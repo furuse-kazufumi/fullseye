@@ -33,6 +33,8 @@ Hough 変換による円検出(1 スカラー特徴量、OpenCV 実装)。エッ
 
 HALCON の `hough_circles`(Detect centers of circles for a specific radius using the Hough transform.)に相当(近似。中心座標ではなく本数のみ)。実装は ``cv2.HoughCircles(_u8(v), HOUGH_GRADIENT, dp=1, minDist=10+int(a*20), param1=100, param2=20+int(b*20), minRadius=3, maxRadius=20)`` —— a は検出する円同士の最小中心間距離を 10〜30 に、b は中心検出の投票しきい値 param2(小さいほど誤検出が増える)を 20〜40 に振る。param1(内部の Canny 高しきい値)と半径範囲(3〜20)は固定。
 
+**前提条件: 先に平滑化すること**(この op は内部で平滑化しない)。HOUGH_GRADIENT は画素ごとの勾配の向きで中心に投票するので、雑音が向きを散らすと票が集まらない。OpenCV の説明・作例も入力をぼかしてから渡している(GaussianBlur / medianBlur)。実測(2026-11-03、96x96、0.3 の地に 0.6 の円板、雑音 σ 0.02): 平滑化なしでは半径 6〜8 の円板 3 個でも半径 18 の円板 1 個でも **0 個**(cv2.HoughCircles を直接呼んでも None)。``gaussian`` a=0.5(σ 約 1.65 px)を先に掛けると 3 / 4 個を正しく数える。0 を返したときは「円が無い」のか「票が割れた」のかを区別できないので、雑音のある画像では必ず平滑化を前段に置く。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_features ファミリ ガイド](../guides/gallery2d_features.md)

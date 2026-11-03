@@ -11,7 +11,8 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/orientation_xld.chain.jpg">orientation_xld: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>윤곽선에 타원을 맞춘 결과의 기울기 각도(<code style="color:#22d3bf">cv2.fitEllipse</code>의 각도를 180°로 접어 [0,1]로 정규화). HALCON의 <code style="color:#22d3bf">orientation_xld</code>(Calculate the orientation of contours or polygons.)에 해당.</p>
+<p>가장 큰 윤곽에 타원을 피팅(<code style="color:#22d3bf">cv2.fitEllipse</code>)한 <b>주축 각 θ / 180</b>(θ는 열 축에서 <b>화면상 반시계 방향</b>, 행은 아래 방향, [0, 180)도로 접음). 영역 버전 <code style="color:#22d3bf">orientation_region</code>과 같은 규약(180을 곱하면 도). HALCON의 <code style="color:#22d3bf">orientation_xld</code>(Calculate the orientation of contours or polygons.)는 같은 방향의 각을 -π..π 라디안으로 반환하므로(가장 먼 점으로 방향 결정), 이것은 180도로 접어 [0,1)로 정규화한 버전이다.</p>
+<p>★2026-11-03까지 <code style="color:#22d3bf">cv2.fitEllipse</code>의 각을 그대로 써서 <b>단축의, 화면상 시계 방향의 각</b>(= 90 - θ)을 반환했다(반시계 방향 20도 막대에서 0.389 = 70도, 45도만 우연히 일치).</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

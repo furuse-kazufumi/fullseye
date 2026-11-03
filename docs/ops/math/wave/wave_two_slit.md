@@ -67,11 +67,11 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[wave_fringe_period](wave_fringe_period.md) · [abel_inverse_image](../transform/abel_inverse_image.md) · [abel_revolve](../transform/abel_revolve.md) · [hankel_image](../transform/hankel_image.md) · [dct_transform](../transform/dct_transform.md) · [dwt_transform](../transform/dwt_transform.md) · [chebyshev_coeffs_nd](../numerics/chebyshev_coeffs_nd.md) · [geodesic_heat_grid](../geometry/geodesic_heat_grid.md)
+[wave_fringe_period](wave_fringe_period.md) · [wave_dominant_frequency](wave_dominant_frequency.md) · [abel_inverse_image](../transform/abel_inverse_image.md) · [abel_revolve](../transform/abel_revolve.md) · [hankel_image](../transform/hankel_image.md) · [dct_transform](../transform/dct_transform.md) · [dwt_transform](../transform/dwt_transform.md) · [chebyshev_coeffs_nd](../numerics/chebyshev_coeffs_nd.md)
 
 ## 同カテゴリ(`wave`)
 
-[wave_membrane_mode](wave_membrane_mode.md) · [wave_mode_frequencies](wave_mode_frequencies.md) · [wave_nodal_lines](wave_nodal_lines.md) · [wave_fringe_period](wave_fringe_period.md) · [wave_grating_orders](wave_grating_orders.md)
+[wave_membrane_mode](wave_membrane_mode.md) · [wave_mode_frequencies](wave_mode_frequencies.md) · [wave_nodal_lines](wave_nodal_lines.md) · [wave_fringe_period](wave_fringe_period.md) · [wave_dominant_frequency](wave_dominant_frequency.md) · [wave_grating_orders](wave_grating_orders.md)
 
 ---
 *Provenance: mathops.py — MATH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

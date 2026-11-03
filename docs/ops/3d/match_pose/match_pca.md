@@ -49,7 +49,7 @@ PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。
 
 ## 同カテゴリ(`match_pose`)
 
-[match_phase_3d](match_phase_3d.md) · [moment_axes](moment_axes.md) · [match_logpolar_z](match_logpolar_z.md)
+[match_phase_3d](match_phase_3d.md) · [find_surface_pose](find_surface_pose.md) · [moment_axes](moment_axes.md) · [match_logpolar_z](match_logpolar_z.md)
 
 ---
 *Provenance: match3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

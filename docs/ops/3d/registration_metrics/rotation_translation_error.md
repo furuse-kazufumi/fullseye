@@ -3,7 +3,7 @@ op: rotation_translation_error
 dim: 3d
 category: registration_metrics
 in: pose × pose
-out: measurement
+out: table
 gpu: なし
 examples: [reg_eval]
 author: Kazufumi Furuse
@@ -13,8 +13,9 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 # rotation_translation_error — 3D `registration_metrics` op
 
-- **データ種**: `pose × pose` → `measurement`
-- **呼び出し**: `import fullseye as fs; fs.ledger.rotation_translation_error(gt, est)` (実装を直接呼ぶなら `import registration_eval; registration_eval.rotation_translation_error(gt, est)`、台帳から引くなら `ops3d.get("rotation_translation_error")`)
+- **データ種**: `pose × pose` → `table`
+- **呼び出し**: `import fullseye as fs; fs.ledger.rotation_translation_error(gt, est)` (実装を直接呼ぶなら `import ops3d; ops3d.rotation_translation_error(gt, est)`、台帳から引くなら `ops3d.get("rotation_translation_error")`)
+- **台帳経由の戻り値**: `fullseye.ledger.rotation_translation_error(...)` は**宣言 out 型 `table` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.rotation_translation_error.raw(...)`、または `ops3d.rotation_translation_error` を直接呼ぶ。
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -43,15 +44,15 @@ RRE = 角度(gt_R^T · est_R) = atan2(|axial(dR − dRᵀ)|/2, (tr−1)/2) を�
 
 - [reg_eval](../../../../examples_3d/reg_eval.py) — `py -3.11 examples_3d/reg_eval.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [mesh_select_lod](../resolution/mesh_select_lod.md)
 
 ## 同カテゴリ(`registration_metrics`)
 
 [inlier_ratio](inlier_ratio.md) · [rmse_inliers](rmse_inliers.md) · [registration_recall](registration_recall.md)
 
 ---
-*Provenance: registration_eval.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: ops3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

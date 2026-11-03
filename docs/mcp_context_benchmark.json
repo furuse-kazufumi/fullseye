@@ -22,8 +22,8 @@
     {
       "task": "find scratches using polarization",
       "tool_schema_tokens": 1497,
-      "response_tokens": 236,
-      "total_tokens": 1733,
+      "response_tokens": 268,
+      "total_tokens": 1765,
       "planned": true,
       "expected": "polarization_dolp_map",
       "expected_rank": 1,
@@ -34,8 +34,8 @@
     {
       "task": "recover projected fringe height",
       "tool_schema_tokens": 1497,
-      "response_tokens": 237,
-      "total_tokens": 1734,
+      "response_tokens": 279,
+      "total_tokens": 1776,
       "planned": true,
       "expected": "decode_fringe",
       "expected_rank": 1,
@@ -58,8 +58,8 @@
     {
       "task": "fast structured-light depth",
       "tool_schema_tokens": 1497,
-      "response_tokens": 241,
-      "total_tokens": 1738,
+      "response_tokens": 242,
+      "total_tokens": 1739,
       "planned": true,
       "expected": "decode_fringe",
       "expected_rank": 2,

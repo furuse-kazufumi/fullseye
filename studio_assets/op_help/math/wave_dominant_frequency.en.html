@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">wave_dominant_frequency — MATH <code style="color:#22d3bf">wave</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wave_dominant_frequency(image, window=&#x27;hann&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.wave_dominant_frequency(image, window=&#x27;hann&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;wave_dominant_frequency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Return the frequency, period and orientation of the strongest periodicity of an image (the largest non-DC 2-D FFT peak) (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>平均を引き、<code style="color:#22d3bf">window=&quot;hann&quot;</code>(既定)なら 2-D の Hann 窓を掛けてから <code style="color:#22d3bf">fft2</code> のパワーの最大(DC は除く)を探し、山の 3 点に<b>対数の放物線</b>を行・列それぞれで当ててビンより細かく読む(<code style="color:#22d3bf">wave_fringe_period</code> の 2-D 版。あちらは 1 軸の周期だけ)。<code style="color:#22d3bf">window=&quot;none&quot;</code> は窓を掛けない(周期が画像幅にちょうど整数個入るときだけ厳密)。</p>
+<p>返す dict: <code style="color:#22d3bf">fx</code> / <code style="color:#22d3bf">fy</code>(列方向・行方向の空間周波数 [cycles/px]、山は <code style="color:#22d3bf">fx &gt;= 0</code> の半平面に揃える)、<code style="color:#22d3bf">freq_cpp</code>(<code style="color:#22d3bf">hypot(fx, fy)</code>)、<code style="color:#22d3bf">period_px</code>(<code style="color:#22d3bf">1 / freq_cpp</code>)、<code style="color:#22d3bf">angle_deg</code>(波数ベクトルの向き = 縞に<b>垂直</b>な向き。+列から +行へ回る角で <code style="color:#22d3bf">[0, 180)</code>。縞 <code style="color:#22d3bf">cos(2π(x cosθ + y sinθ)/p)</code> なら θ)、<code style="color:#22d3bf">peak_fraction</code>(山のビンとその鏡像が DC 以外の全パワーに占める割合 = 周期の確からしさ)、<code style="color:#22d3bf">window</code>。</p>
+<p>★前提: 照明むらのような低周波は山を奪う(画像より長い周期は DC の隣に出る)。むらがある画像は先に背景を引くか高域通過を掛けること。</p>
+<p>空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は <code style="color:#22d3bf">ValueError</code>。拒否(<code style="color:#22d3bf">ValueError</code>): 2-D でない、どちらかの辺が 8 画素未満、非有限の値、平らな画像(周期が無い)、未知の <code style="color:#22d3bf">window</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every mathops op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
+<p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:wave_dominant_frequency_grating">wave_dominant_frequency_grating</a> — <code style="color:#22d3bf">py -3.11 examples/wave_dominant_frequency_grating.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dwt_inverse">dwt_inverse</a> · <a style="color:#22d3bf" href="opmath:chebyshev_eval_nd">chebyshev_eval_nd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">wave</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:wave_membrane_mode">wave_membrane_mode</a> · <a style="color:#22d3bf" href="opmath:wave_mode_frequencies">wave_mode_frequencies</a> · <a style="color:#22d3bf" href="opmath:wave_nodal_lines">wave_nodal_lines</a> · <a style="color:#22d3bf" href="opmath:wave_two_slit">wave_two_slit</a> · <a style="color:#22d3bf" href="opmath:wave_fringe_period">wave_fringe_period</a> · <a style="color:#22d3bf" href="opmath:wave_grating_orders">wave_grating_orders</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -10,7 +10,8 @@
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>허프 변환에 의한 원 검출(단일 스칼라 특징량, OpenCV 구현). 에지의 그래디언트 정보를 사용하는 HOUGH_GRADIENT 방식으로 원의 중심·반지름을 투표 방식으로 검출한다 —— 여기서는 검출된 원의 개수만을 반환한다(0개면 0).</p>
-<p>HALCON의 <code style="color:#22d3bf">hough_circles</code>(Detect centers of circles for a specific radius using the Hough transform.)에 해당한다(근사. 중심 좌표가 아니라 개수만). 구현은 <code style="color:#22d3bf">cv2.HoughCircles(_u8(v), HOUGH_GRADIENT, dp=1, minDist=10+int(a*20), param1=100, param2=20+int(b*20), minRadius=3, maxRadius=20)</code> —— a는 검출할 원끼리의 최소 중심 간 거리를 10~30으로, b는 중심 검출의 투표 임계값 param2(작을수록 오검출이 늘어난다)를 20~40으로 바꾼다. param1(내부 Canny 상한 임계값)과 반경 범위(3~20)는 고정이다.</p>
+<p>HALCON의 <code style="color:#22d3bf">hough_circles</code>(Detect centers of circles for a specific radius using the Hough transform.)에 해당(근사: 중심 좌표가 아니라 개수만 반환). 구현은 <code style="color:#22d3bf">cv2.HoughCircles(_u8(v), HOUGH_GRADIENT, dp=1, minDist=10+int(a*20), param1=100, param2=20+int(b*20), minRadius=3, maxRadius=20)</code> —— a는 검출할 원 중심 사이의 최소 거리를 10〜30으로, b는 중심 검출 투표 임계값 param2(작을수록 오검출이 늘어남)를 20〜40으로 바꾼다. param1(내부 Canny 상한 임계값)과 반지름 범위(3〜20)는 고정.</p>
+<p><b>전제 조건: 먼저 평활화할 것</b>(이 op는 내부에서 평활화하지 않는다). HOUGH_GRADIENT는 화소마다의 그래디언트 방향으로 중심에 투표하므로, 잡음이 방향을 흩뜨리면 표가 모이지 않는다. OpenCV의 설명과 예제도 입력을 흐리게 한 뒤 넘긴다(GaussianBlur / medianBlur). 실측(2026-11-03, 96x96, 0.3 바탕에 0.6 원판, 잡음 σ 0.02): 평활화 없이는 반지름 6〜8의 원판 3개도 반지름 18의 원판 1개도 <b>0개</b>(cv2.HoughCircles를 직접 호출해도 None). <code style="color:#22d3bf">gaussian</code> a=0.5(σ 약 1.65 px)를 먼저 적용하면 3 / 4개를 바르게 센다. 0을 반환했을 때는 &quot;원이 없다&quot;인지 &quot;표가 갈렸다&quot;인지 구별할 수 없으므로, 잡음이 있는 영상에서는 반드시 평활화를 앞에 둔다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

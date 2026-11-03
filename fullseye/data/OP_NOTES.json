@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3623,
- "n_notes": 3629,
+ "n_ops": 3626,
+ "n_notes": 3632,
  "notes": {
   "vol_dilate": [
    {
@@ -11495,6 +11495,16 @@
     "path": "docs/ops/3d/match_localize/match_shape_3d.md"
    }
   ],
+  "find_surface_pose": [
+   {
+    "op": "find_surface_pose",
+    "dim": "3d",
+    "category": "match_pose",
+    "in": "points × points",
+    "out": "pose",
+    "path": "docs/ops/3d/match_pose/find_surface_pose.md"
+   }
+  ],
   "match_logpolar_z": [
    {
     "op": "match_logpolar_z",
@@ -12560,7 +12570,7 @@
     "dim": "3d",
     "category": "registration_metrics",
     "in": "pose × pose",
-    "out": "measurement",
+    "out": "table",
     "path": "docs/ops/3d/registration_metrics/rotation_translation_error.md"
    }
   ],
@@ -26755,6 +26765,16 @@
     "path": "docs/ops/math/transform/wavelet_filters.md"
    }
   ],
+  "wave_dominant_frequency": [
+   {
+    "op": "wave_dominant_frequency",
+    "dim": "math",
+    "category": "wave",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/math/wave/wave_dominant_frequency.md"
+   }
+  ],
   "wave_fringe_period": [
    {
     "op": "wave_fringe_period",
@@ -34592,6 +34612,16 @@
     "in": "pairs",
     "out": "efdmodel",
     "path": "docs/ops/shape2d/descriptor/elliptic_fourier.md"
+   }
+  ],
+  "fit_circle_xld": [
+   {
+    "op": "fit_circle_xld",
+    "dim": "shape2d",
+    "category": "descriptor",
+    "in": "contour",
+    "out": "table",
+    "path": "docs/ops/shape2d/descriptor/fit_circle_xld.md"
    }
   ],
   "fourier_smooth": [

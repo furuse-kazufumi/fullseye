@@ -33,9 +33,14 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-楕円フィットした輪郭の傾き角(``cv2.fitEllipse`` の角度を 180° で
-折り返して [0,1] に正規化)。HALCON の ``orientation_xld``（Calculate the
-orientation of contours or polygons.）に相当。
+楕円フィット(``cv2.fitEllipse``)した最大の輪郭の**主軸の角 θ / 180**(θ は列軸から
+**画面上で反時計回り**、行は下向き、[0, 180) 度に折り返す)。領域版 ``orientation_region``
+と同じ規約(× 180 で度)。HALCON の ``orientation_xld``（Calculate the
+orientation of contours or polygons.）は同じ向きの角をラジアンで -π..π に返す
+(最遠点で向きを決める)ので、ここは 180 度で畳んで [0,1) に正規化した版。
+
+★2026-11-03 まで ``cv2.fitEllipse`` の角をそのまま使っていて、**短軸の、画面上で時計回りの角**
+(= 90 - θ)を返していた(反時計回り 20 度の棒で 0.389 = 70 度、45 度だけ偶然一致)。
 
 ``a``, ``b`` は未使用。
 

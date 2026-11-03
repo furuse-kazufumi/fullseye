@@ -14,7 +14,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # sun_position — GEOCAM `sun` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.sun_position(lat_deg, lon_deg, unix_times)` (実装を直接呼ぶなら `import geocam; geocam.sun_position(lat_deg, lon_deg, unix_times)`、台帳から引くなら `opsgeocam.get("sun_position")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sun_position(unix_times, lat_deg, lon_deg)` (実装を直接呼ぶなら `import opsgeocam; opsgeocam.sun_position(unix_times, lat_deg, lon_deg)`、台帳から引くなら `opsgeocam.get("sun_position")`)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -64,6 +64,6 @@ Returns:
 [sun_pixel_position](sun_pixel_position.md) · [camera_orientation_from_sun](camera_orientation_from_sun.md) · [sun_bloom_fit](sun_bloom_fit.md) · [camera_orientation_from_sun_candidates](camera_orientation_from_sun_candidates.md)
 
 ---
-*Provenance: geocam.py — GEOCAM operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: opsgeocam.py — GEOCAM operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

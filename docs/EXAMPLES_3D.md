@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 376 の型付き op)を、**実問題を解く実行可能な事例**（全 123 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 377 の型付き op)を、**実問題を解く実行可能な事例**（全 124 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -21,7 +21,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ## 実データ源
 
-- **合成データ(制御GT)** — 95 事例
+- **合成データ(制御GT)** — 96 事例
 - **手続き生成(GTは幾何/解析)** — 14 事例
 - **骨格CT(MS-Human-700 実解剖骨)** — 4 事例
 - **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 6 事例
@@ -34,6 +34,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 ### 位置合わせ / SLAM
 
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** (`cad_to_scan`, synthetic) — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。
+- **L字金具の6-DoF姿勢を点群から初期値なしで求める(PPF投票+ICP)** (`find_surface_pose_bracket`, synthetic) — find_surface_pose(HALCON find_surface_model 相当)の呼び出し例。回転対称の無い L 字金具を65°回転+並進で置き、点の3割を間引き・順序入替・雑音0.01を足した場面から姿勢を復元。回転誤差0.21°・並進誤差0.006。単位行列から始めたICPだけの対照は回転誤差5.2°。
 - **手法を自動選択する点群登録** (`auto_register`, synthetic) — 2点群の近さを見て、近ければ ICP・大きく離れていれば FPFH+ICP を自動選択する(手法指定不要)。
 - **登録品質の評価(recall/RMSE/inlier)** (`reg_eval`, synthetic) — 登録結果が成功か失敗かを inlier率・RMSE・recall で定量化。対応ゼロでは NaN を返し捏造しない。
 - **2視点からの相対カメラ姿勢(SfM初期化)** (`two_view_pose`, synthetic) — 2枚の画像の対応点から基礎/基本行列を解き、相対カメラ姿勢と3D点を復元する(単眼SfM/VOの初手)。

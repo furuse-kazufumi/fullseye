@@ -13,9 +13,12 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edges_sub_pix.inputs.jpg">edges_sub_pix: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>亚像素精度的边缘点提取。求出梯度及其法线方向(<code style="color:#22d3bf">gradient_normals</code>),将超过阈值(<code style="color:#22d3bf">0.15+0.5*a</code>)的像素连通成分化,然后通过抛物线拟合将各点精细化到亚像素位置(<code style="color:#22d3bf">subpixel_refine_edges</code>,与 <code style="color:#22d3bf">ops</code> 侧同名 op 共享的实现——经 2026-09-02 的修复才成为真正意义上的亚像素;旧实现只是原样返回整数像素坐标)。相当于 HALCON 的 <code style="color:#22d3bf">edges_sub_pix</code>(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。</p>
-<p><code style="color:#22d3bf">a</code> 调节边缘强度的阈值。<code style="color:#22d3bf">b</code> 未使用。</p>
-<p>??? FsValueError????? NaN / inf?</p>
+<p>亚像素精度的边缘轮廓提取。求出梯度及其法线方向(<code style="color:#22d3bf">gradient_normals</code>),用非极大值抑制(与 Canny 相同,仅保留沿法线方向强于两侧的像素)细化为单像素宽,把超过阈值(<code style="color:#22d3bf">0.15+0.5*a</code>,按最大梯度归一化的强度)的像素连接成<b>沿曲线排序的轮廓</b>(在分支点处拆分为不同轮廓,闭合边缘在起点闭合),再用抛物线拟合沿法线把各点精细化到亚像素位置(<code style="color:#22d3bf">subpixel_refine_edges</code>,与 <code style="color:#22d3bf">ops</code> 侧同名 op 共享的实现 —— 经 2026-09-02 的修复才成为真正的亚像素;旧实现直接返回整数像素坐标)。相当于 HALCON 的 <code style="color:#22d3bf">edges_sub_pix</code>(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。</p>
+<p>每条轮廓的点<b>沿曲线排序</b>(相邻点间距约 1 px),所以 <code style="color:#22d3bf">length_xld</code> 可测边缘长度,<code style="color:#22d3bf">area_center_xld</code> / <code style="color:#22d3bf">circularity_xld</code> 可测闭合边缘所围的形状(r = 18 px 的圆盘 length_xld 约 113 px = 2πr)。</p>
+<p>★直到 2026-11-03,超过阈值的 2〜3 px 宽<b>带</b>中的像素按<b>光栅顺序</b>原样放进一条轮廓 —— 同一圆盘的 length_xld 为 2508 px(点逐行往返)。与点顺序无关的量(直线拟合 <code style="color:#22d3bf">fit_line_contour_xld</code> 等)与以前的值接近。</p>
+<p><code style="color:#22d3bf">a</code> 调节边缘强度阈值。<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>Raises:</p>
+<p>FsValueError: 含 NaN / inf 的图像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

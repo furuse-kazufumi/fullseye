@@ -33,9 +33,12 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-領域の主軸の向き(``regionprops`` の ``orientation``、[-π/2,π/2] を
-[0,1] へ線形写像)。楕円フィットした際の長軸の傾きを表す。HALCON の
-``orientation_region``（Orientation of a region.）に相当。
+領域の主軸の向き θ / 180(θ は等価楕円の長軸の角、列軸から**画面上で反時計回り**・行は
+下向き、[0, 180] 度。× 180 で度。実装は ``regionprops`` の ``orientation`` を
+``(orientation + π/2) / π`` で写したもの)。HALCON の
+``orientation_region``（Orientation of a region.）と同じ向きの角 —— HALCON は最遠点で
+向きを決めて -π..π のラジアンで返すが、ここは 180 度で畳んで [0,1] に正規化している。
+``elliptic_axis`` の Phi(ラジアン)とは θ ≡ Phi (mod π) で一致する。
 
 ``a``, ``b`` は未使用。
 

@@ -14,7 +14,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # rss_longitudinal_same — DRIVE `rss` op
 
 - **データ種**: `table` → `scalar`
-- **呼び出し**: `import fullseye as fs; fs.ledger.rss_longitudinal_same(v_rear: 'float', v_front: 'float', p: 'dict', p_front: 'Optional[dict]' = None) -> 'float'` (実装を直接呼ぶなら `import rsssafety; rsssafety.rss_longitudinal_same(v_rear: 'float', v_front: 'float', p: 'dict', p_front: 'Optional[dict]' = None) -> 'float'`、台帳から引くなら `opsdrive.get("rss_longitudinal_same")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.rss_longitudinal_same(p: 'dict', v_rear: 'float', v_front: 'float', p_front: 'Optional[dict]' = None) -> 'float'` (実装を直接呼ぶなら `import opsdrive; opsdrive.rss_longitudinal_same(p: 'dict', v_rear: 'float', v_front: 'float', p_front: 'Optional[dict]' = None) -> 'float'`、台帳から引くなら `opsdrive.get("rss_longitudinal_same")`)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -44,6 +44,6 @@ version: 0.8.1  # fullseye lib version this note was generated for
 [rss_params](rss_params.md) · [rss_stopping_distance](rss_stopping_distance.md) · [rss_longitudinal_opposite](rss_longitudinal_opposite.md) · [rss_lateral](rss_lateral.md) · [rss_longitudinal_check](rss_longitudinal_check.md) · [rss_lateral_check](rss_lateral_check.md) · [rss_worst_case_gap](rss_worst_case_gap.md) · [rss_worst_case_gap_opposite](rss_worst_case_gap_opposite.md)
 
 ---
-*Provenance: rsssafety.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: opsdrive.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

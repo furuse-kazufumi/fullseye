@@ -53,9 +53,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3428,
+    "executable": 3431,
     "reasons": {
-      "python_signature": 2469,
+      "python_signature": 2472,
       "registry": 959
     },
     "not_executable_reasons": {
@@ -358,9 +358,9 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3626,
-    "conversion_pairs": 395,
-    "conversion_edge_incidence": 2343
+    "edges": 3629,
+    "conversion_pairs": 396,
+    "conversion_edge_incidence": 2347
   },
   "nodes": [
     {
@@ -478,7 +478,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 43,
-      "consumed_by": 66,
+      "consumed_by": 67,
       "generator": false,
       "type_check": false,
       "choose_when": "undocumented",
@@ -753,7 +753,7 @@
       "container": "dense_array",
       "size_hint": "input-dependent",
       "produced_by": 721,
-      "consumed_by": 1046,
+      "consumed_by": 1047,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -884,7 +884,7 @@
       "sort": "measurement",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 93,
+      "produced_by": 92,
       "consumed_by": 6,
       "generator": true,
       "type_check": true,
@@ -984,7 +984,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 78,
-      "consumed_by": 292,
+      "consumed_by": 294,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1027,7 +1027,7 @@
       "sort": "pose",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 16,
+      "produced_by": 17,
       "consumed_by": 10,
       "generator": true,
       "type_check": true,
@@ -1368,7 +1368,7 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1166,
+      "produced_by": 1169,
       "consumed_by": 547,
       "generator": true,
       "type_check": true,
@@ -5914,6 +5914,92 @@
         "callable": "match_pca"
       },
       "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00001"
+    },
+    {
+      "op": "find_surface_pose",
+      "inputs": [
+        "points",
+        "points"
+      ],
+      "output": "pose",
+      "category": "3d",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00001"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00001"
+        }
+      ],
+      "input_roles": [
+        "model_points",
+        "scene_points"
+      ],
+      "runtime_target": {
+        "module": "ppf",
+        "callable": "find_surface_pose"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ppf",
+        "callable": "find_surface_pose"
+      },
+      "parameter_schema": [
+        {
+          "name": "model_normals",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "scene_normals",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "dist_step",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "angle_bins",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 30
+        },
+        {
+          "name": "k_normals",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 16
+        }
+      ],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -15703,34 +15789,19 @@
         }
       ],
       "input_roles": [
-        "R_est",
-        "t_est"
+        "pose_est",
+        "pose_gt"
       ],
       "runtime_target": {
-        "module": "metrics3d",
+        "module": "ops3d",
         "callable": "pose_error"
       },
       "executor": {
         "kind": "python",
-        "module": "metrics3d",
+        "module": "ops3d",
         "callable": "pose_error"
       },
-      "parameter_schema": [
-        {
-          "name": "R_gt",
-          "type": "unannotated",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "t_gt",
-          "type": "unannotated",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        }
-      ],
+      "parameter_schema": [],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -23191,7 +23262,7 @@
         "pose",
         "pose"
       ],
-      "output": "measurement",
+      "output": "table",
       "category": "3d",
       "family": null,
       "family_candidate": null,
@@ -23216,12 +23287,12 @@
         "est"
       ],
       "runtime_target": {
-        "module": "registration_eval",
+        "module": "ops3d",
         "callable": "rotation_translation_error"
       },
       "executor": {
         "kind": "python",
-        "module": "registration_eval",
+        "module": "ops3d",
         "callable": "rotation_translation_error"
       },
       "parameter_schema": [],
@@ -31631,6 +31702,55 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 1
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00005"
+    },
+    {
+      "op": "wave_dominant_frequency",
+      "inputs": [
+        "image"
+      ],
+      "output": "table",
+      "category": "math",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00005"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00005"
+        }
+      ],
+      "runtime_target": {
+        "module": "mathops",
+        "callable": "wave_dominant_frequency"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "mathops",
+        "callable": "wave_dominant_frequency"
+      },
+      "parameter_schema": [
+        {
+          "name": "window",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "hann"
         }
       ],
       "verified_executable": false,
@@ -92196,25 +92316,25 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_same"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_same"
       },
       "parameter_schema": [
         {
-          "name": "v_front",
+          "name": "v_rear",
           "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
         },
         {
-          "name": "p",
-          "type": "dict",
+          "name": "v_front",
+          "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -92259,25 +92379,25 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_opposite"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_opposite"
       },
       "parameter_schema": [
         {
-          "name": "v2",
+          "name": "v1",
           "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
         },
         {
-          "name": "p1",
-          "type": "dict",
+          "name": "v2",
+          "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -92322,25 +92442,25 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_lateral"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_lateral"
       },
       "parameter_schema": [
         {
-          "name": "v2",
+          "name": "v1",
           "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
         },
         {
-          "name": "p1",
-          "type": "dict",
+          "name": "v2",
+          "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -92385,15 +92505,22 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_check"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_check"
       },
       "parameter_schema": [
+        {
+          "name": "d",
+          "type": "float",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
         {
           "name": "v_rear",
           "type": "float",
@@ -92404,13 +92531,6 @@
         {
           "name": "v_front",
           "type": "float",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "p",
-          "type": "dict",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -92455,15 +92575,22 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_lateral_check"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_lateral_check"
       },
       "parameter_schema": [
+        {
+          "name": "d_lat",
+          "type": "float",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
         {
           "name": "v1",
           "type": "float",
@@ -92474,13 +92601,6 @@
         {
           "name": "v2",
           "type": "float",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "p1",
-          "type": "dict",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -92525,15 +92645,22 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap"
       },
       "parameter_schema": [
+        {
+          "name": "d0",
+          "type": "float",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
         {
           "name": "v_rear",
           "type": "float",
@@ -92544,13 +92671,6 @@
         {
           "name": "v_front",
           "type": "float",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "p",
-          "type": "dict",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -92611,15 +92731,22 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap_opposite"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap_opposite"
       },
       "parameter_schema": [
+        {
+          "name": "d0",
+          "type": "float",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
         {
           "name": "v1",
           "type": "float",
@@ -92630,13 +92757,6 @@
         {
           "name": "v2",
           "type": "float",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "p1",
-          "type": "dict",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -92697,15 +92817,22 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap_lateral"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap_lateral"
       },
       "parameter_schema": [
+        {
+          "name": "d0",
+          "type": "float",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
         {
           "name": "v1",
           "type": "float",
@@ -92716,13 +92843,6 @@
         {
           "name": "v2",
           "type": "float",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "p1",
-          "type": "dict",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -167244,6 +167364,55 @@
       "source_ref": "S00042"
     },
     {
+      "op": "fit_circle_xld",
+      "inputs": [
+        "contour"
+      ],
+      "output": "table",
+      "category": "shape2d",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00042"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00042"
+        }
+      ],
+      "runtime_target": {
+        "module": "fourierdesc",
+        "callable": "fit_circle_xld"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "fourierdesc",
+        "callable": "fit_circle_xld"
+      },
+      "parameter_schema": [
+        {
+          "name": "method",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "geometric"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00042"
+    },
+    {
       "op": "contour_fourier_complex",
       "inputs": [
         "pairs"
@@ -179643,24 +179812,24 @@
         }
       ],
       "runtime_target": {
-        "module": "geocam",
+        "module": "opsgeocam",
         "callable": "sun_position"
       },
       "executor": {
         "kind": "python",
-        "module": "geocam",
+        "module": "opsgeocam",
         "callable": "sun_position"
       },
       "parameter_schema": [
         {
-          "name": "lon_deg",
+          "name": "lat_deg",
           "type": "unannotated",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
         },
         {
-          "name": "unix_times",
+          "name": "lon_deg",
           "type": "unannotated",
           "required": true,
           "range": "undocumented",
@@ -253316,7 +253485,9 @@
       "graph",
       "hessian"
     ],
-    "orphans": [],
+    "orphans": [
+      "contour"
+    ],
     "never_consumed": [
       "frame",
       "gradient",
@@ -253324,7 +253495,9 @@
       "hessian"
     ],
     "unchecked_ops": [],
-    "unreachable": [],
+    "unreachable": [
+      "contour"
+    ],
     "duplicate_declarations": [
       {
         "op": "gaussians_to_voxel",

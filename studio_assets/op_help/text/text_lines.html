@@ -6,6 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>文字候補の矩形を行にまとめる(縦に重なり、横に近く、ストローク幅が近いものを繋ぐ)。</p>
 <p>★規則の根拠(2026-09-27 実測): 候補は字画ごとの断片になる(横棒と &#x27;l&#x27; では高さが 5 倍違う)ので「高さが近い」を条件にすると 3 行が 30〜60 行に割れた。行の同一性は<b>縦の重なり</b>(小さい方の高さの <code style="color:#22d3bf">overlap_ratio</code> 以上)で判定し、横の隙間は大きい方の高さの <code style="color:#22d3bf">gap_ratio</code> 倍以内、ストローク幅は <code style="color:#22d3bf">width_ratio</code> 倍以内。</p>
+<p><code style="color:#22d3bf">boxes</code> は 2 つの形を受ける: (1) N×4 の矩形 [y0, x0, y1, x1] (従来の形)、(2) <code style="color:#22d3bf">text_candidates</code> の返す <b>表</b>(dict。<code style="color:#22d3bf">boxes</code> を必ず持ち、<code style="color:#22d3bf">stroke_width</code> があればそれを使う)。台帳はこの op の入力を <code style="color:#22d3bf">table</code> と宣言しており、候補の表をそのまま渡せば鎖 <code style="color:#22d3bf">text_candidates -&gt; text_lines</code> が繋がる(★2026-11-03: 以前は表を渡すと <code style="color:#22d3bf">int()</code> の TypeError で落ちていた —— レシピの e2e が見つけた)。表を渡したうえで <code style="color:#22d3bf">stroke_width</code> も別に渡すと、どちらを使うか決まらないので ValueError(fail-closed)。<code style="color:#22d3bf">boxes</code> キーの無い dict も ValueError。</p>
 <p>Returns dict: <code style="color:#22d3bf">lines</code>(M×4 の矩形)/ <code style="color:#22d3bf">members</code>(各行の候補 index のリスト)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>

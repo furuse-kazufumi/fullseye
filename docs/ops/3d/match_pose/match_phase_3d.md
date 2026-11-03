@@ -62,7 +62,7 @@ Reddy & Chatterji の 3D 版。相互パワースペクトル R = A·conj(B) を
 
 ## 同カテゴリ(`match_pose`)
 
-[match_pca](match_pca.md) · [moment_axes](moment_axes.md) · [match_logpolar_z](match_logpolar_z.md)
+[match_pca](match_pca.md) · [find_surface_pose](find_surface_pose.md) · [moment_axes](moment_axes.md) · [match_logpolar_z](match_logpolar_z.md)
 
 ---
 *Provenance: match3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

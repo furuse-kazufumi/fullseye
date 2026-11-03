@@ -1,29 +1,29 @@
 {
  "summary": {
-  "recipes": 243,
+  "recipes": 267,
   "recipes_py": 25,
-  "recipebook": 218,
-  "multi_stage": 203,
+  "recipebook": 242,
+  "multi_stage": 220,
   "families_total": 56,
   "families_covered": 56,
   "families_uncovered": [],
   "task_class": {
-   "3d": 30,
-   "analysis": 23,
-   "inspection": 53,
-   "measurement": 63,
+   "3d": 36,
+   "analysis": 24,
+   "inspection": 59,
+   "measurement": 71,
    "optics": 8,
    "preprocess": 38,
-   "sensing": 14,
+   "sensing": 17,
    "simulation": 9,
    "visualization": 5
   },
   "halcon_chapters": {
    "1D Measuring": 7,
-   "2D Metrology": 5,
-   "3D Matching": 5,
+   "2D Metrology": 6,
+   "3D Matching": 8,
    "3D Object Model": 18,
-   "3D Reconstruction": 11,
+   "3D Reconstruction": 14,
    "Calibration": 4,
    "Color": 8,
    "Features": 2,
@@ -33,26 +33,25 @@
    "Inspection": 4,
    "Matching": 5,
    "Morphology": 3,
-   "OCR": 3,
-   "Regions": 17,
+   "OCR": 4,
+   "Regions": 19,
    "Restoration": 2,
-   "Segmentation": 8,
+   "Segmentation": 10,
    "Texture": 3,
-   "Transformations": 6,
-   "XLD": 6
+   "Transformations": 7,
+   "XLD": 10
   },
   "runner": {
-   "mcp": 79,
-   "python": 164
+   "mcp": 89,
+   "python": 178
   },
-  "truth_gated": 219,
+  "truth_gated": 243,
   "type_cuts_total": 0,
   "recipes_with_type_cuts": 0,
-  "distinct_ops": 388,
+  "distinct_ops": 409,
   "categories_2d_total": 49,
-  "categories_2d_covered": 24,
+  "categories_2d_covered": 25,
   "categories_2d_uncovered": [
-   "3d",
    "arithmetic",
    "artificial_life",
    "artistic",
@@ -80,13 +79,13 @@
   ],
   "gpu": {
    "snapshot_commit": "a3f91eae72f851e870e6a45294ecfc44ded9cb10",
-   "recipes_measured": 243,
-   "recipes_unmeasured": 0,
-   "recipes_with_gpu_stage": 126,
-   "switches_total": 95,
+   "recipes_measured": 247,
+   "recipes_unmeasured": 20,
+   "recipes_with_gpu_stage": 127,
+   "switches_total": 96,
    "switch_histogram": {
-    "0": 162,
-    "1": 69,
+    "0": 165,
+    "1": 70,
     "2": 11,
     "4": 1
    }
@@ -96,14 +95,14 @@
   {
    "family": "2d",
    "ops": 959,
-   "recipes": 83,
-   "ops_used": 92
+   "recipes": 90,
+   "ops_used": 99
   },
   {
    "family": "3d",
-   "ops": 376,
-   "recipes": 19,
-   "ops_used": 30
+   "ops": 377,
+   "recipes": 25,
+   "ops_used": 35
   },
   {
    "family": "acoustics",
@@ -132,7 +131,7 @@
   {
    "family": "blob",
    "ops": 11,
-   "recipes": 3,
+   "recipes": 4,
    "ops_used": 6
   },
   {
@@ -180,8 +179,8 @@
   {
    "family": "drive",
    "ops": 717,
-   "recipes": 5,
-   "ops_used": 9
+   "recipes": 7,
+   "ops_used": 11
   },
   {
    "family": "emproof",
@@ -216,8 +215,8 @@
   {
    "family": "geocam",
    "ops": 9,
-   "recipes": 1,
-   "ops_used": 3
+   "recipes": 2,
+   "ops_used": 4
   },
   {
    "family": "gfx2d",
@@ -252,8 +251,8 @@
   {
    "family": "lightfield",
    "ops": 17,
-   "recipes": 2,
-   "ops_used": 5
+   "recipes": 3,
+   "ops_used": 6
   },
   {
    "family": "live4d",
@@ -269,9 +268,9 @@
   },
   {
    "family": "math",
-   "ops": 114,
-   "recipes": 4,
-   "ops_used": 8
+   "ops": 115,
+   "recipes": 5,
+   "ops_used": 9
   },
   {
    "family": "measure1d",
@@ -354,20 +353,20 @@
   {
    "family": "roughness",
    "ops": 9,
-   "recipes": 4,
-   "ops_used": 7
+   "recipes": 5,
+   "ops_used": 8
   },
   {
    "family": "segmentation",
    "ops": 59,
-   "recipes": 3,
-   "ops_used": 3
+   "recipes": 4,
+   "ops_used": 4
   },
   {
    "family": "shape2d",
-   "ops": 16,
+   "ops": 17,
    "recipes": 2,
-   "ops_used": 4
+   "ops_used": 5
   },
   {
    "family": "shapestat",
@@ -390,14 +389,14 @@
   {
    "family": "specular",
    "ops": 20,
-   "recipes": 4,
+   "recipes": 6,
    "ops_used": 6
   },
   {
    "family": "text",
    "ops": 3,
-   "recipes": 2,
-   "ops_used": 2
+   "recipes": 3,
+   "ops_used": 3
   },
   {
    "family": "tomography",
@@ -1125,6 +1124,24 @@
    "gpu_switches": 1
   },
   {
+   "name": "Measure — equivalent-ellipse angle Phi of a turned bar (elliptic_axis)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "otsu",
+    "elliptic_axis"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
    "name": "Measure — anisometry (aspect ratio) of an oval part",
    "source": "recipebook",
    "family": "2d",
@@ -1550,6 +1567,86 @@
    "gpu_stages": 0,
    "gpu_unmeasured_ops": [],
    "gpu_switches": 0
+  },
+  {
+   "name": "Measure — orientation of a bar from its sub-pixel outline (orientation_xld)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "threshold_sub_pix",
+    "orientation_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "orientation_xld"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — equivalent-ellipse angle Phi of a bar from its sub-pixel outline (elliptic_axis_xld)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "threshold_sub_pix",
+    "elliptic_axis_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — perimeter of a round part from sub-pixel edges",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "gaussian",
+    "edges_sub_pix",
+    "length_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "length_xld"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Inspect — length of a scratch from its centre line (lines_gauss)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "lines_gauss",
+    "length_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "lines_gauss",
+    "length_xld"
+   ],
+   "gpu_switches": null
   },
   {
    "name": "Measure — sub-pixel centre of a laser spot / fiducial dot",
@@ -2765,6 +2862,26 @@
    "gpu_switches": 0
   },
   {
+   "name": "Inspect — group character candidates into text lines",
+   "source": "recipebook",
+   "family": "text",
+   "task_class": "inspection",
+   "halcon": "OCR",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "text_candidates",
+    "text_lines"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "text_lines"
+   ],
+   "gpu_switches": null
+  },
+  {
    "name": "3D — radius of a ball from a noisy scan with stray points",
    "source": "recipebook",
    "family": "3d",
@@ -2977,6 +3094,47 @@
    "gpu_stages": 0,
    "gpu_unmeasured_ops": [],
    "gpu_switches": 0
+  },
+  {
+   "name": "3D — how far a part sits from its nominal pose (point-to-plane ICP -> pose error)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Matching",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "estimate_point_normals",
+    "icp_point2plane",
+    "pose_error"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "pose_error"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "3D — camera pose deviation from its nominal mounting (PnP -> RRE / RTE)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Matching",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "dlt_pose",
+    "rotation_translation_error"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "rotation_translation_error"
+   ],
+   "gpu_switches": null
   },
   {
    "name": "3D — plane tilt from a depth camera image",
@@ -3506,6 +3664,25 @@
    "gpu_switches": 0
   },
   {
+   "name": "Sense — sun elevation at a site over a day",
+   "source": "recipebook",
+   "family": "geocam",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "sun_position"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "sun_position"
+   ],
+   "gpu_switches": null
+  },
+  {
    "name": "Optics — focal length of a biconvex singlet lens (paraxial EFL / BFL)",
    "source": "recipebook",
    "family": "optics",
@@ -4033,6 +4210,27 @@
    "gpu_switches": 1
   },
   {
+   "name": "3D — metric depth from a light field (EPI structure-tensor slope, camera-array model)",
+   "source": "recipebook",
+   "family": "lightfield",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "lf_synthesize",
+    "lf_epi_slope",
+    "lf_disparity_to_depth"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "lf_epi_slope"
+   ],
+   "gpu_switches": null
+  },
+  {
    "name": "Measure — flow velocity from a PIV image pair (multipass cross-correlation)",
    "source": "recipebook",
    "family": "piv",
@@ -4408,6 +4606,26 @@
    "gpu_stages": 0,
    "gpu_unmeasured_ops": [],
    "gpu_switches": 0
+  },
+  {
+   "name": "Measure — RSS minimum safe gap behind a braking lead car (rss_params -> rss_longitudinal_same)",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "rss_params",
+    "rss_longitudinal_same"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "rss_longitudinal_same"
+   ],
+   "gpu_switches": null
   },
   {
    "name": "Analyze — driver lateral wobble (Ornstein-Uhlenbeck mean reversion and noise)",
@@ -4893,6 +5111,264 @@
    "gpu_stages": 0,
    "gpu_unmeasured_ops": [],
    "gpu_switches": 0
+  },
+  {
+   "name": "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "2D Metrology",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "threshold_sub_pix",
+    "fit_circle_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "fit_circle_xld"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Inspect — count touching parts as watershed basins (one label per object)",
+   "source": "recipebook",
+   "family": "segmentation",
+   "task_class": "inspection",
+   "halcon": "Segmentation",
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "threshold",
+    "distance_transform",
+    "invert_image",
+    "hierarchical_watershed"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "invert_image",
+    "hierarchical_watershed"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Segment — marker-controlled watershed inside a mask (two touching parts, background kept out)",
+   "source": "recipebook",
+   "family": "blob",
+   "task_class": "inspection",
+   "halcon": "Segmentation",
+   "runner": "python",
+   "stages": 5,
+   "ops": [
+    "threshold",
+    "blob_label",
+    "sobel_amp",
+    "invert_image",
+    "blob_split"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "invert_image"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — unwrap an off-centre ring about its centre and read its radius",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "measurement",
+   "halcon": "Transformations",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "polar_unwrap",
+    "img_to_projection_profile"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "polar_unwrap"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Inspect — count bright and dim inclusions in a grey volume (threshold, then count)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "vol_threshold",
+    "vol_count"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "vol_threshold",
+    "vol_count"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Sense — bearing of a sound source from a microphone pair (time difference of arrival)",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "tdoa_bearing"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "tdoa_bearing"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — feed-mark wavelength of a machined surface from its areal PSD peak",
+   "source": "recipebook",
+   "family": "roughness",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "surface_psd",
+    "spectral_stats"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "surface_psd"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — period and direction of a stripe / grating texture (strongest 2-D FFT peak)",
+   "source": "recipebook",
+   "family": "math",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "wave_dominant_frequency"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "wave_dominant_frequency"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "3D — find a known part's 6-DoF pose in a scene cloud (PPF surface matching)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Matching",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "find_surface_pose"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "find_surface_pose"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Sense — degree of linear polarization map from four analyzer angles (0/45/90/135)",
+   "source": "recipebook",
+   "family": "specular",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "polarization_dolp_map"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — glossy (specular) area from polarization: DoLP map, threshold, area fraction",
+   "source": "recipebook",
+   "family": "specular",
+   "task_class": "inspection",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "polarization_dolp_map",
+    "threshold",
+    "area_frac"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "area_frac"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — wrapped phase from 4-step phase-shifted fringes",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "wrapped_phase"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "wrapped_phase"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "3D — height map from 4-step phase-shift fringes (decode, unwrap, scale)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "decode_fringe"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
   }
  ],
  "missing_ops": [
@@ -4969,12 +5445,6 @@
    "book": "book_3d"
   },
   {
-   "family": "3d",
-   "need": "pose (R, t) -> 4x4 transform converter",
-   "why": "rotation_translation_error / registration_recall take 4x4 matrices while dlt_pose / ICP / FPFH return (R, t) tuples; pose_error takes R and t as four separate arguments, so no pose-sorted chain can end in a pose-accuracy stage",
-   "book": "book_3d"
-  },
-  {
    "family": "reprconv",
    "need": "keypoints (row, col) <-> (u = col, v = row) swap",
    "why": "the keypoints sort carries both conventions (calib.project_3d_point returns (row, col); pnp3d.dlt_pose / pnp_ransac expect (u, v)) and no op converts between them",
@@ -5003,33 +5473,15 @@
    "need": "table field selector (table -> image / signal / scalar, by key)",
    "why": "dict-returning drive ops cannot feed their natural consumers: flow_from_depth_motion -> {u, v} cannot reach ttc_from_flow(u: image, v: image) or foe_from_flow; label_extent -> {width} cannot reach ttc_from_scale(w0, w1). A generic typed 'get field' op would close all of these.",
    "book": "book_misc"
+  },
+  {
+   "family": "3d",
+   "need": "voxel -> voxel grey threshold (the ledger twin of the registry's vol_threshold)",
+   "why": "vol_threshold exists (2-D registry, sort 'volume', a = absolute level) and the volume-sorted chain vol_threshold -> vol_count runs; but the ledger's voxel chain (vol_label, regionprops3d, skeletonize_vol) takes 'voxel', and no op turns a grey voxel volume into a binary one at a chosen level, so threshold -> label / measure in 3-D still has a type cut between 'volume' and 'voxel'",
+   "book": "book_newops"
   }
  ],
  "failed_attempts": [
-  {
-   "family": "2d",
-   "recipe": "Measure — orientation of a bar from its sub-pixel outline (orientation_xld)",
-   "op": "orientation_xld",
-   "error": "returns 0.389 (70.0 deg) for a bar that orientation_region measures at 19.9 deg on the same scene (0.250 = 45 deg agrees only because 45 = 90 - 45)",
-   "cause": "doc_mismatch",
-   "book": "book_2d"
-  },
-  {
-   "family": "2d",
-   "recipe": "Measure — equivalent-ellipse angle Phi of a bar (elliptic_axis)",
-   "op": "elliptic_axis",
-   "error": "Phi = -0.348 rad for a bar turned +20 deg counter-clockwise on screen, while orientation_region on the same region gives +19.9 deg; the note says Phi is counter-clockwise from the column axis (elliptic_axis_xld shows the same sign: -0.3505)",
-   "cause": "doc_mismatch",
-   "book": "book_2d"
-  },
-  {
-   "family": "2d",
-   "recipe": "Inspect — count circular holes with the Hough circle transform (no pre-smoothing)",
-   "op": "cv_hough_circles",
-   "error": "returns 0.0 on blobs_image (3 disks r 6-8) and on disk_image (r 18) with noise sigma 0.02; cv2.HoughCircles called directly also returns None; after gaussian a=0.5 it counts 3 / 4 correctly",
-   "cause": "doc_mismatch",
-   "book": "book_2d"
-  },
   {
    "family": "2d",
    "recipe": "Inspect — split touching parts with a marker-controlled watershed",
@@ -5037,30 +5489,6 @@
    "error": "count_obj of its output = 3 / 4 for 4 / 6 touching disks (it returns the dam lines, not basins)",
    "cause": "type_gap",
    "book": "book_2d"
-  },
-  {
-   "family": "2d",
-   "recipe": "Measure — perimeter of a round part from sub-pixel edges",
-   "op": "edges_sub_pix",
-   "error": "gaussian -> edges_sub_pix -> length_xld = 2508 px for a disk of circumference 113 px (4237 vs 151): the edge points of one contour are not ordered along the curve, so length_xld / circularity_xld sum raster jumps; threshold_sub_pix (ordered marching squares) gives 121 px",
-   "cause": "doc_mismatch",
-   "book": "book_2d"
-  },
-  {
-   "family": "2d",
-   "recipe": "Inspect — length of a scratch from its line contour (lines_gauss)",
-   "op": "lines_gauss",
-   "error": "lines_gauss -> length_xld = 117 / 177 px for 40 / 60 px scratches (one contour of the thresholded ridge band's pixels, not a centre line)",
-   "cause": "doc_mismatch",
-   "book": "book_2d"
-  },
-  {
-   "family": "text",
-   "recipe": "Inspect — group character candidates into text lines",
-   "op": "text_lines",
-   "error": "text_candidates (out=table) -> text_lines (in=table): TypeError: int() argument must be a string, a bytes-like object or a real number, not 'dict' — it needs the (N, 4) boxes array",
-   "cause": "doc_mismatch",
-   "book": "book_measure"
   },
   {
    "family": "text",
@@ -5095,35 +5523,11 @@
    "book": "book_3d"
   },
   {
-   "family": "geocam",
-   "recipe": "Sense — sun elevation at a site over a day",
-   "op": "sun_position",
-   "error": "OP_GRAPH declares one input (signal) + kw lon_deg, unix_times, but the signature is (lat_deg, lon_deg, unix_times): the signal lands in lat_deg -> TypeError: only 0-dimensional arrays can be converted to Python scalars",
-   "cause": "doc_mismatch",
-   "book": "book_3d"
-  },
-  {
-   "family": "3d",
-   "recipe": "3D — pose accuracy of a registration against ground truth",
-   "op": "pose_error / rotation_translation_error",
-   "error": "pose_error is declared [pose, pose] but takes (R_est, t_est, R_gt, t_gt); rotation_translation_error needs 4x4 matrices, which no pose-producing op returns",
-   "cause": "doc_mismatch",
-   "book": "book_3d"
-  },
-  {
    "family": "piv",
    "recipe": "piv_synth_pair -> piv_cross_correlate",
    "op": "piv_synth_pair",
    "error": "fs.ledger.piv_synth_pair returns only frame a (64, 64); frame b and the truth are dropped, so piv_cross_correlate(a, b) has no b in the chain",
    "cause": "type_gap",
-   "book": "book_optics"
-  },
-  {
-   "family": "lightfield",
-   "recipe": "lf_synthesize -> lf_epi_slope -> lf_disparity_to_depth",
-   "op": "lf_epi_slope",
-   "error": "runs, but the structure-tensor EPI slope reads -1.38 for a true -1.5 px/view (8 % bias; 0.995 for 1.0), so the depth gate fails at 2 %; lf_depth_from_focus is used instead",
-   "cause": "op_bug",
    "book": "book_optics"
   },
   {
@@ -5141,14 +5545,6 @@
    "error": "ValueError movie has a negative entry; the default model needs one ON/OFF half (onoff[:, :n]) which a chain cannot slice — used model='hr' instead",
    "cause": "type_gap",
    "book": "book_optics"
-  },
-  {
-   "family": "drive",
-   "recipe": "Measure — RSS minimum safe following distance (rss_params -> rss_longitudinal_same)",
-   "op": "rss_longitudinal_same",
-   "error": "TypeError: rss_longitudinal_same() missing 2 required positional arguments: 'v_front' and 'p' — OP_GRAPH inputs=['table'] binds the first positional slot, which is v_rear (a float); parameter_schema omits v_rear. Same pattern for rss_longitudinal_check / rss_lateral*: the table is the keyword p. Still so through the ledger (2026-11-03): fs.ledger.rss_longitudinal_same(p, v_rear=20, v_front=15) -> TypeError: got multiple values for argument 'v_rear'; fs.ledger.rss_longitudinal_check(p, d=50, v_rear=20, v_front=15) -> got multiple values for argument 'd' (the table is not taken positionally)",
-   "cause": "declaration_lie",
-   "book": "book_misc"
   },
   {
    "family": "drive",
@@ -5173,6 +5569,14 @@
    "error": "spectrum outputs pairs (freqs, magnitude); find_peaks / peak_subbin input 'signal' — type cut at stage 2. Via the ledger: fs.ledger.find_peaks(spectrum(...)) -> ValueError: expected a 1-D signal ..., got shape (129, 2)",
    "cause": "type_gap",
    "book": "book_misc"
+  },
+  {
+   "family": "shape2d",
+   "recipe": "contour -> from_xld -> elliptic_fourier (EFD of a sub-pixel contour)",
+   "op": "from_xld",
+   "error": "opsshape2d declares from_xld inputs ['table'], but the function requires the XLD contour dict {'shape', 'cs'} and refuses a table: fs.ledger.from_xld([[1, 2], [3, 4]]) -> ValueError: from_xld: contour must be an XLD contour dict with key 'cs', got list. The registry contour producers (threshold_sub_pix, edges_sub_pix) output 'contour', so contour -> from_xld is a type cut although the call works; the declaration should be ['contour']",
+   "cause": "declaration_lie",
+   "book": "book_newops"
   }
  ]
 }

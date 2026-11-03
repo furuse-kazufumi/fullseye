@@ -11,7 +11,7 @@
 <p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/orientation_region.chain.jpg">orientation_region: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>区域主轴的方向(<code style="color:#22d3bf">regionprops</code> 的 <code style="color:#22d3bf">orientation</code>,从 [-π/2, π/2] 线性映射到 [0,1])。表示对区域进行椭圆拟合时长轴的倾斜角。相当于 HALCON 的 <code style="color:#22d3bf">orientation_region</code>(Orientation of a region.)。</p>
+<p>区域主轴方向 θ / 180(θ 为等效椭圆长轴的角度,从列轴起<b>在屏幕上逆时针</b>测量,行向下,范围 [0, 180] 度;乘以 180 即为度;实现为将 <code style="color:#22d3bf">regionprops</code> 的 <code style="color:#22d3bf">orientation</code> 按 <code style="color:#22d3bf">(orientation + π/2) / π</code> 映射)。与 HALCON 的 <code style="color:#22d3bf">orientation_region</code>(Orientation of a region.)方向相同 —— HALCON 用最远点确定朝向并以 -π..π 弧度返回,这里折叠到 180 度并归一化到 [0,1]。与 <code style="color:#22d3bf">elliptic_axis</code> 的 Phi(弧度)满足 θ ≡ Phi (mod π)。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

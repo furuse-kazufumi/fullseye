@@ -26,6 +26,13 @@ version: 0.8.1  # fullseye lib version this note was generated for
 重なり**(小さい方の高さの ``overlap_ratio`` 以上)で判定し、横の隙間は大きい方の高さの
 ``gap_ratio`` 倍以内、ストローク幅は ``width_ratio`` 倍以内。
 
+``boxes`` は 2 つの形を受ける: (1) N×4 の矩形 [y0, x0, y1, x1] (従来の形)、(2) :func:`text_candidates`
+の返す **表**(dict。``boxes`` を必ず持ち、``stroke_width`` があればそれを使う)。台帳はこの op の入力を
+``table`` と宣言しており、候補の表をそのまま渡せば鎖 ``text_candidates -> text_lines`` が繋がる
+(★2026-11-03: 以前は表を渡すと ``int()`` の TypeError で落ちていた —— レシピの e2e が見つけた)。
+表を渡したうえで ``stroke_width`` も別に渡すと、どちらを使うか決まらないので ValueError(fail-closed)。
+``boxes`` キーの無い dict も ValueError。
+
 Returns dict: ``lines``(M×4 の矩形)/ ``members``(各行の候補 index のリスト)。
 
 ## 参考(サンプルデータ・文献)
