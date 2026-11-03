@@ -4,7 +4,7 @@ dim: 2d
 category: region
 in: region
 out: region
-gpu: なし
+gpu: あり(lbl_clear_border)
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `region` → `region`
 - **呼び出し**: `fullseye.apply(img, "sk_clear_border", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(`lbl_clear_border`、`device="cuda"` で高速経路)
 
 ![sk_clear_border: input → output](../../_fig/sk_clear_border.png)
 

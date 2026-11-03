@@ -277,8 +277,7 @@ READS = {
     "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md"],
     # registry(api)を組むときに op のつまみ表を読む(書く段 gen_mcp_data は鎖の前にある)
     "tools/gen_device_rules.py": ["fullseye/data/op_knob.json"],
-    "tools/gen_gpu_routes.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/RECIPE_INDEX.json",
-                                "fullseye/data/op_knob.json"],
+    "tools/gen_gpu_routes.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/RECIPE_INDEX.json"],
 }
 
 #: 順序の例外 —— 読むが、後ろの段が書いてもよいもの。(段, READS のパターン) → 理由。
@@ -302,6 +301,11 @@ ORDER_EXEMPT = {
     ("tools/gen_docs_index_ops.py", "docs/README.*.md"): _SHARED_README,
     ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.md"): _DOCMAP_COUNT,
     ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.*.md"): _DOCMAP_COUNT,
+    # 文書地図は docs/perf/pipeline_routes.md の題(1 行目、生成器に固定の文)だけを読む。表の中身は
+    # gen_gpu_routes が鎖の最後(規則表とレシピの索引の後)で書くが、題は変わらないので地図に影響しない。
+    ("tools/gen_docs_index_ops.py", "docs/perf/pipeline_routes.md"): (
+        "gen_docs_index_ops は文書地図に載せるため pipeline_routes.md の題だけを読む。題は gen_gpu_routes の"
+        "固定の文で、後で書き直されるのは表の中身だけなので、地図の生成結果には影響しない。"),
 }
 
 #: **CHAIN に入れないものと、その理由**(2026-09-09)。
