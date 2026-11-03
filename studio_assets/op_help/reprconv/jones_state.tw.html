@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">jones_state — REPRCONV <code style="color:#22d3bf">entry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">jones</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jones_state(azimuth_deg=0.0, ellipticity_deg=0.0, amplitude=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.jones_state(azimuth_deg=0.0, ellipticity_deg=0.0, amplitude=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;jones_state&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>偏振方位與橢圓率 → Jones 向量 <code style="color:#22d3bf">jones</code>(Ex, Ey)。<code style="color:#22d3bf">jones</code> 型別的入口。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>方位角 ψ = <code style="color:#22d3bf">azimuth_deg</code>、楕円率角 χ = <code style="color:#22d3bf">ellipticity_deg</code>(|χ| &lt;= 45 度)で</p>
+<p>E = A · [cos ψ cos χ + i sin ψ sin χ,  sin ψ cos χ − i cos ψ sin χ]</p>
+<p>を返す。<code style="color:#22d3bf">optics.stokes_from_jones</code> の約束(S3 = 2 Im(Ex·conj(Ey)))のもとで <b>Stokes が (A², A² cos2χ cos2ψ, A² cos2χ sin2ψ, A² sin2χ) になる</b>ように符号を選んである(χ = 0 で直線偏光、χ = +45 度で S3 &gt; 0 の円偏光 = <code style="color:#22d3bf">[1, -i]/√2</code>)。<code style="color:#22d3bf">jones_apply</code> に通す入射光の状態として使う。それまで Jones ベクトルを作る op が無く、<code style="color:#22d3bf">jones_apply</code> の第 2 入力と <code style="color:#22d3bf">stokes_from_jones</code> に何も渡せなかった。</p>
+<p>Args:</p>
+<p>azimuth_deg: 偏光楕円の長軸の向き [度] (+x から +y へ)。有限。</p>
+<p>ellipticity_deg: 楕円率角 [度]、[-45, 45]。</p>
+<p>amplitude: 振幅 A(&gt;= 0、有限)。強度は A²。</p>
+<p>Returns:</p>
+<p>(2,) complex128。</p>
+<p>Raises:</p>
+<p>ValueError: 非有限 / ellipticity が [-45, 45] の外 / amplitude &lt; 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">jones</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">entry</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:indices_to_positions">indices_to_positions</a> · <a style="color:#22d3bf" href="opreprconv:synapse_table_from_table">synapse_table_from_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

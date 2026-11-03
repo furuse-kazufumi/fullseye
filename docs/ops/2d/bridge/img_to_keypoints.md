@@ -77,7 +77,7 @@ img_to_keypoints 0.50 0.50
 
 ## 型が繋がる次の op(`keypoints` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_keypoints_uv_to_points](../typed/tb_keypoints_uv_to_points.md) · [tb_keypoints_to_image2d](../typed/tb_keypoints_to_image2d.md)
+[identity](../misc/identity.md) · [tb_keypoints_uv_to_points](../typed/tb_keypoints_uv_to_points.md) · [tb_keypoints_to_image2d](../typed/tb_keypoints_to_image2d.md) · [tb_keypoints_rowcol_to_uv](../typed/tb_keypoints_rowcol_to_uv.md) · [tb_keypoints_uv_to_rowcol](../typed/tb_keypoints_uv_to_rowcol.md)
 
 ## 同カテゴリ(`bridge`)
 

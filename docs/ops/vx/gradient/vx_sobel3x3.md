@@ -5,7 +5,7 @@ category: gradient
 in: image2d
 out: table
 gpu: なし
-examples: [gallery_openvx_spec_values]
+examples: [gallery_openvx_spec_values, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -41,6 +41,7 @@ Sobel 3×3(3.46 節): G_x = [[−1,0,1],[−2,0,2],[−1,0,1]]、G_y = [[−1,�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery_openvx_spec_values](../../../../examples/gallery_openvx_spec_values.py) — `py -3.11 examples/gallery_openvx_spec_values.py`
+- [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

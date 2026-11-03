@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">indices_to_positions — REPRCONV <code style="color:#22d3bf">entry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">indices</code> → <code style="color:#22d3bf">positions</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.indices_to_positions(indices, spacing=1.0, origin=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.indices_to_positions(indices, spacing=1.0, origin=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;indices_to_positions&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>下标 <code style="color:#22d3bf">indices</code> → 事件位置 <code style="color:#22d3bf">positions</code>(物理单位)。<code style="color:#22d3bf">positions</code> 类型的入口。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p><code style="color:#22d3bf">x = origin + spacing * i</code>。<code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> などが返す <b>標本番号</b>を、<code style="color:#22d3bf">point_spectrum</code> が受ける<b>位置の列</b>(欠陥が流れ方向のどこにあったか、いつ数えたか)にする。<code style="color:#22d3bf">positions</code> を <code style="color:#22d3bf">signal</code> と分けてあるのは、等間隔標本の列を事象の位置として(またはその逆に)渡すと、例外なしに別物のスペクトルが出るため(<code style="color:#22d3bf">point_spectrum</code> の docstring)。順序は入力のまま(並べ替えない)。</p>
+<p>空の添字は ValueError(この repo の空入力の方針 A: 黙って空を返さず、何が空かを名指しで拒否)。</p>
+<p>Args:</p>
+<p>indices: 1-D の整数(整数値の float も可。非整数・非有限・空は拒否)。</p>
+<p>spacing: 標本間隔(位置の単位 / 標本)。有限で 0 でないこと。</p>
+<p>origin: 添字 0 の位置。有限。</p>
+<p>Returns:</p>
+<p>(k,) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 1-D でない / 整数でない / 非有限 / 空 / spacing が 0 か非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">positions</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">entry</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:synapse_table_from_table">synapse_table_from_table</a> · <a style="color:#22d3bf" href="opreprconv:jones_state">jones_state</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

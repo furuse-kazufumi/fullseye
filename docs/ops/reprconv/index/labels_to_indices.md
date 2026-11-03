@@ -45,7 +45,7 @@ Raises:
 
 ## 型が繋がる次の op(`indices` を入力に取れる)
 
-[indices_to_labels](indices_to_labels.md) · [select_points](select_points.md)
+[indices_to_labels](indices_to_labels.md) · [select_points](select_points.md) · [indices_to_positions](../entry/indices_to_positions.md)
 
 ## 同カテゴリ(`index`)
 

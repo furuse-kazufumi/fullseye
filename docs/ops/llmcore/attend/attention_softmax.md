@@ -5,7 +5,7 @@ category: attend
 in: tokens × tokens × tokens
 out: tokens
 gpu: なし
-examples: [poc_attention_identities]
+examples: [poc_attention_identities, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ Returns:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_attention_identities](../../../../examples/poc_attention_identities.py) — `py -3.11 examples/poc_attention_identities.py`
+- [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`
 
 ## 型が繋がる次の op(`tokens` を入力に取れる)
 

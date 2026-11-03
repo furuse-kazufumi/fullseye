@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(450 例)
+### 2-D 画像/信号/幾何(451 例)
 
 **workflow**
 - **MCPで物理量・登録見本・検証済みpipeline案を明示して使う** — 外部資産なしの合成画像で、名前つき物理量による平滑化、明示的な登録見本ハンドルによる位置決め、候補が一意なときだけ返す検証済みpipeline案を実行し、結果を自己検査する。 `py -3.11 examples/mcp_usability.py`
@@ -518,6 +518,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **2-D 画像で見つけた欠陥は CAD のどの面のどこか(cadmap)** — 姿勢(ICP/PPF)から先、画素→レイ→CAD 面 ID と (x,y,z)・面積 mm² へ写す。既知配置の欠陥で往復誤差を確認。 `py -3.11 examples/defect_to_cad.py`
 - **部品 2 回スキャンのずれ量を 8 つの表現で測って往復する** — 法線/曲率/記述子/添字/スコア/シフト/回転倍率/フロー/変形/複素など 12 系統の表現を経由して既知剛体変位を測り、戻るものは誤差 0、戻らないものは落ちた量を数値で言う。 `py -3.11 examples/representation_conversion.py`
 - **表現変換(reprconv)op を往復させて嘘を露見させる** — 産む op はあるが食う op が無かった 25 型を消費する reprconv 族を往復させ、可逆なものは誤差 0、不可逆なものは何がどれだけ落ちるかを印字する。 `py -3.11 examples/representation_roundtrip.py`
+- **行き止まりだった型と入口の無かった型を、本物の産み手からの鎖で通す** — gradient / hessian / frame / graph / pointmap / match の出口と positions / synapse_table / jones の入口、tokens の出口、table の欄・スペクトルのピーク・keypoints の軸・pose の 4x4(reprconv の 20 op)を、既存の産み手の返りから既存の受け手まで通し、閉形式の真値 20 項目と比べる。 `py -3.11 examples/type_connectivity_tour.py`
 - **X 線 CT のボイド形態(合否 1 個の数字は、寿命に効く形に盲目)** — ★★体積率を 3.000 % に厳密にそろえたまま位置・形・近接だけを変えた 5 条件を接合層に仕込むと、2 値化してボイド率だけを出すゼロ点は 2.46〜2.63 %(開き 0.17 ポイント)としか分けない ―― 合否 5 % なら全条件合格、1 % なら全条件不合格。同じ 5 条件を形態は桁で分ける(界面離隔 60.0 対 10.0 µm、扁平度 0.97 対 0.25、最近接 160.0 対 20.0 µm)。★応力の代理指標(界面に接するボイドの投影面積)は 0 → 14.68 % まで動き、界面に接する扁平ボイドは同体積の球の 2.09 倍(閉形式 1.93、実測との差は 1 ポイント以内)、連なりの跨ぎ率は 13.1 倍。★★崖の予想が 2 つとも外れた ―― ボクセル 60 µm(球の径の半分 58 µm を超える)でもボイド率は 3.21 % と崩れず(線形の被覆率で積むと体積は保存される。格子の位相を 3 通り振ると ±1.36 ポイント振れるだけ)、先に死ぬのは形のほうで、扁平度は 60 µm で測れなくなり界面欠損率は 14.16 → 9.78 %(-31 %)と**合格の側へ**落ちる。離隔も『42 µm より粗いと判別不能』は外れで、順序は最後まで残るが値は嘘になる(真値 0 µm の接触側がボクセル 1.0〜1.3 個に貼りつき、真値 42.2 µm の層中央は 120 µm と 2.8 倍)。★しきい値 0.50 で連なりのボイドが融合して塊が 24 → 5 個に落ち、その瞬間『最近接ボイド間隔』は 20 → 340 µm に跳ねる ―― 指標が壊れるのではなく測っている対象が黙って入れ替わる。連結半径の掃引は設計どおり(連なり 10.0 µm / 予測 8.7、散在 75.0 µm / 予測 70.5)で、雑音 sigma 0.15 では偽ボイドが 24 → 1794 個に爆発するのにボイド率は 2.61 → 2.94 % しか動かない。**寿命そのものは測っていない ―― 示せたのは合否 1 個の数字の盲目さまで**。 `py -3.11 examples/poc_ct_void_morphology.py`
 - **電池セルの内部劣化を CT で測る(膨れの何割が外から見えるか)** — 積層電極 17 層(ピッチ 0.320 mm)とアルミ缶を真値つきで組み、順投影→ビームハードニング→光子雑音→FBP まで通してから測る。ゼロ点=外形だけの指標。★電極が 10 % 膨れて積層が 0.340 mm 伸びても、クリアランス 0.240 mm が飲むので**外形に出るのは 29.4 %**(幾何の予測どおり)。その割合は劣化の大きさではなく**セルの初期クリアランスで決まる設計量**で、0.40 mm のセルでは何も見えない。★端板は周辺固定なので中央だけふくらみ、**ノギスは体積等価な平均の 3.6 倍**を読む(+0.235 対 +0.066 mm、予測 4.0 倍)。★★外形のふくらみを揃えた 3 つ(一様膨れ / 局所膨れ / ガス空隙)は缶の高さ 6.313 mm でばらつき 0.000 mm ―― 外形では原理的に分けられないが、内部は層厚 0.190/0.187/0.173 mm・空隙率 0.00/0.00/5.20 %・平面度 0.0156/0.0428/0.0784 mm で分かれる(一様と局所は層厚では分かれず**平面度が分ける**)。同じ外形を作る内部の膨張体積は 0.6715 対 0.3880 mm3 と 1.7 倍違い、**外形の変化量から中の劣化量は逆算できない**。★層厚は真値 0.200 に対し 0.175 mm と 12.5 % 過小(ぼけで縞が正弦波に近づき、微分ピーク間隔が半周期 0.160 mm へ引かれる)なのに、同じプロファイルの**層間隔は 0.321 mm で真値を保つ**。★★崖は 2 つ予測してから測った ―― 標本化定理なら voxel/層厚 0.80、隙間 0.120 mm を 2 標本で跨ぐなら 0.30。**実測は 0.30 で、狭いほうの特徴(電極厚ではなく隙間)が崖を決めた**。★雑音とビームハードニングでは壊れ方が違い、フォトン数 1000 分の 1 でも層数は 1 枚しか動かないのに空隙体積は -10.3 → -24.8 %、ビームハードニングは外形も層厚も動かさず空隙だけを -9.1 → -14.7 % 痩せさせる。SoH や寿命は測っていない(そう明記した)。 `py -3.11 examples/poc_battery_ct_degradation.py`
 - **電極の屈曲度を CT から測る(Bruggeman は向きに盲目)** — 合成マイクロ CT の多孔電極で、同じ 1 個のボリュームから屈曲度が 3 つ出る ―― Bruggeman 1.499 / 測地 1.182 / 輸送方程式(真値)1.843。ゼロ点の経験則 τ = ε^(-0.5) は**必ず小さめに外し**、ε = 0.691 → 0.168 で誤差 -8.2 % → -69.1 % と単調に開く。実測の Bruggeman 指数は ε>=0.40 で 1.78 / ε<0.25 で 2.70 で、**1.5 乗則は高空隙率の近似ですらない**。★★測地屈曲度の 2 乗は Bruggeman に 0.8 / 5.7 / 6.9 % で寄り添うが、**2 つの「よく合う数字」は真値に対して同じ向きに外れている**だけ。★★決定打は対照群 ―― 空隙率を 0.4448 対 0.4510 に揃えて粒子だけ 4:1 に潰す(カレンダリング)と、厚み方向 τ は 1.843 → 6.794(異方比 0.97 → 4.20)。経験則は ε しか見ないので同じ 1.5 を返し、**面内は当たって見え(-8 %)厚み方向は壊滅(-78 %)**。★もっともらしい犯人「閉気孔」は対照群で外れ(全空隙の 0.05 / 1.50 / 1.92 %)、効いているのは粒子半径の 0.40 倍しかない首。ただし**そのスカラーも向きを分けられない**(扁平床は内接半径 1 分布なのに τ_z / τ_x が 4.2 倍)。★予想が外れた ―― 「voxel が首の直径を超えたら崩れる」と予測したが**崖は無く**、voxel を 5.5 倍粗くすると τ_f は 1.771 → 3.041(+72 %)へ単調に増える一方、**ε は -0.4 % しか動かない**。図も検出数も壊れないまま数字だけが片側へずれる。 `py -3.11 examples/poc_battery_electrode_tortuosity.py`
@@ -797,11 +798,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3651 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 961 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 62 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
-### 2d(959 ops / 49 categories)
+### 2d(961 ops / 49 categories)
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op(`ops.REGISTRY`)と、複数画像を取る n-ary op(`imgops_nary`)。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
 
@@ -1687,7 +1688,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xmh_daubechies` `image → image` GPU: なし — Daubechies ウェーブレット変換(``mahotas.daubechies``)。xmh_haar と同じ配置(1 段、係数を元画像サイズの配列に詰めて min-max 正規化)で、基底を Daubechies 系に変えたもの。 · 例: `gallery2d_geometry`
 - `xmh_haar` `image → image` GPU: なし — Haar ウェーブレット変換(``mahotas.haar``)。画像を偶数サイズに切り詰めてから変換し、結果の係数配列(近似/水平/垂直/対角の各サブバンドが元画像と同じ大きさの配列に詰め込まれた、Matlab 風の in-place レイアウト)をそのまま min-max 正規化して画像として見せる。 · 例: `gallery2d_geometry`
 
-#### 2d / typed(161)
+#### 2d / typed(163)
 - `tb_abs_funct_1d` `signal → signal` GPU: なし — Absolute value of the y-values (HALCON ``abs_funct_1d``). · 例: なし
 - `tb_alpha_shape_boundary` `points → signal` GPU: なし — alpha shapes による**境界点インデックス**を返す(点群 → 境界点)。 · 例: なし
 - `tb_angular_spectrum_propagate` `cimage → cimage` GPU: なし — Exact scalar free-space propagation of a complex field (angular spectrum). · 例: なし
@@ -1750,8 +1751,10 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `tb_iqft2` `qimage → qimage` GPU: なし — Inverse quaternion Fourier transform of a **centred** spectrum. → (H, W, 4). · 例: なし
 - `tb_iss_keypoints` `points → signal` GPU: なし — ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。 局所共分散の最小固有値 λ3 を saliency とし、固有値が distinct(向きが well-defined)な点のみ候補にして NMS で疎に選ぶ。回転不変。返り値=点 index 配列。 · 例: なし
 - `tb_jitter` `points → points` GPU: なし — 各点に等方ガウスノイズ ``N(0, sigma)`` を付加(センサ位置ノイズの模倣)。 · 例: なし
+- `tb_keypoints_rowcol_to_uv` `keypoints → keypoints` GPU: なし — 像面の点 ``(row, col)`` → ``(u, v) = (col, row)``。``keypoints`` 型の 2 つの流儀のつなぎ。 · 例: なし
 - `tb_keypoints_to_image2d` `keypoints → image` GPU: なし — 画像座標 ``(N,2) = (u, v)`` → 計数画像 ``(H, W)``。``keypoints`` の 2 つ目の出口。 · 例: なし
 - `tb_keypoints_uv_to_points` `keypoints → points` GPU: なし — 画像座標 ``(N,2) = (u, v)`` → 点群 ``(N,3) = (z, y, x)``。``keypoints`` の出口。 · 例: なし
+- `tb_keypoints_uv_to_rowcol` `keypoints → keypoints` GPU: なし — 像面の点 ``(u, v) = (col, row)`` → ``(row, col)``。:func:`keypoints_rowcol_to_uv` の逆向き。 · 例: なし
 - `tb_landmark_asymmetry` `points → signal` GPU: なし — 左右の対ごとの**符号つき**非対称量。→ ``(M,)``。 · 例: なし
 - `tb_lf_center_view` `lightfield → image` GPU: なし — The centre viewpoint — the ordinary 2-D image a plenoptic camera also gives. · 例: なし
 - `tb_lf_depth_from_focus` `lightfield → image` GPU: なし — Per-pixel slope from the **sharpness peak** across the refocus sweep. · 例: なし
@@ -2924,8 +2927,8 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `plenoptic_system` `table × table × table → table` GPU: なし — Assemble a main lens, MLA and sensor and report F-number matching. · 例: `plenoptic_capture_pipeline`, `poc_plenoptic_camera`
 
 #### optics / polarization(11)
-- `jones_apply` `cimage × jones → jones` GPU: なし — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``. · 例: `optics_imaging`
-- `jones_element` `入力なし → cimage` GPU: なし — A 2x2 complex Jones matrix for one polarisation element. · 例: `optics_imaging`
+- `jones_apply` `cimage × jones → jones` GPU: なし — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``. · 例: `optics_imaging`, `type_connectivity_tour`
+- `jones_element` `入力なし → cimage` GPU: なし — A 2x2 complex Jones matrix for one polarisation element. · 例: `optics_imaging`, `type_connectivity_tour`
 - `mueller_apply` `matrix × stokes → stokes` GPU: なし — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``. · 例: `optics_imaging`, `poc_photoelasticity`, `polarization_camera_pipeline`
 - `mueller_checks` `matrix → table` GPU: なし — Say whether a 4x4 matrix is a physically realisable Mueller matrix, and how depolarising it is. · 例: `polarization_camera_pipeline`
 - `mueller_element` `入力なし → matrix` GPU: なし — A 4x4 real Mueller matrix for one polarisation element. · 例: `optics_imaging`, `poc_mueller_dofp_observability`, `poc_photoelasticity`, `polarization_camera_pipeline`
@@ -2933,8 +2936,8 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `mueller_partial_polarizer` `入力なし → matrix` GPU: なし — Mueller matrix of a linear polariser with a finite extinction ratio (a linear diattenuator). → (4, 4), or (*shape, 4, 4) for an angle field. · 例: `polarization_camera_pipeline`
 - `polarization_demosaic` `image2d → polsweep` GPU: なし — Split a polarisation-sensor mosaic into the four analyser images. · 例: `poc_shape_from_polarization`, `polarization_camera_pipeline`
 - `polarization_demosaic_color` `image2d → rgbvolume` GPU: なし — Split a **colour** polarisation-sensor mosaic (Sony IMX250MYR family, a 4x4 block = a 2x2 Bayer block whose every colour site is itself a 2x2 block of polarisers) into four RGB images: ``(4, H, W, 3)`` in :data:`POLARIZATION_SWEEP_ANGLES` order, each channel interpolated to full resolution. The ``rgbvolume`` sort carries it (four "slices" of RGB). · 例: `polarization_camera_pipeline`
-- `stokes_analyze` `stokes → table` GPU: なし — Read a Stokes vector: degree of polarisation, azimuth, ellipticity. · 例: `optics_imaging`, `polarization_camera_pipeline`, `specular_photometric`
-- `stokes_from_jones` `jones → stokes` GPU: なし — Jones vector -> Stokes vector (the four measurable intensities). · 例: `optics_imaging`
+- `stokes_analyze` `stokes → table` GPU: なし — Read a Stokes vector: degree of polarisation, azimuth, ellipticity. · 例: `optics_imaging`, `polarization_camera_pipeline`, `specular_photometric`, `type_connectivity_tour`
+- `stokes_from_jones` `jones → stokes` GPU: なし — Jones vector -> Stokes vector (the four measurable intensities). · 例: `optics_imaging`, `type_connectivity_tour`
 
 #### optics / radiosity(7)
 - `form_factor_matrix` `table → matrix` GPU: なし — All patch-to-patch view factors F_ij of a ``radiosity_patches`` set (occlusion by the scene's rays). · 例: `poc_pocket_interreflection`
@@ -3542,9 +3545,9 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `vx_warp_perspective` `image2d × matrix → image2d` GPU: なし — 射影変換(3.57 節)。逆写像: ``x0 = M[0]·(x, y, 1)``、``y0 = M[1]·(x, y, 1)``、``z0 = M[2]·(x, y, 1)``、 出力 (x, y) = 入力 (x0/z0, y0/z0)(REQ-0508)。z0 = 0 の画素は外として埋める。 · 例: `gallery_openvx_spec_values`
 
 #### vx / gradient(3)
-- `vx_magnitude` `image2d × image2d → image2d` GPU: なし — 勾配の大きさ(3.31 節)。REQ-0270 の概念定義をそのまま: ``z = uint16(sqrt(double(uint32(x·x) + uint32(y·y))) + 0.5)``、 ``mag = z > 32767 ? 32767 : z``。入力・出力とも S16。 · 例: `gallery_openvx_spec_values`
+- `vx_magnitude` `image2d × image2d → image2d` GPU: なし — 勾配の大きさ(3.31 節)。REQ-0270 の概念定義をそのまま: ``z = uint16(sqrt(double(uint32(x·x) + uint32(y·y))) + 0.5)``、 ``mag = z > 32767 ? 32767 : z``。入力・出力とも S16。 · 例: `gallery_openvx_spec_values`, `type_connectivity_tour`
 - `vx_phase` `image2d × image2d → image2d` GPU: なし — 勾配の位相(3.41 節): ϕ = atan2(gy, gx) を 0 ≤ ϕ < 2π に移し、0〜255 に写す(REQ-0364)。出力 U8。 · 例: `gallery_openvx_spec_values`
-- `vx_sobel3x3` `image2d → table` GPU: なし — Sobel 3×3(3.46 節): G_x = [[−1,0,1],[−2,0,2],[−1,0,1]]、G_y = [[−1,−2,−1],[0,0,0],[1,2,1]] (REQ-0415)を相関として当てる。 · 例: `gallery_openvx_spec_values`
+- `vx_sobel3x3` `image2d → table` GPU: なし — Sobel 3×3(3.46 節): G_x = [[−1,0,1],[−2,0,2],[−1,0,1]]、G_y = [[−1,−2,−1],[0,0,0],[1,2,1]] (REQ-0415)を相関として当てる。 · 例: `gallery_openvx_spec_values`, `type_connectivity_tour`
 
 #### vx / pixel(2)
 - `vx_histogram` `image2d → pairs` GPU: なし — ヒストグラム(3.26 節): 画素値 I は ``i = (I − offset) × numBins / range`` の升に入る(offset ≤ I < offset + range、REQ-0230)。 範囲外の画素は数えない。整数の割り算(切り捨て)で升を決める。 · 例: `gallery_openvx_spec_values`
@@ -4455,7 +4458,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `vol_label_mpr_rgb` `rgbvolume → rgbimage` GPU: なし — 色付きボリュームの直交 3 断面を **1 枚の RGB** に並べた図を返す。 · 例: `voxel_labels_color`
 - `vol_label_slice_rgb` `rgbvolume → rgbimage` GPU: なし — 色付きボリュームから 1 枚の断面 RGB を取り出す(axial / coronal / sagittal)。 · 例: `voxel_labels_color`
 
-### reprconv(42 ops / 10 categories)
+### reprconv(62 ops / 15 categories)
 
 #### reprconv / algebra(11)
 - `angle_to_matrix` `angle → matrix` GPU: なし — 角度 **[度]** → z 軸まわりの回転行列 ``matrix (3,3)``。``angle`` の出口。 · 例: `representation_roundtrip`
@@ -4475,6 +4478,12 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `curvature_to_table` `curvature → table` GPU: なし — 曲率 → 分布の要約 ``table``。**一方向**(統計は情報を捨てるのが仕事)。 · 例: `representation_conversion`
 - `shape_index_to_curvature` `pairs → curvature` GPU: なし — 形状指数と曲がり ``(N,2)`` → 主曲率 ``(N,2)``。:func:`curvature_to_shape_index` の逆。 · 例: `representation_roundtrip`
 
+#### reprconv / derivative(4)
+- `gradient_coherence` `gradient → voxel` GPU: なし — 3-D 勾配 → 構造テンソルの**面らしさ**(コヒーレンス)``voxel``、値域 [0, 1]。 · 例: `type_connectivity_tour`
+- `gradient_magnitude` `gradient → voxel` GPU: なし — 3-D 勾配 ``gradient`` → 勾配の大きさの体積 ``voxel``。``gradient`` 型の出口。 · 例: `type_connectivity_tour`
+- `hessian_determinant` `hessian → voxel` GPU: なし — 3-D Hessian ``hessian`` → 行列式 ``det H`` の体積 ``voxel``(符号つき)。``hessian`` 型の出口。 · 例: `type_connectivity_tour`
+- `hessian_vesselness` `hessian → voxel` GPU: なし — 3-D Hessian → Frangi の管らしさ(vesselness)``voxel``、値域 [0, 1]。 · 例: `type_connectivity_tour`
+
 #### reprconv / descriptor(3)
 - `descriptor_to_matrix` `descriptor → matrix` GPU: なし — 記述子 → ``matrix``。``descriptor`` の出口(**可逆**)。 · 例: `representation_conversion`, `representation_roundtrip`
 - `descriptor_to_table` `descriptor → table` GPU: なし — 記述子 → 要約 ``table``。**一方向**。 · 例: `representation_conversion`
@@ -4482,8 +4491,24 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### reprconv / direction(3)
 - `angles_to_normals` `pairs → normals` GPU: なし — 方位・仰角の対 ``(N,2)`` **[度]** → 単位法線 ``(N,3)``。``pairs`` の出口。 · 例: `representation_roundtrip`
-- `normals_to_angles` `normals → pairs` GPU: なし — 法線 ``(N,3)`` → 方位・仰角の対 ``(N,2)`` **[度]**。``normals`` の出口。 · 例: `poc_tacscalib_sphere_lut`, `representation_roundtrip`
+- `normals_to_angles` `normals → pairs` GPU: なし — 法線 ``(N,3)`` → 方位・仰角の対 ``(N,2)`` **[度]**。``normals`` の出口。 · 例: `poc_tacscalib_sphere_lut`, `representation_roundtrip`, `type_connectivity_tour`
 - `normals_to_egi` `normals → image2d` GPU: なし — 法線 ``(N,3)`` → 拡張ガウス像 ``(n_el, n_az)`` の ``image2d``。 · 例: `representation_conversion`
+
+#### reprconv / entry(3)
+- `indices_to_positions` `indices → positions` GPU: なし — 添字 ``indices`` → 事象の位置 ``positions``(物理単位)。``positions`` 型の入口。 · 例: `type_connectivity_tour`
+- `jones_state` `入力なし → jones` GPU: なし — 偏光の向きと楕円率 → Jones ベクトル ``jones``(Ex, Ey)。``jones`` 型の入口。 · 例: `type_connectivity_tour`
+- `synapse_table_from_table` `table → synapse_table` GPU: なし — 表 ``table``(列名 → 配列)→ シナプス表 ``synapse_table (m, 3)``。``synapse_table`` 型の入口。 · 例: `type_connectivity_tour`
+
+#### reprconv / exit(3)
+- `pairs_peak_x` `pairs → measurement` GPU: なし — 対 ``pairs (x, y)`` → y が最大になる x(放物線で標本の間まで補間)``measurement``。 · 例: `type_connectivity_tour`
+- `pose_to_matrix` `pose → matrix` GPU: なし — 剛体姿勢 ``pose (R, t)`` → 4×4 の同次変換 ``matrix``。 · 例: `type_connectivity_tour`
+- `tokens_to_matrix` `tokens → matrix` GPU: なし — トークン列 ``tokens (T, d)`` → 一般の行列 ``matrix (T, d)``。``tokens`` 型の出口。 · 例: `type_connectivity_tour`
+
+#### reprconv / field(4)
+- `table_field_image2d` `table → image2d` GPU: なし — 表 ``table`` の 1 欄 → 2-D 画像 ``image2d``。``table`` を返す op から画像を受ける op へのつなぎ。 · 例: `type_connectivity_tour`
+- `table_field_matrix` `table → matrix` GPU: なし — 表 ``table`` の 1 欄 → 一般の行列 ``matrix``。例: ``swt_map`` の ``swt`` 欄 → ``text_candidates``。
+- `table_field_measurement` `table → measurement` GPU: なし — 表 ``table`` の 1 欄 → 数 1 個 ``measurement``。例: ``label_extent`` の ``width``。
+- `table_field_signal` `table → signal` GPU: なし — 表 ``table`` の 1 欄 → 1-D 配列 ``signal``。CSV の 1 列や dict の系列を信号の op へ渡す。
 
 #### reprconv / flow(4)
 - `flow_apply` `points × flow_scattered → points` GPU: なし — 点群 ``(N,3)`` に散在フロー ``(N,3)`` を足す → ``points``。``flow`` の消費側。 · 例: `representation_conversion`
@@ -4501,10 +4526,12 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `labels_to_indices` `labels → indices` GPU: なし — ``labels`` → 非背景の添字 ``(N,)``。:func:`indices_to_labels` の逆向き。 · 例: `representation_conversion`
 - `select_points` `points × indices → points` GPU: なし — 点群 ``(N,3)`` と添字 ``(M,)`` → 部分点群 ``(M,3)``。``indices`` の消費側。 · 例: `representation_conversion`
 
-#### reprconv / keypoint(6)
+#### reprconv / keypoint(8)
 - `keypoints_from_image2d` `image2d → keypoints` GPU: なし — 計数/応答画像 ``(H, W)`` → 画像座標 ``(N,2) = (u, v)``。往復の戻り路。 · 例: `representation_roundtrip`
+- `keypoints_rowcol_to_uv` `keypoints → keypoints` GPU: なし — 像面の点 ``(row, col)`` → ``(u, v) = (col, row)``。``keypoints`` 型の 2 つの流儀のつなぎ。 · 例: `type_connectivity_tour`
 - `keypoints_to_image2d` `keypoints → image2d` GPU: なし — 画像座標 ``(N,2) = (u, v)`` → 計数画像 ``(H, W)``。``keypoints`` の 2 つ目の出口。 · 例: `representation_roundtrip`
 - `keypoints_uv_to_points` `keypoints → points` GPU: なし — 画像座標 ``(N,2) = (u, v)`` → 点群 ``(N,3) = (z, y, x)``。``keypoints`` の出口。 · 例: `representation_roundtrip`
+- `keypoints_uv_to_rowcol` `keypoints → keypoints` GPU: なし — 像面の点 ``(u, v) = (col, row)`` → ``(row, col)``。:func:`keypoints_rowcol_to_uv` の逆向き。
 - `points_to_position` `points → position` GPU: なし — 点群 ``(N,3)`` → 重心 ``(z, y, x)``。**不可逆**(分布を捨てる)。 · 例: `representation_conversion`, `representation_roundtrip`
 - `points_zyx_to_keypoints_uv` `points → keypoints` GPU: なし — 点群 ``(N,3) = (z, y, x)`` → 画像座標 ``(N,2) = (u, v)``。 · 例: `representation_roundtrip`
 - `position_to_points` `position → points` GPU: なし — 位置 ``(z, y, x)`` → 1 点の点群 ``(1, 3)``。``position`` の出口(**可逆**)。 · 例: `representation_conversion`
@@ -4518,6 +4545,12 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `correlation_score` `voxel × voxel → score` GPU: なし — 2 つの ``voxel`` → 正規化相互相関の ``score`` volume。**この型の唯一の入口**。 · 例: `poc_leak_localization`, `representation_conversion`, `representation_roundtrip`
 - `score_to_image2d` `score → image2d` GPU: なし — ``score`` volume → 最大値投影 ``image2d``。``score`` の 2 つ目の出口。 · 例: `representation_conversion`
 - `score_to_position` `score → position` GPU: なし — ``score`` volume → 最大値の位置 ``position (z, y, x)``。``score`` の出口。 · 例: `representation_conversion`
+
+#### reprconv / structure(4)
+- `frame_axis` `frame → normals` GPU: なし — Frenet 標構 ``frame`` → 1 本の軸の単位ベクトル列 ``normals (N,3)``。``frame`` 型の出口。 · 例: `type_connectivity_tour`
+- `knn_graph_to_conn_graph` `graph → conn_graph` GPU: なし — k 近傍グラフ ``graph`` → 重みつき隣接行列 ``conn_graph (n, n)``。``graph`` 型の出口。 · 例: `type_connectivity_tour`
+- `match_component` `match → measurement` GPU: なし — ``match`` 型(1-D の結果ベクトル)→ その 1 成分の ``measurement``。``match`` 型の出口。 · 例: `type_connectivity_tour`
+- `pointmap_to_points` `pointmap → points` GPU: なし — 格子整列の 3-D 点 ``pointmap (H,W,3)`` → 点群 ``points (N,3)``。``pointmap`` 型の出口。 · 例: `type_connectivity_tour`
 
 ### fileio(14 ops / 4 categories)
 
@@ -4540,7 +4573,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `points_write_xyz` `points → text` GPU: なし — 有限な `(N,3)` 点群を17桁の XYZ テキストに書く(``text``)。 · 例: `fileio_roundtrip`
 
 #### fileio / table(2)
-- `table_read_csv` `text → table` GPU: なし — :func:`table_write_csv` の単位つき CSV を読み、列・単位・メタデータの ``table`` を返す。 · 例: `fileio_roundtrip`
+- `table_read_csv` `text → table` GPU: なし — :func:`table_write_csv` の単位つき CSV を読み、列・単位・メタデータの ``table`` を返す。 · 例: `fileio_roundtrip`, `type_connectivity_tour`
 - `table_write_csv` `table → text` GPU: なし — 単位と由来を持つ表を、pandas / MATLAB でも読める CSV 文字列にする(``text``)。 · 例: `fileio_roundtrip`
 
 ### cadmap(4 ops / 4 categories)
@@ -4979,18 +5012,18 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `bandpass` `signal → signal` GPU: なし — Butterworth band-pass between *low* and *high* Hz. Both edges must be inside ``(0, rate/2)``; same length contract as :func:`lowpass`. · 例: `poc_gw_detector_pseudo_simulation`, `poc_leak_localization`
 - `companding_mu_law` `signal → signal` GPU: なし — mu-law companding — the G.711 curve, used here on any 1-D signal. · 例: `gallery2d_gray_arith`
 - `envelope` `signal → signal` GPU: なし — Amplitude envelope via the analytic (Hilbert) signal — the shape of a knock / impact / acoustic-emission burst. · 例: `coherence_scanning`, `poc_beam_modal_video`
-- `find_peaks` `signal → indices` GPU: なし — Peak indices (scipy.signal.find_peaks) — impacts / defect echoes. · 例: `poc_multibeam_bathymetry`, `poc_tree_ring_dendro`, `poc_web_roll_periodicity`
+- `find_peaks` `signal → indices` GPU: なし — Peak indices (scipy.signal.find_peaks) — impacts / defect echoes. · 例: `poc_multibeam_bathymetry`, `poc_tree_ring_dendro`, `poc_web_roll_periodicity`, `type_connectivity_tour`
 - `highpass` `signal → signal` GPU: なし — Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`. · 例: `gallery2d_texture_freq`, `optics_four_f_processor`, `signal_filter`
 - `local_std` `signal → signal` GPU: なし — Rolling standard deviation with a stated error bound. · 例: `gallery2d_texture_freq`
 - `lowpass` `signal → signal` GPU: なし — Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside ``(0, rate/2)``; an out-of-Nyquist cutoff raises instead of passing the signal through. A signal too short for zero-phase filtfilt also raises (the message names the exact minimum) instead of silently coming back unfiltered. · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `optics_four_f_processor`, `signal_filter`
 - `peak_subbin` `signal × indices → signal` GPU: なし — Peak position **between** samples — the vertex of a fit through 3 points. · 例: `poc_multibeam_bathymetry`, `poc_print_registration`, `poc_web_roll_periodicity`
-- `point_spectrum` `positions → table` GPU: なし — Periodogram of **event positions** — defects, impacts, counts, arrivals. · 例: `poc_web_roll_periodicity`
+- `point_spectrum` `positions → table` GPU: なし — Periodogram of **event positions** — defects, impacts, counts, arrivals. · 例: `poc_web_roll_periodicity`, `type_connectivity_tour`
 - `quantize` `signal → signal` GPU: なし — Scalar quantiser with the error model stated, plus optional dither. · 例: `poc_cold_chain_excursion`
 - `resample` `signal → signal` GPU: なし — Resample a signal to *new_rate* (Fourier method). · 例: `poc_driving_school`
 - `rms` `signal → measurement` GPU: なし — RMS level. Scalar for the whole signal, or a framewise array when *frame* is given (a vibration/energy envelope over time). · 例: `lens_design_demo`, `lightfield_depth`, `poc_battery_electrode_breathing`, `poc_bilateral_asymmetry`, `poc_bump_coplanarity`, `poc_cad_scan_deviation`, `poc_calipers_under_illusion`, `poc_camera_calibration`, `poc_dimensional_inspection`, `poc_exoplanet_transit`, `poc_fabric_defect`, `poc_focus_stacking`, `poc_fourier_ptychography`, `poc_lens_solves_afocal`, `poc_panorama_drift`, `poc_print_registration`, `poc_river_surface_velocity`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_strain_history`, `poc_surface_roughness`, `poc_symmetry_restoration`, `poc_table_tennis_bounce`, `poc_tacscalib_sphere_lut`, `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`, `poc_thermal_radiometry`, `profile_shape_inspection`
 - `signal_features` `signal → table` GPU: なし — A compact acoustic/vibration feature vector for anomaly detection: ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid`` (Hz), ``peak_freq`` (Hz), ``bandwidth`` (Hz). All finite — a NaN / Inf sample raises ``ValueError`` rather than producing NaN features (an empty signal too, since 2026-10-12; it used to give zeros). · 例: `gallery_oned_audio_funct`
 - `spectrogram` `signal → image2d` GPU: なし — STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape ``(n_freqs, n_frames)``. Hann-windowed; *hop* defaults to ``win//2``. · 例: `acoustic_condition_monitoring`, `poc_emva1288_sensor`, `poc_gw_detector_pseudo_simulation`
-- `spectrum` `signal → pairs` GPU: なし — Raw one-sided magnitude spectrum -> ``(freqs, magnitude)`` (``np.fft.rfft``). · 例: `acoustic_condition_monitoring`, `anim3d_lens_aberrations`, `poc_bearing_diagnosis`, `poc_gear_tooth_metrology`, `poc_machine_condition_fusion`, `poc_pipe_wall_loss`, `poc_recycling_sorting`, `poc_thin_film_reflectometry`, `poc_web_roll_periodicity`
+- `spectrum` `signal → pairs` GPU: なし — Raw one-sided magnitude spectrum -> ``(freqs, magnitude)`` (``np.fft.rfft``). · 例: `acoustic_condition_monitoring`, `anim3d_lens_aberrations`, `poc_bearing_diagnosis`, `poc_gear_tooth_metrology`, `poc_machine_condition_fusion`, `poc_pipe_wall_loss`, `poc_recycling_sorting`, `poc_thin_film_reflectometry`, `poc_web_roll_periodicity`, `type_connectivity_tour`
 - `zero_crossing_rate` `signal → measurement` GPU: なし — Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue. · 例: `gallery_oned_audio_funct`, `gallery_spectrum_signal_bridge`
 
 ### colortransport(11 ops / 4 categories)
@@ -5342,7 +5375,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 #### conngraph / construct(3)
 - `graph_binarize` `conn_graph → conn_graph` GPU: なし — |W| > thresh の辺を 1.0、それ以外を 0.0 にした conn_graph(対角も同じ規則)。 · 例: `gallery_conngraph_closed_forms`
 - `graph_degree_preserving_shuffle` `conn_graph → conn_graph` GPU: なし — 次数保存シャッフル(帰無モデル): 各ノードの入次数・出次数と重みの多重集合を保って辺を繋ぎ替える。 · 例: `poc_larval_connectome_reservoir`, `poc_malecns_activity_wave`, `poc_microns_brain_wave`
-- `graph_from_synapses` `synapse_table → conn_graph` GPU: なし — シナプス表 (m, 3) = (pre_id, post_id, count) を n×n の重みつき有向隣接行列にする。 · 例: `poc_fly_optomotor_steering`, `poc_microns_brain_wave`
+- `graph_from_synapses` `synapse_table → conn_graph` GPU: なし — シナプス表 (m, 3) = (pre_id, post_id, count) を n×n の重みつき有向隣接行列にする。 · 例: `poc_fly_optomotor_steering`, `poc_microns_brain_wave`, `type_connectivity_tour`
 
 #### conngraph / dimension(4)
 - `graph_block_shuffle` `conn_graph × labels → conn_graph` GPU: なし — 層(ラベル)のブロックごとに**送り手を混ぜた**対照の ``conn_graph``: 各受け手が受ける重みの多重集合と 層間の総結線量は保ったまま、「誰から」だけを壊す。 · 例: `poc_connectome_motor_bottleneck`
@@ -5360,7 +5393,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 #### conngraph / stats(9)
 - `graph_betweenness` `conn_graph → signal` GPU: なし — 媒介中心性(Brandes 2001、二値有向、正規化なし)。ノードごとの長さ n の配列。 · 例: `gallery_conngraph_closed_forms`
 - `graph_clustering_coefficient` `conn_graph → measurement` GPU: なし — 平均局所クラスタ係数(向きを畳んだ二値グラフ、Watts–Strogatz)。次数 < 2 のノードは 0 と数える。 · 例: `gallery_conngraph_closed_forms`
-- `graph_components` `conn_graph → labels` GPU: なし — 弱連結成分のラベル(0 始まり、ノード番号順の初出で番号づけ)。長さ n の int64。 · 例: `gallery_conngraph_closed_forms`
+- `graph_components` `conn_graph → labels` GPU: なし — 弱連結成分のラベル(0 始まり、ノード番号順の初出で番号づけ)。長さ n の int64。 · 例: `gallery_conngraph_closed_forms`, `type_connectivity_tour`
 - `graph_degree_table` `conn_graph → table` GPU: なし — ノードごとの in_degree / out_degree(二値)と in_strength / out_strength(重み和)の表。 · 例: `poc_larval_connectome_reservoir`, `poc_theorems_as_pictures`
 - `graph_laplacian_spectrum` `conn_graph → signal` GPU: なし — 向きを畳んだ二値グラフの Laplacian L = D − A の固有値(昇順、長さ n)。 · 例: `gallery_conngraph_closed_forms`
 - `graph_modularity` `conn_graph × labels → measurement` GPU: なし — 有向・重みつきモジュラリティ Q(Leicht–Newman 2008)。 · 例: `gallery_conngraph_closed_forms`
@@ -5502,7 +5535,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 #### llmcore / attend(4)
 - `attention_grouped` `tokens × tokens × tokens → tokens` GPU: なし — 頭を束ねる注意(GQA)→ tokens。**n_kv_heads == n_heads で MHA、== 1 で MQA に厳密一致**。 · 例: `poc_attention_identities`
 - `attention_linear` `tokens × tokens × tokens → tokens` GPU: なし — softmax を外した注意 → tokens。**(QKᵀ)V == Q(KᵀV) —— 結合則そのもの**。 · 例: `poc_attention_identities`
-- `attention_softmax` `tokens × tokens × tokens → tokens` GPU: なし — 一括の注意(参照実装)→ tokens。**この族の答え合わせの基準**。 · 例: `poc_attention_identities`
+- `attention_softmax` `tokens × tokens × tokens → tokens` GPU: なし — 一括の注意(参照実装)→ tokens。**この族の答え合わせの基準**。 · 例: `poc_attention_identities`, `type_connectivity_tour`
 - `attention_tiled` `tokens × tokens × tokens → tokens` GPU: なし — タイル + online softmax の注意(FlashAttention の芯)→ tokens。**近似ではない**。 · 例: `poc_attention_identities`
 
 #### llmcore / decode(1)

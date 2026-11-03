@@ -48,7 +48,7 @@ Raises:
 
 ## 同カテゴリ(`keypoint`)
 
-[keypoints_uv_to_points](keypoints_uv_to_points.md) · [points_zyx_to_keypoints_uv](points_zyx_to_keypoints_uv.md) · [keypoints_to_image2d](keypoints_to_image2d.md) · [keypoints_from_image2d](keypoints_from_image2d.md) · [points_to_position](points_to_position.md)
+[keypoints_uv_to_points](keypoints_uv_to_points.md) · [points_zyx_to_keypoints_uv](points_zyx_to_keypoints_uv.md) · [keypoints_to_image2d](keypoints_to_image2d.md) · [keypoints_from_image2d](keypoints_from_image2d.md) · [points_to_position](points_to_position.md) · [keypoints_rowcol_to_uv](keypoints_rowcol_to_uv.md) · [keypoints_uv_to_rowcol](keypoints_uv_to_rowcol.md)
 
 ---
 *Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -7,6 +7,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 型のつながりを全型で数える台帳と門、行き止まり・入口なしの型をつなぐ 12 op と、レシピで落ちた鎖をつなぐ 8 op(2026-11-03)
+
+- `docs/TYPE_ROLES.json`(手書き)に `docs/OP_INDEX.json` の全 102 型(`any` と、`in_sorts` にだけ現れる `entries` を含む)の分類 a/b/c/d/ok・理由・根拠(検索語と確かめた関数)・入口 / 終端の理由を書いた。`tools/type_connectivity.py` が全入力(`in_sorts`)で数えて `docs/TYPE_CONNECTIVITY.md` を生成する(regen_all に登録)。門 `tests/test_type_connectivity.py`: 台帳の行と型が過不足なく一致 / 行き止まり・入口なしは理由のある型だけ / どの型も入口(全入力のそろう op の不動点)から届き終端へ届く / 入口 29・終端 13 の天井 / 偽の op を足すと全部赤になる。
+- 数え直しの前後(全入力で数える): 行き止まり 5 → 0、入口なし 3 → 1(残る `entries` = 凡例の中身で、入口として正しい)、入口から届かない型 4 → 0、終端へ届かない型 7 → 0(どちらも同じ台帳の入口・終端で数えて)。細い型は 48 のまま(大半は族の中で閉じた型で、問題ではない)。第 1 入力だけで数えた最初の数字(行き止まり 7・入口なし 2・image から届かない 15)と両方を生成物に並べる。
+- 新しい op(`opsreprconv` のカテゴリ `derivative` / `structure` / `entry` / `exit`、新しい型名は 0): `gradient_magnitude` / `gradient_coherence`(構造テンソルの面らしさ)/ `hessian_determinant` / `hessian_vesselness`(Frangi 1998 を与えられた Hessian から)/ `frame_axis` / `knn_graph_to_conn_graph`(1 本で conn_graph 族の 20 op へ)/ `pointmap_to_points`(`depth_to_points` と同じ点が同じ順)/ `match_component`(2-D の `match` 型の出口。進化の候補を動かさないため台帳側)/ `indices_to_positions`(`point_spectrum` への入口)/ `synapse_table_from_table`(CSV からコネクトーム)/ `jones_state`(Jones ベクトルの最初の 1 本)/ `tokens_to_matrix`。レシピの網羅(feat/recipes-coverage)で型の穴として落ちた鎖のために: `table_field_image2d` / `table_field_signal` / `table_field_matrix` / `table_field_measurement`(dict を返す op の欄を型を確かめて渡す)/ `pairs_peak_x`(spectrum のピーク)/ `keypoints_rowcol_to_uv` / `keypoints_uv_to_rowcol`(keypoints 型に同居する 2 つの軸の約束)/ `pose_to_matrix`(R, t -> 4x4)。門 `tests/test_reprconv_type_connectivity_2026_11_03.py`(本物の産み手の返りで真値と比較)、例 `examples/type_connectivity_tour.py`(20 項目)。
+- 実測で見つけた型の揺れ: `gradient` は 2 形が同居(`gradient3d` = (gmag, gvec)、`sobel3d` = 利得 32 の torch 3 本)。受け手は形を見分けて利得をそろえる。`axes` は別物 2 つが同居(図の座標変換 dict と、点群の重心・主軸・固有値)。分けるには新しい型名が要るので**変えていない**(案は `docs/TYPE_CONNECTIVITY.md`)。
+- 破壊的変更: なし(既存の op の宣言・型名は 1 つも変えていない。足しただけ)。
+
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 
 - 新モジュール `photoelastic`(opsoptics のカテゴリ `photoelastic`、12 op)。単位は SI、位相差は rad・nm・縞次数を並べて返し、mm を m に・nm を m に・表の ×10⁻⁷ MPa⁻¹ を Pa⁻¹ に渡す取り違えは ValueError で拒否する。

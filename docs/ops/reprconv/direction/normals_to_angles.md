@@ -5,7 +5,7 @@ category: direction
 in: normals
 out: pairs
 gpu: なし
-examples: [poc_tacscalib_sphere_lut, representation_roundtrip]
+examples: [poc_tacscalib_sphere_lut, representation_roundtrip, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -47,10 +47,11 @@ Raises:
 
 - [poc_tacscalib_sphere_lut](../../../../examples/poc_tacscalib_sphere_lut.py) — `py -3.11 examples/poc_tacscalib_sphere_lut.py`
 - [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
+- [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[angles_to_normals](angles_to_normals.md) · [shape_index_to_curvature](../curvature/shape_index_to_curvature.md) · [pairs_to_signal](../pairs/pairs_to_signal.md) · [pairs_to_image2d](../pairs/pairs_to_image2d.md) · [pairs_to_table](../pairs/pairs_to_table.md) · [polar_to_cscalar](../algebra/polar_to_cscalar.md)
+[angles_to_normals](angles_to_normals.md) · [shape_index_to_curvature](../curvature/shape_index_to_curvature.md) · [pairs_to_signal](../pairs/pairs_to_signal.md) · [pairs_to_image2d](../pairs/pairs_to_image2d.md) · [pairs_to_table](../pairs/pairs_to_table.md) · [polar_to_cscalar](../algebra/polar_to_cscalar.md) · [pairs_peak_x](../exit/pairs_peak_x.md)
 
 ## 同カテゴリ(`direction`)
 

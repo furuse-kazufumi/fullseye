@@ -53,10 +53,10 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3417,
+    "executable": 3439,
     "reasons": {
-      "python_signature": 2458,
-      "registry": 959
+      "python_signature": 2478,
+      "registry": 961
     },
     "not_executable_reasons": {
       "python_callable_not_found": 14,
@@ -358,9 +358,9 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3626,
-    "conversion_pairs": 395,
-    "conversion_edge_incidence": 2343
+    "edges": 3648,
+    "conversion_pairs": 405,
+    "conversion_edge_incidence": 2360
   },
   "nodes": [
     {
@@ -466,7 +466,7 @@
       "sort": "conn_graph",
       "container": "graph",
       "size_hint": "input-dependent",
-      "produced_by": 5,
+      "produced_by": 6,
       "consumed_by": 20,
       "generator": true,
       "type_check": true,
@@ -687,7 +687,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 1,
-      "consumed_by": 0,
+      "consumed_by": 1,
       "generator": false,
       "type_check": true,
       "choose_when": "undocumented",
@@ -709,7 +709,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 2,
-      "consumed_by": 0,
+      "consumed_by": 2,
       "generator": false,
       "type_check": true,
       "choose_when": "undocumented",
@@ -720,7 +720,7 @@
       "container": "graph",
       "size_hint": "input-dependent",
       "produced_by": 1,
-      "consumed_by": 0,
+      "consumed_by": 1,
       "generator": false,
       "type_check": true,
       "choose_when": "undocumented",
@@ -731,7 +731,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 1,
-      "consumed_by": 0,
+      "consumed_by": 2,
       "generator": false,
       "type_check": true,
       "choose_when": "undocumented",
@@ -752,7 +752,7 @@
       "sort": "image",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 721,
+      "produced_by": 722,
       "consumed_by": 1046,
       "generator": true,
       "type_check": true,
@@ -764,7 +764,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 10,
-      "consumed_by": 3,
+      "consumed_by": 4,
       "generator": false,
       "type_check": true,
       "choose_when": "undocumented",
@@ -774,7 +774,7 @@
       "sort": "jones",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 1,
+      "produced_by": 2,
       "consumed_by": 2,
       "generator": true,
       "type_check": true,
@@ -785,8 +785,8 @@
       "sort": "keypoints",
       "container": "sparse_set",
       "size_hint": "input-dependent",
-      "produced_by": 18,
-      "consumed_by": 19,
+      "produced_by": 22,
+      "consumed_by": 23,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -852,7 +852,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 8,
-      "consumed_by": 0,
+      "consumed_by": 1,
       "generator": false,
       "type_check": false,
       "choose_when": "undocumented",
@@ -862,7 +862,7 @@
       "sort": "matrix",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 91,
+      "produced_by": 94,
       "consumed_by": 248,
       "generator": true,
       "type_check": true,
@@ -884,7 +884,7 @@
       "sort": "measurement",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 93,
+      "produced_by": 96,
       "consumed_by": 6,
       "generator": true,
       "type_check": true,
@@ -939,7 +939,7 @@
       "sort": "normals",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 9,
+      "produced_by": 10,
       "consumed_by": 10,
       "generator": true,
       "type_check": true,
@@ -951,7 +951,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 85,
-      "consumed_by": 66,
+      "consumed_by": 67,
       "generator": false,
       "type_check": true,
       "choose_when": "undocumented",
@@ -973,7 +973,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 2,
-      "consumed_by": 1,
+      "consumed_by": 2,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -983,7 +983,7 @@
       "sort": "points",
       "container": "sparse_set",
       "size_hint": "input-dependent",
-      "produced_by": 78,
+      "produced_by": 79,
       "consumed_by": 292,
       "generator": true,
       "type_check": true,
@@ -1028,7 +1028,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 16,
-      "consumed_by": 10,
+      "consumed_by": 11,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1049,10 +1049,10 @@
       "sort": "positions",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 0,
+      "produced_by": 1,
       "consumed_by": 1,
       "generator": true,
-      "type_check": false,
+      "type_check": true,
       "choose_when": "undocumented",
       "source": "chain_fuzz catalog"
     },
@@ -1280,7 +1280,7 @@
       "sort": "signal",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 161,
+      "produced_by": 162,
       "consumed_by": 425,
       "generator": true,
       "type_check": true,
@@ -1357,7 +1357,7 @@
       "sort": "synapse_table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 0,
+      "produced_by": 1,
       "consumed_by": 1,
       "generator": true,
       "type_check": true,
@@ -1369,7 +1369,7 @@
       "container": "sequence",
       "size_hint": "input-dependent",
       "produced_by": 1166,
-      "consumed_by": 547,
+      "consumed_by": 552,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1391,7 +1391,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 8,
-      "consumed_by": 20,
+      "consumed_by": 21,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1456,7 +1456,7 @@
       "sort": "voxel",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 63,
+      "produced_by": 67,
       "consumed_by": 123,
       "generator": true,
       "type_check": true,
@@ -149055,6 +149055,86 @@
       "source_ref": "S00032"
     },
     {
+      "op": "keypoints_rowcol_to_uv",
+      "inputs": [
+        "keypoints"
+      ],
+      "output": "keypoints",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "keypoints_rowcol_to_uv"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "keypoints_rowcol_to_uv"
+      },
+      "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "keypoints_uv_to_rowcol",
+      "inputs": [
+        "keypoints"
+      ],
+      "output": "keypoints",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "keypoints_uv_to_rowcol"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "keypoints_uv_to_rowcol"
+      },
+      "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
       "op": "indices_to_labels",
       "inputs": [
         "indices"
@@ -150169,6 +150249,934 @@
         "callable": "deformation_to_points"
       },
       "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "gradient_magnitude",
+      "inputs": [
+        "gradient"
+      ],
+      "output": "voxel",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "gradient_magnitude"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "gradient_magnitude"
+      },
+      "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "gradient_coherence",
+      "inputs": [
+        "gradient"
+      ],
+      "output": "voxel",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "gradient_coherence"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "gradient_coherence"
+      },
+      "parameter_schema": [
+        {
+          "name": "sigma",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.5
+        },
+        {
+          "name": "eps",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1e-12
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "hessian_determinant",
+      "inputs": [
+        "hessian"
+      ],
+      "output": "voxel",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "hessian_determinant"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "hessian_determinant"
+      },
+      "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "hessian_vesselness",
+      "inputs": [
+        "hessian"
+      ],
+      "output": "voxel",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "hessian_vesselness"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "hessian_vesselness"
+      },
+      "parameter_schema": [
+        {
+          "name": "alpha",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.5
+        },
+        {
+          "name": "beta",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.5
+        },
+        {
+          "name": "c",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "black_ridges",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "frame_axis",
+      "inputs": [
+        "frame"
+      ],
+      "output": "normals",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "frame_axis"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "frame_axis"
+      },
+      "parameter_schema": [
+        {
+          "name": "axis",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "tangent"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "knn_graph_to_conn_graph",
+      "inputs": [
+        "graph"
+      ],
+      "output": "conn_graph",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "knn_graph_to_conn_graph"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "knn_graph_to_conn_graph"
+      },
+      "parameter_schema": [
+        {
+          "name": "weight",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "inverse_distance"
+        },
+        {
+          "name": "symmetric",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "pointmap_to_points",
+      "inputs": [
+        "pointmap"
+      ],
+      "output": "points",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "pointmap_to_points"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "pointmap_to_points"
+      },
+      "parameter_schema": [
+        {
+          "name": "drop_nonpositive_z",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "match_component",
+      "inputs": [
+        "match"
+      ],
+      "output": "measurement",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "match_component"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "match_component"
+      },
+      "parameter_schema": [
+        {
+          "name": "index",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "indices_to_positions",
+      "inputs": [
+        "indices"
+      ],
+      "output": "positions",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "indices_to_positions"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "indices_to_positions"
+      },
+      "parameter_schema": [
+        {
+          "name": "spacing",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "origin",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "synapse_table_from_table",
+      "inputs": [
+        "table"
+      ],
+      "output": "synapse_table",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "synapse_table_from_table"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "synapse_table_from_table"
+      },
+      "parameter_schema": [
+        {
+          "name": "pre",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "pre"
+        },
+        {
+          "name": "post",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "post"
+        },
+        {
+          "name": "count",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "jones_state",
+      "inputs": [],
+      "output": "jones",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "jones_state"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "jones_state"
+      },
+      "parameter_schema": [
+        {
+          "name": "azimuth_deg",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "ellipticity_deg",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "amplitude",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "tokens_to_matrix",
+      "inputs": [
+        "tokens"
+      ],
+      "output": "matrix",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "tokens_to_matrix"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "tokens_to_matrix"
+      },
+      "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "pose_to_matrix",
+      "inputs": [
+        "pose"
+      ],
+      "output": "matrix",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "pose_to_matrix"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "pose_to_matrix"
+      },
+      "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "pairs_peak_x",
+      "inputs": [
+        "pairs"
+      ],
+      "output": "measurement",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "pairs_peak_x"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "pairs_peak_x"
+      },
+      "parameter_schema": [
+        {
+          "name": "x_min",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "x_max",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "table_field_image2d",
+      "inputs": [
+        "table"
+      ],
+      "output": "image",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "table_field_image2d"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "table_field_image2d"
+      },
+      "parameter_schema": [
+        {
+          "name": "key",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "table_field_signal",
+      "inputs": [
+        "table"
+      ],
+      "output": "signal",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "table_field_signal"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "table_field_signal"
+      },
+      "parameter_schema": [
+        {
+          "name": "key",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "table_field_matrix",
+      "inputs": [
+        "table"
+      ],
+      "output": "matrix",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "table_field_matrix"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "table_field_matrix"
+      },
+      "parameter_schema": [
+        {
+          "name": "key",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00032"
+    },
+    {
+      "op": "table_field_measurement",
+      "inputs": [
+        "table"
+      ],
+      "output": "measurement",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00032"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00032"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "table_field_measurement"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "table_field_measurement"
+      },
+      "parameter_schema": [
+        {
+          "name": "key",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        }
+      ],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -233401,6 +234409,73 @@
       "source_ref": "S00056"
     },
     {
+      "op": "tb_keypoints_rowcol_to_uv",
+      "inputs": [
+        "keypoints"
+      ],
+      "output": "keypoints",
+      "category": "typed",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "backends_typed",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executor": {
+        "kind": "registry",
+        "alias": "tb_keypoints_rowcol_to_uv",
+        "module": "backend_safe",
+        "callable": "_safe(_make_runner.<locals>._run)"
+      },
+      "runtime_target": {
+        "module": "backend_safe",
+        "callable": "_safe(_make_runner.<locals>._run)"
+      },
+      "verified_executable": true,
+      "verification": {
+        "source": "tools/gen_op_facets.py::_verified_registry_ops",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "temporary_cwd",
+          "filesystem_unchanged",
+          "random_state_unchanged",
+          "under_2_seconds"
+        ]
+      },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
       "op": "tb_keypoints_to_image2d",
       "inputs": [
         "keypoints"
@@ -233509,6 +234584,73 @@
       "executor": {
         "kind": "registry",
         "alias": "tb_keypoints_uv_to_points",
+        "module": "backend_safe",
+        "callable": "_safe(_make_runner.<locals>._run)"
+      },
+      "runtime_target": {
+        "module": "backend_safe",
+        "callable": "_safe(_make_runner.<locals>._run)"
+      },
+      "verified_executable": true,
+      "verification": {
+        "source": "tools/gen_op_facets.py::_verified_registry_ops",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "temporary_cwd",
+          "filesystem_unchanged",
+          "random_state_unchanged",
+          "under_2_seconds"
+        ]
+      },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "tb_keypoints_uv_to_rowcol",
+      "inputs": [
+        "keypoints"
+      ],
+      "output": "keypoints",
+      "category": "typed",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "backends_typed",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executor": {
+        "kind": "registry",
+        "alias": "tb_keypoints_uv_to_rowcol",
         "module": "backend_safe",
         "callable": "_safe(_make_runner.<locals>._run)"
       },
@@ -253276,21 +254418,15 @@
     }
   ],
   "diagnostics": {
-    "dead_ends": [
-      "frame",
-      "gradient",
-      "graph",
-      "hessian"
+    "dead_ends": [],
+    "orphans": [
+      "match"
     ],
-    "orphans": [],
-    "never_consumed": [
-      "frame",
-      "gradient",
-      "graph",
-      "hessian"
-    ],
+    "never_consumed": [],
     "unchecked_ops": [],
-    "unreachable": [],
+    "unreachable": [
+      "match"
+    ],
     "duplicate_declarations": [
       {
         "op": "gaussians_to_voxel",

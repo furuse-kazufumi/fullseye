@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">synapse_table_from_table — REPRCONV <code style="color:#22d3bf">entry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">synapse_table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.synapse_table_from_table(table, pre=&#x27;pre&#x27;, post=&#x27;post&#x27;, count=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.synapse_table_from_table(table, pre=&#x27;pre&#x27;, post=&#x27;post&#x27;, count=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;synapse_table_from_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>표 <code style="color:#22d3bf">table</code> (열 이름 → 배열) → 시냅스 표 <code style="color:#22d3bf">synapse_table (m, 3)</code>. <code style="color:#22d3bf">synapse_table</code> 형의 입구.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>コネクトームの公開データは CSV(<code style="color:#22d3bf">table_read_csv</code> で <code style="color:#22d3bf">table</code> になる)で来るので、その 3 列を <code style="color:#22d3bf">(pre_id, post_id, count)</code> の m×3 に詰め直す。<code style="color:#22d3bf">count</code> を省くと 1 (シナプス 1 個 = 1 行の表)。<code style="color:#22d3bf">synapse_table</code> を <code style="color:#22d3bf">points</code> と分けてある理由(形が同じ (N,3) で、点群を渡すと座標が id として読まれる)を守るため、<b>id が 0 以上の整数であることをここで確かめる</b>(<code style="color:#22d3bf">graph_from_synapses</code> と同じ規約)。</p>
+<p><code style="color:#22d3bf">table</code> は 2 つの形を受ける: 列名 → 配列の dict そのものと、<code style="color:#22d3bf">table_read_csv</code> の返り <code style="color:#22d3bf">{&quot;columns&quot;: {列名: 配列}, &quot;units&quot;: ..., &quot;meta&quot;: ...}</code>(列は <code style="color:#22d3bf">columns</code> から読む)。</p>
+<p>Args:</p>
+<p>table: 列名 → 1-D 配列の dict、または <code style="color:#22d3bf">table_read_csv</code> の返り。</p>
+<p>pre, post: 前・後ニューロン id の列名。</p>
+<p>count: シナプス数の列名(None で全行 1)。</p>
+<p>Returns:</p>
+<p>(m, 3) float64。</p>
+<p>Raises:</p>
+<p>ValueError: dict でない / 列が無い / 長さがそろわない / id が 0 以上の整数でない /</p>
+<p>count が負か非有限 / 空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">synapse_table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">entry</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:indices_to_positions">indices_to_positions</a> · <a style="color:#22d3bf" href="opreprconv:jones_state">jones_state</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
