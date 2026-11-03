@@ -44,3 +44,19 @@ def test_phase_correlation_shift_through_the_ledger():
                            (out.values() if isinstance(out, dict) else out)
                            if np.asarray(v).dtype.kind in "fi"])
     assert np.any(np.isclose(np.abs(vals), 3.0, atol=0.05)) and np.any(np.isclose(np.abs(vals), 5.0, atol=0.05)), out
+
+
+def test_every_op_graph_edge_names_where_it_runs():
+    """OP_GRAPH の辺は全部、実行先(executor か runtime_target)を持つ。
+
+    2026-11-03 まで 20 辺(fileio 14・read_wav / read_audio / write_wav・汎用アルゴリズムの並べ替え 3)が
+    空で、OP_GRAPH を読む側(レシピの runner)が呼べなかった。
+    """
+    import json
+    from pathlib import Path
+    g = json.loads((Path(__file__).resolve().parents[1] / "fullseye/data/OP_GRAPH.json").read_text(encoding="utf-8"))
+    bare = [e["op"] for e in g["edges"] if not (e.get("executor") or e.get("runtime_target"))]
+    assert not bare, bare
+    by = {e["op"]: e for e in g["edges"]}
+    for op in ("points_write_xyz", "points_read_xyz", "mesh_write_obj", "table_read_csv", "read_wav"):
+        assert (by[op].get("executor") or {}).get("kind") == "python", (op, by[op].get("executor"))
