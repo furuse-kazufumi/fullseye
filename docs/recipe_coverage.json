@@ -4,9 +4,13 @@
   "recipes_py": 25,
   "recipebook": 242,
   "multi_stage": 220,
-  "families_total": 56,
+  "families_total": 59,
   "families_covered": 56,
-  "families_uncovered": [],
+  "families_uncovered": [
+   "acceptance",
+   "matchreg",
+   "symbol"
+  ],
   "task_class": {
    "3d": 36,
    "analysis": 24,
@@ -94,7 +98,7 @@
  "families": [
   {
    "family": "2d",
-   "ops": 959,
+   "ops": 964,
    "recipes": 90,
    "ops_used": 99
   },
@@ -103,6 +107,12 @@
    "ops": 377,
    "recipes": 25,
    "ops_used": 35
+  },
+  {
+   "family": "acceptance",
+   "ops": 8,
+   "recipes": 0,
+   "ops_used": 0
   },
   {
    "family": "acoustics",
@@ -118,7 +128,7 @@
   },
   {
    "family": "aoi",
-   "ops": 3,
+   "ops": 8,
    "recipes": 1,
    "ops_used": 2
   },
@@ -142,7 +152,7 @@
   },
   {
    "family": "calib",
-   "ops": 21,
+   "ops": 29,
    "recipes": 2,
    "ops_used": 4
   },
@@ -190,7 +200,7 @@
   },
   {
    "family": "fileio",
-   "ops": 14,
+   "ops": 28,
    "recipes": 2,
    "ops_used": 4
   },
@@ -267,6 +277,12 @@
    "ops_used": 4
   },
   {
+   "family": "matchreg",
+   "ops": 12,
+   "recipes": 0,
+   "ops_used": 0
+  },
+  {
    "family": "math",
    "ops": 115,
    "recipes": 5,
@@ -298,7 +314,7 @@
   },
   {
    "family": "optics",
-   "ops": 483,
+   "ops": 504,
    "recipes": 14,
    "ops_used": 37
   },
@@ -340,7 +356,7 @@
   },
   {
    "family": "reprconv",
-   "ops": 42,
+   "ops": 62,
    "recipes": 2,
    "ops_used": 2
   },
@@ -391,6 +407,12 @@
    "ops": 20,
    "recipes": 6,
    "ops_used": 6
+  },
+  {
+   "family": "symbol",
+   "ops": 33,
+   "recipes": 0,
+   "ops_used": 0
   },
   {
    "family": "text",

@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(467 例)
+### 2-D 画像/信号/幾何(469 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -263,6 +263,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **絵では確かめられないもの(力学系と極小曲面を定義と恒等式で採点する)** — ローレンツ・アトラクタの図は積分器が 1 次でも 4 次でも蝶に見え、極小曲面の図は平均曲率が 0 でなくてもきれいに見える —— 「見て分かる」が一切効かない族なので採点を全部絵の外から取った。★線形系の厳密解は expm(At)x₀ で、刻み半分にすると RK4 の誤差は**比 16.0 / 16.0 / 16.0**(4 次)、対照群のオイラー法は 2.08 / 2.04 / 2.02(1 次)、同じ dt=0.01 で 2.02e-02 対 3.33e-10。★★リアプノフ指数の**和**はトレース恒等式で厳密に −(σ+1+β) = −13.666667、実測 −13.666664(差 2.57e-06)—— 指数を出す手続き(接流 + QR)とは独立。λ₁ = 0.9142(公表値 0.906)、λ₂ = −0.008(理論 0)、保存系の対照群は和 4.87e-15。★周期倍分岐は r = 3 と 1+√6 が厳密で実測 2.999401 / 3.449260、δ = 4.7485(文献値 4.6692)。★**残差を隠さない**: 分岐点での収束は代数的なので有限の burn-in では必ず手前に見え、burn 2,000 → 20,000 で誤差が **10.9 倍縮む** —— 門は「誤差が小さい」ではなく「伸ばすと置いていった分だけ縮む」で置いた。★★相関次元は円 1.0061・カントール 0.6408(log2/log3 = 0.6309)だが平面は 1.8789(真値 2)—— 偏りの正体を**探し当ててから書いた**: 点数を 400 → 3,000 にしても 1.8825 / 1.8789 / 1.8709 と**動かず**、正体は**べき乗則を見る半径の窓**(既定は対距離の 1〜25 パーセンタイルで、上端が箱の端に当たり相関和が飽和する)。窓を狭めると 1.887 → 1.947 と真値に寄る。★★場の**発散は厳密に tr(A)・渦度は A₁₀−A₀₁** で、それを測るのは**PIV 族の既存 op**(piv_divergence / piv_vorticity)—— 4 通りすべて 1e-6 未満、ローレンツの xy 断面は −σ−1 = −11.000000。★円を中心線にした管はトーラスなので体積 2π²Rr²・表面積 4π²Rr が解析解で、既存 mesh_volume / mesh_area が比 0.997 / 0.999。まっすぐな区間を含む曲線でも半径が 0.150000000000 で崩れない(平行移動フレーム —— フレネ枠は直線部で法線が定義できない)。★★極小曲面は |H| 中央値 0.00002〜0.00014 で、対照群の単位球 1.00004・半径 1 の円柱 0.50000 —— 門が素通しでない証拠。カテノイドとヘリコイドはガウス曲率が一致するが(等長)それは**必要条件にすぎない**。等長な曲げは面積 17.6738〜17.6756 で不変。★ジャイロイドは体積比 0.499928 / 0.499981 / 0.499991(体心反転の対称性・格子に依らない)だが、**節面近似の残差は隠さず出す**(|H| / 主曲率スケール = 0.1250 —— Schoen のジャイロイドは H = 0)。検査 43 件・図 11 枚。 `py -3.11 examples/poc_what_a_picture_cannot_check.py`
 - **その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)** — 管理図も工程能力も**測定のばらつきを含んだままの数字**を見ている —— それを分け、1 回の測定の不確かさを報告できる形にするまでを全部「絵の外」から採点した。★平方和の分解 SS_total = SS_部品 + SS_測定者 + SS_交互作用 + SS_誤差 は**代数的な恒等式**なので分散成分の出し方と独立に閉じる(相対差 1e-16)。★繰り返し性は「升目ごとの np.var(ddof=1) の平均」に代数的に等しく、**既存の numpy が真値**になる。★★規格の worked example(10 部品 x 3 測定者 x 3 回の 90 点)を再現: EV 0.199933 / AV 0.226838 / GRR 0.302372 / PV 1.042327 で公表値と最大差 1.5e-06、寄与率 3.4 / 4.4 / 7.8 / 92.2 % は完全一致 —— **外の権威が出した答え**で、こちらの導出とは独立。★★交互作用を残すか誤差へ畳むかで **EV が 7.3 % 動く**(0.214435 対 0.199933)。規格は交互作用が有意でなければ畳んだ値を公表しているので、**どちらのモデルで出したかを返り値に載せる** —— 黙って切り替えると同じ工程について別の数字を返し理由が残らない。★★負の分散成分は稀な端ではない: 測定者差を**厳密に 0** にした合成データで 40 本中 24 本が負になり 0 へ丸められる。丸めを申告しない実装は「差は無い」と言い切ってしまう。★推定の揺れも隠さない —— 繰り返し性の標準偏差 0.00776 は理論 σ/√(2df) の 0.00913 と同じ桁だが、再現性は測定者 4 人(自由度 3)からの推定なので **0.159** と桁違いに不確か。★カッパは一致率ではない: 独立でたらめな判定でも合格率 0.95 なら素の一致率は 0.920 になるのに κ は 0.101。全員一致なら κ = 1 が厳密に出る。★★**相関を無視した誤りの向きは一定でない** —— 規格の例(電圧・電流・位相差から抵抗とリアクタンスを同時に出す)で相関を落とすと u_c(R) は 0.0702 → 0.1945 と **2.8 倍の過大**、u_c(X) は 0.2961 → 0.2009 と過小。「安全側に外れるから省いてよい」は成り立たない。★有効自由度は **t 表を引く直前に切り捨てる**(ν_eff 16.64 → 16 で k = 2.1199、切り捨てないと 2.1132 —— 公表値は前者)。★★**正しく失敗する**: 比較損失 δY = X₁²+X₂² を x₁=0 で評価すると感度 2x₁ が 0 になり伝播則は u=0・区間 [0,0] を返す —— 実装の誤りでなく **1 次近似が極値で情報を失う**手法の限界で、モンテカルロは同じ場所で [0, 150]e-6。x₁ が小さい間は区間が**負の損失**を含む。どちらも guf_valid / invalid_reasons で**構造として申告**する(黙って 0 を返せば読み手は「測定が完璧だった」と読む)。★★4 つの矩形分布の和には**厳密解**がある: Irwin-Hall(4) から y₂.₅% = √3(2·0.6^¼ − 4) = −3.879407(乱数を 1 つも使わない真値)。超過尖度 −6/(5n) = −0.3 で正規より裾が薄いので、正規近似を使う伝播則は 0.040521 **構造的に広く**出る —— 同じ「検証に落ちた」でも、正規の例は推定器の位置揺れ、矩形の例は手法そのものの誤差で、**原因が逆**。検査 28 件・図 9 枚。 `py -3.11 examples/poc_measurement_system_analysis.py`
 - **「解像度の式」は見つかる大きさを教えない(照明ごとの検出確率、MIL-HDBK-1823A)** — ヘアライン金属の V 字の傷(幅 2〜300 µm、斜面 10°±1.5°)を照明の物理モデルで描き、同じカメラ・同じ処理で照明だけを 3 通りに変えて MIL-HDBK-1823A の検出確率を出した。真値は自分で入れた傷の幅。★描画は台帳の放射輝度 illumdesign._radiance を 1 点ずつ呼んだ値と相対差 0 で一致し、傷の斜面の面積は幅 / 画素に厳密に配る。★★設計の式(detectability_limit)は分解できる最小の大きさを 202 µm と言うが、斜面が光をカメラへ鏡面反射するリング仰角 70° では a90/95 が **8.9 µm**(23 分の 1)、ドームは 27.1 µm、仰角 30° は傷の 105/120 が記録閾値の下で a90/95 は試した最大の 20 倍先の外挿(op が旗を立てる)。解像度は「形が分かるか」、POD は「在ることに気づくか」で別の問い。★★モデルを物理で確かめた: 当てた a90 の大きさの傷を 200 本描き直すと実測の検出率は 0.910 / 0.845(0.9 ± 0.064 の帯)。★同じ測定を見つけた/見落としたに落とした 2 値 GLM の a90 は â vs a と 0.15 / 0.18 SE で一致。★記録閾値と応答の天井を無視した素朴な最小二乗は傾きを最大 4.7 SE 寝かせる(打ち切りつき最尤が要る理由)。★ゼロ点: 無欠陥部位にでたらめな大きさを割り振ると op は曲線を拒む。★判定閾値 2→12 DN で a90/95 は 2.7→19.2 µm、正規の誤検出は 0.30→8.6e-05。合成であること(面・傷・センサ・幾何光学)は docstring に明記。検査 16 件・約 9 秒。 `py -3.11 examples/poc_pod_lighting.py`
+- **穴の位置と半径を XLD 輪郭から読む(fit_circle_xld)** — 新 op `fit_circle_xld`(HALCON fit_circle_contour_xld の Row / Column / Radius)の呼び出し例。被覆率で描いた円板(中心 (50.3, 44.6)、半径 20.5 px)を threshold_sub_pix で輪郭にし、輪郭ごとに幾何距離(既定)と代数法で円を当てる。中心は 0.05 px、半径は 0.15 px 以内で真値に戻る(半径の 0.08 px の偏りは輪郭抽出の側)。60° の短い円弧でも幾何法は半径を 1 px 以内に保つ。 `py -3.11 examples/fit_circle_xld_bore.py`
+- **縞・格子の周期と向きを 1 回で読む(wave_dominant_frequency)** — 新 op `wave_dominant_frequency` の呼び出し例。向き θ・周期 p の縞を 4 組描き、2-D FFT の DC 以外の最大の山(Hann 窓 + 対数放物線)から周期を 2 % 以内、向きを 0.3° 以内で読み返す。1 軸の wave_fringe_period は斜めの縞で見かけの周期 p / cosθ(30° で 4.94 px、60° で 16 px)を返すことを並べて示す。 `py -3.11 examples/wave_dominant_frequency_grating.py`
 - **10/10 は検出限界ではない ―― 小標本の検出率と誤警報率を片側信頼限界で読む** — 新 op `proportion_interval`(Clopper–Pearson / Wilson / Jeffreys)と `trials_for_all_success` の呼び出し例。10/10 検出の片側 95 % 下限は 0.7411、誤警報 0/20 の片側 95 % 上限は 0.1391、検出率 0.90 を片側 95 % で言うには 29/29 が要る(28/28 では足りない)。値は閉形式 α^(1/n) と一致することを assert で確かめる。 `py -3.11 examples/proportion_interval_audit.py`
 - **無限に描き続ける絵を、恒等式で採点する** — **絵では確かめられないものを、閉形式と整数不変量で採点する。** この回の素材は「止めなければ終わらない」生成器 —— 規則 90 の一次元セルオートマトン、ラングトンの蟻、アポロニウスの円詰め、カオスゲーム、バーンズリーのシダ、流れ場、反応拡散、プラズマ。どれも**絵を見ても正しさが分からない**(「もっとフラクタルらしく」見えるだけ)ので、**絵と独立に成り立つ式**を同じ op から出して採点する。★★芯 1: **規則 90 の第 n 行は二項係数の偶奇そのもの** —— 残差 **0.00e+00**(リュカの定理の帰結「C(n,k) が奇 ⟺ (n & k) == k」を使う。二項係数を直接積むと C(62,31)·31 が int64 を黙って溢れる)。★★芯 2: **ラングトンの蟻の高速道路は周期 104 で同じ斜めの変位を繰り返し、104 歩あたり正味ちょうど 12 マスを黒くする** ——どちらも残差 **0.00e+00** の整数不変量。★最初「104 歩で 52 マス」と書いて**外した**: 実測 0.114 マス/歩 と合わず、測り直すと 12/104 = 0.11538 だった(周期の中で塗っては消すので、正味はずっと少ない)。★★芯 3: **互いに接する 4 円の曲率はデカルトの円定理 (Σk)² = 2Σk² を厳密に満たす** (残差 **1.19e-16**)。★★さらに**描いた円が本当に接しているか**を別に測る(残差 **9.20e-07**)—— 平方根の枝を選び損ねると、絵としては「フラクタルっぽい」まま**外へ逃げる円の鎖**が出る(実際に出した)。見た目では欠陥と分からない。★★芯 4: **流れ場は ψ の回転として作るので発散が恒等的に 0**(残差 7.0e-17)、**餌も死も無い反応拡散は総量が保存**、**ダイヤモンド–スクエア法は 4 隅を書き換えない** —— どれも数値解法が壊れていれば真っ先に崩れる量。★★芯 5: **継ぎ目の無い循環動画は「最後に頭へ戻す」で作らない** —— 時間依存の量をすべて θ の関数にして θ を 0→2π 回すと、t = T は t = 0 と**同じ式**になる。継ぎ目は消したのではなく**最初から存在しない**。★**測る側の偏りも 1 件入れてある**: ミュラー・リヤーの 2 本は厳密に等長なのに、素朴な長さ計測は **223 画素と 225 画素**と答える。しかも矢羽根が無くても **223 画素**(真値 220 より 3 画素長い)—— 反エイリアスの裾を「黒い画素」として数えているから。★ここでも**外した**: 「矢羽根が長いほど偏る」と読んだが、20 px で 2 画素に達したあと 80 px まで**動かない**。偏りを作るのは長さではなく、**端に裾が乗るかどうか**だけ。★★**この回で錯視の描画を落とした**: カフェウォールやカニッツァの検査は「厳密に水平に引いた目地が水平だ」「平坦に塗ったマスが平坦だ」という**定数を置いて定数を読み返すだけ**で、間に変換が 1 つも無く、測定の能力を何も試していなかった(同義反復)。絵の側も直線と矩形を引いているだけで、この箱の力を示さない。**新しい op は 1 つも足していない。** 検査 18 件・図 16 枚(動く図 1 枚を含む)。 `py -3.11 examples/poc_illusions_and_perpetual_drawing.py`
 - **錯視で測定器を健診する(キャリパーが外すのはどこで、なぜか)** — 錯視は「答えの分かっている図」である。だから**測られる側**ではなく**測る側**を採点できる —— Fullseye は真値つきの絵を作る op と HALCON 流のサブピクセル測定器を同じ箱に持っているので、この採点が 1 本の走行で閉じる。**新しい op は 1 つも足していない。**★カフェウォールの目地に直線の計測オブジェクトを当てると、傾きは **厳密に 0.0 度**・残差 rms も **0.0**(真値 0)—— 目が「傾いている」と言い張る図で、測る側は 1 ulp も外さない。★★ところが**探針 1 枚では足りなかった**: ずらし量 0.25 だけで試して「測定器は決して動かない」と書いたが、ずらし量 5 通り × 探索半幅 4 通りの 20 通りを全部測ると、**探索半幅が目地の帯幅 8 px に届く 10/16 px のとき、ずらし量 0.125 と 0.375 でだけ 0.1429 度傾く**(目地の反対側の境界を掴む)。0.25 はたまたま外れない側だった。★★★そして**外したことは答えでなく残差に出る** —— 0.1429 度は数字だけ見れば「ほぼ 0」で通ってしまうが、rms は **0.00 → 1.70** と桁で動き、角度 0 ⇔ rms 0 が 20 通り全部で一致する。**門は答えでなく残差に置く。**★ミュラー・リヤーでは**測定器も外す。ただし目とは別の理由で** —— 矢羽根は「長く見せる」だけでなく測定線の上に余計なエッジを置くので(2 本 → 4 本)、測定器は軸ではなく**矢羽根のストロークを対にする**(幅 5.701 px)。★★想定幅 220 px を**宣言して** fuzzy_measure_pairing に測らせると、適合度は矢羽根なし 0.9988 に対し矢羽根あり **0.0225** —— 間違った値を返すのではなく「想定幅の構造は見つからない」と**数で申告する**。測り方を宣言した分だけ、失敗が静かな誤りから見える拒否に変わる。★矢羽根が無くても答えは 223.777 px で真値 220 と合わないが、長さを 140〜300 px に振るとずれは **+3.777 px 一定**(振れ幅 0.0000 px)—— 比例なら倍率の誤り、一定なら**端の定義**のずれで、「線分の長さ」と「外側エッジ間の距離」は線幅ぶん違う量である。引けば真値に戻る。★★エビングハウスでは円の計測オブジェクトが 2 円の半径を **29.996525 px と 29.996525 px**(差 **2.5e-12 px**、真値 0)と返す。どちらも指定の 30 px より 0.0035 px 小さく、中心も −0.5076 px ずれるが、**系統誤差は両方に同じだけ乗るので差を取ると消える**。★ツェルナーでは7 本すべてが最大 |傾き| **4.3e-04 度**(幅 520 px を渡って 0.0039 px)。動いたのは答えではなく**証拠の数**で、ハッチの向きが 1 本おきに反転するため採用点が 61 点中 **13 と 19** を交互に取る —— 「測れた」と「よく測れた」は別の量。★★ポッゲンドルフでは**測定器が外す**: 共線のはずの 2 区間で角度が **0.450 度**違う。原因は極性が塊で交互すること(41 点が 9 個の塊、+18 / −23)—— **細い線には 2 つのエッジがあり、「線の位置」はどちらか(あるいは中心か)を言うまで定義されない**。両エッジを対にして中心を取ると角度差 0.450 → **0.115 度**、rms 2.07 → 0.10/0.39 まで下がるが **0 にはならない**(帯の縁の細い縦線と画像の端が測定線に掛かる)—— そこまでは追い込んでいない、というのが正直な状態。検査 24 件・図 16 枚。 `py -3.11 examples/poc_calipers_under_illusion.py`
@@ -578,10 +580,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **space**
 - **星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める** — 固定 seed の合成星表 196 星と PSF・光子雑音・読み出し雑音を含む 128×128 像を作り、star_detect の 18 検出(真の星 16 + ホットピクセル 2)を三角形の角距離で全星表へ照合し、偽点を捨てて kabsch で姿勢を推定する。誤対応 0・偽点棄却 2/2・姿勢角誤差 0.0046 度。太陽・月の迷光、星不足、高速回転の星の流れは未計算の限界。 `py -3.11 examples/poc_star_tracker.py`
 
-### 3-D 点群/体積/曲面(123 例)
+### 3-D 点群/体積/曲面(124 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
+- **L字金具の6-DoF姿勢を点群から初期値なしで求める(PPF投票+ICP)** — find_surface_pose(HALCON find_surface_model 相当)の呼び出し例。回転対称の無い L 字金具を65°回転+並進で置き、点の3割を間引き・順序入替・雑音0.01を足した場面から姿勢を復元。回転誤差0.21°・並進誤差0.006。単位行列から始めたICPだけの対照は回転誤差5.2°。 `py -3.11 examples_3d/find_surface_pose_bracket.py`
 - **手法を自動選択する点群登録** — 2点群の近さを見て、近ければ ICP・大きく離れていれば FPFH+ICP を自動選択する(手法指定不要)。 `py -3.11 examples_3d/auto_register.py`
 - **登録品質の評価(recall/RMSE/inlier)** — 登録結果が成功か失敗かを inlier率・RMSE・recall で定量化。対応ゼロでは NaN を返し捏造しない。 `py -3.11 examples_3d/reg_eval.py`
 - **2視点からの相対カメラ姿勢(SfM初期化)** — 2枚の画像の対応点から基礎/基本行列を解き、相対カメラ姿勢と3D点を復元する(単眼SfM/VOの初手)。 `py -3.11 examples_3d/two_view_pose.py`
@@ -783,6 +786,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `descriptor_distance(m1, m2, n_harmonics=None, scale_invariant=True)` — 2 つの形状間の距離(小さいほど似た形)。回転/平行移動/始点/(任意で)スケール不変。
 - `fourier_smooth(points, keep)` — 輪郭を複素 FFT で帯域制限して平滑化する。
 - `from_xld(contour, i=0)` — XLD 輪郭 dict(``{"shape", "cs":[Nx2,...]}``)から i 番目の輪郭を取り出す。
+- `fit_circle_xld(contour, method='geometric')` — XLD 輪郭 1 本ごとに円を当てはめ、中心の行・列と半径を返す(``table``)。
 - `contour_fourier_complex(points, n_harmonics=None, parametrisation='index')` — 閉輪郭を複素フーリエ級数の係数にする —— ``z(t) = Σ c_k exp(2πi k t)``。
 - `contour_epicycle_chain(spectrum, phase, order='frequency')` — 位相 ``t`` における**回る振り子の連鎖**を返す(``pairs``)。
 - `contour_fourier_truncation_energy(spectrum, orders=None)` — 打ち切り次数ごとの**予言される**誤差(``table``)—— パーセバルの厳密式。
@@ -814,9 +818,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3758 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 964 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 62 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 62 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(964 ops / 49 categories)
 
@@ -922,7 +926,7 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `contour_point_num_xld` (halcon: `contour_point_num_xld`) `contour → feature` GPU: なし — XLD 輪郭群のうち最も点数の多い輪郭を選び、その頂点数を 500 点で正規化して [0,1] で返す（500 点以上は 1.0 に飽和）。a, b は未使用。輪郭が無ければ 0 を返す。 · 例: `gallery2d_contour_measure`
 - `contours_to_region` (halcon: `gen_region_contour_xld`) `contour → region` GPU: なし — XLD 輪郭をラスタ化して region に変換する。HALCON の ``gen_region_contour_xld``（Create a region from an XLD contour.）に相当。 · 例: `gallery2d_contour_measure`, `quickstart`
 - `edges_color_sub_pix` (halcon: `edges_color_sub_pix`) `color → contour` GPU: なし — カラーエッジ上の連結成分を輪郭（contour）として取り出す。HALCON の ``edges_color_sub_pix``（Deriche/Shen/Canny でサブピクセル精度のカラー エッジを抽出する）に相当するとされるが、**実装はサブピクセル精度では ない**——``_edges_color`` の勾配強度をしきい値二値化し、8 連結の ラベリング（``scipy.ndimage.label``）でつないだ画素座標をそのまま 輪郭点として返す（座標はすべて整数格子上）。3 画素未満の成分は捨てる。 · 例: `gallery2d_contour_measure`
-- `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` GPU: なし — サブピクセル精度のエッジ点抽出。勾配とその法線方向(``gradient_ normals``)を求め、しきい値(``0.15+0.5*a``)を超える画素を連結成分化した 後、放物線当てはめで各点をサブピクセル位置へ精密化する(``subpixel_ refine_edges``、``ops`` 側の同名 op と共有する実装 ―― 2026-09-02 修正で 真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して いた)。HALCON の ``edges_sub_pix``（Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.）に相当。 · 例: `gallery2d_contour_measure`, `quickstart`
+- `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` GPU: なし — サブピクセル精度のエッジ輪郭抽出。勾配とその法線方向(``gradient_ normals``)を求め、非極大抑制(Canny と同じ、法線方向の両隣より強い画素だけ)で 1 画素幅に細らせ、しきい値(``0.15+0.5*a``、最大勾配で正規化した強度)を超える画素を **曲線に沿って並べた輪郭**に繋ぎ(分岐点で別の輪郭に分ける。閉じたエッジは始点で閉じる)、 放物線当てはめで各点を法線方向にサブピクセル位置へ精密化する(``subpixel_ refine_edges``、``ops`` 側の同名 op と共有する実装 ―― 2026-09-02 修正で 真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して いた)。HALCON の ``edges_sub_pix``（Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.）に相当。 · 例: `gallery2d_contour_measure`, `quickstart`
 - `fit_line_contours` (halcon: `fit_line_contour_xld`) `contour → contour` GPU: なし — 各 XLD 輪郭を 1 本の直線で近似する。HALCON の ``fit_line_contour_xld``（Approximate XLD contours by line segments.）に相当。 · 例: `gallery2d_contour_measure`, `poc_screw_thread_metrology`
 - `gen_contour_region_xld` (halcon: `gen_contour_region_xld`) `region → contour` GPU: なし — region（画素マスク）の外周を、トレース順（輪郭に沿った順序）を保った XLD 輪郭として抽出する。``find_contours``（marching squares によるサブピクセル輪郭）で取る。scikit-image が無い環境では ``MissingDependencyError`` で止まる（2026-10-25 までは自前の Moore 近傍追跡——画素解像度で点数も座標も違う別の輪郭——に黙って落ちていた。追跡は ``backends_auto._moore_boundaries`` を名指しで呼べば使える）。a, b は未使用。 · 例: `gallery2d_contour_measure`
 - `gen_region_contour_xld` (halcon: `gen_region_contour_xld`) `contour → region` GPU: なし — 輪郭(点列)を画素グリッドにラスタライズしてから、``1+2*a`` 回だけ 二値膨張して太らせ、連結した領域マスクを作る(細い線のままだと ``region`` の {0,1} 契約上「線が繋がって見えない」ことがあるための補強)。HALCON の ``gen_region_contour_xld``（Create a region from an XLD contour.）に相当。 · 例: `gallery2d_contour_measure`
@@ -939,7 +943,7 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sk_find_contours` `image → contour` GPU: なし — 等高線抽出(marching squares)。グレースケール画像上で指定したレベル値と交差する曲線を辿り、サブピクセル精度の輪郭座標列の集合として返す —— 二値画像の外周だけでなく、連続値の等高線も扱える点が二値輪郭抽出と違う。 · 例: `gallery2d_bridge`, `gallery2d_contour_measure`
 - `smooth_contours` (halcon: `smooth_contours_xld`) `contour → contour` GPU: なし — 移動平均による XLD 輪郭の平滑化。HALCON の ``smooth_contours_xld``（Smooth an XLD contour.）に相当。 · 例: `gallery2d_contour_measure`
 - `smooth_contours_xld` (halcon: `smooth_contours_xld`) `contour → contour` GPU: なし — 輪郭の座標列を移動平均(窓幅 ``2*(1+3*a)+1``)で平滑化する。輪郭の ギザギザ(画素境界由来のジグザグ)を滑らかにする。HALCON の ``smooth_contours_xld``（Smooth an XLD contour.）に相当。 · 例: `gallery2d_contour_measure`
-- `threshold_sub_pix` (halcon: `threshold_sub_pix`) `image → contour` GPU: なし — マーチングスクエア法(``skimage.measure.find_contours``)によるレベル クロッシング(等高線)抽出。指定した階調レベル(``0.2+0.5*a``)を横切る位置を サブピクセル精度で輪郭として返す。HALCON の ``threshold_sub_pix`` （Extract level crossings from an image with subpixel accuracy.）に相当。 · 例: `gallery2d_contour_measure`, `poc_peg_insertion_tactile`, `poc_screw_thread_metrology`
+- `threshold_sub_pix` (halcon: `threshold_sub_pix`) `image → contour` GPU: なし — マーチングスクエア法(``skimage.measure.find_contours``)によるレベル クロッシング(等高線)抽出。指定した階調レベル(``0.2+0.5*a``)を横切る位置を サブピクセル精度で輪郭として返す。HALCON の ``threshold_sub_pix`` （Extract level crossings from an image with subpixel accuracy.）に相当。 · 例: `fit_circle_xld_bore`, `gallery2d_contour_measure`, `poc_peg_insertion_tactile`, `poc_screw_thread_metrology`
 - `zero_crossing_sub_pix` (halcon: `zero_crossing_sub_pix`) `image → contour` GPU: なし — LoG(ガウス平滑化込みラプラシアン、シグマ ``0.5+2*a``)のゼロ交差を ``find_contours`` でサブピクセル精度の輪郭として抽出する。領域版の ``zero_crossing``(画素解像度)に対するサブピクセル精度版。HALCON の ``zero_crossing_sub_pix``（Extract zero crossings from an image with subpixel accuracy.）に相当。 · 例: `gallery2d_contour_measure`
 
 #### 2d / decomposition(7)
@@ -1064,7 +1068,7 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `eccentricity_xld` (halcon: `eccentricity_xld`) `contour → match` GPU: なし — ``eccentricity`` の輪郭版。最大の輪郭について ``(Anisometry, Bulkiness, StructureFactor)`` を ``match`` ソートの 3 成分ベクトルで返す。HALCON の ``eccentricity_xld``（Shape features derived from the ellipse parameters of contours or polygons.）**と同じ 3 値・同じ式**。 · 例: `gallery2d_features`
 - `effective_bit_depth` `image → feature` GPU: なし — 画像が**実際に**使っているビット数を推定して ``[0,1]`` に写して返す(feature)。 · 例: `gallery2d_features`
 - `elliptic_axis` (halcon: `elliptic_axis`) `region → match` GPU: なし — 領域に等価な楕円(equivalent ellipse、慣性モーメントが一致する楕円)の``(Ra, Rb, Phi)`` を ``match`` ソートの 3 成分ベクトルで返す —— ``Ra``/``Rb`` は長半径・短半径(**画素**)、``Phi`` は主軸の角(ラジアン、列軸から反時計回り)。HALCON の ``elliptic_axis`` (Calculate the parameters of the equivalent ellipse.)と同じ 3 値。 · 例: `gallery2d_features`
-- `elliptic_axis_xld` (halcon: `elliptic_axis_xld`) `contour → match` GPU: なし — 最大の点数を持つ輪郭に楕円を当てはめ(``cv2.fitEllipse``)、``(Ra, Rb, Phi)`` を ``match`` ソートの 3 成分ベクトルで返す —— ``Ra``/``Rb`` は長半径・短半径 [px]、``Phi`` は主軸の角(ラジアン、列軸から反時計回り、-π/2 より大きく π/2 以下)。HALCON の ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）と同じ 3 値。 · 例: `gallery2d_features`
+- `elliptic_axis_xld` (halcon: `elliptic_axis_xld`) `contour → match` GPU: なし — 最大の点数を持つ輪郭に楕円を当てはめ(``cv2.fitEllipse``)、``(Ra, Rb, Phi)`` を ``match`` ソートの 3 成分ベクトルで返す —— ``Ra``/``Rb`` は長半径・短半径 [px]、``Phi`` は主軸の角(ラジアン、列軸から**画面上で反時計回り**・行は下向き、-π/2 より大きく π/2 以下)。HALCON の ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）と同じ 3 値。 · 例: `gallery2d_features`
 - `entropy_gray` (halcon: `entropy_gray`) `image → feature` GPU: なし — グレースケール階調の Shannon エントロピー(64 ビンヒストグラムから計算 し、最大値 ``log2(64)=6`` bit で正規化)。階調分布の「ばらつき/情報量」を 表し、一様な画像ほど値は大きく、単一階調に偏るほど 0 に近づく。HALCON の ``entropy_gray``（Determine the entropy and anisotropy of images.）は エントロピーと異方性の組を返すが、この代役ではエントロピーのみを実装 している。 · 例: `gallery2d_features`
 - `estimate_noise` (halcon: `estimate_noise`) `image → feature` GPU: なし — 加法性ノイズの標準偏差 σ をロバスト推定する(``_noise_sigma``: ラプラシアン応答の MAD を正規分布換算し、5 点ラプラシアン核のノイズ利得 ``sqrt(20)`` で割る)。エッジ由来の外れ値には鈍く、平坦部のノイズだけを 拾う設計(2026-09-02 に旧実装の「σ が単位を持たず σ≈0.08 以上で 1.0 に 張り付く」不具合を修正済み、詳細は ``_noise_sigma`` の docstring)。HALCON の ``estimate_noise``（Estimate the image noise from a single image.）に 相当。 · 例: `gallery2d_features`, `poc_weld_radiograph_porosity`
 - `euler_number` (halcon: `euler_number`) `region → feature` GPU: なし — オイラー数(``skimage.measure.euler_number``、連結成分数から穴の数を 引いた位相不変量)。値が小さい(負に近い)ほど穴が多いことを示す。HALCON の ``euler_number``（Calculate the Euler number.）に相当。 · 例: `gallery2d_features`
@@ -1085,8 +1089,8 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `moments_region_central` (halcon: `moments_region_central`) `region → feature` GPU: なし — 正規化中心モーメント(2 次まで)の和の絶対値 ``|μ20+μ11+μ02|``。 HALCON の ``moments_region_central``（Geometric moments of regions.）に 相当する、複数成分を 1 スカラーへ合成した近似。 · 例: `gallery2d_features`, `scale_law_of_features`
 - `moments_region_central_invar` (halcon: `moments_region_central_invar`) `region → feature` GPU: なし — Hu の第 2 不変モーメント(``hu[1]``)の絶対値。HALCON の ``moments_region_central_invar``（Geometric moments of regions.）に相当 する近似(``moments_region_2nd_invar`` が Hu[0] を使うのに対し、こちらは Hu[1] を使う ―― どちらも HALCON 独自の相対不変モーメントの厳密な代用では ない)。 · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
 - `moments_xld` (halcon: `moments_xld`) `contour → feature` GPU: なし — 輪郭の生モーメント(``cv2.moments``)から ``(mu20+mu02)/面積²`` という 単一スカラーを計算する ―― HALCON の ``moments_xld``（Geometric moments M20, M02, and M11 of contours or polygons.）が返す M20/M02/M11 の 3 成分を 1 つに合成した近似(個々の方向成分・M11 は失われる)。 · 例: `gallery2d_features`
-- `orientation_region` (halcon: `orientation_region`) `region → feature` GPU: なし — 領域の主軸の向き(``regionprops`` の ``orientation``、[-π/2,π/2] を [0,1] へ線形写像)。楕円フィットした際の長軸の傾きを表す。HALCON の ``orientation_region``（Orientation of a region.）に相当。 · 例: `gallery2d_features`
-- `orientation_xld` (halcon: `orientation_xld`) `contour → feature` GPU: なし — 楕円フィットした輪郭の傾き角(``cv2.fitEllipse`` の角度を 180° で 折り返して [0,1] に正規化)。HALCON の ``orientation_xld``（Calculate the orientation of contours or polygons.）に相当。 · 例: `gallery2d_features`
+- `orientation_region` (halcon: `orientation_region`) `region → feature` GPU: なし — 領域の主軸の向き θ / 180(θ は等価楕円の長軸の角、列軸から**画面上で反時計回り**・行は 下向き、[0, 180] 度。× 180 で度。実装は ``regionprops`` の ``orientation`` を ``(orientation + π/2) / π`` で写したもの)。HALCON の ``orientation_region``（Orientation of a region.）と同じ向きの角 —— HALCON は最遠点で 向きを決めて -π..π のラジアンで返すが、ここは 180 度で畳んで [0,1] に正規化している。 ``elliptic_axis`` の Phi(ラジアン)とは θ ≡ Phi (mod π) で一致する。 · 例: `gallery2d_features`
+- `orientation_xld` (halcon: `orientation_xld`) `contour → feature` GPU: なし — 楕円フィット(``cv2.fitEllipse``)した最大の輪郭の**主軸の角 θ / 180**(θ は列軸から **画面上で反時計回り**、行は下向き、[0, 180) 度に折り返す)。領域版 ``orientation_region`` と同じ規約(× 180 で度)。HALCON の ``orientation_xld``（Calculate the orientation of contours or polygons.）は同じ向きの角をラジアンで -π..π に返す (最遠点で向きを決める)ので、ここは 180 度で畳んで [0,1) に正規化した版。 · 例: `gallery2d_features`
 - `rectangularity` (halcon: `rectangularity`) `region → feature` GPU: なし — 矩形度。**同じ 1 次・2 次モーメントを持つ矩形**を作り、領域との差の面積を その矩形の面積で正規化する(``1 - |領域 XOR 矩形| / |矩形|``)。矩形なら 1。 HALCON の ``rectangularity``（Shape factor for the rectangularity of a region.）**と同じ定義**。 · 例: `gallery2d_features`, `shape_factors_closed_form`
 - `rectangularity_xld` (halcon: `rectangularity_xld`) `contour → feature` GPU: なし — 矩形度の輪郭版。輪郭を塗りつぶして、**同じ 1 次・2 次モーメントを持つ矩形**との 差の面積をその矩形の面積で正規化する。矩形なら 1。HALCON の ``rectangularity_xld``（Shape factor for the rectangularity of contours or polygons.）**と同じ定義**。 · 例: `gallery2d_features`
 - `roundness` (halcon: `roundness`) `region → feature` GPU: なし — 真円度 ``1 - σ/μ``。``μ`` と ``σ`` は**重心から輪郭画素までの距離**の平均と 標準偏差で、距離が一様なほど(= 真円に近いほど)1 に近い。HALCON の ``roundness``（Shape factors from contour.）**と同じ式**。 · 例: `gallery2d_features`, `shape_factors_closed_form`
@@ -1778,7 +1782,7 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `tb_lf_center_view` `lightfield → image` GPU: なし — The centre viewpoint — the ordinary 2-D image a plenoptic camera also gives. · 例: なし
 - `tb_lf_depth_from_focus` `lightfield → image` GPU: なし — Per-pixel slope from the **sharpness peak** across the refocus sweep. · 例: なし
 - `tb_lf_epi` `lightfield → image` GPU: なし — Epipolar-plane image — the slice whose **line slope is the disparity**. · 例: なし
-- `tb_lf_epi_slope` `lightfield → image` GPU: なし — Per-pixel slope from the **EPI line orientation** (structure tensor, one pass). · 例: なし
+- `tb_lf_epi_slope` `lightfield → image` GPU: なし — Per-pixel slope from the **EPI line orientation** (structure tensor, refined by shearing). · 例: なし
 - `tb_lf_refocus` `lightfield → image` GPU: なし — Shift-and-add refocus: the synthetic-aperture image focused at *slope*. · 例: なし
 - `tb_lf_subaperture` `lightfield → image` GPU: なし — One sub-aperture view — the image seen through one point of the pupil. · 例: なし
 - `tb_lf_synthetic_aperture` `lightfield → image` GPU: なし — Refocus through a shaped aperture — and, with ``reduce="median"``, through occluders. · 例: なし
@@ -1884,7 +1888,7 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` GPU: なし — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · 例: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` GPU: なし — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · 例: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d(376 ops / 68 categories)
+### 3d(377 ops / 68 categories)
 
 点群・体積・メッシュ・深度の op(`ops3d.OPS3D`)。関数として呼ぶ。
 
@@ -2075,7 +2079,8 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `match_points_ncc` `points × points → position` GPU: なし — 点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。 · 例: `matching_localize`
 - `match_shape_3d` `voxel × voxel → position` GPU: なし — 3D 形状ベース(勾配方向)マッチング = 2D shapematch_gpu の voxel 版(「輪郭マッチング」)。 · 例: `matching_localize`
 
-#### 3d / match_pose(4)
+#### 3d / match_pose(5)
+- `find_surface_pose` `points × points → pose` GPU: なし — 既知の物体(モデル点群)が場面の点群のどこにあるかを、点対特徴(PPF)の投票と ICP で求める(``pose``)。 · 例: `find_surface_pose_bracket`
 - `match_logpolar_z` `voxel × voxel → rot_scale` GPU: なし — log-polar × 位相相関(Fourier-Mellin)で **z 軸回転 + 等方スケール**を復元。 · 例: `shape_desc_pose`
 - `match_pca` `points × points → pose` GPU: なし — PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。 · 例: `shape_desc_pose`
 - `match_phase_3d` `voxel × voxel → shift` GPU: なし — 3D 位相相関(FFT)。b を a に合わせる整数シフト (dz,dy,dx) を返す。 · 例: `shape_desc_pose`
@@ -2226,7 +2231,7 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `inlier_ratio` `points × points → measurement` GPU: なし — 対応集合の inlier 率 = ‖T·source[i] − target[i]‖ < thresh の割合。→ [0,1]。 · 例: `reg_eval`
 - `registration_recall` `points × points → measurement` GPU: なし — 3DMatch 流の per-pair 登録成否 = 1.0(成功)/ 0.0(失敗)。 · 例: `reg_eval`
 - `rmse_inliers` `points × points → measurement` GPU: なし — inlier 対応(残差 < thresh)上の RMSE と inlier 数。→ (rmse, n_inliers)。 · 例: `reg_eval`
-- `rotation_translation_error` `pose × pose → measurement` GPU: なし — 2 つの 4×4 変換間の相対回転誤差(測地角[度], RRE)と相対並進誤差(RTE)。 · 例: `reg_eval`
+- `rotation_translation_error` `pose × pose → table` GPU: なし — 2 つの 4×4 変換間の相対回転誤差(測地角[度], RRE)と相対並進誤差(RTE)。 · 例: `reg_eval`
 
 #### 3d / render(19)
 - `ambient_occlusion` `mesh → image2d` GPU: なし — メッシュを AO マップ画像 ``(H, W)`` [0,1] にレンダリングして返す。 · 例: `render_ao`
@@ -2409,7 +2414,7 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 #### fit / registration(1)
 - `phase_correlation_shift` `image2d × image2d → table` GPU: なし — 2 枚の画像の位置合わせに必要なサブピクセル移動量を位相限定相関で求める。 · 例: `fit_ops_from_knowhow`
 
-### math(114 ops / 12 categories)
+### math(115 ops / 12 categories)
 
 視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
 
@@ -2543,8 +2548,9 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `tf_step_response` `signal × signal × signal → signal` GPU: なし — 単位ステップ応答 y(t) = L⁻¹[H(s)/s] (t)。 · 例: `transforms_tour`
 - `wavelet_filters` `入力なし → table` GPU: なし — Daubechies の正規直交ウェーブレット dbN のフィルタを、教科書の構成(スペクトル分解)で作る。 · 例: `gallery_math_numerics_filters`
 
-#### math / wave(6)
-- `wave_fringe_period` `image2d → measurement` GPU: なし — The period of a striped image, measured back out of it (pixels). · 例: `poc_beats_fringes_and_screens`
+#### math / wave(7)
+- `wave_dominant_frequency` `image2d → table` GPU: なし — 画像の最も強い周期(2-D FFT の DC 以外で最大の山)の周波数・周期・向きを返す(``table``)。 · 例: `wave_dominant_frequency_grating`
+- `wave_fringe_period` `image2d → measurement` GPU: なし — The period of a striped image, measured back out of it (pixels). · 例: `poc_beats_fringes_and_screens`, `wave_dominant_frequency_grating`
 - `wave_grating_orders` `入力なし → table` GPU: なし — Where a grating sends each order: ``d (sin_out - sin_in) = m lambda`` solved for the angle. · 例: `poc_beats_fringes_and_screens`, `poc_spectrometer_illumination`
 - `wave_membrane_mode` `入力なし → matrix` GPU: なし — One eigenmode of a vibrating **membrane** — the shape the sand draws. · 例: `poc_beats_fringes_and_screens`
 - `wave_mode_frequencies` `入力なし → signal` GPU: なし — The eigenvalue ladder of a membrane — a closed form you can check against. · 例: `poc_beats_fringes_and_screens`
@@ -3180,7 +3186,7 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `lf_all_in_focus` `lightfield × image2d → image2d` GPU: なし — Composite one everywhere-sharp image by refocusing each pixel at its own slope. · 例: `lightfield_depth`, `poc_compound_eye`
 - `lf_depth_from_focus` `lightfield → image2d` GPU: なし — Per-pixel slope from the **sharpness peak** across the refocus sweep. · 例: `lightfield_depth`, `plenoptic_decode_pipeline`, `poc_compound_eye`, `poc_lightfield_depth`, `poc_plenoptic_camera`
 - `lf_disparity_to_depth` `image2d → depth` GPU: なし — Slope (px per angular step) -> metric depth, the camera-array model. · 例: `lightfield_depth`, `poc_lightfield_depth`
-- `lf_epi_slope` `lightfield → image2d` GPU: なし — Per-pixel slope from the **EPI line orientation** (structure tensor, one pass). · 例: `lightfield_depth`, `poc_lightfield_depth`
+- `lf_epi_slope` `lightfield → image2d` GPU: なし — Per-pixel slope from the **EPI line orientation** (structure tensor, refined by shearing). · 例: `lightfield_depth`, `poc_lightfield_depth`
 - `lf_plenoptic_design` `入力なし → table` GPU: なし — Size a plenoptic camera: what angular/spatial resolution and depth range you buy. · 例: `lightfield_depth`, `poc_compound_eye`
 
 #### lightfield / refocus(4)
@@ -5409,14 +5415,15 @@ _計 3755 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 #### roughness / synth(1)
 - `surface_synth_psd` `入力なし → depth` GPU: なし — 指定した PSD から高さ場を合成する。``(z, sq_analytic)`` を返す。 · 例: `poc_polish_wipe_measure`, `poc_surface_roughness`
 
-### shape2d(16 ops / 2 categories)
+### shape2d(17 ops / 2 categories)
 
-#### shape2d / descriptor(10)
+#### shape2d / descriptor(11)
 - `contour_epicycle_chain` `matrix → pairs` GPU: なし — 位相 ``t`` における**回る振り子の連鎖**を返す(``pairs``)。 · 例: `poc_one_stroke_epicycles`
 - `contour_fourier_complex` `pairs → matrix` GPU: なし — 閉輪郭を複素フーリエ級数の係数にする —— ``z(t) = Σ c_k exp(2πi k t)``。 · 例: `poc_one_stroke_epicycles`
 - `contour_fourier_truncation_energy` `matrix → table` GPU: なし — 打ち切り次数ごとの**予言される**誤差(``table``)—— パーセバルの厳密式。 · 例: `poc_one_stroke_epicycles`
 - `descriptor_distance` `efdmodel × efdmodel → measurement` GPU: なし — 2 つの形状間の距離(小さいほど似た形)。回転/平行移動/始点/(任意で)スケール不変。 · 例: `contour_fourier`, `shape2d_morph_descriptor_tour`
 - `elliptic_fourier` `pairs → efdmodel` GPU: なし — 閉輪郭の楕円フーリエ係数を Kuhl–Giardina 閉形式で求める。 · 例: `contour_fourier`, `shape2d_morph_descriptor_tour`
+- `fit_circle_xld` `contour → table` GPU: なし — XLD 輪郭 1 本ごとに円を当てはめ、中心の行・列と半径を返す(``table``)。 · 例: `fit_circle_xld_bore`
 - `fourier_smooth` `pairs → pairs` GPU: なし — 輪郭を複素 FFT で帯域制限して平滑化する。 · 例: `contour_fourier`
 - `from_xld` `table → pairs` GPU: なし — XLD 輪郭 dict(``{"shape", "cs":[Nx2,...]}``)から i 番目の輪郭を取り出す。 · 例: `shape2d_morph_descriptor_tour`
 - `invariants` `efdmodel → pairs` GPU: なし — 回転・平行移動・始点・(任意で)スケールに不変な形状記述子((N,2))。 · 例: `shape2d_morph_descriptor_tour`

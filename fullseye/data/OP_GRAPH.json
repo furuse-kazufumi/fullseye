@@ -53,13 +53,13 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3529,
+    "executable": 3543,
     "reasons": {
-      "python_signature": 2565,
+      "python_signature": 2579,
       "registry": 964
     },
     "not_executable_reasons": {
-      "python_callable_not_found": 14,
+      "generic_algorithm_layer_run_by_api.run_algo": 3,
       "python_signature_has_fewer_inputs_than_graph": 1,
       "unknown_input_or_output_sort": 208
     }
@@ -373,9 +373,9 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3752,
-    "conversion_pairs": 408,
-    "conversion_edge_incidence": 2428
+    "edges": 3755,
+    "conversion_pairs": 409,
+    "conversion_edge_incidence": 2432
   },
   "nodes": [
     {
@@ -493,7 +493,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 43,
-      "consumed_by": 66,
+      "consumed_by": 67,
       "generator": false,
       "type_check": false,
       "choose_when": "undocumented",
@@ -768,7 +768,7 @@
       "container": "dense_array",
       "size_hint": "input-dependent",
       "produced_by": 729,
-      "consumed_by": 1088,
+      "consumed_by": 1089,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -899,7 +899,7 @@
       "sort": "measurement",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 97,
+      "produced_by": 96,
       "consumed_by": 6,
       "generator": true,
       "type_check": true,
@@ -999,7 +999,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 82,
-      "consumed_by": 296,
+      "consumed_by": 298,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1042,7 +1042,7 @@
       "sort": "pose",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 16,
+      "produced_by": 17,
       "consumed_by": 11,
       "generator": true,
       "type_check": true,
@@ -1383,7 +1383,7 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1237,
+      "produced_by": 1240,
       "consumed_by": 584,
       "generator": true,
       "type_check": true,
@@ -5929,6 +5929,92 @@
         "callable": "match_pca"
       },
       "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00001"
+    },
+    {
+      "op": "find_surface_pose",
+      "inputs": [
+        "points",
+        "points"
+      ],
+      "output": "pose",
+      "category": "3d",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00001"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00001"
+        }
+      ],
+      "input_roles": [
+        "model_points",
+        "scene_points"
+      ],
+      "runtime_target": {
+        "module": "ppf",
+        "callable": "find_surface_pose"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ppf",
+        "callable": "find_surface_pose"
+      },
+      "parameter_schema": [
+        {
+          "name": "model_normals",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "scene_normals",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "dist_step",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "angle_bins",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 30
+        },
+        {
+          "name": "k_normals",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 16
+        }
+      ],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -13823,8 +13909,18 @@
           "default": "general"
         }
       ],
-      "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "verified_executable": true,
+      "verification": {
+        "source": "tests/test_op_facets_2026_10_28.py::test_three_multi_input_business_dags_execute_through_mcp",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "meaningful_synthetic_input"
+        ]
+      },
       "bundle_semantics": "stack_global",
       "source_ref": "S00001"
     },
@@ -15708,34 +15804,19 @@
         }
       ],
       "input_roles": [
-        "R_est",
-        "t_est"
+        "pose_est",
+        "pose_gt"
       ],
       "runtime_target": {
-        "module": "metrics3d",
+        "module": "ops3d",
         "callable": "pose_error"
       },
       "executor": {
         "kind": "python",
-        "module": "metrics3d",
+        "module": "ops3d",
         "callable": "pose_error"
       },
-      "parameter_schema": [
-        {
-          "name": "R_gt",
-          "type": "unannotated",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "t_gt",
-          "type": "unannotated",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        }
-      ],
+      "parameter_schema": [],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -23196,7 +23277,7 @@
         "pose",
         "pose"
       ],
-      "output": "measurement",
+      "output": "table",
       "category": "3d",
       "family": null,
       "family_candidate": null,
@@ -23221,12 +23302,12 @@
         "est"
       ],
       "runtime_target": {
-        "module": "registration_eval",
+        "module": "ops3d",
         "callable": "rotation_translation_error"
       },
       "executor": {
         "kind": "python",
-        "module": "registration_eval",
+        "module": "ops3d",
         "callable": "rotation_translation_error"
       },
       "parameter_schema": [],
@@ -31636,6 +31717,55 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 1
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00005"
+    },
+    {
+      "op": "wave_dominant_frequency",
+      "inputs": [
+        "image"
+      ],
+      "output": "table",
+      "category": "math",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00005"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00005"
+        }
+      ],
+      "runtime_target": {
+        "module": "mathops",
+        "callable": "wave_dominant_frequency"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "mathops",
+        "callable": "wave_dominant_frequency"
+      },
+      "parameter_schema": [
+        {
+          "name": "window",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "hann"
         }
       ],
       "verified_executable": false,
@@ -93956,25 +94086,25 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_same"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_same"
       },
       "parameter_schema": [
         {
-          "name": "v_front",
+          "name": "v_rear",
           "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
         },
         {
-          "name": "p",
-          "type": "dict",
+          "name": "v_front",
+          "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -94019,25 +94149,25 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_opposite"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_opposite"
       },
       "parameter_schema": [
         {
-          "name": "v2",
+          "name": "v1",
           "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
         },
         {
-          "name": "p1",
-          "type": "dict",
+          "name": "v2",
+          "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -94082,25 +94212,25 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_lateral"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_lateral"
       },
       "parameter_schema": [
         {
-          "name": "v2",
+          "name": "v1",
           "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
         },
         {
-          "name": "p1",
-          "type": "dict",
+          "name": "v2",
+          "type": "float",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -94145,15 +94275,22 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_check"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_longitudinal_check"
       },
       "parameter_schema": [
+        {
+          "name": "d",
+          "type": "float",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
         {
           "name": "v_rear",
           "type": "float",
@@ -94164,13 +94301,6 @@
         {
           "name": "v_front",
           "type": "float",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "p",
-          "type": "dict",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -94215,15 +94345,22 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_lateral_check"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_lateral_check"
       },
       "parameter_schema": [
+        {
+          "name": "d_lat",
+          "type": "float",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
         {
           "name": "v1",
           "type": "float",
@@ -94234,13 +94371,6 @@
         {
           "name": "v2",
           "type": "float",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "p1",
-          "type": "dict",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -94285,15 +94415,22 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap"
       },
       "parameter_schema": [
+        {
+          "name": "d0",
+          "type": "float",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
         {
           "name": "v_rear",
           "type": "float",
@@ -94304,13 +94441,6 @@
         {
           "name": "v_front",
           "type": "float",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "p",
-          "type": "dict",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -94371,15 +94501,22 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap_opposite"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap_opposite"
       },
       "parameter_schema": [
+        {
+          "name": "d0",
+          "type": "float",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
         {
           "name": "v1",
           "type": "float",
@@ -94390,13 +94527,6 @@
         {
           "name": "v2",
           "type": "float",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "p1",
-          "type": "dict",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -94457,15 +94587,22 @@
         }
       ],
       "runtime_target": {
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap_lateral"
       },
       "executor": {
         "kind": "python",
-        "module": "rsssafety",
+        "module": "opsdrive",
         "callable": "rss_worst_case_gap_lateral"
       },
       "parameter_schema": [
+        {
+          "name": "d0",
+          "type": "float",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
         {
           "name": "v1",
           "type": "float",
@@ -94476,13 +94613,6 @@
         {
           "name": "v2",
           "type": "float",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "p1",
-          "type": "dict",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
@@ -174946,6 +175076,55 @@
       "source_ref": "S00045"
     },
     {
+      "op": "fit_circle_xld",
+      "inputs": [
+        "contour"
+      ],
+      "output": "table",
+      "category": "shape2d",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00045"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00045"
+        }
+      ],
+      "runtime_target": {
+        "module": "fourierdesc",
+        "callable": "fit_circle_xld"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "fourierdesc",
+        "callable": "fit_circle_xld"
+      },
+      "parameter_schema": [
+        {
+          "name": "method",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "geometric"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00045"
+    },
+    {
       "op": "contour_fourier_complex",
       "inputs": [
         "pairs"
@@ -187345,24 +187524,24 @@
         }
       ],
       "runtime_target": {
-        "module": "geocam",
+        "module": "opsgeocam",
         "callable": "sun_position"
       },
       "executor": {
         "kind": "python",
-        "module": "geocam",
+        "module": "opsgeocam",
         "callable": "sun_position"
       },
       "parameter_schema": [
         {
-          "name": "lon_deg",
+          "name": "lat_deg",
           "type": "unannotated",
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
         },
         {
-          "name": "unix_times",
+          "name": "lon_deg",
           "type": "unannotated",
           "required": true,
           "range": "undocumented",
@@ -193514,9 +193693,14 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "archive_create"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "not_executable_in_mcp": "io_side_effect",
+      "mcp_rejection_detail": "unsafe parameter: paths_or_items",
       "bundle_semantics": "unknown",
       "source_ref": "S00059"
     },
@@ -193559,9 +193743,14 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "archive_extract"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "not_executable_in_mcp": "io_side_effect",
+      "mcp_rejection_detail": "unsafe parameter: data_or_path",
       "bundle_semantics": "unknown",
       "source_ref": "S00059"
     },
@@ -193604,9 +193793,14 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "archive_list"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "not_executable_in_mcp": "io_side_effect",
+      "mcp_rejection_detail": "unsafe parameter: data_or_path",
       "bundle_semantics": "unknown",
       "source_ref": "S00059"
     },
@@ -193649,9 +193843,14 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "archive_probe"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "not_executable_in_mcp": "io_side_effect",
+      "mcp_rejection_detail": "unsafe parameter: data_or_path",
       "bundle_semantics": "unknown",
       "source_ref": "S00059"
     },
@@ -193693,6 +193892,10 @@
           "effect": 0.0,
           "kind": "unused"
         }
+      },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "astro_fits_read"
       },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
@@ -193739,6 +193942,10 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "astro_fits_write"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
@@ -193783,6 +193990,10 @@
           "effect": 0.0,
           "kind": "unused"
         }
+      },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "e57_read"
       },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
@@ -193829,6 +194040,10 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "e57_write"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
@@ -193873,6 +194088,10 @@
           "effect": 0.0,
           "kind": "unused"
         }
+      },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "em_mrc_read"
       },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
@@ -193919,6 +194138,10 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "em_mrc_write"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
@@ -193937,7 +194160,7 @@
       "family_candidate_source": null,
       "type_semantics": "typed",
       "consumes_input": true,
-      "executable": false,
+      "executable": true,
       "compute": {
         "structure": "unknown",
         "intensity": "unknown",
@@ -193950,21 +194173,16 @@
           "source_ref": "S00059"
         }
       ],
-      "parameters": {
-        "a": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        },
-        "b": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        }
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "mesh_read_obj"
       },
-      "executable_reason": "python_callable_not_found",
+      "executor": {
+        "kind": "python",
+        "module": "fileio",
+        "callable": "mesh_read_obj"
+      },
+      "parameter_schema": [],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -193982,7 +194200,7 @@
       "family_candidate_source": null,
       "type_semantics": "typed",
       "consumes_input": true,
-      "executable": false,
+      "executable": true,
       "compute": {
         "structure": "unknown",
         "intensity": "unknown",
@@ -193995,21 +194213,16 @@
           "source_ref": "S00059"
         }
       ],
-      "parameters": {
-        "a": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        },
-        "b": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        }
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "mesh_read_off"
       },
-      "executable_reason": "python_callable_not_found",
+      "executor": {
+        "kind": "python",
+        "module": "fileio",
+        "callable": "mesh_read_off"
+      },
+      "parameter_schema": [],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -194053,6 +194266,10 @@
           "effect": 0.0,
           "kind": "unused"
         }
+      },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "mesh_read_ply"
       },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
@@ -194099,6 +194316,10 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "mesh_read_stl"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
@@ -194117,7 +194338,7 @@
       "family_candidate_source": null,
       "type_semantics": "typed",
       "consumes_input": true,
-      "executable": false,
+      "executable": true,
       "compute": {
         "structure": "unknown",
         "intensity": "unknown",
@@ -194130,21 +194351,16 @@
           "source_ref": "S00059"
         }
       ],
-      "parameters": {
-        "a": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        },
-        "b": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        }
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "mesh_write_obj"
       },
-      "executable_reason": "python_callable_not_found",
+      "executor": {
+        "kind": "python",
+        "module": "fileio",
+        "callable": "mesh_write_obj"
+      },
+      "parameter_schema": [],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -194162,7 +194378,7 @@
       "family_candidate_source": null,
       "type_semantics": "typed",
       "consumes_input": true,
-      "executable": false,
+      "executable": true,
       "compute": {
         "structure": "unknown",
         "intensity": "unknown",
@@ -194175,21 +194391,16 @@
           "source_ref": "S00059"
         }
       ],
-      "parameters": {
-        "a": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        },
-        "b": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        }
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "mesh_write_off"
       },
-      "executable_reason": "python_callable_not_found",
+      "executor": {
+        "kind": "python",
+        "module": "fileio",
+        "callable": "mesh_write_off"
+      },
+      "parameter_schema": [],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -194233,6 +194444,10 @@
           "effect": 0.0,
           "kind": "unused"
         }
+      },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "mesh_write_ply"
       },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
@@ -194279,6 +194494,10 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "mesh_write_stl"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
@@ -194323,6 +194542,10 @@
           "effect": 0.0,
           "kind": "unused"
         }
+      },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "nifti_read"
       },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
@@ -194369,6 +194592,10 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "nifti_write"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
@@ -194413,6 +194640,10 @@
           "effect": 0.0,
           "kind": "unused"
         }
+      },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "nrrd_read"
       },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
@@ -194459,6 +194690,10 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "nrrd_write"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
@@ -194503,6 +194738,10 @@
           "effect": 0.0,
           "kind": "unused"
         }
+      },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "ome_tiff_read"
       },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
@@ -194549,6 +194788,10 @@
           "kind": "unused"
         }
       },
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "ome_tiff_write"
+      },
       "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
@@ -194567,7 +194810,7 @@
       "family_candidate_source": null,
       "type_semantics": "typed",
       "consumes_input": true,
-      "executable": false,
+      "executable": true,
       "compute": {
         "structure": "unknown",
         "intensity": "unknown",
@@ -194580,21 +194823,16 @@
           "source_ref": "S00059"
         }
       ],
-      "parameters": {
-        "a": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        },
-        "b": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        }
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "points_read_xyz"
       },
-      "executable_reason": "python_callable_not_found",
+      "executor": {
+        "kind": "python",
+        "module": "fileio",
+        "callable": "points_read_xyz"
+      },
+      "parameter_schema": [],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -194612,7 +194850,7 @@
       "family_candidate_source": null,
       "type_semantics": "typed",
       "consumes_input": true,
-      "executable": false,
+      "executable": true,
       "compute": {
         "structure": "unknown",
         "intensity": "unknown",
@@ -194625,21 +194863,16 @@
           "source_ref": "S00059"
         }
       ],
-      "parameters": {
-        "a": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        },
-        "b": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        }
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "points_write_xyz"
       },
-      "executable_reason": "python_callable_not_found",
+      "executor": {
+        "kind": "python",
+        "module": "fileio",
+        "callable": "points_write_xyz"
+      },
+      "parameter_schema": [],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -194657,7 +194890,7 @@
       "family_candidate_source": null,
       "type_semantics": "typed",
       "consumes_input": true,
-      "executable": false,
+      "executable": true,
       "compute": {
         "structure": "unknown",
         "intensity": "unknown",
@@ -194670,23 +194903,19 @@
           "source_ref": "S00059"
         }
       ],
-      "parameters": {
-        "a": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        },
-        "b": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        }
+      "runtime_target": {
+        "module": "dsp",
+        "callable": "read_audio"
       },
-      "executable_reason": "python_callable_not_found",
+      "executor": {
+        "kind": "python",
+        "module": "dsp",
+        "callable": "read_audio"
+      },
+      "parameter_schema": [],
       "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "not_executable_in_mcp": "io_side_effect",
+      "mcp_rejection_detail": "unsafe parameter: path",
       "bundle_semantics": "unknown",
       "source_ref": "S00059"
     },
@@ -194702,7 +194931,7 @@
       "family_candidate_source": null,
       "type_semantics": "typed",
       "consumes_input": true,
-      "executable": false,
+      "executable": true,
       "compute": {
         "structure": "unknown",
         "intensity": "unknown",
@@ -194715,23 +194944,19 @@
           "source_ref": "S00059"
         }
       ],
-      "parameters": {
-        "a": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        },
-        "b": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        }
+      "runtime_target": {
+        "module": "dsp",
+        "callable": "read_wav"
       },
-      "executable_reason": "python_callable_not_found",
+      "executor": {
+        "kind": "python",
+        "module": "dsp",
+        "callable": "read_wav"
+      },
+      "parameter_schema": [],
       "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "not_executable_in_mcp": "io_side_effect",
+      "mcp_rejection_detail": "unsafe parameter: path",
       "bundle_semantics": "unknown",
       "source_ref": "S00059"
     },
@@ -194747,7 +194972,7 @@
       "family_candidate_source": null,
       "type_semantics": "typed",
       "consumes_input": true,
-      "executable": false,
+      "executable": true,
       "compute": {
         "structure": "unknown",
         "intensity": "unknown",
@@ -194760,21 +194985,16 @@
           "source_ref": "S00059"
         }
       ],
-      "parameters": {
-        "a": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        },
-        "b": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        }
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "table_read_csv"
       },
-      "executable_reason": "python_callable_not_found",
+      "executor": {
+        "kind": "python",
+        "module": "fileio",
+        "callable": "table_read_csv"
+      },
+      "parameter_schema": [],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -194792,7 +195012,7 @@
       "family_candidate_source": null,
       "type_semantics": "typed",
       "consumes_input": true,
-      "executable": false,
+      "executable": true,
       "compute": {
         "structure": "unknown",
         "intensity": "unknown",
@@ -194805,21 +195025,31 @@
           "source_ref": "S00059"
         }
       ],
-      "parameters": {
-        "a": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        },
-        "b": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        }
+      "runtime_target": {
+        "module": "fileio",
+        "callable": "table_write_csv"
       },
-      "executable_reason": "python_callable_not_found",
+      "executor": {
+        "kind": "python",
+        "module": "fileio",
+        "callable": "table_write_csv"
+      },
+      "parameter_schema": [
+        {
+          "name": "units",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "meta",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        }
+      ],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -194837,7 +195067,7 @@
       "family_candidate_source": null,
       "type_semantics": "typed",
       "consumes_input": true,
-      "executable": false,
+      "executable": true,
       "compute": {
         "structure": "unknown",
         "intensity": "unknown",
@@ -194850,23 +195080,35 @@
           "source_ref": "S00059"
         }
       ],
-      "parameters": {
-        "a": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        },
-        "b": {
-          "used": false,
-          "source": "unmeasured",
-          "effect": 0.0,
-          "kind": "unused"
-        }
+      "runtime_target": {
+        "module": "dsp",
+        "callable": "write_wav"
       },
-      "executable_reason": "python_callable_not_found",
+      "executor": {
+        "kind": "python",
+        "module": "dsp",
+        "callable": "write_wav"
+      },
+      "parameter_schema": [
+        {
+          "name": "x",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "rate",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 44100
+        }
+      ],
       "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "not_executable_in_mcp": "io_side_effect",
+      "mcp_rejection_detail": "unsafe parameter: path",
       "bundle_semantics": "unknown",
       "source_ref": "S00059"
     },
@@ -261910,7 +262152,14 @@
       "gpu_timing": "not_applicable",
       "parameters": {},
       "population_extension_reason": "generic algorithm layer requested by design",
-      "executable_reason": "python_callable_not_found",
+      "runtime_target": {
+        "module": "api",
+        "callable": "run_algo",
+        "fixed_args": [
+          "quicksort"
+        ]
+      },
+      "executable_reason": "generic_algorithm_layer_run_by_api.run_algo",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -261942,7 +262191,14 @@
       "gpu_timing": "not_applicable",
       "parameters": {},
       "population_extension_reason": "generic algorithm layer requested by design",
-      "executable_reason": "python_callable_not_found",
+      "runtime_target": {
+        "module": "api",
+        "callable": "run_algo",
+        "fixed_args": [
+          "heapsort"
+        ]
+      },
+      "executable_reason": "generic_algorithm_layer_run_by_api.run_algo",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -261974,7 +262230,14 @@
       "gpu_timing": "not_applicable",
       "parameters": {},
       "population_extension_reason": "generic algorithm layer requested by design",
-      "executable_reason": "python_callable_not_found",
+      "runtime_target": {
+        "module": "api",
+        "callable": "run_algo",
+        "fixed_args": [
+          "mergesort"
+        ]
+      },
+      "executable_reason": "generic_algorithm_layer_run_by_api.run_algo",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -261983,10 +262246,14 @@
   ],
   "diagnostics": {
     "dead_ends": [],
-    "orphans": [],
+    "orphans": [
+      "contour"
+    ],
     "never_consumed": [],
     "unchecked_ops": [],
-    "unreachable": [],
+    "unreachable": [
+      "contour"
+    ],
     "duplicate_declarations": [
       {
         "op": "gaussians_to_voxel",

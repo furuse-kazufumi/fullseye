@@ -9,7 +9,7 @@ MCP の検索(`fullseye_find_ops`)は runner = mcp(MCP の pipeline でそのま
 | 項目 | 値 |
 |---|---|
 | レシピ | 267(2 段以上 220) |
-| 族(docs/ops)の網羅 | 56 / 56 |
+| 族(docs/ops)の網羅 | 56 / 59 |
 | 2-D の category の網羅 | 25 / 49 |
 | 使った op(重複なし) | 409 |
 | 真値の門つき | 243 |
@@ -21,6 +21,8 @@ MCP の検索(`fullseye_find_ops`)は runner = mcp(MCP の pipeline でそのま
 
 HALCON の章: 1D Measuring 7, 2D Metrology 6, 3D Matching 8, 3D Object Model 18, 3D Reconstruction 14, Calibration 4, Color 8, Features 2, Filters 10, Frequency 1, Identification 1, Inspection 4, Matching 5, Morphology 3, OCR 4, Regions 19, Restoration 2, Segmentation 10, Texture 3, Transformations 7, XLD 10
 
+**レシピの無い族**: acceptance, matchreg, symbol
+
 2-D でレシピの無い category: arithmetic, artificial_life, artistic, augmentation, classification, decomposition, deformation, domain, extra, filtering, intensity_transform, macro, misc, morphology_markers, noise, physics, region_morphology, region_transform, self_similarity, tactile, texture_feature, texture_shape_feature, tomography, transform
 
 GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈の GPU 経路(`gpu_route.route(op, "pipeline")`)を持つ箇所の数(CPU と GPU の間の受け渡し 1 回)。snapshot に無い op を含むレシピは未計測。
@@ -29,15 +31,16 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 
 | 族 | op 数 | レシピ | 使った op |
 |---|---:|---:|---:|
-| 2d | 959 | 90 | 99 |
+| 2d | 964 | 90 | 99 |
 | 3d | 377 | 25 | 35 |
+| acceptance | 8 | 0 | 0 |
 | acoustics | 27 | 4 | 6 |
 | annotate | 51 | 2 | 4 |
-| aoi | 3 | 1 | 2 |
+| aoi | 8 | 1 | 2 |
 | astrostack | 14 | 4 | 9 |
 | blob | 11 | 4 | 6 |
 | cadmap | 4 | 1 | 1 |
-| calib | 21 | 2 | 4 |
+| calib | 29 | 2 | 4 |
 | codematch | 6 | 1 | 1 |
 | colortransport | 11 | 2 | 3 |
 | conngraph | 28 | 2 | 4 |
@@ -45,7 +48,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | dem | 25 | 2 | 3 |
 | drive | 717 | 7 | 11 |
 | emproof | 14 | 1 | 2 |
-| fileio | 14 | 2 | 4 |
+| fileio | 28 | 2 | 4 |
 | fit | 3 | 2 | 2 |
 | flyvision | 22 | 3 | 6 |
 | generative | 42 | 3 | 5 |
@@ -58,19 +61,20 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | lightfield | 17 | 3 | 6 |
 | live4d | 14 | 1 | 2 |
 | llmcore | 10 | 1 | 4 |
+| matchreg | 12 | 0 | 0 |
 | math | 115 | 5 | 9 |
 | measure1d | 17 | 3 | 7 |
 | motionmag | 9 | 3 | 4 |
 | multivar | 18 | 3 | 5 |
 | oned | 49 | 3 | 8 |
-| optics | 483 | 14 | 37 |
+| optics | 504 | 14 | 37 |
 | photon | 17 | 3 | 7 |
 | piv | 29 | 4 | 8 |
 | printpath | 23 | 1 | 3 |
 | profile | 12 | 2 | 5 |
 | quat | 19 | 2 | 5 |
 | rangedoppler | 8 | 2 | 5 |
-| reprconv | 42 | 2 | 2 |
+| reprconv | 62 | 2 | 2 |
 | residue | 5 | 1 | 1 |
 | roughness | 9 | 5 | 8 |
 | segmentation | 59 | 4 | 4 |
@@ -79,6 +83,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | simcal | 10 | 1 | 4 |
 | spc | 41 | 4 | 6 |
 | specular | 20 | 6 | 6 |
+| symbol | 33 | 0 | 0 |
 | text | 3 | 3 | 3 |
 | tomography | 32 | 4 | 6 |
 | videocube | 6 | 1 | 1 |

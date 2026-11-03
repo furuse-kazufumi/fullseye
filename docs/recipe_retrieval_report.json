@@ -1,22 +1,24 @@
 {
-  "method": "Business-language queries contain no operator names; hit when the expected existing recipe is in top 2.",
-  "recall_at_2": 1.0,
+  "method": "Business-language queries contain no operator names. recall_at_2: the expected existing recipe is in the top 2. e2e_task_recipe_hit_at_2: one of the top-2 MCP-runnable recipes contains an op PR #224's judge expects. blind_*_hit_at_3: queries written from docs/ops without seeing the recipes; a top-3 recipe has that family / one of the listed ops.",
+  "recipes_in_index": 267,
+  "recipes_mcp": 89,
+  "recall_at_2": 0.6666666666666666,
   "queries": [
     {
       "query": "remove impulse noise",
       "expected": "Denoise — median",
       "top_2": [
-        "FA — scratch on hairline metal",
-        "Denoise — median"
+        "Preprocess — remove salt-and-pepper impulses before measuring part area",
+        "FA — scratch on hairline metal"
       ],
-      "hit": true
+      "hit": false
     },
     {
       "query": "count holes in backlit plate",
       "expected": "FA — count holes in a back-lit plate",
       "top_2": [
-        "FA — count holes in a back-lit plate",
-        "Count — blobs"
+        "Inspect — count punched holes in a plate (Euler number)",
+        "FA — count holes in a back-lit plate"
       ],
       "hit": true
     },
@@ -25,7 +27,7 @@
       "expected": "Binarize — document (adaptive)",
       "top_2": [
         "Binarize — document (adaptive)",
-        "FA — scratch on hairline metal"
+        "Analyze — statistical shape model: variance explained by the first mode"
       ],
       "hit": true
     },
@@ -33,16 +35,17 @@
       "query": "detect bright spots",
       "expected": "Spots — local maxima",
       "top_2": [
-        "Spots — local maxima",
-        "FA — scratch on hairline metal"
+        "Inspect — bright spots on a vignetted background (white top-hat)",
+        "Inspect — count bright round blobs (Laplacian-of-Gaussian detector)"
       ],
-      "hit": true
+      "hit": false
     },
     {
       "query": "hairline metal scratch",
       "expected": "FA — scratch on hairline metal",
       "top_2": [
-        "FA — scratch on hairline metal"
+        "FA — scratch on hairline metal",
+        "Inspect — length of a dark scratch on brushed metal"
       ],
       "hit": true
     },
@@ -51,16 +54,897 @@
       "expected": "FA — weld porosity (X-ray)",
       "top_2": [
         "FA — weld porosity (X-ray)",
-        "Spots — local maxima"
+        "Preprocess — reveal faint stars: cosmic-ray reject, register and stack dithered frames"
       ],
       "hit": true
     }
   ],
+  "e2e_task_recipe_hit_at_2": 0.75,
+  "e2e_tasks": [
+    {
+      "id": "ge_components_3",
+      "judge": "judge_component_count",
+      "top_2": [
+        "Inspect — bright spots on a vignetted background (white top-hat)",
+        "Inspect — roundness of a punched disk (circularity)"
+      ],
+      "hit": true
+    },
+    {
+      "id": "ge_components_5",
+      "judge": "judge_component_count",
+      "top_2": [
+        "Preprocess — segment dark characters on shaded paper for OCR",
+        "Count — blobs"
+      ],
+      "hit": true
+    },
+    {
+      "id": "ge_fill_fraction",
+      "judge": "judge_region_fraction",
+      "top_2": [
+        "Inspect — glossy (specular) area from polarization: DoLP map, threshold, area fraction",
+        "Inspect — bright spots on a vignetted background (white top-hat)"
+      ],
+      "hit": true
+    },
+    {
+      "id": "ge_gaussian_noise",
+      "judge": "judge_smoothed_std",
+      "top_2": [
+        "Preprocess — denoise a flat field and verify the residual noise level",
+        "Texture — local std"
+      ],
+      "hit": false
+    },
+    {
+      "id": "po_template_xy",
+      "judge": "judge_match_position",
+      "top_2": [
+        "Locate — find a fiducial mark by normalized cross-correlation",
+        "Measure — perimeter of a round part from sub-pixel edges"
+      ],
+      "hit": true
+    },
+    {
+      "id": "po_shape_pose",
+      "judge": "judge_match_position",
+      "top_2": [
+        "Measure — orientation angle of an elongated part",
+        "Measure — orientation of a bar from its sub-pixel outline (orientation_xld)"
+      ],
+      "hit": false
+    },
+    {
+      "id": "po_fixture_corners",
+      "judge": "judge_feature_count",
+      "top_2": [
+        "Inspect — count corners of rectangular parts",
+        "Keypoints — Harris corners"
+      ],
+      "hit": true
+    },
+    {
+      "id": "po_grasp_corners",
+      "judge": "judge_feature_count",
+      "top_2": [
+        "Inspect — count the arms of a branched part (skeleton end points)",
+        "Measure — count all edges along a caliper line"
+      ],
+      "hit": false
+    },
+    {
+      "id": "mv_variant_template",
+      "judge": "judge_match_position",
+      "top_2": [
+        "Locate — find a rotated part and its angle (shape-based matching)",
+        "Measure — perimeter of a round part from sub-pixel edges"
+      ],
+      "hit": true
+    },
+    {
+      "id": "mv_variant_shape",
+      "judge": "judge_match_position",
+      "top_2": [
+        "Measure — perimeter of a round part from sub-pixel edges",
+        "Measure — angle of a straight edge by a sub-pixel line fit"
+      ],
+      "hit": false
+    },
+    {
+      "id": "mv_common_corners_4",
+      "judge": "judge_feature_count",
+      "top_2": [
+        "Inspect — count corners of rectangular parts",
+        "Keypoints — Harris corners"
+      ],
+      "hit": true
+    },
+    {
+      "id": "mv_common_corners_6",
+      "judge": "judge_feature_count",
+      "top_2": [
+        "FA — count holes in a back-lit plate",
+        "Inspect — count parts under strongly uneven illumination (local threshold)"
+      ],
+      "hit": false
+    },
+    {
+      "id": "sp_dolp_020",
+      "judge": "judge_dolp_mean",
+      "top_2": [
+        "Sense — degree of linear polarization map from four analyzer angles (0/45/90/135)",
+        "Inspect — glossy (specular) area from polarization: DoLP map, threshold, area fraction"
+      ],
+      "hit": true
+    },
+    {
+      "id": "sp_dolp_035",
+      "judge": "judge_dolp_mean",
+      "top_2": [
+        "Sense — degree of linear polarization map from four analyzer angles (0/45/90/135)",
+        "Inspect — glossy (specular) area from polarization: DoLP map, threshold, area fraction"
+      ],
+      "hit": true
+    },
+    {
+      "id": "sp_dolp_050",
+      "judge": "judge_dolp_mean",
+      "top_2": [
+        "Sense — degree of linear polarization map from four analyzer angles (0/45/90/135)",
+        "Inspect — glossy (specular) area from polarization: DoLP map, threshold, area fraction"
+      ],
+      "hit": true
+    },
+    {
+      "id": "sp_dolp_065",
+      "judge": "judge_dolp_mean",
+      "top_2": [
+        "Sense — degree of linear polarization map from four analyzer angles (0/45/90/135)",
+        "Inspect — glossy (specular) area from polarization: DoLP map, threshold, area fraction"
+      ],
+      "hit": true
+    },
+    {
+      "id": "m3_wrapped_ramp_x",
+      "judge": "judge_phase_mean",
+      "top_2": [
+        "Measure — wrapped phase from 4-step phase-shifted fringes",
+        "3D — height map from 4-step phase-shift fringes (decode, unwrap, scale)"
+      ],
+      "hit": true
+    },
+    {
+      "id": "m3_wrapped_ramp_y",
+      "judge": "judge_phase_mean",
+      "top_2": [
+        "Measure — wrapped phase from 4-step phase-shifted fringes",
+        "3D — height map from 4-step phase-shift fringes (decode, unwrap, scale)"
+      ],
+      "hit": true
+    },
+    {
+      "id": "m3_depth_ramp_x",
+      "judge": "judge_depth_mean",
+      "top_2": [
+        "3D — height map from 4-step phase-shift fringes (decode, unwrap, scale)",
+        "Measure — wrapped phase from 4-step phase-shifted fringes"
+      ],
+      "hit": true
+    },
+    {
+      "id": "m3_depth_ramp_y",
+      "judge": "judge_depth_mean",
+      "top_2": [
+        "3D — height map from 4-step phase-shift fringes (decode, unwrap, scale)",
+        "Measure — wrapped phase from 4-step phase-shifted fringes"
+      ],
+      "hit": true
+    }
+  ],
+  "blind_family_hit_at_3": 0.85,
+  "blind_op_hit_at_3": 0.7,
+  "blind_queries": [
+    {
+      "family": "2d",
+      "query": "Measure the gap between two parallel edges of a stamped part along a scan line, with sub-pixel accuracy",
+      "top_3": [
+        "Measure — perimeter of a round part from sub-pixel edges",
+        "Measure — angle of a straight edge by a sub-pixel line fit",
+        "Measure — maximal diameter of a part from its sub-pixel contour"
+      ],
+      "family_hit": true,
+      "op_hit": false
+    },
+    {
+      "family": "2d",
+      "query": "金属表面のヘアライン状の細いキズを、向きのある模様として強調して見つけたい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "Measure — direction of a grating or brushed texture (structure tensor)",
+        "Inspect — length of a dark scratch on brushed metal"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "3d",
+      "query": "Find the axis and radius of a pipe in a laser-scanned point cloud even with clutter around it",
+      "top_3": [
+        "3D — find a known part's 6-DoF pose in a scene cloud (PPF surface matching)",
+        "3D — pipe radius from a cylinder scan (normals + RANSAC cylinder)",
+        "3D — tilt of a flat face (RANSAC plane) despite clutter"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "3d",
+      "query": "点群から床の平面を取り除いて、その上に置かれた球状の部品の中心と半径を求めたい",
+      "top_3": [
+        "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)",
+        "Measure — unwrap an off-centre ring about its centre and read its radius",
+        "3D — radius of a ball from a noisy scan with stray points"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "acoustics",
+      "query": "Diagnose an outer-race fault on a motor bearing from an accelerometer vibration recording",
+      "top_3": [
+        "Inspect — bearing outer-race defect frequency by envelope spectrum",
+        "Sense — bearing of a sound source from a microphone pair (time difference of arrival)",
+        "Sense — direction of arrival of two sources with an antenna array (MUSIC)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "annotate",
+      "query": "検査画像に寸法線とスケールバーと凡例を入れて、報告書に貼れる図にしたい",
+      "top_3": [
+        "Inspect — airfoil blade profile deviation from the nominal NACA section",
+        "Inspect — missing material against the nominal shape (region difference)",
+        "Inspect — count bright round blobs (Laplacian-of-Gaussian detector)"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "aoi",
+      "query": "Correct uneven brightness across circuit-board camera tiles and stitch them into one registered board map",
+      "top_3": [
+        "Inspect — flat-field correct, then register the frame to the golden image",
+        "Inspect — split touching particles with distance-transform seeds",
+        "3D — shape from polarization of a glossy dome (curvature from polarization images)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "astrostack",
+      "query": "望遠鏡で撮った多数の短時間露光画像を位置合わせし、宇宙線を除去しながら重ね合わせたい",
+      "top_3": [
+        "Preprocess — reveal faint stars: cosmic-ray reject, register and stack dithered frames",
+        "Measure — overlay alignment from a moire mark (nm-scale shift)",
+        "Measure — sub-pixel shift between two images (phase correlation)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "blob",
+      "query": "Count pellets on a conveyor image and separate the ones that are stuck together, then measure each one",
+      "top_3": [
+        "Measure — perimeter of a round part from sub-pixel edges",
+        "Inspect — count touching parts as watershed basins (one label per object)",
+        "Inspect — split touching round parts and count them (distance-transform peaks)"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "cadmap",
+      "query": "カメラ画像で見つけた欠陥の位置を、CADモデルの表面上の座標に対応付けたい",
+      "top_3": [
+        "Inspect — map a camera pixel onto the CAD surface (depth of the hit)",
+        "3D — object pose from known 3-D points and their image (PnP)",
+        "3D — camera pose deviation from its nominal mounting (PnP -> RRE / RTE)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "calib",
+      "query": "Work out a camera's lens parameters from photos of a dot-grid target plate and convert pixel coordinates to millimetres on the table plane",
+      "top_3": [
+        "Calibrate — camera focal length from views of a planar target",
+        "Measure — circle on a plane in millimetres from pixels (homography)",
+        "Optics — optimize a singlet to a target focal length (merit function, damped least squares)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "codematch",
+      "query": "照明の明るさが変わっても安定にテンプレートを探せる、輝度の増減の向きだけを使う照合をしたい",
+      "top_3": [
+        "Inspect — locate a part template under an illumination change (orientation codes)",
+        "Locate — find a fiducial mark by normalized cross-correlation",
+        "Locate — find a rotated part and its angle (shape-based matching)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "colortransport",
+      "query": "Make images from a second camera match the colour look of the reference camera on the line",
+      "top_3": [
+        "Preprocess — colour transfer of a product photo to a reference look",
+        "Sense — horizon line a camera sees from a DEM",
+        "Inspect — perceptual colour difference ΔE*ab against a reference colour"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "conngraph",
+      "query": "神経回路の接続データから、ハブやモジュール構造などネットワークの統計を出したい",
+      "top_3": [
+        "Analyze — clusters of a connectome after pruning weak synapses",
+        "Analyze — algebraic connectivity of a neuron ring (Laplacian spectrum)",
+        "Measure — shortest route on a weighted network (slime-mould transport)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "converge",
+      "query": "From results on coarse, medium and fine meshes, estimate the discretisation error band and the observed order of accuracy",
+      "top_3": [
+        "Measure — observed order of convergence of a grid study (GCI)",
+        "3D — how far a part sits from its nominal pose (point-to-plane ICP -> pose error)",
+        "Measure — perimeter of a round part from sub-pixel edges"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "dem",
+      "query": "標高データから斜面の傾きと、水の流れる向き・集水量を計算したい",
+      "top_3": [
+        "Sense — horizon line a camera sees from a DEM",
+        "DEM — slope of a hillside after filling sinks",
+        "DEM — hillshade of a tilted terrain"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "drive",
+      "query": "Estimate time to collision with the car ahead from dashcam video using how fast it grows in the image",
+      "top_3": [
+        "Sense — time to collision with a wall from depth and ego motion",
+        "Sense — time to collision from the looming angle (tau)",
+        "Sense — beating shell: maximum-intensity projection video"
+      ],
+      "family_hit": true,
+      "op_hit": false
+    },
+    {
+      "family": "drive",
+      "query": "倉庫内の複数台の搬送ロボットが互いにぶつからない経路をまとめて計画したい",
+      "top_3": [
+        "Inspect — length of a scratch from its centre line (lines_gauss)",
+        "Measure — perimeter of a round part from sub-pixel edges",
+        "Inspect — group character candidates into text lines"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "emproof",
+      "query": "Score how well an automatic neuron segmentation agrees with the proofread ground truth, counting merges and splits",
+      "top_3": [
+        "Inspect — score a segmentation against the ground-truth mask (Dice / Jaccard)",
+        "Inspect — score a segmentation split error (variation of information)",
+        "Sense — time to collision with a wall from depth and ego motion"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "fileio",
+      "query": "STLのメッシュとCSVの測定表を読み込み、メッシュをPLYで書き出したい",
+      "top_3": [
+        "3D — export a part mesh as OBJ, re-import it and check its volume",
+        "Print — filament volume for the equator layer of a scanned ball",
+        "3D — volume of a CT inclusion from its marching-cubes surface"
+      ],
+      "family_hit": true,
+      "op_hit": false
+    },
+    {
+      "family": "fit",
+      "query": "Fit a circle to edge points that cover only a short arc of a hole and get its centre and radius",
+      "top_3": [
+        "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)",
+        "Measure — circle on a plane in millimetres from pixels (homography)",
+        "Measure — image radius of a 3-D ring seen by a camera"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "flyvision",
+      "query": "昆虫の目のような仕組みで、こちらへ近づいてくる物体と衝突までの時間を検出したい",
+      "top_3": [
+        "Sense — time to collision from the looming angle (tau)",
+        "Sense — time to collision with a wall from depth and ego motion",
+        "Shape — distance transform"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "generative",
+      "query": "Simulate a scanning electron microscope image of a line pattern and measure the line width from it",
+      "top_3": [
+        "Simulate — SEM secondary-electron image of a sloped facet",
+        "Measure — tilt of a flat measured by a coherence-scanning interferometer",
+        "Inspect — length of a scratch from its centre line (lines_gauss)"
+      ],
+      "family_hit": true,
+      "op_hit": false
+    },
+    {
+      "family": "geocam",
+      "query": "屋外カメラの向きを、写っている太陽の位置と撮影日時から推定したい",
+      "top_3": [
+        "Sense — sun elevation at a site over a day",
+        "Sense — horizon line a camera sees from a DEM",
+        "Measure — orientation angle of an elongated part"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "gfx2d",
+      "query": "Turn a raw Bayer sensor frame into a white-balanced colour image, fixing dead pixels and black level",
+      "top_3": [
+        "Preprocess — raw Bayer ISP: black level, demosaic, gray-world white balance",
+        "Preprocess — lens-shading (vignetting) correction from a flat-field frame",
+        "3D — depth of a plane from a plenoptic camera raw image (refocus stack, depth from focus)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "graph",
+      "query": "駐車のような切り返しを含む、車が実際に走れる最短経路を求めたい",
+      "top_3": [
+        "Measure — shortest route on a weighted network (slime-mould transport)",
+        "Sense — indirect ToF depth with dual-frequency phase unwrapping",
+        "3D — export a part mesh as OBJ, re-import it and check its volume"
+      ],
+      "family_hit": true,
+      "op_hit": false
+    },
+    {
+      "family": "imgforensics",
+      "query": "Check whether a photo submitted as evidence was edited, e.g. copy-pasted regions or double JPEG compression",
+      "top_3": [
+        "Inspect — locate a spliced patch with different sensor noise",
+        "Inspect — detect a copy-move forgery and its displacement",
+        "Measure — convex-hull area of a C-shaped part"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "imgmetrics",
+      "query": "圧縮後の画像の劣化をSSIMやPSNRで数値評価し、色差もあわせて一覧表にしたい",
+      "top_3": [
+        "Inspect — image fidelity report of a noisy capture (PSNR / RMSE with conditions)",
+        "Measure — sub-pixel shift between two images (phase correlation)",
+        "Measure — ring radius by polar unwrapping"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "interferometry",
+      "query": "Get a surface height map from a white-light scanning interferometer image stack",
+      "top_3": [
+        "Measure — tilt of a flat measured by a coherence-scanning interferometer",
+        "Measure — surface height at a pixel by white-light interferometry (CSI peak)",
+        "3D — height of a bump by phase-shift structured light"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "lightfield",
+      "query": "マイクロレンズアレイ付きカメラの画像から、撮影後にピントを合わせ直したり奥行きを出したりしたい",
+      "top_3": [
+        "3D — depth of a plane from a plenoptic camera raw image (refocus stack, depth from focus)",
+        "Sense — direction of arrival of two sources with an antenna array (MUSIC)",
+        "Optics — object-side telecentric lens: magnification and telecentricity error"
+      ],
+      "family_hit": true,
+      "op_hit": false
+    },
+    {
+      "family": "live4d",
+      "query": "Turn a time series of 3-D microscopy volumes into a video showing how cells move, with motion trails",
+      "top_3": [
+        "Sense — beating shell: maximum-intensity projection video",
+        "Print — filament volume for the equator layer of a scanned ball",
+        "Measure — sub-pixel vibration amplitude from video (phase-based)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "llmcore",
+      "query": "トランスフォーマのアテンション計算を、位置の回転埋め込みや正規化も含めて参照実装で確かめたい",
+      "top_3": [
+        "Analyze — attention as a key-value lookup (RMSNorm → scores → softmax → mix)",
+        "Inspect — embed and blindly recover an integrity watermark",
+        "Locate — find a fiducial mark by normalized cross-correlation"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "math",
+      "query": "Fit a polynomial calibration curve to sensor readings and find where it crosses zero",
+      "top_3": [
+        "Analyze — count polynomial roots inside a circle (argument principle)",
+        "Measure — count zero crossings of a smoothed profile (1-D function)",
+        "Calibrate — camera gain from a captured test chart (simulation calibration)"
+      ],
+      "family_hit": true,
+      "op_hit": false
+    },
+    {
+      "family": "measure1d",
+      "query": "円形の穴の縁をキャリパで何本も測って直径を求め、基準寸法からミリに換算したい",
+      "top_3": [
+        "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)",
+        "Measure — sub-pixel edge position along a caliper line",
+        "Measure — diameter of a bright round part"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "motionmag",
+      "query": "Make tiny vibrations of a machine visible in a video and measure how far it actually moves",
+      "top_3": [
+        "Inspect — magnify a small vibration in video (motion magnification)",
+        "Measure — vibration SNR in a frequency band of a video",
+        "Measure — sub-pixel vibration amplitude from video (phase-based)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "multivar",
+      "query": "実験計画法で少ない試行回数の条件表を作り、各因子の主効果を解析したい",
+      "top_3": [
+        "Analyze — response-surface optimum of a central composite experiment",
+        "Simulate — SEM secondary-electron image of a sloped facet",
+        "Sense — indirect ToF depth with dual-frequency phase unwrapping"
+      ],
+      "family_hit": true,
+      "op_hit": false
+    },
+    {
+      "family": "oned",
+      "query": "Find peaks and the dominant frequency in a 1-D sensor signal after band-pass filtering it",
+      "top_3": [
+        "Sense — dominant vibration frequency after band-pass filtering",
+        "Preprocess — suppress periodic interference stripes with an FFT low-pass",
+        "Measure — vibration SNR in a frequency band of a video"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "optics",
+      "query": "偏光カメラの生データから、偏光度や偏光角の画像を作りたい",
+      "top_3": [
+        "Measure — photoelastic retardance and principal-stress direction (polarization camera)",
+        "Sense — horizon line a camera sees from a DEM",
+        "3D — shape from polarization of a glossy dome (curvature from polarization images)"
+      ],
+      "family_hit": true,
+      "op_hit": false
+    },
+    {
+      "family": "optics",
+      "query": "Check how much the magnification of my telecentric lens changes over the working distance range",
+      "top_3": [
+        "Optics — object-side telecentric lens: magnification and telecentricity error",
+        "Inspect — magnify a small vibration in video (motion magnification)",
+        "Measure — height with a chromatic confocal probe (designed lens, calibration table)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "photon",
+      "query": "単一光子検出器の到着時間ヒストグラムから、背景を引いて蛍光寿命を推定したい",
+      "top_3": [
+        "Sense — direct ToF distance from a TCSPC histogram (SPAD lidar pixel)",
+        "Preprocess — OpenVX look-up table, then 16-bin histogram",
+        "Enhance — histogram equalize"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "piv",
+      "query": "Compute the velocity and vorticity field of a water flow from a pair of particle images, removing bad vectors",
+      "top_3": [
+        "Measure — vorticity of a PIV vector field after outlier replacement",
+        "Measure — flow velocity from a PIV image pair (multipass cross-correlation)",
+        "Sense — self-rotation of a compound eye from optic flow (fly motion vision)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "printpath",
+      "query": "3Dプリンタ用にメッシュをスライスしてGコードを出し、造形時間を見積もりたい",
+      "top_3": [
+        "Print — filament volume for the equator layer of a scanned ball",
+        "3D — export a part mesh as OBJ, re-import it and check its volume",
+        "3D — surface area of a scanned ball (convex hull mesh)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "profile",
+      "query": "Measure thickness and leading-edge radius of a turbine blade cross-section and compare it with the nominal shape",
+      "top_3": [
+        "Measure — airfoil leading-edge radius",
+        "Inspect — airfoil blade profile deviation from the nominal NACA section",
+        "3D — how far a part sits from its nominal pose (point-to-plane ICP -> pose error)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "quat",
+      "query": "カラー画像をRGBチャンネルに分けずに一体として扱い、色付きの模様をテンプレートと照合したい",
+      "top_3": [
+        "Inspect — segment a coloured part by saturation (HSV)",
+        "Inspect — pick a blue part by its colour channel",
+        "Locate — find a rotated part and its angle (shape-based matching)"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "rangedoppler",
+      "query": "Find the distance and speed of targets from an FMCW radar beat signal",
+      "top_3": [
+        "Sense — FMCW radar range and velocity of a target (range-Doppler map)",
+        "Sense — radar direction of arrival with a uniform linear array (beamforming)",
+        "Sense — time to collision with a wall from depth and ego motion"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "reprconv",
+      "query": "オプティカルフローの結果を色付き画像で見たい。ついでに各画素の速さも出したい",
+      "top_3": [
+        "Sense — self-rotation of a compound eye from optic flow (fly motion vision)",
+        "Inspect — segment a coloured part by saturation (HSV)",
+        "Sense — time to collision with a wall from depth and ego motion"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "residue",
+      "query": "Recover a large displacement unambiguously from two wrapped periodic readings taken with different pitches",
+      "top_3": [
+        "Measure — large displacement from multi-wavelength phases (CRT unwrapping)",
+        "Sense — indirect ToF depth with dual-frequency phase unwrapping",
+        "Measure — overlay alignment from a moire mark (nm-scale shift)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "roughness",
+      "query": "表面の形状成分を取り除いてから、算術平均粗さなどの面粗さパラメータを出したい",
+      "top_3": [
+        "Measure — profile roughness Ra / Rq after a robust spline filter",
+        "Measure — areal roughness Sq: form removal, Gaussian L-filter, ISO 25178 parameters",
+        "Measure — profile roughness Ra / Rq after a robust Gaussian filter (scratched, curved part)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "segmentation",
+      "query": "Threshold a low-contrast micrograph automatically and score the binary mask against manual labels",
+      "top_3": [
+        "Inspect — score a segmentation against the ground-truth mask (Dice / Jaccard)",
+        "Segment — marker-controlled watershed inside a mask (two touching parts, background kept out)",
+        "Preprocess — suppress periodic interference stripes with an FFT low-pass"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "shape2d",
+      "query": "部品の輪郭形状をフーリエ係数で表して、良品との形の違いを数値化したい",
+      "top_3": [
+        "Measure — radius of a round part from its contour (elliptic Fourier)",
+        "Measure — perimeter of a round part from sub-pixel edges",
+        "Inspect — length of a scratch from its centre line (lines_gauss)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "shapestat",
+      "query": "Align landmark sets from many specimens and build a statistical model of their shape variation",
+      "top_3": [
+        "Analyze — statistical shape model: variance explained by the first mode",
+        "Inspect — variation-model defect detection against good samples",
+        "Inspect — form error after best-fit similarity alignment of landmarks"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "simcal",
+      "query": "シミュレーションのパラメータを実測データに合わせて同定し、その不確かさも出したい",
+      "top_3": [
+        "Measure — areal roughness Sq: form removal, Gaussian L-filter, ISO 25178 parameters",
+        "Measure — observed order of convergence of a grid study (GCI)",
+        "Simulate — SEM secondary-electron image of a sloped facet"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "spc",
+      "query": "Run a gauge R&R study and compute process capability (Cpk) for a diameter measurement",
+      "top_3": [
+        "Inspect — process capability Cp / Cpk against spec limits",
+        "Measure — diameter of a bright round part",
+        "Inspect — diameter of a dense inclusion along a probe line (CT volume)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "specular",
+      "query": "鏡のような塗装面のうねりを、縞模様の映り込みを使って検査したい",
+      "top_3": [
+        "Measure — areal roughness Sq: form removal, Gaussian L-filter, ISO 25178 parameters",
+        "Inspect — dark contamination spots on a woven fabric",
+        "Texture — Gabor"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "text",
+      "query": "Locate printed text lines on a product label before running OCR",
+      "top_3": [
+        "Inspect — group character candidates into text lines",
+        "Inspect — stroke width of printed characters (SWT)",
+        "Inspect — character candidates from a stroke-width field"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "tomography",
+      "query": "CTの投影データから断面を再構成し、回転中心のずれとリング状のアーチファクトも直したい",
+      "top_3": [
+        "CT — reconstruct a disk phantom and measure its area",
+        "CT — suppress ring artefacts from a bad detector, then measure",
+        "Measure — unwrap an off-centre ring about its centre and read its radius"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "videocube",
+      "query": "Summarise a long inspection video into a few keyframes and a space-time cube view",
+      "top_3": [
+        "Sense — slit-scan (x-t) image of a moving spot",
+        "Sense — beating shell: maximum-intensity projection video",
+        "Inspect — segment a coloured part by saturation (HSV)"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "videostream",
+      "query": "固定カメラの映像から背景を差し引いて動く物体だけ取り出したい。照明のちらつきも抑えたい",
+      "top_3": [
+        "Inspect — moving object mask in a flickering video (deflicker + background model)",
+        "FA — scratch on hairline metal",
+        "Preprocess — subtract a background frame, then measure the part area"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "volcolor",
+      "query": "Colour the labelled regions of a segmented CT volume consistently and show slices with the label overlay",
+      "top_3": [
+        "3D — colour a labelled volume and cut an RGB slice",
+        "3D — label the objects in a CT volume and read their voxel counts",
+        "3D — per-object volume table of a labelled scan"
+      ],
+      "family_hit": true,
+      "op_hit": true
+    },
+    {
+      "family": "vx",
+      "query": "組込み向け標準ビジョンAPIと同じ定義で、3x3勾配・勾配強度・非極大抑制を計算したい",
+      "top_3": [
+        "Measure — perimeter of a round part from sub-pixel edges",
+        "Measure — angle of a straight edge by a sub-pixel line fit",
+        "Inspect — count corners of rectangular parts"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    }
+  ],
+  "before_after": {
+    "before_label": "master a8b9c1f249 (recipes.py 25 recipes), 2026-11-03",
+    "recipes_in_index": {
+      "before": 25,
+      "after": 267
+    },
+    "recipes_mcp": {
+      "before": 25,
+      "after": 89
+    },
+    "recall_at_2": {
+      "before": 1.0,
+      "after": 0.6666666666666666
+    },
+    "e2e_task_recipe_hit_at_2": {
+      "before": 0.2,
+      "after": 0.75
+    },
+    "blind_family_hit_at_3": {
+      "before": 0.0333,
+      "after": 0.85
+    },
+    "blind_op_hit_at_3": {
+      "before": 0.0,
+      "after": 0.7
+    }
+  },
   "inventory": [
     {
       "source": "recipes.py RECIPES",
       "found": 25,
       "included": 25,
+      "excluded": 0,
+      "reason": null
+    },
+    {
+      "source": "fullseye/recipebook RECIPES",
+      "found": 242,
+      "included": 242,
       "excluded": 0,
       "reason": null
     },
@@ -80,9 +964,9 @@
     },
     {
       "source": "docs/**/*.md",
-      "found": 4278,
+      "found": 4282,
       "included": 0,
-      "excluded": 4278,
+      "excluded": 4282,
       "reason": "Documentation contains prose and snippets, not a statically unambiguous inventory of MCP stages."
     }
   ]

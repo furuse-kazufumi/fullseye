@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3755, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3758, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -932,6 +932,7 @@
 {"name":"find_checkerboard_corners","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"find_marks_and_pose","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"find_peaks","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"find_surface_pose","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fingerprint_correlate","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fingerprint_strength_map","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"finish_catalog","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -946,6 +947,7 @@
 {"name":"fit_circle3","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_circle_3d","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_circle_geometric","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"fit_circle_xld","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_cone","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_curve_principal_axis","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_ellipsoid","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -3550,6 +3552,7 @@
 {"name":"watersheds","status":"ok","in_sort":"image","out_sort":"region","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"watersheds_marker","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"watersheds_threshold","status":"ok","in_sort":"image","out_sort":"region","probe_input":"op_probe.sample_input('image', structured=True)"},
+{"name":"wave_dominant_frequency","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"wave_fringe_period","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"wave_grating_orders","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"wave_membrane_mode","status":"not_in_registry","reason":"not executable by fullseye.apply"},

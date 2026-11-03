@@ -27,7 +27,9 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ![lines_gauss: knob a sweep](../../_fig/lines_gauss.a.jpg)
 
-*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![lines_gauss: knob b sweep](../../_fig/lines_gauss.b.jpg)
 
 **別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
 

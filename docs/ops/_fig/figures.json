@@ -8287,6 +8287,7 @@
    "color_ok": true,
    "extra": {
     "a": "lines_facet.a.jpg",
+    "b": "lines_facet.b.jpg",
     "inputs": "lines_facet.inputs.jpg"
    },
    "fig": "lines_facet.png",
@@ -8300,9 +8301,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "dict",
    "program": "lines_facet 0.50 0.50",
    "pseudocolor": false,
@@ -8312,6 +8311,7 @@
    "color_ok": true,
    "extra": {
     "a": "lines_gauss.a.jpg",
+    "b": "lines_gauss.b.jpg",
     "inputs": "lines_gauss.inputs.jpg"
    },
    "fig": "lines_gauss.png",
@@ -8325,9 +8325,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "dict",
    "program": "lines_gauss 0.50 0.50",
    "pseudocolor": false,

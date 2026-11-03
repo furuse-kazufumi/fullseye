@@ -1,8 +1,8 @@
 {
- "n_ops": 3749,
+ "n_ops": 3752,
  "tiers": {
   "color": 12,
-  "ledger": 2785,
+  "ledger": 2788,
   "nary": 17,
   "registry": 935
  },
@@ -9872,6 +9872,20 @@
    ]
   },
   {
+   "name": "find_surface_pose",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "pose",
+   "category": "match_pose",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "points",
+    "points"
+   ]
+  },
+  {
    "name": "fingerprint_correlate",
    "halcon": "",
    "in_sort": "image2d",
@@ -10056,6 +10070,19 @@
    "dim": "fit",
    "in_sorts": [
     "keypoints"
+   ]
+  },
+  {
+   "name": "fit_circle_xld",
+   "halcon": "",
+   "in_sort": "contour",
+   "out_sort": "table",
+   "category": "descriptor",
+   "tier": "ledger",
+   "ledger": "opsshape2d",
+   "dim": "shape2d",
+   "in_sorts": [
+    "contour"
    ]
   },
   {
@@ -27207,7 +27234,7 @@
    "name": "rotation_translation_error",
    "halcon": "",
    "in_sort": "pose",
-   "out_sort": "measurement",
+   "out_sort": "table",
    "category": "registration_metrics",
    "tier": "ledger",
    "ledger": "ops3d",
@@ -35933,6 +35960,19 @@
    "in_sorts": [
     "image2d",
     "labels2d"
+   ]
+  },
+  {
+   "name": "wave_dominant_frequency",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {

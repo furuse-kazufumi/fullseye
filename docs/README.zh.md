@@ -64,7 +64,7 @@
 | `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 19 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
-467 个示例中,检查实际运行的有 467 个。
+469 个示例中,检查实际运行的有 469 个。
 
 ### 各版本的算子数
 
@@ -140,19 +140,19 @@
 
 ## 查找算子
 
-共有 **3,755 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **72 篇族指南**。按维度的入口:
+共有 **3,758 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **72 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 947/947、类型化台账 2759/2771、单行门面 `fullseye.<名称>` 743/1545 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 947/947、类型化台账 2762/2774、单行门面 `fullseye.<名称>` 745/1546 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3755 篇中，附有可运行示例的 **3708** 篇(47 篇没有)，用法说明 120 字以上的 **3553** 篇(202 篇仅一行)。结构(调用形式、类型、可衔接算子)3755 篇全有。
+**内容实测**: 3758 篇中，附有可运行示例的 **3711** 篇(47 篇没有)，用法说明 120 字以上的 **3556** 篇(202 篇仅一行)。结构(调用形式、类型、可衔接算子)3758 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
 | `2d` | 964 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 717 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 504 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
-| `3d` | 376 | [INDEX](ops/3d/INDEX.md) |
-| `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
+| `3d` | 377 | [INDEX](ops/3d/INDEX.md) |
+| `math` | 115 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `reprconv` | 62 | [INDEX](ops/reprconv/INDEX.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
@@ -178,8 +178,8 @@
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `measure1d` | 17 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
 | `photon` | 17 | [INDEX](ops/photon/INDEX.md) · [guide](ops/photon/guides/photon_timeresolved.md) |
+| `shape2d` | 17 | [INDEX](ops/shape2d/INDEX.md) · [guide](ops/shape2d/guides/shape_description_2d.md) |
 | `imgforensics` | 16 | [INDEX](ops/imgforensics/INDEX.md) |
-| `shape2d` | 16 | [INDEX](ops/shape2d/INDEX.md) · [guide](ops/shape2d/guides/shape_description_2d.md) |
 | `shapestat` | 16 | [INDEX](ops/shapestat/INDEX.md) · [guide](ops/shapestat/guides/shape_statistics.md) |
 | `videostream` | 16 | [INDEX](ops/videostream/INDEX.md) · [guide](ops/videostream/guides/video_streaming.md) |
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
@@ -304,9 +304,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 311 篇
+## 文档地图 — 共 312 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,755 篇算子说明与 72 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,758 篇算子说明与 72 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 
@@ -447,7 +447,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(227)
+**Other**(228)
 
 | 文档 | 内容 |
 |---|---|
@@ -519,6 +519,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`PIPELINE_SHAPES.md`](PIPELINE_SHAPES.md) | Typed DAG execution |
 | [`POC_QUALITY_CRITERIA.en.md`](POC_QUALITY_CRITERIA.en.md) | Quality criteria for PoCs, figures, videos and exhibits (for whoever asks and whoever builds) |
 | [`REALDATA_TLESS_6DOF.md`](REALDATA_TLESS_6DOF.md) | BOP T-LESS 実機深度 6 自由度 PoC _(ja)_ |
+| [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | レシピの網羅(族・課題・型の繋がり・GPU 経路) _(ja)_ |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
 | [`STUDIO_GUIDE.de.md`](STUDIO_GUIDE.de.md) | Vollständiger Leitfaden zu Fullseye Studio |
 | [`STUDIO_GUIDE.en.md`](STUDIO_GUIDE.en.md) | The complete guide to Fullseye Studio |
