@@ -277,9 +277,7 @@ TOOLS: dict[str, dict] = {
             "op を順に適用する。段ごとに数値統計・判定・劣化台帳を記録し、最終ハンドル(と最後が"
             "計測なら値)を返す。走らせる前に段間の型連鎖(前段の out_sort = 次段の in_sort)を検査し、"
             "破れていれば 1 段も走らせず拒否。strict(既定)では劣化した段で止まり、どこまで走ったかを"
-            "返す。判定が最初に割れた段の入出力対比の小図を自動で付ける。dry_run=true なら走らせず、"
-            "型の切れ目・GPU と CPU の切り替わり(どの段で、なぜ)・転送の回数の見込みだけを返す"
-            "(fullseye.explain_pipeline、structuredContent.plan)。"),
+            "返す。判定が最初に割れた段の入出力対比の小図を自動で付ける。"),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -1777,7 +1775,8 @@ def _profile_tool_names(profile: str) -> set[str]:
 
 # minimal プロファイルの広告スキーマから隠す上級引数(受け付けは常に可。full では見せる)。
 # 2026-11-02: device / parity_check を足した分で minimal が 1,500 トークンの予算を超えたため。
-MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check")}
+# 2026-11-04(統合 GPU): 第 5 便の dry_run / assume_cuda で再び 1,500 を超えた(1,588)ので同じ扱いにする。
+MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check", "dry_run", "assume_cuda")}
 
 
 def _advertised_schema(name: str, profile: str) -> dict:

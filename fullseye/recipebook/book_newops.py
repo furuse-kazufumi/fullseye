@@ -240,11 +240,26 @@ def nw_ean13_label(variant: int):
     return {"value": img, "aux": {}, "truth": {"text": sym["text"]}}
 
 
+def nw_stereo_shift(variant: int):
+    """滑らかな模様の右画像と、それを一様な視差 d だけずらした左画像(d = 5 / 3 px)。
+
+    真値 = 視差 d(左の画素 (r, c) は右の (r, c - d) に写る)。
+    """
+    from scipy import ndimage as ndi
+    d = 5.0 if variant == 0 else 3.0
+    right = ndi.gaussian_filter(rng(variant, 70).random((64, 96)), 1.2)
+    right = (right - right.min()) / np.ptp(right)
+    rr, cc = np.mgrid[0:64, 0:96].astype(float)
+    left = ndi.map_coordinates(right, [rr, cc - d], order=1, mode="nearest")
+    return {"value": left, "aux": {"right": right}, "truth": {"disparity": d}}
+
+
 SAMPLES = {
     "nw_bore": nw_bore, "nw_touching": nw_touching, "nw_two_grey_parts": nw_two_grey_parts,
     "nw_offcentre_ring": nw_offcentre_ring, "nw_grey_spheres": nw_grey_spheres, "nw_mic_pair": nw_mic_pair,
     "nw_feed_marks": nw_feed_marks, "nw_grating": nw_grating, "nw_bracket_scene": nw_bracket_scene,
     "nw_probe_sphere": nw_probe_sphere, "nw_shifted_pair": nw_shifted_pair, "nw_ean13_label": nw_ean13_label,
+    "nw_stereo_shift": nw_stereo_shift,
 }
 
 
@@ -389,6 +404,15 @@ RECIPES = [
              "line decoded on its own and the text accepted only when lines agree (majority vote, so a single "
              "misread line cannot win). The label is rendered from the encoded symbol, so the truth is the 13 "
              "digits that were encoded."},
+    # ------------------------------------------------ 2026-11-04 統合 GPU: mv(第 6 便、opsmv)
+    {"name": "Stereo — disparity of a rectified pair by multi-scale semi-global matching",
+     "family": "mv", "task": "measure", "task_class": "3d", "halcon": "3D Reconstruction",
+     "input_sort": "image", "sample": "nw_stereo_shift",
+     "stages": [{"op": "binocular_disparity_ms", "args": ["$in", "$aux.right"], "kw": {"max_disp": 12}}],
+     "expect": [{"get": ["disparity", "@median"], "approx": "disparity", "atol": 0.1}],
+     "note": "HALCON binocular_disparity_ms: a rectified left / right pair (the left image is the right one moved by "
+             "a uniform disparity d of 5 / 3 px), matched by semi-global aggregation over several paths with a "
+             "left-right consistency check; the median of the disparity map is d. The truth is the shift itself."},
 ]
 
 
@@ -455,4 +479,8 @@ NOTES_JA = {
     "Read — an EAN-13 (JAN) barcode label, including a tilted and noisy one":
         "EAN-13(JAN)のラベルを読む(傾きと雑音つきも)— read_barcode1d が推定した向きで平行な走査線を"
         "引き、線ごとに復号して多数決で一致したときだけ文字列を返す。真値は符号化した 13 桁。",
+    "Stereo — disparity of a rectified pair by multi-scale semi-global matching":
+        "平行化したステレオ対の視差を半大域照合で測る — binocular_disparity_ms(HALCON の同名 op)が"
+        "複数の経路で集約し左右の整合を確かめて視差の地図を返す。左は右を一様な視差 d(5 / 3 px)だけ"
+        "ずらした像なので、地図の中央値が d になる。",
 }
