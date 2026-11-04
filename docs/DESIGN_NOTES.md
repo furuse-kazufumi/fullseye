@@ -1380,6 +1380,10 @@
 
 - **L25** — ★repo 直下のモジュール(profileops)を import するので、チェックアウトから そのまま走らせても通るように repo 直下を先頭に置く。他の例と同じ作法。 これが無いと `py -3.11 examples/<name>.py` が ModuleNotFoundError で落ちる (2026-09-09 実測: 走らせる門が無かった 83 本のうち、落ちたのはこの型の 2 本だけ)。
 
+## `examples/quickstart.py`
+
+- **L58** — ★世代は 8(以前は 30)。見せるのは 4 段が通ることで、探索の質ではない。 30 世代は進化だけで手元 147 秒、CI の py3.12/3.14 では例全体が 600 秒を超えた(2026-11-04)。
+
 ## `examples/representation_roundtrip.py`
 
 - **L175** — (c) ガウシアン -> voxel の質量。★一度間違えた数字
@@ -2416,8 +2420,8 @@
 ## `tests/test_example_scripts_run.py`
 
 - **L48** — ★2026-09-09、この門を入れた最初の CI で **7 本が py3.12 で落ちた**(py3.11 は緑)。 CI は意図的に **py3.11 だけ** torch / kornia / mahotas / opencv-contrib を入れ、 他の版では入れない。テスト側には ``requires_backend`` という宣言の仕組みが既に あったのに、**例を走らせる門にはそれが無かった** —— 仕組みがあることと、 全経路が通っていることは別。 ``gallery2d_*`` は「その族の op を全部動かす」ギャラリーなので、契約そのものが **どの backend が入っているかに依存する**(op 名を直書きしてレジストリと突き合わせ、 1 つでも欠けると「OPS に余分」で落ちる)。だから族ごと宣言する。残り 2 本は torch を直に使う(``fit_zernike`` / ``match_logpolar_z``)。 完全環境(CI の py3.11、``FULLSEYE_REQUIRE_OPTIONAL=1``)では skip が**失敗**に なるので、宣言の付け過ぎも付け忘れも両方向で落ちる。
-- **L87** — ★PYTHONPATH を渡さない(この門の要点)。利用者は環境変数を設定しない。
-- **L126** — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
+- **L90** — ★PYTHONPATH を渡さない(この門の要点)。利用者は環境変数を設定しない。
+- **L129** — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
 
 ## `tests/test_fallback_names_identify_the_op.py`
 
@@ -2497,6 +2501,10 @@
 ## `tests/test_imgforensics.py`
 
 - **L1064** — ★2026-10-18: 以前は float の [0,1] をそのまま渡し、古い Pillow がバイト列を読み替えて黙って通していた (Pillow 13 で発覚)。本物の 8 bit に直してから JPEG を通す。
+
+## `tests/test_impl_differential.py`
+
+- **L191** — ★2026-11-04 の master(run 41724324673)の py3.12 / py3.14 で ``tb_points_to_voxel``(torch の scatter_add)が「片方が落ちる」になった。台帳(docs/IMPL_DIFFERENTIAL.json)は全 backend の ある環境で作るので、torch の無い版では**比べられない**だけで、写し方が壊れたのではない。 tests/test_op_probe_ledger.py と同じ判定: 「壊れている」と「この環境に無い」を分け、 分けた分は残りを確かめてから ``requires_backend`` で明示する(完全環境では失敗)。
 
 ## `tests/test_kendama_combo.py`
 
@@ -2677,6 +2685,10 @@
 ## `tests/test_raytrace3d.py`
 
 - **L276** — ★2026-10-15: 傾いた鏡(摂動)の後で像面と平行に進む光線を、以前は rms 3.4e18 mm の有効な点として数えた
+
+## `tests/test_reprconv_type_connectivity_2026_11_03.py`
+
+- **L24** — ★sobel3d / hessian3d は torch を使う。`match3d` 自体は torch 無しでも import できる (torch_lazy が初回使用まで読み込まない)ので、2026-11-03 までの `pytest.importorskip("match3d")` は**何も skip せず**、torch の無い master の py3.12 / py3.14 で ImportError になっていた。要るのは torch なので、それを 使うテストごとに `requires_backend("torch")` で宣言する(完全環境では skip が失敗)。
 
 ## `tests/test_roughness_robust.py`
 

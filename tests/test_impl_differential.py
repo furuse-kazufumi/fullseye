@@ -20,6 +20,7 @@ optional 依存(cv2 / skimage / torch / kornia)が無い組は skip(``requires_b
 from __future__ import annotations
 
 import os
+import re
 import sys
 
 import numpy as np
@@ -186,15 +187,33 @@ def test_aligned_points_are_for_pairs_that_differ():
 BRIDGE_OK = sorted(b["op"][3:] for b in DATA["bridges"] if b["result"] == "一致")
 
 
+#: 「optional backend が入っていない」だけの失敗(torch_lazy / backend の ImportError の定型文)。
+#: ★2026-11-04 の master(run 41724324673)の py3.12 / py3.14 で ``tb_points_to_voxel``(torch の
+#: scatter_add)が「片方が落ちる」になった。台帳(docs/IMPL_DIFFERENTIAL.json)は全 backend の
+#: ある環境で作るので、torch の無い版では**比べられない**だけで、写し方が壊れたのではない。
+#: tests/test_op_probe_ledger.py と同じ判定: 「壊れている」と「この環境に無い」を分け、
+#: 分けた分は残りを確かめてから ``requires_backend`` で明示する(完全環境では失敗)。
+_OPTIONAL_BACKEND = "needs the optional"
+
+
 def test_bridge_samples_still_map_knobs_as_documented():
     """``tb_X`` のつまみ k = 0 / 3/7 / 1 が、台帳の関数の既定の 1/4・1・2 倍(範囲表は lo + (hi−lo)k)に写る。"""
-    bad = []
+    bad, absent = [], {}
     for stem in BRIDGE_OK:
         r = D.check_tb_bridge(stem)
-        if r["result"] not in ("一致", "未検証"):
-            bad.append((stem, r))
+        if r["result"] in ("一致", "未検証"):
+            continue
+        why = r.get("why", "")
+        m = re.search(r"optional '(\w+)' backend", why)
+        if r["result"] == "片方が落ちる" and why.startswith("ImportError") and _OPTIONAL_BACKEND in why and m:
+            absent[stem] = m.group(1)
+            continue
+        bad.append((stem, r))
     assert not bad, bad
     assert len(BRIDGE_OK) >= 120
+    if absent:
+        print("optional backend が無いので比べていない橋 %d 本: %s" % (len(absent), absent))
+        requires_backend(*sorted(set(absent.values())))
 
 
 # --------------------------------------------------------------------------- 直した不具合の回帰

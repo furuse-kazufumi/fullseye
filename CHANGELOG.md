@@ -7,7 +7,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
-版はまだ決めていない(0.9.0 の後に入った 8 本の統合と、GPU 一式 7 本の統合)。
+版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
 ### 追加 — CT のスキャン方式を 1 つの幾何で(コーンビーム FDK・ヘリカル・ラミノグラフィ・反復法)と GPU 経路
@@ -80,6 +80,21 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - ブランチ側で分類・登録が漏れていた道具と部品を、門を緩めずに直した: regen_all の未分類の実測器 8 本を EXCLUDED に
   理由つきで、公開経路から見えない部品(accel_seam / accel_typed / accel_label)を _INTERNAL に、ループの表明 13 か所に件数の 1 行。
 - HALCON の名前の被覆は 1017 / 2313(第 6 便の 1033 から段 0 の部分対応 16 名を外した値)。
+- 第 6 便の効かないつまみ 10 件(dead_knob)は全部、探針の入力がつまみの効く場面を作っていなかった。op の配線ミスは 0、
+  免除は 0。連鎖ファズの opsmv の builder を、つまみが効く入力にした。
+- 同梱の `fullseye/data/halcon_stubs.json` からベンダー文書の説明文(short_desc)を外した(作り直しで再混入していた)。
+- FSIM / FSIMc の要約に「特徴類似度による全参照の画質指標」を足した(6 言語)。検索の評価集合の当たり率が master と同じ値に戻った。
+- `gpu_auto_sweep` のロックが Windows 以外で一度も取れなかった(UnrealEditor の確認を pgrep でも行う)。索引の GPU tier の規則を、
+  `tools/` が隣に無い置き方でも見つける。レンズの 3-D 教材の「軸上のスポット半径」は環境で桁が割れる丸めの残りなので「< 1e-6 µm」と書く。
+
+## 0.9.0 — 2026-11-04
+
+PyPI に出す 0.9.0。11/03 に用意した分(下の「0.9.0 として 11/03 に用意した分」、PR #243)は tag を付けず未公開のままだったので、同じ版に 11/04 の 8 本の統合(この節)を足して出す。
+
+### 修正 — master の py3.12 / py3.14 だけで赤だった 2 件(PR の CI は py3.11 だけなので見えなかった)
+
+- `tests/test_pipeline_engine.py::test_run_genome_is_deterministic`: `run_genome` が輪郭の dict を返すと、比べ方(`np.array_equal(np.asarray(a), np.asarray(b))`)が「真偽値が曖昧」の ValueError を投げていた。optional の backend が無い版は登録表が小さく、同じ seed でも輪郭を返す鎖が選ばれた。入れ子まで比べる形に直し、seed 40 本で画像以外の出力も必ず通す試験を足した(py3.11 でも dict を 2 本通る)。
+- `examples/quickstart.py` が CI で 600 秒を超えた: 進化 30 世代だけで手元 147 秒。見せるのは 4 段が通ることなので 8 世代にした(例全体 178 → 69 秒)。
 
 ### 修正 — 完成度監査の段 0(CI・MCP・HALCON の見せ方・導入の文書)
 
@@ -222,7 +237,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   `tests/test_jsonio.py` の乱数の種(`hash` → `zlib.crc32`)。
 - 連鎖ファズに `contour` 型の種(`fit_circle_xld` が台帳の中で到達できなかった。親の乱数列は進めない)。
 
-## 0.9.0 — 2026-11-03
+### 0.9.0 として 11/03 に用意した分(PR #243)
+
+以下の小節(「minor を上げる理由」から 0.8.1 の前まで)は 11/03 の時点の 0.9.0 の中身。
 
 minor を上げる理由(CONTRIBUTING.md「Versioning」): Python 3.10 の終了(下限の引き上げ)、`raytrace3d` の傾けた像面で
 値が変わる修正、21 op(`opscalib`)の入口を ValueError にした契約変更。
