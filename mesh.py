@@ -667,10 +667,11 @@ def _read_ply_points(raw: bytes, src: str):
 def _read_xyz(raw: bytes, src: str):
     """Plain text ``x y z [r g b]``, one point per line (``#`` starts a comment)."""
     rows = []
-    comma_lines = plain_lines = 0
+    comma_lines = plain_lines = comment_lines = 0
     for i, ln in enumerate(_text(raw).splitlines()):
         s = ln.split("#")[0].strip()
         if not s:
+            comment_lines += ln.strip().startswith("#")
             continue
         if "," in s:
             # ★ A comma is a column separator only when it is the ONLY one on the
@@ -689,6 +690,11 @@ def _read_xyz(raw: bytes, src: str):
         raise ValueError("%s: XYZ file mixes comma-separated and whitespace-separated lines"
                          % src)
     if not rows:
+        # ★2026-11-05 redteam I26: write_points writes a 0-point cloud as a header comment
+        # ("# 0 points ..."), and that file must read back as a (0, 3) cloud. A file with no
+        # comment and no data (only blanks) is still refused -- it is not a point cloud.
+        if comment_lines:
+            return np.zeros((0, 3), np.float64), None
         raise ValueError("%s: XYZ file has no data lines" % src)
     _check_count(len(rows), "points", src)
     w = len(rows[0])
@@ -1223,7 +1229,8 @@ def write_points(path: str, points, colors=None, binary: bool = True) -> None:
         coloured. Coordinates **and** colours round-trip **exactly** (colours stay
         float in ``[0, 1]``). ``.npz`` stores it under the ``points`` key.
       * ``.xyz`` — text ``x y z [r g b]``, 17 digits; colours written as floats in
-        ``[0, 1]`` (exact round-trip through :func:`read_points`).
+        ``[0, 1]`` (exact round-trip through :func:`read_points`). An empty cloud is
+        written as one ``# 0 points`` comment line and reads back as ``(0, 3)``.
       * ``.ply`` — ``binary_little_endian`` by default (``binary=False`` for
         ASCII), ``double`` xyz (exact) and, when coloured, ``uchar`` red/green/blue
         **quantised to 8 bits** (use ``.npy``/``.npz`` for exact colour).
@@ -1275,8 +1282,11 @@ def _write_xyz_points(src: str, P: np.ndarray, C) -> None:
     else:
         rows = ["%.17g %.17g %.17g %.17g %.17g %.17g" % (x, y, z, r, g, b)
                 for (x, y, z), (r, g, b) in zip(P, C)]
+    if not rows:
+        # an empty file cannot be told from a truncated one; say what it is (I26)
+        rows = ["# 0 points (x y z%s)" % ("" if C is None else " r g b")]
     with open(src, "w", encoding="ascii") as f:
-        f.write("\n".join(rows) + ("\n" if rows else ""))
+        f.write("\n".join(rows) + "\n")
 
 
 def _write_ply_points(src: str, P: np.ndarray, C, binary: bool) -> None:
