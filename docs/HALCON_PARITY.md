@@ -8,13 +8,13 @@ excluded here, not counted).
 
 ## Headline
 - **1016 / 2313 distinct real HALCON operators implemented (43.9%)**
-  = 1016 evolvable registry ops (of which 17 are also reachable through the
+  = 1016 names: 387 through `Op.halcon` on the evolvable registry ops, 595 through perception facades (`fullseye/data/halcon_facade_map.json`, not registry ops) and 34 through typed-ledger ops (`opassist.ledger_halcon_map()`, not registry ops) (of which 17 are also reachable through the
   n-ary capability tier — a subset, not an addition; 0 n-ary-only).
 - dangling registry `Op.halcon` (fake names): **0** (fail-closed).
 - partial analogues (the name is claimed but only part of the job is done): **16**, not counted above — apply_bead_inspection_model, apply_texture_inspection_model, binocular_calibration, calibrate_sheet_of_light, camera_calibration, create_bead_inspection_model, create_local_deformable_model, create_ocv_proj, create_shape_model_3d, create_texture_inspection_model, find_box_3d, find_deformable_surface_model, find_local_deformable_model, find_planar_uncalib_deformable_model, find_shape_model_3d, measure_profile_sheet_of_light (what each does and does not do: docs/HALCON_COVERAGE.md).
 
 ## Evolvable registry (single-image pipeline, coverage-counted)
-- registry ops: 947 ; distinct real HALCON ops covered: **1017**
+- registry ops: 947 ; distinct real HALCON ops covered: **1017** (all sources; through registry `Op.halcon` alone: 388)
 - auto-generated ops passing the functional gate: 226 / 227
 - auto ops counted in coverage but FAILING the gate: 1 ['abs_image']
 
