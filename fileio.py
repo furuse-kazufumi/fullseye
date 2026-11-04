@@ -366,17 +366,42 @@ def _face_normals(vertices, faces):
     return normals, tri
 
 
-def _vertex_normals(vertices, faces):
-    """Return area-weighted normals sharing the vertex indices used by OBJ."""
+def _obj_normals(vertices, faces):
+    """``(vn, corner_index)`` for OBJ: unit normals and, per face corner, its 0-based vn index.
+
+    A corner uses its vertex's area-weighted normal (smooth shading, so a closed mesh stays one
+    shared-vertex surface for readers that split vertices by normal, e.g. trimesh). A vertex no
+    face references gets no ``vn``; a vertex whose face normals cancel (both sides of one
+    triangle, a pinched fan) has no vertex normal, so each of its corners uses that face's own
+    unit normal instead.
+
+    ★2026-11-05 redteam I15: both cases used to raise "vertex normal is undefined", although
+    OFF / PLY write the same mesh; the docstring also promised per-face normals. The docstring
+    now says what is written, and every mesh OFF / PLY accept is accepted."""
     tri = vertices[faces]
     cross = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
-    normals = np.zeros_like(vertices)
+    face_unit = cross / np.linalg.norm(cross, axis=1)[:, None]      # _mesh_arrays: no zero-area face
+    summed = np.zeros_like(vertices)
     for corner in range(3):
-        np.add.at(normals, faces[:, corner], cross)
-    length = np.linalg.norm(normals, axis=1)
-    if np.any(length == 0):
-        raise ValueError("mesh_write_obj: vertex normal is undefined")
-    return normals / length[:, None]
+        np.add.at(summed, faces[:, corner], cross)
+    length = np.linalg.norm(summed, axis=1)
+    scale = np.max(np.linalg.norm(cross, axis=1))
+    defined = length > 1e-12 * scale
+    used = np.zeros(len(vertices), bool)
+    used[faces.ravel()] = True
+    smooth = np.flatnonzero(used & defined)
+    vn = [summed[smooth] / length[smooth][:, None]]
+    slot = np.full(len(vertices), -1, np.int64)
+    slot[smooth] = np.arange(len(smooth))
+    corner_index = slot[faces]
+    need = np.flatnonzero((corner_index < 0).any(axis=1))           # faces with an undefined corner
+    if need.size:
+        vn.append(face_unit[need])
+        face_slot = len(smooth) + np.arange(need.size)
+        rows = corner_index[need]
+        rows[rows < 0] = np.broadcast_to(face_slot[:, None], rows.shape)[rows < 0]
+        corner_index[need] = rows
+    return np.concatenate(vn), corner_index
 
 
 def _ply_table(value, op: str):
@@ -544,17 +569,19 @@ def mesh_read_stl(data):
 def mesh_write_obj(mesh):
     """三角形 mesh を ``v`` / ``vn`` / ``f`` を持つ Wavefront OBJ 文字列に書く(``text``)。
 
-    面ごとの法線を ``vn`` として書く。material/texture は書かない。呼び出し例:
+    頂点の面積重み法線(滑らかな陰影)を ``vn`` として書き、``f v//vn`` で参照する。どの面からも
+    参照されない頂点には ``vn`` を書かず、面の法線が打ち消し合って頂点法線が定まらない頂点
+    (表裏 2 枚の三角形など)は、その角だけ面の単位法線を使う —— OFF / PLY が書ける mesh は
+    全部書ける。material/texture は書かない。呼び出し例:
     ``text = mesh_write_obj((vertices, faces))``。
     """
     vertices, faces = _mesh_arrays(mesh, "mesh_write_obj")
-    normals = _vertex_normals(vertices, faces)
+    normals, corner = _obj_normals(vertices, faces)
     lines = ["# Wavefront OBJ written by fullseye.fileio", "o mesh"]
     lines += ["v %.17g %.17g %.17g" % tuple(v) for v in vertices]
     lines += ["vn %.17g %.17g %.17g" % tuple(n) for n in normals]
-    lines += ["f %d//%d %d//%d %d//%d" %
-              (a + 1, a + 1, b + 1, b + 1, c + 1, c + 1)
-              for a, b, c in faces]
+    lines += ["f %d//%d %d//%d %d//%d" % (a + 1, na + 1, b + 1, nb + 1, c + 1, nc + 1)
+              for (a, b, c), (na, nb, nc) in zip(faces, corner)]
     return "\n".join(lines) + "\n"
 
 
