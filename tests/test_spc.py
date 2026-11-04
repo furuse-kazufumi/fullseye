@@ -181,12 +181,16 @@ def test_hotelling_mean_row_is_zero():
     assert abs(float(t2)) < 1e-9
 
 
-def test_hotelling_ucl_matches_f_distribution():
-    from scipy.stats import f as fdist
+def test_hotelling_phase_one_ucl_matches_beta_distribution():
+    # ★既定(同じデータから mean/cov を推定 = phase I)の限界は Beta(Tracy-Young-Mason 1992)。
+    #   以前このテストは phase-II の F 式を既定経路に当てた値を固定していた(敵対的検証
+    #   2026-11-05 S2: phase I では T² <= (m-1)^2/m が恒等的に成り立ち、F 式では警報不能)。
+    from scipy.stats import beta as bdist
     data = np.random.default_rng(7).normal(0.0, 1.0, size=(40, 2))
     r = spc.spc_hotelling_t2(data, alpha=0.0027)
     m, p = 40, 2
-    ucl = p * (m + 1.0) * (m - 1.0) / (m * (m - p)) * fdist.ppf(1 - 0.0027, p, m - p)
+    ucl = (m - 1.0) ** 2 / m * bdist.ppf(1 - 0.0027, p / 2.0, (m - p - 1) / 2.0)
+    assert r["phase"] == "phase_I"
     assert r["ucl"] == pytest.approx(ucl)
 
 
