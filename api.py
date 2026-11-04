@@ -3469,6 +3469,19 @@ def _prepare_pipeline(image, stages, a, b, policy):
     return image, checked, ops_
 
 
+def _pipeline_entry(v, op, coerce, policy):
+    """鎖の入口の値に、第 1 段の op の入口の契約を当てる(数値でない dtype の拒否 → sort の coerce →
+    dtype 契約 → :func:`_guard_input`)。返り値 = 第 1 段に渡す値。
+
+    :func:`_pipeline_steps` の ``entry=True`` と ``FullseyeEngine.run_cached`` が共有する 1 本 ——
+    run_cached はキャッシュに当たっても毎回ここを通す(2026-11-05 敵対的検証 C6)。"""
+    _reject_untyped(v, op)
+    v = _coerce_input(v, op) if coerce else v
+    v = _contract_dtype(v, op, policy)
+    _guard_input(v, op, policy)
+    return v
+
+
 def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast, entry=True):
     """CPU の段実行の唯一の本体: 各段の後の値を順に yield する。
 
@@ -3490,10 +3503,7 @@ def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast, entry=True):
                 continue
             v = v.to_dense()
         if first:
-            _reject_untyped(v, op)
-            v = _coerce_input(v, op) if coerce else v
-            v = _contract_dtype(v, op, policy)
-            _guard_input(v, op, policy)
+            v = _pipeline_entry(v, op, coerce, policy)
             first = False
 
         def _stage(_op=op, _v=v, _a=sa, _b=sb):

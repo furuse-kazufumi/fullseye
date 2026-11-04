@@ -434,17 +434,34 @@ class FullseyeEngine:
         policy = api._policy(None)
         fast = api._fast_on(None)
         img, norm, ops_ = api._prepare_pipeline(image, stages, 0.5, 0.5, policy)
-        # the policy and the fast-twin switch change results, so they are part of the key
-        prefix = (_input_hash(img), policy, fast)
-        prev = img
+        # ★2026-11-05(敵対的検証 C6): (1) 入口の契約(uint8 の /255 と台帳記録、extra_checks の値域、
+        #   strict での拒否)は**キャッシュに当たっても毎回**通す —— 以前は第 1 段が当たると飛び、
+        #   strict + extra_checks="on" で run() が断る画像を暖まった run_cached() は返していた。
+        #   (2) 結果を変える状態を鍵に入れる: 照合用テンプレート(ops._MATCH_CTX、スレッドローカル)と
+        #   fssystem の全パラメータ —— 以前はテンプレート A の答えをテンプレート B で返した。
+        #   (3) 計算中に劣化台帳へ記録が残った段はキャッシュしない(当たると記録が消え、fallback の値が
+        #   「成功」に見えた)。次の呼び出しでもう一度計算され、同じ記録が残る。
+        import backend_safe
+        import fssystem
+        import ops as _rt_ops
+        v0 = api._pipeline_entry(img, ops_[0], True, policy)
+        template = _rt_ops._MATCH_CTX.get("template")
+        prefix = (_input_hash(img), policy, fast,
+                  None if template is None else _input_hash(template),
+                  repr(sorted(fssystem.system_snapshot().items())))
+        prev = v0
         for i, st in enumerate(norm):
             prefix = prefix + (tuple(st),)
             hit = cache.get(prefix)
             if hit is not None:
                 prev = hit
                 continue
-            val = next(iter(api._pipeline_steps(prev, [st], [ops_[i]], True, policy, fast, entry=(i == 0))))
-            prev = cache.put(prefix, val, protect=[prefix])
+            mark = backend_safe.mark()
+            val = next(iter(api._pipeline_steps(prev, [st], [ops_[i]], True, policy, fast, entry=False)))
+            if backend_safe.events_since(mark):
+                prev = val                            # degraded: recompute (and re-record) next time
+            else:
+                prev = cache.put(prefix, val, protect=[prefix])
         return prev
 
     def stepwise_states(self, image, coerce: bool = True) -> list:
