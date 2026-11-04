@@ -62,8 +62,10 @@ def pipeline_states(stages, image, coerce=True):
     valid just because it ran, and non-finite counts appear in ``reasons`` rather than being blanked.
     A stage that raises (and every stage after it) gets ``ran=False`` and an ``error`` message. No
     automatic "fix and rerun" is offered — the state only reports."""
-    norm = [(stage_name(st), *(float(x) for x in (tuple(st)[1:3] + (0.5, 0.5))[:2]))
-            if not isinstance(st, str) else (st, 0.5, 0.5) for st in stages]
+    # ★2026-11-05(敵対的検証 C13): 以前は ``tuple(st)[1:3]`` で段を読み、dict 段は鍵の名前
+    #   ("op" / "a")を float にしようとして ValueError、``(name, {"a": ..})`` は float(dict) の TypeError
+    #   だった(run_pipeline は同じ段を受ける)。名前は stage_name、ノブは api._normalise_stage の 1 本。
+    norm = [(stage_name(st), *api._normalise_stage(i, st, 0.5, 0.5)[1:]) for i, st in enumerate(stages)]
     out = []
     if not norm or image is None:
         return [{"index": i, "op": n, "a": a, "b": b, "ran": False, "valid": None, "reasons": []}
@@ -253,16 +255,12 @@ class FullseyeEngine:
                 op = stage_name(st)
             except TypeError as e:
                 raise ValueError("stage %d: %s" % (i, e)) from None
-            if isinstance(st, dict):                 # Studio / run_pipeline と同じ {"op"|"name", "a", "b"}
-                a, b = st.get("a", 0.5), st.get("b", 0.5)
-            elif isinstance(st, (tuple, list)) and len(st) == 2 and isinstance(st[1], dict):
-                a, b = st[1].get("a", 0.5), st[1].get("b", 0.5)   # (name, {"a": .., "b": ..}) —— run_pipeline と同じ形
-            elif isinstance(st, (tuple, list)):
-                a = st[1] if len(st) > 1 else 0.5
-                b = st[2] if len(st) > 2 else 0.5
-            else:
-                a, b = 0.5, 0.5
-            self.stages.append([op, float(a), float(b)])
+            # ★2026-11-05(敵対的検証 C3): ノブの読み方は run_pipeline と同じ api._normalise_stage 1 本。
+            #   以前はここだけ別の読み方で、dict 段の未知キー({"op": "threshold", "A": 0.9} の打ち間違い)と
+            #   4 要素目(("threshold", 0.9, 0.5, 0.1))を黙って捨て、文字列ノブ "0.9" を float() で通していた
+            #   —— run_pipeline は同じ段を TypeError で断る。同じ段は入口によらず同じ意味・同じ拒否。
+            _, a, b = api._normalise_stage(i, st, 0.5, 0.5)
+            self.stages.append([op, a, b])
 
     # ------------------------------------------------------------------ load --
     def _adopt(self, other: "FullseyeEngine") -> "FullseyeEngine":
@@ -365,10 +363,11 @@ class FullseyeEngine:
 
     def set_knobs(self, i: int, a: float | None = None, b: float | None = None) -> "FullseyeEngine":
         """Tune stage *i*'s knobs in place; returns self for chaining."""
+        # 兄弟(C3): 段の作成と同じ型の規則(数値と bool のみ、"0.9" は TypeError)
         if a is not None:
-            self.stages[i][1] = float(a)
+            self.stages[i][1] = api._stage_knob(i, self.stages[i][0], "a", a)
         if b is not None:
-            self.stages[i][2] = float(b)
+            self.stages[i][2] = api._stage_knob(i, self.stages[i][0], "b", b)
         return self
 
     # -------------------------------------------------------------- execution --
