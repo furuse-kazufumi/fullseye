@@ -174,7 +174,15 @@ def image_to_world_plane(image_points, homography):
 
 
 def image_points_to_world_plane(cam_par, pose, image_points, scale=1.0):
-    """カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。"""
+    """カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。
+
+    返り値は (N,2) の world 座標 × ``scale``。視線が z=0 平面とカメラの**前**で交わらない画素
+    (地平線より上など、交点がカメラの後ろ)は平面上の点を見ていないので、その行は ``nan``。
+    視線が平面と平行な画素は ``ValueError``。
+
+    ★2026-11-05(敵対的検証 geometry、未再現の疑いを確認): 以前は交点の係数 lam < 0(カメラの
+    後ろ)でも有限の world 点を返していた(深度 −6.7 の点が「見えている点」として返った)。
+    """
     op = "image_points_to_world_plane"
     K = _K(cam_par, op); pose = _pose_matrix(pose, op)
     sc = _finite_scalar(scale, "scale", op, positive=True)
@@ -184,6 +192,7 @@ def image_points_to_world_plane(cam_par, pose, image_points, scale=1.0):
     p = _finite_array(image_points, "image_points", op, cols=2)
     rays = np.column_stack((p[:, 1], p[:, 0], np.ones(len(p)))) @ ray_transform.T
     lam = _checked_div(-o[2], rays[:, 2], op, "the viewing ray is parallel to the z = 0 plane")
+    lam = np.where(lam > 0, lam, np.nan)          # 交点がカメラの後ろ → 平面上の点ではない
     return (o[None, :2] + lam[:, None] * rays[:, :2]) * sc
 
 
