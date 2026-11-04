@@ -269,7 +269,7 @@ def vector_to_hom_mat3d(src_points, dst_points):
     ``dst ≈ R src + t`` の ``R``(det = +1)と ``t`` を返す。**倍率は推定しない**(剛体のみ)。
     HALCON の同名 op は ``TransformationType``('rigid' / 'similarity' / 'affine' / 'projective')
     を引数に取るが、この関数は 'rigid' に当たる。倍率込みの相似変換が要るなら
-    ``odometry.umeyama_align(src, dst, with_scale=True)``(→ ``R, t, s``)を使う。
+    ``odometry.umeyama_align(src, dst, with_scale=True)``(→ ``(s, R, t)``、``dst ≈ s R src + t``)を使う。
 
     ★2026-11-05(敵対的検証 G6): 以前の docstring は「剛体/相似」と書いていたが、実装は
     倍率を推定しない(dst = 2 R src + t を渡すと残差 2.6 のまま)。仕様は剛体として明記した。
