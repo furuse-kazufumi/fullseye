@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 611 / 1615 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 611 / 1619 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel.py`
@@ -1382,6 +1382,10 @@
 
 - **L25** — ★repo 바로 아래의 모듈（profileops）을 import 하므로, 체크아웃에서 그대로 실행해도 통과하도록 repo 루트를 맨 앞에 둔다. 다른 예제와 같은 방식. 이것이 없으면 `py -3.11 examples/<name>.py` 가 ModuleNotFoundError 로 떨어진다（2026-09-09 실측: 실행하는 문이 없던 83 개 중, 떨어진 것은 이 유형의 2 개뿐）.
 
+## `examples/quickstart.py`
+
+- **L58** _(ja)_ — ★世代は 8(以前は 30)。見せるのは 4 段が通ることで、探索の質ではない。 30 世代は進化だけで手元 147 秒、CI の py3.12/3.14 では例全体が 600 秒を超えた(2026-11-04)。
+
 ## `examples/representation_roundtrip.py`
 
 - **L175** — (c) 가우시안 -> voxel 의 질량. ★한 번 틀렸던 숫자
@@ -1622,10 +1626,11 @@
 - **L356** _(ja)_ — ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
 - **L363** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
 - **L401** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228 の再現で見つけた): color 層は OpenCV が要る(extra `opencv`)。 素の `pip install fullseye` では空が正しいのに、ここが無条件に assert していたので `fullseye index` が AssertionError で落ちていた。黙って空になるのを止めたいのは OpenCV が在るときだけ。
-- **L475** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228): checkout の判定が「HERE に docs/ が在るか」だけだった。wheel の HERE は site-packages そのものなので、別のパッケージが site-packages/docs/ を置いていると、そこへ OP_INDEX.json を書きに行く(読み取り専用の環境では落ちる)。checkout にしか無い正本の組で判定する。
-- **L558** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
-- **L667** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
-- **L677** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
+- **L426** _(ja)_ — ★2026-11-04(統合 GPU): 規則は tools/ にあるので、imgevolve.py の隣に tools/ が無い置き方(変異探針の 小さな作業木: imgevolve.py だけを写し、本体は PYTHONPATH で引く)では見つからず索引が組めなかった。 imgevolve.py の隣を先に、無ければ sys.path の各所の tools/ を探す。
+- **L481** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228): checkout の判定が「HERE に docs/ が在るか」だけだった。wheel の HERE は site-packages そのものなので、別のパッケージが site-packages/docs/ を置いていると、そこへ OP_INDEX.json を書きに行く(読み取り専用の環境では落ちる)。checkout にしか無い正本の組で判定する。
+- **L564** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
+- **L673** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
+- **L683** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
 
 ## `imgforensics.py`
 
@@ -2418,8 +2423,8 @@
 ## `tests/test_example_scripts_run.py`
 
 - **L48** — ★2026-09-09, 이 게이트를 넣은 첫 CI 에서 **7 개가 py3.12 에서 실패했다**(py3.11 은 초록). CI 는 의도적으로 **py3.11 에만** torch / kornia / mahotas / opencv-contrib 를 넣고, 다른 버전에는 넣지 않는다. 테스트 쪽에는 ``requires_backend`` 라는 선언 장치가 이미 있었는데, **예제를 실행하는 게이트에는 그것이 없었다** —— 장치가 있다는 것과 모든 경로가 그것을 지난다는 것은 별개다. ``gallery2d_*`` 는 「그 계열의 op 를 전부 돌리는」 갤러리이므로, 계약 자체가 **어떤 backend 가 들어 있는지에 의존한다**(op 이름을 직접 적어 레지스트리와 맞추고, 하나라도 빠지면 「OPS 에 여분」으로 실패). 그래서 계열마다 선언한다. 남은 2 개는 torch 를 직접 쓴다(``fit_zernike`` / ``match_logpolar_z``). 완전한 환경(CI 의 py3.11, ``FULLSEYE_REQUIRE_OPTIONAL=1``)에서는 skip 이 **실패**가 되므로, 과다 선언도 선언 누락도 양방향으로 실패한다.
-- **L87** — ★PYTHONPATH 를 넘기지 않는다(이 게이트의 핵심). 사용자는 환경 변수를 설정하지 않는다.
-- **L126** _(ja)_ — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
+- **L90** — ★PYTHONPATH 를 넘기지 않는다(이 게이트의 핵심). 사용자는 환경 변수를 설정하지 않는다.
+- **L129** _(ja)_ — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
 
 ## `tests/test_fallback_names_identify_the_op.py`
 
@@ -2499,6 +2504,10 @@
 ## `tests/test_imgforensics.py`
 
 - **L1064** _(ja)_ — ★2026-10-18: 以前は float の [0,1] をそのまま渡し、古い Pillow がバイト列を読み替えて黙って通していた (Pillow 13 で発覚)。本物の 8 bit に直してから JPEG を通す。
+
+## `tests/test_impl_differential.py`
+
+- **L191** _(ja)_ — ★2026-11-04 の master(run 41724324673)の py3.12 / py3.14 で ``tb_points_to_voxel``(torch の scatter_add)が「片方が落ちる」になった。台帳(docs/IMPL_DIFFERENTIAL.json)は全 backend の ある環境で作るので、torch の無い版では**比べられない**だけで、写し方が壊れたのではない。 tests/test_op_probe_ledger.py と同じ判定: 「壊れている」と「この環境に無い」を分け、 分けた分は残りを確かめてから ``requires_backend`` で明示する(完全環境では失敗)。
 
 ## `tests/test_kendama_combo.py`
 
@@ -2679,6 +2688,10 @@
 ## `tests/test_raytrace3d.py`
 
 - **L276** _(ja)_ — ★2026-10-15: 傾いた鏡(摂動)の後で像面と平行に進む光線を、以前は rms 3.4e18 mm の有効な点として数えた
+
+## `tests/test_reprconv_type_connectivity_2026_11_03.py`
+
+- **L24** _(ja)_ — ★sobel3d / hessian3d は torch を使う。`match3d` 自体は torch 無しでも import できる (torch_lazy が初回使用まで読み込まない)ので、2026-11-03 までの `pytest.importorskip("match3d")` は**何も skip せず**、torch の無い master の py3.12 / py3.14 で ImportError になっていた。要るのは torch なので、それを 使うテストごとに `requires_backend("torch")` で宣言する(完全環境では skip が失敗)。
 
 ## `tests/test_roughness_robust.py`
 
