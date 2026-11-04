@@ -10,6 +10,26 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(optics)
+
+回帰の門は `tests/test_redteam2_optics_2026_11_05.py`(真値・不変量・独立実装と突き合わせる)。op の宣言・型名は変えていない。
+
+- O1 `defocus_blur`(値が変わる): 手前から over 合成(前乗算の色とぼかした被覆率 α、最後に累積 α で割る)。以前は全層をぼかして足し、ぼかした重みで割っていて、合焦した不透明な手前の縁が奥のぼけに汚された(1.0 -> 0.666)。層は半開区間 `[e_i, e_{i+1})`(最後だけ両端を含む)に振り分け、境界上の深度が 2 層に重複しない。
+- O2 `defocus_blur`(値が変わる): 深度 `+inf` は `z -> ∞` の錯乱円 `f²/(N(z_f − f))` でぼかす(以前は合焦距離に置き換えてくっきり写った)。NaN と `-inf` は従来どおり合焦扱い。
+- O3 `echo_phase_polarity` / `sam_cscan`(値が変わる・NaN が出る): ゲートの山は**ゲート内部の局所極大**(以前は端検査なしの argmax で、表面エコーの裾のゲート端を返した。既定 100 MHz・Si 100 µm で振幅 0.063 -> 0.020)。内部に極大が無ければ `amplitude` / `t_peak`(`tof`)は NaN。新しい返り: `peak_found` / `edge_dominated`(A スキャン)、`n_no_peak`(C スキャン)。`signed_peak` は包絡線の山から半周期以内の |RF| 最大で読む(以前はゲート全体で、裾の符号を読んだ)。
+- O4 `fringe_ftp_phase`(値が変わる): 推定した搬送波を DFT の整数ビンに丸めない。視野で周期的な(漏れの無い)画像だけ整数ビン、それ以外はピークの両隣 1 ビンで DTFT のパワーを細かく評価してサブビンに(7.3 px の縞で位相 RMS 0.634 -> 0.020 rad)。`info["carrier_period"]` が変わる。
+- O5 `decode_fringe(ref_phase=...)`(値が変わる): 巻き込み位相の差 `wrap(wrapped − ref_phase)` を 1 回だけ展開し、大域の `2πm` は有効画素の中央値が `[−π, π]` に入る分岐に揃える。以前は計測面を展開してから参照を引いていて、展開の起点の分岐が揃わず 60 条件中 24 で高さが `k·2πm` ずれた。`ref_phase` 自体の `2πm` のずれは消える。
+- O6 `modulation` と、それを使う `decode_fringe(min_modulation=...)` / `grating_three_image_retrieve`(P = N): 変調度の床を画素ごとの相対量 `|mean| > 64 eps · max_n |I_n|` に(以前は絶対の 1e-12 で、1e-13 倍した同じデータを「有効画素なし」と拒否)。兄弟: `fringe_ftp_phase` の「一定画像」判定の `max(|im|, 1.0)` の床も相対量に。
+- O7 `wrapped_phase` / `decode_fringe` の巻き込み位相、`lockin_demodulate` / `lockin_phase` の `phase`、`fringe_multipath_phase_error` の `phase` / `bias`: 値域を文書どおり `(-π, π]` に(`-π` は `+π` へ)。
+
+### 修正 — 敵対的検証 2026-11-05 第 2 巡(optics)の同型の箇所の一掃
+
+- O1 の兄弟: `examples/poc_telecentric_metrology.py` の描画の層合成も同じ形(ぼかした重みで正規化)だったので手前から over 合成に(門 30 件 OK、読みが 0.33 -> 0.49 % 以内などに動き docstring を更新)。`examples/poc_focus_stacking.py` は穴 (d) として欠陥の存在を門にしていたので、直った側の門に反転し、合成が変わって動いた数値を測り直した(全焦点 33.69 -> 40.20 dB ほか)。
+- O3 の兄弟: `signed_peak`(上記)。`test_ultrasound` の `f_min_time` の門は欠陥(裾込みの振幅)に依っていたので、裾の支配を `edge_dominated` とゲート端の包絡線で見る形にした。
+- O4 の兄弟: `moirealign` は既にサブビン、`interferometry` の搬送波は許容幅つきの照合、`octscan` は窓の中心だけに使うので変えない。
+- O5: `unwrap_phase_2d` / `decode_fringe` の docstring の「参照を同じ手順で展開して引けば相殺」という誤った約束を直した。
+- O8 台帳の docstring の op 数・カテゴリ数: `opsinterferometry`(5 -> 6 カテゴリ)と同じ形の古い数 10 本(`opsacoustics` / `opsconngraph` / `opsdem` / `opsemproof` / `opsflyvision` / `opsmotionmag` / `opsprintpath` / `opsroughness` / `opsshape2d`、`opsoptics` は数を書くのをやめ `list_ops()` を正本に)。25 件の主張を台帳の実数と突き合わせる門を足した。
+
 ### 変更(Breaking)— `plenoptic_refocus_depth` の傾き↔距離の単位を直した(2026-11-04)
 
 - 像のずれを `slope × 角度ステップ × ピッチ` で出していた。次元から正しくは傾き × ピッチ / 角度ステップで、PoC のカメラでは 1/角度ステップ² ≈ 3000 倍小さく、測った傾きはどれも合焦距離(1.0 m)へ戻っていた。いまは復号の視点刻み(1 視点 = ピッチ/U ぶんの射出瞳)、射出瞳までの距離、Newton の式で変換する近軸の式。処方を順方向に光線追跡した視差と、理想レンズで相対 1e-6、三枚玉で 2e-4 以内で一致する(`tests/test_plenoptic.py`)。
