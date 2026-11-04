@@ -120,7 +120,7 @@ def match_fundamental_matrix_ransac(points1, points2, thresh: float = 1.0, iters
     # ★2026-11-05(敵対的検証 G1b): 以前は内れ値で再推定した F を返しながら、inliers は
     # 再推定前の 8 点仮説のものを返していた(返した F で数え直すと 138 → 185 点)。
     # featmatch._refit_keeping_consensus と同じ規則: 返す inliers は常に返す F の内れ値。
-    # 再推定で合意が 8 点未満に痩せたら、合意を満たしていた仮説の F を返す。
+    # 再推定で合意が仮説より減るなら、合意の多い仮説の F を返す(RANSAC の目的)。
     F, inl = best_F, best_in
     if best_in.sum() >= 8:
         try:
@@ -129,7 +129,7 @@ def match_fundamental_matrix_ransac(points1, points2, thresh: float = 1.0, iters
             F2 = None
         if F2 is not None and np.isfinite(F2).all():
             inl2 = _sampson(F2, p1, p2) < thresh ** 2
-            if inl2.sum() >= 8:
+            if inl2.sum() >= best_in.sum():
                 F, inl = F2, inl2
     return {"F": F, "inliers": inl, "num_inliers": int(inl.sum())}
 

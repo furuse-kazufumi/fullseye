@@ -283,10 +283,10 @@ def ransac_rigid(src_pts, dst_pts, pairs, inlier_thr, iters=2000, seed=0,
         return None
     # ★2026-11-05(敵対的検証 G1b の兄弟): 以前は内れ値で再推定した R,t を返しながら、
     # inliers は再推定前の 3 点仮説のものを返していた(iters=10 で 33 点食い違う)。
-    # 返す inliers は常に返す R,t の内れ値。再推定で合意が 3 点未満に痩せたら仮説を返す。
+    # 返す inliers は常に返す R,t の内れ値。再推定で合意が仮説より減るなら仮説を返す。
     R, t = _kabsch(S[best_inliers], D[best_inliers], device)
     inl = np.linalg.norm(S @ R.T + t - D, axis=1) < inlier_thr
-    if int(inl.sum()) < 3:
+    if int(inl.sum()) < best_count:
         R, t = best_pose
         inl = np.linalg.norm(S @ R.T + t - D, axis=1) < inlier_thr
     return R, t, inl, S, D

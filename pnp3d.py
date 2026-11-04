@@ -375,7 +375,7 @@ def pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0):
 
     - 最良標本の inlier が 6 未満のときは全点で解き直す fallback に入り、``info["fallback"] = True`` が付く。このとき ``inlier_mask`` は fallback 姿勢で数え直した実測値なので、``inlier_ratio`` が小さいまま返ることがある(合意を捏造しない)。fallback も失敗すれば ``ValueError``。
     - inlier 数の比較は「より多い」だけを更新するので、同数なら先に見つかった標本が残る。
-    - 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。リフィットで合意が 6 点未満に痩せたら、合意を満たしていた仮説の姿勢を返す(``featmatch`` の RANSAC と同じ規則)。
+    - 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。リフィットで合意(内れ値の数)が仮説より減るなら、仮説の姿勢を返す。
     - Raises ``ValueError``: 形状不正 / 6 点未満 / 点数不一致 / 非有限(``dlt_pose`` と同じ入口検査)。
     - 評価は ``reprojection_error``、GT 比較は ``pose_error``。
     """
@@ -425,12 +425,12 @@ def pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0):
     # n_inliers / inlier_ratio は「最良の 6 点仮説」のものを返していた(返した姿勢で数え直すと
     # 74 → 107 点、35 点が食い違う)。featmatch._refit_keeping_consensus と同じ規則で、
     # 返す inliers は常に返す姿勢の内れ値、rms も返す姿勢・返す mask の上で測る。
-    # 当てはめ直しで合意が 6 点未満に痩せたら、合意を満たしていた仮説の姿勢をそのまま返す。
+    # 当てはめ直しで合意が仮説より減るなら、合意の多い仮説の姿勢を返す(RANSAC の目的)。
     try:
         R, t, _ = pnp_pose(X[best_inliers], x[best_inliers], K)
         mask = np.linalg.norm(_project(X, K, R, t) - x, axis=1) < thresh
-        if int(mask.sum()) < 6:
-            raise ValueError("refit lost the consensus")
+        if int(mask.sum()) < best_count:
+            raise ValueError("refit lost consensus")
     except (ValueError, np.linalg.LinAlgError):
         R, t = best_pose
         mask = np.linalg.norm(_project(X, K, R, t) - x, axis=1) < thresh

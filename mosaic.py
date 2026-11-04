@@ -63,7 +63,8 @@ def proj_match_points_ransac(points1, points2, thresh=2.0, iters=500, seed=0):
     # ★2026-11-05(敵対的検証 G1b): 以前は内れ値で当てはめ直した H を返しながら、inliers は
     # 当てはめ直す前の 4 点仮説のものを返していた(返した H で数え直すと 186 → 196 点)。
     # featmatch._refit_keeping_consensus と同じ規則: 返す inliers は常に返す H の内れ値。
-    # 当てはめ直しで合意が 4 点未満に痩せたら、合意を満たしていた仮説の H を返す。
+    # 当てはめ直しで合意が仮説より減るなら(この DLT は正規化なしで、星 13 個の当てはめ直しが
+    # 倍率 1.33 の H・内れ値 8 個になった例がある)、合意の多い仮説の H を返す(RANSAC の目的)。
     if best_H is None or best_in.sum() < 4:
         return {"H": np.eye(3), "inliers": np.zeros(n, bool), "num_inliers": 0}
     H, inl = best_H, best_in
@@ -73,7 +74,7 @@ def proj_match_points_ransac(points1, points2, thresh=2.0, iters=500, seed=0):
         H2 = None
     if H2 is not None and np.isfinite(H2).all():
         inl2 = inliers_of(H2)
-        if inl2.sum() >= 4:
+        if inl2.sum() >= best_in.sum():
             H, inl = H2, inl2
     return {"H": H, "inliers": inl, "num_inliers": int(inl.sum())}
 
