@@ -326,3 +326,46 @@ def test_n3_cpd_rigid_same_answer_at_any_scale():
         assert np.linalg.norm(t / s - t1) < 1e-8, s
         assert info["iters"] == i1["iters"], s
         assert info["sigma2"] / s ** 2 == pytest.approx(i1["sigma2"], rel=1e-6, abs=0), s
+
+
+# ── 兄弟の一掃: 単位ベクトルの + 1e-12 床(curve3d / transforms)───────────────
+
+
+@pytest.mark.parametrize("s", [1.0, 1e-6, 1e-9])
+def test_sibling_frenet_frame_is_unit_at_any_scale(s):
+    # 修正前: s=1e-6 で ‖N‖ = 0.998、s=1e-9 で 0.33(分母の + 1e-12)。
+    import curve3d
+    t = np.linspace(0.0, 2.0 * np.pi, 200)
+    C = np.c_[np.cos(t), np.sin(t), 0.1 * t] * s
+    T, N, B = curve3d.frenet_frame(C)
+    n_pts = len(T)
+    assert n_pts == 200
+    for V in (T, N, B):
+        assert np.abs(np.linalg.norm(V, axis=1) - 1.0).max() < 1e-12
+    T1, N1, _ = curve3d.frenet_frame(C / s)
+    assert T == pytest.approx(T1, abs=1e-9)
+    assert N == pytest.approx(N1, abs=1e-6)
+
+
+def test_sibling_frenet_frame_straight_line_normal_is_zero():
+    import curve3d
+    t = np.linspace(0.0, 1.0, 50)
+    T, N, B = curve3d.frenet_frame(np.c_[t, 2 * t, -t] * 1e-9)
+    assert np.abs(np.linalg.norm(T, axis=1) - 1.0).max() < 1e-12
+    assert np.abs(N).max() == 0.0 and np.abs(B).max() == 0.0
+
+
+@pytest.mark.parametrize("s", [1.0, 1e-6, 1e-9])
+def test_sibling_pluecker_to_hom_mat3d_is_a_rotation(s):
+    # 修正前: 長さ 1e-6 の方向で det(R) = 0.999996、1e-9 で 0.996。
+    import tools_geom as tg
+    import transforms
+    pl = tg.points_to_pluecker_line(np.zeros(3), np.array([1.0, 0.0, 0.0]) * s)
+    M = transforms.point_pluecker_line_to_hom_mat3d([0, 0, 0], pl, [0, 0, 0],
+                                                    np.array([0.0, 1.0, 0.0]) * s)
+    R = M[:3, :3]
+    assert np.linalg.det(R) == pytest.approx(1.0, abs=1e-12)
+    assert np.abs(R.T @ R - np.eye(3)).max() < 1e-12
+    assert R @ np.array([1.0, 0.0, 0.0]) == pytest.approx([0.0, 1.0, 0.0], abs=1e-12)
+    with pytest.raises(ValueError):
+        transforms.point_pluecker_line_to_hom_mat3d([0, 0, 0], pl, [0, 0, 0], [0, 0, 0])

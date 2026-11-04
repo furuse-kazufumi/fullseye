@@ -203,9 +203,11 @@ def test_116_curve_shortcuts_match_original_full_derivatives():
     t = np.linspace(0, 20, 1000)
     curve = np.column_stack((np.cos(t), np.sin(t), .03 * t))
     r1, r2, r3 = curve3d._d(curve)
-    tangent = r1 / (np.linalg.norm(r1, axis=1, keepdims=True) + 1e-12)
+    # 2026-11-05 敵対的検証(numerics): 参照式から分母の + 1e-12 を外した(その床が欠陥で、
+    # 尺度 1e-6 の曲線で ‖N‖ = 0.998 になった)。この曲線では ‖r'‖, ‖N 成分‖ > 0 なので素の割り算。
+    tangent = r1 / np.linalg.norm(r1, axis=1, keepdims=True)
     normal_part = r2 - np.sum(r2 * tangent, axis=1, keepdims=True) * tangent
-    normal = normal_part / (np.linalg.norm(normal_part, axis=1, keepdims=True) + 1e-12)
+    normal = normal_part / np.linalg.norm(normal_part, axis=1, keepdims=True)
     for actual, expected in zip(curve3d.frenet_frame(curve),
                                 (tangent, normal, np.cross(tangent, normal))):
         np.testing.assert_array_equal(actual, expected)
