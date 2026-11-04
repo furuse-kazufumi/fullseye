@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**103 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**104 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -3881,6 +3881,28 @@ Source: [examples/poc_star_tracker.py](https://github.com/furuse-kazufumi/fullse
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_star_tracker)
 
 
+
+## No.2026.299 —— Carried from Image to Point Cloud, Volume, Mesh and Graph, the Ball Count Stays 71 in Three Types
+
+A height image of two BGA packages (6 x 6 each, 10 px pitch, 3.2 px radius, one ball missing) is synthesised and carried from type to type and back with 29 representation-conversion ops. Blob centroids sit within 0.066 px of the planted centres; an integer-position response image → keypoints → image matches pixel for pixel, and keypoints ↔ point cloud matches bit for bit. The volume of one Gaussian per ball (weight 1/N) sums to 1 − 1.4e-10 when truncated at 6σ, and to 0.99911 at 3σ — above the axis-aligned box limit 0.99192. Shifting the second inspection by (2, −3, 5) voxels puts the circular correlation peak exactly there, and keypoints read from its maximum-intensity projection give the same position. The iso-surface mesh has Euler characteristic 142 = 2 × 71, and its volume converges to the closed-form sum of spheres at −1.20 / −0.22 / −0.020 % for 1 / 0.5 / 0.25 voxel steps. The 4-nearest-neighbour graph has two components (35, 36), and the Laplacian has two zero eigenvalues. On a magnified single ball the median principal curvature × R is 1.001 and the shape index 0.9999. The height image's pointmap is (x, y, z); handed as-is to a (z, y, x) consumer it raises nothing and piles 15360 pixels into the four leftmost columns (bottom right).
+
+[![Carried from Image to Point Cloud, Volume, Mesh and Graph, the Ball Count Stays 71 in Three Types](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png)
+
+*↑ **Carried from Image to Point Cloud, Volume, Mesh and Graph, the Ball Count Stays 71 in Three Types** ―― A height image of two BGA packages (6 x 6 each, 10 px pitch, 3.2 px radius, one ball missing) is synthesised and carried from type to type and back with 29 representation-conversion ops. Blob centroids sit within 0.066 px of the planted centres; an integer-position response image → keypoints → image matches pixel for pixel, and keypoints ↔ point cloud matches bit for bit. The volume of one Gaussian per ball (weight 1/N) sums to 1 − 1.4e-10 when truncated at 6σ, and to 0.99911 at 3σ — above the axis-aligned box limit 0.99192. Shifting the second inspection by (2, −3, 5) voxels puts the circular correlation peak exactly there, and keypoints read from its maximum-intensity projection give the same position. The iso-surface mesh has Euler characteristic 142 = 2 × 71, and its volume converges to the closed-form sum of spheres at −1.20 / −0.22 / −0.020 % for 1 / 0.5 / 0.25 voxel steps. The 4-nearest-neighbour graph has two components (35, 36), and the Laplacian has two zero eigenvalues. On a magnified single ball the median principal curvature × R is 1.001 and the shape index 0.9999. The height image's pointmap is (x, y, z); handed as-is to a (z, y, x) consumer it raises nothing and piles 15360 pixels into the four leftmost columns (bottom right).*
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/02_bga_mesh_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/02_bga_mesh_volume.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_bga_ball_type_roundtrip.py
+```
+
+Source: [examples/poc_bga_ball_type_roundtrip.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bga_ball_type_roundtrip.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip)
+
+Ops used (notes): [`angles_to_normals`](https://furuse.work/ops/reprconv/direction/angles_to_normals.html) · [`correlation_score`](https://furuse.work/ops/reprconv/score/correlation_score.html) · [`curvature_to_shape_index`](https://furuse.work/ops/reprconv/curvature/curvature_to_shape_index.html) · [`curvature_to_table`](https://furuse.work/ops/reprconv/curvature/curvature_to_table.html) · [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`flow_apply`](https://furuse.work/ops/reprconv/flow/flow_apply.html) · [`flow_speed`](https://furuse.work/ops/reprconv/flow/flow_speed.html) · [`gaussians_to_points`](https://furuse.work/ops/reprconv/gaussians/gaussians_to_points.html) · [`gaussians_to_voxel`](https://furuse.work/ops/3d/transform/gaussians_to_voxel.html) · [`graph_components`](https://furuse.work/ops/conngraph/stats/graph_components.html) · [`graph_laplacian_spectrum`](https://furuse.work/ops/conngraph/stats/graph_laplacian_spectrum.html) · [`indices_to_labels`](https://furuse.work/ops/reprconv/index/indices_to_labels.html) · [`keypoints_from_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_from_image2d.html) · [`keypoints_rowcol_to_uv`](https://furuse.work/ops/reprconv/keypoint/keypoints_rowcol_to_uv.html) · [`keypoints_to_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_to_image2d.html) · [`keypoints_uv_to_points`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_points.html) · [`keypoints_uv_to_rowcol`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_rowcol.html) · [`knn_graph`](https://furuse.work/ops/3d/geodesic/knn_graph.html) · [`knn_graph_to_conn_graph`](https://furuse.work/ops/reprconv/structure/knn_graph_to_conn_graph.html) · [`labels_to_indices`](https://furuse.work/ops/reprconv/index/labels_to_indices.html) · [`mesh_volume`](https://furuse.work/ops/3d/mesh_process/mesh_volume.html) · [`normals_to_angles`](https://furuse.work/ops/reprconv/direction/normals_to_angles.html) · [`normals_to_egi`](https://furuse.work/ops/reprconv/direction/normals_to_egi.html) … (+13)
 
 
 

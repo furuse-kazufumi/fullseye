@@ -32,9 +32,13 @@ def _image(image, name):
     if not np.all(np.isfinite(a)):
         raise ValueError(f"{name}: image contains NaN or infinity")
     lo, hi = float(np.min(a)), float(np.max(a))
-    scale = max(1.0, abs(lo), abs(hi))
+    scale = max(abs(lo), abs(hi))
     # Relative to the signal magnitude: rounding dust in a uniform image must
-    # not turn into an axis or an apparent rotational order.
+    # not turn into an axis or an apparent rotational order. ★No absolute 1 in the
+    # scale: with max(1, |lo|, |hi|) an image in physical units below 1 (radiance in
+    # W, 1e-14 full scale) was refused as "uniform" while the same image x 1e14 was
+    # measured (red-team 2026-11-05, sibling of S5/S6). An all-zero image still has
+    # hi - lo = 0 <= 0 and is refused.
     if hi - lo <= 64.0 * np.finfo(np.float64).eps * scale:
         raise ValueError(f"{name}: a constant or numerically uniform image has no measurable symmetry")
     return a, lo, hi
@@ -549,6 +553,6 @@ def symmetry_score(image, symmetry, exclusion_mask=None, detrend=True):
         raise ValueError("symmetry_score: exclusion_mask removes every pixel")
     q01, q99 = np.percentile(a[valid], [1.0, 99.0])
     robust_dynamic = float(q99 - q01)
-    floor = 64.0 * np.finfo(np.float64).eps * max(1.0, abs(float(q01)), abs(float(q99)))
+    floor = 64.0 * np.finfo(np.float64).eps * max(abs(float(q01)), abs(float(q99)))
     denominator = robust_dynamic if robust_dynamic > floor else dynamic
     return float(np.mean(diff[valid]) / denominator)

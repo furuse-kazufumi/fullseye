@@ -38,6 +38,7 @@
 | [複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ)](capabilities/complex-plane-fields.md) | Seeing the complex plane as an area (domain colouring, basins, escape time, flow) | 測る | `verified-synthetic` | 8/8 | `poc_complex_plane_fields` synthetic → tests/test_poc_scripts_run.py |
 | [周期パターンが標本化格子で折り返す距離と、縞の上で狂う衝突時間を閉形式で測る(複眼・検査カメラ)](capabilities/compound-eye-aliasing-and-ttc.md) | The distance at which a periodic pattern aliases on a sampling lattice, and the time-to-contact that stripes corrupt — in closed form (compound eyes and inspection cameras) | 測る | `verified-synthetic` | 8/8 | `poc_zebra_stripes_fly_eye` synthetic → tests/test_poc_scripts_run.py |
 | [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md) | Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge | 光と色 | `verified-synthetic` | 6/6 | `converge_tour` synthetic → tests/test_example_scripts_run.py |
+| [画像を点・点群・体積・メッシュ・グラフへ渡して戻す](capabilities/convert-between-representations.md) | Carry an image through points, point clouds, volumes, meshes and graphs — and back | 組み立てる | `verified-synthetic` | 11/11 | `poc_bga_ball_type_roundtrip` synthetic → tests/test_poc_scripts_run.py<br>`representation_roundtrip` synthetic → tests/test_example_scripts_run.py<br>`representation_conversion` synthetic → tests/test_example_scripts_run.py<br>`type_connectivity_tour` synthetic → tests/test_example_scripts_run.py |
 | [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md) | Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network) | 見つける | `validated-public-real-data` | 5/5 | `poc_weed_rice_ratio` real → tests/test_poc_scripts_run.py |
 | [コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾何で再構成する(工業用 CT)](capabilities/ct-scan-modes.md) | Reconstruct cone-beam, helical and laminography scans on one geometry (industrial CT) | 形にする | `verified-synthetic` | 5/5 | `ct_scan_modes` synthetic → tests/test_example_scripts_run.py |
 | [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z) | 見つける | `verified-synthetic` | 15/15 | `poc_dual_energy_xray` synthetic → tests/test_poc_scripts_run.py |
@@ -137,8 +138,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 471 |
-| `tests/test_poc_scripts_run.py` が走らせる | 297 |
+| 2-D 台帳の例 | 472 |
+| `tests/test_poc_scripts_run.py` が走らせる | 298 |
 | `tests/test_example_scripts_run.py` が走らせる | 174 |
 | **どの門も走らせていない** | **0** |
 
