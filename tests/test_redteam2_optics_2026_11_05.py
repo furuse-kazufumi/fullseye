@@ -252,3 +252,46 @@ def test_o5_any_2pi_offset_in_the_reference_cancels():
     assert len(outs) == 4
     for o in outs:
         assert np.abs(o - h).max() < 1e-9
+
+
+# --------------------------------------------------------------------------- #
+# O4 fringe_ftp_phase: 推定した搬送波を DFT の整数ビンに丸めない
+# --------------------------------------------------------------------------- #
+def _ftp_bump(period, noise=0.0):
+    yy, xx = np.mgrid[0:128, 0:128]
+    true = 1.5 * np.exp(-((xx - 64) ** 2 + (yy - 64) ** 2) / (2 * 15 ** 2))   # 傾きを持たない対象
+    img = 0.5 + 0.4 * np.cos(2 * np.pi * xx / period + true)
+    if noise:
+        img = img + np.random.default_rng(5).normal(0.0, noise, img.shape)
+    return img, true - true.mean()
+
+
+def test_o4_off_bin_carrier_is_estimated_below_one_bin():
+    import fringe as F
+    periods = (7.3, 6.55, 9.17, 11.9)
+    assert len(periods) == 4
+    for period in periods:
+        img, ref = _ftp_bump(period)
+        _, est = F.fringe_ftp_phase(img, return_info=True)
+        _, known = F.fringe_ftp_phase(img, carrier_period=period, return_info=True)
+        e_est = (est["phase"] - ref)[16:-16, 16:-16]
+        e_known = (known["phase"] - ref)[16:-16, 16:-16]
+        rms_est = float(np.sqrt((e_est ** 2).mean()))
+        rms_known = float(np.sqrt((e_known ** 2).mean()))
+        # 独立の基準: 搬送波を真値で渡した同じ op の誤差(端の効果だけを持つ)
+        assert rms_est < max(2.0 * rms_known, 0.03), (period, rms_est, rms_known)  # 以前は 0.63 rad
+        assert abs(est["carrier_period"] / period - 1.0) < 2e-3, period
+
+
+def test_o4_frame_periodic_image_keeps_the_exact_integer_bin():
+    import fringe as F
+    img, ref = _ftp_bump(8.0)                            # 128 / 8 = 16 周期(整数ビン)
+    _, info = F.fringe_ftp_phase(img, return_info=True)
+    assert info["carrier_period"] == 8.0
+
+
+def test_o4_noisy_integer_carrier_still_estimated_closely():
+    import fringe as F
+    img, ref = _ftp_bump(8.0, noise=0.02)                # 雑音で漏れがある -> サブビン推定の経路
+    _, info = F.fringe_ftp_phase(img, return_info=True)
+    assert abs(info["carrier_period"] / 8.0 - 1.0) < 2e-3

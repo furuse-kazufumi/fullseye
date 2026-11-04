@@ -408,7 +408,12 @@ def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
     2-D FFT の直流から離れた片側一次スペクトルを窓で抜き、複素解析信号へ戻して
     位相を展開し、搬送波の線形ランプを除く。``carrier_axis`` は位相が増える方向
     (``"x"``=列、``"y"``=行)。``carrier_period`` は画素単位で、省略時は指定軸の
-    正周波数側にある最大ピークから推定する。``bandwidth`` は搬送周波数に対する
+    正周波数側にある最大ピークから推定する。★画像が視野の中で周期的(DFT に漏れが無い)
+    ときだけ整数ビンを搬送波とし、そうでなければピークの両隣 1 ビンで DTFT のパワーを
+    細かく評価してサブビンに直す(2026-11-05 まで常に整数ビンに丸め、7.3 px の縞が
+    7.11 px と読まれて位相 RMS 0.63 rad の傾きが残った)。推定した搬送波は、対象の位相の
+    搬送軸方向の一様な傾きと区別できない(どちらも同じ画像を作る)—— 傾きを残したい、
+    あるいは搬送波が既知なら ``carrier_period`` を渡す。``bandwidth`` は搬送周波数に対する
     Gaussian 窓の標準偏差の比(0 < bandwidth < 1)。``k`` は rad から高さへの係数。
 
     返り値は通常 ``height``。``return_info=True`` なら ``(height, info)`` となり、
@@ -475,6 +480,33 @@ def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
                 f"(spectral prominence {prominence:.3g} < 5)"
             )
         carrier_f = float(freq[peak_i])
+        # ★DFT のビン(1/画素数)に丸めたままにしない: 7.3 px の縞が 7.11 px と読まれ、
+        # 残った 1 次の傾きが位相 RMS 0.63 rad になっていた(2026-11-05)。
+        # 画像が視野の中で周期的(搬送波が整数周期 + 周期的な対象、合成データの理想)なら
+        # DFT は厳密で、整数ビンが搬送波そのもの —— その印は搬送波と直流から 8 ビン以上
+        # 離れた帯域に漏れが無いこと(パワーの中央値がピークの 1e-12 未満)。漏れがある
+        # (端で切れた縞、雑音のある実データ)ときは、ピークの両隣 1 ビンの範囲で搬送軸に
+        # 沿った DTFT のパワー(横方向に和、単一正弦波の最尤推定)を細かい格子で評価し、
+        # 放物線で細分してサブビンに直す。
+        n_al = w if axis == 1 else h
+        k_pk = int(round(carrier_f * n_al))
+        kk = np.round(freq * n_al).astype(np.int64)
+        far = (kk > 8) & (np.abs(kk - k_pk) > 8)
+        periodic = bool(far.any()) and float(np.median(profile[far])) < 1e-12 * float(profile[peak_i])
+        if not periodic:
+            rows = centered if axis == 1 else centered.T          # (横, 搬送軸)
+            grid = carrier_f + np.linspace(-1.0, 1.0, 201) / n_al
+            basis = np.exp(-2j * np.pi * np.outer(np.arange(n_al), grid))
+            pw = (np.abs(rows @ basis) ** 2).sum(axis=0)
+            j = int(np.argmax(pw))
+            cf = float(grid[j])
+            if 0 < j < grid.size - 1:
+                y0, y1, y2 = np.log(pw[j - 1:j + 2] + np.finfo(float).tiny)
+                den = y0 - 2.0 * y1 + y2
+                if den < 0.0:
+                    cf += 0.5 * (y0 - y2) / den * float(grid[1] - grid[0])
+            if 0.0 < cf < 0.5:
+                carrier_f = cf
     else:
         period = float(carrier_period)
         if not np.isfinite(period) or period <= 2.0:
