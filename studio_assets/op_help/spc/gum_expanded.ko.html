@@ -11,6 +11,9 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nu_eff &gt;= min_i nu_i</code> 가 <b>항상</b> 성립한다. 증명은 <code style="color:#22d3bf">sum u_i^4/nu_i &lt;= (1/nu_min) sum u_i^4 &lt;= (1/nu_min)(sum u_i^2)^2</code>. 유효 자유도가 최소 성분보다 작아지면 계산이 깨진 것이다.</p>
 <p style="margin:2px 0 2px 12px">• 모든 자유도가 무한대이면 <code style="color:#22d3bf">k</code> 는 정규분포의 분위점으로 수렴한다(95 % 에서 1.959964).</p>
 <p>무한 자유도(알려진 상수 등)는 <code style="color:#22d3bf">numpy.inf</code> 를 넣는다.</p>
+<p>★★ <b>상관이 있을 때의 자유도</b>. Welch-Satterthwaite(GUM G.4.1)는 입력이 <b>독립</b>이라는 전제의 식이어서, 상관 항을 포함한 <code style="color:#22d3bf">u_c</code> 에 그대로 쓰면 자유도를 부풀린다(같은 크기의 두 성분, 각 nu=4, r=+1 에서 nu_eff=32 —— 예산 자유도의 총합 8 을 넘는다). 음의 상관에서는 반대로 1 미만으로 무너진다. 그래서 *correlation* 에 0 이 아닌 비대각 성분이 있으면, 0 이 아닌 상관으로 이어진 성분을 하나의 군으로 묶고, 군의 분산 <code style="color:#22d3bf">w_g&#x27; R_g w_g</code>(<code style="color:#22d3bf">w = c u</code>)와 군의 자유도 <code style="color:#22d3bf">min_{i in g} nu_i</code> 로 Welch-Satterthwaite 를 구성한다::</p>
+<p>nu_eff = u_c^4 / sum_g (w_g&#x27; R_g w_g)^2 / min_{i in g} nu_i</p>
+<p>근거: 같은 측정에서 추정한 상관 성분(공분산이 Wishart, 자유도 nu 공통)에서는 합성 분산의 추정량이 정확히 <code style="color:#22d3bf">sigma^2 chi^2_nu / nu</code> 이므로, 유효 자유도는 <code style="color:#22d3bf">r</code> 에 관계없이 <code style="color:#22d3bf">nu</code> 그 자체다(Willink, *Metrologia* 44:340, 2007 의 일반화 Welch-Satterthwaite 가 r=+1 인 같은 두 성분에서 nu 를 주는 것과 일치). 자유도가 다른 성분이 상관하면 최솟값을 취한다 —— 안전 쪽(k 를 크게)으로 기우는 이 구현의 규칙이며 규격의 식은 아니다. 상관이 모두 0(또는 단위 행렬)이면 모든 군이 성분 1 개이고 기존 식과 같은 값이 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

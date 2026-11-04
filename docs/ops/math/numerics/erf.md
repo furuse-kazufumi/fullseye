@@ -5,7 +5,7 @@ category: numerics
 in: signal
 out: signal
 gpu: なし
-examples: [numerics_tour, poc_battery_electrode_breathing, poc_change_detection_misreg, poc_crack_width_timeseries, poc_dic_strain, poc_die_tilt_tsv_overlay, poc_dimensional_inspection, poc_exoplanet_transit, poc_fresco_craquelure, poc_mri_bias_field, poc_search_sweep_width, poc_settlement_significance, poc_star_astrometry, representation_roundtrip]
+examples: [numerics_tour, poc_battery_electrode_breathing, poc_bga_ball_type_roundtrip, poc_change_detection_misreg, poc_crack_width_timeseries, poc_dic_strain, poc_die_tilt_tsv_overlay, poc_dimensional_inspection, poc_exoplanet_transit, poc_fresco_craquelure, poc_mri_bias_field, poc_search_sweep_width, poc_settlement_significance, poc_star_astrometry, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -50,6 +50,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 - [numerics_tour](../../../../examples/numerics_tour.py) — `py -3.11 examples/numerics_tour.py`
 - [poc_battery_electrode_breathing](../../../../examples/poc_battery_electrode_breathing.py) — `py -3.11 examples/poc_battery_electrode_breathing.py`
+- [poc_bga_ball_type_roundtrip](../../../../examples/poc_bga_ball_type_roundtrip.py) — `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 - [poc_change_detection_misreg](../../../../examples/poc_change_detection_misreg.py) — `py -3.11 examples/poc_change_detection_misreg.py`
 - [poc_crack_width_timeseries](../../../../examples/poc_crack_width_timeseries.py) — `py -3.11 examples/poc_crack_width_timeseries.py`
 - [poc_dic_strain](../../../../examples/poc_dic_strain.py) — `py -3.11 examples/poc_dic_strain.py`

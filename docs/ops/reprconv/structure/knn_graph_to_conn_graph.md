@@ -5,7 +5,7 @@ category: structure
 in: graph
 out: conn_graph
 gpu: なし
-examples: [type_connectivity_tour]
+examples: [poc_bga_ball_type_roundtrip, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -52,6 +52,7 @@ Raises:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_bga_ball_type_roundtrip](../../../../examples/poc_bga_ball_type_roundtrip.py) — `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 - [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`
 
 ## 型が繋がる次の op(`conn_graph` を入力に取れる)

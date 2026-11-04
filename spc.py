@@ -29,7 +29,8 @@ Four operators, in the order a line uses them:
   * **multivariate** — :func:`spc_hotelling_t2`: when several measurements move
     together, charting them one at a time both misses joint drift and inflates the
     false-alarm rate. Hotelling's ``T^2 = (x-mu)' S^-1 (x-mu)`` charts them jointly
-    against an F-distributed control limit, so correlated features are judged as one.
+    against the control limit of its phase (Beta in phase I, chi-square for known
+    parameters), so correlated features are judged as one.
 
 Measured — the closed-form identities the tests are built on
 (``tests/test_spc.py``):
@@ -41,7 +42,7 @@ Measured — the closed-form identities the tests are built on
     CUSUM slope after a step of size d        accumulates at rate (d - k) per sample
     Cpk of a centred process (mu at midpoint) Cpk == Cp exactly
     Cpk == Cp*(1 - 2k) for off-centre k       k = (mu-midpoint)/(USL-LSL)
-    Hotelling T² of the mean row              0 (x == mu); UCL from F_{a,p,m-p}
+    Hotelling T² of the mean row              0 (x == mu); phase-I UCL from Beta
 
 Provenance — textbook and standards only (see ``docs/PROVENANCE.md``; the naming
 rule forbids any product or company name):
@@ -53,7 +54,10 @@ rule forbids any product or company name):
   * V. E. Kane, "Process capability indices", *J. Quality Technology* 18:41, 1986 —
     Cp and Cpk.
   * H. Hotelling, "Multivariate quality control", in *Techniques of Statistical
-    Analysis*, 1947 — the T² statistic and its F-distributed limit.
+    Analysis*, 1947 — the T² statistic.
+  * N. D. Tracy, J. C. Young, R. L. Mason, "Multivariate control charts for
+    individual observations", *J. Quality Technology* 24:88, 1992 — the phase-I
+    Beta limit for individual observations.
 """
 from __future__ import annotations
 
@@ -343,26 +347,50 @@ def spc_capability(signal, lsl, usl, sigma=None):
 
 
 def spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None):
-    """Multivariate SPC by Hotelling's T² with an F-distributed control limit.
+    """Multivariate SPC by Hotelling's T² with the control limit of the phase being charted.
 
     ``data`` is a 2-D array of shape ``(m, p)`` — ``m`` observations of ``p``
-    correlated features. With the sample mean vector ``mu`` and covariance ``S``
-    (unless passed in explicitly), each row's statistic is::
+    correlated features. Each row's statistic is::
 
         T^2_i = (x_i - mu)' S^-1 (x_i - mu)
 
-    charted against the phase-II control limit::
+    The control limit depends on where ``mu`` and ``S`` come from, and the op
+    picks it from what you pass:
 
-        UCL = p (m+1)(m-1) / (m (m-p)) * F_{alpha, p, m-p}
+    * **Phase I (default, neither ``mean`` nor ``cov``)** — ``mu`` and ``S`` are
+      the sample mean and ``ddof=1`` covariance of the *same* rows. Then
+      ``m T^2_i / (m-1)^2`` follows ``Beta(p/2, (m-p-1)/2)`` exactly (Gnanadesikan
+      & Kettenring 1972; Tracy, Young & Mason 1992), so::
 
-    at false-alarm rate ``alpha`` (default 0.0027, the 3-sigma-equivalent). Returns
-    a dict with the per-row ``t2`` array, the ``ucl``, the integer indices
-    ``out_of_control``, and boolean ``in_control``. The mean row (``x == mu``) has
-    ``T^2 == 0`` (pinned in the tests).
+          UCL = (m-1)^2 / m * Beta_{1-alpha}(p/2, (m-p-1)/2)
 
-    **Raises** ``ValueError``: a non-2-D / empty *data*, fewer observations than
-    features plus one (covariance not invertible), ``alpha`` outside ``(0, 1)``, a
-    singular covariance, or non-finite / mislabelled input.
+      In phase I ``T^2_i <= (m-1)^2/m`` holds for every row whatever the data, so
+      the phase-II F limit (which exceeds that bound for small ``m``) can never
+      alarm there. Needs ``m >= p + 2``.
+    * **Known parameters (both ``mean`` and ``cov``)** — the in-control mean and
+      covariance are taken as known (a specification, or estimates from a very
+      large reference). Then ``T^2 ~ chi^2_p`` and ``UCL = chi^2_{p, 1-alpha}``,
+      independent of how many rows are charted (one row is enough).
+    * **Phase II with estimated parameters** — if ``mean`` / ``cov`` were estimated
+      from a separate in-control reference of ``n`` rows and new rows are charted
+      against them, the exact limit is
+      ``p (n+1)(n-1) / (n (n-p)) * F_{1-alpha}(p, n-p)`` with ``n`` the size of the
+      *reference*, not of the charted data. This op treats passed parameters as
+      known (chi-square limit, the ``n -> inf`` limit of that F form); for a small
+      reference compute the F limit with your ``n`` and compare ``t2`` against it.
+
+    Passing only one of ``mean`` / ``cov`` is refused: no standard control limit
+    exists for a half-known parameter set.
+
+    At false-alarm rate ``alpha`` (default 0.0027, the 3-sigma-equivalent). Returns
+    a dict with the per-row ``t2`` array, the ``ucl``, the ``phase`` used
+    (``"phase_I"`` / ``"known"``), the integer indices ``out_of_control``, and
+    boolean ``in_control``. The mean row (``x == mu``) has ``T^2 == 0`` (pinned in
+    the tests).
+
+    **Raises** ``ValueError``: a non-2-D / empty *data*, fewer than ``p+2``
+    observations in phase I, only one of ``mean`` / ``cov``, ``alpha`` outside
+    ``(0, 1)``, a singular covariance, or non-finite / mislabelled input.
     """
     op = "spc_hotelling_t2"
     arr = _as_float_array(data, "data", op)
@@ -372,15 +400,21 @@ def spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None):
     m, p = arr.shape
     if not (0.0 < alpha < 1.0):
         raise ValueError("%s: alpha must be in (0, 1), got %r" % (op, alpha))
-    if mean is None or cov is None:
-        if m < p + 1:
-            raise ValueError("%s: need at least p+1=%d observations to estimate an "
-                             "invertible covariance, got m=%d" % (op, p + 1, m))
-    mu = arr.mean(axis=0) if mean is None else _as_1d(mean, "mean", op)
+    if (mean is None) != (cov is None):
+        raise ValueError("%s: pass both mean and cov (known in-control parameters, "
+                         "chi-square limit) or neither (phase I, estimated from the "
+                         "data, Beta limit) — there is no standard limit for only one"
+                         % op)
+    known = mean is not None
+    if not known and m < p + 2:
+        raise ValueError("%s: phase I needs at least p+2=%d observations (an "
+                         "invertible covariance and a Beta limit with (m-p-1)/2 > 0), "
+                         "got m=%d" % (op, p + 2, m))
+    mu = arr.mean(axis=0) if not known else _as_1d(mean, "mean", op)
     if mu.size != p:
         raise ValueError("%s: mean has %d entries but data has p=%d features"
                          % (op, mu.size, p))
-    if cov is None:
+    if not known:
         s = np.cov(arr, rowvar=False, ddof=1)
         s = np.atleast_2d(s)
     else:
@@ -396,11 +430,22 @@ def spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None):
                          "so T² is undefined; drop a redundant feature" % (op, exc))
     d = arr - mu
     t2 = np.einsum("ij,jk,ik->i", d, s_inv, d)
-    from scipy.stats import f as _f
-    fcrit = float(_f.ppf(1.0 - alpha, p, m - p)) if m > p else float("inf")
-    ucl = p * (m + 1.0) * (m - 1.0) / (m * (m - p)) * fcrit if m > p else float("inf")
+    _st = _scipy_stats()
+    if known:
+        # ★母数既知なら T² ~ chi2_p。以前は charted rows の m から phase-II の F 式を
+        #   作っていて、m <= p で UCL = inf(1 行の 50σ 外れを素通し)だった。
+        ucl = float(_st.chi2.ppf(1.0 - alpha, p))
+        phase = "known"
+    else:
+        # ★同じデータから推定した phase I は Beta 限界。phase-II の F 式を当てると
+        #   T² <= (m-1)^2/m の恒等的上限より UCL が大きくなり(m=10, p=2 で 33.5 > 8.1)、
+        #   どんな外れ値でも警報が出なかった(敵対的検証 2026-11-05 S2)。
+        ucl = float((m - 1.0) ** 2 / m
+                    * _st.beta.ppf(1.0 - alpha, 0.5 * p, 0.5 * (m - p - 1.0)))
+        phase = "phase_I"
     ooc = np.nonzero(t2 > ucl)[0]
     return {"t2": t2, "ucl": ucl, "p": p, "m": m, "alpha": float(alpha),
+            "phase": phase,
             "out_of_control": ooc.tolist(), "in_control": bool(ooc.size == 0)}
 
 
@@ -1080,6 +1125,46 @@ def gum_propagate(table, u="u", sensitivity="sensitivity", correlation=None):
     }
 
 
+def _ws_groups(base, nu, correlation, op):
+    """Welch-Satterthwaite に渡す (分散の項, 自由度) の組。
+
+    相関なし: 成分ごとに ``((c_i u_i)^2, nu_i)``(従来どおり)。相関あり: 非零の相関で
+    つながった成分の群ごとに ``(w_g' R_g w_g, min nu_g)``(:func:`gum_expanded` の ★★)。
+    """
+    terms = np.asarray(base["contribution"], dtype=np.float64)       # (c_i u_i)^2
+    if correlation is None:
+        return terms, nu
+    n = terms.size
+    R = _validate_correlation(correlation, n, op)
+    linked = (R != 0.0)
+    np.fill_diagonal(linked, False)
+    if not linked.any():
+        return terms, nu
+    w = np.asarray(base["sensitivity"], dtype=np.float64) * np.asarray(base["u"], dtype=np.float64)
+    group = -np.ones(n, dtype=np.int64)
+    g = 0
+    for i in range(n):                      # 連結成分(非零の相関でつながった成分)
+        if group[i] >= 0:
+            continue
+        stack = [i]
+        group[i] = g
+        while stack:
+            j = stack.pop()
+            for k in np.nonzero(linked[j])[0]:
+                if group[k] < 0:
+                    group[k] = g
+                    stack.append(int(k))
+        g += 1
+    var_g = np.empty(g)
+    nu_g = np.empty(g)
+    for k in range(g):
+        idx = np.nonzero(group == k)[0]
+        wg = w[idx]
+        var_g[k] = max(float(wg @ R[np.ix_(idx, idx)] @ wg), 0.0)
+        nu_g[k] = float(np.min(nu[idx]))
+    return var_g, nu_g
+
+
 def gum_expanded(table, u="u", sensitivity="sensitivity", dof="dof", level=0.95,
                  correlation=None, estimate=None, lower_bound=None, upper_bound=None):
     """Welch-Satterthwaite の有効自由度と包含係数 k、拡張不確かさ U(``table``)。
@@ -1096,6 +1181,22 @@ def gum_expanded(table, u="u", sensitivity="sensitivity", dof="dof", level=0.95,
         (95 % で 1.959964)。
 
     無限自由度(既知の定数など)は ``numpy.inf`` を入れる。
+
+    ★★**相関があるときの自由度**。Welch-Satterthwaite(GUM G.4.1)は入力が**独立**で
+    あることを前提にした式で、相関項を含む ``u_c`` にそのまま当てると自由度を水増し
+    する(等しい 2 成分・各 nu=4・r=+1 で nu_eff=32 —— 予算の自由度の総和 8 を超える)。
+    負の相関では逆に 1 未満へ潰れる。そこで *correlation* に非零の非対角があるときは、
+    非零の相関でつながった成分を 1 つの群にまとめ、群の分散 ``w_g' R_g w_g``
+    (``w = c u``)と群の自由度 ``min_{i in g} nu_i`` で Welch-Satterthwaite を組む::
+
+        nu_eff = u_c^4 / sum_g (w_g' R_g w_g)^2 / min_{i in g} nu_i
+
+    根拠: 同じ測定から推定した相関する成分(共分散行列が Wishart、自由度 nu 共通)では、
+    合成分散の推定量は厳密に ``sigma^2 chi^2_nu / nu`` で、有効自由度は ``r`` に依らず
+    ``nu`` そのもの(Willink, *Metrologia* 44:340, 2007 の一般化 Welch-Satterthwaite で
+    r=+1 の等しい 2 成分が nu になるのと一致)。自由度の違う成分が相関する場合は最小値を
+    取る —— 安全側(k を大きく)に倒す本実装の規則であって、規格の式ではない。
+    相関がすべて 0(または単位行列)なら群は全部 1 成分で、従来の式と同じ値になる。
     """
     op = "gum_expanded"
     base = gum_propagate(table, u=u, sensitivity=sensitivity, correlation=correlation)
@@ -1113,10 +1214,12 @@ def gum_expanded(table, u="u", sensitivity="sensitivity", dof="dof", level=0.95,
         raise ValueError("%s: level must lie strictly between 0 and 1, got %r"
                          % (op, level))
     uc = float(base["u_combined"][0])
-    terms = base["contribution"]                 # (c_i u_i)^2
+    terms, nu_terms = _ws_groups(base, nu, correlation, op)
     with np.errstate(divide="ignore", invalid="ignore"):
-        denom = float(np.nansum(np.where(np.isfinite(nu), terms ** 2 / nu, 0.0)))
-    nu_eff = float("inf") if denom <= 0 else uc ** 4 / denom
+        denom = float(np.nansum(np.where(np.isfinite(nu_terms), terms ** 2 / nu_terms, 0.0)))
+    # 分子は群の分散の和の 2 乗(= u_c^4)。sqrt を経た u_c を 4 乗すると丸めで
+    # 4.0 が 3.9999999 になり、下の切り捨てで自由度が 1 落ちる(r=0.5 の 2 成分で実測)。
+    nu_eff = float("inf") if denom <= 0 else float(np.sum(terms)) ** 2 / denom
     _st = _scipy_stats()
     # ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」
     #   ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、
@@ -1452,7 +1555,13 @@ def gum_validate(guf, mcm, ndig=2):
             "%s: the numerical tolerance is built from u(y), which is %r here. With no "
             "spread there is no tolerance to compare against — this is exactly the "
             "stationary-point case the propagation law cannot describe." % (op, uy))
+    # JCGM 101 8.1.3: u(y) を *ndig* 桁に**丸めてから** c x 10^l(c は ndig 桁の整数)と
+    # 書き、delta = 0.5 x 10^l。丸めで桁が繰り上がる(ndig=2 で 0.0996 -> 0.10 = 10 x 10^-2)
+    # と l も 1 つ上がる。以前は floor(log10 u) だけで作り、0.0996 で delta 0.0005
+    # (正しくは 0.005)と 10 倍厳しくなっていた(敵対的検証 2026-11-05 S4)。
     lo_e = int(np.floor(np.log10(abs(uy)))) - (ndig - 1)
+    if round(abs(uy) / 10.0 ** lo_e) >= 10 ** ndig:
+        lo_e += 1
     delta = 0.5 * 10.0 ** lo_e
 
     dlow = abs(float(guf["low"][0]) - float(mcm["low"][0]))
@@ -1473,9 +1582,15 @@ def _shortest_interval(y: np.ndarray, level: float):
         raise ValueError("gum_monte_carlo: level must lie strictly between 0 and 1")
     s = np.sort(y)
     n = s.size
-    q = int(np.floor(level * n))
+    # JCGM 101 7.7.2: q = pM if pM is an integer, otherwise the integer part of
+    # pM + 1/2 (round half up). floor(pM) undercovered by one order statistic when the
+    # fractional part was >= 1/2 (red-team 2026-11-05, checked against the standard).
+    q = int(np.floor(level * n + 0.5))
     if q < 1:
         raise ValueError("gum_monte_carlo: level too small for n=%d" % n)
+    if q >= n:
+        raise ValueError("gum_monte_carlo: level %r too large for n=%d (q=%d leaves no "
+                         "interval to choose)" % (level, n, q))
     widths = s[q:] - s[:n - q]
     i = int(np.argmin(widths))
     return float(s[i]), float(s[i + q])
@@ -1487,8 +1602,8 @@ def _shortest_interval(y: np.ndarray, level: float):
 # Why this sits next to `spc_hotelling_t2` rather than replacing it: both chart
 # several correlated measurements jointly, but they answer different questions and
 # are scaled differently. Hotelling asks "is this observation outside the control
-# region of the sample I estimated from?" and its limit comes from an F
-# distribution. The MT-method asks "how far is this observation from a *unit space*
+# region of the sample I estimated from?" and its limit comes from a Beta / F /
+# chi-square distribution depending on the phase. The MT-method asks "how far is this observation from a *unit space*
 # of known-good product, in units where the unit space itself averages one?" — the
 # scale is the reference population, not a distributional tail. That reference
 # framing is what lets a line set a single threshold (commonly 3) and keep it
@@ -1532,7 +1647,11 @@ def _mt_unit_space(arr: np.ndarray, op: str):
     #   (measured). Dividing by that dust amplifies it into a distance of nonsense,
     #   and the absolute test never fires. Put the floor at the *relative* scale of
     #   the column, below which a spread cannot be represented in the data itself.
-    floor = np.finfo(float).eps * 64.0 * np.maximum(np.abs(mean), 1.0)
+    #   ★The scale is the column's own largest magnitude — never an absolute 1. With
+    #   max(|mean|, 1) the floor was absolute below |mean| = 1, so the same parts in
+    #   farads (1 pF +- 0.01 pF) were declared flat and an 8-sigma part scored MD 0.05
+    #   while in pF it scored 4.8 (red-team 2026-11-05 S5). MD is unit-free; so is this.
+    floor = np.finfo(float).eps * 64.0 * np.abs(arr).max(axis=0)
     flat = np.asarray(std <= floor).reshape(-1)
     n_flat = int(flat.sum())
     if n_flat:
