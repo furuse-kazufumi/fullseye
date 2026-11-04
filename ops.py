@@ -1536,12 +1536,12 @@ def _fill_holes(v, a, b):
 def _select_largest(v, a, b):
     """最大面積の連結領域だけを残す。HALCON の ``select_shape_std``（Select regions of a given shape.）に相当。
 
-``a``, ``b`` は未使用（常に「最大」を選ぶ）。連結成分ラベリング後、画素数が最大の 1 成分だけを 1、それ以外を 0 にする。入力に前景が無ければ全 0 を返す。HALCON の ``select_shape_std`` は面積以外の形状基準（円形度等）や複数選択にも対応するが、この実装は面積最大の単一選択のみ。
+``a``, ``b`` は未使用（常に「最大」を選ぶ）。連結成分ラベリング（**前景は 8 連結** = HALCON の ``connection`` の既定。2026-11-05 敵対的検証 第 2 巡 P1 までは 4 連結で、斜めに接する 2 つの塊の片方だけを残していた）後、画素数が最大の 1 成分だけを 1、それ以外を 0 にする。入力に前景が無ければ全 0 を返す。HALCON の ``select_shape_std`` は面積以外の形状基準（円形度等）や複数選択にも対応するが、この実装は面積最大の単一選択のみ。
 
 Raises:
     FsValueError: NaN / inf を含む画像。"""
     _require_finite_image(v, "select_largest")
-    lab, n = ndimage.label(_bin(v))
+    lab, n = ndimage.label(_bin(v), structure=np.ones((3, 3), bool))
     if n == 0:
         return np.zeros_like(v, np.float64)
     sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
@@ -1551,8 +1551,8 @@ Raises:
 def _remove_small(v, a, b):
     """小さい連結領域を面積で除去する。HALCON の ``select_shape``（Choose regions with the aid of shape features.）に相当。
 
-``a`` が除去のしきい値（画素数）を、画像全体の画素数に対する割合 ``0.01〜0.16``（``(0.01+0.15a) * 画素数``）として振る。``b`` は未使用。しきい値以上の面積を持つ連結成分だけを残す。連結性は scipy ``label`` の既定（4連結）。"""
-    lab, n = ndimage.label(_bin(v))
+``a`` が除去のしきい値（画素数）を、画像全体の画素数に対する割合 ``0.01〜0.16``（``(0.01+0.15a) * 画素数``）として振る。``b`` は未使用。しきい値以上の面積を持つ連結成分だけを残す。**連結性は 8 連結**（HALCON の ``connection`` の既定。2026-11-05 敵対的検証 第 2 巡 P1 までは scipy ``label`` の既定の 4 連結で、斜めに接する塊を別々に数えて小さいとみなし消していた）。"""
+    lab, n = ndimage.label(_bin(v), structure=np.ones((3, 3), bool))
     if n == 0:
         return np.zeros_like(v, np.float64)
     sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
@@ -2187,8 +2187,8 @@ def _shape_locate(v, a, b):
 def _classify_shape(v, a, b):
     """最大の連結領域について円形度（circularity）を計算する形状分類の基礎特徴量。対応する単体の HALCON op は指定されていない。
 
-``a``, ``b`` は未使用。最大面積の連結成分について ``4π×面積 / 周長²`` を計算し、理想円で 1 になるよう ``min(1.0, ...)`` で頭打ちにする（数値誤差で 1 をわずかに超えるのを防ぐ）。周長は領域からその侵食を引いた境界画素数（``_region_boundary`` と同じ考え方）で近似するため、輪郭ベースの周長より粗い。前景が無ければ 0 を返す。コード中のコメントの通り、OCR・良否判定など「形状で分類する」処理の土台として使うことを想定している。"""
-    lab, n = ndimage.label(_bin(v))
+``a``, ``b`` は未使用。最大面積の連結成分（前景は 8 連結、2026-11-05 まで 4 連結）について ``4π×面積 / 周長²`` を計算し、理想円で 1 になるよう ``min(1.0, ...)`` で頭打ちにする（数値誤差で 1 をわずかに超えるのを防ぐ）。周長は領域からその侵食を引いた境界画素数（``_region_boundary`` と同じ考え方）で近似するため、輪郭ベースの周長より粗い。前景が無ければ 0 を返す。コード中のコメントの通り、OCR・良否判定など「形状で分類する」処理の土台として使うことを想定している。"""
+    lab, n = ndimage.label(_bin(v), structure=np.ones((3, 3), bool))
     if n == 0:
         return np.float64(0.0)
     sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))

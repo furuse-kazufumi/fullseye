@@ -10,6 +10,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(imageops)
+
+- P1 前景の連結成分を 8 連結に(HALCON の `connection` の既定。`count_obj` は 2026-08-30 に直した兄弟、KNOWN_ISSUES §1): `select_largest` / `select_shape_std` / `select_shape` / `remove_small` / `r2_sort_region` / `r3_select_region_point` / `classify_shape`、最大の成分を読む領域特徴の全部(`backends_auto._largest_label` を通る `contlength` / `diameter_region` / `convexity` / `orientation_region` / `elliptic_axis` / `eccentricity` / `compactness` / `circularity` / `roundness` / `rectangularity` / モーメント系ほか)、`r2_split_skeleton_lines` の線分の数え上げ、`hx_close_edges_length` のラベル付け。torch の経路(`accel_label`)も前景を 8 連結に揃えた(背景の成分は 4 連結のまま = 前景 8 / 背景 4 の双対)。値が変わる: 斜めにだけ接する塊を持つ入力(対角に接する 2 つの 20×20 の正方形で `select_largest` 400 → 800 画素、`contlength` 76 → 152 = skimage の 8 連結 regionprops と一致)。
+
+### 修正 — 敵対的検証 2026-11-05 第 2 巡(imageops)
+
 ### 変更(Breaking)— `plenoptic_refocus_depth` の傾き↔距離の単位を直した(2026-11-04)
 
 - 像のずれを `slope × 角度ステップ × ピッチ` で出していた。次元から正しくは傾き × ピッチ / 角度ステップで、PoC のカメラでは 1/角度ステップ² ≈ 3000 倍小さく、測った傾きはどれも合焦距離(1.0 m)へ戻っていた。いまは復号の視点刻み(1 視点 = ピッチ/U ぶんの射出瞳)、射出瞳までの距離、Newton の式で変換する近軸の式。処方を順方向に光線追跡した視差と、理想レンズで相対 1e-6、三枚玉で 2e-4 以内で一致する(`tests/test_plenoptic.py`)。

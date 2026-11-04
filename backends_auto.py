@@ -362,7 +362,13 @@ def _halcon_rectangularity(mask):
 
 
 def _largest_label(mask):
-    lab, n = ndimage.label(mask)
+    """最大の連結成分 ``(big, lab, n)``。**前景は 8 連結**(HALCON の ``connection`` の既定)。
+
+    2026-11-05(敵対的検証 第 2 巡 P1): それまでは ``ndimage.label`` の既定 = 4 連結で、斜めにだけ接する
+    2 つの塊を別の成分に分け、領域特徴(周囲長・径・モーメントほか)と ``select_shape_std`` が片方しか
+    見ていなかった(``count_obj`` は 2026-08-30 に 8 連結へ直した兄弟、KNOWN_ISSUES §1)。
+    """
+    lab, n = ndimage.label(mask, structure=np.ones((3, 3), bool))
     if n == 0:
         return None, lab, 0
     sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
@@ -1052,7 +1058,8 @@ def _sh_region_trans(p):
             _require_dep(_HAS_SK, "skimage", "skimage.morphology.convex_hull_image (grid_points_in_poly, Cython)")
             return skmorph.convex_hull_image(m).astype(np.float64)
         if kind == "remove_small":
-            lab, n = ndimage.label(m)
+            # 前景は 8 連結(HALCON の connection の既定。敵対的検証 2026-11-05 第 2 巡 P1)
+            lab, n = ndimage.label(m, structure=np.ones((3, 3), bool))
             if n == 0:
                 return np.zeros_like(m, np.float64)
             sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
@@ -1959,9 +1966,9 @@ SEED: list[tuple] = [
     ("shape_trans", "region", REG, REG, "region_trans", {"kind": "convex"},
      '領域の凸包(``skimage.morphology.convex_hull_image``)を返す。HALCON の\n``shape_trans``（Transform the shape of a region.）は本来 convex/\nrectangle1/ellipse など複数の変形モードを ``Type`` 引数で選べる演算子\nだが、この代役では凸包 1 種類に固定している(近似の限界)。\n\n``a``, ``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("select_shape_std", "region", REG, REG, "region_trans", {"kind": "select_largest"},
-     '連結成分のうち最大の面積を持つものだけを残す(``_largest_label`` で\n選択)。HALCON の ``select_shape_std``（Select regions of a given shape.）\nは ``max_area`` を含む複数の標準基準を選べる演算子だが、ここでは\n「面積最大」1 種類に固定している(近似)。\n\n``a``, ``b`` は未使用。複数領域が同面積の場合は ``argmax`` の実装依存で\nどれか 1 つが選ばれる。'),
+     '連結成分のうち最大の面積を持つものだけを残す(``_largest_label`` で\n選択、前景は 8 連結)。HALCON の ``select_shape_std``（Select regions of a given shape.）\nは ``max_area`` を含む複数の標準基準を選べる演算子だが、ここでは\n「面積最大」1 種類に固定している(近似)。\n\n``a``, ``b`` は未使用。複数領域が同面積の場合は ``argmax`` の実装依存で\nどれか 1 つが選ばれる。'),
     ("select_shape", "region", REG, REG, "region_trans", {"kind": "remove_small"},
-     '面積が閾値(``16+a*200`` 画素)未満の連結成分を除去する(小さなノイズ状\n領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of\nshape features.）は面積・円形度・凸性など任意の形状特徴で選別できる\n汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。\n\n``a`` が面積の下限しきい値を振る。``b`` は未使用。'),
+     '面積が閾値(``16+a*200`` 画素)未満の連結成分(前景は 8 連結)を除去する(小さなノイズ状\n領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of\nshape features.）は面積・円形度・凸性など任意の形状特徴で選別できる\n汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。\n\n``a`` が面積の下限しきい値を振る。``b`` は未使用。'),
     ("distance_transform", "region", REG, IMG, "region_trans", {"kind": "dist_transform"},
      'ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で\n正規化した画像。各前景画素について最も近い背景画素までの距離を表す ――\n値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく\n``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the\ndistance transformation of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
     # ---- Regions: features -----------------------------------------------
