@@ -3312,48 +3312,65 @@ def _normalise_stages(image, stages, a, b) -> list:
             % (type(image).__name__, type(stages).__name__))
     if isinstance(stages, str):
         stages = [s.strip() for s in stages.split(",") if s.strip()]
-    norm = []
-    for i, st in enumerate(stages):
-        if isinstance(st, str):
-            name, sa, sb = st, a, b
-        elif isinstance(st, dict):
-            name = st.get("op", st.get("name"))
-            if not isinstance(name, str):
-                raise TypeError("stage %d: a dict stage needs 'op' (or 'name'), got keys %s"
-                                % (i, sorted(st)))
-            bad = set(st) - {"op", "name", "a", "b"}
+    return [_normalise_stage(i, st, a, b) for i, st in enumerate(stages)]
+
+
+def _stage_knob(i, name, label, x) -> float:
+    """段のノブ 1 つを :func:`_check_call_args` と同じ型の規則で float にする(値域・有限性は後段)。
+
+    ★2026-11-05(敵対的検証 C4): 以前は dict 形(``{"op": .., "a": "0.9"}`` / ``(name, {"a": "0.9"})``)
+    だけが ``float("0.9")`` で文字列を通し、tuple 形と ``apply`` は拒否していた。bool は逆で、tuple 形が
+    拒否し dict 形と ``apply`` は 1.0 として通していた。**段の書き方によらず** ``apply`` の規則に揃える:
+    数値(int / float / numpy の整数・浮動小数)と bool(``float(True) == 1.0``)だけを受け、他は TypeError。
+    """
+    if isinstance(x, bool):
+        return float(x)
+    if not isinstance(x, _KNOB_NUMERIC):
+        raise TypeError("stage %d (%r): knobs a and b must be numbers in 0..1 (the rule of "
+                        "fullseye.apply), got %s=%r (%s)" % (i, name, label, x, type(x).__name__))
+    return float(x)
+
+
+def _normalise_stage(i, st, a=0.5, b=0.5) -> tuple:
+    """段 1 つ(5 形のどれか)を ``(name, a, b)`` にする。:func:`_normalise_stages` /
+    ``engine.FullseyeEngine`` / ``engine.pipeline_states`` が共有する唯一の読み方
+    (C3 / C13、2026-11-05): 未知のキー・3 個を超える位置ノブ・数値でないノブは TypeError。"""
+    if isinstance(st, str):
+        name, sa, sb = st, a, b
+    elif isinstance(st, dict):
+        name = st.get("op", st.get("name"))
+        if not isinstance(name, str):
+            raise TypeError("stage %d: a dict stage needs 'op' (or 'name'), got keys %s"
+                            % (i, sorted(st)))
+        bad = set(st) - {"op", "name", "a", "b"}
+        if bad:
+            raise TypeError("stage %d (%r): unknown key(s) %s — ops take only the knobs a and b"
+                            % (i, name, sorted(bad)))
+        sa, sb = st.get("a", a), st.get("b", b)
+    elif isinstance(st, (tuple, list)):
+        if not st or not isinstance(st[0], str):
+            raise TypeError("stage %d: a tuple stage starts with the op name, got %r" % (i, st))
+        name, rest = st[0], list(st[1:])
+        if len(rest) == 1 and isinstance(rest[0], dict):
+            bad = set(rest[0]) - {"a", "b"}
             if bad:
-                raise TypeError("stage %d (%r): unknown key(s) %s — ops take only the knobs a and b"
+                raise TypeError("stage %d (%r): unknown knob(s) %s — ops take only a and b"
                                 % (i, name, sorted(bad)))
-            sa, sb = st.get("a", a), st.get("b", b)
-        elif isinstance(st, (tuple, list)):
-            if not st or not isinstance(st[0], str):
-                raise TypeError("stage %d: a tuple stage starts with the op name, got %r" % (i, st))
-            name, rest = st[0], list(st[1:])
-            if len(rest) == 1 and isinstance(rest[0], dict):
-                bad = set(rest[0]) - {"a", "b"}
-                if bad:
-                    raise TypeError("stage %d (%r): unknown knob(s) %s — ops take only a and b"
-                                    % (i, name, sorted(bad)))
-                sa, sb = rest[0].get("a", a), rest[0].get("b", b)
-            elif len(rest) <= 2 and all(isinstance(x, _NUMBER) and not isinstance(x, bool) for x in rest):
-                # ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の
-                #   省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。
-                #   省いた位置の分だけ、その位置の既定値で埋める。
-                sa, sb = rest + [a, b][len(rest):]
-            else:
-                raise TypeError(
-                    "stage %d (%r): expected (name), (name, a), (name, a, b) or (name, {'a': .., 'b': ..}), got %r"
-                    % (i, name, st))
+            sa, sb = rest[0].get("a", a), rest[0].get("b", b)
+        elif len(rest) <= 2 and all(isinstance(x, _NUMBER) for x in rest):
+            # bool は int の部分型: apply と同じく 1.0 / 0.0 として受ける(C4、dict 形と揃える)
+            # ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の
+            #   省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。
+            #   省いた位置の分だけ、その位置の既定値で埋める。
+            sa, sb = rest + [a, b][len(rest):]
         else:
-            raise TypeError("stage %d: expected an op name, a (name, a, b) tuple or a dict, got %s"
-                            % (i, type(st).__name__))
-        try:
-            norm.append((name, float(sa), float(sb)))
-        except (TypeError, ValueError):
-            raise TypeError("stage %d (%r): knobs a and b must be numbers, got a=%r b=%r"
-                            % (i, name, sa, sb)) from None
-    return norm
+            raise TypeError(
+                "stage %d (%r): expected (name), (name, a), (name, a, b) or (name, {'a': .., 'b': ..}), got %r"
+                % (i, name, st))
+    else:
+        raise TypeError("stage %d: expected an op name, a (name, a, b) tuple or a dict, got %s"
+                        % (i, type(st).__name__))
+    return (name, _stage_knob(i, name, "a", sa), _stage_knob(i, name, "b", sb))
 
 
 def _check_chain_sorts(ops_, where: str = "run_pipeline") -> None:
