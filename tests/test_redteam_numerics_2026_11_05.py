@@ -232,3 +232,73 @@ def test_n1_degenerate_inputs_are_explicit():
     # 同心円は交点なし、接する 2 円は 1 点
     assert g2.intersection_circles(0, 0, 1, 0, 0, 2) == []
     assert len(g2.intersection_circles(0, 0, 1e-6, 2e-6, 0, 1e-6)) == 1
+
+
+# ── N4: ICP の収束判定・正則化 ───────────────────────────────────────────────
+
+
+def _wavy_surface():
+    from scipy.spatial.transform import Rotation
+    u, v = np.meshgrid(np.linspace(-1, 1, 30), np.linspace(-1, 1, 30))
+    Q = np.c_[u.ravel(), v.ravel(), (0.3 * np.sin(2 * u) * np.cos(3 * v)).ravel()]
+    Rt = Rotation.from_rotvec([0.05, -0.08, 0.12]).as_matrix()
+    tt = np.array([0.03, -0.02, 0.04])
+    P = (Q - tt) @ Rt            # Rt·P + tt = Q(既知解)
+    return P, Q, Rt, tt
+
+
+def _rot_err_deg(R, Rt):
+    # ‖R − Rt‖_F = 2√2·sin(θ/2)(arccos のトレース式は θ → 0 で √eps の桁しか分解しない)
+    f = np.linalg.norm(np.asarray(R, float) - Rt) / (2.0 * np.sqrt(2.0))
+    return float(np.degrees(2.0 * np.arcsin(min(f, 1.0))))
+
+
+ICP_SCALES = [1e3, 1.0, 1e-6, 1e-8]
+
+
+@pytest.mark.parametrize("s", ICP_SCALES)
+def test_n4_registration_icp_converges_at_any_scale(s):
+    # 修正前: tol=1e-8 が座標単位で、s=1e-6 で 4.25° ずれた姿勢で止まった。
+    import registration
+    P, Q, Rt, tt = _wavy_surface()
+    R, t, _al, _rmse = registration.icp(P * s, Q * s)
+    assert _rot_err_deg(R, Rt) < 1e-6
+    assert np.linalg.norm(t / s - tt) < 1e-8
+
+
+@pytest.mark.parametrize("s", ICP_SCALES)
+@pytest.mark.parametrize("reproducible", [False, True])
+def test_n4_point_to_plane_icp_converges_at_any_scale(s, reproducible):
+    import pointcloud
+    import registration
+    P, Q, Rt, tt = _wavy_surface()
+    N = pointcloud.estimate_normals(Q, k=16)
+    R, t, _al, _rmse = registration.point_to_plane_icp(P * s, Q * s, dst_normals=N,
+                                                       reproducible=reproducible)
+    assert _rot_err_deg(R, Rt) < 1e-6
+    assert np.linalg.norm(t / s - tt) < 1e-8
+
+
+@pytest.mark.parametrize("s", [1.0, 1e-4, 1e-7, 1e-9])
+@pytest.mark.parametrize("reproducible", [False, True])
+def test_n4_match3d_icp_point2plane_regularisation_is_scale_free(s, reproducible):
+    # 修正前: reg = 1e-12·I が生の JᵀJ に足され、s=1e-7 で 1.05° ずれた。
+    import match3d
+    import pointcloud
+    P, Q, Rt, tt = _wavy_surface()
+    N = pointcloud.estimate_normals(Q, k=16)
+    R, t, *_ = match3d.icp_point2plane(P * s, Q * s, N, iters=30, reproducible=reproducible)
+    assert _rot_err_deg(R, Rt) < 1e-6
+    assert np.linalg.norm(t / s - tt) < 1e-8
+
+
+@pytest.mark.parametrize("s", [1.0, 1e-7, 1e-8, 1e-10])
+def test_n4_match3d_icp_point2point_small_rmse_gate_is_relative(s):
+    # 兄弟: icp_point2point_3d の「rmse < 1e-9 で収束」は絶対量で、s=1e-8 で初回の
+    # Kabsch 1 回で止まり 5.6° ずれた。
+    import match3d
+    P, Q, Rt, tt = _wavy_surface()
+    out = match3d.icp_point2point_3d(P * s, Q * s, iters=50)
+    R = out["R"] if isinstance(out, dict) else out[0]
+    R = np.asarray(R.detach().cpu().numpy() if hasattr(R, "detach") else R)
+    assert _rot_err_deg(R, Rt) < 1e-6

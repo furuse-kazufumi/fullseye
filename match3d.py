@@ -1830,6 +1830,11 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
     t = np.zeros(3, dtype=np.float64) if init_t is None else _np3(init_t, (3,))
 
     tree = cKDTree(dst_np)                      # dst は不変なので 1 回だけ
+    # 「RMSE が十分小さい」は dst の外接箱の対角長に対する相対量(★2026-11-05 敵対的検証 N4 の
+    # 兄弟: 以前の rmse < 1e-9 は座標単位の絶対量で、尺度 1e-8 の点群では初回の Kabsch 1 回で
+    # 打ち切り 5.6° ずれた姿勢を返した)。
+    _diag = float(np.linalg.norm(dst_np.max(axis=0) - dst_np.min(axis=0))) if len(dst_np) else 0.0
+    _rmse_zero = 1e-9 * (_diag if np.isfinite(_diag) else 0.0)
 
     rmse_history = []
     prev_rmse = float("inf")
@@ -1885,11 +1890,11 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
         t = dR @ t + dt
 
         # 収束判定: RMSE が絶対的に十分小さい、または相対改善が閾値未満
-        if rmse < 1e-9:
+        if rmse < _rmse_zero:
             converged = True
             break
         if prev_rmse < float("inf"):
-            if abs(prev_rmse - rmse) / (prev_rmse + 1e-12) < tol:
+            if abs(prev_rmse - rmse) / (prev_rmse if prev_rmse > 0 else 1.0) < tol:
                 converged = True
                 break
         prev_rmse = rmse
@@ -1987,7 +1992,8 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
         dst_normals (M,3): dst の単位法線(未正規化でも内部で正規化)。
                            未知なら pointcloud.estimate_normals(dst) 等で事前推定。
         iters: 最大反復数。
-        tol: RMSE 変化がこの値未満で収束打ち切り。
+        tol: RMSE 変化が ``tol × L``(L = dst の外接箱の対角長)未満で収束打ち切り。
+            点群の尺度に対する相対量(2026-11-05 までは座標単位の絶対量)。
         init ((R0,t0)): 初期姿勢(粗マッチの R,t を渡す)。None なら単位。
         trim (float|None): [0,1) の割合。点-面残差の大きい上位を毎反復捨てる
                            Trimmed ICP(部分重なり・外れ値に頑健)。
@@ -2074,7 +2080,15 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
     prev = float("inf")
     rmse = float("inf")
     n_iter = 0
-    reg = np.eye(6, dtype=np.float64) * 1e-12   # 特異回避の微小正則化
+    # ★2026-11-05 敵対的検証 N4: 特異回避の微小正則化と収束判定を点群の尺度 L に相対化。
+    # J の回転の列 p×n は長さの次元なので 1/L を掛けた無次元の系に 1e-12·I を足して解き戻す
+    # (以前は生の JᵀJ + 1e-12·I で、尺度 1e-7 の点群では回転ブロック ~1e-14 が床に潰れ 1.05° ずれた)。
+    _L = float(np.linalg.norm(Q.max(axis=0) - Q.min(axis=0)))
+    _col = (np.array([1.0 / _L] * 3 + [1.0] * 3) if np.isfinite(_L) and _L > 0
+            else np.ones(6))
+    _tol_abs = float(tol) * (_L if np.isfinite(_L) else 0.0)
+    _colw = np.outer(_col, _col)
+    reg = np.eye(6, dtype=np.float64) * 1e-12   # 無次元の系に掛ける
     tree = cKDTree(Q)                           # dst は不変(torch.cdist と同じ最近傍)
     for it in range(int(iters)):
         n_iter = it + 1
@@ -2090,10 +2104,10 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
         # J_i = [p×n | n],  b_i = -(p-q)·n = -r_s  (正規方程式 (JᵀJ)x=Jᵀb を 6×6 で)
         J = np.concatenate([np.cross(p_s, n_s), n_s], axis=1)  # (K,6)
         if reproducible:
-            x = np.linalg.solve(_oz._matmul_repro_any(J.T, J) + reg,
-                                _oz._matmul_repro_any(J.T, (-r_s)[:, None])[:, 0])
+            x = _col * np.linalg.solve(_oz._matmul_repro_any(J.T, J) * _colw + reg,
+                                       _oz._matmul_repro_any(J.T, (-r_s)[:, None])[:, 0] * _col)
         else:
-            x = np.linalg.solve(J.T @ J + reg, J.T @ (-r_s))
+            x = _col * np.linalg.solve((J.T @ J) * _colw + reg, (J.T @ (-r_s)) * _col)
         R_inc = _rodrigues_np(x[:3])
         t_inc = x[3:]
         cur = _move(cur, R_inc, t_inc)
@@ -2104,7 +2118,7 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
             rmse = _oz._rms(_dot(cur[sel] - q_s, n_s))
         else:
             rmse = float(np.sqrt(np.mean(np.einsum("ij,ij->i", cur[sel] - q_s, n_s) ** 2)))
-        if abs(prev - rmse) < tol:
+        if abs(prev - rmse) < _tol_abs:
             break
         prev = rmse
 
