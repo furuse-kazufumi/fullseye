@@ -148,3 +148,142 @@ class TestF3ScaleFreeSimilarity:
         H = fit_transform.hom_vector_to_proj_hom_mat2d(s, d)
         g = np.c_[s, np.ones(len(s))] @ H.T
         np.testing.assert_allclose(g[:, :2] / g[:, 2:] / k, d / k, atol=1e-9)
+
+
+NAN, INF = float("nan"), float("inf")
+
+
+class TestF4NonFiniteLeaves:
+    """Every numeric leaf is scanned: scalars in dicts / lists / tuples, object arrays, deep nesting."""
+
+    @pytest.mark.parametrize("value", [
+        {"x": NAN},
+        {"x": np.float64(INF)},
+        {"x": complex(NAN, 0.0)},
+        [np.zeros(2), INF],
+        (np.zeros(2), {"k": NAN}),
+        {"a": {"b": {"c": {"d": np.array([NAN])}}}},
+        {"a": [[[[[[1.0, NAN]]]]]]},
+        np.array([1.0, NAN], dtype=object),
+        {"x": np.float32(NAN)},
+    ], ids=["dict-float", "dict-np-inf", "dict-complex", "list-scalar", "tuple-dict", "deep-dict",
+            "deep-list", "object-array", "float32-scalar"])
+    def test_leaf_is_found(self, value):
+        assert api._nonfinite_leaf(value) is not None
+
+    @pytest.mark.parametrize("value", [
+        {"x": 1.0, "n": 3, "flag": True, "s": "text", "none": None},
+        [np.zeros(2), 1.5, (2, 3)],
+        {"a": {"b": {"c": {"d": np.array([1.0])}}}},
+        np.array([1.0, "a"], dtype=object),
+        {"z": complex(1.0, -2.0)},
+    ])
+    def test_finite_values_pass(self, value):
+        assert api._nonfinite_leaf(value) is None
+
+    @pytest.mark.parametrize("policy", ["raise", "fallback", "warn"])
+    def test_identity_refuses_nan_in_a_dict_whatever_the_policy(self, policy):
+        with pytest.raises(ValueError, match="NaN or infinity"):
+            api.apply({"x": NAN}, "identity", on_error=policy)
+
+    def test_escape_hatch_still_hands_the_value_through(self):
+        out = api.apply({"x": NAN}, "identity", allow_nonfinite=True)
+        assert math.isnan(out["x"])
+
+
+def _hand_eye_case(rels, X_rotvec=(0.3, -0.2, 0.15), X_t=(12.0, -5.0, 30.0), step_t=(2.0, 3.0, 4.0)):
+    """Poses A (and B = X⁻¹ A X) built from relative rotations *rels*; X is the known truth."""
+    X = np.eye(4)
+    X[:3, :3] = Rotation.from_rotvec(X_rotvec).as_matrix()
+    X[:3, 3] = X_t
+    A = [np.eye(4)]
+    for R in rels:
+        M = np.eye(4)
+        M[:3, :3] = R
+        M[:3, 3] = step_t
+        A.append(A[-1] @ M)
+    B = [np.linalg.inv(X) @ p @ X for p in A]
+    return A, B, X
+
+
+HALF_X = np.diag([1.0, -1.0, -1.0])
+HALF_Y = np.diag([-1.0, 1.0, -1.0])
+HALF_Z = np.diag([-1.0, -1.0, 1.0])
+HALF_XY = Rotation.from_rotvec(np.pi * np.array([1.0, 1.0, 0.0]) / math.sqrt(2.0)).as_matrix()
+HALF_XYZ = Rotation.from_rotvec(np.pi * np.ones(3) / math.sqrt(3.0)).as_matrix()
+GENERAL = Rotation.from_rotvec([0.2, 0.3, 0.4]).as_matrix()
+
+
+class TestF5HandEyeHalfTurns:
+    """Exact 180° relative motions are valid hand-eye data; the rotation log must handle them."""
+
+    @pytest.mark.parametrize("rels", [
+        [HALF_X, HALF_Y, GENERAL],                      # the reviewer's sequence
+        [HALF_X, GENERAL],                              # one half-turn + one general motion
+        [HALF_X, HALF_Y, HALF_XYZ],                     # three half-turns, no common normal
+        [GENERAL, HALF_XY, Rotation.from_rotvec([-0.5, 0.1, 0.2]).as_matrix()],
+    ], ids=["reviewer", "half-plus-general", "three-half-turns", "mixed"])
+    def test_recovers_known_X(self, rels):
+        import calib
+        A, B, X = _hand_eye_case(rels)
+        got = calib.hand_eye_calibration(A, B)
+        np.testing.assert_allclose(got[:3, :3], X[:3, :3], atol=1e-9)
+        np.testing.assert_allclose(got[:3, 3], X[:3, 3], atol=1e-7)
+
+    def test_reviewer_call_through_opscalib(self):
+        import opscalib
+        A, B, X = _hand_eye_case([HALF_X, HALF_Y, GENERAL])
+        np.testing.assert_allclose(opscalib.call("hand_eye_calibration", A, B), X, atol=1e-7)
+
+    @pytest.mark.parametrize("rels", [[HALF_X, HALF_Y], [HALF_X, HALF_Z, HALF_XY]],
+                             ids=["two-half-turns", "half-turns-sharing-a-normal"])
+    def test_half_turns_alone_are_ambiguous_and_refused(self, rels):
+        # Q = 180 deg about the common normal n maps every half-turn axis a to -a (same half-turn),
+        # so Q·Rx explains the data as well as Rx: the data do not determine X.
+        import calib
+        A, B, _ = _hand_eye_case(rels)
+        assert all(np.allclose(HALF_Z @ R @ HALF_Z.T, R) for R in rels)   # the ambiguity is real
+        with pytest.raises(ValueError, match="half-turns"):
+            calib.hand_eye_calibration(A, B)
+
+    def test_half_turn_data_with_small_noise_stays_close(self):
+        import calib
+        A, B, X = _hand_eye_case([HALF_X, HALF_Y, GENERAL])
+        rng = np.random.default_rng(3)
+        Bn = []
+        for p in B:
+            q = p.copy()
+            q[:3, :3] = Rotation.from_rotvec(1e-6 * rng.normal(size=3)).as_matrix() @ q[:3, :3]
+            Bn.append(q)
+        got = calib.hand_eye_calibration(A, Bn)
+        ang = np.linalg.norm(Rotation.from_matrix(got[:3, :3] @ X[:3, :3].T).as_rotvec())
+        assert ang < 1e-4
+
+    def test_single_axis_half_turns_are_still_refused(self):
+        import calib
+        A, B, _ = _hand_eye_case([HALF_X, HALF_X, Rotation.from_rotvec([0.4, 0, 0]).as_matrix()])
+        with pytest.raises(ValueError, match="single axis|not determined"):
+            calib.hand_eye_calibration(A, B)
+
+    @pytest.mark.parametrize("theta", [np.pi, np.pi - 1e-9, np.pi - 1e-6, np.pi - 1e-3, 3.0, 1.0, 1e-4])
+    def test_rotation_logs_match_scipy_near_and_at_pi(self, theta):
+        import calib
+        import camera
+        axis = np.array([0.3, -0.5, 0.8]) / np.linalg.norm([0.3, -0.5, 0.8])
+        R = Rotation.from_rotvec(theta * axis).as_matrix()
+        for f in (calib._rot_to_axis, camera.rotation_log):
+            w = f(R)
+            # at exactly π the sign of the axis is a free choice: compare as rotations
+            np.testing.assert_allclose(Rotation.from_rotvec(w).as_matrix(), R, atol=1e-12)
+            assert abs(np.linalg.norm(w) - theta) < 1e-9
+            if theta < np.pi - 1e-12:
+                np.testing.assert_allclose(w, theta * axis, atol=1e-9)
+
+    def test_balltrack_spin_half_turn_is_finite(self):
+        import balltrack
+        R = Rotation.from_rotvec(np.pi * np.array([0.0, 0.6, 0.8])).as_matrix()
+        d0 = np.array([[1.0, 0, 0], [0, 1.0, 0], [0, 0, 1.0], [0.6, 0.0, 0.8]])
+        out = balltrack.spin_from_markers(d0, d0 @ R.T, dt=1.0)
+        assert np.isfinite(out["omega"]).all()
+        assert abs(abs(float(out["axis"] @ [0.0, 0.6, 0.8])) - 1.0) < 1e-9
+        np.testing.assert_allclose(out["R"], R, atol=1e-9)

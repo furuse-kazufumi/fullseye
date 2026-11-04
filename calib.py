@@ -332,13 +332,49 @@ def calibrate_cameras(object_points, image_points_list):
 
 
 # ── Tsai-Lenz ハンドアイ校正(AX = XB)──────────────────────────────────────────── #
+#: 相対運動の回転角がこれより π に近いとき「半回転の近く」とみなす [rad]。そこでは歪対称部
+#: sinθ·a が小さく(ちょうど π で 0)、軸の向きは回転行列だけからは決まらない。
+_HALF_TURN_TOL = 1e-3
+
+
 def _rot_to_axis(R):
-    """回転行列から回転ベクトル(軸*角)を返す。"""
+    """回転行列から回転ベクトル(軸*角)を返す。
+
+    ★2026-11-04(外部監査 v0.9.0 F5): 以前は ``ax / (2 sin θ) · θ`` だけで、ちょうど 180° では歪対称部が 0 なので
+    **零ベクトル**を返していた(半回転の運動が「回っていない」扱いになり、軸の違う半回転 2 つを含む
+    正しい姿勢列が「単一軸」として拒否された)。π の近くは :func:`camera.rotation_log`
+    (対称部から軸、歪対称部から向き)。ちょうど π の向きは呼ぶ側(:func:`hand_eye_calibration`)が揃える。
+    """
     ang = np.arccos(np.clip((np.trace(R) - 1) / 2, -1, 1))
     if ang < 1e-9:
         return np.zeros(3)
+    if np.pi - ang < _HALF_TURN_TOL:
+        import camera                                  # numpy だけのモジュール(循環しない)
+        return camera.rotation_log(R)
     ax = np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])
     return ax / (2 * np.sin(ang)) * ang
+
+
+def _rx_linear(rels):
+    """``Ra Rx = Rx Rb`` を Rx の 9 成分の線形方程式として積み、最小特異ベクトルを SO(3) へ射影する。
+
+    ``vec(Ra Rx − Rx Rb) = (I ⊗ Ra − Rbᵀ ⊗ I) vec(Rx)``(列優先の vec)。回転軸の符号を使わないので
+    半回転でも定義どおりに効く(Andreff, Horaud & Espiau 2001 の回転部)。ここでは半回転の軸の向きを
+    揃えるための初期値にだけ使い、Rx そのものは従来どおり Park-Martin の Procrustes で解く。
+
+    返り値 ``(Rx0, ratio)``。``ratio`` = 2 番目に小さい特異値 / 最大の特異値。解の空間が 1 次元でない
+    (``ratio`` ≈ 0)なら Rx はデータから決まらない —— 半回転だけの組では、半回転の軸がどれも垂直な
+    向き n のまわりの π 回転 Q が ``Q a = ±a`` を満たし、``Q Rx`` も同じデータを説明する。
+    """
+    I3 = np.eye(3)
+    K = np.vstack([np.kron(I3, Ma[:3, :3]) - np.kron(Mb[:3, :3].T, I3) for Ma, Mb in rels])
+    _, sv, Vt = np.linalg.svd(K)
+    X0 = Vt[-1].reshape(3, 3, order="F")
+    if np.linalg.det(X0) < 0:
+        X0 = -X0
+    U, _, Wt = np.linalg.svd(X0)
+    ratio = float(sv[-2] / sv[0]) if sv[0] > 0 else 0.0
+    return U @ np.diag([1.0, 1.0, np.sign(np.linalg.det(U @ Wt))]) @ Wt, ratio
 
 
 def _axis_to_rot(v):
@@ -368,12 +404,27 @@ def hand_eye_calibration(poses_a, poses_b):
                          "axes) to fix the rotation, got %d" % (op, len(A)))
     # 回転: 相対運動の回転軸から最小二乗で Rx を解く(修正 Rodrigues)
     Msum = np.zeros((3, 3)); bsum = np.zeros(3)
-    rels = []
+    rels, axes, near_pi = [], [], []
     for i in range(len(A) - 1):
         Ma = np.linalg.inv(A[i]) @ A[i + 1]
         Mb = np.linalg.inv(B[i]) @ B[i + 1]
         rels.append((Ma, Mb))
         alpha = _rot_to_axis(Ma[:3, :3]); beta = _rot_to_axis(Mb[:3, :3])
+        axes.append((alpha, beta))
+        near_pi.append(max(np.linalg.norm(alpha), np.linalg.norm(beta)) > np.pi - _HALF_TURN_TOL)
+    # 半回転の近くでは alpha と beta の向きがそれぞれ勝手に決まる(ちょうど π では alpha と −alpha が
+    # 同じ回転)。Park-Martin は alpha ≈ Rx beta の向きまで使うので、向きの違う組は Procrustes を壊す。
+    # 軸の向きを使わない線形解 Rx0 で beta を写し、alpha をその向きに揃える(半回転の無い組は触らない)。
+    if any(near_pi):
+        Rx0, ratio = _rx_linear(rels)
+        if ratio <= 1e-9:
+            raise ValueError("%s: the relative motions include half-turns (180 deg) whose axis sign is "
+                             "free, and with them the rotation of X is not determined (a 180 deg turn "
+                             "of X about a common normal fits the same data); add a motion that is not "
+                             "a half-turn, about a different axis" % op)
+        axes = [((-al if (np_ and float(al @ (Rx0 @ be)) < 0.0) else al), be)
+                for (al, be), np_ in zip(axes, near_pi)]
+    for alpha, beta in axes:
         # Park-Martin/Procrustes: Rx beta ~= alpha なので M = sum(alpha beta^T)
         Msum += np.outer(alpha, beta)
     U, S, Vt = np.linalg.svd(Msum)
