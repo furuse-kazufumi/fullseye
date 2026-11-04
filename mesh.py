@@ -239,12 +239,16 @@ def _read_obj_vertices(raw: bytes, src: str):
     """``v`` records -> (V, C). Colours only when a line carries exactly 6 numbers
     (``x y z r g b``, the common vertex-colour extension); ``v x y z w`` keeps w
     out of the colours."""
+    # ★2026-11-05 redteam I14: records are keyword + whitespace (any blanks, tabs included);
+    # "v\t1 2 3" and "f\t1 2 3" used to be skipped because the test was startswith("v ").
     rows, widths = [], []
     for ln in _text(raw).splitlines():
         s = ln.strip()
-        if not s or s[0] == "#" or not s.startswith("v "):
+        if not s or s[0] == "#":
             continue
         parts = s.split()
+        if parts[0] != "v":
+            continue
         if len(parts) < 4:
             raise ValueError("%s: OBJ 'v' record needs 3 coordinates, got %r" % (src, s[:60]))
         rows.append(parts[1:7])
@@ -267,10 +271,11 @@ def _read_obj(raw: bytes, src: str):
         s = ln.strip()
         if not s or s[0] == "#":
             continue
-        if s.startswith("v "):
+        keyword = s.split(None, 1)[0]
+        if keyword == "v":
             seen += 1
             continue
-        if not s.startswith("f "):
+        if keyword != "f":
             continue
         nv_seen = seen
         idx = []
