@@ -19887,6 +19887,23 @@
     "hi": "प्रशिक्षित धुंधलेपन से आगे लॉट-नंबर OCR अस्वीकार करने के बजाय गलत पढ़ता है",
     "fr": "Au-delà du flou appris, l'OCR des numéros de lot lit mal au lieu de rejeter"
    }
+  },
+  {
+   "id": "poc_bga_ball_type_roundtrip",
+   "group": "wing_threed",
+   "media": "01_bga_types.png",
+   "motion": false,
+   "thumb_src": "01_bga_types.png",
+   "label": {
+    "ja": "画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個",
+    "en": "Carried from Image to Point Cloud, Volume, Mesh and Graph, the Ball Count Stays 71 in Three Types",
+    "zh": "从图像传到点云、体积、网格和图,焊球数在三种类型中都是 71 个",
+    "tw": "從影像傳到點雲、體積、網格和圖,焊球數在三種型別中都是 71 個",
+    "ko": "영상에서 점군·볼륨·메시·그래프로 넘겨도 볼 개수는 세 가지 형에서 모두 71개",
+    "de": "Vom Bild über Punktwolke, Volumen, Netz und Graph: Die Kugelzahl bleibt in drei Typen 71",
+    "hi": "image से point cloud, volume, mesh और graph तक ले जाने पर भी तीनों प्रकारों में ball की गिनती 71 रहती है",
+    "fr": "De l'image au nuage de points, au volume, au maillage et au graphe, le nombre de billes reste 71 dans trois types"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -20766,6 +20783,14 @@
     "de": "Fourier-Ptychographie (schräge LED-Beleuchtung, Phasenrückgewinnung zu hochaperturiger Amplitude und Phase, Ablehnung ohne Konvergenz)",
     "hi": "Fourier ptychography (तिरछी LED रोशनी, phase retrieval से high-NA amplitude और phase, converge न हो तो मना)",
     "fr": "Ptychographie de Fourier (éclairage LED oblique, récupération de phase vers amplitude et phase à grande ouverture, refus sans convergence)"
+   },
+   "convert-between-representations": {
+    "zh": "把图像传给点、点云、体积、网格和图,再传回来",
+    "tw": "把影像傳給點、點雲、體積、網格和圖,再傳回來",
+    "ko": "영상을 점·점군·볼륨·메시·그래프로 넘기고 다시 되돌리기",
+    "de": "Ein Bild über Punkte, Punktwolken, Volumen, Netze und Graphen weiterreichen – und zurück",
+    "hi": "image को points, point cloud, volume, mesh और graph तक ले जाना — और वापस",
+    "fr": "Faire passer une image par des points, un nuage de points, un volume, un maillage et un graphe — et revenir"
    }
   }
  },
