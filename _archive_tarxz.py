@@ -16,10 +16,10 @@ import tarfile
 from collections.abc import Mapping
 
 _MAX_TOTAL_BYTES = 2 * 1024**3
-# Windows reserved device names (Microsoft "Naming Files, Paths, and Namespaces"): COM0 / LPT0
-# and the superscript digits ¹ ² ³ are reserved too, and so are the console names CONIN$ /
-# CONOUT$. ★2026-11-05 redteam (io, archive probe): only CON/PRN/AUX/NUL and COM1-9 / LPT1-9
-# were listed, so "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
+# ★2026-11-05 redteam (io, archive probe): Windows reserved device names (Microsoft "Naming
+# Files, Paths, and Namespaces") include COM0 / LPT0, the superscript digits ¹ ² ³ and the
+# console names CONIN$ / CONOUT$. Only CON/PRN/AUX/NUL and COM1-9 / LPT1-9 were listed, so
+# "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
 _WINDOWS_DEVICES = {"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$",
                     *(f"{port}{d}" for port in ("COM", "LPT") for d in "0123456789\u00b9\u00b2\u00b3")}
 

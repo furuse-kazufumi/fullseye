@@ -92,6 +92,7 @@ _NRRD_TYPE_ALIASES = {
 }
 # ★2026-11-05 redteam I8: the table above is now every spelling of the teem NRRD format spec
 # ("type" field): "signed long long" / "signed long long int" were missing and refused.
+
 #: teem NRRD "space" field: canonical name -> implied space dimension (aliases below)
 _NRRD_SPACES = {
     "right-anterior-superior": 3, "left-anterior-superior": 3, "left-posterior-superior": 3,
@@ -880,10 +881,10 @@ def e57_read(data):
 # 書庫。安全モデルと決定的 tar は helpstore.py、実読込量の門は sample_data.py を基にする。
 # ---------------------------------------------------------------------------
 _ARCHIVE_FORMATS = {"zip", "tar", "tar.gz", "tar.bz2", "tar.xz", "7z", "rar"}
-# Windows reserved device names (Microsoft "Naming Files, Paths, and Namespaces"): COM0 / LPT0
-# and the superscript digits ¹ ² ³ are reserved too, and so are the console names CONIN$ /
-# CONOUT$. ★2026-11-05 redteam (io, archive probe): only CON/PRN/AUX/NUL and COM1-9 / LPT1-9
-# were listed, so "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
+# ★2026-11-05 redteam (io, archive probe): Windows reserved device names (Microsoft "Naming
+# Files, Paths, and Namespaces") include COM0 / LPT0, the superscript digits ¹ ² ³ and the
+# console names CONIN$ / CONOUT$. Only CON/PRN/AUX/NUL and COM1-9 / LPT1-9 were listed, so
+# "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
 _WINDOWS_DEVICES = {"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$",
                     *(f"{port}{d}" for port in ("COM", "LPT") for d in "0123456789\u00b9\u00b2\u00b3")}
 
