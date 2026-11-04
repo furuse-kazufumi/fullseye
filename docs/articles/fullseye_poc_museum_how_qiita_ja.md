@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **103 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **104 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -3881,6 +3881,28 @@ py -3.11 examples/poc_star_tracker.py
 この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_star_tracker)
 
 
+
+## No.2026.299 —— 画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個
+
+2 個の BGA パッケージ(各 6 x 6、ピッチ 10 px、半径 3.2 px、1 個欠け)の高さ画像を合成し、表現変換の op 29 個で型から型へ渡して戻した。画像の塊の重心は置いた中心と最大 0.066 px、整数位置の応答画像 → keypoints → 画像は画素ごとに bit 一致、keypoints ↔ 点群も bit 一致。点ごとのガウシアン(重み 1/N)の体積の総和は 6σ 打ち切りで 1 − 1.4e-10、3σ では 0.99911(箱の極限 0.99192 より大きい)。2 回目の検査を (2, −3, 5) voxel ずらすと、体積の循環相関のピークは厳密にそこへ立ち、最大値投影の画像から読んだ keypoints も同じ位置。等値面のメッシュはオイラー標数 142 = 2 × 71 で、体積は閉形式の球の和へ刻み 1 / 0.5 / 0.25 voxel で −1.20 / −0.22 / −0.020 % と収束する。4 近傍グラフは 2 成分 (35, 36) で、ラプラシアンの 0 固有値も 2。1 個を拡大した高さ画像では主曲率 × R の中央値 1.001、形状指数 0.9999。高さ画像の pointmap は列が (x, y, z) で、(z, y, x) の受け手にそのまま渡すと例外なしに 15360 画素が左端の 4 列に積もる(右下)。
+
+[![画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png)
+
+*↑ **画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個** ―― 2 個の BGA パッケージ(各 6 x 6、ピッチ 10 px、半径 3.2 px、1 個欠け)の高さ画像を合成し、表現変換の op 29 個で型から型へ渡して戻した。画像の塊の重心は置いた中心と最大 0.066 px、整数位置の応答画像 → keypoints → 画像は画素ごとに bit 一致、keypoints ↔ 点群も bit 一致。点ごとのガウシアン(重み 1/N)の体積の総和は 6σ 打ち切りで 1 − 1.4e-10、3σ では 0.99911(箱の極限 0.99192 より大きい)。2 回目の検査を (2, −3, 5) voxel ずらすと、体積の循環相関のピークは厳密にそこへ立ち、最大値投影の画像から読んだ keypoints も同じ位置。等値面のメッシュはオイラー標数 142 = 2 × 71 で、体積は閉形式の球の和へ刻み 1 / 0.5 / 0.25 voxel で −1.20 / −0.22 / −0.020 % と収束する。4 近傍グラフは 2 成分 (35, 36) で、ラプラシアンの 0 固有値も 2。1 個を拡大した高さ画像では主曲率 × R の中央値 1.001、形状指数 0.9999。高さ画像の pointmap は列が (x, y, z) で、(z, y, x) の受け手にそのまま渡すと例外なしに 15360 画素が左端の 4 列に積もる(右下)。*
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/02_bga_mesh_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/02_bga_mesh_volume.png)
+
+*↑ 測定の図*
+
+```
+py -3.11 examples/poc_bga_ball_type_roundtrip.py
+```
+
+ソース: [examples/poc_bga_ball_type_roundtrip.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bga_ball_type_roundtrip.py)
+
+この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip)
+
+使用 op(ノートへ): [`angles_to_normals`](https://furuse.work/ops/reprconv/direction/angles_to_normals.html) · [`correlation_score`](https://furuse.work/ops/reprconv/score/correlation_score.html) · [`curvature_to_shape_index`](https://furuse.work/ops/reprconv/curvature/curvature_to_shape_index.html) · [`curvature_to_table`](https://furuse.work/ops/reprconv/curvature/curvature_to_table.html) · [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`flow_apply`](https://furuse.work/ops/reprconv/flow/flow_apply.html) · [`flow_speed`](https://furuse.work/ops/reprconv/flow/flow_speed.html) · [`gaussians_to_points`](https://furuse.work/ops/reprconv/gaussians/gaussians_to_points.html) · [`gaussians_to_voxel`](https://furuse.work/ops/3d/transform/gaussians_to_voxel.html) · [`graph_components`](https://furuse.work/ops/conngraph/stats/graph_components.html) · [`graph_laplacian_spectrum`](https://furuse.work/ops/conngraph/stats/graph_laplacian_spectrum.html) · [`indices_to_labels`](https://furuse.work/ops/reprconv/index/indices_to_labels.html) · [`keypoints_from_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_from_image2d.html) · [`keypoints_rowcol_to_uv`](https://furuse.work/ops/reprconv/keypoint/keypoints_rowcol_to_uv.html) · [`keypoints_to_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_to_image2d.html) · [`keypoints_uv_to_points`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_points.html) · [`keypoints_uv_to_rowcol`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_rowcol.html) · [`knn_graph`](https://furuse.work/ops/3d/geodesic/knn_graph.html) · [`knn_graph_to_conn_graph`](https://furuse.work/ops/reprconv/structure/knn_graph_to_conn_graph.html) · [`labels_to_indices`](https://furuse.work/ops/reprconv/index/labels_to_indices.html) · [`mesh_volume`](https://furuse.work/ops/3d/mesh_process/mesh_volume.html) · [`normals_to_angles`](https://furuse.work/ops/reprconv/direction/normals_to_angles.html) · [`normals_to_egi`](https://furuse.work/ops/reprconv/direction/normals_to_egi.html) …(他 13)
 
 
 

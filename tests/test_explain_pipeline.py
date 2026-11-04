@@ -14,6 +14,7 @@ import pytest
 
 import api
 import fullseye
+from conftest import requires_backend
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SHAPE = (2048, 2048)
@@ -33,6 +34,8 @@ def plan(stages, **kw):
     (["gaussian", "hx_plane_deviation", "threshold", "select_shape"], 2, 3, []),  # torch -> CuPy -> torch
 ])
 def test_known_recipes_switch_where_expected(stages, n_switches, n_transfers, cpu_ops):
+    # torch が無いと accel の経路が無く、torch のある環境で作った出荷表と食い違う(2026-11-04 master py3.12/3.14)
+    requires_backend("torch")
     p = plan(stages)
     assert p["n_switches"] == n_switches and p["n_transfers"] == n_transfers, p["switches"]
     assert [s["op"] for s in p["stages"] if s["on"] == "cpu"] == cpu_ops
@@ -41,6 +44,8 @@ def test_known_recipes_switch_where_expected(stages, n_switches, n_transfers, cp
 
 
 def test_switch_reasons_name_the_stage_and_the_cause():
+    # torch が無いと accel の経路が無く、torch のある環境で作った出荷表と食い違う(2026-11-04 master py3.12/3.14)
+    requires_backend("torch")
     p = plan(["gaussian", "sk_dog", "threshold", "select_shape"])
     assert p["switches"] == [
         {"at": 1, "op": "sk_dog", "from": "accel", "to": "cpu", "reason": "not_listed"},
@@ -98,6 +103,8 @@ def test_explain_pipeline_never_runs_an_op(monkeypatch):
 
 
 def test_generated_route_table_is_current():
+    # torch が無いと accel の経路が無く、torch のある環境で作った出荷表と食い違う(2026-11-04 master py3.12/3.14)
+    requires_backend("torch")
     import subprocess
     import sys
     r = subprocess.run([sys.executable, str(ROOT / "tools" / "gen_gpu_routes.py"), "--check"], cwd=ROOT,

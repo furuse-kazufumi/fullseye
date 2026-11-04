@@ -32355,9 +32355,9 @@
             {
               "file": "05_refocus_sweep.png",
               "content_box": [
-                51,
+                34,
                 0,
-                617,
+                652,
                 690
               ]
             },
@@ -32365,12 +32365,12 @@
               "file": "06_depth_map.png",
               "content_box": [
                 0,
-                230,
+                226,
                 720,
-                230
+                238
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 3.125
+              "source_aspect": 3.030303
             },
             {
               "file": "07_plenoptic_1_vs_2.png",
@@ -32387,12 +32387,12 @@
               "file": "08_limits.png",
               "content_box": [
                 0,
-                202,
+                207,
                 720,
-                285
+                275
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.526316
+              "source_aspect": 2.614379
             }
           ],
           "frame_count": 6,
@@ -32404,17 +32404,17 @@
             1600,
             1600
           ],
-          "bytes": 478384,
+          "bytes": 645955,
           "color_mad": [
             0.3424,
-            0.1396,
-            0.1241,
-            0.3527,
-            0.117,
-            0.1882
+            0.1482,
+            0.1172,
+            1.0452,
+            0.1052,
+            0.1659
           ],
-          "max_color_mad": 0.3527,
-          "source_sha256": "523d78c4d4533602724273aaf6a4a376883eba06c4c1efb5fb7626bfd1d00000"
+          "max_color_mad": 1.0452,
+          "source_sha256": "198ec8c07d32f50f29d7d7c611be8c81fee8b4f1891a27a57c1b5261b88b3a07"
         },
         "en": {
           "path": "articles/assets/poc/poc_plenoptic_camera/story.en.gif",
@@ -32449,9 +32449,9 @@
             {
               "file": "05_refocus_sweep.png",
               "content_box": [
-                51,
+                34,
                 0,
-                617,
+                652,
                 690
               ]
             },
@@ -32459,12 +32459,12 @@
               "file": "06_depth_map.png",
               "content_box": [
                 0,
-                230,
+                226,
                 720,
-                230
+                238
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 3.125
+              "source_aspect": 3.030303
             },
             {
               "file": "07_plenoptic_1_vs_2.png",
@@ -32481,12 +32481,12 @@
               "file": "08_limits.png",
               "content_box": [
                 0,
-                202,
+                207,
                 720,
-                285
+                275
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.526316
+              "source_aspect": 2.614379
             }
           ],
           "frame_count": 6,
@@ -32498,17 +32498,17 @@
             1600,
             1600
           ],
-          "bytes": 478384,
+          "bytes": 645955,
           "color_mad": [
             0.3424,
-            0.1396,
-            0.1241,
-            0.3527,
-            0.117,
-            0.1882
+            0.1482,
+            0.1172,
+            1.0452,
+            0.1052,
+            0.1659
           ],
-          "max_color_mad": 0.3527,
-          "source_sha256": "3b85935abb871bd43407db19ceea77535c41c87a9b6221ff3d95dafd8ce20b6e"
+          "max_color_mad": 1.0452,
+          "source_sha256": "8ab35b1b3a0c252b1a7bdd48d8d580d25bfe7fac8c7b89994d8685307066713d"
         }
       },
       "thumbnail": {
@@ -34441,197 +34441,11 @@
       "reason": "two_or_fewer_raster_figures",
       "usable_figures": 2
     },
-    "poc_real_file_formats": {
-      "representative": "01_stars_matched.png",
-      "status": "gif",
-      "selected": [
-        "01_stars_matched.png",
-        "02_magnitudes.png",
-        "03_mri_head.png",
-        "04_em_density.png",
-        "05_e57_points.png",
-        "06_verdicts.png"
-      ],
-      "excluded_frames": [],
-      "variants": {
-        "ja": {
-          "path": "articles/assets/poc/poc_real_file_formats/story.ja.gif",
-          "frames": [
-            {
-              "file": "01_stars_matched.png",
-              "content_box": [
-                15,
-                0,
-                690,
-                690
-              ]
-            },
-            {
-              "file": "02_magnitudes.png",
-              "content_box": [
-                0,
-                113,
-                720,
-                463
-              ]
-            },
-            {
-              "file": "03_mri_head.png",
-              "content_box": [
-                0,
-                258,
-                720,
-                173
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 4.15
-            },
-            {
-              "file": "04_em_density.png",
-              "content_box": [
-                0,
-                227,
-                720,
-                235
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 3.066667
-            },
-            {
-              "file": "05_e57_points.png",
-              "content_box": [
-                15,
-                0,
-                690,
-                690
-              ]
-            },
-            {
-              "file": "06_verdicts.png",
-              "content_box": [
-                0,
-                240,
-                720,
-                210
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 3.435
-            }
-          ],
-          "frame_count": 6,
-          "durations_ms": [
-            2500,
-            1600,
-            1600,
-            1600,
-            1600,
-            1600
-          ],
-          "bytes": 807225,
-          "color_mad": [
-            0.6764,
-            0.1092,
-            1.0091,
-            0.6749,
-            0.0,
-            0.0378
-          ],
-          "max_color_mad": 1.0091,
-          "source_sha256": "0bb8bcd85fd681ca2b7fef1b17455be9ef311b4d32a8d777b86b1f0b49487a96"
-        },
-        "en": {
-          "path": "articles/assets/poc/poc_real_file_formats/story.en.gif",
-          "frames": [
-            {
-              "file": "01_stars_matched.png",
-              "content_box": [
-                15,
-                0,
-                690,
-                690
-              ]
-            },
-            {
-              "file": "02_magnitudes.png",
-              "content_box": [
-                0,
-                113,
-                720,
-                463
-              ]
-            },
-            {
-              "file": "03_mri_head.png",
-              "content_box": [
-                0,
-                258,
-                720,
-                173
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 4.15
-            },
-            {
-              "file": "04_em_density.png",
-              "content_box": [
-                0,
-                227,
-                720,
-                235
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 3.066667
-            },
-            {
-              "file": "05_e57_points.png",
-              "content_box": [
-                15,
-                0,
-                690,
-                690
-              ]
-            },
-            {
-              "file": "06_verdicts.png",
-              "content_box": [
-                0,
-                240,
-                720,
-                210
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 3.435
-            }
-          ],
-          "frame_count": 6,
-          "durations_ms": [
-            2500,
-            1600,
-            1600,
-            1600,
-            1600,
-            1600
-          ],
-          "bytes": 807225,
-          "color_mad": [
-            0.6764,
-            0.1092,
-            1.0091,
-            0.6749,
-            0.0,
-            0.0378
-          ],
-          "max_color_mad": 1.0091,
-          "source_sha256": "709f5d8b3cb0deeacb9b1840e5f4394938b0c402357cd1b86dfcc15bf4fffa1e"
-        }
-      },
-      "reason": null,
-      "cover": "01_stars_matched.png",
-      "still": "articles/assets/poc/poc_real_file_formats/01_stars_matched.png",
-      "alt": {
-        "ja": "SDSS r の NGC 2420(北が上)。青=star_detect の検出、緑=SDSS の星表の星(15〜20 等、飽和なし)で 1.0″ 以内に対応、赤=対応なし。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外(検出の青だけが並ぶ)。",
-        "en": "Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed"
-      }
+    "poc_bga_ball_type_roundtrip": {
+      "representative": "01_bga_types.png",
+      "status": "static",
+      "reason": "two_or_fewer_raster_figures",
+      "usable_figures": 2
     }
   }
 }

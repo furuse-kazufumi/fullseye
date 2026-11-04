@@ -19,6 +19,69 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `examples/poc_real_file_formats.py`: SDSS(FITS)・OpenNeuro(NIfTI)・EMDB(MRC)・OME(OME-TIFF)・libE57(E57)の公開ファイルを配布されたバイト列のまま読み、astropy / nibabel / mrcfile / tifffile との全画素一致と配布元の公表値で採点する。同梱は `data/fileio_real/`(SHA-256 固定、出典とライセンスは README)。E57 の原本は再配布の条件が無いので `tools/fetch_e57_bunny.py` で repo 外へ取得(`realdata.E57_BUNNY_FILES`)、CI は同梱のイトカワ形状で代える。
 - 記録した穴: `em_mrc_read` は格子の起点 NXSTART を返さない(EMD-3197 で −2 = 22.8 Å)。能力ノート `scientific-data-files`。
 
+### 変更(Breaking)— `plenoptic_refocus_depth` の傾き↔距離の単位を直した(2026-11-04)
+
+- 像のずれを `slope × 角度ステップ × ピッチ` で出していた。次元から正しくは傾き × ピッチ / 角度ステップで、PoC のカメラでは 1/角度ステップ² ≈ 3000 倍小さく、測った傾きはどれも合焦距離(1.0 m)へ戻っていた。いまは復号の視点刻み(1 視点 = ピッチ/U ぶんの射出瞳)、射出瞳までの距離、Newton の式で変換する近軸の式。処方を順方向に光線追跡した視差と、理想レンズで相対 1e-6、三枚玉で 2e-4 以内で一致する(`tests/test_plenoptic.py`)。
+- 値が変わる: 同じ傾きに対する `depth_m` と `depth_resolution_m`。`depth_resolution_m` の定義は「傾き ±1 の半幅」から「傾き ±1/(U−1)(全基線で 1 標本の視差)の半幅」へ。
+- 新たに ValueError: `V != U` の場、視点 1 つの場、focused(2.0)の系、像点が射出瞳以遠に来る傾き。返り値に `pupil_step_mm` と `exit_pupil_distance_mm` を足した。`mla_to_sensor_mm` は読まなくなった(`plenoptic_capture` は画素→瞳を `microimage_diameter_mm` で写すので、視差はそちらで決まる)。
+- PoC `poc_plenoptic_camera`: 真値の傾きを光線追跡から取り、復号したライトフィールドのピント山と比べる門を足した(以前の門は式を自分の逆で往復するだけで、+712 / 0 / −448 を真値と出しながら通っていた)。3 平面がセンサの視野に入るよう置き直し(以前は 0.6 m の面が視野の外)、真値の距離の図も主光線の幾何から作る。`inspection_texture` の目盛りの終点(画素を二重に掛けて上端まで伸びていた)と "QC 17" の文字の大きさ(PIL 既定の 11 px)を直した。図と動画は作り直し。
+
+- `lf_plenoptic_design`(Breaking、値が変わる): 視点間の基線を `aperture/(U−1)` から `aperture/U`(U 個の瞳セルの中心間隔)へ、`focal_px_subaperture` を `f/pitch` から像距離/pitch(MLA までの距離)へ。理想レンズで光線追跡した視差と相対 1e-3 で一致。`depth_precision_mm` は f=50 mm・N=8・300 mm で 5.564 → 5.299 mm、N=4・150 mm で 0.696 → 0.530 mm、`poc_compound_eye` の設計で 9.936 → 10.060 mm、基線 0.3750 → 0.3333 mm。`plenoptic_capture` の画素→瞳は実機と違って反転しない(傾きの符号が実機と逆)ことを docstring と能力ノートに明記。
+
+### 修正 — `plenoptic_mla_calibrate` のメモリが全ペア O(n²) だった(2026-11-04)
+
+- 格子の基底を全ペアの差から取っていて、7200 px の白画像で 791 GiB を確保して落ちた。KD 木で 1.25 ピッチ以内のペアだけを取る形に替え、同じ画像で 230,400 個の中心を 2.4 秒で校正する。結果は従来の全ペア版と 1e-10 で一致(回転・ピッチを変えた 3 格子で門)。サブピクセルの頂点補間もベクトル化した(同じ式)。
+
+### 文書 — `lf_depth_from_focus` の既定 `interp="linear"` の偏り(2026-11-04)
+
+- 小数の傾きでは linear の補間ぼけが傾きを 0 側へ引く。厳密にずらした場で 7×7 視点の +0.17 が +0.019 に、cubic なら 28 例で偏り 0.0037 以内(時間は 3.75 倍)。既定は変えない(雑音のある整数傾きの場では cubic が良くない: `poc_compound_eye` の RMSE 0.010 → 0.029、他の例も linear に依る)。docstring に測定を書き、テストで数値を固定した。
+
+### 破壊的変更(Breaking) — 外部監査 v0.9.0 の 9 件の修正で振る舞いが変わるもの
+
+- F1 `run_pipeline` / `FullseyeEngine.run_stepwise`(`api._normalise_stages`): 段 `("op", a)` の省いた `b` は共通の `b` になる(以前は共通の `a`)。dict 形 `{"op": .., "a": ..}` と同じ答え。
+- F2 `apply([x1, x2], op)`(n-ary の密な入力): 整数・bool の画像は `on_error="raise"` で `ValueError`、既定では単入力と同じく `/255`(uint8)・`/65535`(uint16)で変換して台帳に記録する(以前は整数のまま op に渡り、例外も記録もなく別の答え)。region の入力と `convol_image` の核(重みの表)は従来どおり縮めない。
+- F3 値が変わる: `vector_to_similarity` の倍率(座標の単位に依存した偏りが消える)、`odometry.umeyama_align` は小さい座標でも倍率を返す(以前は `var <= 1e-12` で 1.0)、`featmatch` の最小標本の退化判定は相対量(座標 1e-6 の標本を「退化」と捨てない)。
+- F4 入口の非有限値の拒否(`apply` / `run_pipeline`、方針に依らず): 入力そのものが NaN / inf のスカラー(例 `apply(float("nan"), "feature_to_img", …)`)、dict・list・tuple の中のスカラー、複素スカラー、object 配列、4 段以上の入れ子の NaN / inf も拒否する(以前は素通し)。`allow_nonfinite=True` は従来どおり。
+- F5 `hand_eye_calibration` / `calibrate_hand_eye`: ちょうど 180° の相対運動を含む列を解く(以前は「単一軸」で拒否)。半回転だけで X が決まらない列は「not determined」の文で拒否する。`camera.rotation_log` は角を atan2 で取り、π の近くの軸の向きを歪対称部から取る(値が丸めの桁で変わる)。
+- F6 `ransac_homography` / `ransac_fundamental`: 最終の当てはめ直しで内れ値が `min_inliers` を割るときは、合意を満たしていた RANSAC の模型を返す(以前は割った模型を成功として返した)。
+- F7 `register_ecc`: 反復の上限で止まったとき、`metric` と `min_rho` の判定は返す warp で測り直した相関(以前は最後の更新前の値)。`history` は従来どおり反復ごとの値。
+- F8 `ocr_classify` / `ocr_read_line`: 他のクラスも同じ距離(0 を含む)の同点は margin 1 で拒否する。`margin` は自クラスの距離が 1e-12 以下でも比で返す(以前は inf)。
+- F9 `register_accuracy_map` の `by_texture` / `by_magnitude`: 4 群は排他的(`[lo, hi)`、最後だけ `[lo, hi]`)。`n` の和が集計した画素の数になり、各群の `n` と `epe_median` が変わる。
+
+### 修正 — 外部監査 v0.9.0 の 9 件(F1〜F9)と同型の箇所の一掃
+
+外部の検証者の報告(9 件)を実コードで 1 件ずつ確かめ、9 件とも契約違反と判定した。回帰は
+`tests/test_audit_0_9_0_fixes_2026_11_04.py`(真値は閉形式・既知解から独立に作る)。
+
+- F1 部分タプル段の補完。兄弟: `FullseyeEngine.__init__` / `unified.Pipeline` は正しく、触らない。
+- F2 n-ary の密な入力に `_contract_dtype` を入力ごとに(単入力と PrecisionUnion の n-ary 経路はすでに通っていた)。
+- F3 倍率の床 `var + 1e-12` を広がりで割った比へ。同じ形の絶対の床を相対量へ: `featmatch._similarity_fit` / `_degenerate_pair` / `_degenerate_affine` / `_degenerate_h`、`odometry.umeyama_align`、`fit_transform._hartley_norm` と `H[2,2]` の床。1e-9〜1e6 の 6 尺度で同じ答え。
+- F4 `_nonfinite_leaf` がスカラーの葉・object 配列・32 段までの入れ子を見る。
+- F5 回転の対数の 180° 特異点: π の近くは対称部から軸を取り、半回転の軸の向きは軸の符号を使わない線形解 `(I⊗Ra − Rbᵀ⊗I) vec(Rx) = 0` で揃えてから従来の Park-Martin。異なる軸の半回転を含む既知解 4 種で X を 1e-9 で戻す。兄弟: `camera.rotation_log`、`balltrack.spin_from_markers`(ちょうど 180° で NaN の ω)。`mathestimation.se3_log` は定義域 θ < π を約束して拒否しているので変えない。
+- F6 当てはめ直しが合意を保つときだけ採る(`pcseg.fit_sphere_ransac` と同じ規則)。兄弟: `ransac_fundamental`。
+- F7 返す warp で相関を測り直す。兄弟: `register_mi` / `register_ffd` は最後に測り直しており問題なし。
+- F8 同点の比を 1 に。兄弟: `features_match` / `feat_fpfh` / `feat_shot` の比の検定は同点を落としており問題なし。
+- F9 群を半開区間に。兄弟: 他の区間の集計は半開区間で問題なし。
+
+### 破壊的変更(Breaking) — 外部検証 第 2 陣(E1〜E4・I1〜I3・G1〜G3)の修正で振る舞いが変わるもの
+
+回帰の門は `tests/test_audit_extra_2026_11_04.py`(報告の再現 + 兄弟の掃除)。op の宣言・型名は変えていない。
+
+| 項目 | 分類 | 何が変わるか |
+|---|---|---|
+| E1 `pipeline_evolve.evolve` / `evolve_params.evolve_params` の変異が `max_len` を守る(`mutate(..., max_len=5)` を追加) | 値 | 挿入の上限が 5 固定だった。既定 `max_len=4` でも同じ seed の探索経路と best が変わり得る。`max_len=0` は `()`、`max_len=1` は長さ 1 以下 |
+| E2 `FullseyeEngine.run_cached` の入力の鍵が全バイトの SHA-256 + 方針(`on_error`)+ fast 切替 | 値 | 先頭と末尾 1 MiB だけ見ていて、中央 1 画素だけ違う 2 枚に古い結果を返していた。object 配列は TypeError |
+| E3 `FullseyeEngine.to_python` / `to_python_staged` のノブを `repr`(最短往復)で書く | 出力 | `%.3f` で 0.123456 → 0.123 に丸めていた。生成コードの文字列が変わる。非有限は `float('nan')` |
+| E4 `FullseyeEngine.run_cached` が `run` と同じ事前検査(型の連鎖・ノブ・入口の非有限)を通る | fail-closed | `otsu,invert` などを `run` は拒否、`run_cached` は実行していた。今は同じ ValueError |
+| I1 readable な型付き JSON の整数リストを Python int で復元 | fail-closed | `[0, 2**63+1]`(uint64)が float 経由で `2**63` になっていた。整数 dtype のリストの float は整数値かつ絶対値 2**53 以下だけ受け、それ以外は ValueError |
+| I1 の兄弟 `table_read_csv` の全整数列で 2**53 を超える値があれば int64 / uint64 で返す | 型 | float64 に丸めて返していた(ns の時刻など)。uint64 にも入らなければ ValueError。小さい整数の列は従来どおり float64 |
+| I2 `nrrd_read` のヘッダ終端を行ごとに探す(最初の空行) | 値 | CRLF のファイルで本体に LF が 2 つ並ぶと本体側の `\n\n` を終端と取り違えて拒否していた |
+| I3 `archive_create(..., "zip", level=)` の level が各メンバーに効く | 出力 | ZipInfo に level が渡らず常に zlib 既定(6)だった。既定の `level=None`(=9)を含め、同じ入力でも ZIP のバイト列が変わる |
+| G1 `evaluation.metrics.rmse(domain="points3d")` を全経路で点ごと(行のユークリッド距離)に | 値 / fail-closed | mask・weights・`nan_policy="omit"`/`"propagate"` の経路だけ座標ごとに平均して √3 倍小さかった。行を割る mask と行内で違う重みは ValueError、omit は点ごと落とす(`reduction="none"`/`"sum"` も点単位で選ぶ) |
+| G2 `evaluation.metrics.iou` / `dice` が NaN の重みを omit したあとで a・b を選ぶ | 値 | IndexError で落ちていた。全部の重みが落ちたら `empty` の方針 |
+| G3 `transforms.hom_mat3d_to_pose` のジンバルロック(ry = ±90° ちょうど)を `rx = 0` 規約で分解、ry は atan2 | 値 | rx と rz を両方失い往復誤差 1.0 だった。`pose_quat` と同じ規約。ry の値は ±90° 以外でも最下位桁が変わり得る |
+| G3 の兄弟 `raytrace3d._euler_zyx`(`lensfile` の COORDBRK の角)を同じ分解に一本化 | 値 | β = ±90° ちょうどで α・γ を失っていた |
+
 ### 追加 — CT のスキャン方式を 1 つの幾何で(コーンビーム FDK・ヘリカル・ラミノグラフィ・反復法)と GPU 経路
 
 - 新モジュール `ctscan`(opstomography のカテゴリ `ct_scan`、11 op)と `tomography_gpu`(共通の核)。幾何は `ct_scan_geometry` の dict 1 つで、線源・検出器中心・検出器の u/v 軸を view ごとに持つ。投影(レイ駆動)、その厳密な転置、ボクセル駆動の逆投影の 3 つの核だけを全方式で共有し、方式が足すのは軌道と重みだけ。
@@ -82,6 +145,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   k != -1 は丸めの差だけ動く(two_mirror で 1.7e-8 mm・1.2e-4 波)。lensopt が丸めで converged / stalled を
   入れ替えなくなった。統合で測り直した門: レンズの収差の 3-D 教材の「軸上のスポット半径」(無収差の丸めの残り
   9.2e-12 → 7.6e-12 µm、翻訳表 8 言語)と、レンズ系の 3-D 教材の光線を描く棒の数(449 → 448)。
+
+### 修正 — Studio の実行ワーカーの終了で GUI スレッドが永久に止まる(Linux CI で 2 回)
+
+- 原因: ワーカー(QObject)が QThread の `started` / `finished` の受け手で、終わるスレッドの中で `deleteLater` により
+  壊されていた。`~QObject` は自分の signal-slot mutex(Qt は 131 個をアドレスで共有)を握ったまま送り手の QThread の
+  `disconnectNotify` を呼び、PySide の override 探索が GIL を待つ。GUI スレッドは GIL を握ったまま
+  `QPlainTextEdit.setPlainText` の `QMetaObject::disconnect` で同じ番号の mutex を待つ。WSL Ubuntu 24.04 +
+  PySide6 6.12.0 で 3330 反復中 3 回再現し、gdb の全スレッドのスタックで 3 回とも同じ形を確認した。
+- 直し: ワーカーは queued の `invokeMethod` で起動し、QThread からの接続を持たない。スレッドが終わって `wait()` した後に
+  GUI スレッドで消す(実行ワーカーとバッチワーカーの両方)。門: `tests/test_studio_worker_teardown_thread_2026_11_04.py`
+  (`~QObject` が走ったスレッドと、QThread からワーカーへの接続数を数える。旧い配線では 2 件とも落ちる)。
 
 ### 統合(integrate/2026-11-04-gpu)
 

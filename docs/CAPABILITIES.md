@@ -30,6 +30,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
+| [画像を点・点群・体積・メッシュ・グラフへ渡して戻す](capabilities/convert-between-representations.md) | `keypoints_from_image2d` → `keypoints_uv_to_points` → `knn_graph` → `knn_graph_to_conn_graph` → `graph_components` | `poc_bga_ball_type_roundtrip` |
 | [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
 | [コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾何で再構成する(工業用 CT)](capabilities/ct-scan-modes.md) | `ct_scan_geometry` → `ellipsoid_projections` → `fdk_reconstruct` → `vol_rle_components` → `vol_rle_volume` | `ct_scan_modes` |
 | [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
@@ -1202,6 +1203,22 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 動く例: `poc_astro_photometry`, `poc_registration_basin`
 
+### [画像を点・点群・体積・メッシュ・グラフへ渡して戻す](capabilities/convert-between-representations.md)
+
+1 枚の画像から、明るい塊を点(keypoints)にし、高さを載せて 3-D の点群にし、点ごとのガウシアンにして体積(voxel)にし、等値面のメッシュや近傍のグラフへ渡します。逆向きも揃っていて、点群 → keypoints → 計数画像、体積の相関 → 位置 → 画像と戻れます。どの変換も**軸の約束を op 名に書いて**あり(`keypoints_uv_to_points` は (u, v) → (z, y, x))、往復できるものは bit 一致、できないものは何が落ちるかを `opsreprconv.roundtrips()` が宣言しています。
+
+使う op: `keypoints_from_image2d`, `keypoints_to_image2d`, `keypoints_uv_to_points`, `points_zyx_to_keypoints_uv`, `pointmap_to_points`, `points_to_gaussians`, `correlation_score`, `score_to_position`, `knn_graph_to_conn_graph`, `labels_to_indices`, `select_points`
+
+推奨パイプライン: [`keypoints_from_image2d`](ops/reprconv/keypoint/keypoints_from_image2d.md) → [`keypoints_uv_to_points`](ops/reprconv/keypoint/keypoints_uv_to_points.md) → [`knn_graph`](ops/3d/geodesic/knn_graph.md) → [`knn_graph_to_conn_graph`](ops/reprconv/structure/knn_graph_to_conn_graph.md) → [`graph_components`](ops/conngraph/stats/graph_components.md)
+
+代替: [`keypoints_rowcol_to_uv`](ops/reprconv/keypoint/keypoints_rowcol_to_uv.md), [`depth_to_organized_points`](ops/3d/range_image/depth_to_organized_points.md), [`voxel_to_mesh`](ops/3d/transform/voxel_to_mesh.md), [`graph_laplacian_spectrum`](ops/conngraph/stats/graph_laplacian_spectrum.md), [`points_to_position`](ops/reprconv/keypoint/points_to_position.md)
+
+限界: keypoints_from_image2d は 8 近傍の連結成分の重心なので、隣り合う画素に落ちた 2 点は 1 点に融合する(画素の往復が bit 一致なのは整数位置で離れた点だけ)。points は (z, y, x)、pointmap_to_points の返りは (x, y, z) で、取り違えても例外は出ない。gaussians_to_voxel は 3σ 打ち切りで質量が 1 にならない(0.99911、箱の極限 0.99192)。体積の相関は循環相関で、縁で切れたガウシアンはずれのピークを 1 voxel 動かしうる。
+
+実寸校正: 画素・voxel の実寸は変換の外で持つ(op は格子の添字で計算する)。gaussians_to_voxel は origin と spacing を必ず渡す —— 既定の刻み 1 は世界座標をそのまま添字にする。
+
+動く例: `poc_bga_ball_type_roundtrip`, `representation_roundtrip`, `representation_conversion`, `type_connectivity_tour`
+
 ### [基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する](capabilities/golden-compare.md)
 
 現場でいちばん多い検査は「良品の画像と比べて違うところを探す」です。`fullseye/golden.py` の `compare_to_golden(image, golden)` はそれを 1 回の呼び出しにします —— 位相相関で整数並進を合わせ(`max_shift` を超える推定は採用せず `align_ok=0` で返す)、任意でガウス平滑してから差分 `|image − golden|` を取り、`threshold` を超えた画素を検査領域 `mask` の中で連結成分にして `min_area` 未満を落とし、計測 dict `{shift_row, shift_col, align_ok, ssim, psnr, max_diff, mean_diff, defect_area, defect_count, defect_area_max, valid_fraction}` と差分の絵(`diff` / `defect_mask` / `labels`)を返します。位置合わせで画像の外から巻き込んだ縁は `valid` から外し、欠陥にも平均にも数えません。
@@ -1432,9 +1449,9 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 
 代替: [`lf_from_mla`](ops/lightfield/decode/lf_from_mla.md), [`lf_refocus`](ops/lightfield/refocus/lf_refocus.md), [`lf_depth_from_focus`](ops/lightfield/depth/lf_depth_from_focus.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md)
 
-限界: 幾何光学のみで回折と画素間クロストークは扱わない。
+限界: 幾何光学のみで回折と画素間クロストークは扱わない。傾き↔距離は近軸の式で、球面収差の分だけ距離がずれる。
 
-実寸校正: 一様な白色面で MLA 格子を校正し、距離既知の三平面で深度を確認する。
+実寸校正: 一様な白色面で MLA 格子を校正し、処方を順方向に光線追跡した視差を真値に三平面で深度を確認する。
 
 動く例: `poc_plenoptic_camera`
 

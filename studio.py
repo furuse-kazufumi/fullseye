@@ -8128,6 +8128,30 @@ def build_window(model=None):
 
     run_bridge = _RunBridge(win)
 
+    def _delete_worker_on_gui_thread(worker):
+        """Destroy a finished worker here, on the GUI thread (2026-11-04 deadlock).
+
+        The worker used to be a *receiver* of its QThread (``started -> run``,
+        ``finished -> deleteLater``) and was destroyed by ``deleteLater`` inside the
+        finishing thread.  ``~QObject`` then holds the worker's signal-slot mutex --
+        Qt shares 131 of them by object address -- while it calls the sender
+        QThread's ``disconnectNotify``, and PySide's override lookup there waits for
+        the GIL.  The GUI thread meanwhile held the GIL inside
+        ``QPlainTextEdit.setPlainText``, whose ``QMetaObject::disconnect`` waited
+        for the same pool mutex: both threads stopped for good (CI py3.11/py3.12,
+        reproduced on Linux with gdb: 3 hangs in 3330 iterations).
+
+        Now the worker is started by a queued ``invokeMethod`` and nothing of the
+        QThread is connected to it, so its ``~QObject`` makes no Python call under
+        a Qt lock; and it is deleted here, after ``QThread.wait()``, never by its
+        own thread's event dispatch.
+        """
+        if worker is None:
+            return
+        import shiboken6                     # noqa: PLC0415  (ships with PySide6)
+        if shiboken6.isValid(worker):
+            shiboken6.delete(worker)
+
     class _ThreadFinishBridge(QtCore.QObject):
         """Carry thread identity into a receiver with explicit GUI affinity."""
 
@@ -8135,17 +8159,18 @@ def build_window(model=None):
             super().__init__(run_bridge)
             self.generation = generation
             self.thread = thread
-            # Keep both Python wrappers alive until Qt confirms worker deletion.
+            # Keep the worker's Python wrapper alive until it is deleted below.
             self.worker = worker
 
         @QtCore.Slot()
         def finished(self):
             # finished() is emitted before QThread has necessarily completed all
             # thread-local cleanup.  wait() is the synchronization point that
-            # makes releasing the worker's Python wrapper safe.
+            # makes deleting the worker (and releasing its wrapper) safe.
             self.thread.wait()
             _thread_finished(self.generation, self.thread)
             run_ctl.finish_bridges.pop(self.generation, None)
+            _delete_worker_on_gui_thread(self.worker)
             self.worker = None
             self.thread = None
             self.deleteLater()
@@ -8166,11 +8191,12 @@ def build_window(model=None):
         worker.started.connect(run_bridge.started, QtCore.Qt.QueuedConnection)
         worker.finished.connect(run_bridge.finished, QtCore.Qt.QueuedConnection)
         worker.run_done.connect(run_bridge.done, QtCore.Qt.QueuedConnection)
-        thread.started.connect(worker.run)
-        # QObject cleanup belongs to the worker thread.  Controller cleanup belongs
-        # to the GUI thread; a context-free Python lambda here can run in the
-        # emitting worker thread and drop the final wrappers there.
-        thread.finished.connect(worker.deleteLater)
+        # The worker must not be a receiver of the (Python-wrapped) QThread: its
+        # ~QObject would call the thread's disconnectNotify -- a GIL wait -- while
+        # holding a shared Qt mutex (see _delete_worker_on_gui_thread).  So start
+        # it with a queued call that the thread's event loop delivers, and delete
+        # it on the GUI thread once the thread has finished.
+        QtCore.QMetaObject.invokeMethod(worker, "run", QtCore.Qt.QueuedConnection)
         finish_bridge = _ThreadFinishBridge(gen, thread, worker)
         run_ctl.finish_bridges[gen] = finish_bridge
         thread.finished.connect(finish_bridge.finished, QtCore.Qt.QueuedConnection)
@@ -8298,8 +8324,8 @@ def build_window(model=None):
         worker = _BatchWorker(gen, snapshot, plan, stop_event); worker.moveToThread(thread)
         worker.progress.connect(batch_bridge.progress, QtCore.Qt.QueuedConnection)
         worker.complete.connect(batch_bridge.complete, QtCore.Qt.QueuedConnection)
-        thread.started.connect(worker.run)
-        thread.finished.connect(worker.deleteLater)
+        # Same rule as the run worker: no QThread -> worker connection, GUI-side delete.
+        QtCore.QMetaObject.invokeMethod(worker, "run", QtCore.Qt.QueuedConnection)
         finish_bridge = _ThreadFinishBridge(gen, thread, worker)
         run_ctl.finish_bridges[gen] = finish_bridge
         thread.finished.connect(finish_bridge.finished, QtCore.Qt.QueuedConnection)

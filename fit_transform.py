@@ -83,7 +83,12 @@ def vector_to_similarity(src, dst) -> np.ndarray:
         raise ValueError("vector_to_similarity: all src points coincide — scale and rotation "
                          "are not determined")
     sc, dc = s.mean(0), d.mean(0)
-    sd, dd = s - sc, d - dc
+    # ★2026-11-04(外部監査 v0.9.0 F3): 以前は ``scale = D.sum() / (var + 1e-12)`` で、床 1e-12 [座標²] が座標の単位に
+    #   依存していた(座標 1 で倍率 1.999999999996、座標 1e-6 で 0.667、真値はどちらも 2)。倍率は
+    #   座標の単位に依らない量なので、両方の点群を src の広がり ``ref`` で割ってから比を取る
+    #   (割った後の分散は >= 1/N、床は要らない)。``ref > 0`` は上の「全部 1 点」の検査が保証する。
+    ref = float(np.abs(s - sc).max())
+    sd, dd = (s - sc) / ref, (d - dc) / ref
     H_ = sd.T @ dd / len(s)
     U, D, Vt = np.linalg.svd(H_)
     R = Vt.T @ U.T
@@ -92,7 +97,7 @@ def vector_to_similarity(src, dst) -> np.ndarray:
         R = Vt.T @ U.T
         D = D.copy(); D[-1] *= -1
     var = (sd ** 2).sum() / len(s)
-    scale = D.sum() / (var + 1e-12)
+    scale = D.sum() / var
     t = dc - scale * R @ sc
     M = np.eye(3)
     M[:2, :2] = scale * R
@@ -129,7 +134,9 @@ def _hartley_norm(p: np.ndarray):
     """Hartley 等方正規化: 重心を原点へ、原点からの平均距離を sqrt(2) へ。→ (T (3x3), p_n)。"""
     c = p.mean(0)
     md = float(np.mean(np.linalg.norm(p - c, axis=1)))
-    s = np.sqrt(2.0) / md if md > 1e-12 else 1.0
+    # ★2026-11-04(外部監査 v0.9.0 F3): 床 ``md > 1e-12`` は座標の単位に依存した(1e-13 の尺度の点は正規化されずに DLT へ)。
+    #   正規化は尺度を消すための操作なので、全部が 1 点に重なる(md == 0)ときだけ外す。
+    s = np.sqrt(2.0) / md if md > 0.0 else 1.0
     T = np.array([[s, 0.0, -s * c[0]], [0.0, s, -s * c[1]], [0.0, 0.0, 1.0]])
     return T, (p - c) * s
 
@@ -156,6 +163,8 @@ def hom_vector_to_proj_hom_mat2d(src, dst) -> np.ndarray:
     _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     Hn = Vt[-1].reshape(3, 3)
     H = np.linalg.inv(Td) @ Hn @ Ts
-    if abs(H[2, 2]) > 1e-12:
+    # ★2026-11-04(外部監査 v0.9.0 F3): H[2,2] の床は単位の無い量で比べる。H[2,2] = Hn[2] · Ts[:, 2] で、どちらも正規化後の
+    #   (単位の無い)ベクトルなので、その大きさの積に対する相対値が「原点が無限遠へ写る」の判定になる。
+    if abs(H[2, 2]) > 1e-12 * float(np.linalg.norm(Hn[2]) * np.linalg.norm(Ts[:, 2])):
         H = H / H[2, 2]
     return H

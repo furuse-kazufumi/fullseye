@@ -9526,6 +9526,28 @@ py -3.11 examples/poc_star_tracker.py
 
 
 
+## No.2026.299 —— 画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個
+
+2 個の BGA パッケージ(各 6 x 6、ピッチ 10 px、半径 3.2 px、1 個欠け)の高さ画像を合成し、表現変換の op 29 個で型から型へ渡して戻した。画像の塊の重心は置いた中心と最大 0.066 px、整数位置の応答画像 → keypoints → 画像は画素ごとに bit 一致、keypoints ↔ 点群も bit 一致。点ごとのガウシアン(重み 1/N)の体積の総和は 6σ 打ち切りで 1 − 1.4e-10、3σ では 0.99911(箱の極限 0.99192 より大きい)。2 回目の検査を (2, −3, 5) voxel ずらすと、体積の循環相関のピークは厳密にそこへ立ち、最大値投影の画像から読んだ keypoints も同じ位置。等値面のメッシュはオイラー標数 142 = 2 × 71 で、体積は閉形式の球の和へ刻み 1 / 0.5 / 0.25 voxel で −1.20 / −0.22 / −0.020 % と収束する。4 近傍グラフは 2 成分 (35, 36) で、ラプラシアンの 0 固有値も 2。1 個を拡大した高さ画像では主曲率 × R の中央値 1.001、形状指数 0.9999。高さ画像の pointmap は列が (x, y, z) で、(z, y, x) の受け手にそのまま渡すと例外なしに 15360 画素が左端の 4 列に積もる(右下)。
+
+[![画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png)
+
+*↑ **画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個** ―― 2 個の BGA パッケージ(各 6 x 6、ピッチ 10 px、半径 3.2 px、1 個欠け)の高さ画像を合成し、表現変換の op 29 個で型から型へ渡して戻した。画像の塊の重心は置いた中心と最大 0.066 px、整数位置の応答画像 → keypoints → 画像は画素ごとに bit 一致、keypoints ↔ 点群も bit 一致。点ごとのガウシアン(重み 1/N)の体積の総和は 6σ 打ち切りで 1 − 1.4e-10、3σ では 0.99911(箱の極限 0.99192 より大きい)。2 回目の検査を (2, −3, 5) voxel ずらすと、体積の循環相関のピークは厳密にそこへ立ち、最大値投影の画像から読んだ keypoints も同じ位置。等値面のメッシュはオイラー標数 142 = 2 × 71 で、体積は閉形式の球の和へ刻み 1 / 0.5 / 0.25 voxel で −1.20 / −0.22 / −0.020 % と収束する。4 近傍グラフは 2 成分 (35, 36) で、ラプラシアンの 0 固有値も 2。1 個を拡大した高さ画像では主曲率 × R の中央値 1.001、形状指数 0.9999。高さ画像の pointmap は列が (x, y, z) で、(z, y, x) の受け手にそのまま渡すと例外なしに 15360 画素が左端の 4 列に積もる(右下)。*
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/02_bga_mesh_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/02_bga_mesh_volume.png)
+
+*↑ 測定の図*
+
+```
+py -3.11 examples/poc_bga_ball_type_roundtrip.py
+```
+
+ソース: [examples/poc_bga_ball_type_roundtrip.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bga_ball_type_roundtrip.py)
+
+この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip)
+
+使用 op(ノートへ): [`angles_to_normals`](https://furuse.work/ops/reprconv/direction/angles_to_normals.html) · [`correlation_score`](https://furuse.work/ops/reprconv/score/correlation_score.html) · [`curvature_to_shape_index`](https://furuse.work/ops/reprconv/curvature/curvature_to_shape_index.html) · [`curvature_to_table`](https://furuse.work/ops/reprconv/curvature/curvature_to_table.html) · [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`flow_apply`](https://furuse.work/ops/reprconv/flow/flow_apply.html) · [`flow_speed`](https://furuse.work/ops/reprconv/flow/flow_speed.html) · [`gaussians_to_points`](https://furuse.work/ops/reprconv/gaussians/gaussians_to_points.html) · [`gaussians_to_voxel`](https://furuse.work/ops/3d/transform/gaussians_to_voxel.html) · [`graph_components`](https://furuse.work/ops/conngraph/stats/graph_components.html) · [`graph_laplacian_spectrum`](https://furuse.work/ops/conngraph/stats/graph_laplacian_spectrum.html) · [`indices_to_labels`](https://furuse.work/ops/reprconv/index/indices_to_labels.html) · [`keypoints_from_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_from_image2d.html) · [`keypoints_rowcol_to_uv`](https://furuse.work/ops/reprconv/keypoint/keypoints_rowcol_to_uv.html) · [`keypoints_to_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_to_image2d.html) · [`keypoints_uv_to_points`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_points.html) · [`keypoints_uv_to_rowcol`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_rowcol.html) · [`knn_graph`](https://furuse.work/ops/3d/geodesic/knn_graph.html) · [`knn_graph_to_conn_graph`](https://furuse.work/ops/reprconv/structure/knn_graph_to_conn_graph.html) · [`labels_to_indices`](https://furuse.work/ops/reprconv/index/labels_to_indices.html) · [`mesh_volume`](https://furuse.work/ops/3d/mesh_process/mesh_volume.html) · [`normals_to_angles`](https://furuse.work/ops/reprconv/direction/normals_to_angles.html) · [`normals_to_egi`](https://furuse.work/ops/reprconv/direction/normals_to_egi.html) …(他 13)
+
 ### 装置の棟 ―― 生の出力から、装置固有の壊れ方まで再現する
 
 計測装置を名前だけ借り、都合のよい画像を出すのは簡単です。この部屋の 33 点は逆に、光子・電子・干渉・熱拡散・走査・光線追跡から装置の生出力を作り、そこから普段の測定値までを一続きにしています。
@@ -10716,29 +10738,29 @@ py -3.11 examples/poc_lens_tolerancing.py
 
 ## No.2026.272 —— 処方から撮るプレノプティックカメラ
 
-主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。候補距離への3分類は廃止し、処方の slope↔距離式を使って候補にない 0.75 m と 1.3 m を往復した誤差は 1e-9 m 未満。カメラ断面とF値比の図は検証ではない概念図と明記した。
+主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。真値は変換式から作らず、物体点から処方を順方向に光線追跡して測った視差で、0.6 / 1.0 / 1.8 m で +0.169 / -0.029 / -0.163 レンズレット毎視点(1.0 m が 0 でないのは F/3.7 の球面収差)。復号したライトフィールドのピント山は +0.175 / 0.000 / -0.150 で、0.03 以内で一致する。以前の変換式は像のずれを「傾き×角度ステップ×ピッチ」としていて約 3000 倍小さく、真値を +712 / 0 / -448 と出していたが、式を自分の逆で往復するだけの門は通っていた。距離は近軸の式なので、領域ごとの中央値誤差が +51 / +22 / +224 mm 残る。カメラ断面とF値比の図は検証ではない概念図と明記した。
 
 [![処方から撮るプレノプティックカメラ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png)
 
-*↑ **処方から撮るプレノプティックカメラ** ―― 主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。候補距離への3分類は廃止し、処方の slope↔距離式を使って候補にない 0.75 m と 1.3 m を往復した誤差は 1e-9 m 未満。カメラ断面とF値比の図は検証ではない概念図と明記した。*
+*↑ **処方から撮るプレノプティックカメラ** ―― 主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。真値は変換式から作らず、物体点から処方を順方向に光線追跡して測った視差で、0.6 / 1.0 / 1.8 m で +0.169 / -0.029 / -0.163 レンズレット毎視点(1.0 m が 0 でないのは F/3.7 の球面収差)。復号したライトフィールドのピント山は +0.175 / 0.000 / -0.150 で、0.03 以内で一致する。以前の変換式は像のずれを「傾き×角度ステップ×ピッチ」としていて約 3000 倍小さく、真値を +712 / 0 / -448 と出していたが、式を自分の逆で往復するだけの門は通っていた。距離は近軸の式なので、領域ごとの中央値誤差が +51 / +22 / +224 mm 残る。カメラ断面とF値比の図は検証ではない概念図と明記した。*
 
 用語: EPI — ライトフィールドの位置と視点の二軸を切り出した画像で、同じ三次元点が奥行きに応じた傾きの線として現れる。
 
-[![480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section.png)
+[![Conceptual diagram (not a validation gate): main lens, MLA, sensor and five illustrative rays.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section.png)
 
-*↑ 測定の図 ―― 480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.*
+*↑ 測定の図 ―― Conceptual diagram (not a validation gate): main lens, MLA, sensor and five illustrative rays.*
 
 [![F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/02_f_number_matching_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/02_f_number_matching.png)
 
 *↑ F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.*
 
-[![15 x 15 decoded views; EPI disparity is 0.6 px per view step.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi.png)
+[![15 x 15 decoded views; ray-traced parallax +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 /](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi.png)
 
-*↑ 15 x 15 decoded views; EPI disparity is 0.6 px per view step.*
+*↑ 15 x 15 decoded views; ray-traced parallax +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 / 1.8 m.*
 
-[![Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map.png)
+[![Ray-traced truth vs focus-sweep estimate; median error +51 mm / +22 mm / +224 mm at 0.6 / 1.0 / 1.8 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map.png)
 
-*↑ Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.*
+*↑ Ray-traced truth vs focus-sweep estimate; median error +51 mm / +22 mm / +224 mm at 0.6 / 1.0 / 1.8 m (paraxial relation; spherical aberration).*
 
 [![Same MLA: plenoptic 1.0 images the pupil; focused 2.0 images scene fragments.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/07_plenoptic_1_vs_2_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/07_plenoptic_1_vs_2.png)
 
@@ -10756,7 +10778,7 @@ py -3.11 examples/poc_plenoptic_camera.py
 
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_plenoptic_camera)
 
-使用 op(ノートへ): [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lf_depth_from_focus`](https://furuse.work/ops/lightfield/depth/lf_depth_from_focus.html) · [`lf_refocus`](https://furuse.work/ops/lightfield/refocus/lf_refocus.html) · [`mla_surface`](https://furuse.work/ops/optics/plenoptic/mla_surface.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plenoptic_capture`](https://furuse.work/ops/optics/plenoptic/plenoptic_capture.html) · [`plenoptic_decode`](https://furuse.work/ops/optics/plenoptic/plenoptic_decode.html) · [`plenoptic_mla_calibrate`](https://furuse.work/ops/optics/plenoptic/plenoptic_mla_calibrate.html) · [`plenoptic_refocus_depth`](https://furuse.work/ops/optics/plenoptic/plenoptic_refocus_depth.html) · [`plenoptic_system`](https://furuse.work/ops/optics/plenoptic/plenoptic_system.html)
+使用 op(ノートへ): [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lf_depth_from_focus`](https://furuse.work/ops/lightfield/depth/lf_depth_from_focus.html) · [`lf_refocus`](https://furuse.work/ops/lightfield/refocus/lf_refocus.html) · [`mla_surface`](https://furuse.work/ops/optics/plenoptic/mla_surface.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plenoptic_capture`](https://furuse.work/ops/optics/plenoptic/plenoptic_capture.html) · [`plenoptic_decode`](https://furuse.work/ops/optics/plenoptic/plenoptic_decode.html) · [`plenoptic_mla_calibrate`](https://furuse.work/ops/optics/plenoptic/plenoptic_mla_calibrate.html) · [`plenoptic_refocus_depth`](https://furuse.work/ops/optics/plenoptic/plenoptic_refocus_depth.html) · [`plenoptic_system`](https://furuse.work/ops/optics/plenoptic/plenoptic_system.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
 
 ## No.2026.273 —— 同じ粒子を走査像と透過像で測る ―― 52 nm と 48 nm のどちらが正しいか
 

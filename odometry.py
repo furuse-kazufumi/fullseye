@@ -168,7 +168,12 @@ def umeyama_align(src, dst, with_scale: bool = True):
         raise ValueError("src and dst must be equal-shape (N, 3)")
     n = A.shape[0]
     ca, cb = A.mean(0), B.mean(0)
-    Ac, Bc = A - ca, B - cb
+    # ★2026-11-04(外部監査 v0.9.0 F3): 以前は ``var > 1e-12`` [座標²] の床で、座標 1e-9 の軌跡は倍率 2 でも s = 1.0 を返した。
+    #   倍率は単位に依らない比なので、両方を src の広がり ref で割ってから取る(ref == 0 = 全部 1 点
+    #   のときだけ倍率は決まらず 1.0、従来どおり)。
+    ref = float(np.abs(A - ca).max()) if A.size else 0.0
+    k = ref if ref > 0.0 else 1.0
+    Ac, Bc = (A - ca) / k, (B - cb) / k
     H = Bc.T @ Ac / n
     U, D, Vt = np.linalg.svd(H)
     S = np.eye(3)
@@ -176,7 +181,7 @@ def umeyama_align(src, dst, with_scale: bool = True):
         S[2, 2] = -1.0
     R = U @ S @ Vt
     var = (Ac ** 2).sum() / n
-    s = (np.trace(np.diag(D) @ S) / var) if (with_scale and var > 1e-12) else 1.0
+    s = (np.trace(np.diag(D) @ S) / var) if (with_scale and ref > 0.0) else 1.0
     t = cb - s * R @ ca
     return float(s), R, t
 

@@ -749,10 +749,13 @@ def _translation_fit(p1, p2):
 def _similarity_fit(p1, p2):
     """2-D の相似(回転 + 一様な倍率 + 並進)の最小二乗(Umeyama 1991)。"""
     m1, m2 = p1.mean(0), p2.mean(0)
-    a, b = p1 - m1, p2 - m2
-    va = (a * a).sum()
-    if va <= 1e-12:
+    # ★2026-11-04(外部監査 v0.9.0 F3): 床 ``va <= 1e-12`` [座標²] は座標の単位に依存した(座標 1e-6 の 2 点は常に「退化」)。
+    #   退化 = 標本の点が座標の丸めの範囲で重なること(相対量)。広がり ref で割ってから倍率を取る。
+    ref = float(np.abs(p1 - m1).max())
+    if not ref > 1e-12 * float(np.abs(p1).max()):
         raise ValueError("degenerate sample")
+    a, b = (p1 - m1) / ref, (p2 - m2) / ref
+    va = (a * a).sum()
     U, S, Vt = np.linalg.svd(b.T @ a)
     D = np.diag([1.0, np.sign(np.linalg.det(U @ Vt))])
     R = U @ D @ Vt
@@ -774,13 +777,16 @@ def _affine_fit(p1, p2):
 def _degenerate_affine(p1, p2):
     for P in (p1, p2):
         u, v = P[1] - P[0], P[2] - P[0]
-        if abs(u[0] * v[1] - u[1] * v[0]) < 1e-6 * (1.0 + np.dot(u, u) + np.dot(v, v)):
+        # ★2026-11-04(外部監査 v0.9.0 F3): 以前は ``< 1e-6 * (1.0 + |u|² + |v|²)`` で、定数 1.0 [px²] が座標の単位に依存した
+        #   (座標 1e-6 の三角形は常に「一直線」)。外積と |u|²+|v|² は同じ単位なので比だけで判定する。
+        if abs(u[0] * v[1] - u[1] * v[0]) <= 1e-6 * (np.dot(u, u) + np.dot(v, v)):
             return True
     return False
 
 
 def _degenerate_pair(p1, p2):
-    return bool(np.linalg.norm(p1[1] - p1[0]) < 1e-6 or np.linalg.norm(p2[1] - p2[0]) < 1e-6)
+    # ★2026-11-04(外部監査 v0.9.0 F3): 以前は絶対の 1e-6 [px]。2 点の重なりは座標の大きさに対する相対量で判定する。
+    return bool(any(np.linalg.norm(P[1] - P[0]) <= 1e-9 * float(np.abs(P).max()) for P in (p1, p2)))
 
 
 def _homog_resid2(H, p1, p2):
@@ -794,7 +800,7 @@ def _degenerate_h(p1, p2):
     for P in (p1, p2):
         for a, b, c in ((0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)):
             u, v = P[b] - P[a], P[c] - P[a]
-            if abs(u[0] * v[1] - u[1] * v[0]) < 1e-6 * (1.0 + np.dot(u, u) + np.dot(v, v)):
+            if abs(u[0] * v[1] - u[1] * v[0]) <= 1e-6 * (np.dot(u, u) + np.dot(v, v)):   # F3: 相対量(_degenerate_affine)
                 return True
     return False
 
@@ -878,6 +884,27 @@ def _ransac(p1, p2, s, fit, resid2, thresh, confidence, max_iters, score, lo, se
     return best_m, best_in, it, best_cost
 
 
+def _refit_keeping_consensus(model, inl, fit, resid2, th2, need, p1, p2):
+    """全内れ値での当てはめ直しを、合意(内れ値 ``need`` 個以上)を保つときだけ採る。→ (model, r2, inliers)。
+
+    ★2026-11-04(外部監査 v0.9.0 F6): 以前は当てはめ直した模型で内れ値を数え直すだけで、その数を
+    ``min_inliers`` と比べ直していなかった(``min_inliers=7`` で 6 個の模型が成功として返った)。
+    当てはめ直しで合意が痩せたら、合意を満たしていた RANSAC の模型をそのまま返す
+    (``pcseg.fit_sphere_ransac`` と同じ規則)。返す ``inliers`` は常に返す模型の内れ値。
+    """
+    try:
+        M2 = fit(p1[inl], p2[inl])
+    except (np.linalg.LinAlgError, ValueError, FloatingPointError):
+        M2 = None
+    if M2 is not None and np.isfinite(M2).all():
+        r2 = resid2(M2, p1, p2)
+        inl2 = r2 < th2
+        if int(inl2.sum()) >= need:
+            return M2, r2, inl2
+    r2 = resid2(model, p1, p2)
+    return model, r2, r2 < th2
+
+
 def _ransac_common(matches, op, thresh, confidence, max_iters, score, local_optimization, seed, s):
     m = _table(matches, "feature_matches", op, "matches")
     p1 = np.asarray(m["pts1"], np.float64).reshape(-1, 2)
@@ -953,9 +980,7 @@ def ransac_homography(matches, thresh=2.0, confidence=0.999, max_iters=5000, sco
     if H is None or int(inl.sum()) < max(ns, mn):
         raise ValueError("%s: no consensus — %d inliers (< %d) within %.3g px after %d iterations"
                          % (op, 0 if inl is None else int(inl.sum()), max(ns, mn), th, it))
-    H = fit(p1[inl], p2[inl])
-    r2 = _homog_resid2(H, p1, p2)
-    inl = r2 < th * th
+    H, r2, inl = _refit_keeping_consensus(H, inl, fit, _homog_resid2, th * th, max(ns, mn), p1, p2)
     H = H / H[2, 2]
     return {"kind": "homography", "H": H, "model": model, "inliers": inl, "n_inliers": int(inl.sum()),
             "inlier_ratio": float(inl.mean()), "rms_px": float(np.sqrt(r2[inl].mean())) if inl.any() else 0.0,
@@ -998,9 +1023,7 @@ def ransac_fundamental(matches, thresh=1.0, confidence=0.999, max_iters=5000, sc
     if F is None or int(inl.sum()) < max(8, mn):
         raise ValueError("%s: no consensus — %d inliers (< %d) within %.3g px after %d iterations"
                          % (op, 0 if inl is None else int(inl.sum()), max(8, mn), th, it))
-    F = _fund_fit(p1[inl], p2[inl])
-    r2 = _sampson2(F, p1, p2)
-    inl = r2 < th * th
+    F, r2, inl = _refit_keeping_consensus(F, inl, _fund_fit, _sampson2, th * th, max(8, mn), p1, p2)
     F = F / np.linalg.norm(F)
     if F[2, 2] < 0:
         F = -F

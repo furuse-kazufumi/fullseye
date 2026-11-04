@@ -11,6 +11,7 @@ import pytest
 import api
 import device_policy
 from tools import gen_device_rules as gen
+from conftest import requires_backend
 
 ROOT = Path(__file__).resolve().parents[1]
 RULES = json.loads((ROOT / "fullseye" / "data" / "DEVICE_RULES.json").read_text(encoding="utf-8"))
@@ -26,11 +27,15 @@ def gpu_box(monkeypatch):
 
 
 def test_table_is_regenerated_from_the_committed_logs():
+    # torch が無いと accel の経路が無く、torch のある環境で作った出荷表と食い違う(2026-11-04 master py3.12/3.14)
+    requires_backend("torch")
     assert gen.build() == RULES
 
 
 def test_table_covers_the_gpu_ops_it_was_measured_on():
     """表が空や一部だけに縮むと、規則は黙って効かなくなる(全部 GPU に戻る)。件数に床を置く。"""
+    # torch が無いと accel の経路が無く、torch のある環境で作った出荷表と食い違う(2026-11-04 master py3.12/3.14)
+    requires_backend("torch")
     assert len({r["op"] for r in gen.read_logs("sweep_gpu.jsonl")}) >= 85
     assert len(RULES["ops"]) >= 85
     assert sum(r["min_pixels"] > 0 for r in RULES["ops"].values()) >= 50
@@ -178,6 +183,8 @@ def test_before_after_on_the_shipped_table():
     """★採用条件の実測(after < before): 出荷する表で CPU に回る点を、規則なし(cuda)と規則あり(auto)で
     同じプロセスで測った 2 回目(``before_after_2.jsonl``、表の材料には入れていない)。全点を測り切っていて、
     揺れの幅(10 % と 50 µs)を超えて遅くなった点が無い。"""
+    # torch が無いと accel の経路が無く、torch のある環境で作った出荷表と食い違う(2026-11-04 master py3.12/3.14)
+    requires_backend("torch")
     from tools.bench_gpu_crossover import BA_KNOBS, BA_SIDES, sweep_ops
     rows = gen.read_logs("before_after_2.jsonl")
     accelerated = api._gpu_op_names()

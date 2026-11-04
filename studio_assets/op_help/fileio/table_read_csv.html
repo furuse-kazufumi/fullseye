@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">table_write_csv</code> の単位つき CSV を読み、列・単位・メタデータの <code style="color:#22d3bf">table</code> を返す。</p>
-<p>返り値は <code style="color:#22d3bf">{&quot;columns&quot;: {列名: 1-D 配列}, &quot;units&quot;: {...}, &quot;meta&quot;: {...}}</code>。列名と単位の個数、全データ行の列数、必須メタデータを検査し、途中までの表は返さない。数値列は float64 (空欄は NaN)、数値以外を含む列は文字列配列になる。入力は UTF-8 の <code style="color:#22d3bf">str</code> または <code style="color:#22d3bf">bytes</code>。</p>
+<p>返り値は <code style="color:#22d3bf">{&quot;columns&quot;: {列名: 1-D 配列}, &quot;units&quot;: {...}, &quot;meta&quot;: {...}}</code>。列名と単位の個数、全データ行の列数、必須メタデータを検査し、途中までの表は返さない。数値列は float64 (空欄は NaN)、数値以外を含む列は文字列配列になる。ただし全セルが整数で、float64 では正確に持てない値(絶対値が 2**53 超)を含む列は int64 / uint64 で返す(丸めて返さない)。入力は UTF-8 の <code style="color:#22d3bf">str</code> または <code style="color:#22d3bf">bytes</code>。</p>
 <p>呼び出し例: <code style="color:#22d3bf">roundtrip = table_read_csv(table_write_csv(table, units=units, meta=meta))</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>

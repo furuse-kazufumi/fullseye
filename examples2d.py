@@ -1466,6 +1466,13 @@ EXAMPLES = [
                 "synapse_table / jones の入口、tokens の出口、table の欄・スペクトルのピーク・keypoints の"
                 "軸・pose の 4x4(reprconv の 20 op)を、既存の産み手の返りから既存の受け手まで通し、"
                 "閉形式の真値 20 項目と比べる。"},
+    {"id": "poc_bga_ball_type_roundtrip", "task": "tomography_3d", "data": "synthetic",
+     "name": "BGA の半田ボールを画像 → 点 → 点群 → 体積 → メッシュ / グラフと渡して戻す(型を変えても保たれる量)",
+     "summary": "欠け 1 個の 2 パッケージ 71 球の高さ画像を、表現変換の op 29 個で型から型へ渡す。個数は keypoints・"
+                "メッシュのオイラー標数(χ 142)・グラフで一致、画素と点の往復は bit 一致、ガウシアンの質量は 1 − 1.4e-10、"
+                "既知のずれ (2, −3, 5) は相関のピークに厳密に立ち、メッシュの体積は閉形式の球の和へ −1.20 → −0.020 % と"
+                "収束、グラフは 2 成分 (35, 36)。★pointmap の (x, y, z) を (z, y, x) の受け手へそのまま渡すと例外なしに"
+                "15360 画素が左端 4 列に積もる。"},
     # -- robot perception templates (copy-and-adapt; synthetic data, CLI --save) -- #
     {"id": "perception_pipeline", "task": "perception_templates", "data": "synthetic",
      "name": "整流ステレオ対→深度→点群→地形高さマップ→通行可能性",
