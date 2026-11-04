@@ -116,6 +116,8 @@ _NIFTI_TIME_UNITS = {8: "s", 16: "ms", 24: "us"}
 _NIFTI_EXTENSIONS = (".nii", ".nii.gz")
 _OME_AXIS_ORDER = "TCZYX"
 _OME_EXTENSIONS = (".ome.tif", ".ome.tiff")
+#: OME MapAnnotation namespace under which ome_tiff_write records the axes it was given
+_OME_AXES_NS = "fullseye/ome-tiff/axes"
 
 
 def _csv_columns(table, op: str) -> dict[str, np.ndarray]:
@@ -2330,7 +2332,8 @@ def ome_tiff_write(stack, *, meta):
     """TCZYX 多次元配列と物理サイズ・チャネル名を OME-TIFF の ``bytes`` にする。
 
     ``meta['axes']`` は TCZYX の部分列で YX 終端。X/Y(および Z 軸があれば Z)の
-    ``physical_size_*`` と ``*_unit``、C 軸があれば ``channel_names`` を必須とする。
+    ``physical_size_*`` と ``*_unit``、C 軸があれば ``channel_names`` を必須とする。書いた
+    ``axes`` は名前空間つきの MapAnnotation に残し、長さ 1 の軸も :func:`ome_tiff_read` で戻る。
     呼び出し例: ``ome_tiff_write(stack, meta={"axes": "CZYX", ...})``。
     """
     op = "ome_tiff_write"
@@ -2346,6 +2349,10 @@ def ome_tiff_write(stack, *, meta):
         metadata[f"PhysicalSize{axis}Unit"] = unit
     if channel_names:
         metadata["Channel"] = {"Name": channel_names}
+    # ★2026-11-05 redteam I10: tifffile squeezes length-1 axes on read, and OME's 5-D Size*
+    # cannot tell "ZYX with Z=1" from "YX". The axes as written are recorded in a namespaced
+    # MapAnnotation so ome_tiff_read can restore the written shape (other readers ignore it).
+    metadata["MapAnnotation"] = {"Namespace": _OME_AXES_NS, "Value": {"axes": axes}}
     digest = hashlib.sha256()
     digest.update(array.dtype.str.encode("ascii"))
     digest.update(repr(array.shape).encode("ascii"))
@@ -2414,10 +2421,34 @@ def _ome_xml_meta(xml: str, shape, axes: str, dtype, op: str):
             "channel_names": names if "C" in axes else []}
 
 
+def _ome_written_axes(xml: str, op: str):
+    """The axes ome_tiff_write recorded (``None`` for files written by anything else)."""
+    try:
+        root = _ET.fromstring(xml)
+    except _ET.ParseError as exc:
+        raise ValueError(f"{op}: malformed OME-XML: {exc}") from exc
+    found = []
+    for node in root.iter():
+        if node.tag.rsplit("}", 1)[-1] != "MapAnnotation" or node.attrib.get("Namespace") != _OME_AXES_NS:
+            continue
+        found += [m.text or "" for m in node.iter()
+                  if m.tag.rsplit("}", 1)[-1] == "M" and m.attrib.get("K") == "axes"]
+    if not found:
+        return None
+    if len(found) != 1:
+        raise ValueError(f"{op}: OME-XML records {len(found)} Fullseye axes annotations; expected one")
+    axes = found[0].strip().upper()
+    if (not axes.endswith("YX") or len(set(axes)) != len(axes)
+            or "".join(a for a in _OME_AXIS_ORDER if a in axes) != axes):
+        raise ValueError(f"{op}: recorded axes {found[0]!r} are not a canonical TCZYX subset ending in YX")
+    return axes
+
+
 def ome_tiff_read(data):
     """OME-TIFF を ``(stack, meta)`` として読み、OME-XML と配列を相互検証する。
 
-    ``meta`` は TCZYX 部分列の ``axes``、物理サイズと単位、チャネル名を持つ。
+    ``meta`` は TCZYX 部分列の ``axes``、物理サイズと単位、チャネル名を持つ。:func:`ome_tiff_write`
+    の書いた長さ 1 の軸は記録から戻す(他の書き手のファイルでは tifffile と同じく長さ 1 の軸を畳む)。
     通常 TIFF、複数 Image、XML の Size/dtype と TIFF の不一致、無名チャネルは拒否する。
     呼び出し例: ``stack, meta = ome_tiff_read(payload)``。
     """
@@ -2441,6 +2472,13 @@ def ome_tiff_read(data):
         raise ValueError(f"{op}: corrupt or truncated TIFF: {exc}") from exc
     if len(axes) != array.ndim or "".join(axis for axis in _OME_AXIS_ORDER if axis in axes) != axes or not axes.endswith("YX"):
         raise ValueError(f"{op}: TIFF axes {axes!r} are not a canonical TCZYX subset ending in YX")
+    written = _ome_written_axes(xml, op)
+    if written is not None and written != axes:
+        # tifffile dropped length-1 axes; put them back (the Size* check below verifies them = 1)
+        if any(axis not in written for axis in axes):
+            raise ValueError(f"{op}: TIFF axes {axes!r} are not a subset of the recorded axes {written!r}")
+        array = array.reshape(tuple(array.shape[axes.index(a)] if a in axes else 1 for a in written))
+        axes = written
     expected_pages = math.prod(array.shape[:-2])
     if page_count != expected_pages:
         raise ValueError(f"{op}: OME-XML SizeT/SizeC/SizeZ declare {expected_pages} TIFF pages, "
