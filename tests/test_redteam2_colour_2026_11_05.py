@@ -321,3 +321,32 @@ def test_k6_lab_to_rgb_still_clips_out_of_gamut_as_documented():
     assert np.all((out >= 0) & (out <= 1))
     rt = M.lab_to_rgb(M.rgb_to_lab(np.array([0.2, 0.5, 0.8])))
     np.testing.assert_allclose(rt, [0.2, 0.5, 0.8], atol=1e-6)
+
+
+# ---------------------------------------------------------------------------
+# K7: 幅の広い整数 dtype の拒否文が自己矛盾していた
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("dt", [np.int32, np.int64, np.uint64])
+def test_k7_wide_integer_dtype_refusal_names_the_reason_not_a_contradiction(dt):
+    with pytest.raises(ValueError) as ei:
+        M.rgb_to_lab(np.array([0, 128, 255], dt))
+    msg = str(ei.value)
+    # 修正前: "(or be an integer dtype)" と言いながら整数 dtype を拒否していた
+    assert "or be an integer dtype" not in msg
+    assert np.dtype(dt).name in msg and "uint8" in msg
+
+
+@pytest.mark.parametrize("dt", [np.int32, np.int64, np.uint64])
+def test_k7_wide_integer_values_already_in_unit_range_pass_as_float(dt):
+    # Python の整数リスト [1, 1, 1](= int64)は白: 従来どおり通る
+    np.testing.assert_allclose(M.rgb_to_lab(np.array([1, 1, 1], dt)), M.rgb_to_lab([1.0, 1.0, 1.0]))
+
+
+def test_k7_table_integer_dtypes_divide_by_max_and_negative_is_refused():
+    np.testing.assert_allclose(M.rgb_to_lab(np.array([0, 128, 255], np.uint8)),
+                               M.rgb_to_lab(np.array([0, 128, 255]) / 255.0))
+    np.testing.assert_allclose(M.rgb_to_lab(np.array([0, 64, 127], np.int8)),
+                               M.rgb_to_lab(np.array([0, 64, 127]) / 127.0))
+    with pytest.raises(ValueError, match="negative"):
+        CT.color_transfer(np.full((4, 4, 3), -3, np.int8), np.full((4, 4, 3), 3, np.int8), "reinhard", "rgb")

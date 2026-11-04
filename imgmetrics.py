@@ -27,7 +27,10 @@ PSNR も SSIM も「取りうる値の幅」で正規化するので、``[0, 1]`
 ``[0, 255]`` だと思って測ると **PSNR が 48.13 dB ずれる**(``20*log10(255)``)。
 しかも例外は出ず、**それらしい数値が出る**。よって:
 
-* 整数 dtype は dtype から一意に決まる(``uint8`` → 255)。
+* 整数 dtype は dtype から一意に決まる(``uint8`` → 255)。対応するのは
+  ``uint8`` / ``uint16`` / ``uint32`` / ``int8`` / ``int16`` だけで、``int32`` /
+  ``int64`` / ``uint64`` は「満の値」が一つに決まらない(0〜255 を入れた int32 は
+  ありふれている)ので推測しない。
 * float は **決めつけない**。``[0, 1]`` に収まっていれば 1.0 とみなすが、
   1.0 を超える値が 1 つでもあれば ``data_range`` の明示を要求して
   ``ValueError``。「たぶん 255 だろう」で進まない。
@@ -123,7 +126,8 @@ _INT_RANGES = {
 def data_range_of(*arrays, data_range=None):
     """画素値が取りうる幅を決める。**推測はしない**。
 
-    整数 dtype は dtype から一意に決まる。float は ``[0, 1]`` に収まっている
+    整数 dtype(``uint8`` / ``uint16`` / ``uint32`` / ``int8`` / ``int16``)は dtype から
+    一意に決まる(それ以外の整数 dtype は推測しないので ``data_range`` を明示)。float は ``[0, 1]`` に収まっている
     ときだけ 1.0 とみなし、それ以外は ``data_range`` の明示を要求する。
 
     ``[0, 1]`` の float を 255 だと思って PSNR を測ると **48.13 dB** ずれるが
@@ -219,15 +223,44 @@ _M_RGB2XYZ = np.array([
 _M_XYZ2RGB = np.linalg.inv(_M_RGB2XYZ)
 
 
+#: _to_unit_float が受ける整数 dtype の名前(文面に使う)。
+_UNIT_INT_NAMES = "uint8 / uint16 / uint32 / int8 / int16"
+
+
 def _to_unit_float(rgb):
-    """整数 dtype の画像を ``[0, 1]`` の float にする(float はそのまま検査)。"""
+    """整数 dtype の画像を ``[0, 1]`` の float にする(float はそのまま検査)。
+
+    整数は ``uint8`` / ``uint16`` / ``uint32`` / ``int8`` / ``int16`` だけを dtype の最大値で
+    割る(skimage の img_as_float と同じく符号付きも最大値)。割った結果が負(符号付きの
+    負の値)なら ``MetricContractError``。``int32`` / ``int64`` / ``uint64`` は満の値が
+    一つに決まらないので**最大値で割らない**(0〜255 を入れた int32 を 2**31-1 で割ると
+    黙って真っ黒): 値そのものが ``[0, 1]`` にあるとき(Python の整数リスト ``[1, 1, 1]``
+    = 白、など)だけ float として通し、それ以外は理由を名指しして拒否する。
+
+    ★2026-11-05(敵対的検証 第 2 巡 K7): 以前は int32 などを
+    「[0, 1] に収まるか整数 dtype であれ」という自己矛盾した文面で拒否していた。
+    """
     x = np.asarray(rgb)
     if x.dtype in _INT_RANGES:
-        return x.astype(np.float64) / _INT_RANGES[x.dtype]
+        u = x.astype(np.float64) / _INT_RANGES[x.dtype]
+        if u.size and np.min(u) < 0.0:
+            raise MetricContractError(
+                f"sRGB values must lie in [0, 1]; the {x.dtype} image holds negative values "
+                f"(min {int(np.min(x))})"
+            )
+        return u
+    if np.issubdtype(x.dtype, np.integer) and x.size and (np.min(x) < 0 or np.max(x) > 1):
+        raise MetricContractError(
+            f"integer dtype {x.dtype} has no agreed full-scale value for sRGB (only "
+            f"{_UNIT_INT_NAMES} are divided by their maximum), and its values "
+            f"[{int(np.min(x))}, {int(np.max(x))}] are not already in [0, 1]; cast to uint8/uint16 "
+            f"or convert to float yourself, e.g. x / 255.0 for 8-bit data stored in a wider type"
+        )
     x = x.astype(np.float64, copy=False)
     if x.size and (np.nanmin(x) < -1e-6 or np.nanmax(x) > 1.0 + 1e-6):
         raise MetricContractError(
-            f"sRGB values must lie in [0, 1] (or be an integer dtype), got "
+            f"sRGB values must lie in [0, 1] (or be one of the integer dtypes "
+            f"{_UNIT_INT_NAMES}), got "
             f"[{float(np.nanmin(x)):.6g}, {float(np.nanmax(x)):.6g}]"
         )
     return np.clip(x, 0.0, 1.0)
@@ -300,7 +333,8 @@ def rgb_to_xyz(rgb):
     白 ``(1, 1, 1)`` は ``(0.9505, 1.0, 1.0890)`` に写る(Y を 1 に正規化した尺度)。
 
     - 入力: 最後の軸が 3 なら形は任意(``(3,)`` の 1 色、``(N, 3)`` の色表、
-      ``(H, W, 3)`` の画像)。整数 dtype(uint8/uint16 など)は dtype の最大値で割る。
+      ``(H, W, 3)`` の画像)。整数 dtype(uint8 / uint16 / uint32 / int8 / int16)は dtype の
+      最大値で割る(int32 / int64 / uint64 は値が ``[0, 1]`` のときだけ float として通る)。
       float は ``[0, 1]`` に収まっていなければ ``MetricContractError``(``ValueError``
       の部分型)。ガンマを外した線形値を渡すと二重にガンマを外すので注意。
     - 返り値: 入力と同じ形の float64。
