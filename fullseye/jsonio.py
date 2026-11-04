@@ -229,6 +229,12 @@ def _decode_array(p, name="value"):
             arr = arr.astype(np.uint64)                # the writer wrapped uint64 into int64; undo it
         else:
             arr = _cast_exact(arr, want, name)
+    elif enc == "b64f64" and want is not None and want != arr.dtype:
+        # ★2026-11-05 redteam I17: a float32 / float16 array travels as float64 bytes (exact), but
+        # came back float64 while the readable "list" form restored float32 -- the same value
+        # had two dtypes depending on readable=. Restore the declared dtype, only when every
+        # value survives the cast (a forged float32 over float64-only values is refused).
+        arr = _cast_exact(arr, want, name)
     return arr
 
 
