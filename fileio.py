@@ -451,8 +451,37 @@ def _ply_table(value, op: str):
         arr = np.asarray(values)
         if arr.ndim != 1 or len(arr) != len(vertices) or arr.dtype.kind not in "iuf" or not np.isfinite(arr).all():
             raise ValueError(f"{op}: attribute {name!r} must be a finite numeric (N,) array")
-        fields.append((name, arr.astype(np.float64), "double"))
+        if arr.dtype.kind == "f":
+            fields.append((name, arr.astype(np.float64), "double"))
+        else:
+            fields.append((name, *_ply_int_column(arr, name, op)))
     return vertices, faces, fields
+
+
+#: PLY's integer scalar types (the 1990s Turk spec has no 64-bit integer)
+_PLY_INT_KINDS = (("char", np.int8), ("uchar", np.uint8), ("short", np.int16), ("ushort", np.uint16),
+                  ("int", np.int32), ("uint", np.uint32))
+
+
+def _ply_int_column(arr, name: str, op: str):
+    """An integer attribute as ``(values, ply_type)`` with an exact integer PLY type.
+
+    ★2026-11-05 redteam I16: integer attributes were written as ``double``, so a label or a
+    count above 2**53 came back rounded (9007199254740993 -> ...992). The PLY type now follows
+    the dtype (int8 -> char ... uint32 -> uint); an int64 / uint64 column is written as ``int`` /
+    ``uint`` when every value fits, and refused otherwise (PLY has no 64-bit integer type, and
+    rounding it through double is exactly what must not happen)."""
+    for ply, dt in _PLY_INT_KINDS:
+        if arr.dtype == np.dtype(dt):
+            return arr, ply
+    lo, hi = (int(arr.min()), int(arr.max())) if arr.size else (0, 0)
+    for ply, dt in (("int", np.int32), ("uint", np.uint32)):
+        info = np.iinfo(dt)
+        if info.min <= lo and hi <= info.max:
+            return arr.astype(dt), ply
+    raise ValueError(f"{op}: integer attribute {name!r} holds values in [{lo}, {hi}], outside every "
+                     "PLY integer type (int32 / uint32); PLY has no 64-bit integer — store it as two "
+                     "uint attributes or as a separate table")
 
 
 def mesh_write_ply(table, *, binary):
@@ -474,11 +503,12 @@ def mesh_write_ply(table, *, binary):
     if not binary:
         body = []
         for i in range(len(vertices)):
-            body.append(" ".join(str(int(values[i])) if kind == "uchar" else format(float(values[i]), ".17g")
+            body.append(" ".join(format(float(values[i]), ".17g") if kind == "double" else str(int(values[i]))
                                  for _name, values, kind in props))
         body += ["3 %d %d %d" % tuple(face) for face in faces]
         return header + "\n".join(body) + ("\n" if body else "")
-    dtype = np.dtype([(name, "u1" if kind == "uchar" else "<f8") for name, _v, kind in props])
+    numpy_type = {"double": "<f8", **{ply: np.dtype(dt).newbyteorder("<").str for ply, dt in _PLY_INT_KINDS}}
+    dtype = np.dtype([(name, numpy_type[kind]) for name, _v, kind in props])
     records = np.empty(len(vertices), dtype=dtype)
     for name, values, _kind in props:
         records[name] = values
@@ -524,7 +554,24 @@ def mesh_read_ply(data):
         result["colors"] = colors
     standard = {"x", "y", "z", "nx", "ny", "nz", "red", "green", "blue",
                 "r", "g", "b", "diffuse_red", "diffuse_green", "diffuse_blue"}
-    result["attributes"] = {name: np.asarray(values) for name, values in scalars.items() if name not in standard}
+    # mesh._ply_data hands every scalar back as float64 (exact for PLY's <= 32-bit integers);
+    # an integer property is returned in its own integer dtype (I16), and a non-integral token
+    # in one (ASCII "1.5" under "property int") is refused rather than truncated.
+    attributes = {}
+    for name, values in scalars.items():
+        if name in standard:
+            continue
+        kind = _mesh._PLY_TYPES.get(vertex["types"].get(name, ""), "f8")
+        values = np.asarray(values)
+        if kind[0] in "iu":
+            target = np.dtype(kind)
+            info = np.iinfo(target)
+            if values.size and (not np.all(values == np.floor(values))
+                                or values.min() < info.min or values.max() > info.max):
+                raise ValueError(f"{op}: integer property {name!r} holds a value outside {target}")
+            values = values.astype(target)
+        attributes[name] = values
+    result["attributes"] = attributes
     face = parsed.get("face")
     if face is not None and face["count"]:
         lists = face["lists"]
