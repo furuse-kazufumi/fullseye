@@ -369,3 +369,22 @@ def test_k8_luma_field_grey_equals_rgb_grey_and_wcag_linearised_value():
     # 文書が実装と同じことを言う: 「値そのもの」ではなく線形化
     assert "その値を輝度そのものとして扱う" not in doc
     assert "srgb_to_linear" in doc
+
+
+# ---------------------------------------------------------------------------
+# 未再現の疑い(再現できたので直したもの)
+# ---------------------------------------------------------------------------
+
+def test_sus_monogenic_orientation_stays_in_half_open_range():
+    import quatimage as Q
+    q = np.zeros((4, 4, 4))
+    q[..., 0] = 1.0
+    q[..., 1] = 1.0
+    q[..., 2] = -1e-17          # 0° のすぐ下: np.mod(-1e-17, pi) は丸めでちょうど pi
+    th = Q.monogenic_orientation(q)
+    assert np.all((th >= 0) & (th < np.pi))
+    # 真値: 向き -1e-17 rad は 0 と同じ(pi は 0 と同じ向きだが約束の範囲の外)
+    np.testing.assert_allclose(th, 0.0, atol=1e-15)
+    assert np.all(Q.monogenic_orientation(q, display=True) < 1.0)
+    _amp, _ph, ori = Q.monogenic_metrics(q)
+    np.testing.assert_array_equal(ori, th)
