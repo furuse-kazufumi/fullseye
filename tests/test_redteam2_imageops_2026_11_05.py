@@ -415,3 +415,28 @@ def test_p8_crop_contours_is_symmetric_about_the_image_centre():
     kept = np.asarray(out["cs"][0], float)
     assert len(kept) > 0
     assert kept.mean(0) == pytest.approx([20.0, 30.0], abs=1e-9)
+
+
+# --------------------------------------------------------------------------------------------- #
+# P10: kirsch_dir / robinson_dir の同点は丸めでなく決まる(小さい番号)。整数の厳密な畳み込みと一致
+# --------------------------------------------------------------------------------------------- #
+@pytest.mark.parametrize("name", ["kirsch_dir", "robinson_dir"])
+def test_p10_compass_direction_matches_exact_integer_arithmetic_and_ignores_offsets(name):
+    import backends_auto as BA
+    rng = np.random.default_rng(7)
+    q = np.round(ndimage.gaussian_filter(rng.random((40, 48)), 1.5) * 255).astype(np.int64)
+    q[15:25, 10:20] = 200                                   # 平らな面と、2 方向が厳密に同点になる斜面
+    q[:, 30:] = np.arange(18)[None, :] * 3 + 40
+    x = q / 255.0
+    if name == "kirsch_dir":
+        ks = BA._KIRSCH
+    else:
+        ks = ([np.rot90(BA._ROBINSON[0], i) for i in range(4)] + [np.rot90(BA._ROBINSON[1], i) for i in range(4)])
+    assert len(ks) == 8
+    resp = np.stack([ndimage.convolve(q, k.astype(np.int64)) for k in ks])     # 整数で厳密
+    ref = np.argmax(resp == resp.max(0), 0) / 7.0
+    ref[(resp == 0).all(0)] = 0.0
+    y = ap(x, name)
+    assert np.array_equal(y, ref)
+    for off in (0.1, -0.07, 0.31):
+        assert np.array_equal(ap(x + off, name), y)

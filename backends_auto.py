@@ -613,7 +613,8 @@ def _sh_edge(p):
             return _norm(_compass(x, _KIRSCH))
         if kind == "kirsch_dir":
             resp = _kill_dust(np.stack([ndimage.convolve(x, k) for k in _KIRSCH]), x)
-            return np.argmax(resp, 0).astype(np.float64) / (len(_KIRSCH) - 1)
+            # ★同点は小さい番号(丸めに決めさせない。2026-11-05 敵対的検証 第 2 巡 P10)
+            return _argmax_ties_first(resp, x).astype(np.float64) / (len(_KIRSCH) - 1)
         if kind == "frei":
             return _norm(np.hypot(ndimage.convolve(x, _FREI[0]), ndimage.convolve(x, _FREI[1])))
         if kind == "frei_dir":
@@ -630,7 +631,7 @@ def _sh_edge(p):
         if kind == "robinson_dir":
             r = [np.rot90(_ROBINSON[0], i) for i in range(4)] + [np.rot90(_ROBINSON[1], i) for i in range(4)]
             resp = _kill_dust(np.stack([ndimage.convolve(x, k) for k in r]), x)
-            return np.argmax(resp, 0).astype(np.float64) / (len(r) - 1)
+            return _argmax_ties_first(resp, x).astype(np.float64) / (len(r) - 1)   # 同点は小さい番号(P10 の兄弟)
         if kind == "laplace":
             return _norm(np.abs(ndimage.laplace(x)))
         raise ValueError(kind)
@@ -772,6 +773,22 @@ def _sh_diffusion(p):
 #: 床は入力の大きさに対する相対量。屑(2e-15)の 500 倍あり、16-bit の量子化幅を
 #: 畳み込んだ実信号(2e-4)より 8 桁下なので実エッジは削らない。
 _DIR_DUST = 1e-12
+
+
+def _argmax_ties_first(resp, ref, rel=1e-9):
+    """``np.argmax(resp, 0)`` で、最大との差が丸めの桁(``rel·max|ref|·Σ|核|`` 相当)の成分を**同点**とみなし、
+    小さい番号を選ぶ。
+
+    Kirsch の 8 方向の核は和が 0 なので応答は明るさの足し算で数学的に変わらないが、2 方向が厳密に同点の画素
+    (平らな斜面など)では、浮動小数の丸めが勝者を決めていた —— 明るさに 0.1 足すだけで 18 画素の方向が
+    変わった(敵対的検証 2026-11-05 第 2 巡 P10)。床は入力の大きさに対する相対量 ``rel`` で、実の差
+    (量子化幅 2e-4 級)より 5 桁下、丸め(1e-15 級)より 6 桁上。
+    """
+    resp = np.asarray(resp, np.float64)
+    scale = max(float(np.max(np.abs(np.asarray(ref, np.float64)))), 1e-12)
+    tol = rel * scale * 16.0                      # 3x3 の核の |係数| の和の上限(Kirsch 39 / 16 で正規化前)
+    top = np.max(resp, axis=0)
+    return np.argmax(resp >= top - tol, axis=0)
 
 
 def _kill_dust(arr, ref):
