@@ -7619,11 +7619,14 @@ def _b_mv_map(pool, rng):
 def _b_mv_rectify(pool, rng):
     pose = np.eye(4)
     pose[:3, 3] = [-0.1, -0.1, 1.0]
-    return (rng.random((48, 48)), _MV_CAM, pose, 32, 32, 0.005), {}
+    # 64 x 64 マス(0.005 m)の平面は右下が画像の外へ出る: fill が効く(32 x 32 では全部が中で効かなかった)
+    return (rng.random((48, 48)), _MV_CAM, pose, 64, 64, 0.005), {}
 
 
 def _b_mv_distortion(pool, rng):
-    return (rng.random((48, 48)), dict(_MV_CAM, kappa=-1e-4), dict(_MV_CAM, kappa=0.0)), {}
+    # 歪みの無い入力を樽型(kappa = -2e-3)へ写すと、四隅の画素が入力の外を引く: fill が効く。
+    # (逆向きの -1e-4 → 0 は全画素が入力の中に落ち、fill はどんな値でも出力に現れなかった)
+    return (rng.random((48, 48)), dict(_MV_CAM, kappa=0.0), dict(_MV_CAM, kappa=-2e-3)), {}
 
 
 def _b_mv_crop(pool, rng):
@@ -7636,9 +7639,18 @@ def _b_mv_contour_gray(pool, rng):
 
 def _b_mv_ncc_models(pool, rng):
     import matching as _mt
-    tile = rng.random((8, 8))
-    img = np.tile(tile, (7, 7))                     # 8 画素周期: min_distance が効く
-    return ([_mt.create_ncc_model(img[0:8, 0:8])], img), {"min_score": 0.5}
+    rr = np.random.default_rng(3)
+    tile = rr.random((8, 8))
+    # 弱い雑音の地に、8 画素おきに並べた 6 つの写し(min_distance と max_matches が効く)と、
+    # 強さの違う雑音(0.25 / 0.6)を足した写し 2 つ(照合の得点が散り、min_score が効く)を置く。
+    # ★以前の 8 画素周期の敷き詰め(7 x 7)は得点 1 の一致が 49 か所あり、上位 max_matches = 10 が
+    # 全部 1 になって min_score が出力に現れなかった(2026-11-04 の統合で直した)。
+    img = rr.random((56, 56)) * 0.3 + 0.35
+    for c in range(0, 48, 8):
+        img[44:52, c:c + 8] = tile
+    for (r, c), sd in zip([(4, 4), (4, 30)], (0.25, 0.6)):
+        img[r:r + 8, c:c + 8] = np.clip(tile + sd * rr.standard_normal((8, 8)), 0.0, 1.0)
+    return ([_mt.create_ncc_model(tile)], img), {"min_score": 0.5}
 
 
 def _b_mv_circle(pool, rng):
@@ -7704,6 +7716,48 @@ def _b_mv_train(pool, rng):
     return _mv_blobs(), {}
 
 
+def _b_mv_train_gmm(pool, rng):
+    """クラスごとに重なる 2 つの塊 + n_centers=2。EM が反復するので iterations / tol が効く
+    (n_centers=1 は閉形式で 1 回で決まり、どちらのつまみも出力に現れない)。"""
+    g = np.random.default_rng(12)
+    a = np.vstack([g.normal([0.0, 0.0], 1.0, (60, 2)), g.normal([1.5, 0.5], 1.0, (60, 2))])
+    b = np.vstack([g.normal([6.0, 1.0], 1.0, (60, 2)), g.normal([7.2, 2.0], 1.0, (60, 2))])
+    return (np.vstack([a, b]), np.repeat([0, 1], 120)), {"n_centers": 2}
+
+
+def _b_mv_lepetit(pool, rng):
+    """左 32 列は乱数の模様(radius / check_neighbor / min_check_neighbor_diff が効く)、右は平らな地に
+    強さの違う 1 画素の点(+0.05〜+0.6、応答の下限 min_score で拾う点の数が変わる)。片方だけでは
+    どちらかのつまみが出力に現れない(2026-11-04 の統合で実測)。"""
+    im = np.full((48, 80), 0.3)
+    im[:, :32] = np.random.default_rng(5).random((48, 32))
+    for (r, c), amp in zip([(10, 44), (10, 64), (30, 44), (30, 64), (24, 54)], (0.05, 0.1, 0.2, 0.4, 0.6)):
+        im[r, c] += amp
+    return (im,), {}
+
+
+def _b_mv_segment(pool, rng):
+    """隙間 2 列で並ぶ 2 つの画と離れた 1 つの画(max_gap = 1 は 3 字、2 は 2 字)と、面積 2 と 6 の
+    小さな点(min_area = 4 は片方だけ落とす)。"""
+    im = np.zeros((24, 48))
+    im[6:18, 5:10] = 1.0
+    im[6:18, 12:17] = 1.0
+    im[6:18, 25:30] = 1.0
+    im[20, 35:37] = 1.0
+    im[2:4, 40:43] = 1.0
+    return (im,), {}
+
+
+def _b_mv_slant(pool, rng):
+    """30 度傾いた縦の画の列: 走査の範囲 max_angle が 30 度より狭いと別の角度を返す。"""
+    im = np.zeros((40, 80))
+    for x0 in range(10, 70, 12):
+        for r in range(8, 32):
+            c = int(round(x0 + (r - 20) * np.tan(np.radians(30.0))))
+            im[r, c:c + 2] = 1.0
+    return (im,), {}
+
+
 def _b_mv_gmm_use(pool, rng):
     import mvclass as _mc
     X, y = _mv_blobs()
@@ -7737,9 +7791,13 @@ def _b_mv_lexicon_word(pool, rng):
 
 
 def _b_mv_glyphs(pool, rng):
-    lab = np.zeros((24, 64), dtype=np.int32)
+    lab = np.zeros((24, 96), dtype=np.int32)
     for i, x in enumerate(range(4, 52, 10), 1):
         lab[6:18, x:x + 5] = i
+    # 幅の広い字(16 列 = 中央値の 3.2 倍)と背の低い字(4 行 = 中央値の 1/3)を 1 つずつ:
+    # max_width_ratio と min_height_ratio が効く(揃った 5 字だけではどちらも出力に現れなかった)
+    lab[6:18, 56:72] = 6
+    lab[14:18, 80:85] = 7
     return (lab,), {}
 
 
@@ -7754,11 +7812,12 @@ _MV_BUILDERS = {
     "morph_hat": _b_mv_se, "morph_skiz": _b_mv_region, "opening_seg": _b_mv_se,
     "gen_nurbs_interp": _b_mv_nurbs, "filter_kalman": _b_mv_kalman, "run_bg_esti": _b_mv_bg_run,
     "give_bg_esti": _b_mv_bg_give, "update_bg_esti": _b_mv_bg_update,
-    "train_class_gmm": _b_mv_train, "train_class_knn": _b_mv_train, "train_class_mlp": _b_mv_train,
+    "train_class_gmm": _b_mv_train_gmm, "train_class_knn": _b_mv_train, "train_class_mlp": _b_mv_train,
     "train_class_svm": _b_mv_train, "classify_class_gmm": _b_mv_gmm_use, "evaluate_class_gmm": _b_mv_gmm_use,
     "classify_class_knn": _b_mv_knn_use, "classify_class_mlp": _b_mv_mlp_use, "classify_class_svm": _b_mv_svm_use,
     "create_lexicon": _b_mv_lexicon, "lookup_lexicon": _b_mv_lexicon_word, "suggest_lexicon": _b_mv_lexicon_word,
-    "select_characters": _b_mv_glyphs,
+    "select_characters": _b_mv_glyphs, "points_lepetit": _b_mv_lepetit,
+    "segment_characters": _b_mv_segment, "text_line_slant": _b_mv_slant,
 }
 
 
