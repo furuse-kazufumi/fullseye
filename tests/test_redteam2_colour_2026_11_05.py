@@ -409,3 +409,21 @@ def test_sus_film_color_hue_is_nan_for_achromatic_and_never_360():
     # 丸めで 360.0 になる入力(a* > 0、b* = -1e-17 a*: 素の式は 360.0 を返す)は 0
     assert np.degrees(np.arctan2(-1e-17, 1.0)) % 360.0 == 360.0
     assert F._hue_angle_deg(np.array([[50.0, 1.0, -1e-17]]))[0] == 0.0
+
+
+def test_sus_hdr_merge_uint8_unsaturated_series_uses_256_levels():
+    import hdrfusion as HF
+    E = np.linspace(1, 50, 64).reshape(8, 8)
+    t = np.array([1.0, 2.0, 4.0])
+    imgs = [np.clip(np.round(E * tt * 0.3), 0, 255).astype(np.uint8) for tt in t]
+    assert max(int(i.max()) for i in imgs) < 200            # どの露出も飽和していない
+    lin256 = HF._pack_response(np.arange(256.0), "linear", 256)
+    for w in ("hat", "gaussian", "linear", "hat_time"):
+        # 独立な基準: 満の値 255 を明示した線形応答
+        np.testing.assert_array_equal(HF.hdr_merge(imgs, t, weight=w),
+                                      HF.hdr_merge(imgs, t, response=lin256, weight=w))
+    # uint16(満の値が dtype から決まらない)は従来どおり系列の最大値 + 1
+    u16 = [i.astype(np.uint16) for i in imgs]
+    L = max(int(i.max()) for i in u16) + 1
+    linL = HF._pack_response(np.arange(float(L)), "linear", L)
+    np.testing.assert_array_equal(HF.hdr_merge(u16, t), HF.hdr_merge(u16, t, response=linL))
