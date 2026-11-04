@@ -393,7 +393,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **測る**
 
-- 平面ターゲットの多視点から内部行列 K を推定する(Zhang 法): [説明](../capabilities/camera-intrinsics-calibration.md) · 例 [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py)
+- 平面ターゲットの多視点から内部行列 K を推定する(Zhang 法): [説明](../capabilities/camera-intrinsics-calibration.md) · 例 [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py) · [poc_caltab_chain_truth](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_caltab_chain_truth.py)
 - 複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ): [説明](../capabilities/complex-plane-fields.md) · 例 [poc_complex_plane_fields](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_complex_plane_fields.py)
 - 周期パターンが標本化格子で折り返す距離と、縞の上で狂う衝突時間を閉形式で測る(複眼・検査カメラ): [説明](../capabilities/compound-eye-aliasing-and-ttc.md) · 例 [poc_zebra_stripes_fly_eye](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zebra_stripes_fly_eye.py)
 - カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General): [説明](../capabilities/emva1288-camera-datasheets.md) · 例 [poc_emva1288_sensor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py) · [poc_emva1288_in_camera_processing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py)
@@ -503,7 +503,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 298 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -671,7 +671,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>幾何・校正</b> (24)</summary>
+<details class="vall"><summary><b>幾何・校正</b> (25)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../articles/assets/poc/poc_simcal_thin_film/story.ja.gif" alt="Schwarz ら 2024 の顕微鏡写真(Si 上の SiO₂ の縁)を 40 px 角の 52 区画の RGB 平均にし、転送行列 × 黒体の光源 × CIE 1931 → sRGB × 利得 × ガンマ × 周辺減光の 7 本のつまみに合わせた終点を通る切り口(ほかのつまみは終点に固定、色は log10(χ² − 最小 + 1)、暗いほど合う、上が大きい値)。左は各軸 ±8 σ_CRLB(T 5752〜6449 K、周辺減光 -0.149〜-0.018)でも谷が 1 点に閉じる。右は利得 ×1/2〜×2・ガンマ 1.4〜3.2 の全域に谷が溝として伸び、明るさを上げても γ を上げれば同じ画素値に戻る。simcal_fit が値を出したのは T = 6100 K, vig = -0.084 だけで、膜厚・屈折率・分散・利得・ガンマは共線性指数 γ > 10 で「組み合わせ」として数を出さない。出典: Schwarz et al., Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502; data Zenodo 10.5281/zenodo.13753754 (CC BY 4.0). Modified: re-labelled and rounded table / micrograph downsized to 640x360, block means." loading="lazy" width="200" height="200"></picture><span>実画像で薄膜の模型を較正(決まる係数と決まらない組み合わせ)</span></a>
 <a href="../articles/assets/poc/poc_camera_calibration/05_calibration_convergence.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_camera_calibration.jpg" alt="カメラ校正" width="200" height="200"><b>&#9654;</b><span>カメラ校正</span></a>
@@ -694,6 +694,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_public_camera_heading_real.jpg" alt="カメラの向き(実写)" width="200" height="200"><b>&#9654;</b><span>カメラの向き(実写)</span></a>
 <a href="../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><img src="../articles/assets/poc/poc_real_tless_6dof/story.ja.gif" alt="scene 1/image 1。PPF+ICP の推定モデル(橙)と BOP 真値(青)。" loading="lazy" width="200" height="200"></picture><span>実深度点群で既知部品の6自由度姿勢を推定する</span></a>
 <a href="../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><img src="../articles/assets/poc/poc_calibration_truth_map/story.ja.gif" alt="camera_calibration_lm on 6 rendered views (k1 = -0.21): where the estimate errs" loading="lazy" width="200" height="200"></picture><span>真値つきのカメラ校正 ―― 再投影 0.044 px でも隅では 0.568 px 誤る</span></a>
+<a href="../articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png"><img src="../articles/assets/poc/poc_caltab_chain_truth/story.ja.gif" alt="create_caltab -> rendered camera -> find_caltab -> camera_calibration_lm" loading="lazy" width="200" height="200"></picture><span>円マークの校正板を端から端まで ―― 雑音 0 でも fx は 0.45 % 外れ、その床は 2 値の重心が決める</span></a>
 <a href="../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><img src="../articles/assets/poc/poc_part_locate_features/story.ja.gif" alt="SIFT -> features_match -> ransac_homography: corner error 0.367 px" loading="lazy" width="200" height="200"></picture><span>37 度回した部品を SIFT は 0.367 px で見つけ、既存の Harris は 158 px 外す</span></a>
 <a href="../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_multimodal_mi_registration.jpg" alt="相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる" width="200" height="200"><span>相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる</span></a>
 <a href="../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_sheet_deformation_ffd.jpg" alt="シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない" width="200" height="200"><span>シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない</span></a>

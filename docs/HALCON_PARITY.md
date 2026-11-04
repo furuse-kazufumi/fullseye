@@ -38,7 +38,7 @@ excluded here, not counted).
 | profile | ops |
 |---|---:|
 | contract_verified | 2 |
-| functional_analogue | 612 |
-| unknown | 16 |
+| functional_analogue | 615 |
+| unknown | 13 |
 
 Unknown is never promoted to PASS.

@@ -19753,6 +19753,23 @@
    }
   },
   {
+   "id": "poc_caltab_chain_truth",
+   "group": "wing_geometry",
+   "media": "01_caltab_chain.png",
+   "motion": false,
+   "thumb_src": "01_caltab_chain.png",
+   "label": {
+    "ja": "円マークの校正板を端から端まで ―― 雑音 0 でも fx は 0.45 % 外れ、その床は 2 値の重心が決める",
+    "en": "A Circle-Mark Calibration Plate End to End: fx Is 0.45 % Off Even Without Noise, and the Binary Centroid Sets That Floor",
+    "zh": "圆点标定板全流程:无噪声时 fx 仍偏 0.45 %,底限由二值质心决定",
+    "tw": "圓點校正板全流程:無雜訊時 fx 仍偏 0.45 %,底限由二值質心決定",
+    "ko": "원형 마크 보정판 전 과정: 잡음이 없어도 fx는 0.45 % 벗어나며, 그 바닥은 이진 무게중심이 정한다",
+    "de": "Kreismarken-Kalibrierplatte durchgängig: fx liegt ohne Rauschen 0,45 % daneben, der Binärschwerpunkt setzt den Boden",
+    "hi": "वृत्त-चिह्न कैलिब्रेशन प्लेट शुरू से अंत तक: शोर के बिना भी fx 0.45 % हटता है, सीमा बाइनरी सेंट्रॉइड तय करता है",
+    "fr": "Mire à pastilles de bout en bout : fx dévie de 0,45 % même sans bruit, et le barycentre binaire fixe ce plancher"
+   }
+  },
+  {
    "id": "poc_light_section_step_weld_floor",
    "group": "wing_metrology",
    "media": "01_height_map.png",

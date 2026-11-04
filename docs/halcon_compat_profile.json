@@ -2,8 +2,8 @@
   "about": "A name mapping is not a compatibility claim. Unknown is never promoted to PASS.",
   "profiles": {
     "contract_verified": 2,
-    "functional_analogue": 612,
-    "unknown": 16
+    "functional_analogue": 615,
+    "unknown": 13
   },
   "entries": [
     {
@@ -618,9 +618,9 @@
     {
       "op": "create_caltab",
       "halcon": "create_caltab",
-      "profile": "unknown",
+      "profile": "functional_analogue",
       "evidence": [],
-      "notes": "Name mapping only; no op-level worked-example signal or reference-contract evidence."
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
     },
     {
       "op": "create_funct_1d_array",
@@ -1327,16 +1327,16 @@
     {
       "op": "find_caltab",
       "halcon": "find_caltab",
-      "profile": "unknown",
+      "profile": "functional_analogue",
       "evidence": [],
-      "notes": "Name mapping only; no op-level worked-example signal or reference-contract evidence."
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
     },
     {
       "op": "find_marks_and_pose",
       "halcon": "find_marks_and_pose",
-      "profile": "unknown",
+      "profile": "functional_analogue",
       "evidence": [],
-      "notes": "Name mapping only; no op-level worked-example signal or reference-contract evidence."
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
     },
     {
       "op": "find_ncc_models",

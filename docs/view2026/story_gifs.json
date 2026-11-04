@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 203,
+  "target_count": 204,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -34006,6 +34006,121 @@
       "alt": {
         "ja": "camera_calibration_lm on 6 rendered views (k1 = -0.21): where the estimate errs",
         "en": "Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner"
+      }
+    },
+    "poc_caltab_chain_truth": {
+      "representative": "01_caltab_chain.png",
+      "status": "gif",
+      "selected": [
+        "01_caltab_chain.png",
+        "02_caltab_chain_params.png",
+        "03_caltab_chain_noise.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_caltab_chain_truth/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_caltab_chain.png",
+              "content_box": [
+                0,
+                265,
+                720,
+                160
+              ]
+            },
+            {
+              "file": "02_caltab_chain_params.png",
+              "content_box": [
+                0,
+                152,
+                720,
+                385
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.869485
+            },
+            {
+              "file": "03_caltab_chain_noise.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 144781,
+          "color_mad": [
+            0.7222,
+            0.0296,
+            0.0609
+          ],
+          "max_color_mad": 0.7222,
+          "source_sha256": "233d8be29c6b74a8b8c32326ed9882df10fc68589669a7ef0becd2ce699971b6"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_caltab_chain_truth/story.en.gif",
+          "frames": [
+            {
+              "file": "01_caltab_chain.png",
+              "content_box": [
+                0,
+                265,
+                720,
+                160
+              ]
+            },
+            {
+              "file": "02_caltab_chain_params.png",
+              "content_box": [
+                0,
+                152,
+                720,
+                385
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.869485
+            },
+            {
+              "file": "03_caltab_chain_noise.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 144781,
+          "color_mad": [
+            0.7222,
+            0.0296,
+            0.0609
+          ],
+          "max_color_mad": 0.7222,
+          "source_sha256": "a52f3e2bf4ac5b9cc6a03b969fbe802afe8b14ed2b9a13129b2ffe7402dda2e6"
+        }
+      },
+      "reason": null,
+      "cover": "01_caltab_chain.png",
+      "still": "articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png",
+      "alt": {
+        "ja": "create_caltab -> rendered camera -> find_caltab -> camera_calibration_lm",
+        "en": "A Circle-Mark Calibration Plate End to End: fx Is 0.45 % Off Even Without Noise, and the Binary Centroid Sets That Floor"
       }
     },
     "poc_light_section_step_weld_floor": {

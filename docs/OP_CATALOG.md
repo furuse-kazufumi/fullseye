@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(471 例)
+### 2-D 画像/信号/幾何(472 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -316,6 +316,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **公共カメラはどこを向いているか・実写編(807 局の道路カメラで太陽を探し、日没 1 本から向きを決めて道路で検算する)** — Fintraffic 天候カメラ(CC BY 4.0、鍵なし)807 局 × 24 h の実写。見た目の門は文字・標識・白い車を太陽と言い(24/24 誤検出)、太陽は切れたブルーム、空は上 1/3 —— そこで足した 2 op(sun_bloom_fit = 切れていない縁に円を当てる / camera_orientation_from_sun_candidates = 時刻どおりに動く 1 本を RANSAC + 道路カメラの事前知識で選び f も探索)で、追えた日没 1 本(E18 Hamina、メタデータの向き UNKNOWN)から yaw 267.9°。同じ姿勢で車線の消失点を世界方位にすると OSM の路線方位と 2.5° 差。1 枚抜きで yaw 1.3°・roll 10°・f 2 %(弱い自由度は隠さない)。生画像は commit せず集計だけ。 `py -3.11 examples/poc_public_camera_heading_real.py`
 - **公共カメラはどこを向いているか(位置しか公開されない固定カメラの向きを、写真そのものから決める)** — 新族 geocam(7 op、numpy + scipy)。位置既知の固定カメラの (yaw, pitch, roll) を学習なしで 2 つの独立な手掛かりから決めて互いに検算: DEM で描いた 360° の稜線 vs 動的計画法で抜いた空と地形の境界(yaw を一周した残差曲線と曖昧さ margin を返す)、時刻つきの太陽の画素 ≥ 2 点 → Wahba 問題の SVD 解(太陽位置は NOAA の閉形式)。真値つき合成カメラでスカイライン 0.058°・太陽 0.002°・2 経路の一致 0.061°、対照の「道路方向の事前知識」は 7.5°、平地の DEM は ambiguous(黙って間違えない)。GIF は yaw を一周させて稜線が境界に噛み合う瞬間。 `py -3.11 examples/poc_public_camera_heading.py`
 - **カメラの熱ドリフトが寸法計測に効く量(分離できるのは歪みがあるから)** — ★★**予想が逆だった** —— 歪みが無ければ主点ドリフトは寸法に**厳密に 0**、焦点距離ドリフトは位置に依らない一定の倍率誤差で、位置を振っても何も分離できない。歪み k1=-0.12 を入れて初めて主点ドリフトが半径に比例する誤差を作る。1 次式 err(R)=a+b·R に当てはめると a=+224.5 ppm(対照条件 +225.3、差 0.4 %)、b=+0.2388 ppm/px(主点のみ 0.2190 + f のみ 0.0197 = 0.2387)。★対照群で誤差の床を先に測ると 1 枚 117 ppm。**ドリフトが床を超えるのは ΔT=1.6 K から**。 `py -3.11 examples/poc_thermal_drift_metrology.py`
+- **円マークの校正板を端から端まで ―― create_caltab → 描画 → find_caltab → camera_calibration_lm を真値と突き合わせる** — 真の K・樽型歪み(k1 = −0.18)・8 姿勢の円マーク板(7x9、15 mm)を、画素から板へ逆に引く描画で撮り、`find_caltab`(2 値の重心)で 63 点を拾って `camera_calibration_lm` で校正する。雑音 0 の検出のずれ 0.0939 px は 2 値の重心の量子化の理論値 1/sqrt(6πρ) = 0.0934 px と一致。σ_I = 0.05 で 8 個の内部・歪みの誤差はすべて共分散の 1σ の 2 倍以内(白色化距離 d² = 11.2 < χ²₈ の 99.9 % 点 26.1)、fx は −0.42 %(ほぼ量子化の床)。姿勢の誤差は内部パラメータの 1σ から伝わる許容の 0.5 倍以内。雑音を 0.02〜0.2 に振ると fx のずれは検出点のずれに比例し(傾き 0.99)、共分散の利得の予測と 0.85〜0.92 倍で合う。検出点のずれ自体は画像の雑音の 0.56 乗でしか増えない(2 値の重心)。新 op なし。 `py -3.11 examples/poc_caltab_chain_truth.py`
 - **真値つきのカメラ校正 ―― 画像から K と歪み、どこで誤るかの地図、次の 1 枚** — 真の K・樽型歪み(k1 = −0.21)・6 姿勢でチェッカー板を描き(画素を板へ逆に引く描画)、角を `find_checkerboard_corners` で拾って `camera_calibration_lm`(Zhang を初期値に K・歪み・全姿勢を同時に LM)で校正する。新 op 8 本(`calib_lm`、`opscalib`)。角は描画の真値に rms 0.046 px、fx の誤差は Zhang の閉形式 12.89 % → LM 0.133 %(共分散の 1σ 0.85 px の内)。真値と比べた誤差の地図(カメラの向きのずれを除いた後)は中央 0.094 px・隅で最大 0.568 px(500 mm 先で 0.413 mm)、共分散を写した不確かさの地図は平均 0.225 px。板を中心にしか置いていない 4 枚に次の 1 枚を推薦させると隅を選び、モンテカルロ 15 本の実際の誤差は 1.41 px(中心に正対 3.13、遠い中心 3.98 px)—— 隅どうしの順位は差が雑音の内。OpenCV の calibrateCamera / stereoCalibrate と同じ極小に落ちることは試験で照合(OpenCV は optional)。学習 0、門 23 件。 `py -3.11 examples/poc_calibration_truth_map.py`
 
 **visualization**
@@ -1614,7 +1615,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `f2_gauss_pyramid` (halcon: `gen_gauss_pyramid`) `image → image` GPU: あり(許可リスト) — Return one level of the image's Gauss pyramid, down-sampled by 2 ``level`` times (blur + decimate) and then up-sampled back to the original HxW so the result is a band-limited (low-pass) version at reduced resolution. ``a`` selects the level (1..4); ``b`` is ignored. · 例: `gallery2d_smoothing_rank`
 - `gauss_filter` (halcon: `gauss_filter`) `image → image` GPU: あり(gauss_filter@twin) — ガウシアンぼかし(``scipy.ndimage.gaussian_filter``、シグマ ``0.3+2.7*a``) による平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）の代役 ―― HALCON は離散ガウス核(整数演算)、こちらは連続ガウス核 の scipy 実装で、近似ではあるが結果は非常に近い。 · 例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_pv_thermal_survey`, `poc_sea_ice_concentration`, `poc_search_sweep_width`, `poc_solar_limb_darkening`, `poc_vanishing_detail_and_morphing_area`, `poc_vessel_network`, `poc_white_balance`
 - `gauss_image` (halcon: `gauss_image`) `image → image` GPU: あり(gauss_image) — 実装は ``gauss_filter`` と同一(同じ ``kind: "gauss"`` 分岐、シグマ ``0.3+2.7*a`` のガウシアンぼかし)。HALCON では ``gauss_filter``(離散近似) と ``gauss_image``(周波数領域/連続ガウス)は別演算子だが、この代役では 区別せず同じ関数を指す。HALCON の ``gauss_image``（Smooth an image using discrete Gaussian functions.）の代役。 · 例: `gallery2d_smoothing_rank`, `poc_colocalization_crosstalk`, `poc_moire_screen`, `poc_prnu_camera_fingerprint`, `poc_weld_radiograph_porosity`
-- `gaussian` (halcon: `gauss_filter`) `image → image` GPU: あり(gauss_filter) — 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `mcp_usability`, `perf_pointcloud_descriptors`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_chromatic_confocal`, `poc_dtof_ranging`, `poc_flybrain_pointcloud`, `poc_interferometry_step`, `poc_itof_multifreq`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
+- `gaussian` (halcon: `gauss_filter`) `image → image` GPU: あり(gauss_filter) — 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `mcp_usability`, `perf_pointcloud_descriptors`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_caltab_chain_truth`, `poc_chromatic_confocal`, `poc_dtof_ranging`, `poc_flybrain_pointcloud`, `poc_interferometry_step`, `poc_itof_multifreq`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
 - `guided_filter` (halcon: `guided_filter`) `image → image` GPU: なし — 実装は ``bilateral_filter`` と同一(``kind: "bilateral"``)。本来の ガイド付きフィルタ(guided filter、局所線形モデルに基づくエッジ保存平滑化) とは数学的に別のアルゴリズムだが、この代役ではバイラテラルフィルタで 代用している(似た用途=エッジ保存平滑化を満たすための近似、結果の数値は 一致しない)。HALCON の ``guided_filter``（Guided filtering of an image.） の代役。 · 例: `gallery2d_smoothing_rank`
 - `isotropic_diffusion` (halcon: `isotropic_diffusion`) `image → image` GPU: あり(許可リスト) — 実装は単純なガウシアンぼかし(``gaussian_filter``、シグマ ``0.5+2.5*a``)。等方拡散方程式の解はガウシアン核による畳み込みと数学的に 等価なので、この近似は理論的にも妥当(異方性拡散のようなエッジ保存効果は 無く、方向を問わず一様に滑らかになる)。HALCON の ``isotropic_diffusion`` （Perform an isotropic diffusion of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
 - `kuwahara` `image → image` GPU: あり(許可リスト) — Kuwahara フィルタ(1976)。4 つの重なる窓のうち分散が最小の窓の平均を出す、縁を保つ平滑化。 · 例: `gallery2d_smoothing_rank`
@@ -4941,8 +4942,8 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### calib / calibrate(5)
 - `camera_calibration` (halcon: `camera_calibration`) `keypoints → table` GPU: なし — [部分対応] Zhang 法で平面ターゲット多視点から内部行列 K だけを推定(camera_calibration)。 · 例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_calibration_truth_map`, `poc_camera_calibration`
-- `camera_calibration_lm` `keypoints → table` GPU: なし — Zhang 法の初期値から内部パラメータ・歪み・全姿勢を LM で同時に最適化し、共分散とともに返す(``table``)。 · 例: `poc_calibration_truth_map`
-- `find_marks_and_pose` (halcon: `find_marks_and_pose`) `image2d → table` GPU: なし — マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。
+- `camera_calibration_lm` `keypoints → table` GPU: なし — Zhang 法の初期値から内部パラメータ・歪み・全姿勢を LM で同時に最適化し、共分散とともに返す(``table``)。 · 例: `poc_calibration_truth_map`, `poc_caltab_chain_truth`
+- `find_marks_and_pose` (halcon: `find_marks_and_pose`) `image2d → table` GPU: なし — マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。 · 例: `poc_caltab_chain_truth`
 - `hand_eye_calibration` (halcon: `hand_eye_calibration`) `入力なし → matrix` GPU: なし — 一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。
 - `stereo_calibration_lm` `keypoints → table` GPU: なし — 左右の内部・歪み・板の姿勢と右カメラの相対姿勢 (R, T) を LM で同時に最適化する(``table``)。
 
@@ -4971,9 +4972,9 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### calib / target(6)
 - `caltab_points` (halcon: `caltab_points`) `入力なし → keypoints` GPU: なし — 校正板の理想マーク座標(ワールド, mm; 原点=最初のマーク)を (y, x) で返す(caltab_points)。
-- `create_caltab` (halcon: `create_caltab`) `入力なし → table` GPU: なし — 校正板の記述(理想点、板中心が原点)を作る(create_caltab)。
+- `create_caltab` (halcon: `create_caltab`) `入力なし → table` GPU: なし — 校正板の記述(理想点、板中心が原点)を作る(create_caltab)。 · 例: `poc_caltab_chain_truth`
 - `disp_caltab` (halcon: `disp_caltab`) `table → image2d` GPU: なし — 校正板画像を返す(表示用)(disp_caltab)。
-- `find_caltab` (halcon: `find_caltab`) `image2d → keypoints` GPU: なし — 画像から校正板の円マーク中心を検出(連結成分の重心)(find_caltab)。
+- `find_caltab` (halcon: `find_caltab`) `image2d → keypoints` GPU: なし — 画像から校正板の円マーク中心を検出(連結成分の重心)(find_caltab)。 · 例: `poc_caltab_chain_truth`
 - `gen_caltab` (halcon: `gen_caltab`) `入力なし → table` GPU: なし — 円マーク格子の校正板画像を生成(gen_caltab)。
 - `sim_caltab` (halcon: `sim_caltab`) `table → table` GPU: なし — 校正板を指定カメラ姿勢で投影した画像をシミュレート(sim_caltab)。
 

@@ -101,7 +101,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 使う op: `camera_calibration`, `estimate_distortion`, `intrinsic_matrix`, `decompose_intrinsics`
 
-動く例: `camera_intrinsics_calibration`
+動く例: `camera_intrinsics_calibration`, `poc_caltab_chain_truth`
 
 ### [複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ)](capabilities/complex-plane-fields.md)
 

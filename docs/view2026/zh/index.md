@@ -378,7 +378,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **测量**
 
-- 从平面标定板的多视图估计内参矩阵 K(张正友法): [说明](../../capabilities/camera-intrinsics-calibration.md) _(ja)_ · 示例 [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py)
+- 从平面标定板的多视图估计内参矩阵 K(张正友法): [说明](../../capabilities/camera-intrinsics-calibration.md) _(ja)_ · 示例 [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py) · [poc_caltab_chain_truth](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_caltab_chain_truth.py)
 - 把复平面当作面来看(域着色、吸引域、逃逸时间、绕翼流动): [说明](../../capabilities/complex-plane-fields.md) _(ja)_ · 示例 [poc_complex_plane_fields](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_complex_plane_fields.py)
 - 以闭式求周期图案在采样晶格上混叠的距离，以及条纹所扰乱的碰撞时间（复眼与检测相机）: [说明](../../capabilities/compound-eye-aliasing-and-ttc.md) _(ja)_ · 示例 [poc_zebra_stripes_fly_eye](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zebra_stripes_fly_eye.py)
 - 用 EMVA 1288 的步骤重新测量相机规格书上的数值,并看相机内部的预处理会使这些数值偏移多少(Linear 与 General): [说明](../../capabilities/emva1288-camera-datasheets.md) _(ja)_ · 示例 [poc_emva1288_sensor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py) · [poc_emva1288_in_camera_processing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py)
@@ -488,7 +488,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 297 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 298 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -656,7 +656,7 @@ PoC 297 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>几何与标定</b> (24)</summary>
+<details class="vall"><summary><b>几何与标定</b> (25)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>用真实图像标定薄膜模型(可确定的系数与无法确定的组合)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/05_calibration_convergence.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_calibration.jpg" alt="相机标定" width="200" height="200"><b>&#9654;</b><span>相机标定</span></a>
@@ -679,6 +679,7 @@ PoC 297 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_public_camera_heading_real.jpg" alt="摄像头朝向(实拍)" width="200" height="200"><b>&#9654;</b><span>摄像头朝向(实拍)</span></a>
 <a href="../../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><img src="../../articles/assets/poc/poc_real_tless_6dof/story.en.gif" alt="Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data" loading="lazy" width="200" height="200"></picture><span>从真实深度点云估计已知零件的六自由度姿态</span></a>
 <a href="../../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><img src="../../articles/assets/poc/poc_calibration_truth_map/story.en.gif" alt="Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner" loading="lazy" width="200" height="200"></picture><span>带真值的相机标定:重投影 0.044 px,角落仍错 0.568 px</span></a>
+<a href="../../articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png"><img src="../../articles/assets/poc/poc_caltab_chain_truth/story.en.gif" alt="A Circle-Mark Calibration Plate End to End: fx Is 0.45 % Off Even Without Noise, and the Binary Centroid Sets That Floor" loading="lazy" width="200" height="200"></picture><span>圆点标定板全流程:无噪声时 fx 仍偏 0.45 %,底限由二值质心决定</span></a>
 <a href="../../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><img src="../../articles/assets/poc/poc_part_locate_features/story.en.gif" alt="SIFT Locates a Part Rotated 37 Degrees to 0.367 px; the Existing Harris Matcher Misses by 158 px" loading="lazy" width="200" height="200"></picture><span>SIFT 以 0.367 px 定位旋转 37 度的零件,原有 Harris 偏差 158 px</span></a>
 <a href="../../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_multimodal_mi_registration.jpg" alt="可见光与红外电路板图像相关为 −0.74,互信息仍以 0.170 px 配准" width="200" height="200"><span>可见光与红外电路板图像相关为 −0.74,互信息仍以 0.170 px 配准</span></a>
 <a href="../../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sheet_deformation_ffd.jpg" alt="FFD 以 0.025 px 跟踪薄片变形,但条码与空白处无法确定位移场" width="200" height="200"><span>FFD 以 0.025 px 跟踪薄片变形,但条码与空白处无法确定位移场</span></a>
