@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from backend_safe import signed01
+from backend_safe import reflect_padded, signed01
 from scipy import ndimage
 
 
@@ -194,7 +194,9 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             (向き自体は返さない)。
             """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
-            axx, axy, ayy = feature.structure_tensor(x, sigma=0.5 + 2 * a, order="rc")
+            # 鏡映の余白で包む(skimage の既定 mode='constant' は枠に偽の向きを作る。2026-11-05 P6)
+            axx, axy, ayy = reflect_padded(
+                lambda u: feature.structure_tensor(u, sigma=0.5 + 2 * a, order="rc"), x, 0.5 + 2 * a)
             l1, l2 = feature.structure_tensor_eigenvalues([axx, axy, ayy])
             return _norm(np.nan_to_num((l1 - l2) / (l1 + l2 + 1e-8)))
 
@@ -210,7 +212,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             blob)と谷(暗い blob)を区別しない。
             """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
-            H = feature.hessian_matrix(x, sigma=0.5 + 2.5 * a, order="rc", use_gaussian_derivatives=True)
+            H = reflect_padded(lambda u: feature.hessian_matrix(u, sigma=0.5 + 2.5 * a, order="rc",
+                                                                use_gaussian_derivatives=True), x, 0.5 + 2.5 * a)
             ev = feature.hessian_matrix_eigvals(H)
             # ★``ev[0]`` は**代数的**に最大の固有値であって、絶対値最大ではない。
             # 明るい稜線では主曲率が負なので ev[0] は絶対値の小さい方になり、

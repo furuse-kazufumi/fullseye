@@ -263,3 +263,34 @@ def test_p5_blob_doh_counts_the_gaussian_spots_like_skimage(sigma):
     assert len(counts) == 5
     assert all(c1 >= c2 for c1, c2 in zip(counts, counts[1:])), "しきい値を上げると数は減る"
     assert ap(x, "xsk_blob_log", 0.5, 0.5) == len(centres)            # LoG は変えていない
+
+
+# --------------------------------------------------------------------------------------------- #
+# P6: 微分の応答は一様な画像で定数、明るさの一様な足し算で変わらない(枠の 0 埋めの偽応答が無い)
+# --------------------------------------------------------------------------------------------- #
+P6_OPS = ["sk_corner_harris", "points_harris_binomial", "points_foerstner", "sk_hessian_det", "xsk_hessian_eig",
+          "sk_shape_index", "xsk_struct_coherence", "xsk2_corner_kr"]
+
+
+def _offset_probe():
+    rng = np.random.default_rng(7)
+    x = ndimage.gaussian_filter(rng.random((40, 48)), 1.5)
+    x = (x - x.min()) / (x.max() - x.min()) * 0.6 + 0.15
+    yy, xx = np.mgrid[0:40, 0:48]
+    x[(yy - 20) ** 2 + (xx - 24) ** 2 < 36] = 0.8
+    return x
+
+
+@pytest.mark.parametrize("name", P6_OPS)
+def test_p6_uniform_image_has_no_structure(name):
+    for c in (0.0, 0.3, 0.7):
+        y = ap(np.full((32, 32), c), name)
+        assert float(np.ptp(y)) < 1e-6, (name, c, float(np.ptp(y)))
+
+
+@pytest.mark.parametrize("name", P6_OPS)
+def test_p6_response_is_invariant_to_a_brightness_offset(name):
+    """微分だけで作る量は明るさの一様な足し算で変わらない —— 縁も内側も。"""
+    x = _offset_probe()
+    d = np.abs(ap(x + 0.1, name) - ap(x, name))
+    assert float(d.max()) < 1e-6, (name, float(d.max()))

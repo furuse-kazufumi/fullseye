@@ -34,7 +34,7 @@ import numpy as np
 
 from fslib import FsValueError
 
-from backend_safe import gradient_normals, signed01, subpixel_refine_edges
+from backend_safe import gradient_normals, reflect_padded, signed01, subpixel_refine_edges
 from scipy import ndimage
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -646,9 +646,11 @@ def _sh_corner(p):
             xb = ndimage.gaussian_filter(x, 0.5 + 1.5 * b)
             # 2026-10-25 まで skimage 無しでは k=0.04・Sobel 直積・``_norm`` という**別の式**に落ちていた
             # (coins で最大差 0.999)。双子 ``numpy_twins.corner_harris`` は同じ式・同じ丸め。
-            return signed01(_corner_harris(xb, sigma=s))
+            # ★鏡映の余白で包む(skimage の構造テンソルは画像の外 = 0 で、一様な画像でも枠が最大の
+            #   応答になり正規化を支配していた。2026-11-05 敵対的検証 第 2 巡 P6)
+            return signed01(reflect_padded(lambda u: _corner_harris(u, sigma=s), xb, s))
         if kind == "foerstner":
-            w, q = _corner_foerstner(x, sigma=s)
+            w, q = reflect_padded(lambda u: _corner_foerstner(u, sigma=s), x, s)
             return _norm(np.nan_to_num(w) * np.nan_to_num(q))
         raise ValueError(kind)
     return fn

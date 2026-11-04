@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from backend_safe import require_finite, signed01
+from backend_safe import reflect_padded, require_finite, signed01
 
 
 def _safe(fn, out_sort=None):
@@ -196,7 +196,9 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
          lambda v, a, b: morphology.isotropic_closing(binm(v), 1 + a * 4).astype(np.float64)),
         ("xsk2_hog", "texture", IMAGE, IMAGE, _hog),
         ("xsk2_corner_kr", "edges", IMAGE, IMAGE,
-         lambda v, a, b: signed01(np.nan_to_num(feature.corner_kitchen_rosenfeld(np.clip(v, 0, 1))))),
+         # 鏡映の余白で包む(既定 mode='constant' は枠に偽のコーナーを作る。2026-11-05 P6)
+         lambda v, a, b: signed01(np.nan_to_num(reflect_padded(
+             lambda u: feature.corner_kitchen_rosenfeld(u, mode="reflect"), np.clip(v, 0, 1), 0.0, 4)))),
         ("xsk2_radon", "frequency", IMAGE, IMAGE, _radon),
         ("xsk2_inv_gauss_grad", "edges", IMAGE, IMAGE,
          lambda v, a, b: segmentation.inverse_gaussian_gradient(np.clip(v, 0, 1), alpha=50 + 150 * a)),

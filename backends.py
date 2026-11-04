@@ -18,7 +18,7 @@ import os
 
 import numpy as np
 
-from backend_safe import signed01
+from backend_safe import reflect_padded, signed01
 
 # ★The _safe fallback is a LAST RESORT and it can MASK A DEAD OP. For
 # out_sort=="image" `backend_safe.fallback` returns the clipped INPUT, so a
@@ -369,15 +369,19 @@ DOCS: dict[str, str] = {
         "``feature.shape_index(v, sigma=0.5+2.0*a)`` の NaN(平坦領域で未定義になる)"
         "を 0 に置き換えてから ``signed01``(符号付き応答の 0 を 0.5 に写像し、"
         "±最大値を 0/1 に写像する)で ``[0,1]`` へ写した値 —— a は Hessian を計算する"
-        "際のガウス微分の σ を 0.5〜2.5 に振る。b は未使用。"
+        "際のガウス微分の σ を 0.5〜2.5 に振る。b は未使用。画像の外は鏡映で埋める"
+        "(2026-11-05 まで skimage の既定 = 0 埋めで、枠に偽の応答が出ていた)。"
     ),
     "sk_hessian_det": (
         "Hessian 行列式によるブロブ検出応答。2 階微分の行列(Hessian)の行列式は、"
         "ブロブ状の構造で正、鞍点状の構造で負になる符号付き応答。\n\n"
         "HALCON に直接対応するものは無い。実装は "
-        "``feature.hessian_matrix_det(v, sigma=0.5+2.5*a)`` を ``signed01`` で "
+        "``feature.hessian_matrix_det(v, sigma=0.5+2.5*a, approximate=False)`` を ``signed01`` で "
         "``[0,1]`` へ写した値(符号を保つため 0.5 が「応答ゼロ」に対応)—— a は"
-        "スケール σ を 0.5〜3.0 に振る。b は未使用。"
+        "スケール σ を 0.5〜3.0 に振る。b は未使用。画像の外は鏡映で埋める。\n\n"
+        "2026-11-05(敵対的検証 第 2 巡 P6)までは skimage の既定の箱フィルタ近似"
+        "(``approximate=True``)で、核の和が 0 でないため一様な画像でも明るさの 2 乗に比例する"
+        "応答を返し、明るさを 0.1 足すだけで値が変わっていた(厳密解との相関 0.08)。"
     ),
     "sk_corner_harris": (
         "Harris コーナー応答(skimage 実装)。勾配の構造テンソルから、平坦部/エッジ/"
@@ -388,6 +392,8 @@ DOCS: dict[str, str] = {
         "へ写した値 —— a は微分に使うガウス σ を 0.5〜2.5 に振る。b は未使用。"
         "Harris の自由パラメータ k は skimage の既定値(0.05)のまま固定。OpenCV 版の"
         "cv_corner_harris とはパラメータの振り方が異なるので同一結果にはならない。"
+        "画像の外は鏡映で埋める(2026-11-05 まで skimage の構造テンソルの既定 = 0 埋めで、"
+        "一様な画像でも枠が最大の応答になり正規化を支配していた)。"
     ),
     "sk_adjust_log": (
         "対数階調変換(log transform)。``out = gain * log(1 + in)`` 型の対数カーブで"
@@ -909,11 +915,18 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             ("sk_autolevel", "gray", "scale_image_max", IMAGE, IMAGE,
              lambda v, a, b: filters.rank.autolevel(_u8s(v), _disk(a)).astype(np.float64) / 255),
             ("sk_shape_index", "texture", "", IMAGE, IMAGE,
-             lambda v, a, b: signed01(np.nan_to_num(feature.shape_index(v, sigma=0.5 + 2.0 * a)))),
+             # ★3 本とも鏡映の余白で包む(skimage の既定は画像の外 = 0、枠に偽の応答。2026-11-05 P6)
+             lambda v, a, b: signed01(np.nan_to_num(reflect_padded(
+                 lambda u: feature.shape_index(u, sigma=0.5 + 2.0 * a), v, 0.5 + 2.0 * a)))),
             ("sk_hessian_det", "edges", "", IMAGE, IMAGE,
-             lambda v, a, b: signed01(feature.hessian_matrix_det(v, sigma=0.5 + 2.5 * a))),
+             # ★厳密な行列式(approximate=False)。既定の箱フィルタ近似は核の和が 0 でなく、一様な画像でも
+             #   明るさの 2 乗に比例する応答を返す(0.3 で 5.8e-4、0.4 で 1.0e-3)—— 実画像で厳密解との
+             #   相関が 0.08 しかなかった。厳密版は 1024² で近似より速い(0.14 s 対 0.20 s)。2026-11-05 P6
+             lambda v, a, b: signed01(reflect_padded(
+                 lambda u: feature.hessian_matrix_det(u, sigma=0.5 + 2.5 * a, approximate=False), v, 0.5 + 2.5 * a))),
             ("sk_corner_harris", "edges", "points_harris", IMAGE, IMAGE,
-             lambda v, a, b: signed01(feature.corner_harris(v, sigma=0.5 + 2.0 * a))),
+             lambda v, a, b: signed01(reflect_padded(
+                 lambda u: feature.corner_harris(u, sigma=0.5 + 2.0 * a), v, 0.5 + 2.0 * a))),
             # gain > 1 は出力を 1 より上へ押し上げる(実測 max=1.1380, a=0.5)。
             # `image` は [0,1] 契約なので出口で clip(2026-09-02)。`ops._apply` が
             # 段間で掛けている clip と同じなので **パイプライン結果はビット不変**、

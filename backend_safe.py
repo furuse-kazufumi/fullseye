@@ -354,6 +354,29 @@ def require_finite(x, what):
     return x
 
 
+def reflect_padded(fn, x, sigma=1.0, extra=3):
+    """*fn* を鏡映の余白で包んだ 2-D 画像に当て、元の窓に切り戻す。
+
+    skimage の ``structure_tensor`` / ``hessian_matrix`` / ``shape_index`` / ``corner_kitchen_rosenfeld`` は
+    既定が ``mode='constant', cval=0``(画像の外を 0 で埋める)で、``corner_harris`` / ``corner_foerstner`` /
+    ``hessian_matrix_det`` には mode の引数が無い。一様な画像でも枠に明るさの段差が生まれ、その偽の応答が
+    最大になって ``signed01`` / ``_norm`` の正規化を支配し、内側の値まで背景の明るさで変わっていた
+    (敵対的検証 2026-11-05 第 2 巡 P6)。余白は scipy の ``mode='reflect'``(= numpy の ``symmetric``)と同じ
+    鏡映で ``ceil(4·sigma) + extra`` 画素(ガウスの打ち切り 4σ + 微分の核)。
+
+    2-D でない入力はそのまま *fn* に渡す。*fn* が tuple / list を返すときは各成分を切り戻す。
+    """
+    x = np.asarray(x, np.float64)
+    if x.ndim != 2 or x.size == 0:
+        return fn(x)
+    p = int(np.ceil(4.0 * float(sigma))) + int(extra)
+    out = fn(np.pad(x, p, mode="symmetric"))
+    crop = (slice(p, p + x.shape[0]), slice(p, p + x.shape[1]))
+    if isinstance(out, (tuple, list)):
+        return type(out)(np.asarray(o)[crop] for o in out)
+    return np.asarray(out)[crop]
+
+
 def signed01(x):
     """Map a SIGNED filter response to [0,1] with the zero-crossing at 0.5.
 
