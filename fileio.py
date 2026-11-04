@@ -2383,6 +2383,15 @@ def _ome_xml_meta(xml: str, shape, axes: str, dtype, op: str):
     if len(pixels_nodes) != 1:
         raise ValueError(f"{op}: OME Image must contain exactly one Pixels element")
     pixels = pixels_nodes[0]
+    # ★2026-11-05 redteam I11: the docstring promised to reject a Pixels Type that disagrees with
+    # the TIFF samples, but ``dtype`` was never read -- Type="int16" over uint16 data passed.
+    ome_type = {"int8": "int8", "int16": "int16", "int32": "int32", "uint8": "uint8",
+                "uint16": "uint16", "uint32": "uint32", "float32": "float", "float64": "double",
+                "complex64": "complex", "complex128": "double-complex", "bool": "bit"}.get(np.dtype(dtype).name)
+    declared_type = pixels.attrib.get("Type")
+    if ome_type is None or declared_type != ome_type:
+        raise ValueError(f"{op}: OME-XML Pixels Type={declared_type!r} disagrees with the TIFF samples "
+                         f"({np.dtype(dtype)}; OME Type {ome_type!r})")
     dimension_order = pixels.attrib.get("DimensionOrder")
     if dimension_order not in ("XYZCT", "XYZTC", "XYCZT", "XYCTZ", "XYTCZ", "XYTZC"):
         raise ValueError(f"{op}: unsupported OME DimensionOrder {dimension_order!r}")
