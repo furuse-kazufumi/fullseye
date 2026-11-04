@@ -16,8 +16,12 @@ import tarfile
 from collections.abc import Mapping
 
 _MAX_TOTAL_BYTES = 2 * 1024**3
-_WINDOWS_DEVICES = {"CON", "PRN", "AUX", "NUL",
-                    *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))}
+# Windows reserved device names (Microsoft "Naming Files, Paths, and Namespaces"): COM0 / LPT0
+# and the superscript digits ¹ ² ³ are reserved too, and so are the console names CONIN$ /
+# CONOUT$. ★2026-11-05 redteam (io, archive probe): only CON/PRN/AUX/NUL and COM1-9 / LPT1-9
+# were listed, so "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
+_WINDOWS_DEVICES = {"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$",
+                    *(f"{port}{d}" for port in ("COM", "LPT") for d in "0123456789\u00b9\u00b2\u00b3")}
 
 
 def _safe_name(name, op):
@@ -28,7 +32,10 @@ def _safe_name(name, op):
     pure = pathlib.PurePosixPath(name)
     if pure.is_absolute() or any(part in {"", ".", ".."} for part in pure.parts):
         raise ValueError(f"{op}: unsafe archive member name: {name!r}")
-    if pure.parts and (":" in pure.parts[0] or pure.parts[0].upper().split(".")[0] in _WINDOWS_DEVICES):
+    # every component, not only the first: "data/CON.txt" is as unextractable on Windows as
+    # "CON.txt" (fileio._safe_archive_name already checks each part)
+    if any(":" in part or part.rstrip(" .").split(".", 1)[0].upper() in _WINDOWS_DEVICES
+           for part in pure.parts):
         raise ValueError(f"{op}: unsafe archive member name: {name!r}")
     return pure.as_posix()
 

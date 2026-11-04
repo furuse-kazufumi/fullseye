@@ -763,6 +763,12 @@ def e57_write(table):
     """座標・強度・色・pose を持つ点群 ``table`` を ASTM E57 の ``bytes`` に書く。
 
     ``pye57`` は optional。未導入なら導入コマンドを含む ``ImportError`` で閉じる。
+
+    精度: 座標(cartesianX/Y/Z)と強度は E57 の **single(float32)** で書かれる(pye57 の
+    ``write_scan_raw`` が single 固定)。float64 の点は float32 の精度で往復する —— 原点から
+    35 万 m の UTM 座標なら誤差は数 cm。大きい座標は原点の近くへ平行移動し、その量を
+    ``pose['translation']``(double で書かれ正確に往復する)に入れること。色は 8 bit に丸め、
+    ``pose['rotation']`` は単位四元数に正規化して書く。
     呼び出し例: ``payload = e57_write({'points': points, 'pose': pose})``。
     """
     pye57 = _require_pye57()
@@ -874,8 +880,12 @@ def e57_read(data):
 # 書庫。安全モデルと決定的 tar は helpstore.py、実読込量の門は sample_data.py を基にする。
 # ---------------------------------------------------------------------------
 _ARCHIVE_FORMATS = {"zip", "tar", "tar.gz", "tar.bz2", "tar.xz", "7z", "rar"}
-_WINDOWS_DEVICES = {"CON", "PRN", "AUX", "NUL",
-                    *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))}
+# Windows reserved device names (Microsoft "Naming Files, Paths, and Namespaces"): COM0 / LPT0
+# and the superscript digits ¹ ² ³ are reserved too, and so are the console names CONIN$ /
+# CONOUT$. ★2026-11-05 redteam (io, archive probe): only CON/PRN/AUX/NUL and COM1-9 / LPT1-9
+# were listed, so "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
+_WINDOWS_DEVICES = {"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$",
+                    *(f"{port}{d}" for port in ("COM", "LPT") for d in "0123456789\u00b9\u00b2\u00b3")}
 
 
 def _archive_source(data_or_path, op):

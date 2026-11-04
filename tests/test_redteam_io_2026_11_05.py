@@ -541,3 +541,39 @@ def test_i26_empty_xyz_round_trips(tmp_path):
     p.write_bytes(b"")                       # a 0-byte file is still not a point cloud
     with pytest.raises(ValueError):
         mesh.read_points(str(p))
+
+
+# --------------------------------------------------------------------------- #
+# 追加(時間枠の探針で見つけた本物): Windows の予約名の取りこぼし                #
+# --------------------------------------------------------------------------- #
+_RESERVED = ["COM0", "LPT0.txt", "COM¹.txt", "lpt³", "CONIN$", "CONOUT$", "con.txt", "COM9"]
+
+
+@pytest.mark.parametrize("name", _RESERVED)
+def test_archive_extract_refuses_every_windows_reserved_name(tmp_path, name):
+    import zipfile
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        z.writestr("dir/" + name, b"payload")
+    with pytest.raises(ValueError, match="Windows"):
+        fileio.archive_extract(buf.getvalue(), str(tmp_path / "out"))
+    assert not (tmp_path / "out" / "dir").exists()
+
+
+@pytest.mark.parametrize("fmt", ["zip", "tar", "tar.gz", "tar.xz"])
+@pytest.mark.parametrize("name", ["data/CON.txt", "data/COM0", "CONOUT$"])
+def test_archive_create_refuses_reserved_names_in_any_component(fmt, name):
+    with pytest.raises(ValueError):
+        fileio.archive_create({name: b"x"}, fmt)
+
+
+def test_e57_precision_is_what_the_docstring_says():
+    """pye57 writes cartesian / intensity as E57 single: float32 round trip, the pose in double."""
+    pytest.importorskip("pye57")
+    assert "float32" in fileio.e57_write.__doc__
+    P = np.array([[0.125, 1.5, -2.0], [0.1, 0.2, 0.3]])
+    shift = [352145.123456789, 4123456.98765, 12.345678901]
+    back = fileio.e57_read(fileio.e57_write({"points": P, "pose": {"rotation": [1, 0, 0, 0],
+                                                                    "translation": shift}}))
+    assert np.array_equal(back["points"], P.astype(np.float32).astype(np.float64))
+    assert back["pose"]["translation"].tolist() == shift
