@@ -139,3 +139,55 @@ def test_t6_accel_vol_gaussian_honours_the_border_choice():
     assert checked == len(_HIGH_B)
     assert not accel_vol._b_falls_back("vol_gaussian_g", 0.5, 0.5)
     assert not accel_vol._b_falls_back("vol_median_g", 0.5, 0.9)
+
+
+# --------------------------------------------------------------------------- T7
+def _t7_cases():
+    import acoustics
+    import fringe
+    import granular
+    import scoop
+    return {
+        "synthesize_bearing_signal": lambda **k: acoustics.synthesize_bearing_signal(duration=0.05, noise_sigma=0.1, **k),
+        "synthesize_speed_ramp": lambda **k: acoustics.synthesize_speed_ramp(duration=0.2, noise_sigma=0.1, **k)["signal"],
+        "synthesize_fringes": lambda **k: fringe.synthesize_fringes(np.zeros((16, 16)), noise=0.05, **k),
+        "heap_synth_cone": lambda **k: granular.heap_synth_cone(30.0, 20.0, noise=0.01, **k)["side"],
+        "discharge_synth": lambda **k: np.asarray(granular.discharge_synth(
+            0.02, 0.001, 1500.0, 30.0, 1e-3, 1.0, n_frames=2, grid=128, noise=1e-4, **k)["frames"]),
+        "scoop_synth_side": lambda **k: scoop.scoop_synth_side(20.0, 10.0, noise=0.01, **k)["side"],
+    }
+
+
+@pytest.mark.parametrize("name", sorted(["synthesize_bearing_signal", "synthesize_speed_ramp", "synthesize_fringes",
+                                         "heap_synth_cone", "discharge_synth", "scoop_synth_side"]))
+def test_t7_noise_without_a_seed_is_refused(name):
+    f = _t7_cases()[name]
+    with pytest.raises(ValueError, match="explicit integer seed"):
+        f()
+    with pytest.raises(ValueError, match="explicit integer seed"):
+        f(seed=None)
+
+
+@pytest.mark.parametrize("name", sorted(["synthesize_bearing_signal", "synthesize_speed_ramp", "synthesize_fringes",
+                                         "heap_synth_cone", "discharge_synth", "scoop_synth_side"]))
+def test_t7_an_integer_seed_makes_the_noise_reproducible(name):
+    """同じ seed で 2 回 = 1 ビットも同じ、違う seed = 違う(雑音が本当に入っている)。"""
+    f = _t7_cases()[name]
+    x, y, z = np.asarray(f(seed=3)), np.asarray(f(seed=3)), np.asarray(f(seed=4))
+    assert x.size > 1
+    assert np.array_equal(x, y)
+    assert not np.array_equal(x, z)
+
+
+def test_t7_noise_free_calls_still_need_no_seed():
+    import acoustics
+    import fringe
+    import granular
+    import scoop
+    a = acoustics.synthesize_bearing_signal(duration=0.05)
+    b = acoustics.synthesize_bearing_signal(duration=0.05)
+    assert np.array_equal(np.asarray(a), np.asarray(b))
+    assert np.array_equal(fringe.synthesize_fringes(np.zeros((8, 8))), fringe.synthesize_fringes(np.zeros((8, 8))))
+    assert np.array_equal(granular.heap_synth_cone(30.0, 20.0)["side"], granular.heap_synth_cone(30.0, 20.0)["side"])
+    assert np.array_equal(scoop.scoop_synth_side(20.0, 10.0)["side"], scoop.scoop_synth_side(20.0, 10.0)["side"])
+    assert acoustics.synthesize_speed_ramp(duration=0.2)["signal"].size > 1
