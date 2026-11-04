@@ -13,12 +13,13 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(471 例)
+### 2-D 画像/信号/幾何(472 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
 - **書庫を同じbytesで作り、安全に一覧・展開する** — zip、tar、tar.gz、tar.xzを2回作ってSHA-256一致を確かめ、標準ライブラリという独立の読み手とFullseyeの安全な展開の両方で相対pathと内容がbit一致することを自己検査する。 `py -3.11 examples/archive_roundtrip.py`
 - **表・メッシュ・点群を標準形式で受け渡す** — 単位と由来を持つ CSV、属性つき PLY、STL、OBJ、OFF、XYZ、E57 をメモリ上で書いて読み戻し、pandas、plyfile、numpy-stl、trimesh、pye57 でも同じ内容を読めることを自己検査する。 `py -3.11 examples/fileio_roundtrip.py`
+- **実物の科学データファイルを 5 形式読み、外の読み手と公表値で採点する(FITS・NIfTI・MRC・OME-TIFF・E57)** — 公開の実物ファイルを 5 形式、配布されたバイト列のまま(SHA-256 固定)読み、外の読み手と配布元の公表値で採点する。★FITS(SDSS r の NGC 2420、public domain、SkyView の面積保存の再標本化)は astropy と 160,000 画素・WCS 10 キーが完全一致、star_detect → aperture_photometry で SDSS DR16 の飽和なし 15〜20 等の星 127 個の 91.3 % を 1″ 以内で拾い、等級の傾き 1.009・ずれ +0.002 等・頑健なばらつき 0.028 等。★NIfTI(OpenNeuro ds000117、CC0)は nibabel とボクセル完全一致、傾き 26.40°(装置の記載 −26.4)。照合で nifti_read の不具合を直した(180° 近くの四元数で向きが 0.0125° 回っていた → nifti1_io.c と同じ閾値)。★MRC(EMDB EMD-3197)は mrcfile と完全一致、統計量は EMDB の登録値と相対 3e-8、等値面 1.9 の中身 2 塊 4,776 nm³。格子の起点 NXSTART を返さない穴は記録した門。★OME-TIFF(OME 見本 tubhiswt-2D、CC BY 4.0)は 2 ファイル組の片方を拒否(理由を独立に確認)、参照の tifffile は欠けたチャネルをゼロで埋めて返す。★E57 は libE57 の bunny 6 型が PTS 文字版と 30,571 点 1 対 1(取得時)、CI は同梱のイトカワ形状を pye57 で書いた E57。M67 の最初の試みは最近傍の再標本化と飽和で傾き 0.52 だった。 `py -3.11 examples/poc_real_file_formats.py`
 
 **workflow**
 - **MCPで物理量・登録見本・検証済みpipeline案を明示して使う** — 外部資産なしの合成画像で、名前つき物理量による平滑化、明示的な登録見本ハンドルによる位置決め、候補が一意なときだけ返す検証済みpipeline案を実行し、結果を自己検査する。 `py -3.11 examples/mcp_usability.py`
@@ -1558,7 +1559,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `local_min` (halcon: `local_min`) `image → region` GPU: なし — 局所極小点(領域極小)検出。``x`` が窓内の最小値(``_k(a)``)に一致し、 かつ ``x < 0.7-0.4*b`` を満たす画素を前景とする、``local_max`` の暗部版。 HALCON の ``local_min``（Detect all local minima in an image.）に相当。 · 例: `gallery2d_segmentation`
 - `local_threshold` (halcon: `local_threshold`) `image → region` GPU: あり(local_threshold) — 局所ガウス平滑化+オフセットによるしきい値処理(``gaussian_filter(x, 1+3*a)`` にオフセット ``(b-0.5)*0.3`` を加えたものがしきい値)。 ``dyn_threshold`` と似た発想だが、局所平均を矩形窓でなくガウシアンで 求める点が異なる。HALCON の ``local_threshold``（Segment an image using local thresholding.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `nonmax_suppression_amp` (halcon: `nonmax_suppression_amp`) `image → region` GPU: あり(nonmax_suppression_amp) — 極大点（ローカルマキシマム）を抽出する非極大値抑制。窓内最大値と一致し、かつ閾値 ``0.3+0.4b`` を超える画素だけを前景として残す。a が窓サイズを 3/5/7/9 に振る。 · 例: `gallery2d_segmentation`
-- `otsu` (halcon: `binary_threshold`) `image → region` GPU: あり(otsu) — 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。 · 例: `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_segmentation_gauntlet`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `poc_water_inspection_images`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
+- `otsu` (halcon: `binary_threshold`) `image → region` GPU: あり(otsu) — 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。 · 例: `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_segmentation_gauntlet`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `poc_water_inspection_images`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
 - `pouring` (halcon: `pouring`) `image → region` GPU: なし — 分水嶺法（watershed）による領域分割の境界抽出。勾配画像（Sobel 振幅）を地形とみなし、暗い領域（``x < 0.2+0.3a``）を種（マーカー）として分水嶺を計算、``skimage.segmentation.find_boundaries`` で境界を前景として返す。b は未使用。 · 例: `gallery2d_segmentation`
 - `ptile_threshold` `image → feature` GPU: なし — 面積率で決める P-tile しきい値を feature として返す。 · 例: `poc_threshold_transfer_after_normalization`
 - `regiongrowing` (halcon: `regiongrowing`) `image → region` GPU: なし — 領域成長の簡易近似。まず高いしきい値(``x > 0.5+0.3*a``)でシード (種)領域を作り、それを ``1+4*b`` 回だけ二値膨張して広げる ―― 真の領域成長 (隣接画素との類似度を逐次判定しながら広げる)ではなく、しきい値+膨張という 軽量な代用になっている(近似の限界)。HALCON の ``regiongrowing`` （Segment an image using region growing.）の代役。 · 例: `gallery2d_segmentation`
@@ -4626,11 +4627,11 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `archive_probe` `any → text` GPU: なし — 書庫のマジックナンバーを検査し、形式名を返す。 / Probe archive magic and return its format name. · 例: `archive_roundtrip`
 
 #### fileio / e57(2)
-- `e57_read` `any → table` GPU: なし — ASTM E57 の ``bytes`` を読み、座標・強度・色・pose の点群 ``table`` を返す。 · 例: `fileio_roundtrip`
+- `e57_read` `any → table` GPU: なし — ASTM E57 の ``bytes`` を読み、座標・強度・色・pose の点群 ``table`` を返す。 · 例: `fileio_roundtrip`, `poc_real_file_formats`
 - `e57_write` `table → any` GPU: なし — 座標・強度・色・pose を持つ点群 ``table`` を ASTM E57 の ``bytes`` に書く。 · 例: `fileio_roundtrip`
 
 #### fileio / fits(2)
-- `astro_fits_read` `any → any` GPU: なし — primary HDU の 2-D/3-D FITS を ``(image_or_volume, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`
+- `astro_fits_read` `any → any` GPU: なし — primary HDU の 2-D/3-D FITS を ``(image_or_volume, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`, `poc_real_file_formats`
 - `astro_fits_write` `any → any` GPU: なし — 2-D/3-D 天文画像と基本 WCS を primary-HDU FITS の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / mesh(8)
@@ -4644,11 +4645,11 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `mesh_write_stl` `mesh → any` GPU: なし — 三角形 mesh を ASCII または little-endian binary STL に書く(``text`` / ``bytes``)。
 
 #### fileio / mrc(2)
-- `em_mrc_read` `any → any` GPU: なし — MRC2014/CCP4 の mode 0/1/2/6 を ``(image_or_volume, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`
+- `em_mrc_read` `any → any` GPU: なし — MRC2014/CCP4 の mode 0/1/2/6 を ``(image_or_volume, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`, `poc_real_file_formats`
 - `em_mrc_write` `any → any` GPU: なし — 2-D/3-D 電顕データを MRC2014/CCP4 の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / nifti(2)
-- `nifti_read` `any → any` GPU: なし — 単一ファイル NIfTI-1(``.nii`` / ``.nii.gz``)を ``(array, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`
+- `nifti_read` `any → any` GPU: なし — 単一ファイル NIfTI-1(``.nii`` / ``.nii.gz``)を ``(array, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`, `poc_real_file_formats`
 - `nifti_write` `any → any` GPU: なし — 3-D/4-D 配列と affine/pixdim を単一ファイル NIfTI-1 の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / nrrd(2)
@@ -4656,7 +4657,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `nrrd_write` `any → any` GPU: なし — 多次元配列と ``space directions`` を raw/gzip NRRD の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / ome_tiff(2)
-- `ome_tiff_read` `any → any` GPU: なし — OME-TIFF を ``(stack, meta)`` として読み、OME-XML と配列を相互検証する。 · 例: `fileio_scientific_roundtrip`
+- `ome_tiff_read` `any → any` GPU: なし — OME-TIFF を ``(stack, meta)`` として読み、OME-XML と配列を相互検証する。 · 例: `fileio_scientific_roundtrip`, `poc_real_file_formats`
 - `ome_tiff_write` `any → any` GPU: なし — TCZYX 多次元配列と物理サイズ・チャネル名を OME-TIFF の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / points(2)
@@ -4742,7 +4743,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### annotate / shape(4)
 - `arc` `image2d → image2d` GPU: あり(許可リスト) — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` GPU: なし — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
+- `ellipse` `image2d → image2d` GPU: なし — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: あり(許可リスト) — 多角形の塗り(偶奇規則の交差判定 ―― :mod:`imagedraw` は輪郭のみ)。 · 例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: あり(許可リスト) — 角丸の矩形(``fill=True`` で塗り)。下敷きや囲みに使う。 · 例: `annotate_gallery`, `poc_machine_condition_fusion`
 
@@ -5354,9 +5355,9 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `cosmic_ray_reject_stack` `images → images` GPU: あり(許可リスト) — フレーム間比較による宇宙線除去 —— **同じ場所に二度は当たらない**。 · 例: `astro_stacking`
 
 #### astrostack / photometry(3)
-- `aperture_photometry` `image2d × keypoints → table` GPU: なし — 円形開口 + 環状背景の測光(古典的な CCD 測光)。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_exoplanet_transit`, `poc_nuclei_ploidy`, `poc_real_sky_photometry`
+- `aperture_photometry` `image2d × keypoints → table` GPU: なし — 円形開口 + 環状背景の測光(古典的な CCD 測光)。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_exoplanet_transit`, `poc_nuclei_ploidy`, `poc_real_file_formats`, `poc_real_sky_photometry`
 - `psf_fit` `image2d × keypoints → table` GPU: なし — 星像に PSF を当てはめて中心と FWHM を出す。 · 例: `astro_stacking`, `poc_star_astrometry`
-- `star_detect` `image2d → keypoints` GPU: なし — 星を検出して ``(row, col)`` の重心列を返す。 · 例: `astro_stacking`, `poc_exoplanet_transit`, `poc_search_sweep_width`, `poc_star_astrometry`
+- `star_detect` `image2d → keypoints` GPU: なし — 星を検出して ``(row, col)`` の重心列を返す。 · 例: `astro_stacking`, `poc_exoplanet_transit`, `poc_real_file_formats`, `poc_search_sweep_width`, `poc_star_astrometry`
 
 #### astrostack / quality(3)
 - `frame_quality` `image2d → table` GPU: なし — 1 枚の品質を数える —— 鋭さ・FWHM・背景・真円度、そして選別用の点。 · 例: `astro_stacking`

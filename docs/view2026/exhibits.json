@@ -19887,6 +19887,23 @@
     "hi": "प्रशिक्षित धुंधलेपन से आगे लॉट-नंबर OCR अस्वीकार करने के बजाय गलत पढ़ता है",
     "fr": "Au-delà du flou appris, l'OCR des numéros de lot lit mal au lieu de rejeter"
    }
+  },
+  {
+   "id": "poc_real_file_formats",
+   "group": "wing_metrology",
+   "media": "01_stars_matched.png",
+   "motion": false,
+   "thumb_src": "01_stars_matched.png",
+   "label": {
+    "ja": "実物の科学データファイルを読む",
+    "en": "Reading real scientific data files",
+    "zh": "读取真实的科学数据文件",
+    "tw": "讀取真實的科學資料檔",
+    "ko": "실제 과학 데이터 파일 읽기",
+    "de": "Echte wissenschaftliche Datendateien lesen",
+    "hi": "वास्तविक वैज्ञानिक data file पढ़ना",
+    "fr": "Lire de vrais fichiers de données scientifiques"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -19975,6 +19992,14 @@
    }
   ],
   "titles": {
+   "scientific-data-files": {
+    "zh": "读取科学数据文件(FITS、NIfTI、MRC、OME-TIFF、E57)",
+    "tw": "讀取科學資料檔(FITS、NIfTI、MRC、OME-TIFF、E57)",
+    "ko": "과학 데이터 파일 읽기(FITS·NIfTI·MRC·OME-TIFF·E57)",
+    "de": "Wissenschaftliche Datendateien lesen (FITS, NIfTI, MRC, OME-TIFF, E57)",
+    "hi": "वैज्ञानिक data file पढ़ना (FITS, NIfTI, MRC, OME-TIFF, E57)",
+    "fr": "Lire des fichiers de données scientifiques (FITS, NIfTI, MRC, OME-TIFF, E57)"
+   },
    "reuse-computation-results": {
     "zh": "同一输入的验证、邻域搜索与变换核只计算一次",
     "tw": "同一輸入的驗證、鄰域搜尋與轉換核心只計算一次",

@@ -370,7 +370,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-99 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+100 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -476,6 +476,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す: [説明](../capabilities/inspection-workflow.md) · 例 [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
 - レンズの製造公差を、MTF と歩留まりで決める: [説明](../capabilities/lens-tolerancing.md) · 例 [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - 同じ入力の検証・近傍探索・変換核を一度だけ計算する: [説明](../capabilities/reuse-computation-results.md) · 例 [perf_pointcloud_descriptors](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_pointcloud_descriptors.py) · [perf_monogenic_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_monogenic_metrics.py) · [perf_prepared_volume_probe](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_prepared_volume_probe.py) · [perf_polarization_analyze](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_polarization_analyze.py) · [perf_hankel_plan_and_piv_stream](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_hankel_plan_and_piv_stream.py)
+- 科学データのファイルを読む(FITS・NIfTI・MRC・OME-TIFF・E57): [説明](../capabilities/scientific-data-files.md) · 例 [poc_real_file_formats](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py)
 - op の返り値(型付き)を JSON に出し、bit そのままで戻す: [説明](../capabilities/typed-results-as-json.md) · 例 [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す: [説明](../capabilities/typed-results-as-markdown.md) · 例 [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - 型付きの検査結果を Excel(.xlsx)レポートに書き出す: [説明](../capabilities/xlsx-report.md) · 例 [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -503,7 +504,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 298 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -583,7 +584,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>寸法・形状計測</b> (58)</summary>
+<details class="vall"><summary><b>寸法・形状計測</b> (59)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../articles/assets/poc/poc_aoi_ct_traceability/story.ja.gif" alt="One populated region in top view and reconstructed attenuation slices. The same central joint is traceable to its internal void; rings and metal streaks arise in projection reconstruction." loading="lazy" width="200" height="200"></picture><span>AOI と CT の対応</span></a>
 <a href="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../articles/assets/poc/poc_asbuilt_wall_deviation/story.ja.gif" alt="竣工した壁の歪み" loading="lazy" width="200" height="200"></picture><span>竣工した壁の歪み</span></a>
@@ -643,6 +644,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><img src="../articles/assets/poc/poc_real_sem_metal_layer/story.ja.gif" alt="実 SEM 像。緑=track ラベル、赤=重複除去後の via ラベル。" loading="lazy" width="200" height="200"></picture><span>実SEM金属配線の寸法計測</span></a>
 <a href="../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><img src="../articles/assets/poc/poc_virtual_acceptance_3d/story.ja.gif" alt="artefact layout (VDI/VDE 2634-2 idea) and the noise each design leaves on the flat" loading="lazy" width="200" height="200"></picture><span>買う前に受入試験をかける ―― 同じ iToF でも黒い球 1 つで不合格になる</span></a>
 <a href="../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><img src="../articles/assets/poc/poc_light_section_step_weld_floor/story.ja.gif" alt="高さ地図(フレーム × 列、gauss): 段差 2 mm と高さの変わるビード" loading="lazy" width="200" height="200"></picture><span>光切断の高さは µm で合うが、実機を決めるのはスペックルの床 20.7 µm</span></a>
+<a href="../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><img src="../articles/assets/poc/poc_real_file_formats/story.ja.gif" alt="SDSS r の NGC 2420(北が上)。青=star_detect の検出、緑=SDSS の星表の星(15〜20 等、飽和なし)で 1.0″ 以内に対応、赤=対応なし。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外(検出の青だけが並ぶ)。" loading="lazy" width="200" height="200"></picture><span>実物の科学データファイルを読む</span></a>
 </div>
 </details>
 

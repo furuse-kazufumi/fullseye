@@ -1,0 +1,4 @@
+# Bundled real data files are pinned byte-for-byte by SHA-256 (examples/poc_real_file_formats.py).
+# Never convert line endings: the FITS file mixes an ASCII header with binary pixels, and the CSV / JSON
+# must keep the bytes the providers served.
+* -text

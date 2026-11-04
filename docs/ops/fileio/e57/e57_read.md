@@ -5,7 +5,7 @@ category: e57
 in: any
 out: table
 gpu: なし
-examples: [fileio_roundtrip]
+examples: [fileio_roundtrip, poc_real_file_formats]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -33,6 +33,7 @@ ASTM E57 の ``bytes`` を読み、座標・強度・色・pose の点群 ``tabl
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [fileio_roundtrip](../../../../examples/fileio_roundtrip.py) — `py -3.11 examples/fileio_roundtrip.py`
+- [poc_real_file_formats](../../../../examples/poc_real_file_formats.py) — `py -3.11 examples/poc_real_file_formats.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

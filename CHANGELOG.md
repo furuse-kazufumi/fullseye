@@ -10,6 +10,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 修正 — `nifti_read` の qform(180° に近い回転の四元数)
+
+- 1 − |bcd|² < 1e-7 のとき参照実装 nifti1_io.c(`nifti_quatern_to_mat44`)と同じく a = 0 として (b, c, d) を正規化する。これまでは float32 の丸め屑(OpenNeuro ds000117 の磁場地図で 1.2e-8)から a = 1.1e-4 を作り、向きを 0.0125° 回していた(nibabel と行列要素で 8e-4 の差)。回帰試験は `tests/test_poc_real_file_formats.py`。
+
+### 追加 — PoC「実物の科学データファイルを 5 形式読む」(収蔵 2026.300)
+
+- `examples/poc_real_file_formats.py`: SDSS(FITS)・OpenNeuro(NIfTI)・EMDB(MRC)・OME(OME-TIFF)・libE57(E57)の公開ファイルを配布されたバイト列のまま読み、astropy / nibabel / mrcfile / tifffile との全画素一致と配布元の公表値で採点する。同梱は `data/fileio_real/`(SHA-256 固定、出典とライセンスは README)。E57 の原本は再配布の条件が無いので `tools/fetch_e57_bunny.py` で repo 外へ取得(`realdata.E57_BUNNY_FILES`)、CI は同梱のイトカワ形状で代える。
+- 記録した穴: `em_mrc_read` は格子の起点 NXSTART を返さない(EMD-3197 で −2 = 22.8 Å)。能力ノート `scientific-data-files`。
+
 ### 追加 — CT のスキャン方式を 1 つの幾何で(コーンビーム FDK・ヘリカル・ラミノグラフィ・反復法)と GPU 経路
 
 - 新モジュール `ctscan`(opstomography のカテゴリ `ct_scan`、11 op)と `tomography_gpu`(共通の核)。幾何は `ct_scan_geometry` の dict 1 つで、線源・検出器中心・検出器の u/v 軸を view ごとに持つ。投影(レイ駆動)、その厳密な転置、ボクセル駆動の逆投影の 3 つの核だけを全方式で共有し、方式が足すのは軌道と重みだけ。

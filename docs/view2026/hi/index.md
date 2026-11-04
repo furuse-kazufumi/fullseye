@@ -355,7 +355,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-99 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+100 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -461,6 +461,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - एक call में पूरा folder inspect करना (batch, spec, aggregate, SPC, report, audit log): [explanation](../../capabilities/inspection-workflow.md) _(ja)_ · examples [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
 - MTF और yield से lens manufacturing tolerances तय करना: [explanation](../../capabilities/lens-tolerancing.md) _(ja)_ · examples [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - एक ही input की validation, neighbourhood search और transform kernel केवल एक बार गणना करना: [explanation](../../capabilities/reuse-computation-results.md) _(ja)_ · examples [perf_pointcloud_descriptors](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_pointcloud_descriptors.py) · [perf_monogenic_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_monogenic_metrics.py) · [perf_prepared_volume_probe](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_prepared_volume_probe.py) · [perf_polarization_analyze](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_polarization_analyze.py) · [perf_hankel_plan_and_piv_stream](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_hankel_plan_and_piv_stream.py)
+- वैज्ञानिक data file पढ़ना (FITS, NIfTI, MRC, OME-TIFF, E57): [explanation](../../capabilities/scientific-data-files.md) _(ja)_ · examples [poc_real_file_formats](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py)
 - Typed op results को JSON में लिखना और bit-for-bit वापस पढ़ना: [explanation](../../capabilities/typed-results-as-json.md) _(ja)_ · examples [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - Typed op results को Markdown में दिखाना, वापस पढ़ने के लिए JSON block के साथ: [explanation](../../capabilities/typed-results-as-markdown.md) _(ja)_ · examples [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - Typed inspection results को Excel (.xlsx) report में लिखना: [explanation](../../capabilities/xlsx-report.md) _(ja)_ · examples [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -488,7 +489,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-297 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+298 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -568,7 +569,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional और shape metrology</b> (58)</summary>
+<details class="vall"><summary><b>Dimensional और shape metrology</b> (59)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../../articles/assets/poc/poc_aoi_ct_traceability/story.en.gif" alt="Full visual inspection and sampled CT must assign the same index to each joint. Unequal-sided fiducials fixed this correspondence, then top-ranked candidates caught 19 % of interface-touching voids. Apparent void rankings can agree while most life-limiting parts are missed." loading="lazy" width="200" height="200"></picture><span>AOI-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../../articles/assets/poc/poc_asbuilt_wall_deviation/story.en.gif" alt="Point-cloud dimensions can confuse room heading or furniture with wall position. A room with known tilt and bulges was rotated, while its plane-pair error stayed at +2.24 mm. Bounding boxes grow with heading and sample count; plane fitting jumps to furniture when outliers become the majority." loading="lazy" width="200" height="200"></picture><span>As-built दीवारें</span></a>
@@ -628,6 +629,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><img src="../../articles/assets/poc/poc_real_sem_metal_layer/story.en.gif" alt="Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?" loading="lazy" width="200" height="200"></picture><span>वास्तविक SEM धातु परत की मापिकी</span></a>
 <a href="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><img src="../../articles/assets/poc/poc_virtual_acceptance_3d/story.en.gif" alt="Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF" loading="lazy" width="200" height="200"></picture><span>खरीदने से पहले स्वीकृति परीक्षण: एक काला गोला वही iToF फेल कर देता है</span></a>
 <a href="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><img src="../../articles/assets/poc/poc_light_section_step_weld_floor/story.en.gif" alt="Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor" loading="lazy" width="200" height="200"></picture><span>लाइट-सेक्शन ऊँचाई µm तक सही, पर असली सीमा 20.7 µm स्पेकल फ़्लोर</span></a>
+<a href="../../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><img src="../../articles/assets/poc/poc_real_file_formats/story.en.gif" alt="Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed" loading="lazy" width="200" height="200"></picture><span>वास्तविक वैज्ञानिक data file पढ़ना</span></a>
 </div>
 </details>
 

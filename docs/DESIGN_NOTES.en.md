@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 636 of 1621. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 636 of 1623. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1033,6 +1033,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L157** — Amplitude step. ★This itself is a knob. If coarse, the limit rounds to the same grid point, and one misreads a **difference created by the step**, like "the larger σ, the wider the gap", as real (2026-09-09; at 34 levels the median of σ=1.5 and σ=3.0 both rounded to 3.20).
 
+## `examples/poc_real_file_formats.py`
+
+- **L382** _(ja)_ — ★記録した穴: em_mrc_read の meta は NXSTART を返さないので、この地図を空間に置くと x が 2 ボクセル = 22.8 Å ずれる。塞がったら(meta に起点が載ったら)この門が鳴る。
+
 ## `examples/poc_recycling_sorting.py`
 
 - **L520** — ★**Before** the sweep, form a prediction from the algebra and print it.
@@ -1475,6 +1479,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `feat_shot.py`
 
 - **L80** _(ja)_ — ★2026-10-11: 平面上の点の λ3 は丸め屑(λ3/λ1 ~ 1e-17)。軸に沿った平面では 厳密に 0 で落ちるが、傾けた平面では屑が正になり「特徴の無い平面」から キーポイントが 203 個出ていた(回転不変の主張が崩れる)。床は λ1 に対する相対量で。
+
+## `fileio.py`
+
+- **L2028** _(ja)_ — ★参照実装 nifti1_io.c(nifti_quatern_to_mat44)と同じ規則: 1 - |bcd|^2 < 1e-7 なら 180 度回転と みなして a = 0 とし、(b, c, d) を単位長に正規化する。2026-11-04 まで閾値が無く、float32 の 丸め屑 1.2e-8 から a = 1.1e-4 を作って向きを 0.0125 度回していた(OpenNeuro ds000117 の 磁場地図で nibabel と 8e-4 の差。examples/poc_real_file_formats.py が見つけた)。
 
 ## `flyvision.py`
 
