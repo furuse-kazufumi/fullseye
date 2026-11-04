@@ -15,7 +15,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - F1 `run_pipeline` / `FullseyeEngine.run_stepwise`(`api._normalise_stages`): 段 `("op", a)` の省いた `b` は共通の `b` になる(以前は共通の `a`)。dict 形 `{"op": .., "a": ..}` と同じ答え。
 - F2 `apply([x1, x2], op)`(n-ary の密な入力): 整数・bool の画像は `on_error="raise"` で `ValueError`、既定では単入力と同じく `/255`(uint8)・`/65535`(uint16)で変換して台帳に記録する(以前は整数のまま op に渡り、例外も記録もなく別の答え)。region の入力と `convol_image` の核(重みの表)は従来どおり縮めない。
 - F3 値が変わる: `vector_to_similarity` の倍率(座標の単位に依存した偏りが消える)、`odometry.umeyama_align` は小さい座標でも倍率を返す(以前は `var <= 1e-12` で 1.0)、`featmatch` の最小標本の退化判定は相対量(座標 1e-6 の標本を「退化」と捨てない)。
-- F4 入口の非有限値の拒否(`apply` / `run_pipeline`、方針に依らず): dict・list・tuple の中のスカラー、複素スカラー、object 配列、4 段以上の入れ子の NaN / inf も拒否する(以前は素通し)。`allow_nonfinite=True` は従来どおり。
+- F4 入口の非有限値の拒否(`apply` / `run_pipeline`、方針に依らず): 入力そのものが NaN / inf のスカラー(例 `apply(float("nan"), "feature_to_img", …)`)、dict・list・tuple の中のスカラー、複素スカラー、object 配列、4 段以上の入れ子の NaN / inf も拒否する(以前は素通し)。`allow_nonfinite=True` は従来どおり。
 - F5 `hand_eye_calibration` / `calibrate_hand_eye`: ちょうど 180° の相対運動を含む列を解く(以前は「単一軸」で拒否)。半回転だけで X が決まらない列は「not determined」の文で拒否する。`camera.rotation_log` は角を atan2 で取り、π の近くの軸の向きを歪対称部から取る(値が丸めの桁で変わる)。
 - F6 `ransac_homography` / `ransac_fundamental`: 最終の当てはめ直しで内れ値が `min_inliers` を割るときは、合意を満たしていた RANSAC の模型を返す(以前は割った模型を成功として返した)。
 - F7 `register_ecc`: 反復の上限で止まったとき、`metric` と `min_rho` の判定は返す warp で測り直した相関(以前は最後の更新前の値)。`history` は従来どおり反復ごとの値。

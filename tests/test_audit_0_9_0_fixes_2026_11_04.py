@@ -471,6 +471,7 @@ class TestF9AccuracyMapQuartilesPartition:
         q = np.hypot(g[0], g[1])[m]
         edges = np.quantile(q, [0, 0.25, 0.5, 0.75, 1.0])
         idx = np.clip(np.searchsorted(edges, q, side="right") - 1, 0, 3)
+        assert len(r["by_magnitude"]) == 4          # 空なら下のループは何も確かめない
         for k, row in enumerate(r["by_magnitude"]):
             sel = idx == k
             assert row["n"] == int(sel.sum())
