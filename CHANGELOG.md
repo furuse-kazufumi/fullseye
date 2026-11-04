@@ -30,6 +30,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - C4 の兄弟 `FullseyeGraph.add` / `from_dict`: ノブは `apply` の型規則(`"0.3"` は TypeError、以前は float 化)。C5 の兄弟 `FullseyeGraph.to_python`: `validate()` に error がある graph(未知の op・非有限のノブ)は ValueError で書き出さない。ノブは `engine._knob_literal` で書く(注入は以前から無い: 全値 `%r`)。
 - MCP `fullseye_apply` は利用者の劣化台帳を消さない(`degraded` はこの呼び出し・このスレッドの記録だけ)。MCP の応答に NaN / inf を書かない: `write_message` は非有限を含む応答を同じ id の -32603 に置き換え、`fullseye_pipeline` の値は非有限を含むとき null にせず省く(値はハンドルから読む)。
 
+- 第 2 巡(state)T1 `FullseyeEngine.run_cached`: 返り値はキャッシュから切り離した複製(配列は copy、dict / list は deepcopy)。以前はキャッシュ内の配列そのものを返し、利用者が書き換えると次の呼び出しがその値を返した。`StageCache.get` / `put` 自体は従来どおり参照を保持する。
+- 第 2 巡 T8 `run_cached`: XLD 輪郭(dict)など dict / list / スカラーの入力を内容で正準化して鍵にする(以前は contour 始まりの鎖が全部 TypeError)。object 配列は従来どおり TypeError。
+- 第 2 巡 T3 MCP `fullseye_validate_pipeline`: 段数の上限は fssystem の `pipeline_max_stages`(以前は 64 固定で、`pipeline_max_stages=16` の下で `fullseye_pipeline` と判定が割れた)。
+- 第 2 巡 T4 MCP: structuredContent の上限 `mcp_response_budget` を呼ぶたびに読む(以前は import 時の定数で `fssystem.system(...)` が効かなかった)。`fullseye_import_json` の `json` 文字列の長さも同じ上限で検査。`MAX_STRUCTURED_BYTES` は import 時の既定として残す(schema の説明用)。
+- 第 2 巡 T5 `fssystem`: `tightens_only=True` の数値の上限 10 項目から既定より緩い値を外した(`find_ops_k` 10、`find_ops_recipe_max` 3、`plan_k` 10、`plan_max_depth` 8/16、`plan_max_expansions` 100000、`plan_timeout_ms` 2000、`mcp_handle_max_bytes` / `mcp_pipeline_max_intermediate_bytes` 256 MiB、`mcp_stack_max_pixels` 64 Mpx、`iteration_limit` 500 は ValueError)。import 時に `max(values) == default` を検査する。
+
 ### 修正 — 敵対的検証 2026-11-05(contract)
 
 - C1 `unified._make_evolution_caller` が `api.apply` を呼ぶ。`Pipeline.run` は registry 段を `api._prepare_pipeline` + `api._pipeline_steps`(run_pipeline の本体)で走らせる。facade / 知覚 / 生の callable の段は自然シグネチャの関数なので従来どおり。
