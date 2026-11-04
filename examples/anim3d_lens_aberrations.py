@@ -1530,7 +1530,7 @@ def textbook_checks(g):
                  "> 1.08", "%.3f" % sph_end, sph_end > 1.08)],
         "coma": [
             _row("軸上のスポット半径(spot_stats、非球面の無収差)", "on-axis spot radius (spot_stats; stigmatic asphere)",
-                 "< 1 µm", "%.2g µm" % g["coma_axis_um"], g["coma_axis_um"] < 1.0),
+                 "< 1 µm", "%s µm" % _axis_spot(g["coma_axis_um"]), g["coma_axis_um"] < 1.0),
             _row("メリディオナルのコマ: 実光線(ray_fan)/ 3·W131/(n′u′)(画角 0.5 / 1 / 2°)",
                  "tangential coma: real rays (ray_fan) / 3·W131/(n′u′) (field 0.5 / 1 / 2°)",
                  "< 0.01", "%.4f" % g["coma_mer_dev"], g["coma_mer_dev"] < 0.01),
@@ -1794,7 +1794,7 @@ def main(argv=None) -> int:
         assert "http://" not in html and "https://" not in html, "外部 URL がある"
     print("書いた: %s(%.0f KB、ja+en、4 タブ・各 %d コマ)" % (path if a.out else "一時フォルダ", size / 1e3, len(t)))
     print("球面: 実光線 / 3 次の式 = " + "  ".join("a=%g:%.3f" % (a_, r) for a_, r in g["sph"]))
-    print("コマ: 軸上のスポット半径 %.2g µm(非球面の無収差)" % g["coma_axis_um"])
+    print("コマ: 軸上のスポット半径 %s µm(非球面の無収差)" % _axis_spot(g["coma_axis_um"]))
     print("色: F−C の焦点差 単レンズ %.3f mm / アクロマート %s、F..C の焦点のゆれ %.3f / %.4f mm"
           % (g["fc1"], fmt_fc(g["fc2"]), g["sec1"], g["sec2"]))
     print("限界(実光線 / 3 次の式): 球面 f/%.1f で %.3f、コマ %.0f° で %.3f、T 像面 %.0f° で %.3f"
