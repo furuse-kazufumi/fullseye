@@ -10,6 +10,35 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(contract)
+
+同じ入力を入口(`apply` / `run_pipeline` / `FullseyeEngine.run` / `run_cached` / `fullseye.Image` /
+`fullseye.Pipeline` / MCP `fullseye_apply` / MCP `fullseye_pipeline`)のどれに入れても、同じ拒否・同じ値になる。
+回帰の門は `tests/test_redteam_contract_2026_11_05.py`(8 入口の表と、各項目の再現)。
+
+- C1 `fullseye.Image(...).<op>()` / `fullseye.Pipeline([...]).run()`: registry(進化)op は `apply` / `run_pipeline` と同じ入口を通る。NaN を含む入力は拒否、uint8 は `/255` に変換して台帳に記録(strict では拒否)、ノブは数値で有限(`a="0.3"` は TypeError、`a=nan` は ValueError、0..1 の外は記録して切り詰め)、`Pipeline` は連続する registry 段の型連鎖を何も走らせる前に検査する(`["gaussian", "vol_gaussian"]` は ValueError)。以前は生の `op.fn` で、uint8 200 に gaussian が uint8 200 を返した。
+- C2 MCP `fullseye_pipeline`: CPU の段も `fullseye.apply(on_error="raise")` を通る(`fullseye_apply` と同じ)。uint8 のハンドル・範囲外のノブの段は失敗として返る(以前は生の `fn` で通った)。
+- C3 `FullseyeEngine(stages)` / `from_dict` / `load`: dict 段の未知のキー(`{"op": "threshold", "A": 0.9}`)、4 要素以上の段、数値でないノブ(`"0.9"`)は作るときに TypeError(以前は黙って捨てる・float 化)。`set_knobs` も同じ型の規則。
+- C4 `run_pipeline` の段: dict 形 `{"a": "0.9"}` / `(name, {"a": "0.9"})` の文字列ノブは TypeError(以前は float 化して通した)。bool は全形で `apply` と同じく 1.0 / 0.0(以前は tuple 形だけ拒否)。
+- C5 `FullseyeEngine.to_python` / `to_python_staged`: registry に無い op 名の段があれば ValueError で何も書き出さない。`# --ops` の注釈行は JSON でエスケープ(改行を含む名前で書き出したスクリプトに任意のコードが入った)。
+- C6 `FullseyeEngine.run_cached`: キャッシュの鍵に照合用テンプレートと fssystem の全パラメータが入る。入口の契約はキャッシュに当たっても毎回通る(uint8 の台帳記録、strict + `extra_checks="on"` の拒否)。劣化台帳に記録が残った段はキャッシュしない。兄弟: Studio の段キャッシュの文脈にもテンプレートと fssystem を入れた。
+- C7 `apply(template=...)`: テンプレートにも入口の契約。NaN / inf は方針に依らず拒否(`allow_nonfinite=True` が抜け道)、uint8 は `/255` で記録(`on_error="raise"` では拒否)、空・次元の検査。
+- C9 `validation_kit`: 3 次元の画像は `(H, W, 3)` / `(H, W, 4)` だけ受け、他は `KitError`(以前は最後の軸で平均)。RGBA は alpha を除いた 3 色の平均(以前は 4 チャネルの平均)。
+- C10 `from_jsonable` / `from_json` に `max_bytes` / `max_pixels`(既定 None = 上限なし)。MCP `fullseye_import_json` は `mcp_handle_max_bytes` / `mcp_stack_max_pixels` を渡し、宣言形がそれを超える封筒は確保の前に拒否する。
+- C11 n 項 `apply([...])`: 入力ごとに単入力と同じ `_guard_input`(空・次元・色軸・`extra_checks` の値域)。`on_error="raise"` で拒否、既定では記録。
+- MCP `fullseye_apply` は利用者の劣化台帳を消さない(`degraded` はこの呼び出し・このスレッドの記録だけ)。MCP の応答に NaN / inf を書かない: `write_message` は非有限を含む応答を同じ id の -32603 に置き換え、`fullseye_pipeline` の値は非有限を含むとき null にせず省く(値はハンドルから読む)。
+
+### 修正 — 敵対的検証 2026-11-05(contract)
+
+- C1 `unified._make_evolution_caller` が `api.apply` を呼ぶ。`Pipeline.run` は registry 段を `api._prepare_pipeline` + `api._pipeline_steps`(run_pipeline の本体)で走らせる。facade / 知覚 / 生の callable の段は自然シグネチャの関数なので従来どおり。
+- C2 registry 段は `executor["alias"]` で `fullseye.apply(..., template=...)`。n 項の段も同じ入口。
+- C3 / C4 / C13 段の読み方を `api._normalise_stage` / `api._stage_knob` の 1 本に(run_pipeline・FullseyeEngine・`engine.pipeline_states`)。`pipeline_states` は dict 段・`(name, {..})` 段で落ちていた。
+- C5 兄弟: `graphengine.FullseyeGraph.to_python` は全値を `%r` で書いており無害(確認のみ)。Studio の `export_python` は読み込み時に registry で検査済みの名前だけを持つ。
+- C6 入口は `api._pipeline_entry`(`_pipeline_steps` の entry と共有)。
+- C10 兄弟: 配列 sort の宣言形も上限で先に検査。`np.prod` の int64 桁あふれ(宣言 `[2**62+1, 4]` を 4 値と読んだ)を `math.prod` に。RLE は run の合計を確保の前に照合。
+- C12 n 項 `apply` が各入力の `fullseye.Image` を剥がす(非有限の検査より前)。
+- 探針で本物でなかったもの(変更なし): MCP `HandleStore._check_path`(`..`・根の兄弟の接頭辞・`\\?\` 拡張パス・ADS・末尾の点・根の中の junction で外を指す、の全部を拒否)、`_write_viewer`(言語・badge・タブ id は許可リスト、JSON は `</` をエスケープし表示は `esc()`)。
+
 ### 変更(Breaking)— `plenoptic_refocus_depth` の傾き↔距離の単位を直した(2026-11-04)
 
 - 像のずれを `slope × 角度ステップ × ピッチ` で出していた。次元から正しくは傾き × ピッチ / 角度ステップで、PoC のカメラでは 1/角度ステップ² ≈ 3000 倍小さく、測った傾きはどれも合焦距離(1.0 m)へ戻っていた。いまは復号の視点刻み(1 視点 = ピッチ/U ぶんの射出瞳)、射出瞳までの距離、Newton の式で変換する近軸の式。処方を順方向に光線追跡した視差と、理想レンズで相対 1e-6、三枚玉で 2e-4 以内で一致する(`tests/test_plenoptic.py`)。
