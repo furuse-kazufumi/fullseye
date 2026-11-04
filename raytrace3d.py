@@ -946,10 +946,12 @@ def noncoaxial_layout(system):
 
 
 def _euler_zyx(R):
-    """R = Rz(γ)·Ry(β)·Rx(α) の (α, β, γ) [度]。"""
-    b = math.asin(max(-1.0, min(1.0, -R[2, 0])))
-    a = math.atan2(R[2, 1], R[2, 2])
-    g = math.atan2(R[1, 0], R[0, 0])
+    """R = Rz(γ)·Ry(β)·Rx(α) の (α, β, γ) [度]。
+
+    ★2026-11-04(外部検証 G3 の兄弟): β = ±90° ちょうどで α と γ を両方失っていた。分解は
+    ``transforms._euler_zyx_from_R`` に一本化(ロックでは α = 0、γ に和・差を寄せる)。"""
+    import transforms
+    a, b, g = transforms._euler_zyx_from_R(np.asarray(R, dtype=float))
     return [math.degrees(a), math.degrees(b), math.degrees(g)]
 
 

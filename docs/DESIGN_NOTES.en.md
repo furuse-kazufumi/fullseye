@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 636 of 1621. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 639 of 1638. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -62,14 +62,16 @@ This repository records *why* things are the way they are in **comments in the s
 - **L2370** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
 - **L2401** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
 - **L2689** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2725** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L3057** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
-- **L3182** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L3186** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
-- **L3511** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L3515** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3637** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3647** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L2730** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L3062** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
+- **L3200** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F2): 単入力の apply / run_pipeline と PrecisionUnion の n-ary 経路は dtype 契約(_contract_dtype)を通るのに、密な配列の n-ary だけが通らず、uint8 の 32 + 32 が on_error="raise" でも例外も台帳記録も無く 1.0(正しくは 64/255)になっていた。入力ごとに同じ規則で。 畳み込みの核(_NARY_KERNEL_SECOND の第 2 入力)は画像でなく重みの表なので、型だけ float64 にする。
+- **L3216** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L3220** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
+- **L3340** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の 省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。 省いた位置の分だけ、その位置の既定値で埋める。
+- **L3548** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L3552** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L3674** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3684** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -183,6 +185,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L804** _(ja)_ — ★ dt が標本間隔を超えると模型は標本の間で区分線形になり、C_d と推力が別の値に化けるのに例外も NaN も出ない (30 fps の同じ軌跡で dt = 0.5 s にすると C_d 0.33 → 3.1、2026-10-23 の敵対的レビュー)。歩数の上限は ms で渡した t を止める。
 - **L965** _(ja)_ — ★ 残差が離散化の床にあるなら n·ln(RSS_b / RSS_t) は丸め屑の比を増幅するだけ(雑音ゼロの真値で +144、推力の推定値は 3e-14 m/s²)。
 
+## `balltrack.py`
+
+- **L413** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F5): 以前は軸 = 歪対称部 / |歪対称部| で、コマ間がちょうど 180° だと 0 / 0 = NaN の ω を 返した。回転の対数は camera.rotation_log(π の近くは対称部から軸)に寄せる。ちょうど π では ω と −ω の区別は原理的に付かない(どちらも同じ R)。
+
 ## `barcode1d.py`
 
 - **L847** _(ja)_ — ★走査の向きを当て直す(2026-11-04)。構造テンソルの向きはシンボルの外形(バーの端の 勾配)に引かれて 2〜6° ずれる(実測、モジュール 2〜4.5 px)。ずれた走査線は長い シンボルの途中でバーの上下の端から抜け、先頭の数桁だけが有効な ITF として読まれた (短読み、4800 通り中 53 件が conflict)。多数の文字列を読んだ走査線の「最初のバーの 縁」の点はバーに平行な 1 本の直線に乗るので、その向きから走査の向きを決め直して読み直す。 Refine the scan direction from the leading edges of the lines that read the majority text (they lie on a line parallel to the bars) and scan again.
@@ -200,6 +206,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `caltab.py`
 
 - **L256** — ★What this gate **does not catch**: errors in the intrinsic parameters for a single planar target (especially the fx/fy ratio). A single-plane homography places only two constraints on the intrinsics (Zhang 2000), so a wrong fy is mostly absorbed into the 6 DoF pose being solved here, and the residual can stay below the threshold. Measured 2026-09-05: even setting fy wrong from 500 -> 300 gives RMS 0.90 px on Linux/scipy 1.18 (0.14 px with the correct K). The same input becomes 6.39 px on Windows/old scipy, so **it "detects or not" purely by the difference in where the optimization converges**. If you want to verify the intrinsics, take 3 or more viewpoints or use a non-planar target. Where this works is inconsistencies that "cannot be absorbed by the pose" (wrong correspondences, a non-planar board).
+
+## `camera.py`
+
+- **L104** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F5): 角は arccos でなく atan2(sinθ, cosθ)(arccos は π の近くで桁落ちし、π−1e-9 で 角を 1e-8 外した)。π の近くの軸は対称部 (R+Rᵀ)/2 − cosθ I = (1−cosθ) a aᵀ の最大対角の列から取り、 向きは歪対称部 sinθ·a から取る(以前は向きを見ず、θ < π では逆向きの軸 = 別の回転を返しえた)。 ちょうど π では a と −a は同じ回転で、どちらを返しても rodrigues(·) は R に戻る。
 
 ## `carpath.py`
 
@@ -260,11 +270,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `engine.py`
 
-- **L190** _(ja)_ — ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
-- **L243** _(ja)_ — ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、 {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
-- **L274** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107): {"stages": None} が 0 段のエンジンになり、run が入力をそのまま 返していた(壊れた設定が「成功」)。[] は文書どおり恒等、None / 数値は設定の壊れ。
-- **L280** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
-- **L372** _(ja)_ — ★範囲外は断る(2026-09-20、GenSpark N40): --upto 9 / -1 が黙って全段 / 0 段になっていた
+- **L196** _(ja)_ — ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
+- **L249** _(ja)_ — ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、 {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
+- **L280** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107): {"stages": None} が 0 段のエンジンになり、run が入力をそのまま 返していた(壊れた設定が「成功」)。[] は文書どおり恒等、None / 数値は設定の壊れ。
+- **L286** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
+- **L378** _(ja)_ — ★範囲外は断る(2026-09-20、GenSpark N40): --upto 9 / -1 が黙って全段 / 0 段になっていた
+- **L430** — ★2026-11-04 external audit E4: each stage used to go through ``run_pipeline(prev, [st])`` on its own, so the chain-wide checks of :meth:`run` (sort chain, knobs, non-finite entry) never saw the whole pipeline -- ``otsu,invert`` ran here while ``run`` refuses it. Prepare the whole chain first (runs nothing), then resume stage by stage on the same runner Studio's stage cache uses (``entry`` only for the first stage).
 
 ## `evis_fullseye_bridge.py`
 
@@ -1476,6 +1487,22 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L80** _(ja)_ — ★2026-10-11: 平面上の点の λ3 は丸め屑(λ3/λ1 ~ 1e-17)。軸に沿った平面では 厳密に 0 で落ちるが、傾けた平面では屑が正になり「特徴の無い平面」から キーポイントが 203 個出ていた(回転不変の主張が崩れる)。床は λ1 に対する相対量で。
 
+## `featmatch.py`
+
+- **L752** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F3): 床 ``va <= 1e-12`` [座標²] は座標の単位に依存した(座標 1e-6 の 2 点は常に「退化」)。 退化 = 標本の点が座標の丸めの範囲で重なること(相対量)。広がり ref で割ってから倍率を取る。
+- **L780** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F3): 以前は ``< 1e-6 * (1.0 + |u|² + |v|²)`` で、定数 1.0 [px²] が座標の単位に依存した (座標 1e-6 の三角形は常に「一直線」)。外積と |u|²+|v|² は同じ単位なので比だけで判定する。
+- **L788** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F3): 以前は絶対の 1e-6 [px]。2 点の重なりは座標の大きさに対する相対量で判定する。
+
+## `fileio.py`
+
+- **L1260** — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
+
+## `fit_transform.py`
+
+- **L86** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F3): 以前は ``scale = D.sum() / (var + 1e-12)`` で、床 1e-12 [座標²] が座標の単位に 依存していた(座標 1 で倍率 1.999999999996、座標 1e-6 で 0.667、真値はどちらも 2)。倍率は 座標の単位に依らない量なので、両方の点群を src の広がり ``ref`` で割ってから比を取る (割った後の分散は >= 1/N、床は要らない)。``ref > 0`` は上の「全部 1 点」の検査が保証する。
+- **L137** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F3): 床 ``md > 1e-12`` は座標の単位に依存した(1e-13 の尺度の点は正規化されずに DLT へ)。 正規化は尺度を消すための操作なので、全部が 1 点に重なる(md == 0)ときだけ外す。
+- **L166** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F3): H[2,2] の床は単位の無い量で比べる。H[2,2] = Hn[2] · Ts[:, 2] で、どちらも正規化後の (単位の無い)ベクトルなので、その大きさの積に対する相対値が「原点が無限遠へ写る」の判定になる。
+
 ## `flyvision.py`
 
 - **L217** — ★ The cap is on the *product*, not on either factor, because the accident it prevents is the cross term: a modest 900-ommatidium eye and a modest 512x512 image are each unremarkable and together are 236M float64 = 1.9 GB.
@@ -1509,6 +1536,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L760** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
 - **L1267** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
 - **L1356** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+
+## `fullseye/evaluation/metrics.py`
+
+- **L342** — ★2026-11-04 external audit G2: ``_weights`` narrows *selected* in place under ``nan_policy="omit"`` (a NaN weight drops its element). a and b used to be taken before that, so ``ww[a & b]`` indexed with masks of different lengths (IndexError). Weights first.
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1650,6 +1681,11 @@ This repository records *why* things are the way they are in **comments in the s
 - **L151** _(ja)_ — ★2026-09-20(GenSpark 第 23 報 N92): 配列なしで呼ぶと空集合の pop(KeyError)/ 0-d の float() (TypeError)という内部の文が出ていた。
 - **L163** _(ja)_ — ★2026-10-11: 符号付きの幅を最大値(int16 = 32767)にしていて、skimage の peak_signal_noise_ratio(data_range = iinfo.max - iinfo.min = 65535)と 6.02 dB ずれた。 幅は dtype が取りうる全範囲。符号なしは max - 0 で従来と同じ。
 
+## `intensityreg.py`
+
+- **L411** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F7): history の各値は**更新前の** W の相関なので、反復の上限で抜けると history[-1] は返す W の相関ではない(報告 0.8242、返した変換の相関 0.9945 —— min_rho=0.9 で正しい 答えを拒否し、逆向きなら悪い答えを通しうる)。metric と min_rho の判定は返す W(最も細かい段の Wl)で 測り直した相関で行う。収束で抜けたときは W が更新されていないので history[-1] と同じ値。 history は従来どおり反復ごとの値(長さ = iterations)のまま。
+- **L1018** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F9): 以前は 4 群とも両端を含む [lo, hi] で、境界の値(同値の多い 場では全部)が隣の群にも数えられた(有効 576 画素で各群 576、合計 2304)。群は排他的に: [lo, hi) で、最後の群だけ最大値を含む [lo, hi]。全部同じ値なら最後の群に全部が入る。
+
 ## `lens_gpu.py`
 
 - **L879** _(ja)_ — ★float32 では 1e-10 mm に届かない(丸めが 1e-5 mm)。届かない判定だと毎回 20 反復して float64 より遅かった
@@ -1757,10 +1793,15 @@ This repository records *why* things are the way they are in **comments in the s
 ## `ocrclassic.py`
 
 - **L103** _(ja)_ — ★正直な開示: 係数 {1.0, 1.25, 1.5, 2.0, 2.5} と下の距離比 {1.05, 1.10, 1.15, 1.20} は、 試験とは別の乱数種(1000, 2000, 11)の開発用掃引で比べて選んだ(試験の乱数種では選んでいない)。 (当時の実装で)2.5 では字種外の '#' が単線書体で 30 回中 30 回誤読され、1.5 で 0〜3 回になった。 その後、行端の推定を中身に依らない規則にして型の外れ値を除いた結果、係数への依存は小さくなった (現行の試験では '#' と乱数の塊はどちらも 40/40 棄却)。 Reject factor applied to the per-blur-level 99th percentile of the within-class, within-band nearest-other-sample (weighted) distance. Honest disclosure: chosen among {1.0..2.5} with a development sweep on seeds disjoint from the test seeds (2.5 let '#' through in 30/30 cases for the stroke font in the implementation of that time; after the content-independent line-edge rule removed template outliers, the result depends little on the factor).
+- **L1283** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F8): 以前は ``d_own <= 1e-12`` なら他クラスの距離に関わらず margin = inf(拒否しない)で、別クラスも距離 0 の完全な同点が「A、margin inf」で通っていた。 比は定義どおり d_other / d_own、両方 0 は同点 = 1(min_margin_ratio >= 1 なので拒否)、 自クラスだけ 0 のときだけ inf。絶対の床 1e-12 も無くす(重みつき距離の単位に依存し、近い同点も隠した)。
 
 ## `octscan.py`
 
 - **L1238** _(ja)_ — ★窓の端で振幅が下り坂のところは、0 で埋めた外側との段差が「極大」に見える → 元の振幅で極大のものだけ
+
+## `odometry.py`
+
+- **L171** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F3): 以前は ``var > 1e-12`` [座標²] の床で、座標 1e-9 の軌跡は倍率 2 でも s = 1.0 を返した。 倍率は単位に依らない比なので、両方を src の広がり ref で割ってから取る(ref == 0 = 全部 1 点 のときだけ倍率は決まらず 1.0、従来どおり)。
 
 ## `op_probe.py`
 

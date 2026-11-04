@@ -101,20 +101,25 @@ def rotation_log(R) -> np.ndarray:
     R = np.asarray(R, np.float64)
     if R.shape != (3, 3):
         raise ValueError("R must be 3x3")
-    cos = np.clip((np.trace(R) - 1.0) / 2.0, -1.0, 1.0)
-    theta = float(np.arccos(cos))
+    # ★2026-11-04(外部監査 v0.9.0 F5): 角は arccos でなく atan2(sinθ, cosθ)(arccos は π の近くで桁落ちし、π−1e-9 で
+    #   角を 1e-8 外した)。π の近くの軸は対称部 (R+Rᵀ)/2 − cosθ I = (1−cosθ) a aᵀ の最大対角の列から取り、
+    #   向きは歪対称部 sinθ·a から取る(以前は向きを見ず、θ < π では逆向きの軸 = 別の回転を返しえた)。
+    #   ちょうど π では a と −a は同じ回転で、どちらを返しても rodrigues(·) は R に戻る。
+    sv = 0.5 * np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])   # = sinθ · a
+    s = float(np.linalg.norm(sv))
+    c = float((np.trace(R) - 1.0) / 2.0)
+    theta = float(np.arctan2(s, c))
     if theta < 1e-12:
         return np.zeros(3)
-    if np.pi - theta < 1e-6:
-        # near 180 deg: axis from the largest diagonal of R + I (numerically stable)
-        A = (R + np.eye(3)) / 2.0
-        k = np.sqrt(np.clip(np.diag(A), 0.0, None))
-        i = int(np.argmax(k))
-        k = A[:, i] / (k[i] if k[i] > 1e-12 else 1.0)
-        k = k / max(np.linalg.norm(k), 1e-12)
-        return theta * k
-    axis = np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])
-    return theta * axis / (2.0 * np.sin(theta))
+    if np.pi - theta >= 1e-3:
+        return theta * sv / s
+    aa = (0.5 * (R + R.T) - c * np.eye(3)) / (1.0 - c)                              # = a aᵀ
+    i = int(np.argmax(np.diag(aa)))
+    a = aa[:, i] / np.sqrt(max(float(aa[i, i]), 1e-300))
+    a = a / np.linalg.norm(a)
+    if float(a @ sv) < 0.0:
+        a = -a
+    return theta * a
 
 
 def _project_camframe(Xc: np.ndarray, K: np.ndarray):
