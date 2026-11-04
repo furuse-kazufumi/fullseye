@@ -67,6 +67,7 @@ def test_ome_chapter_refuses_half_of_a_multi_file_set_and_the_reason_is_true():
     g = poc.Gates()
     res = poc.chapter_ome(g)
     assert not g.failed(), g.failed()
+    assert len(res["refusals"]) == 2           # C0 と C1 の 2 本(空の集合で通さない)
     assert all(msg and "found 1" in msg for msg in res["refusals"].values())
     assert res["zero_filled"] and res["own_c1_max"] > 0
 

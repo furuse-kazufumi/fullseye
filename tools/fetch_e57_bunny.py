@@ -26,6 +26,9 @@ sys.path.insert(0, str(ROOT))
 
 import realdata  # noqa: E402
 
+#: 取得元(libE57 の公開試験データ、SourceForge の E57Example-data)。``%s`` にファイル名が入る。
+E57_BUNNY_URL = "https://sourceforge.net/projects/e57-3d-imgfmt/files/E57Example-data/%s/download"
+
 
 def _sha256(path: Path) -> str:
     h = hashlib.sha256()
@@ -48,7 +51,7 @@ def fetch(dest: Path | None = None) -> Path:
                 continue
             raise SystemExit("%s が台帳と違う中身で在る。消してから取り直す" % target)
         part = target.with_name(target.name + ".part")
-        request = urllib.request.Request(realdata.E57_BUNNY_URL % name,
+        request = urllib.request.Request(E57_BUNNY_URL % name,
                                          headers={"User-Agent": "fullseye-realdata/1"})
         with urllib.request.urlopen(request, timeout=120) as resp, part.open("wb") as out:
             if not resp.geturl().startswith("https://"):

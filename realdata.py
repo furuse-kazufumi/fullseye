@@ -268,8 +268,8 @@ def sample_photo_credit(names) -> str:
 # ---------------------------------------------------------------------------
 # libE57 の公開試験点群(E57 の読み手の採点用。再配布の条件が書かれていないので同梱しない)
 # ---------------------------------------------------------------------------
-#: 取得元(SourceForge の e57-3d-imgfmt 計画の E57Example-data)。``%s`` にファイル名が入る。
-E57_BUNNY_URL = "https://sourceforge.net/projects/e57-3d-imgfmt/files/E57Example-data/%s/download"
+#: 取得元の URL は配布物に入れず、取得道具 ``tools/fetch_e57_bunny.py`` の ``E57_BUNNY_URL`` に置く
+#: (配布されるのは照合用のバイト数と SHA-256 だけ)。
 #: 同じ点(Stanford bunny 由来の 30,571 点)を 6 つの数値型で格納した E57 の型名。
 E57_BUNNY_KINDS = ("Double", "Float", "Int32", "Int24", "Int21", "Int19")
 #: ファイル名 → (バイト数, SHA-256)。2026-11-04 に上の URL から取得した値。``bunnyData.pts`` は
