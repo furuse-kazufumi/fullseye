@@ -1519,11 +1519,26 @@ def _reg_open(v, a, b):
 
 ``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。細い突起や小さな孤立領域を除去する。構造要素は scipy 既定の十字形。"""
     return ndimage.binary_opening(_bin(v), iterations=_it(a)).astype(np.float64)
+def _binary_closing_unbounded(m, iterations):
+    """十字の構造要素を ``iterations`` 回 —— 画像の外へ続く平面の上の closing を画像に切り戻す(外は背景)。
+
+    ``binary_closing`` の ``border_value=0`` は縁の前景を削り(拡大性が破れる)、``border_value=1`` は画像の外を
+    前景とみなして縁の近くに楔を生やす。余白 0 を付けて閉じ、切り戻せばどちらも起きない
+    (敵対的検証 2026-11-05 第 2 巡 P3)。
+    """
+    it = int(iterations)
+    pad = it + 1
+    mp = np.pad(np.asarray(m, bool), pad, mode="constant", constant_values=False)
+    return ndimage.binary_closing(mp, iterations=it)[pad:-pad, pad:-pad]
+
+
 def _reg_close(v, a, b):
     """領域（region）の二値クロージング（膨張してから侵食）。HALCON の ``closing_circle``（Close a region with a circular structuring element.）に相当。
 
-``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。細い切れ込みや小さな穴を埋める。``border_value=1`` を指定しているため画像端は前景として扱われる。"""
-    return ndimage.binary_closing(_bin(v), iterations=_it(a), border_value=1).astype(np.float64)
+``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。細い切れ込みや小さな穴を埋める。
+
+**画像の縁**: 平面は画像の外へ続き、外は背景とみなす（余白 0 を付けて閉じてから切り戻す）。closing は拡大的（入力の前景を削らない）で、縁の近くに新しい前景も作らない。2026-11-05（敵対的検証 第 2 巡 P3）までは ``border_value=1`` で画像の外を前景とみなしており、縁の近くの孤立画素から角の楔が生えていた（20×20 の (1,1) の 1 画素が a=1 で 10 画素に）。"""
+    return _binary_closing_unbounded(_bin(v), _it(a)).astype(np.float64)
 def _fill_holes(v, a, b):
     """領域内の穴埋め。HALCON の ``fill_up``（Fill up holes in regions.）に相当。
 
@@ -1676,8 +1691,8 @@ def _region_boundary(v, a, b):
 def _convex_fill(v, a, b):
     """凸包に近い形へ穴・くびれを埋める（クロージングによる近似）。HALCON の ``shape_trans``（Transform the shape of a region.）の凸包変換に相当することを意図しているが、実装は反復回数の多いクロージングであり、厳密な凸包計算ではない（近似）。
 
-``a`` が反復回数を ``3〜6``（``_it(a)+2``）に振る。``b`` は未使用。``border_value=1`` の二値クロージングを掛けるだけなので、反復回数を超える大きさのくびれ・穴は埋まらない（真の凸包なら必ず埋まる）。"""
-    return ndimage.binary_closing(_bin(v), iterations=_it(a) + 2, border_value=1).astype(np.float64)
+``a`` が反復回数を ``3〜6``（``_it(a)+2``）に振る。``b`` は未使用。二値クロージングを掛けるだけなので、反復回数を超える大きさのくびれ・穴は埋まらない（真の凸包なら必ず埋まる）。クロージングは画像の外へ続く平面の上で行って切り戻す（2026-11-05 敵対的検証 第 2 巡 P3 までは ``border_value=1`` で、画像の外を前景とみなして縁の近くに楔を生やしていた）。"""
+    return _binary_closing_unbounded(_bin(v), _it(a) + 2).astype(np.float64)
 
 
 # --- image -> contour (XLD) -------------------------------------------------- #

@@ -132,3 +132,57 @@ def test_p2_compactness_is_halcon_max_one_and_the_help_says_so():
     doc = ops._BY_NAME["compactness"].doc
     assert "max(1, 周囲長²" in doc
     assert "ここでは切らない。" not in doc
+
+
+# --------------------------------------------------------------------------------------------- #
+# P3: 二値 closing は拡大的で、画像の外へ続く平面の上の closing を切り戻したものと同じ
+# --------------------------------------------------------------------------------------------- #
+def _border_probe():
+    X = np.zeros((40, 48))
+    X[0:15, 0:20] = 1          # 左上の角に接する矩形
+    X[25:40, 30:48] = 1        # 右下の角に接する矩形
+    X[18:22, 10:14] = 1
+    X[5:8, 30:33] = 1
+    X[30, 5] = 1               # 孤立画素
+    X[1, 40] = 1               # 縁の近くの孤立画素(border_value=1 だと角の楔が生える)
+    return X
+
+
+CLOSINGS = ["closing_circle", "closing_rectangle1", "closing_golay", "hx_closing", "reg_close", "convex_fill"]
+
+
+@pytest.mark.parametrize("name", CLOSINGS)
+@pytest.mark.parametrize("a", [0.0, 0.5, 1.0])
+def test_p3_binary_closing_is_extensive_and_equals_the_unbounded_plane(name, a):
+    X = _border_probe()
+    y = ap(X, name, a) > 0.5
+    assert not ((X > 0.5) & ~y).any(), "closing は入力の前景を削らない(X ⊆ φ(X))"
+    # 真値: 余白 24 の大きな画像の上で同じ op を当て、元の窓に切り戻したもの(縁はもう縁でない)
+    P = 24
+    big = np.pad(X, P)
+    ref = ap(big, name, a)[P:-P, P:-P] > 0.5
+    assert np.array_equal(y, ref)
+    assert np.array_equal(ap(y, name, a) > 0.5, y), "冪等"
+
+
+def test_p3_reg_close_does_not_grow_a_wedge_from_a_lone_pixel_near_the_corner():
+    X = np.zeros((20, 20))
+    X[1, 1] = 1
+    for a in (0.0, 0.5, 1.0):
+        assert int((ap(X, "reg_close", a) > 0.5).sum()) == 1
+
+
+def test_p3_close_edges_keeps_edges_on_the_image_border():
+    ones = np.ones((20, 20))
+    for b in (0.0, 0.5, 1.0):
+        assert int((ap(ones, "hx_close_edges", 0.5, b) > 0.5).sum()) == 400
+    assert int((ap(ones, "hx_close_edges_length", 0.5, 0.5) > 0.5).sum()) == 400
+
+
+def test_p3_close_edges_length_counts_diagonal_lines_as_one_piece():
+    """1 画素幅の斜め線(長さ 20)は 8 近傍で 1 成分。min_len = 2+int(b*20) = 12 で消えない。"""
+    v = np.zeros((40, 40))
+    for i in range(20):
+        v[10 + i, 10 + i] = 1.0
+    y = ap(v, "hx_close_edges_length", 0.5, 0.5)
+    assert int((y > 0.5).sum()) >= 20

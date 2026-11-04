@@ -13,6 +13,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(imageops)
 
 - P1 前景の連結成分を 8 連結に(HALCON の `connection` の既定。`count_obj` は 2026-08-30 に直した兄弟、KNOWN_ISSUES §1): `select_largest` / `select_shape_std` / `select_shape` / `remove_small` / `r2_sort_region` / `r3_select_region_point` / `classify_shape`、最大の成分を読む領域特徴の全部(`backends_auto._largest_label` を通る `contlength` / `diameter_region` / `convexity` / `orientation_region` / `elliptic_axis` / `eccentricity` / `compactness` / `circularity` / `roundness` / `rectangularity` / モーメント系ほか)、`r2_split_skeleton_lines` の線分の数え上げ、`hx_close_edges_length` のラベル付け。torch の経路(`accel_label`)も前景を 8 連結に揃えた(背景の成分は 4 連結のまま = 前景 8 / 背景 4 の双対)。値が変わる: 斜めにだけ接する塊を持つ入力(対角に接する 2 つの 20×20 の正方形で `select_largest` 400 → 800 画素、`contlength` 76 → 152 = skimage の 8 連結 regionprops と一致)。
+- P3 二値 closing を「画像の外へ続く平面の上で閉じて切り戻す」(外は背景)に: `closing_circle` / `closing_rectangle1` / `closing_golay` / `hx_closing` / `hx_close_edges` / `hx_close_edges_length` は画像の外を 0 として収縮し、縁に接する前景を構造要素の半径ぶん削っていた(closing の拡大性違反、探針で 66〜240 画素)。`reg_close` / `convex_fill` は以前 `border_value=1` に直してあったが、それは画像の外を前景とみなすので、縁の近くの孤立画素から角の楔が生えていた(20×20 の (1,1) の 1 画素が `reg_close` a=1 で 10 画素)。いまはどれも、余白 24 の画像で同じ op を当てて切り戻したものと画素まで一致する。兄弟: `hx_close_edges_length` は全面が前景のとき背景の代わりに先頭の前景の成分を捨てて全面 0 を返していた(`np.nonzero(sizes >= n)[0][1:]`)ので直した。値が変わる: 縁に接する(または縁の近くの)前景を持つ入力。
 
 ### 修正 — 敵対的検証 2026-11-05 第 2 巡(imageops)
 

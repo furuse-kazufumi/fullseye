@@ -1037,7 +1037,12 @@ def _sh_binmorph(p):
         if op == "opening":
             return ndimage.binary_opening(m, fp).astype(np.float64)
         if op == "closing":
-            return ndimage.binary_closing(m, fp).astype(np.float64)
+            # ★closing は拡大的(X ⊆ φ(X))。``binary_closing`` は画像の外を 0 として収縮するので、縁に接する
+            # 前景が構造要素の半径だけ削れていた(closing_circle で 66〜240 画素)。2026-11-05(敵対的検証 第 2 巡 P3): 画像の外へ続く平面の上で閉じてから画像に切り戻す(余白 0 を付けて ``binary_closing`` → 切り出し)。
+            # ``border_value=1`` にすると逆に、縁の近くの孤立画素から角の楔が生える(画像の外を前景とみなす)。
+            pad = max(fp.shape) // 2 + 1
+            mp = np.pad(m, pad, mode="constant", constant_values=False)
+            return ndimage.binary_closing(mp, fp)[pad:-pad, pad:-pad].astype(np.float64)
         if op == "erosion_it":
             return ndimage.binary_erosion(m, iterations=it).astype(np.float64)
         if op == "dilation_it":
