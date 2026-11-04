@@ -12,32 +12,29 @@
 等方点(isotropic point)**という、いちばん応力が小さい所」。
 
 【グラウンドトゥルース(自分で仕込んだ真値)】
-円板を直径方向に圧縮したときの平面応力場には**閉形式**がある(Frocht):
+円板を直径方向に圧縮したときの平面応力場には**閉形式**がある(Hondros / Frocht)。
+応力場から偏光像までは**光弾性の族の op**(``photoelastic.py``)で組む:
 
-    σxx = -(2P/πh)[ x²(R-y)/r1⁴ + x²(R+y)/r2⁴ - 1/(2R) ]
-    σyy = -(2P/πh)[ (R-y)³/r1⁴ + (R+y)³/r2⁴ - 1/(2R) ]
-    τxy =  (2P/πh)[ x(R-y)²/r1⁴ - x(R+y)²/r2⁴ ]
+    brazilian_disc_stress → principal_stress → photoelastic_retardation
+      → polariscope_intensity(暗視野・明視野・平面偏光)
+      → photoelastic_polarization_images(6 強度)→ photoelastic_phase_estimate
 
-主応力差 σ1-σ2 = √((σxx-σyy)² + 4τxy²)、等傾角 θ = ½·atan2(2τxy, σxx-σyy)。
-応力光学則 **N = h(σ1-σ2)/fσ**(N = 縞次数)で位相差 δ = 2πN。
-
-偏光系は**フルセイの op で組む**(`mueller_element` + `mueller_apply`)。
-教科書の暗視野円偏光ポラリスコープ I = sin²(δ/2) と一致するかを 1 節で
-確かめてから使う —— 合成器も測定器も同じ人が書いたときに効く唯一の検算。
+応力光学則は N = h(σ1-σ2)/fσ(N = 縞次数)、位相差 δ = 2πN。
+族の op は 1 節で ``mueller_element`` の素子を 1 枚ずつ並べた鎖(別の実装)と
+突き合わせてから使う。旧版(2026-09-06、応力場も位相子の場も手書き)の計算は
+``tests/test_poc_photoelasticity_ops.py`` に独立な参照として残し、値の一致を門にしてある。
 
 材料: エポキシ相当(fσ = 10.7 N/mm/縞)、円板 φ50 mm × 厚 6 mm、荷重 500 N。
 中心の主応力差は 8P/(πDh) = 4.24 MPa、縞次数 2.38。
 
 【節立て】
- 1) ★検算 —— (a) op の偏光系が理論式と一致するか (b) 応力場が力の釣り合いを満たすか
+ 1) ★検算 —— (a) Mueller の鎖が教科書式と、族の偏光像が鎖と一致するか (b) 応力場が力の釣り合いを満たすか
  2) ★ゼロ点 —— 「一様応力 P/(Dh) と答える」推定器に勝てるか
  3) 暗視野 1 枚から縞次数を数える —— 整数の縞しか読めない
- 4) ★位相シフト(6 段)—— δ と θ を分ける
+ 4) ★位相シフト —— δ と θ を分ける
  5) ★★位相の巻き —— 壊れるのは応力が大きい所ではなく**等方点**
  6) 雑音と 8 bit 量子化
  7) 所見
-
-【この PoC で分かった fullseye 側の穴 → 末尾の「所見」節】
 """
 from __future__ import annotations
 
@@ -50,147 +47,148 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
+import photoelastic as pe                                        # noqa: E402
 from fullseye.evaluation import save_video as save_evaluation_video  # noqa: E402
 
-# --- 試験片と光学系の諸元 ---------------------------------------------------- #
+# --- 試験片と光学系の諸元(表示は mm・MPa、op へは SI で渡す)------------------ #
 R_MM = 25.0             # 円板の半径 [mm]
 H_MM = 6.0              # 厚さ [mm]
 P_N = 500.0             # 荷重 [N]
 F_SIGMA = 10.7          # 材料の縞値 [N/(mm·縞)] —— エポキシの実測値の並び
+LAMBDA_M = 5.5e-7       # 波長 [m]。fσ はこの波長での値(δ は fσ だけで決まる)
+C_PA = LAMBDA_M / (F_SIGMA * 1e3)   # 応力光学係数 [Pa⁻¹] = λ/fσ(5.1e-11、樹脂の桁)
 NPIX = 257              # 奇数にして中心を画素に乗せる
 PX_MM = 2.0 * R_MM / (NPIX - 1)
 
-_YY, _XX = np.mgrid[0:NPIX, 0:NPIX].astype(np.float64)
-X_MM = (_XX - (NPIX - 1) / 2.0) * PX_MM
-Y_MM = ((NPIX - 1) / 2.0 - _YY) * PX_MM
-# 荷重点 (0, ±R) では応力が発散する。実験でも接触部は読まないので、
-# 評価は半径 0.9R までに限る(それでも縞次数は 8 近くまで出る)。
-IN_DISC = X_MM ** 2 + Y_MM ** 2 <= (R_MM * 0.90) ** 2
 
+def fields(npix=NPIX):
+    """円板の応力場 → 主応力差・等傾角・位相差(全部 op)。返りは表示単位の dict。
 
-def disc_stress(x, y, p=P_N, r=R_MM, h=H_MM):
-    """直径圧縮された円板の平面応力(閉形式)。返りは ``(sxx, syy, txy)`` [MPa]。
-
-    荷重は y 軸方向、接触点は ``(0, ±r)``。単位は N と mm なので応力は N/mm² = MPa。
+    ``dsig`` [MPa] = σ1-σ2、``theta`` [rad] = σ1 の向き(x 軸から反時計回り)、
+    ``delta`` [rad]、``order`` = 縞次数、``in_disc`` = 半径 0.9R の内側
+    (荷重点 (0, ±R) では応力が発散する。実験でも接触部は読まないので評価はここまで。
+    それでも縞次数は 12 まで出る)。
     """
-    r1sq = x ** 2 + (r - y) ** 2
-    r2sq = x ** 2 + (r + y) ** 2
-    r1sq = np.maximum(r1sq, 1e-9)
-    r2sq = np.maximum(r2sq, 1e-9)
-    k = 2.0 * p / (np.pi * h)
-    sxx = -k * (x ** 2 * (r - y) / r1sq ** 2 + x ** 2 * (r + y) / r2sq ** 2 - 1.0 / (2 * r))
-    syy = -k * ((r - y) ** 3 / r1sq ** 2 + (r + y) ** 3 / r2sq ** 2 - 1.0 / (2 * r))
-    txy = k * (x * (r - y) ** 2 / r1sq ** 2 - x * (r + y) ** 2 / r2sq ** 2)
-    return sxx, syy, txy
+    disc = pe.brazilian_disc_stress(radius_m=R_MM * 1e-3, thickness_m=H_MM * 1e-3,
+                                    load_n=P_N, size=npix)
+    ps = pe.principal_stress(disc["sxx"], disc["syy"], disc["txy"])
+    ret = pe.photoelastic_retardation(ps["difference"], H_MM * 1e-3, C_PA, LAMBDA_M)
+    in_disc = np.hypot(disc["x"], disc["y"]) <= R_MM * 1e-3 * 0.90
+    return {"dsig": ps["difference"] / 1e6, "theta": np.deg2rad(ps["angle_deg"]),
+            "angle_deg": ps["angle_deg"], "delta": ret["delta_rad"], "order": ret["fringe_order"],
+            "in_disc": in_disc, "disc": disc, "ret": ret}
 
 
-def principal_difference(sxx, syy, txy):
-    """主応力差 σ1-σ2 と等傾角 θ [rad]。"""
-    d = sxx - syy
-    return np.sqrt(d * d + 4.0 * txy * txy), 0.5 * np.arctan2(2.0 * txy, d)
+def build_fields():
+    """``(σ1-σ2 [MPa], θ [rad], δ [rad])`` —— ViEW2026 の掃引ビューア(tools/)もこれを呼ぶ。"""
+    f = fields()
+    return f["dsig"], f["theta"], f["delta"]
 
 
-# --- 偏光系(fullseye の op で組む)------------------------------------------- #
-def polariscope_matrices(analyser_deg):
-    """暗視野/明視野の円偏光ポラリスコープを 4x4 Mueller の並びで返す。
+_F = fields()
+IN_DISC = _F["in_disc"]
 
-    P(0°) → QWP(45°) → 試料 → QWP(-45°) → A(analyser)。試料だけが画素ごとに
-    変わるので、前後は定数行列としてまとめておける。
+
+def specimen_frames(delta, theta):
+    """円偏光照明の試料を 6 強度の偏光計で撮った像 ``(6, H, W)``(0/45/90/135/右/左)。
+
+    エポキシは C > 0 なので σ1 が**遅相軸**。op の位相子の角は進相軸なので θ + 90° を渡す
+    (``photoelastic_retardation`` の docstring の規約)。
     """
-    q1 = np.asarray(fs.mueller_element("quarter_wave", 45.0))
-    q2 = np.asarray(fs.mueller_element("quarter_wave", -45.0))
-    an = np.asarray(fs.mueller_element("polarizer", analyser_deg))
-    s_in = np.asarray(fs.mueller_apply(q1, np.array([1.0, 1.0, 0.0, 0.0])))
-    return s_in, an @ q2
+    return pe.photoelastic_polarization_images(delta, np.rad2deg(theta) + 90.0, "stokes6")
 
 
-def _retarder_stack(delta, theta):
-    """画素ごとの位相子 Mueller を (H, W, 4, 4) で作る。
-
-    ``fs.mueller_element`` は 1 枚ぶん(スカラーの δ と θ)しか作らないので、
-    画素ごとに変わる位相子はここで閉形式から組む。**組んだあとは
-    ``fs.mueller_apply`` がそのまま (H,W,4,4) x (4,) を通す**
-    (2026-09-06 に broadcast 対応。この PoC が掘り当てた穴)。
-    """
-    c2, s2 = np.cos(2 * theta), np.sin(2 * theta)
-    cd, sd = np.cos(delta), np.sin(delta)
-    m = np.zeros(delta.shape + (4, 4))
-    m[..., 0, 0] = 1.0
-    m[..., 1, 1] = c2 * c2 + s2 * s2 * cd
-    m[..., 1, 2] = c2 * s2 * (1.0 - cd)
-    m[..., 1, 3] = -s2 * sd
-    m[..., 2, 1] = m[..., 1, 2]
-    m[..., 2, 2] = s2 * s2 + c2 * c2 * cd
-    m[..., 2, 3] = c2 * sd
-    m[..., 3, 1] = s2 * sd
-    m[..., 3, 2] = -c2 * sd
-    m[..., 3, 3] = cd
-    return m
+def stokes_from_frames(frames):
+    """6 強度 → 試料を出た Stokes ``(S0, S1, S2, S3)``。偏光計で測れるのはこの 4 つだけ。"""
+    i0, i45, i90, i135, ir, il = frames
+    return i0 + i90, i0 - i90, i45 - i135, ir - il
 
 
 def polariscope_image(delta, theta, analyser_deg=90.0):
-    """ポラリスコープの強度画像。"""
-    s_in, post = polariscope_matrices(analyser_deg)
-    s = fs.mueller_apply(_retarder_stack(delta, theta), s_in)
+    """円偏光ポラリスコープ P(0°)→QWP(45°)→試料→QWP(-45°)→A(analyser) の強度。
+
+    検光子 90° が暗視野(= ``polariscope_intensity(..., "circular_dark")``)、0° が明視野。
+    途中の角度は族の op に無いので、試料を出た Stokes(:func:`specimen_frames`)に
+    後段の 2 素子を ``mueller_element`` / ``mueller_apply`` で掛ける(ViEW2026 の掃引用)。
+    """
+    s = np.stack(stokes_from_frames(specimen_frames(delta, theta)), axis=-1)
+    post = (np.asarray(fs.mueller_element("polarizer", analyser_deg))
+            @ np.asarray(fs.mueller_element("quarter_wave", -45.0)))
     return np.asarray(fs.mueller_apply(post, s))[..., 0]
 
 
-def plane_polariscope(delta, theta, pol_deg=0.0):
-    """平面(直線)偏光ポラリスコープ、直交配置。等傾線と等色線が混ざる。"""
-    b = np.deg2rad(pol_deg)
-    return np.sin(2.0 * (theta - b)) ** 2 * np.sin(delta / 2.0) ** 2
+def to_mpa(delta_rad):
+    """位相差 [rad] → 主応力差 [MPa](縞次数 = waves、N = h(σ1-σ2)/fσ)。"""
+    return F_SIGMA * pe.retardation_convert(delta_rad, "rad", "waves") / H_MM
 
 
 # =========================================================================== #
 def section1_check():
     print("=" * 78)
-    print("1) ★検算 —— 偏光系の op と、応力場そのもの")
+    print("1) ★検算 —— 族の偏光像と、応力場そのもの")
     print("=" * 78)
-    # (a) fullseye の Mueller op が教科書式と一致するか。
-    s_in, post = polariscope_matrices(90.0)
-    worst = 0.0
-    for d_deg in range(0, 361, 15):
-        for th_deg in (0.0, 13.0, 30.0, 45.0, 71.0):
-            m = np.asarray(fs.mueller_element("retarder", th_deg, d_deg))
-            i_op = float((post @ (m @ s_in))[0])
-            i_th = float(np.sin(np.deg2rad(d_deg) / 2.0) ** 2)
-            worst = max(worst, abs(i_op - i_th))
-    print("  (a) `mueller_element` + `mueller_apply` で組んだ暗視野円偏光系 vs")
-    print("      教科書式 I = sin²(δ/2): 125 通りの最大差 %.3e" % worst)
-    print("      → 一致。**しかも θ に依らない**(円偏光系の要件)ことも同時に確認。")
-    # ★所見を固定する: これは fullseye の Mueller op に対する**厳密な**検算で、
-    #   δ を 15 度刻みで一周・θ を 5 通り振っても機械精度で一致する(実測 2.2e-16)。
+    # (a) 族の op(閉形式)と、mueller_element の素子を 1 枚ずつ並べた鎖(optics 側の別実装)。
+    q1 = np.asarray(fs.mueller_element("quarter_wave", 45.0))
+    post = (np.asarray(fs.mueller_element("polarizer", 90.0))
+            @ np.asarray(fs.mueller_element("quarter_wave", -45.0)))
+    s_in = np.asarray(fs.mueller_apply(q1, np.array([1.0, 1.0, 0.0, 0.0])))
+    d_deg = np.arange(0.0, 361.0, 15.0)
+    th_deg = np.array([0.0, 13.0, 30.0, 45.0, 71.0])
+    dd, tt = np.meshgrid(np.deg2rad(d_deg), th_deg, indexing="ij")     # δ [rad] × θ [deg]
+    i_op = pe.polariscope_intensity(dd, tt, "circular_dark")
+    frames = pe.photoelastic_polarization_images(dd, tt + 90.0, "stokes6")
+    worst_t = worst_i = worst_s = 0.0
+    for a in range(dd.shape[0]):
+        for b in range(dd.shape[1]):
+            # 暗視野は進相軸の取り方に依らない。教科書式との照合は初版と同じ角(θ)のまま、
+            # 族の op との照合は op の規約(進相軸 = σ1 + 90°)で組む。
+            i_text = float(np.sin(np.deg2rad(d_deg[a]) / 2.0) ** 2)
+            m0 = np.asarray(fs.mueller_element("retarder", th_deg[b], d_deg[a]))
+            worst_t = max(worst_t, abs(float((post @ (m0 @ s_in))[0]) - i_text))
+            m = np.asarray(fs.mueller_element("retarder", th_deg[b] + 90.0, d_deg[a]))
+            s = m @ s_in
+            worst_i = max(worst_i, abs(float((post @ s)[0]) - float(i_op[a, b])))
+            got = np.array([f[a, b] for f in stokes_from_frames(frames)])
+            worst_s = max(worst_s, float(np.max(np.abs(got - s))))
+    n_case = dd.size
+    print("  (a) mueller_element の鎖(暗視野円偏光)vs 教科書式 I = sin²(δ/2)      :"
+          " %d 通りの最大差 %.3e" % (n_case, worst_t))
+    print("      `polariscope_intensity`(暗視野円偏光)vs mueller_element の鎖:"
+          " %d 通りの最大差 %.3e" % (n_case, worst_i))
+    print("      `photoelastic_polarization_images` の Stokes vs 同じ鎖     :"
+          " %d 通りの最大差 %.3e" % (n_case, worst_s))
+    print("      → 一致。**しかも暗視野は θ に依らない**(円偏光系の要件)ことも同時に確認。")
+    # ★所見を固定する: δ を 15 度刻みで一周・θ を 5 通り振っても機械精度で一致する。
+    #   族の op(閉形式)と optics の素子の鎖は別の実装なので、ここは自己一致ではない。
     #   ここが緩んだら 3 節以降で測っているのは「読み取り手順」ではなく op のバグ。
-    assert worst < 1e-12, "Mueller 系が教科書式から外れた: %.3e" % worst
+    assert n_case == 125
+    assert worst_t < 1e-12 and worst_i < 1e-12 and worst_s < 1e-12, (worst_t, worst_i, worst_s)
 
     # (b) 応力場が力の釣り合いを満たすか(水平直径上の σyy を積分すると -P/h)。
-    n = 20001
-    x = np.linspace(-R_MM * (1 - 1e-9), R_MM * (1 - 1e-9), n)
-    _sxx, syy, _txy = disc_stress(x, np.zeros_like(x))
-    load = np.trapezoid(syy, x) * H_MM
+    r_m, h_m = R_MM * 1e-3, H_MM * 1e-3
+    x = np.linspace(-r_m * (1 - 1e-9), r_m * (1 - 1e-9), 20001)
+    on_line = pe.brazilian_disc_stress(r_m, h_m, P_N, x=x, y=np.zeros_like(x))
+    load = np.trapezoid(on_line["syy"], x) * h_m
     print()
     print("  (b) 水平直径上の σyy を積分した力: %.3f N(真値 -%.1f N、誤差 %.3f %%)"
           % (load, P_N, 100 * abs(load / (-P_N) - 1)))
-    sxx0, syy0, txy0 = disc_stress(np.array([0.0]), np.array([0.0]))
-    d0, _ = principal_difference(sxx0, syy0, txy0)
+    c = (NPIX - 1) // 2
+    d0 = float(_F["dsig"][c, c])
     closed = 8 * P_N / (np.pi * 2 * R_MM * H_MM)
-    n_centre = H_MM * float(d0[0]) / F_SIGMA
-    print("      中心の主応力差 %.4f MPa(閉形式 8P/(πDh) = %.4f)" % (d0[0], closed))
-    print("      中心の縞次数 N = h(σ1-σ2)/fσ = %.3f" % n_centre)
+    n_centre = float(_F["order"][c, c])
+    fv = _F["ret"]["fringe_value_n_per_m"]
+    print("      中心の主応力差 %.4f MPa(閉形式 8P/(πDh) = %.4f)" % (d0, closed))
+    print("      中心の縞次数 N = h(σ1-σ2)/fσ = %.3f(材料縞値 λ/C = %.1f N/m を op が返す)"
+          % (n_centre, fv))
     print()
     print("  → ここまで近似ゼロ。以降のずれは全部『読み取り手順』のもの。")
     # ★応力場そのものの検算も固定する。積分した力が荷重に一致しなければ
     #   「真値」ではないし、中心値は閉形式 8P/(πDh) と代数的に同じはず。
     assert abs(load / (-P_N) - 1.0) < 1e-4, "力の釣り合いが崩れた: %.4f N" % load
-    assert abs(float(d0[0]) / closed - 1.0) < 1e-9, (float(d0[0]), closed)
+    assert abs(d0 / closed - 1.0) < 1e-9, (d0, closed)
+    #   C = λ/fσ で渡したので、op の返す材料縞値は fσ に戻る(単位の取り違えの門)。
+    assert abs(fv / (F_SIGMA * 1e3) - 1.0) < 1e-12, fv
     return n_centre
-
-
-def build_fields():
-    sxx, syy, txy = disc_stress(X_MM, Y_MM)
-    dsig, theta = principal_difference(sxx, syy, txy)
-    n_fringe = H_MM * dsig / F_SIGMA
-    return dsig, theta, 2.0 * np.pi * n_fringe
 
 
 def section2_zero_point(dsig, delta):
@@ -208,7 +206,7 @@ def section2_zero_point(dsig, delta):
     # ★ゼロ点の水準を固定する。以降の「◯倍」はすべてこの 1.09 MPa を分母にしている
     #   ので、ここが動くと比較の意味が変わる。
     assert 1.0 < err0 < 1.2, err0
-    return naive, m
+    return naive, m, err0
 
 
 def section3_dark_field(dsig, theta, delta, naive, m):
@@ -216,11 +214,10 @@ def section3_dark_field(dsig, theta, delta, naive, m):
     print("=" * 78)
     print("3) 暗視野 1 枚から縞次数を数える —— 整数しか読めない")
     print("=" * 78)
-    img = polariscope_image(delta, theta, analyser_deg=90.0)
-    # 暗線(I=0)は N が整数の等値線。最も素朴な読み方 = しきい値で暗線を拾い、
-    # 「暗線から暗線のあいだを線形に内挿する」。ここでは内挿せず整数だけ使う。
-    n_true = delta / (2 * np.pi)
-    n_int = np.round(n_true)                       # 「最寄りの暗線の次数」を読む
+    ang = np.rad2deg(theta)
+    img = pe.polariscope_intensity(delta, ang, "circular_dark")
+    # 暗線(I=0)は N が整数の等値線。最も素朴な読み方 = 「最寄りの暗線の次数」を読む。
+    n_int = np.round(pe.retardation_convert(delta, "rad", "waves"))
     est = F_SIGMA * n_int / H_MM
     e = float(np.mean(np.abs(est[m] - dsig[m])))
     print("  暗視野画像の輝度: 最小 %.4f 最大 %.4f(理論 sin²(δ/2) と同形)"
@@ -234,33 +231,19 @@ def section3_dark_field(dsig, theta, delta, naive, m):
     #   4 節の位相シフト(誤差が機械精度まで落ちる)との対比がこの PoC の骨格。
     assert 1.5 < gain < 2.5, gain
     assert e > 0.3, e
-    bright = polariscope_image(delta, theta, analyser_deg=0.0)
-    plane = plane_polariscope(delta, theta, 0.0)
+    bright = pe.polariscope_intensity(delta, ang, "circular_bright")
+    plane = pe.polariscope_intensity(delta, ang, "plane_dark", polarizer_deg=0.0)
     figs.save_grid("polariscope",
                    [np.where(IN_DISC, img, 0.0), np.where(IN_DISC, bright, 0.0),
                     np.where(IN_DISC, plane, 0.0), np.where(IN_DISC, dsig, 0.0)],
                    ["暗視野(円偏光)", "明視野(円偏光)",
                     "平面偏光(等傾線が混ざる)", "主応力差 σ1-σ2 [MPa](真値)"],
                    title="円板の直径圧縮 —— ポラリスコープ像と真値",
-                   caption="偏光系は fullseye の mueller_element / mueller_apply で組んだ。")
+                   caption="応力場も偏光像も光弾性の族の op(brazilian_disc_stress → polariscope_intensity)で組んだ。")
     print("  → 整数の縞しか読まないと **fσ/h = %.3f MPa の刻み**でしか答えられない。"
           % (F_SIGMA / H_MM))
     print("     縞が 2 本しか出ていない試験片では、これは実質「3 段階」の分解能。")
-    return img
-
-
-def emerging_stokes(delta, theta):
-    """円偏光を入れたとき、試料から出てくる Stokes ベクトル ``(H,W,4)``。
-
-    入射 (1,0,0,1) を位相子 M(δ,θ) に通すと解析的に
-
-        S1' = -sin2θ·sinδ,  S2' = cos2θ·sinδ,  S3' = cosδ
-
-    になる。**偏光計で測れるのはこの 3 成分だけ**で、ここから (δ, θ) を
-    復元するのが位相シフト光弾性のすべて。
-    """
-    return np.asarray(fs.mueller_apply(_retarder_stack(delta, theta),
-                                       np.array([1.0, 0.0, 0.0, 1.0])))
+    return e, gain
 
 
 def section4_phase_shift(dsig, theta, delta, m):
@@ -270,14 +253,12 @@ def section4_phase_shift(dsig, theta, delta, m):
     print("=" * 78)
     print("  ※ここは**手順の検算**(雑音ゼロで、同じ強度式から解き戻す)。")
     print("    実測の誤差は 6 節(雑音・量子化)で出す。")
-    s_out = emerging_stokes(delta, theta)
-    s1, s2, s3 = s_out[..., 1], s_out[..., 2], s_out[..., 3]
+    frames = specimen_frames(delta, theta)
+    _s0, s1, s2, s3 = stokes_from_frames(frames)
 
     # (i) 等傾角。平面偏光 4 枚から 4θ が出る。
-    i0 = plane_polariscope(delta, theta, 0.0)
-    i1 = plane_polariscope(delta, theta, 22.5)
-    i2 = plane_polariscope(delta, theta, 45.0)
-    i3 = plane_polariscope(delta, theta, 67.5)
+    i0, i1, i2, i3 = (pe.polariscope_intensity(delta, np.rad2deg(theta), "plane_dark", polarizer_deg=b)
+                      for b in (0.0, 22.5, 45.0, 67.5))
     th_hat = 0.25 * np.arctan2(i3 - i1, i2 - i0)
     ang = np.abs(np.mod(th_hat - theta + np.pi / 4, np.pi / 2) - np.pi / 4)
     ang_p90 = float(np.rad2deg(np.percentile(ang[IN_DISC], 90)))
@@ -288,13 +269,12 @@ def section4_phase_shift(dsig, theta, delta, m):
     #   (4 枚の平面偏光から 4θ を出す代数がそのまま逆写像になっている)。
     assert ang_p90 < 1e-6, ang_p90
 
-    # (ii) 位相差。θ を使うと sinδ の**符号まで**取れる。
-    sin_d = s2 * np.cos(2 * th_hat) - s1 * np.sin(2 * th_hat)
-    d_hat = np.arctan2(sin_d, s3)                      # (-π, π]
+    # (ii) 位相差。θ を使うと sinδ の**符号まで**取れる(進相軸 = θ + 90° で読む)。
+    fast = th_hat + np.pi / 2
+    d_hat = np.arctan2(s2 * np.cos(2 * fast) - s1 * np.sin(2 * fast), s3)     # (-π, π]
     wrapped_true = np.mod(delta + np.pi, 2 * np.pi) - np.pi
     err = np.abs(np.mod(d_hat - wrapped_true + np.pi, 2 * np.pi) - np.pi)
-    good = err < 0.05
-    agree = 100 * float(np.mean(good[IN_DISC]))
+    agree = 100 * float(np.mean((err < 0.05)[IN_DISC]))
     print("  巻いたままの δ(-π, π] の一致率: %.1f %%(誤差 < 0.05 rad)" % agree)
     print()
     print("  → ★残りの %.1f %% は**符号が反転**している。原因は光弾性で有名な"
@@ -303,18 +283,23 @@ def section4_phase_shift(dsig, theta, delta, m):
     print("     **1 波長の 1 回の測定では原理的に分けられない**。等傾角の")
     print("     復元も 4θ からなので θ は π/2 の周期しか決まらず、その飛びが")
     print("     そのまま δ の符号の飛びになる。")
-    est = F_SIGMA * (np.abs(d_hat) / (2 * np.pi)) / H_MM
-    abs_err = float(np.mean(np.abs(est[m] - dsig[m])))
-    print("     |δ| だけを使えば主応力差は N<0.5 の領域で誤差 %.2e MPa。" % abs_err)
+    # 符号を捨てた |δ| ∈ [0, π] は `photoelastic_phase_estimate`(6 強度)がそのまま返す。
+    est = pe.photoelastic_phase_estimate(frames, "stokes6")
+    fold_gap = float(np.max(np.abs(est["delta_rad"] - np.abs(d_hat))[IN_DISC]))
+    abs_err = float(np.mean(np.abs(to_mpa(est["delta_rad"])[m] - dsig[m])))
+    print("     |δ| だけを使えば(`photoelastic_phase_estimate` の返り)主応力差は"
+          " N<0.5 の領域で誤差 %.2e MPa。" % abs_err)
+    print("     op の |δ| と上の符号つき推定の絶対値の差: 最大 %.1e rad" % fold_gap)
     # ★所見を固定する。
     #   (1) 一致率は 95 % を超えるが、**100 % にはならない**。残りは (δ,θ) ↔ (-δ,θ+90°)
     #       の二義性で符号が反転した画素で、1 波長 1 回の測定では原理的に消せない。
-    #       「ほぼ合う」でも「完全に合う」でもない、という所見をそのまま固定する。
     assert 95.0 < agree < 99.5, agree
     #   (2) 符号を捨てて |δ| だけ使えば、巻きの無い領域では機械精度で戻る
-    #       (3 節の 0.58 MPa と比べると 15 桁ちがう)。
+    #       (3 節の 0.58 MPa と比べると 15 桁ちがう)。op の閉形式の逆算と、
+    #       平面偏光の θ を経由した上の手順は同じ |δ| を出す。
     assert abs_err < 1e-12, abs_err
-    return d_hat, th_hat, s1, s2, s3, abs_err
+    assert fold_gap < 1e-12, fold_gap
+    return d_hat, th_hat, s1, s2, s3, abs_err, agree
 
 
 def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
@@ -322,7 +307,7 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
     print("=" * 78)
     print("5) ★★位相の巻きを解く —— 壊れる場所は 2 つ、どちらも予測できる")
     print("=" * 78)
-    n_true = delta / (2 * np.pi)
+    n_true = pe.retardation_convert(delta, "rad", "waves")
     print("  縞次数 N: 最小 %.3f / 中央 %.3f / 最大 %.3f(半径 0.9R まで)"
           % (n_true[IN_DISC].min(), np.median(n_true[IN_DISC]), n_true[IN_DISC].max()))
     print("  N > 0.5 = 位相が巻いている画素: %.1f %%"
@@ -330,8 +315,7 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
 
     # 縞の間隔。1 縞あたり 2 画素を切ると標本化定理から復元できない。
     gy, gx = np.gradient(n_true)
-    per_px = np.hypot(gx, gy)
-    px_per_fringe = 1.0 / np.maximum(per_px, 1e-12)
+    px_per_fringe = 1.0 / np.maximum(np.hypot(gx, gy), 1e-12)
     aliased = IN_DISC & (px_per_fringe < 2.0)
     print("  1 縞あたりの画素数: 中央 %.1f / 最小 %.2f。**2 画素未満** = %.1f %%"
           % (np.median(px_per_fringe[IN_DISC]), px_per_fringe[IN_DISC].min(),
@@ -355,15 +339,8 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
                         ("標本化不足を外す", ~aliased),
                         ("標本化不足 + 低変調を外す", ~aliased & ~lowmod)]:
         kw = {} if mask is None else {"mask": mask}
-        try:
-            unwrapped = np.asarray(fs.ledger.unwrap_phase_2d(wrapped, **kw))
-        except TypeError as exc:                        # mask を受けない場合
-            print("  %-34s %12s" % (label, "mask 不可: %s" % exc))
-            continue
+        unwrapped = np.asarray(fs.ledger.unwrap_phase_2d(wrapped, **kw))
         valid = IN_DISC & np.isfinite(unwrapped)
-        if valid.sum() < 50:
-            print("  %-34s %12s" % (label, "有効画素なし"))
-            continue
         off = float(np.median((unwrapped - delta)[valid]))
         ok = np.abs(unwrapped - off - delta) < 0.5 * np.pi
         rates[label] = 100 * float(np.mean(ok[valid]))
@@ -376,10 +353,9 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
         and abs(float(modulation[IN_DISC].max()) - 1.0) < 1e-9, \
         (float(modulation[IN_DISC].min()), float(modulation[IN_DISC].max()))
     #   (2) ★★実測は「マスクを渡すと直る」という素朴な期待の**逆**を言っている:
-    #       マスク無し 97.0 % / 標本化不足を外して 97.1 % / **低変調まで外すと 81.9 %**。
-    #       低変調の画素を抜くと領域が分断され、skimage の unwrap が島ごとに
-    #       別の 2π オフセットを選ぶため。「どちらもマスクで外せる」は
-    #       **予報としては正しいが、処方としては誤り**。実測のほうを固定しておく。
+    #       低変調の画素まで外すと一致率が 90 % を割る。低変調の画素を抜くと領域が
+    #       分断され、skimage の unwrap が島ごとに別の 2π オフセットを選ぶため。
+    #       「どちらもマスクで外せる」は**予報としては正しいが、処方としては誤り**。
     assert rates["そのまま(マスク無し)"] > 90.0, rates
     assert rates["標本化不足 + 低変調を外す"] < 90.0, rates
     figs.save_grid("unwrap",
@@ -398,13 +374,13 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
     print("         ゼロになる等方点。**いちばん応力が小さい所**が含まれる。")
     print("  → ★★ところが実測は「予報した画素を外せば直る」の**逆**を言う:")
     print("     マスク無し %.1f %% / 標本化不足だけ外して %.1f %% / 低変調まで外すと %.1f %%。"
-          % (rates["そのまま(マスク無し)"],
-             rates.get("標本化不足を外す", float("nan")),
-             rates.get("標本化不足 + 低変調を外す", float("nan"))))
+          % (rates["そのまま(マスク無し)"], rates["標本化不足を外す"],
+             rates["標本化不足 + 低変調を外す"]))
     print("     外すほど領域が分断され、`unwrap_phase_2d` が島ごとに別の 2π を")
     print("     選ぶため。**予報としては正しいが、処方としては誤り** ——")
     print("     信頼できない画素は「捨てる」のでなく「重みを下げて繋いだまま解く」")
     print("     必要がある(重みつきアンラップ。いまの薄いラッパには口が無い)。")
+    return rates
 
 
 def section6_noise(dsig, theta, delta, m):
@@ -413,13 +389,14 @@ def section6_noise(dsig, theta, delta, m):
     print("6) 雑音と 8 bit 量子化")
     print("=" * 78)
     rng = np.random.default_rng(5)
+    ang = np.rad2deg(theta)
     rows = {}
     print("  %10s %10s | %14s %12s"
           % ("雑音 σ", "量子化", "δ 誤差 rad", "σ1-σ2 誤差"))
     print("  " + "-" * 54)
     for sig, bits in [(0.0, 0), (0.002, 0), (0.01, 0), (0.0, 8), (0.002, 8)]:
-        dark = polariscope_image(delta, theta, 90.0)
-        bright = polariscope_image(delta, theta, 0.0)
+        dark = pe.polariscope_intensity(delta, ang, "circular_dark")
+        bright = pe.polariscope_intensity(delta, ang, "circular_bright")
         if sig > 0:
             dark = dark + rng.normal(0, sig, dark.shape)
             bright = bright + rng.normal(0, sig, bright.shape)
@@ -430,9 +407,8 @@ def section6_noise(dsig, theta, delta, m):
         d_hat = 2.0 * np.arctan2(np.sqrt(np.maximum(dark, 0)),
                                  np.sqrt(np.maximum(bright, 0)))
         e = np.abs(np.mod(d_hat - delta + np.pi, 2 * np.pi) - np.pi)
-        est = F_SIGMA * (d_hat / (2 * np.pi)) / H_MM
         rows[(sig, bits)] = (float(np.median(e[m])),
-                             float(np.mean(np.abs(est[m] - dsig[m]))))
+                             float(np.mean(np.abs(to_mpa(d_hat)[m] - dsig[m]))))
         print("  %10.3f %10s | %14.5f %12.5f"
               % (sig, "%d bit" % bits if bits else "なし",
                  rows[(sig, bits)][0], rows[(sig, bits)][1]))
@@ -457,43 +433,38 @@ def section7_findings():
     print("7) 所見 —— fullseye に足りないもの")
     print("=" * 78)
     print("""
-  (a) ✔**直した**: `mueller_apply` が画像に効かなかった。4x4 と 4 ベクトル
-      1 組しか通らず、画素ごとに位相差が変わる系(光弾性はまさにそれ)を
-      組むには (H,W,4,4) の掛け算を呼び手が手書きするしかなかった。
-      **1 節で確かめたとおり 4x4 そのものは正しい**(125 通りで最大差 2.2e-16)
-      ので、足りないのは形だけ —— broadcast を通した(2026-09-06)。
-      この PoC はいま `fs.mueller_apply` をそのまま呼んでいる。
-      残る穴は `mueller_element` が (H,W) の δ / θ を受けないことで、
-      位相子の 4x4 を組む式は依然としてここに手書きしてある
-      (`_retarder_stack`)。これは族を足すときに一緒に片付ける。
+  (a) ✔**直した(2026-10-23)**: 光弾性の族が無かった。初版(2026-09-06)は
+      応力場の閉形式も、画素ごとの位相子の 4x4 も、平面偏光の強度式も
+      ここに手書きしていた。いまは `photoelastic.py` の op 12 本のうち 7 本を
+      呼ぶだけで、手書きの式は残っていない。旧版の計算は
+      `tests/test_poc_photoelasticity_ops.py` に独立な参照として残し、
+      族の op との一致(主応力差・位相差・偏光像・各節の数値)を門にしている。
 
-  (b) ★**光弾性の族が無い**(`op_find` で "photoelastic" / "光弾性" /
-      "birefringence" / "retardation" いずれも 0 件。3 層すべて確認)。
-      あるのは Stokes/Mueller の素材と位相アンラップだけ。足すなら:
-      `photoelastic_stress(delta, thickness, f_sigma)`(応力光学則)/
-      `polariscope_simulate(delta, theta, kind)`(平面・円、明暗)/
-      `phase_step_photoelastic(images, method)`(6 段・10 段)/
-      `disc_diametral_stress(...)`(真値つきの検証用。粗さ族の
-      `surface_synth_psd` と同じ位置づけ)。
+  (b) ★**書き直しで見つかった符号**: 初版は σ1 の向きを位相子の**進相軸**に
+      渡していた。エポキシ(C > 0)では σ1 は**遅相軸**(op の規約)。
+      暗視野・明視野・平面偏光の強度は (δ,θ) ↔ (-δ,θ+90°) で変わらないので
+      画像では見えず、試料を出た Stokes の S1・S2 の符号と、円偏光
+      ポラリスコープの検光子を 0°/90° 以外に回した像だけが変わる。
+      この版は op の規約(進相軸 = σ1 + 90°)に合わせた。
 
   (c) ★★**位相アンラップに「信頼度の重み」の口が無い**。
       `unwrap_phase_2d` は skimage の実装で、5 節のとおり**等方点の近くで
       必ず壊れる**。壊れる場所は事前に分かる(変調度 = 明視野+暗視野の
       振幅が小さい所)が、★**その画素をマスクで外すと一致率はむしろ下がる**
-      (5 節の実測: 97.0 % → 81.9 %)—— 領域が分断され、島ごとに別の 2π が
-      選ばれるため。要るのは「捨てる口」ではなく**重みつきアンラップ**
-      (信頼度の低い画素を繋いだまま従属させる)で、それが無い。
-      これは光弾性に限らず、干渉計・位相シフト法・InSAR すべてに効く。
+      —— 領域が分断され、島ごとに別の 2π が選ばれるため。要るのは
+      「捨てる口」ではなく**重みつきアンラップ**(信頼度の低い画素を
+      繋いだまま従属させる)で、それが無い。干渉計・位相シフト法・InSAR
+      すべてに効く。空間をたどらない道として、族には多波長で画素ごとに
+      次数を決める `retardation_unwrap_multiwavelength` があるが、
+      撮る波長を増やす別の測定なので、この PoC(1 波長)の問いには使っていない。
 
   (d) 応力・ひずみの単位を持つ量が族をまたいで散らばっている。
       `piv_strain_rate`(流体のひずみ速度)、`poc_dic_strain` が要求した
       Green-Lagrange、ここで要る主応力差 —— **同じ「応力/ひずみ」という
-      語で 3 つ別のものを指している**。族を足すときに規約を決めること
-      (`measure3d` が (depth,row,col) を決めたのと同じ整理)。
+      語で 3 つ別のものを指している**。
 
-  (e) この PoC の 1 節 (a) は **fullseye の op に対する厳密な検算**になって
-      いる(125 通りで最大差が機械精度)。族を足したらここに繋いで回帰試験に
-      するのが安い。
+  (e) 1 節 (a) は**族の op と optics の素子の鎖の厳密な照合**になっている
+      (125 通りで最大差が機械精度)。どちらかが壊れればここで落ちる。
 """)
 
 
@@ -508,27 +479,26 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
     """★動画: 荷重を 0 → P まで上げて縞が湧き出す様子(前半)と、P のまま平面偏光子の対を
     0 → 90 度回して等傾線(黒い帯)が動く様子(後半)。
 
-    応力場は閉形式(:func:`disc_stress`)、像は本文と同じ :func:`polariscope_image`
-    (Mueller op)と :func:`plane_polariscope`。描画用に格子を ``npx`` 画素へ細かくしただけで、
-    式は本文と同じ。乱数は使わない。図を出さない実行では呼ばれない。
+    応力場・偏光像は本文と同じ族の op(:func:`fields` と ``polariscope_intensity``)。
+    描画用に格子を ``npx`` 画素へ細かくしただけで、式は本文と同じ。乱数は使わない。
+    応力は荷重に比例するので、荷重 p の場は P_N の場を p/P_N 倍して作る。
+    図を出さない実行では呼ばれない。
     """
     if not figs.enabled():
         return None
     import annotate as AN
     import imgio
 
-    yy, xx = np.mgrid[0:npx, 0:npx].astype(np.float64)
+    f_full = fields(npx)
+    disc = f_full["in_disc"]
     pmm = 2.0 * R_MM / (npx - 1)
-    xm, ym = (xx - (npx - 1) / 2.0) * pmm, ((npx - 1) / 2.0 - yy) * pmm
-    disc = xm ** 2 + ym ** 2 <= (R_MM * 0.90) ** 2
-    rim = np.abs(np.hypot(xm, ym) - R_MM) < 0.6 * pmm      # 円板の縁(半径 R)の細い線
-    sxx, syy, txy = disc_stress(xm, ym)                     # P = P_N のときの応力
-    dsig_full, theta = principal_difference(sxx, syy, txy)
+    rim = np.abs(np.hypot(f_full["disc"]["x"], f_full["disc"]["y"]) * 1e3 - R_MM) < 0.6 * pmm
+    dsig_full, theta, ang = f_full["dsig"], f_full["theta"], f_full["angle_deg"]
     vmax = float(np.percentile(dsig_full[disc], 99.0))
     c0 = (npx - 1) // 2                                      # 中心の画素
-    n_c_full = H_MM * float(dsig_full[c0, c0]) / F_SIGMA     # 荷重 P_N での中心の縞次数
+    n_c_full = float(f_full["order"][c0, c0])                # 荷重 P_N での中心の縞次数
     loads = np.linspace(0.0, P_N, n_load)
-    i_centre = np.array([math_sin2(np.pi * n_c_full * p / P_N) for p in loads])
+    i_centre = np.sin(np.pi * n_c_full * loads / P_N) ** 2
 
     S, GAP, TB = npx, 6, 34
     FW, FH = 3 * S + 2 * GAP, TB + S
@@ -561,7 +531,7 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
     for k, p in enumerate(loads):
         f = base1.copy()
         s_ = p / P_N
-        dark = polariscope_image(2.0 * np.pi * H_MM * dsig_full * s_ / F_SIGMA, theta, 90.0)
+        dark = pe.polariscope_intensity(f_full["delta"] * s_, ang, "circular_dark")
         a = disc_rgb(np.repeat(np.clip(dark, 0, 1)[..., None], 3, 2))
         n_c = n_c_full * s_
         a = _v_txt(a, "荷重 P = %3.0f N\n中心の縞次数 N = %.2f\n(閉形式 h(σ1-σ2)/fσ)" % (p, n_c), (5, 5), fs_=12)
@@ -582,7 +552,6 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
     frames += [frames[-1]] * n_hold
 
     # 後半: 荷重 P_N のまま、直交させた平面偏光子の対を回す
-    delta = 2.0 * np.pi * H_MM * dsig_full / F_SIGMA
     base2 = base.copy()
     title(base2, 0, "平面偏光(直交)= 等色線 + 等傾線")
     title(base2, 1, "等傾角 θ(真値)と、いま黒くなる向き")
@@ -590,10 +559,9 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
     base2[TB:, xs[2]:xs[2] + S] = last_plot
     th_rgb = np.asarray(imgio.apply_cmap(np.mod(theta, np.pi) / np.pi, "twilight", vmin=0.0, vmax=1.0),
                         np.float64)
-    angs = np.linspace(0.0, 90.0, n_rot)
-    for bdeg in angs:
+    for bdeg in np.linspace(0.0, 90.0, n_rot):
         f = base2.copy()
-        plane = plane_polariscope(delta, theta, bdeg)
+        plane = pe.polariscope_intensity(f_full["delta"], ang, "plane_dark", polarizer_deg=float(bdeg))
         a = disc_rgb(np.repeat(np.clip(plane, 0, 1)[..., None], 3, 2))
         a = _v_txt(a, "偏光子 %.0f 度 / 検光子 %.0f 度" % (bdeg, bdeg + 90.0), (5, 5), fs_=12)
         f[TB:, xs[0]:xs[0] + S] = a
@@ -615,28 +583,31 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
                             "まま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない"
                             "縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点"
                             "で、中央の真値 θ の図で白く塗った点と重なる。"
-                            "偏光系は fullseye の mueller_element / mueller_apply(暗視野)と sin²(2(θ-β))·sin²(δ/2)(平面)。"
+                            "応力場と偏光像は光弾性の族の op(brazilian_disc_stress / principal_stress / "
+                            "photoelastic_retardation / polariscope_intensity)。"
                             % (len(frames), 2 * R_MM, npx, P_N, n_c_full, int(np.floor(n_c_full)), P_N))
     return {"n_centre": n_c_full, "frames": len(frames)}
 
 
-def math_sin2(x):
-    """sin² のスカラー版(動画の右のグラフ用)。"""
-    return float(np.sin(x) ** 2)
+def run():
+    """全節を回して、門が見る数値を dict で返す(テストが旧版の参照と突き合わせる)。"""
+    n_centre = section1_check()
+    dsig, theta, delta = _F["dsig"], _F["theta"], _F["delta"]
+    naive, m, err0 = section2_zero_point(dsig, delta)
+    e3, gain3 = section3_dark_field(dsig, theta, delta, naive, m)
+    d_hat, _th, s1, s2, s3, abs_err, agree = section4_phase_shift(dsig, theta, delta, m)
+    rates = section5_wrapping(dsig, delta, d_hat, s1, s2, s3)
+    rows = section6_noise(dsig, theta, delta, m)
+    return {"n_centre": n_centre, "err0": err0, "e3": e3, "gain3": gain3, "agree": agree,
+            "abs_err": abs_err, "rates": rates, "rows": rows, "d_hat": d_hat}
 
 
 def main():
     t0 = time.time()
     print("poc_photoelasticity — 光弾性で応力を測る(円板の直径圧縮)")
-    print("(真値 = 閉形式の応力場。偏光系は fullseye の Mueller op で組む)")
+    print("(真値 = 閉形式の応力場。応力場から偏光像まで光弾性の族の op で組む)")
     print()
-    n_centre = section1_check()
-    dsig, theta, delta = build_fields()
-    naive, m = section2_zero_point(dsig, delta)
-    section3_dark_field(dsig, theta, delta, naive, m)
-    d_hat, _th, k1, k2, k3, abs_err = section4_phase_shift(dsig, theta, delta, m)
-    section5_wrapping(dsig, delta, d_hat, k1, k2, k3)
-    rows = section6_noise(dsig, theta, delta, m)
+    out = run()
     section7_findings()
     # 動画は既存の図の**最後**に書く(番号が後ろの図のファイル名をずらさないように)。
     if figs.enabled():
@@ -646,7 +617,7 @@ def main():
     print("経過 %.1f 秒" % (time.time() - t0))
     print("\nPASS: 中心の縞次数 %.3f を閉形式どおりに合成し、位相シフトで解き戻すと"
           "主応力差の誤差は %.1e MPa(8 bit 量子化だけでも δ に %.5f rad 乗る)"
-          % (n_centre, abs_err, rows[(0.0, 8)][0]))
+          % (out["n_centre"], out["abs_err"], out["rows"][(0.0, 8)][0]))
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1621. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 608 von 1621. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -944,16 +944,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_photoelasticity.py`
 
-- **L161** — ★Den Befund festhalten: Dies ist eine **exakte** Gegenrechnung zu fullseyes Mueller-op, die selbst bei einem vollen δ-Durchlauf in 15-Grad-Schritten und 5 θ-Werten auf Maschinengenauigkeit übereinstimmt (gemessen 2.2e-16). Lockert sich das, misst man ab Abschnitt 3 nicht das "Ausleseverfahren", sondern einen Bug im op.
-- **L182** — ★Auch die Gegenrechnung des Spannungsfelds selbst festhalten. Stimmt die integrierte Kraft nicht mit der Last überein, ist es nicht der "wahre Wert", und der Zentralwert muss algebraisch mit der geschlossenen Form 8P/(πDh) identisch sein.
-- **L208** — ★Das Niveau des Nullpunkts festhalten. Jedes folgende "N-fach" verwendet diese 1.09 MPa als Nenner, verschiebt sich das, ändert sich die Bedeutung des Vergleichs.
-- **L232** — ★Den Befund festhalten: Das naive Verfahren, aus einem einzigen Dunkelfeldbild nur ganzzahlige Streifen abzulesen, **schlägt den Nullpunkt nicht einmal um das 2-fache**. Weil die Auflösung durch den Schritt fσ/h = 1.78 MPa begrenzt ist. Der Kontrast zur Phasenverschiebung in Abschnitt 4 (deren Fehler auf Maschinengenauigkeit fällt) ist das Rückgrat dieses PoC.
-- **L287** — ★Da wir bei null Rauschen aus derselben Intensitätsgleichung zurückrechnen, muss θ **exakt** zurückkommen (die Algebra, die 4θ aus den 4 planpolarisierten Bildern erzeugt, ist selbst die Umkehrabbildung).
-- **L309** — ★Den Befund festhalten. (1) Die Übereinstimmung übersteigt 95 %, erreicht aber **nie 100 %**. Der Rest sind Pixel, deren Vorzeichen durch die Mehrdeutigkeit (δ,θ) ↔ (-δ,θ+90°) umgekehrt ist, die sich mit einer einzigen Messung bei einer Wellenlänge prinzipiell nicht beseitigen lässt. Den Befund unverändert festhalten: weder "nahezu übereinstimmend" noch "vollständig übereinstimmend".
-- **L372** — ★Den Befund festhalten. (1) Es gibt keine Depolarisation (der Stokes-Betrag ist exakt 1). Das ist die Grundlage für die Behauptung in Abschnitt 5, dass in der Modulation nicht die Lichtmenge, sondern **die Phasenempfindlichkeit** abfällt.
-- **L378** — (2) ★★Die Messung sagt das **Gegenteil** der naiven Erwartung, "eine Maske zu übergeben behebt es": ohne Maske 97.0 % / bei Ausschluss der Unterabtastung 97.1 % / **schließt man auch die niedrige Modulation aus, fällt es auf 81.9 %**. Weil das Entfernen der niedrig modulierten Pixel die Region zerteilt und skimages unwrap pro Insel einen anderen 2π-Offset wählt. "Beides lässt sich per Maske ausschließen" ist **als Vorhersage richtig, als Rezept aber falsch**. Den Messwert festhalten.
-- **L443** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
-- **L446** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
+- **L161** _(ja)_ — ★所見を固定する: δ を 15 度刻みで一周・θ を 5 通り振っても機械精度で一致する。 族の op(閉形式)と optics の素子の鎖は別の実装なので、ここは自己一致ではない。 ここが緩んだら 3 節以降で測っているのは「読み取り手順」ではなく op のバグ。
+- **L185** — ★Auch die Gegenrechnung des Spannungsfelds selbst festhalten. Stimmt die integrierte Kraft nicht mit der Last überein, ist es nicht der "wahre Wert", und der Zentralwert muss algebraisch mit der geschlossenen Form 8P/(πDh) identisch sein.
+- **L206** — ★Das Niveau des Nullpunkts festhalten. Jedes folgende "N-fach" verwendet diese 1.09 MPa als Nenner, verschiebt sich das, ändert sich die Bedeutung des Vergleichs.
+- **L229** — ★Den Befund festhalten: Das naive Verfahren, aus einem einzigen Dunkelfeldbild nur ganzzahlige Streifen abzulesen, **schlägt den Nullpunkt nicht einmal um das 2-fache**. Weil die Auflösung durch den Schritt fσ/h = 1.78 MPa begrenzt ist. Der Kontrast zur Phasenverschiebung in Abschnitt 4 (deren Fehler auf Maschinengenauigkeit fällt) ist das Rückgrat dieses PoC.
+- **L268** — ★Da wir bei null Rauschen aus derselben Intensitätsgleichung zurückrechnen, muss θ **exakt** zurückkommen (die Algebra, die 4θ aus den 4 planpolarisierten Bildern erzeugt, ist selbst die Umkehrabbildung).
+- **L293** _(ja)_ — ★所見を固定する。 (1) 一致率は 95 % を超えるが、**100 % にはならない**。残りは (δ,θ) ↔ (-δ,θ+90°) の二義性で符号が反転した画素で、1 波長 1 回の測定では原理的に消せない。
+- **L349** — ★Den Befund festhalten. (1) Es gibt keine Depolarisation (der Stokes-Betrag ist exakt 1). Das ist die Grundlage für die Behauptung in Abschnitt 5, dass in der Modulation nicht die Lichtmenge, sondern **die Phasenempfindlichkeit** abfällt.
+- **L355** _(ja)_ — (2) ★★実測は「マスクを渡すと直る」という素朴な期待の**逆**を言っている: 低変調の画素まで外すと一致率が 90 % を割る。低変調の画素を抜くと領域が 分断され、skimage の unwrap が島ごとに別の 2π オフセットを選ぶため。 「どちらもマスクで外せる」は**予報としては正しいが、処方としては誤り**。
+- **L419** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
+- **L422** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
 
 ## `examples/poc_pigment_unmixing.py`
 

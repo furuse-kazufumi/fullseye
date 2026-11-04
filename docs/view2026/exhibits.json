@@ -1106,9 +1106,16 @@
    "ops": [
     "axes_frame",
     "axes_transform",
+    "brazilian_disc_stress",
     "mueller_apply",
     "mueller_element",
+    "photoelastic_phase_estimate",
+    "photoelastic_polarization_images",
+    "photoelastic_retardation",
     "plot_series",
+    "polariscope_intensity",
+    "principal_stress",
+    "retardation_convert",
     "text_box",
     "ticks",
     "unwrap_phase_2d"
