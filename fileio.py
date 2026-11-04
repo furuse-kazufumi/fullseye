@@ -92,6 +92,19 @@ _NRRD_TYPE_ALIASES = {
 }
 # ★2026-11-05 redteam I8: the table above is now every spelling of the teem NRRD format spec
 # ("type" field): "signed long long" / "signed long long int" were missing and refused.
+#: teem NRRD "space" field: canonical name -> implied space dimension (aliases below)
+_NRRD_SPACES = {
+    "right-anterior-superior": 3, "left-anterior-superior": 3, "left-posterior-superior": 3,
+    "right-anterior-superior-time": 4, "left-anterior-superior-time": 4,
+    "left-posterior-superior-time": 4, "scanner-xyz": 3, "scanner-xyz-time": 4,
+    "3D-right-handed": 3, "3D-left-handed": 3, "3D-right-handed-time": 4, "3D-left-handed-time": 4,
+}
+_NRRD_SPACE_ALIASES = {
+    "ras": "right-anterior-superior", "las": "left-anterior-superior",
+    "lps": "left-posterior-superior", "rast": "right-anterior-superior-time",
+    "last": "left-anterior-superior-time", "lpst": "left-posterior-superior-time",
+    **{name.lower(): name for name in _NRRD_SPACES},
+}
 _NIFTI_DTYPES = {
     2: np.dtype("u1"), 4: np.dtype("i2"), 8: np.dtype("i4"),
     16: np.dtype("f4"), 64: np.dtype("f8"), 256: np.dtype("i1"),
@@ -1751,10 +1764,19 @@ def _nrrd_unit(value, op: str):
     return unit
 
 
+def _nrrd_space(value, op: str):
+    """Canonical teem name of an NRRD ``space`` (``"LPS"`` -> ``"left-posterior-superior"``)."""
+    name = _NRRD_SPACE_ALIASES.get(str(value).strip().lower())
+    if name is None:
+        raise ValueError(f"{op}: unknown NRRD space {value!r}; expected one of "
+                         f"{', '.join(_NRRD_SPACES)} (or RAS/LAS/LPS/RAST/LAST/LPST)")
+    return name
+
+
 def _nrrd_geometry(meta, ndim: int, op: str):
     if not isinstance(meta, Mapping):
         raise ValueError(f"{op}: meta must be a mapping")
-    allowed = {"space_directions", "space_unit", "space_origin", "kinds"}
+    allowed = {"space_directions", "space_unit", "space_origin", "kinds", "space"}
     unknown = set(meta) - allowed
     if unknown:
         raise ValueError(f"{op}: unsupported metadata key(s): {', '.join(sorted(map(str, unknown)))}")
@@ -1787,7 +1809,13 @@ def _nrrd_geometry(meta, ndim: int, op: str):
     kinds = list(meta.get("kinds", ["domain" if value is not None else "list" for value in vectors]))
     if len(kinds) != ndim or any(not isinstance(v, str) or not v or any(c.isspace() for c in v) for v in kinds):
         raise ValueError(f"{op}: kinds must contain one whitespace-free name per array axis")
-    return vectors, unit, origin, kinds
+    space = meta.get("space")
+    if space is not None:
+        space = _nrrd_space(space, op)
+        if _NRRD_SPACES[space] != space_dim:
+            raise ValueError(f"{op}: space {space!r} is {_NRRD_SPACES[space]}-D but the direction "
+                             f"vectors have {space_dim} components")
+    return vectors, unit, origin, kinds, space
 
 
 def _nrrd_vector_text(vector) -> str:
@@ -1800,7 +1828,9 @@ def nrrd_write(array, *, meta, encoding):
     """多次元配列と ``space directions`` を raw/gzip NRRD の ``bytes`` にする。
 
     ``meta`` は各配列軸の方向ベクトル(非空間軸は ``None``)、``space_origin``、
-    ``space_unit``(``mm`` / ``um`` / ``angstrom``)を持つ。``encoding`` は ``raw`` または
+    ``space_unit``(``mm`` / ``um`` / ``angstrom``)を持つ。任意の ``space`` は teem の座標系名
+    (``left-posterior-superior`` / ``LPS`` / ``RAS`` / ``scanner-xyz`` …)で、与えると
+    ``space dimension`` の代わりに ``space:`` 行を書く(仕様では両者は排他)。``encoding`` は ``raw`` または
     ``gzip`` を明示する。呼び出し例: ``nrrd_write(vol, meta=geometry, encoding="gzip")``。
     """
     op = "nrrd_write"
@@ -1814,11 +1844,11 @@ def nrrd_write(array, *, meta, encoding):
     encoding = str(encoding).lower()
     if encoding not in ("raw", "gzip"):
         raise ValueError(f"{op}: encoding must be 'raw' or 'gzip', got {encoding!r}")
-    vectors, unit, origin, kinds = _nrrd_geometry(meta, values.ndim, op)
+    vectors, unit, origin, kinds, space = _nrrd_geometry(meta, values.ndim, op)
     space_dim = len(origin)
     header = ["NRRD0005", "# Created by Fullseye", f"type: {type_by_dtype[native_dtype]}",
               f"dimension: {values.ndim}", "sizes: " + " ".join(map(str, values.shape)),
-              f"space dimension: {space_dim}",
+              f"space: {space}" if space is not None else f"space dimension: {space_dim}",
               "space directions: " + " ".join(_nrrd_vector_text(v) for v in vectors),
               "kinds: " + " ".join(kinds),
               "space units: " + " ".join(f'"{unit}"' for _ in range(space_dim)),
@@ -1922,8 +1952,8 @@ def _nrrd_directions(text: str, dimension: int, op: str):
 def nrrd_read(data):
     """raw/gzip NRRD を ``(array, meta)`` として読み、空間単位を明示して返す。
 
-    ``meta`` は ``space_directions``、方向ベクトルの長さから得た ``voxel_spacing``、
-    ``space_unit``、``space_origin``、``kinds`` を持つ。detached data、未知の encoding、
+    ``meta`` は ``space``(teem の座標系名、無ければ ``None``)、``space_directions``、
+    方向ベクトルの長さから得た ``voxel_spacing``、``space_unit``、``space_origin``、``kinds`` を持つ。detached data、未知の encoding、
     shape/dtype/byte 数の不一致は拒否する。呼び出し例: ``array, meta = nrrd_read(payload)``。
     """
     op = "nrrd_read"
@@ -1966,12 +1996,22 @@ def nrrd_read(data):
     array = np.frombuffer(payload, dtype=dtype).reshape(sizes, order="F").copy()
     if array.dtype.itemsize > 1:
         array = array.astype(array.dtype.newbyteorder("="), copy=False)
+    # ★2026-11-05 redteam I9: the "space" field (LPS / RAS / scanner-xyz ...) was dropped, so an
+    # LPS and an RAS file -- the same numbers in mirrored patient frames -- read back identical.
+    # It is returned as meta["space"] (canonical teem name, None when absent) and written back.
+    space = None
+    if "space" in fields:
+        if "space dimension" in fields:
+            raise ValueError(f"{op}: 'space' and 'space dimension' are mutually exclusive in NRRD")
+        space = _nrrd_space(fields["space"], op)
     vectors, space_dim = (None, None)
     if "space directions" in fields:
         vectors, space_dim = _nrrd_directions(fields["space directions"], dimension, op)
         declared = fields.get("space dimension")
         if declared is not None and int(declared) != space_dim:
             raise ValueError(f"{op}: space dimension {declared} disagrees with direction vectors of length {space_dim}")
+        if space is not None and _NRRD_SPACES[space] != space_dim:
+            raise ValueError(f"{op}: space {space!r} is {_NRRD_SPACES[space]}-D but direction vectors have length {space_dim}")
     unit = None
     if "space units" in fields:
         units = re.findall(r'"([^"\\]*(?:\\.[^"\\]*)*)"', fields["space units"])
@@ -1998,8 +2038,8 @@ def nrrd_read(data):
     if kinds is not None and len(kinds) != dimension:
         raise ValueError(f"{op}: kinds count must match dimension")
     spacing = None if vectors is None else [None if v is None else float(np.linalg.norm(v)) for v in vectors]
-    return array, {"format": "NRRD", "encoding": encoding, "space_directions": vectors,
-                   "voxel_spacing": spacing, "space_unit": unit,
+    return array, {"format": "NRRD", "encoding": encoding, "space": space,
+                   "space_directions": vectors, "voxel_spacing": spacing, "space_unit": unit,
                    "space_origin": origin, "kinds": kinds}
 
 
