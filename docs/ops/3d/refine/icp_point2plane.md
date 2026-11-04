@@ -41,7 +41,8 @@ RMSE 1.7e-16・回転誤差 0° に回復(point-to-point は 17 反復で RMSE 4
     dst_normals (M,3): dst の単位法線(未正規化でも内部で正規化)。
                        未知なら pointcloud.estimate_normals(dst) 等で事前推定。
     iters: 最大反復数。
-    tol: RMSE 変化がこの値未満で収束打ち切り。
+    tol: RMSE 変化が ``tol × L``(L = dst の外接箱の対角長)未満で収束打ち切り。
+        点群の尺度に対する相対量(2026-11-05 までは座標単位の絶対量)。
     init ((R0,t0)): 初期姿勢(粗マッチの R,t を渡す)。None なら単位。
     trim (float|None): [0,1) の割合。点-面残差の大きい上位を毎反復捨てる
                        Trimmed ICP(部分重なり・外れ値に頑健)。

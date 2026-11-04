@@ -5,15 +5,16 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The Frenet frame (tangent T, principal normal N, binormal B) at each point. → (T, N, B), each (Npts,3) unit vectors.</p>
-<p>Differentiates the ordered point sequence (N,3) with <code style="color:#22d3bf">np.gradient</code> over the index parameter (internally central differences, one-sided differences at both ends) to get r&#x27;, r&#x27;&#x27;, and</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>順序付き点列 (N,3) を index パラメータで <code style="color:#22d3bf">np.gradient</code>(内部は中心差分、両端は片側差分)して r&#x27;, r&#x27;&#x27; を取り、</p>
 <p style="margin:2px 0 2px 12px">• T = r&#x27; / ‖r&#x27;‖</p>
-<p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖ (the component of r&#x27;&#x27; orthogonal to T = the direction pointing toward the centre of curvature)</p>
+<p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖(r&#x27;&#x27; の T 直交成分 = 曲率中心へ向く向き)</p>
 <p style="margin:2px 0 2px 12px">• B = T × N</p>
-<p>is computed at each point. The direction of the T-orthogonal component of r&#x27;&#x27; is invariant to reparameterisation, so as long as the point spacing changes smoothly the index parameter yields the correct direction.</p>
-<p style="margin:2px 0 2px 12px">• The denominator only gets an absolute 1e-12 added, so places that cannot be normalised do not come out unit length. On straight segments (r&#x27;&#x27; ∥ T or 0), N and B become almost zero vectors, and the direction of N flips across an inflection point. The &quot;unit vector&quot; guarantee does not hold there.</p>
-<p style="margin:2px 0 2px 12px">• For a sequence with N&lt;2, <code style="color:#22d3bf">np.gradient</code> raises <code style="color:#22d3bf">ValueError</code>. There is no other shape validation.</p>
-<p style="margin:2px 0 2px 12px">• The 2 points at both ends use one-sided differences, so accuracy drops. Applying equal spacing (<code style="color:#22d3bf">resample_uniform</code>) or smoothing (<code style="color:#22d3bf">fit_spline_curve</code>) first makes it stable.</p>
-<p>For the curvature and torsion values themselves use <code style="color:#22d3bf">curvature_torsion</code>; for arc length, <code style="color:#22d3bf">arc_length</code>.</p>
+<p>を各点で計算する。r&#x27;&#x27; の T 直交成分の向きは再パラメータ化に不変なので、点間隔が滑らかに変わる限り index パラメータで正しい向きが出る。</p>
+<p style="margin:2px 0 2px 12px">• 正規化に床は置かない(2026-11-05 敵対的検証 N1 の兄弟: 以前は分母に絶対値 1e-12 を足しており、尺度 1e-6 の曲線で N の長さが 0.998、1e-9 で 0.33 になった)。T は ‖r&#x27;‖ = 0 の点(同じ点の繰り返し)だけ 0 ベクトル。N は r&#x27;&#x27; の T 直交成分が ‖r&#x27;‖ の 1e-9 倍以下(1 標本あたりの曲がりが 1e-9 rad 未満 = 直線区間)の点で 0 ベクトル、B もそこで 0。変曲点の前後では N の向きが反転する。</p>
+<p style="margin:2px 0 2px 12px">• N&lt;2 の点列は <code style="color:#22d3bf">np.gradient</code> が <code style="color:#22d3bf">ValueError</code> を出す。形状検証はそれ以外に無い。</p>
+<p style="margin:2px 0 2px 12px">• 両端 2 点は片側差分なので精度が落ちる。等間隔化(<code style="color:#22d3bf">resample_uniform</code>)や平滑(<code style="color:#22d3bf">fit_spline_curve</code>)を先に掛けると安定する。</p>
+<p>曲率・捩率の数値そのものは <code style="color:#22d3bf">curvature_torsion</code>、弧長は <code style="color:#22d3bf">arc_length</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

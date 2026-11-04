@@ -19,7 +19,7 @@
   "counts": {
     "fail_closed": 3,
     "documented_fallback": 6,
-    "silent_fallback": 0,
+    "silent_fallback": 1,
     "legitimate_empty": 18,
     "undecided": 1
   },
@@ -84,8 +84,19 @@
     },
     {
       "module": "geometry2d.py",
+      "function": "intersection_lines",
+      "line": 95,
+      "exception_types": [
+        "ValueError"
+      ],
+      "returned_or_assigned": "None",
+      "classification": "silent_fallback",
+      "reason": "例外を値またはpassへ変換して呼出側から失敗を隠す"
+    },
+    {
+      "module": "geometry2d.py",
       "function": "_cs_pts",
-      "line": 128,
+      "line": 147,
       "exception_types": [],
       "returned_or_assigned": "np.concatenate([np.asarray(c, float) for c in cs], 0) if cs else np.zeros((0, 2))",
       "classification": "legitimate_empty",
@@ -94,7 +105,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_cc_min",
-      "line": 137,
+      "line": 156,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -103,7 +114,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_cc",
-      "line": 146,
+      "line": 165,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -112,7 +123,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_contours_xld",
-      "line": 155,
+      "line": 174,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -121,7 +132,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_lc",
-      "line": 357,
+      "line": 376,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -130,7 +141,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_lr",
-      "line": 366,
+      "line": 385,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -139,7 +150,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_sr",
-      "line": 375,
+      "line": 394,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -148,7 +159,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_cc_min_points",
-      "line": 384,
+      "line": 403,
       "exception_types": [],
       "returned_or_assigned": "{'distance': 0.0}",
       "classification": "legitimate_empty",
@@ -199,7 +210,7 @@
     {
       "module": "ops.py",
       "function": "_ncc_locate",
-      "line": 1849,
+      "line": 1862,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -208,7 +219,7 @@
     {
       "module": "ops.py",
       "function": "_shape_locate",
-      "line": 2175,
+      "line": 2188,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -217,7 +228,7 @@
     {
       "module": "ops.py",
       "function": "module_requirements",
-      "line": 2566,
+      "line": 2579,
       "exception_types": [
         "Exception"
       ],
@@ -228,7 +239,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2635,
+      "line": 2648,
       "exception_types": [
         "Exception"
       ],
@@ -239,7 +250,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2643,
+      "line": 2656,
       "exception_types": [
         "Exception"
       ],
@@ -250,7 +261,7 @@
     {
       "module": "ops.py",
       "function": "_label_guarded_functions_with_their_op_name",
-      "line": 2912,
+      "line": 2925,
       "exception_types": [
         "AttributeError, TypeError"
       ],
@@ -261,7 +272,7 @@
     {
       "module": "ops.py",
       "function": "apply_genome",
-      "line": 3026,
+      "line": 3039,
       "exception_types": [
         "Exception"
       ],

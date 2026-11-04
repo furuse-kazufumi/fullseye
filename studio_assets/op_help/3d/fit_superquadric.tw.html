@@ -5,7 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 least_squares 對點群擬合超二次曲面,回傳 dict{a,eps,R,t,residual}。</p>
-<p>初始位姿 = 慣性張量特徵向量,初始 a = 主軸 bbox 的一半,初始 eps=(1,1)。最佳化時 <code style="color:#22d3bf">a</code> 保持為正,<code style="color:#22d3bf">eps</code> 截斷(clip)到 [0.1, 2.0]。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>初期姿勢 = 慣性テンソル固有ベクトル、初期 a = 主軸 bbox 半分、初期 eps=(1,1)。<code style="color:#22d3bf">a</code> は正、<code style="color:#22d3bf">eps</code> は [0.1, 2.0] にクリップして最適化する。</p>
+<p>尺度: 点群を重心へ寄せ、外接箱の対角長 <code style="color:#22d3bf">L</code> で割った無次元の座標で解き、<code style="color:#22d3bf">a = L·a&#x27;</code>、<code style="color:#22d3bf">t = 重心 + L·t&#x27;</code>、<code style="color:#22d3bf">residual = L³·residual&#x27;</code> で戻す(★2026-11-05 敵対的検証 N5)。以前は生の座標のまま解いており、残差が長さの 1.5 乗で縮むため scipy 既定の <code style="color:#22d3bf">gtol</code> が初回評価で満たされ、<code style="color:#22d3bf">s &lt;= 1e-4</code> の点群では PCA の初期値をそのまま返していた(楕円体 a=(2,1.5,1) が 1.979/1.495/1.001、中心が 0.17·s ずれる)。いまは <code style="color:#22d3bf">s</code> に依らず同じ解。全点が一致する点群(<code style="color:#22d3bf">L == 0</code>)は <code style="color:#22d3bf">ValueError</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict: {&#x27;a&#x27;: (3,), &#x27;eps&#x27;: (2,), &#x27;R&#x27;: (3,3), &#x27;t&#x27;: (3,), &#x27;residual&#x27;: float}</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
