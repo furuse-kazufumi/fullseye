@@ -116,3 +116,60 @@ def test_k2_sibling_driveenv_tone_map_huge_and_nonfinite():
         DE.tone_map(np.array([[np.inf, 1.0, 0.0]]), 1.0)
     with pytest.raises(ValueError, match="finite"):
         DE.tone_map(np.array([[np.nan, 1.0, 0.0]]), 1.0)
+
+
+# ---------------------------------------------------------------------------
+# K3: Stokes の実現可能性検査に絶対床 +1e-12
+# ---------------------------------------------------------------------------
+
+# 1e-200 / 1e200: 2 乗の和が下溢れ・溢れる桁(兄弟: pol の計算)
+_SCALES = [1.0, 1e-6, 1e-9, 1e-12, 1e-13, 1e-200, 1e200]
+
+
+def test_k3_unphysical_stokes_refused_at_every_intensity_scale():
+    import optics as O
+    M = O.mueller_element("polarizer", 0.0)
+    assert len(_SCALES) == 7
+    for k in _SCALES:
+        s = np.array([1.0, 2.0, 0.0, 0.0]) * k          # DoP = 2 はどの桁でも非物理
+        with pytest.raises(ValueError, match="realisable"):
+            O.stokes_analyze(s)
+        with pytest.raises(ValueError, match="realisable"):
+            O.mueller_apply(M, s)
+        with pytest.raises(ValueError, match="unphysical"):
+            O.mueller_apply(M, np.tile(s, (2, 2, 1)))
+
+
+def test_k3_physical_stokes_accepted_at_every_intensity_scale():
+    import optics as O
+    M = O.mueller_element("polarizer", 0.0)
+    for k in _SCALES:
+        s = np.array([1.0, 1.0, 0.0, 0.0]) * k          # DoP = 1(境界)は受理
+        assert O.stokes_analyze(s)["dop"] == pytest.approx(1.0, abs=1e-12)
+        np.testing.assert_allclose(O.mueller_apply(M, s), s, rtol=1e-12, atol=0)
+        np.testing.assert_allclose(O.mueller_apply(M, np.tile(s, (2, 2, 1)))[0, 0], s, rtol=1e-12, atol=0)
+
+
+def test_k3_field_accepts_rounding_dust_in_dark_pixel_of_bright_field():
+    # 屑の許容は場の明るさに対する相対量: 明るい場の中の暗い画素の屑は通す。
+    import optics as O
+    M = O.mueller_element("polarizer", 0.0)
+    field = np.array([[[1.0, 0.5, 0.0, 0.0], [0.0, 1e-17, 0.0, 0.0]]])
+    out = O.mueller_apply(M, field)
+    assert np.all(np.isfinite(out))
+
+
+def test_k3_polar_gpu_torch_cpu_matches_optics_rule():
+    torch = pytest.importorskip("torch")
+    import optics as O
+    import polar_gpu as PG
+    M = torch.tensor(O.mueller_element("polarizer", 0.0))
+    for k in _SCALES:
+        bad = torch.tensor(np.tile(np.array([1.0, 2.0, 0.0, 0.0]) * k, (3, 1)))
+        with pytest.raises(ValueError, match="unphysical"):
+            PG.mueller_apply_batch(M, bad)
+        with pytest.raises(ValueError, match="unphysical"):
+            PG.stokes_analyze_batch(bad)
+        good = torch.tensor(np.tile(np.array([1.0, 1.0, 0.0, 0.0]) * k, (3, 1)))
+        PG.mueller_apply_batch(M, good)
+        assert float(PG.stokes_analyze_batch(good)["dop"][0]) == pytest.approx(1.0, abs=1e-12)
