@@ -676,10 +676,12 @@ DOCS: dict[str, str] = {
         "考え方だが、勾配計算・平滑化のブロックサイズなどを固定パラメータで計算する"
         "OpenCV 版。\n\n"
         "HALCON の `points_harris` に相当(近似)。実装は "
-        "``cv2.cornerHarris(v, blockSize=2, ksize=3, k=0.04)`` を ``signed01`` で "
+        "``cv2.cornerHarris(v, blockSize=3, ksize=3, k=0.04)`` を ``signed01`` で "
         "``[0,1]`` へ写した値 —— blockSize(近傍サイズ)・ksize(Sobel 開口)・k"
         "(Harris の自由パラメータ)はすべて固定。a, b は未使用 —— skimage 版と違い"
         "スケールを振る仕組みが無い、素の Harris 応答。"
+        "2026-11-05(敵対的検証 第 2 巡 P11)までは blockSize=2 で、偶数の窓の中心が"
+        "半画素ずれ、応答が右下へ 0.5 px 片寄っていた。"
     ),
     "cv_min_eigen": (
         "最小固有値によるコーナー強度(Shi-Tomasi 系、OpenCV 実装)。勾配の構造"
@@ -1017,7 +1019,9 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
              lambda v, a, b: (cv2.Canny(_u8(v), int(50 + 100 * a), int(100 + 150 * b)) > 0).astype(np.float64)),
             # more image->image
             ("cv_corner_harris", "edges", "points_harris", IMAGE, IMAGE,
-             lambda v, a, b: signed01(cv2.cornerHarris(v.astype(np.float32), 2, 3, 0.04))),
+             # ★blockSize は奇数の 3(中心のある窓)。2026-11-05(敵対的検証 第 2 巡 P11)までは 2 で、偶数の
+             #   箱は中心が半画素ずれ、正方形の 4 隅の応答の極大が中心対称でなかった(中心 20.0、真値 19.5)。
+             lambda v, a, b: signed01(cv2.cornerHarris(v.astype(np.float32), 3, 3, 0.04))),
             ("cv_min_eigen", "edges", "points_harris", IMAGE, IMAGE,
              lambda v, a, b: norm(cv2.cornerMinEigenVal(v.astype(np.float32), 3 + 2 * int(a * 2)))),
             ("cv_precorner", "edges", "corner_response", IMAGE, IMAGE,

@@ -440,3 +440,25 @@ def test_p10_compass_direction_matches_exact_integer_arithmetic_and_ignores_offs
     assert np.array_equal(y, ref)
     for off in (0.1, -0.07, 0.31):
         assert np.array_equal(ap(x + off, name), y)
+
+
+# --------------------------------------------------------------------------------------------- #
+# P11: cv_corner_harris の応答は正方形の 4 隅で中心対称(偶数の窓の半画素の片寄りが無い)
+# --------------------------------------------------------------------------------------------- #
+def test_p11_cv_corner_harris_peaks_are_symmetric_about_the_square_centre():
+    pytest.importorskip("cv2")
+    x = np.full((40, 40), 0.2)
+    x[10:30, 10:30] = 0.8                                   # 画素 10..29、中心 19.5
+    x = ndimage.gaussian_filter(x, 0.7)
+    y = ap(x, "cv_corner_harris")
+    peaks = []
+    for (r0, r1, c0, c1) in [(0, 20, 0, 20), (20, 40, 20, 40), (0, 20, 20, 40), (20, 40, 0, 20)]:
+        sub = y[r0:r1, c0:c1]
+        i, j = np.unravel_index(np.argmax(sub), sub.shape)
+        peaks.append((i + r0, j + c0))
+    assert len(peaks) == 4
+    (a1, b1), (a2, b2), (a3, b3), (a4, b4) = peaks
+    assert ((a1 + a2) / 2, (b1 + b2) / 2) == (19.5, 19.5)
+    assert ((a3 + a4) / 2, (b3 + b4) / 2) == (19.5, 19.5)
+    # 応答の場そのものも 180 度回転と可換
+    assert float(np.abs(ap(np.rot90(x, 2), "cv_corner_harris") - np.rot90(y, 2)).max()) < 1e-5

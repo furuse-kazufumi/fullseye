@@ -22,6 +22,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - P8 中心基準の変換の中心を画素中心の規約 ((H-1)/2, (W-1)/2) に(以前は H/2 で、中心の点が 1.3 倍で 0.15 px ずれ、180 度回転と可換でなかった): `zoom_image_factor` / `zoom_region`(と同じ実装の `zoom`)/ `affine_trans_image` / `affine_trans_region`、兄弟の `rescale_img` / `affine_warp`(ops)、輪郭の幾何(`affine_trans_contour_xld` ほか `_sh_xld` の affine / projective / polar)、`hx_crop_contours` / `hx_polar_trans_inv` / `hx_radial_distort_contour`、`polar_trans_image` / `polar_trans_image_inv` / `xcv2_warp_logpolar` の極の中心。`polar_trans_image` は補間の旗が抜けて最近傍(`WARP_POLAR_LINEAR` = 0)になっていたので双線形に(依存の説明と HALCON の `polar_trans_image` は双線形)。中心について回転対称な像の展開の角度方向の揺れ 0.25 → 0.006。既存テスト `test_rescale_img_default_b_is_bit_identical_to_the_old_cubic_default` は「旧」の式に H/2 の中心を写していたので、補間次数を固定する目的はそのままに中心を (H-1)/2 にした。
 - P9 `zoom_image_size` を角合わせから画素中心合わせ(`cv2.resize` / `skimage.transform.resize` と同じ、出力の画素 o ↔ 入力の (o+0.5)·H/Ht − 0.5)に。1/2 縮小で 0.5 px 上にずれ、縦の傾斜の平均が 0.4921(真値 0.5)だった。`cv2.resize(INTER_LINEAR)` と 1e-6 以内で一致(`f2_gauss_pyramid` は直済の兄弟)。
 - P10 `kirsch_dir` / `robinson_dir` の同点(2 方向の応答が数学的に等しい画素)が浮動小数の丸めで決まり、明るさに 0.1 足すだけで 18 画素の方向が変わっていた。最大との差が丸めの桁(入力の大きさに対する相対 1.6e-8)の方向を同点とみなし、小さい番号を選ぶ。整数の厳密な畳み込みで同点を小さい番号に決めた参照と画素まで一致し、明るさの足し算で変わらない。値が変わる: 同点の画素(平らな斜面など)。
+- P11 `cv_corner_harris` の `blockSize=2`(偶数の窓)は中心が半画素ずれ、応答が右下へ 0.5 px 片寄っていた(正方形の 4 隅の極大の中心 20.0、真値 19.5)。奇数の 3 に。応答の場は 180 度回転と可換になった。値が変わる: 全画素(窓が 2×2 → 3×3)。
 
 ### 修正 — 敵対的検証 2026-11-05 第 2 巡(imageops)
 
