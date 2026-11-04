@@ -6,7 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reads the unit-aware CSV produced by <code style="color:#22d3bf">table_write_csv</code> and returns a <code style="color:#22d3bf">table</code> containing columns, units, and metadata.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返り値は <code style="color:#22d3bf">{&quot;columns&quot;: {列名: 1-D 配列}, &quot;units&quot;: {...}, &quot;meta&quot;: {...}}</code>。列名と単位の個数、全データ行の列数、必須メタデータを検査し、途中までの表は返さない。数値列は float64 (空欄は NaN)、数値以外を含む列は文字列配列になる。入力は UTF-8 の <code style="color:#22d3bf">str</code> または <code style="color:#22d3bf">bytes</code>。</p>
+<p>返り値は <code style="color:#22d3bf">{&quot;columns&quot;: {列名: 1-D 配列}, &quot;units&quot;: {...}, &quot;meta&quot;: {...}}</code>。列名と単位の個数、全データ行の列数、必須メタデータを検査し、途中までの表は返さない。数値列は float64 (空欄は NaN)、数値以外を含む列は文字列配列になる。ただし全セルが整数で、float64 では正確に持てない値(絶対値が 2**53 超)を含む列は int64 / uint64 で返す(丸めて返さない)。入力は UTF-8 の <code style="color:#22d3bf">str</code> または <code style="color:#22d3bf">bytes</code>。</p>
 <p>呼び出し例: <code style="color:#22d3bf">roundtrip = table_read_csv(table_write_csv(table, units=units, meta=meta))</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
