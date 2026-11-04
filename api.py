@@ -3090,14 +3090,35 @@ def _check_call_args(image, name, a, b, policy):
         out.append(x)
     return out[0], out[1]
 
+#: :func:`_nonfinite_leaf` が降りる入れ子の深さの上限(再帰の歯止め。実際の入力は数段)。
+_NONFINITE_MAX_DEPTH = 32
+
+
 def _nonfinite_leaf(x, depth=0):
     """*x* の最初の非有限な浮動小数の葉を短い文で返す(無ければ None)。
 
     ndarray は float / complex の種だけ見る(整数・bool は NaN を持てない)。float は
     ``min`` / ``max`` が NaN を伝播し ±inf をそのまま出すので、bool 配列を作らずに済む。
-    list / tuple / dict は 3 段まで降りる(n 項 op の入力リスト、XLD の ``cs``、表の列)。
+    object 配列は要素ごとに降りる。list / tuple / dict は :data:`_NONFINITE_MAX_DEPTH` 段まで降りる
+    (n 項 op の入力リスト、XLD の ``cs``、表の列、入れ子の表)。
+
+    ★2026-11-04(外部監査 v0.9.0 F4): 以前は**スカラーの葉**(``{"x": nan}`` の ``nan``、
+    ``[array, inf]`` の ``inf``、複素のスカラー)と object 配列を見ず、深さも 3 段で打ち切っていた ——
+    ``apply({"x": nan}, "identity", on_error="raise")`` が NaN をそのまま返した(入口の契約違反)。
     """
+    if isinstance(x, (bool, np.bool_)):
+        return None
+    if isinstance(x, (float, complex, np.floating, np.complexfloating)):
+        return None if np.isfinite(x) else "non-finite value %r" % (x,)
     if isinstance(x, np.ndarray):
+        if x.dtype == object:
+            if depth >= _NONFINITE_MAX_DEPTH:
+                return None
+            for i, v in enumerate(x.flat):
+                hit = _nonfinite_leaf(v, depth + 1)
+                if hit is not None:
+                    return "element %d: %s" % (i, hit)
+            return None
         if x.size == 0 or x.dtype.kind not in "fc":
             return None
         if x.dtype.kind == "f":
@@ -3108,7 +3129,7 @@ def _nonfinite_leaf(x, depth=0):
                 return None
         n = int(np.count_nonzero(~np.isfinite(x)))
         return "%d of %d values non-finite (shape %s)" % (n, x.size, x.shape)
-    if depth >= 3:
+    if depth >= _NONFINITE_MAX_DEPTH:
         return None
     if isinstance(x, dict):
         for k, v in x.items():
