@@ -19,7 +19,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-FSIMc(彩度 I / Q を含む、1 = 同一、**higher is better**)。TID2013 の FSIMc.txt と 4 桁一致するのは色画像(RGB → YIQ full range)を渡したとき
+FSIMc(特徴類似度による全参照の画質指標。彩度 I / Q を含む、1 = 同一、**higher is better**)。TID2013 の FSIMc.txt と 4 桁一致するのは色画像(RGB → YIQ full range)を渡したとき
 (``iqatid.tid2013_evaluate(root, fsimc, luma="rgb")``、3,000 組 max |差| 5.0e-5)。(H, W) 入力なら FSIM と同じ値。詳細 :func:`fsim_pair`。
 
 ## 詳しい使い方ガイド

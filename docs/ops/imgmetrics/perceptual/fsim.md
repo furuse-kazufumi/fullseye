@@ -19,7 +19,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-FSIM(輝度のみ、1 = 同一、**higher is better**)。TID2013 の FSIM.txt と 4 桁一致するのは **Y′ limited の灰色画像**を渡したとき
+FSIM(特徴類似度による全参照の画質指標。輝度のみ、1 = 同一、**higher is better**)。TID2013 の FSIM.txt と 4 桁一致するのは **Y′ limited の灰色画像**を渡したとき
 (``iqatid.tid2013_evaluate(root, fsim, luma="limited_u8")``、3,000 組 max |差| 5.0e-5)。詳細 :func:`fsim_pair`。
 
 ## 詳しい使い方ガイド
