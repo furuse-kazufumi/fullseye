@@ -388,3 +388,24 @@ def test_sus_monogenic_orientation_stays_in_half_open_range():
     assert np.all(Q.monogenic_orientation(q, display=True) < 1.0)
     _amp, _ph, ori = Q.monogenic_metrics(q)
     np.testing.assert_array_equal(ori, th)
+
+
+def test_sus_film_color_hue_is_nan_for_achromatic_and_never_360():
+    import filmoptics as F
+    # 膜が周囲(n=1)か基板と同じ屈折率 = 膜が無いのと同じ = 分散の無い基板の平坦な反射率 = 無彩色。
+    # 修正前は丸め屑の向き(191°、238°…)を色相として返した。
+    cases = [(1.0, 1.3), (1.0, 1.5), (1.0, 2.0), (1.5, 1.5)]
+    assert len(cases) == 4
+    for nf, ns in cases:
+        r = F.film_color(film=nf, substrate=ns, thickness_min_nm=0.0, thickness_max_nm=500.0, n_points=3)
+        assert np.all(r["chroma"] < 1e-9)
+        assert np.all(np.isnan(r["hue_deg"])), (nf, ns, r["hue_deg"])
+    # 色のある既定(SiO2 on Si)は [0, 360) の有限値で、独立に atan2 から求めた値と一致
+    r = F.film_color(n_points=201)
+    h = r["hue_deg"]
+    assert np.all(np.isfinite(h)) and np.all((h >= 0) & (h < 360))
+    ref = np.degrees(np.arctan2(r["lab"][:, 2], r["lab"][:, 1])) % 360.0
+    np.testing.assert_allclose(h, ref, atol=1e-12)
+    # 丸めで 360.0 になる入力(a* > 0、b* = -1e-17 a*: 素の式は 360.0 を返す)は 0
+    assert np.degrees(np.arctan2(-1e-17, 1.0)) % 360.0 == 360.0
+    assert F._hue_angle_deg(np.array([[50.0, 1.0, -1e-17]]))[0] == 0.0
