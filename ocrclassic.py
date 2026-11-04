@@ -1280,7 +1280,14 @@ def ocr_classify(features, model, k=1, blur=None) -> dict:
         d_own = float(row[y == lab].min())
         other = row[y != lab]
         d_other = float(other.min()) if other.size else math.inf
-        ratio = math.inf if d_own <= 1e-12 else d_other / d_own
+        # ★2026-11-04(外部監査 v0.9.0 F8): 以前は ``d_own <= 1e-12`` なら他クラスの距離に関わらず
+        #   margin = inf(拒否しない)で、別クラスも距離 0 の完全な同点が「A、margin inf」で通っていた。
+        #   比は定義どおり d_other / d_own、両方 0 は同点 = 1(min_margin_ratio >= 1 なので拒否)、
+        #   自クラスだけ 0 のときだけ inf。絶対の床 1e-12 も無くす(重みつき距離の単位に依存し、近い同点も隠した)。
+        if d_own > 0.0:
+            ratio = d_other / d_own
+        else:
+            ratio = math.inf if d_other > 0.0 else 1.0
         rd = float(rd_class.get(lab, rd_global))
         is_rej = bool(d_own > rd or ratio < mr)
         raw.append(lab)

@@ -275,7 +275,7 @@ def run() -> dict:
         one[0] == 0 and all(p <= q for p, q in zip(one, one[1:])) and one[-1] == one[-2]
         and two[0] == two[3] and two[1] == two[2]
         and np.all(np.asarray(fs.apply(float("nan"), "feature_to_img", 0.5, 0.5,
-                                       on_error="raise")) == 1.0))
+                                       on_error="raise", allow_nonfinite=True)) == 1.0))
 
     for k, v in checks.items():
         print("  closed-form %-16s %s" % (k, "OK" if v else "NG"))

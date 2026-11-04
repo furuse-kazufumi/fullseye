@@ -10,6 +10,33 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 外部監査 v0.9.0 の 9 件の修正で振る舞いが変わるもの
+
+- F1 `run_pipeline` / `FullseyeEngine.run_stepwise`(`api._normalise_stages`): 段 `("op", a)` の省いた `b` は共通の `b` になる(以前は共通の `a`)。dict 形 `{"op": .., "a": ..}` と同じ答え。
+- F2 `apply([x1, x2], op)`(n-ary の密な入力): 整数・bool の画像は `on_error="raise"` で `ValueError`、既定では単入力と同じく `/255`(uint8)・`/65535`(uint16)で変換して台帳に記録する(以前は整数のまま op に渡り、例外も記録もなく別の答え)。region の入力と `convol_image` の核(重みの表)は従来どおり縮めない。
+- F3 値が変わる: `vector_to_similarity` の倍率(座標の単位に依存した偏りが消える)、`odometry.umeyama_align` は小さい座標でも倍率を返す(以前は `var <= 1e-12` で 1.0)、`featmatch` の最小標本の退化判定は相対量(座標 1e-6 の標本を「退化」と捨てない)。
+- F4 入口の非有限値の拒否(`apply` / `run_pipeline`、方針に依らず): 入力そのものが NaN / inf のスカラー(例 `apply(float("nan"), "feature_to_img", …)`)、dict・list・tuple の中のスカラー、複素スカラー、object 配列、4 段以上の入れ子の NaN / inf も拒否する(以前は素通し)。`allow_nonfinite=True` は従来どおり。
+- F5 `hand_eye_calibration` / `calibrate_hand_eye`: ちょうど 180° の相対運動を含む列を解く(以前は「単一軸」で拒否)。半回転だけで X が決まらない列は「not determined」の文で拒否する。`camera.rotation_log` は角を atan2 で取り、π の近くの軸の向きを歪対称部から取る(値が丸めの桁で変わる)。
+- F6 `ransac_homography` / `ransac_fundamental`: 最終の当てはめ直しで内れ値が `min_inliers` を割るときは、合意を満たしていた RANSAC の模型を返す(以前は割った模型を成功として返した)。
+- F7 `register_ecc`: 反復の上限で止まったとき、`metric` と `min_rho` の判定は返す warp で測り直した相関(以前は最後の更新前の値)。`history` は従来どおり反復ごとの値。
+- F8 `ocr_classify` / `ocr_read_line`: 他のクラスも同じ距離(0 を含む)の同点は margin 1 で拒否する。`margin` は自クラスの距離が 1e-12 以下でも比で返す(以前は inf)。
+- F9 `register_accuracy_map` の `by_texture` / `by_magnitude`: 4 群は排他的(`[lo, hi)`、最後だけ `[lo, hi]`)。`n` の和が集計した画素の数になり、各群の `n` と `epe_median` が変わる。
+
+### 修正 — 外部監査 v0.9.0 の 9 件(F1〜F9)と同型の箇所の一掃
+
+外部の検証者の報告(9 件)を実コードで 1 件ずつ確かめ、9 件とも契約違反と判定した。回帰は
+`tests/test_audit_0_9_0_fixes_2026_11_04.py`(真値は閉形式・既知解から独立に作る)。
+
+- F1 部分タプル段の補完。兄弟: `FullseyeEngine.__init__` / `unified.Pipeline` は正しく、触らない。
+- F2 n-ary の密な入力に `_contract_dtype` を入力ごとに(単入力と PrecisionUnion の n-ary 経路はすでに通っていた)。
+- F3 倍率の床 `var + 1e-12` を広がりで割った比へ。同じ形の絶対の床を相対量へ: `featmatch._similarity_fit` / `_degenerate_pair` / `_degenerate_affine` / `_degenerate_h`、`odometry.umeyama_align`、`fit_transform._hartley_norm` と `H[2,2]` の床。1e-9〜1e6 の 6 尺度で同じ答え。
+- F4 `_nonfinite_leaf` がスカラーの葉・object 配列・32 段までの入れ子を見る。
+- F5 回転の対数の 180° 特異点: π の近くは対称部から軸を取り、半回転の軸の向きは軸の符号を使わない線形解 `(I⊗Ra − Rbᵀ⊗I) vec(Rx) = 0` で揃えてから従来の Park-Martin。異なる軸の半回転を含む既知解 4 種で X を 1e-9 で戻す。兄弟: `camera.rotation_log`、`balltrack.spin_from_markers`(ちょうど 180° で NaN の ω)。`mathestimation.se3_log` は定義域 θ < π を約束して拒否しているので変えない。
+- F6 当てはめ直しが合意を保つときだけ採る(`pcseg.fit_sphere_ransac` と同じ規則)。兄弟: `ransac_fundamental`。
+- F7 返す warp で相関を測り直す。兄弟: `register_mi` / `register_ffd` は最後に測り直しており問題なし。
+- F8 同点の比を 1 に。兄弟: `features_match` / `feat_fpfh` / `feat_shot` の比の検定は同点を落としており問題なし。
+- F9 群を半開区間に。兄弟: 他の区間の集計は半開区間で問題なし。
+
 ### 破壊的変更(Breaking) — 外部検証 第 2 陣(E1〜E4・I1〜I3・G1〜G3)の修正で振る舞いが変わるもの
 
 回帰の門は `tests/test_audit_extra_2026_11_04.py`(報告の再現 + 兄弟の掃除)。op の宣言・型名は変えていない。

@@ -410,11 +410,15 @@ def spin_from_markers(dirs0, dirs1, dt: float) -> dict:
     U, _, Vt = np.linalg.svd(Hm)
     d = np.sign(np.linalg.det(Vt.T @ U.T))
     R = Vt.T @ np.diag([1.0, 1.0, d]) @ U.T
-    ang = float(np.arccos(np.clip((np.trace(R) - 1.0) / 2.0, -1.0, 1.0)))
+    # ★2026-11-04(外部監査 v0.9.0 F5): 以前は軸 = 歪対称部 / |歪対称部| で、コマ間がちょうど 180° だと 0 / 0 = NaN の ω を
+    #   返した。回転の対数は camera.rotation_log(π の近くは対称部から軸)に寄せる。ちょうど π では
+    #   ω と −ω の区別は原理的に付かない(どちらも同じ R)。
+    import camera
+    w = camera.rotation_log(R)
+    ang = float(np.linalg.norm(w))
     if ang < 1e-12:
         axis = np.array([0.0, 0.0, 1.0])
     else:
-        w = np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])
-        axis = w / np.linalg.norm(w)
+        axis = w / ang
     rms = float(np.sqrt(np.mean(np.sum((D0 @ R.T - D1) ** 2, axis=1))))
     return {"omega": axis * ang / dt, "angle": ang, "axis": axis, "R": R, "full": True, "rms": rms}

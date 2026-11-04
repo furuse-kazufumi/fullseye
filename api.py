@@ -2711,14 +2711,19 @@ def _reject_untyped(v, op_or_sort) -> None:
             % (name, sort, a.dtype))
 
 
-def _contract_dtype(v, op, policy):
+def _contract_dtype(v, op, policy, *, in_sort=None, name=None):
     """Bring an integer/bool image onto the float64 [0,1] contract, or refuse it.
 
     Returns the value to run the op on. Independent of ``coerce`` (which is about
     the *sort*, not the dtype): a dtype outside the contract is wrong for every
     caller, and staying silent is what produced the wrong answers above.
+
+    ``in_sort`` / ``name`` override ``op.in_sort`` / ``op.name`` for one input of an
+    n-ary op (``NaryOp`` has ``in_sorts[i]``), exactly as in :func:`_pu_contract`.
     """
-    if op.in_sort not in _DTYPE_CONTRACT_SORTS:
+    in_sort = op.in_sort if in_sort is None else in_sort
+    name = op.name if name is None else name
+    if in_sort not in _DTYPE_CONTRACT_SORTS:
         return v
     a = v if isinstance(v, np.ndarray) else None
     if a is not None and a.dtype.kind == "f" and a.dtype.itemsize < 8:
@@ -2734,7 +2739,7 @@ def _contract_dtype(v, op, policy):
             "Convert explicitly, e.g. img.astype(np.float64) / 255.0 for uint8 — the core "
             "operators run scipy.ndimage with no dtype argument, so an integer image is "
             "filtered as an integer and the result is a different image, not a slower one."
-            % (op.name, op.in_sort, a.dtype))
+            % (name, in_sort, a.dtype))
     if a.dtype.kind == "b":
         out = a.astype(np.float64)
         how = "bool -> float64 {0,1}"
@@ -2742,7 +2747,7 @@ def _contract_dtype(v, op, policy):
         s = _dtype_scale(a)
         out = a.astype(np.float64) if s == 1.0 else a.astype(np.float64) / s
         how = "%s -> float64 (/%g)" % (a.dtype, s)
-    _bs.record(op.name,
+    _bs.record(name,
                ValueError("dtype_converted: %s; the contract is float64 in [0,1]" % how),
                op.out_sort, source="input")
     return out
@@ -3085,14 +3090,35 @@ def _check_call_args(image, name, a, b, policy):
         out.append(x)
     return out[0], out[1]
 
+#: :func:`_nonfinite_leaf` が降りる入れ子の深さの上限(再帰の歯止め。実際の入力は数段)。
+_NONFINITE_MAX_DEPTH = 32
+
+
 def _nonfinite_leaf(x, depth=0):
     """*x* の最初の非有限な浮動小数の葉を短い文で返す(無ければ None)。
 
     ndarray は float / complex の種だけ見る(整数・bool は NaN を持てない)。float は
     ``min`` / ``max`` が NaN を伝播し ±inf をそのまま出すので、bool 配列を作らずに済む。
-    list / tuple / dict は 3 段まで降りる(n 項 op の入力リスト、XLD の ``cs``、表の列)。
+    object 配列は要素ごとに降りる。list / tuple / dict は :data:`_NONFINITE_MAX_DEPTH` 段まで降りる
+    (n 項 op の入力リスト、XLD の ``cs``、表の列、入れ子の表)。
+
+    ★2026-11-04(外部監査 v0.9.0 F4): 以前は**スカラーの葉**(``{"x": nan}`` の ``nan``、
+    ``[array, inf]`` の ``inf``、複素のスカラー)と object 配列を見ず、深さも 3 段で打ち切っていた ——
+    ``apply({"x": nan}, "identity", on_error="raise")`` が NaN をそのまま返した(入口の契約違反)。
     """
+    if isinstance(x, (bool, np.bool_)):
+        return None
+    if isinstance(x, (float, complex, np.floating, np.complexfloating)):
+        return None if np.isfinite(x) else "non-finite value %r" % (x,)
     if isinstance(x, np.ndarray):
+        if x.dtype == object:
+            if depth >= _NONFINITE_MAX_DEPTH:
+                return None
+            for i, v in enumerate(x.flat):
+                hit = _nonfinite_leaf(v, depth + 1)
+                if hit is not None:
+                    return "element %d: %s" % (i, hit)
+            return None
         if x.size == 0 or x.dtype.kind not in "fc":
             return None
         if x.dtype.kind == "f":
@@ -3103,7 +3129,7 @@ def _nonfinite_leaf(x, depth=0):
                 return None
         n = int(np.count_nonzero(~np.isfinite(x)))
         return "%d of %d values non-finite (shape %s)" % (n, x.size, x.shape)
-    if depth >= 3:
+    if depth >= _NONFINITE_MAX_DEPTH:
         return None
     if isinstance(x, dict):
         for k, v in x.items():
@@ -3171,6 +3197,14 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None, allow_nonf
             _reject_untyped(x, srt)
         inputs = [(_coerce_sort(x, srt) if coerce else np.asarray(x))
                   for x, srt in zip(image, nop.in_sorts)]
+        # ★2026-11-04(外部監査 v0.9.0 F2): 単入力の apply / run_pipeline と PrecisionUnion の n-ary 経路は
+        #   dtype 契約(_contract_dtype)を通るのに、密な配列の n-ary だけが通らず、uint8 の 32 + 32 が
+        #   on_error="raise" でも例外も台帳記録も無く 1.0(正しくは 64/255)になっていた。入力ごとに同じ規則で。
+        #   畳み込みの核(_NARY_KERNEL_SECOND の第 2 入力)は画像でなく重みの表なので、型だけ float64 にする。
+        inputs = [(np.asarray(x, np.float64) if (i == 1 and name in _NARY_KERNEL_SECOND
+                                                 and np.asarray(x).dtype.kind in "bui")
+                   else _contract_dtype(x, nop, policy, in_sort=srt, name=name))
+                  for i, (x, srt) in enumerate(zip(inputs, nop.in_sorts))]
         # the n-ary functions carry no guard of their own: give them the same recorded,
         # sanitised fail-soft as every backend op (strict mode re-raises inside guard)
         def body(v0, aa, bb):
@@ -3303,7 +3337,10 @@ def _normalise_stages(image, stages, a, b) -> list:
                                     % (i, name, sorted(bad)))
                 sa, sb = rest[0].get("a", a), rest[0].get("b", b)
             elif len(rest) <= 2 and all(isinstance(x, _NUMBER) and not isinstance(x, bool) for x in rest):
-                sa, sb = (rest + [a, b])[:2]
+                # ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の
+                #   省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。
+                #   省いた位置の分だけ、その位置の既定値で埋める。
+                sa, sb = rest + [a, b][len(rest):]
             else:
                 raise TypeError(
                     "stage %d (%r): expected (name), (name, a), (name, a, b) or (name, {'a': .., 'b': ..}), got %r"
