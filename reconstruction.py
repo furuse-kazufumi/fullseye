@@ -86,12 +86,23 @@ def match_fundamental_matrix_ransac(points1, points2, thresh: float = 1.0, iters
 
     返す ``inliers`` / ``num_inliers`` は返す ``F`` で数え直した内れ値(Sampson 距離 < ``thresh``²。
     再推定前の仮説のものではない。2026-11-05 敵対的検証 G1b)。
+
+    Raises ``ValueError``: 対応が 8 組未満 / 点数不一致 / 非有限 / 全標本で当てはめ失敗
+    (以前は 8 組未満で ``F`` = 単位行列を返していた。G8)。
     """
     p1 = np.asarray(points1, float).reshape(-1, 2)
     p2 = np.asarray(points2, float).reshape(-1, 2)
     n = len(p1)
+    # ★2026-11-05(敵対的検証 G8): 8 点未満で F = 単位行列(rank 3 で基礎行列ではない)を
+    # num_inliers なしで返していた(E 側は KeyError 'num_inliers')。模型を捏造せず拒否する。
+    if len(p2) != n:
+        raise ValueError("match_fundamental_matrix_ransac: points1 and points2 have different "
+                         f"lengths ({n} vs {len(p2)})")
     if n < 8:
-        return {"F": np.eye(3), "inliers": np.zeros(n, bool)}
+        raise ValueError(f"match_fundamental_matrix_ransac: the 8-point algorithm needs >= 8 "
+                         f"correspondences, got {n}")
+    if not (np.isfinite(p1).all() and np.isfinite(p2).all()):
+        raise ValueError("match_fundamental_matrix_ransac: points contain non-finite values")
     rng = np.random.default_rng(seed)
     best_in, best_F = None, None
     for _ in range(iters):
@@ -103,6 +114,9 @@ def match_fundamental_matrix_ransac(points1, points2, thresh: float = 1.0, iters
         inl = _sampson(F, p1, p2) < thresh ** 2
         if best_in is None or inl.sum() > best_in.sum():
             best_in, best_F = inl, F
+    if best_in is None:
+        raise ValueError("match_fundamental_matrix_ransac: every 8-point sample failed to fit "
+                         "(degenerate correspondences)")
     # ★2026-11-05(敵対的検証 G1b): 以前は内れ値で再推定した F を返しながら、inliers は
     # 再推定前の 8 点仮説のものを返していた(返した F で数え直すと 138 → 185 点)。
     # featmatch._refit_keeping_consensus と同じ規則: 返す inliers は常に返す F の内れ値。
@@ -121,7 +135,11 @@ def match_fundamental_matrix_ransac(points1, points2, thresh: float = 1.0, iters
 
 
 def match_essential_matrix_ransac(points1, points2, K, thresh: float = 1.0, iters: int = 200, seed: int = 0):
-    """点対応と内部行列 K から RANSAC で本質行列 E を推定(match_essential_matrix_ransac)。"""
+    """点対応と内部行列 K から RANSAC で本質行列 E を推定(match_essential_matrix_ransac)。
+
+    返り値のキーは ``E`` / ``inliers`` / ``num_inliers``(:func:`match_fundamental_matrix_ransac`
+    と同じ内れ値)。8 組未満などは ``match_fundamental_matrix_ransac`` と同じく ``ValueError``。
+    """
     r = match_fundamental_matrix_ransac(points1, points2, thresh, iters, seed)
     K = np.asarray(K, float)
     E = K.T @ r["F"] @ K
