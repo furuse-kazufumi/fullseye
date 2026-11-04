@@ -1014,8 +1014,13 @@ def make_figures(L, chief, depth, rend, sweep, field, dof):
     if figs.target_dir() is not None:
         gsz = 300
         sg = setup(gsz)
-        zs = list(np.linspace(-3.0, 3.0, 10)) + list(np.linspace(3.0, -3.0, 10))[1:-1]
-        frames = [(np.clip(frame(float(dz), gsz, sg, 12), 0, 1) * 255).astype(np.uint8) for dz in zs]
+        # ★2026-11-05: 往路 10 コマ + 復路 8 コマ。復路は往路と同じ高さなので描き直さず使い回す
+        #   (1 コマ = 3 本のレンズの描画で、手元 1 本 ~15 秒。18 → 10 回で図の段が ~6 分縮む)。
+        #   以前は復路を np.linspace(3, -3, 10) から取っていて、往路と 1 ulp(6.7e-16 mm)違う
+        #   だけの同じ絵を描いていた。図つきの全数走行で 900 秒を超えていた主因がこの GIF。
+        fwd = [float(dz) for dz in np.linspace(-3.0, 3.0, 10)]
+        drawn = {i: (np.clip(frame(dz, gsz, sg, 12), 0, 1) * 255).astype(np.uint8) for i, dz in enumerate(fwd)}
+        frames = [drawn[i] for i in list(range(10)) + list(range(8, 0, -1))]
         figs.save_gif("work_up_down", frames,
                       "ワークを ±3 mm 上下させる。通常のレンズだけ像が伸び縮みし(水色の線 = 合焦面の輪郭)、穴の底が隠れる。", fps=6)
     # 4. 絞りのずれ
