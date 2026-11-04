@@ -392,12 +392,21 @@ def vector_to_proj_hom_mat2d_distortion(src_points, dst_points):
 
 
 def point_pluecker_line_to_hom_mat3d(point, pluecker, target_point, target_dir):
-    """点+Plücker 直線の対応から 3D 剛体変換を推定(point_pluecker_line_to_hom_mat3d)。"""
+    """点+Plücker 直線の対応から 3D 剛体変換を推定(point_pluecker_line_to_hom_mat3d)。
+
+    回転は ``direction`` を ``target_dir`` に重ねる最小回転(反平行なら直交軸まわりの半回転)、
+    並進は ``point`` を ``target_point`` に写す。"""
     d1 = _m(pluecker["direction"]); d1 = d1 / (np.linalg.norm(d1) + 1e-12)
     d2 = _m(target_dir); d2 = d2 / (np.linalg.norm(d2) + 1e-12)
     v = np.cross(d1, d2); s = np.linalg.norm(v); c = d1 @ d2
-    if s < 1e-9:
+    if s < 1e-9 and c > 0:
         R = np.eye(3)
+    elif s < 1e-9:
+        # ★2026-11-05(敵対的検証 G4): 反平行(180°)で単位行列を返していた(R·d1 = d1 ≠ d2)。
+        # d1 に直交する任意の軸 a まわりの半回転 R = 2 a aᵀ − I で d1 を −d1 = d2 に重ねる。
+        ref = np.eye(3)[int(np.argmin(np.abs(d1)))]
+        a = np.cross(d1, ref); a = a / np.linalg.norm(a)
+        R = 2.0 * np.outer(a, a) - np.eye(3)
     else:
         vx = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
         R = np.eye(3) + vx + vx @ vx * ((1 - c) / (s ** 2))
