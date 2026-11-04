@@ -331,10 +331,17 @@ def point_line_to_hom_mat2d(p_src, dir_src, p_dst, dir_dst):
 
 
 def proj_hom_mat2d_to_pose(H, K):
-    """ホモグラフィと内部行列から平面の姿勢(R,t)を分解(proj_hom_mat2d_to_pose)。"""
+    """ホモグラフィと内部行列から平面の姿勢(R,t)を分解(proj_hom_mat2d_to_pose)。
+
+    ``H ∝ K [r1 r2 t]`` を分解して 4x4 姿勢を返す。``H`` の倍率・符号には依らず、
+    板(z=0 平面)がカメラの前(``t_z > 0``)に来る符号を選ぶ。"""
     H = _m(H); K = _m(K); Kinv = np.linalg.inv(K)
     L = Kinv @ H
     lam = 1.0 / (np.linalg.norm(L[:, 0]) + 1e-12)
+    # ★2026-11-05(敵対的検証 G7): H と −H は同じ射影だが、符号を正規化していなかったので
+    # −H を渡すと板がカメラの後ろ(t_z < 0)になる姿勢を返した。板が前に来る符号を選ぶ。
+    if L[2, 2] * lam < 0:
+        lam = -lam
     r1 = L[:, 0] * lam; r2 = L[:, 1] * lam; t = L[:, 2] * lam
     r3 = np.cross(r1, r2)
     R = np.column_stack([r1, r2, r3])
