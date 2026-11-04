@@ -11,7 +11,7 @@ version: 0.1.0
 
 ## この族は何をする道具箱か
 
-高さ場から**粗さのパラメータを出す**層です。6 op / 3 カテゴリ(numpy と
+高さ場から**粗さのパラメータを出す**層です。9 op / 3 カテゴリ(numpy と
 `scipy.ndimage` のみ。台帳は `opsroughness.py`、実体は `roughness.py`):
 
 - **synth(1)** — `surface_synth_psd`: 指定した PSD から高さ場を作り、
