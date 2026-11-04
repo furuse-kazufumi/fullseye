@@ -495,7 +495,7 @@ def synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0,
     amplitude:   縞振幅 b(既定 0.5)。bias±amplitude が [0,1] に収まると自然。
     axis:        搬送波の方向(1 = 列方向 x に沿う既定、0 = 行方向 y)。
     noise:       付加ガウスノイズの標準偏差(0 で無ノイズ)。
-    seed:        ノイズ用乱数シード。``noise > 0`` なら整数で必ず渡す(None は ValueError —— 呼ぶたび雑音が変わるので)。
+    seed:        ノイズ用乱数シード。
     return_phase: True なら (images, total_phase) を返す(テスト・デバッグ用)。
 
     返り値: (N, H, W) float 配列(値域 [0,1] にクリップ)。return_phase=True なら位相も。

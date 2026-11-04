@@ -342,12 +342,11 @@ def heap_synth_cone(phi_deg: float, radius_px: float, pitch: float = 1e-3, *, to
       が傾いているときの罠(平らでない地面で安息角が足し算される —— 既存 PoC `poc_stockpile_volume`
       と同じ門)。カメラのロール(回転型)とは 2 次でなく **1 次で違う**(β = 5 度・φ = 30 度で
       1.4 度、``atan(tan φ + tan β)`` 対 ``φ + β``)ので別物として扱う。
-    - ``noise``: 被覆率に足す一様雑音の振幅(縁の揺らぎの代わり)。``noise > 0`` なら ``seed`` を整数で必ず渡す
-      (None は ``ValueError``)。
+    - ``noise``: 被覆率に足す一様雑音の振幅(縁の揺らぎの代わり)。
     - 返り: ``side``(被覆率 ``(rows, cols)``)、``heightmap`` [m]、``ground``(基準面 [m]、同形)、
       ``truth``(phi_deg, R_px, H_px, toe_px, V(数値回転積分 [m³]), V_cone(閉形式)、ground_tilt_deg)、
       ``pitch``。側面像の列 ``x`` の粉の高さ(被覆率の列和)はちょうど ``c(x)`` [px] になる(副画素)。
-    **Raises** ``ValueError``: 範囲外・円弧の重なり・``noise > 0`` で ``seed=None``。"""
+    **Raises** ``ValueError``: 範囲外・円弧の重なり。"""
     if noise > 0.0 and seed is None:     # 敵対的検証 2026-11-05 第 2 巡 T7
         raise ValueError("heap_synth_cone: noise needs an explicit integer seed (seed=None would draw fresh noise on every call)")
     phi = _angle(phi_deg, "phi_deg")
@@ -576,8 +575,7 @@ def discharge_synth(D0: float, d: float, bulk_density: float, phi_deg: float, pi
     ``V(t) = W t / ρ_b``、``R(t) = (3 V / (π tan φ))^{1/3}``。返り: ``frames``(``n_frames`` 枚、``(grid, grid)``
     [m])、``times`` [s]、``W``(真の率 [kg/s])、``masses``(真の質量列)。``noise`` = 高さ図に足す
     ガウス雑音の σ [m] (距離センサの雑音の代わり; 地面も揺れるので体積は 0 で切られて偏る —— その偏りを
-    門で測る)。山が格子からはみ出すと ``ValueError``(体積を黙って切らない)。``noise > 0`` なら ``seed`` を整数で
-    必ず渡す(None は ``ValueError``)。"""
+    門で測る)。山が格子からはみ出すと ``ValueError``(体積を黙って切らない)。"""
     if noise > 0.0 and seed is None:     # 敵対的検証 2026-11-05 第 2 巡 T7
         raise ValueError("discharge_synth: noise needs an explicit integer seed (seed=None would draw fresh noise on every call)")
     W = beverloo_rate(D0, d, bulk_density, C=C, k=k)
