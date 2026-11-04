@@ -39,7 +39,16 @@ from .handles import HandleError, HandleStore
 PROTOCOL_VERSION = "2025-06-18"
 SERVER_NAME = "fullseye"
 #: llmesh/mcp/validator.py の ``_MAX_RAW_BYTES`` と同じ。超えたら typed tree を落とす。
-MAX_STRUCTURED_BYTES = int(get_system("mcp_response_budget"))
+MAX_STRUCTURED_BYTES = int(get_system("mcp_response_budget"))   # import 時の既定(schema の説明用)
+
+
+def _response_budget(value=None) -> int:
+    """structuredContent の上限(byte)。*value* が None なら**呼ぶたびに** fssystem の
+    ``mcp_response_budget`` を読む。
+
+    ★2026-11-05(敵対的検証 第 2 巡 T4): 以前は import 時に 1 回だけ定数にして既定引数へ焼いていたので、
+    ``with fssystem.system(mcp_response_budget=16000)`` が MCP の応答に効かなかった(40 kB を返した)。"""
+    return int(get_system("mcp_response_budget")) if value is None else int(value)
 
 def _execution_policy() -> dict:
     return {"status":"declared_not_applied"}
@@ -625,8 +634,9 @@ def _structured_summary(value: dict) -> str:
 
 
 def tool_result(text: str, structured: dict | None, *, links: list | None = None,
-                max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+                max_structured_bytes: int | None = None) -> dict:
     """本文(text)は必ず付け、typed tree は上限内なら付ける。超えたら**落としたと書く**。"""
+    max_structured_bytes = _response_budget(max_structured_bytes)
     if structured is not None and get_system("mcp_body_mode") == "compact" and text.lstrip().startswith(("{","[")):
         text = _structured_summary(structured)
     content: list[dict] = [{"type": "text", "text": text}]
@@ -1304,7 +1314,8 @@ def _pipeline_json_value(value, store: HandleStore, *, sort: str, provenance: li
 
 
 def _apply(a: dict, cat: Catalog, store: HandleStore, *,
-           max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+           max_structured_bytes: int | None = None) -> dict:
+    max_structured_bytes = _response_budget(max_structured_bytes)
     op = _resolve_op(a["op"], cat)
     meta, arr = store.get(a["handle"])
     _check_sort(op, meta["sort"], prev="ハンドル %s" % meta["handle"])
@@ -1368,7 +1379,8 @@ def _acceleration_record(requested, op_name: str, shape, degraded=None) -> dict:
 
 
 def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
-              max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+              max_structured_bytes: int | None = None) -> dict:
+    max_structured_bytes = _response_budget(max_structured_bytes)
     return _pipeline_dag(a,cat,store,max_structured_bytes=max_structured_bytes)
 
 
@@ -1729,7 +1741,8 @@ def _fix_text(a: dict, store: HandleStore) -> dict:
 
 
 def _inspect(a: dict, store: HandleStore, *,
-             max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+             max_structured_bytes: int | None = None) -> dict:
+    max_structured_bytes = _response_budget(max_structured_bytes)
     meta, arr = store.get(a["handle"])
     if not isinstance(arr, np.ndarray):
         structured={**meta,"value":arr}
@@ -1825,6 +1838,9 @@ def _import_json(a: dict, store: HandleStore) -> dict:
     has_env = a.get("envelope") is not None
     if has_json == has_env:
         raise ArgError("json(文字列)か envelope(オブジェクト)のどちらか一方を渡すこと")
+    # T4 の兄弟: schema の maxLength は import 時の既定。いまの mcp_response_budget で呼ぶたびに測る。
+    if has_json and isinstance(a["json"], str) and len(a["json"]) > _response_budget():
+        raise ArgError("json は %d 文字で、上限 mcp_response_budget=%d を超える" % (len(a["json"]), _response_budget()))
     # ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する
     #   (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
     limits = {"max_bytes": int(store.max_bytes), "max_pixels": int(get_system("mcp_stack_max_pixels"))}
@@ -1938,8 +1954,9 @@ def _write_viewer(a: dict, store: HandleStore) -> dict:
 
 
 def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = None, *,
-              max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+              max_structured_bytes: int | None = None) -> dict:
     """tool 本体。引数違反は ArgError(= -32602)、実行の失敗は isError の結果。"""
+    max_structured_bytes = _response_budget(max_structured_bytes)
     if name not in TOOLS:
         raise ArgError("知らない tool: %r(あるのは %s)" % (name, sorted(TOOLS)))
     profile = os.environ.get("FULLSEYE_MCP_PROFILE", "full")
@@ -2095,7 +2112,10 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             raise ArgError(str(exc)) from exc
         return tool_result(json.dumps(r, ensure_ascii=False, indent=2), r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_validate_pipeline":
-        r = validate_pipeline(a["stages"], a.get("start_sort"), cat, max_stages=a.get("max_stages", 64),
+        # ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、
+        #   pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。
+        #   None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
+        r = validate_pipeline(a["stages"], a.get("start_sort"), cat, max_stages=None,
                               bindings=a.get("bindings"),store=store)
         text = json.dumps(r, ensure_ascii=False, indent=2)
         return (tool_result(text, r, max_structured_bytes=max_structured_bytes) if r["valid"]

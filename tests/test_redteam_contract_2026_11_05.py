@@ -468,3 +468,26 @@ def test_t8_run_cached_accepts_contour_inputs_and_keys_them_by_content():
     assert engine._input_hash(reordered) == engine._input_hash(c)
     with pytest.raises(TypeError):
         engine._input_hash(np.array([object()], dtype=object))
+
+
+def test_t3_validate_tool_uses_pipeline_max_stages_like_the_pipeline_tool():
+    S, cat, store = _mcp()
+    h = S.call_tool("fullseye_import_json", {"envelope": fs.to_jsonable(X, "image")}, cat, store)["structuredContent"]["handle"]
+    stages = [{"op": "gaussian"} for _ in range(40)]
+    with fssystem.system(pipeline_max_stages=16):
+        v = S.call_tool("fullseye_validate_pipeline", {"stages": stages, "start_sort": "image"}, cat, store)
+        assert v["isError"] and v["structuredContent"]["valid"] is False
+        assert [e["reason"] for e in v["structuredContent"]["errors"]][:1] == ["too_many_stages"]
+        with pytest.raises(Exception, match="too_many_stages"):
+            S.call_tool("fullseye_pipeline", {"handle": h, "stages": stages}, cat, store)
+    v = S.call_tool("fullseye_validate_pipeline", {"stages": stages, "start_sort": "image"}, cat, store)
+    assert not v["isError"]                               # default cap 64
+
+
+def test_t4_response_budget_is_read_per_call():
+    from fullseye.mcp import server as S
+    big = {"x": "y" * 40000}
+    with fssystem.system(mcp_response_budget=16000):
+        tr = S.tool_result(json.dumps(big), big)
+        assert "structuredContent" not in tr and tr["_meta"]["fullseye"]["limit"] == 16000
+    assert "structuredContent" in S.tool_result(json.dumps(big), big)
