@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 203,
+  "target_count": 204,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -34437,6 +34437,12 @@
     },
     "poc_symbol_lot_ocr": {
       "representative": "01_lot_ocr_defocus.png",
+      "status": "static",
+      "reason": "two_or_fewer_raster_figures",
+      "usable_figures": 2
+    },
+    "poc_bga_ball_type_roundtrip": {
+      "representative": "01_bga_types.png",
       "status": "static",
       "reason": "two_or_fewer_raster_figures",
       "usable_figures": 2

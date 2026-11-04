@@ -29,7 +29,8 @@
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_keypoints 0.50 0.50
 tb_keypoints_uv_to_rowcol 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_keypoints%200.50%200.50%0Atb_keypoints_uv_to_rowcol%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_keypoints%200.50%200.50%0Atb_keypoints_uv_to_rowcol%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
-<p style="margin:2px 0 2px 12px">• (none yet)</p>
+<p>The examples below call the underlying ledger op <code style="color:#22d3bf">keypoints_uv_to_rowcol</code>. This bridge op is the same implementation adapted to the <code style="color:#22d3bf">fn(v, a, b)</code> convention, so the behaviour carries over unchanged (only the call form differs).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_bga_ball_type_roundtrip">poc_bga_ball_type_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/poc_bga_ball_type_roundtrip.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">keypoints</code> as input)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_keypoints_uv_to_points">tb_keypoints_uv_to_points</a> · <a style="color:#22d3bf" href="op:tb_keypoints_to_image2d">tb_keypoints_to_image2d</a> · <a style="color:#22d3bf" href="op:tb_keypoints_rowcol_to_uv">tb_keypoints_rowcol_to_uv</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">typed</code>)</h3>
