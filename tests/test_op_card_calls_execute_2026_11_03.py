@@ -53,12 +53,24 @@ def _tiers() -> dict:
 # ---------------------------------------------------------------- 1. 機械的な検査(全件)
 
 def test_every_card_names_the_entry_that_accepts_the_op():
+    """★カードの台帳(OP_CARDS.json)は全 backend のある環境で作る。レジストリの中身は backend で
+    変わる(kornia → xkor_*、mahotas → xmh_*、torch → dl_*、opencv-contrib → xcv3_* が無ければ
+    登録されない)ので、満杯でない環境では**この環境に居ない op のカードは確かめられない**。
+    2026-11-04 の master(run 41724324673)の py3.12 で 26 枚が ``tiers=[]`` で「入口違い」に
+    数えられた。居る op のカードは全部確かめ、居ない分は ``requires_full_registry`` で明示する
+    (完全環境の py3.11 では skip ではなく失敗 —— そこでは居ない op のカードは本物の入口違い)。
+    """
     import opassist
+    from conftest import FULL_REGISTRY_BACKENDS, _have_backend, requires_full_registry
+    full = all(_have_backend(b) for b in FULL_REGISTRY_BACKENDS)
     tiers = _tiers()
-    bad = []
+    bad, absent = [], []
     for c in _cards():
         name, entry, call = c["name"], c.get("entry"), c.get("call", "")
         t = tiers.get(name, set())
+        if not t and not full:
+            absent.append(name)
+            continue
         if entry == "apply":
             ok = bool(t & {"registry", "nary"}) and call.startswith("fullseye.apply(") and (", %r, 0.5, 0.5" % name) in call
         elif entry == "op_run":
@@ -69,6 +81,9 @@ def test_every_card_names_the_entry_that_accepts_the_op():
         if not ok:
             bad.append("%s: entry=%r tiers=%s call=%s" % (name, entry, sorted(map(str, t)), call))
     assert not bad, "%d 枚のカードが入口を間違えている:\n%s" % (len(bad), "\n".join(bad[:30]))
+    if absent:
+        print("レジストリが満杯でないので確かめていないカード %d 枚: %s" % (len(absent), ", ".join(absent)))
+        requires_full_registry()
 
 
 def test_op_run_cards_list_exactly_the_required_arguments():

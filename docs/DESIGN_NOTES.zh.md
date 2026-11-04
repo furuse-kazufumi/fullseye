@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：611 / 1603 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：611 / 1606 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -1381,6 +1381,10 @@
 
 - **L25** — ★由于要 import repo 根目录下的模块（profileops），把 repo 根目录放在最前，使其从 checkout 直接运行也能通过。与其他示例做法相同。没有它，`py -3.11 examples/<name>.py` 会以 ModuleNotFoundError 失败（2026-09-09 实测：在没有运行门的 83 个中，失败的只有这种类型的 2 个）。
 
+## `examples/quickstart.py`
+
+- **L58** _(ja)_ — ★世代は 8(以前は 30)。見せるのは 4 段が通ることで、探索の質ではない。 30 世代は進化だけで手元 147 秒、CI の py3.12/3.14 では例全体が 600 秒を超えた(2026-11-04)。
+
 ## `examples/representation_roundtrip.py`
 
 - **L175** — (c) 高斯 -> voxel 的质量。★曾经弄错过的数字
@@ -2403,8 +2407,8 @@
 ## `tests/test_example_scripts_run.py`
 
 - **L48** — ★2026-09-09，在加入这个门后的第一次 CI 上，**7 个在 py3.12 上落败**（py3.11 是绿的）。CI 故意**只在 py3.11** 安装 torch / kornia / mahotas / opencv-contrib，其他版本不装。测试侧本已有名为 ``requires_backend`` 的声明机制，但**跑示例的门却没有它** —— 机制存在，和所有路径都经过它，是两回事。``gallery2d_*`` 是「把该族的 op 全部跑一遍」的画廊，所以它的契约本身**依赖于装了哪些 backend**（它直写 op 名并与 registry 核对，缺一个就以「OPS 里多余」落败）。所以按族声明。剩下 2 个直接用 torch（``fit_zernike`` / ``match_logpolar_z``）。在满配环境（CI 的 py3.11，``FULLSEYE_REQUIRE_OPTIONAL=1``）里 skip 会变成**失败**，所以声明过多和漏声明两个方向都会落败。
-- **L87** — ★不传 PYTHONPATH（这个门的要点）。使用者不会设置环境变量。
-- **L126** _(ja)_ — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
+- **L90** — ★不传 PYTHONPATH（这个门的要点）。使用者不会设置环境变量。
+- **L129** _(ja)_ — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
 
 ## `tests/test_fallback_names_identify_the_op.py`
 
@@ -2484,6 +2488,10 @@
 ## `tests/test_imgforensics.py`
 
 - **L1064** _(ja)_ — ★2026-10-18: 以前は float の [0,1] をそのまま渡し、古い Pillow がバイト列を読み替えて黙って通していた (Pillow 13 で発覚)。本物の 8 bit に直してから JPEG を通す。
+
+## `tests/test_impl_differential.py`
+
+- **L191** _(ja)_ — ★2026-11-04 の master(run 41724324673)の py3.12 / py3.14 で ``tb_points_to_voxel``(torch の scatter_add)が「片方が落ちる」になった。台帳(docs/IMPL_DIFFERENTIAL.json)は全 backend の ある環境で作るので、torch の無い版では**比べられない**だけで、写し方が壊れたのではない。 tests/test_op_probe_ledger.py と同じ判定: 「壊れている」と「この環境に無い」を分け、 分けた分は残りを確かめてから ``requires_backend`` で明示する(完全環境では失敗)。
 
 ## `tests/test_kendama_combo.py`
 
@@ -2661,6 +2669,10 @@
 ## `tests/test_raytrace3d.py`
 
 - **L276** _(ja)_ — ★2026-10-15: 傾いた鏡(摂動)の後で像面と平行に進む光線を、以前は rms 3.4e18 mm の有効な点として数えた
+
+## `tests/test_reprconv_type_connectivity_2026_11_03.py`
+
+- **L24** _(ja)_ — ★sobel3d / hessian3d は torch を使う。`match3d` 自体は torch 無しでも import できる (torch_lazy が初回使用まで読み込まない)ので、2026-11-03 までの `pytest.importorskip("match3d")` は**何も skip せず**、torch の無い master の py3.12 / py3.14 で ImportError になっていた。要るのは torch なので、それを 使うテストごとに `requires_backend("torch")` で宣言する(完全環境では skip が失敗)。
 
 ## `tests/test_roughness_robust.py`
 

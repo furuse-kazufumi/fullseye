@@ -60,6 +60,9 @@ from conftest import FULL_REGISTRY_BACKENDS, _have_backend, requires_backend  # 
 NEEDS = {
     "lens_design_demo": ("torch",),
     "representation_conversion": ("torch",),
+    # 鎖 1 の sobel3d と鎖 3-4 の hessian3d が torch(hessian 型の産み手はこれしか無い)。
+    # 2026-11-04 の master(run 41724324673)の py3.12 / py3.14 で exit 1 だった。
+    "type_connectivity_tour": ("torch",),
 }
 
 
