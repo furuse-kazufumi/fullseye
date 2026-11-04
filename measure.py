@@ -99,12 +99,18 @@ def fit_circle(points) -> dict:
                              full_matrices=False)  # U は捨てる(2026-09-06)
     if sv[0] <= 1e-12 or sv[1] <= 1e-9 * sv[0]:
         raise ValueError("points are collinear or coincident; no circle fit")
-    a_mat = np.column_stack([2.0 * x, 2.0 * y, np.ones(len(x))])
-    sol, *_ = np.linalg.lstsq(a_mat, x * x + y * y, rcond=None)
-    cx, cy, c = float(sol[0]), float(sol[1]), float(sol[2])
-    r2 = c + cx * cx + cy * cy
-    if not np.isfinite(r2) or r2 <= 1e-12:
+    # ★2026-11-05(敵対的検証 G10 の兄弟): 重心へ寄せて解く(未中心化の x²+y² は原点から遠い
+    # 点で桁落ちする。ransac_fit._fit_circle_2d と同じ直し方)。半径の床も絶対値 1e-12(単位²)
+    # だと半径 1e-6 以下の円を拒否したので、点の広がりに対する相対量にした。
+    x0, y0 = float(x.mean()), float(y.mean())
+    xc, yc = x - x0, y - y0
+    a_mat = np.column_stack([2.0 * xc, 2.0 * yc, np.ones(len(x))])
+    sol, *_ = np.linalg.lstsq(a_mat, xc * xc + yc * yc, rcond=None)
+    cxc, cyc, c = float(sol[0]), float(sol[1]), float(sol[2])
+    r2 = c + cxc * cxc + cyc * cyc
+    if not np.isfinite(r2) or r2 <= 1e-12 * float(sv[0]) ** 2 / len(x):
         raise ValueError("points are collinear or degenerate; no circle fit")
+    cx, cy = cxc + x0, cyc + y0
     r = float(np.sqrt(r2))
     resid = np.hypot(x - cx, y - cy) - r
     return {"cy": cy, "cx": cx, "r": r, "rms": float(np.sqrt(np.mean(resid ** 2)))}

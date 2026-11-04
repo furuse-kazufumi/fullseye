@@ -160,14 +160,23 @@ def fit_sphere_ransac(points, thresh: float = 0.01, iters: int = 200, seed: int 
     rng = np.random.default_rng(seed)
 
     def solve(Q):
+        # ★2026-11-05(敵対的検証 G10): 重心に寄せずに代数球を解いていた(未中心化の |p|² は
+        # 原点から遠い点群で桁落ちし、オフセット 1e7 で半径 0.70 → 0.68・内れ値 302 → 118)。
+        # 2026-10-07 に ransac_fit._fit_sphere_ls で直した方法(重心へ寄せる+同一平面の
+        # 4 点は球が定まらないので None)に揃えた。
+        q0 = Q.mean(0)
+        Q = Q - q0
+        sv = np.linalg.svd(Q, compute_uv=False)
+        if not np.all(np.isfinite(sv)) or sv[-1] <= 1e-9 * sv[0]:
+            return None
         A = np.hstack([2 * Q, np.ones((Q.shape[0], 1))])
         b = (Q ** 2).sum(1)
         sol, *_ = np.linalg.lstsq(A, b, rcond=None)
         c = sol[:3]
         r2 = sol[3] + c @ c
-        if r2 <= 0:
+        if not np.isfinite(r2) or r2 <= 0:
             return None
-        return c, np.sqrt(r2)
+        return c + q0, np.sqrt(r2)
 
     best = None
     for _ in range(int(iters)):
