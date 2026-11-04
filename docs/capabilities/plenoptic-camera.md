@@ -9,8 +9,8 @@ version: 0.7.0
 inputs: [table, image2d, lightfield]
 pipeline: [mla_surface, plenoptic_system, plenoptic_capture, plenoptic_mla_calibrate, plenoptic_decode, plenoptic_refocus_depth]
 alternatives: [lf_from_mla, lf_refocus, lf_depth_from_focus, trace_sensor_rays]
-limits: 幾何光学のみで回折と画素間クロストークは扱わない。
-calibration: 一様な白色面で MLA 格子を校正し、距離既知の三平面で深度を確認する。
+limits: 幾何光学のみで回折と画素間クロストークは扱わない。傾き↔距離は近軸の式で、球面収差の分だけ距離がずれる。
+calibration: 一様な白色面で MLA 格子を校正し、処方を順方向に光線追跡した視差を真値に三平面で深度を確認する。
 ---
 
 # 処方から撮るプレノプティックカメラ
@@ -57,20 +57,21 @@ print(image.shape, slopes.shape, confidence.shape)
 
 ## 限界
 
-幾何光学モデルであり、回折と画素間クロストークは扱わない。
+幾何光学モデルであり、回折と画素間クロストークは扱わない。`plenoptic_refocus_depth` は近軸の式なので、開口いっぱいの光線の球面収差は入らない。PoC の F/3.7 の処方では、1.0 m の平面の視差が 0 でなく -0.029 レンズレット毎視点になり、領域ごとの距離の中央値誤差が +51 / +22 / +224 mm(0.6 / 1.0 / 1.8 m)残る。`lf_depth_from_focus` は既定の `interp="linear"` だと小数の傾きを 0 側へ引くので、実機の視差には `interp="cubic"` を渡す。
 
 ## 実寸校正
 
-一様な白色面から MLA のピッチ、回転、原点を校正し、距離既知の三平面でスロープからメートルへの変換を確認する。
+一様な白色面から MLA のピッチ、回転、原点を校正し、距離既知の三平面でスロープからメートルへの変換を確認する。真値の視差は変換式から作らず、物体点から処方を順方向に光線追跡して、射出瞳を横切る位置(どの視点か)と MLA を横切る位置(どのレンズレットか)から測る。
 
 ## 生画像が実機らしく見える条件
 
-プレノプティック生画像には、円盤状マイクロ像の格子、円盤間の暗い隅、各円盤内で反転・移動する場面断片が現れ、復号後の EPI には視差に応じた斜線が現れる。この PoC の白色面では暗い隅が 21.33 %（正方格子の閉形式 `1 - π/4` は 21.46 %）、円盤端の輝度比が `9.92e-6`、最強の非直流ピークが `1/15 = 0.06667 cycle/pixel` だった。EPI の点像移動は 1 view あたり 0.6 px である。開口を除く探針では暗い隅が 0 % となり、この門を通らない。
+プレノプティック生画像には、円盤状マイクロ像の格子、円盤間の暗い隅、各円盤内で反転・移動する場面断片が現れ、復号後の EPI には視差に応じた斜線が現れる。この PoC の白色面では暗い隅が 21.33 %（正方格子の閉形式 `1 - π/4` は 21.46 %）、円盤端の輝度比が `9.92e-6`、最強の非直流ピークが `1/15 = 0.06667 cycle/pixel` だった。復号後の視差は光線追跡で 0.6 / 1.0 / 1.8 m に +0.169 / -0.029 / -0.163 レンズレット毎視点、復号したライトフィールドのピント山で +0.175 / 0.000 / -0.150 だった。開口を除く探針では暗い隅が 0 % となり、この門を通らない。
 
 The raw-frame resemblance is measured rather than asserted: a lattice of
 microimage discs has dark inter-disc corners and shifted, inverted scene
 fragments inside the discs, while decoding produces slanted disparity lines in
 the EPI.  The white-frame measurements are 21.33% dark corners (closed form
 `1 - pi/4 = 21.46%`), a `9.92e-6` rim/core intensity ratio, and the strongest
-off-centre spectral peak at `1/15 = 0.06667 cycle/pixel`; the EPI track moves
-0.6 px per view.  Removing the aperture gives 0% dark corners and fails the gate.
+off-centre spectral peak at `1/15 = 0.06667 cycle/pixel`.  The decoded parallax
+is +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 / 1.8 m by forward
+ray tracing and +0.175 / 0.000 / -0.150 by the decoded field's focus peaks.  Removing the aperture gives 0% dark corners and fails the gate.

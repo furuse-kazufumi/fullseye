@@ -5,6 +5,15 @@ The full run traces a 480 x 480 sensor behind a 32 x 32 MLA (15 pixels per
 microlens).  ``CI=1`` selects the 96 x 96, 6 x 6 reduced run.  Every figure and
 video frame is decoded from the captured raw frame. Explanatory diagrams are
 labelled as conceptual rather than counted as validation.
+
+Truth does not come from the slope-to-distance formula it checks.  Rays are
+traced *forward* from an object point through the prescription
+(``raytrace.trace_rays``); where each crosses the exit pupil fixes the view that
+sees it and where it crosses the MLA fixes its lenslet, so the parallax per view
+is measured, not derived.  Before 2026-11-04 the PoC's only metric-depth gate
+round-tripped the conversion through its own inverse, and it passed while the
+conversion was 1/angular_step**2 (~3000x) wrong: the planes' "true slopes" were
+printed as +712 / 0 / -448 lenslets per view against a measured 0 / 0 / 0.
 """
 from __future__ import annotations
 
@@ -17,7 +26,7 @@ from pathlib import Path
 
 import numpy as np
 from scipy import ndimage
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from matplotlib import colormaps
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -50,12 +59,15 @@ def inspection_texture(n=256):
     pil = Image.fromarray(np.uint8(np.clip(im, 0, 1)*255), "L")
     draw = ImageDraw.Draw(pil)
     draw.rectangle((.12*n, .14*n, .62*n, .34*n), fill=205, outline=28, width=max(1, n//100))
-    draw.text((.17*n, .19*n), "QC 17", fill=20, stroke_width=max(0, n//180))
+    # The label is sized to the box (PIL's built-in default is an 11 px bitmap
+    # font, invisible on a 256 px coupon -- 2026-11-04).
+    font = ImageFont.load_default(size=max(8, int(round(.13*n))))
+    draw.text((.17*n, .17*n), "QC 17", fill=20, font=font, stroke_width=max(0, n//180))
     draw.line((.10*n, .78*n, .90*n, .78*n), fill=225, width=max(1, n//90))
     for k in range(17):
         xx = (.10+.05*k)*n
-        h = (.10 if k % 2 == 0 else .055)*n
-        draw.line((xx, .78*n, xx, (.78-h)*n), fill=230, width=max(1, n//140))
+        h = (.10 if k % 2 == 0 else .055)*n     # already in pixels
+        draw.line((xx, .78*n, xx, .78*n-h), fill=230, width=max(1, n//140))
     im = np.asarray(pil, dtype=float)/255
     # A real defect crosses both smooth metal and the printed label.
     scratch = np.abs(y-(.70*n-.43*x+7*np.sin(x/n*9))) < max(1.0, n/220)
@@ -64,25 +76,123 @@ def inspection_texture(n=256):
     return np.clip(im, 0, 1)
 
 
-def inspection_scene():
+def _image_plane_z(lens):
+    """Global z of the last vertex, the MLA (nominal image) plane and the exit pupil."""
+    para = RT.paraxial_trace(lens)
+    z_last = float(sum(s["t"] for s in lens["surfaces"][:-1]))
+    image_mm = lens["image_mm"] if lens["image_mm"] is not None else float(para["image_mm"])
+    return z_last, z_last+float(image_mm), z_last+float(para["xp_position"]), para
+
+
+def chief_ray_scale(lens, depth_m):
+    """MLA-plane position per object-plane position, from one forward-traced chief ray."""
+    _, z_img, _, para = _image_plane_z(lens)
+    x_obj = 1e-3*depth_m*1000
+    o = np.array([[x_obj, 0.0, -1000.0*depth_m]])
+    d = np.array([[0.0, 0.0, float(para["ep_position"])]])-o
+    d /= np.linalg.norm(d)
+    tr = RT.trace_rays(lens, o, d)
+    q = tr["points"][0, -2]; v = tr["dirs"][0, -1]
+    return float((q[0]+(z_img-q[2])/v[2]*v[0])/x_obj)
+
+
+def scene_layout(lens, half_width_mm):
+    """Centre and size of each plane so the sensor sees them in its left, middle and right thirds."""
+    third = 2*half_width_mm/3
+    layout = []
+    for z, centre_s in zip(DEPTHS_M, (-third, 0.0, third)):
+        k = chief_ray_scale(lens, z)
+        layout.append({"depth_m": float(z), "centre_mm": centre_s/k,
+                       "size_mm": (1.3*third/abs(k), 2.2*half_width_mm/abs(k)), "scale": k})
+    return layout
+
+
+def inspection_scene(lens=None, half_width_mm=2.4):
     tex = inspection_texture()
+    lens = prescription() if lens is None else lens
     objects = []
-    for z, x in zip(DEPTHS_M, (-75.0, 0.0, 75.0)):
-        objects.append({"type": "plane", "point_mm": (x, 0, -1000*z),
-                        "size_mm": (62, 100), "albedo": tex})
+    for item in scene_layout(lens, half_width_mm):
+        objects.append({"type": "plane", "point_mm": (item["centre_mm"], 0, -1000*item["depth_m"]),
+                        "size_mm": item["size_mm"], "albedo": tex})
     return LR.lens_scene(objects,
         [{"type": "directional", "to_light": (0, 0, 1), "irradiance_W_m2_nm": 1.0}],
         sources=[{"position_mm": (38, -25, -1000), "intensity_W_sr_nm": 1.0}])
 
 
-def depth_to_slope(system, depth_m):
-    """Inverse of the paraxial slope-to-distance calibration."""
-    z=np.asarray(depth_m,float)*1000
-    f=abs(float(RT.paraxial_trace(system["main_lens"])["efl"]))
-    z0=float(system["main_lens"]["object_mm"]); image0=f*z0/(z0-f)
-    image=1/(1/f-1/z)
-    step=(system["pixel_pitch_mm"]/system["mla_to_sensor_mm"])*system["mla"]["pitch_mm"]
-    return (image-image0)/step
+def truth_depth_map(system, calibration, lf_shape, layout):
+    """Nearest plane on each decoded sample's chief ray (NaN where it sees background)."""
+    H, W = system["sensor_size"]; pp = system["pixel_pitch_mm"]
+    B = np.asarray(calibration["basis_px"], float); org = np.asarray(calibration["origin_px"], float)
+    inv = np.linalg.inv(B)
+    corners = np.array([[0, 0], [W-1, 0], [0, H-1], [W-1, H-1]])
+    lo = np.ceil(((corners-org)@inv).min(0)).astype(int)
+    jj, ii = np.indices(lf_shape[2:])
+    base = org+(ii[..., None]+lo[0])*B[0]+(jj[..., None]+lo[1])*B[1]
+    xs = (base[..., 0]-(W-1)/2)*pp; ys = (base[..., 1]-(H-1)/2)*pp
+    depth = np.full(lf_shape[2:], np.nan)
+    for item in sorted(layout, key=lambda d: -d["depth_m"]):      # nearest plane last wins
+        k = item["scale"]; w, h = item["size_mm"]
+        inside = (np.abs(xs/k-item["centre_mm"]) <= w/2) & (np.abs(ys/k) <= h/2)
+        depth[inside] = item["depth_m"]
+    return depth
+
+
+def depth_to_slope(system, depth_m, views):
+    """Paraxial slope (lenslets per decoded view) of an object at *depth_m*.
+
+    The forward form of ``plenoptic_refocus_depth``: Newton's equation gives the
+    image shift ``delta`` behind the MLA; a view step moves the exit-pupil
+    coordinate by ``dX = (pitch/views)*xp_radius/(microimage_diameter/2)``; the
+    MLA crossing then moves by ``dX*delta/(D+delta)`` with ``D`` the exit-pupil
+    distance.  (Before 2026-11-04 this was ``delta/(angular_step*pitch)``.)
+    """
+    lens = system["main_lens"]
+    _, z_img, z_xp, para = _image_plane_z(lens)
+    f = float(para["efl"]); bfl = float(para["bfl"]); ffl = float(para["ffl"])
+    image0 = z_img-_image_plane_z(lens)[0]
+    x = -np.asarray(depth_m, float)*1000-ffl
+    delta = bfl-f*f/x-image0
+    p = system["mla"]["pitch_mm"]
+    dX = (p/views)*float(para["xp_radius"])/(system["microimage_diameter_mm"]/2)
+    return (dX/p)*delta/((z_img-z_xp)+delta)
+
+
+def traced_slope(system, depth_m, views, pupil_extent=1.0):
+    """Measured truth: lenslets of MLA parallax per decoded view from forward-traced rays.
+
+    Rays from an on-axis point at *depth_m* fill the entrance pupil and run
+    through the prescription.  The exit-pupil crossing of each image-space ray is
+    the pupil coordinate a decoded view selects; its MLA crossing is the
+    lenslet.  The returned slope is the line fit over the pupil positions the
+    *views* views sample, so it includes the lens's spherical aberration;
+    ``pupil_extent=1e-3`` shrinks the fit to the paraxial zone.
+    """
+    lens = system["main_lens"]
+    _, z_img, z_xp, para = _image_plane_z(lens)
+    obj = np.array([0.0, 0.0, -1000.0*depth_m])
+    xe = np.linspace(-.97, .97, 389)*float(para["ep_radius"])
+    d = np.column_stack([xe, np.zeros_like(xe), np.full_like(xe, float(para["ep_position"]))])-obj
+    d /= np.linalg.norm(d, axis=1, keepdims=True)
+    tr = RT.trace_rays(lens, np.repeat(obj[None], len(xe), 0), d)
+    q = tr["points"][tr["valid"], -2]; v = tr["dirs"][tr["valid"], -1]
+    uv = (q[:, 0]+(z_xp-q[:, 2])/v[:, 2]*v[:, 0])/float(para["xp_radius"])
+    x_mla = q[:, 0]+(z_img-q[:, 2])/v[:, 2]*v[:, 0]
+    order = np.argsort(uv)
+    p = system["mla"]["pitch_mm"]
+    k = (np.arange(views)-(views-1)/2)*pupil_extent
+    uv_k = (k*p/views)/(system["microimage_diameter_mm"]/2)
+    if not (uv[order][0] < uv_k[0] and uv_k[-1] < uv[order][-1]):
+        raise AssertionError("traced pupil does not cover the decoded views")
+    return float(np.polyfit(k, np.interp(uv_k, uv[order], x_mla[order])/p, 1)[0])
+
+
+def old_depth_to_slope(system, depth_m):
+    """The pre-2026-11-04 relation, kept only as the broken probe of the truth gate."""
+    z = np.asarray(depth_m, float)*1000
+    f = abs(float(RT.paraxial_trace(system["main_lens"])["efl"]))
+    z0 = float(system["main_lens"]["object_mm"]); image0 = f*z0/(z0-f)
+    step = (system["pixel_pitch_mm"]/system["mla_to_sensor_mm"])*system["mla"]["pitch_mm"]
+    return (1/(1/f-1/z)-image0)/step
 
 
 def synthetic_lightfield(spatial, angular=15):
@@ -178,7 +288,7 @@ def pseudocolour(values, lo, hi, cmap):
     return np.uint8(colormaps[cmap](q)[..., :3]*255)
 
 
-def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_est, sharp):
+def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_est, sharp, info):
     """Seven explanatory chapters, all derived from this figure-mode run."""
     figs.save("camera_section", camera_section_image(system),
               "Conceptual diagram (not a validation gate): main lens, MLA, sensor and five illustrative rays.")
@@ -195,43 +305,59 @@ def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_
                    ncols=2, gray=True, caption="480 x 480 raw frame; 32 x 32 lenslets and 15-pixel microimages.")
     epi = lf[:, lf.shape[1]//2, lf.shape[2]//2, :]
     views = [lf[lf.shape[0]//2, i] for i in (1, lf.shape[1]//2, lf.shape[1]-2)]
+    tl, tm, tr = info["truth_slopes"]
     figs.save_grid("decode_subaperture_epi", views+[epi],  # gray-ok: EPI の傾斜軌跡を示す輝度像であり深度場ではない
                    ["left pupil", "centre pupil", "right pupil", "EPI: slanted point tracks"],
-                   ncols=2, gray=True, caption="15 x 15 decoded views; EPI disparity is 0.6 px per view step.")
-    pick = [int(np.argmin(abs(slopes-s))) for s in (-1, 0, 1)]
+                   ncols=2, gray=True,
+                   caption=(f"{lf.shape[0]} x {lf.shape[1]} decoded views; ray-traced parallax "
+                            f"{tl:+.3f} / {tm:+.3f} / {tr:+.3f} lenslets per view at 0.6 / 1.0 / 1.8 m."))
+    peaks = info["focus_peaks"]
+    pick = [int(np.argmin(abs(slopes-s))) for s in peaks]
     score_plot = np.repeat((focus / np.maximum(focus.max(0), 1e-12)).T, 8, axis=0)
     figs.save_grid("refocus_sweep", [stack[i] for i in pick]+[score_plot],
-                   ["0.6 m", "1.0 m", "1.8 m", "focus measure vs slope"], ncols=2, gray=True,
-                   caption="The 0.6, 1.0 and 1.8 m planes peak at slopes -1.05, 0.00 and 1.05.")
-    err_mm = (depth_est-depth_truth)*1000
-    depth_lo, depth_hi = 600., 1800.
-    err_lim = max(1., float(np.max(np.abs(err_mm))))
+                   [f"{z:.1f} m: slope {slopes[i]:+.3f}" for z, i in zip(DEPTHS_M, pick)]
+                   + ["focus measure vs slope"], ncols=2, gray=True,
+                   caption=(f"Measured focus peaks {peaks[0]:+.3f} / {peaks[1]:+.3f} / {peaks[2]:+.3f} "
+                            f"vs ray-traced {tl:+.3f} / {tm:+.3f} / {tr:+.3f} lenslets per view."))
+    seen = np.isfinite(depth_truth)
+    err_mm = np.where(seen, (depth_est-np.where(seen, depth_truth, 0))*1000, 0.0)
+    depth_truth = np.where(seen, depth_truth, np.nan)
+    depth_lo, depth_hi = 500., 2000.
+    err_lim = max(1., float(np.percentile(np.abs(err_mm[seen]), 95)))
     colour_bar = np.repeat(np.linspace(depth_hi, depth_lo, 128)[:, None], 20, axis=1)
-    panels = [pseudocolour(ndimage.zoom(depth_truth*1000, 4, order=0), depth_lo, depth_hi, "turbo"),
+    panels = [pseudocolour(ndimage.zoom(np.nan_to_num(depth_truth, nan=0.0)*1000, 4, order=0),
+                           depth_lo, depth_hi, "turbo"),
               pseudocolour(ndimage.zoom(depth_est*1000, 4, order=0), depth_lo, depth_hi, "turbo"),
               pseudocolour(ndimage.zoom(err_mm, 4, order=0), -err_lim, err_lim, "RdBu_r"),
               pseudocolour(colour_bar, depth_lo, depth_hi, "turbo")]
     figs.save_grid("depth_map", panels,
                    ["truth depth (mm)", "estimated depth (mm)", "signed error (mm)", "colour bar (mm)"], ncols=4,
                    signed=False, gray=False,
-                   caption="Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.")
+                   caption=("Ray-traced truth vs focus-sweep estimate; median error "
+                            + " / ".join(f"{e*1000:+.0f} mm" for e in info["depth_median_error_m"])
+                            + " at 0.6 / 1.0 / 1.8 m (paraxial relation; spherical aberration)."))
     p10, p20 = textbook_raw_pair(inspection_texture(256))
     figs.save_grid("plenoptic_1_vs_2", [p10, p20],
                    ["1.0 raw: pupil images", "2.0 raw: inverted scene fragments"],
                    ncols=2, gray=True,
                    caption="Same MLA: plenoptic 1.0 images the pupil; focused 2.0 images scene fragments.")
     detuned = ndimage.gaussian_filter(stack[pick[1]], 2.0)
-    small_raw = raw.reshape(lf.shape[2], raw.shape[0]//lf.shape[2], lf.shape[3],
-                            raw.shape[1]//lf.shape[3]).mean((1, 3))
+    # One lenslet per block; the decoder drops the partial lenslet at the frame
+    # edge, so crop the block means to the decoded spatial shape.
+    cell = raw.shape[0]//system["mla"]["n_lenslets"][0]
+    nb = raw.shape[0]//cell
+    small_raw = raw[:nb*cell, :nb*cell].reshape(nb, cell, nb, cell).mean((1, 3))
+    small_raw = small_raw[:lf.shape[2], :lf.shape[3]]
     mismatch = np.clip(small_raw + .35*np.roll(small_raw, 2, axis=1), 0, 1)
     figs.save_grid("limits", [stack[pick[1]], detuned, mismatch],
                    ["nominal", "detuned main lens", "1.5x F-number overlap"], ncols=3, gray=True,
-                   caption="Limits: nominal prescription, detuned lens, and 1.50x F-number overlap.")
+                   caption="Limits, illustrative (blur and shifted-copy models, not traced): "
+                           "nominal, detuned main lens, 1.50x F-number overlap.")
 
 
 def make_video(lf):
     """Write a 24-frame, 480-pixel refocus sweep and enforce content gates."""
-    video_slopes = np.linspace(-1.4, 1.4, 24)
+    video_slopes = np.linspace(-.45, .45, 24)
     frames = []
     for slope in video_slopes:
         a = LF.lf_refocus(lf, slope, interp="cubic")
@@ -268,7 +394,9 @@ def main():
                         f_number=n_main, shape="square")
     system = P.plenoptic_system(lens, mla,
         {"size": (cfg["sensor_px"], cfg["sensor_px"]), "pixel_pitch_um": pixel_um})
-    cap = P.plenoptic_capture(system, inspection_scene(), pupil_samples=1)
+    half_width = cfg["sensor_px"]*pixel_um*1e-3/2
+    layout = scene_layout(lens, half_width)
+    cap = P.plenoptic_capture(system, inspection_scene(lens, half_width), pupil_samples=1)
     # ``white_image`` is the matching optical flat returned by this capture.
     # A finite white object is not a flat field: its projected boundaries and
     # overlaps bias the detected microimage peaks at full resolution.
@@ -276,26 +404,43 @@ def main():
     raw = cap["raw"]
     raw = np.clip(raw/(np.percentile(raw[raw > 0], 99.5)+1e-15), 0, 1)
     lf=P.plenoptic_decode(raw,calibration,angular=(cfg["angular"],cfg["angular"]))
-    truth_slopes=depth_to_slope(system,DEPTHS_M)
-    yy,xx=np.indices(lf.shape[2:]); masks=[xx<lf.shape[3]/3,(xx>=lf.shape[3]/3)&(xx<2*lf.shape[3]/3),xx>=2*lf.shape[3]/3]
-    slopes = np.linspace(-1.4, 1.4, 25)
+    views = lf.shape[1]
+    # Truth from forward-traced rays (full pupil, with aberration) and its
+    # paraxial limit; neither reads the slope-to-distance relation.
+    truth_slopes = np.array([traced_slope(system, z, views) for z in DEPTHS_M])
+    paraxial_truth = np.array([traced_slope(system, z, views, 1e-3) for z in DEPTHS_M])
+    paraxial_formula = depth_to_slope(system, DEPTHS_M, views)
+    depth_truth = truth_depth_map(system, calibration, lf.shape, layout)
+    masks = [ndimage.binary_erosion(depth_truth == z, iterations=2) for z in DEPTHS_M]
+    slopes = np.round(np.linspace(-.4, .4, 33), 12)
     stack = np.stack([LF.lf_refocus(lf, s, interp="cubic") for s in slopes])
-    focus = np.array([[np.var(ndimage.laplace(im)[m]) for m in masks] for im in stack])
+    focus = np.array([[np.var(ndimage.laplace(im)[m]) if m.any() else 0.0 for m in masks]
+                      for im in stack])
     peaks = slopes[np.argmax(focus, axis=0)]
-    depth_truth = np.select(masks, DEPTHS_M, default=DEPTHS_M[1])
-    slope_map, sharp = LF.lf_depth_from_focus(lf, slopes, window=5, subpixel=False)
+    # interp="cubic": the linear default pulls fractional slopes toward 0
+    # (lightfield.lf_depth_from_focus docstring, measured 2026-11-04).
+    slope_map, sharp = LF.lf_depth_from_focus(lf, slopes, window=5, interp="cubic")
     depth_est=P.plenoptic_refocus_depth(lf,system,slope_map)["depth_m"]
-    holdout=np.array([.75,1.3]); holdout_slopes=depth_to_slope(system,holdout)
+    region_slope = [float(np.median(slope_map[m])) if m.any() else float("nan") for m in masks]
+    depth_median_error = [float(np.median(depth_est[m]))-z if m.any() else float("nan")
+                          for m, z in zip(masks, DEPTHS_M)]
+    holdout=np.array([.75,1.3])
+    holdout_slopes=np.array([traced_slope(system, z, views, 1e-3) for z in holdout])
     holdout_back=P.plenoptic_refocus_depth(lf,system,holdout_slopes)["depth_m"]
     cpu = time.process_time()-cpu0; wall = time.perf_counter()-wall0
     metrics = {"sensor_px": cfg["sensor_px"], "lenslets": cfg["lenslets"],
                "pitch_px": cfg["pitch_px"], "angular": cfg["angular"],
                "rays": cap["ray_count"], "cpu_s": cpu, "wall_s": wall,
                "focus_peaks": peaks.tolist(), "truth_slopes": truth_slopes.tolist(),
+               "paraxial_truth_slopes": paraxial_truth.tolist(),
+               "paraxial_formula_slopes": paraxial_formula.tolist(),
+               "pre_fix_formula_slopes": old_depth_to_slope(system, DEPTHS_M).tolist(),
+               "region_median_slopes": region_slope, "region_pixels": [int(m.sum()) for m in masks],
+               "depth_median_error_m": depth_median_error,
                "source_id":"captured_raw->flat_field_calibration->plenoptic_decode",
                "holdout_depth_m":holdout.tolist(),"holdout_abs_error_m":np.abs(holdout_back-holdout).tolist()}
     if figs.target_dir() is not None and not cfg["ci"]:
-        make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_est, sharp)
+        make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_est, sharp, metrics)
         ensure_figure_widths()
         metrics.update(make_video(lf))
         cpu = time.process_time()-cpu0; wall = time.perf_counter()-wall0
@@ -308,16 +453,40 @@ def main():
     print("2026.272 | prescription plenoptic camera")
     print(f"scale={cfg['sensor_px']}x{cfg['sensor_px']}; MLA={cfg['lenslets']}x{cfg['lenslets']}; pitch={cfg['pitch_px']} px")
     print(f"F-number main/MLA={system['main_f_number']:.3f}/{system['mla_f_number']:.3f}; rays={cap['ray_count']}")
-    print(f"focus slopes truth={truth_slopes.tolist()} measured={peaks.tolist()}")
+    print("ray-traced slope (full pupil) = " + " / ".join(f"{s:+.4f}" for s in truth_slopes)
+          + " lenslets/view at 0.6 / 1.0 / 1.8 m")
+    print("ray-traced slope (paraxial)   = " + " / ".join(f"{s:+.4f}" for s in paraxial_truth)
+          + "; paraxial formula = " + " / ".join(f"{s:+.4f}" for s in paraxial_formula))
+    print("pre-fix formula               = " + " / ".join(f"{s:+.1f}" for s in old_depth_to_slope(system, DEPTHS_M)))
+    print("measured focus peak           = " + " / ".join(f"{s:+.4f}" for s in peaks)
+          + "; region median slope = " + " / ".join(f"{s:+.4f}" for s in region_slope))
+    print("region median depth error     = " + " / ".join(f"{e*1000:+.1f} mm" for e in depth_median_error)
+          + "; holdout |error| = " + " / ".join(f"{e*1000:.3f} mm" for e in np.abs(holdout_back-holdout)))
     print(f"CPU {cpu:.3f} s; wall {wall:.3f} s")
     assert raw.shape == (cfg["sensor_px"], cfg["sensor_px"])
-    # The six-sample CI image is deliberately too small for a stable local
-    # focus score; the quantitative gate uses a 48-sample field in tests.
-    # Continuous metric depth is gated by the prescription holdout round trip.
     assert np.isfinite(depth_est).all() and np.isfinite(sharp).all()
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
-    assert np.max(np.abs(holdout_back-holdout))<1e-9
+    # Gate 1 (every run): the paraxial relation equals the paraxial limit of the
+    # forward-traced rays, and metric depth inverts traced (not formula) slopes.
+    assert np.max(np.abs(paraxial_formula-paraxial_truth)) <= 1e-3*np.max(np.abs(paraxial_truth))
+    assert np.max(np.abs(holdout_back-holdout)/holdout) < 1e-3
+    # Broken probe: the pre-fix relation is two orders of magnitude off the rays.
+    assert np.max(np.abs(old_depth_to_slope(system, DEPTHS_M))) > 100*np.max(np.abs(truth_slopes))
+    # Gate 2 (full run; six lenslets are too few for a regional focus score):
+    # the decoded field's own parallax, measured by its focus peak and by the
+    # regional median of the depth-from-focus map, matches the traced full-pupil
+    # truth within 0.03 lenslets/view (about 18 % of the 0.6 m and 1.8 m
+    # parallax -- a unit or baseline error of that size turns it red), the three
+    # planes are told apart in order, and metric depth stays within 20 %.  The
+    # remaining offset is honest: the sharpness peak of an aberrated ray fan is
+    # not exactly its least-squares line, and the depth relation is paraxial.
+    if not cfg["ci"]:
+        assert all(m.sum() >= 30 for m in masks), [int(m.sum()) for m in masks]
+        assert np.all(np.abs(peaks-truth_slopes) <= .03), (peaks, truth_slopes)
+        assert np.all(np.abs(np.array(region_slope)-truth_slopes) <= .03), (region_slope, truth_slopes)
+        assert region_slope[0] > region_slope[1] > region_slope[2]
+        assert np.all(np.abs(np.array(depth_median_error)/DEPTHS_M) < .2), depth_median_error
     print("PASS: captured raw causally feeds decoded EPI, refocus and continuous depth")
 
 

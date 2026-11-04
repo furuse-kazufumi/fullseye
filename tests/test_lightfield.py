@@ -711,3 +711,29 @@ def test_synthesize_background_is_the_smallest_absolute_slope_not_the_last_entry
     # and the "last entry" rule really is false: last = -2 is *not* the backdrop
     _, m2 = LF.lf_synthesize((0.5, -2.0), (3, 3), (32, 32), coverage=0.55, seed=0)
     assert np.array_equal(m, m2)
+
+
+def _fourier_exact_field(slope, angular, n=64, sigma=1.5, seed=7):
+    """Every view an exact (band-limited, periodic) sub-pixel shift: no interpolation in the truth."""
+    rng = np.random.default_rng(seed)
+    tex = gaussian_filter(rng.standard_normal((n, n)), sigma, mode="wrap")
+    F = np.fft.fft2(tex)
+    ky = np.fft.fftfreq(n)[:, None]; kx = np.fft.fftfreq(n)[None, :]
+    c = (angular - 1) / 2
+    lf = np.empty((angular, angular, n, n))
+    for v in range(angular):
+        for u in range(angular):
+            ph = np.exp(-2j * np.pi * (ky * slope * (v - c) + kx * slope * (u - c)))
+            lf[v, u] = np.real(np.fft.ifft2(F * ph))
+    return lf
+
+
+@pytest.mark.parametrize("true", [0.17, -0.16])
+def test_depth_from_focus_linear_default_is_biased_on_fractional_slopes(true):
+    """The docstring's 2026-11-04 numbers: linear pulls a fractional slope to ~0, cubic does not."""
+    lf = _fourier_exact_field(true, 7)
+    sweep = np.round(np.linspace(-1.5, 1.5, 61), 12)
+    lin, _ = LF.lf_depth_from_focus(lf, sweep, window=9, edge="wrap")
+    cub, _ = LF.lf_depth_from_focus(lf, sweep, window=9, edge="wrap", interp="cubic")
+    assert abs(float(np.median(lin)) - true) > 0.1      # the default's documented bias
+    assert abs(float(np.median(cub)) - true) < 0.005    # cubic recovers the truth

@@ -21,9 +21,40 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 Convert light-field refocus slope(s) to object distance in metres.
 
-The paraxial relation uses MLA pitch as the spatial baseline and one angular
-pixel as ``pixel_pitch / mla_to_sensor`` radians.  Zero slope is the main
-lens conjugate and maps to its configured object distance.
+*slope* is in the unit of :func:`lightfield.lf_refocus` and
+:func:`lightfield.lf_depth_from_focus` on a field from
+:func:`plenoptic_decode`: decoded spatial samples (lenslets) of parallax per
+view step.  Zero slope is the main-lens conjugate of the MLA plane and maps
+to the configured object distance.
+
+Paraxial model of the unfocused (1.0) camera, in the geometry
+:func:`plenoptic_capture` traces.  :func:`plenoptic_decode` samples ``U``
+views across one lenslet pitch, so one view step moves the exit-pupil
+coordinate by ``dX = (pitch/U) * xp_radius / (microimage_diameter/2)``.  A
+point imaged ``delta`` behind the MLA plane, with the exit pupil ``D`` in
+front of it, shifts on the MLA by ``dX * delta/(D+delta)`` per view, hence
+``slope = (dX/pitch) * delta/(D+delta)``; Newton's equation of the
+paraxial main lens turns the image position into the object distance.
+
+Before 2026-11-04 the image shift was ``slope * angular_step * pitch`` with
+``angular_step = pixel_pitch/mla_to_sensor`` -- a factor ``1/angular_step**2``
+(~3000x for the PoC camera) too small, so every measured slope mapped back
+to the focus distance.  The relation is now gated against rays traced
+forward through the prescription (``tests/test_plenoptic.py``): rel. error
+below 1e-6 for an ideal lens and 2e-4 for the PoC's three-element lens.
+
+Limits: it is paraxial.  Spherical aberration of a real aperture moves the
+best-focus slope of the full pupil away from the paraxial one -- for the PoC
+lens at F/3.7 the decoded 1.0 m plane sits at slope -0.029, not 0 (measured
+in ``examples/poc_plenoptic_camera.py``).  ``depth_resolution_m`` is half
+the depth span of a slope change of ``+-1/(U-1)``: one decoded sample of
+parallax across the full angular baseline.
+
+**Raises** ``ValueError``: *lf* not ``(V,U,H,W)``, ``V != U`` (one slope
+cannot describe two different per-view pupil steps), fewer than two views,
+a focused (2.0) system (its MLA is not at the main-lens image plane, so
+slope means something else), a non-finite slope, or a slope whose image
+point lies at or beyond the exit pupil (``slope*pitch/dX >= 1``).
 
 ## ファミリ共通の入力契約(fail-closed)
 

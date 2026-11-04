@@ -17,6 +17,7 @@ from __future__ import annotations
 import math
 import numpy as np
 from scipy import ndimage as _ndi
+from scipy.spatial import cKDTree as _KDTree
 
 import lensrender as LR
 import lightfield as LF
@@ -258,16 +259,28 @@ def plenoptic_mla_calibrate(white_image, pitch_px_guess, *, max_residual_px=0.25
     # Sub-pixel quadratic peak in the smoothed image.  Unlike a 3x3 centroid,
     # this is not biased toward the centre pixel when a narrow spot lies close
     # to the edge of that window.
-    for k, (x, y) in enumerate(pts.copy()):
-        ix, iy = int(x), int(y)
-        denx=sm[iy,ix-1]-2*sm[iy,ix]+sm[iy,ix+1]
-        deny=sm[iy-1,ix]-2*sm[iy,ix]+sm[iy+1,ix]
-        dx=0.5*(sm[iy,ix-1]-sm[iy,ix+1])/denx if abs(denx)>1e-15 else 0.0
-        dy=0.5*(sm[iy-1,ix]-sm[iy+1,ix])/deny if abs(deny)>1e-15 else 0.0
-        pts[k]=[ix+np.clip(dx,-0.5,0.5),iy+np.clip(dy,-0.5,0.5)]
+    ix = pts[:, 0].astype(np.int64); iy = pts[:, 1].astype(np.int64)
+    c0 = sm[iy, ix]
+    denx = sm[iy, ix-1]-2*c0+sm[iy, ix+1]
+    deny = sm[iy-1, ix]-2*c0+sm[iy+1, ix]
+    okx = np.abs(denx) > 1e-15; oky = np.abs(deny) > 1e-15
+    dx = np.zeros(len(pts)); dy = np.zeros(len(pts))
+    np.divide(0.5*(sm[iy, ix-1]-sm[iy, ix+1]), denx, out=dx, where=okx)
+    np.divide(0.5*(sm[iy-1, ix]-sm[iy+1, ix]), deny, out=dy, where=oky)
+    pts = np.column_stack([ix+np.clip(dx, -0.5, 0.5), iy+np.clip(dy, -0.5, 0.5)])
     # Estimate two lattice basis vectors from pair differences near one pitch.
-    dif = pts[:,None,:]-pts[None,:,:]; dist=np.linalg.norm(dif,axis=2)
-    cand=dif[(dist>0.75*p)&(dist<1.25*p)]
+    # A KD-tree returns only the pairs closer than 1.25 pitch, so memory grows
+    # with the number of peaks rather than its square (the former all-pairs
+    # difference array asked for 791 GiB on a 7200 px white frame, 2026-11-04).
+    # Both orientations of every pair are kept, as the all-pairs array had them.
+    pairs = _KDTree(pts).query_pairs(1.25*p, output_type="ndarray")
+    if len(pairs):
+        dif = pts[pairs[:, 0]]-pts[pairs[:, 1]]
+        dist = np.linalg.norm(dif, axis=1)
+        dif = dif[(dist > 0.75*p) & (dist < 1.25*p)]
+        cand = np.concatenate([dif, -dif])
+    else:
+        cand = np.zeros((0, 2))
     if len(cand)<4:
         raise ValueError("lenslet peaks do not support the pitch guess")
     ang=np.mod(np.arctan2(cand[:,1],cand[:,0]), math.pi/2)
@@ -323,29 +336,84 @@ def plenoptic_decode(raw, calibration, *, angular=(5, 5)):
 def plenoptic_refocus_depth(lf, system, slope):
     """Convert light-field refocus slope(s) to object distance in metres.
 
-    The paraxial relation uses MLA pitch as the spatial baseline and one angular
-    pixel as ``pixel_pitch / mla_to_sensor`` radians.  Zero slope is the main
-    lens conjugate and maps to its configured object distance.
+    *slope* is in the unit of :func:`lightfield.lf_refocus` and
+    :func:`lightfield.lf_depth_from_focus` on a field from
+    :func:`plenoptic_decode`: decoded spatial samples (lenslets) of parallax per
+    view step.  Zero slope is the main-lens conjugate of the MLA plane and maps
+    to the configured object distance.
+
+    Paraxial model of the unfocused (1.0) camera, in the geometry
+    :func:`plenoptic_capture` traces.  :func:`plenoptic_decode` samples ``U``
+    views across one lenslet pitch, so one view step moves the exit-pupil
+    coordinate by ``dX = (pitch/U) * xp_radius / (microimage_diameter/2)``.  A
+    point imaged ``delta`` behind the MLA plane, with the exit pupil ``D`` in
+    front of it, shifts on the MLA by ``dX * delta/(D+delta)`` per view, hence
+    ``slope = (dX/pitch) * delta/(D+delta)``; Newton's equation of the
+    paraxial main lens turns the image position into the object distance.
+
+    Before 2026-11-04 the image shift was ``slope * angular_step * pitch`` with
+    ``angular_step = pixel_pitch/mla_to_sensor`` -- a factor ``1/angular_step**2``
+    (~3000x for the PoC camera) too small, so every measured slope mapped back
+    to the focus distance.  The relation is now gated against rays traced
+    forward through the prescription (``tests/test_plenoptic.py``): rel. error
+    below 1e-6 for an ideal lens and 2e-4 for the PoC's three-element lens.
+
+    Limits: it is paraxial.  Spherical aberration of a real aperture moves the
+    best-focus slope of the full pupil away from the paraxial one -- for the PoC
+    lens at F/3.7 the decoded 1.0 m plane sits at slope -0.029, not 0 (measured
+    in ``examples/poc_plenoptic_camera.py``).  ``depth_resolution_m`` is half
+    the depth span of a slope change of ``+-1/(U-1)``: one decoded sample of
+    parallax across the full angular baseline.
+
+    **Raises** ``ValueError``: *lf* not ``(V,U,H,W)``, ``V != U`` (one slope
+    cannot describe two different per-view pupil steps), fewer than two views,
+    a focused (2.0) system (its MLA is not at the main-lens image plane, so
+    slope means something else), a non-finite slope, or a slope whose image
+    point lies at or beyond the exit pupil (``slope*pitch/dX >= 1``).
     """
     a=np.asarray(lf)
     if a.ndim != 4 or any(n == 0 for n in a.shape):
         raise ValueError("lf must have non-empty shape (V,U,H,W)")
     if not isinstance(system,dict) or system.get("kind")!="plenoptic_system":
         raise ValueError("system must be returned by plenoptic_system")
+    if system.get("configuration") != "unfocused":
+        raise ValueError("plenoptic_refocus_depth models the unfocused (1.0) camera; "
+                         "a focused (2.0) system has its MLA off the main-lens image plane")
+    V, U = int(a.shape[0]), int(a.shape[1])
+    if V != U:
+        raise ValueError("lf angular axes must be equal (V == U); got %d x %d" % (V, U))
+    if U < 2:
+        raise ValueError("lf needs at least two views per axis to carry parallax")
     s=np.asarray(slope,dtype=float)
     if not np.isfinite(s).all(): raise ValueError("slope must be finite")
-    para=RT.paraxial_trace(system["main_lens"]); f=abs(float(para["efl"]))
-    z0=float(system["main_lens"]["object_mm"])
-    if not math.isfinite(z0):
-        z0=1e12
-    image0=f*z0/(z0-f)
-    angular_step=system["pixel_pitch_mm"]/system["mla_to_sensor_mm"]
-    delta=s*angular_step*system["mla"]["pitch_mm"]
-    image=image0+delta
-    denom=1/f-1/image
-    z=np.where(np.abs(denom)>1e-15,1/denom,np.inf)
-    step=angular_step*system["mla"]["pitch_mm"]
-    zp=1/(1/f-1/(image+step)); zm=1/(1/f-1/(image-step))
-    return {"depth_m":z/1000.0,"depth_resolution_m":np.abs(zp-zm)/2000.0,
-            "slope":s.copy(),"spatial_shape":a.shape[2:],"angular":a.shape[:2],
-            "spatial_per_angular":tuple(a.shape[i+2]/a.shape[i] for i in range(2))}
+    lens = system["main_lens"]
+    geo = LR._geometry(lens, float(lens["wavelength_um"]), op="plenoptic_refocus_depth")
+    para = geo["para"]
+    f = float(para["efl"]); bfl = float(para["bfl"]); ffl = float(para["ffl"])
+    pitch = float(system["mla"]["pitch_mm"])
+    image0 = float(geo["image_mm"])
+    xp_dist = image0 - float(geo["xp_position"])
+    pupil_step = (pitch/U) * float(geo["xp_radius"]) / (system["microimage_diameter_mm"]/2)
+
+    def depth_mm(sv):
+        k = np.asarray(sv, float) * pitch / pupil_step
+        beyond = k >= 1.0
+        with np.errstate(divide="ignore", invalid="ignore"):
+            delta = np.where(beyond, np.nan, k * xp_dist / (1.0 - k))
+            xprime = image0 + delta - bfl
+            z = -(-f*f/xprime + ffl)
+        z = np.where(np.abs(xprime) > 1e-15, z, np.inf)
+        return np.where(beyond, np.inf, z), beyond
+
+    z, beyond = depth_mm(s)
+    if np.any(beyond):
+        raise ValueError("slope*pitch/pupil_step >= 1: the image point would lie at or "
+                         "beyond the exit pupil (max slope %.6g)" % (pupil_step/pitch))
+    ds = 1.0 / (U - 1)
+    zp, _ = depth_mm(s + ds); zm, _ = depth_mm(s - ds)
+    with np.errstate(invalid="ignore"):
+        resolution = np.abs(zp - zm) / 2000.0
+    return {"depth_m": z/1000.0, "depth_resolution_m": resolution,
+            "slope": s.copy(), "spatial_shape": a.shape[2:], "angular": a.shape[:2],
+            "pupil_step_mm": float(pupil_step), "exit_pupil_distance_mm": float(xp_dist),
+            "spatial_per_angular": tuple(a.shape[i+2]/a.shape[i] for i in range(2))}
