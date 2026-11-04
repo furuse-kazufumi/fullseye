@@ -21,6 +21,9 @@ op 931 本で「測る」ことはできても、測った数字を **良否に�
   ok にもしない)。
 - 規則の綴り間違い(``"mx"`` 等)は ``ValueError`` —— 誤字の規則が「何も検査しない」で
   通ると、その仕様は永久に全部 ok になる。
+- 規則の限界値(``min`` / ``max`` / ``nominal`` / ``tol`` / 数値の ``eq`` / ``in`` の要素)が
+  非有限(NaN / inf)なら ``ValueError`` —— NaN との比較は全部 False なので、その規則は
+  黙って全部 ok になる。片側だけ見たいならキーを省く。
 - 違反が 1 つでもあれば ``ng``。``result["violations"]`` に ``{key, value, rule, limit}`` を
   全部並べ、``detail`` は人が読む 1 行の根拠。
 
@@ -65,6 +68,15 @@ def _validate_spec(spec) -> None:
         for k in ("min", "max", "nominal", "tol"):
             if k in rule and not _is_number(rule[k]):
                 raise ValueError("judge: rule %r for %r must be a number, got %r" % (k, key, rule[k]))
+            # 非有限の限界値は拒否する: x < nan / x > nan / |x-nom| > nan は全部 False で、
+            # その規則は「何も検査しない」= 常に ok になる(fail-open)。inf も同様に
+            # 「片側の限界を外したい」なら規則からキーを外す(min だけ・max だけで書ける)。
+            if k in rule and not math.isfinite(float(rule[k])):
+                raise ValueError("judge: rule %r for %r must be finite, got %r "
+                                 "(omit the key instead of using inf; NaN never compares)"
+                                 % (k, key, rule[k]))
+        if "eq" in rule and _is_number(rule["eq"]) and not math.isfinite(float(rule["eq"])):
+            raise ValueError("judge: rule 'eq' for %r must be finite, got %r" % (key, rule["eq"]))
         if "tol" in rule and float(rule["tol"]) < 0:
             raise ValueError("judge: 'tol' for %r must be >= 0" % (key,))
         if "min" in rule and "max" in rule and float(rule["min"]) > float(rule["max"]):
@@ -76,6 +88,9 @@ def _validate_spec(spec) -> None:
                 raise ValueError("judge: 'in' for %r must be iterable" % (key,)) from None
             if isinstance(rule["in"], (str, bytes)):
                 raise ValueError("judge: 'in' for %r must be a collection, not a string" % (key,))
+            bad = [a for a in rule["in"] if _is_number(a) and not math.isfinite(float(a))]
+            if bad:
+                raise ValueError("judge: 'in' for %r contains non-finite value(s) %r" % (key, bad))
 
 
 def _check_one(key, value, rule):
