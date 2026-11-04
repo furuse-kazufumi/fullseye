@@ -10,6 +10,25 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 外部検証 第 2 陣(E1〜E4・I1〜I3・G1〜G3)の修正で振る舞いが変わるもの
+
+回帰の門は `tests/test_audit_extra_2026_11_04.py`(報告の再現 + 兄弟の掃除)。op の宣言・型名は変えていない。
+
+| 項目 | 分類 | 何が変わるか |
+|---|---|---|
+| E1 `pipeline_evolve.evolve` / `evolve_params.evolve_params` の変異が `max_len` を守る(`mutate(..., max_len=5)` を追加) | 値 | 挿入の上限が 5 固定だった。既定 `max_len=4` でも同じ seed の探索経路と best が変わり得る。`max_len=0` は `()`、`max_len=1` は長さ 1 以下 |
+| E2 `FullseyeEngine.run_cached` の入力の鍵が全バイトの SHA-256 + 方針(`on_error`)+ fast 切替 | 値 | 先頭と末尾 1 MiB だけ見ていて、中央 1 画素だけ違う 2 枚に古い結果を返していた。object 配列は TypeError |
+| E3 `FullseyeEngine.to_python` / `to_python_staged` のノブを `repr`(最短往復)で書く | 出力 | `%.3f` で 0.123456 → 0.123 に丸めていた。生成コードの文字列が変わる。非有限は `float('nan')` |
+| E4 `FullseyeEngine.run_cached` が `run` と同じ事前検査(型の連鎖・ノブ・入口の非有限)を通る | fail-closed | `otsu,invert` などを `run` は拒否、`run_cached` は実行していた。今は同じ ValueError |
+| I1 readable な型付き JSON の整数リストを Python int で復元 | fail-closed | `[0, 2**63+1]`(uint64)が float 経由で `2**63` になっていた。整数 dtype のリストの float は整数値かつ絶対値 2**53 以下だけ受け、それ以外は ValueError |
+| I1 の兄弟 `table_read_csv` の全整数列で 2**53 を超える値があれば int64 / uint64 で返す | 型 | float64 に丸めて返していた(ns の時刻など)。uint64 にも入らなければ ValueError。小さい整数の列は従来どおり float64 |
+| I2 `nrrd_read` のヘッダ終端を行ごとに探す(最初の空行) | 値 | CRLF のファイルで本体に LF が 2 つ並ぶと本体側の `\n\n` を終端と取り違えて拒否していた |
+| I3 `archive_create(..., "zip", level=)` の level が各メンバーに効く | 出力 | ZipInfo に level が渡らず常に zlib 既定(6)だった。既定の `level=None`(=9)を含め、同じ入力でも ZIP のバイト列が変わる |
+| G1 `evaluation.metrics.rmse(domain="points3d")` を全経路で点ごと(行のユークリッド距離)に | 値 / fail-closed | mask・weights・`nan_policy="omit"`/`"propagate"` の経路だけ座標ごとに平均して √3 倍小さかった。行を割る mask と行内で違う重みは ValueError、omit は点ごと落とす(`reduction="none"`/`"sum"` も点単位で選ぶ) |
+| G2 `evaluation.metrics.iou` / `dice` が NaN の重みを omit したあとで a・b を選ぶ | 値 | IndexError で落ちていた。全部の重みが落ちたら `empty` の方針 |
+| G3 `transforms.hom_mat3d_to_pose` のジンバルロック(ry = ±90° ちょうど)を `rx = 0` 規約で分解、ry は atan2 | 値 | rx と rz を両方失い往復誤差 1.0 だった。`pose_quat` と同じ規約。ry の値は ±90° 以外でも最下位桁が変わり得る |
+| G3 の兄弟 `raytrace3d._euler_zyx`(`lensfile` の COORDBRK の角)を同じ分解に一本化 | 値 | β = ±90° ちょうどで α・γ を失っていた |
+
 ### 追加 — CT のスキャン方式を 1 つの幾何で(コーンビーム FDK・ヘリカル・ラミノグラフィ・反復法)と GPU 経路
 
 - 新モジュール `ctscan`(opstomography のカテゴリ `ct_scan`、11 op)と `tomography_gpu`(共通の核)。幾何は `ct_scan_geometry` の dict 1 つで、線源・検出器中心・検出器の u/v 軸を view ごとに持つ。投影(レイ駆動)、その厳密な転置、ボクセル駆動の逆投影の 3 つの核だけを全方式で共有し、方式が足すのは軌道と重みだけ。
