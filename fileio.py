@@ -207,7 +207,33 @@ def table_write_csv(table, *, units, meta):
     return buf.getvalue()
 
 
+_CSV_INT_RE = re.compile(r"[+-]?[0-9]+\Z")
+
+
+def _csv_exact_int_column(values: list[str]):
+    """An all-integer column that float64 cannot hold exactly -> int64 / uint64, else None.
+
+    ★2026-11-04 (sibling of external audit I1): every numeric column went through ``float()``, so
+    an int64 column written by :func:`table_write_csv` (``str(value)``, e.g. a nanosecond time
+    stamp ~1.7e18) came back silently rounded to the nearest float64. A column is kept as integers
+    only when every cell is an integer literal and at least one is beyond float64's exact range;
+    small-integer columns stay float64 as documented."""
+    if not values or not all(_CSV_INT_RE.match(v) for v in values):
+        return None
+    ints = [int(v) for v in values]
+    if all(abs(x) <= 2 ** 53 for x in ints):
+        return None
+    for dt in (np.int64, np.uint64):
+        info = np.iinfo(dt)
+        if all(info.min <= x <= info.max for x in ints):
+            return np.array(ints, dtype=dt)
+    raise ValueError("table_read_csv: integer column does not fit int64 or uint64")
+
+
 def _csv_number_column(values: list[str]):
+    exact = _csv_exact_int_column(values)
+    if exact is not None:
+        return exact
     out = []
     for value in values:
         if value == "":
@@ -225,7 +251,9 @@ def table_read_csv(text):
 
     返り値は ``{"columns": {列名: 1-D 配列}, "units": {...}, "meta": {...}}``。列名と単位の
     個数、全データ行の列数、必須メタデータを検査し、途中までの表は返さない。数値列は float64
-    (空欄は NaN)、数値以外を含む列は文字列配列になる。入力は UTF-8 の ``str`` または ``bytes``。
+    (空欄は NaN)、数値以外を含む列は文字列配列になる。ただし全セルが整数で、float64 では
+    正確に持てない値(絶対値が 2**53 超)を含む列は int64 / uint64 で返す(丸めて返さない)。
+    入力は UTF-8 の ``str`` または ``bytes``。
 
     呼び出し例: ``roundtrip = table_read_csv(table_write_csv(table, units=units, meta=meta))``。
     """
@@ -1213,6 +1241,14 @@ def _zip_datetime(entry, deterministic):
     return (year, dt.month, dt.day, dt.hour, dt.minute, dt.second - dt.second % 2)
 
 
+def _zipinfo_set_level(info, level):
+    """Set a member's deflate level (``compress_level`` from Python 3.13, ``_compresslevel`` before)."""
+    if "compress_level" in zipfile.ZipInfo.__slots__:
+        info.compress_level = level
+    else:                                        # Python 3.11 / 3.12: the slot is private-named
+        info._compresslevel = level
+
+
 def _create_zip(entries, level, deterministic):
     out = io.BytesIO()
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED,
@@ -1221,6 +1257,10 @@ def _create_zip(entries, level, deterministic):
             name = entry["name"] + ("/" if entry["is_dir"] and not entry["name"].endswith("/") else "")
             info = zipfile.ZipInfo(name, _zip_datetime(entry, deterministic))
             info.compress_type = zipfile.ZIP_DEFLATED
+            # ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")``
+            # takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set,
+            # zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
+            _zipinfo_set_level(info, level)
             info.create_system = 3
             info.external_attr = ((0o40755 if entry["is_dir"] else 0o100644) << 16) | (0x10 if entry["is_dir"] else 0)
             if entry["is_dir"]:
@@ -1746,14 +1786,30 @@ def nrrd_write(array, *, meta, encoding):
     return ("\n".join(header) + "\n\n").encode("ascii") + stored
 
 
+def _nrrd_header_end(raw: bytes):
+    """``(header_end, data_start)`` of the first blank line, walking the header line by line.
+
+    ★2026-11-04 external audit I2: the terminator used to be searched over the whole file --
+    ``\n\n`` first, ``\r\n\r\n`` only if that was absent. A valid CRLF file whose raw body
+    happens to contain two LF bytes (two uint8 pixels of value 10) matched inside the *data*,
+    the header swallowed a pixel and the read failed. A header line ends at LF (an optional CR
+    before it is part of the line ending); the first empty line ends the header. ``None`` if no
+    line is empty."""
+    pos = 0
+    while True:
+        nl = raw.find(b"\n", pos)
+        if nl < 0:
+            return None
+        if raw[pos:nl] in (b"", b"\r"):
+            return pos, nl + 1
+        pos = nl + 1
+
+
 def _nrrd_fields(raw: bytes, op: str):
-    marker = raw.find(b"\n\n")
-    marker_size = 2
-    if marker < 0:
-        marker = raw.find(b"\r\n\r\n")
-        marker_size = 4
-    if marker < 0:
+    found = _nrrd_header_end(raw)
+    if found is None:
         raise ValueError(f"{op}: NRRD header has no blank-line terminator")
+    marker, data_start = found
     try:
         text = raw[:marker].decode("ascii").replace("\r\n", "\n")
     except UnicodeDecodeError as exc:
@@ -1774,7 +1830,7 @@ def _nrrd_fields(raw: bytes, op: str):
         if key in fields:
             raise ValueError(f"{op}: duplicate header field {key!r}")
         fields[key] = value
-    return fields, raw[marker + marker_size:]
+    return fields, raw[data_start:]
 
 
 def _nrrd_directions(text: str, dimension: int, op: str):

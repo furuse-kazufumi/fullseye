@@ -10700,29 +10700,29 @@ py -3.11 examples/poc_lens_tolerancing.py
 
 ## No.2026.272 —— 処方から撮るプレノプティックカメラ
 
-主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。候補距離への3分類は廃止し、処方の slope↔距離式を使って候補にない 0.75 m と 1.3 m を往復した誤差は 1e-9 m 未満。カメラ断面とF値比の図は検証ではない概念図と明記した。
+主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。真値は変換式から作らず、物体点から処方を順方向に光線追跡して測った視差で、0.6 / 1.0 / 1.8 m で +0.169 / -0.029 / -0.163 レンズレット毎視点(1.0 m が 0 でないのは F/3.7 の球面収差)。復号したライトフィールドのピント山は +0.175 / 0.000 / -0.150 で、0.03 以内で一致する。以前の変換式は像のずれを「傾き×角度ステップ×ピッチ」としていて約 3000 倍小さく、真値を +712 / 0 / -448 と出していたが、式を自分の逆で往復するだけの門は通っていた。距離は近軸の式なので、領域ごとの中央値誤差が +51 / +22 / +224 mm 残る。カメラ断面とF値比の図は検証ではない概念図と明記した。
 
 [![処方から撮るプレノプティックカメラ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png)
 
-*↑ **処方から撮るプレノプティックカメラ** ―― 主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。候補距離への3分類は廃止し、処方の slope↔距離式を使って候補にない 0.75 m と 1.3 m を往復した誤差は 1e-9 m 未満。カメラ断面とF値比の図は検証ではない概念図と明記した。*
+*↑ **処方から撮るプレノプティックカメラ** ―― 主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。真値は変換式から作らず、物体点から処方を順方向に光線追跡して測った視差で、0.6 / 1.0 / 1.8 m で +0.169 / -0.029 / -0.163 レンズレット毎視点(1.0 m が 0 でないのは F/3.7 の球面収差)。復号したライトフィールドのピント山は +0.175 / 0.000 / -0.150 で、0.03 以内で一致する。以前の変換式は像のずれを「傾き×角度ステップ×ピッチ」としていて約 3000 倍小さく、真値を +712 / 0 / -448 と出していたが、式を自分の逆で往復するだけの門は通っていた。距離は近軸の式なので、領域ごとの中央値誤差が +51 / +22 / +224 mm 残る。カメラ断面とF値比の図は検証ではない概念図と明記した。*
 
 用語: EPI — ライトフィールドの位置と視点の二軸を切り出した画像で、同じ三次元点が奥行きに応じた傾きの線として現れる。
 
-[![480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section.png)
+[![Conceptual diagram (not a validation gate): main lens, MLA, sensor and five illustrative rays.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section.png)
 
-*↑ 測定の図 ―― 480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.*
+*↑ 測定の図 ―― Conceptual diagram (not a validation gate): main lens, MLA, sensor and five illustrative rays.*
 
 [![F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/02_f_number_matching_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/02_f_number_matching.png)
 
 *↑ F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.*
 
-[![15 x 15 decoded views; EPI disparity is 0.6 px per view step.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi.png)
+[![15 x 15 decoded views; ray-traced parallax +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 /](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi.png)
 
-*↑ 15 x 15 decoded views; EPI disparity is 0.6 px per view step.*
+*↑ 15 x 15 decoded views; ray-traced parallax +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 / 1.8 m.*
 
-[![Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map.png)
+[![Ray-traced truth vs focus-sweep estimate; median error +51 mm / +22 mm / +224 mm at 0.6 / 1.0 / 1.8 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map.png)
 
-*↑ Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.*
+*↑ Ray-traced truth vs focus-sweep estimate; median error +51 mm / +22 mm / +224 mm at 0.6 / 1.0 / 1.8 m (paraxial relation; spherical aberration).*
 
 [![Same MLA: plenoptic 1.0 images the pupil; focused 2.0 images scene fragments.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/07_plenoptic_1_vs_2_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/07_plenoptic_1_vs_2.png)
 
@@ -10740,7 +10740,7 @@ py -3.11 examples/poc_plenoptic_camera.py
 
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_plenoptic_camera)
 
-使用 op(ノートへ): [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lf_depth_from_focus`](https://furuse.work/ops/lightfield/depth/lf_depth_from_focus.html) · [`lf_refocus`](https://furuse.work/ops/lightfield/refocus/lf_refocus.html) · [`mla_surface`](https://furuse.work/ops/optics/plenoptic/mla_surface.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plenoptic_capture`](https://furuse.work/ops/optics/plenoptic/plenoptic_capture.html) · [`plenoptic_decode`](https://furuse.work/ops/optics/plenoptic/plenoptic_decode.html) · [`plenoptic_mla_calibrate`](https://furuse.work/ops/optics/plenoptic/plenoptic_mla_calibrate.html) · [`plenoptic_refocus_depth`](https://furuse.work/ops/optics/plenoptic/plenoptic_refocus_depth.html) · [`plenoptic_system`](https://furuse.work/ops/optics/plenoptic/plenoptic_system.html)
+使用 op(ノートへ): [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lf_depth_from_focus`](https://furuse.work/ops/lightfield/depth/lf_depth_from_focus.html) · [`lf_refocus`](https://furuse.work/ops/lightfield/refocus/lf_refocus.html) · [`mla_surface`](https://furuse.work/ops/optics/plenoptic/mla_surface.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plenoptic_capture`](https://furuse.work/ops/optics/plenoptic/plenoptic_capture.html) · [`plenoptic_decode`](https://furuse.work/ops/optics/plenoptic/plenoptic_decode.html) · [`plenoptic_mla_calibrate`](https://furuse.work/ops/optics/plenoptic/plenoptic_mla_calibrate.html) · [`plenoptic_refocus_depth`](https://furuse.work/ops/optics/plenoptic/plenoptic_refocus_depth.html) · [`plenoptic_system`](https://furuse.work/ops/optics/plenoptic/plenoptic_system.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
 
 ## No.2026.273 —— 同じ粒子を走査像と透過像で測る ―― 52 nm と 48 nm のどちらが正しいか
 

@@ -8,7 +8,7 @@
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">fixed</code> と真の場 <code style="color:#22d3bf">true_flow2d</code> から <code style="color:#22d3bf">synthesize_moving</code> で moving を作り(3 次スプライン、明るさの写し、雑音)、<code style="color:#22d3bf">method</code> で合わせ、推定の場と真の場の差の長さ(終点誤差 EPE [px])を画素ごとに返す。答えの真値は合成に使った場そのもので、推定側はそれを知らない。</p>
 <p><code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;ffd&quot;</code> / <code style="color:#22d3bf">&quot;demons&quot;</code>(<code style="color:#22d3bf">deformreg.demons_register</code>、場の向きは同じ)/ <code style="color:#22d3bf">&quot;ecc&quot;</code> / <code style="color:#22d3bf">&quot;mi&quot;</code>(パラメトリック。滑らかな場はアフィンでしか近似できない —— その近似の誤差も地図に出る)/ <code style="color:#22d3bf">&quot;phase&quot;</code>(<code style="color:#22d3bf">aoi.register_image</code>、並進だけ)。</p>
-<p>地図の内訳(どこで壊れるか)として、fixed の勾配の強さの 4 分位ごと・真の変位の大きさの 4 分位ごとの EPE の中央値を <code style="color:#22d3bf">by_texture</code> / <code style="color:#22d3bf">by_magnitude</code> に返す(模様の無い所で場が決まらないことが数で出る)。</p>
+<p>地図の内訳(どこで壊れるか)として、fixed の勾配の強さの 4 分位ごと・真の変位の大きさの 4 分位ごとの EPE の中央値を <code style="color:#22d3bf">by_texture</code> / <code style="color:#22d3bf">by_magnitude</code> に返す(模様の無い所で場が決まらないことが数で出る)。4 群は排他的(<code style="color:#22d3bf">[lo, hi)</code>、最後の群だけ <code style="color:#22d3bf">[lo, hi]</code>)で、<code style="color:#22d3bf">n</code> の和は集計した画素の数。同値が境界に並ぶと群の大きさは 1/4 ずつにならない(全部同じ値なら最後の群に全部)。</p>
 <p>Args:</p>
 <p>fixed: 基準の 2-D 画像。</p>
 <p>true_flow2d: 真の場 <code style="color:#22d3bf">(2,H,W)</code> の <code style="color:#22d3bf">(dy, dx)</code>(結果と同じ向き)。逆写像が一意であること(勾配 &lt; 1)。</p>

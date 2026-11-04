@@ -35,15 +35,21 @@ __all__ = ["FullseyeEngine", "diagnose_stages", "stage_name", "StageCache", "pip
 def _input_hash(image):
     """A content signature for the input array, used as the first part of a stage cache key.
 
-    Different pixels -> different key -> the cache does not serve a stale result. Hashes the raw
-    bytes (the caller passes the same image across knob edits, so this is paid once per run, not
-    per stage)."""
+    Different pixels -> different key -> the cache does not serve a stale result. Hashes shape,
+    dtype and **every byte** with SHA-256 (paid once per ``run_cached`` call, not per stage; about
+    2 ms for a 1024x1024 float64 frame, the same as the partial hash it replaced).
+
+    ★2026-11-04 external audit E2: only the first and the last MiB were hashed, so two
+    1024x1024 float64 frames that differed in the centre pixel got the same key and the cache
+    served the first frame's result for the second. An object array has no byte content to key
+    on and is refused."""
     import hashlib
     arr = np.ascontiguousarray(image)
-    h = hashlib.sha1()
+    if arr.dtype.hasobject:
+        raise TypeError("run_cached: cannot key the stage cache on an object array (dtype %s)" % arr.dtype)
+    h = hashlib.sha256()
     h.update(str((arr.shape, arr.dtype.str)).encode())
-    h.update(arr.view(np.uint8).reshape(-1)[: 1 << 20].tobytes())   # up to 1 MiB is plenty to separate inputs
-    h.update(arr.view(np.uint8).reshape(-1)[-(1 << 20):].tobytes())
+    h.update(memoryview(arr).cast("B") if arr.size else b"")
     return h.hexdigest()
 
 
@@ -421,15 +427,25 @@ class FullseyeEngine:
         stages = self._stage_tuples()
         if not stages or image is None:
             return image
-        prefix = (_input_hash(image),)
-        prev = image
-        for i, st in enumerate(stages):
+        # ★2026-11-04 external audit E4: each stage used to go through ``run_pipeline(prev, [st])`` on
+        # its own, so the chain-wide checks of :meth:`run` (sort chain, knobs, non-finite entry) never
+        # saw the whole pipeline -- ``otsu,invert`` ran here while ``run`` refuses it. Prepare the
+        # whole chain first (runs nothing), then resume stage by stage on the same runner Studio's
+        # stage cache uses (``entry`` only for the first stage).
+        policy = api._policy(None)
+        fast = api._fast_on(None)
+        img, norm, ops_ = api._prepare_pipeline(image, stages, 0.5, 0.5, policy)
+        # the policy and the fast-twin switch change results, so they are part of the key
+        prefix = (_input_hash(img), policy, fast)
+        prev = img
+        for i, st in enumerate(norm):
             prefix = prefix + (tuple(st),)
             hit = cache.get(prefix)
             if hit is not None:
                 prev = hit
                 continue
-            prev = cache.put(prefix, api.run_pipeline(prev, [st], coerce=(i == 0)), protect=[prefix])
+            val = next(iter(api._pipeline_steps(prev, [st], [ops_[i]], True, policy, fast, entry=(i == 0))))
+            prev = cache.put(prefix, val, protect=[prefix])
         return prev
 
     def stepwise_states(self, image, coerce: bool = True) -> list:
@@ -474,7 +490,7 @@ class FullseyeEngine:
                  "    return fullseye.run_pipeline(frame, ["]
         for name, a, b in self.stages:
             lines.append("        # %s" % _stage_comment(name))
-            lines.append("        (%r, %.3f, %.3f)," % (name, a, b))
+            lines.append("        (%r, %s, %s)," % (name, _knob_literal(a), _knob_literal(b)))
         lines += ["    ])"]
         return "\n".join(lines) + "\n"
 
@@ -493,7 +509,8 @@ class FullseyeEngine:
                  "    x = frame"]
         for name, a, b in self.stages:
             lines.append("    # %s" % _stage_comment(name))
-            lines.append("    x = fullseye.run_pipeline(x, [(%r, %.3f, %.3f)])" % (name, a, b))
+            lines.append("    x = fullseye.run_pipeline(x, [(%r, %s, %s)])"
+                         % (name, _knob_literal(a), _knob_literal(b)))
         lines += ["    return x"]
         return chr(10).join(lines) + chr(10)
 
@@ -505,6 +522,19 @@ class FullseyeEngine:
     def __repr__(self):
         return "FullseyeEngine(%r, %d stages: %s)" % (
             self.name, len(self.stages), self.to_ops() or "<empty>")
+
+
+def _knob_literal(v) -> str:
+    """A knob as Python source that evaluates to the SAME float (``repr`` = shortest round trip).
+
+    ★2026-11-04 external audit E3: the exporters wrote ``%.3f``, so a 0.123456 knob ran as 0.123
+    in the generated code (Studio's own export already used ``repr``). Non-finite values are
+    written as ``float('nan')`` / ``float('inf')`` so the script still parses (and is refused by
+    ``run_pipeline`` exactly as :meth:`FullseyeEngine.run` refuses it)."""
+    f = float(v)
+    if f != f or f in (float("inf"), float("-inf")):
+        return "float(%r)" % repr(f)
+    return repr(f)
 
 
 def _stage_comment(name: str) -> str:

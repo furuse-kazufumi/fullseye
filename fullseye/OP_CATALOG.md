@@ -3044,7 +3044,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sensor_spec` `入力なし → table` GPU: なし — イメージセンサの諸元。**電子の数**まで決める側の値だけを持つ。 · 例: `poc_nir_silicon_transmission`, `poc_optics_drawings`, `vision_layout_from_catalog`
 - `surface_defect` `table × image2d → table` GPU: なし — 2-D の欠陥図を**部品の面に貼る**(``defectgen`` の出力をそのまま食う)。 · 例: `studio_raytrace_scene`
 - `surface_finish` `table → table` GPU: なし — 部品の面に**加工目**(旋盤目・ヘアライン・ローレット・梨地・研削目)を刻む。 · 例: `virtual_machine_vision`
-- `trace_rays` `table × points × points → table` GPU: なし — 光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。 · 例: `anim3d_lens_aberrations`, `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_lens_solves_afocal`, `poc_noncoaxial_optics`, `poc_pocket_interreflection`, `poc_telecentric_metrology`, `studio_raytrace_scene`
+- `trace_rays` `table × points × points → table` GPU: なし — 光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。 · 例: `anim3d_lens_aberrations`, `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_lens_solves_afocal`, `poc_noncoaxial_optics`, `poc_plenoptic_camera`, `poc_pocket_interreflection`, `poc_telecentric_metrology`, `studio_raytrace_scene`
 - `vision_layout` `table × table × table → table` GPU: なし — センサー・レンズ・照明・シーンを束ね、**導出量を閉じた式で**返す。 · 例: `poc_nir_silicon_transmission`, `poc_optics_drawings`, `vision_layout_from_catalog`
 
 #### optics / sensorchar(19)

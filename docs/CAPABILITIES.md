@@ -1432,9 +1432,9 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 
 代替: [`lf_from_mla`](ops/lightfield/decode/lf_from_mla.md), [`lf_refocus`](ops/lightfield/refocus/lf_refocus.md), [`lf_depth_from_focus`](ops/lightfield/depth/lf_depth_from_focus.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md)
 
-限界: 幾何光学のみで回折と画素間クロストークは扱わない。
+限界: 幾何光学のみで回折と画素間クロストークは扱わない。傾き↔距離は近軸の式で、球面収差の分だけ距離がずれる。
 
-実寸校正: 一様な白色面で MLA 格子を校正し、距離既知の三平面で深度を確認する。
+実寸校正: 一様な白色面で MLA 格子を校正し、処方を順方向に光線追跡した視差を真値に三平面で深度を確認する。
 
 動く例: `poc_plenoptic_camera`
 

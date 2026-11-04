@@ -157,13 +157,32 @@ def hom_mat3d_rotate(H, phi=0.0, axis=2):
     return R @ _m(H)
 
 
+def _euler_zyx_from_R(R):
+    """``R = Rz(rz) · Ry(ry) · Rx(rx)`` の ``(rx, ry, rz)``(ラジアン)。
+
+    ★2026-11-04 外部検証 G3: ``ry = ±90°`` ちょうど(``cos ry = 0``、ジンバルロック)では
+    ``R[2,1], R[2,2], R[1,0], R[0,0]`` がすべて 0 になり、``atan2(0, 0) = 0`` で rx と rz の両方を
+    失っていた(往復誤差 1.0、``e_y`` が [1,0,0] → [0,1,0])。rx と rz は和・差しか決まらないので、
+    ``pose_quat._R_to_euler`` と同じ規約で ``rx = 0`` に固定し、rz を ``R[0,1] = −sin rz`` /
+    ``R[1,1] = cos rz``(±90° の両方で成り立つ)から取る。``cos ry`` は ``hypot(R[0,0], R[1,0])``
+    で測り、√ε 未満をロックとみなす(この先は汎用式の atan2 が丸め屑を読む)。ry も arcsin でなく
+    atan2 で取るので ±90° 近くの精度が落ちない。
+    """
+    cy = float(np.hypot(R[0, 0], R[1, 0]))
+    ry = float(np.arctan2(-R[2, 0], cy))
+    if cy < np.sqrt(np.finfo(float).eps):
+        return 0.0, ry, float(np.arctan2(-R[0, 1], R[1, 1]))
+    return float(np.arctan2(R[2, 1], R[2, 2])), ry, float(np.arctan2(R[1, 0], R[0, 0]))
+
+
 def hom_mat3d_to_pose(H):
-    """4x4 変換行列を pose [rx,ry,rz(ZYX euler), tx,ty,tz] に分解。"""
+    """4x4 変換行列を pose [rx,ry,rz(ZYX euler), tx,ty,tz] に分解。
+
+    ``ry = ±90°``(ジンバルロック)では rx と rz は和・差しか決まらないので ``rx = 0`` に固定する
+    (:func:`pose_to_hom_mat3d` で戻すと元の行列になる)。"""
     H = _m(H)
     R, t = H[:3, :3], H[:3, 3]
-    ry = np.arcsin(-np.clip(R[2, 0], -1, 1))
-    rx = np.arctan2(R[2, 1], R[2, 2])
-    rz = np.arctan2(R[1, 0], R[0, 0])
+    rx, ry, rz = _euler_zyx_from_R(R)
     return np.array([rx, ry, rz, t[0], t[1], t[2]])
 
 
