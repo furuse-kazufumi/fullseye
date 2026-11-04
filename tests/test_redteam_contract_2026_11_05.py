@@ -491,3 +491,16 @@ def test_t4_response_budget_is_read_per_call():
         tr = S.tool_result(json.dumps(big), big)
         assert "structuredContent" not in tr and tr["_meta"]["fullseye"]["limit"] == 16000
     assert "structuredContent" in S.tool_result(json.dumps(big), big)
+
+
+def test_t5_tightens_only_caps_cannot_be_raised_above_their_default():
+    numeric = {n: sp for n, sp in fssystem.SYSTEM_PARAMS.items()
+               if sp["tightens_only"] and all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in sp["values"])}
+    assert len(numeric) >= 11                             # the 10 reported caps + mcp_response_budget / pipeline_max_stages
+    for name, sp in numeric.items():
+        assert max(sp["values"]) == sp["default"], name
+    with pytest.raises(ValueError):
+        with fssystem.system(mcp_stack_max_pixels=67108864):
+            pass
+    with fssystem.system(mcp_stack_max_pixels=16777216):  # tightening still works
+        assert fssystem.get_system("mcp_stack_max_pixels") == 16777216
