@@ -350,3 +350,22 @@ def test_k7_table_integer_dtypes_divide_by_max_and_negative_is_refused():
                                M.rgb_to_lab(np.array([0, 64, 127]) / 127.0))
     with pytest.raises(ValueError, match="negative"):
         CT.color_transfer(np.full((4, 4, 3), -3, np.int8), np.full((4, 4, 3), 3, np.int8), "reinhard", "rgb")
+
+
+# ---------------------------------------------------------------------------
+# K8: annotate._luma_field の docstring が実装と違った(文書を直した)
+# ---------------------------------------------------------------------------
+
+def test_k8_luma_field_grey_equals_rgb_grey_and_wcag_linearised_value():
+    import annotate as A
+    v = 0.5
+    grey = A._luma_field(np.full((2, 2), v))
+    rgb = A._luma_field(np.full((2, 2, 3), v))
+    # 真値(WCAG / IEC 61966-2-1): ((0.5 + 0.055) / 1.055) ** 2.4
+    truth = ((v + 0.055) / 1.055) ** 2.4
+    np.testing.assert_allclose(grey, truth, rtol=1e-12)
+    np.testing.assert_allclose(rgb, truth, rtol=1e-12)
+    doc = A._luma_field.__doc__
+    # 文書が実装と同じことを言う: 「値そのもの」ではなく線形化
+    assert "その値を輝度そのものとして扱う" not in doc
+    assert "srgb_to_linear" in doc
