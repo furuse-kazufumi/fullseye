@@ -3303,7 +3303,10 @@ def _normalise_stages(image, stages, a, b) -> list:
                                     % (i, name, sorted(bad)))
                 sa, sb = rest[0].get("a", a), rest[0].get("b", b)
             elif len(rest) <= 2 and all(isinstance(x, _NUMBER) and not isinstance(x, bool) for x in rest):
-                sa, sb = (rest + [a, b])[:2]
+                # ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の
+                #   省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。
+                #   省いた位置の分だけ、その位置の既定値で埋める。
+                sa, sb = rest + [a, b][len(rest):]
             else:
                 raise TypeError(
                     "stage %d (%r): expected (name), (name, a), (name, a, b) or (name, {'a': .., 'b': ..}), got %r"
