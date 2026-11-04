@@ -386,3 +386,38 @@ def test_mcp_never_writes_a_nan_token():
     store = _mcp()[2]
     assert S._pipeline_json_value({"v": float("nan")}, store, sort="feature", provenance=[]) is None
     assert S._pipeline_json_value({"v": 1.5}, store, sort="feature", provenance=[]) == {"v": 1.5}
+
+
+# --------------------------------------------------------------------------- #
+# C1 sibling: the imgevolve CLI apply / pipeline use the apply entry            #
+# --------------------------------------------------------------------------- #
+def _cli(monkeypatch, argv):
+    import contextlib
+    import io
+    import sys
+    import imgevolve
+    monkeypatch.setattr(sys, "argv", ["fullseye"] + list(argv))
+    with contextlib.redirect_stdout(io.StringIO()):
+        return imgevolve.main()
+
+
+def test_c1_cli_apply_and_pipeline_check_knobs_and_sort_chain(monkeypatch, tmp_path):
+    cv2 = pytest.importorskip("cv2")
+    src = str(tmp_path / "in.png")
+    img = np.round(X * 255).astype(np.uint8)
+    cv2.imwrite(src, img)
+    out = str(tmp_path / "out.png")
+    for knob in ("5", "nan"):
+        with pytest.raises(ValueError):
+            _cli(monkeypatch, ["apply", "threshold", src, out, "--a", knob])
+        with pytest.raises(ValueError):
+            _cli(monkeypatch, ["pipeline", src, out, "--ops", "gaussian,threshold", "--a", knob])
+    with pytest.raises(ValueError, match="type mismatch"):
+        _cli(monkeypatch, ["pipeline", src, out, "--ops", "gaussian,vol_gaussian"])
+    # a sound call: the written file equals fullseye.apply on the same /255 frame
+    assert _cli(monkeypatch, ["apply", "gaussian", src, out, "--a", "0.3"]) == 0
+    ref = np.clip(fs.apply(img / 255.0, "gaussian", 0.3) * 255, 0, 255).astype(np.uint8)
+    assert np.array_equal(cv2.imread(out, cv2.IMREAD_GRAYSCALE), ref)
+    assert _cli(monkeypatch, ["pipeline", src, out, "--ops", "gaussian,invert", "--a", "0.3"]) == 0
+    ref = np.clip(fs.run_pipeline(img / 255.0, ["gaussian", "invert"], a=0.3) * 255, 0, 255).astype(np.uint8)
+    assert np.array_equal(cv2.imread(out, cv2.IMREAD_GRAYSCALE), ref)
