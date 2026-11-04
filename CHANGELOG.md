@@ -10,6 +10,52 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(numerics)
+
+長さ・長さ² に固定の `1e-12` を足す/比べる床と、中心化せずに解く当てはめを直した。値が変わるのは
+主に尺度の小さい(1e-4 以下)・原点から遠い入力で、単位の尺度の入力は丸めの桁しか変わらない。
+
+- N8 `measure.fit_ellipse` / N6 `fit_circle`: 重心を引き RMS 半径で割った座標で解く。中心 (6000, 8000) の
+  楕円 ra=5, rb=4, 20° が 5.119 / 3.912 / 21.94° → 真値、off=1e6 の円 r=2.00003 → 2。半径 8e-7 以下の円を
+  `ValueError` にしていたのが解ける。`fit_line` も長さ 1e-13 の線分を解く。一致点の判定は座標の大きさに
+  対する相対量。
+- N5 `fit_superquadric`: 無次元の座標で解いて戻す(s ≤ 1e-4 で PCA 初期値のまま返していた)。全点一致・
+  非有限の点群は `ValueError`。`superquadric_residual` の体積補正の床 `max(a1a2a3, 1e-12)` を外した
+  (小さい物体の残差が変わる)。
+- N7 `create_cam_pose_look_at_point`: 視線 ∥ up・up が 0・視点と注視点の一致は `ValueError`(以前は det=0 の
+  行列を返した)。わずかに傾いた up でも正規直交。`render3d.look_at` の一致判定は相対量、平行判定は
+  正規化した up で。
+- N1 `tools_geom` / `geometry2d`: 交点・距離の床を外した。2 点が一致する直線の `distance_pl` /
+  `projection_pl`、方向 0 の `distance_point_line` / `distance_point_pluecker_line` /
+  `pluecker_line_to_point_direction`、長さ 0 の直線の `intersection_line_circle` は `ValueError`
+  (以前は 0 や NaN)。2 点が一致する直線の `intersection_lines` は None。長さ 0 の線分の `distance_ps` は端点まで。
+- N4 `registration.icp` / `point_to_plane_icp` / `register` と `match3d.icp_point2plane`: `tol` は dst の
+  外接箱の対角長に対する**相対量**(以前は座標単位)。単位の尺度の点群でも収束の止まり方が少し変わる。
+  `match3d.icp_point2point_3d` の「RMSE が十分小さい」も相対量。
+- N3 `deform3d.register_cpd_rigid`: σ² の床を初期分散の 1e-12 倍に(尺度 1e-6 で 27.6° ずれていた)。
+- 兄弟: `curve3d.frenet_frame` の T・N は床なしで単位長(直線区間の N・B は 0 ベクトル)、
+  `transforms.point_pluecker_line_to_hom_mat3d` / `dual_quat_trans_line_3d` は床なしで正規化し長さ 0 の方向は
+  `ValueError`、`measure3d.fit_line3` は長さ 1e-13 の線分を解く。
+- 未確定の疑いを確かめて本物だったもの: `ops._ncc_map`(NCC 系の op の相関マップ)は画像を平均で中心化し、
+  平坦・エネルギー 0 の判定を相対量に(1e-7 倍の画像で全面 0、1e5 のオフセットに 1e-3 のコントラストで全面 0
+  だった)。`kendama._rot_log` は atan2 で角を取る(1e-9 rad の回転を 0 にしていた)。
+
+### 修正 — 敵対的検証 2026-11-05(numerics)の兄弟の一掃と、直さなかったもの
+
+回帰は `tests/test_redteam_numerics_2026_11_05.py`(閉形式の真値と「並進・拡大で答えが同じ動きをする」
+不変量。1e6〜1e-12 の尺度)。
+
+- 直さなかった兄弟: `ransac_fit` の床(geometry 担当)、`pcseg`(担当外)、`deform3d.register_nonrigid` の
+  scale/prev_rms の床(s=1e-12 で初めて効き、その尺度の劣化は TPS の鞍点系の条件数が主因)、
+  `backends_halcon_ext._fit_circle_contour_xld` と `geocam.sun_bloom_fit` の中心化しない Kåsa(画素座標
+  ~1e4 での誤差は 1e-8 px の桁)、`profileops._fit_circle`(弦長 1 に正規化済みの座標)、`contours_xld` /
+  `contours_xld2._dir` の方向の床(画素座標で長さ ≥ 1)、`symmetry3d` の利用者が渡す法線・軸の正規化、
+  `pnp3d` の LM の床(尺度 1e-12 以下でしか効かない)。
+- `reprconv.curvature_to_shape_index`: 平面 (k1 = k2 = 0) の S = 0 は鞍と同じ値になる仕様を docstring に明記
+  (値は変えない。C = 0 が平面の印、S だけで分類しない)。
+- `tests/test_perf_batch20_2026_10_20.py::test_116`: Frenet 標構の参照式が旧い `+ 1e-12` の床(欠陥)を
+  ビット一致で固定していたので、床なしの式に替えた。
+
 ### 変更(Breaking)— `plenoptic_refocus_depth` の傾き↔距離の単位を直した(2026-11-04)
 
 - 像のずれを `slope × 角度ステップ × ピッチ` で出していた。次元から正しくは傾き × ピッチ / 角度ステップで、PoC のカメラでは 1/角度ステップ² ≈ 3000 倍小さく、測った傾きはどれも合焦距離(1.0 m)へ戻っていた。いまは復号の視点刻み(1 視点 = ピッチ/U ぶんの射出瞳)、射出瞳までの距離、Newton の式で変換する近軸の式。処方を順方向に光線追跡した視差と、理想レンズで相対 1e-6、三枚玉で 2e-4 以内で一致する(`tests/test_plenoptic.py`)。
