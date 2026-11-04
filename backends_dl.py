@@ -80,13 +80,16 @@ def anisotropic(v, a, b):
     振る（``iters = 5 + int(b*15)``）。ステップ幅 ``lam=0.2`` は固定。ガウシアンぼかしと
     異なりエッジをぼかさずにノイズだけ均せるのが利点。HALCON の
     ``anisotropic_diffusion``（画像の異方性拡散を行う）に相当するが、同じ結果になる
-    とは限らない近似実装。
+    とは限らない近似実装。画像の縁は複製(縁を越える流れは 0)。
     """
     torch = _torch()["torch"]
     x = _t(v); K = 0.02 + 0.2 * a; iters = 5 + int(b * 15); lam = 0.2
     for _ in range(iters):
-        dn = torch.roll(x, -1, 2) - x; ds = torch.roll(x, 1, 2) - x
-        de = torch.roll(x, -1, 3) - x; dw = torch.roll(x, 1, 3) - x
+        # 縁は複製(Neumann)。2026-11-05(敵対的検証 第 2 巡 P7)までは torch.roll の周期境界。
+        dn = torch.cat([x[:, :, 1:], x[:, :, -1:]], 2) - x
+        ds = torch.cat([x[:, :, :1], x[:, :, :-1]], 2) - x
+        de = torch.cat([x[:, :, :, 1:], x[:, :, :, -1:]], 3) - x
+        dw = torch.cat([x[:, :, :, :1], x[:, :, :, :-1]], 3) - x
         x = x + lam * (torch.exp(-(dn / K) ** 2) * dn + torch.exp(-(ds / K) ** 2) * ds
                        + torch.exp(-(de / K) ** 2) * de + torch.exp(-(dw / K) ** 2) * dw)
     return np.clip(_np(x), 0, 1)

@@ -294,3 +294,27 @@ def test_p6_response_is_invariant_to_a_brightness_offset(name):
     x = _offset_probe()
     d = np.abs(ap(x + 0.1, name) - ap(x, name))
     assert float(d.max()) < 1e-6, (name, float(d.max()))
+
+
+# --------------------------------------------------------------------------------------------- #
+# P7: Perona–Malik 系は画像の縁で巻かない(局所性: n 回の 4 近傍の反復は n 画素より遠くへ届かない)
+# --------------------------------------------------------------------------------------------- #
+@pytest.mark.parametrize("name", ["anisotropic_diffusion", "coherence_enhancing_diff", "alife_perona_malik",
+                                  "dl_aniso_diffusion", "ph_perona_malik"])
+def test_p7_diffusion_does_not_wrap_around_the_image(name):
+    if name == "dl_aniso_diffusion":
+        pytest.importorskip("torch")
+    st = np.full((32, 64), 0.5)
+    st[:, 0] = 0.4                                       # 左端の 1 列だけ段差。右端は 63 px 離れている
+    o = ap(st, name, 1.0, 1.0)
+    assert float(np.abs(o[:, 0] - st[:, 0]).max()) > 1e-3, "左端は拡散する(op が効いている)"
+    assert float(np.abs(o[:, -24:] - st[:, -24:]).max()) == 0.0, "右の 24 列には届かない(反復 ≤ 20 回)"
+
+
+def test_p7_monotony_does_not_compare_with_the_opposite_border():
+    """左端だけ明るい列の画素: 画像の中の暗い近傍は右の 3 つだけ(8 近傍のうち 3)。反対側の縁(右端、暗い)を
+    近傍に数えると 6 になる。"""
+    x = np.zeros((8, 8))
+    x[:, 0] = 1.0
+    y = ap(x, "monotony")
+    assert y[3, 0] == pytest.approx(3 / 8)

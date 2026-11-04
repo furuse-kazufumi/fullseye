@@ -443,7 +443,9 @@ def _sh_lut(p):
             for dy in (-1, 0, 1):
                 for dx in (-1, 0, 1):
                     if dy or dx:
-                        cnt += (np.roll(np.roll(x, dy, 0), dx, 1) < x).astype(np.float64)
+                        # 縁は複製(画像の外の近傍 = 自分なので「より小さい」に数えない)。2026-11-05 P7 の兄弟:
+                        # それまでは np.roll で反対側の縁の画素と比べていた。
+                        cnt += (_shift_edge(x, dy, dx) < x).astype(np.float64)
             return cnt / 8.0
         if kind == "equalize_local":                 # windowed histogram equalisation (equ_histo_image_rect)
             nb = 2 + int(a * 4)
@@ -741,10 +743,12 @@ def _sh_diffusion(p):
             y = x.copy()
             K = 0.05 + 0.25 * b
             for _ in range(2 + int(a * 8)):
-                dn = np.roll(y, -1, 0) - y
-                ds = np.roll(y, 1, 0) - y
-                de = np.roll(y, -1, 1) - y
-                dw = np.roll(y, 1, 1) - y
+                # ★縁は複製(Neumann、縁を越える流れは 0)。2026-11-05(敵対的検証 第 2 巡 P7)までは
+                #   np.roll の周期境界で、右端の列が 60 px 離れた左端の列と拡散していた。
+                dn = _shift_edge(y, -1, 0) - y
+                ds = _shift_edge(y, 1, 0) - y
+                de = _shift_edge(y, 0, -1) - y
+                dw = _shift_edge(y, 0, 1) - y
                 cn, cs = np.exp(-(dn / K) ** 2), np.exp(-(ds / K) ** 2)
                 ce, cw = np.exp(-(de / K) ** 2), np.exp(-(dw / K) ** 2)
                 y = y + 0.2 * (cn * dn + cs * ds + ce * de + cw * dw)
