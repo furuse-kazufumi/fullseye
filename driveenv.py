@@ -599,7 +599,9 @@ def tone_map(radiance, exposure: float):
     """HDR カメラの色を保つ階調の圧縮: m = 各画素の最大チャンネル × exposure、表示 = 輝度 × exposure × (1 + m/4)/(1 + m)
     —— m ≪ 1 では線形、最大チャンネルは m = 2 でちょうど 1 に達し、それより明るい画素は最大チャンネルが 1 になるよう全体を割る(色の比 = 色度は変えない。飽和で灯火が白くならない、仮定: 車載の HDR カメラ)。
 
-    空の入力(``radiance`` が 0 要素)・非有限(NaN/Inf)の輝度は ValueError。
+    非有限(NaN/Inf)の輝度も ValueError(NaN の画素を黙って返さない)。
+
+    空の入力(``radiance`` が 0 要素)は ValueError。
     """
     if (len(radiance) if isinstance(radiance, (list, tuple)) else np.asarray(radiance).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("tone_map: radiance is empty — pass at least one element")
