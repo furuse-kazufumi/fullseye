@@ -302,3 +302,27 @@ def test_n4_match3d_icp_point2point_small_rmse_gate_is_relative(s):
     R = out["R"] if isinstance(out, dict) else out[0]
     R = np.asarray(R.detach().cpu().numpy() if hasattr(R, "detach") else R)
     assert _rot_err_deg(R, Rt) < 1e-6
+
+
+# ── N3: deform3d.register_cpd_rigid の σ² 床 ──────────────────────────────────
+
+
+def test_n3_cpd_rigid_same_answer_at_any_scale():
+    # 修正前: σ² の床 1e-12(長さ²)で s=1e-6 の点群は 1 反復で「収束」し 27.6° ずれた。
+    import deform3d
+    from scipy.spatial.transform import Rotation
+    rng = np.random.default_rng(0)
+    Y = rng.uniform(-1, 1, (150, 3))
+    Rt = Rotation.from_rotvec([0.0, 0.0, 0.5]).as_matrix()
+    tt = np.array([0.1, -0.2, 0.05])
+    X = Y @ Rt.T + tt + 0.01 * rng.standard_normal(Y.shape)
+    R1, t1, i1 = deform3d.register_cpd_rigid(Y, X, iters=100)
+    assert _rot_err_deg(R1, Rt) < 0.2            # 雑音 0.01 の下での真値との差(s=1 で 0.106°)
+    scales = [1e3, 1e-3, 1e-6, 1e-7]
+    assert len(scales) == 4
+    for s in scales:
+        R, t, info = deform3d.register_cpd_rigid(Y * s, X * s, iters=100)
+        assert _rot_err_deg(R, R1) < 1e-6, s
+        assert np.linalg.norm(t / s - t1) < 1e-8, s
+        assert info["iters"] == i1["iters"], s
+        assert info["sigma2"] / s ** 2 == pytest.approx(i1["sigma2"], rel=1e-6, abs=0), s

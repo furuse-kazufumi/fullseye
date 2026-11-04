@@ -384,8 +384,11 @@ def register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-8):
     t = np.zeros(D, dtype=np.float64)
 
     # 初期分散 σ² = (1/(D N M)) Σ_{m,n} ‖x_n − y_m‖²
-    sigma2 = _pairwise_dist(X, Y).__pow__(2).sum() / (D * N * M)
-    sigma2 = max(float(sigma2), 1e-12)
+    sigma2 = float(_pairwise_dist(X, Y).__pow__(2).sum() / (D * N * M))
+    # ★2026-11-05 敵対的検証 N3: σ² の床は初期分散に対する相対量。以前の 1e-12 は長さ² の絶対量で、
+    # 尺度 1e-6 の点群(σ² ~ 1e-13)では初期分散ごと床に持ち上がり、1 反復で「収束」して 27.6° ずれた。
+    sigma2_floor = max(1e-12 * sigma2, np.finfo(np.float64).tiny)
+    sigma2 = max(sigma2, sigma2_floor)
 
     converged = False
     used = 0
@@ -431,9 +434,9 @@ def register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-8):
         trAtR = np.trace(A.T @ R)
         trXhPX = float(np.sum(Pt1 * np.sum(Xh ** 2, axis=1)))
         new_sigma2 = (trXhPX - trAtR) / (Np * D)
-        new_sigma2 = max(float(new_sigma2), 1e-12)
+        new_sigma2 = max(float(new_sigma2), sigma2_floor)
 
-        if abs(new_sigma2 - sigma2) / max(sigma2, 1e-12) < tol:
+        if abs(new_sigma2 - sigma2) / max(sigma2, sigma2_floor) < tol:
             sigma2 = new_sigma2
             converged = True
             break
