@@ -142,6 +142,45 @@ def _cast_exact(arr, dt, name):
     return out
 
 
+#: a float in an integer list is accepted only if it is integral and no larger than this: below it
+#: every integer has exactly one float64, above it a JSON float may already have been rounded
+_EXACT_FLOAT_INT = 2 ** 53
+
+
+def _exact_int_list(data, dt, shape, n, name):
+    """Decode a readable integer list with Python ints (no float64 on the way).
+
+    ★2026-11-04 external audit I1: ``np.asarray([0, 2**63 + 1])`` infers float64 (the two ints do
+    not share an int64 / uint64 type), so ``2**63 + 1`` became ``2**63`` *before* the exactness
+    check, which then compared two already-rounded arrays and passed. Every element is now checked
+    as a Python int against the dtype's range; a float is accepted only when it is integral and
+    ``|x| <= 2**53`` (a hand-written ``3.0``), never a large or fractional one."""
+    try:
+        obj = np.asarray(data, dtype=object)
+    except (TypeError, ValueError):
+        raise ValueError("%s: list data is not a numeric array" % name) from None
+    if obj.size != n:
+        raise ValueError("%s: list data has %d values, envelope shape %r wants %d"
+                         % (name, obj.size, shape, n))
+    info = np.iinfo(dt)
+    vals = []
+    for x in obj.reshape(-1).tolist():
+        if isinstance(x, bool):
+            x = int(x)
+        elif isinstance(x, int):
+            pass
+        elif isinstance(x, float):
+            if not (np.isfinite(x) and x.is_integer() and abs(x) <= _EXACT_FLOAT_INT):
+                raise ValueError("%s: %r is not an exact integer for dtype %s" % (name, x, dt))
+            x = int(x)
+        else:
+            raise ValueError("%s: list data must hold numbers, got %s" % (name, type(x).__name__))
+        if not info.min <= x <= info.max:
+            raise ValueError("%s: values do not fit dtype %s" % (name, dt))
+        vals.append(x)
+    return np.array(vals, dtype=dt).reshape(shape)
+
+
 def _decode_array(p, name="value"):
     if not isinstance(p, dict) or "encoding" not in p or "shape" not in p or "data" not in p:
         raise ValueError("%s: array payload needs encoding / shape / data" % name)
@@ -151,6 +190,9 @@ def _decode_array(p, name="value"):
         raise ValueError("%s: unknown encoding %r" % (name, enc))
     if enc == "list":
         dt = _envelope_dtype(p, enc, name, "float64")
+        if dt.kind in "iu":
+            n = int(np.prod(shape)) if shape else 1
+            return _exact_int_list(p["data"], dt, shape, n, name)
         try:
             raw = np.asarray(p["data"])
         except (TypeError, ValueError):

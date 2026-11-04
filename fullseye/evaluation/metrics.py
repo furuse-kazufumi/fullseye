@@ -37,7 +37,18 @@ def rmse(
     empty: str,
     domain: str,
 ):
-    """Root-mean-square error with every interpretation choice explicit."""
+    """Root-mean-square error with every interpretation choice explicit.
+
+    For ``domain="points3d"`` the unit is the **point**: ``sqrt(mean_i |a_i - b_i|^2)`` (the
+    Euclidean distance per row, as :func:`metrics3d.rmse_correspondence`), on every path. A mask
+    must select whole rows, the weights of a row must be equal (one weight per point), and
+    ``nan_policy="omit"`` drops a point if any of its coordinates (or weights) is non-finite.
+    ``reduction="none"`` still returns the per-coordinate ``|a - b|`` in the input's shape, with
+    whole unselected points NaN.
+    """
+    if domain == "points3d":
+        return _rmse_points(measured, expected, mask=mask, nan_policy=nan_policy, weights=weights,
+                            unit=unit, reduction=reduction, empty=empty)
     a, b, selected, w = _prepare_numeric(
         measured,
         expected,
@@ -60,13 +71,71 @@ def rmse(
         return float(np.sqrt(np.sum(sq * w) / np.sum(w)))
     if nan_policy == "propagate" and not np.all(np.isfinite(sq)):
         return float(np.sqrt(np.mean(sq)))
-    if domain == "points3d" and mask is None and nan_policy == "raise":
-        import metrics3d
-
-        return metrics3d.rmse_correspondence(a.reshape(-1, 3), b.reshape(-1, 3))
     import imgmetrics
 
     return imgmetrics.rmse(a, b)
+
+
+def _rmse_points(measured, expected, *, mask, nan_policy, weights, unit, reduction, empty):
+    """``rmse`` for ``domain="points3d"``: rows are points on every path.
+
+    ★2026-11-04 external audit G1: only the no-option path (no mask, ``nan_policy="raise"``)
+    reached :func:`metrics3d.rmse_correspondence`; an all-true mask, unit weights or
+    ``nan_policy="omit"`` flattened the (N, 3) array and averaged over *coordinates*, so a
+    3 mm displacement read as sqrt(3) mm."""
+    _validate_policies(nan_policy, unit, reduction, empty, "points3d")
+    a = np.asarray(measured, dtype=np.float64)
+    b = np.asarray(expected, dtype=np.float64)
+    if a.shape != b.shape:
+        raise ValueError(f"measured and expected shapes differ: {a.shape} != {b.shape}")
+    if a.size == 0:
+        return _empty_value(empty)
+    _validate_domain(a, "points3d")
+    sel3 = _selection(mask, a.shape)
+    rows = sel3.all(axis=1)
+    if np.any(sel3.any(axis=1) & ~rows):
+        raise ValueError("points3d mask must select whole points (all 3 coordinates of a row, or none)")
+    finite = (np.isfinite(a) & np.isfinite(b)).all(axis=1)
+    if nan_policy == "raise" and np.any(rows & ~finite):
+        raise ValueError("selected values contain NaN or inf")
+    if nan_policy == "omit":
+        rows &= finite
+    w = None
+    if weights is not None:
+        w3 = np.asarray(weights, dtype=np.float64)
+        if w3.shape != a.shape:
+            raise ValueError(f"weights shape {w3.shape} must equal data shape {a.shape}")
+        if np.any(w3[rows] < 0):
+            raise ValueError("weights must be non-negative")
+        wfin = np.isfinite(w3).all(axis=1)
+        if nan_policy == "raise" and np.any(rows & ~wfin):
+            raise ValueError("selected weights contain NaN or inf")
+        if nan_policy == "omit":
+            rows &= wfin
+        wr = w3[rows]
+        fin = np.isfinite(wr).all(axis=1)
+        if np.any(fin & np.any(wr != wr[:, :1], axis=1)):
+            raise ValueError("points3d weights must give the 3 coordinates of a point the same weight")
+        w = np.where(fin, wr[:, 0], np.nan)          # one weight per point; non-finite only under propagate
+    if not rows.any():
+        return _empty_value(empty)
+    if w is not None and not np.any(w > 0):
+        return _empty_value(empty)
+    diff = a[rows] - b[rows]
+    if reduction == "none":
+        out = np.full(a.shape, np.nan, dtype=np.float64)
+        out[rows] = np.abs(diff)
+        return out
+    d2 = np.sum(diff ** 2, axis=1)
+    if reduction == "sum":
+        return float(np.sum(d2 if w is None else d2 * w) ** 0.5)
+    if w is not None:
+        return float(np.sqrt(np.sum(d2 * w) / np.sum(w)))
+    if nan_policy == "propagate" and not np.all(np.isfinite(d2)):
+        return float(np.sqrt(np.mean(d2)))
+    import metrics3d
+
+    return metrics3d.rmse_correspondence(a[rows], b[rows])
 
 
 def mae(
@@ -270,9 +339,14 @@ def _overlap(
         return float("nan")
     if not selected.any():
         return _empty_value(empty)
+    # ★2026-11-04 external audit G2: ``_weights`` narrows *selected* in place under
+    # ``nan_policy="omit"`` (a NaN weight drops its element). a and b used to be taken before
+    # that, so ``ww[a & b]`` indexed with masks of different lengths (IndexError). Weights first.
+    w = _weights(weights, a0.shape, selected, nan_policy)
+    if not selected.any():
+        return _empty_value(empty)
     a = np.asarray(a0, dtype=bool)[selected]
     b = np.asarray(b0, dtype=bool)[selected]
-    w = _weights(weights, a0.shape, selected, nan_policy)
     if w is None:
         if not np.any(a | b):
             return _empty_value(empty)
