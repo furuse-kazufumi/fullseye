@@ -276,6 +276,12 @@ def ph_total_variation_flow(v, a, b):
     edges; the fidelity term keeps the result anchored to the noisy input I0 so it
     denoises rather than collapsing to a constant. ``a`` sets the step count,
     ``b`` the fidelity weight lam.
+
+    The curvature term is the mean of the four forward/backward staggerings (forward
+    gradient + backward divergence and its mirror, per axis), so the flow commutes
+    with flipping the image. Until 2026-11-05 (adversarial review round 2) only the
+    forward-gradient / backward-divergence pair was used, and flipping the input
+    changed the result by up to 0.15.
     """
     im = _img(v)
     i0 = im.copy()
@@ -287,16 +293,21 @@ def ph_total_variation_flow(v, a, b):
     lam = 0.02 + 0.20 * float(np.clip(b, 0.0, 1.0))      # ROF fidelity weight
     n = _steps(a, 1, 80)
     for _ in range(n):
-        # forward differences for the inner gradient ...
-        ixf = _shift(im, 0, 1) - im
-        iyf = _shift(im, 1, 0) - im
-        mag = np.sqrt(ixf * ixf + iyf * iyf + beta * beta)
-        px = ixf / mag
-        py = iyf / mag
-        # ... paired with backward differences for the outer divergence.
-        # This forward/backward staggering couples adjacent pixels and avoids the
-        # checkerboard null-space that a pure central-difference div would excite.
-        curv = (px - _shift(px, 0, -1)) + (py - _shift(py, -1, 0))
+        # Inner gradient by one-sided differences, paired with the opposite-sided
+        # difference for the outer divergence (the adjoint). This staggering couples
+        # adjacent pixels and avoids the checkerboard null-space that a pure
+        # central-difference div would excite. One staggering alone is biased toward
+        # its direction, so the four (column side x row side) choices are averaged.
+        curv = np.zeros_like(im)
+        for sc in (1, -1):
+            for sr in (1, -1):
+                ix = sc * (_shift(im, 0, sc) - im)
+                iy = sr * (_shift(im, sr, 0) - im)
+                mag = np.sqrt(ix * ix + iy * iy + beta * beta)
+                px = ix / mag
+                py = iy / mag
+                curv += sc * (px - _shift(px, 0, -sc)) + sr * (py - _shift(py, -sr, 0))
+        curv *= 0.25
         im = im + dt * (curv - lam * (im - i0))
         im = np.clip(im, 0.0, 1.0)
     return np.clip(im, 0.0, 1.0)

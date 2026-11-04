@@ -462,3 +462,29 @@ def test_p11_cv_corner_harris_peaks_are_symmetric_about_the_square_centre():
     assert ((a3 + a4) / 2, (b3 + b4) / 2) == (19.5, 19.5)
     # 応答の場そのものも 180 度回転と可換
     assert float(np.abs(ap(np.rot90(x, 2), "cv_corner_harris") - np.rot90(y, 2)).max()) < 1e-5
+
+
+# --------------------------------------------------------------------------------------------- #
+# 疑い(再現できたので直した): zero_crossing と ph_total_variation_flow は像の反転・転置と可換
+# --------------------------------------------------------------------------------------------- #
+FLIPS = [np.flipud, np.fliplr, np.transpose]
+
+
+@pytest.mark.parametrize("name", ["zero_crossing", "ph_total_variation_flow"])
+@pytest.mark.parametrize("a,b", [(0.5, 0.5), (0.2, 0.9)])
+def test_suspect_flip_covariance(name, a, b):
+    x = _smooth()
+    y = ap(x, name, a, b)
+    assert len(FLIPS) == 3
+    for fl in FLIPS:
+        assert float(np.abs(fl(y) - ap(fl(x).copy(), name, a, b)).max()) < 1e-9, fl.__name__
+
+
+def test_suspect_zero_crossing_marks_the_pixel_closest_to_the_zero():
+    """1 本の縦の段差(列 19|20)の LoG のゼロ交差は、段差を挟んで対称 —— 反転しても同じ列の対に付く。"""
+    x = np.full((32, 40), 0.2)
+    x[:, 20:] = 0.8
+    y = ap(x, "zero_crossing", 0.5, 0.5)
+    cols = sorted(set(np.nonzero(y[10] > 0.5)[0].tolist()))
+    assert cols, "ゼロ交差がある"
+    assert cols == sorted(set((39 - np.nonzero(ap(x[:, ::-1].copy(), "zero_crossing", 0.5, 0.5)[10] > 0.5)[0]).tolist()))

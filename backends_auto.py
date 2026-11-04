@@ -1042,9 +1042,20 @@ def _sh_segment(p):
         if kind == "zero_crossing":                  # Laplacian sign-changes (zero_crossing)
             lap = _log_dc_free(x, 0.5 + 2.0 * a)
             s = np.sign(lap)
+            al = np.abs(lap)
             zc = np.zeros_like(x, bool)
-            zc[:-1, :] |= np.abs(np.diff(s, axis=0)) > 0
-            zc[:, :-1] |= np.abs(np.diff(s, axis=1)) > 0
+            # ★符号が変わる 4 近傍の対のうち、**0 に近い方**の画素に印を付ける(同じなら両方)。
+            #   2026-11-05(敵対的検証 第 2 巡)までは対の上 / 左の画素に固定で印を付けていて、像を上下・
+            #   左右に反転すると線が 1 画素ずれた(反転と可換でない)。
+            for axis in (0, 1):
+                ch = np.abs(np.diff(s, axis=axis)) > 0
+                lo = [slice(None)] * 2
+                hi = [slice(None)] * 2
+                lo[axis] = slice(None, -1)
+                hi[axis] = slice(1, None)
+                lo, hi = tuple(lo), tuple(hi)
+                zc[lo] |= ch & (al[lo] <= al[hi])
+                zc[hi] |= ch & (al[hi] <= al[lo])
             return zc.astype(np.float64)
         if kind == "local_min":                      # regional minima (local_min)
             return ((x <= ndimage.minimum_filter(x, _k(a))) & (x < (0.7 - 0.4 * b))).astype(np.float64)
@@ -2178,7 +2189,7 @@ SEED: list[tuple] = [
     ("shape_trans_xld", "contour", CON, CON, "xld", {"kind": "convex"},
      '輪郭の凸包(``cv2.convexHull``)を計算し、輪郭形式のまま返す\n(``shape_trans`` の輪郭版)。HALCON の ``shape_trans_xld``（Transform the\nshape of contours or polygons.）が持つ複数の変形モードのうち、凸包 1 種類\nのみを実装している(近似)。\n\n``a``, ``b`` は未使用。cv2 が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("zero_crossing", "segmentation", IMG, REG, "segment", {"kind": "zero_crossing"},
-     'ラプラシアン(ガウス平滑化込み、シグマ ``0.5+2*a``)の符号が反転する\n画素(ゼロ交差)を検出する。LoG のゼロ交差はエッジの位置を高精度に示す\nことで知られる古典的な検出法。HALCON の ``zero_crossing``（Extract zero\ncrossings from an image.）に相当。\n\n``a`` がガウス平滑化のシグマを振る。``b`` は未使用。上下・左右いずれかの\n方向で符号が変わればゼロ交差とみなす(斜め方向は直接見ていない)。'),
+     'ラプラシアン(ガウス平滑化込み、シグマ ``0.5+2*a``)の符号が反転する\n画素(ゼロ交差)を検出する。LoG のゼロ交差はエッジの位置を高精度に示す\nことで知られる古典的な検出法。HALCON の ``zero_crossing``（Extract zero\ncrossings from an image.）に相当。\n\n``a`` がガウス平滑化のシグマを振る。``b`` は未使用。上下・左右いずれかの\n方向で符号が変わればゼロ交差とみなす(斜め方向は直接見ていない)。印は符号が変わる\n2 画素のうちラプラシアンが 0 に近い方に付く(同じなら両方)ので、像の反転と可換\n(2026-11-05 まで対の上 / 左の画素に固定で、反転すると線が 1 画素ずれた)。'),
     ("local_min", "segmentation", IMG, REG, "segment", {"kind": "local_min"},
      '局所極小点(領域極小)検出。``x`` が窓内の最小値(``_k(a)``)に一致し、\nかつ ``x < 0.7-0.4*b`` を満たす画素を前景とする、``local_max`` の暗部版。\nHALCON の ``local_min``（Detect all local minima in an image.）に相当。\n\n``a`` が窓サイズを、``b`` が輝度の上限しきい値を振る。両方が使われる。'),
     ("pruning", "region", REG, REG, "region_trans", {"kind": "pruning"},
