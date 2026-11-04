@@ -295,3 +295,40 @@ def test_o4_noisy_integer_carrier_still_estimated_closely():
     img, ref = _ftp_bump(8.0, noise=0.02)                # 雑音で漏れがある -> サブビン推定の経路
     _, info = F.fringe_ftp_phase(img, return_info=True)
     assert abs(info["carrier_period"] / 8.0 - 1.0) < 2e-3
+
+
+# --------------------------------------------------------------------------- #
+# O8 台帳の docstring の「N op / M カテゴリ」が実数と合う(opsinterferometry と兄弟)
+# --------------------------------------------------------------------------- #
+def _docstring_count_claims():
+    """ops*.py の docstring にある「<mod>.py(、)N op / M カテゴリ」を全部拾う。"""
+    import ast
+    import pathlib
+    import re
+    pat = re.compile(r"`{0,2}(\w+)\.py`{0,2}\s*[、(]\s*(?:[^、()]*、\s*)?(\d+) op / (\d+) カテゴリ")
+    root = pathlib.Path(__file__).resolve().parents[1]
+    out = []
+    for f in sorted(root.glob("ops*.py")):
+        doc = ast.get_docstring(ast.parse(f.read_text(encoding="utf-8"))) or ""
+        for m in pat.finditer(doc):
+            out.append((f.stem, m.group(1), int(m.group(2)), int(m.group(3))))
+    return out
+
+
+def test_o8_registry_docstring_counts_match_the_registry():
+    import collections
+    import importlib
+    claims = _docstring_count_claims()
+    assert len(claims) >= 12                              # 拾えているか(空集合への表明の防止)
+    assert ("opsinterferometry", "interferometry", 9, 6) in claims   # 以前は 5 カテゴリ
+    bad = []
+    for reg, mod, n_op, n_cat in claims:
+        m = importlib.import_module(reg)
+        cats = collections.defaultdict(list)
+        for name in m.list_ops():
+            info = m.info(name)
+            cats[info.get("module")].append(info["category"])
+        got = (len(cats[mod]), len(set(cats[mod])))
+        if got != (n_op, n_cat):
+            bad.append((reg, mod, (n_op, n_cat), got))
+    assert not bad, bad
