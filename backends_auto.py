@@ -282,7 +282,12 @@ def _halcon_circularity(dists, area):
 
 
 def _halcon_compactness(length, area):
-    """``max(1, L²/(4π·F))``。HALCON は画素近似のため 1 で切る(下側)。"""
+    """``max(1, L²/(4π·F))``。HALCON は画素近似のため 1 で切る(下側)。
+
+    HALCON 23.11 の ``compactness``: 「C = max(1, C′)」「The value of C is clipped to 1.0, because the pixel
+    area of a region can only be an approximation of a real circle's area」、表明 ``Compactness >= 1.0 ||
+    Compactness == 0``(0 は空の領域 —— 空は呼ぶ側が 0 を返す)。
+    """
     if area <= 0:
         return 1.0
     return float(max(1.0, (length * length) / (4.0 * np.pi * area)))
@@ -1989,7 +1994,7 @@ SEED: list[tuple] = [
     ("circularity", "features", REG, FEA, "region_feat", {"metric": "circularity"},
      '円形度 ``min(1, 面積 /(π・max²))``。``max`` は**重心から輪郭画素までの最大距離**\nで、円なら 1、細長い形や大きな出っ張り・穴があるほど小さい。連結成分が複数ある\n場合は最大面積のものだけを評価する。HALCON の ``circularity``（Shape factor for\nthe circularity (similarity to a circle) of a region.）**と同じ式**。\n\n★2026-09-26 まで等周比 ``4π・面積/周囲長²`` という**別の量**を返していた。\n名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が\n同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と**順序まで変わる**)。\n``docs/hardening/halcon-named-shape-factors.md``。\n\n``a``, ``b`` は未使用。'),
     ("compactness", "features", REG, FEA, "region_feat", {"metric": "compactness"},
-     'コンパクトさ ``周囲長² / (4π・面積)``。円で 1、細長い/ぎざぎざ/穴が多いほど\n大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the\ncompactness of a region.）と同じ量。\n\n★2026-09-26 まで ``/10`` して ``min(1.0, ...)`` で切っていた —— 値を [0,1] に\n収めるための便宜だったが、``周囲長²/(4π・面積)`` が 10 を超える形(幅 2 px なら\n長さ 80 以上の傷)を**全部 1.0 に潰していた**。傷や割れという、いちばん見たい\n領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも\nfeature の契約ではない(``elliptic_axis`` は 6.35、``r3_region_features`` は\n18.1 を返す)ので、潰す理由が無かった ――\n``docs/hardening/compactness-saturated-at-one.md``。\n\nHALCON は ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため)が、\nここでは切らない。1 を下回る値は「領域が小さすぎて近似が効いていない」と\nいう情報そのもので、必要なら呼ぶ側で切れる。\n\n``a``, ``b`` は未使用。'),
+     'コンパクトさ ``max(1, 周囲長² / (4π・面積))``。円で 1、細長い/ぎざぎざ/穴が多いほど\n大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the\ncompactness of a region.）と同じ量。\n\n★2026-09-26 まで ``/10`` して ``min(1.0, ...)`` で切っていた —— 値を [0,1] に\n収めるための便宜だったが、``周囲長²/(4π・面積)`` が 10 を超える形(幅 2 px なら\n長さ 80 以上の傷)を**全部 1.0 に潰していた**。傷や割れという、いちばん見たい\n領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも\nfeature の契約ではない(``elliptic_axis`` は 6.35、``r3_region_features`` は\n18.1 を返す)ので、潰す理由が無かった ――\n``docs/hardening/compactness-saturated-at-one.md``。\n\nHALCON と同じく ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため。\nHALCON 23.11 の ``compactness`` の説明: 「C = max(1, C′)」「The value of C is\nclipped to 1.0」、返り値の表明 ``Compactness >= 1.0 || Compactness == 0``)。\n半径 3〜6 の円板は 1.0 になる。領域が空なら 0。\n\n★2026-11-05(敵対的検証 第 2 巡 P2)まで、この説明は「ここでは切らない」と\n書いていた —— 実装は 2026-09-26 から HALCON の ``max(1, C)`` で、説明文だけが\nその前の方針のまま残っていた。\n\n``a``, ``b`` は未使用。'),
     ("convexity", "features", REG, FEA, "region_feat", {"metric": "convexity"},
      '凸性 ``面積 / 凸包面積``(1 に近いほど凸形状に近い)。``skimage.\nmeasure.regionprops`` の ``area`` と ``area_convex`` の比。HALCON の\n``convexity``（Shape factor for the convexity of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("rectangularity", "features", REG, FEA, "region_feat", {"metric": "rectangularity"},

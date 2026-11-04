@@ -111,3 +111,24 @@ def test_p1_accel_label_paths_use_the_same_connectivity():
         got = fn(t, 0.0, 0.5, "cpu")[0, 0].numpy()
         assert np.array_equal(got > 0.5, ap(m, name, 0.0, 0.5) > 0.5)
         assert int((got > 0.5).sum()) == 800
+
+
+# --------------------------------------------------------------------------------------------- #
+# P2: compactness は HALCON と同じ max(1, L²/(4πF))。説明文も同じことを言う
+# --------------------------------------------------------------------------------------------- #
+def test_p2_compactness_is_halcon_max_one_and_the_help_says_so():
+    from skimage import draw, measure
+    import ops
+    radii = [3, 6, 20, 40]
+    assert len(radii) == 4
+    for r in radii:
+        d = np.zeros((96, 96))
+        rr, cc = draw.disk((48, 48), r, shape=d.shape)
+        d[rr, cc] = 1
+        rp = measure.regionprops(d.astype(int))[0]
+        raw = rp.perimeter ** 2 / (4 * np.pi * rp.area)
+        assert ap(d, "compactness") == pytest.approx(max(1.0, raw), rel=1e-9)
+    assert ap(np.zeros((16, 16)), "compactness") == 0.0          # HALCON: 空の領域は 0
+    doc = ops._BY_NAME["compactness"].doc
+    assert "max(1, 周囲長²" in doc
+    assert "ここでは切らない。" not in doc

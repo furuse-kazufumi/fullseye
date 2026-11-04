@@ -16,6 +16,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### 修正 — 敵対的検証 2026-11-05 第 2 巡(imageops)
 
+- P2 `compactness` の説明文が「HALCON は `max(1, C)` と下で切るが、ここでは切らない」と書いていたが、実装(`_halcon_compactness`)は 2026-09-26 の後の便から HALCON と同じ `max(1, C)`。HALCON 23.11 の `compactness` の説明(「C = max(1, C′)」「clipped to 1.0」、表明 `Compactness >= 1.0 || Compactness == 0`)で実装が正しいことを確かめ、説明文と `docs/hardening/compactness-saturated-at-one.md` を直した(値は変わらない)。
+
 ### 変更(Breaking)— `plenoptic_refocus_depth` の傾き↔距離の単位を直した(2026-11-04)
 
 - 像のずれを `slope × 角度ステップ × ピッチ` で出していた。次元から正しくは傾き × ピッチ / 角度ステップで、PoC のカメラでは 1/角度ステップ² ≈ 3000 倍小さく、測った傾きはどれも合焦距離(1.0 m)へ戻っていた。いまは復号の視点刻み(1 視点 = ピッチ/U ぶんの射出瞳)、射出瞳までの距離、Newton の式で変換する近軸の式。処方を順方向に光線追跡した視差と、理想レンズで相対 1e-6、三枚玉で 2e-4 以内で一致する(`tests/test_plenoptic.py`)。
