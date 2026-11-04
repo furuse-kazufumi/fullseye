@@ -990,8 +990,12 @@ def make_figures(lam, chart, est, imgs, ident, micro, real):
     figure_scale = figs._figure_scale()
     for d in np.linspace(0.0, 1500.0, 46):
         p = spectrum(d)
+        # ★render_plot の既定は等倍(Studio の画面用、2026-11-01 の 5103a2f2ab)。隣に並べる
+        #   円盤の板は figure_scale 倍で作るので、倍率は**ここで明示的に渡す**(渡さないと
+        #   高さ 280 と 560 で np.concatenate が落ちる —— 図の段は CI が走らせていなかった)。
         plot = figs.render_plot([("R(λ)", p[:, 0], p[:, 1])], xlabel="波長 [nm]", ylabel="反射率",
-                                title="SiO₂ %4.0f nm on Si" % d, size=(420, 280), ylim=(0.0, 0.6))
+                                title="SiO₂ %4.0f nm on Si" % d, size=(420, 280), ylim=(0.0, 0.6),
+                                scale=figure_scale)
         sw = FO.film_color("SIO2", "SI", d, d + 1e-6, 2, exposure=1.6)["srgb"][0]
         yy, xx = np.mgrid[0:280 * figure_scale, 0:140 * figure_scale]
         disk = np.hypot(xx - 70 * figure_scale, yy - 140 * figure_scale) < 62 * figure_scale
