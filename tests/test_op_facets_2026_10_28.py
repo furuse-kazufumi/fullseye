@@ -490,3 +490,22 @@ def test_minimal_context_six_tasks_stay_under_2800_tokens():
     assert len(report["tasks"]) == 6 and report["max_tokens"] <= 2800
     assert report["recall_at_7"] >= 4/6
     assert 16000 in opsearch.system_params()["params"]["mcp_response_budget"]["values"]
+
+
+def test_map_edges_run_through_the_base_op_on_the_stack():
+    """map:: の辺は実行先を持ち、その入口を積んだ列に掛けると要素ごとに掛けたのと一致する(2026-11-04)。"""
+    import json
+    import numpy as np
+    import fullseye
+    g = json.loads((Path(ROOT) / "fullseye" / "data" / "OP_GRAPH.json").read_text(encoding="utf-8"))
+    maps = [e for e in g["edges"] if e["op"].startswith("map::")]
+    assert len(maps) >= 1          # 2026-11-04 時点は map::companding_mu_law の 1 本(空なら下は素通り)
+    for e in maps:
+        ex = e.get("executor") or {}
+        assert ex.get("kind") == "registry" and ex.get("map") == "stack_pointwise", e["op"]
+        base = e["op"][len("map::"):]
+        assert ex.get("alias") == base
+        stack = np.random.default_rng(0).random((3, 16, 16))
+        whole = fullseye.apply(stack, base, 0.5, 0.5, on_error="raise")
+        each = np.stack([fullseye.apply(x, base, 0.5, 0.5, on_error="raise") for x in stack])
+        assert whole.shape == each.shape and np.allclose(whole, each, atol=1e-12), e["op"]
