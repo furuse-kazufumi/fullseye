@@ -288,3 +288,36 @@ def test_k5_hsv_is_scale_invariant_for_tiny_values_against_colorsys():
         for got in (a, d):
             assert got[0] == pytest.approx(h0, abs=1e-12), (k, got)
             assert got[1] == pytest.approx(s0, abs=1e-12), (k, got)
+
+
+# ---------------------------------------------------------------------------
+# K6: imgmetrics.linear_to_srgb が範囲外を黙って切り詰めた
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("bad", [[1.5, 0.2, 0.5], [-0.2, 0.5, 0.5], [np.nan, 0.5, 0.5], [np.inf, 0.0, 0.0]])
+def test_k6_linear_to_srgb_refuses_like_its_pair_and_its_delegate(bad):
+    import gfx2d as G
+    v = np.array(bad, dtype=np.float64)
+    with pytest.raises(ValueError):
+        M.linear_to_srgb(v)
+    # 一貫性: 委譲先(gfx2d)と対(srgb_to_linear)も同じ入力を拒否する
+    with pytest.raises(ValueError):
+        G.linear_to_srgb(v.reshape(1, 3))
+    with pytest.raises(ValueError):
+        M.srgb_to_linear(v)
+
+
+def test_k6_linear_to_srgb_in_range_matches_gfx2d_and_tiny_overshoot_is_clipped():
+    import gfx2d as G
+    x = np.linspace(0.0, 1.0, 1001)
+    np.testing.assert_array_equal(M.linear_to_srgb(x), G.linear_to_srgb(x.reshape(1, -1))[0])
+    np.testing.assert_array_equal(M.linear_to_srgb(np.array([1.0 + 5e-7, -5e-7, 0.5])),
+                                  M.linear_to_srgb(np.array([1.0, 0.0, 0.5])))
+
+
+def test_k6_lab_to_rgb_still_clips_out_of_gamut_as_documented():
+    # lab_to_rgb は色域外の切り詰めを約束している(例外は出ない)
+    out = M.lab_to_rgb(np.array([50.0, 120.0, -120.0]))
+    assert np.all((out >= 0) & (out <= 1))
+    rt = M.lab_to_rgb(M.rgb_to_lab(np.array([0.2, 0.5, 0.8])))
+    np.testing.assert_allclose(rt, [0.2, 0.5, 0.8], atol=1e-6)

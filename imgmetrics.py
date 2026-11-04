@@ -252,9 +252,29 @@ def linear_to_srgb(lin):
     """線形 RGB に sRGB の伝達関数を掛ける(``srgb_to_linear`` の逆)。
 
     実体は :func:`gfx2d.linear_to_srgb`(上と同じ理由で委譲)。
+
+    値域の約束は対の ``srgb_to_linear`` と委譲先 ``gfx2d.linear_to_srgb`` に揃える:
+    ``[0, 1]`` の外(許容 1e-6、その範囲の食み出しは切り詰め)・NaN/Inf は
+    ``MetricContractError``(``ValueError`` の部分型)。**HDR の線形値(1 超)や負値を
+    黙って切り詰めない** ―― 先に露光・トーンマップ(:mod:`render_tonemap`)で収めるか、
+    色域外を切り詰めると決めたなら呼び出し側で ``np.clip`` してから渡す
+    (:func:`lab_to_rgb` は色域外の切り詰めを約束しているので、内部でそうしている)。
+
+    ★2026-11-05(敵対的検証 第 2 巡 K6): 以前は範囲外を黙って ``[0, 1]`` に切り詰めて
+    いた(``[1.5, -0.2, 0.5]`` → ``[1, 0, 0.735]``)。委譲先も対の関数も拒否するのに
+    ここだけ通していた。repo 内でこの入口に HDR を渡す呼び出しは ``lab_to_rgb`` だけ
+    (HDR を扱う例は ``gfx2d`` 側を露光で収めてから呼んでいる)。
     """
-    return _elementwise_transfer("linear_to_srgb",
-                                 np.clip(np.asarray(lin, dtype=np.float64), 0.0, 1.0))
+    x = np.asarray(lin, dtype=np.float64)
+    if x.size and not np.all(np.isfinite(x)):
+        raise MetricContractError("linear RGB must be finite (NaN/Inf has no sRGB encoding)")
+    if x.size and (np.min(x) < -1e-6 or np.max(x) > 1.0 + 1e-6):
+        raise MetricContractError(
+            f"linear RGB values must lie in [0, 1], got [{float(np.min(x)):.6g}, {float(np.max(x)):.6g}]; "
+            "tone-map or expose HDR values first, or np.clip explicitly if out-of-gamut "
+            "clipping is what you want"
+        )
+    return _elementwise_transfer("linear_to_srgb", np.clip(x, 0.0, 1.0))
 
 
 def _elementwise_transfer(fname, x):
@@ -385,7 +405,9 @@ def lab_to_rgb(lab, white=D65_WHITE):
     delta = 6.0 / 29.0
     finv = lambda f: np.where(f > delta, f ** 3, 3.0 * delta ** 2 * (f - 4.0 / 29.0))
     xyz = np.stack([finv(fx), finv(fy), finv(fz)], axis=-1) * np.asarray(white, dtype=np.float64)
-    return linear_to_srgb(xyz @ _M_XYZ2RGB.T)
+    # 色域外の切り詰めはこの関数の約束(docstring)なので、ここで明示的に行う
+    # (linear_to_srgb は 2026-11-05 から範囲外を拒否する)。
+    return linear_to_srgb(np.clip(xyz @ _M_XYZ2RGB.T, 0.0, 1.0))
 
 
 # =========================================================================
