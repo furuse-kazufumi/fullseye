@@ -74,7 +74,11 @@ def _modulation_from_sums(stack: np.ndarray, s: np.ndarray, c: np.ndarray):
     amp = (2.0 / stack.shape[0]) * np.hypot(s, c)
     mean = stack.mean(axis=0)
     gamma = np.zeros_like(amp)
-    valid = np.abs(mean) > 1e-12
+    # ★床は画素ごとの相対量(その画素の |I_n| の最大の 64 eps 倍)。2026-11-05 まで絶対の
+    # 1e-12 で、全体を 1e-13 倍した同じデータの変調度が 0 になり、decode_fringe と
+    # grating_three_image_retrieve(P = N の経路だけ)が「有効画素なし」で拒否していた。
+    scale = np.abs(stack).max(axis=0)
+    valid = np.abs(mean) > 64.0 * np.finfo(np.float64).eps * scale
     gamma[valid] = amp[valid] / mean[valid]
     return gamma
 
@@ -130,7 +134,9 @@ def modulation(images) -> np.ndarray:
 
     振幅 b = (2/N)·sqrt(s² + c²)、平均 a = mean_n I_n(s,c は Σ I sin/cos)。変調度 γ = b/a。
     影・飽和・低反射で γ は小さくなる。低変調画素をマスクして位相を NaN 化するのに使う。
-    平均が 0 の画素は γ=0(位相が定義できない)とする。
+    平均が 0 の画素は γ=0(位相が定義できない)とする。「0」はその画素の画像値の
+    最大に対する相対量で判定する(``|mean| <= 64 eps · max_n |I_n|``)ので、画像全体の
+    尺度(1 でも 1e-13 でも)で答えは変わらない。
     """
     stack = _as_stack(images)
     s, c = _phase_sums(stack)
@@ -405,8 +411,10 @@ def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
     if not 0.0 < bw < 1.0:
         raise ValueError("bandwidth must satisfy 0 < bandwidth < 1")
     dynamic = float(np.ptp(im))
-    scale = max(float(np.max(np.abs(im))), 1.0)
-    if dynamic <= 64.0 * np.finfo(float).eps * scale:
+    # ★床は画像自身の尺度の相対量(2026-11-05 まで max(|im|, 1.0) で、1e-15 倍した
+    # 同じ縞を「一定」と拒否していた —— modulation の絶対床 O6 の兄弟)
+    scale = float(np.max(np.abs(im)))
+    if dynamic <= 64.0 * np.finfo(float).eps * scale or scale == 0.0:
         raise ValueError("fringe_ftp_phase: image is constant (no fringe modulation)")
 
     centered = im - float(np.mean(im))

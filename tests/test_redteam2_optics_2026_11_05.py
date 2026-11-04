@@ -136,3 +136,51 @@ def test_o2_nan_depth_is_still_treated_as_in_focus():
     d = np.full((64, 64), np.nan)
     out = OS.defocus_blur(img, d, cam, f_number=2.0)
     assert np.array_equal(out, img)
+
+
+# --------------------------------------------------------------------------- #
+# O6 fringe.modulation: 変調度の床は相対量(全体の尺度で答えが変わらない)
+# --------------------------------------------------------------------------- #
+SCALES = (1.0, 1e-6, 1e-13, 1e-18)
+
+
+def test_o6_modulation_is_scale_invariant():
+    import fringe as F
+    imgs = F.synthesize_fringes(np.zeros((32, 32)), n_steps=4, freq=3)
+    ref = F.modulation(imgs)
+    assert ref.mean() > 0.9                              # 真値: bias 0.5・振幅 0.5 で γ = 1
+    assert len(SCALES) == 4
+    for s in SCALES:
+        assert np.abs(F.modulation(imgs * s) - ref).max() < 1e-9, s   # 以前は 1e-13 で 0
+    assert np.all(F.modulation(np.zeros((4, 8, 8))) == 0.0)          # 平均 0 の画素は γ = 0
+
+
+def test_o6_decode_fringe_and_grating_retrieval_survive_a_tiny_scale():
+    pytest.importorskip("skimage")
+    import fringe as F
+    import gratinginterf as G
+    imgs = F.synthesize_fringes(np.zeros((32, 32)), n_steps=4, freq=3)
+    out = F.decode_fringe(imgs * 1e-13, min_modulation=0.5)          # 以前は「有効画素なし」
+    assert np.isfinite(out).all()
+    yy, xx = np.mgrid[0:64, 0:64]
+    T = 0.6 + 0.2 * np.exp(-((xx - 32) ** 2 + (yy - 32) ** 2) / 200.0)
+    P = 0.8 * np.sin(xx / 10.0)
+    D = 0.7 + 0.2 * (yy / 63.0)
+    sc = 1e-13
+    s = G.grating_stepping_simulate(transmission=T * sc, dpc_rad=P, darkfield=D, n_steps=8)
+    r = G.grating_stepping_simulate(n_steps=8, shape=(64, 64)) * sc
+    res = G.grating_three_image_retrieve(s, r)                       # P = N の経路(以前は拒否)
+    assert np.abs(res["transmission"] - T).max() < 1e-9
+    assert np.abs(res["darkfield"] - D).max() < 1e-9
+    assert np.abs(res["dpc_rad"] - P).max() < 1e-9
+
+
+def test_o6_sibling_ftp_constant_check_is_relative():
+    import fringe as F
+    yy, xx = np.mgrid[0:64, 0:64]
+    img = 0.5 + 0.4 * np.cos(2 * np.pi * xx / 8.0)
+    h1 = F.fringe_ftp_phase(img, carrier_period=8.0)
+    for s in (1e-15, 1e-18):                            # 以前は max(|im|, 1.0) の床で「一定」と拒否
+        assert np.abs(F.fringe_ftp_phase(img * s, carrier_period=8.0) - h1).max() < 1e-9
+    with pytest.raises(ValueError, match="constant"):
+        F.fringe_ftp_phase(np.zeros((64, 64)))
