@@ -41,7 +41,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 Keep the k-th largest connected component; k = round(a*(n-1)).
 
-前景マスク(``> 0.5``)を ``scipy.ndimage.label``(既定の 4 連結)で連結成分に
+前景マスク(``> 0.5``)を ``scipy.ndimage.label``(**8 連結** = HALCON の ``connection`` の既定。2026-11-05 敵対的検証 第 2 巡 P1 までは既定の 4 連結)で連結成分に
 分け、面積(画素数)の降順に並べて ``k`` 番目の成分だけを残す。``k`` は
 ``round(a*(n-1))`` を ``[0, n-1]`` に clip した整数で、``a=0`` で最大成分、
 ``a=1`` で最小成分、``a=0.5`` でおおよそ中央の順位の成分。``n`` は成分数。
@@ -51,7 +51,7 @@ Keep the k-th largest connected component; k = round(a*(n-1)).
 複数あるときの順位は保証されない(``numpy.argsort`` の順序に依存)。成分数
 ``n`` が変わると同じ ``a`` でも選ばれる順位が変わる(相対指定)ので、
 「最大成分」を確実に取りたいだけなら ``a=0`` か ``select_largest`` を使う。
-斜め接続だけでつながった画素は別成分として数えられる(4 連結)。前段に
+斜め接続だけでつながった画素も同じ成分に数える(8 連結)。前段に
 ``opening_circle`` でくびれを切っておくと成分単位の選択が安定する。
 
 **端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。

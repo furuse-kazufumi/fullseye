@@ -16,6 +16,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ユークリッド距離変換。HALCON の <code style="color:#22d3bf">distance_transform</code>（Compute the distance transformation of a region.）に相当。</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。各前景画素について最も近い背景画素までのユークリッド距離を求め（<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>）、<code style="color:#22d3bf">_norm</code> でその画像内の最大値を 1 に正規化する（画像間で絶対距離の比較はできない）。骨格化・粒の中心検出等の前処理に使う。</p>
+<p><b>背景が 1 画素も無い</b>(全面が前景)とき、最も近い背景は画像の中に無い —— どの画素も「無限に遠い」ので、正規化した答えは<b>一様 1.0</b>(<code style="color:#22d3bf">xsp_chamfer_dist</code> / <code style="color:#22d3bf">cv_dist</code> と同じ)。2026-11-05(敵対的検証 第 2 巡 P4)までは <code style="color:#22d3bf">distance_transform_edt</code> が画像の外の (-1, 0) に背景があるかのような斜面を返し、左右の反転で値が変わっていた。前景が無ければ 0。</p>
 <p>Raises:</p>
 <p>FsValueError: NaN / inf を含む画像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

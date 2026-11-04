@@ -16,7 +16,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_crop_contours.inputs.jpg">hx_crop_contours: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 contour 裁到中央 a×b 比例的矩形内(只保留范围内的点)。</p>
-<p>在每个 contour 的点中,只保留离图像中心 <code style="color:#22d3bf">(H/2, W/2)</code> 行方向在 <code style="color:#22d3bf">hh</code> 以内且列方向在 <code style="color:#22d3bf">ww</code> 以内的点, 丢弃 1 个点都不剩的 contour 后返回。</p>
+<p>在每个 contour 的点中,只保留离图像中心 <code style="color:#22d3bf">((H-1)/2, (W-1)/2)</code>(像素中心的约定。2026-11-05 之前为 <code style="color:#22d3bf">(H/2, W/2)</code>)行方向在 <code style="color:#22d3bf">hh</code> 以内且列方向在 <code style="color:#22d3bf">ww</code> 以内的点, 丢弃 1 个点都不剩的 contour 后返回。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 保留高度的一半 <code style="color:#22d3bf">hh = (0.3 + 0.6*a) * H/2</code>(整体的 30%〜90%)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 保留宽度的一半 <code style="color:#22d3bf">ww = (0.3 + 0.6*b) * W/2</code>(整体的 30%〜90%)。即使 a=b=1,周边 5% 也会被去掉。</p>
 <p>只是剔除点而不分割,因此绕到矩形外又回来的 contour,剩下的点会彼此相连(跳跃)。若要完全忽略矩形外,在后级用 <code style="color:#22d3bf">hx_split_contours</code>。从图像边缘指定留白的版本是 <code style="color:#22d3bf">hx_clip_contours</code>, 用 1 个旋钮做成正方形窗口的版本是 <code style="color:#22d3bf">xg_crop_contours</code>。</p>

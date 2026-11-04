@@ -15,11 +15,11 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 close_edges 之上,再去掉長度(像素數)低於閾值的短邊緣碎片。</p>
-<p>以 <code style="color:#22d3bf">v &gt; a</code> 二值化 → 以 3×3（8 鄰域）結構元素做 1 次 <code style="color:#22d3bf">binary_closing</code> → 以 <code style="color:#22d3bf">ndimage.label</code>（預設 4 鄰域連通）分為連通元件，去掉像素數少於 <code style="color:#22d3bf">min_len</code> 的元件，以 0/1 的 float 影像回傳。</p>
+<p>以 <code style="color:#22d3bf">v &gt; a</code> 二值化 → 以 3×3（8 鄰域）結構元素做 1 次閉運算 → 以 <code style="color:#22d3bf">ndimage.label</code>（<b>8 鄰域連通</b>）分為連通元件，去掉像素數少於 <code style="color:#22d3bf">min_len</code> 的元件，以 0/1 的 float 影像回傳。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二值化閾值。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 保留的最小像素數 <code style="color:#22d3bf">min_len = 2 + int(b*20)</code>（2〜22）。</p>
 <p style="margin:2px 0 2px 12px">• 連 1 個元件都沒有時，原樣回傳閉運算結果。</p>
-<p>注意：閉運算的結構元素固定為 3×3，沒有 <code style="color:#22d3bf">hx_close_edges</code> 那樣的寬度調整。由於標記採用 4 鄰域，斜向相連的 1 像素寬線會分成不同元件，「長度」被算得偏短而容易被刪除。<code style="color:#22d3bf">binary_closing</code> 把影像外視為 0，因此邊界 1 像素的帶總是 0。「長度」是元件的像素數，而非幾何線長（塊狀物也會被算作長）。</p>
+<p>注意：閉運算的結構元素固定為 3×3，沒有 <code style="color:#22d3bf">hx_close_edges</code> 那樣的寬度調整。「長度」是元件的像素數，而非幾何線長（塊狀物也會被算作長）。2026-11-05（對抗性驗證 第 2 輪 P1/P3）之前，標記採用 4 鄰域，把斜向相連的 1 像素寬線分成不同元件而刪除，閉運算把影像外視為 0，使邊界 1 像素的帶總是 0。現在以 8 鄰域計數，閉運算在延伸到影像之外的平面上進行後裁切回來（邊界處的邊緣也會保留）。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

@@ -199,7 +199,7 @@
     {
       "module": "ops.py",
       "function": "_ncc_locate",
-      "line": 1849,
+      "line": 1882,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -208,7 +208,7 @@
     {
       "module": "ops.py",
       "function": "_shape_locate",
-      "line": 2175,
+      "line": 2209,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -217,7 +217,7 @@
     {
       "module": "ops.py",
       "function": "module_requirements",
-      "line": 2566,
+      "line": 2600,
       "exception_types": [
         "Exception"
       ],
@@ -228,7 +228,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2635,
+      "line": 2669,
       "exception_types": [
         "Exception"
       ],
@@ -239,7 +239,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2643,
+      "line": 2677,
       "exception_types": [
         "Exception"
       ],
@@ -250,7 +250,7 @@
     {
       "module": "ops.py",
       "function": "_label_guarded_functions_with_their_op_name",
-      "line": 2912,
+      "line": 2946,
       "exception_types": [
         "AttributeError, TypeError"
       ],
@@ -261,7 +261,7 @@
     {
       "module": "ops.py",
       "function": "apply_genome",
-      "line": 3026,
+      "line": 3060,
       "exception_types": [
         "Exception"
       ],

@@ -33,7 +33,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-コンパクトさ ``周囲長² / (4π・面積)``。円で 1、細長い/ぎざぎざ/穴が多いほど
+コンパクトさ ``max(1, 周囲長² / (4π・面積))``。円で 1、細長い/ぎざぎざ/穴が多いほど
 大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the
 compactness of a region.）と同じ量。
 
@@ -45,9 +45,14 @@ feature の契約ではない(``elliptic_axis`` は 6.35、``r3_region_features`
 18.1 を返す)ので、潰す理由が無かった ――
 ``docs/hardening/compactness-saturated-at-one.md``。
 
-HALCON は ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため)が、
-ここでは切らない。1 を下回る値は「領域が小さすぎて近似が効いていない」と
-いう情報そのもので、必要なら呼ぶ側で切れる。
+HALCON と同じく ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため。
+HALCON 23.11 の ``compactness`` の説明: 「C = max(1, C′)」「The value of C is
+clipped to 1.0」、返り値の表明 ``Compactness >= 1.0 || Compactness == 0``)。
+半径 3〜6 の円板は 1.0 になる。領域が空なら 0。
+
+★2026-11-05(敵対的検証 第 2 巡 P2)まで、この説明は「ここでは切らない」と
+書いていた —— 実装は 2026-09-26 から HALCON の ``max(1, C)`` で、説明文だけが
+その前の方針のまま残っていた。
 
 ``a``, ``b`` は未使用。
 

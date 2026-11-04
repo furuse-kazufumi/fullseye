@@ -19,7 +19,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二値化しきい値(エッジ振幅画像を想定。a=0 では 0 より大きい画素がすべて前景)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 構造要素の反復回数 <code style="color:#22d3bf">it = 1 + int(b*3)</code>(1〜4、正方形の辺は 3〜9 画素)。閉じられる隙間はおおむね</p>
 <p><code style="color:#22d3bf">2*it</code> 画素以下。</p>
-<p>注意: <code style="color:#22d3bf">binary_closing</code> は画像外を 0 として収縮するため、画像端から <code style="color:#22d3bf">it</code> 画素の帯は必ず 0 になる(全面 1 の 20×20 に it=1 を掛けると残るのは 18×18)。端に接するエッジを扱うときは前に余白を付けるか、結果を膨張し直す。入力は image(エッジ振幅)で出力も image sort だが中身は二値。<code style="color:#22d3bf">hx_nonmax_dir</code> や <code style="color:#22d3bf">sobel_amp</code> の後に置き、つながったエッジは <code style="color:#22d3bf">hx_region_to_label</code> や <code style="color:#22d3bf">hx_detect_edge_segments</code> へ渡す。</p>
+<p>画像の縁: 平面は画像の外へ続き、外は背景とみなす(余白を付けて閉じてから切り戻す)。closing は拡大的なので縁に接するエッジも削らない(全面 1 の 20×20 は 20×20 のまま)。2026-11-05(敵対的検証 第 2 巡 P3)までは画像の外を 0 として収縮し、画像端から <code style="color:#22d3bf">it</code> 画素の帯が必ず 0 になっていた。入力は image(エッジ振幅)で出力も image sort だが中身は二値。<code style="color:#22d3bf">hx_nonmax_dir</code> や <code style="color:#22d3bf">sobel_amp</code> の後に置き、つながったエッジは <code style="color:#22d3bf">hx_region_to_label</code> や <code style="color:#22d3bf">hx_detect_edge_segments</code> へ渡す。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>

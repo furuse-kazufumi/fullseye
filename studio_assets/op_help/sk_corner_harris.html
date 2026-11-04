@@ -15,7 +15,7 @@
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Harris コーナー応答(skimage 実装)。勾配の構造テンソルから、平坦部/エッジ/コーナーを見分ける符号付きスコアを計算する古典的なコーナー検出器。</p>
-<p>HALCON の <code style="color:#22d3bf">points_harris</code>(Detect points of interest using the Harris operator.)に相当(近似。座標点ではなく応答画像を返す)。実装は <code style="color:#22d3bf">feature.corner_harris(v, sigma=0.5+2.0*a)</code> を <code style="color:#22d3bf">signed01</code> で <code style="color:#22d3bf">[0,1]</code> へ写した値 —— a は微分に使うガウス σ を 0.5〜2.5 に振る。b は未使用。Harris の自由パラメータ k は skimage の既定値(0.05)のまま固定。OpenCV 版のcv_corner_harris とはパラメータの振り方が異なるので同一結果にはならない。</p>
+<p>HALCON の <code style="color:#22d3bf">points_harris</code>(Detect points of interest using the Harris operator.)に相当(近似。座標点ではなく応答画像を返す)。実装は <code style="color:#22d3bf">feature.corner_harris(v, sigma=0.5+2.0*a)</code> を <code style="color:#22d3bf">signed01</code> で <code style="color:#22d3bf">[0,1]</code> へ写した値 —— a は微分に使うガウス σ を 0.5〜2.5 に振る。b は未使用。Harris の自由パラメータ k は skimage の既定値(0.05)のまま固定。OpenCV 版のcv_corner_harris とはパラメータの振り方が異なるので同一結果にはならない。画像の外は鏡映で埋める(2026-11-05 まで skimage の構造テンソルの既定 = 0 埋めで、一様な画像でも枠が最大の応答になり正規化を支配していた)。</p>
 <p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
 <p><b>同じ処理の別実装(実測、<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は <code style="color:#22d3bf">cv_corner_harris</code> 0.99。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

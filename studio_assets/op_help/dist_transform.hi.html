@@ -16,8 +16,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Euclidean distance transform। HALCON के <code style="color:#22d3bf">distance_transform</code> (Compute the distance transformation of a region.) के समकक्ष है।</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। हर foreground pixel के लिए सबसे नज़दीकी background pixel तक की Euclidean distance निकाली जाती है (<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>), और <code style="color:#22d3bf">_norm</code> से उस image के भीतर के maximum को 1 पर normalise किया जाता है (image के बीच absolute distance की तुलना नहीं हो सकती)। skeletonisation, कणों के केंद्र की पहचान आदि के preprocessing में उपयोग होता है।</p>
-<p>?????:</p>
-<p>FsValueError: image ??? NaN / inf ????? ???</p>
+<p>जब <b>एक भी background pixel न हो</b> (पूरी image foreground हो), तो सबसे नज़दीकी background image के भीतर नहीं है —— हर pixel &quot;अनंत दूर&quot; है, इसलिए normalise किया गया उत्तर <b>एकसमान 1.0</b> है (<code style="color:#22d3bf">xsp_chamfer_dist</code> / <code style="color:#22d3bf">cv_dist</code> जैसा ही)। 2026-11-05 (adversarial verification, दौर 2, P4) तक <code style="color:#22d3bf">distance_transform_edt</code> ऐसी ढलान लौटाता था मानो image के बाहर (-1, 0) पर background हो, और बाएँ-दाएँ पलटने पर मान बदल जाते थे। Foreground न हो तो 0।</p>
+<p>अपवाद:</p>
+<p>FsValueError: image में NaN / inf है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -13,7 +13,7 @@
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/closest_point_transform.inputs.jpg">closest_point_transform: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>領域の<b>補集合</b>に対するユークリッド距離変換を正規化して返す ―― 各画素から最も近い領域(前景)画素までの距離を表す、<code style="color:#22d3bf">distance_transform</code> とは前景/背景が逆の距離場。出力は <code style="color:#22d3bf">image</code> 型。HALCON の <code style="color:#22d3bf">closest_point_transform</code>（Compute the closest-point transformation of a region.）に相当。</p>
+<p>領域の<b>補集合</b>に対するユークリッド距離変換を正規化して返す ―― 各画素から最も近い領域(前景)画素までの距離を表す、<code style="color:#22d3bf">distance_transform</code> とは前景/背景が逆の距離場。出力は <code style="color:#22d3bf">image</code> 型。領域が空なら一様 1.0 (最も近い領域の画素が無い = どこも最遠)。HALCON の <code style="color:#22d3bf">closest_point_transform</code>（Compute the closest-point transformation of a region.）に相当。</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>

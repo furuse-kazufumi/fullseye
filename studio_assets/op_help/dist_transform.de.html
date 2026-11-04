@@ -16,8 +16,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Euklidische Distanztransformation. Entspricht HALCONs <code style="color:#22d3bf">distance_transform</code> (Compute the distance transformation of a region.).</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Für jedes Vordergrundpixel wird der euklidische Abstand zum nächsten Hintergrundpixel berechnet (<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>) und mit <code style="color:#22d3bf">_norm</code> so normiert, dass das Maximum innerhalb dieses Bildes 1 wird (absolute Abstände lassen sich zwischen Bildern nicht vergleichen). Dient als Vorverarbeitung für Skelettierung, Erkennung von Kornmittelpunkten usw.</p>
-<p>L?st aus:</p>
-<p>FsValueError: Das Bild enth?lt NaN / inf.</p>
+<p>Gibt es <b>kein einziges Hintergrundpixel</b> (das ganze Bild ist Vordergrund), liegt der nächste Hintergrund nicht im Bild —— jedes Pixel ist „unendlich weit entfernt“, daher ist die normierte Antwort <b>überall 1.0</b> (wie bei <code style="color:#22d3bf">xsp_chamfer_dist</code> / <code style="color:#22d3bf">cv_dist</code>). Bis 2026-11-05 (adversariale Prüfung, Runde 2, P4) lieferte <code style="color:#22d3bf">distance_transform_edt</code> eine Rampe, als läge bei (-1, 0) außerhalb des Bildes Hintergrund, und die Werte änderten sich bei einer Links-Rechts-Spiegelung. Ohne Vordergrund 0.</p>
+<p>Löst aus:</p>
+<p>FsValueError: Das Bild enthält NaN / inf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
