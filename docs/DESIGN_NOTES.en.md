@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 639 of 1638. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 639 of 1654. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -200,8 +200,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `calib.py`
 
-- **L281** — ★On 2026-09-06 we measured that this gate **does not fire on a real camera**. On distortion-free synthetic data it works as designed (ratio 3.8e-14 at 0 degrees tilt, 8.6e-10 at 0.05 degrees, both refused). But with realistic barrel distortion k1=-0.18, the planar-homography model no longer fits in the first place, and the ratio **sticks around 1.9e-06 regardless of tilt** (0 degrees 1.916e-06 / 0.05 degrees 1.935e-06 / 0.2 degrees 2.005e-06).
-- **L287** — ★Only when two conditions are met together: that **there is distortion** and that **the board moves sideways between viewpoints**. With either one alone the gate rings as designed (the separation is the 3 in tests/test_calib.py). And an actual calibration session always has both, since you shoot while moving the board by hand. Nor is it enough to just raise the threshold —— with distortion, the gap between full degeneracy 1.92e-06 and 2 degrees tilt 4.42e-06 is only 2.3x, and no dividing line can be drawn. Therefore: * leave the threshold as is (it works correctly for distortion-corrected points) * **return** the ratio itself as ``orientation_rank_ratio`` * let the later gate that actually stops things say "tilt the board" (below). Instead of fixing it, we hand the user the material for judgment.
+- **L301** _(ja)_ — ★2026-11-05(敵対的検証 geometry): H は H[2,2] = 1 に揃えてあるが、H[2,2] は平面座標の 原点の取り方で変わる(原点をずらすと h3 だけが変わる)。そのまま V に積むと視点ごとの 行の重みが原点で変わり、K も退化判定の比も原点の取り方に依存した(物体座標に 1000 mm 足しただけで「退化」と拒否)。原点に依らない h1, h2 の長さで各 H の倍率を揃える。
+- **L312** — ★On 2026-09-06 we measured that this gate **does not fire on a real camera**. On distortion-free synthetic data it works as designed (ratio 3.8e-14 at 0 degrees tilt, 8.6e-10 at 0.05 degrees, both refused). But with realistic barrel distortion k1=-0.18, the planar-homography model no longer fits in the first place, and the ratio **sticks around 1.9e-06 regardless of tilt** (0 degrees 1.916e-06 / 0.05 degrees 1.935e-06 / 0.2 degrees 2.005e-06).
+- **L318** — ★Only when two conditions are met together: that **there is distortion** and that **the board moves sideways between viewpoints**. With either one alone the gate rings as designed (the separation is the 3 in tests/test_calib.py). And an actual calibration session always has both, since you shoot while moving the board by hand. Nor is it enough to just raise the threshold —— with distortion, the gap between full degeneracy 1.92e-06 and 2 degrees tilt 4.42e-06 is only 2.3x, and no dividing line can be drawn. Therefore: * leave the threshold as is (it works correctly for distortion-corrected points) * **return** the ratio itself as ``orientation_rank_ratio`` * let the later gate that actually stops things say "tilt the board" (below). Instead of fixing it, we hand the user the material for judgment.
 
 ## `caltab.py`
 
@@ -1486,12 +1487,15 @@ This repository records *why* things are the way they are in **comments in the s
 ## `feat_shot.py`
 
 - **L80** _(ja)_ — ★2026-10-11: 平面上の点の λ3 は丸め屑(λ3/λ1 ~ 1e-17)。軸に沿った平面では 厳密に 0 で落ちるが、傾けた平面では屑が正になり「特徴の無い平面」から キーポイントが 203 個出ていた(回転不変の主張が崩れる)。床は λ1 に対する相対量で。
+- **L269** _(ja)_ — ★2026-11-05(敵対的検証 G9): 縮退の床が単位²の絶対値だったので、座標が小さい点群(mm を m で渡す等)では全仮説を「縮退」として捨て、外れ値込みの当てはめに落ちていた。床は点群の尺度(重心からの二乗平均距離)に対する相対量にした。(feat_spin.ransac と同じく尺度² 倍。)
+- **L284** _(ja)_ — ★2026-11-05(敵対的検証 G1b の兄弟): 以前は内れ値で再推定した R,t を返しながら、 inliers は再推定前の 3 点仮説のものを返していた(iters=10 で 33 点食い違う)。 返す inliers は常に返す R,t の内れ値。再推定で合意が仮説より減るなら仮説を返す。
 
 ## `featmatch.py`
 
 - **L752** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F3): 床 ``va <= 1e-12`` [座標²] は座標の単位に依存した(座標 1e-6 の 2 点は常に「退化」)。 退化 = 標本の点が座標の丸めの範囲で重なること(相対量)。広がり ref で割ってから倍率を取る。
 - **L780** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F3): 以前は ``< 1e-6 * (1.0 + |u|² + |v|²)`` で、定数 1.0 [px²] が座標の単位に依存した (座標 1e-6 の三角形は常に「一直線」)。外積と |u|²+|v|² は同じ単位なので比だけで判定する。
 - **L788** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F3): 以前は絶対の 1e-6 [px]。2 点の重なりは座標の大きさに対する相対量で判定する。
+- **L883** _(ja)_ — ★2026-11-05(敵対的検証 G2): w**s が 2**-53 未満だと 1 - w**s が 1.0 に丸まり log が 0(または −0)になって ZeroDivisionError で落ちていた(内れ値率が低いとき)。 その場合と、見積もりが非有限・上限超えのときは上限 max_iters まで回す。
 
 ## `fileio.py`
 
@@ -1760,6 +1764,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L3596** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
 - **L3941** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
 
+## `measure.py`
+
+- **L102** _(ja)_ — ★2026-11-05(敵対的検証 G10 の兄弟): 重心へ寄せて解く(未中心化の x²+y² は原点から遠い 点で桁落ちする。ransac_fit._fit_circle_2d と同じ直し方)。半径の床も絶対値 1e-12(単位²) だと半径 1e-6 以下の円を拒否したので、点の広がりに対する相対量にした。
+
 ## `measuring1d.py`
 
 - **L375** _(ja)_ — ★空の表は名指しで拒否する(2026-10-12 の空入力の方針 A)。空 list を空 list で返すと、 測定が 1 件も取れなかったことが mm 換算の後ろで見えなくなる。
@@ -1780,6 +1788,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `metrics3d.py`
 
 - **L373** _(ja)_ — ★2026-10-07 レビュー修正: md=None(軸方向は無制限)で球の半径を r にしていたため、 実際は「半径 r の球」で切り取っていた(面が法線方向に r 以上動くと両側が揃わず nan)。 無制限の円筒は球で絞れないので、全点を候補にして軸・半径で判定する。
+
+## `mosaic.py`
+
+- **L63** _(ja)_ — ★2026-11-05(敵対的検証 G1b): 以前は内れ値で当てはめ直した H を返しながら、inliers は 当てはめ直す前の 4 点仮説のものを返していた(返した H で数え直すと 186 → 196 点)。 featmatch._refit_keeping_consensus と同じ規則: 返す inliers は常に返す H の内れ値。 当てはめ直しで合意が仮説より減るなら(この DLT は正規化なしで、星 13 個の当てはめ直しが 倍率 1.33 の H・内れ値 8 個になった例がある)、合意の多い仮説の H を返す(RANSAC の目的)。
 
 ## `motionio.py`
 
@@ -2039,7 +2051,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `pcseg.py`
 
-- **L489** — ★ ``full_matrices=True`` (default) allocates the (N, N) U and **throws it away**. Measured 2026-09-06: for 20000 points, 3.73 s / 3.2 GB, whereas ``full_matrices=False`` is 0.876 ms (**4263x**) with Vt bit-identical. For 100k points it dies at 80 GB. The same pattern was in pcseg.fit_plane / measure / ops / camera / pnp3d (all throwing away U). The static gate is tests/test_svd_full_matrices.py.
+- **L111** _(ja)_ — ★2026-11-05(敵対的検証 G9): 縮退の床が単位²の絶対値だったので、座標が小さい点群(mm を m で渡す等)では全仮説を「縮退」として捨て、外れ値込みの当てはめに落ちていた。床は点群の尺度(重心からの二乗平均距離)に対する相対量にした。
+- **L163** _(ja)_ — ★2026-11-05(敵対的検証 G10): 重心に寄せずに代数球を解いていた(未中心化の |p|² は 原点から遠い点群で桁落ちし、オフセット 1e7 で半径 0.70 → 0.68・内れ値 302 → 118)。 2026-10-07 に ransac_fit._fit_sphere_ls で直した方法(重心へ寄せる+同一平面の 4 点は球が定まらないので None)に揃えた。
+- **L502** — ★ ``full_matrices=True`` (default) allocates the (N, N) U and **throws it away**. Measured 2026-09-06: for 20000 points, 3.73 s / 3.2 GB, whereas ``full_matrices=False`` is 0.876 ms (**4263x**) with Vt bit-identical. For 100k points it dies at 80 GB. The same pattern was in pcseg.fit_plane / measure / ops / camera / pnp3d (all throwing away U). The static gate is tests/test_svd_full_matrices.py.
 
 ## `perpetual.py`
 
@@ -2076,6 +2090,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L241** _(ja)_ — ★2026-10-07 レビュー修正: 旧式は回転ブロックに -[Xc]x(= t も回す更新の微分)を使い、 実際の更新(t は回さない)と食い違っていた。初期値が良いほど収束が線形に遅くなり、 30 反復で最小に届かないことがあった(重心中心化した DLT 初期値で 50 反復要した)。
 - **L309** _(ja)_ — ★2026-10-07 レビュー修正: 世界原点から遠い点群(オフセット 1e4、画素ノイズ 0.5 px)で DLT の脱正規化 M = T2⁻¹·Pn·T3 の並進列が桁落ちし、t が壊れた初期値から LM が 回転誤差 175° の別解へ落ちていた。入口で重心 c を引いて解き、最後に t − R·c で戻す (Xc = R(X − c) + t' = R X + (t' − R c))。
+- **L424** _(ja)_ — ★2026-11-05(敵対的検証 G1): 以前は当てはめ直した姿勢を返しながら、inlier_mask / n_inliers / inlier_ratio は「最良の 6 点仮説」のものを返していた(返した姿勢で数え直すと 74 → 107 点、35 点が食い違う)。featmatch._refit_keeping_consensus と同じ規則で、 返す inliers は常に返す姿勢の内れ値、rms も返す姿勢・返す mask の上で測る。 当てはめ直しで合意が仮説より減るなら、合意の多い仮説の姿勢を返す(RANSAC の目的)。
 
 ## `polish.py`
 
@@ -2085,7 +2100,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L190** _(ja)_ — ★2026-10-07 レビュー修正: ry = ±90°(ジンバルロック)では R[2,1], R[2,2], R[1,0], R[0,0] が どれも丸め屑になり、rx, rz を屑の atan2 で決めていた(ry=90° ちょうどで行列の往復誤差 0.16)。 cos(ry) = hypot(R[0,0], R[1,0]) が √ε 未満なら rx と rz は和/差しか決まらないので rx = 0 に 固定し、rz を残りの成分から取る(R[0,1] = −sin rz, R[1,1] = cos rz が ±90° の両方で成り立つ)。
 - **L291** _(ja)_ — ★2026-10-07 レビュー修正: 符号を w の正負で揃えると、w≈0 をまたぐ組(yaw +179° と −179°)が 反対の半球に分かれ、平均が恒等(0°)に潰れた。最初の四元数を基準に、内積が負のものを反転する。
-- **L425** _(ja)_ — ★2026-10-07 レビュー修正: 回転が無い(純並進)と sin(θ/2)=0 で割れず、旧実装は 軸 0・並進 0 を返して並進を丸ごと失った。qr = ±1 なら qd = ±(0, t/2) なので t = 2·sign(w)·qd[1:]、軸 = t/|t|、d = |t|(並進も無ければ軸 0・d 0)。
+- **L427** _(ja)_ — ★2026-11-05(敵対的検証 geometry、未再現の疑いを確認): 以前は θ = 2 acos(w)、 sin(θ/2) = sqrt(1 − w²) + 1e-12 で、小さい回転では 1 − w² が桁落ちして 0 になり (θ = 2e-8 で θ → 0、d → 5000、|axis| → 10000)、境界付近は 1e-12 の足し算で軸が縮んだ。 sin(θ/2) はベクトル部のノルムそのもの、θ は atan2 で取る(単位四元数で同じ量)。
+- **L434** _(ja)_ — ★2026-10-07 レビュー修正: 回転が無い(純並進)と sin(θ/2)=0 で割れず、旧実装は 軸 0・並進 0 を返して並進を丸ごと失った。qr = ±1 なら qd = ±(0, t/2) なので t = 2·sign(w)·qd[1:]、軸 = t/|t|、d = |t|(並進も無ければ軸 0・d 0)。
 
 ## `ppf.py`
 
@@ -2121,6 +2137,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L976** _(ja)_ — ★2026-10-07: 補正で割った値 v = I / c の分散は I / c² = |v| / c(補正を σ に通さないと 2θ=55° で σ を 2.3 倍小さく見積もった)
 
+## `ransac_fit.py`
+
+- **L169** _(ja)_ — ★2026-11-05(敵対的検証 G9): 縮退の床が単位²の絶対値だったので、座標が小さい点群(mm を m で渡す等)では全仮説を「縮退」として捨て、外れ値込みの当てはめに落ちていた。床は点群の尺度(重心からの二乗平均距離)に対する相対量にした。
+- **L293** _(ja)_ — ★2026-11-05(敵対的検証 G9): 縮退の床が単位²の絶対値だったので、座標が小さい点群(mm を m で渡す等)では全仮説を「縮退」として捨て、外れ値込みの当てはめに落ちていた。床は点群の尺度(重心からの二乗平均距離)に対する相対量にした。(直線は長さなので尺度そのものに対する相対量。)
+
 ## `raster.py`
 
 - **L222** — ★ /iinfo.max put a signed image in [-1, 1] (int16 -32768 -> -1.00003)
@@ -2143,6 +2164,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L146** — ★ Only those whose ``public`` column is true may be used in figures to be published. Those limited to cited use for research and education purposes carry ``cite``.
 - **L205** — ★ skimage only holds a bundled subset; the rest it fetches at runtime via pooch. Whatever it cannot fetch **we do not use in this repo** (if a PoC depends on the connection, it becomes unclear whether a failure was the implementation or the network).
+
+## `reconstruction.py`
+
+- **L96** _(ja)_ — ★2026-11-05(敵対的検証 G8): 8 点未満で F = 単位行列(rank 3 で基礎行列ではない)を num_inliers なしで返していた(E 側は KeyError 'num_inliers')。模型を捏造せず拒否する。
+- **L120** _(ja)_ — ★2026-11-05(敵対的検証 G1b): 以前は内れ値で再推定した F を返しながら、inliers は 再推定前の 8 点仮説のものを返していた(返した F で数え直すと 138 → 185 点)。 featmatch._refit_keeping_consensus と同じ規則: 返す inliers は常に返す F の内れ値。 再推定で合意が仮説より減るなら、合意の多い仮説の F を返す(RANSAC の目的)。
 
 ## `render3d.py`
 
@@ -3148,6 +3174,11 @@ This repository records *why* things are the way they are in **comments in the s
 ## `torch_lazy.py`
 
 - **L69** _(ja)_ — ★2026-09-20(GenSpark 第 24・25 報 N94): torch が入っているのに「install with」だけが出て、 導入すれば直ると誤って案内していた。入っているのに import で落ちたなら、その理由を言う。
+
+## `transforms.py`
+
+- **L355** _(ja)_ — ★2026-11-05(敵対的検証 G7): H と −H は同じ射影だが、符号を正規化していなかったので −H を渡すと板がカメラの後ろ(t_z < 0)になる姿勢を返した。板が前に来る符号を選ぶ。
+- **L435** _(ja)_ — ★2026-11-05(敵対的検証 G4): 反平行(180°)で単位行列を返していた(R·d1 = d1 ≠ d2)。 d1 に直交する任意の軸 a まわりの半回転 R = 2 a aᵀ − I で d1 を −d1 = d2 に重ねる。
 
 ## `treemorph.py`
 
