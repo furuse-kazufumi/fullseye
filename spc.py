@@ -29,7 +29,8 @@ Four operators, in the order a line uses them:
   * **multivariate** — :func:`spc_hotelling_t2`: when several measurements move
     together, charting them one at a time both misses joint drift and inflates the
     false-alarm rate. Hotelling's ``T^2 = (x-mu)' S^-1 (x-mu)`` charts them jointly
-    against an F-distributed control limit, so correlated features are judged as one.
+    against the control limit of its phase (Beta in phase I, chi-square for known
+    parameters), so correlated features are judged as one.
 
 Measured — the closed-form identities the tests are built on
 (``tests/test_spc.py``):
@@ -41,7 +42,7 @@ Measured — the closed-form identities the tests are built on
     CUSUM slope after a step of size d        accumulates at rate (d - k) per sample
     Cpk of a centred process (mu at midpoint) Cpk == Cp exactly
     Cpk == Cp*(1 - 2k) for off-centre k       k = (mu-midpoint)/(USL-LSL)
-    Hotelling T² of the mean row              0 (x == mu); UCL from F_{a,p,m-p}
+    Hotelling T² of the mean row              0 (x == mu); phase-I UCL from Beta
 
 Provenance — textbook and standards only (see ``docs/PROVENANCE.md``; the naming
 rule forbids any product or company name):
@@ -53,7 +54,10 @@ rule forbids any product or company name):
   * V. E. Kane, "Process capability indices", *J. Quality Technology* 18:41, 1986 —
     Cp and Cpk.
   * H. Hotelling, "Multivariate quality control", in *Techniques of Statistical
-    Analysis*, 1947 — the T² statistic and its F-distributed limit.
+    Analysis*, 1947 — the T² statistic.
+  * N. D. Tracy, J. C. Young, R. L. Mason, "Multivariate control charts for
+    individual observations", *J. Quality Technology* 24:88, 1992 — the phase-I
+    Beta limit for individual observations.
 """
 from __future__ import annotations
 
@@ -343,26 +347,50 @@ def spc_capability(signal, lsl, usl, sigma=None):
 
 
 def spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None):
-    """Multivariate SPC by Hotelling's T² with an F-distributed control limit.
+    """Multivariate SPC by Hotelling's T² with the control limit of the phase being charted.
 
     ``data`` is a 2-D array of shape ``(m, p)`` — ``m`` observations of ``p``
-    correlated features. With the sample mean vector ``mu`` and covariance ``S``
-    (unless passed in explicitly), each row's statistic is::
+    correlated features. Each row's statistic is::
 
         T^2_i = (x_i - mu)' S^-1 (x_i - mu)
 
-    charted against the phase-II control limit::
+    The control limit depends on where ``mu`` and ``S`` come from, and the op
+    picks it from what you pass:
 
-        UCL = p (m+1)(m-1) / (m (m-p)) * F_{alpha, p, m-p}
+    * **Phase I (default, neither ``mean`` nor ``cov``)** — ``mu`` and ``S`` are
+      the sample mean and ``ddof=1`` covariance of the *same* rows. Then
+      ``m T^2_i / (m-1)^2`` follows ``Beta(p/2, (m-p-1)/2)`` exactly (Gnanadesikan
+      & Kettenring 1972; Tracy, Young & Mason 1992), so::
 
-    at false-alarm rate ``alpha`` (default 0.0027, the 3-sigma-equivalent). Returns
-    a dict with the per-row ``t2`` array, the ``ucl``, the integer indices
-    ``out_of_control``, and boolean ``in_control``. The mean row (``x == mu``) has
-    ``T^2 == 0`` (pinned in the tests).
+          UCL = (m-1)^2 / m * Beta_{1-alpha}(p/2, (m-p-1)/2)
 
-    **Raises** ``ValueError``: a non-2-D / empty *data*, fewer observations than
-    features plus one (covariance not invertible), ``alpha`` outside ``(0, 1)``, a
-    singular covariance, or non-finite / mislabelled input.
+      In phase I ``T^2_i <= (m-1)^2/m`` holds for every row whatever the data, so
+      the phase-II F limit (which exceeds that bound for small ``m``) can never
+      alarm there. Needs ``m >= p + 2``.
+    * **Known parameters (both ``mean`` and ``cov``)** — the in-control mean and
+      covariance are taken as known (a specification, or estimates from a very
+      large reference). Then ``T^2 ~ chi^2_p`` and ``UCL = chi^2_{p, 1-alpha}``,
+      independent of how many rows are charted (one row is enough).
+    * **Phase II with estimated parameters** — if ``mean`` / ``cov`` were estimated
+      from a separate in-control reference of ``n`` rows and new rows are charted
+      against them, the exact limit is
+      ``p (n+1)(n-1) / (n (n-p)) * F_{1-alpha}(p, n-p)`` with ``n`` the size of the
+      *reference*, not of the charted data. This op treats passed parameters as
+      known (chi-square limit, the ``n -> inf`` limit of that F form); for a small
+      reference compute the F limit with your ``n`` and compare ``t2`` against it.
+
+    Passing only one of ``mean`` / ``cov`` is refused: no standard control limit
+    exists for a half-known parameter set.
+
+    At false-alarm rate ``alpha`` (default 0.0027, the 3-sigma-equivalent). Returns
+    a dict with the per-row ``t2`` array, the ``ucl``, the ``phase`` used
+    (``"phase_I"`` / ``"known"``), the integer indices ``out_of_control``, and
+    boolean ``in_control``. The mean row (``x == mu``) has ``T^2 == 0`` (pinned in
+    the tests).
+
+    **Raises** ``ValueError``: a non-2-D / empty *data*, fewer than ``p+2``
+    observations in phase I, only one of ``mean`` / ``cov``, ``alpha`` outside
+    ``(0, 1)``, a singular covariance, or non-finite / mislabelled input.
     """
     op = "spc_hotelling_t2"
     arr = _as_float_array(data, "data", op)
@@ -372,15 +400,21 @@ def spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None):
     m, p = arr.shape
     if not (0.0 < alpha < 1.0):
         raise ValueError("%s: alpha must be in (0, 1), got %r" % (op, alpha))
-    if mean is None or cov is None:
-        if m < p + 1:
-            raise ValueError("%s: need at least p+1=%d observations to estimate an "
-                             "invertible covariance, got m=%d" % (op, p + 1, m))
-    mu = arr.mean(axis=0) if mean is None else _as_1d(mean, "mean", op)
+    if (mean is None) != (cov is None):
+        raise ValueError("%s: pass both mean and cov (known in-control parameters, "
+                         "chi-square limit) or neither (phase I, estimated from the "
+                         "data, Beta limit) — there is no standard limit for only one"
+                         % op)
+    known = mean is not None
+    if not known and m < p + 2:
+        raise ValueError("%s: phase I needs at least p+2=%d observations (an "
+                         "invertible covariance and a Beta limit with (m-p-1)/2 > 0), "
+                         "got m=%d" % (op, p + 2, m))
+    mu = arr.mean(axis=0) if not known else _as_1d(mean, "mean", op)
     if mu.size != p:
         raise ValueError("%s: mean has %d entries but data has p=%d features"
                          % (op, mu.size, p))
-    if cov is None:
+    if not known:
         s = np.cov(arr, rowvar=False, ddof=1)
         s = np.atleast_2d(s)
     else:
@@ -396,11 +430,22 @@ def spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None):
                          "so T² is undefined; drop a redundant feature" % (op, exc))
     d = arr - mu
     t2 = np.einsum("ij,jk,ik->i", d, s_inv, d)
-    from scipy.stats import f as _f
-    fcrit = float(_f.ppf(1.0 - alpha, p, m - p)) if m > p else float("inf")
-    ucl = p * (m + 1.0) * (m - 1.0) / (m * (m - p)) * fcrit if m > p else float("inf")
+    _st = _scipy_stats()
+    if known:
+        # ★母数既知なら T² ~ chi2_p。以前は charted rows の m から phase-II の F 式を
+        #   作っていて、m <= p で UCL = inf(1 行の 50σ 外れを素通し)だった。
+        ucl = float(_st.chi2.ppf(1.0 - alpha, p))
+        phase = "known"
+    else:
+        # ★同じデータから推定した phase I は Beta 限界。phase-II の F 式を当てると
+        #   T² <= (m-1)^2/m の恒等的上限より UCL が大きくなり(m=10, p=2 で 33.5 > 8.1)、
+        #   どんな外れ値でも警報が出なかった(敵対的検証 2026-11-05 S2)。
+        ucl = float((m - 1.0) ** 2 / m
+                    * _st.beta.ppf(1.0 - alpha, 0.5 * p, 0.5 * (m - p - 1.0)))
+        phase = "phase_I"
     ooc = np.nonzero(t2 > ucl)[0]
     return {"t2": t2, "ucl": ucl, "p": p, "m": m, "alpha": float(alpha),
+            "phase": phase,
             "out_of_control": ooc.tolist(), "in_control": bool(ooc.size == 0)}
 
 
@@ -1487,8 +1532,8 @@ def _shortest_interval(y: np.ndarray, level: float):
 # Why this sits next to `spc_hotelling_t2` rather than replacing it: both chart
 # several correlated measurements jointly, but they answer different questions and
 # are scaled differently. Hotelling asks "is this observation outside the control
-# region of the sample I estimated from?" and its limit comes from an F
-# distribution. The MT-method asks "how far is this observation from a *unit space*
+# region of the sample I estimated from?" and its limit comes from a Beta / F /
+# chi-square distribution depending on the phase. The MT-method asks "how far is this observation from a *unit space*
 # of known-good product, in units where the unit space itself averages one?" — the
 # scale is the reference population, not a distributional tail. That reference
 # framing is what lets a line set a single threshold (commonly 3) and keep it

@@ -17840,13 +17840,13 @@
    "hi": "individual measurements के लिए EWMA control chart (Roberts 1959)।"
   },
   "spc/spc_hotelling_t2": {
-   "fp": "9c8badfbf811",
-   "ja": "Hotelling の T² による多変量 SPC(F 分布由来の管理限界で相関する計測を同時に判定)。",
-   "zh": "基于 Hotelling T² 的多变量 SPC，控制限服从 F 分布。",
-   "tw": "基於 Hotelling T² 的多變量 SPC，管制界限服從 F 分配。",
-   "ko": "F 분포를 따르는 관리 한계를 쓰는 Hotelling T² 다변량 SPC.",
-   "de": "Multivariate SPC mit Hotellings T² und F-verteilter Regelgrenze.",
-   "hi": "F-distributed control limit के साथ Hotelling के T² द्वारा multivariate SPC।"
+   "fp": "fa14c152603e",
+   "ja": "Hotelling の T² による多変量 SPC(管理限界は推定の段階で選ぶ: phase I は Beta 分布、母数既知は χ² 分布)。",
+   "zh": "基于 Hotelling T² 的多变量 SPC，控制限按所处阶段选取(第 I 阶段用 Beta 分布，参数已知时用 χ² 分布)。",
+   "tw": "基於 Hotelling T² 的多變量 SPC，管制界限依所處階段選取(第 I 階段用 Beta 分配，參數已知時用 χ² 分配)。",
+   "ko": "Hotelling T² 다변량 SPC. 관리 한계는 단계에 따라 고른다(phase I 은 Beta 분포, 모수가 알려진 경우는 χ² 분포).",
+   "de": "Multivariate SPC mit Hotellings T² und der Regelgrenze der jeweiligen Phase (Phase I: Beta-Verteilung, bekannte Parameter: χ²-Verteilung).",
+   "hi": "Hotelling के T² द्वारा multivariate SPC, जिसकी control limit चरण के अनुसार चुनी जाती है (phase I में Beta distribution, ज्ञात parameters में χ² distribution)।"
   },
   "spc/spc_mt_distance": {
    "fp": "27ade6a39799",
