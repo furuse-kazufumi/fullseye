@@ -302,9 +302,18 @@ def vector_to_aniso(src_points, dst_points):
 
 
 def point_line_to_hom_mat2d(p_src, dir_src, p_dst, dir_dst):
-    """点+方向の対応から 2D 剛体変換を推定(point_line_to_hom_mat2d)。"""
+    """点+方向の対応から 2D 剛体変換を推定(point_line_to_hom_mat2d)。
+
+    返す ``H`` (3,3) は ``H[:2,:2] @ p_src + H[:2,2] = p_dst`` かつ回転 ``H[:2,:2]`` が
+    ``dir_src`` を ``dir_dst`` と同じ向きに重ねる剛体変換。点と方向は同じ成分順で与える
+    (どちらの順でも、回転は与えた成分順の上で効く)。
+
+    ★2026-11-05(敵対的検証 G3): 以前は角度を ``arctan2(d[0], d[1])``(第 2 軸から測る角)
+    で取っていたため回転の向きが逆で、(0,1)→(1,0) が 180° ずれた。第 1 軸から測る
+    ``arctan2(d[1], d[0])`` に直した。
+    """
     ds = _m(dir_src); dd = _m(dir_dst)
-    a = np.arctan2(dd[0], dd[1]) - np.arctan2(ds[0], ds[1])
+    a = np.arctan2(dd[1], dd[0]) - np.arctan2(ds[1], ds[0])
     c, s = np.cos(a), np.sin(a)
     R = np.array([[c, -s], [s, c]])
     t = _m(p_dst) - R @ _m(p_src)
