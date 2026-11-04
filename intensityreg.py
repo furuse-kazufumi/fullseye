@@ -961,6 +961,8 @@ def register_accuracy_map(fixed, true_flow2d, method="ffd", modality="same", noi
 
     地図の内訳(どこで壊れるか)として、fixed の勾配の強さの 4 分位ごと・真の変位の大きさの 4 分位ごとの
     EPE の中央値を ``by_texture`` / ``by_magnitude`` に返す(模様の無い所で場が決まらないことが数で出る)。
+    4 群は排他的(``[lo, hi)``、最後の群だけ ``[lo, hi]``)で、``n`` の和は集計した画素の数。同値が境界に
+    並ぶと群の大きさは 1/4 ずつにならない(全部同じ値なら最後の群に全部)。
 
     Args:
         fixed: 基準の 2-D 画像。
@@ -1013,10 +1015,14 @@ def register_accuracy_map(fixed, true_flow2d, method="ffd", modality="same", noi
     tm = np.hypot(g[0], g[1])[mask]
 
     def by(q, name):
+        # ★2026-11-04(外部監査 v0.9.0 F9): 以前は 4 群とも両端を含む [lo, hi] で、境界の値(同値の多い
+        #   場では全部)が隣の群にも数えられた(有効 576 画素で各群 576、合計 2304)。群は排他的に:
+        #   [lo, hi) で、最後の群だけ最大値を含む [lo, hi]。全部同じ値なら最後の群に全部が入る。
         edges = np.quantile(q, [0, 0.25, 0.5, 0.75, 1.0])
+        grp = np.clip(np.searchsorted(edges, q, side="right") - 1, 0, len(edges) - 2)
         rows = []
-        for a, b in zip(edges[:-1], edges[1:]):
-            sel = (q >= a) & (q <= b)
+        for k, (a, b) in enumerate(zip(edges[:-1], edges[1:])):
+            sel = grp == k
             rows.append({name + "_lo": float(a), name + "_hi": float(b), "n": int(sel.sum()),
                          "epe_median": float(np.median(e[sel])) if sel.any() else 0.0})
         return rows

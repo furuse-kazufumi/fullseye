@@ -430,3 +430,48 @@ class TestF8OcrExactTieIsAmbiguous:
         f[2, 0] = 0.3
         r = o.ocr_classify(np.zeros(o.FEATURE_LENGTH), self._model(f, ["A", "B", "A"]), k=3)
         assert r["raw_labels"] == ["A"] and r["rejected"] == [True]
+
+
+class TestF9AccuracyMapQuartilesPartition:
+    """The quartile groups of register_accuracy_map are exclusive and cover every scored pixel once."""
+
+    def test_reviewer_case_constant_magnitude(self):
+        import featmatch
+        import intensityreg as ir
+        F = featmatch.synthetic_scene((32, 32), seed=1)
+        r = ir.register_accuracy_map(F, np.zeros((2, 32, 32)), method="ecc", margin=4,
+                                     method_kwargs={"motion": "translation"})
+        n = int(r["mask"].sum())
+        for key in ("by_magnitude", "by_texture"):
+            assert sum(row["n"] for row in r[key]) == n
+
+    def test_groups_are_exclusive_with_ties_on_the_edges(self):
+        import featmatch
+        import intensityreg as ir
+        F = featmatch.synthetic_scene((48, 48), seed=3)
+        g = np.zeros((2, 48, 48))
+        g[1, :, 24:] = 0.5                           # two-valued magnitude: many pixels sit on an edge
+        r = ir.register_accuracy_map(F, g, method="ecc", margin=4, method_kwargs={"motion": "translation"})
+        n = int(r["mask"].sum())
+        for key, name in (("by_magnitude", "true_px"), ("by_texture", "grad")):
+            rows = r[key]
+            assert sum(row["n"] for row in rows) == n
+            # the ranges are half-open [lo, hi) except the last, which closes on the maximum
+            los = [row[name + "_lo"] for row in rows]
+            assert los == sorted(los)
+
+    def test_epe_median_per_group_matches_an_independent_partition(self):
+        import featmatch
+        import intensityreg as ir
+        F = featmatch.synthetic_scene((48, 48), seed=5)
+        g = ir.smooth_test_field(F.shape, amplitude=1.0, wavelength=40, seed=1)
+        r = ir.register_accuracy_map(F, g, method="ecc", margin=4, method_kwargs={"motion": "affine"})
+        m = r["mask"]
+        e = r["error_map"][m]
+        q = np.hypot(g[0], g[1])[m]
+        edges = np.quantile(q, [0, 0.25, 0.5, 0.75, 1.0])
+        idx = np.clip(np.searchsorted(edges, q, side="right") - 1, 0, 3)
+        for k, row in enumerate(r["by_magnitude"]):
+            sel = idx == k
+            assert row["n"] == int(sel.sum())
+            assert row["epe_median"] == (float(np.median(e[sel])) if sel.any() else 0.0)
