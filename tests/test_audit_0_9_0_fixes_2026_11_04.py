@@ -287,3 +287,51 @@ class TestF5HandEyeHalfTurns:
         assert np.isfinite(out["omega"]).all()
         assert abs(abs(float(out["axis"] @ [0.0, 0.6, 0.8])) - 1.0) < 1e-9
         np.testing.assert_allclose(out["R"], R, atol=1e-9)
+
+
+class TestF6RansacFinalConsensus:
+    """The returned model must itself have >= min_inliers inliers (after the final refit)."""
+
+    Q = np.array([[.956, -.667], [-1.216, .292], [.621, .143], [-.141, -.144], [1.163, -.200],
+                  [.779, -.276], [-.342, -.285], [-1.048, -.804], [1.321, .294], [1.378, .323]])
+
+    def _matches(self, p, q):
+        return dict(kind="feature_matches", pts1=p, pts2=q, image_shape1=(16, 16), image_shape2=(16, 16))
+
+    def test_reviewer_case_keeps_the_promised_consensus(self):
+        import featmatch
+        r = featmatch.ransac_homography(self._matches(np.zeros((10, 2)), self.Q), model="translation",
+                                        thresh=1, min_inliers=7, seed=0, local_optimization=False)
+        assert r["n_inliers"] >= 7
+        # the reported inliers are exactly the points within thresh of the returned model
+        res = np.linalg.norm(self.Q - r["H"][:2, 2], axis=1)
+        assert np.array_equal(r["inliers"], res < 1.0)
+
+    @pytest.mark.parametrize("model", ["translation", "similarity", "affine", "projective"])
+    @pytest.mark.parametrize("seed", range(12))
+    def test_every_model_and_seed_honours_min_inliers(self, model, seed):
+        import featmatch
+        rng = np.random.default_rng(seed)
+        p = rng.uniform(0, 20, (14, 2))
+        q = p + rng.normal(0, 0.6, (14, 2))          # noise of the order of thresh: refits move the set
+        mn = 7
+        try:
+            r = featmatch.ransac_homography(self._matches(p, q), model=model, thresh=1.0, min_inliers=mn,
+                                            seed=seed, local_optimization=bool(seed % 2))
+        except ValueError:
+            return                                    # honest "no consensus" is allowed
+        assert r["n_inliers"] >= mn and int(r["inliers"].sum()) == r["n_inliers"]
+
+    @pytest.mark.parametrize("seed", range(8))
+    def test_fundamental_honours_min_inliers(self, seed):
+        import featmatch
+        rng = np.random.default_rng(100 + seed)
+        X = np.c_[rng.uniform(-1, 1, (30, 2)), rng.uniform(4, 8, 30)]
+        p = X[:, :2] / X[:, 2:] * 100 + 50
+        Xb = X + np.array([0.3, 0.0, 0.0])
+        q = Xb[:, :2] / Xb[:, 2:] * 100 + 50 + rng.normal(0, 0.8, (30, 2))
+        try:
+            r = featmatch.ransac_fundamental(self._matches(p, q), thresh=0.8, min_inliers=20, seed=seed)
+        except ValueError:
+            return
+        assert r["n_inliers"] >= 20 and int(r["inliers"].sum()) == r["n_inliers"]

@@ -884,6 +884,27 @@ def _ransac(p1, p2, s, fit, resid2, thresh, confidence, max_iters, score, lo, se
     return best_m, best_in, it, best_cost
 
 
+def _refit_keeping_consensus(model, inl, fit, resid2, th2, need, p1, p2):
+    """全内れ値での当てはめ直しを、合意(内れ値 ``need`` 個以上)を保つときだけ採る。→ (model, r2, inliers)。
+
+    ★2026-11-04(外部監査 v0.9.0 F6): 以前は当てはめ直した模型で内れ値を数え直すだけで、その数を
+    ``min_inliers`` と比べ直していなかった(``min_inliers=7`` で 6 個の模型が成功として返った)。
+    当てはめ直しで合意が痩せたら、合意を満たしていた RANSAC の模型をそのまま返す
+    (``pcseg.fit_sphere_ransac`` と同じ規則)。返す ``inliers`` は常に返す模型の内れ値。
+    """
+    try:
+        M2 = fit(p1[inl], p2[inl])
+    except (np.linalg.LinAlgError, ValueError, FloatingPointError):
+        M2 = None
+    if M2 is not None and np.isfinite(M2).all():
+        r2 = resid2(M2, p1, p2)
+        inl2 = r2 < th2
+        if int(inl2.sum()) >= need:
+            return M2, r2, inl2
+    r2 = resid2(model, p1, p2)
+    return model, r2, r2 < th2
+
+
 def _ransac_common(matches, op, thresh, confidence, max_iters, score, local_optimization, seed, s):
     m = _table(matches, "feature_matches", op, "matches")
     p1 = np.asarray(m["pts1"], np.float64).reshape(-1, 2)
@@ -959,9 +980,7 @@ def ransac_homography(matches, thresh=2.0, confidence=0.999, max_iters=5000, sco
     if H is None or int(inl.sum()) < max(ns, mn):
         raise ValueError("%s: no consensus — %d inliers (< %d) within %.3g px after %d iterations"
                          % (op, 0 if inl is None else int(inl.sum()), max(ns, mn), th, it))
-    H = fit(p1[inl], p2[inl])
-    r2 = _homog_resid2(H, p1, p2)
-    inl = r2 < th * th
+    H, r2, inl = _refit_keeping_consensus(H, inl, fit, _homog_resid2, th * th, max(ns, mn), p1, p2)
     H = H / H[2, 2]
     return {"kind": "homography", "H": H, "model": model, "inliers": inl, "n_inliers": int(inl.sum()),
             "inlier_ratio": float(inl.mean()), "rms_px": float(np.sqrt(r2[inl].mean())) if inl.any() else 0.0,
@@ -1004,9 +1023,7 @@ def ransac_fundamental(matches, thresh=1.0, confidence=0.999, max_iters=5000, sc
     if F is None or int(inl.sum()) < max(8, mn):
         raise ValueError("%s: no consensus — %d inliers (< %d) within %.3g px after %d iterations"
                          % (op, 0 if inl is None else int(inl.sum()), max(8, mn), th, it))
-    F = _fund_fit(p1[inl], p2[inl])
-    r2 = _sampson2(F, p1, p2)
-    inl = r2 < th * th
+    F, r2, inl = _refit_keeping_consensus(F, inl, _fund_fit, _sampson2, th * th, max(8, mn), p1, p2)
     F = F / np.linalg.norm(F)
     if F[2, 2] < 0:
         F = -F
