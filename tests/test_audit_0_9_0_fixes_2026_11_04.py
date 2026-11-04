@@ -75,3 +75,76 @@ class TestF2NaryDtypeContract:
         got = api.apply([img, k_int], "convol_image", on_error="raise")
         ref = api.apply([img, k_int.astype(np.float64)], "convol_image", on_error="raise")
         assert np.array_equal(got, ref)
+
+
+SCALES = [1e-9, 1e-6, 1e-3, 1.0, 1e3, 1e6]
+
+
+def _similar_pair(k, scale=2.0, th=0.3):
+    s = k * np.array([[0.0, 0.0], [1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
+    R = np.array([[math.cos(th), -math.sin(th)], [math.sin(th), math.cos(th)]])
+    return s, scale * s @ R.T + k * np.array([0.5, -0.25]), R
+
+
+class TestF3ScaleFreeSimilarity:
+    """A fit whose answer is scale-free must not depend on the unit of the coordinates."""
+
+    @pytest.mark.parametrize("k", SCALES)
+    def test_vector_to_similarity_recovers_exact_scale_at_every_unit(self, k):
+        import fit_transform
+        s, d, R = _similar_pair(k)
+        M = fit_transform.vector_to_similarity(s, d)
+        np.testing.assert_allclose(M[:2, :2], 2.0 * R, rtol=0, atol=1e-12)
+        np.testing.assert_allclose(M[:2, 2] / k, [0.5, -0.25], rtol=0, atol=1e-9)
+
+    def test_reviewer_numbers(self):
+        import opscalib
+        for k in (1.0, 1e-6):
+            s = k * np.array([[0.0, 0.0], [1, 0], [0, 1], [1, 1]])
+            assert float(opscalib.call("vector_to_similarity", s, 2 * s)[0, 0]) == pytest.approx(2.0, abs=1e-12)
+
+    @pytest.mark.parametrize("k", SCALES)
+    def test_featmatch_minimal_sample_fits_are_unit_free(self, k):
+        import featmatch
+        s, d, R = _similar_pair(k)
+        H = featmatch._similarity_fit(s[:2], d[:2])
+        np.testing.assert_allclose(H[:2, :2], 2.0 * R, rtol=0, atol=1e-12)
+        assert not featmatch._degenerate_pair(s[:2], d[:2])
+        assert not featmatch._degenerate_affine(s[:3], d[:3])
+        assert not featmatch._degenerate_h(s[:4], d[:4])
+
+    @pytest.mark.parametrize("k", SCALES)
+    def test_featmatch_degeneracy_still_caught_at_every_unit(self, k):
+        import featmatch
+        line = k * np.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0], [3.0, 3.0]])
+        same = k * np.array([[1.0, 2.0], [1.0, 2.0]])
+        assert featmatch._degenerate_pair(same, same)
+        assert featmatch._degenerate_affine(line[:3], line[:3])
+        assert featmatch._degenerate_h(line, line)
+        with pytest.raises(ValueError):
+            featmatch._similarity_fit(same, same)
+
+    @pytest.mark.parametrize("k", SCALES)
+    def test_odometry_umeyama_scale_is_unit_free(self, k):
+        import odometry
+        P = k * np.random.default_rng(0).normal(size=(10, 3))
+        s, R, t = odometry.umeyama_align(P, 2.0 * P, with_scale=True)
+        assert s == pytest.approx(2.0, rel=1e-12)
+        np.testing.assert_allclose(R, np.eye(3), atol=1e-12)
+
+    def test_umeyama_coincident_points_keep_unit_scale(self):
+        import odometry
+        P = np.ones((5, 3))
+        s, _R, _t = odometry.umeyama_align(P, P + 1.0, with_scale=True)
+        assert s == 1.0
+
+    @pytest.mark.parametrize("k", [1e-14, 1e-9, 1.0, 1e9])
+    def test_projective_fit_maps_points_at_every_unit(self, k):
+        import fit_transform
+        s = k * np.array([[0.0, 0.0], [1, 0], [0, 1], [1, 1], [0.3, 0.7]])
+        Ht = np.array([[1.1, 0.1, 0.2 * k], [-0.05, 0.9, 0.1 * k], [0.01 / k, -0.02 / k, 1.0]])
+        h = np.c_[s, np.ones(len(s))] @ Ht.T
+        d = h[:, :2] / h[:, 2:]
+        H = fit_transform.hom_vector_to_proj_hom_mat2d(s, d)
+        g = np.c_[s, np.ones(len(s))] @ H.T
+        np.testing.assert_allclose(g[:, :2] / g[:, 2:] / k, d / k, atol=1e-9)
