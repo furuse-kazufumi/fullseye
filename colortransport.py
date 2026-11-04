@@ -338,6 +338,11 @@ def gaussian_transport_map(src_samples, ref_samples):
     return A, m1, m2
 
 
+#: color_transfer が「チャネルが一定」とみなす相対床(std / max(1, max|値|))。
+#: 無彩色の Lab a*/b* の丸め屑(~4e-6 / 100)をこれ未満に落とす。
+_CT_SPREAD_RTOL = 1e-6
+
+
 def color_transfer(src, ref, method="reinhard", space="lab"):
     """``src`` の色味を ``ref`` に寄せる。
 
@@ -355,6 +360,11 @@ def color_transfer(src, ref, method="reinhard", space="lab"):
         * ``"gaussian"`` —— 共分散ごと運ぶ Monge 写像。**相関が保たれる**。
         * ``"histogram"`` —— チャネルごとに厳密なヒストグラム整合。
           周辺分布は完全に一致するが、**チャネル間の相関は壊れる**。
+
+        **一定のチャネル**(標準偏差が ``1e-6 × max(1, max|値|)`` 以下 ―― 無彩色の
+        src の Lab a*/b* はこれに当たる。丸め屑しか無い)は、``"reinhard"`` では
+        ``MetricContractError``、``"histogram"`` では厳密に一定の入力と同じく参照の
+        平均へ写す。屑を拡大して偽の色を作らない。
     space : {"lab", "rgb"}
         統計を取る空間。既定の ``lab`` は :mod:`imgmetrics` の実体を使う。
 
@@ -381,19 +391,34 @@ def color_transfer(src, ref, method="reinhard", space="lab"):
     sv = (_M.rgb_to_lab(s) if space == "lab" else s).reshape(-1, 3)
     rv = (_M.rgb_to_lab(r) if space == "lab" else r).reshape(-1, 3)
 
+    # ★2026-11-05(敵対的検証 第 2 巡 K1): 「一定のチャネル」の床が絶対値 1e-12 だった。
+    # 無彩色の src を Lab に直すと a*/b* は数学的には 0 で一定だが、sRGB→XYZ 行列の
+    # Y 行和(1.0000001)と白 Y=1 の差から std 3.9e-6 の丸め屑が残り、床を素通りして
+    # 屑が数百万倍され a* −24〜61 の偽の色が出た。床はデータの大きさに対する相対量にする
+    # (gaussian 側の 1e-12 × 最大固有値 = 分散の相対床と同じ桁: std で 1e-6)。
+    spread_floor = _CT_SPREAD_RTOL * max(1.0, float(np.max(np.abs(sv))))
+    flat = sv.std(axis=0) <= spread_floor
     if method == "reinhard":
         ss, rs = sv.std(axis=0), rv.std(axis=0)
-        if np.any(ss <= 1e-12):
+        if np.any(flat):
             raise MetricContractError(
-                "a source channel is constant, so it has no spread to rescale; "
-                "Reinhard transfer is undefined here (scaling by 0 would silently flatten it)"
+                "a source channel is constant (spread "
+                f"{float(np.min(ss)):.3e} <= {spread_floor:.3e}, i.e. only rounding residue), so it "
+                "has no spread to rescale; Reinhard transfer is undefined here (scaling by 0 would "
+                "silently flatten it, and scaling the residue would invent colour)"
             )
         out = (sv - sv.mean(axis=0)) * (rs / ss) + rv.mean(axis=0)
     elif method == "gaussian":
         A, m1, m2 = gaussian_transport_map(sv, rv)
         out = (sv - m1) @ A.T + m2
     else:
-        out = np.stack([histogram_match(sv[:, c], rv[:, c]) for c in range(3)], axis=1)
+        # 数値的に一定のチャネルは「厳密に一定」と同じに扱う: 屑の並び順で参照の
+        # 分位点全体へ引き伸ばさず、平均に揃えてから整合する(ties="average" で
+        # 参照の平均へ写る ―― 厳密に一定な入力と同じ結果)。
+        sv_h = sv.copy()
+        for c in np.flatnonzero(flat):
+            sv_h[:, c] = sv[:, c].mean()
+        out = np.stack([histogram_match(sv_h[:, c], rv[:, c]) for c in range(3)], axis=1)
 
     out = out.reshape(s.shape)
     return np.clip(_M.lab_to_rgb(out) if space == "lab" else out, 0.0, 1.0)
