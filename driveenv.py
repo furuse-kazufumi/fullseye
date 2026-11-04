@@ -590,11 +590,16 @@ def _headlamp_intensity(mode: str, h_deg, v_deg):
     return np.where(v_deg > -0.57, base * 0.03, base)            # すれ違い: 水平の少し下で上を切る(遮光)
 
 
+#: tone_map が m(最大チャンネル × exposure)を式に入れる上限。これより上は r * scale が
+#: 溢れうるので色の比 r / max(r) を直接返す(m > 2 では元の式の結果もその比)。
+_TONE_MAP_M_SAFE = 1e150
+
+
 def tone_map(radiance, exposure: float):
     """HDR カメラの色を保つ階調の圧縮: m = 各画素の最大チャンネル × exposure、表示 = 輝度 × exposure × (1 + m/4)/(1 + m)
     —— m ≪ 1 では線形、最大チャンネルは m = 2 でちょうど 1 に達し、それより明るい画素は最大チャンネルが 1 になるよう全体を割る(色の比 = 色度は変えない。飽和で灯火が白くならない、仮定: 車載の HDR カメラ)。
 
-    空の入力(``radiance`` が 0 要素)は ValueError。
+    空の入力(``radiance`` が 0 要素)・非有限(NaN/Inf)の輝度は ValueError。
     """
     if (len(radiance) if isinstance(radiance, (list, tuple)) else np.asarray(radiance).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("tone_map: radiance is empty — pass at least one element")
@@ -603,11 +608,22 @@ def tone_map(radiance, exposure: float):
     r = np.asarray(radiance, np.float64)
     if r.ndim < 1 or r.shape[-1] != 3:
         raise ValueError("%s: radiance must be (..., 3)" % op)
-    m = np.max(r, axis=-1, keepdims=True) * k
-    scale = k * (1.0 + m / 4.0) / (1.0 + m)
-    out = r * scale
-    mx = np.max(out, axis=-1, keepdims=True)
-    return np.where(mx > 1.0, out / np.maximum(mx, 1e-300), out)
+    # ★2026-11-05(敵対的検証 第 2 巡 K2 の兄弟): 非有限の輝度は NaN を黙って返していた → 拒否。
+    # 有限でも m・r*scale が溢れると inf/inf = NaN(1e307 × exposure 10)。m > 2 の画素は
+    # 「最大チャンネルを 1 に割る」側で結果は色の比 r / max(r) そのものなので、溢れる桁
+    # (m > _TONE_MAP_M_SAFE)ではその比を直接返す(それ未満の値は従来とビット単位で同じ)。
+    if not np.all(np.isfinite(r)):
+        raise ValueError("%s: radiance must be finite (NaN/Inf would come out as NaN pixels)" % op)
+    rmax = np.max(r, axis=-1, keepdims=True)
+    with np.errstate(over="ignore", invalid="ignore"):
+        m = rmax * k
+        huge = m > _TONE_MAP_M_SAFE
+        m_s = np.where(huge, 1.0, m)
+        scale = k * (1.0 + m_s / 4.0) / (1.0 + m_s)
+        out = r * scale
+        mx = np.max(out, axis=-1, keepdims=True)
+        ratio = r / np.where(huge, rmax, 1.0)
+        return np.where(huge, ratio, np.where(mx > 1.0, out / np.maximum(mx, 1e-300), out))
 
 
 def env_render(world: dict, pose, K, width: int = 640, height: int = 400, env: Optional[dict] = None, *,

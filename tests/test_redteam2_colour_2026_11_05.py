@@ -66,3 +66,53 @@ def test_k1_rgb_space_grey_gradient_still_transfers():
     # 過剰な拒否をしない: rgb 空間では無彩色の勾配も各チャネルに広がりがある。
     out = CT.color_transfer(_achromatic_gradient(), _colourful_ref(), "reinhard", "rgb")
     assert np.all(np.isfinite(out)) and out.shape == (16, 64, 3)
+
+
+# ---------------------------------------------------------------------------
+# K2: トーンマップが有限の大きな放射輝度で NaN を返した
+# ---------------------------------------------------------------------------
+
+_HUGE = [1e10, 1e154, 1e155, 1e200, 1e307, 1e308]
+
+
+def test_k2_tonemap_aces_is_one_for_huge_finite_radiance():
+    import render_tonemap as RT
+    assert len(_HUGE) == 6
+    for v in _HUGE:
+        out = RT.tonemap_aces(np.full((2, 2), v))
+        # 真値: f(x) >= 1 for x >= 7.24 → クリップで 1.0(docstring の [0, 1] の約束)
+        assert np.all(out == 1.0), (v, out)
+
+
+@pytest.mark.parametrize("kw", [{}, {"exposure": 10.0}, {"white": 2.0}, {"white": 1e200},
+                                {"white": 1e-200, "exposure": 10.0}])
+def test_k2_tonemap_reinhard_is_finite_in_unit_range_for_huge_input(kw):
+    import render_tonemap as RT
+    for v in _HUGE:
+        out = RT.tonemap_reinhard(np.full((2, 2, 3), v), **kw)
+        assert np.all(np.isfinite(out)) and np.all((out >= 0) & (out <= 1)), (v, kw, out)
+        assert np.all(out > 0.99), (v, kw, out)
+
+
+def test_k2_tonemap_values_in_normal_range_unchanged_against_closed_form():
+    # 頭打ちは「1 に写る点より上」だけ: 通常域では閉じた式と一致する。
+    import render_tonemap as RT
+    x = np.linspace(0.0, 20.0, 2001).reshape(1, -1)
+    a, b, c, d, e = 2.51, 0.03, 2.43, 0.59, 0.14
+    np.testing.assert_array_equal(RT.tonemap_aces(x), np.clip(x * (a * x + b) / (x * (c * x + d) + e), 0, 1))
+    np.testing.assert_array_equal(RT.tonemap_reinhard(x), x / (1 + x))
+    w = 3.0
+    np.testing.assert_array_equal(RT.tonemap_reinhard(x, white=w),
+                                  np.clip(x * (1 + x / (w * w)) / (1 + x), 0, 1))
+
+
+def test_k2_sibling_driveenv_tone_map_huge_and_nonfinite():
+    import driveenv as DE
+    for v in (1e200, 1e307, 1e308):
+        out = DE.tone_map(np.array([[v, v / 2, 0.0]]), 10.0)
+        # 真値: 明るい画素は最大チャンネルを 1 に割る = 色の比 (1, 0.5, 0)
+        np.testing.assert_allclose(out, [[1.0, 0.5, 0.0]], rtol=1e-12, atol=0)
+    with pytest.raises(ValueError, match="finite"):
+        DE.tone_map(np.array([[np.inf, 1.0, 0.0]]), 1.0)
+    with pytest.raises(ValueError, match="finite"):
+        DE.tone_map(np.array([[np.nan, 1.0, 0.0]]), 1.0)
