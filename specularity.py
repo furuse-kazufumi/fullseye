@@ -1486,7 +1486,9 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
 
     albedo = np.linalg.norm(best_g, axis=0)
     normals = np.zeros((3, P))
-    good = albedo > 1e-8
+    # ★2026-11-05(敵対的検証 第 2 巡 K4 の兄弟): 退化の床を入力の最大輝度に対する相対量に
+    # (photometric._albedo_floor と同じ。絶対 1e-8 では強度 ×1e-8 で全法線が (0, 0, 1))。
+    good = albedo > photometric._albedo_floor(Iv)
     normals[:, good] = best_g[:, good] / albedo[good]
     normals[2, ~good] = 1.0
     # Unsolvable pixels are NaN, not (0, 0, 1). Keeping the 3-light subset's

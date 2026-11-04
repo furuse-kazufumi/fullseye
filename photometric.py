@@ -21,12 +21,31 @@ def _as_stack(images):
     return a
 
 
+#: 「アルベドが 0」とみなす相対床(入力の最大 |輝度| に対する比)。
+_ALBEDO_RTOL = 1e-8
+
+
+def _albedo_floor(intensities):
+    """アルベドの退化判定の床 ``_ALBEDO_RTOL × max|I|``(2026-11-05 敵対的検証 第 2 巡 K4)。
+
+    以前は絶対値 1e-8 で、強度を 1e-8 倍(物理単位の放射輝度では普通の桁)にすると
+    全画素が「アルベド 0」扱いになり法線が (0, 0, 1) で返った(球で誤差 74.5°)。
+    全画素が 0 なら床も 0(``albedo > 0`` の画素は無い)。
+    """
+    a = np.asarray(intensities, dtype=np.float64)
+    if a.size == 0:
+        return 0.0
+    return _ALBEDO_RTOL * float(np.max(np.abs(a)))
+
+
 def photometric_stereo(images, lights, mask=None, normalize=True, *,
                        lit_only=False, lit_thresh=1e-3):
     """Lambertian フォトメトリックステレオ: 既知光源方向の N 枚から法線とアルベドを復元。→ (normals HxWx3, albedo HxW)。
 
     I_n = albedo * max(N·L_n, 0)。各画素で g = albedo*N を最小二乗 g = pinv(L) @ I で解き、
     albedo=|g|, normal=g/|g|。N>=3 必要。albedo~0 や mask 外の画素は normal=(0,0,1)。
+    「albedo~0」は入力の最大輝度に対する相対量(``1e-8 × max|I|``)。
+    輝度の単位・桁(W/m² でも 8 bit でも)に依らず同じ画素が退化と判定される。
     normalize=True で光源ベクトルを単位方向に正規化(render_lambertian と同一規約 = アルベド絶対値が正しく出る)。
     強度重み付き光源を使うなら normalize=False にし、合成側も生ベクトルで揃えること。
 
@@ -65,7 +84,8 @@ def photometric_stereo(images, lights, mask=None, normalize=True, *,
     g = Lpinv @ Iv                              # (3,P)  = albedo*normal
     albedo = np.linalg.norm(g, axis=0)          # (P,)
     normals = np.zeros((3, H * W))
-    good = albedo > 1e-8
+    floor = _albedo_floor(Iv)
+    good = albedo > floor
     normals[:, good] = g[:, good] / albedo[good]
     normals[2, ~good] = 1.0
     if lit_only:
@@ -88,7 +108,7 @@ def photometric_stereo(images, lights, mask=None, normalize=True, *,
             g[:, sel] = np.linalg.pinv(Lsub) @ Iv[np.ix_(use, sel)]
         albedo = np.linalg.norm(g, axis=0)
         normals = np.zeros((3, H * W))
-        good = albedo > 1e-8
+        good = albedo > floor
         normals[:, good] = g[:, good] / albedo[good]
         normals[2, ~good] = 1.0
 

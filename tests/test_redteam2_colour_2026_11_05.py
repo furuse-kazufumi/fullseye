@@ -173,3 +173,71 @@ def test_k3_polar_gpu_torch_cpu_matches_optics_rule():
         good = torch.tensor(np.tile(np.array([1.0, 1.0, 0.0, 0.0]) * k, (3, 1)))
         PG.mueller_apply_batch(M, good)
         assert float(PG.stokes_analyze_batch(good)["dop"][0]) == pytest.approx(1.0, abs=1e-12)
+
+
+# ---------------------------------------------------------------------------
+# K4: フォトメトリックステレオのアルベド床が絶対 1e-8
+# ---------------------------------------------------------------------------
+
+def _ps_sphere():
+    H = W = 24
+    yy, xx = np.mgrid[0:H, 0:W]
+    x = (xx - W / 2 + 0.5) / (W / 2.2)
+    y = (yy - H / 2 + 0.5) / (H / 2.2)
+    z2 = 1 - x * x - y * y
+    m = z2 > 0.05
+    n = np.dstack([x, y, np.sqrt(np.clip(z2, 0, 1))])
+    n[~m] = (0, 0, 1)
+    L = np.array([[0.3, 0.2, 1], [-0.3, 0.25, 1], [0.1, -0.35, 1], [-0.2, -0.2, 1], [0.35, -0.05, 1]], float)
+    Ln = L / np.linalg.norm(L, axis=1, keepdims=True)
+    I = np.stack([0.8 * np.clip(n @ l, 0, None) for l in Ln])
+    m = m & (I > 1e-3).all(0)                # 全灯で照らされた画素 = 線形モデルが厳密
+    return I, L, n, m
+
+
+def _max_angle_deg(nn, n, m):
+    d = np.clip((np.asarray(nn, float)[m] * n[m]).sum(-1), -1, 1)
+    return float(np.degrees(np.arccos(d)).max())
+
+
+_PS_SCALES = [1.0, 1e-6, 1e-8, 1e-9, 1e-12]
+
+
+def test_k4_photometric_stereo_normals_are_scale_invariant():
+    import photometric as P
+    I, L, n, m = _ps_sphere()
+    assert m.sum() > 300
+    assert len(_PS_SCALES) == 5
+    for k in _PS_SCALES:
+        nn, al = P.photometric_stereo(I * k, L)
+        # 真値の法線と比べる(修正前: 1e-8 倍で全法線 (0,0,1)、誤差 74.5°)
+        assert _max_angle_deg(nn, n, m) < 0.05, k
+        np.testing.assert_allclose(al[m], 0.8 * k, rtol=1e-3)
+
+
+def test_k4_sibling_photometric_stereo_robust_is_scale_invariant():
+    import specularity as S
+    I, L, n, m = _ps_sphere()
+    for k in _PS_SCALES:
+        nr = S.photometric_stereo_robust(I * k, L, method="median")[0]
+        assert not np.isnan(nr[m]).any()
+        assert _max_angle_deg(nr, n, m) < 0.05, k
+
+
+def test_k4_sibling_gpu_kernel_floor_is_relative_torch_cpu():
+    torch = pytest.importorskip("torch")
+    import accel_typed as AT
+    I, L, n, m = _ps_sphere()
+    Ln = L / np.linalg.norm(L, axis=1, keepdims=True)
+    H, W = m.shape
+    fn = AT.k_photometric(torch.device("cpu"))
+    for k in (1.0, 1e-8):
+        nn, _al = fn((I * k).reshape(len(L), -1), np.linalg.pinv(Ln), H, W)
+        assert _max_angle_deg(nn, n, m) < 0.05, k
+
+
+def test_k4_all_dark_pixels_still_default_normal():
+    import photometric as P
+    I, L, _n, _m = _ps_sphere()
+    nn, al = P.photometric_stereo(np.zeros_like(I), L)
+    assert np.all(nn == np.array([0, 0, 1], np.float32)) and np.all(al == 0)
