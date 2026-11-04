@@ -1482,40 +1482,37 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 if actual != expected:
                     raise RuntimeError("registry target mismatch: %r != %r"%(actual,expected))
                 with backend_safe.strict_mode(True), backend_safe.current_op(edge["op"]):
-                    if edge["op"] in {"ncc_locate", "shape_locate"}:
-                        runtime_ops.set_match_template(template_value)
-                    try:
-                        # 段ごとに転送するので、規則も段ごとに通す(auto のときだけ CPU に残ることがある)
-                        if device == "cuda" and len(args) == 1:
-                            stage_decision=fullseye.explain_device(a.get("device", "cpu"), stages=(edge["op"],),
-                                                                   shape=np.shape(incoming))
-                            stage_device=stage_decision["resolved"]
-                        else:
-                            stage_decision={"device":"cpu","path":"cpu",
-                                            "reason":(pipeline_decision.get("reason") if device != "cuda"
-                                                      else "multi_input")}
-                            stage_device=device if len(args) == 1 else "cpu"
-                        stage_devices.append({"stage":i,"op":edge["op"],
-                                              "device":stage_decision["device"] if stage_device == "cuda" else "cpu",
-                                              "path":stage_decision.get("path") if stage_device == "cuda" else "cpu",
-                                              "reason":stage_decision.get("reason")})
-                        if stage_device == "cuda" and len(args) == 1:
-                            out=fullseye.apply(incoming, edge["op"], float(normalized_spec["a"]),
-                                               float(normalized_spec["b"]), device=stage_device,
-                                               on_error="raise")
-                        else:
-                            out=registered.fn(incoming,float(normalized_spec["a"]),
-                                              float(normalized_spec["b"]))
-                        if gpu_effective and stage_device == "cuda" and parity_check and len(args) == 1 \
-                                and isinstance(out, np.ndarray):
-                            cpu=fullseye.apply(incoming,edge["op"],float(normalized_spec["a"]),
-                                               float(normalized_spec["b"]),device="cpu",on_error="raise")
-                            if isinstance(cpu,np.ndarray) and cpu.shape == out.shape:
-                                parity_meta={"approximate":True,"max_abs_diff_vs_cpu":float(
-                                    np.max(np.abs(np.asarray(out,np.float64)-np.asarray(cpu,np.float64))))}
-                    finally:
-                        if edge["op"] in {"ncc_locate", "shape_locate"}:
-                            runtime_ops.set_match_template(None)
+                    # ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply
+                    #   (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、
+                    #   extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。
+                    #   全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
+                    stage_template = template_value if edge["op"] in {"ncc_locate", "shape_locate"} else None
+                    # 段ごとに転送するので、規則も段ごとに通す(auto のときだけ CPU に残ることがある)
+                    if device == "cuda" and len(args) == 1:
+                        stage_decision=fullseye.explain_device(a.get("device", "cpu"), stages=(edge["op"],),
+                                                               shape=np.shape(incoming))
+                        stage_device=stage_decision["resolved"]
+                    else:
+                        stage_decision={"device":"cpu","path":"cpu",
+                                        "reason":(pipeline_decision.get("reason") if device != "cuda"
+                                                  else "multi_input")}
+                        stage_device=device if len(args) == 1 else "cpu"
+                    stage_devices.append({"stage":i,"op":edge["op"],
+                                          "device":stage_decision["device"] if stage_device == "cuda" else "cpu",
+                                          "path":stage_decision.get("path") if stage_device == "cuda" else "cpu",
+                                          "reason":stage_decision.get("reason")})
+                    out=fullseye.apply(incoming, executor["alias"], float(normalized_spec["a"]),
+                                       float(normalized_spec["b"]),
+                                       device=(stage_device if len(args) == 1 else "cpu"),
+                                       on_error="raise", template=stage_template)
+                    if gpu_effective and stage_device == "cuda" and parity_check and len(args) == 1 \
+                            and isinstance(out, np.ndarray):
+                        cpu=fullseye.apply(incoming,executor["alias"],float(normalized_spec["a"]),
+                                           float(normalized_spec["b"]),device="cpu",on_error="raise",
+                                           template=stage_template)
+                        if isinstance(cpu,np.ndarray) and cpu.shape == out.shape:
+                            parity_meta={"approximate":True,"max_abs_diff_vs_cpu":float(
+                                np.max(np.abs(np.asarray(out,np.float64)-np.asarray(cpu,np.float64))))}
             else:
                 fn=getattr(importlib.import_module(executor["module"]),executor["callable"])
                 out=fn(*args,**params)
