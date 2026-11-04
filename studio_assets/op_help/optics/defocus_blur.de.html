@@ -5,10 +5,13 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Legt aus der Ground-Truth-Tiefe die <b>Schärfentiefe-Unschärfe</b> auf (ideales Lochkamerabild → Bild eines realen Objektivs).</p>
-<p>Getrennt gehalten, weil der Name leicht mit optics.depth_of_field verwechselt wird: jener liefert den <b>Zahlenwert</b> der Schärfentiefe, dieser <b>wendet Unschärfe auf ein Bild an</b> (entdeckt am 2026-09-05, als beide im Register unter demselben Namen kollidierten. Ops gleichen Namens werden stillschweigend vom zuletzt registrierten überschrieben, daher werden sie über den Namen unterschieden).</p>
-<p>Der Durchmesser des Zerstreuungskreises ist die geschlossene Form der geometrischen Optik <code style="color:#22d3bf">c = (f² / (N (z_f − f))) · |z − z_f| / z</code> (f = Brennweite, N = Blendenzahl, z_f = Fokusabstand). In Pixel umgerechnet wird je nach Tiefe gruppierter Schicht ein Gauß-Weichzeichner angewandt und von der vorderen Schicht aus zusammengesetzt.</p>
-<p>Ohne dies übersieht man Aufbauten, die &quot;im Sichtfeld liegen, an der realen Maschine aber nie scharf werden&quot; ―― Zweck der Virtualisierung ist nicht, Bilder zu machen, sondern vorab zu wissen, <b>ob die Prüfung mit diesem optischen Aufbau funktioniert</b>, daher lässt sich die Schärfentiefe nicht weglassen.</p>
-<p>Ohne <code style="color:#22d3bf">focus_mm</code> wird auf den Arbeitsabstand von <code style="color:#22d3bf">camera</code> fokussiert. Rückgabe in derselben Form wie die Eingabe.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>名前が optics.depth_of_field と紛らわしいので分けてある: あちらは被写界深度の <b>数値</b>を返し、こちらは<b>画像にぼけを掛ける</b>(2026-09-05 に台帳で同名衝突を起こして発覚。同名 op は後勝ちで静かに上書きされるので、名前で区別する)。</p>
+<p>錯乱円の直径は幾何光学の閉じた式 <code style="color:#22d3bf">c = (f² / (N (z_f − f))) · |z − z_f| / z</code>(f = 焦点距離, N = F 値, z_f = 合焦距離)。画素数に直して、深度でまとめた層ごとにガウスぼかしを掛け、手前の層から合成する。</p>
+<p>合成は<b>手前から over 合成</b>(前乗算の色とぼかした被覆率 α を使い、手前の層が覆った分だけ奥の層を隠す)。合焦した不透明な手前の面は奥のぼけに汚されない(★2026-11-05 まで全層を足してぼかした重みで割っていて、合焦面の縁が 1.0 -&gt; 0.67 に落ちた)。最後に累積 α で割るのは、ピンホール像に写っていない「手前の陰」の分を周囲の色で埋めるため。</p>
+<p>深度 <code style="color:#22d3bf">+inf</code>(無限遠)は <code style="color:#22d3bf">z -&gt; ∞</code> の極限 <code style="color:#22d3bf">c = f² / (N (z_f − f))</code> でぼかす(★2026-11-05 まで合焦距離に置き換えていて、無限遠がくっきり写った)。NaN と <code style="color:#22d3bf">-inf</code> は深度が無い画素として従来どおり合焦扱い。層は深度の半開区間 <code style="color:#22d3bf">[e_i, e_{i+1})</code> で分ける(最後の層だけ両端を含む)ので、境界上の深度が 2 層に重複しない。</p>
+<p>これが無いと「視野には入っているのに実機では合焦しない」構成を見逃す ―― 仮想化の目的は絵を作ることではなく、<b>その光学構成で検査が成立するか</b>を先に知ることなので、被写界深度は省けない。</p>
+<p><code style="color:#22d3bf">focus_mm</code> を省くと <code style="color:#22d3bf">camera</code> の作動距離に合わせる。返り値は入力と同じ形。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>
