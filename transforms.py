@@ -416,8 +416,11 @@ def point_pluecker_line_to_hom_mat3d(point, pluecker, target_point, target_dir):
 
 
 def dual_quat_trans_line_3d(dual_quat, line_point, line_dir):
-    """双四元数で 3D 直線を変換(点と方向を剛体変換)(dual_quat_trans_line_3d)。"""
-    from pose_quat import dual_quat_to_hom_mat3d
+    """双四元数で 3D 直線を変換(点と方向を剛体変換)(dual_quat_trans_line_3d)。
+
+    ★2026-11-05(敵対的検証 G5): 以前は ``pose_quat`` から ``dual_quat_to_hom_mat3d`` を
+    import しようとして常に ImportError だった(関数はこのモジュールにある)。
+    """
     T = dual_quat_to_hom_mat3d(dual_quat)
     p = T[:3, :3] @ _m(line_point) + T[:3, 3]
     d = T[:3, :3] @ _m(line_dir)
