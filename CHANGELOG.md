@@ -36,6 +36,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 第 2 巡 T4 MCP: structuredContent の上限 `mcp_response_budget` を呼ぶたびに読む(以前は import 時の定数で `fssystem.system(...)` が効かなかった)。`fullseye_import_json` の `json` 文字列の長さも同じ上限で検査。`MAX_STRUCTURED_BYTES` は import 時の既定として残す(schema の説明用)。
 - 第 2 巡 T5 `fssystem`: `tightens_only=True` の数値の上限 10 項目から既定より緩い値を外した(`find_ops_k` 10、`find_ops_recipe_max` 3、`plan_k` 10、`plan_max_depth` 8/16、`plan_max_expansions` 100000、`plan_timeout_ms` 2000、`mcp_handle_max_bytes` / `mcp_pipeline_max_intermediate_bytes` 256 MiB、`mcp_stack_max_pixels` 64 Mpx、`iteration_limit` 500 は ValueError)。import 時に `max(values) == default` を検査する。
 
+- 第 2 巡(claims)D10 MCP: `fullseye_plan` の `want` / `goal`、`fullseye_suggest_pipeline` の `query` が空・空白だけのとき -32602(引数違反)。以前は -32603(内部エラー)。`want` の schema に `minLength: 1`。全 tool の文字列引数に `""` / `"   "` を当てる探針で該当は 4 件、修正後 0 件。`fullseye_find_ops` は `lang`(ja / en / zh / tw / ko / de / hi)を受ける(ハンドラは読んでいたが schema に無く渡せなかった)。
+
 ### 修正 — 敵対的検証 2026-11-05(contract)
 
 - C1 `unified._make_evolution_caller` が `api.apply` を呼ぶ。`Pipeline.run` は registry 段を `api._prepare_pipeline` + `api._pipeline_steps`(run_pipeline の本体)で走らせる。facade / 知覚 / 生の callable の段は自然シグネチャの関数なので従来どおり。
