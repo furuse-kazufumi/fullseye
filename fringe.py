@@ -183,8 +183,11 @@ def unwrap_phase_2d(wrapped, mask=None, crop_valid=False) -> np.ndarray:
     画素独立な次数確定を使う。
 
     使いどころ: ``wrapped_phase`` → 本 op → ``phase_to_height``(同モジュールの
-    関数、``height = k (phase - ref_phase)``)。参照面を同じ手順で展開して引けば
-    大域オフセットは相殺される。``decode_fringe`` はこの連鎖を 1 回で行う。
+    関数、``height = k (phase - ref_phase)``)。★展開の大域オフセット ``2πm`` は
+    展開ごとに決まる(起点の分岐は入力の位相の場に依る)ので、参照面と計測面を
+    **別々に展開して引いても相殺しない**(2026-11-05 まで「相殺する」と書いていたが、
+    60 条件中 24 で高さが ``k·2π`` ずれた)。参照を引くときは ``decode_fringe`` の
+    ``ref_phase`` を使う —— 巻き込み位相の差を先に取ってから 1 回だけ展開する。
 
     空の入力(``wrapped`` が 0 要素)は ValueError。
     """
@@ -334,14 +337,20 @@ def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
 
     手順(実装どおり): ``wrapped_phase`` → 信頼マスクを組む(``min_modulation`` が
     あれば ``modulation(stack) >= min_modulation``、``mask`` があればそれと AND)→
-    ``unwrap_phase_2d(wrapped, mask=信頼マスク)`` → ``ref_phase`` が ``None`` なら
-    ``k * unwrapped``、あれば ``phase_to_height``(``k * (unwrapped - ref_phase)``)。
+    ``ref_phase`` が ``None`` なら ``k * unwrap_phase_2d(wrapped, mask=信頼マスク)``、
+    あれば ``k * unwrap_phase_2d(wrap(wrapped − ref_phase), mask=信頼マスク)``
+    (大域の ``2πm`` は中央値を ``[−π, π]`` に入れる分岐)。
 
     引数:
     - ``phase_shift_images``: ``(N, H, W)``、``N >= 3``、等間隔位相シフト。
-    - ``ref_phase``: スカラまたは ``(H, W)``。参照面を**同じ手順で展開した**位相を
-      渡す(``unwrap_phase_2d`` の大域オフセットが両者で同じ扱いになるよう、参照も
-      本 op で ``ref_phase=None`` として復号した結果を使うのが安全)。
+    - ``ref_phase``: スカラまたは ``(H, W)``。参照面(高さ 0)の位相 —— 本 op で
+      ``ref_phase=None, k=1`` として復号した結果でも、解析的な位相でもよい。
+      ★差を先に取ってから展開する: ``Δ = wrap(wrapped − ref_phase)`` を 1 回だけ
+      ``unwrap_phase_2d`` し、``ref_phase`` の ``2πm`` のずれは wrap で消える。
+      残る展開の大域の ``2πm`` は「有効画素の中央値が ``[−π, π]`` に入る」分岐に
+      揃える(視野の過半が参照面から位相で π 未満の高さにある、という前提)。
+      2026-11-05 まで計測面と参照面を別々に展開して引いていて、展開の起点の分岐が
+      両者で違うと高さが ``k·2πm`` ずれた(60 条件中 24)。
     - ``k``: 位相→高さの較正定数(単位/rad)。``synthesize_fringes`` の
       ``phase_gain`` の逆数に対応。
     - ``mask``: ``(H, W)`` の bool、True = 有効。``min_modulation``: 変調度の下限
@@ -375,10 +384,20 @@ def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
         m = np.asarray(mask, dtype=bool)
         reliab = m if reliab is None else (reliab & m)
 
-    unwrapped = unwrap_phase_2d(wrapped, mask=reliab)
     if ref_phase is None:
-        return float(k) * unwrapped
-    return phase_to_height(unwrapped, ref_phase, k)
+        return float(k) * unwrap_phase_2d(wrapped, mask=reliab)
+    ref = np.asarray(ref_phase, dtype=np.float64)
+    if ref.ndim != 0 and ref.shape != wrapped.shape:
+        raise ValueError(
+            f"ref_phase shape {ref.shape} does not match phase shape {wrapped.shape}"
+        )
+    # 差を先に取ってから 1 回だけ展開する(別々に展開すると起点の分岐が揃わない)
+    diff = wrapped - ref
+    diff = np.mod(diff + np.pi, 2.0 * np.pi) - np.pi
+    un = unwrap_phase_2d(diff, mask=reliab)
+    med = float(np.nanmedian(un))
+    un = un - 2.0 * np.pi * np.round(med / (2.0 * np.pi))
+    return float(k) * un
 
 
 def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,

@@ -217,3 +217,38 @@ def test_o7_siblings_lockin_and_multipath_phase_range():
     r = LT.fringe_multipath_phase_error(1.0, -np.pi, 0.0, 0.0)
     assert -np.pi < float(r["phase"]) <= np.pi and abs(float(r["phase"]) - np.pi) < 1e-12
     assert -np.pi < float(r["bias"]) <= np.pi
+
+
+# --------------------------------------------------------------------------- #
+# O5 decode_fringe(ref_phase=...): 参照を引いた高さに k·2πm の大域オフセットが残らない
+# --------------------------------------------------------------------------- #
+def test_o5_reference_subtraction_has_no_global_2pi_offset():
+    pytest.importorskip("skimage")
+    import fringe as F
+    yy, xx = np.mgrid[0:64, 0:64]
+    cases = [(amp, freq, n) for amp in (1.0, 2.0, 3.0, 4.0) for freq in (2, 3, 4, 5, 6)
+             for n in (3, 4, 5)]
+    assert len(cases) == 60
+    worst = 0.0
+    for amp, freq, n in cases:
+        h = amp * np.exp(-((xx - 32) ** 2 + (yy - 32) ** 2) / 150.0)     # 真値の高さ
+        kw = dict(n_steps=n, freq=freq, phase_gain=2.0, bias=0.5, amplitude=0.4)
+        ref = F.decode_fringe(F.synthesize_fringes(np.zeros_like(h), **kw))
+        out = F.decode_fringe(F.synthesize_fringes(h, **kw), ref_phase=ref, k=0.5)
+        worst = max(worst, float(np.abs(out - h).max()))
+    assert worst < 1e-6                                   # 以前は 60 条件中 24 で π / 2π ずれた
+
+
+def test_o5_any_2pi_offset_in_the_reference_cancels():
+    """参照の位相に 2πm を足しても(展開の分岐の違い)高さは同じ —— 差を先に取るので。"""
+    pytest.importorskip("skimage")
+    import fringe as F
+    yy, xx = np.mgrid[0:48, 0:48]
+    h = 1.5 * np.exp(-((xx - 24) ** 2 + (yy - 24) ** 2) / 80.0)
+    kw = dict(n_steps=4, freq=3, phase_gain=1.0)
+    _, total_ref = F.synthesize_fringes(np.zeros_like(h), return_phase=True, **kw)
+    obj = F.synthesize_fringes(h, **kw)
+    outs = [F.decode_fringe(obj, ref_phase=total_ref + 2 * np.pi * m, k=1.0) for m in (-3, 0, 1, 7)]
+    assert len(outs) == 4
+    for o in outs:
+        assert np.abs(o - h).max() < 1e-9
