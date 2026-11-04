@@ -18,7 +18,7 @@ import os
 
 import numpy as np
 
-from backend_safe import reflect_padded, signed01
+from backend_safe import _reflect_padded, signed01
 
 # ★The _safe fallback is a LAST RESORT and it can MASK A DEAD OP. For
 # out_sort=="image" `backend_safe.fallback` returns the clipped INPUT, so a
@@ -918,16 +918,16 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
              lambda v, a, b: filters.rank.autolevel(_u8s(v), _disk(a)).astype(np.float64) / 255),
             ("sk_shape_index", "texture", "", IMAGE, IMAGE,
              # ★3 本とも鏡映の余白で包む(skimage の既定は画像の外 = 0、枠に偽の応答。2026-11-05 P6)
-             lambda v, a, b: signed01(np.nan_to_num(reflect_padded(
+             lambda v, a, b: signed01(np.nan_to_num(_reflect_padded(
                  lambda u: feature.shape_index(u, sigma=0.5 + 2.0 * a), v, 0.5 + 2.0 * a)))),
             ("sk_hessian_det", "edges", "", IMAGE, IMAGE,
              # ★厳密な行列式(approximate=False)。既定の箱フィルタ近似は核の和が 0 でなく、一様な画像でも
              #   明るさの 2 乗に比例する応答を返す(0.3 で 5.8e-4、0.4 で 1.0e-3)—— 実画像で厳密解との
              #   相関が 0.08 しかなかった。厳密版は 1024² で近似より速い(0.14 s 対 0.20 s)。2026-11-05 P6
-             lambda v, a, b: signed01(reflect_padded(
+             lambda v, a, b: signed01(_reflect_padded(
                  lambda u: feature.hessian_matrix_det(u, sigma=0.5 + 2.5 * a, approximate=False), v, 0.5 + 2.5 * a))),
             ("sk_corner_harris", "edges", "points_harris", IMAGE, IMAGE,
-             lambda v, a, b: signed01(reflect_padded(
+             lambda v, a, b: signed01(_reflect_padded(
                  lambda u: feature.corner_harris(u, sigma=0.5 + 2.0 * a), v, 0.5 + 2.0 * a))),
             # gain > 1 は出力を 1 より上へ押し上げる(実測 max=1.1380, a=0.5)。
             # `image` は [0,1] 契約なので出口で clip(2026-09-02)。`ops._apply` が

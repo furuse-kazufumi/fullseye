@@ -354,7 +354,7 @@ def require_finite(x, what):
     return x
 
 
-def reflect_padded(fn, x, sigma=1.0, extra=3):
+def _reflect_padded(fn, x, sigma=1.0, extra=3):
     """*fn* を鏡映の余白で包んだ 2-D 画像に当て、元の窓に切り戻す。
 
     skimage の ``structure_tensor`` / ``hessian_matrix`` / ``shape_index`` / ``corner_kitchen_rosenfeld`` は
