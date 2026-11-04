@@ -10,6 +10,16 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(state)
+
+- T6 GPU の経路(`apply(..., device="cuda"/"auto")` の単 op、`accel.run_batch` / `accel.run_pipeline`、`accel_vol.run_batch_vol` / `run_pipeline_vol`)で値が変わる: `b > 0.5` が端の扱い(nearest / constant / wrap)・構造要素(十字 / 円板 / 線)を選ぶ op(`fast._KNOB_B_OPTIONED` の 18 本と `vol_gaussian`)は core で答える(以前は kernel が `b` を無視して reflect / 正方形のまま計算し、`device="cpu"` と a=0.5 で median 0.528・mean_box 0.311・gaussian 0.265・gdilate 0.424・gerode 0.417・gopen 0.417・gclose 0.405 違った)。`b <= 0.5` は従来どおり kernel(速さも答えも変わらない)。
+
+### 修正 — 敵対的検証 2026-11-05 第 2 巡(state)
+
+回帰は `tests/test_redteam2_state_2026_11_05.py`(真値は `device="cpu"` の core、合成器は 2 回呼んで一致するかの不変量)。
+
+- T6 accel の kernel が `b` の新しい選択肢を黙って無視していた。`accel._b_falls_back` / `accel_vol._b_falls_back` を足し、CPU の高速 twin(`fast.apply_fast`)と同じ判定で core へ回す。`api._try_accel` は kernel を起こさず `_NOACCEL`(台帳に何も残さない、`device="cpu"` と 1 ビットも同じ)、常駐パイプラインは区間の途中でもその段だけ core で計算して戻す。`accel.parity("cpu")` が許容 5e-3 を超えていた 5 本(gerode / gdilate / gray_opening_rect / gray_closing_rect / gauss_filter)は全部 0 本になった —— 門は緩めず、kernel が写せない入力を kernel に渡さない形。兄弟: `accel_vol` の `vol_gaussian_g`(`b > 0.5` で 0.42 違った)を同じ形で直した。`vol_median_g` 等は `b` を使わない。`accel_label` の領域 op は `b` を端・構造要素に使わない。
+
 ### 変更(Breaking)— `plenoptic_refocus_depth` の傾き↔距離の単位を直した(2026-11-04)
 
 - 像のずれを `slope × 角度ステップ × ピッチ` で出していた。次元から正しくは傾き × ピッチ / 角度ステップで、PoC のカメラでは 1/角度ステップ² ≈ 3000 倍小さく、測った傾きはどれも合焦距離(1.0 m)へ戻っていた。いまは復号の視点刻み(1 視点 = ピッチ/U ぶんの射出瞳)、射出瞳までの距離、Newton の式で変換する近軸の式。処方を順方向に光線追跡した視差と、理想レンズで相対 1e-6、三枚玉で 2e-4 以内で一致する(`tests/test_plenoptic.py`)。
