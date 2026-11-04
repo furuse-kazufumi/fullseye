@@ -370,10 +370,12 @@ def pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0):
 
     返り値: ``R`` (3,3)、``t`` (3,)(規約 ``Xc = R X + t``)、``inlier_mask`` bool (N,)、``info`` dict。
     ``info`` のキーは ``n_inliers`` / ``inlier_ratio`` / ``iters`` / ``rms``(最終姿勢の再投影 RMS [px]、inlier 集合上)。
+    返す ``inlier_mask`` / ``n_inliers`` / ``inlier_ratio`` / ``rms`` はすべて**返す姿勢**で数え直した値
+    (最良仮説のものではない。2026-11-05 敵対的検証 G1)。
 
     - 最良標本の inlier が 6 未満のときは全点で解き直す fallback に入り、``info["fallback"] = True`` が付く。このとき ``inlier_mask`` は fallback 姿勢で数え直した実測値なので、``inlier_ratio`` が小さいまま返ることがある(合意を捏造しない)。fallback も失敗すれば ``ValueError``。
     - inlier 数の比較は「より多い」だけを更新するので、同数なら先に見つかった標本が残る。
-    - 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。
+    - 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。リフィットで合意が 6 点未満に痩せたら、合意を満たしていた仮説の姿勢を返す(``featmatch`` の RANSAC と同じ規則)。
     - Raises ``ValueError``: 形状不正 / 6 点未満 / 点数不一致 / 非有限(``dlt_pose`` と同じ入口検査)。
     - 評価は ``reprojection_error``、GT 比較は ``pose_error``。
     """
@@ -382,6 +384,7 @@ def pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0):
     rng = np.random.default_rng(seed)
     best_inliers = None
     best_count = -1
+    best_pose = None
     for _ in range(iters):
         idx = rng.choice(n, 6, replace=False)
         try:
@@ -395,6 +398,7 @@ def pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0):
         if c > best_count:
             best_count = c
             best_inliers = inliers
+            best_pose = (R, t)
     if best_inliers is None or best_count < 6:
         # RANSAC が最小合意(6 inlier)に届かず → 全点 PnP で fallback。
         # 旧実装は inlier_ratio=1.0・n_inliers=n を無条件で載せ「100% コンセンサス」を
@@ -417,7 +421,21 @@ def pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0):
             "rms": rms,
         }
         return R, t, mask, info
-    R, t, rms = pnp_pose(X[best_inliers], x[best_inliers], K)
-    info = {"n_inliers": best_count, "inlier_ratio": best_count / n, "iters": iters,
-            "rms": rms}
-    return R, t, best_inliers, info
+    # ★2026-11-05(敵対的検証 G1): 以前は当てはめ直した姿勢を返しながら、inlier_mask /
+    # n_inliers / inlier_ratio は「最良の 6 点仮説」のものを返していた(返した姿勢で数え直すと
+    # 74 → 107 点、35 点が食い違う)。featmatch._refit_keeping_consensus と同じ規則で、
+    # 返す inliers は常に返す姿勢の内れ値、rms も返す姿勢・返す mask の上で測る。
+    # 当てはめ直しで合意が 6 点未満に痩せたら、合意を満たしていた仮説の姿勢をそのまま返す。
+    try:
+        R, t, _ = pnp_pose(X[best_inliers], x[best_inliers], K)
+        mask = np.linalg.norm(_project(X, K, R, t) - x, axis=1) < thresh
+        if int(mask.sum()) < 6:
+            raise ValueError("refit lost the consensus")
+    except (ValueError, np.linalg.LinAlgError):
+        R, t = best_pose
+        mask = np.linalg.norm(_project(X, K, R, t) - x, axis=1) < thresh
+    err = np.linalg.norm(_project(X[mask], K, R, t) - x[mask], axis=1)
+    rms = float(np.sqrt(np.mean(err ** 2)))
+    cnt = int(mask.sum())
+    info = {"n_inliers": cnt, "inlier_ratio": cnt / n, "iters": iters, "rms": rms}
+    return R, t, mask, info
