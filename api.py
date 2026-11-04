@@ -29,7 +29,7 @@ from __future__ import annotations
 import os
 import warnings
 import sys
-from typing import Iterable, Sequence
+from typing import Iterable, NamedTuple, Sequence
 
 import numpy as np
 
@@ -3165,9 +3165,21 @@ def _refuse_nonfinite(image, name):
         % (name, hit))
 
 
+class _NaryInput(NamedTuple):
+    """n 項 op の入力 1 本を :func:`_guard_input` に渡すための op 相当(名前・その入力の sort・出力 sort)。"""
+    name: str
+    in_sort: str
+    out_sort: str
+
+
 def _apply_impl(image, name, a, b, coerce, device, policy, fast=None, allow_nonfinite=False, shadow=False):
     a, b = _check_call_args(image, name, a, b, policy)
     nop = _nary_by_name().get(name) if find_op(name) is None else None
+    if nop is not None and isinstance(image, (list, tuple)):
+        # ★2026-11-05(敵対的検証 C12): 単入力の apply / run_pipeline は fullseye.Image を剥がすのに、
+        #   n 項だけが剥がさず「got a scalar Image」の TypeError だった。入力ごとに同じ剥がし方
+        #   (非有限の検査より前 —— Image の中身も検査する)。
+        image = [_unwrap_image(x) for x in image]
     if not allow_nonfinite and (nop is not None or find_op(name) is not None):
         _refuse_nonfinite(image, name)          # a known op only: an unknown name keeps its own error below
     if nop is not None:                                  # n-ary tier: needs a LIST of inputs
@@ -3205,6 +3217,13 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None, allow_nonf
                                                  and np.asarray(x).dtype.kind in "bui")
                    else _contract_dtype(x, nop, policy, in_sort=srt, name=name))
                   for i, (x, srt) in enumerate(zip(inputs, nop.in_sorts))]
+        # ★2026-11-05(敵対的検証 C11): 単入力の apply にある _guard_input(空・次元・色軸・extra_checks の
+        #   値域)が n 項に無く、空 (0, 0) / 1-D / 4-D / 0..50 の入力が on_error="raise" でも例外も台帳記録も
+        #   無く通っていた。入力ごとに同じ検査(その入力の sort で)。畳み込みの核は画像でないので外す。
+        for i, (x, srt) in enumerate(zip(inputs, nop.in_sorts)):
+            if i == 1 and name in _NARY_KERNEL_SECOND:
+                continue
+            _guard_input(x, _NaryInput(name, srt, nop.out_sort), policy)
         # the n-ary functions carry no guard of their own: give them the same recorded,
         # sanitised fail-soft as every backend op (strict mode re-raises inside guard)
         def body(v0, aa, bb):
