@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 636 of 1621. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 635 of 1621. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -944,16 +944,16 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_photoelasticity.py`
 
-- **L161** — ★Pin the finding: this is an **exact** cross-check against fullseye's Mueller op, agreeing to machine precision even sweeping δ once around in 15-degree steps and θ over 5 values (measured 2.2e-16). If this loosens, what Section 3 onward measures is not the "readout procedure" but a bug in the op.
-- **L182** — ★Pin the cross-check of the stress field itself too. If the integrated force does not match the load it is not the "ground truth", and the central value should be algebraically identical to the closed form 8P/(πDh).
-- **L208** — ★Pin the level of the zero point. Every subsequent "N×" uses this 1.09 MPa as the denominator, so if it moves the meaning of the comparison changes.
-- **L232** — ★Pin the finding: the naive procedure of reading only integer fringes from a single dark-field image **cannot even beat the zero point by 2×**. Because the resolution is rate-limited by the fσ/h = 1.78 MPa step. The contrast with Section 4's phase shift (whose error drops to machine precision) is the backbone of this PoC.
-- **L287** — ★Since we invert from the same intensity equation with zero noise, θ should come back **exactly** (the algebra that produces 4θ from the 4 plane-polarization images is itself the inverse map).
-- **L309** — ★Pin the finding. (1) The agreement exceeds 95 % but **never reaches 100 %**. The rest are pixels sign-flipped by the (δ,θ) ↔ (-δ,θ+90°) ambiguity, which cannot in principle be removed by a single measurement at one wavelength. Pin the finding as-is: neither "nearly matches" nor "fully matches".
-- **L372** — ★Pin the finding. (1) There is no depolarization (the Stokes magnitude is exactly 1). This is the basis for Section 5's claim that what drops in the modulation is not the light level but **the phase sensitivity**.
-- **L378** — (2) ★★The measurement says the **opposite** of the naive expectation that "passing a mask fixes it": no mask 97.0 % / excluding undersampling 97.1 % / **excluding low modulation as well drops to 81.9 %**. Because removing the low-modulation pixels fragments the region and skimage's unwrap picks a different 2π offset per island. "Both can be excluded by a mask" is **correct as a forecast but wrong as a prescription**. Pin the measured value.
-- **L443** — ★Pin the finding. (1) With neither noise nor quantization, δ comes back **exactly** from the bright-field/dark-field ratio.
-- **L446** — (2) ★The error from 8 bit quantization "alone" is the same order as the error from noise σ=0.002 alone (measured 0.00277 vs 0.00305). The camera's bit depth weighs as heavily as noise.
+- **L161** _(ja)_ — ★所見を固定する: これは fullseye の Mueller op に対する**厳密な**検算で、 δ を 15 度刻みで一周・θ を 5 通り振っても機械精度で一致する(実測 2.2e-16)。 ここが緩んだら 3 節以降で測っているのは「読み取り手順」ではなく op のバグ。 族の op(閉形式)と optics の素子の鎖は別の実装なので、後の 2 行も自己一致ではない。
+- **L186** — ★Pin the cross-check of the stress field itself too. If the integrated force does not match the load it is not the "ground truth", and the central value should be algebraically identical to the closed form 8P/(πDh).
+- **L207** — ★Pin the level of the zero point. Every subsequent "N×" uses this 1.09 MPa as the denominator, so if it moves the meaning of the comparison changes.
+- **L230** — ★Pin the finding: the naive procedure of reading only integer fringes from a single dark-field image **cannot even beat the zero point by 2×**. Because the resolution is rate-limited by the fσ/h = 1.78 MPa step. The contrast with Section 4's phase shift (whose error drops to machine precision) is the backbone of this PoC.
+- **L269** — ★Since we invert from the same intensity equation with zero noise, θ should come back **exactly** (the algebra that produces 4θ from the 4 plane-polarization images is itself the inverse map).
+- **L294** — ★Pin the finding. (1) The agreement exceeds 95 % but **never reaches 100 %**. The rest are pixels sign-flipped by the (δ,θ) ↔ (-δ,θ+90°) ambiguity, which cannot in principle be removed by a single measurement at one wavelength. Pin the finding as-is: neither "nearly matches" nor "fully matches".
+- **L351** — ★Pin the finding. (1) There is no depolarization (the Stokes magnitude is exactly 1). This is the basis for Section 5's claim that what drops in the modulation is not the light level but **the phase sensitivity**.
+- **L357** — (2) ★★The measurement says the **opposite** of the naive expectation that "passing a mask fixes it": no mask 97.0 % / excluding undersampling 97.1 % / **excluding low modulation as well drops to 81.9 %**. Because removing the low-modulation pixels fragments the region and skimage's unwrap picks a different 2π offset per island. "Both can be excluded by a mask" is **correct as a forecast but wrong as a prescription**. Pin the measured value.
+- **L422** — ★Pin the finding. (1) With neither noise nor quantization, δ comes back **exactly** from the bright-field/dark-field ratio.
+- **L425** — (2) ★The error from 8 bit quantization "alone" is the same order as the error from noise σ=0.002 alone (measured 0.00277 vs 0.00305). The camera's bit depth weighs as heavily as noise.
 
 ## `examples/poc_pigment_unmixing.py`
 

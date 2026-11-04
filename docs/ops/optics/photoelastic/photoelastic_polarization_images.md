@@ -5,7 +5,7 @@ category: photoelastic
 in: image2d
 out: polsweep
 gpu: なし
-examples: [photoelastic_roundtrip]
+examples: [photoelastic_roundtrip, poc_photoelasticity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [photoelastic_roundtrip](../../../../examples/photoelastic_roundtrip.py) — `py -3.11 examples/photoelastic_roundtrip.py`
+- [poc_photoelasticity](../../../../examples/poc_photoelasticity.py) — `py -3.11 examples/poc_photoelasticity.py`
 
 ## 型が繋がる次の op(`polsweep` を入力に取れる)
 

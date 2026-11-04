@@ -1942,7 +1942,7 @@ py -3.11 examples/poc_particle_sizing.py
 
 [![光弾性で応力を測る ―― 巻き戻しが最初に失敗するのは等方点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 
-*↑ **光弾性で応力を測る ―― 巻き戻しが最初に失敗するのは等方点** ―― 円板圧縮の閉形式応力場(中心 4.2441 MPa、縞次数 2.380)を Mueller 行列(偏光変化を表す4×4行列)の op で偏光像にし、縞から応力へ戻す図。op の偏光系は教科書式と 125 通りで最大差 2.2e-16。縞次数が 0.5 を超える 84.2 % の画素で位相が巻き、巻き戻しが最初に壊れるのは応力の大きい所ではなく、変調が落ちる等方点。*
+*↑ **光弾性で応力を測る ―― 巻き戻しが最初に失敗するのは等方点** ―― 円板圧縮の閉形式応力場(中心 4.2441 MPa、縞次数 2.380)を光弾性の族の op で偏光像にし、縞から応力へ戻す図。偏光系は Mueller 行列(偏光変化を表す4×4行列)の素子を並べた鎖で検算し、教科書式と 125 通りで最大差 2.2e-16。縞次数が 0.5 を超える 84.2 % の画素で位相が巻き、巻き戻しが最初に壊れるのは応力の大きい所ではなく、変調が落ちる等方点。*
 
 用語: Mueller matrix — 偏光状態を表すストークスベクトルに作用し、光学素子や試料による偏光変化を記述する4×4実行列。
 
@@ -1962,7 +1962,7 @@ py -3.11 examples/poc_photoelasticity.py
 
 この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_photoelasticity)
 
-使った Fullseye の op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`mueller_apply`](https://furuse.work/ops/optics/polarization/mueller_apply.html) · [`mueller_element`](https://furuse.work/ops/optics/polarization/mueller_element.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`unwrap_phase_2d`](https://furuse.work/ops/3d/structured_light/unwrap_phase_2d.html)
+使った Fullseye の op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`brazilian_disc_stress`](https://furuse.work/ops/optics/photoelastic/brazilian_disc_stress.html) · [`mueller_apply`](https://furuse.work/ops/optics/polarization/mueller_apply.html) · [`mueller_element`](https://furuse.work/ops/optics/polarization/mueller_element.html) · [`photoelastic_phase_estimate`](https://furuse.work/ops/optics/photoelastic/photoelastic_phase_estimate.html) · [`photoelastic_polarization_images`](https://furuse.work/ops/optics/photoelastic/photoelastic_polarization_images.html) · [`photoelastic_retardation`](https://furuse.work/ops/optics/photoelastic/photoelastic_retardation.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`polariscope_intensity`](https://furuse.work/ops/optics/photoelastic/polariscope_intensity.html) · [`principal_stress`](https://furuse.work/ops/optics/photoelastic/principal_stress.html) · [`retardation_convert`](https://furuse.work/ops/optics/photoelastic/retardation_convert.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`unwrap_phase_2d`](https://furuse.work/ops/3d/structured_light/unwrap_phase_2d.html)
 
 ## No.2026.103 —— 弦でレールを測る ―― 伝達関数が 0 になる波長は、何 mm あっても 0 mm と出る
 
