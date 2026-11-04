@@ -241,3 +241,50 @@ def test_k4_all_dark_pixels_still_default_normal():
     I, L, _n, _m = _ps_sphere()
     nn, al = P.photometric_stereo(np.zeros_like(I), L)
     assert np.all(nn == np.array([0, 0, 1], np.float32)) and np.all(al == 0)
+
+
+# ---------------------------------------------------------------------------
+# K5: color_pca の RGB→HSV が無彩色に H = 2/3、絶対床で小さい値の H/S が歪む
+# ---------------------------------------------------------------------------
+
+def _hsv_cases():
+    rng = np.random.default_rng(1)
+    x = rng.random((50, 50, 3))
+    x[0, :8] = [[1, 1, 0], [1, 0, 1], [0, 1, 1], [0.5, 0.5, 0.5], [0, 0, 0], [1, 1, 1],
+                [0.2, 0.7, 0.7], [0.3, 0.3, 0.1]]
+    return x
+
+
+def _hue_dist(a, b):
+    d = np.abs(a - b)
+    return np.minimum(d, 1 - d)
+
+
+def test_k5_color_pca_hsv_matches_skimage_including_achromatic():
+    skc = pytest.importorskip("skimage.color")
+    import color_pca as C
+    x = _hsv_cases()
+    for out in (C.trans_from_rgb(x, "hsv"), C.apply_color_trans_lut(x, C.create_color_trans_lut("rgb_to_hsv"))):
+        ref = skc.rgb2hsv(x)
+        assert _hue_dist(out[..., 0], ref[..., 0]).max() < 1e-12
+        assert np.abs(out[..., 1:] - ref[..., 1:]).max() < 1e-12
+    # 真値: 無彩色(灰・黒・白)の H と S は 0(修正前 H = 2/3)
+    out = C.trans_from_rgb(x, "hsv")
+    np.testing.assert_array_equal(out[0, 3:6, :2], 0.0)
+
+
+def test_k5_hsv_is_scale_invariant_for_tiny_values_against_colorsys():
+    import colorsys
+    import color_pca as C
+    import driveworld as D
+    base = np.array([2.0, 1.0, 0.5])
+    h0, s0, _ = colorsys.rgb_to_hsv(*base)
+    scales = [1e-1, 1e-6, 1e-13, 1e-200]
+    assert len(scales) == 4
+    for k in scales:
+        t = (base * k).reshape(1, 1, 3)
+        a = C.trans_from_rgb(t, "hsv")[0, 0]
+        d = D._rgb_to_hsv(t.reshape(1, 3))[0]
+        for got in (a, d):
+            assert got[0] == pytest.approx(h0, abs=1e-12), (k, got)
+            assert got[1] == pytest.approx(s0, abs=1e-12), (k, got)
