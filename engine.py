@@ -476,11 +476,29 @@ class FullseyeEngine:
     def to_ops(self) -> str:
         return ",".join(s[0] for s in self.stages)
 
+    def _check_exportable(self, where: str) -> None:
+        """書き出す前に、全段の op 名が registry に在ることを確かめる(無ければ ValueError、何も書かない)。
+
+        ★2026-11-05(敵対的検証 C5): ``to_python`` は op 名を ``# --ops "..."`` の注釈行へ素のまま
+        書いていたので、信頼できない pipeline JSON の段名に改行を入れると(``"gaussian\nimport os; ..."``)
+        **書き出したスクリプトを import しただけで任意のコードが走った**。registry の名前は識別子なので、
+        在る名前だけを書き出せば注入は起きない —— 在らない名前の書き出しはどのみち動かないスクリプトになる。"""
+        bad = [(i, name) for i, (name, _, _) in enumerate(self.stages) if api.find_op(name) is None]
+        if bad:
+            raise ValueError("%s: stage(s) %s name operator(s) that are not in the registry -- refusing to "
+                             "write them into generated code (check validate() first)"
+                             % (where, ", ".join("%d %r" % (i, n) for i, n in bad)))
+
     def to_python(self) -> str:
-        """The pipeline as a standalone Python function (same as Studio export)."""
+        """The pipeline as a standalone Python function (same as Studio export).
+
+        Every stage must name a registered operator (``ValueError`` otherwise, nothing is
+        generated); the ``# --ops`` comment line is written JSON-escaped so it can never
+        span more than one line."""
+        self._check_exportable("to_python")
         lines = ["# -*- coding: utf-8 -*-",
-                 '# --ops "%s"   (the same pipeline as a CLI string: fullseye run "<ops>" in.png --out out.png)'
-                 % ",".join(str(s[0]) for s in self.stages),
+                 '# --ops %s   (the same pipeline as a CLI string: fullseye run "<ops>" in.png --out out.png)'
+                 % json.dumps(",".join(str(s[0]) for s in self.stages), ensure_ascii=True),
                  "import fullseye, numpy as np", "",
                  "# pipeline %r - %d stage(s); rows run top to bottom, each op reads the "
                  "previous op's output (a/b = that op's two knobs)" % (
@@ -499,7 +517,9 @@ class FullseyeEngine:
         One call per stage with its generated comment above it and the running signal
         in ``x``, so a single stage can be copied out on its own, or your own if/for
         can branch BETWEEN stages (the two-tier interface rule: every sample exists
-        both as a one-liner and as a staged form)."""
+        both as a one-liner and as a staged form). Same name check as :meth:`to_python`
+        (op names are written with ``%r``, which cannot break a line either)."""
+        self._check_exportable("to_python_staged")
         fn = _py_ident(self.name)
         lines = ["# -*- coding: utf-8 -*-", "import fullseye, numpy as np", "",
                  "# pipeline %r - STAGED form: x is the running signal; copy any single" % self.name,
