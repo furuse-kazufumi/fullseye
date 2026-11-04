@@ -1668,6 +1668,9 @@ def em_mrc_write(volume, *, meta):
         dmin = dmax = dmean = rms = float("nan")
     struct.pack_into("<3f", header, 76, dmin, dmax, dmean)
     struct.pack_into("<2i", header, 88, 0, 0)
+    # ★2026-11-05 redteam I7: MRC2014 word 28 (byte 108) is NVERSION = 20140 (year*10 + version).
+    # It was left 0, so the file did not declare itself MRC2014 (mrcfile.validate rejected it).
+    struct.pack_into("<i", header, 108, 20140)
     struct.pack_into("<3f", header, 196, *origin)
     header[208:212] = b"MAP "
     header[212:216] = bytes((0x44, 0x41, 0, 0))
