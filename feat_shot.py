@@ -266,11 +266,13 @@ def ransac_rigid(src_pts, dst_pts, pairs, inlier_thr, iters=2000, seed=0,
     if m < 3:
         return None
     best_inliers, best_count = None, 0
+    # ★2026-11-05(敵対的検証 G9): 縮退の床が単位²の絶対値だったので、座標が小さい点群(mm を m で渡す等)では全仮説を「縮退」として捨て、外れ値込みの当てはめに落ちていた。床は点群の尺度(重心からの二乗平均距離)に対する相対量にした。(feat_spin.ransac と同じく尺度² 倍。)
+    floor = 1e-6 * float(np.mean(np.sum((S - S.mean(0)) ** 2, axis=1)))
     for _ in range(iters):
         sel = rng.choice(m, 3, replace=False)
         P3, Q3 = S[sel], D[sel]
-        if np.linalg.norm(np.cross(P3[1] - P3[0], P3[2] - P3[0])) < 1e-6:
-            continue                             # 共線サンプルは退化
+        if np.linalg.norm(np.cross(P3[1] - P3[0], P3[2] - P3[0])) <= floor:
+            continue                             # 共線サンプルは退化(点群の尺度² に対する相対量)
         R, t = _kabsch(P3, Q3, device)
         err = np.linalg.norm(S @ R.T + t - D, axis=1)
         inl = err < inlier_thr

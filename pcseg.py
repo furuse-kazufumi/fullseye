@@ -108,11 +108,13 @@ def fit_plane_ransac(points, thresh: float = 0.01, iters: int = 200, seed: int =
         raise ValueError("need >= 3 points")
     rng = np.random.default_rng(seed)
     best_inl, best_cnt = None, -1
+    # ★2026-11-05(敵対的検証 G9): 縮退の床が単位²の絶対値だったので、座標が小さい点群(mm を m で渡す等)では全仮説を「縮退」として捨て、外れ値込みの当てはめに落ちていた。床は点群の尺度(重心からの二乗平均距離)に対する相対量にした。
+    floor = 1e-12 * float(np.mean(np.sum((P - P.mean(0)) ** 2, axis=1)))
     for _ in range(int(iters)):
         i = rng.choice(n, 3, replace=False)
         nrm = np.cross(P[i[1]] - P[i[0]], P[i[2]] - P[i[0]])
         nn = np.linalg.norm(nrm)
-        if nn < 1e-12:
+        if nn <= floor:                            # 共線・一致(点群の尺度² に対する相対量)
             continue
         nrm = nrm / nn
         d = -nrm @ P[i[0]]
@@ -228,6 +230,8 @@ def fit_cylinder_ransac(points, normals=None, thresh: float = 0.01,
         if N.shape != P.shape:
             raise ValueError("normals must match points shape")
     rng = np.random.default_rng(seed)
+    # 半径の床は点群の尺度に対する相対量(2026-11-05 敵対的検証 G9 の兄弟: 絶対値 1e-9 だった)
+    r_floor = 1e-9 * float(np.sqrt(np.mean(np.sum((P - P.mean(0)) ** 2, axis=1))))
 
     def hypo(i, j):
         w = np.cross(N[i], N[j])
@@ -249,7 +253,7 @@ def fit_cylinder_ransac(points, normals=None, thresh: float = 0.01,
         st, *_ = np.linalg.lstsq(A, p1 - p0, rcond=None)
         c = p0 + st[0] * d0
         r = np.linalg.norm(p0 - c)
-        if r <= 1e-9:
+        if r <= r_floor:
             return None
         return c, w, r
 

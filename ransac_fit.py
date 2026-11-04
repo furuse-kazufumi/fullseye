@@ -166,12 +166,14 @@ def ransac_plane(points, thresh, iters=500, seed=0):
 
     best_mask = None
     best_n = -1
+    # ★2026-11-05(敵対的検証 G9): 縮退の床が単位²の絶対値だったので、座標が小さい点群(mm を m で渡す等)では全仮説を「縮退」として捨て、外れ値込みの当てはめに落ちていた。床は点群の尺度(重心からの二乗平均距離)に対する相対量にした。
+    floor = 1e-12 * float(np.mean(np.sum((P - P.mean(0)) ** 2, axis=1)))
     for _ in range(iters):
         idx = rng.choice(N, size=3, replace=False)
         p0, p1, p2 = P[idx]
         n = np.cross(p1 - p0, p2 - p0)
         ln = np.linalg.norm(n)
-        if ln < 1e-12:                       # 共線 → 縮退、スキップ
+        if ln <= floor:                      # 共線 → 縮退、スキップ(点群の尺度² に対する相対量)
             continue
         n = n / ln
         mask, cnt = _score_hypothesis(
@@ -288,12 +290,14 @@ def ransac_line(points, thresh, iters=300, seed=0):
 
     best_mask = None
     best_n = -1
+    # ★2026-11-05(敵対的検証 G9): 縮退の床が単位²の絶対値だったので、座標が小さい点群(mm を m で渡す等)では全仮説を「縮退」として捨て、外れ値込みの当てはめに落ちていた。床は点群の尺度(重心からの二乗平均距離)に対する相対量にした。(直線は長さなので尺度そのものに対する相対量。)
+    floor = 1e-12 * float(np.sqrt(np.mean(np.sum((P - P.mean(0)) ** 2, axis=1))))
     for _ in range(iters):
         idx = rng.choice(N, size=2, replace=False)
         p0, p1 = P[idx]
         d = p1 - p0
         ld = np.linalg.norm(d)
-        if ld < 1e-12:                       # 同一点 → 縮退、スキップ
+        if ld <= floor:                      # 同一点 → 縮退、スキップ(点群の尺度に対する相対量)
             continue
         d = d / ld
         mask, cnt = _score_hypothesis(
@@ -369,6 +373,8 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
     best_mask = None
     best_n = -1
     best_axis = None
+    # 半径の床は点群の尺度に対する相対量(2026-11-05 敵対的検証 G9 の兄弟: 絶対値 1e-9 だった)
+    r_floor = 1e-9 * float(np.sqrt(np.mean(np.sum((P - P.mean(0)) ** 2, axis=1))))
     for _ in range(iters):
         i, j = rng.choice(N, size=2, replace=False)
         axis = np.cross(Nn[i], Nn[j])
@@ -391,7 +397,7 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
         t = np.linalg.solve(A2, qj - qi)
         center2d = qi + t[0] * mi
         r = 0.5 * (abs(t[0]) + abs(t[1]))
-        if not np.isfinite(r) or r <= 1e-9:
+        if not np.isfinite(r) or r <= r_floor:
             continue
         q_all = np.stack([P @ e1, P @ e2], 1)
         mask, cnt = _score_hypothesis(
