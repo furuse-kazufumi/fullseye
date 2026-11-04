@@ -214,6 +214,13 @@ def fit_superquadric(points) -> dict:
     初期姿勢 = 慣性テンソル固有ベクトル、初期 a = 主軸 bbox 半分、初期 eps=(1,1)。
     ``a`` は正、``eps`` は [0.1, 2.0] にクリップして最適化する。
 
+    尺度: 点群を重心へ寄せ、外接箱の対角長 ``L`` で割った無次元の座標で解き、``a = L·a'``、
+    ``t = 重心 + L·t'``、``residual = L³·residual'`` で戻す(★2026-11-05 敵対的検証 N5)。
+    以前は生の座標のまま解いており、残差が長さの 1.5 乗で縮むため scipy 既定の ``gtol`` が
+    初回評価で満たされ、``s <= 1e-4`` の点群では PCA の初期値をそのまま返していた
+    (楕円体 a=(2,1.5,1) が 1.979/1.495/1.001、中心が 0.17·s ずれる)。いまは ``s`` に依らず同じ解。
+    全点が一致する点群(``L == 0``)は ``ValueError``。
+
     Returns
     -------
     dict: {'a': (3,), 'eps': (2,), 'R': (3,3), 't': (3,), 'residual': float}
@@ -225,9 +232,16 @@ def fit_superquadric(points) -> dict:
     if len(P) < 6:
         raise ValueError(f"fit_superquadric: at least 6 points required (got N={len(P)})")
 
+    if not np.all(np.isfinite(P)):
+        raise ValueError("fit_superquadric: points must be finite")
+    L = float(np.linalg.norm(P.max(axis=0) - P.min(axis=0)))
+    if not L > 0.0:
+        raise ValueError("fit_superquadric: all points coincide — no superquadric is defined")
+    c0 = P.mean(axis=0)
+    P = (P - c0) / L                      # 無次元(外接箱の対角 = 1)
     t0, R0, a0 = _principal_frame(P)
     rotvec0 = Rotation.from_matrix(R0).as_rotvec()
-    diag = float(np.linalg.norm(P.max(axis=0) - P.min(axis=0))) + _EPS
+    diag = 1.0
 
     # p = [a1,a2,a3, eps1,eps2, rvx,rvy,rvz, tx,ty,tz]
     p0 = np.concatenate([a0, [1.0, 1.0], rotvec0, t0]).astype(np.float64)
@@ -252,10 +266,14 @@ def fit_superquadric(points) -> dict:
     sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
                         xtol=1e-10, ftol=1e-10, max_nfev=4000)
     p = sol.x
-    a = np.asarray(p[0:3], dtype=np.float64)
+    a_n = np.asarray(p[0:3], dtype=np.float64)
     eps = np.clip(np.asarray(p[3:5], dtype=np.float64), 0.1, 2.0)
     R = Rotation.from_rotvec(p[5:8]).as_matrix()
-    t = np.asarray(p[8:11], dtype=np.float64)
-    residual = (float(np.mean(sol.fun ** 2)) if np.array_equal(eps, p[3:5])
-                else superquadric_residual(P, a, eps, R, t))
+    t_n = np.asarray(p[8:11], dtype=np.float64)
+    residual_n = (float(np.mean(sol.fun ** 2)) if np.array_equal(eps, p[3:5])
+                  else superquadric_residual(P, a_n, eps, R, t_n))
+    # 無次元の解を元の単位へ(F は相似変換で不変、残差 sqrt(a1a2a3)² は長さの 3 乗)。
+    a = L * a_n
+    t = c0 + L * t_n
+    residual = float(residual_n * L ** 3)
     return {"a": a, "eps": eps, "R": R, "t": t, "residual": residual}

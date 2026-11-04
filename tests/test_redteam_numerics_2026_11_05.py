@@ -74,3 +74,46 @@ def test_n6_coincident_points_still_rejected():
     for fit in (measure.fit_line, measure.fit_circle, measure.fit_ellipse):
         with pytest.raises(ValueError):
             fit(pts)
+
+
+# ── N5: superquadric.fit_superquadric ─────────────────────────────────────────
+
+
+def _ellipsoid_cloud(noise=0.0):
+    rng = np.random.default_rng(0)
+    d = rng.standard_normal((400, 3))
+    d /= np.linalg.norm(d, axis=1, keepdims=True)
+    P = np.array([1.0, -1.0, 2.0]) + d * np.array([2.0, 1.5, 1.0])
+    return P + noise * rng.standard_normal(P.shape)
+
+
+@pytest.mark.parametrize("s", [1e3, 1.0, 1e-4, 1e-6])
+def test_n5_fit_superquadric_recovers_truth_at_any_scale(s):
+    # 真値: 楕円体 a=(2,1.5,1)、eps=(1,1)、中心 (1,-1,2)(表面上の厳密点)。
+    # 修正前は s <= 1e-4 で gtol が初回評価で満たされ、PCA 初期値 1.979/1.495/1.001 を返した。
+    import superquadric as sq
+    r = sq.fit_superquadric(_ellipsoid_cloud() * s)
+    assert np.sort(r["a"])[::-1] / s == pytest.approx([2.0, 1.5, 1.0], abs=1e-6)
+    assert r["t"] / s == pytest.approx([1.0, -1.0, 2.0], abs=1e-6)
+    assert r["eps"] == pytest.approx([1.0, 1.0], abs=1e-6)
+
+
+def test_n5_fit_superquadric_same_solution_for_s1_and_s1e6():
+    # 雑音ありの点群(解は真値と少しずれる)でも、s=1 と s=1e-6 で同じ解・残差は s³ 倍。
+    import superquadric as sq
+    P = _ellipsoid_cloud(noise=0.02)
+    r1 = sq.fit_superquadric(P)
+    r6 = sq.fit_superquadric(P * 1e-6)
+    assert r6["a"] / 1e-6 == pytest.approx(r1["a"], rel=1e-6)
+    assert r6["t"] / 1e-6 == pytest.approx(r1["t"], abs=1e-6)
+    assert r6["eps"] == pytest.approx(r1["eps"], abs=1e-6)
+    assert r6["residual"] / 1e-18 == pytest.approx(r1["residual"], rel=1e-5)
+    # 返り値の residual は superquadric_residual と同じ量(元の単位)。
+    assert r6["residual"] == pytest.approx(
+        sq.superquadric_residual(P * 1e-6, r6["a"], r6["eps"], r6["R"], r6["t"]), rel=1e-9)
+
+
+def test_n5_fit_superquadric_coincident_points_rejected():
+    import superquadric as sq
+    with pytest.raises(ValueError):
+        sq.fit_superquadric(np.ones((10, 3)))
