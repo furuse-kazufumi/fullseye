@@ -1582,9 +1582,15 @@ def _shortest_interval(y: np.ndarray, level: float):
         raise ValueError("gum_monte_carlo: level must lie strictly between 0 and 1")
     s = np.sort(y)
     n = s.size
-    q = int(np.floor(level * n))
+    # JCGM 101 7.7.2: q = pM if pM is an integer, otherwise the integer part of
+    # pM + 1/2 (round half up). floor(pM) undercovered by one order statistic when the
+    # fractional part was >= 1/2 (red-team 2026-11-05, checked against the standard).
+    q = int(np.floor(level * n + 0.5))
     if q < 1:
         raise ValueError("gum_monte_carlo: level too small for n=%d" % n)
+    if q >= n:
+        raise ValueError("gum_monte_carlo: level %r too large for n=%d (q=%d leaves no "
+                         "interval to choose)" % (level, n, q))
     widths = s[q:] - s[:n - q]
     i = int(np.argmin(widths))
     return float(s[i]), float(s[i + q])

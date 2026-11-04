@@ -315,3 +315,39 @@ def test_sibling_polar_fit_negative_minimum_is_judged_relative_to_the_pixel():
     d0, _ = SP.polarization_separate(okstack, angles_deg=ang)
     d1, _ = SP.polarization_separate(okstack * 1e-14, angles_deg=ang)
     assert np.allclose(d1, d0 * 1e-14, rtol=1e-9, atol=0)
+
+
+def test_s4_gum_validate_delta_matches_the_published_examples():
+    """JCGM 101 7.9.2 の例題: u=0.00035 g / ndig=2 -> delta 0.000005、ndig=1 -> 0.00005;
+    9.2.2.7: u=2.0 / ndig=2 -> 0.05;u=1.0e1 / ndig=2 -> 0.5。"""
+    import spc
+    cases = [(0.00035, 2, 0.5e-5), (0.00035, 1, 0.5e-4), (2.0, 2, 0.05), (10.0, 2, 0.5), (10.0, 1, 5.0)]
+    assert len(cases) == 5
+    for u, ndig, want in cases:
+        g = spc.gum_expanded({"u": np.array([u]), "sensitivity": np.array([1.0]),
+                              "dof": np.array([np.inf])}, estimate=0.0)
+        v = spc.gum_validate(g, {"low": g["low"], "high": g["high"]}, ndig=ndig)
+        assert float(v["delta"][0]) == pytest.approx(want, rel=1e-12), (u, ndig)
+
+
+# ---- 疑い(確認済み): _shortest_interval の q(JCGM 101 7.7.2) ---------------
+
+def _shortest_reference(y, p):
+    """独立実装: 7.7.2 のとおり q = pM(整数なら)/ int(pM + 1/2)、r = 1..M-q の最短。"""
+    s = sorted(float(v) for v in y)
+    M = len(s)
+    pm = p * M
+    q = int(round(pm)) if abs(pm - round(pm)) < 1e-9 else int(pm + 0.5)
+    best = min(range(1, M - q + 1), key=lambda r: (s[r + q - 1] - s[r - 1], r))
+    return s[best - 1], s[best + q - 1]
+
+
+def test_shortest_interval_q_follows_jcgm101_7_7_2():
+    """pM の端数が 1/2 以上なら q は切り上げ(旧実装は切り捨てで順序統計量 1 つ分狭い)。"""
+    import spc
+    rng = np.random.default_rng(5)
+    cases = [(30, 0.95), (50, 0.95), (11, 0.95), (200, 0.95), (199, 0.9), (1000, 0.6827)]
+    assert len(cases) == 6
+    for M, p in cases:
+        y = rng.gamma(2.0, size=M)
+        assert spc._shortest_interval(y, p) == _shortest_reference(y, p), (M, p)
