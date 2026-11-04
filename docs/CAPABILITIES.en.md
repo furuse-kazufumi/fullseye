@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 100 capabilities**
+**Currently 101 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -962,7 +962,7 @@ Alternatives: [`signal_features`](ops/oned/signal/signal_features.md), [`octave_
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## Compose (10)
+## Compose (11)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 

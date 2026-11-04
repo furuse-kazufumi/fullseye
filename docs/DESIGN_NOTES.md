@@ -1042,6 +1042,10 @@
 
 - **L157** — 振幅の刻み。★これ自体がノブ。粗いと限界が同じ格子点に丸まって、 「σ が大きいほど差が開く」のような**刻みが作った差**を本物と誤読する (2026-09-09、34 段では σ=1.5 と σ=3.0 の中央値がどちらも 3.20 に丸まった)。
 
+## `examples/poc_real_file_formats.py`
+
+- **L382** — ★記録した穴: em_mrc_read の meta は NXSTART を返さないので、この地図を空間に置くと x が 2 ボクセル = 22.8 Å ずれる。塞がったら(meta に起点が載ったら)この門が鳴る。
+
 ## `examples/poc_recycling_sorting.py`
 
 - **L520** — ★掃引の**前に**、代数から予測を立てて印字する。
@@ -1494,6 +1498,7 @@
 ## `fileio.py`
 
 - **L1260** — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
+- **L2084** — ★参照実装 nifti1_io.c(nifti_quatern_to_mat44)と同じ規則: 1 - |bcd|^2 < 1e-7 なら 180 度回転と みなして a = 0 とし、(b, c, d) を単位長に正規化する。2026-11-04 まで閾値が無く、float32 の 丸め屑 1.2e-8 から a = 1.1e-4 を作って向きを 0.0125 度回していた(OpenNeuro ds000117 の 磁場地図で nibabel と 8e-4 の差。examples/poc_real_file_formats.py が見つけた)。
 
 ## `fit_transform.py`
 

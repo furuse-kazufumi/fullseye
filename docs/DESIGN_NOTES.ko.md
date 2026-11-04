@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 611 / 1638 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 611 / 1640 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel.py`
@@ -1044,6 +1044,10 @@
 
 - **L157** — 진폭의 간격. ★이것 자체가 노브. 거칠면 한계가 같은 격자점으로 반올림되어 "σ가 클수록 차이가 벌어진다" 같은 **간격이 만든 차이**를 진짜로 오독한다(2026-09-09, 34단에서는 σ=1.5와 σ=3.0의 중앙값이 둘 다 3.20으로 반올림되었다).
 
+## `examples/poc_real_file_formats.py`
+
+- **L382** _(ja)_ — ★記録した穴: em_mrc_read の meta は NXSTART を返さないので、この地図を空間に置くと x が 2 ボクセル = 22.8 Å ずれる。塞がったら(meta に起点が載ったら)この門が鳴る。
+
 ## `examples/poc_recycling_sorting.py`
 
 - **L520** — ★스윕 **전에** 대수로부터 예측을 세워 인쇄한다.
@@ -1496,6 +1500,7 @@
 ## `fileio.py`
 
 - **L1260** _(ja)_ — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
+- **L2084** _(ja)_ — ★参照実装 nifti1_io.c(nifti_quatern_to_mat44)と同じ規則: 1 - |bcd|^2 < 1e-7 なら 180 度回転と みなして a = 0 とし、(b, c, d) を単位長に正規化する。2026-11-04 まで閾値が無く、float32 の 丸め屑 1.2e-8 から a = 1.1e-4 を作って向きを 0.0125 度回していた(OpenNeuro ds000117 の 磁場地図で nibabel と 8e-4 の差。examples/poc_real_file_formats.py が見つけた)。
 
 ## `fit_transform.py`
 

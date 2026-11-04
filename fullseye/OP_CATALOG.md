@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(472 例)
+### 2-D 画像/信号/幾何(473 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`

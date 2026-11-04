@@ -357,7 +357,7 @@ Some PoC descriptions are in English.
 
 ## What it can do
 
-100 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+101 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
@@ -492,7 +492,7 @@ Some PoC descriptions are in English.
 
 ## See everything
 
-298 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+299 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 

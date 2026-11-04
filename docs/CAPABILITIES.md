@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 100 項目**
+**収録 101 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -1185,7 +1185,7 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 動く例: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (10)
+## 組み立てる (11)
 
 ### [位置を合わせて重ねる](capabilities/align-and-stack.md)
 

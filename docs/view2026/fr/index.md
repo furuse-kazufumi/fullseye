@@ -355,7 +355,7 @@ Certaines descriptions de PoC sont en anglais.
 
 ## Ce qu'il permet de faire
 
-100 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+101 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -490,7 +490,7 @@ Certaines descriptions de PoC sont en anglais.
 
 ## Tout voir
 
-298 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+299 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
