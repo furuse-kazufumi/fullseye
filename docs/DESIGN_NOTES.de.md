@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1638. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1649. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -63,15 +63,17 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L2401** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
 - **L2689** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
 - **L2730** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L3062** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
-- **L3200** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F2): 単入力の apply / run_pipeline と PrecisionUnion の n-ary 経路は dtype 契約(_contract_dtype)を通るのに、密な配列の n-ary だけが通らず、uint8 の 32 + 32 が on_error="raise" でも例外も台帳記録も無く 1.0(正しくは 64/255)になっていた。入力ごとに同じ規則で。 畳み込みの核(_NARY_KERNEL_SECOND の第 2 入力)は画像でなく重みの表なので、型だけ float64 にする。
-- **L3216** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L3220** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
-- **L3340** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の 省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。 省いた位置の分だけ、その位置の既定値で埋める。
-- **L3548** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L3552** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3674** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3684** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L3086** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
+- **L3203** _(ja)_ — ★2026-11-05(敵対的検証 C12): 単入力の apply / run_pipeline は fullseye.Image を剥がすのに、 n 項だけが剥がさず「got a scalar Image」の TypeError だった。入力ごとに同じ剥がし方 (非有限の検査より前 —— Image の中身も検査する)。
+- **L3236** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F2): 単入力の apply / run_pipeline と PrecisionUnion の n-ary 経路は dtype 契約(_contract_dtype)を通るのに、密な配列の n-ary だけが通らず、uint8 の 32 + 32 が on_error="raise" でも例外も台帳記録も無く 1.0(正しくは 64/255)になっていた。入力ごとに同じ規則で。 畳み込みの核(_NARY_KERNEL_SECOND の第 2 入力)は画像でなく重みの表なので、型だけ float64 にする。
+- **L3244** _(ja)_ — ★2026-11-05(敵対的検証 C11): 単入力の apply にある _guard_input(空・次元・色軸・extra_checks の 値域)が n 項に無く、空 (0, 0) / 1-D / 4-D / 0..50 の入力が on_error="raise" でも例外も台帳記録も 無く通っていた。入力ごとに同じ検査(その入力の sort で)。畳み込みの核は画像でないので外す。
+- **L3259** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L3263** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
+- **L3405** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の 省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。 省いた位置の分だけ、その位置の既定値で埋める。
+- **L3618** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L3622** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L3744** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3754** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -270,12 +272,15 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `engine.py`
 
-- **L196** _(ja)_ — ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
-- **L249** _(ja)_ — ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、 {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
-- **L280** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107): {"stages": None} が 0 段のエンジンになり、run が入力をそのまま 返していた(壊れた設定が「成功」)。[] は文書どおり恒等、None / 数値は設定の壊れ。
-- **L286** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
-- **L378** _(ja)_ — ★範囲外は断る(2026-09-20、GenSpark N40): --upto 9 / -1 が黙って全段 / 0 段になっていた
-- **L430** _(ja)_ — ★2026-11-04 external audit E4: each stage used to go through ``run_pipeline(prev, [st])`` on its own, so the chain-wide checks of :meth:`run` (sort chain, knobs, non-finite entry) never saw the whole pipeline -- ``otsu,invert`` ran here while ``run`` refuses it. Prepare the whole chain first (runs nothing), then resume stage by stage on the same runner Studio's stage cache uses (``entry`` only for the first stage).
+- **L65** _(ja)_ — ★2026-11-05(敵対的検証 C13): 以前は ``tuple(st)[1:3]`` で段を読み、dict 段は鍵の名前 ("op" / "a")を float にしようとして ValueError、``(name, {"a": ..})`` は float(dict) の TypeError だった(run_pipeline は同じ段を受ける)。名前は stage_name、ノブは api._normalise_stage の 1 本。
+- **L198** _(ja)_ — ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
+- **L251** _(ja)_ — ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、 {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
+- **L258** _(ja)_ — ★2026-11-05(敵対的検証 C3): ノブの読み方は run_pipeline と同じ api._normalise_stage 1 本。 以前はここだけ別の読み方で、dict 段の未知キー({"op": "threshold", "A": 0.9} の打ち間違い)と 4 要素目(("threshold", 0.9, 0.5, 0.1))を黙って捨て、文字列ノブ "0.9" を float() で通していた —— run_pipeline は同じ段を TypeError で断る。同じ段は入口によらず同じ意味・同じ拒否。
+- **L278** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107): {"stages": None} が 0 段のエンジンになり、run が入力をそのまま 返していた(壊れた設定が「成功」)。[] は文書どおり恒等、None / 数値は設定の壊れ。
+- **L284** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
+- **L377** _(ja)_ — ★範囲外は断る(2026-09-20、GenSpark N40): --upto 9 / -1 が黙って全段 / 0 段になっていた
+- **L429** _(ja)_ — ★2026-11-04 external audit E4: each stage used to go through ``run_pipeline(prev, [st])`` on its own, so the chain-wide checks of :meth:`run` (sort chain, knobs, non-finite entry) never saw the whole pipeline -- ``otsu,invert`` ran here while ``run`` refuses it. Prepare the whole chain first (runs nothing), then resume stage by stage on the same runner Studio's stage cache uses (``entry`` only for the first stage).
+- **L437** _(ja)_ — ★2026-11-05(敵対的検証 C6): (1) 入口の契約(uint8 の /255 と台帳記録、extra_checks の値域、 strict での拒否)は**キャッシュに当たっても毎回**通す —— 以前は第 1 段が当たると飛び、 strict + extra_checks="on" で run() が断る画像を暖まった run_cached() は返していた。 (2) 結果を変える状態を鍵に入れる: 照合用テンプレート(ops._MATCH_CTX、スレッドローカル)と fssystem の全パラメータ —— 以前はテンプレート A の答えをテンプレート B で返した。 (3) 計算中に劣化台帳へ記録が残った段はキャッシュしない(当たると記録が消え、fallback の値が 「成功」に見えた)。次の呼び出しでもう一度計算され、同じ記録が残る。
 
 ## `evis_fullseye_bridge.py`
 
@@ -1563,11 +1568,15 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `fullseye/mcp/server.py`
 
 - **L541** _(ja)_ — ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは FramingError(→ -32700)にしてループを続ける。
-- **L1659** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
-- **L1954** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
-- **L1981** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
-- **L2137** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
-- **L2184** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
+- **L1149** _(ja)_ — ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の 台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。 印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
+- **L1260** _(ja)_ — ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、 値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
+- **L1504** _(ja)_ — ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、 extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。 全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
+- **L1675** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
+- **L1828** _(ja)_ — ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
+- **L1973** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
+- **L2000** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
+- **L2156** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
+- **L2203** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
 
 ## `fullseye/opsearch.py`
 
@@ -1576,6 +1585,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `fullseye/recipebook/__init__.py`
 
 - **L184** _(ja)_ — ★OP_GRAPH に実行先の無い辺が 20 本ある(fileio 14 など、2026-11-03 実測)。op ノートの 「呼び出し」行が案内する台帳の入口 fs.ledger.<op> を引く(無ければ従来どおり拒否)。
+
+## `fullseye/validation_kit.py`
+
+- **L110** _(ja)_ — ★2026-11-05(敵対的検証 C9): 以前は任意の 3 次元配列を最後の軸で平均し、(N, H, W) の積み重ねや (H, W, D) の体積を黙って 2-D の「画像」にしていた((3, 40, 40) → (3, 40)、数えた個数は別物)。 色の軸と読めるのは (H, W, 3) / (H, W, 4) だけ(RGBA は alpha を除いた 3 色の平均)。他は断る。
 
 ## `fullseye/xlsxio.py`
 
@@ -2236,23 +2249,24 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L349** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
 - **L358** — ★ Rechtsklick auf die Abbildung selbst (Benutzer 2026-09-06: "es wäre schön, das als Abbildung Angezeigte per Rechtsklick in die Zwischenablage kopieren zu können"). Eine Studio-UI-Konvention dieses Repos —— **die Anzeigeseite muss auch per Rechtsklick alles ermöglichen**. Es kann dasselbe wie die Buttonreihe unten (mach es nicht zu einem Entweder-oder).
-- **L1550** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
-- **L1560** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
-- **L1583** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
-- **L1594** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
-- **L2187** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
-- **L6430** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
-- **L6987** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L9280** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L10353** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
-- **L10509** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
-- **L11386** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L12286** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
-- **L12359** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
-- **L12362** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
-- **L13851** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
-- **L13870** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
-- **L14912** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L989** _(ja)_ — ★2026-11-05(敵対的検証 C6 の兄弟): engine.run_cached と同じく、結果を変える状態 —— 照合用 テンプレート(ops._MATCH_CTX)と fssystem の全パラメータ —— も文脈に入れる(変われば全段を捨てる)。
+- **L1557** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
+- **L1567** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
+- **L1590** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
+- **L1601** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
+- **L2194** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
+- **L6437** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+- **L6994** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L9287** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L10360** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L10516** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L11393** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L12293** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+- **L12366** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+- **L12369** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+- **L13858** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
+- **L13877** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+- **L14919** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `studio_result.py`
 
@@ -3165,7 +3179,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `unified.py`
 
-- **L559** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N181): dict / list を registry の鍵にして unhashable で落ちていた
+- **L567** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N181): dict / list を registry の鍵にして unhashable で落ちていた
 
 ## `verify_auto.py`
 
