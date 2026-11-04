@@ -151,8 +151,8 @@ Two more doors, both new since 0.1.11 and both honest about their limits:
 
 | Door | For | Run this first | Status |
 |---|---|---|---|
-| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. 9 tools, strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). [`docs/MCP.md`](docs/MCP.md) |
-| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (947 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the 17 n-ary 2-D operators and the 2,683 typed-ledger operators, whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
+| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. A `full` and a smaller `minimal` tool profile (the tool list is `tools/list`; see docs/MCP.md), strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). [`docs/MCP.md`](docs/MCP.md) |
+| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (947 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the n-ary 2-D operators and the typed-ledger operators (counts: the index line at the top), whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
 
 ## Install
 
@@ -336,7 +336,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | Update a checkout safely | `tools/update_fullseye.py --check` |
 | **See what is actually verified (and how)** | `docs/MATURITY.md` + `docs/maturity.json` (generated, not written) |
 | **Report results from real hardware or real data** (data may stay private) | `docs/VALIDATION_CONTRIBUTING.en.md` · [issue form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) |
-| **Read why it is built this way** | `docs/DESIGN_NOTES.md` — 606 load-bearing `★` comments collected from the source, in 6 languages (translated as we go; untranslated entries are shown as such) |
+| **Read why it is built this way** | `docs/DESIGN_NOTES.md` — the load-bearing `★` comments collected from the source (generated; the count is `total` in `docs/design_notes.json`), in 6 languages (translated as we go; untranslated entries are shown as such) |
 | Cite Fullseye | `CITATION.cff` |
 
 ## Design principles

@@ -142,7 +142,7 @@
 
 共有 **3,816 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **73 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 947/947、型別台帳 2820/2832、單行門面 `fullseye.<名稱>` 756/1559 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 947/947、型別台帳 2846/2846、單行門面 `fullseye.<名稱>` 756/1559 —— **門面側僅涵蓋一半**。
 
 **內容實測**: 3816 篇中，附有可執行範例的 **3768** 篇(48 篇沒有)，用法說明 120 字以上的 **3614** 篇(202 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3816 篇全有。
 
@@ -230,7 +230,7 @@
 
 | 文件 | 內容 |
 |---|---|
-| [OPERATORS.md](OPERATORS.md) | 全部 897 個運算子的目錄（48 個類別，依 sort 分組，並列出 HALCON／OpenCV／scikit-image／MATLAB 的對應 API） |
+| [OPERATORS.md](OPERATORS.md) | 2-D registry 全部運算子的目錄（數量見正文第 1 行，依 sort 分組，並列出 HALCON／OpenCV／scikit-image／MATLAB 的對應 API） |
 | [EXAMPLES.md](EXAMPLES.md) | 逐個運算子的範例程式碼（附上其他函式庫中的等價呼叫） |
 | [OP_INDEX.json](OP_INDEX.json) | 機器可讀的運算子索引（用 `imgevolve.py index` 重新產生） |
 | [ADDING_OPS.md](ADDING_OPS.md) | 如何新增運算子（演化、codegen、目錄與索引都會自動跟上） |

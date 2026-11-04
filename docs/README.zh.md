@@ -142,7 +142,7 @@
 
 共有 **3,816 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **73 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 947/947、类型化台账 2820/2832、单行门面 `fullseye.<名称>` 756/1559 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 947/947、类型化台账 2846/2846、单行门面 `fullseye.<名称>` 756/1559 —— **门面侧仅覆盖一半**。
 
 **内容实测**: 3816 篇中，附有可运行示例的 **3768** 篇(48 篇没有)，用法说明 120 字以上的 **3614** 篇(202 篇仅一行)。结构(调用形式、类型、可衔接算子)3816 篇全有。
 
@@ -230,7 +230,7 @@
 
 | 文档 | 内容 |
 |---|---|
-| [OPERATORS.md](OPERATORS.md) | 全部 897 个算子的目录（48 个类别，按 sort 分组，并列出 HALCON／OpenCV／scikit-image／MATLAB 的对应 API） |
+| [OPERATORS.md](OPERATORS.md) | 2-D registry 全部算子的目录（数量见正文第 1 行，按 sort 分组，并列出 HALCON／OpenCV／scikit-image／MATLAB 的对应 API） |
 | [EXAMPLES.md](EXAMPLES.md) | 逐个算子的示例代码（附其他库中的等价调用） |
 | [OP_INDEX.json](OP_INDEX.json) | 机器可读的算子索引（用 `imgevolve.py index` 重新生成） |
 | [ADDING_OPS.md](ADDING_OPS.md) | 如何新增算子（演化、codegen、目录与索引都会自动跟进） |

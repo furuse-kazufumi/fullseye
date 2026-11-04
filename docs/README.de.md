@@ -142,7 +142,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 **3,816 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **73 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2820/2832, Fassade `fullseye.<name>` 756/1559 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2846/2846, Fassade `fullseye.<name>` 756/1559 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
 **Gemessener Inhalt**: von 3816 Notizen verweisen **3768** auf mindestens ein lauffähiges Beispiel (48 ohne), **3614** haben einen Nutzungsabschnitt ab 120 Zeichen (202 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3816.
 
@@ -230,7 +230,7 @@ Nach Namen suchen mit `py -3.11 imgevolve.py ops --search edge`; die vollständi
 
 | Dokument | Inhalt |
 |---|---|
-| [OPERATORS.md](OPERATORS.md) | Katalog aller 897 Operatoren (48 Kategorien, nach sort gegliedert, mit den entsprechenden APIs von HALCON/OpenCV/scikit-image/MATLAB) |
+| [OPERATORS.md](OPERATORS.md) | Katalog aller Operatoren der 2-D-Registry (Anzahlen in der ersten Zeile, nach sort gegliedert, mit den entsprechenden APIs von HALCON/OpenCV/scikit-image/MATLAB) |
 | [EXAMPLES.md](EXAMPLES.md) | Beispielcode je Operator, samt dem äquivalenten Aufruf in anderen Bibliotheken |
 | [OP_INDEX.json](OP_INDEX.json) | Maschinenlesbarer Operatorindex (neu erzeugen mit `imgevolve.py index`) |
 | [ADDING_OPS.md](ADDING_OPS.md) | Wie man einen neuen Operator hinzufügt (Evolution, Codegen, Katalog und Index ziehen automatisch nach) |

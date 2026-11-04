@@ -12,7 +12,7 @@ version: 0.2.1
 
 ## できること
 
-op が 931 本あっても、ライン担当が最初に触る形は「画像フォルダを指して、前処理と計測を決め、仕様で良否をつけ、集計とレポートをもらう」です。`fullseye/inspect_batch.py` の `inspect_batch(folder, recipe, measure=..., spec=...)` はその 1 回の呼び出しで、各画像を **読む → recipe(`run_pipeline` の stages)→ `measure`(計測 op を束ねた callable → dict)→ `judge`(仕様照合)** に通し、行ごとに入力ファイルの sha256・計測値・根拠つきの Verdict・所要時間を返します。数値の計測列は時系列にまとめ、2 点以上あれば EWMA(`spc_ewma`)で工程が管理状態かを添えます。`report_path` の拡張子で `.xlsx` / `.md` / `.jsonl` に書き分け、`audit_path` を渡すと 1 行 1 JSON の監査ログに追記します。
+op が何千本あっても、ライン担当が最初に触る形は「画像フォルダを指して、前処理と計測を決め、仕様で良否をつけ、集計とレポートをもらう」です。`fullseye/inspect_batch.py` の `inspect_batch(folder, recipe, measure=..., spec=...)` はその 1 回の呼び出しで、各画像を **読む → recipe(`run_pipeline` の stages)→ `measure`(計測 op を束ねた callable → dict)→ `judge`(仕様照合)** に通し、行ごとに入力ファイルの sha256・計測値・根拠つきの Verdict・所要時間を返します。数値の計測列は時系列にまとめ、2 点以上あれば EWMA(`spc_ewma`)で工程が管理状態かを添えます。`report_path` の拡張子で `.xlsx` / `.md` / `.jsonl` に書き分け、`audit_path` を渡すと 1 行 1 JSON の監査ログに追記します。
 
 `fullseye/judge.py` の `judge(measurements, spec)` はその判定の入口です。仕様は `{"area": {"min": 10, "max": 15}, "width_mm": {"nominal": 3.0, "tol": 0.05}, "label": {"eq": "OK"}, "grade": {"in": ["A", "B"]}}` の 4 種の規則(境界は含む)で、返り値は PLC が読む語彙(`ok` / `ng` / `error`)の `Verdict` に、違反の一覧 `{key, value, rule, limit}` と人が読む 1 行の根拠が付きます。**黙って ok にしない**のが約束です —— 仕様にあって計測に無いキー、NaN/inf、数値でない値は `error`、規則の綴り間違い(`"mx"` など)は `ValueError` で止まります。1 枚が読めない・op が落ちた場合も既定ではその行を `error` にしてバッチを止めません(`on_error="raise"` で即停止)。入力が 0 枚なら `ValueError`(0 枚を検査して「全部 ok」は報告になりません)。
 

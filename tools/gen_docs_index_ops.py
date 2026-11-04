@@ -266,6 +266,12 @@ def _note_substance():
     return total, ex, use
 
 
+def ledger_names() -> set:
+    """型つき台帳の op 名(``fullseye.list_ops`` の ledger 層 = ``docs/OP_INDEX.json`` の ledger 層)。"""
+    import fullseye as fs
+    return {d["name"] for d in fs.list_ops(include_ledger=True) if d["tier"] == "ledger"}
+
+
 def _honest(lang: str) -> str:
     """**網羅していないことを索引そのものに書く。** 数は毎回数え直す。
 
@@ -276,7 +282,6 @@ def _honest(lang: str) -> str:
     """
     import fullseye as fs
     import ops as _ops
-    import typed_catalog as _tc
 
     # ★ノートの集合は**台帳から**取る(ファイルを数え上げない)。
     # 2026-09-06 の敵対的レビュー(Codex)で、ファイルを glob して stem を
@@ -287,7 +292,12 @@ def _honest(lang: str) -> str:
     # `tests/test_docs_index_reachable.py` が別に見る(消えた/余った を検出)。
     noted = {r["name"] for r in _records()}
     reg = {getattr(o, "name", str(o)) for o in _ops.REGISTRY}
-    led = {r[0] for r in _tc.catalog()}
+    # ★2026-11-05(敵対的検証 第 2 巡 D5b): 分母を ``typed_catalog.catalog()`` から取っていた
+    #   (2832)。あれは**連鎖ファザーと registry の橋の型カタログ**で、台帳ではない —— 台帳に無い
+    #   complexops 12 本(cx_fft 等、op_run は断る)を含み、ファザーに向かないファイル I/O 31 本を
+    #   含まない。README 冒頭の「2,846 in the typed ledgers」、OP_INDEX の ledger 層、op_run が
+    #   引ける集合と同じ ``list_ops`` の ledger 層で数える(同じ問いに 2 つの分母を出さない)。
+    led = ledger_names()
     # ★`dir(fullseye)` ではなく `__all__`。dir はモジュール属性(os / sys /
     # warnings / annotations)を含み、しかも**他のテストが import した後は
     # 1 つ増える**(1094 → 1095)ので、全体スイートでだけドリフト門が落ちた
