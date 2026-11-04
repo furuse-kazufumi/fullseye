@@ -335,3 +335,59 @@ class TestF6RansacFinalConsensus:
         except ValueError:
             return
         assert r["n_inliers"] >= 20 and int(r["inliers"].sum()) == r["n_inliers"]
+
+
+def _ecc_rho_reference(T, I, W, border):
+    """Correlation coefficient of T and I warped by W over the same mask register_ecc uses (closed form)."""
+    import intensityreg as ir
+    yy, xx = ir._grid(T.shape)
+    X, Y = ir._map(W, xx, yy)
+    m = np.zeros(T.shape, bool)
+    m[border:T.shape[0] - border, border:T.shape[1] - border] = True
+    m &= (X >= border) & (X <= I.shape[1] - 1 - border) & (Y >= border) & (Y <= I.shape[0] - 1 - border)
+    t = T[m] - T[m].mean()
+    i = ir._sample(I, X, Y)[m]
+    i = i - i.mean()
+    return float(t @ i / (np.linalg.norm(t) * np.linalg.norm(i)))
+
+
+class TestF7EccMetricOfReturnedWarp:
+    """``metric`` is the correlation of the warp that is returned, also when n_iter runs out."""
+
+    def test_reviewer_case(self):
+        import featmatch
+        import intensityreg as ir
+        F = featmatch.synthetic_scene((64, 64), seed=2)
+        M = np.roll(F, 2, axis=1)
+        kw = dict(motion="translation", n_iter=1, smooth_sigma=0)
+        r = ir.register_ecc(F, M, **kw)
+        ref = _ecc_rho_reference(F, M, r["warp"], border=1)
+        assert r["metric"] == pytest.approx(ref, abs=1e-12)
+        assert r["metric"] == pytest.approx(0.9945018403280075, abs=1e-12)  # the reviewer's value of the returned warp
+        assert len(r["history"]) == r["iterations"] == 1                 # history keeps its meaning
+        assert ir.register_ecc(F, M, min_rho=0.9, **kw)["metric"] > 0.9   # no longer refused
+
+    @pytest.mark.parametrize("motion", ["translation", "euclidean", "affine", "homography"])
+    @pytest.mark.parametrize("n_iter", [1, 2, 3, 200])
+    def test_every_motion_and_budget(self, motion, n_iter):
+        import featmatch
+        import intensityreg as ir
+        F = featmatch.synthetic_scene((64, 64), seed=4)
+        M = np.roll(np.roll(F, 1, axis=0), -2, axis=1)
+        r = ir.register_ecc(F, M, motion=motion, n_iter=n_iter, smooth_sigma=0)
+        ref = _ecc_rho_reference(F, M, r["warp"], border=1)
+        assert r["metric"] == pytest.approx(ref, abs=1e-12)
+        assert len(r["history"]) == r["iterations"]
+        if r["converged"]:
+            assert r["history"][-1] == r["metric"]
+
+    def test_stale_value_cannot_hide_a_worse_warp_from_min_rho(self):
+        # the floor is applied to the returned warp's own correlation
+        import featmatch
+        import intensityreg as ir
+        F = featmatch.synthetic_scene((64, 64), seed=2)
+        M = np.roll(F, 2, axis=1)
+        r = ir.register_ecc(F, M, motion="translation", n_iter=1, smooth_sigma=0)
+        with pytest.raises(ValueError, match="below min_rho"):
+            ir.register_ecc(F, M, motion="translation", n_iter=1, smooth_sigma=0,
+                            min_rho=min(0.999999, r["metric"] + 1e-6))
