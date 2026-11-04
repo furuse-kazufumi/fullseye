@@ -107,10 +107,22 @@ def test_n5_fit_superquadric_same_solution_for_s1_and_s1e6():
     assert r6["a"] / 1e-6 == pytest.approx(r1["a"], rel=1e-6)
     assert r6["t"] / 1e-6 == pytest.approx(r1["t"], abs=1e-6)
     assert r6["eps"] == pytest.approx(r1["eps"], abs=1e-6)
-    assert r6["residual"] / 1e-18 == pytest.approx(r1["residual"], rel=1e-5)
-    # 返り値の residual は superquadric_residual と同じ量(元の単位)。
+    assert r6["residual"] / 1e-18 == pytest.approx(r1["residual"], rel=1e-5, abs=0)
+    # 返り値の residual は superquadric_residual と同じ量(元の単位)。approx の既定 abs=1e-12 は
+    # 1e-21 の量を何とでも一致させるので abs=0 を明示する。
     assert r6["residual"] == pytest.approx(
-        sq.superquadric_residual(P * 1e-6, r6["a"], r6["eps"], r6["R"], r6["t"]), rel=1e-9)
+        sq.superquadric_residual(P * 1e-6, r6["a"], r6["eps"], r6["R"], r6["t"]), rel=1e-9, abs=0)
+
+
+def test_n5_superquadric_residual_scales_as_length_cubed():
+    # 兄弟: superquadric_residual の体積補正 sqrt(max(a1a2a3, 1e-12)) の絶対の床。
+    import superquadric as sq
+    P = _ellipsoid_cloud(noise=0.02)
+    a, eps, R, t = np.array([2.0, 1.5, 1.0]), (1.0, 1.0), np.eye(3), np.array([1.0, -1.0, 2.0])
+    r1 = sq.superquadric_residual(P, a, eps, R, t)
+    for s in (1e-3, 1e-6):
+        rs = sq.superquadric_residual(P * s, a * s, eps, R, t * s)
+        assert rs / s ** 3 == pytest.approx(r1, rel=1e-9, abs=0)
 
 
 def test_n5_fit_superquadric_coincident_points_rejected():
