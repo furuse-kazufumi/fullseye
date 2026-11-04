@@ -184,3 +184,36 @@ def test_o6_sibling_ftp_constant_check_is_relative():
         assert np.abs(F.fringe_ftp_phase(img * s, carrier_period=8.0) - h1).max() < 1e-9
     with pytest.raises(ValueError, match="constant"):
         F.fringe_ftp_phase(np.zeros((64, 64)))
+
+
+# --------------------------------------------------------------------------- #
+# O7 wrapped_phase: 値域は文書どおり (-π, π](−π は +π へ)と兄弟
+# --------------------------------------------------------------------------- #
+def test_o7_wrapped_phase_never_returns_minus_pi():
+    import fringe as F
+    stacks = {"general": F.synthesize_fringes(np.zeros((4, 64)), n_steps=3, freq=4),
+              "four_step": F.synthesize_fringes(np.zeros((4, 64)), n_steps=4, freq=4)}
+    assert len(stacks) == 2
+    for method, st in stacks.items():
+        w = F.wrapped_phase(st, method=method)
+        assert w.min() > -np.pi and w.max() <= np.pi, method      # 以前は −π ちょうどが出た
+        # 真値: 搬送波 4 周期の総位相 φ = 2π·4·x/64 を (-π, π] に折ったもの
+        x = np.arange(64) / 64.0
+        true = np.angle(np.exp(1j * 2 * np.pi * 4 * x))
+        true = np.where(true <= -np.pi, np.pi, true)
+        d = np.angle(np.exp(1j * (w[0] - true)))
+        assert np.abs(d).max() < 1e-9, method
+
+
+def test_o7_siblings_lockin_and_multipath_phase_range():
+    import lighttransport as LT
+    import lockin as L
+    n = 16
+    k = np.arange(n)
+    v = np.zeros((n, 4, 4))
+    v[:] = -np.cos(2 * np.pi * k / n)[:, None, None]            # 位相 π ちょうど
+    ph = L.lockin_demodulate(v, 1.0, 16.0)["phase"]
+    assert ph.min() > -np.pi and np.allclose(ph, np.pi)          # 以前は −π
+    r = LT.fringe_multipath_phase_error(1.0, -np.pi, 0.0, 0.0)
+    assert -np.pi < float(r["phase"]) <= np.pi and abs(float(r["phase"]) - np.pi) < 1e-12
+    assert -np.pi < float(r["bias"]) <= np.pi

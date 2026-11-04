@@ -59,6 +59,16 @@ def _as_stack(images) -> np.ndarray:
     return stack
 
 
+def _principal(phi):
+    """``arctan2`` の主値 ``[-π, π]`` を ``(-π, π]`` に写す(``-π`` は ``+π`` へ)。
+
+    ``arctan2(-0.0, c<0)`` は ``-π`` を返す。tensordot の和が ``-0.0`` になる画素
+    (例: 位相 0 の縞の 3 段)で起き、文書の値域 ``(-π, π]`` を外れていた(2026-11-05)。
+    """
+    phi = np.asarray(phi, dtype=np.float64)
+    return np.where(phi <= -np.pi, np.pi, phi)
+
+
 def _phase_sums(stack: np.ndarray):
     """Σ_n I_n sin δ_n(=s)と Σ_n I_n cos δ_n(=c)を返す(δ_n = 2πn/N)。"""
     n = stack.shape[0]
@@ -123,7 +133,7 @@ def wrapped_phase(images, method="general") -> np.ndarray:
         c = stack[0] - stack[2]
     else:
         raise ValueError("method must be 'general' or 'four_step'")
-    return np.arctan2(s, c)
+    return _principal(np.arctan2(s, c))
 
 
 # --------------------------------------------------------------------------- #
@@ -356,7 +366,7 @@ def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
         s, c = stack[1] - stack[3], stack[0] - stack[2]
     else:
         raise ValueError("method must be 'general' or 'four_step'")
-    wrapped = np.arctan2(s, c)
+    wrapped = _principal(np.arctan2(s, c))
 
     reliab = None
     if min_modulation is not None:
