@@ -1652,10 +1652,15 @@ def _dist_transform(v, a, b):
 
 ``a``, ``b`` は未使用。各前景画素について最も近い背景画素までのユークリッド距離を求め（``scipy.ndimage.distance_transform_edt``）、``_norm`` でその画像内の最大値を 1 に正規化する（画像間で絶対距離の比較はできない）。骨格化・粒の中心検出等の前処理に使う。
 
+**背景が 1 画素も無い**(全面が前景)とき、最も近い背景は画像の中に無い —— どの画素も「無限に遠い」ので、正規化した答えは**一様 1.0**(``xsp_chamfer_dist`` / ``cv_dist`` と同じ)。2026-11-05(敵対的検証 第 2 巡 P4)までは ``distance_transform_edt`` が画像の外の (-1, 0) に背景があるかのような斜面を返し、左右の反転で値が変わっていた。前景が無ければ 0。
+
 Raises:
     FsValueError: NaN / inf を含む画像。"""
     _require_finite_image(v, "dist_transform")
-    return _norm(ndimage.distance_transform_edt(_bin(v)))
+    m = _bin(v)
+    if m.size and m.all():
+        return np.ones(m.shape, np.float64)       # 背景なし -> どこも最遠 = 正規化 1.0
+    return _norm(ndimage.distance_transform_edt(m))
 
 
 def _dist_transform_abs(v, a, b):
@@ -1664,17 +1669,30 @@ def _dist_transform_abs(v, a, b):
     ``a`` で距離の種類を選ぶ: ``a < 1/3`` はユークリッド、``1/3 <= a < 2/3`` は市街地（L1）、
     それ以上はチェス盤（L∞）。``b < 0.5`` は各前景画素から最も近い背景画素までの距離、
     ``b >= 0.5`` は各背景画素から最も近い前景画素までの距離を返す。出力は float64 の画像で、
-    ``dist_transform`` と違い画像内の最大値で正規化しない（3×3 と 9×9 の正方形の中心は
-    それぞれ 2 と 5）。例: ``_dist_transform_abs(np.ones((3, 3)), 0, 0)``。
+    ``dist_transform`` と違い画像内の最大値で正規化しない（背景に囲まれた 3×3 と 9×9 の正方形の
+    中心はそれぞれ 2 と 5）。例: ``_dist_transform_abs(np.pad(np.ones((3, 3)), 1), 0, 0)[2, 2]`` は 2.0。
+
+    ★2026-11-05（敵対的検証 第 2 巡 P4b）まで、この例は ``np.ones((3, 3))``（背景が無い）と書いており、
+    実際の値は 2.0 でなく 2.236 だった（下の縮退入力）。
+
+    **距離を測る相手が画像に無い**（``b < 0.5`` で背景が 1 画素も無い、``b >= 0.5`` で前景が無い）とき、
+    距離は定義されない（無限）。絶対距離の op なので有限の代わりの値を作らず ``FsValueError`` で止める。
+    2026-11-05（敵対的検証 第 2 巡 P4）までは ``distance_transform_edt`` が画像の外の (-1, 0) に相手が
+    あるかのような斜面（3×3 で 1〜3.6）を、``cdt`` は一様 -1 を、例外なく返していた。
 
     HALCON の参照 op は ``int4`` の近似を返す。この op は厳密な float64 距離を返し、
     互換 API ではない。
 
     Raises:
-        FsValueError: NaN / inf を含む画像。
+        FsValueError: NaN / inf を含む画像。距離を測る相手（背景、または前景）が画像に無い。
     """
     _require_finite_image(v, "dist_transform_abs")
     mask = _bin(v) if b < 0.5 else ~_bin(v)
+    if mask.size and mask.all():
+        target = "background" if b < 0.5 else "foreground"
+        raise FsValueError(
+            "dist_transform_abs: the image has no %s pixel, so the distance to the nearest one is undefined "
+            "(infinite); pass a region with at least one %s pixel" % (target, target))
     if a < (1.0 / 3.0):
         return ndimage.distance_transform_edt(mask).astype(np.float64)
     metric = "taxicab" if a < (2.0 / 3.0) else "chessboard"

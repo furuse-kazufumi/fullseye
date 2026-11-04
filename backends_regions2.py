@@ -282,7 +282,7 @@ def r2_inner_circle(v, a, b):
 
     領域の最大内接円をマスクとして描く。入力を ``> 0.5`` で前景マスクに直し、
     ``scipy.ndimage.distance_transform_edt`` で各前景画素から最近傍の背景画素
-    までの距離を取り、その最大値 ``r0`` を与える画素を中心 ``(cy, cx)`` とする
+    (画像の外も背景とみなす)までの距離を取り、その最大値 ``r0`` を与える画素を中心 ``(cy, cx)`` とする
     (最大値が複数あれば行優先で最初の画素)。描く半径は
     ``r = r0 * (0.6 + 0.8*a)`` で、``a=0`` で 0.6 倍、``a=0.5`` で ``r0`` そのまま、
     ``a=1`` で 1.4 倍(``a`` は [0,1] に clip、非有限なら 0.5)。``b`` は未使用。
@@ -302,7 +302,10 @@ def r2_inner_circle(v, a, b):
     out = np.zeros(m.shape, np.float64)
     if not m.any():
         return out
-    dt = ndimage.distance_transform_edt(m)
+    # ★内接円は領域そのものの量: 画像の外は背景(余白 1 を付けて測り、切り戻す)。2026-11-05(敵対的検証
+    # 第 2 巡 P4)までは画像の縁を背景とみなさず、縁に接する領域で円が画像の外へはみ出し、全面が前景の
+    # 画像では (-1, 0) に背景があるかのような斜面の最大 = 画像全体を覆う円になっていた。
+    dt = ndimage.distance_transform_edt(np.pad(m, 1))[1:-1, 1:-1]
     cy, cx = np.unravel_index(int(np.argmax(dt)), dt.shape)
     r0 = float(dt[cy, cx])                                # genuine inradius
     r = r0 * (0.6 + 0.8 * _knob(a))                       # a in [0,1] -> [0.6,1.4]*inradius

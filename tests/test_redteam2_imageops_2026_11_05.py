@@ -186,3 +186,60 @@ def test_p3_close_edges_length_counts_diagonal_lines_as_one_piece():
         v[10 + i, 10 + i] = 1.0
     y = ap(v, "hx_close_edges_length", 0.5, 0.5)
     assert int((y > 0.5).sum()) >= 20
+
+
+# --------------------------------------------------------------------------------------------- #
+# P4 / P4b: 距離を測る相手が画像に無い入力、領域の量は画像の縁に依らない
+# --------------------------------------------------------------------------------------------- #
+@pytest.mark.parametrize("name,x", [("dist_transform", np.ones((6, 8))), ("distance_transform", np.ones((6, 8))),
+                                    ("closest_point_transform", np.zeros((6, 8)))])
+def test_p4_normalised_distance_with_nothing_to_reach_is_uniform_one(name, x):
+    """相手が無い = どこも無限に遠い -> 正規化した答えは一様 1.0(xsp_chamfer_dist / cv_dist と同じ)。"""
+    y = ap(x, name, 0.0, 0.0)
+    assert np.array_equal(y, np.ones_like(x))
+    assert np.array_equal(y, ap(x[:, ::-1], name, 0.0, 0.0)[:, ::-1])
+
+
+@pytest.mark.parametrize("a", [0.0, 0.5, 1.0])
+def test_p4_absolute_distance_with_nothing_to_reach_is_refused(a):
+    from fslib import FsValueError
+    import ops
+    with pytest.raises(FsValueError, match="undefined"):
+        ops._dist_transform_abs(np.ones((6, 8)), a, 0.0)
+    with pytest.raises(FsValueError, match="undefined"):
+        ops._dist_transform_abs(np.zeros((6, 8)), a, 1.0)
+    # 相手が 1 画素でもあれば距離は有限で、左右の反転と可換
+    x = np.ones((6, 8))
+    x[2, 3] = 0
+    y = ops._dist_transform_abs(x, a, 0.0)
+    assert np.isfinite(y).all() and y[2, 3] == 0.0
+
+
+def test_p4b_the_documented_example_values_hold():
+    import ops
+    for k, centre in [(3, 2.0), (9, 5.0)]:
+        sq = np.pad(np.ones((k, k)), 1)
+        assert ops._dist_transform_abs(sq, 0.0, 0.0)[1 + k // 2, 1 + k // 2] == pytest.approx(centre)
+    doc = ops._dist_transform_abs.__doc__
+    assert "np.pad(np.ones((3, 3)), 1)" in doc
+
+
+def test_p4_region_thickness_does_not_depend_on_the_image_border():
+    """太さは領域そのものの量: 画像を広げても同じ。全面の 60x80 は 60、縁に接する 30x70 は 30。"""
+    full = np.ones((60, 80))
+    assert ap(full, "get_region_thickness") == pytest.approx(ap(np.pad(full, 10), "get_region_thickness"))
+    assert ap(full, "get_region_thickness") == pytest.approx(60.0, abs=1.0)
+    r = np.zeros((50, 80))
+    r[0:30, 10:80] = 1
+    assert ap(r, "get_region_thickness") == pytest.approx(ap(np.pad(r, 10), "get_region_thickness"))
+    assert ap(r, "get_region_thickness") == pytest.approx(30.0, abs=1.0)
+
+
+def test_p4_inner_circle_stays_inside_a_region_that_fills_the_image():
+    full = np.ones((20, 30))
+    y = ap(full, "r2_inner_circle", 0.5, 0.5) > 0.5
+    ref = ap(np.pad(full, 12), "r2_inner_circle", 0.5, 0.5)[12:-12, 12:-12] > 0.5
+    assert np.array_equal(y, ref)
+    assert int(y.sum()) < 0.6 * full.size                    # 半径 ~10 の円(以前は画像全体 600 画素)
+    ys, xs = np.nonzero(y)
+    assert abs(ys.mean() - 9.5) <= 1.0 and abs(xs.mean() - 14.5) <= 6.0

@@ -1082,6 +1082,10 @@ def _sh_region_trans(p):
             big, _, n = _largest_label(m)
             return big.astype(np.float64) if big is not None else np.zeros_like(m, np.float64)
         if kind == "dist_transform":
+            # ★背景が無いと最も近い背景は画像に無い -> どこも最遠 = 正規化 1.0(xsp_chamfer_dist と同じ)。
+            # 2026-11-05(敵対的検証 第 2 巡 P4)までは edt が (-1, 0) に背景があるかのような斜面を返した。
+            if m.size and m.all():
+                return np.ones(m.shape, np.float64)
             return _norm(ndimage.distance_transform_edt(m))
         if kind == "shape_bbox":
             ys, xs = np.where(m)
@@ -1096,6 +1100,9 @@ def _sh_region_trans(p):
                 sk = sk & ~(sk & (nb <= 1))
             return sk.astype(np.float64)
         if kind == "closest_point_transform":        # distance to the nearest region point (EDT of complement)
+            # ★領域が空なら最も近い領域の画素は無い -> どこも最遠 = 正規化 1.0(2026-11-05 P4、以前は斜面)
+            if m.size and not m.any():
+                return np.ones(m.shape, np.float64)
             return _norm(ndimage.distance_transform_edt(~m))
         if kind == "junctions_skeleton":             # skeleton branch points (>=3 neighbours)
             sk = _skeletonize(m)
@@ -1199,7 +1206,10 @@ def _sh_region_feat(p):
         if metric == "thickness":                    # 2x max inscribed distance (get_region_thickness)
             # ★画素で返す(2026-09-26)。頭打ちも外れる —— 厚みが画像の長辺の半分を
             # 超える領域は、それまで全部 1.0 だった。
-            return np.float64(2 * float(ndimage.distance_transform_edt(m).max()))
+            # ★太さは**領域そのもの**の量: 画像の外は背景(余白 1 を付けて測る)。2026-11-05(敵対的検証
+            # 第 2 巡 P4)までは画像の縁を背景とみなさず、上の縁に接する 30x70 の矩形が 60、全面の
+            # 60x80 が 198.4(画像の外の (-1, 0) に背景があるかのような斜面の最大)になっていた。
+            return np.float64(2 * float(ndimage.distance_transform_edt(np.pad(m, 1)).max()))
         if metric == "perimeter":
             # ★画素で返す(2026-09-26)。HALCON の `contlength` は輪郭長(画素)。
             return np.float64(per)
@@ -1980,7 +1990,7 @@ SEED: list[tuple] = [
     ("select_shape", "region", REG, REG, "region_trans", {"kind": "remove_small"},
      '面積が閾値(``16+a*200`` 画素)未満の連結成分(前景は 8 連結)を除去する(小さなノイズ状\n領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of\nshape features.）は面積・円形度・凸性など任意の形状特徴で選別できる\n汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。\n\n``a`` が面積の下限しきい値を振る。``b`` は未使用。'),
     ("distance_transform", "region", REG, IMG, "region_trans", {"kind": "dist_transform"},
-     'ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で\n正規化した画像。各前景画素について最も近い背景画素までの距離を表す ――\n値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく\n``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the\ndistance transformation of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
+     'ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で\n正規化した画像。各前景画素について最も近い背景画素までの距離を表す ――\n(背景が無ければ一様 1.0 = どこも最遠)\n値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく\n``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the\ndistance transformation of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
     # ---- Regions: features -----------------------------------------------
     # ★2026-09-02: 旧仕様は out_sort=feature / metric="area" で、実体は
     #   `np.mean(mask)` = **画像に占める面積比**。HALCON の `area_center` は
@@ -2146,11 +2156,11 @@ SEED: list[tuple] = [
     ("zero_crossing_sub_pix", "contour", IMG, CON, "xld", {"kind": "zero_crossing_sub_pix"},
      'LoG(ガウス平滑化込みラプラシアン、シグマ ``0.5+2*a``)のゼロ交差を\n``find_contours`` でサブピクセル精度の輪郭として抽出する。領域版の\n``zero_crossing``(画素解像度)に対するサブピクセル精度版。HALCON の\n``zero_crossing_sub_pix``（Extract zero crossings from an image with\nsubpixel accuracy.）に相当。\n\n``a`` がガウス平滑化のシグマを振る。``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("closest_point_transform", "region", REG, IMG, "region_trans", {"kind": "closest_point_transform"},
-     '領域の**補集合**に対するユークリッド距離変換を正規化して返す ―― 各\n画素から最も近い領域(前景)画素までの距離を表す、``distance_transform``\nとは前景/背景が逆の距離場。出力は ``image`` 型。HALCON の\n``closest_point_transform``（Compute the closest-point transformation of\na region.）に相当。\n\n``a``, ``b`` は未使用。'),
+     '領域の**補集合**に対するユークリッド距離変換を正規化して返す ―― 各\n画素から最も近い領域(前景)画素までの距離を表す、``distance_transform``\nとは前景/背景が逆の距離場。出力は ``image`` 型。領域が空なら一様 1.0\n(最も近い領域の画素が無い = どこも最遠)。HALCON の\n``closest_point_transform``（Compute the closest-point transformation of\na region.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("junctions_skeleton", "region", REG, REG, "region_trans", {"kind": "junctions_skeleton"},
      '骨格化した領域のうち、3x3 近傍に 3 つ以上の骨格画素を持つ画素(分岐点・\n交差点)だけを残す。骨格の端点(``pruning`` が削る対象)ではなく、枝分かれ\nする結節点を検出する。HALCON の ``junctions_skeleton``（Find junctions and\nend points in a skeleton.）に相当(HALCON は端点も同時に返すが、ここでは\n分岐点のみを検出する近似)。\n\n``a``, ``b`` は未使用。'),
     ("get_region_thickness", "features", REG, FEA, "region_feat", {"metric": "thickness"},
-     '領域の太さ [px] の近似値 ``2 × 最大内接円半径``(``distance_transform_edt`` の最大値の 2 倍)。\n\nHALCON の ``get_region_thickness``（Access the thickness of a region along the main axis.）が定義する\n「主軸に沿った太さのプロファイル」とは異なり、方向を問わないグローバルな最大内接半径\nだけを見る単純化(主軸方向の情報は失われる)。\n\n★2026-09-26 まで画像の最大辺長で割っていて、厚みが画像の長辺の半分を超える領域は\n全部 1.0 に頭打ちしていた(30x70 の矩形で 0.1500、いまは 30.0)。\n``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``, ``b`` は未使用。'),
+     '領域の太さ [px] の近似値 ``2 × 最大内接円半径``(``distance_transform_edt`` の最大値の 2 倍)。\n画像の外は背景とみなす(縁に接する領域も、画像を広げたときと同じ太さ。全面の 60x80 は 60)。\n\nHALCON の ``get_region_thickness``（Access the thickness of a region along the main axis.）が定義する\n「主軸に沿った太さのプロファイル」とは異なり、方向を問わないグローバルな最大内接半径\nだけを見る単純化(主軸方向の情報は失われる)。\n\n★2026-09-26 まで画像の最大辺長で割っていて、厚みが画像の長辺の半分を超える領域は\n全部 1.0 に頭打ちしていた(30x70 の矩形で 0.1500、いまは 30.0)。\n``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``, ``b`` は未使用。'),
 ]
 
 
