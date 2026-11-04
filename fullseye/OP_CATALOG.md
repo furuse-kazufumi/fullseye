@@ -3497,7 +3497,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `spc_mt_unit_space` `matrix → table` GPU: なし — Build an MT-method unit space from known-good observations. · 例: `poc_mt_hidden_fault`, `poc_spc`
 
 #### spc / multivariate(1)
-- `spc_hotelling_t2` `matrix → table` GPU: なし — Multivariate SPC by Hotelling's T² with an F-distributed control limit. · 例: `poc_spc`
+- `spc_hotelling_t2` `matrix → table` GPU: なし — Multivariate SPC by Hotelling's T² with the control limit of the phase being charted. · 例: `poc_spc`
 
 #### spc / pod(7)
 - `pod_ahat_fit` `table → table` GPU: なし — â vs a の回帰を、左右の打ち切りつき最尤法で当てる(``table``)。 · 例: `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
