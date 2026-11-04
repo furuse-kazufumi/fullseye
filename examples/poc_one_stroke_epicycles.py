@@ -62,6 +62,7 @@ import numpy as np
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 import fullseye as fs  # noqa: E402
 import examplefig as figs  # noqa: E402
+import realdata  # noqa: E402
 
 L = fs.ledger
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -270,6 +271,7 @@ def main(argv=None):
     src_label = "Hokusai, Great Wave (Met CC0, DP130155)" if default_photo else os.path.basename(photo_path)
     if default_photo:
         print("   出典 葛飾北斎「神奈川沖浪裏」1830-32 年頃 / メトロポリタン美術館 Open Access (CC0、object 45434)")
+        realdata.mark_read("hokusai-great-wave-met")
 
     # ------------------------------------------------------------------ #
     # 1 章 濃淡を点の密度に写す                                            #

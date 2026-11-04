@@ -18,7 +18,10 @@ the PoC series found, what changed, and which gate now stops each one coming bac
 **Real RGB-D 6-DoF PoC:** [`poc_real_tless_6dof`](examples/poc_real_tless_6dof.py)
 runs the depth-to-point-cloud, normal, table-removal, clustering, PPF and ICP chain on
 BOP T-LESS (CC BY 4.0), scores it with symmetry-aware MSSD/MSPD, and compares it with
-the public Drost and Vidal baselines. Dataset citation: Hodaň et al., T-LESS, WACV 2017,
+the public Drost and Vidal baselines. The dataset is not in the repository: on a machine
+without it (`FULLSEYE_TLESS_DATA`, as in CI) the script prints the recorded 2026-11-01 run
+instead of re-measuring, so CI checks the record, not the data, and the maturity ledger
+does not count it as real-data validation. Dataset citation: Hodaň et al., T-LESS, WACV 2017,
 [doi:10.1109/WACV.2017.8](https://doi.org/10.1109/WACV.2017.8).
 
 > **Real-hardware and real-data results wanted.** Fullseye is developed without physical
@@ -61,7 +64,7 @@ on plain numpy arrays, so other projects can drop it into a vision pipeline dire
 
 > **New here? Read the full introduction.** A single long-form article walks through
 > the whole system — the three layers, the Studio IDE, the honest-evaluation
-> discipline, and 151 worked exhibits, all illustrated with real operator output.
+> discipline, and a museum of worked exhibits, all illustrated with real operator output.
 > **[English](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md)** ·
 > **[日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md)**
 
@@ -325,7 +328,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 |---|---|
 | **Read the whole story end to end (long-form)** | [`docs/articles/fullseye_overview_qiita_en.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md) |
 | See what the operators produce (result gallery) | `docs/GALLERY.md` |
-| Browse the paper exhibits (151 op demos, en/ja) | `docs/articles/exhibits/` |
+| Browse the paper exhibits (op demos and the PoC museum, en/ja; accession numbers in `exhibit_numbers.json`) | `docs/articles/exhibits/` |
 | Look up any of the 3,810 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
 | Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |

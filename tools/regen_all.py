@@ -402,6 +402,11 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/record_real_data_runs.py": ("能力ノートが名指す data: real の例を門と同じ条件(手元のキャッシュ無し)で走らせ、"
+                                       "実データを読んだ印(realdata.mark_read)を docs/real_data_runs.json に残す実測器。"
+                                       "例 1 本に分単位かかるので手で回して commit する。gen_maturity(鎖の段)は記録を読むだけ。"
+                                       "記録と実走の食い違いは tests/test_poc_scripts_run.py が全 PoC を走らせるたびに照合する"
+                                       "(敵対的検証 2026-11-05 第 2 巡 D6)。"),
     "tools/bench_device_ops.py": ("device 引数を持つ op(torch の GPU 経路)の実測器。結果は out/device_ops(追跡外)。GPU が要り数字は機械で変わる。(GPU 便、2026-11-04 の統合で分類)"),
     "tools/bench_gpu_optics.py": ("GPU 第 4 便の実測器(raytrace の CPU 基準と lens_gpu の一括経路の時間、--out の JSON)。"
                                   "数字は機械と負荷で変わり、--batch cuda は GPU と gpu_in_use.lock の手順が要るので手で回す。"

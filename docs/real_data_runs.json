@@ -1,0 +1,123 @@
+{
+ "examples": {
+  "poc_code_matching_breakdown": {
+   "datasets_read": [
+    "skimage.data:astronaut",
+    "skimage.data:camera",
+    "skimage.data:chelsea",
+    "skimage.data:clock",
+    "skimage.data:coffee",
+    "skimage.data:gravel"
+   ],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_dense_bubble_count": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_flybrain_pointcloud": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_geodetic_benchmarks_real": {
+   "datasets_read": [
+    "ngs-geodetic-benchmarks"
+   ],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_good_sample_variation_model": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_grating_interferometry": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_gw_detector_pseudo_simulation": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_hyperspectral_foreign_matter": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_industrial_oct": {
+   "datasets_read": [
+    "liverpool-oct-paint-sdoct"
+   ],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_material_optical_library": {
+   "datasets_read": [
+    "refractiveindex-info-green2008-si",
+    "refractiveindex-info-metals-nk"
+   ],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_one_stroke_epicycles": {
+   "datasets_read": [
+    "hokusai-great-wave-met"
+   ],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_patch_anomaly": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_real_coin_metrology": {
+   "datasets_read": [
+    "skimage.data:coins"
+   ],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_real_tless_6dof": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_sem_wafer_defect_edge_bias": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_si_wafer_pl_defect_visibility": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_tem_ctf_thon_rings": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_thin_film_reflectometry": {
+   "datasets_read": [
+    "sanchez-arriaga2023-sio2-standards",
+    "schwarz2024-sio2-micrograph",
+    "schwarz2024-sio2-reflectance"
+   ],
+   "exit": 0,
+   "printed_pass": true
+  },
+  "poc_weed_rice_ratio": {
+   "datasets_read": [],
+   "exit": 0,
+   "printed_pass": true
+  }
+ },
+ "generated_by": "tools/record_real_data_runs.py",
+ "how": "each example is run like tests/test_poc_scripts_run.py (no PYTHONPATH, no FULLSEYE_* variables, CI=true as GitHub Actions sets it) with HOME / USERPROFILE / FULLSEYE_DATA_DIR pointing at empty directories, as on a CI runner; datasets_read = the realdata.mark_read() lines it wrote"
+}

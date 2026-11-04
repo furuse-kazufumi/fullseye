@@ -69,6 +69,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402  公開経路 fs.ledger.<名前>
+import realdata  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
                          "reduced" if os.environ.get("CI") else "full") == "reduced"
@@ -565,6 +566,7 @@ def stage8_real():
         ms = np.stack([_gray_down(os.path.join(root, "Test", "Label", r[4].strip()), DAGM_DOWN, True) if r[1] == "1"
                        else np.zeros(train.shape[1:], bool) for r in sel])
         labs = np.array([r[1] == "1" for r in sel])
+        realdata.mark_read("dagm2007-class1")
         print("   DAGM 2007 Class1(確率的なテクスチャ、%s px): 良品 %d 枚で学び、試験 %d 枚(不良 %d・良品 %d、楕円の弱い注釈)"
               % (train.shape[1:], len(train), len(tests), labs.sum(), (~labs).sum()))
         res = {}
@@ -617,6 +619,7 @@ def stage8_real():
             ms = np.stack([_gray_down(os.path.join(VISA, r["mask"]), down, True) if r["mask"]
                            else np.zeros(train.shape[1:], bool) for r in te])
             labs = np.array([r["label"] == "anomaly" for r in te])
+            realdata.mark_read("visa")
             print("   VisA %s(1/%d、%s px): 良品 %d 枚で学び、試験 %d 枚(不良 %d・良品 %d)"
                   % (obj, down, train.shape[1:], len(train), len(tests), labs.sum(), (~labs).sum()))
             res = {}

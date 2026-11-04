@@ -182,6 +182,30 @@ class RealDataError(RuntimeError):
     """
 
 
+#: 立っていると、:func:`mark_read` が「実データを読んだ」印を 1 行ずつこのファイルへ足す。
+#: ``tools/record_real_data_runs.py`` が門と同じ条件(CI と同じく手元のキャッシュ無し)で
+#: 例を走らせるときに立て、``docs/real_data_runs.json`` に残す。成熟度台帳の
+#: ``validated-public-real-data`` はその記録を見る(``tools/gen_maturity.py``)。
+REAL_DATA_LOG_ENV = "FULLSEYE_REAL_DATA_LOG"
+
+
+def mark_read(dataset: str) -> None:
+    """実データ ``dataset`` を**実際に読んだ**ことを記録する(読み終えた直後に呼ぶ)。
+
+    ★2026-11-05(敵対的検証 第 2 巡 D6): 成熟度台帳は「例が ``data: real`` で、門が走らせる」だけで
+    ``validated-public-real-data`` を出していた。実データが CI に無い例は、実データの章を飛ばして
+    記録値を印字し PASS する —— 2026-11-05 に測ると 19 能力のうち 11 がそうだった。読んだかどうかは例の中でしか
+    分からないので、読んだ所で印を残す。環境変数が無いときは何もしない(利用者の出力を汚さない)。
+    """
+    if not isinstance(dataset, str) or not dataset.strip() or "\n" in dataset:
+        raise ValueError("mark_read: dataset は 1 行の空でない名前: %r" % (dataset,))
+    path = os.environ.get(REAL_DATA_LOG_ENV, "").strip()
+    if not path:
+        return
+    with open(path, "a", encoding="utf-8") as fh:
+        fh.write(dataset.strip() + "\n")
+
+
 def _data():
     try:
         import skimage.data as _d
@@ -200,7 +224,7 @@ def sample_photo_raw(name: str):
     fn = SAMPLE_PHOTOS[name][0]
     d = _data()
     try:
-        return getattr(d, fn)()
+        out = getattr(d, fn)()
     except Exception as exc:
         # ★skimage は同梱の部分集合しか持っておらず、残りは実行時に
         #   pooch で取りに行く。取りに行けないものは**この repo では使わない**
@@ -208,6 +232,8 @@ def sample_photo_raw(name: str):
         #   分からなくなる)。
         raise RealDataError("実データ %r を読めなかった: %s: %s — 同梱されていない (pooch のダウンロードが要る) "
                             "可能性が高い" % (name, type(exc).__name__, exc)) from exc
+    mark_read("skimage.data:%s" % name)
+    return out
 
 
 def sample_photo(name: str) -> np.ndarray:

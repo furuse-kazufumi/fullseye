@@ -66,6 +66,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 from match3d import render_point_depth                            # noqa: E402
+import realdata  # noqa: E402
 
 
 DATA_ENV = "FULLSEYE_TLESS_DATA"
@@ -461,6 +462,7 @@ def run_real(root: Path, config: MatchConfig = DEFAULT_CONFIG, *, diagnostics: b
     model_infos = _json(root / "models_reconst" / "models_info.json")
     scenes = [prepare_scene(load_scene(root, *spec), config)
               for spec in first_bop19_scene_specs(root)]
+    realdata.mark_read("bop-tless")
     rows = []
     seed = 0
     for scene in scenes:

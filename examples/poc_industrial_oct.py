@@ -51,6 +51,7 @@ import numpy as np
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 import examplefig as figs  # noqa: E402
 import octscan as O  # noqa: E402
+import realdata  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
                          "reduced" if os.environ.get("CI") else "full") == "reduced"
@@ -197,6 +198,7 @@ def real_sample(data, key, n_lines=None):
 def chapter_real():
     print("\n1. 実測: 自動車塗装の見本の生スペクトル(Liverpool Research Data Catalogue 126、CC BY 4.0)")
     data = load_real()
+    realdata.mark_read("liverpool-oct-paint-sdoct")
     wl = data["wavelength_nm"]
     dwl = np.diff(wl)
     print("   分光器: %d 画素、%.2f〜%.2f nm、画素の幅 %.4f〜%.4f nm(等間隔でない較正)" % (
