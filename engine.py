@@ -44,13 +44,66 @@ def _input_hash(image):
     served the first frame's result for the second. An object array has no byte content to key
     on and is refused."""
     import hashlib
-    arr = np.ascontiguousarray(image)
-    if arr.dtype.hasobject:
-        raise TypeError("run_cached: cannot key the stage cache on an object array (dtype %s)" % arr.dtype)
     h = hashlib.sha256()
-    h.update(str((arr.shape, arr.dtype.str)).encode())
-    h.update(memoryview(arr).cast("B") if arr.size else b"")
+    _hash_into(h, image, 0)
     return h.hexdigest()
+
+
+#: :func:`_hash_into` が降りる入れ子の深さの上限(XLD は 2 段: dict → list → 配列)。
+_HASH_MAX_DEPTH = 32
+
+
+def _hash_into(h, v, depth):
+    """*v* の内容を正準な形で *h* に流し込む(型の名・形・dtype・全 byte、dict は鍵の順に依らない)。
+
+    ★2026-11-05(敵対的検証 第 2 巡 T8): 以前は ``np.ascontiguousarray(image)`` だけで鍵を作り、XLD 輪郭
+    (``{"shape": (H, W), "cs": [(N, 2) ...]}``)は object 配列になって **contour 始まりの鎖が全部 TypeError**
+    だった(contour を取る registry op は 66 本、``run`` は通る)。dict / list / tuple / 数値・文字列の
+    スカラーを降りて正準化する。object 配列・未知の型は従来どおり TypeError(鍵にできる内容が無い)。"""
+    if depth > _HASH_MAX_DEPTH:
+        raise TypeError("run_cached: input nests deeper than %d levels" % _HASH_MAX_DEPTH)
+    if isinstance(v, np.ndarray):
+        arr = np.ascontiguousarray(v)
+        if arr.dtype.hasobject:
+            raise TypeError("run_cached: cannot key the stage cache on an object array (dtype %s)" % arr.dtype)
+        h.update(b"A" + str((arr.shape, arr.dtype.str)).encode())
+        h.update(memoryview(arr).cast("B") if arr.size else b"")
+        return
+    if isinstance(v, dict):
+        try:
+            keys = sorted(v, key=lambda k: (type(k).__name__, repr(k)))
+        except TypeError:
+            raise TypeError("run_cached: cannot key the stage cache on this dict") from None
+        h.update(b"D%d:" % len(keys))
+        for k in keys:
+            _hash_into(h, k, depth + 1)
+            _hash_into(h, v[k], depth + 1)
+        return
+    if isinstance(v, (list, tuple)):
+        h.update((b"L" if isinstance(v, list) else b"T") + b"%d:" % len(v))
+        for x in v:
+            _hash_into(h, x, depth + 1)
+        return
+    if v is None or isinstance(v, (bool, int, float, complex, str, bytes, np.generic)):
+        h.update(b"S" + ("%s|%r" % (type(v).__name__, v)).encode("utf-8", "backslashreplace"))
+        return
+    if hasattr(v, "__array__") and not isinstance(v, (dict, list, tuple)):
+        _hash_into(h, np.asarray(v), depth + 1)
+        return
+    raise TypeError("run_cached: cannot key the stage cache on a %s" % type(v).__name__)
+
+
+def _detached(v):
+    """呼び手に返す値をキャッシュから切り離す(配列は copy、dict / list は deepcopy)。
+
+    ★2026-11-05(敵対的検証 第 2 巡 T1): run_cached は**キャッシュの中の配列そのもの**を返しており、
+    利用者が結果を書き換える(``out[:] = 0``)と次の呼び出しがその書き換えた値を返した(同じ object)。"""
+    import copy
+    if isinstance(v, np.ndarray):
+        return v.copy()
+    if isinstance(v, (dict, list, tuple)):
+        return copy.deepcopy(v)
+    return v
 
 
 def pipeline_states(stages, image, coerce=True):
@@ -462,7 +515,7 @@ class FullseyeEngine:
                 prev = val                            # degraded: recompute (and re-record) next time
             else:
                 prev = cache.put(prefix, val, protect=[prefix])
-        return prev
+        return _detached(prev)        # T1: never hand out the cached object itself
 
     def stepwise_states(self, image, coerce: bool = True) -> list:
         """Per-stage ``ran`` / ``valid`` / ``reasons`` for this pipeline on *image*.

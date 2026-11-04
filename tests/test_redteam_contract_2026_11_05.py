@@ -441,3 +441,30 @@ def test_graph_knob_type_rule_and_to_python_refuses_an_invalid_graph():
     exec(compile(g.to_python(), "g.py", "exec"), ns)
     assert np.array_equal(ns["g"](**{"$in": X})["blur"], g.run(X, terminal="blur"))
     assert np.array_equal(g.run(X, terminal="blur"), fs.apply(X, "gaussian", 0.123456789))
+
+
+# --------------------------------------------------------------------------- #
+# round 2 (state): T1 / T8 run_cached, T3 / T4 MCP system params, T5 fssystem  #
+# --------------------------------------------------------------------------- #
+def test_t1_run_cached_hands_out_a_copy():
+    cache = StageCache()
+    eng = fs.FullseyeEngine(["gaussian", "invert"])
+    ref = eng.run(X)
+    out = eng.run_cached(X, cache)
+    out[:] = 0.0                                          # the caller reuses the buffer
+    again = fs.FullseyeEngine(["gaussian", "invert"]).run_cached(X, cache)
+    assert again is not out and np.array_equal(again, ref)
+
+
+def test_t8_run_cached_accepts_contour_inputs_and_keys_them_by_content():
+    import op_probe
+    c = op_probe.sample_input("contour")
+    eng = fs.FullseyeEngine([("length_xld", 0.5, 0.5)])
+    cache = StageCache()
+    assert eng.run_cached(c, cache) == eng.run(c)
+    shifted = {"shape": c["shape"], "cs": [np.asarray(p, np.float64) * 2.0 for p in c["cs"]]}
+    assert eng.run_cached(shifted, cache) == eng.run(shifted) != eng.run(c)
+    reordered = {"cs": c["cs"], "shape": c["shape"]}
+    assert engine._input_hash(reordered) == engine._input_hash(c)
+    with pytest.raises(TypeError):
+        engine._input_hash(np.array([object()], dtype=object))
