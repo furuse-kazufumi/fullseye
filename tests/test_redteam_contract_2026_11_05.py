@@ -421,3 +421,23 @@ def test_c1_cli_apply_and_pipeline_check_knobs_and_sort_chain(monkeypatch, tmp_p
     assert _cli(monkeypatch, ["pipeline", src, out, "--ops", "gaussian,invert", "--a", "0.3"]) == 0
     ref = np.clip(fs.run_pipeline(img / 255.0, ["gaussian", "invert"], a=0.3) * 255, 0, 255).astype(np.uint8)
     assert np.array_equal(cv2.imread(out, cv2.IMREAD_GRAYSCALE), ref)
+
+
+# --------------------------------------------------------------------------- #
+# C4 / C5 siblings: FullseyeGraph                                               #
+# --------------------------------------------------------------------------- #
+def test_graph_knob_type_rule_and_to_python_refuses_an_invalid_graph():
+    import graphengine as G
+    with pytest.raises(TypeError):
+        G.FullseyeGraph.from_dict({"nodes": [{"id": "n", "op": "gaussian", "inputs": ["$in"], "a": "0.3"}]})
+    bad = ({"nodes": [{"id": "n", "op": "no_such_op_xyz", "inputs": ["$in"]}]},
+           {"nodes": [{"id": "n", "op": "gaussian", "inputs": ["$in"], "a": float("nan")}]})
+    assert len(bad) == 2
+    for d in bad:
+        with pytest.raises(ValueError, match="refusing"):
+            G.FullseyeGraph.from_dict(d).to_python()
+    g = G.FullseyeGraph("g").add("blur", "gaussian", ["$in"], a=0.123456789)
+    ns: dict = {}
+    exec(compile(g.to_python(), "g.py", "exec"), ns)
+    assert np.array_equal(ns["g"](**{"$in": X})["blur"], g.run(X, terminal="blur"))
+    assert np.array_equal(g.run(X, terminal="blur"), fs.apply(X, "gaussian", 0.123456789))
