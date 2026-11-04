@@ -839,14 +839,19 @@ def _sh_geom(p):
             return np.clip(ndimage.rotate(x, -45 + 90 * a, reshape=False, mode="reflect"), 0, 1)
         if kind == "zoom":                            # 等方ズーム(zoom_region など)
             s = 0.7 + 0.6 * a
-            off = (x.shape[0] * (1 - 1 / s) / 2, x.shape[1] * (1 - 1 / s) / 2)
+            # ★中心は ((H-1)/2, (W-1)/2)(画素中心の規約: 画素 i の中心が座標 i なので、画像の中心は ((H-1)/2, (W-1)/2))。2026-11-05(敵対的検証 第 2 巡 P8)
+            #   までは H/2 で、中心の点が 1.3 倍で 0.15 px ずれ、180 度回転と可換でなかった。
+            c = (np.array(x.shape[:2], np.float64) - 1.0) / 2.0
+            off = tuple(c * (1 - 1 / s))
             return np.clip(ndimage.affine_transform(x, np.diag([1 / s, 1 / s]),
                                                     offset=off, mode="reflect"), 0, 1)
         if kind == "zoom_factor":                     # HALCON zoom_image_factor
             # ScaleHeight = a, ScaleWidth = b の **2 つの倍率**(HALCON と同じ)。
             # キャンバスは保つ(内容だけを中心基準で拡大縮小)。
             sr, sc = 0.7 + 0.6 * a, 0.7 + 0.6 * b
-            off = (x.shape[0] * (1 - 1 / sr) / 2, x.shape[1] * (1 - 1 / sc) / 2)
+            # ★中心は ((H-1)/2, (W-1)/2)(2026-11-05 P8 まで H/2)
+            cy, cx = (x.shape[0] - 1) / 2.0, (x.shape[1] - 1) / 2.0
+            off = (cy * (1 - 1 / sr), cx * (1 - 1 / sc))
             return np.clip(ndimage.affine_transform(x, np.diag([1 / sr, 1 / sc]),
                                                     offset=off, mode="reflect"), 0, 1)
         if kind == "zoom_size":                       # HALCON zoom_image_size
@@ -865,7 +870,12 @@ def _sh_geom(p):
             H, W = x.shape[:2]
             ht = max(1, int(round(H * (0.5 + a))))
             wt = max(1, int(round(W * (0.5 + b))))
+            # ★画素中心合わせ(cv2.resize / skimage.transform.resize と同じ): 出力の画素 o の中心は入力の
+            #   (o + 0.5)·H/ht - 0.5。2026-11-05(敵対的検証 第 2 巡 P9)までは角合わせ(o·H/ht)で、
+            #   1/2 縮小の像が入力の 0.5 px 上にずれ、縦の傾斜の平均が 0.4921(真値 0.5)になっていた
+            #   (f2_gauss_pyramid は直済の兄弟)。
             small = ndimage.affine_transform(x, np.diag([H / ht, W / wt]),
+                                             offset=(0.5 * H / ht - 0.5, 0.5 * W / wt - 0.5),
                                              output_shape=(ht, wt), order=1, mode="reflect")
             out = np.zeros((H, W), np.float64)
             hh, ww = min(H, ht), min(W, wt)
@@ -875,7 +885,7 @@ def _sh_geom(p):
             ang = np.deg2rad(-20 + 40 * a)
             M = np.array([[np.cos(ang), -np.sin(ang) + (b - 0.5) * 0.4],
                           [np.sin(ang), np.cos(ang)]])
-            c = np.array(x.shape) / 2
+            c = (np.array(x.shape[:2], np.float64) - 1.0) / 2.0     # 画素中心の規約(2026-11-05 P8 まで shape/2)
             return np.clip(ndimage.affine_transform(x, M, offset=c - M @ c, mode="reflect"), 0, 1)
         if kind == "polar":
             _require_dep(_HAS_CV, "cv2", "cv2.warpPolar (bilinear, fixed-point)")
@@ -893,8 +903,12 @@ def _sh_geom(p):
             # array against 0 in `dst`). Reading `dst` therefore produced an
             # all-black image for every input — see the inverse branch below.
             dst = np.zeros((h, w), np.float32)
-            out = cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2),
-                                min(h, w) / 2, cv2.WARP_POLAR_LINEAR, dst)
+            # 中心は ((w-1)/2, (h-1)/2)(cv2 も画素中心が整数座標)。2026-11-05(敵対的検証 第 2 巡 P8 の兄弟)
+            # までは (w/2, h/2) で、画像の中心について回転対称な像が角度方向に揺れていた。
+            # 補間は双線形(``WARP_POLAR_LINEAR`` は 0 なので、補間の旗を足さないと INTER_NEAREST = 0 になる。
+            # 依存の説明(上の _require_dep)と HALCON の polar_trans_image は双線形。2026-11-05 P8 の兄弟)。
+            out = cv2.warpPolar(x.astype(np.float32), (w, h), ((w - 1) / 2, (h - 1) / 2),
+                                min(h, w) / 2, cv2.WARP_POLAR_LINEAR + cv2.INTER_LINEAR, dst)
             return np.clip(np.asarray(out, np.float64), 0, 1)
         if kind == "polar_inv":                      # inverse polar->Cartesian (polar_trans_image_inv)
             _require_dep(_HAS_CV, "cv2", "cv2.warpPolar + WARP_INVERSE_MAP (bilinear, fixed-point)")
@@ -911,7 +925,7 @@ def _sh_geom(p):
             radius = min(h, w) / 2
             dst = np.zeros((h, w), np.float32)
             out = np.asarray(
-                cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2), radius,
+                cv2.warpPolar(x.astype(np.float32), (w, h), ((w - 1) / 2, (h - 1) / 2), radius,
                               cv2.WARP_POLAR_LINEAR + cv2.WARP_INVERSE_MAP, dst),
                 np.float64)
             # cv2 が**書かなかった画素は未初期化のまま**返ってくる(戻り値は自前で
@@ -1694,7 +1708,7 @@ def _sh_xld(p):
                     out.append(np.vstack([c, c[:1]]))
                     continue
                 pts = c.astype(np.float64)
-                yc, xc = H / 2, W / 2
+                yc, xc = (H - 1) / 2, (W - 1) / 2          # 画素中心の規約(2026-11-05 P8 の兄弟、以前は H/2)
                 if kind == "affine":
                     ang = np.deg2rad(-20 + 40 * a)
                     R = np.array([[np.cos(ang), -np.sin(ang)], [np.sin(ang), np.cos(ang)]])

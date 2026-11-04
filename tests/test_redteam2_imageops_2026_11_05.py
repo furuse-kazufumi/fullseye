@@ -318,3 +318,100 @@ def test_p7_monotony_does_not_compare_with_the_opposite_border():
     x[:, 0] = 1.0
     y = ap(x, "monotony")
     assert y[3, 0] == pytest.approx(3 / 8)
+
+
+# --------------------------------------------------------------------------------------------- #
+# P8 / P9: 中心基準の変換は画素中心の規約 ((H-1)/2, (W-1)/2)、サイズ指定の縮小は画素中心合わせ
+# --------------------------------------------------------------------------------------------- #
+def _smooth(H=40, W=56, seed=1):
+    rng = np.random.default_rng(seed)
+    x = ndimage.gaussian_filter(rng.random((H, W)), 2.0)
+    return (x - x.min()) / (x.max() - x.min()) * 0.8 + 0.1
+
+
+@pytest.mark.parametrize("name,a,b", [("zoom_image_factor", 1.0, 1.0), ("zoom_image_factor", 0.0, 0.3),
+                                      ("affine_trans_image", 0.75, 0.5), ("affine_trans_image", 0.5, 1.0),
+                                      ("rescale_img", 0.9, 0.5), ("affine_warp", 0.8, 0.7)])
+def test_p8_centred_transforms_commute_with_a_half_turn(name, a, b):
+    """画像の中心まわりの変換は、中心まわりの 180 度回転と可換(中心が半画素ずれると可換でない)。"""
+    x = _smooth()
+    y1 = ap(np.rot90(x, 2), name, a, b)
+    y2 = np.rot90(ap(x, name, a, b), 2)
+    assert float(np.abs(y1 - y2)[4:-4, 4:-4].max()) < 1e-9
+
+
+def test_p8_zoom_keeps_the_centre_pixel_and_matches_scipy_zoom_about_the_pixel_centre():
+    x = _smooth()
+    H, W = x.shape
+    s = 1.3
+    c = np.array([(H - 1) / 2, (W - 1) / 2])
+    ref = ndimage.affine_transform(x, np.diag([1 / s, 1 / s]), offset=c - c / s, mode="reflect")
+    assert float(np.abs(ap(x, "zoom_image_factor", 1.0, 1.0) - ref)[4:-4, 4:-4].max()) < 1e-9
+    d = np.zeros((41, 41))
+    d[20, 20] = 1.0
+    g = ndimage.gaussian_filter(d, 2.0)
+    g /= g.max()
+    Y, X = np.mgrid[0:41, 0:41]
+    for name, a, b in [("zoom_image_factor", 1.0, 1.0), ("affine_trans_image", 1.0, 0.5)]:
+        z = ap(g, name, a, b)
+        assert (z * Y).sum() / z.sum() == pytest.approx(20.0, abs=1e-6)
+        assert (z * X).sum() / z.sum() == pytest.approx(20.0, abs=1e-6)
+
+
+@pytest.mark.parametrize("name", ["zoom_region", "affine_trans_region"])
+def test_p8_region_transforms_keep_a_centred_square_centred(name):
+    zr = np.zeros((41, 41))
+    zr[16:25, 16:25] = 1
+    ys, xs = np.nonzero(ap(zr, name, 1.0, 0.5) > 0.5)
+    assert len(ys) > 0
+    assert ys.mean() == pytest.approx(20.0, abs=1e-6) and xs.mean() == pytest.approx(20.0, abs=1e-6)
+
+
+def test_p8_polar_transform_is_centred_on_the_image_centre():
+    """画像の中心について回転対称な像の極座標展開は、角度(行)方向にほぼ一定。"""
+    h, w = 40, 56
+    yy, xx = np.mgrid[0:h, 0:w]
+    img = np.exp(-((yy - (h - 1) / 2) ** 2 + (xx - (w - 1) / 2) ** 2) / (2 * 6.0 ** 2))
+    out = ap(img, "polar_trans_image", 0.5, 0.5)
+    assert float(np.ptp(out[:, 1:20], axis=0).max()) < 0.02     # 旧(中心 w/2、最近傍)は 0.25
+
+
+def test_p9_zoom_image_size_samples_pixel_centres_like_cv2_resize():
+    cv2 = pytest.importorskip("cv2")
+    H = W = 64
+    ramp = np.tile((np.arange(H) / (H - 1))[:, None], (1, W))
+    small = ap(ramp, "zoom_image_size", 0.0, 0.0)[:32, :32]   # Ht = Wt = 32
+    ref = cv2.resize(ramp.astype(np.float32), (32, 32), interpolation=cv2.INTER_LINEAR)
+    assert float(np.abs(small - ref).max()) < 1e-6
+    assert small.mean() == pytest.approx(ramp.mean(), abs=1e-9)
+    x = _smooth(48, 48)
+    got = ap(x, "zoom_image_size", 0.25, 0.25)                    # 0.75 倍 -> 36 x 36
+    ref2 = cv2.resize(x.astype(np.float32), (36, 36), interpolation=cv2.INTER_LINEAR)
+    assert float(np.abs(got[:36, :36] - ref2)[2:-2, 2:-2].max()) < 1e-5
+
+
+def _ellipse_contour(H=41, W=61):
+    t = np.linspace(0, 2 * np.pi, 64, endpoint=False)
+    c = np.column_stack([(H - 1) / 2 + 10 * np.sin(t), (W - 1) / 2 + 15 * np.cos(t)])
+    return {"shape": (H, W), "cs": [c]}
+
+
+@pytest.mark.parametrize("name,a,b", [("affine_trans_contour_xld", 1.0, 0.0), ("hx_radial_distort_contour", 1.0, 0.0),
+                                      ("hx_radial_distort_contour", 0.0, 0.0)])
+def test_p8_contour_transforms_keep_a_centred_contour_centred(name, a, b):
+    cv = _ellipse_contour()
+    out = api.apply(cv, name, a, b, on_error="raise")
+    assert len(out["cs"]) == 1
+    m = np.asarray(out["cs"][0], float).mean(0)
+    assert m[0] == pytest.approx(20.0, abs=1e-6) and m[1] == pytest.approx(30.0, abs=1e-6)
+
+
+def test_p8_crop_contours_is_symmetric_about_the_image_centre():
+    """中心について対称な点の集合を中心の窓で切ると、残る点も中心について対称。"""
+    H, W = 41, 61
+    yy, xx = np.mgrid[0:H, 0:W]
+    pts = np.column_stack([yy.ravel(), xx.ravel()]).astype(float)
+    out = api.apply({"shape": (H, W), "cs": [pts]}, "hx_crop_contours", 0.37, 0.41, on_error="raise")
+    kept = np.asarray(out["cs"][0], float)
+    assert len(kept) > 0
+    assert kept.mean(0) == pytest.approx([20.0, 30.0], abs=1e-9)

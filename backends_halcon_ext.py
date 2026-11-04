@@ -1351,7 +1351,7 @@ def _smallest_rectangle2_xld(v, a, b):
 def _crop_contours_xld(v, a, b):
     """contour を中央の a×b 割合の矩形に crop(範囲内の点のみ残す)。
 
-    各 contour の点のうち、画像中心 ``(H/2, W/2)`` からの距離が行方向 ``hh`` 以内かつ列方向 ``ww`` 以内のものだけを
+    各 contour の点のうち、画像中心 ``((H-1)/2, (W-1)/2)``(画素中心の規約。2026-11-05 まで ``(H/2, W/2)``)からの距離が行方向 ``hh`` 以内かつ列方向 ``ww`` 以内のものだけを
     残し、1 点も残らない contour は捨てて返す。
 
     - ``a`` → 残す高さの半分 ``hh = (0.3 + 0.6*a) * H/2``(全体の 30%〜90%)。
@@ -1363,7 +1363,7 @@ def _crop_contours_xld(v, a, b):
     """
     h, w = _c_shape(v)
     hh, ww = (0.3 + 0.6 * a) * h / 2, (0.3 + 0.6 * b) * w / 2
-    cy, cx = h / 2, w / 2
+    cy, cx = (h - 1) / 2, (w - 1) / 2      # 画素中心の規約(敵対的検証 2026-11-05 第 2 巡 P8 の兄弟)
     out = []
     for c in _c_cs(v):
         m = (np.abs(c[:, 0] - cy) <= hh) & (np.abs(c[:, 1] - cx) <= ww)
@@ -1479,7 +1479,7 @@ def _polar_trans_contour_xld_inv(v, a, b):
     """contour 点を (radius, angle) とみなし直交座標へ逆変換(polar_trans の逆)。
 
     各 contour の点を ``(row, col) = (半径 rad, 角度)`` とみなし、``ang = col / W * 2*pi`` として
-    ``(cy + rad*sin(ang), cx + rad*cos(ang))``(``cy, cx = H/2, W/2``)の直交座標に戻した contour を返す。
+    ``(cy + rad*sin(ang), cx + rad*cos(ang))``(``cy, cx = (H-1)/2, (W-1)/2`` = 画素中心の規約の画像中心。2026-11-05 まで ``H/2, W/2``)の直交座標に戻した contour を返す。
 
     - ``a``, ``b`` は未使用。
     - 半径は行の値をそのまま画素距離として使い、角度は列を画像幅で 0〜2π に写す。
@@ -1490,7 +1490,7 @@ def _polar_trans_contour_xld_inv(v, a, b):
     この差を織り込むか、この op を「列=角度・行=半径の一般的な極座標表現から直交へ」の変換として単独で使う。
     """
     h, w = _c_shape(v)
-    cy, cx = h / 2, w / 2
+    cy, cx = (h - 1) / 2, (w - 1) / 2      # 画素中心の規約(敵対的検証 2026-11-05 第 2 巡 P8 の兄弟)
     out = []
     for c in _c_cs(v):
         rad = c[:, 0]
@@ -1657,7 +1657,7 @@ def _add_noise_white_contour_xld(v, a, b):
 def _change_radial_distortion_contours_xld(v, a, b):
     """contour に放射歪み r' = r(1 + k r^2) を適用(k は (a-0.5) で樽/糸巻き)。
 
-    各 contour の点を画像中心 ``(H/2, W/2)`` からの相対座標 ``d`` にし、正規化半径 ``r = |d| / (max(H, W)/2)`` に
+    各 contour の点を画像中心 ``((H-1)/2, (W-1)/2)``(画素中心の規約。2026-11-05 まで ``(H/2, W/2)``)からの相対座標 ``d`` にし、正規化半径 ``r = |d| / (max(H, W)/2)`` に
     対して ``d' = d * (1 + k*r^2)`` と伸縮させた contour を返す(放射歪みモデルの 1 次項)。
 
     - ``a`` → 歪み係数 ``k = (a - 0.5) * 1.5``(-0.75〜+0.75)。``k < 0`` で点が中心に寄る(樽型)、``k > 0`` で
@@ -1669,7 +1669,7 @@ def _change_radial_distortion_contours_xld(v, a, b):
     計測(``hx_fit_circle_contour`` 等)で試す、あるいは合成的にデータを増やす用途。
     """
     h, w = _c_shape(v)
-    cy, cx = h / 2, w / 2
+    cy, cx = (h - 1) / 2, (w - 1) / 2      # 画素中心の規約(敵対的検証 2026-11-05 第 2 巡 P8 の兄弟)
     k = (a - 0.5) * 1.5
     scale = max(h, w) / 2
     out = []

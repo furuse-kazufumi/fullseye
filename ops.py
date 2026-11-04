@@ -2015,7 +2015,8 @@ def _rescale_img(v, a, b):
     """
     s = 0.7 + 0.6 * a
     order = (0, 1, 3, 3)[min(3, int(np.clip(b, 0.0, 1.0) * 4))]
-    off = (v.shape[0] * (1 - 1 / s) / 2, v.shape[1] * (1 - 1 / s) / 2)
+    # 中心は ((H-1)/2, (W-1)/2)(画素中心の規約)。2026-11-05(敵対的検証 第 2 巡 P8 の兄弟)までは H/2。
+    off = ((v.shape[0] - 1) / 2 * (1 - 1 / s), (v.shape[1] - 1) / 2 * (1 - 1 / s))
     return np.clip(ndimage.affine_transform(v, np.array([1 / s, 1 / s]), offset=off,
                                             order=order, mode="reflect"), 0, 1)
 
@@ -2026,7 +2027,7 @@ def _affine_warp(v, a, b):
 ``a`` が回転角を ``-20°〜+20°`` に、``b`` がせん断量を ``-0.2〜+0.2`` に振る。回転中心は画像の中心、境界は ``reflect``（鏡映）で埋め、結果を ``[0,1]`` に clip する。平行移動・拡大縮小は含まない（``_rescale_img``/``_rotate_img`` が別 op として存在）。"""
     ang = np.deg2rad(-20 + 40 * a); sh = (b - 0.5) * 0.4
     M = np.array([[np.cos(ang), -np.sin(ang) + sh], [np.sin(ang), np.cos(ang)]])
-    c = np.array(v.shape) / 2
+    c = (np.array(v.shape[:2], np.float64) - 1.0) / 2.0     # 画素中心の規約(2026-11-05 P8 の兄弟、以前は shape/2)
     return np.clip(ndimage.affine_transform(v, M, offset=c - M @ c, mode="reflect"), 0, 1)
 
 
