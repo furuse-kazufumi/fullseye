@@ -32,6 +32,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 | I23 `imgio.save_ply` の座標 | 出力 | `property float` + `%g`(6 桁)から `property double` + `%.17g` |
 | I24 `table_read_csv` の空欄のある 2^53 超の整数列 | 型 | float64 に丸めていた。空欄を mask した int64 / uint64 の `MaskedArray` で返す |
 | I26 `mesh.write_points` の 0 点の `.xyz` | 出力 | 0 バイトだったのが `# 0 points (x y z)` の 1 行。注釈だけの `.xyz` を `read_points` は (0, 3) で読む |
+| (追加の探針)`archive_extract` / `archive_create` の Windows 予約名 | fail-closed | COM0 / LPT0 / COM¹²³ / LPT¹²³ / CONIN$ / CONOUT$ も拒否(以前は CON/PRN/AUX/NUL と COM1-9 / LPT1-9 だけ)。tar.xz の作成は先頭以外の成分(`data/CON.txt`)も検査する |
 
 ### 修正 — 敵対的検証 2026-11-05(io)
 
@@ -41,6 +42,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - I14 OBJ のタブ区切りの `v` / `f` 行を読む(以前は `v` 行が欠けて添字範囲外、`f` 行は黙って消えた)。
 - I18 `mdio.extract_json` の fence を CommonMark 0.31 §4.5 どおりに(空の fence・`file.py` などの info 文字列・`~~~` の中の ``` ・長い fence の中の短い fence の後ろの封筒を見落としていた)。
 - I25 `table_read_csv` が UTF-8 BOM を列名に含めない。
+- (追加の探針・文書)`e57_write` の docstring に精度を明記: pye57 が座標・強度を E57 single(float32)固定で書くため float64 は float32 の精度で往復する(35 万 m の UTM で数 cm)。`pose['translation']` は double で正確に往復するので、大きい座標はそちらへ移す。バックエンドの制約なので値は変えず門で固定した。
+- 探針を当てて欠陥が無かったもの: `lens_file_read` / `lens_file_write`(R・t・k は `repr` で正確に往復、utf-16 も可)、`motionio`(読み専用、空白類で split 済み)、DICOM(SimpleITK 経由の読みだけ、書きは範囲外)。7z / rar は 7z 実行ファイルが要る経路で、名前の検査は上の共通関数を通る。
 - 兄弟で直さなかったもの: `tools/import_bodyparts3d_organs.py` の OBJ 読み(固定の公開データ専用、入力は空白区切り)、`pocviewer` の PLY 書き出し(float32 で詰めた表示データを JS 側と同じ文字列で出す双子)、`tests/test_docs_index_reachable.py` の fence 除去(文書検査の補助)、`table_write_csv` の `=` 始まりのセル(CSV は型を持たず、接頭辞を足すと往復が壊れる)。
 - 既存テストの期待値の変更: `tests/test_codegen.py` の C literal の文字列(旧書式 `%.6f` をなぞっていただけ、値は同じ 1.5 / 0.5 / 1.0)。
 
