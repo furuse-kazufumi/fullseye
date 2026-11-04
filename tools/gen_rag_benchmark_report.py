@@ -37,7 +37,8 @@ def build() -> dict:
         direct = [x["name"] for x in search_ops(row["query"], 10)["ops"]]
         planned = plan_chain(row["query"], row["start_sort"], row["goal_sort"], k=10, max_depth=4)
         names = [x["name"] for stage in planned.get("stages", []) for x in stage["candidates"]]
-        default = plan(row["start_sort"], row["goal_sort"], goal=row["query"])
+        # 時間でなく展開数で打ち切る(tests/test_rag_recall_airag.py と同じ。CI の負荷で結果が割れないように)
+        default = plan(row["start_sort"], row["goal_sort"], goal=row["query"], constraints={"timeout_ms": 120_000})
         executable_names = [name for p in default.get("plans", []) for name in p["ops"]]
         sr, pr = recall(direct, row["relevant"]), recall(names, row["relevant"])
         er = recall(executable_names, row["relevant"])
