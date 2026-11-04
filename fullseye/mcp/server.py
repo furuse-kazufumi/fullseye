@@ -1806,9 +1806,12 @@ def _import_json(a: dict, store: HandleStore) -> dict:
     has_env = a.get("envelope") is not None
     if has_json == has_env:
         raise ArgError("json(文字列)か envelope(オブジェクト)のどちらか一方を渡すこと")
+    # ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する
+    #   (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
+    limits = {"max_bytes": int(store.max_bytes), "max_pixels": int(get_system("mcp_stack_max_pixels"))}
     try:
-        value, sort = (fullseye.from_json(a["json"]) if has_json
-                       else fullseye.from_jsonable(a["envelope"]))
+        value, sort = (fullseye.from_json(a["json"], **limits) if has_json
+                       else fullseye.from_jsonable(a["envelope"], **limits))
     except ValueError as exc:                                    # 信頼境界: 封筒を再検証
         raise ArgError("JSON 封筒が読めない: %s" % exc) from None
     if isinstance(value, np.ndarray):

@@ -55,6 +55,7 @@ from __future__ import annotations
 
 import base64
 import json
+import math
 
 import numpy as np
 
@@ -191,13 +192,13 @@ def _decode_array(p, name="value"):
     if enc == "list":
         dt = _envelope_dtype(p, enc, name, "float64")
         if dt.kind in "iu":
-            n = int(np.prod(shape)) if shape else 1
+            n = math.prod(shape)
             return _exact_int_list(p["data"], dt, shape, n, name)
         try:
             raw = np.asarray(p["data"])
         except (TypeError, ValueError):
             raise ValueError("%s: list data is not a numeric array" % name) from None
-        n = int(np.prod(shape)) if shape else 1
+        n = math.prod(shape)
         if raw.size != n:
             raise ValueError("%s: list data has %d values, envelope shape %r wants %d"
                              % (name, raw.size, shape, n))
@@ -213,7 +214,7 @@ def _decode_array(p, name="value"):
         raw = base64.b64decode(p["data"], validate=True)
     except (TypeError, ValueError):
         raise ValueError("%s: data is not base64" % name) from None
-    n = int(np.prod(shape)) if shape else 1
+    n = math.prod(shape)
     if len(raw) % np.dtype(dt).itemsize:
         raise ValueError("%s: %d bytes is not a whole number of %s values" % (name, len(raw), dt))
     arr = np.frombuffer(raw, dtype=dt)
@@ -246,9 +247,32 @@ def _rle_encode(mask):
     return [int(r) for r in runs]
 
 
+def _check_declared(shape, itemsize, name, max_bytes=None, max_pixels=None):
+    """Refuse a declared *shape* that exceeds the caller's limits -- BEFORE anything is allocated.
+
+    ★2026-11-05(敵対的検証 C10): a region envelope is run-length encoded, so a ~100-byte request
+    ``{"shape": [6000, 6000], "runs": [36000000]}`` made the decoder allocate 288 MB of float64 and
+    only then did the MCP handle store compare it with ``mcp_handle_max_bytes``. ``None`` = no
+    limit (the library default); the MCP server passes its own limits."""
+    n = math.prod(int(s) for s in shape)
+    if max_pixels is not None and n > max_pixels:
+        raise ValueError("%s: declared shape %r is %d values, above the limit %d"
+                         % (name, tuple(shape), n, max_pixels))
+    if max_bytes is not None and n * itemsize > max_bytes:
+        raise ValueError("%s: declared shape %r needs %d bytes, above the limit %d"
+                         % (name, tuple(shape), n * itemsize, max_bytes))
+    return n
+
+
 def _rle_decode(runs, shape):
     h, w = (int(shape[0]), int(shape[1]))
     total = h * w
+    # checked on the run list first (O(len(runs))): a mismatched envelope allocates nothing
+    covered = sum(int(r) for r in runs)
+    if covered > total or any(int(r) < 0 for r in runs):
+        raise ValueError("region: run lengths do not fit %dx%d" % (h, w))
+    if covered != total:
+        raise ValueError("region: runs cover %d of %d pixels" % (covered, total))
     out = np.zeros(total, dtype=np.float64)
     pos, val = 0, 0.0
     for r in runs:
@@ -347,8 +371,13 @@ def to_json(value, sort, readable=False, indent=None):
                       allow_nan=False, indent=indent)
 
 
-def from_jsonable(env):
-    """Inverse of :func:`to_jsonable`: ``(value, sort)``. Fail-closed on a bad envelope."""
+def from_jsonable(env, *, max_bytes=None, max_pixels=None):
+    """Inverse of :func:`to_jsonable`: ``(value, sort)``. Fail-closed on a bad envelope.
+
+    ``max_bytes`` / ``max_pixels`` (default ``None`` = no limit): refuse an array / region whose
+    **declared** shape exceeds them, before it is decoded -- a run-length region is otherwise a
+    tiny request for an H*W float64 allocation. A server reading untrusted envelopes passes its
+    limits (the MCP server passes ``mcp_handle_max_bytes`` / ``mcp_stack_max_pixels``)."""
     if not isinstance(env, dict) or "fullseye_sort" not in env:
         raise ValueError("from_jsonable: not a fullseye envelope (no 'fullseye_sort')")
     if type(env.get("version")) is not int or env.get("version") != VERSION:
@@ -359,6 +388,8 @@ def from_jsonable(env):
         raise ValueError("from_jsonable: unknown sort %r" % (sort,))
     p = env.get("payload")
     if sort in _ARRAY_SORTS:
+        if (max_bytes is not None or max_pixels is not None) and isinstance(p, dict) and "shape" in p:
+            _check_declared(_payload_shape(p, sort), 8, sort, max_bytes, max_pixels)
         a = _decode_array(p, sort)
         _, ndim, last = _ARRAY_SORTS[sort]
         if a.ndim != ndim or (last is not None and a.shape[-1] != last):
@@ -376,6 +407,7 @@ def from_jsonable(env):
         if not isinstance(runs, list) or not all(
                 isinstance(r, int) and not isinstance(r, bool) for r in runs):
             raise ValueError("from_jsonable: %s runs must be a list of ints" % sort)
+        _check_declared(shp, 8, "from_jsonable: %s" % sort, max_bytes, max_pixels)
         return _rle_decode(runs, shp), sort
     if sort in ("feature", "scalar"):
         if not isinstance(p, dict) or "value" not in p:
@@ -404,13 +436,14 @@ def from_jsonable(env):
     raise ValueError("from_jsonable: unhandled sort %r" % sort)     # pragma: no cover
 
 
-def from_json(text):
-    """``(value, sort)`` from a JSON string written by :func:`to_json`."""
+def from_json(text, *, max_bytes=None, max_pixels=None):
+    """``(value, sort)`` from a JSON string written by :func:`to_json` (limits as in
+    :func:`from_jsonable`)."""
     try:
         env = json.loads(text)
     except (TypeError, ValueError) as exc:
         raise ValueError("from_json: not JSON (%s)" % exc) from None
-    return from_jsonable(env)
+    return from_jsonable(env, max_bytes=max_bytes, max_pixels=max_pixels)
 
 
 # --------------------------------------------------------------------------- #
