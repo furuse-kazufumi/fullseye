@@ -3020,12 +3020,36 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     shadow = decision.get("path") == "allow_single" and decision["device"] == "cuda"
     if template is None:
         return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite, shadow=shadow)
+    template = _check_template(template, name, policy, allow_nonfinite)
     prev = _ops._MATCH_CTX.get("template")
     _ops.set_match_template(template)
     try:
         return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite, shadow=shadow)
     finally:
         _ops.set_match_template(prev)
+
+
+def _check_template(template, name, policy, allow_nonfinite=False):
+    """``apply(template=...)`` のテンプレートに、入力画像と同じ入口の契約を当てる(返り値 = 走らせる値)。
+
+    ★2026-11-05(敵対的検証 C7): テンプレートは ``ncc_locate`` / ``shape_locate`` の 2 本目の入力なのに
+    検査が 1 つも無く、NaN 1 画素のテンプレートで ``on_error="raise"`` でも ``[0, 0, 0]``(no-match)が
+    例外も台帳記録も無く返っていた(同じ NaN を画像側に入れると拒否される)。画像と同じ順で:
+    ``fullseye.Image`` を剥がす → 非有限は方針に依らず拒否(``allow_nonfinite=True`` が唯一の抜け道)→
+    数値でない dtype は TypeError → 整数・bool は ``/255`` などで契約へ(記録、``raise`` では拒否)→
+    空・次元・extra_checks の値域(:func:`_guard_input`)。未知の op 名はここでは触らない(本体が断る)。
+    """
+    op = find_op(name) if isinstance(name, str) else None
+    if op is None:
+        return template
+    t = _unwrap_image(template)
+    if not allow_nonfinite:
+        _refuse_nonfinite(t, "%s (template)" % name)
+    t = np.asarray(t)
+    _reject_untyped(t, op)
+    t = _contract_dtype(t, op, policy)
+    _guard_input(t, op, policy)
+    return t
 
 
 def _coerce_sort(v, sort: str):
