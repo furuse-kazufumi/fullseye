@@ -61,14 +61,13 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3601,
+    "executable": 3602,
     "reasons": {
       "python_signature": 2637,
       "registry": 964
     },
     "not_executable_reasons": {
       "generic_algorithm_layer_run_by_api.run_algo": 3,
-      "map_executor_not_implemented": 1,
       "python_signature_has_fewer_inputs_than_graph": 1,
       "unknown_input_or_output_sort": 208
     }
@@ -265981,10 +265980,21 @@
       "type_semantics": "typed",
       "consumes_input": true,
       "bundle_semantics": "elementwise",
-      "executable": false,
+      "executable": true,
       "verified_executable": false,
-      "executable_reason": "map_executor_not_implemented",
+      "executable_reason": "pointwise registry op applied to the stacked sequence (= per-element map)",
       "not_executable_in_mcp": "not_verified",
+      "executor": {
+        "kind": "registry",
+        "alias": "companding_mu_law",
+        "module": "backend_safe",
+        "callable": "_safe(_companding_mu_law)",
+        "map": "stack_pointwise"
+      },
+      "runtime_target": {
+        "module": "backend_safe",
+        "callable": "_safe(_companding_mu_law)"
+      },
       "compute": {
         "structure": "elementwise",
         "intensity": "derived",

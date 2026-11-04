@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：611 / 1619 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：611 / 1621 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -2497,6 +2497,10 @@
 - **L277** _(ja)_ — ★同名なのに HALCON と別の量を返すもの。**直す予定のものだけ**をここに書き、 「本当にまだ違う」ことを下の試験が確かめる(直ったら台帳から外させる)。
 - **L280** _(ja)_ — ★2026-09-26: `elliptic_axis` と `diameter_region` はここから外れた —— ユーザー 判断で「寸法を持つ特徴も HALCON と同じ**画素値**で返す」と決まり、量もスケールも 合わせたため(docs/KNOWN_ISSUES.md §51 は解決)。台帳を空にしても門は残す: 次に「まだ合わせていないもの」が出たとき、ここに名指しで載せる場所が要る。
 
+## `tests/test_hidden_function_defects_2026_10_02.py`
+
+- **L106** _(ja)_ — ★2026-11-04(統合 GPU、第 6 便): 2 名は消した関数ではなく、HALCON と同じ仕事をする後継に対応づいた。 「対応なし」を外すだけでなく、何に対応しているかを表明する(消した関数を指さないことも続けて見る)。 - gen_contour_nurbs_xld(制御点・重み・節点・次数 → NURBS 曲線)→ 台帳の nurbs_curve。重みつき NURBS で あることの閉形式の門: tests/test_mathgeometry.py::test_nurbs_circle_is_exact_and_misses_corner_points (9 点の 2 次 NURBS が円そのもの、|r − R| < 1e-13)と ::test_nurbs_unit_weights_equal_scipy_bspline。 - gen_nurbs_interp(点列を全部通る NURBS の制御データ)→ 台帳の gen_nurbs_interp(mvtext)。補間の門: tests/test_opsmv.py::test_nurbs_interpolation_passes_through_every_point と ::test_nurbs_interpolation_reproduces_a_straight_line。
+
 ## `tests/test_honest_summary_arithmetic.py`
 
 - **L41** — 改成「没有就说明理由并 skip」—— ★2026-09-08 的 CI 在这里变红：把本地有的东西也当成 CI 里有，就只有本地变绿（与 `feedback_gate_computed_a_verdict_then_discarded_it` 同型）。
@@ -2950,6 +2954,7 @@
 ## `tools/gen_op_facets.py`
 
 - **L465** _(ja)_ — ★2026-11-03: chain_fuzz の op 表に載らない台帳 op(fileio 14、acoustics の read_wav / read_audio / write_wav = 入出力の副作用がある op)は実行先が空で、OP_GRAPH を読む側が 呼べなかった(レシピの e2e が fs.ledger に迂回して見つけた)。台帳の func を実行先にする。
+- **L559** _(ja)_ — ★2026-11-04(統合 GPU): map:: の辺は実行先を持つものだけを作る(tests/test_ledger_entry_points_2026_11_03.py の「全部の辺に実行先がある」が正)。画素ごとに独立な op(compute.structure = elementwise)を 2-D の登録 op として持つなら、積んだ列 (N, H, W) にそのまま掛けた結果が要素ごとの map と同じなので、元の op の入口を 実行先にする(tests/test_op_facets_2026_10_28.py::test_map_edges_run_through_the_base_op_on_the_stack)。 近傍を見る op(neighborhood_stencil)は積んだ列に掛けると軸 0 をまたぐので、実行先を作れない → 辺を作らない。
 
 ## `tools/gen_op_figures.py`
 
