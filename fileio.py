@@ -1376,7 +1376,10 @@ def archive_create(paths_or_items, fmt, *, root=None, level=None, deterministic=
 # stays dependency-light; optional reference readers are used only by tests.
 # ---------------------------------------------------------------------------
 def _fits_value(text: str, keyword: str):
-    value = text.rstrip()
+    # ★2026-11-05 redteam I6: FITS 4.0 §4.2.1.2 -- in free format the opening quote of a string
+    # may stand in any column after the value indicator, not only column 11. Leading blanks
+    # before the quote are not part of the value (blanks *inside* the quotes still are).
+    value = text.strip()
     if value.startswith("'"):
         chars, index = [], 1
         while index < len(value):
