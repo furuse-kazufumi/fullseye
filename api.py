@@ -2711,14 +2711,19 @@ def _reject_untyped(v, op_or_sort) -> None:
             % (name, sort, a.dtype))
 
 
-def _contract_dtype(v, op, policy):
+def _contract_dtype(v, op, policy, *, in_sort=None, name=None):
     """Bring an integer/bool image onto the float64 [0,1] contract, or refuse it.
 
     Returns the value to run the op on. Independent of ``coerce`` (which is about
     the *sort*, not the dtype): a dtype outside the contract is wrong for every
     caller, and staying silent is what produced the wrong answers above.
+
+    ``in_sort`` / ``name`` override ``op.in_sort`` / ``op.name`` for one input of an
+    n-ary op (``NaryOp`` has ``in_sorts[i]``), exactly as in :func:`_pu_contract`.
     """
-    if op.in_sort not in _DTYPE_CONTRACT_SORTS:
+    in_sort = op.in_sort if in_sort is None else in_sort
+    name = op.name if name is None else name
+    if in_sort not in _DTYPE_CONTRACT_SORTS:
         return v
     a = v if isinstance(v, np.ndarray) else None
     if a is not None and a.dtype.kind == "f" and a.dtype.itemsize < 8:
@@ -2734,7 +2739,7 @@ def _contract_dtype(v, op, policy):
             "Convert explicitly, e.g. img.astype(np.float64) / 255.0 for uint8 — the core "
             "operators run scipy.ndimage with no dtype argument, so an integer image is "
             "filtered as an integer and the result is a different image, not a slower one."
-            % (op.name, op.in_sort, a.dtype))
+            % (name, in_sort, a.dtype))
     if a.dtype.kind == "b":
         out = a.astype(np.float64)
         how = "bool -> float64 {0,1}"
@@ -2742,7 +2747,7 @@ def _contract_dtype(v, op, policy):
         s = _dtype_scale(a)
         out = a.astype(np.float64) if s == 1.0 else a.astype(np.float64) / s
         how = "%s -> float64 (/%g)" % (a.dtype, s)
-    _bs.record(op.name,
+    _bs.record(name,
                ValueError("dtype_converted: %s; the contract is float64 in [0,1]" % how),
                op.out_sort, source="input")
     return out
@@ -3171,6 +3176,14 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None, allow_nonf
             _reject_untyped(x, srt)
         inputs = [(_coerce_sort(x, srt) if coerce else np.asarray(x))
                   for x, srt in zip(image, nop.in_sorts)]
+        # ★2026-11-04(外部監査 v0.9.0 F2): 単入力の apply / run_pipeline と PrecisionUnion の n-ary 経路は
+        #   dtype 契約(_contract_dtype)を通るのに、密な配列の n-ary だけが通らず、uint8 の 32 + 32 が
+        #   on_error="raise" でも例外も台帳記録も無く 1.0(正しくは 64/255)になっていた。入力ごとに同じ規則で。
+        #   畳み込みの核(_NARY_KERNEL_SECOND の第 2 入力)は画像でなく重みの表なので、型だけ float64 にする。
+        inputs = [(np.asarray(x, np.float64) if (i == 1 and name in _NARY_KERNEL_SECOND
+                                                 and np.asarray(x).dtype.kind in "bui")
+                   else _contract_dtype(x, nop, policy, in_sort=srt, name=name))
+                  for i, (x, srt) in enumerate(zip(inputs, nop.in_sorts))]
         # the n-ary functions carry no guard of their own: give them the same recorded,
         # sanitised fail-soft as every backend op (strict mode re-raises inside guard)
         def body(v0, aa, bb):
