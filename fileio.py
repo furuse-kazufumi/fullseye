@@ -236,15 +236,25 @@ def _csv_exact_int_column(values: list[str]):
     stamp ~1.7e18) came back silently rounded to the nearest float64. A column is kept as integers
     only when every cell is an integer literal and at least one is beyond float64's exact range;
     small-integer columns stay float64 as documented."""
-    if not values or not all(_CSV_INT_RE.match(v) for v in values):
+    # ★2026-11-05 redteam I24: one empty cell (a missing value, written by table_write_csv for
+    # None) sent the whole column through float64, so a large int column with a gap came back
+    # rounded -- against "丸めて返さない". Blank cells are now allowed here: such a column is
+    # returned as an integer masked array (mask = the blanks), exact and still numeric.
+    present = [v for v in values if v != ""]
+    if not present or not all(_CSV_INT_RE.match(v) for v in present):
         return None
-    ints = [int(v) for v in values]
+    ints = [int(v) for v in present]
     if all(abs(x) <= 2 ** 53 for x in ints):
         return None
     for dt in (np.int64, np.uint64):
         info = np.iinfo(dt)
         if all(info.min <= x <= info.max for x in ints):
-            return np.array(ints, dtype=dt)
+            if len(present) == len(values):
+                return np.array(ints, dtype=dt)
+            it = iter(ints)
+            mask = np.array([v == "" for v in values])
+            data = np.array([0 if blank else next(it) for blank in mask], dtype=dt)
+            return np.ma.masked_array(data, mask=mask)
     raise ValueError("table_read_csv: integer column does not fit int64 or uint64")
 
 
@@ -271,6 +281,7 @@ def table_read_csv(text):
     個数、全データ行の列数、必須メタデータを検査し、途中までの表は返さない。数値列は float64
     (空欄は NaN)、数値以外を含む列は文字列配列になる。ただし全セルが整数で、float64 では
     正確に持てない値(絶対値が 2**53 超)を含む列は int64 / uint64 で返す(丸めて返さない)。
+    その列に空欄(欠測)があれば、空欄を mask した int64 / uint64 の ``numpy.ma.MaskedArray`` で返す。
     入力は UTF-8 の ``str`` または ``bytes``。
 
     呼び出し例: ``roundtrip = table_read_csv(table_write_csv(table, units=units, meta=meta))``。
