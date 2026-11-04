@@ -70,7 +70,7 @@ TOOLS: dict[str, dict] = {
     "fullseye_plan": {
         "description": "型付き経路を計画する。入力と欲しい型が分かったら使い、次に fullseye_op_cards を呼ぶ。",
         "inputSchema": {"type":"object","properties":{"have":{"oneOf":[{"type":"string"},{"type":"array","items":{"type":"string"}}]},
-            "want":{"type":"string"},"goal":{"type":"string","maxLength":400},
+            "want":{"type":"string","minLength":1},"goal":{"type":"string","maxLength":400},
             "direction":{"type":"string","enum":["forward","backward"]},
             "pattern":{"type":"string"}},"required":["have","want"],"additionalProperties":False}},
     "fullseye_describe": {
@@ -118,6 +118,10 @@ TOOLS: dict[str, dict] = {
                 "limit": {"type":"integer","minimum":1,"maximum":MAX_SEARCH_LIMIT,"default":7},
                 "detail": {"type":"boolean","default":False,
                            "description":"true なら候補の要約・出典を本文にも展開する"},
+                # ★2026-11-05(敵対的検証 第 2 巡 D10): ハンドラは a.get("lang") を読むのに schema に無く、
+                #   additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
+                "lang": {"type": "string", "enum": ["ja", "en", "zh", "tw", "ko", "de", "hi"],
+                         "description": "要約の言語(省略時は問い合わせの文字から判定)"},
             },
             "required": ["query"],
             "additionalProperties": False,
@@ -1967,6 +1971,11 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name in ("fullseye_plan", "fullseye_describe", "fullseye_choose"):
         from fullseye.opsearch import plan, describe, choose
         if name == "fullseye_plan":
+            # ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal="   " が search_ops の
+            #   ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
+            for key in ("want", "goal"):
+                if isinstance(a.get(key), str) and not a[key].strip():
+                    raise ArgError("%s が空(空白だけ)の文字列" % key)
             r = plan(a["have"], a["want"], a.get("direction", "forward"), a.get("pattern"), goal=a.get("goal"))
         elif name == "fullseye_describe":
             r = describe(a["kind"], a["name"])
@@ -2049,6 +2058,8 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name == "fullseye_suggest_pipeline":
         from fullseye.opsearch import normalize_sort, search_ops, op_cards
         start, goal = normalize_sort(a["start_sort"]), normalize_sort(a["goal_sort"])
+        if not a["query"].strip():                       # D10: blank query = -32602, not an internal error
+            raise ArgError("query が空白だけの文字列")
         found = search_ops(a["query"], 5, in_sort=start, out_sort=goal)
         candidates = found["ops"] or found.get("retry_ops", [])
         qkey = a["query"].strip().lower().replace(" ", "_")

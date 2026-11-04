@@ -504,3 +504,27 @@ def test_t5_tightens_only_caps_cannot_be_raised_above_their_default():
             pass
     with fssystem.system(mcp_stack_max_pixels=16777216):  # tightening still works
         assert fssystem.get_system("mcp_stack_max_pixels") == 16777216
+
+
+# --------------------------------------------------------------------------- #
+# round 2 (claims) D10: a blank string is an argument error, never -32603       #
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("tool,args", [
+    ("fullseye_plan", {"have": "image", "want": ""}),
+    ("fullseye_plan", {"have": "image", "want": "   "}),
+    ("fullseye_plan", {"have": "image", "want": "region", "goal": "   "}),
+    ("fullseye_suggest_pipeline", {"query": "   ", "start_sort": "image", "goal_sort": "region"}),
+], ids=["want-empty", "want-blank", "goal-blank", "suggest-blank"])
+def test_d10_blank_strings_are_invalid_params(tool, args):
+    S, cat, store = _mcp()
+    r = S.dispatch({"jsonrpc": "2.0", "id": 1, "method": "tools/call",
+                    "params": {"name": tool, "arguments": args}}, cat, store)
+    assert r["error"]["code"] == -32602, r["error"]
+
+
+def test_d10_find_ops_accepts_lang():
+    S, cat, store = _mcp()
+    r = S.call_tool("fullseye_find_ops", {"query": "ノイズ除去", "lang": "en"}, cat, store)
+    assert r["structuredContent"]["lang"] == "en"
+    with pytest.raises(Exception):
+        S.call_tool("fullseye_find_ops", {"query": "blur", "lang": "xx"}, cat, store)
