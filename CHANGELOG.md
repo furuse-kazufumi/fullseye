@@ -74,6 +74,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   入れ替えなくなった。統合で測り直した門: レンズの収差の 3-D 教材の「軸上のスポット半径」(無収差の丸めの残り
   9.2e-12 → 7.6e-12 µm、翻訳表 8 言語)と、レンズ系の 3-D 教材の光線を描く棒の数(449 → 448)。
 
+### 修正 — Studio の実行ワーカーの終了で GUI スレッドが永久に止まる(Linux CI で 2 回)
+
+- 原因: ワーカー(QObject)が QThread の `started` / `finished` の受け手で、終わるスレッドの中で `deleteLater` により
+  壊されていた。`~QObject` は自分の signal-slot mutex(Qt は 131 個をアドレスで共有)を握ったまま送り手の QThread の
+  `disconnectNotify` を呼び、PySide の override 探索が GIL を待つ。GUI スレッドは GIL を握ったまま
+  `QPlainTextEdit.setPlainText` の `QMetaObject::disconnect` で同じ番号の mutex を待つ。WSL Ubuntu 24.04 +
+  PySide6 6.12.0 で 3330 反復中 3 回再現し、gdb の全スレッドのスタックで 3 回とも同じ形を確認した。
+- 直し: ワーカーは queued の `invokeMethod` で起動し、QThread からの接続を持たない。スレッドが終わって `wait()` した後に
+  GUI スレッドで消す(実行ワーカーとバッチワーカーの両方)。門: `tests/test_studio_worker_teardown_thread_2026_11_04.py`
+  (`~QObject` が走ったスレッドと、QThread からワーカーへの接続数を数える。旧い配線では 2 件とも落ちる)。
+
 ### 統合(integrate/2026-11-04-gpu)
 
 - GPU 一式 7 本(第 2・3 便 #240・第 8 便 CT・第 4 便 光学・第 6 便 opsmv・機械的 GPU 化・第 5 便)を 1 本にまとめた。
