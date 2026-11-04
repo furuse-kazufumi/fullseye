@@ -320,14 +320,30 @@ def _read_off(raw: bytes, src: str):
     if len(lines) < li + nv + nf:
         raise ValueError("%s: OFF declares %d vertices + %d faces but only %d data lines follow"
                          % (src, nv, nf, len(lines) - li))
+    # ★2026-11-05 redteam I13: a "4" in the magic (Geomview "[ST][C][N][4]OFF") means every
+    # vertex is homogeneous ``x y z w`` -- the point is (x/w, y/w, z/w). w used to be dropped
+    # (4OFF "2 0 0 2" read as (2, 0, 0) instead of (1, 0, 0)).
+    homogeneous = "4" in head[0]
+    ncoord = 4 if homogeneous else 3
     vrows = []
     for i in range(nv):
         t = lines[li + i].split()
-        if len(t) < 3:
-            raise ValueError("%s: OFF vertex line %d has %d value(s), need 3"
-                             % (src, i, len(t)))
-        vrows.append(t[:3])
-    V = _floats(vrows, "OFF vertex", src) if vrows else np.zeros((0, 3))
+        if len(t) < ncoord:
+            raise ValueError("%s: OFF vertex line %d has %d value(s), need %d"
+                             % (src, i, len(t), ncoord))
+        vrows.append(t[:ncoord])
+    if not vrows:
+        V = np.zeros((0, 3))
+    elif homogeneous:
+        H = _floats(vrows, "OFF homogeneous vertex", src)
+        w = H[:, 3]
+        if not np.all(np.isfinite(w)) or np.any(w == 0):
+            bad = int(np.flatnonzero(~np.isfinite(w) | (w == 0))[0])
+            raise ValueError("%s: 4OFF vertex %d has w = %r — a point at infinity has no position"
+                             % (src, bad, float(w[bad])))
+        V = H[:, :3] / w[:, None]
+    else:
+        V = _floats(vrows, "OFF vertex", src)
     faces = []
     for i in range(nf):
         t = lines[li + nv + i].split()
