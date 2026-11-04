@@ -370,7 +370,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-99 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+100 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -471,6 +471,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **組み立てる**
 
 - 位置を合わせて重ねる: [説明](../capabilities/align-and-stack.md) · 例 [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py) · [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py)
+- 画像を点・点群・体積・メッシュ・グラフへ渡して戻す: [説明](../capabilities/convert-between-representations.md) · 例 [poc_bga_ball_type_roundtrip](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bga_ball_type_roundtrip.py) · [representation_roundtrip](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/representation_roundtrip.py) · [representation_conversion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/representation_conversion.py) · [type_connectivity_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/type_connectivity_tour.py)
 - 基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する: [説明](../capabilities/golden-compare.md) · 例 [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - 既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る: [説明](../capabilities/inspection-fixture.md) · 例 [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す: [説明](../capabilities/inspection-workflow.md) · 例 [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
@@ -503,7 +504,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 298 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -646,7 +647,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 形状</b> (20)</summary>
+<details class="vall"><summary><b>3-D 形状</b> (21)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="../articles/assets/poc/poc_battery_ct_degradation/story.ja.gif" alt="真正面(0 度)なら空隙の影までは見える。ただし奥行きに積算されているので厚みも深さも出ない。22 度傾けると層の縞そのものが重なって消える —— 投影では姿勢が結果を決めてしまう。だから断層に落とす。" loading="lazy" width="200" height="200"></picture><span>電池の CT 劣化</span></a>
 <a href="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="../articles/assets/poc/poc_bev_sensor_fusion/story.ja.gif" alt="評価窓は前方 3-30 m。既知でない領域(車体内部・陰)は評価から外す。" loading="lazy" width="200" height="200"></picture><span>鳥瞰図の融合</span></a>
@@ -668,6 +669,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori.png"><img src="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/story.ja.gif" alt="同じ θ の繊維を 12 本ずつ、θ を 3 通り描いたもの。★**S² の緯線 1 本が、3 次元では 1 枚のトーラス面**になる —— 3 つの色が入れ子の殻をつくる。S² の北極と南極に対応する 2 本だけは、直線と単位円になる(この図には入れていない)。" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>4 次元を 3-D で</span></a>
 <a href="../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_plateau_venue_lod2.jpg" alt="会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに" width="200" height="200"><span>会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに</span></a>
 <a href="../view2026/anim3d/star_tracker_anim3d.html?lang=ja"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png"><img src="../articles/assets/poc/poc_star_tracker/story.ja.gif" alt="PSF・光子雑音・読み出し雑音を含む合成像。真の星16個に、星表に無いホットピクセル2個を加えた。" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>合成星像から衛星姿勢を推定する</span></a>
+<a href="../articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_bga_ball_type_roundtrip.jpg" alt="画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個" width="200" height="200"><span>画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個</span></a>
 </div>
 </details>
 

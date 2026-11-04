@@ -357,7 +357,7 @@ Some PoC descriptions are in English.
 
 ## What it can do
 
-99 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+100 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
@@ -458,6 +458,7 @@ Some PoC descriptions are in English.
 **Build a workflow**
 
 - Align and stack: [explanation](../../capabilities/align-and-stack.md) _(ja)_ · examples [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py) · [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py)
+- Carry an image through points, point clouds, volumes, meshes and graphs — and back: [explanation](../../capabilities/convert-between-representations.md) _(ja)_ · examples [poc_bga_ball_type_roundtrip](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bga_ball_type_roundtrip.py) · [representation_roundtrip](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/representation_roundtrip.py) · [representation_conversion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/representation_conversion.py) · [type_connectivity_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/type_connectivity_tour.py)
 - Compare against a golden image — align, diff, count defects, judge the lot: [explanation](../../capabilities/golden-compare.md) _(ja)_ · examples [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - Validate a recipe and spec on known good/bad sets before deployment, and measure the margins: [explanation](../../capabilities/inspection-fixture.md) _(ja)_ · examples [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log: [explanation](../../capabilities/inspection-workflow.md) _(ja)_ · examples [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
@@ -490,7 +491,7 @@ Some PoC descriptions are in English.
 
 ## See everything
 
-297 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+298 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -633,7 +634,7 @@ Some PoC descriptions are in English.
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D shape</b> (20)</summary>
+<details class="vall"><summary><b>3-D shape</b> (21)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="../../articles/assets/poc/poc_battery_ct_degradation/story.en.gif" alt="Battery cells with the same exterior can hide different causes of swelling or voiding. Known defects were put into stacked electrodes and imaged by CT; only 29.4 % of electrode swelling reached the outside. Cells with matching can heights separate internally, so outside dimensions cannot identify the cause." loading="lazy" width="200" height="200"></picture><span>Battery CT ageing</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="../../articles/assets/poc/poc_bev_sensor_fusion/story.en.gif" alt="For distant vehicles, a small image calibration error becomes a physical shift in a bird's-eye map. Opposite-side range sensors were fused on one grid, tracing the reprojection shift at 22 m. Complementary views create the gain, but growing yaw error makes fusion worse than one sensor." loading="lazy" width="200" height="200"></picture><span>BEV sensor fusion</span></a>
@@ -655,6 +656,7 @@ Some PoC descriptions are in English.
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori.png"><img src="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/story.en.gif" alt="Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>4-D with 3-D tools</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="The venue buildings and asteroid Itokawa on one ruler: PLATEAU CityGML LOD2 as a mesh" width="200" height="200"><span>The venue buildings and asteroid Itokawa on one ruler: PLATEAU CityGML LOD2 as a mesh</span></a>
 <a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=en"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png"><img src="../../articles/assets/poc/poc_star_tracker/story.en.gif" alt="How One Star Image Reveals Satellite Attitude" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
+<a href="../../articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bga_ball_type_roundtrip.jpg" alt="Carried from Image to Point Cloud, Volume, Mesh and Graph, the Ball Count Stays 71 in Three Types" width="200" height="200"><span>Carried from Image to Point Cloud, Volume, Mesh and Graph, the Ball Count Stays 71 in Three Types</span></a>
 </div>
 </details>
 

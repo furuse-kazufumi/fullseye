@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 99 capabilities**
+**Currently 100 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -31,6 +31,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
+| [Carry an image through points, point clouds, volumes, meshes and graphs — and back](capabilities/convert-between-representations.md) | `keypoints_from_image2d` → `keypoints_uv_to_points` → `knn_graph` → `knn_graph_to_conn_graph` → `graph_components` | `poc_bga_ball_type_roundtrip` |
 | [Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
 | [Reconstruct cone-beam, helical and laminography scans on one geometry (industrial CT)](capabilities/ct-scan-modes.md) | `ct_scan_geometry` → `ellipsoid_projections` → `fdk_reconstruct` → `vol_rle_components` → `vol_rle_volume` | `ct_scan_modes` |
 | [Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
@@ -960,7 +961,7 @@ Alternatives: [`signal_features`](ops/oned/signal/signal_features.md), [`octave_
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## Compose (9)
+## Compose (10)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 
@@ -973,6 +974,18 @@ Pipeline: [`align_frames`](ops/astrostack/align/align_frames.md) → [`drizzle_r
 Alternatives: [`frame_align`](ops/astrostack/align/frame_align.md), [`icp_point2point_3d`](ops/3d/refine/icp_point2point_3d.md), [`register_cross`](ops/3d/fusion/register_cross.md), [`interp_scattered`](ops/math/interp_poly/interp_scattered.md)
 
 Runnable: `poc_astro_photometry`, `poc_registration_basin`
+
+### [Carry an image through points, point clouds, volumes, meshes and graphs — and back](capabilities/convert-between-representations.md)
+
+Turns the bright blobs of one image into keypoints, lifts them to a 3-D point cloud with a height, spreads each point into a Gaussian and samples a voxel volume, and hands that to an iso-surface mesh or a nearest-neighbour graph. The reverse direction exists as well: point cloud → keypoints → count image, and volume correlation → position → image. Every conversion spells its axis convention in its name (`keypoints_uv_to_points` is (u, v) → (z, y, x)); the reversible ones round-trip bit for bit, and `opsreprconv.roundtrips()` declares what the others lose.
+
+Operators: `keypoints_from_image2d`, `keypoints_to_image2d`, `keypoints_uv_to_points`, `points_zyx_to_keypoints_uv`, `pointmap_to_points`, `points_to_gaussians`, `correlation_score`, `score_to_position`, `knn_graph_to_conn_graph`, `labels_to_indices`, `select_points`
+
+Pipeline: [`keypoints_from_image2d`](ops/reprconv/keypoint/keypoints_from_image2d.md) → [`keypoints_uv_to_points`](ops/reprconv/keypoint/keypoints_uv_to_points.md) → [`knn_graph`](ops/3d/geodesic/knn_graph.md) → [`knn_graph_to_conn_graph`](ops/reprconv/structure/knn_graph_to_conn_graph.md) → [`graph_components`](ops/conngraph/stats/graph_components.md)
+
+Alternatives: [`keypoints_rowcol_to_uv`](ops/reprconv/keypoint/keypoints_rowcol_to_uv.md), [`depth_to_organized_points`](ops/3d/range_image/depth_to_organized_points.md), [`voxel_to_mesh`](ops/3d/transform/voxel_to_mesh.md), [`graph_laplacian_spectrum`](ops/conngraph/stats/graph_laplacian_spectrum.md), [`points_to_position`](ops/reprconv/keypoint/points_to_position.md)
+
+Runnable: `poc_bga_ball_type_roundtrip`, `representation_roundtrip`, `representation_conversion`, `type_connectivity_tour`
 
 ### [Compare against a golden image — align, diff, count defects, judge the lot](capabilities/golden-compare.md)
 

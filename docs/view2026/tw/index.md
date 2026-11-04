@@ -355,7 +355,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 99 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 100 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -456,6 +456,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **搭建流程**
 
 - 對齊並疊加: [說明](../../capabilities/align-and-stack.md) _(ja)_ · 範例 [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py) · [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py)
+- 把影像傳給點、點雲、體積、網格和圖,再傳回來: [說明](../../capabilities/convert-between-representations.md) _(ja)_ · 範例 [poc_bga_ball_type_roundtrip](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bga_ball_type_roundtrip.py) · [representation_roundtrip](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/representation_roundtrip.py) · [representation_conversion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/representation_conversion.py) · [type_connectivity_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/type_connectivity_tour.py)
 - 與基準影像(黃金樣本)比較、量缺陷、按批判定: [說明](../../capabilities/golden-compare.md) _(ja)_ · 範例 [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - 用已知良品/不良品集在部署前檢定檢測配方與規格,並量測餘裕: [說明](../../capabilities/inspection-fixture.md) _(ja)_ · 範例 [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - 一次呼叫檢測整個資料夾(批次、依規格判定、彙總、SPC、報告、稽核日誌): [說明](../../capabilities/inspection-workflow.md) _(ja)_ · 範例 [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
@@ -488,7 +489,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 297 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 298 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -631,7 +632,7 @@ PoC 297 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>三維形狀</b> (20)</summary>
+<details class="vall"><summary><b>三維形狀</b> (21)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="../../articles/assets/poc/poc_battery_ct_degradation/story.en.gif" alt="Battery cells with the same exterior can hide different causes of swelling or voiding. Known defects were put into stacked electrodes and imaged by CT; only 29.4 % of electrode swelling reached the outside. Cells with matching can heights separate internally, so outside dimensions cannot identify the cause." loading="lazy" width="200" height="200"></picture><span>電池 CT 劣化</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="../../articles/assets/poc/poc_bev_sensor_fusion/story.en.gif" alt="For distant vehicles, a small image calibration error becomes a physical shift in a bird's-eye map. Opposite-side range sensors were fused on one grid, tracing the reprojection shift at 22 m. Complementary views create the gain, but growing yaw error makes fusion worse than one sensor." loading="lazy" width="200" height="200"></picture><span>鳥瞰圖融合</span></a>
@@ -653,6 +654,7 @@ PoC 297 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori.png"><img src="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/story.en.gif" alt="Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>以三維工具量四維</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="會場建築與小行星糸川同一把尺:把 PLATEAU 的 CityGML LOD2 變成網格" width="200" height="200"><span>會場建築與小行星糸川同一把尺:把 PLATEAU 的 CityGML LOD2 變成網格</span></a>
 <a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=tw"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png"><img src="../../articles/assets/poc/poc_star_tracker/story.en.gif" alt="How One Star Image Reveals Satellite Attitude" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
+<a href="../../articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bga_ball_type_roundtrip.jpg" alt="從影像傳到點雲、體積、網格和圖,焊球數在三種型別中都是 71 個" width="200" height="200"><span>從影像傳到點雲、體積、網格和圖,焊球數在三種型別中都是 71 個</span></a>
 </div>
 </details>
 

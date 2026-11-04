@@ -4480,6 +4480,20 @@
    "run": "py -3.11 examples/poc_symbol_lot_ocr.py",
    "lead_ja": "",
    "lead_en": ""
+  },
+  {
+   "id": "poc_bga_ball_type_roundtrip",
+   "wing": "wing_threed",
+   "added": "2026-11-04",
+   "numbers_source": "log",
+   "figure": "bga_types",
+   "title_ja": "画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個",
+   "title_en": "Carried from Image to Point Cloud, Volume, Mesh and Graph, the Ball Count Stays 71 in Three Types",
+   "caption_ja": "2 個の BGA パッケージ(各 6 x 6、ピッチ 10 px、半径 3.2 px、1 個欠け)の高さ画像を合成し、表現変換の op 29 個で型から型へ渡して戻した。画像の塊の重心は置いた中心と最大 0.066 px、整数位置の応答画像 → keypoints → 画像は画素ごとに bit 一致、keypoints ↔ 点群も bit 一致。点ごとのガウシアン(重み 1/N)の体積の総和は 6σ 打ち切りで 1 − 1.4e-10、3σ では 0.99911(箱の極限 0.99192 より大きい)。2 回目の検査を (2, −3, 5) voxel ずらすと、体積の循環相関のピークは厳密にそこへ立ち、最大値投影の画像から読んだ keypoints も同じ位置。等値面のメッシュはオイラー標数 142 = 2 × 71 で、体積は閉形式の球の和へ刻み 1 / 0.5 / 0.25 voxel で −1.20 / −0.22 / −0.020 % と収束する。4 近傍グラフは 2 成分 (35, 36) で、ラプラシアンの 0 固有値も 2。1 個を拡大した高さ画像では主曲率 × R の中央値 1.001、形状指数 0.9999。高さ画像の pointmap は列が (x, y, z) で、(z, y, x) の受け手にそのまま渡すと例外なしに 15360 画素が左端の 4 列に積もる(右下)。",
+   "caption_en": "A height image of two BGA packages (6 x 6 each, 10 px pitch, 3.2 px radius, one ball missing) is synthesised and carried from type to type and back with 29 representation-conversion ops. Blob centroids sit within 0.066 px of the planted centres; an integer-position response image → keypoints → image matches pixel for pixel, and keypoints ↔ point cloud matches bit for bit. The volume of one Gaussian per ball (weight 1/N) sums to 1 − 1.4e-10 when truncated at 6σ, and to 0.99911 at 3σ — above the axis-aligned box limit 0.99192. Shifting the second inspection by (2, −3, 5) voxels puts the circular correlation peak exactly there, and keypoints read from its maximum-intensity projection give the same position. The iso-surface mesh has Euler characteristic 142 = 2 × 71, and its volume converges to the closed-form sum of spheres at −1.20 / −0.22 / −0.020 % for 1 / 0.5 / 0.25 voxel steps. The 4-nearest-neighbour graph has two components (35, 36), and the Laplacian has two zero eigenvalues. On a magnified single ball the median principal curvature × R is 1.001 and the shape index 0.9999. The height image's pointmap is (x, y, z); handed as-is to a (z, y, x) consumer it raises nothing and piles 15360 pixels into the four leftmost columns (bottom right).",
+   "run": "py -3.11 examples/poc_bga_ball_type_roundtrip.py",
+   "lead_ja": "",
+   "lead_en": ""
   }
  ]
 }
