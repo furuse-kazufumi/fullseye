@@ -17,6 +17,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 新たに ValueError: `V != U` の場、視点 1 つの場、focused(2.0)の系、像点が射出瞳以遠に来る傾き。返り値に `pupil_step_mm` と `exit_pupil_distance_mm` を足した。`mla_to_sensor_mm` は読まなくなった(`plenoptic_capture` は画素→瞳を `microimage_diameter_mm` で写すので、視差はそちらで決まる)。
 - PoC `poc_plenoptic_camera`: 真値の傾きを光線追跡から取り、復号したライトフィールドのピント山と比べる門を足した(以前の門は式を自分の逆で往復するだけで、+712 / 0 / −448 を真値と出しながら通っていた)。3 平面がセンサの視野に入るよう置き直し(以前は 0.6 m の面が視野の外)、真値の距離の図も主光線の幾何から作る。`inspection_texture` の目盛りの終点(画素を二重に掛けて上端まで伸びていた)と "QC 17" の文字の大きさ(PIL 既定の 11 px)を直した。図と動画は作り直し。
 
+- `lf_plenoptic_design`(Breaking、値が変わる): 視点間の基線を `aperture/(U−1)` から `aperture/U`(U 個の瞳セルの中心間隔)へ、`focal_px_subaperture` を `f/pitch` から像距離/pitch(MLA までの距離)へ。理想レンズで光線追跡した視差と相対 1e-3 で一致。`depth_precision_mm` は f=50 mm・N=8・300 mm で 5.564 → 5.299 mm、N=4・150 mm で 0.696 → 0.530 mm、`poc_compound_eye` の設計で 9.936 → 10.060 mm、基線 0.3750 → 0.3333 mm。`plenoptic_capture` の画素→瞳は実機と違って反転しない(傾きの符号が実機と逆)ことを docstring と能力ノートに明記。
+
 ### 修正 — `plenoptic_mla_calibrate` のメモリが全ペア O(n²) だった(2026-11-04)
 
 - 格子の基底を全ペアの差から取っていて、7200 px の白画像で 791 GiB を確保して落ちた。KD 木で 1.25 ピッチ以内のペアだけを取る形に替え、同じ画像で 230,400 個の中心を 2.4 秒で校正する。結果は従来の全ペア版と 1e-10 で一致(回転・ピッチを変えた 3 格子で門)。サブピクセルの頂点補間もベクトル化した(同じ式)。

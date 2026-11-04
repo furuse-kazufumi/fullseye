@@ -1470,19 +1470,27 @@ def lf_plenoptic_design(focal_mm=50.0, f_number=8.0, object_mm=300.0,
     ``n_views`` · ``resolution_loss`` (``U*V``) · ``image_mm`` /
     ``magnification`` / ``working_distance_mm`` from the thin lens ·
     ``aperture_mm`` (``f/N``) · ``baseline_mm`` (viewpoint spacing across the
-    pupil, ``aperture / (U - 1)``) · ``focal_px_subaperture`` (focal length in
-    units of the *microlens* pitch, the pixel of a sub-aperture image) ·
+    pupil, ``aperture / U``: the ``U`` pixels behind a microlens tile the pupil
+    into ``U`` cells whose centres are ``aperture/U`` apart) ·
+    ``focal_px_subaperture`` (the MLA's distance behind the lens -- the image
+    distance, not the focal length -- in units of the *microlens* pitch, the
+    pixel of a sub-aperture image) ·
     ``dof_pixel_mm`` / ``dof_refocus_mm`` and ``refocus_gain`` · and
     ``depth_precision_mm``, the object-side distance change that moves the
     disparity by *subpixel_px* pixels (``Z^2 * dp / (focal_px * baseline)``) —
     the honest depth resolution at *object_mm*.
+
+    Before 2026-11-04 the baseline was ``aperture/(U-1)`` and the sub-aperture
+    focal length ``f/pitch``; at ``f = 50 mm, N = 4, s_o = 150 mm`` that made
+    ``depth_precision_mm`` 31 % too large. Both are now gated against rays
+    traced through an ideal lens (``tests/test_lightfield.py``, rel. 1e-3).
 
     **Raises** ``ValueError``: any non-positive or non-finite length, an
     ``mla_pitch_um`` smaller than two *pixel_um* (fewer than 2 directions is not
     a light field), a sensor smaller than one microlens, a non-positive
     *subpixel_px*, ``object_mm == focal_mm`` (propagated from
     ``optics.thin_lens``: the object images at infinity), and an angular
-    resolution of 1 in either axis, where the baseline would be a 0/0.
+    resolution of 1 in either axis (a single view has no parallax).
     """
     op = "lf_plenoptic_design"
     f = _positive(focal_mm, op + ": focal_mm")
@@ -1509,8 +1517,8 @@ def lf_plenoptic_design(focal_mm=50.0, f_number=8.0, object_mm=300.0,
                          "block" % (op, sh, sw, ang, ang))
     lens = _optics.thin_lens(f, s_o)
     aperture_mm = f / N
-    baseline_mm = aperture_mm / float(ang - 1)
-    focal_px_sub = f / (m_um * 1e-3)          # focal length in microlens pitches
+    baseline_mm = aperture_mm / float(ang)    # pupil-cell centres
+    focal_px_sub = float(lens["image_mm"]) / (m_um * 1e-3)   # MLA distance in microlens pitches
     dof_px = _optics.depth_of_field(f, N, s_o, p_um * 1e-3)
     dof_ml = _optics.depth_of_field(f, N, s_o, m_um * 1e-3)
     gain = (dof_ml["depth_mm"] / dof_px["depth_mm"]

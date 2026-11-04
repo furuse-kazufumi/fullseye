@@ -59,6 +59,8 @@ print(image.shape, slopes.shape, confidence.shape)
 
 幾何光学モデルであり、回折と画素間クロストークは扱わない。`plenoptic_refocus_depth` は近軸の式なので、開口いっぱいの光線の球面収差は入らない。PoC の F/3.7 の処方では、1.0 m の平面の視差が 0 でなく -0.029 レンズレット毎視点になり、領域ごとの距離の中央値誤差が +51 / +22 / +224 mm(0.6 / 1.0 / 1.8 m)残る。`lf_depth_from_focus` は既定の `interp="linear"` だと小数の傾きを 0 側へ引くので、実機の視差には `interp="cubic"` を渡す。
 
+符号の約束が実機と逆: `plenoptic_capture` は画素のずれ q を瞳座標 +q へ写す(反転しない)が、焦点面にセンサを置いた実際のマイクロレンズは瞳を反転する。このため同じ物体の傾きの符号が実機の生画像と逆になる(ここでは近い物体が正、実機では負)。実機の生画像を変換するときは傾きの符号を反転する。実データと比べる PoC がまだ無いので、モデルは変えていない。
+
 ## 実寸校正
 
 一様な白色面から MLA のピッチ、回転、原点を校正し、距離既知の三平面でスロープからメートルへの変換を確認する。真値の視差は変換式から作らず、物体点から処方を順方向に光線追跡して、射出瞳を横切る位置(どの視点か)と MLA を横切る位置(どのレンズレットか)から測る。
@@ -74,4 +76,8 @@ the EPI.  The white-frame measurements are 21.33% dark corners (closed form
 `1 - pi/4 = 21.46%`), a `9.92e-6` rim/core intensity ratio, and the strongest
 off-centre spectral peak at `1/15 = 0.06667 cycle/pixel`.  The decoded parallax
 is +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 / 1.8 m by forward
-ray tracing and +0.175 / 0.000 / -0.150 by the decoded field's focus peaks.  Removing the aperture gives 0% dark corners and fails the gate.
+ray tracing and +0.175 / 0.000 / -0.150 by the decoded field's focus peaks.
+Sign convention: `plenoptic_capture` maps a pixel offset to the pupil without
+the inversion a physical lenslet applies, so slopes here have the opposite sign
+to a real sensor's (near objects positive here, negative on real data); negate
+real-sensor slopes before `plenoptic_refocus_depth`.  Removing the aperture gives 0% dark corners and fails the gate.

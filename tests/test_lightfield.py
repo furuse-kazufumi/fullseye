@@ -458,10 +458,14 @@ def test_plenoptic_design_composes_optics_rather_than_re_deriving_it():
     assert d["dof_refocus_mm"] == pytest.approx(
         O.depth_of_field(50.0, 8.0, 300.0, 27.6e-3)["depth_mm"], rel=1e-15)
     assert d["aperture_mm"] == pytest.approx(50.0 / 8.0, rel=1e-15)
-    assert d["baseline_mm"] == pytest.approx((50.0 / 8.0) / 7.0, rel=1e-15)
+    # 2026-11-04: U views tile the pupil, so their centres are aperture/U apart
+    # (was aperture/(U-1)); the sub-aperture "focal length" is the MLA's
+    # distance behind the lens, the image distance 60 mm (was f = 50 mm).
+    # Both are checked against traced rays in the test below.
+    assert d["baseline_mm"] == pytest.approx((50.0 / 8.0) / 8.0, rel=1e-15)
     assert d["pitch_is_integer"] is True
-    # depth precision = Z^2 * dp / (f_px * b), the derivative of Z = f*b/d
-    f_px = 50.0 / 27.6e-3
+    f_px = lens["image_mm"] / 27.6e-3
+    assert d["focal_px_subaperture"] == pytest.approx(f_px, rel=1e-15)
     assert d["depth_precision_mm"] == pytest.approx(
         300.0 ** 2 * 0.1 / (f_px * d["baseline_mm"]), rel=1e-12)
 
@@ -737,3 +741,46 @@ def test_depth_from_focus_linear_default_is_biased_on_fractional_slopes(true):
     cub, _ = LF.lf_depth_from_focus(lf, sweep, window=9, edge="wrap", interp="cubic")
     assert abs(float(np.median(lin)) - true) > 0.1      # the default's documented bias
     assert abs(float(np.median(cub)) - true) < 0.005    # cubic recovers the truth
+
+
+def _traced_slope_per_view(f, aperture, s_o, pitch_mm, views, z_mm):
+    """Lenslets of MLA-plane parallax per view for an on-axis point at *z_mm*.
+
+    An ideal thin lens (``raytrace``, stop at the lens) images *s_o* onto the
+    MLA.  Each of the *views* views is the pupil cell of one pixel behind a
+    lenslet, so its rays pass the lens at the cell centre; the parallax is
+    where those rays cross the MLA plane, fitted against view index.  Nothing
+    here reads ``lf_plenoptic_design``.
+    """
+    import raytrace as RT
+    lens = RT.lens_system([{"f": f, "t": None, "ap": aperture / 2}], stop=0, object_mm=s_o)
+    image_mm = float(RT.paraxial_trace(lens)["image_mm"])
+    k = np.arange(views) - (views - 1) / 2
+    xk = k * aperture / views                         # pupil-cell centres
+    obj = np.array([0.0, 0.0, -z_mm])
+    d = np.column_stack([xk, np.zeros_like(xk), np.zeros_like(xk)]) - obj
+    d /= np.linalg.norm(d, axis=1, keepdims=True)
+    tr = RT.trace_rays(lens, np.repeat(obj[None], views, 0), d)
+    assert tr["valid"].all()
+    q = tr["points"][:, -2]; v = tr["dirs"][:, -1]
+    x = q[:, 0] + (image_mm - q[:, 2]) / v[:, 2] * v[:, 0]
+    return float(np.polyfit(k, x / pitch_mm, 1)[0])
+
+
+@pytest.mark.parametrize("f,N,s_o,pitch", [(50.0, 8.0, 300.0, 27.6),
+                                            (50.0, 4.0, 150.0, 27.6),
+                                            (12.0, 4.0, 120.0, 31.05)])
+def test_plenoptic_design_precision_matches_forward_traced_parallax(f, N, s_o, pitch):
+    """depth_precision_mm = the object shift that moves the traced parallax by subpixel_px."""
+    d = LF.lf_plenoptic_design(f, N, s_o, 3.45, pitch, (2048, 2448), subpixel_px=0.1)
+    U = d["angular_u"]; p = pitch * 1e-3; ap = f / N
+    h = 1e-3 * s_o
+    ds_dz = (_traced_slope_per_view(f, ap, s_o, p, U, s_o + h)
+             - _traced_slope_per_view(f, ap, s_o, p, U, s_o - h)) / (2 * h)
+    assert _traced_slope_per_view(f, ap, s_o, p, U, s_o) == pytest.approx(0.0, abs=1e-12)
+    truth = 0.1 / abs(ds_dz)
+    assert d["depth_precision_mm"] == pytest.approx(truth, rel=1e-3)
+    # A point at infinity images at f, so the traced rays cross the MLA (at the
+    # image distance i) at X*(1 - i/f): its parallax isolates the view spacing.
+    s_inf = _traced_slope_per_view(f, ap, s_o, p, U, 1e12)
+    assert d["baseline_mm"] == pytest.approx(s_inf * p / (1 - d["image_mm"] / f), rel=1e-6)

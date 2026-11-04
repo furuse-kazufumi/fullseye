@@ -212,7 +212,8 @@ def main():
     assert abs(epi_med - TRUE_SLOPE) < 0.01
     assert (conf > 0).any() and (energy > 0).any()
 
-    focal_px = 50.0 / 27.6e-3                        # サブアパーチャ画素 = MLA ピッチ
+    # サブアパーチャ画素 = MLA ピッチ。焦点距離ではなく MLA までの距離(像距離 60 mm)で数える(2026-11-04)
+    focal_px = design["focal_px_subaperture"]
     base = design["baseline_mm"]
     depth = L.lf_disparity_to_depth(dff, focal_px=focal_px, baseline=base)
     expect = focal_px * base / TRUE_SLOPE

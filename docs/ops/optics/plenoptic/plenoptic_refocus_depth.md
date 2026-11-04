@@ -43,6 +43,9 @@ to the focus distance.  The relation is now gated against rays traced
 forward through the prescription (``tests/test_plenoptic.py``): rel. error
 below 1e-6 for an ideal lens and 2e-4 for the PoC's three-element lens.
 
+Sign: follows :func:`plenoptic_capture`'s non-inverting pixel-to-pupil
+map, which is the opposite of a physical lenslet; negate real-sensor slopes.
+
 Limits: it is paraxial.  Spherical aberration of a real aperture moves the
 best-focus slope of the full pupil away from the paraxial one -- for the PoC
 lens at F/3.7 the decoded 1.0 m plane sits at slope -0.029, not 0 (measured
