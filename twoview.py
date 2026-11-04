@@ -241,14 +241,12 @@ def _homography_dlt(pts1, pts2):
     return H / denom
 
 
-def _planar_degeneracy_ratio(pts1, pts2):
-    """対応点が単一ホモグラフィでどれだけ説明できるか(スケール不変)。→ float(小=平面的)。
+def _planar_shape_ratio(pts1, pts2):
+    """H の対称転送残差の中央値 / 点の広がり。→ float(小=平面的)。**視差に比例する**。
 
-    平面(共平面 3D)/純回転シーンでは 1 つの H が全対応を厳密に満たすため、本質行列分解は
-    退化する(F は 2 パラメータ族に縮退)。H の対称転送残差の中央値を点群の広がりで正規化して
-    返す。値が小さいほど平面的=退化。三角測量後の構造ではなく **入力対応点** で判定するのは、
-    退化時に復元姿勢が誤るため三角測量済み構造が平面性を保たない(スケール不変な共分散比でも
-    seed により 0.003〜0.44 と散らばり分離不能)ことを実測で確認したため。
+    2026-11-05 まで ``recover_pose`` の平面判定そのものだった量。基線(視差)に比例するので、
+    非平面でも基線が小さいと平面と誤判定した(敵対的検証 G11)。いまは F の残差から雑音の尺度が
+    取れない 8 点ちょうどの入力でだけ使う(従来どおりの判定を保つため)。
     """
     p1 = np.asarray(pts1, float)
     p2 = np.asarray(pts2, float)
@@ -267,19 +265,69 @@ def _planar_degeneracy_ratio(pts1, pts2):
     return float(np.median(resid) / (scale + 1e-12))
 
 
-def recover_pose(pts1, pts2, K1, K2=None, planar_tol=1e-2):
+def _planar_degeneracy_ratio(pts1, pts2):
+    """平面度 = ホモグラフィの当てはまり / 基礎行列の当てはまり(自由度で補正した RMS の比)。→ float(小=平面的)。
+
+    平面(共平面 3D)/純回転シーンでは 1 つの H が全対応を(雑音の範囲で)満たすため、本質行列分解は
+    退化する(F は 2 パラメータ族に縮退)。非平面なら H では説明できない視差が残り、F だけが当たる。
+    そこで両方を当てはめ、残差を自由度で割った尺度を比べる(Torr の模型選択と同じ考え方):
+
+    - ``σ_H² = Σ |H p1 − p2|² / (2N − 8)``(正規化 DLT の H、前向き転送誤差 [px²])
+    - ``σ_F² = Σ Sampson(F) / (N − 7)``(正規化 8 点法の F、Sampson 距離 [px²])
+    - 返り値 ``σ_H / max(σ_F, 1e-9 × 点の広がり)``
+
+    平面・純回転では H も F も雑音だけを残すので比は約 √2(H の転送誤差は 2 次元、Sampson は 1 次元。
+    実測 N=60 で 1.2〜1.9、N=20 で 0.6〜3.3)。非平面では視差 / 雑音に比例して大きくなる。雑音が
+    ないなら非平面は基線 0.2 % でも 1e5 超、平面は 1e-6 程度で、**基線(視差)の大きさに依らず**
+    分かれる。視差が雑音と同程度しかないときは平面と区別できず(比 1.5〜3)、そのとき 8 点法の
+    並進方向も 10〜160° 狂うことを実測で確認した(拒否するのが正しい側)。
+
+    三角測量後の構造ではなく **入力対応点** で判定するのは、退化時に復元姿勢が誤るため三角測量済み
+    構造が平面性を保たない(スケール不変な共分散比でも seed により 0.003〜0.44 と散らばり分離不能)
+    ことを実測で確認したため。8 点ちょうどでは F が全点を通り σ_F が測れないので ``nan`` を返す
+    (``recover_pose`` は 8 点では :func:`_planar_shape_ratio` で判定する)。
+
+    ★2026-11-05(敵対的検証 G11): 以前は H 残差の中央値を点の広がりで割った量(いまの
+    :func:`_planar_shape_ratio`)で、これは視差に比例するため、非平面でも基線 0.05 で拒否していた
+    (同じデータを ``camera.recover_pose`` は誤差 5e-16 で解く)。
+    """
+    p1 = np.asarray(pts1, float)
+    p2 = np.asarray(pts2, float)
+    n = len(p1)
+    if n < 9:
+        return float("nan")
+    try:
+        H = _homography_dlt(p1, p2)
+    except np.linalg.LinAlgError:
+        return 0.0   # H が特異=極度の退化。fail-closed で平面扱い
+    with np.errstate(divide="ignore", invalid="ignore"):
+        fwd = (H @ _to_homog(p1).T).T
+        fwd = fwd[:, :2] / fwd[:, 2:3]
+    if not np.isfinite(fwd).all():
+        return 0.0   # 点が無限遠へ飛ぶ H は退化。fail-closed で平面扱い
+    sigma_h = np.sqrt(np.sum((fwd - p2) ** 2) / (2 * n - 8))
+    F = fundamental_8point(p1, p2)
+    F = F / np.linalg.norm(F)
+    sigma_f = np.sqrt(np.sum(sampson_distance(F, p1, p2)) / (n - 7))
+    spread = (np.mean(np.linalg.norm(p1 - p1.mean(axis=0), axis=1))
+              + np.mean(np.linalg.norm(p2 - p2.mean(axis=0), axis=1)))
+    return float(sigma_h / max(sigma_f, 1e-9 * spread, np.finfo(float).tiny))
+
+
+def recover_pose(pts1, pts2, K1, K2=None, planar_tol=3.0):
     """対応点 + K から相対姿勢 (R,t) と 3D 構造を復元(cheirality で一意化)。→ (R, t_unit, points3d)。
 
     t はスケール不定なので単位ベクトル。points3d は cam1 座標系(|t|=1 に対応するスケール)。
 
     fail-closed: 平面(共平面 3D)/純回転シーンは本質行列分解の**退化配置**で、Sampson 残差 ~0 の
     まま並進方向を誤って返す(見かけは完璧)。そうした入力は姿勢を復元できないため ValueError で
-    明示拒否する(ホモグラフィ分解を使うこと)。`planar_tol` はスケール不変な平面度しきい値
-    (`_planar_degeneracy_ratio` の戻り値がこれ未満なら退化と判定)。
+    明示拒否する(ホモグラフィ分解を使うこと)。`planar_tol` は視差・尺度に依らない平面度しきい値
+    (`_planar_degeneracy_ratio` = H と F の当てはまりの比がこれ未満なら退化と判定。既定 3.0)。
 
     手順:
     - 入口検査(8 点以上、点数一致、(N,2) かつ有限)。
-    - 平面度: 正規化 DLT でホモグラフィ H を当て、対称転送残差の中央値を両画像の点の広がり(重心からの平均距離の和)で割った比を出す。これが ``planar_tol``(既定 1e-2)未満なら ``ValueError``。H が特異なら比 0 として同じく拒否。
+    - 平面度: 正規化 DLT のホモグラフィ H と正規化 8 点法の F を両方当て、自由度で割った残差の尺度の比 ``σ_H / σ_F`` を出す(:func:`_planar_degeneracy_ratio`)。これが ``planar_tol``(既定 3.0)未満なら ``ValueError``。平面・純回転は約 √2、非平面は視差 / 雑音に比例して大きい。H が特異なら比 0 として同じく拒否。8 点ちょうどは F の残差から雑音が測れないので、従来の判定(H 残差の中央値 / 点の広がり < 1e-2、視差に比例)を使う。
+    - ★2026-11-05(敵対的検証 G11): 以前の比(H 残差 / 点の広がり、既定 1e-2)は視差に比例し、非平面でも基線が小さいと拒否していた(``camera.recover_pose`` は同じデータを解く)。逆に雑音が大きいと平面でも通していた(σ = 2 px で比 1e-2 超)。どちらも新しい比で直る。
     - ``essential_8point`` → 4 候補 ``(R, ±t)`` へ分解 → 各候補で ``triangulate`` し、両カメラで深度 > 0 の点数が最大の候補を採る(同数なら先の候補)。
 
     返り値: ``R`` (3,3)、``t`` (3,) 単位ベクトル、``points3d`` (N,3)。規約は cam1 = K1[I|0]、cam2 = K2[R|t] で ``X2 = R X1 + t``。``points3d`` は cam1 座標系で |t|=1 のスケール。視線が平行な対応は NaN 行になる。
@@ -296,12 +344,17 @@ def recover_pose(pts1, pts2, K1, K2=None, planar_tol=1e-2):
         raise ValueError("8-point algorithm requires at least 8 points")
     if len(p1) != len(p2):
         raise ValueError("correspondence point counts do not match")
-    ratio = _planar_degeneracy_ratio(p1, p2)
-    if ratio < planar_tol:
+    if len(p1) == 8:
+        ratio, tol = _planar_shape_ratio(p1, p2), 1e-2
+    else:
+        ratio, tol = _planar_degeneracy_ratio(p1, p2), float(planar_tol)
+    if not ratio >= tol:
         raise ValueError(
             "planar (coplanar 3D) / pure-rotation scenes degenerate the essential-matrix "
             f"decomposition, so recover_pose cannot recover relative pose "
-            f"(planarity ratio={ratio:.2e} < tol={planar_tol:g}). "
+            f"(planarity ratio={ratio:.2e} < tol={tol:g}; the homography explains the "
+            "correspondences about as well as the fundamental matrix, i.e. the parallax is not "
+            "distinguishable from the noise). "
             "Use homography decomposition (H = K2^-1 * (image homography) * K1) for this layout instead."
         )
     E = essential_8point(pts1, pts2, K1, K2)
