@@ -1296,13 +1296,13 @@
    "hi": "हर contour के शुरुआती point की copy अंत में जोड़कर खुली polyline को बंद loop बनाता है (केवल 2 या ज़्यादा points वाले contours)। HALCON के ``close_contours_xld`` (Close an XLD contour.) के समकक्ष है।"
   },
   "2d/closest_point_transform": {
-   "fp": "0f6a44ced5a9",
-   "en": "Returns the normalized Euclidean distance transform of the region's complement — a distance field representing, for each pixel, the distance to the nearest region (foreground) pixel, with foreground/background reversed relative to ``distance_transform``. The output type is ``image``. Corresponds to HALCON's ``closest_point_transform`` (Compute the closest-point transformation of a region.).",
-   "zh": "返回区域**补集**的欧氏距离变换归一化结果——表示每个像素到最近的区域（前景）像素的距离，与 ``distance_transform`` 相比前景/背景是相反的距离场。输出类型为 ``image``。相当于 HALCON 的 ``closest_point_transform``（Compute the closest-point transformation of a region.）。",
-   "tw": "回傳區域**補集**的歐氏距離變換歸一化結果——表示每個像素到最近的區域（前景）像素的距離，與 ``distance_transform`` 相比前景/背景是相反的距離場。輸出型別為 ``image``。相當於 HALCON 的 ``closest_point_transform``（Compute the closest-point transformation of a region.）。",
-   "ko": "영역의 **여집합**에 대한 유클리드 거리 변환을 정규화하여 반환한다 — 각 화소에서 가장 가까운 영역(전경) 화소까지의 거리를 나타내며, ``distance_transform``과는 전경/배경이 반대인 거리장이다. 출력은 ``image`` 타입. HALCON의 ``closest_point_transform``(Compute the closest-point transformation of a region.)에 해당.",
-   "de": "Gibt die normierte euklidische Distanztransformation des Komplements der Region zurück — ein Distanzfeld, das für jedes Pixel die Distanz zum nächstgelegenen Regions-(Vordergrund-)Pixel angibt, wobei Vordergrund/Hintergrund im Vergleich zu ``distance_transform`` vertauscht sind. Der Ausgabetyp ist ``image``. Entspricht HALCONs ``closest_point_transform`` (Compute the closest-point transformation of a region.).",
-   "hi": "Region के **complement** पर Euclidean distance transform को normalise करके लौटाता है ―― हर pixel से सबसे नज़दीकी region (foreground) pixel तक की दूरी दर्शाने वाला, ``distance_transform`` से foreground/background उलटा distance field। आउटपुट ``image`` type का है। HALCON के ``closest_point_transform`` (Compute the closest-point transformation of a region.) के समकक्ष है।"
+   "fp": "d3302136a389",
+   "en": "Returns the normalized Euclidean distance transform of the region's **complement** — a distance field representing, for each pixel, the distance to the nearest region (foreground) pixel, with foreground/background reversed relative to ``distance_transform``. The output type is ``image``. If the region is empty, the result is uniformly 1.0 (there is no nearest region pixel = everywhere is farthest). Corresponds to HALCON's ``closest_point_transform`` (Compute the closest-point transformation of a region.).",
+   "zh": "返回区域**补集**的欧氏距离变换归一化结果——表示每个像素到最近的区域（前景）像素的距离，与 ``distance_transform`` 相比前景/背景是相反的距离场。输出类型为 ``image``。区域为空时一律为 1.0（没有最近的区域像素 = 到处都是最远）。相当于 HALCON 的 ``closest_point_transform``（Compute the closest-point transformation of a region.）。",
+   "tw": "回傳區域**補集**的歐氏距離變換歸一化結果——表示每個像素到最近的區域（前景）像素的距離，與 ``distance_transform`` 相比前景/背景是相反的距離場。輸出型別為 ``image``。區域為空時一律為 1.0（沒有最近的區域像素 = 處處都是最遠）。相當於 HALCON 的 ``closest_point_transform``（Compute the closest-point transformation of a region.）。",
+   "ko": "영역의 **여집합**에 대한 유클리드 거리 변환을 정규화하여 반환한다 — 각 화소에서 가장 가까운 영역(전경) 화소까지의 거리를 나타내며, ``distance_transform``과는 전경/배경이 반대인 거리장이다. 출력은 ``image`` 타입. 영역이 비어 있으면 일률적으로 1.0(가장 가까운 영역 화소가 없음 = 어디나 가장 멂). HALCON의 ``closest_point_transform``(Compute the closest-point transformation of a region.)에 해당.",
+   "de": "Gibt die normierte euklidische Distanztransformation des **Komplements** der Region zurück — ein Distanzfeld, das für jedes Pixel die Distanz zum nächstgelegenen Regions-(Vordergrund-)Pixel angibt, wobei Vordergrund/Hintergrund im Vergleich zu ``distance_transform`` vertauscht sind. Der Ausgabetyp ist ``image``. Ist die Region leer, ist das Ergebnis überall 1.0 (es gibt kein nächstgelegenes Regionspixel = überall am weitesten entfernt). Entspricht HALCONs ``closest_point_transform`` (Compute the closest-point transformation of a region.).",
+   "hi": "Region के **complement** पर Euclidean distance transform को normalise करके लौटाता है ―― हर pixel से सबसे नज़दीकी region (foreground) pixel तक की दूरी दर्शाने वाला, ``distance_transform`` से foreground/background उलटा distance field। आउटपुट ``image`` type का है। Region खाली हो तो हर जगह एकसमान 1.0 (सबसे नज़दीकी region pixel नहीं है = हर जगह सबसे दूर)। HALCON के ``closest_point_transform`` (Compute the closest-point transformation of a region.) के समकक्ष है।"
   },
   "2d/closing_circle": {
    "fp": "1bc8eaee77af",
@@ -1341,13 +1341,13 @@
    "hi": "Implementation ``anisotropic_diffusion`` जैसा ही है (``kind: \"anisotropic\"``)। मूल coherence-enhancing diffusion structure tensor के eigenvectors के साथ diffusion की दिशा नियंत्रित करने वाली (रेखीय संरचनाओं को जोड़ने वाली) विधि है, लेकिन यह विकल्प structure tensor की गणना नहीं करता और साधारण Perona-Malik anisotropic diffusion से काम चलाता है (सन्निकटन की सीमा ―― रेखीय संरचनाओं को जोड़ने का असर नहीं आता)। HALCON के ``coherence_enhancing_diff`` (Perform a coherence enhancing diffusion of an image.) का विकल्प।"
   },
   "2d/compactness": {
-   "fp": "67873f3efdb1",
-   "en": "Compactness ``perimeter^2 / (4pi * area)``. It is 1 for a circle and grows with elongation, roughness and holes, with **no upper bound**. The same quantity as HALCON's ``compactness`` (Shape factor for the compactness of a region.).",
-   "zh": "紧凑度 ``周长² / (4π・面积)``。圆为 1,越细长/越粗糙/孔洞越多则越大,**没有上限**。与 HALCON 的 ``compactness``(Shape factor for the compactness of a region.)是同一个量。",
-   "tw": "緊湊度 ``周長² / (4π・面積)``。圓為 1,越細長/越粗糙/孔洞越多就越大,**沒有上限**。與 HALCON 的 ``compactness``(Shape factor for the compactness of a region.)是同一個量。",
-   "ko": "콤팩트니스 ``둘레² / (4π・면적)``. 원이면 1이고 가늘고 길수록, 울퉁불퉁할수록, 구멍이 많을수록 커지며 **상한이 없다**. HALCON의 ``compactness``(Shape factor for the compactness of a region.)와 같은 양이다.",
-   "de": "Kompaktheit ``Umfang² / (4π · Fläche)``. Für einen Kreis ist sie 1 und wächst mit Länglichkeit, Rauheit und Löchern — **ohne obere Schranke**. Dieselbe Größe wie HALCONs ``compactness`` (Shape factor for the compactness of a region.).",
-   "hi": "Compactness ``perimeter^2 / (4pi * area)``। वृत्त के लिए 1, और लंबा-पतला/दाँतेदार/ज़्यादा छेदों वाला होने पर बढ़ता है, और इसकी **ऊपरी सीमा नहीं** है। HALCON के ``compactness`` (Shape factor for the compactness of a region.) वाली ही मात्रा।"
+   "fp": "287f7958d9e5",
+   "en": "Compactness ``max(1, perimeter^2 / (4pi * area))``. It is 1 for a circle and grows with elongation, roughness and holes, with **no upper bound**. The same quantity as HALCON's ``compactness`` (Shape factor for the compactness of a region.).",
+   "zh": "紧凑度 ``max(1, 周长² / (4π・面积))``。圆为 1，越细长/越粗糙/孔洞越多则越大，**没有上限**。与 HALCON 的 ``compactness``（Shape factor for the compactness of a region.）是同一个量。",
+   "tw": "緊湊度 ``max(1, 周長² / (4π・面積))``。圓為 1，越細長/越粗糙/孔洞越多就越大，**沒有上限**。與 HALCON 的 ``compactness``（Shape factor for the compactness of a region.）是同一個量。",
+   "ko": "콤팩트니스 ``max(1, 둘레² / (4π・면적))``. 원이면 1이고 가늘고 길수록, 울퉁불퉁할수록, 구멍이 많을수록 커지며 **상한이 없다**. HALCON의 ``compactness``(Shape factor for the compactness of a region.)와 같은 양이다.",
+   "de": "Kompaktheit ``max(1, Umfang² / (4π · Fläche))``. Für einen Kreis ist sie 1 und wächst mit Länglichkeit, Rauheit und Löchern — **ohne obere Schranke**. Dieselbe Größe wie HALCONs ``compactness`` (Shape factor for the compactness of a region.).",
+   "hi": "Compactness ``max(1, perimeter^2 / (4pi * area))``। वृत्त के लिए 1, और लंबा-पतला/दाँतेदार/ज़्यादा छेदों वाला होने पर बढ़ता है, और इसकी **ऊपरी सीमा नहीं** है। HALCON के ``compactness`` (Shape factor for the compactness of a region.) वाली ही मात्रा।"
   },
   "2d/compactness_xld": {
    "fp": "e2eb40bc54da",
@@ -1926,13 +1926,13 @@
    "hi": "Euclidean distance transform। HALCON के ``distance_transform`` (Compute the distance transformation of a region.) के समकक्ष है।"
   },
   "2d/distance_transform": {
-   "fp": "cd74606f51d4",
-   "en": "An image obtained by normalizing the Euclidean distance transform (``ndimage.distance_transform_edt``) by its maximum value. It represents, for each foreground pixel, the distance to the nearest background pixel -- the larger the value, the \"deeper\" the pixel is inside the region. Note that the output type is ``image``, not ``region``. Equivalent to HALCON's ``distance_transform`` (Compute the distance transformation of a region.).",
-   "zh": "以最大值归一化后的欧几里得距离变换(``ndimage.distance_transform_edt``)图像。表示每个前景像素到最近背景像素的距离——数值越大,说明该像素越处于区域的\"深处\"。请注意输出类型是 ``image`` 而不是 ``region``。相当于 HALCON 的 ``distance_transform``(Compute the distance transformation of a region.)。",
-   "tw": "以最大值正規化後的歐幾里得距離變換(``ndimage.distance_transform_edt``)影像。表示每個前景像素到最近背景像素的距離——數值越大,代表該像素越處於區域的「深處」。請注意輸出型別是 ``image`` 而非 ``region``。相當於 HALCON 的 ``distance_transform``(Compute the distance transformation of a region.)。",
-   "ko": "최댓값으로 정규화한 유클리드 거리 변환(``ndimage.distance_transform_edt``) 이미지. 각 전경 픽셀에 대해 가장 가까운 배경 픽셀까지의 거리를 나타낸다 -- 값이 클수록 영역의 '안쪽 깊이'에 있는 픽셀이다. 출력이 ``region``이 아니라 ``image`` 타입이 되는 점에 주의. HALCON의 ``distance_transform``(Compute the distance transformation of a region.)에 해당.",
-   "de": "Ein Bild, das durch Normierung der euklidischen Distanztransformation (``ndimage.distance_transform_edt``) auf ihren Maximalwert entsteht. Es gibt für jedes Vordergrundpixel den Abstand zum nächstgelegenen Hintergrundpixel an -- je größer der Wert, desto 'tiefer' liegt das Pixel im Inneren der Region. Zu beachten: Der Ausgabetyp ist ``image``, nicht ``region``. Entspricht HALCONs ``distance_transform`` (Compute the distance transformation of a region.).",
-   "hi": "Euclidean distance transform (``ndimage.distance_transform_edt``) को अधिकतम मान से normalise की गई image। हर foreground pixel के लिए सबसे नज़दीकी background pixel तक की दूरी दर्शाता है ―― मान जितना बड़ा, pixel region में उतना \"गहरा\"। ध्यान दें कि आउटपुट ``region`` नहीं बल्कि ``image`` type का होता है। HALCON के ``distance_transform`` (Compute the distance transformation of a region.) के समकक्ष है।"
+   "fp": "5cc8d890ead7",
+   "en": "An image obtained by normalizing the Euclidean distance transform (``ndimage.distance_transform_edt``) by its maximum value. It represents, for each foreground pixel, the distance to the nearest background pixel -- (if there is no background, it is uniformly 1.0 = everywhere is farthest) the larger the value, the \"deeper\" the pixel is inside the region. Note that the output type is ``image``, not ``region``. Equivalent to HALCON's ``distance_transform`` (Compute the distance transformation of a region.).",
+   "zh": "以最大值归一化后的欧几里得距离变换（``ndimage.distance_transform_edt``）图像。表示每个前景像素到最近背景像素的距离——（没有背景时一律为 1.0 = 到处都是最远）数值越大，说明该像素越处于区域的“深处”。请注意输出类型是 ``image`` 而不是 ``region``。相当于 HALCON 的 ``distance_transform``（Compute the distance transformation of a region.）。",
+   "tw": "以最大值正規化後的歐幾里得距離變換（``ndimage.distance_transform_edt``）影像。表示每個前景像素到最近背景像素的距離——（沒有背景時一律為 1.0 = 處處都是最遠）數值越大，代表該像素越處於區域的「深處」。請注意輸出型別是 ``image`` 而非 ``region``。相當於 HALCON 的 ``distance_transform``（Compute the distance transformation of a region.）。",
+   "ko": "최댓값으로 정규화한 유클리드 거리 변환(``ndimage.distance_transform_edt``) 이미지. 각 전경 픽셀에 대해 가장 가까운 배경 픽셀까지의 거리를 나타낸다 -- (배경이 없으면 일률적으로 1.0 = 어디나 가장 멂) 값이 클수록 영역의 '안쪽 깊이'에 있는 픽셀이다. 출력이 ``region``이 아니라 ``image`` 타입이 되는 점에 주의. HALCON의 ``distance_transform``(Compute the distance transformation of a region.)에 해당.",
+   "de": "Ein Bild, das durch Normierung der euklidischen Distanztransformation (``ndimage.distance_transform_edt``) auf ihren Maximalwert entsteht. Es gibt für jedes Vordergrundpixel den Abstand zum nächstgelegenen Hintergrundpixel an -- (gibt es keinen Hintergrund, ist es überall 1.0 = überall am weitesten entfernt) je größer der Wert, desto 'tiefer' liegt das Pixel im Inneren der Region. Zu beachten: Der Ausgabetyp ist ``image``, nicht ``region``. Entspricht HALCONs ``distance_transform`` (Compute the distance transformation of a region.).",
+   "hi": "Euclidean distance transform (``ndimage.distance_transform_edt``) को अधिकतम मान से normalise की गई image। हर foreground pixel के लिए सबसे नज़दीकी background pixel तक की दूरी दर्शाता है ―― (background न हो तो हर जगह एकसमान 1.0 = हर जगह सबसे दूर) मान जितना बड़ा, pixel region में उतना \"गहरा\"। ध्यान दें कि आउटपुट ``region`` नहीं बल्कि ``image`` type का होता है। HALCON के ``distance_transform`` (Compute the distance transformation of a region.) के समकक्ष है।"
   },
   "2d/dl_aniso_diffusion": {
    "fp": "b61d2bc5d8c5",
@@ -2522,13 +2522,13 @@
    "hi": "Region के convex hull को भरे हुए region के रूप में लौटाता है (``skimage.morphology.convex_hull_image``)। a, b इस्तेमाल नहीं होते। ``shape_trans`` (convex hull में shape बदलने वाला seed op) जैसा ही implementation।"
   },
   "2d/get_region_thickness": {
-   "fp": "a83d99dfa81a",
-   "en": "An approximation of a region's thickness in pixels, ``2 × largest inscribed radius`` (twice the maximum of ``distance_transform_edt``).",
-   "zh": "区域粗细 [px] 的近似值 ``2 × 最大内切圆半径``(``distance_transform_edt`` 最大值的 2 倍)。",
-   "tw": "區域粗細 [px] 的近似值 ``2 × 最大內切圓半徑``(``distance_transform_edt`` 最大值的 2 倍)。",
-   "ko": "영역 두께 [px] 의 근삿값 ``2 × 최대 내접원 반지름``(``distance_transform_edt`` 최댓값의 2 배).",
-   "de": "Eine Näherung der Dicke einer Region in Pixeln, ``2 × größter Inkreisradius`` (das Doppelte des Maximums von ``distance_transform_edt``).",
-   "hi": "Region की मोटाई का pixels में अनुमान, ``2 × सबसे बड़ी inscribed radius`` (``distance_transform_edt`` के अधिकतम का दोगुना)।"
+   "fp": "8d5a24aa3ff8",
+   "en": "An approximation of a region's thickness in pixels, ``2 × largest inscribed radius`` (twice the maximum of ``distance_transform_edt``). Outside the image is treated as background (a region touching the border also gets the same thickness as when the image is enlarged; a full 60x80 gives 60).",
+   "zh": "区域粗细 [px] 的近似值 ``2 × 最大内切圆半径``（``distance_transform_edt`` 最大值的 2 倍）。图像外视为背景（接触边缘的区域也与扩大图像时的粗细相同。全满的 60x80 为 60）。",
+   "tw": "區域粗細 [px] 的近似值 ``2 × 最大內切圓半徑``（``distance_transform_edt`` 最大值的 2 倍）。影像外視為背景（接觸邊緣的區域也與擴大影像時的粗細相同。全滿的 60x80 為 60）。",
+   "ko": "영역 두께 [px] 의 근삿값 ``2 × 최대 내접원 반지름``(``distance_transform_edt`` 최댓값의 2 배). 영상 밖은 배경으로 간주한다(가장자리에 닿는 영역도 영상을 넓혔을 때와 같은 두께. 전면인 60x80은 60).",
+   "de": "Eine Näherung der Dicke einer Region in Pixeln, ``2 × größter Inkreisradius`` (das Doppelte des Maximums von ``distance_transform_edt``). Das Bildäußere gilt als Hintergrund (auch eine Region, die den Rand berührt, hat dieselbe Dicke wie bei vergrößertem Bild; ein volles 60x80 ergibt 60).",
+   "hi": "Region की मोटाई का pixels में अनुमान, ``2 × सबसे बड़ी inscribed radius`` (``distance_transform_edt`` के अधिकतम का दोगुना)। Image के बाहर को background माना जाता है (किनारे को छूने वाले region की मोटाई भी वही होती है जो image को बड़ा करने पर होती; पूरा भरा 60x80 का मान 60 है)।"
   },
   "2d/gopen": {
    "fp": "e3016c160604",
@@ -5078,22 +5078,22 @@
    "hi": "केवल सबसे बड़े क्षेत्रफल वाला connected region रखता है। HALCON के ``select_shape_std`` (Select regions of a given shape.) के समकक्ष है।"
   },
   "2d/select_shape": {
-   "fp": "ab979b89486a",
-   "en": "Removes connected components whose area is below a threshold (``16+a*200`` pixels) -- i.e., removes small noise-like regions. HALCON's ``select_shape`` (Choose regions with the aid of shape features.) is a general-purpose operator that can filter by any shape feature such as area, circularity, or convexity, but here it is fixed to a single area-based cutoff (an approximation).",
-   "zh": "去除面积低于阈值(``16+a*200`` 像素)的连通成分(去除类似噪声的小区域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可以用面积、圆形度、凸性等任意形状特征进行筛选的通用算子,但这里固定为按面积截断这一种(近似)。",
-   "tw": "去除面積低於閾值(``16+a*200`` 像素)的連通成分(去除類似雜訊的小區域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可用面積、圓形度、凸性等任意形狀特徵篩選的通用運算子,但這裡固定為以面積截斷這一種(近似)。",
-   "ko": "면적이 임계값(``16+a*200`` 픽셀) 미만인 연결 성분을 제거한다(작은 노이즈성 영역 제거). HALCON의 ``select_shape``(Choose regions with the aid of shape features.)는 면적, 원형도, 볼록성 등 임의의 형상 특징으로 선별할 수 있는 범용 연산자지만, 여기서는 면적 기준의 컷오프 한 종류로 고정되어 있다(근사).",
-   "de": "Entfernt zusammenhängende Komponenten, deren Fläche unter einem Schwellenwert (``16+a*200`` Pixel) liegt (Entfernung kleiner, rauschartiger Regionen). HALCONs ``select_shape`` (Choose regions with the aid of shape features.) ist ein universeller Operator, der nach beliebigen Formmerkmalen wie Fläche, Rundheit oder Konvexität filtern kann, hier jedoch fest auf einen einzigen flächenbasierten Grenzwert festgelegt ist (eine Approximation).",
-   "hi": "Threshold (``16+a*200`` pixels) से कम क्षेत्रफल वाले connected components हटाता है (छोटे noise जैसे regions हटाना)। HALCON का ``select_shape`` (Choose regions with the aid of shape features.) क्षेत्रफल, circularity, convexity जैसे किसी भी shape feature से छाँट सकने वाला सामान्य operator है, लेकिन यहाँ केवल 1 प्रकार, क्षेत्रफल से कटौती, तय है (सन्निकटन)।"
+   "fp": "b70ceffa1d50",
+   "en": "Removes connected components (foreground is 8-connected) whose area is below a threshold (``16+a*200`` pixels) -- i.e., removes small noise-like regions. HALCON's ``select_shape`` (Choose regions with the aid of shape features.) is a general-purpose operator that can filter by any shape feature such as area, circularity, or convexity, but here it is fixed to a single area-based cutoff (an approximation).",
+   "zh": "去除面积低于阈值（``16+a*200`` 像素）的连通成分（前景为 8 连通）（去除类似噪声的小区域）。HALCON 的 ``select_shape``（Choose regions with the aid of shape features.）是可以用面积、圆形度、凸性等任意形状特征进行筛选的通用算子，但这里固定为按面积截断这一种（近似）。",
+   "tw": "去除面積低於閾值（``16+a*200`` 像素）的連通成分（前景為 8 連通）（去除類似雜訊的小區域）。HALCON 的 ``select_shape``（Choose regions with the aid of shape features.）是可用面積、圓形度、凸性等任意形狀特徵篩選的通用運算子，但這裡固定為以面積截斷這一種（近似）。",
+   "ko": "면적이 임계값(``16+a*200`` 픽셀) 미만인 연결 성분(전경은 8 연결)을 제거한다(작은 노이즈성 영역 제거). HALCON의 ``select_shape``(Choose regions with the aid of shape features.)는 면적, 원형도, 볼록성 등 임의의 형상 특징으로 선별할 수 있는 범용 연산자지만, 여기서는 면적 기준의 컷오프 한 종류로 고정되어 있다(근사).",
+   "de": "Entfernt zusammenhängende Komponenten (Vordergrund 8-zusammenhängend), deren Fläche unter einem Schwellenwert (``16+a*200`` Pixel) liegt (Entfernung kleiner, rauschartiger Regionen). HALCONs ``select_shape`` (Choose regions with the aid of shape features.) ist ein universeller Operator, der nach beliebigen Formmerkmalen wie Fläche, Rundheit oder Konvexität filtern kann, hier jedoch fest auf einen einzigen flächenbasierten Grenzwert festgelegt ist (eine Approximation).",
+   "hi": "Threshold (``16+a*200`` pixels) से कम क्षेत्रफल वाले connected components (foreground 8-connected है) हटाता है (छोटे noise जैसे regions हटाना)। HALCON का ``select_shape`` (Choose regions with the aid of shape features.) क्षेत्रफल, circularity, convexity जैसे किसी भी shape feature से छाँट सकने वाला सामान्य operator है, लेकिन यहाँ केवल 1 प्रकार, क्षेत्रफल से कटौती, तय है (सन्निकटन)।"
   },
   "2d/select_shape_std": {
-   "fp": "81a3d0e9435c",
-   "en": "Keeps only the connected component with the largest area (selected via ``_largest_label``). HALCON's ``select_shape_std`` (Select regions of a given shape.) is an operator that lets you choose among several standard criteria including ``max_area``, but here it is fixed to the single criterion \"largest area\" (an approximation).",
-   "zh": "只保留连通成分中面积最大的那一个(通过 ``_largest_label`` 选取)。HALCON 的 ``select_shape_std``(Select regions of a given shape.)是可以选择包括 ``max_area`` 在内的多种标准基准的算子,但这里固定为\"面积最大\"这一种(近似)。",
-   "tw": "只保留連通成分中面積最大的那一個(透過 ``_largest_label`` 選取)。HALCON 的 ``select_shape_std``(Select regions of a given shape.)是可選擇包含 ``max_area`` 在內的多種標準基準的運算子,但這裡固定為「面積最大」這一種(近似)。",
-   "ko": "연결 성분 중 가장 큰 면적을 가진 것만 남긴다(``_largest_label``로 선택). HALCON의 ``select_shape_std``(Select regions of a given shape.)는 ``max_area``를 포함한 여러 표준 기준을 선택할 수 있는 연산자지만, 여기서는 '면적 최대' 한 종류로 고정되어 있다(근사).",
-   "de": "Behält nur die zusammenhängende Komponente mit der größten Fläche (ausgewählt über ``_largest_label``). HALCONs ``select_shape_std`` (Select regions of a given shape.) ist ein Operator, bei dem unter mehreren Standardkriterien einschließlich ``max_area`` gewählt werden kann, hier jedoch fest auf das eine Kriterium 'größte Fläche' festgelegt ist (eine Approximation).",
-   "hi": "Connected components में से केवल सबसे बड़े क्षेत्रफल वाले को रखता है (``_largest_label`` से चुनाव)। HALCON का ``select_shape_std`` (Select regions of a given shape.) ``max_area`` सहित कई मानक मानदंड चुन सकने वाला operator है, लेकिन यहाँ केवल 1 प्रकार \"सबसे बड़ा क्षेत्रफल\" तय है (सन्निकटन)।"
+   "fp": "4d03241b3b8f",
+   "en": "Keeps only the connected component with the largest area (selected via ``_largest_label``; foreground is 8-connected). HALCON's ``select_shape_std`` (Select regions of a given shape.) is an operator that lets you choose among several standard criteria including ``max_area``, but here it is fixed to the single criterion \"largest area\" (an approximation).",
+   "zh": "只保留连通成分中面积最大的那一个（通过 ``_largest_label`` 选取，前景为 8 连通）。HALCON 的 ``select_shape_std``（Select regions of a given shape.）是可以选择包括 ``max_area`` 在内的多种标准基准的算子，但这里固定为“面积最大”这一种（近似）。",
+   "tw": "只保留連通成分中面積最大的那一個（透過 ``_largest_label`` 選取，前景為 8 連通）。HALCON 的 ``select_shape_std``（Select regions of a given shape.）是可選擇包含 ``max_area`` 在內的多種標準基準的運算子，但這裡固定為「面積最大」這一種（近似）。",
+   "ko": "연결 성분 중 가장 큰 면적을 가진 것만 남긴다(``_largest_label``로 선택, 전경은 8 연결). HALCON의 ``select_shape_std``(Select regions of a given shape.)는 ``max_area``를 포함한 여러 표준 기준을 선택할 수 있는 연산자지만, 여기서는 '면적 최대' 한 종류로 고정되어 있다(근사).",
+   "de": "Behält nur die zusammenhängende Komponente mit der größten Fläche (ausgewählt über ``_largest_label``, Vordergrund 8-zusammenhängend). HALCONs ``select_shape_std`` (Select regions of a given shape.) ist ein Operator, bei dem unter mehreren Standardkriterien einschließlich ``max_area`` gewählt werden kann, hier jedoch fest auf das eine Kriterium 'größte Fläche' festgelegt ist (eine Approximation).",
+   "hi": "Connected components में से केवल सबसे बड़े क्षेत्रफल वाले को रखता है (``_largest_label`` से चुनाव, foreground 8-connected है)। HALCON का ``select_shape_std`` (Select regions of a given shape.) ``max_area`` सहित कई मानक मानदंड चुन सकने वाला operator है, लेकिन यहाँ केवल 1 प्रकार \"सबसे बड़ा क्षेत्रफल\" तय है (सन्निकटन)।"
   },
   "2d/select_shape_xld": {
    "fp": "3e2c01094482",
