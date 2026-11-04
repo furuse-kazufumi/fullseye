@@ -612,7 +612,7 @@ Pipeline: [`illumination_design`](ops/optics/illumination/illumination_design.md
 
 Alternatives: [`photometric_stereo_robust`](ops/specular/photometric/photometric_stereo_robust.md), [`normals_from_depth`](ops/3d/range_image/normals_from_depth.md), [`background_flatten`](ops/3d/surface_fit/background_flatten.md), [`tophat`](ops/2d/morphology/tophat.md), [`laplace_of_gauss`](ops/2d/edges/laplace_of_gauss.md), [`dem_slope`](ops/dem/surface/dem_slope.md)
 
-Runnable: `illumination_design_demo`, `photometric_stereo`, `poc_bump_coplanarity`
+Runnable: `illumination_design_demo`, `photometric_stereo`, `poc_bump_coplanarity`, `poc_surface_defect_classifiers`
 
 ### [Locate a part by template matching and move the measurement model with it](capabilities/template-alignment.md)
 

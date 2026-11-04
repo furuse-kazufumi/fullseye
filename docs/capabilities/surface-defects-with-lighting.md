@@ -4,7 +4,7 @@ title: 表面の凹凸欠陥を、照明の設計から検出まで
 title_en: Surface relief defects, from lighting design to detection
 category: 見つける
 ops: [illumination_design, lighting_sweep, photometric_stereo, integrate_normals, bothat]
-examples: [illumination_design_demo, photometric_stereo, poc_bump_coplanarity]
+examples: [illumination_design_demo, photometric_stereo, poc_bump_coplanarity, poc_surface_defect_classifiers]
 version: 0.2.0
 inputs: [images]
 pipeline: [illumination_design, lighting_sweep, light_source, defect_contrast, irradiance_map, illumination_uniformity, photometric_stereo, integrate_normals, surface_form_error, bothat, auto_threshold, remove_small]
@@ -65,3 +65,4 @@ print("峰の仰角 [deg]", float(sweep[sweep[:, 1].argmax(), 0]))   # 90 - 2*10
 
 - op: `illumination_design` / `lighting_sweep` / `defect_contrast`(設計)、`photometric_stereo` / `integrate_normals`(形)、`bothat` / `auto_threshold`(検出)
 - 例: [`illumination_design_demo`](../../examples/illumination_design_demo.py)、[`photometric_stereo`](../../examples_3d/photometric_stereo.py)、[`poc_bump_coplanarity`](../../examples/poc_bump_coplanarity.py)
+- PoC: [`poc_surface_defect_classifiers`](../../examples/poc_surface_defect_classifiers.py)(凹凸の欠陥と汚れを 1 灯の陰影で描き、画素の分類 `class_ndim_norm` → 領域の特徴 → `train_class_gmm` などの学習した分類器で仕分ける。1 灯・1 向きの勾配の特徴では、研削の筋に沿う傷の再現率が 0.275 に落ちる —— 灯や勾配の向きを足す理由)

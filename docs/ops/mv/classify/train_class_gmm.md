@@ -6,7 +6,7 @@ in: matrix
 out: table
 halcon: train_class_gmm
 gpu: なし
-examples: [machine_vision_tour]
+examples: [machine_vision_tour, poc_surface_defect_classifiers]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -51,6 +51,7 @@ Returns:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [machine_vision_tour](../../../../examples/machine_vision_tour.py) — `py -3.11 examples/machine_vision_tour.py`
+- [poc_surface_defect_classifiers](../../../../examples/poc_surface_defect_classifiers.py) — `py -3.11 examples/poc_surface_defect_classifiers.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

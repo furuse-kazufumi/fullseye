@@ -373,7 +373,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 - Template-Matching, das ungleichmäßiges Licht, Glanzlichter und Verdeckung übersteht (Richtung der Helligkeitsänderung als Code vergleichen, unbestimmte Templates ablehnen): [Erklärung](../../capabilities/robust-code-matching.md) _(ja)_ · Beispiele [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
 - Hohlräume in Hybridbonds über die Phase statt die Helligkeit des Ultraschallechos finden (C-Bild des akustischen Rastermikroskops, Frequenzabwägung, Detektionswahrscheinlichkeit): [Erklärung](../../capabilities/sam-bond-voids.md) _(ja)_ · Beispiele [poc_sam_hybrid_bonding_voids](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py)
 - Ein bekanntes 3-D-Teil mit sechs Freiheitsgraden in einer Punktwolke lokalisieren: [Erklärung](../../capabilities/six-dof-surface-pose.md) _(ja)_ · Beispiele [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py) · [poc_real_tless_6dof](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
-- Oberflächendefekte mit Relief: von der Beleuchtungsauslegung bis zur Detektion: [Erklärung](../../capabilities/surface-defects-with-lighting.md) _(ja)_ · Beispiele [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py)
+- Oberflächendefekte mit Relief: von der Beleuchtungsauslegung bis zur Detektion: [Erklärung](../../capabilities/surface-defects-with-lighting.md) _(ja)_ · Beispiele [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py) · [poc_surface_defect_classifiers](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_surface_defect_classifiers.py)
 - Teil per Template-Matching lokalisieren und das Messmodell mitführen: [Erklärung](../../capabilities/template-alignment.md) _(ja)_ · Beispiele [poc_template_tracking](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) · [gallery2d_contour_measure](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_contour_measure.py) · [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py)
 
 **Messen**
@@ -488,7 +488,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 
 ## Alles ansehen
 
-297 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+298 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -507,7 +507,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrielle Prüfung</b> (56)</summary>
+<details class="vall"><summary><b>Industrielle Prüfung</b> (57)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../../articles/assets/poc/poc_barcode_1d/story.en.gif" alt="Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers." loading="lazy" width="200" height="200"></picture><span>1-D-Barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../../articles/assets/poc/poc_battery_electrode_tortuosity/story.en.gif" alt="Electrode tortuosity from CT — the rule of thumb only sees porosity" loading="lazy" width="200" height="200"></picture><span>Elektroden-Tortuosität</span></a>
@@ -565,6 +565,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 <a href="../../articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_package_1d.jpg" alt="Bei einer Unschärfe, die noch 90 % Lesungen erlaubt, erhält der Strichcode die Druckqualität F" width="200" height="200"><span>Bei einer Unschärfe, die noch 90 % Lesungen erlaubt, erhält der Strichcode die Druckqualität F</span></a>
 <a href="../../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_part_dpm.jpg" alt="zxing-cpp liest eine Nadelpräge-Data-Matrix erst, wenn sie unscharf ist" width="200" height="200"><span>zxing-cpp liest eine Nadelpräge-Data-Matrix erst, wenn sie unscharf ist</span></a>
 <a href="../../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_lot_ocr.jpg" alt="Jenseits der trainierten Unschärfe liest die Chargen-OCR falsch, statt abzulehnen" width="200" height="200"><span>Jenseits der trainierten Unschärfe liest die Chargen-OCR falsch, statt abzulehnen</span></a>
+<a href="../../articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png"><img src="../../articles/assets/poc/poc_surface_defect_classifiers/story.en.gif" alt="Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected" loading="lazy" width="200" height="200"></picture><span>Metalloberflächenfehler mit trainierten Klassifikatoren sortiert: Kratzer entlang der Schleifriefen werden zu drei Vierteln übersehen, unbekannte Poren zu 95 % abgelehnt</span></a>
 </div>
 </details>
 

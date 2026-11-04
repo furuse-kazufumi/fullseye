@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 203,
+  "target_count": 204,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -34440,6 +34440,202 @@
       "status": "static",
       "reason": "two_or_fewer_raster_figures",
       "usable_figures": 2
+    },
+    "poc_surface_defect_classifiers": {
+      "representative": "01_defect_patches.png",
+      "status": "gif",
+      "selected": [
+        "01_defect_patches.png",
+        "02_stain_pixels.png",
+        "03_stain_pixel_iou.png",
+        "04_classifier_accuracy.png",
+        "05_gmm_confusion_reject.png",
+        "06_accuracy_by_weight.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_surface_defect_classifiers/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_defect_patches.png",
+              "content_box": [
+                0,
+                158,
+                720,
+                374
+              ]
+            },
+            {
+              "file": "02_stain_pixels.png",
+              "content_box": [
+                0,
+                268,
+                720,
+                154
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.681529
+            },
+            {
+              "file": "03_stain_pixel_iou.png",
+              "content_box": [
+                0,
+                236,
+                720,
+                217
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.323864
+            },
+            {
+              "file": "04_classifier_accuracy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                233
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.085
+            },
+            {
+              "file": "05_gmm_confusion_reject.png",
+              "content_box": [
+                0,
+                167,
+                720,
+                356
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.02
+            },
+            {
+              "file": "06_accuracy_by_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 348502,
+          "color_mad": [
+            0.4253,
+            0.255,
+            0.0331,
+            0.0375,
+            0.0242,
+            0.0795
+          ],
+          "max_color_mad": 0.4253,
+          "source_sha256": "1e7113fff3bf7c44251a2e98d0dc4ee13bd01c9d29a4169649684ceabbd2cb9d"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_surface_defect_classifiers/story.en.gif",
+          "frames": [
+            {
+              "file": "01_defect_patches.png",
+              "content_box": [
+                0,
+                158,
+                720,
+                374
+              ]
+            },
+            {
+              "file": "02_stain_pixels.png",
+              "content_box": [
+                0,
+                268,
+                720,
+                154
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.681529
+            },
+            {
+              "file": "03_stain_pixel_iou.png",
+              "content_box": [
+                0,
+                236,
+                720,
+                217
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.323864
+            },
+            {
+              "file": "04_classifier_accuracy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                233
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.085
+            },
+            {
+              "file": "05_gmm_confusion_reject.png",
+              "content_box": [
+                0,
+                167,
+                720,
+                356
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.02
+            },
+            {
+              "file": "06_accuracy_by_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 348502,
+          "color_mad": [
+            0.4253,
+            0.255,
+            0.0331,
+            0.0375,
+            0.0242,
+            0.0795
+          ],
+          "max_color_mad": 0.4253,
+          "source_sha256": "e189acd605d3e9e8524ae97304cdbec0840c24625f5063c5ea58d686e0d016b2"
+        }
+      },
+      "reason": null,
+      "cover": "01_defect_patches.png",
+      "still": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
+      "alt": {
+        "ja": "rendered ground-metal patches (height defects shade, the stain changes colour)",
+        "en": "Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected"
+      }
     }
   }
 }

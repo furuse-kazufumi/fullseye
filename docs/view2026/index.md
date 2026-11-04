@@ -388,7 +388,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する): [説明](../capabilities/robust-code-matching.md) · 例 [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
 - ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD): [説明](../capabilities/sam-bond-voids.md) · 例 [poc_sam_hybrid_bonding_voids](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py)
 - 既知の 3-D 部品を点群から 6 自由度で見つける: [説明](../capabilities/six-dof-surface-pose.md) · 例 [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py) · [poc_real_tless_6dof](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
-- 表面の凹凸欠陥を、照明の設計から検出まで: [説明](../capabilities/surface-defects-with-lighting.md) · 例 [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py)
+- 表面の凹凸欠陥を、照明の設計から検出まで: [説明](../capabilities/surface-defects-with-lighting.md) · 例 [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py) · [poc_surface_defect_classifiers](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_surface_defect_classifiers.py)
 - 位置決め(テンプレート照合で測定線を追従させる): [説明](../capabilities/template-alignment.md) · 例 [poc_template_tracking](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) · [gallery2d_contour_measure](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_contour_measure.py) · [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py)
 
 **測る**
@@ -503,7 +503,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 298 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -522,7 +522,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>産業検査</b> (56)</summary>
+<details class="vall"><summary><b>産業検査</b> (57)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../articles/assets/poc/poc_barcode_1d/story.ja.gif" alt="同じ画像・同じ二値化で、run 数を検査するかどうかだけが違う。" loading="lazy" width="200" height="200"></picture><span>1 次元バーコード</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../articles/assets/poc/poc_battery_electrode_tortuosity/story.ja.gif" alt="左と中は同じ球状粒子床の直交する 2 断面。右はカレンダリングで潰した粒子(空隙率はほぼ同じ、屈曲度は 3.7 倍)。" loading="lazy" width="200" height="200"></picture><span>電極の屈曲度</span></a>
@@ -580,6 +580,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symbol_package_1d.jpg" alt="90 % 読めるぼけでも、バーコードの印字品質は F" width="200" height="200"><span>90 % 読めるぼけでも、バーコードの印字品質は F</span></a>
 <a href="../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symbol_part_dpm.jpg" alt="ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる" width="200" height="200"><span>ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる</span></a>
 <a href="../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symbol_lot_ocr.jpg" alt="ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる" width="200" height="200"><span>ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる</span></a>
+<a href="../articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png"><img src="../articles/assets/poc/poc_surface_defect_classifiers/story.ja.gif" alt="rendered ground-metal patches (height defects shade, the stain changes colour)" loading="lazy" width="200" height="200"></picture><span>金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する</span></a>
 </div>
 </details>
 
