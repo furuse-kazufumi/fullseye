@@ -1400,6 +1400,24 @@ def _fits_value(text: str, keyword: str):
         raise ValueError(f"astro_fits_read: unsupported value {token!r} for header key {keyword}") from exc
 
 
+def _fits_float_text(value: float) -> str:
+    """The shortest decimal that reads back as the same float64, in FITS syntax.
+
+    ★2026-11-05 redteam I5: ``"%.15G"`` wrote 0.30000000000000004 as ``0.3`` (another float) and
+    5.0 as ``5`` (an integer card, read back as ``int``). ``repr`` is the shortest round-tripping
+    decimal and always carries a ``.`` or an exponent, so a float stays a float. The exponent sign
+    and leading zeros are optional in FITS 4.0 §4.2.4 and are dropped only when that is what keeps
+    the value inside the 20-column fixed-format field; a value that still needs more than 20
+    characters (17 significant digits with a 3-digit exponent) is written in free format, which
+    FITS allows for every non-mandatory keyword (it still fits one card)."""
+    text = repr(float(value)).upper()
+    if len(text) > 20 and "E" in text:
+        mantissa, exponent = text.split("E")
+        sign = "-" if exponent.startswith("-") else ""
+        text = f"{mantissa}E{sign}{exponent.lstrip('+-').lstrip('0') or '0'}"
+    return text
+
+
 def _fits_card(keyword: str, value) -> bytes:
     if not isinstance(keyword, str) or not keyword or len(keyword) > 8 or not keyword.isascii():
         raise ValueError(f"astro_fits_write: FITS keyword must be 1..8 ASCII characters, got {keyword!r}")
@@ -1411,7 +1429,7 @@ def _fits_card(keyword: str, value) -> bytes:
     elif isinstance(value, (float, np.floating)):
         if not math.isfinite(float(value)):
             raise ValueError(f"astro_fits_write: header key {key} must be finite")
-        field = ("%.15G" % float(value)).rjust(20)
+        field = _fits_float_text(value).rjust(20)
     elif isinstance(value, str):
         if not value.isascii() or any(c in value for c in "\r\n"):
             raise ValueError(f"astro_fits_write: header key {key} must contain one-line ASCII text")
