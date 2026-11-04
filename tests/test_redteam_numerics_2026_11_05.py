@@ -410,3 +410,13 @@ def test_suspect_kendama_rot_log_small_angles(th):
     w = th * np.array([0.6, 0.0, 0.8])
     got = kendama._rot_log(kendama._rot_exp(w))
     assert np.linalg.norm(got - w) / th < 1e-7
+
+
+def test_n6_sibling_fit_line3_short_segment_is_not_coincident():
+    # 兄弟: measure3d.fit_line3 の s[0] <= 1e-12 の絶対床。
+    import measure3d
+    p = np.c_[np.linspace(0, 1, 5), np.linspace(0, 2, 5), np.zeros(5)] * 1e-13
+    d = measure3d.fit_line3(p)["direction"]
+    assert abs(d @ np.array([1.0, 2.0, 0.0]) / np.sqrt(5.0)) == pytest.approx(1.0, abs=1e-12)
+    with pytest.raises(ValueError):
+        measure3d.fit_line3(np.full((5, 3), 7.0))
