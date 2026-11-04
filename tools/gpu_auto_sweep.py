@@ -960,10 +960,19 @@ def worker(a) -> int:
 
 # ---- GPU lock ------------------------------------------------------------------ #
 def unreal_running() -> bool:
+    """UnrealEditor が走っているか。確かめられないなら True(GPU を使わない、fail-closed)。
+
+    ★2026-11-04(統合 GPU): Windows の tasklist しか見ていなかったので、Linux(CI)では常に OSError →
+    True になり、ロックが一度も取れなかった(tests/test_gpu_auto_sweep.py の 2 本が CI だけ赤)。
+    Windows 以外は ``pgrep -f UnrealEditor``(0 = 居る / 1 = 居ない / それ以外と起動失敗は確かめられない)。
+    """
     try:
-        r = subprocess.run(["tasklist", "/FI", "IMAGENAME eq UnrealEditor.exe", "/NH"],
-                           capture_output=True, timeout=20)
-        return b"UnrealEditor" in r.stdout       # 文面は OEM コードページなのでバイトで見る
+        if os.name == "nt":
+            r = subprocess.run(["tasklist", "/FI", "IMAGENAME eq UnrealEditor.exe", "/NH"],
+                               capture_output=True, timeout=20)
+            return b"UnrealEditor" in r.stdout   # 文面は OEM コードページなのでバイトで見る
+        r = subprocess.run(["pgrep", "-f", "UnrealEditor"], capture_output=True, timeout=20)
+        return r.returncode != 1
     except (OSError, subprocess.SubprocessError):
         return True               # 確かめられないなら使わない(fail-closed)
 
