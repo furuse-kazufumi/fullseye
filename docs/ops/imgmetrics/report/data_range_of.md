@@ -21,7 +21,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 画素値が取りうる幅を決める。**推測はしない**。
 
-整数 dtype は dtype から一意に決まる。float は ``[0, 1]`` に収まっている
+整数 dtype(``uint8`` / ``uint16`` / ``uint32`` / ``int8`` / ``int16``)は dtype から
+一意に決まる(それ以外の整数 dtype は推測しないので ``data_range`` を明示)。float は ``[0, 1]`` に収まっている
 ときだけ 1.0 とみなし、それ以外は ``data_range`` の明示を要求する。
 
 ``[0, 1]`` の float を 255 だと思って PSNR を測ると **48.13 dB** ずれるが

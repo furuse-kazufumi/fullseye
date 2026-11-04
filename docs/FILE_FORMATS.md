@@ -16,7 +16,7 @@
 | FITS | `.fits` | `fileio.astro_fits_read` | `fileio.astro_fits_write` | `astro_fits_read`<br>`astro_fits_write` | stdlib / core | `tests/test_fileio_scientific.py`<br>`tests/test_kendama_combo.py` | `astropy` |
 | GIF | `.gif` | — | `examplefig.save_gif`<br>`projmap.save_gif`<br>`videocube.video_write_gif` | `video_write_gif` | optional: PIL, fullseye, mujoco | `tests/test_docs_index_reachable.py`<br>`tests/test_evaluation_artifacts_video.py`<br>+12 | — |
 | glTF | `.gltf` | `meshio_opt.read_gltf`<br>`meshio_opt.read_gltf_merged` | — | — | stdlib / core | `tests/test_mesh.py`<br>`tests/test_meshio_opt.py`<br>+1 | — |
-| Radiance HDR | `.hdr` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_hdrfusion.py`<br>`tests/test_public_api.py`<br>+3 | — |
+| Radiance HDR | `.hdr` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_hdrfusion.py`<br>`tests/test_public_api.py`<br>+4 | — |
 | IMG | `.img` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_specops.py`<br>+3 | — |
 | JPEG | `.jpeg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_imgforensics.py`<br>+3 | — |
 | JPEG | `.jpg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_help_rendering.py`<br>+13 | — |

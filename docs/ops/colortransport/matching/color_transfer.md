@@ -35,6 +35,11 @@ method : {"reinhard", "gaussian", "histogram"}
     * ``"gaussian"`` —— 共分散ごと運ぶ Monge 写像。**相関が保たれる**。
     * ``"histogram"`` —— チャネルごとに厳密なヒストグラム整合。
       周辺分布は完全に一致するが、**チャネル間の相関は壊れる**。
+
+    **一定のチャネル**(標準偏差が ``1e-6 × max(1, max|値|)`` 以下 ―― 無彩色の
+    src の Lab a*/b* はこれに当たる。丸め屑しか無い)は、``"reinhard"`` では
+    ``MetricContractError``、``"histogram"`` では厳密に一定の入力と同じく参照の
+    平均へ写す。屑を拡大して偽の色を作らない。
 space : {"lab", "rgb"}
     統計を取る空間。既定の ``lab`` は :mod:`imgmetrics` の実体を使う。
 
