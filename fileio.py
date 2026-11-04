@@ -282,18 +282,22 @@ def table_read_csv(text):
     (空欄は NaN)、数値以外を含む列は文字列配列になる。ただし全セルが整数で、float64 では
     正確に持てない値(絶対値が 2**53 超)を含む列は int64 / uint64 で返す(丸めて返さない)。
     その列に空欄(欠測)があれば、空欄を mask した int64 / uint64 の ``numpy.ma.MaskedArray`` で返す。
-    入力は UTF-8 の ``str`` または ``bytes``。
+    入力は UTF-8 の ``str`` または ``bytes``(先頭の BOM は読み飛ばす)。
 
     呼び出し例: ``roundtrip = table_read_csv(table_write_csv(table, units=units, meta=meta))``。
     """
     op = "table_read_csv"
     if isinstance(text, bytes):
         try:
-            text = text.decode("utf-8")
+            text = text.decode("utf-8-sig")
         except UnicodeDecodeError as exc:
             raise ValueError(f"{op}: input is not UTF-8") from exc
     if not isinstance(text, str):
         raise ValueError(f"{op}: expected CSV text, got {type(text).__name__}")
+    # ★2026-11-05 redteam I25: a UTF-8 BOM (Excel's "CSV UTF-8" writes one) became part of the
+    # first column name ('\ufeffx'). It is a byte-order mark, not data: drop it once.
+    if text.startswith("\ufeff"):
+        text = text[1:]
     if len(text) > _MAX_CSV_CHARS:
         raise ValueError(f"{op}: input has {len(text)} characters; limit is {_MAX_CSV_CHARS}")
     lines = text.splitlines()
