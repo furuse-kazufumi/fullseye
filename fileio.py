@@ -85,10 +85,13 @@ _NRRD_TYPE_ALIASES = {
     "unsigned short int": "uint16", "uint16_t": "uint16", "int": "int32",
     "signed int": "int32", "int32_t": "int32", "uint": "uint32",
     "unsigned int": "uint32", "uint32_t": "uint32", "longlong": "int64",
-    "long long": "int64", "long long int": "int64", "int64_t": "int64",
+    "long long": "int64", "long long int": "int64", "signed long long": "int64",
+    "signed long long int": "int64", "int64_t": "int64",
     "ulonglong": "uint64", "unsigned long long": "uint64",
     "unsigned long long int": "uint64", "uint64_t": "uint64",
 }
+# ★2026-11-05 redteam I8: the table above is now every spelling of the teem NRRD format spec
+# ("type" field): "signed long long" / "signed long long int" were missing and refused.
 _NIFTI_DTYPES = {
     2: np.dtype("u1"), 4: np.dtype("i2"), 8: np.dtype("i4"),
     16: np.dtype("f4"), 64: np.dtype("f8"), 256: np.dtype("i1"),
@@ -1932,7 +1935,7 @@ def nrrd_read(data):
         raise ValueError(f"{op}: missing required header field(s): {', '.join(missing)}")
     if any(key in fields for key in ("data file", "datafile", "line skip", "byte skip")):
         raise ValueError(f"{op}: detached data and line/byte skip headers are unsupported")
-    type_name = fields["type"].lower()
+    type_name = " ".join(fields["type"].lower().split())      # "unsigned  char" == "unsigned char"
     type_name = _NRRD_TYPE_ALIASES.get(type_name, type_name)
     if type_name not in _NRRD_DTYPES:
         raise ValueError(f"{op}: unsupported NRRD type {fields['type']!r}")
