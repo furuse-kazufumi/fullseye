@@ -166,3 +166,69 @@ def test_n7_look_at_tiny_scene_and_tiny_up():
     ref = render3d.look_at((0, 0, 5), (0, 0, 0), up=(0, 1, 0))
     small = render3d.look_at((0, 0, 5e-13), (0, 0, 0), up=(0, 1e-12, 0))
     assert small[:3, :3] == pytest.approx(ref[:3, :3], abs=1e-12)
+
+
+# ── N1: tools_geom / geometry2d の長さ² の床 ──────────────────────────────────
+
+SCALES = [1.0, 1e-3, 1e-6, 1e-7]
+
+
+@pytest.mark.parametrize("s", SCALES)
+def test_n1_tools_geom_results_scale_with_input(s):
+    import tools_geom as tg
+    # 線分 (0,0)-(1,0) と横線 row=1.5: 交点 (1.5, 0) は線分の外 → None(修正前 s=1e-6 で交点を返した)
+    assert tg.intersection_segment_line((0, 0, 1 * s, 0), (1.5 * s, -s, 1.5 * s, s)) is None
+    # 線分の中の交点はそのまま
+    hit = tg.intersection_segment_line((0, 0, 1 * s, 0), (0.5 * s, -s, 0.5 * s, s))
+    assert hit is not None and hit / s == pytest.approx([0.5, 0.0], abs=1e-12)
+    # 直交 2 直線(修正前 s=1e-7 で「平行」= None)
+    il = tg.intersection_lines((0, 0, 1 * s, 0), (0.5 * s, -0.5 * s, 0.5 * s, 0.5 * s))
+    assert il is not None and il / s == pytest.approx([0.5, 0.0], abs=1e-12)
+    # Plücker: 点 (1,1,0)-(1,1,1) の直線と原点の距離 = √2(修正前 s=1e-6 で 0.707)
+    pl = tg.points_to_pluecker_line(np.array([1, 1, 0.0]) * s, np.array([1, 1, 1.0]) * s)
+    assert tg.distance_point_pluecker_line([0, 0, 0], pl) / s == pytest.approx(np.sqrt(2.0), rel=1e-12)
+    pt = tg.pluecker_line_to_point_direction(pl)["point"] / s
+    assert pt[:2] == pytest.approx([1.0, 1.0], rel=1e-12)
+    # 線分と円: 線分 (0,-2)-(0,2)、中心 0 半径 1 → 2 点
+    assert len(tg.intersection_segment_circle((0, -2 * s, 0, 2 * s), (0, 0), 1 * s)) == 2
+
+
+@pytest.mark.parametrize("s", SCALES)
+def test_n1_geometry2d_results_scale_with_input(s):
+    import geometry2d as g2
+    # 点 (0.5, 1) と線分 (0,0)-(1,0): 距離 1(修正前 s=1e-6 で 1.031、1e-7 で 1.116)
+    assert g2.distance_ps(0.5 * s, 1 * s, 0, 0, 1 * s, 0) / s == pytest.approx(1.0, rel=1e-12)
+    assert g2.distance_ps(2 * s, 0, 0, 0, 1 * s, 0) / s == pytest.approx(1.0, rel=1e-12)
+    # 2 円 (0,0) r=1 と (1,0) r=1 → (0.5, ±√3/2) の 2 点(修正前 s=1e-6 で 1 点)
+    pts = g2.intersection_circles(0, 0, 1 * s, 1 * s, 0, 1 * s)
+    assert len(pts) == 2
+    got = np.array(sorted([(p / s).tolist() for p in pts], key=lambda q: q[1]))
+    assert got == pytest.approx(np.array([[0.5, -np.sqrt(3) / 2], [0.5, np.sqrt(3) / 2]]), abs=1e-12)
+    # 点と直線・射影・交点
+    assert g2.distance_pl(0.3 * s, 2 * s, 0, 0, 1 * s, 0) / s == pytest.approx(2.0, rel=1e-12)
+    assert g2.projection_pl(0.3 * s, 2 * s, 0, 0, 1 * s, 0) / s == pytest.approx([0.3, 0.0], abs=1e-12)
+    il = g2.intersection_lines(0, 0, 1 * s, 0, 0.5 * s, -0.5 * s, 0.5 * s, 0.5 * s)
+    assert il is not None and il / s == pytest.approx([0.5, 0.0], abs=1e-12)
+    assert g2.distance_point_line(0, 2 * s, 0, 0, 0, 0, 1 * s, 0, 0) / s == pytest.approx(2.0, rel=1e-12)
+
+
+def test_n1_degenerate_inputs_are_explicit():
+    import geometry2d as g2
+    import tools_geom as tg
+    # 長さ 0 の線分の点-線分距離は端点までの距離
+    assert g2.distance_ps(3.0, 4.0, 0, 0, 0, 0) == pytest.approx(5.0, rel=1e-15)
+    # 2 点が一致する直線: 交点は None、距離・射影は ValueError
+    assert g2.intersection_lines(0, 0, 0, 0, 0, 1, 1, 1) is None
+    assert tg.intersection_lines((0, 0, 0, 0), (0, 1, 1, 1)) is None
+    for bad in (lambda: g2.distance_pl(1, 1, 2, 2, 2, 2),
+                lambda: g2.projection_pl(1, 1, 2, 2, 2, 2),
+                lambda: g2.distance_point_line(1, 1, 1, 0, 0, 0, 0, 0, 0),
+                lambda: tg.pluecker_line_to_point_direction({"direction": [0, 0, 0], "moment": [0, 0, 0]}),
+                lambda: tg.intersection_line_circle((1, 1, 1, 1), (0, 0), 1.0)):
+        with pytest.raises(ValueError):
+            bad()
+    # 長さ 0 の線分(輪郭の重複点)と円は交点なし(contours_xld2 が重複点つきの輪郭を渡す)
+    assert tg.intersection_segment_circle((0, 1, 0, 1), (0, 0), 1.0) == []
+    # 同心円は交点なし、接する 2 円は 1 点
+    assert g2.intersection_circles(0, 0, 1, 0, 0, 2) == []
+    assert len(g2.intersection_circles(0, 0, 1e-6, 2e-6, 0, 1e-6)) == 1
