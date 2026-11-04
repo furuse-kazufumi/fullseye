@@ -638,7 +638,7 @@ Pipeline: [`ct_scan_geometry`](ops/tomography/ct_scan/ct_scan_geometry.md) → [
 
 Alternatives: [`sirt_reconstruct`](ops/tomography/ct_scan/sirt_reconstruct.md), [`os_sart_reconstruct`](ops/tomography/ct_scan/os_sart_reconstruct.md), [`tv_reconstruct`](ops/tomography/ct_scan/tv_reconstruct.md), [`ct_forward_project`](ops/tomography/ct_scan/ct_forward_project.md), [`ct_adjoint_project`](ops/tomography/ct_scan/ct_adjoint_project.md)
 
-Runnable: `ct_scan_modes`
+Runnable: `ct_scan_modes`, `poc_ct_casting_sparse_views`
 
 ### [Correct lens distortion over a whole image (barrel, pincushion, tangential)](capabilities/lens-distortion-correction.md)
 

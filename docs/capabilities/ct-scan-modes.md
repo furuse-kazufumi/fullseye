@@ -4,7 +4,7 @@ title: コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾�
 title_en: Reconstruct cone-beam, helical and laminography scans on one geometry (industrial CT)
 category: 形にする
 ops: [ct_scan_geometry, ellipsoid_projections, fdk_reconstruct, sirt_reconstruct, tv_reconstruct]
-examples: [ct_scan_modes]
+examples: [ct_scan_modes, poc_ct_casting_sparse_views]
 version: 0.8.1
 inputs: [ctgeometry, projstack]
 pipeline: [ct_scan_geometry, ellipsoid_projections, fdk_reconstruct, vol_rle_components, vol_rle_volume]
@@ -63,4 +63,5 @@ FDK は中央面でだけ厳密で、コーン角が増えると Feldkamp アー
 
 - op: `ct_scan_geometry` / `ellipsoid_projections` / `fdk_reconstruct` / `sirt_reconstruct` / `tv_reconstruct`
 - 例: [`ct_scan_modes`](../../examples/ct_scan_modes.py)
+- PoC: [`poc_ct_casting_sparse_views`](../../examples/poc_ct_casting_sparse_views.py) —— 少数投影・限られた角度で 4 手法の順位と空隙の体積の誤差を真値と比べる(RMSE の 1 位が体積の 1 位とは限らない)
 - 実測: [`gpu_ct_2026-11-02`](../perf/gpu_ct_2026-11-02.md)

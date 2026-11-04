@@ -448,7 +448,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **Reconstruct और correct करना**
 
-- एक ही ज्यामिति पर cone-beam, helical और laminography स्कैन का पुनर्निर्माण (औद्योगिक CT): [explanation](../../capabilities/ct-scan-modes.md) _(ja)_ · examples [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py)
+- एक ही ज्यामिति पर cone-beam, helical और laminography स्कैन का पुनर्निर्माण (औद्योगिक CT): [explanation](../../capabilities/ct-scan-modes.md) _(ja)_ · examples [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py) · [poc_ct_casting_sparse_views](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_casting_sparse_views.py)
 - पूरी image में lens distortion ठीक करना (barrel, pincushion, tangential): [explanation](../../capabilities/lens-distortion-correction.md) _(ja)_ · examples [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
 - Projections से slices का reconstruction (CT): [explanation](../../capabilities/tomography-reconstruction.md) _(ja)_ · examples [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
 - Silhouettes से solid तराशना (visual hull): [explanation](../../capabilities/visual-hull-from-silhouettes.md) _(ja)_ · examples [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
@@ -488,7 +488,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-297 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+298 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -507,7 +507,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrial inspection</b> (56)</summary>
+<details class="vall"><summary><b>Industrial inspection</b> (57)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../../articles/assets/poc/poc_barcode_1d/story.en.gif" alt="Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers." loading="lazy" width="200" height="200"></picture><span>1-D barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../../articles/assets/poc/poc_battery_electrode_tortuosity/story.en.gif" alt="Electrode tortuosity from CT — the rule of thumb only sees porosity" loading="lazy" width="200" height="200"></picture><span>Electrode tortuosity</span></a>
@@ -565,6 +565,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_package_1d.jpg" alt="जिस धुंधलेपन पर बारकोड 90% पढ़ा जाता है, उस पर प्रिंट गुणवत्ता ग्रेड F है" width="200" height="200"><span>जिस धुंधलेपन पर बारकोड 90% पढ़ा जाता है, उस पर प्रिंट गुणवत्ता ग्रेड F है</span></a>
 <a href="../../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_part_dpm.jpg" alt="डॉट-पीन Data Matrix को zxing-cpp तभी पढ़ता है जब वह धुंधली हो" width="200" height="200"><span>डॉट-पीन Data Matrix को zxing-cpp तभी पढ़ता है जब वह धुंधली हो</span></a>
 <a href="../../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_lot_ocr.jpg" alt="प्रशिक्षित धुंधलेपन से आगे लॉट-नंबर OCR अस्वीकार करने के बजाय गलत पढ़ता है" width="200" height="200"><span>प्रशिक्षित धुंधलेपन से आगे लॉट-नंबर OCR अस्वीकार करने के बजाय गलत पढ़ता है</span></a>
+<a href="../../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><img src="../../articles/assets/poc/poc_ct_casting_sparse_views/story.en.gif" alt="CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume" loading="lazy" width="200" height="200"></picture><span>ढलाई के रिक्त स्थानों का CT: RMSE में सबसे अच्छा पुनर्निर्माण रिक्त आयतन में हमेशा सबसे अच्छा नहीं</span></a>
 </div>
 </details>
 

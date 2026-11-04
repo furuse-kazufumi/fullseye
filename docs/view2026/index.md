@@ -463,7 +463,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **形にする**
 
-- コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾何で再構成する(工業用 CT): [説明](../capabilities/ct-scan-modes.md) · 例 [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py)
+- コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾何で再構成する(工業用 CT): [説明](../capabilities/ct-scan-modes.md) · 例 [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py) · [poc_ct_casting_sparse_views](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_casting_sparse_views.py)
 - レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線): [説明](../capabilities/lens-distortion-correction.md) · 例 [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
 - 投影から断面を再構成する(CT): [説明](../capabilities/tomography-reconstruction.md) · 例 [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
 - シルエットから立体を彫り出す(視体積交差): [説明](../capabilities/visual-hull-from-silhouettes.md) · 例 [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
@@ -503,7 +503,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 298 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -522,7 +522,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>産業検査</b> (56)</summary>
+<details class="vall"><summary><b>産業検査</b> (57)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../articles/assets/poc/poc_barcode_1d/story.ja.gif" alt="同じ画像・同じ二値化で、run 数を検査するかどうかだけが違う。" loading="lazy" width="200" height="200"></picture><span>1 次元バーコード</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../articles/assets/poc/poc_battery_electrode_tortuosity/story.ja.gif" alt="左と中は同じ球状粒子床の直交する 2 断面。右はカレンダリングで潰した粒子(空隙率はほぼ同じ、屈曲度は 3.7 倍)。" loading="lazy" width="200" height="200"></picture><span>電極の屈曲度</span></a>
@@ -580,6 +580,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symbol_package_1d.jpg" alt="90 % 読めるぼけでも、バーコードの印字品質は F" width="200" height="200"><span>90 % 読めるぼけでも、バーコードの印字品質は F</span></a>
 <a href="../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symbol_part_dpm.jpg" alt="ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる" width="200" height="200"><span>ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる</span></a>
 <a href="../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symbol_lot_ocr.jpg" alt="ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる" width="200" height="200"><span>ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる</span></a>
+<a href="../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><img src="../articles/assets/poc/poc_ct_casting_sparse_views/story.ja.gif" alt="鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない" loading="lazy" width="200" height="200"></picture><span>鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない</span></a>
 </div>
 </details>
 

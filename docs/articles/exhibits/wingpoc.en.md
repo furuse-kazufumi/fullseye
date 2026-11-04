@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 46 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 47 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1487,6 +1487,36 @@ Source: [examples/poc_symbol_lot_ocr.py](https://github.com/furuse-kazufumi/full
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_symbol_lot_ocr)
 
 Ops used (notes): [`capture_degrade`](https://furuse.work/ops/symbol/symbol_capture/capture_degrade.html) · [`ocr_classify`](https://furuse.work/ops/symbol/ocr/ocr_classify.html) · [`ocr_features`](https://furuse.work/ops/symbol/ocr/ocr_features.html) · [`ocr_font`](https://furuse.work/ops/symbol/ocr/ocr_font.html) · [`ocr_read_line`](https://furuse.work/ops/symbol/ocr/ocr_read_line.html) · [`ocr_read_trials`](https://furuse.work/ops/symbol/ocr/ocr_read_trials.html) · [`ocr_render_text`](https://furuse.work/ops/symbol/ocr/ocr_render_text.html) · [`ocr_score`](https://furuse.work/ops/symbol/ocr/ocr_score.html) · [`ocr_segment_line`](https://furuse.work/ops/symbol/ocr/ocr_segment_line.html) · [`ocr_train`](https://furuse.work/ops/symbol/ocr/ocr_train.html) · [`symbol_read_pod`](https://furuse.work/ops/symbol/read_pod/symbol_read_pod.html)
+
+## No.2026.303 —— CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume
+
+Three ellipsoidal voids (24 to 84 voxels) sit in an aluminium casting (32³ at 0.25 mm), scanned by cone-beam CT under three conditions. The ground truth is the analytic ellipsoids themselves: the drawn void volumes match 4/3πabc within 0.2 %, the discrete projector matches the closed-form projections to 4.0 % relative L2 (2.6 % at 64³), and the projector pair is adjoint to 3.8e-16. The data are closed-form projections plus noise, not the discrete projector the reconstructions use. By RMSE, 36 views over 360° rank OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053, while at 12 views and over 110° TV moves to first (0.77 and 0.78 of the better algebraic method). Yet at 12 views FDK, last by RMSE, measures void volume from the attenuation deficit within 0.9 % of the closed form, better than TV at 5.9 %. Over 110° FDK finds none of the voids. Thresholding at half the aluminium value biases even the true volume by 16.7 %, so any method that looks better than that is flagged as cancelling biases. The TV weight 3e-3 was chosen on a separate calibration casting and matches the hindsight best on the evaluation casting. Dual energy measures the steel insert at −8.7 % and pays with 41.65 times the noise in the aluminium basis (closed form 41.00). Monochromatic, Gaussian noise, convex voids and illustrative attenuation coefficients.
+
+[![CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/01_slices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png)
+
+*↑ **CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume** ―― Three ellipsoidal voids (24 to 84 voxels) sit in an aluminium casting (32³ at 0.25 mm), scanned by cone-beam CT under three conditions. The ground truth is the analytic ellipsoids themselves: the drawn void volumes match 4/3πabc within 0.2 %, the discrete projector matches the closed-form projections to 4.0 % relative L2 (2.6 % at 64³), and the projector pair is adjoint to 3.8e-16. The data are closed-form projections plus noise, not the discrete projector the reconstructions use. By RMSE, 36 views over 360° rank OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053, while at 12 views and over 110° TV moves to first (0.77 and 0.78 of the better algebraic method). Yet at 12 views FDK, last by RMSE, measures void volume from the attenuation deficit within 0.9 % of the closed form, better than TV at 5.9 %. Over 110° FDK finds none of the voids. Thresholding at half the aluminium value biases even the true volume by 16.7 %, so any method that looks better than that is flagged as cancelling biases. The TV weight 3e-3 was chosen on a separate calibration casting and matches the hindsight best on the evaluation casting. Dual energy measures the steel insert at −8.7 % and pays with 41.65 times the noise in the aluminium basis (closed form 41.00). Monochromatic, Gaussian noise, convex voids and illustrative attenuation coefficients.*
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/02_ranking_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/02_ranking.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/03_tv_weight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/03_tv_weight.png)
+
+*↑ この回の図*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy.png)
+
+*↑ この回の図*
+
+```
+py -3.11 examples/poc_ct_casting_sparse_views.py
+```
+
+Source: [examples/poc_ct_casting_sparse_views.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_casting_sparse_views.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ct_casting_sparse_views)
+
+Ops used (notes): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_scan/ct_adjoint_project.html) · [`ct_dual_energy_reconstruct`](https://furuse.work/ops/tomography/ct_scan/ct_dual_energy_reconstruct.html) · [`ct_forward_project`](https://furuse.work/ops/tomography/ct_scan/ct_forward_project.html) · [`ct_scan_geometry`](https://furuse.work/ops/tomography/ct_scan/ct_scan_geometry.html) · [`ellipsoid_phantom`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_phantom.html) · [`ellipsoid_projections`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_projections.html) · [`fdk_reconstruct`](https://furuse.work/ops/tomography/ct_scan/fdk_reconstruct.html) · [`os_sart_reconstruct`](https://furuse.work/ops/tomography/ct_scan/os_sart_reconstruct.html) · [`shepp_logan_3d`](https://furuse.work/ops/tomography/ct_scan/shepp_logan_3d.html) · [`sirt_reconstruct`](https://furuse.work/ops/tomography/ct_scan/sirt_reconstruct.html) · [`tv_reconstruct`](https://furuse.work/ops/tomography/ct_scan/tv_reconstruct.html) · [`vol_rle_centroid`](https://furuse.work/ops/3d/rle_region/vol_rle_centroid.html) · [`vol_rle_components`](https://furuse.work/ops/3d/rle_region/vol_rle_components.html) · [`vol_rle_volume`](https://furuse.work/ops/3d/rle_region/vol_rle_volume.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 

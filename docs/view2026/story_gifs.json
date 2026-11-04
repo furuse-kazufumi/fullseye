@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 203,
+  "target_count": 204,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -34440,6 +34440,148 @@
       "status": "static",
       "reason": "two_or_fewer_raster_figures",
       "usable_figures": 2
+    },
+    "poc_ct_casting_sparse_views": {
+      "representative": "01_slices.png",
+      "status": "gif",
+      "selected": [
+        "01_slices.png",
+        "02_ranking.png",
+        "03_tv_weight.png",
+        "04_dual_energy.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_ct_casting_sparse_views/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_slices.png",
+              "content_box": [
+                0,
+                91,
+                720,
+                508
+              ]
+            },
+            {
+              "file": "02_ranking.png",
+              "content_box": [
+                0,
+                134,
+                720,
+                421
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.711957
+            },
+            {
+              "file": "03_tv_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_dual_energy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                234
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.077364
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 316265,
+          "color_mad": [
+            0.1023,
+            0.0258,
+            0.1548,
+            0.0637
+          ],
+          "max_color_mad": 0.1548,
+          "source_sha256": "3b7c4e291ff1ed95edb45095eb3e7d7beb26a0c3c91fca0e4de49eac492bb614"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_ct_casting_sparse_views/story.en.gif",
+          "frames": [
+            {
+              "file": "01_slices.png",
+              "content_box": [
+                0,
+                91,
+                720,
+                508
+              ]
+            },
+            {
+              "file": "02_ranking.png",
+              "content_box": [
+                0,
+                134,
+                720,
+                421
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.711957
+            },
+            {
+              "file": "03_tv_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_dual_energy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                234
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.077364
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 316265,
+          "color_mad": [
+            0.1023,
+            0.0258,
+            0.1548,
+            0.0637
+          ],
+          "max_color_mad": 0.1548,
+          "source_sha256": "dee25ce8a0ee93d087e41d628de8263f3660bf350a3a57671a68080d91b5032a"
+        }
+      },
+      "reason": null,
+      "cover": "01_slices.png",
+      "still": "articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png",
+      "alt": {
+        "ja": "鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない",
+        "en": "CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume"
+      }
     }
   }
 }

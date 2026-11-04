@@ -448,7 +448,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 
 **Rekonstruieren und korrigieren**
 
-- Kegelstrahl-, Helix- und Laminographie-Scans auf einer Geometrie rekonstruieren (Industrie-CT): [Erklärung](../../capabilities/ct-scan-modes.md) _(ja)_ · Beispiele [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py)
+- Kegelstrahl-, Helix- und Laminographie-Scans auf einer Geometrie rekonstruieren (Industrie-CT): [Erklärung](../../capabilities/ct-scan-modes.md) _(ja)_ · Beispiele [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py) · [poc_ct_casting_sparse_views](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_casting_sparse_views.py)
 - Linsenverzeichnung im ganzen Bild korrigieren (Tonne, Kissen, tangential): [Erklärung](../../capabilities/lens-distortion-correction.md) _(ja)_ · Beispiele [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
 - Schnitte aus Projektionen rekonstruieren (CT): [Erklärung](../../capabilities/tomography-reconstruction.md) _(ja)_ · Beispiele [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
 - Aus Silhouetten einen Körper schnitzen (Visual Hull): [Erklärung](../../capabilities/visual-hull-from-silhouettes.md) _(ja)_ · Beispiele [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
@@ -488,7 +488,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 
 ## Alles ansehen
 
-297 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+298 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -507,7 +507,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrielle Prüfung</b> (56)</summary>
+<details class="vall"><summary><b>Industrielle Prüfung</b> (57)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../../articles/assets/poc/poc_barcode_1d/story.en.gif" alt="Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers." loading="lazy" width="200" height="200"></picture><span>1-D-Barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../../articles/assets/poc/poc_battery_electrode_tortuosity/story.en.gif" alt="Electrode tortuosity from CT — the rule of thumb only sees porosity" loading="lazy" width="200" height="200"></picture><span>Elektroden-Tortuosität</span></a>
@@ -565,6 +565,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 <a href="../../articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_package_1d.jpg" alt="Bei einer Unschärfe, die noch 90 % Lesungen erlaubt, erhält der Strichcode die Druckqualität F" width="200" height="200"><span>Bei einer Unschärfe, die noch 90 % Lesungen erlaubt, erhält der Strichcode die Druckqualität F</span></a>
 <a href="../../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_part_dpm.jpg" alt="zxing-cpp liest eine Nadelpräge-Data-Matrix erst, wenn sie unscharf ist" width="200" height="200"><span>zxing-cpp liest eine Nadelpräge-Data-Matrix erst, wenn sie unscharf ist</span></a>
 <a href="../../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_lot_ocr.jpg" alt="Jenseits der trainierten Unschärfe liest die Chargen-OCR falsch, statt abzulehnen" width="200" height="200"><span>Jenseits der trainierten Unschärfe liest die Chargen-OCR falsch, statt abzulehnen</span></a>
+<a href="../../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><img src="../../articles/assets/poc/poc_ct_casting_sparse_views/story.en.gif" alt="CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume" loading="lazy" width="200" height="200"></picture><span>CT von Gussporen: Die beste Rekonstruktion nach RMSE ist nicht immer die beste beim Porenvolumen</span></a>
 </div>
 </details>
 

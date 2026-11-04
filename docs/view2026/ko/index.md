@@ -448,7 +448,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **재구성·보정**
 
-- 하나의 기하로 콘빔·헬리컬·라미노그래피 재구성(산업용 CT): [설명](../../capabilities/ct-scan-modes.md) _(ja)_ · 예제 [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py)
+- 하나의 기하로 콘빔·헬리컬·라미노그래피 재구성(산업용 CT): [설명](../../capabilities/ct-scan-modes.md) _(ja)_ · 예제 [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py) · [poc_ct_casting_sparse_views](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_casting_sparse_views.py)
 - 이미지 전체의 렌즈 왜곡 보정(배럴·핀쿠션·접선): [설명](../../capabilities/lens-distortion-correction.md) _(ja)_ · 예제 [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
 - 투영에서 단면 재구성(CT): [설명](../../capabilities/tomography-reconstruction.md) _(ja)_ · 예제 [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
 - 실루엣에서 입체 깎아내기(시각 헐): [설명](../../capabilities/visual-hull-from-silhouettes.md) _(ja)_ · 예제 [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
@@ -488,7 +488,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 297개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 298개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -507,7 +507,7 @@ PoC 297개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>산업 검사</b> (56)</summary>
+<details class="vall"><summary><b>산업 검사</b> (57)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../../articles/assets/poc/poc_barcode_1d/story.en.gif" alt="Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers." loading="lazy" width="200" height="200"></picture><span>1차원 바코드</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../../articles/assets/poc/poc_battery_electrode_tortuosity/story.en.gif" alt="Electrode tortuosity from CT — the rule of thumb only sees porosity" loading="lazy" width="200" height="200"></picture><span>전극 굴곡도</span></a>
@@ -565,6 +565,7 @@ PoC 297개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_package_1d.jpg" alt="90 % 읽히는 흐림에서도 바코드 인쇄 품질 등급은 F" width="200" height="200"><span>90 % 읽히는 흐림에서도 바코드 인쇄 품질 등급은 F</span></a>
 <a href="../../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_part_dpm.jpg" alt="도트 핀 Data Matrix는 흐려져야 zxing-cpp가 읽는다" width="200" height="200"><span>도트 핀 Data Matrix는 흐려져야 zxing-cpp가 읽는다</span></a>
 <a href="../../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_lot_ocr.jpg" alt="학습 범위를 넘는 흐림에서 로트 번호 OCR은 거부 대신 오독한다" width="200" height="200"><span>학습 범위를 넘는 흐림에서 로트 번호 OCR은 거부 대신 오독한다</span></a>
+<a href="../../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><img src="../../articles/assets/poc/poc_ct_casting_sparse_views/story.en.gif" alt="CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume" loading="lazy" width="200" height="200"></picture><span>주물 기공 CT: RMSE 1위 재구성이 기공 부피에서도 1위인 것은 아니다</span></a>
 </div>
 </details>
 

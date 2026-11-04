@@ -448,7 +448,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **重建與校正**
 
-- 以同一幾何描述重建錐束、螺旋與分層掃描(工業 CT): [說明](../../capabilities/ct-scan-modes.md) _(ja)_ · 範例 [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py)
+- 以同一幾何描述重建錐束、螺旋與分層掃描(工業 CT): [說明](../../capabilities/ct-scan-modes.md) _(ja)_ · 範例 [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py) · [poc_ct_casting_sparse_views](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_casting_sparse_views.py)
 - 對整張影像校正鏡頭畸變(桶形、枕形、切向): [說明](../../capabilities/lens-distortion-correction.md) _(ja)_ · 範例 [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
 - 從投影重建斷面(CT): [說明](../../capabilities/tomography-reconstruction.md) _(ja)_ · 範例 [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
 - 從剪影雕出立體(視覺外殼): [說明](../../capabilities/visual-hull-from-silhouettes.md) _(ja)_ · 範例 [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
@@ -488,7 +488,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 297 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 298 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -507,7 +507,7 @@ PoC 297 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>工業檢測</b> (56)</summary>
+<details class="vall"><summary><b>工業檢測</b> (57)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../../articles/assets/poc/poc_barcode_1d/story.en.gif" alt="Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers." loading="lazy" width="200" height="200"></picture><span>一維條碼</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../../articles/assets/poc/poc_battery_electrode_tortuosity/story.en.gif" alt="Electrode tortuosity from CT — the rule of thumb only sees porosity" loading="lazy" width="200" height="200"></picture><span>電極曲折度</span></a>
@@ -565,6 +565,7 @@ PoC 297 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_package_1d.jpg" alt="在 90% 可讀的模糊下,條碼的印刷品質等級為 F" width="200" height="200"><span>在 90% 可讀的模糊下,條碼的印刷品質等級為 F</span></a>
 <a href="../../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_part_dpm.jpg" alt="點針刻印的 Data Matrix 要模糊後 zxing-cpp 才能讀出" width="200" height="200"><span>點針刻印的 Data Matrix 要模糊後 zxing-cpp 才能讀出</span></a>
 <a href="../../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_lot_ocr.jpg" alt="超出訓練範圍的模糊下,批號 OCR 從拒識變為誤讀" width="200" height="200"><span>超出訓練範圍的模糊下,批號 OCR 從拒識變為誤讀</span></a>
+<a href="../../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><img src="../../articles/assets/poc/poc_ct_casting_sparse_views/story.en.gif" alt="CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume" loading="lazy" width="200" height="200"></picture><span>鑄件氣孔 CT:RMSE 第一的重建,氣孔體積未必第一</span></a>
 </div>
 </details>
 

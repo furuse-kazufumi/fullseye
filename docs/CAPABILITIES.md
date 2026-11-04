@@ -777,7 +777,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 実寸校正: 線源・検出器距離(`dso`, `dsd`)と検出器ピッチは幾何の値がそのまま振幅に効く。既知寸法のファントムを再構成してボクセルピッチを実測する。回転中心のずれは `offset_u` で与える。
 
-動く例: `ct_scan_modes`
+動く例: `ct_scan_modes`, `poc_ct_casting_sparse_views`
 
 ### [レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)](capabilities/lens-distortion-correction.md)
 

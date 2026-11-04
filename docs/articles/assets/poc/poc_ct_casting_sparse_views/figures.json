@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_slices.png",
+  "name": "slices",
+  "caption": "",
+  "shape": [
+   945,
+   1340,
+   3
+  ]
+ },
+ {
+  "file": "02_ranking.png",
+  "name": "ranking",
+  "caption": "",
+  "shape": [
+   736,
+   1260,
+   3
+  ],
+  "csv": "02_ranking.csv",
+  "tsv": "02_ranking.tsv"
+ },
+ {
+  "file": "03_tv_weight.png",
+  "name": "tv_weight",
+  "caption": "",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "04_dual_energy.png",
+  "name": "dual_energy",
+  "caption": "",
+  "shape": [
+   349,
+   1074,
+   3
+  ]
+ }
+]
