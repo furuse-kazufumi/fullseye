@@ -26,6 +26,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - C9 `validation_kit`: 3 次元の画像は `(H, W, 3)` / `(H, W, 4)` だけ受け、他は `KitError`(以前は最後の軸で平均)。RGBA は alpha を除いた 3 色の平均(以前は 4 チャネルの平均)。
 - C10 `from_jsonable` / `from_json` に `max_bytes` / `max_pixels`(既定 None = 上限なし)。MCP `fullseye_import_json` は `mcp_handle_max_bytes` / `mcp_stack_max_pixels` を渡し、宣言形がそれを超える封筒は確保の前に拒否する。
 - C11 n 項 `apply([...])`: 入力ごとに単入力と同じ `_guard_input`(空・次元・色軸・`extra_checks` の値域)。`on_error="raise"` で拒否、既定では記録。
+- C1 の兄弟 CLI `fullseye apply` / `fullseye pipeline`(`imgevolve.py`): 生の `ops.RT` ではなく `api.apply` / `api.run_pipeline` を `on_error="raise"` で通す(n 項の枝と同じ)。`--a 5` / `--a nan` と型の合わない `--ops`(`gaussian,vol_gaussian`)は ValueError で止まる(以前は黙って走った)。
+- C4 の兄弟 `FullseyeGraph.add` / `from_dict`: ノブは `apply` の型規則(`"0.3"` は TypeError、以前は float 化)。C5 の兄弟 `FullseyeGraph.to_python`: `validate()` に error がある graph(未知の op・非有限のノブ)は ValueError で書き出さない。ノブは `engine._knob_literal` で書く(注入は以前から無い: 全値 `%r`)。
 - MCP `fullseye_apply` は利用者の劣化台帳を消さない(`degraded` はこの呼び出し・このスレッドの記録だけ)。MCP の応答に NaN / inf を書かない: `write_message` は非有限を含む応答を同じ id の -32603 に置き換え、`fullseye_pipeline` の値は非有限を含むとき null にせず省く(値はハンドルから読む)。
 
 ### 修正 — 敵対的検証 2026-11-05(contract)
@@ -33,7 +35,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - C1 `unified._make_evolution_caller` が `api.apply` を呼ぶ。`Pipeline.run` は registry 段を `api._prepare_pipeline` + `api._pipeline_steps`(run_pipeline の本体)で走らせる。facade / 知覚 / 生の callable の段は自然シグネチャの関数なので従来どおり。
 - C2 registry 段は `executor["alias"]` で `fullseye.apply(..., template=...)`。n 項の段も同じ入口。
 - C3 / C4 / C13 段の読み方を `api._normalise_stage` / `api._stage_knob` の 1 本に(run_pipeline・FullseyeEngine・`engine.pipeline_states`)。`pipeline_states` は dict 段・`(name, {..})` 段で落ちていた。
-- C5 兄弟: `graphengine.FullseyeGraph.to_python` は全値を `%r` で書いており無害(確認のみ)。Studio の `export_python` は読み込み時に registry で検査済みの名前だけを持つ。
+- C5 兄弟: `graphengine.FullseyeGraph.to_python` は全値を `%r` で書いており注入は無いが、動かないスクリプトを書き出さないよう検査を足した(上の Breaking)。Studio の `export_python` / プログラム表示の `# bypassed: <name>` は、名前が `add_stage`(`find_op` で正規化)と `load_dict`(registry で検査)からしか入らないので無害。行は読み戻しの書式(`_hdev_strip_comment`)でもあるので変えない。
 - C6 入口は `api._pipeline_entry`(`_pipeline_steps` の entry と共有)。
 - C10 兄弟: 配列 sort の宣言形も上限で先に検査。`np.prod` の int64 桁あふれ(宣言 `[2**62+1, 4]` を 4 値と読んだ)を `math.prod` に。RLE は run の合計を確保の前に照合。
 - C12 n 項 `apply` が各入力の `fullseye.Image` を剥がす(非有限の検査より前)。
