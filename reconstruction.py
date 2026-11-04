@@ -82,7 +82,11 @@ def _sampson(F, p1, p2):
 
 
 def match_fundamental_matrix_ransac(points1, points2, thresh: float = 1.0, iters: int = 200, seed: int = 0):
-    """点対応から RANSAC で基礎行列 F とインライアを推定(match_fundamental_matrix_ransac)。"""
+    """点対応から RANSAC で基礎行列 F とインライアを推定(match_fundamental_matrix_ransac)。
+
+    返す ``inliers`` / ``num_inliers`` は返す ``F`` で数え直した内れ値(Sampson 距離 < ``thresh``²。
+    再推定前の仮説のものではない。2026-11-05 敵対的検証 G1b)。
+    """
     p1 = np.asarray(points1, float).reshape(-1, 2)
     p2 = np.asarray(points2, float).reshape(-1, 2)
     n = len(p1)
@@ -99,9 +103,21 @@ def match_fundamental_matrix_ransac(points1, points2, thresh: float = 1.0, iters
         inl = _sampson(F, p1, p2) < thresh ** 2
         if best_in is None or inl.sum() > best_in.sum():
             best_in, best_F = inl, F
+    # ★2026-11-05(敵対的検証 G1b): 以前は内れ値で再推定した F を返しながら、inliers は
+    # 再推定前の 8 点仮説のものを返していた(返した F で数え直すと 138 → 185 点)。
+    # featmatch._refit_keeping_consensus と同じ規則: 返す inliers は常に返す F の内れ値。
+    # 再推定で合意が 8 点未満に痩せたら、合意を満たしていた仮説の F を返す。
+    F, inl = best_F, best_in
     if best_in.sum() >= 8:
-        best_F = _fund_8pt(p1[best_in], p2[best_in])       # インライアで再推定
-    return {"F": best_F, "inliers": best_in, "num_inliers": int(best_in.sum())}
+        try:
+            F2 = _fund_8pt(p1[best_in], p2[best_in])       # インライアで再推定
+        except Exception:
+            F2 = None
+        if F2 is not None and np.isfinite(F2).all():
+            inl2 = _sampson(F2, p1, p2) < thresh ** 2
+            if inl2.sum() >= 8:
+                F, inl = F2, inl2
+    return {"F": F, "inliers": inl, "num_inliers": int(inl.sum())}
 
 
 def match_essential_matrix_ransac(points1, points2, K, thresh: float = 1.0, iters: int = 200, seed: int = 0):

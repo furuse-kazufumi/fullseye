@@ -258,7 +258,7 @@ def ransac_rigid(src_pts, dst_pts, pairs, inlier_thr, iters=2000, seed=0,
                  device="cpu"):
     """3 点最小サンプル + Kabsch の RANSAC で外れ対応に頑健な剛体姿勢を推定。
     退化(共線)サンプルを棄却し、最良インライア集合で再推定。
-    返り値 (R, t, inliers(bool), S, D) or None。"""
+    返り値 (R, t, inliers(bool), S, D) or None。``inliers`` は返す R,t で数え直した内れ値。"""
     rng = np.random.default_rng(seed)
     S = src_pts[pairs[:, 0]]
     D = dst_pts[pairs[:, 1]]
@@ -276,11 +276,18 @@ def ransac_rigid(src_pts, dst_pts, pairs, inlier_thr, iters=2000, seed=0,
         inl = err < inlier_thr
         c = int(inl.sum())
         if c > best_count:
-            best_count, best_inliers = c, inl
+            best_count, best_inliers, best_pose = c, inl, (R, t)
     if best_inliers is None or best_count < 3:
         return None
+    # ★2026-11-05(敵対的検証 G1b の兄弟): 以前は内れ値で再推定した R,t を返しながら、
+    # inliers は再推定前の 3 点仮説のものを返していた(iters=10 で 33 点食い違う)。
+    # 返す inliers は常に返す R,t の内れ値。再推定で合意が 3 点未満に痩せたら仮説を返す。
     R, t = _kabsch(S[best_inliers], D[best_inliers], device)
-    return R, t, best_inliers, S, D
+    inl = np.linalg.norm(S @ R.T + t - D, axis=1) < inlier_thr
+    if int(inl.sum()) < 3:
+        R, t = best_pose
+        inl = np.linalg.norm(S @ R.T + t - D, axis=1) < inlier_thr
+    return R, t, inl, S, D
 
 
 def register_shot(src, dst, radius=None, normal_k=16, ratio=0.9,
