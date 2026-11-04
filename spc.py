@@ -1555,7 +1555,13 @@ def gum_validate(guf, mcm, ndig=2):
             "%s: the numerical tolerance is built from u(y), which is %r here. With no "
             "spread there is no tolerance to compare against — this is exactly the "
             "stationary-point case the propagation law cannot describe." % (op, uy))
+    # JCGM 101 8.1.3: u(y) を *ndig* 桁に**丸めてから** c x 10^l(c は ndig 桁の整数)と
+    # 書き、delta = 0.5 x 10^l。丸めで桁が繰り上がる(ndig=2 で 0.0996 -> 0.10 = 10 x 10^-2)
+    # と l も 1 つ上がる。以前は floor(log10 u) だけで作り、0.0996 で delta 0.0005
+    # (正しくは 0.005)と 10 倍厳しくなっていた(敵対的検証 2026-11-05 S4)。
     lo_e = int(np.floor(np.log10(abs(uy)))) - (ndig - 1)
+    if round(abs(uy) / 10.0 ** lo_e) >= 10 ** ndig:
+        lo_e += 1
     delta = 0.5 * 10.0 ** lo_e
 
     dlow = abs(float(guf["low"][0]) - float(mcm["low"][0]))

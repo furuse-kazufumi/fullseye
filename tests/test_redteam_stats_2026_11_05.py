@@ -167,3 +167,33 @@ def test_s3_gum_correlated_interval_covers_at_the_nominal_level():
                                   "dof": np.full(2, n - 1.0)}, correlation=R)
             hits += bool(abs(m[i].sum()) <= g["expanded"][0])
         assert hits / reps >= 0.94, (r, hits / reps)
+
+
+# ---- S4: gum_validate の数値許容差(JCGM 101 8.1.3) -----------------------
+
+def _delta_decimal(u, ndig):
+    """独立実装: u を ndig 有効桁に丸めて(半分は切り上げ)c x 10^l、delta = 0.5 x 10^l。"""
+    from decimal import Decimal, ROUND_HALF_UP
+    d = Decimal(repr(float(u)))
+    e = d.adjusted() - (ndig - 1)
+    q = d.quantize(Decimal(1).scaleb(e), rounding=ROUND_HALF_UP)
+    if q.adjusted() - (ndig - 1) != e:            # 丸めで桁が繰り上がった
+        e += 1
+    return 0.5 * 10.0 ** e
+
+
+def test_s4_gum_validate_delta_rounds_u_to_ndig_digits_first():
+    """u=0.0996, ndig=2 -> 0.10 = 10 x 10^-2 -> delta 0.005(旧実装 0.0005)。"""
+    import spc
+    us = (0.0996, 0.0999, 0.1000, 0.0949, 0.0951, 0.996, 0.00994, 0.00996, 1.234, 9.96, 99.4)
+    assert len(us) == 11
+    for ndig in (1, 2, 3):
+        for u in us:
+            g = spc.gum_expanded({"u": np.array([u]), "sensitivity": np.array([1.0]),
+                                  "dof": np.array([np.inf])}, estimate=1.0)
+            v = spc.gum_validate(g, {"low": g["low"], "high": g["high"]}, ndig=ndig)
+            assert float(v["delta"][0]) == pytest.approx(_delta_decimal(u, ndig), rel=1e-12), (u, ndig)
+    g = spc.gum_expanded({"u": np.array([0.0996]), "sensitivity": np.array([1.0]),
+                          "dof": np.array([np.inf])}, estimate=1.0)
+    v = spc.gum_validate(g, {"low": g["low"] + 0.003, "high": g["high"] + 0.003}, ndig=2)
+    assert float(v["delta"][0]) == pytest.approx(0.005) and bool(v["agree"][0])
