@@ -503,8 +503,8 @@ WSL 側で測るか、`tracemalloc`(標準ライブラリ)で代替する。
 | # | 何が起きるか | 場所 | 方向 |
 |---|---|---|---|
 | 32-1 | 3-D 347 op の RAG ノートが docstring **1 行目のみ**(283 op が複数行、25 op は文の途中で切れる) | `ops3d.py` 786 付近 `splitlines()[0]` | 生成器を全文へ。指紋は 1 行目のままにするか要判断 |
-| 32-2 | wheel 同梱 `OP_CATALOG.md` に台帳 19 族 343 op + n-ary 16 op が無い | 生成器が 5 レジストリしか読まない | `typed_catalog.catalog()` を読ませる |
-| 32-3 | `docs/OP_INDEX.json` が 2026-08-12 で停止(538 vs 881)なのに「自動追従」と案内 | README / AI_RAG_GUIDE | 生成に組み込むか、案内を消す |
+| 32-2 | ~~wheel 同梱 `OP_CATALOG.md` に台帳 19 族 343 op + n-ary 16 op が無い~~ **解消済み(2026-11-05 の敵対的検証 第 2 巡で確認)**。`fullseye/OP_CATALOG.md` は `tools/gen_op_catalog.py`(`regen_all` の段)が op ノートの台帳から書き、台帳の族の節と n-ary の層を含む | — | 解消済み |
+| 32-3 | ~~`docs/OP_INDEX.json` が 2026-08-12 で停止(538 vs 881)なのに「自動追従」と案内~~ **解消済み(2026-11-05 の敵対的検証 第 2 巡で確認)**。`imgevolve.py index` が `regen_all` の鎖の 2 段目にあり、`--check` が CI で索引の古びを止める | — | 解消済み |
 | 32-4 | `_NDIM_OK` が image/region に 3-D を許し、RGB (H,W,3) を 2-D op に渡すと体積として処理して無警告で返す | `api.py` 1226 | `image` は ndim==2 を要求(色は rgbimage/color sort へ) |
 | 32-5 | `calib.camera_calibration` の縮退ゲートが近縮退+雑音を通し、fx が +16% でも RMS 0.13 px | `calib.py` 167-172 | RMS は K の誤りを反映しない(#caltab と同型)。条件数で見る |
 | 32-6 | 角度の符号が HALCON と鏡像(1-D measuring / XLD / geometry 系)、同 repo の `hom_mat2d_rotate` とも逆 | `backends_measure1d` / `backends_xldgeom` | 既定出力が変わる → 0.2.0 の候補。まず文書化 |
