@@ -11,6 +11,9 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nu_eff &gt;= min_i nu_i</code> <b>始終</b>成立。證明為 <code style="color:#22d3bf">sum u_i^4/nu_i &lt;= (1/nu_min) sum u_i^4 &lt;= (1/nu_min)(sum u_i^2)^2</code>。有效自由度若小於最小成分的自由度,表示計算壞了。</p>
 <p style="margin:2px 0 2px 12px">• 所有自由度均為無窮大時,<code style="color:#22d3bf">k</code> 收斂到常態分布的分位點(95 % 時為 1.959964)。</p>
 <p>無窮自由度(已知常數等)填入 <code style="color:#22d3bf">numpy.inf</code>。</p>
+<p>★★ <b>存在相關時的自由度</b>。Welch-Satterthwaite(GUM G.4.1)以輸入<b>相互獨立</b>為前提;直接用於含相關項的 <code style="color:#22d3bf">u_c</code> 會虛增自由度(兩個相等分量、各 nu=4、r=+1 時 nu_eff=32 —— 超過預算自由度總和 8)。負相關時則反而跌到 1 以下。因此當 *correlation* 含非零的非對角元素時,把由非零相關連在一起的分量併成一組,用組變異數 <code style="color:#22d3bf">w_g&#x27; R_g w_g</code>(<code style="color:#22d3bf">w = c u</code>)與組自由度 <code style="color:#22d3bf">min_{i in g} nu_i</code> 構造 Welch-Satterthwaite::</p>
+<p>nu_eff = u_c^4 / sum_g (w_g&#x27; R_g w_g)^2 / min_{i in g} nu_i</p>
+<p>依據:由同一組量測估計的相關分量(共變異數為 Wishart、自由度 nu 相同)時,合成變異數的估計量嚴格為 <code style="color:#22d3bf">sigma^2 chi^2_nu / nu</code>,有效自由度與 <code style="color:#22d3bf">r</code> 無關,就是 <code style="color:#22d3bf">nu</code>(與 Willink, *Metrologia* 44:340, 2007 的廣義 Welch-Satterthwaite 在 r=+1 的兩個相等分量下得到 nu 一致)。自由度不同的分量相關時取最小值 —— 這是本實作偏向安全側(k 更大)的規則,不是標準中的公式。所有相關均為 0(或單位矩陣)時每組只有 1 個分量,結果與傳統公式相同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

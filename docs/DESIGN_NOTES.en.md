@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 639 of 1649. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 641 of 1644. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -42,7 +42,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `annotate.py`
 
-- **L3112** — ★Punctuation (。、) should not be rotated but **shifted to the upper right**, but here we don't shift it —— rather than silently approximating what we can't do, we write it in the docstring and leave it. Characters (punctuation) that **shift to the upper right** in vertical writing. A dot that sits at the lower left of the glyph in horizontal setting comes to the upper right in vertical setting —— the typographic manner is to **move the position**, not to rotate. Windows' ``@``-prefixed fonts (the vertical-writing face GDI selects by face name) did this on the font side. Pillow opens a font by **file path** so it can't reach the ``@`` face, and HarfBuzz's ``direction="ttb"`` also gives different results with and without Raqm installed (this machine's Pillow 12.3.0 has ``features.check("raqm")`` False). Following the policy **choose what is consistent across platforms**, here we shift by composition.
+- **L3105** — ★Punctuation (。、) should not be rotated but **shifted to the upper right**, but here we don't shift it —— rather than silently approximating what we can't do, we write it in the docstring and leave it. Characters (punctuation) that **shift to the upper right** in vertical writing. A dot that sits at the lower left of the glyph in horizontal setting comes to the upper right in vertical setting —— the typographic manner is to **move the position**, not to rotate. Windows' ``@``-prefixed fonts (the vertical-writing face GDI selects by face name) did this on the font side. Pillow opens a font by **file path** so it can't reach the ``@`` face, and HarfBuzz's ``direction="ttb"`` also gives different results with and without Raqm installed (this machine's Pillow 12.3.0 has ``features.check("raqm")`` False). Following the policy **choose what is consistent across platforms**, here we shift by composition.
 
 ## `aoi.py`
 
@@ -219,14 +219,6 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L225** — ★Enforce the headline honesty claim ("a DNA op is added only when it beats the hand baseline on a LOCKED holdout") — previously this flag was printed but never gated, so a worse-than-hand macro could be registered and then selected by the next evolution. The gate refuses that unless it is explicitly overridden.
 
-## `color_pca.py`
-
-- **L71** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K5): 無彩色(mx == r == g == b)で 3 つの分岐が 全部真になり、最後の b の分岐 (r-g)/df + 4 = 4 が勝って H = 2/3 を返していた (skimage / colorsys は 0)。また df = mx-mn+1e-12 の絶対床が小さい値の H/S を 歪めていた(RGB 2e-13 の H 0.007 / S 0.125、真値 0.056 / 0.75)。 退化は d == 0 の厳密な判定にし、分岐は r → g → b の優先で互いに排他にする (driveworld._rgb_to_hsv と同じ。2 チャンネルが同率最大でも式は同じ値になる)。
-
-## `colortransport.py`
-
-- **L394** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K1): 「一定のチャネル」の床が絶対値 1e-12 だった。 無彩色の src を Lab に直すと a*/b* は数学的には 0 で一定だが、sRGB→XYZ 行列の Y 行和(1.0000001)と白 Y=1 の差から std 3.9e-6 の丸め屑が残り、床を素通りして 屑が数百万倍され a* −24〜61 の偽の色が出た。床はデータの大きさに対する相対量にする (gaussian 側の 1e-12 × 最大固有値 = 分散の相対床と同じ桁: std で 1e-6)。
-
 ## `conngraph.py`
 
 - **L357** _(ja)_ — ★2026-10-07: 非零の向きつきグラフに閉路(自己ループ含む)が無ければ W は冪零 = 半径はちょうど 0。 ARPACK は冪零(Jordan 塊)で擬スペクトルの縁を返す(鎖 500 個で 0.366、層状 DAG で 3.6e-5 → reservoir_from_graph が 0 を拒否せず 2.5 万倍に拡大した)。残差では見分けられないので構造で判定する。
@@ -259,10 +251,6 @@ This repository records *why* things are the way they are in **comments in the s
 - **L161** _(ja)_ — ★**名簿に 12 載せて、扉が 3 つしか無かった**(2026-09-25)。``capabilities()`` は I-O・サーボ・ロボット・ROS を名乗るのに、開ける口が在ったのは :class:`DigitalIO` の 3 backend だけで、残り 9 には入口が 1 つも無かった —— 名簿を読んだ人が、そこから何かを始める方法が無い。隣の層(``comm``)は 同じ問いに既に答えていたので、これは機能の不在ではなく**片側の入口だけが 塞がれていた**型である。開けないものにも「何を入れればよいか」を返す。
 - **L189** _(ja)_ — ★PyPI に無い SDK(ベンダ配布の wheel)は「pip install None」と言わせない。
 
-## `driveenv.py`
-
-- **L613** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K2 の兄弟): 非有限の輝度は NaN を黙って返していた → 拒否。 有限でも m・r*scale が溢れると inf/inf = NaN(1e307 × exposure 10)。m > 2 の画素は 「最大チャンネルを 1 に割る」側で結果は色の比 r / max(r) そのものなので、溢れる桁 (m > _TONE_MAP_M_SAFE)ではその比を直接返す(それ未満の値は従来とビット単位で同じ)。
-
 ## `drivehumanoid.py`
 
 - **L375** _(ja)_ — ★ユーザー案(2026-10-03)「あらかじめ物体ごとの描画をマスク付きで作っておく」。精細なメッシュを向き × 位相ごとに 一度だけ描き(色・マスク・深度のずれ)、毎コマは縮めて貼り、世界の深度と比べて前後を決める。見た目は精細なまま、 1 体の費用は貼る画素の数だけ。近似は 2 つ(門で大きさを測る): (1) 方位を n_yaw 段に丸める、(2) 事前描画は水平に 遠くから見た像なので、カメラが高い・近いときの透視の違いを無視する。
@@ -273,8 +261,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `driveworld.py`
 
-- **L196** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K5 の兄弟): 退化の判定を絶対 1e-12 から厳密な 0 に (RGB が 1e-12 の桁の色で H/S が 0 になっていた。skimage.color.rgb2hsv と同じ判定)。
-- **L617** _(ja)_ — ★2026-10-07: 置いた高さ z を物体に残す(残さないと world_move が元の z を外せず、z=2 で置いて z=2 へ動かすと底が 4 になった)
+- **L615** _(ja)_ — ★2026-10-07: 置いた高さ z を物体に残す(残さないと world_move が元の z を外せず、z=2 で置いて z=2 へ動かすと底が 4 になった)
 
 ## `dualxray.py`
 
@@ -1649,8 +1636,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `hdrfusion.py`
 
 - **L300** _(ja)_ — ★両端(真っ黒・飽和)の重みは 0。ガウスの重みは端で 0.018 残るが、放射輝度の式は w·t² で 重みづけるので、飽和した長い露出(t が 256 倍なら t² は 65536 倍)が支配して応答が波打つ (雑音なしの列でも ln 誤差 ±0.7、実測)。端を 0 にすると消える。
-- **L386** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡): uint8 でも段数を「データの最大値 + 1」にしていたので、 どの露出も飽和していない系列で**最も明るい画素が飽和扱い**になり(Z >= L-1-margin)、 三角の重みも実際の段の幅でなくデータの幅に張られていた(未飽和の uint8 系列で 相対誤差の中央値が 256 段の 0.50 % に対し 0.69 %)。uint8 は満の値が 255 に決まるので 256 段。 uint16 などは 10/12/14 bit のセンサ値を入れるのが普通で満の値が dtype から 決まらないため、従来どおりデータの最大値 + 1(= 最も明るい段を飽和とみなす)。
-- **L461** _(ja)_ — ★mode="mirror"(d c b | a b c d)。"reflect"(d c b a | a b c d)だと 0 を挟んだ格子の偶奇が端で ずれ、端の画素の重みの和が 11/8 になって融合の端が 37 % 明るく飛ぶ(図で発見、2026-11-03)。
+- **L448** _(ja)_ — ★mode="mirror"(d c b | a b c d)。"reflect"(d c b a | a b c d)だと 0 を挟んだ格子の偶奇が端で ずれ、端の画素の重みの和が 11/8 になって融合の端が 37 % 明るく飛ぶ(図で発見、2026-11-03)。
 
 ## `honest_summary.py`
 
@@ -1692,8 +1678,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `imgmetrics.py`
 
-- **L155** _(ja)_ — ★2026-09-20(GenSpark 第 23 報 N92): 配列なしで呼ぶと空集合の pop(KeyError)/ 0-d の float() (TypeError)という内部の文が出ていた。
-- **L167** _(ja)_ — ★2026-10-11: 符号付きの幅を最大値(int16 = 32767)にしていて、skimage の peak_signal_noise_ratio(data_range = iinfo.max - iinfo.min = 65535)と 6.02 dB ずれた。 幅は dtype が取りうる全範囲。符号なしは max - 0 で従来と同じ。
+- **L151** _(ja)_ — ★2026-09-20(GenSpark 第 23 報 N92): 配列なしで呼ぶと空集合の pop(KeyError)/ 0-d の float() (TypeError)という内部の文が出ていた。
+- **L163** _(ja)_ — ★2026-10-11: 符号付きの幅を最大値(int16 = 32767)にしていて、skimage の peak_signal_noise_ratio(data_range = iinfo.max - iinfo.min = 65535)と 6.02 dB ずれた。 幅は dtype が取りうる全範囲。符号なしは max - 0 で従来と同じ。
 
 ## `intensityreg.py`
 
@@ -1798,6 +1784,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `motionio.py`
 
 - **L137** _(ja)_ — ★ 値域(ptp)最大の単調列を時刻にすると、左→右に掃く縁の x(0..239 px)が 秒単位の t(0..0.1)に勝って x と t が入れ替わった(2026-10-07)。 x・y は画素座標なので整数値。時刻は「整数でない単調列」を優先し、 決まらなければ推測せず拒否する(見出しを付ければ名前で読める)。
+
+## `multivar.py`
+
+- **L93** _(ja)_ — ★相対の床は列自身の最大絶対値に対して取る(絶対の 1 を混ぜない)。 max(1, |mean|) では |mean| < 1 で床が絶対値 1e-12 になり、同じ表が pF では 通り F では「変動なし」で拒否された(敵対的検証 2026-11-05 S6)。標準化 PCA は 列ごとの単位に依らない(相関行列は無次元)ので、この判定も依らない。
 
 ## `occupancy.py`
 
@@ -2040,9 +2030,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L871** _(ja)_ — ★奇数次の微分は奇関数。偶数長の ``fftfreq`` はナイキストの ``-1/2`` だけを 持ち対の ``+1/2`` が無いので、そこを残すと実の場の「微分」に虚部が出た (実測 max|Im| 0.34)。hilbert_x と同じくそのビンを 0 にする。
 - **L887** _(ja)_ — ★補集合はここで作る。`1 - lowpass` を呼び出し側に作らせると、 境界の扱いが 2 通りに分かれて lowpass + highpass = 1 が崩れる。
 - **L892** _(ja)_ — ★ナイキストのビンを 0 にする。``fftfreq`` は偶数長で ``-1/2`` だけを 返し、対になる ``+1/2`` が無いので、そこを残すと片側位相が**奇対称を 厳密に満たさない**(実測: 残差 1.6e-09 → 0 にすると 2.3e-16)。 離散ヒルベルト変換で標準的な扱いで、`scipy.signal.hilbert` も同じ。
-- **L2528** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K3): 許容に絶対の +1e-12 が入っていて、DoP = 2 の 状態でも S0 <= 1e-12 の桁なら受理され dop = 1.0 にクリップされていた。許容は S0 に 対する相対量だけにする(強度の単位・桁に依らず同じ意味)。
-- **L2613** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K3): 絶対の +1e-12 をやめ、場の明るさ(最大 S0)に 対する相対の丸め屑だけを許す(暗い画素の屑は通し、場全体の桁を下げても DoP > 1 は通さない)。
-- **L2790** _(ja)_ — ★縁は**モザイクのまま**鏡映で 2 画素広げてから抜く。広げ幅が偶数で ``reflect`` (縁の画素を重ねない鏡映)なら 2x2 の位相が保たれる。マスク後の面を伸ばすと 未計測の 0 が縁に写り、一様な場でも縁が暗くなった(実測 16 画素)。
+- **L2767** _(ja)_ — ★縁は**モザイクのまま**鏡映で 2 画素広げてから抜く。広げ幅が偶数で ``reflect`` (縁の画素を重ねない鏡映)なら 2x2 の位相が保たれる。マスク後の面を伸ばすと 未計測の 0 が縁に写り、一様な場でも縁が暗くなった(実測 16 画素)。
 
 ## `optscene.py`
 
@@ -2078,7 +2066,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `photometric.py`
 
-- **L128** _(ja)_ — ★2026-10-02: 以前は ``np.sign(nz) * 1e-6 + 1e-12`` で、nz がちょうど 0(真横を向く法線)のとき np.sign(0) = 0 になり分母が 1e-12 → p = -1e12 を返していた(±1e-6 で抑えるつもりが効かない)。 0 は正の側に寄せる。真横の法線の勾配は本来無限大で、ここでは |p|, |q| ≤ 1e6 に抑えた値になる。
+- **L108** _(ja)_ — ★2026-10-02: 以前は ``np.sign(nz) * 1e-6 + 1e-12`` で、nz がちょうど 0(真横を向く法線)のとき np.sign(0) = 0 になり分母が 1e-12 → p = -1e12 を返していた(±1e-6 で抑えるつもりが効かない)。 0 は正の側に寄せる。真横の法線の勾配は本来無限大で、ここでは |p|, |q| ≤ 1e6 に抑えた値になる。
 
 ## `pipeline3d.py`
 
@@ -2092,10 +2080,6 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L241** _(ja)_ — ★2026-10-07 レビュー修正: 旧式は回転ブロックに -[Xc]x(= t も回す更新の微分)を使い、 実際の更新(t は回さない)と食い違っていた。初期値が良いほど収束が線形に遅くなり、 30 反復で最小に届かないことがあった(重心中心化した DLT 初期値で 50 反復要した)。
 - **L309** _(ja)_ — ★2026-10-07 レビュー修正: 世界原点から遠い点群(オフセット 1e4、画素ノイズ 0.5 px)で DLT の脱正規化 M = T2⁻¹·Pn·T3 の並進列が桁落ちし、t が壊れた初期値から LM が 回転誤差 175° の別解へ落ちていた。入口で重心 c を引いて解き、最後に t − R·c で戻す (Xc = R(X − c) + t' = R X + (t' − R c))。
-
-## `polar_gpu.py`
-
-- **L163** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K3): 絶対の +1e-12 → 場の最大 S0 に対する相対(optics と同じ)。
 
 ## `polish.py`
 
@@ -2171,11 +2155,6 @@ This repository records *why* things are the way they are in **comments in the s
 - **L2153** _(ja)_ — ★marching cubes は**面積 0 の三角形**を出す(格子点をちょうど通る等値面で、 2 頂点が同じ位置に来る)。曲率 op はそれを正しく拒否するので、ここで落とす —— 黙って渡すと「曲率が定義できない」と下流で落ち、原因がここだと分からない。
 - **L2215** _(ja)_ — ★平行移動フレームで掃く(フレネ枠を使わない —— 直線部で法線が定義できず、 変曲点で従法線が反転して管がねじれる)。真値は、円を中心線にすると トーラスになり体積 2 pi^2 R r^2・表面積 4 pi^2 R r が解析解であること。 ------------------------------------------------------------------------- #
 
-## `render_tonemap.py`
-
-- **L114** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K2): 有限の大きな放射輝度で NaN を返していた (exposure=10 で 1e308 → x = inf → inf/inf)。x は「1 に写る十分大きな有限値」で 頭打ちにしてから式に入れる。頭打ちの点より上は元の式でも浮動小数で 1.0(または 1 超 → クリップで 1.0)なので、有限で溢れない入力の値は 1 ビットも変わらない。
-- **L155** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K2): x >= 1e154 で x*x が溢れて inf/inf = NaN を 返していた(docstring は [0, 1] を約束)。f は x >= _ACES_X_SAT(f(x)=1 の正根 ≈ 7.24 より上)で 1 以上 → クリップで 1.0 なので、そこで頭打ちにしても値は変わらない。
-
 ## `reprconv.py`
 
 - **L170** — ★ For conversion to an integer dtype, inspect the raw value **before the cast**. A hole found by adversarial inspection (2026-09-02): ``np.asarray(nan, dtype=int64)`` raises no exception and returns INT_MIN, and after the cast ``dtype.kind == 'i'`` so it slips past the non-finite check below. A non-integer like 3.7 is also silently truncated to 3 —— **a result off by 1 in the index is returned with no exception**. This is exactly the lie of a conversion op.
@@ -2235,18 +2214,21 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `spc.py`
 
-- **L426** _(ja)_ — ★管理図と工程能力は「工程のばらつき」を見るが、その数字は**測定のばらつきを 含んだまま**である。ゲージ R&R は総変動を「部品差」と「測る行為の差」に分け、 後者が前者を食っていないかを見る —— 工程能力の前に来るべき検査で、ここが 抜けていると「工程が暴れている」と読んだものが実は測定器だったという取り違えが 起きる。GUM は同じ問いを 1 回の測定について立て、成分ごとの不確かさを 合成する。どちらも閉形式で、照合できる恒等式を持つ。 =========================================================================== #
-- **L733** _(ja)_ — ★どのモデルで出した数字かを必ず載せる(黙って切り替えない)
-- **L1042** _(ja)_ — ★★**破綻は警告でなく構造で返す**。感度係数がすべて 0 になると、入力に 不確かさがあるのに合成不確かさが 0 になる —— 規格の比較損失の例 (``dY = X1^2 + X2^2`` を ``x_i = 0`` で評価)がまさにこれで、 ``c_i = 2 x_i = 0`` だから 1 次近似は「不確かさゼロ」と答える。数式としては 正しいが**測定の主張としては嘘**で、モンテカルロは同じ状況で ``u = 50e-6`` を返す。0 を返すこと自体は止めない(それが伝播則の答えなので)が、 ``guf_valid=False`` と ``invalid_reasons=["stationary_point"]`` を**結果に 同伴させる**。警告にすると握りつぶされ、呼んだ側は「測定が完璧だった」と読む。
-- **L1051** _(ja)_ — ★**この検出条件そのものは本実装の判断であって、規格が列挙したものではない**。 規格が定めるのは線形モデルの 3 条件(Welch-Satterthwaite の適用可否 / 有限自由度の入力が独立であること / 出力分布が正規または t で近似できること)と 非線形モデルの 5 条件(最良推定値の近傍で連続微分可能 / 適切な次数の全微分で 成立 / 高次項に関わる入力が独立 / その分布が正規 / 落とした高次項が無視できる) で、「感度が全部 0」「区間が定義域を出る」という**判定手順は書かれていない**。 ここで実装したのは、その条件が破れたときに**観測される形**のほうである —— 停留点は高次項が支配する特殊例、負側への張り出しは正規近似の破綻の現れ。
-- **L1062** _(ja)_ — ★停留点 = 不確かさのある入力の 1 次感度が**すべて**0(高次項が支配する)。 感度が非 0 なのに分散が 0 なのは、相関による**厳密な打ち消し** (X1 = X2 で Y = X1 - X2)で、u = 0 が正しい答え —— 妥当として note を付ける。
-- **L1073** _(ja)_ — ★破綻は**警告でなく構造**で返す(警告は握りつぶされる/ログに消える)
-- **L1104** _(ja)_ — ★ NaN は ``nu <= 0`` をすり抜け、下の isfinite で「無限大」扱いになっていた (dof=[4, nan] で nu_eff 16 = 自由度を水増しし k を小さく)。欠測は拒否する。
-- **L1121** _(ja)_ — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
-- **L1151** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
-- **L1530** — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
-- **L1562** — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
-- **L1673** — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
+- **L435** _(ja)_ — ★母数既知なら T² ~ chi2_p。以前は charted rows の m から phase-II の F 式を 作っていて、m <= p で UCL = inf(1 行の 50σ 外れを素通し)だった。
+- **L440** _(ja)_ — ★同じデータから推定した phase I は Beta 限界。phase-II の F 式を当てると T² <= (m-1)^2/m の恒等的上限より UCL が大きくなり(m=10, p=2 で 33.5 > 8.1)、 どんな外れ値でも警報が出なかった(敵対的検証 2026-11-05 S2)。
+- **L471** _(ja)_ — ★管理図と工程能力は「工程のばらつき」を見るが、その数字は**測定のばらつきを 含んだまま**である。ゲージ R&R は総変動を「部品差」と「測る行為の差」に分け、 後者が前者を食っていないかを見る —— 工程能力の前に来るべき検査で、ここが 抜けていると「工程が暴れている」と読んだものが実は測定器だったという取り違えが 起きる。GUM は同じ問いを 1 回の測定について立て、成分ごとの不確かさを 合成する。どちらも閉形式で、照合できる恒等式を持つ。 =========================================================================== #
+- **L778** _(ja)_ — ★どのモデルで出した数字かを必ず載せる(黙って切り替えない)
+- **L1087** _(ja)_ — ★★**破綻は警告でなく構造で返す**。感度係数がすべて 0 になると、入力に 不確かさがあるのに合成不確かさが 0 になる —— 規格の比較損失の例 (``dY = X1^2 + X2^2`` を ``x_i = 0`` で評価)がまさにこれで、 ``c_i = 2 x_i = 0`` だから 1 次近似は「不確かさゼロ」と答える。数式としては 正しいが**測定の主張としては嘘**で、モンテカルロは同じ状況で ``u = 50e-6`` を返す。0 を返すこと自体は止めない(それが伝播則の答えなので)が、 ``guf_valid=False`` と ``invalid_reasons=["stationary_point"]`` を**結果に 同伴させる**。警告にすると握りつぶされ、呼んだ側は「測定が完璧だった」と読む。
+- **L1096** _(ja)_ — ★**この検出条件そのものは本実装の判断であって、規格が列挙したものではない**。 規格が定めるのは線形モデルの 3 条件(Welch-Satterthwaite の適用可否 / 有限自由度の入力が独立であること / 出力分布が正規または t で近似できること)と 非線形モデルの 5 条件(最良推定値の近傍で連続微分可能 / 適切な次数の全微分で 成立 / 高次項に関わる入力が独立 / その分布が正規 / 落とした高次項が無視できる) で、「感度が全部 0」「区間が定義域を出る」という**判定手順は書かれていない**。 ここで実装したのは、その条件が破れたときに**観測される形**のほうである —— 停留点は高次項が支配する特殊例、負側への張り出しは正規近似の破綻の現れ。
+- **L1107** _(ja)_ — ★停留点 = 不確かさのある入力の 1 次感度が**すべて**0(高次項が支配する)。 感度が非 0 なのに分散が 0 なのは、相関による**厳密な打ち消し** (X1 = X2 で Y = X1 - X2)で、u = 0 が正しい答え —— 妥当として note を付ける。
+- **L1118** _(ja)_ — ★破綻は**警告でなく構造**で返す(警告は握りつぶされる/ログに消える)
+- **L1205** _(ja)_ — ★ NaN は ``nu <= 0`` をすり抜け、下の isfinite で「無限大」扱いになっていた (dof=[4, nan] で nu_eff 16 = 自由度を水増しし k を小さく)。欠測は拒否する。
+- **L1224** _(ja)_ — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
+- **L1254** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
+- **L1645** — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
+- **L1650** — ★The scale is the column's own largest magnitude — never an absolute 1. With max(|mean|, 1) the floor was absolute below |mean| = 1, so the same parts in farads (1 pF +- 0.01 pF) were declared flat and an 8-sigma part scored MD 0.05 while in pF it scored 4.8 (red-team 2026-11-05 S5). MD is unit-free; so is this.
+- **L1681** — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
+- **L1792** — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
 
 ## `specops.py`
 
@@ -2256,10 +2238,6 @@ This repository records *why* things are the way they are in **comments in the s
 ## `spectralrad.py`
 
 - **L576** _(ja)_ — ★既定の溶融石英(SILICA、Malitson の分散式)は材料表に k が無く、厚さは効かない —— 内部の吸収を入れたいなら k を持つ硝材の名前と厚さを渡す(材料表の glass の類)。
-
-## `specularity.py`
-
-- **L1489** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K4 の兄弟): 退化の床を入力の最大輝度に対する相対量に (photometric._albedo_floor と同じ。絶対 1e-8 では強度 ×1e-8 で全法線が (0, 0, 1))。
 
 ## `studio.py`
 
@@ -2294,6 +2272,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `symbolpod.py`
 
 - **L359** _(ja)_ — ★完全分離: 劣化量に対して読めるかどうかが決まっていて、傾きは推定できない。 代わりに「全数成功の実証」(MIL-HDBK-1823A の 29/29 と同じ論法)を返す: すべて読めた最も厳しい水準 L* と、そこでの試行数が p=0.90 を片側 level で 示すのに足りるか(:func:`pod.trials_for_all_success`)。 Complete separation: report the all-success demonstration instead.
+
+## `symmetry2d.py`
+
+- **L37** — not turn into an axis or an apparent rotational order. ★No absolute 1 in the scale: with max(1, |lo|, |hi|) an image in physical units below 1 (radiance in W, 1e-14 full scale) was refused as "uniform" while the same image x 1e14 was measured (red-team 2026-11-05, sibling of S5/S6). An all-zero image still has hi - lo = 0 <= 0 and is refused.
 
 ## `tacsim.py`
 
@@ -2818,9 +2800,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_spc.py`
 
-- **L237** _(ja)_ — ★台帳 opsspc は 2026-10-12 から 2 モジュール(spc と pod)を載せる。比べるのは 「spc モジュールの op」どうし —— pod 側の一致は tests/test_pod.py が見る。
-- **L247** _(ja)_ — ★真値は導出した恒等式と**既存 op**。当てはめた数字を固定しない。 単位空間の MD² の平均はちょうど (n-1)/n で、教科書の「平均 1」を有限標本で 正確に言い直したもの。1.0 を固定する試験はどんな標本でも間違いになる。
-- **L320** _(ja)_ — ★この列の std は **0 ではない**。4.2 を 200 個並べただけで丸め屑が 1.3e-14 残る(実測)。`std == 0.0` で判定していた最初の版はここを取りこぼし、 その屑で割った距離が意味を失っていた。屑が在ることを門に書いておく —— 絶対判定に戻したらこの行が落ちる。
+- **L185** _(ja)_ — ★既定(同じデータから mean/cov を推定 = phase I)の限界は Beta(Tracy-Young-Mason 1992)。 以前このテストは phase-II の F 式を既定経路に当てた値を固定していた(敵対的検証 2026-11-05 S2: phase I では T² <= (m-1)^2/m が恒等的に成り立ち、F 式では警報不能)。
+- **L241** _(ja)_ — ★台帳 opsspc は 2026-10-12 から 2 モジュール(spc と pod)を載せる。比べるのは 「spc モジュールの op」どうし —— pod 側の一致は tests/test_pod.py が見る。
+- **L251** _(ja)_ — ★真値は導出した恒等式と**既存 op**。当てはめた数字を固定しない。 単位空間の MD² の平均はちょうど (n-1)/n で、教科書の「平均 1」を有限標本で 正確に言い直したもの。1.0 を固定する試験はどんな標本でも間違いになる。
+- **L324** _(ja)_ — ★この列の std は **0 ではない**。4.2 を 200 個並べただけで丸め屑が 1.3e-14 残る(実測)。`std == 0.0` で判定していた最初の版はここを取りこぼし、 その屑で割った距離が意味を失っていた。屑が在ることを門に書いておく —— 絶対判定に戻したらこの行が落ちる。
 
 ## `tests/test_specularity.py`
 
