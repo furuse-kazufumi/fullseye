@@ -197,3 +197,121 @@ def test_s4_gum_validate_delta_rounds_u_to_ndig_digits_first():
                           "dof": np.array([np.inf])}, estimate=1.0)
     v = spc.gum_validate(g, {"low": g["low"] + 0.003, "high": g["high"] + 0.003}, ndig=2)
     assert float(v["delta"][0]) == pytest.approx(0.005) and bool(v["agree"][0])
+
+
+# ---- S5/S6 と兄弟: 「変動なし」「範囲外」の床に絶対の 1 を混ぜない --------
+#
+# 不変量: 列(画像)ごとの単位の付け替え(x -> s x)で結果が変わらないこと。
+
+_UNIT_SCALES = (1.0, 1e-12, 1e-15, 1e6)
+
+
+def test_s5_mt_distance_is_invariant_to_feature_units():
+    """MT 法の MD は z = (x - m)/s で無次元。pF と F で同じ値(旧実装は F で全特徴が flat)。"""
+    import spc
+    rng = np.random.default_rng(0)
+    good = np.column_stack([rng.normal(1.0, 0.01, 200), rng.normal(4.7, 0.02, 200),
+                            rng.normal(2.2, 0.015, 200)])
+    bad = np.array([[1.08, 4.7, 2.2]])
+    ref = None
+    assert len(_UNIT_SCALES) == 4
+    for s in _UNIT_SCALES:
+        u = spc.spc_mt_unit_space(good * s)
+        d = spc.spc_mt_distance(bad * s, mean=u["mean"], std=u["std"], inv_corr=u["inv_corr"])
+        assert u["flat_features"] == 0, s
+        if ref is None:
+            ref = float(d["md"][0])
+            assert ref > 3.0
+        assert float(d["md"][0]) == pytest.approx(ref, rel=1e-9), s
+        assert d["flagged"].tolist() == [0]
+
+
+def test_s5_mt_truly_flat_feature_is_still_detected_at_any_scale():
+    """床を相対にしても、同じ値の繰り返し(丸め屑の std)は単位に依らず flat と判定する。"""
+    import spc
+    rng = np.random.default_rng(1)
+    for s in _UNIT_SCALES:
+        X = np.column_stack([rng.normal(0.0, 1.0, 200), np.full(200, 4.2), rng.normal(5.0, 1.0, 200)]) * s
+        assert spc.spc_mt_unit_space(X)["flat_features"] == 1, s
+        X0 = np.column_stack([rng.normal(0.0, 1.0, 200), np.zeros(200)]) * s
+        assert spc.spc_mt_unit_space(X0)["flat_features"] == 1, s
+
+
+def test_s6_standardised_pca_is_invariant_to_column_units():
+    """標準化 PCA の固有値は列の単位に依らない(旧実装は F で全列「変動なし」の ValueError)。"""
+    import multivar
+    rng = np.random.default_rng(0)
+    t = rng.normal(size=(50, 1))
+    X = np.column_stack([1.0 + 0.0005 * t[:, 0] + 0.0002 * rng.normal(size=50),
+                         4.7 + 0.02 * t[:, 0] + 0.01 * rng.normal(size=50),
+                         2.2 + 0.01 * rng.normal(size=50)])
+    ref = np.asarray(multivar.mv_pca(X, n_parallel=0)["eigenvalues"])
+    # 独立の検算: 標準化 PCA の固有値 = 相関行列の固有値
+    want = np.sort(np.linalg.eigvalsh(np.corrcoef(X, rowvar=False)))[::-1]
+    assert np.allclose(ref, want, rtol=1e-9, atol=1e-12)
+    for s in _UNIT_SCALES:
+        got = np.asarray(multivar.mv_pca(X * s, n_parallel=0)["eigenvalues"])
+        assert np.allclose(got, ref, rtol=1e-9, atol=1e-12), s
+
+
+def test_s6_constant_column_is_still_refused_at_any_scale():
+    import multivar
+    rng = np.random.default_rng(2)
+    for s in _UNIT_SCALES:
+        X = np.column_stack([rng.normal(size=30), np.full(30, 4.2), rng.normal(size=30)]) * s
+        with pytest.raises(ValueError, match="no variation"):
+            multivar.mv_pca(X, n_parallel=0)
+
+
+def test_sibling_feat_image_vector_range_tolerance_is_relative():
+    """data_range=(0, 1e-12) の画像に 1.5e-12 が入っていたら拒否(旧: 許容 1e-12 で通過)。"""
+    import multivar
+    img = np.full((8, 8), 0.5e-12)
+    img[0, 0] = 1.5e-12
+    with pytest.raises(ValueError, match="outside data_range"):
+        multivar.feat_image_vector([img], features=["entropy_bits"], data_range=(0.0, 1e-12))
+    img1 = img * 1e12
+    with pytest.raises(ValueError, match="outside data_range"):
+        multivar.feat_image_vector([img1], features=["entropy_bits"], data_range=(0.0, 1.0))
+
+
+def _symmetric_scene():
+    yy, xx = np.mgrid[0:41, 0:41].astype(float)
+    return (np.exp(-((xx - 20.0) ** 2 + (yy - 14.0) ** 2) / 30.0)
+            + 0.5 * np.exp(-((xx - 20.0) ** 2) / 8.0 - ((yy - 30.0) ** 2) / 20.0))
+
+
+def test_sibling_symmetry2d_is_invariant_to_intensity_units():
+    """放射輝度を W(1e-14 フルスケール)で渡しても対称軸は同じ(旧: 「一様な画像」で拒否)。"""
+    import symmetry2d as S
+    img = _symmetric_scene()
+    ref = S.reflection_axis(img)
+    for s in (1e-14, 1e-15, 1e8):
+        got = S.reflection_axis(img * s)
+        assert got["angle_deg"] == pytest.approx(ref["angle_deg"], abs=1e-9), s
+        assert got["offset_px"] == pytest.approx(ref["offset_px"], abs=1e-9), s
+    with pytest.raises(ValueError):
+        S.reflection_axis(np.zeros((41, 41)))
+
+
+def test_sibling_polar_fit_negative_minimum_is_judged_relative_to_the_pixel():
+    """変調振幅が平均を上回る(物理的にあり得ない)掃引は、強度の単位に依らず拒否される。
+
+    角度 0/60/120 では各コマは正のまま、当てはめの I_min だけが負(-1e-6 相対)。
+    旧実装は絶対許容 1e-12 なので、1e-14 フルスケールの単位では見逃していた。
+    """
+    import specularity as SP
+    ang = np.array([0.0, 60.0, 120.0])
+    S0, eps = 1.0, 1e-6
+    t = np.deg2rad(ang)
+    frames = 0.5 * (S0 + S0 * (1 + eps) * np.cos(2 * t))
+    assert np.all(frames > 0)
+    stack = np.broadcast_to(frames[:, None, None], (3, 4, 4)).copy()
+    for s in (1.0, 1e-14, 1e6):
+        with pytest.raises(ValueError, match="negative minimum"):
+            SP.polarization_separate(stack * s, angles_deg=ang)
+    ok = 0.5 * (S0 + 0.5 * S0 * np.cos(2 * t))
+    okstack = np.broadcast_to(ok[:, None, None], (3, 4, 4)).copy()
+    d0, _ = SP.polarization_separate(okstack, angles_deg=ang)
+    d1, _ = SP.polarization_separate(okstack * 1e-14, angles_deg=ang)
+    assert np.allclose(d1, d0 * 1e-14, rtol=1e-9, atol=0)

@@ -1641,7 +1641,11 @@ def _mt_unit_space(arr: np.ndarray, op: str):
     #   (measured). Dividing by that dust amplifies it into a distance of nonsense,
     #   and the absolute test never fires. Put the floor at the *relative* scale of
     #   the column, below which a spread cannot be represented in the data itself.
-    floor = np.finfo(float).eps * 64.0 * np.maximum(np.abs(mean), 1.0)
+    #   ★The scale is the column's own largest magnitude — never an absolute 1. With
+    #   max(|mean|, 1) the floor was absolute below |mean| = 1, so the same parts in
+    #   farads (1 pF +- 0.01 pF) were declared flat and an 8-sigma part scored MD 0.05
+    #   while in pF it scored 4.8 (red-team 2026-11-05 S5). MD is unit-free; so is this.
+    floor = np.finfo(float).eps * 64.0 * np.abs(arr).max(axis=0)
     flat = np.asarray(std <= floor).reshape(-1)
     n_flat = int(flat.sum())
     if n_flat:
