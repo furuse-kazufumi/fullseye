@@ -4,7 +4,7 @@ dim: gfx2d
 category: sprite
 in: rgba × rgba
 out: rgba
-gpu: なし
+gpu: あり(許可リスト)
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `rgba × rgba` → `rgba`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sprite_blit(dst, sprite, x=0, y=0, anchor='top_left', flip_x=False, flip_y=False, opacity=1.0)` (実装を直接呼ぶなら `import gfx2d; gfx2d.sprite_blit(dst, sprite, x=0, y=0, anchor='top_left', flip_x=False, flip_y=False, opacity=1.0)`、台帳から引くなら `opsgfx2d.get("sprite_blit")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(16,777,216 画素)以上で GPU を選ぶ
 
 ## 使い方
 

@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gen_nurbs_interp — MV <code style="color:#22d3bf">curve</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_nurbs_interp(points, degree=3)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mvtext; mvtext.gen_nurbs_interp(points, degree=3)</code>、台帳から引くなら <code style="color:#22d3bf">opsmv.get(&quot;gen_nurbs_interp&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">gen_nurbs_interp</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>点列を全部通る非有理 B スプラインの制御点を求める(大域補間)。</p>
+<p>媒介変数は弦長、節点は媒介変数の平均(The NURBS Book の 9.2.1)で決め、基底の線形方程式を解く。重みは全部 1 なので、返りをそのまま <code style="color:#22d3bf">nurbs_curve</code> に渡せる(<code style="color:#22d3bf">knots</code> と <code style="color:#22d3bf">degree</code> も一緒に渡す)。連続する同じ点は ValueError(弦長が 0 になり媒介変数が決まらない)。空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>points: (N, d) の点列(N &gt; degree)。</p>
+<p>degree: 次数(&gt;= 1)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">control_points</code> (N, d)、<code style="color:#22d3bf">knots</code> (N+degree+1,)、<code style="color:#22d3bf">weights</code>、<code style="color:#22d3bf">degree</code>、<code style="color:#22d3bf">u</code> を持つ dict。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a> · <a style="color:#22d3bf" href="opmv:find_ncc_models">find_ncc_models</a> · <a style="color:#22d3bf" href="opmv:run_bg_esti">run_bg_esti</a> · <a style="color:#22d3bf" href="opmv:give_bg_esti">give_bg_esti</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a> · <a style="color:#22d3bf" href="opmv:classify_class_gmm">classify_class_gmm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">curve</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvtext.py — MV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -4,7 +4,7 @@ dim: dem
 category: surface
 in: depth
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_dem_terrain, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_aspect(dem, cell_size, method='horn', flat_tol=1e-12)` (実装を直接呼ぶなら `import demops; demops.dem_aspect(dem, cell_size, method='horn', flat_tol=1e-12)`、台帳から引くなら `opsdem.get("dem_aspect")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

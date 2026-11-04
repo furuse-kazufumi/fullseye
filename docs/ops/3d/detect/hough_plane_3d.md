@@ -4,7 +4,7 @@ dim: 3d
 category: detect
 in: voxel
 out: primitive
-gpu: なし
+gpu: native(device 引数)
 examples: [detect_primitives_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `primitive`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hough_plane_3d(vol, device='cpu', ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0)` (実装を直接呼ぶなら `import match3d; match3d.hough_plane_3d(vol, device='cpu', ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0)`、台帳から引くなら `ops3d.get("hough_plane_3d")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: op 自身の `device=` 引数(native、実測 11.675 倍)。`fullseye.apply` / `run_pipeline` からはまだ GPU に送らない —— 実装を直接 `device="cuda"` で呼ぶ
 
 ## 使い方
 

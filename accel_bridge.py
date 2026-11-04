@@ -96,8 +96,13 @@ def _as_stages(x, start=ops.IMAGE) -> list:
     return ops.decode_by_names(x)
 
 
-def plan(stages) -> list:
+def plan(stages, shadow=None) -> list:
     """Stage 列を GPU(image)/ VOL(volume)/ CPU 区間の連なりに分割。
+
+    *shadow* = 段ごとの経路(``api.explain_device`` の ``allow_*`` / ``accel`` / ``cpu``、段と同じ長さ)。
+    手書きの GPU 経路が無く ``allow_*`` の段は ``"shadow"`` 区間(:func:`gpu_shadow.run_chain`、
+    連続する段は GPU に載せたまま)。手書きの経路があっても経路が ``cpu`` の段(鎖の枠だけの経路が
+    孤立した ``chain_only``)は CPU 区間。長さが合わなければ使わない(従来どおり)。
 
     返り値 = ``[("gpu", [(accel名,a,b),...]) | ("vol", [(vol_accel名,a,b),...]) |
     ("cpu", [Stage,...]), ...]``。連続する同種 GPU op は 1 区間にまとまり、
@@ -105,8 +110,14 @@ def plan(stages) -> list:
     sort が image/volume を外れた op は自然に CPU 区間へ落ちる。
     """
     segs: list = []
-    for st in stages:
+    if shadow is not None and len(shadow) != len(stages):
+        shadow = None
+    for i, st in enumerate(stages):
         kind = _seg_kind(st)
+        if kind == "cpu" and shadow is not None and str(shadow[i]).startswith("allow_"):
+            kind = "shadow"
+        elif kind == "gpu" and shadow is not None and shadow[i] == "cpu":
+            kind = "cpu"
         if kind == "gpu":
             item = (_C2A[st.op], st.a, st.b)
         elif kind == "vol":
@@ -122,8 +133,10 @@ def plan(stages) -> list:
     return segs
 
 
-def run(stages_or_genome, imgs, device="cpu", start=ops.IMAGE):
+def run(stages_or_genome, imgs, device="cpu", start=ops.IMAGE, shadow=None):
     """champion を GPU(image/volume)/CPU 混在で実行。
+
+    *shadow* は :func:`plan` を見よ(許可リストの段を CuPy の影の層で GPU に載せる。既定 None = 使わない)。
 
     image accel 区間は ``accel.run_pipeline``、volume accel 区間は
     ``accel_vol.run_pipeline_vol``(いずれも常駐=転送 1 回)、未対応区間は core ``RT``(CPU)。
@@ -131,8 +144,12 @@ def run(stages_or_genome, imgs, device="cpu", start=ops.IMAGE):
     """
     stages = _as_stages(stages_or_genome, start)
     cur = [np.asarray(im, np.float64) for im in imgs]
-    for kind, items in plan(stages):
-        if kind == "gpu":
+    for kind, items in plan(stages, shadow if device != "cpu" else None):
+        if kind == "shadow":
+            import gpu_route
+            cur = [np.asarray(v, np.float64) if isinstance(v, np.ndarray) else v
+                   for v in gpu_route.run_chain(items, cur)]
+        elif kind == "gpu":
             cur = [np.asarray(im, np.float64)
                    for im in accel.run_pipeline(items, cur, device=device)]
         elif kind == "vol":

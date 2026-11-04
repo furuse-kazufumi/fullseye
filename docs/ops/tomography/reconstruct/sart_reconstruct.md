@@ -14,7 +14,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 # sart_reconstruct — TOMOGRAPHY `reconstruct` op
 
 - **データ種**: `sinogram` → `image2d`
-- **呼び出し**: `import fullseye as fs; fs.ledger.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True)` (実装を直接呼ぶなら `import tomography; tomography.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True)`、台帳から引くなら `opstomography.get("sart_reconstruct")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True, device='cpu')` (実装を直接呼ぶなら `import tomography; tomography.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True, device='cpu')`、台帳から引くなら `opstomography.get("sart_reconstruct")`)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -66,6 +66,8 @@ reason SART leads FBP there at all (FBP scores 0.0250, between the two).
     oscillate; over 2 it provably diverges, and is refused.
 :param initial: starting estimate, ``(size, size)``; ``None`` -> zeros.
 :param nonnegative: clip to ``>= 0`` after each sweep.
+:param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+    ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
 :returns: ``(size, size)`` float64 image.
 :raises ValueError: as :func:`filtered_backprojection`, plus a relaxation
     outside ``(0, 2)`` and an *initial* whose shape is not ``(size, size)``.

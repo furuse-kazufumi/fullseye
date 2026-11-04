@@ -5,9 +5,9 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-furuse.work-informational)](https://furuse.work/)
 
-**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,752
+**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,810
 operators in the machine-readable index, `docs/OP_INDEX.json`: 947 single-input 2-D operators +
-17 n-ary + 2,788 in the typed ledgers, each with a per-operator note), the family guides, and the
+17 n-ary + 2,846 in the typed ledgers, each with a per-operator note), the family guides, and the
 release notes.
 
 **What it can do: [CAPABILITIES.en.md](docs/CAPABILITIES.en.md)** — an index organised by
@@ -96,16 +96,16 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 98 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.9.0); stage definitions in [MATURITY.md](docs/MATURITY.md)).
+The 99 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.9.0); stage definitions in [MATURITY.md](docs/MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 79 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 80 |
 | `validated-public-real-data` | an example on public measured data runs in a gate | 19 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 469 examples, 469 are actually run by a gate.
+Of 471 examples, 471 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -196,7 +196,7 @@ knobs in `[0, 1]`. Feature operators return a Python float; contour operators a 
 
 ## Operator library
 
-**3,752 typed operators** (964 2-D in the registry, 17 of them n-ary, + 2,788 in the typed ledgers,
+**3,810 typed operators** (964 2-D in the registry, 17 of them n-ary, + 2,846 in the typed ledgers,
 the 3-D ledger among them), covering denoising, smoothing, sharpening,
 thresholding/segmentation, morphology, edge/corner/blob detection, distance
 transforms, color-space conversion, texture/shape features, contours, and the 3-D
@@ -326,7 +326,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | **Read the whole story end to end (long-form)** | [`docs/articles/fullseye_overview_qiita_en.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md) |
 | See what the operators produce (result gallery) | `docs/GALLERY.md` |
 | Browse the paper exhibits (151 op demos, en/ja) | `docs/articles/exhibits/` |
-| Look up any of the 3,752 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Look up any of the 3,810 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
 | Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
 | Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |

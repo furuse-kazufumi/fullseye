@@ -4,7 +4,7 @@ dim: lightfield
 category: depth
 in: image2d
 out: depth
-gpu: なし
+gpu: あり(許可リスト)
 examples: [lightfield_depth, poc_lightfield_depth]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `depth`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *, far_depth=None, min_slope=1e-06)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *, far_depth=None, min_slope=1e-06)`、台帳から引くなら `opslightfield.get("lf_disparity_to_depth")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

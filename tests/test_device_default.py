@@ -47,11 +47,13 @@ def test_gpu_ledger_count_matches_accelerator_registries():
     """台帳側と実装側を別経路で数え、GPU行の欠落を拒否する。"""
     import accel
     import accel_match
+    import accel_typed
     import accel_vol
     from tools import opdocs
     records = opdocs._records()[0]
     ledger_count = sum(bool(row.get("gpu_accel")) for row in records)
-    implementation_count = len(accel.ACCEL) + len(accel_vol.VOL_ACCEL) + len(accel_match.MATCH_ACCEL)
+    implementation_count = (len(accel.ACCEL) + len(accel_vol.VOL_ACCEL) + len(accel_match.MATCH_ACCEL)
+                            + len(accel.NARY_ACCEL) + len(accel_typed.TYPED_ACCEL))
     assert ledger_count == implementation_count
 
 
@@ -109,7 +111,9 @@ def test_default_apply_never_attempts_the_gpu(monkeypatch):
             default = api.apply(image, "gaussian")
             assert calls == [], "the default call reached the GPU path"
             assert np.array_equal(default, api.apply(image, "gaussian", device="cpu"))
-            api.apply(image, "gaussian", device="auto")          # control: auto does try the GPU
-        assert calls, "control failed: device='auto' never tried the (fake) GPU, so the check above proves nothing"
+            # control: an explicit request does try the GPU. ★2026-11-04(統合 GPU): 第 5 便の auto は
+            # 実測の損益分岐で 32x32 を CPU に残すので、対照は auto でなく cuda で取る(既定 cpu の検査は不変)。
+            api.apply(image, "gaussian", device="cuda")
+        assert calls, "control failed: device='cuda' never tried the (fake) GPU, so the check above proves nothing"
     finally:
         api.reset_gpu()

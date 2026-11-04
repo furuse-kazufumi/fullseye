@@ -1,0 +1,1 @@
+{"base_mib": 1123, "after_torch_ctx_mib": 1670, "after_gaussian_4096_mib": 1930, "torch_reserved_mib": 260.0, "cupy_available": true, "after_cupy_ctx_mib": 1930}

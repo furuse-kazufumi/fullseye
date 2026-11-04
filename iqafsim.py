@@ -300,13 +300,13 @@ def fsim_pair(ref, dist, data_range: float = 255.0, downsample: bool = True) -> 
 
 
 def fsim(ref, dist, data_range: float = 255.0) -> float:
-    """FSIM(輝度のみ、1 = 同一、**higher is better**)。TID2013 の FSIM.txt と 4 桁一致するのは **Y′ limited の灰色画像**を渡したとき
+    """FSIM(特徴類似度による全参照の画質指標。輝度のみ、1 = 同一、**higher is better**)。TID2013 の FSIM.txt と 4 桁一致するのは **Y′ limited の灰色画像**を渡したとき
     (``iqatid.tid2013_evaluate(root, fsim, luma="limited_u8")``、3,000 組 max |差| 5.0e-5)。詳細 :func:`fsim_pair`。"""
     return fsim_pair(ref, dist, data_range=data_range)["fsim"]
 
 
 def fsimc(ref, dist, data_range: float = 255.0) -> float:
-    """FSIMc(彩度 I / Q を含む、1 = 同一、**higher is better**)。TID2013 の FSIMc.txt と 4 桁一致するのは色画像(RGB → YIQ full range)を渡したとき
+    """FSIMc(特徴類似度による全参照の画質指標。彩度 I / Q を含む、1 = 同一、**higher is better**)。TID2013 の FSIMc.txt と 4 桁一致するのは色画像(RGB → YIQ full range)を渡したとき
     (``iqatid.tid2013_evaluate(root, fsimc, luma="rgb")``、3,000 組 max |差| 5.0e-5)。(H, W) 入力なら FSIM と同じ値。詳細 :func:`fsim_pair`。"""
     return fsim_pair(ref, dist, data_range=data_range)["fsimc"]
 

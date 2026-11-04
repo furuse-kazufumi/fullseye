@@ -471,7 +471,7 @@ def _peak_offset(wl_um, na, lsa_um, fwhm_um):
 
 
 def chromatic_confocal_probe(surfaces=None, stop: int = 0, wl_min_nm: float = 450.0,
-                             wl_max_nm: float = 700.0, n_points: int = 26) -> dict:
+                             wl_max_nm: float = 700.0, n_points: int = 26, device=None) -> dict:
     """対物レンズの処方から、波長 → 焦点位置の較正表(虹のものさしの目盛)を作る。
 
     処方 *surfaces* は :func:`raytrace.lens_system` と同じ形(dict か (R, t, n[, k[, ap]]) の列、
@@ -490,6 +490,7 @@ def chromatic_confocal_probe(surfaces=None, stop: int = 0, wl_min_nm: float = 45
     最終面から)/ ``origin_mm``(z = 0 の位置、最終面から)/ ``beam_radius_mm`` / ``surfaces``。
 
     wl_min_nm / wl_max_nm / n_points: 較正する帯域と点数(4〜1024、等間隔)。
+    device: ``None`` は波長ごとのループ、``"auto"`` / ``"cpu"`` / ``"cuda"`` は波長の軸を ``lens_gpu`` で一括に計算する(torch が要る。応答のピークの読み取りは numpy のまま)。
 
     **Raises** ``ValueError``: 処方の誤り(raytrace がそのまま名指しする)、帯域が硝材の表の外、
     縁の光線のけられ・全反射、焦点が無い(発散系)、**較正表が波長に対して単調でない**(同じ位置に
@@ -514,11 +515,24 @@ def chromatic_confocal_probe(surfaces=None, stop: int = 0, wl_min_nm: float = 45
     h = float(base["surfaces"][base["stop"]]["ap"])
     wl = np.linspace(lo, hi, m)
     par, lsa, na, efl = [], [], [], []
-    for w in wl:
+    batch = None
+    if device is not None:                              # 波長の軸を一括で(lens_gpu)。値は下のループと同じ定義
+        import lens_gpu as _lg
+        lens = _lg.compile_lens(base, wl * 1e-3, device=device)
+        pb = _lg.paraxial_batch(lens)
+        batch = (pb["efl"][0].detach().cpu().numpy(), pb["bfl"][0].detach().cpu().numpy(),
+                 _lg.marginal_focus(lens, h)[0].detach().cpu().numpy())
+    for iw, w in enumerate(wl):
         try:
-            sw = _rt.with_wavelength(base, w * 1e-3)
-            p = _rt.paraxial_trace(sw)
-            mf = _marginal_focus(_rt, sw, h)
+            if batch is None:
+                sw = _rt.with_wavelength(base, w * 1e-3)
+                p = _rt.paraxial_trace(sw)
+                mf = _marginal_focus(_rt, sw, h)
+            else:
+                p = {"efl": float(batch[0][iw]), "bfl": float(batch[1][iw])}
+                mf = float(batch[2][iw])
+                if not math.isfinite(mf):
+                    raise ValueError("the marginal ray at h = %g mm is vignetted or totally internally reflected" % h)
         except ValueError as e:
             raise ValueError("%s: at %.1f nm: %s" % (op, w, e)) from None
         if not (math.isfinite(p["bfl"]) and math.isfinite(p["efl"]) and p["efl"] > 0.0):

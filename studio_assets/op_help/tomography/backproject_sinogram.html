@@ -1,8 +1,8 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">backproject_sinogram — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;backproject_sinogram&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None, device=&#x27;cpu&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None, device=&#x27;cpu&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;backproject_sinogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: あり(許可リストの機械的 GPU 経路、CuPy)。<code style="color:#22d3bf">device=&quot;auto&quot;</code> は測った大きさ(4,194,304 画素)以上で GPU を選ぶ</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Plain, <b>un-filtered</b> back-projection — the blurred baseline.</p>
 <p>Smear each projection back along the rays it came from and sum. The result is the true slice convolved with <code style="color:#22d3bf">1/|r|</code>, so it is correct in the large and wrong everywhere in detail.</p>
@@ -13,6 +13,8 @@
 <p>rounded down to an odd number.</p>
 <p>:param span_deg: angular range used for the <code style="color:#22d3bf">d(theta)</code> weight; <code style="color:#22d3bf">None</code> -&gt;</p>
 <p>inferred from *angles_deg* (or 180 for the default scan).</p>
+<p>:param device: <code style="color:#22d3bf">&quot;cpu&quot;</code> (default) stays on this float64 route. <code style="color:#22d3bf">&quot;auto&quot;</code> or</p>
+<p><code style="color:#22d3bf">&quot;cuda&quot;</code> hands the call to <code style="color:#22d3bf">tomography_gpu</code>, single precision on a GPU.</p>
 <p>:returns: <code style="color:#22d3bf">(size, size)</code> float64 image. :raises ValueError: as <code style="color:#22d3bf">filtered_backprojection</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>

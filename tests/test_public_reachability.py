@@ -55,6 +55,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #: 数字は不可視な関数の本数で、増減しても意図的なら書き換えてよい。
 _INTERNAL = {
     "accel_bridge": 9, "accel_vol": 3,
+    # 2026-11-03 device="auto" の判断(損益分岐の表・空き VRAM・段ごとの経路)。利用者の入口は
+    # fullseye.explain_device / resolve_device で、この部品は api の内側からだけ呼ぶ。
+    "device_policy": 6,
     "algo_codegen": 4, "algo_difftest": 8, "backends": 4, "backends_auto": 2,
     "backends_color": 3, "backends_cv2b": 1, "backends_dl": 3, "backends_extra": 1,
     "backends_halcon_ext": 1, "backends_kornia": 1, "backends_macro": 1,
@@ -67,6 +70,8 @@ _INTERNAL = {
     "halcon_scrape": 9, "honest_summary": 1, "imgevolve": 14, "lib_coverage": 3,
     "param_specs": 10, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
+    # GPU 第 4 便: 一括経路。op でなく、raytrace / optics と同じ定義を (M, W, R) で計算する下回りの部品。
+    "polar_gpu": 13,   # 2026-11-04 統合 GPU: 第 4 便の後半の commit で 12 → 13(実測)
     # studio 2026-10-03 +10: 結果プレビュー・台帳 op の実行窓・エディタへ繋ぐ部品(GUI の内側)
     # studio 2026-10-19 +4: 妥当性の判定 assess_validity と入力参照 input_reference / resolve_input_ref / file_sha256(GUI の内側の部品。テストが直接呼ぶ)
     # studio_search / studio_errors 2026-10-20: Studio の論理層(Qt 非依存)。UI への配線は次の片。
@@ -92,6 +97,14 @@ _INTERNAL = {
     # ★2026-11-03: Reed-Solomon(GF(256) の表・符号化・復号)は記号の読み取りの族の内部部品。
     #   利用者は qr_* / dm_* / grade_datacode2d の返す訂正語数として使う(体そのものは op にしない)。
     "symrs": 5,
+    # ★2026-11-04(統合 GPU): GPU 第 2・3 便(#240)の計算核の継ぎ目。accel_seam は contextvars で核だけを差し替える
+    #   部品(kernel / use)、accel_typed は型付き op の GPU 経路の入口 call / call_candidate と torch の核 k_*(実測で計 14 本)。
+    #   利用者は各 op の device 引数(既定 cpu)から使い、核そのものは op にしない。第 2・3 便のブランチは
+    #   ここに書いていなかった(統合で門が赤になって分かった)。
+    "accel_seam": 2, "accel_typed": 14,
+    # ★2026-11-04(統合 GPU): 第 5 便の accel_label(連結成分のラベル付けと領域ごとの集計の torch 経路、label / table)。
+    #   accel が import する核で、利用者は領域解析の op の device 引数から使う。
+    "accel_label": 2,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -275,7 +288,28 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (opscalib / opsfileio / opsmath / opsshape2d …)も同じ 4 本を公開経路に載せていない。op 自身は fs.ledger から引ける。
 # 2026-11-04 統合に W2(opsfit の 4 本)を重ねた: 948 + 4(opsacceptance)+ 4(opsmatchreg)+ 15(opssymbol)
 #   + 4(opsfit)= 975。実測も 975(各ブランチで認めた増分の和で、新しい増分はない)。
-_HIDDEN_FUNCTIONS_TODAY = 975
+# 2026-11-02 CT の共通の核 tomography_gpu の内部部品 7 本(forward_project / adjoint_project / voxel_backproject /
+#   filter_rows / parallel_slice_geometry / gpu_memory_peak_bytes / reset_gpu_memory_peak)で実測 948 → 955。利用者は
+#   ctscan の 11 op と tomography の device 引数から使う(核そのものは公開経路に載せない)。
+# 2026-11-04 統合 GPU(integrate/2026-11-04-gpu): 975(上の 4 台帳まで)+ 7(tomography_gpu、CT の第 8 便)
+#   + 17(GPU 第 2・3 便 #240 の内部の核: accel.run_nary、accel_seam.kernel / use、accel_typed.call / call_candidate
+#   と k_* 計 14 本。利用者は device 引数から使う。★第 2・3 便のブランチはこの上限を書き換えていなかった)= 999。実測も 999。
+# 2026-11-02 GPU 第 4 便: 一括経路 lens_gpu / polar_gpu の下回りの部品(op でなく、raytrace / optics と同じ定義を
+#   (M, W, R) で計算する)。実測 948 → 977。公開 op として載せる判断は次の便。
+# 2026-11-04 統合 GPU: 999 + 35(第 4 便 lens_gpu 22・polar_gpu 13。ブランチの注記は 29 だが、その後の commit
+#   21ba71f0bf / 959c474b26 で増えた分が数え直されていなかった)= 1034。実測も 1034。
+# 2026-11-02 opsmv 台帳(工業用ビジョンの定番 47 op): 台帳の内部 API 4 本、除算モデルの 2 本
+#   (distort_division / undistort_division、op の部品)、opassist.ledger_halcon_map。実測 948 → 955。
+# 2026-11-04 統合 GPU: 1034 + 7(opsmv)= 1041。実測も 1041。
+# 2026-11-02 gpu_shadow(機械的 GPU の影の層 10 本)。CuPy は任意依存で、入口は gpu_shadow.apply / run_allowed。実測 948 → 958。
+# 2026-11-04 統合 GPU: 1041 + 11(gpu_shadow。ブランチの注記は 10 本、実測は 11 本 = GpuAutoError / ShadowImporter / Stats /
+#   allowed_ops / available / get_shadow / resident_ops / run_allowed / shadow_fn / to_cpu / to_gpu)= 1052。実測も 1052。
+# 2026-11-03 GPU 第 5 便: device_policy(auto の判断 6 本)・gpu_route(GPU 経路を決める唯一の関数と Route 型、
+#   実行の入口の 9 本)・gpu_shadow の鎖の 2 本(pipeline_ops / run_chain)。利用者の入口は fullseye.explain_device
+#   と fullseye_describe の gpu_paths で、部品そのものは公開経路に載せない。実測 958 → 975。
+# 2026-11-04 統合 GPU: 1052 + 19(第 5 便 device_policy 6・gpu_route 9・gpu_shadow の鎖 2・accel_label 2。
+#   ブランチの注記は 17、accel_label の 2 本が数えられていなかった)= 1071。実測も 1071。
+_HIDDEN_FUNCTIONS_TODAY = 1071
 
 
 def _hidden_total():

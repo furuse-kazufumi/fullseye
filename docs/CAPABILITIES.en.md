@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 98 capabilities**
+**Currently 99 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -32,6 +32,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
 | [Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
+| [Reconstruct cone-beam, helical and laminography scans on one geometry (industrial CT)](capabilities/ct-scan-modes.md) | `ct_scan_geometry` → `ellipsoid_projections` → `fdk_reconstruct` → `vol_rle_components` → `vol_rle_volume` | `ct_scan_modes` |
 | [Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [Fourier ptychography (oblique LED illumination, phase retrieval to a high-NA amplitude and phase, refused unless it converges)](capabilities/fourier-ptychography.md) | `fp_design` → `fp_stack_from_images` → `fp_reconstruct` → `fp_element_contrast` | `poc_fourier_ptychography` |
@@ -625,7 +626,19 @@ Alternatives: [`edges_sub_pix`](ops/2d/contour/edges_sub_pix.md), [`fit_line_con
 
 Runnable: `poc_template_tracking`, `gallery2d_contour_measure`, `poc_search_sweep_width`
 
-## Shape (3)
+## Shape (4)
+
+### [Reconstruct cone-beam, helical and laminography scans on one geometry (industrial CT)](capabilities/ct-scan-modes.md)
+
+One description of a scan (`ct_scan_geometry`), holding the source and detector per view, drives cone-beam, helical, laminography, fan (flat and equiangular), short-scan, offset-detector, tomosynthesis, few-view and limited-angle reconstruction on the same projector and back-projector. The closed-form projections of ellipsoids (`ellipsoid_projections`) are the ground truth, so reconstruction error can be measured apart from projector error. With a GPU, `device="auto"` runs there.
+
+Operators: `ct_scan_geometry`, `ellipsoid_projections`, `fdk_reconstruct`, `sirt_reconstruct`, `tv_reconstruct`
+
+Pipeline: [`ct_scan_geometry`](ops/tomography/ct_scan/ct_scan_geometry.md) → [`ellipsoid_projections`](ops/tomography/ct_scan/ellipsoid_projections.md) → [`fdk_reconstruct`](ops/tomography/ct_scan/fdk_reconstruct.md) → [`vol_rle_components`](ops/3d/rle_region/vol_rle_components.md) → [`vol_rle_volume`](ops/3d/rle_region/vol_rle_volume.md)
+
+Alternatives: [`sirt_reconstruct`](ops/tomography/ct_scan/sirt_reconstruct.md), [`os_sart_reconstruct`](ops/tomography/ct_scan/os_sart_reconstruct.md), [`tv_reconstruct`](ops/tomography/ct_scan/tv_reconstruct.md), [`ct_forward_project`](ops/tomography/ct_scan/ct_forward_project.md), [`ct_adjoint_project`](ops/tomography/ct_scan/ct_adjoint_project.md)
+
+Runnable: `ct_scan_modes`
 
 ### [Correct lens distortion over a whole image (barrel, pincushion, tangential)](capabilities/lens-distortion-correction.md)
 

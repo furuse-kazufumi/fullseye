@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">apply_metrology_model — MEASURE1D <code style="color:#22d3bf">apply</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">metrologymodel × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.apply_metrology_model(model, image, measure_length=6.0, sigma=1.0, threshold=0.05) -&gt; &#x27;list&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metrology; metrology.apply_metrology_model(model, image, measure_length=6.0, sigma=1.0, threshold=0.05) -&gt; &#x27;list&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;apply_metrology_model&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">apply_metrology_model</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर metrology object के reference shape के normal के साथ subpixel edge मापता है, shape को फिर से fit करता है और परिणाम लौटाता है (apply_metrology_model)।</p>

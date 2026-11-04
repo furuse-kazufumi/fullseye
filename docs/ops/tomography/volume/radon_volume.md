@@ -14,7 +14,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 # radon_volume — TOMOGRAPHY `volume` op
 
 - **データ種**: `voxel` → `sinostack`
-- **呼び出し**: `import fullseye as fs; fs.ledger.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)` (実装を直接呼ぶなら `import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)`、台帳から引くなら `opstomography.get("radon_volume")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1, device='cpu')` (実装を直接呼ぶなら `import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1, device='cpu')`、台帳から引くなら `opstomography.get("radon_volume")`)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -23,9 +23,8 @@ Project every slice of a ``(Z, H, W)`` volume -> a ``(Z, A, D)`` stack.
 
 Parallel-beam geometry with the rotation axis along ``Z``, which is the case
 where the 3-D problem really is a stack of independent 2-D ones — each slice
-projects into its own sinogram and nothing crosses between them. (A cone beam
-does not have this property and is not implemented; saying so is cheaper than
-a wrong ``FDK``.)
+projects into its own sinogram and nothing crosses between them. A cone beam
+does not have this property: see :mod:`ctscan`.
 
 The output's axis order is ``(slice, angle, detector)`` so that ``stack[k]``
 is a sinogram in this module's own convention and every 2-D operator here
@@ -35,6 +34,8 @@ applies to it unchanged.
 :param angles_deg: view angles; ``None`` -> uniform ``[0, 180)``, 180 views.
 :param n_detectors: bins; ``None`` -> covers the in-plane diagonal.
 :param oversample: ray samples per pixel, ``1 .. 8``.
+:param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+    ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
 :returns: ``(Z, n_angles, n_detectors)`` float64 stack.
 :raises ValueError: on a non-3-D input or a stack over
     :data:`MAX_STACK_ELEMENTS`.

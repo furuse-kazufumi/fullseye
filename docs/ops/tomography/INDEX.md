@@ -1,4 +1,4 @@
-# TOMOGRAPHY operator help — 32 ops in 7 categories
+# TOMOGRAPHY operator help — 43 ops in 8 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/tomography/<category>/<op>.md` を走査。
 
@@ -7,6 +7,10 @@
 ### artifact (5)
 
 [beam_hardening_apply](artifact/beam_hardening_apply.md) · [beam_hardening_correct](artifact/beam_hardening_correct.md) · [metal_trace_interpolate](artifact/metal_trace_interpolate.md) · [ring_artifact_apply](artifact/ring_artifact_apply.md) · [ring_artifact_remove](artifact/ring_artifact_remove.md)
+
+### ct_scan (11)
+
+[ct_adjoint_project](ct_scan/ct_adjoint_project.md) · [ct_dual_energy_reconstruct](ct_scan/ct_dual_energy_reconstruct.md) · [ct_forward_project](ct_scan/ct_forward_project.md) · [ct_scan_geometry](ct_scan/ct_scan_geometry.md) · [ellipsoid_phantom](ct_scan/ellipsoid_phantom.md) · [ellipsoid_projections](ct_scan/ellipsoid_projections.md) · [fdk_reconstruct](ct_scan/fdk_reconstruct.md) · [os_sart_reconstruct](ct_scan/os_sart_reconstruct.md) · [shepp_logan_3d](ct_scan/shepp_logan_3d.md) · [sirt_reconstruct](ct_scan/sirt_reconstruct.md) · [tv_reconstruct](ct_scan/tv_reconstruct.md)
 
 ### forward (3)
 

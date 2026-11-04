@@ -4,7 +4,7 @@ dim: 2d
 category: physics
 in: image
 out: image
-gpu: なし
+gpu: あり(許可リスト)
 examples: [gallery2d_physics_alife_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "ph_heat_flow", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ![ph_heat_flow: input → output](../../_fig/ph_heat_flow.png)
 

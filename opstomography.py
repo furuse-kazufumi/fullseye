@@ -35,11 +35,12 @@
 """
 import numpy as np
 
+import ctscan
 import dualxray
 import materials
 import tomography
 
-_MOD = {"tomography": tomography, "dualxray": dualxray, "materials": materials}
+_MOD = {"tomography": tomography, "dualxray": dualxray, "materials": materials, "ctscan": ctscan}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用: image2d / voxel / measurement / signal / table
@@ -106,6 +107,14 @@ _MOD = {"tomography": tomography, "dualxray": dualxray, "materials": materials}
 #     入口 = `radon_volume` (voxel -> sinostack)、出口 = `fbp_volume`
 #     (-> voxel)。voxel プールが既に在るので入口から到達でき、出口が voxel へ
 #     戻るので既存の 3-D 語彙へ合流する(zscan / histcube と同じ形)。
+#
+#   * projstack — (ビュー, V, U) の 3-D。コーンビーム等の投影の積み重ね。sinostack と
+#     構造は同じ 3-D float だが軸の順序が違い、取り違えても形が合えば有限の像が返る
+#     (スライスを角度として読む)。基準どおり分ける。入口 = `ellipsoid_projections`
+#     (閉形式の真値)と `ct_forward_project`、出口 = 再構成 4 op(-> voxel)。
+#   * ctgeometry — `ct_scan_geometry` の dict。線源・検出器の位置が view ごとに入る。
+#     table に相乗りさせると、別の表を渡したときに線源の無い dict が下流の再構成へ
+#     流れるので分ける(再構成は kind を見て拒否する)。
 _CATALOG = {
     "layout": [
         ("projection_angles", "tomography", [], "signal"),
@@ -135,6 +144,22 @@ _CATALOG = {
     "volume": [
         ("radon_volume", "tomography", ["voxel"], "sinostack"),
         ("fbp_volume", "tomography", ["sinostack"], "voxel"),
+    ],
+    # 2026-11-02 スキャン方式(ctscan.py): 幾何を 1 つの dict にまとめ、投影と逆投影は tomography_gpu の核を共有する。
+    # コーンビーム・ヘリカル・ラミノグラフィ・ファンビーム・ショートスキャン・検出器オフセット・トモシンセシス・
+    # 少数ビュー・制限角は全部 ct_scan_geometry の引数で、再構成 op は共通。
+    "ct_scan": [
+        ("ct_scan_geometry", "ctscan", [], "ctgeometry"),
+        ("shepp_logan_3d", "ctscan", [], "voxel"),
+        ("ellipsoid_phantom", "ctscan", [], "voxel"),
+        ("ellipsoid_projections", "ctscan", ["ctgeometry"], "projstack"),
+        ("ct_forward_project", "ctscan", ["voxel", "ctgeometry"], "projstack"),
+        ("ct_adjoint_project", "ctscan", ["projstack", "ctgeometry"], "voxel"),
+        ("fdk_reconstruct", "ctscan", ["projstack", "ctgeometry"], "voxel"),
+        ("sirt_reconstruct", "ctscan", ["projstack", "ctgeometry"], "voxel"),
+        ("os_sart_reconstruct", "ctscan", ["projstack", "ctgeometry"], "voxel"),
+        ("tv_reconstruct", "ctscan", ["projstack", "ctgeometry"], "voxel"),
+        ("ct_dual_energy_reconstruct", "ctscan", ["projstack", "projstack", "ctgeometry"], "table"),
     ],
     # 2026-10-15 エネルギー弁別 X 線(dualxray.py + materials の X 線の列): 管のスペクトル → 検出器のチャネル
     # → 材料ごとの厚み図の投影 → 基底分解・R 値・実効 Z・弁別の誤り率。CT の前段(投影の物理)なので

@@ -4,7 +4,7 @@ dim: annotate
 category: shape
 in: image2d
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [annotate_gallery, poc_optics_drawings, poc_plenoptic_camera, poc_polish_wipe_measure, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.arc(img, center, radius, start_deg, end_deg, color='neutral', width=2, alpha=1.0, scheme='okabe_ito')` (実装を直接呼ぶなら `import annotate; annotate.arc(img, center, radius, start_deg, end_deg, color='neutral', width=2, alpha=1.0, scheme='okabe_ito')`、台帳から引くなら `opsannotate.get("arc")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

@@ -355,7 +355,7 @@ Certaines descriptions de PoC sont en anglais.
 
 ## Ce qu'il permet de faire
 
-98 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+99 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -448,6 +448,7 @@ Certaines descriptions de PoC sont en anglais.
 
 **Reconstruire**
 
+- Reconstruire les balayages coniques, hélicoïdaux et de laminographie sur une seule géométrie (CT industrielle): [explication](../../capabilities/ct-scan-modes.md) _(ja)_ · exemples [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py)
 - Corriger la distorsion de l'objectif sur l'image entière (en barillet, en coussinet, tangentielle): [explication](../../capabilities/lens-distortion-correction.md) _(ja)_ · exemples [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
 - Reconstruire des coupes à partir de projections (CT): [explication](../../capabilities/tomography-reconstruction.md) _(ja)_ · exemples [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
 - Sculpter un solide à partir de silhouettes (intersection de volumes visuels): [explication](../../capabilities/visual-hull-from-silhouettes.md) _(ja)_ · exemples [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
@@ -483,7 +484,7 @@ Certaines descriptions de PoC sont en anglais.
 
 </div>
 
-[Liste des 180 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Liste des 182 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Tout voir
 

@@ -1,8 +1,8 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">backproject_sinogram — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)</code>(要直接调用实现,<code style="color:#22d3bf">import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)</code>;从台账取用则 <code style="color:#22d3bf">opstomography.get(&quot;backproject_sinogram&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None, device=&#x27;cpu&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None, device=&#x27;cpu&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opstomography.get(&quot;backproject_sinogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:有(许可列表中的机械式 GPU 路径,CuPy)。<code style="color:#22d3bf">device=&quot;auto&quot;</code> 在实测尺寸(4,194,304 像素)及以上选择 GPU</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>未滤波</b>的朴素反投影 —— 模糊的基线。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
@@ -14,6 +14,8 @@
 <p>rounded down to an odd number.</p>
 <p>:param span_deg: angular range used for the <code style="color:#22d3bf">d(theta)</code> weight; <code style="color:#22d3bf">None</code> -&gt;</p>
 <p>inferred from *angles_deg* (or 180 for the default scan).</p>
+<p>:param device: <code style="color:#22d3bf">&quot;cpu&quot;</code> (default) stays on this float64 route. <code style="color:#22d3bf">&quot;auto&quot;</code> or</p>
+<p><code style="color:#22d3bf">&quot;cuda&quot;</code> hands the call to <code style="color:#22d3bf">tomography_gpu</code>, single precision on a GPU.</p>
 <p>:returns: <code style="color:#22d3bf">(size, size)</code> float64 image. :raises ValueError: as <code style="color:#22d3bf">filtered_backprojection</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

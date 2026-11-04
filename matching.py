@@ -244,10 +244,14 @@ def create_ncc_model(template) -> dict:
         等しい定数テンプレートは ``constant=True``、``norm=0``、
         ``t0n`` が全ゼロとなり、すべての窓にスコア0を返す。
 
+    空の入力(``template`` が 0 要素)は ValueError。
+
     Raises:
         FsValueError: ``template`` が NaN または無限大を含む場合。
     """
     source = np.asarray(template)
+    if source.size == 0:
+        raise ValueError("create_ncc_model: template is empty — pass at least one pixel")
     t = np.array(source, dtype=np.float64, copy=True)
     constant = bool(t.size and np.max(t) == np.min(t))
     prepared, template_scale, template_scale_exp = _ncc_scale(

@@ -389,6 +389,18 @@ def _normalized_threshold_alternative(solutions: list[dict], starts: list[str], 
     return out
 
 
+def _gpu_paths(name: str) -> dict | None:
+    """op の GPU 版の有無・種類・倍率(AI が実行前に CPU / GPU を選ぶため)。:func:`gpu_route.describe`。
+
+    台帳が読めなければ ``None``(説明そのものは返す)。
+    """
+    try:
+        import gpu_route
+        return gpu_route.describe(name)
+    except Exception:  # noqa: BLE001 - 付記の失敗で説明を落とさない
+        return None
+
+
 def describe(kind: str, name: str, budget_tokens: int = 800) -> dict:
     """Describe one sort, op, or family; never dump the complete inventory."""
     if kind == "sort":
@@ -399,6 +411,7 @@ def describe(kind: str, name: str, budget_tokens: int = 800) -> dict:
             indexed = next((row for row in load_index()["rows"] if row.get("n") == name), None)
             edge = dict(edge)
             edge["gpu"] = (indexed or {}).get("gpu", "なし")
+            edge["gpu_paths"] = _gpu_paths(name)
         r = {"found": edge is not None, "op": edge, "param_space": param_space(name, {}) if edge else None}
     elif kind == "family":
         fam = next((f for f in _load_json(PKG_FAMILIES)["families"] if f["name"] == name), None)

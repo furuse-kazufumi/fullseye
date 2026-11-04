@@ -4,7 +4,8 @@ dim: segmentation
 category: classify
 in: image2d × signal
 out: labels2d
-gpu: なし
+halcon: classify_image_class_lut
+gpu: あり(許可リスト)
 examples: [halcon_segmentation_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +16,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × signal` → `labels2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.classify_image_class_lut(image, lut)` (実装を直接呼ぶなら `import segmentation; segmentation.classify_image_class_lut(image, lut)`、台帳から引くなら `opssegmentation.get("classify_image_class_lut")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **HALCON 相当**: `classify_image_class_lut`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

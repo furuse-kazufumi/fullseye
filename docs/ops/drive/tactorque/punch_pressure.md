@@ -4,7 +4,7 @@ dim: drive
 category: tactorque
 in: matrix × matrix × scalar × scalar
 out: matrix
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × scalar × scalar` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.punch_pressure(X, Y, a: 'float', P: 'float' = 0.0, M1=(0.0, 0.0), pitch: 'float | None' = None, sub: 'int' = 4) -> 'np.ndarray'` (実装を直接呼ぶなら `import tactorque; tactorque.punch_pressure(X, Y, a: 'float', P: 'float' = 0.0, M1=(0.0, 0.0), pitch: 'float | None' = None, sub: 'int' = 4) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("punch_pressure")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ## 使い方
 

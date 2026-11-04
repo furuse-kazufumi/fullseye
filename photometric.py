@@ -11,6 +11,8 @@ honest な前提: Lambertian + 既知光源 + 影なし(N·L>0)で線形最小�
 """
 import numpy as np
 
+import accel_seam
+
 
 def _as_stack(images):
     a = np.asarray(images, dtype=np.float64)
@@ -52,6 +54,14 @@ def photometric_stereo(images, lights, mask=None, normalize=True, *,
         L = L / (np.linalg.norm(L, axis=1, keepdims=True) + 1e-12)
     Iv = I.reshape(N, H * W)                     # (N,P)
     Lpinv = np.linalg.pinv(L)                    # (3,N)  最小二乗
+    gpu = accel_seam.kernel("photometric.solve")
+    if gpu is not None and not lit_only:
+        normals, albedo = gpu(Iv, Lpinv, H, W)
+        if mask is not None:
+            m = np.asarray(mask, bool)
+            normals[~m] = (0.0, 0.0, 1.0)
+            albedo[~m] = 0.0
+        return normals.astype(np.float32), albedo.astype(np.float32)
     g = Lpinv @ Iv                              # (3,P)  = albedo*normal
     albedo = np.linalg.norm(g, axis=0)          # (P,)
     normals = np.zeros((3, H * W))

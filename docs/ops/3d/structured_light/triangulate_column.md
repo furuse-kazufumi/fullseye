@@ -4,7 +4,7 @@ dim: 3d
 category: structured_light
 in: image2d
 out: depth
-gpu: なし
+gpu: あり(許可リスト)
 examples: [structured_light_scan]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `depth`
 - **呼び出し**: `import fullseye as fs; fs.ledger.triangulate_column(column, k_cam, k_proj, rot, trans) -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.triangulate_column(column, k_cam, k_proj, rot, trans) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("triangulate_column")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

@@ -14,7 +14,7 @@
 
 *実際のオペレータ出力だけで作った 6 幕(エッジと方位 / 連結成分の選別 / サブピクセル計測 / SDF からのメッシュ化 / 点群クラスタリング / レンズのデフォーカス)。*
 
-**Fullseye**（作業名 imgevolve）は、numpy-native な画像処理オペレータ・ライブラリと、HDevelop 風のビジュアル・パイプライン設計環境（Fullseye Studio）+ 実行ランタイム（FullseyeEngine）を備えた、HALCON/HDevelop 級の実用ツールです。オペレータは約 **947**（レジストリ）、実 HALCON オペレータ **965/2313** を genuine 実装、48 カテゴリをカバーします。
+**Fullseye**（作業名 imgevolve）は、numpy-native な画像処理オペレータ・ライブラリと、HDevelop 風のビジュアル・パイプライン設計環境（Fullseye Studio）+ 実行ランタイム（FullseyeEngine）を備えた、HALCON/HDevelop 級の実用ツールです。オペレータは約 **947**（レジストリ）、実 HALCON オペレータ **1016/2313** を genuine 実装、48 カテゴリをカバーします。
 
 ★ **画像処理ライブラリでは珍しく「仮想の光学設計」まで内蔵** —— 薄肉/厚肉レンズ・光線追跡・Seidel 収差・PSF/MTF に加え、damped-least-squares（Levenberg–Marquardt）でレンズ処方そのものを最適化（`optimize_lens`）。**撮像系を設計して、その像を上のオペレータで検査するまでを一気通貫**でできる（半導体・精密計測で効く差別化）。
 
@@ -57,16 +57,16 @@
 
 ### 検証の段
 
-能力 98 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.9.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
+能力 99 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.9.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
 
 | 段 | 意味 | 能力 |
 |---|---|---|
 | `research-prototype` | 実装はあるが、試験や走る例が揃っていない | 0 |
-| `verified-synthetic` | 真値を持つ合成データで自動検証 | 79 |
+| `verified-synthetic` | 真値を持つ合成データで自動検証 | 80 |
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 19 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 469 本のうち、門が実際に走らせるもの 469 本。
+例 471 本のうち、門が実際に走らせるもの 471 本。
 
 ### 版ごとの op の数
 
@@ -142,11 +142,11 @@
 
 ## オペレータを探す
 
-**3,758 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **72 本の族ガイド**があります。次元ごとの入口:
+**3,816 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **73 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 947/947、型つき台帳 2762/2774、1 行ファサード `fullseye.<名前>` 745/1546。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 947/947、型つき台帳 2820/2832、1 行ファサード `fullseye.<名前>` 756/1559。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3758 本のうち、実行できる例が付いているのは **3711 本**(47 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3556 本**(202 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3758 本すべてにある。
+**ノートの中身の実測**: 3816 本のうち、実行できる例が付いているのは **3768 本**(48 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3614 本**(202 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3816 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -159,12 +159,13 @@
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [ガイド](ops/segmentation/guides/halcon_segmentation.md) |
 | `annotate` — 図注(軸・凡例・注記) | 51 | [INDEX](ops/annotate/INDEX.md) · [ガイド](ops/annotate/guides/figure_annotation.md) |
 | `oned` | 49 | [INDEX](ops/oned/INDEX.md) |
+| `mv` | 47 | [INDEX](ops/mv/INDEX.md) · [ガイド](ops/mv/guides/machine_vision_classics.md) |
 | `gfx2d` — 描画 | 44 | [INDEX](ops/gfx2d/INDEX.md) |
+| `tomography` — 断層 | 43 | [INDEX](ops/tomography/INDEX.md) |
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [ガイド](ops/generative/guides/generative_art.md) |
 | `imgmetrics` — 画質の指標 | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [ガイド](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
 | `symbol` | 33 | [INDEX](ops/symbol/INDEX.md) · [ガイド](ops/symbol/guides/symbol_reading.md) |
-| `tomography` — 断層 | 32 | [INDEX](ops/tomography/INDEX.md) |
 | `calib` | 29 | [INDEX](ops/calib/INDEX.md) · [ガイド](ops/calib/guides/camera_calibration.md) |
 | `piv` — 粒子画像流速測定 + DIC | 29 | [INDEX](ops/piv/INDEX.md) · [ガイド](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [ガイド](ops/conngraph/guides/conngraph.md) |
@@ -248,7 +249,7 @@
 
 | ドキュメント | 内容 |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | 「名前だけ」でなく実際に同じ処理ができるかの genuine 実装状況（965/2313） |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | 「名前だけ」でなく実際に同じ処理ができるかの genuine 実装状況（1016/2313） |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | 公式リファレンス（v2605）を実スクレイプした被覆計測 |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | 多ライブラリ横断被覆（HALCON 以外の distinctive op 取り込み） |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | 独立実装（scipy/cv2/skimage）同士のクロスバックエンド一致による parity 実証 |
@@ -306,9 +307,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 312 本
+## ドキュメント地図 — 全 325 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,758 本と族ガイド 72 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,816 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
@@ -449,7 +450,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(228)
+**そのほか**(241)
 
 | 文書 | 内容 |
 |---|---|
@@ -499,6 +500,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`GPU_OPTIMIZATION_PATTERNS.en.md`](GPU_OPTIMIZATION_PATTERNS.en.md) | GPU Optimization Design-Pattern Catalog (for RTX 5090 / Blackwell sm_120) |
 | [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure |
 | [`HALCON_COVERAGE_HONEST.en.md`](HALCON_COVERAGE_HONEST.en.md) | HALCON Coverage — the honest denominator (updated 2026-08-18) |
+| [`HALCON_GAP_2026-11-02.md`](HALCON_GAP_2026-11-02.md) | HALCON 2605 の全 2,313 演算子の棚卸し(2026-11-02) |
 | [`HARDENING.en.md`](HARDENING.en.md) | What the PoCs hardened — found, fixed, and gated |
 | [`HARDENING.md`](HARDENING.md) | PoC が上げた堅牢性 —— 見つけて直した記録 |
 | [`HDEVELOP_DEV_OPS.en.md`](HDEVELOP_DEV_OPS.en.md) | HDevelop `dev_*` operator family — the UI/display control surface (Studio north star) |
@@ -544,6 +546,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/compound-eye-aliasing-and-ttc.md`](capabilities/compound-eye-aliasing-and-ttc.md) | id: compound-eye-aliasing-and-ttc |
 | [`capabilities/convergent-forward-models.md`](capabilities/convergent-forward-models.md) | id: convergent-forward-models |
 | [`capabilities/crop-weed-cover-grade.md`](capabilities/crop-weed-cover-grade.md) | id: crop-weed-cover-grade |
+| [`capabilities/ct-scan-modes.md`](capabilities/ct-scan-modes.md) | id: ct-scan-modes |
 | [`capabilities/dual-energy-xray-material-discrimination.md`](capabilities/dual-energy-xray-material-discrimination.md) | id: dual-energy-xray-material-discrimination |
 | [`capabilities/emva1288-camera-datasheets.md`](capabilities/emva1288-camera-datasheets.md) | id: emva1288-camera-datasheets |
 | [`capabilities/estimate-lens-distortion.md`](capabilities/estimate-lens-distortion.md) | id: estimate-lens-distortion |
@@ -671,6 +674,17 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`literature/electron_microscopy.md`](literature/electron_microscopy.md) | 文献層: 電子顕微鏡の撮像と計測(厳選) |
 | [`literature/industrial_optical_sensing.md`](literature/industrial_optical_sensing.md) | 文献層: 工業用光学センシング(厳選) |
 | [`literature/sensitivity_uq_calibration.md`](literature/sensitivity_uq_calibration.md) | 文献層: 感度解析・不確かさ定量化・較正(厳選) |
+| [`perf/GPU_TIERS.md`](perf/GPU_TIERS.md) | GPU tier 分類 — 全 op の 4 段台帳 |
+| [`perf/HALCON_OPENCL_PARITY.md`](perf/HALCON_OPENCL_PARITY.md) | HALCON 26.05 OpenCL 84 演算子 — Fullseye 対応行列 |
+| [`perf/gpu_auto_sweep_2026-11-02.md`](perf/gpu_auto_sweep_2026-11-02.md) | 機械的 GPU 化の掃引 (2026-11-02) |
+| [`perf/gpu_crossover_2026-11-02.md`](perf/gpu_crossover_2026-11-02.md) | GPU の損益分岐とパイプライン(第 5 便、2026-11-02〜03) |
+| [`perf/gpu_ct_2026-11-02.md`](perf/gpu_ct_2026-11-02.md) | CT 再構成の CPU / GPU 実測(2026-11-02、GPU 第 8 便) |
+| [`perf/gpu_fill3_2026-11-02.md`](perf/gpu_fill3_2026-11-02.md) | GPU 穴埋め 第 3 便 — HALCON OpenCL 48 件と required 名簿の採否 — 2026-11-02 |
+| [`perf/gpu_fill_2026-11-02.md`](perf/gpu_fill_2026-11-02.md) | GPU 穴埋め候補 10 op の採否(D') — 2026-11-02 |
+| [`perf/gpu_optics_2026-11-02.md`](perf/gpu_optics_2026-11-02.md) | GPU 第 4 便: 光路・波長・偏光の一括計算(2026-11-02) |
+| [`perf/gpu_required_2026-11-02.md`](perf/gpu_required_2026-11-02.md) | GPU でしか回らない寸法 — 実寸の実演(C') 2026-11-02 |
+| [`perf/op_time_ranking_2026-11-02.md`](perf/op_time_ranking_2026-11-02.md) | Op time ranking — 2026-11-02 |
+| [`perf/pipeline_routes.md`](perf/pipeline_routes.md) | レシピの GPU 経路(生成物) |
 | [`view2026/about.md`](view2026/about.md) | Fullseye |
 | [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
 | [`view2026/en/about.md`](view2026/en/about.md) | Fullseye |

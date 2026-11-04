@@ -4,7 +4,7 @@ dim: annotate
 category: paper
 in: image2d
 out: image2d
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [paper_figure, poc_flybrain_pointcloud, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_scale_bar(img, units_per_pixel, unit='µm', corner='rb', target_fraction=0.2, margin=14, color='neutral', thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme='okabe_ito', font_path=None, layout=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_scale_bar(img, units_per_pixel, unit='µm', corner='rb', target_fraction=0.2, margin=14, color='neutral', thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme='okabe_ito', font_path=None, layout=None)`、台帳から引くなら `opsannotate.get("annotate_scale_bar")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

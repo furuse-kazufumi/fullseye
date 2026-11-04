@@ -103,6 +103,13 @@ LIN = 22.0                      # 入射光線をレンズの手前どれだけ�
 GLASS_NAMES = {"N-BK7": ("クラウンガラス", "crown glass"), "N-SF2": ("フリントガラス", "flint glass")}
 
 
+def _axis_spot(um: float) -> str:
+    """無収差の軸上のスポット半径の表示。★2026-11-04(統合 GPU): 値は丸めの残り(~1e-11 µm)で、
+    Windows では 7.6e-12、Linux では 7.5e-12 と環境で桁が割れ、翻訳表の鍵(en の文)が CI だけ合わなかった。
+    1e-6 µm 未満は「< 1e-6」と書く(どの環境でも同じ文になる)。"""
+    return ("%.2g" % um) if um >= 1e-6 else "< 1e-6"
+
+
 def glass_label(key, lang="ja", short=False):
     """材料表のキーの一般名。ja「クラウンガラス(n_d = 1.5168, V_d = 64.17)」/ en。short=True は名前だけ。"""
     ja, en = GLASS_NAMES[key]
@@ -1523,7 +1530,7 @@ def textbook_checks(g):
                  "> 1.08", "%.3f" % sph_end, sph_end > 1.08)],
         "coma": [
             _row("軸上のスポット半径(spot_stats、非球面の無収差)", "on-axis spot radius (spot_stats; stigmatic asphere)",
-                 "< 1 µm", "%.2g µm" % g["coma_axis_um"], g["coma_axis_um"] < 1.0),
+                 "< 1 µm", "%s µm" % _axis_spot(g["coma_axis_um"]), g["coma_axis_um"] < 1.0),
             _row("メリディオナルのコマ: 実光線(ray_fan)/ 3·W131/(n′u′)(画角 0.5 / 1 / 2°)",
                  "tangential coma: real rays (ray_fan) / 3·W131/(n′u′) (field 0.5 / 1 / 2°)",
                  "< 0.01", "%.4f" % g["coma_mer_dev"], g["coma_mer_dev"] < 0.01),
@@ -1605,13 +1612,13 @@ def textbook_lessons(rec, g):
                         _t("同じ大きさの丸にぼける", "A round blur of the same size everywhere"),
                         _t("彗星の形に広がる(瞳の 1 つの輪が像で 2 周する円になる)", "A comet shape (one pupil ring becomes a circle traced twice)")],
             "answer": 2,
-            "explain": _t("軸上のスポット半径は %.2g µm(無収差)だが、斜めの光では瞳の輪ごとに大きさの違う円がずれて重なり、"
+            "explain": _t("軸上のスポット半径は %s µm(無収差)だが、斜めの光では瞳の輪ごとに大きさの違う円がずれて重なり、"
                           "彗星の形になる。メリディオナルのコマは 3·W131/u′、サジタルはその 1/3。%.0f° でのメリディオナルのコマは"
-                          " %.1f µm(実光線)、3 次の式との比 %.3f。" % (g["coma_axis_um"], f_end, coma[-1]["tc_real"], coma_end),
-                          "The on-axis spot radius is %.2g µm (stigmatic), but for oblique light each pupil ring makes a circle "
+                          " %.1f µm(実光線)、3 次の式との比 %.3f。" % (_axis_spot(g["coma_axis_um"]), f_end, coma[-1]["tc_real"], coma_end),
+                          "The on-axis spot radius is %s µm (stigmatic), but for oblique light each pupil ring makes a circle "
                           "of a different size, shifted, and they pile up into a comet. Tangential coma is 3·W131/u′, sagittal one "
                           "third of that. At %.0f° the tangential coma is %.1f µm (real rays), ratio %.3f to third order."
-                          % (g["coma_axis_um"], f_end, coma[-1]["tc_real"], coma_end)),
+                          % (_axis_spot(g["coma_axis_um"]), f_end, coma[-1]["tc_real"], coma_end)),
             "formula": _t("W = W131 H ρ³ cos φ(H = 画角に比例)\nメリディオナルのコマ: 3 W131 / (n′u′)\n"
                           "サジタルのコマ: W131 / (n′u′)(1/3)",
                           "W = W131 H ρ³ cos φ (H proportional to the field)\ntangential coma: 3 W131 / (n′u′)\n"
@@ -1787,7 +1794,7 @@ def main(argv=None) -> int:
         assert "http://" not in html and "https://" not in html, "外部 URL がある"
     print("書いた: %s(%.0f KB、ja+en、4 タブ・各 %d コマ)" % (path if a.out else "一時フォルダ", size / 1e3, len(t)))
     print("球面: 実光線 / 3 次の式 = " + "  ".join("a=%g:%.3f" % (a_, r) for a_, r in g["sph"]))
-    print("コマ: 軸上のスポット半径 %.2g µm(非球面の無収差)" % g["coma_axis_um"])
+    print("コマ: 軸上のスポット半径 %s µm(非球面の無収差)" % _axis_spot(g["coma_axis_um"]))
     print("色: F−C の焦点差 単レンズ %.3f mm / アクロマート %s、F..C の焦点のゆれ %.3f / %.4f mm"
           % (g["fc1"], fmt_fc(g["fc2"]), g["sec1"], g["sec2"]))
     print("限界(実光線 / 3 次の式): 球面 f/%.1f で %.3f、コマ %.0f° で %.3f、T 像面 %.0f° で %.3f"

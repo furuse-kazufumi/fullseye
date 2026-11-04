@@ -4,7 +4,7 @@ dim: annotate
 category: shape
 in: image2d × pairs
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [annotate_gallery, poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × pairs` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.filled_polygon(img, points, color='neutral', alpha=1.0, scheme='okabe_ito')` (実装を直接呼ぶなら `import annotate; annotate.filled_polygon(img, points, color='neutral', alpha=1.0, scheme='okabe_ito')`、台帳から引くなら `opsannotate.get("filled_polygon")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

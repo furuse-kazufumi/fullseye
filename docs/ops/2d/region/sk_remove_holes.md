@@ -5,7 +5,7 @@ category: region
 in: region
 out: region
 halcon: fill_up
-gpu: なし
+gpu: 鎖の中だけ(lbl_sk_remove_holes)
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `region` → `region`
 - **呼び出し**: `fullseye.apply(img, "sk_remove_holes", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `fill_up`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(`lbl_sk_remove_holes`)。隣の段も GPU のパイプラインでは GPU に載せたまま走る。単独の呼び出しは `device="cuda"` でも CPU(単独では CPU に勝たないと実測した)
 
 ![sk_remove_holes: input → output](../../_fig/sk_remove_holes.png)
 

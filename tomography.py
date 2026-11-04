@@ -131,9 +131,10 @@ image with ``n_angles=100000`` is a 25 MB input asking for a 3 GB sinogram, and
 
 Honest disclosure — what this cannot do, measured rather than assumed:
 
-  * **Parallel beam only.** Real medical and industrial scanners are fan or cone
-    beam, where the slices are *not* independent and an FDK-style weighting is
-    required. Saying so costs less than a wrong ``fdk``.
+  * **Parallel beam only, in this module.** Real medical and industrial scanners
+    are fan or cone beam, where the slices are *not* independent and an FDK-style
+    weighting is required. Those scans live in :mod:`ctscan`, on one geometry
+    description, and the GPU routes of this module in :mod:`tomography_gpu`.
   * **The obvious way to find a metal trace is worse than doing nothing.**
     Thresholding the sinogram — the first thing anyone tries — scores 1.3-1.4x
     *worse* than no correction at every implant density tested, because it flags
@@ -208,6 +209,8 @@ Deliberately **not** here (owned elsewhere — composed with, never re-implement
 from __future__ import annotations
 
 import numpy as np
+
+import accel_seam
 
 __all__ = [
     "projection_angles", "ellipse_phantom", "ellipse_sinogram",
@@ -592,6 +595,9 @@ def _project(img: np.ndarray, angles_rad: np.ndarray, n_det: int,
     the phantom's own anti-aliased edge, not the quadrature, which is why the
     default is 1 and not something four times slower for nothing.
     """
+    gpu = accel_seam.kernel("tomography.project")
+    if gpu is not None:
+        return gpu(img, angles_rad, n_det, oversample)
     h, w = img.shape
     cx = (w - 1) / 2.0
     cy = (h - 1) / 2.0
@@ -613,6 +619,9 @@ def _project(img: np.ndarray, angles_rad: np.ndarray, n_det: int,
 def _backproject(sino: np.ndarray, angles_rad: np.ndarray, size: int) -> np.ndarray:
     """Un-normalised back-projection: smear every projection back along its rays
     and sum. The caller supplies the ``d(theta)`` weight."""
+    gpu = accel_seam.kernel("tomography.backproject")
+    if gpu is not None:
+        return gpu(sino, angles_rad, size)
     n_det = sino.shape[1]
     c = (size - 1) / 2.0
     grid = np.arange(size, dtype=np.float64) - c
@@ -762,6 +771,9 @@ def _filter_projections(sino: np.ndarray, kind: str, cutoff: float) -> np.ndarra
     while n_pad < 2 * n_det:
         n_pad <<= 1
     h = _ramp_filter(n_pad, kind, cutoff)
+    gpu = accel_seam.kernel("tomography.filter")
+    if gpu is not None:
+        return gpu(sino, h, n_pad)
     padded = np.zeros((sino.shape[0], n_pad), dtype=np.float64)
     padded[:, :n_det] = sino
     out = np.fft.irfft(np.fft.rfft(padded, axis=1) * h[None, :], n=n_pad, axis=1)
@@ -1063,7 +1075,7 @@ def ellipse_sinogram(size=256, ellipses=None, angles_deg=None, n_detectors=None)
     return out * r
 
 
-def radon_transform(image, angles_deg=None, n_detectors=None, oversample=1):
+def radon_transform(image, angles_deg=None, n_detectors=None, oversample=1, device="cpu"):
     """Forward parallel-beam projection: a slice in, a **sinogram** out.
 
     Rows of the result are projection angles and columns are detector bins. The
@@ -1092,10 +1104,16 @@ def radon_transform(image, angles_deg=None, n_detectors=None, oversample=1):
     :param n_detectors: bins; ``None`` -> odd count covering the diagonal.
     :param oversample: ray samples per pixel, ``1 .. 8``. The default is 1
         because 4 measures no better (0.073 % against 0.070 %).
+    :param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+        ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
     :returns: ``(n_angles, n_detectors)`` float64 sinogram.
     :raises ValueError: on non-finite input, an empty angle list, a detector count
         under 4, or a sinogram over :data:`MAX_SINOGRAM_ELEMENTS`.
     """
+    if device != "cpu":
+        import tomography_gpu
+        if tomography_gpu.resolve_device(device) != "cpu":
+            return tomography_gpu.radon_transform(image, angles_deg, n_detectors, oversample, device=device)
     op = "radon_transform"
     img = _as_image(image, op)
     ang = (np.linspace(0.0, 180.0, 180, endpoint=False) if angles_deg is None
@@ -1138,7 +1156,7 @@ def _recon_size(size, sino: np.ndarray, op: str) -> int:
     return sz
 
 
-def backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None):
+def backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None, device="cpu"):
     """Plain, **un-filtered** back-projection — the blurred baseline.
 
     Smear each projection back along the rays it came from and sum. The result is
@@ -1170,9 +1188,15 @@ def backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None):
         rounded down to an odd number.
     :param span_deg: angular range used for the ``d(theta)`` weight; ``None`` ->
         inferred from *angles_deg* (or 180 for the default scan).
+    :param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+        ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
     :returns: ``(size, size)`` float64 image.
     :raises ValueError: as :func:`filtered_backprojection`.
     """
+    if device != "cpu":
+        import tomography_gpu
+        if tomography_gpu.resolve_device(device) != "cpu":
+            return tomography_gpu.backproject_sinogram(sinogram, angles_deg, size, span_deg, device=device)
     return filtered_backprojection(sinogram, angles_deg=angles_deg, size=size,
                                    filter_name="none", span_deg=span_deg,
                                    _op="backproject_sinogram")
@@ -1211,7 +1235,7 @@ def _span_weight(ang: np.ndarray, span_deg, op: str) -> float:
     approximation in between (the partially-redundant range 180 < span < 360
     strictly needs Parker weighting, which is not implemented; the uniform
     rescaling gets the mean density right and leaves the redundant wedge
-    over-smoothed relative to the rest).
+    over-smoothed relative to the rest). :func:`ctscan.fdk_reconstruct` has it.
 
     When *span_deg* is ``None`` the covered range is **inferred from the angle
     list**, and the estimator has to survive irregular schemes. The first one,
@@ -1271,7 +1295,7 @@ def _covered_span_deg(ang: np.ndarray, step_deg: float) -> float:
 
 def filtered_backprojection(sinogram, angles_deg=None, size=None,
                             filter_name="ramp", cutoff=1.0, span_deg=None,
-                            _op="filtered_backprojection"):
+                            _op="filtered_backprojection", device="cpu"):
     """Filtered back-projection (FBP) — the standard CT reconstruction.
 
     Filter each projection along the detector axis with the ramp ``|f|`` (times an
@@ -1338,11 +1362,17 @@ def filtered_backprojection(sinogram, angles_deg=None, size=None,
         range the views actually cover, inferred from the angle list (exact for
         a uniform grid over any span and for any full-coverage irregular set
         such as golden angle; see :func:`_span_weight`).
+    :param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+        ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
     :returns: ``(size, size)`` float64 image.
     :raises ValueError: on a non-2-D or non-finite sinogram, an angle count that
         disagrees with the row count, an unknown filter, a cutoff outside
         ``(0, 1]``, or an output over :data:`MAX_IMAGE_ELEMENTS`.
     """
+    if device != "cpu":
+        import tomography_gpu
+        if tomography_gpu.resolve_device(device) != "cpu":
+            return tomography_gpu.filtered_backprojection(sinogram, angles_deg, size, filter_name, cutoff, span_deg, device=device)
     op = _op
     sino = _as_sinogram(sinogram, op)
     ang = _as_angles(angles_deg, sino.shape[0], op)
@@ -1357,7 +1387,7 @@ def filtered_backprojection(sinogram, angles_deg=None, size=None,
 
 
 def sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10,
-                     relaxation=0.3, initial=None, nonnegative=True):
+                     relaxation=0.3, initial=None, nonnegative=True, device="cpu"):
     """SART — simultaneous algebraic reconstruction, one angle at a time.
 
     An iterative solver for ``A x = p`` where ``A`` is the projector: for each
@@ -1405,10 +1435,16 @@ def sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10,
         oscillate; over 2 it provably diverges, and is refused.
     :param initial: starting estimate, ``(size, size)``; ``None`` -> zeros.
     :param nonnegative: clip to ``>= 0`` after each sweep.
+    :param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+        ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
     :returns: ``(size, size)`` float64 image.
     :raises ValueError: as :func:`filtered_backprojection`, plus a relaxation
         outside ``(0, 2)`` and an *initial* whose shape is not ``(size, size)``.
     """
+    if device != "cpu":
+        import tomography_gpu
+        if tomography_gpu.resolve_device(device) != "cpu":
+            return tomography_gpu.sart_reconstruct(sinogram, angles_deg, size, n_iter, relaxation, initial, nonnegative, device=device)
     op = "sart_reconstruct"
     sino = _as_sinogram(sinogram, op)
     ang = _as_angles(angles_deg, sino.shape[0], op)
@@ -1439,6 +1475,9 @@ def sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10,
     ones_img = np.ones((sz, sz), dtype=np.float64)
     ones_sino = np.ones((1, n_det), dtype=np.float64)
     eps = 1e-9
+    gpu = accel_seam.kernel("tomography.sart")
+    if gpu is not None:
+        return gpu(x, sino, rad, sz, n_det, n_it, lam, bool(nonnegative), eps)
     project_geometry = [_project_geometry((sz, sz), a, n_det) for a in rad]
     backproject_geometry = [_backproject_geometry(a, sz, n_det) for a in rad]
     row_sums = np.stack([_project_from_geometry(ones_img, g)
@@ -2021,14 +2060,13 @@ def sinogram_center_shift(sinogram, shift_px=None, angles_deg=None):
 # --------------------------------------------------------------------------- #
 # 6. the volume route (parallel beam, slice by slice)                          #
 # --------------------------------------------------------------------------- #
-def radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1):
+def radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1, device="cpu"):
     """Project every slice of a ``(Z, H, W)`` volume -> a ``(Z, A, D)`` stack.
 
     Parallel-beam geometry with the rotation axis along ``Z``, which is the case
     where the 3-D problem really is a stack of independent 2-D ones — each slice
-    projects into its own sinogram and nothing crosses between them. (A cone beam
-    does not have this property and is not implemented; saying so is cheaper than
-    a wrong ``FDK``.)
+    projects into its own sinogram and nothing crosses between them. A cone beam
+    does not have this property: see :mod:`ctscan`.
 
     The output's axis order is ``(slice, angle, detector)`` so that ``stack[k]``
     is a sinogram in this module's own convention and every 2-D operator here
@@ -2038,6 +2076,8 @@ def radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1):
     :param angles_deg: view angles; ``None`` -> uniform ``[0, 180)``, 180 views.
     :param n_detectors: bins; ``None`` -> covers the in-plane diagonal.
     :param oversample: ray samples per pixel, ``1 .. 8``.
+    :param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+        ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
     :returns: ``(Z, n_angles, n_detectors)`` float64 stack.
     :raises ValueError: on a non-3-D input or a stack over
         :data:`MAX_STACK_ELEMENTS`.
@@ -2046,6 +2086,10 @@ def radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1):
     """
     if (len(volume) if isinstance(volume, (list, tuple)) else np.asarray(volume).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("radon_volume: volume is empty — pass at least one element")
+    if device != "cpu":
+        import tomography_gpu
+        if tomography_gpu.resolve_device(device) != "cpu":
+            return tomography_gpu.radon_volume(volume, angles_deg, n_detectors, oversample, device=device)
     op = "radon_volume"
     vol = _as_float_array(volume, "volume", MAX_STACK_ELEMENTS, op)
     if vol.ndim != 3:
@@ -2080,7 +2124,7 @@ def radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1):
 
 
 def fbp_volume(stack, angles_deg=None, size=None, filter_name="ramp",
-               cutoff=1.0, span_deg=None):
+               cutoff=1.0, span_deg=None, device="cpu"):
     """Reconstruct every sinogram of a ``(Z, A, D)`` stack -> a ``(Z, S, S)`` volume.
 
     The inverse of :func:`radon_volume`, slice by slice. The result is a plain
@@ -2101,6 +2145,8 @@ def fbp_volume(stack, angles_deg=None, size=None, filter_name="ramp",
     :param filter_name: one of :data:`FILTERS`.
     :param cutoff: fraction of Nyquist to keep.
     :param span_deg: angular range for the ``d(theta)`` weight.
+    :param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+        ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
     :returns: ``(Z, size, size)`` float64 volume.
     :raises ValueError: on a non-3-D stack, or an output over
         :data:`MAX_STACK_ELEMENTS`. Empty input (``stack`` with 0 elements) raises ``ValueError``.
@@ -2108,6 +2154,10 @@ def fbp_volume(stack, angles_deg=None, size=None, filter_name="ramp",
     op = "fbp_volume"
     if np.asarray(stack).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
         raise ValueError("fbp_volume: stack is empty — pass at least one element")
+    if device != "cpu":
+        import tomography_gpu
+        if tomography_gpu.resolve_device(device) != "cpu":
+            return tomography_gpu.fbp_volume(stack, angles_deg, size, filter_name, cutoff, span_deg, device=device)
     st = _as_float_array(stack, "stack", MAX_STACK_ELEMENTS, op)
     if st.ndim != 3:
         raise ValueError(

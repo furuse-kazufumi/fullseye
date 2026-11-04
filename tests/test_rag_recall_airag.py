@@ -34,7 +34,9 @@ def _measure(rows):
         direct = [x["name"] for x in search_ops(row["query"], 10)["ops"]]
         plan = plan_chain(row["query"], row["start_sort"], row["goal_sort"], k=10, max_depth=4)
         planned = [x["name"] for stage in plan.get("stages", []) for x in stage["candidates"]]
-        executable=plan_api(row["start_sort"],row["goal_sort"],goal=row["query"])
+        # plan() は既定で plan_timeout_ms(900 ms)で打ち切る。CI の負荷で問い合わせ(mv01 は手元で 0.56 秒)が時間切れに
+        # なると実行可能な計画が空になり、報告(手元で生成)と食い違った(2026-11-04、#250 の CI)。上限を展開数の側に移す。
+        executable=plan_api(row["start_sort"],row["goal_sort"],goal=row["query"],constraints={"timeout_ms": 120_000})
         executable_names=[name for p in executable.get("plans",[]) for name in p["ops"]]
         sr, pr = _recall(direct, row["relevant"]), _recall(planned, row["relevant"])
         er=_recall(executable_names,row["relevant"])

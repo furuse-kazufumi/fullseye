@@ -4,7 +4,7 @@ dim: acoustics
 category: level
 in: signal
 out: signal
-gpu: なし
+gpu: あり(許可リスト)
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.weighting_response(freqs, kind='A', floor_db=-200.0)` (実装を直接呼ぶなら `import acoustics; acoustics.weighting_response(freqs, kind='A', floor_db=-200.0)`、台帳から引くなら `opsacoustics.get("weighting_response")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ## 使い方
 

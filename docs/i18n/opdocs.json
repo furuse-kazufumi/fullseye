@@ -809,6 +809,46 @@
    "ko": "**같은 어간의 다른 op**: {a0} 는 입출력 타입이 다른 별개의 처리이며, 이름만 비슷하다(`docs/IMPL_DIFFERENTIAL.md`).",
    "de": "**Andere Ops mit demselben Wortstamm**: {a0} — eine andere Operation mit anderen Ein-/Ausgabetypen; nur der Name ist ähnlich (`docs/IMPL_DIFFERENTIAL.md`).",
    "hi": "**उसी stem वाले दूसरे op**: {a0} — अलग input/output type वाला अलग operation; सिर्फ़ नाम मिलता-जुलता है (`docs/IMPL_DIFFERENTIAL.md`)।"
+  },
+  "- **GPU**: 鎖の中だけ(`{a0}`)。隣の段も GPU のパイプラインでは GPU に載せたまま走る。単独の呼び出しは `device=\"cuda\"` でも CPU(単独では CPU に勝たないと実測した)": {
+   "en": "- **GPU**: inside a chain only (`{a0}`). In a pipeline whose neighbouring stage is also on the GPU it stays resident on the GPU. A single call runs on the CPU even with `device=\"cuda\"` (measured: alone it does not beat the CPU)",
+   "zh": "- **GPU**:仅在链中(`{a0}`)。相邻阶段也在 GPU 上的流水线中,数据留在 GPU 上运行。单独调用即使 `device=\"cuda\"` 也在 CPU 上运行(实测:单独运行赢不了 CPU)",
+   "tw": "- **GPU**:僅在鏈中(`{a0}`)。相鄰階段也在 GPU 上的管線中,資料留在 GPU 上執行。單獨呼叫即使 `device=\"cuda\"` 也在 CPU 上執行(實測:單獨執行贏不了 CPU)",
+   "ko": "- **GPU**: 체인 안에서만(`{a0}`). 이웃 단계도 GPU인 파이프라인에서는 GPU에 올린 채 실행된다. 단독 호출은 `device=\"cuda\"` 여도 CPU(실측: 단독으로는 CPU를 이기지 못함)",
+   "de": "- **GPU**: nur innerhalb einer Kette (`{a0}`). In einer Pipeline, deren Nachbarstufe ebenfalls auf der GPU läuft, bleibt es auf der GPU. Ein Einzelaufruf läuft auch mit `device=\"cuda\"` auf der CPU (gemessen: allein schlägt es die CPU nicht)",
+   "hi": "- **GPU**: केवल chain के भीतर (`{a0}`)। जिस pipeline में पड़ोसी stage भी GPU पर हो, वहाँ GPU पर resident रहता है। अकेली call `device=\"cuda\"` होने पर भी CPU पर चलती है (मापा गया: अकेले यह CPU से तेज़ नहीं)"
+  },
+  "- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device=\"auto\"` は測った大きさ({a0} 画素)以上で GPU を選ぶ": {
+   "en": "- **GPU**: yes (mechanical GPU path from the allow-list, CuPy). `device=\"auto\"` chooses the GPU from the measured size ({a0} pixels) up",
+   "zh": "- **GPU**:有(许可列表中的机械式 GPU 路径,CuPy)。`device=\"auto\"` 在实测尺寸({a0} 像素)及以上选择 GPU",
+   "tw": "- **GPU**:有(許可清單中的機械式 GPU 路徑,CuPy)。`device=\"auto\"` 在實測尺寸({a0} 像素)以上選擇 GPU",
+   "ko": "- **GPU**: 있음(허용 목록의 기계적 GPU 경로, CuPy). `device=\"auto\"` 는 측정한 크기({a0} 픽셀) 이상에서 GPU를 선택",
+   "de": "- **GPU**: ja (mechanischer GPU-Pfad aus der Allow-List, CuPy). `device=\"auto\"` wählt die GPU ab der gemessenen Größe ({a0} Pixel)",
+   "hi": "- **GPU**: हाँ (allow-list का mechanical GPU path, CuPy)। `device=\"auto\"` मापे गए आकार ({a0} pixel) और उससे बड़े पर GPU चुनता है"
+  },
+  "- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU": {
+   "en": "- **GPU**: inside a chain only (mechanical GPU path from the allow-list, CuPy). Stays resident on the GPU only when the neighbouring stage is also on the allow-list. A single call runs on the CPU",
+   "zh": "- **GPU**:仅在链中(许可列表中的机械式 GPU 路径,CuPy)。仅当相邻阶段也在许可列表中时才留在 GPU 上运行。单独调用在 CPU 上运行",
+   "tw": "- **GPU**:僅在鏈中(許可清單中的機械式 GPU 路徑,CuPy)。僅當相鄰階段也在許可清單中時才留在 GPU 上執行。單獨呼叫在 CPU 上執行",
+   "ko": "- **GPU**: 체인 안에서만(허용 목록의 기계적 GPU 경로, CuPy). 이웃 단계도 허용 목록일 때만 GPU에 올린 채 실행된다. 단독 호출은 CPU",
+   "de": "- **GPU**: nur innerhalb einer Kette (mechanischer GPU-Pfad aus der Allow-List, CuPy). Bleibt nur auf der GPU, wenn auch die Nachbarstufe auf der Allow-List steht. Ein Einzelaufruf läuft auf der CPU",
+   "hi": "- **GPU**: केवल chain के भीतर (allow-list का mechanical GPU path, CuPy)। पड़ोसी stage भी allow-list में हो तभी GPU पर resident रहता है। अकेली call CPU पर चलती है"
+  },
+  "- **GPU**: op 自身の `device=` 引数(native、実測 {a0} 倍)。`fullseye.apply` / `run_pipeline` からはまだ GPU に送らない —— 実装を直接 `device=\"cuda\"` で呼ぶ": {
+   "en": "- **GPU**: the op's own `device=` argument (native, measured {a0}x). `fullseye.apply` / `run_pipeline` do not send it to the GPU yet — call the implementation directly with `device=\"cuda\"`",
+   "zh": "- **GPU**:op 自身的 `device=` 参数(native,实测 {a0} 倍)。`fullseye.apply` / `run_pipeline` 尚不会把它送到 GPU —— 请直接以 `device=\"cuda\"` 调用实现",
+   "tw": "- **GPU**:op 自身的 `device=` 參數(native,實測 {a0} 倍)。`fullseye.apply` / `run_pipeline` 尚不會把它送到 GPU —— 請直接以 `device=\"cuda\"` 呼叫實作",
+   "ko": "- **GPU**: op 자체의 `device=` 인수(native, 실측 {a0}배). `fullseye.apply` / `run_pipeline` 은 아직 GPU로 보내지 않는다 —— 구현을 직접 `device=\"cuda\"` 로 호출",
+   "de": "- **GPU**: das eigene `device=`-Argument des Ops (native, gemessen {a0}x). `fullseye.apply` / `run_pipeline` schicken es noch nicht auf die GPU — die Implementierung direkt mit `device=\"cuda\"` aufrufen",
+   "hi": "- **GPU**: op का अपना `device=` argument (native, मापा गया {a0}x)। `fullseye.apply` / `run_pipeline` इसे अभी GPU पर नहीं भेजते —— implementation को सीधे `device=\"cuda\"` से call करें"
+  },
+  "- **GPU**: op 自身の `device=` 引数(native、実測 {a0} 倍で単独の門 5 倍に届かない)。`fullseye.apply` / `run_pipeline` からは GPU に送らない —— 実装を直接 `device=\"cuda\"` で呼ぶ": {
+   "en": "- **GPU**: the op's own `device=` argument (native, measured {a0}x, below the 5x gate for single calls). `fullseye.apply` / `run_pipeline` do not send it to the GPU — call the implementation directly with `device=\"cuda\"`",
+   "zh": "- **GPU**:op 自身的 `device=` 参数(native,实测 {a0} 倍,未达到单独调用的 5 倍门槛)。`fullseye.apply` / `run_pipeline` 不会把它送到 GPU —— 请直接以 `device=\"cuda\"` 调用实现",
+   "tw": "- **GPU**:op 自身的 `device=` 參數(native,實測 {a0} 倍,未達單獨呼叫的 5 倍門檻)。`fullseye.apply` / `run_pipeline` 不會把它送到 GPU —— 請直接以 `device=\"cuda\"` 呼叫實作",
+   "ko": "- **GPU**: op 자체의 `device=` 인수(native, 실측 {a0}배로 단독 호출의 5배 기준에 못 미침). `fullseye.apply` / `run_pipeline` 은 GPU로 보내지 않는다 —— 구현을 직접 `device=\"cuda\"` 로 호출",
+   "de": "- **GPU**: das eigene `device=`-Argument des Ops (native, gemessen {a0}x, unter der 5x-Schwelle für Einzelaufrufe). `fullseye.apply` / `run_pipeline` schicken es nicht auf die GPU — die Implementierung direkt mit `device=\"cuda\"` aufrufen",
+   "hi": "- **GPU**: op का अपना `device=` argument (native, मापा गया {a0}x, अकेली call की 5x सीमा से कम)। `fullseye.apply` / `run_pipeline` इसे GPU पर नहीं भेजते —— implementation को सीधे `device=\"cuda\"` से call करें"
   }
  }
 }

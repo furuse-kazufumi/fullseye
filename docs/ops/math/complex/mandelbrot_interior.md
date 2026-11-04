@@ -4,7 +4,7 @@ dim: math
 category: complex
 in: cimage
 out: mask
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_complex_plane_fields]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `cimage` → `mask`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mandelbrot_interior(c)` (実装を直接呼ぶなら `import mathops; mathops.mandelbrot_interior(c)`、台帳から引くなら `opsmath.get("mandelbrot_interior")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

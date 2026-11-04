@@ -14,7 +14,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 # lens_global_search — OPTICS `lensglobal` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.lens_global_search(system=None, variables=None, merit=None, n_starts: 'int' = 8, seed: 'int' = 0, spread: 'float' = 0.5, iterations: 'int' = 40, duplicate_tolerance: 'float' = 0.001) -> 'dict'` (実装を直接呼ぶなら `import lensglobal; lensglobal.lens_global_search(system=None, variables=None, merit=None, n_starts: 'int' = 8, seed: 'int' = 0, spread: 'float' = 0.5, iterations: 'int' = 40, duplicate_tolerance: 'float' = 0.001) -> 'dict'`、台帳から引くなら `opsoptics.get("lens_global_search")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lens_global_search(system=None, variables=None, merit=None, n_starts: 'int' = 8, seed: 'int' = 0, spread: 'float' = 0.5, iterations: 'int' = 40, duplicate_tolerance: 'float' = 0.001, device=None) -> 'dict'` (実装を直接呼ぶなら `import lensglobal; lensglobal.lens_global_search(system=None, variables=None, merit=None, n_starts: 'int' = 8, seed: 'int' = 0, spread: 'float' = 0.5, iterations: 'int' = 40, duplicate_tolerance: 'float' = 0.001, device=None) -> 'dict'`、台帳から引くなら `opsoptics.get("lens_global_search")`)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -36,6 +36,7 @@ holds every start's result sorted by merit (ties by start index): ``{"start", "m
 where ``duplicate_of`` is the ``start`` of an earlier (better) optimum with the same variables
 (every variable within *duplicate_tolerance* relative, floor 1e-9) or None. ``basins`` lists the
 distinct optima with the number of starts that reached each. Deterministic for a given seed.
+*device* is handed to ``lensopt.optimize_lens`` (``None`` = its default path).
 
 Example::
 

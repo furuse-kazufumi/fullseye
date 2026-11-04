@@ -5,7 +5,7 @@ category: arithmetic
 in: image
 out: image
 halcon: cos_image
-gpu: なし
+gpu: あり(cos_image)
 examples: [gallery2d_gray_arith]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "cos_image", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `cos_image`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(`cos_image`、`device="cuda"` で高速経路)
 
 ![cos_image: input → output](../../_fig/cos_image.png)
 

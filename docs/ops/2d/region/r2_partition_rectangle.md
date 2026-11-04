@@ -5,7 +5,7 @@ category: region
 in: region
 out: region
 halcon: partition_rectangle
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `region` → `region`
 - **呼び出し**: `fullseye.apply(img, "r2_partition_rectangle", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `partition_rectangle`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ![r2_partition_rectangle: input → output](../../_fig/r2_partition_rectangle.png)
 

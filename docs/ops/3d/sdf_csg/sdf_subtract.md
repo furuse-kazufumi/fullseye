@@ -4,7 +4,7 @@ dim: 3d
 category: sdf_csg
 in: sdf × sdf
 out: sdf
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [sdf_csg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `sdf × sdf` → `sdf`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sdf_subtract(a, b)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.sdf_subtract(a, b)`、台帳から引くなら `ops3d.get("sdf_subtract")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

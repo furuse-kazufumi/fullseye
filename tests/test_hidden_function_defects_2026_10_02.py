@@ -92,8 +92,8 @@ def test_the_names_deprecated_in_030_are_gone_in_040(mod, name, successor):
 
 def test_the_nurbs_successor_exists_and_the_halcon_facade_no_longer_points_at_the_removed_names():
     """旧 NURBS 2 本(0.5.0 で削除)の移行先 mathgeometry.nurbs_curve が在り、HALCON 名の facade 表が消した関数を
-    指さず、stubs の対応数も消した分だけ減っていること(HALCON の gen_contour_nurbs_xld は重みと節点を取る本物の NURBS で、
-    消した関数はそれに当たっていなかった)。"""
+    指さず(HALCON の gen_contour_nurbs_xld は重みと節点を取る本物の NURBS で、消した関数はそれに当たっていなかった)、
+    stubs ではその 2 名が消した関数でなく後継(nurbs_curve / gen_nurbs_interp)に対応していること。"""
     import json
     import mathgeometry as G
     assert callable(G.nurbs_curve)
@@ -102,6 +102,21 @@ def test_the_nurbs_successor_exists_and_the_halcon_facade_no_longer_points_at_th
     assert len(facade) > 500                      # 表が空なら下の not any は無条件に通る
     assert not any(str(v).startswith("contours_xld2.gen_") and "nurbs" in str(v) for v in facade.values())
     stubs = json.loads((root / "fullseye" / "data" / "halcon_stubs.json").read_text(encoding="utf-8"))
-    assert stubs["operators"]["gen_contour_nurbs_xld"]["covered"] is False
-    assert stubs["operators"]["gen_nurbs_interp"]["covered"] is False
-    assert stubs["n_covered"] == sum(1 for v in stubs["operators"].values() if v.get("covered"))
+    ops = stubs["operators"]
+    # ★2026-11-04(統合 GPU、第 6 便): 2 名は消した関数ではなく、HALCON と同じ仕事をする後継に対応づいた。
+    #   「対応なし」を外すだけでなく、何に対応しているかを表明する(消した関数を指さないことも続けて見る)。
+    #   - gen_contour_nurbs_xld(制御点・重み・節点・次数 → NURBS 曲線)→ 台帳の nurbs_curve。重みつき NURBS で
+    #     あることの閉形式の門: tests/test_mathgeometry.py::test_nurbs_circle_is_exact_and_misses_corner_points
+    #     (9 点の 2 次 NURBS が円そのもの、|r − R| < 1e-13)と ::test_nurbs_unit_weights_equal_scipy_bspline。
+    #   - gen_nurbs_interp(点列を全部通る NURBS の制御データ)→ 台帳の gen_nurbs_interp(mvtext)。補間の門:
+    #     tests/test_opsmv.py::test_nurbs_interpolation_passes_through_every_point と
+    #     ::test_nurbs_interpolation_reproduces_a_straight_line。
+    import fullseye as fs
+    for halcon, analog in (("gen_contour_nurbs_xld", "ledger:nurbs_curve"),
+                           ("gen_nurbs_interp", "ledger:gen_nurbs_interp")):
+        row = ops[halcon]
+        assert row["covered"] is True, halcon
+        assert analog in row["imgevolve_analogs"], (halcon, row["imgevolve_analogs"])
+        assert not any("contours_xld2" in a for a in row["imgevolve_analogs"]), (halcon, row["imgevolve_analogs"])
+        assert callable(getattr(fs.ledger, analog.split(":", 1)[1])), analog
+    assert stubs["n_covered"] == sum(1 for v in ops.values() if v.get("covered"))

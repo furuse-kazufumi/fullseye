@@ -306,6 +306,10 @@ KNOB_EXEMPT = {
     ("capture_degrade", "defocus_px"):
         "sub-pixel: a defocus disc of diameter <= 1 px centred on a pixel stays inside it "
         "(area-integrated kernel = identity); the probe sweeps 0.5 / 1 px from the default 0",
+    ("ct_scan_geometry", "pitch"):
+        "read only by scan='helical'; the probe runs the default circular cone orbit",
+    ("ct_scan_geometry", "tilt_deg"):
+        "read only by the laminography scans; the probe runs the default circular cone orbit",
 }
 
 

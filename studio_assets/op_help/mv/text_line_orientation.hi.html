@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">text_line_orientation — MV <code style="color:#22d3bf">text</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_line_orientation(image, max_angle=30.0, step=0.25)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mvtext; mvtext.text_line_orientation(image, max_angle=30.0, step=0.25)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmv.get(&quot;text_line_orientation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">text_line_orientation</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>प्रोजेक्शन की तीक्ष्णता अधिकतम करके पाठ पंक्तियों का झुकाव डिग्री में निकालता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>行の射影は傾きが合うと階段が最も鋭くなる。その鋭さ(隣り合う射影の差の 2 乗和)を <code style="color:#22d3bf">-max_angle .. max_angle</code> で走査する。角度の向きはこの repo の矩形と同じで、右へ進むと行が増える向きが正。インクが無い画像は 0.0 を返す(理由: 傾きを決める手がかりが無い)。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>image: 灰色画像か bool の領域 (H, W)。灰色は Otsu のしきい値で二値にする。</p>
+<p>max_angle: 走査の範囲(度、&gt; 0)。</p>
+<p>step: 走査の刻み(度、&gt; 0)。</p>
+<p>Returns:</p>
+<p>傾き(度)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">scalar</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">text</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:text_line_slant">text_line_slant</a> · <a style="color:#22d3bf" href="opmv:segment_characters">segment_characters</a> · <a style="color:#22d3bf" href="opmv:select_characters">select_characters</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvtext.py — MV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

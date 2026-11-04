@@ -27,7 +27,9 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 import type_connectivity as TC  # noqa: E402
 
 #: 入口として数える型の天井(2026-11-03 の実数)。増やすなら理由を台帳と commit に。
-MAX_ENTRY = 29
+# 2026-11-04(統合 GPU): 29 → 30。第 8 便の ctgeometry(ct_scan_geometry が引数だけで作る CT の幾何、
+#   coordgrid と同じ class d の入口)を TYPE_ROLES に足した分。
+MAX_ENTRY = 30
 #: 終端として数える型の天井(2026-11-03 の実数)。
 MAX_TERMINAL = 13
 #: 数えた母集団の床(門が空の索引を読んで素通りしないため)。

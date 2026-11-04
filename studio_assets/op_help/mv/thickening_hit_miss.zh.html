@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">thickening_hit_miss — MV <code style="color:#22d3bf">morphology</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mask × mask × mask</code> → <code style="color:#22d3bf">mask</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thickening_hit_miss(region, hit, miss, iterations=1)</code>(要直接调用实现,<code style="color:#22d3bf">import mvmorph; mvmorph.thickening_hit_miss(region, hit, miss, iterations=1)</code>;从台账取用则 <code style="color:#22d3bf">opsmv.get(&quot;thickening_hit_miss&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">thickening</code>(其含义与参数可参考 HALCON 手册)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>用任意结构元对加厚区域（<code style="color:#22d3bf">A ∪ HMT(A)</code>，重复 <code style="color:#22d3bf">iterations</code> 次）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>ヒットオアミスで一致した中心の画素を領域へ足す。中心はミス側に置く(ヒット側に置くと何も増えない)。変化が止まったら早く抜ける。空の入力(<code style="color:#22d3bf">region</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>region: 2-D の領域。</p>
+<p>hit: ヒットの構造要素(奇数辺の bool 配列)。</p>
+<p>miss: ミスの構造要素(同じ形)。</p>
+<p>iterations: 繰り返しの上限(&gt;= 1)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">region</code> と同じ形の bool 配列。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">mask</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opmv:hit_or_miss_golay">hit_or_miss_golay</a> · <a style="color:#22d3bf" href="opmv:hit_or_miss_seq">hit_or_miss_seq</a> · <a style="color:#22d3bf" href="opmv:thickening_golay">thickening_golay</a> · <a style="color:#22d3bf" href="opmv:thickening_seq">thickening_seq</a> · <a style="color:#22d3bf" href="opmv:morph_hat">morph_hat</a> · <a style="color:#22d3bf" href="opmv:morph_skiz">morph_skiz</a> · <a style="color:#22d3bf" href="opmv:opening_seg">opening_seg</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">morphology</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:golay_elements">golay_elements</a> · <a style="color:#22d3bf" href="opmv:hit_or_miss_golay">hit_or_miss_golay</a> · <a style="color:#22d3bf" href="opmv:hit_or_miss_seq">hit_or_miss_seq</a> · <a style="color:#22d3bf" href="opmv:thickening_golay">thickening_golay</a> · <a style="color:#22d3bf" href="opmv:thickening_seq">thickening_seq</a> · <a style="color:#22d3bf" href="opmv:morph_hat">morph_hat</a> · <a style="color:#22d3bf" href="opmv:morph_skiz">morph_skiz</a> · <a style="color:#22d3bf" href="opmv:opening_seg">opening_seg</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvmorph.py — MV 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

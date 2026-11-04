@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: connection
-gpu: なし
+gpu: 鎖の中だけ(lbl_cv_cc_count)
 examples: [gallery2d_features, genspark_external_review]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `region` → `feature`
 - **呼び出し**: `fullseye.apply(img, "cv_cc_count", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `connection`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(`lbl_cv_cc_count`)。隣の段も GPU のパイプラインでは GPU に載せたまま走る。単独の呼び出しは `device="cuda"` でも CPU(単独では CPU に勝たないと実測した)
 
 ![cv_cc_count: input → output](../../_fig/cv_cc_count.png)
 

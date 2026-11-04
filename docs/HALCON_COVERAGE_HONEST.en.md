@@ -1,5 +1,7 @@
-<!-- i18n-source-sha: ce86068760f5 -->
+<!-- i18n-source-sha: 4722b3bd13de -->
 # HALCON Coverage — the honest denominator (updated 2026-08-18)
+
+> 2026-11-02 note: the 2026-08 classification below was reviewed name by name. The current four-way split is in [HALCON_GAP_2026-11-02.md](HALCON_GAP_2026-11-02.md).
 
 [日本語](./HALCON_COVERAGE_HONEST.md) · **English**
 

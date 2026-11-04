@@ -1,0 +1,886 @@
+{
+ "generated_by": "tools/gen_halcon_opencl_parity.py",
+ "source": "docs/perf/halcon_2605_opencl_ops.json",
+ "total": 84,
+ "n1_fullseye": 84,
+ "n2_gpu": 36,
+ "n3_missing": 0,
+ "rows": [
+  {
+   "halcon": "binocular_disparity_ms",
+   "chapter": "3DRECONSTRUCTION",
+   "page": 319,
+   "fullseye_ops": [
+    "binocular_disparity_ms"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "binocular_distance_ms",
+   "chapter": "3DRECONSTRUCTION",
+   "page": 328,
+   "fullseye_ops": [
+    "binocular_distance_ms"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "depth_from_focus",
+   "chapter": "3DRECONSTRUCTION",
+   "page": 368,
+   "fullseye_ops": [
+    "depth_from_focus"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "reconstruct_surface_stereo",
+   "chapter": "3DRECONSTRUCTION",
+   "page": 380,
+   "fullseye_ops": [
+    "reconstruct_surface_stereo"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "change_radial_distortion_image",
+   "chapter": "CALIBRATION",
+   "page": 536,
+   "fullseye_ops": [
+    "change_radial_distortion_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "image_to_world_plane",
+   "chapter": "CALIBRATION",
+   "page": 544,
+   "fullseye_ops": [
+    "rectify_to_world_plane"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "abs_diff_image",
+   "chapter": "FILTERS",
+   "page": 1029,
+   "fullseye_ops": [
+    "abs_diff_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "abs_image",
+   "chapter": "FILTERS",
+   "page": 1030,
+   "fullseye_ops": [
+    "abs_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "acos_image",
+   "chapter": "FILTERS",
+   "page": 1031,
+   "fullseye_ops": [
+    "acos_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "add_image",
+   "chapter": "FILTERS",
+   "page": 1032,
+   "fullseye_ops": [
+    "add_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "affine_trans_image",
+   "chapter": "FILTERS",
+   "page": 1161,
+   "fullseye_ops": [
+    "affine_trans_image",
+    "affine_warp"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "affine_trans_image_size",
+   "chapter": "FILTERS",
+   "page": 1163,
+   "fullseye_ops": [
+    "affine_trans_image_size"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "asin_image",
+   "chapter": "FILTERS",
+   "page": 1033,
+   "fullseye_ops": [
+    "asin_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "atan2_image",
+   "chapter": "FILTERS",
+   "page": 1034,
+   "fullseye_ops": [
+    "atan2_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "atan_image",
+   "chapter": "FILTERS",
+   "page": 1034,
+   "fullseye_ops": [
+    "atan_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "binomial_filter",
+   "chapter": "FILTERS",
+   "page": 1259,
+   "fullseye_ops": [
+    "binomial_filter"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "cfa_to_rgb",
+   "chapter": "FILTERS",
+   "page": 1057,
+   "fullseye_ops": [
+    "cfa_to_rgb"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "convol_image",
+   "chapter": "FILTERS",
+   "page": 1204,
+   "fullseye_ops": [
+    "convol_image"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "cos_image",
+   "chapter": "FILTERS",
+   "page": 1035,
+   "fullseye_ops": [
+    "cos_image"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "derivate_gauss",
+   "chapter": "FILTERS",
+   "page": 1081,
+   "fullseye_ops": [
+    "derivate_gauss"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "deviation_image",
+   "chapter": "FILTERS",
+   "page": 1292,
+   "fullseye_ops": [
+    "deviation_image",
+    "std_filter"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "div_image",
+   "chapter": "FILTERS",
+   "page": 1036,
+   "fullseye_ops": [
+    "div_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "edges_image",
+   "chapter": "FILTERS",
+   "page": 1090,
+   "fullseye_ops": [
+    "canny",
+    "cv_canny",
+    "cv_scharr",
+    "edges_image",
+    "sk_canny",
+    "sk_farid",
+    "sk_scharr"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "edges_sub_pix",
+   "chapter": "FILTERS",
+   "page": 1093,
+   "fullseye_ops": [
+    "edges_sub_pix"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "exp_image",
+   "chapter": "FILTERS",
+   "page": 1037,
+   "fullseye_ops": [
+    "exp_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "gamma_image",
+   "chapter": "FILTERS",
+   "page": 1037,
+   "fullseye_ops": [
+    "gamma_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "gauss_filter",
+   "chapter": "FILTERS",
+   "page": 1264,
+   "fullseye_ops": [
+    "cv_gaussian",
+    "gauss_filter",
+    "gaussian"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "highpass_image",
+   "chapter": "FILTERS",
+   "page": 1098,
+   "fullseye_ops": [
+    "highpass",
+    "highpass_image"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "invert_image",
+   "chapter": "FILTERS",
+   "page": 1039,
+   "fullseye_ops": [
+    "invert",
+    "invert_image"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "linear_trans_color",
+   "chapter": "FILTERS",
+   "page": 1062,
+   "fullseye_ops": [
+    "linear_trans_color"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "lines_gauss",
+   "chapter": "FILTERS",
+   "page": 1196,
+   "fullseye_ops": [
+    "lines_gauss",
+    "sk_frangi",
+    "sk_hessian",
+    "sk_meijering"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "log_image",
+   "chapter": "FILTERS",
+   "page": 1040,
+   "fullseye_ops": [
+    "log_image",
+    "sk_adjust_log"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "lut_trans",
+   "chapter": "FILTERS",
+   "page": 1211,
+   "fullseye_ops": [
+    "f2_lut_trans"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "map_image",
+   "chapter": "FILTERS",
+   "page": 1166,
+   "fullseye_ops": [
+    "map_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "max_image",
+   "chapter": "FILTERS",
+   "page": 1040,
+   "fullseye_ops": [
+    "max_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "mean_image",
+   "chapter": "FILTERS",
+   "page": 1271,
+   "fullseye_ops": [
+    "cv_box",
+    "mean_box",
+    "mean_box_wh",
+    "mean_image"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "median_image",
+   "chapter": "FILTERS",
+   "page": 1276,
+   "fullseye_ops": [
+    "cv_median",
+    "median",
+    "median_image",
+    "sk_median_disk"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "median_rect",
+   "chapter": "FILTERS",
+   "page": 1278,
+   "fullseye_ops": [
+    "median_rect"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "min_image",
+   "chapter": "FILTERS",
+   "page": 1041,
+   "fullseye_ops": [
+    "min_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "mirror_image",
+   "chapter": "FILTERS",
+   "page": 1168,
+   "fullseye_ops": [
+    "mirror_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "mult_image",
+   "chapter": "FILTERS",
+   "page": 1042,
+   "fullseye_ops": [
+    "mult_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "points_harris",
+   "chapter": "FILTERS",
+   "page": 1235,
+   "fullseye_ops": [
+    "corner_response",
+    "cv_corner_harris",
+    "cv_min_eigen",
+    "sk_corner_harris"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "polar_trans_image_ext",
+   "chapter": "FILTERS",
+   "page": 1168,
+   "fullseye_ops": [
+    "polar_trans_image_ext"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "polar_trans_image_inv",
+   "chapter": "FILTERS",
+   "page": 1170,
+   "fullseye_ops": [
+    "polar_trans_image_inv"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "pow_image",
+   "chapter": "FILTERS",
+   "page": 1044,
+   "fullseye_ops": [
+    "gamma",
+    "pow_image"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "principal_comp",
+   "chapter": "FILTERS",
+   "page": 1063,
+   "fullseye_ops": [
+    "principal_comp"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "projective_trans_image",
+   "chapter": "FILTERS",
+   "page": 1172,
+   "fullseye_ops": [
+    "projective_trans_image"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "projective_trans_image_size",
+   "chapter": "FILTERS",
+   "page": 1174,
+   "fullseye_ops": [
+    "projective_trans_image_size"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "rgb1_to_gray",
+   "chapter": "FILTERS",
+   "page": 1064,
+   "fullseye_ops": [
+    "rgb1_to_gray"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "rgb3_to_gray",
+   "chapter": "FILTERS",
+   "page": 1065,
+   "fullseye_ops": [
+    "rgb3_to_gray"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "rotate_image",
+   "chapter": "FILTERS",
+   "page": 1175,
+   "fullseye_ops": [
+    "rotate_image",
+    "rotate_img"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "scale_image",
+   "chapter": "FILTERS",
+   "page": 1044,
+   "fullseye_ops": [
+    "cv_trunc",
+    "scale_clip",
+    "scale_image"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "sin_image",
+   "chapter": "FILTERS",
+   "page": 1046,
+   "fullseye_ops": [
+    "sin_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "sobel_amp",
+   "chapter": "FILTERS",
+   "page": 1112,
+   "fullseye_ops": [
+    "sobel_amp",
+    "sobel_mag"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "sobel_dir",
+   "chapter": "FILTERS",
+   "page": 1114,
+   "fullseye_ops": [
+    "sobel_dir"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "sqrt_image",
+   "chapter": "FILTERS",
+   "page": 1046,
+   "fullseye_ops": [
+    "sqrt_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "sub_image",
+   "chapter": "FILTERS",
+   "page": 1047,
+   "fullseye_ops": [
+    "sub_image"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "tan_image",
+   "chapter": "FILTERS",
+   "page": 1049,
+   "fullseye_ops": [
+    "tan_image"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "texture_laws",
+   "chapter": "FILTERS",
+   "page": 1294,
+   "fullseye_ops": [
+    "texture_laws"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "trans_from_rgb",
+   "chapter": "FILTERS",
+   "page": 1065,
+   "fullseye_ops": [
+    "trans_from_rgb"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "trans_to_rgb",
+   "chapter": "FILTERS",
+   "page": 1072,
+   "fullseye_ops": [
+    "trans_to_rgb"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "zoom_image_factor",
+   "chapter": "FILTERS",
+   "page": 1177,
+   "fullseye_ops": [
+    "rescale_img",
+    "zoom_image_factor"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "zoom_image_size",
+   "chapter": "FILTERS",
+   "page": 1178,
+   "fullseye_ops": [
+    "zoom_image_size"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "area_center_gray",
+   "chapter": "IMAGE",
+   "page": 1646,
+   "fullseye_ops": [
+    "area_center_gray"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "convert_image_type",
+   "chapter": "IMAGE",
+   "page": 1694,
+   "fullseye_ops": [
+    "it_convert_image_type"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "crop_domain",
+   "chapter": "IMAGE",
+   "page": 1677,
+   "fullseye_ops": [
+    "it_crop_domain"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "crop_part",
+   "chapter": "IMAGE",
+   "page": 1679,
+   "fullseye_ops": [
+    "it_crop_part"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "crop_rectangle1",
+   "chapter": "IMAGE",
+   "page": 1680,
+   "fullseye_ops": [
+    "it_crop_rectangle1"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "crop_rectangle2",
+   "chapter": "IMAGE",
+   "page": 1681,
+   "fullseye_ops": [
+    "crop_rectangle2"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "gray_histo",
+   "chapter": "IMAGE",
+   "page": 1661,
+   "fullseye_ops": [
+    "gray_histo"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "gray_projections",
+   "chapter": "IMAGE",
+   "page": 1665,
+   "fullseye_ops": [
+    "gray_projections"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "gauss_image",
+   "chapter": "LEGACY",
+   "page": 1800,
+   "fullseye_ops": [
+    "gauss_image"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "polar_trans_image",
+   "chapter": "LEGACY",
+   "page": 1801,
+   "fullseye_ops": [
+    "polar_trans_image",
+    "sk_swirl"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "find_ncc_model",
+   "chapter": "MATCHING",
+   "page": 1927,
+   "fullseye_ops": [
+    "ncc_locate"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "find_ncc_models",
+   "chapter": "MATCHING",
+   "page": 1931,
+   "fullseye_ops": [
+    "find_ncc_models"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "gray_closing_rect",
+   "chapter": "MORPHOLOGY",
+   "page": 2192,
+   "fullseye_ops": [
+    "gray_closing_rect"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "gray_closing_shape",
+   "chapter": "MORPHOLOGY",
+   "page": 2193,
+   "fullseye_ops": [
+    "gray_closing_shape"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "gray_dilation_rect",
+   "chapter": "MORPHOLOGY",
+   "page": 2195,
+   "fullseye_ops": [
+    "gray_dilation_rect",
+    "max_filter"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "gray_dilation_shape",
+   "chapter": "MORPHOLOGY",
+   "page": 2196,
+   "fullseye_ops": [
+    "gray_dilation_shape"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "gray_erosion_rect",
+   "chapter": "MORPHOLOGY",
+   "page": 2198,
+   "fullseye_ops": [
+    "gray_erosion_rect",
+    "min_filter"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "gray_erosion_shape",
+   "chapter": "MORPHOLOGY",
+   "page": 2199,
+   "fullseye_ops": [
+    "gray_erosion_shape"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "gray_opening_rect",
+   "chapter": "MORPHOLOGY",
+   "page": 2201,
+   "fullseye_ops": [
+    "gray_opening_rect"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  },
+  {
+   "halcon": "gray_opening_shape",
+   "chapter": "MORPHOLOGY",
+   "page": 2202,
+   "fullseye_ops": [
+    "gray_opening_shape"
+   ],
+   "gpu_path": false,
+   "note": "Fullseye 対応あり(CPU のみ)"
+  },
+  {
+   "halcon": "gray_range_rect",
+   "chapter": "MORPHOLOGY",
+   "page": 2203,
+   "fullseye_ops": [
+    "cv_gradient",
+    "gray_range_rect",
+    "morph_grad"
+   ],
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
+  }
+ ]
+}

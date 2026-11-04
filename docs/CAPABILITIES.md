@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 98 項目**
+**収録 99 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -31,6 +31,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
 | [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
+| [コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾何で再構成する(工業用 CT)](capabilities/ct-scan-modes.md) | `ct_scan_geometry` → `ellipsoid_projections` → `fdk_reconstruct` → `vol_rle_components` → `vol_rle_volume` | `ct_scan_modes` |
 | [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [フーリエ・タイコグラフィ(LED の斜め照明の像の組 → 位相回復で高 NA の振幅と位相、収束しなければ拒否)](capabilities/fourier-ptychography.md) | `fp_design` → `fp_stack_from_images` → `fp_reconstruct` → `fp_element_contrast` | `poc_fourier_ptychography` |
@@ -760,7 +761,23 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 動く例: `poc_template_tracking`, `gallery2d_contour_measure`, `poc_search_sweep_width`
 
-## 形にする (3)
+## 形にする (4)
+
+### [コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾何で再構成する(工業用 CT)](capabilities/ct-scan-modes.md)
+
+線源と検出器の位置を view ごとに持つ 1 つの記述(`ct_scan_geometry`)から、コーンビーム、ヘリカル、ラミノグラフィ、ファンビーム(等間隔・等角)、ショートスキャン、検出器オフセット、トモシンセシス、少数ビュー、制限角を同じ投影と逆投影の核で再構成します。楕円体の閉形式の投影(`ellipsoid_projections`)を真値に使うので、再構成の誤差を投影器の誤差と分けて測れます。GPU があれば `device="auto"` で GPU に載ります。
+
+使う op: `ct_scan_geometry`, `ellipsoid_projections`, `fdk_reconstruct`, `sirt_reconstruct`, `tv_reconstruct`
+
+推奨パイプライン: [`ct_scan_geometry`](ops/tomography/ct_scan/ct_scan_geometry.md) → [`ellipsoid_projections`](ops/tomography/ct_scan/ellipsoid_projections.md) → [`fdk_reconstruct`](ops/tomography/ct_scan/fdk_reconstruct.md) → [`vol_rle_components`](ops/3d/rle_region/vol_rle_components.md) → [`vol_rle_volume`](ops/3d/rle_region/vol_rle_volume.md)
+
+代替: [`sirt_reconstruct`](ops/tomography/ct_scan/sirt_reconstruct.md), [`os_sart_reconstruct`](ops/tomography/ct_scan/os_sart_reconstruct.md), [`tv_reconstruct`](ops/tomography/ct_scan/tv_reconstruct.md), [`ct_forward_project`](ops/tomography/ct_scan/ct_forward_project.md), [`ct_adjoint_project`](ops/tomography/ct_scan/ct_adjoint_project.md)
+
+限界: FDK は中央面でだけ厳密で、コーン角が増えると Feldkamp アーチファクトが増える(`test_feldkamp_artifact_grows_with_cone_angle`)。ヘリカルは近似の重み付き FDK で、Katsevich の厳密解ではない。ラミノグラフィとトモシンセシスは軸のまわりの周波数を測っていないので、深さ方向の分解能はフィルタでは戻らない。TV は対象が区分的に一定という仮定で埋めるので、残差が小さいことは真値の証拠にならない。
+
+実寸校正: 線源・検出器距離(`dso`, `dsd`)と検出器ピッチは幾何の値がそのまま振幅に効く。既知寸法のファントムを再構成してボクセルピッチを実測する。回転中心のずれは `offset_u` で与える。
+
+動く例: `ct_scan_modes`
 
 ### [レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)](capabilities/lens-distortion-correction.md)
 

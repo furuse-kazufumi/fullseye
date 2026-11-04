@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">이 가이드는 일본어만 있습니다(사람이 쓴 산문이라 기계적으로 치환하지 않았습니다).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">工業用ビジョンの定番の演算 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>工業用の画像処理の現場でよく呼ばれる古典の演算を、1 つの台帳にまとめた族です。47 op / 10 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opsmv.py</code>、実体は <code style="color:#22d3bf">mvimage.py</code> / <code style="color:#22d3bf">mvstereo.py</code> / <code style="color:#22d3bf">mvmorph.py</code> / <code style="color:#22d3bf">mvtrack.py</code> / <code style="color:#22d3bf">mvclass.py</code> / <code style="color:#22d3bf">mvtext.py</code> と既存のモジュール)。</p>
+<p style="margin:2px 0 2px 12px">• <b>stereo(3)</b> — <code style="color:#22d3bf">binocular_disparity_ms</code> / <code style="color:#22d3bf">binocular_distance_ms</code> / <code style="color:#22d3bf">reconstruct_surface_stereo</code>: 平行化した 2 枚 → 視差 → 距離 → 点群。無効の画素は NaN。</p>
+<p style="margin:2px 0 2px 12px">• <b>resample(4)</b> — <code style="color:#22d3bf">map_image</code> / <code style="color:#22d3bf">rectify_to_world_plane</code> / <code style="color:#22d3bf">change_radial_distortion_image</code> / <code style="color:#22d3bf">crop_rectangle2</code>: 写像の適用、平面の正面図、除算モデルの歪みの変換、回転矩形の切り出し。</p>
+<p style="margin:2px 0 2px 12px">• <b>gray(5)</b> — <code style="color:#22d3bf">atan2_image</code> / <code style="color:#22d3bf">area_center_gray</code> / <code style="color:#22d3bf">gray_histo</code> / <code style="color:#22d3bf">gray_projections</code> / <code style="color:#22d3bf">get_grayval_contour_xld</code>: 灰色値を重みにした計測と、輪郭に沿った読み取り。</p>
+<p style="margin:2px 0 2px 12px">• <b>detect(3)</b> — <code style="color:#22d3bf">points_lepetit</code> / <code style="color:#22d3bf">create_ncc_model</code> / <code style="color:#22d3bf">find_ncc_models</code>: 注目点と複数テンプレート。</p>
+<p style="margin:2px 0 2px 12px">• <b>pose(1)</b> — <code style="color:#22d3bf">get_circle_pose</code>: 楕円の像から 3-D の円(解は 2 つ)。</p>
+<p style="margin:2px 0 2px 12px">• <b>morphology(9)</b> — <code style="color:#22d3bf">golay_elements</code> / <code style="color:#22d3bf">hit_or_miss_golay</code> / <code style="color:#22d3bf">hit_or_miss_seq</code> / <code style="color:#22d3bf">thickening_hit_miss</code> / <code style="color:#22d3bf">thickening_golay</code> / <code style="color:#22d3bf">thickening_seq</code> / <code style="color:#22d3bf">morph_hat</code> / <code style="color:#22d3bf">morph_skiz</code> / <code style="color:#22d3bf">opening_seg</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>curve(1)</b> — <code style="color:#22d3bf">gen_nurbs_interp</code>: 点列を全部通る B スプライン。<code style="color:#22d3bf">nurbs_curve</code> へ渡せる。</p>
+<p style="margin:2px 0 2px 12px">• <b>tracking(5)</b> — <code style="color:#22d3bf">filter_kalman</code> / <code style="color:#22d3bf">create_bg_esti</code> / <code style="color:#22d3bf">run_bg_esti</code> / <code style="color:#22d3bf">give_bg_esti</code> / <code style="color:#22d3bf">update_bg_esti</code>: カルマンの 1 周期と画素ごとの背景推定。</p>
+<p style="margin:2px 0 2px 12px">• <b>classify(12)</b> — <code style="color:#22d3bf">train_class_gmm</code> / <code style="color:#22d3bf">classify_class_gmm</code> / <code style="color:#22d3bf">evaluate_class_gmm</code> / <code style="color:#22d3bf">train_class_knn</code> / <code style="color:#22d3bf">classify_class_knn</code> / <code style="color:#22d3bf">train_class_mlp</code> / <code style="color:#22d3bf">classify_class_mlp</code> / <code style="color:#22d3bf">train_class_svm</code> / <code style="color:#22d3bf">classify_class_svm</code> / <code style="color:#22d3bf">create_lexicon</code> / <code style="color:#22d3bf">lookup_lexicon</code> / <code style="color:#22d3bf">suggest_lexicon</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>text(4)</b> — <code style="color:#22d3bf">text_line_orientation</code> / <code style="color:#22d3bf">text_line_slant</code> / <code style="color:#22d3bf">segment_characters</code> / <code style="color:#22d3bf">select_characters</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 다이어그램(소스):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[平行化した 2 枚] --&gt; B[binocular_disparity_ms]
+    B --&gt; C[reconstruct_surface_stereo]
+    D[校正の写像表] --&gt; E[map_image]
+    F[姿勢と内部パラメータ] --&gt; G[rectify_to_world_plane]
+    H[連続画像] --&gt; I[run_bg_esti] --&gt; J[領域の op]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最初の 1 本</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+rng = np.random.default_rng(0)
+right = rng.random((48, 96))
+left = np.roll(right, 6, axis=1)                     # 真の視差は 6 画素
+res = fs.ledger.binocular_disparity_ms(left, right, max_disp=12)
+print(float(np.nanmedian(res[&quot;disparity&quot;])))         # 6.0</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">組み合わせ</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">binocular_disparity_ms</code> → <code style="color:#22d3bf">reconstruct_surface_stereo</code>: 返りの <code style="color:#22d3bf">disparity</code> をそのまま渡す。NaN は点を作らない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gen_radial_distortion_map</code> → <code style="color:#22d3bf">map_image</code>: 写像表の <code style="color:#22d3bf">row_map</code> / <code style="color:#22d3bf">col_map</code> をそのまま適用する。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">find_caltab</code> / <code style="color:#22d3bf">find_marks_and_pose</code> → <code style="color:#22d3bf">rectify_to_world_plane</code>: 求めた姿勢で平面の正面図を作り、画素を実寸で測る。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gen_nurbs_interp</code> → <code style="color:#22d3bf">nurbs_curve</code>: 点列を通る曲線を任意の密度で標本化する。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">create_bg_esti</code> → <code style="color:#22d3bf">run_bg_esti</code> → <code style="color:#22d3bf">opening_circle</code> などの領域の op: 前景の <code style="color:#22d3bf">mask</code> を後段へ渡す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">落とし穴</h3>
+<p style="margin:2px 0 2px 12px">• <b><code style="color:#22d3bf">binocular_disparity_ms</code> の返りは NaN を含む。</b> 左端の <code style="color:#22d3bf">max_disp</code> 列と左右一致で落ちた画素は無効。平均を取る前に <code style="color:#22d3bf">valid</code> を見る。</p>
+<p style="margin:2px 0 2px 12px">• <b><code style="color:#22d3bf">image_to_world_plane</code> と <code style="color:#22d3bf">rectify_to_world_plane</code> は別物。</b> 前者は点を写す校正族の op で、後者が画像を平行化する。</p>
+<p style="margin:2px 0 2px 12px">• <b><code style="color:#22d3bf">gray_projections</code> は和ではなく平均。</b> 領域の画素が無い行と列は 0.0 になる。</p>
+<p style="margin:2px 0 2px 12px">• <b><code style="color:#22d3bf">gray_histo</code> は <code style="color:#22d3bf">[0, 1]</code> の外の画素を拒む。</b> 8 bit の配列は 255 で割ってから渡す。</p>
+<p style="margin:2px 0 2px 12px">• <b>Golay の文字は 5 つだけ。</b> <code style="color:#22d3bf">l</code> / <code style="color:#22d3bf">m</code> / <code style="color:#22d3bf">e</code> / <code style="color:#22d3bf">i</code> は教科書の形、<code style="color:#22d3bf">c</code> はこの repo の定義で、他の製品の同名の文字と同じ形かは確かめていない。<code style="color:#22d3bf">thickening_seq(region, &quot;c&quot;)</code> は 4 連結の領域を外接矩形まで埋める。凸包ではない。</p>
+<p style="margin:2px 0 2px 12px">• <b><code style="color:#22d3bf">get_circle_pose</code> の解は 2 つ。</b> 1 枚の像からは区別できない。別の手がかりで選ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>向きの規約。</b> <code style="color:#22d3bf">crop_rectangle2</code> の <code style="color:#22d3bf">phi</code> はこの repo の矩形と同じで、正だと右へ進むほど行が増える。行の軸が下向きなので、反時計回りを正とする慣習とは符号が逆になる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">出典</h3>
+<p>各 op の docstring に論文と教科書を挙げた。Lepetit と Fua(2006)、Hirschmüller(2008)、Lenz と Fritsch(1990)、Shiu と Ahmad(1989)、Ridder ほか(1995)、Piegl と Tiller(1997)、Serra(1982)、Soille(2003)。</p>

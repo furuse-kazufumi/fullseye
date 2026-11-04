@@ -20,11 +20,67 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 
+def _write_md(payload: dict, md_path: Path) -> None:
+    """``payload``(JSON と同じ構造)から順位表 Markdown を書く。PoC は再実行しない。
+
+    手書きしない(AGENTS.md: 生成物の唯一の入口)。``--md`` はこの関数だけを使い、
+    既に測った JSON から表を起こす —— PoC を回し直さずに表記だけ直せる。
+    """
+    rows = payload["ops"]
+    runs = payload.get("runs", [])
+    lines = ["# Op time ranking — 2026-11-02", "",
+             "実行したPoCで `ops.RT` に到達した呼び出しだけを実測した。総時間順。",
+             "", "| rank | op | 族 | GPU | calls | 1回 ms | 合計 s |",
+             "|---:|---|---|---|---:|---:|---:|"]
+    for rank, row in enumerate(rows[:40], 1):
+        lines.append("| %d | `%s` | %s | %s | %d | %.3f | %.3f |" %
+                     (rank, row["op"], row["family"], row["gpu"] or "なし", row["calls"],
+                      row["mean_ms"], row["total_s"]))
+    missing = defaultdict(lambda: {"ops": 0, "total_s": 0.0})
+    for row in rows[:40]:
+        if not row["gpu"]:
+            missing[row["family"]]["ops"] += 1
+            missing[row["family"]]["total_s"] += row["total_s"]
+    lines += ["", "## 上位40のGPU未対応内訳", "",
+              "| 族 | op数 | 合計 s |", "|---|---:|---:|"]
+    for family, value in sorted(missing.items(), key=lambda item: (-item[1]["total_s"], item[0])):
+        lines.append("| %s | %d | %.3f |" % (family, value["ops"], value["total_s"]))
+    # 所見: PoC は CPU 前提の寸法で作られているので合計時間は小さい。GPU の価値は寸法で決まる。
+    top = rows[0] if rows else {"op": "-", "total_s": 0.0}
+    total_all = sum(r["total_s"] for r in rows)
+    lines += ["", "## 所見", "",
+              "実行した %d 本の PoC で `ops.RT` に到達した op は %d 種、総時間は合計 %.1f s。"
+              % (len(runs), len(rows), total_all),
+              "最も重い op でも合計 **%.1f s**(`%s`)で、時間×頻度の順位では GPU の出番は見えない。"
+              % (top["total_s"], top["op"]),
+              "既存 PoC は CPU 前提の寸法で作られているから小さいだけで、**GPU の価値は"
+              "「実寸」で決まる**(`docs/perf/gpu_required_2026-11-02.md` の寸法×時間表を参照)。",
+              "",
+              "MCP e2e 20 課題(#224)の op 時間は未計測(この便ではローカルに実行器を立てていない)。"
+              "立てた回に同じ JSON へ追記する。"]
+    lines += ["", "## Workloads", ""]
+    for run in runs:
+        lines.append("- `%s`: %s, %.3f s%s" %
+                     (run["script"], run["status"], run["elapsed_s"],
+                      " — " + run["error"] if run["error"] else ""))
+    md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("scripts", nargs="+", help="Python scripts, relative to the checkout")
-    parser.add_argument("--out", required=True, help="JSON output path")
+    parser.add_argument("scripts", nargs="*", help="Python scripts, relative to the checkout")
+    parser.add_argument("--out", help="JSON output path (profiling mode)")
+    parser.add_argument("--md", help="既存の JSON から .md を起こすだけ(PoC は再実行しない)")
     args = parser.parse_args()
+
+    if args.md:
+        src = Path(args.md)
+        payload = json.loads(src.read_text(encoding="utf-8"))
+        _write_md(payload, src.with_suffix(".md"))
+        print("rendered %s from %s" % (src.with_suffix(".md"), src))
+        return 0
+    if not args.out or not args.scripts:
+        raise SystemExit("profiling mode needs scripts and --out; or use --md <json>")
 
     import accel_bridge
     import ops

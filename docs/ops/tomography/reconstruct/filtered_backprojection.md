@@ -4,7 +4,7 @@ dim: tomography
 category: reconstruct
 in: sinogram
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [ct_reconstruction, poc_aoi_ct_traceability, poc_ct_fidelity, poc_sem_tem_same_particle]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,8 +14,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 # filtered_backprojection — TOMOGRAPHY `reconstruct` op
 
 - **データ種**: `sinogram` → `image2d`
-- **呼び出し**: `import fullseye as fs; fs.ledger.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None, _op='filtered_backprojection')` (実装を直接呼ぶなら `import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None, _op='filtered_backprojection')`、台帳から引くなら `opstomography.get("filtered_backprojection")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **呼び出し**: `import fullseye as fs; fs.ledger.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None, _op='filtered_backprojection', device='cpu')` (実装を直接呼ぶなら `import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None, _op='filtered_backprojection', device='cpu')`、台帳から引くなら `opstomography.get("filtered_backprojection")`)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 
@@ -85,6 +85,8 @@ the sharpest and the noisiest; ``"shepp-logan"``, ``"cosine"``, ``"hann"`` and
     range the views actually cover, inferred from the angle list (exact for
     a uniform grid over any span and for any full-coverage irregular set
     such as golden angle; see :func:`_span_weight`).
+:param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+    ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
 :returns: ``(size, size)`` float64 image.
 :raises ValueError: on a non-2-D or non-finite sinogram, an angle count that
     disagrees with the row count, an unknown filter, a cutoff outside

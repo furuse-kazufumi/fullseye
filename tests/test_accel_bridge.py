@@ -38,9 +38,10 @@ def test_core_to_accel_injective():
 
 
 def test_plan_segments_mixed():
-    # rotate_img = scipy order=3 B-spline(IIR 前置フィルタ)で bit-faithful な
-    # GPU 化が不能と判定済みの恒久 CPU op(dog は 2026-08-31 に GPU 化されたので交代)
-    st = [ops.stage("median", 0.5, 0.4), ops.stage("rotate_img", 0.5, 0.4),
+    # 手書きの GPU 経路の無い CPU op の代表。rotate_img(scipy order=3 B-spline)は GPU 第 3 便で
+    # parity < 5e-3 の核が採用され(accel.FILL3_ADOPTED)、kuwahara に交代(2026-11-04 の統合)。
+    # (dog は 2026-08-31 に GPU 化されたので rotate_img に交代していた)
+    st = [ops.stage("median", 0.5, 0.4), ops.stage("kuwahara", 0.5, 0.4),
           ops.stage("threshold", 0.3, 0.4)]
     segs = B.plan(st)
     assert [k for k, _ in segs] == ["gpu", "cpu", "gpu"]
@@ -69,7 +70,7 @@ def test_all_accel_equals_run_pipeline():
 
 
 def test_all_cpu_equals_core():
-    st = [ops.stage("rotate_img", 0.5, 0.4)]
+    st = [ops.stage("kuwahara", 0.5, 0.4)]
     imgs = _imgs()
     out = B.run(st, imgs, device="cpu")
     for a, im in zip(out, imgs):
@@ -77,12 +78,12 @@ def test_all_cpu_equals_core():
 
 
 def test_coverage_counts():
-    st = [ops.stage("median", 0.5, 0.4), ops.stage("rotate_img", 0.5, 0.4),
+    st = [ops.stage("median", 0.5, 0.4), ops.stage("kuwahara", 0.5, 0.4),
           ops.stage("threshold", 0.3, 0.4)]
     cov = B.coverage(st)
     assert cov["n_total"] == 3 and cov["n_gpu"] == 2 and cov["n_cpu"] == 1
     assert cov["n_gpu_segments"] == 2
-    assert cov["uncovered_ops"] == ["rotate_img"]
+    assert cov["uncovered_ops"] == ["kuwahara"]
 
 
 def test_dog_is_gpu_covered():

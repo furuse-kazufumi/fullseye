@@ -4,7 +4,7 @@ dim: drive
 category: swarmflow
 in: signal × scalar
 out: signal
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_swarm_obstacle_from_flow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × scalar` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sph_kernel(r, h: 'float', dim: 'int' = 2, derivative: 'bool' = False) -> 'np.ndarray'` (実装を直接呼ぶなら `import swarmflow; swarmflow.sph_kernel(r, h: 'float', dim: 'int' = 2, derivative: 'bool' = False) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("sph_kernel")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ## 使い方
 

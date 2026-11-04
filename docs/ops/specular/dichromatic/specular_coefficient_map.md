@@ -4,7 +4,7 @@ dim: specular
 category: dichromatic
 in: rgbimage
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.specular_coefficient_map(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)` (実装を直接呼ぶなら `import specularity; specularity.specular_coefficient_map(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)`、台帳から引くなら `opsspecular.get("specular_coefficient_map")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(12,582,912 画素)以上で GPU を選ぶ
 
 ## 使い方
 

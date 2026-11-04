@@ -4,7 +4,7 @@ dim: reprconv
 category: score
 in: voxel × voxel
 out: score
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_leak_localization, representation_conversion, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel × voxel` → `score`
 - **呼び出し**: `import fullseye as fs; fs.ledger.correlation_score(voxel_a, voxel_b)` (実装を直接呼ぶなら `import reprconv; reprconv.correlation_score(voxel_a, voxel_b)`、台帳から引くなら `opsreprconv.get("correlation_score")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(16,777,216 画素)以上で GPU を選ぶ
 
 ## 使い方
 

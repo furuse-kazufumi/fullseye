@@ -4,7 +4,7 @@ dim: drive
 category: grind
 in: image2d × scalar
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_dose_uniformity_from_grinding, poc_powder_grinding_ae]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.particle_image_d50(image, pitch: 'float', basis: 'str' = 'volume', threshold: 'float' = 0.02, border: 'str' = 'exclude') -> 'dict'` (実装を直接呼ぶなら `import grind; grind.particle_image_d50(image, pitch: 'float', basis: 'str' = 'volume', threshold: 'float' = 0.02, border: 'str' = 'exclude') -> 'dict'`、台帳から引くなら `opsdrive.get("particle_image_d50")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

@@ -75,11 +75,26 @@ operator names, sort mismatches, out-of-range knobs and unknown arguments are al
 explicitly — nothing is coerced to "the nearest thing".
 
 Every tool that runs operators accepts `device` (default `cpu`, so the same call gives the same
-numbers on every host; `auto` = CUDA when the host has it, otherwise CPU; `FULLSEYE_DEVICE` overrides; `cuda` on a CPU-only host runs on the CPU with the
-reason recorded per op, as before). The result carries `acceleration` (`requested`, effective
-`device`, `approximate: true` only when it really ran on CUDA) and the GPU/CPU
-segment plan; pass `parity_check: true` to also run the CPU reference and record
-`max_abs_diff_vs_cpu` (doubles the work, so it is opt-in).
+numbers on every host; `auto` = CUDA when the host has it,
+otherwise CPU; `FULLSEYE_DEVICE` overrides; `cuda` on a CPU-only host runs on the CPU with the
+reason recorded per op, as before). On a CUDA host `auto` also keeps the work on the CPU when
+the measured crossover table (`fullseye/data/DEVICE_RULES.json`) says the GPU does not win at
+this size, when an op without a hand-written GPU path is not on the measured allow-list
+(`fullseye/data/gpu_auto_allow.json`, run through CuPy) or is smaller than the size it was
+measured at, and when free VRAM is below `FULLSEYE_GPU_MIN_FREE_MB` (default 2048; `0` turns
+the check off) — e.g. a local LLM holding the same GPU. Explicit `cuda` and `FULLSEYE_DEVICE`
+outrank all of these. The result carries `acceleration` (`requested`, effective
+`device`, `approximate: true` only when it really ran on CUDA, plus `path` —
+`accel` / `allow_single` / `allow_resident` / `allow_pipeline` / `cpu` — and `reason` when the
+CPU was chosen: `requested_cpu`, `env_cpu`, `no_cuda`, `vram_low`, `crossover`, `not_listed`,
+`chain_only`, `no_cupy`, `below_measured_size`, `gpu_failed`; `fullseye_pipeline` adds one row
+per stage) and the GPU/CPU segment plan; pass `parity_check: true` to also run the CPU reference
+and record `max_abs_diff_vs_cpu` (doubles the work, so it is opt-in). `fullseye_describe`
+(kind `op`) returns `gpu_paths` — whether the op has a hand-written GPU path, every matching
+route (`kind` accel / native / shadow, where it may be used — single call, resident chain,
+pipeline — and the measured speed-up), the primary route, and the size from which `auto` picks
+the GPU — so an agent can choose before it runs anything. In Python: `fullseye.explain_device(...)`;
+the one function that decides an op's GPU route is `gpu_route.route(op, context)`.
 The `minimal` tool profile advertises `fullseye_pipeline` without `device` / `parity_check`
 (they are still accepted; the minimal profile stays under its 1,500-token budget).
 
@@ -112,7 +127,7 @@ plain C ABI there are no per-language bindings to maintain: Python (`ctypes`,
 toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1, CPython 3.11
 as of 2026-09-15) rather than which ones exist.
 
-What this is **not**: it is not the Python library (3,752 operators in the machine-readable
+What this is **not**: it is not the Python library (3,810 operators in the machine-readable
 index) in another language. Its
 purpose is to be a *second implementation* of a small contract, so that a differential
 fuzzer and a header-including C caller can find specification bugs the Python tests cannot
@@ -126,7 +141,7 @@ language wins, and the losses were SIMD losses; see `CHANGELOG.md` 0.1.11.
 **Every operator of the 2-D registry (947 single-input operators; the 964 2-D operators of the
 index minus the 17 n-ary ones; those whose backend is installed) is reachable through
 `fs_apply`; the five contract operators also have a native route. Look at `route`.** The typed
-ledgers (2,788 operators whose inputs are point clouds, signals, tables …) and the n-ary
+ledgers (2,846 operators whose inputs are point clouds, signals, tables …) and the n-ary
 operators cannot be carried by one image / region handle and are refused with a status code and
 a reason — a later stage, not a silent gap. `fs_apply(op, inputs, n_in, params_json, route_pref, outputs,
 out_cap, n_out, info)` names the operator as a string and takes its parameters as a JSON

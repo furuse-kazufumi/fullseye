@@ -1,0 +1,99 @@
+{
+ "rows": {
+  "radon_transform": {
+   "desc": "1024² 180 views",
+   "gpu_s": 0.23238589998800308
+  },
+  "radon_volume": {
+   "desc": "8 x 512² 180 views",
+   "gpu_s": 0.47131950000766665
+  },
+  "backproject_sinogram": {
+   "desc": "1024² 180 views",
+   "gpu_s": 0.036906199995428324
+  },
+  "filtered_backprojection": {
+   "desc": "1024² 180 views",
+   "gpu_s": 0.0389614999294281
+  },
+  "fbp_volume": {
+   "desc": "8 x 512² 180 views",
+   "gpu_s": 0.08624129998497665
+  },
+  "sart_reconstruct": {
+   "desc": "256² 180 views 3 sweeps",
+   "gpu_s": 0.9065326999407262
+  },
+  "piv_cross_correlate": {
+   "desc": "2048² win32 ov0.5",
+   "gpu_s": 0.024045900092460215
+  },
+  "piv_multipass": {
+   "desc": "2048² win64/32",
+   "gpu_s": 0.048040300025604665
+  },
+  "piv_ensemble_correlate": {
+   "desc": "16 x 1024² win32",
+   "gpu_s": 0.035892699961550534
+  },
+  "plane_sweep_depth": {
+   "desc": "1024² 64 depths win5",
+   "gpu_s": 0.07986069994512945
+  },
+  "joint_bilateral": {
+   "desc": "2048² sigma 3",
+   "gpu_s": 1.3999721000436693
+  },
+  "temporal_bilateral": {
+   "desc": "60 x 1024² window 5",
+   "gpu_s": 0.5115649000508711
+  },
+  "voxel_grid_downsample": {
+   "desc": "1e7 points",
+   "gpu_s": 0.08148980000987649
+  },
+  "occupancy_grid": {
+   "desc": "1e7 points 256³",
+   "gpu_s": 0.035446600057184696
+  },
+  "photometric_stereo": {
+   "desc": "12 x 2048²",
+   "gpu_s": 0.158788500004448
+  },
+  "points_to_voxel": {
+   "desc": "1e7 points 256³",
+   "gpu_s": 0.7984672000166029
+  },
+  "scene_flow_lk": {
+   "desc": "128³",
+   "gpu_s": 0.05991730000823736
+  }
+ },
+ "gpu": "NVIDIA GeForce RTX 5090",
+ "torch": "2.11.0+cu128",
+ "runs": [
+  {
+   "start": "2026-11-02T16:37:17",
+   "end": "2026-11-02T16:38:10",
+   "names": [
+    "backproject_sinogram",
+    "fbp_volume",
+    "filtered_backprojection",
+    "joint_bilateral",
+    "occupancy_grid",
+    "photometric_stereo",
+    "piv_cross_correlate",
+    "piv_ensemble_correlate",
+    "piv_multipass",
+    "plane_sweep_depth",
+    "points_to_voxel",
+    "radon_transform",
+    "radon_volume",
+    "sart_reconstruct",
+    "scene_flow_lk",
+    "temporal_bilateral",
+    "voxel_grid_downsample"
+   ]
+  }
+ ]
+}

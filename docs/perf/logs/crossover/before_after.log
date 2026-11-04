@@ -1,0 +1,5 @@
+window start 2026-11-03T12:29:16 {'util_pct': 1, 'mem_mib': 1123}
+<venv>/site-packages/cupyx\jit\_interface.py:173: FutureWarning: cupyx.jit.rawkernel is experimental. The interface can change in the future.
+  cupy._util.experimental('cupyx.jit.rawkernel')
+window end 2026-11-03T12:33:50 {'util_pct': 0, 'mem_mib': 1900} more False
+ba rc=0

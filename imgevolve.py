@@ -406,6 +406,7 @@ def _build_op_index():
         if r["halcon"] in col:
             r["tier"] = "color"
     rows += _ledger_rows({r["name"] for r in rows})
+    _assign_gpu_tier(rows)
     return {
         "n_ops": len(rows),
         "tiers": {t: sum(1 for r in rows if r["tier"] == t) for t in
@@ -416,6 +417,23 @@ def _build_op_index():
                         | {r["out_sort"] for r in rows if r["out_sort"]}),
         "ops": sorted(rows, key=lambda r: (r["tier"], r["name"])),
     }
+
+
+def _assign_gpu_tier(rows) -> None:
+    """各 op 行に ``gpu_tier``(4 値)を付ける。規則は ``tools/gpu_tier_rules.py``
+    (型 in_sort/out_sort と正本名簿 ``fullseye/data/gpu_required.json`` から導く)。
+    手書きのフラグは drift するので、索引を組むこの一点でだけ機械的に付ける。"""
+    # ★2026-11-04(統合 GPU): 規則は tools/ にあるので、imgevolve.py の隣に tools/ が無い置き方(変異探針の
+    # 小さな作業木: imgevolve.py だけを写し、本体は PYTHONPATH で引く)では見つからず索引が組めなかった。
+    # imgevolve.py の隣を先に、無ければ sys.path の各所の tools/ を探す。
+    for base in [HERE] + [p for p in sys.path if p]:
+        tools = os.path.join(base, "tools")
+        if os.path.isfile(os.path.join(tools, "gpu_tier_rules.py")):
+            if tools not in sys.path:
+                sys.path.insert(0, tools)
+            break
+    import gpu_tier_rules
+    gpu_tier_rules.assign(rows)
 
 
 def _ledger_rows(taken):

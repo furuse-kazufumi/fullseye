@@ -4,7 +4,7 @@ dim: drive
 category: swarmflow
 in: signal × scalar × scalar
 out: table
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [poc_swarm_obstacle_from_flow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ritter_dam_break(x, t: 'float', h0: 'float', g: 'float' = 9.81, particle_mass=None) -> 'dict'` (実装を直接呼ぶなら `import swarmflow; swarmflow.ritter_dam_break(x, t: 'float', h0: 'float', g: 'float' = 9.81, particle_mass=None) -> 'dict'`、台帳から引くなら `opsdrive.get("ritter_dam_break")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

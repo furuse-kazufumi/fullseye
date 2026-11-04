@@ -4,6 +4,7 @@ dim: calib
 category: plane
 in: table
 out: keypoints
+halcon: image_points_to_world_plane
 gpu: なし
 examples: []
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `keypoints`
 - **呼び出し**: `import fullseye as fs; fs.ledger.image_points_to_world_plane(cam_par, pose, image_points, scale=1.0)` (実装を直接呼ぶなら `import calib; calib.image_points_to_world_plane(cam_par, pose, image_points, scale=1.0)`、台帳から引くなら `opscalib.get("image_points_to_world_plane")`)
+- **HALCON 相当**: `image_points_to_world_plane`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

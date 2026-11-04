@@ -4,7 +4,7 @@ dim: drive
 category: tacslip
 in: image2d × scalar × scalar
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_tacsim_marker_shear]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.marker_detect(m, dark: 'float', r_px: 'float', binary: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import tacslip; tacslip.marker_detect(m, dark: 'float', r_px: 'float', binary: 'bool' = False) -> 'dict'`、台帳から引くなら `opsdrive.get("marker_detect")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

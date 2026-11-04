@@ -1,8 +1,8 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">backproject_sinogram — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)</code>; from the registry, <code style="color:#22d3bf">opstomography.get(&quot;backproject_sinogram&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None, device=&#x27;cpu&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None, device=&#x27;cpu&#x27;)</code>; from the registry, <code style="color:#22d3bf">opstomography.get(&quot;backproject_sinogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: yes (mechanical GPU path from the allow-list, CuPy). <code style="color:#22d3bf">device=&quot;auto&quot;</code> chooses the GPU from the measured size (4,194,304 pixels) up</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Plain, <b>un-filtered</b> back-projection — the blurred baseline.</p>
 <p>Smear each projection back along the rays it came from and sum. The result is the true slice convolved with <code style="color:#22d3bf">1/|r|</code>, so it is correct in the large and wrong everywhere in detail.</p>
@@ -13,6 +13,8 @@
 <p>rounded down to an odd number.</p>
 <p>:param span_deg: angular range used for the <code style="color:#22d3bf">d(theta)</code> weight; <code style="color:#22d3bf">None</code> -&gt;</p>
 <p>inferred from *angles_deg* (or 180 for the default scan).</p>
+<p>:param device: <code style="color:#22d3bf">&quot;cpu&quot;</code> (default) stays on this float64 route. <code style="color:#22d3bf">&quot;auto&quot;</code> or</p>
+<p><code style="color:#22d3bf">&quot;cuda&quot;</code> hands the call to <code style="color:#22d3bf">tomography_gpu</code>, single precision on a GPU.</p>
 <p>:returns: <code style="color:#22d3bf">(size, size)</code> float64 image. :raises ValueError: as <code style="color:#22d3bf">filtered_backprojection</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

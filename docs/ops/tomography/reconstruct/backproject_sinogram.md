@@ -4,7 +4,7 @@ dim: tomography
 category: reconstruct
 in: sinogram
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [ct_reconstruction, poc_ct_fidelity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,8 +14,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 # backproject_sinogram — TOMOGRAPHY `reconstruct` op
 
 - **データ種**: `sinogram` → `image2d`
-- **呼び出し**: `import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)` (実装を直接呼ぶなら `import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)`、台帳から引くなら `opstomography.get("backproject_sinogram")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **呼び出し**: `import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None, device='cpu')` (実装を直接呼ぶなら `import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None, device='cpu')`、台帳から引くなら `opstomography.get("backproject_sinogram")`)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 
@@ -50,6 +50,8 @@ one is an integral transform, and the only thing they share is a word.
     rounded down to an odd number.
 :param span_deg: angular range used for the ``d(theta)`` weight; ``None`` ->
     inferred from *angles_deg* (or 180 for the default scan).
+:param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+    ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
 :returns: ``(size, size)`` float64 image.
 :raises ValueError: as :func:`filtered_backprojection`.
 

@@ -4,7 +4,7 @@ dim: annotate
 category: plot
 in: axes × signal × signal
 out: pairs
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [annotate_gallery, poc_beam_modal_video, poc_camera_calibration, poc_crack_width_timeseries, poc_moire_alignment, poc_motion_magnification, poc_real_sem_metal_layer, poc_real_tless_6dof, poc_strain_history, poc_structure_4d_deterioration, poc_superresolution_limits, poc_traffic_counting, poc_wound_area_tracking, poc_xyt_event_surface]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,7 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `axes × signal × signal` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.data_to_pixel(axes, x, y)` (実装を直接呼ぶなら `import annotate; annotate.data_to_pixel(axes, x, y)`、台帳から引くなら `opsannotate.get("data_to_pixel")`)
 - **台帳経由の戻り値**: `fullseye.ledger.data_to_pixel(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.data_to_pixel.raw(...)`、または `annotate.data_to_pixel` を直接呼ぶ。
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

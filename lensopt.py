@@ -184,8 +184,51 @@ def _residuals(system, fields, wavelengths, rings, efl_target, efl_weight, field
     return r, lost
 
 
+def _batch_residuals(systems, fields, wavelengths, rings, efl_target, efl_weight, field_weights, pupil_fill, device):
+    """:func:`_residuals` を設計案 × 視野 × 波長 × 光線で一括に(``lens_gpu``)。
+
+    返り値 ``(r, lost, ok, by_field)``: r (M, 残差)、lost (M,)、ok (M,) は False なら CPU の経路へ回す案
+    (主光線が届かない・テレセン)、by_field は視野ごとの RMS (M, F)。残差の並びは :func:`_residuals` と同じ。
+    """
+    import lens_gpu as LG
+    import torch
+    lens = LG.compile_many(systems, wavelengths, device=device)
+    para = LG.paraxial_batch(lens)
+    M = lens.M
+    res = []
+    lost = torch.zeros(M, dtype=torch.int64, device=lens.device)
+    ok = torch.ones(M, dtype=torch.bool, device=lens.device)
+    rms = []
+    for fw, field in zip(field_weights, fields):
+        b = LG.bundle_batch(lens, field=field, rings=rings, pupil_fill=pupil_fill, para=para)
+        cx, cy = b["chief_x"][..., None], b["chief_y"][..., None]
+        ok = ok & torch.isfinite(cx[..., 0]).all(1) & torch.isfinite(cy[..., 0]).all(1) & ~b["failed"].any(1)
+        v = b["valid"]
+        dx = torch.where(v, b["x"] - cx, torch.ones_like(cx))
+        dy = torch.where(v, b["y"] - cy, torch.ones_like(cy))
+        lost = lost + (~v).sum((1, 2))
+        res.append((math.sqrt(fw) * torch.stack((dx, dy), -1)).reshape(M, -1))
+        m = v.to(dx.dtype)
+        n = m.sum((1, 2))
+        s2 = ((dx * dx + dy * dy) * m).sum((1, 2))
+        rms.append(torch.where(n > 0, torch.sqrt(s2 / n.clamp(min=1.0)), torch.full_like(n, INF)))
+    r = torch.cat(res, 1)
+    if efl_target is not None:
+        p = LG.paraxial_batch(LG._at_wavelengths(lens, [lens.system["wavelength_um"]]))
+        r = torch.cat([r, efl_weight * (p["efl"][:, :1] - efl_target) / abs(efl_target)], 1)
+    return (r.detach().cpu().numpy(), lost.detach().cpu().numpy(), ok.detach().cpu().numpy(),
+            torch.stack(rms, 1).detach().cpu().numpy())
+
+
+def _resolved_device(device, n_designs, n_fields, n_wl, rings, n_surfaces):
+    if device is None:
+        return None
+    import lens_gpu as LG
+    return LG._device(device, n_designs * n_fields * n_wl * len(RT._pupil_grid(rings)[0]) * n_surfaces)
+
+
 def merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=None,
-                   efl_weight=None, field_weights=None, pupil_fill=0.98):
+                   efl_weight=None, field_weights=None, pupil_fill=0.98, device=None):
     """The DLS merit ``Σ residual²`` and its parts for one prescription (``table``).
 
     Same residual definition as :func:`optimize_lens`: transverse ray offsets
@@ -195,6 +238,9 @@ def merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=No
     efl_target)/efl_target`` when a target is given. Returns ``merit``,
     ``rms_spot`` (RMS over all rays, mm), ``rms_by_field``, ``efl``,
     ``rays_lost`` and the residual count.
+
+    *device*: ``None`` (the default) is the per-ray-bundle path; ``"auto"`` / ``"cpu"`` / ``"cuda"`` evaluates
+    the same residuals as one tensor (``lens_gpu``), which needs torch.
     """
     RT._check_system(system)
     fl = _fields(system, fields)
@@ -225,16 +271,25 @@ def merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=No
         efl_weight = 10.0 * math.sqrt(n_rays)              # 1 % EFL error ~ 0.1 mm rms blur equivalent
     else:
         efl_weight = RT._finite(efl_weight, "efl_weight", nonneg=True)
-    r, lost = _residuals(system, fl, wls, rings, efl_target, efl_weight, fw, pupil_fill)
-    by_field = {}
-    for fw_i, field in zip(fw, fl):
-        st = []
-        for wl in wls:
-            b = RT.ray_bundle(system, field=field, rings=rings, wavelength_um=wl, pupil_fill=pupil_fill)
-            d = (b["image_xy"] - b["chief_xy"])[b["valid"]]
-            st.append(d)
-        d = np.concatenate(st) if st else np.zeros((0, 2))
-        by_field[float(field)] = float(np.sqrt(np.mean(d[:, 0] ** 2 + d[:, 1] ** 2))) if len(d) else INF
+    done = False
+    dev = _resolved_device(device, 1, len(fl), len(wls), rings, len(system["surfaces"]))
+    if dev is not None:
+        rb, lb, okb, bf = _batch_residuals([system], fl, wls, rings, efl_target, efl_weight, fw, pupil_fill, dev)
+        if bool(okb[0]):
+            r, lost = rb[0], int(lb[0])
+            by_field = {float(f): float(v) for f, v in zip(fl, bf[0])}
+            done = True
+    if not done:
+        r, lost = _residuals(system, fl, wls, rings, efl_target, efl_weight, fw, pupil_fill)
+        by_field = {}
+        for fw_i, field in zip(fw, fl):
+            st = []
+            for wl in wls:
+                b = RT.ray_bundle(system, field=field, rings=rings, wavelength_um=wl, pupil_fill=pupil_fill)
+                d = (b["image_xy"] - b["chief_xy"])[b["valid"]]
+                st.append(d)
+            d = np.concatenate(st) if st else np.zeros((0, 2))
+            by_field[float(field)] = float(np.sqrt(np.mean(d[:, 0] ** 2 + d[:, 1] ** 2))) if len(d) else INF
     ray_part = r[:-1] if efl_target is not None else r
     p = RT.paraxial_trace(system)
     return {"merit": float(np.dot(r, r)), "rms_spot": float(np.sqrt(np.mean(ray_part * ray_part) * 2.0)),
@@ -249,7 +304,7 @@ def merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=No
 def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4,
                   efl_target=None, efl_weight=None, field_weights=None, iterations=30,
                   damping=1e-3, tolerance=1e-7, min_thickness=0.5, max_thickness=None,
-                  min_radius=1.0, pupil_fill=0.98):
+                  min_radius=1.0, pupil_fill=0.98, device=None):
     """Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``).
 
     *variables*: surface parameters to move — strings ``"R<i>"``/``"c<i>"``
@@ -264,12 +319,17 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
     ``(JᵀJ + λ diag(JᵀJ)) δ = −Jᵀr`` and accepts the step only if the merit
     falls (then λ /= 3; otherwise λ ×= 4 and retried, up to 6 times); a step
     that yields an invalid prescription counts as a failure. Stops when the
-    relative merit change is below *tolerance* twice in a row (``converged``,
+    relative merit change is below *tolerance* twice in a row, or once with no
+    further step able to lower the merit (the rounding floor) (``converged``,
     ``status="converged"``), when two iterations in a row accept no step or λ
-    blows past 1e8 (``status="stalled"``, ``converged=False``), or after
+    blows past 1e8 before that (``status="stalled"``, ``converged=False``), or after
     *iterations* (``status="iterations"``). Thickness is clamped to
     ``[min_thickness, max_thickness]`` and ``|R| >= min_radius`` — the start
     included, so the returned system always obeys the bounds.
+
+    *device*: ``None`` (the default) evaluates one ray bundle at a time; ``"auto"`` / ``"cpu"`` / ``"cuda"``
+    evaluates all the Jacobian's columns as one tensor through ``lens_gpu`` (same residuals; torch needed).
+    The accepted steps agree with the default path to rounding of the finite differences.
 
     Returns ``{"system": optimised prescription, "merit_initial",
     "merit_final", "rms_initial", "rms_final", "efl_initial", "efl_final",
@@ -319,15 +379,51 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
     x_start = np.array([_get(system, v) for v in varlist], dtype=np.float64)
     system = _rebuild(system, x_start, varlist, bounds)
     m0 = merit_function(system, fields=fields, wavelengths=wavelengths, rings=rings, efl_target=efl_target,
-                        efl_weight=efl_weight, field_weights=field_weights, pupil_fill=pupil_fill)
+                        efl_weight=efl_weight, field_weights=field_weights, pupil_fill=pupil_fill, device=device)
     fl, wls, ew, fw = m0["fields"], m0["wavelengths"], m0["efl_weight"], None
     if field_weights is None:
         fw = [1.0] * len(fl)
     else:
         fw = [float(w) for w in field_weights]
 
+    dev = _resolved_device(device, len(varlist) + 1, len(fl), len(wls), rings, n_surf)
+
     def resid(sys_):
+        if dev is not None:
+            rb, _l, okb, _b = _batch_residuals([sys_], fl, wls, int(rings), efl_target, ew, fw, pupil_fill, dev)
+            if bool(okb[0]):
+                return rb[0]
         return _residuals(sys_, fl, wls, int(rings), efl_target, ew, fw, pupil_fill)[0]
+
+    def jacobian_batch(cur_sys, x_now, r_now):
+        """全列を 1 回で評価する。前進差分が使えない列だけ、CPU の経路と同じく後退差分へ回す。"""
+        cand, hs, order = [], [], []
+        J_ = np.zeros((len(r_now), len(x_now)))
+        for j, var in enumerate(varlist):
+            h_ = 1e-4 / (ap_scale ** (4 + 2 * var[2])) if var[0] == "A" else steps[var[0]] * max(1.0, abs(x_now[j]))
+            xp_ = x_now.copy()
+            xp_[j] += h_
+            try:
+                cand.append(_rebuild(cur_sys, xp_, varlist, bounds))
+                hs.append(h_)
+                order.append(j)
+            except (ValueError, FloatingPointError):
+                xp_ = x_now.copy()
+                xp_[j] -= h_
+                J_[:, j] = (resid(_rebuild(cur_sys, xp_, varlist, bounds)) - r_now) / (-h_)
+        if cand:
+            rb, _l, okb, _b = _batch_residuals(cand, fl, wls, int(rings), efl_target, ew, fw, pupil_fill, dev)
+            for q, j in enumerate(order):
+                if bool(okb[q]):
+                    J_[:, j] = (rb[q] - r_now) / hs[q]
+                    continue
+                try:                                             # 一括で追えなかった列は CPU の経路で
+                    J_[:, j] = (_residuals(cand[q], fl, wls, int(rings), efl_target, ew, fw, pupil_fill)[0] - r_now) / hs[q]
+                except (ValueError, FloatingPointError):
+                    xp_ = x_now.copy()
+                    xp_[j] -= hs[q]
+                    J_[:, j] = (resid(_rebuild(cur_sys, xp_, varlist, bounds)) - r_now) / (-hs[q])
+        return J_
 
     x = np.array([_get(system, v) for v in varlist], dtype=np.float64)
     cur = system
@@ -343,8 +439,8 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
     it = 0
     for it in range(1, iterations + 1):
         # Jacobian by forward differences
-        J = np.zeros((len(r), len(x)))
-        for j, var in enumerate(varlist):
+        J = np.zeros((len(r), len(x))) if dev is None else jacobian_batch(cur, x, r)
+        for j, var in enumerate(varlist if dev is None else ()):
             kind = var[0]
             if kind == "A":
                 # a coefficient step that moves the sag at the stop edge by ~1e-4 mm
@@ -396,14 +492,22 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
         if not accepted:
             rejected += 1
             if lam > 1e8 or rejected >= 2:
-                status = "stalled"                               # no acceptable step: not convergence
+                # ★2026-11-02: 相対改善が許容未満まで来たあとは、merit が丸めの床に当たって次の手が棄却される。
+                #   以前はこれも stalled にしていて、converged / stalled が最下位ビットの丸めで入れ替わった
+                #   (_intersect_conic の安定化で 1e-15 mm 動いただけで test_lensopt の判定が反転)。
+                #   許容未満の改善を見たあとで下げる手が尽きたなら収束、そうでなければ stalled。
+                if small_count >= 1:
+                    converged = True
+                    status = "converged"
+                else:
+                    status = "stalled"                           # no acceptable step: not convergence
                 break
         if small_count >= 2:
             converged = True
             status = "converged"
             break
     mf = merit_function(cur, fields=fl, wavelengths=wls, rings=rings, efl_target=efl_target,
-                        efl_weight=ew, field_weights=fw, pupil_fill=pupil_fill)
+                        efl_weight=ew, field_weights=fw, pupil_fill=pupil_fill, device=device)
     names = {"c": "R%d", "t": "t%d", "k": "k%d"}
     vars_out = []
     for var, x0 in zip(varlist, [_get(system, v) for v in varlist]):

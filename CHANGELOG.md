@@ -5,6 +5,88 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## Unreleased
+
+版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
+既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
+
+### 追加 — CT のスキャン方式を 1 つの幾何で(コーンビーム FDK・ヘリカル・ラミノグラフィ・反復法)と GPU 経路
+
+- 新モジュール `ctscan`(opstomography のカテゴリ `ct_scan`、11 op)と `tomography_gpu`(共通の核)。幾何は `ct_scan_geometry` の dict 1 つで、線源・検出器中心・検出器の u/v 軸を view ごとに持つ。投影(レイ駆動)、その厳密な転置、ボクセル駆動の逆投影の 3 つの核だけを全方式で共有し、方式が足すのは軌道と重みだけ。
+- 再構成式のある方式は `fdk_reconstruct`: コーンビーム(Feldkamp, Davis & Kress 1984)、ファンビーム(等間隔・等角)、ショートスキャン(Parker 1982)、検出器オフセット(Wang 2002)、ヘリカル(検出器行の窓をボクセルごとに正規化する近似。Katsevich の厳密解ではない)、ラミノグラフィ(平行ビームは Myagotin ら 2013 の sin(傾き) の重み、コーンは同じ重みの近似)。
+- 式の無い方式は `sirt_reconstruct`、`os_sart_reconstruct`(Wang & Jiang 2004)、`tv_reconstruct`(Chambolle & Pock 2011、Sidky ら 2012)。トモシンセシス、少数ビュー、制限角はこちら。`ct_dual_energy_reconstruct` は投影領域で 2 物質に分けてから再構成する(Alvarez & Macovski 1976)。
+- 真値は `ellipsoid_projections`(楕円体の弦の長さの閉形式)と `shepp_logan_3d`。`<Ax, y> = <x, A^T y>` は全方式で 1e-12 未満。
+- 新しい sort: `projstack`(ビュー, V, U)と `ctgeometry`。`sinostack` と軸の順序が違い、取り違えると例外でなく有限の像が返るので分けた。
+- 既存の `radon_transform` / `backproject_sinogram` / `filtered_backprojection` / `sart_reconstruct` / `radon_volume` / `fbp_volume` に `device` を追加。既定の `"cpu"` は従来と同じ float64 の経路で、`"auto"` / `"cuda"` は `tomography_gpu` の単精度の経路へ渡す。VRAM を超える寸法は view とスライスに分割する。測定は `docs/perf/gpu_ct_2026-11-02.md`。
+
+### 追加 — 光路・波長・偏光の一括計算(GPU 第 4 便)
+
+- 新モジュール `lens_gpu`: 設計案 × 波長 × 光線を 1 つのテンソルで追う。`raytrace` の近軸、実光線、色収差、OPD、公差 MC と、`lensimage` の MTF、`lensrender` の Fresnel + `materials` の内部透過率を同じ定義で計算する。公差 MC は乱数列まで揃え、案ごとに CPU と一致する。
+- 新モジュール `polar_gpu`: 実光線の各面に Fresnel 振幅を掛けて光線ごとの Jones 行列を作る経路と、`optics` / `photoelastic` / `sfpolar` の画素ごとの計算のバッチ版。
+- どちらも公開 op ではなく下回りの部品で、torch が無い環境では `raytrace` / `optics` がそのまま使える。測定は `docs/perf/gpu_optics_2026-11-02.md`。
+
+### 追加 — 工業用ビジョンの定番の演算(opsmv、47 op)と HALCON 全名の棚卸し
+
+- 新しい台帳 `opsmv`: ステレオ(`binocular_disparity_ms` ほか)、幾何の再標本化(`map_image` /
+  `rectify_to_world_plane` / `change_radial_distortion_image`)、`points_lepetit`、`get_circle_pose`、
+  Golay の組と肥厚、`morph_skiz`、`filter_kalman`、カルマン背景推定、GMM / k-NN と語の照合、文字行の傾き。
+- `docs/HALCON_GAP_2026-11-02.md`: 全 2,313 演算子の 4 分類。`tools/gen_halcon_gap.py` が生成する。
+- 台帳 op の `halcon` 欄を `fullseye/data/halcon_ledger_map.json` から埋めた(以前は全部空)。
+
+### 変更 — opsmv の統合で既存 op の振る舞いが変わるもの(値・署名)
+
+- `gray_projections` は和でなく平均を返す。`gray_histo` は `[0, 1]` の外の画素を拒む。
+- `filters_freq.map_image`(灰色値の LUT)を消し、`mvimage.map_image`(幾何の写像)に置き換えた。
+  LUT は `lut_trans` を使う。
+- `calibration3d.change_radial_distortion_image` を消し、2 つのカメラの間を除算モデルで変換する
+  `mvimage.change_radial_distortion_image` に置き換えた。
+- `find_ncc_models` はモデルのリストも受ける。`create_ncc_model` は空のテンプレートを拒む。
+
+### 追加 — GPU 第 2・3 便(#240): GPU tier の台帳・HALCON OpenCL 対応行列・穴埋めの核
+
+- `docs/perf/GPU_TIERS.md`(全 op の GPU tier 4 段、`tools/gpu_tier_rules.py`)と `docs/perf/HALCON_OPENCL_PARITY.md`
+  (HALCON OpenCL 84 op の対応行列、`tools/gen_halcon_opencl_parity.py`)を regen_all の段に。
+- 第 2 便: 実寸の bench で 5 倍以上だった 7 op を `accel` に。第 3 便: HALCON 48 件と required の穴埋め(採用 29 op)、
+  型付き op の計算核だけを差し替える継ぎ目 `accel_seam` と入口 `accel_typed`、n-ary の GPU 経路。
+  採否は `docs/perf/gpu_fill3_2026-11-02.md`(`tools/gen_gpu_fill3_report.py` が実測ログから作る)。
+
+### 追加 — 機械的 GPU 化(`gpu_shadow`、CuPy)と許可リスト
+
+- 既存の numpy / scipy 実装を CuPy 配列で走らせる影の層 `gpu_shadow`。GPU tier の op を掃引し
+  (`tools/gpu_auto_sweep.py`)、転送込みで採用の下限を超え CPU と一致した op だけを許可リスト
+  `fullseye/data/gpu_auto_allow.json` に載せる(全画素の照合で 696 件中 695 一致、plane_sweep_depth は不採用)。
+  CuPy は任意依存で、無い環境では CPU のまま(`tests/test_gpu_shadow_coexist.py`)。
+
+### 追加 — `device="auto"` の実測の損益分岐と GPU 経路の一元化(GPU 第 5 便)
+
+- `device="auto"` は、CUDA があっても実測の損益分岐表(`fullseye/data/DEVICE_RULES.json`)で GPU が勝たない大きさ・
+  許可リストに無い op・空き VRAM が `FULLSEYE_GPU_MIN_FREE_MB`(既定 2048)未満のときは CPU に残る。
+  結果の `acceleration` に経路(`accel` / `allow_single` / `allow_resident` / `allow_pipeline` / `cpu`)と理由を書く。
+- op の GPU 経路を決めるのは `gpu_route.route(op, context)` の 1 か所。`fullseye.explain_device` /
+  `fullseye.explain_pipeline` と MCP の dry_run で、走らせる前に経路が分かる。op ノートの GPU 欄もここから書く。
+- 領域の解析(連結成分のラベル付け + 領域ごとの集計、`accel_label`)と、op 自身が `device` を持つ native 経路 17 op。
+- ★既定は `"cpu"` のまま(第 5 便のブランチは既定を `"auto"` にしていたが、0.9.0 の決定に合わせて統合で戻した)。
+
+### 修正(値が変わる) — 放物面の軸の近くの光線と円錐面の交点(raytrace、第 4 便)
+
+- `_intersect_conic` の根を安定な形(q/A と C/q)にした。k = -1 の軸の近く(A ~ 1e-8)で 7e-9 mm の桁落ちがあった。
+  k != -1 は丸めの差だけ動く(two_mirror で 1.7e-8 mm・1.2e-4 波)。lensopt が丸めで converged / stalled を
+  入れ替えなくなった。統合で測り直した門: レンズの収差の 3-D 教材の「軸上のスポット半径」(無収差の丸めの残り
+  9.2e-12 → 7.6e-12 µm、翻訳表 8 言語)と、レンズ系の 3-D 教材の光線を描く棒の数(449 → 448)。
+
+### 統合(integrate/2026-11-04-gpu)
+
+- GPU 一式 7 本(第 2・3 便 #240・第 8 便 CT・第 4 便 光学・第 6 便 opsmv・機械的 GPU 化・第 5 便)を 1 本にまとめた。
+- ブランチ側で分類・登録が漏れていた道具と部品を、門を緩めずに直した: regen_all の未分類の実測器 8 本を EXCLUDED に
+  理由つきで、公開経路から見えない部品(accel_seam / accel_typed / accel_label)を _INTERNAL に、ループの表明 13 か所に件数の 1 行。
+- HALCON の名前の被覆は 1017 / 2313(第 6 便の 1033 から段 0 の部分対応 16 名を外した値)。
+- 第 6 便の効かないつまみ 10 件(dead_knob)は全部、探針の入力がつまみの効く場面を作っていなかった。op の配線ミスは 0、
+  免除は 0。連鎖ファズの opsmv の builder を、つまみが効く入力にした。
+- 同梱の `fullseye/data/halcon_stubs.json` からベンダー文書の説明文(short_desc)を外した(作り直しで再混入していた)。
+- FSIM / FSIMc の要約に「特徴類似度による全参照の画質指標」を足した(6 言語)。検索の評価集合の当たり率が master と同じ値に戻った。
+- `gpu_auto_sweep` のロックが Windows 以外で一度も取れなかった(UnrealEditor の確認を pgrep でも行う)。索引の GPU tier の規則を、
+  `tools/` が隣に無い置き方でも見つける。レンズの 3-D 教材の「軸上のスポット半径」は環境で桁が割れる丸めの残りなので「< 1e-6 µm」と書く。
+
 ## 0.9.0 — 2026-11-04
 
 PyPI に出す 0.9.0。11/03 に用意した分(下の「0.9.0 として 11/03 に用意した分」、PR #243)は tag を付けず未公開のままだったので、同じ版に 11/04 の 8 本の統合(この節)を足して出す。

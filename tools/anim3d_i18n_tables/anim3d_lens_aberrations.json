@@ -488,14 +488,14 @@
    "hi": "धूमकेतु का आकार (पुतली का एक वलय दो बार घूमा गया वृत्त बनता है)",
    "fr": "Une forme de comète (un anneau de la pupille devient un cercle parcouru deux fois)"
   },
-  "The on-axis spot radius is 9.2e-12 µm (stigmatic), but for oblique light each pupil ring makes a circle of a different size, shifted, and they pile up into a comet. Tangential coma is 3·W131/u′, sagittal one third of that. At 10° the tangential coma is 1284.4 µm (real rays), ratio 1.059 to third order.": {
-   "ja": "軸上のスポット半径は 9.2e-12 µm(無収差)だが、斜めの光では瞳の輪ごとに大きさの違う円がずれて重なり、彗星の形になる。メリディオナルのコマは 3·W131/u′、サジタルはその 1/3。10° でのメリディオナルのコマは 1284.4 µm(実光線)、3 次の式との比 1.059。",
-   "zh": "轴上光斑半径为 9.2e-12 µm(无像差)，但对斜入射光，每个光瞳环各成一个大小不同、位置错开的圆，叠成彗星状。子午彗差为 3·W131/u′，弧矢彗差为其三分之一。10° 时子午彗差为 1284.4 µm(实光线)，与三级公式之比为 1.059。",
-   "tw": "軸上光斑半徑為 9.2e-12 µm(無像差)，但對斜射光，每個光瞳環各成一個大小不同、位置錯開的圓，疊成彗星狀。子午彗星像差為 3·W131/u′，弧矢彗星像差為其三分之一。10° 時子午彗星像差為 1284.4 µm(實光線)，與三階公式之比為 1.059。",
-   "ko": "축 위 스폿 반지름은 9.2e-12 µm(무수차)이지만, 비스듬한 빛에서는 동공의 고리마다 크기가 다른 원이 어긋나게 생겨 혜성 모양으로 쌓인다. 자오(T) 코마는 3·W131/u′, 구결(S) 코마는 그 삼분의 일. 10°에서 자오(T) 코마는 1284.4 µm(실광선), 삼차 공식과의 비 1.059.",
-   "de": "Der Spotradius auf der Achse beträgt 9.2e-12 µm (stigmatisch), doch bei schrägem Licht erzeugt jeder Pupillenring einen Kreis anderer Größe, versetzt, und sie häufen sich zu einem Kometen. Die tangentiale Koma ist 3·W131/u′, die sagittale ein Drittel davon. Bei 10° beträgt die tangentiale Koma 1284.4 µm (reale Strahlen), Verhältnis 1.059 zur dritten Ordnung.",
-   "hi": "अक्ष पर स्पॉट त्रिज्या 9.2e-12 µm है (स्टिग्मैटिक), पर तिरछे प्रकाश में पुतली का हर वलय अलग आकार का, खिसका हुआ वृत्त बनाता है और वे मिलकर धूमकेतु बन जाते हैं। स्पर्शरेखीय कोमा 3·W131/u′ है, धनुकीय उसका एक-तिहाई। 10° पर स्पर्शरेखीय कोमा 1284.4 µm है (वास्तविक किरणें), तृतीय कोटि से अनुपात 1.059।",
-   "fr": "Le rayon de la tache sur l'axe est 9.2e-12 µm (stigmatique), mais en lumière oblique chaque anneau de la pupille forme un cercle de taille différente, décalé, et ils s'empilent en comète. La coma tangentielle vaut 3·W131/u′, la sagittale un tiers de cela. À 10° la coma tangentielle est de 1284.4 µm (rayons réels), rapport 1.059 au troisième ordre."
+  "The on-axis spot radius is < 1e-6 µm (stigmatic), but for oblique light each pupil ring makes a circle of a different size, shifted, and they pile up into a comet. Tangential coma is 3·W131/u′, sagittal one third of that. At 10° the tangential coma is 1284.4 µm (real rays), ratio 1.059 to third order.": {
+   "ja": "軸上のスポット半径は < 1e-6 µm(無収差)だが、斜めの光では瞳の輪ごとに大きさの違う円がずれて重なり、彗星の形になる。メリディオナルのコマは 3·W131/u′、サジタルはその 1/3。10° でのメリディオナルのコマは 1284.4 µm(実光線)、3 次の式との比 1.059。",
+   "zh": "轴上光斑半径为 < 1e-6 µm(无像差)，但对斜入射光，每个光瞳环各成一个大小不同、位置错开的圆，叠成彗星状。子午彗差为 3·W131/u′，弧矢彗差为其三分之一。10° 时子午彗差为 1284.4 µm(实光线)，与三级公式之比为 1.059。",
+   "tw": "軸上光斑半徑為 < 1e-6 µm(無像差)，但對斜射光，每個光瞳環各成一個大小不同、位置錯開的圓，疊成彗星狀。子午彗星像差為 3·W131/u′，弧矢彗星像差為其三分之一。10° 時子午彗星像差為 1284.4 µm(實光線)，與三階公式之比為 1.059。",
+   "ko": "축 위 스폿 반지름은 < 1e-6 µm(무수차)이지만, 비스듬한 빛에서는 동공의 고리마다 크기가 다른 원이 어긋나게 생겨 혜성 모양으로 쌓인다. 자오(T) 코마는 3·W131/u′, 구결(S) 코마는 그 삼분의 일. 10°에서 자오(T) 코마는 1284.4 µm(실광선), 삼차 공식과의 비 1.059.",
+   "de": "Der Spotradius auf der Achse beträgt < 1e-6 µm (stigmatisch), doch bei schrägem Licht erzeugt jeder Pupillenring einen Kreis anderer Größe, versetzt, und sie häufen sich zu einem Kometen. Die tangentiale Koma ist 3·W131/u′, die sagittale ein Drittel davon. Bei 10° beträgt die tangentiale Koma 1284.4 µm (reale Strahlen), Verhältnis 1.059 zur dritten Ordnung.",
+   "hi": "अक्ष पर स्पॉट त्रिज्या < 1e-6 µm है (स्टिग्मैटिक), पर तिरछे प्रकाश में पुतली का हर वलय अलग आकार का, खिसका हुआ वृत्त बनाता है और वे मिलकर धूमकेतु बन जाते हैं। स्पर्शरेखीय कोमा 3·W131/u′ है, धनुकीय उसका एक-तिहाई। 10° पर स्पर्शरेखीय कोमा 1284.4 µm है (वास्तविक किरणें), तृतीय कोटि से अनुपात 1.059।",
+   "fr": "Le rayon de la tache sur l'axe est < 1e-6 µm (stigmatique), mais en lumière oblique chaque anneau de la pupille forme un cercle de taille différente, décalé, et ils s'empilent en comète. La coma tangentielle vaut 3·W131/u′, la sagittale un tiers de cela. À 10° la coma tangentielle est de 1284.4 µm (rayons réels), rapport 1.059 au troisième ordre."
   },
   "W = W131 H ρ³ cos φ (H proportional to the field)\ntangential coma: 3 W131 / (n′u′)\nsagittal coma: W131 / (n′u′) (one third)": {
    "ja": "W = W131 H ρ³ cos φ(H = 画角に比例)\nメリディオナルのコマ: 3 W131 / (n′u′)\nサジタルのコマ: W131 / (n′u′)(1/3)",

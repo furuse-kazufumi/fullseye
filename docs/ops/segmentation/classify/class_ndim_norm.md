@@ -4,7 +4,8 @@ dim: segmentation
 category: classify
 in: images × table
 out: mask
-gpu: なし
+halcon: class_ndim_norm
+gpu: あり(許可リスト)
 examples: [halcon_segmentation_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +16,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `images × table` → `mask`
 - **呼び出し**: `import fullseye as fs; fs.ledger.class_ndim_norm(feature_images, model, thresh=3.0)` (実装を直接呼ぶなら `import segmentation; segmentation.class_ndim_norm(feature_images, model, thresh=3.0)`、台帳から引くなら `opssegmentation.get("class_ndim_norm")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **HALCON 相当**: `class_ndim_norm`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

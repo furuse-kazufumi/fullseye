@@ -1,8 +1,8 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">filtered_backprojection — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;filtered_backprojection&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;, device=&#x27;cpu&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;, device=&#x27;cpu&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;filtered_backprojection&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: あり(許可リストの機械的 GPU 経路、CuPy)。<code style="color:#22d3bf">device=&quot;auto&quot;</code> は測った大きさ(4,194,304 画素)以上で GPU を選ぶ</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>フィルタ補正逆投影(FBP)—— CT 再構成の標準。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
@@ -30,6 +30,8 @@
 <p>range the views actually cover, inferred from the angle list (exact for</p>
 <p>a uniform grid over any span and for any full-coverage irregular set</p>
 <p>such as golden angle; see <code style="color:#22d3bf">_span_weight</code>).</p>
+<p>:param device: <code style="color:#22d3bf">&quot;cpu&quot;</code> (default) stays on this float64 route. <code style="color:#22d3bf">&quot;auto&quot;</code> or</p>
+<p><code style="color:#22d3bf">&quot;cuda&quot;</code> hands the call to <code style="color:#22d3bf">tomography_gpu</code>, single precision on a GPU.</p>
 <p>:returns: <code style="color:#22d3bf">(size, size)</code> float64 image. :raises ValueError: on a non-2-D or non-finite sinogram, an angle count that</p>
 <p>disagrees with the row count, an unknown filter, a cutoff outside</p>
 <p><code style="color:#22d3bf">(0, 1]</code>, or an output over <code style="color:#22d3bf">MAX_IMAGE_ELEMENTS</code>.</p>

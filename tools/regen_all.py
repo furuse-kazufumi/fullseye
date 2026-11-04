@@ -51,6 +51,11 @@ CHAIN = [
     #   2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、
     #   spec を足して回し忘れても誰も気づけなかった)。
     (["gen_auto_specs_data.py"], "auto_specs_data.py(data/auto_specs/*.json の wheel 同梱用ミラー)"),
+    # ★2026-11-03: GPU の台帳 2 本は op ノートより前に。op ノートの GPU 欄は gpu_route(この 2 本と許可リスト)
+    #   から書くので、後ろで台帳が変わるとノートが 1 周遅れになる。入力は commit した実測ログと許可リストだけ
+    #   (registry を組むときに op_knob.json を読むが、表の中身には入らない —— ORDER_EXEMPT)。
+    (["tools/gen_device_rules.py"], "fullseye/data/DEVICE_RULES.json(device=auto の実測規則と許可リストの道)"),
+    (["tools/gen_accel_use.py"], "fullseye/data/GPU_ACCEL_USE.json(手書き経路の場面: 領域の解析の族の実測から)"),
     # ★`tools/` の外にある唯一の生成物。だから取りこぼしていた ——
     # 生成器を `tools/*.py` で探す限り、これは永久に見つからない。
     # ★2026-10-15: 16 番目から 2 番目へ上げた。入力は registry だけ(他の段の生成物を
@@ -59,6 +64,10 @@ CHAIN = [
     #   (統合作業で `imgevolve.py index` を手で先に回して回避していた)。順序は
     #   下の OUTPUTS / READS から `order_violations()` が検査する。
     (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
+    # ★索引の直後(docs/OP_INDEX.json を読む)。GPU tier と HALCON OpenCL 対応行列。
+    (["tools/gpu_tier_rules.py"], "docs/perf/GPU_TIERS.md(全 op の GPU tier 4 段分類)"),
+    (["tools/gen_halcon_opencl_parity.py"], "docs/perf/HALCON_OPENCL_PARITY.md + json(HALCON OpenCL 84 op 対応行列)"),
+    (["tools/gen_gpu_fill3_report.py"], "docs/perf/gpu_fill3_2026-11-02.md + json(GPU 第 3 便の採否、実測ログから)"),
     (["tools/audit_file_formats.py"], "docs/FILE_FORMATS.md(実装・op・テストから生成するファイル形式棚卸し)"),
     (["tools/halcon_compat_profile.py", "--manifest"],
      "HALCON 互換プロファイル + 比較試験 manifest + HALCON_PARITY の H15 節"),
@@ -67,6 +76,8 @@ CHAIN = [
     # opdocs はノートへ同じ JSON から「同じ処理の別実装」の行を差し込む(この段の出力は読まない)。
     (["tools/impl_differential.py", "--quiet"],
      "docs/IMPL_DIFFERENTIAL.md(同じ処理の別実装の突き合わせ表)"),
+    (["tools/gen_halcon_gap.py"],
+     "HALCON 全 2,313 演算子の 4 分類の台帳(docs/HALCON_GAP_2026-11-02.md + 機械可読版)"),
     (["tools/opdocs.py", "all"],
      "op ノート + SAMPLES + TOC + RAG skill のコーパス地図 + Studio help HTML(6 言語)"),
     (["tools/gen_op_catalog.py"], "1 ページの op カタログ"),
@@ -136,6 +147,9 @@ CHAIN = [
     (["tools/gen_recipe_retrieval_report.py"], "business-language recipe recall report"),
     (["tools/measure_mcp_context.py"], "six-task minimal MCP context benchmark"),
     (["tools/gen_rag_benchmark_report.py"], "RAG recall measurement and synonym-gap report"),
+    # レシピ全部に explain_pipeline を当てた表。レシピの索引を読むので、その段の後
+    # (規則表 DEVICE_RULES と場面の台帳 GPU_ACCEL_USE は鎖の先頭近くで作ってある)。
+    (["tools/gen_gpu_routes.py"], "docs/perf/pipeline_routes.{json,md}(レシピ全部の GPU 経路)"),
 ]
 
 #: ---- 段の依存表(2026-10-15)------------------------------------------------------
@@ -159,11 +173,16 @@ CHAIN = [
 OUTPUTS = {
     "gen_auto_specs_data.py": ["auto_specs_data.py"],
     "imgevolve.py": ["docs/OP_INDEX.json"],
+    "tools/gpu_tier_rules.py": ["docs/perf/GPU_TIERS.md"],
+    "tools/gen_halcon_opencl_parity.py": ["docs/perf/HALCON_OPENCL_PARITY.md",
+                                          "docs/perf/halcon_opencl_parity.json"],
+    "tools/gen_gpu_fill3_report.py": ["docs/perf/gpu_fill3_2026-11-02.md", "docs/perf/gpu_fill3_decisions.json"],
     "tools/audit_file_formats.py": ["docs/FILE_FORMATS.md"],
     "tools/halcon_compat_profile.py": ["docs/halcon_compat_profile.json",
                                         "docs/halcon_comparison_manifest.json",
                                         "docs/HALCON_PARITY.md"],
     "tools/impl_differential.py": ["docs/IMPL_DIFFERENTIAL.md"],
+    "tools/gen_halcon_gap.py": ["docs/HALCON_GAP_2026-11-02.md", "docs/halcon_gap_2026-11-02.json"],
     "tools/opdocs.py": ["docs/ops/*", "studio_assets/op_help/*", "docs/i18n/help_coverage.json",
                         "fullseye/skill_template/SKILL.md", "skills/fullseye-ops/SKILL.md"],
     "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"],
@@ -207,6 +226,9 @@ OUTPUTS = {
     "tools/gen_recipe_retrieval_report.py": ["docs/recipe_retrieval_report.json"],
     "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json"],
     "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
+    "tools/gen_device_rules.py": ["fullseye/data/DEVICE_RULES.json"],
+    "tools/gen_gpu_routes.py": ["docs/perf/pipeline_routes.json", "docs/perf/pipeline_routes.md"],
+    "tools/gen_accel_use.py": ["fullseye/data/GPU_ACCEL_USE.json"],
     # 2026-10-23: 手で列挙していて #116 の文献 4 本が漏れ、regen が exit 1(--check は緑)だった。
     #   件数を打ち直す文献ノートの実ファイルと合わせる(OSS_LANDSCAPE.md は gen_oss_landscape.py の生成物、
     #   oss_landscape_notes.md は手書きの注で、どちらもこの段は書かない)。
@@ -254,11 +276,15 @@ MAY_OUTPUTS = {
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
 READS = {
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
+    "tools/gpu_tier_rules.py": ["docs/OP_INDEX.json"],
+    "tools/gen_halcon_opencl_parity.py": ["docs/OP_INDEX.json"],
+    "tools/gen_gpu_fill3_report.py": ["docs/perf/GPU_TIERS.md", "docs/perf/halcon_opencl_parity.json"],
     "tools/audit_file_formats.py": ["auto_specs_data.py", "docs/OP_INDEX.json"],
     "tools/halcon_compat_profile.py": ["docs/OP_INDEX.json"],
+    "tools/gen_halcon_gap.py": ["docs/OP_INDEX.json"],
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/type_connectivity.py": ["docs/OP_INDEX.json"],
-    "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json",
+    "tools/gen_wingpoc_gallery.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json", "docs/articles/exhibits/exhibit_numbers.json",
                                       "docs/articles/exhibits/glossary.json"],
     "tools/gen_view2026_story_gifs.py": ["docs/articles/assets/poc/*_720.jpg"],
     "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json",
@@ -266,7 +292,7 @@ READS = {
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
-    "tools/gen_docs_index_ops.py": [
+    "tools/gen_docs_index_ops.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json", "docs/HALCON_GAP_2026-11-02.md", 
         "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
         "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md", "docs/FILE_FORMATS.md",
         "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
@@ -276,10 +302,14 @@ READS = {
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
         "docs/TYPE_CONNECTIVITY.md",
         "docs/HALCON_PARITY.md", "docs/IMPL_DIFFERENTIAL.md",
+        "docs/perf/GPU_TIERS.md", "docs/perf/HALCON_OPENCL_PARITY.md", "docs/perf/gpu_fill3_2026-11-02.md",   # docmap が題を読む(2026-11-02)
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md", "docs/RECIPE_COVERAGE.md",
-        "docs/view2026/index.md", "docs/view2026/*/index.md"],
-    "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
+        "docs/view2026/index.md", "docs/view2026/*/index.md",
+        "docs/perf/pipeline_routes.md"],                # 題だけ(ORDER_EXEMPT)
+    # op ノートの GPU 欄・索引の gpu 欄は gpu_route(規則表の許可リストの道と場面の台帳)から書く
+    "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*", "fullseye/data/DEVICE_RULES.json",
+                              "fullseye/data/GPU_ACCEL_USE.json"],
     "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "docs/ops/families.json",
                                   "docs/ops/families_timing.json"],
     "tools/gen_recipe_index.py": ["fullseye/data/OP_SEARCH.json", "fullseye/data/OP_GRAPH.json"],
@@ -295,7 +325,15 @@ READS = {
                                              "fullseye/data/OP_GRAPH.json",
                                              "fullseye/data/TUNING_CARDS.json"],
     "tools/gen_literature_counts.py": ["docs/ops/*"],
-    "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md"],
+    "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md", "fullseye/data/DEVICE_RULES.json",
+                                "fullseye/data/GPU_ACCEL_USE.json"],
+    # registry(api)を組むときに op のつまみ表を読む(書く段 gen_mcp_data は鎖の前にある)
+    "tools/gen_device_rules.py": ["fullseye/data/op_knob.json"],
+    "tools/gen_gpu_routes.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/RECIPE_INDEX.json",
+                                "fullseye/data/GPU_ACCEL_USE.json"],
+    # op ノートの GPU 欄(とそれを写すカタログ)は gpu_route から書く: 規則表の許可リストの道と場面の台帳
+    "tools/opdocs.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json"],
+    "tools/gen_op_catalog.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json"],
 }
 
 #: 順序の例外 —— 読むが、後ろの段が書いてもよいもの。(段, READS のパターン) → 理由。
@@ -319,6 +357,14 @@ ORDER_EXEMPT = {
     ("tools/gen_docs_index_ops.py", "docs/README.*.md"): _SHARED_README,
     ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.md"): _DOCMAP_COUNT,
     ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.*.md"): _DOCMAP_COUNT,
+    # 文書地図は docs/perf/pipeline_routes.md の題(1 行目、生成器に固定の文)だけを読む。表の中身は
+    # gen_gpu_routes が鎖の最後(規則表とレシピの索引の後)で書くが、題は変わらないので地図に影響しない。
+    ("tools/gen_device_rules.py", "fullseye/data/op_knob.json"): (
+        "gen_device_rules は registry を組むときに op のつまみ表を読むが、規則表に入るのは実測ログ・許可リスト・"
+        "op 名だけ(つまみの値は入らない)。op ノートが GPU 欄のために規則表を読むので、鎖の先頭近くに置く。"),
+    ("tools/gen_docs_index_ops.py", "docs/perf/pipeline_routes.md"): (
+        "gen_docs_index_ops は文書地図に載せるため pipeline_routes.md の題だけを読む。題は gen_gpu_routes の"
+        "固定の文で、後で書き直されるのは表の中身だけなので、地図の生成結果には影響しない。"),
 }
 
 #: **CHAIN に入れないものと、その理由**(2026-09-09)。
@@ -356,6 +402,13 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/bench_device_ops.py": ("device 引数を持つ op(torch の GPU 経路)の実測器。結果は out/device_ops(追跡外)。GPU が要り数字は機械で変わる。(GPU 便、2026-11-04 の統合で分類)"),
+    "tools/bench_gpu_optics.py": ("GPU 第 4 便の実測器(raytrace の CPU 基準と lens_gpu の一括経路の時間、--out の JSON)。"
+                                  "数字は機械と負荷で変わり、--batch cuda は GPU と gpu_in_use.lock の手順が要るので手で回す。"
+                                  "測定の記録は docs/perf/gpu_optics_2026-11-02.md / .json(2026-11-04 の統合で分類)。"),
+    "tools/gpu_fill3_bench.py": ("GPU 第 3 便の実測器。CPU(登録経路)と GPU(転送込み)の時間を測り docs/perf/logs/fill3_*.json へ"
+                                  "書く。数字は機械と負荷で変わり、GPU と gpu_in_use.lock の手順が要るので CI では回さず手で回して "
+                                  "commit する。採否表は gen_gpu_fill3_report.py(鎖の段)がそのログから作る(2026-11-04 の統合で分類)。"),
     "tools/snapshot_recipe_gpu_routes.py": ("レシピの段の op が pipeline 文脈の GPU 経路を持つかの snapshot(docs/recipe_gpu_routes.json)。"
                                              "gpu_route がまだ本線に無く、GPU の枝の worktree を読み取りで借りるので手で回して commit する"
                                              "(2026-11-03)。gen_recipe_coverage は snapshot だけを読むので --check は決定的。"),
@@ -363,6 +416,18 @@ EXCLUDED = {
                              "手で回し、docs/perf/op_time_ranking_<date>.json を日付つきで commit する(2026-11-02)。"),
     "tools/measure_op_families.py": ("CPU timing and peak memory are machine-dependent raw measurements; run manually, "
                                       "then commit docs/ops/families_timing.json with environment metadata."),
+    "tools/bench_label_ops.py": ("領域の解析の族の GPU 実測(CUDA と共有 GPU のロックが要り、値は機械と負荷で変わる)。生ログを "
+                                 "docs/perf/logs/label/ に commit し、採否の台帳はそのログから tools/gen_gpu_routes.py が書く。"),
+    "tools/bench_gpu_crossover.py": ("GPU の実測(機械と負荷で値が変わり、共有 GPU のロックの下で手で回す)。生ログを docs/perf/logs/ に "
+            "commit し、表はそのログから決定的に作る生成器(tools/gen_device_rules.py)が書く。"),
+    "tools/gpu_auto_sweep.py": ("機械的 GPU 化の掃引(CuPy と GPU が要り、作業ファイルは out/)。採用の結果は "
+                                "report 段が fullseye/data/gpu_auto_allow.json と docs/perf/gpu_auto_sweep_*.md へ書く。"),
+    "tools/gpu_auto_report.py": ("gpu_auto_sweep の report 段の本体。入力は out/ の掃引ログ(コミットしない)なので、"
+                                 "掃引した機械でだけ回して許可リストと報告を commit する。"),
+    "tools/gpu_auto_merge_rest.py": ("partial/none の掃引(out/、コミットしない)の採用分を許可リストへ足す。"
+                                     "掃引した機械でだけ回す。"),
+    "tools/gpu_auto_method_compare.py": "GPU 化の方式比較の実測(CuPy / torch が要る)。結果は --out の JSON。",
+    "tools/gpu_auto_verify.py": "採用 op の実寸照合(GPU が要る)。作業ファイルは out/。",
     "tools/measure_device_crossover.py": ("GPU timing is machine-dependent and must be run manually only after "
                                            "the script verifies that the GPU is idle; raw timing is not deterministic."),
     "tools/build_shwfs_anim3d.py": ("Shack-Hartmann 波面センサーの動く 3-D 教材(docs/view2026/anim3d/shack_hartmann_anim3d.html)。"
@@ -642,6 +707,7 @@ NOT_A_GENERATOR = {
     "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",
     "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",
+    "tools/bench_gpu_ct.py": "CT の CPU/GPU ベンチ(docs/perf/gpu_ct_2026-11-02.json に段ごとに書く実測値。GPU が要り、回すたびに変わる)。",
     "tools/update_fullseye.py": ("安全アップデータ(git pull --ff-only と、導入済みの RAG スキルの更新)。"
                                  "shutil.copytree は利用者の ~/.claude/skills のバックアップで、repo の生成物は書かない。"),
     "tools/bench_realtime.py": "ベンチ(実時間)。",

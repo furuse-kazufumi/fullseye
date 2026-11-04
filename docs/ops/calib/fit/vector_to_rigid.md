@@ -4,6 +4,7 @@ dim: calib
 category: fit
 in: keypoints
 out: matrix
+halcon: vector_to_rigid
 gpu: なし
 examples: []
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `keypoints` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vector_to_rigid(src, dst) -> 'np.ndarray'` (実装を直接呼ぶなら `import fit_transform; fit_transform.vector_to_rigid(src, dst) -> 'np.ndarray'`、台帳から引くなら `opscalib.get("vector_to_rigid")`)
+- **HALCON 相当**: `vector_to_rigid`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

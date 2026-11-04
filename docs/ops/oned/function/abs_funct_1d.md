@@ -4,7 +4,8 @@ dim: oned
 category: function
 in: signal
 out: signal
-gpu: なし
+halcon: abs_funct_1d
+gpu: 鎖の中だけ(許可リスト)
 examples: [signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +16,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.abs_funct_1d(y)` (実装を直接呼ぶなら `import funct1d; funct1d.abs_funct_1d(y)`、台帳から引くなら `ops1d.get("abs_funct_1d")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **HALCON 相当**: `abs_funct_1d`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

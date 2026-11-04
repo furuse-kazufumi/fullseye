@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: laplace_of_gauss
-gpu: なし
+gpu: あり(許可リスト)
 examples: [gallery2d_edges, gallery_spectrum_signal_bridge, poc_colormap_readability, poc_datacenter_thermal_field, poc_dehazing, poc_driving_longitudinal, poc_emva1288_in_camera_processing, poc_eye_to_brain, poc_pocket_interreflection, poc_powder_grinding_ae, poc_registration_basin, poc_simcal_pixel_shift, poc_simcal_thin_film, poc_wound_area_tracking, simcal_checks_tour, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "log", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `laplace_of_gauss`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ![log: input → output](../../_fig/log.png)
 

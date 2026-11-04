@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fullseye"
 version = "0.9.0"
-description = "Numpy-native operator library for vision, 3-D and measurement (3,752 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
+description = "Numpy-native operator library for vision, 3-D and measurement (3,810 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -152,6 +152,12 @@ py-modules = [
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
   "api", "param_specs", "ops", "backend_safe", "torch_lazy", "fileio", "opsfileio", "_archive_tarxz",
+  # device_policy: device="auto" の規則(表は fullseye/data/DEVICE_RULES.json)。api が import する。
+  "device_policy",
+  # gpu_route: op の GPU 経路(accel / native / shadow)を決める唯一の関数。台帳を読むのもここだけ。
+  "gpu_route",
+  # accel_label: 領域の解析(連結成分のラベル付け + 領域ごとの集計)の torch 経路。accel が import する。
+  "accel_label",
   # ★2026-10-25: numpy_twins は backends_auto / backends_filters2 / backends_regions2 が import する
   #   (scikit-image の無い環境の双子)。py-modules に無いと wheel から落ちて 3 backend ごと消える。
   "numpy_twins",
@@ -160,6 +166,8 @@ py-modules = [
   # opnames: canonical op-name aliases (phase 1 of the naming cleanup, 2026-10-07). api / opassist /
   # imgevolve / the fullseye facade import it, so it must ship.
   "opnames",
+  # gpu_shadow: 既存の numpy/scipy 実装を CuPy で走らせる影の層(CuPy は任意依存、既定の経路は import しない)。
+  "gpu_shadow",
   # pocviewer: PoC の結果を 1 枚の HTML ビューアにする公開 API(fullseye.write_viewer、MCP tool も呼ぶ)。
   # root モジュールが py-modules から落ちると wheel から黙って消える(2026-09-05 / 09-14 の事故と同じ族)。
   "pocviewer",
@@ -275,10 +283,13 @@ py-modules = [
   # Reed-Solomon は symrs)、撮像シミュ、印字品質の等級、読み取りの POD、zxing-cpp の仲介、OCR。
   "symrs", "barcode1d", "qrsym", "dmsym", "symrender", "symgrade", "symbolpod", "symzxing",
   "ocrclassic", "opssymbol",
+  # opsmv: 工業用ビジョンの定番の演算の台帳(2026-11-02)。ステレオ・幾何の再標本化・古典形態学・
+  # カルマン背景・分類器の入口・文字行。実体は mvimage / mvstereo / mvmorph / mvtrack / mvclass / mvtext。
+  "opsmv", "mvimage", "mvstereo", "mvmorph", "mvtrack", "mvclass", "mvtext",
   "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "studio_result", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
-  "samples", "references", "codegen", "difftest", "parity", "accel", "accel_bridge", "accel_match", "accel_vol", "bench",
+  "samples", "references", "codegen", "difftest", "parity", "accel", "accel_bridge", "accel_match", "accel_seam", "accel_typed", "accel_vol", "bench",
   # CPU 高速 twin テーブル(cv2/IPP)。api._try_fast が import するので wheel に要る
   "fast",
   "algo", "algo_codegen", "algo_difftest", "synth",
@@ -314,6 +325,10 @@ py-modules = [
   "inspection", "scattered",
   # shapematch が import する GPU twin(上の 24 件を足して初めて表に出た依存)。
   "shapematch_gpu",
+  "ctscan",
+  "tomography_gpu",
+  # 光線追跡の (設計案, 波長, 光線) 一括経路(GPU 第 4 便)。torch は optional、import は torch_lazy 経由。
+  "lens_gpu", "polar_gpu",
   # --- 3-D vision toolkit (ops3d registry + method modules) + examples gallery ---
   "examples3d", "ops3d", "opsfit", "measure3d", "pipeline3d", "pipeline_evolve", "evolve_params", "metrics3d", "match3d", "bspline_surf", "bundle3d", "curvature3d", "curve3d", "deform3d", "depth_bilateral", "descriptors3d", "edges3d", "feat_fpfh", "feat_harris", "feat_shot", "feat_spin", "fringe", "fuse3d", "geodesic3d", "gicp", "medial", "moments3d", "motion_seg3d", "normals_orient", "pcl_augment", "pcl_filter", "photometric", "plane_sweep", "pnp3d", "pose_graph", "range_image", "ransac_fit", "recon3d", "regionprops3d", "registration_eval", "scene_flow3d", "sdf_ops", "segment3d", "spherical_proj", "superquadric", "symmetry3d", "tsdf_fusion", "twoview", "visualhull",
   # 3-D mesh / rendering support (imported by ops3d.py + render_beauty.py)
@@ -346,7 +361,7 @@ py-modules = [
               # Canonical facade / disposition data (unified.py + dispositions.py
               # read these; the root-level data/ dir is only a dev-cache fallback
               # and never ships).
-              "data/halcon_facade_map.json", "data/halcon_stubs.json",
+              "data/halcon_facade_map.json", "data/halcon_ledger_map.json", "data/halcon_stubs.json",
               "data/halcon_graph.json",
               # MCP サーバ(fullseye.mcp)が wheel から読むカタログ: 索引の複製と
               # ノートの frontmatter(tools/gen_mcp_data.py が書く)。0.1.11 は docs/ を
@@ -358,7 +373,14 @@ py-modules = [
               # 意味で op を引く検索の索引(6 言語の要約。fullseye.opsearch / fullseye-rag search、2026-10-07)
               "data/OP_SEARCH.json", "data/OP_CARDS.json", "data/OP_PROBE.json", "data/RECIPE_INDEX.json",
               "data/OP_GRAPH.json", "data/OP_FAMILIES.json", "data/OP_DEVICE.json", "data/OP_SORTS.json",
-              "data/OP_SHAPES.json", "data/OP_PATTERNS.json", "data/SYSTEM_PARAMS.json"]
+              "data/OP_SHAPES.json", "data/OP_PATTERNS.json", "data/SYSTEM_PARAMS.json",
+              # device="auto" の実測の表(device_policy が読む。tools/gen_device_rules.py が生ログから作る)
+              "data/DEVICE_RULES.json",
+              # 実測で採用した機械的 GPU の許可リスト(gpu_shadow.run_allowed が読む)
+              "data/gpu_auto_allow.json",
+              # gpu_route が読む実測の台帳: 手書き経路の場面(領域の解析の族、tools/gen_gpu_routes.py)と
+              # op 自身の device 引数の経路(native)。無いと前者は全部 single、後者は 1 件も選ばれない。
+              "data/GPU_ACCEL_USE.json", "data/GPU_NATIVE.json"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).

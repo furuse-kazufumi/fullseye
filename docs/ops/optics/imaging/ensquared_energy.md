@@ -4,7 +4,7 @@ dim: optics
 category: imaging
 in: image2d
 out: pairs
-gpu: なし
+gpu: あり(許可リスト)
 examples: [optical_design_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ensquared_energy(psf, pixel_pitch_um=1.0, samples=64, max_half_width_um=None, centre='centroid')` (実装を直接呼ぶなら `import optics; optics.ensquared_energy(psf, pixel_pitch_um=1.0, samples=64, max_half_width_um=None, centre='centroid')`、台帳から引くなら `opsoptics.get("ensquared_energy")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

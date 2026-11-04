@@ -12,7 +12,7 @@
 
 *Sechs Akte, ausschließlich echte Operator-Ausgaben: Kantenorientierung, Blob-Auswahl, Subpixel-Messung, SDF zu Mesh, LiDAR-Clustering, Objektiv-Defokus.*
 
-**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **947** Operatoren (gezählt in der Registry), bietet für **965/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 48 Kategorien ab.
+**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **947** Operatoren (gezählt in der Registry), bietet für **1016/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 48 Kategorien ab.
 
 ★ **Selten für eine Bildverarbeitungsbibliothek, bringt Fullseye auch virtuelles optisches Design mit** — dünne/dicke Linsen, Raytracing, Seidel-Aberrationen und PSF/MTF, dazu eine Damped-Least-Squares-Optimierung (Levenberg–Marquardt) der Linsenverordnung selbst (`optimize_lens`). Man kann **das abbildende System entwerfen und sein Bild dann mit den obigen Operatoren prüfen — durchgängig**, ein Unterscheidungsmerkmal für Halbleiter und Präzisionsmesstechnik.
 
@@ -55,16 +55,16 @@ Nicht gemessen: plausible, aber falsche Werte (Abstand zur Grundwahrheit), Gesch
 
 ### Verifikationsstufe
 
-Die 98 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.9.0) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
+Die 99 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.9.0) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
 
 | Stufe | Bedeutung | Fähigkeiten |
 |---|---|---|
 | `research-prototype` | implementiert; Tests oder ein laufendes Beispiel fehlen noch | 0 |
-| `verified-synthetic` | automatisch gegen synthetische Grundwahrheit geprüft | 79 |
+| `verified-synthetic` | automatisch gegen synthetische Grundwahrheit geprüft | 80 |
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 19 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 469 Beispielen werden 469 tatsächlich von einem Gate ausgeführt.
+Von 471 Beispielen werden 471 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
@@ -140,11 +140,11 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**3,758 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **72 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**3,816 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **73 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2762/2774, Fassade `fullseye.<name>` 745/1546 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2820/2832, Fassade `fullseye.<name>` 756/1559 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3758 Notizen verweisen **3711** auf mindestens ein lauffähiges Beispiel (47 ohne), **3556** haben einen Nutzungsabschnitt ab 120 Zeichen (202 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3758.
+**Gemessener Inhalt**: von 3816 Notizen verweisen **3768** auf mindestens ein lauffähiges Beispiel (48 ohne), **3614** haben einen Nutzungsabschnitt ab 120 Zeichen (202 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3816.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
@@ -157,12 +157,13 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
 | `oned` | 49 | [INDEX](ops/oned/INDEX.md) |
+| `mv` | 47 | [INDEX](ops/mv/INDEX.md) · [guide](ops/mv/guides/machine_vision_classics.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
+| `tomography` | 43 | [INDEX](ops/tomography/INDEX.md) |
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
 | `imgmetrics` | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
 | `symbol` | 33 | [INDEX](ops/symbol/INDEX.md) · [guide](ops/symbol/guides/symbol_reading.md) |
-| `tomography` | 32 | [INDEX](ops/tomography/INDEX.md) |
 | `calib` | 29 | [INDEX](ops/calib/INDEX.md) · [guide](ops/calib/guides/camera_calibration.md) |
 | `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
@@ -246,7 +247,7 @@ Nach Namen suchen mit `py -3.11 imgevolve.py ops --search edge`; die vollständi
 
 | Dokument | Inhalt |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | Stand der genuine (wirklich gleichwertigen) Implementierungen (965/2313) — ob ein Operator tatsächlich dasselbe leistet und nicht bloß denselben Namen trägt |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | Stand der genuine (wirklich gleichwertigen) Implementierungen (1016/2313) — ob ein Operator tatsächlich dasselbe leistet und nicht bloß denselben Namen trägt |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | Abdeckung, gemessen durch tatsächliches Scrapen der offiziellen Referenz (v2605) |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | Bibliotheksübergreifende Abdeckung (Aufnahme markanter Operatoren jenseits von HALCON) |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | Parität, belegt durch die Übereinstimmung unabhängiger Implementierungen (scipy/cv2/skimage) über die Backends hinweg |
@@ -304,9 +305,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 312
+## Dokumentkarte — alle 325
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,758 Operator-Notizen und 72 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,816 Operator-Notizen und 73 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 
@@ -447,7 +448,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(228)
+**Other**(241)
 
 | Dokument | Inhalt |
 |---|---|
@@ -497,6 +498,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`GPU_OPTIMIZATION_PATTERNS.en.md`](GPU_OPTIMIZATION_PATTERNS.en.md) | GPU Optimization Design-Pattern Catalog (for RTX 5090 / Blackwell sm_120) |
 | [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure |
 | [`HALCON_COVERAGE_HONEST.en.md`](HALCON_COVERAGE_HONEST.en.md) | HALCON Coverage — the honest denominator (updated 2026-08-18) |
+| [`HALCON_GAP_2026-11-02.md`](HALCON_GAP_2026-11-02.md) | HALCON 2605 の全 2,313 演算子の棚卸し(2026-11-02) _(ja)_ |
 | [`HARDENING.en.md`](HARDENING.en.md) | What the PoCs hardened — found, fixed, and gated |
 | [`HARDENING.md`](HARDENING.md) | What the PoCs hardened — found, fixed, and gated → [`HARDENING.en.md`](HARDENING.en.md) · Original _(ja)_ |
 | [`HDEVELOP_DEV_OPS.en.md`](HDEVELOP_DEV_OPS.en.md) | HDevelop `dev_*` operator family — the UI/display control surface (Studio north star) |
@@ -542,6 +544,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`capabilities/compound-eye-aliasing-and-ttc.md`](capabilities/compound-eye-aliasing-and-ttc.md) | id: compound-eye-aliasing-and-ttc |
 | [`capabilities/convergent-forward-models.md`](capabilities/convergent-forward-models.md) | id: convergent-forward-models |
 | [`capabilities/crop-weed-cover-grade.md`](capabilities/crop-weed-cover-grade.md) | id: crop-weed-cover-grade |
+| [`capabilities/ct-scan-modes.md`](capabilities/ct-scan-modes.md) | id: ct-scan-modes |
 | [`capabilities/dual-energy-xray-material-discrimination.md`](capabilities/dual-energy-xray-material-discrimination.md) | id: dual-energy-xray-material-discrimination |
 | [`capabilities/emva1288-camera-datasheets.md`](capabilities/emva1288-camera-datasheets.md) | id: emva1288-camera-datasheets |
 | [`capabilities/estimate-lens-distortion.md`](capabilities/estimate-lens-distortion.md) | id: estimate-lens-distortion |
@@ -669,6 +672,17 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`literature/electron_microscopy.md`](literature/electron_microscopy.md) | 文献層: 電子顕微鏡の撮像と計測(厳選) _(ja)_ |
 | [`literature/industrial_optical_sensing.md`](literature/industrial_optical_sensing.md) | 文献層: 工業用光学センシング(厳選) _(ja)_ |
 | [`literature/sensitivity_uq_calibration.md`](literature/sensitivity_uq_calibration.md) | 文献層: 感度解析・不確かさ定量化・較正(厳選) _(ja)_ |
+| [`perf/GPU_TIERS.md`](perf/GPU_TIERS.md) | GPU tier 分類 — 全 op の 4 段台帳 _(ja)_ |
+| [`perf/HALCON_OPENCL_PARITY.md`](perf/HALCON_OPENCL_PARITY.md) | HALCON 26.05 OpenCL 84 演算子 — Fullseye 対応行列 _(ja)_ |
+| [`perf/gpu_auto_sweep_2026-11-02.md`](perf/gpu_auto_sweep_2026-11-02.md) | 機械的 GPU 化の掃引 (2026-11-02) _(ja)_ |
+| [`perf/gpu_crossover_2026-11-02.md`](perf/gpu_crossover_2026-11-02.md) | GPU の損益分岐とパイプライン(第 5 便、2026-11-02〜03) _(ja)_ |
+| [`perf/gpu_ct_2026-11-02.md`](perf/gpu_ct_2026-11-02.md) | CT 再構成の CPU / GPU 実測(2026-11-02、GPU 第 8 便) _(ja)_ |
+| [`perf/gpu_fill3_2026-11-02.md`](perf/gpu_fill3_2026-11-02.md) | GPU 穴埋め 第 3 便 — HALCON OpenCL 48 件と required 名簿の採否 — 2026-11-02 _(ja)_ |
+| [`perf/gpu_fill_2026-11-02.md`](perf/gpu_fill_2026-11-02.md) | GPU 穴埋め候補 10 op の採否(D') — 2026-11-02 _(ja)_ |
+| [`perf/gpu_optics_2026-11-02.md`](perf/gpu_optics_2026-11-02.md) | GPU 第 4 便: 光路・波長・偏光の一括計算(2026-11-02) _(ja)_ |
+| [`perf/gpu_required_2026-11-02.md`](perf/gpu_required_2026-11-02.md) | GPU でしか回らない寸法 — 実寸の実演(C') 2026-11-02 _(ja)_ |
+| [`perf/op_time_ranking_2026-11-02.md`](perf/op_time_ranking_2026-11-02.md) | Op time ranking — 2026-11-02 |
+| [`perf/pipeline_routes.md`](perf/pipeline_routes.md) | レシピの GPU 経路(生成物) _(ja)_ |
 | [`view2026/about.md`](view2026/about.md) | Fullseye |
 | [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
 | [`view2026/en/about.md`](view2026/en/about.md) | Fullseye |

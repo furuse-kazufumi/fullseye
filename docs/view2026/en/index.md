@@ -357,7 +357,7 @@ Some PoC descriptions are in English.
 
 ## What it can do
 
-98 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+99 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
@@ -450,6 +450,7 @@ Some PoC descriptions are in English.
 
 **Reconstruct and correct**
 
+- Reconstruct cone-beam, helical and laminography scans on one geometry (industrial CT): [explanation](../../capabilities/ct-scan-modes.md) _(ja)_ · examples [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py)
 - Correct lens distortion over a whole image (barrel, pincushion, tangential): [explanation](../../capabilities/lens-distortion-correction.md) _(ja)_ · examples [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
 - Reconstruct slices from projections (CT): [explanation](../../capabilities/tomography-reconstruction.md) _(ja)_ · examples [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
 - Carve a solid out of silhouettes (visual hull): [explanation](../../capabilities/visual-hull-from-silhouettes.md) _(ja)_ · examples [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
@@ -485,7 +486,7 @@ Some PoC descriptions are in English.
 
 </div>
 
-[All 180 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[All 182 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## See everything
 

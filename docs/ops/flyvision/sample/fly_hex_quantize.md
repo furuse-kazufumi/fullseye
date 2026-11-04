@@ -4,7 +4,7 @@ dim: flyvision
 category: sample
 in: signal
 out: signal
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_eye_to_brain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode='log', contrast=0.2)` (実装を直接呼ぶなら `import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode='log', contrast=0.2)`、台帳から引くなら `opsflyvision.get("fly_hex_quantize")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ## 使い方
 

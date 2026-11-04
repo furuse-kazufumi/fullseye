@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">text_line_slant — MV <code style="color:#22d3bf">text</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_line_slant(image, max_angle=45.0, step=0.5)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mvtext; mvtext.text_line_slant(image, max_angle=45.0, step=0.5)</code>; aus dem Register: <code style="color:#22d3bf">opsmv.get(&quot;text_line_slant&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">text_line_slant</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Bestimmt die Zeichenschräge einer waagerechten Textzeile in Grad durch Maximieren der Spaltenprojektionsschärfe.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>せん断 <code style="color:#22d3bf">col&#x27; = col + (row - row0) tan(a)</code> で縦の字画が立つと列の射影が最も鋭くなる。正の角度は下へ行くほど左へ寄った字(上が右へ倒れた字)。インクが無い画像は 0.0 を返す(理由: 斜体角を決める手がかりが無い)。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>image: 灰色画像か bool の領域 (H, W)。文字行は水平に直しておく。</p>
+<p>max_angle: 走査の範囲(度、0 より大きく 90 未満)。</p>
+<p>step: 走査の刻み(度、&gt; 0)。</p>
+<p>Returns:</p>
+<p>斜体角(度)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">Leitfaden zur Familie machine_vision_classics</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">scalar</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">text</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:text_line_orientation">text_line_orientation</a> · <a style="color:#22d3bf" href="opmv:segment_characters">segment_characters</a> · <a style="color:#22d3bf" href="opmv:select_characters">select_characters</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvtext.py — MV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

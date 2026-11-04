@@ -4,7 +4,7 @@ dim: 3d
 category: geom_transform
 in: voxel
 out: voxel
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [vol_geometry_transform]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_rotate(vol, angle_deg, axes=(1, 2), order=1, reshape=False, mode='constant', cval=0.0)` (実装を直接呼ぶなら `import volxform; volxform.vol_rotate(vol, angle_deg, axes=(1, 2), order=1, reshape=False, mode='constant', cval=0.0)`、台帳から引くなら `ops3d.get("vol_rotate")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

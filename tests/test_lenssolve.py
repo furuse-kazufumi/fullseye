@@ -657,6 +657,8 @@ def _tables():
 
 
 def test_every_test_file_reads_to_the_same_surface_table_as_before_this_slice():
+    # 2026-11-02: cb_three_mirrors.zmx の素子 5 の半開口だけ golden を更新(11.28398522835117 → 11.283985228461834、
+    # 1.1e-10 mm)。放物面に近い面の実光線から決まる値で、raytrace._intersect_conic の桁落ちの修正の分。他の値は同じ。
     before = json.load(open(os.path.join(DATA, "surface_tables_before_slice7.json"), encoding="utf-8"))
     now = _tables()
     assert len(before) == 10

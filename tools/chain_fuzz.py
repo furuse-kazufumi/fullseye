@@ -536,6 +536,12 @@ def make_generators():
         "sinostack": lambda rng: np.stack(
             [np.abs(np.sin(np.linspace(0, np.pi, 40))[:, None] * np.hanning(48)[None, :]) * 100.0
              + rng.random((40, 48)) for _ in range(3)]),
+        # スキャン方式: 幾何と、その幾何の閉形式の投影(形が幾何と合う組)
+        "ctgeometry": lambda rng: __import__("ctscan").ct_scan_geometry(
+            "cone", n_views=8, n_u=16, n_v=16, vol_shape=(8, 8, 8)),
+        "projstack": lambda rng: __import__("ctscan").ellipsoid_projections(
+            __import__("ctscan").ct_scan_geometry(
+                "cone", n_views=8, n_u=16, n_v=16, vol_shape=(8, 8, 8)), device="cpu"),
         # lab / metrics / transport_plan / phash / fingerprint は実体から作る
         "lab": lambda rng: __import__("imgmetrics").rgb_to_lab(rng.random((24, 32, 3))),
         "metrics": lambda rng: (lambda M, a: M.compare_images(a, np.clip(a + 0.02, 0, 1)))(
@@ -7557,13 +7563,276 @@ def _b_clm_next(pool, rng):
             (120, 160)), {}
 
 
+# --- 工業用ビジョンの定番(opsmv、2026-11-02)。引数は真値の分かる小さな入力から作る。 --- #
+_MV_CAM = {"fx": 200.0, "fy": 200.0, "cx": 24.0, "cy": 24.0}
+
+
+def _mv_pair():
+    """真の視差 3 画素の小さなステレオ対。"""
+    from scipy import ndimage as _ndi
+    right = _ndi.gaussian_filter(np.random.default_rng(11).random((24, 48)), 1.0)
+    right = (right - right.min()) / (right.max() - right.min())
+    rr, cc = np.mgrid[0:24, 0:48].astype(float)
+    d = np.where((cc > 20) & (cc < 34) & (rr > 6) & (rr < 18), 6.0, 3.0)     # 段差: P2 が効く
+    return _ndi.map_coordinates(right, [rr, cc - d], order=1, mode="nearest"), right
+
+
+def _mv_region():
+    a = np.zeros((32, 32), bool)
+    a[8:24, 6:14] = True
+    a[8:24, 18:26] = True
+    a[14:16, 14:18] = True
+    return a
+
+
+def _mv_blobs():
+    rng = np.random.default_rng(12)
+    return (np.vstack([rng.normal([0.0, 0.0], 1.0, (20, 2)), rng.normal([6.0, 1.0], 1.0, (20, 2))]),
+            np.repeat([0, 1], 20))
+
+
+def _mv_circle_points():
+    t = np.linspace(0.0, 2.0 * np.pi, 24, endpoint=False)
+    center, normal = np.array([0.1, -0.05, 1.0]), np.array([0.3, 0.2, -1.0])
+    nz = normal / np.linalg.norm(normal)
+    e1 = np.cross(nz, [1.0, 0.0, 0.0])
+    e1 /= np.linalg.norm(e1)
+    e2 = np.cross(nz, e1)
+    p = center + 0.05 * (np.cos(t)[:, None] * e1 + np.sin(t)[:, None] * e2)
+    return np.column_stack([200.0 * p[:, 1] / p[:, 2] + 24.0, 200.0 * p[:, 0] / p[:, 2] + 24.0])
+
+
+def _b_mv_disparity(pool, rng):
+    return _mv_pair(), {"max_disp": 8}
+
+
+def _b_mv_distance(pool, rng):
+    left, right = _mv_pair()
+    return (left, right, 100.0, 0.5), {"max_disp": 8}
+
+
+def _b_mv_map(pool, rng):
+    rr, cc = np.mgrid[0:16, 0:16].astype(float)
+    return (rng.random((32, 32)), {"row_map": rr + 20.5, "col_map": cc + 1.5}), {}      # 外へ出る: fill が効く
+
+
+def _b_mv_rectify(pool, rng):
+    pose = np.eye(4)
+    pose[:3, 3] = [-0.1, -0.1, 1.0]
+    # 64 x 64 マス(0.005 m)の平面は右下が画像の外へ出る: fill が効く(32 x 32 では全部が中で効かなかった)
+    return (rng.random((48, 48)), _MV_CAM, pose, 64, 64, 0.005), {}
+
+
+def _b_mv_distortion(pool, rng):
+    # 歪みの無い入力を樽型(kappa = -2e-3)へ写すと、四隅の画素が入力の外を引く: fill が効く。
+    # (逆向きの -1e-4 → 0 は全画素が入力の中に落ち、fill はどんな値でも出力に現れなかった)
+    return (rng.random((48, 48)), dict(_MV_CAM, kappa=0.0), dict(_MV_CAM, kappa=-2e-3)), {}
+
+
+def _b_mv_crop(pool, rng):
+    return (rng.random((48, 48)), 24.0, 24.0, 0.3, 10.0, 5.0), {}
+
+
+def _b_mv_contour_gray(pool, rng):
+    return (rng.random((32, 32)), np.column_stack([np.linspace(2.0, 28.0, 20), np.linspace(4.0, 20.0, 20)])), {}
+
+
+def _b_mv_ncc_models(pool, rng):
+    import matching as _mt
+    rr = np.random.default_rng(3)
+    tile = rr.random((8, 8))
+    # 弱い雑音の地に、8 画素おきに並べた 6 つの写し(min_distance と max_matches が効く)と、
+    # 強さの違う雑音(0.25 / 0.6)を足した写し 2 つ(照合の得点が散り、min_score が効く)を置く。
+    # ★以前の 8 画素周期の敷き詰め(7 x 7)は得点 1 の一致が 49 か所あり、上位 max_matches = 10 が
+    # 全部 1 になって min_score が出力に現れなかった(2026-11-04 の統合で直した)。
+    img = rr.random((56, 56)) * 0.3 + 0.35
+    for c in range(0, 48, 8):
+        img[44:52, c:c + 8] = tile
+    for (r, c), sd in zip([(4, 4), (4, 30)], (0.25, 0.6)):
+        img[r:r + 8, c:c + 8] = np.clip(tile + sd * rr.standard_normal((8, 8)), 0.0, 1.0)
+    return ([_mt.create_ncc_model(tile)], img), {"min_score": 0.5}
+
+
+def _b_mv_circle(pool, rng):
+    return (_mv_circle_points(), 0.05, _MV_CAM), {}
+
+
+def _b_mv_golay(pool, rng):
+    return ("l", 2), {}
+
+
+def _b_mv_hmt(pool, rng):
+    return (_mv_region(), "l"), {}
+
+
+def _b_mv_thickening_hit_miss(pool, rng):
+    import mvmorph as _mm
+    pair = _mm.golay_elements("c", 2)
+    return (_mv_region(), pair["hit"], pair["miss"]), {"iterations": 2}
+
+
+def _b_mv_thickening_letter(pool, rng):
+    return (_mv_region(), "c"), {}
+
+
+def _b_mv_se(pool, rng):
+    return (_mv_region(), np.ones((3, 3), bool)), {}
+
+
+def _b_mv_region(pool, rng):
+    return (_mv_region(),), {}
+
+
+def _b_mv_nurbs(pool, rng):
+    t = np.linspace(0.0, 3.0, 10)
+    return (np.column_stack([30.0 * np.cos(t), 20.0 * np.sin(t)]),), {}
+
+
+def _b_mv_kalman(pool, rng):
+    F = np.array([[1.0, 1.0], [0.0, 1.0]])
+    return (np.zeros(2), np.eye(2), [1.0], F, np.array([[1.0, 0.0]]), 1e-3, 0.1), {}
+
+
+def _mv_bg():
+    import mvtrack as _tk
+    return _tk.create_bg_esti(np.full((16, 16), 0.5))
+
+
+def _b_mv_bg_run(pool, rng):
+    return (_mv_bg(), rng.random((16, 16))), {}
+
+
+def _b_mv_bg_give(pool, rng):
+    return (_mv_bg(),), {}
+
+
+def _b_mv_bg_update(pool, rng):
+    reg = np.zeros((16, 16), bool)
+    reg[:8] = True
+    return (_mv_bg(), rng.random((16, 16)), reg), {}
+
+
+def _b_mv_train(pool, rng):
+    return _mv_blobs(), {}
+
+
+def _b_mv_train_gmm(pool, rng):
+    """クラスごとに重なる 2 つの塊 + n_centers=2。EM が反復するので iterations / tol が効く
+    (n_centers=1 は閉形式で 1 回で決まり、どちらのつまみも出力に現れない)。"""
+    g = np.random.default_rng(12)
+    a = np.vstack([g.normal([0.0, 0.0], 1.0, (60, 2)), g.normal([1.5, 0.5], 1.0, (60, 2))])
+    b = np.vstack([g.normal([6.0, 1.0], 1.0, (60, 2)), g.normal([7.2, 2.0], 1.0, (60, 2))])
+    return (np.vstack([a, b]), np.repeat([0, 1], 120)), {"n_centers": 2}
+
+
+def _b_mv_lepetit(pool, rng):
+    """左 32 列は乱数の模様(radius / check_neighbor / min_check_neighbor_diff が効く)、右は平らな地に
+    強さの違う 1 画素の点(+0.05〜+0.6、応答の下限 min_score で拾う点の数が変わる)。片方だけでは
+    どちらかのつまみが出力に現れない(2026-11-04 の統合で実測)。"""
+    im = np.full((48, 80), 0.3)
+    im[:, :32] = np.random.default_rng(5).random((48, 32))
+    for (r, c), amp in zip([(10, 44), (10, 64), (30, 44), (30, 64), (24, 54)], (0.05, 0.1, 0.2, 0.4, 0.6)):
+        im[r, c] += amp
+    return (im,), {}
+
+
+def _b_mv_segment(pool, rng):
+    """隙間 2 列で並ぶ 2 つの画と離れた 1 つの画(max_gap = 1 は 3 字、2 は 2 字)と、面積 2 と 6 の
+    小さな点(min_area = 4 は片方だけ落とす)。"""
+    im = np.zeros((24, 48))
+    im[6:18, 5:10] = 1.0
+    im[6:18, 12:17] = 1.0
+    im[6:18, 25:30] = 1.0
+    im[20, 35:37] = 1.0
+    im[2:4, 40:43] = 1.0
+    return (im,), {}
+
+
+def _b_mv_slant(pool, rng):
+    """30 度傾いた縦の画の列: 走査の範囲 max_angle が 30 度より狭いと別の角度を返す。"""
+    im = np.zeros((40, 80))
+    for x0 in range(10, 70, 12):
+        for r in range(8, 32):
+            c = int(round(x0 + (r - 20) * np.tan(np.radians(30.0))))
+            im[r, c:c + 2] = 1.0
+    return (im,), {}
+
+
+def _b_mv_gmm_use(pool, rng):
+    import mvclass as _mc
+    X, y = _mv_blobs()
+    return (_mc.train_class_gmm(X, y), X), {}
+
+
+def _b_mv_knn_use(pool, rng):
+    import mvclass as _mc
+    X, y = _mv_blobs()
+    return (_mc.train_class_knn(X, y), X), {}
+
+
+def _b_mv_mlp_use(pool, rng):
+    import final_genuine2 as _fg
+    X, y = _mv_blobs()
+    return (_fg.train_class_mlp(X, y, epochs=20), X), {}
+
+
+def _b_mv_svm_use(pool, rng):
+    import final_genuine2 as _fg
+    X, y = _mv_blobs()
+    return (_fg.train_class_svm(X, y, epochs=20), X), {}
+
+
+def _b_mv_lexicon(pool, rng):
+    return (["bolt", "nut", "washer"],), {}
+
+
+def _b_mv_lexicon_word(pool, rng):
+    return ({"words": ["bolt", "nut", "washer"]}, "wasber"), {}
+
+
+def _b_mv_glyphs(pool, rng):
+    lab = np.zeros((24, 96), dtype=np.int32)
+    for i, x in enumerate(range(4, 52, 10), 1):
+        lab[6:18, x:x + 5] = i
+    # 幅の広い字(16 列 = 中央値の 3.2 倍)と背の低い字(4 行 = 中央値の 1/3)を 1 つずつ:
+    # max_width_ratio と min_height_ratio が効く(揃った 5 字だけではどちらも出力に現れなかった)
+    lab[6:18, 56:72] = 6
+    lab[14:18, 80:85] = 7
+    return (lab,), {}
+
+
+_MV_BUILDERS = {
+    "binocular_disparity_ms": _b_mv_disparity, "binocular_distance_ms": _b_mv_distance,
+    "map_image": _b_mv_map, "rectify_to_world_plane": _b_mv_rectify,
+    "change_radial_distortion_image": _b_mv_distortion, "crop_rectangle2": _b_mv_crop,
+    "get_grayval_contour_xld": _b_mv_contour_gray, "find_ncc_models": _b_mv_ncc_models,
+    "get_circle_pose": _b_mv_circle, "golay_elements": _b_mv_golay,
+    "hit_or_miss_golay": _b_mv_hmt, "hit_or_miss_seq": _b_mv_hmt, "thickening_hit_miss": _b_mv_thickening_hit_miss,
+    "thickening_golay": _b_mv_thickening_letter, "thickening_seq": _b_mv_thickening_letter,
+    "morph_hat": _b_mv_se, "morph_skiz": _b_mv_region, "opening_seg": _b_mv_se,
+    "gen_nurbs_interp": _b_mv_nurbs, "filter_kalman": _b_mv_kalman, "run_bg_esti": _b_mv_bg_run,
+    "give_bg_esti": _b_mv_bg_give, "update_bg_esti": _b_mv_bg_update,
+    "train_class_gmm": _b_mv_train_gmm, "train_class_knn": _b_mv_train, "train_class_mlp": _b_mv_train,
+    "train_class_svm": _b_mv_train, "classify_class_gmm": _b_mv_gmm_use, "evaluate_class_gmm": _b_mv_gmm_use,
+    "classify_class_knn": _b_mv_knn_use, "classify_class_mlp": _b_mv_mlp_use, "classify_class_svm": _b_mv_svm_use,
+    "create_lexicon": _b_mv_lexicon, "lookup_lexicon": _b_mv_lexicon_word, "suggest_lexicon": _b_mv_lexicon_word,
+    "select_characters": _b_mv_glyphs, "points_lepetit": _b_mv_lepetit,
+    "segment_characters": _b_mv_segment, "text_line_slant": _b_mv_slant,
+}
+
+
 OP_ARG_BUILDERS = {
+    **_MV_BUILDERS,
     "archive_probe": lambda pool, rng: ((_archive_probe_payload(),), {}),
     "archive_list": lambda pool, rng: ((_archive_probe_payload(),), {}),
     "archive_extract": _b_archive_extract,
     "archive_create": lambda pool, rng: (({"probe.txt": b"fullseye archive probe\n"}, "zip"), {}),
     "symmetry_difference_map": _b_symmetry_comparison,
     "symmetry_score": _b_symmetry_comparison,
+    # --- CT のスキャン方式(2026-11-02): 体積・投影の形は幾何(8 view・8^3)と合わせる --- #
+    "ct_forward_project": lambda pool, rng: ([np.ones((8, 8, 8)), pool["ctgeometry"][0]], {}),
+    "os_sart_reconstruct": lambda pool, rng: ([pool["projstack"][0], pool["ctgeometry"][0]],
+                                              {"n_iter": 1, "n_subsets": 4}),
     "fringe_ftp_phase": _b_fringe_ftp,
     "plenoptic_system": _b_plenoptic_system,
     # --- 光弾性(photoelastic、2026-10-23): 単位つきの必須引数を SI の桁で渡す --- #
@@ -8497,6 +8766,8 @@ TYPE_CHECKS = {
     # 断層: sinogram = (角度, 検出器)、sinostack = その積み重ね
     "sinogram": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
     "sinostack": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
+    "projstack": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
+    "ctgeometry": lambda v: isinstance(v, dict) and v.get("kind") == "ct_geometry",
     # 図注: text は文字列、entries は (ラベル, 色) の並び、axes は変換の辞書
     "text": lambda v: isinstance(v, str),
     "entries": lambda v: isinstance(v, (list, tuple)) and len(v) > 0,
@@ -9003,6 +9274,8 @@ NONFINITE_BY_CONTRACT_MSA = {"msa_anova_table"}
 #: ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の
 #: inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
 NONFINITE_BY_CONTRACT_LEDGER_GATE = {
+    # opsmv: 無効の画素は NaN(左端の列と左右一致で落ちた画素)。valid と揃って返す約束。
+    "binocular_disparity_ms", "binocular_distance_ms",
     "sphere_cap_height",          # shape_rel: 「外側は nan」
     "hertz_small_strain_error",   # force_from_radius: 「平頭(p = inf)は nan」
     "large_deformation_contact",  # F_hertz_from_radius: 「平頭は nan」(err_* はその比)

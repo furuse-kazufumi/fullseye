@@ -4,7 +4,8 @@ dim: oned
 category: function
 in: signal × signal
 out: signal
-gpu: なし
+halcon: compose_funct_1d
+gpu: 鎖の中だけ(許可リスト)
 examples: [gallery_oned_audio_funct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +16,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.compose_funct_1d(y1, y2)` (実装を直接呼ぶなら `import funct1d; funct1d.compose_funct_1d(y1, y2)`、台帳から引くなら `ops1d.get("compose_funct_1d")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **HALCON 相当**: `compose_funct_1d`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

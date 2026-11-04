@@ -26,7 +26,7 @@ if _ROOT not in sys.path:
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from api import (  # noqa: E402,F401
-        apply, run_pipeline, resolve_device, cuda_available, find_op, list_ops, op_names, categories, knob_summary,
+        apply, run_pipeline, resolve_device, explain_device, explain_pipeline, last_device_decision, cuda_available, find_op, list_ops, op_names, categories, knob_summary,
         fallbacks, fallback_counts, fallback_overflow, clear_fallbacks, FullseyeFallbackWarning, strict_mode,
         set_match_template, FAILED_BACKENDS, ambiguous_aliases, reset_gpu, gpu_open_ops,
         reset_fast, fast_open_ops, MissingBackendError, MissingDependencyError,
@@ -376,6 +376,9 @@ with warnings.catch_warnings():
         resolve_color, LINE_STYLES, DRAW_MODES,
         imagedraw, draw_line, draw_polyline, draw_circle, draw_markers,
         draw_contour, new_canvas,
+        ctscan, tomography_gpu, ct_scan_geometry, shepp_logan_3d, ellipsoid_phantom,
+        ellipsoid_projections, ct_forward_project, ct_adjoint_project, fdk_reconstruct,
+        sirt_reconstruct, os_sart_reconstruct, tv_reconstruct, ct_dual_energy_reconstruct,
         tomography, projection_angles, sinogram_design, ellipse_phantom,
         ellipse_sinogram, radon_transform, backproject_sinogram,
         filtered_backprojection, sart_reconstruct, beam_hardening_apply,
@@ -1177,6 +1180,9 @@ __all__ = [
     "drawlist", "DrawList", "DrawListError", "diff_command_lists", "format_diff", "flush_buffer", "default_text_metrics", "measured_text_metrics", "COMMAND_SPECS", "TEXT_ADVANCE_RATIO",
     "drawstyle", "DrawStyle", "draw_style", "current_style", "set_color", "set_line_width", "set_line_style", "set_draw", "resolve_pattern", "resolve_color", "LINE_STYLES", "DRAW_MODES",
     "imagedraw", "draw_line", "draw_polyline", "draw_circle", "draw_markers", "draw_contour", "new_canvas",
+    "ctscan", "tomography_gpu", "ct_scan_geometry", "shepp_logan_3d", "ellipsoid_phantom",
+    "ellipsoid_projections", "ct_forward_project", "ct_adjoint_project", "fdk_reconstruct",
+    "sirt_reconstruct", "os_sart_reconstruct", "tv_reconstruct", "ct_dual_energy_reconstruct",
     "tomography", "projection_angles", "sinogram_design", "ellipse_phantom",
     "ellipse_sinogram", "radon_transform", "backproject_sinogram",
     "filtered_backprojection", "sart_reconstruct", "beam_hardening_apply",

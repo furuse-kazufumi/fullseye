@@ -556,16 +556,27 @@ def build() -> dict[str, object]:
                       "produced_by": produced[sort], "consumed_by": consumed[sort],
                       "generator": sort in generators, "type_check": sort in checks,
                       "choose_when": "undocumented", "source": "chain_fuzz catalog"})
+    # ★2026-11-04(統合 GPU): map:: の辺は実行先を持つものだけを作る(tests/test_ledger_entry_points_2026_11_03.py
+    #   の「全部の辺に実行先がある」が正)。画素ごとに独立な op(compute.structure = elementwise)を 2-D の登録 op
+    #   として持つなら、積んだ列 (N, H, W) にそのまま掛けた結果が要素ごとの map と同じなので、元の op の入口を
+    #   実行先にする(tests/test_op_facets_2026_10_28.py::test_map_edges_run_through_the_base_op_on_the_stack)。
+    #   近傍を見る op(neighborhood_stencil)は積んだ列に掛けると軸 0 をまたぐので、実行先を作れない → 辺を作らない。
     lifted = [{"op":"map::"+e["op"],"base_op":e["op"],"input":"seq<%s>"%e["inputs"][0],
-               "output":"seq<%s>"%e["output"],"kind":"map"}
+               "output":"seq<%s>"%e["output"],"kind":"map","base":e}
               for e in edges if e.get("executable") and e.get("bundle_semantics")=="elementwise"
-              and len(e["inputs"])==1 and e["inputs"][0]==e["output"]]
+              and len(e["inputs"])==1 and e["inputs"][0]==e["output"]
+              and e["compute"]["structure"]=="elementwise"
+              and (e.get("executor") or {}).get("kind")=="registry"]
     for row in lifted:
         src={"kind":"derived_map","value":row["base_op"]}; sid=intern(src)
+        base=row.pop("base")
+        executor=dict(base["executor"]); executor["map"]="stack_pointwise"
         edges.append({"op":row["op"],"inputs":[row["input"]],"output":row["output"],
                       "category":"map","family":None,"type_semantics":"typed","consumes_input":True,
-                      "bundle_semantics":"elementwise","executable":False,"verified_executable":False,
-                      "executable_reason":"map_executor_not_implemented","not_executable_in_mcp":"not_verified",
+                      "bundle_semantics":"elementwise","executable":True,"verified_executable":False,
+                      "executable_reason":"pointwise registry op applied to the stacked sequence (= per-element map)",
+                      "not_executable_in_mcp":"not_verified",
+                      "executor":executor,"runtime_target":dict(base.get("runtime_target") or {}),
                       "compute":{"structure":"elementwise","intensity":"derived","source_ref":sid},
                       "implementations":[],"parameters":{},"source_ref":sid,
                       "population_extension_reason":"grounded elementwise lifting"})
