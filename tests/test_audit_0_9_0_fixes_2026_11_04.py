@@ -391,3 +391,42 @@ class TestF7EccMetricOfReturnedWarp:
         with pytest.raises(ValueError, match="below min_rho"):
             ir.register_ecc(F, M, motion="translation", n_iter=1, smooth_sigma=0,
                             min_rho=min(0.999999, r["metric"] + 1e-6))
+
+
+class TestF8OcrExactTieIsAmbiguous:
+    """Another class at the same (zero) distance is a tie, not an unambiguous match."""
+
+    def _model(self, feats, labels, mr=1.5):
+        import ocrclassic as o
+        return dict(features=np.asarray(feats, float), labels=np.array(labels), reject_distance=1.0,
+                    min_margin_ratio=mr)
+
+    def test_reviewer_case_is_rejected(self):
+        import ocrclassic as o
+        r = o.ocr_classify(np.zeros(o.FEATURE_LENGTH), self._model(np.zeros((2, o.FEATURE_LENGTH)), ["A", "B"]))
+        assert r["rejected"] == [True] and r["labels"] == ["?"] and r["raw_labels"] == ["A"]
+        assert r["margin"] == [1.0]
+
+    def test_exact_match_with_a_distinct_other_class_is_kept(self):
+        import ocrclassic as o
+        f = np.zeros((2, o.FEATURE_LENGTH))
+        f[1, 0] = 0.5
+        r = o.ocr_classify(np.zeros(o.FEATURE_LENGTH), self._model(f, ["A", "B"]))
+        assert r["labels"] == ["A"] and r["margin"] == [math.inf] and r["rejected"] == [False]
+
+    @pytest.mark.parametrize("d", [1e-15, 1e-13, 1e-9])
+    def test_near_ties_below_the_old_floor_are_ratios_not_infinity(self, d):
+        # the old absolute floor (d_own <= 1e-12 -> margin = inf) also hid near ties
+        import ocrclassic as o
+        f = np.zeros((2, o.FEATURE_LENGTH))
+        f[0, 0], f[1, 0] = d, 1.01 * d
+        r = o.ocr_classify(np.zeros(o.FEATURE_LENGTH), self._model(f, ["A", "B"]))
+        assert r["margin"][0] == pytest.approx(1.01, rel=1e-6)
+        assert r["rejected"] == [True]
+
+    def test_k3_vote_with_an_exact_tie_is_rejected(self):
+        import ocrclassic as o
+        f = np.zeros((3, o.FEATURE_LENGTH))
+        f[2, 0] = 0.3
+        r = o.ocr_classify(np.zeros(o.FEATURE_LENGTH), self._model(f, ["A", "B", "A"]), k=3)
+        assert r["raw_labels"] == ["A"] and r["rejected"] == [True]
