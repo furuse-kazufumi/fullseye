@@ -243,3 +243,23 @@ def test_p4_inner_circle_stays_inside_a_region_that_fills_the_image():
     assert int(y.sum()) < 0.6 * full.size                    # 半径 ~10 の円(以前は画像全体 600 画素)
     ys, xs = np.nonzero(y)
     assert abs(ys.mean() - 9.5) <= 1.0 and abs(xs.mean() - 14.5) <= 6.0
+
+
+# --------------------------------------------------------------------------------------------- #
+# P5: xsk_blob_doh のしきい値は DoH の応答の桁に合う(b=0.5 で skimage の既定 0.01)
+# --------------------------------------------------------------------------------------------- #
+@pytest.mark.parametrize("sigma", [3.0, 6.0])
+def test_p5_blob_doh_counts_the_gaussian_spots_like_skimage(sigma):
+    from skimage import feature
+    x = np.zeros((128, 128))
+    centres = [(25, 25), (25, 95), (64, 60), (100, 25), (100, 100)]
+    for (r, c) in centres:
+        x[r, c] = 1
+    x = ndimage.gaussian_filter(x, sigma)
+    x = 0.1 + 0.8 * x / x.max()
+    assert len(feature.blob_doh(x)) == len(centres)                   # 独立参照: skimage の既定
+    assert ap(x, "xsk_blob_doh", 0.5, 0.5) == len(centres)
+    counts = [ap(x, "xsk_blob_doh", 1.0, b) for b in (0.0, 0.25, 0.5, 0.75, 1.0)]
+    assert len(counts) == 5
+    assert all(c1 >= c2 for c1, c2 in zip(counts, counts[1:])), "しきい値を上げると数は減る"
+    assert ap(x, "xsk_blob_log", 0.5, 0.5) == len(centres)            # LoG は変えていない

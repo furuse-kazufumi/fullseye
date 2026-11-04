@@ -16,6 +16,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - P3 二値 closing を「画像の外へ続く平面の上で閉じて切り戻す」(外は背景)に: `closing_circle` / `closing_rectangle1` / `closing_golay` / `hx_closing` / `hx_close_edges` / `hx_close_edges_length` は画像の外を 0 として収縮し、縁に接する前景を構造要素の半径ぶん削っていた(closing の拡大性違反、探針で 66〜240 画素)。`reg_close` / `convex_fill` は以前 `border_value=1` に直してあったが、それは画像の外を前景とみなすので、縁の近くの孤立画素から角の楔が生えていた(20×20 の (1,1) の 1 画素が `reg_close` a=1 で 10 画素)。いまはどれも、余白 24 の画像で同じ op を当てて切り戻したものと画素まで一致する。兄弟: `hx_close_edges_length` は全面が前景のとき背景の代わりに先頭の前景の成分を捨てて全面 0 を返していた(`np.nonzero(sizes >= n)[0][1:]`)ので直した。値が変わる: 縁に接する(または縁の近くの)前景を持つ入力。
 - P4 距離を測る相手が画像に無い縮退入力: `dist_transform` / `distance_transform`(全面が前景)と `closest_point_transform`(前景なし)は一様 1.0(どこも最遠 = 正規化 1.0、`xsp_chamfer_dist` / `cv_dist` と同じ)。`dist_transform_abs` は `FsValueError`(絶対距離なので有限の代わりの値を作らない)。以前は `distance_transform_edt` が画像の外の (-1, 0) に相手があるかのような斜面(左右の反転で値が変わる)を、`cdt` は一様 -1 を返していた。兄弟: `get_region_thickness` と `r2_inner_circle` は領域そのものの量なので画像の外を背景とみなす(余白 1 で測る)。値が変わる: 上の縁に接する 30×70 の矩形の太さ 60 → 30、全面の 60×80 は 198.4 → 60、全面の 20×30 の内接円は画像全体 → 半径 10 の円。
 - P4b `dist_transform_abs` の説明の例 `np.ones((3, 3))`(背景なし、実値 2.236)を背景に囲まれた正方形(中心 2.0 / 9×9 で 5.0)に直した。
+- P5 `xsk_blob_doh` がどの設定でも 0 個だった: しきい値を LoG / DoG と共通の 0.02〜0.17 で振っていたが、DoH の応答(スケール正規化したヘッセ行列式)は 1 桁以上小さい。DoH だけ `0.001·100^b`(対数、b=0.5 で skimage の既定 0.01)に。σ=3 / 6 のガウス斑点 5 個を skimage の既定と同じく 5 個と数える。`xsk_blob_log` / `xsk_blob_dog` は変えていない。
 
 ### 修正 — 敵対的検証 2026-11-05 第 2 巡(imageops)
 

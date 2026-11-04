@@ -117,13 +117,18 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
 
                 ``a`` が探索する最大スケール ``max_sigma`` を 5〜25 の範囲で振る
                 (大きいほど大きなブロブまで拾う)。``b`` が検出しきい値
-                ``threshold`` を 0.02〜0.17 で振る(小さいほど弱いブロブまで拾い、
-                検出数が増えやすい)。3 手法は速度・精度が異なる(LoG が最も正確
+                ``threshold`` を振る(小さいほど弱いブロブまで拾い、検出数が増えやすい):
+                LoG / DoG は 0.02〜0.17(線形)、**DoH は 0.001〜0.1(対数、``0.001·100^b``、
+                ``b=0.5`` で skimage の既定 0.01)**。DoH の応答(スケール正規化したヘッセ行列式)は
+                LoG / DoG より 1 桁以上小さく、2026-11-05(敵対的検証 第 2 巡 P5)まで共通の
+                0.02〜0.17 を当てていたので、``xsk_blob_doh`` はどの設定でも 0 個だった
+                (σ=3〜6 のガウス斑点 5 個を skimage の既定は 5 個と数える)。3 手法は速度・精度が異なる(LoG が最も正確
                 だが遅く、DoH はエッジに強い一方、小さいブロブを苦手とする、等)。
                 """
                 x = np.clip(np.asarray(v, np.float64), 0, 1)
                 f = {"log": feature.blob_log, "dog": feature.blob_dog, "doh": feature.blob_doh}[kind]
-                bl = f(x, max_sigma=5 + 20 * a, threshold=0.02 + 0.15 * b)
+                thr = (0.001 * 100.0 ** float(b)) if kind == "doh" else (0.02 + 0.15 * b)
+                bl = f(x, max_sigma=5 + 20 * a, threshold=thr)
                 return np.float64(len(bl))
             return fn
 
