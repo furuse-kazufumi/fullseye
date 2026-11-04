@@ -191,3 +191,83 @@ def test_t7_noise_free_calls_still_need_no_seed():
     assert np.array_equal(granular.heap_synth_cone(30.0, 20.0)["side"], granular.heap_synth_cone(30.0, 20.0)["side"])
     assert np.array_equal(scoop.scoop_synth_side(20.0, 10.0)["side"], scoop.scoop_synth_side(20.0, 10.0)["side"])
     assert acoustics.synthesize_speed_ramp(duration=0.2)["signal"].size > 1
+
+
+# --------------------------------------------------------------------------- T8(未再現の疑い -> 再現)
+def test_t8_blas_cap_is_restored_after_contexts_interleave_across_threads():
+    """A 入る -> B 入る -> A 抜ける -> B 抜ける。全部抜けたら元のスレッド数(修正前: 24 -> 1 に固まった)。
+
+    途中は「最後に入った文脈の上限」がプロセス全体に掛かる(B の 2 が A の退出で外れない)。
+    """
+    import threading
+    import fsthreads as T
+    if not T.available():
+        pytest.skip("threadpoolctl is not installed")
+    start = T.current_threads()
+    if start is None or start < 3:
+        pytest.skip("needs a BLAS with >= 3 threads to tell the caps apart")
+    a_in, b_in, a_out = threading.Event(), threading.Event(), threading.Event()
+    seen = {}
+
+    def A():
+        with T.blas_threads(1):
+            a_in.set()
+            b_in.wait(10)
+            seen["A_inside_with_B"] = T.current_threads()
+        a_out.set()
+
+    def B():
+        a_in.wait(10)
+        with T.blas_threads(2):
+            b_in.set()
+            a_out.wait(10)
+            seen["B_after_A_left"] = T.current_threads()
+
+    for _rep in range(3):
+        seen.clear()
+        a_in.clear(); b_in.clear(); a_out.clear()
+        ta, tb = threading.Thread(target=A), threading.Thread(target=B)
+        ta.start(); tb.start(); ta.join(20); tb.join(20)
+        assert seen == {"A_inside_with_B": 2, "B_after_A_left": 2}, seen
+        assert T.current_threads() == start
+    assert T._ACTIVE == [] and T._HELD["limiter"] is None
+
+
+def test_t8_single_thread_nesting_keeps_last_entered_semantics():
+    import fsthreads as T
+    if not T.available():
+        pytest.skip("threadpoolctl is not installed")
+    start = T.current_threads()
+    with T.blas_threads(1):
+        assert T.current_threads() == 1
+        with T.blas_threads(2):              # 内側の明示指定がそのまま入る(従来どおり)
+            assert T.current_threads() == 2
+        assert T.current_threads() == 1
+    assert T.current_threads() == start
+
+
+# --------------------------------------------------------------------------- T9(未再現の疑い -> 再現)
+def test_t9_shared_hankel_plan_cannot_be_corrupted_by_one_caller():
+    """lru_cache で共有される HankelPlan を 1 人が書き換えると、plan を渡さない別の呼び出しまで変わった(0.95)。"""
+    import mathtransforms as mt
+    r = np.linspace(0.0, 3.0, 200)
+    f = np.exp(-np.pi * r * r)
+    ref = mt.hankel_transform(r, f, order=0, n=64)["F"].copy()
+    plan = mt.HankelPlan(0, 64)
+    assert plan is mt.HankelPlan(0, 64)                  # 共有されている(だから読み取り専用でなければならない)
+    for arr in (plan.T, plan.jk, plan.Jp1):
+        with pytest.raises(ValueError):
+            arr[0] += 1.0
+    with pytest.raises(AttributeError):
+        plan.S = 1.0
+    with pytest.raises(AttributeError):
+        plan.T = np.eye(64)
+    with pytest.raises(AttributeError):
+        del plan.T
+    got = mt.hankel_transform(r, f, order=0, n=64)["F"]
+    assert np.array_equal(got, ref)
+    # 真値(自己双対 exp(-pi r^2))とも合う = 壊れていない
+    nu = mt.hankel_transform(r, f, order=0, n=64)["nu"]
+    assert float(np.abs(got - np.exp(-np.pi * nu * nu)).max()) < 1e-3
+    tw = plan.T.copy()                                   # 写しは書ける
+    tw[0, 0] += 1.0
