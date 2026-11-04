@@ -140,16 +140,33 @@ def project_hom_point_hom_mat3d(points_hom, hom_mat3d):
     return np.column_stack([uv[:, 1], uv[:, 0]])
 
 
+def _hartley_T(p):
+    """Hartley 正規化(重心を原点、重心からの平均距離 √2)の 3x3 相似変換。"""
+    c = p.mean(0)
+    d = float(np.mean(np.linalg.norm(p - c, axis=1)))
+    s = np.sqrt(2.0) / d if d > 0 else 1.0
+    return np.array([[s, 0.0, -s * c[0]], [0.0, s, -s * c[1]], [0.0, 0.0, 1.0]])
+
+
 def _homography_dlt(src, dst):
-    """4+ 点対応から DLT でホモグラフィ H (dst = H src) を推定。"""
+    """4+ 点対応から正規化 DLT でホモグラフィ H (dst = H src) を推定。
+
+    ★2026-11-05(敵対的検証 geometry、未再現の疑いを確認): 以前は Hartley 正規化なしの DLT で、
+    物体座標が原点から離れている(mm で 0〜1000 等)と条件が悪く、雑音 0.05 px の Zhang 校正で
+    fx 誤差の中央値が正規化ありの 3 倍(2.4 % 対 0.75 %)になった。Zhang の K は平面の原点の
+    取り方に依らない(h1, h2 が変わらない)はずなのに、原点をずらすだけで K が変わっていた。
+    両側を Hartley 正規化してから解き、逆正規化する(Hartley 1997)。"""
     src = np.asarray(src, float).reshape(-1, 2); dst = np.asarray(dst, float).reshape(-1, 2)
+    Ts, Td = _hartley_T(src), _hartley_T(dst)
+    sn = src @ Ts[:2, :2].T + Ts[:2, 2]
+    dn = dst @ Td[:2, :2].T + Td[:2, 2]
     A = []
-    for (x, y), (u, v) in zip(src, dst):
+    for (x, y), (u, v) in zip(sn, dn):
         A.append([-x, -y, -1, 0, 0, 0, u * x, u * y, u])
         A.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
     A = np.asarray(A)
     _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
-    H = Vt[-1].reshape(3, 3)
+    H = np.linalg.inv(Td) @ Vt[-1].reshape(3, 3) @ Ts
     return H / H[2, 2]
 
 
@@ -281,8 +298,13 @@ def camera_calibration(object_points, image_points_list):
         reproj.append(float(np.sqrt(np.mean(np.sum((pr - xy) ** 2, axis=1)))))
     V = []
     for H in Hs:
-        V.append(_vij(H, 0, 1))
-        V.append(_vij(H, 0, 0) - _vij(H, 1, 1))
+        # ★2026-11-05(敵対的検証 geometry): H は H[2,2] = 1 に揃えてあるが、H[2,2] は平面座標の
+        # 原点の取り方で変わる(原点をずらすと h3 だけが変わる)。そのまま V に積むと視点ごとの
+        # 行の重みが原点で変わり、K も退化判定の比も原点の取り方に依存した(物体座標に 1000 mm
+        # 足しただけで「退化」と拒否)。原点に依らない h1, h2 の長さで各 H の倍率を揃える。
+        Hv = H / np.sqrt(np.linalg.norm(H[:, 0]) * np.linalg.norm(H[:, 1]))
+        V.append(_vij(Hv, 0, 1))
+        V.append(_vij(Hv, 0, 0) - _vij(Hv, 1, 1))
     V = np.asarray(V)
     _, sv, Vt = np.linalg.svd(V, full_matrices=V.shape[0] < V.shape[1])
     # 正面平行ばかりの視点では零空間が 2 次元以上になり b が定まらない(Zhang 1999 §3.3)。

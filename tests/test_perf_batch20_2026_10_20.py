@@ -223,8 +223,11 @@ def test_142_143_calibration_matches_original_implementations():
     src = rng.normal(size=(30, 2)); transform = np.array([[1.2, .1, 3], [-.2, .9, 4], [.01, -.02, 1]])
     hom = np.column_stack((src, np.ones(len(src)))) @ transform.T
     dst = hom[:, :2] / hom[:, 2, None]
-    np.testing.assert_array_equal(calib._homography_dlt(src, dst),
-                                  _homography_dlt_original(src, dst))
+    # 2026-11-05(敵対的検証 geometry): _homography_dlt は Hartley 正規化つきに変えたので、
+    # 正規化なしの元実装とはビット一致しない(雑音なしでは両方とも真の変換に 1e-12 で一致する)。
+    np.testing.assert_allclose(calib._homography_dlt(src, dst),
+                               _homography_dlt_original(src, dst), rtol=0, atol=1e-12)
+    np.testing.assert_allclose(calib._homography_dlt(src, dst), transform, rtol=0, atol=1e-12)
     camera = {"fx": 800., "fy": 810., "cx": 320., "cy": 240.}
     pose = np.eye(4); pose[:3, 3] = (1, 2, 10)
     points = rng.uniform((0, 0), (480, 640), size=(200, 2))

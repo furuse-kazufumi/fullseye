@@ -289,15 +289,29 @@ def vector_to_hom_mat3d(src_points, dst_points):
 
 
 def vector_to_proj_hom_mat2d(src_points, dst_points):
-    """2D 点対応から射影変換(ホモグラフィ 3x3)を DLT 推定(vector_to_proj_hom_mat2d)。"""
+    """2D 点対応から射影変換(ホモグラフィ 3x3)を正規化 DLT 推定(vector_to_proj_hom_mat2d)。
+
+    両側の点を Hartley 正規化(重心を原点、平均距離 √2)してから解き、逆正規化する
+    (2026-11-05 敵対的検証 geometry: calib._homography_dlt と同じく、正規化なしでは座標が原点から
+    遠いと条件が悪かった)。"""
     src = _m(src_points).reshape(-1, 2); dst = _m(dst_points).reshape(-1, 2)
+
+    def hartley(p):
+        c = p.mean(0)
+        d = float(np.mean(np.linalg.norm(p - c, axis=1)))
+        k = np.sqrt(2.0) / d if d > 0 else 1.0
+        return np.array([[k, 0.0, -k * c[0]], [0.0, k, -k * c[1]], [0.0, 0.0, 1.0]])
+
+    Ts, Td = hartley(src), hartley(dst)
+    sn = src @ Ts[:2, :2].T + Ts[:2, 2]
+    dn = dst @ Td[:2, :2].T + Td[:2, 2]
     A = []
-    for (x, y), (u, v) in zip(src, dst):
+    for (x, y), (u, v) in zip(sn, dn):
         A.append([-x, -y, -1, 0, 0, 0, u * x, u * y, u])
         A.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
     A = _m(A)
     _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
-    H = Vt[-1].reshape(3, 3)
+    H = np.linalg.inv(Td) @ Vt[-1].reshape(3, 3) @ Ts
     return H / H[2, 2]
 
 
