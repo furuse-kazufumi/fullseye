@@ -559,7 +559,18 @@ def read_message(stdin) -> dict | None:
 
 
 def write_message(stdout, msg: dict) -> None:
-    body = json.dumps(msg, ensure_ascii=False).encode("utf-8")
+    """1 通を Content-Length 枠で書く。**JSON に無い NaN / ±inf のトークンは決して書かない**(fail-closed)。
+
+    ★2026-11-05(敵対的検証): ``json.dumps`` の既定 ``allow_nan=True`` は ``NaN`` / ``Infinity`` を
+    そのまま出し、厳密な JSON の相手には壊れた本文になる。非有限の値が混ざった応答は、同じ id の
+    -32603(内部エラー)に置き換えて書く(値を黙って null にもしない)。"""
+    try:
+        body = json.dumps(msg, ensure_ascii=False, allow_nan=False).encode("utf-8")
+    except ValueError as exc:
+        _log("write_message", "non-finite value in response refused: %s" % exc)
+        body = json.dumps(_err(msg.get("id") if isinstance(msg, dict) else None, -32603,
+                               "内部エラー: 応答に JSON で表せない非有限の値(NaN / inf)が含まれていた"),
+                          ensure_ascii=False).encode("utf-8")
     stdout.write(b"Content-Length: " + str(len(body)).encode() + b"\r\n\r\n")
     stdout.write(body)
     stdout.flush()
@@ -1135,13 +1146,17 @@ def _run_op(arr, op, ka: float, kb: float, allow: bool, device: str = "cpu"):
     """1 op を走らせる。strict で失敗したら (None, degraded, err)。"""
     import backend_safe
     import fullseye
-    backend_safe.clear_fallbacks()
+    # ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で
+    #   **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の
+    #   台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。
+    #   印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
+    mark = backend_safe.mark()
     try:
         out = fullseye.apply(arr, op.name, ka, kb, device=device,
                             on_error=("fallback" if allow else "raise"))
     except Exception as exc:                                    # noqa: BLE001
-        return None, backend_safe.fallbacks(), {"type": type(exc).__name__, "message": str(exc)[:400]}
-    return out, backend_safe.fallbacks(), None
+        return None, backend_safe.events_since(mark), {"type": type(exc).__name__, "message": str(exc)[:400]}
+    return out, backend_safe.events_since(mark), None
 
 
 def _stage(store: HandleStore, meta: dict, arr, op, ka: float, kb: float, allow: bool, *,
@@ -1242,7 +1257,11 @@ def _pipeline_json_value(value, store: HandleStore, *, sort: str, provenance: li
         if item is None or isinstance(item, (str, bool, int)):
             return item
         if isinstance(item, float):
-            return item if math.isfinite(item) else None
+            # ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、
+            #   値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
+            if not math.isfinite(item):
+                raise ValueError("value holds a non-finite number")
+            return item
         if isinstance(item, np.generic):
             return convert(item.item())
         if isinstance(item, np.ndarray):
