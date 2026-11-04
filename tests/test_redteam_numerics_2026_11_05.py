@@ -369,3 +369,44 @@ def test_sibling_pluecker_to_hom_mat3d_is_a_rotation(s):
     assert R @ np.array([1.0, 0.0, 0.0]) == pytest.approx([0.0, 1.0, 0.0], abs=1e-12)
     with pytest.raises(ValueError):
         transforms.point_pluecker_line_to_hom_mat3d([0, 0, 0], pl, [0, 0, 0], [0, 0, 0])
+
+
+# ── 未確定の疑いを確かめて本物だったもの: ops._ncc_map / kendama._rot_log ─────
+
+
+def test_suspect_ncc_map_is_invariant_to_gain_and_offset():
+    # 修正前: 画像と型を 1e-7 倍すると絶対の床 1e-12 で全面 0、
+    # 1e5 のオフセットに 1e-3 のコントラストは E[v²]−E[v]² の桁落ちで全面 0。
+    import ops
+    rng = np.random.default_rng(0)
+    img = rng.random((64, 64))
+    T = img[20:31, 30:41].copy()
+    ref = ops._ncc_map(img, T)
+    assert np.unravel_index(np.argmax(ref), ref.shape) == (25, 35)
+    cases = [(1e-7, 0.0), (1e-12, 0.0), (1e3, 0.0), (1e-3, 1e3), (1e-3, 1e5)]
+    assert len(cases) == 5
+    for a, b in cases:
+        m = ops._ncc_map(img * a + b, T * a + b)
+        assert np.unravel_index(np.argmax(m), m.shape) == (25, 35), (a, b)
+        assert m.max() == pytest.approx(1.0, abs=1e-9), (a, b)
+        assert np.abs(m - ref).max() < 1e-6, (a, b)
+
+
+def test_suspect_ncc_map_flat_windows_and_flat_template_score_zero():
+    import ops
+    rng = np.random.default_rng(1)
+    T = rng.random((9, 9))
+    flat = np.full((40, 40), 0.5)
+    flat[25:, :] = 1.5
+    m = ops._ncc_map(flat * 1e-9, T)
+    assert np.abs(m[:15, :]).max() == 0.0          # 平坦な窓(画像の大きさに依らず)
+    assert np.abs(ops._ncc_map(rng.random((40, 40)), np.full((9, 9), 3.0))).max() == 0.0
+
+
+@pytest.mark.parametrize("th", [1e-3, 1e-6, 1e-9, 1e-12, 3.0, np.pi - 1e-8])
+def test_suspect_kendama_rot_log_small_angles(th):
+    # 修正前: acos((trR−1)/2) は小さい角で √eps の桁しか分解せず、1e-9 rad の回転を 0 に潰した。
+    import kendama
+    w = th * np.array([0.6, 0.0, 0.8])
+    got = kendama._rot_log(kendama._rot_exp(w))
+    assert np.linalg.norm(got - w) / th < 1e-7
