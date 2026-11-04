@@ -129,3 +129,40 @@ def test_n5_fit_superquadric_coincident_points_rejected():
     import superquadric as sq
     with pytest.raises(ValueError):
         sq.fit_superquadric(np.ones((10, 3)))
+
+
+# ── N7: shapematch.create_cam_pose_look_at_point / render3d.look_at ───────────
+
+
+def test_n7_look_at_parallel_up_rejected():
+    # 修正前: 視線 ∥ up で det=0・rank 1 の行列を例外なく返した。
+    import render3d
+    import shapematch
+    with pytest.raises(ValueError, match="parallel"):
+        shapematch.create_cam_pose_look_at_point((0, 0, 5), (0, 0, 0), up=(0, 0, 1))
+    with pytest.raises(ValueError, match="parallel"):
+        render3d.look_at((0, 0, 5), (0, 0, 0), up=(0, 0, 1))
+    with pytest.raises(ValueError, match="coincide"):
+        shapematch.create_cam_pose_look_at_point((1, 2, 3), (1, 2, 3))
+
+
+@pytest.mark.parametrize("tilt", [1e-2, 1e-6, 1e-8])
+def test_n7_look_at_slightly_tilted_up_is_orthonormal(tilt):
+    # 修正前: +1e-12 の床で tilt=1e-8 で det=0.9998、|RᵀR-I|=2e-4(1e-10 では 0.98)。
+    import shapematch
+    T = shapematch.create_cam_pose_look_at_point((0, 0, 5), (0, 0, 0), up=(tilt, 0, 1))
+    R = T[:3, :3]
+    assert np.linalg.det(R) == pytest.approx(1.0, abs=1e-12)
+    assert np.abs(R.T @ R - np.eye(3)).max() < 1e-12
+    assert R[:, 2] == pytest.approx([0.0, 0.0, -1.0], abs=1e-15)    # z = 前方
+
+
+def test_n7_look_at_tiny_scene_and_tiny_up():
+    # 兄弟: 1e-13 離れた視点・|up| = 1e-12 は正しい入力(絶対の閾値で拒んでいた)。
+    import render3d
+    import shapematch
+    T = shapematch.create_cam_pose_look_at_point((0, 0, 1e-13), (0, 0, 0), up=(0, 1e-12, 0))
+    assert np.linalg.det(T[:3, :3]) == pytest.approx(1.0, abs=1e-12)
+    ref = render3d.look_at((0, 0, 5), (0, 0, 0), up=(0, 1, 0))
+    small = render3d.look_at((0, 0, 5e-13), (0, 0, 0), up=(0, 1e-12, 0))
+    assert small[:3, :3] == pytest.approx(ref[:3, :3], abs=1e-12)
