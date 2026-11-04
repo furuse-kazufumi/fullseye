@@ -119,3 +119,51 @@ def test_s2_hotelling_refuses_half_known_parameters_and_too_few_rows():
         spc.spc_hotelling_t2(X, cov=np.eye(2))
     with pytest.raises(ValueError):
         spc.spc_hotelling_t2(X[:3])            # m = p+1: phase I の Beta が定義されない
+
+
+# ---- S3: gum_expanded の Welch-Satterthwaite と相関 -----------------------
+
+def _tb2(u=(1.0, 1.0), nu=(4.0, 4.0)):
+    return {"u": np.array(u), "sensitivity": np.array([1.0, 1.0]), "dof": np.array(nu)}
+
+
+def test_s3_gum_correlated_dof_never_exceeds_the_budget():
+    """r=+1 の等しい 2 成分(各 nu=4)は Wishart の厳密解 nu_eff=4(旧実装 32 > 総和 8)。"""
+    import spc
+    rs = (0.25, 0.5, 1.0, -0.5, -0.95)
+    assert len(rs) == 5
+    for r in rs:
+        o = spc.gum_expanded(_tb2(), correlation=np.array([[1.0, r], [r, 1.0]]))
+        nu_eff = float(o["dof_effective"][0])
+        assert nu_eff <= 8.0 + 1e-9, (r, nu_eff)
+        assert nu_eff == pytest.approx(4.0, rel=1e-12), (r, nu_eff)
+        assert float(o["dof_used"][0]) == 4.0
+
+
+def test_s3_gum_uncorrelated_value_is_unchanged():
+    """相関なし・単位行列の相関は従来の Welch-Satterthwaite と同じ値(閉形式 8)。"""
+    import spc
+    a = spc.gum_expanded(_tb2())
+    b = spc.gum_expanded(_tb2(), correlation=np.eye(2))
+    assert float(a["dof_effective"][0]) == pytest.approx(8.0, rel=1e-12)
+    assert float(b["dof_effective"][0]) == pytest.approx(8.0, rel=1e-12)
+
+
+def test_s3_gum_correlated_interval_covers_at_the_nominal_level():
+    """独立の検算(Monte Carlo): 同じ 5 回の測定から推定した相関する 2 成分の和について、
+    U = k u_c の区間が真値を 95 % 以上で覆う。旧実装(nu_eff を水増し)は r=+1 で約 89 %。"""
+    import spc
+    rng = np.random.default_rng(3)
+    n, reps = 5, 4000
+    for r in (1.0, 0.5):
+        R = np.array([[1.0, r], [r, 1.0]])
+        L = np.linalg.cholesky(np.array([[1.0, r], [r, 1.0 + 1e-12]]))
+        X = rng.normal(size=(reps, n, 2)) @ L.T
+        m = X.mean(axis=1)
+        s = X.std(axis=1, ddof=1) / np.sqrt(n)
+        hits = 0
+        for i in range(reps):
+            g = spc.gum_expanded({"u": s[i], "sensitivity": np.ones(2),
+                                  "dof": np.full(2, n - 1.0)}, correlation=R)
+            hits += bool(abs(m[i].sum()) <= g["expanded"][0])
+        assert hits / reps >= 0.94, (r, hits / reps)

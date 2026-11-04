@@ -1125,6 +1125,46 @@ def gum_propagate(table, u="u", sensitivity="sensitivity", correlation=None):
     }
 
 
+def _ws_groups(base, nu, correlation, op):
+    """Welch-Satterthwaite に渡す (分散の項, 自由度) の組。
+
+    相関なし: 成分ごとに ``((c_i u_i)^2, nu_i)``(従来どおり)。相関あり: 非零の相関で
+    つながった成分の群ごとに ``(w_g' R_g w_g, min nu_g)``(:func:`gum_expanded` の ★★)。
+    """
+    terms = np.asarray(base["contribution"], dtype=np.float64)       # (c_i u_i)^2
+    if correlation is None:
+        return terms, nu
+    n = terms.size
+    R = _validate_correlation(correlation, n, op)
+    linked = (R != 0.0)
+    np.fill_diagonal(linked, False)
+    if not linked.any():
+        return terms, nu
+    w = np.asarray(base["sensitivity"], dtype=np.float64) * np.asarray(base["u"], dtype=np.float64)
+    group = -np.ones(n, dtype=np.int64)
+    g = 0
+    for i in range(n):                      # 連結成分(非零の相関でつながった成分)
+        if group[i] >= 0:
+            continue
+        stack = [i]
+        group[i] = g
+        while stack:
+            j = stack.pop()
+            for k in np.nonzero(linked[j])[0]:
+                if group[k] < 0:
+                    group[k] = g
+                    stack.append(int(k))
+        g += 1
+    var_g = np.empty(g)
+    nu_g = np.empty(g)
+    for k in range(g):
+        idx = np.nonzero(group == k)[0]
+        wg = w[idx]
+        var_g[k] = max(float(wg @ R[np.ix_(idx, idx)] @ wg), 0.0)
+        nu_g[k] = float(np.min(nu[idx]))
+    return var_g, nu_g
+
+
 def gum_expanded(table, u="u", sensitivity="sensitivity", dof="dof", level=0.95,
                  correlation=None, estimate=None, lower_bound=None, upper_bound=None):
     """Welch-Satterthwaite の有効自由度と包含係数 k、拡張不確かさ U(``table``)。
@@ -1141,6 +1181,22 @@ def gum_expanded(table, u="u", sensitivity="sensitivity", dof="dof", level=0.95,
         (95 % で 1.959964)。
 
     無限自由度(既知の定数など)は ``numpy.inf`` を入れる。
+
+    ★★**相関があるときの自由度**。Welch-Satterthwaite(GUM G.4.1)は入力が**独立**で
+    あることを前提にした式で、相関項を含む ``u_c`` にそのまま当てると自由度を水増し
+    する(等しい 2 成分・各 nu=4・r=+1 で nu_eff=32 —— 予算の自由度の総和 8 を超える)。
+    負の相関では逆に 1 未満へ潰れる。そこで *correlation* に非零の非対角があるときは、
+    非零の相関でつながった成分を 1 つの群にまとめ、群の分散 ``w_g' R_g w_g``
+    (``w = c u``)と群の自由度 ``min_{i in g} nu_i`` で Welch-Satterthwaite を組む::
+
+        nu_eff = u_c^4 / sum_g (w_g' R_g w_g)^2 / min_{i in g} nu_i
+
+    根拠: 同じ測定から推定した相関する成分(共分散行列が Wishart、自由度 nu 共通)では、
+    合成分散の推定量は厳密に ``sigma^2 chi^2_nu / nu`` で、有効自由度は ``r`` に依らず
+    ``nu`` そのもの(Willink, *Metrologia* 44:340, 2007 の一般化 Welch-Satterthwaite で
+    r=+1 の等しい 2 成分が nu になるのと一致)。自由度の違う成分が相関する場合は最小値を
+    取る —— 安全側(k を大きく)に倒す本実装の規則であって、規格の式ではない。
+    相関がすべて 0(または単位行列)なら群は全部 1 成分で、従来の式と同じ値になる。
     """
     op = "gum_expanded"
     base = gum_propagate(table, u=u, sensitivity=sensitivity, correlation=correlation)
@@ -1158,10 +1214,12 @@ def gum_expanded(table, u="u", sensitivity="sensitivity", dof="dof", level=0.95,
         raise ValueError("%s: level must lie strictly between 0 and 1, got %r"
                          % (op, level))
     uc = float(base["u_combined"][0])
-    terms = base["contribution"]                 # (c_i u_i)^2
+    terms, nu_terms = _ws_groups(base, nu, correlation, op)
     with np.errstate(divide="ignore", invalid="ignore"):
-        denom = float(np.nansum(np.where(np.isfinite(nu), terms ** 2 / nu, 0.0)))
-    nu_eff = float("inf") if denom <= 0 else uc ** 4 / denom
+        denom = float(np.nansum(np.where(np.isfinite(nu_terms), terms ** 2 / nu_terms, 0.0)))
+    # 分子は群の分散の和の 2 乗(= u_c^4)。sqrt を経た u_c を 4 乗すると丸めで
+    # 4.0 が 3.9999999 になり、下の切り捨てで自由度が 1 落ちる(r=0.5 の 2 成分で実測)。
+    nu_eff = float("inf") if denom <= 0 else float(np.sum(terms)) ** 2 / denom
     _st = _scipy_stats()
     # ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」
     #   ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、
