@@ -6,7 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liest OME-TIFF als <code style="color:#22d3bf">(stack, meta)</code> und gleicht OME-XML mit dem Array ab.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">meta</code> は TCZYX 部分列の <code style="color:#22d3bf">axes</code>、物理サイズと単位、チャネル名を持つ。通常 TIFF、複数 Image、XML の Size/dtype と TIFF の不一致、無名チャネルは拒否する。</p>
+<p><code style="color:#22d3bf">meta</code> は TCZYX 部分列の <code style="color:#22d3bf">axes</code>、物理サイズと単位、チャネル名を持つ。<code style="color:#22d3bf">ome_tiff_write</code> の書いた長さ 1 の軸は記録から戻す(他の書き手のファイルでは tifffile と同じく長さ 1 の軸を畳む)。通常 TIFF、複数 Image、XML の Size/dtype と TIFF の不一致、無名チャネルは拒否する。</p>
 <p>呼び出し例: <code style="color:#22d3bf">stack, meta = ome_tiff_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

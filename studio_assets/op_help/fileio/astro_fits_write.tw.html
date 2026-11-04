@@ -6,7 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將二維/三維天文影像與基本 WCS 寫成主 HDU FITS <code style="color:#22d3bf">bytes</code>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">header</code> は FITS の基本 WCS キー(<code style="color:#22d3bf">CTYPE*</code>, <code style="color:#22d3bf">CRPIX*</code>, <code style="color:#22d3bf">CRVAL*</code>, <code style="color:#22d3bf">CDELT*</code>, <code style="color:#22d3bf">PC*_*</code>, <code style="color:#22d3bf">CD*_*</code>, <code style="color:#22d3bf">CUNIT*</code> など)だけを持つ辞書。構造キーは配列から作り、uint16/uint32 は標準の BZERO 規約で保存する。呼び出し例:</p>
+<p><code style="color:#22d3bf">header</code> は FITS の基本 WCS キー(<code style="color:#22d3bf">CTYPE*</code>, <code style="color:#22d3bf">CRPIX*</code>, <code style="color:#22d3bf">CRVAL*</code>, <code style="color:#22d3bf">CDELT*</code>, <code style="color:#22d3bf">PC*_*</code>, <code style="color:#22d3bf">CD*_*</code>, <code style="color:#22d3bf">CUNIT*</code> など)だけを持つ辞書。構造キーは配列から作り、int8/uint16/uint32/uint64 は FITS 4.0 の標準の BZERO 規約で保存する。呼び出し例:</p>
 <p><code style="color:#22d3bf">payload = astro_fits_write(image, header={&quot;CTYPE1&quot;: &quot;RA---TAN&quot;})</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

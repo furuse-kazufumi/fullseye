@@ -6,7 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>讀取 OME-TIFF 為 <code style="color:#22d3bf">(stack, meta)</code>，並交叉核對 OME-XML 與陣列。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">meta</code> は TCZYX 部分列の <code style="color:#22d3bf">axes</code>、物理サイズと単位、チャネル名を持つ。通常 TIFF、複数 Image、XML の Size/dtype と TIFF の不一致、無名チャネルは拒否する。</p>
+<p><code style="color:#22d3bf">meta</code> は TCZYX 部分列の <code style="color:#22d3bf">axes</code>、物理サイズと単位、チャネル名を持つ。<code style="color:#22d3bf">ome_tiff_write</code> の書いた長さ 1 の軸は記録から戻す(他の書き手のファイルでは tifffile と同じく長さ 1 の軸を畳む)。通常 TIFF、複数 Image、XML の Size/dtype と TIFF の不一致、無名チャネルは拒否する。</p>
 <p>呼び出し例: <code style="color:#22d3bf">stack, meta = ome_tiff_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
