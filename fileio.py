@@ -1434,6 +1434,10 @@ def _fits_storage(image):
     bzero, bscale = 0, 1
     if dtype == np.dtype("uint8"):
         bitpix, stored = 8, array.astype(">u1", copy=False)
+    elif dtype == np.dtype("int8"):
+        # FITS 4.0 Table 11: signed bytes are BITPIX=8 with BZERO=-128 (stored = value + 128)
+        bitpix, bzero = 8, -128
+        stored = (array.view(np.uint8) ^ np.uint8(0x80)).astype(">u1")
     elif dtype == np.dtype("int16"):
         bitpix, stored = 16, array.astype(">i2", copy=False)
     elif dtype == np.dtype("uint16"):
@@ -1446,12 +1450,17 @@ def _fits_storage(image):
         stored = (array.astype(np.int64) - bzero).astype(">i4")
     elif dtype == np.dtype("int64"):
         bitpix, stored = 64, array.astype(">i8", copy=False)
+    elif dtype == np.dtype("uint64"):
+        # FITS 4.0 Table 11: BITPIX=64 with BZERO=2**63; value - 2**63 is a sign-bit flip
+        bitpix, bzero = 64, 1 << 63
+        stored = (array.astype(np.uint64) ^ np.uint64(1 << 63)).view(np.int64).astype(">i8")
     elif dtype == np.dtype("float32"):
         bitpix, stored = -32, array.astype(">f4", copy=False)
     elif dtype == np.dtype("float64"):
         bitpix, stored = -64, array.astype(">f8", copy=False)
     else:
-        raise ValueError(f"astro_fits_write: unsupported dtype {dtype}; use uint8/uint16/uint32, int16/int32/int64, float32/float64")
+        raise ValueError(f"astro_fits_write: unsupported dtype {dtype}; use int8/uint8, int16/uint16, "
+                         "int32/uint32, int64/uint64, float32/float64")
     return array, stored, bitpix, bzero, bscale
 
 
@@ -1460,7 +1469,7 @@ def astro_fits_write(image, *, header):
 
     ``header`` は FITS の基本 WCS キー(``CTYPE*``, ``CRPIX*``, ``CRVAL*``,
     ``CDELT*``, ``PC*_*``, ``CD*_*``, ``CUNIT*`` など)だけを持つ辞書。構造キーは
-    配列から作り、uint16/uint32 は標準の BZERO 規約で保存する。呼び出し例:
+    配列から作り、int8/uint16/uint32/uint64 は FITS 4.0 の標準の BZERO 規約で保存する。呼び出し例:
     ``payload = astro_fits_write(image, header={"CTYPE1": "RA---TAN"})``。
     """
     array, stored, bitpix, bzero, bscale = _fits_storage(image)
@@ -1496,6 +1505,8 @@ def astro_fits_read(data):
     """primary HDU の 2-D/3-D FITS を ``(image_or_volume, meta)`` として読む。
 
     ``meta`` は ``bitpix``、``bzero``、``bscale`` と基本 WCS の ``wcs`` 辞書を持つ。
+    FITS 4.0 の整数の規約(BSCALE=1 で BZERO=-128 / 2**15 / 2**31 / 2**63)は int8 / uint16 /
+    uint32 / uint64 の整数のまま正確に返す(それ以外の BZERO/BSCALE は float64 に換算)。
     切れたブロック、random groups、BLANK、次元・BITPIX・データ長の不一致は名指しで拒否する。
     呼び出し例: ``image, meta = astro_fits_read(payload)``。
     """
@@ -1562,10 +1573,18 @@ def astro_fits_read(data):
         raise ValueError(f"{op}: BZERO/BSCALE must be finite numeric values and BSCALE must be nonzero")
     if not math.isfinite(float(bzero)) or not math.isfinite(float(bscale)):
         raise ValueError(f"{op}: BZERO/BSCALE must be finite")
-    if bitpix == 16 and bzero == 1 << 15 and bscale == 1:
+    # ★2026-11-05 redteam I4: FITS 4.0 §5.3 / Table 11 -- the four integer offset conventions
+    # (BSCALE=1 with BZERO = -128 / 2**15 / 2**31 / 2**63) denote *integer* data of the other
+    # signedness. uint64 used to go through float64 (2**63 + 1 -> 2**63, 2**64 - 1 -> 2**64) and
+    # int8 came back as float64. They are now decoded with exact integer arithmetic.
+    if bitpix == 8 and bzero == -128 and bscale == 1:
+        array = (array ^ np.uint8(0x80)).view(np.int8)
+    elif bitpix == 16 and bzero == 1 << 15 and bscale == 1:
         array = (array.astype(np.int32) + (1 << 15)).astype(np.uint16)
     elif bitpix == 32 and bzero == 1 << 31 and bscale == 1:
         array = (array.astype(np.int64) + (1 << 31)).astype(np.uint32)
+    elif bitpix == 64 and bzero == 1 << 63 and bscale == 1:
+        array = array.view(np.uint64) ^ np.uint64(1 << 63)
     elif bzero != 0 or bscale != 1:
         array = array.astype(np.float64) * float(bscale) + float(bzero)
     wcs = {key: values[key] for key in _FITS_WCS_KEYS if key in values}
