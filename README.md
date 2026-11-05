@@ -353,12 +353,18 @@ Everything below lives in the repo — start at the guide that matches what you 
 
 ## Scope
 
-- **Out of scope: deep learning (training).** Fullseye is classical image processing plus
-  physical models; it does not train networks (HALCON's Deep Learning chapter is not a target).
+- **Out of scope: deep learning.** Fullseye is classical image processing plus physical models.
+  It does not train or ship deep networks or pretrained weights (HALCON's Deep Learning chapter is
+  not a target).
+- **Classical trained classifiers: included.** Small classifiers that you train on your own feature
+  vectors, in numpy (HALCON's Classification chapter): `train_class_gmm` / `train_class_knn`
+  (`mvclass`), `train_class_mlp` (one hidden layer) / `train_class_svm` (linear, one-vs-rest),
+  `fisher_lda_fit` (two-class, closed form). Nothing is pretrained; the model is whatever your
+  labelled data makes it.
 - **OCR: classical, included since 0.9.0.** `opssymbol` ships a classical OCR (`ocrclassic`, 8 ops:
   a built-in 5x7 font, line segmentation, features, training and classification, reading a line, scoring),
-  alongside 1-D / 2-D code reading and print-quality grading. No neural network is trained or shipped.
-- **After 1.0, as candidates: trained classifiers** (HALCON's Classification chapter).
+  alongside 1-D / 2-D code reading and print-quality grading. Its classifier is k-NN over feature
+  templates rendered from the font, not a neural network.
 - Some HALCON names are only **partial** analogues and are not counted as covered — see the
   "Partial analogues" table in [docs/HALCON_COVERAGE.md](docs/HALCON_COVERAGE.md).
 
