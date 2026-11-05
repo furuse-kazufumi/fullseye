@@ -683,15 +683,16 @@ def _corner_response(t, a, b, dev):
 
 
 def _aniso_diffusion(t, a, b, dev):
-    """core anisotropic(Perona–Malik、np.roll = 周期境界)の逐語移植。K=0.05+0.25b、
-    反復 2+int(8a)、刻み 0.2。反復 x 全画素の指数計算で計算重 = GPU が効く型(実測 144x)。"""
+    """core anisotropic(Perona–Malik、縁は複製 = Neumann)の逐語移植。K=0.05+0.25b、
+    反復 2+int(8a)、刻み 0.2。反復 x 全画素の指数計算で計算重 = GPU が効く型(実測 144x)。
+    2026-11-05(敵対的検証 第 2 巡 P7)まで CPU と同じく torch.roll の周期境界だった。"""
     K = 0.05 + 0.25 * b
     y = t.clone()
     for _ in range(2 + int(a * 8)):
-        dn = torch.roll(y, -1, 2) - y
-        ds = torch.roll(y, 1, 2) - y
-        de = torch.roll(y, -1, 3) - y
-        dw = torch.roll(y, 1, 3) - y
+        dn = torch.cat([y[:, :, 1:], y[:, :, -1:]], 2) - y
+        ds = torch.cat([y[:, :, :1], y[:, :, :-1]], 2) - y
+        de = torch.cat([y[:, :, :, 1:], y[:, :, :, -1:]], 3) - y
+        dw = torch.cat([y[:, :, :, :1], y[:, :, :, :-1]], 3) - y
         y = y + 0.2 * (torch.exp(-(dn / K) ** 2) * dn + torch.exp(-(ds / K) ** 2) * ds
                        + torch.exp(-(de / K) ** 2) * de + torch.exp(-(dw / K) ** 2) * dw)
     return y.clamp(0, 1)
@@ -988,7 +989,7 @@ def _affine_spline(t, M, off, dev):
 def _affine_warp(t, a, b, dev):
     ang = np.deg2rad(-20 + 40 * a)
     M = np.array([[np.cos(ang), -np.sin(ang) + (b - 0.5) * 0.4], [np.sin(ang), np.cos(ang)]])
-    c = np.array(t.shape[2:], np.float64) / 2
+    c = (np.array(t.shape[2:], np.float64) - 1) / 2      # 画素中心の規約(CPU と同じ、敵対的検証 2026-11-05 P8)
     return _affine_spline(t, M, c - M @ c, dev)
 
 
@@ -1005,7 +1006,7 @@ def _zoom_factor(t, a, b, dev):
     sr, sc = 0.7 + 0.6 * a, 0.7 + 0.6 * b
     H, W = t.shape[2], t.shape[3]
     return _affine_spline(t, np.diag([1 / sr, 1 / sc]),
-                          (H * (1 - 1 / sr) / 2, W * (1 - 1 / sc) / 2), dev)
+                          ((H - 1) / 2 * (1 - 1 / sr), (W - 1) / 2 * (1 - 1 / sc)), dev)   # 中心 (H-1)/2(P8)
 
 
 def _rescale_img(t, a, b, dev):
@@ -1013,7 +1014,7 @@ def _rescale_img(t, a, b, dev):
     s = 0.7 + 0.6 * a
     H, W = t.shape[2], t.shape[3]
     order = (0, 1, 3, 3)[min(3, int(float(np.clip(b, 0.0, 1.0)) * 4))]
-    off = (H * (1 - 1 / s) / 2, W * (1 - 1 / s) / 2)
+    off = ((H - 1) / 2 * (1 - 1 / s), (W - 1) / 2 * (1 - 1 / s))      # 中心 (H-1)/2(P8)
     yy, xx = _affine_coords(H, W, np.diag([1 / s, 1 / s]), off, dev)
     if order == 3:
         return _spline_sample(_spline_prefilter(t), yy, xx)
@@ -1034,8 +1035,9 @@ def _zoom_size(t, a, b, dev):
     """core zoom_image_size: 全体を (ht,wt) へ order=1 で標本化し、キャンバス左上へ置く。"""
     H, W = t.shape[2], t.shape[3]
     ht, wt = max(1, int(round(H * (0.5 + a)))), max(1, int(round(W * (0.5 + b))))
-    ys = torch.arange(ht, dtype=torch.float64, device=dev) * (H / ht)
-    xs = torch.arange(wt, dtype=torch.float64, device=dev) * (W / wt)
+    # 画素中心合わせ(CPU と同じ、敵対的検証 2026-11-05 P9): 出力 o -> 入力 (o+0.5)·H/ht - 0.5
+    ys = (torch.arange(ht, dtype=torch.float64, device=dev) + 0.5) * (H / ht) - 0.5
+    xs = (torch.arange(wt, dtype=torch.float64, device=dev) + 0.5) * (W / wt) - 0.5
     y0, x0 = torch.floor(ys), torch.floor(xs)
     fy, fx = (ys - y0).float().view(1, 1, -1, 1), (xs - x0).float().view(1, 1, 1, -1)
     y0, x0 = y0.long(), x0.long()

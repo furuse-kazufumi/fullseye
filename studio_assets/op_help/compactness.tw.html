@@ -11,9 +11,10 @@
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness.chain.jpg">compactness: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>緊湊度 <code style="color:#22d3bf">周長² / (4π・面積)</code>。圓為 1,越細長/越粗糙/孔洞越多就越大,<b>沒有上限</b>。與 HALCON 的 <code style="color:#22d3bf">compactness</code>(Shape factor for the compactness of a region.)是同一個量。</p>
-<p>★2026-09-26 之前先 <code style="color:#22d3bf">/10</code> 再用 <code style="color:#22d3bf">min(1.0, ...)</code> 截斷 —— 這是為了把值收在 [0,1] 內的權宜之計,但 <code style="color:#22d3bf">周長²/(4π·面積)</code> 超過 10 的形狀(寬 2 px 時即長度 80 以上的刮痕)<b>全部被壓成 1.0</b>。在刮痕、裂紋這類最想看的區域,回傳的卻是「形狀不同、數值相同」。值域 [0,1] 本來就不是 feature 的約定(<code style="color:#22d3bf">elliptic_axis</code> 回傳 6.35,<code style="color:#22d3bf">r3_region_features</code> 回傳 18.1),所以沒有壓縮的理由 —— <code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>。</p>
-<p>HALCON 用 <code style="color:#22d3bf">max(1, C)</code> <b>從下方</b>截斷(因為像素近似可能低於 1), 這裡不截斷。低於 1 的值本身就是「區域太小、近似不起作用」這一資訊,如有需要可由呼叫端截斷。</p>
+<p>緊湊度 <code style="color:#22d3bf">max(1, 周長² / (4π・面積))</code>。圓為 1，越細長/越粗糙/孔洞越多就越大，<b>沒有上限</b>。與 HALCON 的 <code style="color:#22d3bf">compactness</code>（Shape factor for the compactness of a region.）是同一個量。</p>
+<p>★2026-09-26 之前先 <code style="color:#22d3bf">/10</code> 再用 <code style="color:#22d3bf">min(1.0, ...)</code> 截斷 —— 這是為了把值收在 [0,1] 內的權宜之計，但 <code style="color:#22d3bf">周長²/(4π·面積)</code> 超過 10 的形狀（寬 2 px 時即長度 80 以上的刮痕）<b>全部被壓成 1.0</b>。在刮痕、裂紋這類最想看的區域，回傳的卻是「形狀不同、數值相同」。值域 [0,1] 本來就不是 feature 的約定（<code style="color:#22d3bf">elliptic_axis</code> 回傳 6.35，<code style="color:#22d3bf">r3_region_features</code> 回傳 18.1），所以沒有壓縮的理由 —— <code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>。</p>
+<p>與 HALCON 相同，以 <code style="color:#22d3bf">max(1, C)</code> <b>從下方</b>截斷（因為像素近似可能低於 1。HALCON 23.11 中 <code style="color:#22d3bf">compactness</code> 的說明：「C = max(1, C′)」「The value of C is clipped to 1.0」，回傳值的斷言 <code style="color:#22d3bf">Compactness &gt;= 1.0 || Compactness == 0</code>）。半徑 3〜6 的圓盤為 1.0。區域為空時為 0。</p>
+<p>★2026-11-05（對抗性驗證 第 2 輪 P2）之前，本說明寫的是「這裡不截斷」—— 實作自 2026-09-26 起就是 HALCON 的 <code style="color:#22d3bf">max(1, C)</code>，只有說明文字還停留在之前的方針。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

@@ -19,7 +19,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 이진화 임계값(에지 진폭 영상을 상정. a=0에서는 0보다 큰 화소가 모두 전경).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 구조 요소의 반복 횟수 <code style="color:#22d3bf">it = 1 + int(b*3)</code>(1~4, 정사각형의 변은 3~9화소). 닫을 수 있는 틈은 대략</p>
 <p><code style="color:#22d3bf">2*it</code>화소 이하.</p>
-<p>주의: <code style="color:#22d3bf">binary_closing</code>은 영상 밖을 0으로 하여 침식하므로, 영상 끝에서 <code style="color:#22d3bf">it</code>화소의 띠는 반드시 0이 된다(전면 1인 20×20에 it=1을 걸면 남는 것은 18×18). 끝에 접하는 에지를 다룰 때는 미리 여백을 붙이거나, 결과를다시 팽창시킨다. 입력은 image(에지 진폭)이고 출력도 image sort이지만 내용은 이진. <code style="color:#22d3bf">hx_nonmax_dir</code>나 <code style="color:#22d3bf">sobel_amp</code>의뒤에 두고, 이어진 에지는 <code style="color:#22d3bf">hx_region_to_label</code>이나 <code style="color:#22d3bf">hx_detect_edge_segments</code>로 넘긴다.</p>
+<p>영상의 가장자리: 평면은 영상 밖으로 이어지며, 밖은 배경으로 간주한다(여백을 붙여 닫은 뒤 잘라 되돌린다). closing은 확대적이므로가장자리에 닿는 에지도 깎지 않는다(전면 1인 20×20은 20×20 그대로). 2026-11-05(적대적 검증 제2차 P3)까지는 영상밖을 0으로 하여 침식했기 때문에, 영상 끝에서 <code style="color:#22d3bf">it</code>화소의 띠가 반드시 0이 되었다. 입력은 image(에지 진폭)이고 출력도 image sort이지만 내용은 이진. <code style="color:#22d3bf">hx_nonmax_dir</code>나 <code style="color:#22d3bf">sobel_amp</code>의뒤에 두고, 이어진 에지는 <code style="color:#22d3bf">hx_region_to_label</code>이나 <code style="color:#22d3bf">hx_detect_edge_segments</code>로 넘긴다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>

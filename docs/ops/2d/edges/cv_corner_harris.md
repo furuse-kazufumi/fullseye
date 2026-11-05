@@ -39,7 +39,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 Harris コーナー応答(OpenCV 実装)。sk_corner_harris と同じ Harris の考え方だが、勾配計算・平滑化のブロックサイズなどを固定パラメータで計算するOpenCV 版。
 
-HALCON の `points_harris` に相当(近似)。実装は ``cv2.cornerHarris(v, blockSize=2, ksize=3, k=0.04)`` を ``signed01`` で ``[0,1]`` へ写した値 —— blockSize(近傍サイズ)・ksize(Sobel 開口)・k(Harris の自由パラメータ)はすべて固定。a, b は未使用 —— skimage 版と違いスケールを振る仕組みが無い、素の Harris 応答。
+HALCON の `points_harris` に相当(近似)。実装は ``cv2.cornerHarris(v, blockSize=3, ksize=3, k=0.04)`` を ``signed01`` で ``[0,1]`` へ写した値 —— blockSize(近傍サイズ)・ksize(Sobel 開口)・k(Harris の自由パラメータ)はすべて固定。a, b は未使用 —— skimage 版と違いスケールを振る仕組みが無い、素の Harris 応答。2026-11-05(敵対的検証 第 2 巡 P11)までは blockSize=2 で、偶数の窓の中心が半画素ずれ、応答が右下へ 0.5 px 片寄っていた。
 
 **値の比較可能性(実測)**: 出力を**その画像の最大値で正規化**している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって**画像をまたいで値を比較できない** —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。
 

@@ -41,6 +41,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で
 正規化した画像。各前景画素について最も近い背景画素までの距離を表す ――
+(背景が無ければ一様 1.0 = どこも最遠)
 値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく
 ``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the
 distance transformation of a region.）に相当。

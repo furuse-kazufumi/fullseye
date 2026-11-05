@@ -15,7 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.inputs.jpg">hx_radial_distort_contour: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>contour 에 방사 왜곡 r&#x27; = r(1 + k r^2) 을 적용(k 는 (a−0.5) 로 배럴/핀쿠션).</p>
-<p>각 contour의 점을 영상 중심 <code style="color:#22d3bf">(H/2, W/2)</code>로부터의 상대 좌표 <code style="color:#22d3bf">d</code>로 바꾸고, 정규화 반지름 <code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code>에대해 <code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code>로 신축시킨 contour를 반환한다(방사 왜곡 모델의 1차 항).</p>
+<p>각 contour의 점을 영상 중심 <code style="color:#22d3bf">((H-1)/2, (W-1)/2)</code>(화소 중심 규약. 2026-11-05까지는 <code style="color:#22d3bf">(H/2, W/2)</code>)로부터의 상대 좌표 <code style="color:#22d3bf">d</code>로 바꾸고, 정규화 반지름 <code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code>에대해 <code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code>로 신축시킨 contour를 반환한다(방사 왜곡 모델의 1차 항).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 왜곡 계수 <code style="color:#22d3bf">k = (a - 0.5) * 1.5</code>(-0.75~+0.75). <code style="color:#22d3bf">k &lt; 0</code>이면 점이 중심으로 모이고(배럴형), <code style="color:#22d3bf">k &gt; 0</code>이면</p>
 <p>바깥으로 퍼진다(핀쿠션형). a=0.5에서 변화 없음.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>

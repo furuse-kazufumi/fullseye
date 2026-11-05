@@ -15,7 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/remove_small.inputs.jpg">remove_small: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>小さい連結領域を面積で除去する。HALCON の <code style="color:#22d3bf">select_shape</code>（Choose regions with the aid of shape features.）に相当。</p>
-<p><code style="color:#22d3bf">a</code> が除去のしきい値（画素数）を、画像全体の画素数に対する割合 <code style="color:#22d3bf">0.01〜0.16</code>（<code style="color:#22d3bf">(0.01+0.15a) * 画素数</code>）として振る。<code style="color:#22d3bf">b</code> は未使用。しきい値以上の面積を持つ連結成分だけを残す。連結性は scipy <code style="color:#22d3bf">label</code> の既定（4連結）。</p>
+<p><code style="color:#22d3bf">a</code> が除去のしきい値（画素数）を、画像全体の画素数に対する割合 <code style="color:#22d3bf">0.01〜0.16</code>（<code style="color:#22d3bf">(0.01+0.15a) * 画素数</code>）として振る。<code style="color:#22d3bf">b</code> は未使用。しきい値以上の面積を持つ連結成分だけを残す。<b>連結性は 8 連結</b>（HALCON の <code style="color:#22d3bf">connection</code> の既定。2026-11-05 敵対的検証 第 2 巡 P1 までは scipy <code style="color:#22d3bf">label</code> の既定の 4 連結で、斜めに接する塊を別々に数えて小さいとみなし消していた）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

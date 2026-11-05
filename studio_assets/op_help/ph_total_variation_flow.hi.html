@@ -19,6 +19,7 @@
 <p>Gradient descent of the ROF energy TV(I) + (lam/2)||I - I0||^2:</p>
 <p>I_t = div(grad I / |grad I|) - lam (I - I0).</p>
 <p>The TV term (curvature of the level sets) flattens noise while preserving sharp edges; the fidelity term keeps the result anchored to the noisy input I0 so it denoises rather than collapsing to a constant. <code style="color:#22d3bf">a</code> sets the step count, <code style="color:#22d3bf">b</code> the fidelity weight lam.</p>
+<p>The curvature term is the mean of the four forward/backward staggerings (forward gradient + backward divergence and its mirror, per axis), so the flow commutes with flipping the image. Until 2026-11-05 (adversarial review round 2) only the forward-gradient / backward-divergence pair was used, and flipping the input changed the result by up to 0.15.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -14,7 +14,8 @@
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基於 Hessian 行列式的斑點(blob)偵測響應。二階導數矩陣(Hessian)的行列式是一種帶符號的響應值,在斑點狀結構處為正,在鞍點狀結構處為負。</p>
-<p>HALCON 中沒有直接對應的運算子。實作為用 <code style="color:#22d3bf">signed01</code> 將 <code style="color:#22d3bf">feature.hessian_matrix_det(v, sigma=0.5+2.5*a)</code> 對映到 <code style="color:#22d3bf">[0,1]</code> 的值(為保留符號，0.5 對應「零響應」)—— a 將尺度 σ 在 0.5~3.0 之間調節。b 未使用。</p>
+<p>HALCON 中沒有直接對應的運算子。實作為用 <code style="color:#22d3bf">signed01</code> 將 <code style="color:#22d3bf">feature.hessian_matrix_det(v, sigma=0.5+2.5*a, approximate=False)</code> 對映到 <code style="color:#22d3bf">[0,1]</code> 的值(為保留符號，0.5 對應「零響應」)—— a 將尺度 σ 在 0.5~3.0 之間調節。b 未使用。影像外部以鏡像填補。</p>
+<p>2026-11-05(對抗性驗證 第 2 輪 P6)之前使用 skimage 預設的盒式濾波近似(<code style="color:#22d3bf">approximate=True</code>)，由於核的總和不為 0，即使是均勻影像也會回傳與亮度平方成正比的響應，僅把亮度加 0.1 值就會改變(與精確解的相關係數 0.08)。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

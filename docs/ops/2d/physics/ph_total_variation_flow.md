@@ -48,6 +48,12 @@ edges; the fidelity term keeps the result anchored to the noisy input I0 so it
 denoises rather than collapsing to a constant. ``a`` sets the step count,
 ``b`` the fidelity weight lam.
 
+The curvature term is the mean of the four forward/backward staggerings (forward
+gradient + backward divergence and its mirror, per axis), so the flow commutes
+with flipping the image. Until 2026-11-05 (adversarial review round 2) only the
+forward-gradient / backward-divergence pair was used, and flipping the input
+changed the result by up to 0.15.
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

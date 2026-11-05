@@ -10,7 +10,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>偵測到的斑點（斑點狀結構）數量（以 LoG/DoG/DoH 其中之一偵測）。</p>
 <p>使用 skimage.feature 的 Laplacian of Gaussian(LoG)/ Difference of Gaussian(DoG)/ Determinant of Hessian(DoH)之一(此程式碼對 3 種方法採用共同實作，使用哪一種取決於呼叫端以哪個 op 名稱註冊 —— <code style="color:#22d3bf">xsk_blob_log</code> / <code style="color:#22d3bf">xsk_blob_dog</code> / <code style="color:#22d3bf">xsk_blob_doh</code> ——)偵測斑點(blob)，並直接傳回其個數(feature 輸出)。</p>
-<p><code style="color:#22d3bf">a</code> 在 5~25 的範圍內調整搜尋的最大尺度 <code style="color:#22d3bf">max_sigma</code> (越大越能偵測到更大的斑點)。<code style="color:#22d3bf">b</code> 將偵測閾值 <code style="color:#22d3bf">threshold</code> 在 0.02~0.17 之間調整(越小越能偵測到更弱的斑點，偵測數也越容易增加)。3 種方法在速度與精度上不同(LoG 最準確但較慢，DoH 對邊緣較強，但不擅長小斑點，等)。</p>
+<p><code style="color:#22d3bf">a</code> 在 5~25 的範圍內調整搜尋的最大尺度 <code style="color:#22d3bf">max_sigma</code> (越大越能偵測到更大的斑點)。<code style="color:#22d3bf">b</code> 調整偵測閾值 <code style="color:#22d3bf">threshold</code>(越小越能偵測到更弱的斑點，偵測數也越容易增加):</p>
+<p>LoG / DoG 為 0.02~0.17(線性)，<b>DoH 為 0.001~0.1(對數，<code style="color:#22d3bf">0.001·100^b</code>，<code style="color:#22d3bf">b=0.5</code> 時為 skimage 的預設值 0.01)</b>。DoH 的響應(尺度正規化的 Hessian 行列式) 比 LoG / DoG 小 1 個數量級以上，2026-11-05(對抗性驗證 第 2 輪 P5)之前套用了共同的 0.02~0.17，因此 <code style="color:#22d3bf">xsk_blob_doh</code> 在任何設定下都是 0 個(σ=3~6 的 5 個高斯斑點，skimage 的預設設定數出 5 個)。3 種方法在速度與精度上不同(LoG 最準確但較慢，DoH 對邊緣較強，但不擅長小斑點，等)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
