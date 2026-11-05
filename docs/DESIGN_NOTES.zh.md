@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：611 / 1644 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：611 / 1646 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -1044,6 +1044,10 @@
 
 - **L157** — 振幅的步长。★它本身就是一个旋钮。若太粗，极限会被舍入到同一格点，从而把“σ 越大差距越大”这类**由步长制造的差异**误读为真实（2026-09-09，在 34 级时 σ=1.5 与 σ=3.0 的中位数都舍入到 3.20）。
 
+## `examples/poc_real_file_formats.py`
+
+- **L382** _(ja)_ — ★記録した穴: em_mrc_read の meta は NXSTART を返さないので、この地図を空間に置くと x が 2 ボクセル = 22.8 Å ずれる。塞がったら(meta に起点が載ったら)この門が鳴る。
+
 ## `examples/poc_recycling_sorting.py`
 
 - **L520** — ★在扫描**之前**，先从代数给出预测并打印出来。
@@ -1496,6 +1500,7 @@
 ## `fileio.py`
 
 - **L1260** _(ja)_ — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
+- **L2084** _(ja)_ — ★参照実装 nifti1_io.c(nifti_quatern_to_mat44)と同じ規則: 1 - |bcd|^2 < 1e-7 なら 180 度回転と みなして a = 0 とし、(b, c, d) を単位長に正規化する。2026-11-04 まで閾値が無く、float32 の 丸め屑 1.2e-8 から a = 1.1e-4 を作って向きを 0.0125 度回していた(OpenNeuro ds000117 の 磁場地図で nibabel と 8e-4 の差。examples/poc_real_file_formats.py が見つけた)。
 
 ## `fit_transform.py`
 
