@@ -13,6 +13,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 残件
 
 - L2 `ph_total_variation_flow` の値が変わる: `b` が選ぶ忠実度 lam が 0.02〜0.22 から 10〜30 になった(`b=0` が最も強くならす)。`a` は従来どおり反復数(1〜80)。a が大きいほど出力が真値から離れていく振る舞いは無くなり、a ≈ 0.5 より先はほぼ同じ出力(ROF の最小点)になる。
+- L3 MCP `fullseye_find_ops` の `limit` は、どの値でも提案の総数(op + レシピ)。レシピは最大 `find_ops_recipe_max`(2)件で op の枠を必ず 1 つ残す。既定値 7 以外を渡した呼び出しで op の件数が変わる(例 limit 8: 以前は op 8 件を引いて提案は op 8 件、いまは op 6 件 + レシピ 2 件)。limit 1 はレシピを返さない(以前は op 1 件 + レシピ 1 件を返し、提案は op 1 件)。既定(limit 省略・limit 7)は 1 件も変わらない。
 
 ### 修正 — 敵対的検証 2026-11-05 残件
 
@@ -20,6 +21,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 - L1 角度を `(−π, π]` に折る内部関数 2 本が約束の値域を守っていなかった(`fringe.wrapped_phase` を `(−π, π]` に直したときの兄弟)。`complexops._wrap` は `np.round` の偶数丸めで `−π` を `−π` のまま、`3π` を `−π` にしていた。`carpath._wrap` は floor の式で `π` を `−π` にしていた(値域が `[−π, π)`)。どちらも floor で折ってから `−π` 以下を `+2π` する形(drivecourse / drivetown の `_wrap` と同じ)。呼び出し側は全部モジュールの中で、`phase_unwrap` の結果は変わらない(同じ位相を `+π` と書いても `−π` と書いても展開が同じことを門にした)。Reeds-Shepp / Dubins の経路長は 1,445 点の格子(π の境界を含む)で修正前と全部一致(対称な候補が拾っていた)。兄弟: `[−π, π)` を返す `drivecommonroad` / `itof` / `moirealign` / `ultrasound` の `_wrap` と examples の 2 本は値域を約束しておらず、呼び出し側は差の絶対値か小さな差にしか使わないので変えない。`residue._wrap_signed` は `[−p/2, p/2)` と書いてあり、そのとおり。
 - L2 `ph_total_variation_flow` は反復を増やす(a ≥ 0.5)と雑音除去にならず、a=1 では誤差が雑音の入力より大きかった(正方形 + 端の帯・σ 0.05・b=0: 入力 0.050、a=0.1 で 0.019、a=1 で 0.067)。原因は時間刻みの安定条件でも発散でもなく(1 歩の変化は減り続け、雑音の無い入力でも a=1 で RMSE 0.067 = 明るさの偏り)、忠実度 lam が弱すぎたこと: 時定数 1/lam(4.5〜50)が走る時間の全体 80 × 0.008 = 0.64 より桁で長く、忠実度が効かないまま純粋な TV flow が一定値へ流れていた(正方形の中が 0.70 → 0.67、幅 8 px の帯が 0.10 → 0.13)。lam を 10〜30 に(dt·lam ≤ 0.24 で安定、lam·80·dt ≥ 6.4 で最小点に着く)。門: 区分定数 3 枚 × σ 2 通り × b 3 通りで、a を 0〜1 に振った誤差がどこでも入力の 3/4 未満、a=1 が途中の最良の 1.25 倍以内、上がり幅が入力誤差の 1/8 以下、a=0.8 と a=1 の出力の差 < 1e-3、雑音の無い入力の RMSE < 0.025。兄弟: `dc_structure_texture`(`backends_decomp._tv_structure`、Chambolle の双対法)は a が強さ(weight)で反復は固定 120 回なので同じ形ではない。`ph_heat_flow` / `ph_mean_curvature_motion` / `ph_perona_malik` は忠実度項を持たない拡散で、a(時間)とともにならしが進むのが仕様。
+- L3 MCP `fullseye_find_ops` の `limit` が単調でなかった: "edge detection" で limit 5/6/7/8 → op 5/6/5/8 件。`limit` が既定値 `find_ops_k`(7)と等しいときだけ op の枠を 7 − `find_ops_recipe_max`(2)= 5 にし、それ以外は op を limit 件引いていた(提案は limit 件で切るので、レシピは既定値のときしか提案に入らなかった)。レシピの枠 = min(`find_ops_recipe_max`, limit − 1)、op の枠 = limit − レシピの枠 に一本化した(limit だけで決まるので単調)。道具の schema は変えていない(minimal プロファイルの予算 1500 に残り 3 トークン)。意味は `docs/MCP.md` の表に書いた。門: 2 つの問いで limit 1〜12 の op 件数・提案件数が減らず、前の候補が入れ替わらず(後ろに足されるだけ)、提案件数 = limit、既定 = limit 7。兄弟: `fullseye_search_ops` の `limit` は op の件数だけでレシピを混ぜないので同じ形ではない。
 
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(state)
 

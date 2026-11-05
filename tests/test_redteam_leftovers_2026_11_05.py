@@ -148,3 +148,62 @@ def test_l2_tv_flow_reaches_a_fixed_point_and_keeps_clean_input(b):
     late = P.ph_total_variation_flow(noisy, 1.0, b)
     earlier = P.ph_total_variation_flow(noisy, 0.8, b)
     assert float(np.abs(late - earlier).max()) < 1e-3
+
+
+# ---- L3: MCP fullseye_find_ops の limit は単調 ---------------------------------
+
+
+@pytest.fixture(scope="module")
+def _mcp():
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.handles import HandleStore
+    from fullseye.mcp.server import call_tool
+
+    cat = Catalog.load()
+
+    def find(query, limit=None):
+        args = {"query": query}
+        if limit is not None:
+            args["limit"] = limit
+        return call_tool("fullseye_find_ops", args, cat, HandleStore(roots=[]))["structuredContent"]
+
+    return find
+
+
+@pytest.mark.parametrize("query", ["edge detection", "remove noise"])
+def test_l3_find_ops_more_limit_never_returns_fewer_ops(_mcp, query):
+    """修正前: "edge detection" の limit 5/6/7/8 → op 5/6/5/8 件(既定値 7 のときだけレシピの枠を引いた)。"""
+    from fssystem import get_system
+
+    recipe_max = int(get_system("find_ops_recipe_max"))
+    limits = list(range(1, 13))
+    rows = [_mcp(query, L) for L in limits]
+    assert len(rows) == 12
+    n_ops = [len(r["ops"]) for r in rows]
+    n_prop = [len(r["proposals"]) for r in rows]
+    names = [[o["name"] for o in r["ops"]] for r in rows]
+    # 単調: limit を増やして op も提案も減らない
+    assert all(b >= a for a, b in zip(n_ops, n_ops[1:])), n_ops
+    assert all(b >= a for a, b in zip(n_prop, n_prop[1:])), n_prop
+    # 増やした分は後ろに足されるだけ(前の候補が入れ替わらない)
+    assert all(nb[:len(na)] == na for na, nb in zip(names, names[1:]))
+    for L, r in zip(limits, rows):
+        # limit は提案の総数。レシピは find_ops_recipe_max 件までで、op の枠を必ず 1 つ残す
+        assert len(r["proposals"]) <= L
+        assert len(r["recipes"]) <= min(recipe_max, L - 1)
+        assert len(r["ops"]) >= 1
+        assert len(r["ops"]) + len(r["recipes"]) + len(r.get("retry_ops", [])) >= len(r["proposals"])
+    # この 2 つの問いは op もレシピも十分あるので、総数はちょうど limit
+    assert n_prop == limits
+
+
+def test_l3_find_ops_default_limit_is_the_same_as_limit_seven(_mcp):
+    """既定(limit 省略)は find_ops_k = 7 を渡したのと 1 件も違わない。"""
+    from fssystem import get_system
+
+    k = int(get_system("find_ops_k"))
+    assert k == 7
+    a, b = _mcp("edge detection"), _mcp("edge detection", k)
+    assert [o["name"] for o in a["ops"]] == [o["name"] for o in b["ops"]]
+    assert [x["name"] for x in a["recipes"]] == [x["name"] for x in b["recipes"]]
+    assert len(a["proposals"]) == len(b["proposals"]) == 7
