@@ -7,7 +7,7 @@
 <p>按弧長等間隔重取樣為 n 點(線性插值)。→ (n,3)。</p>
 <p>以 <code style="color:#22d3bf">arc_length</code> 的累積弧長為參數,取 <code style="color:#22d3bf">np.linspace(0, total, n)</code> 的位置並用 <code style="color:#22d3bf">np.interp</code> 對 x、y、z 獨立線性內插。輸出為 float64 的 (n,3)。起點和終點與輸入的首尾一致,中間點落在折線上(不一定經過原始點)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>:輸出點數。1 時僅起點 1 點,0 時為空的 (0,3)。多於輸入也不會增加資訊, 只是把折線切得更細。</p>
-<p style="margin:2px 0 2px 12px">• 總長小於 1e-12(全部點重合)時,將首點複製 n 次回傳。</p>
+<p style="margin:2px 0 2px 12px">• 總長為 0(全部點重合)時,將首點複製 n 次回傳。</p>
 <p style="margin:2px 0 2px 12px">• 輸出行數固定為 3,輸入不是 (N,3) 時會因行數不足而失敗,或多餘的行被捨棄。沒有形狀檢驗。</p>
 <p style="margin:2px 0 2px 12px">• 封閉曲線不會封閉(終點→起點的區間不在內插範圍內)。即使有重複點 <code style="color:#22d3bf">np.interp</code> 也能通過,但該區間以長度 0 處理。</p>
 <p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> 是 index 參數的差分,因此間距不均勻的點列用本 op 等間距化後再傳入,數值微分會更穩定。需要平滑內插時用 <code style="color:#22d3bf">fit_spline_curve</code>。</p>
