@@ -13,6 +13,9 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reinhard&quot;</code> —— gleicht nur Mittelwert und Standardabweichung jedes Kanals an (Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001). Dabei wirkt die Annahme, dass <b>jeder Kanal unimodal normalverteilt ist</b>. Bei einem bimodalen Bild mit klar getrenntem Vorder- und Hintergrund stimmen Mittelwert und Varianz, doch es entsteht <b>eine Farbe, die keinen der beiden Gipfel trifft</b> (es wird keine Ausnahme ausgelöst).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gaussian&quot;</code> —— Monge-Abbildung, die die Kovarianz mitträgt. <b>Die Korrelation bleibt erhalten</b>.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;histogram&quot;</code> —— exakter Histogrammabgleich pro Kanal. Die Randverteilungen stimmen exakt überein, aber <b>die Korrelation zwischen den Kanälen geht verloren</b>.</p>
+<p><b>Konstante Kanäle</b> (Standardabweichung höchstens <code style="color:#22d3bf">1e-6 × max(1, max|x|)</code>, x die Werte des Kanals —— die Lab-a*/b* eines</p>
+<p>unbunten src fallen darunter; sie enthalten nur Rundungsreste) lösen bei <code style="color:#22d3bf">&quot;reinhard&quot;</code> <code style="color:#22d3bf">MetricContractError</code> aus; bei <code style="color:#22d3bf">&quot;histogram&quot;</code></p>
+<p>werden sie wie ein streng konstanter Eingang auf den Mittelwert der Referenz abgebildet. Der Rest wird nie zu einer falschen Farbe vergrößert.</p>
 <p>space : {&quot;lab&quot;, &quot;rgb&quot;}</p>
 <p>Raum, in dem die Statistiken gebildet werden. Der Standard <code style="color:#22d3bf">lab</code> nutzt die Implementierung aus <code style="color:#22d3bf">imgmetrics</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>

@@ -2502,13 +2502,33 @@ def mueller_partial_polarizer(angle_deg=0.0, extinction_ratio=1000.0, transmissi
     return np.ascontiguousarray(m, dtype=np.float64)
 
 
+def _stokes_pol_norm(s1, s2, s3):
+    """``sqrt(S1^2+S2^2+S3^2)`` を桁に依らず正しく(2026-11-05 敵対的検証 第 2 巡 K3 の兄弟)。
+
+    2 乗の和は ``|S| < 1e-154`` で 0 に下溢れ(DoP = 0 と出る)、``|S| > 1e154`` で inf に
+    溢れる(物理的な状態が「DoP > 1」で拒否される)。その桁だけ ``hypot`` で測り直す
+    (通常の桁の値は従来の式とビット単位で同じ)。スカラーにも配列にも使える。
+    """
+    s1, s2, s3 = (np.asarray(c, dtype=np.float64) for c in (s1, s2, s3))
+    with np.errstate(over="ignore", under="ignore"):
+        pol = np.sqrt(s1 ** 2 + s2 ** 2 + s3 ** 2)
+    nz = (s1 != 0) | (s2 != 0) | (s3 != 0)
+    off = nz & ~((pol >= 1e-150) & (pol <= 1e150))
+    if np.any(off):
+        pol = np.where(off, np.hypot(np.hypot(s1, s2), s3), pol)
+    return pol
+
+
 def _require_stokes(s, op: str, name: str = "stokes") -> np.ndarray:
     v = _require_vec(s, name, op, 4)
-    pol = float(np.sqrt(v[1] ** 2 + v[2] ** 2 + v[3] ** 2))
+    pol = float(_stokes_pol_norm(v[1], v[2], v[3]))
     if v[0] < 0.0:
         raise ValueError("%s: %s[0] (total intensity S0) is %g — a negative "
                          "intensity is not a physical state" % (op, name, v[0]))
-    if pol > v[0] * (1.0 + 1e-9) + 1e-12:
+    # ★2026-11-05(敵対的検証 第 2 巡 K3): 許容に絶対の +1e-12 が入っていて、DoP = 2 の
+    # 状態でも S0 <= 1e-12 の桁なら受理され dop = 1.0 にクリップされていた。許容は S0 に
+    # 対する相対量だけにする(強度の単位・桁に依らず同じ意味)。
+    if pol > v[0] * (1.0 + 1e-9):
         raise ValueError("%s: %s is not physically realisable — the polarised "
                          "part sqrt(S1^2+S2^2+S3^2) = %g exceeds the total "
                          "intensity S0 = %g (degree of polarisation > 1)"
@@ -2589,8 +2609,11 @@ def _mueller_apply_field(m, s):
             "mueller_apply: the leading shapes do not broadcast — mueller %r vs "
             "stokes %r" % (tuple(m.shape[:-2]), tuple(s.shape[:-1]))) from None
     s0 = s[..., 0]
-    pol = np.sqrt(s[..., 1] ** 2 + s[..., 2] ** 2 + s[..., 3] ** 2)
-    bad = (s0 < 0) | (pol > s0 * (1.0 + 1e-9) + 1e-12)
+    pol = _stokes_pol_norm(s[..., 1], s[..., 2], s[..., 3])
+    # ★2026-11-05(敵対的検証 第 2 巡 K3): 絶対の +1e-12 をやめ、場の明るさ(最大 S0)に
+    # 対する相対の丸め屑だけを許す(暗い画素の屑は通し、場全体の桁を下げても DoP > 1 は通さない)。
+    s0_scale = float(np.max(s0)) if s0.size else 0.0
+    bad = (s0 < 0) | (pol > s0 * (1.0 + 1e-9) + 1e-12 * max(s0_scale, 0.0))
     n_bad = int(np.count_nonzero(bad))
     if n_bad:
         worst = float(np.max(np.where(bad, pol - s0, -np.inf)))
@@ -2663,7 +2686,7 @@ def stokes_analyze(stokes):
                          "no light, so every ratio would be 0/0; check for a "
                          "blocked beam (crossed polarisers) before analysing")
     lin = float(np.hypot(s[1], s[2]))
-    pol = float(np.sqrt(s[1] ** 2 + s[2] ** 2 + s[3] ** 2))
+    pol = float(_stokes_pol_norm(s[1], s[2], s[3]))
     # Rounding-dust floor, relative to S0 (see the docstring): an exact-zero
     # test turned S3 = 8.7e-17 into "right" and a 8.7e-17 linear part into an
     # azimuth.

@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>确定像素值可取的范围。<b>不做猜测。</b></p>
-<p>整数 dtype 由 dtype 唯一确定。float 只有在落在 <code style="color:#22d3bf">[0, 1]</code> 内时才视为 1.0,其他情况要求显式给出 <code style="color:#22d3bf">data_range</code>。</p>
+<p>整数 dtype(<code style="color:#22d3bf">uint8</code> / <code style="color:#22d3bf">uint16</code> / <code style="color:#22d3bf">uint32</code> / <code style="color:#22d3bf">int8</code> / <code style="color:#22d3bf">int16</code>)由 dtype 唯一确定(其他整数 dtype 不作推测，请显式给出 <code style="color:#22d3bf">data_range</code>)。float 只有在落在 <code style="color:#22d3bf">[0, 1]</code> 内时才视为 1.0,其他情况要求显式给出 <code style="color:#22d3bf">data_range</code>。</p>
 <p>把 <code style="color:#22d3bf">[0, 1]</code> 的 float 当作 255 来测 PSNR 会偏差 <b>48.13 dB</b>,却不会抛出异常 —— 只会得到一个像模像样的数值,所以在这里拦下。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>*arrays : ndarray</p>

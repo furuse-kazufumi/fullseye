@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>화소값이 취할 수 있는 폭을 정합니다. <b>추측하지 않습니다.</b></p>
-<p>정수 dtype은 dtype에서 유일하게 정해진다. float는 <code style="color:#22d3bf">[0, 1]</code>에 들어 있을때만 1.0으로 간주하고, 그 외에는 <code style="color:#22d3bf">data_range</code>의 명시를 요구한다.</p>
+<p>정수 dtype(<code style="color:#22d3bf">uint8</code> / <code style="color:#22d3bf">uint16</code> / <code style="color:#22d3bf">uint32</code> / <code style="color:#22d3bf">int8</code> / <code style="color:#22d3bf">int16</code>)은 dtype에서유일하게 정해진다(그 밖의 정수 dtype은 추측하지 않으므로 <code style="color:#22d3bf">data_range</code>를 명시). float는 <code style="color:#22d3bf">[0, 1]</code>에 들어 있을때만 1.0으로 간주하고, 그 외에는 <code style="color:#22d3bf">data_range</code>의 명시를 요구한다.</p>
 <p><code style="color:#22d3bf">[0, 1]</code>의 float를 255라고 여기고 PSNR을 재면 <b>48.13 dB</b> 어긋나지만예외는 나지 않는다 -- 그럴듯한 수치가 나올 뿐이므로, 여기서 멈춘다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>*arrays : ndarray</p>

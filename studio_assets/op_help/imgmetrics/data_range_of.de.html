@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bestimmt die Spanne, die die Pixelwerte annehmen können. <b>Es wird nichts geraten.</b></p>
-<p>Bei Integer-dtypes ist er eindeutig durch den dtype bestimmt. float gilt nur dann als 1.0, wenn es in <code style="color:#22d3bf">[0, 1]</code> liegt; andernfalls ist die explizite Angabe von <code style="color:#22d3bf">data_range</code> erforderlich.</p>
+<p>Bei Integer-dtypes (<code style="color:#22d3bf">uint8</code> / <code style="color:#22d3bf">uint16</code> / <code style="color:#22d3bf">uint32</code> / <code style="color:#22d3bf">int8</code> / <code style="color:#22d3bf">int16</code>) ist er eindeutig durch den dtype bestimmt (andere Integer-dtypes werden nicht geraten, daher <code style="color:#22d3bf">data_range</code> explizit angeben). float gilt nur dann als 1.0, wenn es in <code style="color:#22d3bf">[0, 1]</code> liegt; andernfalls ist die explizite Angabe von <code style="color:#22d3bf">data_range</code> erforderlich.</p>
 <p>Misst man das PSNR eines <code style="color:#22d3bf">[0, 1]</code>-float so, als wäre es 255, liegt man um <b>48.13 dB</b> daneben, doch es wird keine Ausnahme ausgelöst -- es kommt nur eine plausibel aussehende Zahl heraus, daher wird hier gestoppt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>*arrays : ndarray</p>

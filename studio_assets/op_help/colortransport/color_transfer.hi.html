@@ -13,6 +13,9 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reinhard&quot;</code> —— हर channel का केवल mean और standard deviation मिलाता है (Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001)। यह इस assumption पर टिका है कि <b>हर channel एक unimodal normal distribution है</b> । जिस bimodal picture में foreground और background साफ़ अलग हों, वहाँ mean और variance तो मिल जाते हैं, पर <b>ऐसा रंग बनता है जो किसी भी peak पर नहीं पड़ता</b> (कोई exception नहीं उठता)।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gaussian&quot;</code> —— covariance समेत transport करने वाला Monge map। <b>correlation बना रहता है</b> ।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;histogram&quot;</code> —— हर channel के लिए exact histogram matching। marginal distribution पूरी तरह मिल जाते हैं, पर <b>channels के बीच का correlation टूट जाता है</b> ।</p>
+<p><b>स्थिर channels</b> (standard deviation <code style="color:#22d3bf">1e-6 × max(1, max|x|)</code> या उससे कम, x उस channel के मान —— achromatic</p>
+<p>src के Lab a*/b* इसी में आते हैं; उनमें केवल rounding का कचरा होता है) <code style="color:#22d3bf">&quot;reinhard&quot;</code> में <code style="color:#22d3bf">MetricContractError</code> उठाते हैं;</p>
+<p><code style="color:#22d3bf">&quot;histogram&quot;</code> में उन्हें ठीक स्थिर input की तरह reference के mean पर map किया जाता है। कचरे को बढ़ाकर झूठा रंग नहीं बनाया जाता।</p>
 <p>space : {&quot;lab&quot;, &quot;rgb&quot;}</p>
 <p>वह space जिसमें statistics लिए जाते हैं। default <code style="color:#22d3bf">lab</code> में <code style="color:#22d3bf">imgmetrics</code> का implementation उपयोग होता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>

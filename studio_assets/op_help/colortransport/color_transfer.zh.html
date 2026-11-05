@@ -13,6 +13,10 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reinhard&quot;</code> —— 只匹配各通道的均值和标准差(Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001)。其前提是<b>各通道为单峰正态分布</b>这一假定。在前景与背景明显分开的双峰图像上，均值和方差虽然一致，得到的却是<b>哪个峰都对不上的颜色</b>(不会抛出异常)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gaussian&quot;</code> —— 连同协方差一起搬运的 Monge 映射。<b>相关性得以保持</b>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;histogram&quot;</code> —— 逐通道的精确直方图匹配。边缘分布完全一致，但<b>通道间的相关性会被破坏</b>。</p>
+<p><b>恒定的通道</b>(标准差不超过 <code style="color:#22d3bf">1e-6 × max(1, max|x|)</code>,x 为该通道的值 —— 无彩色</p>
+<p>src 的 Lab a*/b* 就属于这种情况，其中只有舍入残渣)在 <code style="color:#22d3bf">&quot;reinhard&quot;</code> 下引发</p>
+<p><code style="color:#22d3bf">MetricContractError</code>,在 <code style="color:#22d3bf">&quot;histogram&quot;</code> 下与严格恒定的输入一样映射到参考的</p>
+<p>均值。不会把残渣放大成虚假的颜色。</p>
 <p>space : {&quot;lab&quot;, &quot;rgb&quot;}</p>
 <p>计算统计量的空间。默认的 <code style="color:#22d3bf">lab</code> 使用 <code style="color:#22d3bf">imgmetrics</code> 中的实现。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>

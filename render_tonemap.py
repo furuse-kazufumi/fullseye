@@ -56,6 +56,10 @@ _ACES_B = 0.03
 _ACES_C = 2.43
 _ACES_D = 0.59
 _ACES_E = 0.14
+# f(x) >= 1 になる点(≈ 7.24)より上の頭打ち。f(8) = 1.0031 > 1 なのでクリップ後は 1.0。
+_ACES_X_SAT = 8.0
+# Reinhard の x/(1+x) は x > 2**53 で浮動小数として 1.0。溢れない頭打ち。
+_REINHARD_X_CAP = 1e300
 
 
 def _as_hdr(hdr) -> np.ndarray:
@@ -107,14 +111,26 @@ def tonemap_reinhard(hdr, exposure: float = 1.0, white: float | None = None) -> 
     """
     H = _as_hdr(hdr)
     e = _check_exposure(exposure)
-    x = H * e
+    # ★2026-11-05(敵対的検証 第 2 巡 K2): 有限の大きな放射輝度で NaN を返していた
+    # (exposure=10 で 1e308 → x = inf → inf/inf)。x は「1 に写る十分大きな有限値」で
+    # 頭打ちにしてから式に入れる。頭打ちの点より上は元の式でも浮動小数で 1.0(または
+    # 1 超 → クリップで 1.0)なので、有限で溢れない入力の値は 1 ビットも変わらない。
+    with np.errstate(over="ignore"):
+        x = H * e
     if white is None:
+        x = np.minimum(x, _REINHARD_X_CAP)
         ld = x / (1.0 + x)
     else:
         w = float(white)
         if not np.isfinite(w) or w <= 0.0:
             raise ValueError(f"white must be a positive finite scalar, got {white!r}")
-        ld = x * (1.0 + x / (w * w)) / (1.0 + x)
+        # f(x) = x(1 + x/w²)/(1 + x) は狭義単調で f(w) = 1。x > w は 1 超 → 1.0(元の式もクリップで 1.0)。
+        # w² が溢れる・下溢れる(w > 1e154 / w < 1e-154)ときだけ x/w/w の順にする
+        # (通常域は従来どおり x/(w*w) で、値はビット単位で同じ)。
+        xs = np.minimum(x, w)
+        ww = w * w
+        q = xs / ww if (np.isfinite(ww) and ww >= np.finfo(np.float64).tiny) else xs / w / w
+        ld = np.where(x > w, 1.0, xs * (1.0 + q) / (1.0 + xs))
     return np.clip(ld, 0.0, 1.0)
 
 
@@ -136,7 +152,11 @@ def tonemap_aces(hdr, exposure: float = 1.0) -> np.ndarray:
     """
     H = _as_hdr(hdr)
     e = _check_exposure(exposure)
-    x = H * e
+    # ★2026-11-05(敵対的検証 第 2 巡 K2): x >= 1e154 で x*x が溢れて inf/inf = NaN を
+    # 返していた(docstring は [0, 1] を約束)。f は x >= _ACES_X_SAT(f(x)=1 の正根 ≈ 7.24
+    # より上)で 1 以上 → クリップで 1.0 なので、そこで頭打ちにしても値は変わらない。
+    with np.errstate(over="ignore"):
+        x = np.minimum(H * e, _ACES_X_SAT)
     num = x * (_ACES_A * x + _ACES_B)
     den = x * (_ACES_C * x + _ACES_D) + _ACES_E
     ld = num / den

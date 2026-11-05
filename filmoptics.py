@@ -308,7 +308,8 @@ def film_color(film="SIO2", substrate="SI", thickness_min_nm=0.0, thickness_max_
 
     返り値 dict:
       thickness_nm (N,) / reflectance (N, K) と wavelength_nm (K,) / linear_srgb (N, 3)(白 = 1、負は色域外)/
-      srgb (N, 3)(ガンマ済み・0〜1 に切った表示用)/ lab (N, 3)(CIELAB、白 = D65)/ hue_deg (N,)(a*b* の色相角)/
+      srgb (N, 3)(ガンマ済み・0〜1 に切った表示用)/ lab (N, 3)(CIELAB、白 = D65)/ hue_deg (N,)(a*b* の色相角 [0, 360)、
+      彩度 C* <= 1e-6 の無彩色は定義されないので NaN)/
       chroma (N,)。
 
     ★色は膜厚について**周期的に繰り返す**(SiO₂ on Si では光学的厚さ n d が約 λ/2 ≈ 190 nm 進むごとに似た色に戻る)
@@ -343,8 +344,26 @@ def film_color(film="SIO2", substrate="SI", thickness_min_nm=0.0, thickness_max_
     lab = _lab(xyz)
     return {"thickness_nm": d, "wavelength_nm": lam, "reflectance": R, "linear_srgb": lin * ex,
             "srgb": _srgb_gamma(lin * ex), "lab": lab,
-            "hue_deg": np.degrees(np.arctan2(lab[:, 2], lab[:, 1])) % 360.0,
+            "hue_deg": _hue_angle_deg(lab),
             "chroma": np.hypot(lab[:, 1], lab[:, 2])}
+
+
+#: 色相角を「定義されない」とみなす CIELAB の彩度(C*、白 = 100 の尺度)。無彩色の
+#: 計算の屑は C* ~ 1e-13 なので、その十分上・見える色差(~1)の十分下に置く。
+_HUE_CHROMA_FLOOR = 1e-6
+
+
+def _hue_angle_deg(lab):
+    """CIELAB の色相角 ``h_ab`` [deg] を ``[0, 360)`` で(2026-11-05 敵対的検証 第 2 巡)。
+
+    ``x % 360.0`` は ``x = -1e-15`` で丸めて **ちょうど 360.0** を返すので、360 は 0 に戻す。
+    彩度 ``C* <= _HUE_CHROMA_FLOOR`` の無彩色は色相が定義されない(CIE 15)ので NaN
+    ―― 以前は a*/b* の丸め屑の向き(191°、238° など入力ごとにばらばら)を返していた。
+    """
+    a, b = lab[:, 1], lab[:, 2]
+    h = np.degrees(np.arctan2(b, a)) % 360.0
+    h = np.where(h >= 360.0, 0.0, h)
+    return np.where(np.hypot(a, b) <= _HUE_CHROMA_FLOOR, np.nan, h)
 
 
 # --------------------------------------------------------------------------- #

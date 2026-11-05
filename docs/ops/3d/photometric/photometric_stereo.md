@@ -26,6 +26,8 @@ Lambertian フォトメトリックステレオ: 既知光源方向の N 枚か�
 
 I_n = albedo * max(N·L_n, 0)。各画素で g = albedo*N を最小二乗 g = pinv(L) @ I で解き、
 albedo=|g|, normal=g/|g|。N>=3 必要。albedo~0 や mask 外の画素は normal=(0,0,1)。
+「albedo~0」は入力の最大輝度に対する相対量(``1e-8 × max|I|``)。
+輝度の単位・桁(W/m² でも 8 bit でも)に依らず同じ画素が退化と判定される。
 normalize=True で光源ベクトルを単位方向に正規化(render_lambertian と同一規約 = アルベド絶対値が正しく出る)。
 強度重み付き光源を使うなら normalize=False にし、合成側も生ベクトルで揃えること。
 

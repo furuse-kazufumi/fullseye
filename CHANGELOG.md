@@ -117,6 +117,30 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - P2 `compactness` の説明文が「HALCON は `max(1, C)` と下で切るが、ここでは切らない」と書いていたが、実装(`_halcon_compactness`)は 2026-09-26 の後の便から HALCON と同じ `max(1, C)`。HALCON 23.11 の `compactness` の説明(「C = max(1, C′)」「clipped to 1.0」、表明 `Compactness >= 1.0 || Compactness == 0`)で実装が正しいことを確かめ、説明文と `docs/hardening/compactness-saturated-at-one.md` を直した(値は変わらない)。
 - CI(PR #266)で出た取りこぼし: GPU(accel)の kernel を CPU の新しい規約に揃えた —— `affine_trans_image` / `affine_warp` / `affine_trans_image_size` / `zoom_image_factor` / `rescale_img` の中心を (H-1)/2 に(P8)、`zoom_image_size` を画素中心合わせに(P9)、`anisotropic_diffusion` / `coherence_enhancing_diff` の差分を縁の複製に(P7)。parity の許容は変えていない。`dist_transform_abs` の「相手が無い」入力は拒否をやめて一様 0 に(空の領域は正当な入力 = 空入力の門・契約電池と両立)。P7 でタイル可能になった `anisotropic_diffusion` / `coherence_enhancing_diff` / `monotony` を `scale._NOT_TILE_SAFE` から外した。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(colour)
+
+- K1 `color_transfer(method="reinhard")`: 標準偏差が `1e-6 × max(1, max|値|)` 以下のチャネルを「一定」として `MetricContractError`(以前は絶対 1e-12)。無彩色の src を `space="lab"` で渡すと拒否される(以前は a*/b* の丸め屑を数百万倍して a* −24〜61 の偽の色を返した)。`method="histogram"` では同じチャネルを参照の平均へ写す(値が変わる。厳密に一定な入力と同じ結果)。
+- K2 `driveenv.tone_map`: NaN / Inf の輝度は `ValueError`(以前は NaN の画素を返した)。
+- K3 `optics.mueller_apply` / `stokes_analyze`(スカラー・場)、`polar_gpu.mueller_apply_batch` / `stokes_analyze_batch`: DoP > 1 の Stokes ベクトルをどの強度の桁でも拒否する(以前は S0 ≤ 1e-12 の桁で受理し dop = 1.0 にクリップ)。場は場の最大 S0 の 1e-12 倍の丸め屑だけを許す。
+- K6 `imgmetrics.linear_to_srgb`: `[0, 1]` の外(許容 1e-6)と NaN / Inf は `MetricContractError`(以前は黙って切り詰め)。委譲先 `gfx2d.linear_to_srgb` と対の `srgb_to_linear` に揃えた。`lab_to_rgb` の色域外の切り詰めは従来どおり。
+- K7 `imgmetrics` の色の入口(`rgb_to_xyz` / `rgb_to_lab` / `srgb_to_linear` / `delta_e_map`、`colortransport.color_transfer` など `_to_unit_float` を通るもの): `int8` / `int16` の負の値は `MetricContractError`。
+- 疑い `filmoptics.film_color` の `hue_deg`: 彩度 C* ≤ 1e-6 の無彩色は NaN(以前は丸め屑の向き)。
+- 疑い `hdrfusion.hdr_merge(response=None)`: `uint8` の系列は 256 段(以前は系列の最大値 + 1 で、未飽和の系列でも最も明るい画素を飽和扱い)。値が変わるのは最大値が 255 未満の `uint8` 系列だけ。
+
+### 修正 — 敵対的検証 2026-11-05 第 2 巡(colour)
+
+回帰は `tests/test_redteam2_colour_2026_11_05.py`(真値・閉形式・skimage / colorsys・旧版との突き合わせ)。
+
+- K1 `colortransport.color_transfer` の一定チャネルの床を相対量に。屑の出所(`imgmetrics` の sRGB→XYZ 行列の Y 行和 1.0000001 と白 Y = 1)は IEC 61966-2-1 の 7 桁の行列そのものなので変えない(変えると全ての Lab の値が 1e-5 の桁で動く)。`gaussian` は元から相対床(分散で 1e-12)。
+- K2 `render_tonemap.tonemap_aces` が 1e154 以上で NaN(`x*x` の溢れ)、`tonemap_reinhard(exposure=10)` が 1e308 で NaN、`white` が 1e-154 未満で `w*w` の下溢れ。1 に写る点より上で頭打ち(通常域の値は旧版とビット単位で同じ)。兄弟: `driveenv.tone_map` の 1e307 × exposure 10 で inf / NaN → 溢れる桁は色の比を直接返す(それ未満はビット単位で同じ)。
+- K3 Stokes の実現可能性の絶対床 `+1e-12` を相対に(`optics._require_stokes` / `_mueller_apply_field`、`polar_gpu`)。兄弟: `sqrt(S1²+S2²+S3²)` が |S| < 1e-154 で 0 に下溢れ(DoP 0)、> 1e154 で inf(物理的な状態を拒否)→ その桁だけ `hypot`(通常の桁はビット単位で同じ)。
+- K4 `photometric.photometric_stereo` のアルベドの退化床を `1e-8 × max|I|` に(以前は絶対 1e-8 で、強度 ×1e-8 で全法線 (0, 0, 1)、球で 74.5° 外れた)。兄弟: `specularity.photometric_stereo_robust`、GPU 核 `accel_typed.k_photometric`。
+- K5 `color_pca.trans_from_rgb(..., "hsv")` / `apply_color_trans_lut` が無彩色で H = 2/3(分岐の上書き順)、`mx − mn + 1e-12` の絶対床で小さい値の H / S が歪んだ。skimage と 1e-12 で一致。兄弟: `driveworld._rgb_to_hsv` の 1e-12 の床を厳密な 0 に。
+- K6 上記(Breaking)。repo 内でこの入口に HDR を渡す呼び出しは `lab_to_rgb` だけ(HDR を扱う例は `gfx2d` 側を露光・clip で収めてから呼ぶ)。
+- K7 `int32` / `int64` / `uint64` の拒否文が「整数 dtype であれ」と自己矛盾していた。満の値が dtype から決まらないので最大値で割らない方針を明文化し、値が `[0, 1]` のとき(Python の整数リスト `[1, 1, 1]` など)だけ従来どおり通す。
+- K8 `annotate._luma_field` の docstring を実装(sRGB の伝達関数を外す、灰 0.5 → 0.214)に合わせた(コードは変えていない)。
+- 疑い `quatimage.monogenic_orientation` / `monogenic_metrics` が `np.mod(-1e-17, π)` の丸めでちょうど π(約束は `[0, π)`)→ 0 に戻す。`filmoptics.film_color` の `hue_deg` が丸めで 360.0 → 0 に戻す。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(state)
 
 - T6 GPU の経路(`apply(..., device="cuda"/"auto")` の単 op、`accel.run_batch` / `accel.run_pipeline`、`accel_vol.run_batch_vol` / `run_pipeline_vol`)で値が変わる: `b > 0.5` が端の扱い(nearest / constant / wrap)・構造要素(十字 / 円板 / 線)を選ぶ op(`fast._KNOB_B_OPTIONED` の 18 本と `vol_gaussian`)は core で答える(以前は kernel が `b` を無視して reflect / 正方形のまま計算し、`device="cpu"` と a=0.5 で median 0.528・mean_box 0.311・gaussian 0.265・gdilate 0.424・gerode 0.417・gopen 0.417・gclose 0.405 違った)。`b <= 0.5` は従来どおり kernel(速さも答えも変わらない)。
