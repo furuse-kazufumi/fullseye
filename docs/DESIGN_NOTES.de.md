@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1758. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1764. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -2731,6 +2731,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L41** — Es auf "bei Fehlen mit Begründung skip" setzen —— ★das CI vom 2026-09-08 wurde hier rot: anzunehmen, was lokal vorhanden ist, sei auch im CI da, macht nur lokal grün (gleiches Muster wie `feedback_gate_computed_a_verdict_then_discarded_it`).
 
+## `tests/test_i18n_gate_1_0.py`
+
+- **L261** _(ja)_ — ★全角の読点「，」は数を区切る(NFKC を先に掛けると 350,424 という 1 つの数に化けていた)
+
 ## `tests/test_imgforensics.py`
 
 - **L1064** _(ja)_ — ★2026-10-18: 以前は float の [0,1] をそのまま渡し、古い Pillow がバイト列を読み替えて黙って通していた (Pillow 13 で発覚)。本物の 8 bit に直してから JPEG を通す。
@@ -3101,7 +3105,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L25** — ★**Entferne den eigenen Speicherort dieses Skripts aus sys.path.** Python legt das Verzeichnis des Skripts auf sys.path[0], sodass beim Start aus dem `tools/` des checkout selbst im venv des wheel Dinge unter `tools/` (das nicht mitgelieferte chain_fuzz usw.) importierbar werden und man in einem Zustand zaehlt, in dem "Dinge sichtbar sind, die nicht im wheel liegen". Im Review vom 2026-09-05 hat dieses Gate **das Fehlen von tb_* 143 op uebersehen** genau deswegen. Verschiebe zugleich auch cwd in ein leeres temporaeres Verzeichnis (dasselbe passiert, wenn cwd der checkout ist).
 - **L34** — ★Merke dir **vor** dem Verschieben von cwd das urspruengliche cwd und loese fortan alle Argumentpfade dagegen auf. Gemessen 2026-09-05: preflight uebergibt absolute Pfade und ging daher lokal durch, waehrend ci.yml relative Pfade uebergibt, sodass der dump in ein temp-dir weggeschrieben wurde und compare mit FileNotFoundError scheiterte -- **das Gate fuehrte den Vergleich auf dem produktiven Aufrufpfad kein einziges Mal aus**. Das 3. Mal fuer "stelle das Gate dorthin, wo der Unfall passiert". Statt den Aufrufer zu korrigieren, sorge dafuer, dass es auch bei Aufruf mit relativen Pfaden korrekt funktioniert, und schliesse diese ganze Klasse.
-- **L139** — ★2026-09-08: schau auch auf die editable-Seite. Bis dahin wurde ``a["failed_backends"]`` **nur gesammelt und von niemandem gelesen** -- in derselben Runde als Loch derselben Art wie examplefigs Abbildungs-Fehler aufgedeckt. Das editable-venv hat **viele** optionale Abhaengigkeiten, sodass ein backend wegen einer Versionsabweichung beim import scheitern kann. Dann ist die wheel-Seite bloss "von Anfang an nicht da, weil die Abhaengigkeit fehlt", protokolliert keinen Fehler, und dieser Vergleich geht gruen durch. Die op des gefallenen backend verschwinden stillschweigend aus der Registry.
+- **L145** — ★2026-09-08: schau auch auf die editable-Seite. Bis dahin wurde ``a["failed_backends"]`` **nur gesammelt und von niemandem gelesen** -- in derselben Runde als Loch derselben Art wie examplefigs Abbildungs-Fehler aufgedeckt. Das editable-venv hat **viele** optionale Abhaengigkeiten, sodass ein backend wegen einer Versionsabweichung beim import scheitern kann. Dann ist die wheel-Seite bloss "von Anfang an nicht da, weil die Abhaengigkeit fehlt", protokolliert keinen Fehler, und dieser Vergleich geht gruen durch. Die op des gefallenen backend verschwinden stillschweigend aus der Registry.
 
 ## `tools/conversion_matrix.py`
 
@@ -3149,7 +3153,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L513** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
 - **L533** _(ja)_ — ★2026-10-11: 訳文ファイル(`X.zh.md` など)の題は**その言語**で書かれている。以前は 日本語版と同じく漢字で判定して `(ja)` を付けていたので、中国語版の索引で中国語の文書が 「読めない日本語」と表示されていた。印は**ファイルの言語**で付け、自分の言語なら付けない。
 - **L544** _(ja)_ — ★2026-10-11: 日本語の原文に**この言語の訳がある**なら、訳の題と訳へのリンクを先に出す (以前は英訳があっても英語版の索引が日本語の題と日本語版へのリンクしか出さず、 読める版があることが索引から分からなかった)。原文が日本語であることの印は残す。
-- **L705** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
+- **L707** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
 
 ## `tools/gen_hardening_index.py`
 
@@ -3192,7 +3196,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/gen_op_catalog.py`
 
-- **L266** _(ja)_ — ★fail-closed: op の一覧は台帳の本体。ここを「(section failed)」の 1 行で済ませると カタログが黙って空になる(pip だけの利用者の RAG はこのファイルしか持たない)。
+- **L571** _(ja)_ — ★fail-closed: op の一覧は台帳の本体。ここを「(section failed)」の 1 行で済ませると カタログが黙って空になる(pip だけの利用者の RAG はこのファイルしか持たない)。
+- **L609** _(ja)_ — ★全言語を組み上げてから書く: 言語版の訳が欠けて止まるとき、日本語版だけ新しくなる半端を作らない。
 
 ## `tools/gen_op_facets.py`
 
@@ -3283,6 +3288,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L2611** _(ja)_ — ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
 
+## `tools/i18n_guide_check.py`
+
+- **L94** _(ja)_ — 数の字句。★桁区切りは **ASCII の ``,`` だけ**(全角の ``，`` は中国語の読点で、数を区切る —— NFKC を先に掛けると ``350，424`` が ``350,424`` に化けて 1 つの数になる。訳 A の報告、2026-11-06)。 数字は ASCII と全角(全角は字句を切り出した後に NFKC でそろえる)。 後ろの単位: 和文・中文の ``万 / 千万 / 億 / 亿 / 兆``(空白は任意)と、英語の数詞 ``million / billion / trillion``(空白か ``-`` でつなぐ。``10-million`` / ``1.5 billion``)。
+- **L258** _(ja)_ — ★コードブロックの中は数えない(2026-11-06 の決定、docs/I18N.md): 中のコメントや mermaid の ラベルは訳してもよく、原文のまま写してもよい。地の文(フェンスと code span の外)は訳す。
+- **L283** _(ja)_ — ★``・``(U+30FB 中点)と ``ー``(U+30FC 長音)も数える —— どちらも中国語の文章には出ない (中国語の間隔号は ``·`` U+00B7)。
+
 ## `tools/impl2/knob_probe.py`
 
 - **L219** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N220 の一次検証): 以前は ``--all-region`` が大域の ``_REGION_MODE`` を 立てるだけだったので、``--all-image --all-region`` を 1 回で回すと**画像の op まで二値の探針**で測り、 別々に回すと 2 回目の ``--json`` が 1 回目を上書きした。結果、op_knob.json は region -> region の 87 op を一度も載せておらず(461 / 567)、9-16 以降に足した image -> image の 19 op も未計測のまま だった。二値の探針は **op ごと**に、入力の型(索引の in_sort)が region のときだけ使う。
@@ -3303,20 +3314,21 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tools/opdocs.py`
 
 - **L158** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) war registriert, hatte aber **nicht eine einzige Notiz unter docs/ops** —— es erscheint in OP_CATALOG, aber ohne Notiz je op (Typvertrag, Fallstricke, verwandte ops) fehlte es vollständig im RAG-Korpus. Aufgefallen ist es, als `poc_web_roll_periodicity` dsp um 2 ergänzte.
-- **L982** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
-- **L1055** — ★Die n-äre (mehreingabige) Schicht. Bis zum 2026-09-09 hatten **17 Operatoren keine einzige Notiz** (`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2` …). In `OP_INDEX.json` stehen sie als Tier `nary`, doch ohne Notiz unter `docs/ops/` waren sie **aus dem RAG-Korpus heraus nie auffindbar**. Der Grund für das Übersehen ist klar: hier wurde nur `ops.REGISTRY` durchlaufen, und `ops.REGISTRY` (899) stimmt mit der Zahl der 2-D-Notizen (899) überein — von der Registry aus gezählt sah es vollständig aus. Erst schichtübergreifendes Zählen zeigt es.
-- **L1097** — ★2026-09-07: ``OPS3D[...]["doc"]`` ist zum Registrierungszeitpunkt nur **die erste Zeile des Docstrings**, herausgeschnitten (ops3d._build). Verwendet man es für die "Verwendung" einer Notiz, wird es zu einer einzigen Zeile, egal wie viele Absätze die Implementierung schreibt —— der 3-D-Anteil von "494 ops mit einzeiliger Verwendung" war durch dieses Abschneiden verursacht (viele ops haben selbst lange Docstrings). Lies den Docstring der Funktion vollständig, wie bei der ledger-dim.
-- **L1121** — ★ Ein Brücken-op (``tb_<name>``) hat dieselbe Implementierung wie das ``<name>`` des Ledgers, und Beispiele werden unter dem Ledger-Namen geschrieben. Bis zum 2026-09-06 galten 147 davon als "null Beispiele", aber das bedeutete nur, dass wir nicht gezählt hatten, dass **Beispiele, die dieselbe Implementierung aufrufen, unter einem anderen Namen existieren**. Erbe die Beispiele der Ledger-Seite und vermerke in der Notiz ausdrücklich, dass es "Beispiele des ursprünglichen op" sind (um nicht zu lügen).
-- **L1180** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
-- **L1446** — ★Ein n-ärer Operator lässt sich nicht über `fullseye.apply` aufrufen — das ist das Ein-Bild-Modell. Die Ein-Bild-Aufrufform hier hinzuschreiben lässt **die Notiz lügen**; die einzige Aufgabe dieser Notiz ist zu sagen, wie man aufruft, also ist eine falsche Aufrufform schlimmer als gar keine. Der öffentliche Weg ist `fullseye.FullseyeGraph`.
-- **L1465** — ★2026-09-07: **Schreibe zuerst den öffentlichen Pfad**. Hier stand nur ein direkter Import des Implementierungsmoduls, und `fullseye.ledger.<name>`, das Nutzer tatsächlich verwenden, tauchte nicht auf (alle 1.244 ops außer 2-D). Dass PoCs wiederholt "nicht in fs.<name>" meldeten, lag nicht daran, dass der Name fehlte, sondern daran, dass **der Einstiegspunkt nicht geschrieben war**.
-- **L1920** — ★ Gib die Einstiegspunkte in 6 Sprachen aus (2026-09-09). Die Blätter (Studios op-Hilfe) haben 10.191 Seiten in 6 Sprachen, doch **der Index, der dorthin führt, war nur Japanisch** —— eine Lücke der Form, dass die Übersetzungen existieren, aber nicht erreichbar sind. Der Wortlaut des Rahmens kommt in `T()`, sodass Löcher in den Paralleltexten vom bestehenden Gate (test_chrome_translation_table_has_no_holes) überwacht werden.
-- **L1960** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
-- **L1971** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
-- **L1980** — ★ Dies zeigte lange nur auf `2d/guides/` und schickte die Leser kein einziges Mal zu den Leitfäden der 30 Familien wie Optik, PIV und Tomographie (behoben 2026-09-09).
-- **L2138** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
-- **L2307** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
-- **L3009** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L271** _(ja)_ — ★2026-11-06(1.0.0 の文書の門): 知識ガイドの訳を原文の横に置くと、``*/guides/*.md`` の glob が訳を**別のガイドとして**数えていた(17 本 → 51 本。訳は front matter に原文の ``guide:`` / ``applies_to`` を写すので、op の頁に同じガイドが 3 回並ぶ)。訳は原文に紐付けて扱う。
+- **L1028** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
+- **L1101** — ★Die n-äre (mehreingabige) Schicht. Bis zum 2026-09-09 hatten **17 Operatoren keine einzige Notiz** (`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2` …). In `OP_INDEX.json` stehen sie als Tier `nary`, doch ohne Notiz unter `docs/ops/` waren sie **aus dem RAG-Korpus heraus nie auffindbar**. Der Grund für das Übersehen ist klar: hier wurde nur `ops.REGISTRY` durchlaufen, und `ops.REGISTRY` (899) stimmt mit der Zahl der 2-D-Notizen (899) überein — von der Registry aus gezählt sah es vollständig aus. Erst schichtübergreifendes Zählen zeigt es.
+- **L1143** — ★2026-09-07: ``OPS3D[...]["doc"]`` ist zum Registrierungszeitpunkt nur **die erste Zeile des Docstrings**, herausgeschnitten (ops3d._build). Verwendet man es für die "Verwendung" einer Notiz, wird es zu einer einzigen Zeile, egal wie viele Absätze die Implementierung schreibt —— der 3-D-Anteil von "494 ops mit einzeiliger Verwendung" war durch dieses Abschneiden verursacht (viele ops haben selbst lange Docstrings). Lies den Docstring der Funktion vollständig, wie bei der ledger-dim.
+- **L1167** — ★ Ein Brücken-op (``tb_<name>``) hat dieselbe Implementierung wie das ``<name>`` des Ledgers, und Beispiele werden unter dem Ledger-Namen geschrieben. Bis zum 2026-09-06 galten 147 davon als "null Beispiele", aber das bedeutete nur, dass wir nicht gezählt hatten, dass **Beispiele, die dieselbe Implementierung aufrufen, unter einem anderen Namen existieren**. Erbe die Beispiele der Ledger-Seite und vermerke in der Notiz ausdrücklich, dass es "Beispiele des ursprünglichen op" sind (um nicht zu lügen).
+- **L1226** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
+- **L1492** — ★Ein n-ärer Operator lässt sich nicht über `fullseye.apply` aufrufen — das ist das Ein-Bild-Modell. Die Ein-Bild-Aufrufform hier hinzuschreiben lässt **die Notiz lügen**; die einzige Aufgabe dieser Notiz ist zu sagen, wie man aufruft, also ist eine falsche Aufrufform schlimmer als gar keine. Der öffentliche Weg ist `fullseye.FullseyeGraph`.
+- **L1511** — ★2026-09-07: **Schreibe zuerst den öffentlichen Pfad**. Hier stand nur ein direkter Import des Implementierungsmoduls, und `fullseye.ledger.<name>`, das Nutzer tatsächlich verwenden, tauchte nicht auf (alle 1.244 ops außer 2-D). Dass PoCs wiederholt "nicht in fs.<name>" meldeten, lag nicht daran, dass der Name fehlte, sondern daran, dass **der Einstiegspunkt nicht geschrieben war**.
+- **L1969** — ★ Gib die Einstiegspunkte in 6 Sprachen aus (2026-09-09). Die Blätter (Studios op-Hilfe) haben 10.191 Seiten in 6 Sprachen, doch **der Index, der dorthin führt, war nur Japanisch** —— eine Lücke der Form, dass die Übersetzungen existieren, aber nicht erreichbar sind. Der Wortlaut des Rahmens kommt in `T()`, sodass Löcher in den Paralleltexten vom bestehenden Gate (test_chrome_translation_table_has_no_holes) überwacht werden.
+- **L2009** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
+- **L2020** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
+- **L2029** — ★ Dies zeigte lange nur auf `2d/guides/` und schickte die Leser kein einziges Mal zu den Leitfäden der 30 Familien wie Optik, PIV und Tomographie (behoben 2026-09-09).
+- **L2187** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
+- **L2356** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+- **L3064** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 
@@ -3346,10 +3358,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L109** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
 - **L117** — ★2026-10-15: ohne `--md` **schrieb es nichts** (es gab nur eine Zusammenfassung auf stdout aus). docs/CONVERSION_MATRIX.md blieb auf dem Stand vom 2026-09-02 ("59 Typen / 164 Konversionspaare") stehen, und da --check "eine Stufe, die nichts schreibt" nicht als Drift sieht, lief es sechs Wochen lang durch. Jetzt weist `trace_problems()` eine Stufe zurück, die ihre deklarierten Ausgaben nicht einmal berührt.
 - **L133** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
-- **L388** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
-- **L802** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L817** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L865** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
+- **L390** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
+- **L804** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L819** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L867** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `tools_geom.py`
 
