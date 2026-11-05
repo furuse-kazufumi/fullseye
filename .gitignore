@@ -16,6 +16,8 @@ data/*
 !data/macro_champions.json
 # Public measured data for the thin-film PoC (CC BY 4.0, small extracts; source and changes in its README.md).
 !data/thin_film_real/
+# Public real data files for the file-reader PoC (SDSS / OpenNeuro CC0 / EMDB / OME CC BY 4.0, byte-for-byte as distributed; sources, licences and SHA-256 in its README.md).
+!data/fileio_real/
 # Public measured OCT spectra for the industrial-OCT PoC (CC BY 4.0, a small extract; source and changes in its README.md).
 !data/oct_real/
 # Public deflectometry grid images and the full-run record for the PMD PoC (CC0 1.0, a small extract; source and changes in its README.md).

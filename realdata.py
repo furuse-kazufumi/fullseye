@@ -291,6 +291,77 @@ def sample_photo_credit(names) -> str:
     return chr(10).join(out)
 
 
+# ---------------------------------------------------------------------------
+# libE57 の公開試験点群(E57 の読み手の採点用。再配布の条件が書かれていないので同梱しない)
+# ---------------------------------------------------------------------------
+#: 取得元の URL は配布物に入れず、取得道具 ``tools/fetch_e57_bunny.py`` の ``E57_BUNNY_URL`` に置く
+#: (配布されるのは照合用のバイト数と SHA-256 だけ)。
+#: 同じ点(Stanford bunny 由来の 30,571 点)を 6 つの数値型で格納した E57 の型名。
+E57_BUNNY_KINDS = ("Double", "Float", "Int32", "Int24", "Int21", "Int19")
+#: ファイル名 → (バイト数, SHA-256)。2026-11-04 に上の URL から取得した値。``bunnyData.pts`` は
+#: 同じ点の文字版(真値として使う)。
+E57_BUNNY_FILES = {
+    "bunnyDouble.e57": (743424, "5ec10af7a8b4cf7778d247ea20b2c3058e6488b55ef102ae187373d5cbe8b056"),
+    "bunnyFloat.e57": (374784, "ed48ac81e9e79c00a14950f6d00c8f93b0a7df0b400a01e85d488d9ddea11660"),
+    "bunnyInt32.e57": (374784, "6b3696c452a2dd0e325ab30b1ad28a40de87f1a56cd9d8a24ad81389b606c205"),
+    "bunnyInt24.e57": (282624, "11fe6c4bbddc44b0e8e825a782dee56f7deae5a47c4251dc8248cfb8c80c3c9c"),
+    "bunnyInt21.e57": (248832, "671d1f169fb9db0b5729af3b8d1fbc96e1585b21448ec25d6ce3f06bb9af1e2a"),
+    "bunnyInt19.e57": (225280, "71375f94ea8e35dbdcec1595117461ee8f24047705bf951f64b4cea2a93a3154"),
+    "bunnyData.pts": (880566, "2bc55437d6c3a6b3fbf6e63e9f909a6ab9e0bf73cc43628e243d720a6e04d40f"),
+}
+
+
+def e57_bunny_cache() -> Path:
+    """libE57 の bunny 一式の repo 外キャッシュ先(``FULLSEYE_E57_BUNNY_DATA`` で上書き)。
+
+    開発 worktree が ``<root>/projects/<checkout>`` にあれば ``<root>/data/realdata/e57_bunny``、
+    それ以外はユーザーキャッシュ。ローカル絶対パスをソースに焼き込まないための分岐
+    (:func:`sem_metal_layer_cache` と同じ形)。
+    """
+    configured = os.environ.get("FULLSEYE_E57_BUNNY_DATA", "").strip()
+    if configured:
+        return Path(configured).expanduser()
+    here = Path(__file__).resolve().parent
+    if here.parent.name.lower() == "projects":
+        return here.parent.parent / "data" / "realdata" / "e57_bunny"
+    return Path.home() / ".cache" / "fullseye" / "e57_bunny"
+
+
+def _sha256_file(path: Path) -> str:
+    import hashlib
+
+    h = hashlib.sha256()
+    with path.open("rb") as fh:
+        for block in iter(lambda: fh.read(1 << 20), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
+def e57_bunny_files(*, required: bool = True) -> dict[str, Path] | None:
+    """取得済みの bunny 一式を、バイト数と SHA-256 を照合してから返す。
+
+    1 つも無ければ ``required=False`` で ``None``(CI の既定)。一部だけ在る・中身が違う場合は
+    黙って使わず :class:`RealDataError` にする(取得物は untrusted として照合してから読む)。
+    """
+    cache = e57_bunny_cache()
+    present = {name: cache / name for name in E57_BUNNY_FILES if (cache / name).is_file()}
+    if not present:
+        if required:
+            raise RealDataError("libE57 の bunny 一式が無い: %s。tools/fetch_e57_bunny.py で取得する" % cache)
+        return None
+    if len(present) != len(E57_BUNNY_FILES):
+        missing = sorted(set(E57_BUNNY_FILES) - set(present))
+        raise RealDataError("libE57 の bunny 一式が欠けている(%s): %s" % (", ".join(missing), cache))
+    for name, (size, digest) in E57_BUNNY_FILES.items():
+        path = present[name]
+        if path.stat().st_size != size:
+            raise RealDataError("%s のバイト数 %d が台帳 %d と違う" % (path, path.stat().st_size, size))
+        got = _sha256_file(path)
+        if got != digest:
+            raise RealDataError("%s の SHA-256 %s が台帳と違う" % (path, got))
+    return present
+
+
 if __name__ == "__main__":                                      # pragma: no cover
     ok, ng = [], []
     for name in sorted(SAMPLE_PHOTOS):

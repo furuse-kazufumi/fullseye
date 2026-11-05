@@ -2269,10 +2269,15 @@ def nifti_write(volume, *, meta, compressed):
 def _nifti_qform(raw: bytes, endian: str, pixdim):
     b, c, d = struct.unpack_from(endian + "3f", raw, 256)
     norm = b * b + c * c + d * d
-    a = math.sqrt(max(0.0, 1.0 - norm)) if norm <= 1.00001 else 0.0
-    if norm > 1.00001:
-        scale = math.sqrt(norm)
-        b, c, d = b / scale, c / scale, d / scale
+    # ★参照実装 nifti1_io.c(nifti_quatern_to_mat44)と同じ規則: 1 - |bcd|^2 < 1e-7 なら 180 度回転と
+    #   みなして a = 0 とし、(b, c, d) を単位長に正規化する。2026-11-04 まで閾値が無く、float32 の
+    #   丸め屑 1.2e-8 から a = 1.1e-4 を作って向きを 0.0125 度回していた(OpenNeuro ds000117 の
+    #   磁場地図で nibabel と 8e-4 の差。examples/poc_real_file_formats.py が見つけた)。
+    if 1.0 - norm < 1e-7:
+        scale = math.sqrt(norm) if norm > 0 else 1.0
+        a, b, c, d = 0.0, b / scale, c / scale, d / scale
+    else:
+        a = math.sqrt(1.0 - norm)
     rotation = np.asarray([
         [a*a+b*b-c*c-d*d, 2*b*c-2*a*d, 2*b*d+2*a*c],
         [2*b*c+2*a*d, a*a+c*c-b*b-d*d, 2*c*d-2*a*b],

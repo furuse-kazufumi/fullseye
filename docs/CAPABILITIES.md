@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 100 項目**
+**収録 101 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -69,6 +69,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [同じ入力の検証・近傍探索・変換核を一度だけ計算する](capabilities/reuse-computation-results.md) | `polarization_separate` | `perf_pointcloud_descriptors` |
 | [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
+| [科学データのファイルを読む(FITS・NIfTI・MRC・OME-TIFF・E57)](capabilities/scientific-data-files.md) | `astro_fits_read` | `poc_real_file_formats` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
 | [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md) | `sem_render` → `tem_power_spectrum` | `poc_sem_tem_same_particle` |
 | [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
@@ -1184,7 +1185,7 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 動く例: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (10)
+## 組み立てる (11)
 
 ### [位置を合わせて重ねる](capabilities/align-and-stack.md)
 
@@ -1273,6 +1274,22 @@ op が何千本あっても、ライン担当が最初に触る形は「画像�
 実寸校正: 数値の単位や較正は元の op と同じ。曲率は点群の長さ単位、体積プローブは spacing、偏光は検光子角度を正しく渡す。
 
 動く例: `perf_pointcloud_descriptors`, `perf_monogenic_metrics`, `perf_prepared_volume_probe`, `perf_polarization_analyze`, `perf_hankel_plan_and_piv_stream`
+
+### [科学データのファイルを読む(FITS・NIfTI・MRC・OME-TIFF・E57)](capabilities/scientific-data-files.md)
+
+天文の FITS、脳画像の NIfTI-1、電子顕微鏡の MRC2014、顕微鏡の OME-TIFF、3-D スキャナの E57 を、ファイルの `bytes` から `(配列, meta)`(E57 は点群の表)にします。`meta` には寸法を持つ量を単位つきで入れます —— FITS の基本 WCS、NIfTI の qform / sform と画素間隔(mm)、MRC のボクセル寸法(Å)、OME-TIFF の物理サイズ、E57 の pose。読んだ配列はそのまま 2-D / 3-D の op (`star_detect`・`aperture_photometry`・`otsu`・`vol_label`・`vol_region_props`・`obb` など)へ渡せます。
+
+使う op: `astro_fits_read`, `nifti_read`, `em_mrc_read`, `ome_tiff_read`, `e57_read`, `nrrd_read`
+
+推奨パイプライン: [`astro_fits_read`](ops/fileio/fits/astro_fits_read.md)
+
+代替: [`nifti_read`](ops/fileio/nifti/nifti_read.md), [`em_mrc_read`](ops/fileio/mrc/em_mrc_read.md), [`ome_tiff_read`](ops/fileio/ome_tiff/ome_tiff_read.md), [`e57_read`](ops/fileio/e57/e57_read.md), [`nrrd_read`](ops/fileio/nrrd/nrrd_read.md), [`star_detect`](ops/astrostack/photometry/star_detect.md), [`aperture_photometry`](ops/astrostack/photometry/aperture_photometry.md), [`vol_label`](ops/3d/regionprops/vol_label.md), [`vol_region_props`](ops/3d/regionprops/vol_region_props.md)
+
+限界: FITS は primary HDU だけ(拡張 HDU・BLANK・random groups は拒否)。MRC は格子の起点 NXSTART を返さない。OME-TIFF は 1 ファイルで完結し物理サイズとチャネル名を持つものだけ(複数ファイルの組は拒否)。NRRD は空間の単位の明示が要る。E57 は 1 scan だけ。
+
+実寸校正: 物理寸法はファイルのヘッダから読む(FITS は WCS の度、NIfTI は mm、MRC は Å、OME-TIFF は宣言された単位)。ヘッダに無い寸法は推測しない。
+
+動く例: `poc_real_file_formats`
 
 ### [op の返り値(型付き)を JSON に出し、bit そのままで戻す](capabilities/typed-results-as-json.md)
 

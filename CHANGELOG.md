@@ -229,6 +229,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - O5: `unwrap_phase_2d` / `decode_fringe` の docstring の「参照を同じ手順で展開して引けば相殺」という誤った約束を直した。
 - O8 台帳の docstring の op 数・カテゴリ数: `opsinterferometry`(5 -> 6 カテゴリ)と同じ形の古い数 10 本(`opsacoustics` / `opsconngraph` / `opsdem` / `opsemproof` / `opsflyvision` / `opsmotionmag` / `opsprintpath` / `opsroughness` / `opsshape2d`、`opsoptics` は数を書くのをやめ `list_ops()` を正本に)。25 件の主張を台帳の実数と突き合わせる門を足した。
 
+### 修正 — `nifti_read` の qform(180° に近い回転の四元数)
+
+- 1 − |bcd|² < 1e-7 のとき参照実装 nifti1_io.c(`nifti_quatern_to_mat44`)と同じく a = 0 として (b, c, d) を正規化する。これまでは float32 の丸め屑(OpenNeuro ds000117 の磁場地図で 1.2e-8)から a = 1.1e-4 を作り、向きを 0.0125° 回していた(nibabel と行列要素で 8e-4 の差)。回帰試験は `tests/test_poc_real_file_formats.py`。
+
+### 追加 — PoC「実物の科学データファイルを 5 形式読む」(収蔵 2026.300)
+
+- `examples/poc_real_file_formats.py`: SDSS(FITS)・OpenNeuro(NIfTI)・EMDB(MRC)・OME(OME-TIFF)・libE57(E57)の公開ファイルを配布されたバイト列のまま読み、astropy / nibabel / mrcfile / tifffile との全画素一致と配布元の公表値で採点する。同梱は `data/fileio_real/`(SHA-256 固定、出典とライセンスは README)。E57 の原本は再配布の条件が無いので `tools/fetch_e57_bunny.py` で repo 外へ取得(`realdata.E57_BUNNY_FILES`)、CI は同梱のイトカワ形状で代える。
+- 記録した穴: `em_mrc_read` は格子の起点 NXSTART を返さない(EMD-3197 で −2 = 22.8 Å)。能力ノート `scientific-data-files`。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(stats)
 
 回帰の門は `tests/test_redteam_stats_2026_11_05.py`(真値・不変量・独立実装と比べる。修正前のコードで 23 件が落ちることを確認)。

@@ -1,0 +1,86 @@
+{
+ "_source": "EMDB entry API https://www.ebi.ac.uk/emdb/api/entry/EMD-3197 (retrieved 2026-11-04); subset of the 'map' record and the title, copied verbatim",
+ "emdb_id": "EMD-3197",
+ "title": "Sub-tomogram averaging of electron cryo-microscopic data taken from focused-ion beam milled lamellae of nuclei of Pseudorabies virus (PrV) nuclear egress complex-expressing cells",
+ "map": {
+  "axis_order": {
+   "fast": "X",
+   "medium": "Y",
+   "slow": "Z"
+  },
+  "cell": {
+   "a": {
+    "units": "Å",
+    "valueOf_": "228.0"
+   },
+   "alpha": {
+    "units": "deg",
+    "valueOf_": "90.0"
+   },
+   "b": {
+    "units": "Å",
+    "valueOf_": "228.0"
+   },
+   "beta": {
+    "units": "deg",
+    "valueOf_": "90.0"
+   },
+   "c": {
+    "units": "Å",
+    "valueOf_": "228.0"
+   },
+   "gamma": {
+    "units": "deg",
+    "valueOf_": "90.0"
+   }
+  },
+  "contour_list": {
+   "contour": [
+    {
+     "instance_type": "contour",
+     "level": 1.9,
+     "primary": true,
+     "source": "AUTHOR"
+    }
+   ]
+  },
+  "data_type": "IMAGE STORED AS FLOATING POINT NUMBER (4 BYTES)",
+  "dimensions": {
+   "col": 20,
+   "row": 20,
+   "sec": 20
+  },
+  "origin": {
+   "col": -2,
+   "row": 0,
+   "sec": 0
+  },
+  "pixel_spacing": {
+   "x": {
+    "units": "Å",
+    "valueOf_": "11.4"
+   },
+   "y": {
+    "units": "Å",
+    "valueOf_": "11.4"
+   },
+   "z": {
+    "units": "Å",
+    "valueOf_": "11.4"
+   }
+  },
+  "spacing": {
+   "x": 20,
+   "y": 20,
+   "z": 20
+  },
+  "statistics": {
+   "average": 0.78361201,
+   "maximum": 5.57673693,
+   "minimum": -4.13374567,
+   "std": 2.39995289
+  },
+  "format": "CCP4",
+  "file": "emd_3197.map.gz"
+ }
+}

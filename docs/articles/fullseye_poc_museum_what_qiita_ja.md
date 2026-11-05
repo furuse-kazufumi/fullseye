@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **141 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **142 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1500,7 +1500,7 @@ py -3.11 examples/poc_symbol_lot_ocr.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 47 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 48 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -3265,6 +3265,44 @@ py -3.11 examples/poc_light_section_step_weld_floor.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_light_section_step_weld_floor)
 
 使用 op(ノートへ): [`gum_expanded`](https://furuse.work/ops/spc/uncertainty/gum_expanded.html) · [`laser_line_center_gauss`](https://furuse.work/ops/optics/light_section/laser_line_center_gauss.html) · [`laser_line_center_steger`](https://furuse.work/ops/optics/light_section/laser_line_center_steger.html) · [`laser_line_coherent`](https://furuse.work/ops/optics/coherent/laser_line_coherent.html) · [`light_plane_calibrate`](https://furuse.work/ops/optics/light_section/light_plane_calibrate.html) · [`light_section_floor_sweep`](https://furuse.work/ops/optics/light_section/light_section_floor_sweep.html) · [`light_section_height_map`](https://furuse.work/ops/optics/light_section/light_section_height_map.html) · [`light_section_profile`](https://furuse.work/ops/optics/light_section/light_section_profile.html) · [`light_section_render`](https://furuse.work/ops/optics/light_section/light_section_render.html) · [`light_section_rig`](https://furuse.work/ops/optics/light_section/light_section_rig.html) · [`light_section_scan`](https://furuse.work/ops/optics/light_section/light_section_scan.html) · [`light_section_speckle_floor`](https://furuse.work/ops/optics/light_section/light_section_speckle_floor.html) · [`light_section_targets`](https://furuse.work/ops/optics/light_section/light_section_targets.html) · [`light_section_uncertainty_budget`](https://furuse.work/ops/optics/light_section/light_section_uncertainty_budget.html)
+
+## No.2026.300 —— 実物の科学データファイルを 5 形式読む ―― 外の読み手と公表値で採点し、読み手の不具合を 1 つ直す
+
+公開されている実物の科学データファイルを Fullseye の読み込み op で読み、外の読み手(astropy / nibabel / mrcfile / tifffile)と配布元の公表値の両方で採点した。ファイルは配布されたバイト列のまま同梱し SHA-256 を固定した。★FITS: SDSS r バンドの散開星団 NGC 2420(400×400、SDSS のデータは public domain、SkyView の面積保存の再標本化)は 160,000 画素が astropy と完全一致、WCS 10 キーも一致。`star_detect` → `aperture_photometry` で 811 個を検出し、SDSS DR16 の星表のうち飽和の旗の無い 15〜20 等の星 127 個の 91.3 % を 1″ 以内(中央値 0.058″)で拾った。画素(ナノマギー)を零点 22.5 で等級にすると傾き 1.009、星表とのずれ +0.002 等、頑健なばらつき 0.028 等。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外。★NIfTI: OpenNeuro ds000117(CC0)の磁場地図 64×64×33 は nibabel とボクセル完全一致。BIDS の撮像条件と照合し、スライス間隔 3.75 mm、傾き 26.40°(装置の記載 Tra>Cor(−26.4))。照合の途中で `nifti_read` の不具合を見つけて直した: 180° に近い回転の四元数で float32 の丸め屑 1.2e-8 から a = 1.1e-4 を作り、向きを 0.0125° 回していた(nibabel と 8e-4 の差)。参照実装 nifti1_io.c と同じ閾値 1e-7 にした。大津の領域は skimage と 99.83 % 一致、頭部は 2,091 mL。★MRC: EMDB EMD-3197(20³、11.4 Å)は mrcfile と完全一致、最小・最大・平均・標準偏差は EMDB の登録値と相対 3e-8。登録された等値面 1.9 の中身は 2 塊 2,876 + 1,901 nm³。ただし `em_mrc_read` は格子の起点(NXSTART = −2、22.8 Å)を返さない ―― 記録した穴として門に残した。★OME-TIFF: OME の公開見本 tubhiswt-2D(CC BY 4.0)は 2 チャネルを 2 ファイルに分けた組で、`ome_tiff_read` は片方だけでは拒否する。理由が事実であることを別に確かめた(XML は SizeC = 2 を 2 ファイルに宣言、各ファイルの頁は 1 枚)。参照実装の tifffile はバイト列だけを渡すと、もう 1 枚を警告のログだけで**ゼロで埋めて**返す(実物の C1 の最大は 255)。★E57: libE57 の試験点群 bunny を 6 つの数値型で読み、同じ点の PTS 文字版と 30,571 点が 1 対 1 で一致(整数・倍精度 3e-17 m、単精度 8.4e-9 m)。原本は再配布の条件が書かれていないので同梱せず取得道具に任せ、CI では同梱のイトカワ形状(CC0)を pye57 で書いた E57 で代える(25,350 頂点が float32 の格納値と完全一致)。★経緯: 最初の M67 では等級の傾きが 0.52 だった。SkyView の既定(最近傍)は星の光を保存せず、M67 の星は SDSS で飽和する。面積保存で取り直し、飽和しない NGC 2420 に替えた。
+
+[![実物の科学データファイルを 5 形式読む ―― 外の読み手と公表値で採点し、読み手の不具合を 1 つ直す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/01_stars_matched_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/01_stars_matched.png)
+
+*↑ **実物の科学データファイルを 5 形式読む ―― 外の読み手と公表値で採点し、読み手の不具合を 1 つ直す** ―― SDSS r バンドの NGC 2420。青 = star_detect の検出、緑 = SDSS DR16 の星表の星(飽和なし 15〜20 等)と 1″ 以内で対応、赤 = 対応なし。*
+
+[![nanomaggy の画素を開口(半径 4 画素)で足し、零点 22.5 で等級にした。破線は y = x。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/02_magnitudes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/02_magnitudes.png)
+
+*↑ 測定の図 ―― nanomaggy の画素を開口(半径 4 画素)で足し、零点 22.5 で等級にした。破線は y = x。*
+
+[![磁場地図の振幅像(3×3×3.75 mm)の 3 つの中央断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/03_mri_head_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/03_mri_head.png)
+
+*↑ 磁場地図の振幅像(3×3×3.75 mm)の 3 つの中央断面。*
+
+[![EMD-3197(20³、11.4 Å)の 3 つの中央断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/04_em_density_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/04_em_density.png)
+
+*↑ EMD-3197(20³、11.4 Å)の 3 つの中央断面。*
+
+[![E57 から読んだ点群を主軸の面へ投影した密度(libE57 bunny)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/05_e57_points_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/05_e57_points.png)
+
+*↑ E57 から読んだ点群を主軸の面へ投影した密度(libE57 bunny)。*
+
+[![参照実装(astropy / nibabel / mrcfile / tifffile)と配布元の公表値で採点した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/06_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/06_verdicts.png)
+
+*↑ 参照実装(astropy / nibabel / mrcfile / tifffile)と配布元の公表値で採点した。*
+
+```
+py -3.11 examples/poc_real_file_formats.py
+```
+
+ソース: [examples/poc_real_file_formats.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_file_formats)
+
+使用 op(ノートへ): [`aperture_photometry`](https://furuse.work/ops/astrostack/photometry/aperture_photometry.html) · [`astro_fits_read`](https://furuse.work/ops/fileio/fits/astro_fits_read.html) · [`e57_read`](https://furuse.work/ops/fileio/e57/e57_read.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`em_mrc_read`](https://furuse.work/ops/fileio/mrc/em_mrc_read.html) · [`nifti_read`](https://furuse.work/ops/fileio/nifti/nifti_read.html) · [`ome_tiff_read`](https://furuse.work/ops/fileio/ome_tiff/ome_tiff_read.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`star_detect`](https://furuse.work/ops/astrostack/photometry/star_detect.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html) · [`vol_region_props`](https://furuse.work/ops/3d/regionprops/vol_region_props.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 

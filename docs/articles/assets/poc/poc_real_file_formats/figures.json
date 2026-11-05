@@ -1,0 +1,68 @@
+[
+ {
+  "file": "01_stars_matched.png",
+  "name": "stars_matched",
+  "caption": "SDSS r の NGC 2420(北が上)。青=star_detect の検出、緑=SDSS の星表の星(15〜20 等、飽和なし)で 1.0″ 以内に対応、赤=対応なし。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外(検出の青だけが並ぶ)。",
+  "shape": [
+   800,
+   800,
+   3
+  ],
+  "source": "Sloan Digital Sky Survey DR16 r-band frames (public domain data; images CC BY, credit SDSS), resampled by NASA GSFC SkyView with the area-weighted Clip sampler"
+ },
+ {
+  "file": "02_magnitudes.png",
+  "name": "magnitudes",
+  "caption": "nanomaggy の画素を開口(半径 4 画素)で足し、零点 22.5 で等級にした。破線は y = x。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "Sloan Digital Sky Survey DR16 r-band frames (public domain data; images CC BY, credit SDSS), resampled by NASA GSFC SkyView with the area-weighted Clip sampler"
+ },
+ {
+  "file": "03_mri_head.png",
+  "name": "mri_head",
+  "caption": "磁場地図の振幅像(3×3×3.75 mm)の 3 つの中央断面。赤=大津の領域の最大成分(2091 mL)。",
+  "shape": [
+   320,
+   1328,
+   3
+  ],
+  "source": "OpenNeuro ds000117 (Wakeman, Apšvalka & Henson; doi:10.18112/openneuro.ds000117.v2.0.0), CC0"
+ },
+ {
+  "file": "04_em_density.png",
+  "name": "em_density",
+  "caption": "EMD-3197(20³、11.4 Å)の 3 つの中央断面。水色=登録された推奨等値面 1.90 の輪郭。",
+  "shape": [
+   240,
+   736,
+   3
+  ],
+  "source": "EMDB EMD-3197 (Hagen et al. 2015, doi:10.1016/j.cell.2015.11.029), distributed without restriction; wwPDB archive CC0 1.0"
+ },
+ {
+  "file": "05_e57_points.png",
+  "name": "e57_points",
+  "caption": "E57 から読んだ点群を主軸の面へ投影した密度(libE57 bunny)。",
+  "shape": [
+   520,
+   520
+  ],
+  "source": "libE57 E57 example data (bunny, Stanford 3D Scanning Repository origin), not redistributed"
+ },
+ {
+  "file": "06_verdicts.png",
+  "name": "verdicts",
+  "caption": "参照実装(astropy / nibabel / mrcfile / tifffile)と配布元の公表値で採点した。",
+  "shape": [
+   400,
+   1374,
+   3
+  ],
+  "csv": "06_verdicts.csv",
+  "tsv": "06_verdicts.tsv"
+ }
+]

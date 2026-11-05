@@ -1492,7 +1492,7 @@ Ops used (notes): [`capture_degrade`](https://furuse.work/ops/symbol/symbol_capt
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 47 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 48 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -3259,6 +3259,44 @@ Source: [examples/poc_light_section_step_weld_floor.py](https://github.com/furus
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_light_section_step_weld_floor)
 
 Ops used (notes): [`gum_expanded`](https://furuse.work/ops/spc/uncertainty/gum_expanded.html) · [`laser_line_center_gauss`](https://furuse.work/ops/optics/light_section/laser_line_center_gauss.html) · [`laser_line_center_steger`](https://furuse.work/ops/optics/light_section/laser_line_center_steger.html) · [`laser_line_coherent`](https://furuse.work/ops/optics/coherent/laser_line_coherent.html) · [`light_plane_calibrate`](https://furuse.work/ops/optics/light_section/light_plane_calibrate.html) · [`light_section_floor_sweep`](https://furuse.work/ops/optics/light_section/light_section_floor_sweep.html) · [`light_section_height_map`](https://furuse.work/ops/optics/light_section/light_section_height_map.html) · [`light_section_profile`](https://furuse.work/ops/optics/light_section/light_section_profile.html) · [`light_section_render`](https://furuse.work/ops/optics/light_section/light_section_render.html) · [`light_section_rig`](https://furuse.work/ops/optics/light_section/light_section_rig.html) · [`light_section_scan`](https://furuse.work/ops/optics/light_section/light_section_scan.html) · [`light_section_speckle_floor`](https://furuse.work/ops/optics/light_section/light_section_speckle_floor.html) · [`light_section_targets`](https://furuse.work/ops/optics/light_section/light_section_targets.html) · [`light_section_uncertainty_budget`](https://furuse.work/ops/optics/light_section/light_section_uncertainty_budget.html)
+
+## No.2026.300 —— Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed
+
+Real, publicly distributed scientific data files are read with Fullseye's reader operators and scored against both independent readers (astropy, nibabel, mrcfile, tifffile) and the values published by the data providers. The files are shipped byte-for-byte as distributed, pinned by SHA-256. FITS: an SDSS r-band image of the open cluster NGC 2420 (400x400; SDSS data are public domain; resampled by SkyView with the area-conserving sampler) matches astropy on all 160,000 pixels and all 10 WCS keys. star_detect and aperture_photometry find 811 sources and recover 91.3% of the 127 unsaturated SDSS DR16 catalogue stars of magnitude 15-20 within 1 arcsec (median 0.058 arcsec). Turning the nanomaggy pixels into magnitudes with zero point 22.5 gives slope 1.009, offset +0.002 mag and robust scatter 0.028 mag. The cluster core is outside the score because the SDSS pipeline leaves the crowded core out of its catalogue. NIfTI: a 64x64x33 field-map magnitude from OpenNeuro ds000117 (CC0) matches nibabel voxel for voxel, with 3.75 mm slice spacing and a 26.40 degree tilt that agree with the scanner's BIDS sidecar (Tra>Cor(-26.4)). The comparison exposed a bug in nifti_read, now fixed: for quaternions close to a 180-degree rotation it turned float32 rounding (1.2e-8) into a = 1.1e-4 and rotated the orientation by 0.0125 degrees (8e-4 off nibabel); it now uses the 1e-7 threshold of the reference nifti1_io.c. Otsu's region agrees with scikit-image on 99.83% of voxels and the head is 2,091 mL. MRC: EMDB EMD-3197 (20^3, 11.4 A) matches mrcfile exactly and EMDB's published minimum, maximum, mean and standard deviation to 3e-8 relative; the published contour level 1.9 encloses two bodies of 2,876 and 1,901 nm^3. em_mrc_read does not return the grid start (NXSTART = -2, 22.8 A); that gap is kept as a recorded gate. OME-TIFF: the OME sample tubhiswt-2D (CC BY 4.0) splits two channels across two files, and ome_tiff_read refuses either file alone. The reason is checked independently (the XML declares SizeC = 2 over two files; each file holds one page). Given only the bytes, the reference tifffile returns the missing channel filled with zeros and only logs a warning (the real C1 peaks at 255). E57: the libE57 test bunny in six numeric types matches the PTS text version of the same 30,571 points one-to-one (3e-17 m for integer and double, 8.4e-9 m for float). The originals carry no redistribution terms, so they are fetched by a tool rather than bundled; CI instead reads an E57 written by pye57 from the bundled Itokawa shape (CC0), whose 25,350 vertices match the stored float32 values exactly. History: the first attempt on M67 gave a magnitude slope of 0.52, because SkyView's default nearest-neighbour resampling does not conserve starlight and M67's stars saturate in SDSS.
+
+[![Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/01_stars_matched_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/01_stars_matched.png)
+
+*↑ **Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed** ―― SDSS r-band NGC 2420. Blue: star_detect detections; green: unsaturated SDSS DR16 catalogue stars (mag 15-20) matched within 1 arcsec; red: unmatched.*
+
+[![nanomaggy の画素を開口(半径 4 画素)で足し、零点 22.5 で等級にした。破線は y = x。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/02_magnitudes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/02_magnitudes.png)
+
+*↑ The measurement ―― nanomaggy の画素を開口(半径 4 画素)で足し、零点 22.5 で等級にした。破線は y = x。 (figure labels are in Japanese; the numbers are the same)*
+
+[![磁場地図の振幅像(3×3×3.75 mm)の 3 つの中央断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/03_mri_head_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/03_mri_head.png)
+
+*↑ 磁場地図の振幅像(3×3×3.75 mm)の 3 つの中央断面。*
+
+[![EMD-3197(20³、11.4 Å)の 3 つの中央断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/04_em_density_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/04_em_density.png)
+
+*↑ EMD-3197(20³、11.4 Å)の 3 つの中央断面。*
+
+[![E57 から読んだ点群を主軸の面へ投影した密度(libE57 bunny)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/05_e57_points_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/05_e57_points.png)
+
+*↑ E57 から読んだ点群を主軸の面へ投影した密度(libE57 bunny)。*
+
+[![参照実装(astropy / nibabel / mrcfile / tifffile)と配布元の公表値で採点した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/06_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/06_verdicts.png)
+
+*↑ 参照実装(astropy / nibabel / mrcfile / tifffile)と配布元の公表値で採点した。*
+
+```
+py -3.11 examples/poc_real_file_formats.py
+```
+
+Source: [examples/poc_real_file_formats.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_file_formats)
+
+Ops used (notes): [`aperture_photometry`](https://furuse.work/ops/astrostack/photometry/aperture_photometry.html) · [`astro_fits_read`](https://furuse.work/ops/fileio/fits/astro_fits_read.html) · [`e57_read`](https://furuse.work/ops/fileio/e57/e57_read.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`em_mrc_read`](https://furuse.work/ops/fileio/mrc/em_mrc_read.html) · [`nifti_read`](https://furuse.work/ops/fileio/nifti/nifti_read.html) · [`ome_tiff_read`](https://furuse.work/ops/fileio/ome_tiff/ome_tiff_read.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`star_detect`](https://furuse.work/ops/astrostack/photometry/star_detect.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html) · [`vol_region_props`](https://furuse.work/ops/3d/regionprops/vol_region_props.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 
