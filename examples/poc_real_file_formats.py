@@ -146,6 +146,7 @@ def load_bundled(name: str) -> bytes:
     got = hashlib.sha256(raw).hexdigest()
     if got != digest:
         raise realdata.RealDataError("%s の SHA-256 %s が台帳と違う" % (name, got))
+    realdata.mark_read("fileio-real:" + name)   # 成熟度台帳の「実データを読んだ」記録(D6)
     return raw
 
 

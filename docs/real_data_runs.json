@@ -83,6 +83,20 @@
    "exit": 0,
    "printed_pass": true
   },
+  "poc_real_file_formats": {
+   "datasets_read": [
+    "fileio-real:ds000117_sub-01_ses-mri_acq-func_magnitude1.json",
+    "fileio-real:ds000117_sub-01_ses-mri_acq-func_magnitude1.nii.gz",
+    "fileio-real:emd_3197.map.gz",
+    "fileio-real:emd_3197_published.json",
+    "fileio-real:sdss_dr16_ngc2420_photoprimary.csv",
+    "fileio-real:sdss_r_ngc2420_skyview_clip.fits",
+    "fileio-real:tubhiswt_C0.ome.tif",
+    "fileio-real:tubhiswt_C1.ome.tif"
+   ],
+   "exit": 0,
+   "printed_pass": true
+  },
   "poc_real_tless_6dof": {
    "datasets_read": [],
    "exit": 0,
