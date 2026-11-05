@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1747. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1748. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -2116,7 +2116,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `opsreprconv.py`
 
-- **L341** — ★ ``flow`` **lässt sich nicht mit einem einzigen Prädikat schreiben**. Da dicht (3,D,H,W) und verstreut (N,3) unter demselben Typnamen koexistieren, schützt ein Prädikat, das beide durchlässt, nichts, und die Festlegung auf eines macht zwangsläufig einen der bestehenden 4 Ops zu einem TYPEMISS. **Trennen ist korrekt** (dasselbe Urteil wie das Trennen von ``video`` von ``voxel``), aber das ist Arbeit, die Deklarationen bestehender Ops umzuschreiben, und liegt außerhalb des Umfangs dieses Moduls, also hinterlassen wir hier nur den Vorschlag.
+- **L344** — ★ ``flow`` **lässt sich nicht mit einem einzigen Prädikat schreiben**. Da dicht (3,D,H,W) und verstreut (N,3) unter demselben Typnamen koexistieren, schützt ein Prädikat, das beide durchlässt, nichts, und die Festlegung auf eines macht zwangsläufig einen der bestehenden 4 Ops zu einem TYPEMISS. **Trennen ist korrekt** (dasselbe Urteil wie das Trennen von ``video`` von ``voxel``), aber das ist Arbeit, die Deklarationen bestehender Ops umzuschreiben, und liegt außerhalb des Umfangs dieses Moduls, also hinterlassen wir hier nur den Vorschlag.
 
 ## `opsspc.py`
 
@@ -2300,8 +2300,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `reprconv.py`
 
-- **L170** — ★ Zur Konvertierung in einen Integer-dtype prüfe den rohen Wert **vor dem Cast**. Ein durch adversariale Prüfung gefundenes Loch (2026-09-02): ``np.asarray(nan, dtype=int64)`` löst keine Ausnahme aus und gibt INT_MIN zurück, und nach dem Cast ist ``dtype.kind == 'i'``, sodass es an der Nicht-endlich-Prüfung unten vorbeischlüpft. Ein Nicht-Integer wie 3.7 wird ebenfalls stillschweigend auf 3 abgeschnitten —— **ein um 1 verschobenes Ergebnis im Index wird ohne Ausnahme zurückgegeben**. Dies ist genau die Lüge eines Konvertierungs-Ops.
-- **L1104** — ★ Regressionspunkt eines echten Bugs. Zunächst war dies ``np.maximum(sigma, finfo.tiny)``. An einem Duplikatpunkt ist sigma = 2.2e-308, und ``sigma ** 3`` in ``gaussians_to_voxel`` **läuft auf 0 unter**, was eine Division durch null -> NaN verursacht. Was "0 vermeiden" sollte, wurde durch einen Wert ersetzt, der stromabwärts NaN erzeugt (ein Teil des Volumens wird ohne Ausnahme zu NaN = der Lehrbuch-stille-Fehler). Da ein Duplikatpunkt bedeutet "der Abstand kann nicht gemessen werden", fail-closed statt mit einem Sentinel aufzufüllen.
+- **L171** — ★ Zur Konvertierung in einen Integer-dtype prüfe den rohen Wert **vor dem Cast**. Ein durch adversariale Prüfung gefundenes Loch (2026-09-02): ``np.asarray(nan, dtype=int64)`` löst keine Ausnahme aus und gibt INT_MIN zurück, und nach dem Cast ist ``dtype.kind == 'i'``, sodass es an der Nicht-endlich-Prüfung unten vorbeischlüpft. Ein Nicht-Integer wie 3.7 wird ebenfalls stillschweigend auf 3 abgeschnitten —— **ein um 1 verschobenes Ergebnis im Index wird ohne Ausnahme zurückgegeben**. Dies ist genau die Lüge eines Konvertierungs-Ops.
+- **L1105** — ★ Regressionspunkt eines echten Bugs. Zunächst war dies ``np.maximum(sigma, finfo.tiny)``. An einem Duplikatpunkt ist sigma = 2.2e-308, und ``sigma ** 3`` in ``gaussians_to_voxel`` **läuft auf 0 unter**, was eine Division durch null -> NaN verursacht. Was "0 vermeiden" sollte, wurde durch einen Wert ersetzt, der stromabwärts NaN erzeugt (ein Teil des Volumens wird ohne Ausnahme zu NaN = der Lehrbuch-stille-Fehler). Da ein Duplikatpunkt bedeutet "der Abstand kann nicht gemessen werden", fail-closed statt mit einem Sentinel aufzufüllen.
 
 ## `residue.py`
 
@@ -2903,6 +2903,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_raytrace3d.py`
 
 - **L276** _(ja)_ — ★2026-10-15: 傾いた鏡(摂動)の後で像面と平行に進む光線を、以前は rms 3.4e18 mm の有効な点として数えた
+
+## `tests/test_reprconv.py`
+
+- **L428** _(ja)_ — ★2026-11-05: ``hessian`` に numpy の産み手 ``reprconv.voxel_to_hessian`` が入ったので空になった (全 op 実行の門は torch 無しでも全部回る)。torch しか産み手の無い型が新たに出たら、 ``{型: {産み手}}`` をここに足す —— 下の門がその産み手の集合を実物と突き合わせる。
 
 ## `tests/test_reprconv_type_connectivity_2026_11_03.py`
 

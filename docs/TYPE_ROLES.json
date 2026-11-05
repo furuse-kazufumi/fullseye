@@ -230,8 +230,8 @@
    "status": "fixed",
    "why": "hessian3d の 6 成分を受ける op が 0(行き止まり)。vol_frangi / vol_hessian_blobness は体積から自分で Hessian を作るので、与えられた Hessian からは何も計算できなかった。",
    "evidence": "match3d.hessian3d の返り(list の torch 6 本)を実測。grep 'hessian\\|frangi\\|vessel\\|eigen' を op 名・HALCON 名で引いた(sk_hessian / xsk_hessian_eig は 2-D の image -> image)。",
-   "action": "hessian_determinant(det H、-> voxel)と hessian_vesselness(Frangi 1998、-> voxel)を足した。",
-   "design": "差別化の機会: hessian3d 以外(多尺度ガウス微分・AD の 2 階微分)の Hessian も同じ 6 成分の形で渡せば、管らしさ・塊らしさ・行列式・主曲率を共通に引き出せる。尺度正規化(σ² を掛けるか)を値に持たせるかが未決なので、多尺度の受け手は案だけ。"
+   "action": "hessian_determinant(det H、-> voxel)と hessian_vesselness(Frangi 1998、-> voxel)を足した。2026-11-05: 産み手が torch の hessian3d だけで、素の pip install(torch なし)では受け手 2 本に入力が届かなかったので、numpy と scipy だけの産み手 reprconv.voxel_to_hessian(voxel -> hessian、ガウス微分の尺度 sigma、sigma=0 は hessian3d と同じ 3 タップ核)を足した。",
+   "design": "差別化の機会: hessian3d 以外(多尺度ガウス微分・AD の 2 階微分)の Hessian も同じ 6 成分の形で渡せば、管らしさ・塊らしさ・行列式・主曲率を共通に引き出せる。voxel_to_hessian は尺度正規化を引数(scale_normalize、既定は掛けない = hessian3d と同じ 1/voxel²)にした。値そのものに尺度を持たせるかは未決なので、多尺度の受け手は案だけ。"
   },
   "histcube": {
    "class": "ok",

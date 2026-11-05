@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 657 of 1747. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 657 of 1748. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `_archive_tarxz.py`
@@ -2116,7 +2116,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `opsreprconv.py`
 
-- **L341** — ★ ``flow`` **cannot be written with a single predicate**. Because dense (3,D,H,W) and scattered (N,3) coexist under the same type name, a predicate that passes both protects nothing, and deciding on one necessarily makes one of the existing 4 ops a TYPEMISS. **Separating is correct** (the same judgment as separating ``video`` from ``voxel``), but that is work to rewrite the declarations of existing ops and is outside this module's scope, so here we only leave the proposal.
+- **L344** — ★ ``flow`` **cannot be written with a single predicate**. Because dense (3,D,H,W) and scattered (N,3) coexist under the same type name, a predicate that passes both protects nothing, and deciding on one necessarily makes one of the existing 4 ops a TYPEMISS. **Separating is correct** (the same judgment as separating ``video`` from ``voxel``), but that is work to rewrite the declarations of existing ops and is outside this module's scope, so here we only leave the proposal.
 
 ## `opsspc.py`
 
@@ -2300,8 +2300,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `reprconv.py`
 
-- **L170** — ★ For conversion to an integer dtype, inspect the raw value **before the cast**. A hole found by adversarial inspection (2026-09-02): ``np.asarray(nan, dtype=int64)`` raises no exception and returns INT_MIN, and after the cast ``dtype.kind == 'i'`` so it slips past the non-finite check below. A non-integer like 3.7 is also silently truncated to 3 —— **a result off by 1 in the index is returned with no exception**. This is exactly the lie of a conversion op.
-- **L1104** — ★ Regression point of a real bug. At first this was ``np.maximum(sigma, finfo.tiny)``. At a duplicate point sigma = 2.2e-308, and ``sigma ** 3`` in ``gaussians_to_voxel`` **underflows to 0**, causing division by zero -> NaN. What was meant to "avoid 0" was replaced with a value that produces NaN downstream (part of the volume becomes NaN with no exception = the textbook silent error). Since a duplicate point means "the spacing cannot be measured", fail-closed instead of padding with a sentinel.
+- **L171** — ★ For conversion to an integer dtype, inspect the raw value **before the cast**. A hole found by adversarial inspection (2026-09-02): ``np.asarray(nan, dtype=int64)`` raises no exception and returns INT_MIN, and after the cast ``dtype.kind == 'i'`` so it slips past the non-finite check below. A non-integer like 3.7 is also silently truncated to 3 —— **a result off by 1 in the index is returned with no exception**. This is exactly the lie of a conversion op.
+- **L1105** — ★ Regression point of a real bug. At first this was ``np.maximum(sigma, finfo.tiny)``. At a duplicate point sigma = 2.2e-308, and ``sigma ** 3`` in ``gaussians_to_voxel`` **underflows to 0**, causing division by zero -> NaN. What was meant to "avoid 0" was replaced with a value that produces NaN downstream (part of the volume becomes NaN with no exception = the textbook silent error). Since a duplicate point means "the spacing cannot be measured", fail-closed instead of padding with a sentinel.
 
 ## `residue.py`
 
@@ -2903,6 +2903,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_raytrace3d.py`
 
 - **L276** _(ja)_ — ★2026-10-15: 傾いた鏡(摂動)の後で像面と平行に進む光線を、以前は rms 3.4e18 mm の有効な点として数えた
+
+## `tests/test_reprconv.py`
+
+- **L428** _(ja)_ — ★2026-11-05: ``hessian`` に numpy の産み手 ``reprconv.voxel_to_hessian`` が入ったので空になった (全 op 実行の門は torch 無しでも全部回る)。torch しか産み手の無い型が新たに出たら、 ``{型: {産み手}}`` をここに足す —— 下の門がその産み手の集合を実物と突き合わせる。
 
 ## `tests/test_reprconv_type_connectivity_2026_11_03.py`
 

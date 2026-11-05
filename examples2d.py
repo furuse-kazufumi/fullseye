@@ -1460,6 +1460,11 @@ EXAMPLES = [
      "name": "表現変換(reprconv)op を往復させて嘘を露見させる",
      "summary": "産む op はあるが食う op が無かった 25 型を消費する reprconv 族を往復させ、"
                 "可逆なものは誤差 0、不可逆なものは何がどれだけ落ちるかを印字する。"},
+    {"id": "hessian_numpy_chain", "task": "tomography_3d", "data": "synthetic",
+     "name": "torch なしで voxel → hessian → voxel の鎖を通し、管と球を見分ける",
+     "summary": "numpy と scipy だけの hessian 型の産み手 voxel_to_hessian から hessian_vesselness / "
+                "hessian_determinant まで、torch を import できない状態で通す。2 次多項式の H = A、"
+                "ガウス球の中心の閉形式、球の vesselness の閉形式、管と球の分離の 12 項目を真値と比べる。"},
     {"id": "type_connectivity_tour", "task": "tomography_3d", "data": "synthetic",
      "name": "行き止まりだった型と入口の無かった型を、本物の産み手からの鎖で通す",
      "summary": "gradient / hessian / frame / graph / pointmap / match の出口と positions / "

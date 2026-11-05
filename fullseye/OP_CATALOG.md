@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(473 例)
+### 2-D 画像/信号/幾何(474 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -539,6 +539,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **2-D 画像で見つけた欠陥は CAD のどの面のどこか(cadmap)** — 姿勢(ICP/PPF)から先、画素→レイ→CAD 面 ID と (x,y,z)・面積 mm² へ写す。既知配置の欠陥で往復誤差を確認。 `py -3.11 examples/defect_to_cad.py`
 - **部品 2 回スキャンのずれ量を 8 つの表現で測って往復する** — 法線/曲率/記述子/添字/スコア/シフト/回転倍率/フロー/変形/複素など 12 系統の表現を経由して既知剛体変位を測り、戻るものは誤差 0、戻らないものは落ちた量を数値で言う。 `py -3.11 examples/representation_conversion.py`
 - **表現変換(reprconv)op を往復させて嘘を露見させる** — 産む op はあるが食う op が無かった 25 型を消費する reprconv 族を往復させ、可逆なものは誤差 0、不可逆なものは何がどれだけ落ちるかを印字する。 `py -3.11 examples/representation_roundtrip.py`
+- **torch なしで voxel → hessian → voxel の鎖を通し、管と球を見分ける** — numpy と scipy だけの hessian 型の産み手 voxel_to_hessian から hessian_vesselness / hessian_determinant まで、torch を import できない状態で通す。2 次多項式の H = A、ガウス球の中心の閉形式、球の vesselness の閉形式、管と球の分離の 12 項目を真値と比べる。 `py -3.11 examples/hessian_numpy_chain.py`
 - **行き止まりだった型と入口の無かった型を、本物の産み手からの鎖で通す** — gradient / hessian / frame / graph / pointmap / match の出口と positions / synapse_table / jones の入口、tokens の出口、table の欄・スペクトルのピーク・keypoints の軸・pose の 4x4(reprconv の 20 op)を、既存の産み手の返りから既存の受け手まで通し、閉形式の真値 20 項目と比べる。 `py -3.11 examples/type_connectivity_tour.py`
 - **BGA の半田ボールを画像 → 点 → 点群 → 体積 → メッシュ / グラフと渡して戻す(型を変えても保たれる量)** — 欠け 1 個の 2 パッケージ 71 球の高さ画像を、表現変換の op 29 個で型から型へ渡す。個数は keypoints・メッシュのオイラー標数(χ 142)・グラフで一致、画素と点の往復は bit 一致、ガウシアンの質量は 1 − 1.4e-10、既知のずれ (2, −3, 5) は相関のピークに厳密に立ち、メッシュの体積は閉形式の球の和へ −1.20 → −0.020 % と収束、グラフは 2 成分 (35, 36)。★pointmap の (x, y, z) を (z, y, x) の受け手へそのまま渡すと例外なしに15360 画素が左端 4 列に積もる。 `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 - **X 線 CT のボイド形態(合否 1 個の数字は、寿命に効く形に盲目)** — ★★体積率を 3.000 % に厳密にそろえたまま位置・形・近接だけを変えた 5 条件を接合層に仕込むと、2 値化してボイド率だけを出すゼロ点は 2.46〜2.63 %(開き 0.17 ポイント)としか分けない ―― 合否 5 % なら全条件合格、1 % なら全条件不合格。同じ 5 条件を形態は桁で分ける(界面離隔 60.0 対 10.0 µm、扁平度 0.97 対 0.25、最近接 160.0 対 20.0 µm)。★応力の代理指標(界面に接するボイドの投影面積)は 0 → 14.68 % まで動き、界面に接する扁平ボイドは同体積の球の 2.09 倍(閉形式 1.93、実測との差は 1 ポイント以内)、連なりの跨ぎ率は 13.1 倍。★★崖の予想が 2 つとも外れた ―― ボクセル 60 µm(球の径の半分 58 µm を超える)でもボイド率は 3.21 % と崩れず(線形の被覆率で積むと体積は保存される。格子の位相を 3 通り振ると ±1.36 ポイント振れるだけ)、先に死ぬのは形のほうで、扁平度は 60 µm で測れなくなり界面欠損率は 14.16 → 9.78 %(-31 %)と**合格の側へ**落ちる。離隔も『42 µm より粗いと判別不能』は外れで、順序は最後まで残るが値は嘘になる(真値 0 µm の接触側がボクセル 1.0〜1.3 個に貼りつき、真値 42.2 µm の層中央は 120 µm と 2.8 倍)。★しきい値 0.50 で連なりのボイドが融合して塊が 24 → 5 個に落ち、その瞬間『最近接ボイド間隔』は 20 → 340 µm に跳ねる ―― 指標が壊れるのではなく測っている対象が黙って入れ替わる。連結半径の掃引は設計どおり(連なり 10.0 µm / 予測 8.7、散在 75.0 µm / 予測 70.5)で、雑音 sigma 0.15 では偽ボイドが 24 → 1794 個に爆発するのにボイド率は 2.61 → 2.94 % しか動かない。**寿命そのものは測っていない ―― 示せたのは合否 1 個の数字の盲目さまで**。 `py -3.11 examples/poc_ct_void_morphology.py`
@@ -822,9 +823,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 43 · **volcolor** 11 · **reprconv** 62 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(964 ops / 49 categories)
 
@@ -4525,7 +4526,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `vol_label_mpr_rgb` `rgbvolume → rgbimage` GPU: あり(許可リスト) — 色付きボリュームの直交 3 断面を **1 枚の RGB** に並べた図を返す。 · 例: `voxel_labels_color`
 - `vol_label_slice_rgb` `rgbvolume → rgbimage` GPU: 鎖の中だけ(許可リスト) — 色付きボリュームから 1 枚の断面 RGB を取り出す(axial / coronal / sagittal)。 · 例: `voxel_labels_color`
 
-### reprconv(62 ops / 15 categories)
+### reprconv(63 ops / 15 categories)
 
 #### reprconv / algebra(11)
 - `angle_to_matrix` `angle → matrix` GPU: なし — 角度 **[度]** → z 軸まわりの回転行列 ``matrix (3,3)``。``angle`` の出口。 · 例: `representation_roundtrip`
@@ -4545,11 +4546,12 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `curvature_to_table` `curvature → table` GPU: なし — 曲率 → 分布の要約 ``table``。**一方向**(統計は情報を捨てるのが仕事)。 · 例: `poc_bga_ball_type_roundtrip`, `representation_conversion`
 - `shape_index_to_curvature` `pairs → curvature` GPU: なし — 形状指数と曲がり ``(N,2)`` → 主曲率 ``(N,2)``。:func:`curvature_to_shape_index` の逆。 · 例: `poc_bga_ball_type_roundtrip`, `representation_roundtrip`
 
-#### reprconv / derivative(4)
+#### reprconv / derivative(5)
 - `gradient_coherence` `gradient → voxel` GPU: なし — 3-D 勾配 → 構造テンソルの**面らしさ**(コヒーレンス)``voxel``、値域 [0, 1]。 · 例: `type_connectivity_tour`
 - `gradient_magnitude` `gradient → voxel` GPU: なし — 3-D 勾配 ``gradient`` → 勾配の大きさの体積 ``voxel``。``gradient`` 型の出口。 · 例: `type_connectivity_tour`
-- `hessian_determinant` `hessian → voxel` GPU: なし — 3-D Hessian ``hessian`` → 行列式 ``det H`` の体積 ``voxel``(符号つき)。``hessian`` 型の出口。 · 例: `type_connectivity_tour`
-- `hessian_vesselness` `hessian → voxel` GPU: なし — 3-D Hessian → Frangi の管らしさ(vesselness)``voxel``、値域 [0, 1]。 · 例: `type_connectivity_tour`
+- `hessian_determinant` `hessian → voxel` GPU: なし — 3-D Hessian ``hessian`` → 行列式 ``det H`` の体積 ``voxel``(符号つき)。``hessian`` 型の出口。 · 例: `hessian_numpy_chain`, `type_connectivity_tour`
+- `hessian_vesselness` `hessian → voxel` GPU: なし — 3-D Hessian → Frangi の管らしさ(vesselness)``voxel``、値域 [0, 1]。 · 例: `hessian_numpy_chain`, `type_connectivity_tour`
+- `voxel_to_hessian` `voxel → hessian` GPU: なし — 体積 ``voxel`` → 3-D Hessian ``hessian`` の 6 成分 (zz, yy, xx, zy, zx, yx)。numpy と scipy だけで作る ``hessian`` 型の入口。 · 例: `hessian_numpy_chain`
 
 #### reprconv / descriptor(3)
 - `descriptor_to_matrix` `descriptor → matrix` GPU: なし — 記述子 → ``matrix``。``descriptor`` の出口(**可逆**)。 · 例: `representation_conversion`, `representation_roundtrip`

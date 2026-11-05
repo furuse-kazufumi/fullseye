@@ -73,7 +73,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | profile | 12 | 2 | 5 |
 | quat | 19 | 2 | 5 |
 | rangedoppler | 8 | 2 | 5 |
-| reprconv | 62 | 2 | 2 |
+| reprconv | 63 | 2 | 2 |
 | residue | 5 | 1 | 1 |
 | roughness | 9 | 5 | 8 |
 | segmentation | 59 | 4 | 4 |

@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">voxel_to_hessian — REPRCONV <code style="color:#22d3bf">derivative</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">hessian</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_to_hessian(vol, sigma=1.0, scale_normalize=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.voxel_to_hessian(vol, sigma=1.0, scale_normalize=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;voxel_to_hessian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>volume <code style="color:#22d3bf">voxel</code> → 3-D Hessian <code style="color:#22d3bf">hessian</code> के 6 components (zz, yy, xx, zy, zx, yx)। केवल numpy और scipy से बना <code style="color:#22d3bf">hessian</code> प्रकार का प्रवेश।</p>
+<p><code style="color:#22d3bf">hessian3d</code> (torch का conv3d) जैसा <b>वही रूप</b> लौटाता है: लंबाई 6 की list, हर एक <code style="color:#22d3bf">(D,H,W)</code> float32, क्रम (zz, yy, xx, zy, zx, yx) (axis 0=z, 1=y, 2=x), इकाई 1/voxel², किनारे replicate (<code style="color:#22d3bf">scipy.ndimage</code> का <code style="color:#22d3bf">mode=&quot;nearest&quot;</code>)। इसलिए <code style="color:#22d3bf">hessian_determinant</code> / <code style="color:#22d3bf">hessian_vesselness</code> इसे सीधे पढ़ते हैं, और torch के बिना सादे <code style="color:#22d3bf">pip install fullseye</code> में भी <code style="color:#22d3bf">voxel → hessian → voxel</code> की श्रृंखला चलती है।</p>
+<p><code style="color:#22d3bf">sigma</code> Gaussian smoothing का scale (voxel) है। विकर्ण components &quot;उस axis का 2nd order × बाकी 2 axes का smoothing&quot; हैं, cross components &quot;2 axes का 1st order × बचे axis का smoothing&quot; के separable convolution हैं। kernels Gaussian derivative के आकार के हैं, और उनका योग तथा 1st/2nd moments ठीक-ठीक मिलाए गए हैं (sample किया गया Gaussian derivative kernel का योग 0 नहीं होता, जिससे चमक 2nd derivative में रिसती है), इसलिए 2nd degree polynomial ½xᵀAx + bᵀx पर भीतरी भाग में rounding की सीमा तक <code style="color:#22d3bf">H = A</code> मिलता है। <code style="color:#22d3bf">sigma=0</code> का अर्थ &quot;smoothing नहीं&quot; नहीं, बल्कि <code style="color:#22d3bf">hessian3d</code> जैसे ही 3-tap kernels ([1,−2,1] / [−0.5,0,0.5] / [1,2,1]/4) हैं —— torch संस्करण से float32 rounding की सीमा तक मेल खाता है। <code style="color:#22d3bf">scale_normalize=True</code> पर σ² से गुणा होता है (Lindeberg का γ=1 normalisation; scales के पार मान तुलना करने के लिए; <code style="color:#22d3bf">vol_frangi</code> के आंतरिक Hessian जैसा ही नियम)।</p>
+<p>2-D images स्वीकार नहीं: <code style="color:#22d3bf">hessian</code> प्रकार 3-D के 6 components है, और इसे लेने वाले भी <code style="color:#22d3bf">(D,H,W)</code> चाहते हैं। 2-D Hessian response के लिए <code style="color:#22d3bf">sk_hessian</code> / <code style="color:#22d3bf">sk_hessian_det</code> / <code style="color:#22d3bf">xsk_hessian_eig</code> (image → image) इस्तेमाल करें।</p>
+<p>Args:</p>
+<p>vol: 3-D volume <code style="color:#22d3bf">(D,H,W)</code>, वास्तविक, परिमित।</p>
+<p>sigma: Gaussian smoothing का scale (voxel)। परिमित और &gt;= 0। 0 पर <code style="color:#22d3bf">hessian3d</code> जैसे ही kernels। डिफ़ॉल्ट 1.0।</p>
+<p>scale_normalize: True पर हर component को σ² से गुणा करता है (<code style="color:#22d3bf">sigma=0</code> के साथ नहीं चल सकता)।</p>
+<p>Returns:</p>
+<p>6 <code style="color:#22d3bf">np.ndarray</code> की list, हर एक <code style="color:#22d3bf">(D,H,W)</code> float32, क्रम (zz, yy, xx, zy, zx, yx)।</p>
+<p>Raises:</p>
+<p>ValueError: खाली / 3-D नहीं / अपरिमित / sigma परिमित non-negative संख्या नहीं /</p>
+<p><code style="color:#22d3bf">scale_normalize</code> और <code style="color:#22d3bf">sigma=0</code> एक साथ।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">vol</code> में 0 elements) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:hessian_numpy_chain">hessian_numpy_chain</a> — <code style="color:#22d3bf">py -3.11 examples/hessian_numpy_chain.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">hessian</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">derivative</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gradient_magnitude">gradient_magnitude</a> · <a style="color:#22d3bf" href="opreprconv:gradient_coherence">gradient_coherence</a> · <a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
