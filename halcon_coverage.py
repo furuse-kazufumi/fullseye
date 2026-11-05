@@ -194,7 +194,7 @@ def analyze(data, registry, versions_data=None):
     partial = set(PARTIAL)
     covered = (ours & real_ops) - partial
     dangling = sorted(ours - real_ops)
-    by_source = covered_by_source(analog, covered)
+    by_source = _covered_by_source(analog, covered)
 
     per_chapter = {}
     uncovered = {}
@@ -233,7 +233,7 @@ SOURCE_LABEL = {
 }
 
 
-def source_of(ref: str) -> str:
+def _source_of(ref: str) -> str:
     """``analog`` の値 1 つの出どころ(``facade:`` / ``ledger:`` の接頭辞、無ければ registry)。"""
     if ref.startswith("facade:"):
         return "facade"
@@ -242,7 +242,7 @@ def source_of(ref: str) -> str:
     return "registry"
 
 
-def covered_by_source(analog, covered):
+def _covered_by_source(analog, covered):
     """``covered`` を出どころ別の**互いに素な**集合に分ける(:data:`SOURCES` の順に先取り)。
 
     ★2026-11-05(敵対的検証 第 2 巡 D2): 見出しは「1017 ... via `Op.halcon`, from 947 registry ops」
@@ -251,7 +251,7 @@ def covered_by_source(analog, covered):
     """
     seen, out = set(), {}
     for src in SOURCES:
-        names = {h for h in covered if any(source_of(r) == src for r in analog.get(h, ()))} - seen
+        names = {h for h in covered if any(_source_of(r) == src for r in analog.get(h, ()))} - seen
         out[src] = names
         seen |= names
     assert seen == set(covered), "出どころの分からない対応がある: %s" % sorted(set(covered) - seen)[:5]
