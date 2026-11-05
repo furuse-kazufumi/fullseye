@@ -12,8 +12,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L42** _(ja)_ — ★実測(第 3 便、2048² x50): np.stack + 1 枚ずつの f32 化が 1.4 s で、PCIe 片道 0.3 s より重かった (一時配列の確保と page fault)。行き先を 1 回だけ確保して流し込むと一時配列が消える。値は同じ。
 - **L306** _(ja)_ — ★CPU 側(ops._otsu)と同じく**ビンの上端**で切る(2026-09-26)。 中点で切ると argmax ビンの背景画素が前景に混ざる。ここを直し忘れると 同じ絵で CPU と GPU の答えが割れる(test_fast_parity が門)。
-- **L1190** _(ja)_ — ★2026-10-02: HALCON 名は ``local_max``(画素精度のマスク)。以前は ``local_max_sub_pix`` と書いていた。
-- **L1399** _(ja)_ — interior 差の判定閾値。★2026-09-20(GenSpark 第 32・33 報 N116): 0.0002 の差に "exact" と出て、 語が実測と矛盾していた —— 判定は閾値で決まるので、語に閾値を添える。
+- **L1192** _(ja)_ — ★2026-10-02: HALCON 名は ``local_max``(画素精度のマスク)。以前は ``local_max_sub_pix`` と書いていた。
+- **L1401** _(ja)_ — interior 差の判定閾値。★2026-09-20(GenSpark 第 32・33 報 N116): 0.0002 の差に "exact" と出て、 語が実測と矛盾していた —— 判定は閾値で決まるので、語に閾値を添える。
 
 ## `accel_match.py`
 
@@ -1868,12 +1868,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1317** _(ja)_ — ★境目は **0.5 を含めて**歴史側に置く。0.5 は「まん中」として既定値に使われて いて(api.apply の既定、studio の中央、保存済みプログラムの初期値)、ここを 新しい側に入れると**既定のまま呼んだだけで答えが変わる**。実測で gaussian と その HALCON 別名の一致検査まで割れた。
 - **L1473** _(ja)_ — ★**しきい値は argmax ビンの「上端」で取る**(2026-09-26)。中点で取ると、 argmax が指すのは**背景の山を含むビン**なので、その中点より上に居る背景画素 自身が前景に入る。背景 0.30 / 明部 0.90 の板では 400 px の答えが 4,096 px (全画素)になり、例外も警告も出なかった —— skimage と OpenCV は同じ絵で 400 を返す。ビンの上端で切れば argmax ビンの画素は全部背景側に落ちる。 試験の入力に必ず雑音が載っていたため 30 年物の門が全部通していた (docs/hardening/otsu-threshold-at-the-bin-midpoint.md)。
 - **L1615** _(ja)_ — ★2026-10-07: 0 画素の面積率は 0/0(np.mean が NaN を返し、guard が黙って置き換えていた)
-- **L1773** — ★Die Raender **mit dem Randwert** auffuellen. Zuvor war es ``np.convolve(x, k, "same")``, was die w Punkte an beiden Enden **mit Null** mittelt -- Anfang und Ende einer Kontur wurden um bis zu 50 px oder mehr Richtung Ursprung (0,0) gezogen, was eine Abbildung ergab, in der die roten Streifen von 140 Konturen nach oben links konvergierten (gefunden 2026-09-06, als erstmals Abbildungen pro op erstellt wurden; in numerischen Tests betrug die mittlere Abweichung 0.3 px und war unsichtbar).
-- **L2370** _(ja)_ — ★pickle は**名前で**(2026-09-19 外部レビュー N5): ``fn`` は ``backend_safe._safe`` のクロージャで pickle できず、Op を丸ごと multiprocessing / joblib に渡すと PicklingError で止まっていた(``Pipeline`` は名前を持つので通る、という非対称)。 復元先は**復元する側の環境の登録**: backend が入っていない環境で戻すと KeyError(不足 extra の案内つき)になり、黙って別の実装にはならない。
-- **L2546** _(ja)_ — ★2026-09-19 の外部レビュー(#1): scikit-image 無しの環境で ``sk_canny`` を呼ぶと 「unknown operator」になり、**存在しない**のか **backend が入っていない**のかを 区別できなかった。fn は ``backend_safe._safe`` に包まれて ``__module__`` を失う ので、登録の側で出自を残す(後勝ち = ``REGISTRY`` の重複解消と同じ規則)。 ``imgevolve.py index`` がこれを ``module`` / ``requires`` として索引に書き、 ``api._resolve`` が未登録の名前を引かれたときに索引から不足 extra を案内する。
-- **L2555** _(ja)_ — ★pyproject の optional-dependencies と食い違うと案内が嘘になるので ``tests/test_usability_review_2026_09_19.py`` が突き合わせる。
-- **L2842** _(ja)_ — ★2026-10-07: 複素の sort は sanitize(実 sort 向けの規約で**実部だけ**を返す)を通さない。 以前は tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が cimage / beatcube を名乗りながら float64 を返していた(虚部を黙って捨てる = 位相が消える)。 backends_bridge の橋は同じ理由で既に素通しにしていた —— その規約をこちらにも揃える。
-- **L2857** — ★**Ein Verzeichnis von ops, die auf der nativen Seite bei einer degenerierten Eingabe den ganzen Prozess zum Absturz bringen** (2026-09-05). `guard` kann nur Python-Ausnahmen abfangen. Sobald innerhalb von C/C++ ausserhalb der Grenzen geschrieben wird, ist es dort vorbei, und die gesamte Pipeline des Nutzers verschwindet -- die schlimmste Art, wie fail-soft bricht. Es bleibt nur die Abweisung am Eingang, also **hier mit Begruendung auffuehren und zur Registrierungszeit eine Schranke setzen**. **Das Verhalten unterscheidet sich je nach Plattform** -- das ist der Existenzgrund dieses Verzeichnisses. Die 3 unten stuerzen unter Linux (Ubuntu 24.04 / Python 3.12 / PyPI-wheel) ab, aber **unter Windows reproduzierte sich mit derselben Eingabe kein einziger**. Ein anderer nativer Build bedeutet, dass die Grenze anders bricht, also ist eine feine Trennlinie 'diese Art von Eingabe ist in Ordnung' nicht vertrauenswuerdig -- **degenerierte Eingaben pauschal ablehnen**. Nicht 'entfernen, sobald behoben', sondern **entfernen, sobald bestaetigt werden kann, dass der Upstream behoben ist** (dies ist nicht unser eigener Code, also unterscheidet sich die Entfernungsbedingung).
+- **L1772** — ★Die Raender **mit dem Randwert** auffuellen. Zuvor war es ``np.convolve(x, k, "same")``, was die w Punkte an beiden Enden **mit Null** mittelt -- Anfang und Ende einer Kontur wurden um bis zu 50 px oder mehr Richtung Ursprung (0,0) gezogen, was eine Abbildung ergab, in der die roten Streifen von 140 Konturen nach oben links konvergierten (gefunden 2026-09-06, als erstmals Abbildungen pro op erstellt wurden; in numerischen Tests betrug die mittlere Abweichung 0.3 px und war unsichtbar).
+- **L2369** _(ja)_ — ★pickle は**名前で**(2026-09-19 外部レビュー N5): ``fn`` は ``backend_safe._safe`` のクロージャで pickle できず、Op を丸ごと multiprocessing / joblib に渡すと PicklingError で止まっていた(``Pipeline`` は名前を持つので通る、という非対称)。 復元先は**復元する側の環境の登録**: backend が入っていない環境で戻すと KeyError(不足 extra の案内つき)になり、黙って別の実装にはならない。
+- **L2545** _(ja)_ — ★2026-09-19 の外部レビュー(#1): scikit-image 無しの環境で ``sk_canny`` を呼ぶと 「unknown operator」になり、**存在しない**のか **backend が入っていない**のかを 区別できなかった。fn は ``backend_safe._safe`` に包まれて ``__module__`` を失う ので、登録の側で出自を残す(後勝ち = ``REGISTRY`` の重複解消と同じ規則)。 ``imgevolve.py index`` がこれを ``module`` / ``requires`` として索引に書き、 ``api._resolve`` が未登録の名前を引かれたときに索引から不足 extra を案内する。
+- **L2554** _(ja)_ — ★pyproject の optional-dependencies と食い違うと案内が嘘になるので ``tests/test_usability_review_2026_09_19.py`` が突き合わせる。
+- **L2841** _(ja)_ — ★2026-10-07: 複素の sort は sanitize(実 sort 向けの規約で**実部だけ**を返す)を通さない。 以前は tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が cimage / beatcube を名乗りながら float64 を返していた(虚部を黙って捨てる = 位相が消える)。 backends_bridge の橋は同じ理由で既に素通しにしていた —— その規約をこちらにも揃える。
+- **L2856** — ★**Ein Verzeichnis von ops, die auf der nativen Seite bei einer degenerierten Eingabe den ganzen Prozess zum Absturz bringen** (2026-09-05). `guard` kann nur Python-Ausnahmen abfangen. Sobald innerhalb von C/C++ ausserhalb der Grenzen geschrieben wird, ist es dort vorbei, und die gesamte Pipeline des Nutzers verschwindet -- die schlimmste Art, wie fail-soft bricht. Es bleibt nur die Abweisung am Eingang, also **hier mit Begruendung auffuehren und zur Registrierungszeit eine Schranke setzen**. **Das Verhalten unterscheidet sich je nach Plattform** -- das ist der Existenzgrund dieses Verzeichnisses. Die 3 unten stuerzen unter Linux (Ubuntu 24.04 / Python 3.12 / PyPI-wheel) ab, aber **unter Windows reproduzierte sich mit derselben Eingabe kein einziger**. Ein anderer nativer Build bedeutet, dass die Grenze anders bricht, also ist eine feine Trennlinie 'diese Art von Eingabe ist in Ordnung' nicht vertrauenswuerdig -- **degenerierte Eingaben pauschal ablehnen**. Nicht 'entfernen, sobald behoben', sondern **entfernen, sobald bestaetigt werden kann, dass der Upstream behoben ist** (dies ist nicht unser eigener Code, also unterscheidet sich die Entfernungsbedingung).
 
 ## `ops1d.py`
 
@@ -2199,10 +2199,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `scale.py`
 
-- **L55** _(ja)_ — ★2026-09-17: 検査のタイル幅を 64/16 だけから 60/12 も見るように広げたら、 tile_safe と宣言されていた 168 本のうち 16 本が割れた。64 も 16 も 8 の 倍数なので、周期 8 の処理と、たまたま境界が穴に掛からない領域処理が すり抜けていた。以下はそのとき測って落ちたもの(誤差は 60/12 での実測)。
-- **L87** _(ja)_ — ★2026-09-17: 走査長平滑化は隙間を最大 65 画素まで埋めるので、 標準タイラーの halo より広い。60/12 のタイルで 0.2613 ずれた(実測)。
-- **L90** _(ja)_ — ★2026-09-17: 局所の二峰性は窓が最大 41 画素、傾き補正は角度を画像全体から 1 つ決める。どちらもタイルごとに測ると別の答えになる(実測 1.0000)。
-- **L191** _(ja)_ — ★名前つきの理由は**カテゴリの分岐より先に**引く。category が先に返してしまうと、 幾何カテゴリの op はすべて「cv2 の座標上限」と説明されてしまい、実際の理由 (deskew なら「角度は画像全体から 1 つ決まる」)に辿り着けない。この辞書に 載っているのは実測で非タイル可と分かった op だけなので、載せた op 以外の 分類は 1 件も変わらない(2026-09-17 に 925 op 全数で確認)。
+- **L57** _(ja)_ — ★2026-09-17: 検査のタイル幅を 64/16 だけから 60/12 も見るように広げたら、 tile_safe と宣言されていた 168 本のうち 16 本が割れた。64 も 16 も 8 の 倍数なので、周期 8 の処理と、たまたま境界が穴に掛からない領域処理が すり抜けていた。以下はそのとき測って落ちたもの(誤差は 60/12 での実測)。
+- **L89** _(ja)_ — ★2026-09-17: 走査長平滑化は隙間を最大 65 画素まで埋めるので、 標準タイラーの halo より広い。60/12 のタイルで 0.2613 ずれた(実測)。
+- **L92** _(ja)_ — ★2026-09-17: 局所の二峰性は窓が最大 41 画素、傾き補正は角度を画像全体から 1 つ決める。どちらもタイルごとに測ると別の答えになる(実測 1.0000)。
+- **L193** _(ja)_ — ★名前つきの理由は**カテゴリの分岐より先に**引く。category が先に返してしまうと、 幾何カテゴリの op はすべて「cv2 の座標上限」と説明されてしまい、実際の理由 (deskew なら「角度は画像全体から 1 つ決まる」)に辿り着けない。この辞書に 載っているのは実測で非タイル可と分かった op だけなので、載せた op 以外の 分類は 1 件も変わらない(2026-09-17 に 925 op 全数で確認)。
 
 ## `scene_registry.py`
 
