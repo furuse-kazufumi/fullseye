@@ -35,7 +35,7 @@ the image quality itself is decided by the sensor.
 
 ## 2. Makers that build their own sensors (cannot be looked up by part number)
 
-Canon (for its own products only) / Teledyne DALSA・e2v (also sells sensors externally) / Photron (high-speed cameras) /
+Canon (for its own products only) / Teledyne DALSA / e2v (also sells sensors externally) / Photron (high-speed cameras) /
 Vision Research = Phantom (custom sensors with 28 µm pixels; TMX is back-side illuminated) / Hamamatsu (a mix of in-house and
 external sensors; ORCA-Quest was developed by Fairchild Imaging) / Sony (both).
 → For details, see the corresponding section of `image_sensors.md`.

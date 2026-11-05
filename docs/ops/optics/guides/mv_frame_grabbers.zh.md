@@ -55,7 +55,7 @@ Vieworks VT 系列(TDI、最高 300 kHz)就是以此带宽为前提的产品。
 | BitFlow | Claxon / Cyton | CXP / Camera Link |
 | Active Silicon | FireBird | CXP / Camera Link |
 | Kaya Instruments | Komodo | CXP |
-| **AVAL DATA(アバールデータ)** | APX-3312A / APX-3313A(Camera Link)、Opt-C:Link 系列 | 同时拥有 Camera Link 采集卡和自有光接口。在日本国内的设备领域实力强 |
+| **AVAL DATA** | APX-3312A / APX-3313A(Camera Link)、Opt-C:Link 系列 | 同时拥有 Camera Link 采集卡和自有光接口。在日本国内的设备领域实力强 |
 | Euresys | Grablink(Camera Link) | 与 CXP 的 Coaxlink 分属不同产品线,继续提供 Camera Link |
 
 ## 为什么在虚拟化中不能忽视
