@@ -2583,7 +2583,26 @@ def _guard_input(v, op, policy):
 #
 # ``region`` inputs are deliberately NOT touched: an int {0,1} mask is a legitimate
 # region and ``_coerce_input`` already re-types it without rescaling.
-_DTYPE_CONTRACT_SORTS = frozenset({"image", "color", "volume"})
+#
+# ★2026-11-05(1.0 前の修正 typed-dtype): the typed bridge opened sorts whose values
+# are the SAME [0,1] pixel values as ``image`` — ``video`` (T,H,W[,3]) frames,
+# ``rgbimage`` (H,W,3) linear RGB, ``lightfield`` (V,U,H,W) views — but the set
+# stayed at the three original sorts, so a uint8 video passed ``on_error="raise"``
+# and ``tb_temporal_bandpass`` / ``tb_temporal_band_power`` returned the x255 /
+# x255**2 answer with no exception and no record (the other 14 video ops are
+# scale-equivariant or thresholded and happened to agree). Every entry
+# (``apply``, the n-ary tier, ``template=``, ``run_pipeline`` CPU/GPU,
+# ``FullseyeEngine.run_cached`` and the MCP stages, which call ``fullseye.apply``)
+# reads THIS set, so widening it here is what makes them agree.
+#
+# Deliberately NOT here — their values are not pixel values, an integer can be the
+# meaning, and /255 would be a silent unit change (the opposite bug):
+#   counts (photon counts, int64 by contract), cimage / beatcube (complex fields),
+#   qimage (quaternion: signed Riesz pairs, QFT spectra far outside [0,1]),
+#   signal / matrix / points / keypoints (profiles, linear algebra, coordinates),
+#   region (int masks, see above), contour / feature / match / any.
+_DTYPE_CONTRACT_SORTS = frozenset({"image", "color", "volume",
+                                   "video", "rgbimage", "lightfield"})
 _DTYPE_FULL_SCALE = {"uint8": 255.0, "uint16": 65535.0}
 
 
