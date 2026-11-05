@@ -2618,7 +2618,7 @@
   "examples2d_total": 472,
   "run_by_the_poc_gate": 298,
   "run_by_the_example_gate": 174,
-  "scripts_on_disk": 479,
+  "scripts_on_disk": 480,
   "excluded_from_the_registry": 8,
   "excluded_but_run_by_a_named_test": {
    "lensfile_tolerance_worst_mtf": [

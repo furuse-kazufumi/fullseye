@@ -99,16 +99,16 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 99 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.9.0); stage definitions in [MATURITY.md](docs/MATURITY.md)).
+The 100 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.9.0); stage definitions in [MATURITY.md](docs/MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 91 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 92 |
 | `validated-public-real-data` | an example on public measured data runs in a gate | 8 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 479 examples, 475 are actually run by a gate.
+Of 480 examples, 476 are actually run by a gate.
 
 ### Operator counts by version
 
