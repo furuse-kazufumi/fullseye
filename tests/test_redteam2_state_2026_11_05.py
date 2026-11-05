@@ -77,7 +77,14 @@ def test_t6_low_b_still_runs_the_kernel():
 
 
 def test_t6_api_single_op_gpu_path_defers_to_core():
-    """api._try_accel(device 指定の単 op 経路)は b の新しい選択肢では kernel を走らせない。"""
+    """api._try_accel(device 指定の単 op 経路)は b の新しい選択肢では kernel を走らせない。
+
+    ★1.0 前の修正 2026-11-05(t8-flake): GPU の遮断器(``api._GPU_OPEN``)はプロセスで 1 つで、同じ
+    ワーカーで先に走ったテスト(例: CUDA の無い機械で ``device="cuda"`` を頼む
+    ``test_api_device.py::test_apply_device_graceful``)が median_image を開けたまま残すと、下の
+    「歴史側は kernel が答える」が ``_NOACCEL`` で落ちた。ここが確かめるのは kernel と core の一致で
+    遮断器ではないので、空の遮断器で走らせて終わったら元に戻す。
+    """
     accel, _rows = _knob_b_rows()
     import api
     import fast
@@ -85,7 +92,8 @@ def test_t6_api_single_op_gpu_path_defers_to_core():
     regs = sorted(r for r in fast._KNOB_B_OPTIONED if r in rev)
     assert len(regs) >= 7
     im = _probe()
-    with warnings.catch_warnings():
+    with warnings.catch_warnings(), pytest.MonkeyPatch.context() as mp:
+        mp.setattr(api, "_GPU_OPEN", set())
         warnings.simplefilter("ignore")
         for reg in regs:
             op = api._resolve(reg)
