@@ -10,6 +10,37 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(typed-dtype)
+
+整数・bool の入力を float64 [0,1] の契約へ寄せる入口の dtype 契約(uint8 は /255、uint16 は /65535、
+`on_error="raise"` では拒否、それ以外の方針では変換して台帳に `dtype_converted` を記録)を、`image` / `color` /
+`volume` に加えて **`video`((T,H,W) と (T,H,W,3))・`rgbimage`((H,W,3))・`lightfield`((V,U,H,W))** にも掛ける。
+3 つとも、産む op(`img_to_video` / `img_to_rgb` / `img_to_lightfield`、`tb_points_render`)と消費する op の
+docstring が「値は画素値(入力と同じ値域、[0,1])」と約束している sort。
+
+- 以前は uint8 の動画が strict でも通り、`tb_temporal_bandpass` は float の答えの 255 倍(実測で差 194)、
+  `tb_temporal_band_power` は 255² 倍(差 7246)を例外も記録も無く返していた。他の 14 本の video op は
+  尺度に依らない演算・しきい値のためたまたま同じ答えだった。
+- 変わること: 上の 3 sort を受ける 31 本の op に整数・bool の配列を渡すと、`on_error="raise"` で `ValueError`、
+  既定の方針では /255 などで変換され台帳に記録される。float16 / float32 は無記録で float64 に上げる
+  (`image` と同じ)。float64 の入力の答えは 1 ビットも変わらない。
+- 全部の入口が同じ規則になる: `fullseye.apply` / `api.apply` / `api.run_pipeline`(CPU・GPU)/
+  `FullseyeEngine.run` · `run_stepwise` · `run_cached` / MCP の段(`fullseye.apply` を呼ぶ)。
+- `tb_sensor_capture` は `rgbimage` を返すが値は 0..2^bit_depth−1 の**整数のセンサ符号**。これを別の
+  `rgbimage` op に `apply` で渡すと、strict では拒否、既定では int32 の最大値で割られる(`image` の int32 と同じ
+  規則)。続けるなら `out / (2**bit_depth - 1)` で [0,1] に直してから渡すこと。
+
+### 修正 — 1.0 前の修正 2026-11-05(typed-dtype)の棚卸しと、契約に入れなかった sort
+
+回帰は `tests/test_fix_typed-dtype_2026_11_05.py`(真値 = 同じ値を float64/255 で渡した答え。31 本の op ×
+strict 拒否 / 変換と記録 / float 不変、6 つの入口の一致)。
+
+- 契約に入れなかった sort と理由(値が画素値ではなく、整数が意味を持つか /255 が黙った単位変更になる):
+  `counts`(光子カウント、int64 が契約)、`cimage` / `beatcube`(複素の場)、`qimage`(四元数。モノジェニックの
+  Riesz 対は符号つき、QFT のスペクトルは [0,1] を大きく超える)、`signal` / `matrix` / `points` / `keypoints`
+  (プロファイル・線形代数・座標)、`region`(整数のマスクは正当)。
+- 値域の契約(`_RANGE_CONTRACT_SORTS` = `image` / `color`)は広げていない(この便は dtype だけ)。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(numerics)
 
 長さ・長さ² に固定の `1e-12` を足す/比べる床と、中心化せずに解く当てはめを直した。値が変わるのは
