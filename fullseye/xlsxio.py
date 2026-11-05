@@ -54,6 +54,21 @@ def _thumb(arr, longest=256):
     return np.clip(a, 0.0, 1.0)
 
 
+def _put(ws, row, col, value):
+    """Write *value* to ``(row, col)``; a ``str`` is always stored as text, never as a formula.
+
+    ★2026-11-05 redteam I19 (CWE-1236, formula injection): openpyxl turns any string starting
+    with ``=`` into a formula, so a measured label such as ``=HYPERLINK("http://x","y")`` or a
+    heading ``=1+1`` became live in the report. Text cells are forced to the string type; ``+``,
+    ``-`` and ``@`` prefixes, which Excel evaluates only when typed, are stored as text the same
+    way. Numbers stay numbers."""
+    cell = ws.cell(row, col)
+    cell.value = value
+    if isinstance(value, str):
+        cell.data_type = "s"
+    return cell
+
+
 def _cell_value(v):
     """セルに書ける値へ: numpy のスカラは数値のまま(str にしない)、他は str。"""
     if isinstance(v, np.generic) and v.dtype.kind in "biuf":
@@ -76,15 +91,15 @@ def _write_tabular(ws, r, value, sort, Font, float_fmt, max_rows):
                 if k not in keys:
                     keys.append(k)
         for j, k in enumerate(keys, 1):
-            ws.cell(r, j, str(k)).font = Font(bold=True)
+            _put(ws, r, j, str(k)).font = Font(bold=True)
         r += 1
         for d in rows[:max_rows]:
             for j, k in enumerate(keys, 1):
                 v = d.get(k) if isinstance(d, dict) else (d[k] if k < len(d) else None)
-                ws.cell(r, j, _cell_value(v))
+                _put(ws, r, j, _cell_value(v))
             r += 1
         if len(rows) > max_rows:
-            ws.cell(r, 1, "… %d 行中 %d 行のみ表示" % (len(rows), max_rows))
+            _put(ws, r, 1, "… %d 行中 %d 行のみ表示" % (len(rows), max_rows))
             r += 1
         return r + 1
     a = np.atleast_2d(np.asarray(value, np.float64))
@@ -92,10 +107,10 @@ def _write_tabular(ws, r, value, sort, Font, float_fmt, max_rows):
         a = a.reshape(-1, 1)                                    # 1-D は縦に並べる
     for i in range(min(a.shape[0], max_rows)):
         for j in range(a.shape[1]):
-            ws.cell(r, j + 1, float(a[i, j]))
+            _put(ws, r, j + 1, float(a[i, j]))
         r += 1
     if a.shape[0] > max_rows:
-        ws.cell(r, 1, "… %d 行中 %d 行のみ表示" % (a.shape[0], max_rows))
+        _put(ws, r, 1, "… %d 行中 %d 行のみ表示" % (a.shape[0], max_rows))
         r += 1
     return r + 1
 
@@ -110,6 +125,7 @@ def save_xlsx_report(sections, path, *, title=None, float_fmt="%.6g", max_rows=1
     ``region`` …)は ``thumbnails=True`` ならサムネイル PNG を埋め込む(失敗しても
     形・値域の 1 行要約に落とす=fail-soft)。書き出した ``path`` を返す。
 
+    文字列は常に文字列型で書く(``=`` 始まりでも数式にしない、CWE-1236)。
     openpyxl が要る(``pip install "fullseye[xlsx]"``)。未知 sort は ``ValueError``。"""
     openpyxl = _require_openpyxl()
     from openpyxl.drawing.image import Image as XLImage
@@ -123,7 +139,7 @@ def save_xlsx_report(sections, path, *, title=None, float_fmt="%.6g", max_rows=1
     ws.title = "Report"
     r = 1
     if title:
-        c = ws.cell(r, 1, title)
+        c = _put(ws, r, 1, str(title))
         c.font = Font(bold=True, size=14)
         r += 2
     tmpfiles: list[str] = []
@@ -131,14 +147,14 @@ def save_xlsx_report(sections, path, *, title=None, float_fmt="%.6g", max_rows=1
     try:
         from api import write_image
         for heading, value, sort in sections:
-            hc = ws.cell(r, 1, str(heading))
+            hc = _put(ws, r, 1, str(heading))
             hc.font = Font(bold=True, size=12)
             r += 1
             if sort in _TABULAR:
                 r = _write_tabular(ws, r, value, sort, Font, float_fmt, max_rows)
             elif sort in _SCALARISH:
                 v = _J.as_value(value) if _J.is_envelope(value) else value
-                ws.cell(r, 1, float(v) if isinstance(v, (int, float, np.floating)) else str(v))
+                _put(ws, r, 1, float(v) if isinstance(v, (int, float, np.floating)) else str(v))
                 r += 2
             elif sort in _IMAGELIKE:
                 placed = False
@@ -156,7 +172,7 @@ def save_xlsx_report(sections, path, *, title=None, float_fmt="%.6g", max_rows=1
                         placed = False
                 if not placed:
                     a = np.asarray(value, np.float64)
-                    ws.cell(r, 1, "image %s  range [%.4g, %.4g]" % (
+                    _put(ws, r, 1, "image %s  range [%.4g, %.4g]" % (
                         tuple(a.shape), float(a.min()) if a.size else 0.0,
                         float(a.max()) if a.size else 0.0))
                     r += 2

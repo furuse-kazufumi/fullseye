@@ -683,15 +683,16 @@ def _corner_response(t, a, b, dev):
 
 
 def _aniso_diffusion(t, a, b, dev):
-    """core anisotropic(Perona–Malik、np.roll = 周期境界)の逐語移植。K=0.05+0.25b、
-    反復 2+int(8a)、刻み 0.2。反復 x 全画素の指数計算で計算重 = GPU が効く型(実測 144x)。"""
+    """core anisotropic(Perona–Malik、縁は複製 = Neumann)の逐語移植。K=0.05+0.25b、
+    反復 2+int(8a)、刻み 0.2。反復 x 全画素の指数計算で計算重 = GPU が効く型(実測 144x)。
+    2026-11-05(敵対的検証 第 2 巡 P7)まで CPU と同じく torch.roll の周期境界だった。"""
     K = 0.05 + 0.25 * b
     y = t.clone()
     for _ in range(2 + int(a * 8)):
-        dn = torch.roll(y, -1, 2) - y
-        ds = torch.roll(y, 1, 2) - y
-        de = torch.roll(y, -1, 3) - y
-        dw = torch.roll(y, 1, 3) - y
+        dn = torch.cat([y[:, :, 1:], y[:, :, -1:]], 2) - y
+        ds = torch.cat([y[:, :, :1], y[:, :, :-1]], 2) - y
+        de = torch.cat([y[:, :, :, 1:], y[:, :, :, -1:]], 3) - y
+        dw = torch.cat([y[:, :, :, :1], y[:, :, :, :-1]], 3) - y
         y = y + 0.2 * (torch.exp(-(dn / K) ** 2) * dn + torch.exp(-(ds / K) ** 2) * ds
                        + torch.exp(-(de / K) ** 2) * de + torch.exp(-(dw / K) ** 2) * dw)
     return y.clamp(0, 1)
@@ -988,7 +989,7 @@ def _affine_spline(t, M, off, dev):
 def _affine_warp(t, a, b, dev):
     ang = np.deg2rad(-20 + 40 * a)
     M = np.array([[np.cos(ang), -np.sin(ang) + (b - 0.5) * 0.4], [np.sin(ang), np.cos(ang)]])
-    c = np.array(t.shape[2:], np.float64) / 2
+    c = (np.array(t.shape[2:], np.float64) - 1) / 2      # 画素中心の規約(CPU と同じ、敵対的検証 2026-11-05 P8)
     return _affine_spline(t, M, c - M @ c, dev)
 
 
@@ -1005,7 +1006,7 @@ def _zoom_factor(t, a, b, dev):
     sr, sc = 0.7 + 0.6 * a, 0.7 + 0.6 * b
     H, W = t.shape[2], t.shape[3]
     return _affine_spline(t, np.diag([1 / sr, 1 / sc]),
-                          (H * (1 - 1 / sr) / 2, W * (1 - 1 / sc) / 2), dev)
+                          ((H - 1) / 2 * (1 - 1 / sr), (W - 1) / 2 * (1 - 1 / sc)), dev)   # 中心 (H-1)/2(P8)
 
 
 def _rescale_img(t, a, b, dev):
@@ -1013,7 +1014,7 @@ def _rescale_img(t, a, b, dev):
     s = 0.7 + 0.6 * a
     H, W = t.shape[2], t.shape[3]
     order = (0, 1, 3, 3)[min(3, int(float(np.clip(b, 0.0, 1.0)) * 4))]
-    off = (H * (1 - 1 / s) / 2, W * (1 - 1 / s) / 2)
+    off = ((H - 1) / 2 * (1 - 1 / s), (W - 1) / 2 * (1 - 1 / s))      # 中心 (H-1)/2(P8)
     yy, xx = _affine_coords(H, W, np.diag([1 / s, 1 / s]), off, dev)
     if order == 3:
         return _spline_sample(_spline_prefilter(t), yy, xx)
@@ -1034,8 +1035,9 @@ def _zoom_size(t, a, b, dev):
     """core zoom_image_size: 全体を (ht,wt) へ order=1 で標本化し、キャンバス左上へ置く。"""
     H, W = t.shape[2], t.shape[3]
     ht, wt = max(1, int(round(H * (0.5 + a)))), max(1, int(round(W * (0.5 + b))))
-    ys = torch.arange(ht, dtype=torch.float64, device=dev) * (H / ht)
-    xs = torch.arange(wt, dtype=torch.float64, device=dev) * (W / wt)
+    # 画素中心合わせ(CPU と同じ、敵対的検証 2026-11-05 P9): 出力 o -> 入力 (o+0.5)·H/ht - 0.5
+    ys = (torch.arange(ht, dtype=torch.float64, device=dev) + 0.5) * (H / ht) - 0.5
+    xs = (torch.arange(wt, dtype=torch.float64, device=dev) + 0.5) * (W / wt) - 0.5
     y0, x0 = torch.floor(ys), torch.floor(xs)
     fy, fx = (ys - y0).float().view(1, 1, -1, 1), (xs - x0).float().view(1, 1, 1, -1)
     y0, x0 = y0.long(), x0.long()
@@ -1349,12 +1351,40 @@ if _HAS_TORCH:
     del _key, _row
 
 
+def _b_falls_back(name, a, b) -> bool:
+    """accel op *name* の kernel が ``(a, b)`` を忠実に写せず、core に回すべきか。
+
+    ★敵対的検証 2026-11-05 第 2 巡 T6: ``b > 0.5`` で端の扱い(``ops._border``)・構造要素の形
+    (``ops._se``)を選ぶ core op(``fast._KNOB_B_OPTIONED``)に対し、ここの kernel は**歴史的な規約
+    (reflect / 正方形)しか実装していない**。以前は ``b`` を黙って無視し、``device="cuda"`` だけ答えが
+    変わっていた(a=0.5 で median 0.528・mean_box 0.311・gaussian 0.265・gdilate 0.424 …)。
+    CPU の高速 twin(``fast.apply_fast``)と同じ判定で、選択肢が新しい間は core へ回す
+    —— 速くはならないが、答えは ``device="cpu"`` と 1 ビットも変わらない。
+    """
+    row = ACCEL.get(name)
+    if row is None:
+        return False
+    import fast
+    return fast._b_selects_a_new_option(row[1], a, b)
+
+
+def _core_batch(name, imgs, a, b):
+    """:func:`_b_falls_back` の受け皿: core op を 1 枚ずつ float64 で走らせ、kernel と同じく 0..1 に切る。"""
+    import ops
+    core = ops.RT[ACCEL[name][1]]
+    return [np.clip(np.asarray(core(np.asarray(im, np.float64).copy(), a, b), np.float64), 0.0, 1.0)
+            for im in imgs]
+
+
 def run_batch(name, imgs, a=0.5, b=0.4, device="cpu"):
     """Run one accel op over a batch of images; returns a list of 2-D arrays.
 
     :data:`REDUCERS`(領域 -> 特徴・ベクトル)は 1 枚ごとの ``np.float64`` / 1-D 配列のリスト(0..1 に切らない)。
+    ``b`` が kernel の実装していない選択肢を選ぶとき(:func:`_b_falls_back`)は core で答える。
     """
     fn = ACCEL[name][0]
+    if _b_falls_back(name, a, b):
+        return _core_batch(name, imgs, a, b)
     t = _to_batch(imgs, device)
     if name in REDUCERS:
         return list(fn(t, a, b, device))
@@ -1384,6 +1414,10 @@ def run_pipeline(steps, imgs, device="cpu"):
             if i != len(steps) - 1:
                 raise ValueError("accel reducer %r must be the last step of a resident segment" % name)
             return list(ACCEL[name][0](t, a, b, device))
+        if _b_falls_back(name, a, b):
+            # 区間の途中でも core へ(1 往復増えるが、b の選択を無視するよりよい —— T6)
+            t = _to_batch(_core_batch(name, _from_batch(t), a, b), device)
+            continue
         t = ACCEL[name][0](t, a, b, device).clamp(0, 1)
     return _from_batch(t)
 

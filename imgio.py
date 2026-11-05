@@ -946,13 +946,19 @@ def load(path: str, color: bool = False):
 
 
 def save_ply(path: str, points, colors=None) -> None:
-    """Write an ASCII PLY point cloud. *points* (N,3); *colors* optional (N,3) in [0,1]."""
+    """Write an ASCII PLY point cloud. *points* (N,3); *colors* optional (N,3) in [0,1].
+
+    Coordinates are ``double`` properties written with 17 significant digits, so a float64
+    point cloud reads back bit-exact (the same as :func:`mesh.write_points`).
+    """
+    # ★2026-11-05 redteam I23: coordinates were "%g" (6 significant digits) under
+    # "property float": a UTM easting 352145.12 came back 352145 (errors of metres).
     P = np.asarray(points, np.float64)
     if P.ndim != 2 or P.shape[1] != 3:
         raise ValueError("points must be (N, 3)")
     n = len(P)
     lines = ["ply", "format ascii 1.0", "element vertex %d" % n,
-             "property float x", "property float y", "property float z"]
+             "property double x", "property double y", "property double z"]
     C = None
     if colors is not None:
         # PLY colour channels are integers.  Round to nearest instead of truncating:
@@ -963,9 +969,9 @@ def save_ply(path: str, points, colors=None) -> None:
     body = []
     for i in range(n):
         if C is not None:
-            body.append("%g %g %g %d %d %d" % (P[i, 0], P[i, 1], P[i, 2],
-                                               C[i, 0], C[i, 1], C[i, 2]))
+            body.append("%.17g %.17g %.17g %d %d %d" % (P[i, 0], P[i, 1], P[i, 2],
+                                                     C[i, 0], C[i, 1], C[i, 2]))
         else:
-            body.append("%g %g %g" % (P[i, 0], P[i, 1], P[i, 2]))
+            body.append("%.17g %.17g %.17g" % (P[i, 0], P[i, 1], P[i, 2]))
     with open(path, "w", encoding="ascii") as f:
         f.write("\n".join(lines + body) + "\n")

@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">voxel_to_hessian — REPRCONV <code style="color:#22d3bf">derivative</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">hessian</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_to_hessian(vol, sigma=1.0, scale_normalize=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.voxel_to_hessian(vol, sigma=1.0, scale_normalize=False)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;voxel_to_hessian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Volumen <code style="color:#22d3bf">voxel</code> → die sechs Komponenten (zz, yy, xx, zy, zx, yx) der 3-D-Hesse-Matrix <code style="color:#22d3bf">hessian</code>. Der Eingang zu <code style="color:#22d3bf">hessian</code>, nur mit numpy und scipy gebaut.</p>
+<p>Gibt <b>dieselbe Form</b> wie <code style="color:#22d3bf">hessian3d</code> (torch conv3d) zurück: eine list der Länge 6, jeweils <code style="color:#22d3bf">(D,H,W)</code> float32, in der Reihenfolge (zz, yy, xx, zy, zx, yx) (Achse 0=z, 1=y, 2=x), in Einheiten von 1/voxel², Ränder replicate (<code style="color:#22d3bf">mode=&quot;nearest&quot;</code> von <code style="color:#22d3bf">scipy.ndimage</code>). Daher lesen <code style="color:#22d3bf">hessian_determinant</code> / <code style="color:#22d3bf">hessian_vesselness</code> sie unverändert, und die Kette <code style="color:#22d3bf">voxel → hessian → voxel</code> funktioniert auch in einem schlichten <code style="color:#22d3bf">pip install fullseye</code> ohne torch.</p>
+<p><code style="color:#22d3bf">sigma</code> ist der Maßstab der Gauß-Glättung (Voxel). Diagonalkomponenten sind &quot;2. Ordnung auf dieser Achse × Glättung auf den anderen 2 Achsen&quot;, Kreuzkomponenten &quot;1. Ordnung auf 2 Achsen × Glättung auf der übrigen Achse&quot;, als separierbare Faltungen. Die Kerne haben die Form von Gauß-Ableitungen, wobei Summe und 1./2. Moment exakt abgeglichen sind (ein abgetasteter Gauß-Ableitungskern summiert nicht zu 0, sodass Helligkeit in die 2. Ableitung leckt); daher ergibt ein quadratisches Polynom ½xᵀAx + bᵀx im Inneren <code style="color:#22d3bf">H = A</code> bis auf Rundung. <code style="color:#22d3bf">sigma=0</code> bedeutet nicht &quot;keine Glättung&quot;, sondern dieselben 3-Tap-Kerne wie <code style="color:#22d3bf">hessian3d</code> ([1,−2,1] / [−0.5,0,0.5] / [1,2,1]/4) —— es stimmt mit der torch-Version bis auf float32-Rundung überein. <code style="color:#22d3bf">scale_normalize=True</code> multipliziert mit σ² (Lindebergs γ=1-Normierung, um Werte über Maßstäbe hinweg zu vergleichen; dieselbe Konvention wie die interne Hesse-Matrix von <code style="color:#22d3bf">vol_frangi</code>).</p>
+<p>2-D-Bilder werden nicht angenommen: der Typ <code style="color:#22d3bf">hessian</code> besteht aus den sechs 3-D-Komponenten, und seine Empfänger brauchen <code style="color:#22d3bf">(D,H,W)</code>. Für eine 2-D-Hesse-Antwort <code style="color:#22d3bf">sk_hessian</code> / <code style="color:#22d3bf">sk_hessian_det</code> / <code style="color:#22d3bf">xsk_hessian_eig</code> (image → image) verwenden.</p>
+<p>Args:</p>
+<p>vol: ein 3-D-Volumen <code style="color:#22d3bf">(D,H,W)</code>, reell, endlich.</p>
+<p>sigma: Maßstab der Gauß-Glättung (Voxel). Endlich und &gt;= 0. 0 ergibt dieselben Kerne wie <code style="color:#22d3bf">hessian3d</code>. Standard 1.0.</p>
+<p>scale_normalize: True multipliziert jede Komponente mit σ² (nicht mit <code style="color:#22d3bf">sigma=0</code> kombinierbar).</p>
+<p>Returns:</p>
+<p>list aus 6 <code style="color:#22d3bf">np.ndarray</code>, jeweils <code style="color:#22d3bf">(D,H,W)</code> float32, in der Reihenfolge (zz, yy, xx, zy, zx, yx).</p>
+<p>Raises:</p>
+<p>ValueError: leer / nicht 3-D / nicht endlich / sigma keine endliche nichtnegative Zahl /</p>
+<p><code style="color:#22d3bf">scale_normalize</code> zusammen mit <code style="color:#22d3bf">sigma=0</code>.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">vol</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:hessian_numpy_chain">hessian_numpy_chain</a> — <code style="color:#22d3bf">py -3.11 examples/hessian_numpy_chain.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">hessian</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">derivative</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gradient_magnitude">gradient_magnitude</a> · <a style="color:#22d3bf" href="opreprconv:gradient_coherence">gradient_coherence</a> · <a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

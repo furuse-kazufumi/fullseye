@@ -950,9 +950,9 @@
     },
     {
       "source": "examples/poc_*.py",
-      "found": 297,
+      "found": 299,
       "included": 0,
-      "excluded": 297,
+      "excluded": 299,
       "reason": "PoC programs are arbitrary Python; a linear MCP pipeline cannot be extracted statically without guessing."
     },
     {
@@ -964,9 +964,9 @@
     },
     {
       "source": "docs/**/*.md",
-      "found": 4355,
+      "found": 4358,
       "included": 0,
-      "excluded": 4355,
+      "excluded": 4358,
       "reason": "Documentation contains prose and snippets, not a statically unambiguous inventory of MCP stages."
     }
   ]

@@ -66,7 +66,7 @@ _INTERNAL = {
     "difftest": 1, "dispositions": 3, "evolve": 2,
     "examples2d": 11, "examples3d": 11, "fast": 31,
     "fscript": 29, "fsruntime": 8,
-    "gi_render": 2, "graph": 3, "graph_seed": 2, "halcon_coverage": 9,
+    "gi_render": 2, "graph": 3, "graph_seed": 2, "halcon_coverage": 10,
     "halcon_scrape": 9, "honest_summary": 1, "imgevolve": 14, "lib_coverage": 3,
     "param_specs": 10, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
@@ -309,7 +309,11 @@ def test_pending_exposure_shrinks_when_fixed():
 #   と fullseye_describe の gpu_paths で、部品そのものは公開経路に載せない。実測 958 → 975。
 # 2026-11-04 統合 GPU: 1052 + 19(第 5 便 device_policy 6・gpu_route 9・gpu_shadow の鎖 2・accel_label 2。
 #   ブランチの注記は 17、accel_label の 2 本が数えられていなかった)= 1071。実測も 1071。
-_HIDDEN_FUNCTIONS_TODAY = 1071
+# 2026-11-05 敵対的検証の統合(integrate/redteam-2026-11-05、claims D6/D7): 1071 + 2。
+#   halcon_coverage.source_breakdown_text(成熟度の文面を出所別に組む補助。呼ぶのは honest_summary だけ)と
+#   realdata.mark_read(PoC が「実データを読んだ」印を記録に足す補助。呼ぶのは data: real の例だけで、op ではない)。
+#   同じ便の source_of / covered_by_source はモジュールの中でしか使わないので _ を付けて内部にした(数えない)。
+_HIDDEN_FUNCTIONS_TODAY = 1073
 
 
 def _hidden_total():

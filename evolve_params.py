@@ -87,13 +87,17 @@ def evaluate(chain, task, cache=None):
     return fit
 
 
-def mutate(chain, rng, sigma=0.25):
-    """並び(置換/挿入/削除)と param(ガウス摂動)の変異。→ tuple。"""
+def mutate(chain, rng, sigma=0.25, max_len=5):
+    """並び(置換/挿入/削除)と param(ガウス摂動)の変異。→ tuple。
+
+    挿入は ``len(chain) < max_len`` のときだけ(★2026-11-04 外部検証 E1 の兄弟: 上限が 5 に
+    固定されていて、``evolve_params(max_len=1)`` が上限を超える chain を返し得た)。
+    """
     g = list(chain)
     kind = rng.integers(4)
     if kind == 0 and g:                                  # op 置換(param は新規乱数)
         g[int(rng.integers(len(g)))] = random_gene(rng)
-    elif kind == 1 and len(g) < 5:                        # 挿入
+    elif kind == 1 and len(g) < max_len:                  # 挿入
         g.insert(int(rng.integers(len(g) + 1)), random_gene(rng))
     elif kind == 2 and g:                                 # 削除
         g.pop(int(rng.integers(len(g))))
@@ -131,7 +135,7 @@ def evolve_params(task, pop=24, gens=12, elite=3, seed=0, max_len=4):
                 return max(cand, key=lambda c: evaluate(c, task, cache))
             child = crossover(pick(), pick(), rng, max_len)
             if rng.random() < 0.7:
-                child = mutate(child, rng)
+                child = mutate(child, rng, max_len=max_len)
             nxt.append(child)
         population = nxt
     best = max(population, key=lambda c: evaluate(c, task, cache))

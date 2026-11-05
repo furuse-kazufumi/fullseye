@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsshape2d —— 2-D の形を**記述して写す** op の統一レジストリ。
 
-実体は 2 モジュール(13 op / 2 カテゴリ):
+実体は 2 モジュール(17 op / 2 カテゴリ):
 
 * ``fourierdesc.py`` —— 閉輪郭の楕円フーリエ記述子(EFD)。形を有限個の係数に
   畳んで、回転・平行移動・始点・(任意で)大きさに不変な形で比べる。

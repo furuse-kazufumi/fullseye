@@ -42,6 +42,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import dsp  # noqa: E402
 import examplefig as figs  # noqa: E402
 import fullseye as fs  # noqa: E402
+import realdata  # noqa: E402
 
 L = fs.ledger
 
@@ -215,6 +216,7 @@ def chapter_real(data):
               "aLIGODesign.txt を 1 つの dir に置き、環境変数で渡す。実データ門は未実行。")
         return None
     strain, nr, design, fig1 = data["strain"], data["nr"], data["design"], data["fig1"]
+    realdata.mark_read("gwosc-gw150914")
     t = np.arange(strain["H1"].size) / FS_HZ + T0
     psd = {d: L.psd_welch(strain[d], FS_HZ, 4.0) for d in strain}
     print("   O1 の実測 ASD と設計曲線(T1800044)の比:")

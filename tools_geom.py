@@ -14,10 +14,15 @@ def _p(x):
 
 # ── 交点 ─────────────────────────────────────────────────────────────────────── #
 def intersection_lines(l1, l2):
-    """2 直線(各 2 点)の交点 (row, col) を返す(intersection_lines)。平行なら None。"""
+    """2 直線(各 2 点)の交点 (row, col) を返す(intersection_lines)。
+
+    平行(なす角の正弦 < 1e-12)か、どちらかの直線の 2 点が一致するなら None。判定は長さに
+    対する相対量で、座標の尺度に依らない(2026-11-05 敵対的検証 N1: 以前は外積の絶対値 < 1e-12 で、
+    座標 1e-7 の直交する 2 直線を「平行」とした)。"""
     r1, c1, r2, c2 = l1; r3, c3, r4, c4 = l2
     d = (c1 - c2) * (r3 - r4) - (r1 - r2) * (c3 - c4)
-    if abs(d) < 1e-12:
+    n1 = float(np.hypot(r1 - r2, c1 - c2)); n2 = float(np.hypot(r3 - r4, c3 - c4))
+    if n1 == 0.0 or n2 == 0.0 or abs(d) <= 1e-12 * n1 * n2:
         return None
     a = c1 * r2 - r1 * c2; b = c3 * r4 - r3 * c4
     col = (a * (c3 - c4) - (c1 - c2) * b) / d
@@ -30,6 +35,8 @@ def intersection_line_circle(line, center, radius):
     r1, c1, r2, c2 = line; cr, cc = center
     d = _p([r2 - r1, c2 - c1]); f = _p([r1 - cr, c1 - cc])
     a = d @ d; b = 2 * (f @ d); cq = f @ f - radius ** 2
+    if a == 0:
+        raise ValueError("intersection_line_circle: the line's two points coincide")
     disc = b * b - 4 * a * cq
     if disc < 0:
         return []
@@ -43,9 +50,12 @@ def intersection_segment_line(seg, line):
     pt = intersection_lines(seg, line)
     if pt is None:
         return None
+    # ★2026-11-05 敵対的検証 N1: 長さ・長さ² に固定の 1e-12 を足していた。座標 1e-6 の図形では
+    # 床が本体と同じ桁になり、線分外の交点を返す・2 円の交点が 1 個・Plücker 距離が半分になった。
+    # 床は外し、退化(長さ 0)は明示的に扱う。
     r1, c1, r2, c2 = seg
     t_num = (pt[0] - r1) * (r2 - r1) + (pt[1] - c1) * (c2 - c1)
-    t_den = (r2 - r1) ** 2 + (c2 - c1) ** 2 + 1e-12
+    t_den = (r2 - r1) ** 2 + (c2 - c1) ** 2          # > 0(長さ 0 なら intersection_lines が None)
     t = t_num / t_den
     return pt if -1e-9 <= t <= 1 + 1e-9 else None
 
@@ -62,9 +72,11 @@ def intersection_segment_circle(seg, center, radius):
     """線分と円の交点(線分内のみ)(intersection_segment_circle)。"""
     r1, c1, r2, c2 = seg
     out = []
+    if (r2 - r1) ** 2 + (c2 - c1) ** 2 == 0:
+        return out     # 長さ 0 の線分(輪郭の重複点)は交点なし(以前も NaN を経て空だった)
     for pt in intersection_line_circle(seg, center, radius):
         t = ((pt[0] - r1) * (r2 - r1) + (pt[1] - c1) * (c2 - c1)) / \
-            ((r2 - r1) ** 2 + (c2 - c1) ** 2 + 1e-12)
+            ((r2 - r1) ** 2 + (c2 - c1) ** 2)
         if -1e-9 <= t <= 1 + 1e-9:
             out.append(pt)
     return out
@@ -100,8 +112,14 @@ def point_direction_to_pluecker_line(point, direction):
 
 def pluecker_line_to_point_direction(pluecker):
     """Plücker 座標から直線上の 1 点と方向を復元(pluecker_line_to_point_direction)。"""
+    # ★2026-11-05 敵対的検証 N1: 長さ・長さ² に固定の 1e-12 を足していた。座標 1e-6 の図形では
+    # 床が本体と同じ桁になり、線分外の交点を返す・2 円の交点が 1 個・Plücker 距離が半分になった。
+    # 床は外し、退化(長さ 0)は明示的に扱う。
     d = _p(pluecker["direction"]); m = _p(pluecker["moment"])
-    point = np.cross(d, m) / (d @ d + 1e-12)
+    dd = float(d @ d)
+    if not dd > 0.0:
+        raise ValueError("pluecker line has a zero direction vector")
+    point = np.cross(d, m) / dd
     return {"point": point, "direction": d}
 
 
@@ -117,7 +135,7 @@ def distance_point_pluecker_line(point, pluecker):
     pd = pluecker_line_to_point_direction(pluecker)
     p0, d = pd["point"], pd["direction"]
     v = _p(point).ravel() - p0
-    return float(np.linalg.norm(np.cross(v, d)) / (np.linalg.norm(d) + 1e-12))
+    return float(np.linalg.norm(np.cross(v, d)) / np.linalg.norm(d))   # d ≠ 0 は上で検査済み
 
 
 # ── 方向つき Hough 変換 ──────────────────────────────────────────────────────── #

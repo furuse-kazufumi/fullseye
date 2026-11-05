@@ -13,7 +13,8 @@
 <p>dst_normals (M,3): dst 的單位法線(即使未正規化也會在內部正規化)。</p>
 <p>未知時以 pointcloud.estimate_normals(dst) 等事先估計。</p>
 <p>iters: 最大迭代次數。</p>
-<p>tol: RMSE 變化小於此值時判定收斂並終止。</p>
+<p>tol: RMSE 變化小於 <code style="color:#22d3bf">tol × L</code>(L = dst 外接框的對角線長)時判定收斂並終止。</p>
+<p>是相對於點雲尺度的相對量(2026-11-05 之前是座標單位的絕對量)。</p>
 <p>init ((R0,t0)): 初始位姿(傳入粗匹配的 R,t)。None 時為單位。</p>
 <p>trim (float|None): [0,1) 的比例。每次迭代捨棄點-面殘差最大的前若干部分的</p>
 <p>Trimmed ICP(對部分重疊、離群值穩健)。</p>

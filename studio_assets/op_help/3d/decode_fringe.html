@@ -11,10 +11,16 @@
 <p>mask:               省略可。True=有効画素。無効画素は NaN。</p>
 <p>min_modulation:     省略可。指定すると modulation &lt; この値の画素を低信頼として無効化。</p>
 <p>返り値: 高さマップ(2D float)。ref_phase=None のときは k を掛けた連続位相を返す。無効画素は NaN。</p>
-<p>手順(実装どおり): <code style="color:#22d3bf">wrapped_phase</code> → 信頼マスクを組む(<code style="color:#22d3bf">min_modulation</code> があれば <code style="color:#22d3bf">modulation(stack) &gt;= min_modulation</code>、<code style="color:#22d3bf">mask</code> があればそれと AND)→ <code style="color:#22d3bf">unwrap_phase_2d(wrapped, mask=信頼マスク)</code> → <code style="color:#22d3bf">ref_phase</code> が <code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">k * unwrapped</code>、あれば <code style="color:#22d3bf">phase_to_height</code>(<code style="color:#22d3bf">k * (unwrapped - ref_phase)</code>)。</p>
+<p>手順(実装どおり): <code style="color:#22d3bf">wrapped_phase</code> → 信頼マスクを組む(<code style="color:#22d3bf">min_modulation</code> があれば <code style="color:#22d3bf">modulation(stack) &gt;= min_modulation</code>、<code style="color:#22d3bf">mask</code> があればそれと AND)→ <code style="color:#22d3bf">ref_phase</code> が <code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">k * unwrap_phase_2d(wrapped, mask=信頼マスク)</code>、あれば <code style="color:#22d3bf">k * unwrap_phase_2d(wrap(wrapped − ref_phase), mask=信頼マスク)</code> (大域の <code style="color:#22d3bf">2πm</code> は中央値を <code style="color:#22d3bf">[−π, π]</code> に入れる分岐)。</p>
 <p>引数:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phase_shift_images</code>: <code style="color:#22d3bf">(N, H, W)</code>、<code style="color:#22d3bf">N &gt;= 3</code>、等間隔位相シフト。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref_phase</code>: スカラまたは <code style="color:#22d3bf">(H, W)</code>。参照面を<b>同じ手順で展開した</b>位相を渡す(<code style="color:#22d3bf">unwrap_phase_2d</code> の大域オフセットが両者で同じ扱いになるよう、参照も本 op で <code style="color:#22d3bf">ref_phase=None</code> として復号した結果を使うのが安全)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref_phase</code>: スカラまたは <code style="color:#22d3bf">(H, W)</code>。参照面(高さ 0)の位相 —— 本 op で <code style="color:#22d3bf">ref_phase=None, k=1</code> として復号した結果でも、解析的な位相でもよい。</p>
+<p>★差を先に取ってから展開する: <code style="color:#22d3bf">Δ = wrap(wrapped − ref_phase)</code> を 1 回だけ</p>
+<p><code style="color:#22d3bf">unwrap_phase_2d</code> し、<code style="color:#22d3bf">ref_phase</code> の <code style="color:#22d3bf">2πm</code> のずれは wrap で消える。</p>
+<p>残る展開の大域の <code style="color:#22d3bf">2πm</code> は「有効画素の中央値が <code style="color:#22d3bf">[−π, π]</code> に入る」分岐に</p>
+<p>揃える(視野の過半が参照面から位相で π 未満の高さにある、という前提)。</p>
+<p>2026-11-05 まで計測面と参照面を別々に展開して引いていて、展開の起点の分岐が</p>
+<p>両者で違うと高さが <code style="color:#22d3bf">k·2πm</code> ずれた(60 条件中 24)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: 位相→高さの較正定数(単位/rad)。<code style="color:#22d3bf">synthesize_fringes</code> の <code style="color:#22d3bf">phase_gain</code> の逆数に対応。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code>: <code style="color:#22d3bf">(H, W)</code> の bool、True = 有効。<code style="color:#22d3bf">min_modulation</code>: 変調度の下限(<code style="color:#22d3bf">[0, 1]</code> 程度。影・飽和の画素を落とす)。</p>
 <p>検証(<code style="color:#22d3bf">ValueError</code>): 画像列が 3-D でない・<code style="color:#22d3bf">N &lt; 3</code>・非有限 / <code style="color:#22d3bf">mask</code> の形が違う / <code style="color:#22d3bf">ref_phase</code> の形が違う / 有効画素がゼロ。scikit-image が無ければ <code style="color:#22d3bf">RuntimeError</code>。</p>

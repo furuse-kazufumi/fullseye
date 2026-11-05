@@ -61,6 +61,24 @@ def _as_points(points, min_n: int, name: str = "points") -> np.ndarray:
     return p
 
 
+def _centre_and_scale(p: np.ndarray, what: str):
+    """Centroid ``(mx, my)`` and RMS radius ``scale`` of (row, col) points.
+
+    ★2026-11-05 敵対的検証 N6/N8: 当てはめは重心を引いて ``scale`` で割った座標で解く。
+    生の座標のまま ``x²`` を組むと、画像上の位置(オフセット 6000 px)で楕円の軸が 2 % ずれ、
+    小さい物体(半径 8e-7)を絶対の床 ``1e-12`` で「退化」と捨てていた。退化(一致点)の判定は
+    座標の大きさに対する相対量(丸めの屑 ~ eps·|p| の 450 倍)で行う。
+    """
+    y, x = p[:, 0], p[:, 1]
+    mx, my = float(x.mean()), float(y.mean())
+    xc, yc = x - mx, y - my
+    scale = float(np.sqrt(np.mean(xc * xc + yc * yc)))
+    mag = float(np.max(np.abs(p)))
+    if not np.isfinite(scale) or scale == 0.0 or scale <= 1e-13 * mag:
+        raise ValueError(f"points are coincident; no {what} is defined")
+    return mx, my, xc, yc, scale
+
+
 def fit_line(points) -> dict:
     """Total-least-squares line fit to (row, col) points — orthogonal regression via
     SVD, minimising the perpendicular distance (unlike y-on-x regression, it is
@@ -70,11 +88,11 @@ def fit_line(points) -> dict:
     points or a coincident cluster with no defined direction."""
     p = _as_points(points, 2, "points")
     y, x = p[:, 0], p[:, 1]
-    mx, my = float(x.mean()), float(y.mean())
+    # 一致点の判定は座標の大きさに対する相対量(以前は s[0] <= 1e-12 の絶対量で、
+    # 長さ 1e-13 の正しい線分を「一致点」と捨てていた。敵対的検証 2026-11-05 N6 の兄弟)。
+    mx, my, _xc, _yc, _scale = _centre_and_scale(p, "line direction")
     _, s, vt = np.linalg.svd(np.column_stack([x - mx, y - my]),
                              full_matrices=False)  # full_matrices=False: U は捨てるのに (N,N) を確保していた(2026-09-06 実測 20000 点で 3.73 s / 3.2 GB → 0.88 ms、Vt はビット一致)
-    if s[0] <= 1e-12:
-        raise ValueError("points are coincident; no line direction is defined")
     dx, dy = float(vt[0, 0]), float(vt[0, 1])          # unit direction (col, row)
     resid = (x - mx) * (-dy) + (y - my) * dx           # signed perpendicular distance
     ang = np.degrees(np.arctan2(dy, dx))
@@ -93,19 +111,25 @@ def fit_circle(points) -> dict:
     :func:`fit_circle_geometric` to minimise geometric radial distances."""
     p = _as_points(points, 3, "points")
     y, x = p[:, 0], p[:, 1]
+    # ★2026-11-05 敵対的検証 N6: 重心を引き RMS 半径で割った座標で解く。生の座標では
+    # x²+y² の桁落ちでオフセット 1e6 の r=2 が 2.00003 になり、r² <= 1e-12 の絶対の床で
+    # 半径 8e-7 の円を「退化」と捨てていた。退化の判定はいずれも相対量。
+    mx, my, xc, yc, scale = _centre_and_scale(p, "circle")
     # Collinear points admit only an infinite-radius (line) "circle": the algebraic
     # system is rank-deficient. Reject it explicitly (perpendicular spread ~ 0).
-    _, sv, _ = np.linalg.svd(np.column_stack([x - x.mean(), y - y.mean()]),
+    _, sv, _ = np.linalg.svd(np.column_stack([xc, yc]),
                              full_matrices=False)  # U は捨てる(2026-09-06)
-    if sv[0] <= 1e-12 or sv[1] <= 1e-9 * sv[0]:
+    if sv[1] <= 1e-9 * sv[0]:
         raise ValueError("points are collinear or coincident; no circle fit")
-    a_mat = np.column_stack([2.0 * x, 2.0 * y, np.ones(len(x))])
-    sol, *_ = np.linalg.lstsq(a_mat, x * x + y * y, rcond=None)
-    cx, cy, c = float(sol[0]), float(sol[1]), float(sol[2])
-    r2 = c + cx * cx + cy * cy
+    u, v = xc / scale, yc / scale                      # 無次元(RMS 半径 1)
+    a_mat = np.column_stack([2.0 * u, 2.0 * v, np.ones(len(u))])
+    sol, *_ = np.linalg.lstsq(a_mat, u * u + v * v, rcond=None)
+    cu, cv, c = float(sol[0]), float(sol[1]), float(sol[2])
+    r2 = c + cu * cu + cv * cv                          # 無次元の r²
     if not np.isfinite(r2) or r2 <= 1e-12:
         raise ValueError("points are collinear or degenerate; no circle fit")
-    r = float(np.sqrt(r2))
+    cx, cy = mx + scale * cu, my + scale * cv
+    r = float(scale * np.sqrt(r2))
     resid = np.hypot(x - cx, y - cy) - r
     return {"cy": cy, "cx": cx, "r": r, "rms": float(np.sqrt(np.mean(resid ** 2)))}
 
@@ -202,8 +226,14 @@ def fit_ellipse(points) -> dict:
     admits no ellipse (collinear / hyperbolic)."""
     p = _as_points(points, 5, "points")
     y, x = p[:, 0], p[:, 1]
-    d1 = np.column_stack([x * x, x * y, y * y])        # quadratic part
-    d2 = np.column_stack([x, y, np.ones(len(x))])      # linear part
+    # ★2026-11-05 敵対的検証 N8: Halir-Flusser の散布行列を生の座標で組むと、x⁴ と 1 が同じ
+    # 行列に並び、画像上の位置だけで答えが変わっていた(ra=5, rb=4, 20° が中心 (6000,8000) で
+    # 5.119 / 3.912 / 21.94°)。重心を引き RMS 半径で割った (u, v) で解いて戻す
+    # (Hartley 正規化と同じ考え)。rms は従来どおり元の座標での単位正規化した 2 次曲線の残差。
+    mx, my, xc, yc, sc = _centre_and_scale(p, "ellipse")
+    un, vn = xc / sc, yc / sc
+    d1 = np.column_stack([un * un, un * vn, vn * vn])  # quadratic part
+    d2 = np.column_stack([un, vn, np.ones(len(un))])   # linear part
     s1, s2, s3 = d1.T @ d1, d1.T @ d2, d2.T @ d2
     try:
         t = -np.linalg.solve(s3, s2.T)
@@ -223,10 +253,10 @@ def fit_ellipse(points) -> dict:
                         float(a2[0]), float(a2[1]), float(a2[2]))
     m0 = np.array([[a, b / 2.0], [b / 2.0, c]])        # 2×2 quadratic form
     try:
-        x0, y0 = np.linalg.solve(m0, [-d / 2.0, -e / 2.0])
+        u0, v0 = np.linalg.solve(m0, [-d / 2.0, -e / 2.0])
     except np.linalg.LinAlgError:
         raise ValueError("degenerate ellipse conic; no centre") from None
-    f_center = a * x0 * x0 + b * x0 * y0 + c * y0 * y0 + d * x0 + e * y0 + f
+    f_center = a * u0 * u0 + b * u0 * v0 + c * v0 * v0 + d * u0 + e * v0 + f
     lam, vec = np.linalg.eigh(m0)                      # ascending eigenvalues
     # The conic's overall sign is arbitrary (eigenvector direction), so test the
     # sign-invariant shape: same-signed eigenvalues => ellipse; the semi-axes are
@@ -236,13 +266,20 @@ def fit_ellipse(points) -> dict:
     ratios = -f_center / lam
     if not np.all(np.isfinite(ratios)) or np.any(ratios <= 0):
         raise ValueError("point set admits no ellipse (degenerate quadratic form)")
-    axes = np.sqrt(ratios)                             # a semi-axis per eigenvector
+    axes = sc * np.sqrt(ratios)                        # a semi-axis per eigenvector (元の単位)
     imaj = int(np.argmax(axes))
     ra, rb = float(axes[imaj]), float(axes[1 - imaj])
     vmaj = vec[:, imaj]                                # (x, y) direction of the major axis
     ang = np.degrees(np.arctan2(float(vmaj[1]), float(vmaj[0])))
     ang = ((ang + 90.0) % 180.0) - 90.0
-    coef = np.array([a, b, c, d, e, f], np.float64)
+    x0, y0 = mx + sc * float(u0), my + sc * float(v0)
+    # (u, v) = ((x-mx)/sc, (y-my)/sc) の 2 次曲線を sc² 倍して元の座標の係数へ戻す。
+    coef = np.array([
+        a, b, c,
+        -2.0 * a * mx - b * my + d * sc,
+        -b * mx - 2.0 * c * my + e * sc,
+        a * mx * mx + b * mx * my + c * my * my - d * sc * mx - e * sc * my + f * sc * sc,
+    ], np.float64)
     coef = coef / (np.linalg.norm(coef) or 1.0)
     resid = (coef[0] * x * x + coef[1] * x * y + coef[2] * y * y
              + coef[3] * x + coef[4] * y + coef[5])
@@ -274,7 +311,9 @@ def fit_rectangle2(points) -> dict:
     for i in range(len(h)):
         edge = h[(i + 1) % len(h)] - h[i]
         norm = float(np.hypot(edge[0], edge[1]))
-        if norm < 1e-12:
+        # ★1.0 前の修正 2026-11-05 abs-floor: 以前は ``norm < 1e-12``。辺 1e-13 の矩形では全辺を飛ばし TypeError で落ちた。
+        #   凸包の頂点は互いに異なるので、長さ 0 の辺だけを飛ばす。
+        if norm == 0.0:
             continue
         u = edge / norm                                # a candidate rectangle axis
         v = np.array([-u[1], u[0]])

@@ -7233,9 +7233,10 @@ def _b_plenoptic_decode(pool, rng):
 
 
 def _b_plenoptic_refocus_depth(pool, rng):
+    """The unfocused (1.0) system: the slope-to-distance relation models only it (2026-11-04)."""
     import plenoptic
-    args, kwargs = _b_plenoptic_system(pool, rng)
-    system = plenoptic.plenoptic_system(*args, **kwargs)
+    args, _ = _b_plenoptic_system(pool, rng)
+    system = plenoptic.plenoptic_system(*args, kind="unfocused")
     return ([np.zeros((3, 3, 5, 5)), system, 0.2], {})
 
 

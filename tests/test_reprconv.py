@@ -313,6 +313,9 @@ DECLARED_CHECKS = {
     "positions": lambda v: isinstance(v, np.ndarray) and v.ndim == 1 and v.dtype.kind == "f",
     "synapse_table": lambda v: isinstance(v, np.ndarray) and v.ndim == 2 and v.shape[1] == 3,
     "jones": lambda v: isinstance(v, np.ndarray) and v.shape == (2,) and v.dtype.kind == "c",
+    # 2026-11-05: hessian の産み手 voxel_to_hessian(hessian3d と同じ形: list の 6 本、各 (D,H,W))
+    "hessian": lambda v: isinstance(v, list) and len(v) == 6
+    and all(getattr(x, "ndim", 0) == 3 and x.shape == v[0].shape for x in v),
 }
 
 
@@ -407,12 +410,10 @@ def _connectivity_inputs(pool):
         "keypoints_uv_to_rowcol": (np.array([[1.0, 2.0], [3.0, 4.0]]),),
         "pose_to_matrix": ((np.eye(3), np.zeros(3)),),
     }
-    try:                                            # sobel3d / hessian3d は torch を使う
-        import match3d
-        out["hessian_determinant"] = (match3d.hessian3d(vox),)
-        out["hessian_vesselness"] = (match3d.hessian3d(vox),)
-    except ImportError:                             # pragma: no cover
-        pass
+    # hessian の受け手は numpy の産み手 voxel_to_hessian の返りで回す(torch の有無に依らない。
+    # 2026-11-05 まで産み手は torch の hessian3d だけで、torch の無い環境では実行できなかった)
+    out["hessian_determinant"] = (rc.voxel_to_hessian(vox, sigma=1.0),)
+    out["hessian_vesselness"] = (rc.voxel_to_hessian(vox, sigma=1.0),)
     return out
 
 
@@ -424,7 +425,10 @@ def _connectivity_inputs(pool):
 #: 「実行していない」と明示する(完全環境の py3.11 では skip ではなく失敗になる)。
 #: torch 無しの産み手が入ったら ``test_torch_only_sorts_have_only_torch_producers`` が落ちるので、
 #: ここから外すこと(型のつながりが環境に依存している、という欠陥の記録でもある)。
-TORCH_ONLY_INPUT_SORTS = {"hessian": {"hessian3d"}}
+#: ★2026-11-05: ``hessian`` に numpy の産み手 ``reprconv.voxel_to_hessian`` が入ったので空になった
+#: (全 op 実行の門は torch 無しでも全部回る)。torch しか産み手の無い型が新たに出たら、
+#: ``{型: {産み手}}`` をここに足す —— 下の門がその産み手の集合を実物と突き合わせる。
+TORCH_ONLY_INPUT_SORTS: dict = {}
 
 
 def _needs_absent_torch(meta) -> bool:
@@ -443,6 +447,10 @@ class TestDeclaredTypeMatchesActualReturn:
     def test_torch_only_sorts_have_only_torch_producers(self):
         import fullseye
         rows = fullseye.list_ops(include_ledger=True, include_algo=True)
+        # hessian は torch 無しの産み手を持つ(2026-11-05)。免除の表に戻っていないこと
+        hess = {r["name"] for r in rows if r.get("out_sort") == "hessian"}
+        assert {"hessian3d", "voxel_to_hessian"} <= hess, sorted(hess)
+        assert "hessian" not in TORCH_ONLY_INPUT_SORTS
         for sort, producers in TORCH_ONLY_INPUT_SORTS.items():
             got = {r["name"] for r in rows if r.get("out_sort") == sort}
             assert got == producers, (

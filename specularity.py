@@ -1422,7 +1422,10 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
     n_used = 0
     for idx in subsets:
         Lt = L[list(idx)]                                   # (3, 3)
-        if abs(float(np.linalg.det(Lt))) <= 1e-12:
+        # Relative to the lights' own scale, as in the refit below (abs-floor2: the
+        # absolute 1e-12 skipped every triple of unnormalised lights of strength 1e-5).
+        if abs(float(np.linalg.det(Lt))) <= 1e-12 * max(
+                float(np.abs(Lt).max()) ** 3, np.finfo(np.float64).tiny):
             continue                                        # coplanar triple
         n_used += 1
         for start in range(0, P, chunk):
@@ -1486,7 +1489,9 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
 
     albedo = np.linalg.norm(best_g, axis=0)
     normals = np.zeros((3, P))
-    good = albedo > 1e-8
+    # ★2026-11-05(敵対的検証 第 2 巡 K4 の兄弟): 退化の床を入力の最大輝度に対する相対量に
+    # (photometric._albedo_floor と同じ。絶対 1e-8 では強度 ×1e-8 で全法線が (0, 0, 1))。
+    good = albedo > photometric._albedo_floor(Iv)
     normals[:, good] = best_g[:, good] / albedo[good]
     normals[2, ~good] = 1.0
     # Unsolvable pixels are NaN, not (0, 0, 1). Keeping the 3-light subset's
@@ -1643,7 +1648,9 @@ def _polar_fit(images, angles_deg, op, max_violation_frac, want_residual=False):
     a0, a1, a2 = a[0], a[1], a[2]
     amp = np.hypot(a1, a2)
     i_min = a0 - amp
-    fit_bad = i_min < -1e-12 * np.maximum(np.abs(a0), 1.0)
+    # 負の最小強度の許容は画素自身の強度の大きさに相対(絶対の 1 を混ぜない: 強度が
+    # 1 未満の単位だと 1e-12 の絶対許容が信号そのものを超え、破綻した当てはめを見逃す)。
+    fit_bad = i_min < -1e-12 * np.maximum(np.abs(a0), np.abs(flat).max(axis=0))
     floor = -POLAR_NEGATIVE_FLOOR * float(np.abs(flat).max())
     neg = (flat < floor).any(axis=0)
     bad = fit_bad | neg

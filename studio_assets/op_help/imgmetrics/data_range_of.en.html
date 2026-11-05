@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Decide the span the pixel values may take. <b>It does not guess.</b></p>
-<p>For integer dtypes it is uniquely determined by the dtype. Float is treated as 1.0 only when it lies within <code style="color:#22d3bf">[0, 1]</code> and otherwise an explicit <code style="color:#22d3bf">data_range</code> is required.</p>
+<p>Integer dtypes (<code style="color:#22d3bf">uint8</code> / <code style="color:#22d3bf">uint16</code> / <code style="color:#22d3bf">uint32</code> / <code style="color:#22d3bf">int8</code> / <code style="color:#22d3bf">int16</code>) are uniquely determined by the dtype (other integer dtypes are not guessed, so give <code style="color:#22d3bf">data_range</code> explicitly). Float is treated as 1.0 only when it lies within <code style="color:#22d3bf">[0, 1]</code> and otherwise an explicit <code style="color:#22d3bf">data_range</code> is required.</p>
 <p>Measuring PSNR of a <code style="color:#22d3bf">[0, 1]</code> float as if it were 255 is off by <b>48.13 dB</b>, yet no exception is raised -- only a plausible-looking number comes out, so it is stopped here.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>*arrays : ndarray</p>

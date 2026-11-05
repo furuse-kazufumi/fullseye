@@ -6,6 +6,9 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Projiziert Pixel aus Kamera-Intrinsik und -Extrinsik zurück auf die Weltebene z=0 (image_points_to_world_plane).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>返り値は (N,2) の world 座標 × <code style="color:#22d3bf">scale</code>。視線が z=0 平面とカメラの<b>前</b>で交わらない画素(地平線より上など、交点がカメラの後ろ)は平面上の点を見ていないので、その行は <code style="color:#22d3bf">nan</code>。視線が平面と平行な画素は <code style="color:#22d3bf">ValueError</code>。</p>
+<p>★2026-11-05(敵対的検証 geometry、未再現の疑いを確認): 以前は交点の係数 lam &lt; 0(カメラの後ろ)でも有限の world 点を返していた(深度 −6.7 の点が「見えている点」として返った)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecalib:camera_calibration">Leitfaden zur Familie camera_calibration</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

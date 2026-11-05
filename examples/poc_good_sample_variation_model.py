@@ -69,6 +69,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402  公開経路 fs.ledger.<名前>
+import realdata  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
                          "reduced" if os.environ.get("CI") else "full") == "reduced"
@@ -408,6 +409,7 @@ def stage5_real():
         return None
     t0 = time.perf_counter()
     train, test, mask, normal = _visa(DATA)
+    realdata.mark_read("visa")
     print("   良品(学習用) %d 枚、試験 %d 枚(良品 %d・不良 %d)、%s px、欠陥の領域 %d 個"
           % (len(train), len(test), normal.sum(), (~normal).sum(), test.shape[1:],
              fs.ledger.anomaly_region_overlap(mask, mask)["n_regions"]))
@@ -554,6 +556,7 @@ def stage6_texture():
 
     good = [r[2] for r in rows("Train") if r[1] == "0"][:80]
     st = np.stack([load(os.path.join(root, "Train", p)) for p in good])
+    realdata.mark_read("dagm2007-class1")
     m = fs.ledger.varmodel_fit(st, spread="moderated", far=FAR)
     Z, M, lab = [], [], []
     for r in rows("Test")[:300]:

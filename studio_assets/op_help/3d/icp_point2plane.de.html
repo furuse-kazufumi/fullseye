@@ -13,7 +13,8 @@
 <p>dst_normals (M,3): Einheitsnormalen von dst (werden intern normiert, auch wenn sie nicht normiert sind).</p>
 <p>Falls unbekannt, vorab mit pointcloud.estimate_normals(dst) o. Ä. schätzen.</p>
 <p>iters: maximale Anzahl der Iterationen.</p>
-<p>tol: Abbruch als konvergiert, wenn die RMSE-Änderung unter diesem Wert liegt.</p>
+<p>tol: Abbruch als konvergiert, wenn die RMSE-Änderung unter <code style="color:#22d3bf">tol × L</code> liegt (L = Diagonale der Bounding-Box von dst).</p>
+<p>Relativ zur Skala der Punktwolke (bis 2026-11-05 ein absoluter Wert in Koordinateneinheiten).</p>
 <p>init ((R0,t0)): Anfangspose (R,t des groben Matches übergeben). Bei None die Identität.</p>
 <p>trim (float|None): Anteil in [0,1). Trimmed ICP, das in jeder Iteration den obersten Anteil mit dem größten Punkt-Ebene-Residuum verwirft</p>
 <p>(robust gegen Teilüberlappung und Ausreißer).</p>

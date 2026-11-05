@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖(r&#x27;&#x27;의 T 직교 성분 = 곡률 중심을 향하는 방향)</p>
 <p style="margin:2px 0 2px 12px">• B = T × N</p>
 <p>를 각 점에서 계산한다. r&#x27;&#x27;의 T 직교 성분의 방향은 재파라미터화에 불변이므로, 점 간격이매끄럽게 변하는 한 index 파라미터로 올바른 방향이 나온다.</p>
-<p style="margin:2px 0 2px 12px">• 분모에는 절댓값 1e-12를 더할 뿐이어서, 완전히 정규화되지 않는 곳은 단위 길이가 되지 않는다. 직선 구간(r&#x27;&#x27; ∥ T 또는 0)에서는 N·B가 거의 영벡터가 되고, 변곡점 전후에서 N의 방향이반전된다. &quot;단위 벡터&quot;라는 보장은 거기서는 성립하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 정규화에 하한을 두지 않는다(2026-11-05 적대적 검증 N1 의 형제: 이전에는 분모에 절댓값 1e-12 를더해서, 스케일 1e-6 의 곡선에서 N 의 길이가 0.998, 1e-9 에서 0.33 이 되었다). T 는 ‖r&#x27;‖ = 0 인 점(같은 점의 반복)에서만 영벡터. N 은 r&#x27;&#x27; 의 T 직교 성분이 ‖r&#x27;‖ 의 1e-9 배 이하(샘플당굽음이 1e-9 rad 미만 = 직선 구간)인 점에서 영벡터이고, B 도 거기서 0. 변곡점 전후에서 N 의 방향이반전된다.</p>
 <p style="margin:2px 0 2px 12px">• N&lt;2인 점열은 <code style="color:#22d3bf">np.gradient</code>가 <code style="color:#22d3bf">ValueError</code>를 낸다. 형상 검증은 그 외에는 없다.</p>
 <p style="margin:2px 0 2px 12px">• 양 끝 2점은 한쪽 차분이므로 정밀도가 떨어진다. 등간격화(<code style="color:#22d3bf">resample_uniform</code>)나 평활화(<code style="color:#22d3bf">fit_spline_curve</code>)를 먼저 적용하면 안정된다.</p>
 <p>곡률·비틀림률의 수치 자체는 <code style="color:#22d3bf">curvature_torsion</code>, 호 길이는 <code style="color:#22d3bf">arc_length</code>.</p>

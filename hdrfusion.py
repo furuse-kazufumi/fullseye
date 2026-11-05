@@ -370,6 +370,10 @@ def hdr_merge(images, exposures, response=None, weight="hat", saturation_margin=
     どの露出でも有効でない画素(全部で飽和 / 全部で真っ暗)は、最短(飽和)/ 最長(真っ暗)の露出
     1 枚の値で埋める(下限 / 上限の推定 —— NaN を返さない約束。``hdr_dynamic_range`` は
     ここで測れる上限を数える)。``response=None`` は「段 = 露光量」の線形(オフセット 0)。
+    そのときの段数 ``L`` は float と ``uint8`` で 256、それ以外の整数 dtype(``uint16`` に
+    入った 12 bit のセンサ値など、満の値が dtype から決まらないもの)は**系列の最大値 + 1**
+    ―― つまり系列で最も明るい段を飽和とみなす。満の値が分かっているなら
+    ``camera_response_*`` の応答表(``levels``)を渡すこと。
     三角の重みは ``[dark_level, L−1]`` に張る(既定 = 逆応答が初めて正になる段。暗いときの
     オフセットを持つセンサで、オフセットのすぐ上の雑音だらけの段に重みを与えないため)。
 
@@ -379,7 +383,16 @@ def hdr_merge(images, exposures, response=None, weight="hat", saturation_margin=
     op = "hdr_merge"
     if response is None:
         arrs, _ = _stack(images, op)
-        L = 256 if all(a.dtype.kind == "f" for a in arrs) else int(max(int(np.max(a)) for a in arrs) + 1)
+        # ★2026-11-05(敵対的検証 第 2 巡): uint8 でも段数を「データの最大値 + 1」にしていたので、
+        # どの露出も飽和していない系列で**最も明るい画素が飽和扱い**になり(Z >= L-1-margin)、
+        # 三角の重みも実際の段の幅でなくデータの幅に張られていた(未飽和の uint8 系列で
+        # 相対誤差の中央値が 256 段の 0.50 % に対し 0.69 %)。uint8 は満の値が 255 に決まるので 256 段。
+        # uint16 などは 10/12/14 bit のセンサ値を入れるのが普通で満の値が dtype から
+        # 決まらないため、従来どおりデータの最大値 + 1(= 最も明るい段を飽和とみなす)。
+        if all(a.dtype.kind == "f" for a in arrs) or all(a.dtype == np.uint8 for a in arrs):
+            L = 256
+        else:
+            L = int(max(int(np.max(a)) for a in arrs) + 1)
         inv = np.arange(L, dtype=np.float64)
     else:
         inv, L = _response(response, op)

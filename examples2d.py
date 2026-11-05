@@ -1460,12 +1460,24 @@ EXAMPLES = [
      "name": "表現変換(reprconv)op を往復させて嘘を露見させる",
      "summary": "産む op はあるが食う op が無かった 25 型を消費する reprconv 族を往復させ、"
                 "可逆なものは誤差 0、不可逆なものは何がどれだけ落ちるかを印字する。"},
+    {"id": "hessian_numpy_chain", "task": "tomography_3d", "data": "synthetic",
+     "name": "torch なしで voxel → hessian → voxel の鎖を通し、管と球を見分ける",
+     "summary": "numpy と scipy だけの hessian 型の産み手 voxel_to_hessian から hessian_vesselness / "
+                "hessian_determinant まで、torch を import できない状態で通す。2 次多項式の H = A、"
+                "ガウス球の中心の閉形式、球の vesselness の閉形式、管と球の分離の 12 項目を真値と比べる。"},
     {"id": "type_connectivity_tour", "task": "tomography_3d", "data": "synthetic",
      "name": "行き止まりだった型と入口の無かった型を、本物の産み手からの鎖で通す",
      "summary": "gradient / hessian / frame / graph / pointmap / match の出口と positions / "
                 "synapse_table / jones の入口、tokens の出口、table の欄・スペクトルのピーク・keypoints の"
                 "軸・pose の 4x4(reprconv の 20 op)を、既存の産み手の返りから既存の受け手まで通し、"
                 "閉形式の真値 20 項目と比べる。"},
+    {"id": "poc_bga_ball_type_roundtrip", "task": "tomography_3d", "data": "synthetic",
+     "name": "BGA の半田ボールを画像 → 点 → 点群 → 体積 → メッシュ / グラフと渡して戻す(型を変えても保たれる量)",
+     "summary": "欠け 1 個の 2 パッケージ 71 球の高さ画像を、表現変換の op 29 個で型から型へ渡す。個数は keypoints・"
+                "メッシュのオイラー標数(χ 142)・グラフで一致、画素と点の往復は bit 一致、ガウシアンの質量は 1 − 1.4e-10、"
+                "既知のずれ (2, −3, 5) は相関のピークに厳密に立ち、メッシュの体積は閉形式の球の和へ −1.20 → −0.020 % と"
+                "収束、グラフは 2 成分 (35, 36)。★pointmap の (x, y, z) を (z, y, x) の受け手へそのまま渡すと例外なしに"
+                "15360 画素が左端 4 列に積もる。"},
     # -- robot perception templates (copy-and-adapt; synthetic data, CLI --save) -- #
     {"id": "perception_pipeline", "task": "perception_templates", "data": "synthetic",
      "name": "整流ステレオ対→深度→点群→地形高さマップ→通行可能性",
@@ -2018,6 +2030,9 @@ EXAMPLES = [
     {"id": "poc_real_tless_6dof", "task": "registration", "data": "real",
      "name": "実機 RGB-D の産業部品を PPF で 6 自由度照合する(公開基準に負ける場所まで数える)",
      "summary": "BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象をdepth→点群→法線→RANSAC平面除去→cluster→PPF+ICPと通す。★★旧180/160点・6 mmの0.162/0.185から密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内で最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP100反復を採用。8.291秒/対象でAR_MSSD 0.197 / AR_MSPD 0.220となり、粗い間引きの影響を確認したが、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。★2000点は2時間で未完走、54.6秒/対象以上。クラスタなし0.111/0.113、理想深度0.985/0.985、ICPなし0.346/0.338、符号未整理法線0.132/0.161。★MSSD>0.2dの失敗109/132: 結合cluster 34、可視率<0.8が8、薄い部品21、深度欠損>1%が36、対称部品103(重複)。"},
+    {"id": "poc_real_file_formats", "task": "fileio", "data": "real",
+     "name": "実物の科学データファイルを 5 形式読み、外の読み手と公表値で採点する(FITS・NIfTI・MRC・OME-TIFF・E57)",
+     "summary": "公開の実物ファイルを 5 形式、配布されたバイト列のまま(SHA-256 固定)読み、外の読み手と配布元の公表値で採点する。★FITS(SDSS r の NGC 2420、public domain、SkyView の面積保存の再標本化)は astropy と 160,000 画素・WCS 10 キーが完全一致、star_detect → aperture_photometry で SDSS DR16 の飽和なし 15〜20 等の星 127 個の 91.3 % を 1″ 以内で拾い、等級の傾き 1.009・ずれ +0.002 等・頑健なばらつき 0.028 等。★NIfTI(OpenNeuro ds000117、CC0)は nibabel とボクセル完全一致、傾き 26.40°(装置の記載 −26.4)。照合で nifti_read の不具合を直した(180° 近くの四元数で向きが 0.0125° 回っていた → nifti1_io.c と同じ閾値)。★MRC(EMDB EMD-3197)は mrcfile と完全一致、統計量は EMDB の登録値と相対 3e-8、等値面 1.9 の中身 2 塊 4,776 nm³。格子の起点 NXSTART を返さない穴は記録した門。★OME-TIFF(OME 見本 tubhiswt-2D、CC BY 4.0)は 2 ファイル組の片方を拒否(理由を独立に確認)、参照の tifffile は欠けたチャネルをゼロで埋めて返す。★E57 は libE57 の bunny 6 型が PTS 文字版と 30,571 点 1 対 1(取得時)、CI は同梱のイトカワ形状を pye57 で書いた E57。M67 の最初の試みは最近傍の再標本化と飽和で傾き 0.52 だった。"},
     {"id": "poc_real_sky_photometry", "task": "photometry", "data": "real",
      "name": "実写の深宇宙に既知の星を仕込んで測る(汚染は S/N も同じ向きに膨らませる)",
      "summary": "Hubble Deep Field(872x1000、public domain)を 16 bit 満量 65,535 e- で電子に直し、σ=1.5 px・フラックス既知のガウシアン星を局所背景の下位 30 %(空)と上位 2 %(混雑)に 40 個ずつ仕込んで aperture_photometry で回収する。★実写の空は正規分布ではない(頑健 σ 1,474 e- 対 std 6,698 e- = 4.54 倍)。★背景は 64x64 タイル 195 枚で 3,176〜8,448 e-、大域中央値 1 つで引くと最大 5,272 e- = 3.6σ の系統誤差。★★空でも開口 1 つあたり C = 6,677 e- が混入し、回収比 4.384 / 2.352 / 1.675 / 1.221 / 1.058(F = 2e3 / 5e3 / 1e4 / 3e4 / 1e5)は 1 + C/(F·frac) で**最大ずれ 0.9 %**。★崖を先に予測(F = C/(0.10·frac) = 67,521 e-)してから測ると回収比 1.086(予測 1.100、ずれ 1.2 %)。★★混雑側は 341.2 → 7.8 倍。★★op の SNR 中央値 19.2 に対し同じ背景からの閉形式は 4.2 ―― 混入は分子を膨らませるので信頼度も同じ向きに嘘をつく(S/N を門にすると汚染された測定ほど通る)。★ゼロ点(背景を引かない開口和)は F=1e5 でも 3.3 倍。飽和は 3 画素(0.0003 %)で、「実写だから飽和で壊れる」はこの画像では成り立たない。"},

@@ -65,6 +65,7 @@ import examplefig as figs                                        # noqa: E402
 import pod as POD                                                # noqa: E402
 import segeval as SE                                             # noqa: E402
 import semsim as SM                                              # noqa: E402
+import realdata  # noqa: E402
 
 SEED = 7
 BASE = 0.30                      #: 平らな面の明るさ[0,1]
@@ -409,6 +410,8 @@ def stage2_3_real(picked):
                           float(np.median(bfs)), float(np.median(arat)))
             print("   %-5s %7d %8.3f %8.3f %8.3f %10.3f" % (cls, *table[cls]))
     if polar:
+        # 実画像を 1 枚以上読んで採点した
+        realdata.mark_read("carinthia-s-sem")
         print("   ★実データの欠陥は背景より %+.3f 暗い(合成の明るい塊と極性が逆)。"
               % float(np.median(polar)))
     return table, (float(np.median(polar)) if polar else float("nan"))

@@ -44,8 +44,12 @@ class FullseyeGraph:
         ins = [str(i) for i in (inputs if isinstance(inputs, (list, tuple)) else [inputs])]
         if not ins:
             raise ValueError("node %r has no inputs" % node_id)
+        # ★2026-11-05(敵対的検証 C4 の兄弟): float(a) は "0.3" を 0.3 として通していた(apply は TypeError)。
+        #   ノブの型は apply / run_pipeline と同じ規則(数値と bool のみ)。有限性と範囲は validate / apply が見る。
+        import api
         self.nodes[node_id] = {"op": str(op), "inputs": ins,
-                               "a": float(a), "b": float(b)}
+                               "a": api._stage_knob(len(self._order), str(op), "a", a),
+                               "b": api._stage_knob(len(self._order), str(op), "b", b)}
         self._order.append(node_id)
         return self
 
@@ -218,6 +222,13 @@ class FullseyeGraph:
         (the same runner :meth:`run` uses). The function name goes through
         ``engine._py_ident``, so a graph named ``class`` / ``1x`` still compiles."""
         import engine
+        # ★2026-11-05(敵対的検証 C5 の兄弟): 値は全部 %r で 1 行に収まり注入は起きないが、未知の op・
+        #   非有限のノブの節点も書き出し、動かないスクリプト(NameError: nan、unknown operator)になっていた。
+        #   engine.FullseyeEngine.to_python と同じく、検査で error のある graph は書き出さない。
+        errors = [p for p in self.validate() if p.get("severity") == "error"]
+        if errors:
+            raise ValueError("to_python: the graph has %d error(s) -- refusing to generate code: %s"
+                             % (len(errors), "; ".join(str(p.get("msg")) for p in errors[:5])))
         _, nary = self._tables()
         ext = self._external()
         lines = ["import fullseye", "",
@@ -230,7 +241,7 @@ class FullseyeGraph:
             else:
                 arg = "v[%r]" % s["inputs"][0]
             coerce = all(i in ext for i in s["inputs"])
-            lines.append("    v[%r] = fullseye.apply(%s, %r, %r, %r, coerce=%r)"
-                         % (nid, arg, s["op"], s["a"], s["b"], coerce))
+            lines.append("    v[%r] = fullseye.apply(%s, %r, %s, %s, coerce=%r)"
+                         % (nid, arg, s["op"], engine._knob_literal(s["a"]), engine._knob_literal(s["b"]), coerce))
         lines.append("    return v")
         return "\n".join(lines)

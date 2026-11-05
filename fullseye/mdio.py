@@ -34,7 +34,38 @@ from fullseye import jsonio as _J
 
 __all__ = ["to_markdown", "json_block", "extract_json", "report"]
 
-_FENCE = re.compile(r"```[ \t]*([A-Za-z0-9_+-]*)[ \t]*\r?\n(.*?)\r?\n```", re.DOTALL)
+_LINE_BREAK = re.compile(r"\r\n|\n|\r")
+_OPEN_FENCE = re.compile(r"( {0,3})(`{3,}|~{3,})(.*)\Z")
+
+
+def _fenced_blocks(md):
+    """``(info_string, content)`` of every fenced code block, per CommonMark 0.31 §4.5.
+
+    ★2026-11-05 redteam I18: a single regex used to pair fences. An empty fence, an info string
+    it did not expect (``file.py``, ``python title="a.py"``), a ``~~~`` fence holding a
+    backtick line or a longer fence holding a shorter one made it pair the wrong lines, and the
+    envelope after them was silently not found. Now: an opening fence is 0-3 spaces + at least
+    three backticks or tildes (a backtick fence's info string may not contain a backtick); it is
+    closed only by a fence of the same character, at least as long, with nothing but spaces /
+    tabs after it; an unclosed fence runs to the end of the document. Up to the opening fence's
+    indentation is removed from each content line."""
+    lines = _LINE_BREAK.split(md)
+    i = 0
+    while i < len(lines):
+        m = _OPEN_FENCE.match(lines[i])
+        if m is None or (m.group(2)[0] == "`" and "`" in m.group(3)):
+            i += 1
+            continue
+        indent, fence, info = len(m.group(1)), m.group(2), m.group(3).strip()
+        close = re.compile(r" {0,3}" + re.escape(fence[0]) + r"{%d,}[ \t]*\Z" % len(fence))
+        body, i = [], i + 1
+        while i < len(lines) and not close.match(lines[i]):
+            line = lines[i]
+            strip = len(line) - len(line.lstrip(" "))
+            body.append(line[min(strip, indent):])
+            i += 1
+        i += 1                                                  # past the closing fence (or the end)
+        yield info, "\n".join(body)
 
 
 def _fmt(x, float_fmt):
@@ -154,7 +185,7 @@ def extract_json(md):
     ``(value, sort)``. Fenced blocks that are not fullseye envelopes are ignored;
     a fenced block that *is* a fullseye envelope but malformed fails closed."""
     out = []
-    for _lang, block in _FENCE.findall(md):
+    for _info, block in _fenced_blocks(md):
         block = block.strip()
         if not block:
             continue

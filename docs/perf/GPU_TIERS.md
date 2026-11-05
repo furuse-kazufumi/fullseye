@@ -18,18 +18,18 @@
 | tier | 件数 |
 |---|---:|
 | `required` | 49 |
-| `suitable` | 2184 |
+| `suitable` | 2185 |
 | `partial` | 643 |
 | `none` | 934 |
-| **合計** | **3810** |
+| **合計** | **3811** |
 
 ## GPU 対応率
 
 指標 = `gpu_status=あり` の件数 ÷ (`required` + `suitable`) の件数(件数÷全体ではない)。現状値をそのまま書く(低くてよい)。
 
 - gpu 経路あり: **173**
-- `required` + `suitable`: **2233**
-- **GPU 対応率 = 7.7%** (173 / 2233)
+- `required` + `suitable`: **2234**
+- **GPU 対応率 = 7.7%** (173 / 2234)
 
 正直な内訳: gpu 経路を持つ op のうち 50 件は `partial`(領域モルフォロジ等)、0 件は `none` で、分母には入らない(分子にのみ計上)。
 
@@ -244,6 +244,7 @@
 | calibrate | 0 | 2 | 3 | 0 | 5 |
 | cavity | 0 | 0 | 2 | 3 | 5 |
 | depth | 0 | 4 | 0 | 1 | 5 |
+| derivative | 0 | 5 | 0 | 0 | 5 |
 | direction | 0 | 3 | 2 | 0 | 5 |
 | evaluate | 0 | 1 | 3 | 1 | 5 |
 | film | 0 | 1 | 3 | 1 | 5 |
@@ -286,7 +287,6 @@
 | check | 0 | 0 | 0 | 4 | 4 |
 | decode | 0 | 3 | 0 | 1 | 4 |
 | deform | 1 | 2 | 1 | 0 | 4 |
-| derivative | 0 | 4 | 0 | 0 | 4 |
 | dichromatic | 0 | 4 | 0 | 0 | 4 |
 | dimension | 0 | 3 | 1 | 0 | 4 |
 | estimate | 3 | 1 | 0 | 0 | 4 |

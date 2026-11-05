@@ -2,7 +2,7 @@
  {
   "file": "01_camera_section.png",
   "name": "camera_section",
-  "caption": "480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.",
+  "caption": "Conceptual diagram (not a validation gate): main lens, MLA, sensor and five illustrative rays.",
   "shape": [
    480,
    1200,
@@ -32,30 +32,30 @@
  {
   "file": "04_decode_subaperture_epi.png",
   "name": "decode_subaperture_epi",
-  "caption": "15 x 15 decoded views; EPI disparity is 0.6 px per view step.",
+  "caption": "15 x 15 decoded views; ray-traced parallax +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 / 1.8 m.",
   "shape": [
-   606,
-   542,
+   590,
+   526,
    3
   ]
  },
  {
   "file": "05_refocus_sweep.png",
   "name": "refocus_sweep",
-  "caption": "The 0.6, 1.0 and 1.8 m planes peak at slopes -1.05, 0.00 and 1.05.",
+  "caption": "Measured focus peaks +0.175 / +0.000 / -0.150 vs ray-traced +0.169 / -0.029 / -0.163 lenslets per view.",
   "shape": [
-   606,
-   542,
+   590,
+   558,
    3
   ]
  },
  {
   "file": "06_depth_map.png",
   "name": "depth_map",
-  "caption": "Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.",
+  "caption": "Ray-traced truth vs focus-sweep estimate; median error +51 mm / +22 mm / +224 mm at 0.6 / 1.0 / 1.8 m (paraxial relation; spherical aberration).",
   "shape": [
    180,
-   562,
+   546,
    3
   ]
  },
@@ -72,10 +72,10 @@
  {
   "file": "08_limits.png",
   "name": "limits",
-  "caption": "Limits: nominal prescription, detuned lens, and 1.50x F-number overlap.",
+  "caption": "Limits, illustrative (blur and shifted-copy models, not traced): nominal, detuned main lens, 1.50x F-number overlap.",
   "shape": [
-   244,
-   616,
+   300,
+   784,
    3
   ]
  },

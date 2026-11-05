@@ -554,10 +554,12 @@ RECIPES = [
      "task_class": "analysis", "halcon": None, "input_sort": None, "sample": "mx_sobol_linear",
      "stages": [{"op": "doe_saltelli", "kw": {"n": 512, "factors": "$aux.factors", "seed": 0}},
                 {"op": "sens_sobol", "args": ["$prev", "$aux.y"], "kw": {"n_boot": 50}}],
-     "expect": [{"get": ["S1", 0], "approx": "s1_0", "atol": 0.03}, {"get": ["S1", 2], "approx": "s1_2", "atol": 0.03}],
+     "expect": [{"get": ["S1", 0], "approx": "s1_0", "atol": 0.01}, {"get": ["S1", 2], "approx": "s1_2", "atol": 0.01}],
      "note": "variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the "
              "model output on them, then first-order and total Sobol' indices with bootstrap intervals — which "
-             "input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa²."},
+             "input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². The gate is ±0.01: the "
+             "estimate is within 0.0032 of the closed form on both variants, and the smallest index (0.024) must "
+             "not be confused with 0."},
     {"name": "Analyze — principal components and explained variance of multivariate data", "family": "multivar",
      "task": "reduce", "task_class": "analysis", "halcon": None, "input_sort": "matrix", "sample": "mx_aniso_samples",
      "stages": [{"op": "mv_pca", "kw": {"standardize": False, "n_parallel": 50, "seed": 0}}],

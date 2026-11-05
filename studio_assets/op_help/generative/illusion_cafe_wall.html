@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>カフェウォール錯視。<b>目地は厳密な水平線</b>なのに、傾いて見える。</p>
-<p><code style="color:#22d3bf">shift</code> は 1 行ごとの市松のずれ(<code style="color:#22d3bf">size</code> 比)。ずれが 0 または 0.5 では錯視は消える —— <b>0.25 前後が最も強い</b>というのが古典的な観察で、この op はそのままずらし量を振れるようにしてある(<code style="color:#22d3bf">shift=0.25</code> が既定ではないのは、生成器の既定値で「効果が最大」を主張したくないため)。</p>
+<p><code style="color:#22d3bf">shift</code> は 1 行ごとの市松のずれ(<code style="color:#22d3bf">size</code> 比、行 <code style="color:#22d3bf">r</code> のずれは <code style="color:#22d3bf">r * shift * size</code>)。市松の周期は <code style="color:#22d3bf">2 * size</code> なので、ずれが 0(各行のタイルが縦に揃う)と 1.0 (隣の行と白黒が入れ替わった市松模様)では錯視は消え、周期 2 で繰り返す。<b>半タイルずれの 0.5 前後が最も強い</b>というのが古典的な観察(Gregory &amp; Heard 1979) で、既定値はこの古典配置にしてある。ずらし量は 0〜1 を振って確かめられる。</p>
 <p>不変量: 目地の中心 y は <code style="color:#22d3bf">k * size</code>(k = 1..rows-1)<b>ちょうど</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art ファミリ ガイド</a></p>

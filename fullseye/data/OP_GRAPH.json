@@ -61,9 +61,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3602,
+    "executable": 3603,
     "reasons": {
-      "python_signature": 2637,
+      "python_signature": 2638,
       "registry": 964
     },
     "not_executable_reasons": {
@@ -390,9 +390,9 @@
   },
   "counts": {
     "nodes": 103,
-    "edges": 3814,
+    "edges": 3815,
     "conversion_pairs": 416,
-    "conversion_edge_incidence": 2488
+    "conversion_edge_incidence": 2489
   },
   "nodes": [
     {
@@ -773,7 +773,7 @@
       "sort": "hessian",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 1,
+      "produced_by": 2,
       "consumed_by": 2,
       "generator": false,
       "type_check": true,
@@ -1511,7 +1511,7 @@
       "container": "dense_array",
       "size_hint": "input-dependent",
       "produced_by": 74,
-      "consumed_by": 124,
+      "consumed_by": 125,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -18234,7 +18234,7 @@
           "required": false,
           "range": "undocumented",
           "unit": "undocumented",
-          "default": 0.01
+          "default": 3.0
         }
       ],
       "verified_executable": false,
@@ -160904,6 +160904,63 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 1e-12
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00036"
+    },
+    {
+      "op": "voxel_to_hessian",
+      "inputs": [
+        "voxel"
+      ],
+      "output": "hessian",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00036"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00036"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "voxel_to_hessian"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "voxel_to_hessian"
+      },
+      "parameter_schema": [
+        {
+          "name": "sigma",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "scale_normalize",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
         }
       ],
       "verified_executable": false,

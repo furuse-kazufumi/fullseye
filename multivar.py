@@ -90,7 +90,11 @@ def _standardise(A: np.ndarray, names, op: str, scale: bool):
     mean = A.mean(axis=0)
     sd = A.std(axis=0, ddof=1) if scale else np.ones(A.shape[1])
     if scale:
-        dead = [names[j] for j in np.flatnonzero(~(sd > 1e-12 * np.maximum(1.0, np.abs(mean))))]
+        # ★相対の床は列自身の最大絶対値に対して取る(絶対の 1 を混ぜない)。
+        #   max(1, |mean|) では |mean| < 1 で床が絶対値 1e-12 になり、同じ表が pF では
+        #   通り F では「変動なし」で拒否された(敵対的検証 2026-11-05 S6)。標準化 PCA は
+        #   列ごとの単位に依らない(相関行列は無次元)ので、この判定も依らない。
+        dead = [names[j] for j in np.flatnonzero(~(sd > 1e-12 * np.abs(A).max(axis=0)))]
         if dead:
             raise ValueError("%s: columns with no variation cannot be standardised: %s "
                              "(remove them — they carry no information)" % (op, dead))
@@ -200,7 +204,10 @@ def feat_image_vector(images=None, features=DEFAULT_FEATURES, data_range=None, u
             if not (0 <= r0 < r1 <= a.shape[0] and 0 <= c0 < c1 <= a.shape[1]) or (r1 - r0) < 3 or (c1 - c0) < 3:
                 raise ValueError("%s: roi %s does not fit image %d of shape %s (min 3x3)" % (op, roi, i, a.shape))
             a = a[r0:r1, c0:c1]
-        if lo is not None and (a.min() < lo - 1e-12 * max(1.0, abs(lo)) or a.max() > hi + 1e-12 * max(1.0, abs(hi))):
+        # 許容は宣言された範囲の大きさに対して相対(絶対の 1 を混ぜると、範囲 (0, 1e-12)
+        # では許容が範囲の幅と同じになり、2 倍外れた値も通っていた)。
+        _rtol = 1e-12 * max(abs(lo), abs(hi)) if lo is not None else 0.0
+        if lo is not None and (a.min() < lo - _rtol or a.max() > hi + _rtol):
             raise ValueError("%s: image %d has values [%g, %g] outside data_range (%g, %g) — the range given is wrong"
                              % (op, i, a.min(), a.max(), lo, hi))
         p01, p50, p99 = np.percentile(a, [1, 50, 99])

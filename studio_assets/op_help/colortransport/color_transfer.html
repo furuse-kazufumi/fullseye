@@ -13,6 +13,10 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reinhard&quot;</code> —— 各チャネルの平均と標準偏差だけ合わせる(Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001)。<b>各チャネルが単峰の正規分布</b>という仮定が効いている。前景と背景がはっきり分かれた 二峰の絵では、平均と分散は合うのに <b>どちらの峰にも当たらない色</b>になる(例外は出ない)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gaussian&quot;</code> —— 共分散ごと運ぶ Monge 写像。<b>相関が保たれる</b>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;histogram&quot;</code> —— チャネルごとに厳密なヒストグラム整合。周辺分布は完全に一致するが、<b>チャネル間の相関は壊れる</b>。</p>
+<p><b>一定のチャネル</b>(標準偏差が <code style="color:#22d3bf">1e-6 × max(1, max|x|)</code> 以下、x はそのチャネルの値 ―― 無彩色の</p>
+<p>src の Lab a*/b* はこれに当たる。丸め屑しか無い)は、<code style="color:#22d3bf">&quot;reinhard&quot;</code> では</p>
+<p><code style="color:#22d3bf">MetricContractError</code>、<code style="color:#22d3bf">&quot;histogram&quot;</code> では厳密に一定の入力と同じく参照の</p>
+<p>平均へ写す。屑を拡大して偽の色を作らない。</p>
 <p>space : {&quot;lab&quot;, &quot;rgb&quot;}</p>
 <p>統計を取る空間。既定の <code style="color:#22d3bf">lab</code> は <code style="color:#22d3bf">imgmetrics</code> の実体を使う。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>

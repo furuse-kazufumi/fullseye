@@ -13,7 +13,8 @@
 <p>dst_normals (M,3): unit normals of dst (normalised internally even if not normalised).</p>
 <p>If unknown, estimate beforehand with pointcloud.estimate_normals(dst) etc.</p>
 <p>iters: maximum number of iterations.</p>
-<p>tol: stops as converged when the RMSE change is below this value.</p>
+<p>tol: stops as converged when the RMSE change is below <code style="color:#22d3bf">tol × L</code> (L = bounding-box diagonal of dst).</p>
+<p>Relative to the scale of the point cloud (until 2026-11-05 it was an absolute value in coordinate units).</p>
 <p>init ((R0,t0)): initial pose (pass the R,t of the coarse match). None means identity.</p>
 <p>trim (float|None): fraction in [0,1). Trimmed ICP that discards the top share with the largest point-to-plane residual</p>
 <p>in every iteration (robust to partial overlap and outliers).</p>

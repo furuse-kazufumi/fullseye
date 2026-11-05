@@ -140,16 +140,33 @@ def project_hom_point_hom_mat3d(points_hom, hom_mat3d):
     return np.column_stack([uv[:, 1], uv[:, 0]])
 
 
+def _hartley_T(p):
+    """Hartley 正規化(重心を原点、重心からの平均距離 √2)の 3x3 相似変換。"""
+    c = p.mean(0)
+    d = float(np.mean(np.linalg.norm(p - c, axis=1)))
+    s = np.sqrt(2.0) / d if d > 0 else 1.0
+    return np.array([[s, 0.0, -s * c[0]], [0.0, s, -s * c[1]], [0.0, 0.0, 1.0]])
+
+
 def _homography_dlt(src, dst):
-    """4+ 点対応から DLT でホモグラフィ H (dst = H src) を推定。"""
+    """4+ 点対応から正規化 DLT でホモグラフィ H (dst = H src) を推定。
+
+    ★2026-11-05(敵対的検証 geometry、未再現の疑いを確認): 以前は Hartley 正規化なしの DLT で、
+    物体座標が原点から離れている(mm で 0〜1000 等)と条件が悪く、雑音 0.05 px の Zhang 校正で
+    fx 誤差の中央値が正規化ありの 3 倍(2.4 % 対 0.75 %)になった。Zhang の K は平面の原点の
+    取り方に依らない(h1, h2 が変わらない)はずなのに、原点をずらすだけで K が変わっていた。
+    両側を Hartley 正規化してから解き、逆正規化する(Hartley 1997)。"""
     src = np.asarray(src, float).reshape(-1, 2); dst = np.asarray(dst, float).reshape(-1, 2)
+    Ts, Td = _hartley_T(src), _hartley_T(dst)
+    sn = src @ Ts[:2, :2].T + Ts[:2, 2]
+    dn = dst @ Td[:2, :2].T + Td[:2, 2]
     A = []
-    for (x, y), (u, v) in zip(src, dst):
+    for (x, y), (u, v) in zip(sn, dn):
         A.append([-x, -y, -1, 0, 0, 0, u * x, u * y, u])
         A.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
     A = np.asarray(A)
     _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
-    H = Vt[-1].reshape(3, 3)
+    H = np.linalg.inv(Td) @ Vt[-1].reshape(3, 3) @ Ts
     return H / H[2, 2]
 
 
@@ -174,7 +191,15 @@ def image_to_world_plane(image_points, homography):
 
 
 def image_points_to_world_plane(cam_par, pose, image_points, scale=1.0):
-    """カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。"""
+    """カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。
+
+    返り値は (N,2) の world 座標 × ``scale``。視線が z=0 平面とカメラの**前**で交わらない画素
+    (地平線より上など、交点がカメラの後ろ)は平面上の点を見ていないので、その行は ``nan``。
+    視線が平面と平行な画素は ``ValueError``。
+
+    ★2026-11-05(敵対的検証 geometry、未再現の疑いを確認): 以前は交点の係数 lam < 0(カメラの
+    後ろ)でも有限の world 点を返していた(深度 −6.7 の点が「見えている点」として返った)。
+    """
     op = "image_points_to_world_plane"
     K = _K(cam_par, op); pose = _pose_matrix(pose, op)
     sc = _finite_scalar(scale, "scale", op, positive=True)
@@ -184,6 +209,7 @@ def image_points_to_world_plane(cam_par, pose, image_points, scale=1.0):
     p = _finite_array(image_points, "image_points", op, cols=2)
     rays = np.column_stack((p[:, 1], p[:, 0], np.ones(len(p)))) @ ray_transform.T
     lam = _checked_div(-o[2], rays[:, 2], op, "the viewing ray is parallel to the z = 0 plane")
+    lam = np.where(lam > 0, lam, np.nan)          # 交点がカメラの後ろ → 平面上の点ではない
     return (o[None, :2] + lam[:, None] * rays[:, :2]) * sc
 
 
@@ -272,8 +298,13 @@ def camera_calibration(object_points, image_points_list):
         reproj.append(float(np.sqrt(np.mean(np.sum((pr - xy) ** 2, axis=1)))))
     V = []
     for H in Hs:
-        V.append(_vij(H, 0, 1))
-        V.append(_vij(H, 0, 0) - _vij(H, 1, 1))
+        # ★2026-11-05(敵対的検証 geometry): H は H[2,2] = 1 に揃えてあるが、H[2,2] は平面座標の
+        # 原点の取り方で変わる(原点をずらすと h3 だけが変わる)。そのまま V に積むと視点ごとの
+        # 行の重みが原点で変わり、K も退化判定の比も原点の取り方に依存した(物体座標に 1000 mm
+        # 足しただけで「退化」と拒否)。原点に依らない h1, h2 の長さで各 H の倍率を揃える。
+        Hv = H / np.sqrt(np.linalg.norm(H[:, 0]) * np.linalg.norm(H[:, 1]))
+        V.append(_vij(Hv, 0, 1))
+        V.append(_vij(Hv, 0, 0) - _vij(Hv, 1, 1))
     V = np.asarray(V)
     _, sv, Vt = np.linalg.svd(V, full_matrices=V.shape[0] < V.shape[1])
     # 正面平行ばかりの視点では零空間が 2 次元以上になり b が定まらない(Zhang 1999 §3.3)。
@@ -332,13 +363,49 @@ def calibrate_cameras(object_points, image_points_list):
 
 
 # ── Tsai-Lenz ハンドアイ校正(AX = XB)──────────────────────────────────────────── #
+#: 相対運動の回転角がこれより π に近いとき「半回転の近く」とみなす [rad]。そこでは歪対称部
+#: sinθ·a が小さく(ちょうど π で 0)、軸の向きは回転行列だけからは決まらない。
+_HALF_TURN_TOL = 1e-3
+
+
 def _rot_to_axis(R):
-    """回転行列から回転ベクトル(軸*角)を返す。"""
+    """回転行列から回転ベクトル(軸*角)を返す。
+
+    ★2026-11-04(外部監査 v0.9.0 F5): 以前は ``ax / (2 sin θ) · θ`` だけで、ちょうど 180° では歪対称部が 0 なので
+    **零ベクトル**を返していた(半回転の運動が「回っていない」扱いになり、軸の違う半回転 2 つを含む
+    正しい姿勢列が「単一軸」として拒否された)。π の近くは :func:`camera.rotation_log`
+    (対称部から軸、歪対称部から向き)。ちょうど π の向きは呼ぶ側(:func:`hand_eye_calibration`)が揃える。
+    """
     ang = np.arccos(np.clip((np.trace(R) - 1) / 2, -1, 1))
     if ang < 1e-9:
         return np.zeros(3)
+    if np.pi - ang < _HALF_TURN_TOL:
+        import camera                                  # numpy だけのモジュール(循環しない)
+        return camera.rotation_log(R)
     ax = np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])
     return ax / (2 * np.sin(ang)) * ang
+
+
+def _rx_linear(rels):
+    """``Ra Rx = Rx Rb`` を Rx の 9 成分の線形方程式として積み、最小特異ベクトルを SO(3) へ射影する。
+
+    ``vec(Ra Rx − Rx Rb) = (I ⊗ Ra − Rbᵀ ⊗ I) vec(Rx)``(列優先の vec)。回転軸の符号を使わないので
+    半回転でも定義どおりに効く(Andreff, Horaud & Espiau 2001 の回転部)。ここでは半回転の軸の向きを
+    揃えるための初期値にだけ使い、Rx そのものは従来どおり Park-Martin の Procrustes で解く。
+
+    返り値 ``(Rx0, ratio)``。``ratio`` = 2 番目に小さい特異値 / 最大の特異値。解の空間が 1 次元でない
+    (``ratio`` ≈ 0)なら Rx はデータから決まらない —— 半回転だけの組では、半回転の軸がどれも垂直な
+    向き n のまわりの π 回転 Q が ``Q a = ±a`` を満たし、``Q Rx`` も同じデータを説明する。
+    """
+    I3 = np.eye(3)
+    K = np.vstack([np.kron(I3, Ma[:3, :3]) - np.kron(Mb[:3, :3].T, I3) for Ma, Mb in rels])
+    _, sv, Vt = np.linalg.svd(K)
+    X0 = Vt[-1].reshape(3, 3, order="F")
+    if np.linalg.det(X0) < 0:
+        X0 = -X0
+    U, _, Wt = np.linalg.svd(X0)
+    ratio = float(sv[-2] / sv[0]) if sv[0] > 0 else 0.0
+    return U @ np.diag([1.0, 1.0, np.sign(np.linalg.det(U @ Wt))]) @ Wt, ratio
 
 
 def _axis_to_rot(v):
@@ -368,12 +435,27 @@ def hand_eye_calibration(poses_a, poses_b):
                          "axes) to fix the rotation, got %d" % (op, len(A)))
     # 回転: 相対運動の回転軸から最小二乗で Rx を解く(修正 Rodrigues)
     Msum = np.zeros((3, 3)); bsum = np.zeros(3)
-    rels = []
+    rels, axes, near_pi = [], [], []
     for i in range(len(A) - 1):
         Ma = np.linalg.inv(A[i]) @ A[i + 1]
         Mb = np.linalg.inv(B[i]) @ B[i + 1]
         rels.append((Ma, Mb))
         alpha = _rot_to_axis(Ma[:3, :3]); beta = _rot_to_axis(Mb[:3, :3])
+        axes.append((alpha, beta))
+        near_pi.append(max(np.linalg.norm(alpha), np.linalg.norm(beta)) > np.pi - _HALF_TURN_TOL)
+    # 半回転の近くでは alpha と beta の向きがそれぞれ勝手に決まる(ちょうど π では alpha と −alpha が
+    # 同じ回転)。Park-Martin は alpha ≈ Rx beta の向きまで使うので、向きの違う組は Procrustes を壊す。
+    # 軸の向きを使わない線形解 Rx0 で beta を写し、alpha をその向きに揃える(半回転の無い組は触らない)。
+    if any(near_pi):
+        Rx0, ratio = _rx_linear(rels)
+        if ratio <= 1e-9:
+            raise ValueError("%s: the relative motions include half-turns (180 deg) whose axis sign is "
+                             "free, and with them the rotation of X is not determined (a 180 deg turn "
+                             "of X about a common normal fits the same data); add a motion that is not "
+                             "a half-turn, about a different axis" % op)
+        axes = [((-al if (np_ and float(al @ (Rx0 @ be)) < 0.0) else al), be)
+                for (al, be), np_ in zip(axes, near_pi)]
+    for alpha, beta in axes:
         # Park-Martin/Procrustes: Rx beta ~= alpha なので M = sum(alpha beta^T)
         Msum += np.outer(alpha, beta)
     U, S, Vt = np.linalg.svd(Msum)

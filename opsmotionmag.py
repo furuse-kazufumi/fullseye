@@ -9,8 +9,7 @@ magnification)と位相ベースの微小変位計測** — 見えないほど�
 `riesz` のいずれにも 1 件もヒットしなかった(`docs/INDUSTRY_SIGNALS.md` §3 の
 3 表面実測)。既存の `tf_steerable_filter` は**位相を持たない実数の
 エッジ応答**、`optical_flow_*` は**1 画素以上の運動を推定する別レジーム**で、
-どちらも「増幅」ではない。本レジストリはその台帳(motionmag.py、9 op /
-4 カテゴリ)。
+どちらも「増幅」ではない。本レジストリはその台帳(motionmag.py、9 op / 5 カテゴリ)。
 
 来歴は公開文献のみ(docs/PROVENANCE.md の naming rule に従い、特定の製品・
 企業を動機にも名前にも使わない): Freeman & Adelson, IEEE PAMI 13(9) 1991

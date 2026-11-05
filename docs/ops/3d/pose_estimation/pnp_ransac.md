@@ -34,10 +34,12 @@ Raises ValueError: points_2d が (N,2) でない / points_3d が (N,3) でない
 
 返り値: ``R`` (3,3)、``t`` (3,)(規約 ``Xc = R X + t``)、``inlier_mask`` bool (N,)、``info`` dict。
 ``info`` のキーは ``n_inliers`` / ``inlier_ratio`` / ``iters`` / ``rms``(最終姿勢の再投影 RMS [px]、inlier 集合上)。
+返す ``inlier_mask`` / ``n_inliers`` / ``inlier_ratio`` / ``rms`` はすべて**返す姿勢**で数え直した値
+(最良仮説のものではない。2026-11-05 敵対的検証 G1)。
 
 - 最良標本の inlier が 6 未満のときは全点で解き直す fallback に入り、``info["fallback"] = True`` が付く。このとき ``inlier_mask`` は fallback 姿勢で数え直した実測値なので、``inlier_ratio`` が小さいまま返ることがある(合意を捏造しない)。fallback も失敗すれば ``ValueError``。
 - inlier 数の比較は「より多い」だけを更新するので、同数なら先に見つかった標本が残る。
-- 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。
+- 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。リフィットで合意(内れ値の数)が仮説より減るなら、仮説の姿勢を返す。
 - Raises ``ValueError``: 形状不正 / 6 点未満 / 点数不一致 / 非有限(``dlt_pose`` と同じ入口検査)。
 - 評価は ``reprojection_error``、GT 比較は ``pose_error``。
 

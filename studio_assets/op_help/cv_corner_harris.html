@@ -14,7 +14,7 @@
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Harris コーナー応答(OpenCV 実装)。sk_corner_harris と同じ Harris の考え方だが、勾配計算・平滑化のブロックサイズなどを固定パラメータで計算するOpenCV 版。</p>
-<p>HALCON の <code style="color:#22d3bf">points_harris</code> に相当(近似)。実装は <code style="color:#22d3bf">cv2.cornerHarris(v, blockSize=2, ksize=3, k=0.04)</code> を <code style="color:#22d3bf">signed01</code> で <code style="color:#22d3bf">[0,1]</code> へ写した値 —— blockSize(近傍サイズ)・ksize(Sobel 開口)・k(Harris の自由パラメータ)はすべて固定。a, b は未使用 —— skimage 版と違いスケールを振る仕組みが無い、素の Harris 応答。</p>
+<p>HALCON の <code style="color:#22d3bf">points_harris</code> に相当(近似)。実装は <code style="color:#22d3bf">cv2.cornerHarris(v, blockSize=3, ksize=3, k=0.04)</code> を <code style="color:#22d3bf">signed01</code> で <code style="color:#22d3bf">[0,1]</code> へ写した値 —— blockSize(近傍サイズ)・ksize(Sobel 開口)・k(Harris の自由パラメータ)はすべて固定。a, b は未使用 —— skimage 版と違いスケールを振る仕組みが無い、素の Harris 応答。2026-11-05(敵対的検証 第 2 巡 P11)までは blockSize=2 で、偶数の窓の中心が半画素ずれ、応答が右下へ 0.5 px 片寄っていた。</p>
 <p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
 <p><b>同じ処理の別実装(実測、<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は <code style="color:#22d3bf">sk_corner_harris</code> 0.99。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

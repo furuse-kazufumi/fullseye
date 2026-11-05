@@ -22,7 +22,7 @@ version: 0.1.0
 - **何 dB か、誰の定義で。** 基準値と周波数重み付けを言わない dB は数ではありません。
 - **その振動はこの加振から来たのか。** 2 チャネル、伝達関数、そして**その答えをどこまで信じてよいか**を言うコヒーレンス。
 
-この族はその 4 つに答える道具箱です。19 op / 6 カテゴリ(numpy + scipy のみ、台帳は `opsacoustics.py`、実体は `acoustics.py`):
+この族はその 4 つに答える道具箱です。20 op / 6 カテゴリ(numpy + scipy のみ、台帳は `opsacoustics.py`、実体は `acoustics.py`):
 
 - **transform(3)** — `stft` / `istft` / `stft_cola_check`: 位相を保つ短時間フーリエ変換と、**厳密に戻る**逆変換。`dsp.spectrogram` は強度だけなので、時間周波数平面で信号を加工して戻る経路がライブラリ内に 1 本も無かった、その 1 本です。
 - **synthesis(2)** — `synthesize_bearing_signal` / `synthesize_speed_ramp`: 前方モデル。**測る前に答えが分かっている**入力を作るためのもので、この族の全主張はこの 2 つに対して測ってあります。

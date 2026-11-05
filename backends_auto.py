@@ -34,7 +34,7 @@ import numpy as np
 
 from fslib import FsValueError
 
-from backend_safe import gradient_normals, signed01, subpixel_refine_edges
+from backend_safe import gradient_normals, _reflect_padded, signed01, subpixel_refine_edges
 from scipy import ndimage
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -282,7 +282,12 @@ def _halcon_circularity(dists, area):
 
 
 def _halcon_compactness(length, area):
-    """``max(1, L²/(4π·F))``。HALCON は画素近似のため 1 で切る(下側)。"""
+    """``max(1, L²/(4π·F))``。HALCON は画素近似のため 1 で切る(下側)。
+
+    HALCON 23.11 の ``compactness``: 「C = max(1, C′)」「The value of C is clipped to 1.0, because the pixel
+    area of a region can only be an approximation of a real circle's area」、表明 ``Compactness >= 1.0 ||
+    Compactness == 0``(0 は空の領域 —— 空は呼ぶ側が 0 を返す)。
+    """
     if area <= 0:
         return 1.0
     return float(max(1.0, (length * length) / (4.0 * np.pi * area)))
@@ -362,7 +367,13 @@ def _halcon_rectangularity(mask):
 
 
 def _largest_label(mask):
-    lab, n = ndimage.label(mask)
+    """最大の連結成分 ``(big, lab, n)``。**前景は 8 連結**(HALCON の ``connection`` の既定)。
+
+    2026-11-05(敵対的検証 第 2 巡 P1): それまでは ``ndimage.label`` の既定 = 4 連結で、斜めにだけ接する
+    2 つの塊を別の成分に分け、領域特徴(周囲長・径・モーメントほか)と ``select_shape_std`` が片方しか
+    見ていなかった(``count_obj`` は 2026-08-30 に 8 連結へ直した兄弟、KNOWN_ISSUES §1)。
+    """
+    lab, n = ndimage.label(mask, structure=np.ones((3, 3), bool))
     if n == 0:
         return None, lab, 0
     sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
@@ -432,7 +443,9 @@ def _sh_lut(p):
             for dy in (-1, 0, 1):
                 for dx in (-1, 0, 1):
                     if dy or dx:
-                        cnt += (np.roll(np.roll(x, dy, 0), dx, 1) < x).astype(np.float64)
+                        # 縁は複製(画像の外の近傍 = 自分なので「より小さい」に数えない)。2026-11-05 P7 の兄弟:
+                        # それまでは np.roll で反対側の縁の画素と比べていた。
+                        cnt += (_shift_edge(x, dy, dx) < x).astype(np.float64)
             return cnt / 8.0
         if kind == "equalize_local":                 # windowed histogram equalisation (equ_histo_image_rect)
             nb = 2 + int(a * 4)
@@ -600,7 +613,8 @@ def _sh_edge(p):
             return _norm(_compass(x, _KIRSCH))
         if kind == "kirsch_dir":
             resp = _kill_dust(np.stack([ndimage.convolve(x, k) for k in _KIRSCH]), x)
-            return np.argmax(resp, 0).astype(np.float64) / (len(_KIRSCH) - 1)
+            # ★同点は小さい番号(丸めに決めさせない。2026-11-05 敵対的検証 第 2 巡 P10)
+            return _argmax_ties_first(resp, x).astype(np.float64) / (len(_KIRSCH) - 1)
         if kind == "frei":
             return _norm(np.hypot(ndimage.convolve(x, _FREI[0]), ndimage.convolve(x, _FREI[1])))
         if kind == "frei_dir":
@@ -617,7 +631,7 @@ def _sh_edge(p):
         if kind == "robinson_dir":
             r = [np.rot90(_ROBINSON[0], i) for i in range(4)] + [np.rot90(_ROBINSON[1], i) for i in range(4)]
             resp = _kill_dust(np.stack([ndimage.convolve(x, k) for k in r]), x)
-            return np.argmax(resp, 0).astype(np.float64) / (len(r) - 1)
+            return _argmax_ties_first(resp, x).astype(np.float64) / (len(r) - 1)   # 同点は小さい番号(P10 の兄弟)
         if kind == "laplace":
             return _norm(np.abs(ndimage.laplace(x)))
         raise ValueError(kind)
@@ -635,9 +649,11 @@ def _sh_corner(p):
             xb = ndimage.gaussian_filter(x, 0.5 + 1.5 * b)
             # 2026-10-25 まで skimage 無しでは k=0.04・Sobel 直積・``_norm`` という**別の式**に落ちていた
             # (coins で最大差 0.999)。双子 ``numpy_twins.corner_harris`` は同じ式・同じ丸め。
-            return signed01(_corner_harris(xb, sigma=s))
+            # ★鏡映の余白で包む(skimage の構造テンソルは画像の外 = 0 で、一様な画像でも枠が最大の
+            #   応答になり正規化を支配していた。2026-11-05 敵対的検証 第 2 巡 P6)
+            return signed01(_reflect_padded(lambda u: _corner_harris(u, sigma=s), xb, s))
         if kind == "foerstner":
-            w, q = _corner_foerstner(x, sigma=s)
+            w, q = _reflect_padded(lambda u: _corner_foerstner(u, sigma=s), x, s)
             return _norm(np.nan_to_num(w) * np.nan_to_num(q))
         raise ValueError(kind)
     return fn
@@ -728,10 +744,12 @@ def _sh_diffusion(p):
             y = x.copy()
             K = 0.05 + 0.25 * b
             for _ in range(2 + int(a * 8)):
-                dn = np.roll(y, -1, 0) - y
-                ds = np.roll(y, 1, 0) - y
-                de = np.roll(y, -1, 1) - y
-                dw = np.roll(y, 1, 1) - y
+                # ★縁は複製(Neumann、縁を越える流れは 0)。2026-11-05(敵対的検証 第 2 巡 P7)までは
+                #   np.roll の周期境界で、右端の列が 60 px 離れた左端の列と拡散していた。
+                dn = _shift_edge(y, -1, 0) - y
+                ds = _shift_edge(y, 1, 0) - y
+                de = _shift_edge(y, 0, -1) - y
+                dw = _shift_edge(y, 0, 1) - y
                 cn, cs = np.exp(-(dn / K) ** 2), np.exp(-(ds / K) ** 2)
                 ce, cw = np.exp(-(de / K) ** 2), np.exp(-(dw / K) ** 2)
                 y = y + 0.2 * (cn * dn + cs * ds + ce * de + cw * dw)
@@ -755,6 +773,22 @@ def _sh_diffusion(p):
 #: 床は入力の大きさに対する相対量。屑(2e-15)の 500 倍あり、16-bit の量子化幅を
 #: 畳み込んだ実信号(2e-4)より 8 桁下なので実エッジは削らない。
 _DIR_DUST = 1e-12
+
+
+def _argmax_ties_first(resp, ref, rel=1e-9):
+    """``np.argmax(resp, 0)`` で、最大との差が丸めの桁(``rel·max|ref|·Σ|核|`` 相当)の成分を**同点**とみなし、
+    小さい番号を選ぶ。
+
+    Kirsch の 8 方向の核は和が 0 なので応答は明るさの足し算で数学的に変わらないが、2 方向が厳密に同点の画素
+    (平らな斜面など)では、浮動小数の丸めが勝者を決めていた —— 明るさに 0.1 足すだけで 18 画素の方向が
+    変わった(敵対的検証 2026-11-05 第 2 巡 P10)。床は入力の大きさに対する相対量 ``rel`` で、実の差
+    (量子化幅 2e-4 級)より 5 桁下、丸め(1e-15 級)より 6 桁上。
+    """
+    resp = np.asarray(resp, np.float64)
+    scale = max(float(np.max(np.abs(np.asarray(ref, np.float64)))), 1e-12)
+    tol = rel * scale * 16.0                      # 3x3 の核の |係数| の和の上限(Kirsch 39 / 16 で正規化前)
+    top = np.max(resp, axis=0)
+    return np.argmax(resp >= top - tol, axis=0)
 
 
 def _kill_dust(arr, ref):
@@ -822,14 +856,19 @@ def _sh_geom(p):
             return np.clip(ndimage.rotate(x, -45 + 90 * a, reshape=False, mode="reflect"), 0, 1)
         if kind == "zoom":                            # 等方ズーム(zoom_region など)
             s = 0.7 + 0.6 * a
-            off = (x.shape[0] * (1 - 1 / s) / 2, x.shape[1] * (1 - 1 / s) / 2)
+            # ★中心は ((H-1)/2, (W-1)/2)(画素中心の規約: 画素 i の中心が座標 i なので、画像の中心は ((H-1)/2, (W-1)/2))。2026-11-05(敵対的検証 第 2 巡 P8)
+            #   までは H/2 で、中心の点が 1.3 倍で 0.15 px ずれ、180 度回転と可換でなかった。
+            c = (np.array(x.shape[:2], np.float64) - 1.0) / 2.0
+            off = tuple(c * (1 - 1 / s))
             return np.clip(ndimage.affine_transform(x, np.diag([1 / s, 1 / s]),
                                                     offset=off, mode="reflect"), 0, 1)
         if kind == "zoom_factor":                     # HALCON zoom_image_factor
             # ScaleHeight = a, ScaleWidth = b の **2 つの倍率**(HALCON と同じ)。
             # キャンバスは保つ(内容だけを中心基準で拡大縮小)。
             sr, sc = 0.7 + 0.6 * a, 0.7 + 0.6 * b
-            off = (x.shape[0] * (1 - 1 / sr) / 2, x.shape[1] * (1 - 1 / sc) / 2)
+            # ★中心は ((H-1)/2, (W-1)/2)(2026-11-05 P8 まで H/2)
+            cy, cx = (x.shape[0] - 1) / 2.0, (x.shape[1] - 1) / 2.0
+            off = (cy * (1 - 1 / sr), cx * (1 - 1 / sc))
             return np.clip(ndimage.affine_transform(x, np.diag([1 / sr, 1 / sc]),
                                                     offset=off, mode="reflect"), 0, 1)
         if kind == "zoom_size":                       # HALCON zoom_image_size
@@ -848,7 +887,12 @@ def _sh_geom(p):
             H, W = x.shape[:2]
             ht = max(1, int(round(H * (0.5 + a))))
             wt = max(1, int(round(W * (0.5 + b))))
+            # ★画素中心合わせ(cv2.resize / skimage.transform.resize と同じ): 出力の画素 o の中心は入力の
+            #   (o + 0.5)·H/ht - 0.5。2026-11-05(敵対的検証 第 2 巡 P9)までは角合わせ(o·H/ht)で、
+            #   1/2 縮小の像が入力の 0.5 px 上にずれ、縦の傾斜の平均が 0.4921(真値 0.5)になっていた
+            #   (f2_gauss_pyramid は直済の兄弟)。
             small = ndimage.affine_transform(x, np.diag([H / ht, W / wt]),
+                                             offset=(0.5 * H / ht - 0.5, 0.5 * W / wt - 0.5),
                                              output_shape=(ht, wt), order=1, mode="reflect")
             out = np.zeros((H, W), np.float64)
             hh, ww = min(H, ht), min(W, wt)
@@ -858,7 +902,7 @@ def _sh_geom(p):
             ang = np.deg2rad(-20 + 40 * a)
             M = np.array([[np.cos(ang), -np.sin(ang) + (b - 0.5) * 0.4],
                           [np.sin(ang), np.cos(ang)]])
-            c = np.array(x.shape) / 2
+            c = (np.array(x.shape[:2], np.float64) - 1.0) / 2.0     # 画素中心の規約(2026-11-05 P8 まで shape/2)
             return np.clip(ndimage.affine_transform(x, M, offset=c - M @ c, mode="reflect"), 0, 1)
         if kind == "polar":
             _require_dep(_HAS_CV, "cv2", "cv2.warpPolar (bilinear, fixed-point)")
@@ -876,8 +920,12 @@ def _sh_geom(p):
             # array against 0 in `dst`). Reading `dst` therefore produced an
             # all-black image for every input — see the inverse branch below.
             dst = np.zeros((h, w), np.float32)
-            out = cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2),
-                                min(h, w) / 2, cv2.WARP_POLAR_LINEAR, dst)
+            # 中心は ((w-1)/2, (h-1)/2)(cv2 も画素中心が整数座標)。2026-11-05(敵対的検証 第 2 巡 P8 の兄弟)
+            # までは (w/2, h/2) で、画像の中心について回転対称な像が角度方向に揺れていた。
+            # 補間は双線形(``WARP_POLAR_LINEAR`` は 0 なので、補間の旗を足さないと INTER_NEAREST = 0 になる。
+            # 依存の説明(上の _require_dep)と HALCON の polar_trans_image は双線形。2026-11-05 P8 の兄弟)。
+            out = cv2.warpPolar(x.astype(np.float32), (w, h), ((w - 1) / 2, (h - 1) / 2),
+                                min(h, w) / 2, cv2.WARP_POLAR_LINEAR + cv2.INTER_LINEAR, dst)
             return np.clip(np.asarray(out, np.float64), 0, 1)
         if kind == "polar_inv":                      # inverse polar->Cartesian (polar_trans_image_inv)
             _require_dep(_HAS_CV, "cv2", "cv2.warpPolar + WARP_INVERSE_MAP (bilinear, fixed-point)")
@@ -894,7 +942,7 @@ def _sh_geom(p):
             radius = min(h, w) / 2
             dst = np.zeros((h, w), np.float32)
             out = np.asarray(
-                cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2), radius,
+                cv2.warpPolar(x.astype(np.float32), (w, h), ((w - 1) / 2, (h - 1) / 2), radius,
                               cv2.WARP_POLAR_LINEAR + cv2.WARP_INVERSE_MAP, dst),
                 np.float64)
             # cv2 が**書かなかった画素は未初期化のまま**返ってくる(戻り値は自前で
@@ -994,9 +1042,20 @@ def _sh_segment(p):
         if kind == "zero_crossing":                  # Laplacian sign-changes (zero_crossing)
             lap = _log_dc_free(x, 0.5 + 2.0 * a)
             s = np.sign(lap)
+            al = np.abs(lap)
             zc = np.zeros_like(x, bool)
-            zc[:-1, :] |= np.abs(np.diff(s, axis=0)) > 0
-            zc[:, :-1] |= np.abs(np.diff(s, axis=1)) > 0
+            # ★符号が変わる 4 近傍の対のうち、**0 に近い方**の画素に印を付ける(同じなら両方)。
+            #   2026-11-05(敵対的検証 第 2 巡)までは対の上 / 左の画素に固定で印を付けていて、像を上下・
+            #   左右に反転すると線が 1 画素ずれた(反転と可換でない)。
+            for axis in (0, 1):
+                ch = np.abs(np.diff(s, axis=axis)) > 0
+                lo = [slice(None)] * 2
+                hi = [slice(None)] * 2
+                lo[axis] = slice(None, -1)
+                hi[axis] = slice(1, None)
+                lo, hi = tuple(lo), tuple(hi)
+                zc[lo] |= ch & (al[lo] <= al[hi])
+                zc[hi] |= ch & (al[hi] <= al[lo])
             return zc.astype(np.float64)
         if kind == "local_min":                      # regional minima (local_min)
             return ((x <= ndimage.minimum_filter(x, _k(a))) & (x < (0.7 - 0.4 * b))).astype(np.float64)
@@ -1026,7 +1085,12 @@ def _sh_binmorph(p):
         if op == "opening":
             return ndimage.binary_opening(m, fp).astype(np.float64)
         if op == "closing":
-            return ndimage.binary_closing(m, fp).astype(np.float64)
+            # ★closing は拡大的(X ⊆ φ(X))。``binary_closing`` は画像の外を 0 として収縮するので、縁に接する
+            # 前景が構造要素の半径だけ削れていた(closing_circle で 66〜240 画素)。2026-11-05(敵対的検証 第 2 巡 P3): 画像の外へ続く平面の上で閉じてから画像に切り戻す(余白 0 を付けて ``binary_closing`` → 切り出し)。
+            # ``border_value=1`` にすると逆に、縁の近くの孤立画素から角の楔が生える(画像の外を前景とみなす)。
+            pad = max(fp.shape) // 2 + 1
+            mp = np.pad(m, pad, mode="constant", constant_values=False)
+            return ndimage.binary_closing(mp, fp)[pad:-pad, pad:-pad].astype(np.float64)
         if op == "erosion_it":
             return ndimage.binary_erosion(m, iterations=it).astype(np.float64)
         if op == "dilation_it":
@@ -1052,7 +1116,8 @@ def _sh_region_trans(p):
             _require_dep(_HAS_SK, "skimage", "skimage.morphology.convex_hull_image (grid_points_in_poly, Cython)")
             return skmorph.convex_hull_image(m).astype(np.float64)
         if kind == "remove_small":
-            lab, n = ndimage.label(m)
+            # 前景は 8 連結(HALCON の connection の既定。敵対的検証 2026-11-05 第 2 巡 P1)
+            lab, n = ndimage.label(m, structure=np.ones((3, 3), bool))
             if n == 0:
                 return np.zeros_like(m, np.float64)
             sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
@@ -1065,6 +1130,10 @@ def _sh_region_trans(p):
             big, _, n = _largest_label(m)
             return big.astype(np.float64) if big is not None else np.zeros_like(m, np.float64)
         if kind == "dist_transform":
+            # ★背景が無いと最も近い背景は画像に無い -> どこも最遠 = 正規化 1.0(xsp_chamfer_dist と同じ)。
+            # 2026-11-05(敵対的検証 第 2 巡 P4)までは edt が (-1, 0) に背景があるかのような斜面を返した。
+            if m.size and m.all():
+                return np.ones(m.shape, np.float64)
             return _norm(ndimage.distance_transform_edt(m))
         if kind == "shape_bbox":
             ys, xs = np.where(m)
@@ -1079,6 +1148,9 @@ def _sh_region_trans(p):
                 sk = sk & ~(sk & (nb <= 1))
             return sk.astype(np.float64)
         if kind == "closest_point_transform":        # distance to the nearest region point (EDT of complement)
+            # ★領域が空なら最も近い領域の画素は無い -> どこも最遠 = 正規化 1.0(2026-11-05 P4、以前は斜面)
+            if m.size and not m.any():
+                return np.ones(m.shape, np.float64)
             return _norm(ndimage.distance_transform_edt(~m))
         if kind == "junctions_skeleton":             # skeleton branch points (>=3 neighbours)
             sk = _skeletonize(m)
@@ -1182,7 +1254,10 @@ def _sh_region_feat(p):
         if metric == "thickness":                    # 2x max inscribed distance (get_region_thickness)
             # ★画素で返す(2026-09-26)。頭打ちも外れる —— 厚みが画像の長辺の半分を
             # 超える領域は、それまで全部 1.0 だった。
-            return np.float64(2 * float(ndimage.distance_transform_edt(m).max()))
+            # ★太さは**領域そのもの**の量: 画像の外は背景(余白 1 を付けて測る)。2026-11-05(敵対的検証
+            # 第 2 巡 P4)までは画像の縁を背景とみなさず、上の縁に接する 30x70 の矩形が 60、全面の
+            # 60x80 が 198.4(画像の外の (-1, 0) に背景があるかのような斜面の最大)になっていた。
+            return np.float64(2 * float(ndimage.distance_transform_edt(np.pad(m, 1)).max()))
         if metric == "perimeter":
             # ★画素で返す(2026-09-26)。HALCON の `contlength` は輪郭長(画素)。
             return np.float64(per)
@@ -1661,7 +1736,7 @@ def _sh_xld(p):
                     out.append(np.vstack([c, c[:1]]))
                     continue
                 pts = c.astype(np.float64)
-                yc, xc = H / 2, W / 2
+                yc, xc = (H - 1) / 2, (W - 1) / 2          # 画素中心の規約(2026-11-05 P8 の兄弟、以前は H/2)
                 if kind == "affine":
                     ang = np.deg2rad(-20 + 40 * a)
                     R = np.array([[np.cos(ang), -np.sin(ang)], [np.sin(ang), np.cos(ang)]])
@@ -1959,11 +2034,11 @@ SEED: list[tuple] = [
     ("shape_trans", "region", REG, REG, "region_trans", {"kind": "convex"},
      '領域の凸包(``skimage.morphology.convex_hull_image``)を返す。HALCON の\n``shape_trans``（Transform the shape of a region.）は本来 convex/\nrectangle1/ellipse など複数の変形モードを ``Type`` 引数で選べる演算子\nだが、この代役では凸包 1 種類に固定している(近似の限界)。\n\n``a``, ``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("select_shape_std", "region", REG, REG, "region_trans", {"kind": "select_largest"},
-     '連結成分のうち最大の面積を持つものだけを残す(``_largest_label`` で\n選択)。HALCON の ``select_shape_std``（Select regions of a given shape.）\nは ``max_area`` を含む複数の標準基準を選べる演算子だが、ここでは\n「面積最大」1 種類に固定している(近似)。\n\n``a``, ``b`` は未使用。複数領域が同面積の場合は ``argmax`` の実装依存で\nどれか 1 つが選ばれる。'),
+     '連結成分のうち最大の面積を持つものだけを残す(``_largest_label`` で\n選択、前景は 8 連結)。HALCON の ``select_shape_std``（Select regions of a given shape.）\nは ``max_area`` を含む複数の標準基準を選べる演算子だが、ここでは\n「面積最大」1 種類に固定している(近似)。\n\n``a``, ``b`` は未使用。複数領域が同面積の場合は ``argmax`` の実装依存で\nどれか 1 つが選ばれる。'),
     ("select_shape", "region", REG, REG, "region_trans", {"kind": "remove_small"},
-     '面積が閾値(``16+a*200`` 画素)未満の連結成分を除去する(小さなノイズ状\n領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of\nshape features.）は面積・円形度・凸性など任意の形状特徴で選別できる\n汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。\n\n``a`` が面積の下限しきい値を振る。``b`` は未使用。'),
+     '面積が閾値(``16+a*200`` 画素)未満の連結成分(前景は 8 連結)を除去する(小さなノイズ状\n領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of\nshape features.）は面積・円形度・凸性など任意の形状特徴で選別できる\n汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。\n\n``a`` が面積の下限しきい値を振る。``b`` は未使用。'),
     ("distance_transform", "region", REG, IMG, "region_trans", {"kind": "dist_transform"},
-     'ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で\n正規化した画像。各前景画素について最も近い背景画素までの距離を表す ――\n値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく\n``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the\ndistance transformation of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
+     'ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で\n正規化した画像。各前景画素について最も近い背景画素までの距離を表す ――\n(背景が無ければ一様 1.0 = どこも最遠)\n値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく\n``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the\ndistance transformation of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
     # ---- Regions: features -----------------------------------------------
     # ★2026-09-02: 旧仕様は out_sort=feature / metric="area" で、実体は
     #   `np.mean(mask)` = **画像に占める面積比**。HALCON の `area_center` は
@@ -1982,7 +2057,7 @@ SEED: list[tuple] = [
     ("circularity", "features", REG, FEA, "region_feat", {"metric": "circularity"},
      '円形度 ``min(1, 面積 /(π・max²))``。``max`` は**重心から輪郭画素までの最大距離**\nで、円なら 1、細長い形や大きな出っ張り・穴があるほど小さい。連結成分が複数ある\n場合は最大面積のものだけを評価する。HALCON の ``circularity``（Shape factor for\nthe circularity (similarity to a circle) of a region.）**と同じ式**。\n\n★2026-09-26 まで等周比 ``4π・面積/周囲長²`` という**別の量**を返していた。\n名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が\n同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と**順序まで変わる**)。\n``docs/hardening/halcon-named-shape-factors.md``。\n\n``a``, ``b`` は未使用。'),
     ("compactness", "features", REG, FEA, "region_feat", {"metric": "compactness"},
-     'コンパクトさ ``周囲長² / (4π・面積)``。円で 1、細長い/ぎざぎざ/穴が多いほど\n大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the\ncompactness of a region.）と同じ量。\n\n★2026-09-26 まで ``/10`` して ``min(1.0, ...)`` で切っていた —— 値を [0,1] に\n収めるための便宜だったが、``周囲長²/(4π・面積)`` が 10 を超える形(幅 2 px なら\n長さ 80 以上の傷)を**全部 1.0 に潰していた**。傷や割れという、いちばん見たい\n領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも\nfeature の契約ではない(``elliptic_axis`` は 6.35、``r3_region_features`` は\n18.1 を返す)ので、潰す理由が無かった ――\n``docs/hardening/compactness-saturated-at-one.md``。\n\nHALCON は ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため)が、\nここでは切らない。1 を下回る値は「領域が小さすぎて近似が効いていない」と\nいう情報そのもので、必要なら呼ぶ側で切れる。\n\n``a``, ``b`` は未使用。'),
+     'コンパクトさ ``max(1, 周囲長² / (4π・面積))``。円で 1、細長い/ぎざぎざ/穴が多いほど\n大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the\ncompactness of a region.）と同じ量。\n\n★2026-09-26 まで ``/10`` して ``min(1.0, ...)`` で切っていた —— 値を [0,1] に\n収めるための便宜だったが、``周囲長²/(4π・面積)`` が 10 を超える形(幅 2 px なら\n長さ 80 以上の傷)を**全部 1.0 に潰していた**。傷や割れという、いちばん見たい\n領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも\nfeature の契約ではない(``elliptic_axis`` は 6.35、``r3_region_features`` は\n18.1 を返す)ので、潰す理由が無かった ――\n``docs/hardening/compactness-saturated-at-one.md``。\n\nHALCON と同じく ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため。\nHALCON 23.11 の ``compactness`` の説明: 「C = max(1, C′)」「The value of C is\nclipped to 1.0」、返り値の表明 ``Compactness >= 1.0 || Compactness == 0``)。\n半径 3〜6 の円板は 1.0 になる。領域が空なら 0。\n\n★2026-11-05(敵対的検証 第 2 巡 P2)まで、この説明は「ここでは切らない」と\n書いていた —— 実装は 2026-09-26 から HALCON の ``max(1, C)`` で、説明文だけが\nその前の方針のまま残っていた。\n\n``a``, ``b`` は未使用。'),
     ("convexity", "features", REG, FEA, "region_feat", {"metric": "convexity"},
      '凸性 ``面積 / 凸包面積``(1 に近いほど凸形状に近い)。``skimage.\nmeasure.regionprops`` の ``area`` と ``area_convex`` の比。HALCON の\n``convexity``（Shape factor for the convexity of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("rectangularity", "features", REG, FEA, "region_feat", {"metric": "rectangularity"},
@@ -2114,7 +2189,7 @@ SEED: list[tuple] = [
     ("shape_trans_xld", "contour", CON, CON, "xld", {"kind": "convex"},
      '輪郭の凸包(``cv2.convexHull``)を計算し、輪郭形式のまま返す\n(``shape_trans`` の輪郭版)。HALCON の ``shape_trans_xld``（Transform the\nshape of contours or polygons.）が持つ複数の変形モードのうち、凸包 1 種類\nのみを実装している(近似)。\n\n``a``, ``b`` は未使用。cv2 が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("zero_crossing", "segmentation", IMG, REG, "segment", {"kind": "zero_crossing"},
-     'ラプラシアン(ガウス平滑化込み、シグマ ``0.5+2*a``)の符号が反転する\n画素(ゼロ交差)を検出する。LoG のゼロ交差はエッジの位置を高精度に示す\nことで知られる古典的な検出法。HALCON の ``zero_crossing``（Extract zero\ncrossings from an image.）に相当。\n\n``a`` がガウス平滑化のシグマを振る。``b`` は未使用。上下・左右いずれかの\n方向で符号が変わればゼロ交差とみなす(斜め方向は直接見ていない)。'),
+     'ラプラシアン(ガウス平滑化込み、シグマ ``0.5+2*a``)の符号が反転する\n画素(ゼロ交差)を検出する。LoG のゼロ交差はエッジの位置を高精度に示す\nことで知られる古典的な検出法。HALCON の ``zero_crossing``（Extract zero\ncrossings from an image.）に相当。\n\n``a`` がガウス平滑化のシグマを振る。``b`` は未使用。上下・左右いずれかの\n方向で符号が変わればゼロ交差とみなす(斜め方向は直接見ていない)。印は符号が変わる\n2 画素のうちラプラシアンが 0 に近い方に付く(同じなら両方)ので、像の反転と可換\n(2026-11-05 まで対の上 / 左の画素に固定で、反転すると線が 1 画素ずれた)。'),
     ("local_min", "segmentation", IMG, REG, "segment", {"kind": "local_min"},
      '局所極小点(領域極小)検出。``x`` が窓内の最小値(``_k(a)``)に一致し、\nかつ ``x < 0.7-0.4*b`` を満たす画素を前景とする、``local_max`` の暗部版。\nHALCON の ``local_min``（Detect all local minima in an image.）に相当。\n\n``a`` が窓サイズを、``b`` が輝度の上限しきい値を振る。両方が使われる。'),
     ("pruning", "region", REG, REG, "region_trans", {"kind": "pruning"},
@@ -2129,11 +2204,11 @@ SEED: list[tuple] = [
     ("zero_crossing_sub_pix", "contour", IMG, CON, "xld", {"kind": "zero_crossing_sub_pix"},
      'LoG(ガウス平滑化込みラプラシアン、シグマ ``0.5+2*a``)のゼロ交差を\n``find_contours`` でサブピクセル精度の輪郭として抽出する。領域版の\n``zero_crossing``(画素解像度)に対するサブピクセル精度版。HALCON の\n``zero_crossing_sub_pix``（Extract zero crossings from an image with\nsubpixel accuracy.）に相当。\n\n``a`` がガウス平滑化のシグマを振る。``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("closest_point_transform", "region", REG, IMG, "region_trans", {"kind": "closest_point_transform"},
-     '領域の**補集合**に対するユークリッド距離変換を正規化して返す ―― 各\n画素から最も近い領域(前景)画素までの距離を表す、``distance_transform``\nとは前景/背景が逆の距離場。出力は ``image`` 型。HALCON の\n``closest_point_transform``（Compute the closest-point transformation of\na region.）に相当。\n\n``a``, ``b`` は未使用。'),
+     '領域の**補集合**に対するユークリッド距離変換を正規化して返す ―― 各\n画素から最も近い領域(前景)画素までの距離を表す、``distance_transform``\nとは前景/背景が逆の距離場。出力は ``image`` 型。領域が空なら一様 1.0\n(最も近い領域の画素が無い = どこも最遠)。HALCON の\n``closest_point_transform``（Compute the closest-point transformation of\na region.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("junctions_skeleton", "region", REG, REG, "region_trans", {"kind": "junctions_skeleton"},
      '骨格化した領域のうち、3x3 近傍に 3 つ以上の骨格画素を持つ画素(分岐点・\n交差点)だけを残す。骨格の端点(``pruning`` が削る対象)ではなく、枝分かれ\nする結節点を検出する。HALCON の ``junctions_skeleton``（Find junctions and\nend points in a skeleton.）に相当(HALCON は端点も同時に返すが、ここでは\n分岐点のみを検出する近似)。\n\n``a``, ``b`` は未使用。'),
     ("get_region_thickness", "features", REG, FEA, "region_feat", {"metric": "thickness"},
-     '領域の太さ [px] の近似値 ``2 × 最大内接円半径``(``distance_transform_edt`` の最大値の 2 倍)。\n\nHALCON の ``get_region_thickness``（Access the thickness of a region along the main axis.）が定義する\n「主軸に沿った太さのプロファイル」とは異なり、方向を問わないグローバルな最大内接半径\nだけを見る単純化(主軸方向の情報は失われる)。\n\n★2026-09-26 まで画像の最大辺長で割っていて、厚みが画像の長辺の半分を超える領域は\n全部 1.0 に頭打ちしていた(30x70 の矩形で 0.1500、いまは 30.0)。\n``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``, ``b`` は未使用。'),
+     '領域の太さ [px] の近似値 ``2 × 最大内接円半径``(``distance_transform_edt`` の最大値の 2 倍)。\n画像の外は背景とみなす(縁に接する領域も、画像を広げたときと同じ太さ。全面の 60x80 は 60)。\n\nHALCON の ``get_region_thickness``（Access the thickness of a region along the main axis.）が定義する\n「主軸に沿った太さのプロファイル」とは異なり、方向を問わないグローバルな最大内接半径\nだけを見る単純化(主軸方向の情報は失われる)。\n\n★2026-09-26 まで画像の最大辺長で割っていて、厚みが画像の長辺の半分を超える領域は\n全部 1.0 に頭打ちしていた(30x70 の矩形で 0.1500、いまは 30.0)。\n``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``, ``b`` は未使用。'),
 ]
 
 

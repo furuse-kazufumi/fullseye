@@ -14,7 +14,7 @@
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/distance_transform.inputs.jpg">distance_transform: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>ユークリッド距離変換(<code style="color:#22d3bf">ndimage.distance_transform_edt</code>)を最大値で正規化した画像。各前景画素について最も近い背景画素までの距離を表す ―― 値が大きいほど領域の「奥」にある画素。出力は <code style="color:#22d3bf">region</code> ではなく <code style="color:#22d3bf">image</code> 型になる点に注意。HALCON の <code style="color:#22d3bf">distance_transform</code>（Compute the distance transformation of a region.）に相当。</p>
+<p>ユークリッド距離変換(<code style="color:#22d3bf">ndimage.distance_transform_edt</code>)を最大値で正規化した画像。各前景画素について最も近い背景画素までの距離を表す ―― (背景が無ければ一様 1.0 = どこも最遠) 値が大きいほど領域の「奥」にある画素。出力は <code style="color:#22d3bf">region</code> ではなく <code style="color:#22d3bf">image</code> 型になる点に注意。HALCON の <code style="color:#22d3bf">distance_transform</code>（Compute the distance transformation of a region.）に相当。</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>

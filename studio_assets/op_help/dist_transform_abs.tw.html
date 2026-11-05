@@ -17,9 +17,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dist_transform_abs.inputs.jpg">dist_transform_abs: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>不正規化的絕對像素距離轉換。相當於 HALCON 的 <code style="color:#22d3bf">distance_transform</code>（Compute the distance transformation of a region.）。</p>
-<p><code style="color:#22d3bf">a</code> 選擇距離類型：<code style="color:#22d3bf">a &lt; 1/3</code> 為歐氏距離，<code style="color:#22d3bf">1/3 &lt;= a &lt; 2/3</code> 為城市街區（L1），其餘為棋盤（L∞）。<code style="color:#22d3bf">b &lt; 0.5</code> 對每個前景像素回傳到最近背景像素的距離；<code style="color:#22d3bf">b &gt;= 0.5</code> 對每個背景像素回傳到最近前景像素的距離。輸出為 float64 影像，與 <code style="color:#22d3bf">dist_transform</code> 不同，不以影像內最大值正規化（3×3 與 9×9 正方形的中心分別為 2 與 5）。例：<code style="color:#22d3bf">_dist_transform_abs(np.ones((3, 3)), 0, 0)</code>。</p>
+<p><code style="color:#22d3bf">a</code> 選擇距離類型：<code style="color:#22d3bf">a &lt; 1/3</code> 為歐氏距離，<code style="color:#22d3bf">1/3 &lt;= a &lt; 2/3</code> 為城市街區（L1），其餘為棋盤（L∞）。<code style="color:#22d3bf">b &lt; 0.5</code> 對每個前景像素回傳到最近背景像素的距離；<code style="color:#22d3bf">b &gt;= 0.5</code> 對每個背景像素回傳到最近前景像素的距離。輸出為 float64 影像，與 <code style="color:#22d3bf">dist_transform</code> 不同，不以影像內最大值正規化（被背景包圍的 3×3 與 9×9 正方形的中心分別為 2 與 5）。例：<code style="color:#22d3bf">_dist_transform_abs(np.pad(np.ones((3, 3)), 1), 0, 0)[2, 2]</code> 為 2.0。</p>
+<p>★2026-11-05（對抗性驗證 第 2 輪 P4b）之前，這個例子寫的是 <code style="color:#22d3bf">np.ones((3, 3))</code>（沒有背景），實際的值不是 2.0 而是 2.236（即下面的退化輸入）。</p>
+<p>當<b>影像中不存在要量測距離的對象</b>(<code style="color:#22d3bf">b &lt; 0.5</code> 時沒有任何背景像素,<code style="color:#22d3bf">b &gt;= 0.5</code> 時沒有前景)時, 距離沒有定義(無限大)。此時回傳<b>全為 0</b>(「沒有距離場」)——空區域是合法的輸入(<code style="color:#22d3bf">b &gt;= 0.5</code> 的全背景以及 <code style="color:#22d3bf">b &lt; 0.5</code> 的全前景都是),因此不視為例外。不要把這個 0 當作距離來讀:</p>
+<p>對象是否存在,請在輸入端以 <code style="color:#22d3bf">region.any()</code> / <code style="color:#22d3bf">(~region).any()</code> 確認。兩個方向都是常數,因此與影像的翻轉、旋轉可交換。2026-11-05(對抗性驗證 第 2 輪 P4)之前,<code style="color:#22d3bf">distance_transform_edt</code> 回傳的是彷彿對象位於影像外 (-1, 0) 處的斜坡(3×3 上為 1〜3.6),<code style="color:#22d3bf">cdt</code> 回傳全為 -1 的值。</p>
 <p>HALCON 的參考運算子回傳 <code style="color:#22d3bf">int4</code> 近似值。本 op 回傳精確的 float64 距離，不是相容 API。</p>
-<p>??? FsValueError????? NaN / inf?</p>
+<p>例外:</p>
+<p>FsValueError: 影像含有 NaN / inf。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

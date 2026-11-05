@@ -331,10 +331,15 @@ def test_rescale_img_b_selects_the_interpolation_order():
 
 
 def test_rescale_img_default_b_is_bit_identical_to_the_old_cubic_default():
-    """b=0.5 -> order 3。b が死んでいた頃(ndimage 既定 order=3)とビット一致。"""
+    """b=0.5 -> order 3。b が死んでいた頃(ndimage 既定 order=3)とビット一致。
+
+    ★2026-11-05(敵対的検証 第 2 巡 P8): 中心を H/2 から画素中心の規約 (H-1)/2 に直した。ここで比べる
+    「旧」の式も同じ中心にする(この門が固定したいのは補間次数 = ndimage の既定 order=3 であって、
+    半画素ずれた中心ではない)。
+    """
     v = _photo(64)
     s = 0.7 + 0.6 * 0.9
-    off = (v.shape[0] * (1 - 1 / s) / 2, v.shape[1] * (1 - 1 / s) / 2)
+    off = ((v.shape[0] - 1) / 2 * (1 - 1 / s), (v.shape[1] - 1) / 2 * (1 - 1 / s))
     old = np.clip(ndimage.affine_transform(v, np.array([1 / s, 1 / s]), offset=off,
                                            mode="reflect"), 0, 1)
     assert np.array_equal(old, np.asarray(RT["rescale_img"](v.copy(), 0.9, 0.5), np.float64))

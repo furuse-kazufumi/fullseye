@@ -5,7 +5,7 @@ category: derivative
 in: hessian
 out: voxel
 gpu: なし
-examples: [type_connectivity_tour]
+examples: [hessian_numpy_chain, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -53,15 +53,16 @@ Raises:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [hessian_numpy_chain](../../../../examples/hessian_numpy_chain.py) — `py -3.11 examples/hessian_numpy_chain.py`
 - [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)
 
-[correlation_score](../score/correlation_score.md)
+[correlation_score](../score/correlation_score.md) · [voxel_to_hessian](voxel_to_hessian.md)
 
 ## 同カテゴリ(`derivative`)
 
-[gradient_magnitude](gradient_magnitude.md) · [gradient_coherence](gradient_coherence.md) · [hessian_determinant](hessian_determinant.md)
+[gradient_magnitude](gradient_magnitude.md) · [gradient_coherence](gradient_coherence.md) · [voxel_to_hessian](voxel_to_hessian.md) · [hessian_determinant](hessian_determinant.md)
 
 ---
 *Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

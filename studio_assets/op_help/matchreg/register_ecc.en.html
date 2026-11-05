@@ -27,8 +27,9 @@
 <p>Returns:</p>
 <p>dict(<code style="color:#22d3bf">kind=&quot;registration&quot;</code>, <code style="color:#22d3bf">method=&quot;ecc&quot;</code>)。<code style="color:#22d3bf">warp</code> (3,3) / <code style="color:#22d3bf">flow2d</code> (2,H,W) の</p>
 <p><code style="color:#22d3bf">(dy, dx)</code> / <code style="color:#22d3bf">warped</code>(fixed の格子へ戻した moving、外側は 0)/ <code style="color:#22d3bf">valid</code> / <code style="color:#22d3bf">valid_fraction</code> /</p>
-<p><code style="color:#22d3bf">metric_name=&quot;ecc_rho&quot;</code> / <code style="color:#22d3bf">metric</code>(最後の相関係数)/ <code style="color:#22d3bf">iterations</code> / <code style="color:#22d3bf">converged</code> /</p>
-<p><code style="color:#22d3bf">history</code> / <code style="color:#22d3bf">model</code> / <code style="color:#22d3bf">image_shape</code>。</p>
+<p><code style="color:#22d3bf">metric_name=&quot;ecc_rho&quot;</code> / <code style="color:#22d3bf">metric</code>(<b>返す warp での</b>相関係数)/ <code style="color:#22d3bf">iterations</code> / <code style="color:#22d3bf">converged</code> /</p>
+<p><code style="color:#22d3bf">history</code>(反復ごとの、その反復の<b>更新前の</b> warp の相関。反復の上限で止まったときは</p>
+<p><code style="color:#22d3bf">history[-1]</code> は返す warp の値ではなく <code style="color:#22d3bf">metric</code> と違いうる)/ <code style="color:#22d3bf">model</code> / <code style="color:#22d3bf">image_shape</code>。</p>
 <p>Raises:</p>
 <p>ValueError: 画像が不正 / <code style="color:#22d3bf">motion</code> が違う / 引数が値域外 / 初期の変換が特異 / 反復が発散 /</p>
 <p>テンプレートが画像の外へ出た / 相関が負で ECC が定義できない(<code style="color:#22d3bf">nonpositive=&quot;raise&quot;</code>)/</p>

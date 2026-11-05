@@ -370,7 +370,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-99 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+101 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -471,11 +471,13 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **組み立てる**
 
 - 位置を合わせて重ねる: [説明](../capabilities/align-and-stack.md) · 例 [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py) · [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py)
+- 画像を点・点群・体積・メッシュ・グラフへ渡して戻す: [説明](../capabilities/convert-between-representations.md) · 例 [poc_bga_ball_type_roundtrip](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bga_ball_type_roundtrip.py) · [representation_roundtrip](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/representation_roundtrip.py) · [representation_conversion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/representation_conversion.py) · [type_connectivity_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/type_connectivity_tour.py)
 - 基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する: [説明](../capabilities/golden-compare.md) · 例 [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - 既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る: [説明](../capabilities/inspection-fixture.md) · 例 [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す: [説明](../capabilities/inspection-workflow.md) · 例 [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
 - レンズの製造公差を、MTF と歩留まりで決める: [説明](../capabilities/lens-tolerancing.md) · 例 [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - 同じ入力の検証・近傍探索・変換核を一度だけ計算する: [説明](../capabilities/reuse-computation-results.md) · 例 [perf_pointcloud_descriptors](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_pointcloud_descriptors.py) · [perf_monogenic_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_monogenic_metrics.py) · [perf_prepared_volume_probe](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_prepared_volume_probe.py) · [perf_polarization_analyze](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_polarization_analyze.py) · [perf_hankel_plan_and_piv_stream](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_hankel_plan_and_piv_stream.py)
+- 科学データのファイルを読む(FITS・NIfTI・MRC・OME-TIFF・E57): [説明](../capabilities/scientific-data-files.md) · 例 [poc_real_file_formats](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py)
 - op の返り値(型付き)を JSON に出し、bit そのままで戻す: [説明](../capabilities/typed-results-as-json.md) · 例 [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す: [説明](../capabilities/typed-results-as-markdown.md) · 例 [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - 型付きの検査結果を Excel(.xlsx)レポートに書き出す: [説明](../capabilities/xlsx-report.md) · 例 [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -499,11 +501,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC 以外の使用例 182 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 183 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 
-PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 299 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -583,7 +585,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>寸法・形状計測</b> (58)</summary>
+<details class="vall"><summary><b>寸法・形状計測</b> (59)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../articles/assets/poc/poc_aoi_ct_traceability/story.ja.gif" alt="One populated region in top view and reconstructed attenuation slices. The same central joint is traceable to its internal void; rings and metal streaks arise in projection reconstruction." loading="lazy" width="200" height="200"></picture><span>AOI と CT の対応</span></a>
 <a href="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../articles/assets/poc/poc_asbuilt_wall_deviation/story.ja.gif" alt="竣工した壁の歪み" loading="lazy" width="200" height="200"></picture><span>竣工した壁の歪み</span></a>
@@ -643,10 +645,11 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><img src="../articles/assets/poc/poc_real_sem_metal_layer/story.ja.gif" alt="実 SEM 像。緑=track ラベル、赤=重複除去後の via ラベル。" loading="lazy" width="200" height="200"></picture><span>実SEM金属配線の寸法計測</span></a>
 <a href="../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><img src="../articles/assets/poc/poc_virtual_acceptance_3d/story.ja.gif" alt="artefact layout (VDI/VDE 2634-2 idea) and the noise each design leaves on the flat" loading="lazy" width="200" height="200"></picture><span>買う前に受入試験をかける ―― 同じ iToF でも黒い球 1 つで不合格になる</span></a>
 <a href="../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><img src="../articles/assets/poc/poc_light_section_step_weld_floor/story.ja.gif" alt="高さ地図(フレーム × 列、gauss): 段差 2 mm と高さの変わるビード" loading="lazy" width="200" height="200"></picture><span>光切断の高さは µm で合うが、実機を決めるのはスペックルの床 20.7 µm</span></a>
+<a href="../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><img src="../articles/assets/poc/poc_real_file_formats/story.ja.gif" alt="SDSS r の NGC 2420(北が上)。青=star_detect の検出、緑=SDSS の星表の星(15〜20 等、飽和なし)で 1.0″ 以内に対応、赤=対応なし。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外(検出の青だけが並ぶ)。" loading="lazy" width="200" height="200"></picture><span>実物の科学データファイルを読む</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 形状</b> (20)</summary>
+<details class="vall"><summary><b>3-D 形状</b> (21)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="../articles/assets/poc/poc_battery_ct_degradation/story.ja.gif" alt="真正面(0 度)なら空隙の影までは見える。ただし奥行きに積算されているので厚みも深さも出ない。22 度傾けると層の縞そのものが重なって消える —— 投影では姿勢が結果を決めてしまう。だから断層に落とす。" loading="lazy" width="200" height="200"></picture><span>電池の CT 劣化</span></a>
 <a href="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="../articles/assets/poc/poc_bev_sensor_fusion/story.ja.gif" alt="評価窓は前方 3-30 m。既知でない領域(車体内部・陰)は評価から外す。" loading="lazy" width="200" height="200"></picture><span>鳥瞰図の融合</span></a>
@@ -668,6 +671,7 @@ PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori.png"><img src="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/story.ja.gif" alt="同じ θ の繊維を 12 本ずつ、θ を 3 通り描いたもの。★**S² の緯線 1 本が、3 次元では 1 枚のトーラス面**になる —— 3 つの色が入れ子の殻をつくる。S² の北極と南極に対応する 2 本だけは、直線と単位円になる(この図には入れていない)。" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>4 次元を 3-D で</span></a>
 <a href="../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_plateau_venue_lod2.jpg" alt="会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに" width="200" height="200"><span>会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに</span></a>
 <a href="../view2026/anim3d/star_tracker_anim3d.html?lang=ja"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png"><img src="../articles/assets/poc/poc_star_tracker/story.ja.gif" alt="PSF・光子雑音・読み出し雑音を含む合成像。真の星16個に、星表に無いホットピクセル2個を加えた。" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>合成星像から衛星姿勢を推定する</span></a>
+<a href="../articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_bga_ball_type_roundtrip.jpg" alt="画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個" width="200" height="200"><span>画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個</span></a>
 </div>
 </details>
 
@@ -1400,8 +1404,8 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [レンズの製造公差を MTF・歩留まり・補償ストロークで配分](../articles/assets/poc/poc_lens_tolerancing/05_rebudget.png) (図): 公開処方の三枚玉に、曲率・厚み・屈折率・アッベ数・偏心・傾き・面の非点不整・くさび・群偏心を行ごとに割り当てる。新 op 8 本は分布、中央差分感度、Monte Carlo、Wilson 95 % 歩留まり区間、複数の補償変数と組立ストロークを一つの報告にする。薄いくさびの像移動は閉形式 f(n−1)α に 6e-8、1 fringe の非点不整の実光線 OPD RMS は閉形式に 1.3 %。CI の 16 試行では歩留まり 0.688、内部間隔と像面の補償を足すと 1.000。一様・正規・切断正規は同じ ±公差でも 0.750 / 1.000 / 1.000、首位の公差を締めて低感度を緩めた再配分は 0.833。学習 0、較正 0。
   公開処方の三枚玉に、曲率・厚み・屈折率・アッベ数・偏心・傾き・面の非点不整・くさび・群偏心を行ごとに割り当てる。新 op 8 本は分布、中央差分感度、Monte Carlo、Wilson 95 % 歩留まり区間、複数の補償変数と組立ストロークを一つの報告にする。薄いくさびの像移動は閉形式 f(n−1)α に 6e-8、1 fringe の非点不整の実光線 OPD RMS は閉形式に 1.3 %。CI の 16 試行では歩留まり 0.688、内部間隔と像面の補償を足すと 1.000。一様・正規・切断正規は同じ ±公差でも 0.750 / 1.000 / 1.000、首位の公差を締めて低感度を緩めた再配分は 0.833。学習 0、較正 0。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
   用語: MTF — 空間周波数ごとに像のコントラストが物体からどれだけ伝わるかを表す、光学伝達関数の絶対値。; Wilson 95 % — 二項比率の信頼区間を、正規近似のスコア検定を反転して求める方法で、標本が小さい場合もWald区間より安定する。
-- [処方から撮るプレノプティックカメラ: 生のマイクロ像から撮影後の再合焦と距離へ](../articles/assets/poc/poc_plenoptic_camera/01_camera_section.png) (図): 主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。候補距離への3分類は廃止し、処方の slope↔距離式を使って候補にない 0.75 m と 1.3 m を往復した誤差は 1e-9 m 未満。カメラ断面とF値比の図は検証ではない概念図と明記した。
-  主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。候補距離への3分類は廃止し、処方の slope↔距離式を使って候補にない 0.75 m と 1.3 m を往復した誤差は 1e-9 m 未満。カメラ断面とF値比の図は検証ではない概念図と明記した。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
+- [処方から撮るプレノプティックカメラ: 生のマイクロ像から撮影後の再合焦と距離へ](../articles/assets/poc/poc_plenoptic_camera/01_camera_section.png) (図): 主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。真値は変換式から作らず、物体点から処方を順方向に光線追跡して測った視差で、0.6 / 1.0 / 1.8 m で +0.169 / -0.029 / -0.163 レンズレット毎視点(1.0 m が 0 でないのは F/3.7 の球面収差)。復号したライトフィールドのピント山は +0.175 / 0.000 / -0.150 で、0.03 以内で一致する。以前の変換式は像のずれを「傾き×角度ステップ×ピッチ」としていて約 3000 倍小さく、真値を +712 / 0 / -448 と出していたが、式を自分の逆で往復するだけの門は通っていた。距離は近軸の式なので、領域ごとの中央値誤差が +51 / +22 / +224 mm 残る。カメラ断面とF値比の図は検証ではない概念図と明記した。
+  主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。真値は変換式から作らず、物体点から処方を順方向に光線追跡して測った視差で、0.6 / 1.0 / 1.8 m で +0.169 / -0.029 / -0.163 レンズレット毎視点(1.0 m が 0 でないのは F/3.7 の球面収差)。復号したライトフィールドのピント山は +0.175 / 0.000 / -0.150 で、0.03 以内で一致する。以前の変換式は像のずれを「傾き×角度ステップ×ピッチ」としていて約 3000 倍小さく、真値を +712 / 0 / -448 と出していたが、式を自分の逆で往復するだけの門は通っていた。距離は近軸の式なので、領域ごとの中央値誤差が +51 / +22 / +224 mm 残る。カメラ断面とF値比の図は検証ではない概念図と明記した。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
   用語: EPI — ライトフィールドの位置と視点の二軸を切り出した画像で、同じ三次元点が奥行きに応じた傾きの線として現れる。
 - [同じ粒子を走査像と透過像で測る](../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif) (GIF): 同じ球形・ファセット粒子14個の台帳から二つの像を作り、面積相当径、最大傾斜、接触対の分水嶺、傾斜像の高さ、限定角再構成を共通の真値で採点する。52 nm粒子では走査像のしきい値径は+4.16 nm、透過像は正焦点で-0.18 nm、焦点外れ12000 nmで+9.82 nm。走査像の偏りはガウス縁の閉形式2 sqrt(2 ln 2) sigmaに一致し、透過像の暗い縁はsqrt(lambda defocus)に10%以内。反射信号の材料比は公表された反射係数、立体計測は平行投影の閉形式と完全角再構成で検算する。新opなし、学習0、較正0。
   同じ球形・ファセット粒子14個の台帳から二つの像を作り、面積相当径、最大傾斜、接触対の分水嶺、傾斜像の高さ、限定角再構成を共通の真値で採点する。52 nm粒子では走査像のしきい値径は+4.16 nm、透過像は正焦点で-0.18 nm、焦点外れ12000 nmで+9.82 nm。走査像の偏りはガウス縁の閉形式2 sqrt(2 ln 2) sigmaに一致し、透過像の暗い縁はsqrt(lambda defocus)に10%以内。反射信号の材料比は公表された反射係数、立体計測は平行投影の閉形式と完全角再構成で検算する。新opなし、学習0、較正0。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_tem_same_particle.py)

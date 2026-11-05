@@ -153,7 +153,9 @@ def _residual_vector(P: np.ndarray, a, eps, R, t) -> np.ndarray:
     eps1 = float(eps[0])
     F = inside_outside(P, a, eps, R, t)
     F = np.clip(F, 0.0, _F_CLIP)
-    vol = np.sqrt(max(a1 * a2 * a3, _EPS))
+    # ★2026-11-05 敵対的検証 N5: 以前は max(a1a2a3, 1e-12)。長さ³ の絶対の床なので、
+    # 半径 1e-6 の物体(a1a2a3 ~ 1e-18)では体積補正が 1e-6 に固定され残差が 3e5 倍に化けた。
+    vol = np.sqrt(max(a1 * a2 * a3, 0.0))
     return vol * (F ** eps1 - 1.0)
 
 
@@ -170,8 +172,9 @@ def superquadric_residual(points, a, eps, R, t) -> float:
       ``eps1`` だけを使う)。
     - ``R``/``t``: 姿勢(``X_body = R.T @ (X - t)``)。``None`` なら単位回転 / 原点。
 
-    数値保護: F は [0, 1e12] にクリップし、``a1*a2*a3`` は 1e-12 以上に持ち上げてから sqrt を取る
-    (退化パラメータで inf/NaN にならないため。表面近傍の値には影響しない)。
+    数値保護: F は [0, 1e12] にクリップし、``a1*a2*a3`` は負を 0 に切ってから sqrt を取る
+    (退化パラメータで inf/NaN にならないため。長さ³ の絶対の床は置かない —— 小さい物体の残差を
+    変えてしまうため。2026-11-05)。
     次元: ``sqrt(a1 a2 a3)`` は長さの 3/2 乗、``F^eps1 - 1`` は無次元なので、返り値は長さの 3 乗の
     次元を持ち点群のスケールに依存する。大きさの違う物体どうしの比較には向かない。真の点-表面
     ユークリッド距離ではなく半径距離近似であること、外れ値に無防備なことはモジュール docstring
@@ -214,6 +217,13 @@ def fit_superquadric(points) -> dict:
     初期姿勢 = 慣性テンソル固有ベクトル、初期 a = 主軸 bbox 半分、初期 eps=(1,1)。
     ``a`` は正、``eps`` は [0.1, 2.0] にクリップして最適化する。
 
+    尺度: 点群を重心へ寄せ、外接箱の対角長 ``L`` で割った無次元の座標で解き、``a = L·a'``、
+    ``t = 重心 + L·t'``、``residual = L³·residual'`` で戻す(★2026-11-05 敵対的検証 N5)。
+    以前は生の座標のまま解いており、残差が長さの 1.5 乗で縮むため scipy 既定の ``gtol`` が
+    初回評価で満たされ、``s <= 1e-4`` の点群では PCA の初期値をそのまま返していた
+    (楕円体 a=(2,1.5,1) が 1.979/1.495/1.001、中心が 0.17·s ずれる)。いまは ``s`` に依らず同じ解。
+    全点が一致する点群(``L == 0``)は ``ValueError``。
+
     Returns
     -------
     dict: {'a': (3,), 'eps': (2,), 'R': (3,3), 't': (3,), 'residual': float}
@@ -225,9 +235,17 @@ def fit_superquadric(points) -> dict:
     if len(P) < 6:
         raise ValueError(f"fit_superquadric: at least 6 points required (got N={len(P)})")
 
+    if not np.all(np.isfinite(P)):
+        raise ValueError("fit_superquadric: points must be finite")
+    L = float(np.linalg.norm(P.max(axis=0) - P.min(axis=0)))
+    if not L > 0.0:
+        raise ValueError("fit_superquadric: all points coincide — no superquadric is defined")
+    c0 = P.mean(axis=0)
+    P_world = P
+    P = (P_world - c0) / L                      # 無次元(外接箱の対角 = 1)
     t0, R0, a0 = _principal_frame(P)
     rotvec0 = Rotation.from_matrix(R0).as_rotvec()
-    diag = float(np.linalg.norm(P.max(axis=0) - P.min(axis=0))) + _EPS
+    diag = 1.0
 
     # p = [a1,a2,a3, eps1,eps2, rvx,rvy,rvz, tx,ty,tz]
     p0 = np.concatenate([a0, [1.0, 1.0], rotvec0, t0]).astype(np.float64)
@@ -252,10 +270,13 @@ def fit_superquadric(points) -> dict:
     sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
                         xtol=1e-10, ftol=1e-10, max_nfev=4000)
     p = sol.x
-    a = np.asarray(p[0:3], dtype=np.float64)
+    a_n = np.asarray(p[0:3], dtype=np.float64)
     eps = np.clip(np.asarray(p[3:5], dtype=np.float64), 0.1, 2.0)
     R = Rotation.from_rotvec(p[5:8]).as_matrix()
-    t = np.asarray(p[8:11], dtype=np.float64)
-    residual = (float(np.mean(sol.fun ** 2)) if np.array_equal(eps, p[3:5])
-                else superquadric_residual(P, a, eps, R, t))
+    t_n = np.asarray(p[8:11], dtype=np.float64)
+    # 無次元の解を元の単位へ(F は相似変換で不変)。residual は返す (a, eps, R, t) で元の点群に
+    # 対して測り直す(superquadric_residual と同じ量。L³·mean(sol.fun²) とは丸めの桁だけ違う)。
+    a = L * a_n
+    t = c0 + L * t_n
+    residual = superquadric_residual(P_world, a, eps, R, t)
     return {"a": a, "eps": eps, "R": R, "t": t, "residual": residual}

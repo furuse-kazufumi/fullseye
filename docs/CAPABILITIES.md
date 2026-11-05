@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 99 項目**
+**収録 101 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -30,6 +30,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
+| [画像を点・点群・体積・メッシュ・グラフへ渡して戻す](capabilities/convert-between-representations.md) | `keypoints_from_image2d` → `keypoints_uv_to_points` → `knn_graph` → `knn_graph_to_conn_graph` → `graph_components` | `poc_bga_ball_type_roundtrip` |
 | [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
 | [コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾何で再構成する(工業用 CT)](capabilities/ct-scan-modes.md) | `ct_scan_geometry` → `ellipsoid_projections` → `fdk_reconstruct` → `vol_rle_components` → `vol_rle_volume` | `ct_scan_modes` |
 | [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
@@ -68,6 +69,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [同じ入力の検証・近傍探索・変換核を一度だけ計算する](capabilities/reuse-computation-results.md) | `polarization_separate` | `perf_pointcloud_descriptors` |
 | [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
+| [科学データのファイルを読む(FITS・NIfTI・MRC・OME-TIFF・E57)](capabilities/scientific-data-files.md) | `astro_fits_read` | `poc_real_file_formats` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
 | [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md) | `sem_render` → `tem_power_spectrum` | `poc_sem_tem_same_particle` |
 | [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
@@ -1183,7 +1185,7 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 動く例: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (9)
+## 組み立てる (11)
 
 ### [位置を合わせて重ねる](capabilities/align-and-stack.md)
 
@@ -1200,6 +1202,22 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 実寸校正: 合わせは px のまま。変位を実寸にするなら既知寸法の的を同じ光学系で測り `mm_per_px_from_reference` → `pixel_to_world`。
 
 動く例: `poc_astro_photometry`, `poc_registration_basin`
+
+### [画像を点・点群・体積・メッシュ・グラフへ渡して戻す](capabilities/convert-between-representations.md)
+
+1 枚の画像から、明るい塊を点(keypoints)にし、高さを載せて 3-D の点群にし、点ごとのガウシアンにして体積(voxel)にし、等値面のメッシュや近傍のグラフへ渡します。逆向きも揃っていて、点群 → keypoints → 計数画像、体積の相関 → 位置 → 画像と戻れます。どの変換も**軸の約束を op 名に書いて**あり(`keypoints_uv_to_points` は (u, v) → (z, y, x))、往復できるものは bit 一致、できないものは何が落ちるかを `opsreprconv.roundtrips()` が宣言しています。
+
+使う op: `keypoints_from_image2d`, `keypoints_to_image2d`, `keypoints_uv_to_points`, `points_zyx_to_keypoints_uv`, `pointmap_to_points`, `points_to_gaussians`, `correlation_score`, `score_to_position`, `knn_graph_to_conn_graph`, `labels_to_indices`, `select_points`
+
+推奨パイプライン: [`keypoints_from_image2d`](ops/reprconv/keypoint/keypoints_from_image2d.md) → [`keypoints_uv_to_points`](ops/reprconv/keypoint/keypoints_uv_to_points.md) → [`knn_graph`](ops/3d/geodesic/knn_graph.md) → [`knn_graph_to_conn_graph`](ops/reprconv/structure/knn_graph_to_conn_graph.md) → [`graph_components`](ops/conngraph/stats/graph_components.md)
+
+代替: [`keypoints_rowcol_to_uv`](ops/reprconv/keypoint/keypoints_rowcol_to_uv.md), [`depth_to_organized_points`](ops/3d/range_image/depth_to_organized_points.md), [`voxel_to_mesh`](ops/3d/transform/voxel_to_mesh.md), [`graph_laplacian_spectrum`](ops/conngraph/stats/graph_laplacian_spectrum.md), [`points_to_position`](ops/reprconv/keypoint/points_to_position.md)
+
+限界: keypoints_from_image2d は 8 近傍の連結成分の重心なので、隣り合う画素に落ちた 2 点は 1 点に融合する(画素の往復が bit 一致なのは整数位置で離れた点だけ)。points は (z, y, x)、pointmap_to_points の返りは (x, y, z) で、取り違えても例外は出ない。gaussians_to_voxel は 3σ 打ち切りで質量が 1 にならない(0.99911、箱の極限 0.99192)。体積の相関は循環相関で、縁で切れたガウシアンはずれのピークを 1 voxel 動かしうる。
+
+実寸校正: 画素・voxel の実寸は変換の外で持つ(op は格子の添字で計算する)。gaussians_to_voxel は origin と spacing を必ず渡す —— 既定の刻み 1 は世界座標をそのまま添字にする。
+
+動く例: `poc_bga_ball_type_roundtrip`, `representation_roundtrip`, `representation_conversion`, `type_connectivity_tour`
 
 ### [基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する](capabilities/golden-compare.md)
 
@@ -1219,7 +1237,7 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 ### [フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す](capabilities/inspection-workflow.md)
 
-op が 931 本あっても、ライン担当が最初に触る形は「画像フォルダを指して、前処理と計測を決め、仕様で良否をつけ、集計とレポートをもらう」です。`fullseye/inspect_batch.py` の `inspect_batch(folder, recipe, measure=..., spec=...)` はその 1 回の呼び出しで、各画像を **読む → recipe(`run_pipeline` の stages)→ `measure`(計測 op を束ねた callable → dict)→ `judge`(仕様照合)** に通し、行ごとに入力ファイルの sha256・計測値・根拠つきの Verdict・所要時間を返します。数値の計測列は時系列にまとめ、2 点以上あれば EWMA(`spc_ewma`)で工程が管理状態かを添えます。`report_path` の拡張子で `.xlsx` / `.md` / `.jsonl` に書き分け、`audit_path` を渡すと 1 行 1 JSON の監査ログに追記します。
+op が何千本あっても、ライン担当が最初に触る形は「画像フォルダを指して、前処理と計測を決め、仕様で良否をつけ、集計とレポートをもらう」です。`fullseye/inspect_batch.py` の `inspect_batch(folder, recipe, measure=..., spec=...)` はその 1 回の呼び出しで、各画像を **読む → recipe(`run_pipeline` の stages)→ `measure`(計測 op を束ねた callable → dict)→ `judge`(仕様照合)** に通し、行ごとに入力ファイルの sha256・計測値・根拠つきの Verdict・所要時間を返します。数値の計測列は時系列にまとめ、2 点以上あれば EWMA(`spc_ewma`)で工程が管理状態かを添えます。`report_path` の拡張子で `.xlsx` / `.md` / `.jsonl` に書き分け、`audit_path` を渡すと 1 行 1 JSON の監査ログに追記します。
 
 使う op: `inspect_batch`, `judge`, `as_verdict`, `run_pipeline`, `spc_ewma`, `save_xlsx_report`, `report`, `to_json_lines`
 
@@ -1256,6 +1274,22 @@ op が 931 本あっても、ライン担当が最初に触る形は「画像フ
 実寸校正: 数値の単位や較正は元の op と同じ。曲率は点群の長さ単位、体積プローブは spacing、偏光は検光子角度を正しく渡す。
 
 動く例: `perf_pointcloud_descriptors`, `perf_monogenic_metrics`, `perf_prepared_volume_probe`, `perf_polarization_analyze`, `perf_hankel_plan_and_piv_stream`
+
+### [科学データのファイルを読む(FITS・NIfTI・MRC・OME-TIFF・E57)](capabilities/scientific-data-files.md)
+
+天文の FITS、脳画像の NIfTI-1、電子顕微鏡の MRC2014、顕微鏡の OME-TIFF、3-D スキャナの E57 を、ファイルの `bytes` から `(配列, meta)`(E57 は点群の表)にします。`meta` には寸法を持つ量を単位つきで入れます —— FITS の基本 WCS、NIfTI の qform / sform と画素間隔(mm)、MRC のボクセル寸法(Å)、OME-TIFF の物理サイズ、E57 の pose。読んだ配列はそのまま 2-D / 3-D の op (`star_detect`・`aperture_photometry`・`otsu`・`vol_label`・`vol_region_props`・`obb` など)へ渡せます。
+
+使う op: `astro_fits_read`, `nifti_read`, `em_mrc_read`, `ome_tiff_read`, `e57_read`, `nrrd_read`
+
+推奨パイプライン: [`astro_fits_read`](ops/fileio/fits/astro_fits_read.md)
+
+代替: [`nifti_read`](ops/fileio/nifti/nifti_read.md), [`em_mrc_read`](ops/fileio/mrc/em_mrc_read.md), [`ome_tiff_read`](ops/fileio/ome_tiff/ome_tiff_read.md), [`e57_read`](ops/fileio/e57/e57_read.md), [`nrrd_read`](ops/fileio/nrrd/nrrd_read.md), [`star_detect`](ops/astrostack/photometry/star_detect.md), [`aperture_photometry`](ops/astrostack/photometry/aperture_photometry.md), [`vol_label`](ops/3d/regionprops/vol_label.md), [`vol_region_props`](ops/3d/regionprops/vol_region_props.md)
+
+限界: FITS は primary HDU だけ(拡張 HDU・BLANK・random groups は拒否)。MRC は格子の起点 NXSTART を返さない。OME-TIFF は 1 ファイルで完結し物理サイズとチャネル名を持つものだけ(複数ファイルの組は拒否)。NRRD は空間の単位の明示が要る。E57 は 1 scan だけ。
+
+実寸校正: 物理寸法はファイルのヘッダから読む(FITS は WCS の度、NIfTI は mm、MRC は Å、OME-TIFF は宣言された単位)。ヘッダに無い寸法は推測しない。
+
+動く例: `poc_real_file_formats`
 
 ### [op の返り値(型付き)を JSON に出し、bit そのままで戻す](capabilities/typed-results-as-json.md)
 
@@ -1415,9 +1449,9 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 
 代替: [`lf_from_mla`](ops/lightfield/decode/lf_from_mla.md), [`lf_refocus`](ops/lightfield/refocus/lf_refocus.md), [`lf_depth_from_focus`](ops/lightfield/depth/lf_depth_from_focus.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md)
 
-限界: 幾何光学のみで回折と画素間クロストークは扱わない。
+限界: 幾何光学のみで回折と画素間クロストークは扱わない。傾き↔距離は近軸の式で、球面収差の分だけ距離がずれる。
 
-実寸校正: 一様な白色面で MLA 格子を校正し、距離既知の三平面で深度を確認する。
+実寸校正: 一様な白色面で MLA 格子を校正し、処方を順方向に光線追跡した視差を真値に三平面で深度を確認する。
 
 動く例: `poc_plenoptic_camera`
 

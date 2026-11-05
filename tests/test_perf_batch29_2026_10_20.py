@@ -72,16 +72,19 @@ def test_388_signal_features_matches_original_composition():
         r = dsp.rms(x)
         peak = float(np.max(np.abs(x)))
         freqs, mag = dsp.spectrum(x, rate)
-        msum = float(mag.sum()) + 1e-12
+        # 2026-11-05(abs-floor2): 元の合成の + 1e-12 の床と小数桁の丸めは尺度で結果を変える欠陥だった
+        # (rate=1 の peak_freq 0.0236 Hz が 0.024 に)。修正後の定義(床なし・有効桁を残す丸め)で照合する。
+        msum = float(mag.sum())
         centroid = float((freqs * mag).sum() / msum)
+        rk = dsp._round_keep
         expected = {
-            "rms": round(r, 6), "peak": round(peak, 6),
-            "crest_factor": round(peak / (r + 1e-12), 4),
+            "rms": rk(r, 6, 6), "peak": rk(peak, 6, 6),
+            "crest_factor": round(peak / r, 4),
             "zcr": round(dsp.zero_crossing_rate(x), 6),
-            "spectral_centroid": round(centroid, 3),
-            "peak_freq": round(float(freqs[int(np.argmax(mag))]), 3),
-            "bandwidth": round(float(np.sqrt(
-                ((freqs - centroid) ** 2 * mag).sum() / msum)), 3),
+            "spectral_centroid": rk(centroid, 3, 3),
+            "peak_freq": rk(float(freqs[int(np.argmax(mag))]), 3, 3),
+            "bandwidth": rk(float(np.sqrt(
+                ((freqs - centroid) ** 2 * mag).sum() / msum)), 3, 3),
         }
         assert dsp.signal_features(x, rate) == expected
 

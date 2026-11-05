@@ -16,6 +16,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schließt eine Region mit einem scheibenförmigen Strukturelement (Dilatation gefolgt von Erosion). Entspricht HALCONs <code style="color:#22d3bf">closing</code> (schließt eine Region).</p>
 <p>Ruft <code style="color:#22d3bf">scipy.ndimage.binary_closing</code> mit einer Kreisscheibe vom Radius <code style="color:#22d3bf">r = 1 + int(a*4)</code> auf. <code style="color:#22d3bf">b</code> wird nicht verwendet. Füllt kleine Löcher und Unterbrechungen und erhält dabei die Gesamtform.</p>
+<p>Bildrand: Die Ebene setzt sich über das Bild hinaus fort, und das Äußere gilt als Hintergrund (es wird aufgefüllt, geschlossen und dann zurückgeschnitten). Closing ist extensiv, daher wird auch Vordergrund, der den Rand berührt, nicht abgetragen. 2026-11-05 (adversariale Prüfung, Runde 2, P3): Es wird auf einer Ebene geschlossen, die sich über das Bild hinaus fortsetzt, und danach auf das Bild zurückgeschnitten (Auffüllen mit 0 → <code style="color:#22d3bf">binary_closing</code> → Ausschneiden). Davor wurde mit dem Bildäußeren als 0 erodiert, wodurch der Vordergrund am Rand um den Radius abgetragen wurde.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

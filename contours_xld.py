@@ -53,6 +53,12 @@ def gen_cross_contour_xld(row, col, size=5.0, angle=0.0, shape=(256, 256)):
     return _contour(shape, h + [v])
 
 
+def _unit_or_zero(v):
+    """長さ 1 に正規化したベクトル。長さ 0 なら 0 ベクトル(床を足さない)。"""
+    n = float(np.linalg.norm(v))
+    return v / n if n > 0.0 else np.zeros_like(v, dtype=float)
+
+
 def gen_contour_polygon_rounded_xld(points, radius=2.0, n=8, shape=(256, 256)):
     """角を丸めた多角形輪郭を生成(gen_contour_polygon_rounded_xld)。"""
     p = np.asarray(points, float).reshape(-1, 2)
@@ -61,7 +67,9 @@ def gen_contour_polygon_rounded_xld(points, radius=2.0, n=8, shape=(256, 256)):
     for i in range(m):
         prev = p[(i - 1) % m]; cur = p[i]; nxt = p[(i + 1) % m]
         v1 = prev - cur; v2 = nxt - cur
-        v1 = v1 / (np.linalg.norm(v1) + 1e-12); v2 = v2 / (np.linalg.norm(v2) + 1e-12)
+        # ★1.0 前の修正 2026-11-05 abs-floor: 以前は長さに + 1e-12(座標 1e-6 で丸めの位置が相対 1e-6 ずれた)。長さ 0 の辺は
+        #   以前どおり 0 ベクトル。
+        v1 = _unit_or_zero(v1); v2 = _unit_or_zero(v2)
         a = cur + v1 * radius; b = cur + v2 * radius
         for t in np.linspace(0, 1, int(n)):
             out.append((1 - t) * a + t * b)
@@ -91,8 +99,10 @@ def get_polygon_xld(contour, tolerance=2.0):
         if len(pts) < 3:
             return pts
         start, end = pts[0], pts[-1]
-        line = end - start; L = np.linalg.norm(line) + 1e-12
-        d = np.abs(_cross2d(line, pts - start)) / L
+        line = end - start; L = float(np.linalg.norm(line))
+        # 閉じた輪郭(始点 = 終点)は始点からの距離で分ける(以前は + 1e-12 で割って同じ扱い)
+        d = (np.abs(_cross2d(line, pts - start)) / L if L > 0.0
+             else np.linalg.norm(pts - start, axis=1))
         idx = int(d.argmax())
         if d[idx] > eps:
             left = dp(pts[:idx + 1], eps); right = dp(pts[idx:], eps)

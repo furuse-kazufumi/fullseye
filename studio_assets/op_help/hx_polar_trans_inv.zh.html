@@ -14,7 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_polar_trans_inv.inputs.jpg">hx_polar_trans_inv: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 contour 点视为 (radius, angle) 并逆变换回直角坐标(polar_trans 的逆)。</p>
-<p>把各 contour 的点视为 <code style="color:#22d3bf">(row, col) = (半径 rad, 角度)</code>,令 <code style="color:#22d3bf">ang = col / W * 2*pi</code>,返回转换回 <code style="color:#22d3bf">(cy + rad*sin(ang), cx + rad*cos(ang))</code>(<code style="color:#22d3bf">cy, cx = H/2, W/2</code>)直角坐标的 contour。</p>
+<p>把各 contour 的点视为 <code style="color:#22d3bf">(row, col) = (半径 rad, 角度)</code>,令 <code style="color:#22d3bf">ang = col / W * 2*pi</code>,返回转换回 <code style="color:#22d3bf">(cy + rad*sin(ang), cx + rad*cos(ang))</code>(<code style="color:#22d3bf">cy, cx = (H-1)/2, (W-1)/2</code> = 像素中心约定下的图像中心。2026-11-05 之前为 <code style="color:#22d3bf">H/2, W/2</code>)直角坐标的 contour。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <p style="margin:2px 0 2px 12px">• 半径直接把行的值作为像素距离使用,角度把列按图像宽度映射到 0〜2π。</p>
 <p>注意: 正变换 <code style="color:#22d3bf">polar_trans_contour_xld</code> 把行输出为 <code style="color:#22d3bf">r / max(H, W) * H</code>、把列输出为 <code style="color:#22d3bf">(θ + π) / 2π * W</code>, 因此本 op 并不是它的严格逆变换。角度有 π 的偏差(点映射到中心对称的位置),非正方形图像中半径有 <code style="color:#22d3bf">max(H, W)/H</code> 倍的偏差(实测往返产生半径 2 倍的误差)。期望与正变换往返时, 要把这一差异考虑进去,或者把本 op 单独作为“从列=角度、行=半径的一般极坐标表示到直角坐标”的变换使用。</p>

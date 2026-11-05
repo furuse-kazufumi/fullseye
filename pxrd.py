@@ -1222,10 +1222,13 @@ def cubic_index(two_theta, wavelength, lattices=LATTICES, tolerance=0.05, n_firs
 # 検出器の較正
 # ----------------------------------------------------------------------------------------------
 def _circle_fit(px, py):
-    A = np.column_stack([2 * px, 2 * py, np.ones_like(px)])
-    sol, *_ = np.linalg.lstsq(A, px * px + py * py, rcond=None)
+    # 重心へ寄せて解く(2026-11-05 敵対的検証 G10 の兄弟: 未中心化の代数円は原点から遠い点で桁落ち)
+    x0, y0 = float(np.mean(px)), float(np.mean(py))
+    qx, qy = px - x0, py - y0
+    A = np.column_stack([2 * qx, 2 * qy, np.ones_like(qx)])
+    sol, *_ = np.linalg.lstsq(A, qx * qx + qy * qy, rcond=None)
     cx, cy, c = sol
-    return float(cx), float(cy), float(math.sqrt(max(c + cx * cx + cy * cy, 0.0)))
+    return float(cx) + x0, float(cy) + y0, float(math.sqrt(max(c + cx * cx + cy * cy, 0.0)))
 
 
 def _ray_samples(im, cx, cy, n_az, rmax, step=0.5):

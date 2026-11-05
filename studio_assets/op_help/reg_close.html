@@ -15,7 +15,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/reg_close.inputs.jpg">reg_close: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>領域（region）の二値クロージング（膨張してから侵食）。HALCON の <code style="color:#22d3bf">closing_circle</code>（Close a region with a circular structuring element.）に相当。</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">_it(a)</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。細い切れ込みや小さな穴を埋める。<code style="color:#22d3bf">border_value=1</code> を指定しているため画像端は前景として扱われる。</p>
+<p><code style="color:#22d3bf">a</code> が反復回数を <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">_it(a)</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。細い切れ込みや小さな穴を埋める。</p>
+<p><b>画像の縁</b>: 平面は画像の外へ続き、外は背景とみなす（余白 0 を付けて閉じてから切り戻す）。closing は拡大的（入力の前景を削らない）で、縁の近くに新しい前景も作らない。2026-11-05（敵対的検証 第 2 巡 P3）までは <code style="color:#22d3bf">border_value=1</code> で画像の外を前景とみなしており、縁の近くの孤立画素から角の楔が生えていた（20×20 の (1,1) の 1 画素が a=1 で 10 画素に）。</p>
 <p><b>つまみ(実測)</b>: <code style="color:#22d3bf">a</code> は<b>段階的</b>に効き、切り替わるのは a ≈ 0.33、0.67、0.99(実測。刻み 0.02 の掃きで測った位置)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>

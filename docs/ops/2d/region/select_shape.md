@@ -37,7 +37,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-面積が閾値(``16+a*200`` 画素)未満の連結成分を除去する(小さなノイズ状
+面積が閾値(``16+a*200`` 画素)未満の連結成分(前景は 8 連結)を除去する(小さなノイズ状
 領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of
 shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる
 汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。

@@ -23,7 +23,10 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 返り値は ``{"columns": {列名: 1-D 配列}, "units": {...}, "meta": {...}}``。列名と単位の
 個数、全データ行の列数、必須メタデータを検査し、途中までの表は返さない。数値列は float64
-(空欄は NaN)、数値以外を含む列は文字列配列になる。入力は UTF-8 の ``str`` または ``bytes``。
+(空欄は NaN)、数値以外を含む列は文字列配列になる。ただし全セルが整数で、float64 では
+正確に持てない値(絶対値が 2**53 超)を含む列は int64 / uint64 で返す(丸めて返さない)。
+その列に空欄(欠測)があれば、空欄を mask した int64 / uint64 の ``numpy.ma.MaskedArray`` で返す。
+入力は UTF-8 の ``str`` または ``bytes``(先頭の BOM は読み飛ばす)。
 
 呼び出し例: ``roundtrip = table_read_csv(table_write_csv(table, units=units, meta=meta))``。
 

@@ -207,14 +207,12 @@ def _meta_from_sitk(img, dtype: str, src_fmt: str,
     spacing = tuple(float(s) for s in img.GetSpacing())      # (sx, sy, sz)
     origin = np.asarray(img.GetOrigin(), np.float64)         # (ox, oy, oz)
     direction = np.asarray(img.GetDirection(), np.float64)
-    if direction.size == 9:
-        direction = direction.reshape(3, 3)
-    else:                                                    # 2-D image safety net
-        direction = np.eye(3, dtype=np.float64)
-    if len(spacing) == 3:
-        spacing_mm = (spacing[2], spacing[1], spacing[0])    # -> (sz, sy, sx)
-    else:
-        spacing_mm = (1.0, 1.0, 1.0)
+    # the caller has already refused a non-3-D image; never invent a geometry for one
+    if direction.size != 9 or len(spacing) != 3 or origin.size != 3:
+        raise ValueError("%s: %d-D image geometry where a 3-D volume was expected"
+                         % (src_fmt, len(spacing)))
+    direction = direction.reshape(3, 3)
+    spacing_mm = (spacing[2], spacing[1], spacing[0])        # -> (sz, sy, sx)
     return VolumeMeta(spacing_mm=spacing_mm, origin=origin, direction=direction,
                       dtype=dtype, n_series=n_series, modality=modality,
                       source_format=src_fmt)
@@ -544,27 +542,42 @@ def read_volume(path: str, series_id: Optional[str] = None,
 
 
 # ---- writers --------------------------------------------------------------- #
+def _checked_geometry(meta: "VolumeMeta", src: str):
+    """``meta``'s ``(spacing_zyx, origin_xyz, direction_3x3)``, validated -- or ``ValueError``.
+
+    ★2026-11-05 redteam I12: each of the three used to sit in ``try: ... except Exception: pass``
+    (and a length test), so a zero / negative / NaN spacing, a 2-element spacing, a singular or
+    wrong-shaped direction and a NaN origin were silently replaced by ITK's defaults (or written
+    as NaN) and the file claimed a geometry nobody asked for. Fail closed instead."""
+    try:
+        sp = np.asarray(meta.spacing_mm, np.float64)
+        origin = np.asarray(meta.origin, np.float64)
+        direction = np.asarray(meta.direction, np.float64)
+    except (TypeError, ValueError) as e:
+        raise ValueError("%s: VolumeMeta geometry is not numeric (%s)" % (src, e)) from None
+    if sp.shape != (3,) or not np.isfinite(sp).all() or (sp <= 0).any():
+        raise ValueError("%s: spacing_mm must be three finite positive (sz, sy, sx) values, got %r"
+                         % (src, meta.spacing_mm))
+    if origin.shape != (3,) or not np.isfinite(origin).all():
+        raise ValueError("%s: origin must be three finite (x, y, z) values, got %r" % (src, meta.origin))
+    if direction.shape != (3, 3) or not np.isfinite(direction).all():
+        raise ValueError("%s: direction must be a finite 3x3 matrix, got shape %r"
+                         % (src, direction.shape))
+    # a direction cosine matrix has |det| = 1; reject one whose columns are (near-)dependent
+    if abs(float(np.linalg.det(direction))) <= 1e-6 * max(1.0, float(np.abs(direction).max()) ** 3):
+        raise ValueError("%s: direction matrix is singular (det = %.3g) — its axes do not span 3-D"
+                         % (src, float(np.linalg.det(direction))))
+    return sp, origin, direction
+
+
 def _write_sitk(path: str, vol: np.ndarray, meta: Optional["VolumeMeta"]) -> None:
     sitk = _sitk()
     img = sitk.GetImageFromArray(np.ascontiguousarray(vol))   # (D,H,W) -> image, depth=D
     if meta is not None:
-        try:
-            sp = tuple(float(s) for s in meta.spacing_mm)     # (sz, sy, sx)
-            if len(sp) == 3:
-                img.SetSpacing((sp[2], sp[1], sp[0]))          # -> ITK (sx, sy, sz)
-        except Exception:
-            pass
-        try:
-            o = np.asarray(meta.origin, np.float64).ravel()
-            if o.size >= 3:
-                img.SetOrigin((float(o[0]), float(o[1]), float(o[2])))
-        except Exception:
-            pass
-        try:
-            d = np.asarray(meta.direction, np.float64).reshape(3, 3)
-            img.SetDirection(tuple(float(x) for x in d.ravel()))
-        except Exception:
-            pass
+        sp, o, d = _checked_geometry(meta, str(path))         # sp = (sz, sy, sx)
+        img.SetSpacing((float(sp[2]), float(sp[1]), float(sp[0])))   # -> ITK (sx, sy, sz)
+        img.SetOrigin((float(o[0]), float(o[1]), float(o[2])))
+        img.SetDirection(tuple(float(x) for x in d.ravel()))
     try:
         sitk.WriteImage(img, str(path))
     except Exception as e:
@@ -590,7 +603,9 @@ def write_volume(path: str, vol, meta: Optional["VolumeMeta"] = None) -> None:
     The array is written in its own dtype (RGB / multi-component volumes are not
     supported). DICOM *series* writing and headerless raw writing are intentionally
     out of scope (they need per-slice tags / an external sidecar) and raise
-    ``ValueError``. A non-finite voxel is refused.
+    ``ValueError``. A non-finite voxel is refused, and so is a ``meta`` whose spacing is not three
+    finite positive values, whose origin is not three finite values or whose direction is not a
+    finite non-singular 3x3 matrix (checked for every format, before anything is written).
     """
     p = str(path)
     v = np.asarray(vol)
@@ -599,6 +614,8 @@ def write_volume(path: str, vol, meta: Optional["VolumeMeta"] = None) -> None:
                          % (p, v.ndim))
     if not np.isfinite(np.asarray(v, np.float64)).all():
         raise ValueError("%s: refusing to write a volume with non-finite (NaN/Inf) voxels" % p)
+    if meta is not None:
+        _checked_geometry(meta, p)       # every format: a bad geometry is a caller error, not ignorable
 
     suf = _suffix(p)
     if suf in (".nii", ".nii.gz", ".nrrd", ".nhdr", ".mha", ".mhd", ".hdr"):

@@ -986,7 +986,14 @@ class PipelineModel:
                 for i in range(len(self._stages))]
 
     def _context(self):
-        return (self._img_ver, api._policy(None), api._fast_on(None))
+        # ★2026-11-05(敵対的検証 C6 の兄弟): engine.run_cached と同じく、結果を変える状態 —— 照合用
+        #   テンプレート(ops._MATCH_CTX)と fssystem の全パラメータ —— も文脈に入れる(変われば全段を捨てる)。
+        import fssystem
+        import ops as _rt_ops
+        from engine import _input_hash
+        t = _rt_ops._MATCH_CTX.get("template")
+        return (self._img_ver, api._policy(None), api._fast_on(None),
+                None if t is None else _input_hash(t), repr(sorted(fssystem.system_snapshot().items())))
 
     def _ensure(self, idx):
         """Make ``self._cache[idx]`` valid, running only the stages the cache cannot serve.
@@ -1475,20 +1482,42 @@ class PerceptionModel:
     MODES = ("optical flow", "motion overlay", "stereo depth", "stereo terrain")
 
     def __init__(self, frame_b=None):
-        self.frame_b = None if frame_b is None else np.asarray(frame_b, np.float64)
+        self.frame_b = None if frame_b is None else np.asarray(frame_b)
 
     def set_frame_b(self, arr):
-        self.frame_b = None if arr is None else np.asarray(arr, np.float64)
+        self.frame_b = None if arr is None else np.asarray(arr)
+
+    @staticmethod
+    def _frame(arr, which):
+        """One perception input on the facade's contract: float64 in [0,1], finite.
+
+        ★2026-11-05 (external audit F2, sibling; nary-guard): both frames used to be cast with
+        ``np.asarray(x, np.float64)`` -- a uint8 frame B stayed 0..255 next to a [0,1] frame A,
+        and optical flow / stereo depth came back silently different (max colour difference 1.0 /
+        0.96 against the same frames as float), and a NaN frame gave a NaN picture. The integer
+        rule is :func:`api._contract_dtype` under the process policy (``FULLSEYE_ON_ERROR`` /
+        strict: ``"raise"`` refuses, otherwise ``/255`` for uint8 and a ledger record), exactly as
+        ``fullseye.apply`` treats every input of an n-ary op.
+        """
+        v = np.asarray(arr)
+        if v.dtype.kind not in "biuf":
+            raise TypeError("frame %s must be a real numeric image, got dtype %s" % (which, v.dtype))
+        srt = "color" if v.ndim == 3 else "image"
+        v = np.asarray(api._contract_dtype(v, api._NaryInput("studio_perception", srt, "image"),
+                                           api._policy(None)), np.float64)
+        if v.size and not np.isfinite(v).all():
+            raise ValueError("frame %s contains NaN or infinity; clean or mask it first" % which)
+        return v
 
     def view(self, mode, frame_a):
         """Return an (H, W, 3) RGB visualization for *mode*. Raises ValueError if a
         second frame is missing or the two frames disagree in size."""
         if frame_a is None:
             raise ValueError("no frame A (load or generate an image first)")
-        a = imgio.ensure_gray(np.asarray(frame_a, np.float64))
+        a = imgio.ensure_gray(self._frame(frame_a, "A"))
         if self.frame_b is None:
             raise ValueError("load a second frame (B) first")
-        b = imgio.ensure_gray(self.frame_b)
+        b = imgio.ensure_gray(self._frame(self.frame_b, "B"))
         if a.shape != b.shape:
             raise ValueError("frame A %s and B %s must be the same size" % (a.shape, b.shape))
         if mode == "optical flow":
@@ -8128,6 +8157,30 @@ def build_window(model=None):
 
     run_bridge = _RunBridge(win)
 
+    def _delete_worker_on_gui_thread(worker):
+        """Destroy a finished worker here, on the GUI thread (2026-11-04 deadlock).
+
+        The worker used to be a *receiver* of its QThread (``started -> run``,
+        ``finished -> deleteLater``) and was destroyed by ``deleteLater`` inside the
+        finishing thread.  ``~QObject`` then holds the worker's signal-slot mutex --
+        Qt shares 131 of them by object address -- while it calls the sender
+        QThread's ``disconnectNotify``, and PySide's override lookup there waits for
+        the GIL.  The GUI thread meanwhile held the GIL inside
+        ``QPlainTextEdit.setPlainText``, whose ``QMetaObject::disconnect`` waited
+        for the same pool mutex: both threads stopped for good (CI py3.11/py3.12,
+        reproduced on Linux with gdb: 3 hangs in 3330 iterations).
+
+        Now the worker is started by a queued ``invokeMethod`` and nothing of the
+        QThread is connected to it, so its ``~QObject`` makes no Python call under
+        a Qt lock; and it is deleted here, after ``QThread.wait()``, never by its
+        own thread's event dispatch.
+        """
+        if worker is None:
+            return
+        import shiboken6                     # noqa: PLC0415  (ships with PySide6)
+        if shiboken6.isValid(worker):
+            shiboken6.delete(worker)
+
     class _ThreadFinishBridge(QtCore.QObject):
         """Carry thread identity into a receiver with explicit GUI affinity."""
 
@@ -8135,17 +8188,18 @@ def build_window(model=None):
             super().__init__(run_bridge)
             self.generation = generation
             self.thread = thread
-            # Keep both Python wrappers alive until Qt confirms worker deletion.
+            # Keep the worker's Python wrapper alive until it is deleted below.
             self.worker = worker
 
         @QtCore.Slot()
         def finished(self):
             # finished() is emitted before QThread has necessarily completed all
             # thread-local cleanup.  wait() is the synchronization point that
-            # makes releasing the worker's Python wrapper safe.
+            # makes deleting the worker (and releasing its wrapper) safe.
             self.thread.wait()
             _thread_finished(self.generation, self.thread)
             run_ctl.finish_bridges.pop(self.generation, None)
+            _delete_worker_on_gui_thread(self.worker)
             self.worker = None
             self.thread = None
             self.deleteLater()
@@ -8166,11 +8220,12 @@ def build_window(model=None):
         worker.started.connect(run_bridge.started, QtCore.Qt.QueuedConnection)
         worker.finished.connect(run_bridge.finished, QtCore.Qt.QueuedConnection)
         worker.run_done.connect(run_bridge.done, QtCore.Qt.QueuedConnection)
-        thread.started.connect(worker.run)
-        # QObject cleanup belongs to the worker thread.  Controller cleanup belongs
-        # to the GUI thread; a context-free Python lambda here can run in the
-        # emitting worker thread and drop the final wrappers there.
-        thread.finished.connect(worker.deleteLater)
+        # The worker must not be a receiver of the (Python-wrapped) QThread: its
+        # ~QObject would call the thread's disconnectNotify -- a GIL wait -- while
+        # holding a shared Qt mutex (see _delete_worker_on_gui_thread).  So start
+        # it with a queued call that the thread's event loop delivers, and delete
+        # it on the GUI thread once the thread has finished.
+        QtCore.QMetaObject.invokeMethod(worker, "run", QtCore.Qt.QueuedConnection)
         finish_bridge = _ThreadFinishBridge(gen, thread, worker)
         run_ctl.finish_bridges[gen] = finish_bridge
         thread.finished.connect(finish_bridge.finished, QtCore.Qt.QueuedConnection)
@@ -8298,8 +8353,8 @@ def build_window(model=None):
         worker = _BatchWorker(gen, snapshot, plan, stop_event); worker.moveToThread(thread)
         worker.progress.connect(batch_bridge.progress, QtCore.Qt.QueuedConnection)
         worker.complete.connect(batch_bridge.complete, QtCore.Qt.QueuedConnection)
-        thread.started.connect(worker.run)
-        thread.finished.connect(worker.deleteLater)
+        # Same rule as the run worker: no QThread -> worker connection, GUI-side delete.
+        QtCore.QMetaObject.invokeMethod(worker, "run", QtCore.Qt.QueuedConnection)
         finish_bridge = _ThreadFinishBridge(gen, thread, worker)
         run_ctl.finish_bridges[gen] = finish_bridge
         thread.finished.connect(finish_bridge.finished, QtCore.Qt.QueuedConnection)

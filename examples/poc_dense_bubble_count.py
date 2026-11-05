@@ -88,6 +88,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import fullseye as fs  # noqa: E402  ★先に fullseye(パスフックが repo 直下を足す)
 import blob2d as B  # noqa: E402
 import segworld as SW  # noqa: E402
+import realdata  # noqa: E402
 
 import examplefig as figs  # noqa: E402
 
@@ -645,6 +646,7 @@ def load_pemwe():
     if len(pairs) != 35:
         print("   PEMWE の組が 35 でない(%d)—— 拒否" % len(pairs))
         return None
+    realdata.mark_read("pemwe-bubble-masks")
     return pairs
 
 
@@ -673,6 +675,7 @@ def load_bbbc():
     small, large = ("_w1", "_w2") if med["_w1"] < med["_w2"] else ("_w2", "_w1")
     print("   BBBC005: 面積の中央値 %s → 小さい物体 = %s、大きい物体 = %s" % (
         {k: round(v) for k, v in med.items()}, small, large))
+    realdata.mark_read("bbbc005")
     return {"small": out[small], "large": out[large]}
 
 

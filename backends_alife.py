@@ -153,6 +153,18 @@ def _shift(x, dy, dx):
     return np.roll(np.roll(x, dy, axis=0), dx, axis=1)
 
 
+def _shift_neumann(x, dy, dx):
+    """``_shift`` と同じ向きのずらしで、縁を**複製**する(Neumann、縁を越える流れは 0)。
+
+    画像の拡散(Perona–Malik)は格子のトーラスではない —— ``np.roll`` だと右端が左端と拡散する
+    (敵対的検証 2026-11-05 第 2 巡 P7)。CA / 反応拡散の ``_shift`` は周期のまま。
+    """
+    H, W = x.shape[0], x.shape[1]
+    py0, py1, px0, px1 = max(dy, 0), max(-dy, 0), max(dx, 0), max(-dx, 0)
+    p = np.pad(x, ((py0, py1), (px0, px1)), mode="edge")
+    return p[py1:py1 + H, px1:px1 + W]
+
+
 def _lap(x):
     """5-point discrete Laplacian on the torus."""
     return (_shift(x, 1, 0) + _shift(x, -1, 0)
@@ -314,6 +326,9 @@ def alife_perona_malik(v, a, b):
     is what makes the edges sharpen rather than merely survive. ``a`` sets the
     edge scale kappa = 0.02 + 0.2a, ``b`` the iteration count 1 + int(15b);
     lambda is fixed at 0.2 (<= 0.25, the explicit-scheme stability bound).
+    The image border is replicated (Neumann, no flux across it); until
+    2026-11-05 (adversarial review round 2, P7) the lattice was periodic and the
+    right column diffused with the left one.
     """
     x = _img(v)
     kappa = 0.02 + 0.2 * _knob(a)
@@ -321,10 +336,10 @@ def alife_perona_malik(v, a, b):
     lam = 0.2
     im = x
     for _ in range(iters):
-        dn = _shift(im, -1, 0) - im
-        ds = _shift(im, 1, 0) - im
-        de = _shift(im, 0, 1) - im
-        dw = _shift(im, 0, -1) - im
+        dn = _shift_neumann(im, -1, 0) - im
+        ds = _shift_neumann(im, 1, 0) - im
+        de = _shift_neumann(im, 0, 1) - im
+        dw = _shift_neumann(im, 0, -1) - im
         cn = 1.0 / (1.0 + (dn / kappa) ** 2)
         cs = 1.0 / (1.0 + (ds / kappa) ** 2)
         ce = 1.0 / (1.0 + (de / kappa) ** 2)

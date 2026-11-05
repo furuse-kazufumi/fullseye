@@ -13,7 +13,8 @@
 <p>dst_normals (M,3): dst 의 단위 법선(정규화되지 않아도 내부에서 정규화).</p>
 <p>모르면 pointcloud.estimate_normals(dst) 등으로 사전 추정.</p>
 <p>iters: 최대 반복 수.</p>
-<p>tol: RMSE 변화가 이 값 미만이면 수렴으로 보고 종료.</p>
+<p>tol: RMSE 변화가 <code style="color:#22d3bf">tol × L</code>(L = dst 외접 박스의 대각선 길이) 미만이면 수렴으로 보고 종료.</p>
+<p>점군의 스케일에 대한 상대량(2026-11-05 까지는 좌표 단위의 절대량).</p>
 <p>init ((R0,t0)): 초기 자세(대략적 매치의 R,t 를 전달). None 이면 단위.</p>
 <p>trim (float|None): [0,1) 의 비율. 점-면 잔차가 큰 상위를 매 반복 버리는</p>
 <p>Trimmed ICP(부분 겹침·이상값에 강건).</p>

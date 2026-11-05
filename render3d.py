@@ -210,10 +210,17 @@ def look_at(eye, target, up=(0.0, 0.0, 1.0)) -> np.ndarray:
     u = np.asarray(up, np.float64).reshape(3)
     f = t - e
     fn = np.linalg.norm(f)
-    if not np.isfinite(fn) or fn < 1e-12:
+    # 一致・平行の判定は相対量(2026-11-05 敵対的検証 N7 の兄弟): 以前は fn < 1e-12 の絶対量で
+    # 1e-13 離れた正しい視点を拒み、up を正規化せずに sn < 1e-9 と比べていた(|up| = 1e-12 の
+    # up は直交でも「平行」)。
+    ref = max(float(np.linalg.norm(e)), float(np.linalg.norm(t)))
+    if not np.isfinite(fn) or fn == 0.0 or fn <= 4.0 * np.finfo(float).eps * ref:
         raise ValueError("look_at: eye and target coincide")
     f = f / fn
-    s = np.cross(f, u)
+    un = np.linalg.norm(u)
+    if not np.isfinite(un) or un == 0.0:
+        raise ValueError("look_at: 'up' must be a finite non-zero vector")
+    s = np.cross(f, u / un)
     sn = np.linalg.norm(s)
     if sn < 1e-9:
         raise ValueError("look_at: 'up' is parallel to the view direction")

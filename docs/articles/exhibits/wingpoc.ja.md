@@ -1492,7 +1492,7 @@ py -3.11 examples/poc_symbol_lot_ocr.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 47 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 48 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -3257,6 +3257,44 @@ py -3.11 examples/poc_light_section_step_weld_floor.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_light_section_step_weld_floor)
 
 使用 op(ノートへ): [`gum_expanded`](https://furuse.work/ops/spc/uncertainty/gum_expanded.html) · [`laser_line_center_gauss`](https://furuse.work/ops/optics/light_section/laser_line_center_gauss.html) · [`laser_line_center_steger`](https://furuse.work/ops/optics/light_section/laser_line_center_steger.html) · [`laser_line_coherent`](https://furuse.work/ops/optics/coherent/laser_line_coherent.html) · [`light_plane_calibrate`](https://furuse.work/ops/optics/light_section/light_plane_calibrate.html) · [`light_section_floor_sweep`](https://furuse.work/ops/optics/light_section/light_section_floor_sweep.html) · [`light_section_height_map`](https://furuse.work/ops/optics/light_section/light_section_height_map.html) · [`light_section_profile`](https://furuse.work/ops/optics/light_section/light_section_profile.html) · [`light_section_render`](https://furuse.work/ops/optics/light_section/light_section_render.html) · [`light_section_rig`](https://furuse.work/ops/optics/light_section/light_section_rig.html) · [`light_section_scan`](https://furuse.work/ops/optics/light_section/light_section_scan.html) · [`light_section_speckle_floor`](https://furuse.work/ops/optics/light_section/light_section_speckle_floor.html) · [`light_section_targets`](https://furuse.work/ops/optics/light_section/light_section_targets.html) · [`light_section_uncertainty_budget`](https://furuse.work/ops/optics/light_section/light_section_uncertainty_budget.html)
+
+## No.2026.300 —— 実物の科学データファイルを 5 形式読む ―― 外の読み手と公表値で採点し、読み手の不具合を 1 つ直す
+
+公開されている実物の科学データファイルを Fullseye の読み込み op で読み、外の読み手(astropy / nibabel / mrcfile / tifffile)と配布元の公表値の両方で採点した。ファイルは配布されたバイト列のまま同梱し SHA-256 を固定した。★FITS: SDSS r バンドの散開星団 NGC 2420(400×400、SDSS のデータは public domain、SkyView の面積保存の再標本化)は 160,000 画素が astropy と完全一致、WCS 10 キーも一致。`star_detect` → `aperture_photometry` で 811 個を検出し、SDSS DR16 の星表のうち飽和の旗の無い 15〜20 等の星 127 個の 91.3 % を 1″ 以内(中央値 0.058″)で拾った。画素(ナノマギー)を零点 22.5 で等級にすると傾き 1.009、星表とのずれ +0.002 等、頑健なばらつき 0.028 等。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外。★NIfTI: OpenNeuro ds000117(CC0)の磁場地図 64×64×33 は nibabel とボクセル完全一致。BIDS の撮像条件と照合し、スライス間隔 3.75 mm、傾き 26.40°(装置の記載 Tra>Cor(−26.4))。照合の途中で `nifti_read` の不具合を見つけて直した: 180° に近い回転の四元数で float32 の丸め屑 1.2e-8 から a = 1.1e-4 を作り、向きを 0.0125° 回していた(nibabel と 8e-4 の差)。参照実装 nifti1_io.c と同じ閾値 1e-7 にした。大津の領域は skimage と 99.83 % 一致、頭部は 2,091 mL。★MRC: EMDB EMD-3197(20³、11.4 Å)は mrcfile と完全一致、最小・最大・平均・標準偏差は EMDB の登録値と相対 3e-8。登録された等値面 1.9 の中身は 2 塊 2,876 + 1,901 nm³。ただし `em_mrc_read` は格子の起点(NXSTART = −2、22.8 Å)を返さない ―― 記録した穴として門に残した。★OME-TIFF: OME の公開見本 tubhiswt-2D(CC BY 4.0)は 2 チャネルを 2 ファイルに分けた組で、`ome_tiff_read` は片方だけでは拒否する。理由が事実であることを別に確かめた(XML は SizeC = 2 を 2 ファイルに宣言、各ファイルの頁は 1 枚)。参照実装の tifffile はバイト列だけを渡すと、もう 1 枚を警告のログだけで**ゼロで埋めて**返す(実物の C1 の最大は 255)。★E57: libE57 の試験点群 bunny を 6 つの数値型で読み、同じ点の PTS 文字版と 30,571 点が 1 対 1 で一致(整数・倍精度 3e-17 m、単精度 8.4e-9 m)。原本は再配布の条件が書かれていないので同梱せず取得道具に任せ、CI では同梱のイトカワ形状(CC0)を pye57 で書いた E57 で代える(25,350 頂点が float32 の格納値と完全一致)。★経緯: 最初の M67 では等級の傾きが 0.52 だった。SkyView の既定(最近傍)は星の光を保存せず、M67 の星は SDSS で飽和する。面積保存で取り直し、飽和しない NGC 2420 に替えた。
+
+[![実物の科学データファイルを 5 形式読む ―― 外の読み手と公表値で採点し、読み手の不具合を 1 つ直す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/01_stars_matched_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/01_stars_matched.png)
+
+*↑ **実物の科学データファイルを 5 形式読む ―― 外の読み手と公表値で採点し、読み手の不具合を 1 つ直す** ―― SDSS r バンドの NGC 2420。青 = star_detect の検出、緑 = SDSS DR16 の星表の星(飽和なし 15〜20 等)と 1″ 以内で対応、赤 = 対応なし。*
+
+[![nanomaggy の画素を開口(半径 4 画素)で足し、零点 22.5 で等級にした。破線は y = x。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/02_magnitudes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/02_magnitudes.png)
+
+*↑ 測定の図 ―― nanomaggy の画素を開口(半径 4 画素)で足し、零点 22.5 で等級にした。破線は y = x。*
+
+[![磁場地図の振幅像(3×3×3.75 mm)の 3 つの中央断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/03_mri_head_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/03_mri_head.png)
+
+*↑ 磁場地図の振幅像(3×3×3.75 mm)の 3 つの中央断面。*
+
+[![EMD-3197(20³、11.4 Å)の 3 つの中央断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/04_em_density_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/04_em_density.png)
+
+*↑ EMD-3197(20³、11.4 Å)の 3 つの中央断面。*
+
+[![E57 から読んだ点群を主軸の面へ投影した密度(libE57 bunny)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/05_e57_points_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/05_e57_points.png)
+
+*↑ E57 から読んだ点群を主軸の面へ投影した密度(libE57 bunny)。*
+
+[![参照実装(astropy / nibabel / mrcfile / tifffile)と配布元の公表値で採点した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/06_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/06_verdicts.png)
+
+*↑ 参照実装(astropy / nibabel / mrcfile / tifffile)と配布元の公表値で採点した。*
+
+```
+py -3.11 examples/poc_real_file_formats.py
+```
+
+ソース: [examples/poc_real_file_formats.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_file_formats)
+
+使用 op(ノートへ): [`aperture_photometry`](https://furuse.work/ops/astrostack/photometry/aperture_photometry.html) · [`astro_fits_read`](https://furuse.work/ops/fileio/fits/astro_fits_read.html) · [`e57_read`](https://furuse.work/ops/fileio/e57/e57_read.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`em_mrc_read`](https://furuse.work/ops/fileio/mrc/em_mrc_read.html) · [`nifti_read`](https://furuse.work/ops/fileio/nifti/nifti_read.html) · [`ome_tiff_read`](https://furuse.work/ops/fileio/ome_tiff/ome_tiff_read.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`star_detect`](https://furuse.work/ops/astrostack/photometry/star_detect.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html) · [`vol_region_props`](https://furuse.work/ops/3d/regionprops/vol_region_props.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 
@@ -8668,9 +8706,9 @@ py -3.11 examples/poc_illusions_and_perpetual_drawing.py
 
 *↑ 測定の図 ―― `measure_length` は「参照線の法線方向に何 px 探すか」。3 px から 16 px まで振っても角度は **0.0 のまま**で、採用された点も **4 通りとも 41 点**(半幅 3 px, 半幅 6 px, 半幅 10 px, 半幅 16 px)。目地は一様なグレーなので、探索を広げても拾える点は増えません。★これは**何も起きなかった図**です ---- はじめこの図説に「半幅を変えると点の数が変わる」と書きましたが、**生成された本文を読み返すとデータと違っていました**。証拠の数が実際に動く例は第 5 章のツェルナー(61 点中 13 と 19)のほうです。*
 
-[![ずらし量 5 通り × 探索半幅 4 通りの **20 通り全部**を測ったもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid.png)
+[![ずらし量 9 通り(市松の周期 1 つぶん、0〜1)× 探索半幅 4 通りの **36 通り全部**を測ったもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid.png)
 
-*↑ ずらし量 5 通り × 探索半幅 4 通りの **20 通り全部**を測ったもの。*
+*↑ ずらし量 9 通り(市松の周期 1 つぶん、0〜1)× 探索半幅 4 通りの **36 通り全部**を測ったもの。*
 
 [![青い横罫が測定線(`gen_measure_rectangle2`)、橙の縦罫が `measure_pos` が見つけたサブピクセルエッジです。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/06_muller_caliper_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/06_muller_caliper.png)
 
@@ -9487,6 +9525,28 @@ py -3.11 examples/poc_star_tracker.py
 この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_star_tracker)
 
 
+
+## No.2026.299 —— 画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個
+
+2 個の BGA パッケージ(各 6 x 6、ピッチ 10 px、半径 3.2 px、1 個欠け)の高さ画像を合成し、表現変換の op 29 個で型から型へ渡して戻した。画像の塊の重心は置いた中心と最大 0.066 px、整数位置の応答画像 → keypoints → 画像は画素ごとに bit 一致、keypoints ↔ 点群も bit 一致。点ごとのガウシアン(重み 1/N)の体積の総和は 6σ 打ち切りで 1 − 1.4e-10、3σ では 0.99911(箱の極限 0.99192 より大きい)。2 回目の検査を (2, −3, 5) voxel ずらすと、体積の循環相関のピークは厳密にそこへ立ち、最大値投影の画像から読んだ keypoints も同じ位置。等値面のメッシュはオイラー標数 142 = 2 × 71 で、体積は閉形式の球の和へ刻み 1 / 0.5 / 0.25 voxel で −1.20 / −0.22 / −0.020 % と収束する。4 近傍グラフは 2 成分 (35, 36) で、ラプラシアンの 0 固有値も 2。1 個を拡大した高さ画像では主曲率 × R の中央値 1.001、形状指数 0.9999。高さ画像の pointmap は列が (x, y, z) で、(z, y, x) の受け手にそのまま渡すと例外なしに 15360 画素が左端の 4 列に積もる(右下)。
+
+[![画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png)
+
+*↑ **画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個** ―― 2 個の BGA パッケージ(各 6 x 6、ピッチ 10 px、半径 3.2 px、1 個欠け)の高さ画像を合成し、表現変換の op 29 個で型から型へ渡して戻した。画像の塊の重心は置いた中心と最大 0.066 px、整数位置の応答画像 → keypoints → 画像は画素ごとに bit 一致、keypoints ↔ 点群も bit 一致。点ごとのガウシアン(重み 1/N)の体積の総和は 6σ 打ち切りで 1 − 1.4e-10、3σ では 0.99911(箱の極限 0.99192 より大きい)。2 回目の検査を (2, −3, 5) voxel ずらすと、体積の循環相関のピークは厳密にそこへ立ち、最大値投影の画像から読んだ keypoints も同じ位置。等値面のメッシュはオイラー標数 142 = 2 × 71 で、体積は閉形式の球の和へ刻み 1 / 0.5 / 0.25 voxel で −1.20 / −0.22 / −0.020 % と収束する。4 近傍グラフは 2 成分 (35, 36) で、ラプラシアンの 0 固有値も 2。1 個を拡大した高さ画像では主曲率 × R の中央値 1.001、形状指数 0.9999。高さ画像の pointmap は列が (x, y, z) で、(z, y, x) の受け手にそのまま渡すと例外なしに 15360 画素が左端の 4 列に積もる(右下)。*
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/02_bga_mesh_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip/02_bga_mesh_volume.png)
+
+*↑ 測定の図*
+
+```
+py -3.11 examples/poc_bga_ball_type_roundtrip.py
+```
+
+ソース: [examples/poc_bga_ball_type_roundtrip.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bga_ball_type_roundtrip.py)
+
+この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip)
+
+使用 op(ノートへ): [`angles_to_normals`](https://furuse.work/ops/reprconv/direction/angles_to_normals.html) · [`correlation_score`](https://furuse.work/ops/reprconv/score/correlation_score.html) · [`curvature_to_shape_index`](https://furuse.work/ops/reprconv/curvature/curvature_to_shape_index.html) · [`curvature_to_table`](https://furuse.work/ops/reprconv/curvature/curvature_to_table.html) · [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`flow_apply`](https://furuse.work/ops/reprconv/flow/flow_apply.html) · [`flow_speed`](https://furuse.work/ops/reprconv/flow/flow_speed.html) · [`gaussians_to_points`](https://furuse.work/ops/reprconv/gaussians/gaussians_to_points.html) · [`gaussians_to_voxel`](https://furuse.work/ops/3d/transform/gaussians_to_voxel.html) · [`graph_components`](https://furuse.work/ops/conngraph/stats/graph_components.html) · [`graph_laplacian_spectrum`](https://furuse.work/ops/conngraph/stats/graph_laplacian_spectrum.html) · [`indices_to_labels`](https://furuse.work/ops/reprconv/index/indices_to_labels.html) · [`keypoints_from_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_from_image2d.html) · [`keypoints_rowcol_to_uv`](https://furuse.work/ops/reprconv/keypoint/keypoints_rowcol_to_uv.html) · [`keypoints_to_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_to_image2d.html) · [`keypoints_uv_to_points`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_points.html) · [`keypoints_uv_to_rowcol`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_rowcol.html) · [`knn_graph`](https://furuse.work/ops/3d/geodesic/knn_graph.html) · [`knn_graph_to_conn_graph`](https://furuse.work/ops/reprconv/structure/knn_graph_to_conn_graph.html) · [`labels_to_indices`](https://furuse.work/ops/reprconv/index/labels_to_indices.html) · [`mesh_volume`](https://furuse.work/ops/3d/mesh_process/mesh_volume.html) · [`normals_to_angles`](https://furuse.work/ops/reprconv/direction/normals_to_angles.html) · [`normals_to_egi`](https://furuse.work/ops/reprconv/direction/normals_to_egi.html) …(他 13)
 
 ### 装置の棟 ―― 生の出力から、装置固有の壊れ方まで再現する
 
@@ -10678,29 +10738,29 @@ py -3.11 examples/poc_lens_tolerancing.py
 
 ## No.2026.272 —— 処方から撮るプレノプティックカメラ
 
-主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。候補距離への3分類は廃止し、処方の slope↔距離式を使って候補にない 0.75 m と 1.3 m を往復した誤差は 1e-9 m 未満。カメラ断面とF値比の図は検証ではない概念図と明記した。
+主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。真値は変換式から作らず、物体点から処方を順方向に光線追跡して測った視差で、0.6 / 1.0 / 1.8 m で +0.169 / -0.029 / -0.163 レンズレット毎視点(1.0 m が 0 でないのは F/3.7 の球面収差)。復号したライトフィールドのピント山は +0.175 / 0.000 / -0.150 で、0.03 以内で一致する。以前の変換式は像のずれを「傾き×角度ステップ×ピッチ」としていて約 3000 倍小さく、真値を +712 / 0 / -448 と出していたが、式を自分の逆で往復するだけの門は通っていた。距離は近軸の式なので、領域ごとの中央値誤差が +51 / +22 / +224 mm 残る。カメラ断面とF値比の図は検証ではない概念図と明記した。
 
 [![処方から撮るプレノプティックカメラ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png)
 
-*↑ **処方から撮るプレノプティックカメラ** ―― 主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。候補距離への3分類は廃止し、処方の slope↔距離式を使って候補にない 0.75 m と 1.3 m を往復した誤差は 1e-9 m 未満。カメラ断面とF値比の図は検証ではない概念図と明記した。*
+*↑ **処方から撮るプレノプティックカメラ** ―― 主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI(エピポーラ平面画像)・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。真値は変換式から作らず、物体点から処方を順方向に光線追跡して測った視差で、0.6 / 1.0 / 1.8 m で +0.169 / -0.029 / -0.163 レンズレット毎視点(1.0 m が 0 でないのは F/3.7 の球面収差)。復号したライトフィールドのピント山は +0.175 / 0.000 / -0.150 で、0.03 以内で一致する。以前の変換式は像のずれを「傾き×角度ステップ×ピッチ」としていて約 3000 倍小さく、真値を +712 / 0 / -448 と出していたが、式を自分の逆で往復するだけの門は通っていた。距離は近軸の式なので、領域ごとの中央値誤差が +51 / +22 / +224 mm 残る。カメラ断面とF値比の図は検証ではない概念図と明記した。*
 
 用語: EPI — ライトフィールドの位置と視点の二軸を切り出した画像で、同じ三次元点が奥行きに応じた傾きの線として現れる。
 
-[![480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section.png)
+[![Conceptual diagram (not a validation gate): main lens, MLA, sensor and five illustrative rays.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section.png)
 
-*↑ 測定の図 ―― 480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.*
+*↑ 測定の図 ―― Conceptual diagram (not a validation gate): main lens, MLA, sensor and five illustrative rays.*
 
 [![F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/02_f_number_matching_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/02_f_number_matching.png)
 
 *↑ F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.*
 
-[![15 x 15 decoded views; EPI disparity is 0.6 px per view step.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi.png)
+[![15 x 15 decoded views; ray-traced parallax +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 /](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi.png)
 
-*↑ 15 x 15 decoded views; EPI disparity is 0.6 px per view step.*
+*↑ 15 x 15 decoded views; ray-traced parallax +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 / 1.8 m.*
 
-[![Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map.png)
+[![Ray-traced truth vs focus-sweep estimate; median error +51 mm / +22 mm / +224 mm at 0.6 / 1.0 / 1.8 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map.png)
 
-*↑ Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.*
+*↑ Ray-traced truth vs focus-sweep estimate; median error +51 mm / +22 mm / +224 mm at 0.6 / 1.0 / 1.8 m (paraxial relation; spherical aberration).*
 
 [![Same MLA: plenoptic 1.0 images the pupil; focused 2.0 images scene fragments.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/07_plenoptic_1_vs_2_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/07_plenoptic_1_vs_2.png)
 
@@ -10718,7 +10778,7 @@ py -3.11 examples/poc_plenoptic_camera.py
 
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_plenoptic_camera)
 
-使用 op(ノートへ): [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lf_depth_from_focus`](https://furuse.work/ops/lightfield/depth/lf_depth_from_focus.html) · [`lf_refocus`](https://furuse.work/ops/lightfield/refocus/lf_refocus.html) · [`mla_surface`](https://furuse.work/ops/optics/plenoptic/mla_surface.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plenoptic_capture`](https://furuse.work/ops/optics/plenoptic/plenoptic_capture.html) · [`plenoptic_decode`](https://furuse.work/ops/optics/plenoptic/plenoptic_decode.html) · [`plenoptic_mla_calibrate`](https://furuse.work/ops/optics/plenoptic/plenoptic_mla_calibrate.html) · [`plenoptic_refocus_depth`](https://furuse.work/ops/optics/plenoptic/plenoptic_refocus_depth.html) · [`plenoptic_system`](https://furuse.work/ops/optics/plenoptic/plenoptic_system.html)
+使用 op(ノートへ): [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lf_depth_from_focus`](https://furuse.work/ops/lightfield/depth/lf_depth_from_focus.html) · [`lf_refocus`](https://furuse.work/ops/lightfield/refocus/lf_refocus.html) · [`mla_surface`](https://furuse.work/ops/optics/plenoptic/mla_surface.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plenoptic_capture`](https://furuse.work/ops/optics/plenoptic/plenoptic_capture.html) · [`plenoptic_decode`](https://furuse.work/ops/optics/plenoptic/plenoptic_decode.html) · [`plenoptic_mla_calibrate`](https://furuse.work/ops/optics/plenoptic/plenoptic_mla_calibrate.html) · [`plenoptic_refocus_depth`](https://furuse.work/ops/optics/plenoptic/plenoptic_refocus_depth.html) · [`plenoptic_system`](https://furuse.work/ops/optics/plenoptic/plenoptic_system.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
 
 ## No.2026.273 —— 同じ粒子を走査像と透過像で測る ―― 52 nm と 48 nm のどちらが正しいか
 

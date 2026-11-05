@@ -14,11 +14,16 @@ def distance_pp(row1, col1, row2, col2) -> float:
 
 
 def _line_ab(r1, c1, r2, c2):
-    """2 点を通る直線 a*col + b*row + c = 0 の (a,b,c)(正規化)。"""
+    """2 点を通る直線 a*col + b*row + c = 0 の (a,b,c)(正規化)。2 点が一致すれば ValueError。"""
+    # ★2026-11-05 敵対的検証 N1: 長さ・長さ² に固定の 1e-12 を足していた。座標 1e-6 の図形では
+    # 床が本体と同じ桁になり、線分外の交点を返す・2 円の交点が 1 個・Plücker 距離が半分になった。
+    # 床は外し、退化(長さ 0)は明示的に扱う。
     a = r2 - r1
     b = c1 - c2
     c = -(a * c1 + b * r1)
-    n = np.hypot(a, b) + 1e-12
+    n = float(np.hypot(a, b))
+    if not n > 0.0:
+        raise ValueError("the line's two points coincide; no line is defined")
     return a / n, b / n, c / n
 
 
@@ -33,7 +38,10 @@ def projection_pl(row, col, r1, c1, r2, c2):
     p = np.array([row, col], float)
     A = np.array([r1, c1], float)
     d = np.array([r2 - r1, c2 - c1], float)
-    d = d / (np.hypot(*d) + 1e-12)
+    n = float(np.hypot(*d))
+    if not n > 0.0:
+        raise ValueError("projection_pl: the line's two points coincide")
+    d = d / n
     return A + np.dot(p - A, d) * d
 
 
@@ -42,7 +50,9 @@ def distance_ps(row, col, r1, c1, r2, c2) -> float:
     p = np.array([row, col], float)
     A, B = np.array([r1, c1], float), np.array([r2, c2], float)
     ab = B - A
-    t = np.clip(np.dot(p - A, ab) / (np.dot(ab, ab) + 1e-12), 0, 1)
+    ab2 = float(np.dot(ab, ab))
+    # 長さ 0 の線分は点 A(以前の + 1e-12 は座標 1e-6 で足を線分の外へ押し出した)。
+    t = float(np.clip(np.dot(p - A, ab) / ab2, 0, 1)) if ab2 > 0.0 else 0.0
     return float(np.hypot(*(p - (A + t * ab))))
 
 
@@ -78,9 +88,12 @@ def angle_ll(ra1, ca1, rb1, cb1, ra2, ca2, rb2, cb2) -> float:
 
 
 def intersection_lines(ra1, ca1, rb1, cb1, ra2, ca2, rb2, cb2):
-    """2 直線の交点 (row, col) を返す(平行なら None、intersection_lines)。"""
-    a1, b1, c1 = _line_ab(ra1, ca1, rb1, cb1)
-    a2, b2, c2 = _line_ab(ra2, ca2, rb2, cb2)
+    """2 直線の交点 (row, col) を返す(平行・2 点が一致する直線なら None、intersection_lines)。"""
+    try:
+        a1, b1, c1 = _line_ab(ra1, ca1, rb1, cb1)
+        a2, b2, c2 = _line_ab(ra2, ca2, rb2, cb2)
+    except ValueError:
+        return None
     M = np.array([[b1, a1], [b2, a2]])                    # [row, col] 係数
     det = np.linalg.det(M)
     if abs(det) < 1e-12:
@@ -92,13 +105,16 @@ def intersection_lines(ra1, ca1, rb1, cb1, ra2, ca2, rb2, cb2):
 def intersection_circles(row1, col1, r1, row2, col2, r2):
     """2 円の交点(0/1/2 点)を返す(intersection_circles)。"""
     d = np.hypot(row2 - row1, col2 - col1)
-    if d > r1 + r2 or d < abs(r1 - r2) or d < 1e-12:
+    # 同心・接する判定は半径に対する相対量(2026-11-05 敵対的検証 N1: 以前は d < 1e-12・
+    # h² <= 1e-12 の絶対量で、半径 1e-6 の 2 円の交点 2 個を 1 個にしていた)。
+    rmax = max(abs(r1), abs(r2))
+    if d > r1 + r2 or d < abs(r1 - r2) or d <= 1e-12 * rmax or d == 0:
         return []
     a = (r1 * r1 - r2 * r2 + d * d) / (2 * d)
     h2 = r1 * r1 - a * a
     ux, uy = (row2 - row1) / d, (col2 - col1) / d
     mx, my = row1 + a * ux, col1 + a * uy
-    if h2 <= 1e-12:
+    if h2 <= 1e-12 * rmax * rmax:
         return [np.array([mx, my])]
     h = np.sqrt(h2)
     return [np.array([mx + h * uy, my - h * ux]), np.array([mx - h * uy, my + h * ux])]
@@ -117,7 +133,10 @@ def distance_point_line(px, py, pz, lx, ly, lz, dx, dy, dz) -> float:
     p = np.array([px, py, pz], float)
     l = np.array([lx, ly, lz], float)
     d = np.array([dx, dy, dz], float)
-    d = d / (np.linalg.norm(d) + 1e-12)
+    n = float(np.linalg.norm(d))
+    if not n > 0.0:
+        raise ValueError("distance_point_line: the direction vector is zero")
+    d = d / n
     return float(np.linalg.norm(np.cross(p - l, d)))
 
 
@@ -391,5 +410,7 @@ def distance_point_pluecker_line(px, py, pz, mx, my, mz, lx, ly, lz) -> float:
     """3D 点から Pluecker 直線(モーメント m, 方向 l)までの距離(distance_point_pluecker_line)。"""
     l = np.array([lx, ly, lz], float); m = np.array([mx, my, mz], float)
     p = np.array([px, py, pz], float)
-    ln = np.linalg.norm(l) + 1e-12
+    ln = float(np.linalg.norm(l))
+    if not ln > 0.0:
+        raise ValueError("distance_point_pluecker_line: the direction vector is zero")
     return float(np.linalg.norm(np.cross(p, l / ln) - m / ln))

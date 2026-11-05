@@ -8,7 +8,7 @@
 <p style="margin:2px 0 2px 12px">• <b>そのピークは次数か共振か。</b> 回転数が動けば、軸に同期した成分は滲み、固定共振はその場に残ります。同じ信号を角度領域に置き直すと立場が厳密に逆転します。</p>
 <p style="margin:2px 0 2px 12px">• <b>何 dB か、誰の定義で。</b> 基準値と周波数重み付けを言わない dB は数ではありません。</p>
 <p style="margin:2px 0 2px 12px">• <b>その振動はこの加振から来たのか。</b> 2 チャネル、伝達関数、そして<b>その答えをどこまで信じてよいか</b>を言うコヒーレンス。</p>
-<p>この族はその 4 つに答える道具箱です。19 op / 6 カテゴリ(numpy + scipy のみ、台帳は <code style="color:#22d3bf">opsacoustics.py</code>、実体は <code style="color:#22d3bf">acoustics.py</code>):</p>
+<p>この族はその 4 つに答える道具箱です。20 op / 6 カテゴリ(numpy + scipy のみ、台帳は <code style="color:#22d3bf">opsacoustics.py</code>、実体は <code style="color:#22d3bf">acoustics.py</code>):</p>
 <p style="margin:2px 0 2px 12px">• <b>transform(3)</b> — <code style="color:#22d3bf">stft</code> / <code style="color:#22d3bf">istft</code> / <code style="color:#22d3bf">stft_cola_check</code>: 位相を保つ短時間フーリエ変換と、<b>厳密に戻る</b>逆変換。<code style="color:#22d3bf">dsp.spectrogram</code> は強度だけなので、時間周波数平面で信号を加工して戻る経路がライブラリ内に 1 本も無かった、その 1 本です。</p>
 <p style="margin:2px 0 2px 12px">• <b>synthesis(2)</b> — <code style="color:#22d3bf">synthesize_bearing_signal</code> / <code style="color:#22d3bf">synthesize_speed_ramp</code>: 前方モデル。<b>測る前に答えが分かっている</b>入力を作るためのもので、この族の全主張はこの 2 つに対して測ってあります。</p>
 <p style="margin:2px 0 2px 12px">• <b>bearing(4)</b> — <code style="color:#22d3bf">envelope_spectrum</code> / <code style="color:#22d3bf">bearing_defect_frequencies</code> / <code style="color:#22d3bf">spectral_kurtosis</code> / <code style="color:#22d3bf">cepstrum</code>: 復調して欠陥率を出す、幾何から特徴周波数を出す、<b>復調帯域を機械に選ばせる</b>、周波数軸の周期構造(反射遅延・側帯波間隔)を quefrency 軸で拾う。</p>

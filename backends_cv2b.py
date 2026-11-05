@@ -40,7 +40,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         """
         x = np.asarray(v, np.float32)
         h, w = x.shape
-        return cv2.warpPolar(x, (w, h), (w / 2, h / 2), min(h, w) / 2,
+        # 中心は ((w-1)/2, (h-1)/2)(画素中心の規約。2026-11-05 P8 の兄弟、以前は (w/2, h/2))
+        return cv2.warpPolar(x, (w, h), ((w - 1) / 2, (h - 1) / 2), min(h, w) / 2,
                              cv2.WARP_POLAR_LOG + cv2.INTER_LINEAR).astype(np.float64)
 
     def _meanshift(v, a, b):

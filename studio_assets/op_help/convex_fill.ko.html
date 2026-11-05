@@ -15,7 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/convex_fill.inputs.jpg">convex_fill: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구멍과 잘록한 부분을 메워 볼록 껍질(convex hull)에 가까운 형태로 만든다(클로징에 의한 근사). HALCON의 <code style="color:#22d3bf">shape_trans</code>(Transform the shape of a region.)의 볼록 껍질 변환에 대응하도록 의도되었지만, 실제 구현은 반복 횟수가 많은 클로징이며 엄밀한 볼록 껍질 계산은 아니다(근사).</p>
-<p><code style="color:#22d3bf">a</code>가 반복 횟수를 <code style="color:#22d3bf">3〜6</code>(<code style="color:#22d3bf">_it(a)+2</code>)으로 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. <code style="color:#22d3bf">border_value=1</code>의 이진 닫힘 연산을 적용할 뿐이므로, 반복 횟수를 넘는 크기의 잘록한 부분·구멍은 메워지지 않는다(진짜 볼록 껍질이라면 반드시 메워진다).</p>
+<p><code style="color:#22d3bf">a</code>가 반복 횟수를 <code style="color:#22d3bf">3〜6</code>(<code style="color:#22d3bf">_it(a)+2</code>)으로 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 이진 닫힘 연산을 적용할 뿐이므로, 반복 횟수를 넘는 크기의 잘록한 부분·구멍은 메워지지 않는다(진짜 볼록 껍질이라면 반드시 메워진다). 닫힘 연산은 영상 밖으로 이어지는 평면 위에서 수행한 뒤 잘라 되돌린다(2026-11-05 적대적 검증 제2차 P3까지는 <code style="color:#22d3bf">border_value=1</code>로, 영상 밖을 전경으로 간주하여 가장자리 근처에 쐐기가 돋아나게 했다).</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.33、0.67、0.99(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>
