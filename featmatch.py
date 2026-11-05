@@ -880,7 +880,12 @@ def _ransac(p1, p2, s, fit, resid2, thresh, confidence, max_iters, score, lo, se
             if w >= 1.0:
                 need = it
             elif w > 0:
-                need = int(math.ceil(math.log(1 - confidence) / math.log(1 - w ** s)))
+                # ★2026-11-05(敵対的検証 G2): w**s が 2**-53 未満だと 1 - w**s が 1.0 に丸まり
+                # log が 0(または −0)になって ZeroDivisionError で落ちていた(内れ値率が低いとき)。
+                # その場合と、見積もりが非有限・上限超えのときは上限 max_iters まで回す。
+                den = math.log(1 - w ** s)
+                est = math.log(1 - confidence) / den if den < 0.0 else math.inf
+                need = int(math.ceil(est)) if est < max_iters else max_iters
     return best_m, best_in, it, best_cost
 
 

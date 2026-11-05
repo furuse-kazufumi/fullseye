@@ -261,6 +261,27 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 残した同形: 反復の収束判定・有限差分の刻み・例の比較許容(lens*/raytrace/pod/seg* 等)は「混合の絶対/相対許容」で、データの単位で判定が反転する種類ではないので触らない。`fullseye/inspect_batch.py` の `sigma=1e-12` は sd = 0(全値が平均に厳密に等しい)のときだけで偏差が 0 なので警報に影響しない。
 - `emva_pair_statistics` の 1/(2NM) は EMVA 1288 Release 4.0 Linear 式 (18) と脚注 6(NM−1 でなく NM を意図して使う)どおりで変えない。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(geometry)
+
+- G1 `pnp3d.pnp_ransac`: 返す `inlier_mask` / `n_inliers` / `inlier_ratio` / `rms` は返す姿勢で数え直した値(以前は当てはめ直す前の最良 6 点仮説のもので、返した姿勢で数えると 74 点 → 107 点)。当てはめ直しで合意(内れ値の数)が仮説より減るなら仮説の姿勢を返す(RANSAC の目的を悪くしない)。兄弟 G1b: `mosaic.proj_match_points_ransac`(合意なしのときの `inliers` も全 False に)・`reconstruction.match_fundamental_matrix_ransac`・`feat_shot.ransac_rigid` も同じ規則。
+- G8 `reconstruction.match_fundamental_matrix_ransac` / `match_essential_matrix_ransac`: 対応 8 組未満・点数不一致・非有限・全標本で当てはめ失敗は `ValueError`(以前は 8 組未満で `F` = 単位行列を `num_inliers` なしで返し、E 側は `KeyError`)。
+- G3 `transforms.point_line_to_hom_mat2d`: 回転の向きが逆だった(角を `arctan2(d[0], d[1])` で取っていた)。値が変わる: 回転は `dir_src` を `dir_dst` と同じ向きに重ねる。
+- G4 `transforms.point_pluecker_line_to_hom_mat3d`: 反平行の方向で単位行列ではなく直交軸まわりの半回転を返す。
+- G7 `transforms.proj_hom_mat2d_to_pose`: `H` の符号に依らず板がカメラの前(`t_z > 0`)に来る姿勢を返す(以前は `−H` で後ろ)。`caltab.find_marks_and_pose` の回避は残る(発火しなくなるだけ)。
+- G9 RANSAC の縮退の床を点群の尺度に対する相対量に: `pcseg.fit_plane_ransac`・`ransac_fit.ransac_plane` / `ransac_line`・`feat_shot.ransac_rigid`、兄弟で円筒の半径の床(`pcseg.fit_cylinder_ransac`・`ransac_fit.ransac_cylinder`)。値が変わる: 座標の小さい点群(平面 3e-7 倍・直線 1e-13 倍・剛体 1e-4 倍)で外れ値込みの当てはめ / `None` に落ちず、単位スケールと同じ内れ値を返す。
+- G10 `pcseg.fit_sphere_ransac`: 重心に寄せて代数球を解き、同一平面の 4 点は仮説にしない(値が変わる: 原点から遠い点群で正しい半径)。兄弟: `measure.fit_circle`(重心に寄せる、半径の床 `r² <= 1e-12` の絶対値を点の広がりに対する相対量に — 半径 1e-6 以下の円を拒否しなくなる)、`pxrd._circle_fit`。
+- G11 `twoview.recover_pose`: 平面判定を「H 残差の中央値 / 点の広がり(視差に比例、既定 1e-2)」から「H と F の当てはまりの比 σ_H/σ_F(視差に依らない、既定 `planar_tol=3.0`)」へ。非平面で基線が小さい入力を拒否しなくなり(基線 0.05 でも解く)、雑音の大きい平面(σ = 2 px)は拒否するようになった。比 1.5〜3 の帯は視差が雑音と区別できず 8 点法の並進方向も 10〜160° 狂う(実測)ので拒否する側。8 点ちょうどは従来の判定のまま。
+- `pose_quat.convert_point_3d_cart_to_spher`: 緯度を `atan2(z, hypot(x, y))` で(以前の `asin(z / (r + 1e-12))` は極付近で単位スケールでも 1.4e-6 rad ずれ、r = 1e-12 で 90° が 30°)。`pose_quat.dual_quat_to_screw`: 小さい回転で桁落ちしない(以前は θ = 2e-8 で θ = 0・d = 5000)。
+- `calib.image_points_to_world_plane`(と `caltab.gen_image_to_world_plane_map`): 視線と z=0 平面の交点がカメラの後ろになる画素は `nan`(以前は有限の点を返した)。
+- `calib.camera_calibration` / `calib.vector_to_hom_mat2d` / `transforms.vector_to_proj_hom_mat2d`: ホモグラフィを Hartley 正規化 DLT で解く。Zhang の V は各 H を `sqrt(|h1||h2|)` で揃えてから積む。値が変わる(丸めの桁、雑音つきでは条件の良い側へ): K と退化判定の比が平面座標の原点の取り方に依らなくなった(以前は物体座標に 1000 mm 足すだけで「退化」と拒否)。
+
+### 修正 — 敵対的検証 2026-11-05(geometry)
+
+- G2 `featmatch` の RANSAC(`ransac_fundamental` / `ransac_homography` の共通部): 内れ値率が低いと適応回数の式 `log(1 − w**s)` が 0 になり `ZeroDivisionError` で落ちていた。分母が 0・見積もりが上限超えなら `max_iters` まで回す。同じ式の兄弟は repo に無い。
+- G5 `transforms.dual_quat_trans_line_3d`: 呼び先のモジュールを取り違えて常に `ImportError` だった。
+- G6 `transforms.vector_to_hom_mat3d`: 剛体(倍率なし)と docstring に明記(以前は「剛体/相似」と書きながら倍率を推定しない)。HALCON の同名 op の `'rigid'` に当たる。相似は `odometry.umeyama_align(with_scale=True)`。
+- 回帰テスト `tests/test_redteam_geometry_2026_11_05.py`(返した値を、返した模型で数え直した値・尺度や原点を変えた不変量・独立の計算と突き合わせる)。
+
 ### 変更(Breaking)— `plenoptic_refocus_depth` の傾き↔距離の単位を直した(2026-11-04)
 
 - 像のずれを `slope × 角度ステップ × ピッチ` で出していた。次元から正しくは傾き × ピッチ / 角度ステップで、PoC のカメラでは 1/角度ステップ² ≈ 3000 倍小さく、測った傾きはどれも合焦距離(1.0 m)へ戻っていた。いまは復号の視点刻み(1 視点 = ピッチ/U ぶんの射出瞳)、射出瞳までの距離、Newton の式で変換する近軸の式。処方を順方向に光線追跡した視差と、理想レンズで相対 1e-6、三枚玉で 2e-4 以内で一致する(`tests/test_plenoptic.py`)。

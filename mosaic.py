@@ -28,7 +28,12 @@ def _apply_h(H, pts):
 
 
 def proj_match_points_ransac(points1, points2, thresh=2.0, iters=500, seed=0):
-    """点対応から RANSAC で射影変換(ホモグラフィ)を推定(proj_match_points_ransac)。"""
+    """点対応から RANSAC で射影変換(ホモグラフィ)を推定(proj_match_points_ransac)。
+
+    返す ``inliers`` / ``num_inliers`` は返す ``H`` で数え直した内れ値(当てはめ直す前の仮説の
+    ものではない。2026-11-05 敵対的検証 G1b)。合意が取れない(4 点未満)ときは
+    ``H`` = 単位行列・``num_inliers`` = 0 を返す(呼び出し側は ``num_inliers`` で判定すること)。
+    """
     p1 = np.asarray(points1, float).reshape(-1, 2)
     p2 = np.asarray(points2, float).reshape(-1, 2)
     n = len(p1)
@@ -36,22 +41,42 @@ def proj_match_points_ransac(points1, points2, thresh=2.0, iters=500, seed=0):
         return {"H": np.eye(3), "inliers": np.zeros(n, bool), "num_inliers": 0}
     rng = np.random.default_rng(seed)
     best_in = np.zeros(n, bool)
+    best_H = None
+
+    def inliers_of(H):
+        with np.errstate(divide="ignore", invalid="ignore"):
+            proj = _apply_h(H, p1)
+            err = np.hypot(proj[:, 0] - p2[:, 0], proj[:, 1] - p2[:, 1])
+        return err < thresh                      # NaN (点が無限遠へ) は内れ値にしない
+
     for _ in range(int(iters)):
         idx = rng.choice(n, 4, replace=False)
         try:
             H = _homography_dlt(p1[idx], p2[idx])
         except Exception:
             continue
-        proj = _apply_h(H, p1)
-        err = np.hypot(proj[:, 0] - p2[:, 0], proj[:, 1] - p2[:, 1])
-        inl = err < thresh
+        if not np.isfinite(H).all():
+            continue
+        inl = inliers_of(H)
         if inl.sum() > best_in.sum():
-            best_in = inl
-    if best_in.sum() >= 4:
-        H = _homography_dlt(p1[best_in], p2[best_in])
-    else:
-        H = np.eye(3)
-    return {"H": H, "inliers": best_in, "num_inliers": int(best_in.sum())}
+            best_in, best_H = inl, H
+    # ★2026-11-05(敵対的検証 G1b): 以前は内れ値で当てはめ直した H を返しながら、inliers は
+    # 当てはめ直す前の 4 点仮説のものを返していた(返した H で数え直すと 186 → 196 点)。
+    # featmatch._refit_keeping_consensus と同じ規則: 返す inliers は常に返す H の内れ値。
+    # 当てはめ直しで合意が仮説より減るなら(この DLT は正規化なしで、星 13 個の当てはめ直しが
+    # 倍率 1.33 の H・内れ値 8 個になった例がある)、合意の多い仮説の H を返す(RANSAC の目的)。
+    if best_H is None or best_in.sum() < 4:
+        return {"H": np.eye(3), "inliers": np.zeros(n, bool), "num_inliers": 0}
+    H, inl = best_H, best_in
+    try:
+        H2 = _homography_dlt(p1[best_in], p2[best_in])
+    except Exception:
+        H2 = None
+    if H2 is not None and np.isfinite(H2).all():
+        inl2 = inliers_of(H2)
+        if inl2.sum() >= best_in.sum():
+            H, inl = H2, inl2
+    return {"H": H, "inliers": inl, "num_inliers": int(inl.sum())}
 
 
 def proj_match_points_ransac_guided(points1, points2, guide_H, thresh=2.0, iters=200, seed=0):

@@ -140,16 +140,33 @@ def project_hom_point_hom_mat3d(points_hom, hom_mat3d):
     return np.column_stack([uv[:, 1], uv[:, 0]])
 
 
+def _hartley_T(p):
+    """Hartley 正規化(重心を原点、重心からの平均距離 √2)の 3x3 相似変換。"""
+    c = p.mean(0)
+    d = float(np.mean(np.linalg.norm(p - c, axis=1)))
+    s = np.sqrt(2.0) / d if d > 0 else 1.0
+    return np.array([[s, 0.0, -s * c[0]], [0.0, s, -s * c[1]], [0.0, 0.0, 1.0]])
+
+
 def _homography_dlt(src, dst):
-    """4+ 点対応から DLT でホモグラフィ H (dst = H src) を推定。"""
+    """4+ 点対応から正規化 DLT でホモグラフィ H (dst = H src) を推定。
+
+    ★2026-11-05(敵対的検証 geometry、未再現の疑いを確認): 以前は Hartley 正規化なしの DLT で、
+    物体座標が原点から離れている(mm で 0〜1000 等)と条件が悪く、雑音 0.05 px の Zhang 校正で
+    fx 誤差の中央値が正規化ありの 3 倍(2.4 % 対 0.75 %)になった。Zhang の K は平面の原点の
+    取り方に依らない(h1, h2 が変わらない)はずなのに、原点をずらすだけで K が変わっていた。
+    両側を Hartley 正規化してから解き、逆正規化する(Hartley 1997)。"""
     src = np.asarray(src, float).reshape(-1, 2); dst = np.asarray(dst, float).reshape(-1, 2)
+    Ts, Td = _hartley_T(src), _hartley_T(dst)
+    sn = src @ Ts[:2, :2].T + Ts[:2, 2]
+    dn = dst @ Td[:2, :2].T + Td[:2, 2]
     A = []
-    for (x, y), (u, v) in zip(src, dst):
+    for (x, y), (u, v) in zip(sn, dn):
         A.append([-x, -y, -1, 0, 0, 0, u * x, u * y, u])
         A.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
     A = np.asarray(A)
     _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
-    H = Vt[-1].reshape(3, 3)
+    H = np.linalg.inv(Td) @ Vt[-1].reshape(3, 3) @ Ts
     return H / H[2, 2]
 
 
@@ -174,7 +191,15 @@ def image_to_world_plane(image_points, homography):
 
 
 def image_points_to_world_plane(cam_par, pose, image_points, scale=1.0):
-    """カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。"""
+    """カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。
+
+    返り値は (N,2) の world 座標 × ``scale``。視線が z=0 平面とカメラの**前**で交わらない画素
+    (地平線より上など、交点がカメラの後ろ)は平面上の点を見ていないので、その行は ``nan``。
+    視線が平面と平行な画素は ``ValueError``。
+
+    ★2026-11-05(敵対的検証 geometry、未再現の疑いを確認): 以前は交点の係数 lam < 0(カメラの
+    後ろ)でも有限の world 点を返していた(深度 −6.7 の点が「見えている点」として返った)。
+    """
     op = "image_points_to_world_plane"
     K = _K(cam_par, op); pose = _pose_matrix(pose, op)
     sc = _finite_scalar(scale, "scale", op, positive=True)
@@ -184,6 +209,7 @@ def image_points_to_world_plane(cam_par, pose, image_points, scale=1.0):
     p = _finite_array(image_points, "image_points", op, cols=2)
     rays = np.column_stack((p[:, 1], p[:, 0], np.ones(len(p)))) @ ray_transform.T
     lam = _checked_div(-o[2], rays[:, 2], op, "the viewing ray is parallel to the z = 0 plane")
+    lam = np.where(lam > 0, lam, np.nan)          # 交点がカメラの後ろ → 平面上の点ではない
     return (o[None, :2] + lam[:, None] * rays[:, :2]) * sc
 
 
@@ -272,8 +298,13 @@ def camera_calibration(object_points, image_points_list):
         reproj.append(float(np.sqrt(np.mean(np.sum((pr - xy) ** 2, axis=1)))))
     V = []
     for H in Hs:
-        V.append(_vij(H, 0, 1))
-        V.append(_vij(H, 0, 0) - _vij(H, 1, 1))
+        # ★2026-11-05(敵対的検証 geometry): H は H[2,2] = 1 に揃えてあるが、H[2,2] は平面座標の
+        # 原点の取り方で変わる(原点をずらすと h3 だけが変わる)。そのまま V に積むと視点ごとの
+        # 行の重みが原点で変わり、K も退化判定の比も原点の取り方に依存した(物体座標に 1000 mm
+        # 足しただけで「退化」と拒否)。原点に依らない h1, h2 の長さで各 H の倍率を揃える。
+        Hv = H / np.sqrt(np.linalg.norm(H[:, 0]) * np.linalg.norm(H[:, 1]))
+        V.append(_vij(Hv, 0, 1))
+        V.append(_vij(Hv, 0, 0) - _vij(Hv, 1, 1))
     V = np.asarray(V)
     _, sv, Vt = np.linalg.svd(V, full_matrices=V.shape[0] < V.shape[1])
     # 正面平行ばかりの視点では零空間が 2 次元以上になり b が定まらない(Zhang 1999 §3.3)。

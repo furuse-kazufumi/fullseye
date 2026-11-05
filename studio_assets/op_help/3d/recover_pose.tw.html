@@ -1,15 +1,16 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">recover_pose — 3D <code style="color:#22d3bf">two_view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">pose</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code>(要直接呼叫實作,<code style="color:#22d3bf">import twoview; twoview.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;recover_pose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.recover_pose(pts1, pts2, K1, K2=None, planar_tol=3.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import twoview; twoview.recover_pose(pts1, pts2, K1, K2=None, planar_tol=3.0)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;recover_pose&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由對應點 + K 恢復相對姿態 (R,t) 與 3D 結構(用 cheirality 消歧)。→ (R, t_unit, points3d)。</p>
 <p>t 的尺度不定，因此為單位向量。points3d 在 cam1 座標系中(對應 |t|=1 的尺度)。</p>
-<p>fail-closed：平面(共面 3D)/純旋轉場景是本質矩陣分解的<b>退化配置</b>，Sampson 殘差維持 ~0 卻回傳錯誤的平移方向(表面上完美)。這類輸入無法還原位姿，因此以 ValueError 明確拒絕(請使用單應性分解)。<code style="color:#22d3bf">planar_tol</code> 是尺度不變的平面度閾值(<code style="color:#22d3bf">_planar_degeneracy_ratio</code> 的回傳值小於它即判定為退化)。</p>
+<p>fail-closed：平面(共面 3D)/純旋轉場景是本質矩陣分解的<b>退化配置</b>，Sampson 殘差維持 ~0 卻回傳錯誤的平移方向(表面上完美)。這類輸入無法還原位姿，因此以 ValueError 明確拒絕(請使用單應性分解)。<code style="color:#22d3bf">planar_tol</code> 是與視差、尺度無關的平面度閾值(<code style="color:#22d3bf">_planar_degeneracy_ratio</code> = H 與 F 擬合程度之比小於它即判定為退化。預設 3.0)。</p>
 <p>步驟：</p>
 <p style="margin:2px 0 2px 12px">• 入口檢查(8 個點以上、點數一致、(N,2) 且有限)。</p>
-<p style="margin:2px 0 2px 12px">• 平面度：以正規化 DLT 擬合單應性 H，求對稱轉移殘差的中位數除以兩張影像中點的散布(到質心的平均距離之和)的比值。若小於 <code style="color:#22d3bf">planar_tol</code>(預設 1e-2)則 <code style="color:#22d3bf">ValueError</code>。H 奇異時比值視為 0，同樣拒絕。</p>
+<p style="margin:2px 0 2px 12px">• 平面度：同時以正規化 DLT 擬合單應性 H、以正規化 8 點法擬合 F，求按自由度正規化的殘差尺度之比 <code style="color:#22d3bf">σ_H / σ_F</code>(<code style="color:#22d3bf">_planar_degeneracy_ratio</code>)。若小於 <code style="color:#22d3bf">planar_tol</code>(預設 3.0)則 <code style="color:#22d3bf">ValueError</code>。平面與純旋轉約為 √2，非平面則與視差 / 雜訊成比例地變大。H 奇異時比值視為 0，同樣拒絕。恰好 8 點時無法從 F 的殘差測得雜訊，因此使用以往的判定(H 殘差中位數 / 點的散布 &lt; 1e-2，與視差成比例)。</p>
+<p style="margin:2px 0 2px 12px">• ★2026-11-05(對抗性驗證 G11)：以往的比值(H 殘差 / 點的散布，預設 1e-2)與視差成比例，即使非平面在基線小時也會被拒絕(<code style="color:#22d3bf">camera.recover_pose</code> 能解同一資料)。反之雜訊大時連平面也會放行(σ = 2 px 時比值超過 1e-2)。新比值修正了這兩點。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">essential_8point</code> → 分解為 4 個候選 <code style="color:#22d3bf">(R, ±t)</code> → 對每個候選做 <code style="color:#22d3bf">triangulate</code>，取兩台相機中深度 &gt; 0 的點數最多的候選(數量相同時取前面的候選)。</p>
 <p>回傳值：<code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,) 單位向量、<code style="color:#22d3bf">points3d</code> (N,3)。慣例為 cam1 = K1[I|0]、cam2 = K2[R|t]，<code style="color:#22d3bf">X2 = R X1 + t</code>。<code style="color:#22d3bf">points3d</code> 在 cam1 座標系中，尺度為 |t|=1。視線平行的對應為 NaN 列。</p>
 <p style="margin:2px 0 2px 12px">• 省略 <code style="color:#22d3bf">K2</code> 時兩張影像都用 <code style="color:#22d3bf">K1</code>。</p>
