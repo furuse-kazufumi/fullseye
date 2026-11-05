@@ -10,6 +10,45 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(abs-floor2)
+
+前の便(abs-floor)の棚卸しで「未確認」だった公開経路の 183 件を 1 件ずつ見て、単位のある量に絶対の床が
+混ざって入力の尺度で結果が変わるものを直した。尺度 1 の入力は丸めの桁しか変わらない。
+
+- `dsp.signal_features`: スペクトル重心・帯域の分母に足していた 1e-12 と、波高率 `peak / (rms + 1e-12)` の
+  床を外す。振幅 1e-9 の信号(m 単位の振動・ひずみ)で重心 50 Hz が 16.7 Hz に、振幅 1e-15 で波高率 √2 が
+  0.001 になっていた。`rms` / `peak` / 周波数は、小数の桁で丸めると小さい値が 0 に潰れる(振幅 1e-9 で
+  rms 0)ので、有効数字 6 桁を残す丸めに(0.1 より大きい値は以前と同じ値)。全部 0 の信号は以前どおり 0。
+- `matrix_to_img`(`backends_bridge`): 「全要素が等しい」判定 `hi − lo < 1e-12`・`max|x| < 1e-12` を値の
+  大きさに対する相対/厳密な 0 に。値 1e-13 の桁の行列(m² 単位の共分散など)が一様 0.5 になっていた。
+- `mathnumerics.interp_barycentric(nodes="chebyshev2")`: 点の照合 `|xk − 期待値| <= 1e-12` を区間の尺度に
+  対する相対の許容に。区間 [1e6, 2e6] の正しい Chebyshev 点を丸めの差(2e-10)で `ValueError` にし、
+  区間 [0, 1e-15] の等間隔点を Chebyshev 点として通して(誤った重みで)補間していた。
+- `fourierdesc.elliptic_fourier`: 長さ 0 の線分を 1e-12 に持ち上げる床と、周長 < 1e-9 の拒否を外し、
+  周長 0 だけを拒否。座標 1e-13 の輪郭を拒否し、座標 1e-6 の輪郭では重複点で係数が動き、一点に重なる
+  1000 点以上の輪郭は周長 1e-9 として通っていた。`invariants(scale_invariant=True)` /
+  `normalize(size_invariant=True)` の「第 1 高調波 > 1e-12 なら割る」を相対の判定に(座標 1e-13 で
+  正規化されないまま返っていた)。
+- `fourierdesc.elliptic_fourier` / `contour_fourier_complex`: 閉じ点の判定 `np.allclose(p[0], p[-1])` を
+  輪郭の広がりに対する相対の判定に。絶対の許容 1e-8 のせいで、広がり 1e-8 以下の輪郭では末尾の本物の点を
+  閉じ点として落としていた(`contour_fourier_complex` の係数の行数が 1 減る)。
+- `visualhull.look_at`(`carve_look_at`): eye と target の一致判定 `|target − eye| < 1e-12` を座標の丸めの
+  桁に(`create_cam_pose_look_at_point` と同じ規則)。座標 1e-13 の正しいカメラを拒否していた。
+- `specularity.photometric_stereo_robust(normalize=False)`: 3 灯の行列式 `<= 1e-12` の共面判定を、後段の
+  refit と同じ光の強さ³ に対する相対量に。強さ 1e-5 の正規化していない光で、全 3 つ組が「共面」になって
+  `ValueError` だった。
+
+### 修正 — 1.0 前の修正 2026-11-05(abs-floor2)
+
+- 183 件の内訳: a 7(全部修正)・a-weak 21(うち 2 件修正)・b 128・c 9・コメント 18。分類と理由は便の
+  報告(inventory2.md)に残した。前の便が次便に回した 2 件のうち、`pivops._stamp_triangle` は描画の画素
+  座標なので問題なし、`mesh_decimate.decimate_qem_manifold` の面積の床は公開経路の外(例からだけ呼ばれる)
+  なので次便。
+- 直さなかった a-weak の主なもの: 長さの床で全点一致・重複点の退化でだけ効くもの(`register_nonrigid`・
+  `gicp`・`fit_torus`・`fpfh` の近傍距離など)、`div_image` の |分母| < 1e-12 → NaN(画素値の契約内)。
+- 別件(床ではない): `pointcloud.fpfh` は 1/距離 の重みを正規化しないので、記述子そのものが座標の尺度で
+  変わる。値が変わる変更になるので、この便では報告だけにした。
+
 ### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(abs-floor)
 
 外部監査 F3(`vector_to_similarity` の分母の固定 1e-12。master では修正済み)と同じ型 —— 長さ² の量に
