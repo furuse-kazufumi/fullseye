@@ -10,6 +10,23 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(plenoptic-gate)
+
+- `examples/poc_plenoptic_camera.py` の `CI=1` 縮小走行(96 px・6 x 6 MLA)は、もう
+  焦点ピークと領域 median を印字しない。復号される空間は 5 x 5 で、侵食後の各面の標本は 0 個 ——
+  焦点度は全スロープで 0 になり、`argmax` が掃引の先頭 −0.4 を返し、median は `nan` だった。
+  それを `PASS` の隣に並べていた。今は `UNMEASURED: regional parallax gate ...` の行を出し、
+  PASS 行も「gate 1 only; regional parallax gate UNMEASURED」と範囲を書く。
+  `run_metrics.json` の `focus_peaks` / `region_median_slopes` / `depth_median_error_m` は
+  測れないとき `null`(以前は `NaN` = 不正な JSON)、新しい `regional_gate` 欄が `measured` / `unmeasured`。
+
+### 修正 — 1.0 前の修正 2026-11-05(plenoptic-gate)
+
+- 同 PoC の領域判定を `regional_parallax()` に集め、測れるとき(全領域 30 標本以上、どの規模でも)は
+  必ず判定する: 焦点度が有限・焦点曲線が平らでない・ピークが掃引の**内側**(端は打ち切られた探索)・
+  領域 median が有限。閾値(0.03 lenslets/view、深度 20 %)は変えていない。full 走行(480 px)は
+  測れなければ落ちる。回帰テスト `tests/test_fix_plenoptic_gate_2026_11_05.py`。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(numerics)
 
 長さ・長さ² に固定の `1e-12` を足す/比べる床と、中心化せずに解く当てはめを直した。値が変わるのは
