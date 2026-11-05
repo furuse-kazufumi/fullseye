@@ -2015,12 +2015,15 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         from fullseye.opsearch import _format, search_ops, tuning_cards
         try:
             from fssystem import get_system
-            total_limit = a.get("limit", get_system("find_ops_k"))
-            # The default seven is one comparison set (ops + examples).  An
-            # explicit non-default limit keeps the legacy meaning: that many
-            # operator rows, with recipes as supplementary metadata.
-            recipe_limit = min(get_system("find_ops_recipe_max"), total_limit)
-            op_limit = total_limit - recipe_limit if total_limit == get_system("find_ops_k") else total_limit
+            total_limit = int(a.get("limit", get_system("find_ops_k")))
+            # limit = the total number of proposals (ops + recipes) for every value,
+            # not only the default.  Recipes take at most find_ops_recipe_max slots
+            # and always leave one for an operator; the rest are operator rows.  The
+            # split depends on limit alone, so a larger limit never returns fewer
+            # ops (red-team 2026-11-05: limit 5/6/7/8 gave 5/6/5/8 ops, because only
+            # a limit equal to the default reserved the recipe slots).
+            recipe_limit = max(0, min(get_system("find_ops_recipe_max"), total_limit - 1))
+            op_limit = total_limit - recipe_limit
             r = search_ops(a["query"], op_limit, lang=a.get("lang"),
                            in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
         except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)

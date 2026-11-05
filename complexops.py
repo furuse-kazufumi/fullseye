@@ -151,8 +151,17 @@ def _as_field(x, name: str = "cx") -> np.ndarray:
 
 
 def _wrap(x: np.ndarray) -> np.ndarray:
-    """Wrap radians into ``(-pi, pi]`` (the gamma operator of Herraez 2002)."""
-    return x - _TWO_PI * np.round(x / _TWO_PI)
+    """Wrap radians into ``(-pi, pi]`` (the gamma operator of Herraez 2002).
+
+    The interval is half-open on the left: ``-pi`` (and every odd multiple of
+    ``pi``) maps to ``+pi``, the same convention as ``np.angle`` /
+    ``fringe.wrapped_phase``. ``x - 2*pi*np.round(x/(2*pi))`` does not keep this
+    promise: numpy rounds half to even, so ``-pi`` stayed ``-pi`` and ``3*pi``
+    became ``-pi`` (red-team 2026-11-05). Floor-based folding, then the one
+    boundary value that floating point can still land on is moved to ``+pi``.
+    """
+    y = x - _TWO_PI * np.floor((x + np.pi) / _TWO_PI)
+    return np.where(y <= -np.pi, y + _TWO_PI, y)
 
 
 # --------------------------------------------------------------------------- #
