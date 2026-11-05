@@ -5,16 +5,15 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>各點的 Frenet 標架(切線 T,主法線 N,副法線 B)。→ (T, N, B),各為 (Npts,3) 單位向量。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>順序付き点列 (N,3) を index パラメータで <code style="color:#22d3bf">np.gradient</code>(内部は中心差分、両端は片側差分)して r&#x27;, r&#x27;&#x27; を取り、</p>
+<p>將有序點列 (N,3) 以 index 參數用 <code style="color:#22d3bf">np.gradient</code>(內部為中心差分,兩端為單側差分)求導得到 r&#x27;, r&#x27;&#x27;,</p>
 <p style="margin:2px 0 2px 12px">• T = r&#x27; / ‖r&#x27;‖</p>
-<p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖(r&#x27;&#x27; の T 直交成分 = 曲率中心へ向く向き)</p>
+<p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖(r&#x27;&#x27; 的 T 正交分量 = 指向曲率中心的方向)</p>
 <p style="margin:2px 0 2px 12px">• B = T × N</p>
-<p>を各点で計算する。r&#x27;&#x27; の T 直交成分の向きは再パラメータ化に不変なので、点間隔が滑らかに変わる限り index パラメータで正しい向きが出る。</p>
-<p style="margin:2px 0 2px 12px">• 正規化に床は置かない(2026-11-05 敵対的検証 N1 の兄弟: 以前は分母に絶対値 1e-12 を足しており、尺度 1e-6 の曲線で N の長さが 0.998、1e-9 で 0.33 になった)。T は ‖r&#x27;‖ = 0 の点(同じ点の繰り返し)だけ 0 ベクトル。N は r&#x27;&#x27; の T 直交成分が ‖r&#x27;‖ の 1e-9 倍以下(1 標本あたりの曲がりが 1e-9 rad 未満 = 直線区間)の点で 0 ベクトル、B もそこで 0。変曲点の前後では N の向きが反転する。</p>
-<p style="margin:2px 0 2px 12px">• N&lt;2 の点列は <code style="color:#22d3bf">np.gradient</code> が <code style="color:#22d3bf">ValueError</code> を出す。形状検証はそれ以外に無い。</p>
-<p style="margin:2px 0 2px 12px">• 両端 2 点は片側差分なので精度が落ちる。等間隔化(<code style="color:#22d3bf">resample_uniform</code>)や平滑(<code style="color:#22d3bf">fit_spline_curve</code>)を先に掛けると安定する。</p>
-<p>曲率・捩率の数値そのものは <code style="color:#22d3bf">curvature_torsion</code>、弧長は <code style="color:#22d3bf">arc_length</code>。</p>
+<p>在各點計算上述量。r&#x27;&#x27; 的 T 正交分量的方向對重新參數化不變,因此只要點間距平滑變化,用 index 參數也能得到正確方向。</p>
+<p style="margin:2px 0 2px 12px">• 正規化不設下限(2026-11-05 對抗驗證 N1 的同類:以前在分母上加絕對值 1e-12, 尺度 1e-6 的曲線上 N 的長度為 0.998,1e-9 時為 0.33)。T 僅在 ‖r&#x27;‖ = 0 的點(同一點重複)為零向量。N 在 r&#x27;&#x27; 的 T 正交分量不超過 ‖r&#x27;‖ 的 1e-9 倍(每個取樣的彎曲小於 1e-9 rad = 直線區間)的點為零向量,B 在那裡也為 0。在反曲點前後 N 的方向會反轉。</p>
+<p style="margin:2px 0 2px 12px">• N&lt;2 的點列會由 <code style="color:#22d3bf">np.gradient</code> 拋出 <code style="color:#22d3bf">ValueError</code>。除此之外沒有形狀檢驗。</p>
+<p style="margin:2px 0 2px 12px">• 兩端 2 點為單側差分,精度下降。先進行等間距化(<code style="color:#22d3bf">resample_uniform</code>)或平滑(<code style="color:#22d3bf">fit_spline_curve</code>)會更穩定。</p>
+<p>曲率、撓率的數值本身用 <code style="color:#22d3bf">curvature_torsion</code>,弧長用 <code style="color:#22d3bf">arc_length</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

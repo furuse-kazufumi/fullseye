@@ -5,16 +5,15 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर point पर Frenet frame (tangent T, principal normal N, binormal B)। → (T, N, B), हर एक (Npts,3) unit vectors।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>順序付き点列 (N,3) を index パラメータで <code style="color:#22d3bf">np.gradient</code>(内部は中心差分、両端は片側差分)して r&#x27;, r&#x27;&#x27; を取り、</p>
+<p>क्रमित point sequence (N,3) को index parameter पर <code style="color:#22d3bf">np.gradient</code> (भीतर central difference, दोनों सिरों पर one-sided difference) से differentiate करके r&#x27;, r&#x27;&#x27; निकाले जाते हैं, और</p>
 <p style="margin:2px 0 2px 12px">• T = r&#x27; / ‖r&#x27;‖</p>
-<p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖(r&#x27;&#x27; の T 直交成分 = 曲率中心へ向く向き)</p>
+<p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖ (r&#x27;&#x27; का T के लंबवत component = curvature केंद्र की ओर की दिशा)</p>
 <p style="margin:2px 0 2px 12px">• B = T × N</p>
-<p>を各点で計算する。r&#x27;&#x27; の T 直交成分の向きは再パラメータ化に不変なので、点間隔が滑らかに変わる限り index パラメータで正しい向きが出る。</p>
-<p style="margin:2px 0 2px 12px">• 正規化に床は置かない(2026-11-05 敵対的検証 N1 の兄弟: 以前は分母に絶対値 1e-12 を足しており、尺度 1e-6 の曲線で N の長さが 0.998、1e-9 で 0.33 になった)。T は ‖r&#x27;‖ = 0 の点(同じ点の繰り返し)だけ 0 ベクトル。N は r&#x27;&#x27; の T 直交成分が ‖r&#x27;‖ の 1e-9 倍以下(1 標本あたりの曲がりが 1e-9 rad 未満 = 直線区間)の点で 0 ベクトル、B もそこで 0。変曲点の前後では N の向きが反転する。</p>
-<p style="margin:2px 0 2px 12px">• N&lt;2 の点列は <code style="color:#22d3bf">np.gradient</code> が <code style="color:#22d3bf">ValueError</code> を出す。形状検証はそれ以外に無い。</p>
-<p style="margin:2px 0 2px 12px">• 両端 2 点は片側差分なので精度が落ちる。等間隔化(<code style="color:#22d3bf">resample_uniform</code>)や平滑(<code style="color:#22d3bf">fit_spline_curve</code>)を先に掛けると安定する。</p>
-<p>曲率・捩率の数値そのものは <code style="color:#22d3bf">curvature_torsion</code>、弧長は <code style="color:#22d3bf">arc_length</code>。</p>
+<p>हर point पर गणना की जाती है। r&#x27;&#x27; के T-लंबवत component की दिशा reparameterisation से नहीं बदलती, इसलिए जब तक point spacing smoothly बदलती है, index parameter से सही दिशा मिलती है।</p>
+<p style="margin:2px 0 2px 12px">• normalisation में कोई निचली सीमा नहीं रखी जाती (2026-11-05, red-team N1 का sibling: पहले denominator में absolute 1e-12 जोड़ा जाता था, जिससे scale 1e-6 के curve पर N की लंबाई 0.998 और 1e-9 पर 0.33 हो जाती थी)। T केवल ‖r&#x27;‖ = 0 वाले points (एक ही point का दोहराव) पर zero vector है। N उन points पर zero vector है जहाँ r&#x27;&#x27; का T-लंबवत घटक ‖r&#x27;‖ के 1e-9 गुने से अधिक नहीं है (प्रति sample मोड़ 1e-9 rad से कम = सीधा हिस्सा), और B भी वहाँ 0 है। inflection point के आगे-पीछे N की दिशा उलट जाती है।</p>
+<p style="margin:2px 0 2px 12px">• N&lt;2 वाले sequence पर <code style="color:#22d3bf">np.gradient</code> <code style="color:#22d3bf">ValueError</code> देता है। इसके अलावा कोई shape validation नहीं है।</p>
+<p style="margin:2px 0 2px 12px">• दोनों सिरों के 2 points one-sided difference से बनते हैं, इसलिए accuracy कम होती है। पहले समान spacing (<code style="color:#22d3bf">resample_uniform</code>) या smoothing (<code style="color:#22d3bf">fit_spline_curve</code>) लगाने से परिणाम स्थिर होता है।</p>
+<p>curvature और torsion के मान स्वयं <code style="color:#22d3bf">curvature_torsion</code> से, arc length <code style="color:#22d3bf">arc_length</code> से।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
