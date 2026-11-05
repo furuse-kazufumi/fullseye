@@ -1,8 +1,8 @@
 {
- "n_ops": 3810,
+ "n_ops": 3811,
  "tiers": {
   "color": 12,
-  "ledger": 2846,
+  "ledger": 2847,
   "nary": 17,
   "registry": 935
  },
@@ -39182,6 +39182,20 @@
    "dim": "3d",
    "in_sorts": [
     "voxel",
+    "voxel"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "voxel_to_hessian",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "hessian",
+   "category": "derivative",
+   "tier": "ledger",
+   "ledger": "opsreprconv",
+   "dim": "reprconv",
+   "in_sorts": [
     "voxel"
    ],
    "gpu_tier": "suitable"

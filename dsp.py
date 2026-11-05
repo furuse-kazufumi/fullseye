@@ -20,6 +20,7 @@ specops) instead of quietly turning every downstream feature into NaN.
 """
 from __future__ import annotations
 
+import math
 import os
 import wave
 from functools import lru_cache
@@ -610,6 +611,18 @@ def resample(x, rate, new_rate):
     return _rs(x, max(1, n)), new_rate
 
 
+def _round_keep(v, decimals, sig):
+    """``round(v, decimals)``、ただし小さい値でも有効数字 ``sig`` 桁は残す(abs-floor2)。
+
+    小数点以下の桁数で丸めると、振幅 1e-9 の信号(m 単位の振動・ひずみ)の rms が 0 に潰れる。
+    ``|v| >= 10**(sig - 1 - decimals)`` では従来の ``round(v, decimals)`` と同じ値。
+    """
+    v = float(v)
+    if v == 0.0 or not math.isfinite(v):
+        return v
+    return round(v, max(int(decimals), int(sig) - 1 - int(math.floor(math.log10(abs(v))))))
+
+
 def signal_features(x, rate=1.0):
     """A compact acoustic/vibration feature vector for anomaly detection:
     ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid`` (Hz),
@@ -634,18 +647,22 @@ def signal_features(x, rate=1.0):
     r = rms(x)
     peak = float(np.max(np.abs(x)))
     freqs, mag = spectrum(x, rate)
-    msum = float(mag.sum()) + 1e-12
+    # 床を足さない(abs-floor2): 以前の ``mag.sum() + 1e-12`` は振幅 1e-9 以下の信号で
+    # 重心・帯域を 0 側へ潰した(比なので振幅の尺度に依らないはずの量)。
+    msum = float(mag.sum())
+    if not msum > 0.0:
+        msum = 1.0                      # 全部 0 の信号: 分子も 0 なので重心・帯域は 0
     centroid = float((freqs * mag).sum() / msum)
     peak_freq = float(freqs[int(np.argmax(mag))])
     bandwidth = float(np.sqrt(((freqs - centroid) ** 2 * mag).sum() / msum))
     return {
-        "rms": round(r, 6),
-        "peak": round(peak, 6),
-        "crest_factor": round(peak / (r + 1e-12), 4),
+        "rms": _round_keep(r, 6, 6),
+        "peak": _round_keep(peak, 6, 6),
+        "crest_factor": round(peak / r, 4) if r > 0.0 else 0.0,
         "zcr": round(zero_crossing_rate(x), 6),
-        "spectral_centroid": round(centroid, 3),
-        "peak_freq": round(peak_freq, 3),
-        "bandwidth": round(bandwidth, 3),
+        "spectral_centroid": _round_keep(centroid, 3, 3),
+        "peak_freq": _round_keep(peak_freq, 3, 3),
+        "bandwidth": _round_keep(bandwidth, 3, 3),
     }
 
 

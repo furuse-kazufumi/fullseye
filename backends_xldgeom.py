@@ -93,6 +93,17 @@ def _openpts(cs):
     return _allpts(out)
 
 
+def _var_floor(pts):
+    """「全点が同一」とみなす分散(長さ²)の床: 座標の大きさ² の 1e-24 倍(丸め屑だけ)。
+
+    ★1.0 前の修正 2026-11-05 abs-floor: 以前は固有値・幅・長さを固定の 1e-12 と比べていて、座標 1e-6 の輪郭では楕円の
+    離心率が 0、軸比が 1e6 になった(固有値が 1e-12 の桁)。
+    """
+    if len(pts) == 0:
+        return 0.0
+    return (1e-12 * float(np.abs(pts).max())) ** 2
+
+
 def _pca(pts):
     """Population covariance eigen-decomposition of an (N,2) (row,col) point set.
 
@@ -174,19 +185,20 @@ def xg_eccentricity(v, a, b):
     数えない。``a``, ``b`` は未使用。
 
     返り値は ``numpy.float64`` で [0, 1]。真円・正方形など等方な点配置で 0、
-    一直線上の点(``λ_min = 0``)で 1。点が 2 個未満、または ``λ_max <= 1e-12``
-    (全点同一)なら 0.0。輪郭が複数あればそれらをまとめた分布の離心率になり、
+    一直線上の点(``λ_min = 0``)で 1。点が 2 個未満、または全点が同一(``λ_max`` が
+    座標の大きさ² の 1e-24 倍以下 = 丸め屑)なら 0.0。輪郭が複数あればそれらをまとめた分布の離心率になり、
     個々の輪郭の形ではなく配置の広がりも混ざる(輪郭ごとに評価したいなら先に
     ``select_contours_xld`` などで 1 本に絞る)。輪郭点の密度に依存する(点が
     密な部分が重く効く)点は面積ベースの指標と異なる。軸比そのものは
     ``xg_elliptic_axis``、主軸の向きは ``xg_orientation``。
     """
-    r = _pca(_openpts(_cs(v)))
+    pts = _openpts(_cs(v))
+    r = _pca(pts)
     if r is None:
         return np.float64(0.0)
     w, _ = r
     lo, hi = float(w[0]), float(w[1])
-    if hi <= 1e-12:
+    if hi <= _var_floor(pts):
         return np.float64(0.0)
     e = math.sqrt(max(0.0, 1.0 - lo / hi))
     return _fin(min(1.0, e))
@@ -232,21 +244,24 @@ def xg_elliptic_axis(v, a, b):
     等価楕円の長軸/短軸比 ``sqrt(λ_max/λ_min)`` を返す。``a``, ``b`` は未使用。
 
     返り値は ``numpy.float64`` で 1 以上。等方な点配置で 1、細長いほど大きい。
-    ``λ_min <= 1e-12``(全点が一直線)では ``λ_max > 1e-12`` なら 1e6、そうで
-    なければ 1.0。それ以外でも上限 1e6 で打ち切る。点が 2 個未満なら 1.0。
+    ``λ_min <= 1e-12·λ_max``(全点が一直線。比が上限 1e6 に届く)では 1e6、全点が同一
+    (``λ_max`` が座標の大きさ² の 1e-24 倍以下)なら 1.0。それ以外でも上限 1e6 で打ち切る。点が 2 個未満なら 1.0。
     非有限になった場合も 1.0 に落とす。[0,1] に正規化されていない量なので、
     他の特徴量と並べる際はスケールに注意(1e6 の外れ値が出うる)。
     ``xg_eccentricity`` は同じ固有値を [0,1] に写した版で、こちらは比を直接
     見たいときに使う。軸ではなく外接矩形の縦横比なら ``xg_height_width_ratio``
     (こちらは向きに依存する)。
     """
-    r = _pca(_openpts(_cs(v)))
+    pts = _openpts(_cs(v))
+    r = _pca(pts)
     if r is None:
         return np.float64(1.0)
     w, _ = r
     lo, hi = float(w[0]), float(w[1])
-    if lo <= 1e-12:
-        return np.float64(1e6 if hi > 1e-12 else 1.0)
+    if hi <= _var_floor(pts):
+        return np.float64(1.0)
+    if lo <= 1e-12 * hi:
+        return np.float64(1e6)
     return _fin(min(1e6, math.sqrt(hi / lo)), default=1.0)
 
 
@@ -257,8 +272,9 @@ def xg_height_width_ratio(v, a, b):
     ``h = max(row) - min(row)`` と列方向の広がり ``w = max(col) - min(col)`` の比
     ``h / w`` を返す。``a``, ``b`` は未使用。
 
-    返り値は ``numpy.float64``。点が無ければ 0.0。``w < 1e-12``(全点が同じ列=
-    縦一直線)では ``h > 1e-12`` なら 1e6、そうでなければ 0.0。上限は 1e6。
+    返り値は ``numpy.float64``。点が無ければ 0.0。``w`` が座標の大きさの 1e-12 倍以下
+    (全点が同じ列=縦一直線)では ``h`` がそれより大きければ 1e6、そうでなければ 0.0。
+    上限は 1e6。
     軸並行の bbox なので回転に不変ではない(45° 傾いた細長い輪郭は 1 に近づく)。
     回転不変な細長さは ``xg_elliptic_axis`` / ``xg_eccentricity`` を使う。
     ``h``, ``w`` は点座標の範囲(画素中心間の距離)で、画素数ベースの幅より 1 小さい。
@@ -269,8 +285,9 @@ def xg_height_width_ratio(v, a, b):
         return np.float64(0.0)
     h = float(np.ptp(pts[:, 0]))
     w = float(np.ptp(pts[:, 1]))
-    if w < 1e-12:
-        return np.float64(1e6 if h > 1e-12 else 0.0)
+    tiny = 1e-12 * float(np.abs(pts).max())
+    if w <= tiny:
+        return np.float64(1e6 if h > tiny else 0.0)
     return _fin(min(1e6, h / w))
 
 
@@ -300,7 +317,7 @@ def xg_clip_contours(v, a, b):
     複数)だけ残す。``b`` は未使用。
 
     返り値は入力と同じ ``{"shape", "cs"}`` 形式の輪郭辞書(点配列はコピー)。
-    輪郭が無ければ ``cs`` は空。``L_max <= 1e-12``(全輪郭が 1 点)なら全輪郭を
+    輪郭が無ければ ``cs`` は空。``L_max = 0``(全輪郭が 1 点)なら全輪郭を
     そのまま返す。しきい値が画像サイズでなく「最長輪郭に対する相対値」なので、
     最長の輪郭が変わると選別基準も動く(点数の絶対値で選ぶなら
     ``select_contours_xld``)。名前から想像される矩形での切り取りではなく、
@@ -313,7 +330,7 @@ def xg_clip_contours(v, a, b):
         return {"shape": shape, "cs": []}
     lens = [_plen(c) for c in cs]
     lmax = max(lens)
-    if lmax <= 1e-12:
+    if not lmax > 0.0:
         return {"shape": shape, "cs": [c.copy() for c in cs]}
     lo = float(np.clip(a, 0.0, 1.0)) * lmax
     out = [c.copy() for c, length in zip(cs, lens) if length >= lo]
@@ -328,7 +345,7 @@ def _max_perp(pts, i, j):
     seg = pts[j] - p
     seg_len = math.hypot(seg[0], seg[1])
     w = pts[i + 1:j] - p
-    if seg_len < 1e-12:
+    if seg_len == 0.0:
         d = np.hypot(w[:, 0], w[:, 1])
     else:
         d = np.abs(seg[0] * w[:, 1] - seg[1] * w[:, 0]) / seg_len

@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3816, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3817, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -3584,6 +3584,7 @@
 {"name":"voronoi_cells","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"voxel_grid_downsample","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"voxel_iou","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"voxel_to_hessian","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"voxel_to_mesh","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"voxel_to_mips","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"vx_histogram","status":"not_in_registry","reason":"not executable by fullseye.apply"},

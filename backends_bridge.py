@@ -595,11 +595,13 @@ def matrix_to_img(v, a, b):
         x = np.sign(x) * np.log1p(k * np.abs(x)) / np.log1p(k)
     if float(b) < 0.5:
         lo, hi = float(np.min(x)), float(np.max(x))
-        if hi - lo < 1e-12:
+        # 幅は値の大きさに対する相対量で見る(abs-floor2: 以前の絶対の 1e-12 は、
+        # 値が 1e-13 の桁の行列 —— 例えば m² 単位の共分散 —— を一様 0.5 にした)。
+        if hi - lo <= 1e-12 * max(abs(lo), abs(hi)):
             return np.full(x.shape, 0.5, np.float64)
         return (x - lo) / (hi - lo)
     m = float(np.max(np.abs(x)))
-    if m < 1e-12:
+    if not m > 0.0:
         return np.full(x.shape, 0.5, np.float64)
     return np.clip(0.5 + 0.5 * x / m, 0.0, 1.0)
 

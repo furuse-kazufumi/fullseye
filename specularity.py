@@ -1422,7 +1422,10 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
     n_used = 0
     for idx in subsets:
         Lt = L[list(idx)]                                   # (3, 3)
-        if abs(float(np.linalg.det(Lt))) <= 1e-12:
+        # Relative to the lights' own scale, as in the refit below (abs-floor2: the
+        # absolute 1e-12 skipped every triple of unnormalised lights of strength 1e-5).
+        if abs(float(np.linalg.det(Lt))) <= 1e-12 * max(
+                float(np.abs(Lt).max()) ** 3, np.finfo(np.float64).tiny):
             continue                                        # coplanar triple
         n_used += 1
         for start in range(0, P, chunk):

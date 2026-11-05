@@ -1,4 +1,4 @@
-# REPRCONV operator help — 62 ops in 15 categories
+# REPRCONV operator help — 63 ops in 15 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/reprconv/<category>/<op>.md` を走査。
 
@@ -12,9 +12,9 @@
 
 [curvature_to_shape_index](curvature/curvature_to_shape_index.md) · [curvature_to_table](curvature/curvature_to_table.md) · [shape_index_to_curvature](curvature/shape_index_to_curvature.md)
 
-### derivative (4)
+### derivative (5)
 
-[gradient_coherence](derivative/gradient_coherence.md) · [gradient_magnitude](derivative/gradient_magnitude.md) · [hessian_determinant](derivative/hessian_determinant.md) · [hessian_vesselness](derivative/hessian_vesselness.md)
+[gradient_coherence](derivative/gradient_coherence.md) · [gradient_magnitude](derivative/gradient_magnitude.md) · [hessian_determinant](derivative/hessian_determinant.md) · [hessian_vesselness](derivative/hessian_vesselness.md) · [voxel_to_hessian](derivative/voxel_to_hessian.md)
 
 ### descriptor (3)
 

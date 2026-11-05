@@ -6,6 +6,7 @@ value domain) plus correctness anchors and evolution-honesty invariants.
 """
 from __future__ import annotations
 
+import contextlib
 import os
 import sys
 import warnings
@@ -120,6 +121,35 @@ def _isolate_studio_settings(tmp_path_factory):
             os.environ.pop(_STUDIO_SETTINGS_ENV, None)
         else:
             os.environ[_STUDIO_SETTINGS_ENV] = prev
+
+
+#: api の遮断器(プロセスで 1 つの集合)。開けたまま残すと、同じワーカーで後に走るテストの
+#: GPU / 速い双子の経路が黙って閉じる(1.0 前の修正 2026-11-05 t8-flake: T6 が median_image で落ちた)。
+_API_BREAKERS = ("_GPU_OPEN", "_FAST_OPEN")
+
+
+@contextlib.contextmanager
+def _api_breakers_restored():
+    """抜けるときに api の遮断器を入ったときの中身へ戻す(api を読んでいなければ何もしない)。"""
+    api = sys.modules.get("api")
+    saved = {k: set(getattr(api, k)) for k in _API_BREAKERS if hasattr(api, k)} if api is not None else {}
+    try:
+        yield
+    finally:
+        api = sys.modules.get("api")
+        if api is not None:
+            for k in _API_BREAKERS:
+                cur = getattr(api, k, None)
+                if isinstance(cur, set):
+                    cur.clear()
+                    cur.update(saved.get(k, ()))
+
+
+@pytest.fixture(autouse=True)
+def _isolate_api_breakers():
+    """テストが開けた遮断器を次のテストへ持ち越さない(中で開けて中で確かめるのは従来どおり)。"""
+    with _api_breakers_restored():
+        yield
 
 
 # --------------------------------------------------------------------------- #

@@ -10,6 +10,143 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(nary-guard)
+
+- MCP `fullseye_pipeline` の `python` 実行器の段(型つきの関数を直に呼ぶ段: 2 入力の `phase_correlation_shift` / `polarization_render` / `deflectometry_phase_to_slope`、1 入力の `fringe_ftp_phase` など)が、`registry` の段と同じ入口の契約を受ける。宣言 sort が `image` / `color` / `volume` の入力は、整数・bool なら `fullseye.apply(on_error="raise")` と同じ文で拒否(float16/32 は float64 へ無損失に昇格)、NaN / ±inf も拒否。以前は `.npy` から読んだ uint8 のハンドルが、同じパイプラインの `gauss_filter` では拒否されるのに、これらの段では 0..255 のまま黙って計算された(外部監査 F2 の兄弟)。それ以外の sort(`points` / `seq<image>` / `polsweep` …)の値は従来どおり触らない。
+- Studio の 2 枚の知覚パネル(`studio.PerceptionModel`)が、枠 A・B を `fullseye.apply` の n 項入力と同じ規則で受ける。uint8 / uint16 は方針(`FULLSEYE_ON_ERROR` / strict)が `"raise"` なら拒否、それ以外は /255(/65535)して台帳に記録(名前 `studio_perception`)。NaN / ±inf の枠は ValueError。以前は両方を `np.asarray(x, float64)` で受けていたので、uint8 の B を [0,1] の A と並べるとオプティカルフロー・ステレオ深度が黙って別の絵になり(同じ枠を float で渡したときとの色の差 最大 1.0 / 0.96)、NaN の枠は NaN の絵を返した。
+
+### 修正 — 1.0 前の修正 2026-11-05(nary-guard)
+
+- 外部監査 F2(uint8 の 32 を 2 枚 `add_image` → strict でも 1.0、記録 0 件)は `api.apply` の n 項経路では前の便(#263/#270)で直っていた(strict は拒否、fallback は 64/255 = 0.250980392 と入力ごとに台帳 1 件)。全 17 本の n 項 op の、dtype 契約の対象の入力 23 本と非有限の入力 34 本、ファサード(`fullseye.apply`)・グラフ(`graphengine.FullseyeGraph.run`)の入口で回帰テストに固定した(`tests/test_fix_nary_guard_2026_11_05.py`)。
+
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(abs-floor2)
+
+前の便(abs-floor)の棚卸しで「未確認」だった公開経路の 183 件を 1 件ずつ見て、単位のある量に絶対の床が
+混ざって入力の尺度で結果が変わるものを直した。尺度 1 の入力は丸めの桁しか変わらない。
+
+- `dsp.signal_features`: スペクトル重心・帯域の分母に足していた 1e-12 と、波高率 `peak / (rms + 1e-12)` の
+  床を外す。振幅 1e-9 の信号(m 単位の振動・ひずみ)で重心 50 Hz が 16.7 Hz に、振幅 1e-15 で波高率 √2 が
+  0.001 になっていた。`rms` / `peak` / 周波数は、小数の桁で丸めると小さい値が 0 に潰れる(振幅 1e-9 で
+  rms 0、rate=1 の peak_freq 0.0236 Hz が 0.024)ので、rms・peak は有効数字 6 桁、周波数は 3 桁を残す丸めに
+  (0.1 以上の値は以前と同じ値)。全部 0 の信号は以前どおり 0。`tests/test_perf_batch29` の照合の式も同じ定義に直した。
+- `matrix_to_img`(`backends_bridge`): 「全要素が等しい」判定 `hi − lo < 1e-12`・`max|x| < 1e-12` を値の
+  大きさに対する相対/厳密な 0 に。値 1e-13 の桁の行列(m² 単位の共分散など)が一様 0.5 になっていた。
+- `mathnumerics.interp_barycentric(nodes="chebyshev2")`: 点の照合 `|xk − 期待値| <= 1e-12` を区間の尺度に
+  対する相対の許容に。区間 [1e6, 2e6] の正しい Chebyshev 点を丸めの差(2e-10)で `ValueError` にし、
+  区間 [0, 1e-15] の等間隔点を Chebyshev 点として通して(誤った重みで)補間していた。
+- `fourierdesc.elliptic_fourier`: 長さ 0 の線分を 1e-12 に持ち上げる床と、周長 < 1e-9 の拒否を外し、
+  周長 0 だけを拒否。座標 1e-13 の輪郭を拒否し、座標 1e-6 の輪郭では重複点で係数が動き、一点に重なる
+  1000 点以上の輪郭は周長 1e-9 として通っていた。`invariants(scale_invariant=True)` /
+  `normalize(size_invariant=True)` の「第 1 高調波 > 1e-12 なら割る」を相対の判定に(座標 1e-13 で
+  正規化されないまま返っていた)。
+- `fourierdesc.elliptic_fourier` / `contour_fourier_complex`: 閉じ点の判定 `np.allclose(p[0], p[-1])` を
+  輪郭の広がりに対する相対の判定に。絶対の許容 1e-8 のせいで、広がり 1e-8 以下の輪郭では末尾の本物の点を
+  閉じ点として落としていた(`contour_fourier_complex` の係数の行数が 1 減る)。
+- `visualhull.look_at`(`carve_look_at`): eye と target の一致判定 `|target − eye| < 1e-12` を座標の丸めの
+  桁に(`create_cam_pose_look_at_point` と同じ規則)。座標 1e-13 の正しいカメラを拒否していた。
+- `specularity.photometric_stereo_robust(normalize=False)`: 3 灯の行列式 `<= 1e-12` の共面判定を、後段の
+  refit と同じ光の強さ³ に対する相対量に。強さ 1e-5 の正規化していない光で、全 3 つ組が「共面」になって
+  `ValueError` だった。
+
+### 修正 — 1.0 前の修正 2026-11-05(abs-floor2)
+
+- 183 件の内訳: a 7(全部修正)・a-weak 21(うち 2 件修正)・b 128・c 9・コメント 18。分類と理由は便の
+  報告(inventory2.md)に残した。前の便が次便に回した 2 件のうち、`pivops._stamp_triangle` は描画の画素
+  座標なので問題なし、`mesh_decimate.decimate_qem_manifold` の面積の床は公開経路の外(例からだけ呼ばれる)
+  なので次便。
+- 直さなかった a-weak の主なもの: 長さの床で全点一致・重複点の退化でだけ効くもの(`register_nonrigid`・
+  `gicp`・`fit_torus`・`fpfh` の近傍距離など)、`div_image` の |分母| < 1e-12 → NaN(画素値の契約内)。
+- 別件(床ではない): `pointcloud.fpfh` は 1/距離 の重みを正規化しないので、記述子そのものが座標の尺度で
+  変わる。値が変わる変更になるので、この便では報告だけにした。
+
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(abs-floor)
+
+外部監査 F3(`vector_to_similarity` の分母の固定 1e-12。master では修正済み)と同じ型 —— 長さ² の量に
+固定の 1e-12 の床を足す/比べる —— の兄弟を、利用者が直接呼ぶ op から直した。座標・深度の尺度が 1e-4 以下
+(µm を m で持つ顕微系など)で結果が変わる。単位の尺度の入力は丸めの桁しか変わらない。
+
+- `pcseg.curvature` / `objmodel3d.edges_object_model_3d`: 近傍共分散の固有値の和の床を座標の大きさ² に
+  対する相対量に。座標 1e-6 の点群で曲率が全部 0 / エッジ点 0 個だったのが、尺度 1 と同じ値になる。
+- `feat_shot.iss_keypoints`: λ1 の床を同じく相対量に(座標 1e-6 でキーポイント 0 個だった)。
+- `xg_eccentricity` / `xg_elliptic_axis` / `xg_height_width_ratio`: 「全点同一」「一直線」の判定を座標の
+  大きさに対する相対量に。座標 1e-6 の楕円で離心率 0・軸比 1e6 を返していた。`xg_elliptic_axis` の
+  一直線の判定は `λ_min <= 1e-12·λ_max`(比が上限 1e6 に届く点)。
+- `camera.normals_from_depth`(`fullseye.normals_from_depth`): 外積の長さ < 1e-12 を NaN にしていた判定を、
+  接線の長さの積に対する相対量に。深度 1e-3 m・fx 5000 px で全画素 NaN だった。
+- `range_image.normals_from_depth`: `n / (|n| + 1e-12)` を床なしの正規化に(外積 0 の画素は以前どおり 0)。
+- `objmodel3d.intersect_plane_object_model_3d` / `volume_object_model_3d_relative_to_plane`: 平面の法線
+  `(a, b, c)` の長さに足していた 1e-12 を外し、法線 0 の平面は `ValueError`(以前は黙って全点/0 点)。
+- `curve3d.resample_uniform` / `measure.fit_rectangle2` / `xg_clip_contours`: 長さ < 1e-12 を「長さ 0」と
+  みなしていたのを厳密な 0 に(全長 1e-13 の曲線を先頭点の複製にし、辺 1e-13 の矩形で `TypeError`)。
+
+### 修正 — 1.0 前の修正 2026-11-05(abs-floor)
+
+- `gen_parallels_xld` / `gen_contour_polygon_rounded_xld` / `get_polygon_xld`・`backends_xldgeom` の
+  Douglas-Peucker: 接線・辺の長さに足していた + 1e-12 を外す(座標 1e-6 で相対 1e-6 ずれた)。長さ 0 の
+  接線・辺は以前どおり 0 ベクトル/始点からの距離。
+- 棚卸し(tests・examples を除く .py の絶対の床 1373 件)と、直さなかったものの分類は便の報告に残した。
+  主な残り: 物理シミュレータ・描画(SI 単位・単位ベクトルで尺度が固定)、画素値の床([0, 1] の契約で尺度が
+  固定)、長さに 1e-9 の床(座標 1e-9 の桁でだけ効く)。
+
+### 修正 — 1.0 前の修正 2026-11-05(hessian-np)
+
+- `hessian` 型の産み手が torch の `match3d.hessian3d` だけで、素の `pip install fullseye`(torch なし)では
+  `hessian_determinant` / `hessian_vesselness` に入力が届かなかった(型の鎖 voxel → hessian → voxel が
+  行き止まり)。numpy と scipy だけの産み手 `reprconv.voxel_to_hessian(vol, sigma=1.0, scale_normalize=False)`
+  を足した(台帳 `opsreprconv`、`fs.ledger.voxel_to_hessian`)。返りは `hessian3d` と同じ形(list の 6 本、
+  各 (D,H,W) float32、順 zz, yy, xx, zy, zx, yx、1/voxel²、端は replicate)。ガウス微分核は和と 1・2 次
+  モーメントを厳密に合わせてあり、2 次多項式で内部の H = A が丸めの範囲で出る。`sigma=0` は `hessian3d`
+  と同じ 3 タップ核で torch 版と一致する。既存 op の振る舞いは変わらない。
+  例 `examples/hessian_numpy_chain.py`、門 `tests/test_fix_hessian_np_2026_11_05.py`。
+
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(typed-dtype)
+
+整数・bool の入力を float64 [0,1] の契約へ寄せる入口の dtype 契約(uint8 は /255、uint16 は /65535、
+`on_error="raise"` では拒否、それ以外の方針では変換して台帳に `dtype_converted` を記録)を、`image` / `color` /
+`volume` に加えて **`video`((T,H,W) と (T,H,W,3))・`rgbimage`((H,W,3))・`lightfield`((V,U,H,W))** にも掛ける。
+3 つとも、産む op(`img_to_video` / `img_to_rgb` / `img_to_lightfield`、`tb_points_render`)と消費する op の
+docstring が「値は画素値(入力と同じ値域、[0,1])」と約束している sort。
+
+- 以前は uint8 の動画が strict でも通り、`tb_temporal_bandpass` は float の答えの 255 倍(実測で差 194)、
+  `tb_temporal_band_power` は 255² 倍(差 7246)を例外も記録も無く返していた。他の 14 本の video op は
+  尺度に依らない演算・しきい値のためたまたま同じ答えだった。
+- 変わること: 上の 3 sort を受ける 31 本の op に整数・bool の配列を渡すと、`on_error="raise"` で `ValueError`、
+  既定の方針では /255 などで変換され台帳に記録される。float16 / float32 は無記録で float64 に上げる
+  (`image` と同じ)。float64 の入力の答えは 1 ビットも変わらない。
+- 全部の入口が同じ規則になる: `fullseye.apply` / `api.apply` / `api.run_pipeline`(CPU・GPU)/
+  `FullseyeEngine.run` · `run_stepwise` · `run_cached` / MCP の段(`fullseye.apply` を呼ぶ)。
+- `tb_sensor_capture` は `rgbimage` を返すが値は 0..2^bit_depth−1 の**整数のセンサ符号**。これを別の
+  `rgbimage` op に `apply` で渡すと、strict では拒否、既定では int32 の最大値で割られる(`image` の int32 と同じ
+  規則)。続けるなら `out / (2**bit_depth - 1)` で [0,1] に直してから渡すこと。
+
+### 修正 — 1.0 前の修正 2026-11-05(typed-dtype)の棚卸しと、契約に入れなかった sort
+
+回帰は `tests/test_fix_typed-dtype_2026_11_05.py`(真値 = 同じ値を float64/255 で渡した答え。31 本の op ×
+strict 拒否 / 変換と記録 / float 不変、6 つの入口の一致)。
+
+- 契約に入れなかった sort と理由(値が画素値ではなく、整数が意味を持つか /255 が黙った単位変更になる):
+  `counts`(光子カウント、int64 が契約)、`cimage` / `beatcube`(複素の場)、`qimage`(四元数。モノジェニックの
+  Riesz 対は符号つき、QFT のスペクトルは [0,1] を大きく超える)、`signal` / `matrix` / `points` / `keypoints`
+  (プロファイル・線形代数・座標)、`region`(整数のマスクは正当)。
+- 値域の契約(`_RANGE_CONTRACT_SORTS` = `image` / `color`)は広げていない(この便は dtype だけ)。
+
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(plenoptic-gate)
+
+- `examples/poc_plenoptic_camera.py` の `CI=1` 縮小走行(96 px・6 x 6 MLA)は、もう
+  焦点ピークと領域 median を印字しない。復号される空間は 5 x 5 で、侵食後の各面の標本は 0 個 ——
+  焦点度は全スロープで 0 になり、`argmax` が掃引の先頭 −0.4 を返し、median は `nan` だった。
+  それを `PASS` の隣に並べていた。今は `UNMEASURED: regional parallax gate ...` の行を出し、
+  PASS 行も「gate 1 only; regional parallax gate UNMEASURED」と範囲を書く。
+  `run_metrics.json` の `focus_peaks` / `region_median_slopes` / `depth_median_error_m` は
+  測れないとき `null`(以前は `NaN` = 不正な JSON)、新しい `regional_gate` 欄が `measured` / `unmeasured`。
+
+### 修正 — 1.0 前の修正 2026-11-05(plenoptic-gate)
+
+- 同 PoC の領域判定を `regional_parallax()` に集め、測れるとき(全領域 30 標本以上、どの規模でも)は
+  必ず判定する: 焦点度が有限・焦点曲線が平らでない・ピークが掃引の**内側**(端は打ち切られた探索)・
+  領域 median が有限。閾値(0.03 lenslets/view、深度 20 %)は変えていない。full 走行(480 px)は
+  測れなければ落ちる。回帰テスト `tests/test_fix_plenoptic_gate_2026_11_05.py`。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(numerics)
 
 長さ・長さ² に固定の `1e-12` を足す/比べる床と、中心化せずに解く当てはめを直した。値が変わるのは
@@ -153,6 +290,22 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - L1 角度を `(−π, π]` に折る内部関数 2 本が約束の値域を守っていなかった(`fringe.wrapped_phase` を `(−π, π]` に直したときの兄弟)。`complexops._wrap` は `np.round` の偶数丸めで `−π` を `−π` のまま、`3π` を `−π` にしていた。`carpath._wrap` は floor の式で `π` を `−π` にしていた(値域が `[−π, π)`)。どちらも floor で折ってから `−π` 以下を `+2π` する形(drivecourse / drivetown の `_wrap` と同じ)。呼び出し側は全部モジュールの中で、`phase_unwrap` の結果は変わらない(同じ位相を `+π` と書いても `−π` と書いても展開が同じことを門にした)。Reeds-Shepp / Dubins の経路長は 1,445 点の格子(π の境界を含む)で修正前と全部一致(対称な候補が拾っていた)。兄弟: `[−π, π)` を返す `drivecommonroad` / `itof` / `moirealign` / `ultrasound` の `_wrap` と examples の 2 本は値域を約束しておらず、呼び出し側は差の絶対値か小さな差にしか使わないので変えない。`residue._wrap_signed` は `[−p/2, p/2)` と書いてあり、そのとおり。
 - L2 `ph_total_variation_flow` は反復を増やす(a ≥ 0.5)と雑音除去にならず、a=1 では誤差が雑音の入力より大きかった(正方形 + 端の帯・σ 0.05・b=0: 入力 0.050、a=0.1 で 0.019、a=1 で 0.067)。原因は時間刻みの安定条件でも発散でもなく(1 歩の変化は減り続け、雑音の無い入力でも a=1 で RMSE 0.067 = 明るさの偏り)、忠実度 lam が弱すぎたこと: 時定数 1/lam(4.5〜50)が走る時間の全体 80 × 0.008 = 0.64 より桁で長く、忠実度が効かないまま純粋な TV flow が一定値へ流れていた(正方形の中が 0.70 → 0.67、幅 8 px の帯が 0.10 → 0.13)。lam を 10〜30 に(dt·lam ≤ 0.24 で安定、lam·80·dt ≥ 6.4 で最小点に着く)。門: 区分定数 3 枚 × σ 2 通り × b 3 通りで、a を 0〜1 に振った誤差がどこでも入力の 3/4 未満、a=1 が途中の最良の 1.25 倍以内、上がり幅が入力誤差の 1/8 以下、a=0.8 と a=1 の出力の差 < 1e-3、雑音の無い入力の RMSE < 0.025。兄弟: `dc_structure_texture`(`backends_decomp._tv_structure`、Chambolle の双対法)は a が強さ(weight)で反復は固定 120 回なので同じ形ではない。`ph_heat_flow` / `ph_mean_curvature_motion` / `ph_perona_malik` は忠実度項を持たない拡散で、a(時間)とともにならしが進むのが仕様。
 - L3 MCP `fullseye_find_ops` の `limit` が単調でなかった: "edge detection" で limit 5/6/7/8 → op 5/6/5/8 件。`limit` が既定値 `find_ops_k`(7)と等しいときだけ op の枠を 7 − `find_ops_recipe_max`(2)= 5 にし、それ以外は op を limit 件引いていた(提案は limit 件で切るので、レシピは既定値のときしか提案に入らなかった)。レシピの枠 = min(`find_ops_recipe_max`, limit − 1)、op の枠 = limit − レシピの枠 に一本化した(limit だけで決まるので単調)。道具の schema は変えていない(minimal プロファイルの予算 1500 に残り 3 トークン)。意味は `docs/MCP.md` の表に書いた。門: 2 つの問いで limit 1〜12 の op 件数・提案件数が減らず、前の候補が入れ替わらず(後ろに足されるだけ)、提案件数 = limit、既定 = limit 7。兄弟: `fullseye_search_ops` の `limit` は op の件数だけでレシピを混ぜないので同じ形ではない。
+
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(t8-flake)
+
+- `fsthreads.for_decomposition` / `fs.blas_threads` の `as` で受ける値は、**掛けた後に BLAS の現在値を
+  読み直して**上限以下になっているときだけ `True` になる。以前は設定が黙って捨てられても `True` と答えた。
+
+### 修正 — 1.0 前の修正 2026-11-05(t8-flake)
+
+- threadpoolctl 3.8.0(2026-11-05 公開)から、pthreads / Windows 版 OpenBLAS の上限は最初に設定した
+  スレッド(制御スレッド)からしか変えられず、他のスレッドの設定は黙って無視される。`fsthreads` は
+  limiter を文脈の外で持つので制御が解放されず、(1) 主スレッドで一度使った後は別スレッドの文脈が全部
+  素通し(CI shard 5 の `{'A_inside_with_B': 4, 'B_after_A_left': 4}`。偶発ではなく 3.8 では毎回)、
+  (2) 生きている worker が先に入ると全部抜けた後もプロセスが 1 スレッドに固まった(24 -> 1)、
+  (3) 利用者自身の `threadpool_limits` も別スレッドから効かなくなった。上限を掛け替えるたびに鍵の下で
+  `OpenBLASController.clear_controlling_thread(force=True)` で制御を取り、終わったら手放す
+  (3.7 以前には無い API なので、有るときだけ使う)。回帰テスト `tests/test_fix_t8_flake_2026_11_05.py`。
 
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(state)
 

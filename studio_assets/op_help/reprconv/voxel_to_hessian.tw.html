@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">voxel_to_hessian — REPRCONV <code style="color:#22d3bf">derivative</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">hessian</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_to_hessian(vol, sigma=1.0, scale_normalize=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.voxel_to_hessian(vol, sigma=1.0, scale_normalize=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;voxel_to_hessian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>體 <code style="color:#22d3bf">voxel</code> → 3-D Hessian <code style="color:#22d3bf">hessian</code> 的 6 個分量 (zz, yy, xx, zy, zx, yx)。僅用 numpy 與 scipy 建構的 <code style="color:#22d3bf">hessian</code> 型別的入口。</p>
+<p>回傳與 <code style="color:#22d3bf">hessian3d</code>(torch 的 conv3d)<b>相同的形式</b>: 長度為 6 的 list,各為 <code style="color:#22d3bf">(D,H,W)</code> float32, 順序為 (zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x),單位為 1/voxel²,邊緣 replicate (<code style="color:#22d3bf">scipy.ndimage</code> 的 <code style="color:#22d3bf">mode=&quot;nearest&quot;</code>)。因此 <code style="color:#22d3bf">hessian_determinant</code> / <code style="color:#22d3bf">hessian_vesselness</code> 可直接讀取,即使在沒有 torch 的純 <code style="color:#22d3bf">pip install fullseye</code> 中, <code style="color:#22d3bf">voxel → hessian → voxel</code> 的鏈也能接通。</p>
+<p><code style="color:#22d3bf">sigma</code> 是高斯平滑的尺度(voxel)。對角分量為「該軸的 2 階 × 其他 2 軸的平滑」,交叉分量為「2 個軸的 1 階 × 其餘軸的平滑」的可分離卷積。核為高斯導數的形狀,其和與 1 階、2 階矩嚴格對齊(取樣的高斯導數核之和不為 0,亮度會洩漏到 2 階導數中),因此對 2 次多項式 ½xᵀAx + bᵀx,內部在捨入範圍內得到 <code style="color:#22d3bf">H = A</code>。<code style="color:#22d3bf">sigma=0</code> 不是「無平滑」,而是與 <code style="color:#22d3bf">hessian3d</code> 相同的 3 抽頭核([1,−2,1] / [−0.5,0,0.5] / [1,2,1]/4)—— 與 torch 版在 float32 捨入範圍內一致。<code style="color:#22d3bf">scale_normalize=True</code> 時乘以 σ²(Lindeberg 的 γ=1 正規化。用於跨尺度比較數值。與 <code style="color:#22d3bf">vol_frangi</code> 內部 Hessian 的約定相同)。</p>
+<p>不接受 2-D 影像: <code style="color:#22d3bf">hessian</code> 型別是 3-D 的 6 個分量,接收方也需要 <code style="color:#22d3bf">(D,H,W)</code>。2-D 的 Hessian 響應請用 <code style="color:#22d3bf">sk_hessian</code> / <code style="color:#22d3bf">sk_hessian_det</code> / <code style="color:#22d3bf">xsk_hessian_eig</code>(image → image)。</p>
+<p>Args:</p>
+<p>vol: 3-D 體 <code style="color:#22d3bf">(D,H,W)</code>,實數,有限。</p>
+<p>sigma: 高斯平滑的尺度(voxel)。有限且 &gt;= 0。0 時與 <code style="color:#22d3bf">hessian3d</code> 相同的核。預設 1.0。</p>
+<p>scale_normalize: True 時各分量乘以 σ²(不能與 <code style="color:#22d3bf">sigma=0</code> 同時使用)。</p>
+<p>Returns:</p>
+<p>6 個 <code style="color:#22d3bf">np.ndarray</code> 組成的 list,各為 <code style="color:#22d3bf">(D,H,W)</code> float32,順序為 (zz, yy, xx, zy, zx, yx)。</p>
+<p>Raises:</p>
+<p>ValueError: 空 / 不是 3-D / 非有限 / sigma 不是有限的非負數 /</p>
+<p><code style="color:#22d3bf">scale_normalize</code> 與 <code style="color:#22d3bf">sigma=0</code> 同時使用。</p>
+<p>空輸入(<code style="color:#22d3bf">vol</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:hessian_numpy_chain">hessian_numpy_chain</a> — <code style="color:#22d3bf">py -3.11 examples/hessian_numpy_chain.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">hessian</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">derivative</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gradient_magnitude">gradient_magnitude</a> · <a style="color:#22d3bf" href="opreprconv:gradient_coherence">gradient_coherence</a> · <a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -180,8 +180,11 @@ def gen_parallels_xld(contour, distance=5.0):
     out = []
     for a in contour["cs"]:
         d = np.gradient(a, axis=0)
-        norm = np.hypot(d[:, 0], d[:, 1])[:, None] + 1e-12
-        nvec = np.column_stack([-d[:, 1], d[:, 0]]) / norm
+        # ★1.0 前の修正 2026-11-05 abs-floor: 以前は接線の長さに + 1e-12。座標 1e-6 の輪郭ではオフセットが相対 1e-6 ずれた。
+        #   床なしで割り、接線が 0 の点(重なった点)は以前どおりオフセット 0。
+        norm = np.hypot(d[:, 0], d[:, 1])[:, None]
+        nvec = np.divide(np.column_stack([-d[:, 1], d[:, 0]]), norm,
+                         out=np.zeros_like(a, dtype=float), where=norm > 0.0)
         out.append(a + distance * nvec)
         out.append(a - distance * nvec)
     return _contour(contour.get("shape", (256, 256)), out)

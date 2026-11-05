@@ -2,7 +2,12 @@
 """PoC 2026.272: a prescription, MLA and sensor make one refocusable exposure.
 
 The full run traces a 480 x 480 sensor behind a 32 x 32 MLA (15 pixels per
-microlens).  ``CI=1`` selects the 96 x 96, 6 x 6 reduced run.  Every figure and
+microlens).  ``CI=1`` selects the 96 x 96, 6 x 6 reduced run.  That run decodes
+only 5 x 5 spatial samples -- about ten per plane, none left after the regional
+erosion -- so it checks gate 1 only and prints the regional parallax gate as
+``UNMEASURED``; it never prints a focus peak or region median it did not
+measure.  (Before 2026-11-05 it printed the empty-region focus argmax, the
+sweep's first slope -0.4, and ``nan`` medians next to ``PASS``.)  Every figure and
 video frame is decoded from the captured raw frame. Explanatory diagrams are
 labelled as conceptual rather than counted as validation.
 
@@ -40,6 +45,34 @@ RS = [22.01359, -435.76044, -22.21328, 20.29192, 79.6836, -18.39533]
 TS = [3.25896, 6.00755, 0.99997, 4.75041, 2.95208, None]
 NS = [(1.62041, 60.32), 1.0, (1.62004, 36.37), 1.0, (1.62041, 60.32), 1.0]
 DEPTHS_M = np.array([0.6, 1.0, 1.8])
+#: Decoded samples a plane's eroded region needs before its focus score is a
+#: measurement (the full run has 135..216; the CI=1 run has none).
+MIN_REGION_PX = 30
+
+
+def regional_parallax(slopes, stack, slope_map, depth_est, masks):
+    """Focus peak, median slope and median depth of each region, or ``None`` if unmeasurable.
+
+    Returns ``None`` when any region has fewer than ``MIN_REGION_PX`` decoded
+    samples: an empty region's focus score is 0 at every slope, so its argmax is
+    the sweep's first slope, and its median is ``nan``.  When it does measure,
+    every value is checked finite and every focus peak is checked to lie
+    strictly inside the slope sweep -- a peak on the sweep's end is a
+    truncated search, not a measurement.
+    """
+    counts = [int(m.sum()) for m in masks]
+    if min(counts) < MIN_REGION_PX:
+        return None
+    focus = np.array([[np.var(ndimage.laplace(im)[m]) for m in masks] for im in stack])
+    assert np.isfinite(focus).all(), "non-finite focus score"
+    assert np.all(np.ptp(focus, axis=0) > 0), ("flat focus curve", np.ptp(focus, axis=0))
+    idx = np.argmax(focus, axis=0)
+    assert np.all((idx > 0) & (idx < len(slopes)-1)), ("focus peak on the sweep's end", slopes[idx])
+    region_slope = np.array([np.median(slope_map[m]) for m in masks])
+    region_depth = np.array([np.median(depth_est[m]) for m in masks])
+    assert np.isfinite(region_slope).all() and np.isfinite(region_depth).all(), (region_slope, region_depth)
+    return {"focus": focus, "peaks": slopes[idx], "region_slope": region_slope,
+            "depth_median_error": region_depth-DEPTHS_M, "region_pixels": counts}
 
 
 def prescription(object_mm=1000.0, aperture_mm=5.0):
@@ -414,16 +447,16 @@ def main():
     masks = [ndimage.binary_erosion(depth_truth == z, iterations=2) for z in DEPTHS_M]
     slopes = np.round(np.linspace(-.4, .4, 33), 12)
     stack = np.stack([LF.lf_refocus(lf, s, interp="cubic") for s in slopes])
-    focus = np.array([[np.var(ndimage.laplace(im)[m]) if m.any() else 0.0 for m in masks]
-                      for im in stack])
-    peaks = slopes[np.argmax(focus, axis=0)]
     # interp="cubic": the linear default pulls fractional slopes toward 0
     # (lightfield.lf_depth_from_focus docstring, measured 2026-11-04).
     slope_map, sharp = LF.lf_depth_from_focus(lf, slopes, window=5, interp="cubic")
     depth_est=P.plenoptic_refocus_depth(lf,system,slope_map)["depth_m"]
-    region_slope = [float(np.median(slope_map[m])) if m.any() else float("nan") for m in masks]
-    depth_median_error = [float(np.median(depth_est[m]))-z if m.any() else float("nan")
-                          for m, z in zip(masks, DEPTHS_M)]
+    region = regional_parallax(slopes, stack, slope_map, depth_est, masks)
+    region_pixels = [int(m.sum()) for m in masks]
+    if region is not None:
+        focus = region["focus"]; peaks = region["peaks"]
+        region_slope = region["region_slope"].tolist()
+        depth_median_error = region["depth_median_error"].tolist()
     holdout=np.array([.75,1.3])
     holdout_slopes=np.array([traced_slope(system, z, views, 1e-3) for z in holdout])
     holdout_back=P.plenoptic_refocus_depth(lf,system,holdout_slopes)["depth_m"]
@@ -431,12 +464,15 @@ def main():
     metrics = {"sensor_px": cfg["sensor_px"], "lenslets": cfg["lenslets"],
                "pitch_px": cfg["pitch_px"], "angular": cfg["angular"],
                "rays": cap["ray_count"], "cpu_s": cpu, "wall_s": wall,
-               "focus_peaks": peaks.tolist(), "truth_slopes": truth_slopes.tolist(),
+               "regional_gate": "measured" if region is not None else "unmeasured",
+               "focus_peaks": peaks.tolist() if region is not None else None,
+               "truth_slopes": truth_slopes.tolist(),
                "paraxial_truth_slopes": paraxial_truth.tolist(),
                "paraxial_formula_slopes": paraxial_formula.tolist(),
                "pre_fix_formula_slopes": old_depth_to_slope(system, DEPTHS_M).tolist(),
-               "region_median_slopes": region_slope, "region_pixels": [int(m.sum()) for m in masks],
-               "depth_median_error_m": depth_median_error,
+               "region_median_slopes": region_slope if region is not None else None,
+               "region_pixels": region_pixels,
+               "depth_median_error_m": depth_median_error if region is not None else None,
                "source_id":"captured_raw->flat_field_calibration->plenoptic_decode",
                "holdout_depth_m":holdout.tolist(),"holdout_abs_error_m":np.abs(holdout_back-holdout).tolist()}
     if figs.target_dir() is not None and not cfg["ci"]:
@@ -458,10 +494,14 @@ def main():
     print("ray-traced slope (paraxial)   = " + " / ".join(f"{s:+.4f}" for s in paraxial_truth)
           + "; paraxial formula = " + " / ".join(f"{s:+.4f}" for s in paraxial_formula))
     print("pre-fix formula               = " + " / ".join(f"{s:+.1f}" for s in old_depth_to_slope(system, DEPTHS_M)))
-    print("measured focus peak           = " + " / ".join(f"{s:+.4f}" for s in peaks)
-          + "; region median slope = " + " / ".join(f"{s:+.4f}" for s in region_slope))
-    print("region median depth error     = " + " / ".join(f"{e*1000:+.1f} mm" for e in depth_median_error)
-          + "; holdout |error| = " + " / ".join(f"{e*1000:.3f} mm" for e in np.abs(holdout_back-holdout)))
+    if region is not None:
+        print("measured focus peak           = " + " / ".join(f"{s:+.4f}" for s in peaks)
+              + "; region median slope = " + " / ".join(f"{s:+.4f}" for s in region_slope))
+        print("region median depth error     = " + " / ".join(f"{e*1000:+.1f} mm" for e in depth_median_error))
+    else:
+        print(f"UNMEASURED: regional parallax gate -- decoded field {lf.shape[2]} x {lf.shape[3]}, "
+              f"eroded region samples {region_pixels} < {MIN_REGION_PX}; no focus peak or region median reported")
+    print("holdout |error|               = " + " / ".join(f"{e*1000:.3f} mm" for e in np.abs(holdout_back-holdout)))
     print(f"CPU {cpu:.3f} s; wall {wall:.3f} s")
     assert raw.shape == (cfg["sensor_px"], cfg["sensor_px"])
     assert np.isfinite(depth_est).all() and np.isfinite(sharp).all()
@@ -481,13 +521,20 @@ def main():
     # planes are told apart in order, and metric depth stays within 20 %.  The
     # remaining offset is honest: the sharpness peak of an aberrated ray fan is
     # not exactly its least-squares line, and the depth relation is paraxial.
+    # The full run must measure; whenever the regions are large enough (any
+    # scale) the gate runs -- it is never skipped on a run that has the data.
     if not cfg["ci"]:
-        assert all(m.sum() >= 30 for m in masks), [int(m.sum()) for m in masks]
+        assert region is not None, ("full run cannot measure the regional gate", region_pixels)
+    if region is not None:
         assert np.all(np.abs(peaks-truth_slopes) <= .03), (peaks, truth_slopes)
         assert np.all(np.abs(np.array(region_slope)-truth_slopes) <= .03), (region_slope, truth_slopes)
         assert region_slope[0] > region_slope[1] > region_slope[2]
         assert np.all(np.abs(np.array(depth_median_error)/DEPTHS_M) < .2), depth_median_error
-    print("PASS: captured raw causally feeds decoded EPI, refocus and continuous depth")
+    if region is not None:
+        print("PASS: captured raw causally feeds decoded EPI, refocus and continuous depth")
+    else:
+        print("PASS (gate 1 only; regional parallax gate UNMEASURED at this scale): "
+              "paraxial relation matches the traced rays and metric depth inverts traced slopes")
 
 
 if __name__ == "__main__":

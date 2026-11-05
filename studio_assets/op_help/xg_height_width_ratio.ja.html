@@ -13,7 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群の軸並行外接矩形の 高さ/幅 比。</p>
 <p>全輪郭の点(閉輪郭の重複終点は除く)をまとめ、行方向の広がり <code style="color:#22d3bf">h = max(row) - min(row)</code> と列方向の広がり <code style="color:#22d3bf">w = max(col) - min(col)</code> の比 <code style="color:#22d3bf">h / w</code> を返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は <code style="color:#22d3bf">numpy.float64</code>。点が無ければ 0.0。<code style="color:#22d3bf">w &lt; 1e-12</code>(全点が同じ列= 縦一直線)では <code style="color:#22d3bf">h &gt; 1e-12</code> なら 1e6、そうでなければ 0.0。上限は 1e6。軸並行の bbox なので回転に不変ではない(45° 傾いた細長い輪郭は 1 に近づく)。回転不変な細長さは <code style="color:#22d3bf">xg_elliptic_axis</code> / <code style="color:#22d3bf">xg_eccentricity</code> を使う。<code style="color:#22d3bf">h</code>, <code style="color:#22d3bf">w</code> は点座標の範囲(画素中心間の距離)で、画素数ベースの幅より 1 小さい。複数輪郭があれば全体を囲む 1 つの bbox の比になる。</p>
+<p>返り値は <code style="color:#22d3bf">numpy.float64</code>。点が無ければ 0.0。<code style="color:#22d3bf">w</code> が座標の大きさの 1e-12 倍以下(全点が同じ列=縦一直線)では <code style="color:#22d3bf">h</code> がそれより大きければ 1e6、そうでなければ 0.0。上限は 1e6。軸並行の bbox なので回転に不変ではない(45° 傾いた細長い輪郭は 1 に近づく)。回転不変な細長さは <code style="color:#22d3bf">xg_elliptic_axis</code> / <code style="color:#22d3bf">xg_eccentricity</code> を使う。<code style="color:#22d3bf">h</code>, <code style="color:#22d3bf">w</code> は点座標の範囲(画素中心間の距離)で、画素数ベースの幅より 1 小さい。複数輪郭があれば全体を囲む 1 つの bbox の比になる。</p>
 <p><b>同じ語幹の別の op</b>: <code style="color:#22d3bf">height_width_ratio</code> は入出力の型が違う別の処理で、名前が似ているだけ(<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>

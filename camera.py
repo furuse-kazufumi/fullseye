@@ -256,7 +256,11 @@ def normals_from_depth(depth, K, smooth: int = 0) -> np.ndarray:
     dv[1:-1, :] = grid[2:, :] - grid[:-2, :]                   # d/dy (central)
     n = np.cross(du, dv)
     norm = np.linalg.norm(n, axis=-1, keepdims=True)
-    n = n / np.where(norm < 1e-12, np.nan, norm)
+    # ★1.0 前の修正 2026-11-05 abs-floor: 以前は ``norm < 1e-12`` を無効にしていた。外積の長さは長さ² なので、深度 1e-3 m・
+    #   fx 5000 px の顕微系では全画素が NaN になった。無効の判定は接線の長さの積に対する
+    #   相対量(= 2 本の接線のなす角の正弦が 1e-12 以下)。
+    tang = (np.linalg.norm(du, axis=-1) * np.linalg.norm(dv, axis=-1))[..., None]
+    n = n / np.where(norm > 1e-12 * tang, norm, np.nan)
     # orient toward the camera centre (origin): a visible surface normal must point
     # back toward the viewpoint, i.e. n . X <= 0 (the ray to the point). Testing
     # only the Z sign is wrong once the surface is viewed obliquely enough that the

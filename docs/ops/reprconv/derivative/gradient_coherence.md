@@ -52,11 +52,11 @@ Raises:
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)
 
-[correlation_score](../score/correlation_score.md)
+[correlation_score](../score/correlation_score.md) · [voxel_to_hessian](voxel_to_hessian.md)
 
 ## 同カテゴリ(`derivative`)
 
-[gradient_magnitude](gradient_magnitude.md) · [hessian_determinant](hessian_determinant.md) · [hessian_vesselness](hessian_vesselness.md)
+[gradient_magnitude](gradient_magnitude.md) · [voxel_to_hessian](voxel_to_hessian.md) · [hessian_determinant](hessian_determinant.md) · [hessian_vesselness](hessian_vesselness.md)
 
 ---
 *Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

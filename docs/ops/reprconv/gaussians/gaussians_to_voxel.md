@@ -65,7 +65,7 @@ Raises:
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)
 
-[correlation_score](../score/correlation_score.md)
+[correlation_score](../score/correlation_score.md) · [voxel_to_hessian](../derivative/voxel_to_hessian.md)
 
 ## 同カテゴリ(`gaussians`)
 

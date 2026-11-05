@@ -1156,6 +1156,30 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             "stages": normalized, "execution_order":[x[0] for x in ordered], "errors": errors}
 
 
+def _python_stage_inputs(args, in_sorts, name):
+    """``python`` 実行器の段(型つきの関数を直に呼ぶ段)へ渡す入力に、``fullseye.apply`` の入口の契約を当てる。
+
+    ★2026-11-05(外部監査 F2 の兄弟、nary-guard): ``registry`` の段は ``fullseye.apply(on_error="raise")``
+    を通る(敵対的検証 C2)のに、``python`` の段(``phase_correlation_shift`` / ``polarization_render`` /
+    ``deflectometry_phase_to_slope`` の 2 入力と ``fringe_ftp_phase`` など)は値をそのまま関数に渡していた ——
+    ``.npy`` から読んだ uint8 のハンドルが、同じパイプラインの ``gauss_filter`` では拒否されるのに、
+    こちらでは 0..255 の値のまま黙って計算された。入力ごとに、宣言 sort が dtype 契約の対象
+    (``image`` / ``color`` / ``volume``)なら :func:`api._contract_dtype` を strict で当て(整数・bool は拒否、
+    float16/32 は float64 へ無損失に昇格)、非有限値は ``fullseye.apply`` と同じ文で拒否する。
+    それ以外の sort(``points`` / ``seq<image>`` / ``polsweep`` ...)は型つきの値の表現が別なので触らない。
+    """
+    import api
+    sorts = list(in_sorts or ())
+    out = []
+    for k, x in enumerate(args):
+        srt = sorts[k] if k < len(sorts) else None
+        if srt in api._DTYPE_CONTRACT_SORTS and isinstance(x, np.ndarray):
+            x = api._contract_dtype(x, api._NaryInput(name, srt, srt), "raise")
+            api._refuse_nonfinite(x, name)
+        out.append(x)
+    return out
+
+
 def _run_op(arr, op, ka: float, kb: float, allow: bool, device: str = "cpu"):
     """1 op を走らせる。strict で失敗したら (None, degraded, err)。"""
     import backend_safe
@@ -1550,6 +1574,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                                 np.max(np.abs(np.asarray(out,np.float64)-np.asarray(cpu,np.float64))))}
             else:
                 fn=getattr(importlib.import_module(executor["module"]),executor["callable"])
+                args=_python_stage_inputs(args, normalized_spec.get("in_sorts") or edge["inputs"], edge["op"])
                 out=fn(*args,**params)
         except Exception as exc:  # noqa: BLE001
             failed.add("stage:%d"%i)
