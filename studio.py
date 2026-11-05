@@ -986,7 +986,14 @@ class PipelineModel:
                 for i in range(len(self._stages))]
 
     def _context(self):
-        return (self._img_ver, api._policy(None), api._fast_on(None))
+        # ★2026-11-05(敵対的検証 C6 の兄弟): engine.run_cached と同じく、結果を変える状態 —— 照合用
+        #   テンプレート(ops._MATCH_CTX)と fssystem の全パラメータ —— も文脈に入れる(変われば全段を捨てる)。
+        import fssystem
+        import ops as _rt_ops
+        from engine import _input_hash
+        t = _rt_ops._MATCH_CTX.get("template")
+        return (self._img_ver, api._policy(None), api._fast_on(None),
+                None if t is None else _input_hash(t), repr(sorted(fssystem.system_snapshot().items())))
 
     def _ensure(self, idx):
         """Make ``self._cache[idx]`` valid, running only the stages the cache cannot serve.

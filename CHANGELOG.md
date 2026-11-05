@@ -56,6 +56,45 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `tests/test_perf_batch20_2026_10_20.py::test_116`: Frenet 標構の参照式が旧い `+ 1e-12` の床(欠陥)を
   ビット一致で固定していたので、床なしの式に替えた。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(contract)
+
+同じ入力を入口(`apply` / `run_pipeline` / `FullseyeEngine.run` / `run_cached` / `fullseye.Image` /
+`fullseye.Pipeline` / MCP `fullseye_apply` / MCP `fullseye_pipeline`)のどれに入れても、同じ拒否・同じ値になる。
+回帰の門は `tests/test_redteam_contract_2026_11_05.py`(8 入口の表と、各項目の再現)。
+
+- C1 `fullseye.Image(...).<op>()` / `fullseye.Pipeline([...]).run()`: registry(進化)op は `apply` / `run_pipeline` と同じ入口を通る。NaN を含む入力は拒否、uint8 は `/255` に変換して台帳に記録(strict では拒否)、ノブは数値で有限(`a="0.3"` は TypeError、`a=nan` は ValueError、0..1 の外は記録して切り詰め)、`Pipeline` は連続する registry 段の型連鎖を何も走らせる前に検査する(`["gaussian", "vol_gaussian"]` は ValueError)。以前は生の `op.fn` で、uint8 200 に gaussian が uint8 200 を返した。
+- C2 MCP `fullseye_pipeline`: CPU の段も `fullseye.apply(on_error="raise")` を通る(`fullseye_apply` と同じ)。uint8 のハンドル・範囲外のノブの段は失敗として返る(以前は生の `fn` で通った)。
+- C3 `FullseyeEngine(stages)` / `from_dict` / `load`: dict 段の未知のキー(`{"op": "threshold", "A": 0.9}`)、4 要素以上の段、数値でないノブ(`"0.9"`)は作るときに TypeError(以前は黙って捨てる・float 化)。`set_knobs` も同じ型の規則。
+- C4 `run_pipeline` の段: dict 形 `{"a": "0.9"}` / `(name, {"a": "0.9"})` の文字列ノブは TypeError(以前は float 化して通した)。bool は全形で `apply` と同じく 1.0 / 0.0(以前は tuple 形だけ拒否)。
+- C5 `FullseyeEngine.to_python` / `to_python_staged`: registry に無い op 名の段があれば ValueError で何も書き出さない。`# --ops` の注釈行は JSON でエスケープ(改行を含む名前で書き出したスクリプトに任意のコードが入った)。
+- C6 `FullseyeEngine.run_cached`: キャッシュの鍵に照合用テンプレートと fssystem の全パラメータが入る。入口の契約はキャッシュに当たっても毎回通る(uint8 の台帳記録、strict + `extra_checks="on"` の拒否)。劣化台帳に記録が残った段はキャッシュしない。兄弟: Studio の段キャッシュの文脈にもテンプレートと fssystem を入れた。
+- C7 `apply(template=...)`: テンプレートにも入口の契約。NaN / inf は方針に依らず拒否(`allow_nonfinite=True` が抜け道)、uint8 は `/255` で記録(`on_error="raise"` では拒否)、空・次元の検査。
+- C9 `validation_kit`: 3 次元の画像は `(H, W, 3)` / `(H, W, 4)` だけ受け、他は `KitError`(以前は最後の軸で平均)。RGBA は alpha を除いた 3 色の平均(以前は 4 チャネルの平均)。
+- C10 `from_jsonable` / `from_json` に `max_bytes` / `max_pixels`(既定 None = 上限なし)。MCP `fullseye_import_json` は `mcp_handle_max_bytes` / `mcp_stack_max_pixels` を渡し、宣言形がそれを超える封筒は確保の前に拒否する。
+- C11 n 項 `apply([...])`: 入力ごとに単入力と同じ `_guard_input`(空・次元・色軸・`extra_checks` の値域)。`on_error="raise"` で拒否、既定では記録。
+- C1 の兄弟 CLI `fullseye apply` / `fullseye pipeline`(`imgevolve.py`): 生の `ops.RT` ではなく `api.apply` / `api.run_pipeline` を `on_error="raise"` で通す(n 項の枝と同じ)。`--a 5` / `--a nan` と型の合わない `--ops`(`gaussian,vol_gaussian`)は ValueError で止まる(以前は黙って走った)。
+- C4 の兄弟 `FullseyeGraph.add` / `from_dict`: ノブは `apply` の型規則(`"0.3"` は TypeError、以前は float 化)。C5 の兄弟 `FullseyeGraph.to_python`: `validate()` に error がある graph(未知の op・非有限のノブ)は ValueError で書き出さない。ノブは `engine._knob_literal` で書く(注入は以前から無い: 全値 `%r`)。
+- MCP `fullseye_apply` は利用者の劣化台帳を消さない(`degraded` はこの呼び出し・このスレッドの記録だけ)。MCP の応答に NaN / inf を書かない: `write_message` は非有限を含む応答を同じ id の -32603 に置き換え、`fullseye_pipeline` の値は非有限を含むとき null にせず省く(値はハンドルから読む)。
+
+- 第 2 巡(state)T1 `FullseyeEngine.run_cached`: 返り値はキャッシュから切り離した複製(配列は copy、dict / list は deepcopy)。以前はキャッシュ内の配列そのものを返し、利用者が書き換えると次の呼び出しがその値を返した。`StageCache.get` / `put` 自体は従来どおり参照を保持する。
+- 第 2 巡 T8 `run_cached`: XLD 輪郭(dict)など dict / list / スカラーの入力を内容で正準化して鍵にする(以前は contour 始まりの鎖が全部 TypeError)。object 配列は従来どおり TypeError。
+- 第 2 巡 T3 MCP `fullseye_validate_pipeline`: 段数の上限は fssystem の `pipeline_max_stages`(以前は 64 固定で、`pipeline_max_stages=16` の下で `fullseye_pipeline` と判定が割れた)。
+- 第 2 巡 T4 MCP: structuredContent の上限 `mcp_response_budget` を呼ぶたびに読む(以前は import 時の定数で `fssystem.system(...)` が効かなかった)。`fullseye_import_json` の `json` 文字列の長さも同じ上限で検査。`MAX_STRUCTURED_BYTES` は import 時の既定として残す(schema の説明用)。
+- 第 2 巡 T5 `fssystem`: `tightens_only=True` の数値の上限 10 項目から既定より緩い値を外した(`find_ops_k` 10、`find_ops_recipe_max` 3、`plan_k` 10、`plan_max_depth` 8/16、`plan_max_expansions` 100000、`plan_timeout_ms` 2000、`mcp_handle_max_bytes` / `mcp_pipeline_max_intermediate_bytes` 256 MiB、`mcp_stack_max_pixels` 64 Mpx、`iteration_limit` 500 は ValueError)。import 時に `max(values) == default` を検査する。
+
+- 第 2 巡(claims)D10 MCP: `fullseye_plan` の `want` / `goal`、`fullseye_suggest_pipeline` の `query` が空・空白だけのとき -32602(引数違反)。以前は -32603(内部エラー)。`want` の schema に `minLength: 1`。全 tool の文字列引数に `""` / `"   "` を当てる探針で該当は 4 件、修正後 0 件。`fullseye_find_ops` は `lang`(ja / en / zh / tw / ko / de / hi)を受ける(ハンドラは読んでいたが schema に無く渡せなかった)。
+
+### 修正 — 敵対的検証 2026-11-05(contract)
+
+- C1 `unified._make_evolution_caller` が `api.apply` を呼ぶ。`Pipeline.run` は registry 段を `api._prepare_pipeline` + `api._pipeline_steps`(run_pipeline の本体)で走らせる。facade / 知覚 / 生の callable の段は自然シグネチャの関数なので従来どおり。
+- C2 registry 段は `executor["alias"]` で `fullseye.apply(..., template=...)`。n 項の段も同じ入口。
+- C3 / C4 / C13 段の読み方を `api._normalise_stage` / `api._stage_knob` の 1 本に(run_pipeline・FullseyeEngine・`engine.pipeline_states`)。`pipeline_states` は dict 段・`(name, {..})` 段で落ちていた。
+- C5 兄弟: `graphengine.FullseyeGraph.to_python` は全値を `%r` で書いており注入は無いが、動かないスクリプトを書き出さないよう検査を足した(上の Breaking)。Studio の `export_python` / プログラム表示の `# bypassed: <name>` は、名前が `add_stage`(`find_op` で正規化)と `load_dict`(registry で検査)からしか入らないので無害。行は読み戻しの書式(`_hdev_strip_comment`)でもあるので変えない。
+- C6 入口は `api._pipeline_entry`(`_pipeline_steps` の entry と共有)。
+- C10 兄弟: 配列 sort の宣言形も上限で先に検査。`np.prod` の int64 桁あふれ(宣言 `[2**62+1, 4]` を 4 値と読んだ)を `math.prod` に。RLE は run の合計を確保の前に照合。
+- C12 n 項 `apply` が各入力の `fullseye.Image` を剥がす(非有限の検査より前)。
+- 探針で本物でなかったもの(変更なし): MCP `HandleStore._check_path`(`..`・根の兄弟の接頭辞・`\\?\` 拡張パス・ADS・末尾の点・根の中の junction で外を指す、の全部を拒否)、`_write_viewer`(言語・badge・タブ id は許可リスト、JSON は `</` をエスケープし表示は `esc()`)。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(state)
 
 - T6 GPU の経路(`apply(..., device="cuda"/"auto")` の単 op、`accel.run_batch` / `accel.run_pipeline`、`accel_vol.run_batch_vol` / `run_pipeline_vol`)で値が変わる: `b > 0.5` が端の扱い(nearest / constant / wrap)・構造要素(十字 / 円板 / 線)を選ぶ op(`fast._KNOB_B_OPTIONED` の 18 本と `vol_gaussian`)は core で答える(以前は kernel が `b` を無視して reflect / 正方形のまま計算し、`device="cpu"` と a=0.5 で median 0.528・mean_box 0.311・gaussian 0.265・gdilate 0.424・gerode 0.417・gopen 0.417・gclose 0.405 違った)。`b <= 0.5` は従来どおり kernel(速さも答えも変わらない)。

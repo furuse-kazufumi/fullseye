@@ -253,7 +253,11 @@ def cmd_apply(a):
         raise SystemExit("%r takes one input; --input2 is for the n-ary ops (see: %s ops --search nary)"
                          % (op.name, _prog()))
     v = _imread(a.inp, op.in_sort)
-    out = ops.RT[op.name](v, a.a, a.b)
+    # ★2026-11-05(敵対的検証 C1 の兄弟): 以前は生の ops.RT を呼び、apply の入口の契約(ノブの有限性・
+    #   0..1 の範囲、空・次元、extra_checks、fallback の guard と台帳)を飛ばしていた —— `--a 5` / `--a nan`
+    #   が黙って通った。n 項の枝(_apply_nary)と同じく api.apply を on_error="raise" で通す(CLI は fail-closed)。
+    import api as _api
+    out = _api.apply(v, op.name, a.a, a.b, on_error="raise")
     if op.out_sort == "feature":
         print("feature %s = %s" % (op.halcon or op.name, float(np.asarray(out).reshape(-1)[0])))
         return 0
@@ -283,8 +287,11 @@ def cmd_pipeline(a):
             raise SystemExit("unknown op in pipeline: %r" % nm)
         resolved.append(op)
     v = _imread(a.inp, resolved[0].in_sort)
-    for op in resolved:
-        v = ops.RT[op.name](v, a.a, a.b)
+    # ★2026-11-05(敵対的検証 C1 の兄弟): 段ごとに生の ops.RT を呼んでいたので、型連鎖
+    #   (gaussian,vol_gaussian)もノブも検査されなかった。run_pipeline(何も走らせる前に型連鎖とノブを
+    #   検査する)を on_error="raise" で通す。
+    import api as _api
+    v = _api.run_pipeline(v, [(op.name, a.a, a.b) for op in resolved], on_error="raise")
     if isinstance(v, np.ndarray):
         _imwrite(a.out, v)
         print("pipeline %s -> %s %s" % (" -> ".join(names), a.out, getattr(v, "shape", "")))

@@ -224,7 +224,7 @@ OUTPUTS = {
     "tools/gen_recipe_index.py": ["fullseye/data/RECIPE_INDEX.json"],
     "tools/gen_recipe_coverage.py": ["docs/RECIPE_COVERAGE.md", "docs/recipe_coverage.json"],
     "tools/gen_recipe_retrieval_report.py": ["docs/recipe_retrieval_report.json"],
-    "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json"],
+    "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json", "docs/MCP.md"],
     "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
     "tools/gen_device_rules.py": ["fullseye/data/DEVICE_RULES.json"],
     "tools/gen_gpu_routes.py": ["docs/perf/pipeline_routes.json", "docs/perf/pipeline_routes.md"],
@@ -306,7 +306,8 @@ READS = {
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md", "docs/RECIPE_COVERAGE.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md",
-        "docs/perf/pipeline_routes.md"],                # 題だけ(ORDER_EXEMPT)
+        "docs/perf/pipeline_routes.md",                 # 題だけ(ORDER_EXEMPT)
+        "docs/MCP.md"],                                 # 題だけ(ORDER_EXEMPT、2026-11-05)
     # op ノートの GPU 欄・索引の gpu 欄は gpu_route(規則表の許可リストの道と場面の台帳)から書く
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*", "fullseye/data/DEVICE_RULES.json",
                               "fullseye/data/GPU_ACCEL_USE.json"],
@@ -362,6 +363,9 @@ ORDER_EXEMPT = {
     ("tools/gen_device_rules.py", "fullseye/data/op_knob.json"): (
         "gen_device_rules は registry を組むときに op のつまみ表を読むが、規則表に入るのは実測ログ・許可リスト・"
         "op 名だけ(つまみの値は入らない)。op ノートが GPU 欄のために規則表を読むので、鎖の先頭近くに置く。"),
+    ("tools/gen_docs_index_ops.py", "docs/MCP.md"): (
+        "gen_docs_index_ops は文書地図に載せるため MCP.md の題(先頭の # 見出し)だけを読む。後ろの "
+        "measure_mcp_context が書き直すのは本文中の実測トークン数の 1 文だけなので、地図の生成結果には影響しない。"),
     ("tools/gen_docs_index_ops.py", "docs/perf/pipeline_routes.md"): (
         "gen_docs_index_ops は文書地図に載せるため pipeline_routes.md の題だけを読む。題は gen_gpu_routes の"
         "固定の文で、後で書き直されるのは表の中身だけなので、地図の生成結果には影響しない。"),
