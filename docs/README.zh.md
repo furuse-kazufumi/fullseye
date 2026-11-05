@@ -60,11 +60,11 @@
 | 阶段 | 含义 | 能力 |
 |---|---|---|
 | `research-prototype` | 已实现,但测试或可运行的示例尚不齐全 | 0 |
-| `verified-synthetic` | 已用合成真值自动验证 | 80 |
-| `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 19 |
+| `verified-synthetic` | 已用合成真值自动验证 | 91 |
+| `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 8 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
-471 个示例中,检查实际运行的有 471 个。
+479 个示例中,检查实际运行的有 475 个。
 
 ### 各版本的算子数
 

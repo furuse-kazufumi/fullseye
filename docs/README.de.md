@@ -60,11 +60,11 @@ Die 99 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von
 | Stufe | Bedeutung | Fähigkeiten |
 |---|---|---|
 | `research-prototype` | implementiert; Tests oder ein laufendes Beispiel fehlen noch | 0 |
-| `verified-synthetic` | automatisch gegen synthetische Grundwahrheit geprüft | 80 |
-| `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 19 |
+| `verified-synthetic` | automatisch gegen synthetische Grundwahrheit geprüft | 91 |
+| `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 8 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 471 Beispielen werden 471 tatsächlich von einem Gate ausgeführt.
+Von 479 Beispielen werden 475 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 

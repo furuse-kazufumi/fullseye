@@ -74,7 +74,7 @@ def test_d1_the_docstring_names_the_offsets_the_image_has():
     assert inspect.signature(IL.illusion_cafe_wall).parameters["shift"].default == 0.5
     # 6 言語の訳も同じ原文の指紋を持つ(古い訳を出さない)
     import opdocs
-    _, rest = opdocs.summary_and_rest(doc)
+    _, rest = opdocs.summary_and_rest(inspect.cleandoc(doc))       # ノートは字下げを外した原文から指紋を取る
     ent = json.loads(_read("docs/i18n/op_rest.json"))["bodies"]["generative/illusion_cafe_wall"]
     assert ent["fp"] == opdocs.fingerprint(rest)
     assert "0.25" not in ent["en"] and "0.5" in ent["en"]
@@ -224,6 +224,10 @@ def test_d5_d8_d9_hand_written_counts_in_readme_and_docs_index_are_current():
 
 
 def test_d5b_the_docs_index_counts_the_ledger_not_the_type_catalogue():
+    import fullseye as fs
+    import gen_docs_index_ops as G
+    live = {d["name"] for d in fs.list_ops(include_ledger=True) if d["tier"] == "ledger"}
+    assert len(live) > 2000 and G.ledger_names() == live     # 生成器が数える集合 = op_run が引ける台帳
     idx = json.loads(_read("docs/OP_INDEX.json"))["tiers"]["ledger"]
     m = re.search(r"型つき台帳 (\d+)/(\d+)", _read("docs/README.md"))
     assert m, "docs/README.md に「型つき台帳 N/M」が無い"
@@ -330,6 +334,8 @@ def test_d7_not_run_by_any_gate_is_counted_from_the_disk():
     assert sorted(e["not_run_by_any_gate_reasons"]) == unrun
     assert {"g1_policy_staged", "hand_tracking_demo", "perception_staged", "gsplat_trained_product"} <= set(unrun)
     assert e["scripts_on_disk"] == len(EX2.discover())
+    m = re.search(r"Of ([\d,]+) examples, ([\d,]+) are actually run by a gate", _read("README.md"))
+    assert m and (int(m.group(1).replace(",", "")), int(m.group(2).replace(",", ""))) ==         (e["scripts_on_disk"], e["scripts_on_disk"] - e["not_run_by_any_gate"])
 
 
 # --------------------------------------------------------------------------- #

@@ -28220,17 +28220,17 @@
             1600,
             1600
           ],
-          "bytes": 275451,
+          "bytes": 277353,
           "color_mad": [
             0.1797,
             0.0358,
-            0.1051,
-            0.0341,
+            0.0798,
+            0.0457,
             0.0404,
             0.0394
           ],
           "max_color_mad": 0.1797,
-          "source_sha256": "d89542e82bd9c92e8abccc0c1b522d8f6ddb4d614fb57524d6b2affe84017223"
+          "source_sha256": "be21b5c51cb656dd984b733d1f7a4be202c34aec250018b391b3c8bb5c23cb78"
         },
         "en": {
           "path": "articles/assets/poc/poc_calipers_under_illusion/story.en.gif",
@@ -28312,17 +28312,17 @@
             1600,
             1600
           ],
-          "bytes": 275451,
+          "bytes": 277353,
           "color_mad": [
             0.1797,
             0.0358,
-            0.1051,
-            0.0341,
+            0.0798,
+            0.0457,
             0.0404,
             0.0394
           ],
           "max_color_mad": 0.1797,
-          "source_sha256": "c0d33d325ef3038023346226fa4aa6ecbd030e20e236566f219869f2e29f5aab"
+          "source_sha256": "8a8e4075aec0a2fb720ab43d984ad147ecd1ba6b792f176c3395e849d54c554d"
         }
       },
       "thumbnail": {

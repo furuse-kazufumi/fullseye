@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1638. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1646. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -462,10 +462,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_calipers_under_illusion.py`
 
 - **L141** _(ja)_ — ★はじめ図説に「半幅を変えると採用点の数が変わる」と書いたが、生成された 本文を読むと 4 通りとも 41 点だった。**書いたことがデータと違った**ので 直し、「変わらない」ほうを門にした。証拠の数が動く例は第 5 章のツェルナー。
-- **L150** _(ja)_ — (b) ★探針 1 枚では足りない ---- ずらし量 × 探索半幅の格子で全数を見る 最初は shift=0.25 だけで試して「測定器は決して動かない」と書いた。 格子で見ると **0.125 と 0.375 でだけ** 0.14 度傾く。既定に見える 0.25 は、たまたま外れない側だった。
-- **L266** _(ja)_ — 外れた組み合わせを絵の上に描き戻す。★全体図では 8 px の飛びが潰れて 見えないので、目地の帯の周りだけを**等倍で切り出す**。
-- **L365** _(ja)_ — ★測定線は軸そのものの上にある。そのまま塗ると被写体が消えるので、 指示線だけ 12 px 上へ逃がして描く(測っている行は軸の行のまま)。
-- **L476** _(ja)_ — ★中心の座標は推測せず illusion.py から読む(最初 (h/2, w/4) と当てずっぽうに 置いて、周りの円のエッジを掴み rms が 3.4 になった)。真の中心は (170, 168) と (170, 452)、半径 30。
+- **L150** _(ja)_ — (b) ★探針 1 枚では足りない ---- ずらし量 × 探索半幅の格子で全数を見る 最初は shift=0.25 だけで試して「測定器は決して動かない」と書いた。 格子で見ると **0.125 の奇数倍でだけ** 0.14 度傾く。既定に見える 0.25 は、たまたま外れない側だった。
+- **L154** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D1): 格子は 0〜0.5 しか振っていなかった。 市松の周期は 2 タイル = shift 0〜1 なので、周期 1 つぶんの 9 通りを振る (0 と 1.0 が錯視の消える両端、0.5 が最強)。外れたずらし量は本文に 手で書かず、格子から出す。
+- **L274** _(ja)_ — 外れた組み合わせを絵の上に描き戻す。★全体図では 8 px の飛びが潰れて 見えないので、目地の帯の周りだけを**等倍で切り出す**。
+- **L373** _(ja)_ — ★測定線は軸そのものの上にある。そのまま塗ると被写体が消えるので、 指示線だけ 12 px 上へ逃がして描く(測っている行は軸の行のまま)。
+- **L484** _(ja)_ — ★中心の座標は推測せず illusion.py から読む(最初 (h/2, w/4) と当てずっぽうに 置いて、周りの円のエッジを掴み rms が 3.4 になった)。真の中心は (170, 168) と (170, 452)、半径 30。
 
 ## `examples/poc_camera_calibration.py`
 
@@ -566,9 +567,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_dense_bubble_count.py`
 
-- **L748** _(ja)_ — ★最初は「相対 3 % 以内」と書いて、真値 30 個で 1 個ずれた 0.033 で落ちた —— 言いたかったのは 「誤っても 1 個ぶん」なので、個数の差で書き直した(2026-10-18)。真値は画面の外に出た細胞も 数えているので、1 個の差の一部は op でなく真値の規約の側にある(どれかは区別していない)。
-- **L751** _(ja)_ — ★2 回目: 1 個ぶんでも足りなかった(最大 2 個、600 枚の全数で)。ずれの大きさは印字に残し、 門は「自信をもった誤りの件数」だけにする —— 合わせ直すたびに門を緩めるのは門ではないので、 ここで止める。
-- **L846** _(ja)_ — ★記録(門ではない): o = 0.4 では「決まらない」と言った塊の区間が真値を外す。いびつな泡が 別の泡に食い込むと、くびれが山を残さず、上限 hi にも数えられない(op の docstring の限界)。
+- **L751** _(ja)_ — ★最初は「相対 3 % 以内」と書いて、真値 30 個で 1 個ずれた 0.033 で落ちた —— 言いたかったのは 「誤っても 1 個ぶん」なので、個数の差で書き直した(2026-10-18)。真値は画面の外に出た細胞も 数えているので、1 個の差の一部は op でなく真値の規約の側にある(どれかは区別していない)。
+- **L754** _(ja)_ — ★2 回目: 1 個ぶんでも足りなかった(最大 2 個、600 枚の全数で)。ずれの大きさは印字に残し、 門は「自信をもった誤りの件数」だけにする —— 合わせ直すたびに門を緩めるのは門ではないので、 ここで止める。
+- **L849** _(ja)_ — ★記録(門ではない): o = 0.4 では「決まらない」と言った塊の区間が真値を外す。いびつな泡が 別の泡に食い込むと、くびれが山を残さず、上限 hi にも数えられない(op の docstring の限界)。
 
 ## `examples/poc_dfm_thickness_overhang.py`
 
@@ -727,7 +728,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_good_sample_variation_model.py`
 
-- **L297** _(ja)_ — ★地の模様が弱いと、汚れた 3 枚の傷が位相相関の山を引っ張り、0.65 px の「ずれ」として拒否された (実測。拒否は正しい振る舞い —— 汚れた良品は位置合わせも汚す)。ここは帯の比較なので模様を強くする。
+- **L298** _(ja)_ — ★地の模様が弱いと、汚れた 3 枚の傷が位相相関の山を引っ張り、0.65 px の「ずれ」として拒否された (実測。拒否は正しい振る舞い —— 汚れた良品は位置合わせも汚す)。ここは帯の比較なので模様を強くする。
 
 ## `examples/poc_granular_heap_repose.py`
 
@@ -740,7 +741,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_grating_interferometry.py`
 
-- **L324** _(ja)_ — ★正直な限界: 段差の縁の 1 画素だけが π を超える板(平らな背景の隣)は、折り返しが見えずに通る
+- **L325** _(ja)_ — ★正直な限界: 段差の縁の 1 画素だけが π を超える板(平らな背景の隣)は、折り返しが見えずに通る
 
 ## `examples/poc_gravitational_lens_invariants.py`
 
@@ -756,13 +757,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_hyperspectral_foreign_matter.py`
 
-- **L105** _(ja)_ — 見た目の色(線形 RGB の反射率)。★**同じ色にしたのは設計**(この PoC の問いそのもの: 色を合わせた異物)。 皮つきアーモンドの茶色に、殻・木片・茶色に着色した樹脂片を ±3 % で合わせた。黒い樹脂だけは黒い。
-- **L418** _(ja)_ — ★実データの破片は暗い(反射率の中央値 0.07)ので、生の反射率の SAM は足し算のベースラインに負ける(下で数える)。 連続体除去(`spec_continuum_removal`、上側の凸包で割る)の帯の深さ 1 − R/包絡 を特徴にする。
-- **L466** _(ja)_ — ★外の真値の検査 1: 別の撮影の基準試料(Training/PP・PE・PET の 11x11)をライブラリにして、試験の場面の PP / PET / PE を分ける
-- **L482** _(ja)_ — ★外の真値の検査 2: この PoC の材料表の物理(吸収帯 + Kubelka–Munk)をライブラリにする
-- **L944** _(ja)_ — 幾何平均(間が空いていれば余裕の真ん中)。★初版は q_k だけで決め、試験のトレイで粒径・含水率の端の仁を 丸ごと排出した(画素の分位点は仁の「個体」のばらつきを数えていない、2026-10-15 に図で見つけた)。
-- **L1038** _(ja)_ — ★クラスごとに同じ画素数で選ぶ: Fisher の Sb = Σ n_k (μ_k − μ)² は画素の多いクラス(ベルト・仁)に 引っ張られ、少ない樹脂片どうし(PE と PP)を分ける帯域を選ばなくなる(2026-10-15 の初回で実測)。
-- **L1050** _(ja)_ — ★log 反射率で選ぶ: 画素ごとの明るさ(陰影)は全帯に共通の足し算になり、多変量の J はその方向を クラス内のばらつきとして割り引く(1 帯域だけでは明るさと材質を分けられない —— k = 1 が弱いのはそのため)
+- **L106** _(ja)_ — 見た目の色(線形 RGB の反射率)。★**同じ色にしたのは設計**(この PoC の問いそのもの: 色を合わせた異物)。 皮つきアーモンドの茶色に、殻・木片・茶色に着色した樹脂片を ±3 % で合わせた。黒い樹脂だけは黒い。
+- **L420** _(ja)_ — ★実データの破片は暗い(反射率の中央値 0.07)ので、生の反射率の SAM は足し算のベースラインに負ける(下で数える)。 連続体除去(`spec_continuum_removal`、上側の凸包で割る)の帯の深さ 1 − R/包絡 を特徴にする。
+- **L468** _(ja)_ — ★外の真値の検査 1: 別の撮影の基準試料(Training/PP・PE・PET の 11x11)をライブラリにして、試験の場面の PP / PET / PE を分ける
+- **L484** _(ja)_ — ★外の真値の検査 2: この PoC の材料表の物理(吸収帯 + Kubelka–Munk)をライブラリにする
+- **L947** _(ja)_ — 幾何平均(間が空いていれば余裕の真ん中)。★初版は q_k だけで決め、試験のトレイで粒径・含水率の端の仁を 丸ごと排出した(画素の分位点は仁の「個体」のばらつきを数えていない、2026-10-15 に図で見つけた)。
+- **L1041** _(ja)_ — ★クラスごとに同じ画素数で選ぶ: Fisher の Sb = Σ n_k (μ_k − μ)² は画素の多いクラス(ベルト・仁)に 引っ張られ、少ない樹脂片どうし(PE と PP)を分ける帯域を選ばなくなる(2026-10-15 の初回で実測)。
+- **L1053** _(ja)_ — ★log 反射率で選ぶ: 画素ごとの明るさ(陰影)は全帯に共通の足し算になり、多変量の J はその方向を クラス内のばらつきとして割り引く(1 帯域だけでは明るさと材質を分けられない —— k = 1 が弱いのはそのため)
 
 ## `examples/poc_illusions_and_perpetual_drawing.py`
 
@@ -853,8 +854,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_material_optical_library.py`
 
-- **L111** _(ja)_ — ★2026-10-15: 水の k を Hale & Querry 1973 から Segelstein 1981 に差し替えた(RII の Hale の表は NIR を 0.2 µm おきにしか持たず、1.45 / 1.94 µm の吸収帯を線形補間で 1/3 に潰していた。n は滑らかなので Hale のまま)。 1500 nm の k は optiland 0.6.3 の MaterialFile で Segelstein.yml を評価し直した値(2.2392e-4)。
-- **L195** _(ja)_ — ★2026-10-15: 以前は k の相対差に 1e-6 を掛けて n の門に混ぜていたので、k が ±100 % ずれても通った。 写した k は有効数字 5 桁(1.4361e-07 など)なので、丸めの幅は相対 5e-5。optiland が k を持たない点(0)では こちらも 1e-8 未満(水の 500 nm は Segelstein の 9e-10、吸収の無い区間)。
+- **L112** _(ja)_ — ★2026-10-15: 水の k を Hale & Querry 1973 から Segelstein 1981 に差し替えた(RII の Hale の表は NIR を 0.2 µm おきにしか持たず、1.45 / 1.94 µm の吸収帯を線形補間で 1/3 に潰していた。n は滑らかなので Hale のまま)。 1500 nm の k は optiland 0.6.3 の MaterialFile で Segelstein.yml を評価し直した値(2.2392e-4)。
+- **L196** _(ja)_ — ★2026-10-15: 以前は k の相対差に 1e-6 を掛けて n の門に混ぜていたので、k が ±100 % ずれても通った。 写した k は有効数字 5 桁(1.4361e-07 など)なので、丸めの幅は相対 5e-5。optiland が k を持たない点(0)では こちらも 1e-8 未満(水の 500 nm は Segelstein の 9e-10、吸収の無い区間)。
 
 ## `examples/poc_measurement_system_analysis.py`
 
@@ -910,13 +911,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_one_stroke_epicycles.py`
 
-- **L209** _(ja)_ — ★線画なので**灰色のまま**出す。(H,W) を渡すと save_gif が疑似カラーに 塗って黄緑の絵になる(実測)—— 強度そのものを見せる図では色は邪魔。
-- **L246** _(ja)_ — ★env は examplefig が **呼ばれるたび**に読むので、ここで入れれば効く (import 時に固定されていたら --out が黙って無視される、の回避)。
-- **L267** _(ja)_ — ★2026-10-06: 図の見出しが「photograph (NASA AS11-45-6709)」のまま北斎を描いていた(前の題材の名残)。 出典は入力から決める(--image で自分の写真を渡したときに北斎と名乗らない)。
-- **L418** _(ja)_ — ★この絵では既定のペン幅 1.0 px がたまたまほぼ当たっており(偏り -0.0031)、 解いた幅 0.900 px のほうが偏りは大きい(-0.0294)。**閉形式が当てるのは 偏りではなくインク率**なので、門はそちらに置く —— 偏りで門を作ると 「元から合っていた絵」で落ちる(実測でそうなった)。
-- **L422** _(ja)_ — ★偏りで門を作ると「元から合っていた絵」で落ちる(この絵では既定 1.0 px の 偏りが -0.0031 と既にほぼ 0 で、解いた 0.903 px のほうが偏りは大きい)。 閉形式が当てるのは**インク率**で、線が重なるぶん実測は必ず下回る —— 門はその向きと大きさに置く。
-- **L457** _(ja)_ — ★**ナイキストを満たしているか**を先に測る。等弧長の打ち直しは、標本間隔が 線分より粗いと角を切って線そのものが短くなる —— フーリエに載せる**前**の 段階で情報が落ちるので、ここを見ないと「予言が当たった」の土台が崩れる。
-- **L523** _(ja)_ — ★図を出さない設定のときは**組む前に**やめる(examplefig.enabled はそのためにある)。 72 コマを描いてから捨てていたので、この PoC だけで 322 秒かかっていた —— スイートは FULLSEYE_FIGURES=off で全 PoC を並列に走らせ、1 本 600 秒・ 全体 5400 秒の上限があるので、共有ランナーで timeout に落ちる(CI py3.12)。 数値の門はフレームに依らないので、ここを飛ばしても採点は 1 つも減らない。
+- **L210** _(ja)_ — ★線画なので**灰色のまま**出す。(H,W) を渡すと save_gif が疑似カラーに 塗って黄緑の絵になる(実測)—— 強度そのものを見せる図では色は邪魔。
+- **L247** _(ja)_ — ★env は examplefig が **呼ばれるたび**に読むので、ここで入れれば効く (import 時に固定されていたら --out が黙って無視される、の回避)。
+- **L268** _(ja)_ — ★2026-10-06: 図の見出しが「photograph (NASA AS11-45-6709)」のまま北斎を描いていた(前の題材の名残)。 出典は入力から決める(--image で自分の写真を渡したときに北斎と名乗らない)。
+- **L420** _(ja)_ — ★この絵では既定のペン幅 1.0 px がたまたまほぼ当たっており(偏り -0.0031)、 解いた幅 0.900 px のほうが偏りは大きい(-0.0294)。**閉形式が当てるのは 偏りではなくインク率**なので、門はそちらに置く —— 偏りで門を作ると 「元から合っていた絵」で落ちる(実測でそうなった)。
+- **L424** _(ja)_ — ★偏りで門を作ると「元から合っていた絵」で落ちる(この絵では既定 1.0 px の 偏りが -0.0031 と既にほぼ 0 で、解いた 0.903 px のほうが偏りは大きい)。 閉形式が当てるのは**インク率**で、線が重なるぶん実測は必ず下回る —— 門はその向きと大きさに置く。
+- **L459** _(ja)_ — ★**ナイキストを満たしているか**を先に測る。等弧長の打ち直しは、標本間隔が 線分より粗いと角を切って線そのものが短くなる —— フーリエに載せる**前**の 段階で情報が落ちるので、ここを見ないと「予言が当たった」の土台が崩れる。
+- **L525** _(ja)_ — ★図を出さない設定のときは**組む前に**やめる(examplefig.enabled はそのためにある)。 72 コマを描いてから捨てていたので、この PoC だけで 322 秒かかっていた —— スイートは FULLSEYE_FIGURES=off で全 PoC を並列に走らせ、1 本 600 秒・ 全体 5400 秒の上限があるので、共有ランナーで timeout に落ちる(CI py3.12)。 数値の門はフレームに依らないので、ここを飛ばしても採点は 1 つも減らない。
 
 ## `examples/poc_pallet_load_utilization.py`
 
@@ -1200,7 +1201,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_tem_ctf_thon_rings.py`
 
-- **L345** _(ja)_ — 許容幅(★初回の実行で 400 Å の例が 12.5 % / 5.2° で旧の幅 10 % / 5° を外れ、広げた —— 記録として残す): 大きさは max(60 Å, 10 %)(実写 part2_001 で著者の 2 つの推定どうしが非点で 9 Å、この推定とは 190 Å 違う桁)、 向きは 8°(大きさの誤差 / 大きさ ≈ 0.12 rad = 7° の桁が、向きの決まりにくさの目安)。
+- **L346** _(ja)_ — 許容幅(★初回の実行で 400 Å の例が 12.5 % / 5.2° で旧の幅 10 % / 5° を外れ、広げた —— 記録として残す): 大きさは max(60 Å, 10 %)(実写 part2_001 で著者の 2 つの推定どうしが非点で 9 Å、この推定とは 190 Å 違う桁)、 向きは 8°(大きさの誤差 / 大きさ ≈ 0.12 rad = 7° の桁が、向きの決まりにくさの目安)。
 
 ## `examples/poc_template_tracking.py`
 
@@ -1263,11 +1264,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_thin_film_reflectometry.py`
 
-- **L92** _(ja)_ — ★色名から色相への対応は私の選択(CSS の色は表の色より彩度が高い)—— 色相だけを比べる。
-- **L210** _(ja)_ — ★ 実測で採点(公開データ、CC BY 4.0)—— この PoC の主役 # --------------------------------------------------------------------------- #
-- **L308** _(ja)_ — ★フラット補正(2026-10-15、図を見たユーザーの指摘「Si 側が 2 段に分かれて見える」から): 写真は視野の中心が明るい 周辺減光を持つ(裸の Si は左端 0.238 → 中央寄り 0.263、SiO₂ は中央寄り 0.103 → 右端 0.095)。補正しないと、Si の 暗い側が「薄い膜」と読まれ(0 nm 付近は R が膜厚の 2 乗でしか下がらないので、数 % の明るさの差が 10〜17 nm に化ける)、 明るい側は 0 nm に張り付いて、2 段に見えた。減光を半径の 2 乗 V = c₀ + c₁ r² として**裸の Si の側だけ**で当てはめ、 視野全体を割る。SiO₂ の側は当てはめに使っていないので、その明るさの傾きが消えるかが独立の検算になる。
-- **L437** _(ja)_ — ★予言が外れた: 「裸の Si は無彩色(C* < 3)」と置いたら C* 6.6 だった。Si の反射率は 400 nm 0.49 → 800 nm 0.33 と 短波長ほど高いので、裸のウェハは**青みの灰色**に見える(実物のとおり)。門を所見の側に書き直した。
-- **L475** _(ja)_ — ★境の直上でも FFT は最大 %.0f nm 外す(窓の DC の裾とフレネルの位相の分)—— 2 倍の厚さで 1 % 以内に入る。
+- **L93** _(ja)_ — ★色名から色相への対応は私の選択(CSS の色は表の色より彩度が高い)—— 色相だけを比べる。
+- **L211** _(ja)_ — ★ 実測で採点(公開データ、CC BY 4.0)—— この PoC の主役 # --------------------------------------------------------------------------- #
+- **L312** _(ja)_ — ★フラット補正(2026-10-15、図を見たユーザーの指摘「Si 側が 2 段に分かれて見える」から): 写真は視野の中心が明るい 周辺減光を持つ(裸の Si は左端 0.238 → 中央寄り 0.263、SiO₂ は中央寄り 0.103 → 右端 0.095)。補正しないと、Si の 暗い側が「薄い膜」と読まれ(0 nm 付近は R が膜厚の 2 乗でしか下がらないので、数 % の明るさの差が 10〜17 nm に化ける)、 明るい側は 0 nm に張り付いて、2 段に見えた。減光を半径の 2 乗 V = c₀ + c₁ r² として**裸の Si の側だけ**で当てはめ、 視野全体を割る。SiO₂ の側は当てはめに使っていないので、その明るさの傾きが消えるかが独立の検算になる。
+- **L441** _(ja)_ — ★予言が外れた: 「裸の Si は無彩色(C* < 3)」と置いたら C* 6.6 だった。Si の反射率は 400 nm 0.49 → 800 nm 0.33 と 短波長ほど高いので、裸のウェハは**青みの灰色**に見える(実物のとおり)。門を所見の側に書き直した。
+- **L479** _(ja)_ — ★境の直上でも FFT は最大 %.0f nm 外す(窓の DC の裾とフレネルの位相の分)—— 2 倍の厚さで 1 % 以内に入る。
 
 ## `examples/poc_timelapse_growth.py`
 
@@ -1643,10 +1644,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L34** _(ja)_ — ★wheel には data/halcon_operators.json を**同梱しない**(MVTec のリファレンスの説明文を含むため。 名前だけは halcon_names_data として出荷している)。`fullseye coverage` が FileNotFoundError で落ちていた (GenSpark 第 6 報 N5)ので、無いなら何が要るかと数字の在処を言って終える。
 - **L68** — ★Auto-Ops, die das Funktions-Gate **nicht bestanden** haben, aus der Schlagzeile ausschließen — zuvor wurden sie nur per [warn] ausgegeben, aber weiter mitgezählt, was die „funktional gegatterte“ Paritätszahl mit Ops aufblähte, die das Gate ablehnt.
 - **L87** — ★2026-09-08: Diese Zeile lautete -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." Gemessen: **979 + 17 = 979**, d. h. die 17 n-ary-ops sind eine **Teilmenge** von ``reg_counted`` (``nary_names - reg_counted`` ist leer). Die 979 der Ueberschrift stimmt, doch allein die Aufschluesselungszeile sieht nach 'Addition' aus, und wer sie addiert, erhaelt 996. Die Zahlen stimmen, aber **die Erklaerung luegt**, daher wurde es korrigiert. Ob die Aufschluesselung als Summe aufgeht, prueft jedes Mal ``tests/test_honest_summary_arithmetic.py``.
+- **L94** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D2): ここは「= %d evolvable registry ops」だったが、registry の Op.halcon が名乗るのは 388 名だけで、残りは facade と台帳の対応。出どころ別に数えて書く。
 
 ## `illusion.py`
 
-- **L290** _(ja)_ — ★周りの円は**互いに重ならない**ように置く。n 個を半径 rs の環に並べるとき、 隣どうしの中心間距離は 2*rs*sin(pi/n) なので rs > rr / sin(pi/n) が要る。 最初これを守らずに (rs=62, rr=46, n=6) と置いたら、周りの円が融合して **花のような 1 つの塊**になった —— エビングハウス錯視になっていない。
+- **L291** _(ja)_ — ★周りの円は**互いに重ならない**ように置く。n 個を半径 rs の環に並べるとき、 隣どうしの中心間距離は 2*rs*sin(pi/n) なので rs > rr / sin(pi/n) が要る。 最初これを守らずに (rs=62, rr=46, n=6) と置いたら、周りの円が融合して **花のような 1 つの塊**になった —— エビングハウス錯視になっていない。
 
 ## `imgevolve.py`
 
@@ -2142,7 +2144,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `realdata.py`
 
 - **L146** — ★ Nur solche, deren ``public``-Spalte true ist, dürfen in zu veröffentlichenden Abbildungen verwendet werden. Solche, die auf zitierte Nutzung zu Forschungs- und Bildungszwecken beschränkt sind, tragen ``cite``.
-- **L205** — ★ skimage hält nur eine gebündelte Teilmenge; den Rest holt es zur Laufzeit über pooch. Was es nicht holen kann, **verwenden wir in diesem Repo nicht** (wenn ein PoC von der Verbindung abhängt, wird unklar, ob ein Fehler die Implementierung oder das Netzwerk war).
+- **L229** — ★ skimage hält nur eine gebündelte Teilmenge; den Rest holt es zur Laufzeit über pooch. Was es nicht holen kann, **verwenden wir in diesem Repo nicht** (wenn ein PoC von der Verbindung abhängt, wird unklar, ob ein Fehler die Implementierung oder das Netzwerk war).
 
 ## `render3d.py`
 
@@ -2584,6 +2586,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1564** _(ja)_ — ★円は (p/q, 1/(2q^2)) に**載っている**ので、接触は 2 次元の距離で見る。 x の差だけで測ると 0/1 と 1/9 のような組を「接していない」と読む (距離 0.1111 対 半径和 0.5062)—— 最初これで落ちた。
 - **L1684** _(ja)_ — ★ムーア曲線は**閉じている**(最後から最初に戻れる)。ヒルベルトは閉じない。
 
+## `tests/test_maturity.py`
+
+- **L105** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D7): ここは `== 0` で、生成器が書く**定数** 0 と照合していた (台帳の外の 8 本を数えず、どの門も走らせない 4 本が見えなかった)。いまは生成器が数え、 ここはディスクとの和と「走らない例には理由がある」ことを見る。
+
 ## `tests/test_mcp_images.py`
 
 - **L331** _(ja)_ — ★最初 `ones + inf` にしていて、有限部が定数なので免除 op でも「定数」判定になり 落ちた —— それは診断器が正しい。確かめたいのは「免除 op なら非有限を異常と 言わない」だけなので、有限部に変化のある入力にする。
@@ -2685,14 +2691,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_poc_scripts_run.py`
 
-- **L57** — ★2026-09-08: die feste 6 aufgeben und **an die CPU-Zahl anpassen**. Auf gemeinsam genutzten Runnern (2–4 vCPU) verlangsamt 6-fache Parallelität nur jeden Einzelnen, ohne die Gesamtzeit zu verkürzen, und als die PoCs auf 84 wuchsen, **traf jeder Job pytests 900-Sekunden-timeout** (py3.10 / 3.12). Lokal (12 Kerne) läuft es wie bisher mit 6 oder mehr.
-- **L73** — ★``PYTHONPATH`` **nicht übergeben** (2026-09-09). Lange wurde ``PYTHONPATH=<repo>`` übergeben, doch das ist eine Einstellung, die Nutzer nicht vornehmen, und es bedeutete, dass das Gate einen Schritt neben dem Ort stand, an dem der Unfall geschieht —— durch denselben blinden Fleck blieben `examples/piv_flow_from_particles.py` und andere als "ModuleNotFoundError beim direkten Ausführen aus einem Checkout" (jene Seite hatte nicht einmal ein Gate, das sie ausführt, daher blieb es unbemerkt. `test_example_scripts_run.py`). Auf der PoC-Seite fügen 108 von 116 den repo-Wurzelpfad selbst zu ``sys.path`` hinzu, und die übrigen 8 importieren nur ``fullseye``, sodass alle auch nach dem Entfernen bestehen (gemessen).
-- **L87** _(ja)_ — ★stdin は /dev/null(2026-10-23)。渡さないと子は親(xdist の worker)の stdin = execnet の パイプを継ぐ。worker が死んだあとも子がそのパイプを握り、controller が「node down」の後に 固まる形になりうる(手元で torch+libiomp5md の子が消えないゾンビになった日に疑った経路。 再現はしなかったが、子に親の制御パイプを継がせる理由は無い)。
-- **L96** — ★Bei Fehlschlag auch das Ende von stdout zurückgeben. Ein PoC druckt seine Befunde und "welche Prüfung fehlschlug" nach stdout vor SystemExit(1), sodass man mit stderr allein **nur "exit 1" und sonst nichts erfährt** (2026-09-07 CI, py3.10 poc_ct_fidelity).
-- **L99** _(ja)_ — ★stdout は 4000 文字残す。1200 だと**章の後ろだけ**が見えて、前半で 落ちた検査の実測値が CI から読めない(2026-09-24、poc_endless_zoom の 10 番目が落ちたとき「NG が残っている(10 番目)」しか分からなかった)。
-- **L108** — ★2026-09-07: dies **gab lange 0 zurück** und ging so glatt durch das `assert code == 0` weiter unten —— ein Gate, das sein Urteil gleich nach dem Berechnen verwirft (gemessen: 3 PoCs drucken nie PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). -2 zurückgeben, damit es fehlschlägt.
-- **L140** _(ja)_ — ★2026-10-07: 以前は**全本を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全本を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全本を WORKERS 並列で回し、最大 48 本が同時に走って単独 286 秒の PoC が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
-- **L156** — ★Dieses Gate führt die 84 PoCs **in einem Durchgang** aus (session fixture). Diese Zeit wird dem ersten Test angerechnet, sodass pyprojects Standard-timeout (900 Sekunden) auf gemeinsam genutzten Runnern fehlschlägt. Nur hier erweitern —— den Standard zu lockern würde auch die Hänger-Erkennung anderer Tests abstumpfen.
+- **L60** — ★2026-09-08: die feste 6 aufgeben und **an die CPU-Zahl anpassen**. Auf gemeinsam genutzten Runnern (2–4 vCPU) verlangsamt 6-fache Parallelität nur jeden Einzelnen, ohne die Gesamtzeit zu verkürzen, und als die PoCs auf 84 wuchsen, **traf jeder Job pytests 900-Sekunden-timeout** (py3.10 / 3.12). Lokal (12 Kerne) läuft es wie bisher mit 6 oder mehr.
+- **L76** — ★``PYTHONPATH`` **nicht übergeben** (2026-09-09). Lange wurde ``PYTHONPATH=<repo>`` übergeben, doch das ist eine Einstellung, die Nutzer nicht vornehmen, und es bedeutete, dass das Gate einen Schritt neben dem Ort stand, an dem der Unfall geschieht —— durch denselben blinden Fleck blieben `examples/piv_flow_from_particles.py` und andere als "ModuleNotFoundError beim direkten Ausführen aus einem Checkout" (jene Seite hatte nicht einmal ein Gate, das sie ausführt, daher blieb es unbemerkt. `test_example_scripts_run.py`). Auf der PoC-Seite fügen 108 von 116 den repo-Wurzelpfad selbst zu ``sys.path`` hinzu, und die übrigen 8 importieren nur ``fullseye``, sodass alle auch nach dem Entfernen bestehen (gemessen).
+- **L89** _(ja)_ — ★実データを読んだ印(realdata.mark_read)を集める(2026-11-05、敵対的検証 第 2 巡 D6)。 成熟度台帳が「門の実行で実データを読む」とする例が、本当に読んだかを下の門で照合する。
+- **L94** _(ja)_ — ★stdin は /dev/null(2026-10-23)。渡さないと子は親(xdist の worker)の stdin = execnet の パイプを継ぐ。worker が死んだあとも子がそのパイプを握り、controller が「node down」の後に 固まる形になりうる(手元で torch+libiomp5md の子が消えないゾンビになった日に疑った経路。 再現はしなかったが、子に親の制御パイプを継がせる理由は無い)。
+- **L110** — ★Bei Fehlschlag auch das Ende von stdout zurückgeben. Ein PoC druckt seine Befunde und "welche Prüfung fehlschlug" nach stdout vor SystemExit(1), sodass man mit stderr allein **nur "exit 1" und sonst nichts erfährt** (2026-09-07 CI, py3.10 poc_ct_fidelity).
+- **L113** _(ja)_ — ★stdout は 4000 文字残す。1200 だと**章の後ろだけ**が見えて、前半で 落ちた検査の実測値が CI から読めない(2026-09-24、poc_endless_zoom の 10 番目が落ちたとき「NG が残っている(10 番目)」しか分からなかった)。
+- **L123** — ★2026-09-07: dies **gab lange 0 zurück** und ging so glatt durch das `assert code == 0` weiter unten —— ein Gate, das sein Urteil gleich nach dem Berechnen verwirft (gemessen: 3 PoCs drucken nie PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). -2 zurückgeben, damit es fehlschlägt.
+- **L168** _(ja)_ — ★2026-10-07: 以前は**全本を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全本を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全本を WORKERS 並列で回し、最大 48 本が同時に走って単独 286 秒の PoC が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
+- **L184** — ★Dieses Gate führt die 84 PoCs **in einem Durchgang** aus (session fixture). Diese Zeit wird dem ersten Test angerechnet, sodass pyprojects Standard-timeout (900 Sekunden) auf gemeinsam genutzten Runnern fehlschlägt. Nur hier erweitern —— den Standard zu lockern würde auch die Hänger-Erkennung anderer Tests abstumpfen.
+- **L199** _(ja)_ — ★成熟度台帳が「門の実行で実データを読む」とした例は、この実行でも同じデータを読んでいること (2026-11-05、敵対的検証 第 2 巡 D6)。逆向き(台帳は読まないが手元のキャッシュで読めた)は 許す —— 台帳は CI と同じくキャッシュ無しで測った控えめな側。
 
 ## `tests/test_printpath.py`
 
@@ -2942,13 +2950,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tools/gen_docs_index_ops.py`
 
 - **L253** _(ja)_ — ★2026-10-07: 言語版の目次 INDEX.<lang>.md もノートではない(以前は 5 本を数えて 3089 本を 3094 本と書いていた)
-- **L281** — ★Nimm die Menge der Notizen **aus dem Register** (zaehle nicht die Dateien auf). Im adversarialen Review vom 2026-09-06 (Codex) mischte eine Version, die Dateien globt und Stems zaehlt, ein `docs/ops/SAMPLES.md` (keine op-Notiz) hinein, und der Index nannte 1,842, der RAG-Leitfaden 1,843 -- **es wurden gleichzeitig widerspruechliche Zahlen veroeffentlicht**. Notizen werden 1:1 aus records erzeugt, daher ist ein Name in records selbst die Definition von "ein Name, der eine Notiz hat". Die Uebereinstimmung mit den Dateien prueft separat `tests/test_docs_index_reachable.py` (erkennt Fehlende / Ueberzaehlige).
-- **L291** — ★`__all__`, nicht `dir(fullseye)`. dir enthaelt Modulattribute (os / sys / warnings / annotations) und **erhoeht sich zudem um eins, nachdem ein anderer Test importiert hat** (1094 → 1095), sodass das Drift-Gate nur in der Gesamt-Suite fiel (2026-09-06). Die oeffentliche Oberflaeche sind die 1,091 Namen, die die Fassade in `__all__` deklariert.
-- **L340** — ★Der Index ist nicht nur fuer Menschen, sondern auch **die Suchoberflaeche der KI** (die Bemerkung des Nutzers vom 2026-09-06 "der Index ist doch auch der Teil, der als RAG genutzt wird, oder?"). Da op-Notizen zugleich der Suchkorpus fuer KI-Coding-Unterstuetzung sind, mache den **maschinenlesbaren Einstiegspunkt** im Index explizit. Schreibt man "alle op" fuer etwas, das nur die Haelfte hat, irrt sich das RAG ueber die andere Haelfte selbstsicher -- deshalb werden die gemessenen Zeilen aus `_honest()` nicht aus diesem Abschnitt entfernt.
-- **L498** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
-- **L518** _(ja)_ — ★2026-10-11: 訳文ファイル(`X.zh.md` など)の題は**その言語**で書かれている。以前は 日本語版と同じく漢字で判定して `(ja)` を付けていたので、中国語版の索引で中国語の文書が 「読めない日本語」と表示されていた。印は**ファイルの言語**で付け、自分の言語なら付けない。
-- **L529** _(ja)_ — ★2026-10-11: 日本語の原文に**この言語の訳がある**なら、訳の題と訳へのリンクを先に出す (以前は英訳があっても英語版の索引が日本語の題と日本語版へのリンクしか出さず、 読める版があることが索引から分からなかった)。原文が日本語であることの印は残す。
-- **L690** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
+- **L291** — ★Nimm die Menge der Notizen **aus dem Register** (zaehle nicht die Dateien auf). Im adversarialen Review vom 2026-09-06 (Codex) mischte eine Version, die Dateien globt und Stems zaehlt, ein `docs/ops/SAMPLES.md` (keine op-Notiz) hinein, und der Index nannte 1,842, der RAG-Leitfaden 1,843 -- **es wurden gleichzeitig widerspruechliche Zahlen veroeffentlicht**. Notizen werden 1:1 aus records erzeugt, daher ist ein Name in records selbst die Definition von "ein Name, der eine Notiz hat". Die Uebereinstimmung mit den Dateien prueft separat `tests/test_docs_index_reachable.py` (erkennt Fehlende / Ueberzaehlige).
+- **L300** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D5b): 分母を ``typed_catalog.catalog()`` から取っていた (2832)。あれは**連鎖ファザーと registry の橋の型カタログ**で、台帳ではない —— 台帳に無い complexops 12 本(cx_fft 等、op_run は断る)を含み、ファザーに向かないファイル I/O 31 本を 含まない。README 冒頭の「2,846 in the typed ledgers」、OP_INDEX の ledger 層、op_run が 引ける集合と同じ ``list_ops`` の ledger 層で数える(同じ問いに 2 つの分母を出さない)。
+- **L306** — ★`__all__`, nicht `dir(fullseye)`. dir enthaelt Modulattribute (os / sys / warnings / annotations) und **erhoeht sich zudem um eins, nachdem ein anderer Test importiert hat** (1094 → 1095), sodass das Drift-Gate nur in der Gesamt-Suite fiel (2026-09-06). Die oeffentliche Oberflaeche sind die 1,091 Namen, die die Fassade in `__all__` deklariert.
+- **L355** — ★Der Index ist nicht nur fuer Menschen, sondern auch **die Suchoberflaeche der KI** (die Bemerkung des Nutzers vom 2026-09-06 "der Index ist doch auch der Teil, der als RAG genutzt wird, oder?"). Da op-Notizen zugleich der Suchkorpus fuer KI-Coding-Unterstuetzung sind, mache den **maschinenlesbaren Einstiegspunkt** im Index explizit. Schreibt man "alle op" fuer etwas, das nur die Haelfte hat, irrt sich das RAG ueber die andere Haelfte selbstsicher -- deshalb werden die gemessenen Zeilen aus `_honest()` nicht aus diesem Abschnitt entfernt.
+- **L513** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
+- **L533** _(ja)_ — ★2026-10-11: 訳文ファイル(`X.zh.md` など)の題は**その言語**で書かれている。以前は 日本語版と同じく漢字で判定して `(ja)` を付けていたので、中国語版の索引で中国語の文書が 「読めない日本語」と表示されていた。印は**ファイルの言語**で付け、自分の言語なら付けない。
+- **L544** _(ja)_ — ★2026-10-11: 日本語の原文に**この言語の訳がある**なら、訳の題と訳へのリンクを先に出す (以前は英訳があっても英語版の索引が日本語の題と日本語版へのリンクしか出さず、 読める版があることが索引から分からなかった)。原文が日本語であることの印は残す。
+- **L705** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
 
 ## `tools/gen_hardening_index.py`
 
@@ -2984,9 +2993,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/gen_maturity.py`
 
-- **L105** _(ja)_ — 任意キー。**ここに無いキーは拒む**(fail-closed)。★所属・勤務先・製品名の欄は 意図して持たない —— 報告者に求めない情報は、台帳に置く場所も作らない。
-- **L313** — ★Dies ist eine **untere Schranke**. Da nur geprueft wird, ob der op-Name als Literal in ``tests/`` erscheint, werden Sweep-artige Tests, die das Register durchlaufen und alle op ausfuehren (``for name in ledger: ...``), nicht gezaehlt. Lies es als "**kein namentlicher Test**", nicht als "kein Test".
-- **L335** _(ja)_ — ★報告が付いた行にだけ鍵を足す(空の台帳で出力を動かさない)。 repo 内の判定は別の鍵に残す —— 1 つの段に畳まない。
+- **L115** _(ja)_ — 任意キー。**ここに無いキーは拒む**(fail-closed)。★所属・勤務先・製品名の欄は 意図して持たない —— 報告者に求めない情報は、台帳に置く場所も作らない。
+- **L382** — ★Dies ist eine **untere Schranke**. Da nur geprueft wird, ob der op-Name als Literal in ``tests/`` erscheint, werden Sweep-artige Tests, die das Register durchlaufen und alle op ausfuehren (``for name in ledger: ...``), nicht gezaehlt. Lies es als "**kein namentlicher Test**", nicht als "kein Test".
+- **L404** _(ja)_ — ★報告が付いた行にだけ鍵を足す(空の台帳で出力を動かさない)。 repo 内の判定は別の鍵に残す —— 1 つの段に畳まない。
+- **L433** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D7): ここは定数 0 だった。台帳の外のスクリプト (examples2d.EXCLUDED)を数えておらず、どの門も走らせない 4 本が見えていなかった。
 
 ## `tools/gen_op_catalog.py`
 
@@ -3006,6 +3016,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L127** _(ja)_ — ★2026-10-04: 主点を 0.5 画素ずらすだけの橋(CARLA ↔ Fullseye の内部パラメータ)。3×3 で焦点距離が正の K しか受けず、 汎用の合成 matrix は fail-closed で拒否される(op_probe の探針 K では走る —— tests/test_backends_typed_liveness.py)。
 - **L140** — ★2026-09-07 (Nutzeranweisung "es besteht kein Bedarf, alles in ein Bild zusammenzufassen; Stufenweises oder solches mit mehreren Bedingungen getrennt ausgeben", "bei manchem ist eine Falschfarbe verstaendlicher", "Komplexes gerne auch als animiertes GIF"). Zusaetzlich zur Hauptabbildung `<op>.png`: `<op>.a.jpg` / `<op>.b.jpg` — 3 Bilder mit dem Regler auf 0.1 / 0.5 / 0.9 gestellt (**nur wenn sich die Ausgabe aendert**; aendert sie sich nicht, kommt der Grund ins manifest) `<op>.chain.jpg` — eine Stufenabbildung fuer eine op mit vorgeschalteter op (Bild → Zwischenschritt → Ausgabe) `<op>.gif` — wenn die Ausgabe Video / Lichtfeld / Volumen ist, Frames / Blickpunkte / Slices der Reihe nach zeigen (das Standbild `<op>.png` ist die fertige Form und das GIF ist zusaetzlich; Studios QTextBrowser zeigt das erste Frame). Wende Falschfarbe nur auf die Ausgabe eines **Feldes einer Groesse** an (Abstand, Phase, Orientierung, Tiefe, Kruemmung …) und schreibe `(viridis)` in die Bildunterschrift. Filter-Typen bleiben grau (nicht als farbwechselnde op darstellen).
 - **L756** — ★"Es lief" und "eine sinnvolle Ausgabe kam heraus" sind zweierlei (2026-09-07, Bemerkung des Nutzers "was soll das pechschwarze out?"). Zaehlt man ein leeres Array als "hat eine Abbildung", wird eine schwarze Platte zur Abbildung. Erfasse Leeres als leer und schreibe den Grund in die Notiz.
+
+## `tools/gen_trust_block.py`
+
+- **L419** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D7): not_run_by_any_gate はディスク上の例のスクリプト(台帳の外を 含む)から数えるようになった。分母も同じ集合(scripts_on_disk)にする —— 2-D 台帳の件数から引くと 台帳に無い 4 本を台帳の例から引いてしまう。
 
 ## `tools/gen_view2026_pages.py`
 
@@ -3141,9 +3155,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L117** — ★2026-10-15: ohne `--md` **schrieb es nichts** (es gab nur eine Zusammenfassung auf stdout aus). docs/CONVERSION_MATRIX.md blieb auf dem Stand vom 2026-09-02 ("59 Typen / 164 Konversionspaare") stehen, und da --check "eine Stufe, die nichts schreibt" nicht als Drift sieht, lief es sechs Wochen lang durch. Jetzt weist `trace_problems()` eine Stufe zurück, die ihre deklarierten Ausgaben nicht einmal berührt.
 - **L133** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
 - **L384** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
-- **L790** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L805** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L853** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
+- **L798** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L813** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L861** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `torch_lazy.py`
 

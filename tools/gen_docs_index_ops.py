@@ -267,9 +267,14 @@ def _note_substance():
 
 
 def ledger_names() -> set:
-    """型つき台帳の op 名(``fullseye.list_ops`` の ledger 層 = ``docs/OP_INDEX.json`` の ledger 層)。"""
-    import fullseye as fs
-    return {d["name"] for d in fs.list_ops(include_ledger=True) if d["tier"] == "ledger"}
+    """型つき台帳の op 名(``docs/OP_INDEX.json`` の ledger 層 = ``fullseye.list_ops`` の ledger 層)。
+
+    索引から読む: ``list_ops`` は鎖の後段(gen_mcp_data)が書く ``op_knob.json`` も読むので、ここで呼ぶと
+    regen_all の順序の検査が落ちる。中身が同じことは tests/test_redteam2_claims_2026_11_05.py が見る。
+    """
+    import json
+    with open(os.path.join(_ROOT, "docs", "OP_INDEX.json"), encoding="utf-8") as fh:
+        return {o["name"] for o in json.load(fh)["ops"] if o["tier"] == "ledger"}
 
 
 def _honest(lang: str) -> str:
