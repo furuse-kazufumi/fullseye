@@ -311,7 +311,9 @@ def fit_rectangle2(points) -> dict:
     for i in range(len(h)):
         edge = h[(i + 1) % len(h)] - h[i]
         norm = float(np.hypot(edge[0], edge[1]))
-        if norm < 1e-12:
+        # ★1.0 前の修正 2026-11-05 abs-floor: 以前は ``norm < 1e-12``。辺 1e-13 の矩形では全辺を飛ばし TypeError で落ちた。
+        #   凸包の頂点は互いに異なるので、長さ 0 の辺だけを飛ばす。
+        if norm == 0.0:
             continue
         u = edge / norm                                # a candidate rectangle axis
         v = np.array([-u[1], u[0]])

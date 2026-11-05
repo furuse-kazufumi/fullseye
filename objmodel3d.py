@@ -121,6 +121,19 @@ def smooth_object_model_3d(points, k: int = 8) -> np.ndarray:
     return p[idx].mean(axis=1)
 
 
+def _plane_normal_norm(nrm, op):
+    """平面 (a, b, c, d) の法線 (a, b, c) の長さ。0・非有限なら ValueError。
+
+    ★1.0 前の修正 2026-11-05 abs-floor: 以前は ``norm + 1e-12`` で割っていた。平面の係数は定数倍しても同じ平面なのに、
+    係数を 1e-9 倍すると距離が 0.1 % 変わり、法線が 0 の「平面」は黙って全点/0 点を返した。
+    """
+    n = float(np.linalg.norm(nrm))
+    if not (np.isfinite(n) and n > 0.0):
+        raise ValueError("%s: the plane normal (a, b, c) is zero or non-finite — no plane is defined"
+                         % op)
+    return n
+
+
 def edges_object_model_3d(points, k: int = 12, thresh: float = 0.08) -> np.ndarray:
     """局所曲率が高い点=3D エッジを抽出(edges_object_model_3d)。近傍 PCA の平面性で判定。"""
     from scipy.spatial import cKDTree
@@ -128,12 +141,16 @@ def edges_object_model_3d(points, k: int = 12, thresh: float = 0.08) -> np.ndarr
     if len(p) <= k:
         return p
     _, idx = cKDTree(p).query(p, k=k)
+    # ★1.0 前の修正 2026-11-05 abs-floor: 以前は ``w[0] / (w.sum() + 1e-12)``。w は長さ² なので、座標 1e-6 の点群では
+    #   床が本体と同じ桁になりエッジ点が 1 個も出なかった。床は座標の大きさ² に対する相対量。
+    floor = (1e-12 * float(np.abs(p).max())) ** 2
     out = []
     for i, nb in enumerate(idx):
         d = p[nb] - p[nb].mean(0)
         w = np.linalg.eigvalsh(np.cov(d.T))
         w = np.clip(w, 0, None)
-        curv = w[0] / (w.sum() + 1e-12)                  # 表面変動率(大=エッジ/角)
+        tot = float(w.sum())
+        curv = w[0] / tot if tot > floor else 0.0       # 表面変動率(大=エッジ/角)
         if curv > thresh:
             out.append(p[i])
     return np.asarray(out) if out else np.zeros((0, 3))
@@ -144,7 +161,7 @@ def intersect_plane_object_model_3d(points, plane=(0.0, 0.0, 1.0, 0.0), tol: flo
     p = _pts(points)
     a, b, c, d = plane
     nrm = np.array([a, b, c], float)
-    dist = np.abs(p @ nrm + d) / (np.linalg.norm(nrm) + 1e-12)
+    dist = np.abs(p @ nrm + d) / _plane_normal_norm(nrm, "intersect_plane_object_model_3d")
     return p[dist < tol]
 
 
@@ -266,7 +283,7 @@ def volume_object_model_3d_relative_to_plane(points, plane=(0, 0, 1, 0)):
     from scipy.spatial import ConvexHull
     p = _pts(points)
     a, b, c, d = plane; nrm = np.array([a, b, c], float)
-    signed = (p @ nrm + d) / (np.linalg.norm(nrm) + 1e-12)
+    signed = (p @ nrm + d) / _plane_normal_norm(nrm, "volume_object_model_3d_relative_to_plane")
     above = p[signed > 0]
     if len(above) < 4:
         return 0.0

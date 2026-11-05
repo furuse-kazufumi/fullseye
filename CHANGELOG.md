@@ -19,6 +19,35 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 - 外部監査 F2(uint8 の 32 を 2 枚 `add_image` → strict でも 1.0、記録 0 件)は `api.apply` の n 項経路では前の便(#263/#270)で直っていた(strict は拒否、fallback は 64/255 = 0.250980392 と入力ごとに台帳 1 件)。全 17 本の n 項 op の、dtype 契約の対象の入力 23 本と非有限の入力 34 本、ファサード(`fullseye.apply`)・グラフ(`graphengine.FullseyeGraph.run`)の入口で回帰テストに固定した(`tests/test_fix_nary_guard_2026_11_05.py`)。
 
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(abs-floor)
+
+外部監査 F3(`vector_to_similarity` の分母の固定 1e-12。master では修正済み)と同じ型 —— 長さ² の量に
+固定の 1e-12 の床を足す/比べる —— の兄弟を、利用者が直接呼ぶ op から直した。座標・深度の尺度が 1e-4 以下
+(µm を m で持つ顕微系など)で結果が変わる。単位の尺度の入力は丸めの桁しか変わらない。
+
+- `pcseg.curvature` / `objmodel3d.edges_object_model_3d`: 近傍共分散の固有値の和の床を座標の大きさ² に
+  対する相対量に。座標 1e-6 の点群で曲率が全部 0 / エッジ点 0 個だったのが、尺度 1 と同じ値になる。
+- `feat_shot.iss_keypoints`: λ1 の床を同じく相対量に(座標 1e-6 でキーポイント 0 個だった)。
+- `xg_eccentricity` / `xg_elliptic_axis` / `xg_height_width_ratio`: 「全点同一」「一直線」の判定を座標の
+  大きさに対する相対量に。座標 1e-6 の楕円で離心率 0・軸比 1e6 を返していた。`xg_elliptic_axis` の
+  一直線の判定は `λ_min <= 1e-12·λ_max`(比が上限 1e6 に届く点)。
+- `camera.normals_from_depth`(`fullseye.normals_from_depth`): 外積の長さ < 1e-12 を NaN にしていた判定を、
+  接線の長さの積に対する相対量に。深度 1e-3 m・fx 5000 px で全画素 NaN だった。
+- `range_image.normals_from_depth`: `n / (|n| + 1e-12)` を床なしの正規化に(外積 0 の画素は以前どおり 0)。
+- `objmodel3d.intersect_plane_object_model_3d` / `volume_object_model_3d_relative_to_plane`: 平面の法線
+  `(a, b, c)` の長さに足していた 1e-12 を外し、法線 0 の平面は `ValueError`(以前は黙って全点/0 点)。
+- `curve3d.resample_uniform` / `measure.fit_rectangle2` / `xg_clip_contours`: 長さ < 1e-12 を「長さ 0」と
+  みなしていたのを厳密な 0 に(全長 1e-13 の曲線を先頭点の複製にし、辺 1e-13 の矩形で `TypeError`)。
+
+### 修正 — 1.0 前の修正 2026-11-05(abs-floor)
+
+- `gen_parallels_xld` / `gen_contour_polygon_rounded_xld` / `get_polygon_xld`・`backends_xldgeom` の
+  Douglas-Peucker: 接線・辺の長さに足していた + 1e-12 を外す(座標 1e-6 で相対 1e-6 ずれた)。長さ 0 の
+  接線・辺は以前どおり 0 ベクトル/始点からの距離。
+- 棚卸し(tests・examples を除く .py の絶対の床 1373 件)と、直さなかったものの分類は便の報告に残した。
+  主な残り: 物理シミュレータ・描画(SI 単位・単位ベクトルで尺度が固定)、画素値の床([0, 1] の契約で尺度が
+  固定)、長さに 1e-9 の床(座標 1e-9 の桁でだけ効く)。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(numerics)
 
 長さ・長さ² に固定の `1e-12` を足す/比べる床と、中心化せずに解く当てはめを直した。値が変わるのは

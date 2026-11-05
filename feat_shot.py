@@ -68,6 +68,9 @@ def iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99,
     if nms_radius is None:
         nms_radius = 0.6 * radius
     saliency = np.full(n, -1.0)
+    # ★1.0 前の修正 2026-11-05 abs-floor: 以前は ``l1 <= 1e-12`` の絶対の床。λ1 は長さ² なので、座標 1e-6 の点群では
+    #   全点が捨てられキーポイントが 0 個になった。床は座標の大きさ² に対する相対量。
+    l1_floor = (1e-12 * float(np.abs(pts).max())) ** 2 if n else 0.0
     for i in range(n):
         nb_idx = tree.query_ball_point(pts[i], radius)
         if len(nb_idx) < min_neighbors:
@@ -75,7 +78,7 @@ def iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99,
         q = pts[nb_idx] - pts[i]
         vals = np.linalg.eigvalsh((q.T @ q) / len(nb_idx))[::-1]  # λ1>=λ2>=λ3
         l1, l2, l3 = vals
-        if l1 <= 1e-12:
+        if l1 <= l1_floor:
             continue
         # ★2026-10-11: 平面上の点の λ3 は丸め屑(λ3/λ1 ~ 1e-17)。軸に沿った平面では
         #   厳密に 0 で落ちるが、傾けた平面では屑が正になり「特徴の無い平面」から
