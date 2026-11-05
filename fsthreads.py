@@ -143,8 +143,13 @@ numpy は行優先、LAPACK は列優先なので、分解のたびに並べ替�
 それでも下位ビットはこの repo が気にする対象なので、条件を書いておく:
 
 * 単スレッドで使う限り上限は決定的で、**機械をまたいだ再現性は上がる**。
-* Python のスレッドを跨ぐ同時実行では上限が不定になりうる。ただし
-  **何もしなければ不定なまま**なので、この層が新しく壊すものは無い。
+* Python のスレッドを跨ぐ同時実行では、効いている文脈のうち**最後に入った文脈の上限**が
+  プロセス全体に掛かる(他のスレッドの文脈はそれを見る)。
+* **最後の文脈が抜けたら元のスレッド数に戻る**。★敵対的検証 2026-11-05 第 2 巡: 以前は
+  文脈ごとに threadpoolctl の ``limit`` を重ねていたので、スレッド A が入る → B が入る(A の
+  上限を「元」として憶える)→ A が抜ける(B の上限が外れる)→ B が抜ける(A の上限に戻す)で、
+  **全部抜けた後もプロセスが 1 スレッドに固まった**(24 -> 1)。いまはプロセスで 1 つの
+  受け台帳(:data:`_ACTIVE`)を鍵つきで持ち、元の値は最初の文脈が入ったときに 1 回だけ憶える。
 * 決定的にしたいなら ``FULLSEYE_BLAS_THREADS`` を整数で固定する。
 """
 from __future__ import annotations
@@ -207,6 +212,13 @@ _LOCAL = threading.local()
 
 #: 観測用の通し数。効いているかを外から数えられるようにしておく。
 _COUNTS = {"limited": 0, "skipped": 0}
+
+#: プロセスで 1 つの上限の受け台帳(スレッドを跨いで共有。:data:`_STATE_LOCK` の下でだけ触る)。
+#: 要素は ``(token, cap)`` を入った順に。効く上限は**最後の要素**の cap。
+_ACTIVE = []
+#: いまプロセスに掛けている threadpoolctl の limiter と、その上限(元の値はこの limiter が持つ)。
+_HELD = {"limiter": None, "cap": None}
+_STATE_LOCK = threading.Lock()
 
 
 def _controller():
@@ -306,6 +318,32 @@ def reset_counters():
     _COUNTS["limited"] = _COUNTS["skipped"] = 0
 
 
+def _reapply_locked(ctl):
+    """:data:`_ACTIVE` の最後の上限をプロセスに掛ける(空なら元に戻す)。:data:`_STATE_LOCK` の下で呼ぶ。
+
+    limiter は 1 個だけ持つ: 上限を変えるときは**いったん元に戻してから**新しい limiter を作るので、
+    新しい limiter が憶える「元」は常に、どの文脈も入っていないときの値になる。
+    """
+    want = _ACTIVE[-1][1] if _ACTIVE else None
+    if want == _HELD["cap"]:
+        return
+    lim = _HELD["limiter"]
+    _HELD["limiter"] = _HELD["cap"] = None
+    if lim is not None:
+        lim.restore_original_limits()
+    if want is not None:
+        _HELD["limiter"] = ctl.limit(limits=want, user_api="blas")
+        _HELD["cap"] = want
+
+
+def _leave_locked(ctl, token):
+    for i, (t, _c) in enumerate(_ACTIVE):
+        if t is token:
+            del _ACTIVE[i]
+            break
+    _reapply_locked(ctl)
+
+
 @contextlib.contextmanager
 def _apply(cap):
     ctl = _controller() if cap is not None else None
@@ -314,12 +352,21 @@ def _apply(cap):
         yield False
         return
     _COUNTS["limited"] += 1
+    token = object()
+    with _STATE_LOCK:
+        _ACTIVE.append((token, int(cap)))
+        try:
+            _reapply_locked(ctl)
+        except BaseException:
+            _leave_locked(ctl, token)       # 入れなかった文脈は台帳に残さない
+            raise
     _LOCAL.depth = getattr(_LOCAL, "depth", 0) + 1
     try:
-        with ctl.limit(limits=cap, user_api="blas"):
-            yield True
+        yield True
     finally:
         _LOCAL.depth -= 1
+        with _STATE_LOCK:
+            _leave_locked(ctl, token)
 
 
 @contextlib.contextmanager

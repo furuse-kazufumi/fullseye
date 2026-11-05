@@ -528,6 +528,8 @@ def synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0,
 
     total_phase = carrier + float(phase_gain) * h
 
+    if noise and seed is None:   # 敵対的検証 2026-11-05 第 2 巡 T7(lockin / photoncount と同じ規約)
+        raise ValueError("synthesize_fringes: noise needs an explicit integer seed (seed=None would draw fresh noise on every call)")
     rng = np.random.default_rng(seed)
     images = np.empty((n, rows, cols), dtype=np.float64)
     for idx in range(n):
