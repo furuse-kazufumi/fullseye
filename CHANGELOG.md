@@ -18,7 +18,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `dsp.signal_features`: スペクトル重心・帯域の分母に足していた 1e-12 と、波高率 `peak / (rms + 1e-12)` の
   床を外す。振幅 1e-9 の信号(m 単位の振動・ひずみ)で重心 50 Hz が 16.7 Hz に、振幅 1e-15 で波高率 √2 が
   0.001 になっていた。`rms` / `peak` / 周波数は、小数の桁で丸めると小さい値が 0 に潰れる(振幅 1e-9 で
-  rms 0)ので、有効数字 6 桁を残す丸めに(0.1 より大きい値は以前と同じ値)。全部 0 の信号は以前どおり 0。
+  rms 0、rate=1 の peak_freq 0.0236 Hz が 0.024)ので、rms・peak は有効数字 6 桁、周波数は 3 桁を残す丸めに
+  (0.1 以上の値は以前と同じ値)。全部 0 の信号は以前どおり 0。`tests/test_perf_batch29` の照合の式も同じ定義に直した。
 - `matrix_to_img`(`backends_bridge`): 「全要素が等しい」判定 `hi − lo < 1e-12`・`max|x| < 1e-12` を値の
   大きさに対する相対/厳密な 0 に。値 1e-13 の桁の行列(m² 単位の共分散など)が一様 0.5 になっていた。
 - `mathnumerics.interp_barycentric(nodes="chebyshev2")`: 点の照合 `|xk − 期待値| <= 1e-12` を区間の尺度に

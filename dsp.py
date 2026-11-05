@@ -611,16 +611,16 @@ def resample(x, rate, new_rate):
     return _rs(x, max(1, n)), new_rate
 
 
-def _round_keep(v, decimals):
-    """``round(v, decimals)``、ただし小さい値でも有効数字 6 桁は残す(abs-floor2)。
+def _round_keep(v, decimals, sig):
+    """``round(v, decimals)``、ただし小さい値でも有効数字 ``sig`` 桁は残す(abs-floor2)。
 
     小数点以下の桁数で丸めると、振幅 1e-9 の信号(m 単位の振動・ひずみ)の rms が 0 に潰れる。
-    ``|v| >= 0.1`` 付近から上は従来の ``round(v, decimals)`` と同じ値。
+    ``|v| >= 10**(sig - 1 - decimals)`` では従来の ``round(v, decimals)`` と同じ値。
     """
     v = float(v)
     if v == 0.0 or not math.isfinite(v):
         return v
-    return round(v, max(int(decimals), 5 - int(math.floor(math.log10(abs(v))))))
+    return round(v, max(int(decimals), int(sig) - 1 - int(math.floor(math.log10(abs(v))))))
 
 
 def signal_features(x, rate=1.0):
@@ -656,13 +656,13 @@ def signal_features(x, rate=1.0):
     peak_freq = float(freqs[int(np.argmax(mag))])
     bandwidth = float(np.sqrt(((freqs - centroid) ** 2 * mag).sum() / msum))
     return {
-        "rms": _round_keep(r, 6),
-        "peak": _round_keep(peak, 6),
+        "rms": _round_keep(r, 6, 6),
+        "peak": _round_keep(peak, 6, 6),
         "crest_factor": round(peak / r, 4) if r > 0.0 else 0.0,
         "zcr": round(zero_crossing_rate(x), 6),
-        "spectral_centroid": _round_keep(centroid, 3),
-        "peak_freq": _round_keep(peak_freq, 3),
-        "bandwidth": _round_keep(bandwidth, 3),
+        "spectral_centroid": _round_keep(centroid, 3, 3),
+        "peak_freq": _round_keep(peak_freq, 3, 3),
+        "bandwidth": _round_keep(bandwidth, 3, 3),
     }
 
 
