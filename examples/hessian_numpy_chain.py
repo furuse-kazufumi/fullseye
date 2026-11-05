@@ -32,7 +32,25 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-sys.modules["torch"] = None            # torch を import できない状態(素の pip install と同じ)
+import importlib.abc
+
+
+class _BlockTorch(importlib.abc.MetaPathFinder):
+    """torch を import できない状態(素の pip install と同じ)を作る。
+
+    ★2026-11-06: 以前は ``sys.modules["torch"] = None`` で塞いでいたが、scipy 1.17 の
+    ``array_api_compat`` は ``sys.modules`` に名前があれば本物の torch とみなして
+    ``Tensor`` を引き(``None.Tensor``)、torch の入った環境で AttributeError になった。
+    import の段で ModuleNotFoundError を出す形なら、``sys.modules`` に名前が載らない。
+    """
+
+    def find_spec(self, name, path=None, target=None):
+        if name == "torch" or name.startswith("torch."):
+            raise ModuleNotFoundError("No module named 'torch' (blocked by this example)")
+        return None
+
+
+sys.meta_path.insert(0, _BlockTorch())
 
 import numpy as np  # noqa: E402
 
@@ -100,7 +118,7 @@ def main() -> int:
     check("vesselness > 0.5 の voxel がある(管の長さ 33 以上)", float(n_hot >= 33), 1.0, 0.0)
 
     print(f"\n{len(CHECKED)} 項目中 {len(CHECKED) - len(FAILED)} 項目が真値と一致"
-          f"(torch は import していない: {sys.modules.get('torch') is None})")
+          f"(torch は import していない: {'torch' not in sys.modules})")
     return 1 if FAILED or len(CHECKED) != 12 else 0
 
 

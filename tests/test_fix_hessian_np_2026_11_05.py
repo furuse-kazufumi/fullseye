@@ -173,7 +173,15 @@ class TestSigmaZeroIsTheHessian3dKernel:
 
 _CHAIN_SCRIPT = r"""
 import sys
-sys.modules["torch"] = None            # torch を import できない interpreter(素の pip install 相当)
+import importlib.abc
+class _BlockTorch(importlib.abc.MetaPathFinder):
+    # torch を import できない interpreter(素の pip install 相当)。sys.modules["torch"] = None は
+    # scipy 1.17 の array_api_compat が None.Tensor を引いて落ちる(2026-11-06)ので import の段で塞ぐ。
+    def find_spec(self, name, path=None, target=None):
+        if name == "torch" or name.startswith("torch."):
+            raise ModuleNotFoundError("No module named 'torch' (blocked)")
+        return None
+sys.meta_path.insert(0, _BlockTorch())
 import numpy as np
 import opsreprconv
 n = 33
