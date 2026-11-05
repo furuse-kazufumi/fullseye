@@ -5,18 +5,17 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由對應點 + K 恢復相對姿態 (R,t) 與 3D 結構(用 cheirality 消歧)。→ (R, t_unit, points3d)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>t はスケール不定なので単位ベクトル。points3d は cam1 座標系(|t|=1 に対応するスケール)。</p>
-<p>fail-closed: 平面(共平面 3D)/純回転シーンは本質行列分解の<b>退化配置</b>で、Sampson 残差 ~0 のまま並進方向を誤って返す(見かけは完璧)。そうした入力は姿勢を復元できないため ValueError で明示拒否する(ホモグラフィ分解を使うこと)。<code style="color:#22d3bf">planar_tol</code> は視差・尺度に依らない平面度しきい値(<code style="color:#22d3bf">_planar_degeneracy_ratio</code> = H と F の当てはまりの比がこれ未満なら退化と判定。既定 3.0)。</p>
-<p>手順:</p>
-<p style="margin:2px 0 2px 12px">• 入口検査(8 点以上、点数一致、(N,2) かつ有限)。</p>
-<p style="margin:2px 0 2px 12px">• 平面度: 正規化 DLT のホモグラフィ H と正規化 8 点法の F を両方当て、自由度で割った残差の尺度の比 <code style="color:#22d3bf">σ_H / σ_F</code> を出す(<code style="color:#22d3bf">_planar_degeneracy_ratio</code>)。これが <code style="color:#22d3bf">planar_tol</code>(既定 3.0)未満なら <code style="color:#22d3bf">ValueError</code>。平面・純回転は約 √2、非平面は視差 / 雑音に比例して大きい。H が特異なら比 0 として同じく拒否。8 点ちょうどは F の残差から雑音が測れないので、従来の判定(H 残差の中央値 / 点の広がり &lt; 1e-2、視差に比例)を使う。</p>
-<p style="margin:2px 0 2px 12px">• ★2026-11-05(敵対的検証 G11): 以前の比(H 残差 / 点の広がり、既定 1e-2)は視差に比例し、非平面でも基線が小さいと拒否していた(<code style="color:#22d3bf">camera.recover_pose</code> は同じデータを解く)。逆に雑音が大きいと平面でも通していた(σ = 2 px で比 1e-2 超)。どちらも新しい比で直る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">essential_8point</code> → 4 候補 <code style="color:#22d3bf">(R, ±t)</code> へ分解 → 各候補で <code style="color:#22d3bf">triangulate</code> し、両カメラで深度 &gt; 0 の点数が最大の候補を採る(同数なら先の候補)。</p>
-<p>返り値: <code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,) 単位ベクトル、<code style="color:#22d3bf">points3d</code> (N,3)。規約は cam1 = K1[I|0]、cam2 = K2[R|t] で <code style="color:#22d3bf">X2 = R X1 + t</code>。<code style="color:#22d3bf">points3d</code> は cam1 座標系で |t|=1 のスケール。視線が平行な対応は NaN 行になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K2</code> 省略時は <code style="color:#22d3bf">K1</code> を両画像に使う。</p>
-<p style="margin:2px 0 2px 12px">• 外れ値に無防備(RANSAC は行わない)。前段で誤対応を除く。</p>
-<p style="margin:2px 0 2px 12px">• 決定論的。GT 検証は <code style="color:#22d3bf">pose_error</code>、残差は <code style="color:#22d3bf">sampson_distance</code>。</p>
+<p>t 的尺度不定，因此為單位向量。points3d 在 cam1 座標系中(對應 |t|=1 的尺度)。</p>
+<p>fail-closed：平面(共面 3D)/純旋轉場景是本質矩陣分解的<b>退化配置</b>，Sampson 殘差維持 ~0 卻回傳錯誤的平移方向(表面上完美)。這類輸入無法還原位姿，因此以 ValueError 明確拒絕(請使用單應性分解)。<code style="color:#22d3bf">planar_tol</code> 是與視差、尺度無關的平面度閾值(<code style="color:#22d3bf">_planar_degeneracy_ratio</code> = H 與 F 擬合程度之比小於它即判定為退化。預設 3.0)。</p>
+<p>步驟：</p>
+<p style="margin:2px 0 2px 12px">• 入口檢查(8 個點以上、點數一致、(N,2) 且有限)。</p>
+<p style="margin:2px 0 2px 12px">• 平面度：同時以正規化 DLT 擬合單應性 H、以正規化 8 點法擬合 F，求按自由度正規化的殘差尺度之比 <code style="color:#22d3bf">σ_H / σ_F</code>(<code style="color:#22d3bf">_planar_degeneracy_ratio</code>)。若小於 <code style="color:#22d3bf">planar_tol</code>(預設 3.0)則 <code style="color:#22d3bf">ValueError</code>。平面與純旋轉約為 √2，非平面則與視差 / 雜訊成比例地變大。H 奇異時比值視為 0，同樣拒絕。恰好 8 點時無法從 F 的殘差測得雜訊，因此使用以往的判定(H 殘差中位數 / 點的散布 &lt; 1e-2，與視差成比例)。</p>
+<p style="margin:2px 0 2px 12px">• ★2026-11-05(對抗性驗證 G11)：以往的比值(H 殘差 / 點的散布，預設 1e-2)與視差成比例，即使非平面在基線小時也會被拒絕(<code style="color:#22d3bf">camera.recover_pose</code> 能解同一資料)。反之雜訊大時連平面也會放行(σ = 2 px 時比值超過 1e-2)。新比值修正了這兩點。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">essential_8point</code> → 分解為 4 個候選 <code style="color:#22d3bf">(R, ±t)</code> → 對每個候選做 <code style="color:#22d3bf">triangulate</code>，取兩台相機中深度 &gt; 0 的點數最多的候選(數量相同時取前面的候選)。</p>
+<p>回傳值：<code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,) 單位向量、<code style="color:#22d3bf">points3d</code> (N,3)。慣例為 cam1 = K1[I|0]、cam2 = K2[R|t]，<code style="color:#22d3bf">X2 = R X1 + t</code>。<code style="color:#22d3bf">points3d</code> 在 cam1 座標系中，尺度為 |t|=1。視線平行的對應為 NaN 列。</p>
+<p style="margin:2px 0 2px 12px">• 省略 <code style="color:#22d3bf">K2</code> 時兩張影像都用 <code style="color:#22d3bf">K1</code>。</p>
+<p style="margin:2px 0 2px 12px">• 對離群值毫無防備(不做 RANSAC)。請在前段去除誤對應。</p>
+<p style="margin:2px 0 2px 12px">• 決定性。GT 驗證用 <code style="color:#22d3bf">pose_error</code>，殘差用 <code style="color:#22d3bf">sampson_distance</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
