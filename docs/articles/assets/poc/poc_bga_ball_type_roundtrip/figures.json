@@ -1,0 +1,24 @@
+[
+ {
+  "file": "01_bga_types.png",
+  "name": "bga_types",
+  "caption": "同じボールを画像・keypoints・体積・スコアで見る。右下は軸の流儀を取り違えた計数画像。",
+  "shape": [
+   327,
+   574,
+   3
+  ]
+ },
+ {
+  "file": "02_bga_mesh_volume.png",
+  "name": "bga_mesh_volume",
+  "caption": "",
+  "shape": [
+   304,
+   728,
+   3
+  ],
+  "csv": "02_bga_mesh_volume.csv",
+  "tsv": "02_bga_mesh_volume.tsv"
+ }
+]

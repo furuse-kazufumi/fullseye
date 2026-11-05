@@ -139,7 +139,7 @@ def main() -> None:
     assert abs(cap_c["cpk"] - cap_c["cp"]) < 1e-9, "中心が仕様中点なのに Cpk != Cp"
     assert cap_o["cpk"] < cap_o["cp"] - 1e-6, "中心をずらしたのに Cpk < Cp にならない"
     assert abs(float(t2_mu)) < 1e-9, "T² の平均行が 0 でない"
-    assert ht["ucl"] > 0 and np.isfinite(ht["ucl"]), "T² の UCL が F 分布から出ていない"
+    assert ht["ucl"] > 0 and np.isfinite(ht["ucl"]), "T² の phase I UCL が Beta 分布から出ていない"
 
     # ★MT 法。単位空間の MD² の平均は**ちょうど (n-1)/n**(導出した恒等式)。
     #   1.0 を固定する検査はどんな有限標本でも間違いになる。
