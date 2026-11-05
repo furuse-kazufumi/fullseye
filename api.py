@@ -2862,6 +2862,10 @@ def _try_accel(op, v, a, b, device):
         return _NOACCEL
     if accel_name is None or (op.name in _GPU_OPEN and not _bs.is_strict()):
         return _NOACCEL                  # breaker open; strict mode retries so "raise" can raise
+    _falls_back = getattr(accel, "_b_falls_back", None)
+    if _falls_back is not None and _falls_back(accel_name, a, b):
+        # 敵対的検証 2026-11-05 第 2 巡 T6: kernel は b の選ぶ端の扱い・構造要素を実装していない → core
+        return _NOACCEL
     try:
         if str(device) == "cuda" and getattr(accel, "_HAS_TORCH", False) and not cuda_available():
             # torch が「CUDA なし」と答える機械では torch の kernel を起こさない(N117 の説明で記録して CPU へ)。

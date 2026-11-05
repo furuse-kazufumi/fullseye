@@ -146,6 +146,8 @@ def scoop_synth_side(a_px: float, h_px: float, *, fill: float = 1.0, heap_frac: 
       ``truth``(``V`` [m³] 閉形式、``V_struck``, ``V_heap``, ``fill``, ``heap_frac``, ``phi_deg``)、``pitch``。
     合成と :func:`revolution_volume_side` は同じ軸対称の模型なので、雑音なしの往復は **配管の検査**(独立な被験者は
     :func:`two_view_volume` の楕円の山と MuJoCo の球)。**Raises** ``ValueError``: 範囲外、``fill < 1`` で山を載せた。"""
+    if noise > 0.0 and seed is None:     # 敵対的検証 2026-11-05 第 2 巡 T7
+        raise ValueError("scoop_synth_side: noise needs an explicit integer seed (seed=None would draw fresh noise on every call)")
     a, h = _pos(a_px, "a_px"), _pos(h_px, "h_px")
     f, hf = _frac(fill, "fill"), _frac(heap_frac, "heap_frac")
     if f <= 0.0:
