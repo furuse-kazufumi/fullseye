@@ -9,7 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: 可 reshape 为 (N,3) 的点云(world 坐标)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>: 半径 (a1,a2,a3)。<code style="color:#22d3bf">eps</code>: 形状指数 (eps1,eps2)(计算 F 时两者都用,外层的 <code style="color:#22d3bf">F**eps1</code> 只用 <code style="color:#22d3bf">eps1</code>)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code>: 位姿(<code style="color:#22d3bf">X_body = R.T @ (X - t)</code>)。<code style="color:#22d3bf">None</code> 表示单位旋转 / 原点。</p>
-<p>数值保护:F 裁剪到 [0, 1e12],<code style="color:#22d3bf">a1*a2*a3</code> 提升到 1e-12 以上后再取 sqrt (为了在退化参数下不出现 inf/NaN。对表面附近的值没有影响)。</p>
+<p>数值保护:F 裁剪到 [0, 1e12],<code style="color:#22d3bf">a1*a2*a3</code> 先把负值截为 0 再取 sqrt (为了在退化参数下不出现 inf/NaN。不设长度³ 的绝对下限 —— 那会改变小物体的残差。2026-11-05)。</p>
 <p>量纲:<code style="color:#22d3bf">sqrt(a1 a2 a3)</code> 是长度的 3/2 次方,<code style="color:#22d3bf">F^eps1 - 1</code> 无量纲,因此返回值具有长度 3 次方的量纲,依赖于点云的尺度。不适合比较大小不同的物体。它不是真正的点-表面欧氏距离而是径向距离近似,并且对离群值毫无防御,这些如模块 docstring 所述。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

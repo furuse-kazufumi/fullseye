@@ -1093,18 +1093,24 @@ def _combo_poses(kp: dict) -> dict:
 
 
 def _rot_log(R) -> np.ndarray:
-    """回転行列 → 回転ベクトル(軸 × 角、角 ∈ [0, π])。角 π は (R + I)/2 の列から軸を取る。"""
-    c = max(-1.0, min(1.0, 0.5 * (float(np.trace(R)) - 1.0)))
-    th = math.acos(c)
-    if th < 1e-12:
+    """回転行列 → 回転ベクトル(軸 × 角、角 ∈ [0, π])。角 π は (R + I)/2 の列から軸を取る。
+
+    角は ``atan2(‖歪対称部‖, (tr R − 1)/2)`` で取る(★2026-11-05 敵対的検証: 以前の
+    ``acos((tr R − 1)/2)`` は小さい角で √eps の桁しか分解せず、1e-6 rad の回転で相対 1e-4、
+    1e-9 rad の回転は 0 になった)。"""
+    R = np.asarray(R, np.float64)
+    w2 = np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])   # = 2 sin(th) · 軸
+    s2 = float(np.linalg.norm(w2))
+    c = 0.5 * (float(np.trace(R)) - 1.0)
+    th = math.atan2(0.5 * s2, c)
+    if s2 == 0.0 and c > 0.0:
         return np.zeros(3)
     if math.pi - th < 1e-6:
         M = 0.5 * (R + np.eye(3))
         k = int(np.argmax(np.diag(M)))
         ax = M[:, k] / math.sqrt(max(M[k, k], 1e-300))
         return th * ax / np.linalg.norm(ax)
-    w = np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]]) / (2.0 * math.sin(th))
-    return th * w
+    return th * w2 / s2
 
 
 def _rot_exp(w) -> np.ndarray:

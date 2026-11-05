@@ -1817,6 +1817,13 @@ def _ncc_map(v, T):
     (no local normalization) instead peaks on whatever is brightest/largest.
     Positions where the template does not fully overlap the image, flat windows
     and a zero-energy template all score 0 (no match).
+
+    "Flat" and "zero-energy" are judged relative to the data (template energy against its
+    own magnitude, window energy against the image's RMS contrast), and the image is
+    centred on its mean first, so the map is the same for ``a·v + b`` at any ``a > 0``
+    (★2026-11-05 敵対的検証: the absolute ``1e-12`` floors zeroed the whole map for an
+    image scaled by 1e-7, and the uncentred ``E[v²] − E[v]²`` lost a 1e-3 contrast on a
+    1e5 offset).
     """
     v = np.asarray(v, np.float64)
     T = np.asarray(T, np.float64)
@@ -1824,8 +1831,11 @@ def _ncc_map(v, T):
         return np.zeros_like(v)
     Tz = T - float(T.mean())
     tnorm = float(np.sqrt(np.sum(Tz * Tz)))
-    if tnorm < 1e-12:
+    t_mag = float(np.max(np.abs(T))) if T.size else 0.0
+    if not np.isfinite(tnorm) or tnorm == 0.0 or tnorm <= 1e-12 * t_mag * np.sqrt(T.size):
         return np.zeros_like(v)
+    if v.size:
+        v = v - float(v.mean())                              # NCC は v の定数加算に不変
     num = ndimage.correlate(v, Tz, mode="constant")          # sum(Tz) == 0 -> mean-free
     m1 = ndimage.uniform_filter(v, size=T.shape, mode="constant")
     m2 = ndimage.uniform_filter(v * v, size=T.shape, mode="constant")
@@ -1836,7 +1846,10 @@ def _ncc_map(v, T):
     if all(h > l for l, h in zip(lo, hi)):
         ok[tuple(slice(l, h) for l, h in zip(lo, hi))] = True
     out = np.zeros_like(v)
-    np.divide(num, den, out=out, where=ok & (den > 1e-12))
+    # 平坦な窓の判定は画像全体の RMS コントラストに対する相対量(単位の画像では従来の 1e-12 と同程度)。
+    v_rms = float(np.sqrt(np.mean(v * v))) if v.size else 0.0
+    den_floor = 1e-12 * v_rms * np.sqrt(float(T.size)) * tnorm
+    np.divide(num, den, out=out, where=ok & (den > den_floor) & (den > 0))
     return np.clip(out, -1.0, 1.0)
 
 

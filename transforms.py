@@ -382,10 +382,20 @@ def vector_to_proj_hom_mat2d_distortion(src_points, dst_points):
     return {"H": H, "kappa": 0.0}
 
 
+def _unit(v, what: str) -> np.ndarray:
+    """v / ‖v‖(床なし)。‖v‖ が 0 か非有限なら ValueError。"""
+    n = float(np.linalg.norm(v))
+    if not np.isfinite(n) or n == 0.0:
+        raise ValueError(f"{what} must be a finite non-zero vector")
+    return v / n
+
+
 def point_pluecker_line_to_hom_mat3d(point, pluecker, target_point, target_dir):
     """点+Plücker 直線の対応から 3D 剛体変換を推定(point_pluecker_line_to_hom_mat3d)。"""
-    d1 = _m(pluecker["direction"]); d1 = d1 / (np.linalg.norm(d1) + 1e-12)
-    d2 = _m(target_dir); d2 = d2 / (np.linalg.norm(d2) + 1e-12)
+    # 方向は床なしで正規化する(2026-11-05 敵対的検証 N1 の兄弟: + 1e-12 の床で、長さ 1e-6 の方向
+    # から det = 0.999996 の非直交な R を返した)。長さ 0 の方向は ValueError。
+    d1 = _unit(_m(pluecker["direction"]), "pluecker direction")
+    d2 = _unit(_m(target_dir), "target_dir")
     v = np.cross(d1, d2); s = np.linalg.norm(v); c = d1 @ d2
     if s < 1e-9:
         R = np.eye(3)
@@ -403,4 +413,4 @@ def dual_quat_trans_line_3d(dual_quat, line_point, line_dir):
     T = dual_quat_to_hom_mat3d(dual_quat)
     p = T[:3, :3] @ _m(line_point) + T[:3, 3]
     d = T[:3, :3] @ _m(line_dir)
-    return {"point": p, "direction": d / (np.linalg.norm(d) + 1e-12)}
+    return {"point": p, "direction": _unit(d, "line_dir")}

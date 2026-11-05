@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖(r&#x27;&#x27; 的 T 正交分量 = 指向曲率中心的方向)</p>
 <p style="margin:2px 0 2px 12px">• B = T × N</p>
 <p>在各點計算上述量。r&#x27;&#x27; 的 T 正交分量的方向對重新參數化不變,因此只要點間距平滑變化,用 index 參數也能得到正確方向。</p>
-<p style="margin:2px 0 2px 12px">• 分母只加上絕對值 1e-12,無法完全正規化的位置不會成為單位長度。在直線區間(r&#x27;&#x27; ∥ T 或 0)中 N、B 幾乎為零向量,在反曲點前後 N 的方向會反轉。「單位向量」的保證在那裡不成立。</p>
+<p style="margin:2px 0 2px 12px">• 正規化不設下限(2026-11-05 對抗驗證 N1 的同類:以前在分母上加絕對值 1e-12, 尺度 1e-6 的曲線上 N 的長度為 0.998,1e-9 時為 0.33)。T 僅在 ‖r&#x27;‖ = 0 的點(同一點重複)為零向量。N 在 r&#x27;&#x27; 的 T 正交分量不超過 ‖r&#x27;‖ 的 1e-9 倍(每個取樣的彎曲小於 1e-9 rad = 直線區間)的點為零向量,B 在那裡也為 0。在反曲點前後 N 的方向會反轉。</p>
 <p style="margin:2px 0 2px 12px">• N&lt;2 的點列會由 <code style="color:#22d3bf">np.gradient</code> 拋出 <code style="color:#22d3bf">ValueError</code>。除此之外沒有形狀檢驗。</p>
 <p style="margin:2px 0 2px 12px">• 兩端 2 點為單側差分,精度下降。先進行等間距化(<code style="color:#22d3bf">resample_uniform</code>)或平滑(<code style="color:#22d3bf">fit_spline_curve</code>)會更穩定。</p>
 <p>曲率、撓率的數值本身用 <code style="color:#22d3bf">curvature_torsion</code>,弧長用 <code style="color:#22d3bf">arc_length</code>。</p>
