@@ -1482,20 +1482,42 @@ class PerceptionModel:
     MODES = ("optical flow", "motion overlay", "stereo depth", "stereo terrain")
 
     def __init__(self, frame_b=None):
-        self.frame_b = None if frame_b is None else np.asarray(frame_b, np.float64)
+        self.frame_b = None if frame_b is None else np.asarray(frame_b)
 
     def set_frame_b(self, arr):
-        self.frame_b = None if arr is None else np.asarray(arr, np.float64)
+        self.frame_b = None if arr is None else np.asarray(arr)
+
+    @staticmethod
+    def _frame(arr, which):
+        """One perception input on the facade's contract: float64 in [0,1], finite.
+
+        ★2026-11-05 (external audit F2, sibling; nary-guard): both frames used to be cast with
+        ``np.asarray(x, np.float64)`` -- a uint8 frame B stayed 0..255 next to a [0,1] frame A,
+        and optical flow / stereo depth came back silently different (max colour difference 1.0 /
+        0.96 against the same frames as float), and a NaN frame gave a NaN picture. The integer
+        rule is :func:`api._contract_dtype` under the process policy (``FULLSEYE_ON_ERROR`` /
+        strict: ``"raise"`` refuses, otherwise ``/255`` for uint8 and a ledger record), exactly as
+        ``fullseye.apply`` treats every input of an n-ary op.
+        """
+        v = np.asarray(arr)
+        if v.dtype.kind not in "biuf":
+            raise TypeError("frame %s must be a real numeric image, got dtype %s" % (which, v.dtype))
+        srt = "color" if v.ndim == 3 else "image"
+        v = np.asarray(api._contract_dtype(v, api._NaryInput("studio_perception", srt, "image"),
+                                           api._policy(None)), np.float64)
+        if v.size and not np.isfinite(v).all():
+            raise ValueError("frame %s contains NaN or infinity; clean or mask it first" % which)
+        return v
 
     def view(self, mode, frame_a):
         """Return an (H, W, 3) RGB visualization for *mode*. Raises ValueError if a
         second frame is missing or the two frames disagree in size."""
         if frame_a is None:
             raise ValueError("no frame A (load or generate an image first)")
-        a = imgio.ensure_gray(np.asarray(frame_a, np.float64))
+        a = imgio.ensure_gray(self._frame(frame_a, "A"))
         if self.frame_b is None:
             raise ValueError("load a second frame (B) first")
-        b = imgio.ensure_gray(self.frame_b)
+        b = imgio.ensure_gray(self._frame(self.frame_b, "B"))
         if a.shape != b.shape:
             raise ValueError("frame A %s and B %s must be the same size" % (a.shape, b.shape))
         if mode == "optical flow":

@@ -10,6 +10,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(nary-guard)
+
+- MCP `fullseye_pipeline` の `python` 実行器の段(型つきの関数を直に呼ぶ段: 2 入力の `phase_correlation_shift` / `polarization_render` / `deflectometry_phase_to_slope`、1 入力の `fringe_ftp_phase` など)が、`registry` の段と同じ入口の契約を受ける。宣言 sort が `image` / `color` / `volume` の入力は、整数・bool なら `fullseye.apply(on_error="raise")` と同じ文で拒否(float16/32 は float64 へ無損失に昇格)、NaN / ±inf も拒否。以前は `.npy` から読んだ uint8 のハンドルが、同じパイプラインの `gauss_filter` では拒否されるのに、これらの段では 0..255 のまま黙って計算された(外部監査 F2 の兄弟)。それ以外の sort(`points` / `seq<image>` / `polsweep` …)の値は従来どおり触らない。
+- Studio の 2 枚の知覚パネル(`studio.PerceptionModel`)が、枠 A・B を `fullseye.apply` の n 項入力と同じ規則で受ける。uint8 / uint16 は方針(`FULLSEYE_ON_ERROR` / strict)が `"raise"` なら拒否、それ以外は /255(/65535)して台帳に記録(名前 `studio_perception`)。NaN / ±inf の枠は ValueError。以前は両方を `np.asarray(x, float64)` で受けていたので、uint8 の B を [0,1] の A と並べるとオプティカルフロー・ステレオ深度が黙って別の絵になり(同じ枠を float で渡したときとの色の差 最大 1.0 / 0.96)、NaN の枠は NaN の絵を返した。
+
+### 修正 — 1.0 前の修正 2026-11-05(nary-guard)
+
+- 外部監査 F2(uint8 の 32 を 2 枚 `add_image` → strict でも 1.0、記録 0 件)は `api.apply` の n 項経路では前の便(#263/#270)で直っていた(strict は拒否、fallback は 64/255 = 0.250980392 と入力ごとに台帳 1 件)。全 17 本の n 項 op の、dtype 契約の対象の入力 23 本と非有限の入力 34 本、ファサード(`fullseye.apply`)・グラフ(`graphengine.FullseyeGraph.run`)の入口で回帰テストに固定した(`tests/test_fix_nary_guard_2026_11_05.py`)。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(numerics)
 
 長さ・長さ² に固定の `1e-12` を足す/比べる床と、中心化せずに解く当てはめを直した。値が変わるのは
