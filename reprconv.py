@@ -131,6 +131,7 @@ __all__ = [
     # 型のつながりを閉じる変換(2026-11-03)
     "gradient_magnitude",
     "gradient_coherence",
+    "voxel_to_hessian",
     "hessian_determinant",
     "hessian_vesselness",
     "frame_axis",
@@ -1787,6 +1788,99 @@ def hessian_vesselness(hessian, alpha=0.5, beta=0.5, c=None, black_ridges=False)
     wrong = (l2 < 0) | (l3 < 0) if black_ridges else (l2 > 0) | (l3 > 0)
     V[wrong] = 0.0
     return np.clip(V, 0.0, 1.0)
+
+
+
+#: ``hessian3d`` と同じ 3 タップの核(``sigma=0`` のとき使う)。2 階 [1,−2,1]・1 階 [−0.5,0,0.5]・
+#: 平滑 [1,2,1]/4 —— どれも下の 3 つのモーメント条件を満たす(だから 2 次多項式で厳密)。
+_HESS_TAP3 = (np.array([1.0, 2.0, 1.0]) / 4.0, np.array([-0.5, 0.0, 0.5]), np.array([1.0, -2.0, 1.0]))
+
+
+def _hessian_kernels(sigma, truncate=4.0):
+    """尺度 ``sigma`` のガウス微分の 1-D 核 ``(k0, k1, k2)``(相関として畳む向き、中心が添字 r)。
+
+    標本化したガウス微分核をそのまま使うと、和が 0 にならず(``scipy`` の 2 階核で σ=1 のとき
+    和 −7.2e-5)**局所の明るさが 2 階微分に漏れる** —— 明るさ 620 の 2 次曲面で Hxx が 1 → 0.954
+    (実測 2026-11-05)。そこで形はガウス微分のまま、モーメントを厳密に合わせる:
+    ``Σk0 = 1``、``Σk1 = 0, Σ i·k1 = 1``、``Σk2 = 0, Σ (i²/2)·k2 = 1``。
+    こうすると 1 次・2 次の多項式で微分が**丸めの範囲で厳密**になる(端の影響を除く)。
+    """
+    if sigma == 0.0:
+        return _HESS_TAP3
+    r = max(1, int(truncate * sigma + 0.5))
+    i = np.arange(-r, r + 1, dtype=np.float64)
+    g = np.exp(-0.5 * (i / sigma) ** 2)
+    k0 = g / g.sum()
+    k1 = i * g
+    k1 = k1 / np.sum(i * k1)
+    k2 = ((i / sigma) ** 2 - 1.0) * g
+    k2 = k2 - k0 * k2.sum()                       # Σk2 = 0(偶関数のまま。k0 も偶)
+    k2 = k2 / np.sum(0.5 * i * i * k2)
+    return k0, k1, k2
+
+
+def voxel_to_hessian(vol, sigma=1.0, scale_normalize=False):
+    """体積 ``voxel`` → 3-D Hessian ``hessian`` の 6 成分 (zz, yy, xx, zy, zx, yx)。numpy と scipy だけで作る ``hessian`` 型の入口。
+
+    ``hessian3d``(torch の conv3d)と**同じ形**を返す: 長さ 6 の list、各 ``(D,H,W)`` float32、
+    順は (zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x)、単位は 1/voxel²、端は replicate
+    (``scipy.ndimage`` の ``mode="nearest"``)。だから ``hessian_determinant`` /
+    ``hessian_vesselness`` がそのまま読み、torch の無い素の ``pip install fullseye`` でも
+    ``voxel → hessian → voxel`` の鎖が通る。
+
+    ``sigma`` はガウス平滑の尺度(voxel)。対角成分は「その軸の 2 階 × 他 2 軸の平滑」、交差成分は
+    「2 軸の 1 階 × 残り軸の平滑」の分離畳み込み。核はガウス微分の形で、和と 1・2 次モーメントを
+    厳密に合わせてある(標本化したガウス微分核は和が 0 にならず、明るさが 2 階微分に漏れる)ので、
+    2 次多項式 ½xᵀAx + bᵀx では内部で ``H = A`` が丸めの範囲で出る。``sigma=0`` は平滑なしでなく
+    ``hessian3d`` と同じ 3 タップ核([1,−2,1] / [−0.5,0,0.5] / [1,2,1]/4)—— torch 版と
+    float32 の丸めの範囲で一致する。``scale_normalize=True`` で σ² を掛ける(Lindeberg の
+    γ=1 正規化。尺度をまたいで値を比べるとき。``vol_frangi`` の内部 Hessian と同じ規約)。
+
+    2-D 画像は受けない: ``hessian`` 型は 3-D の 6 成分で、受け手も ``(D,H,W)`` を要る。
+    2-D のヘッセ応答は ``sk_hessian`` / ``sk_hessian_det`` / ``xsk_hessian_eig``(image → image)。
+
+    Args:
+        vol: 3-D の体積 ``(D,H,W)``、実数、有限。
+        sigma: ガウス平滑の尺度(voxel)。有限で >= 0。0 で ``hessian3d`` と同じ核。既定 1.0。
+        scale_normalize: True で各成分に σ² を掛ける(``sigma=0`` とは併用できない)。
+    Returns:
+        list of 6 ``np.ndarray``、各 ``(D,H,W)`` float32、順は (zz, yy, xx, zy, zx, yx)。
+    Raises:
+        ValueError: 空 / 3-D でない / 非有限 / sigma が有限の非負でない /
+            ``scale_normalize`` と ``sigma=0`` の併用。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
+    """
+    from scipy import ndimage                              # noqa: PLC0415
+
+    v = _host(vol, "vol")
+    if v.size == 0:
+        raise ValueError("voxel_to_hessian: vol is empty — pass at least one element")
+    if v.ndim != 3:
+        raise ValueError(f"vol: expected a 3-D volume (D,H,W); got shape {v.shape}"
+                         + (" — for a 2-D image use sk_hessian / sk_hessian_det / xsk_hessian_eig"
+                            if v.ndim == 2 else ""))
+    if isinstance(sigma, bool) or not isinstance(sigma, (int, float, np.integer, np.floating)):
+        raise ValueError(f"sigma: must be a real number >= 0; got {type(sigma).__name__}")
+    sigma = float(sigma)
+    if not (np.isfinite(sigma) and sigma >= 0.0):
+        raise ValueError(f"sigma: must be a finite number >= 0; got {sigma}")
+    if scale_normalize and sigma == 0.0:
+        raise ValueError("scale_normalize: needs sigma > 0 (sigma=0 is the hessian3d 3-tap "
+                         "kernel, which has no scale to normalise by)")
+    v = v.astype(np.float64, copy=False)
+    k = _hessian_kernels(sigma)
+
+    def sep(o0, o1, o2):
+        out = v
+        for ax, o in enumerate((o0, o1, o2)):
+            out = ndimage.correlate1d(out, k[o], axis=ax, mode="nearest")
+        return out
+
+    comps = (sep(2, 0, 0), sep(0, 2, 0), sep(0, 0, 2),
+             sep(1, 1, 0), sep(1, 0, 1), sep(0, 1, 1))
+    g = sigma * sigma if scale_normalize else 1.0
+    return [(c * g).astype(np.float32) for c in comps]
 
 
 _FRAME_AXES = {"tangent": 0, "normal": 1, "binormal": 2}

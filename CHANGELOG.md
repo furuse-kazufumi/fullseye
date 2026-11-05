@@ -48,6 +48,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   主な残り: 物理シミュレータ・描画(SI 単位・単位ベクトルで尺度が固定)、画素値の床([0, 1] の契約で尺度が
   固定)、長さに 1e-9 の床(座標 1e-9 の桁でだけ効く)。
 
+### 修正 — 1.0 前の修正 2026-11-05(hessian-np)
+
+- `hessian` 型の産み手が torch の `match3d.hessian3d` だけで、素の `pip install fullseye`(torch なし)では
+  `hessian_determinant` / `hessian_vesselness` に入力が届かなかった(型の鎖 voxel → hessian → voxel が
+  行き止まり)。numpy と scipy だけの産み手 `reprconv.voxel_to_hessian(vol, sigma=1.0, scale_normalize=False)`
+  を足した(台帳 `opsreprconv`、`fs.ledger.voxel_to_hessian`)。返りは `hessian3d` と同じ形(list の 6 本、
+  各 (D,H,W) float32、順 zz, yy, xx, zy, zx, yx、1/voxel²、端は replicate)。ガウス微分核は和と 1・2 次
+  モーメントを厳密に合わせてあり、2 次多項式で内部の H = A が丸めの範囲で出る。`sigma=0` は `hessian3d`
+  と同じ 3 タップ核で torch 版と一致する。既存 op の振る舞いは変わらない。
+  例 `examples/hessian_numpy_chain.py`、門 `tests/test_fix_hessian_np_2026_11_05.py`。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(numerics)
 
 長さ・長さ² に固定の `1e-12` を足す/比べる床と、中心化せずに解く当てはめを直した。値が変わるのは

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3810,
- "n_notes": 3816,
+ "n_ops": 3811,
+ "n_notes": 3817,
  "notes": {
   "vol_dilate": [
    {
@@ -34906,6 +34906,16 @@
     "in": "hessian",
     "out": "voxel",
     "path": "docs/ops/reprconv/derivative/hessian_vesselness.md"
+   }
+  ],
+  "voxel_to_hessian": [
+   {
+    "op": "voxel_to_hessian",
+    "dim": "reprconv",
+    "category": "derivative",
+    "in": "voxel",
+    "out": "hessian",
+    "path": "docs/ops/reprconv/derivative/voxel_to_hessian.md"
    }
   ],
   "descriptor_to_matrix": [
