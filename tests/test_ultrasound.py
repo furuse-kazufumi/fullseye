@@ -474,7 +474,12 @@ def test_closed_form_optimum_matches_numeric_and_brute_force(a, zw):
 
 def test_the_time_resolution_bound_is_where_the_front_echo_leaks_into_the_gate():
     """``f_min_time`` の上では、薄いダイ(100 µm)の接合面のゲートの振幅が、表面エコーから遠い厚い
-    ダイ(2 mm、Si の減衰 0 なので同じ損失)と一致する。下では表面エコーの裾がゲートを支配する。"""
+    ダイ(2 mm、Si の減衰 0 なので同じ損失)と一致する。下では表面エコーの裾がゲートを支配する。
+
+    ★2026-11-05: 以前は下の側を「薄いダイのゲートの振幅 > 2 × 厚いダイ」で見ていたが、それは
+    ``_peak_in_gate`` がゲートの端の裾を山と読んでいた欠陥(敵対的検証 第 2 巡 O3)に依っていた。
+    いまは振幅はゲート内部の山で(裾を読まない)、裾の支配は ``edge_dominated`` と
+    ゲートの端の包絡線で見る。"""
     bond = [("sio2", 1e-6), ("sio2", 1e-6)]
     thin = us.acoustic_layer_stack([("silicon", 100e-6)] + bond)
     thick = us.acoustic_layer_stack([("silicon", 2e-3)] + bond)
@@ -483,7 +488,15 @@ def test_the_time_resolution_bound_is_where_the_front_echo_leaks_into_the_gate()
     amp = lambda s, f: us.echo_phase_polarity(us.pulse_echo_ascan(s, f0=f, water_path=1e-3), 1)["amplitude"]
     for k in (1.0, 1.3, 2.0):
         assert abs(amp(thin, k * fm) / amp(thick, k * fm) - 1) < 0.01, k
-    assert amp(thin, 0.8 * fm) > 2 * amp(thick, 0.8 * fm)
+    lo = us.pulse_echo_ascan(thin, f0=0.8 * fm, water_path=1e-3)
+    r = us.echo_phase_polarity(lo, 1)
+    ti, hw = lo["t_interfaces"][1], 2.0 * lo["sigma_t"]
+    gate = (lo["t"] >= ti - hw) & (lo["t"] <= ti + hw)
+    assert lo["envelope"][gate].max() > 2 * amp(thick, 0.8 * fm)   # 裾がゲートを支配する
+    assert r["edge_dominated"] and r["peak_found"]
+    assert abs(r["amplitude"] / amp(thick, 0.8 * fm) - 1) < 0.05    # 山は裾でなく界面のエコー
+    assert not us.echo_phase_polarity(us.pulse_echo_ascan(thin, f0=1.3 * fm, water_path=1e-3),
+                                      1)["edge_dominated"]
 
 
 def test_non_quadratic_attenuation_uses_the_numeric_optimum():

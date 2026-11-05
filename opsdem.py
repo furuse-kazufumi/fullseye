@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsdem —— fullseye の数値標高モデル(DEM)解析 op の統一レジストリ。
 
-実体は ``demops.py``(19 op / 5 カテゴリ)。この台帳は 3 つの役目を持つ:
+実体は ``demops.py``(25 op / 5 カテゴリ)。この台帳は 3 つの役目を持つ:
 
 1. **docs/ops へノートを出す**(``tools/opdocs.py`` の :data:`LEDGER_DIMS`)。
    ここに載っていない族は RAG コーパスにも Studio ヘルプにも 1 枚も出ない。

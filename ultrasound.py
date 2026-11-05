@@ -414,7 +414,12 @@ def pulse_echo_ascan(stack, f0=100e6, bandwidth=0.6, water_path=2e-3, rate=None,
 def _peak_in_gate(t, a, f0, lo, hi):
     """ゲートの中の包絡線の山(放物線で細分)とその時刻の解析信号(復調して補間)。
 
-    ``a`` の最後の軸が時間。返り: (時刻, 複素値, 振幅)。
+    ``a`` の最後の軸が時間。返り: (時刻, 複素値, 振幅, 山があったか)。
+    ★山は**ゲートの内部の局所極大**(両隣より大きい標本)に限る。ゲート内の argmax を
+    そのまま採ると、隣の強いエコー(表面)の裾がゲートの端で最大になり、裾の時刻と
+    振幅を界面のエコーとして返していた(2026-11-05 まで。Si 100 µm・100 MHz で
+    振幅 0.063、真のエコーは 0.020)。内部に極大が無い(ゲート全体が裾の単調な坂)
+    ときは時刻・複素値・振幅を NaN にし、4 つ目の返りを False にする。
     """
     sel = np.nonzero((t >= lo) & (t <= hi))[0]
     if sel.size < 3:
@@ -422,22 +427,42 @@ def _peak_in_gate(t, a, f0, lo, hi):
     tg = t[sel]
     ag = a[..., sel]
     env = np.abs(ag)
-    i = np.argmax(env, axis=-1)
-    i_c = np.clip(i, 1, sel.size - 2)
+    interior = np.zeros(env.shape, dtype=bool)
+    interior[..., 1:-1] = (env[..., 1:-1] > env[..., :-2]) & (env[..., 1:-1] >= env[..., 2:])
+    found = interior.any(axis=-1)
+    i = np.argmax(np.where(interior, env, -np.inf), axis=-1)
+    i = np.clip(i, 1, sel.size - 2)               # 山の無い行は後で NaN にする
     take = lambda arr, j: np.take_along_axis(arr, j[..., None], axis=-1)[..., 0]
-    em, e0, ep = take(env, i_c - 1), take(env, i_c), take(env, i_c + 1)
+    em, e0, ep = take(env, i - 1), take(env, i), take(env, i + 1)
     den = em - 2.0 * e0 + ep
     with np.errstate(invalid="ignore", divide="ignore"):
         d = np.where(den < 0, 0.5 * (em - ep) / den, 0.0)
-    d = np.where(i == i_c, np.clip(d, -0.5, 0.5), 0.0)
-    i = np.where(i == i_c, i_c, i)
+    d = np.clip(d, -0.5, 0.5)
     dt = tg[1] - tg[0]
     tstar = tg[i] + d * dt
     b = ag * np.exp(-2j * np.pi * f0 * tg)        # 復調(包絡線と位相はゆっくり)
     j2 = np.clip(np.where(d >= 0, i + 1, i - 1), 0, sel.size - 1)
     bstar = take(b, i) + np.abs(d) * (take(b, j2) - take(b, i))
     astar = bstar * np.exp(2j * np.pi * f0 * tstar)
-    return tstar, astar, np.abs(astar)
+    tstar = np.where(found, tstar, np.nan)
+    astar = np.where(found, astar, complex(np.nan, np.nan))
+    return tstar, astar, np.abs(astar), found
+
+
+def _signed_near_peak(t, rf, tpk, f0):
+    """包絡線の山 ``tpk`` から半周期 ``0.5/f0`` 以内で |RF| が最大の標本の値(山が無ければ NaN)。
+
+    ★ゲート全体の |RF| 最大を採ると、隣の強いエコーの裾の符号を読む(``_peak_in_gate`` と同じ形)。
+    ``rf`` の最後の軸が時間、``t`` はその時刻、``tpk`` は ``rf`` の前の軸と同じ形。
+    """
+    tpk = np.asarray(tpk, dtype=np.float64)
+    with np.errstate(invalid="ignore"):
+        near = np.abs(t - tpk[..., None]) <= 0.5 / f0
+    near &= np.isfinite(tpk)[..., None]
+    ok = near.any(axis=-1)
+    ip = np.argmax(np.where(near, np.abs(rf), -np.inf), axis=-1)
+    v = np.take_along_axis(rf, ip[..., None], axis=-1)[..., 0]
+    return np.where(ok, v, np.nan)
 
 
 def _wrap(phi):
@@ -465,11 +490,17 @@ def echo_phase_polarity(echo, interface=1, half_width=None, reference_interface=
     ★基準は**表面エコー**。表面そのものが Z の下がる界面(水より柔らかい最上層)なら表面
     エコーが反転しているので、Z の上がる深い界面が「反転」と読まれる —— 分類は「表面に対して
     同じ向きか逆向きか」であって、絶対の Z の上下ではない(``tests/test_ultrasound.py`` の門)。
-    ★``signed_peak``(ゲート内で |RF| が最大のサンプルの、参照エコーに対する相対符号)も返す —— 現場で言う
+    ★振幅と ``t_peak`` はゲートの**内部の局所極大**(隣の強いエコーの裾がゲートの端で最大に
+    なるのを山と読まない)。内部に極大が無ければ ``amplitude`` / ``t_peak`` は NaN、
+    ``peak_found`` は False、``signed_peak`` は 0。``edge_dominated`` はゲートの端の包絡線が
+    山の振幅を超える(隣のエコーの裾がゲートを支配している)か、山が無いとき True ——
+    そのとき読んだ山は干渉の小さなさざ波のことがあり、振幅は信用しない
+    (:func:`sam_frequency_tradeoff` の ``f_min_time`` より下で起きる)。
+    ★``signed_peak``(包絡線の山から半周期以内で |RF| が最大のサンプルの、参照エコーに対する相対符号)も返す —— 現場で言う
     「極性」はこれだが、直交のエコー(薄い層の微分形)では帯域と標本化でどちらにも
     転ぶ。``signed_peak_agrees`` が False の行はそれ。
     返り(A スキャン): ``phase`` [rad] ``phase_deg`` ``amplitude`` ``t_peak`` ``polarity``
-    (+1/−1/0)``label`` ``signed_peak`` ``signed_peak_agrees``。
+    (+1/−1/0)``label`` ``signed_peak`` ``signed_peak_agrees`` ``peak_found`` ``edge_dominated``。
     返り(C スキャン): ``polarity`` の地図と各分類の画素数。
     Raises ValueError: A/C スキャンの印の無い入力、界面の番号が範囲外、tol_deg が (0, 90) の外、
     ゲートの中の標本が 3 未満。
@@ -488,21 +519,25 @@ def echo_phase_polarity(echo, interface=1, half_width=None, reference_interface=
     kr = _int(reference_interface, "reference_interface", op, 0, len(ti) - 1)
     hw = 2.0 * echo["sigma_t"] if half_width is None else _num(half_width, "half_width", op, 0.0, 1.0)
     t, a, f0 = echo["t"], echo["analytic"], echo["f0"]
-    tp, _, amp = _peak_in_gate(t, a, f0, ti[k] - hw, ti[k] + hw)
+    tp, _, amp, found = _peak_in_gate(t, a, f0, ti[k] - hw, ti[k] + hw)
     fq, g = echo["freqs"], echo["weights"] * echo["response"]
     at = lambda tt: complex(np.sum(g * np.exp(2j * np.pi * fq * tt)))
     ap, ar = at(ti[k]), at(ti[kr])
     phase = float(_wrap(np.angle(ap) - np.angle(ar)))
     pol = int(_classify(phase, tol))
     sel = (t >= ti[k] - hw) & (t <= ti[k] + hw)
-    rf = echo["rf"][sel]
-    sp = int(np.sign(rf[np.argmax(np.abs(rf))]))
+    v = float(_signed_near_peak(t[sel], echo["rf"][sel], tp, f0))
+    eg = echo["envelope"][sel]
+    edge = float(max(eg[0], eg[-1]))                 # ゲートの端の包絡線(隣のエコーの裾)
+    sp = int(np.sign(v)) if np.isfinite(v) else 0
     sp_ref = np.sign(np.cos(np.angle(ar)))       # 基準の符号(R > 0 の表面なら +1)
     sp = int(sp * sp_ref) if sp_ref != 0 else sp
     return {"kind": "polarity", "phase": phase, "phase_deg": math.degrees(phase),
             "amplitude": float(amp), "t_peak": float(tp), "polarity": pol,
             "label": {1: "in_phase", -1: "inverted", 0: "quadrature"}[pol],
             "signed_peak": sp, "signed_peak_agrees": bool(pol != 0 and sp == pol),
+            "peak_found": bool(found),
+            "edge_dominated": bool(not found or edge > amp),
             "interface": echo["names"][k], "tol_deg": math.degrees(tol)}
 
 
@@ -532,12 +567,14 @@ def sam_cscan(bond_map, stacks, pixel_size=2e-6, f0=150e6, bandwidth=0.6, f_numb
     水の経路と減衰を掛けて、ゲートの時刻での解析信号に和を取る。
     ゲートは ``t_interfaces[gate_interface] ± half_width``(既定 2σ_t)。
     出力の像:
-      * ``amplitude`` — ゲート内の包絡線の山(振幅の C スキャン)
+      * ``amplitude`` — ゲートの内部の包絡線の山(振幅の C スキャン)
       * ``phase`` — 界面のエコーの**期待時刻**(表面エコーの時刻 + 積層の往復)での解析信号の
         偏角 − 表面エコーの期待時刻での偏角 [rad]
       * ``inphase`` — 期待時刻の解析信号の同相成分 ``|a| cos(phase)``(符号つき。反転したエコーは負)
-      * ``signed_peak`` — ゲート内で |RF| が最大のサンプルの値(従来の極性の読み方)
-      * ``tof`` — 包絡線の山の時刻 [s]
+      * ``signed_peak`` — 包絡線の山から半周期以内で |RF| が最大のサンプルの値(従来の極性の読み方)
+      * ``tof`` — 包絡線の山の時刻 [s]。★山はゲートの**内部の局所極大**に限る(表面エコーの
+        裾がゲートの端で最大になるのを山と読まない)。内部に極大の無い画素は ``amplitude`` /
+        ``tof`` / ``signed_peak`` が NaN、その画素数が ``n_no_peak``
     ``plane_phasor`` は ``{ラベル: 複素数}`` —— そのラベルが一面に広がっていたときの期待時刻の
     値(雑音なし、基準の偏角を引いた後)。地図の設計(どこがパッドか)が分かっていれば、
     良品の基準として ``inphase`` / ``amplitude`` から引ける。
@@ -662,14 +699,14 @@ def sam_cscan(bond_map, stacks, pixel_size=2e-6, f0=150e6, bandwidth=0.6, f_numb
         acc += (lmat @ z).reshape((ng + 1,) + m.shape)
     a = np.moveaxis(acc[:ng], 0, -1)
     a_c = acc[ng] * np.exp(-1j * phi_ref)                    # 期待時刻の値、基準の偏角を引いた
-    tof, _, amp = _peak_in_gate(tg[:ng], a, f0, tg[0], tg[ng - 1])
+    tof, _, amp, found = _peak_in_gate(tg[:ng], a, f0, tg[0], tg[ng - 1])
     phase = np.angle(a_c)
     rf = a.real
-    ip = np.argmax(np.abs(rf), axis=-1)
-    signed = np.take_along_axis(rf, ip[..., None], axis=-1)[..., 0] * np.sign(np.cos(phi_ref))
+    signed = _signed_near_peak(tg[:ng], rf, tof, f0) * np.sign(np.cos(phi_ref))
     return {"kind": "cscan", "amplitude": amp, "phase": phase, "inphase": a_c.real,
             "amplitude_at_t": np.abs(a_c), "t_expected": tg_c,
             "signed_peak": signed, "tof": tof, "reference_phase": phi_ref,
+            "n_no_peak": int((~found).sum()),
             "gate": (float(tg[0]), float(tg[ng - 1])), "gate_interface": gi, "pixel_size": px,
             "f0": f0, "bandwidth": bw, "f_number": fn, "k_res": kr, "water_path": zw,
             "psf_fwhm_f0": kr * (cw["c"] / f0) * fn, "f_number_min": max(_fnum_min(_na_limit(s))

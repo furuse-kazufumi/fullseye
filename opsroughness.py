@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsroughness —— 表面粗さの統一レジストリ。
 
-実体は ``roughness.py``(6 op / 3 カテゴリ。numpy と scipy.ndimage のみ)。
+実体は ``roughness.py``(9 op / 3 カテゴリ。numpy と scipy.ndimage のみ)。
 
 ## なぜ足したか(2026-09-06)
 

@@ -174,7 +174,9 @@ def lockin_demodulate(video, f_ref, fps, window="rect") -> dict:
     products = weights @ flat
     in_phase, quad, dc = (products[i].reshape(shape) for i in range(3))
     leak_image, leak_dc = _leak(w, f, fs)
-    return {"amplitude": np.hypot(in_phase, quad), "phase": np.arctan2(quad, in_phase), "dc": dc,
+    phase = np.arctan2(quad, in_phase)
+    phase = np.where(phase <= -np.pi, np.pi, phase)    # ★文書の (-π, π] に(−0.0 の虚部で −π が出ていた、2026-11-05)
+    return {"amplitude": np.hypot(in_phase, quad), "phase": phase, "dc": dc,
             "in_phase": in_phase, "quadrature": quad, "periods": float(periods), "window": window,
             "n_frames": int(n), "f_ref": f, "fps": fs, "leak_image": float(leak_image), "leak_dc": float(leak_dc)}
 
