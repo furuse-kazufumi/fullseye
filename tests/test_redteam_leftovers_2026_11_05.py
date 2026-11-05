@@ -87,3 +87,64 @@ def test_l1_phase_unwrap_is_blind_to_the_pi_minus_pi_spelling():
     minus = complexops.phase_unwrap(np.where(edge, -np.pi, w))
     assert np.array_equal(plus, minus)
     assert np.ptp(plus - ramp) < 1e-9               # 真値の傾斜を定数の差だけで戻す
+
+
+# ---- L2: ph_total_variation_flow は反復を増やしても誤差が育たない ----------------
+
+
+def _tv_scenes():
+    """区分定数の真値 3 枚(正方形 + 端の細い帯 / 縦の段差 / 大小の円板)。"""
+    sq = np.full((64, 64), 0.3)
+    sq[16:48, 16:48] = 0.7
+    sq[:, :8] = 0.1
+    step = np.where(np.arange(48)[None, :] < 24, 0.3, 0.7) * np.ones((48, 48))
+    y, x = np.mgrid[:64, :64]
+    disk = (0.2 + 0.5 * ((x - 32) ** 2 + (y - 32) ** 2 < 12 ** 2)
+            + 0.2 * ((x - 10) ** 2 + (y - 50) ** 2 < 5 ** 2))
+    return [("square", sq), ("step", step), ("disks", disk)]
+
+
+def _rmse(a, b):
+    return float(np.sqrt(np.mean((np.asarray(a) - np.asarray(b)) ** 2)))
+
+
+_TV_CASES = [(name, sig, b) for name, _ in _tv_scenes() for sig in (0.05, 0.1)
+             for b in (0.0, 0.5, 1.0)]
+
+
+@pytest.mark.parametrize("name,sigma,b", _TV_CASES)
+def test_l2_tv_flow_error_does_not_grow_with_more_steps(name, sigma, b):
+    """真値 = 雑音を足す前の区分定数画像。a(反復数)を 0〜1 に振る。
+
+    修正前(lam 0.02..0.22)は a=1 の誤差が a=0.1 の 3 倍以上になり、雑音の入力より
+    悪かった(正方形・sigma 0.05・b=0 で 0.067 > 0.050)。
+    """
+    import backends_physics as P
+
+    truth = dict(_tv_scenes())[name]
+    noisy = np.clip(truth + np.random.default_rng(3).normal(0.0, sigma, truth.shape), 0.0, 1.0)
+    e_in = _rmse(noisy, truth)
+    a_grid = np.linspace(0.0, 1.0, 11)
+    errs = [_rmse(P.ph_total_variation_flow(noisy, float(a), b), truth) for a in a_grid]
+    assert len(errs) == 11
+    # 雑音除去になっている: a>0 のどこでも入力の誤差の 3/4 未満
+    assert max(errs[1:]) < 0.75 * e_in, (errs, e_in)
+    # 反復を増やして悪化しない: 最後(a=1)は途中の最良の 1.25 倍以内
+    assert errs[-1] <= 1.25 * min(errs), errs
+    # 走り続けて育たない: どの a でも、それまでの最良からの上がり幅は入力誤差の 1/8 以下
+    rise = max(errs[i] - min(errs[: i + 1]) for i in range(len(errs)))
+    assert rise <= e_in / 8.0, (rise, errs)
+
+
+@pytest.mark.parametrize("b", [0.0, 0.5, 1.0])
+def test_l2_tv_flow_reaches_a_fixed_point_and_keeps_clean_input(b):
+    """不変量: 雑音の無い区分定数画像はほぼそのまま(修正前は a=1 で RMSE 0.067)、
+    かつ a=0.8 と a=1 の出力が一致する(ROF の最小点 = 不動点に着いている)。"""
+    import backends_physics as P
+
+    truth = dict(_tv_scenes())["square"]
+    assert _rmse(P.ph_total_variation_flow(truth, 1.0, b), truth) < 0.025
+    noisy = np.clip(truth + np.random.default_rng(5).normal(0.0, 0.1, truth.shape), 0.0, 1.0)
+    late = P.ph_total_variation_flow(noisy, 1.0, b)
+    earlier = P.ph_total_variation_flow(noisy, 0.8, b)
+    assert float(np.abs(late - earlier).max()) < 1e-3
