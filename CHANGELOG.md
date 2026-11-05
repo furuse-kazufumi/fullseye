@@ -47,6 +47,29 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 兄弟で直さなかったもの: `tools/import_bodyparts3d_organs.py` の OBJ 読み(固定の公開データ専用、入力は空白区切り)、`pocviewer` の PLY 書き出し(float32 で詰めた表示データを JS 側と同じ文字列で出す双子)、`tests/test_docs_index_reachable.py` の fence 除去(文書検査の補助)、`table_write_csv` の `=` 始まりのセル(CSV は型を持たず、接頭辞を足すと往復が壊れる)。
 - 既存テストの期待値の変更: `tests/test_codegen.py` の C literal の文字列(旧書式 `%.6f` をなぞっていただけ、値は同じ 1.5 / 0.5 / 1.0)。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(stats)
+
+回帰の門は `tests/test_redteam_stats_2026_11_05.py`(真値・不変量・独立実装と比べる。修正前のコードで 23 件が落ちることを確認)。
+
+- S7 `fullseye.judge`: 規則の `min` / `max` / `nominal` / `tol`、数値の `eq`、`in` の要素が NaN / inf なら `ValueError`(以前は比較が全部 False で常に ok)。片側だけ見るならキーを省く。
+- S1 `spc_hotelling_t2`: `mean` と `cov` を渡したら母数既知として `ucl = chi2_p(1−alpha)`(以前は描く行数 m から phase-II の F 式、m ≤ p で `inf`)。
+- S2 `spc_hotelling_t2`: 既定(同じデータから推定 = phase I)の `ucl` は `(m−1)²/m · Beta_{1−α}(p/2, (m−p−1)/2)`(Tracy-Young-Mason 1992)。値が変わる(m=40, p=2, α=0.0027 で 14.60 → 10.40。小さい m では以前は警報不能)。phase I は m ≥ p+2 を要求(以前は p+1)。`mean` / `cov` の片方だけは `ValueError`。返り値に `phase` を足した。
+- S3 `gum_expanded`: 非零の相関があると、相関でつながった成分を群にして Welch-Satterthwaite を組む(群の分散と群の最小自由度)。`dof_effective` / `coverage_factor` / `expanded` が変わる(等しい 2 成分・各 ν=4・r=+1 で ν_eff 32 → 4)。r=−0.95 で以前出ていた「自由度 1 未満」の `ValueError` は出なくなる。相関なしは同値。
+- S4 `gum_validate`: `delta` は u(y) を `ndig` 桁に丸めてから作る(JCGM 101 7.9.2)。u=0.0996, ndig=2 で 0.0005 → 0.005、`agree` が変わりうる。
+- S5 `spc_mt_unit_space` / `spc_mt_distance`: 「変動なし」の床が列の最大絶対値に相対(以前は |mean| < 1 で絶対値)。1 未満の単位の特徴が flat と判定されなくなり、MD が単位に依らない。
+- S6 `mv_pca` / `mv_pls` 等(`multivar._standardise`): 「変動なし」の拒否が列の大きさに相対。F 単位の表を拒否しなくなる。
+- `gum_monte_carlo` の最短包含区間: q = pM / int(pM + 1/2)(JCGM 101 7.7.2、以前は floor)。pM の端数が 1/2 以上の M で区間が順序統計量 1 つ分広がる。q ≥ M は `ValueError`。
+
+### 修正 — 敵対的検証 2026-11-05(stats)の兄弟の一掃
+
+`max(|x|, 1)` / `max(1, |x|)` の床を repo 全体で当たり、「データの広がり・範囲の判定に絶対の 1 を混ぜた」同型を直した:
+
+- `multivar.feat_image_vector` の `data_range` の許容(範囲 (0, 1e-12) で許容が幅と同じだった)。
+- `symmetry2d` の一様画像の判定と `symmetry_score` の床(1 未満の物理単位の画像を「一様」で拒否していた)。
+- `specularity._polar_fit` の負の I_min の許容(1 未満の単位で非物理な掃引を見逃していた。`polarization_*` が拒否するようになる)。
+- 残した同形: 反復の収束判定・有限差分の刻み・例の比較許容(lens*/raytrace/pod/seg* 等)は「混合の絶対/相対許容」で、データの単位で判定が反転する種類ではないので触らない。`fullseye/inspect_batch.py` の `sigma=1e-12` は sd = 0(全値が平均に厳密に等しい)のときだけで偏差が 0 なので警報に影響しない。
+- `emva_pair_statistics` の 1/(2NM) は EMVA 1288 Release 4.0 Linear 式 (18) と脚注 6(NM−1 でなく NM を意図して使う)どおりで変えない。
+
 ### 変更(Breaking)— `plenoptic_refocus_depth` の傾き↔距離の単位を直した(2026-11-04)
 
 - 像のずれを `slope × 角度ステップ × ピッチ` で出していた。次元から正しくは傾き × ピッチ / 角度ステップで、PoC のカメラでは 1/角度ステップ² ≈ 3000 倍小さく、測った傾きはどれも合焦距離(1.0 m)へ戻っていた。いまは復号の視点刻み(1 視点 = ピッチ/U ぶんの射出瞳)、射出瞳までの距離、Newton の式で変換する近軸の式。処方を順方向に光線追跡した視差と、理想レンズで相対 1e-6、三枚玉で 2e-4 以内で一致する(`tests/test_plenoptic.py`)。

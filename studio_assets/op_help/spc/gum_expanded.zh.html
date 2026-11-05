@@ -11,6 +11,9 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nu_eff &gt;= min_i nu_i</code> <b>始终</b>成立。证明为 <code style="color:#22d3bf">sum u_i^4/nu_i &lt;= (1/nu_min) sum u_i^4 &lt;= (1/nu_min)(sum u_i^2)^2</code>。有效自由度若小于最小分量的自由度,说明计算坏了。</p>
 <p style="margin:2px 0 2px 12px">• 所有自由度均为无穷大时,<code style="color:#22d3bf">k</code> 收敛到正态分布的分位点(95 % 时为 1.959964)。</p>
 <p>无穷自由度(已知常数等)填入 <code style="color:#22d3bf">numpy.inf</code>。</p>
+<p>★★ <b>存在相关时的自由度</b>。Welch-Satterthwaite(GUM G.4.1)以输入<b>相互独立</b>为前提;直接用于含相关项的 <code style="color:#22d3bf">u_c</code> 会虚增自由度(两个相等分量、各 nu=4、r=+1 时 nu_eff=32 —— 超过预算自由度总和 8)。负相关时则反而跌到 1 以下。因此当 *correlation* 含非零的非对角元时,把由非零相关连在一起的分量并成一组,用组方差 <code style="color:#22d3bf">w_g&#x27; R_g w_g</code>(<code style="color:#22d3bf">w = c u</code>)与组自由度 <code style="color:#22d3bf">min_{i in g} nu_i</code> 构造 Welch-Satterthwaite::</p>
+<p>nu_eff = u_c^4 / sum_g (w_g&#x27; R_g w_g)^2 / min_{i in g} nu_i</p>
+<p>依据:由同一组测量估计的相关分量(协方差为 Wishart、自由度 nu 相同)时,合成方差的估计量严格为 <code style="color:#22d3bf">sigma^2 chi^2_nu / nu</code>,有效自由度与 <code style="color:#22d3bf">r</code> 无关,就是 <code style="color:#22d3bf">nu</code>(与 Willink, *Metrologia* 44:340, 2007 的广义 Welch-Satterthwaite 在 r=+1 的两个相等分量下得到 nu 一致)。自由度不同的分量相关时取最小值 —— 这是本实现偏向安全侧(k 更大)的规则,不是标准中的公式。所有相关均为 0(或单位矩阵)时每组只有 1 个分量,结果与传统公式相同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

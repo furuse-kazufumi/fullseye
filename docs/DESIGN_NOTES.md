@@ -1805,6 +1805,10 @@
 
 - **L137** — ★ 値域(ptp)最大の単調列を時刻にすると、左→右に掃く縁の x(0..239 px)が 秒単位の t(0..0.1)に勝って x と t が入れ替わった(2026-10-07)。 x・y は画素座標なので整数値。時刻は「整数でない単調列」を優先し、 決まらなければ推測せず拒否する(見出しを付ければ名前で読める)。
 
+## `multivar.py`
+
+- **L93** — ★相対の床は列自身の最大絶対値に対して取る(絶対の 1 を混ぜない)。 max(1, |mean|) では |mean| < 1 で床が絶対値 1e-12 になり、同じ表が pF では 通り F では「変動なし」で拒否された(敵対的検証 2026-11-05 S6)。標準化 PCA は 列ごとの単位に依らない(相関行列は無次元)ので、この判定も依らない。
+
 ## `occupancy.py`
 
 - **L232** — ★2026-09-07: ``res`` は**軸ごと**を受けるようにした(長さ 3 も可)。立方限定だと 鳥瞰格子(薄い z × 広い xy)のような扁平な体積で、要らない軸まで同じ刻みを 強いられる(`poc_bev_sensor_fusion` の実測: 409.6 万ボクセルのうち使うのは 8.1 %)。 同じ族の `grid_coords` は最初から軸ごとの res を受けていた —— **入口と出口で 契約の広さが違う**のを合わせた。スカラを渡す既存の呼び手は不変。
@@ -2231,18 +2235,21 @@
 
 ## `spc.py`
 
-- **L426** — ★管理図と工程能力は「工程のばらつき」を見るが、その数字は**測定のばらつきを 含んだまま**である。ゲージ R&R は総変動を「部品差」と「測る行為の差」に分け、 後者が前者を食っていないかを見る —— 工程能力の前に来るべき検査で、ここが 抜けていると「工程が暴れている」と読んだものが実は測定器だったという取り違えが 起きる。GUM は同じ問いを 1 回の測定について立て、成分ごとの不確かさを 合成する。どちらも閉形式で、照合できる恒等式を持つ。 =========================================================================== #
-- **L733** — ★どのモデルで出した数字かを必ず載せる(黙って切り替えない)
-- **L1042** — ★★**破綻は警告でなく構造で返す**。感度係数がすべて 0 になると、入力に 不確かさがあるのに合成不確かさが 0 になる —— 規格の比較損失の例 (``dY = X1^2 + X2^2`` を ``x_i = 0`` で評価)がまさにこれで、 ``c_i = 2 x_i = 0`` だから 1 次近似は「不確かさゼロ」と答える。数式としては 正しいが**測定の主張としては嘘**で、モンテカルロは同じ状況で ``u = 50e-6`` を返す。0 を返すこと自体は止めない(それが伝播則の答えなので)が、 ``guf_valid=False`` と ``invalid_reasons=["stationary_point"]`` を**結果に 同伴させる**。警告にすると握りつぶされ、呼んだ側は「測定が完璧だった」と読む。
-- **L1051** — ★**この検出条件そのものは本実装の判断であって、規格が列挙したものではない**。 規格が定めるのは線形モデルの 3 条件(Welch-Satterthwaite の適用可否 / 有限自由度の入力が独立であること / 出力分布が正規または t で近似できること)と 非線形モデルの 5 条件(最良推定値の近傍で連続微分可能 / 適切な次数の全微分で 成立 / 高次項に関わる入力が独立 / その分布が正規 / 落とした高次項が無視できる) で、「感度が全部 0」「区間が定義域を出る」という**判定手順は書かれていない**。 ここで実装したのは、その条件が破れたときに**観測される形**のほうである —— 停留点は高次項が支配する特殊例、負側への張り出しは正規近似の破綻の現れ。
-- **L1062** — ★停留点 = 不確かさのある入力の 1 次感度が**すべて**0(高次項が支配する)。 感度が非 0 なのに分散が 0 なのは、相関による**厳密な打ち消し** (X1 = X2 で Y = X1 - X2)で、u = 0 が正しい答え —— 妥当として note を付ける。
-- **L1073** — ★破綻は**警告でなく構造**で返す(警告は握りつぶされる/ログに消える)
-- **L1104** — ★ NaN は ``nu <= 0`` をすり抜け、下の isfinite で「無限大」扱いになっていた (dof=[4, nan] で nu_eff 16 = 自由度を水増しし k を小さく)。欠測は拒否する。
-- **L1121** — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
-- **L1151** — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
-- **L1530** — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
-- **L1562** — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
-- **L1673** — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
+- **L435** — ★母数既知なら T² ~ chi2_p。以前は charted rows の m から phase-II の F 式を 作っていて、m <= p で UCL = inf(1 行の 50σ 外れを素通し)だった。
+- **L440** — ★同じデータから推定した phase I は Beta 限界。phase-II の F 式を当てると T² <= (m-1)^2/m の恒等的上限より UCL が大きくなり(m=10, p=2 で 33.5 > 8.1)、 どんな外れ値でも警報が出なかった(敵対的検証 2026-11-05 S2)。
+- **L471** — ★管理図と工程能力は「工程のばらつき」を見るが、その数字は**測定のばらつきを 含んだまま**である。ゲージ R&R は総変動を「部品差」と「測る行為の差」に分け、 後者が前者を食っていないかを見る —— 工程能力の前に来るべき検査で、ここが 抜けていると「工程が暴れている」と読んだものが実は測定器だったという取り違えが 起きる。GUM は同じ問いを 1 回の測定について立て、成分ごとの不確かさを 合成する。どちらも閉形式で、照合できる恒等式を持つ。 =========================================================================== #
+- **L778** — ★どのモデルで出した数字かを必ず載せる(黙って切り替えない)
+- **L1087** — ★★**破綻は警告でなく構造で返す**。感度係数がすべて 0 になると、入力に 不確かさがあるのに合成不確かさが 0 になる —— 規格の比較損失の例 (``dY = X1^2 + X2^2`` を ``x_i = 0`` で評価)がまさにこれで、 ``c_i = 2 x_i = 0`` だから 1 次近似は「不確かさゼロ」と答える。数式としては 正しいが**測定の主張としては嘘**で、モンテカルロは同じ状況で ``u = 50e-6`` を返す。0 を返すこと自体は止めない(それが伝播則の答えなので)が、 ``guf_valid=False`` と ``invalid_reasons=["stationary_point"]`` を**結果に 同伴させる**。警告にすると握りつぶされ、呼んだ側は「測定が完璧だった」と読む。
+- **L1096** — ★**この検出条件そのものは本実装の判断であって、規格が列挙したものではない**。 規格が定めるのは線形モデルの 3 条件(Welch-Satterthwaite の適用可否 / 有限自由度の入力が独立であること / 出力分布が正規または t で近似できること)と 非線形モデルの 5 条件(最良推定値の近傍で連続微分可能 / 適切な次数の全微分で 成立 / 高次項に関わる入力が独立 / その分布が正規 / 落とした高次項が無視できる) で、「感度が全部 0」「区間が定義域を出る」という**判定手順は書かれていない**。 ここで実装したのは、その条件が破れたときに**観測される形**のほうである —— 停留点は高次項が支配する特殊例、負側への張り出しは正規近似の破綻の現れ。
+- **L1107** — ★停留点 = 不確かさのある入力の 1 次感度が**すべて**0(高次項が支配する)。 感度が非 0 なのに分散が 0 なのは、相関による**厳密な打ち消し** (X1 = X2 で Y = X1 - X2)で、u = 0 が正しい答え —— 妥当として note を付ける。
+- **L1118** — ★破綻は**警告でなく構造**で返す(警告は握りつぶされる/ログに消える)
+- **L1205** — ★ NaN は ``nu <= 0`` をすり抜け、下の isfinite で「無限大」扱いになっていた (dof=[4, nan] で nu_eff 16 = 自由度を水増しし k を小さく)。欠測は拒否する。
+- **L1224** — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
+- **L1254** — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
+- **L1645** — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
+- **L1650** — ★The scale is the column's own largest magnitude — never an absolute 1. With max(|mean|, 1) the floor was absolute below |mean| = 1, so the same parts in farads (1 pF +- 0.01 pF) were declared flat and an 8-sigma part scored MD 0.05 while in pF it scored 4.8 (red-team 2026-11-05 S5). MD is unit-free; so is this.
+- **L1681** — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
+- **L1792** — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
 
 ## `specops.py`
 
@@ -2286,6 +2293,10 @@
 ## `symbolpod.py`
 
 - **L359** — ★完全分離: 劣化量に対して読めるかどうかが決まっていて、傾きは推定できない。 代わりに「全数成功の実証」(MIL-HDBK-1823A の 29/29 と同じ論法)を返す: すべて読めた最も厳しい水準 L* と、そこでの試行数が p=0.90 を片側 level で 示すのに足りるか(:func:`pod.trials_for_all_success`)。 Complete separation: report the all-success demonstration instead.
+
+## `symmetry2d.py`
+
+- **L37** — not turn into an axis or an apparent rotational order. ★No absolute 1 in the scale: with max(1, |lo|, |hi|) an image in physical units below 1 (radiance in W, 1e-14 full scale) was refused as "uniform" while the same image x 1e14 was measured (red-team 2026-11-05, sibling of S5/S6). An all-zero image still has hi - lo = 0 <= 0 and is refused.
 
 ## `tacsim.py`
 
@@ -2810,9 +2821,10 @@
 
 ## `tests/test_spc.py`
 
-- **L237** — ★台帳 opsspc は 2026-10-12 から 2 モジュール(spc と pod)を載せる。比べるのは 「spc モジュールの op」どうし —— pod 側の一致は tests/test_pod.py が見る。
-- **L247** — ★真値は導出した恒等式と**既存 op**。当てはめた数字を固定しない。 単位空間の MD² の平均はちょうど (n-1)/n で、教科書の「平均 1」を有限標本で 正確に言い直したもの。1.0 を固定する試験はどんな標本でも間違いになる。
-- **L320** — ★この列の std は **0 ではない**。4.2 を 200 個並べただけで丸め屑が 1.3e-14 残る(実測)。`std == 0.0` で判定していた最初の版はここを取りこぼし、 その屑で割った距離が意味を失っていた。屑が在ることを門に書いておく —— 絶対判定に戻したらこの行が落ちる。
+- **L185** — ★既定(同じデータから mean/cov を推定 = phase I)の限界は Beta(Tracy-Young-Mason 1992)。 以前このテストは phase-II の F 式を既定経路に当てた値を固定していた(敵対的検証 2026-11-05 S2: phase I では T² <= (m-1)^2/m が恒等的に成り立ち、F 式では警報不能)。
+- **L241** — ★台帳 opsspc は 2026-10-12 から 2 モジュール(spc と pod)を載せる。比べるのは 「spc モジュールの op」どうし —— pod 側の一致は tests/test_pod.py が見る。
+- **L251** — ★真値は導出した恒等式と**既存 op**。当てはめた数字を固定しない。 単位空間の MD² の平均はちょうど (n-1)/n で、教科書の「平均 1」を有限標本で 正確に言い直したもの。1.0 を固定する試験はどんな標本でも間違いになる。
+- **L324** — ★この列の std は **0 ではない**。4.2 を 200 個並べただけで丸め屑が 1.3e-14 残る(実測)。`std == 0.0` で判定していた最初の版はここを取りこぼし、 その屑で割った距離が意味を失っていた。屑が在ることを門に書いておく —— 絶対判定に戻したらこの行が落ちる。
 
 ## `tests/test_specularity.py`
 

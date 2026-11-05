@@ -5,12 +5,8 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 655 of 1655. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 641 of 1644. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
-
-## `_archive_tarxz.py`
-
-- **L19** — ★2026-11-05 redteam (io, archive probe): Windows reserved device names (Microsoft "Naming Files, Paths, and Namespaces") include COM0 / LPT0, the superscript digits ¹ ² ³ and the console names CONIN$ / CONOUT$. Only CON/PRN/AUX/NUL and COM1-9 / LPT1-9 were listed, so "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
 
 ## `accel.py`
 
@@ -1499,17 +1495,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fileio.py`
 
-- **L93** — ★2026-11-05 redteam I8: the table above is now every spelling of the teem NRRD format spec ("type" field): "signed long long" / "signed long long int" were missing and refused.
-- **L240** _(ja)_ — ★2026-11-05 redteam I24: one empty cell (a missing value, written by table_write_csv for None) sent the whole column through float64, so a large int column with a gap came back rounded -- against "丸めて返さない". Blank cells are now allowed here: such a column is returned as an integer masked array (mask = the blanks), exact and still numeric.
-- **L298** — ★2026-11-05 redteam I25: a UTF-8 BOM (Excel's "CSV UTF-8" writes one) became part of the first column name ('\ufeffx'). It is a byte-order mark, not data: drop it once.
-- **L884** — ★2026-11-05 redteam (io, archive probe): Windows reserved device names (Microsoft "Naming Files, Paths, and Namespaces") include COM0 / LPT0, the superscript digits ¹ ² ³ and the console names CONIN$ / CONOUT$. Only CON/PRN/AUX/NUL and COM1-9 / LPT1-9 were listed, so "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
-- **L1378** — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
-- **L1497** — ★2026-11-05 redteam I6: FITS 4.0 §4.2.1.2 -- in free format the opening quote of a string may stand in any column after the value indicator, not only column 11. Leading blanks before the quote are not part of the value (blanks *inside* the quotes still are).
-- **L1715** — ★2026-11-05 redteam I4: FITS 4.0 §5.3 / Table 11 -- the four integer offset conventions (BSCALE=1 with BZERO = -128 / 2**15 / 2**31 / 2**63) denote *integer* data of the other signedness. uint64 used to go through float64 (2**63 + 1 -> 2**63, 2**64 - 1 -> 2**64) and int8 came back as float64. They are now decoded with exact integer arithmetic.
-- **L1789** — ★2026-11-05 redteam I7: MRC2014 word 28 (byte 108) is NVERSION = 20140 (year*10 + version). It was left 0, so the file did not declare itself MRC2014 (mrcfile.validate rejected it).
-- **L2101** — ★2026-11-05 redteam I9: the "space" field (LPS / RAS / scanner-xyz ...) was dropped, so an LPS and an RAS file -- the same numbers in mirrored patient frames -- read back identical. It is returned as meta["space"] (canonical teem name, None when absent) and written back.
-- **L2452** — ★2026-11-05 redteam I10: tifffile squeezes length-1 axes on read, and OME's 5-D Size* cannot tell "ZYX with Z=1" from "YX". The axes as written are recorded in a namespaced MapAnnotation so ome_tiff_read can restore the written shape (other readers ignore it).
-- **L2486** — ★2026-11-05 redteam I11: the docstring promised to reject a Pixels Type that disagrees with the TIFF samples, but ``dtype`` was never read -- Type="int16" over uint16 data passed.
+- **L1260** — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
 
 ## `fit_transform.py`
 
@@ -1555,10 +1541,6 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L342** — ★2026-11-04 external audit G2: ``_weights`` narrows *selected* in place under ``nan_policy="omit"`` (a NaN weight drops its element). a and b used to be taken before that, so ``ww[a & b]`` indexed with masks of different lengths (IndexError). Weights first.
 
-## `fullseye/jsonio.py`
-
-- **L233** — ★2026-11-05 redteam I17: a float32 / float16 array travels as float64 bytes (exact), but came back float64 while the readable "list" form restored float32 -- the same value had two dtypes depending on readable=. Restore the declared dtype, only when every value survives the cast (a forged float32 over float64-only values is refused).
-
 ## `fullseye/mcp/catalog.py`
 
 - **L70** _(ja)_ — ★``dim`` は **docs/ops の族ディレクトリ名**(``2d`` / ``3d`` / ``oned`` のほか ``optics`` / ``annotate`` … 31 種)で、厳密な次元ではない —— volume を取る registry op は ``2d/3d/`` の下にあり ``dim: 2d``。 次元は ``in`` / ``out`` の sort から読む(2026-09-20、GenSpark 第 31 報 N109。族と次元の分離は 0.2.2)。
@@ -1599,7 +1581,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L46** _(ja)_ — ★ float64 に直してから [0,1] に clip すると uint8 の 0..255 が 0/1 の 2 値に潰れた
 - **L51** _(ja)_ — ★ 切り捨ての int() だと 1000 px が step 3 で 334 px になり longest を守らない
-- **L83** _(ja)_ — dict の表は key / value の 2 列(mdio と同じ)。★ list(dict) はキー文字列の 列になり、1 文字ずつのセルに綴られていた
+- **L68** _(ja)_ — dict の表は key / value の 2 列(mdio と同じ)。★ list(dict) はキー文字列の 列になり、1 文字ずつのセルに綴られていた
 
 ## `fullseye_comm.py`
 
@@ -1693,7 +1675,6 @@ This repository records *why* things are the way they are in **comments in the s
 - **L712** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N209): 順は save(path, arr)。逆に呼ぶと「path must be ... got ndarray」で 止まってはいたが、逆順だとは言わなかった。配列が path に、文字列が arr に来たら、それを言う。
 - **L721** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N120): PFM は float 専用の形式なのに、既定の 8 bit 経路が 0..255 の 値を float32 として書き、読むと 0..1 に clip されて別画像になっていた(往復 max|Δ| 0.98)。 PFM の既定は float(無損失)。
 - **L915** _(ja)_ — ★2026-09-20(GenSpark 第 18 報 N78): 無い・ディレクトリ・読めない、が全部同じ文だった。
-- **L954** — ★2026-11-05 redteam I23: coordinates were "%g" (6 significant digits) under "property float": a UTM easting 352145.12 came back 352145 (errors of metres).
 
 ## `imgmetrics.py`
 
@@ -1789,11 +1770,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `mesh.py`
 
-- **L242** — ★2026-11-05 redteam I14: records are keyword + whitespace (any blanks, tabs included); "v\t1 2 3" and "f\t1 2 3" used to be skipped because the test was startswith("v ").
-- **L328** — ★2026-11-05 redteam I13: a "4" in the magic (Geomview "[ST][C][N][4]OFF") means every vertex is homogeneous ``x y z w`` -- the point is (x/w, y/w, z/w). w used to be dropped (4OFF "2 0 0 2" read as (2, 0, 0) instead of (1, 0, 0)).
-- **L431** — ★ match the whole line: a comment that merely mentions end_header used to end the header there and shift the binary body (silent garbage).
-- **L677** — ★ A comma is a column separator only when it is the ONLY one on the line. "1,5 2,5 3,5" (decimal commas, European locale) used to be re-split into 6 columns and read as xyz + colour (silently wrong).
-- **L693** — ★2026-11-05 redteam I26: write_points writes a 0-point cloud as a header comment ("# 0 points ..."), and that file must read back as a (0, 3) cloud. A file with no comment and no data (only blanks) is still refused -- it is not a point cloud.
+- **L410** — ★ match the whole line: a comment that merely mentions end_header used to end the header there and shift the binary body (silent garbage).
+- **L655** — ★ A comma is a column separator only when it is the ONLY one on the line. "1,5 2,5 3,5" (decimal commas, European locale) used to be re-split into 6 columns and read as xyz + colour (silently wrong).
 
 ## `meshio_opt.py`
 
@@ -1806,6 +1784,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `motionio.py`
 
 - **L137** _(ja)_ — ★ 値域(ptp)最大の単調列を時刻にすると、左→右に掃く縁の x(0..239 px)が 秒単位の t(0..0.1)に勝って x と t が入れ替わった(2026-10-07)。 x・y は画素座標なので整数値。時刻は「整数でない単調列」を優先し、 決まらなければ推測せず拒否する(見出しを付ければ名前で読める)。
+
+## `multivar.py`
+
+- **L93** _(ja)_ — ★相対の床は列自身の最大絶対値に対して取る(絶対の 1 を混ぜない)。 max(1, |mean|) では |mean| < 1 で床が絶対値 1e-12 になり、同じ表が pF では 通り F では「変動なし」で拒否された(敵対的検証 2026-11-05 S6)。標準化 PCA は 列ごとの単位に依らない(相関行列は無次元)ので、この判定も依らない。
 
 ## `occupancy.py`
 
@@ -1870,10 +1852,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1600** _(ja)_ — ★2026-10-07: 0 画素の面積率は 0/0(np.mean が NaN を返し、guard が黙って置き換えていた)
 - **L1740** — ★Pad the edges **with the edge value**. Previously it was ``np.convolve(x, k, "same")``, which averages the w points at both ends **with zero** -- the start and end of a contour got dragged toward the origin (0,0) by up to 50 px or more, producing a figure where the red streaks of 140 contours converged to the upper left (found 2026-09-06 when per-op figures were first made; in numerical tests the mean deviation was 0.3 px and it was invisible).
 - **L2336** _(ja)_ — ★pickle は**名前で**(2026-09-19 外部レビュー N5): ``fn`` は ``backend_safe._safe`` のクロージャで pickle できず、Op を丸ごと multiprocessing / joblib に渡すと PicklingError で止まっていた(``Pipeline`` は名前を持つので通る、という非対称)。 復元先は**復元する側の環境の登録**: backend が入っていない環境で戻すと KeyError(不足 extra の案内つき)になり、黙って別の実装にはならない。
-- **L2528** _(ja)_ — ★2026-09-19 の外部レビュー(#1): scikit-image 無しの環境で ``sk_canny`` を呼ぶと 「unknown operator」になり、**存在しない**のか **backend が入っていない**のかを 区別できなかった。fn は ``backend_safe._safe`` に包まれて ``__module__`` を失う ので、登録の側で出自を残す(後勝ち = ``REGISTRY`` の重複解消と同じ規則)。 ``imgevolve.py index`` がこれを ``module`` / ``requires`` として索引に書き、 ``api._resolve`` が未登録の名前を引かれたときに索引から不足 extra を案内する。
-- **L2537** _(ja)_ — ★pyproject の optional-dependencies と食い違うと案内が嘘になるので ``tests/test_usability_review_2026_09_19.py`` が突き合わせる。
-- **L2824** _(ja)_ — ★2026-10-07: 複素の sort は sanitize(実 sort 向けの規約で**実部だけ**を返す)を通さない。 以前は tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が cimage / beatcube を名乗りながら float64 を返していた(虚部を黙って捨てる = 位相が消える)。 backends_bridge の橋は同じ理由で既に素通しにしていた —— その規約をこちらにも揃える。
-- **L2839** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
+- **L2512** _(ja)_ — ★2026-09-19 の外部レビュー(#1): scikit-image 無しの環境で ``sk_canny`` を呼ぶと 「unknown operator」になり、**存在しない**のか **backend が入っていない**のかを 区別できなかった。fn は ``backend_safe._safe`` に包まれて ``__module__`` を失う ので、登録の側で出自を残す(後勝ち = ``REGISTRY`` の重複解消と同じ規則)。 ``imgevolve.py index`` がこれを ``module`` / ``requires`` として索引に書き、 ``api._resolve`` が未登録の名前を引かれたときに索引から不足 extra を案内する。
+- **L2521** _(ja)_ — ★pyproject の optional-dependencies と食い違うと案内が嘘になるので ``tests/test_usability_review_2026_09_19.py`` が突き合わせる。
+- **L2808** _(ja)_ — ★2026-10-07: 複素の sort は sanitize(実 sort 向けの規約で**実部だけ**を返す)を通さない。 以前は tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が cimage / beatcube を名乗りながら float64 を返していた(虚部を黙って捨てる = 位相が消える)。 backends_bridge の橋は同じ理由で既に素通しにしていた —— その規約をこちらにも揃える。
+- **L2823** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
 
 ## `ops1d.py`
 
@@ -2147,7 +2129,6 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L222** — ★ /iinfo.max put a signed image in [-1, 1] (int16 -32768 -> -1.00003)
 - **L280** — ★2026-10-24: imageio (Pillow) returns a 16-bit RGB/RGBA/gray+alpha PNG as uint8 without an error. Read the declared depth from the IHDR and, when it is > 8, try the depth-keeping reader (OpenCV IMREAD_UNCHANGED) first.
-- **L506** — ★2026-11-05 redteam I22: "%f" kept 6 decimals -- -1.23456789 came back 1.234568 and 1e-07 / 2.5e-07 were written as 0.000000 (an invalid zero scale the reader refuses). repr is the shortest decimal that reads back as the same float.
 
 ## `raytrace.py`
 
@@ -2233,18 +2214,21 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `spc.py`
 
-- **L426** _(ja)_ — ★管理図と工程能力は「工程のばらつき」を見るが、その数字は**測定のばらつきを 含んだまま**である。ゲージ R&R は総変動を「部品差」と「測る行為の差」に分け、 後者が前者を食っていないかを見る —— 工程能力の前に来るべき検査で、ここが 抜けていると「工程が暴れている」と読んだものが実は測定器だったという取り違えが 起きる。GUM は同じ問いを 1 回の測定について立て、成分ごとの不確かさを 合成する。どちらも閉形式で、照合できる恒等式を持つ。 =========================================================================== #
-- **L733** _(ja)_ — ★どのモデルで出した数字かを必ず載せる(黙って切り替えない)
-- **L1042** _(ja)_ — ★★**破綻は警告でなく構造で返す**。感度係数がすべて 0 になると、入力に 不確かさがあるのに合成不確かさが 0 になる —— 規格の比較損失の例 (``dY = X1^2 + X2^2`` を ``x_i = 0`` で評価)がまさにこれで、 ``c_i = 2 x_i = 0`` だから 1 次近似は「不確かさゼロ」と答える。数式としては 正しいが**測定の主張としては嘘**で、モンテカルロは同じ状況で ``u = 50e-6`` を返す。0 を返すこと自体は止めない(それが伝播則の答えなので)が、 ``guf_valid=False`` と ``invalid_reasons=["stationary_point"]`` を**結果に 同伴させる**。警告にすると握りつぶされ、呼んだ側は「測定が完璧だった」と読む。
-- **L1051** _(ja)_ — ★**この検出条件そのものは本実装の判断であって、規格が列挙したものではない**。 規格が定めるのは線形モデルの 3 条件(Welch-Satterthwaite の適用可否 / 有限自由度の入力が独立であること / 出力分布が正規または t で近似できること)と 非線形モデルの 5 条件(最良推定値の近傍で連続微分可能 / 適切な次数の全微分で 成立 / 高次項に関わる入力が独立 / その分布が正規 / 落とした高次項が無視できる) で、「感度が全部 0」「区間が定義域を出る」という**判定手順は書かれていない**。 ここで実装したのは、その条件が破れたときに**観測される形**のほうである —— 停留点は高次項が支配する特殊例、負側への張り出しは正規近似の破綻の現れ。
-- **L1062** _(ja)_ — ★停留点 = 不確かさのある入力の 1 次感度が**すべて**0(高次項が支配する)。 感度が非 0 なのに分散が 0 なのは、相関による**厳密な打ち消し** (X1 = X2 で Y = X1 - X2)で、u = 0 が正しい答え —— 妥当として note を付ける。
-- **L1073** _(ja)_ — ★破綻は**警告でなく構造**で返す(警告は握りつぶされる/ログに消える)
-- **L1104** _(ja)_ — ★ NaN は ``nu <= 0`` をすり抜け、下の isfinite で「無限大」扱いになっていた (dof=[4, nan] で nu_eff 16 = 自由度を水増しし k を小さく)。欠測は拒否する。
-- **L1121** _(ja)_ — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
-- **L1151** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
-- **L1530** — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
-- **L1562** — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
-- **L1673** — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
+- **L435** _(ja)_ — ★母数既知なら T² ~ chi2_p。以前は charted rows の m から phase-II の F 式を 作っていて、m <= p で UCL = inf(1 行の 50σ 外れを素通し)だった。
+- **L440** _(ja)_ — ★同じデータから推定した phase I は Beta 限界。phase-II の F 式を当てると T² <= (m-1)^2/m の恒等的上限より UCL が大きくなり(m=10, p=2 で 33.5 > 8.1)、 どんな外れ値でも警報が出なかった(敵対的検証 2026-11-05 S2)。
+- **L471** _(ja)_ — ★管理図と工程能力は「工程のばらつき」を見るが、その数字は**測定のばらつきを 含んだまま**である。ゲージ R&R は総変動を「部品差」と「測る行為の差」に分け、 後者が前者を食っていないかを見る —— 工程能力の前に来るべき検査で、ここが 抜けていると「工程が暴れている」と読んだものが実は測定器だったという取り違えが 起きる。GUM は同じ問いを 1 回の測定について立て、成分ごとの不確かさを 合成する。どちらも閉形式で、照合できる恒等式を持つ。 =========================================================================== #
+- **L778** _(ja)_ — ★どのモデルで出した数字かを必ず載せる(黙って切り替えない)
+- **L1087** _(ja)_ — ★★**破綻は警告でなく構造で返す**。感度係数がすべて 0 になると、入力に 不確かさがあるのに合成不確かさが 0 になる —— 規格の比較損失の例 (``dY = X1^2 + X2^2`` を ``x_i = 0`` で評価)がまさにこれで、 ``c_i = 2 x_i = 0`` だから 1 次近似は「不確かさゼロ」と答える。数式としては 正しいが**測定の主張としては嘘**で、モンテカルロは同じ状況で ``u = 50e-6`` を返す。0 を返すこと自体は止めない(それが伝播則の答えなので)が、 ``guf_valid=False`` と ``invalid_reasons=["stationary_point"]`` を**結果に 同伴させる**。警告にすると握りつぶされ、呼んだ側は「測定が完璧だった」と読む。
+- **L1096** _(ja)_ — ★**この検出条件そのものは本実装の判断であって、規格が列挙したものではない**。 規格が定めるのは線形モデルの 3 条件(Welch-Satterthwaite の適用可否 / 有限自由度の入力が独立であること / 出力分布が正規または t で近似できること)と 非線形モデルの 5 条件(最良推定値の近傍で連続微分可能 / 適切な次数の全微分で 成立 / 高次項に関わる入力が独立 / その分布が正規 / 落とした高次項が無視できる) で、「感度が全部 0」「区間が定義域を出る」という**判定手順は書かれていない**。 ここで実装したのは、その条件が破れたときに**観測される形**のほうである —— 停留点は高次項が支配する特殊例、負側への張り出しは正規近似の破綻の現れ。
+- **L1107** _(ja)_ — ★停留点 = 不確かさのある入力の 1 次感度が**すべて**0(高次項が支配する)。 感度が非 0 なのに分散が 0 なのは、相関による**厳密な打ち消し** (X1 = X2 で Y = X1 - X2)で、u = 0 が正しい答え —— 妥当として note を付ける。
+- **L1118** _(ja)_ — ★破綻は**警告でなく構造**で返す(警告は握りつぶされる/ログに消える)
+- **L1205** _(ja)_ — ★ NaN は ``nu <= 0`` をすり抜け、下の isfinite で「無限大」扱いになっていた (dof=[4, nan] で nu_eff 16 = 自由度を水増しし k を小さく)。欠測は拒否する。
+- **L1224** _(ja)_ — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
+- **L1254** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
+- **L1645** — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
+- **L1650** — ★The scale is the column's own largest magnitude — never an absolute 1. With max(|mean|, 1) the floor was absolute below |mean| = 1, so the same parts in farads (1 pF +- 0.01 pF) were declared flat and an 8-sigma part scored MD 0.05 while in pF it scored 4.8 (red-team 2026-11-05 S5). MD is unit-free; so is this.
+- **L1681** — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
+- **L1792** — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
 
 ## `specops.py`
 
@@ -2288,6 +2272,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `symbolpod.py`
 
 - **L359** _(ja)_ — ★完全分離: 劣化量に対して読めるかどうかが決まっていて、傾きは推定できない。 代わりに「全数成功の実証」(MIL-HDBK-1823A の 29/29 と同じ論法)を返す: すべて読めた最も厳しい水準 L* と、そこでの試行数が p=0.90 を片側 level で 示すのに足りるか(:func:`pod.trials_for_all_success`)。 Complete separation: report the all-success demonstration instead.
+
+## `symmetry2d.py`
+
+- **L37** — not turn into an axis or an apparent rotational order. ★No absolute 1 in the scale: with max(1, |lo|, |hi|) an image in physical units below 1 (radiance in W, 1e-14 full scale) was refused as "uniform" while the same image x 1e14 was measured (red-team 2026-11-05, sibling of S5/S6). An all-zero image still has hi - lo = 0 <= 0 and is refused.
 
 ## `tacsim.py`
 
@@ -2812,9 +2800,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_spc.py`
 
-- **L237** _(ja)_ — ★台帳 opsspc は 2026-10-12 から 2 モジュール(spc と pod)を載せる。比べるのは 「spc モジュールの op」どうし —— pod 側の一致は tests/test_pod.py が見る。
-- **L247** _(ja)_ — ★真値は導出した恒等式と**既存 op**。当てはめた数字を固定しない。 単位空間の MD² の平均はちょうど (n-1)/n で、教科書の「平均 1」を有限標本で 正確に言い直したもの。1.0 を固定する試験はどんな標本でも間違いになる。
-- **L320** _(ja)_ — ★この列の std は **0 ではない**。4.2 を 200 個並べただけで丸め屑が 1.3e-14 残る(実測)。`std == 0.0` で判定していた最初の版はここを取りこぼし、 その屑で割った距離が意味を失っていた。屑が在ることを門に書いておく —— 絶対判定に戻したらこの行が落ちる。
+- **L185** _(ja)_ — ★既定(同じデータから mean/cov を推定 = phase I)の限界は Beta(Tracy-Young-Mason 1992)。 以前このテストは phase-II の F 式を既定経路に当てた値を固定していた(敵対的検証 2026-11-05 S2: phase I では T² <= (m-1)^2/m が恒等的に成り立ち、F 式では警報不能)。
+- **L241** _(ja)_ — ★台帳 opsspc は 2026-10-12 から 2 モジュール(spc と pod)を載せる。比べるのは 「spc モジュールの op」どうし —— pod 側の一致は tests/test_pod.py が見る。
+- **L251** _(ja)_ — ★真値は導出した恒等式と**既存 op**。当てはめた数字を固定しない。 単位空間の MD² の平均はちょうど (n-1)/n で、教科書の「平均 1」を有限標本で 正確に言い直したもの。1.0 を固定する試験はどんな標本でも間違いになる。
+- **L324** _(ja)_ — ★この列の std は **0 ではない**。4.2 を 200 個並べただけで丸め屑が 1.3e-14 残る(実測)。`std == 0.0` で判定していた最初の版はここを取りこぼし、 その屑で割った距離が意味を失っていた。屑が在ることを門に書いておく —— 絶対判定に戻したらこの行が落ちる。
 
 ## `tests/test_specularity.py`
 

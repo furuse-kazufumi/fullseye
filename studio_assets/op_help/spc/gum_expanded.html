@@ -11,6 +11,9 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nu_eff &gt;= min_i nu_i</code> が<b>常に</b>成り立つ。証明は <code style="color:#22d3bf">sum u_i^4/nu_i &lt;= (1/nu_min) sum u_i^4 &lt;= (1/nu_min)(sum u_i^2)^2</code>。有効自由度が最小の成分より小さくなったら計算が壊れている。</p>
 <p style="margin:2px 0 2px 12px">• すべての自由度が無限大なら <code style="color:#22d3bf">k</code> は正規分布の分位点へ収束する(95 % で 1.959964)。</p>
 <p>無限自由度(既知の定数など)は <code style="color:#22d3bf">numpy.inf</code> を入れる。</p>
+<p>★★<b>相関があるときの自由度</b>。Welch-Satterthwaite(GUM G.4.1)は入力が<b>独立</b>であることを前提にした式で、相関項を含む <code style="color:#22d3bf">u_c</code> にそのまま当てると自由度を水増しする(等しい 2 成分・各 nu=4・r=+1 で nu_eff=32 —— 予算の自由度の総和 8 を超える)。負の相関では逆に 1 未満へ潰れる。そこで *correlation* に非零の非対角があるときは、非零の相関でつながった成分を 1 つの群にまとめ、群の分散 <code style="color:#22d3bf">w_g&#x27; R_g w_g</code> (<code style="color:#22d3bf">w = c u</code>)と群の自由度 <code style="color:#22d3bf">min_{i in g} nu_i</code> で Welch-Satterthwaite を組む::</p>
+<p>nu_eff = u_c^4 / sum_g (w_g&#x27; R_g w_g)^2 / min_{i in g} nu_i</p>
+<p>根拠: 同じ測定から推定した相関する成分(共分散行列が Wishart、自由度 nu 共通)では、合成分散の推定量は厳密に <code style="color:#22d3bf">sigma^2 chi^2_nu / nu</code> で、有効自由度は <code style="color:#22d3bf">r</code> に依らず <code style="color:#22d3bf">nu</code> そのもの(Willink, *Metrologia* 44:340, 2007 の一般化 Welch-Satterthwaite で r=+1 の等しい 2 成分が nu になるのと一致)。自由度の違う成分が相関する場合は最小値を取る —— 安全側(k を大きく)に倒す本実装の規則であって、規格の式ではない。相関がすべて 0(または単位行列)なら群は全部 1 成分で、従来の式と同じ値になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

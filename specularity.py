@@ -1643,7 +1643,9 @@ def _polar_fit(images, angles_deg, op, max_violation_frac, want_residual=False):
     a0, a1, a2 = a[0], a[1], a[2]
     amp = np.hypot(a1, a2)
     i_min = a0 - amp
-    fit_bad = i_min < -1e-12 * np.maximum(np.abs(a0), 1.0)
+    # 負の最小強度の許容は画素自身の強度の大きさに相対(絶対の 1 を混ぜない: 強度が
+    # 1 未満の単位だと 1e-12 の絶対許容が信号そのものを超え、破綻した当てはめを見逃す)。
+    fit_bad = i_min < -1e-12 * np.maximum(np.abs(a0), np.abs(flat).max(axis=0))
     floor = -POLAR_NEGATIVE_FLOOR * float(np.abs(flat).max())
     neg = (flat < floor).any(axis=0)
     bad = fit_bad | neg

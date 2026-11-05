@@ -62,7 +62,8 @@ tb_keypoints_uv_to_rowcol 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+次の例は元の台帳 op `keypoints_uv_to_rowcol` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [poc_bga_ball_type_roundtrip](../../../../examples/poc_bga_ball_type_roundtrip.py) — `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 
 ## 型が繋がる次の op(`keypoints` を入力に取れる)
 
