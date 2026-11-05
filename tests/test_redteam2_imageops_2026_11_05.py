@@ -201,18 +201,18 @@ def test_p4_normalised_distance_with_nothing_to_reach_is_uniform_one(name, x):
 
 
 @pytest.mark.parametrize("a", [0.0, 0.5, 1.0])
-def test_p4_absolute_distance_with_nothing_to_reach_is_refused(a):
-    from fslib import FsValueError
+def test_p4_absolute_distance_with_nothing_to_reach_is_uniform_zero(a):
+    """相手が無い入力は正当な空入力: 例外でなく一様 0(斜面や -1 ではない)、反転と可換。"""
     import ops
-    with pytest.raises(FsValueError, match="undefined"):
-        ops._dist_transform_abs(np.ones((6, 8)), a, 0.0)
-    with pytest.raises(FsValueError, match="undefined"):
-        ops._dist_transform_abs(np.zeros((6, 8)), a, 1.0)
-    # 相手が 1 画素でもあれば距離は有限で、左右の反転と可換
+    for x, b in ((np.ones((6, 8)), 0.0), (np.zeros((6, 8)), 1.0)):
+        y = ops._dist_transform_abs(x, a, b)
+        assert np.array_equal(y, np.zeros_like(x))
+        assert np.array_equal(ap(x, "dist_transform_abs", a, b), np.zeros_like(x))
+    # 相手が 1 画素でもあれば距離は有限で、その画素は 0
     x = np.ones((6, 8))
     x[2, 3] = 0
     y = ops._dist_transform_abs(x, a, 0.0)
-    assert np.isfinite(y).all() and y[2, 3] == 0.0
+    assert np.isfinite(y).all() and y[2, 3] == 0.0 and y.max() > 0
 
 
 def test_p4b_the_documented_example_values_hold():
