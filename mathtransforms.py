@@ -177,7 +177,15 @@ def abel_revolve(slice_rows, dr: float = 1.0) -> np.ndarray:
 # Hankel(quasi-discrete、Guizar-Sicairos & Gutiérrez-Vega 2004)
 # ---------------------------------------------------------------------------- #
 class HankelPlan:
-    """Reusable quasi-discrete Hankel kernel for one ``(order, n)`` pair."""
+    """Reusable quasi-discrete Hankel kernel for one ``(order, n)`` pair.
+
+    The plan is **shared**: ``HankelPlan(order, n)`` returns the same cached object to every
+    caller, so it is read-only — its arrays (``jk``, ``Jp1``, ``T``) refuse in-place writes and
+    its attributes refuse assignment (``ValueError`` / ``AttributeError``). Copy an array
+    (``plan.T.copy()``) to modify it. ★Adversarial review 2026-11-05 round 2: before this, one
+    caller doing ``plan.T[0, 0] += 1`` silently changed every later ``hankel_transform`` with
+    the same ``(order, n)`` — even calls that never passed a plan (max change 0.95).
+    """
     constructions = 0
 
     def __new__(cls, order: int = 0, n: int = 256):
@@ -194,6 +202,19 @@ class _PreparedHankelPlan:
         self.T = 2.0 * special.jv(order, np.outer(self.jk, self.jk) / self.S) / (
             np.outer(self.Jp1, self.Jp1) * self.S)
         self.T_involution_error = float(np.abs(self.T @ self.T - np.eye(n)).max())
+        for arr in (self.jk, self.Jp1, self.T):
+            arr.setflags(write=False)          # 共有される(lru_cache)ので読み取り専用
+        object.__setattr__(self, "_frozen", True)
+
+    def __setattr__(self, name, value):
+        if getattr(self, "_frozen", False):
+            raise AttributeError("HankelPlan is shared (cached per (order, n)) and read-only; "
+                                 "cannot set %r" % (name,))
+        object.__setattr__(self, name, value)
+
+    def __delattr__(self, name):
+        raise AttributeError("HankelPlan is shared (cached per (order, n)) and read-only; "
+                             "cannot delete %r" % (name,))
 
 
 @lru_cache(maxsize=32)

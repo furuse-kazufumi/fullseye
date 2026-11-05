@@ -347,6 +347,8 @@ def heap_synth_cone(phi_deg: float, radius_px: float, pitch: float = 1e-3, *, to
       ``truth``(phi_deg, R_px, H_px, toe_px, V(数値回転積分 [m³]), V_cone(閉形式)、ground_tilt_deg)、
       ``pitch``。側面像の列 ``x`` の粉の高さ(被覆率の列和)はちょうど ``c(x)`` [px] になる(副画素)。
     **Raises** ``ValueError``: 範囲外・円弧の重なり。"""
+    if noise > 0.0 and seed is None:     # 敵対的検証 2026-11-05 第 2 巡 T7
+        raise ValueError("heap_synth_cone: noise needs an explicit integer seed (seed=None would draw fresh noise on every call)")
     phi = _angle(phi_deg, "phi_deg")
     R = _pos(radius_px, "radius_px")
     p = _pos(pitch, "pitch")
@@ -574,6 +576,8 @@ def discharge_synth(D0: float, d: float, bulk_density: float, phi_deg: float, pi
     [m])、``times`` [s]、``W``(真の率 [kg/s])、``masses``(真の質量列)。``noise`` = 高さ図に足す
     ガウス雑音の σ [m] (距離センサの雑音の代わり; 地面も揺れるので体積は 0 で切られて偏る —— その偏りを
     門で測る)。山が格子からはみ出すと ``ValueError``(体積を黙って切らない)。"""
+    if noise > 0.0 and seed is None:     # 敵対的検証 2026-11-05 第 2 巡 T7
+        raise ValueError("discharge_synth: noise needs an explicit integer seed (seed=None would draw fresh noise on every call)")
     W = beverloo_rate(D0, d, bulk_density, C=C, k=k)
     phi = _angle(phi_deg, "phi_deg")
     p = _pos(pitch, "pitch")

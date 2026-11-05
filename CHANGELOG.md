@@ -34,6 +34,21 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - K8 `annotate._luma_field` の docstring を実装(sRGB の伝達関数を外す、灰 0.5 → 0.214)に合わせた(コードは変えていない)。
 - 疑い `quatimage.monogenic_orientation` / `monogenic_metrics` が `np.mod(-1e-17, π)` の丸めでちょうど π(約束は `[0, π)`)→ 0 に戻す。`filmoptics.film_color` の `hue_deg` が丸めで 360.0 → 0 に戻す。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(state)
+
+- T6 GPU の経路(`apply(..., device="cuda"/"auto")` の単 op、`accel.run_batch` / `accel.run_pipeline`、`accel_vol.run_batch_vol` / `run_pipeline_vol`)で値が変わる: `b > 0.5` が端の扱い(nearest / constant / wrap)・構造要素(十字 / 円板 / 線)を選ぶ op(`fast._KNOB_B_OPTIONED` の 18 本と `vol_gaussian`)は core で答える(以前は kernel が `b` を無視して reflect / 正方形のまま計算し、`device="cpu"` と a=0.5 で median 0.528・mean_box 0.311・gaussian 0.265・gdilate 0.424・gerode 0.417・gopen 0.417・gclose 0.405 違った)。`b <= 0.5` は従来どおり kernel(速さも答えも変わらない)。
+- T7 `noise > 0` で `seed=None`(既定)のまま呼ぶと `ValueError`("noise needs an explicit integer seed"、lockin / photoncount と同じ規約): `acoustics.synthesize_bearing_signal` / `synthesize_speed_ramp`、`fringe.synthesize_fringes`、`granular.heap_synth_cone` / `discharge_synth`、`scoop.scoop_synth_side`(以前は `default_rng(None)` で呼ぶたびに雑音が変わり、公開値が再現しなかった)。雑音なしの呼び出しは従来どおり seed 不要。
+- T9 `HankelPlan(order, n)` の配列(`jk` / `Jp1` / `T`)へのその場の書き込みは `ValueError`、属性の代入・削除は `AttributeError`(共有の写しなので)。書き換えたいときは `plan.T.copy()`。
+
+### 修正 — 敵対的検証 2026-11-05 第 2 巡(state)
+
+回帰は `tests/test_redteam2_state_2026_11_05.py`(真値は `device="cpu"` の core、合成器は 2 回呼んで一致するかの不変量)。
+
+- T6 accel の kernel が `b` の新しい選択肢を黙って無視していた。`accel._b_falls_back` / `accel_vol._b_falls_back` を足し、CPU の高速 twin(`fast.apply_fast`)と同じ判定で core へ回す。`api._try_accel` は kernel を起こさず `_NOACCEL`(台帳に何も残さない、`device="cpu"` と 1 ビットも同じ)、常駐パイプラインは区間の途中でもその段だけ core で計算して戻す。`accel.parity("cpu")` が許容 5e-3 を超えていた 5 本(gerode / gdilate / gray_opening_rect / gray_closing_rect / gauss_filter)は全部 0 本になった —— 門は緩めず、kernel が写せない入力を kernel に渡さない形。兄弟: `accel_vol` の `vol_gaussian_g`(`b > 0.5` で 0.42 違った)を同じ形で直した。`vol_median_g` 等は `b` を使わない。`accel_label` の領域 op は `b` を端・構造要素に使わない。
+- T7 合成器 6 本の seed の規約を揃えた。呼び出し側(examples・PoC・tests・tools の 105 か所)は AST で全部当たり、雑音つきで seed を渡していない呼び出しは無かった。兄弟: `seed=None` 既定で乱数を引く関数を AST で全部当たり、`driver_style`(None = 名目値で乱数を引かない)、`mathnumerics.low_discrepancy`(random は既に拒否、Sobol は None で非スクランブル = 決定的)、`astrostack.synth_starfield` の `field_seed` / `coherent.laser_line_coherent` の `noise_seed`(None は seed / 0 に倒れる)、examples の `render` / `make_series` と tools の `scene_weld_xray_porosity`(None = 雑音なし・既定の seed)は決定的で変えない。
+- T8(依頼時は未再現の疑い、再現した)`fsthreads` の BLAS 上限: スレッドを跨いで文脈が交互に入る/抜けると、B の上限が A の退出で外れ(2 -> 24)、全部抜けた後もプロセスが A の上限 1 に固まった(24 -> 1)。文脈ごとに threadpoolctl の `limit` を重ねていたのを、プロセスで 1 つの受け台帳(鍵つき)と limiter 1 個に替えた。効く上限は「効いている文脈のうち最後に入ったもの」、最後の文脈が抜けたら元の値。単スレッドの入れ子は従来どおり。
+- T9(依頼時は未再現の疑い、再現した)`mathtransforms.HankelPlan`: `lru_cache` で全員に同じ物を返すのに書き換えられ、1 人が `plan.T[0, 0] += 1` すると plan を渡さない別の `hankel_transform` まで変わった(最大 0.95)。配列は読み取り専用、属性の代入・削除は `AttributeError`。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(stats)
 
 回帰の門は `tests/test_redteam_stats_2026_11_05.py`(真値・不変量・独立実装と比べる。修正前のコードで 23 件が落ちることを確認)。
