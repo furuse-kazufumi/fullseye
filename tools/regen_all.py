@@ -224,7 +224,7 @@ OUTPUTS = {
     "tools/gen_recipe_index.py": ["fullseye/data/RECIPE_INDEX.json"],
     "tools/gen_recipe_coverage.py": ["docs/RECIPE_COVERAGE.md", "docs/recipe_coverage.json"],
     "tools/gen_recipe_retrieval_report.py": ["docs/recipe_retrieval_report.json"],
-    "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json"],
+    "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json", "docs/MCP.md"],
     "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
     "tools/gen_device_rules.py": ["fullseye/data/DEVICE_RULES.json"],
     "tools/gen_gpu_routes.py": ["docs/perf/pipeline_routes.json", "docs/perf/pipeline_routes.md"],

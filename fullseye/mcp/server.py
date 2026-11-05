@@ -70,7 +70,7 @@ TOOLS: dict[str, dict] = {
     "fullseye_plan": {
         "description": "型付き経路を計画する。入力と欲しい型が分かったら使い、次に fullseye_op_cards を呼ぶ。",
         "inputSchema": {"type":"object","properties":{"have":{"oneOf":[{"type":"string"},{"type":"array","items":{"type":"string"}}]},
-            "want":{"type":"string","minLength":1},"goal":{"type":"string","maxLength":400},
+            "want":{"type":"string"},"goal":{"type":"string","maxLength":400},
             "direction":{"type":"string","enum":["forward","backward"]},
             "pattern":{"type":"string"}},"required":["have","want"],"additionalProperties":False}},
     "fullseye_describe": {
@@ -1809,7 +1809,10 @@ def _profile_tool_names(profile: str) -> set[str]:
 # minimal プロファイルの広告スキーマから隠す上級引数(受け付けは常に可。full では見せる)。
 # 2026-11-02: device / parity_check を足した分で minimal が 1,500 トークンの予算を超えたため。
 # 2026-11-04(統合 GPU): 第 5 便の dry_run / assume_cuda で再び 1,500 を超えた(1,588)ので同じ扱いにする。
-MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check", "dry_run", "assume_cuda")}
+# 2026-11-05(敵対的検証 D10): find_ops の lang を schema に足した分で 1,531 になったので lang も隠す。
+#   plan の want の空・空白はハンドラが ArgError(-32602)で断る(minLength は空白だけを止められず、予算も食う)。
+MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check", "dry_run", "assume_cuda"),
+                                                   "fullseye_find_ops": ("lang",)}
 
 
 def _advertised_schema(name: str, profile: str) -> dict:
