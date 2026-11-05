@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 657 of 1758. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 657 of 1759. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `_archive_tarxz.py`
@@ -3322,8 +3322,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L121** — ★ If a previous staging copy remains in `build/lib`, setuptools **packs it into the wheel as-is** (measured 2026-09-05: a module removed from py-modules stayed in the wheel, and the gate's mutation test passed). Same reason release.yml builds from a clean checkout. Here too, always discard it before building.
 - **L233** _(ja)_ — ★2026-10-18: スクリプトは一時 dir に置くので、`import fullseye` は editable install(本線の 作業ツリー)を読んでいた —— worktree で出すリリースを検査したつもりで、別の版を見ていた。 PYTHONPATH でこの ROOT を先頭に置き、点検する対象 = 出すツリーにする。
-- **L319** _(ja)_ — ★全出力は **repo の外**に残す。repo 直下に置くと「余計なファイル」を見る門に 当たりうるし、木が汚れて「凍った木で 1 回」という証拠の条件が崩れる。
-- **L362** — ★ Calling `--only suite` without `--full` yields 0 items, and it used to say "all PASS" and return with rc=0 (measured in the 2026-09-05 review). **A gate that passes while checking nothing** is worse than no gate.
+- **L323** _(ja)_ — ★2026-11-06: 以前は並列なし・上限 5400 秒(90 分)。スイートが 27,000 件を超え、並列なしでは 90 分に収まらず「点検自体が落ちた: TimeoutExpired」で FAIL になった(中身の合否は分からないまま)。 CI と同じく pytest-xdist で並列に回す(xdist は順序依存を出すためにも入れてある、pyproject 参照)。 並列数は SUITE_WORKERS。16 では時間の上限つきのテスト(test_chain_mine の 120 秒)が負荷で 落ちたので 12 にする。上限の 7200 秒は点検が止まらないための安全装置で、合否の閾値ではない。
+- **L330** _(ja)_ — ★全出力は **repo の外**に残す。repo 直下に置くと「余計なファイル」を見る門に 当たりうるし、木が汚れて「凍った木で 1 回」という証拠の条件が崩れる。
+- **L373** — ★ Calling `--only suite` without `--full` yields 0 items, and it used to say "all PASS" and return with rc=0 (measured in the 2026-09-05 review). **A gate that passes while checking nothing** is worse than no gate.
 
 ## `tools/preflight_op_add.py`
 
