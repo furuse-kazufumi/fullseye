@@ -616,7 +616,11 @@ def curvature(points, k: int = 16) -> np.ndarray:
     cov = np.einsum("nki,nkj->nij", c, c)
     ev = np.linalg.eigvalsh(cov)                   # ascending
     tot = ev.sum(1)
-    return np.where(tot > 1e-12, ev[:, 0] / tot, 0.0)
+    # ★1.0 前の修正 2026-11-05 abs-floor: 以前は ``tot > 1e-12`` の絶対の床。tot は長さ² なので、座標 1e-6 の点群では
+    #   全点の曲率が 0 になった。床は点群の座標の大きさ² に対する相対量(丸め屑だけを落とす)。
+    floor = (1e-12 * float(np.abs(P).max())) ** 2
+    ok = tot > floor
+    return np.where(ok, ev[:, 0] / np.where(ok, tot, 1.0), 0.0)
 
 
 def centroid(points) -> np.ndarray:

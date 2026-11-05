@@ -102,7 +102,10 @@ def normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_came
     dPy, dPx = np.gradient(P, axis=0), np.gradient(P, axis=1)  # (H,W,3) each
     n = np.cross(dPx, dPy)
     nrm = np.linalg.norm(n, axis=-1, keepdims=True)
-    n = n / (nrm + 1e-12)
+    # ★1.0 前の修正 2026-11-05 abs-floor: 以前は ``n / (nrm + 1e-12)``。nrm は長さ² なので、深度・画素の実寸が 1e-6 の桁では
+    #   床が本体を上回り、法線の長さが 1 にならなかった(深度 1e6 の桁でも丸めの差が出た)。
+    #   床なしで割り、外積が厳密に 0 の画素(退化)は以前どおり 0 ベクトル。
+    n = np.divide(n, nrm, out=np.zeros_like(n), where=nrm > 0.0)
     if orient_to_camera:
         # 視線 = 点→カメラ(原点)= -P。n·(-P) < 0 の画素を反転して視点向きに揃える。
         view = -P
