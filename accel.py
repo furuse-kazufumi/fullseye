@@ -1351,12 +1351,40 @@ if _HAS_TORCH:
     del _key, _row
 
 
+def _b_falls_back(name, a, b) -> bool:
+    """accel op *name* の kernel が ``(a, b)`` を忠実に写せず、core に回すべきか。
+
+    ★敵対的検証 2026-11-05 第 2 巡 T6: ``b > 0.5`` で端の扱い(``ops._border``)・構造要素の形
+    (``ops._se``)を選ぶ core op(``fast._KNOB_B_OPTIONED``)に対し、ここの kernel は**歴史的な規約
+    (reflect / 正方形)しか実装していない**。以前は ``b`` を黙って無視し、``device="cuda"`` だけ答えが
+    変わっていた(a=0.5 で median 0.528・mean_box 0.311・gaussian 0.265・gdilate 0.424 …)。
+    CPU の高速 twin(``fast.apply_fast``)と同じ判定で、選択肢が新しい間は core へ回す
+    —— 速くはならないが、答えは ``device="cpu"`` と 1 ビットも変わらない。
+    """
+    row = ACCEL.get(name)
+    if row is None:
+        return False
+    import fast
+    return fast._b_selects_a_new_option(row[1], a, b)
+
+
+def _core_batch(name, imgs, a, b):
+    """:func:`_b_falls_back` の受け皿: core op を 1 枚ずつ float64 で走らせ、kernel と同じく 0..1 に切る。"""
+    import ops
+    core = ops.RT[ACCEL[name][1]]
+    return [np.clip(np.asarray(core(np.asarray(im, np.float64).copy(), a, b), np.float64), 0.0, 1.0)
+            for im in imgs]
+
+
 def run_batch(name, imgs, a=0.5, b=0.4, device="cpu"):
     """Run one accel op over a batch of images; returns a list of 2-D arrays.
 
     :data:`REDUCERS`(領域 -> 特徴・ベクトル)は 1 枚ごとの ``np.float64`` / 1-D 配列のリスト(0..1 に切らない)。
+    ``b`` が kernel の実装していない選択肢を選ぶとき(:func:`_b_falls_back`)は core で答える。
     """
     fn = ACCEL[name][0]
+    if _b_falls_back(name, a, b):
+        return _core_batch(name, imgs, a, b)
     t = _to_batch(imgs, device)
     if name in REDUCERS:
         return list(fn(t, a, b, device))
@@ -1386,6 +1414,10 @@ def run_pipeline(steps, imgs, device="cpu"):
             if i != len(steps) - 1:
                 raise ValueError("accel reducer %r must be the last step of a resident segment" % name)
             return list(ACCEL[name][0](t, a, b, device))
+        if _b_falls_back(name, a, b):
+            # 区間の途中でも core へ(1 往復増えるが、b の選択を無視するよりよい —— T6)
+            t = _to_batch(_core_batch(name, _from_batch(t), a, b), device)
+            continue
         t = ACCEL[name][0](t, a, b, device).clamp(0, 1)
     return _from_batch(t)
 
