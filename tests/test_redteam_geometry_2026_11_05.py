@@ -9,6 +9,7 @@ import math
 
 import numpy as np
 import pytest
+from conftest import requires_backend
 
 import camera as C
 import feat_shot
@@ -90,6 +91,8 @@ def test_g1b_fundamental_inliers_belong_to_returned_f():
 
 @pytest.mark.parametrize("iters", [500, 50, 10])
 def test_g1b_feat_shot_ransac_rigid_inliers_belong_to_returned_pose(iters):
+    # feat_shot は torch(threed extra)の上で解く。torch の無い CI(py3.12/3.14)では飛ばす。
+    requires_backend("torch")
     rng = np.random.default_rng(0)
     src = rng.uniform(-1, 1, (200, 3))
     R = C.rodrigues([0.3, -0.2, 0.5]); t = np.array([0.2, 0.1, -0.3])
@@ -252,6 +255,8 @@ def test_g9_ransac_line_scale_invariant(s):
 
 @pytest.mark.parametrize("s", [1e-4, 1e-6])
 def test_g9_feat_shot_ransac_rigid_scale_invariant(s):
+    # feat_shot は torch(threed extra)の上で解く。torch の無い CI(py3.12/3.14)では飛ばす。
+    requires_backend("torch")
     rng = np.random.default_rng(0)
     src = rng.uniform(-1, 1, (200, 3))
     R = C.rodrigues([0.3, -0.2, 0.5]); t = np.array([0.2, 0.1, -0.3])
