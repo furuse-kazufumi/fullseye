@@ -29,10 +29,10 @@ source_sha256: 1a9b3748af332a4f69b0fb9bd1b803a9b5c6c5c5356b77cb5403cd0f3e57bf3e
 
 | 组织 | 主管的标准 |
 | --- | --- |
-| **A3**(Association for Advancing Automation,原 AIA・美国) | **Camera Link**(含 PoCL / PoCL-Lite)、**Camera Link HS**、**GigE Vision**、**USB3 Vision** |
+| **A3**(Association for Advancing Automation,原 AIA、美国) | **Camera Link**(含 PoCL / PoCL-Lite)、**Camera Link HS**、**GigE Vision**、**USB3 Vision** |
 | **JIIA**(日本工业成像协会) | **CoaXPress**(2013 年发布)、IIDC2、SLVS-EC 系列 |
 | **EMVA**(European Machine Vision Association) | **GenICam**(GenApi / **GenTL** / **SFNC** / PFNC)、**EMVA1288**(相机性能的测量方法)、**OOCI**(Open Optics Camera Interface) |
-| **VDMA**(德国) | 与其说是标准本身,不如说负责解说・推广・协调 |
+| **VDMA**(德国) | 与其说是标准本身,不如说负责解说、推广、协调 |
 | **CMVU**(中国) | 中国方面的窗口 |
 | **G3** | 横跨上述组织的**协调机构**。跨越各硬件标准保持共同软件层的框架 |
 
@@ -62,8 +62,8 @@ CoaXPress 还是 GigE,都能用**同样的功能名**(SFNC = Standard Features N
 
 ## 3. EMVA1288(性能的测量方法)
 
-同样由 EMVA 掌管的**相机性能测量・表述标准**。对 QE・时间暗噪声・饱和容量・
-动态范围・最大 SNR・绝对灵敏度阈值,**用同样的步骤测量、以同样的形式给出**。
+同样由 EMVA 掌管的**相机性能测量、表述标准**。对 QE、时间暗噪声、饱和容量、
+动态范围、最大 SNR、绝对灵敏度阈值,**用同样的步骤测量、以同样的形式给出**。
 
 `image_sensors.md` 的传感器表之所以能跨厂商横向比较,
 是因为所有值都按 EMVA1288 测得。反过来说,没有发布 EMVA1288 报告的
@@ -73,7 +73,7 @@ CoaXPress 还是 GigE,都能用**同样的功能名**(SFNC = Standard Features N
 
 * **传输标准变了,控制的词汇(SFNC)也不变**。所以
   `optscene` 的传感器/镜头/照明对象也应当用不依赖传输标准的量
-  (曝光・增益・ROI・触发)来表示。把传输单独分离到 `interface_budget` 中,
+  (曝光、增益、ROI、触发)来表示。把传输单独分离到 `interface_budget` 中,
   这种划分与上述结构是一致的。
 * **EMVA1288 是单一事实来源**。目录中的 QE / 噪声 / 饱和容量取自这里。
   混入自有指标的数值会破坏横向比较。

@@ -35,7 +35,7 @@ Matrix Vision / The Imaging Source 等。所搭载的传感器(IMX / XGS / GMAX 
 
 ## 2. 自研传感器的厂商(无法从型号查到)
 
-Canon(仅供自家产品)/ Teledyne DALSA・e2v(传感器也对外销售)/ Photron(高速相机)/
+Canon(仅供自家产品)/ Teledyne DALSA / e2v(传感器也对外销售)/ Photron(高速相机)/
 Vision Research = Phantom(28 µm 像素的定制传感器,TMX 为背照式)/ Hamamatsu(自研与
 外购混用。ORCA-Quest 由 Fairchild Imaging 开发)/ Sony(两者兼有)。
 → 详见 `image_sensors.md` 的相应小节。
@@ -44,7 +44,7 @@ Vision Research = Phantom(28 µm 像素的定制传感器,TMX 为背照式)/ Ham
 
 ### Vieworks(韩国)
 
-产品线覆盖面阵扫描(VC / VN / VP / VNP / VQ / VZ / VX)与线扫描・TDI(VT / VL)。
+产品线覆盖面阵扫描(VC / VN / VP / VNP / VQ / VZ / VX)与线扫描、TDI(VT / VL)。
 从虚拟化的角度看,重要的是以下 3 点:
 
 | 系列 | 特点(公开规格) | 对光学模型的含义 |

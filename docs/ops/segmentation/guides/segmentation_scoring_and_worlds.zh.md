@@ -29,29 +29,29 @@ source_sha256: 012ad3a7a3720aa165885696b114ff463581d7a768f3776b24441c3a76841531
 两个输入都是 `labels2d`(非负整数,0 为背景)。输出为 `table`(扁平的 dict)。
 
 - **列联表与对应** —— `seg_confusion_table`: 行 = 真值、列 = 预测的像素数表。对应关系不用 Hungarian,
-  而用**最大重叠**(按行・按列取 argmax),相互选中则为 `mutual`,整体为 1 对 1 则为
+  而用**最大重叠**(按行/按列取 argmax),相互选中则为 `mutual`,整体为 1 对 1 则为
   `unique_matching`。
 - **区域重叠** —— `seg_dice_jaccard`: 对掩膜(背景以外的并集)计算,或用 `per_label` 按标签计算。
   恒等式 D = 2J/(1+J) 是门。
 - **边界的接近程度** —— `seg_boundary_f`(在容许距离 τ 以内是否有对方的边界 = Martin 式的 BF 值)/
   `seg_hausdorff`(最坏的偏差,也给出 HD95)/ `seg_mean_surface_distance`(平均表面距离 ASSD)。
-- **计数上的失效** —— `seg_under_over_segmentation`(用多数表决的重数表示过分割・欠分割)/
-  `seg_object_counts_match`(用 2 部图的度表示分裂・融合・缺失・虚假・一致)。
-- **评分表** —— `seg_score_card`: 以上全部 + 已有 `segcompare` 的 VI・Rand・ARI 汇总到 1 张表。
+- **计数上的失效** —— `seg_under_over_segmentation`(用多数表决的重数表示过分割/欠分割)/
+  `seg_object_counts_match`(用 2 部图的度表示分裂、融合、缺失、虚假、一致)。
+- **评分表** —— `seg_score_card`: 以上全部 + 已有 `segcompare` 的 VI、Rand、ARI 汇总到 1 张表。
 
 ## world(`segworld`): 旋钮 → 图像 + 真值标签 + 闭式真值
 
-`world_*` 不接受输入(只有旋钮),返回带有 `image`・`labels`・`truth` 的 `table`。
+`world_*` 不接受输入(只有旋钮),返回带有 `image`、`labels`、`truth` 的 `table`。
 每个世界都有**让 1 种方法失效的理由**:
 
 - `world_blobs_touching` —— 相互接触的圆(阈值 + 连通成分会把它们融合。真值 = 透镜形面积的闭式)。
-- `world_grains_voronoi` —— 晶粒(晶界的细线。真值 = Voronoi 多边形的面积・边长)。
+- `world_grains_voronoi` —— 晶粒(晶界的细线。真值 = Voronoi 多边形的面积、边长)。
 - `world_parts_with_shadow` —— 带阴影的工业零件(欺骗阈值的暗面和阴影)。
 - `world_texture_regions` —— 均值相同而只有质感不同的区域(阈值切不开)。
 - `world_gradient_illumination` —— 照明梯度上的暗物体(全局阈值失效,平场校正可修复)。
 - `world_thin_structures` —— 宽 1〜3 px 的线和裂纹(平滑后会消失)。
 - `lens_area` —— 等半径 2 个圆重叠部分的面积(闭式,`world_blobs_touching` 真值的核心)。
-- `voronoi_cells` —— 矩形内的 Voronoi 划分(多边形・面积・内部边长。`world_grains_voronoi` 的核心)。
+- `voronoi_cells` —— 矩形内的 Voronoi 划分(多边形、面积、内部边长。`world_grains_voronoi` 的核心)。
 
 ## 流程
 
@@ -89,7 +89,7 @@ assert cm["merged"] == 1 and not cm["counts_match"]               # Dice は高�
 
 | 症状 | 原因 | 应看的尺子 |
 |---|---|---|
-| Dice・Jaccard 很高,物体却不够 | 掩膜类尺子**对融合・分裂视而不见**(只看像素重叠) | `seg_object_counts_match` 的 `merged` / `split`、`seg_under_over_segmentation` |
+| Dice、Jaccard 很高,物体却不够 | 掩膜类尺子**对融合、分裂视而不见**(只看像素重叠) | `seg_object_counts_match` 的 `merged` / `split`、`seg_under_over_segmentation` |
 | 边界 F 很高,区域却多得数不清 | 边界类尺子**对过分割视而不见**(只要裂缝对上就是满分) | `seg_under_over_segmentation` 的 `over`、`seg_score_card` 的 `voi` |
 | ASSD 很小,却在 1 处严重偏离 | 平均值**对离群值不敏感** | `seg_hausdorff`(最坏值,HD95) |
 | `seg_hausdorff` 抛出 `ValueError` | 一方只有 1 种颜色(没有边界)= 没有可测量的表面 | 确认输入中有 2 个以上的标签 |
@@ -98,7 +98,7 @@ assert cm["merged"] == 1 and not cm["counts_match"]               # Dice は高�
 
 ## 一手资料
 
-- Martin et al. 2004, "Learning to Detect Natural Image Boundaries"(带容许距离的边界精确率・召回率):
+- Martin et al. 2004, "Learning to Detect Natural Image Boundaries"(带容许距离的边界精确率、召回率):
   <https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/papers/mfm-pami-boundary.pdf>
 - Perazzi et al. 2016, DAVIS benchmark(边界 F 值的应用): <https://davischallenge.org/>
 - Meilă 2007, "Comparing clusterings — an information based distance"(VI): <https://doi.org/10.1016/j.jmva.2006.11.013>
@@ -107,7 +107,7 @@ assert cm["merged"] == 1 and not cm["counts_match"]               # Dice は高�
 
 ## 相关
 
-- `segcompare`(VI・Rand・ARI 的实现)。`seg_score_card` 会调用它。
-- `metrics3d.voxel_dice` / `voxel_iou` / `hausdorff_distance`(掩膜 Dice・点云 Hausdorff 的第 2 实现,测试的门)。
+- `segcompare`(VI、Rand、ARI 的实现)。`seg_score_card` 会调用它。
+- `metrics3d.voxel_dice` / `voxel_iou` / `hausdorff_distance`(掩膜 Dice、点云 Hausdorff 的第 2 实现,测试的门)。
 - HALCON Segmentation 章的 9 op(`docs/ops/segmentation/guides/halcon_segmentation.md`): **生成**分割的一方。
   这 2 个类别是对生成的分割**评分**的一方。

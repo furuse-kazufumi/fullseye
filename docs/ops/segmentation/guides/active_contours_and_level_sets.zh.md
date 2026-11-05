@@ -36,7 +36,7 @@ source_sha256: 27a77f580c53fdab2e38ce32e1349140e9ab3f1cff62977e00f2b9f29b070026
   `gvf_field` 是 Xu–Prince 1998 的梯度向量流(把力扩散到远离边缘处的场),是用来
   **把 snake 拉进凹陷处**的外力。
 - **区域拟合(不使用边缘)** —— `chan_vese_energy` / `chan_vese_evolve`(Chan–Vese 2001。
-  与用内外均值 c1・c2 近似的 2 值图像之差 + 长度)、`morph_chan_vese`(Márquez-Neila 等 2014 的
+  与用内外均值 c1、c2 近似的 2 值图像之差 + 长度)、`morph_chan_vese`(Márquez-Neila 等 2014 的
   形态学近似,MorphACWE)。
 - **在边缘处停止(测地)** —— `edge_stop_g`(g = 1 / (1 + |∇G_σ*I|² / k²),在边缘处较小)、
   `morph_geodesic_ac`(形态学 GAC,MorphGAC。输入为 g)、`drle_evolve`(Li 等 2010 的距离正则化
@@ -48,7 +48,7 @@ source_sha256: 27a77f580c53fdab2e38ce32e1349140e9ab3f1cff62977e00f2b9f29b070026
 
 | op | 门(真值的来源) | 不保证的内容 |
 |---|---|---|
-| `snake_evolve` | 外力为 0 的圆在 1 次迭代中半径变为 γ/(γ + λ₁) 倍(循环矩阵的特征值,严格)。若 γ ≥ L(外力的 Lipschitz 常数),能量单调不增(下降引理)。第 2 实现 = skimage `active_contour` | 使用 γ < L・`max_px_move`・`resample_every` 时单调性会中断(实测值见 `n_increase`) |
+| `snake_evolve` | 外力为 0 的圆在 1 次迭代中半径变为 γ/(γ + λ₁) 倍(循环矩阵的特征值,严格)。若 γ ≥ L(外力的 Lipschitz 常数),能量单调不增(下降引理)。第 2 实现 = skimage `active_contour` | 使用 γ < L、`max_px_move`、`resample_every` 时单调性会中断(实测值见 `n_increase`) |
 | `gvf_field` | Euler 方程是线性的 → 用稀疏矩阵直接求解和迭代 2 种方式求解,残差 ≈ 0 且两者一致 | 时间步长的稳定条件依据记忆(推荐 `method="direct"`) |
 | `chan_vese_*` | 离散能量的精确梯度 + Armijo 回溯,保证单调不增。凸松弛版返回对偶间隙 | 论文本身并未主张单调减少(这是此处离散化的性质) |
 | `morph_*` | 数据步前后拟合能量单调不增(按像素可分离)。第 2 实现 = skimage 的同名函数 | 平滑步可能使能量上升(返回实测值) |
@@ -109,7 +109,7 @@ assert abs(flow["area_rate"] - flow["area_rate_theory"]) < 0.05 * abs(flow["area
 | 症状 | 原因 | 对策 |
 |---|---|---|
 | snake 进不了凹陷处(U 字形的内侧) | 梯度外力只存在于边缘附近(Xu–Prince 1998 图中的现象) | 用 `gvf_field` 作外力(`external="gvf"`),或用 `resample_every` 重新布点 |
-| snake 在到达边缘之前就缩成一个点 | 在外力达不到的地方只有内部能量(α・β)起作用,圆每次缩为 γ/(γ+λ₁) 倍 | 让初始轮廓靠近边缘、增大 `sigma` 扩大外力的作用范围、增大 `kappa` |
+| snake 在到达边缘之前就缩成一个点 | 在外力达不到的地方只有内部能量(α、β)起作用,圆每次缩为 γ/(γ+λ₁) 倍 | 让初始轮廓靠近边缘、增大 `sigma` 扩大外力的作用范围、增大 `kappa` |
 | snake 的能量增加(`n_increase` > 0) | γ < L(`gamma_ge_lipschitz` 为 False),或 `max_px_move` 破坏了近端梯度的性质 | 使 γ 不小于 `lipschitz` |
 | Chan–Vese 因照明梯度把一整半区域都划进去 | 全局的 2 均值把照明不均看作"2 个区域"(不使用边缘的方法的局限) | 用在边缘处停止的 `morph_geodesic_ac` / `drle_evolve`,或先做平场校正 |
 | 相互接触的颗粒变成 1 个区域 | 轮廓法只有 2 相(内与外),没有把颗粒之间分开的力 | 用分水岭(`watersheds_marker`)或 `blob_split` 分割结果 mask |
@@ -131,12 +131,12 @@ assert abs(flow["area_rate"] - flow["area_rate_theory"]) < 0.05 * abs(flow["area
 - Gage, Hamilton 1986, "The heat equation shrinking convex plane curves": <https://doi.org/10.4310/jdg/1214439902>
 - Grayson 1987, "The heat equation shrinks embedded plane curves to round points": <https://doi.org/10.4310/jdg/1214441371>
 
-`segcontour` 的 docstring 中,把已对照原论文版面确认的公式,与仅停留在二手资料・记忆的部分(GVF 时间步长的
+`segcontour` 的 docstring 中,把已对照原论文版面确认的公式,与仅停留在二手资料、记忆的部分(GVF 时间步长的
 稳定条件、形态学算子与 PDE 等价性的表述、DRLSE 的 CFL 条件的出处)分开写明。
 
 ## 相关
 
 - `segeval`(评分的尺子)与 `segworld`(带真值的合成世界): `segmentation_scoring_and_worlds` 指南。
-  轮廓法的局限(照明梯度・阴影・相互接触的颗粒)在合成世界上可以用数值看出来(PoC `examples/poc_active_contours.py`)。
+  轮廓法的局限(照明梯度、阴影、相互接触的颗粒)在合成世界上可以用数值看出来(PoC `examples/poc_active_contours.py`)。
 - 已有的 `sk_chan_vese`(2-D 注册表,skimage 的 Chan–Vese): `chan_vese_evolve` 的对照对象。
 - HALCON Segmentation 章的 9 op(`halcon_segmentation` 指南): 一次性给像素分类的一方。
