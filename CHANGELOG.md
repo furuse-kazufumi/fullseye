@@ -10,6 +10,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
+### 修正 — 敵対的検証 2026-11-05 残件
+
+回帰は `tests/test_redteam_leftovers_2026_11_05.py`(真値・不変量・独立実装と比べる)。
+
+- L1 角度を `(−π, π]` に折る内部関数 2 本が約束の値域を守っていなかった(`fringe.wrapped_phase` を `(−π, π]` に直したときの兄弟)。`complexops._wrap` は `np.round` の偶数丸めで `−π` を `−π` のまま、`3π` を `−π` にしていた。`carpath._wrap` は floor の式で `π` を `−π` にしていた(値域が `[−π, π)`)。どちらも floor で折ってから `−π` 以下を `+2π` する形(drivecourse / drivetown の `_wrap` と同じ)。呼び出し側は全部モジュールの中で、`phase_unwrap` の結果は変わらない(同じ位相を `+π` と書いても `−π` と書いても展開が同じことを門にした)。Reeds-Shepp / Dubins の経路長は 1,445 点の格子(π の境界を含む)で修正前と全部一致(対称な候補が拾っていた)。兄弟: `[−π, π)` を返す `drivecommonroad` / `itof` / `moirealign` / `ultrasound` の `_wrap` と examples の 2 本は値域を約束しておらず、呼び出し側は差の絶対値か小さな差にしか使わないので変えない。`residue._wrap_signed` は `[−p/2, p/2)` と書いてあり、そのとおり。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(state)
 
 - T6 GPU の経路(`apply(..., device="cuda"/"auto")` の単 op、`accel.run_batch` / `accel.run_pipeline`、`accel_vol.run_batch_vol` / `run_pipeline_vol`)で値が変わる: `b > 0.5` が端の扱い(nearest / constant / wrap)・構造要素(十字 / 円板 / 線)を選ぶ op(`fast._KNOB_B_OPTIONED` の 18 本と `vol_gaussian`)は core で答える(以前は kernel が `b` を無視して reflect / 正方形のまま計算し、`device="cpu"` と a=0.5 で median 0.528・mean_box 0.311・gaussian 0.265・gdilate 0.424・gerode 0.417・gopen 0.417・gclose 0.405 違った)。`b <= 0.5` は従来どおり kernel(速さも答えも変わらない)。
