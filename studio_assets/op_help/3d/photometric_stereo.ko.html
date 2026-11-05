@@ -7,7 +7,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 있음(허용 목록의 기계적 GPU 경로, CuPy). <code style="color:#22d3bf">device=&quot;auto&quot;</code> 는 측정한 크기(4,194,304 픽셀) 이상에서 GPU를 선택</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Lambert 광도 스테레오: 알려진 광원 방향의 N 장에서 법선과 알베도를 복원. → (normals HxWx3, albedo HxW).</p>
-<p>I_n = albedo * max(N·L_n, 0). 각 화소에서 g = albedo*N을 최소제곱 g = pinv(L) @ I로 풀고, albedo=|g|, normal=g/|g|. N&gt;=3 필요. albedo~0이나 mask 밖의 화소는 normal=(0,0,1). normalize=True이면 광원 벡터를 단위 방향으로 정규화한다(render_lambertian과 동일한 규약 = 알베도 절댓값이 올바르게 나온다). 강도 가중 광원을 쓴다면 normalize=False로 하고, 합성 쪽도 원시 벡터로 맞출 것.</p>
+<p>I_n = albedo * max(N·L_n, 0). 각 화소에서 g = albedo*N을 최소제곱 g = pinv(L) @ I로 풀고, albedo=|g|, normal=g/|g|. N&gt;=3 필요. albedo~0이나 mask 밖의 화소는 normal=(0,0,1). &quot;albedo~0&quot;은 입력의 최대 휘도에 대한 상대량이다(<code style="color:#22d3bf">1e-8 × max|I|</code>). 휘도의 단위·자릿수(W/m²이든 8 bit이든)와 상관없이 같은 화소가 퇴화로 판정된다. normalize=True이면 광원 벡터를 단위 방향으로 정규화한다(render_lambertian과 동일한 규약 = 알베도 절댓값이 올바르게 나온다). 강도 가중 광원을 쓴다면 normalize=False로 하고, 합성 쪽도 원시 벡터로 맞출 것.</p>
 <p>lit_only(2026-09-04 추가): <b>부착 그림자(attached shadow)를 제외하고 푼다</b>. 모델의 max(·, 0)은 비선형이므로, N·L &lt; 0인 관측(참값은 0)을 선형 최소제곱에 그대로 넣으면해가 치우친다 ―― 실측: 그림자도 AO도 없는 구에서 중앙값 <b>9°</b>, 켜진 광원만으로 풀면 <b>0.000°</b>. 기본값은 False(기존 동작을 바꾸지 않는다). True로 하면 화소마다 <code style="color:#22d3bf">I &gt; lit_thresh</code>인 광원만 사용해 다시 푼다. <b>같은 점등 패턴의 화소를 묶어서</b> 1 회의 의사역행렬로 처리하므로, 추가 비용은 광원 수에 따른 패턴 수에 비례하는 정도(6 등이면 최대 64 그룹). 켜진 광원이 3 개 미만인 화소는 전체 광원의 해로 되돌린다(fail-open:</p>
 <p>풀 수 없는 화소를 NaN으로 하기보다, 치우쳐 있더라도 값이 있는 편이 하류의 적분이 깨지지 않는다).</p>
 <p>lit_thresh: &quot;켜져 있다&quot;고 간주하는 휘도의 하한. 촬영 잡음보다 위에 둔다.</p>

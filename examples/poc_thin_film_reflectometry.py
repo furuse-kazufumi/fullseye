@@ -58,6 +58,7 @@ import examplefig as figs  # noqa: E402
 import filmoptics as FO  # noqa: E402
 import materials as MT  # noqa: E402
 import matappear as MA  # noqa: E402
+import realdata  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
                          "reduced" if os.environ.get("CI") else "full") == "reduced"
@@ -227,6 +228,7 @@ def chapter_real():
     rows = _csv("schwarz2024_sio2_si_reflectance.csv")
     cov = [float(h.replace("R_cov", "")) for h in rows[0][1:]]
     a = np.array([[float(v) for v in r] for r in rows[1:]])
+    realdata.mark_read("schwarz2024-sio2-reflectance")
     lam = a[:, 0]
     full, bare = np.column_stack([lam, a[:, 1]]), np.column_stack([lam, a[:, -1]])
     out = {"lam": lam, "full": full, "bare": bare, "cov": cov, "a": a}
@@ -272,6 +274,7 @@ def chapter_real():
          NUMBERS["real_cov_mae"] < 5.0)
     # (4) 標準試料(安価な分光器、反射率は任意単位 → 倍率もあてはめる)
     rs = _csv("sanchez_arriaga2023_sio2_standards.csv")
+    realdata.mark_read("sanchez-arriaga2023-sio2-standards")
     groups = {}
     for r in rs[1:]:
         groups.setdefault((r[0], r[1], int(r[2])), []).append((float(r[3]), float(r[4])))
@@ -300,6 +303,7 @@ def chapter_real():
     # (5) 実物の顕微鏡写真(カメラは不明)→ 裸の Si の領域で色を合わせて、画素ごとの膜厚
     from PIL import Image
     im = np.asarray(Image.open(os.path.join(REAL, "schwarz2024_micrograph_sio2_edge_640.jpg")).convert("RGB"), float) / 255.0
+    realdata.mark_read("schwarz2024-sio2-micrograph")
     lin = np.where(im <= 0.04045, im / 12.92, ((im + 0.055) / 1.055) ** 2.4)
     h, w = lin.shape[:2]
     yy, xx = np.mgrid[0:h, 0:w]
@@ -986,8 +990,12 @@ def make_figures(lam, chart, est, imgs, ident, micro, real):
     figure_scale = figs._figure_scale()
     for d in np.linspace(0.0, 1500.0, 46):
         p = spectrum(d)
+        # ★render_plot の既定は等倍(Studio の画面用、2026-11-01 の 5103a2f2ab)。隣に並べる
+        #   円盤の板は figure_scale 倍で作るので、倍率は**ここで明示的に渡す**(渡さないと
+        #   高さ 280 と 560 で np.concatenate が落ちる —— 図の段は CI が走らせていなかった)。
         plot = figs.render_plot([("R(λ)", p[:, 0], p[:, 1])], xlabel="波長 [nm]", ylabel="反射率",
-                                title="SiO₂ %4.0f nm on Si" % d, size=(420, 280), ylim=(0.0, 0.6))
+                                title="SiO₂ %4.0f nm on Si" % d, size=(420, 280), ylim=(0.0, 0.6),
+                                scale=figure_scale)
         sw = FO.film_color("SIO2", "SI", d, d + 1e-6, 2, exposure=1.6)["srgb"][0]
         yy, xx = np.mgrid[0:280 * figure_scale, 0:140 * figure_scale]
         disk = np.hypot(xx - 70 * figure_scale, yy - 140 * figure_scale) < 62 * figure_scale

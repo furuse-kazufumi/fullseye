@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 100 capabilities**
+**Currently 101 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -70,6 +70,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Reuse validation, neighbourhoods and transform kernels](capabilities/reuse-computation-results.md) | `polarization_separate` | `perf_pointcloud_descriptors` |
 | [Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
+| [Reading scientific data files (FITS, NIfTI, MRC, OME-TIFF, E57)](capabilities/scientific-data-files.md) | `astro_fits_read` | `poc_real_file_formats` |
 | [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
 | [Measure the same particles in scanning and transmission images and compare both size biases](capabilities/sem-tem-same-particle.md) | `sem_render` → `tem_power_spectrum` | `poc_sem_tem_same_particle` |
 | [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
@@ -961,7 +962,7 @@ Alternatives: [`signal_features`](ops/oned/signal/signal_features.md), [`octave_
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## Compose (10)
+## Compose (11)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 
@@ -1034,6 +1035,18 @@ Pipeline: [`polarization_separate`](ops/specular/polarization/polarization_separ
 Alternatives: `curvature_descriptors`, `HankelPlan`, `piv_outlier_mask_stream`, `monogenic_metrics`, `grid_axes`, `polarization_analyze`, `prepare_vol_probe`, `unpack_lsb`
 
 Runnable: `perf_pointcloud_descriptors`, `perf_monogenic_metrics`, `perf_prepared_volume_probe`, `perf_polarization_analyze`, `perf_hankel_plan_and_piv_stream`
+
+### [Reading scientific data files (FITS, NIfTI, MRC, OME-TIFF, E57)](capabilities/scientific-data-files.md)
+
+Turns the bytes of astronomy FITS, neuroimaging NIfTI-1, electron-microscopy MRC2014, microscopy OME-TIFF and 3-D scanner E57 files into `(array, meta)` (a point table for E57), with dimensioned quantities carried with their units: the basic FITS WCS, NIfTI qform / sform and voxel spacing in mm, MRC voxel size in angstrom, OME-TIFF physical sizes, E57 pose. The arrays feed straight into Fullseye's 2-D / 3-D operators. Corrupt files, header/content disagreements and unsupported extensions are refused by name rather than read silently. The PoC reads real public files byte-for-byte and checks them against astropy, nibabel, mrcfile and tifffile pixel for pixel and against the providers' published values.
+
+Operators: `astro_fits_read`, `nifti_read`, `em_mrc_read`, `ome_tiff_read`, `e57_read`, `nrrd_read`
+
+Pipeline: [`astro_fits_read`](ops/fileio/fits/astro_fits_read.md)
+
+Alternatives: [`nifti_read`](ops/fileio/nifti/nifti_read.md), [`em_mrc_read`](ops/fileio/mrc/em_mrc_read.md), [`ome_tiff_read`](ops/fileio/ome_tiff/ome_tiff_read.md), [`e57_read`](ops/fileio/e57/e57_read.md), [`nrrd_read`](ops/fileio/nrrd/nrrd_read.md), [`star_detect`](ops/astrostack/photometry/star_detect.md), [`aperture_photometry`](ops/astrostack/photometry/aperture_photometry.md), [`vol_label`](ops/3d/regionprops/vol_label.md), [`vol_region_props`](ops/3d/regionprops/vol_region_props.md)
+
+Runnable: `poc_real_file_formats`
 
 ### [Write typed op results as JSON and read them back bit-for-bit](capabilities/typed-results-as-json.md)
 

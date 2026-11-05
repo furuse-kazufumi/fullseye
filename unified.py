@@ -294,12 +294,20 @@ def _load_facade(reg: Registry) -> None:
                                render_hint=_render_hint(namespace, name), params=_params_of(func)))
 
 
-def _make_evolution_caller(fn):
+def _make_evolution_caller(name: str):
     """進化 op(v,a,b)を自然な ``op(image)`` 呼び出しに包む(F1: 探索用ノブ a/b は自然
     シグネチャに露出しない)。a/b は keyword-only の escape hatch として残す(既定=中立 0.5、
-    power user が ``op(image, a=0.2)`` で調整可=表現力は失わない)。"""
+    power user が ``op(image, a=0.2)`` で調整可=表現力は失わない)。
+
+    ★2026-11-05(敵対的検証 C1): 以前は生の ``op.fn(image, a, b)`` を呼び、``fullseye.apply`` の
+    入口の契約(dtype ``/255`` と台帳、非有限の拒否、ノブの型・範囲、空・次元、strict)を全部
+    飛ばしていた —— ``fullseye.Image(uint8 200).gaussian()`` が uint8 の 200 を返し、NaN 入りの
+    画像・``a=5`` / ``a=nan`` / ``a="0.3"`` が例外も台帳記録も無く通った。``apply`` を通す。"""
     def call(image, *, a: float = 0.5, b: float = 0.5):
-        return fn(image, a, b)
+        import api
+        return api.apply(image, name, a, b)
+    call.__name__ = name
+    call._fullseye_registry_op = name          # Pipeline.run が run_pipeline の段にまとめる目印
     return call
 
 
@@ -317,7 +325,7 @@ def _load_evolution(reg: Registry) -> None:
         doc = doc[0].strip() if doc else f"{op.category} op(HALCON: {op.halcon or '-'})"
         # F1: 自然シグネチャは image のみ(探索ノブ a/b は非露出、keyword-only で調整可)
         params = [("image", _inspect.Parameter.empty, "arg")]
-        reg.register(UnifiedOp(name=op.name, func=_make_evolution_caller(op.fn),
+        reg.register(UnifiedOp(name=op.name, func=_make_evolution_caller(op.name),
                                module=f"fs.apply({op.name!r})", chapter=op.category,
                                namespace=namespace, doc=doc, provenance="evolution",
                                render_hint=_SORT_RENDER.get(op.out_sort, "image"), params=params))
@@ -601,12 +609,51 @@ class Pipeline:
         self._stages.append((_resolve_op(op), kwargs))
         return self
 
+    def _segments(self) -> list:
+        """段を「registry op の連続」と「それ以外の 1 段」に分ける。
+
+        registry(進化)op で kwargs が a / b だけの段は ``("registry", [(name, a, b), ...])`` に
+        まとめ、``fullseye.run_pipeline`` と同じ本体で走らせる。facade / 知覚 / 生の callable は
+        自然シグネチャの関数なので ``("call", op, kwargs)`` のまま呼ぶ。"""
+        import api
+        segs: list = []
+        for i, (op, kw) in enumerate(self._stages):
+            reg_name = getattr(op.func, "_fullseye_registry_op", None)
+            if reg_name is not None and set(kw) <= {"a", "b"}:
+                st = (reg_name, kw.get("a", 0.5), kw.get("b", 0.5))
+                api._normalise_stage(i, st)          # ノブの型は apply と同じ規則(何も走らせない)
+                if segs and segs[-1][0] == "registry":
+                    segs[-1][1].append(st)
+                else:
+                    segs.append(("registry", [st]))
+            else:
+                segs.append(("call", op, kw))
+        return segs
+
     def run(self, x, *, trace: bool = False):
-        """入力 x を全段に順に流す。trace=True で各段の中間出力も返す。"""
+        """入力 x を全段に順に流す。trace=True で各段の中間出力も返す。
+
+        ★2026-11-05(敵対的検証 C1): registry op の段は生の ``op.fn`` ではなく
+        ``fullseye.run_pipeline`` と同じ本体(``api._prepare_pipeline`` + ``api._pipeline_steps``)で
+        走る —— 入口の dtype 契約・非有限の拒否・ノブ検査・台帳・strict が ``run_pipeline`` と同じ。
+        **型の連鎖は何も走らせる前に**連続する registry 段ごとに検査する(``["gaussian",
+        "vol_gaussian"]`` は ``run_pipeline`` と同じ ValueError。以前は黙って走った)。"""
+        import api
+        segs = self._segments()
+        for kind, *rest in segs:                      # 何も走らせない前検査: 型の連鎖
+            if kind == "registry":
+                api._check_chain_sorts([api._resolve(n) for n, _, _ in rest[0]], where="fullseye.Pipeline")
         vals = [x]
-        for op, kw in self._stages:
-            x = op(x, **kw)
-            vals.append(x)
+        policy = api._policy(None)
+        for kind, *rest in segs:
+            if kind == "registry":
+                img, norm, ops_ = api._prepare_pipeline(x, rest[0], 0.5, 0.5, policy)
+                for x in api._pipeline_steps(img, norm, ops_, True, policy, api._fast_on(None)):
+                    vals.append(x)
+            else:
+                op, kw = rest
+                x = op(x, **kw)
+                vals.append(x)
         return (x, vals) if trace else x
 
     __call__ = run

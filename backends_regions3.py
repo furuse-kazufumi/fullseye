@@ -235,7 +235,7 @@ def r3_select_region_point(v, a, b):
     h, w = m.shape
     r = min(h - 1, max(0, int(round(_knob(a) * (h - 1)))))
     c = min(w - 1, max(0, int(round(_knob(b) * (w - 1)))))
-    lab, n = ndimage.label(m)
+    lab, n = ndimage.label(m, structure=np.ones((3, 3), bool))   # 前景は 8 連結(2026-11-05 P1)
     if n == 0:
         return out
     lv = int(lab[r, c])

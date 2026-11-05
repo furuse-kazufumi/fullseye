@@ -57,9 +57,11 @@ def frenet_frame(curve):
     を各点で計算する。r'' の T 直交成分の向きは再パラメータ化に不変なので、点間隔が
     滑らかに変わる限り index パラメータで正しい向きが出る。
 
-    - 分母には絶対値 1e-12 を足すだけで、正規化しきれない箇所は単位長にならない。直線区間
-      (r'' ∥ T または 0)では N・B がほぼゼロベクトルになり、変曲点の前後で N の向きが
-      反転する。「単位ベクトル」の保証はそこでは成り立たない。
+    - 正規化に床は置かない(2026-11-05 敵対的検証 N1 の兄弟: 以前は分母に絶対値 1e-12 を
+      足しており、尺度 1e-6 の曲線で N の長さが 0.998、1e-9 で 0.33 になった)。T は ‖r'‖ = 0 の点
+      (同じ点の繰り返し)だけ 0 ベクトル。N は r'' の T 直交成分が ‖r'‖ の 1e-9 倍以下(1 標本あたりの
+      曲がりが 1e-9 rad 未満 = 直線区間)の点で 0 ベクトル、B もそこで 0。変曲点の前後では N の向きが
+      反転する。
     - N<2 の点列は ``np.gradient`` が ``ValueError`` を出す。形状検証はそれ以外に無い。
     - 両端 2 点は片側差分なので精度が落ちる。等間隔化(``resample_uniform``)や平滑
       (``fit_spline_curve``)を先に掛けると安定する。
@@ -67,11 +69,13 @@ def frenet_frame(curve):
     曲率・捩率の数値そのものは ``curvature_torsion``、弧長は ``arc_length``。
     """
     r1, r2, _ = _d(curve, order=2)
-    T = r1 / (np.linalg.norm(r1, axis=1, keepdims=True) + 1e-12)
+    n1 = np.linalg.norm(r1, axis=1, keepdims=True)
+    T = np.divide(r1, n1, out=np.zeros_like(r1), where=n1 > 0)
     # 主法線 = 接線変化方向(r2 の T 直交成分)
     proj = np.sum(r2 * T, axis=1, keepdims=True) * T
     Nn = r2 - proj
-    N = Nn / (np.linalg.norm(Nn, axis=1, keepdims=True) + 1e-12)
+    nn = np.linalg.norm(Nn, axis=1, keepdims=True)
+    N = np.divide(Nn, nn, out=np.zeros_like(Nn), where=(nn > 1e-9 * n1) & (nn > 0))
     B = np.cross(T, N)
     return T, N, B
 

@@ -107,7 +107,13 @@ def _load_image(path: str) -> np.ndarray:
         arr = imgio.load(path)
     arr = np.asarray(arr, np.float64)
     if arr.ndim == 3:
-        arr = arr.mean(axis=2)
+        # ★2026-11-05(敵対的検証 C9): 以前は任意の 3 次元配列を最後の軸で平均し、(N, H, W) の積み重ねや
+        #   (H, W, D) の体積を黙って 2-D の「画像」にしていた((3, 40, 40) → (3, 40)、数えた個数は別物)。
+        #   色の軸と読めるのは (H, W, 3) / (H, W, 4) だけ(RGBA は alpha を除いた 3 色の平均)。他は断る。
+        if arr.shape[-1] not in (3, 4):
+            raise KitError("a 3-D image must be colour (H, W, 3) or (H, W, 4); got shape %s -- a stack "
+                           "or volume is not one image (split it into one file per frame)" % (arr.shape,))
+        arr = arr[..., :3].mean(axis=2)
     if arr.ndim != 2 or arr.size == 0:
         raise KitError("image must be a non-empty 2-D greyscale array (got shape %s)"
                        % (arr.shape,))

@@ -13,7 +13,7 @@
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_shape_std.inputs.jpg">select_shape_std: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>연결 성분 중 가장 큰 면적을 가진 것만 남긴다(<code style="color:#22d3bf">_largest_label</code>로 선택). HALCON의 <code style="color:#22d3bf">select_shape_std</code>(Select regions of a given shape.)는 <code style="color:#22d3bf">max_area</code>를 포함한 여러 표준 기준을 선택할 수 있는 연산자지만, 여기서는 &#x27;면적 최대&#x27; 한 종류로 고정되어 있다(근사).</p>
+<p>연결 성분 중 가장 큰 면적을 가진 것만 남긴다(<code style="color:#22d3bf">_largest_label</code>로 선택, 전경은 8 연결). HALCON의 <code style="color:#22d3bf">select_shape_std</code>(Select regions of a given shape.)는 <code style="color:#22d3bf">max_area</code>를 포함한 여러 표준 기준을 선택할 수 있는 연산자지만, 여기서는 &#x27;면적 최대&#x27; 한 종류로 고정되어 있다(근사).</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다. 여러 영역의 면적이 같으면 <code style="color:#22d3bf">argmax</code>의 구현에 따라그중 1개가 선택된다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

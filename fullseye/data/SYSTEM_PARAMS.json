@@ -37,8 +37,7 @@
       "values": [
         3,
         5,
-        7,
-        10
+        7
       ],
       "meaning": "Default number of diverse operator proposals.",
       "hide_from_ai": true,
@@ -54,8 +53,7 @@
       "values": [
         0,
         1,
-        2,
-        3
+        2
       ],
       "meaning": "Maximum recipe-derived proposals within the find_ops total.",
       "hide_from_ai": true,
@@ -83,8 +81,7 @@
       "default": 100,
       "values": [
         50,
-        100,
-        500
+        100
       ],
       "meaning": "Reserved iterative solver cap.",
       "hide_from_ai": true,
@@ -110,8 +107,7 @@
       "default": 134217728,
       "values": [
         67108864,
-        134217728,
-        268435456
+        134217728
       ],
       "meaning": "LRU byte cap for live MCP handles.",
       "hide_from_ai": true,
@@ -125,8 +121,7 @@
       "default": 134217728,
       "values": [
         67108864,
-        134217728,
-        268435456
+        134217728
       ],
       "meaning": "Cumulative byte cap for outputs produced by one MCP pipeline request.",
       "hide_from_ai": true,
@@ -156,8 +151,7 @@
       "default": 33554432,
       "values": [
         16777216,
-        33554432,
-        67108864
+        33554432
       ],
       "meaning": "Pixel cap for MCP image loads, stacks, and operation outputs.",
       "hide_from_ai": true,
@@ -213,8 +207,7 @@
         1,
         3,
         5,
-        7,
-        10
+        7
       ],
       "meaning": "Maximum returned plans.",
       "hide_from_ai": true,
@@ -228,9 +221,7 @@
       "default": 4,
       "values": [
         2,
-        4,
-        8,
-        16
+        4
       ],
       "meaning": "Maximum hypergraph depth.",
       "hide_from_ai": true,
@@ -245,8 +236,7 @@
       "values": [
         1000,
         10000,
-        50000,
-        100000
+        50000
       ],
       "meaning": "Planner expansion cap.",
       "hide_from_ai": true,
@@ -261,8 +251,7 @@
       "values": [
         100,
         500,
-        900,
-        2000
+        900
       ],
       "meaning": "Planner wall-time cap.",
       "hide_from_ai": true,

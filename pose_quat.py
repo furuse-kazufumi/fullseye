@@ -317,10 +317,14 @@ def convert_point_3d_cart_to_spher(x, y, z):
 
     ``r = |p|``、経度 ``lon = atan2(y, x)``(x 軸から、z 軸まわりに反時計回り)、緯度
     ``lat = asin(z / r)``(xy 平面から z の正の向きへ)。原点では ``lat = 0``。
+
+    ★2026-11-05(敵対的検証 geometry、未再現の疑いを確認): 以前は ``asin(z / (r + 1e-12))``
+    で、極付近は単位スケールでも 1.4e-6 rad ずれ(asin の傾きが 1 で発散)、r = 1e-12 の点は
+    緯度 90° が 30° になった。``atan2(z, hypot(x, y))``(同じ量、尺度に依らず正確)で計算する。
     """
     r = np.sqrt(x * x + y * y + z * z)
     lon = np.arctan2(y, x)
-    lat = np.arcsin(np.clip(z / (r + 1e-12), -1, 1))
+    lat = np.arctan2(z, np.hypot(x, y))
     return np.array([r, lon, lat])
 
 
@@ -420,8 +424,13 @@ def dual_quat_to_screw(dq):
     """二重四元数からスクリュー成分(角度・並進・軸)を返す(dual_quat_to_screw)。"""
     dq = _q(dq)
     qr, qd = dq[:4], dq[4:8]
-    theta = 2 * np.arccos(np.clip(qr[0], -1, 1))
-    if float(np.linalg.norm(qr[1:])) < 1e-9:
+    # ★2026-11-05(敵対的検証 geometry、未再現の疑いを確認): 以前は θ = 2 acos(w)、
+    # sin(θ/2) = sqrt(1 − w²) + 1e-12 で、小さい回転では 1 − w² が桁落ちして 0 になり
+    # (θ = 2e-8 で θ → 0、d → 5000、|axis| → 10000)、境界付近は 1e-12 の足し算で軸が縮んだ。
+    # sin(θ/2) はベクトル部のノルムそのもの、θ は atan2 で取る(単位四元数で同じ量)。
+    sn = float(np.linalg.norm(qr[1:]))
+    theta = 2 * np.arctan2(sn, qr[0])
+    if sn < 1e-9:
         # ★2026-10-07 レビュー修正: 回転が無い(純並進)と sin(θ/2)=0 で割れず、旧実装は
         # 軸 0・並進 0 を返して並進を丸ごと失った。qr = ±1 なら qd = ±(0, t/2) なので
         # t = 2·sign(w)·qd[1:]、軸 = t/|t|、d = |t|(並進も無ければ軸 0・d 0)。
@@ -429,7 +438,7 @@ def dual_quat_to_screw(dq):
         tn = float(np.linalg.norm(tv))
         axis = tv / tn if tn > 0.0 else np.zeros(3)
         return {"theta": float(theta), "d": tn, "axis": axis}
-    st = np.sqrt(max(1 - qr[0] ** 2, 0)) + 1e-12
+    st = sn
     l = qr[1:] / st
     d = -2 * qd[0] / st
     return {"theta": float(theta), "d": float(d), "axis": l}

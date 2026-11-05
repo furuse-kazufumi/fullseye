@@ -6,7 +6,7 @@
 (`interferomet` / `wli` / `chromatic_conf` = 0)。既存の `fringe` は
 **位相シフト法**で、位相から高さを出す — 精密だが原理的に 2π 不定性を持ち、
 λ/4 を超える段差を**黙って別の値として返す**。本レジストリはその不定性を
-持たない側の台帳(interferometry.py、9 op / 5 カテゴリ)。
+持たない側の台帳(interferometry.py、9 op / 6 カテゴリ)。
 
 来歴は公開文献のみ(docs/PROVENANCE.md の naming rule に従い、特定の製品・
 企業を動機にも名前にも使わない): de Groot, *Adv. Opt. Photon.* 2015(走査

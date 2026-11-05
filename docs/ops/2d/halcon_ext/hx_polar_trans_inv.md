@@ -40,7 +40,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 contour 点を (radius, angle) とみなし直交座標へ逆変換(polar_trans の逆)。
 
 各 contour の点を ``(row, col) = (半径 rad, 角度)`` とみなし、``ang = col / W * 2*pi`` として
-``(cy + rad*sin(ang), cx + rad*cos(ang))``(``cy, cx = H/2, W/2``)の直交座標に戻した contour を返す。
+``(cy + rad*sin(ang), cx + rad*cos(ang))``(``cy, cx = (H-1)/2, (W-1)/2`` = 画素中心の規約の画像中心。2026-11-05 まで ``H/2, W/2``)の直交座標に戻した contour を返す。
 
 - ``a``, ``b`` は未使用。
 - 半径は行の値をそのまま画素距離として使い、角度は列を画像幅で 0〜2π に写す。

@@ -1,15 +1,16 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">recover_pose — 3D <code style="color:#22d3bf">two_view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">pose</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import twoview; twoview.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;recover_pose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.recover_pose(pts1, pts2, K1, K2=None, planar_tol=3.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import twoview; twoview.recover_pose(pts1, pts2, K1, K2=None, planar_tol=3.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;recover_pose&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>対応点 + K から相対姿勢 (R,t) と 3D 構造を復元(cheirality で一意化)。→ (R, t_unit, points3d)。</p>
 <p>t はスケール不定なので単位ベクトル。points3d は cam1 座標系(|t|=1 に対応するスケール)。</p>
-<p>fail-closed: 平面(共平面 3D)/純回転シーンは本質行列分解の<b>退化配置</b>で、Sampson 残差 ~0 のまま並進方向を誤って返す(見かけは完璧)。そうした入力は姿勢を復元できないため ValueError で明示拒否する(ホモグラフィ分解を使うこと)。<code style="color:#22d3bf">planar_tol</code> はスケール不変な平面度しきい値(<code style="color:#22d3bf">_planar_degeneracy_ratio</code> の戻り値がこれ未満なら退化と判定)。</p>
+<p>fail-closed: 平面(共平面 3D)/純回転シーンは本質行列分解の<b>退化配置</b>で、Sampson 残差 ~0 のまま並進方向を誤って返す(見かけは完璧)。そうした入力は姿勢を復元できないため ValueError で明示拒否する(ホモグラフィ分解を使うこと)。<code style="color:#22d3bf">planar_tol</code> は視差・尺度に依らない平面度しきい値(<code style="color:#22d3bf">_planar_degeneracy_ratio</code> = H と F の当てはまりの比がこれ未満なら退化と判定。既定 3.0)。</p>
 <p>手順:</p>
 <p style="margin:2px 0 2px 12px">• 入口検査(8 点以上、点数一致、(N,2) かつ有限)。</p>
-<p style="margin:2px 0 2px 12px">• 平面度: 正規化 DLT でホモグラフィ H を当て、対称転送残差の中央値を両画像の点の広がり(重心からの平均距離の和)で割った比を出す。これが <code style="color:#22d3bf">planar_tol</code>(既定 1e-2)未満なら <code style="color:#22d3bf">ValueError</code>。H が特異なら比 0 として同じく拒否。</p>
+<p style="margin:2px 0 2px 12px">• 平面度: 正規化 DLT のホモグラフィ H と正規化 8 点法の F を両方当て、自由度で割った残差の尺度の比 <code style="color:#22d3bf">σ_H / σ_F</code> を出す(<code style="color:#22d3bf">_planar_degeneracy_ratio</code>)。これが <code style="color:#22d3bf">planar_tol</code>(既定 3.0)未満なら <code style="color:#22d3bf">ValueError</code>。平面・純回転は約 √2、非平面は視差 / 雑音に比例して大きい。H が特異なら比 0 として同じく拒否。8 点ちょうどは F の残差から雑音が測れないので、従来の判定(H 残差の中央値 / 点の広がり &lt; 1e-2、視差に比例)を使う。</p>
+<p style="margin:2px 0 2px 12px">• ★2026-11-05(敵対的検証 G11): 以前の比(H 残差 / 点の広がり、既定 1e-2)は視差に比例し、非平面でも基線が小さいと拒否していた(<code style="color:#22d3bf">camera.recover_pose</code> は同じデータを解く)。逆に雑音が大きいと平面でも通していた(σ = 2 px で比 1e-2 超)。どちらも新しい比で直る。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">essential_8point</code> → 4 候補 <code style="color:#22d3bf">(R, ±t)</code> へ分解 → 各候補で <code style="color:#22d3bf">triangulate</code> し、両カメラで深度 &gt; 0 の点数が最大の候補を採る(同数なら先の候補)。</p>
 <p>返り値: <code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,) 単位ベクトル、<code style="color:#22d3bf">points3d</code> (N,3)。規約は cam1 = K1[I|0]、cam2 = K2[R|t] で <code style="color:#22d3bf">X2 = R X1 + t</code>。<code style="color:#22d3bf">points3d</code> は cam1 座標系で |t|=1 のスケール。視線が平行な対応は NaN 行になる。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K2</code> 省略時は <code style="color:#22d3bf">K1</code> を両画像に使う。</p>

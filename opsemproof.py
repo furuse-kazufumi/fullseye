@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsemproof —— EM 連結体校正の「古典 CV セカンドオピニオン」op の統一レジストリ。
 
-実体は ``emproof.py``(7 op / 4 カテゴリ)と ``segcompare.py``(分割の採点と配線、5 op / 2 カテゴリ)。台帳の役目は 3 つ:
+実体は ``emproof.py``(7 op / 4 カテゴリ)と ``segcompare.py``(分割の採点と配線、7 op / 2 カテゴリ)。台帳の役目は 3 つ:
 docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型と素の返りを橋渡しする。
 
 使い方::

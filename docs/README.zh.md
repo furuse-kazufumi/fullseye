@@ -55,16 +55,16 @@
 
 ### 验证阶段
 
-100 项能力按验证方式分类的数量(`docs/maturity.json`,由 `tools/gen_maturity.py` 从当前代码树(pyproject 版本 0.9.0)生成;阶段定义见 [MATURITY.md](MATURITY.md))。
+101 项能力按验证方式分类的数量(`docs/maturity.json`,由 `tools/gen_maturity.py` 从当前代码树(pyproject 版本 0.9.0)生成;阶段定义见 [MATURITY.md](MATURITY.md))。
 
 | 阶段 | 含义 | 能力 |
 |---|---|---|
 | `research-prototype` | 已实现,但测试或可运行的示例尚不齐全 | 0 |
-| `verified-synthetic` | 已用合成真值自动验证 | 81 |
-| `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 19 |
+| `verified-synthetic` | 已用合成真值自动验证 | 92 |
+| `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 9 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
-472 个示例中,检查实际运行的有 472 个。
+481 个示例中,检查实际运行的有 477 个。
 
 ### 各版本的算子数
 
@@ -92,7 +92,7 @@
 
 <!-- poc-index:start -->
 
-## PoC 系列 — 带真值求解的 298 个实际问题
+## PoC 系列 — 带真值求解的 299 个实际问题
 
 每一个都具有闭式或合成的真值，并必定附带零点(什么都不做)。失败模式分开计数，原因用对照组区分。完整列表: [examples/README.md](../examples/README.md)。
 
@@ -129,6 +129,7 @@
 | verification (2) | [`poc_glyph_typo_detection`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py) Finding and Fixing Wrong Characters Without Recognising Them — the Threshold Comes from Typeface Spread<br>[`poc_larval_connectome_reservoir`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_larval_connectome_reservoir.py) A Larval Connectome as a Reservoir Reads Digits — and the Wiring Is Not What Does It |
 | vibration (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) Modal identification from video — frequency survives to the end, damping lies first<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure? |
 | colour (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) Colour Constancy (White Balance) — No Method Works, Only Conditions Do |
+| fileio (1) | [`poc_real_file_formats`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py) Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed |
 | rectification (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth |
 | space (1) | [`poc_star_tracker`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py) How One Star Image Reveals Satellite Attitude |
 | tomography (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) Where CT Reconstruction Starts to Break as Projections Are Removed |
@@ -142,9 +143,9 @@
 
 共有 **3,816 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **73 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 947/947、类型化台账 2820/2832、单行门面 `fullseye.<名称>` 756/1559 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 947/947、类型化台账 2846/2846、单行门面 `fullseye.<名称>` 756/1561 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3816 篇中，附有可运行示例的 **3770** 篇(46 篇没有)，用法说明 120 字以上的 **3614** 篇(202 篇仅一行)。结构(调用形式、类型、可衔接算子)3816 篇全有。
+**内容实测**: 3816 篇中，附有可运行示例的 **3770** 篇(46 篇没有)，用法说明 120 字以上的 **3615** 篇(201 篇仅一行)。结构(调用形式、类型、可衔接算子)3816 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -230,7 +231,7 @@
 
 | 文档 | 内容 |
 |---|---|
-| [OPERATORS.md](OPERATORS.md) | 全部 897 个算子的目录（48 个类别，按 sort 分组，并列出 HALCON／OpenCV／scikit-image／MATLAB 的对应 API） |
+| [OPERATORS.md](OPERATORS.md) | 2-D registry 全部算子的目录（数量见正文第 1 行，按 sort 分组，并列出 HALCON／OpenCV／scikit-image／MATLAB 的对应 API） |
 | [EXAMPLES.md](EXAMPLES.md) | 逐个算子的示例代码（附其他库中的等价调用） |
 | [OP_INDEX.json](OP_INDEX.json) | 机器可读的算子索引（用 `imgevolve.py index` 重新生成） |
 | [ADDING_OPS.md](ADDING_OPS.md) | 如何新增算子（演化、codegen、目录与索引都会自动跟进） |
@@ -305,7 +306,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 326 篇
+## 文档地图 — 共 327 篇
 
 完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,816 篇算子说明与 73 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
@@ -448,7 +449,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(242)
+**Other**(243)
 
 | 文档 | 内容 |
 |---|---|
@@ -603,6 +604,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/robust-code-matching.md`](capabilities/robust-code-matching.md) | id: robust-code-matching |
 | [`capabilities/robust-gaussian-spline-profile-filter.md`](capabilities/robust-gaussian-spline-profile-filter.md) | id: robust-gaussian-spline-profile-filter |
 | [`capabilities/sam-bond-voids.md`](capabilities/sam-bond-voids.md) | id: sam-bond-voids |
+| [`capabilities/scientific-data-files.md`](capabilities/scientific-data-files.md) | id: scientific-data-files |
 | [`capabilities/scratch-detection-and-width.md`](capabilities/scratch-detection-and-width.md) | id: scratch-detection-and-width |
 | [`capabilities/sem-edge-effect-metrology.md`](capabilities/sem-edge-effect-metrology.md) | id: sem-edge-effect-metrology |
 | [`capabilities/sem-tem-same-particle.md`](capabilities/sem-tem-same-particle.md) | id: sem-tem-same-particle |

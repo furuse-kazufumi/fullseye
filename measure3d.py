@@ -134,7 +134,10 @@ def fit_line3(points) -> dict:
     p = _as_points3(points, 2, "points")
     c = p.mean(0)
     u, s, vt = np.linalg.svd(p - c, full_matrices=False)
-    if s[0] <= 1e-12:
+    # 一致点の判定は座標の大きさに対する相対量(2026-11-05 敵対的検証 N6 の兄弟: 以前の
+    # s[0] <= 1e-12 は絶対量で、長さ 1e-13 の正しい線分を「一致点」と捨てていた)。
+    mag = float(np.max(np.abs(p)))
+    if not s[0] > 0.0 or s[0] / np.sqrt(len(p)) <= 1e-13 * mag:
         raise ValueError("points are coincident; no line direction is defined")
     d = vt[0]
     d = d / np.linalg.norm(d)

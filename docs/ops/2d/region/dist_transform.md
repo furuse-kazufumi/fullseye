@@ -43,6 +43,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ``a``, ``b`` は未使用。各前景画素について最も近い背景画素までのユークリッド距離を求め（``scipy.ndimage.distance_transform_edt``）、``_norm`` でその画像内の最大値を 1 に正規化する（画像間で絶対距離の比較はできない）。骨格化・粒の中心検出等の前処理に使う。
 
+**背景が 1 画素も無い**(全面が前景)とき、最も近い背景は画像の中に無い —— どの画素も「無限に遠い」ので、正規化した答えは**一様 1.0**(``xsp_chamfer_dist`` / ``cv_dist`` と同じ)。2026-11-05(敵対的検証 第 2 巡 P4)までは ``distance_transform_edt`` が画像の外の (-1, 0) に背景があるかのような斜面を返し、左右の反転で値が変わっていた。前景が無ければ 0。
+
 Raises:
     FsValueError: NaN / inf を含む画像。
 

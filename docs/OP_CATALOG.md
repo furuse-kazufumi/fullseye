@@ -13,12 +13,13 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(472 例)
+### 2-D 画像/信号/幾何(473 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
 - **書庫を同じbytesで作り、安全に一覧・展開する** — zip、tar、tar.gz、tar.xzを2回作ってSHA-256一致を確かめ、標準ライブラリという独立の読み手とFullseyeの安全な展開の両方で相対pathと内容がbit一致することを自己検査する。 `py -3.11 examples/archive_roundtrip.py`
 - **表・メッシュ・点群を標準形式で受け渡す** — 単位と由来を持つ CSV、属性つき PLY、STL、OBJ、OFF、XYZ、E57 をメモリ上で書いて読み戻し、pandas、plyfile、numpy-stl、trimesh、pye57 でも同じ内容を読めることを自己検査する。 `py -3.11 examples/fileio_roundtrip.py`
+- **実物の科学データファイルを 5 形式読み、外の読み手と公表値で採点する(FITS・NIfTI・MRC・OME-TIFF・E57)** — 公開の実物ファイルを 5 形式、配布されたバイト列のまま(SHA-256 固定)読み、外の読み手と配布元の公表値で採点する。★FITS(SDSS r の NGC 2420、public domain、SkyView の面積保存の再標本化)は astropy と 160,000 画素・WCS 10 キーが完全一致、star_detect → aperture_photometry で SDSS DR16 の飽和なし 15〜20 等の星 127 個の 91.3 % を 1″ 以内で拾い、等級の傾き 1.009・ずれ +0.002 等・頑健なばらつき 0.028 等。★NIfTI(OpenNeuro ds000117、CC0)は nibabel とボクセル完全一致、傾き 26.40°(装置の記載 −26.4)。照合で nifti_read の不具合を直した(180° 近くの四元数で向きが 0.0125° 回っていた → nifti1_io.c と同じ閾値)。★MRC(EMDB EMD-3197)は mrcfile と完全一致、統計量は EMDB の登録値と相対 3e-8、等値面 1.9 の中身 2 塊 4,776 nm³。格子の起点 NXSTART を返さない穴は記録した門。★OME-TIFF(OME 見本 tubhiswt-2D、CC BY 4.0)は 2 ファイル組の片方を拒否(理由を独立に確認)、参照の tifffile は欠けたチャネルをゼロで埋めて返す。★E57 は libE57 の bunny 6 型が PTS 文字版と 30,571 点 1 対 1(取得時)、CI は同梱のイトカワ形状を pye57 で書いた E57。M67 の最初の試みは最近傍の再標本化と飽和で傾き 0.52 だった。 `py -3.11 examples/poc_real_file_formats.py`
 
 **workflow**
 - **MCPで物理量・登録見本・検証済みpipeline案を明示して使う** — 外部資産なしの合成画像で、名前つき物理量による平滑化、明示的な登録見本ハンドルによる位置決め、候補が一意なときだけ返す検証済みpipeline案を実行し、結果を自己検査する。 `py -3.11 examples/mcp_usability.py`
@@ -1052,7 +1053,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `blob_count` (halcon: `count_obj`) `region → feature` GPU: 鎖の中だけ(lbl_blob_count) — Number of connected components in the region (HALCON `count_obj`). · 例: `gallery2d_features`, `poc_real_coin_metrology`, `quickstart`
 - `circularity` (halcon: `circularity`) `region → feature` GPU: 鎖の中だけ(lbl_circularity) — 円形度 ``min(1, 面積 /(π・max²))``。``max`` は**重心から輪郭画素までの最大距離** で、円なら 1、細長い形や大きな出っ張り・穴があるほど小さい。連結成分が複数ある 場合は最大面積のものだけを評価する。HALCON の ``circularity``（Shape factor for the circularity (similarity to a circle) of a region.）**と同じ式**。 · 例: `gallery2d_features`, `poc_cell_counting`, `poc_particle_sizing`, `poc_rotation_invariance_audit`, `shape_factors_closed_form`
 - `circularity_xld` (halcon: `circularity_xld`) `contour → feature` GPU: なし — 最大の輪郭について、シューレース公式の面積 ``F`` と、**囲まれた面積の重心**から 輪郭点までの最大距離 ``max`` から ``min(1, F/(π・max²))`` を計算する (領域版 ``circularity`` の輪郭版)。HALCON の ``circularity_xld`` （Shape factor for the circularity (similarity to a circle) of contours or polygons.）**と同じ式**。 · 例: `gallery2d_features`
-- `compactness` (halcon: `compactness`) `region → feature` GPU: 鎖の中だけ(lbl_compactness) — コンパクトさ ``周囲長² / (4π・面積)``。円で 1、細長い/ぎざぎざ/穴が多いほど 大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the compactness of a region.）と同じ量。 · 例: `gallery2d_features`, `shape_factors_closed_form`
+- `compactness` (halcon: `compactness`) `region → feature` GPU: 鎖の中だけ(lbl_compactness) — コンパクトさ ``max(1, 周囲長² / (4π・面積))``。円で 1、細長い/ぎざぎざ/穴が多いほど 大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the compactness of a region.）と同じ量。 · 例: `gallery2d_features`, `shape_factors_closed_form`
 - `compactness_xld` (halcon: `compactness_xld`) `contour → feature` GPU: なし — 最大の輪郭についてコンパクトさ ``max(1, 周囲長²/(4π・面積))`` を計算する (``compactness`` の輪郭版)。円で 1、細長い/ぎざぎざなほど大きく、**上限は無い**。 HALCON の ``compactness_xld``（Shape factor for the compactness of contours or polygons.）**と同じ式**。 · 例: `gallery2d_features`
 - `connect_and_holes` (halcon: `connect_and_holes`) `region → feature` GPU: 鎖の中だけ(lbl_connect_and_holes) — 領域の連結成分数を数える（8 連結、``count_obj`` と同じ ``_sh_region_feat`` の ``count`` 分岐）。a, b は未使用。 · 例: `gallery2d_features`
 - `contlength` (halcon: `contlength`) `region → feature` GPU: あり(lbl_contlength) — 領域の周囲長 [px] (``regionprops`` の ``perimeter``)。HALCON の ``contlength``（Contour length of a region.）と同じ量・同じ単位。 · 例: `gallery2d_features`, `scale_law_of_features`
@@ -1076,7 +1077,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `estimate_noise` (halcon: `estimate_noise`) `image → feature` GPU: なし — 加法性ノイズの標準偏差 σ をロバスト推定する(``_noise_sigma``: ラプラシアン応答の MAD を正規分布換算し、5 点ラプラシアン核のノイズ利得 ``sqrt(20)`` で割る)。エッジ由来の外れ値には鈍く、平坦部のノイズだけを 拾う設計(2026-09-02 に旧実装の「σ が単位を持たず σ≈0.08 以上で 1.0 に 張り付く」不具合を修正済み、詳細は ``_noise_sigma`` の docstring)。HALCON の ``estimate_noise``（Estimate the image noise from a single image.）に 相当。 · 例: `gallery2d_features`, `poc_weld_radiograph_porosity`
 - `euler_number` (halcon: `euler_number`) `region → feature` GPU: なし — オイラー数(``skimage.measure.euler_number``、連結成分数から穴の数を 引いた位相不変量)。値が小さい(負に近い)ほど穴が多いことを示す。HALCON の ``euler_number``（Calculate the Euler number.）に相当。 · 例: `gallery2d_features`
 - `fractal_dimension` `image → feature` GPU: なし — テクスチャの複雑さを測る Minkowski-Bouligand(ボックスカウント)フラクタル次元。 · 例: `gallery2d_features`, `poc_endless_zoom_and_turning_solids`, `poc_theorems_as_pictures`
-- `get_region_thickness` (halcon: `get_region_thickness`) `region → feature` GPU: なし — 領域の太さ [px] の近似値 ``2 × 最大内接円半径``(``distance_transform_edt`` の最大値の 2 倍)。 · 例: `gallery2d_features`, `poc_bone_trabecular_thickness`
+- `get_region_thickness` (halcon: `get_region_thickness`) `region → feature` GPU: なし — 領域の太さ [px] の近似値 ``2 × 最大内接円半径``(``distance_transform_edt`` の最大値の 2 倍)。 画像の外は背景とみなす(縁に接する領域も、画像を広げたときと同じ太さ。全面の 60x80 は 60)。 · 例: `gallery2d_features`, `poc_bone_trabecular_thickness`
 - `gray_histo_abs` (halcon: `gray_histo_abs`) `image → feature` GPU: なし — 画像の階調の標準偏差(``x.std()``)を返す。HALCON の ``gray_histo_abs`` （Calculate the gray value distribution.）は本来ヒストグラム全体 (各階調のビン度数)を返す演算子だが、この代役ではヒストグラムそのものでは なく分布の広がりを表す標準偏差 1 個のスカラーに要約している(近似 ―― この パイプラインの ``feature`` ソートが 1 スカラーである契約上の制約)。 · 例: `gallery2d_features`
 - `height_width_ratio` (halcon: `height_width_ratio`) `region → feature` GPU: 鎖の中だけ(lbl_height_width_ratio) — 軸平行の外接矩形の縦横比 ``高さ / 幅``。上限は無く、縦長なら 1 を超える (160x4 なら 40.0)。HALCON の ``height_width_ratio``（Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.）が返す 3 値のうち **Ratio と同じ量**(Height と Width は 画素の長さなので返していない —— docs/KNOWN_ISSUES.md §51)。 · 例: `gallery2d_features`
 - `hough_circle_trans` (halcon: `hough_circle_trans`) `image → image` GPU: なし — 円検出のための Hough 変換。エッジマスクに対して半径 4〜19(3 刻み)の 円テンプレート群で ``skimage.transform.hough_circle`` を計算し、全半径での 最大応答を [0,1] に正規化して返す。HALCON の ``hough_circle_trans`` （Return the Hough-Transform for circles with a given radius.）に相当 (HALCON は半径を明示指定するが、ここでは固定レンジを総当たりする近似)。 · 例: `gallery2d_features`, `poc_real_coin_metrology`
@@ -1430,7 +1431,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### 2d / region(79)
 - `boundary` (halcon: `boundary`) `region → region` GPU: 鎖の中だけ(許可リスト) — 領域からその 1 画素収縮版を引くことで外周境界線(輪郭の内側 1 画素の リング)を取り出す。塗りつぶされた領域を輪郭線に変換する。HALCON の ``boundary``（Reduce a region to its boundary.）に相当。 · 例: `gallery2d_region`, `poc_complex_plane_fields`, `poc_driving_commonroad`, `voxel_labels_color`
-- `closest_point_transform` (halcon: `closest_point_transform`) `region → image` GPU: あり(許可リスト) — 領域の**補集合**に対するユークリッド距離変換を正規化して返す ―― 各 画素から最も近い領域(前景)画素までの距離を表す、``distance_transform`` とは前景/背景が逆の距離場。出力は ``image`` 型。HALCON の ``closest_point_transform``（Compute the closest-point transformation of a region.）に相当。 · 例: `gallery2d_region`
+- `closest_point_transform` (halcon: `closest_point_transform`) `region → image` GPU: あり(許可リスト) — 領域の**補集合**に対するユークリッド距離変換を正規化して返す ―― 各 画素から最も近い領域(前景)画素までの距離を表す、``distance_transform`` とは前景/背景が逆の距離場。出力は ``image`` 型。領域が空なら一様 1.0 (最も近い領域の画素が無い = どこも最遠)。HALCON の ``closest_point_transform``（Compute the closest-point transformation of a region.）に相当。 · 例: `gallery2d_region`
 - `closing_circle` (halcon: `closing_circle`) `region → region` GPU: 鎖の中だけ(許可リスト) — 円盤形構造要素による二値クロージング(膨張の後に収縮)。小さな穴や くびれを埋める、``opening_circle`` と対の演算。HALCON の ``closing_circle``（Close a region with a circular structuring element.）に相当。 · 例: `gallery2d_region`, `poc_bev_sensor_fusion`, `poc_real_sem_metal_layer`
 - `closing_golay` (halcon: `closing_golay`) `region → region` GPU: 鎖の中だけ(許可リスト) — 円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値クロージング（closing、膨張の後に収縮）。小さな穴やくびれを埋める。b は未使用。 · 例: `gallery2d_region`
 - `closing_rectangle1` (halcon: `closing_rectangle1`) `region → region` GPU: あり(許可リスト) — 正方形構造要素による二値クロージング。``closing_circle`` の矩形版。 HALCON の ``closing_rectangle1``（Close a region with a rectangular structuring element.）に相当。 · 例: `gallery2d_region`
@@ -1442,7 +1443,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `dilation_seq` (halcon: `dilation_seq`) `region → region` GPU: あり(dilation_seq) — 既定の十字形構造要素（4 近傍）で、a に応じて 1〜4 回反復して膨張（dilation）する逐次的膨張。b は未使用。 · 例: `gallery2d_region`
 - `dist_transform` (halcon: `distance_transform`) `region → image` GPU: あり(許可リスト) — ユークリッド距離変換。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。 · 例: `gallery2d_region`, `poc_bone_trabecular_thickness`
 - `dist_transform_abs` (halcon: `distance_transform`) `region → image` GPU: なし — 正規化しない絶対画素距離の距離変換。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。 · 例: `gallery2d_region`
-- `distance_transform` (halcon: `distance_transform`) `region → image` GPU: あり(許可リスト) — ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で 正規化した画像。各前景画素について最も近い背景画素までの距離を表す ―― 値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく ``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。 · 例: `gallery2d_region`, `poc_cell_counting`, `poc_crack_width`, `poc_fresco_craquelure`, `poc_particle_sizing`, `poc_vessel_network`
+- `distance_transform` (halcon: `distance_transform`) `region → image` GPU: あり(許可リスト) — ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で 正規化した画像。各前景画素について最も近い背景画素までの距離を表す ―― (背景が無ければ一様 1.0 = どこも最遠) 値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく ``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。 · 例: `gallery2d_region`, `poc_cell_counting`, `poc_crack_width`, `poc_fresco_craquelure`, `poc_particle_sizing`, `poc_vessel_network`
 - `em_skeleton` `region → region` GPU: なし — Eckhardt–Maderlechner 型の不変細線化(HALCON `skeleton` と同系統)。 · 例: `gallery2d_region`
 - `erosion_circle` (halcon: `erosion_circle`) `region → region` GPU: あり(erosion_circle) — 円盤形構造要素による二値収縮(``ndimage.binary_erosion``)。前景領域を 外周から侵食して縮める、最も基本的な二値モルフォロジー演算。HALCON の ``erosion_circle``（Erode a region with a circular structuring element.） に相当。 · 例: `gallery2d_region`, `poc_livestock_body_volume`
 - `erosion_golay` (halcon: `erosion_golay`) `region → region` GPU: あり(erosion_golay) — 円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値の収縮（erosion）。b は未使用。 · 例: `gallery2d_region`
@@ -1489,8 +1490,8 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `remove_noise_region` (halcon: `remove_noise_region`) `region → region` GPU: あり(remove_noise_region) — 円形構造要素（半径 ``_rad(a)``=1〜4）による二値オープニング（opening、収縮の後に膨張）で、孤立した小さな点状ノイズを除去する。b は未使用。 · 例: `find_ops_by_meaning`, `gallery2d_region`
 - `remove_small` (halcon: `select_shape`) `region → region` GPU: あり(lbl_remove_small) — 小さい連結領域を面積で除去する。HALCON の ``select_shape``（Choose regions with the aid of shape features.）に相当。 · 例: `gallery2d_region`, `quickstart`
 - `select_largest` (halcon: `select_shape_std`) `region → region` GPU: 鎖の中だけ(lbl_select_largest) — 最大面積の連結領域だけを残す。HALCON の ``select_shape_std``（Select regions of a given shape.）に相当。 · 例: `gallery2d_region`, `poc_document_scan`, `poc_leaf_disease_area`
-- `select_shape` (halcon: `select_shape`) `region → region` GPU: あり(lbl_select_shape) — 面積が閾値(``16+a*200`` 画素)未満の連結成分を除去する(小さなノイズ状 領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる 汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。 · 例: `gallery2d_region`
-- `select_shape_std` (halcon: `select_shape_std`) `region → region` GPU: 鎖の中だけ(lbl_select_shape_std) — 連結成分のうち最大の面積を持つものだけを残す(``_largest_label`` で 選択)。HALCON の ``select_shape_std``（Select regions of a given shape.） は ``max_area`` を含む複数の標準基準を選べる演算子だが、ここでは 「面積最大」1 種類に固定している(近似)。 · 例: `gallery2d_region`
+- `select_shape` (halcon: `select_shape`) `region → region` GPU: あり(lbl_select_shape) — 面積が閾値(``16+a*200`` 画素)未満の連結成分(前景は 8 連結)を除去する(小さなノイズ状 領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる 汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。 · 例: `gallery2d_region`
+- `select_shape_std` (halcon: `select_shape_std`) `region → region` GPU: 鎖の中だけ(lbl_select_shape_std) — 連結成分のうち最大の面積を持つものだけを残す(``_largest_label`` で 選択、前景は 8 連結)。HALCON の ``select_shape_std``（Select regions of a given shape.） は ``max_area`` を含む複数の標準基準を選べる演算子だが、ここでは 「面積最大」1 種類に固定している(近似)。 · 例: `gallery2d_region`
 - `shape_trans` (halcon: `shape_trans`) `region → region` GPU: なし — 領域の凸包(``skimage.morphology.convex_hull_image``)を返す。HALCON の ``shape_trans``（Transform the shape of a region.）は本来 convex/ rectangle1/ellipse など複数の変形モードを ``Type`` 引数で選べる演算子 だが、この代役では凸包 1 種類に固定している(近似の限界)。 · 例: `gallery2d_region`
 - `sk_clear_border` `region → region` GPU: 鎖の中だけ(lbl_clear_border) — 画像端に接する成分の除去。前景領域のうち画像の外周に触れている連結成分をすべて背景に落とす —— 視野の端で切れた(全体像が写っていない)物体を解析対象から除外する定番の前処理。 · 例: `gallery2d_region`
 - `sk_convex` (halcon: `shape_trans`) `region → region` GPU: なし — 凸包(convex hull)による領域の変形。前景領域を包む最小の凸多角形を求め、その内部を塗りつぶした領域を返す —— くびれや凹みを全て埋める。 · 例: `gallery2d_region`
@@ -1559,7 +1560,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `local_min` (halcon: `local_min`) `image → region` GPU: なし — 局所極小点(領域極小)検出。``x`` が窓内の最小値(``_k(a)``)に一致し、 かつ ``x < 0.7-0.4*b`` を満たす画素を前景とする、``local_max`` の暗部版。 HALCON の ``local_min``（Detect all local minima in an image.）に相当。 · 例: `gallery2d_segmentation`
 - `local_threshold` (halcon: `local_threshold`) `image → region` GPU: あり(local_threshold) — 局所ガウス平滑化+オフセットによるしきい値処理(``gaussian_filter(x, 1+3*a)`` にオフセット ``(b-0.5)*0.3`` を加えたものがしきい値)。 ``dyn_threshold`` と似た発想だが、局所平均を矩形窓でなくガウシアンで 求める点が異なる。HALCON の ``local_threshold``（Segment an image using local thresholding.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `nonmax_suppression_amp` (halcon: `nonmax_suppression_amp`) `image → region` GPU: あり(nonmax_suppression_amp) — 極大点（ローカルマキシマム）を抽出する非極大値抑制。窓内最大値と一致し、かつ閾値 ``0.3+0.4b`` を超える画素だけを前景として残す。a が窓サイズを 3/5/7/9 に振る。 · 例: `gallery2d_segmentation`
-- `otsu` (halcon: `binary_threshold`) `image → region` GPU: あり(otsu) — 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。 · 例: `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_segmentation_gauntlet`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `poc_water_inspection_images`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
+- `otsu` (halcon: `binary_threshold`) `image → region` GPU: あり(otsu) — 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。 · 例: `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_segmentation_gauntlet`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `poc_water_inspection_images`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
 - `pouring` (halcon: `pouring`) `image → region` GPU: なし — 分水嶺法（watershed）による領域分割の境界抽出。勾配画像（Sobel 振幅）を地形とみなし、暗い領域（``x < 0.2+0.3a``）を種（マーカー）として分水嶺を計算、``skimage.segmentation.find_boundaries`` で境界を前景として返す。b は未使用。 · 例: `gallery2d_segmentation`
 - `ptile_threshold` `image → feature` GPU: なし — 面積率で決める P-tile しきい値を feature として返す。 · 例: `poc_threshold_transfer_after_normalization`
 - `regiongrowing` (halcon: `regiongrowing`) `image → region` GPU: なし — 領域成長の簡易近似。まず高いしきい値(``x > 0.5+0.3*a``)でシード (種)領域を作り、それを ``1+4*b`` 回だけ二値膨張して広げる ―― 真の領域成長 (隣接画素との類似度を逐次判定しながら広げる)ではなく、しきい値+膨張という 軽量な代用になっている(近似の限界)。HALCON の ``regiongrowing`` （Segment an image using region growing.）の代役。 · 例: `gallery2d_segmentation`
@@ -4627,11 +4628,11 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `archive_probe` `any → text` GPU: なし — 書庫のマジックナンバーを検査し、形式名を返す。 / Probe archive magic and return its format name. · 例: `archive_roundtrip`
 
 #### fileio / e57(2)
-- `e57_read` `any → table` GPU: なし — ASTM E57 の ``bytes`` を読み、座標・強度・色・pose の点群 ``table`` を返す。 · 例: `fileio_roundtrip`
+- `e57_read` `any → table` GPU: なし — ASTM E57 の ``bytes`` を読み、座標・強度・色・pose の点群 ``table`` を返す。 · 例: `fileio_roundtrip`, `poc_real_file_formats`
 - `e57_write` `table → any` GPU: なし — 座標・強度・色・pose を持つ点群 ``table`` を ASTM E57 の ``bytes`` に書く。 · 例: `fileio_roundtrip`
 
 #### fileio / fits(2)
-- `astro_fits_read` `any → any` GPU: なし — primary HDU の 2-D/3-D FITS を ``(image_or_volume, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`
+- `astro_fits_read` `any → any` GPU: なし — primary HDU の 2-D/3-D FITS を ``(image_or_volume, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`, `poc_real_file_formats`
 - `astro_fits_write` `any → any` GPU: なし — 2-D/3-D 天文画像と基本 WCS を primary-HDU FITS の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / mesh(8)
@@ -4645,11 +4646,11 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `mesh_write_stl` `mesh → any` GPU: なし — 三角形 mesh を ASCII または little-endian binary STL に書く(``text`` / ``bytes``)。
 
 #### fileio / mrc(2)
-- `em_mrc_read` `any → any` GPU: なし — MRC2014/CCP4 の mode 0/1/2/6 を ``(image_or_volume, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`
+- `em_mrc_read` `any → any` GPU: なし — MRC2014/CCP4 の mode 0/1/2/6 を ``(image_or_volume, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`, `poc_real_file_formats`
 - `em_mrc_write` `any → any` GPU: なし — 2-D/3-D 電顕データを MRC2014/CCP4 の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / nifti(2)
-- `nifti_read` `any → any` GPU: なし — 単一ファイル NIfTI-1(``.nii`` / ``.nii.gz``)を ``(array, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`
+- `nifti_read` `any → any` GPU: なし — 単一ファイル NIfTI-1(``.nii`` / ``.nii.gz``)を ``(array, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`, `poc_real_file_formats`
 - `nifti_write` `any → any` GPU: なし — 3-D/4-D 配列と affine/pixdim を単一ファイル NIfTI-1 の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / nrrd(2)
@@ -4657,7 +4658,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `nrrd_write` `any → any` GPU: なし — 多次元配列と ``space directions`` を raw/gzip NRRD の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / ome_tiff(2)
-- `ome_tiff_read` `any → any` GPU: なし — OME-TIFF を ``(stack, meta)`` として読み、OME-XML と配列を相互検証する。 · 例: `fileio_scientific_roundtrip`
+- `ome_tiff_read` `any → any` GPU: なし — OME-TIFF を ``(stack, meta)`` として読み、OME-XML と配列を相互検証する。 · 例: `fileio_scientific_roundtrip`, `poc_real_file_formats`
 - `ome_tiff_write` `any → any` GPU: なし — TCZYX 多次元配列と物理サイズ・チャネル名を OME-TIFF の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / points(2)
@@ -4743,7 +4744,7 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### annotate / shape(4)
 - `arc` `image2d → image2d` GPU: あり(許可リスト) — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` GPU: なし — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
+- `ellipse` `image2d → image2d` GPU: なし — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: あり(許可リスト) — 多角形の塗り(偶奇規則の交差判定 ―― :mod:`imagedraw` は輪郭のみ)。 · 例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: あり(許可リスト) — 角丸の矩形(``fill=True`` で塗り)。下敷きや囲みに使う。 · 例: `annotate_gallery`, `poc_machine_condition_fusion`
 
@@ -5355,9 +5356,9 @@ _計 3816 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `cosmic_ray_reject_stack` `images → images` GPU: あり(許可リスト) — フレーム間比較による宇宙線除去 —— **同じ場所に二度は当たらない**。 · 例: `astro_stacking`
 
 #### astrostack / photometry(3)
-- `aperture_photometry` `image2d × keypoints → table` GPU: なし — 円形開口 + 環状背景の測光(古典的な CCD 測光)。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_exoplanet_transit`, `poc_nuclei_ploidy`, `poc_real_sky_photometry`
+- `aperture_photometry` `image2d × keypoints → table` GPU: なし — 円形開口 + 環状背景の測光(古典的な CCD 測光)。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_exoplanet_transit`, `poc_nuclei_ploidy`, `poc_real_file_formats`, `poc_real_sky_photometry`
 - `psf_fit` `image2d × keypoints → table` GPU: なし — 星像に PSF を当てはめて中心と FWHM を出す。 · 例: `astro_stacking`, `poc_star_astrometry`
-- `star_detect` `image2d → keypoints` GPU: なし — 星を検出して ``(row, col)`` の重心列を返す。 · 例: `astro_stacking`, `poc_exoplanet_transit`, `poc_search_sweep_width`, `poc_star_astrometry`
+- `star_detect` `image2d → keypoints` GPU: なし — 星を検出して ``(row, col)`` の重心列を返す。 · 例: `astro_stacking`, `poc_exoplanet_transit`, `poc_real_file_formats`, `poc_search_sweep_width`, `poc_star_astrometry`
 
 #### astrostack / quality(3)
 - `frame_quality` `image2d → table` GPU: なし — 1 枚の品質を数える —— 鋭さ・FWHM・背景・真円度、そして選別用の点。 · 例: `astro_stacking`

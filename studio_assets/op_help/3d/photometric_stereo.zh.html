@@ -7,7 +7,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:有(许可列表中的机械式 GPU 路径,CuPy)。<code style="color:#22d3bf">device=&quot;auto&quot;</code> 在实测尺寸(4,194,304 像素)及以上选择 GPU</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Lambert 光度立体:由已知光源方向的 N 张图恢复法线与反照率。→ (normals HxWx3, albedo HxW)。</p>
-<p>I_n = albedo * max(N·L_n, 0)。在每个像素用最小二乘 g = pinv(L) @ I 求解 g = albedo*N, albedo=|g|, normal=g/|g|。需要 N&gt;=3。albedo~0 或 mask 外的像素 normal=(0,0,1)。normalize=True 时将光源向量归一化为单位方向(与 render_lambertian 相同的约定 = 反照率绝对值能正确得出)。若使用带强度权重的光源,请设 normalize=False,合成侧也统一使用原始向量。</p>
+<p>I_n = albedo * max(N·L_n, 0)。在每个像素用最小二乘 g = pinv(L) @ I 求解 g = albedo*N, albedo=|g|, normal=g/|g|。需要 N&gt;=3。albedo~0 或 mask 外的像素 normal=(0,0,1)。「albedo~0」是相对于输入最大亮度的相对量(<code style="color:#22d3bf">1e-8 × max|I|</code>)。无论亮度的单位与量级如何(W/m² 也好 8 bit 也好),被判为退化的都是同样的像素。normalize=True 时将光源向量归一化为单位方向(与 render_lambertian 相同的约定 = 反照率绝对值能正确得出)。若使用带强度权重的光源,请设 normalize=False,合成侧也统一使用原始向量。</p>
 <p>lit_only(2026-09-04 新增):<b>去除附着阴影(attached shadow)后求解</b>。模型的 max(·, 0) 是非线性的,把 N·L &lt; 0 的观测(真值为 0)直接放进线性最小二乘会使解产生偏差 ―― 实测:在既无阴影也无 AO 的球上中位数为 <b>9°</b>,只用点亮的光源求解则为 <b>0.000°</b>。默认为 False(不改变以往行为)。设为 True 时对每个像素只用 <code style="color:#22d3bf">I &gt; lit_thresh</code> 的光源重新求解。<b>把点亮模式相同的像素归为一组</b>, 用 1 次伪逆处理,因此额外开销大致只与光源数对应的模式数成正比(6 灯时最多 64 组)。点亮光源少于 3 个的像素退回全光源的解(fail-open:</p>
 <p>与其把无法求解的像素设为 NaN,不如保留即使有偏差的值,这样下游的积分不会崩坏)。</p>
 <p>lit_thresh:视为&quot;点亮&quot;的亮度下限。应设在拍摄噪声之上。</p>

@@ -11,7 +11,7 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_thickness.chain.jpg">get_region_thickness: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>영역 두께 [px] 의 근삿값 <code style="color:#22d3bf">2 × 최대 내접원 반지름</code>(<code style="color:#22d3bf">distance_transform_edt</code> 최댓값의 2 배).</p>
+<p>영역 두께 [px] 의 근삿값 <code style="color:#22d3bf">2 × 최대 내접원 반지름</code>(<code style="color:#22d3bf">distance_transform_edt</code> 최댓값의 2 배). 영상 밖은 배경으로 간주한다(가장자리에 닿는 영역도 영상을 넓혔을 때와 같은 두께. 전면인 60x80은 60).</p>
 <p>HALCON 의 <code style="color:#22d3bf">get_region_thickness</code>（Access the thickness of a region along the main axis.）가 정의하는 &quot;주축을 따른 두께 프로파일&quot;과 달리, 방향을 따지지 않는 전역 최대 내접 반지름만 보는 단순화(주축 방향 정보는 잃는다).</p>
 <p>★2026-09-26 까지는 영상의 최대 변 길이로 나누어, 두께가 영상 긴 변의 절반을 넘는 영역은 모두 1.0 에서 머물렀다(30x70 직사각형에서 0.1500, 지금은 30.0). <code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>.</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> 는 사용하지 않는다.</p>

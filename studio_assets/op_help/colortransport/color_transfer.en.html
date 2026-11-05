@@ -13,6 +13,9 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reinhard&quot;</code> —— matches only the mean and standard deviation of each channel (Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001). It relies on the assumption that <b>each channel is a unimodal normal distribution</b>. On a bimodal picture with clearly separated foreground and background, the mean and variance match, yet the result is <b>a colour that hits neither peak</b> (no exception is raised).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gaussian&quot;</code> —— Monge map that transports the covariance as a whole. <b>Correlation is preserved</b>.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;histogram&quot;</code> —— exact histogram matching per channel. The marginal distributions match perfectly, but <b>the correlation between channels is destroyed</b>.</p>
+<p><b>Constant channels</b> (standard deviation at most <code style="color:#22d3bf">1e-6 × max(1, max|x|)</code>, x being the channel&#x27;s values —— the Lab a*/b* of an</p>
+<p>achromatic src fall here; they hold nothing but rounding residue) raise <code style="color:#22d3bf">MetricContractError</code> with <code style="color:#22d3bf">&quot;reinhard&quot;</code>; with <code style="color:#22d3bf">&quot;histogram&quot;</code></p>
+<p>they are mapped to the reference mean, exactly as a strictly constant input is. The residue is never magnified into a false colour.</p>
 <p>space : {&quot;lab&quot;, &quot;rgb&quot;}</p>
 <p>The space in which the statistics are taken. The default <code style="color:#22d3bf">lab</code> uses the implementation in <code style="color:#22d3bf">imgmetrics</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>

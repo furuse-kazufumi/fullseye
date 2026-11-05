@@ -6,7 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>sRGB(<code style="color:#22d3bf">(..., 3)</code>)→ CIE XYZ. 전달 함수를 먼저 벗긴 뒤 행렬을 곱합니다.</p>
 <p>절차: <code style="color:#22d3bf">srgb_to_linear</code>로 정수 dtype을 <code style="color:#22d3bf">[0, 1]</code>로 정규화하면서 전달 함수를제거하고(IEC 61966-2-1), 선형 RGB에 sRGB(D65)→XYZ의 3x3 행렬을 곱한다. 흰색 <code style="color:#22d3bf">(1, 1, 1)</code>은 <code style="color:#22d3bf">(0.9505, 1.0, 1.0890)</code>에 사상된다(Y를 1로 정규화한 척도).</p>
-<p style="margin:2px 0 2px 12px">• 입력: 마지막 축이 3이면 형태는 임의(<code style="color:#22d3bf">(3,)</code>의 1색, <code style="color:#22d3bf">(N, 3)</code>의 색표, <code style="color:#22d3bf">(H, W, 3)</code>의 영상). 정수 dtype(uint8/uint16 등)은 dtype의 최댓값으로 나눈다. float는 <code style="color:#22d3bf">[0, 1]</code>에 들어 있지 않으면 <code style="color:#22d3bf">MetricContractError</code>(<code style="color:#22d3bf">ValueError</code> 의 하위 형). 감마를 제거한 선형값을 넘기면 감마를 이중으로 제거하므로 주의.</p>
+<p style="margin:2px 0 2px 12px">• 입력: 마지막 축이 3이면 형태는 임의(<code style="color:#22d3bf">(3,)</code>의 1색, <code style="color:#22d3bf">(N, 3)</code>의 색표, <code style="color:#22d3bf">(H, W, 3)</code>의 영상). 정수 dtype(uint8 / uint16 / uint32 / int8 / int16)은 dtype의최댓값으로 나눈다(int32 / int64 / uint64는 값이 <code style="color:#22d3bf">[0, 1]</code>일 때만 float로 통과). float는 <code style="color:#22d3bf">[0, 1]</code>에 들어 있지 않으면 <code style="color:#22d3bf">MetricContractError</code>(<code style="color:#22d3bf">ValueError</code> 의 하위 형). 감마를 제거한 선형값을 넘기면 감마를 이중으로 제거하므로 주의.</p>
 <p style="margin:2px 0 2px 12px">• 반환값: 입력과 같은 형태의 float64.</p>
 <p style="margin:2px 0 2px 12px">• 실패: 마지막 축이 3이 아님 / float가 <code style="color:#22d3bf">[0, 1]</code> 밖 / 비유한.</p>
 <p>다음에 <code style="color:#22d3bf">xyz_to_lab</code>을 잇는 것이 정석(합쳐서 <code style="color:#22d3bf">rgb_to_lab</code>).</p>

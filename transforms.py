@@ -264,7 +264,16 @@ def dual_quat_to_hom_mat3d(dq):
 
 # ── 点対応からの変換推定・分解・pose 変換 ────────────────────────────────────── #
 def vector_to_hom_mat3d(src_points, dst_points):
-    """3D 点対応から剛体/相似変換(4x4)を Umeyama 推定(vector_to_hom_mat3d)。"""
+    """3D 点対応から剛体変換(回転+並進、4x4)を最小二乗推定(Kabsch/Umeyama、倍率なし)(vector_to_hom_mat3d)。
+
+    ``dst ≈ R src + t`` の ``R``(det = +1)と ``t`` を返す。**倍率は推定しない**(剛体のみ)。
+    HALCON の同名 op は ``TransformationType``('rigid' / 'similarity' / 'affine' / 'projective')
+    を引数に取るが、この関数は 'rigid' に当たる。倍率込みの相似変換が要るなら
+    ``odometry.umeyama_align(src, dst, with_scale=True)``(→ ``(s, R, t)``、``dst ≈ s R src + t``)を使う。
+
+    ★2026-11-05(敵対的検証 G6): 以前の docstring は「剛体/相似」と書いていたが、実装は
+    倍率を推定しない(dst = 2 R src + t を渡すと残差 2.6 のまま)。仕様は剛体として明記した。
+    """
     P = _m(src_points).reshape(-1, 3); Q = _m(dst_points).reshape(-1, 3)
     mp = P.mean(0); mq = Q.mean(0)
     Pc = P - mp; Qc = Q - mq
@@ -280,15 +289,29 @@ def vector_to_hom_mat3d(src_points, dst_points):
 
 
 def vector_to_proj_hom_mat2d(src_points, dst_points):
-    """2D 点対応から射影変換(ホモグラフィ 3x3)を DLT 推定(vector_to_proj_hom_mat2d)。"""
+    """2D 点対応から射影変換(ホモグラフィ 3x3)を正規化 DLT 推定(vector_to_proj_hom_mat2d)。
+
+    両側の点を Hartley 正規化(重心を原点、平均距離 √2)してから解き、逆正規化する
+    (2026-11-05 敵対的検証 geometry: calib._homography_dlt と同じく、正規化なしでは座標が原点から
+    遠いと条件が悪かった)。"""
     src = _m(src_points).reshape(-1, 2); dst = _m(dst_points).reshape(-1, 2)
+
+    def hartley(p):
+        c = p.mean(0)
+        d = float(np.mean(np.linalg.norm(p - c, axis=1)))
+        k = np.sqrt(2.0) / d if d > 0 else 1.0
+        return np.array([[k, 0.0, -k * c[0]], [0.0, k, -k * c[1]], [0.0, 0.0, 1.0]])
+
+    Ts, Td = hartley(src), hartley(dst)
+    sn = src @ Ts[:2, :2].T + Ts[:2, 2]
+    dn = dst @ Td[:2, :2].T + Td[:2, 2]
     A = []
-    for (x, y), (u, v) in zip(src, dst):
+    for (x, y), (u, v) in zip(sn, dn):
         A.append([-x, -y, -1, 0, 0, 0, u * x, u * y, u])
         A.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
     A = _m(A)
     _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
-    H = Vt[-1].reshape(3, 3)
+    H = np.linalg.inv(Td) @ Vt[-1].reshape(3, 3) @ Ts
     return H / H[2, 2]
 
 
@@ -302,9 +325,18 @@ def vector_to_aniso(src_points, dst_points):
 
 
 def point_line_to_hom_mat2d(p_src, dir_src, p_dst, dir_dst):
-    """点+方向の対応から 2D 剛体変換を推定(point_line_to_hom_mat2d)。"""
+    """点+方向の対応から 2D 剛体変換を推定(point_line_to_hom_mat2d)。
+
+    返す ``H`` (3,3) は ``H[:2,:2] @ p_src + H[:2,2] = p_dst`` かつ回転 ``H[:2,:2]`` が
+    ``dir_src`` を ``dir_dst`` と同じ向きに重ねる剛体変換。点と方向は同じ成分順で与える
+    (どちらの順でも、回転は与えた成分順の上で効く)。
+
+    ★2026-11-05(敵対的検証 G3): 以前は角度を ``arctan2(d[0], d[1])``(第 2 軸から測る角)
+    で取っていたため回転の向きが逆で、(0,1)→(1,0) が 180° ずれた。第 1 軸から測る
+    ``arctan2(d[1], d[0])`` に直した。
+    """
     ds = _m(dir_src); dd = _m(dir_dst)
-    a = np.arctan2(dd[0], dd[1]) - np.arctan2(ds[0], ds[1])
+    a = np.arctan2(dd[1], dd[0]) - np.arctan2(ds[1], ds[0])
     c, s = np.cos(a), np.sin(a)
     R = np.array([[c, -s], [s, c]])
     t = _m(p_dst) - R @ _m(p_src)
@@ -313,10 +345,17 @@ def point_line_to_hom_mat2d(p_src, dir_src, p_dst, dir_dst):
 
 
 def proj_hom_mat2d_to_pose(H, K):
-    """ホモグラフィと内部行列から平面の姿勢(R,t)を分解(proj_hom_mat2d_to_pose)。"""
+    """ホモグラフィと内部行列から平面の姿勢(R,t)を分解(proj_hom_mat2d_to_pose)。
+
+    ``H ∝ K [r1 r2 t]`` を分解して 4x4 姿勢を返す。``H`` の倍率・符号には依らず、
+    板(z=0 平面)がカメラの前(``t_z > 0``)に来る符号を選ぶ。"""
     H = _m(H); K = _m(K); Kinv = np.linalg.inv(K)
     L = Kinv @ H
     lam = 1.0 / (np.linalg.norm(L[:, 0]) + 1e-12)
+    # ★2026-11-05(敵対的検証 G7): H と −H は同じ射影だが、符号を正規化していなかったので
+    # −H を渡すと板がカメラの後ろ(t_z < 0)になる姿勢を返した。板が前に来る符号を選ぶ。
+    if L[2, 2] * lam < 0:
+        lam = -lam
     r1 = L[:, 0] * lam; r2 = L[:, 1] * lam; t = L[:, 2] * lam
     r3 = np.cross(r1, r2)
     R = np.column_stack([r1, r2, r3])
@@ -382,13 +421,32 @@ def vector_to_proj_hom_mat2d_distortion(src_points, dst_points):
     return {"H": H, "kappa": 0.0}
 
 
+def _unit(v, what: str) -> np.ndarray:
+    """v / ‖v‖(床なし)。‖v‖ が 0 か非有限なら ValueError。"""
+    n = float(np.linalg.norm(v))
+    if not np.isfinite(n) or n == 0.0:
+        raise ValueError(f"{what} must be a finite non-zero vector")
+    return v / n
+
+
 def point_pluecker_line_to_hom_mat3d(point, pluecker, target_point, target_dir):
-    """点+Plücker 直線の対応から 3D 剛体変換を推定(point_pluecker_line_to_hom_mat3d)。"""
-    d1 = _m(pluecker["direction"]); d1 = d1 / (np.linalg.norm(d1) + 1e-12)
-    d2 = _m(target_dir); d2 = d2 / (np.linalg.norm(d2) + 1e-12)
+    """点+Plücker 直線の対応から 3D 剛体変換を推定(point_pluecker_line_to_hom_mat3d)。
+
+    回転は ``direction`` を ``target_dir`` に重ねる最小回転(反平行なら直交軸まわりの半回転)、
+    並進は ``point`` を ``target_point`` に写す。"""
+    # 方向は床なしで正規化する(2026-11-05 敵対的検証 N1 の兄弟: + 1e-12 の床で、長さ 1e-6 の方向
+    # から det = 0.999996 の非直交な R を返した)。長さ 0 の方向は ValueError。
+    d1 = _unit(_m(pluecker["direction"]), "pluecker direction")
+    d2 = _unit(_m(target_dir), "target_dir")
     v = np.cross(d1, d2); s = np.linalg.norm(v); c = d1 @ d2
-    if s < 1e-9:
+    if s < 1e-9 and c > 0:
         R = np.eye(3)
+    elif s < 1e-9:
+        # ★2026-11-05(敵対的検証 G4): 反平行(180°)で単位行列を返していた(R·d1 = d1 ≠ d2)。
+        # d1 に直交する任意の軸 a まわりの半回転 R = 2 a aᵀ − I で d1 を −d1 = d2 に重ねる。
+        ref = np.eye(3)[int(np.argmin(np.abs(d1)))]
+        a = np.cross(d1, ref); a = a / np.linalg.norm(a)
+        R = 2.0 * np.outer(a, a) - np.eye(3)
     else:
         vx = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
         R = np.eye(3) + vx + vx @ vx * ((1 - c) / (s ** 2))
@@ -398,9 +456,12 @@ def point_pluecker_line_to_hom_mat3d(point, pluecker, target_point, target_dir):
 
 
 def dual_quat_trans_line_3d(dual_quat, line_point, line_dir):
-    """双四元数で 3D 直線を変換(点と方向を剛体変換)(dual_quat_trans_line_3d)。"""
-    from pose_quat import dual_quat_to_hom_mat3d
+    """双四元数で 3D 直線を変換(点と方向を剛体変換)(dual_quat_trans_line_3d)。
+
+    ★2026-11-05(敵対的検証 G5): 以前は ``pose_quat`` から ``dual_quat_to_hom_mat3d`` を
+    import しようとして常に ImportError だった(関数はこのモジュールにある)。
+    """
     T = dual_quat_to_hom_mat3d(dual_quat)
     p = T[:3, :3] @ _m(line_point) + T[:3, 3]
     d = T[:3, :3] @ _m(line_dir)
-    return {"point": p, "direction": d / (np.linalg.norm(d) + 1e-12)}
+    return {"point": p, "direction": _unit(d, "line_dir")}

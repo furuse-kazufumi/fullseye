@@ -635,8 +635,13 @@ def separate_direct_global(images, fill=0.5, black_level=0.0, scheme="shift"):
 # --------------------------------------------------------------------------- #
 # 位相のバイアス(縞)
 # --------------------------------------------------------------------------- #
+def _principal(a):
+    """``np.angle`` の主値 ``[-π, π]`` を文書の ``(-π, π]`` に写す(``-π`` は ``+π`` へ、2026-11-05)。"""
+    return np.where(a <= -np.pi, np.pi, a)
+
+
 def _wrap(p):
-    return np.angle(np.exp(1j * p))
+    return _principal(np.angle(np.exp(1j * p)))
 
 
 def fringe_multipath_phase_error(direct_amplitude, direct_phase, global_amplitude, global_phase):
@@ -673,7 +678,7 @@ def fringe_multipath_phase_error(direct_amplitude, direct_phase, global_amplitud
     s = a1 * np.exp(1j * p1) + a2 * np.exp(1j * p2)
     r = a2 / a1
     worst = np.where(r < 1.0, np.arcsin(np.clip(r, 0.0, 1.0)), np.pi)
-    return {"phase": np.angle(s), "bias": _wrap(np.angle(s) - p1), "amplitude": np.abs(s),
+    return {"phase": _principal(np.angle(s)), "bias": _wrap(np.angle(s) - p1), "amplitude": np.abs(s),
             "ratio": r, "worst_case": worst}
 
 

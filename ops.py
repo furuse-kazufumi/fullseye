@@ -1519,11 +1519,26 @@ def _reg_open(v, a, b):
 
 ``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。細い突起や小さな孤立領域を除去する。構造要素は scipy 既定の十字形。"""
     return ndimage.binary_opening(_bin(v), iterations=_it(a)).astype(np.float64)
+def _binary_closing_unbounded(m, iterations):
+    """十字の構造要素を ``iterations`` 回 —— 画像の外へ続く平面の上の closing を画像に切り戻す(外は背景)。
+
+    ``binary_closing`` の ``border_value=0`` は縁の前景を削り(拡大性が破れる)、``border_value=1`` は画像の外を
+    前景とみなして縁の近くに楔を生やす。余白 0 を付けて閉じ、切り戻せばどちらも起きない
+    (敵対的検証 2026-11-05 第 2 巡 P3)。
+    """
+    it = int(iterations)
+    pad = it + 1
+    mp = np.pad(np.asarray(m, bool), pad, mode="constant", constant_values=False)
+    return ndimage.binary_closing(mp, iterations=it)[pad:-pad, pad:-pad]
+
+
 def _reg_close(v, a, b):
     """領域（region）の二値クロージング（膨張してから侵食）。HALCON の ``closing_circle``（Close a region with a circular structuring element.）に相当。
 
-``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。細い切れ込みや小さな穴を埋める。``border_value=1`` を指定しているため画像端は前景として扱われる。"""
-    return ndimage.binary_closing(_bin(v), iterations=_it(a), border_value=1).astype(np.float64)
+``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。細い切れ込みや小さな穴を埋める。
+
+**画像の縁**: 平面は画像の外へ続き、外は背景とみなす（余白 0 を付けて閉じてから切り戻す）。closing は拡大的（入力の前景を削らない）で、縁の近くに新しい前景も作らない。2026-11-05（敵対的検証 第 2 巡 P3）までは ``border_value=1`` で画像の外を前景とみなしており、縁の近くの孤立画素から角の楔が生えていた（20×20 の (1,1) の 1 画素が a=1 で 10 画素に）。"""
+    return _binary_closing_unbounded(_bin(v), _it(a)).astype(np.float64)
 def _fill_holes(v, a, b):
     """領域内の穴埋め。HALCON の ``fill_up``（Fill up holes in regions.）に相当。
 
@@ -1536,12 +1551,12 @@ def _fill_holes(v, a, b):
 def _select_largest(v, a, b):
     """最大面積の連結領域だけを残す。HALCON の ``select_shape_std``（Select regions of a given shape.）に相当。
 
-``a``, ``b`` は未使用（常に「最大」を選ぶ）。連結成分ラベリング後、画素数が最大の 1 成分だけを 1、それ以外を 0 にする。入力に前景が無ければ全 0 を返す。HALCON の ``select_shape_std`` は面積以外の形状基準（円形度等）や複数選択にも対応するが、この実装は面積最大の単一選択のみ。
+``a``, ``b`` は未使用（常に「最大」を選ぶ）。連結成分ラベリング（**前景は 8 連結** = HALCON の ``connection`` の既定。2026-11-05 敵対的検証 第 2 巡 P1 までは 4 連結で、斜めに接する 2 つの塊の片方だけを残していた）後、画素数が最大の 1 成分だけを 1、それ以外を 0 にする。入力に前景が無ければ全 0 を返す。HALCON の ``select_shape_std`` は面積以外の形状基準（円形度等）や複数選択にも対応するが、この実装は面積最大の単一選択のみ。
 
 Raises:
     FsValueError: NaN / inf を含む画像。"""
     _require_finite_image(v, "select_largest")
-    lab, n = ndimage.label(_bin(v))
+    lab, n = ndimage.label(_bin(v), structure=np.ones((3, 3), bool))
     if n == 0:
         return np.zeros_like(v, np.float64)
     sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
@@ -1551,8 +1566,8 @@ Raises:
 def _remove_small(v, a, b):
     """小さい連結領域を面積で除去する。HALCON の ``select_shape``（Choose regions with the aid of shape features.）に相当。
 
-``a`` が除去のしきい値（画素数）を、画像全体の画素数に対する割合 ``0.01〜0.16``（``(0.01+0.15a) * 画素数``）として振る。``b`` は未使用。しきい値以上の面積を持つ連結成分だけを残す。連結性は scipy ``label`` の既定（4連結）。"""
-    lab, n = ndimage.label(_bin(v))
+``a`` が除去のしきい値（画素数）を、画像全体の画素数に対する割合 ``0.01〜0.16``（``(0.01+0.15a) * 画素数``）として振る。``b`` は未使用。しきい値以上の面積を持つ連結成分だけを残す。**連結性は 8 連結**（HALCON の ``connection`` の既定。2026-11-05 敵対的検証 第 2 巡 P1 までは scipy ``label`` の既定の 4 連結で、斜めに接する塊を別々に数えて小さいとみなし消していた）。"""
+    lab, n = ndimage.label(_bin(v), structure=np.ones((3, 3), bool))
     if n == 0:
         return np.zeros_like(v, np.float64)
     sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
@@ -1637,10 +1652,15 @@ def _dist_transform(v, a, b):
 
 ``a``, ``b`` は未使用。各前景画素について最も近い背景画素までのユークリッド距離を求め（``scipy.ndimage.distance_transform_edt``）、``_norm`` でその画像内の最大値を 1 に正規化する（画像間で絶対距離の比較はできない）。骨格化・粒の中心検出等の前処理に使う。
 
+**背景が 1 画素も無い**(全面が前景)とき、最も近い背景は画像の中に無い —— どの画素も「無限に遠い」ので、正規化した答えは**一様 1.0**(``xsp_chamfer_dist`` / ``cv_dist`` と同じ)。2026-11-05(敵対的検証 第 2 巡 P4)までは ``distance_transform_edt`` が画像の外の (-1, 0) に背景があるかのような斜面を返し、左右の反転で値が変わっていた。前景が無ければ 0。
+
 Raises:
     FsValueError: NaN / inf を含む画像。"""
     _require_finite_image(v, "dist_transform")
-    return _norm(ndimage.distance_transform_edt(_bin(v)))
+    m = _bin(v)
+    if m.size and m.all():
+        return np.ones(m.shape, np.float64)       # 背景なし -> どこも最遠 = 正規化 1.0
+    return _norm(ndimage.distance_transform_edt(m))
 
 
 def _dist_transform_abs(v, a, b):
@@ -1649,8 +1669,18 @@ def _dist_transform_abs(v, a, b):
     ``a`` で距離の種類を選ぶ: ``a < 1/3`` はユークリッド、``1/3 <= a < 2/3`` は市街地（L1）、
     それ以上はチェス盤（L∞）。``b < 0.5`` は各前景画素から最も近い背景画素までの距離、
     ``b >= 0.5`` は各背景画素から最も近い前景画素までの距離を返す。出力は float64 の画像で、
-    ``dist_transform`` と違い画像内の最大値で正規化しない（3×3 と 9×9 の正方形の中心は
-    それぞれ 2 と 5）。例: ``_dist_transform_abs(np.ones((3, 3)), 0, 0)``。
+    ``dist_transform`` と違い画像内の最大値で正規化しない（背景に囲まれた 3×3 と 9×9 の正方形の
+    中心はそれぞれ 2 と 5）。例: ``_dist_transform_abs(np.pad(np.ones((3, 3)), 1), 0, 0)[2, 2]`` は 2.0。
+
+    ★2026-11-05（敵対的検証 第 2 巡 P4b）まで、この例は ``np.ones((3, 3))``（背景が無い）と書いており、
+    実際の値は 2.0 でなく 2.236 だった（下の縮退入力）。
+
+    **距離を測る相手が画像に無い**（``b < 0.5`` で背景が 1 画素も無い、``b >= 0.5`` で前景が無い）とき、
+    距離は定義されない（無限）。そのときは**一様 0**（「距離場が無い」）を返す —— 空の領域は正当な入力で
+    （``b >= 0.5`` の全面背景も、``b < 0.5`` の全面前景も）、例外にはしない。0 は距離として読まないこと:
+    相手の有無は入力側で ``region.any()`` / ``(~region).any()`` を確かめる。どちらの向きでも一様なので
+    像の反転・回転と可換。2026-11-05（敵対的検証 第 2 巡 P4）までは ``distance_transform_edt`` が画像の外の
+    (-1, 0) に相手があるかのような斜面（3×3 で 1〜3.6）を、``cdt`` は一様 -1 を返していた。
 
     HALCON の参照 op は ``int4`` の近似を返す。この op は厳密な float64 距離を返し、
     互換 API ではない。
@@ -1660,6 +1690,8 @@ def _dist_transform_abs(v, a, b):
     """
     _require_finite_image(v, "dist_transform_abs")
     mask = _bin(v) if b < 0.5 else ~_bin(v)
+    if mask.size and mask.all():
+        return np.zeros(mask.shape, np.float64)   # 相手が無い -> 距離場なし(一様 0、斜面や -1 ではない)
     if a < (1.0 / 3.0):
         return ndimage.distance_transform_edt(mask).astype(np.float64)
     metric = "taxicab" if a < (2.0 / 3.0) else "chessboard"
@@ -1676,8 +1708,8 @@ def _region_boundary(v, a, b):
 def _convex_fill(v, a, b):
     """凸包に近い形へ穴・くびれを埋める（クロージングによる近似）。HALCON の ``shape_trans``（Transform the shape of a region.）の凸包変換に相当することを意図しているが、実装は反復回数の多いクロージングであり、厳密な凸包計算ではない（近似）。
 
-``a`` が反復回数を ``3〜6``（``_it(a)+2``）に振る。``b`` は未使用。``border_value=1`` の二値クロージングを掛けるだけなので、反復回数を超える大きさのくびれ・穴は埋まらない（真の凸包なら必ず埋まる）。"""
-    return ndimage.binary_closing(_bin(v), iterations=_it(a) + 2, border_value=1).astype(np.float64)
+``a`` が反復回数を ``3〜6``（``_it(a)+2``）に振る。``b`` は未使用。二値クロージングを掛けるだけなので、反復回数を超える大きさのくびれ・穴は埋まらない（真の凸包なら必ず埋まる）。クロージングは画像の外へ続く平面の上で行って切り戻す（2026-11-05 敵対的検証 第 2 巡 P3 までは ``border_value=1`` で、画像の外を前景とみなして縁の近くに楔を生やしていた）。"""
+    return _binary_closing_unbounded(_bin(v), _it(a) + 2).astype(np.float64)
 
 
 # --- image -> contour (XLD) -------------------------------------------------- #
@@ -1817,6 +1849,13 @@ def _ncc_map(v, T):
     (no local normalization) instead peaks on whatever is brightest/largest.
     Positions where the template does not fully overlap the image, flat windows
     and a zero-energy template all score 0 (no match).
+
+    "Flat" and "zero-energy" are judged relative to the data (template energy against its
+    own magnitude, window energy against the image's RMS contrast), and the image is
+    centred on its mean first, so the map is the same for ``a·v + b`` at any ``a > 0``
+    (★2026-11-05 敵対的検証: the absolute ``1e-12`` floors zeroed the whole map for an
+    image scaled by 1e-7, and the uncentred ``E[v²] − E[v]²`` lost a 1e-3 contrast on a
+    1e5 offset).
     """
     v = np.asarray(v, np.float64)
     T = np.asarray(T, np.float64)
@@ -1824,8 +1863,11 @@ def _ncc_map(v, T):
         return np.zeros_like(v)
     Tz = T - float(T.mean())
     tnorm = float(np.sqrt(np.sum(Tz * Tz)))
-    if tnorm < 1e-12:
+    t_mag = float(np.max(np.abs(T))) if T.size else 0.0
+    if not np.isfinite(tnorm) or tnorm == 0.0 or tnorm <= 1e-12 * t_mag * np.sqrt(T.size):
         return np.zeros_like(v)
+    if v.size:
+        v = v - float(v.mean())                              # NCC は v の定数加算に不変
     num = ndimage.correlate(v, Tz, mode="constant")          # sum(Tz) == 0 -> mean-free
     m1 = ndimage.uniform_filter(v, size=T.shape, mode="constant")
     m2 = ndimage.uniform_filter(v * v, size=T.shape, mode="constant")
@@ -1836,7 +1878,10 @@ def _ncc_map(v, T):
     if all(h > l for l, h in zip(lo, hi)):
         ok[tuple(slice(l, h) for l, h in zip(lo, hi))] = True
     out = np.zeros_like(v)
-    np.divide(num, den, out=out, where=ok & (den > 1e-12))
+    # 平坦な窓の判定は画像全体の RMS コントラストに対する相対量(単位の画像では従来の 1e-12 と同程度)。
+    v_rms = float(np.sqrt(np.mean(v * v))) if v.size else 0.0
+    den_floor = 1e-12 * v_rms * np.sqrt(float(T.size)) * tnorm
+    np.divide(num, den, out=out, where=ok & (den > den_floor) & (den > 0))
     return np.clip(out, -1.0, 1.0)
 
 
@@ -1982,7 +2027,8 @@ def _rescale_img(v, a, b):
     """
     s = 0.7 + 0.6 * a
     order = (0, 1, 3, 3)[min(3, int(np.clip(b, 0.0, 1.0) * 4))]
-    off = (v.shape[0] * (1 - 1 / s) / 2, v.shape[1] * (1 - 1 / s) / 2)
+    # 中心は ((H-1)/2, (W-1)/2)(画素中心の規約)。2026-11-05(敵対的検証 第 2 巡 P8 の兄弟)までは H/2。
+    off = ((v.shape[0] - 1) / 2 * (1 - 1 / s), (v.shape[1] - 1) / 2 * (1 - 1 / s))
     return np.clip(ndimage.affine_transform(v, np.array([1 / s, 1 / s]), offset=off,
                                             order=order, mode="reflect"), 0, 1)
 
@@ -1993,7 +2039,7 @@ def _affine_warp(v, a, b):
 ``a`` が回転角を ``-20°〜+20°`` に、``b`` がせん断量を ``-0.2〜+0.2`` に振る。回転中心は画像の中心、境界は ``reflect``（鏡映）で埋め、結果を ``[0,1]`` に clip する。平行移動・拡大縮小は含まない（``_rescale_img``/``_rotate_img`` が別 op として存在）。"""
     ang = np.deg2rad(-20 + 40 * a); sh = (b - 0.5) * 0.4
     M = np.array([[np.cos(ang), -np.sin(ang) + sh], [np.sin(ang), np.cos(ang)]])
-    c = np.array(v.shape) / 2
+    c = (np.array(v.shape[:2], np.float64) - 1.0) / 2.0     # 画素中心の規約(2026-11-05 P8 の兄弟、以前は shape/2)
     return np.clip(ndimage.affine_transform(v, M, offset=c - M @ c, mode="reflect"), 0, 1)
 
 
@@ -2187,8 +2233,8 @@ def _shape_locate(v, a, b):
 def _classify_shape(v, a, b):
     """最大の連結領域について円形度（circularity）を計算する形状分類の基礎特徴量。対応する単体の HALCON op は指定されていない。
 
-``a``, ``b`` は未使用。最大面積の連結成分について ``4π×面積 / 周長²`` を計算し、理想円で 1 になるよう ``min(1.0, ...)`` で頭打ちにする（数値誤差で 1 をわずかに超えるのを防ぐ）。周長は領域からその侵食を引いた境界画素数（``_region_boundary`` と同じ考え方）で近似するため、輪郭ベースの周長より粗い。前景が無ければ 0 を返す。コード中のコメントの通り、OCR・良否判定など「形状で分類する」処理の土台として使うことを想定している。"""
-    lab, n = ndimage.label(_bin(v))
+``a``, ``b`` は未使用。最大面積の連結成分（前景は 8 連結、2026-11-05 まで 4 連結）について ``4π×面積 / 周長²`` を計算し、理想円で 1 になるよう ``min(1.0, ...)`` で頭打ちにする（数値誤差で 1 をわずかに超えるのを防ぐ）。周長は領域からその侵食を引いた境界画素数（``_region_boundary`` と同じ考え方）で近似するため、輪郭ベースの周長より粗い。前景が無ければ 0 を返す。コード中のコメントの通り、OCR・良否判定など「形状で分類する」処理の土台として使うことを想定している。"""
+    lab, n = ndimage.label(_bin(v), structure=np.ones((3, 3), bool))
     if n == 0:
         return np.float64(0.0)
     sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
@@ -2351,15 +2397,31 @@ def _op_from_name(name: str) -> "Op":
     return op
 
 
+def _cf(x: float) -> str:
+    """A C ``float`` literal equal to ``(float)x``.
+
+    ★2026-11-05 redteam I21: knobs were written with ``%.6f``, so a threshold 0.3921566 became
+    ``0.392157f`` -- a different float32 -- and a pixel of 100/255 (between the two) thresholded
+    to 1 in Python and 0 in the generated C. The literal is now the shortest decimal of
+    ``np.float32(x)`` itself (round-to-nearest-even, the same as C's ``(float)x``); that decimal
+    is within half a float64 ulp of the float32, so the compiler reads back exactly that float
+    (no double rounding near a float32 midpoint). A ``.0`` is added when the text would
+    otherwise be an integer literal (``1f`` is not valid C)."""
+    text = repr(float(np.float32(x)))
+    if not any(ch in text for ch in ".eEn"):                    # "1" -> "1.0" ("nan"/"inf" excluded)
+        text += ".0"
+    return text + "f"
+
+
 def _c(name):
     return {
-        "gaussian": lambda a, b: f"gaussian(buf, w, h, {0.3 + 2.7 * a:.6f}f);",
+        "gaussian": lambda a, b: f"gaussian(buf, w, h, {_cf(0.3 + 2.7 * a)});",
         "mean_box": lambda a, b: f"box(buf, w, h, {_k(a)});",
-        "gamma": lambda a, b: f"gamma_op(buf, w, h, {0.5 + 1.5 * a:.6f}f);",
+        "gamma": lambda a, b: f"gamma_op(buf, w, h, {_cf(0.5 + 1.5 * a)});",
         "invert": lambda a, b: "invert(buf, w, h);",
-        "scale_clip": lambda a, b: f"scale_clip(buf, w, h, {0.5 + 1.5 * a:.6f}f, {b - 0.5:.6f}f);",
-        "threshold": lambda a, b: f"threshold(buf, w, h, {a:.6f}f);",
-        "unsharp": lambda a, b: f"sharpen(buf, w, h, {1.5 * a:.6f}f, {0.5 + 1.5 * b:.6f}f);",
+        "scale_clip": lambda a, b: f"scale_clip(buf, w, h, {_cf(0.5 + 1.5 * a)}, {_cf(b - 0.5)});",
+        "threshold": lambda a, b: f"threshold(buf, w, h, {_cf(a)});",
+        "unsharp": lambda a, b: f"sharpen(buf, w, h, {_cf(1.5 * a)}, {_cf(0.5 + 1.5 * b)});",
         "sobel_mag": lambda a, b: "sobel_mag(buf, w, h);",
     }.get(name)
 

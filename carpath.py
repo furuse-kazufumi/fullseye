@@ -47,8 +47,13 @@ def _mod2pi(x: float) -> float:
 
 
 def _wrap(x: float) -> float:
-    """(−π, π] に折る。"""
-    return x - _TWO_PI * math.floor((x + math.pi) / _TWO_PI)
+    """(−π, π] に折る(丸めで −π に落ちた値は +π に戻す)。
+
+    floor だけの式は π を −π にしていた(値域が [−π, π) になり、docstring と食い違う。
+    敵対的検証 2026-11-05)。drivecourse / drivetown の ``_wrap`` と同じ形。
+    """
+    y = x - _TWO_PI * math.floor((x + math.pi) / _TWO_PI)
+    return y + _TWO_PI if y <= -math.pi else y
 
 
 def _polar(x: float, y: float) -> tuple[float, float]:

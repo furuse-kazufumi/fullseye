@@ -19904,6 +19904,23 @@
     "hi": "image से point cloud, volume, mesh और graph तक ले जाने पर भी तीनों प्रकारों में ball की गिनती 71 रहती है",
     "fr": "De l'image au nuage de points, au volume, au maillage et au graphe, le nombre de billes reste 71 dans trois types"
    }
+  },
+  {
+   "id": "poc_real_file_formats",
+   "group": "wing_metrology",
+   "media": "01_stars_matched.png",
+   "motion": false,
+   "thumb_src": "01_stars_matched.png",
+   "label": {
+    "ja": "実物の科学データファイルを読む",
+    "en": "Reading real scientific data files",
+    "zh": "读取真实的科学数据文件",
+    "tw": "讀取真實的科學資料檔",
+    "ko": "실제 과학 데이터 파일 읽기",
+    "de": "Echte wissenschaftliche Datendateien lesen",
+    "hi": "वास्तविक वैज्ञानिक data file पढ़ना",
+    "fr": "Lire de vrais fichiers de données scientifiques"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -20030,17 +20047,17 @@
     "ko": "3차원 점군에서 평면도 구하기",
     "de": "Ebenheit einer Fläche aus einer 3-D-Punktwolke",
     "hi": "3-D point cloud से सतह की समतलता (flatness)",
-   "fr": "Calculer la planéité à partir d'un nuage de points 3-D"
-  },
-  "six-dof-surface-pose": {
-   "zh": "从点云中以六自由度定位已知三维零件",
-   "tw": "從點雲中以六自由度定位已知 3D 零件",
-   "ko": "포인트 클라우드에서 알려진 3D 부품의 6자유도 자세 추정",
-   "de": "Ein bekanntes 3-D-Teil mit sechs Freiheitsgraden in einer Punktwolke lokalisieren",
-   "hi": "point cloud में ज्ञात 3-D भाग का छह स्वतंत्रता अंशों में पता लगाएँ",
-   "fr": "Localiser une pièce 3D connue dans un nuage de points avec six degrés de liberté"
-  },
-  "polarisation-specular-removal": {
+    "fr": "Calculer la planéité à partir d'un nuage de points 3-D"
+   },
+   "six-dof-surface-pose": {
+    "zh": "从点云中以六自由度定位已知三维零件",
+    "tw": "從點雲中以六自由度定位已知 3D 零件",
+    "ko": "포인트 클라우드에서 알려진 3D 부품의 6자유도 자세 추정",
+    "de": "Ein bekanntes 3-D-Teil mit sechs Freiheitsgraden in einer Punktwolke lokalisieren",
+    "hi": "point cloud में ज्ञात 3-D भाग का छह स्वतंत्रता अंशों में पता लगाएँ",
+    "fr": "Localiser une pièce 3D connue dans un nuage de points avec six degrés de liberté"
+   },
+   "polarisation-specular-removal": {
     "zh": "用 4 个偏振方向去除镜面反射(区分电介质与金属)",
     "tw": "用 4 個偏振方向去除鏡面反射(區分介電質與金屬)",
     "ko": "편광 4 방향으로 정반사 제거(유전체와 금속을 구분)",
@@ -20791,6 +20808,14 @@
     "de": "Ein Bild über Punkte, Punktwolken, Volumen, Netze und Graphen weiterreichen – und zurück",
     "hi": "image को points, point cloud, volume, mesh और graph तक ले जाना — और वापस",
     "fr": "Faire passer une image par des points, un nuage de points, un volume, un maillage et un graphe — et revenir"
+   },
+   "scientific-data-files": {
+    "zh": "读取科学数据文件(FITS、NIfTI、MRC、OME-TIFF、E57)",
+    "tw": "讀取科學資料檔(FITS、NIfTI、MRC、OME-TIFF、E57)",
+    "ko": "과학 데이터 파일 읽기(FITS·NIfTI·MRC·OME-TIFF·E57)",
+    "de": "Wissenschaftliche Datendateien lesen (FITS, NIfTI, MRC, OME-TIFF, E57)",
+    "hi": "वैज्ञानिक data file पढ़ना (FITS, NIfTI, MRC, OME-TIFF, E57)",
+    "fr": "Lire des fichiers de données scientifiques (FITS, NIfTI, MRC, OME-TIFF, E57)"
    }
   }
  },

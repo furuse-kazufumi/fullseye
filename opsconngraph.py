@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsconngraph —— 結合グラフ(connectome)解析 op の統一レジストリ。
 
-実体は ``conngraph.py``(23 op / 5 カテゴリ)。台帳の役目は 3 つ:
+実体は ``conngraph.py``(28 op / 7 カテゴリ)。台帳の役目は 3 つ:
 docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型と素の返りを橋渡しする。
 
 使い方::

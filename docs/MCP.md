@@ -50,7 +50,7 @@ retrieval 無しでは使えない)。
 | tool | 何をするか |
 |---|---|
 | `fullseye_search_ops` | 名前・HALCON 名・カテゴリ・次元の部分一致。返り値の `sources` が出どころ(index / registry / ledger / note / facade)、`by_sources` が層別の内訳 |
-| `fullseye_find_ops` | やりたいことの言葉で探す。候補ごとに loader + pipeline の次呼び出し骨格を返す。直接0件なら業務表現の英語候補と型同義語で再検索し、`retry_queries` / `retry_ops` を同じ応答に載せる |
+| `fullseye_find_ops` | やりたいことの言葉で探す。候補ごとに loader + pipeline の次呼び出し骨格を返す。直接0件なら業務表現の英語候補と型同義語で再検索し、`retry_queries` / `retry_ops` を同じ応答に載せる。`limit`(既定 7)は提案の総数: レシピは最大 `find_ops_recipe_max`(2)件で op の枠を必ず 1 つ残し、残りが op。limit を増やして op が減ることはない |
 | `fullseye_plan` | have・want・goalから型付きDAGを返す。「暗い欠陥」「照明むら」「細い傷」等がop説明に一致したときは、`evidence` に一致語・op・説明・固定加点を返す |
 | `fullseye_describe` | sort・op・族を1件だけ説明する |
 | `fullseye_op_cards` | 候補 op の短いカードを token 予算内で返す。カードの途中では切らない |
@@ -276,5 +276,5 @@ Function Hijacking(tool 選択の乗っ取り ASR 70〜100 %)—— と、TRIZ �
 公開する計画入口は `fullseye_plan`、`fullseye_describe`、`fullseye_choose` の3つだけである。
 未計測の制約は推測で補わず、fail-closedの理由として返す。`tools/list` に
 `{"profile":"minimal"}` を渡すか、`FULLSEYE_MCP_PROFILE=minimal`を設定すると実行に必要な10道具を公開する。
-`docs/mcp_context_benchmark.json`を生成する実測では、全22道具が3,651トークン、最小10道具が1,497トークンである。
+`docs/mcp_context_benchmark.json`を生成する実測では、全22道具が3,682トークン、最小10道具が1,497トークンである。
 未検証の設計パターンと重複した計画入口はMCP一覧に出さない。

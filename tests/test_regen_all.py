@@ -140,6 +140,8 @@ def test_the_order_gate_catches_the_old_order():
     expect = {
         ("tools/gen_capabilities_index.py", "imgevolve.py"),
         ("tools/gen_trust_block.py", "imgevolve.py"),
+        # 2026-11-05(敵対的検証 第 2 巡 D5b): docs 索引の「型つき台帳 N/M」の分母を索引の ledger 層から取る。
+        ("tools/gen_docs_index_ops.py", "imgevolve.py"),
         # 2026-10-22: 互換プロファイルは HALCON_PARITY.md を書き、旧順序では docs 索引がそれを先に読む。
         ("tools/gen_docs_index_ops.py", "tools/halcon_compat_profile.py"),
         # 2026-11-02: HALCON の棚卸しの文書も docs 索引の文書地図に載る。

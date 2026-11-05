@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 204,
+  "target_count": 205,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -28220,17 +28220,17 @@
             1600,
             1600
           ],
-          "bytes": 275451,
+          "bytes": 277353,
           "color_mad": [
             0.1797,
             0.0358,
-            0.1051,
-            0.0341,
+            0.0798,
+            0.0457,
             0.0404,
             0.0394
           ],
           "max_color_mad": 0.1797,
-          "source_sha256": "d89542e82bd9c92e8abccc0c1b522d8f6ddb4d614fb57524d6b2affe84017223"
+          "source_sha256": "be21b5c51cb656dd984b733d1f7a4be202c34aec250018b391b3c8bb5c23cb78"
         },
         "en": {
           "path": "articles/assets/poc/poc_calipers_under_illusion/story.en.gif",
@@ -28312,17 +28312,17 @@
             1600,
             1600
           ],
-          "bytes": 275451,
+          "bytes": 277353,
           "color_mad": [
             0.1797,
             0.0358,
-            0.1051,
-            0.0341,
+            0.0798,
+            0.0457,
             0.0404,
             0.0394
           ],
           "max_color_mad": 0.1797,
-          "source_sha256": "c0d33d325ef3038023346226fa4aa6ecbd030e20e236566f219869f2e29f5aab"
+          "source_sha256": "8a8e4075aec0a2fb720ab43d984ad147ecd1ba6b792f176c3395e849d54c554d"
         }
       },
       "thumbnail": {
@@ -34446,6 +34446,198 @@
       "status": "static",
       "reason": "two_or_fewer_raster_figures",
       "usable_figures": 2
+    },
+    "poc_real_file_formats": {
+      "representative": "01_stars_matched.png",
+      "status": "gif",
+      "selected": [
+        "01_stars_matched.png",
+        "02_magnitudes.png",
+        "03_mri_head.png",
+        "04_em_density.png",
+        "05_e57_points.png",
+        "06_verdicts.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_file_formats/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_stars_matched.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
+            },
+            {
+              "file": "02_magnitudes.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_mri_head.png",
+              "content_box": [
+                0,
+                258,
+                720,
+                173
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.15
+            },
+            {
+              "file": "04_em_density.png",
+              "content_box": [
+                0,
+                227,
+                720,
+                235
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.066667
+            },
+            {
+              "file": "05_e57_points.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
+            },
+            {
+              "file": "06_verdicts.png",
+              "content_box": [
+                0,
+                240,
+                720,
+                210
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.435
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 807225,
+          "color_mad": [
+            0.6764,
+            0.1092,
+            1.0091,
+            0.6749,
+            0.0,
+            0.0378
+          ],
+          "max_color_mad": 1.0091,
+          "source_sha256": "0bb8bcd85fd681ca2b7fef1b17455be9ef311b4d32a8d777b86b1f0b49487a96"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_file_formats/story.en.gif",
+          "frames": [
+            {
+              "file": "01_stars_matched.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
+            },
+            {
+              "file": "02_magnitudes.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_mri_head.png",
+              "content_box": [
+                0,
+                258,
+                720,
+                173
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.15
+            },
+            {
+              "file": "04_em_density.png",
+              "content_box": [
+                0,
+                227,
+                720,
+                235
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.066667
+            },
+            {
+              "file": "05_e57_points.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
+            },
+            {
+              "file": "06_verdicts.png",
+              "content_box": [
+                0,
+                240,
+                720,
+                210
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.435
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 807225,
+          "color_mad": [
+            0.6764,
+            0.1092,
+            1.0091,
+            0.6749,
+            0.0,
+            0.0378
+          ],
+          "max_color_mad": 1.0091,
+          "source_sha256": "709f5d8b3cb0deeacb9b1840e5f4394938b0c402357cd1b86dfcc15bf4fffa1e"
+        }
+      },
+      "reason": null,
+      "cover": "01_stars_matched.png",
+      "still": "articles/assets/poc/poc_real_file_formats/01_stars_matched.png",
+      "alt": {
+        "ja": "SDSS r の NGC 2420(北が上)。青=star_detect の検出、緑=SDSS の星表の星(15〜20 等、飽和なし)で 1.0″ 以内に対応、赤=対応なし。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外(検出の青だけが並ぶ)。",
+        "en": "Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed"
+      }
     }
   }
 }

@@ -13,7 +13,7 @@
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/closest_point_transform.inputs.jpg">closest_point_transform: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>回傳區域<b>補集</b>的歐氏距離變換歸一化結果——表示每個像素到最近的區域（前景）像素的距離，與 <code style="color:#22d3bf">distance_transform</code> 相比前景/背景是相反的距離場。輸出型別為 <code style="color:#22d3bf">image</code>。相當於 HALCON 的 <code style="color:#22d3bf">closest_point_transform</code>（Compute the closest-point transformation of a region.）。</p>
+<p>回傳區域<b>補集</b>的歐氏距離變換歸一化結果——表示每個像素到最近的區域（前景）像素的距離，與 <code style="color:#22d3bf">distance_transform</code> 相比前景/背景是相反的距離場。輸出型別為 <code style="color:#22d3bf">image</code>。區域為空時一律為 1.0（沒有最近的區域像素 = 處處都是最遠）。相當於 HALCON 的 <code style="color:#22d3bf">closest_point_transform</code>（Compute the closest-point transformation of a region.）。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

@@ -5,7 +5,7 @@ category: fits
 in: any
 out: any
 gpu: なし
-examples: [fileio_scientific_roundtrip]
+examples: [fileio_scientific_roundtrip, poc_real_file_formats]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -22,6 +22,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 primary HDU の 2-D/3-D FITS を ``(image_or_volume, meta)`` として読む。
 
 ``meta`` は ``bitpix``、``bzero``、``bscale`` と基本 WCS の ``wcs`` 辞書を持つ。
+FITS 4.0 の整数の規約(BSCALE=1 で BZERO=-128 / 2**15 / 2**31 / 2**63)は int8 / uint16 /
+uint32 / uint64 の整数のまま正確に返す(それ以外の BZERO/BSCALE は float64 に換算)。
 切れたブロック、random groups、BLANK、次元・BITPIX・データ長の不一致は名指しで拒否する。
 呼び出し例: ``image, meta = astro_fits_read(payload)``。
 
@@ -34,6 +36,7 @@ primary HDU の 2-D/3-D FITS を ``(image_or_volume, meta)`` として読む。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [fileio_scientific_roundtrip](../../../../examples/fileio_scientific_roundtrip.py) — `py -3.11 examples/fileio_scientific_roundtrip.py`
+- [poc_real_file_formats](../../../../examples/poc_real_file_formats.py) — `py -3.11 examples/poc_real_file_formats.py`
 
 ## 型が繋がる次の op(`any` を入力に取れる)
 

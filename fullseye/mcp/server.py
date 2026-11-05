@@ -39,7 +39,16 @@ from .handles import HandleError, HandleStore
 PROTOCOL_VERSION = "2025-06-18"
 SERVER_NAME = "fullseye"
 #: llmesh/mcp/validator.py の ``_MAX_RAW_BYTES`` と同じ。超えたら typed tree を落とす。
-MAX_STRUCTURED_BYTES = int(get_system("mcp_response_budget"))
+MAX_STRUCTURED_BYTES = int(get_system("mcp_response_budget"))   # import 時の既定(schema の説明用)
+
+
+def _response_budget(value=None) -> int:
+    """structuredContent の上限(byte)。*value* が None なら**呼ぶたびに** fssystem の
+    ``mcp_response_budget`` を読む。
+
+    ★2026-11-05(敵対的検証 第 2 巡 T4): 以前は import 時に 1 回だけ定数にして既定引数へ焼いていたので、
+    ``with fssystem.system(mcp_response_budget=16000)`` が MCP の応答に効かなかった(40 kB を返した)。"""
+    return int(get_system("mcp_response_budget")) if value is None else int(value)
 
 def _execution_policy() -> dict:
     return {"status":"declared_not_applied"}
@@ -109,6 +118,10 @@ TOOLS: dict[str, dict] = {
                 "limit": {"type":"integer","minimum":1,"maximum":MAX_SEARCH_LIMIT,"default":7},
                 "detail": {"type":"boolean","default":False,
                            "description":"true なら候補の要約・出典を本文にも展開する"},
+                # ★2026-11-05(敵対的検証 第 2 巡 D10): ハンドラは a.get("lang") を読むのに schema に無く、
+                #   additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
+                "lang": {"type": "string", "enum": ["ja", "en", "zh", "tw", "ko", "de", "hi"],
+                         "description": "要約の言語(省略時は問い合わせの文字から判定)"},
             },
             "required": ["query"],
             "additionalProperties": False,
@@ -559,7 +572,18 @@ def read_message(stdin) -> dict | None:
 
 
 def write_message(stdout, msg: dict) -> None:
-    body = json.dumps(msg, ensure_ascii=False).encode("utf-8")
+    """1 通を Content-Length 枠で書く。**JSON に無い NaN / ±inf のトークンは決して書かない**(fail-closed)。
+
+    ★2026-11-05(敵対的検証): ``json.dumps`` の既定 ``allow_nan=True`` は ``NaN`` / ``Infinity`` を
+    そのまま出し、厳密な JSON の相手には壊れた本文になる。非有限の値が混ざった応答は、同じ id の
+    -32603(内部エラー)に置き換えて書く(値を黙って null にもしない)。"""
+    try:
+        body = json.dumps(msg, ensure_ascii=False, allow_nan=False).encode("utf-8")
+    except ValueError as exc:
+        _log("write_message", "non-finite value in response refused: %s" % exc)
+        body = json.dumps(_err(msg.get("id") if isinstance(msg, dict) else None, -32603,
+                               "内部エラー: 応答に JSON で表せない非有限の値(NaN / inf)が含まれていた"),
+                          ensure_ascii=False).encode("utf-8")
     stdout.write(b"Content-Length: " + str(len(body)).encode() + b"\r\n\r\n")
     stdout.write(body)
     stdout.flush()
@@ -614,8 +638,9 @@ def _structured_summary(value: dict) -> str:
 
 
 def tool_result(text: str, structured: dict | None, *, links: list | None = None,
-                max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+                max_structured_bytes: int | None = None) -> dict:
     """本文(text)は必ず付け、typed tree は上限内なら付ける。超えたら**落としたと書く**。"""
+    max_structured_bytes = _response_budget(max_structured_bytes)
     if structured is not None and get_system("mcp_body_mode") == "compact" and text.lstrip().startswith(("{","[")):
         text = _structured_summary(structured)
     content: list[dict] = [{"type": "text", "text": text}]
@@ -1135,13 +1160,17 @@ def _run_op(arr, op, ka: float, kb: float, allow: bool, device: str = "cpu"):
     """1 op を走らせる。strict で失敗したら (None, degraded, err)。"""
     import backend_safe
     import fullseye
-    backend_safe.clear_fallbacks()
+    # ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で
+    #   **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の
+    #   台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。
+    #   印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
+    mark = backend_safe.mark()
     try:
         out = fullseye.apply(arr, op.name, ka, kb, device=device,
                             on_error=("fallback" if allow else "raise"))
     except Exception as exc:                                    # noqa: BLE001
-        return None, backend_safe.fallbacks(), {"type": type(exc).__name__, "message": str(exc)[:400]}
-    return out, backend_safe.fallbacks(), None
+        return None, backend_safe.events_since(mark), {"type": type(exc).__name__, "message": str(exc)[:400]}
+    return out, backend_safe.events_since(mark), None
 
 
 def _stage(store: HandleStore, meta: dict, arr, op, ka: float, kb: float, allow: bool, *,
@@ -1242,7 +1271,11 @@ def _pipeline_json_value(value, store: HandleStore, *, sort: str, provenance: li
         if item is None or isinstance(item, (str, bool, int)):
             return item
         if isinstance(item, float):
-            return item if math.isfinite(item) else None
+            # ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、
+            #   値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
+            if not math.isfinite(item):
+                raise ValueError("value holds a non-finite number")
+            return item
         if isinstance(item, np.generic):
             return convert(item.item())
         if isinstance(item, np.ndarray):
@@ -1285,7 +1318,8 @@ def _pipeline_json_value(value, store: HandleStore, *, sort: str, provenance: li
 
 
 def _apply(a: dict, cat: Catalog, store: HandleStore, *,
-           max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+           max_structured_bytes: int | None = None) -> dict:
+    max_structured_bytes = _response_budget(max_structured_bytes)
     op = _resolve_op(a["op"], cat)
     meta, arr = store.get(a["handle"])
     _check_sort(op, meta["sort"], prev="ハンドル %s" % meta["handle"])
@@ -1349,7 +1383,8 @@ def _acceleration_record(requested, op_name: str, shape, degraded=None) -> dict:
 
 
 def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
-              max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+              max_structured_bytes: int | None = None) -> dict:
+    max_structured_bytes = _response_budget(max_structured_bytes)
     return _pipeline_dag(a,cat,store,max_structured_bytes=max_structured_bytes)
 
 
@@ -1482,40 +1517,37 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 if actual != expected:
                     raise RuntimeError("registry target mismatch: %r != %r"%(actual,expected))
                 with backend_safe.strict_mode(True), backend_safe.current_op(edge["op"]):
-                    if edge["op"] in {"ncc_locate", "shape_locate"}:
-                        runtime_ops.set_match_template(template_value)
-                    try:
-                        # 段ごとに転送するので、規則も段ごとに通す(auto のときだけ CPU に残ることがある)
-                        if device == "cuda" and len(args) == 1:
-                            stage_decision=fullseye.explain_device(a.get("device", "cpu"), stages=(edge["op"],),
-                                                                   shape=np.shape(incoming))
-                            stage_device=stage_decision["resolved"]
-                        else:
-                            stage_decision={"device":"cpu","path":"cpu",
-                                            "reason":(pipeline_decision.get("reason") if device != "cuda"
-                                                      else "multi_input")}
-                            stage_device=device if len(args) == 1 else "cpu"
-                        stage_devices.append({"stage":i,"op":edge["op"],
-                                              "device":stage_decision["device"] if stage_device == "cuda" else "cpu",
-                                              "path":stage_decision.get("path") if stage_device == "cuda" else "cpu",
-                                              "reason":stage_decision.get("reason")})
-                        if stage_device == "cuda" and len(args) == 1:
-                            out=fullseye.apply(incoming, edge["op"], float(normalized_spec["a"]),
-                                               float(normalized_spec["b"]), device=stage_device,
-                                               on_error="raise")
-                        else:
-                            out=registered.fn(incoming,float(normalized_spec["a"]),
-                                              float(normalized_spec["b"]))
-                        if gpu_effective and stage_device == "cuda" and parity_check and len(args) == 1 \
-                                and isinstance(out, np.ndarray):
-                            cpu=fullseye.apply(incoming,edge["op"],float(normalized_spec["a"]),
-                                               float(normalized_spec["b"]),device="cpu",on_error="raise")
-                            if isinstance(cpu,np.ndarray) and cpu.shape == out.shape:
-                                parity_meta={"approximate":True,"max_abs_diff_vs_cpu":float(
-                                    np.max(np.abs(np.asarray(out,np.float64)-np.asarray(cpu,np.float64))))}
-                    finally:
-                        if edge["op"] in {"ncc_locate", "shape_locate"}:
-                            runtime_ops.set_match_template(None)
+                    # ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply
+                    #   (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、
+                    #   extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。
+                    #   全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
+                    stage_template = template_value if edge["op"] in {"ncc_locate", "shape_locate"} else None
+                    # 段ごとに転送するので、規則も段ごとに通す(auto のときだけ CPU に残ることがある)
+                    if device == "cuda" and len(args) == 1:
+                        stage_decision=fullseye.explain_device(a.get("device", "cpu"), stages=(edge["op"],),
+                                                               shape=np.shape(incoming))
+                        stage_device=stage_decision["resolved"]
+                    else:
+                        stage_decision={"device":"cpu","path":"cpu",
+                                        "reason":(pipeline_decision.get("reason") if device != "cuda"
+                                                  else "multi_input")}
+                        stage_device=device if len(args) == 1 else "cpu"
+                    stage_devices.append({"stage":i,"op":edge["op"],
+                                          "device":stage_decision["device"] if stage_device == "cuda" else "cpu",
+                                          "path":stage_decision.get("path") if stage_device == "cuda" else "cpu",
+                                          "reason":stage_decision.get("reason")})
+                    out=fullseye.apply(incoming, executor["alias"], float(normalized_spec["a"]),
+                                       float(normalized_spec["b"]),
+                                       device=(stage_device if len(args) == 1 else "cpu"),
+                                       on_error="raise", template=stage_template)
+                    if gpu_effective and stage_device == "cuda" and parity_check and len(args) == 1 \
+                            and isinstance(out, np.ndarray):
+                        cpu=fullseye.apply(incoming,executor["alias"],float(normalized_spec["a"]),
+                                           float(normalized_spec["b"]),device="cpu",on_error="raise",
+                                           template=stage_template)
+                        if isinstance(cpu,np.ndarray) and cpu.shape == out.shape:
+                            parity_meta={"approximate":True,"max_abs_diff_vs_cpu":float(
+                                np.max(np.abs(np.asarray(out,np.float64)-np.asarray(cpu,np.float64))))}
             else:
                 fn=getattr(importlib.import_module(executor["module"]),executor["callable"])
                 out=fn(*args,**params)
@@ -1713,7 +1745,8 @@ def _fix_text(a: dict, store: HandleStore) -> dict:
 
 
 def _inspect(a: dict, store: HandleStore, *,
-             max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+             max_structured_bytes: int | None = None) -> dict:
+    max_structured_bytes = _response_budget(max_structured_bytes)
     meta, arr = store.get(a["handle"])
     if not isinstance(arr, np.ndarray):
         structured={**meta,"value":arr}
@@ -1776,7 +1809,10 @@ def _profile_tool_names(profile: str) -> set[str]:
 # minimal プロファイルの広告スキーマから隠す上級引数(受け付けは常に可。full では見せる)。
 # 2026-11-02: device / parity_check を足した分で minimal が 1,500 トークンの予算を超えたため。
 # 2026-11-04(統合 GPU): 第 5 便の dry_run / assume_cuda で再び 1,500 を超えた(1,588)ので同じ扱いにする。
-MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check", "dry_run", "assume_cuda")}
+# 2026-11-05(敵対的検証 D10): find_ops の lang を schema に足した分で 1,531 になったので lang も隠す。
+#   plan の want の空・空白はハンドラが ArgError(-32602)で断る(minLength は空白だけを止められず、予算も食う)。
+MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check", "dry_run", "assume_cuda"),
+                                                   "fullseye_find_ops": ("lang",)}
 
 
 def _advertised_schema(name: str, profile: str) -> dict:
@@ -1809,9 +1845,15 @@ def _import_json(a: dict, store: HandleStore) -> dict:
     has_env = a.get("envelope") is not None
     if has_json == has_env:
         raise ArgError("json(文字列)か envelope(オブジェクト)のどちらか一方を渡すこと")
+    # T4 の兄弟: schema の maxLength は import 時の既定。いまの mcp_response_budget で呼ぶたびに測る。
+    if has_json and isinstance(a["json"], str) and len(a["json"]) > _response_budget():
+        raise ArgError("json は %d 文字で、上限 mcp_response_budget=%d を超える" % (len(a["json"]), _response_budget()))
+    # ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する
+    #   (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
+    limits = {"max_bytes": int(store.max_bytes), "max_pixels": int(get_system("mcp_stack_max_pixels"))}
     try:
-        value, sort = (fullseye.from_json(a["json"]) if has_json
-                       else fullseye.from_jsonable(a["envelope"]))
+        value, sort = (fullseye.from_json(a["json"], **limits) if has_json
+                       else fullseye.from_jsonable(a["envelope"], **limits))
     except ValueError as exc:                                    # 信頼境界: 封筒を再検証
         raise ArgError("JSON 封筒が読めない: %s" % exc) from None
     if isinstance(value, np.ndarray):
@@ -1919,8 +1961,9 @@ def _write_viewer(a: dict, store: HandleStore) -> dict:
 
 
 def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = None, *,
-              max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+              max_structured_bytes: int | None = None) -> dict:
     """tool 本体。引数違反は ArgError(= -32602)、実行の失敗は isError の結果。"""
+    max_structured_bytes = _response_budget(max_structured_bytes)
     if name not in TOOLS:
         raise ArgError("知らない tool: %r(あるのは %s)" % (name, sorted(TOOLS)))
     profile = os.environ.get("FULLSEYE_MCP_PROFILE", "full")
@@ -1931,6 +1974,11 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name in ("fullseye_plan", "fullseye_describe", "fullseye_choose"):
         from fullseye.opsearch import plan, describe, choose
         if name == "fullseye_plan":
+            # ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal="   " が search_ops の
+            #   ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
+            for key in ("want", "goal"):
+                if isinstance(a.get(key), str) and not a[key].strip():
+                    raise ArgError("%s が空(空白だけ)の文字列" % key)
             r = plan(a["have"], a["want"], a.get("direction", "forward"), a.get("pattern"), goal=a.get("goal"))
         elif name == "fullseye_describe":
             r = describe(a["kind"], a["name"])
@@ -1967,12 +2015,15 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         from fullseye.opsearch import _format, search_ops, tuning_cards
         try:
             from fssystem import get_system
-            total_limit = a.get("limit", get_system("find_ops_k"))
-            # The default seven is one comparison set (ops + examples).  An
-            # explicit non-default limit keeps the legacy meaning: that many
-            # operator rows, with recipes as supplementary metadata.
-            recipe_limit = min(get_system("find_ops_recipe_max"), total_limit)
-            op_limit = total_limit - recipe_limit if total_limit == get_system("find_ops_k") else total_limit
+            total_limit = int(a.get("limit", get_system("find_ops_k")))
+            # limit = the total number of proposals (ops + recipes) for every value,
+            # not only the default.  Recipes take at most find_ops_recipe_max slots
+            # and always leave one for an operator; the rest are operator rows.  The
+            # split depends on limit alone, so a larger limit never returns fewer
+            # ops (red-team 2026-11-05: limit 5/6/7/8 gave 5/6/5/8 ops, because only
+            # a limit equal to the default reserved the recipe slots).
+            recipe_limit = max(0, min(get_system("find_ops_recipe_max"), total_limit - 1))
+            op_limit = total_limit - recipe_limit
             r = search_ops(a["query"], op_limit, lang=a.get("lang"),
                            in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
         except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)
@@ -2013,6 +2064,8 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name == "fullseye_suggest_pipeline":
         from fullseye.opsearch import normalize_sort, search_ops, op_cards
         start, goal = normalize_sort(a["start_sort"]), normalize_sort(a["goal_sort"])
+        if not a["query"].strip():                       # D10: blank query = -32602, not an internal error
+            raise ArgError("query が空白だけの文字列")
         found = search_ops(a["query"], 5, in_sort=start, out_sort=goal)
         candidates = found["ops"] or found.get("retry_ops", [])
         qkey = a["query"].strip().lower().replace(" ", "_")
@@ -2076,7 +2129,10 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             raise ArgError(str(exc)) from exc
         return tool_result(json.dumps(r, ensure_ascii=False, indent=2), r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_validate_pipeline":
-        r = validate_pipeline(a["stages"], a.get("start_sort"), cat, max_stages=a.get("max_stages", 64),
+        # ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、
+        #   pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。
+        #   None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
+        r = validate_pipeline(a["stages"], a.get("start_sort"), cat, max_stages=None,
                               bindings=a.get("bindings"),store=store)
         text = json.dumps(r, ensure_ascii=False, indent=2)
         return (tool_result(text, r, max_structured_bytes=max_structured_bytes) if r["valid"]

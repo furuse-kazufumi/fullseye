@@ -139,11 +139,29 @@ def stokes_from_jones_batch(state):
     return torch.stack((a + b, a - b, 2.0 * cross.real, 2.0 * cross.imag), -1)
 
 
+def _pol_norm(s1, s2, s3):
+    """``sqrt(S1^2+S2^2+S3^2)``。下溢れ・溢れる桁だけ ``hypot`` で測り直す(``optics._stokes_pol_norm`` と同じ)。"""
+    pol = torch.sqrt(s1 * s1 + s2 * s2 + s3 * s3)
+    nz = (s1 != 0) | (s2 != 0) | (s3 != 0)
+    off = nz & ~((pol >= 1e-150) & (pol <= 1e150))
+    if bool(off.any()):
+        pol = torch.where(off, torch.hypot(torch.hypot(s1, s2), s3), pol)
+    return pol
+
+
+def _realisable_slack(s0):
+    """DoP <= 1 の検査に許す丸め屑: 場の最大 S0 の 1e-12 倍(``optics._mueller_apply_field`` と同じ)。"""
+    if s0.numel() == 0:
+        return 0.0
+    return 1e-12 * max(float(s0.max()), 0.0)
+
+
 def mueller_apply_batch(mueller, stokes):
     """``(..., 4, 4) × (..., 4)``。入力の物理の検査は ``optics.mueller_apply`` と同じで、1 点でも破れば全体を拒否。"""
     s0 = stokes[..., 0]
-    pol = torch.sqrt(stokes[..., 1] ** 2 + stokes[..., 2] ** 2 + stokes[..., 3] ** 2)
-    bad = (s0 < 0) | (pol > s0 * (1.0 + 1e-9) + 1e-12)
+    pol = _pol_norm(stokes[..., 1], stokes[..., 2], stokes[..., 3])
+    # ★2026-11-05(敵対的検証 第 2 巡 K3): 絶対の +1e-12 → 場の最大 S0 に対する相対(optics と同じ)。
+    bad = (s0 < 0) | (pol > s0 * (1.0 + 1e-9) + _realisable_slack(s0))
     n_bad = int(bad.sum())
     if n_bad:
         raise ValueError("mueller_apply_batch: %d of %d Stokes vectors are unphysical (S0 < 0 or DoP > 1)"
@@ -209,8 +227,8 @@ def stokes_analyze_batch(stokes):
     S0 == 0 の画素は全部 NaN(スカラー版は例外、場では暗い画素が普通に在るので印で返す)。
     """
     s0, s1, s2, s3 = stokes[..., 0], stokes[..., 1], stokes[..., 2], stokes[..., 3]
-    pol = torch.sqrt(s1 * s1 + s2 * s2 + s3 * s3)
-    if bool(((s0 < 0) | (pol > s0 * (1.0 + 1e-9) + 1e-12)).any()):
+    pol = _pol_norm(s1, s2, s3)
+    if bool(((s0 < 0) | (pol > s0 * (1.0 + 1e-9) + _realisable_slack(s0))).any()):
         raise ValueError("stokes_analyze_batch: unphysical Stokes vectors in the field")
     nan = float("nan")
     dark = s0 == 0

@@ -224,7 +224,7 @@ OUTPUTS = {
     "tools/gen_recipe_index.py": ["fullseye/data/RECIPE_INDEX.json"],
     "tools/gen_recipe_coverage.py": ["docs/RECIPE_COVERAGE.md", "docs/recipe_coverage.json"],
     "tools/gen_recipe_retrieval_report.py": ["docs/recipe_retrieval_report.json"],
-    "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json"],
+    "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json", "docs/MCP.md"],
     "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
     "tools/gen_device_rules.py": ["fullseye/data/DEVICE_RULES.json"],
     "tools/gen_gpu_routes.py": ["docs/perf/pipeline_routes.json", "docs/perf/pipeline_routes.md"],
@@ -292,7 +292,7 @@ READS = {
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
-    "tools/gen_docs_index_ops.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json", "docs/HALCON_GAP_2026-11-02.md", 
+    "tools/gen_docs_index_ops.py": ["docs/OP_INDEX.json", "fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json", "docs/HALCON_GAP_2026-11-02.md", 
         "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
         "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md", "docs/FILE_FORMATS.md",
         "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
@@ -306,7 +306,8 @@ READS = {
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md", "docs/RECIPE_COVERAGE.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md",
-        "docs/perf/pipeline_routes.md"],                # 題だけ(ORDER_EXEMPT)
+        "docs/perf/pipeline_routes.md",                 # 題だけ(ORDER_EXEMPT)
+        "docs/MCP.md"],                                 # 題だけ(ORDER_EXEMPT、2026-11-05)
     # op ノートの GPU 欄・索引の gpu 欄は gpu_route(規則表の許可リストの道と場面の台帳)から書く
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*", "fullseye/data/DEVICE_RULES.json",
                               "fullseye/data/GPU_ACCEL_USE.json"],
@@ -362,6 +363,9 @@ ORDER_EXEMPT = {
     ("tools/gen_device_rules.py", "fullseye/data/op_knob.json"): (
         "gen_device_rules は registry を組むときに op のつまみ表を読むが、規則表に入るのは実測ログ・許可リスト・"
         "op 名だけ(つまみの値は入らない)。op ノートが GPU 欄のために規則表を読むので、鎖の先頭近くに置く。"),
+    ("tools/gen_docs_index_ops.py", "docs/MCP.md"): (
+        "gen_docs_index_ops は文書地図に載せるため MCP.md の題(先頭の # 見出し)だけを読む。後ろの "
+        "measure_mcp_context が書き直すのは本文中の実測トークン数の 1 文だけなので、地図の生成結果には影響しない。"),
     ("tools/gen_docs_index_ops.py", "docs/perf/pipeline_routes.md"): (
         "gen_docs_index_ops は文書地図に載せるため pipeline_routes.md の題だけを読む。題は gen_gpu_routes の"
         "固定の文で、後で書き直されるのは表の中身だけなので、地図の生成結果には影響しない。"),
@@ -402,6 +406,11 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/record_real_data_runs.py": ("能力ノートが名指す data: real の例を門と同じ条件(手元のキャッシュ無し)で走らせ、"
+                                       "実データを読んだ印(realdata.mark_read)を docs/real_data_runs.json に残す実測器。"
+                                       "例 1 本に分単位かかるので手で回して commit する。gen_maturity(鎖の段)は記録を読むだけ。"
+                                       "記録と実走の食い違いは tests/test_poc_scripts_run.py が全 PoC を走らせるたびに照合する"
+                                       "(敵対的検証 2026-11-05 第 2 巡 D6)。"),
     "tools/bench_device_ops.py": ("device 引数を持つ op(torch の GPU 経路)の実測器。結果は out/device_ops(追跡外)。GPU が要り数字は機械で変わる。(GPU 便、2026-11-04 の統合で分類)"),
     "tools/bench_gpu_optics.py": ("GPU 第 4 便の実測器(raytrace の CPU 基準と lens_gpu の一括経路の時間、--out の JSON)。"
                                   "数字は機械と負荷で変わり、--batch cuda は GPU と gpu_in_use.lock の手順が要るので手で回す。"
@@ -685,6 +694,9 @@ EXCLUDED = {
 #: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
+    "realdata.py": ("実写データの取り口(ライブラリ)。書くのは mark_read が環境変数 FULLSEYE_REAL_DATA_LOG の指す "
+                    "repo の外の印のファイルだけ(tools/record_real_data_runs.py と PoC の門が一時ディレクトリに立てる)。"
+                    "__main__ は取り口の自己診断で、コミット物を書かない(敵対的検証 2026-11-05 第 2 巡 D6)。"),
     "tools/fetch_tless.py": "取得器(T-LESS を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
     # ---- 2026-11-01: ViEW2026 の目玉 14 本の受け取り検査(生成物を書かない) ----
     "tools/check_view2026_figure_scale.py": "検査。図が最近傍拡大でなく描画倍率どおりかを数えて表にする(repo の生成物は書かない)。",

@@ -812,15 +812,36 @@ def set_shape_model_origin(model, row, col):
 
 
 def create_cam_pose_look_at_point(cam_pos, look_at, up=(0, 0, 1)):
-    """カメラ位置と注視点から look-at 姿勢(4x4)を構築(create_cam_pose_look_at_point)。"""
-    cam_pos = np.asarray(cam_pos, float); look_at = np.asarray(look_at, float)
-    up = np.asarray(up, float)
-    z = look_at - cam_pos; z = z / (np.linalg.norm(z) + 1e-12)   # 前方
+    """カメラ位置と注視点から look-at 姿勢(4x4)を構築(create_cam_pose_look_at_point)。
+
+    返す ``T[:3, :3]`` の列は camera.py の規約の (x=右, y=下, z=前) で、常に正規直交・det=+1。
+    ``ValueError``: ``cam_pos`` と ``look_at`` が一致(差が座標の丸めの桁以下)、``up`` が 0 または
+    非有限、``up`` が視線と平行(なす角の正弦 < 1e-9)のとき —— render3d.look_at と同じ規則。
+    ★2026-11-05 敵対的検証 N7: 以前は平行な ``up`` で det=0 の行列を例外なく返し、``+1e-12`` の
+    床のせいでわずかに傾いた ``up``(1e-10)でも正規直交でない行列(det=0.98)を返した。
+    """
+    cam_pos = np.asarray(cam_pos, float).reshape(3)
+    look_at = np.asarray(look_at, float).reshape(3)
+    up = np.asarray(up, float).reshape(3)
+    z = look_at - cam_pos
+    zn = float(np.linalg.norm(z))
+    ref = max(float(np.linalg.norm(cam_pos)), float(np.linalg.norm(look_at)))
+    if not np.isfinite(zn) or zn == 0.0 or zn <= 4.0 * np.finfo(float).eps * ref:
+        raise ValueError("create_cam_pose_look_at_point: cam_pos and look_at coincide")
+    z = z / zn                                                   # 前方
+    un = float(np.linalg.norm(up))
+    if not np.isfinite(un) or un == 0.0:
+        raise ValueError("create_cam_pose_look_at_point: 'up' must be a finite non-zero vector")
     # x = cross(z, up) でなければ camera.py の規約(x=右, y=下, z=前)にならない。
     # cross(up, z) だと x が左・y が上を向き、光軸まわりに 180 度回った姿勢を
     # 例外も出さずに返す(投影像が黙って上下左右反転する)。
-    x = np.cross(z, up); x = x / (np.linalg.norm(x) + 1e-12)     # 右
+    x = np.cross(z, up / un)
+    xn = float(np.linalg.norm(x))                                # = sin(視線と up のなす角)
+    if xn < 1e-9:
+        raise ValueError("create_cam_pose_look_at_point: 'up' is parallel to the view direction")
+    x = x / xn                                                   # 右(床なしで正規化)
     y = np.cross(z, x)                                           # 下
+    y = y / np.linalg.norm(y)
     R = np.column_stack([x, y, z])
     T = np.eye(4); T[:3, :3] = R; T[:3, 3] = cam_pos
     return T

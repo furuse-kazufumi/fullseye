@@ -19,7 +19,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二值化阈值（假定为边缘振幅图像。a=0 时大于 0 的像素全部为前景）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 结构元素的迭代次数 <code style="color:#22d3bf">it = 1 + int(b*3)</code>（1〜4，正方形边长 3〜9 像素）。能闭合的缝隙大致在</p>
 <p><code style="color:#22d3bf">2*it</code> 像素以下。</p>
-<p>注意：<code style="color:#22d3bf">binary_closing</code> 把图像外视为 0 进行腐蚀，因此距图像边缘 <code style="color:#22d3bf">it</code> 像素的带一定变为 0 （对全为 1 的 20×20 施加 it=1，剩下的是 18×18）。处理接触边缘的边缘时，要事先加边距，或对结果重新膨胀。输入是 image（边缘振幅），输出也是 image sort，但内容是二值。放在 <code style="color:#22d3bf">hx_nonmax_dir</code> 或 <code style="color:#22d3bf">sobel_amp</code> 的后面，连通后的边缘交给 <code style="color:#22d3bf">hx_region_to_label</code> 或 <code style="color:#22d3bf">hx_detect_edge_segments</code>。</p>
+<p>图像边缘：平面延伸到图像之外，图像外视为背景（加边距闭合后再裁剪回来）。闭运算是扩张性的，因此也不会削去接触边缘的边缘（全为 1 的 20×20 仍是 20×20）。2026-11-05（对抗性验证 第 2 轮 P3）之前把图像外视为 0 进行腐蚀，距图像边缘 <code style="color:#22d3bf">it</code> 像素的带一定变为 0。输入是 image（边缘振幅），输出也是 image sort，但内容是二值。放在 <code style="color:#22d3bf">hx_nonmax_dir</code> 或 <code style="color:#22d3bf">sobel_amp</code> 的后面，连通后的边缘交给 <code style="color:#22d3bf">hx_region_to_label</code> 或 <code style="color:#22d3bf">hx_detect_edge_segments</code>。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

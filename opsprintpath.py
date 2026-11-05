@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsprintpath —— 3D プリンタのデータ(G-code / 3MF / スライス / 層画像の検査)を扱う op の統一レジストリ。
 
-実体は ``printpath.py``(11 op / 4 カテゴリ、numpy + 標準ライブラリ)。台帳の役目は 3 つ:
+実体は ``printpath.py``(23 op / 6 カテゴリ、numpy + 標準ライブラリ)。台帳の役目は 3 つ:
 docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型と素の返りを橋渡しする。
 
 使い方::

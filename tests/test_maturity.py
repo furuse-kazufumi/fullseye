@@ -102,4 +102,14 @@ def test_the_ledger_keeps_the_facts_not_just_the_verdict():
     e = d["example_execution"]
     assert e["run_by_the_poc_gate"] + e["run_by_the_example_gate"] == e["examples2d_total"], \
         "2-D 台帳の件数と、門が走らせる件数の合計が合わない"
-    assert e["not_run_by_any_gate"] == 0
+    # ★2026-11-05(敵対的検証 第 2 巡 D7): ここは `== 0` で、生成器が書く**定数** 0 と照合していた
+    #   (台帳の外の 8 本を数えず、どの門も走らせない 4 本が見えなかった)。いまは生成器が数え、
+    #   ここはディスクとの和と「走らない例には理由がある」ことを見る。
+    import examples2d as EX2
+    not_run = e["not_run_by_any_gate_reasons"]
+    assert e["not_run_by_any_gate"] == len(not_run)
+    assert e["scripts_on_disk"] == len(EX2.discover()) > 400
+    assert e["scripts_on_disk"] == e["examples2d_total"] + e["excluded_from_the_registry"]
+    assert (len(e["excluded_but_run_by_a_named_test"]) + len(not_run)
+            == e["excluded_from_the_registry"] == len(EX2.EXCLUDED))
+    assert all(isinstance(v, str) and len(v.strip()) > 20 for v in not_run.values()), not_run

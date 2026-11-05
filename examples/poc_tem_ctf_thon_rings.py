@@ -53,6 +53,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import examplefig as figs  # noqa: E402
 import temsim as TM  # noqa: E402
 from filters_freq import phase_correlation_fft  # noqa: E402
+import realdata  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
                          "reduced" if os.environ.get("CI") else "full") == "reduced"
@@ -649,6 +650,7 @@ def chapter_real():
         for k, v in RECORDED.items():
             print("     %s = %s" % (k, v))
         return None
+    realdata.mark_read("empiar-10028")
     res = {}
     for tag, (img, author) in got.items():
         t0 = time.process_time()

@@ -86,6 +86,7 @@ from scipy import ndimage
 import fullseye as fs
 
 import examplefig as figs      # ★fullseye の後(パスフックがリポジトリ直下を通す)
+import realdata  # noqa: E402
 
 L = fs.ledger
 
@@ -458,6 +459,7 @@ def section_real():
     print("  train %d / val %d / test %d 枚(データ付属の分割)、1/%d に縮小、区画 %d px 角"
           % (len(sets["train"]), len(sets["val"]), len(sets["test"]), REAL_SCALE, BLOCK))
     data = {k: [_load(root, b) for b in v] for k, v in sets.items()}
+    realdata.mark_read("weedyrice-rgbms")
 
     # val で 1 つ選ぶ(宣言順で同点は先): 領域の作り方 2 通り x 特徴の組 2 通り
     cands = [("格子", "grid", False), ("格子 + 画像内の中央値を引いた列", "grid", True),

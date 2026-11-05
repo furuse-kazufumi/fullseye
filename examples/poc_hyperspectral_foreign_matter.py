@@ -81,6 +81,7 @@ import fullseye as fs  # noqa: E402
 import materials as MT  # noqa: E402
 import specops as SP  # noqa: E402
 import spectralrad as SR  # noqa: E402
+import realdata  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
                          "reduced" if os.environ.get("CI") else "full") == "reduced"
@@ -413,6 +414,7 @@ def chapter_real_polymers():
     gt = np.array(Image.open(os.path.join(root, "Test", "Test_GT.png"))).astype(int)
     if gt.shape != cube.shape[:2]:
         raise ValueError("正解マスクの形が場面と違う")
+    realdata.mark_read("rodare3390-polymers-hsi")
     keep = (wl >= 1100.0) & (wl <= 2400.0)                       # 樹脂の C-H の帯の所(端の雑音の多い帯を除く)
     R, wlk = cube[..., keep], wl[keep]
     # ★実データの破片は暗い(反射率の中央値 0.07)ので、生の反射率の SAM は足し算のベースラインに負ける(下で数える)。
@@ -514,6 +516,7 @@ def chapter_real_pork():
         return None
     z = np.load(npz)
     caps = sorted(k[5:] for k in z.files if k.startswith("cube_"))
+    realdata.mark_read("zenodo17242553-pork-hsi")
     # 捕捉(撮影)で分ける: 2 枚で学び、残り 2 枚で採点(同じ肉片の隣の画素で当てない)
     train_caps, test_caps = caps[:2], caps[2:]
     # 波長: 記録の説明「942〜1723 nm を 224 帯(約 3.5 nm)、最初と最後の 20 帯を除いて 184 帯」→ 1012〜1653 nm と読む

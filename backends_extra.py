@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from backend_safe import signed01
+from backend_safe import _reflect_padded, signed01
 from scipy import ndimage
 
 
@@ -117,13 +117,18 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
 
                 ``a`` が探索する最大スケール ``max_sigma`` を 5〜25 の範囲で振る
                 (大きいほど大きなブロブまで拾う)。``b`` が検出しきい値
-                ``threshold`` を 0.02〜0.17 で振る(小さいほど弱いブロブまで拾い、
-                検出数が増えやすい)。3 手法は速度・精度が異なる(LoG が最も正確
+                ``threshold`` を振る(小さいほど弱いブロブまで拾い、検出数が増えやすい):
+                LoG / DoG は 0.02〜0.17(線形)、**DoH は 0.001〜0.1(対数、``0.001·100^b``、
+                ``b=0.5`` で skimage の既定 0.01)**。DoH の応答(スケール正規化したヘッセ行列式)は
+                LoG / DoG より 1 桁以上小さく、2026-11-05(敵対的検証 第 2 巡 P5)まで共通の
+                0.02〜0.17 を当てていたので、``xsk_blob_doh`` はどの設定でも 0 個だった
+                (σ=3〜6 のガウス斑点 5 個を skimage の既定は 5 個と数える)。3 手法は速度・精度が異なる(LoG が最も正確
                 だが遅く、DoH はエッジに強い一方、小さいブロブを苦手とする、等)。
                 """
                 x = np.clip(np.asarray(v, np.float64), 0, 1)
                 f = {"log": feature.blob_log, "dog": feature.blob_dog, "doh": feature.blob_doh}[kind]
-                bl = f(x, max_sigma=5 + 20 * a, threshold=0.02 + 0.15 * b)
+                thr = (0.001 * 100.0 ** float(b)) if kind == "doh" else (0.02 + 0.15 * b)
+                bl = f(x, max_sigma=5 + 20 * a, threshold=thr)
                 return np.float64(len(bl))
             return fn
 
@@ -189,7 +194,9 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             (向き自体は返さない)。
             """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
-            axx, axy, ayy = feature.structure_tensor(x, sigma=0.5 + 2 * a, order="rc")
+            # 鏡映の余白で包む(skimage の既定 mode='constant' は枠に偽の向きを作る。2026-11-05 P6)
+            axx, axy, ayy = _reflect_padded(
+                lambda u: feature.structure_tensor(u, sigma=0.5 + 2 * a, order="rc"), x, 0.5 + 2 * a)
             l1, l2 = feature.structure_tensor_eigenvalues([axx, axy, ayy])
             return _norm(np.nan_to_num((l1 - l2) / (l1 + l2 + 1e-8)))
 
@@ -205,7 +212,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             blob)と谷(暗い blob)を区別しない。
             """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
-            H = feature.hessian_matrix(x, sigma=0.5 + 2.5 * a, order="rc", use_gaussian_derivatives=True)
+            H = _reflect_padded(lambda u: feature.hessian_matrix(u, sigma=0.5 + 2.5 * a, order="rc",
+                                                                use_gaussian_derivatives=True), x, 0.5 + 2.5 * a)
             ev = feature.hessian_matrix_eigvals(H)
             # ★``ev[0]`` は**代数的**に最大の固有値であって、絶対値最大ではない。
             # 明るい稜線では主曲率が負なので ev[0] は絶対値の小さい方になり、

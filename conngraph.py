@@ -18,7 +18,7 @@
 * **activity** … 状態列の到達潜時・活動の空間的な広がり・座標に活動を載せて回す色動画
   (2026-09-20、MaleCNS の soma 座標に刺激の波を描く PoC から)
 
-の 23 op / 5 カテゴリ。実装は numpy のみ(``networkx`` / ``scipy.sparse`` に
+の 28 op / 7 カテゴリ。実装は numpy のみ(``networkx`` / ``scipy.sparse`` に
 依存しない)。すべて教科書の閉形式で、``tests/test_conngraph.py`` が
 リング・スター・完全グラフ・2 クリークの厳密な真値と突き合わせる。
 

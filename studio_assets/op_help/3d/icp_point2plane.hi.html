@@ -13,7 +13,8 @@
 <p>dst_normals (M,3): dst के unit normals (normalised न हों तब भी भीतर normalise होते हैं)।</p>
 <p>अज्ञात हों तो pointcloud.estimate_normals(dst) आदि से पहले अनुमान लगाएँ।</p>
 <p>iters: iterations की अधिकतम संख्या।</p>
-<p>tol: RMSE का बदलाव इस मान से कम होने पर convergence मानकर रुकता है।</p>
+<p>tol: RMSE का बदलाव <code style="color:#22d3bf">tol × L</code> (L = dst के bounding box का विकर्ण) से कम होने पर convergence मानकर रुकता है।</p>
+<p>यह point cloud के scale के सापेक्ष मात्रा है (2026-11-05 तक यह coordinate units में absolute मान था)।</p>
 <p>init ((R0,t0)): initial pose (मोटे match के R,t दें)। None होने पर identity।</p>
 <p>trim (float|None): [0,1) का अनुपात। हर iteration में सबसे बड़े point-to-plane residual वाले ऊपरी हिस्से को हटाने वाला</p>
 <p>Trimmed ICP (partial overlap और outliers के प्रति robust)।</p>

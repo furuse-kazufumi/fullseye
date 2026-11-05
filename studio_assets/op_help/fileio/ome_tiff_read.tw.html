@@ -6,7 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>讀取 OME-TIFF 為 <code style="color:#22d3bf">(stack, meta)</code>，並交叉核對 OME-XML 與陣列。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">meta</code> は TCZYX 部分列の <code style="color:#22d3bf">axes</code>、物理サイズと単位、チャネル名を持つ。通常 TIFF、複数 Image、XML の Size/dtype と TIFF の不一致、無名チャネルは拒否する。</p>
+<p><code style="color:#22d3bf">meta</code> は TCZYX 部分列の <code style="color:#22d3bf">axes</code>、物理サイズと単位、チャネル名を持つ。<code style="color:#22d3bf">ome_tiff_write</code> の書いた長さ 1 の軸は記録から戻す(他の書き手のファイルでは tifffile と同じく長さ 1 の軸を畳む)。通常 TIFF、複数 Image、XML の Size/dtype と TIFF の不一致、無名チャネルは拒否する。</p>
 <p>呼び出し例: <code style="color:#22d3bf">stack, meta = ome_tiff_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
@@ -14,6 +14,7 @@
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fileio_scientific_roundtrip">fileio_scientific_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/fileio_scientific_roundtrip.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_file_formats">poc_real_file_formats</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_file_formats.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">any</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="opfileio:table_write_csv">table_write_csv</a> · <a style="color:#22d3bf" href="opfileio:table_read_csv">table_read_csv</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_ply">mesh_write_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_ply">mesh_read_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_stl">mesh_write_stl</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_stl">mesh_read_stl</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_obj">mesh_write_obj</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_obj">mesh_read_obj</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">ome_tiff</code>)</h3>

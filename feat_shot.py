@@ -258,7 +258,7 @@ def ransac_rigid(src_pts, dst_pts, pairs, inlier_thr, iters=2000, seed=0,
                  device="cpu"):
     """3 点最小サンプル + Kabsch の RANSAC で外れ対応に頑健な剛体姿勢を推定。
     退化(共線)サンプルを棄却し、最良インライア集合で再推定。
-    返り値 (R, t, inliers(bool), S, D) or None。"""
+    返り値 (R, t, inliers(bool), S, D) or None。``inliers`` は返す R,t で数え直した内れ値。"""
     rng = np.random.default_rng(seed)
     S = src_pts[pairs[:, 0]]
     D = dst_pts[pairs[:, 1]]
@@ -266,21 +266,30 @@ def ransac_rigid(src_pts, dst_pts, pairs, inlier_thr, iters=2000, seed=0,
     if m < 3:
         return None
     best_inliers, best_count = None, 0
+    # ★2026-11-05(敵対的検証 G9): 縮退の床が単位²の絶対値だったので、座標が小さい点群(mm を m で渡す等)では全仮説を「縮退」として捨て、外れ値込みの当てはめに落ちていた。床は点群の尺度(重心からの二乗平均距離)に対する相対量にした。(feat_spin.ransac と同じく尺度² 倍。)
+    floor = 1e-6 * float(np.mean(np.sum((S - S.mean(0)) ** 2, axis=1)))
     for _ in range(iters):
         sel = rng.choice(m, 3, replace=False)
         P3, Q3 = S[sel], D[sel]
-        if np.linalg.norm(np.cross(P3[1] - P3[0], P3[2] - P3[0])) < 1e-6:
-            continue                             # 共線サンプルは退化
+        if np.linalg.norm(np.cross(P3[1] - P3[0], P3[2] - P3[0])) <= floor:
+            continue                             # 共線サンプルは退化(点群の尺度² に対する相対量)
         R, t = _kabsch(P3, Q3, device)
         err = np.linalg.norm(S @ R.T + t - D, axis=1)
         inl = err < inlier_thr
         c = int(inl.sum())
         if c > best_count:
-            best_count, best_inliers = c, inl
+            best_count, best_inliers, best_pose = c, inl, (R, t)
     if best_inliers is None or best_count < 3:
         return None
+    # ★2026-11-05(敵対的検証 G1b の兄弟): 以前は内れ値で再推定した R,t を返しながら、
+    # inliers は再推定前の 3 点仮説のものを返していた(iters=10 で 33 点食い違う)。
+    # 返す inliers は常に返す R,t の内れ値。再推定で合意が仮説より減るなら仮説を返す。
     R, t = _kabsch(S[best_inliers], D[best_inliers], device)
-    return R, t, best_inliers, S, D
+    inl = np.linalg.norm(S @ R.T + t - D, axis=1) < inlier_thr
+    if int(inl.sum()) < best_count:
+        R, t = best_pose
+        inl = np.linalg.norm(S @ R.T + t - D, axis=1) < inlier_thr
+    return R, t, inl, S, D
 
 
 def register_shot(src, dst, radius=None, normal_k=16, ratio=0.9,

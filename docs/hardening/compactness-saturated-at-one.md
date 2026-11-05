@@ -64,6 +64,12 @@ return np.float64(min(1.0, (per * per) / (4 * np.pi * max(pr.area, 1)) / 10))
 —— 1 を下回る値は「領域が小さすぎて画素近似が効いていない」という情報そのもので、
 必要なら呼ぶ側で切れる。この差は説明文に書いた。
 
+★**追記(2026-11-05、敵対的検証 第 2 巡 P2)**: 同じ日(2026-09-26)の後の便
+(`docs/hardening/halcon-named-shape-factors.md`)で、実装は HALCON と同じ `max(1, C)` に
+変わった(`_halcon_compactness`)。説明文の「ここでは切らない」だけが残り、実装と食い違って
+いた。HALCON 23.11 の説明は「C = max(1, C')」「The value of C is clipped to 1.0」、表明は
+`Compactness >= 1.0 || Compactness == 0` なので、実装を正とし、説明文を直した。
+
 ## 門
 
 `tests/test_shape_factors_closed_form_2026_09_26.py`。長さを伸ばすと数が伸び続ける

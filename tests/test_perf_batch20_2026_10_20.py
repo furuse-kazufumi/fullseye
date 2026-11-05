@@ -203,9 +203,11 @@ def test_116_curve_shortcuts_match_original_full_derivatives():
     t = np.linspace(0, 20, 1000)
     curve = np.column_stack((np.cos(t), np.sin(t), .03 * t))
     r1, r2, r3 = curve3d._d(curve)
-    tangent = r1 / (np.linalg.norm(r1, axis=1, keepdims=True) + 1e-12)
+    # 2026-11-05 敵対的検証(numerics): 参照式から分母の + 1e-12 を外した(その床が欠陥で、
+    # 尺度 1e-6 の曲線で ‖N‖ = 0.998 になった)。この曲線では ‖r'‖, ‖N 成分‖ > 0 なので素の割り算。
+    tangent = r1 / np.linalg.norm(r1, axis=1, keepdims=True)
     normal_part = r2 - np.sum(r2 * tangent, axis=1, keepdims=True) * tangent
-    normal = normal_part / (np.linalg.norm(normal_part, axis=1, keepdims=True) + 1e-12)
+    normal = normal_part / np.linalg.norm(normal_part, axis=1, keepdims=True)
     for actual, expected in zip(curve3d.frenet_frame(curve),
                                 (tangent, normal, np.cross(tangent, normal))):
         np.testing.assert_array_equal(actual, expected)
@@ -223,8 +225,11 @@ def test_142_143_calibration_matches_original_implementations():
     src = rng.normal(size=(30, 2)); transform = np.array([[1.2, .1, 3], [-.2, .9, 4], [.01, -.02, 1]])
     hom = np.column_stack((src, np.ones(len(src)))) @ transform.T
     dst = hom[:, :2] / hom[:, 2, None]
-    np.testing.assert_array_equal(calib._homography_dlt(src, dst),
-                                  _homography_dlt_original(src, dst))
+    # 2026-11-05(敵対的検証 geometry): _homography_dlt は Hartley 正規化つきに変えたので、
+    # 正規化なしの元実装とはビット一致しない(雑音なしでは両方とも真の変換に 1e-12 で一致する)。
+    np.testing.assert_allclose(calib._homography_dlt(src, dst),
+                               _homography_dlt_original(src, dst), rtol=0, atol=1e-12)
+    np.testing.assert_allclose(calib._homography_dlt(src, dst), transform, rtol=0, atol=1e-12)
     camera = {"fx": 800., "fy": 810., "cx": 320., "cy": 240.}
     pose = np.eye(4); pose[:3, 3] = (1, 2, 10)
     points = rng.uniform((0, 0), (480, 640), size=(200, 2))

@@ -5,7 +5,7 @@ category: photometry
 in: image2d
 out: keypoints
 gpu: なし
-examples: [astro_stacking, poc_exoplanet_transit, poc_search_sweep_width, poc_star_astrometry]
+examples: [astro_stacking, poc_exoplanet_transit, poc_real_file_formats, poc_search_sweep_width, poc_star_astrometry]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -62,6 +62,7 @@ Returns ``(N, 2)`` float64 ``keypoints``。1 個も無ければ ``(0, 2)``
 
 - [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
 - [poc_exoplanet_transit](../../../../examples/poc_exoplanet_transit.py) — `py -3.11 examples/poc_exoplanet_transit.py`
+- [poc_real_file_formats](../../../../examples/poc_real_file_formats.py) — `py -3.11 examples/poc_real_file_formats.py`
 - [poc_search_sweep_width](../../../../examples/poc_search_sweep_width.py) — `py -3.11 examples/poc_search_sweep_width.py`
 - [poc_star_astrometry](../../../../examples/poc_star_astrometry.py) — `py -3.11 examples/poc_star_astrometry.py`
 

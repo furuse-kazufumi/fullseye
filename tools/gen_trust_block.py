@@ -416,8 +416,11 @@ def build_block(lang: str, data: dict, link_prefix: str = "") -> str:
             "| " + " | ".join(t["mat_cols"]) + " |", "|---|---|---|"]
     for s, meaning in zip(STAGES, t["stages"]):
         out.append("| `%s` | %s | %s |" % (s, meaning, _n(counts[s])))
-    out += ["", t["examples"].format(total=_n(ex["examples2d_total"]),
-                                     run=_n(ex["examples2d_total"] - ex["not_run_by_any_gate"])), ""]
+    # ★2026-11-05(敵対的検証 第 2 巡 D7): not_run_by_any_gate はディスク上の例のスクリプト(台帳の外を
+    #   含む)から数えるようになった。分母も同じ集合(scripts_on_disk)にする —— 2-D 台帳の件数から引くと
+    #   台帳に無い 4 本を台帳の例から引いてしまう。
+    out += ["", t["examples"].format(total=_n(ex["scripts_on_disk"]),
+                                     run=_n(ex["scripts_on_disk"] - ex["not_run_by_any_gate"])), ""]
 
     out += [t["hist_h"], "", "| " + " | ".join(t["hist_cols"]) + " |",
             "|" + "---|" * len(t["hist_cols"])]

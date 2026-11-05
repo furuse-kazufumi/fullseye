@@ -2253,6 +2253,18 @@ def defocus_blur(image, depth_mm, camera, f_number: float = 5.6,
     ``c = (f² / (N (z_f − f))) · |z − z_f| / z``(f = 焦点距離, N = F 値, z_f = 合焦距離)。
     画素数に直して、深度でまとめた層ごとにガウスぼかしを掛け、手前の層から合成する。
 
+    合成は**手前から over 合成**(前乗算の色とぼかした被覆率 α を使い、手前の層が
+    覆った分だけ奥の層を隠す)。合焦した不透明な手前の面は奥のぼけに汚されない
+    (★2026-11-05 まで全層を足してぼかした重みで割っていて、合焦面の縁が 1.0 -> 0.67
+    に落ちた)。最後に累積 α で割るのは、ピンホール像に写っていない「手前の陰」の
+    分を周囲の色で埋めるため。
+
+    深度 ``+inf``(無限遠)は ``z -> ∞`` の極限 ``c = f² / (N (z_f − f))`` でぼかす
+    (★2026-11-05 まで合焦距離に置き換えていて、無限遠がくっきり写った)。
+    NaN と ``-inf`` は深度が無い画素として従来どおり合焦扱い。
+    層は深度の半開区間 ``[e_i, e_{i+1})`` で分ける(最後の層だけ両端を含む)ので、
+    境界上の深度が 2 層に重複しない。
+
     これが無いと「視野には入っているのに実機では合焦しない」構成を見逃す ――
     仮想化の目的は絵を作ることではなく、**その光学構成で検査が成立するか**を
     先に知ることなので、被写界深度は省けない。
@@ -2274,18 +2286,29 @@ def defocus_blur(image, depth_mm, camera, f_number: float = 5.6,
     if nl < 1:
         raise ValueError(f"layers must be >= 1, got {layers!r}")
     finite = np.isfinite(z)
-    if not finite.any():
+    at_inf = np.isposinf(z)                               # 無限遠(z -> ∞ の極限でぼかす)
+    if not (finite.any() or at_inf.any()):
         return img.copy()
-    zz = np.where(finite, z, zf)
-    coc_mm = (f * f / (N * (zf - f))) * np.abs(zz - zf) / np.maximum(zz, 1e-9)
+    zz = np.where(finite, z, zf)                          # NaN / -inf は合焦扱い(深度が無い)
+    c_inf = f * f / (N * (zf - f))                        # z -> ∞ の錯乱円の直径 [mm]
+    coc_mm = np.where(at_inf, c_inf, c_inf * np.abs(zz - zf) / np.maximum(zz, 1e-9))
     coc_px = coc_mm / camera["pixel_mm"]                  # 錯乱円の直径 [px]
 
     flat = img if img.ndim == 3 else img[..., None]
-    edges = np.linspace(zz.min(), zz.max(), nl + 1)
-    out = np.zeros_like(flat)
-    wsum = np.zeros(flat.shape[:2] + (1,))
-    for i in range(nl):
-        sel = (zz >= edges[i]) & (zz <= edges[i + 1])
+    # 層の番号: 有限な深度を半開区間 [e_i, e_{i+1}) に振り分け(最後だけ両端を含む)、
+    # 無限遠は最も奥の別層にする。0 が最も手前。
+    zfin = zz[~at_inf]
+    zmin, zmax = float(zfin.min()), float(zfin.max())
+    if zmax > zmin:
+        idx = np.floor((zz - zmin) / (zmax - zmin) * nl).astype(np.int64)
+        idx = np.clip(idx, 0, nl - 1)
+    else:
+        idx = np.zeros(zz.shape, dtype=np.int64)
+    idx[at_inf] = nl
+    acc_c = np.zeros_like(flat)                           # 前乗算の色の累積
+    acc_a = np.zeros(flat.shape[:2] + (1,))               # 被覆率 α の累積
+    for i in range(nl + 1):                               # 手前から奥へ over 合成
+        sel = idx == i
         if not sel.any():
             continue
         sigma = float(np.median(coc_px[sel])) / 4.0       # ★直径 D の一様な円板の各軸の標準偏差は D/4(2026-10-14 まで D/2 で 2 倍広かった)
@@ -2294,9 +2317,10 @@ def defocus_blur(image, depth_mm, camera, f_number: float = 5.6,
         if sigma > 0.3:
             layer = _gauss_blur(layer, sigma)
             w = _gauss_blur(w, sigma)
-        out += layer
-        wsum += w
-    return (out / np.maximum(wsum, 1e-12)).reshape(img.shape)
+        vis = 1.0 - acc_a                                 # 手前がまだ覆っていない割合
+        acc_c += vis * layer
+        acc_a += vis * w
+    return (acc_c / np.maximum(acc_a, 1e-12)).reshape(img.shape)
 
 
 def _gauss_blur(a, sigma):

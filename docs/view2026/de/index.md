@@ -355,7 +355,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 
 ## Was es kann
 
-100 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+101 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -462,6 +462,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 - Einen Ordner in einem Aufruf prüfen (Batch, Spezifikation, Aggregation, SPC, Bericht, Audit-Log): [Erklärung](../../capabilities/inspection-workflow.md) _(ja)_ · Beispiele [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
 - Fertigungstoleranzen von Objektiven nach MTF und Ausbeute budgetieren: [Erklärung](../../capabilities/lens-tolerancing.md) _(ja)_ · Beispiele [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - Validierung, Nachbarschaftssuche und Transformationskerne nur einmal berechnen: [Erklärung](../../capabilities/reuse-computation-results.md) _(ja)_ · Beispiele [perf_pointcloud_descriptors](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_pointcloud_descriptors.py) · [perf_monogenic_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_monogenic_metrics.py) · [perf_prepared_volume_probe](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_prepared_volume_probe.py) · [perf_polarization_analyze](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_polarization_analyze.py) · [perf_hankel_plan_and_piv_stream](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_hankel_plan_and_piv_stream.py)
+- Wissenschaftliche Datendateien lesen (FITS, NIfTI, MRC, OME-TIFF, E57): [Erklärung](../../capabilities/scientific-data-files.md) _(ja)_ · Beispiele [poc_real_file_formats](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py)
 - Typisierte Op-Ergebnisse als JSON schreiben und bitgenau zurücklesen: [Erklärung](../../capabilities/typed-results-as-json.md) _(ja)_ · Beispiele [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - Typisierte Op-Ergebnisse als Markdown darstellen, mit eingebettetem JSON zum Zurücklesen: [Erklärung](../../capabilities/typed-results-as-markdown.md) _(ja)_ · Beispiele [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - Typisierte Prüfergebnisse in einen Excel-Bericht (.xlsx) schreiben: [Erklärung](../../capabilities/xlsx-report.md) _(ja)_ · Beispiele [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -489,7 +490,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 
 ## Alles ansehen
 
-298 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+299 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -569,7 +570,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 </div>
 </details>
 
-<details class="vall"><summary><b>Maß- und Formmessung</b> (58)</summary>
+<details class="vall"><summary><b>Maß- und Formmessung</b> (59)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../../articles/assets/poc/poc_aoi_ct_traceability/story.en.gif" alt="Full visual inspection and sampled CT must assign the same index to each joint. Unequal-sided fiducials fixed this correspondence, then top-ranked candidates caught 19 % of interface-touching voids. Apparent void rankings can agree while most life-limiting parts are missed." loading="lazy" width="200" height="200"></picture><span>AOI-CT-Zuordnung</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../../articles/assets/poc/poc_asbuilt_wall_deviation/story.en.gif" alt="Point-cloud dimensions can confuse room heading or furniture with wall position. A room with known tilt and bulges was rotated, while its plane-pair error stayed at +2.24 mm. Bounding boxes grow with heading and sample count; plane fitting jumps to furniture when outliers become the majority." loading="lazy" width="200" height="200"></picture><span>Ist-Wände</span></a>
@@ -629,6 +630,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 <a href="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><img src="../../articles/assets/poc/poc_real_sem_metal_layer/story.en.gif" alt="Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?" loading="lazy" width="200" height="200"></picture><span>Metrologie realer REM-Metallschichten</span></a>
 <a href="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><img src="../../articles/assets/poc/poc_virtual_acceptance_3d/story.en.gif" alt="Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF" loading="lazy" width="200" height="200"></picture><span>Abnahmeprüfung vor dem Kauf: Eine schwarze Kugel lässt dieselbe iToF durchfallen</span></a>
 <a href="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><img src="../../articles/assets/poc/poc_light_section_step_weld_floor/story.en.gif" alt="Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor" loading="lazy" width="200" height="200"></picture><span>Lichtschnitthöhen stimmen auf µm, die reale Grenze ist ein Speckle-Boden von 20,7 µm</span></a>
+<a href="../../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><img src="../../articles/assets/poc/poc_real_file_formats/story.en.gif" alt="Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed" loading="lazy" width="200" height="200"></picture><span>Echte wissenschaftliche Datendateien lesen</span></a>
 </div>
 </details>
 

@@ -52,6 +52,16 @@ def apply_transform(points, R, t):
     return (np.asarray(points, np.float64) @ np.asarray(R, np.float64).T) + np.asarray(t, np.float64)
 
 
+def _cloud_size(Q: np.ndarray) -> float:
+    """Bounding-box diagonal of *Q* (independent of point order) — the length unit that makes
+    the ICP tolerances dimensionless. ★2026-11-05 敵対的検証 N4: ``tol`` は座標単位の絶対量だった
+    ので、尺度 1e-6 の点群では初回の RMSE 変化が 1e-8 を割って止まり、4.25° ずれた姿勢を返した。"""
+    if Q.size == 0:
+        return 0.0
+    L = float(np.linalg.norm(Q.max(axis=0) - Q.min(axis=0)))
+    return L if np.isfinite(L) else 0.0
+
+
 def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
         init=None, trim: float | None = None, reproducible: bool = False):
     """Iterative Closest Point: align *src* to *dst* without known correspondences.
@@ -67,6 +77,10 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
     distance each iteration (Trimmed ICP) — this rejects outliers and non-overlap,
     the usual case when an observed cloud only partially matches a CAD model; the
     reported ``rmse`` is then over the kept inliers.
+
+    *tol* is **relative to the size of dst** (its bounding-box diagonal ``L``): iteration
+    stops once the RMSE changes by less than ``tol·L``, so the same call converges the same
+    way on a cloud in metres or in micrometres (until 2026-11-05 it was an absolute length).
 
     ``reproducible=True`` makes every reduction independent of the order of the source
     points (Kabsch through :mod:`ozakimm`, the transform applied element by element, the
@@ -89,6 +103,7 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
         def rms(d):
             return float(np.sqrt(np.mean(d ** 2)))
     tree = cKDTree(Q)
+    tol_abs = float(tol) * _cloud_size(Q)
     if init is None:
         R_tot = np.eye(3)
         t_tot = np.zeros(3)
@@ -113,7 +128,7 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
         cur = move(cur, R, t)
         R_tot = R @ R_tot
         t_tot = R @ t_tot + t
-        if abs(prev - rmse) < tol:
+        if abs(prev - rmse) < tol_abs:
             break
         prev = rmse
     # report rmse for the RETURNED pose: the loop's value was computed before its
@@ -129,7 +144,8 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
                        max_iter: int = 50, tol: float = 1e-8,
                        init=None, trim: float | None = None, reproducible: bool = False):
     """Point-to-plane ICP: align *src* to *dst* minimizing the distance along the
-    destination **surface normal**, not straight-line point distance.
+    destination **surface normal**, not straight-line point distance. *tol* is relative to
+    the bounding-box diagonal of dst, as in :func:`icp`.
 
     On a surface this converges faster and tighter than plain :func:`icp` because
     a source point is free to slide within the tangent plane and is only penalised
@@ -151,6 +167,11 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
     N = (np.asarray(dst_normals, np.float64) if dst_normals is not None
          else pointcloud.estimate_normals(Q, k=k_normals))
     tree = cKDTree(Q)
+    L = _cloud_size(Q)
+    tol_abs = float(tol) * L
+    # 正規方程式の正則化は回転の列(長さの次元)を L で割った無次元の系に掛ける(以前の
+    # 1e-12·I は尺度 1e-7 の点群で回転ブロック ~1e-14 を潰した。N4 の兄弟)。
+    col = np.array([1.0 / L] * 3 + [1.0] * 3) if L > 0 else np.ones(6)
     if reproducible:
         import ozakimm
         move, rowdot, rms = ozakimm._apply_rigid, ozakimm._rowdot, ozakimm._rms
@@ -184,8 +205,9 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
         if reproducible:
             A = np.concatenate([np.cross(p, n), n], axis=1)
             b = -rowdot(p - q, n)
-            x = np.linalg.solve(ozakimm._matmul_repro_any(A.T, A) + 1e-12 * np.eye(6),
-                                ozakimm._matmul_repro_any(A.T, b[:, None])[:, 0])
+            AtA = ozakimm._matmul_repro_any(A.T, A) * np.outer(col, col)
+            Atb = ozakimm._matmul_repro_any(A.T, b[:, None])[:, 0] * col
+            x = col * np.linalg.solve(AtA + 1e-12 * np.eye(6), Atb)
         else:
             A = np.concatenate([np.cross(p, n), n], axis=1)
             b = -rowdot(p - q, n)
@@ -196,7 +218,7 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
         R_tot = R_inc @ R_tot
         t_tot = R_inc @ t_tot + t_inc
         rmse = rms(rowdot(cur[sel] - q, n))
-        if abs(prev - rmse) < tol:
+        if abs(prev - rmse) < tol_abs:
             break
         prev = rmse
     # final point-to-plane residual for the RETURNED pose (also gives a real value

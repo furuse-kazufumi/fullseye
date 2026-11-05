@@ -13,6 +13,10 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reinhard&quot;</code> —— 각 채널의 평균과 표준편차만 맞춘다(Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001). <b>각 채널이 단봉 정규분포</b>라는 가정에 기대고 있다. 전경과 배경이 뚜렷하게 나뉜 쌍봉 그림에서는 평균과 분산은 맞지만 <b>어느 봉우리에도 맞지 않는 색</b>이 된다(예외는 발생하지 않는다).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gaussian&quot;</code> —— 공분산째 옮기는 Monge 사상. <b>상관이 유지된다</b>.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;histogram&quot;</code> —— 채널별로 엄밀한 히스토그램 정합. 주변분포는 완전히 일치하지만 <b>채널 간 상관은 깨진다</b>.</p>
+<p><b>일정한 채널</b>(표준편차가 <code style="color:#22d3bf">1e-6 × max(1, max|x|)</code> 이하, x는 그 채널의 값 ―― 무채색</p>
+<p>src의 Lab a*/b*가 여기에 해당한다. 반올림 찌꺼기밖에 없다)은 <code style="color:#22d3bf">&quot;reinhard&quot;</code> 에서는</p>
+<p><code style="color:#22d3bf">MetricContractError</code>, <code style="color:#22d3bf">&quot;histogram&quot;</code> 에서는 엄밀히 일정한 입력과 마찬가지로 참조의</p>
+<p>평균으로 보낸다. 찌꺼기를 확대해 가짜 색을 만들지 않는다.</p>
 <p>space : {&quot;lab&quot;, &quot;rgb&quot;}</p>
 <p>통계를 구하는 공간. 기본값 <code style="color:#22d3bf">lab</code> 은 <code style="color:#22d3bf">imgmetrics</code> 의 구현을 사용한다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>

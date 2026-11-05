@@ -15,7 +15,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/reg_close.inputs.jpg">reg_close: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역(region)의 이진 닫힘 연산(팽창 후 침식). HALCON의 <code style="color:#22d3bf">closing_circle</code>(Close a region with a circular structuring element.)에 해당한다.</p>
-<p><code style="color:#22d3bf">a</code>가 반복 횟수를 <code style="color:#22d3bf">1〜4</code>(<code style="color:#22d3bf">_it(a)</code>)로 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 가는 틈이나 작은 구멍을 메운다. <code style="color:#22d3bf">border_value=1</code>을 지정하고 있으므로 영상 가장자리는 전경으로 다뤄진다.</p>
+<p><code style="color:#22d3bf">a</code>가 반복 횟수를 <code style="color:#22d3bf">1〜4</code>(<code style="color:#22d3bf">_it(a)</code>)로 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 가는 틈이나 작은 구멍을 메운다.</p>
+<p><b>영상 가장자리</b>: 평면은 영상 밖으로 이어지며, 바깥은 배경으로 간주한다(값 0의 여백을 붙여 닫은 다음 잘라 되돌린다). closing은 확장적이고(입력의 전경을 깎지 않는다), 가장자리 근처에 새로운 전경도 만들지 않는다. 2026-11-05(적대적 검증 제2차 P3)까지는 <code style="color:#22d3bf">border_value=1</code>로 영상 바깥을 전경으로 간주하고 있어, 가장자리 근처의 고립 화소에서 모서리의 쐐기가 자라났다(20×20의 (1,1)의 1 화소가 a=1에서 10 화소로).</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.33、0.67、0.99(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

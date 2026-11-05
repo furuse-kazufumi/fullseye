@@ -39,7 +39,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 最大面積の連結領域だけを残す。HALCON の ``select_shape_std``（Select regions of a given shape.）に相当。
 
-``a``, ``b`` は未使用（常に「最大」を選ぶ）。連結成分ラベリング後、画素数が最大の 1 成分だけを 1、それ以外を 0 にする。入力に前景が無ければ全 0 を返す。HALCON の ``select_shape_std`` は面積以外の形状基準（円形度等）や複数選択にも対応するが、この実装は面積最大の単一選択のみ。
+``a``, ``b`` は未使用（常に「最大」を選ぶ）。連結成分ラベリング（**前景は 8 連結** = HALCON の ``connection`` の既定。2026-11-05 敵対的検証 第 2 巡 P1 までは 4 連結で、斜めに接する 2 つの塊の片方だけを残していた）後、画素数が最大の 1 成分だけを 1、それ以外を 0 にする。入力に前景が無ければ全 0 を返す。HALCON の ``select_shape_std`` は面積以外の形状基準（円形度等）や複数選択にも対応するが、この実装は面積最大の単一選択のみ。
 
 Raises:
     FsValueError: NaN / inf を含む画像。

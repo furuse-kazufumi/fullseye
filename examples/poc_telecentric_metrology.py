@@ -38,8 +38,8 @@
      部品は実物の質感で描く: アルミの治具プレート(``metalfinish`` の削り目 × ``glassmirror`` の複素屈折率の色)、
      金めっきのピン(面取りつき)、黒い樹脂モールド(``surfacelib.clearcoat_shade``、捺印つき)と銀色のリード、
      影(``render_shadow``)と AO(``render_ao``)。門: 照明を同軸落射・ドーム・低角リングに変えても、描いた画像だけから
-     円の計測モデル(``metrology``、HALCON 流)で測ったピン上面の径は閉形式と 0.33 % 以内、6 mm の上下で通常 f = 25 mm は
-     +8.3〜8.4 %、両側テレセンは ±0.16 % 以内(上の門は面の種類の地図なので照明に依らない —— こちらが画像の門)。
+     円の計測モデル(``metrology``、HALCON 流)で測ったピン上面の径は閉形式と 0.49 % 以内、6 mm の上下で通常 f = 25 mm は
+     +7.8〜8.4 %、両側テレセンは ±0.19 % 以内(上の門は面の種類の地図なので照明に依らない —— こちらが画像の門)。
      ★物体で 47 µm/画素に粗くすると、低角リング(暗視野)では上面の縁が弱く 2 % 外れた。
   4. **テレセンでも残る誤差**: 絞りが後側焦点から δ ずれると入射瞳は前側焦点から −f²/δ(Newton)。門: 物高 0.5 mm では
      実光線の傾きの増分が閉形式と 0.04 % —— 物高 8 mm では 11.8 % 大きく、その差は物高の 2 乗で育つ(4 → 8 mm で 4.6 倍、
@@ -516,16 +516,20 @@ def render(sysd, dz, size, pitch_um, blur=None, lighting="coax", shadows=True, k
         zs, sig = blur
         layers = np.linspace(z.min(), z.max() + 1e-9, 9)
         acc = np.zeros_like(rgb)
-        wsum = np.zeros((size, size))
-        for a, b in zip(layers[:-1], layers[1:]):
+        cov = np.zeros((size, size))
+        # ★手前(z の高い層)から over 合成: 手前の被覆率の分だけ奥を隠す(2026-11-05 まで
+        # 全層を足してぼかした重みで割っていて、奥のぼけが合焦した手前の縁に被った。
+        # optscene.defocus_blur と同じ欠陥 —— 敵対的検証 第 2 巡 O1 の兄弟)
+        for a, b in reversed(list(zip(layers[:-1], layers[1:]))):
             m = ((z >= a) & (z < b)).astype(float)
             if not m.any():
                 continue
             s = float(np.interp(0.5 * (a + b), zs, sig))
+            vis = 1.0 - cov
             for ch in range(3):
-                acc[..., ch] += ndimage.gaussian_filter(rgb[..., ch] * m, s)
-            wsum += ndimage.gaussian_filter(m, s)
-        rgb = acc / np.maximum(wsum, 1e-9)[..., None]
+                acc[..., ch] += vis * ndimage.gaussian_filter(rgb[..., ch] * m, s)
+            cov += vis * ndimage.gaussian_filter(m, s)
+        rgb = acc / np.maximum(cov, 1e-9)[..., None]
     return np.clip(rgb, 0.0, 1.0), kind, cam
 
 
@@ -1010,8 +1014,13 @@ def make_figures(L, chief, depth, rend, sweep, field, dof):
     if figs.target_dir() is not None:
         gsz = 300
         sg = setup(gsz)
-        zs = list(np.linspace(-3.0, 3.0, 10)) + list(np.linspace(3.0, -3.0, 10))[1:-1]
-        frames = [(np.clip(frame(float(dz), gsz, sg, 12), 0, 1) * 255).astype(np.uint8) for dz in zs]
+        # ★2026-11-05: 往路 10 コマ + 復路 8 コマ。復路は往路と同じ高さなので描き直さず使い回す
+        #   (1 コマ = 3 本のレンズの描画で、手元 1 本 ~15 秒。18 → 10 回で図の段が ~6 分縮む)。
+        #   以前は復路を np.linspace(3, -3, 10) から取っていて、往路と 1 ulp(6.7e-16 mm)違う
+        #   だけの同じ絵を描いていた。図つきの全数走行で 900 秒を超えていた主因がこの GIF。
+        fwd = [float(dz) for dz in np.linspace(-3.0, 3.0, 10)]
+        drawn = {i: (np.clip(frame(dz, gsz, sg, 12), 0, 1) * 255).astype(np.uint8) for i, dz in enumerate(fwd)}
+        frames = [drawn[i] for i in list(range(10)) + list(range(8, 0, -1))]
         figs.save_gif("work_up_down", frames,
                       "ワークを ±3 mm 上下させる。通常のレンズだけ像が伸び縮みし(水色の線 = 合焦面の輪郭)、穴の底が隠れる。", fps=6)
     # 4. 絞りのずれ

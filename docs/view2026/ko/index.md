@@ -355,7 +355,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-100개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+101개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -462,6 +462,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 폴더를 한 번에 검사(일괄·사양 판정·집계·SPC·보고서·감사 로그): [설명](../../capabilities/inspection-workflow.md) _(ja)_ · 예제 [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
 - MTF와 수율로 렌즈 제조 공차 배분: [설명](../../capabilities/lens-tolerancing.md) _(ja)_ · 예제 [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - 같은 입력의 검증·이웃 탐색·변환 커널을 한 번만 계산: [설명](../../capabilities/reuse-computation-results.md) _(ja)_ · 예제 [perf_pointcloud_descriptors](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_pointcloud_descriptors.py) · [perf_monogenic_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_monogenic_metrics.py) · [perf_prepared_volume_probe](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_prepared_volume_probe.py) · [perf_polarization_analyze](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_polarization_analyze.py) · [perf_hankel_plan_and_piv_stream](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_hankel_plan_and_piv_stream.py)
+- 과학 데이터 파일 읽기(FITS·NIfTI·MRC·OME-TIFF·E57): [설명](../../capabilities/scientific-data-files.md) _(ja)_ · 예제 [poc_real_file_formats](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py)
 - op 반환값(타입 포함)을 JSON으로 쓰고 비트 그대로 되읽기: [설명](../../capabilities/typed-results-as-json.md) _(ja)_ · 예제 [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - op 반환값(타입 포함)을 읽기 쉬운 Markdown으로, JSON을 넣어 되읽기: [설명](../../capabilities/typed-results-as-markdown.md) _(ja)_ · 예제 [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - 타입이 있는 검사 결과를 Excel(.xlsx) 보고서로: [설명](../../capabilities/xlsx-report.md) _(ja)_ · 예제 [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -489,7 +490,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 298개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 299개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -569,7 +570,7 @@ PoC 298개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>치수·형상 계측</b> (58)</summary>
+<details class="vall"><summary><b>치수·형상 계측</b> (59)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../../articles/assets/poc/poc_aoi_ct_traceability/story.en.gif" alt="Full visual inspection and sampled CT must assign the same index to each joint. Unequal-sided fiducials fixed this correspondence, then top-ranked candidates caught 19 % of interface-touching voids. Apparent void rankings can agree while most life-limiting parts are missed." loading="lazy" width="200" height="200"></picture><span>AOI·CT 대응</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../../articles/assets/poc/poc_asbuilt_wall_deviation/story.en.gif" alt="Point-cloud dimensions can confuse room heading or furniture with wall position. A room with known tilt and bulges was rotated, while its plane-pair error stayed at +2.24 mm. Bounding boxes grow with heading and sample count; plane fitting jumps to furniture when outliers become the majority." loading="lazy" width="200" height="200"></picture><span>준공 벽면 편차</span></a>
@@ -629,6 +630,7 @@ PoC 298개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><img src="../../articles/assets/poc/poc_real_sem_metal_layer/story.en.gif" alt="Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?" loading="lazy" width="200" height="200"></picture><span>실제 SEM 금속층 계측</span></a>
 <a href="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><img src="../../articles/assets/poc/poc_virtual_acceptance_3d/story.en.gif" alt="Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF" loading="lazy" width="200" height="200"></picture><span>사기 전에 인수 시험: 같은 iToF가 검은 구 하나로 불합격</span></a>
 <a href="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><img src="../../articles/assets/poc/poc_light_section_step_weld_floor/story.en.gif" alt="Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor" loading="lazy" width="200" height="200"></picture><span>광절단 높이는 µm 단위로 맞지만 실제 한계는 20.7 µm 스페클 바닥</span></a>
+<a href="../../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><img src="../../articles/assets/poc/poc_real_file_formats/story.en.gif" alt="Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed" loading="lazy" width="200" height="200"></picture><span>실제 과학 데이터 파일 읽기</span></a>
 </div>
 </details>
 

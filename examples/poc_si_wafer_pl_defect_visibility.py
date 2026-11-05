@@ -61,6 +61,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import plsim as PL                                               # noqa: E402
 import pod as POD                                                # noqa: E402
+import realdata  # noqa: E402
 
 SEED = 11
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
@@ -188,6 +189,7 @@ def stage1_real():
     dt = decide_raw_dtype(os.path.join(DATA, "Figure_4a_PLI_raw_image.raw"))
     out["dtype"] = dt
     img4a = load_raw(os.path.join(DATA, "Figure_4a_PLI_raw_image.raw"), dt)
+    realdata.mark_read("zenodo19603335-si-pl")
     print("   → %s(ビッグエンディアン float32、値は整数のカウント)。中央値 %.0f、範囲 %.0f〜%.0f"
           % (dt, np.median(img4a), img4a.min(), img4a.max()))
 
