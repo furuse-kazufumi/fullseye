@@ -46,6 +46,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import examplefig as figs  # noqa: E402
 import fullseye as fs  # noqa: E402
 import materials as MT  # noqa: E402
+import realdata  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
                          "reduced" if os.environ.get("CI") else "full") == "reduced"
@@ -210,6 +211,8 @@ def chapter_silicon():
         a = MT.material_optical_constants("SI", wl * 1e3)
         gate("Si %.1f µm: n = %.3f, k = %.4g(Green 2008 の表の点)" % (wl, n_pub, k_pub),
              abs(a["n"] - n_pub) < 5e-4 and abs(a["k"] / k_pub - 1.0) < 1e-3, "n %.4f k %.4g" % (a["n"], a["k"]))
+    # 同梱表の Si(Green 2008 の実測の n,k の表)を公表の点と照合し終えた
+    realdata.mark_read("refractiveindex-info-green2008-si")
     al = MT.material_absorption("SI", 900, 1400, 101)
     a10, a12 = _at(al, 1000), _at(al, 1200)
     NUMBERS["si_alpha_1000"], NUMBERS["si_alpha_1200"] = a10, a12
@@ -254,6 +257,8 @@ def chapter_silicon():
 def chapter_mirror():
     print("\n3. 鏡の材料 10 種の反射率と色")
     R = {m: MT.material_reflectance(m, 300, 1900, 161) for m in METALS}
+    # 同梱表の金属の実測 n,k(Johnson & Christy ほか)を読んだ
+    realdata.mark_read("refractiveindex-info-metals-nk")
     gate("銀は 500 nm で R ≥ 0.97(Johnson & Christy)", _at(R["AG"], 500) >= 0.97, "%.4f" % _at(R["AG"], 500))
     ral = R["AL"]
     sel = (ral[:, 0] >= 400) & (ral[:, 0] <= 1500)

@@ -25,6 +25,22 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - T8(依頼時は未再現の疑い、再現した)`fsthreads` の BLAS 上限: スレッドを跨いで文脈が交互に入る/抜けると、B の上限が A の退出で外れ(2 -> 24)、全部抜けた後もプロセスが A の上限 1 に固まった(24 -> 1)。文脈ごとに threadpoolctl の `limit` を重ねていたのを、プロセスで 1 つの受け台帳(鍵つき)と limiter 1 個に替えた。効く上限は「効いている文脈のうち最後に入ったもの」、最後の文脈が抜けたら元の値。単スレッドの入れ子は従来どおり。
 - T9(依頼時は未再現の疑い、再現した)`mathtransforms.HankelPlan`: `lru_cache` で全員に同じ物を返すのに書き換えられ、1 人が `plan.T[0, 0] += 1` すると plan を渡さない別の `hankel_transform` まで変わった(最大 0.95)。配列は読み取り専用、属性の代入・削除は `AttributeError`。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(claims)
+
+- D3 レシピ「Accept — probing error ... PF and PS」の門: `approx pf_max ± 0.16` / `approx ps ± 0.01` を、標本の真値に持たせた幅の `between` へ(雑音 0 は PS ±1e-9・PF [0, 1e-9]、σ = 0.02 は PS ±0.5σ・PF [2σ, 8σ])。以前は雑音 0 で PF 0〜0.32 mm、σ で 16σ まで通していた。標本の `truth` に `ps_lo` / `ps_hi` / `pf_min` が増えた。兄弟: Sobol の S1 の門 atol 0.03 → 0.01(variant 1 の s1_2 = 0.024 を 0 と区別できなかった)。
+- D6 成熟度台帳(`docs/maturity.json`): `validated-public-real-data` は、例が**門と同じ条件(手元のキャッシュ無し)で実データを読んだ**ときだけ。実データの例の行に `real_data_read_in_gate` / `real_datasets_read` が増え、記録の無い実データ例は `MaturityError`。実データが CI に無い例(章を飛ばして記録を印字する)を裏づけにしていた能力は `verified-synthetic` に下がる。記録は `docs/real_data_runs.json`(`tools/record_real_data_runs.py` が測る)、例は読んだ所で `realdata.mark_read()` を呼ぶ。
+- D7 `maturity.json` の `example_execution.not_run_by_any_gate` は定数 0 だった → ディスク上の例から数える(台帳の外の `examples2d.EXCLUDED` を含む)。`scripts_on_disk` / `excluded_from_the_registry` / `excluded_but_run_by_a_named_test` / `not_run_by_any_gate_reasons` が増えた。
+
+### 修正 — 敵対的検証 2026-11-05 第 2 巡(claims)
+
+- D1 `illusion_cafe_wall` の docstring(6 言語の訳も): 錯視が消えるのは shift = 0(揃う)と 1.0(ただの市松)、最強は半タイルの 0.5(既定値)。以前は「0 か 0.5 で消え 0.25 が最強」。兄弟: `poc_calipers_under_illusion` の格子を 0〜0.5 から周期 1 つぶんの 0〜1(9 通り)へ、外れたずらし量は図説に手で書かず格子から出す。
+- D2 HALCON 対応数の内訳: `halcon_coverage.analyze` が `covered_by_source`(registry の `Op.halcon` / perception facade / 型つき台帳の互いに素な 3 集合)を返し、`docs/HALCON_COVERAGE.md` と `docs/HALCON_PARITY.md` の見出しは生成器がその内訳を書く。以前は「via `Op.halcon`, from 947 registry ops」「= 1016 evolvable registry ops」と書き、registry 由来は 388 だった(数は 1017 / 1016 のまま)。
+- D4 / D5 / D8 / D9 手書きの数: README の MCP の道具の数(9、実物は full 22 / minimal 10)、ABI の扉の台帳 op 数(2,683、冒頭は 2,846)、★設計判断の数(606、`design_notes.json` は 1638)、docs/README 6 言語の OPERATORS.md の行(897 / 48 カテゴリ)、能力ノートの「op が 931 本」、README の「151 exhibits / op demos」(記事の館の図説の数で、展示ディレクトリの数ではない)を、数を書かない形にした。
+- D5b `docs/README*.md` の「型つき台帳 N/M」: 分母を `typed_catalog.catalog()`(連鎖ファザーと registry の橋の型カタログ)から、`list_ops` の ledger 層(= `OP_INDEX.json` の ledger 層)へ。2820/2832 → 2846/2846。
+- D6 README の T-LESS の段落: データの無い機械(CI)では 2026-11-01 の実行記録を印字するだけで、成熟度台帳は実データ検証に数えないことを書いた。
+- 小: `docs/capabilities/water-transparent-media.md` の印字値のコメント(1.371 → 1.37)、`docs/KNOWN_ISSUES.md` 32-2・32-3 を 32-16 と同じ作法で解消済みに。
+- 回帰の門: `tests/test_redteam2_claims_2026_11_05.py`(数え直しと照合、手書きの期待値を持たない)、`tests/test_poc_scripts_run.py` は台帳が「実データを読む」とする例が実走でも印を出すかを照合、`tests/test_maturity.py` は `not_run_by_any_gate` を定数 0 でなく数え直しと照合。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(stats)
 
 回帰の門は `tests/test_redteam_stats_2026_11_05.py`(真値・不変量・独立実装と比べる。修正前のコードで 23 件が落ちることを確認)。

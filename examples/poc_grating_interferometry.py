@@ -65,6 +65,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import examplefig as figs  # noqa: E402
 import gratinginterf as GI  # noqa: E402
 import optics  # noqa: E402
+import realdata  # noqa: E402
 from fullseye.evaluation import GateAdapter, GateStyle  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
@@ -393,6 +394,7 @@ def chapter_real():
         return
     ref = _bin2(tifffile.imread(ref_p).astype(np.float64))
     obj = _bin2(tifffile.imread(obj_p).astype(np.float64))
+    realdata.mark_read("zenodo16944391-talbot-lau")
     print("   基準 %s、試料 %s(2×2 で束ねた)" % (ref.shape, obj.shape))
     region = (80, 180, 60, 160)                                      # 容器の中・球と棒の外
     er = GI.grating_step_period_estimate(ref, region=region)

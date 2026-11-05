@@ -30,9 +30,12 @@
 from __future__ import annotations
 
 import concurrent.futures
+import json
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -83,6 +86,10 @@ def _run_one(path: Path) -> tuple[str, int, str]:
     # `test_example_figures.py` が別に見る)。
     env.pop("FULLSEYE_FIGURE_DIR", None)
     env["FULLSEYE_FIGURES"] = "off"                 # 既定の out/figures にも書かせない(2026-09-20)
+    # ★実データを読んだ印(realdata.mark_read)を集める(2026-11-05、敵対的検証 第 2 巡 D6)。
+    #   成熟度台帳が「門の実行で実データを読む」とする例が、本当に読んだかを下の門で照合する。
+    logdir = tempfile.mkdtemp(prefix="poc_realdata_")
+    env[REAL_DATA_LOG_ENV] = os.path.join(logdir, "read.log")
     try:
         # ★stdin は /dev/null(2026-10-23)。渡さないと子は親(xdist の worker)の stdin = execnet の
         #   パイプを継ぐ。worker が死んだあとも子がそのパイプを握り、controller が「node down」の後に
@@ -92,7 +99,14 @@ def _run_one(path: Path) -> tuple[str, int, str]:
                            cwd=str(path.parent), capture_output=True,
                            stdin=subprocess.DEVNULL, timeout=PER_SCRIPT_TIMEOUT)
     except subprocess.TimeoutExpired:
+        shutil.rmtree(logdir, ignore_errors=True)
         return path.name, -1, "%d 秒で返ってこなかった" % PER_SCRIPT_TIMEOUT
+    try:
+        with open(env[REAL_DATA_LOG_ENV], encoding="utf-8") as fh:
+            read = sorted({ln.strip() for ln in fh if ln.strip()})
+    except OSError:
+        read = []
+    shutil.rmtree(logdir, ignore_errors=True)
     # ★失敗時は stdout の末尾も返す。PoC は所見と「どの検査が落ちたか」を
     # stdout に印字して SystemExit(1) するので、stderr だけだと**空のまま
     # 「exit 1」しか分からない**(2026-09-07 の CI、py3.10 の poc_ct_fidelity)。
@@ -101,7 +115,8 @@ def _run_one(path: Path) -> tuple[str, int, str]:
     #   10 番目が落ちたとき「NG が残っている(10 番目)」しか分からなかった)。
     tail = (r.stderr.decode("utf-8", "replace")[-1200:]
             + chr(10) + "--- stdout(末尾) ---" + chr(10)
-            + r.stdout.decode("utf-8", "replace")[-4000:])
+            + r.stdout.decode("utf-8", "replace")[-4000:]
+            + chr(10) + REAL_DATA_SECTION + chr(10) + chr(10).join(read))
     if r.returncode == 0:
         out = r.stdout.decode("utf-8", "replace")
         if "\nPASS" not in out:
@@ -114,6 +129,19 @@ def _run_one(path: Path) -> tuple[str, int, str]:
                                    + chr(10) + "--- stdout(末尾) ---"
                                    + chr(10) + out[-1200:])
     return path.name, r.returncode, tail
+
+
+#: realdata.REAL_DATA_LOG_ENV と同じ名前(門は realdata を import しない: 子プロセスの環境だけを作る)。
+REAL_DATA_LOG_ENV = "FULLSEYE_REAL_DATA_LOG"
+#: 抜粋の末尾に付ける、実データの印の節の見出し。
+REAL_DATA_SECTION = "--- real-data read ---"
+
+
+def _recorded_real_reads() -> dict:
+    """``docs/real_data_runs.json``: 門と同じ条件で実データを読んだと記録された例 -> データ名。"""
+    with open(ROOT / "docs" / "real_data_runs.json", encoding="utf-8") as fh:
+        runs = json.load(fh)["examples"]
+    return {k + ".py": v["datasets_read"] for k, v in runs.items() if v["datasets_read"]}
 
 
 class _OnDemand(dict):
@@ -168,6 +196,16 @@ def test_the_poc_runs_clean(poc_results, name):
     """
     code, tail = poc_results[name]
     assert code == 0, "%s が exit %d:\n%s" % (name, code, tail)
+    # ★成熟度台帳が「門の実行で実データを読む」とした例は、この実行でも同じデータを読んでいること
+    #   (2026-11-05、敵対的検証 第 2 巡 D6)。逆向き(台帳は読まないが手元のキャッシュで読めた)は
+    #   許す —— 台帳は CI と同じくキャッシュ無しで測った控えめな側。
+    want = _recorded_real_reads().get(name, [])
+    if want:
+        got = {ln.strip() for ln in tail.split(REAL_DATA_SECTION)[-1].splitlines() if ln.strip()}
+        assert set(want) <= got, (
+            "%s: docs/real_data_runs.json は実データ %s を読むとしているが、この実行の印は %s —— "
+            "`py -3.11 tools/record_real_data_runs.py %s` で測り直す"
+            % (name, want, sorted(got), name[:-3]))
 
 
 def test_the_gate_actually_sees_all_of_them():

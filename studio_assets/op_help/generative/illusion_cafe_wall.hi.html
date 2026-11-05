@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Café wall illusion। <b>mortar की line बिल्कुल horizontal हैं</b>, फिर भी झुकी हुई दिखती हैं।</p>
-<p><code style="color:#22d3bf">shift</code> हर 1 row पर checkerboard का खिसकाव है (<code style="color:#22d3bf">size</code> के अनुपात में)। खिसकाव 0 या 0.5 हो तो illusion गायब हो जाता है -- शास्त्रीय अवलोकन यह है कि यह <b>0.25 के आसपास सबसे प्रबल</b> होता है, और यह op खिसकाव की मात्रा को सीधे बदलने देता है (<code style="color:#22d3bf">shift=0.25</code> default नहीं है, क्योंकि हम generator के default मान से &quot;अधिकतम प्रभाव&quot; का दावा नहीं करना चाहते)।</p>
+<p><code style="color:#22d3bf">shift</code> हर row पर checkerboard का खिसकाव है (<code style="color:#22d3bf">size</code> के अनुपात में; row <code style="color:#22d3bf">r</code> का खिसकाव <code style="color:#22d3bf">r * shift * size</code>)। checkerboard का period <code style="color:#22d3bf">2 * size</code> है, इसलिए खिसकाव 0 (हर row की tiles ऊपर-नीचे सीध में) और 1.0 (ऊपर की row से काला-सफ़ेद अदला-बदला साधारण checkerboard) पर illusion गायब हो जाता है, और period 2 से दोहराता है। शास्त्रीय अवलोकन यह है कि यह <b>आधी tile के खिसकाव, 0.5, के आसपास सबसे प्रबल</b> होता है (Gregory &amp; Heard 1979), और default यही शास्त्रीय व्यवस्था है। जाँचने के लिए खिसकाव को 0 से 1 तक बदलें।</p>
 <p>invariant: हर जोड़ (mortar line) का केंद्र y <b>ठीक</b> <code style="color:#22d3bf">k * size</code> (k = 1..rows-1) है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>

@@ -18,7 +18,10 @@ the PoC series found, what changed, and which gate now stops each one coming bac
 **Real RGB-D 6-DoF PoC:** [`poc_real_tless_6dof`](examples/poc_real_tless_6dof.py)
 runs the depth-to-point-cloud, normal, table-removal, clustering, PPF and ICP chain on
 BOP T-LESS (CC BY 4.0), scores it with symmetry-aware MSSD/MSPD, and compares it with
-the public Drost and Vidal baselines. Dataset citation: Hodaň et al., T-LESS, WACV 2017,
+the public Drost and Vidal baselines. The dataset is not in the repository: on a machine
+without it (`FULLSEYE_TLESS_DATA`, as in CI) the script prints the recorded 2026-11-01 run
+instead of re-measuring, so CI checks the record, not the data, and the maturity ledger
+does not count it as real-data validation. Dataset citation: Hodaň et al., T-LESS, WACV 2017,
 [doi:10.1109/WACV.2017.8](https://doi.org/10.1109/WACV.2017.8).
 
 > **Real-hardware and real-data results wanted.** Fullseye is developed without physical
@@ -61,7 +64,7 @@ on plain numpy arrays, so other projects can drop it into a vision pipeline dire
 
 > **New here? Read the full introduction.** A single long-form article walks through
 > the whole system — the three layers, the Studio IDE, the honest-evaluation
-> discipline, and 151 worked exhibits, all illustrated with real operator output.
+> discipline, and a museum of worked exhibits, all illustrated with real operator output.
 > **[English](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md)** ·
 > **[日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md)**
 
@@ -101,11 +104,11 @@ The 100 capabilities, split by how they are verified (`docs/maturity.json`, rebu
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 81 |
-| `validated-public-real-data` | an example on public measured data runs in a gate | 19 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 92 |
+| `validated-public-real-data` | an example on public measured data runs in a gate | 8 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 472 examples, 472 are actually run by a gate.
+Of 480 examples, 476 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -151,8 +154,8 @@ Two more doors, both new since 0.1.11 and both honest about their limits:
 
 | Door | For | Run this first | Status |
 |---|---|---|---|
-| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. 9 tools, strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). [`docs/MCP.md`](docs/MCP.md) |
-| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (947 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the 17 n-ary 2-D operators and the 2,683 typed-ledger operators, whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
+| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. A `full` and a smaller `minimal` tool profile (the tool list is `tools/list`; see docs/MCP.md), strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). [`docs/MCP.md`](docs/MCP.md) |
+| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (947 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the n-ary 2-D operators and the typed-ledger operators (counts: the index line at the top), whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
 
 ## Install
 
@@ -325,7 +328,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 |---|---|
 | **Read the whole story end to end (long-form)** | [`docs/articles/fullseye_overview_qiita_en.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md) |
 | See what the operators produce (result gallery) | `docs/GALLERY.md` |
-| Browse the paper exhibits (151 op demos, en/ja) | `docs/articles/exhibits/` |
+| Browse the paper exhibits (op demos and the PoC museum, en/ja; accession numbers in `exhibit_numbers.json`) | `docs/articles/exhibits/` |
 | Look up any of the 3,810 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
 | Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
@@ -336,7 +339,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | Update a checkout safely | `tools/update_fullseye.py --check` |
 | **See what is actually verified (and how)** | `docs/MATURITY.md` + `docs/maturity.json` (generated, not written) |
 | **Report results from real hardware or real data** (data may stay private) | `docs/VALIDATION_CONTRIBUTING.en.md` · [issue form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) |
-| **Read why it is built this way** | `docs/DESIGN_NOTES.md` — 606 load-bearing `★` comments collected from the source, in 6 languages (translated as we go; untranslated entries are shown as such) |
+| **Read why it is built this way** | `docs/DESIGN_NOTES.md` — the load-bearing `★` comments collected from the source (generated; the count is `total` in `docs/design_notes.json`), in 6 languages (translated as we go; untranslated entries are shown as such) |
 | Cite Fullseye | `CITATION.cff` |
 
 ## Design principles

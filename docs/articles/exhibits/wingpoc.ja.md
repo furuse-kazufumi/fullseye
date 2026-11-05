@@ -8668,9 +8668,9 @@ py -3.11 examples/poc_illusions_and_perpetual_drawing.py
 
 *↑ 測定の図 ―― `measure_length` は「参照線の法線方向に何 px 探すか」。3 px から 16 px まで振っても角度は **0.0 のまま**で、採用された点も **4 通りとも 41 点**(半幅 3 px, 半幅 6 px, 半幅 10 px, 半幅 16 px)。目地は一様なグレーなので、探索を広げても拾える点は増えません。★これは**何も起きなかった図**です ---- はじめこの図説に「半幅を変えると点の数が変わる」と書きましたが、**生成された本文を読み返すとデータと違っていました**。証拠の数が実際に動く例は第 5 章のツェルナー(61 点中 13 と 19)のほうです。*
 
-[![ずらし量 5 通り × 探索半幅 4 通りの **20 通り全部**を測ったもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid.png)
+[![ずらし量 9 通り(市松の周期 1 つぶん、0〜1)× 探索半幅 4 通りの **36 通り全部**を測ったもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid.png)
 
-*↑ ずらし量 5 通り × 探索半幅 4 通りの **20 通り全部**を測ったもの。*
+*↑ ずらし量 9 通り(市松の周期 1 つぶん、0〜1)× 探索半幅 4 通りの **36 通り全部**を測ったもの。*
 
 [![青い横罫が測定線(`gen_measure_rectangle2`)、橙の縦罫が `measure_pos` が見つけたサブピクセルエッジです。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/06_muller_caliper_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/06_muller_caliper.png)
 

@@ -201,6 +201,14 @@ def nw_probe_sphere(variant: int):
 
     中心は z = 800 mm 付近、400 点。真値: PS(大きさの誤差)= 0、PF(形状の誤差 = 半径の幅)は雑音の
     幅で決まり σ の数倍以内(上限 8σ)。雑音 0 なら両方 0(閉形式)。
+
+    門は ``between`` で真値の幅をそのまま渡す(2026-11-05 敵対的検証 第 2 巡 D3): 以前は
+    ``approx pf_max ± 0.16`` で、雑音 0 の variant 0 は PF 0〜0.32 mm を、σ = 0.02 の variant 1 は
+    16σ まで通していた(主張の 8σ の 2 倍)。いまは
+
+    * PS: 雑音 0 は ±1e-9(閉形式の 0)、σ = 0.02 は ±0.5σ(PS の標準偏差は 2σ/√400 = 0.1σ の 5 倍)。
+    * PF: 雑音 0 は [0, 1e-9]、σ = 0.02 は [2σ, 8σ](400 点の幅は約 5.8σ。下限は「雑音を測った」
+      こと、上限は主張の 8σ)。
     """
     sigma = 0.0 if variant == 0 else 0.02
     g = rng(variant, 67)
@@ -208,8 +216,10 @@ def nw_probe_sphere(variant: int):
     u /= np.linalg.norm(u, axis=1)[:, None]
     centre = np.array([3.0, -2.0, 800.0]) if variant == 0 else np.array([-40.0, 25.0, 760.0])
     pts = centre + u * (12.5 + sigma * g.standard_normal((400, 1)))
+    ps_tol = 0.5 * sigma if sigma > 0.0 else 1e-9
     return {"value": pts, "aux": {"diameter": 25.0},
-            "truth": {"ps": 0.0, "pf_max": max(8.0 * sigma, 1e-9)}}
+            "truth": {"ps": 0.0, "ps_lo": -ps_tol, "ps_hi": ps_tol,
+                      "pf_min": 2.0 * sigma, "pf_max": max(8.0 * sigma, 1e-9)}}
 
 
 def nw_shifted_pair(variant: int):
@@ -378,12 +388,12 @@ RECIPES = [
      "family": "acceptance", "task": "measure", "task_class": "measurement", "halcon": None,
      "input_sort": "points", "sample": "nw_probe_sphere",
      "stages": [{"op": "sphere_probing_error", "args": ["$in", "$aux.diameter"]}],
-     "expect": [{"get": ["ps"], "approx": "ps", "atol": 0.01},
-                {"get": ["pf"], "approx": "pf_max", "atol": 0.16}],
+     "expect": [{"get": ["ps"], "between": ["ps_lo", "ps_hi"]},
+                {"get": ["pf"], "between": ["pf_min", "pf_max"]}],
      "note": "acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated "
              "25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF "
              "(range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed "
-             "form; radial noise σ = 0.02 mm keeps PS near 0 and PF within a few σ."},
+             "form (gated at 1e-9); radial noise σ = 0.02 mm keeps PS within ±0.5σ and PF in [2σ, 8σ]."},
     # ------------------------------------------------ 2026-11-04: matchreg(D4、opsmatchreg)
     {"name": "Register — sub-pixel shift between two images by ECC (enhanced correlation coefficient)",
      "family": "matchreg", "task": "register", "task_class": "measurement", "halcon": "Matching",

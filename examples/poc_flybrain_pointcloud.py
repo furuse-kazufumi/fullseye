@@ -46,6 +46,7 @@ import numpy as np
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 import examplefig as figs  # noqa: E402
 import fullseye as fs  # noqa: E402
+import realdata  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET", "reduced" if os.environ.get("CI") else "full") == "reduced"
 ANNOT = "body-annotations-male-cns-v1.0-minconf-0.5.feather"
@@ -134,6 +135,7 @@ def load_somata() -> tuple[dict | None, str]:
             typ = np.full(len(P), "")
             how = "MaleCNS v1.0 somata via the poc_malecns_activity_wave cache (%s)" % alt
         m = _brain_mask(P, sc)
+        realdata.mark_read("malecns-v1.0-somata")
         return {"P": P[m], "superclass": sc[m], "side": side[m], "type": typ[m], "voxel_um": UM_PER_VOXEL}, how
     except Exception as exc:                                       # noqa: BLE001
         return None, "%s: %s" % (type(exc).__name__, str(exc)[:120])

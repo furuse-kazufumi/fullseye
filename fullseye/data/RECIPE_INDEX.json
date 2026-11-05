@@ -10368,7 +10368,7 @@
           }
         }
       ],
-      "when": "variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa².",
+      "when": "variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². The gate is ±0.01: the estimate is within 0.0032 of the closed form on both variants, and the smallest index (0.024) must not be confused with 0.",
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
@@ -10376,13 +10376,13 @@
       },
       "when_ja": "感度解析 — Sobol' 指数でモデルの出力ばらつきにどの入力因子が効いているかを求める",
       "index_text": {
-        "ja": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². 感度解析 — Sobol' 指数でモデルの出力ばらつきにどの入力因子が効いているかを求める Sample matrices for Sobol' indices (Saltelli et al. 2010) -> ``design`` of n (k + 2) runs. First-order and total Sobol' indices with bootstrap confidence intervals.",
-        "en": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². Sample matrices for Sobol' indices (Saltelli et al. 2010) -> ``design`` of n (k + 2) runs. First-order and total Sobol' indices with bootstrap confidence intervals.",
-        "zh": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². 用于 Sobol' 指数的样本矩阵（Saltelli 等 2010）-> 共 n (k + 2) 次运行的 ``design``。 一阶与总效应 Sobol' 指数，附自助法置信区间。",
-        "tw": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². 用於 Sobol' 指數的樣本矩陣（Saltelli 等 2010）-> 共 n (k + 2) 次執行的 ``design``。 一階與總效應 Sobol' 指數，附自助法信賴區間。",
-        "ko": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². Sobol' 지수를 위한 표본 행렬(Saltelli 등 2010) -> n (k + 2)회의 ``design``. 1차 및 전체 Sobol' 지수(부트스트랩 신뢰구간 포함).",
-        "de": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². Stichprobenmatrizen für Sobol'-Indizes (Saltelli et al. 2010) -> ``design`` mit n (k + 2) Läufen. Sobol'-Indizes erster Ordnung und Totaleffekt-Indizes mit Bootstrap-Konfidenzintervallen.",
-        "hi": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². Sobol' indices के लिए sample matrices (Saltelli et al. 2010) -> n (k + 2) runs का ``design``। first-order और total Sobol' indices, bootstrap confidence intervals सहित।"
+        "ja": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². The gate is ±0.01: the estimate is within 0.0032 of the closed form on both variants, and the smallest index (0.024) must not be confused with 0. 感度解析 — Sobol' 指数でモデルの出力ばらつきにどの入力因子が効いているかを求める Sample matrices for Sobol' indices (Saltelli et al. 2010) -> ``design`` of n (k + 2) runs. First-order and total Sobol' indices with bootstrap confidence intervals.",
+        "en": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². The gate is ±0.01: the estimate is within 0.0032 of the closed form on both variants, and the smallest index (0.024) must not be confused with 0. Sample matrices for Sobol' indices (Saltelli et al. 2010) -> ``design`` of n (k + 2) runs. First-order and total Sobol' indices with bootstrap confidence intervals.",
+        "zh": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². The gate is ±0.01: the estimate is within 0.0032 of the closed form on both variants, and the smallest index (0.024) must not be confused with 0. 用于 Sobol' 指数的样本矩阵（Saltelli 等 2010）-> 共 n (k + 2) 次运行的 ``design``。 一阶与总效应 Sobol' 指数，附自助法置信区间。",
+        "tw": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². The gate is ±0.01: the estimate is within 0.0032 of the closed form on both variants, and the smallest index (0.024) must not be confused with 0. 用於 Sobol' 指數的樣本矩陣（Saltelli 等 2010）-> 共 n (k + 2) 次執行的 ``design``。 一階與總效應 Sobol' 指數，附自助法信賴區間。",
+        "ko": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². The gate is ±0.01: the estimate is within 0.0032 of the closed form on both variants, and the smallest index (0.024) must not be confused with 0. Sobol' 지수를 위한 표본 행렬(Saltelli 등 2010) -> n (k + 2)회의 ``design``. 1차 및 전체 Sobol' 지수(부트스트랩 신뢰구간 포함).",
+        "de": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². The gate is ±0.01: the estimate is within 0.0032 of the closed form on both variants, and the smallest index (0.024) must not be confused with 0. Stichprobenmatrizen für Sobol'-Indizes (Saltelli et al. 2010) -> ``design`` mit n (k + 2) Läufen. Sobol'-Indizes erster Ordnung und Totaleffekt-Indizes mit Bootstrap-Konfidenzintervallen.",
+        "hi": "Analyze — global sensitivity (Sobol' indices) of a model rank analysis multivar  variance-based sensitivity: Saltelli sample matrices (Sobol' sequence, n = 512, 3 factors), the model output on them, then first-order and total Sobol' indices with bootstrap intervals — which input tolerances drive the output variance. Linear model: S1_i = a_i²/Σa². The gate is ±0.01: the estimate is within 0.0032 of the closed form on both variants, and the smallest index (0.024) must not be confused with 0. Sobol' indices के लिए sample matrices (Saltelli et al. 2010) -> n (k + 2) runs का ``design``। first-order और total Sobol' indices, bootstrap confidence intervals सहित।"
       }
     },
     {
@@ -10408,7 +10408,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 561
+        "line": 563
       },
       "when_ja": "主成分分析(PCA) — 多変量データの主成分・寄与率を求め、必要な成分数を判断する",
       "index_text": {
@@ -10451,7 +10451,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 570
+        "line": 572
       },
       "when_ja": "セグメンテーション評価 — 細胞・神経の分割誤り(過分割)を情報の変動量(ビット)で評価する",
       "index_text": {
@@ -10494,7 +10494,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 580
+        "line": 582
       },
       "when_ja": "シーンチェンジ検出 — ノイズのある動画を時間方向に平滑化し、フレーム間ヒストグラム差でカット点を見つける",
       "index_text": {
@@ -10533,7 +10533,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 588
+        "line": 590
       },
       "when_ja": "動体検出 — 照明のちらつきを補正してから背景モデルで動いている物体の領域を抽出する",
       "index_text": {
@@ -10583,7 +10583,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 597
+        "line": 599
       },
       "when_ja": "カメラ校正 — テストチャートの撮影画像にシミュレーションを当てはめ、ゲイン・オフセットを推定する",
       "index_text": {
@@ -10634,7 +10634,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 609
+        "line": 611
       },
       "when_ja": "アテンションの計算 — Transformer の注意機構を正規化・スコア・ソフトマックス・重み付き和に分けて計算",
       "index_text": {
@@ -10669,7 +10669,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 619
+        "line": 621
       },
       "when_ja": "格子収束性の検証 — 3 段階の格子の解から観測収束次数と GCI を求め、シミュレーションの収束を確認",
       "index_text": {
@@ -10705,7 +10705,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 626
+        "line": 628
       },
       "when_ja": "不動点反復 — Anderson 加速で反復計算の不動点を求め、残差履歴と誤差の上界を報告する",
       "index_text": {
@@ -10741,7 +10741,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 271
+        "line": 281
       },
       "when_ja": "穴の中心と半径をサブピクセル輪郭から測る — threshold_sub_pix で円板の縁を XLD 輪郭にし、fit_circle_xld で輪郭ごとに幾何距離の円を当てて中心(行・列)と半径を画素で読む(HALCON fit_circle_contour_xld)。真値は被覆率で描いた円。",
       "index_text": {
@@ -10790,7 +10790,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 284
+        "line": 294
       },
       "when_ja": "接した部品を分水嶺の盆地として数える — 二値化・距離変換・反転で部品ごとの谷を作り、hierarchical_watershed をマスクの中で回して盆地のラベル画像(1..k)と個数を得る(HALCON watersheds の basins 出力)。",
       "index_text": {
@@ -10850,7 +10850,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 297
+        "line": 307
       },
       "when_ja": "マスク付きのマーカー分水嶺 — 部品のマスクを 1 ラベル、作業者の印を種、勾配の反転を優先度にして blob_split で流す。マスクの外へは出ないので面積の合計がマスクと一致し、2 部品の面積が分かる(watersheds_marker に mask 引数が無い穴の代わり)。",
       "index_text": {
@@ -10893,7 +10893,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 313
+        "line": 323
       },
       "when_ja": "中心のずれたリングを、その中心で極座標展開して半径を読む — polar_unwrap に中心(行・列)と半径の範囲を渡し、角度で平均した断面の最大の列からリングの半径を得る(HALCON polar_trans_image_ext の Row/Column/Radius)。",
       "index_text": {
@@ -10931,7 +10931,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 325
+        "line": 335
       },
       "when_ja": "濃淡ボリュームの明るい介在物と暗い介在物を数える — vol_threshold で明示のレベル(0.25)で二値化してから vol_count で連結成分を数える。vol_count だけだと 0.5 固定で暗い方を落とす。",
       "index_text": {
@@ -10968,7 +10968,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 334
+        "line": 344
       },
       "when_ja": "マイク 2 本で音源の方位を測る — tdoa_bearing が相互相関で到着時間差 Δt を取り、遠方近似 θ = asin(cΔt/d) で方位(度)にする。マイク間隔 0.2 m、48 kHz。",
       "index_text": {
@@ -11005,7 +11005,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 344
+        "line": 354
       },
       "when_ja": "加工面の送りマークの波長を面 PSD の山から測る — surface_psd の (q, PSD) 対を spectral_stats に渡し、山の横軸 q(cycles/mm)= 1/λ を読む。peak_nm という名前だが単位は対の横軸のまま。",
       "index_text": {
@@ -11036,7 +11036,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 353
+        "line": 363
       },
       "when_ja": "縞・格子・テクスチャの周期と向きを測る — wave_dominant_frequency が Hann 窓の 2-D FFT の DC 以外の最大の山を対数放物線で細かく読み、周期(画素)と波数ベクトルの向き(度)を返す。",
       "index_text": {
@@ -11071,7 +11071,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 363
+        "line": 373
       },
       "when_ja": "既知の部品の 6 自由度の姿勢を場面の点群から求める — find_surface_pose が点対特徴(PPF)の投票で初期値なしに姿勢を立て、ICP で詰めて (R, t) を返す(HALCON find_surface_model)。",
       "index_text": {
@@ -11102,21 +11102,21 @@
           ]
         }
       ],
-      "when": "acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form; radial noise σ = 0.02 mm keeps PS near 0 and PF within a few σ.",
+      "when": "acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form (gated at 1e-9); radial noise σ = 0.02 mm keeps PS within ±0.5σ and PF in [2σ, 8σ].",
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 377
+        "line": 387
       },
       "when_ja": "3D センサの受入試験で、校正済みの球から探針の誤差を測る — sphere_probing_error が点群に球を当て、大きさの誤差 PS(当てた直径 − 校正値)と形状の誤差 PF(最悪 0.3 % を除いた半径の残差の幅)を返す。雑音 0 なら両方 0(閉形式)。",
       "index_text": {
-        "ja": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form; radial noise σ = 0.02 mm keeps PS near 0 and PF within a few σ. 3D センサの受入試験で、校正済みの球から探針の誤差を測る — sphere_probing_error が点群に球を当て、大きさの誤差 PS(当てた直径 − 校正値)と形状の誤差 PF(最悪 0.3 % を除いた半径の残差の幅)を返す。雑音 0 なら両方 0(閉形式)。 球の点群から探針の誤差の形状 PF と寸法 PS を計算する(``table``)。",
-        "en": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form; radial noise σ = 0.02 mm keeps PS near 0 and PF within a few σ. Computes the probing errors of form PF and size PS from the point cloud of a sphere (``table``).",
-        "zh": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form; radial noise σ = 0.02 mm keeps PS near 0 and PF within a few σ. 由球的点云计算探测误差的形状 PF 与尺寸 PS(``table``)。",
-        "tw": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form; radial noise σ = 0.02 mm keeps PS near 0 and PF within a few σ. 由球的點雲計算探測誤差的形狀 PF 與尺寸 PS(``table``)。",
-        "ko": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form; radial noise σ = 0.02 mm keeps PS near 0 and PF within a few σ. 구의 점군으로부터 프로빙 오차의 형상 PF와 크기 PS를 계산한다(``table``).",
-        "de": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form; radial noise σ = 0.02 mm keeps PS near 0 and PF within a few σ. Berechnet die Antastabweichungen Form PF und Größe PS aus der Punktwolke einer Kugel (``table``).",
-        "hi": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form; radial noise σ = 0.02 mm keeps PS near 0 and PF within a few σ. एक sphere के point cloud से probing error का form PF और size PS गणना करता है (``table``)।"
+        "ja": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form (gated at 1e-9); radial noise σ = 0.02 mm keeps PS within ±0.5σ and PF in [2σ, 8σ]. 3D センサの受入試験で、校正済みの球から探針の誤差を測る — sphere_probing_error が点群に球を当て、大きさの誤差 PS(当てた直径 − 校正値)と形状の誤差 PF(最悪 0.3 % を除いた半径の残差の幅)を返す。雑音 0 なら両方 0(閉形式)。 球の点群から探針の誤差の形状 PF と寸法 PS を計算する(``table``)。",
+        "en": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form (gated at 1e-9); radial noise σ = 0.02 mm keeps PS within ±0.5σ and PF in [2σ, 8σ]. Computes the probing errors of form PF and size PS from the point cloud of a sphere (``table``).",
+        "zh": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form (gated at 1e-9); radial noise σ = 0.02 mm keeps PS within ±0.5σ and PF in [2σ, 8σ]. 由球的点云计算探测误差的形状 PF 与尺寸 PS(``table``)。",
+        "tw": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form (gated at 1e-9); radial noise σ = 0.02 mm keeps PS within ±0.5σ and PF in [2σ, 8σ]. 由球的點雲計算探測誤差的形狀 PF 與尺寸 PS(``table``)。",
+        "ko": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form (gated at 1e-9); radial noise σ = 0.02 mm keeps PS within ±0.5σ and PF in [2σ, 8σ]. 구의 점군으로부터 프로빙 오차의 형상 PF와 크기 PS를 계산한다(``table``).",
+        "de": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form (gated at 1e-9); radial noise σ = 0.02 mm keeps PS within ±0.5σ and PF in [2σ, 8σ]. Berechnet die Antastabweichungen Form PF und Größe PS aus der Punktwolke einer Kugel (``table``).",
+        "hi": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) measure measurement acceptance  acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated 25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF (range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed form (gated at 1e-9); radial noise σ = 0.02 mm keeps PS within ±0.5σ and PF in [2σ, 8σ]. एक sphere के point cloud से probing error का form PF और size PS गणना करता है (``table``)।"
       }
     },
     {
@@ -11144,7 +11144,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 388
+        "line": 398
       },
       "when_ja": "2 枚の像のサブピクセルのずれを ECC で測る — register_ecc(並進)の warp の平行移動の列が(dx, dy)(列が先)。滑らかな模様を既知の量だけずらした像なので、真値はそのずれ。",
       "index_text": {
@@ -11175,7 +11175,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 398
+        "line": 408
       },
       "when_ja": "EAN-13(JAN)のラベルを読む(傾きと雑音つきも)— read_barcode1d が推定した向きで平行な走査線を引き、線ごとに復号して多数決で一致したときだけ文字列を返す。真値は符号化した 13 桁。",
       "index_text": {
@@ -11213,7 +11213,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 408
+        "line": 418
       },
       "when_ja": "平行化したステレオ対の視差を半大域照合で測る — binocular_disparity_ms(HALCON の同名 op)が複数の経路で集約し左右の整合を確かめて視差の地図を返す。左は右を一様な視差 d(5 / 3 px)だけずらした像なので、地図の中央値が d になる。",
       "index_text": {
