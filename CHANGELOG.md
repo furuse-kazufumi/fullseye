@@ -154,6 +154,22 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - L2 `ph_total_variation_flow` は反復を増やす(a ≥ 0.5)と雑音除去にならず、a=1 では誤差が雑音の入力より大きかった(正方形 + 端の帯・σ 0.05・b=0: 入力 0.050、a=0.1 で 0.019、a=1 で 0.067)。原因は時間刻みの安定条件でも発散でもなく(1 歩の変化は減り続け、雑音の無い入力でも a=1 で RMSE 0.067 = 明るさの偏り)、忠実度 lam が弱すぎたこと: 時定数 1/lam(4.5〜50)が走る時間の全体 80 × 0.008 = 0.64 より桁で長く、忠実度が効かないまま純粋な TV flow が一定値へ流れていた(正方形の中が 0.70 → 0.67、幅 8 px の帯が 0.10 → 0.13)。lam を 10〜30 に(dt·lam ≤ 0.24 で安定、lam·80·dt ≥ 6.4 で最小点に着く)。門: 区分定数 3 枚 × σ 2 通り × b 3 通りで、a を 0〜1 に振った誤差がどこでも入力の 3/4 未満、a=1 が途中の最良の 1.25 倍以内、上がり幅が入力誤差の 1/8 以下、a=0.8 と a=1 の出力の差 < 1e-3、雑音の無い入力の RMSE < 0.025。兄弟: `dc_structure_texture`(`backends_decomp._tv_structure`、Chambolle の双対法)は a が強さ(weight)で反復は固定 120 回なので同じ形ではない。`ph_heat_flow` / `ph_mean_curvature_motion` / `ph_perona_malik` は忠実度項を持たない拡散で、a(時間)とともにならしが進むのが仕様。
 - L3 MCP `fullseye_find_ops` の `limit` が単調でなかった: "edge detection" で limit 5/6/7/8 → op 5/6/5/8 件。`limit` が既定値 `find_ops_k`(7)と等しいときだけ op の枠を 7 − `find_ops_recipe_max`(2)= 5 にし、それ以外は op を limit 件引いていた(提案は limit 件で切るので、レシピは既定値のときしか提案に入らなかった)。レシピの枠 = min(`find_ops_recipe_max`, limit − 1)、op の枠 = limit − レシピの枠 に一本化した(limit だけで決まるので単調)。道具の schema は変えていない(minimal プロファイルの予算 1500 に残り 3 トークン)。意味は `docs/MCP.md` の表に書いた。門: 2 つの問いで limit 1〜12 の op 件数・提案件数が減らず、前の候補が入れ替わらず(後ろに足されるだけ)、提案件数 = limit、既定 = limit 7。兄弟: `fullseye_search_ops` の `limit` は op の件数だけでレシピを混ぜないので同じ形ではない。
 
+### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(t8-flake)
+
+- `fsthreads.for_decomposition` / `fs.blas_threads` の `as` で受ける値は、**掛けた後に BLAS の現在値を
+  読み直して**上限以下になっているときだけ `True` になる。以前は設定が黙って捨てられても `True` と答えた。
+
+### 修正 — 1.0 前の修正 2026-11-05(t8-flake)
+
+- threadpoolctl 3.8.0(2026-11-05 公開)から、pthreads / Windows 版 OpenBLAS の上限は最初に設定した
+  スレッド(制御スレッド)からしか変えられず、他のスレッドの設定は黙って無視される。`fsthreads` は
+  limiter を文脈の外で持つので制御が解放されず、(1) 主スレッドで一度使った後は別スレッドの文脈が全部
+  素通し(CI shard 5 の `{'A_inside_with_B': 4, 'B_after_A_left': 4}`。偶発ではなく 3.8 では毎回)、
+  (2) 生きている worker が先に入ると全部抜けた後もプロセスが 1 スレッドに固まった(24 -> 1)、
+  (3) 利用者自身の `threadpool_limits` も別スレッドから効かなくなった。上限を掛け替えるたびに鍵の下で
+  `OpenBLASController.clear_controlling_thread(force=True)` で制御を取り、終わったら手放す
+  (3.7 以前には無い API なので、有るときだけ使う)。回帰テスト `tests/test_fix_t8_flake_2026_11_05.py`。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05 第 2 巡(state)
 
 - T6 GPU の経路(`apply(..., device="cuda"/"auto")` の単 op、`accel.run_batch` / `accel.run_pipeline`、`accel_vol.run_batch_vol` / `run_pipeline_vol`)で値が変わる: `b > 0.5` が端の扱い(nearest / constant / wrap)・構造要素(十字 / 円板 / 線)を選ぶ op(`fast._KNOB_B_OPTIONED` の 18 本と `vol_gaussian`)は core で答える(以前は kernel が `b` を無視して reflect / 正方形のまま計算し、`device="cpu"` と a=0.5 で median 0.528・mean_box 0.311・gaussian 0.265・gdilate 0.424・gerode 0.417・gopen 0.417・gclose 0.405 違った)。`b <= 0.5` は従来どおり kernel(速さも答えも変わらない)。
