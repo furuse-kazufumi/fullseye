@@ -150,6 +150,18 @@ numpy は行優先、LAPACK は列優先なので、分解のたびに並べ替�
   上限を「元」として憶える)→ A が抜ける(B の上限が外れる)→ B が抜ける(A の上限に戻す)で、
   **全部抜けた後もプロセスが 1 スレッドに固まった**(24 -> 1)。いまはプロセスで 1 つの
   受け台帳(:data:`_ACTIVE`)を鍵つきで持ち、元の値は最初の文脈が入ったときに 1 回だけ憶える。
+* ★threadpoolctl 3.8.0(2026-11-05)から、pthreads / Windows 版 OpenBLAS の上限は
+  「**最初に設定したスレッド(制御スレッド)**」からしか変えられず、他のスレッドからの設定は
+  **黙って無視される**(context manager で使えば抜けたときに解放されるが、この層は
+  limiter を文脈の外で持つので解放されない)。そのままだと、主スレッドで一度使った後は
+  別スレッドの文脈が全部素通しになり、生きている worker が制御を握ると**全部抜けた後も
+  1 スレッドに固まった**(実測 24 -> 1)。いまは上限を掛け替えるたびに鍵の下で
+  ``OpenBLASController.clear_controlling_thread(force=True)`` で制御を取り、終わったら手放す
+  (この層は「最後に入った文脈がプロセス全体に効く」を約束しているので、取るのが正しい)。
+* 掛けた後に BLAS の現在値を読み直し、上限を超えていたら ``as`` の値を ``False`` にする
+  (効いていないのに「絞った」と答えない)。
+* OpenMP 版 OpenBLAS ではスレッド数がスレッドごとの値なので、別スレッドの文脈の上限は
+  そのスレッドの BLAS 呼び出しにしか効かない(この層の「プロセス全体」の約束は pthreads 版の話)。
 * 決定的にしたいなら ``FULLSEYE_BLAS_THREADS`` を整数で固定する。
 """
 from __future__ import annotations
@@ -217,20 +229,28 @@ _COUNTS = {"limited": 0, "skipped": 0}
 #: 要素は ``(token, cap)`` を入った順に。効く上限は**最後の要素**の cap。
 _ACTIVE = []
 #: いまプロセスに掛けている threadpoolctl の limiter と、その上限(元の値はこの limiter が持つ)。
-_HELD = {"limiter": None, "cap": None}
+_HELD = {"limiter": None, "cap": None, "effective": False}
 _STATE_LOCK = threading.Lock()
+
+#: threadpoolctl >= 3.8 の ``OpenBLASController.clear_controlling_thread``(無い版では ``None``)。
+_RELEASE = None
 
 
 def _controller():
     """``ThreadpoolController`` を 1 個だけ作って使い回す(無ければ ``None``)。"""
-    global _CONTROLLER, _TRIED
+    global _CONTROLLER, _TRIED, _RELEASE
     if not _TRIED:
         _TRIED = True
         try:
+            import threadpoolctl
             from threadpoolctl import ThreadpoolController
             _CONTROLLER = ThreadpoolController()
         except Exception:                                  # noqa: BLE001
             _CONTROLLER = None                             # 無ければ何もしない層になる
+        else:
+            # 3.8 から: pthreads 版 OpenBLAS は「制御スレッド」以外の設定を黙って捨てる。
+            _RELEASE = getattr(getattr(threadpoolctl, "OpenBLASController", None),
+                               "clear_controlling_thread", None)
     return _CONTROLLER
 
 
@@ -323,17 +343,34 @@ def _reapply_locked(ctl):
 
     limiter は 1 個だけ持つ: 上限を変えるときは**いったん元に戻してから**新しい limiter を作るので、
     新しい limiter が憶える「元」は常に、どの文脈も入っていないときの値になる。
+
+    threadpoolctl >= 3.8 では pthreads 版 OpenBLAS の設定が「制御スレッド」以外から黙って
+    無視されるので、掛け替えの間だけこのスレッドが制御を取り(``force=True``)、終わったら手放す。
     """
     want = _ACTIVE[-1][1] if _ACTIVE else None
     if want == _HELD["cap"]:
         return
-    lim = _HELD["limiter"]
-    _HELD["limiter"] = _HELD["cap"] = None
-    if lim is not None:
-        lim.restore_original_limits()
-    if want is not None:
-        _HELD["limiter"] = ctl.limit(limits=want, user_api="blas")
-        _HELD["cap"] = want
+    if _RELEASE is not None:
+        _RELEASE(force=True)                # 別のスレッドが握っていても、この掛け替えはこのスレッドが行う
+    try:
+        lim = _HELD["limiter"]
+        _HELD["limiter"] = _HELD["cap"] = None
+        _HELD["effective"] = False
+        if lim is not None:
+            lim.restore_original_limits()
+        if want is not None:
+            _HELD["limiter"] = ctl.limit(limits=want, user_api="blas")
+            _HELD["cap"] = want
+            _HELD["effective"] = _cap_holds(ctl, want)
+    finally:
+        if _RELEASE is not None:
+            _RELEASE()                      # 握ったままにしない(利用者自身の threadpool_limits を塞がない)
+
+
+def _cap_holds(ctl, want):
+    """制御下の BLAS が全部 ``want`` 以下で動いているか(掛けたつもりで効いていない、を見抜く)。"""
+    seen = [lc.get_num_threads() for lc in ctl.lib_controllers if lc.user_api == "blas"]
+    return bool(seen) and all(n is not None and n <= want for n in seen)
 
 
 def _leave_locked(ctl, token):
@@ -360,9 +397,10 @@ def _apply(cap):
         except BaseException:
             _leave_locked(ctl, token)       # 入れなかった文脈は台帳に残さない
             raise
+        effective = bool(_HELD["effective"])
     _LOCAL.depth = getattr(_LOCAL, "depth", 0) + 1
     try:
-        yield True
+        yield effective
     finally:
         _LOCAL.depth -= 1
         with _STATE_LOCK:
