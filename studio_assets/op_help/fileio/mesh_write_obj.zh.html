@@ -6,7 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将三角网格写成包含 <code style="color:#22d3bf">v</code>、<code style="color:#22d3bf">vn</code> 和 <code style="color:#22d3bf">f</code> 的 Wavefront OBJ 字符串（<code style="color:#22d3bf">text</code>）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>面ごとの法線を <code style="color:#22d3bf">vn</code> として書く。material/texture は書かない。呼び出し例:</p>
+<p>頂点の面積重み法線(滑らかな陰影)を <code style="color:#22d3bf">vn</code> として書き、<code style="color:#22d3bf">f v//vn</code> で参照する。どの面からも参照されない頂点には <code style="color:#22d3bf">vn</code> を書かず、面の法線が打ち消し合って頂点法線が定まらない頂点(表裏 2 枚の三角形など)は、その角だけ面の単位法線を使う —— OFF / PLY が書ける mesh は全部書ける。material/texture は書かない。呼び出し例:</p>
 <p><code style="color:#22d3bf">text = mesh_write_obj((vertices, faces))</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

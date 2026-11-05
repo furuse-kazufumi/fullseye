@@ -6,7 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>primary HDU की 2-D/3-D FITS image को <code style="color:#22d3bf">(image_or_volume, meta)</code> के रूप में पढ़ता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">meta</code> は <code style="color:#22d3bf">bitpix</code>、<code style="color:#22d3bf">bzero</code>、<code style="color:#22d3bf">bscale</code> と基本 WCS の <code style="color:#22d3bf">wcs</code> 辞書を持つ。切れたブロック、random groups、BLANK、次元・BITPIX・データ長の不一致は名指しで拒否する。</p>
+<p><code style="color:#22d3bf">meta</code> は <code style="color:#22d3bf">bitpix</code>、<code style="color:#22d3bf">bzero</code>、<code style="color:#22d3bf">bscale</code> と基本 WCS の <code style="color:#22d3bf">wcs</code> 辞書を持つ。FITS 4.0 の整数の規約(BSCALE=1 で BZERO=-128 / 2**15 / 2**31 / 2**63)は int8 / uint16 / uint32 / uint64 の整数のまま正確に返す(それ以外の BZERO/BSCALE は float64 に換算)。切れたブロック、random groups、BLANK、次元・BITPIX・データ長の不一致は名指しで拒否する。</p>
 <p>呼び出し例: <code style="color:#22d3bf">image, meta = astro_fits_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

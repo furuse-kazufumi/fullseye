@@ -7,6 +7,7 @@
 <p>coordinates, intensity, रंग और pose वाली point-cloud <code style="color:#22d3bf">table</code> को ASTM E57 <code style="color:#22d3bf">bytes</code> में लिखता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p><code style="color:#22d3bf">pye57</code> は optional。未導入なら導入コマンドを含む <code style="color:#22d3bf">ImportError</code> で閉じる。</p>
+<p>精度: 座標(cartesianX/Y/Z)と強度は E57 の <b>single(float32)</b> で書かれる(pye57 の <code style="color:#22d3bf">write_scan_raw</code> が single 固定)。float64 の点は float32 の精度で往復する —— 原点から 35 万 m の UTM 座標なら誤差は数 cm。大きい座標は原点の近くへ平行移動し、その量を <code style="color:#22d3bf">pose[&#x27;translation&#x27;]</code>(double で書かれ正確に往復する)に入れること。色は 8 bit に丸め、<code style="color:#22d3bf">pose[&#x27;rotation&#x27;]</code> は単位四元数に正規化して書く。</p>
 <p>呼び出し例: <code style="color:#22d3bf">payload = e57_write({&#x27;points&#x27;: points, &#x27;pose&#x27;: pose})</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

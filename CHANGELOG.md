@@ -126,6 +126,43 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 小: `docs/capabilities/water-transparent-media.md` の印字値のコメント(1.371 → 1.37)、`docs/KNOWN_ISSUES.md` 32-2・32-3 を 32-16 と同じ作法で解消済みに。
 - 回帰の門: `tests/test_redteam2_claims_2026_11_05.py`(数え直しと照合、手書きの期待値を持たない)、`tests/test_poc_scripts_run.py` は台帳が「実データを読む」とする例が実走でも印を出すかを照合、`tests/test_maturity.py` は `not_run_by_any_gate` を定数 0 でなく数え直しと照合。
 
+### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(io)
+
+回帰の門は `tests/test_redteam_io_2026_11_05.py`(真値・仕様の不変量・astropy / mrcfile / pynrrd / openpyxl と照合)。op の宣言・型名は変えていない。
+
+| 項目 | 分類 | 何が変わるか |
+|---|---|---|
+| I4 `astro_fits_read` の BITPIX=64・BZERO=2^63 / BITPIX=8・BZERO=-128 | 型・値 | float64(2^63+1 → 2^63)だったのが uint64 / int8 の整数で正確に。`astro_fits_write` は int8 / uint64 も同じ規約で書く(以前は拒否) |
+| I5 `astro_fits_write` のヘッダの float | 出力 | `%.15G` から最短往復の `repr`。0.30000000000000004 が 0.3 に、5.0 が整数カードの 5(読むと int)になっていた |
+| I9 `nrrd_read` の meta に `space`(teem の正規名、無ければ `None`) | 型 | 返る dict にキーが 1 つ増える。`nrrd_write` は meta の `space` を受け、与えると `space dimension:` の代わりに `space:` を書く。未知の名前・次元違い・両方の行があるファイルは ValueError |
+| I10 `ome_tiff_write` が書いた axes を MapAnnotation(名前空間 `fullseye/ome-tiff/axes`)に残す | 出力・shape | OME-XML とバイト列(UUID)が変わる。`ome_tiff_read` は長さ 1 の軸を戻す(以前は ZYX(1,3,4) が YX(3,4) で戻った)。記録と TIFF の軸が合わなければ ValueError |
+| I11 `ome_tiff_read` が Pixels の `Type` と画素の dtype の不一致を拒否 | fail-closed | 以前は通していた |
+| I12 `volio.write_volume` が不正な幾何(spacing が 3 つの有限な正でない・origin が 3 つの有限でない・direction が有限な非特異 3×3 でない)を拒否 | fail-closed | 以前は ITK の既定値(か NaN)で黙って書いた。形式に依らず書く前に ValueError |
+| I13 OFF の 4OFF(同次座標)を x/w で読む | 値 | 以前は w を捨てた。w = 0 は ValueError |
+| I15 `mesh_write_obj` が参照されない頂点・表裏 2 枚の三角形を受ける | 受理 | 以前は "vertex normal is undefined"。参照されない頂点には vn を書かず、打ち消す頂点はその角だけ面の法線 |
+| I16 `mesh_write_ply` の整数の属性を整数の PLY 型で、`mesh_read_ply` はその整数 dtype で返す | 型・fail-closed | 以前は double(2^53 超が丸まる)/ 読みは float64。int32 / uint32 に入らない int64 は ValueError |
+| I17 `jsonio` の binary(b64f64)経路で float32 / float16 を元の dtype に | 型 | 以前は float64 で返った(readable と食い違い)。宣言 dtype に入らない偽造 envelope は ValueError |
+| I19 `xlsxio.save_xlsx_report` の文字列は常に文字列型 | 出力 | `=` 始まりが数式になっていた(CWE-1236) |
+| I21 `ops._c`(codegen の C 出力)のノブの literal | 出力 | `%.6f` から float32 の最短 decimal。生成 C の文字列が変わり、閾値判定が Python と一致する |
+| I22 `write_pfm` の scale | 出力 | `%f` から `repr`。1e-07 が `0.000000`(読めない)になっていた |
+| I23 `imgio.save_ply` の座標 | 出力 | `property float` + `%g`(6 桁)から `property double` + `%.17g` |
+| I24 `table_read_csv` の空欄のある 2^53 超の整数列 | 型 | float64 に丸めていた。空欄を mask した int64 / uint64 の `MaskedArray` で返す |
+| I26 `mesh.write_points` の 0 点の `.xyz` | 出力 | 0 バイトだったのが `# 0 points (x y z)` の 1 行。注釈だけの `.xyz` を `read_points` は (0, 3) で読む |
+| (追加の探針)`archive_extract` / `archive_create` の Windows 予約名 | fail-closed | COM0 / LPT0 / COM¹²³ / LPT¹²³ / CONIN$ / CONOUT$ も拒否(以前は CON/PRN/AUX/NUL と COM1-9 / LPT1-9 だけ)。tar.xz の作成は先頭以外の成分(`data/CON.txt`)も検査する |
+
+### 修正 — 敵対的検証 2026-11-05(io)
+
+- I6 FITS の自由書式の文字列(開き引用符が 11 桁目より後、FITS 4.0 §4.2.1.2)を読む。
+- I7 `em_mrc_write` が NVERSION=20140(word 28)を書く。`mrcfile.validate` が通る。
+- I8 NRRD の型名 `signed long long` / `signed long long int` を読む(teem 仕様の 40 通りの綴りを全部門に)。連続空白も畳む。
+- I14 OBJ のタブ区切りの `v` / `f` 行を読む(以前は `v` 行が欠けて添字範囲外、`f` 行は黙って消えた)。
+- I18 `mdio.extract_json` の fence を CommonMark 0.31 §4.5 どおりに(空の fence・`file.py` などの info 文字列・`~~~` の中の ``` ・長い fence の中の短い fence の後ろの封筒を見落としていた)。
+- I25 `table_read_csv` が UTF-8 BOM を列名に含めない。
+- (追加の探針・文書)`e57_write` の docstring に精度を明記: pye57 が座標・強度を E57 single(float32)固定で書くため float64 は float32 の精度で往復する(35 万 m の UTM で数 cm)。`pose['translation']` は double で正確に往復するので、大きい座標はそちらへ移す。バックエンドの制約なので値は変えず門で固定した。
+- 探針を当てて欠陥が無かったもの: `lens_file_read` / `lens_file_write`(R・t・k は `repr` で正確に往復、utf-16 も可)、`motionio`(読み専用、空白類で split 済み)、DICOM(SimpleITK 経由の読みだけ、書きは範囲外)。7z / rar は 7z 実行ファイルが要る経路で、名前の検査は上の共通関数を通る。
+- 兄弟で直さなかったもの: `tools/import_bodyparts3d_organs.py` の OBJ 読み(固定の公開データ専用、入力は空白区切り)、`pocviewer` の PLY 書き出し(float32 で詰めた表示データを JS 側と同じ文字列で出す双子)、`tests/test_docs_index_reachable.py` の fence 除去(文書検査の補助)、`table_write_csv` の `=` 始まりのセル(CSV は型を持たず、接頭辞を足すと往復が壊れる)。
+- 既存テストの期待値の変更: `tests/test_codegen.py` の C literal の文字列(旧書式 `%.6f` をなぞっていただけ、値は同じ 1.5 / 0.5 / 1.0)。
+
 ### 破壊的変更(Breaking) — 敵対的検証 2026-11-05(stats)
 
 回帰の門は `tests/test_redteam_stats_2026_11_05.py`(真値・不変量・独立実装と比べる。修正前のコードで 23 件が落ちることを確認)。

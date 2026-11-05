@@ -6,6 +6,10 @@
 この repo は、なぜそうなっているかを**ソースのコメント**に書いている。そのうち `★` を付けたものが「効く知見」—— 測って分かったこと、踏んだ失敗、そう作った理由。ここはそれを機械的に集めた生成物で、正本はソースの側にある(だから食い違わない)。
 
 
+## `_archive_tarxz.py`
+
+- **L19** — ★2026-11-05 redteam (io, archive probe): Windows reserved device names (Microsoft "Naming Files, Paths, and Namespaces") include COM0 / LPT0, the superscript digits ¹ ² ³ and the console names CONIN$ / CONOUT$. Only CON/PRN/AUX/NUL and COM1-9 / LPT1-9 were listed, so "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
+
 ## `accel.py`
 
 - **L42** — ★実測(第 3 便、2048² x50): np.stack + 1 枚ずつの f32 化が 1.4 s で、PCIe 片道 0.3 s より重かった (一時配列の確保と page fault)。行き先を 1 回だけ確保して流し込むと一時配列が消える。値は同じ。
@@ -1498,7 +1502,17 @@
 
 ## `fileio.py`
 
-- **L1260** — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
+- **L93** — ★2026-11-05 redteam I8: the table above is now every spelling of the teem NRRD format spec ("type" field): "signed long long" / "signed long long int" were missing and refused.
+- **L240** — ★2026-11-05 redteam I24: one empty cell (a missing value, written by table_write_csv for None) sent the whole column through float64, so a large int column with a gap came back rounded -- against "丸めて返さない". Blank cells are now allowed here: such a column is returned as an integer masked array (mask = the blanks), exact and still numeric.
+- **L298** — ★2026-11-05 redteam I25: a UTF-8 BOM (Excel's "CSV UTF-8" writes one) became part of the first column name ('\ufeffx'). It is a byte-order mark, not data: drop it once.
+- **L884** — ★2026-11-05 redteam (io, archive probe): Windows reserved device names (Microsoft "Naming Files, Paths, and Namespaces") include COM0 / LPT0, the superscript digits ¹ ² ³ and the console names CONIN$ / CONOUT$. Only CON/PRN/AUX/NUL and COM1-9 / LPT1-9 were listed, so "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
+- **L1378** — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
+- **L1497** — ★2026-11-05 redteam I6: FITS 4.0 §4.2.1.2 -- in free format the opening quote of a string may stand in any column after the value indicator, not only column 11. Leading blanks before the quote are not part of the value (blanks *inside* the quotes still are).
+- **L1715** — ★2026-11-05 redteam I4: FITS 4.0 §5.3 / Table 11 -- the four integer offset conventions (BSCALE=1 with BZERO = -128 / 2**15 / 2**31 / 2**63) denote *integer* data of the other signedness. uint64 used to go through float64 (2**63 + 1 -> 2**63, 2**64 - 1 -> 2**64) and int8 came back as float64. They are now decoded with exact integer arithmetic.
+- **L1789** — ★2026-11-05 redteam I7: MRC2014 word 28 (byte 108) is NVERSION = 20140 (year*10 + version). It was left 0, so the file did not declare itself MRC2014 (mrcfile.validate rejected it).
+- **L2101** — ★2026-11-05 redteam I9: the "space" field (LPS / RAS / scanner-xyz ...) was dropped, so an LPS and an RAS file -- the same numbers in mirrored patient frames -- read back identical. It is returned as meta["space"] (canonical teem name, None when absent) and written back.
+- **L2452** — ★2026-11-05 redteam I10: tifffile squeezes length-1 axes on read, and OME's 5-D Size* cannot tell "ZYX with Z=1" from "YX". The axes as written are recorded in a namespaced MapAnnotation so ome_tiff_read can restore the written shape (other readers ignore it).
+- **L2486** — ★2026-11-05 redteam I11: the docstring promised to reject a Pixels Type that disagrees with the TIFF samples, but ``dtype`` was never read -- Type="int16" over uint16 data passed.
 
 ## `fit_transform.py`
 
@@ -1547,6 +1561,10 @@
 ## `fullseye/evaluation/metrics.py`
 
 - **L342** — ★2026-11-04 external audit G2: ``_weights`` narrows *selected* in place under ``nan_policy="omit"`` (a NaN weight drops its element). a and b used to be taken before that, so ``ww[a & b]`` indexed with masks of different lengths (IndexError). Weights first.
+
+## `fullseye/jsonio.py`
+
+- **L233** — ★2026-11-05 redteam I17: a float32 / float16 array travels as float64 bytes (exact), but came back float64 while the readable "list" form restored float32 -- the same value had two dtypes depending on readable=. Restore the declared dtype, only when every value survives the cast (a forged float32 over float64-only values is refused).
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1599,7 +1617,7 @@
 
 - **L46** — ★ float64 に直してから [0,1] に clip すると uint8 の 0..255 が 0/1 の 2 値に潰れた
 - **L51** — ★ 切り捨ての int() だと 1000 px が step 3 で 334 px になり longest を守らない
-- **L68** — dict の表は key / value の 2 列(mdio と同じ)。★ list(dict) はキー文字列の 列になり、1 文字ずつのセルに綴られていた
+- **L83** — dict の表は key / value の 2 列(mdio と同じ)。★ list(dict) はキー文字列の 列になり、1 文字ずつのセルに綴られていた
 
 ## `fullseye_comm.py`
 
@@ -1700,6 +1718,7 @@
 - **L712** — ★2026-10-18(外部レビュー 0.6.0 N209): 順は save(path, arr)。逆に呼ぶと「path must be ... got ndarray」で 止まってはいたが、逆順だとは言わなかった。配列が path に、文字列が arr に来たら、それを言う。
 - **L721** — ★2026-09-20(GenSpark 第 34 報 N120): PFM は float 専用の形式なのに、既定の 8 bit 経路が 0..255 の 値を float32 として書き、読むと 0..1 に clip されて別画像になっていた(往復 max|Δ| 0.98)。 PFM の既定は float(無損失)。
 - **L915** — ★2026-09-20(GenSpark 第 18 報 N78): 無い・ディレクトリ・読めない、が全部同じ文だった。
+- **L954** — ★2026-11-05 redteam I23: coordinates were "%g" (6 significant digits) under "property float": a UTM easting 352145.12 came back 352145 (errors of metres).
 
 ## `imgmetrics.py`
 
@@ -1795,8 +1814,11 @@
 
 ## `mesh.py`
 
-- **L410** — ★ match the whole line: a comment that merely mentions end_header used to end the header there and shift the binary body (silent garbage).
-- **L655** — ★ A comma is a column separator only when it is the ONLY one on the line. "1,5 2,5 3,5" (decimal commas, European locale) used to be re-split into 6 columns and read as xyz + colour (silently wrong).
+- **L242** — ★2026-11-05 redteam I14: records are keyword + whitespace (any blanks, tabs included); "v\t1 2 3" and "f\t1 2 3" used to be skipped because the test was startswith("v ").
+- **L328** — ★2026-11-05 redteam I13: a "4" in the magic (Geomview "[ST][C][N][4]OFF") means every vertex is homogeneous ``x y z w`` -- the point is (x/w, y/w, z/w). w used to be dropped (4OFF "2 0 0 2" read as (2, 0, 0) instead of (1, 0, 0)).
+- **L431** — ★ match the whole line: a comment that merely mentions end_header used to end the header there and shift the binary body (silent garbage).
+- **L677** — ★ A comma is a column separator only when it is the ONLY one on the line. "1,5 2,5 3,5" (decimal commas, European locale) used to be re-split into 6 columns and read as xyz + colour (silently wrong).
+- **L693** — ★2026-11-05 redteam I26: write_points writes a 0-point cloud as a header comment ("# 0 points ..."), and that file must read back as a (0, 3) cloud. A file with no comment and no data (only blanks) is still refused -- it is not a point cloud.
 
 ## `meshio_opt.py`
 
@@ -1877,10 +1899,10 @@
 - **L1600** — ★2026-10-07: 0 画素の面積率は 0/0(np.mean が NaN を返し、guard が黙って置き換えていた)
 - **L1740** — ★端は**端の値で**埋める。以前は ``np.convolve(x, k, "same")`` で、 これは両端の w 点を**ゼロと**平均する —— 輪郭の始点と終点が 原点 (0,0) の方向へ最大 50 px 以上引きずられ、輪郭 140 本ぶんの 赤い筋が左上へ収束する図になった(2026-09-06、op ごとの図を初めて 作ったときに発見。数値テストでは平均ずれ 0.3 px で見えなかった)。
 - **L2336** — ★pickle は**名前で**(2026-09-19 外部レビュー N5): ``fn`` は ``backend_safe._safe`` のクロージャで pickle できず、Op を丸ごと multiprocessing / joblib に渡すと PicklingError で止まっていた(``Pipeline`` は名前を持つので通る、という非対称)。 復元先は**復元する側の環境の登録**: backend が入っていない環境で戻すと KeyError(不足 extra の案内つき)になり、黙って別の実装にはならない。
-- **L2512** — ★2026-09-19 の外部レビュー(#1): scikit-image 無しの環境で ``sk_canny`` を呼ぶと 「unknown operator」になり、**存在しない**のか **backend が入っていない**のかを 区別できなかった。fn は ``backend_safe._safe`` に包まれて ``__module__`` を失う ので、登録の側で出自を残す(後勝ち = ``REGISTRY`` の重複解消と同じ規則)。 ``imgevolve.py index`` がこれを ``module`` / ``requires`` として索引に書き、 ``api._resolve`` が未登録の名前を引かれたときに索引から不足 extra を案内する。
-- **L2521** — ★pyproject の optional-dependencies と食い違うと案内が嘘になるので ``tests/test_usability_review_2026_09_19.py`` が突き合わせる。
-- **L2808** — ★2026-10-07: 複素の sort は sanitize(実 sort 向けの規約で**実部だけ**を返す)を通さない。 以前は tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が cimage / beatcube を名乗りながら float64 を返していた(虚部を黙って捨てる = 位相が消える)。 backends_bridge の橋は同じ理由で既に素通しにしていた —— その規約をこちらにも揃える。
-- **L2823** — ★**ネイティブ側が退化入力でプロセスごと落ちる op の台帳**(2026-09-05)。 `guard` は Python の例外しか捕まえられない。C/C++ の中で境界の外へ書き込まれたら そこで終わりで、利用者のパイプラインごと消える —— fail-soft の最悪の破れ方。 入口で弾く以外に手が無いので、**理由つきでここに載せて登録時に関門を掛ける**。 **プラットフォームで挙動が違う**のがこの台帳の存在理由。下の 3 本は Linux(Ubuntu 24.04 / Python 3.12 / PyPI の wheel)では落ちるが、 **Windows では同じ入力で 1 件も再現しなかった**。ネイティブのビルドが違えば 境界の壊れ方も違うということなので、「この種類の入力なら大丈夫」という 細かい線引きは信用できない —— **退化入力はまとめて拒否する**。 直したら消す、ではなく**上流が直ったことを確認できたら**消す(こちらは 自分のコードではないので、消す条件が違う)。
+- **L2528** — ★2026-09-19 の外部レビュー(#1): scikit-image 無しの環境で ``sk_canny`` を呼ぶと 「unknown operator」になり、**存在しない**のか **backend が入っていない**のかを 区別できなかった。fn は ``backend_safe._safe`` に包まれて ``__module__`` を失う ので、登録の側で出自を残す(後勝ち = ``REGISTRY`` の重複解消と同じ規則)。 ``imgevolve.py index`` がこれを ``module`` / ``requires`` として索引に書き、 ``api._resolve`` が未登録の名前を引かれたときに索引から不足 extra を案内する。
+- **L2537** — ★pyproject の optional-dependencies と食い違うと案内が嘘になるので ``tests/test_usability_review_2026_09_19.py`` が突き合わせる。
+- **L2824** — ★2026-10-07: 複素の sort は sanitize(実 sort 向けの規約で**実部だけ**を返す)を通さない。 以前は tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が cimage / beatcube を名乗りながら float64 を返していた(虚部を黙って捨てる = 位相が消える)。 backends_bridge の橋は同じ理由で既に素通しにしていた —— その規約をこちらにも揃える。
+- **L2839** — ★**ネイティブ側が退化入力でプロセスごと落ちる op の台帳**(2026-09-05)。 `guard` は Python の例外しか捕まえられない。C/C++ の中で境界の外へ書き込まれたら そこで終わりで、利用者のパイプラインごと消える —— fail-soft の最悪の破れ方。 入口で弾く以外に手が無いので、**理由つきでここに載せて登録時に関門を掛ける**。 **プラットフォームで挙動が違う**のがこの台帳の存在理由。下の 3 本は Linux(Ubuntu 24.04 / Python 3.12 / PyPI の wheel)では落ちるが、 **Windows では同じ入力で 1 件も再現しなかった**。ネイティブのビルドが違えば 境界の壊れ方も違うということなので、「この種類の入力なら大丈夫」という 細かい線引きは信用できない —— **退化入力はまとめて拒否する**。 直したら消す、ではなく**上流が直ったことを確認できたら**消す(こちらは 自分のコードではないので、消す条件が違う)。
 
 ## `ops1d.py`
 
@@ -2154,6 +2176,7 @@
 
 - **L222** — ★ /iinfo.max put a signed image in [-1, 1] (int16 -32768 -> -1.00003)
 - **L280** — ★2026-10-24: imageio (Pillow) returns a 16-bit RGB/RGBA/gray+alpha PNG as uint8 without an error. Read the declared depth from the IHDR and, when it is > 8, try the depth-keeping reader (OpenCV IMREAD_UNCHANGED) first.
+- **L506** — ★2026-11-05 redteam I22: "%f" kept 6 decimals -- -1.23456789 came back 1.234568 and 1e-07 / 2.5e-07 were written as 0.000000 (an invalid zero scale the reader refuses). repr is the shortest decimal that reads back as the same float.
 
 ## `raytrace.py`
 

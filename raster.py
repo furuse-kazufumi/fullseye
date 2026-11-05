@@ -502,9 +502,12 @@ def write_pfm(path, arr, scale: float = 1.0) -> None:
         raise ValueError("write_pfm scale must be non-zero and finite, got %r" % (scale,))
     little = scale < 0.0
     endian = "<" if little else ">"
-    signed = -abs(scale) if little else abs(scale)
+    signed = -abs(float(scale)) if little else abs(float(scale))
+    # ★2026-11-05 redteam I22: "%f" kept 6 decimals -- -1.23456789 came back 1.234568 and
+    # 1e-07 / 2.5e-07 were written as 0.000000 (an invalid zero scale the reader refuses).
+    # repr is the shortest decimal that reads back as the same float.
     header = ("PF\n" if color else "Pf\n") + ("%d %d\n" % (a.shape[1], a.shape[0])) \
-        + ("%f\n" % signed)
+        + (repr(signed) + "\n")
     body = np.ascontiguousarray(a[::-1], dtype=endian + "f4")   # bottom row first
     with open(str(path), "wb") as fh:
         fh.write(header.encode("ascii"))

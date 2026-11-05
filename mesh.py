@@ -239,12 +239,16 @@ def _read_obj_vertices(raw: bytes, src: str):
     """``v`` records -> (V, C). Colours only when a line carries exactly 6 numbers
     (``x y z r g b``, the common vertex-colour extension); ``v x y z w`` keeps w
     out of the colours."""
+    # ★2026-11-05 redteam I14: records are keyword + whitespace (any blanks, tabs included);
+    # "v\t1 2 3" and "f\t1 2 3" used to be skipped because the test was startswith("v ").
     rows, widths = [], []
     for ln in _text(raw).splitlines():
         s = ln.strip()
-        if not s or s[0] == "#" or not s.startswith("v "):
+        if not s or s[0] == "#":
             continue
         parts = s.split()
+        if parts[0] != "v":
+            continue
         if len(parts) < 4:
             raise ValueError("%s: OBJ 'v' record needs 3 coordinates, got %r" % (src, s[:60]))
         rows.append(parts[1:7])
@@ -267,10 +271,11 @@ def _read_obj(raw: bytes, src: str):
         s = ln.strip()
         if not s or s[0] == "#":
             continue
-        if s.startswith("v "):
+        keyword = s.split(None, 1)[0]
+        if keyword == "v":
             seen += 1
             continue
-        if not s.startswith("f "):
+        if keyword != "f":
             continue
         nv_seen = seen
         idx = []
@@ -320,14 +325,30 @@ def _read_off(raw: bytes, src: str):
     if len(lines) < li + nv + nf:
         raise ValueError("%s: OFF declares %d vertices + %d faces but only %d data lines follow"
                          % (src, nv, nf, len(lines) - li))
+    # ★2026-11-05 redteam I13: a "4" in the magic (Geomview "[ST][C][N][4]OFF") means every
+    # vertex is homogeneous ``x y z w`` -- the point is (x/w, y/w, z/w). w used to be dropped
+    # (4OFF "2 0 0 2" read as (2, 0, 0) instead of (1, 0, 0)).
+    homogeneous = "4" in head[0]
+    ncoord = 4 if homogeneous else 3
     vrows = []
     for i in range(nv):
         t = lines[li + i].split()
-        if len(t) < 3:
-            raise ValueError("%s: OFF vertex line %d has %d value(s), need 3"
-                             % (src, i, len(t)))
-        vrows.append(t[:3])
-    V = _floats(vrows, "OFF vertex", src) if vrows else np.zeros((0, 3))
+        if len(t) < ncoord:
+            raise ValueError("%s: OFF vertex line %d has %d value(s), need %d"
+                             % (src, i, len(t), ncoord))
+        vrows.append(t[:ncoord])
+    if not vrows:
+        V = np.zeros((0, 3))
+    elif homogeneous:
+        H = _floats(vrows, "OFF homogeneous vertex", src)
+        w = H[:, 3]
+        if not np.all(np.isfinite(w)) or np.any(w == 0):
+            bad = int(np.flatnonzero(~np.isfinite(w) | (w == 0))[0])
+            raise ValueError("%s: 4OFF vertex %d has w = %r — a point at infinity has no position"
+                             % (src, bad, float(w[bad])))
+        V = H[:, :3] / w[:, None]
+    else:
+        V = _floats(vrows, "OFF vertex", src)
     faces = []
     for i in range(nf):
         t = lines[li + nv + i].split()
@@ -646,10 +667,11 @@ def _read_ply_points(raw: bytes, src: str):
 def _read_xyz(raw: bytes, src: str):
     """Plain text ``x y z [r g b]``, one point per line (``#`` starts a comment)."""
     rows = []
-    comma_lines = plain_lines = 0
+    comma_lines = plain_lines = comment_lines = 0
     for i, ln in enumerate(_text(raw).splitlines()):
         s = ln.split("#")[0].strip()
         if not s:
+            comment_lines += ln.strip().startswith("#")
             continue
         if "," in s:
             # ★ A comma is a column separator only when it is the ONLY one on the
@@ -668,6 +690,11 @@ def _read_xyz(raw: bytes, src: str):
         raise ValueError("%s: XYZ file mixes comma-separated and whitespace-separated lines"
                          % src)
     if not rows:
+        # ★2026-11-05 redteam I26: write_points writes a 0-point cloud as a header comment
+        # ("# 0 points ..."), and that file must read back as a (0, 3) cloud. A file with no
+        # comment and no data (only blanks) is still refused -- it is not a point cloud.
+        if comment_lines:
+            return np.zeros((0, 3), np.float64), None
         raise ValueError("%s: XYZ file has no data lines" % src)
     _check_count(len(rows), "points", src)
     w = len(rows[0])
@@ -1202,7 +1229,8 @@ def write_points(path: str, points, colors=None, binary: bool = True) -> None:
         coloured. Coordinates **and** colours round-trip **exactly** (colours stay
         float in ``[0, 1]``). ``.npz`` stores it under the ``points`` key.
       * ``.xyz`` — text ``x y z [r g b]``, 17 digits; colours written as floats in
-        ``[0, 1]`` (exact round-trip through :func:`read_points`).
+        ``[0, 1]`` (exact round-trip through :func:`read_points`). An empty cloud is
+        written as one ``# 0 points`` comment line and reads back as ``(0, 3)``.
       * ``.ply`` — ``binary_little_endian`` by default (``binary=False`` for
         ASCII), ``double`` xyz (exact) and, when coloured, ``uchar`` red/green/blue
         **quantised to 8 bits** (use ``.npy``/``.npz`` for exact colour).
@@ -1254,8 +1282,11 @@ def _write_xyz_points(src: str, P: np.ndarray, C) -> None:
     else:
         rows = ["%.17g %.17g %.17g %.17g %.17g %.17g" % (x, y, z, r, g, b)
                 for (x, y, z), (r, g, b) in zip(P, C)]
+    if not rows:
+        # an empty file cannot be told from a truncated one; say what it is (I26)
+        rows = ["# 0 points (x y z%s)" % ("" if C is None else " r g b")]
     with open(src, "w", encoding="ascii") as f:
-        f.write("\n".join(rows) + ("\n" if rows else ""))
+        f.write("\n".join(rows) + "\n")
 
 
 def _write_ply_points(src: str, P: np.ndarray, C, binary: bool) -> None:

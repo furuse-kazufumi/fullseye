@@ -2364,15 +2364,31 @@ def _op_from_name(name: str) -> "Op":
     return op
 
 
+def _cf(x: float) -> str:
+    """A C ``float`` literal equal to ``(float)x``.
+
+    ★2026-11-05 redteam I21: knobs were written with ``%.6f``, so a threshold 0.3921566 became
+    ``0.392157f`` -- a different float32 -- and a pixel of 100/255 (between the two) thresholded
+    to 1 in Python and 0 in the generated C. The literal is now the shortest decimal of
+    ``np.float32(x)`` itself (round-to-nearest-even, the same as C's ``(float)x``); that decimal
+    is within half a float64 ulp of the float32, so the compiler reads back exactly that float
+    (no double rounding near a float32 midpoint). A ``.0`` is added when the text would
+    otherwise be an integer literal (``1f`` is not valid C)."""
+    text = repr(float(np.float32(x)))
+    if not any(ch in text for ch in ".eEn"):                    # "1" -> "1.0" ("nan"/"inf" excluded)
+        text += ".0"
+    return text + "f"
+
+
 def _c(name):
     return {
-        "gaussian": lambda a, b: f"gaussian(buf, w, h, {0.3 + 2.7 * a:.6f}f);",
+        "gaussian": lambda a, b: f"gaussian(buf, w, h, {_cf(0.3 + 2.7 * a)});",
         "mean_box": lambda a, b: f"box(buf, w, h, {_k(a)});",
-        "gamma": lambda a, b: f"gamma_op(buf, w, h, {0.5 + 1.5 * a:.6f}f);",
+        "gamma": lambda a, b: f"gamma_op(buf, w, h, {_cf(0.5 + 1.5 * a)});",
         "invert": lambda a, b: "invert(buf, w, h);",
-        "scale_clip": lambda a, b: f"scale_clip(buf, w, h, {0.5 + 1.5 * a:.6f}f, {b - 0.5:.6f}f);",
-        "threshold": lambda a, b: f"threshold(buf, w, h, {a:.6f}f);",
-        "unsharp": lambda a, b: f"sharpen(buf, w, h, {1.5 * a:.6f}f, {0.5 + 1.5 * b:.6f}f);",
+        "scale_clip": lambda a, b: f"scale_clip(buf, w, h, {_cf(0.5 + 1.5 * a)}, {_cf(b - 0.5)});",
+        "threshold": lambda a, b: f"threshold(buf, w, h, {_cf(a)});",
+        "unsharp": lambda a, b: f"sharpen(buf, w, h, {_cf(1.5 * a)}, {_cf(0.5 + 1.5 * b)});",
         "sobel_mag": lambda a, b: "sobel_mag(buf, w, h);",
     }.get(name)
 

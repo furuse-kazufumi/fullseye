@@ -21,7 +21,10 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 三角形 mesh を ``v`` / ``vn`` / ``f`` を持つ Wavefront OBJ 文字列に書く(``text``)。
 
-面ごとの法線を ``vn`` として書く。material/texture は書かない。呼び出し例:
+頂点の面積重み法線(滑らかな陰影)を ``vn`` として書き、``f v//vn`` で参照する。どの面からも
+参照されない頂点には ``vn`` を書かず、面の法線が打ち消し合って頂点法線が定まらない頂点
+(表裏 2 枚の三角形など)は、その角だけ面の単位法線を使う —— OFF / PLY が書ける mesh は
+全部書ける。material/texture は書かない。呼び出し例:
 ``text = mesh_write_obj((vertices, faces))``。
 
 ## 参考(サンプルデータ・文献)

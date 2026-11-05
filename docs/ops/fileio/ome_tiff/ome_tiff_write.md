@@ -22,7 +22,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 TCZYX 多次元配列と物理サイズ・チャネル名を OME-TIFF の ``bytes`` にする。
 
 ``meta['axes']`` は TCZYX の部分列で YX 終端。X/Y(および Z 軸があれば Z)の
-``physical_size_*`` と ``*_unit``、C 軸があれば ``channel_names`` を必須とする。
+``physical_size_*`` と ``*_unit``、C 軸があれば ``channel_names`` を必須とする。書いた
+``axes`` は名前空間つきの MapAnnotation に残し、長さ 1 の軸も :func:`ome_tiff_read` で戻る。
 呼び出し例: ``ome_tiff_write(stack, meta={"axes": "CZYX", ...})``。
 
 ## 参考(サンプルデータ・文献)

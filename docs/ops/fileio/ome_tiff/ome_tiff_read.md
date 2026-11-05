@@ -21,7 +21,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 OME-TIFF を ``(stack, meta)`` として読み、OME-XML と配列を相互検証する。
 
-``meta`` は TCZYX 部分列の ``axes``、物理サイズと単位、チャネル名を持つ。
+``meta`` は TCZYX 部分列の ``axes``、物理サイズと単位、チャネル名を持つ。:func:`ome_tiff_write`
+の書いた長さ 1 の軸は記録から戻す(他の書き手のファイルでは tifffile と同じく長さ 1 の軸を畳む)。
 通常 TIFF、複数 Image、XML の Size/dtype と TIFF の不一致、無名チャネルは拒否する。
 呼び出し例: ``stack, meta = ome_tiff_read(payload)``。
 
