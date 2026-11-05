@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1758. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1759. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -3322,8 +3322,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L121** — ★ Bleibt in `build/lib` eine vorherige Staging-Kopie zurück, **packt setuptools sie unverändert ins wheel** (gemessen 2026-09-05: ein aus py-modules entferntes Modul blieb im wheel, und der Mutationstest des Gates ging durch). Derselbe Grund, aus dem release.yml aus einem sauberen Checkout baut. Auch hier vor dem Bauen unbedingt verwerfen.
 - **L233** _(ja)_ — ★2026-10-18: スクリプトは一時 dir に置くので、`import fullseye` は editable install(本線の 作業ツリー)を読んでいた —— worktree で出すリリースを検査したつもりで、別の版を見ていた。 PYTHONPATH でこの ROOT を先頭に置き、点検する対象 = 出すツリーにする。
-- **L319** _(ja)_ — ★全出力は **repo の外**に残す。repo 直下に置くと「余計なファイル」を見る門に 当たりうるし、木が汚れて「凍った木で 1 回」という証拠の条件が崩れる。
-- **L362** — ★ `--only suite` ohne `--full` aufzurufen ergibt 0 Elemente, und früher meldete es "alles PASS" und kehrte mit rc=0 zurück (gemessen im Review vom 2026-09-05). **Ein Gate, das durchlässt, während es nichts prüft**, ist schlimmer als gar kein Gate.
+- **L323** _(ja)_ — ★2026-11-06: 以前は並列なし・上限 5400 秒(90 分)。スイートが 27,000 件を超え、並列なしでは 90 分に収まらず「点検自体が落ちた: TimeoutExpired」で FAIL になった(中身の合否は分からないまま)。 CI と同じく pytest-xdist で並列に回す(xdist は順序依存を出すためにも入れてある、pyproject 参照)。 並列数は SUITE_WORKERS。16 では時間の上限つきのテスト(test_chain_mine の 120 秒)が負荷で 落ちたので 12 にする。上限の 7200 秒は点検が止まらないための安全装置で、合否の閾値ではない。
+- **L330** _(ja)_ — ★全出力は **repo の外**に残す。repo 直下に置くと「余計なファイル」を見る門に 当たりうるし、木が汚れて「凍った木で 1 回」という証拠の条件が崩れる。
+- **L373** — ★ `--only suite` ohne `--full` aufzurufen ergibt 0 Elemente, und früher meldete es "alles PASS" und kehrte mit rc=0 zurück (gemessen im Review vom 2026-09-05). **Ein Gate, das durchlässt, während es nichts prüft**, ist schlimmer als gar kein Gate.
 
 ## `tools/preflight_op_add.py`
 
