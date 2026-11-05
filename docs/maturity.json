@@ -1853,7 +1853,18 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": true,
+     "real_datasets_read": [
+      "fileio-real:ds000117_sub-01_ses-mri_acq-func_magnitude1.json",
+      "fileio-real:ds000117_sub-01_ses-mri_acq-func_magnitude1.nii.gz",
+      "fileio-real:emd_3197.map.gz",
+      "fileio-real:emd_3197_published.json",
+      "fileio-real:sdss_dr16_ngc2420_photoprimary.csv",
+      "fileio-real:sdss_r_ngc2420_skyview_clip.fits",
+      "fileio-real:tubhiswt_C0.ome.tif",
+      "fileio-real:tubhiswt_C1.ome.tif"
+     ]
     }
    ]
   },
@@ -2639,7 +2650,7 @@
   "examples2d_total": 473,
   "run_by_the_poc_gate": 299,
   "run_by_the_example_gate": 174,
-  "scripts_on_disk": 480,
+  "scripts_on_disk": 481,
   "excluded_from_the_registry": 8,
   "excluded_but_run_by_a_named_test": {
    "lensfile_tolerance_worst_mtf": [

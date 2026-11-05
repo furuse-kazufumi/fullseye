@@ -98,7 +98,7 @@
 | [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position) | 見つける | `validated-public-real-data` | 5/6 | `poc_code_matching_breakdown` real(門の実行で実データを読む) → tests/test_poc_scripts_run.py |
 | [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md) | A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces) | 測る | `verified-synthetic` | 4/4 | `poc_robust_profile_filter` synthetic → tests/test_poc_scripts_run.py<br>`example_robust_profile_filter` synthetic → tests/test_example_scripts_run.py |
 | [ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)](capabilities/sam-bond-voids.md) | Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD) | 見つける | `verified-synthetic` | 7/7 | `poc_sam_hybrid_bonding_voids` synthetic → tests/test_poc_scripts_run.py |
-| [科学データのファイルを読む(FITS・NIfTI・MRC・OME-TIFF・E57)](capabilities/scientific-data-files.md) | Reading scientific data files (FITS, NIfTI, MRC, OME-TIFF, E57) | 組み立てる | `validated-public-real-data` | 6/6 | `poc_real_file_formats` real → tests/test_poc_scripts_run.py |
+| [科学データのファイルを読む(FITS・NIfTI・MRC・OME-TIFF・E57)](capabilities/scientific-data-files.md) | Reading scientific data files (FITS, NIfTI, MRC, OME-TIFF, E57) | 組み立てる | `validated-public-real-data` | 6/6 | `poc_real_file_formats` real(門の実行で実データを読む) → tests/test_poc_scripts_run.py |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | Detect fine scratches and measure their width | 測る | `verified-synthetic` | 4/4 | `example_scratch_width` synthetic → tests/test_example_scripts_run.py<br>`poc_crack_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_solar_el_inspection` synthetic → tests/test_poc_scripts_run.py |
 | [SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る](capabilities/sem-edge-effect-metrology.md) | Measure how much the bright SEM edge inflates a dimension, with ground truth | 測る | `verified-synthetic` | 6/6 | `poc_sem_wafer_defect_edge_bias` real(**門の実行では実データを読まない**) → tests/test_poc_scripts_run.py |
 | [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md) | Measure the same particles in scanning and transmission images and compare both size biases | 測る | `verified-synthetic` | 9/9 | `poc_sem_tem_same_particle` synthetic → tests/test_poc_scripts_run.py |
@@ -142,7 +142,7 @@
 | 2-D 台帳の例 | 473 |
 | `tests/test_poc_scripts_run.py` が走らせる | 299 |
 | `tests/test_example_scripts_run.py` が走らせる | 174 |
-| ディスク上の例のスクリプト(`examples/*.py`) | 480 |
+| ディスク上の例のスクリプト(`examples/*.py`) | 481 |
 | うち 2-D 台帳の外(`examples2d.EXCLUDED`) | 8 |
 | 台帳の外だが、名指しの試験が走らせる | 4 |
 | **どの門も走らせていない** | **4** |

@@ -57,16 +57,16 @@
 
 ### 検証の段
 
-能力 100 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.9.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
+能力 101 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.9.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
 
 | 段 | 意味 | 能力 |
 |---|---|---|
 | `research-prototype` | 実装はあるが、試験や走る例が揃っていない | 0 |
 | `verified-synthetic` | 真値を持つ合成データで自動検証 | 92 |
-| `validated-public-real-data` | 公開の実測データを使う例が門で走る | 8 |
+| `validated-public-real-data` | 公開の実測データを使う例が門で走る | 9 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 480 本のうち、門が実際に走らせるもの 476 本。
+例 481 本のうち、門が実際に走らせるもの 477 本。
 
 ### 版ごとの op の数
 
@@ -94,7 +94,7 @@
 
 <!-- poc-index:start -->
 
-## PoC シリーズ — 真値つきで実問題を解いた 298 本
+## PoC シリーズ — 真値つきで実問題を解いた 299 本
 
 どれも**真値を閉形式か合成で厳密に持ち、ゼロ点(何もしない場合)を必ず併記**します。壊れ方は 1 つの指標に畳まず別々に数え、原因は対照群で分けます。全文と実行手順は [examples/README.md](../examples/README.md)。
 
@@ -131,6 +131,7 @@
 | verification (2) | [`poc_glyph_typo_detection`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py) 画像の誤字を認識せずに見つけて直す(正しい文字列を入力で貰う)<br>[`poc_larval_connectome_reservoir`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_larval_connectome_reservoir.py) 幼虫コネクトームを reservoir にして数字を読む(配線は効いていない) |
 | 振動 (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) 動画からのモード同定(f は当たる、ζ が先に嘘をつく)<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) モーション拡大の振幅精度(拡大は測るための道具か) |
 | 色 (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) 色恒常性(どの手法にも「効く条件」があり、勝ち続ける手法は無い) |
+| fileio (1) | [`poc_real_file_formats`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py) 実物の科学データファイルを 5 形式読み、外の読み手と公表値で採点する(FITS・NIfTI・MRC・OME-TIFF・E57) |
 | 正対化 (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) 書類スキャンの台形補正と影除去(良いところ取りは無い) |
 | space (1) | [`poc_star_tracker`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py) 星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める |
 | 断層 (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) CT 再構成の忠実度(投影数を減らすとどこで壊れるか) |
@@ -144,7 +145,7 @@
 
 **3,816 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **73 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 947/947、型つき台帳 2846/2846、1 行ファサード `fullseye.<名前>` 756/1559。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 947/947、型つき台帳 2846/2846、1 行ファサード `fullseye.<名前>` 756/1561。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
 **ノートの中身の実測**: 3816 本のうち、実行できる例が付いているのは **3770 本**(46 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3614 本**(202 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3816 本すべてにある。
 
@@ -307,7 +308,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 326 本
+## ドキュメント地図 — 全 327 本
 
 **索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,816 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
@@ -450,7 +451,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(242)
+**そのほか**(243)
 
 | 文書 | 内容 |
 |---|---|
@@ -605,6 +606,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/robust-code-matching.md`](capabilities/robust-code-matching.md) | id: robust-code-matching |
 | [`capabilities/robust-gaussian-spline-profile-filter.md`](capabilities/robust-gaussian-spline-profile-filter.md) | id: robust-gaussian-spline-profile-filter |
 | [`capabilities/sam-bond-voids.md`](capabilities/sam-bond-voids.md) | id: sam-bond-voids |
+| [`capabilities/scientific-data-files.md`](capabilities/scientific-data-files.md) | id: scientific-data-files |
 | [`capabilities/scratch-detection-and-width.md`](capabilities/scratch-detection-and-width.md) | id: scratch-detection-and-width |
 | [`capabilities/sem-edge-effect-metrology.md`](capabilities/sem-edge-effect-metrology.md) | id: sem-edge-effect-metrology |
 | [`capabilities/sem-tem-same-particle.md`](capabilities/sem-tem-same-particle.md) | id: sem-tem-same-particle |
