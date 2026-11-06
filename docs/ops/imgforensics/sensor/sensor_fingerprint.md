@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [image_forensics_audit, poc_prnu_camera_fingerprint]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # sensor_fingerprint — IMGFORENSICS `sensor` op

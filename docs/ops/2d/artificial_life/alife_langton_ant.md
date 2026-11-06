@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [gallery2d_physics_alife_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # alife_langton_ant — 2D `artificial-life` op

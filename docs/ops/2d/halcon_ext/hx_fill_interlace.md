@@ -9,7 +9,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [gallery2d_halcon_ext]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # hx_fill_interlace — 2D `halcon_ext` op

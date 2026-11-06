@@ -8,7 +8,7 @@ gpu: なし
 examples: [image_quality_metrics, poc_camera_shake_deblur, poc_dehazing, poc_focus_stacking, poc_iqa_tid2013, poc_pixel_shift, poc_real_deblur_honesty, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # psnr — IMGMETRICS `fidelity` op

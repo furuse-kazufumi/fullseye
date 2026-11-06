@@ -8,7 +8,7 @@ gpu: なし
 examples: [numerics_tour, poc_battery_electrode_breathing, poc_bga_ball_type_roundtrip, poc_change_detection_misreg, poc_crack_width_timeseries, poc_dic_strain, poc_die_tilt_tsv_overlay, poc_dimensional_inspection, poc_exoplanet_transit, poc_fresco_craquelure, poc_mri_bias_field, poc_search_sweep_width, poc_settlement_significance, poc_star_astrometry, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # erf — MATH `numerics` op

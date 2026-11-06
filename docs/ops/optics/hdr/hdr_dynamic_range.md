@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_hdr_glossy_metal_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # hdr_dynamic_range — OPTICS `hdr` op

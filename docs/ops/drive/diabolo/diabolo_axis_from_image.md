@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_diabolo_model_and_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # diabolo_axis_from_image — DRIVE `diabolo` op

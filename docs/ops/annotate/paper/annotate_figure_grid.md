@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [paper_figure, poc_flybrain_pointcloud, poc_itof_multifreq, poc_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # annotate_figure_grid — ANNOTATE `paper` op

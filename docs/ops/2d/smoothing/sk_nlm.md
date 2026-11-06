@@ -8,7 +8,7 @@ gpu: なし
 examples: [find_ops_by_meaning, gallery2d_smoothing_rank, poc_prnu_camera_fingerprint]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # sk_nlm — 2D `smoothing` op

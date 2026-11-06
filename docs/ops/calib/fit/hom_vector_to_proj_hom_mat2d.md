@@ -9,7 +9,7 @@ gpu: なし
 examples: [poc_panorama_drift, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # hom_vector_to_proj_hom_mat2d — CALIB `fit` op

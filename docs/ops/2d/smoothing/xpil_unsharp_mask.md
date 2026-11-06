@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery2d_smoothing_rank]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # xpil_unsharp_mask — 2D `smoothing` op

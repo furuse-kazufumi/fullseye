@@ -8,7 +8,7 @@ gpu: なし
 examples: [dl_mesh_curvature, mesh_props, minimal_surfaces]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # mesh_area — 3D `mesh_process` op
