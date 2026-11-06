@@ -5,9 +5,9 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
-## Unreleased
+## 1.0.0 — 2026-11-06
 
-版はまだ決めていない(0.9.0 の後に入った GPU 一式 7 本の統合)。
+1.0.0。`CONTRIBUTING.md` の 1.0 の条件を満たしたので出す: 下の破壊的変更(1.0 前の修正)を出し切ったうえで、以後は「Versioning」の約束をメジャーを上げずに守る。文書の門(`docs/I18N.md`: `OP_CATALOG` と知識ガイド 17 本の英語・中国語)は PR #274 で満たした。0.9.0 の後に入った GPU 一式 7 本の統合もこの版に含む。
 既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
 ### 破壊的変更(Breaking) — 1.0 前の修正 2026-11-05(nary-guard)

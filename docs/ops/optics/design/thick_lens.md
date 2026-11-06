@@ -8,7 +8,7 @@ gpu: なし
 examples: [lens_design_demo, poc_material_optical_library]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # thick_lens — OPTICS `design` op

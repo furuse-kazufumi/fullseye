@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [gallery2d_smoothing_rank, poc_real_deblur_honesty]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # iv_motion_deblur — 2D `restoration` op

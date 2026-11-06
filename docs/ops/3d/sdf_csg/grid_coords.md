@@ -8,7 +8,7 @@ gpu: なし
 examples: [gear_metrology, molecule_atom_count, procedural_hand, render_beauty, sdf_csg, sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # grid_coords — 3D `sdf_csg` op

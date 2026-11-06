@@ -9,7 +9,7 @@ gpu: あり(fill_holes)
 examples: [gallery2d_region, poc_cell_counting, poc_document_scan, poc_leaf_disease_area, poc_mesh_quality_repair, poc_real_coin_metrology, poc_real_sem_metal_layer, poc_symmetry_restoration]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # fill_holes — 2D `region` op

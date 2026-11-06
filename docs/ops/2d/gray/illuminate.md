@@ -9,7 +9,7 @@ gpu: あり(illuminate)
 examples: [gallery2d_gray_arith, poc_document_scan, poc_matrix_code_reading]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # illuminate — 2D `gray` op

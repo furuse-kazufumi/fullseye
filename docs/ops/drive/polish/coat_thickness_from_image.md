@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [poc_polish_wipe_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # coat_thickness_from_image — DRIVE `polish` op

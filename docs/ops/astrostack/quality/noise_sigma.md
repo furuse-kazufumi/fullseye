@@ -8,7 +8,7 @@ gpu: なし
 examples: [astro_stacking, poc_colocalization_crosstalk, poc_search_sweep_width, poc_star_astrometry, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # noise_sigma — ASTROSTACK `quality` op
