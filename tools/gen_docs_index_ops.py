@@ -413,7 +413,7 @@ DOC_GROUPS = [
         "CONSUMER_APPLICATIONS.md", "3DGS_USAGE.md", "TERRAIN_WALK.md",
         "GSPLAT_NATIVE_WINDOWS.md"]),
     ("ref", "オペレータのリファレンス", "Operator reference", [
-        "OPERATORS.md", "OP_CATALOG.md", "OP_COMBINATION_MATRIX.md",
+        "OPERATORS.md", "OP_CATALOG.md", "OP_CATALOG.en.md", "OP_CATALOG.zh.md", "OP_COMBINATION_MATRIX.md",
         "CONVERSION_MATRIX.md", "CONNECTIVITY.md", "MATCH_3D_MATRIX.md",
         "GENERAL_ALGORITHMS.md", "ADDING_OPS.md", "WAVE0_STABLE_SLOTS.md"]),
     ("rag", "AI から引く(RAG)", "Retrieval for AI assistants", [
@@ -599,7 +599,9 @@ def _nguide() -> int:
     for d in sorted(os.listdir(base)):
         g = os.path.join(base, d, "guides")
         if os.path.isdir(g):
-            n += len([f for f in os.listdir(g) if f.endswith(".md")])
+            # 訳(`<name>.<lang>.md`)は別のガイドではない(2026-11-06、1.0.0 の文書の門)
+            n += len([f for f in os.listdir(g) if f.endswith(".md")
+                      and not re.search(r"\.[a-z]{2}\.md$", f)])
     return n
 
 

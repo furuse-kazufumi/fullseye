@@ -1,89 +1,88 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南仅有日文版(它是人写的散文,这里不做机械替换)。</p>
 <h2 style="color:#f5a524;margin:0 0 4px 0">虚拟机器视觉 —— 梳理参数与对象模型</h2>
-<p>観察光学系を物理空間に組んで画像を生成するために、<b>何を与えれば像が決まるか</b>を洗い出した台帳。ここが曖昧なまま実装を足すと、見た目だけ合っていて実機と対応しない生成器になる（2026-09-05 のユーザー指示「センサーのパラメータ、レンズのパラメータ、光源のパラメータ、レイアウトのパラメータを洗い出してから進めてください。自ずとそれらがオブジェクトになると思います」）。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">0. 一次情報（この台帳の根拠）</h3>
-<p>| 出典 | そこから採った事実 |</p>
+<p>为了在物理空间中搭建观察光学系统并生成图像,本台账梳理了<b>给出哪些量才能确定图像</b>。若在这一点含糊不清的情况下继续添加实现,就会做出只是看起来像、却与实机不对应的生成器(2026-09-05 的用户指示:&quot;请先梳理传感器的参数、镜头的参数、光源的参数、布局的参数再推进。我想它们自然会成为对象&quot;)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">0. 一手资料(本台账的依据)</h3>
+<p>| 出处 | 从中采用的事实 |</p>
 <p>| --- | --- |</p>
-<p>| SYNOSIS, arXiv:2410.14844（金属表面検査の画像合成） | 粗い金属 BRDF（roughness 0.05–0.3）／表面地形は焦点変化顕微鏡の実測（横 0.44–1.75 µm・縦 410 nm）を法線マップ化（13107²・6.1 µm 間隔）／切削面は手続きモデル（工具回転リング・経路・余弦・振動ノイズ、リング径 4–8 mm・中心間 0.09 mm）／サンドブラストは ADSN + Efros–Freeman／欠陥は 3-D 形状をブーリアン差、マスクは 0.9–1.0 倍の工具形状との交差／path tracing 256 spp・8 bounce・1224×1025／トーラス型リングライト |</p>
-<p>| Adimec / Vision Doctor（明視野 対 暗視野） | 傷は<b>明視野で暗く、暗視野で明るく</b>写る（コントラストが反転する）。暗視野の入射角は 10–15° が定石 |</p>
-<p>| automatica Munich “Virtualising Machine Vision” | 光学デジタルツイン × PBR × 欠陥モデル × 画素精度の自動アノテーション |</p>
-<p>RAD コーパスには<b>マシンビジョン光学の分野が無い</b>（最も近いのは <code style="color:#22d3bf">halcon_operators_corpus_v2</code> と <code style="color:#22d3bf">fullseye_3d_vision_corpus_v2</code>）。本ファイルがその穴を埋める知識層で、以後の実装はここを起点にする。</p>
+<p>| SYNOSIS, arXiv:2410.14844(金属表面检测的图像合成) | 粗糙金属 BRDF(roughness 0.05–0.3)/表面形貌由焦点变化显微镜的实测值(横向 0.44–1.75 µm、纵向 410 nm)转换为法线贴图(13107²、6.1 µm 间隔)/切削面采用程序化模型(刀具旋转环纹、路径、余弦、振动噪声,环径 4–8 mm、中心间距 0.09 mm)/喷砂采用 ADSN + Efros–Freeman/缺陷为 3-D 形状的布尔差,掩膜为与 0.9–1.0 倍刀具形状的交集/path tracing 256 spp、8 bounce、1224×1025/环面形环形光 |</p>
+<p>| Adimec / Vision Doctor(明场 对 暗场) | 划痕<b>在明场下呈暗、在暗场下呈亮</b>(对比度反转)。暗场的入射角以 10–15° 为定式 |</p>
+<p>| automatica Munich “Virtualising Machine Vision” | 光学数字孪生 × PBR × 缺陷模型 × 像素精度的自动标注 |</p>
+<p>RAD 语料库中<b>没有机器视觉光学这一领域</b>(最接近的是 <code style="color:#22d3bf">halcon_operators_corpus_v2</code> 和 <code style="color:#22d3bf">fullseye_3d_vision_corpus_v2</code>)。本文件是填补这一空缺的知识层,此后的实现都以此为起点。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. センサー（Sensor）</h3>
-<p>| パラメータ | 記号・単位 | 像への効き方 | fullseye の現状 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. 传感器(Sensor)</h3>
+<p>| 参数 | 符号/单位 | 对图像的作用 | fullseye 的现状 |</p>
 <p>| --- | --- | --- | --- |</p>
-<p>| 画素ピッチ | p [µm] | 標本化限界 2p。回折限界とどちらが大きいかで律速が決まる | <code style="color:#22d3bf">optical_camera(pixel_um=)</code> ✓ |</p>
-<p>| 解像度 | W×H [px] | 視野 = W·p·WD/f | ✓ |</p>
-<p>| 量子効率 | QE(λ) [-] | 電子数 = 光子数 × QE。波長で変わる | <code style="color:#22d3bf">sensor_spec(quantum_efficiency=)</code> ✓（定数）／<b>QE(λ) の曲線は未実装</b> |</p>
-<p>| フルウェル | FW [e⁻] | 飽和。白飛びは折り返さない | <code style="color:#22d3bf">sensor_capture(full_well_e=)</code> ✓ |</p>
-<p>| 読み出し雑音 | σ_r [e⁻] | 暗部の下限。暗視野で効く | ✓ |</p>
-<p>| ダーク電流 | [e⁻/s] | 長露光で効く。暗視野は露光が長い | <code style="color:#22d3bf">sensor_spec(dark_e_per_s=)</code> ✓（<code style="color:#22d3bf">layout_capture</code> が露光時間と合成）／温度依存は未実装 |</p>
-<p>| ADC ビット深度 | [bit] | 量子化。8 bit だと微小コントラストが刻まれて消える | ✓ |</p>
-<p>| ゲイン | [e⁻/DN] | ショット雑音との比 | ✓ |</p>
-<p>| シャッタ方式 | rolling / global | 動体の歪み。コンベア上の部品で効く | <code style="color:#22d3bf">sensor_spec(shutter=)</code> は<b>記録のみ</b>。ローリングの歪みは未実装 |</p>
-<p>| 分光感度 | S(λ) | 光源スペクトルとの積で実効的な明るさが決まる | <b>未実装</b> |</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. レンズ（Lens）</h3>
-<p>| パラメータ | 記号・単位 | 像への効き方 | fullseye の現状 |</p>
+<p>| 像素间距 | p [µm] | 采样极限 2p。与衍射极限哪个大决定了瓶颈 | <code style="color:#22d3bf">optical_camera(pixel_um=)</code> ✓ |</p>
+<p>| 分辨率 | W×H [px] | 视场 = W·p·WD/f | ✓ |</p>
+<p>| 量子效率 | QE(λ) [-] | 电子数 = 光子数 × QE。随波长变化 | <code style="color:#22d3bf">sensor_spec(quantum_efficiency=)</code> ✓(常数)/<b>QE(λ) 曲线尚未实现</b> |</p>
+<p>| 满阱 | FW [e⁻] | 饱和。过曝不会折返 | <code style="color:#22d3bf">sensor_capture(full_well_e=)</code> ✓ |</p>
+<p>| 读出噪声 | σ_r [e⁻] | 暗部的下限。在暗场下起作用 | ✓ |</p>
+<p>| 暗电流 | [e⁻/s] | 长曝光时起作用。暗场的曝光较长 | <code style="color:#22d3bf">sensor_spec(dark_e_per_s=)</code> ✓(由 <code style="color:#22d3bf">layout_capture</code> 与曝光时间合成)/温度依赖性尚未实现 |</p>
+<p>| ADC 位深 | [bit] | 量化。8 bit 时微小对比度会被量化截断而消失 | ✓ |</p>
+<p>| 增益 | [e⁻/DN] | 与散粒噪声之比 | ✓ |</p>
+<p>| 快门方式 | rolling / global | 运动物体的畸变。对传送带上的零件起作用 | <code style="color:#22d3bf">sensor_spec(shutter=)</code> <b>仅作记录</b>。卷帘快门的畸变尚未实现 |</p>
+<p>| 光谱灵敏度 | S(λ) | 与光源光谱的乘积决定有效亮度 | <b>尚未实现</b> |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 镜头(Lens)</h3>
+<p>| 参数 | 符号/单位 | 对图像的作用 | fullseye 的现状 |</p>
 <p>| --- | --- | --- | --- |</p>
-<p>| 焦点距離 | f [mm] | 倍率 m = f/(WD−f)、視野 | ✓ |</p>
-<p>| F 値 / NA | N, NA = 1/(2N) | 回折・被写界深度・明るさ。作動 F 値 N_w = (1+\|m\|)·N | <code style="color:#22d3bf">optical_budget(f_number=/na=)</code> ✓ |</p>
-<p>| 作動距離 | WD [mm] | 倍率・レイアウト・照明の置き場所 | ✓ |</p>
-<p>| 許容錯乱円 | c [µm] | 被写界深度 DOF ≈ 2·N_w·c/m²（幾何）+ 2λN_w²/m²（波動） | ✓ |</p>
-<p>| エアリー半径 | 1.22·λ·N_w [µm] | 微細欠陥の見え方の下限。<b>画素と比べる</b> | <code style="color:#22d3bf">airy_radius_um</code> ✓ / <code style="color:#22d3bf">optics.airy_pattern</code> ✓ |</p>
-<p>| MTF | MTF(ν) | コントラスト伝達。欠陥は高周波なのでここが効く | <code style="color:#22d3bf">optics.mtf_diffraction</code> / <code style="color:#22d3bf">psf_to_mtf</code> ✓ |</p>
-<p>| 収差 | Seidel / Zernike | 視野端でぼける・非対称になる | <code style="color:#22d3bf">raytrace.seidel_coefficients</code> / <code style="color:#22d3bf">opd_map</code> ✓（未配線） |</p>
-<p>| 歪曲 | k1, k2 … | 寸法測定に直接効く | <code style="color:#22d3bf">lensimage.distortion_map</code> ✓（未配線） |</p>
-<p>| 周辺光量 | cos⁴θ ほか | 端が暗い＝端の欠陥が見えない | <code style="color:#22d3bf">optics.relative_illumination</code> ✓（未配線） |</p>
-<p>| テレセントリック性 | 物側/両側 | 倍率が距離で変わらない＝寸法測定の前提 | <b>未実装</b> |</p>
-<p>| 色収差 | Δf(λ) | 波長ごとにピント位置が違う | <code style="color:#22d3bf">raytrace.chromatic_shift</code> ✓（未配線） |</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 光源（Light）</h3>
-<p>| パラメータ | 単位 | 像への効き方 | fullseye の現状 |</p>
+<p>| 焦距 | f [mm] | 倍率 m = f/(WD−f)、视场 | ✓ |</p>
+<p>| F 值 / NA | N, NA = 1/(2N) | 衍射、景深、亮度。工作 F 值 N_w = (1+\|m\|)·N | <code style="color:#22d3bf">optical_budget(f_number=/na=)</code> ✓ |</p>
+<p>| 工作距离 | WD [mm] | 倍率、布局、照明的摆放位置 | ✓ |</p>
+<p>| 容许弥散圆 | c [µm] | 景深 DOF ≈ 2·N_w·c/m²(几何)+ 2λN_w²/m²(波动) | ✓ |</p>
+<p>| 艾里半径 | 1.22·λ·N_w [µm] | 细微缺陷可见性的下限。<b>与像素比较</b> | <code style="color:#22d3bf">airy_radius_um</code> ✓ / <code style="color:#22d3bf">optics.airy_pattern</code> ✓ |</p>
+<p>| MTF | MTF(ν) | 对比度传递。缺陷是高频的,所以这里起作用 | <code style="color:#22d3bf">optics.mtf_diffraction</code> / <code style="color:#22d3bf">psf_to_mtf</code> ✓ |</p>
+<p>| 像差 | Seidel / Zernike | 视场边缘模糊、不对称 | <code style="color:#22d3bf">raytrace.seidel_coefficients</code> / <code style="color:#22d3bf">opd_map</code> ✓(未接入) |</p>
+<p>| 畸变 | k1, k2 … | 直接影响尺寸测量 | <code style="color:#22d3bf">lensimage.distortion_map</code> ✓(未接入) |</p>
+<p>| 周边光量 | cos⁴θ 等 | 边缘暗 = 边缘的缺陷看不见 | <code style="color:#22d3bf">optics.relative_illumination</code> ✓(未接入) |</p>
+<p>| 远心性 | 物方/双侧 | 倍率不随距离变化 = 尺寸测量的前提 | <b>尚未实现</b> |</p>
+<p>| 色差 | Δf(λ) | 不同波长的对焦位置不同 | <code style="color:#22d3bf">raytrace.chromatic_shift</code> ✓(未接入) |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 光源(Light)</h3>
+<p>| 参数 | 单位 | 对图像的作用 | fullseye 的现状 |</p>
 <p>| --- | --- | --- | --- |</p>
-<p>| 種別 | LED / ハロゲン / レーザー | スペクトル幅とコヒーレンスが違う | <code style="color:#22d3bf">light_spec(source=)</code> ✓（LED 狭帯域 / ハロゲン広帯域 / レーザー単波長）。コヒーレンスは未実装 |</p>
-<p>| スペクトル | S(λ) | 材質の反射率が波長依存（金は短波長で落ちる）。粗さの鏡面割合 exp(−(4πσcosθ/λ)²) も波長依存 | <code style="color:#22d3bf">render_optscene(wavelength_nm=)</code> 単波長 ✓／広帯域は <code style="color:#22d3bf">layout_capture(spectral_samples=)</code> で重ね合わせ ✓ |</p>
-<p>| コヒーレンス | 空間・時間 | レーザーはスペックル。ハロゲンは出ない | <b>未実装</b>（<code style="color:#22d3bf">optics.gaussian_beam</code> / <code style="color:#22d3bf">angular_spectrum_propagate</code> が土台） |</p>
-<p>| 放射強度分布 | I(θ) = I₀cosⁿθ | 均一性。端の照度落ち | <code style="color:#22d3bf">light_source(cos_exponent=)</code> ✓ |</p>
-<p>| 器具の実体寸法 | [mm] | <b>鏡像として写るかどうか</b>＝明視野/暗視野の本体 | <code style="color:#22d3bf">light[&quot;size_mm&quot;]</code> ✓（2026-09-05 追加） |</p>
-<p>| 偏光 | 直線/円 | 映り込み除去。Jones/Mueller | <code style="color:#22d3bf">optics.jones_*</code> / <code style="color:#22d3bf">mueller_*</code> ✓（未配線） |</p>
-<p>| パルス/連続 | [µs] | 動体ブレの抑制 | <b>未実装</b> |</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. レイアウト（Layout）</h3>
-<p>| パラメータ | 単位 | 像への効き方 | fullseye の現状 |</p>
+<p>| 类型 | LED / 卤素灯 / 激光 | 光谱宽度和相干性不同 | <code style="color:#22d3bf">light_spec(source=)</code> ✓(LED 窄带 / 卤素灯宽带 / 激光单波长)。相干性尚未实现 |</p>
+<p>| 光谱 | S(λ) | 材料的反射率依赖于波长(金在短波长下反射率下降)。粗糙度对应的镜面比例 exp(−(4πσcosθ/λ)²) 也依赖于波长 | <code style="color:#22d3bf">render_optscene(wavelength_nm=)</code> 单波长 ✓/宽带用 <code style="color:#22d3bf">layout_capture(spectral_samples=)</code> 叠加 ✓ |</p>
+<p>| 相干性 | 空间/时间 | 激光会产生散斑。卤素灯不会 | <b>尚未实现</b>(<code style="color:#22d3bf">optics.gaussian_beam</code> / <code style="color:#22d3bf">angular_spectrum_propagate</code> 是基础) |</p>
+<p>| 辐射强度分布 | I(θ) = I₀cosⁿθ | 均匀性。边缘照度下降 | <code style="color:#22d3bf">light_source(cos_exponent=)</code> ✓ |</p>
+<p>| 灯具的实际尺寸 | [mm] | <b>是否作为镜像被拍到</b> = 明场/暗场的本质 | <code style="color:#22d3bf">light[&quot;size_mm&quot;]</code> ✓(2026-09-05 添加) |</p>
+<p>| 偏振 | 线/圆 | 去除反光。Jones/Mueller | <code style="color:#22d3bf">optics.jones_*</code> / <code style="color:#22d3bf">mueller_*</code> ✓(未接入) |</p>
+<p>| 脉冲/连续 | [µs] | 抑制运动模糊 | <b>尚未实现</b> |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 布局(Layout)</h3>
+<p>| 参数 | 单位 | 对图像的作用 | fullseye 的现状 |</p>
 <p>| --- | --- | --- | --- |</p>
-<p>| 照明の仰角 | [deg] | 明視野（器具が鏡像に入る）/ 暗視野（入らない、10–15°）の分かれ目 | <code style="color:#22d3bf">light_source(height_mm, radius_mm)</code> ✓ |</p>
-<p>| 照明の方位 | [deg] | 傷の向きとの関係でコントラストが変わる | ✓ |</p>
-<p>| 照明の形 | 同軸/リング/ドーム/バー/バックライト | 何が鏡像に入るか | ✓ |</p>
-<p>| カメラの傾き | [deg] | <b>平面を真上から見ると反射方向が天頂に集中し、加工目が出ない</b>（実測） | <code style="color:#22d3bf">optical_camera(tilt_deg=)</code> ✓ |</p>
-<p>| 作動距離 | [mm] | 倍率・照明の置き場所・被写界深度 | ✓ |</p>
-<p>| 視野 | [mm] | 部品が収まるか | <code style="color:#22d3bf">camera[&quot;fov_mm&quot;]</code> ✓ |</p>
-<p>| 部品の姿勢ばらつき | [mm], [deg] | ドメインランダム化の主軸 | <code style="color:#22d3bf">inspection_dataset(jitter_mm=, tilt_jitter_deg=)</code> ✓ |</p>
-<p>| 背景・治具 | — | 誤検出の主因 | <code style="color:#22d3bf">scene_plane</code> / <code style="color:#22d3bf">scene_box</code> / CSG のみ（CAD メッシュ未対応） |</p>
+<p>| 照明的仰角 | [deg] | 明场(灯具进入镜像)/ 暗场(不进入,10–15°)的分界 | <code style="color:#22d3bf">light_source(height_mm, radius_mm)</code> ✓ |</p>
+<p>| 照明的方位 | [deg] | 对比度随其与划痕方向的关系而变 | ✓ |</p>
+<p>| 照明的形状 | 同轴/环形/穹顶/条形/背光 | 什么会进入镜像 | ✓ |</p>
+<p>| 相机的倾斜 | [deg] | <b>从正上方看平面时反射方向集中在天顶,加工纹理显现不出来</b>(实测) | <code style="color:#22d3bf">optical_camera(tilt_deg=)</code> ✓ |</p>
+<p>| 工作距离 | [mm] | 倍率、照明的摆放位置、景深 | ✓ |</p>
+<p>| 视场 | [mm] | 零件能否容纳 | <code style="color:#22d3bf">camera[&quot;fov_mm&quot;]</code> ✓ |</p>
+<p>| 零件姿态的波动 | [mm], [deg] | 域随机化的主轴 | <code style="color:#22d3bf">inspection_dataset(jitter_mm=, tilt_jitter_deg=)</code> ✓ |</p>
+<p>| 背景、夹具 | — | 误检的主要原因 | 仅有 <code style="color:#22d3bf">scene_plane</code> / <code style="color:#22d3bf">scene_box</code> / CSG(不支持 CAD 网格) |</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. オブジェクト模型（実装済み）</h3>
-<p>洗い出すと、パラメータは 4 つの塊に自然に分かれる。<b>塊ごとに 1 オブジェクト</b>にして、レイアウトが残り 3 つを束ねる形にする。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. 对象模型(已实现)</h3>
+<p>梳理之后,参数自然分为 4 个块。<b>每个块做成 1 个对象</b>, 由布局把其余 3 个捆在一起。</p>
 <p><code style="color:#22d3bf">sensor_spec</code> / <code style="color:#22d3bf">lens_spec</code> / <code style="color:#22d3bf">light_spec</code> / <code style="color:#22d3bf">vision_layout</code> / <code style="color:#22d3bf">layout_capture</code>。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">Layout ─┬─ Sensor  (画素・雑音・飽和・分光感度)
         ├─ Lens    (f, NA/F, WD, 収差, 歪曲, MTF)
         ├─ Light[] (スペクトル, コヒーレンス, 配光, 実体寸法, 姿勢)
         └─ Scene   (部品 + 材質 + 仕上げ + 欠陥)   ← 既存の scene_* op</pre>
-<p>導出量（倍率・作動 F 値・エアリー半径・被写界深度・視野・分解限界）は <code style="color:#22d3bf">optical_budget</code> が<b>閉じた式で</b>返す。撮る前にここを見て構成の可否を判断するのが、この層を持つ目的。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. PoC の順序（基本形から）</h3>
-<p style="margin:2px 0 2px 12px">1. <b>基本形</b>: アルミ + ヘアライン + 同軸照明 + 単波長。<code style="color:#22d3bf">observe_surface</code> で 1 行。合否は「明視野で傷が暗く写る」こと（教科書と符号が合う）。</p>
-<p style="margin:2px 0 2px 12px">2. 暗視野を足し、<b>コントラストの反転</b>が出ることを確認 ✓（§7 参照。欠陥の粗さが鍵）。</p>
-<p style="margin:2px 0 2px 12px">3. 波長を振り、粗さと波長の関係 exp(−(4πσcosθ/λ)²) が効くことを確認。</p>
-<p style="margin:2px 0 2px 12px">4. 広帯域（ハロゲン）＝複数波長の重ね合わせ、LED＝狭帯域、レーザー＝単波長 + スペックルへ拡張。</p>
-<p style="margin:2px 0 2px 12px">5. 収差・歪曲・周辺光量は <code style="color:#22d3bf">lensimage.render_through_lens</code> を後段に掛けて合流。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. 解決したこと / 残る未達（2026-09-05 時点）</h3>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">解決: 明視野 / 暗視野のコントラスト反転</h3>
-<p>鏡面だけのモデルでは暗視野は<b>原理的に</b>成立しない。低角 12° の照明を真上のカメラへ返すには面法線が (90−12)/2 = <b>39° 傾く</b>必要があり、傷の傾斜（5–15°）では届かない。実際の暗視野が光るのは、傷が材料を削り取った跡で<b>局所的に粗く、散乱で返す</b>から。</p>
-<p>欠陥に <code style="color:#22d3bf">roughness_um</code> を持たせ、粗さ 1 つで「鏡面割合 exp(−(4πσcosθ/λ)²) が下がる → 明視野で暗い」と「散乱ローブが広がる（RMS 傾き √2σ/T）→ 暗視野で明るい」を同時に起こす。実測 <b>粗さ 0.4 µm で 明視野 −59% / 暗視野 +91%</b>。</p>
-<p><b>線引き</b>: 厳密な散乱計算ではなく「鏡面割合 × 表面テクスチャの粒度」による擬似生成。反転が出るのは欠陥の粗さ <b>0.2–0.6 µm</b>。それより粗いと散乱が広がりすぎて暗視野でも周囲より暗くなる。表現の分担は「解像できる凹凸 = 法線、解像できない凹凸 = 粗さ」で、<code style="color:#22d3bf">surface_finish</code> の加工目は前者を数オクターブの雑音に<b>圧縮した</b>表現にあたる。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">解決: ラインスキャン / TDI</h3>
-<p><code style="color:#22d3bf">linescan_capture</code> で搬送しながら積む。縦横比 =（速度/ラインレート）/（画素ピッチ·WD/f）が 1 からずれると画像が歪む（光学では直せない、ラインスキャン固有の故障モード）。TDI は電荷が被写体と一緒に送られるので<b>完全同期なら全段が同じ物点を見る</b> （明るくなるだけ）。同期誤差のぶんだけスメアする。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">解決: 伝送帯域</h3>
-<p><code style="color:#22d3bf">interface_budget</code> が CXP / Camera Link / CLHS / GigE / Opt-C:Link の帯域から帯域律速のレートを返す。16k・8bit を CXP-12 ×4 で <b>324 kHz</b> ―― Vieworks VT の公称 300 kHz と整合する。エリアスキャンでは逆に帯域が余る（IMX541 は 262 fps 可能でセンサが 18–42 fps）。<b>律速がどちらかは構成で入れ替わる</b>。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">残る未達</h3>
-<p style="margin:2px 0 2px 12px">• センサ: QE(λ) の分光曲線・暗電流の温度依存・変換ゲイン・PRNU / DSNU・ローリングシャッタの歪み。カタログの値は Basler の EMVA1288 実測（カメラ実装込み）。</p>
-<p style="margin:2px 0 2px 12px">• レンズ: 収差・歪曲・周辺光量は <code style="color:#22d3bf">raytrace</code> / <code style="color:#22d3bf">lensimage</code> / <code style="color:#22d3bf">optics</code> に実装があるのに <b>未配線</b>。テレセントリック性は未実装。ラインスキャン専用レンズ（大イメージサークル、サジタル/タンジェンシャルの収差配分）も未モデル化。</p>
-<p style="margin:2px 0 2px 12px">• 光源: コヒーレンス（レーザーのスペックル）、偏光（Jones/Mueller は <code style="color:#22d3bf">optics</code> にある）、パルス駆動。広帯域は <code style="color:#22d3bf">layout_capture(spectral_samples=)</code> で重ね合わせるところまで。</p>
-<p style="margin:2px 0 2px 12px">• 部品: CAD メッシュを読めない（解析形状 + CSG 差集合のみ）。治具・搬送機構も無い。</p>
+<p>导出量(倍率、工作 F 值、艾里半径、景深、视场、分辨极限)由 <code style="color:#22d3bf">optical_budget</code> <b>以闭式</b>返回。在拍摄之前先看这里、判断配置是否可行, 就是设置这一层的目的。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. PoC 的顺序(从基本形开始)</h3>
+<p style="margin:2px 0 2px 12px">1. <b>基本形</b>: 铝 + 拉丝纹 + 同轴照明 + 单波长。用 <code style="color:#22d3bf">observe_surface</code> 写成 1 行。合格标准是&quot;划痕在明场下呈暗&quot;(与教科书的符号一致)。</p>
+<p style="margin:2px 0 2px 12px">2. 加上暗场,确认会出现<b>对比度反转</b> ✓(参见 §7。缺陷的粗糙度是关键)。</p>
+<p style="margin:2px 0 2px 12px">3. 改变波长,确认粗糙度与波长的关系 exp(−(4πσcosθ/λ)²) 起作用。</p>
+<p style="margin:2px 0 2px 12px">4. 扩展到宽带(卤素灯)= 多个波长的叠加、LED = 窄带、激光 = 单波长 + 散斑。</p>
+<p style="margin:2px 0 2px 12px">5. 像差、畸变、周边光量通过在后级施加 <code style="color:#22d3bf">lensimage.render_through_lens</code> 来汇合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. 已解决的问题 / 尚未达成的部分(截至 2026-09-05)</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">已解决: 明场 / 暗场的对比度反转</h3>
+<p>只有镜面反射的模型中,暗场<b>在原理上</b>不能成立。要把低角度 12° 的照明返回到正上方的相机, 面法线需要<b>倾斜 (90−12)/2 = 39°</b>,而划痕的倾斜(5–15°)达不到。实际的暗场之所以发亮,是因为划痕是材料被削去的痕迹,<b>局部粗糙,靠散射把光返回</b>。</p>
+<p>给缺陷赋予 <code style="color:#22d3bf">roughness_um</code>,仅用 1 个粗糙度就同时引起 &quot;镜面比例 exp(−(4πσcosθ/λ)²) 下降 → 明场下变暗&quot;与 &quot;散射瓣变宽(RMS 斜率 √2σ/T)→ 暗场下变亮&quot;。实测 <b>粗糙度 0.4 µm 时 明场 −59% / 暗场 +91%</b>。</p>
+<p><b>界限</b>: 这不是严格的散射计算,而是基于&quot;镜面比例 × 表面纹理的粒度&quot;的伪生成。出现反转的是缺陷粗糙度 <b>0.2–0.6 µm</b> 的情况。比这更粗糙时散射扩散过度,即使在暗场下也会比周围更暗。表现上的分工是&quot;可分辨的凹凸 = 法线,不可分辨的凹凸 = 粗糙度&quot;, <code style="color:#22d3bf">surface_finish</code> 的加工纹理相当于把前者<b>压缩</b>成数个倍频程噪声的表现。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">已解决: 线扫描 / TDI</h3>
+<p><code style="color:#22d3bf">linescan_capture</code> 一边输送一边堆叠。纵横比 =(速度/行频)/(像素间距·WD/f) 偏离 1 时图像会变形(光学无法修正、线扫描特有的故障模式)。TDI 中电荷与被摄物一起转移,所以<b>完全同步时所有级都看到同一个物点</b> (只是变亮)。同步误差有多大就拖尾多少。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">已解决: 传输带宽</h3>
+<p><code style="color:#22d3bf">interface_budget</code> 根据 CXP / Camera Link / CLHS / GigE / Opt-C:Link 的带宽返回受带宽限制的速率。16k、8bit 经 CXP-12 ×4 为 <b>324 kHz</b> ―― 与 Vieworks VT 的标称 300 kHz 相符。在面阵扫描中则反过来带宽有富余(IMX541 可达 262 fps,而传感器为 18–42 fps)。<b>瓶颈在哪一方会随配置而互换</b>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">尚未达成</h3>
+<p style="margin:2px 0 2px 12px">• 传感器: QE(λ) 光谱曲线、暗电流的温度依赖性、转换增益、PRNU / DSNU、卷帘快门的畸变。目录中的值是 Basler 的 EMVA1288 实测值(包含相机实现)。</p>
+<p style="margin:2px 0 2px 12px">• 镜头: 像差、畸变、周边光量在 <code style="color:#22d3bf">raytrace</code> / <code style="color:#22d3bf">lensimage</code> / <code style="color:#22d3bf">optics</code> 中已有实现,却 <b>未接入</b>。远心性尚未实现。线扫描专用镜头(大像圈、弧矢/子午的像差分配)也尚未建模。</p>
+<p style="margin:2px 0 2px 12px">• 光源: 相干性(激光散斑)、偏振(Jones/Mueller 在 <code style="color:#22d3bf">optics</code> 中已有)、脉冲驱动。宽带仅做到用 <code style="color:#22d3bf">layout_capture(spectral_samples=)</code> 叠加为止。</p>
+<p style="margin:2px 0 2px 12px">• 零件: 无法读取 CAD 网格(只有解析形状 + CSG 差集)。也没有夹具和输送机构。</p>

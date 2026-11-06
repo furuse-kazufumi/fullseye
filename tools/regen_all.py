@@ -185,7 +185,9 @@ OUTPUTS = {
     "tools/gen_halcon_gap.py": ["docs/HALCON_GAP_2026-11-02.md", "docs/halcon_gap_2026-11-02.json"],
     "tools/opdocs.py": ["docs/ops/*", "studio_assets/op_help/*", "docs/i18n/help_coverage.json",
                         "fullseye/skill_template/SKILL.md", "skills/fullseye-ops/SKILL.md"],
-    "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"],
+    # 2026-11-06: 英語版・中国語版(OP_CATALOG.en.md / .zh.md)も同じ段が書く(1.0.0 の文書の門)
+    "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md",
+                                "docs/OP_CATALOG.*.md", "fullseye/OP_CATALOG.*.md"],
     "tools/gen_capabilities_index.py": ["docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md"],
     "tools/gen_hardening_index.py": ["docs/HARDENING.md", "docs/HARDENING.*.md"],
     "tools/audit_fallbacks.py": ["docs/fallback_audit.json"],
@@ -293,7 +295,7 @@ READS = {
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
     "tools/gen_docs_index_ops.py": ["docs/OP_INDEX.json", "fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json", "docs/HALCON_GAP_2026-11-02.md", 
-        "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
+        "docs/ops/*", "docs/OP_CATALOG.md", "docs/OP_CATALOG.*.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
         "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md", "docs/FILE_FORMATS.md",
         "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
         "docs/literature/*.md",                       # 文献ノート全部(2026-10-23: 列挙だと増えた分が READS から漏れる)
