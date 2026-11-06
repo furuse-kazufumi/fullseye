@@ -18,7 +18,7 @@
   "crop_title_band_fraction": 0.12,
   "min_laplacian_density": 0.0005,
   "min_content_fraction": 0.36,
-  "manual_thumbnail_spec_count": 30,
+  "manual_thumbnail_spec_count": 31,
   "entries": {
     "poc_phase_measuring_deflectometry": {
       "representative": "03_photo_vs_pmd.png",

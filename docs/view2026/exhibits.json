@@ -1726,6 +1726,70 @@
    }
   },
   {
+   "id": "carla_iroha_haze",
+   "category": "driving",
+   "media": "",
+   "media_path": "view2026/media/iroha_haze_hairpins.mp4",
+   "thumb_path": "view2026/media/iroha_haze_hairpins.png",
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/driveenv.py",
+   "provenance": "fullseye_shows(非公開)の長尺動画「いろは坂 第 2 版」の本編 251.5〜263 s を 640×360・30 fps で切り出した抜粋と、その 1 コマ(数値は本編の採点ログ iroha2_video.json と説明文から)",
+   "motion": true,
+   "label": {
+    "ja": "霞のヘアピンを登る(CARLA)",
+    "en": "Hazy hairpins (CARLA)",
+    "zh": "雾中的发夹弯(CARLA)",
+    "tw": "霧中的髮夾彎(CARLA)",
+    "ko": "안개 속 헤어핀(CARLA)",
+    "de": "Haarnadeln im Dunst (CARLA)",
+    "hi": "धुंध में hairpin मोड़ (CARLA)",
+    "fr": "Épingles dans la brume (CARLA)"
+   },
+   "lead": {
+    "ja": "山道の長尺動画(いろは坂 第 2 版)の抜粋。CARLA の模擬カメラと LiDAR の出力を Fullseye の op で読み、ルールベースで操舵と速さを決めて登る。地図と CARLA の自動運転は走りに使わず、採点だけに使う。運転のスクリプトは非公開で、使った op は公開。地形は国土地理院の標高データを左右反転したもので、道路の線形と標識の配置は自作(実際のいろは坂とは異なる)。出典表示: 地形 国土地理院 DEM5A(PDL1.0)、CARLA(コード MIT・アセット CC-BY)。",
+    "en": "An excerpt from a long mountain-road video (Irohazaka, version 2). Fullseye ops read CARLA's simulated camera and LiDAR, and rule-based logic sets steering and speed for the climb. The map and CARLA's autopilot do not drive; they only score. The driving script is private; the ops it uses are public. The terrain is Japan's GSI elevation data mirrored left-right, and the road alignment and sign placement are our own (not the real Irohazaka). Attribution: terrain GSI DEM5A (PDL1.0); CARLA (code MIT, assets CC-BY).",
+    "zh": "山路长视频(伊吕波坂 第 2 版)的节选。用 Fullseye 的 op 读取 CARLA 模拟相机和 LiDAR 的输出,以规则决定转向和速度上坡。地图和 CARLA 自动驾驶不参与驾驶,只用于评分。驾驶脚本不公开,所用的 op 公开。地形是日本国土地理院高程数据的左右镜像,道路线形和标志位置为自制(与真实的伊吕波坂不同)。出处: 地形 国土地理院 DEM5A(PDL1.0),CARLA(代码 MIT、素材 CC-BY)。",
+    "tw": "山路長影片(伊呂波坂 第 2 版)的節錄。以 Fullseye 的 op 讀取 CARLA 模擬相機與 LiDAR 的輸出,以規則決定轉向與速度上坡。地圖與 CARLA 自動駕駛不參與駕駛,只用於評分。駕駛腳本不公開,所用的 op 公開。地形是日本國土地理院高程資料的左右鏡像,道路線形與標誌位置為自製(與真實的伊呂波坂不同)。出處: 地形 國土地理院 DEM5A(PDL1.0),CARLA(程式碼 MIT、素材 CC-BY)。",
+    "ko": "산길 장편 영상(이로하자카 제 2 판)의 발췌. CARLA 모의 카메라와 LiDAR 출력을 Fullseye의 op로 읽고, 규칙 기반으로 조향과 속도를 정해 오른다. 지도와 CARLA 자율주행은 주행에 쓰지 않고 채점에만 쓴다. 주행 스크립트는 비공개, 사용한 op는 공개. 지형은 일본 국토지리원 표고 데이터를 좌우 반전한 것이고, 도로 선형과 표지 배치는 자작(실제 이로하자카와 다름). 출처: 지형 국토지리원 DEM5A(PDL1.0), CARLA(코드 MIT, 에셋 CC-BY).",
+    "de": "Ausschnitt aus einem langen Bergstraßen-Video (Irohazaka, Version 2). Fullseye-Ops lesen die simulierte Kamera und das LiDAR von CARLA; regelbasierte Logik setzt Lenkung und Tempo für den Anstieg. Karte und CARLA-Autopilot fahren nicht, sie bewerten nur. Das Fahrskript ist nicht öffentlich, die verwendeten Ops sind es. Das Gelände sind Höhendaten der japanischen GSI, links-rechts gespiegelt; Trassierung und Schilder sind selbst gesetzt (nicht die echte Irohazaka). Quellen: Gelände GSI DEM5A (PDL1.0); CARLA (Code MIT, Assets CC-BY).",
+    "hi": "लंबे पहाड़ी-सड़क video (Irohazaka, version 2) का अंश। Fullseye के ops CARLA के simulated camera और LiDAR को पढ़ते हैं, और rule-based logic चढ़ाई के लिए steering और speed तय करता है। map और CARLA autopilot गाड़ी नहीं चलाते, केवल score करते हैं। driving script private है; उसमें इस्तेमाल हुए ops public हैं। terrain जापान के GSI elevation data को बाएँ-दाएँ उलटकर बना है; सड़क का alignment और signs की जगह हमारी अपनी है (असली Irohazaka नहीं)। स्रोत: terrain GSI DEM5A (PDL1.0); CARLA (code MIT, assets CC-BY)।",
+    "fr": "Extrait d'une longue vidéo de route de montagne (Irohazaka, version 2). Les ops Fullseye lisent la caméra et le LiDAR simulés de CARLA ; une logique à base de règles fixe la direction et la vitesse dans la montée. La carte et le pilote automatique de CARLA ne conduisent pas, ils notent seulement. Le script de conduite n'est pas public ; les ops utilisés le sont. Le relief provient des données d'altitude du GSI japonais, inversées gauche-droite ; le tracé de la route et les panneaux sont les nôtres (pas la vraie Irohazaka). Sources : relief GSI DEM5A (PDL1.0) ; CARLA (code MIT, assets CC-BY)."
+   },
+   "see": {
+    "ja": "霞の中のヘアピンを登る 11.5 秒(本編 251.5〜263 秒)。白線が見える距離からその中で止まれる速さを出し、画面の「速さを決めた理由: 見通し」のとおり目標の速さを止まれる速さ 22.8 km/h に合わせる。",
+    "en": "11.5 s of climbing hairpins in haze (251.5–263 s of the full video). The speed at which the car can stop within the distance where the white line is visible becomes the target, 22.8 km/h, as the on-screen \"speed set by: sight distance\" shows.",
+    "zh": "在雾中爬发夹弯的 11.5 秒(正片 251.5〜263 秒)。由能看见白线的距离求出在其内能停下的速度,如画面「决定速度的理由: 视距」所示,目标速度取能停下的速度 22.8 km/h。",
+    "tw": "在霧中爬髮夾彎的 11.5 秒(正片 251.5〜263 秒)。由能看見白線的距離求出在其內能停下的速度,如畫面「決定速度的理由: 視距」所示,目標速度取能停下的速度 22.8 km/h。",
+    "ko": "안개 속 헤어핀을 오르는 11.5 초(본편 251.5〜263 초). 흰 선이 보이는 거리 안에서 멈출 수 있는 속도를 구하고, 화면의 \"속도를 정한 이유: 시야\"대로 목표 속도를 멈출 수 있는 속도 22.8 km/h로 맞춘다.",
+    "de": "11.5 s Anstieg durch Haarnadeln im Dunst (251.5–263 s des ganzen Videos). Aus der Sichtweite der weißen Linie folgt die Geschwindigkeit, mit der das Auto darin anhalten kann; wie die Anzeige \"Tempo bestimmt durch: Sicht\" zeigt, wird sie zum Ziel: 22.8 km/h.",
+    "hi": "धुंध में hairpin मोड़ों पर चढ़ाई के 11.5 s (पूरे video के 251.5–263 s)। सफ़ेद रेखा जितनी दूर दिखती है, उसके भीतर रुक सकने वाली speed ही target बनती है, 22.8 km/h — जैसा screen पर \"speed का कारण: दृश्यता\" दिखाता है।",
+    "fr": "11.5 s de montée en épingles dans la brume (251.5–263 s de la vidéo complète). La vitesse permettant de s'arrêter dans la distance où la ligne blanche est visible devient la cible, 22.8 km/h, comme l'indique l'écran « vitesse fixée par : visibilité »."
+   },
+   "num": {
+    "ja": "本編(登り 3.38 km)で衝突 0、車線中央からのずれ 中央値 0.066 m・最大 0.418 m、標識 9 枚中 2 枚を読み読み違い 0(審判は地図と CARLA)。",
+    "en": "Full video (3.38 km climb): 0 collisions, offset from lane centre median 0.066 m, max 0.418 m; read 2 of 9 signs, 0 misreads (judged by the map and CARLA).",
+    "zh": "正片(上坡 3.38 km):碰撞 0,偏离车道中心 中位数 0.066 m、最大 0.418 m,9 块标志读出 2 块、误读 0(以地图和 CARLA 评判)。",
+    "tw": "正片(上坡 3.38 km):碰撞 0,偏離車道中心 中位數 0.066 m、最大 0.418 m,9 面標誌讀出 2 面、誤讀 0(以地圖與 CARLA 評判)。",
+    "ko": "본편(오르막 3.38 km): 충돌 0, 차로 중앙에서의 어긋남 중앙값 0.066 m·최대 0.418 m, 표지 9 개 중 2 개 판독·오독 0(심판은 지도와 CARLA).",
+    "de": "Ganzes Video (3.38 km Anstieg): 0 Kollisionen, Abweichung von der Spurmitte Median 0.066 m, max. 0.418 m; 2 von 9 Schildern gelesen, 0 Fehllesungen (bewertet durch Karte und CARLA).",
+    "hi": "पूरा video (3.38 km चढ़ाई): 0 टक्कर, lane के बीच से विचलन median 0.066 m, max 0.418 m; 9 में से 2 signs पढ़े, 0 गलत (map और CARLA से जाँचा)।",
+    "fr": "Vidéo complète (montée de 3.38 km) : 0 collision, écart au centre de voie médiane 0.066 m, max 0.418 m ; 2 panneaux lus sur 9, 0 erreur de lecture (jugé par la carte et CARLA)."
+   },
+   "youtube_url": "",
+   "ops": [
+    "driveenv.sight_stop_speed",
+    "driveenv.mor_from_beta",
+    "driveenv.road_row_distance",
+    "drivelateral.curve_speed_limit",
+    "drivelateral.pure_pursuit_curvature",
+    "drivettc.ttc_from_range",
+    "pcseg.remove_ground",
+    "pcseg.euclidean_clusters",
+    "matching.create_ncc_model",
+    "matching.find_ncc_model",
+    "carlabridge.carla_intrinsics"
+   ]
+  },
+  {
    "id": "poc_eye_to_brain",
    "category": "connectome",
    "media": "01_eye_sweep.gif",
