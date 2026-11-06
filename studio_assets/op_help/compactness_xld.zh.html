@@ -11,7 +11,7 @@
 <p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness_xld.chain.jpg">compactness_xld: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>对最大的轮廓计算紧凑度 <code style="color:#22d3bf">max(1, 周长²/(4π・面积))</code>(区域版 <code style="color:#22d3bf">compactness</code> 的轮廓版)。圆为 1,越细长/越粗糙则越大,<b>没有上限</b>。与 HALCON 的 <code style="color:#22d3bf">compactness_xld</code>(Shape factor for the compactness of contours or polygons.)<b>是同一个公式</b>。</p>
+<p>对最大的轮廓计算紧凑度 <code style="color:#22d3bf">max(1, 周长²/(4π·面积))</code>(区域版 <code style="color:#22d3bf">compactness</code> 的轮廓版)。圆为 1,越细长/越粗糙则越大,<b>没有上限</b>。与 HALCON 的 <code style="color:#22d3bf">compactness_xld</code>(Shape factor for the compactness of contours or polygons.)<b>是同一个公式</b>。</p>
 <p>★2026-09-26 之前先 <code style="color:#22d3bf">/10</code> 再在 1 处封顶 —— <b>与区域版相同的缺陷在轮廓版中也存在</b>。若漏看了修好的 op 的双胞胎,漏洞会残留一半(<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>)。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

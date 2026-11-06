@@ -15,7 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_shade_height_field.inputs.jpg">hx_shade_height_field: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>用 Lambert 着色渲染高度场 v(法线×光源)。光源方位 a・仰角 b。</p>
+<p>用 Lambert 着色渲染高度场 v(法线×光源)。光源方位 a、仰角 b。</p>
 <p>把 <code style="color:#22d3bf">v</code> 视为高度场（gray 值 = 高度，像素间距 1），由 <code style="color:#22d3bf">np.gradient</code> 的 <code style="color:#22d3bf">(gy, gx)</code> 构造法线 <code style="color:#22d3bf">n = (-gx, -gy, 1) / sqrt(gx^2 + gy^2 + 1)</code>，把它与方向为 <code style="color:#22d3bf">l = (cos(el)cos(az), cos(el)sin(az), sin(el))</code> 的平行光的内积 <code style="color:#22d3bf">n·l</code> 在 0 处从下方截断，再用 min-max 归一化到 [0,1] 后返回（Lambertian 阴影）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 光源方位角 <code style="color:#22d3bf">az = a*2*pi</code>（<code style="color:#22d3bf">lx = cos(az)</code> 是列方向分量，<code style="color:#22d3bf">ly = sin(az)</code> 是行方向分量）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 光源仰角 <code style="color:#22d3bf">el = (0.2 + 0.7*b) * pi/2</code>（约 18°〜81°。1 时接近正上方）。</p>

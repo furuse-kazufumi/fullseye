@@ -14,7 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.inputs.jpg">hx_gen_bandfilter: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>理想带通滤波图像(频域圆环,中心半径 a・宽度 b)。与 gen_bandpass 是不同的算子。</p>
+<p>理想带通滤波图像(频域圆环,中心半径 a、宽度 b)。与 gen_bandpass 是不同的算子。</p>
 <p>对与 <code style="color:#22d3bf">hx_gen_lowpass</code> 相同的已 <code style="color:#22d3bf">fftshift</code> 的归一化频率半径 <code style="color:#22d3bf">r</code>（中心=DC），返回把 <code style="color:#22d3bf">c - half &lt;= r &lt;= c + half</code> 的圆环设为 1 的 0/1 float 图像（频域掩模）。输入 <code style="color:#22d3bf">v</code> 只用于获取形状。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 圆环的中心半径 <code style="color:#22d3bf">c = 0.05 + 0.4*a</code>（0.05〜0.45）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 半宽 <code style="color:#22d3bf">half = 0.03 + 0.15*b</code>（0.03〜0.18）。内半径 <code style="color:#22d3bf">c - half</code> 为负的组合（小的 a 与</p>

@@ -306,7 +306,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 327
+## Dokumentkarte — alle 329
 
 Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,817 Operator-Notizen und 73 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
@@ -327,12 +327,14 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | Walking a Character Over Terrain (sim-native, no GPU required) → [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) · Original _(ja)_ |
 | [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure → [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) · Original _(ja)_ |
 
-**Operator reference**(9)
+**Operator reference**(11)
 
 | Dokument | Inhalt |
 |---|---|
 | [`OPERATORS.md`](OPERATORS.md) | imgevolve — cross-library operator catalog |
 | [`OP_CATALOG.md`](OP_CATALOG.md) | Fullseye Operator Catalog — AI capability ledger |
+| [`OP_CATALOG.en.md`](OP_CATALOG.en.md) | Fullseye Operator Catalog — AI capability ledger |
+| [`OP_CATALOG.zh.md`](OP_CATALOG.zh.md) | Fullseye Operator Catalog — AI capability ledger |
 | [`OP_COMBINATION_MATRIX.md`](OP_COMBINATION_MATRIX.md) | fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation) → [`OP_COMBINATION_MATRIX.en.md`](OP_COMBINATION_MATRIX.en.md) · Original _(ja)_ |
 | [`CONVERSION_MATRIX.md`](CONVERSION_MATRIX.md) | 型変換の行列 ―― 穴と不具合の点検 _(ja)_ |
 | [`CONNECTIVITY.md`](CONNECTIVITY.md) | Fullseye connectivity — devices, cameras & industrial protocols |

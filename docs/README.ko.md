@@ -306,7 +306,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 327건
+## 문서 지도 — 전 329건
 
 **색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,817건과 패밀리 가이드 73건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
@@ -327,12 +327,14 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | Walking a Character Over Terrain (sim-native, no GPU required) → [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) · 원문 _(ja)_ |
 | [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure → [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) · 원문 _(ja)_ |
 
-**Operator reference**(9)
+**Operator reference**(11)
 
 | 문서 | 내용 |
 |---|---|
 | [`OPERATORS.md`](OPERATORS.md) | imgevolve — cross-library operator catalog |
 | [`OP_CATALOG.md`](OP_CATALOG.md) | Fullseye Operator Catalog — AI capability ledger |
+| [`OP_CATALOG.en.md`](OP_CATALOG.en.md) | Fullseye Operator Catalog — AI capability ledger |
+| [`OP_CATALOG.zh.md`](OP_CATALOG.zh.md) | Fullseye Operator Catalog — AI capability ledger |
 | [`OP_COMBINATION_MATRIX.md`](OP_COMBINATION_MATRIX.md) | fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation) → [`OP_COMBINATION_MATRIX.en.md`](OP_COMBINATION_MATRIX.en.md) · 원문 _(ja)_ |
 | [`CONVERSION_MATRIX.md`](CONVERSION_MATRIX.md) | 型変換の行列 ―― 穴と不具合の点検 _(ja)_ |
 | [`CONNECTIVITY.md`](CONNECTIVITY.md) | Fullseye connectivity — devices, cameras & industrial protocols |

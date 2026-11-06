@@ -90,8 +90,14 @@ def _dump(path: str) -> int:
                 unshipped_present.append("studio_assets/" + d)
     except Exception:                                  # noqa: BLE001
         pass
+    # 2026-11-06: 同梱の目録(日本語・英語・中国語)が wheel に在るか。package-data の書き漏れは
+    # checkout 側では見えない(fullseye/ に生成物が在るので)ので、配布物の側で数える。
+    pkg_dir = os.path.dirname(fullseye.__file__)
+    catalogs_missing = [n for n in ("OP_CATALOG.md", "OP_CATALOG.en.md", "OP_CATALOG.zh.md")
+                        if not os.path.isfile(os.path.join(pkg_dir, n))]
     payload = {
         "version": getattr(fullseye, "__version__", "?"),
+        "catalogs_missing": catalogs_missing,
         "unshipped_present": unshipped_present,
         "ops": names,
         "failed_backends": [list(x) for x in getattr(ops, "FAILED_BACKENDS", [])],
@@ -145,6 +151,9 @@ def _compare(a_path: str, b_path: str) -> int:
     if a.get("failed_backends"):
         problems.append("editable 側で backend が失敗(その族の op がレジストリから"
                         "黙って消えている): %s" % (a["failed_backends"],))
+    if b.get("catalogs_missing"):
+        problems.append("wheel に同梱の目録が無い: %s(pyproject の package-data を見る)"
+                        % b["catalogs_missing"])
     if b.get("unshipped_present"):
         problems.append("同梱しないはずの資産が wheel に乗っている: %s "
                         "(pyproject の exclude-package-data を見る)" % b["unshipped_present"])

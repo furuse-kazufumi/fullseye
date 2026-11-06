@@ -8,8 +8,8 @@
 
 ## 背景知識ガイド(op の手前にある物理・規約)
 
-- [blas_threads_and_memory](guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置
-- [measurement_uncertainty](guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために
+- [blas_threads_and_memory](guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置 · [English](guides/blas_threads_and_memory.en.md) · [简体中文](guides/blas_threads_and_memory.zh.md)
+- [measurement_uncertainty](guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために · [English](guides/measurement_uncertainty.en.md) · [简体中文](guides/measurement_uncertainty.zh.md)
 
 ## カテゴリ
 

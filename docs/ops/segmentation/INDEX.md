@@ -8,9 +8,9 @@
 
 ## 背景知識ガイド(op の手前にある物理・規約)
 
-- [active_contours_and_level_sets](guides/active_contours_and_level_sets.md) — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか
-- [graph_hierarchy_and_thresholds](guides/graph_hierarchy_and_thresholds.md) — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか
-- [segmentation_scoring_and_worlds](guides/segmentation_scoring_and_worlds.md) — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か
+- [active_contours_and_level_sets](guides/active_contours_and_level_sets.md) — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか · [English](guides/active_contours_and_level_sets.en.md) · [简体中文](guides/active_contours_and_level_sets.zh.md)
+- [graph_hierarchy_and_thresholds](guides/graph_hierarchy_and_thresholds.md) — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか · [English](guides/graph_hierarchy_and_thresholds.en.md) · [简体中文](guides/graph_hierarchy_and_thresholds.zh.md)
+- [segmentation_scoring_and_worlds](guides/segmentation_scoring_and_worlds.md) — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か · [English](guides/segmentation_scoring_and_worlds.en.md) · [简体中文](guides/segmentation_scoring_and_worlds.zh.md)
 
 ## カテゴリ
 
