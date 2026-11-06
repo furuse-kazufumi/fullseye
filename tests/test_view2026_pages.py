@@ -95,6 +95,7 @@ def test_youtube_is_hidden_when_empty_and_invalid_urls_stop_generation():
     assert all("youtube_url" in e for e in d["exhibits"])
     # 空なら出さない・空でなければその URL を 1 回だけ出す(2026-11-06 にいろは坂で最初の 1 本が入った)。
     published = [e["youtube_url"] for e in d["exhibits"] if e["youtube_url"]]
+    assert published, "youtube_url の入った展示が 1 件も無い(2026-11-06 時点でいろは坂が入っている)"
     page = G.build(d, "en")
     assert page.count("[YouTube](") == len(published)
     for url in published:
