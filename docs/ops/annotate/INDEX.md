@@ -8,7 +8,7 @@
 
 ## 背景知識ガイド(op の手前にある物理・規約)
 
-- [dataset_conventions](guides/dataset_conventions.md) — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴
+- [dataset_conventions](guides/dataset_conventions.md) — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴 · [English](guides/dataset_conventions.en.md) · [简体中文](guides/dataset_conventions.zh.md)
 
 ## カテゴリ
 

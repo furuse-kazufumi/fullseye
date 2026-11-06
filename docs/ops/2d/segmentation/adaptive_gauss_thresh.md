@@ -9,7 +9,7 @@ gpu: あり(adaptive_gauss_thresh)
 examples: [gallery2d_segmentation, poc_matrix_code_reading]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # adaptive_gauss_thresh — 2D `segmentation` op

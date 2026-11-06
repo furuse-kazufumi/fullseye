@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_laser_line_speckle_floor, poc_light_section_step_weld_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # laser_line_coherent — OPTICS `coherent` op

@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [annotate_gallery, poc_beam_modal_video, poc_camera_calibration, poc_crack_width_timeseries, poc_moire_alignment, poc_motion_magnification, poc_real_sem_metal_layer, poc_real_tless_6dof, poc_strain_history, poc_structure_4d_deterioration, poc_superresolution_limits, poc_traffic_counting, poc_wound_area_tracking, poc_xyt_event_surface]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # data_to_pixel — ANNOTATE `plot` op

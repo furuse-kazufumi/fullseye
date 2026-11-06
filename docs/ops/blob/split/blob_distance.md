@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [blob_split_tour, poc_bone_trabecular_thickness, poc_dense_bubble_count, poc_real_sem_metal_layer, poc_segmentation_gauntlet]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # blob_distance — BLOB `split` op

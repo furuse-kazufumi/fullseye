@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery_conngraph_closed_forms, poc_bga_ball_type_roundtrip, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # graph_components — CONNGRAPH `stats` op

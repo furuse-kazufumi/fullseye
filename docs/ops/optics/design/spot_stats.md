@@ -8,7 +8,7 @@ gpu: なし
 examples: [anim3d_lens_aberrations, lens_design_demo, lens_optimize_demo, optical_design_metrics, poc_lens_solves_afocal, poc_photograph_through_prescription, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # spot_stats — OPTICS `design` op

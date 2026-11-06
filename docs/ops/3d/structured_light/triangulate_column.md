@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [structured_light_scan]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # triangulate_column — 3D `structured_light` op

@@ -1,0 +1,249 @@
+{
+ "_": "OP_CATALOG の英語版・中国語版のための対訳表(op 要約以外の、生成器が docstring から引く行)。キーは `<module>` / `<module>.<function>`、`fp` は原文(日本語の docstring 先頭行)の指紋(tools/opdocs.py の fingerprint)。**指紋が合わない・訳が無い行があれば tools/gen_op_catalog.py はen / zh を書かずに止まる**(黙って日本語を混ぜない)。op 要約は docs/i18n/op_summary.json を使う。",
+ "languages": [
+  "en",
+  "zh"
+ ],
+ "lines": {
+  "fourierdesc": {
+   "fp": "51dd7265d006",
+   "ja": "fourierdesc — 閉輪郭の楕円フーリエ記述子(EFD)と複素フーリエ平滑化。",
+   "en": "fourierdesc — elliptic Fourier descriptors (EFD) of closed contours and complex Fourier smoothing.",
+   "zh": "fourierdesc —— 闭合轮廓的椭圆傅里叶描述子(EFD)与复傅里叶平滑。"
+  },
+  "fourierdesc.contour_epicycle_chain": {
+   "fp": "a87d1e5e1178",
+   "ja": "位相 ``t`` における**回る振り子の連鎖**を返す(``pairs``)。",
+   "en": "Return the **chain of rotating pendulums** at phase ``t`` (``pairs``).",
+   "zh": "返回相位 ``t`` 处的**旋转摆链**(``pairs``)。"
+  },
+  "fourierdesc.contour_fourier_complex": {
+   "fp": "e7e94ae3cd9f",
+   "ja": "閉輪郭を複素フーリエ級数の係数にする —— ``z(t) = Σ c_k exp(2πi k t)``。",
+   "en": "Turn a closed contour into complex Fourier series coefficients — ``z(t) = Σ c_k exp(2πi k t)``.",
+   "zh": "把闭合轮廓变为复傅里叶级数的系数 —— ``z(t) = Σ c_k exp(2πi k t)``。"
+  },
+  "fourierdesc.contour_fourier_truncation_energy": {
+   "fp": "d4b727cb2dd6",
+   "ja": "打ち切り次数ごとの**予言される**誤差(``table``)—— パーセバルの厳密式。",
+   "en": "The **predicted** error for each truncation order (``table``) — Parseval's exact formula.",
+   "zh": "每个截断阶数的**预测**误差(``table``)—— Parseval 的精确式。"
+  },
+  "fourierdesc.descriptor_distance": {
+   "fp": "c0d748a59cdc",
+   "ja": "2 つの形状間の距離(小さいほど似た形)。回転/平行移動/始点/(任意で)スケール不変。",
+   "en": "Distance between 2 shapes (smaller = more similar). Invariant to rotation / translation / start point / (optionally) scale.",
+   "zh": "2 个形状之间的距离(越小越相似)。对旋转/平移/起点/(可选)尺度不变。"
+  },
+  "fourierdesc.elliptic_fourier": {
+   "fp": "3f9992f589af",
+   "ja": "閉輪郭の楕円フーリエ係数を Kuhl–Giardina 閉形式で求める。",
+   "en": "Compute the elliptic Fourier coefficients of a closed contour in the Kuhl–Giardina closed form.",
+   "zh": "以 Kuhl–Giardina 闭式求闭合轮廓的椭圆傅里叶系数。"
+  },
+  "fourierdesc.fit_circle_xld": {
+   "fp": "b976cc370c92",
+   "ja": "XLD 輪郭 1 本ごとに円を当てはめ、中心の行・列と半径を返す(``table``)。",
+   "en": "Fit a circle to each XLD contour and return the centre row, column and radius (``table``).",
+   "zh": "对每条 XLD 轮廓拟合圆，返回圆心的行、列与半径(``table``)。"
+  },
+  "fourierdesc.fourier_smooth": {
+   "fp": "6b4410e6cdcf",
+   "ja": "輪郭を複素 FFT で帯域制限して平滑化する。",
+   "en": "Smooth a contour by band-limiting it with the complex FFT.",
+   "zh": "用复 FFT 对轮廓做带限平滑。"
+  },
+  "fourierdesc.from_xld": {
+   "fp": "3468965e9937",
+   "ja": "XLD 輪郭 dict(``{\"shape\", \"cs\":[Nx2,...]}``)から i 番目の輪郭を取り出す。",
+   "en": "Take the i-th contour out of an XLD contour dict (``{\"shape\", \"cs\":[Nx2,...]}``).",
+   "zh": "从 XLD 轮廓 dict(``{\"shape\", \"cs\":[Nx2,...]}``)中取出第 i 条轮廓。"
+  },
+  "fourierdesc.invariants": {
+   "fp": "572bfd722e73",
+   "ja": "回転・平行移動・始点・(任意で)スケールに不変な形状記述子((N,2))。",
+   "en": "Shape descriptor invariant to rotation, translation, start point and (optionally) scale ((N,2)).",
+   "zh": "对旋转、平移、起点以及(可选)尺度不变的形状描述子((N,2))。"
+  },
+  "fourierdesc.normalize": {
+   "fp": "ecb65d549157",
+   "ja": "EFD 係数を「正準ポーズ」の係数へ変換する(第1高調波を基準に整列)。",
+   "en": "Convert EFD coefficients to those of the \"canonical pose\" (aligned on the 1st harmonic).",
+   "zh": "把 EFD 系数变换为“标准位姿”的系数(以第1谐波为基准对齐)。"
+  },
+  "fourierdesc.reconstruct": {
+   "fp": "52570dfb0706",
+   "ja": "EFD 係数から輪郭を再構成する((M,2))。",
+   "en": "Reconstruct the contour from EFD coefficients ((M,2)).",
+   "zh": "由 EFD 系数重建轮廓((M,2))。"
+  },
+  "imagedraw": {
+   "fp": "55171e9e111a",
+   "ja": "imagedraw — 画像配列に直接マーカー/線/円/輪郭を焼き込むラスタ描画op(numpy)。",
+   "en": "imagedraw — raster drawing ops that burn markers / lines / circles / contours directly into image arrays (numpy).",
+   "zh": "imagedraw —— 直接把标记/线/圆/轮廓画进图像数组的光栅绘制 op(numpy)。"
+  },
+  "imagedraw.draw_circle": {
+   "fp": "3dc55321f1ae",
+   "ja": "中心 (x,y)・半径 radius の円(fill=True で塗り潰し)。",
+   "en": "Circle with centre (x,y) and radius radius (fill=True fills it).",
+   "zh": "圆心 (x,y)、半径 radius 的圆(fill=True 时填充)。"
+  },
+  "imagedraw.draw_contour": {
+   "fp": "70f41621e8fb",
+   "ja": "XLD 輪郭 ``{cs:[Nx2 (row,col),...]}`` または (N,2) 配列を閉じて描く。",
+   "en": "Close and draw an XLD contour ``{cs:[Nx2 (row,col),...]}`` or an (N,2) array.",
+   "zh": "把 XLD 轮廓 ``{cs:[Nx2 (row,col),...]}`` 或 (N,2) 数组闭合后绘制。"
+  },
+  "imagedraw.draw_line": {
+   "fp": "78cdd4ed78c0",
+   "ja": "(x,y)=p0 から p1 へ太さ width の直線を描く。",
+   "en": "Draw a straight line of thickness width from (x,y)=p0 to p1.",
+   "zh": "从 (x,y)=p0 到 p1 画粗细为 width 的直线。"
+  },
+  "imagedraw.draw_markers": {
+   "fp": "8f09291dd167",
+   "ja": "点列 (N,2) の各点にマーカーを描く。shape='cross'|'square'|'dot'。",
+   "en": "Draw a marker at each point of the point sequence (N,2). shape='cross'|'square'|'dot'.",
+   "zh": "在点列 (N,2) 的每个点上画标记。shape='cross'|'square'|'dot'。"
+  },
+  "imagedraw.draw_polyline": {
+   "fp": "b2b148e73ca2",
+   "ja": "点列 (N,2) を結ぶ折れ線を描く(closed=True で始点に戻る=多角形)。",
+   "en": "Draw a polyline connecting the point sequence (N,2) (closed=True returns to the start point = polygon).",
+   "zh": "画连接点列 (N,2) 的折线(closed=True 时回到起点 = 多边形)。"
+  },
+  "imagedraw.new_canvas": {
+   "fp": "4f036c17de9a",
+   "ja": "背景色つきの空キャンバスを作る(HALCON の ``set_draw`` + 塗り潰しに当たる下地)。",
+   "en": "Create an empty canvas with a background colour (the base that corresponds to HALCON's ``set_draw`` + fill).",
+   "zh": "创建带背景色的空画布(相当于 HALCON 的 ``set_draw`` + 填充的底图)。"
+  },
+  "imagemorph": {
+   "fp": "a789dd17f074",
+   "ja": "imagemorph — 対応点(ランドマーク)駆動の2D画像ワープとモーフ。",
+   "en": "imagemorph — 2-D image warping and morphing driven by corresponding points (landmarks).",
+   "zh": "imagemorph —— 由对应点(地标)驱动的 2D 图像变形(warp)与形变(morph)。"
+  },
+  "imagemorph.add_frame_corners": {
+   "fp": "b1d455e6fa86",
+   "ja": "点群に画像の四隅(+辺の中点)を固定点として足す。",
+   "en": "Add the four image corners (+ edge midpoints) to the point set as fixed points.",
+   "zh": "把图像的四个角(+各边中点)作为固定点加入点集。"
+  },
+  "imagemorph.blend": {
+   "fp": "1e49ee6e104c",
+   "ja": "クロスディゾルブ (1-alpha)·a + alpha·b(a,b は同 shape・[0,1])。",
+   "en": "Cross-dissolve (1-alpha)·a + alpha·b (a, b of the same shape, in [0,1]).",
+   "zh": "交叉溶解 (1-alpha)·a + alpha·b(a,b 形状相同，取值 [0,1])。"
+  },
+  "imagemorph.morph": {
+   "fp": "b0fe8f3d349c",
+   "ja": "2 枚の画像 A, B を対応点でモーフし、比率 alpha の中間画像を作る。",
+   "en": "Morph two images A, B by corresponding points and produce the intermediate image at ratio alpha.",
+   "zh": "按对应点对 2 幅图像 A、B 进行形变，生成比例为 alpha 的中间图像。"
+  },
+  "imagemorph.morph_sequence": {
+   "fp": "313156863269",
+   "ja": "alpha を 0→1 に n 段で振ったモーフ列(A から B へ滑らかに変わる各フレーム)。",
+   "en": "Morph sequence with alpha swept 0→1 in n steps (the frames that change smoothly from A to B).",
+   "zh": "alpha 以 n 级从 0→1 变化的形变序列(从 A 平滑变到 B 的各帧)。"
+  },
+  "imagemorph.warp_piecewise_affine": {
+   "fp": "2ef49e33e261",
+   "ja": "img の src_pts にある内容を dst_pts へ動かす区分アフィンワープ。",
+   "en": "Piecewise-affine warp that moves the content at src_pts of img to dst_pts.",
+   "zh": "分段仿射变形，把 img 中位于 src_pts 的内容移到 dst_pts。"
+  },
+  "imagemorph.warp_tps_image": {
+   "fp": "bcfdb0d66d96",
+   "ja": "薄板スプラインで img の src_pts を dst_pts へ動かす滑らかなワープ。",
+   "en": "Smooth warp that moves src_pts of img to dst_pts with a thin-plate spline.",
+   "zh": "用薄板样条把 img 的 src_pts 移到 dst_pts 的平滑变形。"
+  },
+  "signal1d": {
+   "fp": "c9d4486a0d01",
+   "ja": "signal1d — 点列(1D 信号)の多項式近似・フーリエ変換・ローパス/ハイパス(簡単API)。",
+   "en": "signal1d — polynomial fitting, Fourier transform and low-pass / high-pass of point sequences (1D signals) (simple API).",
+   "zh": "signal1d —— 点列(1D 信号)的多项式近似、傅里叶变换、低通/高通(简易 API)。"
+  },
+  "signal1d.bandpass": {
+   "fp": "830e0e844725",
+   "ja": "点列 y のバンドパス(low..high の中間帯だけ通す)。low<high(ナイキスト割合)。",
+   "en": "Band-pass of the point sequence y (pass only the band between low..high). low<high (fraction of Nyquist).",
+   "zh": "点列 y 的带通(只通过 low..high 之间的频带)。low<high(奈奎斯特比例)。"
+  },
+  "signal1d.fft_spectrum": {
+   "fp": "a7e9f6042f99",
+   "ja": "点列 y の片側振幅スペクトルを返す ``(freqs, magnitude)``。",
+   "en": "Return the one-sided amplitude spectrum of the point sequence y ``(freqs, magnitude)``.",
+   "zh": "返回点列 y 的单边幅度谱 ``(freqs, magnitude)``。"
+  },
+  "signal1d.highpass": {
+   "fp": "c3c86b8bd5cd",
+   "ja": "点列 y をハイパス(トレンド=低周波を除き、細部・エッジ・変動だけ残す)。",
+   "en": "High-pass the point sequence y (remove the trend = low frequencies, keep only detail, edges and variation).",
+   "zh": "对点列 y 做高通(去掉趋势 = 低频，只保留细节、边缘与变动)。"
+  },
+  "signal1d.lowpass": {
+   "fp": "69122f74b8fd",
+   "ja": "点列 y をローパス(高周波=ノイズ/細部を落として平滑化)。cutoff=ナイキスト割合。",
+   "en": "Low-pass the point sequence y (drop high frequencies = noise / detail, i.e. smooth). cutoff = fraction of Nyquist.",
+   "zh": "对点列 y 做低通(去掉高频 = 噪声/细节，即平滑)。cutoff = 奈奎斯特比例。"
+  },
+  "signal1d.poly_eval": {
+   "fp": "363018bfa93e",
+   "ja": "多項式係数 coef(最高次から)を点 x で評価する。",
+   "en": "Evaluate the polynomial coefficients coef (highest degree first) at the points x.",
+   "zh": "在点 x 处计算多项式系数 coef(从最高次开始)的值。"
+  },
+  "signal1d.poly_fit": {
+   "fp": "635ca48f1b69",
+   "ja": "点列 (x, y) を次数 degree の多項式で最小二乗近似し、係数を返す(最高次から)。",
+   "en": "Least-squares fit of the point sequence (x, y) by a polynomial of degree degree; returns the coefficients (highest degree first).",
+   "zh": "用 degree 次多项式对点列 (x, y) 做最小二乘近似，返回系数(从最高次开始)。"
+  },
+  "signal1d.smooth": {
+   "fp": "f044733d7f49",
+   "ja": "移動平均による平滑化(window は奇数の窓幅、端はエッジ複製)。",
+   "en": "Smoothing by moving average (window is an odd window width; the ends replicate the edge).",
+   "zh": "移动平均平滑(window 为奇数窗宽，两端复制边缘)。"
+  },
+  "signal1d.spline_curve_eval": {
+   "fp": "ba64717df609",
+   "ja": "曲線スプライン model をパラメータ t∈[0,1] で評価し (M,D) 点を返す(D=2 or 3)。",
+   "en": "Evaluate the curve spline model at parameter t∈[0,1] and return (M,D) points (D=2 or 3).",
+   "zh": "在参数 t∈[0,1] 处计算曲线样条 model，返回 (M,D) 点(D=2 or 3)。"
+  },
+  "signal1d.spline_curve_fit": {
+   "fp": "1f73b8d5e443",
+   "ja": "点列を **弧長パラメトリック3次スプライン** で当てはめる(2D 輪郭 / 3D 空間曲線)。",
+   "en": "Fit the point sequence with an **arc-length-parametric cubic spline** (2D contour / 3D space curve).",
+   "zh": "用**弧长参数化三次样条**拟合点列(2D 轮廓 / 3D 空间曲线)。"
+  },
+  "signal1d.spline_curve_resample": {
+   "fp": "369b4de7c71a",
+   "ja": "曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。",
+   "en": "Smoothly resample the curve points to n points and return (n,D) (2D/3D; closed curves without a duplicated seam).",
+   "zh": "把曲线点列平滑地重采样为 n 点并返回 (n,D)(2D/3D，闭合曲线的接缝不重复)。"
+  },
+  "signal1d.spline_eval": {
+   "fp": "78cee6dc5273",
+   "ja": "spline object を点 x で評価する。",
+   "en": "Evaluate a spline object at the points x.",
+   "zh": "在点 x 处计算 spline object 的值。"
+  },
+  "signal1d.spline_fit": {
+   "fp": "961136ddb9c9",
+   "ja": "点列 (x, y) を3次スプラインで補間/平滑化し、評価可能な spline object を返す。",
+   "en": "Interpolate / smooth the point sequence (x, y) with a cubic spline and return an evaluable spline object.",
+   "zh": "用三次样条对点列 (x, y) 插值/平滑，返回可求值的 spline object。"
+  },
+  "signal1d.spline_resample": {
+   "fp": "92bb17b37748",
+   "ja": "点列を n 点に等間隔で滑らかに再サンプルし ``(x_new, y_new)`` を返す。",
+   "en": "Smoothly resample the point sequence at n equally spaced points and return ``(x_new, y_new)``.",
+   "zh": "把点列平滑地等间隔重采样为 n 点，返回 ``(x_new, y_new)``。"
+  }
+ }
+}

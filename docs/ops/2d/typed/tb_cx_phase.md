@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [gallery_spectrum_signal_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # tb_cx_phase — 2D `typed` op

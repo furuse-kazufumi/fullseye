@@ -1,13 +1,12 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南仅有日文版(它是人写的散文,这里不做机械替换)。</p>
 <h2 style="color:#f5a524;margin:0 0 4px 0">矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</h2>
-<p>SVD や固有値分解を含む op が「なぜか遅い」とき、原因はアルゴリズムではなく <b>BLAS の使われ方</b>であることが多い。この文書は op の説明ではなく、そこを疑う順番と、測って確かめる方法を書く教材である。</p>
-<p>すべて 2026-09-06 に自分の機械で測った値で、出典は自分の実測に限る（24 論理 CPU / OpenBLAS 0.3.31 / numpy 2.4.6 / Windows、他の負荷を止めた状態、中央値）。他所の機械では数字が変わるが、<b>傾きの向き</b>は再現するはずである。</p>
+<p>含有 SVD 或特征值分解的 op “不知为何很慢”时，原因往往不在算法，而在于 <b>BLAS 的使用方式</b>。本文不是 op 的说明，而是讲述怀疑这些地方的顺序，以及如何测量确认的教材。</p>
+<p>全部是 2026-09-06 在我自己的机器上测得的值，出处仅限我自己的实测（24 个逻辑 CPU / OpenBLAS 0.3.31 / numpy 2.4.6 / Windows，停掉其他负载的状态，中位数）。换一台机器数字会变，但<b>趋势的方向</b>应当能够再现。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. いちばん効くのに、いちばん見落とされる — スレッドの過剰割り当て</h3>
-<p>OpenBLAS も MKL も、既定でスレッド数を<b>論理 CPU 数</b>から決める。行列積ではそれが正しい。分解では正しくない。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">np.linalg.svd(n x n, full_matrices=False)      単位 ms
-n        1t      2t      4t      8t     24t   最速
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. 最有效、却最容易被忽视 —— 线程的过度分配</h3>
+<p>OpenBLAS 和 MKL 默认都根据<b>逻辑 CPU 数</b>决定线程数。对矩阵乘法来说这是对的。对分解来说则不对。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">np.linalg.svd(n x n, full_matrices=False)      单位 ms
+n        1t      2t      4t      8t     24t   最快
 48    0.165   0.195   0.266   0.344   0.651   1t
 96    0.650   0.918   1.081   1.305   2.217   1t
 384  19.331  23.572  21.686  28.090  36.243   1t
@@ -15,133 +14,133 @@ n        1t      2t      4t      8t     24t   最速
 1024 351.7   320.0   259.4   262.4   868.8    4t
 2048 2675    1950    1600    1344    3263     8t
 
-参考: 行列積 a @ a は逆の傾き（768 で 1t 14.0ms / 8t 2.4ms = 5.8 倍速い）</pre>
-<p>svd / eigh / qr / pinv の 4 種 × 7 サイズで、<b>24 スレッドが勝った升目は 1 つも無い</b>。分解の中の GEMM が小さすぎて、同期の費用が計算量を上回るためである。</p>
+参考：矩阵乘法 a @ a 的趋势相反（768 时 1t 14.0ms / 8t 2.4ms = 快 5.8 倍）</pre>
+<p>在 svd / eigh / qr / pinv 这 4 种 × 7 个尺寸中，<b>24 线程获胜的格子连 1 个都没有</b>。因为分解内部的 GEMM 太小，同步的开销超过了计算量。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">判断</h3>
-<p style="margin:2px 0 2px 12px">• 分解が遅いと思ったら、<b>アルゴリズムを疑う前にスレッド数を疑う</b>。確認は 1 行: <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1 python your_script.py</code> で速くなるなら当たり。</p>
-<p style="margin:2px 0 2px 12px">• <b>プロセス全体を絞ってはいけない</b>。行列積は逆に遅くなる。絞るのは分解の周りだけ。</p>
-<p style="margin:2px 0 2px 12px">• fullseye では <code style="color:#22d3bf">fsthreads</code> がこれを自動でやる。止めたいときは <code style="color:#22d3bf">FULLSEYE_BLAS_THREADS=off</code>、固定したいときは <code style="color:#22d3bf">FULLSEYE_BLAS_THREADS=1</code>。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">罠 — これは速さだけの話ではない</h3>
-<p>スレッド数が変わると縮約の順序が変わるので、<b>分解の結果は下位ビットで変わる</b>。</p>
+<p style="margin:2px 0 2px 12px">• 觉得分解慢时，<b>在怀疑算法之前先怀疑线程数</b>。确认只需 1 行：如果 <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1 python your_script.py</code> 变快了，就是这个原因。</p>
+<p style="margin:2px 0 2px 12px">• <b>不要限制整个进程。</b> 矩阵乘法反而会变慢。只在分解周围限制。</p>
+<p style="margin:2px 0 2px 12px">• 在 fullseye 中，<code style="color:#22d3bf">fsthreads</code> 会自动完成这件事。想关闭时用 <code style="color:#22d3bf">FULLSEYE_BLAS_THREADS=off</code>，想固定时用 <code style="color:#22d3bf">FULLSEYE_BLAS_THREADS=1</code>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">陷阱 —— 这不只是速度的问题</h3>
+<p>线程数一变，归约的顺序就会变，因此<b>分解的结果会在低位比特上发生变化</b>。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">svd(64x64)   1t vs 24t   bitwise 一致 False   最大差 3.6e-16
 eigh(256)    1t vs 24t   bitwise 一致 False   最大差 1.7e-12</pre>
-<p>スレッド数は論理 CPU 数から決まるので、<b>何もしない状態が機械ごとに違う値を出す</b>。4 コアの CI と 24 コアの開発機で分解の下位ビットが一致しない。「手元では通るのに CI で許容差を外れる」の原因になりうる。再現性が要るなら、スレッド数を明示的に固定する。</p>
+<p>线程数由逻辑 CPU 数决定，所以<b>什么都不做的状态在每台机器上给出不同的值</b>。4 核的 CI 与 24 核的开发机上，分解的低位比特不一致。这可能成为“本地能通过、在 CI 上却超出容差”的原因。如果需要可再现性，就显式固定线程数。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 何を見て上限を決めるか — 短辺。長辺でも要素数でもない</h3>
-<p>(m, n) の格子 92 升（svd と lstsq）で、予測子ごとに「その規則だけでスレッド上限を決めたときに失う時間」を測った。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">規則                          失う時間   1.2 倍を超える升目   最悪
-何もしない（24t のまま）        3975ms       79/92 升        19.91x
-短辺 &lt;512:1 &lt;1024:4 else:8       303ms        5/92 升         1.41x
-要素数 &lt;512:1 &lt;1024:4 else:8     235ms       14/92 升         2.50x
-長辺 &lt;512:1 &lt;1024:4 else:8       241ms       ---              3.89x</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 看什么来决定上限 —— 短边。不是长边，也不是元素数</h3>
+<p>在 (m, n) 的 92 个格子（svd 与 lstsq）上，针对每个预测量测量了“只用该规则决定线程上限时损失的时间”。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">规则                          损失时间   超过 1.2 倍的格子   最差
+什么都不做（保持 24t）          3975ms       79/92 格        19.91x
+短边 &lt;512:1 &lt;1024:4 else:8       303ms        5/92 格         1.41x
+元素数 &lt;512:1 &lt;1024:4 else:8     235ms       14/92 格         2.50x
+长边 &lt;512:1 &lt;1024:4 else:8       241ms       ---              3.89x</pre>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">判断</h3>
-<p><b>合計では要素数と長辺が勝つ。それでも短辺を採る。</b> 合計の差 68ms より、最悪値の差（1.41 倍か 2.50 / 3.89 倍か）のほうが重いため。平均で 1 割速いより、最悪でも 4 割増しで済むほうが運用しやすい。</p>
-<p>理屈: LAPACK の仕事量は概ね <code style="color:#22d3bf">長辺 × 短辺²</code> で、スレッドが効くかどうかは短辺のブロック幅で決まる。<code style="color:#22d3bf">16384x3</code> の最小二乗を長辺で「大きい行列」と数えると 8 スレッドを許してしまうが、実際は幅 3 の QR である。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">換算の目安</h3>
-<p>| 短辺 | 許すスレッド数 | 根拠 |</p>
+<p><b>按合计，元素数和长边获胜。即便如此仍采用短边。</b> 因为比起合计的差 68ms，最差值的差（1.41 倍还是 2.50 / 3.89 倍）更重要。与其平均快 1 成，不如最差也只多 4 成，这样更便于运维。</p>
+<p>道理：LAPACK 的工作量大致为 <code style="color:#22d3bf">長辺 × 短辺²</code>（长边 × 短边的平方），线程是否起作用由短边的分块宽度决定。如果按长边把 <code style="color:#22d3bf">16384x3</code> 的最小二乘算作“大矩阵”，就会允许 8 个线程，但实际上它是宽度为 3 的 QR。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">换算的参考</h3>
+<p>| 短边 | 允许的线程数 | 依据 |</p>
 <p>| --- | --- | --- |</p>
-<p>| 32 未満 | 触らない | 絞る仕掛け自体が 2.4 µs。それより速い分解に被せると損 |</p>
-<p>| 32〜511 | 1 | この範囲で多スレッドが勝った升目が無い |</p>
-<p>| 512〜1023 | 4 | 1t と拮抗し、上側で 4t が勝ち始める |</p>
-<p>| 1024 以上 | 8 | 2048 で 8t が 1t の 2.0 倍速い。24t は全域で最悪 |</p>
+<p>| 小于 32 | 不处理 | 限制机制本身就要 2.4 µs。套在比它更快的分解上反而吃亏 |</p>
+<p>| 32〜511 | 1 | 在此范围内没有多线程获胜的格子 |</p>
+<p>| 512〜1023 | 4 | 与 1t 不相上下，在上端 4t 开始获胜 |</p>
+<p>| 1024 以上 | 8 | 在 2048 时 8t 比 1t 快 2.0 倍。24t 在全范围内最差 |</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 2 の冪の辺はキャッシュ競合で遅い（<code style="color:#22d3bf">#pragma pack</code> に相当する話）</h3>
-<p>leading dimension が 2 の冪だと、キャッシュのセットが衝突して遅くなる。密行列ライブラリが lda をわざとずらして確保するのはこのためである。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">svd の単スレッド実効 GFLOPS（* が 2 の冪）
-n     255    256*    257    264      -&gt; 冪だけ 13% 遅い
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 边长为 2 的幂时会因缓存冲突而变慢（相当于 <code style="color:#22d3bf">#pragma pack</code> 的话题）</h3>
+<p>leading dimension 为 2 的幂时，缓存组会发生冲突而变慢。稠密矩阵库故意错开 lda 来分配内存，原因就在于此。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">svd 的单线程有效 GFLOPS（* 为 2 的幂）
+n     255    256*    257    264      -&gt; 只有幂次慢 13%
     27.9    26.1    30.4   30.9
-n     511    512*    513    520      -&gt; 18% 遅い
+n     511    512*    513    520      -&gt; 慢 18%
     41.4    34.6    41.2   44.1
-n    1023   1024*   1025   1032      -&gt; 19% 遅い
+n    1023   1024*   1025   1032      -&gt; 慢 19%
     43.9    35.9    44.4   44.5
-n = 64 / 128 では差が出ない（キャッシュに収まるので競合が起きない）</pre>
+n = 64 / 128 时没有差异（能放进缓存，所以不发生冲突）</pre>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">判断</h3>
-<p style="margin:2px 0 2px 12px">• <b>13〜19% は実在する</b>。ベンチマークを 2 の冪の寸法だけで取ると、そこだけ遅い値を「普通の性能」として記録してしまう。</p>
-<p style="margin:2px 0 2px 12px">• ただし<b>最速スレッド数は変わらない</b>（255/256/257/264 は全部 1t、1023/1024/1025/1032 は全部 4t）。スレッドの判断には影響しない。</p>
-<p style="margin:2px 0 2px 12px">• 性能を測るときは、寸法を 2 の冪から意図的に外して 1 点足す。外さないと「升目の分布」が偏る — 正方 1023 のような点が 1 つも無くなる。</p>
+<p style="margin:2px 0 2px 12px">• <b>13〜19% 是真实存在的。</b> 只用 2 的幂的尺寸做基准测试，就会把只在那里才慢的值记录为“正常性能”。</p>
+<p style="margin:2px 0 2px 12px">• 不过<b>最快的线程数不变</b>（255/256/257/264 全是 1t，1023/1024/1025/1032 全是 4t）。不影响线程方面的判断。</p>
+<p style="margin:2px 0 2px 12px">• 测量性能时，要故意偏离 2 的幂再加 1 个点。不偏离的话，“格子的分布”会有偏差 —— 像正方 1023 这样的点连 1 个都没有。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 行優先・列優先 — 変換して使うと、たいてい元が取れない</h3>
-<p>numpy は行優先、LAPACK は列優先なので、分解のたびに並べ替えが起きる。「では列優先で渡せばよい」と考えたくなるが、<b>変換の費用を含めると負ける</b>。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">lstsq                そのまま   変換して渡す   最初から列優先   変換のみ
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 行优先与列优先 —— 转换后再用，大多得不偿失</h3>
+<p>numpy 是行优先，LAPACK 是列优先，所以每次分解都会发生重排。人们很容易想“那就按列优先传入好了”，但<b>把转换的开销算进去就输了</b>。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">lstsq                原样       转换后传入     一开始就列优先   仅转换
 (65536,   36)         27.4ms    26.0 (0.95x)   17.6 (0.64x)     6.4ms
 (16384,  128)         43.9      50.1 (1.14x)   39.0 (0.89x)     8.5
 ( 4096,  512)        414.5     676.5 (1.63x)  432.8 (1.04x)     8.8
 ( 1024, 1024)        172.3     178.6 (1.04x)  177.1 (1.03x)     3.6</pre>
-<p><code style="color:#22d3bf">np.asfortranarray</code> してから渡すと、5 形状中 4 つで<b>遅くなる</b>。コピーが 6〜9 ms かかるのに、節約はそれ以下だからである。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">転置ビューなら無料では？ — 無料なのはビューだけ</h3>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">a.T をとる                   0.10 µs     ストライドの入れ替えだけ = 本当に無料
-np.ascontiguousarray(a.T)    6.5-8.7 ms  戻すと本物のコピー
-svd(A.T) して U,V を入れ替える:
-  (16384,128) 1.90 倍遅い / (4096,512) 1.11 倍 / (1024,1024) 1.04 倍
-  （特異値は一致する。数学的には正しいのに実行時間で負ける）</pre>
-<p><code style="color:#22d3bf">A = (Aᵀ)ᵀ</code> なので <code style="color:#22d3bf">svd(A.T)</code> の U と V を入れ替えれば <code style="color:#22d3bf">svd(A)</code> が得られるが、LAPACK は (n, m) の横長行列として<b>別の経路</b>を通るため遅くなる。</p>
+<p>先 <code style="color:#22d3bf">np.asfortranarray</code> 再传入，5 种形状中有 4 种<b>变慢</b>。因为拷贝要花 6〜9 ms，而节省的时间比这还少。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">转置视图不是免费的吗？ —— 免费的只有视图</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">取 a.T                       0.10 µs     只是交换步长 = 真正免费
+np.ascontiguousarray(a.T)    6.5-8.7 ms  转回来就是真正的拷贝
+svd(A.T) 后交换 U,V：
+  (16384,128) 慢 1.90 倍 / (4096,512) 1.11 倍 / (1024,1024) 1.04 倍
+  （奇异值一致。数学上正确，却在运行时间上输了）</pre>
+<p>由于 <code style="color:#22d3bf">A = (Aᵀ)ᵀ</code>，交换 <code style="color:#22d3bf">svd(A.T)</code> 的 U 和 V 即可得到 <code style="color:#22d3bf">svd(A)</code>，但 LAPACK 会把它当作 (n, m) 的宽矩阵走<b>另一条路径</b>，因此变慢。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">判断</h3>
-<p style="margin:2px 0 2px 12px">• 「列優先にすれば速い」は、<b>すでに列優先である</b>場合にのみ正しい。</p>
-<p style="margin:2px 0 2px 12px">• 効くのは「最初から列優先で組み立てられて、かつ縦長」の場合だけ。設計行列を <code style="color:#22d3bf">np.stack(..., axis=1)</code> で作っている場所なら、<code style="color:#22d3bf">order=&quot;F&quot;</code> で確保するだけで縦長時に 3 割前後取れる（<code style="color:#22d3bf">(65536,36)</code> で 0.64 倍）。</p>
-<p style="margin:2px 0 2px 12px">• それ以外では手を出さない。転置して戻す設計は、費用が利得を上回る。</p>
+<p style="margin:2px 0 2px 12px">• “列优先就快”只在<b>已经是列优先</b>的情况下才成立。</p>
+<p style="margin:2px 0 2px 12px">• 只有在“一开始就按列优先组装，而且是竖长”的情况下才有效。在用 <code style="color:#22d3bf">np.stack(..., axis=1)</code> 构造设计矩阵的地方，只需用 <code style="color:#22d3bf">order=&quot;F&quot;</code> 分配内存，竖长时就能获得 3 成左右的收益（<code style="color:#22d3bf">(65536,36)</code> 时为 0.64 倍）。</p>
+<p style="margin:2px 0 2px 12px">• 除此之外不要动手。转置再转回的设计，开销大于收益。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. 連続軸を意図的に使う — ソートと順位統計（分解とは別の軸の話）</h3>
-<p>ここまでは LAPACK の話だが、「速い向き」を積極的に使う設計もある。numpy は行優先なので、<b>最後の軸が連続</b>である。同じ演算でも軸を選べるなら、連続軸に寄せる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">np.sort（単位 ms）
-形状             dtype     axis=-1(連続)  axis=0(飛び飛び)   比
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. 有意利用连续轴 —— 排序与顺序统计（与分解不同维度的话题）</h3>
+<p>前面讲的是 LAPACK，但也有积极利用“快的方向”的设计。numpy 是行优先，所以<b>最后一个轴是连续的</b>。同样的运算如果可以选择轴，就靠向连续轴。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">np.sort（单位 ms）
+形状             dtype     axis=-1(连续)  axis=0(跳跃)   比
 (65536,   32)   float32        3.68           18.39        5.00
 ( 4096,  256)   float32        1.95            9.12        4.67
 ( 4096,  256)   float64        5.42           13.94        2.57
 ( 1024, 1024)   float64        5.91           12.27        2.08</pre>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">罠 — 「小さい型にすれば速い」は成り立たない</h3>
-<p>同じ配列を量子化しても、<b>比較ソートは速くならない。むしろ遅い</b>。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">(1024,1024) の np.sort(axis=-1)
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">陷阱 —— “用小类型就快”并不成立</h3>
+<p>即使把同一个数组量化，<b>比较排序也不会变快，反而更慢</b>。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">(1024,1024) 的 np.sort(axis=-1)
   float64  5.91ms      float32  3.04ms
-  uint16  21.97ms      uint8   21.03ms      &lt;- float64 の 3.6 倍遅い</pre>
-<p>numpy の float 用ソートは SIMD 最適化された経路を通るが、小さい整数型はそこに乗っていない（この版では）。<b>dtype を小さくすること自体は速さを買わない。</b></p>
-<p>もう 1 つの罠: 上の表で <code style="color:#22d3bf">(256, 4096)</code> の uint8 だけ <code style="color:#22d3bf">axis=0</code> のほうが速く見える（19.45 対 22.57）。これは配置ではなく<b>1 回のソートの長さ</b>の効果で、<code style="color:#22d3bf">axis=0</code> は長さ 256 のソートを 4096 回、<code style="color:#22d3bf">axis=-1</code> は長さ 4096 を 256 回している。軸を比べるときは、<b>長さが変わっていないか</b>を先に確認する。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">量子化が本当に買うもの — 並べ替えを省けること</h3>
-<p>利得は型ではなく<b>値域が有限であること</b>から来る。uint8 は 256 通りしかないので、並べ替えずに数えれば済む。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">uint8 の全体ソート
-  n = 16,777,216   np.sort 355.8ms  -&gt;  計数ソート 66.7ms   5.33 倍
-  n =  2,097,152   np.sort  43.8ms  -&gt;  計数ソート  8.5ms   5.17 倍
+  uint16  21.97ms      uint8   21.03ms      &lt;- 比 float64 慢 3.6 倍</pre>
+<p>numpy 针对 float 的排序走的是经过 SIMD 优化的路径，而小整数类型不在这条路径上（在此版本中）。<b>把 dtype 变小本身并不能换来速度。</b></p>
+<p>另 1 个陷阱：上表中只有 <code style="color:#22d3bf">(256, 4096)</code> 的 uint8 看起来 <code style="color:#22d3bf">axis=0</code> 更快（19.45 对 22.57）。这不是布局的效果，而是<b>1 次排序的长度</b>的效果： <code style="color:#22d3bf">axis=0</code> 是对长度 256 的序列排序 4096 次，<code style="color:#22d3bf">axis=-1</code> 是对长度 4096 的序列排序 256 次。比较轴时，要先确认<b>长度有没有变</b>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">量化真正换来的东西 —— 可以省去排序</h3>
+<p>收益不是来自类型，而是来自<b>值域有限</b>。uint8 只有 256 种取值，所以不排序、只计数就够了。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">uint8 的整体排序
+  n = 16,777,216   np.sort 355.8ms  -&gt;  计数排序 66.7ms   5.33 倍
+  n =  2,097,152   np.sort  43.8ms  -&gt;  计数排序  8.5ms   5.17 倍
 
-uint8 の中央値（順位統計はそもそも並べ替えなくてよい）
-  n = 8,388,608    np.median 35.6ms -&gt; ヒストグラム 27.6ms  1.3 倍
-  n = 1,048,576    np.median  6.4ms -&gt; ヒストグラム  3.7ms  1.7 倍</pre>
-<p>計数ソートは <code style="color:#22d3bf">np.bincount(a, minlength=256)</code> で数え、<code style="color:#22d3bf">np.repeat(np.arange(256, dtype=np.uint8), counts)</code> で展開するだけ。中央値は累積和に <code style="color:#22d3bf">searchsorted</code> を掛ければ、展開すら要らない。</p>
+uint8 的中位数（顺序统计本来就不需要排序）
+  n = 8,388,608    np.median 35.6ms -&gt; 直方图 27.6ms  1.3 倍
+  n = 1,048,576    np.median  6.4ms -&gt; 直方图  3.7ms  1.7 倍</pre>
+<p>计数排序只需用 <code style="color:#22d3bf">np.bincount(a, minlength=256)</code> 计数，再用 <code style="color:#22d3bf">np.repeat(np.arange(256, dtype=np.uint8), counts)</code> 展开即可。中位数只要对累积和做 <code style="color:#22d3bf">searchsorted</code>，连展开都不需要。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">判断</h3>
-<p style="margin:2px 0 2px 12px">• 軸を選べる演算（ソート・累積・リダクション）は<b>最後の軸</b>に寄せる。2〜5 倍。</p>
-<p style="margin:2px 0 2px 12px">• <b>量子化を速さのために入れるなら、比較ソートではなく計数の道に乗せる</b>。uint8/uint16 のまま <code style="color:#22d3bf">np.sort</code> を呼ぶのは、float より遅くなる。</p>
-<p style="margin:2px 0 2px 12px">• 順位統計（中央値・パーセンタイル・rank filter）は、量子化されているならヒストグラムの累積和で置き換えられる。並べ替えが消える。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">効かなかったこと（記録しておく）</h3>
-<p>N 個の D 次元記述子に対する「距離 + argmin」で、記述子を行に置くか列に置くかを比べたが、<b>有意差が出なかった</b>（4096×64 で 1.00 倍、8192×128 で 1.06 倍、2048×256 で 0.97 倍）。<code style="color:#22d3bf">einsum</code> がストライドを吸収するため。配置の効果は「軸を選べる演算」に限られ、縮約を伴う演算には現れない。</p>
+<p style="margin:2px 0 2px 12px">• 可以选择轴的运算（排序、累积、归约）靠向<b>最后一个轴</b>。2〜5 倍。</p>
+<p style="margin:2px 0 2px 12px">• <b>如果为了速度引入量化，就走计数的路，而不是比较排序。</b> 对 uint8/uint16 直接调用 <code style="color:#22d3bf">np.sort</code>，会比 float 还慢。</p>
+<p style="margin:2px 0 2px 12px">• 顺序统计（中位数、百分位数、rank filter）在已量化的情况下，可以用直方图的累积和替代。排序就消失了。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">没有效果的做法（记录在案）</h3>
+<p>在对 N 个 D 维描述子做“距离 + argmin”时，比较了把描述子放在行上还是列上，<b>没有出现显著差异</b>（4096×64 时 1.00 倍，8192×128 时 1.06 倍，2048×256 时 0.97 倍）。因为 <code style="color:#22d3bf">einsum</code> 吸收了步长。布局的效果仅限于“可以选择轴的运算”，在伴随缩并的运算中不会出现。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. 疑う順番</h3>
-<p>分解を含む処理が遅いとき、この順で確かめる。上ほど効きやすく、確認が安い。</p>
-<p style="margin:2px 0 2px 12px">1. <b>スレッド数</b> — <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1</code> で速くなるか（1 行、数秒）</p>
-<p style="margin:2px 0 2px 12px">2. <b>行列の大きさと形</b> — 短辺はいくつか。縦長か正方か</p>
-<p style="margin:2px 0 2px 12px">3. <b>呼び出し回数</b> — 1 回が遅いのか、小さいのを何万回も呼んでいるのか（後者なら絞る仕掛けの費用のほうが高くつく。3×3 の eigh を 2 万回まわす経路では 1 回ごとに <code style="color:#22d3bf">threadpool_limits</code> を呼ぶと 1.9 倍遅くなった: 58.9ms → 112.9ms）</p>
-<p style="margin:2px 0 2px 12px">4. <b>寸法が 2 の冪か</b> — ベンチマークの寸法が偏っていないか</p>
-<p style="margin:2px 0 2px 12px">5. <b>メモリ配置</b> — ここまで来て初めて。しかも変換する価値は薄い</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">測り方の注意</h3>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threadpoolctl.threadpool_limits(...)</code> は毎回<b>読み込み済みの共有ライブラリを数え直す</b>ので 1 回 312 µs かかる。<code style="color:#22d3bf">ThreadpoolController</code> を 1 個持って使い回すと 2.4 µs。ループの中で使うなら後者、それも<b>ループの外に 1 回</b>置く。</p>
-<p style="margin:2px 0 2px 12px">• 最小値ではなく<b>中央値</b>を採る。最小値は「たまたま速かった 1 回」を拾い、常用の速さを表さない。</p>
-<p style="margin:2px 0 2px 12px">• 他のプロセスが CPU を握っていないことを確認してから測る。この文書の初版の数字は、自分が放置した 3 プロセスが 3 コアを占有した状態で取ったもので、比率を 2〜3 倍過大に出していた（48×48 で 83 倍 → 実際は 27 倍）。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. 怀疑的顺序</h3>
+<p>含有分解的处理很慢时，按这个顺序确认。越靠上越容易见效，确认成本也越低。</p>
+<p style="margin:2px 0 2px 12px">1. <b>线程数</b> —— <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1</code> 是否变快（1 行，几秒）</p>
+<p style="margin:2px 0 2px 12px">2. <b>矩阵的大小与形状</b> —— 短边是多少。竖长还是正方</p>
+<p style="margin:2px 0 2px 12px">3. <b>调用次数</b> —— 是 1 次调用就慢，还是把小矩阵调用了几万次（如果是后者，限制机制的开销反而更高。在把 3×3 的 eigh 运行 2 万次的路径上，每 1 次都调用 <code style="color:#22d3bf">threadpool_limits</code> 会慢 1.9 倍：58.9ms → 112.9ms）</p>
+<p style="margin:2px 0 2px 12px">4. <b>尺寸是否为 2 的幂</b> —— 基准测试的尺寸是否有偏</p>
+<p style="margin:2px 0 2px 12px">5. <b>内存布局</b> —— 走到这一步才考虑。而且转换的价值也不大</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">测量时的注意事项</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threadpoolctl.threadpool_limits(...)</code> 每次都会<b>重新清点已加载的共享库</b>，所以 1 次要 312 µs。持有 1 个 <code style="color:#22d3bf">ThreadpoolController</code> 并反复使用则是 2.4 µs。在循环中使用时用后者，而且要<b>在循环外放 1 次</b>。</p>
+<p style="margin:2px 0 2px 12px">• 取<b>中位数</b>而不是最小值。最小值会捡到“碰巧快了的 1 次”，不能代表常态的速度。</p>
+<p style="margin:2px 0 2px 12px">• 先确认没有其他进程占着 CPU 再测量。本文初版的数字，是在我自己放着不管的 3 个进程占用 3 个核的状态下测得的，比率被高估了 2〜3 倍（48×48 时 83 倍 → 实际是 27 倍）。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. 症状から原因へ</h3>
-<p>| 症状 | まず疑う | 確かめ方 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. 从症状到原因</h3>
+<p>| 症状 | 首先怀疑 | 确认方法 |</p>
 <p>| --- | --- | --- |</p>
-<p>| コア数の多い機械のほうが遅い | BLAS のスレッド過剰割り当て | <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1</code> を付けて再実行。速くなれば当たり |</p>
-<p>| 手元は速いのに CI が遅い（またはその逆） | 論理 CPU 数の違い | 両方で <code style="color:#22d3bf">threadpoolctl.threadpool_info()</code> を出して比べる |</p>
-<p>| 手元では通るのに CI で許容差を外れる | スレッド数で縮約順序が変わり下位ビットが動く | 両方で同じスレッド数に固定して再実行。差が消えれば当たり |</p>
-<p>| 小さい行列を大量に回す処理が、絞ったら遅くなった | 絞る仕掛け自体の費用（1 回 2.4 µs、<code style="color:#22d3bf">threadpool_limits</code> 直呼びなら 312 µs） | ループの外に 1 回だけ置く。短辺が 32 未満なら何もしない |</p>
-<p>| 縦長行列の最小二乗が思ったより遅い | 長辺で「大きい行列」と判断してスレッドを許している | 短辺（列数）で判断する。<code style="color:#22d3bf">16384x3</code> は幅 3 の QR |</p>
-<p>| ベンチマークだけ妙に遅い | 寸法が 2 の冪でキャッシュのセット競合 | n と n±1 を並べて測る。13〜19% 差が出れば当たり |</p>
-<p>| 列優先にしたのに速くならない | <code style="color:#22d3bf">np.asfortranarray</code> のコピー代が節約を上回っている | 変換のみの時間を単体で測って、節約と比べる |</p>
-<p>| 量子化したのに <code style="color:#22d3bf">np.sort</code> が速くならない | 小さい整数型は SIMD 経路に乗っていない | <code style="color:#22d3bf">np.bincount</code> による計数ソートに置き換えて比べる |</p>
-<p>| スタック中央値が遅い | <code style="color:#22d3bf">np.median(cube, axis=0)</code> が非連続軸 + 完全な中央値計算 | 奇数枚なら <code style="color:#22d3bf">np.partition</code>、枚数が多いなら軸を連続側へ移す |</p>
+<p>| 核数多的机器反而更慢 | BLAS 线程过度分配 | 加上 <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1</code> 重新运行。变快了就是这个原因 |</p>
+<p>| 本地快而 CI 慢（或者相反） | 逻辑 CPU 数不同 | 在两边输出 <code style="color:#22d3bf">threadpoolctl.threadpool_info()</code> 进行比较 |</p>
+<p>| 本地能通过、在 CI 上却超出容差 | 线程数改变了归约顺序，低位比特发生变动 | 在两边固定为相同的线程数后重新运行。差异消失就是这个原因 |</p>
+<p>| 大量运行小矩阵的处理，加了限制反而变慢 | 限制机制本身的开销（每 1 次 2.4 µs，直接调用 <code style="color:#22d3bf">threadpool_limits</code> 则为 312 µs） | 只在循环外放 1 次。短边小于 32 时什么都不做 |</p>
+<p>| 竖长矩阵的最小二乘比预想的慢 | 按长边判断为“大矩阵”而允许了多线程 | 按短边（列数）判断。<code style="color:#22d3bf">16384x3</code> 是宽度为 3 的 QR |</p>
+<p>| 只有基准测试异常慢 | 尺寸是 2 的幂，发生缓存组冲突 | 把 n 与 n±1 并排测量。出现 13〜19% 的差就是这个原因 |</p>
+<p>| 改成列优先也没有变快 | <code style="color:#22d3bf">np.asfortranarray</code> 的拷贝开销超过了节省 | 单独测量仅转换的时间，与节省量比较 |</p>
+<p>| 量化了 <code style="color:#22d3bf">np.sort</code> 却没有变快 | 小整数类型不在 SIMD 路径上 | 替换为用 <code style="color:#22d3bf">np.bincount</code> 的计数排序进行比较 |</p>
+<p>| 堆叠中位数很慢 | <code style="color:#22d3bf">np.median(cube, axis=0)</code> 是非连续轴 + 完整的中位数计算 | 张数为奇数时用 <code style="color:#22d3bf">np.partition</code>，张数多时把轴移到连续一侧 |</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fsthreads</code> — fullseye でこの上限を実装している層。段数表と実測はその docstring に。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">math_metrology</code> / <code style="color:#22d3bf">measurement_uncertainty</code> — 測った値の扱い（この文書は「測る前に速さを疑う順番」で、対象が違う）。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">外部の一次情報</h3>
-<p>この文書の<b>数値はすべて自分の実測</b>で、外部から引いた値は 1 つも無い。以下は仕様・実装そのものの出典（2026-09-06 に到達を確認）。</p>
-<p style="margin:2px 0 2px 12px">• threadpoolctl（スレッド上限の実装。BSD-3）— &lt;https://github.com/joblib/threadpoolctl&gt;</p>
-<p style="margin:2px 0 2px 12px">• LAPACK Users&#x27; Guide（分解の計算量とブロック化）— &lt;https://www.netlib.org/lapack/lug/&gt;</p>
-<p style="margin:2px 0 2px 12px">• numpy の線形代数 API — &lt;https://numpy.org/doc/stable/reference/routines.linalg.html&gt;</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">相关</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fsthreads</code> —— fullseye 中实现这一上限的层。分级表与实测记录在其 docstring 中。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">math_metrology</code> / <code style="color:#22d3bf">measurement_uncertainty</code> —— 测得值的处理（本文讲的是 “测量之前怀疑速度的顺序”，对象不同）。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">外部的一手资料</h3>
+<p>本文的<b>数值全部是我自己的实测</b>，从外部引用的值连 1 个都没有。以下是规格与实现本身的出处（2026-09-06 确认可访问）。</p>
+<p style="margin:2px 0 2px 12px">• threadpoolctl（线程上限的实现。BSD-3）— &lt;https://github.com/joblib/threadpoolctl&gt;</p>
+<p style="margin:2px 0 2px 12px">• LAPACK Users&#x27; Guide（分解的计算量与分块）— &lt;https://www.netlib.org/lapack/lug/&gt;</p>
+<p style="margin:2px 0 2px 12px">• numpy 的线性代数 API — &lt;https://numpy.org/doc/stable/reference/routines.linalg.html&gt;</p>

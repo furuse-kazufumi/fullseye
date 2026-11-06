@@ -9,7 +9,7 @@ gpu: なし
 examples: [poc_weld_bead_profile, signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # smooth_funct_1d_mean — ONED `function` op

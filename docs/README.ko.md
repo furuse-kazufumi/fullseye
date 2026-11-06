@@ -31,7 +31,7 @@
 
 여기의 숫자는 손으로 쓰지 않습니다. `tools/gen_trust_block.py`가 `docs/`의 측정 데이터(`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`)로부터 이 절을 생성하며, 데이터와 어긋나면 `tests/test_trust_block.py`가 실패합니다. 모든 숫자에 측정한 버전과 날짜를 붙였습니다.
 
-**회귀 테스트 26,045건** — 0.9.0에 포함, commit `f6761b089e`, 2026-11-04에 `pytest --collect-only`로 센 값(선택적 백엔드를 모두 설치한 환경. 설치하지 않으면 해당 백엔드를 쓰는 테스트가 수집되지 않아 건수가 줄어듭니다).
+**회귀 테스트 27,660건** — 1.0.0에 포함, commit `c94e4f3d92`, 2026-11-06에 `pytest --collect-only`로 센 값(선택적 백엔드를 모두 설치한 환경. 설치하지 않으면 해당 백엔드를 쓰는 테스트가 수집되지 않아 건수가 줄어듭니다).
 
 ### 연산자를 하나 추가하면 무엇이 확인하는가
 
@@ -55,7 +55,7 @@
 
 ### 검증 단계
 
-능력 101건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 0.9.0)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
+능력 101건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 1.0.0)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
 
 | 단계 | 의미 | 능력 |
 |---|---|---|
@@ -82,6 +82,7 @@
 | 0.7.0 | 2026-10-18 | 3,354 | 2,401 | 982 | 248 | 19,935 |
 | 0.8.0 | 2026-10-22 | 3,529 | 2,572 | 982 | 275 | 22,073 |
 | 0.9.0 | 2026-11-04 | 3,752 | 2,788 | 966 | 297 | 26,045 |
+| 1.0.0 | 2026-11-06 | 3,811 | 2,847 | 1,017 | 299 | 27,660 |
 
 - 0.1.0–0.1.8의 HALCON 대응 323은 당시의 기록값이며, 0.1.9부터는 개정된 계수 방식으로 979입니다(656개의 구현이 새로 늘어난 것이 아님).
 - 0.2.0에서 처음으로 타입 대장을 색인에 포함했습니다. 918 → 1,942는 세는 범위의 변경이며 새 구현이 아닙니다(대장은 0.1.6부터 있었으나 색인 밖에 있었음).
@@ -306,7 +307,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 327건
+## 문서 지도 — 전 329건
 
 **색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,817건과 패밀리 가이드 73건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
@@ -327,12 +328,14 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | Walking a Character Over Terrain (sim-native, no GPU required) → [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) · 원문 _(ja)_ |
 | [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure → [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) · 원문 _(ja)_ |
 
-**Operator reference**(9)
+**Operator reference**(11)
 
 | 문서 | 내용 |
 |---|---|
 | [`OPERATORS.md`](OPERATORS.md) | imgevolve — cross-library operator catalog |
 | [`OP_CATALOG.md`](OP_CATALOG.md) | Fullseye Operator Catalog — AI capability ledger |
+| [`OP_CATALOG.en.md`](OP_CATALOG.en.md) | Fullseye Operator Catalog — AI capability ledger |
+| [`OP_CATALOG.zh.md`](OP_CATALOG.zh.md) | Fullseye Operator Catalog — AI capability ledger |
 | [`OP_COMBINATION_MATRIX.md`](OP_COMBINATION_MATRIX.md) | fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation) → [`OP_COMBINATION_MATRIX.en.md`](OP_COMBINATION_MATRIX.en.md) · 원문 _(ja)_ |
 | [`CONVERSION_MATRIX.md`](CONVERSION_MATRIX.md) | 型変換の行列 ―― 穴と不具合の点検 _(ja)_ |
 | [`CONNECTIVITY.md`](CONNECTIVITY.md) | Fullseye connectivity — devices, cameras & industrial protocols |

@@ -31,7 +31,7 @@
 
 Keine dieser Zahlen ist von Hand geschrieben: `tools/gen_trust_block.py` erzeugt diesen Abschnitt aus Messdateien in `docs/` (`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`), und `tests/test_trust_block.py` schlägt fehl, wenn er davon abweicht. Jede Zahl trägt Version und Datum ihrer Messung.
 
-**26,045 Regressionstests** — in 0.9.0 enthalten, Commit `f6761b089e`, am 2026-11-04 mit `pytest --collect-only` gezählt, mit allen optionalen Backends installiert (ohne sie werden die Tests der fehlenden Backends nicht gesammelt und die Zahl ist kleiner).
+**27,660 Regressionstests** — in 1.0.0 enthalten, Commit `c94e4f3d92`, am 2026-11-06 mit `pytest --collect-only` gezählt, mit allen optionalen Backends installiert (ohne sie werden die Tests der fehlenden Backends nicht gesammelt und die Zahl ist kleiner).
 
 ### Was einen neu hinzugefügten Operator prüft
 
@@ -55,7 +55,7 @@ Nicht gemessen: plausible, aber falsche Werte (Abstand zur Grundwahrheit), Gesch
 
 ### Verifikationsstufe
 
-Die 101 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.9.0) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
+Die 101 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 1.0.0) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
 
 | Stufe | Bedeutung | Fähigkeiten |
 |---|---|---|
@@ -82,6 +82,7 @@ Von 482 Beispielen werden 478 tatsächlich von einem Gate ausgeführt.
 | 0.7.0 | 2026-10-18 | 3,354 | 2,401 | 982 | 248 | 19,935 |
 | 0.8.0 | 2026-10-22 | 3,529 | 2,572 | 982 | 275 | 22,073 |
 | 0.9.0 | 2026-11-04 | 3,752 | 2,788 | 966 | 297 | 26,045 |
+| 1.0.0 | 2026-11-06 | 3,811 | 2,847 | 1,017 | 299 | 27,660 |
 
 - Der HALCON-Wert 323 für 0.1.0–0.1.8 ist der damals festgehaltene Wert; ab 0.1.9 beträgt er nach geänderter Zählung 979 (keine 656 neuen Implementierungen).
 - 0.2.0 ist die erste Version, deren Index das typisierte Register enthält: 918 → 1,942 ist eine Änderung der Zählweise, keine neue Implementierung (das Register gab es ab 0.1.6, aber außerhalb des Index).
@@ -306,7 +307,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 327
+## Dokumentkarte — alle 329
 
 Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,817 Operator-Notizen und 73 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
@@ -327,12 +328,14 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | Walking a Character Over Terrain (sim-native, no GPU required) → [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) · Original _(ja)_ |
 | [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure → [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) · Original _(ja)_ |
 
-**Operator reference**(9)
+**Operator reference**(11)
 
 | Dokument | Inhalt |
 |---|---|
 | [`OPERATORS.md`](OPERATORS.md) | imgevolve — cross-library operator catalog |
 | [`OP_CATALOG.md`](OP_CATALOG.md) | Fullseye Operator Catalog — AI capability ledger |
+| [`OP_CATALOG.en.md`](OP_CATALOG.en.md) | Fullseye Operator Catalog — AI capability ledger |
+| [`OP_CATALOG.zh.md`](OP_CATALOG.zh.md) | Fullseye Operator Catalog — AI capability ledger |
 | [`OP_COMBINATION_MATRIX.md`](OP_COMBINATION_MATRIX.md) | fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation) → [`OP_COMBINATION_MATRIX.en.md`](OP_COMBINATION_MATRIX.en.md) · Original _(ja)_ |
 | [`CONVERSION_MATRIX.md`](CONVERSION_MATRIX.md) | 型変換の行列 ―― 穴と不具合の点検 _(ja)_ |
 | [`CONNECTIVITY.md`](CONNECTIVITY.md) | Fullseye connectivity — devices, cameras & industrial protocols |

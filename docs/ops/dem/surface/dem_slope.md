@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [dem_geodesy_tour, poc_crop_phenotyping, poc_dem_terrain, poc_geodetic_height_frames, poc_lidar_terrain_change, poc_multibeam_bathymetry, poc_stockpile_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # dem_slope — DEM `surface` op

@@ -31,7 +31,7 @@
 
 這裡的數字都不是手寫的: `tools/gen_trust_block.py` 依據 `docs/` 中的量測資料(`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`)產生本節,若本節與資料不一致,`tests/test_trust_block.py` 就會失敗。每個數字都附有量測時的版本與日期。
 
-**回歸測試 26,045 個** — 包含在 0.9.0 中,commit `f6761b089e`,2026-11-04 以 `pytest --collect-only` 計數(安裝了全部選用後端的環境。未安裝時,依賴該後端的測試不會被收集,數量會較少)。
+**回歸測試 27,660 個** — 包含在 1.0.0 中,commit `c94e4f3d92`,2026-11-06 以 `pytest --collect-only` 計數(安裝了全部選用後端的環境。未安裝時,依賴該後端的測試不會被收集,數量會較少)。
 
 ### 新增一個運算子時,有哪些檢查會驗證它
 
@@ -55,7 +55,7 @@
 
 ### 驗證階段
 
-101 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 0.9.0)產生;階段定義見 [MATURITY.md](MATURITY.md))。
+101 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 1.0.0)產生;階段定義見 [MATURITY.md](MATURITY.md))。
 
 | 階段 | 含義 | 能力 |
 |---|---|---|
@@ -82,6 +82,7 @@
 | 0.7.0 | 2026-10-18 | 3,354 | 2,401 | 982 | 248 | 19,935 |
 | 0.8.0 | 2026-10-22 | 3,529 | 2,572 | 982 | 275 | 22,073 |
 | 0.9.0 | 2026-11-04 | 3,752 | 2,788 | 966 | 297 | 26,045 |
+| 1.0.0 | 2026-11-06 | 3,811 | 2,847 | 1,017 | 299 | 27,660 |
 
 - 0.1.0–0.1.8 的 HALCON 對應數 323 是當時的記錄值;自 0.1.9 起依修訂後的計數方式為 979(並非新增了 656 個實作)。
 - 0.2.0 首次將型別化台帳納入索引: 918 → 1,942 是計數口徑的變更,並非新的實作(台帳自 0.1.6 起就存在,但在索引之外)。
@@ -306,7 +307,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 327 篇
+## 文件地圖 — 共 329 篇
 
 完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,817 篇運算子說明與 73 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
@@ -327,12 +328,14 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | Walking a Character Over Terrain (sim-native, no GPU required) → [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) · 原文 _(ja)_ |
 | [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure → [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) · 原文 _(ja)_ |
 
-**Operator reference**(9)
+**Operator reference**(11)
 
 | 文件 | 內容 |
 |---|---|
 | [`OPERATORS.md`](OPERATORS.md) | imgevolve — cross-library operator catalog |
 | [`OP_CATALOG.md`](OP_CATALOG.md) | Fullseye Operator Catalog — AI capability ledger |
+| [`OP_CATALOG.en.md`](OP_CATALOG.en.md) | Fullseye Operator Catalog — AI capability ledger |
+| [`OP_CATALOG.zh.md`](OP_CATALOG.zh.md) | Fullseye Operator Catalog — AI capability ledger |
 | [`OP_COMBINATION_MATRIX.md`](OP_COMBINATION_MATRIX.md) | fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation) → [`OP_COMBINATION_MATRIX.en.md`](OP_COMBINATION_MATRIX.en.md) · 原文 _(ja)_ |
 | [`CONVERSION_MATRIX.md`](CONVERSION_MATRIX.md) | 型変換の行列 ―― 穴と不具合の点検 _(ja)_ |
 | [`CONNECTIVITY.md`](CONNECTIVITY.md) | Fullseye connectivity — devices, cameras & industrial protocols |

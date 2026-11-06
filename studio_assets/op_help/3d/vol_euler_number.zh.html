@@ -6,7 +6,7 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">chi(b0-b1+b2)</code></p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>二值体的欧拉示性数,并拆分为三个贝蒂数(物体・贯通孔・闭孔)。</p>
+<p>二值体的欧拉示性数,并拆分为三个贝蒂数(物体、贯通孔、闭孔)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">chi = b0 - b1 + b2</code> where <code style="color:#22d3bf">b0</code> counts <b>separate objects</b>, <code style="color:#22d3bf">b1</code> counts <b>tunnels</b> (handles that pass right through) and <code style="color:#22d3bf">b2</code> counts <b>enclosed cavities</b>.  For porous media that split is the whole point:</p>
 <p><code style="color:#22d3bf">b1</code> is open, connected porosity — the paths a fluid can take — while <code style="color:#22d3bf">b2</code> is closed porosity that no fluid reaches.  A single <code style="color:#22d3bf">chi</code> cannot tell a foam with many tunnels from one with many sealed bubbles; the three numbers can.</p>

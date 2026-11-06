@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_region, poc_crack_width, poc_vessel_network]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # thinning — 2D `region` op

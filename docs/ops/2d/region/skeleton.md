@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_region, poc_crack_width, poc_em_branch_territory, poc_fresco_craquelure, poc_real_sem_metal_layer, poc_swc_tree_truth, poc_vessel_network]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # skeleton — 2D `region` op

@@ -2,7 +2,7 @@
 """リリース前の点検を**機械に実行させる**。手順書 `docs/RELEASE_CHECKLIST.md` の実行部。
 
     py -3.11 tools/preflight.py           # 既定(全数テスト以外)
-    py -3.11 tools/preflight.py --full    # 全数テストも含む(+20 分)
+    py -3.11 tools/preflight.py --full    # 全数テストも含む(12 並列で +1 時間前後)
     py -3.11 tools/preflight.py --only wheel,linux
 
 **なぜ道具にするのか**: 2026-09-05 に出した 0.1.8 で、次が全部「知っていたのに
@@ -313,9 +313,20 @@ def _suite_detail(out: str) -> str:
     return " / ".join(parts) or "(出力に FAILED も集計行も無い)"
 
 
+#: 全数テストの並列数と、点検が止まらないための上限(秒)。
+SUITE_WORKERS = 12
+SUITE_TIMEOUT_S = 7200
+
+
 def check_full_suite() -> Result:
     t = time.time()
-    r = _run([PY, "-m", "pytest", "-q", "-p", "no:cacheprovider"], timeout=5400)
+    # ★2026-11-06: 以前は並列なし・上限 5400 秒(90 分)。スイートが 27,000 件を超え、並列なしでは
+    #   90 分に収まらず「点検自体が落ちた: TimeoutExpired」で FAIL になった(中身の合否は分からないまま)。
+    #   CI と同じく pytest-xdist で並列に回す(xdist は順序依存を出すためにも入れてある、pyproject 参照)。
+    #   並列数は SUITE_WORKERS。16 では時間の上限つきのテスト(test_chain_mine の 120 秒)が負荷で
+    #   落ちたので 12 にする。上限の 7200 秒は点検が止まらないための安全装置で、合否の閾値ではない。
+    r = _run([PY, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-n", str(SUITE_WORKERS)],
+             timeout=SUITE_TIMEOUT_S)
     #: ★全出力は **repo の外**に残す。repo 直下に置くと「余計なファイル」を見る門に
     #: 当たりうるし、木が汚れて「凍った木で 1 回」という証拠の条件が崩れる。
     log = os.path.join(tempfile.gettempdir(),
@@ -344,7 +355,7 @@ CHECKS = [
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--full", action="store_true", help="全数テストも走らせる(+20 分)")
+    ap.add_argument("--full", action="store_true", help="全数テストも走らせる(12 並列で +1 時間前後)")
     ap.add_argument("--only", help="実行する項目をカンマ区切りで指定")
     ns = ap.parse_args(argv)
     sys.path.insert(0, ROOT)

@@ -9,7 +9,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [gallery2d_segmentation, poc_battery_electrode_breathing, poc_bump_coplanarity, threshold_family_agreement]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # auto_threshold — 2D `segmentation` op

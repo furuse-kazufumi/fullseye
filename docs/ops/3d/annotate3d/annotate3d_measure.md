@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [annotate3d_figure]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # annotate3d_measure — 3D `annotate3d` op
