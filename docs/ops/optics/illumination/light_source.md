@@ -8,7 +8,7 @@ gpu: なし
 examples: [illumination_design_demo, poc_pocket_interreflection, poc_pod_lighting, virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # light_source — OPTICS `illumination` op

@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [vessel_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # vol_hessian_blobness — 3D `feature` op

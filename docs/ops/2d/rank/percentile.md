@@ -9,7 +9,7 @@ gpu: あり(rank_percentile)
 examples: [gallery2d_smoothing_rank, poc_colormap_readability]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # percentile — 2D `rank` op

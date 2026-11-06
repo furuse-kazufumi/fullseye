@@ -8,7 +8,7 @@ gpu: なし
 examples: [primitive_fitting_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # fit_surface_principal_axes — 3D `geometry` op

@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [ct_reconstruction, poc_battery_ct_degradation]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # beam_hardening_apply — TOMOGRAPHY `artifact` op

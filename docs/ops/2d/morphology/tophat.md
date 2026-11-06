@@ -9,7 +9,7 @@ gpu: あり(gray_tophat)
 examples: [degenerate_inputs, example_scratch_width, gallery2d_morphology, poc_search_sweep_width]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # tophat — 2D `morphology` op

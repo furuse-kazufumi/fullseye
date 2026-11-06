@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_halcon_ext, poc_screw_thread_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # hx_split_contours — 2D `halcon_ext` op

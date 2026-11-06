@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [gallery2d_gray_arith]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # banding_map — 2D `gray` op
