@@ -67,6 +67,9 @@ SPEC = [
     ("poc_driving_crossing", _P + "poc_driving_crossing/01_crossing_dashcam.gif", 0.45, (0.35, 0.0, 1.0)),
     ("poc_driving_pass", _P + "poc_driving_pass/03_mirror_tjunction.gif", 0.6, (0.0, 0.0, 1.0)),
     ("poc_ttc_rss", _P + "poc_ttc_rss/06_approach_gif.gif", 0.3, None),
+    # CARLA の運転動画の抜粋(元は mp4 なので、同じ抜粋の 1 コマの静止画から切る)
+    ("carla_iroha_haze", "view2026/media/iroha_haze_hairpins.png", None, (0.22, 0.0, 1.0)),
+    ("carla_ginza_signals", "view2026/media/ginza_fullseye_excerpt_v2.png", None, (0.2, 0.0, 1.0)),
     ("poc_eye_to_brain", _P + "poc_eye_to_brain/01_eye_sweep.gif", 0.5, None),
     ("poc_malecns_activity_wave", _P + "poc_malecns_activity_wave/01_activity_wave_connectome_vs_shuffle.gif", 0.6, (0.0, 0.0, 1.0)),
     ("poc_microns_brain_wave", _P + "poc_microns_brain_wave/04_wave_on_wiring.gif", 0.5, None),
