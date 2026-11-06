@@ -1774,7 +1774,7 @@
     "hi": "पूरा video (3.38 km चढ़ाई): 0 टक्कर, lane के बीच से विचलन median 0.066 m, max 0.418 m; 9 में से 2 signs पढ़े, 0 गलत (map और CARLA से जाँचा)।",
     "fr": "Vidéo complète (montée de 3.38 km) : 0 collision, écart au centre de voie médiane 0.066 m, max 0.418 m ; 2 panneaux lus sur 9, 0 erreur de lecture (jugé par la carte et CARLA)."
    },
-   "youtube_url": "",
+   "youtube_url": "https://youtu.be/XN1mGAftSlY",
    "ops": [
     "driveenv.sight_stop_speed",
     "driveenv.mor_from_beta",
@@ -1787,6 +1787,67 @@
     "matching.create_ncc_model",
     "matching.find_ncc_model",
     "carlabridge.carla_intrinsics"
+   ]
+  },
+  {
+   "id": "carla_ginza_signals",
+   "category": "driving",
+   "media": "",
+   "media_path": "view2026/media/ginza_fullseye_excerpt_v2.mp4",
+   "thumb_path": "view2026/media/ginza_fullseye_excerpt_v2.png",
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/carlabridge.py",
+   "provenance": "fullseye_shows(非公開)の銀座の運転動画の本編 15〜27 s を 640×360・30 fps で切り出した抜粋(v2)と、21 s の 1 コマ。1 秒おきのコマで赤のまま横断歩道に入らないことを確認済み",
+   "motion": true,
+   "label": {
+    "ja": "銀座の信号(CARLA)",
+    "en": "Ginza signals (CARLA)",
+    "zh": "银座的信号灯(CARLA)",
+    "tw": "銀座的號誌(CARLA)",
+    "ko": "긴자의 신호(CARLA)",
+    "de": "Ampeln in Ginza (CARLA)",
+    "hi": "Ginza के signals (CARLA)",
+    "fr": "Feux de Ginza (CARLA)"
+   },
+   "lead": {
+    "ja": "銀座の街区を CARLA に組んだ運転動画の抜粋。運転は CARLA の Traffic Manager が行い、Fullseye は見たものを重ねて描くだけ —— CARLA の深度とラベルの画像から、前方の車の距離と、信号の位置と距離を出す。信号の灯色の判定は動画を作る側の色の規則で、Fullseye の op ではない。運転のスクリプトは非公開で、使った op は公開。限界: 「前方の車」の枠は重なった数台を 1 つにまとめることがある。出典表示: OpenStreetMap(ODbL)、PLATEAU 中央区 2025(CC BY 4.0 互換)、CARLA(MIT / CC-BY)、Unreal Engine 5。",
+    "en": "An excerpt from a driving video of Ginza's streets built in CARLA. CARLA's Traffic Manager drives; Fullseye only draws what it sees on top: from CARLA's depth and label images it finds the distance to the car ahead and the position and distance of the signals. The signal colour is judged by a colour rule in the video-making script, not by a Fullseye op. The driving script is private; the ops it uses are public. Limit: the \"car ahead\" box sometimes merges several overlapping cars into one. Attribution: OpenStreetMap (ODbL), PLATEAU Chuo-ku 2025 (CC BY 4.0 compatible), CARLA (MIT / CC-BY), Unreal Engine 5.",
+    "zh": "在 CARLA 中搭建银座街区的驾驶视频节选。驾驶由 CARLA 的 Traffic Manager 完成,Fullseye 只把看到的东西叠加绘制:从 CARLA 的深度图和标签图求出前车距离、信号灯的位置和距离。信号灯颜色的判定是制作视频一侧的颜色规则,不是 Fullseye 的 op。驾驶脚本不公开,所用的 op 公开。局限:「前车」框有时把重叠的几辆车合成一个。出处: OpenStreetMap(ODbL)、PLATEAU 中央区 2025(CC BY 4.0 兼容)、CARLA(MIT / CC-BY)、Unreal Engine 5。",
+    "tw": "在 CARLA 中搭建銀座街區的駕駛影片節錄。駕駛由 CARLA 的 Traffic Manager 完成,Fullseye 只把看到的東西疊加繪製:從 CARLA 的深度圖與標籤圖求出前車距離、號誌的位置與距離。號誌燈色的判定是製作影片一側的顏色規則,不是 Fullseye 的 op。駕駛腳本不公開,所用的 op 公開。限制:「前車」框有時把重疊的幾輛車合成一個。出處: OpenStreetMap(ODbL)、PLATEAU 中央區 2025(CC BY 4.0 相容)、CARLA(MIT / CC-BY)、Unreal Engine 5。",
+    "ko": "CARLA에 긴자 거리를 구성한 주행 영상의 발췌. 주행은 CARLA의 Traffic Manager가 하고, Fullseye는 본 것을 겹쳐 그릴 뿐이다: CARLA의 깊이·라벨 영상에서 앞차까지의 거리와 신호의 위치·거리를 구한다. 신호 등색 판정은 영상 제작 측의 색 규칙이며 Fullseye의 op가 아니다. 주행 스크립트는 비공개, 사용한 op는 공개. 한계: \"앞차\" 상자가 겹친 여러 대를 하나로 묶을 때가 있다. 출처: OpenStreetMap(ODbL), PLATEAU 주오구 2025(CC BY 4.0 호환), CARLA(MIT / CC-BY), Unreal Engine 5.",
+    "de": "Ausschnitt aus einem Fahrvideo der Straßen von Ginza, in CARLA nachgebaut. Es fährt der Traffic Manager von CARLA; Fullseye zeichnet nur ein, was es sieht: aus den Tiefen- und Labelbildern von CARLA den Abstand zum vorausfahrenden Auto sowie Lage und Abstand der Ampeln. Die Ampelfarbe beurteilt eine Farbregel im Videoskript, kein Fullseye-Op. Das Fahrskript ist nicht öffentlich, die verwendeten Ops sind es. Grenze: Der Rahmen \"Auto voraus\" fasst manchmal mehrere überlappende Autos zu einem zusammen. Quellen: OpenStreetMap (ODbL), PLATEAU Chuo-ku 2025 (CC BY 4.0 kompatibel), CARLA (MIT / CC-BY), Unreal Engine 5.",
+    "hi": "CARLA में बनाई गई Ginza की सड़कों के driving video का अंश। गाड़ी CARLA का Traffic Manager चलाता है; Fullseye केवल जो देखता है उसे ऊपर बनाता है: CARLA की depth और label images से आगे की car की दूरी और signals की जगह व दूरी निकालता है। signal का रंग video बनाने वाली script के colour rule से तय होता है, Fullseye op से नहीं। driving script private है; उसमें इस्तेमाल हुए ops public हैं। सीमा: \"आगे की car\" का box कभी-कभी कई overlapping cars को एक में मिला देता है। स्रोत: OpenStreetMap (ODbL), PLATEAU Chuo-ku 2025 (CC BY 4.0 compatible), CARLA (MIT / CC-BY), Unreal Engine 5।",
+    "fr": "Extrait d'une vidéo de conduite dans les rues de Ginza reconstruites dans CARLA. C'est le Traffic Manager de CARLA qui conduit ; Fullseye ne fait que superposer ce qu'il voit : à partir des images de profondeur et d'étiquettes de CARLA, la distance au véhicule de devant ainsi que la position et la distance des feux. La couleur du feu est jugée par une règle de couleur du script vidéo, pas par un op Fullseye. Le script de conduite n'est pas public ; les ops utilisés le sont. Limite : le cadre « véhicule devant » regroupe parfois plusieurs véhicules qui se chevauchent. Sources : OpenStreetMap (ODbL), PLATEAU Chuo-ku 2025 (compatible CC BY 4.0), CARLA (MIT / CC-BY), Unreal Engine 5."
+   },
+   "see": {
+    "ja": "信号が青→黄→赤と変わり、自車は赤で横断歩道の手前(停止線の 5.1 m 手前)に止まり、青で発進する 12 秒(本編 15〜27 秒)。枠と距離は Fullseye の op が深度とラベルから出したもの。",
+    "en": "12 s in which the signal turns green → amber → red, the car stops on red before the crosswalk (5.1 m short of the stop line) and pulls away on green (15–27 s of the full video). The boxes and distances come from Fullseye ops on the depth and label images.",
+    "zh": "信号灯由绿→黄→红变化,本车在红灯时停在人行横道前(停止线前 5.1 m),绿灯时起步的 12 秒(正片 15〜27 秒)。框和距离由 Fullseye 的 op 从深度和标签中求出。",
+    "tw": "號誌由綠→黃→紅變化,本車在紅燈時停在行人穿越道前(停止線前 5.1 m),綠燈時起步的 12 秒(正片 15〜27 秒)。框與距離由 Fullseye 的 op 從深度與標籤中求出。",
+    "ko": "신호가 녹색→황색→적색으로 바뀌고, 자차가 적색에서 횡단보도 앞(정지선 5.1 m 앞)에 멈췄다가 녹색에서 출발하는 12 초(본편 15〜27 초). 상자와 거리는 Fullseye의 op가 깊이와 라벨에서 구한 것.",
+    "de": "12 s, in denen die Ampel von Grün → Gelb → Rot wechselt, das Auto bei Rot vor dem Zebrastreifen hält (5.1 m vor der Haltelinie) und bei Grün anfährt (15–27 s des ganzen Videos). Rahmen und Abstände liefern Fullseye-Ops aus Tiefe und Labels.",
+    "hi": "12 s जिनमें signal हरा → पीला → लाल होता है, car लाल पर zebra crossing से पहले (stop line से 5.1 m पहले) रुकती है और हरे पर चल पड़ती है (पूरे video के 15–27 s)। boxes और दूरियाँ Fullseye ops depth और label से निकालते हैं।",
+    "fr": "12 s pendant lesquelles le feu passe du vert → orange → rouge, le véhicule s'arrête au rouge avant le passage piéton (5.1 m avant la ligne d'arrêt) et repart au vert (15–27 s de la vidéo complète). Les cadres et distances viennent des ops Fullseye sur la profondeur et les étiquettes."
+   },
+   "num": {
+    "ja": "抜粋の 12 秒で、赤のまま停止線を越えない。",
+    "en": "In the 12 s excerpt, the car never crosses the stop line on red.",
+    "zh": "在节选的 12 秒中,不会在红灯时越过停止线。",
+    "tw": "在節錄的 12 秒中,不會在紅燈時越過停止線。",
+    "ko": "발췌 12 초 동안 적색인 채로 정지선을 넘지 않는다.",
+    "de": "In den 12 s des Ausschnitts überfährt das Auto die Haltelinie nie bei Rot.",
+    "hi": "12 s के अंश में car लाल रहते stop line पार नहीं करती।",
+    "fr": "Sur les 12 s de l'extrait, le véhicule ne franchit jamais la ligne d'arrêt au rouge."
+   },
+   "youtube_url": "",
+   "ops": [
+    "carlabridge.carla_label_map",
+    "carlabridge.carla_depth_decode",
+    "carlabridge.carla_intrinsics",
+    "carlabridge.lead_from_depth",
+    "blob2d.blob_label",
+    "blob2d.blob_features",
+    "annotate.rounded_rect",
+    "annotate.text_box"
    ]
   },
   {
