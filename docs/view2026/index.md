@@ -110,11 +110,6 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="thumbs/evis_bean_track.jpg" alt="箸先カメラで豆を見失わずに追う(シミュレータ)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>箸先カメラで豆を見失わずに追う(シミュレータ)</span></a>
 <a href="../articles/assets/media/evis_stereo_fullseye.mp4"><img src="thumbs/evis_stereo_depth.jpg" alt="両眼ステレオで豆までの距離を測る(シミュレータ)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>両眼ステレオで豆までの距離を測る(シミュレータ)</span></a>
 <a href="https://youtu.be/XN1mGAftSlY"><img src="thumbs/carla_iroha_haze.jpg" alt="霞のヘアピンを登る(CARLA)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>霞のヘアピンを登る(CARLA)</span></a>
-<a href="../articles/assets/poc/poc_focus_stacking/05_focus_sweep.mp4"><img src="thumbs/poc_focus_stacking.jpg" alt="焦点合成" loading="lazy" width="320" height="320"><b>&#9654;</b><span>焦点合成</span></a>
-<a href="../articles/assets/poc/poc_polarization_specular/08_analyzer_sweep_explained.mp4"><img src="thumbs/poc_polarization_specular.jpg" alt="偏光で鏡面除去" loading="lazy" width="320" height="320"><b>&#9654;</b><span>偏光で鏡面除去</span></a>
-<a href="../articles/assets/poc/poc_compound_eye/02_compound_eye_superposition.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_compound_eye/01_compound_eye_scaling.png"><img src="../articles/assets/poc/poc_compound_eye/story.ja.gif" alt="ハエの神経重ね合わせ ~6(半径1)は √N が厳密に成り立つ領域。" loading="lazy" width="320" height="320"></picture><span>複眼の光場</span></a>
-<a href="../articles/assets/poc/poc_ct_void_morphology/13_section_sweep.mp4"><img src="thumbs/poc_ct_void_morphology.jpg" alt="CT のボイド" loading="lazy" width="320" height="320"><b>&#9654;</b><span>CT のボイド</span></a>
-<a href="../articles/assets/poc/poc_active_contours/06_u_shape_snakes.mp4"><img src="thumbs/poc_active_contours.jpg" alt="動的輪郭" loading="lazy" width="320" height="320"><b>&#9654;</b><span>動的輪郭</span></a>
 </div>
 
 ## シリーズ記事
@@ -705,9 +700,6 @@ document.querySelectorAll("details.vall").forEach(function (d) {
   UAV水田RGBを16画素格子に分け、trainで10特徴の教師ありFisher LDAを学習し、valで方式を選び、test 148枚を一度だけ評価した。境界は事前に5、25、50%と宣言。 **段階一致0.574、カッパ0.424、被度相関0.826、IoU 0.397。撮影日を丸ごと外すと季節の異なる1日は日内相関0.14だった。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_weed_rice_ratio.py)
 - [画像相関のひずみ: 隣のコマと比べて足すと誤差が 31 分の 1](../articles/assets/poc/poc_strain_history/01_speckle.png) (図): 部品が少しずつ伸びていく試験を、表面の斑点模様を撮って追いかけ、ひずみを測る。隣接するコマの差を足していくと、毎回基準のコマと直接比較するより誤差が 31 倍小さかった。効いていたのは比べる回数ではなく、一歩あたりの変形の大きさだった。
   1 時間のクリープを 25 コマ撮り、隣接コマの累積と基準フレームとの直接比較でひずみ履歴を出した図。 **終端で累積 61 µε / 直接 1878 µε と累積が 31 倍良く、教科書の「時刻で入れ替わる」交点は無い(入れ替わるのは雑音の軸)。コマを 24 → 4 歩に間引くと累積は -60 → -606 µε と悪化 ―― 効くのは歩数でなく 1 歩あたりの変形量。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_strain_history.py)
-- [動的輪郭](../articles/assets/poc/poc_active_contours/06_u_shape_snakes.mp4) (動画): 動的輪郭は、曲線を少しずつ動かして物の縁に貼り付けるセグメンテーションの手法である。外から引く力を勾配ベクトル流に替えると、U 字の凹みにも入って 0.993 の重なりで縁に合った。古典のやり方では、縁の力が凹みの奥まで届かず入れない。
-  反復を重ねるほどGVF輪郭が最終形へ近づく **外力だけを GVF に替えると Dice 0.993(真の縁に対して)。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_active_contours.py)
-  用語: GVF — 画像勾配を滑らかなベクトル場へ拡散し、離れた境界や凹部へもスネークを引き寄せる外力。; DRLSE — レベルセット関数を符号付き距離に近く保つ正則化項を持ち、再初期化を不要にした輪郭発展法。; Dice — 二つの領域の共通部分を各領域の大きさの平均で正規化した、0から1の重なり指標。
 
 **三次元計測・幾何処理**
 
@@ -720,8 +712,6 @@ document.querySelectorAll("details.vall").forEach(function (d) {
   この博物館で初めて**実写**を通した 1 本(Middlebury 2014 motorcycle、真値視差つき)。★配布元の注記は真値の穴を NaN と書いているが実際は +inf で、np.nanmedian は中央視差を 42.55 px でなく 44.97 px と答える(isfinite で判定している fill_disparity と apply_cmap は正しく穴として扱った)。 **★既定 max_disp=16 は bad2 95.06 % ―― 真の最大視差 59.91 px を下回る設定は前景を丸ごと失うので、崖は 48 と 64 の間に立つ(幾何から先に言える)。ゼロ点 94.04 % に対し SGM 15.81 %、信頼度で下位 4 割を捨てると 6.80 %。★★距離に落とすところで形が反り返る: depth_from_disparity に主点オフセット doffs が無く、実写の校正値 31.086 px を無視すると距離が 1.519〜5.243 倍にばらけ、最良の単一スケール 0.3733 を掛けてなお残差 958.3 mm RMS(奥行きレンジ 2889 mm の 33.2 %)、遠い面は +1676 mm 押し出され近い面は -926 mm 引き込まれる。この PoC で doffs を引数に足した(閉形式と最大差 0 mm)。★census は実装が弱いのではなく 64 bit パックで窓が 7 で頭打ち(3/5/7 で 75.27/48.62/35.44 % と伸びている途中)。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_stereo_depth.py)
 - [堆積物の体積: 見えない底面と裏側が誤差を決める](../articles/assets/poc/poc_stockpile_volume/07_scan_orbit.mp4) (動画): 鉱山や港の堆積物の在庫量は、山を立体スキャンして体積から出す。見えない裏側を補間で埋めると、在庫量は +17.20 % の過大に出た。答えを決めるのは、誰も測っていない山の下の地面の仮定である。
   山の周りを回りながら、3-D スキャンの位置を 1 → 3 か所に増やす。色は補間面と真の面の差。 **在庫量の誤差は +17.20 % → +0.05 %(真の底面、体積の真値は閉形式 3572.6089 m³)。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py)
-- [焦点合成](../articles/assets/poc/poc_focus_stacking/05_focus_sweep.mp4) (動画): ピントをずらして撮った写真の束から、全焦点の画像と奥行きの地図を作る。全焦点の画像は 33.69 dB で、真ん中の写真よりきれいになった。同じ融合から作った深度は、模様の無い所では当てにならない。
-  F値を上げるほど焦点合成像が真のテクスチャに近づく **全焦点 PSNR 33.69 dB(中央の 1 枚は 28.52 dB)、深度誤差 0.467 mm(テクスチャあり)。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_focus_stacking.py)
 
 **X線CT・ボリューム処理**
 
@@ -731,9 +721,6 @@ document.querySelectorAll("details.vall").forEach(function (d) {
   用語: Beer–Lambert — 均一な吸収媒体を通る光の透過率が、濃度と光路長に対して指数関数的に減るという法則。
 - [積層造形品の実 CT で下向き面の荒れを測る](../articles/assets/poc/poc_am_thermal_to_ct/07_ct_hole_crown.png) (図): 金属の積層造形で作った部品を、公開の X 線 CT の断面で調べる。張り出した下向きの面は、上向きの面より荒れが大きく 63 マイクロメートルだった。同じ傾きどうしで比べると差は小さく、熱画像の解析との対応付けはまだ示していない。
   熱画像は裸のIn718板上の単トラック、CTは別実験・別造形物のOverhang Part X4であり、工程前後を対応付けない。2026-10-02の記録値では、4095 DLは放射率1で1401℃、0.3で1641℃。CTと設計のDiceは0.981。 **表面は下向き63、上向き32マイクロメートルだが、同じ傾き同士では1.16倍。内部空隙は0個、検出下限は約63マイクロメートル。熱画像条件とCT欠陥の対応は示していない。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_am_thermal_to_ct.py)
-- [CT のボイド](../articles/assets/poc/poc_ct_void_morphology/13_section_sweep.mp4) (動画): 電子部品の接合層にできるボイドを、X 線 CT で撮ってボイド率という一つの数字にまとめる。扁平なボイドが界面を塞ぐ面積は、同じ体積の球の 2.09 倍になった。一つの数字に畳むと、寿命に効く形の違いが消える。
-  しきい値を上げるほどボイド判定が広がり、体積率が増える **ボイド率は 2.46 % 対 2.63 % なのに、界面からの距離の中央値は 60.0 µm 対 10.0 µm。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
-  用語: PSF — 点状の物体を撮ったときに像がどのように広がるかを表す、撮像系の空間応答。
 
 **光学・干渉・偏光**
 
@@ -771,8 +758,6 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [仮想 SEM: 加速電圧で像も線幅も変わる](../articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png) (図): SEM の像は表面の写真ではなく、固体の中で散乱した電子のうち外へ出てきたものの集計である。電子を一つずつ追う模型を組み、反射電子の量を 7 元素の実測データベースと照合した。同じ線でも加速電圧を変えると、側壁のどの高さを線幅として測っているかが変わる。
   走査電子顕微鏡(SEM)の像は表面の写真ではなく、固体の中で散乱する一次電子の**相互作用の体積**から何が出てきたかの集計である。新 op 8 本(`sem_electron_mc` / `sem_yield_curve` / `sem_se_universal_curve` / `sem_line_profile` / `sem_cd_measure` / `sem_image` / `sem_charging_series` / `sem_se_escape_fraction`)と材料表の `material_electron_properties` で、一次電子を 1 個ずつ追うモンテカルロ(Joy の単散乱、弾性散乱は Browning 1994 の Mott 近似、阻止能は Joy-Luo)を組み、各段を外の実測値で採点した。 **反射電子係数 η は 7 元素(C〜Au)× 5/10/20/30 keV の全部が Joy のデータベースの実測の幅 ± 0.04 に入り、遮蔽ラザフォードに戻すと W・Au で外れる。最大の到達深さは Kanaya-Okayama の 0.83〜1.04 倍、深さは E^1.75(Si)/ E^1.52(Au)で伸びる(KO は 1.67)。二次電子の収率の形は C〜Ag の 5 元素で Lin & Joy 2005 の普遍曲線に RMS ≤ 0.076、Emax は表の −4〜+7 %(合わせていない)。W・Au は裾が厚く合わない(SE2 が主、未解決)。★ユーザーの見立て「Si の上の W は SE では見えず、反射電子の Z コントラストで浮かぶ」は条件つきで当たった: 段差の無い W を 1 kV で見たときだけ(SE +5 %、反射電子 +96 %)。5 kV では SE も +80 % —— 反射電子が表面を抜けるときに作る SE2 が Z を運ぶ。深さ 150 nm に埋もれた W は 1 kV では反射電子でも +3 %、20 kV で +154 %(情報深さ)。CD-SEM では PMMA の線(底辺 40 nm)を側壁 88 度で測ると、しきい値法の線幅が 1 kV 39.1 nm / 20 kV 39.9 nm ―― 低加速は側壁の上寄り(0.33)、高加速は根元(0.03)を測る。ただし側壁 80 度では差が小さく向きも逆で、「低加速ほど上を測る」は一般則ではない。垂直の側壁はどの電圧でも太く測る(+0.3〜+1.0 nm)。帯電は、η + δ > 1 の 0.5 kV で正に溜まって暗くなり、η + δ·F(V*) = 1 を二分法で別に解いた電位に 2e-15 V で止まる。20 kV は負に溜まり続けて明るくなる(現象論)。途中で見つけた欠陥も残す: 自由行程を出発点の材料で引いたまま材料の境界を素通りしていて、0.01 nm の Si のキャップで W の η が 0.425 → 0.329 に跳んでいた(境界で歩を切って直し、回帰の門にした)。実画像の章は未実施(線幅の真値つきの CC BY の CD-SEM 像が見つからない)。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
   使った Fullseye の op: `material_electron_properties` · `sem_cd_measure` · `sem_charging_series` · `sem_electron_mc` · `sem_image` · `sem_line_profile` · `sem_se_escape_fraction` · `sem_se_universal_curve` · `sem_yield_curve` · `threshold`
-- [偏光で鏡面除去](../articles/assets/poc/poc_polarization_specular/08_analyzer_sweep_explained.mp4) (動画): 光沢のある面の写り込みを、偏光を使って拡散の成分と分ける。拡散成分の誤差は、ブリュースター角の 56.31 度で消える。入射角が浅いと、偏光を使っても分離はあまり良くならない。
-  入射角で鏡面分離の誤差が変わり、ブリュースター角近傍で最小になる **拡散成分の誤差は閉形式 R_p·E と一致し、ブリュースター角 56.31 度で 0。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 
 **熱・音響・時系列**
 
@@ -783,8 +768,6 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [手首カメラで穴に寄せてペグを入れる(12 / 12 成功)](../articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif) (GIF): 柔らかい手首のロボットが、手首のカメラで穴の位置を測ってペグを差し込む。測って寄せる動きを繰り返し、横のずれを 0.03 mm まで詰めてから下ろした。接触の力は物理シミュレータで計算し、学習は使っていない。
   手首カメラで穴の位置を測って寄せ、柔らかい手首でペグを入れる(MuJoCo)。 **サーボ 7 回で真のずれ 2.24 → 0.03 mm。補正ありの挿入は 12 / 12 成功。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pegsim_insertion.py)
-- [複眼の光場](../articles/assets/poc/poc_compound_eye/02_compound_eye_superposition.png) (図): ハエの複眼は、たくさんの個眼で同じ点を見る光の場のセンサとみなせる。同じ点を重ねる個眼を増やしても、雑音を減らす利得は 5.33 で頭打ちになった。ハエが実際に重ねる数は、その頭打ちの手前にある。
-  視点ごとのSNRを上げるほど複眼像が無雑音像に近づく **SNR 利得は N=5 で 2.25(√5 = 2.24)、N=49 で 5.33(√49 = 7.00)。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_compound_eye.py)
 
 **自動運転**
 

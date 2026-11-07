@@ -2606,242 +2606,47 @@
     "matching.find_ncc_model",
     "carlabridge.carla_intrinsics"
    ]
-  },
-  {
-   "id": "poc_focus_stacking",
-   "category": "geometry3d",
-   "media": "05_focus_sweep.mp4",
-   "motion": true,
-   "label": {
-    "ja": "焦点合成",
-    "en": "Focus stacking",
-    "zh": "景深合成",
-    "tw": "景深合成",
-    "ko": "초점 합성",
-    "de": "Fokus-Stacking",
-    "hi": "Focus stacking",
-    "fr": "Empilement de mise au point"
-   },
-   "see": {
-    "ja": "F値を上げるほど焦点合成像が真のテクスチャに近づく",
-    "en": "Raising the f-number brings the focus-stacked image closer to the true texture",
-    "zh": "提高光圈值，景深合成图像越接近真实纹理",
-    "tw": "提高光圈值，景深合成影像越接近真實紋理",
-    "ko": "조리개값을 높일수록 초점 합성 영상이 실제 텍스처에 가까워진다",
-    "de": "Mit steigender Blendenzahl nähert sich das Fokusbild der wahren Textur",
-    "hi": "एफ़-नंबर बढ़ाने पर फ़ोकस-स्टैक की छवि वास्तविक टेक्सचर के पास आती है",
-    "fr": "Augmenter le nombre d’ouverture rapproche l’image empilée de la texture vraie"
-   },
-   "num": {
-    "ja": "全焦点 PSNR 33.69 dB(中央の 1 枚は 28.52 dB)、深度誤差 0.467 mm(テクスチャあり)。",
-    "en": "All-in-focus PSNR 33.69 dB (central 1 frame 28.52 dB); depth error 0.467 mm on textured areas.",
-    "zh": "全焦 PSNR 33.69 dB(中间 1 帧 28.52 dB),深度误差 0.467 mm(有纹理区域)。",
-    "tw": "全焦 PSNR 33.69 dB(中間 1 影格 28.52 dB),深度誤差 0.467 mm(有紋理區域)。",
-    "ko": "전초점 PSNR 33.69 dB(중앙 1장 28.52 dB), 깊이 오차 0.467 mm(텍스처 있는 영역).",
-    "de": "Scharfes Gesamtbild PSNR 33.69 dB (das 1 mittlere Einzelbild 28.52 dB), Tiefenfehler 0.467 mm (texturierte Bereiche).",
-    "hi": "all-in-focus PSNR 33.69 dB (बीच का 1 frame 28.52 dB), depth error 0.467 mm (texture वाले हिस्से में)।",
-    "fr": "PSNR de l'image entièrement nette 33.69 dB (1 image centrale : 28.52 dB), erreur de profondeur 0.467 mm (zones texturées)."
-   },
-   "youtube_url": "",
-   "lead": {
-    "ja": "ピントをずらして撮った写真の束から、全焦点の画像と奥行きの地図を作る。全焦点の画像は 33.69 dB で、真ん中の写真よりきれいになった。同じ融合から作った深度は、模様の無い所では当てにならない。",
-    "en": "A stack of photos focused at different depths is fused into an all-in-focus image and a depth map. The fused image reached 33.69 dB, sharper than the middle frame alone. Depth from the same fusion is unreliable where the surface has no texture.",
-    "zh": "A stack of photos focused at different depths is fused into an all-in-focus image and a depth map. The fused image reached 33.69 dB, sharper than the middle frame alone. Depth from the same fusion is unreliable where the surface has no texture.",
-    "tw": "A stack of photos focused at different depths is fused into an all-in-focus image and a depth map. The fused image reached 33.69 dB, sharper than the middle frame alone. Depth from the same fusion is unreliable where the surface has no texture.",
-    "ko": "A stack of photos focused at different depths is fused into an all-in-focus image and a depth map. The fused image reached 33.69 dB, sharper than the middle frame alone. Depth from the same fusion is unreliable where the surface has no texture.",
-    "de": "A stack of photos focused at different depths is fused into an all-in-focus image and a depth map. The fused image reached 33.69 dB, sharper than the middle frame alone. Depth from the same fusion is unreliable where the surface has no texture.",
-    "hi": "A stack of photos focused at different depths is fused into an all-in-focus image and a depth map. The fused image reached 33.69 dB, sharper than the middle frame alone. Depth from the same fusion is unreliable where the surface has no texture.",
-    "fr": "A stack of photos focused at different depths is fused into an all-in-focus image and a depth map. The fused image reached 33.69 dB, sharper than the middle frame alone. Depth from the same fusion is unreliable where the surface has no texture."
-   }
-  },
-  {
-   "id": "poc_polarization_specular",
-   "category": "optics",
-   "media": "08_analyzer_sweep_explained.mp4",
-   "motion": true,
-   "label": {
-    "ja": "偏光で鏡面除去",
-    "en": "Polarization",
-    "zh": "偏振去镜面反射",
-    "tw": "偏光去鏡面反射",
-    "ko": "편광 정반사 제거",
-    "de": "Polarisation",
-    "hi": "Polarization",
-    "fr": "Suppression des reflets spéculaires par polarisation"
-   },
-   "see": {
-    "ja": "入射角で鏡面分離の誤差が変わり、ブリュースター角近傍で最小になる",
-    "en": "Separation error changes with incidence angle and bottoms out near the Brewster angle",
-    "zh": "镜面分离误差随入射角变化，并在布儒斯特角附近最小",
-    "tw": "鏡面分離誤差隨入射角變化，並在布魯斯特角附近最小",
-    "ko": "정반사 분리 오차는 입사각에 따라 바뀌며 브루스터각 부근에서 가장 작다",
-    "de": "Der Trennfehler hängt vom Einfallswinkel ab und ist nahe dem Brewster-Winkel am kleinsten",
-    "hi": "separation error आपतन कोण के साथ बदलती है और Brewster angle के पास सबसे कम होती है",
-    "fr": "L’erreur de séparation varie avec l’incidence et atteint son minimum près de l’angle de Brewster"
-   },
-   "num": {
-    "ja": "拡散成分の誤差は閉形式 R_p·E と一致し、ブリュースター角 56.31 度で 0。",
-    "en": "The diffuse error matches the closed form R_p·E and is 0 at the Brewster angle, 56.31 degrees.",
-    "zh": "漫反射分量的误差与闭式 R_p·E 一致,在布儒斯特角 56.31 度处为 0。",
-    "tw": "漫反射分量的誤差與閉合式 R_p·E 一致,在布魯斯特角 56.31 度處為 0。",
-    "ko": "확산 성분의 오차는 닫힌 식 R_p·E와 일치하고 브루스터 각 56.31도에서 0.",
-    "de": "Der Fehler des diffusen Anteils folgt der geschlossenen Form R_p·E und ist beim Brewster-Winkel 56.31 Grad gleich 0.",
-    "hi": "diffuse घटक का error closed form R_p·E से मेल खाता है और Brewster angle 56.31 degree पर 0 होता है।",
-    "fr": "L'erreur de la composante diffuse coïncide avec la forme fermée R_p·E et vaut 0 à l'angle de Brewster de 56.31 degrés."
-   },
-   "youtube_url": "",
-   "lead": {
-    "ja": "光沢のある面の写り込みを、偏光を使って拡散の成分と分ける。拡散成分の誤差は、ブリュースター角の 56.31 度で消える。入射角が浅いと、偏光を使っても分離はあまり良くならない。",
-    "en": "Polarisation separates the glare on a shiny surface from its diffuse colour. The diffuse error vanishes at 56.31 degrees, Brewster's angle. At shallow incidence the polarisation method gains little.",
-    "zh": "Polarisation separates the glare on a shiny surface from its diffuse colour. The diffuse error vanishes at 56.31 degrees, Brewster's angle. At shallow incidence the polarisation method gains little.",
-    "tw": "Polarisation separates the glare on a shiny surface from its diffuse colour. The diffuse error vanishes at 56.31 degrees, Brewster's angle. At shallow incidence the polarisation method gains little.",
-    "ko": "Polarisation separates the glare on a shiny surface from its diffuse colour. The diffuse error vanishes at 56.31 degrees, Brewster's angle. At shallow incidence the polarisation method gains little.",
-    "de": "Polarisation separates the glare on a shiny surface from its diffuse colour. The diffuse error vanishes at 56.31 degrees, Brewster's angle. At shallow incidence the polarisation method gains little.",
-    "hi": "Polarisation separates the glare on a shiny surface from its diffuse colour. The diffuse error vanishes at 56.31 degrees, Brewster's angle. At shallow incidence the polarisation method gains little.",
-    "fr": "Polarisation separates the glare on a shiny surface from its diffuse colour. The diffuse error vanishes at 56.31 degrees, Brewster's angle. At shallow incidence the polarisation method gains little."
-   }
-  },
-  {
-   "id": "poc_compound_eye",
-   "category": "robotics",
-   "media": "02_compound_eye_superposition.png",
-   "motion": false,
-   "label": {
-    "ja": "複眼の光場",
-    "en": "Compound eye",
-    "zh": "复眼光场",
-    "tw": "複眼光場",
-    "ko": "겹눈 라이트 필드",
-    "de": "Facettenauge",
-    "hi": "Compound eye",
-    "fr": "Œil composé"
-   },
-   "see": {
-    "ja": "視点ごとのSNRを上げるほど複眼像が無雑音像に近づく",
-    "en": "Higher per-view SNR brings the compound-eye image closer to its noise-free image",
-    "zh": "提高每视点信噪比，复眼图像越接近无噪声图像",
-    "tw": "提高每視點訊噪比，複眼影像越接近無雜訊影像",
-    "ko": "시점별 SNR을 높일수록 겹눈 영상이 무잡음 영상에 가까워진다",
-    "de": "Mit höherem SNR je Ansicht nähert sich das Facettenaugenbild dem rauschfreien Bild",
-    "hi": "प्रति-दृश्य SNR बढ़ाने पर compound-eye image शोर-रहित image के पास आती है",
-    "fr": "Augmenter le SNR par vue rapproche l’image de l’œil composé de l’image sans bruit"
-   },
-   "num": {
-    "ja": "SNR 利得は N=5 で 2.25(√5 = 2.24)、N=49 で 5.33(√49 = 7.00)。",
-    "en": "SNR gain 2.25 at N=5 (√5 = 2.24) and 5.33 at N=49 (√49 = 7.00).",
-    "zh": "SNR 增益:N=5 时 2.25(√5 = 2.24),N=49 时 5.33(√49 = 7.00)。",
-    "tw": "SNR 增益:N=5 時 2.25(√5 = 2.24),N=49 時 5.33(√49 = 7.00)。",
-    "ko": "SNR 이득은 N=5에서 2.25(√5 = 2.24), N=49에서 5.33(√49 = 7.00).",
-    "de": "SNR-Gewinn 2.25 bei N=5 (√5 = 2.24) und 5.33 bei N=49 (√49 = 7.00).",
-    "hi": "SNR gain N=5 पर 2.25 (√5 = 2.24), N=49 पर 5.33 (√49 = 7.00)।",
-    "fr": "Le gain de SNR est de 2.25 pour N=5 (√5 = 2.24) et de 5.33 pour N=49 (√49 = 7.00)."
-   },
-   "youtube_url": "",
-   "lead": {
-    "ja": "ハエの複眼は、たくさんの個眼で同じ点を見る光の場のセンサとみなせる。同じ点を重ねる個眼を増やしても、雑音を減らす利得は 5.33 で頭打ちになった。ハエが実際に重ねる数は、その頭打ちの手前にある。",
-    "en": "A fly's compound eye can be treated as a light-field sensor that views each point through many ommatidia. Pooling more ommatidia on the same point stopped improving the noise gain at 5.33. The fly's own pooling sits below that knee.",
-    "zh": "A fly's compound eye can be treated as a light-field sensor that views each point through many ommatidia. Pooling more ommatidia on the same point stopped improving the noise gain at 5.33. The fly's own pooling sits below that knee.",
-    "tw": "A fly's compound eye can be treated as a light-field sensor that views each point through many ommatidia. Pooling more ommatidia on the same point stopped improving the noise gain at 5.33. The fly's own pooling sits below that knee.",
-    "ko": "A fly's compound eye can be treated as a light-field sensor that views each point through many ommatidia. Pooling more ommatidia on the same point stopped improving the noise gain at 5.33. The fly's own pooling sits below that knee.",
-    "de": "A fly's compound eye can be treated as a light-field sensor that views each point through many ommatidia. Pooling more ommatidia on the same point stopped improving the noise gain at 5.33. The fly's own pooling sits below that knee.",
-    "hi": "A fly's compound eye can be treated as a light-field sensor that views each point through many ommatidia. Pooling more ommatidia on the same point stopped improving the noise gain at 5.33. The fly's own pooling sits below that knee.",
-    "fr": "A fly's compound eye can be treated as a light-field sensor that views each point through many ommatidia. Pooling more ommatidia on the same point stopped improving the noise gain at 5.33. The fly's own pooling sits below that knee."
-   }
-  },
-  {
-   "id": "poc_ct_void_morphology",
-   "category": "ct",
-   "media": "13_section_sweep.mp4",
-   "motion": true,
-   "label": {
-    "ja": "CT のボイド",
-    "en": "CT voids",
-    "zh": "CT 空洞",
-    "tw": "CT 孔洞",
-    "ko": "CT 보이드",
-    "de": "CT-Poren",
-    "hi": "CT voids",
-    "fr": "Vides en CT"
-   },
-   "see": {
-    "ja": "しきい値を上げるほどボイド判定が広がり、体積率が増える",
-    "en": "Raising the threshold expands the segmented voids and increases their volume fraction",
-    "zh": "提高阈值会扩大空洞分割并增加体积分数",
-    "tw": "提高閾值會擴大孔洞分割並增加體積率",
-    "ko": "임계값을 높일수록 보이드 판정이 넓어지고 체적률이 커진다",
-    "de": "Ein höherer Schwellenwert vergrößert die segmentierten Poren und ihren Volumenanteil",
-    "hi": "threshold बढ़ाने पर segmented voids फैलते हैं और उनका आयतन अंश बढ़ता है",
-    "fr": "Relever le seuil étend les vides segmentés et augmente leur fraction volumique"
-   },
-   "num": {
-    "ja": "ボイド率は 2.46 % 対 2.63 % なのに、界面からの距離の中央値は 60.0 µm 対 10.0 µm。",
-    "en": "Void fraction 2.46 % vs 2.63 %, yet median distance to the interface is 60.0 µm vs 10.0 µm.",
-    "zh": "空洞率为 2.46 % 对 2.63 %,但到界面距离的中位数为 60.0 µm 对 10.0 µm。",
-    "tw": "孔洞率為 2.46 % 對 2.63 %,但到界面距離的中位數為 60.0 µm 對 10.0 µm。",
-    "ko": "보이드율은 2.46 % 대 2.63 %인데, 계면까지 거리의 중앙값은 60.0 µm 대 10.0 µm.",
-    "de": "Porenanteil 2.46 % zu 2.63 %, aber der Median des Abstands zur Grenzfläche beträgt 60.0 µm zu 10.0 µm.",
-    "hi": "void fraction 2.46 % बनाम 2.63 %, फिर भी interface से दूरी का median 60.0 µm बनाम 10.0 µm।",
-    "fr": "Le taux de vides est de 2.46 % contre 2.63 %, mais la médiane de la distance à l'interface est de 60.0 µm contre 10.0 µm."
-   },
-   "youtube_url": "",
-   "lead": {
-    "ja": "電子部品の接合層にできるボイドを、X 線 CT で撮ってボイド率という一つの数字にまとめる。扁平なボイドが界面を塞ぐ面積は、同じ体積の球の 2.09 倍になった。一つの数字に畳むと、寿命に効く形の違いが消える。",
-    "en": "Voids in an electronics bond line are imaged by X-ray CT and summed up as a single void fraction. Flat voids block 2.09x the interface area of spheres with the same volume. Collapsing them into one number hides the shape that drives failure.",
-    "zh": "Voids in an electronics bond line are imaged by X-ray CT and summed up as a single void fraction. Flat voids block 2.09x the interface area of spheres with the same volume. Collapsing them into one number hides the shape that drives failure.",
-    "tw": "Voids in an electronics bond line are imaged by X-ray CT and summed up as a single void fraction. Flat voids block 2.09x the interface area of spheres with the same volume. Collapsing them into one number hides the shape that drives failure.",
-    "ko": "Voids in an electronics bond line are imaged by X-ray CT and summed up as a single void fraction. Flat voids block 2.09x the interface area of spheres with the same volume. Collapsing them into one number hides the shape that drives failure.",
-    "de": "Voids in an electronics bond line are imaged by X-ray CT and summed up as a single void fraction. Flat voids block 2.09x the interface area of spheres with the same volume. Collapsing them into one number hides the shape that drives failure.",
-    "hi": "Voids in an electronics bond line are imaged by X-ray CT and summed up as a single void fraction. Flat voids block 2.09x the interface area of spheres with the same volume. Collapsing them into one number hides the shape that drives failure.",
-    "fr": "Voids in an electronics bond line are imaged by X-ray CT and summed up as a single void fraction. Flat voids block 2.09x the interface area of spheres with the same volume. Collapsing them into one number hides the shape that drives failure."
-   }
-  },
-  {
-   "id": "poc_active_contours",
-   "category": "inspection",
-   "media": "06_u_shape_snakes.mp4",
-   "motion": true,
-   "label": {
-    "ja": "動的輪郭",
-    "en": "Active contours",
-    "zh": "主动轮廓",
-    "tw": "主動輪廓",
-    "ko": "능동 윤곽",
-    "de": "Aktive Konturen",
-    "hi": "Active contours",
-    "fr": "Contours actifs"
-   },
-   "see": {
-    "ja": "反復を重ねるほどGVF輪郭が最終形へ近づく",
-    "en": "More iterations bring the GVF contour closer to its final shape",
-    "zh": "迭代越多，GVF 轮廓越接近最终形状",
-    "tw": "迭代越多，GVF 輪廓越接近最終形狀",
-    "ko": "반복할수록 GVF 윤곽이 최종 형상에 가까워진다",
-    "de": "Mit mehr Iterationen nähert sich die GVF-Kontur ihrer Endform",
-    "hi": "iterations बढ़ने पर GVF contour अपने अंतिम आकार के पास आती है",
-    "fr": "Les itérations rapprochent le contour GVF de sa forme finale"
-   },
-   "num": {
-    "ja": "外力だけを GVF に替えると Dice 0.993(真の縁に対して)。",
-    "en": "Swapping only the external force to GVF gives Dice 0.993 against the true edge.",
-    "zh": "只把外力换成 GVF,Dice 达到 0.993(相对真实边缘)。",
-    "tw": "只把外力換成 GVF,Dice 達到 0.993(相對真實邊緣)。",
-    "ko": "외력만 GVF로 바꾸면 Dice 0.993(참 경계 기준).",
-    "de": "Nur die äußere Kraft auf GVF umgestellt: Dice 0.993 gegenüber der wahren Kante.",
-    "hi": "सिर्फ external force को GVF में बदलने पर Dice 0.993 (असली edge के सापेक्ष)।",
-    "fr": "En remplaçant uniquement la force externe par le GVF, on obtient un Dice de 0.993 (par rapport au vrai contour)."
-   },
-   "youtube_url": "",
-   "lead": {
-    "ja": "動的輪郭は、曲線を少しずつ動かして物の縁に貼り付けるセグメンテーションの手法である。外から引く力を勾配ベクトル流に替えると、U 字の凹みにも入って 0.993 の重なりで縁に合った。古典のやり方では、縁の力が凹みの奥まで届かず入れない。",
-    "en": "Active contours segment an object by moving a curve step by step onto its edge. With gradient vector flow as the outside force, the curve enters a U-shaped hollow and matches the true edge at 0.993 overlap. The classic method stalls because the edge force does not reach deep into the hollow.",
-    "zh": "Active contours segment an object by moving a curve step by step onto its edge. With gradient vector flow as the outside force, the curve enters a U-shaped hollow and matches the true edge at 0.993 overlap. The classic method stalls because the edge force does not reach deep into the hollow.",
-    "tw": "Active contours segment an object by moving a curve step by step onto its edge. With gradient vector flow as the outside force, the curve enters a U-shaped hollow and matches the true edge at 0.993 overlap. The classic method stalls because the edge force does not reach deep into the hollow.",
-    "ko": "Active contours segment an object by moving a curve step by step onto its edge. With gradient vector flow as the outside force, the curve enters a U-shaped hollow and matches the true edge at 0.993 overlap. The classic method stalls because the edge force does not reach deep into the hollow.",
-    "de": "Active contours segment an object by moving a curve step by step onto its edge. With gradient vector flow as the outside force, the curve enters a U-shaped hollow and matches the true edge at 0.993 overlap. The classic method stalls because the edge force does not reach deep into the hollow.",
-    "hi": "Active contours segment an object by moving a curve step by step onto its edge. With gradient vector flow as the outside force, the curve enters a U-shaped hollow and matches the true edge at 0.993 overlap. The classic method stalls because the edge force does not reach deep into the hollow.",
-    "fr": "Active contours segment an object by moving a curve step by step onto its edge. With gradient vector flow as the outside force, the curve enters a U-shaped hollow and matches the true edge at 0.993 overlap. The classic method stalls because the edge force does not reach deep into the hollow."
-   }
   }
+ ],
+ "featured_ids": [
+  "poc_phase_measuring_deflectometry",
+  "poc_industrial_oct",
+  "poc_hyperspectral_foreign_matter",
+  "poc_tdi_linescan",
+  "poc_itof_multifreq",
+  "poc_weld_radiograph_porosity",
+  "poc_fourier_ptychography",
+  "poc_code_matching_breakdown",
+  "poc_good_sample_variation_model",
+  "poc_real_defect_floor",
+  "poc_illumination_cone_vs_na",
+  "poc_telecentric_metrology",
+  "poc_simcal_telecentric",
+  "poc_cad_scan_deviation",
+  "poc_lidar_terrain_change",
+  "poc_real_stereo_depth",
+  "poc_sem_tem_same_particle",
+  "poc_tem_ctf_thon_rings",
+  "poc_thin_film_reflectometry",
+  "poc_sam_hybrid_bonding_voids",
+  "poc_optics_drawings",
+  "poc_crack_width_timeseries",
+  "poc_moire_alignment",
+  "poc_laser_line_speckle_floor",
+  "poc_weld_bead_scan_angle",
+  "poc_am_thermal_to_ct",
+  "poc_thermography_ndt",
+  "poc_photoelasticity",
+  "poc_interferometry_step",
+  "poc_virtual_sem_kv_cd_bse",
+  "poc_glyph_typo_detection",
+  "poc_weed_rice_ratio",
+  "poc_stockpile_volume",
+  "poc_strain_history",
+  "poc_pegsim_insertion",
+  "evis_bean_track",
+  "evis_stereo_depth",
+  "carla_iroha_haze"
  ],
  "series": [
   {
@@ -4916,6 +4721,16 @@
     "de": "Poren in Fügeschicht",
     "hi": "Joint voids (CT)",
     "fr": "Vides dans la couche de jonction"
+   },
+   "see": {
+    "ja": "しきい値を上げるほどボイド判定が広がり、体積率が増える",
+    "en": "Raising the threshold expands the segmented voids and increases their volume fraction",
+    "zh": "提高阈值会扩大空洞分割并增加体积分数",
+    "tw": "提高閾值會擴大孔洞分割並增加體積率",
+    "ko": "임계값을 높일수록 보이드 판정이 넓어지고 체적률이 커진다",
+    "de": "Ein höherer Schwellenwert vergrößert die segmentierten Poren und ihren Volumenanteil",
+    "hi": "threshold बढ़ाने पर segmented voids फैलते हैं और उनका आयतन अंश बढ़ता है",
+    "fr": "Relever le seuil étend les vides segmentés et augmente leur fraction volumique"
    }
   },
   {
@@ -5494,6 +5309,16 @@
     "de": "Fliegen-Facettenauge",
     "hi": "Fly compound eye",
     "fr": "Œil composé de la mouche"
+   },
+   "see": {
+    "ja": "視点ごとのSNRを上げるほど複眼像が無雑音像に近づく",
+    "en": "Higher per-view SNR brings the compound-eye image closer to its noise-free image",
+    "zh": "提高每视点信噪比，复眼图像越接近无噪声图像",
+    "tw": "提高每視點訊噪比，複眼影像越接近無雜訊影像",
+    "ko": "시점별 SNR을 높일수록 겹눈 영상이 무잡음 영상에 가까워진다",
+    "de": "Mit höherem SNR je Ansicht nähert sich das Facettenaugenbild dem rauschfreien Bild",
+    "hi": "प्रति-दृश्य SNR बढ़ाने पर compound-eye image शोर-रहित image के पास आती है",
+    "fr": "Augmenter le SNR par vue rapproche l’image de l’œil composé de l’image sans bruit"
    }
   },
   {
@@ -5562,6 +5387,16 @@
     "de": "Fokus-Stacking",
     "hi": "Focus stacking",
     "fr": "Empilement de mise au point"
+   },
+   "see": {
+    "ja": "F値を上げるほど焦点合成像が真のテクスチャに近づく",
+    "en": "Raising the f-number brings the focus-stacked image closer to the true texture",
+    "zh": "提高光圈值，景深合成图像越接近真实纹理",
+    "tw": "提高光圈值，景深合成影像越接近真實紋理",
+    "ko": "조리개값을 높일수록 초점 합성 영상이 실제 텍스처에 가까워진다",
+    "de": "Mit steigender Blendenzahl nähert sich das Fokusbild der wahren Textur",
+    "hi": "एफ़-नंबर बढ़ाने पर फ़ोकस-स्टैक की छवि वास्तविक टेक्सचर के पास आती है",
+    "fr": "Augmenter le nombre d’ouverture rapproche l’image empilée de la texture vraie"
    }
   },
   {
@@ -5698,6 +5533,16 @@
     "de": "Aktive Konturen",
     "hi": "Active contours",
     "fr": "Contours actifs"
+   },
+   "see": {
+    "ja": "反復を重ねるほどGVF輪郭が最終形へ近づく",
+    "en": "More iterations bring the GVF contour closer to its final shape",
+    "zh": "迭代越多，GVF 轮廓越接近最终形状",
+    "tw": "迭代越多，GVF 輪廓越接近最終形狀",
+    "ko": "반복할수록 GVF 윤곽이 최종 형상에 가까워진다",
+    "de": "Mit mehr Iterationen nähert sich die GVF-Kontur ihrer Endform",
+    "hi": "iterations बढ़ने पर GVF contour अपने अंतिम आकार के पास आती है",
+    "fr": "Les itérations rapprochent le contour GVF de sa forme finale"
    }
   },
   {
@@ -5783,6 +5628,16 @@
     "de": "Polarisation",
     "hi": "Polarization",
     "fr": "Suppression des reflets spéculaires par polarisation"
+   },
+   "see": {
+    "ja": "入射角で鏡面分離の誤差が変わり、ブリュースター角近傍で最小になる",
+    "en": "Separation error changes with incidence angle and bottoms out near the Brewster angle",
+    "zh": "镜面分离误差随入射角变化，并在布儒斯特角附近最小",
+    "tw": "鏡面分離誤差隨入射角變化，並在布魯斯特角附近最小",
+    "ko": "정반사 분리 오차는 입사각에 따라 바뀌며 브루스터각 부근에서 가장 작다",
+    "de": "Der Trennfehler hängt vom Einfallswinkel ab und ist nahe dem Brewster-Winkel am kleinsten",
+    "hi": "separation error आपतन कोण के साथ बदलती है और Brewster angle के पास सबसे कम होती है",
+    "fr": "L’erreur de séparation varie avec l’incidence et atteint son minimum près de l’angle de Brewster"
    }
   },
   {

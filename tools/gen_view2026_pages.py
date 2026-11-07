@@ -244,6 +244,9 @@ def validate(d: dict) -> list[str]:
     ids = [e["id"] for e in d["exhibits"]]
     if len(ids) != len(set(ids)):
         bad.append("見どころの id が重複している")
+    # ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
+    if d.get("featured_ids") != ids:
+        bad.append("featured_ids(目玉の正本)と exhibits の id の並びが違う —— どちらかを直すこと")
     for e in d["exhibits"]:
         pid = e["id"]
         for f in ("label", "lead", "see"):

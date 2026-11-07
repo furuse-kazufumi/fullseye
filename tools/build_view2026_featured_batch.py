@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
-"""Promote evidence-bearing PoCs into the ViEW2026 featured gallery.
+"""Refresh the ViEW2026 featured cards that quote the PoC caption ledger.
 
-The selection and numeric copy come from the reviewed PoC caption ledger.  This
-keeps the large gallery reproducible instead of maintaining 80 hand-copied
-numbers in a second file.
+    py -3.11 tools/build_view2026_featured_batch.py
+
+The set of featured exhibits is ``featured_ids`` in ``docs/view2026/exhibits.json``
+(an ordered list; it is the page's tile order).  This tool never adds anything that is
+not on that list.  For each listed PoC that is in the caption ledger it refreshes what
+must follow the ledger -- the lead, ``numbers_source``, ``ops`` and the verbatim caption
+split into ``see`` + ``num`` -- and keeps the hand-edited label, category and figure.
+A listed PoC that is not yet a card is created from the ledger.  Every ledger PoC that
+is not featured must still be in ``all`` (the full list), or the tool stops.
 """
 from __future__ import annotations
 
+import copy
 import json
 import re
 from pathlib import Path
@@ -27,7 +34,7 @@ WING_CATEGORY = {
 }
 #: 英語のキャプションの中で、日本語のまま引くのが正しい語(路面標示の文字など)。ここに無いかなは訳し忘れとして止める。
 QUOTED_JA = {"止まれ"}
-_KANA = re.compile(r"[\u3040-\u30ff]+")
+_KANA = re.compile(r"[぀-ヿ]+")
 VIEW2026_A_OP_IDS = {
     "poc_phase_measuring_deflectometry", "poc_industrial_oct",
     "poc_hyperspectral_foreign_matter", "poc_thin_film_reflectometry",
@@ -37,6 +44,10 @@ VIEW2026_A_OP_IDS = {
     "poc_good_sample_variation_model", "poc_code_matching_breakdown",
     "poc_fourier_ptychography", "poc_photoelasticity",
 }
+
+
+class BuildError(SystemExit):
+    """台帳と目玉の集合が食い違うときに止める(何も書かない)。"""
 
 
 def caption_for(src: dict, lang: str) -> str:
@@ -49,7 +60,7 @@ def caption_for(src: dict, lang: str) -> str:
         return text
     stray = {r for r in runs if not any(r in q for q in QUOTED_JA)}
     if stray:
-        raise SystemExit("%s: caption_en に訳し忘れのかな %s —— 台帳 poc_captions.json を直すこと" % (src["id"], sorted(stray)))
+        raise BuildError("%s: caption_en に訳し忘れのかな %s —— 台帳 poc_captions.json を直すこと" % (src["id"], sorted(stray)))
     return text + " _(ja)_"
 
 
@@ -71,71 +82,66 @@ def media_for(pid: str) -> str | None:
     return scored[0]["file"]
 
 
+def _new_card(src: dict, all_row: dict, langs: list[str]) -> dict:
+    """台帳から目玉のカードを 1 枚作る(featured_ids に新しく足した PoC だけ)。"""
+    pid = src["id"]
+    media = media_for(pid)
+    if src["wing"] not in WING_CATEGORY or not media or not re.search(r"\d", src.get("caption_en", "")):
+        raise BuildError("%s: 目玉にできない(分類の無い翼・図が無い・数が無い)" % pid)
+    return {
+        "id": pid, "category": WING_CATEGORY[src["wing"]], "media": media,
+        "motion": media.lower().endswith((".gif", ".mp4")), "label": copy.deepcopy(all_row["label"]),
+        "lead": {}, "see": {l: caption_for(src, l) for l in langs}, "num": {l: "" for l in langs},
+        "numbers_source": src["numbers_source"], "youtube_url": "",
+    }
+
+
+def rebuild(d: dict, ledger: list[dict]) -> dict:
+    """``d`` を書き換えずに、目玉を featured_ids どおりに作り直した写しを返す。"""
+    d = copy.deepcopy(d)
+    langs = d["langs"]
+    featured = d.get("featured_ids")
+    if not featured or len(featured) != len(set(featured)):
+        raise BuildError("exhibits.json の featured_ids が無いか重複している(目玉の集合の正本)")
+    ledger_by_id = {e["id"]: e for e in ledger}
+    all_by_id = {e["id"]: e for e in d["all"]}
+    previous = {e["id"]: e for e in d["exhibits"]}
+    # ★2026-11-08: 以前は台帳の PoC を「手書きの見どころかこの一括のどちらかに必ず載せる」ために、
+    #   載っていない PoC を全部目玉へ足していた。目玉を約 40 件に絞った(ユーザーの決定)ので、回すと
+    #   285 件に戻ってしまう。目玉は featured_ids だけ、それ以外は all に在ることを確かめる側に替えた。
+    out = []
+    for pid in featured:
+        src = ledger_by_id.get(pid)
+        item = copy.deepcopy(previous[pid]) if pid in previous else None
+        if item is None:
+            if src is None or pid not in all_by_id:
+                raise BuildError("%s: featured_ids に在るが、カードも台帳の行も無い" % pid)
+            item = _new_card(src, all_by_id[pid], langs)
+        if src is not None:
+            item["lead"] = {l: lead_for(src, l) for l in langs}
+            if "numbers_source" in item:
+                item["numbers_source"] = src["numbers_source"]
+                for l in langs:
+                    cap = caption_for(src, l)
+                    # 手で切った see / num はキャプションが変わっていなければそのまま。変わっていれば全文を see へ。
+                    if item["see"][l] + item["num"][l] != cap:
+                        item["see"][l], item["num"][l] = cap, ""
+            if pid in VIEW2026_A_OP_IDS:
+                item["ops"] = src["ops"]
+        out.append(item)
+    d["exhibits"] = out
+    left = sorted(e["id"] for e in ledger if e["id"] not in all_by_id)
+    if left:
+        raise BuildError("台帳の PoC が all(ぜんぶ見る)に無い: %s" % left)
+    return d
+
+
 def main() -> None:
     d = json.loads(DATA.read_text(encoding="utf-8"))
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))["exhibits"]
-    ledger_by_id = {e["id"]: e for e in ledger}
-    for item in d["exhibits"]:
-        src = ledger_by_id.get(item["id"])
-        if src:
-            item["lead"] = {
-                lang: lead_for(src, lang) for lang in d["langs"]
-            }
-    all_by_id = {e["id"]: e for e in d["all"]}
-    previous = {e["id"]: e for e in d["exhibits"]}
-    # Re-running replaces this generated batch and preserves hand-curated cards.
-    d["exhibits"] = [e for e in d["exhibits"] if "numbers_source" not in e]
-    old = {e["id"] for e in d["exhibits"]}
-    candidates = []
-    for e in ledger:
-        pid = e["id"]
-        media = previous.get(pid, {}).get("media") or media_for(pid)
-        if (pid in old or pid not in all_by_id or e["wing"] not in WING_CATEGORY or
-                not media or not re.search(r"\d", e.get("caption_en", ""))):
-            continue
-        # Industrial and dimensional work first, then retain variety by date/id.
-        priority = 0 if e["wing"] in ("wing_industrial", "wing_metrology") else 1
-        candidates.append((priority, e.get("added", ""), pid, e, media))
-    candidates.sort()
-    # Round-robin categories after the industrial half prevents one field from
-    # consuming the gallery merely because its IDs sort first.
-    industrial = [x for x in candidates if x[0] == 0]
-    rest = [x for x in candidates if x not in industrial]
-    buckets = {}
-    for x in rest:
-        buckets.setdefault(x[3]["wing"], []).append(x)
-    varied = []
-    while any(buckets.values()):
-        for wing in sorted(buckets):
-            if buckets[wing]:
-                varied.append(buckets[wing].pop(0))
-    chosen = industrial + varied
-    # ★2026-10-30: 「出来れば全 PoC を載せたい」。初版は 80 本で切っていた。台帳の PoC は手書きの見どころか
-    #   この一括のどちらかに必ず載る —— 載らない PoC があれば理由(図が無い・数が無い・分類の無い翼)ごと止める。
-    left = [e["id"] for e in ledger if e["id"] not in old and e["id"] not in {x[2] for x in chosen}]
-    if left:
-        raise SystemExit("台帳の PoC が見どころに載らない: %s" % left)
-    for _, _, pid, src, media in chosen:
-        label = all_by_id[pid]["label"]
-        captions = {lang: caption_for(src, lang) for lang in d["langs"]}
-        item = {
-            "id": pid, "category": WING_CATEGORY[src["wing"]], "media": media,
-            "motion": media.lower().endswith((".gif", ".mp4")), "label": label,
-            "lead": {lang: lead_for(src, lang) for lang in d["langs"]},
-            "see": captions, "num": {lang: "" for lang in d["langs"]},
-            "numbers_source": src["numbers_source"], "youtube_url": "",
-        }
-        if pid in VIEW2026_A_OP_IDS:
-            item["ops"] = src["ops"]
-        d["exhibits"].append(item)
-    ops_by_id = {e["id"]: e["ops"] for e in ledger if e["id"] in VIEW2026_A_OP_IDS}
-    for item in d["exhibits"]:
-        if item["id"] in ops_by_id:
-            item["ops"] = ops_by_id[item["id"]]
-    DATA.write_text(json.dumps(d, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print("added", len(chosen))
-    for x in chosen:
-        print(x[2], x[3]["wing"], x[3]["numbers_source"], x[4])
+    new = rebuild(d, ledger)
+    DATA.write_text(json.dumps(new, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
+    print("featured", len(new["exhibits"]))
 
 
 if __name__ == "__main__":

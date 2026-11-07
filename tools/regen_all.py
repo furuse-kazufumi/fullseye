@@ -708,7 +708,7 @@ NOT_A_GENERATOR = {
     "tools/check_view2026_figure_scale.py": "検査。図が最近傍拡大でなく描画倍率どおりかを数えて表にする(repo の生成物は書かない)。",
     "tools/make_view2026_before_after.py": "検査用の比較画像を repo の外(--output)へ書く。受け取りで目視するためだけに手で回す。",
     # ---- 2026-10-30: ViEW2026 の正本 docs/view2026/exhibits.json を編集する道具(生成物ではなく入力を書く) ----
-    "tools/build_view2026_featured_batch.py": "入力の編集。台帳 poc_captions.json から注目 80 本を exhibits.json(正本)へ書き込む。台帳が変わったら手で回して commit する(逐語一致の門が回し忘れを止める)。",
+    "tools/build_view2026_featured_batch.py": "入力の編集。exhibits.json の featured_ids(目玉の正本)に挙げた展示だけを、台帳 poc_captions.json に合わせて書き直す(それ以外は目玉に足さない)。台帳が変わったら手で回して commit する(逐語一致の門が回し忘れを止める)。",
     "tools/register_view2026_sweep_viewers.py": "入力の編集。引数掃引ビューアの案内文を exhibits.json(正本)の viewers に登録する。登録を変えたときだけ手で回す。",
     "tools/register_view2026_youtube.py": "入力の編集。YouTube の URL を exhibits.json(正本)に書く。動画を上げたときだけ手で回す。",
     # ---- 2026-10-25: Studio をブラウザで動かす可否の探針(tools/probe_studio_web/、製品ではない) ----
