@@ -34873,7 +34873,7 @@
                 384
               ],
               "source_aspect": 4.046875,
-              "laplacian_density": 0.00401007
+              "laplacian_density": 0.00361766
             },
             {
               "file": "03_intercepts.png",
@@ -34901,15 +34901,15 @@
             1600,
             1600
           ],
-          "bytes": 299777,
+          "bytes": 343795,
           "color_mad": [
             3.376,
-            0.0,
+            0.6139,
             0.075,
             0.034
           ],
           "max_color_mad": 3.376,
-          "source_sha256": "801eee58711b65c7ce3214c7d7de10472b51cd18ab16357ffb4f6b39224f63b0"
+          "source_sha256": "db0ae47408dec8db38c2eba56e7f80e2e0eaded09e0d33c73bcbb3a7b56331bb"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_grain_skiz/story.en.gif",
@@ -34938,7 +34938,7 @@
                 384
               ],
               "source_aspect": 4.046875,
-              "laplacian_density": 0.00401007
+              "laplacian_density": 0.00361766
             },
             {
               "file": "03_intercepts.png",
@@ -34966,15 +34966,15 @@
             1600,
             1600
           ],
-          "bytes": 299777,
+          "bytes": 343795,
           "color_mad": [
             3.376,
-            0.0,
+            0.6139,
             0.075,
             0.034
           ],
           "max_color_mad": 3.376,
-          "source_sha256": "013a0f6fe7b600f5539061bb1fe3f56b51d3274cc3103cea5277d1cfa1b78727"
+          "source_sha256": "848d04876ec02d2e0c295dcc46776cb7d8844a507c2d9e60842cba2fba0f3135"
         }
       },
       "reason": null,

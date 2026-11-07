@@ -3314,9 +3314,9 @@ Ops used (notes): [`aperture_photometry`](https://furuse.work/ops/astrostack/pho
 
 *↑ **Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not** ―― Real tint-etched metallography from TBM (128 x 128 px, about 115 um square, shown 3x). Left: the micrograph; right: expert hand-drawn grain boundaries in white and morph_skiz boundaries in sky blue.*
 
-[![19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skele](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning.png)
+[![19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning.png)
 
-*↑ The measurement ―― 19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― 19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。 (figure labels are in Japanese; the numbers are the same)*
 
 [![16 画素おきの縦横の試験線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts.png)
 

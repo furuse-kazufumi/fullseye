@@ -3312,9 +3312,9 @@ TBM(Zenodo 8386997、CC BY 4.0)の色で腐食した多結晶の金属組織 320
 
 *↑ **実写の金属組織で影響圏の骨格から粒界を引き、粒の大きさを専門家の手描きと比べる ―― 合わせた値は合っても 1 枚ずつは順位も合わない** ―― TBM の実写の金属組織(色で腐食、128 × 128 画素 ≈ 115 µm 角を 3 倍)。左 = 写真、右 = 白が専門家の手描きの粒界、空色が morph_skiz の粒界。*
 
-[![19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skele](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning.png)
+[![19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning.png)
 
-*↑ 測定の図 ―― 19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。*
+*↑ 測定の図 ―― 19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。*
 
 [![16 画素おきの縦横の試験線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts.png)
 

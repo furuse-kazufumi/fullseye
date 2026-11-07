@@ -576,12 +576,15 @@ def write_figures(res: dict) -> None:
     else:
         raise GrainGateError("縁で差の出る箇所が見つからない")
     panels = []
+    # 下地は同じ場所の顕微鏡写真を白へ寄せて薄くしたもの(線がどこを通っているかを写真の上で見せる)
+    faded = (255 - 0.45 * (255 - im["rgb"][crop] * 255)).astype(np.uint8)
     for m in (im["thick"], gt, sk, im["thin"]):
-        a = np.where(m[crop], 0, 255).astype(np.uint8)
-        panels.append(_enlarge(np.repeat(a[:, :, None], 3, 2), 12))
+        a = faded.copy()
+        a[m[crop]] = (0, 0, 0)
+        panels.append(_enlarge(a, 12))
     gap = np.full((panels[0].shape[0], 6, 3), 160, np.uint8)
     figs.save("thinning", np.hstack([x for p in panels for x in (p, gap)][:-1]),
-              caption="%s の左上の隅の 32 × 32 画素(12 倍、黒 = 線、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / "
+              caption="%s の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / "
                       "scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、"
                       "画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。" % name,
               source=SOURCE)

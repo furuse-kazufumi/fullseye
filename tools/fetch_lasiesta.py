@@ -81,13 +81,35 @@ def _download(url: str, part: Path, size: int) -> int:
     return total
 
 
+def _is_bsdtar(exe: str) -> bool:
+    """``tar`` が libarchive の bsdtar か(GNU tar は RAR を読めない。Git for Windows の tar は GNU)。"""
+    try:
+        out = subprocess.run([exe, "--version"], capture_output=True, text=True, timeout=30,
+                             stdin=subprocess.DEVNULL).stdout
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return "bsdtar" in out or "libarchive" in out
+
+
 def _extractor() -> list[str]:
-    """RAR を展開できる道具を探す(見つからなければ止まる)。"""
-    for name, args in (("tar", ["-xf"]), ("unrar", ["x", "-o-"]), ("7z", ["x", "-y"])):
+    """RAR を展開できる道具を探す(見つからなければ止まる)。
+
+    bsdtar を最優先にする: 名前が ``bsdtar`` のもの、Windows 同梱の ``%SystemRoot%\\System32\\tar.exe``、
+    PATH の ``tar`` のうち ``--version`` が bsdtar / libarchive と名乗るもの。次に ``unrar``、``7z``。
+    """
+    candidates = [shutil.which("bsdtar")]
+    root = os.environ.get("SystemRoot")
+    if root:
+        candidates.append(str(Path(root) / "System32" / "tar.exe"))
+    candidates.append(shutil.which("tar"))
+    for exe in candidates:
+        if exe and Path(exe).is_file() and _is_bsdtar(exe):
+            return [exe, "-xf"]
+    for name, args in (("unrar", ["x", "-o-"]), ("7z", ["x", "-y"])):
         exe = shutil.which(name)
         if exe:
             return [exe, *args]
-    raise SystemExit("RAR を展開する道具(tar = bsdtar / unrar / 7z)が見つからない")
+    raise SystemExit("RAR を展開する道具(bsdtar / unrar / 7z)が見つからない(GNU tar は RAR を読めない)")
 
 
 def _extract(archive: Path, dest: Path) -> None:
@@ -96,7 +118,7 @@ def _extract(archive: Path, dest: Path) -> None:
     if work.exists():
         shutil.rmtree(work)
     work.mkdir(parents=True)
-    if Path(tool[0]).stem.lower() == "tar":
+    if tool[1] == "-xf":
         cmd = [*tool, str(archive), "-C", str(work)]
     elif Path(tool[0]).stem.lower() == "unrar":
         cmd = [*tool, str(archive), str(work) + os.sep]
