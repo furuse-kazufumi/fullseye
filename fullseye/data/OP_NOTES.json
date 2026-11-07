@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3811,
- "n_notes": 3817,
+ "n_ops": 3835,
+ "n_notes": 3841,
  "notes": {
   "vol_dilate": [
    {
@@ -19652,6 +19652,126 @@
     "path": "docs/ops/drive/lidar/ray_plane_range.md"
    }
   ],
+  "capture_margin": [
+   {
+    "op": "capture_margin",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "vector × vector × scalar × points",
+    "out": "measurement",
+    "path": "docs/ops/drive/locomotion/capture_margin.md"
+   }
+  ],
+  "com_from_silhouette": [
+   {
+    "op": "com_from_silhouette",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "mask",
+    "out": "keypoints",
+    "path": "docs/ops/drive/locomotion/com_from_silhouette.md"
+   }
+  ],
+  "com_support_margin": [
+   {
+    "op": "com_support_margin",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "vector × points",
+    "out": "measurement",
+    "path": "docs/ops/drive/locomotion/com_support_margin.md"
+   }
+  ],
+  "contact_points": [
+   {
+    "op": "contact_points",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "points × any",
+    "out": "points",
+    "path": "docs/ops/drive/locomotion/contact_points.md"
+   }
+  ],
+  "foot_slip_metrics": [
+   {
+    "op": "foot_slip_metrics",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "any × mask × points",
+    "out": "table",
+    "path": "docs/ops/drive/locomotion/foot_slip_metrics.md"
+   }
+  ],
+  "footstep_plan": [
+   {
+    "op": "footstep_plan",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "mask",
+    "out": "table",
+    "path": "docs/ops/drive/locomotion/footstep_plan.md"
+   }
+  ],
+  "gait_phase": [
+   {
+    "op": "gait_phase",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/drive/locomotion/gait_phase.md"
+   }
+  ],
+  "gait_step_events": [
+   {
+    "op": "gait_step_events",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "any × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/locomotion/gait_step_events.md"
+   }
+  ],
+  "lipm_capture_point": [
+   {
+    "op": "lipm_capture_point",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "points × points × scalar",
+    "out": "points",
+    "path": "docs/ops/drive/locomotion/lipm_capture_point.md"
+   }
+  ],
+  "static_contact_force_lp": [
+   {
+    "op": "static_contact_force_lp",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "points × normals × vector × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/locomotion/static_contact_force_lp.md"
+   }
+  ],
+  "support_line_margin": [
+   {
+    "op": "support_line_margin",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "vector × points",
+    "out": "measurement",
+    "path": "docs/ops/drive/locomotion/support_line_margin.md"
+   }
+  ],
+  "support_polygon": [
+   {
+    "op": "support_polygon",
+    "dim": "drive",
+    "category": "locomotion",
+    "in": "points",
+    "out": "table",
+    "path": "docs/ops/drive/locomotion/support_polygon.md"
+   }
+  ],
   "hill_hold_brake_min": [
    {
     "op": "hill_hold_brake_min",
@@ -23239,6 +23359,126 @@
     "in": "image2d × matrix × matrix",
     "out": "table",
     "path": "docs/ops/drive/ttc/ttc_truth.md"
+   }
+  ],
+  "detect_obstacles": [
+   {
+    "op": "detect_obstacles",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth",
+    "out": "mask",
+    "path": "docs/ops/drive/walkterrain/detect_obstacles.md"
+   }
+  ],
+  "elevation_map": [
+   {
+    "op": "elevation_map",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "points",
+    "out": "depth",
+    "path": "docs/ops/drive/walkterrain/elevation_map.md"
+   }
+  ],
+  "elevation_normals": [
+   {
+    "op": "elevation_normals",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth",
+    "out": "normalmap",
+    "path": "docs/ops/drive/walkterrain/elevation_normals.md"
+   }
+  ],
+  "elevation_step_edges": [
+   {
+    "op": "elevation_step_edges",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth",
+    "out": "mask",
+    "path": "docs/ops/drive/walkterrain/elevation_step_edges.md"
+   }
+  ],
+  "elevation_traversability": [
+   {
+    "op": "elevation_traversability",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth",
+    "out": "mask",
+    "path": "docs/ops/drive/walkterrain/elevation_traversability.md"
+   }
+  ],
+  "fill_gaps": [
+   {
+    "op": "fill_gaps",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth",
+    "out": "depth",
+    "path": "docs/ops/drive/walkterrain/fill_gaps.md"
+   }
+  ],
+  "foothold_candidates": [
+   {
+    "op": "foothold_candidates",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth",
+    "out": "table",
+    "path": "docs/ops/drive/walkterrain/foothold_candidates.md"
+   }
+  ],
+  "foothold_score": [
+   {
+    "op": "foothold_score",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth",
+    "out": "image2d",
+    "path": "docs/ops/drive/walkterrain/foothold_score.md"
+   }
+  ],
+  "fuse_elevation": [
+   {
+    "op": "fuse_elevation",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "images",
+    "out": "depth",
+    "path": "docs/ops/drive/walkterrain/fuse_elevation.md"
+   }
+  ],
+  "ground_plane": [
+   {
+    "op": "ground_plane",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth",
+    "out": "depth",
+    "path": "docs/ops/drive/walkterrain/ground_plane.md"
+   }
+  ],
+  "ground_surface": [
+   {
+    "op": "ground_surface",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth",
+    "out": "depth",
+    "path": "docs/ops/drive/walkterrain/ground_surface.md"
+   }
+  ],
+  "roughness_map": [
+   {
+    "op": "roughness_map",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth",
+    "out": "image2d",
+    "path": "docs/ops/drive/walkterrain/roughness_map.md"
    }
   ],
   "load_asset": [

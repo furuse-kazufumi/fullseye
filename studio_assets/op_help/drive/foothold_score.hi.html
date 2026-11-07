@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">foothold_score — DRIVE <code style="color:#22d3bf">walkterrain</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foothold_score(grid, cell: &#x27;float&#x27; = 0.05, window: &#x27;int&#x27; = 3)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import terrain; terrain.foothold_score(grid, cell: &#x27;float&#x27; = 0.05, window: &#x27;int&#x27; = 3)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;foothold_score&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>प्रति-cell समतलता score [0, 1] में (1 = समतल व क्षैतिज = अच्छा foothold)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Combines local roughness (height std) and slope into a single score; useful to rank candidate step locations for a legged robot.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:walking_ops_tour">walking_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/walking_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:flow_from_depth_motion">flow_from_depth_motion</a> · <a style="color:#22d3bf" href="opdrive:ttc_truth">ttc_truth</a> · <a style="color:#22d3bf" href="opdrive:ttc_from_flow">ttc_from_flow</a> · <a style="color:#22d3bf" href="opdrive:foe_from_flow">foe_from_flow</a> · <a style="color:#22d3bf" href="opdrive:perlin2">perlin2</a> · <a style="color:#22d3bf" href="opdrive:fbm_height">fbm_height</a> · <a style="color:#22d3bf" href="opdrive:fbm_gradient">fbm_gradient</a> · <a style="color:#22d3bf" href="opdrive:radial_periodogram">radial_periodogram</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">walkterrain</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:elevation_map">elevation_map</a> · <a style="color:#22d3bf" href="opdrive:fill_gaps">fill_gaps</a> · <a style="color:#22d3bf" href="opdrive:elevation_traversability">elevation_traversability</a> · <a style="color:#22d3bf" href="opdrive:ground_surface">ground_surface</a> · <a style="color:#22d3bf" href="opdrive:ground_plane">ground_plane</a> · <a style="color:#22d3bf" href="opdrive:detect_obstacles">detect_obstacles</a> · <a style="color:#22d3bf" href="opdrive:fuse_elevation">fuse_elevation</a> · <a style="color:#22d3bf" href="opdrive:roughness_map">roughness_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: terrain.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

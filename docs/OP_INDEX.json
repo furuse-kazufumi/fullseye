@@ -1,8 +1,8 @@
 {
- "n_ops": 3811,
+ "n_ops": 3835,
  "tiers": {
   "color": 12,
-  "ledger": 2847,
+  "ledger": 2871,
   "nary": 17,
   "registry": 935
  },
@@ -3688,6 +3688,23 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "capture_margin",
+   "halcon": "",
+   "in_sort": "vector",
+   "out_sort": "measurement",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "vector",
+    "vector",
+    "scalar",
+    "points"
+   ],
+   "gpu_tier": "partial"
+  },
+  {
    "name": "car_dubins_path",
    "halcon": "",
    "in_sort": "matrix",
@@ -4917,6 +4934,35 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "com_from_silhouette",
+   "halcon": "",
+   "in_sort": "mask",
+   "out_sort": "keypoints",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "mask"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "com_support_margin",
+   "halcon": "",
+   "in_sort": "vector",
+   "out_sort": "measurement",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "vector",
+    "points"
+   ],
+   "gpu_tier": "partial"
+  },
+  {
    "name": "combined_modulus",
    "halcon": "",
    "in_sort": "scalar",
@@ -5149,6 +5195,21 @@
     "scalar"
    ],
    "gpu_tier": "suitable"
+  },
+  {
+   "name": "contact_points",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "points",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points",
+    "any"
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "contact_radius_fit",
@@ -7882,6 +7943,20 @@
    "gpu_tier": "none"
   },
   {
+   "name": "detect_obstacles",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "mask",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "depth"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "detect_reflection_symmetry",
    "halcon": "",
    "in_sort": "points",
@@ -9247,6 +9322,62 @@
     "points"
    ],
    "gpu_tier": "partial"
+  },
+  {
+   "name": "elevation_map",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "depth",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "elevation_normals",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "normalmap",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "depth"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "elevation_step_edges",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "mask",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "depth"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "elevation_traversability",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "mask",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "depth"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "ellipse",
@@ -10743,6 +10874,20 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "fill_gaps",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "depth",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "depth"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "fill_level_from_image",
    "halcon": "",
    "in_sort": "image2d",
@@ -12114,6 +12259,64 @@
    "gpu_tier": "none"
   },
   {
+   "name": "foot_slip_metrics",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "mask",
+    "points"
+   ],
+   "gpu_tier": "none"
+  },
+  {
+   "name": "foothold_candidates",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "table",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "depth"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "foothold_score",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "image2d",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "depth"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "footstep_plan",
+   "halcon": "",
+   "in_sort": "mask",
+   "out_sort": "table",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "mask"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "force_from_wrist_displacement",
    "halcon": "",
    "in_sort": "signal",
@@ -12673,6 +12876,20 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "fuse_elevation",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "depth",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "images"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "fuse_to_voxel",
    "halcon": "",
    "in_sort": "any",
@@ -12700,6 +12917,37 @@
     "measurehandle"
    ],
    "gpu_tier": "suitable"
+  },
+  {
+   "name": "gait_phase",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "gait_step_events",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "scalar",
+    "scalar",
+    "scalar"
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "gauss_cubature",
@@ -14082,6 +14330,20 @@
    "gpu_tier": "none"
   },
   {
+   "name": "ground_plane",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "depth",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "depth"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "ground_shift_track",
    "halcon": "",
    "in_sort": "any",
@@ -14094,6 +14356,20 @@
     "any"
    ],
    "gpu_tier": "none"
+  },
+  {
+   "name": "ground_surface",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "depth",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "depth"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "gs_catalog_html",
@@ -18541,6 +18817,22 @@
     "voxel"
    ],
    "gpu_tier": "suitable"
+  },
+  {
+   "name": "lipm_capture_point",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "points",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points",
+    "points",
+    "scalar"
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "load_asset",
@@ -29955,6 +30247,20 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "roughness_map",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "image2d",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "depth"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "roundabout_entry_check",
    "halcon": "",
    "in_sort": "table",
@@ -33943,6 +34249,24 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "static_contact_force_lp",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points",
+    "normals",
+    "vector",
+    "scalar",
+    "scalar"
+   ],
+   "gpu_tier": "partial"
+  },
+  {
    "name": "statistical_outlier_removal",
    "halcon": "",
    "in_sort": "points",
@@ -34579,6 +34903,35 @@
     "mesh"
    ],
    "gpu_tier": "suitable"
+  },
+  {
+   "name": "support_line_margin",
+   "halcon": "",
+   "in_sort": "vector",
+   "out_sort": "measurement",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "vector",
+    "points"
+   ],
+   "gpu_tier": "partial"
+  },
+  {
+   "name": "support_polygon",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "locomotion",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points"
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "surface_defect",

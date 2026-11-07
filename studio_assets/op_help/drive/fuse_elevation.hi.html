@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fuse_elevation — DRIVE <code style="color:#22d3bf">walkterrain</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fuse_elevation(grids, agg: &#x27;str&#x27; = &#x27;max&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import terrain; terrain.fuse_elevation(grids, agg: &#x27;str&#x27; = &#x27;max&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;fuse_elevation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>कई aligned elevation grids को एक robot-centric map में fuse करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Multi-frame accumulation: as a robot walks it sees the terrain from several depth frames; binning each into an <code style="color:#22d3bf">elevation_map</code> on a common grid and fusing them here fills gaps and firms up heights. <code style="color:#22d3bf">agg</code> = &#x27;max&#x27; (obstacle-safe, default), &#x27;min&#x27; (ground-safe) or &#x27;mean&#x27;. <code style="color:#22d3bf">nan</code> (unobserved in a given frame) is ignored; a cell unobserved in *every* frame stays <code style="color:#22d3bf">nan</code>. Input grids must share a shape.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:walking_ops_tour">walking_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/walking_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">depth</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">walkterrain</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:elevation_map">elevation_map</a> · <a style="color:#22d3bf" href="opdrive:fill_gaps">fill_gaps</a> · <a style="color:#22d3bf" href="opdrive:elevation_traversability">elevation_traversability</a> · <a style="color:#22d3bf" href="opdrive:foothold_score">foothold_score</a> · <a style="color:#22d3bf" href="opdrive:ground_surface">ground_surface</a> · <a style="color:#22d3bf" href="opdrive:ground_plane">ground_plane</a> · <a style="color:#22d3bf" href="opdrive:detect_obstacles">detect_obstacles</a> · <a style="color:#22d3bf" href="opdrive:roughness_map">roughness_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: terrain.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

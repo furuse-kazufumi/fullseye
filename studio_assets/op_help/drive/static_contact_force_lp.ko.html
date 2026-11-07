@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">static_contact_force_lp — DRIVE <code style="color:#22d3bf">locomotion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × normals × vector × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.static_contact_force_lp(contacts, normals, com, mass, mu, gravity: &#x27;float&#x27; = 9.81, n_facets: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import locomotion; locomotion.static_contact_force_lp(contacts, normals, com, mass, mu, gravity: &#x27;float&#x27; = 9.81, n_facets: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;static_contact_force_lp&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>선형화한 마찰 원뿔 아래의 정적 접촉력 분배(<code style="color:#22d3bf">scipy.optimize.linprog</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>静的な接触力の配分。各接触 i の力を、摩擦錐を <code style="color:#22d3bf">n_facets</code> 角の多角錐で内側から近似した生成ベクトル <code style="color:#22d3bf">g_ik = n_i + μ·t_ik</code>(t_ik は接平面の単位ベクトルを等角に回したもの)の非負結合 <code style="color:#22d3bf">f_i = Σ_k λ_ik g_ik</code> で表し、静的な釣り合い</p>
+<p>Σ f_i + m·g = 0,   Σ (p_i − c) × f_i = 0      (g = (0, 0, −gravity))</p>
+<p>を満たす λ ≥ 0 を線形計画で探す。目的は <b>法線力の最大値の最小化</b>(荷重を均す)に、接線力の L1 和を 1e-3 の重みで足したもの(足どうしで押し合う内力 = 解の不定さを消す)。</p>
+<p style="margin:2px 0 2px 12px">• 多角錐は錐の内側(頂点が錐面の上)なので、ここで実行可能なら真の摩擦錐でも実行可能。逆は <code style="color:#22d3bf">n_facets</code> が小さいと成り立たない(縁の近くは保守的)。</p>
+<p style="margin:2px 0 2px 12px">• 平地(法線がすべて +z)では、μ &gt; 0 なら「解がある ⇔ COM の地面への射影が支持多角形の内側」(接線力は z = 0 の点で水平な軸のまわりのモーメントを作れない)。<code style="color:#22d3bf">com_support_margin</code> と突き合わせる門が tests にある。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">contacts</code> (N, 3) [m]、<code style="color:#22d3bf">normals</code> (N, 3)(正規化する。外向き = 地面から足へ)、<code style="color:#22d3bf">com</code> (3,) [m]、<code style="color:#22d3bf">mass</code> [kg] &gt; 0、<code style="color:#22d3bf">mu</code> ≥ 0(0 なら摩擦なし = 法線だけ)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値 <code style="color:#22d3bf">{&quot;feasible&quot;, &quot;forces&quot; (N, 3) [N] か None, &quot;normal&quot; (N,), &quot;tangential&quot; (N,), &quot;max_normal&quot;, &quot;residual&quot;(釣り合いの残差 [N]、[N·m]), &quot;status&quot;, &quot;message&quot;}</code>。解が無ければ <code style="color:#22d3bf">feasible = False</code>、力は <code style="color:#22d3bf">None</code>。</p>
+<p>空の入力(<code style="color:#22d3bf">contacts</code> が 0 要素)は ValueError で拒否する。</p>
+<p>English: friction cones are replaced by inscribed <code style="color:#22d3bf">n_facets</code>-sided pyramids, so a feasible answer here is feasible for the true cone. The LP minimises the largest normal force plus 1e-3 x the L1 tangential force. On flat ground with mu &gt; 0, feasibility is equivalent to the COM projection lying inside the support polygon.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:walking_ops_tour">walking_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/walking_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">locomotion</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:contact_points">contact_points</a> · <a style="color:#22d3bf" href="opdrive:com_from_silhouette">com_from_silhouette</a> · <a style="color:#22d3bf" href="opdrive:support_polygon">support_polygon</a> · <a style="color:#22d3bf" href="opdrive:com_support_margin">com_support_margin</a> · <a style="color:#22d3bf" href="opdrive:gait_phase">gait_phase</a> · <a style="color:#22d3bf" href="opdrive:support_line_margin">support_line_margin</a> · <a style="color:#22d3bf" href="opdrive:lipm_capture_point">lipm_capture_point</a> · <a style="color:#22d3bf" href="opdrive:capture_margin">capture_margin</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: locomotion.py — DRIVE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

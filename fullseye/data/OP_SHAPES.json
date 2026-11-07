@@ -192,7 +192,7 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 20,
+        "direct_edges": 21,
         "join_edges": 2,
         "reduce_edges": 0
       },
@@ -636,7 +636,7 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 20,
+        "direct_edges": 21,
         "join_edges": 2,
         "reduce_edges": 0
       },
@@ -936,7 +936,7 @@
       ],
       "shape": "serial",
       "derived_from": {
-        "direct_edges": 9,
+        "direct_edges": 10,
         "join_edges": 0,
         "reduce_edges": 0
       },
@@ -986,8 +986,8 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 52,
-        "join_edges": 7,
+        "direct_edges": 53,
+        "join_edges": 8,
         "reduce_edges": 0
       },
       "currently_composable": true,
@@ -1239,7 +1239,7 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 20,
+        "direct_edges": 21,
         "join_edges": 2,
         "reduce_edges": 0
       },
