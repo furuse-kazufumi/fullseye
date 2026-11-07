@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(480 例)
+### 2-D 图像/信号/几何(481 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -288,6 +288,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `optics_four_f_processor` — op: `four_f_filter`, `fourier_plane_filter`, `highpass`, `identity`, `lowpass` `py -3.11 examples/optics_four_f_processor.py`
 - `scale_law_of_features` — op: `contlength`, `moments_region_2nd`, `moments_region_3rd`, `moments_region_central` `py -3.11 examples/scale_law_of_features.py`
 - `shape_factors_closed_form` — op: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
+- `walking_ops_tour` — op: `capture_margin`, `com_from_silhouette`, `com_support_margin`, `contact_points`, `detect_obstacles`, `elevation_map`, `elevation_normals`, `elevation_step_edges`, `elevation_traversability`, `fill_gaps`, `foot_slip_metrics`, `foothold_candidates`(另有 12 个) `py -3.11 examples/walking_ops_tour.py`
 - `itokawa_gravity_tour` — op: `mesh_slice_contours`, `polyhedron_clip_halfspace`, `polyhedron_gravity` `py -3.11 examples/itokawa_gravity_tour.py`
 
 **color**
@@ -555,12 +556,12 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_real_walnut_cbct` — op: `arc`, `ct_adjoint_project`, `ct_dual_energy_reconstruct`, `ct_forward_project`, `ct_scan_geometry`, `fdk_reconstruct`, `os_sart_reconstruct`, `rmse`, `sirt_reconstruct`, `ssim`, `threshold`, `tv_reconstruct` `py -3.11 examples/poc_real_walnut_cbct.py`
 
 **perception_templates**
-- `perception_pipeline` — op:(没有 op 笔记链接到此例) `py -3.11 examples/perception_pipeline.py`
+- `perception_pipeline` — op: `elevation_map` `py -3.11 examples/perception_pipeline.py`
 - `segment_and_classify` — op: `otsu` `py -3.11 examples/segment_and_classify.py`
 - `motion_analysis` — op:(没有 op 笔记链接到此例) `py -3.11 examples/motion_analysis.py`
 - `grasp_pose` — op: `rmse` `py -3.11 examples/grasp_pose.py`
 - `perception_on_video` — op: `flow_magnitude` `py -3.11 examples/perception_on_video.py`
-- `physical_ai_perception` — op:(没有 op 笔记链接到此例) `py -3.11 examples/physical_ai_perception.py`
+- `physical_ai_perception` — op: `com_support_margin`, `elevation_map`, `foothold_candidates`, `support_polygon` `py -3.11 examples/physical_ai_perception.py`
 - `import_and_grasp` — op:(没有 op 笔记链接到此例) `py -3.11 examples/import_and_grasp.py`
 - `gaussian_splat_cloud` — op:(没有 op 笔记链接到此例) `py -3.11 examples/gaussian_splat_cloud.py`
 - `sim2real_and_alife` — op: `alife_cyclic_ca`, `alife_dla`, `alife_life_step`, `alife_reaction_bz`, `alife_turing`, `aug_barrel`, `aug_fixed_pattern`, `aug_jpeg_blocks`, `aug_rolling_shutter`, `aug_shot_noise`, `aug_vignette`, `macro_denoise`(另有 5 个) `py -3.11 examples/sim2real_and_alife.py`
@@ -569,8 +570,8 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_safety_clearance` — op:(没有 op 笔记链接到此例) `py -3.11 examples/poc_safety_clearance.py`
 
 **consumer**
-- `consumer_hillco` — op:(没有 op 笔记链接到此例) `py -3.11 examples/consumer_hillco.py`
-- `consumer_onocollo` — op:(没有 op 笔记链接到此例) `py -3.11 examples/consumer_onocollo.py`
+- `consumer_hillco` — op: `com_from_silhouette`, `com_support_margin`, `foothold_candidates`, `gait_phase`, `support_polygon` `py -3.11 examples/consumer_hillco.py`
+- `consumer_onocollo` — op: `com_support_margin`, `contact_points`, `gait_phase`, `support_polygon` `py -3.11 examples/consumer_onocollo.py`
 
 **optics_layout**
 - `vision_layout_from_catalog` — op: `airy_radius_um`, `covers_sensor`, `diffraction_blur`, `interface_budget`, `layout_capture`, `lens_catalog`, `lens_spec`, `light_catalog`, `light_spec`, `light_wavelengths`, `linescan_capture`, `observe_surface`(另有 10 个) `py -3.11 examples/vision_layout_from_catalog.py`
@@ -833,9 +834,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 
 ## Operators by family(族 → 类别，全部 op)
 
-_共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
+_共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
 
-族一览: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族一览: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 741 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -3621,7 +3622,7 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: 无 — 非极大值抑制(3.39 节)。像素 (x, y) 仅当在窗口内**对前面的邻居(上方各行以及同一行左侧)≥、对后面的邻居 >** 时才保留(REQ-0337)。平坦峰顶只保留 1 个像素正是由于这种不对称。*mask* 的非零像素不参与比较，原样保留 (也不用于其他像素的比较，REQ-0336)。被抑制的像素在 U8 时为 0，S16 时为 INT16_MIN(REQ-0335)。超出窗口的邻居不比较。 · 示例: `gallery_openvx_spec_values`
 
-### drive (717 ops / 53 categories)
+### drive (741 ops / 55 categories)
 
 名字是驾驶，内容却是**物理仿真与机器人 PoC 的台账**: 除驾驶(赛道、交通、决策、CARLA / CommonRoad)外，触觉(tac*)、peg-in-hole(peg*)、抛光(polish)、磨削(grind)、切削(cutting)、粉体(granular / scoop)、粉末 X 射线衍射(pxrd)、球类(ball / puck)等作为类别共存其中。请按类别名查找。
 
@@ -4024,6 +4025,20 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `lidar_spec` `无输入 → table` GPU: 无 — 生成旋转式 LiDAR 的规格 dict(默认 32 beam、仰角 −25…+15°、方位 0.2° = 1800 列)。 · 示例: `poc_driving_school`
 - `ray_box_ranges` `points × points → signal` GPU: 无 — 从原点 ``origin`` 沿方向 ``dirs (...,3)`` 的射线进入轴对齐盒为止的距离(slab 法)。 · 示例: `gallery_drive_city_terrain`
 - `ray_plane_range` `points × points → signal` GPU: 无 — 从原点 ``origin`` 沿方向 ``dirs (...,3)`` 的射线到达平面 ``ax+by+cz+d=0`` 为止的距离。 · 示例: `poc_table_tennis_bounce`
+
+#### drive / locomotion (12)
+- `capture_margin` `vector × vector × scalar × points → measurement` GPU: 无 — LIPM 捕获点到支撑集合的有符号距离(0 步可捕获性)。 · 示例: `walking_ops_tour`
+- `com_from_silhouette` `mask → keypoints` GPU: 无 — 二值轮廓的质心(形心),以图像坐标 ``(row, col)`` 表示。在没有完整质量模型时作为身体 COM 投影的廉价代理(evis/hillco 姿态)。空掩码返回 ``(nan, nan)``。 · 示例: `consumer_hillco`, `walking_ops_tour`
+- `com_support_margin` `vector × points → measurement` GPU: 无 — 静态稳定裕度:COM 的地面投影到支撑多边形边界的有符号距离(McGhee & Frank 1968)。 · 示例: `consumer_hillco`, `consumer_onocollo`, `physical_ai_perception`, `walking_ops_tour`
+- `contact_points` `points × any → points` GPU: 无 — 位于地面平面 ``[a,b,c,d]`` 的 *tol* 以内的点 = 地面接触点。 · 示例: `consumer_onocollo`, `walking_ops_tour`
+- `foot_slip_metrics` `any × mask × points → table` GPU: 无 — 支撑相中足部的水平滑移、由足测得的前进量,以及“只有躯干前进”的闸门。 · 示例: `walking_ops_tour`
+- `footstep_plan` `mask → table` GPU: 无 — 在落脚点掩码上的左右交替脚步序列(精确最短路径)。 · 示例: `walking_ops_tour`
+- `gait_phase` `matrix → table` GPU: 无 — 根据高度逐帧把每只脚分类为支撑相(着地)或摆动相。 · 示例: `consumer_hillco`, `consumer_onocollo`, `walking_ops_tour`
+- `gait_step_events` `any × scalar × scalar × scalar → table` GPU: 无 — 用滞回从足部轨迹中提取行走的步(离地 -> 摆动 -> 着地)。 · 示例: `walking_ops_tour`
+- `lipm_capture_point` `points × points × scalar → points` GPU: 无 — 线性倒立摆的瞬时捕获点,``xi = c + c_dot / omega``。 · 示例: `walking_ops_tour`
+- `static_contact_force_lp` `points × normals × vector × scalar × scalar → table` GPU: 无 — 线性化摩擦锥下的静态接触力分配(``scipy.optimize.linprog``)。 · 示例: `walking_ops_tour`
+- `support_line_margin` `vector × points → measurement` GPU: 无 — 对任何支撑集合都有定义的支撑裕度,包括双足(线段)支撑。 · 示例: `walking_ops_tour`
+- `support_polygon` `points → table` GPU: 无 — 地面接触点的凸支撑多边形(地面 x, y 平面)。 · 示例: `consumer_hillco`, `consumer_onocollo`, `physical_ai_perception`, `walking_ops_tour`
 
 #### drive / long (13)
 - `hill_hold_brake_min` `scalar → scalar` GPU: 无 — 能在坡上保持静止的最小制动 [m/s²] = max(0, |a_creep − g sin θ| − c_rr g cos θ)(静摩擦平衡)。 · 示例: `poc_driving_longitudinal`
@@ -4441,6 +4456,20 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `ttc_from_range` `无输入 → scalar` GPU: 无 — 由距离与接近速度求 τ = d / v(秒)。由世界位姿给出的真值(v ≤ 0 时为 ``inf``，d < 0 时为 ``ValueError``)。 · 示例: `poc_ttc_rss`
 - `ttc_from_scale` `无输入 → scalar` GPU: 无 — 由视在大小的变化求 τ(秒，以第一帧的时刻计)：``τ₀ = Δt · w₁ / (w₁ − w₀)``。 · 示例: `poc_ttc_rss`
 - `ttc_truth` `image2d × matrix × matrix → table` GPU: 有(许可列表) — 逐像素的**真实 τ**(秒，以第一帧的时刻计)与接近速度：``{"tau", "closing_speed", "depth1", "valid"}``。 · 示例: `poc_ttc_rss`
+
+#### drive / walkterrain (12)
+- `detect_obstacles` `depth → mask` GPU: 无 — 分割出高出可行走地面超过 *clearance* 的单元。 · 示例: `walking_ops_tour`
+- `elevation_map` `points → depth` GPU: 无 — 将点云分箱为 2.5-D 高程栅格。 · 示例: `perception_pipeline`, `physical_ai_perception`, `walking_ops_tour`
+- `elevation_normals` `depth → normalmap` GPU: 无 — 高程图的朝上单位法线 (H, W, 3) —— :func:`surface_normals` 的台账入口。 · 示例: `walking_ops_tour`
+- `elevation_step_edges` `depth → mask` GPU: 无 — 高程图的台阶边缘(路缘 / 台阶前缘)-> ``(edge_mask, signed_rise)``(台账入口)。 · 示例: `walking_ops_tour`
+- `elevation_traversability` `depth → mask` GPU: 无 — 高程图中可通行的单元(True = 在台阶与坡度上限之内)—— :func:`traversability` 的台账入口。 · 示例: `walking_ops_tour`
+- `fill_gaps` `depth → depth` GPU: 无 — 用最近的有限高度填充 ``nan`` 单元(最近邻)。 · 示例: `walking_ops_tour`
+- `foothold_candidates` `depth → table` GPU: 无 — 从地形中挑选离散的安全落脚目标。 · 示例: `consumer_hillco`, `physical_ai_perception`, `walking_ops_tour`
+- `foothold_score` `depth → image2d` GPU: 无 — 每个单元的平坦度得分 [0, 1] (1 = 平坦且水平 = 好的落脚点)。 · 示例: `walking_ops_tour`
+- `fuse_elevation` `images → depth` GPU: 无 — 将多个对齐的高程栅格融合为一张以机器人为中心的地图。 · 示例: `walking_ops_tour`
+- `ground_plane` `depth → depth` GPU: 无 — 每个单元的稳健最小二乘地面平面 ``z = a·x + b·y + c``。 · 示例: `walking_ops_tour`
+- `ground_surface` `depth → depth` GPU: 无 — 通过灰度开运算(先最小滤波再最大滤波)得到平滑的可行走地面包络。 · 示例: `walking_ops_tour`
+- `roughness_map` `depth → image2d` GPU: 无 — 每个单元的表面粗糙度 = ``window`` 邻域内高度的局部标准差。碎石 / 植被上高,平滑地面上约为 0。 · 示例: `walking_ops_tour`
 
 #### drive / world (4)
 - `load_asset` `无输入 → table` GPU: 无 — 将内置资产读成网格(mesh) dict：``{"V", "F", "color", "label", "name", "dims"}``。 · 示例: `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`
