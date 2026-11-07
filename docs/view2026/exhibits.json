@@ -19987,6 +19987,40 @@
    }
   },
   {
+   "id": "poc_real_stereo_multiscanline",
+   "group": "wing_geometry",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene.png",
+   "label": {
+    "ja": "実写のステレオで視差・面・円の姿勢",
+    "en": "Disparity, surface and circle pose from real stereo",
+    "zh": "用真实立体像对求视差、曲面与圆的位姿",
+    "tw": "用真實立體像對求視差、曲面與圓的位姿",
+    "ko": "실제 스테레오로 시차·면·원의 자세",
+    "de": "Disparität, Fläche und Kreislage aus echtem Stereo",
+    "hi": "वास्तविक stereo से disparity, सतह और वृत्त की pose",
+    "fr": "Disparité, surface et pose de cercle en stéréo réelle"
+   }
+  },
+  {
+   "id": "poc_real_chessboard_undistort",
+   "group": "wing_geometry",
+   "media": "01_board.png",
+   "motion": false,
+   "thumb_src": "01_board.png",
+   "label": {
+    "ja": "実写の校正板で歪みを直し正面図へ",
+    "en": "Undistorting real calibration boards to a front view",
+    "zh": "用真实标定板去畸变并校正为正视图",
+    "tw": "用真實校正板去畸變並校正為正視圖",
+    "ko": "실제 보정판의 왜곡 보정과 정면도",
+    "de": "Echte Kalibrierplatten entzerren und frontal abbilden",
+    "hi": "वास्तविक calibration board का विरूपण सुधार और सामने का दृश्य",
+    "fr": "Corriger la distorsion de vraies mires et les redresser de face"
+   }
+  },
+  {
    "id": "poc_real_walnut_cbct",
    "group": "wing_imaging",
    "media": "01_methods_sparse_limited.png",

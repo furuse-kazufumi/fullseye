@@ -4512,6 +4512,55 @@
    "lead_en": ""
   },
   {
+   "id": "poc_real_stereo_multiscanline",
+   "wing": "wing_geometry",
+   "added": "2026-11-08",
+   "figure": "scene",
+   "figure_caption_ja": "左の実写、binocular_disparity_ms の視差(無効 = 黒)、真値視差、reconstruct_surface_stereo の点群を斜めから見た絵。",
+   "figure_caption_en": "Left photo, binocular_disparity_ms disparity (invalid = black), ground-truth disparity, and the reconstruct_surface_stereo point cloud seen obliquely.",
+   "numbers_source": "log",
+   "title_ja": "実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする",
+   "title_en": "Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks",
+   "caption_ja": "実写のステレオ対(Middlebury 2014 motorcycle、真値視差つき)から、binocular_disparity_ms で視差を、binocular_distance_ms と reconstruct_surface_stereo で距離と面を、get_circle_pose で後輪のリムの姿勢を出し、真値視差と OpenCV(SGBM・reprojectImageTo3D・matchTemplate)で採点した。★有効画素の bad-2 4.67 %・平均誤差 0.960 px・密度 90.0 %(SGBM 7.27 % / 1.315 px / 88.4 %)。無効も誤りに数えると 14.23 %(SGBM 18.00 %)で、両方が有効な画素だけなら 4.45 % 対 4.95 % —— 差の半分は「どこを無効にするか」から来る。★失敗する場所: 真値から幾何で数えた遮蔽(6.9 %)は 57 % が左右一致で無効に落ちる。誤りが残るのは奥行きの段差の近く(bad-2 14.1 %)と、真値の対応で左右の明るさが食い違う面(反射・光沢の代理、11.5 %)で、それ以外は 0.85 %。「無地で壊れる」は最も平らな 1.2 % にしか当たらず、床のコンクリートは 0.68 % で最もよく合う。★名前の ms は多重スケールではなく複数走査線: 集約の向きを 2 → 4 にすると 5.55 → 4.67 %、op の外で 1/2 に縮めた段は 8.31 %。★距離は doffs を渡して相対誤差 中央 0.37 %、点群は OpenCV と最大 0.0006 mm で一致。★★円の姿勢は op が正しく、問題は条件の悪さ: リム(半長軸 62 px、弧 223°)で中心 23.5 mm・法線 7.74° ずれるが、真値の円の上の点を渡すと 1.2e-6°。縁の点の食い違い 0.52 px と同じ雑音で法線の誤差は中央 5.79°・95 % 点 9.39°。2 つの解は再投影の差 0.007 px で選べず、法線は 50.7° 違う。同じ縁を推定した視差で 3-D にすると 2.3 mm・1.59°。★points_lepetit の点で crop_rectangle2 → create_ncc_model → find_ncc_models を引くと bad-2 13.8 %(でたらめな画素 16.3 %)、スコア 0.9 以上で 2.2 %。OpenCV の matchTemplate と最良位置が全点一致。★★MiddEval3 の訓練 15 場面(nocc)で bad-2 の中央 6.52 % 対 SGBM 10.20 %、14 場面で下回る。露出・照明を変えても ms はほぼ動かない(−0.18 / +0.94 点、SGBM +4.99 / +18.08 点。照明では無効が増える)。逆に平行化だけが違う対(Playtable、縦の残差 平均 0.24 px)では ms が +12.1 点悪化し SGBM は +0.6 点 —— 縦のずれに弱い(理由は未確認)。",
+   "caption_en": "From a real stereo pair (Middlebury 2014 motorcycle, with ground-truth disparity), binocular_disparity_ms gives disparity, binocular_distance_ms and reconstruct_surface_stereo give distance and surface, and get_circle_pose gives the pose of the rear wheel rim; all are scored against the ground-truth disparity and against OpenCV (SGBM, reprojectImageTo3D, matchTemplate). Valid-pixel bad-2 is 4.67% with mean error 0.960 px at 90.0% density (SGBM 7.27% / 1.315 px / 88.4%). Counting invalid pixels as errors gives 14.23% (SGBM 18.00%); on pixels where both are valid it is 4.45% vs 4.95%, so half of the gap comes from which pixels each method declares invalid. Where it breaks: occlusions (6.9%, counted geometrically from the ground truth) are 57% invalidated by the left-right check. Errors remain near depth discontinuities (bad-2 14.1%) and on surfaces whose brightness differs between the views at the true correspondence (a proxy for reflection and gloss, 11.5%); everything else is at 0.85%. 'Textureless fails' applies only to the flattest 1.2% of pixels; the concrete floor matches best at 0.68%. The 'ms' in the name means multi-scanline, not multi-scale: going from 2 to 4 aggregation paths takes bad-2 from 5.55% to 4.67%, and a half-resolution pass run outside the operator gives 8.31%. Distance with doffs has a median relative error of 0.37%, and the point cloud matches OpenCV to 0.0006 mm. The circle pose shows the operator is right and the geometry is ill-conditioned: on the rim (semi-major axis 62 px, 223 degrees of arc) the centre is 23.5 mm and the normal 7.74 degrees off, but points taken on the true circle give 1.2e-6 degrees. Adding noise equal to the 0.52 px gap between the edge points and the true circle gives a median normal error of 5.79 degrees (95th percentile 9.39). The two solutions differ by 0.007 px in reprojection and cannot be told apart, yet their normals are 50.7 degrees apart. The same edge lifted to 3-D with the estimated disparity gives 2.3 mm and 1.59 degrees. points_lepetit with crop_rectangle2, create_ncc_model and find_ncc_models gives bad-2 13.8% (random pixels 16.3%), 2.2% above score 0.9, with best positions identical to OpenCV's matchTemplate at every point. On the 15 MiddEval3 training scenes (non-occluded) the median bad-2 is 6.52% vs SGBM 10.20%, lower in 14 scenes. Changing exposure or lighting barely moves it (-0.18 / +0.94 points vs SGBM +4.99 / +18.08; under lighting it invalidates more pixels). But on the pair that differs only in rectification (Playtable, mean vertical residual 0.24 px) it worsens by 12.1 points while SGBM moves 0.6: it is sensitive to vertical misalignment (cause not yet verified).",
+   "ops": [
+    "binocular_disparity_ms",
+    "binocular_distance_ms",
+    "reconstruct_surface_stereo",
+    "get_circle_pose",
+    "points_lepetit",
+    "crop_rectangle2",
+    "create_ncc_model",
+    "find_ncc_models"
+   ],
+   "run": "py -3.11 examples/poc_real_stereo_multiscanline.py",
+   "lead_ja": "",
+   "lead_en": ""
+  },
+  {
+   "id": "poc_real_chessboard_undistort",
+   "wing": "wing_geometry",
+   "added": "2026-11-08",
+   "figure": "board",
+   "figure_caption_ja": "いちばん曲がって写った 1 枚: 元の写真、change_radial_distortion_image で歪みを直した画像、rectify_to_world_plane の正面図(橙 = 1 マス 40 px の格子、青 = 拾い直した角)、直した後と元の差。",
+   "figure_caption_en": "The most distorted photo: original, distortion removed by change_radial_distortion_image, rectify_to_world_plane front view (orange: 40 px grid; blue: re-detected corners), and the difference after minus before.",
+   "numbers_source": "log",
+   "title_ja": "実写の校正板 13 枚で歪みを直し、正面図へ平行化する ―― 直線性と格子の間隔で採点する",
+   "title_en": "Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing",
+   "caption_ja": "OpenCV が配布する校正板の写真 13 枚(640x480、内角 9x6、Apache-2.0)で、change_radial_distortion_image・map_image・rectify_to_world_plane の結果を、出力の画像から OpenCV で拾い直した角の直線性と、1 マス 40 px の格子からのずれで採点した。★camera_calibration_lm は OpenCV の calibrateCamera と同値(内部パラメータの差 2.6e-7 px、再投影 0.4087 px)。★板の行と列の直線性だけで当てた除算モデルの κ(1 係数)で、直線性は 0.655 → 0.157 px。OpenCV の 5 係数で戻した 0.161 px と同等。ただし 2 つのモデルは板の写った範囲では中央 0.49 px しか違わないのに、板が一度も写っていない画像の隅では 46.9 px 食い違う —— どちらが正しいかはこの 13 枚からは言えない。★描き直した 13 枚から角を拾い直すと直線性は中央 0.654 → 0.080 px(OpenCV の undistort は 0.089 px)、13 枚すべてで直る。★map_image は OpenCV の initUndistortRectifyMap の表で remap と最大 9.6e-8 の差、順写像の表は拒否する。★solve_pnp の姿勢は solvePnP と回転 中央 0.12°、正面図の角は格子から RMS 中央 0.24 px・最大 3.0 px、隣の角との間隔は 39.80〜40.02 px。★★points_lepetit は X 字の角に乗らない(1 px 以内 0 / 54、応答の山は角から 2.6 px 脇)。さらに点の 90〜93 % はまっすぐな縁の上にある。1 本の縁で切り分けると、軸に沿った縁やぼけの無い縁では 0 点なのに、傾き 10°・ぼけ 0.7 pxの縁で 100 px あたり 16 点漏れる —— 直線の上の画素を落とす検査の穴として記録した。",
+   "caption_en": "Thirteen calibration-board photos distributed with OpenCV (640x480, 9x6 inner corners, Apache-2.0) are passed through change_radial_distortion_image, map_image and rectify_to_world_plane, and each output is scored by the straightness of corners re-detected in it with OpenCV and by their offset from a 40 px per-square grid. camera_calibration_lm reproduces OpenCV's calibrateCamera (intrinsics within 2.6e-7 px, reprojection 0.4087 px). A one-coefficient division-model kappa fitted only to the straightness of the board's rows and columns takes straightness from 0.655 to 0.157 px, on par with OpenCV's five coefficients (0.161 px). The two models differ by a median of only 0.49 px where the board was seen, but by 46.9 px in image corners the board never reached, and these 13 photos cannot say which is right. Corners re-detected in the 13 redrawn images go from a median straightness of 0.654 to 0.080 px (OpenCV's undistort: 0.089 px), and every image improves. map_image fed OpenCV's initUndistortRectifyMap tables matches remap to 9.6e-8 and refuses forward-mapping tables. The solve_pnp pose agrees with solvePnP to a median of 0.12 degrees, and corners in the front view sit a median RMS of 0.24 px (max 3.0 px) from the grid, with neighbour spacings of 39.80 to 40.02 px. points_lepetit does not land on X-shaped corners (0 of 54 within 1 px; the response peaks 2.6 px beside the corner), and 90-93% of its points lie on straight edges. A single-edge test isolates it: no points on an axis-aligned or unblurred edge, but 16 per 100 px on an edge tilted 10 degrees with 0.7 px blur. The test that should drop pixels on a line leaks there, recorded as a known gap.",
+   "ops": [
+    "change_radial_distortion_image",
+    "map_image",
+    "rectify_to_world_plane",
+    "points_lepetit",
+    "camera_calibration_lm"
+   ],
+   "run": "py -3.11 examples/poc_real_chessboard_undistort.py",
+   "lead_ja": "",
+   "lead_en": ""
+  },
+  {
    "id": "poc_real_walnut_cbct",
    "wing": "wing_imaging",
    "added": "2026-11-08",

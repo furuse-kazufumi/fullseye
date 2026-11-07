@@ -761,6 +761,10 @@
    "accessioned": "2026-09-08",
    "no": "2026.103"
   },
+  "poc_real_chessboard_undistort": {
+   "accessioned": "2026-11-08",
+   "no": "2026.303"
+  },
   "poc_real_coin_metrology": {
    "accessioned": "2026-09-08",
    "no": "2026.104"
@@ -792,6 +796,10 @@
   "poc_real_stereo_depth": {
    "accessioned": "2026-09-08",
    "no": "2026.108"
+  },
+  "poc_real_stereo_multiscanline": {
+   "accessioned": "2026-11-08",
+   "no": "2026.302"
   },
   "poc_real_texture_invariance": {
    "accessioned": "2026-09-08",

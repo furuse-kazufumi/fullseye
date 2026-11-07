@@ -19,6 +19,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 取得は `tools/fetch_walnut_cbct.py`(6 GB の zip から必要な 1,309 要素だけを HTTP Range で取り出し、CRC-32 と SHA-256 で固定)。`realdata` に `walnut_cbct_*` の取り口(置き場は `FULLSEYE_WALNUT_CBCT_DATA` で上書き)。CI は合成 3 本と記録値の印字だけを回し、ネットに出ない。
 - 展示の用語集に cone-beam CT / FDK / SIRT / OS-SART / total variation を足した。
 
+### 追加 — PoC 2 本「実写ステレオで視差・面・円の姿勢」「実写の校正板で歪み・平行化」(収蔵 2026.302 / 2026.303)
+
+- `examples/poc_real_stereo_multiscanline.py` —— Middlebury 2014 の実写ステレオで `binocular_disparity_ms` / `binocular_distance_ms` / `reconstruct_surface_stereo` / `get_circle_pose` / `points_lepetit` + NCC を真値視差と OpenCV で採点(MiddEval3 の 15 場面は `tools/fetch_stereoreal_data.py` で repo 外へ取得、SHA-256 固定)。`examples/poc_real_chessboard_undistort.py` —— OpenCV の校正板の写真 13 枚で `change_radial_distortion_image` / `map_image` / `rectify_to_world_plane` を直線性と格子の間隔で採点。記録した穴: `points_lepetit` の直線の棄却が傾いてぼけた縁で漏れる、`binocular_disparity_ms` は平行化の縦の残差 0.24 px で bad-2 が +12 点悪化する。
+
 ## 1.0.0 — 2026-11-06
 
 1.0.0。`CONTRIBUTING.md` の 1.0 の条件を満たしたので出す: 下の破壊的変更(1.0 前の修正)を出し切ったうえで、以後は「Versioning」の約束をメジャーを上げずに守る。文書の門(`docs/I18N.md`: `OP_CATALOG` と知識ガイド 17 本の英語・中国語)は PR #274 で満たした。0.9.0 の後に入った GPU 一式 7 本の統合もこの版に含む。
