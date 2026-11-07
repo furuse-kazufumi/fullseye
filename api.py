@@ -311,6 +311,8 @@ from realdata import (  # noqa: E402,F401
     sample_stereo_pair, sample_photo_credit,
     sem_metal_layer_cache, sem_metal_layer_root, sem_metal_layer_pairs,
     sem_metal_layer_credit, e57_bunny_cache, e57_bunny_files,
+    walnut_cbct_projection_indices, walnut_cbct_cache, walnut_cbct_write_manifest,
+    walnut_cbct_root, walnut_cbct_credit,
 )
 from deformreg import (  # noqa: E402,F401
     warp_by_field, demons_register, field_magnitude, residual_ssd,

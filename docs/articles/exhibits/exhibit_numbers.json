@@ -1200,6 +1200,10 @@
   "poc_zoom_configurations": {
    "accessioned": "2026-10-19",
    "no": "2026.261"
+  },
+  "poc_real_walnut_cbct": {
+   "accessioned": "2026-11-08",
+   "no": "2026.301"
   }
  },
  "retired": {

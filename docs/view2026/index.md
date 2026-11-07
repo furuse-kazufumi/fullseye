@@ -706,7 +706,7 @@ PoC 300 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>撮像品質・復元</b> (24)</summary>
+<details class="vall"><summary><b>撮像品質・復元</b> (25)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="縞に近づくハエの眼" width="200" height="200"><b>&#9654;</b><span>縞に近づくハエの眼</span></a>
 <a href="../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_camera_shake_deblur.jpg" alt="手ブレ補正" width="200" height="200"><b>&#9654;</b><span>手ブレ補正</span></a>
@@ -732,6 +732,7 @@ PoC 300 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="../articles/assets/poc/poc_simcal_pixel_shift/story.ja.gif" alt="【3 章・見せ場】シーメンススター(腕 32 本)を 8 画素の升に区切り、升ごとにフレームのずれ (dr, dc) を合わせた。升の色 = simcal_fit の分類(緑 = 両方決まる、橙 = 組でしか決まらない、灰 = 効かない)。赤い楕円 = Cramér-Rao の1σ(Fisher 行列の逆の dr・dc の部分)の形と向き(升ごとに長軸を升の幅の 0.84 に揃えた。大きさは升ごとに違う)。星の腕の上では縞が放射状の 1 方向なので、楕円は半径の向きに伸びる —— 縞に沿ったずれ(半径の向き)は画像を変えない。橙の升の「決まる組」は接線の向きと、升が見込む角度の半分以内で揃う(最大 2.5°)。星の外の板は何も決まらない。" loading="lazy" width="200" height="200"></picture><span>ピクセルシフトのずれと開口の較正(決まらない地図)</span></a>
 <a href="../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="../articles/assets/poc/poc_plenoptic_camera/story.ja.gif" alt="480 x 480 raw frame; 32 x 32 lenslets and 15-pixel microimages." loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>処方から撮るプレノプティックカメラ: 生のマイクロ像から撮影後の再合焦と距離へ</span></a>
 <a href="../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><img src="../articles/assets/poc/poc_tof_camera/story.ja.gif" alt="振幅の照明むら、色距離の段差、点群の床・壁・荷物が同じ画素からつながる。" loading="lazy" width="200" height="200"></picture><span>同じ3次元場面の間接ToFと直接ToF: 多経路・混合画素・pile-up・体積誤差</span></a>
+<a href="../articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png"><img src="../articles/assets/poc/poc_real_walnut_cbct/story.ja.gif" alt="行 = 全周 150 枚 / 全周 25 枚 / 150° / 90°、列 = 参照 / FDK / SIRT / TV。濃淡は全パネル共通の 0〜0.062 /mm。90° の TV は平らな塊を描き足すが、形は参照と違う。" loading="lazy" width="200" height="200"></picture><span>実測のコーンビーム CT を再構成する</span></a>
 </div>
 </details>
 

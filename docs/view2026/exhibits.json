@@ -19987,6 +19987,23 @@
    }
   },
   {
+   "id": "poc_real_walnut_cbct",
+   "group": "wing_imaging",
+   "media": "01_methods_sparse_limited.png",
+   "motion": false,
+   "thumb_src": "01_methods_sparse_limited_720.jpg",
+   "label": {
+    "ja": "実測のコーンビーム CT を再構成する",
+    "en": "Reconstructing a measured cone-beam CT scan",
+    "zh": "重建实测的锥束 CT",
+    "tw": "重建實測的錐束 CT",
+    "ko": "실측 콘빔 CT 재구성",
+    "de": "Einen gemessenen Kegelstrahl-CT-Scan rekonstruieren",
+    "hi": "मापे गए cone-beam CT scan का reconstruction",
+    "fr": "Reconstruire un scanner CT à faisceau conique mesuré"
+   }
+  },
+  {
    "id": "poc_real_typewritten_ocr",
    "group": "wing_industrial",
    "media": "01_reading.png",

@@ -549,6 +549,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_battery_ct_degradation` — op: `beam_hardening_apply`, `fbp_volume`, `projection_angles`, `radon_volume`, `ring_artifact_apply` `py -3.11 examples/poc_battery_ct_degradation.py`
 - `poc_battery_electrode_tortuosity` — op: `intersection` `py -3.11 examples/poc_battery_electrode_tortuosity.py`
 - `poc_die_tilt_tsv_overlay` — op: `erf`, `procrustes_fit` `py -3.11 examples/poc_die_tilt_tsv_overlay.py`
+- `poc_real_walnut_cbct` — op: `arc`, `ct_adjoint_project`, `ct_dual_energy_reconstruct`, `ct_forward_project`, `ct_scan_geometry`, `fdk_reconstruct`, `os_sart_reconstruct`, `rmse`, `sirt_reconstruct`, `ssim`, `threshold`, `tv_reconstruct` `py -3.11 examples/poc_real_walnut_cbct.py`
 
 **perception_templates**
 - `perception_pipeline` — op:(没有 op 笔记链接到此例) `py -3.11 examples/perception_pipeline.py`
@@ -1582,7 +1583,7 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` GPU: 无 — Sauvola 局部自适应阈值法。根据每个像素周围的局部均值与标准差来局部地确定阈值,专为存在照明不均的文档图像二值化(文字提取)而设计。 · 示例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` GPU: 无 — 基于 SLIC(Simple Linear Iterative Clustering)的超像素分割。在结合了颜色(此处为灰度值)与坐标的空间中进行 k-means 聚类,将图像分割为大小大致均等的区域。此处返回的是分割结果的边界线区域。 · 示例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` GPU: 有(许可列表) — 基于 Yen 的最大相关准则(maximum correlation criterion)的全局阈值二值化。通过最大化基于直方图熵的评价量来选择阈值,是不同于大津法、Li 法的又一种自动阈值法。 · 示例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` GPU: 有(threshold) — 全局阈值处理（global threshold）。相当于 HALCON 的 ``threshold``（Segment an image using global threshold.）。 · 示例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_sem_metal_layer`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` GPU: 有(threshold) — 全局阈值处理（global threshold）。相当于 HALCON 的 ``threshold``（Segment an image using global threshold.）。 · 示例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_sem_metal_layer`, `poc_real_walnut_cbct`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` GPU: 无 — Sauvola局部自适应二值化(``skimage.filters.threshold_sauvola``,窗口大小为``2*int(a*6)+3``)。由于同时利用局部平均值与局部标准差来决定阈值,因此比``dyn_threshold``更能应对照明不均或低对比度的文档。相当于HALCON``var_threshold``(Threshold an image by local mean and standard deviation analysis.)的近似(公式化的构想相似,但Sauvola的公式与HALCON的公式系数不同——数值结果并不相同)。 · 示例: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` GPU: 无 — 分水岭(watershed)分割。将梯度图像视为地形,以暗区(``x < 0.2+0.3*a``)作为标记求出分水岭线,并返回该边界线。相当于HALCON的``watersheds``(Extract watersheds and basins from an image.)。 · 示例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` GPU: 无 — 实现与``watersheds``完全相同(``kind: "watershed"``)。HALCON的``watersheds_threshold``(Extract watershed basins from an image using a threshold.)原本是带有合并相邻集水盆地的深度阈值的运算符,但此替代实现并未实现该合并阈值,而是返回与``watersheds``相同的结果(近似的局限)。 · 示例: `gallery2d_segmentation`
@@ -4451,17 +4452,17 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `ring_artifact_remove` `sinogram → sinogram` GPU: 无 — 通过压平角度平均剖面来去掉逐探测器 bin 的偏移。 · 示例: `ct_reconstruction`
 
 #### tomography / ct_scan (11)
-- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: 无 — :func:`ct_forward_project` 的精确转置 ``A^T``。 · 示例: `ct_scan_modes`
-- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: 无 — 由同一几何的两次扫描得到两个基材料体数据。
-- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: 无 — 沿 *geometry* 的每条射线投影体数据：离散算子 ``A``。 · 示例: `ct_scan_modes`
-- `ct_scan_geometry` `无输入 → ctgeometry` GPU: 无 — 描述一次 CT 扫描：每个视角下射线源和探测器的位置。 · 示例: `ct_scan_modes`
+- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: 无 — :func:`ct_forward_project` 的精确转置 ``A^T``。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: 无 — 由同一几何的两次扫描得到两个基材料体数据。 · 示例: `poc_real_walnut_cbct`
+- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: 无 — 沿 *geometry* 的每条射线投影体数据：离散算子 ``A``。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `ct_scan_geometry` `无输入 → ctgeometry` GPU: 无 — 描述一次 CT 扫描：每个视角下射线源和探测器的位置。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
 - `ellipsoid_phantom` `无输入 → voxel` GPU: 无 — 将若干均匀椭球之和栅格化到 ``(Z, Y, X)`` 网格上。 · 示例: `ct_scan_modes`
 - `ellipsoid_projections` `ctgeometry → projstack` GPU: 无 — 椭球之和的精确线积分，适用于本族的任意扫描。 · 示例: `ct_scan_modes`
-- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 适用于所有具备重建公式的扫描的滤波反投影：FDK 及其同类方法。 · 示例: `ct_scan_modes`
-- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — OS-SART：将 SIRT 更新逐个应用于有序视角子集。 · 示例: `ct_scan_modes`
+- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 适用于所有具备重建公式的扫描的滤波反投影：FDK 及其同类方法。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — OS-SART：将 SIRT 更新逐个应用于有序视角子集。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
 - `shepp_logan_3d` `无输入 → voxel` GPU: 无 — ``size`` 立方网格上的改进型三维 Shepp-Logan 头部体模。 · 示例: `ct_scan_modes`
-- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — SIRT：同时使用全部视角，``x <- x + lam C A^T R (p - A x)``。 · 示例: `ct_scan_modes`
-- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 基于 Chambolle-Pock 原始对偶法的全变分重建。 · 示例: `ct_scan_modes`
+- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — SIRT：同时使用全部视角，``x <- x + lam C A^T R (p - A x)``。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 基于 Chambolle-Pock 原始对偶法的全变分重建。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
 
 #### tomography / forward (3)
 - `ellipse_phantom` `无输入 → image2d` GPU: 无 — 把若干均匀椭圆之和栅格化到 *size* x *size* 的切片上。 · 示例: `ct_reconstruction`, `poc_ct_fidelity`, `tomography_reconstruct`
@@ -4748,7 +4749,7 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `leader_line` `image2d × text → image2d` GPU: 无 — 引出线 —— 从注记位置(``anchor_xy``)指向对象(``target_xy``)。 · 示例: `annotate_gallery`, `poc_kendama`
 
 #### annotate / shape (4)
-- `arc` `image2d → image2d` GPU: 有(许可列表) — 圆弧。角度以度计,**从屏幕 x 轴顺时针**(因为 row 朝下)。 · 示例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
+- `arc` `image2d → image2d` GPU: 有(许可列表) — 圆弧。角度以度计,**从屏幕 x 轴顺时针**(因为 row 朝下)。 · 示例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_real_walnut_cbct`, `poc_weld_radiograph_porosity`
 - `ellipse` `image2d → image2d` GPU: 无 — 椭圆(用 ``angle_deg`` 旋转,``fill=True`` 时填充)。 · 示例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: 有(许可列表) — 多边形填充(奇偶交叉规则 —— :mod:`imagedraw` 只画轮廓)。 · 示例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: 有(许可列表) — 圆角矩形(``fill=True`` 时填充)。用作衬底或外框。 · 示例: `annotate_gallery`, `poc_machine_condition_fusion`
@@ -5197,8 +5198,8 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `ms_ssim` `image2d × image2d → scalar` GPU: 无 — 多尺度 SSIM(Wang, Simoncelli & Bovik, Asilomar Conf. 2003)。 · 示例: `image_quality_metrics`
 - `mse` `image2d × image2d → scalar` GPU: 无 — 均方误差。不依赖 ``data_range`` 的原始量。 · 示例: `image_quality_metrics`
 - `psnr` `image2d × image2d → scalar` GPU: 无 — 返回两幅图像的峰值信噪比(PSNR,单位 dB)。 · 示例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_dehazing`, `poc_focus_stacking`, `poc_iqa_tid2013`, `poc_pixel_shift`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
-- `rmse` `image2d × image2d → scalar` GPU: 无 — 均方根误差(与像素值同单位)。 · 示例: `ct_scan_modes`, `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_polarization_specular`, `poc_real_tless_6dof`, `poc_structure_4d_deterioration`
-- `ssim` `image2d × image2d → scalar` GPU: 无 — 结构相似性(Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004)。 · 示例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_ct_fidelity`, `poc_dehazing`, `poc_iqa_tid2013`, `poc_superresolution_limits`
+- `rmse` `image2d × image2d → scalar` GPU: 无 — 均方根误差(与像素值同单位)。 · 示例: `ct_scan_modes`, `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_polarization_specular`, `poc_real_tless_6dof`, `poc_real_walnut_cbct`, `poc_structure_4d_deterioration`
+- `ssim` `image2d × image2d → scalar` GPU: 无 — 结构相似性(Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004)。 · 示例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_ct_fidelity`, `poc_dehazing`, `poc_iqa_tid2013`, `poc_real_walnut_cbct`, `poc_superresolution_limits`
 - `ssim_map` `image2d × image2d → image2d` GPU: 无 — SSIM 的**图**(取平均之前)。用来看清哪里不像。 · 示例: `image_quality_metrics`, `poc_iqa_tid2013`
 
 #### imgmetrics / information (5)
