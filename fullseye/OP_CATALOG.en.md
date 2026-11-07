@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (474 examples)
+### 2-D image / signal / geometry (475 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -365,6 +365,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_symbol_package_1d` — ops: `barcode_scan_profiles`, `capture_degrade`, `decode_barcode_profile`, `ean_check_digit`, `encode_barcode1d`, `grade_barcode1d`, `grade_barcode_profile`, `read_barcode1d`, `read_symbols_zxing`, `render_symbol`, `symbol_read`, `symbol_read_pod` (+1 more) `py -3.11 examples/poc_symbol_package_1d.py`
 - `poc_symbol_part_dpm` — ops: `capture_degrade`, `dm_decode_modules`, `dm_encode`, `dm_locate`, `dm_read`, `dm_sample`, `grade_datacode2d`, `qr_decode_modules`, `qr_encode`, `qr_locate`, `qr_read`, `qr_sample` (+4 more) `py -3.11 examples/poc_symbol_part_dpm.py`
 - `poc_symbol_lot_ocr` — ops: `capture_degrade`, `ocr_classify`, `ocr_features`, `ocr_font`, `ocr_read_line`, `ocr_read_trials`, `ocr_render_text`, `ocr_score`, `ocr_segment_line`, `ocr_train`, `symbol_read_pod` `py -3.11 examples/poc_symbol_lot_ocr.py`
+- `poc_real_typewritten_ocr` — ops: `area_center_gray`, `classify_class_gmm`, `classify_class_knn`, `classify_class_mlp`, `classify_class_svm`, `create_lexicon`, `evaluate_class_gmm`, `gray_histo`, `gray_projections`, `lookup_lexicon`, `segment_characters`, `select_characters` (+7 more) `py -3.11 examples/poc_real_typewritten_ocr.py`
 - `poc_barcode_1d` — ops: `decode_barcode`, `gen_measure_rectangle2`, `measure_pos` `py -3.11 examples/poc_barcode_1d.py`
 
 **restoration**
@@ -5053,18 +5054,18 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 ### mv (47 ops / 10 categories)
 
 #### mv / classify (12)
-- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: none — Return the class with the largest posterior for each row under a Gaussian mixture model. · examples: `machine_vision_tour`
-- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: none — Return the class per row by a k-nearest-neighbor majority vote (ties go to the smaller distance sum). · examples: `machine_vision_tour`
-- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: none — Classify feature rows with the multilayer perceptron from `train_class_mlp`. · examples: `machine_vision_tour`
-- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: none — Classify feature rows with the linear SVM from `train_class_svm` (one-vs-rest maximum margin). · examples: `machine_vision_tour`
-- `create_lexicon` (halcon: `create_lexicon`) `no input → table` GPU: none — Build a word list for matching (duplicates removed, order fixed). · examples: `machine_vision_tour`
-- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: none — Return the class posteriors and the overall log density for each row. · examples: `machine_vision_tour`
-- `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: none — Check whether a word is in the list by exact match and return 1.0 if so, otherwise 0.0. · examples: `machine_vision_tour`
-- `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: none — Return the word with the smallest edit distance and that distance. · examples: `machine_vision_tour`
-- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: none — Train a Gaussian mixture per class with EM. · examples: `machine_vision_tour`
-- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: none — Build a k-NN classifier (the features are standardized and kept). · examples: `machine_vision_tour`
-- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: none — Train an MLP classifier. · examples: `machine_vision_tour`
-- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: none — Train a linear SVM (hinge loss, one-vs-rest). · examples: `machine_vision_tour`
+- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: none — Return the class with the largest posterior for each row under a Gaussian mixture model. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: none — Return the class per row by a k-nearest-neighbor majority vote (ties go to the smaller distance sum). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: none — Classify feature rows with the multilayer perceptron from `train_class_mlp`. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: none — Classify feature rows with the linear SVM from `train_class_svm` (one-vs-rest maximum margin). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `create_lexicon` (halcon: `create_lexicon`) `no input → table` GPU: none — Build a word list for matching (duplicates removed, order fixed). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: none — Return the class posteriors and the overall log density for each row. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: none — Check whether a word is in the list by exact match and return 1.0 if so, otherwise 0.0. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: none — Return the word with the smallest edit distance and that distance. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: none — Train a Gaussian mixture per class with EM. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: none — Build a k-NN classifier (the features are standardized and kept). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: none — Train an MLP classifier. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: none — Train a linear SVM (hinge loss, one-vs-rest). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / curve (1)
 - `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: none — Find the control points of a non-rational B-spline through every point (global interpolation). · examples: `machine_vision_tour`
@@ -5075,11 +5076,11 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: none — Detect interest points by comparing opposite pairs on a circle (the Lepetit-Fua detector). · examples: `machine_vision_tour`
 
 #### mv / gray (5)
-- `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: none — Return the gray-weighted mass and centroid `(row, col)`. · examples: `machine_vision_tour`
+- `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: none — Return the gray-weighted mass and centroid `(row, col)`. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
 - `atan2_image` (halcon: `atan2_image`) `image2d × image2d → image2d` GPU: none — Return the per-pixel `atan2(image1, image2)` of two images in radians. · examples: `machine_vision_tour`
 - `get_grayval_contour_xld` (halcon: `get_grayval_contour_xld`) `image2d × keypoints → signal` GPU: none — Read gray values along a contour by interpolation into one signal. · examples: `machine_vision_tour`
-- `gray_histo` (halcon: `gray_histo`) `image2d → table` GPU: none — Return the gray-value histogram as absolute and relative frequencies. · examples: `machine_vision_tour`
-- `gray_projections` (halcon: `gray_projections`) `image2d → table` GPU: none — Return the mean gray value per row and per column. · examples: `machine_vision_tour`
+- `gray_histo` (halcon: `gray_histo`) `image2d → table` GPU: none — Return the gray-value histogram as absolute and relative frequencies. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `gray_projections` (halcon: `gray_projections`) `image2d → table` GPU: none — Return the mean gray value per row and per column. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / morphology (9)
 - `golay_elements` (halcon: `golay_elements`) `no input → table` GPU: none — Build the 3x3 hit and miss structuring elements of a Golay letter with 45-degree rotation. · examples: `machine_vision_tour`
@@ -5107,10 +5108,10 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: none — Map the valid pixels of a disparity image to 3-D points. · examples: `machine_vision_tour`
 
 #### mv / text (4)
-- `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: none — Split a text line image into a label image with one label per character column. · examples: `machine_vision_tour`
-- `select_characters` (halcon: `select_characters`) `labels2d → labels2d` GPU: none — Drop blobs whose height or width is off the median from a character label image and renumber from the left. · examples: `machine_vision_tour`
-- `text_line_orientation` (halcon: `text_line_orientation`) `image2d → scalar` GPU: none — Find the tilt of text lines in degrees by maximizing the sharpness of the projection. · examples: `machine_vision_tour`
-- `text_line_slant` (halcon: `text_line_slant`) `image2d → scalar` GPU: none — Find the character slant of a horizontal text line in degrees by maximizing the sharpness of the column projection. · examples: `machine_vision_tour`
+- `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: none — Split a text line image into a label image with one label per character column. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `select_characters` (halcon: `select_characters`) `labels2d → labels2d` GPU: none — Drop blobs whose height or width is off the median from a character label image and renumber from the left. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `text_line_orientation` (halcon: `text_line_orientation`) `image2d → scalar` GPU: none — Find the tilt of text lines in degrees by maximizing the sharpness of the projection. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `text_line_slant` (halcon: `text_line_slant`) `image2d → scalar` GPU: none — Find the character slant of a horizontal text line in degrees by maximizing the sharpness of the column projection. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / tracking (5)
 - `create_bg_esti` (halcon: `create_bg_esti`) `image2d → table` GPU: none — Create a per-pixel Kalman background model from the first image. · examples: `machine_vision_tour`

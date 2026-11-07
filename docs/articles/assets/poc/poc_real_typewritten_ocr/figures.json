@@ -1,0 +1,70 @@
+[
+ {
+  "file": "01_reading.png",
+  "name": "reading",
+  "caption": "NACA TN 898 の 5 頁(試験頁)。箱 = segment_characters の字、下の字 = k-NN の読み。○青 = 正、×橙 = 誤、灰 = 字数が書き起こしと合わず採点の外。",
+  "shape": [
+   636,
+   1796,
+   3
+  ],
+  "source": "A. E. McPherson, Adaptor for Measuring Principal Strains with Tuckerman Strain Gage, NACA Technical Note 898 (1943), NASA NTRS 19930084880 — Copyright: Public Use Permitted"
+ },
+ {
+  "file": "02_rotation.png",
+  "name": "rotation",
+  "caption": "頁を既知の角度で回して当てた。タイプ打ちの頁は ±0.01° 以内、曲がった小さな頁は 0.3° 前後。範囲外の 35° は誤差 13.3°(NACA)。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "A. E. McPherson, Adaptor for Measuring Principal Strains with Tuckerman Strain Gage, NACA Technical Note 898 (1943), NASA NTRS 19930084880 — Copyright: Public Use Permitted"
+ },
+ {
+  "file": "03_slant.png",
+  "name": "slant",
+  "caption": "直立した印字を既知の角度でせん断した。縦画は約 20 画素なので 2° は 1 画素未満で見えない。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "A. E. McPherson, Adaptor for Measuring Principal Strains with Tuckerman Strain Gage, NACA Technical Note 898 (1943), NASA NTRS 19930084880 — Copyright: Public Use Permitted"
+ },
+ {
+  "file": "04_gap_sweep.png",
+  "name": "gap_sweep",
+  "caption": "小さいと、かすれて割れた字が 2 字に、大きいと詰まった大文字が 1 字になる。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "A. E. McPherson, Adaptor for Measuring Principal Strains with Tuckerman Strain Gage, NACA Technical Note 898 (1943), NASA NTRS 19930084880 — Copyright: Public Use Permitted"
+ },
+ {
+  "file": "05_classifiers.png",
+  "name": "classifiers",
+  "caption": "同じ特徴(区画濃度・射影・重心、主成分 24)。上限 0.9936 は学習に無い字種 10 字を除いた割合。ラベルを混ぜた対照は 0.0506。",
+  "shape": [
+   352,
+   1051,
+   3
+  ],
+  "csv": "05_classifiers.csv",
+  "tsv": "05_classifiers.tsv"
+ },
+ {
+  "file": "06_lexicon.png",
+  "name": "lexicon",
+  "caption": "開いた語彙 = 学習頁の語 230 語、閉じた語彙 = 試験頁の語も入れた 380 語(許される文字列が先に分かる場合の上限)。確信度 = GMM の事後確率が 0.999 未満の字を含む語だけ直す。",
+  "shape": [
+   352,
+   1353,
+   3
+  ],
+  "csv": "06_lexicon.csv",
+  "tsv": "06_lexicon.tsv"
+ }
+]

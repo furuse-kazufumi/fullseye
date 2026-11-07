@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(474 例)
+### 2-D 图像/信号/几何(475 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -365,6 +365,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_symbol_package_1d` — op: `barcode_scan_profiles`, `capture_degrade`, `decode_barcode_profile`, `ean_check_digit`, `encode_barcode1d`, `grade_barcode1d`, `grade_barcode_profile`, `read_barcode1d`, `read_symbols_zxing`, `render_symbol`, `symbol_read`, `symbol_read_pod`(另有 1 个) `py -3.11 examples/poc_symbol_package_1d.py`
 - `poc_symbol_part_dpm` — op: `capture_degrade`, `dm_decode_modules`, `dm_encode`, `dm_locate`, `dm_read`, `dm_sample`, `grade_datacode2d`, `qr_decode_modules`, `qr_encode`, `qr_locate`, `qr_read`, `qr_sample`(另有 4 个) `py -3.11 examples/poc_symbol_part_dpm.py`
 - `poc_symbol_lot_ocr` — op: `capture_degrade`, `ocr_classify`, `ocr_features`, `ocr_font`, `ocr_read_line`, `ocr_read_trials`, `ocr_render_text`, `ocr_score`, `ocr_segment_line`, `ocr_train`, `symbol_read_pod` `py -3.11 examples/poc_symbol_lot_ocr.py`
+- `poc_real_typewritten_ocr` — op: `area_center_gray`, `classify_class_gmm`, `classify_class_knn`, `classify_class_mlp`, `classify_class_svm`, `create_lexicon`, `evaluate_class_gmm`, `gray_histo`, `gray_projections`, `lookup_lexicon`, `segment_characters`, `select_characters`(另有 7 个) `py -3.11 examples/poc_real_typewritten_ocr.py`
 - `poc_barcode_1d` — op: `decode_barcode`, `gen_measure_rectangle2`, `measure_pos` `py -3.11 examples/poc_barcode_1d.py`
 
 **restoration**
@@ -5053,18 +5054,18 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 ### mv (47 ops / 10 categories)
 
 #### mv / classify (12)
-- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: 无 — 按高斯混合模型逐行返回后验最大的类。 · 示例: `machine_vision_tour`
-- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: 无 — 以 k 近邻多数表决逐行返回类（平票取距离和较小者）。 · 示例: `machine_vision_tour`
-- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: 无 — 用 `train_class_mlp` 的多层感知机分类特征行。 · 示例: `machine_vision_tour`
-- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: 无 — 用 `train_class_svm` 的线性 SVM 分类特征行（一对多取最大间隔）。 · 示例: `machine_vision_tour`
-- `create_lexicon` (halcon: `create_lexicon`) `无输入 → table` GPU: 无 — 创建用于匹配的词表（去重并固定顺序）。 · 示例: `machine_vision_tour`
-- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: 无 — 逐行返回各类后验与模型整体的对数密度。 · 示例: `machine_vision_tour`
-- `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: 无 — 以完全匹配检查词是否在表中，在则返回 1.0，否则返回 0.0。 · 示例: `machine_vision_tour`
-- `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: 无 — 返回编辑距离最小的词及其距离。 · 示例: `machine_vision_tour`
-- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: 无 — 用 EM 为每个类学习高斯混合模型。 · 示例: `machine_vision_tour`
-- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: 无 — 构建 k-NN 分类器（特征标准化后保存）。 · 示例: `machine_vision_tour`
-- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: 无 — 训练 MLP 分类器。 · 示例: `machine_vision_tour`
-- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: 无 — 训练线性 SVM（hinge 损失，一对多）。 · 示例: `machine_vision_tour`
+- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: 无 — 按高斯混合模型逐行返回后验最大的类。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: 无 — 以 k 近邻多数表决逐行返回类（平票取距离和较小者）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: 无 — 用 `train_class_mlp` 的多层感知机分类特征行。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: 无 — 用 `train_class_svm` 的线性 SVM 分类特征行（一对多取最大间隔）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `create_lexicon` (halcon: `create_lexicon`) `无输入 → table` GPU: 无 — 创建用于匹配的词表（去重并固定顺序）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: 无 — 逐行返回各类后验与模型整体的对数密度。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: 无 — 以完全匹配检查词是否在表中，在则返回 1.0，否则返回 0.0。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: 无 — 返回编辑距离最小的词及其距离。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: 无 — 用 EM 为每个类学习高斯混合模型。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: 无 — 构建 k-NN 分类器（特征标准化后保存）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: 无 — 训练 MLP 分类器。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: 无 — 训练线性 SVM（hinge 损失，一对多）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / curve (1)
 - `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: 无 — 求经过全部点的非有理 B 样条控制点（全局插值）。 · 示例: `machine_vision_tour`
@@ -5075,11 +5076,11 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: 无 — 比较圆周上相对的两点来检测关注点（Lepetit–Fua 检测器）。 · 示例: `machine_vision_tour`
 
 #### mv / gray (5)
-- `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: 无 — 返回以灰度为权的质量与重心 `(row, col)`。 · 示例: `machine_vision_tour`
+- `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: 无 — 返回以灰度为权的质量与重心 `(row, col)`。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 - `atan2_image` (halcon: `atan2_image`) `image2d × image2d → image2d` GPU: 无 — 以弧度返回两幅图像逐像素的 `atan2(image1, image2)`。 · 示例: `machine_vision_tour`
 - `get_grayval_contour_xld` (halcon: `get_grayval_contour_xld`) `image2d × keypoints → signal` GPU: 无 — 沿轮廓点列插值读取灰度，得到一条信号。 · 示例: `machine_vision_tour`
-- `gray_histo` (halcon: `gray_histo`) `image2d → table` GPU: 无 — 以绝对频数与相对频率返回灰度直方图。 · 示例: `machine_vision_tour`
-- `gray_projections` (halcon: `gray_projections`) `image2d → table` GPU: 无 — 返回每行与每列的灰度平均值。 · 示例: `machine_vision_tour`
+- `gray_histo` (halcon: `gray_histo`) `image2d → table` GPU: 无 — 以绝对频数与相对频率返回灰度直方图。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `gray_projections` (halcon: `gray_projections`) `image2d → table` GPU: 无 — 返回每行与每列的灰度平均值。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / morphology (9)
 - `golay_elements` (halcon: `golay_elements`) `无输入 → table` GPU: 无 — 生成 Golay 字母的 3x3 击中与击不中结构元（45 度步进旋转）。 · 示例: `machine_vision_tour`
@@ -5107,10 +5108,10 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: 无 — 把视差图的有效像素映射为三维点。 · 示例: `machine_vision_tour`
 
 #### mv / text (4)
-- `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: 无 — 把文字行图像切分为按字符列分块的标签图。 · 示例: `machine_vision_tour`
-- `select_characters` (halcon: `select_characters`) `labels2d → labels2d` GPU: 无 — 从字符标签图中去掉高度或宽度偏离中位数的块，并从左重新编号。 · 示例: `machine_vision_tour`
-- `text_line_orientation` (halcon: `text_line_orientation`) `image2d → scalar` GPU: 无 — 通过使投影最锐利求文字行的倾角（度）。 · 示例: `machine_vision_tour`
-- `text_line_slant` (halcon: `text_line_slant`) `image2d → scalar` GPU: 无 — 通过使列投影最锐利求水平文字行的字符倾斜角（度）。 · 示例: `machine_vision_tour`
+- `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: 无 — 把文字行图像切分为按字符列分块的标签图。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `select_characters` (halcon: `select_characters`) `labels2d → labels2d` GPU: 无 — 从字符标签图中去掉高度或宽度偏离中位数的块，并从左重新编号。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `text_line_orientation` (halcon: `text_line_orientation`) `image2d → scalar` GPU: 无 — 通过使投影最锐利求文字行的倾角（度）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `text_line_slant` (halcon: `text_line_slant`) `image2d → scalar` GPU: 无 — 通过使列投影最锐利求水平文字行的字符倾斜角（度）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / tracking (5)
 - `create_bg_esti` (halcon: `create_bg_esti`) `image2d → table` GPU: 无 — 由第一幅图像创建逐像素卡尔曼背景模型。 · 示例: `machine_vision_tour`

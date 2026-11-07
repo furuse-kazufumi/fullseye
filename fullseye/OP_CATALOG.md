@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(474 例)
+### 2-D 画像/信号/幾何(475 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -363,6 +363,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **包装の 1-D バーコード: 読める / 品質が良い / どこまでぼけても読めるか(POD)** — EAN-13・ITF-14・GS1-128 を生成して読み、印字品質の等級を閉形式で確かめ、デフォーカスの読み取り POD をFullseye と zxing-cpp で比べる。★d90 のぼけで読める記号の等級は F。★d90 で撮り直すと読取率 0.79(点推定は楽観側)、使うのは d90/95。 `py -3.11 examples/poc_symbol_package_1d.py`
 - **部品の DPM Data Matrix とラベルの QR: 等級の閉形式と読める限界の POD** — 刻印の SC = 0.35、傾きの AN = 2(1−cos t)/(1+cos t)、k 語の欠けの UEC が閉形式どおり。四角い刻印では 2 つの読み取り器の d90 が数 % で一致。★zxing-cpp はくっきりしたドットピーンを 24 方向中 0 しか読まず、POD が非単調。 `py -3.11 examples/poc_symbol_part_dpm.py`
 - **ロット番号の CIJ 印字を古典 OCR で読む: 可読性の POD と誤読の数え方** — 5x7 ドットと線の内蔵書体、k 最近傍 + 棄却。字種外の字は棄却。デフォーカスと字高の可読性 POD。★学習の範囲を越えたぼけでは誤読が増える(誤読と棄却を分けて数える)。 `py -3.11 examples/poc_symbol_lot_ocr.py`
+- **1943 年のタイプ打ちの報告(実スキャン)を古典 OCR で読む: 傾き・切り出し・4 種の分類器・辞書** — NACA TN 898(1943、NASA NTRS、Public Use Permitted)の 300 dpi の 3 頁を、画像を見て書き起こした 100 行と照合する。傾きは既知の回転を ±28° で 0.007° 以内、傾斜は 5° 以上を 1.3° 以内(±2° 以内は 0 と答える)、切り出しは 100 行中 82 行で字数一致。同じ特徴・学習 2 頁・別の試験頁で GMM 0.969 / k-NN 0.981 / MLP 0.966 / SVM 0.973(k-NN と GMM は scikit-learn / scipy と全数一致)。★辞書は閉じた語彙なら語の正解を増やし、開いた語彙では part→apart のように正しい語を壊して減らす。PDF は repo 外(取得道具で SHA-256 固定)。 `py -3.11 examples/poc_real_typewritten_ocr.py`
 - **1 次元バーコードが読めなくなる境界(誤読と読み取り不能を分けて数える)** — 自作 4-run 符号なので真値は数字そのもの。★**無傷では 6 つの読み方が全部 24/24 で差が出ない** —— 道具の良し悪しは壊してからしか分からない。★★「読めない」と言える実装かどうかで誤読率が 6 倍変わる(厳格 7.3 % / 寛容 46.1 %。**寛容のほうが成功率も高い**)。検査数字は寛容の誤読を 46.1 → 2.6 % にするが 0 にはしない。傾きの崖はatan(60/210)=15.95 度の予測に対し実測 15.5〜16.0 度。ぼけは σ/m に畳めるが傾きは畳めない。 `py -3.11 examples/poc_barcode_1d.py`
 
 **restoration**
@@ -5051,18 +5052,18 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 ### mv(47 ops / 10 categories)
 
 #### mv / classify(12)
-- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: なし — 混合正規分布のモデルで事後確率が最大のクラスを行ごとに返す。 · 例: `machine_vision_tour`
-- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: なし — k 近傍の多数決でクラスを行ごとに返す(同票は距離の和が小さいクラス)。 · 例: `machine_vision_tour`
-- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: なし — ``train_class_mlp`` の多層パーセプトロンで特徴の行を分類する。 · 例: `machine_vision_tour`
-- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: なし — ``train_class_svm`` の線形 SVM で特徴の行を分類する(one-vs-rest の最大マージン)。 · 例: `machine_vision_tour`
-- `create_lexicon` (halcon: `create_lexicon`) `入力なし → table` GPU: なし — 照合に使う語の一覧を作る(重複を除き、順を固定する)。 · 例: `machine_vision_tour`
-- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: なし — 各クラスの事後確率と、モデル全体の対数密度を行ごとに返す。 · 例: `machine_vision_tour`
-- `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: なし — 語が一覧にあるかを完全一致で調べ、あれば 1.0、無ければ 0.0 を返す。 · 例: `machine_vision_tour`
-- `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: なし — 編集距離が最小の語と、その距離を返す(同距離は一覧の順で最初の語)。 · 例: `machine_vision_tour`
-- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: なし — クラスごとに混合正規分布を EM で学習する。 · 例: `machine_vision_tour`
-- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: なし — k-NN の分類器を作る(特徴を標準化して保持する)。 · 例: `machine_vision_tour`
-- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: なし — MLP 分類器を学習(train_class_mlp)。 · 例: `machine_vision_tour`
-- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: なし — 線形 SVM(hinge 損失, one-vs-rest)を学習(train_class_svm)。 · 例: `machine_vision_tour`
+- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: なし — 混合正規分布のモデルで事後確率が最大のクラスを行ごとに返す。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: なし — k 近傍の多数決でクラスを行ごとに返す(同票は距離の和が小さいクラス)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: なし — ``train_class_mlp`` の多層パーセプトロンで特徴の行を分類する。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: なし — ``train_class_svm`` の線形 SVM で特徴の行を分類する(one-vs-rest の最大マージン)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `create_lexicon` (halcon: `create_lexicon`) `入力なし → table` GPU: なし — 照合に使う語の一覧を作る(重複を除き、順を固定する)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: なし — 各クラスの事後確率と、モデル全体の対数密度を行ごとに返す。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: なし — 語が一覧にあるかを完全一致で調べ、あれば 1.0、無ければ 0.0 を返す。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: なし — 編集距離が最小の語と、その距離を返す(同距離は一覧の順で最初の語)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: なし — クラスごとに混合正規分布を EM で学習する。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: なし — k-NN の分類器を作る(特徴を標準化して保持する)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: なし — MLP 分類器を学習(train_class_mlp)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: なし — 線形 SVM(hinge 損失, one-vs-rest)を学習(train_class_svm)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / curve(1)
 - `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: なし — 点列を全部通る非有理 B スプラインの制御点を求める(大域補間)。 · 例: `machine_vision_tour`
@@ -5073,11 +5074,11 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: なし — 円周上の向かい合う 2 点の比較で注目点を検出する(Lepetit と Fua の点検出)。 · 例: `machine_vision_tour`
 
 #### mv / gray(5)
-- `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: なし — 灰色値を重みとした質量と重心 ``(row, col)`` を返す(area_center_gray)。 · 例: `machine_vision_tour`
+- `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: なし — 灰色値を重みとした質量と重心 ``(row, col)`` を返す(area_center_gray)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 - `atan2_image` (halcon: `atan2_image`) `image2d × image2d → image2d` GPU: なし — 2 枚の画像の画素ごとの ``atan2(image1, image2)`` をラジアンで返す(atan2_image)。 · 例: `machine_vision_tour`
 - `get_grayval_contour_xld` (halcon: `get_grayval_contour_xld`) `image2d × keypoints → signal` GPU: なし — 輪郭の点列に沿って灰色値を補間で読み、1 本の信号にする。 · 例: `machine_vision_tour`
-- `gray_histo` (halcon: `gray_histo`) `image2d → table` GPU: なし — 灰色値のヒストグラムを絶対度数と相対度数で返す(gray_histo)。 · 例: `machine_vision_tour`
-- `gray_projections` (halcon: `gray_projections`) `image2d → table` GPU: なし — 灰色値の行ごとと列ごとの平均を返す(gray_projections)。 · 例: `machine_vision_tour`
+- `gray_histo` (halcon: `gray_histo`) `image2d → table` GPU: なし — 灰色値のヒストグラムを絶対度数と相対度数で返す(gray_histo)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `gray_projections` (halcon: `gray_projections`) `image2d → table` GPU: なし — 灰色値の行ごとと列ごとの平均を返す(gray_projections)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / morphology(9)
 - `golay_elements` (halcon: `golay_elements`) `入力なし → table` GPU: なし — Golay の文字の 3x3 構造要素組(ヒット、ミス)を 45 度刻みの回転つきで作る。 · 例: `machine_vision_tour`
@@ -5105,10 +5106,10 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: なし — 視差画像の有効な画素を 3-D の点へ写す(reconstruct_surface_stereo)。 · 例: `machine_vision_tour`
 
 #### mv / text(4)
-- `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: なし — 文字行の画像を、字ごとの列の塊へ切り分けたラベル画像にする。 · 例: `machine_vision_tour`
-- `select_characters` (halcon: `select_characters`) `labels2d → labels2d` GPU: なし — 字のラベル画像から、高さと幅が中央値から外れた塊を落として左から振り直す。 · 例: `machine_vision_tour`
-- `text_line_orientation` (halcon: `text_line_orientation`) `image2d → scalar` GPU: なし — 文字行の傾きを射影の鋭さの最大で求める(度)。 · 例: `machine_vision_tour`
-- `text_line_slant` (halcon: `text_line_slant`) `image2d → scalar` GPU: なし — 水平な文字行の字の斜体角を、列の射影の鋭さの最大で求める(度)。 · 例: `machine_vision_tour`
+- `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: なし — 文字行の画像を、字ごとの列の塊へ切り分けたラベル画像にする。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `select_characters` (halcon: `select_characters`) `labels2d → labels2d` GPU: なし — 字のラベル画像から、高さと幅が中央値から外れた塊を落として左から振り直す。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `text_line_orientation` (halcon: `text_line_orientation`) `image2d → scalar` GPU: なし — 文字行の傾きを射影の鋭さの最大で求める(度)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `text_line_slant` (halcon: `text_line_slant`) `image2d → scalar` GPU: なし — 水平な文字行の字の斜体角を、列の射影の鋭さの最大で求める(度)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / tracking(5)
 - `create_bg_esti` (halcon: `create_bg_esti`) `image2d → table` GPU: なし — 最初の画像から画素ごとのカルマン背景モデルを作る。 · 例: `machine_vision_tour`
