@@ -4890,7 +4890,7 @@ py -3.11 examples/poc_weed_rice_ratio.py
 
 ### 撮像品質・復元ウィング ―― 絵が良くなることと真値に近づくことは別
 
-手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 20 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
+手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 21 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
 
 見た目の指標は真値を最大値としません。霞んだ入力の対比が真値より高い、アンシャープで勾配は真値に一致するのに PSNR は落ちる、雑音を足すと PSNR が上がる。逆に、ナイキストより細かい縞を戻したのに PSNR が -0.01 dB しか動かない場面もあります。
 
@@ -5689,6 +5689,46 @@ py -3.11 examples/poc_photograph_through_prescription.py
 この回が作った図は全部で **22 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_photograph_through_prescription)
 
 使用 op(ノートへ): [`bokeh_shape`](https://furuse.work/ops/optics/lensrender/bokeh_shape.html) · [`chief_ray`](https://furuse.work/ops/optics/design/chief_ray.html) · [`chromatic_shift`](https://furuse.work/ops/optics/design/chromatic_shift.html) · [`depth_of_field`](https://furuse.work/ops/optics/geometric/depth_of_field.html) · [`distortion_map`](https://furuse.work/ops/optics/imaging_sim/distortion_map.html) · [`exit_pupil_samples`](https://furuse.work/ops/optics/lensrender/exit_pupil_samples.html) · [`ghost_analysis`](https://furuse.work/ops/optics/noncoaxial/ghost_analysis.html) · [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`noncoaxial_system`](https://furuse.work/ops/optics/noncoaxial/noncoaxial_system.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`relative_illumination`](https://furuse.work/ops/optics/geometric/relative_illumination.html) · [`render_compare_prescriptions`](https://furuse.work/ops/optics/lensrender/render_compare_prescriptions.html) · [`render_ghost_overlay`](https://furuse.work/ops/optics/lensrender/render_ghost_overlay.html) · [`render_scene_through_lens`](https://furuse.work/ops/optics/lensrender/render_scene_through_lens.html) · [`spot_stats`](https://furuse.work/ops/optics/design/spot_stats.html) · [`trace_sensor_rays`](https://furuse.work/ops/optics/lensrender/trace_sensor_rays.html) · [`with_wavelength`](https://furuse.work/ops/optics/design/with_wavelength.html)
+
+## No.2026.301 —— 実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する ―― 間引くと TV が持ちこたえ、限られた角度ではどれも戻らない
+
+公開されている実測のコーンビーム CT(Der Sarkissian ほか 2019、クルミ 1 個、CC BY 4.0)を、Fullseye の撮影モードの op で再構成し、FDK と 3 つの反復法(SIRT・OS-SART・全変動 TV)を、配布元が 3 つの軌道すべてから作った参照と比べた。使ったのは中段の軌道の投影 1200 枚のうち 300 枚(1.2° 刻み)で、検出器は 6 × 6(中央面)/ 8 × 8(3-D)に束ね、取得道具が 6 GB の zip から必要な要素だけを Range 要求で取り出す(1309 要素、SHA-256 の一覧で固定)。★幾何: 配布元のベクトル 300 本を `ct_scan_geometry` の円軌道に読み替えると、SOD・SDD は装置の設定ファイルと一致し、円軌道で表せない 2 つ(検出器の面内回転 0.50°、縦のずれ 7.2 画素)は投影を `warp_parametric` で引き直して消した。★中央面: 全 300 枚の FDK は参照と RMSE 0.0023 /mm・SSIM 0.94、配布元の FDK(ASTRA、1200 枚)とは SSIM 0.96・平均の比 0.9988。配布元の FDK と参照の差 0.0009 より大きい分の大半は粗い格子(0.1 mm で作り直して箱平均すると 0.0013)。25 枚では FDK 0.0126 / SIRT 0.0074 / OS-SART 0.0067 / TV 0.0046 で、TV が最も持ちこたえる(重み 1e-05 は参照を見ず、使わなかった投影への再投影誤差で選んだ)。90° の限られた角度ではどれも 300 枚の FDK の 4 倍以上悪く(TV 0.0110)、TV は平らな塊で欠けた向きを埋めるが形は参照と違う。★3-D: Fullseye の FDK と ASTRA の FDK は相関 0.9946。両方とも中央面から下端へ向かって同じだけ崩れる(中央 0.0026 → 下端 0.0101、ASTRA 0.0008 → 0.0099)。円軌道は中央面の外を測り切らない(Tuy の条件)。★幾何の取り違え: 隣接の恒等式 <Ax,y> = <x,Aᵀy> はこの装置の幾何で 1e-15 まで成り立つが、それは射影の対が整合していることしか言わない(A と Aᵀ の幾何を食い違わせると 1.1)。縦ずれを無視すると参照との RMSE は 0.0060 に悪化するのに、再投影の残差は 0.0850 と正しい幾何の 0.0870 より小さい —— 残差では見つからない盲点。横に 0.3 mm で 0.0096、回転の向きを逆にすると 0.0209。面内回転 0.5° は中央面の 0.3 mm 格子ではほぼ効かない。★二重エネルギー: このデータは 1 エネルギーだけなので、第 2 エネルギーは閉形式の合成(実データではない)。雑音は同じ角度で 2 度撮った実測の投影の差から作り(物の中で模型は実測を 1.25 倍小さく見積もる)、基底 0 の雑音は 1 エネルギーの ×5.06(条件数 15.5)。白の画像は同じ束ね方で投影 1 枚より 3.5 倍静かで、白から雑音を作ると小さく見積もる。
+
+[![実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する ―― 間引くと TV が持ちこたえ、限られた角度ではどれも戻らない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png)
+
+*↑ **実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する ―― 間引くと TV が持ちこたえ、限られた角度ではどれも戻らない** ―― 実測クルミの中央面(線源の高さ)。列 = 参照(3 軌道)/ FDK / SIRT / TV、行 = 全周 150 枚 / 25 枚 / 150° / 90°。数字は参照との RMSE [1/mm]。*
+
+用語: cone-beam CT — 点の線源から円錐状に広がる X 線を平面の検出器で受け、1 回の回転で立体をまとめて撮る CT の方式。; FDK — コーンビーム CT の投影を重み付けし、行ごとにランプフィルタをかけて逆投影する近似の再構成式で、回転の中央面でだけ厳密になる。; SIRT — 全ての投影の残差を一度に逆投影して画像を少しずつ直す反復の再構成で、公式の無い撮り方にも使える。; OS-SART — 投影を順序付きの部分集合に分け、部分集合ごとに SIRT の更新をかける反復法で、初めのうち速く進む。; total variation — 画像の勾配の大きさの総和で、これを小さくする正則化は区分的に一定な像を好み、欠けたデータを平らな面で埋める。
+
+[![中央面(線源の高さ)。参照は 0.1 mm の格子を 0.3 mm へ箱で平均した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/02_reference_vs_fdk_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/02_reference_vs_fdk.png)
+
+*↑ 測定の図 ―― 中央面(線源の高さ)。参照は 0.1 mm の格子を 0.3 mm へ箱で平均した。*
+
+[![TV の重みは 50 枚の条件で、使わなかった 250 枚への再投影誤差が最小の 1e-05(参照は見ない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/03_rmse_vs_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/03_rmse_vs_views.png)
+
+*↑ TV の重みは 50 枚の条件で、使わなかった 250 枚への再投影誤差が最小の 1e-05(参照は見ない)。*
+
+[![FDK は 212°(180° + 扇の全角)未満で allow_incomplete=True。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/04_rmse_vs_arc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/04_rmse_vs_arc.png)
+
+*↑ FDK は 212°(180° + 扇の全角)未満で allow_incomplete=True。*
+
+[![2 つの FDK は下端で同じだけ崩れ、差(点線)は高さに依らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/06_cone_error_by_height_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/06_cone_error_by_height.png)
+
+*↑ 2 つの FDK は下端で同じだけ崩れ、差(点線)は高さに依らない。*
+
+[![低い側は実データ、高い側は閉形式の合成 + 実測の 2 枚から作った雑音。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/08_dual_energy_synthetic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/08_dual_energy_synthetic.png)
+
+*↑ 低い側は実データ、高い側は閉形式の合成 + 実測の 2 枚から作った雑音。*
+
+```
+py -3.11 tools/fetch_walnut_cbct.py && py -3.11 examples/poc_real_walnut_cbct.py
+```
+
+ソース: [examples/poc_real_walnut_cbct.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_walnut_cbct.py)
+
+この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_walnut_cbct)
+
+使用 op(ノートへ): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_scan/ct_adjoint_project.html) · [`ct_dual_energy_reconstruct`](https://furuse.work/ops/tomography/ct_scan/ct_dual_energy_reconstruct.html) · [`ct_forward_project`](https://furuse.work/ops/tomography/ct_scan/ct_forward_project.html) · [`ct_scan_geometry`](https://furuse.work/ops/tomography/ct_scan/ct_scan_geometry.html) · [`fdk_reconstruct`](https://furuse.work/ops/tomography/ct_scan/fdk_reconstruct.html) · [`os_sart_reconstruct`](https://furuse.work/ops/tomography/ct_scan/os_sart_reconstruct.html) · [`rmse`](https://furuse.work/ops/imgmetrics/fidelity/rmse.html) · [`sirt_reconstruct`](https://furuse.work/ops/tomography/ct_scan/sirt_reconstruct.html) · [`ssim`](https://furuse.work/ops/imgmetrics/fidelity/ssim.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html) · [`tv_reconstruct`](https://furuse.work/ops/tomography/ct_scan/tv_reconstruct.html)
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 

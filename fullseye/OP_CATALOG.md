@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(474 例)
+### 2-D 画像/信号/幾何(475 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -546,6 +546,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **電池セルの内部劣化を CT で測る(膨れの何割が外から見えるか)** — 積層電極 17 層(ピッチ 0.320 mm)とアルミ缶を真値つきで組み、順投影→ビームハードニング→光子雑音→FBP まで通してから測る。ゼロ点=外形だけの指標。★電極が 10 % 膨れて積層が 0.340 mm 伸びても、クリアランス 0.240 mm が飲むので**外形に出るのは 29.4 %**(幾何の予測どおり)。その割合は劣化の大きさではなく**セルの初期クリアランスで決まる設計量**で、0.40 mm のセルでは何も見えない。★端板は周辺固定なので中央だけふくらみ、**ノギスは体積等価な平均の 3.6 倍**を読む(+0.235 対 +0.066 mm、予測 4.0 倍)。★★外形のふくらみを揃えた 3 つ(一様膨れ / 局所膨れ / ガス空隙)は缶の高さ 6.313 mm でばらつき 0.000 mm ―― 外形では原理的に分けられないが、内部は層厚 0.190/0.187/0.173 mm・空隙率 0.00/0.00/5.20 %・平面度 0.0156/0.0428/0.0784 mm で分かれる(一様と局所は層厚では分かれず**平面度が分ける**)。同じ外形を作る内部の膨張体積は 0.6715 対 0.3880 mm3 と 1.7 倍違い、**外形の変化量から中の劣化量は逆算できない**。★層厚は真値 0.200 に対し 0.175 mm と 12.5 % 過小(ぼけで縞が正弦波に近づき、微分ピーク間隔が半周期 0.160 mm へ引かれる)なのに、同じプロファイルの**層間隔は 0.321 mm で真値を保つ**。★★崖は 2 つ予測してから測った ―― 標本化定理なら voxel/層厚 0.80、隙間 0.120 mm を 2 標本で跨ぐなら 0.30。**実測は 0.30 で、狭いほうの特徴(電極厚ではなく隙間)が崖を決めた**。★雑音とビームハードニングでは壊れ方が違い、フォトン数 1000 分の 1 でも層数は 1 枚しか動かないのに空隙体積は -10.3 → -24.8 %、ビームハードニングは外形も層厚も動かさず空隙だけを -9.1 → -14.7 % 痩せさせる。SoH や寿命は測っていない(そう明記した)。 `py -3.11 examples/poc_battery_ct_degradation.py`
 - **電極の屈曲度を CT から測る(Bruggeman は向きに盲目)** — 合成マイクロ CT の多孔電極で、同じ 1 個のボリュームから屈曲度が 3 つ出る ―― Bruggeman 1.499 / 測地 1.182 / 輸送方程式(真値)1.843。ゼロ点の経験則 τ = ε^(-0.5) は**必ず小さめに外し**、ε = 0.691 → 0.168 で誤差 -8.2 % → -69.1 % と単調に開く。実測の Bruggeman 指数は ε>=0.40 で 1.78 / ε<0.25 で 2.70 で、**1.5 乗則は高空隙率の近似ですらない**。★★測地屈曲度の 2 乗は Bruggeman に 0.8 / 5.7 / 6.9 % で寄り添うが、**2 つの「よく合う数字」は真値に対して同じ向きに外れている**だけ。★★決定打は対照群 ―― 空隙率を 0.4448 対 0.4510 に揃えて粒子だけ 4:1 に潰す(カレンダリング)と、厚み方向 τ は 1.843 → 6.794(異方比 0.97 → 4.20)。経験則は ε しか見ないので同じ 1.5 を返し、**面内は当たって見え(-8 %)厚み方向は壊滅(-78 %)**。★もっともらしい犯人「閉気孔」は対照群で外れ(全空隙の 0.05 / 1.50 / 1.92 %)、効いているのは粒子半径の 0.40 倍しかない首。ただし**そのスカラーも向きを分けられない**(扁平床は内接半径 1 分布なのに τ_z / τ_x が 4.2 倍)。★予想が外れた ―― 「voxel が首の直径を超えたら崩れる」と予測したが**崖は無く**、voxel を 5.5 倍粗くすると τ_f は 1.771 → 3.041(+72 %)へ単調に増える一方、**ε は -0.4 % しか動かない**。図も検出数も壊れないまま数字だけが片側へずれる。 `py -3.11 examples/poc_battery_electrode_tortuosity.py`
 - **ダイの傾きと TSV の位置ずれ(同じ 1 つの CT から。傾きは回転まで偽装する)** — 上下 2 枚のダイの 7×7 TSV に 真の位置ずれ (+0.800, −0.450) µm・回転 +0.01500° を仕込み、上ダイを接合面まわりに (1.20°, 0.70°) 傾けた CT 1 個だけで測り返す。ゼロ点(上面の開口の重心差)は 2.419 µm 外し、仕様 ±1.0 µm の 2.4 倍・真の位置ずれ 0.918 µm より大きい。★偽装量は「ダイ厚 × 上面法線の横成分」の閉形式で、ダイ厚 100.032 µm も傾き 1.1979°/0.6968° も同じ CT から測って 比 0.996 / 0.999 で一致する ―― ビアの軸で下面へ引き直すと 0.0023 µm(ゼロ点の 1/1049)。★★予想「傾きは並進と倍率だけを偽装し回転は偽装しない」は外れ: Rx(α)Ry(β) の上 2×2 は sinα sinβ のせん断を持ち、極分解すると偽の回転 予測 +0.00733° / 実測(対照群との差)+0.00696° が出る。真の回転の 46 % で、**軸補正では消えない** ―― 測った法線から α,β を解いて逆投影して初めて対照群と同じ +0.01386° に戻る(倍率も予測 −147.0 / 実測 −144.5 ppm)。崖は合成傾きで解いた 0.491° に対し実測 0.492°(比 1.001)、補正後は 2.0° でも 0.0113 µm。★★いちばん効いたのは幾何でなく標本化: 部分体積を 1 ボクセル幅の直線ランプで刻んでから畳み込むと折り返しが残り、同じ場の傾きを 0.5° で +7.3 %・1.2° で −8.0 % とばらばらに外す。PSF を場のほうに(erf の縁として)入れて標本化すると比 1.0000。しきい値で切った画素の重心も二値化が折り返しを呼び 1.223°/0.750°、生 gray を円板で積むと 1.200°/0.697°。 `py -3.11 examples/poc_die_tilt_tsv_overlay.py`
+- **実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する(間引き・限られた角度・幾何の取り違え)** — 実測のコーンビーム CT(Der Sarkissian ほか 2019 のクルミ 1、Zenodo、CC BY 4.0)の中段の軌道 300 枚を、ct_scan_geometry の円軌道に読み替え(SOD・SDD は装置の設定と一致、面内回転 0.50° と縦ずれ 7.2 画素は warp_parametric で引き直す)、FDK・SIRT・OS-SART・TV で再構成して配布元の 3 軌道の参照と照合する。★全 300 枚の FDK は RMSE 0.0023 /mm・SSIM 0.94、配布元の FDK(ASTRA)とは SSIM 0.96・平均の比 0.9988。差の大半は粗い格子(0.1 mm で 0.0013)。★25 枚: FDK 0.0126 / SIRT 0.0074 / OS-SART 0.0067 / TV 0.0046(TV の重みは使わなかった投影への再投影誤差で選ぶ)。90° はどれも戻らない(TV 0.0110)。★3-D: ASTRA の FDK と相関 0.9946、両方が下端で同じだけ崩れる(Tuy の条件)。★隣接の恒等式は 1e-15 まで成り立つが幾何の取り違えは見えない。縦ずれは再投影の残差でも見えない(0.0850 < 0.0870)。★二重エネルギーは第 2 エネルギーが合成(実データではない)、基底 0 の雑音 ×5.06。 `py -3.11 examples/poc_real_walnut_cbct.py`
 
 **perception_templates**
 - **整流ステレオ対→深度→点群→地形高さマップ→通行可能性** — ロボット移動用の一本道テンプレート(--save で色付き PNG + PLY)。合成データ、実行して数値を印字するテンプレート型(tests/test_examples.py で煙試験)。 `py -3.11 examples/perception_pipeline.py`
@@ -1579,7 +1580,7 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` GPU: なし — Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標準偏差からローカルにしきい値を決める手法で、照明ムラのある文書画像の二値化(文字抽出)向けに設計されている。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` GPU: なし — SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` GPU: あり(許可リスト) — Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` GPU: あり(threshold) — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_sem_metal_layer`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` GPU: あり(threshold) — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_sem_metal_layer`, `poc_real_walnut_cbct`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` GPU: なし — Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、 窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値 を決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。 HALCON の ``var_threshold``（Threshold an image by local mean and standard deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。 · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` GPU: なし — 分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、 暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を 返す。HALCON の ``watersheds``（Extract watersheds and basins from an image.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` GPU: なし — 実装は ``watersheds`` と同一(``kind: "watershed"``)。HALCON の ``watersheds_threshold``（Extract watershed basins from an image using a threshold.）は本来、隣接する集水域を統合する深さのしきい値を持つ演算子 だが、この代役では統合しきい値を実装せず ``watersheds`` と同じ結果を返す (近似の限界)。 · 例: `gallery2d_segmentation`
@@ -4448,17 +4449,17 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `ring_artifact_remove` `sinogram → sinogram` GPU: なし — Remove per-detector-bin offsets by flattening the angle-averaged profile. · 例: `ct_reconstruction`
 
 #### tomography / ct_scan(11)
-- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: なし — The exact transpose ``A^T`` of :func:`ct_forward_project`. · 例: `ct_scan_modes`
-- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: なし — Two scans of one geometry to two basis-material volumes.
-- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: なし — Project a volume along every ray of *geometry*: the discrete operator ``A``. · 例: `ct_scan_modes`
-- `ct_scan_geometry` `入力なし → ctgeometry` GPU: なし — Describe one CT scan: per view, where the source and the detector are. · 例: `ct_scan_modes`
+- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: なし — The exact transpose ``A^T`` of :func:`ct_forward_project`. · 例: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: なし — Two scans of one geometry to two basis-material volumes. · 例: `poc_real_walnut_cbct`
+- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: なし — Project a volume along every ray of *geometry*: the discrete operator ``A``. · 例: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `ct_scan_geometry` `入力なし → ctgeometry` GPU: なし — Describe one CT scan: per view, where the source and the detector are. · 例: `ct_scan_modes`, `poc_real_walnut_cbct`
 - `ellipsoid_phantom` `入力なし → voxel` GPU: なし — Rasterise a sum of uniform ellipsoids onto a ``(Z, Y, X)`` grid. · 例: `ct_scan_modes`
 - `ellipsoid_projections` `ctgeometry → projstack` GPU: なし — Exact line integrals of a sum of ellipsoids, for any scan in this family. · 例: `ct_scan_modes`
-- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — Filtered back-projection for every scan with a formula: FDK and its relatives. · 例: `ct_scan_modes`
-- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — OS-SART: the SIRT update applied to one ordered subset of views at a time. · 例: `ct_scan_modes`
+- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — Filtered back-projection for every scan with a formula: FDK and its relatives. · 例: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — OS-SART: the SIRT update applied to one ordered subset of views at a time. · 例: `ct_scan_modes`, `poc_real_walnut_cbct`
 - `shepp_logan_3d` `入力なし → voxel` GPU: なし — The modified 3-D Shepp-Logan head phantom on a ``size``-cube. · 例: `ct_scan_modes`
-- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — SIRT: every view at once, ``x <- x + lam C A^T R (p - A x)``. · 例: `ct_scan_modes`
-- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — Total-variation reconstruction by the Chambolle-Pock primal-dual method. · 例: `ct_scan_modes`
+- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — SIRT: every view at once, ``x <- x + lam C A^T R (p - A x)``. · 例: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — Total-variation reconstruction by the Chambolle-Pock primal-dual method. · 例: `ct_scan_modes`, `poc_real_walnut_cbct`
 
 #### tomography / forward(3)
 - `ellipse_phantom` `入力なし → image2d` GPU: なし — Rasterise a sum of uniform ellipses onto a *size* x *size* slice. · 例: `ct_reconstruction`, `poc_ct_fidelity`, `tomography_reconstruct`
@@ -4745,7 +4746,7 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `leader_line` `image2d × text → image2d` GPU: なし — 引き出し線 —— 注記の位置(``anchor_xy``)から対象(``target_xy``)へ。 · 例: `annotate_gallery`, `poc_kendama`
 
 #### annotate / shape(4)
-- `arc` `image2d → image2d` GPU: あり(許可リスト) — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
+- `arc` `image2d → image2d` GPU: あり(許可リスト) — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_real_walnut_cbct`, `poc_weld_radiograph_porosity`
 - `ellipse` `image2d → image2d` GPU: なし — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: あり(許可リスト) — 多角形の塗り(偶奇規則の交差判定 ―― :mod:`imagedraw` は輪郭のみ)。 · 例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: あり(許可リスト) — 角丸の矩形(``fill=True`` で塗り)。下敷きや囲みに使う。 · 例: `annotate_gallery`, `poc_machine_condition_fusion`
@@ -5194,8 +5195,8 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `ms_ssim` `image2d × image2d → scalar` GPU: なし — 多尺度 SSIM(Wang, Simoncelli & Bovik, Asilomar Conf. 2003)。 · 例: `image_quality_metrics`
 - `mse` `image2d × image2d → scalar` GPU: なし — 平均二乗誤差。``data_range`` に依らない生の量。 · 例: `image_quality_metrics`
 - `psnr` `image2d × image2d → scalar` GPU: なし — 2 枚の画像のピーク信号対雑音比(PSNR、単位 dB)を返す。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_dehazing`, `poc_focus_stacking`, `poc_iqa_tid2013`, `poc_pixel_shift`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
-- `rmse` `image2d × image2d → scalar` GPU: なし — 平均二乗誤差の平方根(画素値と同じ単位)。 · 例: `ct_scan_modes`, `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_polarization_specular`, `poc_real_tless_6dof`, `poc_structure_4d_deterioration`
-- `ssim` `image2d × image2d → scalar` GPU: なし — 構造的類似度(Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004)。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_ct_fidelity`, `poc_dehazing`, `poc_iqa_tid2013`, `poc_superresolution_limits`
+- `rmse` `image2d × image2d → scalar` GPU: なし — 平均二乗誤差の平方根(画素値と同じ単位)。 · 例: `ct_scan_modes`, `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_polarization_specular`, `poc_real_tless_6dof`, `poc_real_walnut_cbct`, `poc_structure_4d_deterioration`
+- `ssim` `image2d × image2d → scalar` GPU: なし — 構造的類似度(Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004)。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_ct_fidelity`, `poc_dehazing`, `poc_iqa_tid2013`, `poc_real_walnut_cbct`, `poc_superresolution_limits`
 - `ssim_map` `image2d × image2d → image2d` GPU: なし — SSIM の**マップ**(平均を取る前)。どこが似ていないかを絵で見るため。 · 例: `image_quality_metrics`, `poc_iqa_tid2013`
 
 #### imgmetrics / information(5)

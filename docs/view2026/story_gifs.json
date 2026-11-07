@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 205,
+  "target_count": 206,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -34637,6 +34637,202 @@
       "alt": {
         "ja": "SDSS r の NGC 2420(北が上)。青=star_detect の検出、緑=SDSS の星表の星(15〜20 等、飽和なし)で 1.0″ 以内に対応、赤=対応なし。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外(検出の青だけが並ぶ)。",
         "en": "Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed"
+      }
+    },
+    "poc_real_walnut_cbct": {
+      "representative": "01_methods_sparse_limited.png",
+      "status": "gif",
+      "selected": [
+        "01_methods_sparse_limited.png",
+        "02_reference_vs_fdk.png",
+        "03_rmse_vs_views.png",
+        "05_cone_vertical.png",
+        "07_geometry_mistakes.png",
+        "09_scores.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_walnut_cbct/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_methods_sparse_limited.png",
+              "content_box": [
+                62,
+                0,
+                596,
+                690
+              ]
+            },
+            {
+              "file": "02_reference_vs_fdk.png",
+              "content_box": [
+                0,
+                189,
+                720,
+                312
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.311239
+            },
+            {
+              "file": "03_rmse_vs_views.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_cone_vertical.png",
+              "content_box": [
+                0,
+                179,
+                720,
+                332
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.167247
+            },
+            {
+              "file": "07_geometry_mistakes.png",
+              "content_box": [
+                0,
+                171,
+                720,
+                348
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.068429
+            },
+            {
+              "file": "09_scores.png",
+              "content_box": [
+                0,
+                203,
+                720,
+                284
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.538306
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 728411,
+          "color_mad": [
+            0.0743,
+            0.065,
+            0.1242,
+            0.144,
+            0.5649,
+            0.0357
+          ],
+          "max_color_mad": 0.5649,
+          "source_sha256": "9427339517ee7fa62b154d925604b0c1c31ecfa34f7df077d4c09e1c2a0cd1f9"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_walnut_cbct/story.en.gif",
+          "frames": [
+            {
+              "file": "01_methods_sparse_limited.png",
+              "content_box": [
+                62,
+                0,
+                596,
+                690
+              ]
+            },
+            {
+              "file": "02_reference_vs_fdk.png",
+              "content_box": [
+                0,
+                189,
+                720,
+                312
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.311239
+            },
+            {
+              "file": "03_rmse_vs_views.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_cone_vertical.png",
+              "content_box": [
+                0,
+                179,
+                720,
+                332
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.167247
+            },
+            {
+              "file": "07_geometry_mistakes.png",
+              "content_box": [
+                0,
+                171,
+                720,
+                348
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.068429
+            },
+            {
+              "file": "09_scores.png",
+              "content_box": [
+                0,
+                203,
+                720,
+                284
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.538306
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 728411,
+          "color_mad": [
+            0.0743,
+            0.065,
+            0.1242,
+            0.144,
+            0.5649,
+            0.0357
+          ],
+          "max_color_mad": 0.5649,
+          "source_sha256": "943e45748c24cb2f5591c2eabe2a5af3b936482a7cb31a845b0a306001e011b9"
+        }
+      },
+      "reason": null,
+      "cover": "01_methods_sparse_limited.png",
+      "still": "articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png",
+      "alt": {
+        "ja": "行 = 全周 150 枚 / 全周 25 枚 / 150° / 90°、列 = 参照 / FDK / SIRT / TV。濃淡は全パネル共通の 0〜0.062 /mm。90° の TV は平らな塊を描き足すが、形は参照と違う。",
+        "en": "Reconstructing a Measured Cone-Beam CT Scan of a Walnut with FDK and Iterative Methods, Scored Against the Providers' Reference — TV Holds Up When Views Are Thinned, Nothing Recovers a Missing Angular Range"
       }
     }
   }

@@ -492,7 +492,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 
 ## Alles ansehen
 
-299 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+300 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -691,7 +691,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 </div>
 </details>
 
-<details class="vall"><summary><b>Bildqualität und Restaurierung</b> (24)</summary>
+<details class="vall"><summary><b>Bildqualität und Restaurierung</b> (25)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="Ein Fliegenauge nähert sich Streifen" width="200" height="200"><b>&#9654;</b><span>Ein Fliegenauge nähert sich Streifen</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Verwacklung entfernen" width="200" height="200"><b>&#9654;</b><span>Verwacklung entfernen</span></a>
@@ -717,6 +717,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="../../articles/assets/poc/poc_simcal_pixel_shift/story.en.gif" alt="Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only" loading="lazy" width="200" height="200"></picture><span>Kalibrierung von Pixel-Shift-Versatz und Apertur (Karte des Unbestimmten)</span></a>
 <a href="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="../../articles/assets/poc/poc_plenoptic_camera/story.en.gif" alt="A Prescription-Based Plenoptic Camera" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>Eine rezeptbasierte plenoptische Kamera: von Roh-Mikrobildern zu Refokussierung und Entfernung</span></a>
 <a href="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><img src="../../articles/assets/poc/poc_tof_camera/story.en.gif" alt="Indirect and Direct Time of Flight on One 3-D Scene — Multipath, Mixed Pixels, Pile-up and Volume Error" loading="lazy" width="200" height="200"></picture><span>Indirekte und direkte Laufzeitmessung derselben 3-D-Szene: Mehrwege, Mischpixel, Pile-up und Volumenfehler</span></a>
+<a href="../../articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png"><img src="../../articles/assets/poc/poc_real_walnut_cbct/story.en.gif" alt="Reconstructing a Measured Cone-Beam CT Scan of a Walnut with FDK and Iterative Methods, Scored Against the Providers' Reference — TV Holds Up When Views Are Thinned, Nothing Recovers a Missing Angular Range" loading="lazy" width="200" height="200"></picture><span>Einen gemessenen Kegelstrahl-CT-Scan rekonstruieren</span></a>
 </div>
 </details>
 

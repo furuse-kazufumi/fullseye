@@ -492,7 +492,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 299 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 300 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -691,7 +691,7 @@ PoC 299 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>成像品質與復原</b> (24)</summary>
+<details class="vall"><summary><b>成像品質與復原</b> (25)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="逼近條紋的蠅眼" width="200" height="200"><b>&#9654;</b><span>逼近條紋的蠅眼</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="手震去模糊" width="200" height="200"><b>&#9654;</b><span>手震去模糊</span></a>
@@ -717,6 +717,7 @@ PoC 299 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="../../articles/assets/poc/poc_simcal_pixel_shift/story.en.gif" alt="Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only" loading="lazy" width="200" height="200"></picture><span>像素位移的偏移與開口校準(無法確定的地圖)</span></a>
 <a href="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="../../articles/assets/poc/poc_plenoptic_camera/story.en.gif" alt="A Prescription-Based Plenoptic Camera" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>基於處方的光場相機:從原始微影像到重聚焦與距離</span></a>
 <a href="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><img src="../../articles/assets/poc/poc_tof_camera/story.en.gif" alt="Indirect and Direct Time of Flight on One 3-D Scene — Multipath, Mixed Pixels, Pile-up and Volume Error" loading="lazy" width="200" height="200"></picture><span>同一三維場景的間接與直接飛行時間:多路徑、混合像素、堆積和體積誤差</span></a>
+<a href="../../articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png"><img src="../../articles/assets/poc/poc_real_walnut_cbct/story.en.gif" alt="Reconstructing a Measured Cone-Beam CT Scan of a Walnut with FDK and Iterative Methods, Scored Against the Providers' Reference — TV Holds Up When Views Are Thinned, Nothing Recovers a Missing Angular Range" loading="lazy" width="200" height="200"></picture><span>重建實測的錐束 CT</span></a>
 </div>
 </details>
 
