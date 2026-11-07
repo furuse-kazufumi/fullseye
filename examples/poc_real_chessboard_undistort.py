@@ -327,7 +327,7 @@ def line_residuals(xy):
     out = []
     for lines in (g, g.transpose(1, 0, 2)):
         for ln in lines:
-            _, S, _ = np.linalg.svd(ln - ln.mean(0))
+            _, S, _ = np.linalg.svd(ln - ln.mean(0), full_matrices=False)
             out.append(S[1] / np.sqrt(len(ln)))
     return np.array(out)
 

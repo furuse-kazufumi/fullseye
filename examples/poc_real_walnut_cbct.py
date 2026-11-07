@@ -1049,7 +1049,7 @@ def write_figures(fan: dict, cone: dict, mis: dict, dual: dict, g: Gates) -> Non
                    title="実測クルミの中央面: 投影を減らすと手法の差が出る(参照との RMSE [1/mm])",
                    caption="行 = 全周 150 枚 / 全周 25 枚 / 150° / 90°、列 = 参照 / FDK / SIRT / TV。濃淡は全パネル共通の "
                            "0〜%.3f /mm。90° の TV は平らな塊を描き足すが、形は参照と違う。" % vr[1])
-    figs.save_grid("reference_vs_fdk", [_crop(ref, mask), _crop(fan["ref_fdk"], mask),
+    figs.save_grid("reference_vs_fdk", [_crop(ref, mask), _crop(fan["ref_fdk"], mask),  # gray-ok: CT の減弱係数の断面。キャプションの「高さ」は線源の高さで、高さの場ではない
                                         _crop(fan["images"][("300 枚", "FDK")], mask)],
                    captions=["参照: 3 軌道 3600 枚", "配布元の FDK 1200 枚", "Fullseye FDK 300 枚"],
                    ncols=3, gray=True, vrange=vr, title="照合の相手(配布元の 2 つの再構成)",

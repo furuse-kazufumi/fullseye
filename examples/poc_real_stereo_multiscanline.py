@@ -323,7 +323,7 @@ def ransac_ellipse(P, thr=1.0, iters=3000, seed=0):
 def circle_from_3d(Q):
     """3-D 点に平面と円を当て、中心・法線(カメラへ向く)・半径・平面の RMS・円の RMS を返す。"""
     m = Q.mean(0)
-    _, S, Vt = np.linalg.svd(Q - m)
+    _, S, Vt = np.linalg.svd(Q - m, full_matrices=False)
     n, e1, e2 = Vt[2], Vt[0], Vt[1]
     u, v = (Q - m) @ e1, (Q - m) @ e2
     A = np.c_[2 * u, 2 * v, np.ones_like(u)]

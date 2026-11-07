@@ -458,7 +458,7 @@ def walnut_cbct_root(*, required: bool = True, root: Path | None = None, deep: b
 
 
 def walnut_cbct_credit() -> str:
-    """図と実行ログへ載せる帰属表記。"""
+    """クルミのコーンビーム CT の帰属表記(論文とデータの DOI、ライセンス)を返す。図と実行ログへ載せる。"""
     return ("Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data "
             "collection designed for machine learning, Sci. Data 6, 215 (2019), doi:%s; data doi:%s, %s"
             % (WALNUT_CBCT_PAPER_DOI, WALNUT_CBCT_DATASET_DOI, WALNUT_CBCT_LICENSE))
