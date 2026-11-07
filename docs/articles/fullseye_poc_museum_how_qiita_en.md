@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**104 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**105 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -812,7 +812,7 @@ Ops used (notes): [`bokeh_shape`](https://furuse.work/ops/optics/lensrender/boke
 
 ### The Time-as-3-D Wing — A Video Is One Volume
 
-Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 21 exhibits here demonstrate exactly that.
+Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 22 exhibits here demonstrate exactly that.
 
 The time axis also brings its own traps. Rounding onto the frame grid always delays; pixel area makes merging look early. Mislinks come in two opposite kinds, so a single error rate cannot say which way the diffusion coefficient is wrong. Template tracking drifts quietly before it ever loses the target, and all 152 drifted frames report 'found'.
 
@@ -1631,6 +1631,44 @@ Source: [examples/poc_periodic_video_boundary.py](https://github.com/furuse-kazu
 This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_periodic_video_boundary)
 
 Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/window/moving_average_window.html) · [`perpetual_loop`](https://furuse.work/ops/generative/loop/perpetual_loop.html) · [`perpetual_loop_seam`](https://furuse.work/ops/generative/loop/perpetual_loop_seam.html) · [`three_frame_difference`](https://furuse.work/ops/videostream/motion/three_frame_difference.html)
+
+## No.2026.305 —— Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels
+
+Three indoor sequences of LASIESTA (Universidad Politécnica de Madrid, CC BY-SA 4.0; 352x288, 250-300 frames, per-pixel ground truth on every frame) are run through the new opsmv operators. create_bg_esti and run_bg_esti estimate a per-pixel Kalman background, opening_seg drops small blobs, and the F-measure is counted as in CDnet (all frames summed, contour pixels excluded). Parameters are chosen on I_SI_01 only and carried to I_OC_01 and I_OC_02. F-measure: Fullseye 0.890 / 0.878, OpenCV MOG2 (colour and shadow detection, varThreshold chosen on the same sequence) 0.987 / 0.884. The single-channel per-pixel Kalman loses by 0.10 on I_OC_01 and roughly ties on I_OC_02. Because run_bg_esti slows the update under the foreground, a blob that once became foreground through a floor reflection stays as a ghost to the end. Absorbing into the background, with update_bg_esti, only the blobs whose centroid has not moved for 8 frames raises I_OC_01 from 0.794 to 0.890 (precision 0.681 to 0.830) and changes nothing on I_OC_02 (0.881 to 0.878). The MOG2 background is closer to the ground-truth background than give_bg_esti (RMS 0.4 against 2.3-3.1 on 0-255). Tracking: blob centroids are followed by a constant-velocity filter_kalman with a 99% NIS gate, and blobs that drop below half their usual area are treated as partly hidden and not used for the update. On I_OC_01 the 26 frames behind a pillar are bridged by prediction alone and the person is picked up again under the same track number (5.7 px error at re-acquisition, median 7.7 px on visible frames); nearest-neighbour association without prediction loses him at the pillar. Limit: on I_OC_02 the person turns round outside the right edge; the heading from atan2_image on the ground-truth centroids changes by 165 degrees, the constant-velocity prediction leaves the frame, and the Kalman tracker starts a new track. filter_kalman matches cv2.KalmanFilter to 1.8e-12 over 1,000 frames with 3 of every 17 measurements missing, and the mean NIS under the true model is 1.99. In fairness: the tracker's design (grouping fragments within 6 px, starting from blobs seen in two consecutive frames, treating the left and right edges as occluders) was settled while looking at all three sequences.
+
+[![Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png)
+
+*↑ **Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels** ―― Real LASIESTA I_OC_01 footage. Sky blue: filter_kalman positions updated by measurements; orange: the 26 frames behind the pillar carried by the constant-velocity prediction alone; vermilion: nearest-neighbour association without prediction (lost at the pillar); white dots: ground-truth centroids.*
+
+[![I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)
+
+*↑ The measurement ―― I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。 (figure labels are in Japanese; the numbers are the same)*
+
+[![I_OC_01 の第 151 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01.png)
+
+*↑ I_OC_01 の第 151 コマ。*
+
+[![I_OC_02 の第 111 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02.png)
+
+*↑ I_OC_02 の第 111 コマ。*
+
+[![I_OC_01 の背景。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background.png)
+
+*↑ I_OC_01 の背景。*
+
+[![真値の物体が見えているコマだけを打った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error.png)
+
+*↑ 真値の物体が見えているコマだけを打った。*
+
+```
+py -3.11 examples/poc_real_bg_kalman_tracking.py
+```
+
+Source: [examples/poc_real_bg_kalman_tracking.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_bg_kalman_tracking.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking)
+
+Ops used (notes): [`atan2_image`](https://furuse.work/ops/mv/gray/atan2_image.html) · [`create_bg_esti`](https://furuse.work/ops/mv/tracking/create_bg_esti.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`filter_kalman`](https://furuse.work/ops/mv/tracking/filter_kalman.html) · [`give_bg_esti`](https://furuse.work/ops/mv/tracking/give_bg_esti.html) · [`opening_seg`](https://furuse.work/ops/mv/morphology/opening_seg.html) · [`run_bg_esti`](https://furuse.work/ops/mv/tracking/run_bg_esti.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html) · [`update_bg_esti`](https://furuse.work/ops/mv/tracking/update_bg_esti.html)
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 

@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(474 例)
+### 2-D 图像/信号/几何(476 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -340,6 +340,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 **morphology**
 - `poc_bilateral_asymmetry` — op: `rms` `py -3.11 examples/poc_bilateral_asymmetry.py`
 - `poc_vessel_network` — op: `blob_features`, `blob_label`, `distance_transform`, `gauss_filter`, `r2_split_skeleton_lines`, `sk_medial`, `skeleton`, `thinning` `py -3.11 examples/poc_vessel_network.py`
+- `poc_real_grain_skiz` — op: `hit_or_miss_golay`, `hit_or_miss_seq`, `morph_skiz`, `opening_seg`, `percentile`, `thinning` `py -3.11 examples/poc_real_grain_skiz.py`
 
 **inspection**
 - `poc_symmetry_self_reference_inspection` — op: `center_from_symmetric_edges`, `rotational_symmetry`, `symmetry_difference_map`, `symmetry_score` `py -3.11 examples/poc_symmetry_self_reference_inspection.py`
@@ -583,6 +584,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_si_wafer_pl_defect_visibility` — op: `pl_diffusion_psf`, `pl_groove_visibility`, `pl_image_simulate`, `pod_hitmiss_fit` `py -3.11 examples/poc_si_wafer_pl_defect_visibility.py`
 - `poc_real_defect_floor` — op: `annotate_inset`, `annotate_legend`, `laplace_of_gauss` `py -3.11 examples/poc_real_defect_floor.py`
 - `poc_search_sweep_width` — op: `erf`, `gauss_filter`, `gray_tophat`, `integrate_funct_1d`, `laplace`, `ncc_locate`, `noise_sigma`, `photon_sample`, `relative_illumination`, `star_detect`, `tophat`, `vignette`(另有 1 个) `py -3.11 examples/poc_search_sweep_width.py`
+
+**tracking**
+- `poc_real_bg_kalman_tracking` — op: `atan2_image`, `create_bg_esti`, `ellipse`, `filter_kalman`, `give_bg_esti`, `opening_seg`, `run_bg_esti`, `threshold`, `update_bg_esti` `py -3.11 examples/poc_real_bg_kalman_tracking.py`
 
 **space**
 - `poc_star_tracker` — op:(没有 op 笔记链接到此例) `py -3.11 examples/poc_star_tracker.py`
@@ -1423,7 +1427,7 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `median_separate` (halcon: `median_separate`) `image → image` GPU: 有(median_separate) — 实现与 ``median_image`` 相同(``kind: "median"``,方形窗的二维中值)。HALCON 的 ``median_separate``(Separated median filtering with rectangle masks.)是一种快速近似算子,将行方向和列方向分离的一维中值分两个通道执行,但此替代实现不作区分,直接返回普通的二维中值(结果多数情况下相近,但严格来说是不同的算法 —— 此近似的局限)。 · 示例: `gallery2d_smoothing_rank`
 - `median_weighted` (halcon: `median_weighted`) `image → image` GPU: 有(median_weighted) — 中值滤波器（median filter）。实现与 eliminate_min_max/median_image 共享 ``_sh_rank`` 中的 median 分支，不按圆形、八边形等掩膜形状加权，只返回正方形窗口的简单中值。a 将窗口大小分为 3/5/7/9，b 未使用。 · 示例: `gallery2d_smoothing_rank`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` GPU: 有(gray_erosion_rect) — 矩形窗口内的最小值滤波器（相当于灰度腐蚀）。相当于 HALCON 的 ``gray_erosion_rect``（Determine the minimum gray value within a rectangle.）。 · 示例: `gallery2d_smoothing_rank`
-- `percentile` (halcon: `rank_image`) `image → image` GPU: 有(rank_percentile) — 任意百分位数的秩序滤波器（rank filter）。相当于 HALCON 的 ``rank_image``（Compute a rank filter with arbitrary masks.）。 · 示例: `gallery2d_smoothing_rank`, `poc_colormap_readability`
+- `percentile` (halcon: `rank_image`) `image → image` GPU: 有(rank_percentile) — 任意百分位数的秩序滤波器（rank filter）。相当于 HALCON 的 ``rank_image``（Compute a rank filter with arbitrary masks.）。 · 示例: `gallery2d_smoothing_rank`, `poc_colormap_readability`, `poc_real_grain_skiz`
 - `rank_image` (halcon: `rank_image`) `image → image` GPU: 有(rank_image) — 通用秩滤波器(``ndimage.percentile_filter``),将窗口内像素值按升序排列,返回指定百分位位置的值。这是一种连续的推广:百分位为 0 相当于腐蚀,100 相当于膨胀,50 相当于中值。相当于 HALCON 的 ``rank_image``(Compute a rank filter with arbitrary masks.)(HALCON 可采用任意形状的遮罩,这里固定为方形遮罩)。 · 示例: `gallery2d_smoothing_rank`, `poc_dehazing`
 - `rank_rect` (halcon: `rank_rect`) `image → image` GPU: 有(rank_rect) — 实现与 ``rank_image`` 完全相同(``kind: "rank"``,方形窗的百分位滤波器)。在 HALCON 中,``rank_image``(任意遮罩)与 ``rank_rect``(仅限矩形遮罩)是不同的算子,但此替代实现两者都指向同一个方形窗实现。是 HALCON 的 ``rank_rect``(Compute a rank filter with rectangular masks.)的替代实现。 · 示例: `gallery2d_smoothing_rank`
 - `sk_median_disk` (halcon: `median_image`) `image → image` GPU: 无 — 使用圆盘(disk)形 footprint 的中值滤波。与普通的正方形核不同,得到的是接近圆形的各向同性平滑效果。 · 示例: `gallery2d_smoothing_rank`
@@ -1505,7 +1509,7 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `sk_thin` (halcon: `thinning`) `region → region` GPU: 无 — 形态学细化(thinning)。与 sk_skeleton 一样都是将其变为 1 像素宽,但算法不同,基于击中或击不中变换(hit-or-miss transform),生成骨架分支(毛刺)的倾向较少。 · 示例: `gallery2d_region`
 - `skeleton` (halcon: `skeleton`) `region → region` GPU: 无 — 在保持拓扑结构的前提下,将区域细化为 1 像素宽的骨架线(``skimage.morphology.skeletonize``)。分支点和端点的位置得以保留,因此常用于分析带分支的形状(例如数手指的根数)。相当于 HALCON 的 ``skeleton``(Compute the skeleton of a region.)。 · 示例: `gallery2d_region`, `poc_crack_width`, `poc_em_branch_territory`, `poc_fresco_craquelure`, `poc_real_sem_metal_layer`, `poc_swc_tree_truth`, `poc_vessel_network`
 - `smallest_rectangle1` (halcon: `smallest_rectangle1`) `region → region` GPU: 仅在链中(lbl_smallest_rectangle1) — 返回以包围区域的坐标轴对齐外接矩形（axis-aligned bounding box）填充的区域。a、b 未使用。若区域为空则返回全零。 · 示例: `gallery2d_region`
-- `thinning` (halcon: `thinning`) `region → region` GPU: 无 — 使用 ``skimage.morphology.thin``(Zhang-Suen 系细化算法)将区域细化为 1 像素宽。目的与 ``skeleton`` 相似,但内部算法不同,因此在分支点附近等处结果可能略有差异。作为 HALCON 的 ``thinning``(Remove the result of a hit-or-miss operation from a region.)的代替。 · 示例: `gallery2d_region`, `poc_crack_width`, `poc_vessel_network`
+- `thinning` (halcon: `thinning`) `region → region` GPU: 无 — 使用 ``skimage.morphology.thin``(Zhang-Suen 系细化算法)将区域细化为 1 像素宽。目的与 ``skeleton`` 相似,但内部算法不同,因此在分支点附近等处结果可能略有差异。作为 HALCON 的 ``thinning``(Remove the result of a hit-or-miss operation from a region.)的代替。 · 示例: `gallery2d_region`, `poc_crack_width`, `poc_real_grain_skiz`, `poc_vessel_network`
 - `thinning_golay` (halcon: `thinning_golay`) `region → region` GPU: 无 — 对区域进行细化（thinning）。实现使用 skimage 的 ``thin``（Guo–Hall 型的迭代细化），反复处理直到完全变为 1 像素宽，a、b 未使用。 · 示例: `gallery2d_region`
 - `thinning_seq` (halcon: `thinning_seq`) `region → region` GPU: 无 — 对区域进行细化（thinning）。实现与 thinning_golay 完全相同（skimage 的 ``thin``，反复迭代至收敛的 Guo–Hall 型细化），a、b 未使用。 · 示例: `gallery2d_region`
 - `xcv2_hitmiss` `region → region` GPU: 无 — 使用击中击不中变换（hit-or-miss transform）检测「中心为背景、上下左右为前景」的十字形图案（``cv2.MORPH_HITMISS``）。 · 示例: `gallery2d_region`
@@ -1581,7 +1585,7 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` GPU: 无 — Sauvola 局部自适应阈值法。根据每个像素周围的局部均值与标准差来局部地确定阈值,专为存在照明不均的文档图像二值化(文字提取)而设计。 · 示例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` GPU: 无 — 基于 SLIC(Simple Linear Iterative Clustering)的超像素分割。在结合了颜色(此处为灰度值)与坐标的空间中进行 k-means 聚类,将图像分割为大小大致均等的区域。此处返回的是分割结果的边界线区域。 · 示例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` GPU: 有(许可列表) — 基于 Yen 的最大相关准则(maximum correlation criterion)的全局阈值二值化。通过最大化基于直方图熵的评价量来选择阈值,是不同于大津法、Li 法的又一种自动阈值法。 · 示例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` GPU: 有(threshold) — 全局阈值处理（global threshold）。相当于 HALCON 的 ``threshold``（Segment an image using global threshold.）。 · 示例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_sem_metal_layer`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` GPU: 有(threshold) — 全局阈值处理（global threshold）。相当于 HALCON 的 ``threshold``（Segment an image using global threshold.）。 · 示例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_bg_kalman_tracking`, `poc_real_sem_metal_layer`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` GPU: 无 — Sauvola局部自适应二值化(``skimage.filters.threshold_sauvola``,窗口大小为``2*int(a*6)+3``)。由于同时利用局部平均值与局部标准差来决定阈值,因此比``dyn_threshold``更能应对照明不均或低对比度的文档。相当于HALCON``var_threshold``(Threshold an image by local mean and standard deviation analysis.)的近似(公式化的构想相似,但Sauvola的公式与HALCON的公式系数不同——数值结果并不相同)。 · 示例: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` GPU: 无 — 分水岭(watershed)分割。将梯度图像视为地形,以暗区(``x < 0.2+0.3*a``)作为标记求出分水岭线,并返回该边界线。相当于HALCON的``watersheds``(Extract watersheds and basins from an image.)。 · 示例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` GPU: 无 — 实现与``watersheds``完全相同(``kind: "watershed"``)。HALCON的``watersheds_threshold``(Extract watershed basins from an image using a threshold.)原本是带有合并相邻集水盆地的深度阈值的运算符,但此替代实现并未实现该合并阈值,而是返回与``watersheds``相同的结果(近似的局限)。 · 示例: `gallery2d_segmentation`
@@ -4748,7 +4752,7 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### annotate / shape (4)
 - `arc` `image2d → image2d` GPU: 有(许可列表) — 圆弧。角度以度计,**从屏幕 x 轴顺时针**(因为 row 朝下)。 · 示例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` GPU: 无 — 椭圆(用 ``angle_deg`` 旋转,``fill=True`` 时填充)。 · 示例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
+- `ellipse` `image2d → image2d` GPU: 无 — 椭圆(用 ``angle_deg`` 旋转,``fill=True`` 时填充)。 · 示例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_bg_kalman_tracking`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: 有(许可列表) — 多边形填充(奇偶交叉规则 —— :mod:`imagedraw` 只画轮廓)。 · 示例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: 有(许可列表) — 圆角矩形(``fill=True`` 时填充)。用作衬底或外框。 · 示例: `annotate_gallery`, `poc_machine_condition_fusion`
 
@@ -5076,18 +5080,18 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### mv / gray (5)
 - `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: 无 — 返回以灰度为权的质量与重心 `(row, col)`。 · 示例: `machine_vision_tour`
-- `atan2_image` (halcon: `atan2_image`) `image2d × image2d → image2d` GPU: 无 — 以弧度返回两幅图像逐像素的 `atan2(image1, image2)`。 · 示例: `machine_vision_tour`
+- `atan2_image` (halcon: `atan2_image`) `image2d × image2d → image2d` GPU: 无 — 以弧度返回两幅图像逐像素的 `atan2(image1, image2)`。 · 示例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
 - `get_grayval_contour_xld` (halcon: `get_grayval_contour_xld`) `image2d × keypoints → signal` GPU: 无 — 沿轮廓点列插值读取灰度，得到一条信号。 · 示例: `machine_vision_tour`
 - `gray_histo` (halcon: `gray_histo`) `image2d → table` GPU: 无 — 以绝对频数与相对频率返回灰度直方图。 · 示例: `machine_vision_tour`
 - `gray_projections` (halcon: `gray_projections`) `image2d → table` GPU: 无 — 返回每行与每列的灰度平均值。 · 示例: `machine_vision_tour`
 
 #### mv / morphology (9)
 - `golay_elements` (halcon: `golay_elements`) `无输入 → table` GPU: 无 — 生成 Golay 字母的 3x3 击中与击不中结构元（45 度步进旋转）。 · 示例: `machine_vision_tour`
-- `hit_or_miss_golay` (halcon: `hit_or_miss_golay`) `mask → mask` GPU: 无 — 用一个 Golay 字母做击中击不中变换（返回匹配的中心像素）。 · 示例: `machine_vision_tour`
-- `hit_or_miss_seq` (halcon: `hit_or_miss_seq`) `mask → mask` GPU: 无 — 返回 Golay 字母 8 个旋转的击中击不中变换的并集。 · 示例: `machine_vision_tour`
+- `hit_or_miss_golay` (halcon: `hit_or_miss_golay`) `mask → mask` GPU: 无 — 用一个 Golay 字母做击中击不中变换（返回匹配的中心像素）。 · 示例: `machine_vision_tour`, `poc_real_grain_skiz`
+- `hit_or_miss_seq` (halcon: `hit_or_miss_seq`) `mask → mask` GPU: 无 — 返回 Golay 字母 8 个旋转的击中击不中变换的并集。 · 示例: `machine_vision_tour`, `poc_real_grain_skiz`
 - `morph_hat` (halcon: `morph_hat`) `mask × mask → mask` GPU: 无 — 返回开运算去掉的像素与闭运算增加的像素的并集。 · 示例: `machine_vision_tour`
-- `morph_skiz` (halcon: `morph_skiz`) `mask → mask` GPU: 无 — 用欧氏距离求连通分量影响区的边界（SKIZ）。 · 示例: `machine_vision_tour`
-- `opening_seg` (halcon: `opening_seg`) `mask × mask → labels2d` GPU: 无 — 用腐蚀分开由细颈相连的物体，并在区域内重新扩展为标签。 · 示例: `machine_vision_tour`
+- `morph_skiz` (halcon: `morph_skiz`) `mask → mask` GPU: 无 — 用欧氏距离求连通分量影响区的边界（SKIZ）。 · 示例: `machine_vision_tour`, `poc_real_grain_skiz`
+- `opening_seg` (halcon: `opening_seg`) `mask × mask → labels2d` GPU: 无 — 用腐蚀分开由细颈相连的物体，并在区域内重新扩展为标签。 · 示例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`, `poc_real_grain_skiz`
 - `thickening_golay` (halcon: `thickening_golay`) `mask → mask` GPU: 无 — 用一个 Golay 字母加厚区域。 · 示例: `machine_vision_tour`
 - `thickening_hit_miss` (halcon: `thickening`) `mask × mask × mask → mask` GPU: 无 — 用任意结构元对加厚区域（`A ∪ HMT(A)`，重复 `iterations` 次）。 · 示例: `machine_vision_tour`
 - `thickening_seq` (halcon: `thickening_seq`) `mask → mask` GPU: 无 — 依次使用 Golay 字母的各旋转加厚，直到不再变化。 · 示例: `machine_vision_tour`
@@ -5113,11 +5117,11 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `text_line_slant` (halcon: `text_line_slant`) `image2d → scalar` GPU: 无 — 通过使列投影最锐利求水平文字行的字符倾斜角（度）。 · 示例: `machine_vision_tour`
 
 #### mv / tracking (5)
-- `create_bg_esti` (halcon: `create_bg_esti`) `image2d → table` GPU: 无 — 由第一幅图像创建逐像素卡尔曼背景模型。 · 示例: `machine_vision_tour`
-- `filter_kalman` (halcon: `filter_kalman`) `无输入 → table` GPU: 无 — 执行线性卡尔曼滤波的一次预测与更新。 · 示例: `machine_vision_tour`
-- `give_bg_esti` (halcon: `give_bg_esti`) `table → image2d` GPU: 无 — 返回模型当前背景图像的副本。 · 示例: `machine_vision_tour`
-- `run_bg_esti` (halcon: `run_bg_esti`) `table × image2d → table` GPU: 无 — 用一幅图像更新背景并返回前景区域。 · 示例: `machine_vision_tour`
-- `update_bg_esti` (halcon: `update_bg_esti`) `table × image2d × mask → table` GPU: 无 — 只在给定区域内更新背景。 · 示例: `machine_vision_tour`
+- `create_bg_esti` (halcon: `create_bg_esti`) `image2d → table` GPU: 无 — 由第一幅图像创建逐像素卡尔曼背景模型。 · 示例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `filter_kalman` (halcon: `filter_kalman`) `无输入 → table` GPU: 无 — 执行线性卡尔曼滤波的一次预测与更新。 · 示例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `give_bg_esti` (halcon: `give_bg_esti`) `table → image2d` GPU: 无 — 返回模型当前背景图像的副本。 · 示例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `run_bg_esti` (halcon: `run_bg_esti`) `table × image2d → table` GPU: 无 — 用一幅图像更新背景并返回前景区域。 · 示例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `update_bg_esti` (halcon: `update_bg_esti`) `table × image2d × mask → table` GPU: 无 — 只在给定区域内更新背景。 · 示例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
 
 ### generative (42 ops / 6 categories)
 

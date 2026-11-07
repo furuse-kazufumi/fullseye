@@ -34,8 +34,8 @@ The museum is split across several articles; **each wing reads on its own** — 
 
 | Article | Wings | Exhibits |
 |---|---|---:|
-| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 142 |
-| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 104 |
+| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 143 |
+| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 105 |
 | [A Metrology Museum on Paper — The Instrument Wing (sensors and instruments reproduced from physics)](https://qiita.com/furuse-kazufumi/items/43e090b439d9d9183f60) | The Instrument | 33 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 | [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 13 |
@@ -61,14 +61,14 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 ## Recently added (newest first)
 
+- 2026-11-08 — No.2026.305 Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels
+- 2026-11-08 — No.2026.306 Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not
 - 2026-11-04 — No.2026.289 Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF
 - 2026-11-04 — No.2026.290 Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner
 - 2026-11-04 — No.2026.291 Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor
 - 2026-11-04 — No.2026.292 No Single Exposure Shows Both Scratches on Glossy Metal; HDR with a Measured Response Does
 - 2026-11-04 — No.2026.293 SIFT Locates a Part Rotated 37 Degrees to 0.367 px; the Existing Harris Matcher Misses by 158 px
 - 2026-11-04 — No.2026.294 Visible and Thermal Board Images Correlate at −0.74; Mutual Information Aligns Them to 0.170 px
-- 2026-11-04 — No.2026.295 FFD Tracks Sheet Deformation to 0.025 px, but Barcodes and Blank Margins Leave the Field Undetermined
-- 2026-11-04 — No.2026.296 A Barcode Still Read 90 % of the Time at This Blur Grades F for Print Quality
 
 ## Applying it to your own problem
 

@@ -491,7 +491,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 299개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 301개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -571,7 +571,7 @@ PoC 299개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>치수·형상 계측</b> (59)</summary>
+<details class="vall"><summary><b>치수·형상 계측</b> (60)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../../articles/assets/poc/poc_aoi_ct_traceability/story.en.gif" alt="Full visual inspection and sampled CT must assign the same index to each joint. Unequal-sided fiducials fixed this correspondence, then top-ranked candidates caught 19 % of interface-touching voids. Apparent void rankings can agree while most life-limiting parts are missed." loading="lazy" width="200" height="200"></picture><span>AOI·CT 대응</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../../articles/assets/poc/poc_asbuilt_wall_deviation/story.en.gif" alt="Point-cloud dimensions can confuse room heading or furniture with wall position. A room with known tilt and bulges was rotated, while its plane-pair error stayed at +2.24 mm. Bounding boxes grow with heading and sample count; plane fitting jumps to furniture when outliers become the majority." loading="lazy" width="200" height="200"></picture><span>준공 벽면 편차</span></a>
@@ -632,6 +632,7 @@ PoC 299개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><img src="../../articles/assets/poc/poc_virtual_acceptance_3d/story.en.gif" alt="Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF" loading="lazy" width="200" height="200"></picture><span>사기 전에 인수 시험: 같은 iToF가 검은 구 하나로 불합격</span></a>
 <a href="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><img src="../../articles/assets/poc/poc_light_section_step_weld_floor/story.en.gif" alt="Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor" loading="lazy" width="200" height="200"></picture><span>광절단 높이는 µm 단위로 맞지만 실제 한계는 20.7 µm 스페클 바닥</span></a>
 <a href="../../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><img src="../../articles/assets/poc/poc_real_file_formats/story.en.gif" alt="Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed" loading="lazy" width="200" height="200"></picture><span>실제 과학 데이터 파일 읽기</span></a>
+<a href="../../articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries.png"><img src="../../articles/assets/poc/poc_real_grain_skiz/story.en.gif" alt="Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not" loading="lazy" width="200" height="200"></picture><span>영향권으로 금속 결정립계 긋기</span></a>
 </div>
 </details>
 
@@ -741,7 +742,7 @@ PoC 299개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>시계열을 3-D로 측정</b> (21)</summary>
+<details class="vall"><summary><b>시계열을 3-D로 측정</b> (22)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_beam_modal_video/14_beam_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_beam_modal_video.jpg" alt="영상 모드 식별" width="200" height="200"><b>&#9654;</b><span>영상 모드 식별</span></a>
 <a href="../../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><img src="../../articles/assets/poc/poc_cold_chain_excursion/story.en.gif" alt="The question is whether one temperature record represents every product in a cold load. Product loggers were moved through a field with wall heat and door openings; 82.4 % of placements missed failing goods. Wall heat creates false passes, whereas short door pulses warm air but not product and reverse the error." loading="lazy" width="200" height="200"></picture><span>콜드체인 온도</span></a>
@@ -764,6 +765,7 @@ PoC 299개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_table_tennis_bounce/01_drop_test.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_bounce.jpg" alt="탁구공 바운드" width="200" height="200"><b>&#9654;</b><span>탁구공 바운드</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_rally_loop.jpg" alt="랠리와 판독 오차" width="200" height="200"><b>&#9654;</b><span>랠리와 판독 오차</span></a>
 <a href="../../articles/assets/poc/poc_periodic_video_boundary/02_loop.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_periodic_video_boundary/05_contamination_map.png"><img src="../../articles/assets/poc/poc_periodic_video_boundary/story.en.gif" alt="Testing the Periodic Boundary of Temporal Operators with a Seamless Loop" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>주기 동영상</span></a>
+<a href="../../articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png"><img src="../../articles/assets/poc/poc_real_bg_kalman_tracking/story.en.gif" alt="Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels" loading="lazy" width="200" height="200"></picture><span>칼만 예측으로 기둥 뒤를 통과하기</span></a>
 </div>
 </details>
 

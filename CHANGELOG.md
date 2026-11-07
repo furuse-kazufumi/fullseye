@@ -5,6 +5,10 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## Unreleased
+
+- PoC 2 本(trackmorph、収蔵 2026.305 / 2026.306): `examples/poc_real_bg_kalman_tracking.py`(LASIESTA の実写動画で `create_bg_esti` / `run_bg_esti` / `update_bg_esti` / `give_bg_esti` / `filter_kalman` を MOG2 と真値の F 値で比べ、柱の裏をカルマン予測で通り抜ける)と `examples/poc_real_grain_skiz.py`(TBM の実写の金属組織で `morph_skiz` の粒界と ASTM E112 の切断法、Golay の L の細線化を skeletonize と比べる)。データは `tools/fetch_lasiesta.py` / `tools/fetch_tbm.py` で repo 外へ取得(SHA-256 固定)。
+
 ## 1.0.0 — 2026-11-06
 
 1.0.0。`CONTRIBUTING.md` の 1.0 の条件を満たしたので出す: 下の破壊的変更(1.0 前の修正)を出し切ったうえで、以後は「Versioning」の約束をメジャーを上げずに守る。文書の門(`docs/I18N.md`: `OP_CATALOG` と知識ガイド 17 本の英語・中国語)は PR #274 で満たした。0.9.0 の後に入った GPU 一式 7 本の統合もこの版に含む。

@@ -761,6 +761,10 @@
    "accessioned": "2026-09-08",
    "no": "2026.103"
   },
+  "poc_real_bg_kalman_tracking": {
+   "accessioned": "2026-11-08",
+   "no": "2026.305"
+  },
   "poc_real_coin_metrology": {
    "accessioned": "2026-09-08",
    "no": "2026.104"
@@ -776,6 +780,10 @@
   "poc_real_file_formats": {
    "accessioned": "2026-11-04",
    "no": "2026.300"
+  },
+  "poc_real_grain_skiz": {
+   "accessioned": "2026-11-08",
+   "no": "2026.306"
   },
   "poc_real_sem_metal_layer": {
    "accessioned": "2026-11-01",

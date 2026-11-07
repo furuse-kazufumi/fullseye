@@ -506,7 +506,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 299 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 301 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -586,7 +586,7 @@ PoC 299 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>寸法・形状計測</b> (59)</summary>
+<details class="vall"><summary><b>寸法・形状計測</b> (60)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../articles/assets/poc/poc_aoi_ct_traceability/story.ja.gif" alt="One populated region in top view and reconstructed attenuation slices. The same central joint is traceable to its internal void; rings and metal streaks arise in projection reconstruction." loading="lazy" width="200" height="200"></picture><span>AOI と CT の対応</span></a>
 <a href="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../articles/assets/poc/poc_asbuilt_wall_deviation/story.ja.gif" alt="竣工した壁の歪み" loading="lazy" width="200" height="200"></picture><span>竣工した壁の歪み</span></a>
@@ -647,6 +647,7 @@ PoC 299 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><img src="../articles/assets/poc/poc_virtual_acceptance_3d/story.ja.gif" alt="artefact layout (VDI/VDE 2634-2 idea) and the noise each design leaves on the flat" loading="lazy" width="200" height="200"></picture><span>買う前に受入試験をかける ―― 同じ iToF でも黒い球 1 つで不合格になる</span></a>
 <a href="../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><img src="../articles/assets/poc/poc_light_section_step_weld_floor/story.ja.gif" alt="高さ地図(フレーム × 列、gauss): 段差 2 mm と高さの変わるビード" loading="lazy" width="200" height="200"></picture><span>光切断の高さは µm で合うが、実機を決めるのはスペックルの床 20.7 µm</span></a>
 <a href="../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_file_formats/01_stars_matched.png"><img src="../articles/assets/poc/poc_real_file_formats/story.ja.gif" alt="SDSS r の NGC 2420(北が上)。青=star_detect の検出、緑=SDSS の星表の星(15〜20 等、飽和なし)で 1.0″ 以内に対応、赤=対応なし。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外(検出の青だけが並ぶ)。" loading="lazy" width="200" height="200"></picture><span>実物の科学データファイルを読む</span></a>
+<a href="../articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries.png"><img src="../articles/assets/poc/poc_real_grain_skiz/story.ja.gif" alt="TBM の評価の 3 枚(上から F の中央値・上位 10 %・下位 10 %: 0.71 / 0.80 / 0.56)。左 = 実写の顕微鏡写真(色で腐食した金属組織、128 × 128 画素 ≈ 115 µm 角を 3 倍)、右 = 白が専門家の手描きの粒界、空色が morph_skiz の粒界(勾配の低い画素を opening_seg で種にした影響圏の境界)。" loading="lazy" width="200" height="200"></picture><span>金属組織の粒界を影響圏で引く</span></a>
 </div>
 </details>
 
@@ -756,7 +757,7 @@ PoC 299 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>時系列を 3-D として測る</b> (21)</summary>
+<details class="vall"><summary><b>時系列を 3-D として測る</b> (22)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_beam_modal_video/14_beam_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_beam_modal_video.jpg" alt="動画でモード同定" width="200" height="200"><b>&#9654;</b><span>動画でモード同定</span></a>
 <a href="../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><img src="../articles/assets/poc/poc_cold_chain_excursion/story.ja.gif" alt="同じ色尺度ではない —— 各枚は自分の最小最大で塗られる。数字は本文の表を見ること。" loading="lazy" width="200" height="200"></picture><span>冷蔵輸送の温度</span></a>
@@ -779,6 +780,7 @@ PoC 299 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_table_tennis_bounce/01_drop_test.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_table_tennis_bounce.jpg" alt="卓球の跳ね" width="200" height="200"><b>&#9654;</b><span>卓球の跳ね</span></a>
 <a href="../articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_table_tennis_rally_loop.jpg" alt="ラリーと読み誤差" width="200" height="200"><b>&#9654;</b><span>ラリーと読み誤差</span></a>
 <a href="../articles/assets/poc/poc_periodic_video_boundary/02_loop.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_periodic_video_boundary/05_contamination_map.png"><img src="../articles/assets/poc/poc_periodic_video_boundary/story.ja.gif" alt="走る 14 本について、**どのフレームが汚れたか**を1 段 1 op で重ねたもの(横軸が t = 0..31、白が汚れたフレーム、濃い灰が無傷)。上から background / deflicker / exponential / exponential / frame / motion / motion / moving / optical / running / running / temporal / temporal / three の順です。★**帯が 2 本に分かれている段**が窓つきの op ---- 1 本は元の動画の端、もう 1 本はそれを 9 フレーム巡回シフトした先です。★**全面が白い段**は再帰や全域統計を使う op で、端を捨てても直りません。★★**中間色で塗った段**は中身がほとんど無い op ---- 汚れ 0 に見えますが、それは**空の出力がどうシフトしても空だから**で、合格ではありません。" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>周期的な動画</span></a>
+<a href="../articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png"><img src="../articles/assets/poc/poc_real_bg_kalman_tracking/story.ja.gif" alt="LASIESTA I_OC_01 の第 206 コマ。空色の太線 = filter_kalman が観測で更新した位置、橙の細線 = 予測だけで進めた区間(柱の裏 26 コマと一部が隠れたコマ)、朱 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。柱に半分入りかけたコマを更新に使ったので予測は上へ傾き、出てきたコマで 31 画素ずれたが、NIS の門の内側で同じ番号のまま拾い直した。" loading="lazy" width="200" height="200"></picture><span>柱の裏をカルマン予測で通り抜ける</span></a>
 </div>
 </details>
 

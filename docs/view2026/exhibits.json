@@ -19985,6 +19985,40 @@
     "hi": "वास्तविक वैज्ञानिक data file पढ़ना",
     "fr": "Lire de vrais fichiers de données scientifiques"
    }
+  },
+  {
+   "id": "poc_real_bg_kalman_tracking",
+   "group": "wing_xyt",
+   "media": "01_pillar_crossing.png",
+   "motion": false,
+   "thumb_src": "01_pillar_crossing.png",
+   "label": {
+    "ja": "柱の裏をカルマン予測で通り抜ける",
+    "en": "Tracking through a pillar with a Kalman filter",
+    "zh": "用卡尔曼预测穿过柱子背后",
+    "tw": "用卡爾曼預測穿過柱子背後",
+    "ko": "칼만 예측으로 기둥 뒤를 통과하기",
+    "de": "Mit dem Kalman-Filter hinter der Säule hindurch",
+    "hi": "Kalman prediction से खंभे के पीछे tracking",
+    "fr": "Suivre derrière un pilier avec un filtre de Kalman"
+   }
+  },
+  {
+   "id": "poc_real_grain_skiz",
+   "group": "wing_metrology",
+   "media": "01_grain_boundaries.png",
+   "motion": false,
+   "thumb_src": "01_grain_boundaries.png",
+   "label": {
+    "ja": "金属組織の粒界を影響圏で引く",
+    "en": "Grain boundaries from zones of influence",
+    "zh": "用影响区划出金属晶界",
+    "tw": "用影響區畫出金屬晶界",
+    "ko": "영향권으로 금속 결정립계 긋기",
+    "de": "Korngrenzen aus Einflusszonen",
+    "hi": "Zones of influence से grain boundary",
+    "fr": "Joints de grains par zones d'influence"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

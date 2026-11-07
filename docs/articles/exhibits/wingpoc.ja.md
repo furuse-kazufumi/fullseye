@@ -1492,7 +1492,7 @@ py -3.11 examples/poc_symbol_lot_ocr.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 48 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 49 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -3295,6 +3295,36 @@ py -3.11 examples/poc_real_file_formats.py
 この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_file_formats)
 
 使用 op(ノートへ): [`aperture_photometry`](https://furuse.work/ops/astrostack/photometry/aperture_photometry.html) · [`astro_fits_read`](https://furuse.work/ops/fileio/fits/astro_fits_read.html) · [`e57_read`](https://furuse.work/ops/fileio/e57/e57_read.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`em_mrc_read`](https://furuse.work/ops/fileio/mrc/em_mrc_read.html) · [`nifti_read`](https://furuse.work/ops/fileio/nifti/nifti_read.html) · [`ome_tiff_read`](https://furuse.work/ops/fileio/ome_tiff/ome_tiff_read.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`star_detect`](https://furuse.work/ops/astrostack/photometry/star_detect.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html) · [`vol_region_props`](https://furuse.work/ops/3d/regionprops/vol_region_props.html)
+
+## No.2026.306 —— 実写の金属組織で影響圏の骨格から粒界を引き、粒の大きさを専門家の手描きと比べる ―― 合わせた値は合っても 1 枚ずつは順位も合わない
+
+TBM(Zenodo 8386997、CC BY 4.0)の色で腐食した多結晶の金属組織 320 枚(128 × 128 画素、約 0.9 µm/画素)と、材料の専門家が手で描いた粒界(太い線と細い線)を使った。Lab の勾配の低い画素を `opening_seg` で切って種にし、`morph_skiz` で影響圏の境界を引いた。パラメータは元画像の番号が偶数の 152 枚で選び、奇数の 168 枚で採点した。★粒界の位置: 専門家の細い線との境界 F 0.697(許容 3 画素)。同じ種からの watershed は 0.704 で、68 % の枚数で上。SKIZ は種と種の真ん中に線を引き、画像の境を見ない。★粒の大きさ(ASTM E112 の切断法、16 画素おきの試験線): 合わせた平均切片長は専門家 26.2 画素、SKIZ 21.1 画素(比 0.805、ΔG +0.63)。ところが 1 枚ずつは順位が合わない(Spearman ρ −0.16)。SKIZ の切片長は画像ごとにほとんど変わらない(変動係数 0.145、専門家 0.311)。種を勾配の分位点で決めるので、種の密度が粒の大きさに追従しない。粒の数は専門家の 3 倍(中央値 57 対 18)。★op の確かめ: `morph_skiz` は 168 枚すべてで scikit-image の `expand_labels` の影響圏の境界と画素で一致し、区画は種の数を下回らない。ただし右か下の隣で境界を決める規則から、1 画素のひげが 82 % の枚数に出る(`hit_or_miss_seq` の E で数えた)。★細線化: 専門家の太い線を Golay の L の 8 回転で逐次に細くすると、skeletonize と同じ場所を通り(F 0.991)、4 連結の階段なので画素は 1.4 倍。太い線が画像の縁に触れる 5,072 箇所のうち、Golay は 96 % で縁まで届き、skeletonize は 66 %。skeletonize が残した 1 画素の隙間から縁の粒が隣とつながり、縁に触れる粒は 1 枚あたり 12.9 → 8.2 個に減る(Golay は 13.0 個)。
+
+[![実写の金属組織で影響圏の骨格から粒界を引き、粒の大きさを専門家の手描きと比べる ―― 合わせた値は合っても 1 枚ずつは順位も合わない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries.png)
+
+*↑ **実写の金属組織で影響圏の骨格から粒界を引き、粒の大きさを専門家の手描きと比べる ―― 合わせた値は合っても 1 枚ずつは順位も合わない** ―― TBM の実写の金属組織(色で腐食、128 × 128 画素 ≈ 115 µm 角を 3 倍)。左 = 写真、右 = 白が専門家の手描きの粒界、空色が morph_skiz の粒界。*
+
+[![19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skele](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning.png)
+
+*↑ 測定の図 ―― 19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。*
+
+[![16 画素おきの縦横の試験線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts.png)
+
+*↑ 16 画素おきの縦横の試験線。*
+
+[![学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers.png)
+
+*↑ 学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。*
+
+```
+py -3.11 examples/poc_real_grain_skiz.py
+```
+
+ソース: [examples/poc_real_grain_skiz.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_grain_skiz.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_grain_skiz)
+
+使用 op(ノートへ): [`hit_or_miss_golay`](https://furuse.work/ops/mv/morphology/hit_or_miss_golay.html) · [`hit_or_miss_seq`](https://furuse.work/ops/mv/morphology/hit_or_miss_seq.html) · [`morph_skiz`](https://furuse.work/ops/mv/morphology/morph_skiz.html) · [`opening_seg`](https://furuse.work/ops/mv/morphology/opening_seg.html) · [`percentile`](https://furuse.work/ops/2d/rank/percentile.html) · [`thinning`](https://furuse.work/ops/2d/region/thinning.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 
@@ -5692,7 +5722,7 @@ py -3.11 examples/poc_photograph_through_prescription.py
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 
-2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 21 点はその実演です。
+2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 22 点はその実演です。
 
 同時に、時間方向ならではの罠も出ました。フレーム格子への丸めは必ず遅らせ、画素の面積は合体を早める。誤リンクには向きの逆な 2 種類があり、誤り率 1 本では拡散係数がどちらへ外れるか決まらない。テンプレート追跡は見失うより先に静かにずれ、ずれた 152 フレーム全部が「見つけた」と報告する。
 
@@ -6511,6 +6541,44 @@ py -3.11 examples/poc_periodic_video_boundary.py
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_periodic_video_boundary)
 
 使用 op(ノートへ): [`moving_average_window`](https://furuse.work/ops/videostream/window/moving_average_window.html) · [`perpetual_loop`](https://furuse.work/ops/generative/loop/perpetual_loop.html) · [`perpetual_loop_seam`](https://furuse.work/ops/generative/loop/perpetual_loop_seam.html) · [`three_frame_difference`](https://furuse.work/ops/videostream/motion/three_frame_difference.html)
+
+## No.2026.305 —— 実写の固定カメラで人を切り出し、柱の裏をカルマン予測で通り抜ける ―― 画素ごとのカルマン背景と MOG2 を真値の F 値で比べる
+
+LASIESTA(Universidad Politécnica de Madrid、CC BY-SA 4.0)の屋内 3 本(352×288、250〜300 コマ、全コマに画素ごとの真値)で、opsmv の新しい op を通した。`create_bg_esti` / `run_bg_esti` で画素ごとのカルマン背景を推定し、`opening_seg` で細かい塊を落とし、CDnet と同じ数え方(輪郭の灰色を除く全コマの和)で F 値を出した。パラメータは I_SI_01 だけで選び、I_OC_01 / I_OC_02 に持ち込んだ。★F 値: Fullseye 0.890 / 0.878、OpenCV の MOG2(色と影の判定つき、同じ列で varThreshold を選んだ)0.987 / 0.884。灰色 1 枚の画素ごとのカルマンは I_OC_01 で 0.10 負け、I_OC_02 はほぼ並ぶ。★`run_bg_esti` は前景の画素の更新を弱めるので、床の反射で一度前景になった塊が最後まで「幽霊」として残る。重心が 8 コマ動かない塊だけを `update_bg_esti` で背景へ取り込むと、I_OC_01 の F は 0.794 → 0.890(適合率 0.681 → 0.830)。I_OC_02 では差が出ない(0.881 → 0.878)。`give_bg_esti` の背景は MOG2 の方が真値の背景に近い(RMS 0.4 対 2.3〜3.1、0〜255)。★追跡: 塊の重心を等速モデルの `filter_kalman` で追い、99 % の NIS の門で対応づけ、面積が半分を切った塊は「一部が隠れた」として更新に使わない。I_OC_01 では柱の裏の 26 コマを予測だけでつなぎ、同じ番号のまま拾い直した(拾い直した時の誤差 5.7 画素、見えているコマの誤差の中央値 7.7 画素)。予測しない最近傍は柱で見失う。★限界: I_OC_02 では人が画面の右の外で折り返す。真値の重心から `atan2_image` で向きを出すと、隠れる前と後で 165° 変わる。等速の予測は画面の外へ出ていき、カルマンは新しい番号で拾い直す。★`filter_kalman` は 1000 コマ(観測の欠け 3/17)で `cv2.KalmanFilter` と 1.8e-12 で一致、真のモデルの下で NIS の平均は 1.99。正直に: 追跡の作り(割れた体を 6 画素でまとめる・2 コマ続けて見えた塊から始める・左右の縁を遮蔽と扱う)は 3 本を見ながら決めた。
+
+[![実写の固定カメラで人を切り出し、柱の裏をカルマン予測で通り抜ける ―― 画素ごとのカルマン背景と MOG2 を真値の F 値で比べる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png)
+
+*↑ **実写の固定カメラで人を切り出し、柱の裏をカルマン予測で通り抜ける ―― 画素ごとのカルマン背景と MOG2 を真値の F 値で比べる** ―― LASIESTA I_OC_01 の実写。空色 = filter_kalman が観測で更新した軌跡、橙 = 柱の裏 26 コマを等速の予測だけで進めた区間、朱 = 予測しない最近傍(柱で見失う)、白点 = 真値の重心。*
+
+[![I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)
+
+*↑ 測定の図 ―― I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。*
+
+[![I_OC_01 の第 151 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01.png)
+
+*↑ I_OC_01 の第 151 コマ。*
+
+[![I_OC_02 の第 111 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02.png)
+
+*↑ I_OC_02 の第 111 コマ。*
+
+[![I_OC_01 の背景。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background.png)
+
+*↑ I_OC_01 の背景。*
+
+[![真値の物体が見えているコマだけを打った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error.png)
+
+*↑ 真値の物体が見えているコマだけを打った。*
+
+```
+py -3.11 examples/poc_real_bg_kalman_tracking.py
+```
+
+ソース: [examples/poc_real_bg_kalman_tracking.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_bg_kalman_tracking.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking)
+
+使用 op(ノートへ): [`atan2_image`](https://furuse.work/ops/mv/gray/atan2_image.html) · [`create_bg_esti`](https://furuse.work/ops/mv/tracking/create_bg_esti.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`filter_kalman`](https://furuse.work/ops/mv/tracking/filter_kalman.html) · [`give_bg_esti`](https://furuse.work/ops/mv/tracking/give_bg_esti.html) · [`opening_seg`](https://furuse.work/ops/mv/morphology/opening_seg.html) · [`run_bg_esti`](https://furuse.work/ops/mv/tracking/run_bg_esti.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html) · [`update_bg_esti`](https://furuse.work/ops/mv/tracking/update_bg_esti.html)
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
