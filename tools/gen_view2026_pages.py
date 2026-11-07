@@ -400,6 +400,8 @@ def build(d: dict, lang: str) -> str:
     up = "" if lang == "ja" else "../"            # ページから docs/view2026/ への相対
     docs = up + "../"                              # ページから docs/ への相対
     def media(e):                                  # 動く 3-D の HTML はそのページの言語で開く
+        if e.get("youtube_url"):                   # YouTube に本編があれば、タイルと行はそこへ飛ぶ(抜粋はタイルの絵だけ)
+            return e["youtube_url"]
         return docs + _media_rel(d, e) + ("?lang=" + lang if _is_viewer(d, e) else "")
 
     sw = []
