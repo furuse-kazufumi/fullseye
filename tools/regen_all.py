@@ -668,6 +668,10 @@ EXCLUDED = {
     "tools/gen_synth_samples.py": _IMAGE_REASON + (" studio_assets/sample_images の合成テクスチャ。手元では 2 回で"
                                                    "バイト一致だが、コミット済みの 4 ファイルと一致しない"
                                                    "(作った環境との差か古いかは未判定)。"),
+    "tools/gen_gpu_article_figures.py": _IMAGE_REASON + (" Qiita の GPU 記事の図(docs/articles/assets/gpu_auto/)。"
+                                                        "数字は docs/perf/logs/crossover/ と pipeline_routes.json と "
+                                                        "gpu_route.routes から読み、記事の数字と食い違えば落ちる。"
+                                                        "accel の経路を数えるので torch が要る(2026-11-04)。"),
     "tools/gen_blas_article_figs.py": _IMAGE_REASON + (" BLAS スレッド数の**実測**を図にする。★2026-10-07 まで"
                                                        "出力先が手元の絶対パスで、どの checkout から回しても"
                                                        "本線の図を書き換えていた(今は Path(__file__) から求める)。"),

@@ -145,3 +145,15 @@ def test_japanese_only_docs_are_marked_on_other_languages():
     lines = [ln for ln in page.splitlines() if "/capabilities/" in ln]
     assert lines
     assert all(G.JA_MARK in ln for ln in lines)
+
+
+def test_exhibit_with_youtube_opens_the_full_video_from_its_tile():
+    """YouTube に本編がある展示は、タイルと行のリンクが YouTube の本編へ飛ぶ(2026-11-08、短い抜粋より本編)。"""
+    d = G.load()
+    published = [e for e in d["exhibits"] if e["youtube_url"]]
+    assert published, "youtube_url の入った展示が 1 件も無い"
+    for lang in ("ja", "en"):
+        page = G.build(d, lang)
+        for e in published:
+            assert page.count('href="%s"' % e["youtube_url"]) >= 1, (lang, e["id"])
+            assert "](%s)" % e["youtube_url"] in page, (lang, e["id"])

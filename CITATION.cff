@@ -17,6 +17,12 @@ identifiers:
     value: 10.5281/zenodo.22761195
     description: "Concept DOI (resolves to the newest archived version; each GitHub Release mints a version DOI)"
   - type: doi
+    value: 10.5281/zenodo.24004628
+    description: "Version DOI for 1.0.0 (minted by Zenodo from the GitHub Release on 2026-11-06)"
+  - type: doi
+    value: 10.5281/zenodo.23935214
+    description: "Version DOI for 0.9.0 (minted by Zenodo from the GitHub Release on 2026-11-04)"
+  - type: doi
     value: 10.5281/zenodo.23551704
     description: "Version DOI for 0.8.0 (minted by Zenodo from the GitHub Release on 2026-10-22)"
   - type: doi
