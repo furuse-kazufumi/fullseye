@@ -7,6 +7,29 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 歩行と足場の op の第 1 便(2026-11-06)
+
+- `terrain` / `locomotion` の既存の公開関数 17 本を台帳(opsdrive の族 `walkterrain` 12 本・`locomotion` 5 本)に載せた。
+  これまで `fullseye.op_run("support_polygon")` は「not in any ledger」で、型で鎖に組めず MCP からも呼べなかった。
+  型は既存の語彙だけ: 高さ図 = `depth`(`dem_slope` などへ型で繋がる)、通れる所・段差・障害物 = `mask`、
+  接地点・重心の軌跡 = `points`、1 時刻の重心 = `vector`。`terrain.slope_map` は `dem_slope(method="central")` と
+  内側がビット一致なので載せず(縁と穴の扱いだけが違う)、`roughness_map` は TRI(`dem_roughness`)と別の量なので
+  別の op のまま。`surface_normals` は ops3d の op 名・facade の正式名 `terrain_surface_normals` と重なるので `elevation_normals`、
+  1 語の `traversability` は `elevation_traversability` の名で載せた(名前の規則)。`step_edges` は `cell` が値を
+  変えない(符号にしか使わない)ので、台帳の入口 `elevation_step_edges` は `cell` を持たない。
+- 依頼(2026-11-08、試作から): `traversability` / `foothold_score` が幅 1 の軸の格子で `np.gradient` の例外に
+  なっていたのを直した(2 以上の軸では値は同じ)。`support_line_margin` の線分は丸める前の座標で測り、
+  試作(fullseye_shows)の式と 4e-16 以内。
+- 新しい op 7 本(`locomotion`、numpy + scipy): `support_line_margin`(2 足支持の線分・1 足の点までの余裕。
+  `com_support_margin` の `-inf` は変えない)、`lipm_capture_point` / `capture_margin`(LIPM の捕捉点 ξ = c + ċ/ω と
+  踏み出さずに止まれる余裕)、`gait_step_events`(ヒステリシスで一歩を取り出す。同じコマの両足着地は拒否)、
+  `foot_slip_metrics`(立脚中の滑りと足で測る前進、胴だけが進む見せかけを落とす門)、`footstep_plan`(足場の mask と
+  歩幅・歩隔の窓からの左右交互の着地点の列、状態の上の Dijkstra)、`static_contact_force_lp`(摩擦錐を内接の多角錐に
+  した線形計画の静的な接触力)。
+- 門 `tests/test_locomotion_ops_2026_11_06.py`(28 本): 点と線分の距離の閉形式と標本化、LIPM の cosh/sinh の解析解と
+  RK4、一歩の位置が既知の合成、滑りが既知の合成、平地の規則的な交互と小さな格子の総当たり、等分の 2 足と
+  「解がある ⇔ COM が支持多角形の中」。例 `examples/walking_ops_tour.py`(点群 → 足場 → 足場の列 → 歩いた記録の検算)。
+
 ### 追加 — PoC「1943 年のタイプ打ちの報告を古典的な OCR で読む」(収蔵 2026.301)
 
 - `examples/poc_real_typewritten_ocr.py`: NACA TN 898(1943、NASA NTRS 19930084880、Public Use Permitted)の 300 dpi の実スキャン 3 頁を、`text_line_orientation` / `text_line_slant` / `segment_characters` / `select_characters` / `train_class_gmm`・`knn`・`mlp`・`svm` と `classify_class_*` / `create_lexicon` / `lookup_lexicon` / `suggest_lexicon` / `gray_histo` / `gray_projections` / `area_center_gray` で読み、画像を見て書き起こした 100 行と照合する。同じ特徴・学習 2 頁(1,997 字)・別の試験頁(1,562 字)で GMM 0.969 / k-NN 0.981 / MLP 0.966 / SVM 0.973、k-NN と GMM(1 成分)は scikit-learn / scipy と予測が全数一致。傾きは既知の回転を ±28° で 0.007° 以内、傾斜は 5° 以上を 1.3° 以内(±2° 以内は 0 と答える)、切り出しは 100 行中 82 行で字数が一致。辞書は閉じた語彙なら 4 種とも語の正解を増やし、開いた語彙では正しい語を壊して減らす。

@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">elevation_map — DRIVE <code style="color:#22d3bf">walkterrain</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.elevation_map(points, cell: &#x27;float&#x27; = 0.05, agg: &#x27;str&#x27; = &#x27;max&#x27;, bounds=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import terrain; terrain.elevation_map(points, cell: &#x27;float&#x27; = 0.05, agg: &#x27;str&#x27; = &#x27;max&#x27;, bounds=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;elevation_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.elevation_map(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">depth</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.elevation_map.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">terrain.elevation_map</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>將點雲分箱為 2.5-D 高程網格。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>points : (N, 3) array of (x, y, z), z = height.</p>
+<p>cell   : grid resolution in world units.</p>
+<p>agg    : &#x27;max&#x27; (canopy / obstacle-safe, default), &#x27;min&#x27; (ground), or &#x27;mean&#x27;.</p>
+<p>bounds : optional (xmin, xmax, ymin, ymax); defaults to the data extent.</p>
+<p>Returns <code style="color:#22d3bf">(grid, extent)</code> where <code style="color:#22d3bf">grid[i, j]</code> is the aggregated height of cell (row i = y, col j = x) and empty cells are <code style="color:#22d3bf">nan</code>. <code style="color:#22d3bf">extent</code> is <code style="color:#22d3bf">(xmin, xmax, ymin, ymax)</code>.</p>
+<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は <code style="color:#22d3bf">bounds</code> があれば全セル nan の格子を返す(理由: 観測の無い範囲は nan = 観測していない。<code style="color:#22d3bf">bounds</code> が無ければ範囲が決まらないので ValueError)。An empty cloud with <code style="color:#22d3bf">bounds</code> gives an all-<code style="color:#22d3bf">nan</code> grid; without <code style="color:#22d3bf">bounds</code> it raises <code style="color:#22d3bf">ValueError</code> (no extent).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:perception_pipeline">perception_pipeline</a> — <code style="color:#22d3bf">py -3.11 examples/perception_pipeline.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:physical_ai_perception">physical_ai_perception</a> — <code style="color:#22d3bf">py -3.11 examples/physical_ai_perception.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:walking_ops_tour">walking_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/walking_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">depth</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">walkterrain</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:fill_gaps">fill_gaps</a> · <a style="color:#22d3bf" href="opdrive:elevation_traversability">elevation_traversability</a> · <a style="color:#22d3bf" href="opdrive:foothold_score">foothold_score</a> · <a style="color:#22d3bf" href="opdrive:ground_surface">ground_surface</a> · <a style="color:#22d3bf" href="opdrive:ground_plane">ground_plane</a> · <a style="color:#22d3bf" href="opdrive:detect_obstacles">detect_obstacles</a> · <a style="color:#22d3bf" href="opdrive:fuse_elevation">fuse_elevation</a> · <a style="color:#22d3bf" href="opdrive:roughness_map">roughness_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: terrain.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

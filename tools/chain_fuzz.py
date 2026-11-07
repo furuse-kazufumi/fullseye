@@ -7822,6 +7822,190 @@ _MV_BUILDERS = {
 }
 
 
+# --- 歩行と足場(terrain / locomotion、2026-11-06): ノブが効く入力を 1 回だけ作る --- #
+#   高さ図(セル 0.05 m、40 x 48): 勾配 0.45 と 0.9 の坂(max_slope 0.6 の半分 / 倍で通る所が変わる)、
+#   高さ 0.07 m と 0.15 m の段(max_step 0.1・min_rise 0.05 の半分 / 倍で変わる)、高さ 0.18 m の箱 6x6 と
+#   2x3 の小さな塊(clearance 0.12・min_area 0.01 の半分 / 倍で変わる)、小さな凹凸、観測していない穴。
+_FUZZ_WALK = {}
+
+
+def _fuzz_walk():
+    if "grid" not in _FUZZ_WALK:
+        r = np.random.default_rng(20261106)
+        H, W, c = 40, 48, 0.05
+        x = np.arange(W) * c
+        z = np.zeros((H, W))
+        z += np.clip(x - 0.6, 0.0, 0.4) * 0.45              # 列 12..19: 勾配 0.45
+        z += np.clip(x - 1.0, 0.0, 0.2) * 0.9               # 列 20..23: 勾配 0.9
+        z[:, 30:] += 0.07                                    # 段 0.07 m
+        z[:20, 38:] += 0.15                                  # 段 0.15 m(上半分だけ)
+        z[25:31, 26:32] += 0.18                              # 箱
+        z[33:35, 40:43] += 0.18                              # 小さな塊 6 セル = 0.015 m²
+        z += r.normal(0.0, 0.004, z.shape)
+        holes = z.copy()
+        holes[3:5, 3:6] = np.nan
+        yy, xx = np.mgrid[0:H, 0:W]
+        pts = np.stack([(xx + 0.5).ravel() * c, (yy + 0.5).ravel() * c, z.ravel()], 1)
+        _FUZZ_WALK.update({"grid": z, "holes": holes, "cell": c, "pts": pts,
+                           "extent": (0.0, W * c, 0.0, H * c)})
+    return _FUZZ_WALK
+
+
+def _b_walk_points(pool, rng):
+    # 点はセルの中心にあるので bounds を渡せば空のセルは無い(丸めで 1 列ずれて nan の列が出ない)
+    return (_fuzz_walk()["pts"],), {"cell": 0.05, "bounds": (0.0, 2.4, 0.0, 2.0)}
+
+
+def _b_walk_holes(pool, rng):
+    return (_fuzz_walk()["holes"].copy(),), {}
+
+
+def _b_walk_grid_cell(pool, rng):
+    return (_fuzz_walk()["grid"].copy(),), {"cell": 0.05}
+
+
+def _b_walk_grid(pool, rng):
+    return (_fuzz_walk()["grid"].copy(),), {}
+
+
+def _b_walk_obstacles(pool, rng):
+    f = _fuzz_walk()
+    return (f["grid"].copy(),), {"cell": 0.05, "extent": f["extent"]}
+
+
+def _b_walk_fuse(pool, rng):
+    f = _fuzz_walk()
+    a = f["holes"].copy()
+    b = f["grid"].copy() + 0.01
+    b[10:14, 10:14] = np.nan
+    return ([a, b],), {"agg": str(rng.choice(["max", "min", "mean"]))}
+
+
+def _b_walk_candidates(pool, rng):
+    f = _fuzz_walk()
+    return (f["grid"].copy(),), {"cell": 0.05, "extent": f["extent"]}
+
+
+def _b_walk_contact_points(pool, rng):
+    # 地面 z = 0 の点と、0.015 m(tol 0.02 の内)・0.03 m(倍の 0.04 で入る)に浮いた点
+    g = np.stack(np.meshgrid(np.linspace(0, 1, 6), np.linspace(0, 1, 5)), -1).reshape(-1, 2)
+    P = np.c_[g, np.zeros(len(g))]
+    P = np.r_[P, [[0.5, 0.5, 0.015], [0.2, 0.7, 0.03], [0.8, 0.3, 0.3]]]
+    return (P, np.array([0.0, 0.0, 1.0, 0.0])), {}
+
+
+def _b_walk_silhouette(pool, rng):
+    m = np.zeros((24, 20), bool)
+    m[4:20, 6:12] = True
+    m[16:20, 12:16] = True
+    return (m,), {}
+
+
+def _walk_feet():
+    # 3 本は地面、4 本目は 0.03 m 浮いている(contact_tol 0.02 では外れ、0.04 では入る)
+    return np.array([[0.0, 0.0, 0.0], [0.3, 0.0, 0.0], [0.3, 0.2, 0.0], [0.0, 0.25, 0.03]])
+
+
+def _b_walk_polygon(pool, rng):
+    return (_walk_feet(),), {"ground": 0.0}
+
+
+def _b_walk_margin(pool, rng):
+    return (np.array([0.12, 0.1, 0.8]), _walk_feet()), {"ground": 0.0}
+
+
+def _b_walk_line_margin(pool, rng):
+    # 2 本は地面(線分)、3 本目は 0.03 m 浮いている(倍の tol で多角形になる)
+    feet = np.array([[0.0, 0.0, 0.0], [0.4, 0.0, 0.0], [0.2, 0.3, 0.03]])
+    return (np.array([0.2, 0.05, 0.8]), feet), {"ground": 0.0}
+
+
+def _b_walk_gait_phase(pool, rng):
+    t = np.arange(60) * 0.02
+    h = np.stack([np.clip(np.sin(2 * np.pi * t), 0, None), np.clip(np.sin(2 * np.pi * t + np.pi), 0, None)], 1)
+    return (0.08 * h,), {}
+
+
+def _b_walk_lipm(pool, rng):
+    t = np.linspace(0, 0.5, 11)[:, None]
+    com = np.c_[0.1 * t, 0.02 * t, 0.8 + 0 * t]
+    vel = np.c_[0.1 + 0 * t, 0.02 + 0 * t, 0 * t]
+    return (com, vel, 0.8), {}
+
+
+def _b_walk_capture(pool, rng):
+    return (np.array([0.12, 0.1, 0.8]), np.array([0.15, 0.05, 0.0]), 0.8, _walk_feet()), {"ground": 0.0}
+
+
+def _walk_steps_traj():
+    """2 本の足の軌跡 (T, 2, 3)、dt = 0.015 s。遊脚 9 コマ(0.135 s)・立脚 11 コマ(0.165 s)で交互
+    (min_swing_s / min_stance_s 0.1 の倍で落ちる)。一歩だけ足の上がりが 0.03 m(clearance_min 0.02 の倍で落ちる)、
+    別の一歩だけ前進 0.08 m(advance_min 0.05 の倍で落ちる)。閾値は plant_z 0.005 m / swing_z 0.012 m。"""
+    T, dt = 160, 0.015
+    P = np.zeros((T, 2, 3))
+    P[:, 1, 1] = 0.2
+    x = [0.0, 0.1]
+    for f in (0, 1):
+        P[:, f, 0] = x[f]
+    t0, k = 4, 0
+    while t0 + 21 < T:
+        f = k % 2
+        adv = 0.08 if k == 3 else 0.2
+        lift = 0.03 if k == 5 else 0.06
+        x0 = x[f]
+        for i in range(9):
+            s = (i + 1) / 10.0
+            P[t0 + i, f, 0] = x0 + adv * s
+            P[t0 + i, f, 2] = lift * np.sin(np.pi * s)
+        x[f] = x0 + adv
+        P[t0 + 9:, f, 0] = x[f]
+        t0 += 10
+        k += 1
+    return P, dt
+
+
+def _b_walk_step_events(pool, rng):
+    P, dt = _walk_steps_traj()
+    return (P, dt, 0.005, 0.012), {}
+
+
+def _b_walk_slip(pool, rng):
+    # 足ごとに 3 回 / 2 回の立脚。立脚中に足が 0.015 m 滑る(max_slip 0.02 の半分で落ちる)。
+    # 足で測る前進 0.525 m ÷ 胴 1.0 m(min_advance_ratio 0.5 の倍で落ちる)。
+    T = 100
+    P = np.zeros((T, 2, 3))
+    S = np.zeros((T, 2), bool)
+    P[:, 1, 1] = 0.2
+    for f, (blocks, xs) in enumerate((([(0, 20), (40, 60), (80, 100)], [0.0, 0.35, 0.7]),
+                                      ([(20, 40), (60, 80)], [0.175, 0.525]))):
+        for (a, b), x0 in zip(blocks, xs):
+            S[a:b, f] = True
+            P[a:b, f, 0] = x0 + np.linspace(0.0, 0.015, b - a)
+    for f in (0, 1):                                  # 遊脚のコマは前後の立脚の間をつなぐ
+        idx = np.nonzero(S[:, f])[0]
+        P[:, f, 0] = np.interp(np.arange(T), idx, P[idx, f, 0])
+    body = np.c_[np.linspace(0.0, 1.0, T), np.full(T, 0.1), np.full(T, 0.8)]
+    return (P, S, body), {}
+
+
+def _b_walk_footsteps(pool, rng):
+    # 列 3 と 9 に足を置けない(最大の歩幅 3 セルでは届かない所があり、短い一歩が要る = deviation_weight が効く)
+    m = np.ones((9, 16), bool)
+    m[:, 3] = False
+    m[:, 9] = False
+    return (m, 0.1, ((5, 0), (3, 0)), 12, 0.3, 0.15, 0.25), {"extent": (0.0, 1.6, 0.0, 0.9)}
+
+
+def _b_walk_contact_lp(pool, rng):
+    # 斜め 45 度の向きの斜面に 2 本の足。tan(傾き) = 0.85 μ なので、多角錐が 4 面だと摩擦が足りず(cos 45°)、
+    # 8 面(既定)・16 面では足りる —— n_facets が効く入力。
+    mu = 0.6
+    th, az = np.arctan(0.85 * mu), np.radians(45.0)
+    n = np.array([np.sin(th) * np.cos(az), np.sin(th) * np.sin(az), np.cos(th)])
+    P = np.array([[0.1, -0.1, 0.0], [-0.1, 0.1, 0.0]])
+    return (P, np.tile(n, (2, 1)), np.array([0.0, 0.0, 0.8]), 30.0, mu), {}
+
+
 OP_ARG_BUILDERS = {
     **_MV_BUILDERS,
     "archive_probe": lambda pool, rng: ((_archive_probe_payload(),), {}),
@@ -8349,6 +8533,18 @@ OP_ARG_BUILDERS = {
     "dynnikov_coordinates": _b_bp_word, "dynnikov_act": _b_bp_act, "braid_equivalent": _b_bp_equiv,
     "homotopy_class_compare": _b_bp_compare, "pairwise_winding": _b_bp_wind, "homotopy_shortest_paths": _b_bp_hsp,
     "braid_class_representatives": _b_bp_reps, "grid_hole_points": _b_bp_holes, "grid_paths_to_xy": _b_bp_paths,
+    # 歩行と足場(terrain / locomotion、2026-11-06)
+    "elevation_map": _b_walk_points, "fill_gaps": _b_walk_holes, "elevation_traversability": _b_walk_grid_cell,
+    "foothold_score": _b_walk_grid_cell, "ground_surface": _b_walk_grid_cell, "ground_plane": _b_walk_grid,
+    "detect_obstacles": _b_walk_obstacles, "fuse_elevation": _b_walk_fuse, "roughness_map": _b_walk_grid,
+    "elevation_normals": _b_walk_grid_cell, "elevation_step_edges": _b_walk_grid,
+    "foothold_candidates": _b_walk_candidates,
+    "contact_points": _b_walk_contact_points, "com_from_silhouette": _b_walk_silhouette,
+    "support_polygon": _b_walk_polygon, "com_support_margin": _b_walk_margin, "gait_phase": _b_walk_gait_phase,
+    "support_line_margin": _b_walk_line_margin, "lipm_capture_point": _b_walk_lipm,
+    "capture_margin": _b_walk_capture, "gait_step_events": _b_walk_step_events,
+    "foot_slip_metrics": _b_walk_slip, "footstep_plan": _b_walk_footsteps,
+    "static_contact_force_lp": _b_walk_contact_lp,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,
@@ -8583,6 +8779,16 @@ NONFINITE_BY_CONTRACT_OPTICS = {
     # worst_trial preserves physical infinite planes/object distance.
     "tolerance_monte_carlo",
 }
+
+#: 文書化済みの非有限を返す op(歩行と足場、2026-11-06)。どれも docstring に書いてある「測れない」の印:
+#:   * elevation_map — 点の落ちなかったセルは nan(観測していない。0 で埋めると「平らな地面」に化ける)。
+#:   * fuse_elevation — どのコマでも観測されなかったセルは nan のまま。
+#:   * ground_plane — 観測が 3 セル未満の地図は nan の平面(z = 0 の偽の地面を「通れる」と読ませない)。
+#:   * com_from_silhouette — 空の mask の重心は (nan, nan)。
+#:   * com_support_margin — 面積の無い支持(2 足の線分・1 足)は -inf(有限の余裕は support_line_margin)。
+#:   * footstep_plan — 届かないときの cost は inf(risk_aware_path と同じ約束)。
+NONFINITE_BY_CONTRACT_WALK = {"elevation_map", "fuse_elevation", "ground_plane", "com_from_silhouette",
+                              "com_support_margin", "footstep_plan"}
 
 #: 文書化済みの非有限を返す op(cadmap)。**「当たらなかった」を NaN で表すのが
 #: 契約**で、最寄りの面へ丸めないための設計そのもの(丸めると「背景に載っていた
@@ -9337,7 +9543,7 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          | NONFINITE_BY_CONTRACT_OPTICS \
     | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR \
     | NONFINITE_BY_CONTRACT_PRESCRIPTION | NONFINITE_BY_CONTRACT_MEASURE \
-    | NONFINITE_BY_CONTRACT_MSA | NONFINITE_BY_CONTRACT_LEDGER_GATE | NONFINITE_BY_CONTRACT_DUALXRAY
+    | NONFINITE_BY_CONTRACT_MSA | NONFINITE_BY_CONTRACT_LEDGER_GATE | NONFINITE_BY_CONTRACT_DUALXRAY     | NONFINITE_BY_CONTRACT_WALK
 
 #: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
 #: 体積が指数増殖し、後段の全 op が実質ハングする(wave-4 実測: ~34GB の voxel に

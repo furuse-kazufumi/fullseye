@@ -1,4 +1,4 @@
-# DRIVE operator help — 717 ops in 53 categories
+# DRIVE operator help — 741 ops in 55 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -103,6 +103,10 @@
 ### lidar (4)
 
 [lidar_scan](lidar/lidar_scan.md) · [lidar_spec](lidar/lidar_spec.md) · [ray_box_ranges](lidar/ray_box_ranges.md) · [ray_plane_range](lidar/ray_plane_range.md)
+
+### locomotion (12)
+
+[capture_margin](locomotion/capture_margin.md) · [com_from_silhouette](locomotion/com_from_silhouette.md) · [com_support_margin](locomotion/com_support_margin.md) · [contact_points](locomotion/contact_points.md) · [foot_slip_metrics](locomotion/foot_slip_metrics.md) · [footstep_plan](locomotion/footstep_plan.md) · [gait_phase](locomotion/gait_phase.md) · [gait_step_events](locomotion/gait_step_events.md) · [lipm_capture_point](locomotion/lipm_capture_point.md) · [static_contact_force_lp](locomotion/static_contact_force_lp.md) · [support_line_margin](locomotion/support_line_margin.md) · [support_polygon](locomotion/support_polygon.md)
 
 ### long (13)
 
@@ -211,6 +215,10 @@
 ### ttc (9)
 
 [flow_from_depth_motion](ttc/flow_from_depth_motion.md) · [foe_from_flow](ttc/foe_from_flow.md) · [foe_from_motion](ttc/foe_from_motion.md) · [label_extent](ttc/label_extent.md) · [relative_motion](ttc/relative_motion.md) · [ttc_from_flow](ttc/ttc_from_flow.md) · [ttc_from_range](ttc/ttc_from_range.md) · [ttc_from_scale](ttc/ttc_from_scale.md) · [ttc_truth](ttc/ttc_truth.md)
+
+### walkterrain (12)
+
+[detect_obstacles](walkterrain/detect_obstacles.md) · [elevation_map](walkterrain/elevation_map.md) · [elevation_normals](walkterrain/elevation_normals.md) · [elevation_step_edges](walkterrain/elevation_step_edges.md) · [elevation_traversability](walkterrain/elevation_traversability.md) · [fill_gaps](walkterrain/fill_gaps.md) · [foothold_candidates](walkterrain/foothold_candidates.md) · [foothold_score](walkterrain/foothold_score.md) · [fuse_elevation](walkterrain/fuse_elevation.md) · [ground_plane](walkterrain/ground_plane.md) · [ground_surface](walkterrain/ground_surface.md) · [roughness_map](walkterrain/roughness_map.md)
 
 ### world (4)
 

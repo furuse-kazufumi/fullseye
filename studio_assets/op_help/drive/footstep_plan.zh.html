@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">footstep_plan — DRIVE <code style="color:#22d3bf">locomotion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.footstep_plan(mask, cell, start, goal_col, step_max, width_min, width_max, deviation_weight: &#x27;float&#x27; = 0.1, extent=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import locomotion; locomotion.footstep_plan(mask, cell, start, goal_col, step_max, width_min, width_max, deviation_weight: &#x27;float&#x27; = 0.1, extent=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;footstep_plan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>在落脚点掩码上的左右交替脚步序列(精确最短路径)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>足場の候補の mask と、歩幅・歩隔の制約から、左右交互の着地点の列を出す。</p>
+<p>格子の約束は <code style="color:#22d3bf">terrain.elevation_map</code> と同じ(行 i = y、列 j = x、セル辺 <code style="color:#22d3bf">cell</code> [m])。進行方向は +x(列が増える向き)、<b>左足は y が大きい側</b>(行が大きい)。</p>
+<p style="margin:2px 0 2px 12px">• 状態 = (いま立っている足のセル, その足が左か右か, 反対の足がゴールを越えているか)。次の一歩は反対の足を、<code style="color:#22d3bf">mask</code> が True のセル c に置く:</p>
+<p>歩幅 <code style="color:#22d3bf">0 ≤ (x_c − x_stance) ≤ step_max</code> [m]、歩隔</p>
+<p><code style="color:#22d3bf">width_min ≤ (y_left − y_right) ≤ width_max</code> [m] (左右が入れ替わる交差を許さない)。</p>
+<p style="margin:2px 0 2px 12px">• 一歩の費用 = <code style="color:#22d3bf">1 + deviation_weight·[((x_c − x_s − step_max)/step_max)² + ((w − w_mid)/w_half)²]</code>(<code style="color:#22d3bf">w_mid</code>・<code style="color:#22d3bf">w_half</code> は歩隔の幅の中央と半幅、半幅が 0 のときは 2 項目を 0)。第 1 項 1 が歩数を数え、残りは最大の歩幅・中央の歩隔へ寄せる(平地では規則的に交互に並ぶ)。</p>
+<p style="margin:2px 0 2px 12px">• ゴール = 最後の 2 歩(左右 1 歩ずつ)の両方が列 <code style="color:#22d3bf">goal_col</code> 以上。</p>
+<p style="margin:2px 0 2px 12px">• 解法: 状態の上の Dijkstra(費用は非負)= 厳密な最小費用。小さな格子では総当たりの最小と一致する(tests の門)。</p>
+<p><code style="color:#22d3bf">start</code> は <code style="color:#22d3bf">((行, 列) の左足, (行, 列) の右足)</code>。どちらの足から踏み出すかも探索が決める。返り値 <code style="color:#22d3bf">{&quot;reached&quot;, &quot;steps&quot;: [{&quot;side&quot;: &quot;L&quot;/&quot;R&quot;, &quot;cell&quot;: (i, j), &quot;xy&quot;(extent があるとき)}], &quot;cost&quot;, &quot;n_steps&quot;, &quot;expanded&quot;}</code>。届かないときは <code style="color:#22d3bf">reached = False</code>・ <code style="color:#22d3bf">steps</code> 空・<code style="color:#22d3bf">cost = inf</code>(<code style="color:#22d3bf">risk_aware_path</code> と同じ約束)。</p>
+<p>★<code style="color:#22d3bf">roverslip.risk_aware_path</code> は再利用しなかった: あちらの状態は 1 セル、辺は 8 近傍の(8, H, W) の費用で、左右交互・歩幅の窓・歩隔の窓(反対の足との相対位置)を持てない。空の入力(<code style="color:#22d3bf">mask</code> が 0 要素)は ValueError で拒否する。</p>
+<p>English: exact Dijkstra over (stance cell, side, other-foot-past-goal) states; a step puts the other foot on a True cell within the step-length window <code style="color:#22d3bf">[0, step_max]</code> and the step-width window <code style="color:#22d3bf">[width_min, width_max]</code> (left foot on the larger-y side). Unreachable goals return <code style="color:#22d3bf">reached = False</code> and <code style="color:#22d3bf">cost = inf</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:walking_ops_tour">walking_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/walking_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">locomotion</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:contact_points">contact_points</a> · <a style="color:#22d3bf" href="opdrive:com_from_silhouette">com_from_silhouette</a> · <a style="color:#22d3bf" href="opdrive:support_polygon">support_polygon</a> · <a style="color:#22d3bf" href="opdrive:com_support_margin">com_support_margin</a> · <a style="color:#22d3bf" href="opdrive:gait_phase">gait_phase</a> · <a style="color:#22d3bf" href="opdrive:support_line_margin">support_line_margin</a> · <a style="color:#22d3bf" href="opdrive:lipm_capture_point">lipm_capture_point</a> · <a style="color:#22d3bf" href="opdrive:capture_margin">capture_margin</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: locomotion.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

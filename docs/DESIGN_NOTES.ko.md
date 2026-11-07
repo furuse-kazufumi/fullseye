@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 611 / 1765 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 611 / 1766 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `_archive_tarxz.py`
@@ -196,13 +196,13 @@
 
 ## `backends_typed.py`
 
-- **L493** _(ja)_ — ★2026-10-07: 空入力を op が**正しく拒否した後**、ここが空配列の平均 = NaN を返して いた(8 op。外側の guard が置き換えるので有限に見え、台帳にだけ source=output で 残っていた)。拒否の後始末が 0/0 を作らないよう、空なら 0.0。
-- **L570** _(ja)_ — ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより **a だけを配線して b を『未使用』と書く**ほうが正しい。
-- **L588** _(ja)_ — ★2026-10-07: 相対スケールの端が定義域の外へ出ていた 2 本(契約電池で、端の knob が **全入力で**拒否されていた)。両端は a=0.5 の値が相対スケールと同じになるよう選んだ (window 10 / k 3)—— 既定の挙動と図の主図は動かない。整数の既定を持つ引数は ``_make_runner`` が整数に丸めて渡す。
-- **L594** _(ja)_ — ★2026-10-18: points_render の不透明度は (0, 1] —— 既定 1.0 の相対スケールは a > 0.5 で 1 を超えて拒否。 足跡の半径は 0.5〜4 画素(a=0.5 で 2.25)。
-- **L607** _(ja)_ — ★2026-10-07 実測: ``tb_cx_apply_transfer_function`` は H を 32x32 固定で束縛していたので 32x32 以外のスペクトルでは**全入力・全 knob で**拒否していた(契約電池 24x24、図 128x128)。 ``tb_temporal_band_power`` / ``tb_temporal_bandpass`` は帯域 [3, 5] Hz 固定で、12 フレーム / 32 fps の探針(ビン間隔 2.67 Hz)には帯域内のビンが無く、契約電池で一度も計算されていなかった。
-- **L801** _(ja)_ — ★cleandoc で共通の字下げを外してから継ぐ(2026-10-11)。.strip() だけだと 1 行目以外が 4 字下げのまま残り、 字下げの無い橋渡し文を後ろに足すため後段の cleandoc も最小字下げ 0 と見て外さない → docs/ops の Markdown で空行の後の本文がコードブロックとして表示されていた(tb_ 146 本)。
-- **L886** — ★2026-09-05 까지 ``tools/chain_fuzz``(비동봉)를 sys.path 조작으로 읽고 있었다. wheel 에서는 실패하고, 아래의 build() 가 조용히 [] 를 반환하므로 tb_* 143 op 가 사라져 있었다.
+- **L496** _(ja)_ — ★2026-10-07: 空入力を op が**正しく拒否した後**、ここが空配列の平均 = NaN を返して いた(8 op。外側の guard が置き換えるので有限に見え、台帳にだけ source=output で 残っていた)。拒否の後始末が 0/0 を作らないよう、空なら 0.0。
+- **L573** _(ja)_ — ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより **a だけを配線して b を『未使用』と書く**ほうが正しい。
+- **L591** _(ja)_ — ★2026-10-07: 相対スケールの端が定義域の外へ出ていた 2 本(契約電池で、端の knob が **全入力で**拒否されていた)。両端は a=0.5 の値が相対スケールと同じになるよう選んだ (window 10 / k 3)—— 既定の挙動と図の主図は動かない。整数の既定を持つ引数は ``_make_runner`` が整数に丸めて渡す。
+- **L597** _(ja)_ — ★2026-10-18: points_render の不透明度は (0, 1] —— 既定 1.0 の相対スケールは a > 0.5 で 1 を超えて拒否。 足跡の半径は 0.5〜4 画素(a=0.5 で 2.25)。
+- **L610** _(ja)_ — ★2026-10-07 実測: ``tb_cx_apply_transfer_function`` は H を 32x32 固定で束縛していたので 32x32 以外のスペクトルでは**全入力・全 knob で**拒否していた(契約電池 24x24、図 128x128)。 ``tb_temporal_band_power`` / ``tb_temporal_bandpass`` は帯域 [3, 5] Hz 固定で、12 フレーム / 32 fps の探針(ビン間隔 2.67 Hz)には帯域内のビンが無く、契約電池で一度も計算されていなかった。
+- **L804** _(ja)_ — ★cleandoc で共通の字下げを外してから継ぐ(2026-10-11)。.strip() だけだと 1 行目以外が 4 字下げのまま残り、 字下げの無い橋渡し文を後ろに足すため後段の cleandoc も最小字下げ 0 と見て外さない → docs/ops の Markdown で空行の後の本文がコードブロックとして表示されていた(tb_ 146 本)。
+- **L889** — ★2026-09-05 까지 ``tools/chain_fuzz``(비동봉)를 sys.path 조작으로 읽고 있었다. wheel 에서는 실패하고, 아래의 build() 가 조용히 [] 를 반환하므로 tb_* 143 op 가 사라져 있었다.
 
 ## `ballistics.py`
 
@@ -2034,7 +2034,8 @@
 
 ## `opsdrive.py`
 
-- **L119** _(ja)_ — ★2026-11-03(レシピの e2e が見つけた宣言の嘘): RSS の 8 op は台帳で入力を ``["table"]``(rss_params の表)と 宣言しているのに、素の関数は速さ・間隔が先で表は 3〜4 番目(``rss_longitudinal_same(v_rear, v_front, p)``)。 宣言どおり表を第 1 引数に渡すと ``fs.ledger.rss_longitudinal_same(p, v_rear=20, v_front=15)`` が ``TypeError: got multiple values for argument 'v_rear'`` で落ち、型で繋ぐ鎖 ``rss_params -> rss_*`` が組めなかった。 素の関数(rsssafety.* と facade)の並びは公開の約束なので変えず、**台帳の入口だけ**を「表が先」の並びにする: ``(p, v_rear, v_front, p_front=None)`` など(残りの引数の順は素の関数のまま)。``__wrapped__`` で同じ op の identity を保ち、``__signature__`` で OP_GRAPH の引数表も宣言どおり(表が第 1 スロット)になる。 旧い並び(第 1 引数が速さ・間隔の数)で呼んでいた呼び手(連鎖ファザーの builder など)はそのまま素の関数へ渡す。 第 1 引数が dict のときだけ新しい並びと読む —— 素の関数の第 1 引数はどれも数(速さ・間隔)なので取り違えは 起きない。表を第 1 引数と名前つき引数の両方で渡したら TypeError(fail-closed)。
+- **L124** _(ja)_ — ★2026-11-03(レシピの e2e が見つけた宣言の嘘): RSS の 8 op は台帳で入力を ``["table"]``(rss_params の表)と 宣言しているのに、素の関数は速さ・間隔が先で表は 3〜4 番目(``rss_longitudinal_same(v_rear, v_front, p)``)。 宣言どおり表を第 1 引数に渡すと ``fs.ledger.rss_longitudinal_same(p, v_rear=20, v_front=15)`` が ``TypeError: got multiple values for argument 'v_rear'`` で落ち、型で繋ぐ鎖 ``rss_params -> rss_*`` が組めなかった。 素の関数(rsssafety.* と facade)の並びは公開の約束なので変えず、**台帳の入口だけ**を「表が先」の並びにする: ``(p, v_rear, v_front, p_front=None)`` など(残りの引数の順は素の関数のまま)。``__wrapped__`` で同じ op の identity を保ち、``__signature__`` で OP_GRAPH の引数表も宣言どおり(表が第 1 スロット)になる。 旧い並び(第 1 引数が速さ・間隔の数)で呼んでいた呼び手(連鎖ファザーの builder など)はそのまま素の関数へ渡す。 第 1 引数が dict のときだけ新しい並びと読む —— 素の関数の第 1 引数はどれも数(速さ・間隔)なので取り違えは 起きない。表を第 1 引数と名前つき引数の両方で渡したら TypeError(fail-closed)。
+- **L1200** _(ja)_ — 融合は同じ格子の高さ図の list = images。★terrain.slope_map は載せない: dem_slope(method="central") と内側が ビット一致で、縁と穴の扱いだけが違う(slope_map の docstring)。surface_normals は ops3d の測光の op と名前が 重なり、terrain_surface_normals は facade の正式名なので elevation_normals の名で載せる。traversability(1 語)は elevation_traversability、step_edges は cell の効かない台帳の入口 elevation_step_edges(どれも terrain.py の入口)。
 
 ## `opsfit.py`
 
@@ -3081,21 +3082,21 @@
 - **L7109** _(ja)_ — ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が 無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。 窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、 effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
 - **L7320** _(ja)_ — ★obs2 の 2 点目は台車 0 の終点から (−0.15, 1.0) ずらした所: 射影の角 0.1 → 0.2 rad で終点と点の順が入れ替わり、 組紐語が変わる(角が「効かないノブ」に見えない入力。類が同じかは角に依らない —— それは門が別に見る)。
 - **L7647** _(ja)_ — ★以前の 8 画素周期の敷き詰め(7 x 7)は得点 1 の一致が 49 か所あり、上位 max_matches = 10 が 全部 1 になって min_score が出力に現れなかった(2026-11-04 の統合で直した)。
-- **L8754** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L8880** — ★2026-09-02 까지 ``lambda v: True`` 였다 = **술어가 「있다」고 세어지는 만큼, 없는 것보다 나쁘다**(점검 스크립트도 「술어 있음」으로 세어 버린다). 실측으로 None / 42 / 문자열 / dict 까지 통과시켰다. 정본은 소비 측 6 op(reprconv 의 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)를 **전부 실행하여** 정했다: 6 op 모두 위의 2 형만 받고, 그 외는 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 로 명시적 fail-closed 가 된다(실측). **(2,N) 는 받지 않으므로**, 2-tuple 을 np.stack 으로 (2,N) 으로 눌러버리던 adapter 3 건은 axis=1 로 고쳤다. 길이가 다른 2 개(histogram 의 counts/edges)도 「쌍」이 아니므로 걸러낸다.
-- **L9015** — ★「정확히 2 요소」는 pose(`len >= 2` 로 info 를 허용)와 **의도적으로 다르다**. 실측 2026-09-02: mesh 를 1 인자로 받는 기존 consumer 4 건(face_normals / vertex_normals / mesh_area / vertex_curvature)은 3-tuple 에 대해 "mesh must be a 2-element tuple (vertices, faces)" 를 내보내고, cadmap 의 `_mesh` 와 render3d._mesh_arrays 도 2 요소만 받는다. 즉 **이 repo 의 mesh sort 정본은 2-tuple** 이며, 여분의 요소는 「정보가 많은」것이 아니라 하류가 전멸하는 타입의 거짓말이 된다. 유일한 예외였던 `voxel_to_mesh`((v, f, n) 을 반환)는 ops3d.RESULT_ADAPTERS 에서 정본의 배열을 꺼내도록 했다(gicp / vol_label 과 같은 취급).
-- **L9224** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L9226** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-- **L9228** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-- **L9231** _(ja)_ — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
-- **L9238** _(ja)_ — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
-- **L9240** _(ja)_ — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
-- **L9243** _(ja)_ — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
-- **L9245** _(ja)_ — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
-- **L9247** _(ja)_ — ★2026-10-19: 最適化後の処方(R = inf)を返す
-- **L9249** _(ja)_ — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
-- **L9272** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L9398** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L8960** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L9086** — ★2026-09-02 까지 ``lambda v: True`` 였다 = **술어가 「있다」고 세어지는 만큼, 없는 것보다 나쁘다**(점검 스크립트도 「술어 있음」으로 세어 버린다). 실측으로 None / 42 / 문자열 / dict 까지 통과시켰다. 정본은 소비 측 6 op(reprconv 의 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)를 **전부 실행하여** 정했다: 6 op 모두 위의 2 형만 받고, 그 외는 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 로 명시적 fail-closed 가 된다(실측). **(2,N) 는 받지 않으므로**, 2-tuple 을 np.stack 으로 (2,N) 으로 눌러버리던 adapter 3 건은 axis=1 로 고쳤다. 길이가 다른 2 개(histogram 의 counts/edges)도 「쌍」이 아니므로 걸러낸다.
+- **L9221** — ★「정확히 2 요소」는 pose(`len >= 2` 로 info 를 허용)와 **의도적으로 다르다**. 실측 2026-09-02: mesh 를 1 인자로 받는 기존 consumer 4 건(face_normals / vertex_normals / mesh_area / vertex_curvature)은 3-tuple 에 대해 "mesh must be a 2-element tuple (vertices, faces)" 를 내보내고, cadmap 의 `_mesh` 와 render3d._mesh_arrays 도 2 요소만 받는다. 즉 **이 repo 의 mesh sort 정본은 2-tuple** 이며, 여분의 요소는 「정보가 많은」것이 아니라 하류가 전멸하는 타입의 거짓말이 된다. 유일한 예외였던 `voxel_to_mesh`((v, f, n) 을 반환)는 ops3d.RESULT_ADAPTERS 에서 정본의 배열을 꺼내도록 했다(gicp / vol_label 과 같은 취급).
+- **L9430** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L9432** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L9434** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
+- **L9437** _(ja)_ — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
+- **L9444** _(ja)_ — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
+- **L9446** _(ja)_ — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
+- **L9449** _(ja)_ — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
+- **L9451** _(ja)_ — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
+- **L9453** _(ja)_ — ★2026-10-19: 最適化後の処方(R = inf)を返す
+- **L9455** _(ja)_ — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
+- **L9478** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L9604** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 
@@ -3305,7 +3306,7 @@
 
 ## `tools/ledger_gaps.py`
 
-- **L469** _(ja)_ — ★2026-10-14: 絶対許容差 1e-12 は、出力が 1e-21 の桁(重力波のひずみ ``chirp_newtonian``)だと どのノブも「変化なし」にする。出力の最大絶対値が 1 より小さいときは、その大きさで許容差を縮める (1 以上の出力では以前と同じ)。
+- **L473** _(ja)_ — ★2026-10-14: 絶対許容差 1e-12 は、出力が 1e-21 の桁(重力波のひずみ ``chirp_newtonian``)だと どのノブも「変化なし」にする。出力の最大絶対値が 1 より小さいときは、その大きさで許容差を縮める (1 以上の出力では以前と同じ)。
 
 ## `tools/op_example_index.py`
 
