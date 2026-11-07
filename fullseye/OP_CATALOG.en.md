@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (474 examples)
+### 2-D image / signal / geometry (476 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -192,6 +192,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_lightfield_depth` — ops: `color_bar`, `lf_depth_from_focus`, `lf_disparity_to_depth`, `lf_epi`, `lf_epi_slope`, `lf_refocus`, `lf_to_mla` `py -3.11 examples/poc_lightfield_depth.py`
 - `poc_focus_stacking` — ops: `axes_frame`, `axes_transform`, `csi_height_map`, `defocus_blur`, `dilation_circle`, `gauss_filter`, `laplace`, `mean_image`, `optical_camera`, `plot_series`, `psnr`, `rms` (+4 more) `py -3.11 examples/poc_focus_stacking.py`
 - `poc_real_stereo_depth` — ops: (not linked from any op note) `py -3.11 examples/poc_real_stereo_depth.py`
+- `poc_real_stereo_multiscanline` — ops: `binocular_disparity_ms`, `binocular_distance_ms`, `create_ncc_model`, `crop_rectangle2`, `ellipse`, `find_ncc_models`, `get_circle_pose`, `points_lepetit`, `reconstruct_surface_stereo` `py -3.11 examples/poc_real_stereo_multiscanline.py`
 
 **optics**
 - `poc_compound_eye` — ops: `lf_all_in_focus`, `lf_aperture_mask`, `lf_depth_from_focus`, `lf_plenoptic_design`, `lf_subaperture`, `lf_synthesize`, `lf_synthetic_aperture`, `median` `py -3.11 examples/poc_compound_eye.py`
@@ -320,6 +321,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_public_camera_heading` — ops: `camera_orientation_from_skyline`, `camera_orientation_from_sun`, `dem_skyline`, `render_skyline_view`, `skyline_extract`, `sun_pixel_position`, `sun_position` `py -3.11 examples/poc_public_camera_heading.py`
 - `poc_thermal_drift_metrology` — ops: `lockin_thermal_wave`, `polygon_area`, `thermo_optic_coefficient` `py -3.11 examples/poc_thermal_drift_metrology.py`
 - `poc_calibration_truth_map` — ops: `calibration_error_map`, `calibration_next_pose`, `calibration_uncertainty_map`, `camera_calibration`, `camera_calibration_lm`, `checkerboard_points`, `find_checkerboard_corners`, `sim_checkerboard` `py -3.11 examples/poc_calibration_truth_map.py`
+- `poc_real_chessboard_undistort` — ops: `camera_calibration_lm`, `change_radial_distortion_image`, `ellipse`, `map_image`, `points_lepetit`, `rectify_to_world_plane` `py -3.11 examples/poc_real_chessboard_undistort.py`
 
 **visualization**
 - `interactive_poc_viewer` — ops: (not linked from any op note) `py -3.11 examples/interactive_poc_viewer.py`
@@ -4748,7 +4750,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 
 #### annotate / shape (4)
 - `arc` `image2d → image2d` GPU: yes (allow-list) — A circular arc. Angles are in degrees, **clockwise from the screen x-axis** (because row points down). · examples: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` GPU: none — An ellipse (rotated by ``angle_deg``, filled with ``fill=True``). · examples: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
+- `ellipse` `image2d → image2d` GPU: none — An ellipse (rotated by ``angle_deg``, filled with ``fill=True``). · examples: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: yes (allow-list) — A filled polygon (even-odd crossing rule — :mod:`imagedraw` only outlines). · examples: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: yes (allow-list) — A rounded rectangle (filled with ``fill=True``). For backing plates and enclosing boxes. · examples: `annotate_gallery`, `poc_machine_condition_fusion`
 
@@ -4947,7 +4949,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 
 #### calib / calibrate (5)
 - `camera_calibration` (halcon: `camera_calibration`) `keypoints → table` GPU: none — [Partial] Estimates only the intrinsic matrix K from several views of a planar target by Zhang's method (camera_calibration). · examples: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_calibration_truth_map`, `poc_camera_calibration`
-- `camera_calibration_lm` `keypoints → table` GPU: none — Jointly refines intrinsics, distortion and all poses by LM from Zhang's initial estimate and returns them with their covariance (``table``). · examples: `poc_calibration_truth_map`
+- `camera_calibration_lm` `keypoints → table` GPU: none — Jointly refines intrinsics, distortion and all poses by LM from Zhang's initial estimate and returns them with their covariance (``table``). · examples: `poc_calibration_truth_map`, `poc_real_chessboard_undistort`
 - `find_marks_and_pose` (halcon: `find_marks_and_pose`) `image2d → table` GPU: none — Mark detection + pose estimation of the calibration plate (plane homography → pose) (find_marks_and_pose).
 - `hand_eye_calibration` (halcon: `hand_eye_calibration`) `no input → matrix` GPU: none — Solves AX=XB from a series of motion pairs and estimates X (4x4) (hand_eye_calibration).
 - `stereo_calibration_lm` `keypoints → table` GPU: none — Jointly refines both cameras' intrinsics and distortion, the board poses and the right camera's relative pose (R, T) by LM (``table``).
@@ -5070,9 +5072,9 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: none — Find the control points of a non-rational B-spline through every point (global interpolation). · examples: `machine_vision_tour`
 
 #### mv / detect (3)
-- `create_ncc_model` (halcon: `create_ncc_model`) `image2d → table` GPU: none — Prepare an NCC model (a normalized template). · examples: `machine_vision_tour`
-- `find_ncc_models` (halcon: `find_ncc_models`) `table × image2d → table` GPU: none — Find one or more NCC models in one image. · examples: `machine_vision_tour`
-- `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: none — Detect interest points by comparing opposite pairs on a circle (the Lepetit-Fua detector). · examples: `machine_vision_tour`
+- `create_ncc_model` (halcon: `create_ncc_model`) `image2d → table` GPU: none — Prepare an NCC model (a normalized template). · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `find_ncc_models` (halcon: `find_ncc_models`) `table × image2d → table` GPU: none — Find one or more NCC models in one image. · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: none — Detect interest points by comparing opposite pairs on a circle (the Lepetit-Fua detector). · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`, `poc_real_stereo_multiscanline`
 
 #### mv / gray (5)
 - `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: none — Return the gray-weighted mass and centroid `(row, col)`. · examples: `machine_vision_tour`
@@ -5093,18 +5095,18 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `thickening_seq` (halcon: `thickening_seq`) `mask → mask` GPU: none — Thicken a region through the rotations of a Golay letter in turn until it stops changing. · examples: `machine_vision_tour`
 
 #### mv / pose (1)
-- `get_circle_pose` (halcon: `get_circle_pose`) `keypoints → table` GPU: none — Recover the center and normal of a circle of known radius from its image ellipse, in camera coordinates. · examples: `machine_vision_tour`
+- `get_circle_pose` (halcon: `get_circle_pose`) `keypoints → table` GPU: none — Recover the center and normal of a circle of known radius from its image ellipse, in camera coordinates. · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
 
 #### mv / resample (4)
-- `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: none — Redraw an image from one division-model camera into another distortion and intrinsics. · examples: `machine_vision_tour`
-- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: none — Read the inside of a rotated rectangle by linear interpolation and cut it out as an axis-aligned image. · examples: `machine_vision_tour`
-- `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: none — Resample an image through an inverse map (each output pixel reads an input coordinate). · examples: `machine_vision_tour`
-- `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: none — Rectify an image to a fronto-parallel view of the world plane z=0 (one pixel = `scale` world units). · examples: `machine_vision_tour`
+- `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: none — Redraw an image from one division-model camera into another distortion and intrinsics. · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
+- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: none — Read the inside of a rotated rectangle by linear interpolation and cut it out as an axis-aligned image. · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: none — Resample an image through an inverse map (each output pixel reads an input coordinate). · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
+- `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: none — Rectify an image to a fronto-parallel view of the world plane z=0 (one pixel = `scale` world units). · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
 
 #### mv / stereo (3)
-- `binocular_disparity_ms` (halcon: `binocular_disparity_ms`) `image2d × image2d → table` GPU: none — Compute rectified-stereo disparity with semi-global matching, verify it left-right and interpolate to subpixel. · examples: `machine_vision_tour`
-- `binocular_distance_ms` (halcon: `binocular_distance_ms`) `image2d × image2d → table` GPU: none — Compute the distance image of a rectified stereo pair (`Z = focal * baseline / (disparity + doffs)`). · examples: `machine_vision_tour`
-- `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: none — Map the valid pixels of a disparity image to 3-D points. · examples: `machine_vision_tour`
+- `binocular_disparity_ms` (halcon: `binocular_disparity_ms`) `image2d × image2d → table` GPU: none — Compute rectified-stereo disparity with semi-global matching, verify it left-right and interpolate to subpixel. · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `binocular_distance_ms` (halcon: `binocular_distance_ms`) `image2d × image2d → table` GPU: none — Compute the distance image of a rectified stereo pair (`Z = focal * baseline / (disparity + doffs)`). · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: none — Map the valid pixels of a disparity image to 3-D points. · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
 
 #### mv / text (4)
 - `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: none — Split a text line image into a label image with one label per character column. · examples: `machine_vision_tour`

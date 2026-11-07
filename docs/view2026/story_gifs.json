@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 205,
+  "target_count": 207,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -34637,6 +34637,305 @@
       "alt": {
         "ja": "SDSS r の NGC 2420(北が上)。青=star_detect の検出、緑=SDSS の星表の星(15〜20 等、飽和なし)で 1.0″ 以内に対応、赤=対応なし。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外(検出の青だけが並ぶ)。",
         "en": "Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed"
+      }
+    },
+    "poc_real_stereo_multiscanline": {
+      "representative": "01_scene.png",
+      "status": "gif",
+      "selected": [
+        "01_scene.png",
+        "02_failure_map.png",
+        "03_wheel_pose.png",
+        "04_sparse_ncc.png",
+        "05_classes.png",
+        "06_middeval3.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_stereo_multiscanline/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_scene.png",
+              "content_box": [
+                0,
+                75,
+                720,
+                540
+              ]
+            },
+            {
+              "file": "02_failure_map.png",
+              "content_box": [
+                128,
+                0,
+                463,
+                690
+              ]
+            },
+            {
+              "file": "03_wheel_pose.png",
+              "content_box": [
+                0,
+                157,
+                720,
+                376
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.916859
+            },
+            {
+              "file": "04_sparse_ncc.png",
+              "content_box": [
+                0,
+                64,
+                720,
+                561
+              ]
+            },
+            {
+              "file": "05_classes.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.985
+            },
+            {
+              "file": "06_middeval3.png",
+              "content_box": [
+                0,
+                37,
+                720,
+                616
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 1099082,
+          "color_mad": [
+            1.8238,
+            1.824,
+            0.4845,
+            0.6191,
+            0.0292,
+            0.0265
+          ],
+          "max_color_mad": 1.824,
+          "source_sha256": "f032de8b39ba0f18bc3c8665d7a4687989fcef20c624499c698ef654771e1bbf"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_stereo_multiscanline/story.en.gif",
+          "frames": [
+            {
+              "file": "01_scene.png",
+              "content_box": [
+                0,
+                75,
+                720,
+                540
+              ]
+            },
+            {
+              "file": "02_failure_map.png",
+              "content_box": [
+                128,
+                0,
+                463,
+                690
+              ]
+            },
+            {
+              "file": "03_wheel_pose.png",
+              "content_box": [
+                0,
+                157,
+                720,
+                376
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.916859
+            },
+            {
+              "file": "04_sparse_ncc.png",
+              "content_box": [
+                0,
+                64,
+                720,
+                561
+              ]
+            },
+            {
+              "file": "05_classes.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.985
+            },
+            {
+              "file": "06_middeval3.png",
+              "content_box": [
+                0,
+                37,
+                720,
+                616
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 1099082,
+          "color_mad": [
+            1.8238,
+            1.824,
+            0.4845,
+            0.6191,
+            0.0292,
+            0.0265
+          ],
+          "max_color_mad": 1.824,
+          "source_sha256": "348bd28e6041d4a820dc94c82b13007f500fa23500185f0e7500c57d5fb57784"
+        }
+      },
+      "reason": null,
+      "cover": "01_scene.png",
+      "still": "articles/assets/poc/poc_real_stereo_multiscanline/01_scene.png",
+      "alt": {
+        "ja": "bad2 4.67 %(有効だけ)/ 密度 90.0 %。OpenCV SGBM は 7.27 % / 88.4 %。",
+        "en": "Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks"
+      }
+    },
+    "poc_real_chessboard_undistort": {
+      "representative": "01_board.png",
+      "status": "gif",
+      "selected": [
+        "01_board.png",
+        "02_per_image.png",
+        "03_lepetit.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_chessboard_undistort/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_board.png",
+              "content_box": [
+                0,
+                44,
+                720,
+                602
+              ]
+            },
+            {
+              "file": "02_per_image.png",
+              "content_box": [
+                0,
+                96,
+                720,
+                498
+              ]
+            },
+            {
+              "file": "03_lepetit.png",
+              "content_box": [
+                0,
+                32,
+                720,
+                625
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 575388,
+          "color_mad": [
+            0.7761,
+            0.0285,
+            1.0843
+          ],
+          "max_color_mad": 1.0843,
+          "source_sha256": "4834c3ac7ec6a3aef8d3ef6c6ff92508a973617a795d3ee4aa05c851dadb7145"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_chessboard_undistort/story.en.gif",
+          "frames": [
+            {
+              "file": "01_board.png",
+              "content_box": [
+                0,
+                44,
+                720,
+                602
+              ]
+            },
+            {
+              "file": "02_per_image.png",
+              "content_box": [
+                0,
+                96,
+                720,
+                498
+              ]
+            },
+            {
+              "file": "03_lepetit.png",
+              "content_box": [
+                0,
+                32,
+                720,
+                625
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 575388,
+          "color_mad": [
+            0.7761,
+            0.0285,
+            1.0843
+          ],
+          "max_color_mad": 1.0843,
+          "source_sha256": "53e8d18bd09473e8d6febed5bae51be1ec0920d5a9ee92c53bb2167f97275c8b"
+        }
+      },
+      "reason": null,
+      "cover": "01_board.png",
+      "still": "articles/assets/poc/poc_real_chessboard_undistort/01_board.png",
+      "alt": {
+        "ja": "left03.jpg: 直線性 0.875 → 0.080 px。正面図の角と格子のずれ RMS 0.23 px。",
+        "en": "Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing"
       }
     }
   }

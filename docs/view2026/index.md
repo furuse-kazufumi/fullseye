@@ -507,7 +507,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 299 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 301 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -677,7 +677,7 @@ PoC 299 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>幾何・校正</b> (24)</summary>
+<details class="vall"><summary><b>幾何・校正</b> (26)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../articles/assets/poc/poc_simcal_thin_film/story.ja.gif" alt="Schwarz ら 2024 の顕微鏡写真(Si 上の SiO₂ の縁)を 40 px 角の 52 区画の RGB 平均にし、転送行列 × 黒体の光源 × CIE 1931 → sRGB × 利得 × ガンマ × 周辺減光の 7 本のつまみに合わせた終点を通る切り口(ほかのつまみは終点に固定、色は log10(χ² − 最小 + 1)、暗いほど合う、上が大きい値)。左は各軸 ±8 σ_CRLB(T 5752〜6449 K、周辺減光 -0.149〜-0.018)でも谷が 1 点に閉じる。右は利得 ×1/2〜×2・ガンマ 1.4〜3.2 の全域に谷が溝として伸び、明るさを上げても γ を上げれば同じ画素値に戻る。simcal_fit が値を出したのは T = 6100 K, vig = -0.084 だけで、膜厚・屈折率・分散・利得・ガンマは共線性指数 γ > 10 で「組み合わせ」として数を出さない。出典: Schwarz et al., Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502; data Zenodo 10.5281/zenodo.13753754 (CC BY 4.0). Modified: re-labelled and rounded table / micrograph downsized to 640x360, block means." loading="lazy" width="200" height="200"></picture><span>実画像で薄膜の模型を較正(決まる係数と決まらない組み合わせ)</span></a>
 <a href="../articles/assets/poc/poc_camera_calibration/05_calibration_convergence.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_camera_calibration.jpg" alt="カメラ校正" width="200" height="200"><b>&#9654;</b><span>カメラ校正</span></a>
@@ -703,6 +703,8 @@ PoC 299 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><img src="../articles/assets/poc/poc_part_locate_features/story.ja.gif" alt="SIFT -> features_match -> ransac_homography: corner error 0.367 px" loading="lazy" width="200" height="200"></picture><span>37 度回した部品を SIFT は 0.367 px で見つけ、既存の Harris は 158 px 外す</span></a>
 <a href="../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_multimodal_mi_registration.jpg" alt="相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる" width="200" height="200"><span>相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる</span></a>
 <a href="../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_sheet_deformation_ffd.jpg" alt="シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない" width="200" height="200"><span>シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない</span></a>
+<a href="../articles/assets/poc/poc_real_stereo_multiscanline/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_stereo_multiscanline/01_scene.png"><img src="../articles/assets/poc/poc_real_stereo_multiscanline/story.ja.gif" alt="bad2 4.67 %(有効だけ)/ 密度 90.0 %。OpenCV SGBM は 7.27 % / 88.4 %。" loading="lazy" width="200" height="200"></picture><span>実写のステレオで視差・面・円の姿勢</span></a>
+<a href="../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><img src="../articles/assets/poc/poc_real_chessboard_undistort/story.ja.gif" alt="left03.jpg: 直線性 0.875 → 0.080 px。正面図の角と格子のずれ RMS 0.23 px。" loading="lazy" width="200" height="200"></picture><span>実写の校正板で歪みを直し正面図へ</span></a>
 </div>
 </details>
 

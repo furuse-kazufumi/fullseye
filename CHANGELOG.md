@@ -5,6 +5,10 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## Unreleased
+
+- PoC 2 本(収蔵 2026.302 / 2026.303、実データ): `examples/poc_real_stereo_multiscanline.py` —— Middlebury 2014 の実写ステレオで `binocular_disparity_ms` / `binocular_distance_ms` / `reconstruct_surface_stereo` / `get_circle_pose` / `points_lepetit` + NCC を真値視差と OpenCV で採点(MiddEval3 の 15 場面は `tools/fetch_stereoreal_data.py` で repo 外へ取得、SHA-256 固定)。`examples/poc_real_chessboard_undistort.py` —— OpenCV の校正板の写真 13 枚で `change_radial_distortion_image` / `map_image` / `rectify_to_world_plane` を直線性と格子の間隔で採点。記録した穴: `points_lepetit` の直線の棄却が傾いてぼけた縁で漏れる、`binocular_disparity_ms` は平行化の縦の残差 0.24 px で bad-2 が +12 点悪化する。
+
 ## 1.0.0 — 2026-11-06
 
 1.0.0。`CONTRIBUTING.md` の 1.0 の条件を満たしたので出す: 下の破壊的変更(1.0 前の修正)を出し切ったうえで、以後は「Versioning」の約束をメジャーを上げずに守る。文書の門(`docs/I18N.md`: `OP_CATALOG` と知識ガイド 17 本の英語・中国語)は PR #274 で満たした。0.9.0 の後に入った GPU 一式 7 本の統合もこの版に含む。

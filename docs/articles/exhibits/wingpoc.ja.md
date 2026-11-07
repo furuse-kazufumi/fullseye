@@ -6514,7 +6514,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 24 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 26 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -7359,6 +7359,70 @@ py -3.11 examples/poc_sheet_deformation_ffd.py
 この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sheet_deformation_ffd)
 
 使用 op(ノートへ): [`median`](https://furuse.work/ops/2d/rank/median.html) · [`piv_flow_magnitude`](https://furuse.work/ops/piv/field/piv_flow_magnitude.html) · [`register_accuracy_map`](https://furuse.work/ops/matchreg/intensityreg/register_accuracy_map.html) · [`register_ffd`](https://furuse.work/ops/matchreg/intensityreg/register_ffd.html) · [`registration_to_flow2d`](https://furuse.work/ops/matchreg/intensityreg/registration_to_flow2d.html)
+
+## No.2026.302 —— 実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする
+
+実写のステレオ対(Middlebury 2014 motorcycle、真値視差つき)から、binocular_disparity_ms で視差を、binocular_distance_ms と reconstruct_surface_stereo で距離と面を、get_circle_pose で後輪のリムの姿勢を出し、真値視差と OpenCV(SGBM・reprojectImageTo3D・matchTemplate)で採点した。★有効画素の bad-2 4.67 %・平均誤差 0.960 px・密度 90.0 %(SGBM 7.27 % / 1.315 px / 88.4 %)。無効も誤りに数えると 14.23 %(SGBM 18.00 %)で、両方が有効な画素だけなら 4.45 % 対 4.95 % —— 差の半分は「どこを無効にするか」から来る。★失敗する場所: 真値から幾何で数えた遮蔽(6.9 %)は 57 % が左右一致で無効に落ちる。誤りが残るのは奥行きの段差の近く(bad-2 14.1 %)と、真値の対応で左右の明るさが食い違う面(反射・光沢の代理、11.5 %)で、それ以外は 0.85 %。「無地で壊れる」は最も平らな 1.2 % にしか当たらず、床のコンクリートは 0.68 % で最もよく合う。★名前の ms は多重スケールではなく複数走査線: 集約の向きを 2 → 4 にすると 5.55 → 4.67 %、op の外で 1/2 に縮めた段は 8.31 %。★距離は doffs を渡して相対誤差 中央 0.37 %、点群は OpenCV と最大 0.0006 mm で一致。★★円の姿勢は op が正しく、問題は条件の悪さ: リム(半長軸 62 px、弧 223°)で中心 23.5 mm・法線 7.74° ずれるが、真値の円の上の点を渡すと 1.2e-6°。縁の点の食い違い 0.52 px と同じ雑音で法線の誤差は中央 5.79°・95 % 点 9.39°。2 つの解は再投影の差 0.007 px で選べず、法線は 50.7° 違う。同じ縁を推定した視差で 3-D にすると 2.3 mm・1.59°。★points_lepetit の点で crop_rectangle2 → create_ncc_model → find_ncc_models を引くと bad-2 13.8 %(でたらめな画素 16.3 %)、スコア 0.9 以上で 2.2 %。OpenCV の matchTemplate と最良位置が全点一致。★★MiddEval3 の訓練 15 場面(nocc)で bad-2 の中央 6.52 % 対 SGBM 10.20 %、14 場面で下回る。露出・照明を変えても ms はほぼ動かない(−0.18 / +0.94 点、SGBM +4.99 / +18.08 点。照明では無効が増える)。逆に平行化だけが違う対(Playtable、縦の残差 平均 0.24 px)では ms が +12.1 点悪化し SGBM は +0.6 点 —— 縦のずれに弱い(理由は未確認)。
+
+[![実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/01_scene.png)
+
+*↑ **実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする** ―― 左の実写、binocular_disparity_ms の視差(無効 = 黒)、真値視差、reconstruct_surface_stereo の点群を斜めから見た絵。*
+
+[![遮蔽 bad2 71.5 % 無効 57.0 % / 段差の近く bad2 14.1 % 無効 9.7 % / 無地 bad2 4.1 % 無効 14.5 % / 見え方が変わる面 bad2 11.5 % 無効 20.7 % / それ以外 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png)
+
+*↑ 測定の図 ―― 遮蔽 bad2 71.5 % 無効 57.0 % / 段差の近く bad2 14.1 % 無効 9.7 % / 無地 bad2 4.1 % 無効 14.5 % / 見え方が変わる面 bad2 11.5 % 無効 20.7 % / それ以外 bad2 0.8 % 無効 5.7 %*
+
+[![真値に近い解: 中心 23.5 mm・法線 7.74°。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/03_wheel_pose_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/03_wheel_pose.png)
+
+*↑ 真値に近い解: 中心 23.5 mm・法線 7.74°。*
+
+[![Lepetit 点 bad2 13.8 %、でたらめな画素 16.3 %。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/04_sparse_ncc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/04_sparse_ncc.png)
+
+*↑ Lepetit 点 bad2 13.8 %、でたらめな画素 16.3 %。*
+
+[![遮蔽は真値から幾何で数えた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/05_classes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/05_classes.png)
+
+*↑ 遮蔽は真値から幾何で数えた。*
+
+[![同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/06_middeval3_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/06_middeval3.png)
+
+*↑ 同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。*
+
+```
+py -3.11 examples/poc_real_stereo_multiscanline.py
+```
+
+ソース: [examples/poc_real_stereo_multiscanline.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_stereo_multiscanline.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_stereo_multiscanline)
+
+使用 op(ノートへ): [`binocular_disparity_ms`](https://furuse.work/ops/mv/stereo/binocular_disparity_ms.html) · [`binocular_distance_ms`](https://furuse.work/ops/mv/stereo/binocular_distance_ms.html) · [`create_ncc_model`](https://furuse.work/ops/mv/detect/create_ncc_model.html) · [`crop_rectangle2`](https://furuse.work/ops/mv/resample/crop_rectangle2.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`find_ncc_models`](https://furuse.work/ops/mv/detect/find_ncc_models.html) · [`get_circle_pose`](https://furuse.work/ops/mv/pose/get_circle_pose.html) · [`points_lepetit`](https://furuse.work/ops/mv/detect/points_lepetit.html) · [`reconstruct_surface_stereo`](https://furuse.work/ops/mv/stereo/reconstruct_surface_stereo.html)
+
+## No.2026.303 —— 実写の校正板 13 枚で歪みを直し、正面図へ平行化する ―― 直線性と格子の間隔で採点する
+
+OpenCV が配布する校正板の写真 13 枚(640x480、内角 9x6、Apache-2.0)で、change_radial_distortion_image・map_image・rectify_to_world_plane の結果を、出力の画像から OpenCV で拾い直した角の直線性と、1 マス 40 px の格子からのずれで採点した。★camera_calibration_lm は OpenCV の calibrateCamera と同値(内部パラメータの差 2.6e-7 px、再投影 0.4087 px)。★板の行と列の直線性だけで当てた除算モデルの κ(1 係数)で、直線性は 0.655 → 0.157 px。OpenCV の 5 係数で戻した 0.161 px と同等。ただし 2 つのモデルは板の写った範囲では中央 0.49 px しか違わないのに、板が一度も写っていない画像の隅では 46.9 px 食い違う —— どちらが正しいかはこの 13 枚からは言えない。★描き直した 13 枚から角を拾い直すと直線性は中央 0.654 → 0.080 px(OpenCV の undistort は 0.089 px)、13 枚すべてで直る。★map_image は OpenCV の initUndistortRectifyMap の表で remap と最大 9.6e-8 の差、順写像の表は拒否する。★solve_pnp の姿勢は solvePnP と回転 中央 0.12°、正面図の角は格子から RMS 中央 0.24 px・最大 3.0 px、隣の角との間隔は 39.80〜40.02 px。★★points_lepetit は X 字の角に乗らない(1 px 以内 0 / 54、応答の山は角から 2.6 px 脇)。さらに点の 90〜93 % はまっすぐな縁の上にある。1 本の縁で切り分けると、軸に沿った縁やぼけの無い縁では 0 点なのに、傾き 10°・ぼけ 0.7 pxの縁で 100 px あたり 16 点漏れる —— 直線の上の画素を落とす検査の穴として記録した。
+
+[![実写の校正板 13 枚で歪みを直し、正面図へ平行化する ―― 直線性と格子の間隔で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/01_board_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/01_board.png)
+
+*↑ **実写の校正板 13 枚で歪みを直し、正面図へ平行化する ―― 直線性と格子の間隔で採点する** ―― いちばん曲がって写った 1 枚: 元の写真、change_radial_distortion_image で歪みを直した画像、rectify_to_world_plane の正面図(橙 = 1 マス 40 px の格子、青 = 拾い直した角)、直した後と元の差。*
+
+[![直線性 = 角の 6 行・9 列に当てた直線からの垂直距離の RMS。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/02_per_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/02_per_image.png)
+
+*↑ 測定の図 ―― 直線性 = 角の 6 行・9 列に当てた直線からの垂直距離の RMS。*
+
+[![応答の山は角の真上でなく脇に立つ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/03_lepetit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/03_lepetit.png)
+
+*↑ 応答の山は角の真上でなく脇に立つ。*
+
+```
+py -3.11 examples/poc_real_chessboard_undistort.py
+```
+
+ソース: [examples/poc_real_chessboard_undistort.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_chessboard_undistort.py)
+
+この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_chessboard_undistort)
+
+使用 op(ノートへ): [`camera_calibration_lm`](https://furuse.work/ops/calib/calibrate/camera_calibration_lm.html) · [`change_radial_distortion_image`](https://furuse.work/ops/mv/resample/change_radial_distortion_image.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`map_image`](https://furuse.work/ops/mv/resample/map_image.html) · [`points_lepetit`](https://furuse.work/ops/mv/detect/points_lepetit.html) · [`rectify_to_world_plane`](https://furuse.work/ops/mv/resample/rectify_to_world_plane.html)
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 

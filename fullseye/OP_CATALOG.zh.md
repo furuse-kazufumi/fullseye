@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(474 例)
+### 2-D 图像/信号/几何(476 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -192,6 +192,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_lightfield_depth` — op: `color_bar`, `lf_depth_from_focus`, `lf_disparity_to_depth`, `lf_epi`, `lf_epi_slope`, `lf_refocus`, `lf_to_mla` `py -3.11 examples/poc_lightfield_depth.py`
 - `poc_focus_stacking` — op: `axes_frame`, `axes_transform`, `csi_height_map`, `defocus_blur`, `dilation_circle`, `gauss_filter`, `laplace`, `mean_image`, `optical_camera`, `plot_series`, `psnr`, `rms`(另有 4 个) `py -3.11 examples/poc_focus_stacking.py`
 - `poc_real_stereo_depth` — op:(没有 op 笔记链接到此例) `py -3.11 examples/poc_real_stereo_depth.py`
+- `poc_real_stereo_multiscanline` — op: `binocular_disparity_ms`, `binocular_distance_ms`, `create_ncc_model`, `crop_rectangle2`, `ellipse`, `find_ncc_models`, `get_circle_pose`, `points_lepetit`, `reconstruct_surface_stereo` `py -3.11 examples/poc_real_stereo_multiscanline.py`
 
 **optics**
 - `poc_compound_eye` — op: `lf_all_in_focus`, `lf_aperture_mask`, `lf_depth_from_focus`, `lf_plenoptic_design`, `lf_subaperture`, `lf_synthesize`, `lf_synthetic_aperture`, `median` `py -3.11 examples/poc_compound_eye.py`
@@ -320,6 +321,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_public_camera_heading` — op: `camera_orientation_from_skyline`, `camera_orientation_from_sun`, `dem_skyline`, `render_skyline_view`, `skyline_extract`, `sun_pixel_position`, `sun_position` `py -3.11 examples/poc_public_camera_heading.py`
 - `poc_thermal_drift_metrology` — op: `lockin_thermal_wave`, `polygon_area`, `thermo_optic_coefficient` `py -3.11 examples/poc_thermal_drift_metrology.py`
 - `poc_calibration_truth_map` — op: `calibration_error_map`, `calibration_next_pose`, `calibration_uncertainty_map`, `camera_calibration`, `camera_calibration_lm`, `checkerboard_points`, `find_checkerboard_corners`, `sim_checkerboard` `py -3.11 examples/poc_calibration_truth_map.py`
+- `poc_real_chessboard_undistort` — op: `camera_calibration_lm`, `change_radial_distortion_image`, `ellipse`, `map_image`, `points_lepetit`, `rectify_to_world_plane` `py -3.11 examples/poc_real_chessboard_undistort.py`
 
 **visualization**
 - `interactive_poc_viewer` — op:(没有 op 笔记链接到此例) `py -3.11 examples/interactive_poc_viewer.py`
@@ -4748,7 +4750,7 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### annotate / shape (4)
 - `arc` `image2d → image2d` GPU: 有(许可列表) — 圆弧。角度以度计,**从屏幕 x 轴顺时针**(因为 row 朝下)。 · 示例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` GPU: 无 — 椭圆(用 ``angle_deg`` 旋转,``fill=True`` 时填充)。 · 示例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
+- `ellipse` `image2d → image2d` GPU: 无 — 椭圆(用 ``angle_deg`` 旋转,``fill=True`` 时填充)。 · 示例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: 有(许可列表) — 多边形填充(奇偶交叉规则 —— :mod:`imagedraw` 只画轮廓)。 · 示例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: 有(许可列表) — 圆角矩形(``fill=True`` 时填充)。用作衬底或外框。 · 示例: `annotate_gallery`, `poc_machine_condition_fusion`
 
@@ -4947,7 +4949,7 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### calib / calibrate (5)
 - `camera_calibration` (halcon: `camera_calibration`) `keypoints → table` GPU: 无 — [部分对应] 用 Zhang 法从平面靶标的多个视角只估计内参矩阵 K(camera_calibration)。 · 示例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_calibration_truth_map`, `poc_camera_calibration`
-- `camera_calibration_lm` `keypoints → table` GPU: 无 — 从 Zhang 法的初值出发,用 LM 同时优化内参、畸变与全部位姿,并连同协方差一起返回(``table``)。 · 示例: `poc_calibration_truth_map`
+- `camera_calibration_lm` `keypoints → table` GPU: 无 — 从 Zhang 法的初值出发,用 LM 同时优化内参、畸变与全部位姿,并连同协方差一起返回(``table``)。 · 示例: `poc_calibration_truth_map`, `poc_real_chessboard_undistort`
 - `find_marks_and_pose` (halcon: `find_marks_and_pose`) `image2d → table` GPU: 无 — 标记检测 + 标定板位姿估计(平面单应 → 位姿)(find_marks_and_pose)。
 - `hand_eye_calibration` (halcon: `hand_eye_calibration`) `无输入 → matrix` GPU: 无 — 由一系列运动对求解 AX=XB，估计 X(4x4)(hand_eye_calibration)。
 - `stereo_calibration_lm` `keypoints → table` GPU: 无 — 用 LM 同时优化左右相机的内参与畸变、板的位姿以及右相机的相对位姿 (R, T)(``table``)。
@@ -5070,9 +5072,9 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: 无 — 求经过全部点的非有理 B 样条控制点（全局插值）。 · 示例: `machine_vision_tour`
 
 #### mv / detect (3)
-- `create_ncc_model` (halcon: `create_ncc_model`) `image2d → table` GPU: 无 — 准备 NCC 模型（归一化模板）。 · 示例: `machine_vision_tour`
-- `find_ncc_models` (halcon: `find_ncc_models`) `table × image2d → table` GPU: 无 — 在一幅图像中查找一个或多个 NCC 模型。 · 示例: `machine_vision_tour`
-- `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: 无 — 比较圆周上相对的两点来检测关注点（Lepetit–Fua 检测器）。 · 示例: `machine_vision_tour`
+- `create_ncc_model` (halcon: `create_ncc_model`) `image2d → table` GPU: 无 — 准备 NCC 模型（归一化模板）。 · 示例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `find_ncc_models` (halcon: `find_ncc_models`) `table × image2d → table` GPU: 无 — 在一幅图像中查找一个或多个 NCC 模型。 · 示例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: 无 — 比较圆周上相对的两点来检测关注点（Lepetit–Fua 检测器）。 · 示例: `machine_vision_tour`, `poc_real_chessboard_undistort`, `poc_real_stereo_multiscanline`
 
 #### mv / gray (5)
 - `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: 无 — 返回以灰度为权的质量与重心 `(row, col)`。 · 示例: `machine_vision_tour`
@@ -5093,18 +5095,18 @@ _共 3817 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `thickening_seq` (halcon: `thickening_seq`) `mask → mask` GPU: 无 — 依次使用 Golay 字母的各旋转加厚，直到不再变化。 · 示例: `machine_vision_tour`
 
 #### mv / pose (1)
-- `get_circle_pose` (halcon: `get_circle_pose`) `keypoints → table` GPU: 无 — 由已知半径圆的图像椭圆点列，在相机坐标系中求圆心与法线。 · 示例: `machine_vision_tour`
+- `get_circle_pose` (halcon: `get_circle_pose`) `keypoints → table` GPU: 无 — 由已知半径圆的图像椭圆点列，在相机坐标系中求圆心与法线。 · 示例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
 
 #### mv / resample (4)
-- `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: 无 — 把除法模型相机的图像重绘为另一组畸变与内参的图像。 · 示例: `machine_vision_tour`
-- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: 无 — 用线性插值读取旋转矩形内部，并裁剪为轴对齐图像。 · 示例: `machine_vision_tour`
-- `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: 无 — 用逆映射表对图像重采样（每个输出像素读取一个输入坐标）。 · 示例: `machine_vision_tour`
-- `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: 无 — 把图像校正为世界平面 z=0 的正视图（1 像素 = `scale` 世界单位）。 · 示例: `machine_vision_tour`
+- `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: 无 — 把除法模型相机的图像重绘为另一组畸变与内参的图像。 · 示例: `machine_vision_tour`, `poc_real_chessboard_undistort`
+- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: 无 — 用线性插值读取旋转矩形内部，并裁剪为轴对齐图像。 · 示例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: 无 — 用逆映射表对图像重采样（每个输出像素读取一个输入坐标）。 · 示例: `machine_vision_tour`, `poc_real_chessboard_undistort`
+- `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: 无 — 把图像校正为世界平面 z=0 的正视图（1 像素 = `scale` 世界单位）。 · 示例: `machine_vision_tour`, `poc_real_chessboard_undistort`
 
 #### mv / stereo (3)
-- `binocular_disparity_ms` (halcon: `binocular_disparity_ms`) `image2d × image2d → table` GPU: 无 — 用半全局匹配计算校正立体的视差，做左右一致检查并插值到亚像素。 · 示例: `machine_vision_tour`
-- `binocular_distance_ms` (halcon: `binocular_distance_ms`) `image2d × image2d → table` GPU: 无 — 计算校正立体的距离图（`Z = focal * baseline / (disparity + doffs)`）。 · 示例: `machine_vision_tour`
-- `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: 无 — 把视差图的有效像素映射为三维点。 · 示例: `machine_vision_tour`
+- `binocular_disparity_ms` (halcon: `binocular_disparity_ms`) `image2d × image2d → table` GPU: 无 — 用半全局匹配计算校正立体的视差，做左右一致检查并插值到亚像素。 · 示例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `binocular_distance_ms` (halcon: `binocular_distance_ms`) `image2d × image2d → table` GPU: 无 — 计算校正立体的距离图（`Z = focal * baseline / (disparity + doffs)`）。 · 示例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: 无 — 把视差图的有效像素映射为三维点。 · 示例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
 
 #### mv / text (4)
 - `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: 无 — 把文字行图像切分为按字符列分块的标签图。 · 示例: `machine_vision_tour`
