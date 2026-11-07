@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(475 例)
+### 2-D 画像/信号/幾何(480 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -190,6 +190,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **ライトフィールドの深度(81 視点は 2 眼に勝てるのか)** — 既知の深度から合成ライトフィールドを作り、EPI 傾き・焦点度・2 眼を並べる。定数ゼロ点に 22 倍だが、**2 眼には既定設定だと 3.0 倍負ける**(cubic 補間にして初めて 1.6 倍勝つ)。圧勝するのは鏡面ハイライトの場面だけ、という切り分けまで数字で置く。 `py -3.11 examples/poc_lightfield_depth.py`
 - **深度合成(絵は圧勝、深度はゼロ点に負ける場所がある)** — 既知の深度地図から焦点位置を変えた画像列を作り、全焦点画像と深度を**別々に**評価する。絵は +5.17 dB(中央のフレーム比)で勝つ。だが深度は段差帯でゼロ点比 0.94(負け)、★**無テクスチャでは 0.16(6 倍負け)**。しかも突出度の信頼度は嘘の側が高く出る(0.9575 対 0.9381)—— 峰の絶対値で棄却すると RMS が 0.918 → 0.817 mm。 `py -3.11 examples/poc_focus_stacking.py`
 - **実写のステレオ対で視差と距離を測る(この博物館で初めての実データ)** — Middlebury 2014 motorcycle(1/4 縮小、真値視差つき)を 240x741 に切り出して通す。★真値の穴は NaN ではなく +inf(15,927 個)で、np.nanmedian は中央視差を 44.97 px と答える(正しくは 42.55 px)―― isfinite で判定する fill_disparity / apply_cmap は正しく穴として扱った。★既定 max_disp=16 は bad2 95.06 %、崖は 48(46.79 %)と 64(26.75 %)の間、80 では 27.11 % と戻る。★ゼロ点 94.04 % に対し SGM 15.81 % / NCC 21.47 % / SAD 26.75 % / census 48.62 %。census は 64 bit パックで窓が 7 止まり(3/5/7 = 75.27/48.62/35.44 %)、block は 21 まで広げて 23.59 %。★★disparity_confidence の下位 4 割を捨てると bad2 26.75 → 6.80 %(残り 60.6 %)。★★depth_from_disparity に doffs が無く、実写の 31.086 px を無視すると距離が 1.519〜5.243 倍にばらけ、最良の単一スケールでも残差 958.3 mm RMS(レンジの 33.2 %)、遠 +1676 / 近 -926 mm と反り返る ―― この PoC で引数を追加(最大差 0 mm)。★実写の視差レンジでの L* 折返しは jet 3 / turbo 1 / viridis 0 だが、段の均一さは jet 1.73 が turbo 2.57・viridis 3.26 より良い(「悪い配色」とひとまとめにすると何が悪いのか言い損なう)。★uint8 をそのまま渡しても落ちないが float と同じ数字は返らない(26.74 対 26.75 %)。 `py -3.11 examples/poc_real_stereo_depth.py`
+- **実写のステレオ対で視差・距離・面・円の姿勢まで出し、真値視差で採点する(複数走査線の視差)** — Middlebury 2014 motorcycle(scikit-image 同梱の 1/4 縮小、真値視差つき)を binocular_disparity_ms → binocular_distance_ms → reconstruct_surface_stereo と通し、OpenCV の SGBM・reprojectImageTo3D・matchTemplate を参照実装に採点する。★有効画素の bad-2 4.67 %・密度 90.0 %(SGBM 7.27 % / 88.4 %)、無効も誤りに数えると 14.23 %。★失敗の地図: 遮蔽 6.9 % は 57 % が無効に落ち、誤りは段差の近く(14.1 %)と見え方が変わる面(11.5 %)に残る。無地で崩れるのは最も平らな 1.2 % だけで、床は 0.68 %。★★後輪のリムの get_circle_pose は中心 23.5 mm・法線 7.74° ずれるが、真値の円の上の点では 1.2e-6° —— 0.52 px の縁の食い違いが数度になる条件の悪さで、ステレオなら 2.3 mm・1.59°。2 解は再投影 0.007 px 差で選べない。★Lepetit 点 + NCC は bad-2 13.8 %(でたらめな画素 16.3 %)、OpenCV と位置が全点一致。★★MiddEval3 の 15 場面で 14 場面 SGBM を下回るが、平行化だけが違う対(Playtable、縦の残差 0.24 px)で +12.1 点悪化(SGBM +0.6)。 `py -3.11 examples/poc_real_stereo_multiscanline.py`
 
 **optics**
 - **ハエの複眼は光場センサ(神経重ね合わせで「重ねると頑健」を光学で測る)** — 個眼アレイをプレノプティック系として設計し、同一点を N 個眼で重ねたときのSNR 利得を測る。★小開口では √N がほぼ厳密(N=5 で 2.25 対 √5=2.24)、大開口では**飽和する**(N=49 で 5.33 対 7.00)。原因は雑音でなく、ずらして重ねた像の周縁 4 画素の誤差で、雑音だけの利得は 7.05 で √N どおり、周縁 8 画素を除けば 7.19。ハエの ~6 重ねは膝の手前。アレイでこそ距離画像が出ること、少数派の遮蔽者は median 重ねなら貫けることも実測する。 `py -3.11 examples/poc_compound_eye.py`
@@ -318,6 +319,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **公共カメラはどこを向いているか(位置しか公開されない固定カメラの向きを、写真そのものから決める)** — 新族 geocam(7 op、numpy + scipy)。位置既知の固定カメラの (yaw, pitch, roll) を学習なしで 2 つの独立な手掛かりから決めて互いに検算: DEM で描いた 360° の稜線 vs 動的計画法で抜いた空と地形の境界(yaw を一周した残差曲線と曖昧さ margin を返す)、時刻つきの太陽の画素 ≥ 2 点 → Wahba 問題の SVD 解(太陽位置は NOAA の閉形式)。真値つき合成カメラでスカイライン 0.058°・太陽 0.002°・2 経路の一致 0.061°、対照の「道路方向の事前知識」は 7.5°、平地の DEM は ambiguous(黙って間違えない)。GIF は yaw を一周させて稜線が境界に噛み合う瞬間。 `py -3.11 examples/poc_public_camera_heading.py`
 - **カメラの熱ドリフトが寸法計測に効く量(分離できるのは歪みがあるから)** — ★★**予想が逆だった** —— 歪みが無ければ主点ドリフトは寸法に**厳密に 0**、焦点距離ドリフトは位置に依らない一定の倍率誤差で、位置を振っても何も分離できない。歪み k1=-0.12 を入れて初めて主点ドリフトが半径に比例する誤差を作る。1 次式 err(R)=a+b·R に当てはめると a=+224.5 ppm(対照条件 +225.3、差 0.4 %)、b=+0.2388 ppm/px(主点のみ 0.2190 + f のみ 0.0197 = 0.2387)。★対照群で誤差の床を先に測ると 1 枚 117 ppm。**ドリフトが床を超えるのは ΔT=1.6 K から**。 `py -3.11 examples/poc_thermal_drift_metrology.py`
 - **真値つきのカメラ校正 ―― 画像から K と歪み、どこで誤るかの地図、次の 1 枚** — 真の K・樽型歪み(k1 = −0.21)・6 姿勢でチェッカー板を描き(画素を板へ逆に引く描画)、角を `find_checkerboard_corners` で拾って `camera_calibration_lm`(Zhang を初期値に K・歪み・全姿勢を同時に LM)で校正する。新 op 8 本(`calib_lm`、`opscalib`)。角は描画の真値に rms 0.046 px、fx の誤差は Zhang の閉形式 12.89 % → LM 0.133 %(共分散の 1σ 0.85 px の内)。真値と比べた誤差の地図(カメラの向きのずれを除いた後)は中央 0.094 px・隅で最大 0.568 px(500 mm 先で 0.413 mm)、共分散を写した不確かさの地図は平均 0.225 px。板を中心にしか置いていない 4 枚に次の 1 枚を推薦させると隅を選び、モンテカルロ 15 本の実際の誤差は 1.41 px(中心に正対 3.13、遠い中心 3.98 px)—— 隅どうしの順位は差が雑音の内。OpenCV の calibrateCamera / stereoCalibrate と同じ極小に落ちることは試験で照合(OpenCV は optional)。学習 0、門 23 件。 `py -3.11 examples/poc_calibration_truth_map.py`
+- **実写の校正板 13 枚で歪みを直し正面図へ平行化する(直線性と格子の間隔で採点)** — OpenCV の校正板の写真 13 枚(Apache-2.0)で、change_radial_distortion_image・map_image・rectify_to_world_plane を、OpenCV で拾い直した角の直線性と 1 マス 40 px の格子で採点する。★camera_calibration_lm は calibrateCamera と同値(差 2.6e-7 px)。★直線性だけで当てた除算モデルの κ 1 係数で直線性 0.655 → 0.157 px(OpenCV 5 係数 0.161 px)、描き直した画像から拾い直すと 0.080 px(undistort 0.089)。ただし板の写らない隅では 2 つのモデルが 46.9 px 食い違う(外挿)。★map_image は remap と 9.6e-8 で一致。★正面図の角は格子から RMS 0.24 px、間隔 39.80〜40.02 px。★★points_lepetit は X 字の角に乗らず(0 / 54)、点の 90〜93 % がまっすぐな縁に並ぶ —— 傾き 10°・ぼけ 0.7 px の縁で直線の棄却が漏れる(記録した穴)。 `py -3.11 examples/poc_real_chessboard_undistort.py`
 
 **visualization**
 - **結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語)** — fs.write_viewer の最小例。点群・メッシュ・動画(真値と推定の枠 + しきい値つきの時系列)・前後の分割の 4 種を、正直なバッジ(門を通った / 限界を見せる / 何もしない場合)つきのタブで 1 本の自己完結 HTML にする。言語は lang で選ぶ(ja / en / zh / tw / ko / de / hi / fr、先頭が既定)。位置は間引かず量子化(戻りが刻みの半分以内)、外部 URL 無し、欠けた訳は黙って補わず ValueError。 `py -3.11 examples/interactive_poc_viewer.py`
@@ -338,6 +340,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **morphology**
 - **左右非対称性の定量(対称面そのものが変形に引きずられる)** — 厳密に左右対称な合成頭蓋の片側に既知の膨らみを入れて測り返す。検査の床は点対面 rms 0.0297 mm(点対点の 45 分の 1)。**残差が最小になる対称面は非対称量の 46 % を消す** —— 症状を左右に均して残差を買っているため。「見つけるなら残差最適面、量を言うならランドマーク面」を数字で分ける。 `py -3.11 examples/poc_bilateral_asymmetry.py`
 - **血管網を抜いて分岐を測る(ヒゲ、分岐近傍の径の過大、指数の脆さ)** — ★★**きれいな合成画像にはヒゲが出なかった**(予想外れ)—— 端点を持つ枝の最短が 15 px で、ヒゲと呼べるものが 1 本も無い。**ヒゲは細線化ではなく境界のざらつきが作る**(振幅 0 → 0.35 で余分な分岐が 3 → 34 個)。★★ヒゲを刈る長さのしきい値は解像度で成り立ったり成り立たなかったりする: 原寸ならヒゲ最長 9 px と本物最短 15 px が分かれて12 px で完全に切れるが、半分の解像度では 7 px と 6 px で重なり、**どのしきい値でも両方をゼロにできない**。「刈れば直る」は解像度に依存する主張だった。 `py -3.11 examples/poc_vessel_network.py`
+- **実写の金属組織で影響圏の骨格(SKIZ)から粒界を引き、粒の大きさを専門家の手描きと比べる** — TBM(CC BY 4.0)の色で腐食した金属組織 320 枚と専門家の手描きの粒界で、opening_seg の種から morph_skiz の粒界を引く。★境界 F 0.697(watershed 0.704)。★ASTM E112 の切断法で合わせた切片長の比 0.805(ΔG +0.63)だが、1 枚ずつは Spearman ρ −0.16 で順位が合わず、粒の数は 3 倍。★morph_skiz は expand_labels の影響圏の境界と画素で一致、1 画素のひげが 82 % の枚数に出る。★Golay の L の逐次細線化は skeletonize と同じ場所を通り(F 0.991)、画像の縁まで届く割合 96 % 対 66 %、縁の粒 13.0 対 8.2 個/枚。 `py -3.11 examples/poc_real_grain_skiz.py`
 
 **inspection**
 - **2-D対称性の自己参照検査(正解画像なしで欠陥だけを残す)** — 対称模様と線形照明むらを持つ合成部品へ非対称欠陥を入れ、鏡映差分で欠陥領域の平均残差 0.193、模様・照明領域 1.5e-15(比 1.2e14)を得る。片側を欠いた円板の中心誤差はエッジ対 0.231 px に対し面積重心 3.171 px。ただし欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。回転次数 n=2,3,4,6 は雑音・ぼけ3条件で12/12正答し、対称性スコアは欠陥振幅5段階で単調増加する。 `py -3.11 examples/poc_symmetry_self_reference_inspection.py`
@@ -583,6 +586,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **PL 像で細い溝はなぜ見えなくなるか(公開 Si ウェハ PL データで採点)** — フォトルミネッセンス(PL)像は、励起で作った過剰キャリアが**拡散してから**光る。だから像には光学の PSF のほかに、拡散長 L = √(Dτ) で決まる**もう 1 つの PSF**(2 次元のグリーン関数 K₀(r/L)/2πL²)が掛かる。新 op 3 本(`pl_diffusion_psf` は核を総和 1 で、`pl_image_simulate` は励起の場と再結合の場から定常拡散方程式を格子で厳密に解き、`pl_groove_visibility` は溝の幅・拡散長・雑音からコントラスト・CNR・見える境界 L* を閉形式で返す)。★着手前の予想「拡散長の長い良質なウェハほど同じ溝が見えなくなる」は**半分だけ当たった**: 影の溝(励起・発光の欠け、1 − e^{−w/2L})は L 20 → 160 µm で 11.8 → 1.6 % に消えるが、沈みの溝(再結合の線、Donolato 型 SL/(SL+2D))は 48.9 → 89.0 % に**深くなる**(格子の閉形式と 1e-10、連続形と 2.4 % 以内、Donolato 型と 1.7 % 以内)。★★公開実データ(Si ウェハのレーザー溝、HF 処理後 0 min / 55 min / 1 week、CC BY 4.0、DOI 10.5281/zenodo.19603335)を生画像から読み、論文図のヒストグラム(L1 0)と線走査(RMS ≤ 1.1 %)を再現したうえで数えると、HF 直後ほど溝は**深く(50 → 35 %)広い(半値幅 1.32 → 0.42 mm)**= 沈み型の向き。PL 水準は拡散長の代理にならない(55 min は水準が最低なのに深さ・幅は中間)。埋め込み POD(`pod_hitmiss_fit`)では、拡散長の長い 0 min 側で影型の a90 は 4.6 倍大きく(隠れる)、沈み型は 0.28 倍(目立つ)。実地の a90 は白色雑音の閉形式より 1 桁以上甘い —— 限界を決めるのは雑音でなく地の構造。実データ段は環境変数 FULLSEYE_SI_PL_DATA があるときだけ走り、無ければ合成のみで「実データ門は未実行」と明示(CI は合成のみ、図なしで 2 秒)。 `py -3.11 examples/poc_si_wafer_pl_defect_visibility.py`
 - **薄い欠陥はどこまで見えるか(実写の地に真値を仕込んで検出限界を測る)** — 「どこまで薄い傷が見えるか」は普通、平らな地に白色雑音を載せた合成画像で見積もる。その見積もりがどれだけ甘いかを、CC0 実写テクスチャ(brick / grass / gravel)に**位置・大きさ・振幅が既知のガウシアン欠陥を仕込んで**測る。比較相手は**検出器が実際に見る残差 σ を実写に揃えた**合成の地 —— 雑音の量を同じにしてから構造の効果だけを取り出す。★★雑音を揃えても実写の限界は 2.03〜3.47 倍高い: **限界を決めているのは雑音ではなく地の構造**。★背景窓 3 通り × 欠陥 σ 2 通り × 地 3 種の 18 通り全部で 比は 1 を超え(1.72〜4.56)、整合フィルタと `laplace_of_gauss` という独立な 2 検出器でも残る。★外した予測: 「欠陥が大きいほど差が開く」は**振幅の刻みが作った差**だった(34 段では σ=1.5 と σ=3.0 が別の格子点に丸まる。60 段にすると両方 3.30 倍で差が消える)。★★「実写だから場所で変わる」も誤り —— 場所による散らばりは brick 16.8 倍に対し grass 2.4 / gravel 3.3 で、**合成の 3.3 倍と区別がつかない**。散らばりを生むのは目地という**構造**であって「実写であること」ではない。★★ゼロ点(背景を引かず生の画素の最大点)は、**当てるだけなら整合フィルタより 0.65〜0.90 倍良い**(整合フィルタは地の構造も増幅するので損をする)。無欠陥面の空振りも brick では 0 対 0 の引き分け。分かれるのは**照明が 2 % ずれた瞬間**で、ゼロ点は 1 万画素あたり 10.3 回鳴り整合フィルタは 0.0 回 —— 生の画素の閾値は明るさの絶対値だから。**当てる力・空振り・ずれへの強さを別々に数えないと、役に立たない検出器を勝たせられる。** `py -3.11 examples/poc_real_defect_floor.py`
 - **捜索救難の走査幅(画像から測った 1 本の数字が計画を決める)** — 空撮画像から**横距離曲線**(機体直下からの横方向距離ごとの検出確率)を測り、その面積 W = ∫p dx を**走査幅**として捜索計画へ渡す。画像処理と意思決定を 1 本の数字でつなぐ展示。★走査幅の定義そのものを実証: 形の違う 4 本の曲線(実測 p / 幅 W の矩形 / 底辺 2W の三角形 / 二峰形)を同じ面積 256.2 m に揃えると、検出割合は 0.2559 / 0.2563 / 0.2556 / 0.2566 —— **4 つとも予測 0.2562 の 0.8σ 以内**。**形は消え、面積だけが残る**。★崖は C = W v t / A = 1。閉形式を先に印字して min(1,C) = 1.0000 / 1-exp(-C) = 0.6321、矩形の対照で実測 1.0000 / 0.6348(+0.005 は航跡が有限本 n=64 のためで、厳密 1-(1-W/Wd)^64 = 0.6350)。★★予測を外した 1: 実測の p を入れると平行捜索は **0.8464** で 1.000 に届かない。min(1,C) は p が幅 W の**矩形**であること(定値域則)に依存していて、裾を引く実曲線では隣の航跡と裾が重なる。★★予測を外した 2: 「平らな曲線のほうが矩形に近く平行捜索に強い」と予測したが**逆**(0.7705 対 0.8464)。矩形に近いとは『平ら』ではなく『W の内側に立ち、外へ裾を引かない』こと(支持域/W が 2.40 対 2.25)。同条件でも**ランダム捜索では 2 本が一致する**(面積しか見ない)。★★予測を外した 3: 「端は解像度が落ちる」—— ナディア向き中心投影では**地上分解能は端まで一定**(相対ばらつき 0.0e+00)。落ちるのは cos^4・大気・軸外ぼけのほうで、f-theta なら 2.132 倍粗くなる。★★予測を外した 4: 「背景を引けば良くなる」—— 画像全体の中央値と σ で割るのは**アフィン変換で順位が変わらない**(174.4 → 172.0 m)。効くのは**場所ごと**に引いたときだけ(239.6 m)。★最適高度は内点(220 m で W = 258.1 ± 4.0 m)。ただし 220 m と 300 m は標準誤差内で**測り分けられていない**と明記。掃引速度 W·v で見ると、v ∝ min(1,h/600) の機体では最適が 420 m へ動く。★見張り役: **誤検出は端ではなく直下に集中**(0-32 m 帯 113 件 / 最外帯 0 件)—— 目標も白波も同じ cos^4 で暗くなるので、いちばんよく見える所がいちばん吠える。閾値だけで W は 406 → 170 m 動くので、**『走査幅 400 m』は誤検出率と対でなければ何も言っていない**。★素材側の穴も 1 つ: 点源を画素中心 1 点標本で描くと総フラックス誤差 4.6e-07 なのに**ピークが σ=0.9 px で 10.6 % 過大**になり、σ が横距離で変わるので横距離曲線そのものが傾く。erf で画素を厳密積分するよう直した。★★道具の穴を 4 つ見つけ、うち 1 つはその場で埋めた: op_find の語の切り出しが ASCII 限定で、**和文の複数語クエリは構造的に必ず 0 件**だった(採点する doc も docstring の 1 行目だけ)。CJK の段を足し、star_detect の docstring に分野中立の説明語を書いた。 `py -3.11 examples/poc_search_sweep_width.py`
+
+**tracking**
+- **実写の固定カメラで人を切り出し、柱の裏をカルマン予測で通り抜ける(画素ごとのカルマン背景対 MOG2)** — LASIESTA(CC BY-SA 4.0)の屋内 3 本で create_bg_esti / run_bg_esti の画素ごとのカルマン背景と OpenCV の MOG2 を、真値の前景との F 値(CDnet の数え方)で比べる。パラメータは I_SI_01 だけで選ぶ。★F 値: Fullseye 0.890 / 0.878、MOG2 0.987 / 0.884(I_OC_01 / I_OC_02)。★動かない塊を update_bg_esti で取り込むと I_OC_01 の F が 0.794 → 0.890。★filter_kalman の等速モデルと NIS の門で、柱の裏の 26 コマを予測でつなぎ同じ番号で拾い直す(誤差 5.7 画素)。予測しない最近傍は見失う。★限界: I_OC_02 は隠れている間に 165° 折り返し(atan2_image)、カルマンは新しい番号になる。filter_kalman は cv2.KalmanFilter と 1.8e-12 で一致。 `py -3.11 examples/poc_real_bg_kalman_tracking.py`
 
 **space**
 - **星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める** — 固定 seed の合成星表 196 星と PSF・光子雑音・読み出し雑音を含む 128×128 像を作り、star_detect の 18 検出(真の星 16 + ホットピクセル 2)を三角形の角距離で全星表へ照合し、偽点を捨てて kabsch で姿勢を推定する。誤対応 0・偽点棄却 2/2・姿勢角誤差 0.0046 度。太陽・月の迷光、星不足、高速回転の星の流れは未計算の限界。 `py -3.11 examples/poc_star_tracker.py`
@@ -1423,7 +1429,7 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `median_separate` (halcon: `median_separate`) `image → image` GPU: あり(median_separate) — 実装は ``median_image`` と同じ(``kind: "median"``、正方窓の 2 次元 メディアン)。HALCON の ``median_separate``（Separated median filtering with rectangle masks.）は行方向・列方向に分離した 1 次元メディアンを 2 パス 掛ける高速近似演算子だが、この代役では区別せず通常の 2 次元メディアンを 返す(結果は近い場合が多いが厳密には別アルゴリズム ―― 近似の限界)。 · 例: `gallery2d_smoothing_rank`
 - `median_weighted` (halcon: `median_weighted`) `image → image` GPU: あり(median_weighted) — 中央値フィルタ（median filter）。実装は eliminate_min_max/median_image と同じ ``_sh_rank`` の median 分岐で、円形・八角形などマスク形状ごとの重み付けは行わず、正方形窓の単純な中央値を返す。a が窓サイズを 3/5/7/9 に振り、b は未使用。 · 例: `gallery2d_smoothing_rank`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` GPU: あり(gray_erosion_rect) — 矩形窓内の最小値フィルタ（グレースケール侵食に相当）。HALCON の ``gray_erosion_rect``（Determine the minimum gray value within a rectangle.）に相当。 · 例: `gallery2d_smoothing_rank`
-- `percentile` (halcon: `rank_image`) `image → image` GPU: あり(rank_percentile) — 任意パーセンタイルのランクフィルタ。HALCON の ``rank_image``（Compute a rank filter with arbitrary masks.）に相当。 · 例: `gallery2d_smoothing_rank`, `poc_colormap_readability`
+- `percentile` (halcon: `rank_image`) `image → image` GPU: あり(rank_percentile) — 任意パーセンタイルのランクフィルタ。HALCON の ``rank_image``（Compute a rank filter with arbitrary masks.）に相当。 · 例: `gallery2d_smoothing_rank`, `poc_colormap_readability`, `poc_real_grain_skiz`
 - `rank_image` (halcon: `rank_image`) `image → image` GPU: あり(rank_image) — 窓内の画素値を昇順に並べて指定パーセンタイル位置の値を返す汎用ランク フィルタ(``ndimage.percentile_filter``)。パーセンタイル 0 で収縮相当、 100 で膨張相当、50 でメディアン相当になる連続的な一般化。HALCON の ``rank_image``（Compute a rank filter with arbitrary masks.）に相当 (HALCON は任意形状マスクを取れるが、ここでは正方形マスクに固定)。 · 例: `gallery2d_smoothing_rank`, `poc_dehazing`
 - `rank_rect` (halcon: `rank_rect`) `image → image` GPU: あり(rank_rect) — 実装は ``rank_image`` と同一(``kind: "rank"``、正方窓のパーセンタイル フィルタ)。HALCON では ``rank_image``(任意マスク)と ``rank_rect``(矩形 マスク限定)は別演算子だが、この代役ではどちらも同じ正方窓実装を指す。 HALCON の ``rank_rect``（Compute a rank filter with rectangular masks.） の代役。 · 例: `gallery2d_smoothing_rank`
 - `sk_median_disk` (halcon: `median_image`) `image → image` GPU: なし — 円盤(disk)形の footprint によるメディアンフィルタ。通常の正方形カーネルと違い、円形に近い等方的な平滑化になる。 · 例: `gallery2d_smoothing_rank`
@@ -1505,7 +1511,7 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sk_thin` (halcon: `thinning`) `region → region` GPU: なし — モルフォロジー的細線化(thinning)。sk_skeleton と似た 1 画素幅化だが、アルゴリズムが異なりヒット・オア・ミス変換ベースで、骨格の枝(スパー)が出にくい傾向がある。 · 例: `gallery2d_region`
 - `skeleton` (halcon: `skeleton`) `region → region` GPU: なし — 位相を保ったまま領域を 1 画素幅の骨格線に細める (``skimage.morphology.skeletonize``)。分岐や端点の位置は保存されるため、 枝分かれした形状の解析(指の本数を数える等)によく使われる。HALCON の ``skeleton``（Compute the skeleton of a region.）に相当。 · 例: `gallery2d_region`, `poc_crack_width`, `poc_em_branch_territory`, `poc_fresco_craquelure`, `poc_real_sem_metal_layer`, `poc_swc_tree_truth`, `poc_vessel_network`
 - `smallest_rectangle1` (halcon: `smallest_rectangle1`) `region → region` GPU: 鎖の中だけ(lbl_smallest_rectangle1) — 領域を囲む座標軸平行の外接矩形（axis-aligned bounding box）で塗りつぶした領域を返す。a, b は未使用。領域が空なら全ゼロを返す。 · 例: `gallery2d_region`
-- `thinning` (halcon: `thinning`) `region → region` GPU: なし — ``skimage.morphology.thin``(Zhang-Suen 系の細線化アルゴリズム)による 1 画素幅化。``skeleton`` と目的は似ているが内部アルゴリズムが異なるため、 分岐点周辺などで結果がわずかに違うことがある。HALCON の ``thinning`` （Remove the result of a hit-or-miss operation from a region.）の代役。 · 例: `gallery2d_region`, `poc_crack_width`, `poc_vessel_network`
+- `thinning` (halcon: `thinning`) `region → region` GPU: なし — ``skimage.morphology.thin``(Zhang-Suen 系の細線化アルゴリズム)による 1 画素幅化。``skeleton`` と目的は似ているが内部アルゴリズムが異なるため、 分岐点周辺などで結果がわずかに違うことがある。HALCON の ``thinning`` （Remove the result of a hit-or-miss operation from a region.）の代役。 · 例: `gallery2d_region`, `poc_crack_width`, `poc_real_grain_skiz`, `poc_vessel_network`
 - `thinning_golay` (halcon: `thinning_golay`) `region → region` GPU: なし — 領域を細線化する。実装は skimage の ``thin``（Guo–Hall 型の反復細線化）で完全に 1 画素幅になるまで繰り返し、a, b は未使用。 · 例: `gallery2d_region`
 - `thinning_seq` (halcon: `thinning_seq`) `region → region` GPU: なし — 領域を細線化する。実装は thinning_golay と同一（skimage の ``thin``、収束するまで反復する Guo–Hall 型細線化）で、a, b は未使用。 · 例: `gallery2d_region`
 - `xcv2_hitmiss` `region → region` GPU: なし — ヒットオアミス変換で「中心は背景・上下左右は前景」という十字パターンを 検出する（``cv2.MORPH_HITMISS``）。 · 例: `gallery2d_region`
@@ -1581,7 +1587,7 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` GPU: なし — Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標準偏差からローカルにしきい値を決める手法で、照明ムラのある文書画像の二値化(文字抽出)向けに設計されている。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` GPU: なし — SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` GPU: あり(許可リスト) — Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` GPU: あり(threshold) — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_sem_metal_layer`, `poc_real_walnut_cbct`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` GPU: あり(threshold) — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_bg_kalman_tracking`, `poc_real_sem_metal_layer`, `poc_real_walnut_cbct`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` GPU: なし — Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、 窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値 を決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。 HALCON の ``var_threshold``（Threshold an image by local mean and standard deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。 · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` GPU: なし — 分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、 暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を 返す。HALCON の ``watersheds``（Extract watersheds and basins from an image.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` GPU: なし — 実装は ``watersheds`` と同一(``kind: "watershed"``)。HALCON の ``watersheds_threshold``（Extract watershed basins from an image using a threshold.）は本来、隣接する集水域を統合する深さのしきい値を持つ演算子 だが、この代役では統合しきい値を実装せず ``watersheds`` と同じ結果を返す (近似の限界)。 · 例: `gallery2d_segmentation`
@@ -4748,7 +4754,7 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### annotate / shape(4)
 - `arc` `image2d → image2d` GPU: あり(許可リスト) — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_real_walnut_cbct`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` GPU: なし — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
+- `ellipse` `image2d → image2d` GPU: なし — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_bg_kalman_tracking`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: あり(許可リスト) — 多角形の塗り(偶奇規則の交差判定 ―― :mod:`imagedraw` は輪郭のみ)。 · 例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: あり(許可リスト) — 角丸の矩形(``fill=True`` で塗り)。下敷きや囲みに使う。 · 例: `annotate_gallery`, `poc_machine_condition_fusion`
 
@@ -4947,7 +4953,7 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### calib / calibrate(5)
 - `camera_calibration` (halcon: `camera_calibration`) `keypoints → table` GPU: なし — [部分対応] Zhang 法で平面ターゲット多視点から内部行列 K だけを推定(camera_calibration)。 · 例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_calibration_truth_map`, `poc_camera_calibration`
-- `camera_calibration_lm` `keypoints → table` GPU: なし — Zhang 法の初期値から内部パラメータ・歪み・全姿勢を LM で同時に最適化し、共分散とともに返す(``table``)。 · 例: `poc_calibration_truth_map`
+- `camera_calibration_lm` `keypoints → table` GPU: なし — Zhang 法の初期値から内部パラメータ・歪み・全姿勢を LM で同時に最適化し、共分散とともに返す(``table``)。 · 例: `poc_calibration_truth_map`, `poc_real_chessboard_undistort`
 - `find_marks_and_pose` (halcon: `find_marks_and_pose`) `image2d → table` GPU: なし — マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。
 - `hand_eye_calibration` (halcon: `hand_eye_calibration`) `入力なし → matrix` GPU: なし — 一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。
 - `stereo_calibration_lm` `keypoints → table` GPU: なし — 左右の内部・歪み・板の姿勢と右カメラの相対姿勢 (R, T) を LM で同時に最適化する(``table``)。
@@ -5070,41 +5076,41 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: なし — 点列を全部通る非有理 B スプラインの制御点を求める(大域補間)。 · 例: `machine_vision_tour`
 
 #### mv / detect(3)
-- `create_ncc_model` (halcon: `create_ncc_model`) `image2d → table` GPU: なし — NCC モデル(=正規化テンプレート)を準備(create_ncc_model)。 · 例: `machine_vision_tour`
-- `find_ncc_models` (halcon: `find_ncc_models`) `table × image2d → table` GPU: なし — 1 つまたは複数の NCC モデルを 1 枚の画像から探す(find_ncc_models)。 · 例: `machine_vision_tour`
-- `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: なし — 円周上の向かい合う 2 点の比較で注目点を検出する(Lepetit と Fua の点検出)。 · 例: `machine_vision_tour`
+- `create_ncc_model` (halcon: `create_ncc_model`) `image2d → table` GPU: なし — NCC モデル(=正規化テンプレート)を準備(create_ncc_model)。 · 例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `find_ncc_models` (halcon: `find_ncc_models`) `table × image2d → table` GPU: なし — 1 つまたは複数の NCC モデルを 1 枚の画像から探す(find_ncc_models)。 · 例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: なし — 円周上の向かい合う 2 点の比較で注目点を検出する(Lepetit と Fua の点検出)。 · 例: `machine_vision_tour`, `poc_real_chessboard_undistort`, `poc_real_stereo_multiscanline`
 
 #### mv / gray(5)
 - `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: なし — 灰色値を重みとした質量と重心 ``(row, col)`` を返す(area_center_gray)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `atan2_image` (halcon: `atan2_image`) `image2d × image2d → image2d` GPU: なし — 2 枚の画像の画素ごとの ``atan2(image1, image2)`` をラジアンで返す(atan2_image)。 · 例: `machine_vision_tour`
+- `atan2_image` (halcon: `atan2_image`) `image2d × image2d → image2d` GPU: なし — 2 枚の画像の画素ごとの ``atan2(image1, image2)`` をラジアンで返す(atan2_image)。 · 例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
 - `get_grayval_contour_xld` (halcon: `get_grayval_contour_xld`) `image2d × keypoints → signal` GPU: なし — 輪郭の点列に沿って灰色値を補間で読み、1 本の信号にする。 · 例: `machine_vision_tour`
 - `gray_histo` (halcon: `gray_histo`) `image2d → table` GPU: なし — 灰色値のヒストグラムを絶対度数と相対度数で返す(gray_histo)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 - `gray_projections` (halcon: `gray_projections`) `image2d → table` GPU: なし — 灰色値の行ごとと列ごとの平均を返す(gray_projections)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / morphology(9)
 - `golay_elements` (halcon: `golay_elements`) `入力なし → table` GPU: なし — Golay の文字の 3x3 構造要素組(ヒット、ミス)を 45 度刻みの回転つきで作る。 · 例: `machine_vision_tour`
-- `hit_or_miss_golay` (halcon: `hit_or_miss_golay`) `mask → mask` GPU: なし — Golay の文字 1 つでヒットオアミス変換を掛ける(一致した中心の画素を返す)。 · 例: `machine_vision_tour`
-- `hit_or_miss_seq` (halcon: `hit_or_miss_seq`) `mask → mask` GPU: なし — Golay の文字の 8 回転すべてのヒットオアミスの和を返す。 · 例: `machine_vision_tour`
+- `hit_or_miss_golay` (halcon: `hit_or_miss_golay`) `mask → mask` GPU: なし — Golay の文字 1 つでヒットオアミス変換を掛ける(一致した中心の画素を返す)。 · 例: `machine_vision_tour`, `poc_real_grain_skiz`
+- `hit_or_miss_seq` (halcon: `hit_or_miss_seq`) `mask → mask` GPU: なし — Golay の文字の 8 回転すべてのヒットオアミスの和を返す。 · 例: `machine_vision_tour`, `poc_real_grain_skiz`
 - `morph_hat` (halcon: `morph_hat`) `mask × mask → mask` GPU: なし — 開放で消えた画素と閉鎖で増えた画素の和を返す(白黒のトップハットの和)。 · 例: `machine_vision_tour`
-- `morph_skiz` (halcon: `morph_skiz`) `mask → mask` GPU: なし — 領域の連結成分の影響圏の境界(SKIZ)をユークリッド距離で求める。 · 例: `machine_vision_tour`
-- `opening_seg` (halcon: `opening_seg`) `mask × mask → labels2d` GPU: なし — くびれで繋がった物体を収縮で切り離し、元の領域の中で広げ直してラベルにする。 · 例: `machine_vision_tour`
+- `morph_skiz` (halcon: `morph_skiz`) `mask → mask` GPU: なし — 領域の連結成分の影響圏の境界(SKIZ)をユークリッド距離で求める。 · 例: `machine_vision_tour`, `poc_real_grain_skiz`
+- `opening_seg` (halcon: `opening_seg`) `mask × mask → labels2d` GPU: なし — くびれで繋がった物体を収縮で切り離し、元の領域の中で広げ直してラベルにする。 · 例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`, `poc_real_grain_skiz`
 - `thickening_golay` (halcon: `thickening_golay`) `mask → mask` GPU: なし — Golay の文字 1 つで肥厚を掛ける。 · 例: `machine_vision_tour`
 - `thickening_hit_miss` (halcon: `thickening`) `mask × mask × mask → mask` GPU: なし — 任意の構造要素組で肥厚を掛ける(``A ∪ HMT(A)`` を ``iterations`` 回)。 · 例: `machine_vision_tour`
 - `thickening_seq` (halcon: `thickening_seq`) `mask → mask` GPU: なし — Golay の文字の回転を順に掛ける肥厚を、変化が止まるまで続ける。 · 例: `machine_vision_tour`
 
 #### mv / pose(1)
-- `get_circle_pose` (halcon: `get_circle_pose`) `keypoints → table` GPU: なし — 既知の半径の円の像(楕円の点列)から、円の中心と法線をカメラ座標で求める。 · 例: `machine_vision_tour`
+- `get_circle_pose` (halcon: `get_circle_pose`) `keypoints → table` GPU: なし — 既知の半径の円の像(楕円の点列)から、円の中心と法線をカメラ座標で求める。 · 例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
 
 #### mv / resample(4)
-- `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: なし — 除算モデルの歪みを持つカメラの画像を、別の歪み・内部パラメータの画像へ描き直す。 · 例: `machine_vision_tour`
-- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: なし — 回転矩形の内側を線形補間で読み、軸に沿った画像として切り出す(crop_rectangle2)。 · 例: `machine_vision_tour`
-- `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: なし — 逆写像表を画像へ適用して再標本化する(出力の画素ごとに入力の座標を読む)。 · 例: `machine_vision_tour`
-- `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: なし — 画像をワールド平面 z=0 の正面図へ平行化する(1 画素 = ``scale`` のワールド単位)。 · 例: `machine_vision_tour`
+- `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: なし — 除算モデルの歪みを持つカメラの画像を、別の歪み・内部パラメータの画像へ描き直す。 · 例: `machine_vision_tour`, `poc_real_chessboard_undistort`
+- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: なし — 回転矩形の内側を線形補間で読み、軸に沿った画像として切り出す(crop_rectangle2)。 · 例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: なし — 逆写像表を画像へ適用して再標本化する(出力の画素ごとに入力の座標を読む)。 · 例: `machine_vision_tour`, `poc_real_chessboard_undistort`
+- `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: なし — 画像をワールド平面 z=0 の正面図へ平行化する(1 画素 = ``scale`` のワールド単位)。 · 例: `machine_vision_tour`, `poc_real_chessboard_undistort`
 
 #### mv / stereo(3)
-- `binocular_disparity_ms` (halcon: `binocular_disparity_ms`) `image2d × image2d → table` GPU: なし — 平行化ステレオの視差を半大域マッチングで求め、左右一致で検査して小数へ補間する。 · 例: `machine_vision_tour`
-- `binocular_distance_ms` (halcon: `binocular_distance_ms`) `image2d × image2d → table` GPU: なし — 平行化ステレオの距離画像を求める(``Z = focal * baseline / (disparity + doffs)``)。 · 例: `machine_vision_tour`
-- `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: なし — 視差画像の有効な画素を 3-D の点へ写す(reconstruct_surface_stereo)。 · 例: `machine_vision_tour`
+- `binocular_disparity_ms` (halcon: `binocular_disparity_ms`) `image2d × image2d → table` GPU: なし — 平行化ステレオの視差を半大域マッチングで求め、左右一致で検査して小数へ補間する。 · 例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `binocular_distance_ms` (halcon: `binocular_distance_ms`) `image2d × image2d → table` GPU: なし — 平行化ステレオの距離画像を求める(``Z = focal * baseline / (disparity + doffs)``)。 · 例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: なし — 視差画像の有効な画素を 3-D の点へ写す(reconstruct_surface_stereo)。 · 例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
 
 #### mv / text(4)
 - `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: なし — 文字行の画像を、字ごとの列の塊へ切り分けたラベル画像にする。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
@@ -5113,11 +5119,11 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `text_line_slant` (halcon: `text_line_slant`) `image2d → scalar` GPU: なし — 水平な文字行の字の斜体角を、列の射影の鋭さの最大で求める(度)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / tracking(5)
-- `create_bg_esti` (halcon: `create_bg_esti`) `image2d → table` GPU: なし — 最初の画像から画素ごとのカルマン背景モデルを作る。 · 例: `machine_vision_tour`
-- `filter_kalman` (halcon: `filter_kalman`) `入力なし → table` GPU: なし — 線形カルマンフィルタの予測と更新を 1 周期ぶん計算する。 · 例: `machine_vision_tour`
-- `give_bg_esti` (halcon: `give_bg_esti`) `table → image2d` GPU: なし — モデルの現在の背景の画像を返す(コピー)。 · 例: `machine_vision_tour`
-- `run_bg_esti` (halcon: `run_bg_esti`) `table × image2d → table` GPU: なし — 画像 1 枚で背景を更新し、前景の領域を返す。 · 例: `machine_vision_tour`
-- `update_bg_esti` (halcon: `update_bg_esti`) `table × image2d × mask → table` GPU: なし — 指定した領域の画素だけ、画像で背景を更新する(領域の外は分散も動かない)。 · 例: `machine_vision_tour`
+- `create_bg_esti` (halcon: `create_bg_esti`) `image2d → table` GPU: なし — 最初の画像から画素ごとのカルマン背景モデルを作る。 · 例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `filter_kalman` (halcon: `filter_kalman`) `入力なし → table` GPU: なし — 線形カルマンフィルタの予測と更新を 1 周期ぶん計算する。 · 例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `give_bg_esti` (halcon: `give_bg_esti`) `table → image2d` GPU: なし — モデルの現在の背景の画像を返す(コピー)。 · 例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `run_bg_esti` (halcon: `run_bg_esti`) `table × image2d → table` GPU: なし — 画像 1 枚で背景を更新し、前景の領域を返す。 · 例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `update_bg_esti` (halcon: `update_bg_esti`) `table × image2d × mask → table` GPU: なし — 指定した領域の画素だけ、画像で背景を更新する(領域の外は分散も動かない)。 · 例: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
 
 ### generative(42 ops / 6 categories)
 

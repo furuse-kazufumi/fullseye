@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**105 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**108 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -810,7 +810,7 @@ This run produced **22 figures** in total - [see them all](https://github.com/fu
 
 Ops used (notes): [`bokeh_shape`](https://furuse.work/ops/optics/lensrender/bokeh_shape.html) · [`chief_ray`](https://furuse.work/ops/optics/design/chief_ray.html) · [`chromatic_shift`](https://furuse.work/ops/optics/design/chromatic_shift.html) · [`depth_of_field`](https://furuse.work/ops/optics/geometric/depth_of_field.html) · [`distortion_map`](https://furuse.work/ops/optics/imaging_sim/distortion_map.html) · [`exit_pupil_samples`](https://furuse.work/ops/optics/lensrender/exit_pupil_samples.html) · [`ghost_analysis`](https://furuse.work/ops/optics/noncoaxial/ghost_analysis.html) · [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`noncoaxial_system`](https://furuse.work/ops/optics/noncoaxial/noncoaxial_system.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`relative_illumination`](https://furuse.work/ops/optics/geometric/relative_illumination.html) · [`render_compare_prescriptions`](https://furuse.work/ops/optics/lensrender/render_compare_prescriptions.html) · [`render_ghost_overlay`](https://furuse.work/ops/optics/lensrender/render_ghost_overlay.html) · [`render_scene_through_lens`](https://furuse.work/ops/optics/lensrender/render_scene_through_lens.html) · [`spot_stats`](https://furuse.work/ops/optics/design/spot_stats.html) · [`trace_sensor_rays`](https://furuse.work/ops/optics/lensrender/trace_sensor_rays.html) · [`with_wavelength`](https://furuse.work/ops/optics/design/with_wavelength.html)
 
-## No.2026.301 —— Reconstructing a Measured Cone-Beam CT Scan of a Walnut with FDK and Iterative Methods, Scored Against the Providers' Reference — TV Holds Up When Views Are Thinned, Nothing Recovers a Missing Angular Range
+## No.2026.304 —— Reconstructing a Measured Cone-Beam CT Scan of a Walnut with FDK and Iterative Methods, Scored Against the Providers' Reference — TV Holds Up When Views Are Thinned, Nothing Recovers a Missing Angular Range
 
 A publicly released, measured cone-beam CT scan (Der Sarkissian et al. 2019, one walnut, CC BY 4.0) is reconstructed with Fullseye's scan-mode operators, comparing FDK and three iterative methods (SIRT, OS-SART and total variation, TV) against the reference the providers built from all three of their orbits. It uses 300 of the 1200 projections of the middle orbit (1.2 degree steps), binned 6x6 for the mid-plane and 8x8 for 3-D; a fetch tool pulls only the needed members out of a 6 GB zip with HTTP Range requests (1309 members, pinned by a SHA-256 list). Geometry: read as the circular orbit of `ct_scan_geometry`, the providers' 300 vectors give the SOD and SDD of the scanner's settings file; the two things a circular orbit cannot express (a 0.50 degree in-plane detector roll and a 7.2 pixel vertical offset) are removed by resampling the projections with `warp_parametric`. Mid-plane: FDK on all 300 views scores RMSE 0.0023 /mm and SSIM 0.94 against the reference, and SSIM 0.96 with mean ratio 0.9988 against the providers' FDK (ASTRA, 1200 views). Most of the gap to that FDK's 0.0009 is the coarse grid: rebuilt at 0.1 mm and box-averaged it is 0.0013. At 25 views FDK, SIRT, OS-SART and TV give 0.0126, 0.0074, 0.0067 and 0.0046: TV holds up best, with its weight 1e-05 chosen without the reference, by the reprojection error on views it did not use. With a 90 degree range every method is over four times worse than 300-view FDK (TV 0.0110); TV fills the missing directions with flat patches whose shapes differ from the reference. 3-D: Fullseye's FDK and ASTRA's FDK correlate at 0.9946, and both degrade the same way towards the lower end (0.0026 to 0.0101 for Fullseye, 0.0008 to 0.0099 for ASTRA): a circular orbit does not fully measure the planes away from the mid-plane (Tuy's condition). Geometry mistakes: the adjoint identity <Ax,y> = <x,A^T y> holds to 1e-15 on this scanner's geometry, but it only says the projector pair is matched (mismatching the geometries of A and A^T gives 1.1). Ignoring the vertical offset worsens the RMSE to 0.0060, yet the reprojection residual drops to 0.0850 from 0.0870: a blind spot of the residual. A 0.3 mm lateral shift gives 0.0096 and a reversed rotation 0.0209; the 0.5 degree roll barely matters on a 0.3 mm mid-plane grid. Dual energy: the data hold one energy, so the second energy is a closed-form synthesis, not measured data. Its noise is built from the difference of two real projections taken at the same angle (inside the object the model underestimates the measured noise by a factor 1.25); basis 0 carries 5.06 times the single-energy noise (condition number 15.5). The flat fields are 3.5 times quieter than one projection at the same binning, so noise built from them would be underestimated.
 
@@ -1712,7 +1712,7 @@ Ops used (notes): [`atan2_image`](https://furuse.work/ops/mv/gray/atan2_image.ht
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 24 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 26 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -2557,6 +2557,70 @@ Source: [examples/poc_sheet_deformation_ffd.py](https://github.com/furuse-kazufu
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sheet_deformation_ffd)
 
 Ops used (notes): [`median`](https://furuse.work/ops/2d/rank/median.html) · [`piv_flow_magnitude`](https://furuse.work/ops/piv/field/piv_flow_magnitude.html) · [`register_accuracy_map`](https://furuse.work/ops/matchreg/intensityreg/register_accuracy_map.html) · [`register_ffd`](https://furuse.work/ops/matchreg/intensityreg/register_ffd.html) · [`registration_to_flow2d`](https://furuse.work/ops/matchreg/intensityreg/registration_to_flow2d.html)
+
+## No.2026.302 —— Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks
+
+From a real stereo pair (Middlebury 2014 motorcycle, with ground-truth disparity), binocular_disparity_ms gives disparity, binocular_distance_ms and reconstruct_surface_stereo give distance and surface, and get_circle_pose gives the pose of the rear wheel rim; all are scored against the ground-truth disparity and against OpenCV (SGBM, reprojectImageTo3D, matchTemplate). Valid-pixel bad-2 is 4.67% with mean error 0.960 px at 90.0% density (SGBM 7.27% / 1.315 px / 88.4%). Counting invalid pixels as errors gives 14.23% (SGBM 18.00%); on pixels where both are valid it is 4.45% vs 4.95%, so half of the gap comes from which pixels each method declares invalid. Where it breaks: occlusions (6.9%, counted geometrically from the ground truth) are 57% invalidated by the left-right check. Errors remain near depth discontinuities (bad-2 14.1%) and on surfaces whose brightness differs between the views at the true correspondence (a proxy for reflection and gloss, 11.5%); everything else is at 0.85%. 'Textureless fails' applies only to the flattest 1.2% of pixels; the concrete floor matches best at 0.68%. The 'ms' in the name means multi-scanline, not multi-scale: going from 2 to 4 aggregation paths takes bad-2 from 5.55% to 4.67%, and a half-resolution pass run outside the operator gives 8.31%. Distance with doffs has a median relative error of 0.37%, and the point cloud matches OpenCV to 0.0006 mm. The circle pose shows the operator is right and the geometry is ill-conditioned: on the rim (semi-major axis 62 px, 223 degrees of arc) the centre is 23.5 mm and the normal 7.74 degrees off, but points taken on the true circle give 1.2e-6 degrees. Adding noise equal to the 0.52 px gap between the edge points and the true circle gives a median normal error of 5.79 degrees (95th percentile 9.39). The two solutions differ by 0.007 px in reprojection and cannot be told apart, yet their normals are 50.7 degrees apart. The same edge lifted to 3-D with the estimated disparity gives 2.3 mm and 1.59 degrees. points_lepetit with crop_rectangle2, create_ncc_model and find_ncc_models gives bad-2 13.8% (random pixels 16.3%), 2.2% above score 0.9, with best positions identical to OpenCV's matchTemplate at every point. On the 15 MiddEval3 training scenes (non-occluded) the median bad-2 is 6.52% vs SGBM 10.20%, lower in 14 scenes. Changing exposure or lighting barely moves it (-0.18 / +0.94 points vs SGBM +4.99 / +18.08; under lighting it invalidates more pixels). But on the pair that differs only in rectification (Playtable, mean vertical residual 0.24 px) it worsens by 12.1 points while SGBM moves 0.6: it is sensitive to vertical misalignment (cause not yet verified).
+
+[![Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/01_scene.png)
+
+*↑ **Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks** ―― Left photo, binocular_disparity_ms disparity (invalid = black), ground-truth disparity, and the reconstruct_surface_stereo point cloud seen obliquely.*
+
+[![遮蔽 bad2 71.5 % 無効 57.0 % / 段差の近く bad2 14.1 % 無効 9.7 % / 無地 bad2 4.1 % 無効 14.5 % / 見え方が変わる面 bad2 11.5 % 無効 20.7 % / それ以外 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png)
+
+*↑ The measurement ―― 遮蔽 bad2 71.5 % 無効 57.0 % / 段差の近く bad2 14.1 % 無効 9.7 % / 無地 bad2 4.1 % 無効 14.5 % / 見え方が変わる面 bad2 11.5 % 無効 20.7 % / それ以外 bad2 0.8 % 無効 5.7 % (figure labels are in Japanese; the numbers are the same)*
+
+[![真値に近い解: 中心 23.5 mm・法線 7.74°。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/03_wheel_pose_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/03_wheel_pose.png)
+
+*↑ 真値に近い解: 中心 23.5 mm・法線 7.74°。*
+
+[![Lepetit 点 bad2 13.8 %、でたらめな画素 16.3 %。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/04_sparse_ncc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/04_sparse_ncc.png)
+
+*↑ Lepetit 点 bad2 13.8 %、でたらめな画素 16.3 %。*
+
+[![遮蔽は真値から幾何で数えた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/05_classes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/05_classes.png)
+
+*↑ 遮蔽は真値から幾何で数えた。*
+
+[![同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/06_middeval3_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/06_middeval3.png)
+
+*↑ 同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。*
+
+```
+py -3.11 examples/poc_real_stereo_multiscanline.py
+```
+
+Source: [examples/poc_real_stereo_multiscanline.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_stereo_multiscanline.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_stereo_multiscanline)
+
+Ops used (notes): [`binocular_disparity_ms`](https://furuse.work/ops/mv/stereo/binocular_disparity_ms.html) · [`binocular_distance_ms`](https://furuse.work/ops/mv/stereo/binocular_distance_ms.html) · [`create_ncc_model`](https://furuse.work/ops/mv/detect/create_ncc_model.html) · [`crop_rectangle2`](https://furuse.work/ops/mv/resample/crop_rectangle2.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`find_ncc_models`](https://furuse.work/ops/mv/detect/find_ncc_models.html) · [`get_circle_pose`](https://furuse.work/ops/mv/pose/get_circle_pose.html) · [`points_lepetit`](https://furuse.work/ops/mv/detect/points_lepetit.html) · [`reconstruct_surface_stereo`](https://furuse.work/ops/mv/stereo/reconstruct_surface_stereo.html)
+
+## No.2026.303 —— Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing
+
+Thirteen calibration-board photos distributed with OpenCV (640x480, 9x6 inner corners, Apache-2.0) are passed through change_radial_distortion_image, map_image and rectify_to_world_plane, and each output is scored by the straightness of corners re-detected in it with OpenCV and by their offset from a 40 px per-square grid. camera_calibration_lm reproduces OpenCV's calibrateCamera (intrinsics within 2.6e-7 px, reprojection 0.4087 px). A one-coefficient division-model kappa fitted only to the straightness of the board's rows and columns takes straightness from 0.655 to 0.157 px, on par with OpenCV's five coefficients (0.161 px). The two models differ by a median of only 0.49 px where the board was seen, but by 46.9 px in image corners the board never reached, and these 13 photos cannot say which is right. Corners re-detected in the 13 redrawn images go from a median straightness of 0.654 to 0.080 px (OpenCV's undistort: 0.089 px), and every image improves. map_image fed OpenCV's initUndistortRectifyMap tables matches remap to 9.6e-8 and refuses forward-mapping tables. The solve_pnp pose agrees with solvePnP to a median of 0.12 degrees, and corners in the front view sit a median RMS of 0.24 px (max 3.0 px) from the grid, with neighbour spacings of 39.80 to 40.02 px. points_lepetit does not land on X-shaped corners (0 of 54 within 1 px; the response peaks 2.6 px beside the corner), and 90-93% of its points lie on straight edges. A single-edge test isolates it: no points on an axis-aligned or unblurred edge, but 16 per 100 px on an edge tilted 10 degrees with 0.7 px blur. The test that should drop pixels on a line leaks there, recorded as a known gap.
+
+[![Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/01_board_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/01_board.png)
+
+*↑ **Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing** ―― The most distorted photo: original, distortion removed by change_radial_distortion_image, rectify_to_world_plane front view (orange: 40 px grid; blue: re-detected corners), and the difference after minus before.*
+
+[![直線性 = 角の 6 行・9 列に当てた直線からの垂直距離の RMS。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/02_per_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/02_per_image.png)
+
+*↑ The measurement ―― 直線性 = 角の 6 行・9 列に当てた直線からの垂直距離の RMS。 (figure labels are in Japanese; the numbers are the same)*
+
+[![応答の山は角の真上でなく脇に立つ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/03_lepetit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/03_lepetit.png)
+
+*↑ 応答の山は角の真上でなく脇に立つ。*
+
+```
+py -3.11 examples/poc_real_chessboard_undistort.py
+```
+
+Source: [examples/poc_real_chessboard_undistort.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_chessboard_undistort.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_chessboard_undistort)
+
+Ops used (notes): [`camera_calibration_lm`](https://furuse.work/ops/calib/calibrate/camera_calibration_lm.html) · [`change_radial_distortion_image`](https://furuse.work/ops/mv/resample/change_radial_distortion_image.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`map_image`](https://furuse.work/ops/mv/resample/map_image.html) · [`points_lepetit`](https://furuse.work/ops/mv/detect/points_lepetit.html) · [`rectify_to_world_plane`](https://furuse.work/ops/mv/resample/rectify_to_world_plane.html)
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 

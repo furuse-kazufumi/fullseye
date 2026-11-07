@@ -761,6 +761,10 @@
    "accessioned": "2026-09-08",
    "no": "2026.103"
   },
+  "poc_real_bg_kalman_tracking": {
+   "accessioned": "2026-11-08",
+   "no": "2026.305"
+  },
   "poc_real_chessboard_undistort": {
    "accessioned": "2026-11-08",
    "no": "2026.303"
@@ -780,6 +784,10 @@
   "poc_real_file_formats": {
    "accessioned": "2026-11-04",
    "no": "2026.300"
+  },
+  "poc_real_grain_skiz": {
+   "accessioned": "2026-11-08",
+   "no": "2026.306"
   },
   "poc_real_sem_metal_layer": {
    "accessioned": "2026-11-01",
@@ -812,6 +820,10 @@
   "poc_real_typewritten_ocr": {
    "accessioned": "2026-11-08",
    "no": "2026.301"
+  },
+  "poc_real_walnut_cbct": {
+   "accessioned": "2026-11-08",
+   "no": "2026.304"
   },
   "poc_recycling_sorting": {
    "accessioned": "2026-09-07",
@@ -1208,18 +1220,6 @@
   "poc_zoom_configurations": {
    "accessioned": "2026-10-19",
    "no": "2026.261"
-  },
-  "poc_real_walnut_cbct": {
-   "accessioned": "2026-11-08",
-   "no": "2026.304"
-  },
-  "poc_real_bg_kalman_tracking": {
-   "accessioned": "2026-11-08",
-   "no": "2026.305"
-  },
-  "poc_real_grain_skiz": {
-   "accessioned": "2026-11-08",
-   "no": "2026.306"
   }
  },
  "retired": {

@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 206,
+  "target_count": 211,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -115,17 +115,17 @@
             1600,
             1600
           ],
-          "bytes": 508428,
+          "bytes": 470111,
           "color_mad": [
-            0.9814,
+            1.1255,
             0.1196,
             0.796,
             0.0735,
             0.0467,
             0.1326
           ],
-          "max_color_mad": 0.9814,
-          "source_sha256": "ef4c43f178954488493553295482689ee35859d7623d2252e5b9edb3ec4b2114"
+          "max_color_mad": 1.1255,
+          "source_sha256": "afc32d20a3161329ac61215052baf71ed05f226728921726ea8fc9fa1beea63f"
         },
         "en": {
           "path": "articles/assets/poc/poc_phase_measuring_deflectometry/story.en.gif",
@@ -209,17 +209,17 @@
             1600,
             1600
           ],
-          "bytes": 508428,
+          "bytes": 470111,
           "color_mad": [
-            0.9814,
+            1.1255,
             0.1196,
             0.796,
             0.0735,
             0.0467,
             0.1326
           ],
-          "max_color_mad": 0.9814,
-          "source_sha256": "b254e1d952b371e63579d028d0976efb22b077f99d4584a595421bd57c5e2389"
+          "max_color_mad": 1.1255,
+          "source_sha256": "3fac6f9a019974e9cf1eb24d4f00e2b4da2939b8a4f62ff56bb74a506fca3d47"
         }
       },
       "thumbnail": {
@@ -325,16 +325,16 @@
             1600,
             1600
           ],
-          "bytes": 459207,
+          "bytes": 409774,
           "color_mad": [
-            0.7917,
+            1.0412,
             0.2418,
             0.061,
             0.0682,
             0.1051
           ],
-          "max_color_mad": 0.7917,
-          "source_sha256": "cbcf21b75b54a6189c4885f449b4d275a6c3f552144d16fb31e21b55ca5adfca"
+          "max_color_mad": 1.0412,
+          "source_sha256": "37077bccb2c744bfe1d1966f37708b97deb59d6d37a40f39e5b3f96fd8f84272"
         },
         "en": {
           "path": "articles/assets/poc/poc_industrial_oct/story.en.gif",
@@ -406,16 +406,16 @@
             1600,
             1600
           ],
-          "bytes": 459207,
+          "bytes": 409774,
           "color_mad": [
-            0.7917,
+            1.0412,
             0.2418,
             0.061,
             0.0682,
             0.1051
           ],
-          "max_color_mad": 0.7917,
-          "source_sha256": "fd5576538c1b7c3afb5e85dbc3c2c2f8ed2d539cc2461faba653bff5ea57e604"
+          "max_color_mad": 1.0412,
+          "source_sha256": "908950f2373c40cd3ade73a84ab91a9559e0f0410314697186970f6fbca1af6e"
         }
       },
       "thumbnail": {
@@ -739,9 +739,9 @@
             1600,
             1600
           ],
-          "bytes": 654216,
+          "bytes": 654799,
           "color_mad": [
-            0.555,
+            0.7053,
             0.0965,
             0.5241,
             0.1445,
@@ -749,7 +749,7 @@
             1.7194
           ],
           "max_color_mad": 1.7194,
-          "source_sha256": "6a75a4e724a9d8ffce0f57e252e1dac944e3551cacac00926833a44409d56c93"
+          "source_sha256": "e7333ac48861d595fa6b5cf9c5f7fa18015f576236ff86770a099bd568089437"
         },
         "en": {
           "path": "articles/assets/poc/poc_thin_film_reflectometry/story.en.gif",
@@ -827,9 +827,9 @@
             1600,
             1600
           ],
-          "bytes": 654216,
+          "bytes": 654799,
           "color_mad": [
-            0.555,
+            0.7053,
             0.0965,
             0.5241,
             0.1445,
@@ -837,7 +837,7 @@
             1.7194
           ],
           "max_color_mad": 1.7194,
-          "source_sha256": "7b5678f11ce6a5fde0140149a85d72c620f514023e5c9d7612cca8e8201e08f1"
+          "source_sha256": "b9541c4e7c9c23c2ee30c49bd8c6952bc7d8e9dee6fce38a9802746e247353c1"
         }
       },
       "thumbnail": {
@@ -1368,17 +1368,17 @@
             1600,
             1600
           ],
-          "bytes": 988313,
+          "bytes": 987362,
           "color_mad": [
-            0.1477,
+            0.1491,
             0.1304,
             0.0491,
             0.0357,
             0.0004,
             0.0275
           ],
-          "max_color_mad": 0.1477,
-          "source_sha256": "46d3dc22d2ba43af3193c5ea2ce2256d73be55953ee82030560b51890a263e62"
+          "max_color_mad": 0.1491,
+          "source_sha256": "31ac3070216020162b3072ead8e65e3f9f5165fe55164d21e2a61ce138dc27cc"
         },
         "en": {
           "path": "articles/assets/poc/poc_tem_ctf_thon_rings/story.en.gif",
@@ -1462,17 +1462,17 @@
             1600,
             1600
           ],
-          "bytes": 988313,
+          "bytes": 987362,
           "color_mad": [
-            0.1477,
+            0.1491,
             0.1304,
             0.0491,
             0.0357,
             0.0004,
             0.0275
           ],
-          "max_color_mad": 0.1477,
-          "source_sha256": "202498f6bbfeef89295cb6ebf972fe9c2efbb8b45fbfd383695f4aac2f593d92"
+          "max_color_mad": 0.1491,
+          "source_sha256": "b9ef8a3800d7b35866b609e1d23662df787525643f4373d4421750c167847e0f"
         }
       },
       "thumbnail": {
@@ -1579,9 +1579,9 @@
             1600,
             1600
           ],
-          "bytes": 940710,
+          "bytes": 931629,
           "color_mad": [
-            0.1486,
+            0.1487,
             1.0014,
             0.1401,
             0.0291,
@@ -1589,7 +1589,7 @@
             0.1044
           ],
           "max_color_mad": 1.0014,
-          "source_sha256": "ccf9bc53a8b2ff8e6c1180f36d7663d410009a62c10861963fca5d1e42c42be8"
+          "source_sha256": "bca79091e25317f4380c81305b109d7138a116420e5791195ddb0f65d4f22c25"
         },
         "en": {
           "path": "articles/assets/poc/poc_virtual_sem_kv_cd_bse/story.en.gif",
@@ -1667,9 +1667,9 @@
             1600,
             1600
           ],
-          "bytes": 940710,
+          "bytes": 931629,
           "color_mad": [
-            0.1486,
+            0.1487,
             1.0014,
             0.1401,
             0.0291,
@@ -1677,7 +1677,7 @@
             0.1044
           ],
           "max_color_mad": 1.0014,
-          "source_sha256": "296e931f680b2541e2648b68d9b092687bf78a5583122405c36cab2bc827ab53"
+          "source_sha256": "2226274d13bed003e989fc7475038a14c7934f379f69433099b3139dd99700a3"
         }
       },
       "thumbnail": {
@@ -2003,17 +2003,17 @@
             1600,
             1600
           ],
-          "bytes": 539366,
+          "bytes": 540164,
           "color_mad": [
-            1.523,
+            2.5258,
             0.4854,
             0.0549,
             0.0627,
             0.1238,
             0.0337
           ],
-          "max_color_mad": 1.523,
-          "source_sha256": "1e9ada1cf3dbcdf9dce1324d1e67de8574772ad6f29969afffdb9c0cb872c9ec"
+          "max_color_mad": 2.5258,
+          "source_sha256": "e14f342644b7f845fff877464a79245178db1d139707ac01353aa5c9edc6cf63"
         },
         "en": {
           "path": "articles/assets/poc/poc_weld_radiograph_porosity/story.en.gif",
@@ -2097,17 +2097,17 @@
             1600,
             1600
           ],
-          "bytes": 539366,
+          "bytes": 540164,
           "color_mad": [
-            1.523,
+            2.5258,
             0.4854,
             0.0549,
             0.0627,
             0.1238,
             0.0337
           ],
-          "max_color_mad": 1.523,
-          "source_sha256": "5f8a99992069cdb8cfb0ff981c8054dc4577a917a39ed2a28b064d0ad7a749fc"
+          "max_color_mad": 2.5258,
+          "source_sha256": "a44037f9665f576c23c2cb19b8f1656ec31c225f45847be98923ab24b85e78e9"
         }
       },
       "thumbnail": {
@@ -32404,9 +32404,9 @@
             1600,
             1600
           ],
-          "bytes": 645955,
+          "bytes": 646080,
           "color_mad": [
-            0.3424,
+            0.3439,
             0.1482,
             0.1172,
             1.0452,
@@ -32414,7 +32414,7 @@
             0.1659
           ],
           "max_color_mad": 1.0452,
-          "source_sha256": "198ec8c07d32f50f29d7d7c611be8c81fee8b4f1891a27a57c1b5261b88b3a07"
+          "source_sha256": "409bd5bf525e18ff8655a60aee367d990e7d253f17a44bc9764fb46bf230c952"
         },
         "en": {
           "path": "articles/assets/poc/poc_plenoptic_camera/story.en.gif",
@@ -32498,9 +32498,9 @@
             1600,
             1600
           ],
-          "bytes": 645955,
+          "bytes": 646080,
           "color_mad": [
-            0.3424,
+            0.3439,
             0.1482,
             0.1172,
             1.0452,
@@ -32508,7 +32508,7 @@
             0.1659
           ],
           "max_color_mad": 1.0452,
-          "source_sha256": "8ab35b1b3a0c252b1a7bdd48d8d580d25bfe7fac8c7b89994d8685307066713d"
+          "source_sha256": "9379ec84db6d718c59c4243d7143c04bfac68a990a02ed94826d077a00cc7fba"
         }
       },
       "thumbnail": {
@@ -34637,6 +34637,847 @@
       "alt": {
         "ja": "SDSS r の NGC 2420(北が上)。青=star_detect の検出、緑=SDSS の星表の星(15〜20 等、飽和なし)で 1.0″ 以内に対応、赤=対応なし。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外(検出の青だけが並ぶ)。",
         "en": "Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed"
+      }
+    },
+    "poc_real_bg_kalman_tracking": {
+      "representative": "01_pillar_crossing.png",
+      "status": "gif",
+      "selected": [
+        "01_pillar_crossing.png",
+        "03_masks_i_oc_01.png",
+        "04_masks_i_oc_02.png",
+        "05_background.png",
+        "06_track_error.png",
+        "07_scores.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_bg_kalman_tracking/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_pillar_crossing.png",
+              "content_box": [
+                0,
+                50,
+                720,
+                589
+              ]
+            },
+            {
+              "file": "03_masks_i_oc_01.png",
+              "content_box": [
+                0,
+                272,
+                720,
+                145
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.951389
+            },
+            {
+              "file": "04_masks_i_oc_02.png",
+              "content_box": [
+                0,
+                272,
+                720,
+                145
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.951389
+            },
+            {
+              "file": "05_background.png",
+              "content_box": [
+                0,
+                287,
+                720,
+                116
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 6.194444
+            },
+            {
+              "file": "06_track_error.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "07_scores.png",
+              "content_box": [
+                0,
+                263,
+                720,
+                164
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.388158
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 507403,
+          "color_mad": [
+            1.7184,
+            1.0128,
+            1.0635,
+            0.0001,
+            0.0788,
+            0.0317
+          ],
+          "max_color_mad": 1.7184,
+          "source_sha256": "882774b442d099760f975f4dc0afde6652fa1e38c9f80cafaf2043d689ede39a"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_bg_kalman_tracking/story.en.gif",
+          "frames": [
+            {
+              "file": "01_pillar_crossing.png",
+              "content_box": [
+                0,
+                50,
+                720,
+                589
+              ]
+            },
+            {
+              "file": "03_masks_i_oc_01.png",
+              "content_box": [
+                0,
+                272,
+                720,
+                145
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.951389
+            },
+            {
+              "file": "04_masks_i_oc_02.png",
+              "content_box": [
+                0,
+                272,
+                720,
+                145
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.951389
+            },
+            {
+              "file": "05_background.png",
+              "content_box": [
+                0,
+                287,
+                720,
+                116
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 6.194444
+            },
+            {
+              "file": "06_track_error.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "07_scores.png",
+              "content_box": [
+                0,
+                263,
+                720,
+                164
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.388158
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 507403,
+          "color_mad": [
+            1.7184,
+            1.0128,
+            1.0635,
+            0.0001,
+            0.0788,
+            0.0317
+          ],
+          "max_color_mad": 1.7184,
+          "source_sha256": "081d6e34427b5b723c510d4f7d564b37621f46a10942913e61c4fb1239c6f167"
+        }
+      },
+      "reason": null,
+      "cover": "01_pillar_crossing.png",
+      "still": "articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png",
+      "alt": {
+        "ja": "LASIESTA I_OC_01 の第 206 コマ。空色の太線 = filter_kalman が観測で更新した位置、橙の細線 = 予測だけで進めた区間(柱の裏 26 コマと一部が隠れたコマ)、朱 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。柱に半分入りかけたコマを更新に使ったので予測は上へ傾き、出てきたコマで 31 画素ずれたが、NIS の門の内側で同じ番号のまま拾い直した。",
+        "en": "Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels"
+      }
+    },
+    "poc_real_grain_skiz": {
+      "representative": "01_grain_boundaries.png",
+      "status": "gif",
+      "selected": [
+        "01_grain_boundaries.png",
+        "02_thinning.png",
+        "03_intercepts.png",
+        "04_numbers.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_grain_skiz/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_grain_boundaries.png",
+              "content_box": [
+                132,
+                0,
+                456,
+                690
+              ]
+            },
+            {
+              "file": "02_thinning.png",
+              "content_box": [
+                0,
+                195,
+                720,
+                300
+              ],
+              "crop": [
+                0,
+                0,
+                921,
+                384
+              ],
+              "source_aspect": 4.046875,
+              "laplacian_density": 0.00361766
+            },
+            {
+              "file": "03_intercepts.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_numbers.png",
+              "content_box": [
+                0,
+                120,
+                720,
+                450
+              ]
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 343795,
+          "color_mad": [
+            3.376,
+            0.6139,
+            0.075,
+            0.034
+          ],
+          "max_color_mad": 3.376,
+          "source_sha256": "db0ae47408dec8db38c2eba56e7f80e2e0eaded09e0d33c73bcbb3a7b56331bb"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_grain_skiz/story.en.gif",
+          "frames": [
+            {
+              "file": "01_grain_boundaries.png",
+              "content_box": [
+                132,
+                0,
+                456,
+                690
+              ]
+            },
+            {
+              "file": "02_thinning.png",
+              "content_box": [
+                0,
+                195,
+                720,
+                300
+              ],
+              "crop": [
+                0,
+                0,
+                921,
+                384
+              ],
+              "source_aspect": 4.046875,
+              "laplacian_density": 0.00361766
+            },
+            {
+              "file": "03_intercepts.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_numbers.png",
+              "content_box": [
+                0,
+                120,
+                720,
+                450
+              ]
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 343795,
+          "color_mad": [
+            3.376,
+            0.6139,
+            0.075,
+            0.034
+          ],
+          "max_color_mad": 3.376,
+          "source_sha256": "848d04876ec02d2e0c295dcc46776cb7d8844a507c2d9e60842cba2fba0f3135"
+        }
+      },
+      "reason": null,
+      "cover": "01_grain_boundaries.png",
+      "still": "articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries.png",
+      "alt": {
+        "ja": "TBM の評価の 3 枚(上から F の中央値・上位 10 %・下位 10 %: 0.71 / 0.80 / 0.56)。左 = 実写の顕微鏡写真(色で腐食した金属組織、128 × 128 画素 ≈ 115 µm 角を 3 倍)、右 = 白が専門家の手描きの粒界、空色が morph_skiz の粒界(勾配の低い画素を opening_seg で種にした影響圏の境界)。",
+        "en": "Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not"
+      }
+    },
+    "poc_real_stereo_multiscanline": {
+      "representative": "01_scene.png",
+      "status": "gif",
+      "selected": [
+        "01_scene.png",
+        "02_failure_map.png",
+        "03_wheel_pose.png",
+        "04_sparse_ncc.png",
+        "05_classes.png",
+        "06_middeval3.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_stereo_multiscanline/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_scene.png",
+              "content_box": [
+                0,
+                75,
+                720,
+                540
+              ]
+            },
+            {
+              "file": "02_failure_map.png",
+              "content_box": [
+                128,
+                0,
+                463,
+                690
+              ]
+            },
+            {
+              "file": "03_wheel_pose.png",
+              "content_box": [
+                0,
+                157,
+                720,
+                376
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.916859
+            },
+            {
+              "file": "04_sparse_ncc.png",
+              "content_box": [
+                0,
+                64,
+                720,
+                561
+              ]
+            },
+            {
+              "file": "05_classes.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.985
+            },
+            {
+              "file": "06_middeval3.png",
+              "content_box": [
+                0,
+                37,
+                720,
+                616
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 1099082,
+          "color_mad": [
+            1.8238,
+            1.824,
+            0.4845,
+            0.6191,
+            0.0292,
+            0.0265
+          ],
+          "max_color_mad": 1.824,
+          "source_sha256": "f032de8b39ba0f18bc3c8665d7a4687989fcef20c624499c698ef654771e1bbf"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_stereo_multiscanline/story.en.gif",
+          "frames": [
+            {
+              "file": "01_scene.png",
+              "content_box": [
+                0,
+                75,
+                720,
+                540
+              ]
+            },
+            {
+              "file": "02_failure_map.png",
+              "content_box": [
+                128,
+                0,
+                463,
+                690
+              ]
+            },
+            {
+              "file": "03_wheel_pose.png",
+              "content_box": [
+                0,
+                157,
+                720,
+                376
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.916859
+            },
+            {
+              "file": "04_sparse_ncc.png",
+              "content_box": [
+                0,
+                64,
+                720,
+                561
+              ]
+            },
+            {
+              "file": "05_classes.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.985
+            },
+            {
+              "file": "06_middeval3.png",
+              "content_box": [
+                0,
+                37,
+                720,
+                616
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 1099082,
+          "color_mad": [
+            1.8238,
+            1.824,
+            0.4845,
+            0.6191,
+            0.0292,
+            0.0265
+          ],
+          "max_color_mad": 1.824,
+          "source_sha256": "348bd28e6041d4a820dc94c82b13007f500fa23500185f0e7500c57d5fb57784"
+        }
+      },
+      "reason": null,
+      "cover": "01_scene.png",
+      "still": "articles/assets/poc/poc_real_stereo_multiscanline/01_scene.png",
+      "alt": {
+        "ja": "bad2 4.67 %(有効だけ)/ 密度 90.0 %。OpenCV SGBM は 7.27 % / 88.4 %。",
+        "en": "Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks"
+      }
+    },
+    "poc_real_chessboard_undistort": {
+      "representative": "01_board.png",
+      "status": "gif",
+      "selected": [
+        "01_board.png",
+        "02_per_image.png",
+        "03_lepetit.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_chessboard_undistort/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_board.png",
+              "content_box": [
+                0,
+                44,
+                720,
+                602
+              ]
+            },
+            {
+              "file": "02_per_image.png",
+              "content_box": [
+                0,
+                96,
+                720,
+                498
+              ]
+            },
+            {
+              "file": "03_lepetit.png",
+              "content_box": [
+                0,
+                32,
+                720,
+                625
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 575388,
+          "color_mad": [
+            0.7761,
+            0.0285,
+            1.0843
+          ],
+          "max_color_mad": 1.0843,
+          "source_sha256": "4834c3ac7ec6a3aef8d3ef6c6ff92508a973617a795d3ee4aa05c851dadb7145"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_chessboard_undistort/story.en.gif",
+          "frames": [
+            {
+              "file": "01_board.png",
+              "content_box": [
+                0,
+                44,
+                720,
+                602
+              ]
+            },
+            {
+              "file": "02_per_image.png",
+              "content_box": [
+                0,
+                96,
+                720,
+                498
+              ]
+            },
+            {
+              "file": "03_lepetit.png",
+              "content_box": [
+                0,
+                32,
+                720,
+                625
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 575388,
+          "color_mad": [
+            0.7761,
+            0.0285,
+            1.0843
+          ],
+          "max_color_mad": 1.0843,
+          "source_sha256": "53e8d18bd09473e8d6febed5bae51be1ec0920d5a9ee92c53bb2167f97275c8b"
+        }
+      },
+      "reason": null,
+      "cover": "01_board.png",
+      "still": "articles/assets/poc/poc_real_chessboard_undistort/01_board.png",
+      "alt": {
+        "ja": "left03.jpg: 直線性 0.875 → 0.080 px。正面図の角と格子のずれ RMS 0.23 px。",
+        "en": "Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing"
+      }
+    },
+    "poc_real_walnut_cbct": {
+      "representative": "01_methods_sparse_limited.png",
+      "status": "gif",
+      "selected": [
+        "01_methods_sparse_limited.png",
+        "02_reference_vs_fdk.png",
+        "03_rmse_vs_views.png",
+        "05_cone_vertical.png",
+        "07_geometry_mistakes.png",
+        "09_scores.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_walnut_cbct/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_methods_sparse_limited.png",
+              "content_box": [
+                62,
+                0,
+                596,
+                690
+              ]
+            },
+            {
+              "file": "02_reference_vs_fdk.png",
+              "content_box": [
+                0,
+                189,
+                720,
+                312
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.311239
+            },
+            {
+              "file": "03_rmse_vs_views.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_cone_vertical.png",
+              "content_box": [
+                0,
+                179,
+                720,
+                332
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.167247
+            },
+            {
+              "file": "07_geometry_mistakes.png",
+              "content_box": [
+                0,
+                171,
+                720,
+                348
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.068429
+            },
+            {
+              "file": "09_scores.png",
+              "content_box": [
+                0,
+                203,
+                720,
+                284
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.538306
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 728411,
+          "color_mad": [
+            0.0743,
+            0.065,
+            0.1242,
+            0.144,
+            0.5649,
+            0.0357
+          ],
+          "max_color_mad": 0.5649,
+          "source_sha256": "9427339517ee7fa62b154d925604b0c1c31ecfa34f7df077d4c09e1c2a0cd1f9"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_walnut_cbct/story.en.gif",
+          "frames": [
+            {
+              "file": "01_methods_sparse_limited.png",
+              "content_box": [
+                62,
+                0,
+                596,
+                690
+              ]
+            },
+            {
+              "file": "02_reference_vs_fdk.png",
+              "content_box": [
+                0,
+                189,
+                720,
+                312
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.311239
+            },
+            {
+              "file": "03_rmse_vs_views.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_cone_vertical.png",
+              "content_box": [
+                0,
+                179,
+                720,
+                332
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.167247
+            },
+            {
+              "file": "07_geometry_mistakes.png",
+              "content_box": [
+                0,
+                171,
+                720,
+                348
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.068429
+            },
+            {
+              "file": "09_scores.png",
+              "content_box": [
+                0,
+                203,
+                720,
+                284
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.538306
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 728411,
+          "color_mad": [
+            0.0743,
+            0.065,
+            0.1242,
+            0.144,
+            0.5649,
+            0.0357
+          ],
+          "max_color_mad": 0.5649,
+          "source_sha256": "943e45748c24cb2f5591c2eabe2a5af3b936482a7cb31a845b0a306001e011b9"
+        }
+      },
+      "reason": null,
+      "cover": "01_methods_sparse_limited.png",
+      "still": "articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png",
+      "alt": {
+        "ja": "行 = 全周 150 枚 / 全周 25 枚 / 150° / 90°、列 = 参照 / FDK / SIRT / TV。濃淡は全パネル共通の 0〜0.062 /mm。90° の TV は平らな塊を描き足すが、形は参照と違う。",
+        "en": "Reconstructing a Measured Cone-Beam CT Scan of a Walnut with FDK and Iterative Methods, Scored Against the Providers' Reference — TV Holds Up When Views Are Thinned, Nothing Recovers a Missing Angular Range"
       }
     },
     "poc_real_typewritten_ocr": {
