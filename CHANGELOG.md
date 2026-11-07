@@ -13,6 +13,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - PDF(12 MB)は repo に入れず `tools/fetch_naca_tn898.py` で取得して SHA-256 を固定(頁ごとの JPEG も照合)。CI では scikit-image の `page`(BSD-3-Clause)で傾きの章だけを回し、NACA の章は記録値を印字する。
 - 展示の用語集に OCR / GMM / k-NN / MLP / SVM を足した。
 
+### 追加 — PoC「実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する」(収蔵 2026.304)
+
+- `examples/poc_real_walnut_cbct.py`: Der Sarkissian ほか 2019 のクルミ 1(Zenodo 10.5281/zenodo.2686726、CC BY 4.0)の中段の軌道 300 枚を、`ct_scan_geometry` / `fdk_reconstruct` / `sirt_reconstruct` / `os_sart_reconstruct` / `tv_reconstruct` / `ct_forward_project` / `ct_adjoint_project` / `ct_dual_energy_reconstruct` で再構成し、配布元の 3 軌道の参照(full_AGD_50)と ASTRA の FDK で照合する。幾何は SOD 66.0014 / SDD 199.0062 mm が装置の設定ファイルと一致、円軌道で表せない検出器の面内回転 0.50° と縦ずれ 7.2 画素は `warp_parametric` で投影を引き直す。中央面は全 300 枚の FDK が参照と RMSE 0.0023 /mm・SSIM 0.94、25 枚に間引くと FDK 0.0126 / SIRT 0.0074 / OS-SART 0.0067 / TV 0.0046(TV の重みは使わなかった投影への再投影誤差で選び、参照を見ない)。90° の弧はどの方法でも戻らない。二重エネルギーの第 2 エネルギーは合成(実データではない)。
+- 取得は `tools/fetch_walnut_cbct.py`(6 GB の zip から必要な 1,309 要素だけを HTTP Range で取り出し、CRC-32 と SHA-256 で固定)。`realdata` に `walnut_cbct_*` の取り口(置き場は `FULLSEYE_WALNUT_CBCT_DATA` で上書き)。CI は合成 3 本と記録値の印字だけを回し、ネットに出ない。
+- 展示の用語集に cone-beam CT / FDK / SIRT / OS-SART / total variation を足した。
+
 ## 1.0.0 — 2026-11-06
 
 1.0.0。`CONTRIBUTING.md` の 1.0 の条件を満たしたので出す: 下の破壊的変更(1.0 前の修正)を出し切ったうえで、以後は「Versioning」の約束をメジャーを上げずに守る。文書の門(`docs/I18N.md`: `OP_CATALOG` と知識ガイド 17 本の英語・中国語)は PR #274 で満たした。0.9.0 の後に入った GPU 一式 7 本の統合もこの版に含む。
