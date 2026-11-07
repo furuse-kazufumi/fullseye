@@ -91,7 +91,7 @@ def test_a_missing_translation_stops_the_generator():
 
 def test_youtube_is_hidden_when_empty_and_invalid_urls_stop_generation():
     d = G.load()
-    assert len(d["exhibits"]) >= 100
+    assert len(d["exhibits"]) >= 35   # 2026-11-08 ユーザーの決定で目玉を約 40 件に絞った(残りは all に移した)
     assert all("youtube_url" in e for e in d["exhibits"])
     # 空なら出さない・空でなければその URL を 1 回だけ出す(2026-11-06 にいろは坂で最初の 1 本が入った)。
     published = [e["youtube_url"] for e in d["exhibits"] if e["youtube_url"]]
@@ -109,6 +109,16 @@ def test_youtube_is_hidden_when_empty_and_invalid_urls_stop_generation():
     bad = G.validate(broken)
     assert len(bad) >= 1
     assert any("YouTube" in x for x in bad)
+
+
+def test_no_exhibit_disappears_from_the_full_list():
+    """目玉を絞っても、展示は「ぜんぶ見る」(all)から 1 本も消えない(2026-11-08、目玉を約 40 件に絞った)。"""
+    d = G.load()
+    ids = [e["id"] for e in d["all"]]
+    assert len(ids) == len(set(ids))
+    assert len(ids) >= 285, "all の件数が %d —— 目玉から外した展示を all から消していないか" % len(ids)
+    featured_only = sorted({e["id"] for e in d["exhibits"]} - set(ids))
+    assert featured_only == ["carla_iroha_haze"], featured_only   # YouTube の本編へ飛ぶ 1 本だけは all に無い
 
 
 def test_a_stale_translation_stops_the_generator():
