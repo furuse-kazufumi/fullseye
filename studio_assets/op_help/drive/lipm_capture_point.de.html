@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lipm_capture_point — DRIVE <code style="color:#22d3bf">locomotion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points × scalar</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lipm_capture_point(com, com_vel, com_height, gravity: &#x27;float&#x27; = 9.81)</code> (die Implementierung direkt: <code style="color:#22d3bf">import locomotion; locomotion.lipm_capture_point(com, com_vel, com_height, gravity: &#x27;float&#x27; = 9.81)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;lipm_capture_point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Momentaner Capture Point des linearen inversen Pendels, <code style="color:#22d3bf">xi = c + c_dot / omega</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>線形倒立振子(LIPM)の捕捉点 ξ = c + ċ/ω、ω = √(g / z_c)(Kajita ほか 2001、Pratt ほか 2006、Koolen ほか 2012)。足圧中心 p を ξ に置けば重心は p の真上で止まり、p が ξ から離れていると ξ は <code style="color:#22d3bf">ξ̇ = ω (ξ - p)</code> で指数的に離れていく。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">com</code> / <code style="color:#22d3bf">com_vel</code>: 重心の位置と速度。(3,) か (T, 3) の世界座標 [m]、[m/s] (x, y が地面、z が上)。(2,) / (T, 2) の地面の点でもよい。形は 2 つで揃える。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">com_height</code>: LIPM の一定の重心高さ z_c [m] (地面から)。正の有限値。既定値は置かない(ロボットごとに違い、間違うと ω が √ で狂う)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gravity</code>: 重力加速度 [m/s²]。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">com</code> と同じ形。x, y が捕捉点、3 列のときの z は <code style="color:#22d3bf">com_z - com_height</code> (振子の支点 = 地面の高さ)。</p>
+<p>照合: 解析解 <code style="color:#22d3bf">x(t) = x0 cosh ωt + (v0/ω) sinh ωt</code> から <code style="color:#22d3bf">ξ(t) = (x0 + v0/ω) e^{ωt}</code> (tests/test_locomotion_ops_2026_11_06.py)。空の入力(<code style="color:#22d3bf">com</code> が 0 要素)は ValueError で拒否する。</p>
+<p>English: xi = c + c_dot / omega with omega = sqrt(g / z_c); same shape as <code style="color:#22d3bf">com</code>; for 3-column input the z of the result is the pendulum pivot height <code style="color:#22d3bf">com_z - com_height</code>. The source of the law is onocollo <code style="color:#22d3bf">scripts/evis_video/capture_point_train.py</code> (Apache-2.0, same author); this is a fresh numpy implementation.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:walking_ops_tour">walking_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/walking_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">points</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:ray_plane_range">ray_plane_range</a> · <a style="color:#22d3bf" href="opdrive:ray_box_ranges">ray_box_ranges</a> · <a style="color:#22d3bf" href="opdrive:course_distance">course_distance</a> · <a style="color:#22d3bf" href="opdrive:mesh_signed_volume">mesh_signed_volume</a> · <a style="color:#22d3bf" href="opdrive:fit_parabola">fit_parabola</a> · <a style="color:#22d3bf" href="opdrive:flight_fit">flight_fit</a> · <a style="color:#22d3bf" href="opdrive:fit_aero">fit_aero</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">locomotion</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:contact_points">contact_points</a> · <a style="color:#22d3bf" href="opdrive:com_from_silhouette">com_from_silhouette</a> · <a style="color:#22d3bf" href="opdrive:support_polygon">support_polygon</a> · <a style="color:#22d3bf" href="opdrive:com_support_margin">com_support_margin</a> · <a style="color:#22d3bf" href="opdrive:gait_phase">gait_phase</a> · <a style="color:#22d3bf" href="opdrive:support_line_margin">support_line_margin</a> · <a style="color:#22d3bf" href="opdrive:capture_margin">capture_margin</a> · <a style="color:#22d3bf" href="opdrive:gait_step_events">gait_step_events</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: locomotion.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

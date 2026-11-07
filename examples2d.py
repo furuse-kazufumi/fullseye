@@ -558,6 +558,13 @@ EXAMPLES = [
                 "等間隔の補間は 41 点で誤差 1e5、Chebyshev 点は 3e-4 / Euler はエネルギーが 300 歩で 20 倍、Verlet は有界、"
                 "RK4 は短時間は正確だが誤差が時間に比例して増え t≈2300 で Verlet に抜かれる / 積分誤差の傾き 乱数 −0.5・Sobol −1 / "
                 "Gauss は n 点で 2n−1 次まで厳密 / ガウスでぼけた段差は ½(1+erf)。"},
+    {"id": "walking_ops_tour", "task": "measurement", "data": "synthetic",
+     "name": "点群から足場を選び、歩いた記録を足で検算する —— 歩行と足場の台帳 24 op(walkterrain + locomotion)",
+     "summary": "段・箱・穴のある床の点群を elevation_map で高さ図にし、障害物・段差・通れる所・足場の点数で「足を置ける所」の "
+                "mask にする(箱の面積は作った値と一致、穴の上には置かない)。footstep_plan が左右交互の着地点を決め、その点を踏む "
+                "足の軌跡から gait_step_events が着地点を誤差 0 で取り戻し、foot_slip_metrics は滑り 0・足で測る前進 = 胴の前進。"
+                "足を置き直さない見せかけは walking_ok = False。2 足支持では com_support_margin が -inf、support_line_margin は "
+                "線分までの距離。LIPM の捕捉点 ξ = c + ċ/ω、静的な接触力の LP は左右対称で等分。"},
     {"id": "itokawa_gravity_tour", "task": "measurement", "data": "real",
      "name": "小惑星イトカワの実際の形の上で、立つ場所の重さと坂を測る —— 一様密度の多面体の厳密な重力(polygrav 2 op)",
      "summary": "公開データの形(NASA PDS Small Bodies Node の Gaskell Itokawa Shape Model、Q = 64 の 49,152 面、CC0 1.0、"

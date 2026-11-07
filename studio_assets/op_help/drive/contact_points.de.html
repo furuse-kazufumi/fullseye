@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">contact_points — DRIVE <code style="color:#22d3bf">locomotion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × any</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_points(points, plane, tol: &#x27;float&#x27; = 0.02)</code> (die Implementierung direkt: <code style="color:#22d3bf">import locomotion; locomotion.contact_points(points, plane, tol: &#x27;float&#x27; = 0.02)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;contact_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.contact_points(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">points</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.contact_points.raw(...)</code> oder rufe <code style="color:#22d3bf">locomotion.contact_points</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Punkte innerhalb von *tol* einer Bodenebene <code style="color:#22d3bf">[a,b,c,d]</code> = Bodenkontakte.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Given a cloud and the fitted ground plane (see <code style="color:#22d3bf">pcseg.fit_plane_ransac</code>), returns <code style="color:#22d3bf">(contacts (M,3), mask)</code> — the feet/wheels/base actually touching the floor, the input to <code style="color:#22d3bf">support_polygon</code>.</p>
+<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は(0, 3) の点と空の maskを返す(理由: 点が無ければ接地点も無い。拒否すると逐次の処理が止まる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:consumer_onocollo">consumer_onocollo</a> — <code style="color:#22d3bf">py -3.11 examples/consumer_onocollo.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:walking_ops_tour">walking_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/walking_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">points</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:ray_plane_range">ray_plane_range</a> · <a style="color:#22d3bf" href="opdrive:ray_box_ranges">ray_box_ranges</a> · <a style="color:#22d3bf" href="opdrive:course_distance">course_distance</a> · <a style="color:#22d3bf" href="opdrive:mesh_signed_volume">mesh_signed_volume</a> · <a style="color:#22d3bf" href="opdrive:fit_parabola">fit_parabola</a> · <a style="color:#22d3bf" href="opdrive:flight_fit">flight_fit</a> · <a style="color:#22d3bf" href="opdrive:fit_aero">fit_aero</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">locomotion</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:com_from_silhouette">com_from_silhouette</a> · <a style="color:#22d3bf" href="opdrive:support_polygon">support_polygon</a> · <a style="color:#22d3bf" href="opdrive:com_support_margin">com_support_margin</a> · <a style="color:#22d3bf" href="opdrive:gait_phase">gait_phase</a> · <a style="color:#22d3bf" href="opdrive:support_line_margin">support_line_margin</a> · <a style="color:#22d3bf" href="opdrive:lipm_capture_point">lipm_capture_point</a> · <a style="color:#22d3bf" href="opdrive:capture_margin">capture_margin</a> · <a style="color:#22d3bf" href="opdrive:gait_step_events">gait_step_events</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: locomotion.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

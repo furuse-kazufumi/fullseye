@@ -5,6 +5,31 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## Unreleased
+
+### 追加 — 歩行と足場の op の第 1 便(2026-11-06)
+
+- `terrain` / `locomotion` の既存の公開関数 17 本を台帳(opsdrive の族 `walkterrain` 12 本・`locomotion` 5 本)に載せた。
+  これまで `fullseye.op_run("support_polygon")` は「not in any ledger」で、型で鎖に組めず MCP からも呼べなかった。
+  型は既存の語彙だけ: 高さ図 = `depth`(`dem_slope` などへ型で繋がる)、通れる所・段差・障害物 = `mask`、
+  接地点・重心の軌跡 = `points`、1 時刻の重心 = `vector`。`terrain.slope_map` は `dem_slope(method="central")` と
+  内側がビット一致なので載せず(縁と穴の扱いだけが違う)、`roughness_map` は TRI(`dem_roughness`)と別の量なので
+  別の op のまま。`surface_normals` は ops3d の op 名・facade の正式名 `terrain_surface_normals` と重なるので `elevation_normals`、
+  1 語の `traversability` は `elevation_traversability` の名で載せた(名前の規則)。`step_edges` は `cell` が値を
+  変えない(符号にしか使わない)ので、台帳の入口 `elevation_step_edges` は `cell` を持たない。
+- 依頼(2026-11-08、試作から): `traversability` / `foothold_score` が幅 1 の軸の格子で `np.gradient` の例外に
+  なっていたのを直した(2 以上の軸では値は同じ)。`support_line_margin` の線分は丸める前の座標で測り、
+  試作(fullseye_shows)の式と 4e-16 以内。
+- 新しい op 7 本(`locomotion`、numpy + scipy): `support_line_margin`(2 足支持の線分・1 足の点までの余裕。
+  `com_support_margin` の `-inf` は変えない)、`lipm_capture_point` / `capture_margin`(LIPM の捕捉点 ξ = c + ċ/ω と
+  踏み出さずに止まれる余裕)、`gait_step_events`(ヒステリシスで一歩を取り出す。同じコマの両足着地は拒否)、
+  `foot_slip_metrics`(立脚中の滑りと足で測る前進、胴だけが進む見せかけを落とす門)、`footstep_plan`(足場の mask と
+  歩幅・歩隔の窓からの左右交互の着地点の列、状態の上の Dijkstra)、`static_contact_force_lp`(摩擦錐を内接の多角錐に
+  した線形計画の静的な接触力)。
+- 門 `tests/test_locomotion_ops_2026_11_06.py`(28 本): 点と線分の距離の閉形式と標本化、LIPM の cosh/sinh の解析解と
+  RK4、一歩の位置が既知の合成、滑りが既知の合成、平地の規則的な交互と小さな格子の総当たり、等分の 2 足と
+  「解がある ⇔ COM が支持多角形の中」。例 `examples/walking_ops_tour.py`(点群 → 足場 → 足場の列 → 歩いた記録の検算)。
+
 ## 1.0.0 — 2026-11-06
 
 1.0.0。`CONTRIBUTING.md` の 1.0 の条件を満たしたので出す: 下の破壊的変更(1.0 前の修正)を出し切ったうえで、以後は「Versioning」の約束をメジャーを上げずに守る。文書の門(`docs/I18N.md`: `OP_CATALOG` と知識ガイド 17 本の英語・中国語)は PR #274 で満たした。0.9.0 の後に入った GPU 一式 7 本の統合もこの版に含む。

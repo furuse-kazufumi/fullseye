@@ -310,6 +310,10 @@ KNOB_EXEMPT = {
         "read only by scan='helical'; the probe runs the default circular cone orbit",
     ("ct_scan_geometry", "tilt_deg"):
         "read only by the laminography scans; the probe runs the default circular cone orbit",
+    # terrain(2026-11-06): the ground model is chosen by ``ground``; trim is read by 'plane'
+    # (probed, live) and ground_radius by 'opening' only (tests/test_terrain.py covers it).
+    ("detect_obstacles", "ground_radius"):
+        "read only by ground='opening'; the probe runs the default robust-plane ground",
 }
 
 

@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (474 examples)
+### 2-D image / signal / geometry (475 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -287,6 +287,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `optics_four_f_processor` — ops: `four_f_filter`, `fourier_plane_filter`, `highpass`, `identity`, `lowpass` `py -3.11 examples/optics_four_f_processor.py`
 - `scale_law_of_features` — ops: `contlength`, `moments_region_2nd`, `moments_region_3rd`, `moments_region_central` `py -3.11 examples/scale_law_of_features.py`
 - `shape_factors_closed_form` — ops: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
+- `walking_ops_tour` — ops: `capture_margin`, `com_from_silhouette`, `com_support_margin`, `contact_points`, `detect_obstacles`, `elevation_map`, `elevation_normals`, `elevation_step_edges`, `elevation_traversability`, `fill_gaps`, `foot_slip_metrics`, `foothold_candidates` (+12 more) `py -3.11 examples/walking_ops_tour.py`
 - `itokawa_gravity_tour` — ops: `mesh_slice_contours`, `polyhedron_clip_halfspace`, `polyhedron_gravity` `py -3.11 examples/itokawa_gravity_tour.py`
 
 **color**
@@ -550,12 +551,12 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_die_tilt_tsv_overlay` — ops: `erf`, `procrustes_fit` `py -3.11 examples/poc_die_tilt_tsv_overlay.py`
 
 **perception_templates**
-- `perception_pipeline` — ops: (not linked from any op note) `py -3.11 examples/perception_pipeline.py`
+- `perception_pipeline` — ops: `elevation_map` `py -3.11 examples/perception_pipeline.py`
 - `segment_and_classify` — ops: `otsu` `py -3.11 examples/segment_and_classify.py`
 - `motion_analysis` — ops: (not linked from any op note) `py -3.11 examples/motion_analysis.py`
 - `grasp_pose` — ops: `rmse` `py -3.11 examples/grasp_pose.py`
 - `perception_on_video` — ops: `flow_magnitude` `py -3.11 examples/perception_on_video.py`
-- `physical_ai_perception` — ops: (not linked from any op note) `py -3.11 examples/physical_ai_perception.py`
+- `physical_ai_perception` — ops: `com_support_margin`, `elevation_map`, `foothold_candidates`, `support_polygon` `py -3.11 examples/physical_ai_perception.py`
 - `import_and_grasp` — ops: (not linked from any op note) `py -3.11 examples/import_and_grasp.py`
 - `gaussian_splat_cloud` — ops: (not linked from any op note) `py -3.11 examples/gaussian_splat_cloud.py`
 - `sim2real_and_alife` — ops: `alife_cyclic_ca`, `alife_dla`, `alife_life_step`, `alife_reaction_bz`, `alife_turing`, `aug_barrel`, `aug_fixed_pattern`, `aug_jpeg_blocks`, `aug_rolling_shutter`, `aug_shot_noise`, `aug_vignette`, `macro_denoise` (+5 more) `py -3.11 examples/sim2real_and_alife.py`
@@ -564,8 +565,8 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_safety_clearance` — ops: (not linked from any op note) `py -3.11 examples/poc_safety_clearance.py`
 
 **consumer**
-- `consumer_hillco` — ops: (not linked from any op note) `py -3.11 examples/consumer_hillco.py`
-- `consumer_onocollo` — ops: (not linked from any op note) `py -3.11 examples/consumer_onocollo.py`
+- `consumer_hillco` — ops: `com_from_silhouette`, `com_support_margin`, `foothold_candidates`, `gait_phase`, `support_polygon` `py -3.11 examples/consumer_hillco.py`
+- `consumer_onocollo` — ops: `com_support_margin`, `contact_points`, `gait_phase`, `support_polygon` `py -3.11 examples/consumer_onocollo.py`
 
 **optics_layout**
 - `vision_layout_from_catalog` — ops: `airy_radius_um`, `covers_sensor`, `diffraction_blur`, `interface_budget`, `layout_capture`, `lens_catalog`, `lens_spec`, `light_catalog`, `light_spec`, `light_wavelengths`, `linescan_capture`, `observe_surface` (+10 more) `py -3.11 examples/vision_layout_from_catalog.py`
@@ -825,9 +826,9 @@ Ops that do not fit the one-image pipeline (two images, point sequences, variabl
 
 ## Operators by family (family → category, all ops)
 
-_3817 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
+_3841 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
 
-Families: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+Families: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 741 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -3613,7 +3614,7 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: none — Non-maximum suppression (Section 3.39). A pixel (x, y) survives only if, within the window, it is **≥ its preceding neighbors (the row above and the left in the same row) and > its following neighbors** (REQ-0337). This asymmetry is why exactly 1 pixel survives on a flat peak. Nonzero pixels of *mask* are not compared and are kept as is (nor are they used in comparisons for other pixels, REQ-0336). Suppressed pixels become 0 for U8 and INT16_MIN for S16 (REQ-0335). Neighbors that fall outside the window are not compared. · examples: `gallery_openvx_spec_values`
 
-### drive (717 ops / 53 categories)
+### drive (741 ops / 55 categories)
 
 The name says driving, but the content is a **ledger of physics-simulation and robot PoCs**: besides driving (courses, traffic, decisions, CARLA / CommonRoad), categories such as touch (tac*), peg-in-hole (peg*), polishing (polish), grinding (grind), cutting (cutting), granular media (granular / scoop), powder X-ray diffraction (pxrd) and ball games (ball / puck) live side by side. Look things up by category name.
 
@@ -4016,6 +4017,20 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `lidar_spec` `no input → table` GPU: none — Creates the spec dict of a rotating LiDAR (default: 32 beams, elevation −25…+15°, azimuth 0.2° = 1800 columns). · examples: `poc_driving_school`
 - `ray_box_ranges` `points × points → signal` GPU: none — Distance travelled by rays from the origin ``origin`` in directions ``dirs (...,3)`` until they enter an axis-aligned box (slab method). · examples: `gallery_drive_city_terrain`
 - `ray_plane_range` `points × points → signal` GPU: none — Distance travelled by rays from the origin ``origin`` in directions ``dirs (...,3)`` until they hit the plane ``ax+by+cz+d=0``. · examples: `poc_table_tennis_bounce`
+
+#### drive / locomotion (12)
+- `capture_margin` `vector × vector × scalar × points → measurement` GPU: none — Signed distance of the LIPM capture point to the support set (0-step capturability). · examples: `walking_ops_tour`
+- `com_from_silhouette` `mask → keypoints` GPU: none — Centre of mass (centroid) of a binary silhouette, as ``(row, col)`` in image coordinates. A cheap proxy for the body COM projection when a full mass model is unavailable (evis/hillco posture). Returns ``(nan, nan)`` for an empty mask. · examples: `consumer_hillco`, `walking_ops_tour`
+- `com_support_margin` `vector × points → measurement` GPU: none — Static stability margin: signed distance from the COM ground-projection to the support-polygon boundary (McGhee & Frank 1968). · examples: `consumer_hillco`, `consumer_onocollo`, `physical_ai_perception`, `walking_ops_tour`
+- `contact_points` `points × any → points` GPU: none — Points lying within *tol* of a ground plane ``[a,b,c,d]`` = ground contacts. · examples: `consumer_onocollo`, `walking_ops_tour`
+- `foot_slip_metrics` `any × mask × points → table` GPU: none — Horizontal foot slip during stance, foot-measured progression, and a 'body-only' gate. · examples: `walking_ops_tour`
+- `footstep_plan` `mask → table` GPU: none — Alternating left/right footstep sequence over a foothold mask (exact shortest path). · examples: `walking_ops_tour`
+- `gait_phase` `matrix → table` GPU: none — Classify each foot as stance (planted) or swing per frame from its height. · examples: `consumer_hillco`, `consumer_onocollo`, `walking_ops_tour`
+- `gait_step_events` `any × scalar × scalar × scalar → table` GPU: none — Extract walking steps (liftoff -> swing -> touchdown) from foot trajectories, with hysteresis. · examples: `walking_ops_tour`
+- `lipm_capture_point` `points × points × scalar → points` GPU: none — Instantaneous capture point of the linear inverted pendulum, ``xi = c + c_dot / omega``. · examples: `walking_ops_tour`
+- `static_contact_force_lp` `points × normals × vector × scalar × scalar → table` GPU: none — Static contact-force distribution under linearised friction cones (``scipy.optimize.linprog``). · examples: `walking_ops_tour`
+- `support_line_margin` `vector × points → measurement` GPU: none — Support margin that is defined for EVERY support set, including two-foot (segment) support. · examples: `walking_ops_tour`
+- `support_polygon` `points → table` GPU: none — Convex support polygon of the ground-contact points (ground x, y plane). · examples: `consumer_hillco`, `consumer_onocollo`, `physical_ai_perception`, `walking_ops_tour`
 
 #### drive / long (13)
 - `hill_hold_brake_min` `scalar → scalar` GPU: none — Minimum braking [m/s²] that keeps the car standing on a slope = max(0, |a_creep − g sin θ| − c_rr g cos θ) (static friction balance). · examples: `poc_driving_longitudinal`
@@ -4433,6 +4448,20 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `ttc_from_range` `no input → scalar` GPU: none — τ = d / v (seconds) from distance and closing speed. Ground truth derived from the world poses (``inf`` if v ≤ 0, ``ValueError`` if d < 0). · examples: `poc_ttc_rss`
 - `ttc_from_scale` `no input → scalar` GPU: none — τ (seconds, at the time of the first frame) from the change in apparent size: ``τ₀ = Δt · w₁ / (w₁ − w₀)``. · examples: `poc_ttc_rss`
 - `ttc_truth` `image2d × matrix × matrix → table` GPU: yes (allow-list) — Per-pixel **ground-truth τ** (seconds, at the time of the first frame) and closing speed: ``{"tau", "closing_speed", "depth1", "valid"}``. · examples: `poc_ttc_rss`
+
+#### drive / walkterrain (12)
+- `detect_obstacles` `depth → mask` GPU: none — Segment cells rising more than *clearance* above the walkable ground. · examples: `walking_ops_tour`
+- `elevation_map` `points → depth` GPU: none — Bin a point cloud into a 2.5-D elevation grid. · examples: `perception_pipeline`, `physical_ai_perception`, `walking_ops_tour`
+- `elevation_normals` `depth → normalmap` GPU: none — Unit up-pointing normals (H, W, 3) of an elevation map — ledger door of :func:`surface_normals`. · examples: `walking_ops_tour`
+- `elevation_step_edges` `depth → mask` GPU: none — Step edges (curbs / stair nosings) of an elevation map -> ``(edge_mask, signed_rise)`` (ledger door). · examples: `walking_ops_tour`
+- `elevation_traversability` `depth → mask` GPU: none — Traversable cells of an elevation map (True = within the step and slope limits) — ledger door of :func:`traversability`. · examples: `walking_ops_tour`
+- `fill_gaps` `depth → depth` GPU: none — Fill ``nan`` cells with the nearest finite height (nearest-neighbour). · examples: `walking_ops_tour`
+- `foothold_candidates` `depth → table` GPU: none — Pick discrete safe stepping targets from the terrain. · examples: `consumer_hillco`, `physical_ai_perception`, `walking_ops_tour`
+- `foothold_score` `depth → image2d` GPU: none — Per-cell flatness score in [0, 1] (1 = flat & level = good foothold). · examples: `walking_ops_tour`
+- `fuse_elevation` `images → depth` GPU: none — Fuse several aligned elevation grids into one robot-centric map. · examples: `walking_ops_tour`
+- `ground_plane` `depth → depth` GPU: none — Robust least-squares ground plane ``z = a·x + b·y + c`` per cell. · examples: `walking_ops_tour`
+- `ground_surface` `depth → depth` GPU: none — Smooth walkable-ground envelope by grey-opening (min-filter then max-filter). · examples: `walking_ops_tour`
+- `roughness_map` `depth → image2d` GPU: none — Per-cell surface roughness = local height standard deviation over a ``window`` neighbourhood. High on rubble / vegetation, ~0 on smooth ground. · examples: `walking_ops_tour`
 
 #### drive / world (4)
 - `load_asset` `no input → table` GPU: none — Loads a bundled asset as a mesh dict: ``{"V", "F", "color", "label", "name", "dims"}``. · examples: `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`

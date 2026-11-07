@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(474 例)
+### 2-D 画像/信号/幾何(475 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -285,6 +285,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **レンズに微分を計算させる(4f 光学プロセッサ)** — 2 枚のレンズの間にフィルタを 1 枚置くと、光が空間微分を実行する —— GPU も 畳み込みカーネルも要らず、光が通り抜ける時間で終わる。真値は全部**閉形式か整数**: 恒等フィルタなら出力は入力の 180 度回転(2 枚のレンズがそれぞれ前向きの フーリエ変換を行うため)、(i2πf)^n なら n 階微分でガウシアンの閉形式と一致、渦位相板の**巻き数は整数**。外部の参照値を一つも使わない。--morph で 分数階微分 0→2 の連続変化を動画にする(静止画では別々の絵に見えるものが 1 本の族であることが目で分かる)。★偶数長のナイキストのビンを 0 にしないと 片側位相が奇対称を厳密に満たさないことも、桁で見せる。 `py -3.11 examples/optics_four_f_processor.py`
 - **特徴の次元を、真値を一つも使わずに測る** — 形を k 倍に拡大して値が k^p 倍になる指数 p を測り、領域を受けて数を返す 35 op の**次元**(無次元 29・長さ 5・面積 1)を表にする。HALCON の数値も閉形式の真値も使わない —— 変成関係だけで採点する。2026-09-26 に直した 8 op のうち 5 本はこの 1 枚で出ており、同じ枚で未解決の §52(moments 族が p=0、HALCON は 4/5/8)も指す。画布で割ると p が 1.015 から 0.015 へ落ちることをその場で見せ、値域や有限性の門では区別できないことを示す。 `py -3.11 examples/scale_law_of_features.py`
 - **形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる** — 矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region 特徴を採点。面積と矩形度は丸め誤差 0 で一致。コンパクトさが頭打ちしないことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)ことを示す。 `py -3.11 examples/shape_factors_closed_form.py`
+- **点群から足場を選び、歩いた記録を足で検算する —— 歩行と足場の台帳 24 op(walkterrain + locomotion)** — 段・箱・穴のある床の点群を elevation_map で高さ図にし、障害物・段差・通れる所・足場の点数で「足を置ける所」の mask にする(箱の面積は作った値と一致、穴の上には置かない)。footstep_plan が左右交互の着地点を決め、その点を踏む 足の軌跡から gait_step_events が着地点を誤差 0 で取り戻し、foot_slip_metrics は滑り 0・足で測る前進 = 胴の前進。足を置き直さない見せかけは walking_ok = False。2 足支持では com_support_margin が -inf、support_line_margin は 線分までの距離。LIPM の捕捉点 ξ = c + ċ/ω、静的な接触力の LP は左右対称で等分。 `py -3.11 examples/walking_ops_tour.py`
 - **小惑星イトカワの実際の形の上で、立つ場所の重さと坂を測る —— 一様密度の多面体の厳密な重力(polygrav 2 op)** — 公開データの形(NASA PDS Small Bodies Node の Gaskell Itokawa Shape Model、Q = 64 の 49,152 面、CC0 1.0、data/itokawa_shape/)で、polyhedron_gravity(Werner & Scheeres 1997 の面と辺の和)を長軸の断面に沿って計算: 自転の遠心力を足した実効重力は 56.8〜82.0 µm/s²、両端で軽い。重心でガウスの法則 ∇·g = −4πGρ が 2e-16。polyhedron_clip_halfspace で x ≥ 150 m を頭として切り、頭 2,850 kg/m³・全体の質量を保つと胴 1,754 kg/m³・重心 +21.5 m(Lowry 2014: 1,750 ± 110・21 ± 12 m)。動く 3-D 版は tools/build_itokawa_anim3d.py。 `py -3.11 examples/itokawa_gravity_tour.py`
 
 **color**
@@ -823,9 +824,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3841 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 741 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(964 ops / 49 categories)
 
@@ -3611,7 +3612,7 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 #### vx / suppress(1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: なし — 非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で**自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には >** の ときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す (他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。 · 例: `gallery_openvx_spec_values`
 
-### drive(717 ops / 53 categories)
+### drive(741 ops / 55 categories)
 
 名前は運転だが、中身は**物理シミュレーションとロボットの PoC の台帳**: 運転(コース・交通・判断・CARLA / CommonRoad)に加え、触覚(tac*)・peg-in-hole(peg*)・研磨(polish)・研削(grind)・切削(cutting)・粉体(granular / scoop)・粉末 X 線回折(pxrd)・球技(ball / puck)などがカテゴリとして同居している。カテゴリ名で引くこと。
 
@@ -4014,6 +4015,20 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `lidar_spec` `入力なし → table` GPU: なし — 回転式 LiDAR の仕様 dict を作る(既定は 32 beam・仰角 −25…+15°・方位 0.2° = 1800 列)。 · 例: `poc_driving_school`
 - `ray_box_ranges` `points × points → signal` GPU: なし — 原点 ``origin`` から方向 ``dirs (...,3)`` のレイが軸平行箱に入るまでの距離(slab 法)。 · 例: `gallery_drive_city_terrain`
 - `ray_plane_range` `points × points → signal` GPU: なし — 原点 ``origin`` から方向 ``dirs (...,3)`` のレイが平面 ``ax+by+cz+d=0`` に当たるまでの距離。 · 例: `poc_table_tennis_bounce`
+
+#### drive / locomotion(12)
+- `capture_margin` `vector × vector × scalar × points → measurement` GPU: なし — Signed distance of the LIPM capture point to the support set (0-step capturability). · 例: `walking_ops_tour`
+- `com_from_silhouette` `mask → keypoints` GPU: なし — Centre of mass (centroid) of a binary silhouette, as ``(row, col)`` in image coordinates. A cheap proxy for the body COM projection when a full mass model is unavailable (evis/hillco posture). Returns ``(nan, nan)`` for an empty mask. · 例: `consumer_hillco`, `walking_ops_tour`
+- `com_support_margin` `vector × points → measurement` GPU: なし — Static stability margin: signed distance from the COM ground-projection to the support-polygon boundary (McGhee & Frank 1968). · 例: `consumer_hillco`, `consumer_onocollo`, `physical_ai_perception`, `walking_ops_tour`
+- `contact_points` `points × any → points` GPU: なし — Points lying within *tol* of a ground plane ``[a,b,c,d]`` = ground contacts. · 例: `consumer_onocollo`, `walking_ops_tour`
+- `foot_slip_metrics` `any × mask × points → table` GPU: なし — Horizontal foot slip during stance, foot-measured progression, and a 'body-only' gate. · 例: `walking_ops_tour`
+- `footstep_plan` `mask → table` GPU: なし — Alternating left/right footstep sequence over a foothold mask (exact shortest path). · 例: `walking_ops_tour`
+- `gait_phase` `matrix → table` GPU: なし — Classify each foot as stance (planted) or swing per frame from its height. · 例: `consumer_hillco`, `consumer_onocollo`, `walking_ops_tour`
+- `gait_step_events` `any × scalar × scalar × scalar → table` GPU: なし — Extract walking steps (liftoff -> swing -> touchdown) from foot trajectories, with hysteresis. · 例: `walking_ops_tour`
+- `lipm_capture_point` `points × points × scalar → points` GPU: なし — Instantaneous capture point of the linear inverted pendulum, ``xi = c + c_dot / omega``. · 例: `walking_ops_tour`
+- `static_contact_force_lp` `points × normals × vector × scalar × scalar → table` GPU: なし — Static contact-force distribution under linearised friction cones (``scipy.optimize.linprog``). · 例: `walking_ops_tour`
+- `support_line_margin` `vector × points → measurement` GPU: なし — Support margin that is defined for EVERY support set, including two-foot (segment) support. · 例: `walking_ops_tour`
+- `support_polygon` `points → table` GPU: なし — Convex support polygon of the ground-contact points (ground x, y plane). · 例: `consumer_hillco`, `consumer_onocollo`, `physical_ai_perception`, `walking_ops_tour`
 
 #### drive / long(13)
 - `hill_hold_brake_min` `scalar → scalar` GPU: なし — 坂で止まっていられる最小の制動 [m/s²] = max(0, |a_creep − g sin θ| − c_rr g cos θ)(静止摩擦のつり合い)。 · 例: `poc_driving_longitudinal`
@@ -4431,6 +4446,20 @@ _計 3817 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `ttc_from_range` `入力なし → scalar` GPU: なし — 距離と閉じる速さから τ = d / v(秒)。世界の姿勢から出す真値(v ≤ 0 なら ``inf``、d < 0 は ``ValueError``)。 · 例: `poc_ttc_rss`
 - `ttc_from_scale` `入力なし → scalar` GPU: なし — 見かけの大きさの変化から τ(秒、最初のコマの時刻で): ``τ₀ = Δt · w₁ / (w₁ − w₀)``。 · 例: `poc_ttc_rss`
 - `ttc_truth` `image2d × matrix × matrix → table` GPU: あり(許可リスト) — 画素ごとの **真の τ**(秒、最初のコマの時刻で)と閉じる速さ: ``{"tau", "closing_speed", "depth1", "valid"}``。 · 例: `poc_ttc_rss`
+
+#### drive / walkterrain(12)
+- `detect_obstacles` `depth → mask` GPU: なし — Segment cells rising more than *clearance* above the walkable ground. · 例: `walking_ops_tour`
+- `elevation_map` `points → depth` GPU: なし — Bin a point cloud into a 2.5-D elevation grid. · 例: `perception_pipeline`, `physical_ai_perception`, `walking_ops_tour`
+- `elevation_normals` `depth → normalmap` GPU: なし — Unit up-pointing normals (H, W, 3) of an elevation map — ledger door of :func:`surface_normals`. · 例: `walking_ops_tour`
+- `elevation_step_edges` `depth → mask` GPU: なし — Step edges (curbs / stair nosings) of an elevation map -> ``(edge_mask, signed_rise)`` (ledger door). · 例: `walking_ops_tour`
+- `elevation_traversability` `depth → mask` GPU: なし — Traversable cells of an elevation map (True = within the step and slope limits) — ledger door of :func:`traversability`. · 例: `walking_ops_tour`
+- `fill_gaps` `depth → depth` GPU: なし — Fill ``nan`` cells with the nearest finite height (nearest-neighbour). · 例: `walking_ops_tour`
+- `foothold_candidates` `depth → table` GPU: なし — Pick discrete safe stepping targets from the terrain. · 例: `consumer_hillco`, `physical_ai_perception`, `walking_ops_tour`
+- `foothold_score` `depth → image2d` GPU: なし — Per-cell flatness score in [0, 1] (1 = flat & level = good foothold). · 例: `walking_ops_tour`
+- `fuse_elevation` `images → depth` GPU: なし — Fuse several aligned elevation grids into one robot-centric map. · 例: `walking_ops_tour`
+- `ground_plane` `depth → depth` GPU: なし — Robust least-squares ground plane ``z = a·x + b·y + c`` per cell. · 例: `walking_ops_tour`
+- `ground_surface` `depth → depth` GPU: なし — Smooth walkable-ground envelope by grey-opening (min-filter then max-filter). · 例: `walking_ops_tour`
+- `roughness_map` `depth → image2d` GPU: なし — Per-cell surface roughness = local height standard deviation over a ``window`` neighbourhood. High on rubble / vegetation, ~0 on smooth ground. · 例: `walking_ops_tour`
 
 #### drive / world(4)
 - `load_asset` `入力なし → table` GPU: なし — 同梱資産をメッシュ dict に: ``{"V", "F", "color", "label", "name", "dims"}``。 · 例: `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`

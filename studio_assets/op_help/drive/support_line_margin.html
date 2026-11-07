@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">support_line_margin — DRIVE <code style="color:#22d3bf">locomotion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">vector × points</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.support_line_margin(com, contacts, ground=None, contact_tol: &#x27;float&#x27; = 0.02) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import locomotion; locomotion.support_line_margin(com, contacts, ground=None, contact_tol: &#x27;float&#x27; = 0.02) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;support_line_margin&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Support margin that is defined for EVERY support set, including two-foot (segment) support.</p>
+<p>支持の形がどれでも値を持つ静的安定余裕。<code style="color:#22d3bf">com_support_margin</code> は支持多角形に面積が無いとき(2 足支持 = 線分、1 足 = 点)<code style="color:#22d3bf">-inf</code> を返す ―― 2 足で立つ人型の大半の時間が「測れない」になる穴がある。既存の値を変えると破壊的変更なので、この op を別に足した。</p>
+<p style="margin:2px 0 2px 12px">• 面積のある多角形: <code style="color:#22d3bf">com_support_margin</code> と同じ符号つき距離(+ = 内側)。</p>
+<p style="margin:2px 0 2px 12px">• 線分(2 足、または一直線に並んだ足): COM の地面への射影から閉じた線分までの距離に <b>負号を付けた値</b>(<code style="color:#22d3bf">-dist</code>)。線分の上でちょうど 0、離れるほど負。線分には内側が無いので正にはならない(刃の上で釣り合うのが最良)。点と線分の距離は閉形式 <code style="color:#22d3bf">t = clip(((p-a)·(b-a))/|b-a|², 0, 1)</code>。</p>
+<p style="margin:2px 0 2px 12px">• 点(1 足): <code style="color:#22d3bf">-|p - foot|</code>。</p>
+<p><code style="color:#22d3bf">com</code> は (x, y) か (x, y, z)(z は使わない)。<code style="color:#22d3bf">contacts</code> は (N, 2) / (N, 3)。<code style="color:#22d3bf">ground</code> / <code style="color:#22d3bf">contact_tol</code> は <code style="color:#22d3bf">support_polygon</code> に渡す(宙に浮いた足を外す)。単位は入力の世界単位。足が 1 つも無い(フィルタ後も含む)ときは <code style="color:#22d3bf">ValueError</code> (支えが無いことを <code style="color:#22d3bf">-inf</code> で黙って返さない)。</p>
+<p>English: polygon with area -&gt; the same signed distance as <code style="color:#22d3bf">com_support_margin</code>; segment -&gt; <code style="color:#22d3bf">-distance</code> to the closed segment (0 on it, never positive: a line has no interior); single foot -&gt; <code style="color:#22d3bf">-distance</code> to that foot; no foot -&gt; <code style="color:#22d3bf">ValueError</code>. The first source of the segment rule is <code style="color:#22d3bf">fullseye_shows/common/measure.py</code> (<code style="color:#22d3bf">support_line_margin</code>, same author).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:walking_ops_tour">walking_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/walking_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">locomotion</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:contact_points">contact_points</a> · <a style="color:#22d3bf" href="opdrive:com_from_silhouette">com_from_silhouette</a> · <a style="color:#22d3bf" href="opdrive:support_polygon">support_polygon</a> · <a style="color:#22d3bf" href="opdrive:com_support_margin">com_support_margin</a> · <a style="color:#22d3bf" href="opdrive:gait_phase">gait_phase</a> · <a style="color:#22d3bf" href="opdrive:lipm_capture_point">lipm_capture_point</a> · <a style="color:#22d3bf" href="opdrive:capture_margin">capture_margin</a> · <a style="color:#22d3bf" href="opdrive:gait_step_events">gait_step_events</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: locomotion.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
