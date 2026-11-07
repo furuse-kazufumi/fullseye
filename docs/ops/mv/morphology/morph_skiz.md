@@ -6,7 +6,7 @@ in: mask
 out: mask
 halcon: morph_skiz
 gpu: なし
-examples: [machine_vision_tour]
+examples: [machine_vision_tour, poc_real_grain_skiz]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -46,6 +46,7 @@ Returns:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [machine_vision_tour](../../../../examples/machine_vision_tour.py) — `py -3.11 examples/machine_vision_tour.py`
+- [poc_real_grain_skiz](../../../../examples/poc_real_grain_skiz.py) — `py -3.11 examples/poc_real_grain_skiz.py`
 
 ## 型が繋がる次の op(`mask` を入力に取れる)
 

@@ -13,15 +13,19 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - PDF(12 MB)は repo に入れず `tools/fetch_naca_tn898.py` で取得して SHA-256 を固定(頁ごとの JPEG も照合)。CI では scikit-image の `page`(BSD-3-Clause)で傾きの章だけを回し、NACA の章は記録値を印字する。
 - 展示の用語集に OCR / GMM / k-NN / MLP / SVM を足した。
 
+### 追加 — PoC 2 本「実写ステレオで視差・面・円の姿勢」「実写の校正板で歪み・平行化」(収蔵 2026.302 / 2026.303)
+
+- `examples/poc_real_stereo_multiscanline.py` —— Middlebury 2014 の実写ステレオで `binocular_disparity_ms` / `binocular_distance_ms` / `reconstruct_surface_stereo` / `get_circle_pose` / `points_lepetit` + NCC を真値視差と OpenCV で採点(MiddEval3 の 15 場面は `tools/fetch_stereoreal_data.py` で repo 外へ取得、SHA-256 固定)。`examples/poc_real_chessboard_undistort.py` —— OpenCV の校正板の写真 13 枚で `change_radial_distortion_image` / `map_image` / `rectify_to_world_plane` を直線性と格子の間隔で採点。記録した穴: `points_lepetit` の直線の棄却が傾いてぼけた縁で漏れる、`binocular_disparity_ms` は平行化の縦の残差 0.24 px で bad-2 が +12 点悪化する。
+
 ### 追加 — PoC「実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する」(収蔵 2026.304)
 
 - `examples/poc_real_walnut_cbct.py`: Der Sarkissian ほか 2019 のクルミ 1(Zenodo 10.5281/zenodo.2686726、CC BY 4.0)の中段の軌道 300 枚を、`ct_scan_geometry` / `fdk_reconstruct` / `sirt_reconstruct` / `os_sart_reconstruct` / `tv_reconstruct` / `ct_forward_project` / `ct_adjoint_project` / `ct_dual_energy_reconstruct` で再構成し、配布元の 3 軌道の参照(full_AGD_50)と ASTRA の FDK で照合する。幾何は SOD 66.0014 / SDD 199.0062 mm が装置の設定ファイルと一致、円軌道で表せない検出器の面内回転 0.50° と縦ずれ 7.2 画素は `warp_parametric` で投影を引き直す。中央面は全 300 枚の FDK が参照と RMSE 0.0023 /mm・SSIM 0.94、25 枚に間引くと FDK 0.0126 / SIRT 0.0074 / OS-SART 0.0067 / TV 0.0046(TV の重みは使わなかった投影への再投影誤差で選び、参照を見ない)。90° の弧はどの方法でも戻らない。二重エネルギーの第 2 エネルギーは合成(実データではない)。
 - 取得は `tools/fetch_walnut_cbct.py`(6 GB の zip から必要な 1,309 要素だけを HTTP Range で取り出し、CRC-32 と SHA-256 で固定)。`realdata` に `walnut_cbct_*` の取り口(置き場は `FULLSEYE_WALNUT_CBCT_DATA` で上書き)。CI は合成 3 本と記録値の印字だけを回し、ネットに出ない。
 - 展示の用語集に cone-beam CT / FDK / SIRT / OS-SART / total variation を足した。
 
-### 追加 — PoC 2 本「実写ステレオで視差・面・円の姿勢」「実写の校正板で歪み・平行化」(収蔵 2026.302 / 2026.303)
+### 追加 — PoC 2 本「実写動画の背景推定とカルマン追跡」「実写の金属組織の粒界(SKIZ)」(収蔵 2026.305 / 2026.306)
 
-- `examples/poc_real_stereo_multiscanline.py` —— Middlebury 2014 の実写ステレオで `binocular_disparity_ms` / `binocular_distance_ms` / `reconstruct_surface_stereo` / `get_circle_pose` / `points_lepetit` + NCC を真値視差と OpenCV で採点(MiddEval3 の 15 場面は `tools/fetch_stereoreal_data.py` で repo 外へ取得、SHA-256 固定)。`examples/poc_real_chessboard_undistort.py` —— OpenCV の校正板の写真 13 枚で `change_radial_distortion_image` / `map_image` / `rectify_to_world_plane` を直線性と格子の間隔で採点。記録した穴: `points_lepetit` の直線の棄却が傾いてぼけた縁で漏れる、`binocular_disparity_ms` は平行化の縦の残差 0.24 px で bad-2 が +12 点悪化する。
+- `examples/poc_real_bg_kalman_tracking.py`(LASIESTA の実写動画で `create_bg_esti` / `run_bg_esti` / `update_bg_esti` / `give_bg_esti` / `filter_kalman` を MOG2 と真値の F 値で比べ、柱の裏をカルマン予測で通り抜ける)と `examples/poc_real_grain_skiz.py`(TBM の実写の金属組織で `morph_skiz` の粒界と ASTM E112 の切断法、Golay の L の細線化を skeletonize と比べる)。データは `tools/fetch_lasiesta.py` / `tools/fetch_tbm.py` で repo 外へ取得(SHA-256 固定)。
 
 ## 1.0.0 — 2026-11-06
 

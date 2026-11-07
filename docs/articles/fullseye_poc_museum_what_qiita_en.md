@@ -1544,7 +1544,7 @@ Ops used (notes): [`area_center_gray`](https://furuse.work/ops/mv/gray/area_cent
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 48 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 49 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -3349,6 +3349,36 @@ Source: [examples/poc_real_file_formats.py](https://github.com/furuse-kazufumi/f
 This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_file_formats)
 
 Ops used (notes): [`aperture_photometry`](https://furuse.work/ops/astrostack/photometry/aperture_photometry.html) · [`astro_fits_read`](https://furuse.work/ops/fileio/fits/astro_fits_read.html) · [`e57_read`](https://furuse.work/ops/fileio/e57/e57_read.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`em_mrc_read`](https://furuse.work/ops/fileio/mrc/em_mrc_read.html) · [`nifti_read`](https://furuse.work/ops/fileio/nifti/nifti_read.html) · [`ome_tiff_read`](https://furuse.work/ops/fileio/ome_tiff/ome_tiff_read.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`star_detect`](https://furuse.work/ops/astrostack/photometry/star_detect.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html) · [`vol_region_props`](https://furuse.work/ops/3d/regionprops/vol_region_props.html)
+
+## No.2026.306 —— Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not
+
+320 tint-etched polycrystalline micrographs from TBM (Zenodo 8386997, CC BY 4.0; 128 x 128 px, about 0.9 um per pixel) with grain boundaries drawn by a materials expert (thick and thin versions). Pixels of low Lab gradient are split by opening_seg into seeds and morph_skiz draws the boundaries of their zones of influence. Parameters are chosen on the 152 crops from even-numbered source images and scored on the 168 from odd-numbered ones. Boundary position: F 0.697 against the expert's thin line (3 px tolerance); a watershed from the same seeds gives 0.704 and wins on 68% of crops, because SKIZ draws its line midway between seeds and never looks at the image. Grain size (ASTM E112 lineal intercept, test lines every 16 px): the pooled mean intercept is 26.2 px for the expert and 21.1 px for SKIZ (ratio 0.805, delta G +0.63), yet the per-crop ranking does not agree (Spearman rho -0.16). The SKIZ intercept barely changes from crop to crop (coefficient of variation 0.145 against the expert's 0.311): seeds set by a gradient percentile have a density that does not follow grain size, and SKIZ finds three times as many grains (median 57 against 18). Operator checks: morph_skiz matches the zone boundaries of scikit-image's expand_labels pixel for pixel on all 168 crops and never yields fewer cells than seeds, but its right-or-lower-neighbour rule leaves one-pixel spurs on 82% of crops (counted with hit_or_miss_seq and the Golay E). Thinning: sequential thinning of the expert's thick line with the eight rotations of the Golay L follows the same path as skeletonize (F 0.991) with 1.4 times the pixels, being a 4-connected staircase. Of the 5,072 places where the thick line touches the image border, the Golay line reaches the border at 96% and skeletonize at 66%; through the one-pixel gaps skeletonize leaves, border grains merge with their neighbours and drop from 12.9 to 8.2 per crop (13.0 with Golay).
+
+[![Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries.png)
+
+*↑ **Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not** ―― Real tint-etched metallography from TBM (128 x 128 px, about 115 um square, shown 3x). Left: the micrograph; right: expert hand-drawn grain boundaries in white and morph_skiz boundaries in sky blue.*
+
+[![19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning.png)
+
+*↑ The measurement ―― 19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![16 画素おきの縦横の試験線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts.png)
+
+*↑ 16 画素おきの縦横の試験線。*
+
+[![学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers.png)
+
+*↑ 学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。*
+
+```
+py -3.11 examples/poc_real_grain_skiz.py
+```
+
+Source: [examples/poc_real_grain_skiz.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_grain_skiz.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_grain_skiz)
+
+Ops used (notes): [`hit_or_miss_golay`](https://furuse.work/ops/mv/morphology/hit_or_miss_golay.html) · [`hit_or_miss_seq`](https://furuse.work/ops/mv/morphology/hit_or_miss_seq.html) · [`morph_skiz`](https://furuse.work/ops/mv/morphology/morph_skiz.html) · [`opening_seg`](https://furuse.work/ops/mv/morphology/opening_seg.html) · [`percentile`](https://furuse.work/ops/2d/rank/percentile.html) · [`thinning`](https://furuse.work/ops/2d/region/thinning.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 

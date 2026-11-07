@@ -1536,7 +1536,7 @@ Ops used (notes): [`area_center_gray`](https://furuse.work/ops/mv/gray/area_cent
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 48 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 49 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -3341,6 +3341,36 @@ Source: [examples/poc_real_file_formats.py](https://github.com/furuse-kazufumi/f
 This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_file_formats)
 
 Ops used (notes): [`aperture_photometry`](https://furuse.work/ops/astrostack/photometry/aperture_photometry.html) · [`astro_fits_read`](https://furuse.work/ops/fileio/fits/astro_fits_read.html) · [`e57_read`](https://furuse.work/ops/fileio/e57/e57_read.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`em_mrc_read`](https://furuse.work/ops/fileio/mrc/em_mrc_read.html) · [`nifti_read`](https://furuse.work/ops/fileio/nifti/nifti_read.html) · [`ome_tiff_read`](https://furuse.work/ops/fileio/ome_tiff/ome_tiff_read.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`star_detect`](https://furuse.work/ops/astrostack/photometry/star_detect.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html) · [`vol_region_props`](https://furuse.work/ops/3d/regionprops/vol_region_props.html)
+
+## No.2026.306 —— Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not
+
+320 tint-etched polycrystalline micrographs from TBM (Zenodo 8386997, CC BY 4.0; 128 x 128 px, about 0.9 um per pixel) with grain boundaries drawn by a materials expert (thick and thin versions). Pixels of low Lab gradient are split by opening_seg into seeds and morph_skiz draws the boundaries of their zones of influence. Parameters are chosen on the 152 crops from even-numbered source images and scored on the 168 from odd-numbered ones. Boundary position: F 0.697 against the expert's thin line (3 px tolerance); a watershed from the same seeds gives 0.704 and wins on 68% of crops, because SKIZ draws its line midway between seeds and never looks at the image. Grain size (ASTM E112 lineal intercept, test lines every 16 px): the pooled mean intercept is 26.2 px for the expert and 21.1 px for SKIZ (ratio 0.805, delta G +0.63), yet the per-crop ranking does not agree (Spearman rho -0.16). The SKIZ intercept barely changes from crop to crop (coefficient of variation 0.145 against the expert's 0.311): seeds set by a gradient percentile have a density that does not follow grain size, and SKIZ finds three times as many grains (median 57 against 18). Operator checks: morph_skiz matches the zone boundaries of scikit-image's expand_labels pixel for pixel on all 168 crops and never yields fewer cells than seeds, but its right-or-lower-neighbour rule leaves one-pixel spurs on 82% of crops (counted with hit_or_miss_seq and the Golay E). Thinning: sequential thinning of the expert's thick line with the eight rotations of the Golay L follows the same path as skeletonize (F 0.991) with 1.4 times the pixels, being a 4-connected staircase. Of the 5,072 places where the thick line touches the image border, the Golay line reaches the border at 96% and skeletonize at 66%; through the one-pixel gaps skeletonize leaves, border grains merge with their neighbours and drop from 12.9 to 8.2 per crop (13.0 with Golay).
+
+[![Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries.png)
+
+*↑ **Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not** ―― Real tint-etched metallography from TBM (128 x 128 px, about 115 um square, shown 3x). Left: the micrograph; right: expert hand-drawn grain boundaries in white and morph_skiz boundaries in sky blue.*
+
+[![19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning.png)
+
+*↑ The measurement ―― 19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![16 画素おきの縦横の試験線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts.png)
+
+*↑ 16 画素おきの縦横の試験線。*
+
+[![学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers.png)
+
+*↑ 学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。*
+
+```
+py -3.11 examples/poc_real_grain_skiz.py
+```
+
+Source: [examples/poc_real_grain_skiz.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_grain_skiz.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_grain_skiz)
+
+Ops used (notes): [`hit_or_miss_golay`](https://furuse.work/ops/mv/morphology/hit_or_miss_golay.html) · [`hit_or_miss_seq`](https://furuse.work/ops/mv/morphology/hit_or_miss_seq.html) · [`morph_skiz`](https://furuse.work/ops/mv/morphology/morph_skiz.html) · [`opening_seg`](https://furuse.work/ops/mv/morphology/opening_seg.html) · [`percentile`](https://furuse.work/ops/2d/rank/percentile.html) · [`thinning`](https://furuse.work/ops/2d/region/thinning.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 
@@ -5780,7 +5810,7 @@ Ops used (notes): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_s
 
 ### The Time-as-3-D Wing — A Video Is One Volume
 
-Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 21 exhibits here demonstrate exactly that.
+Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 22 exhibits here demonstrate exactly that.
 
 The time axis also brings its own traps. Rounding onto the frame grid always delays; pixel area makes merging look early. Mislinks come in two opposite kinds, so a single error rate cannot say which way the diffusion coefficient is wrong. Template tracking drifts quietly before it ever loses the target, and all 152 drifted frames report 'found'.
 
@@ -6599,6 +6629,44 @@ Source: [examples/poc_periodic_video_boundary.py](https://github.com/furuse-kazu
 This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_periodic_video_boundary)
 
 Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/window/moving_average_window.html) · [`perpetual_loop`](https://furuse.work/ops/generative/loop/perpetual_loop.html) · [`perpetual_loop_seam`](https://furuse.work/ops/generative/loop/perpetual_loop_seam.html) · [`three_frame_difference`](https://furuse.work/ops/videostream/motion/three_frame_difference.html)
+
+## No.2026.305 —— Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels
+
+Three indoor sequences of LASIESTA (Universidad Politécnica de Madrid, CC BY-SA 4.0; 352x288, 250-300 frames, per-pixel ground truth on every frame) are run through the new opsmv operators. create_bg_esti and run_bg_esti estimate a per-pixel Kalman background, opening_seg drops small blobs, and the F-measure is counted as in CDnet (all frames summed, contour pixels excluded). Parameters are chosen on I_SI_01 only and carried to I_OC_01 and I_OC_02. F-measure: Fullseye 0.890 / 0.878, OpenCV MOG2 (colour and shadow detection, varThreshold chosen on the same sequence) 0.987 / 0.884. The single-channel per-pixel Kalman loses by 0.10 on I_OC_01 and roughly ties on I_OC_02. Because run_bg_esti slows the update under the foreground, a blob that once became foreground through a floor reflection stays as a ghost to the end. Absorbing into the background, with update_bg_esti, only the blobs whose centroid has not moved for 8 frames raises I_OC_01 from 0.794 to 0.890 (precision 0.681 to 0.830) and changes nothing on I_OC_02 (0.881 to 0.878). The MOG2 background is closer to the ground-truth background than give_bg_esti (RMS 0.4 against 2.3-3.1 on 0-255). Tracking: blob centroids are followed by a constant-velocity filter_kalman with a 99% NIS gate, and blobs that drop below half their usual area are treated as partly hidden and not used for the update. On I_OC_01 the 26 frames behind a pillar are bridged by prediction alone and the person is picked up again under the same track number (5.7 px error at re-acquisition, median 7.7 px on visible frames); nearest-neighbour association without prediction loses him at the pillar. Limit: on I_OC_02 the person turns round outside the right edge; the heading from atan2_image on the ground-truth centroids changes by 165 degrees, the constant-velocity prediction leaves the frame, and the Kalman tracker starts a new track. filter_kalman matches cv2.KalmanFilter to 1.8e-12 over 1,000 frames with 3 of every 17 measurements missing, and the mean NIS under the true model is 1.99. In fairness: the tracker's design (grouping fragments within 6 px, starting from blobs seen in two consecutive frames, treating the left and right edges as occluders) was settled while looking at all three sequences.
+
+[![Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png)
+
+*↑ **Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels** ―― Real LASIESTA I_OC_01 footage. Sky blue: filter_kalman positions updated by measurements; orange: the 26 frames behind the pillar carried by the constant-velocity prediction alone; vermilion: nearest-neighbour association without prediction (lost at the pillar); white dots: ground-truth centroids.*
+
+[![I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)
+
+*↑ The measurement ―― I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。 (figure labels are in Japanese; the numbers are the same)*
+
+[![I_OC_01 の第 151 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01.png)
+
+*↑ I_OC_01 の第 151 コマ。*
+
+[![I_OC_02 の第 111 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02.png)
+
+*↑ I_OC_02 の第 111 コマ。*
+
+[![I_OC_01 の背景。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background.png)
+
+*↑ I_OC_01 の背景。*
+
+[![真値の物体が見えているコマだけを打った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error.png)
+
+*↑ 真値の物体が見えているコマだけを打った。*
+
+```
+py -3.11 examples/poc_real_bg_kalman_tracking.py
+```
+
+Source: [examples/poc_real_bg_kalman_tracking.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_bg_kalman_tracking.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking)
+
+Ops used (notes): [`atan2_image`](https://furuse.work/ops/mv/gray/atan2_image.html) · [`create_bg_esti`](https://furuse.work/ops/mv/tracking/create_bg_esti.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`filter_kalman`](https://furuse.work/ops/mv/tracking/filter_kalman.html) · [`give_bg_esti`](https://furuse.work/ops/mv/tracking/give_bg_esti.html) · [`opening_seg`](https://furuse.work/ops/mv/morphology/opening_seg.html) · [`run_bg_esti`](https://furuse.work/ops/mv/tracking/run_bg_esti.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html) · [`update_bg_esti`](https://furuse.work/ops/mv/tracking/update_bg_esti.html)
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 

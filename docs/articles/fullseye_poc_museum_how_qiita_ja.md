@@ -852,7 +852,7 @@ py -3.11 tools/fetch_walnut_cbct.py && py -3.11 examples/poc_real_walnut_cbct.py
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 
-2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 21 点はその実演です。
+2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 22 点はその実演です。
 
 同時に、時間方向ならではの罠も出ました。フレーム格子への丸めは必ず遅らせ、画素の面積は合体を早める。誤リンクには向きの逆な 2 種類があり、誤り率 1 本では拡散係数がどちらへ外れるか決まらない。テンプレート追跡は見失うより先に静かにずれ、ずれた 152 フレーム全部が「見つけた」と報告する。
 
@@ -1671,6 +1671,44 @@ py -3.11 examples/poc_periodic_video_boundary.py
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_periodic_video_boundary)
 
 使用 op(ノートへ): [`moving_average_window`](https://furuse.work/ops/videostream/window/moving_average_window.html) · [`perpetual_loop`](https://furuse.work/ops/generative/loop/perpetual_loop.html) · [`perpetual_loop_seam`](https://furuse.work/ops/generative/loop/perpetual_loop_seam.html) · [`three_frame_difference`](https://furuse.work/ops/videostream/motion/three_frame_difference.html)
+
+## No.2026.305 —— 実写の固定カメラで人を切り出し、柱の裏をカルマン予測で通り抜ける ―― 画素ごとのカルマン背景と MOG2 を真値の F 値で比べる
+
+LASIESTA(Universidad Politécnica de Madrid、CC BY-SA 4.0)の屋内 3 本(352×288、250〜300 コマ、全コマに画素ごとの真値)で、opsmv の新しい op を通した。`create_bg_esti` / `run_bg_esti` で画素ごとのカルマン背景を推定し、`opening_seg` で細かい塊を落とし、CDnet と同じ数え方(輪郭の灰色を除く全コマの和)で F 値を出した。パラメータは I_SI_01 だけで選び、I_OC_01 / I_OC_02 に持ち込んだ。★F 値: Fullseye 0.890 / 0.878、OpenCV の MOG2(色と影の判定つき、同じ列で varThreshold を選んだ)0.987 / 0.884。灰色 1 枚の画素ごとのカルマンは I_OC_01 で 0.10 負け、I_OC_02 はほぼ並ぶ。★`run_bg_esti` は前景の画素の更新を弱めるので、床の反射で一度前景になった塊が最後まで「幽霊」として残る。重心が 8 コマ動かない塊だけを `update_bg_esti` で背景へ取り込むと、I_OC_01 の F は 0.794 → 0.890(適合率 0.681 → 0.830)。I_OC_02 では差が出ない(0.881 → 0.878)。`give_bg_esti` の背景は MOG2 の方が真値の背景に近い(RMS 0.4 対 2.3〜3.1、0〜255)。★追跡: 塊の重心を等速モデルの `filter_kalman` で追い、99 % の NIS の門で対応づけ、面積が半分を切った塊は「一部が隠れた」として更新に使わない。I_OC_01 では柱の裏の 26 コマを予測だけでつなぎ、同じ番号のまま拾い直した(拾い直した時の誤差 5.7 画素、見えているコマの誤差の中央値 7.7 画素)。予測しない最近傍は柱で見失う。★限界: I_OC_02 では人が画面の右の外で折り返す。真値の重心から `atan2_image` で向きを出すと、隠れる前と後で 165° 変わる。等速の予測は画面の外へ出ていき、カルマンは新しい番号で拾い直す。★`filter_kalman` は 1000 コマ(観測の欠け 3/17)で `cv2.KalmanFilter` と 1.8e-12 で一致、真のモデルの下で NIS の平均は 1.99。正直に: 追跡の作り(割れた体を 6 画素でまとめる・2 コマ続けて見えた塊から始める・左右の縁を遮蔽と扱う)は 3 本を見ながら決めた。
+
+[![実写の固定カメラで人を切り出し、柱の裏をカルマン予測で通り抜ける ―― 画素ごとのカルマン背景と MOG2 を真値の F 値で比べる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png)
+
+*↑ **実写の固定カメラで人を切り出し、柱の裏をカルマン予測で通り抜ける ―― 画素ごとのカルマン背景と MOG2 を真値の F 値で比べる** ―― LASIESTA I_OC_01 の実写。空色 = filter_kalman が観測で更新した軌跡、橙 = 柱の裏 26 コマを等速の予測だけで進めた区間、朱 = 予測しない最近傍(柱で見失う)、白点 = 真値の重心。*
+
+[![I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)
+
+*↑ 測定の図 ―― I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。*
+
+[![I_OC_01 の第 151 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01.png)
+
+*↑ I_OC_01 の第 151 コマ。*
+
+[![I_OC_02 の第 111 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02.png)
+
+*↑ I_OC_02 の第 111 コマ。*
+
+[![I_OC_01 の背景。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background.png)
+
+*↑ I_OC_01 の背景。*
+
+[![真値の物体が見えているコマだけを打った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error.png)
+
+*↑ 真値の物体が見えているコマだけを打った。*
+
+```
+py -3.11 examples/poc_real_bg_kalman_tracking.py
+```
+
+ソース: [examples/poc_real_bg_kalman_tracking.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_bg_kalman_tracking.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking)
+
+使用 op(ノートへ): [`atan2_image`](https://furuse.work/ops/mv/gray/atan2_image.html) · [`create_bg_esti`](https://furuse.work/ops/mv/tracking/create_bg_esti.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`filter_kalman`](https://furuse.work/ops/mv/tracking/filter_kalman.html) · [`give_bg_esti`](https://furuse.work/ops/mv/tracking/give_bg_esti.html) · [`opening_seg`](https://furuse.work/ops/mv/morphology/opening_seg.html) · [`run_bg_esti`](https://furuse.work/ops/mv/tracking/run_bg_esti.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html) · [`update_bg_esti`](https://furuse.work/ops/mv/tracking/update_bg_esti.html)
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 

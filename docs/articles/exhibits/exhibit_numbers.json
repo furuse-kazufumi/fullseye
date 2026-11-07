@@ -1212,6 +1212,14 @@
   "poc_real_walnut_cbct": {
    "accessioned": "2026-11-08",
    "no": "2026.304"
+  },
+  "poc_real_bg_kalman_tracking": {
+   "accessioned": "2026-11-08",
+   "no": "2026.305"
+  },
+  "poc_real_grain_skiz": {
+   "accessioned": "2026-11-08",
+   "no": "2026.306"
   }
  },
  "retired": {
