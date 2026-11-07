@@ -20046,6 +20046,23 @@
     "hi": "वास्तविक वैज्ञानिक data file पढ़ना",
     "fr": "Lire de vrais fichiers de données scientifiques"
    }
+  },
+  {
+   "id": "poc_real_typewritten_ocr",
+   "group": "wing_industrial",
+   "media": "01_reading.png",
+   "motion": false,
+   "thumb_src": "01_reading.png",
+   "label": {
+    "ja": "1943 年のタイプ打ちの報告を古典 OCR で読む",
+    "en": "Reading a 1943 typewritten report with classical OCR",
+    "zh": "用经典 OCR 读取 1943 年的打字报告",
+    "tw": "用經典 OCR 讀取 1943 年的打字報告",
+    "ko": "1943년 타자 보고서를 고전 OCR로 읽기",
+    "de": "Einen Schreibmaschinenbericht von 1943 mit klassischer OCR lesen",
+    "hi": "1943 की टाइप की गई रिपोर्ट को क्लासिकल OCR से पढ़ना",
+    "fr": "Lire un rapport dactylographié de 1943 par OCR classique"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

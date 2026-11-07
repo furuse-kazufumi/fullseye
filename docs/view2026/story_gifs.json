@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 205,
+  "target_count": 206,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -34637,6 +34637,194 @@
       "alt": {
         "ja": "SDSS r の NGC 2420(北が上)。青=star_detect の検出、緑=SDSS の星表の星(15〜20 等、飽和なし)で 1.0″ 以内に対応、赤=対応なし。星団の中心は SDSS の自動測光が混み合いで星表に載せていないので採点の外(検出の青だけが並ぶ)。",
         "en": "Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed"
+      }
+    },
+    "poc_real_typewritten_ocr": {
+      "representative": "01_reading.png",
+      "status": "gif",
+      "selected": [
+        "01_reading.png",
+        "02_rotation.png",
+        "03_slant.png",
+        "04_gap_sweep.png",
+        "05_classifiers.png",
+        "06_lexicon.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_typewritten_ocr/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_reading.png",
+              "content_box": [
+                0,
+                217,
+                720,
+                255
+              ]
+            },
+            {
+              "file": "02_rotation.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_slant.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_gap_sweep.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_classifiers.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.985795
+            },
+            {
+              "file": "06_lexicon.png",
+              "content_box": [
+                0,
+                251,
+                720,
+                187
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.84375
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 269337,
+          "color_mad": [
+            0.6995,
+            0.0314,
+            0.0539,
+            0.0239,
+            0.0461,
+            0.0356
+          ],
+          "max_color_mad": 0.6995,
+          "source_sha256": "08eb7ea146eeaba5c6b414394fbeee332b19b5a9cdc3a101a187df3ec15d87f8"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_typewritten_ocr/story.en.gif",
+          "frames": [
+            {
+              "file": "01_reading.png",
+              "content_box": [
+                0,
+                217,
+                720,
+                255
+              ]
+            },
+            {
+              "file": "02_rotation.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_slant.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_gap_sweep.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_classifiers.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.985795
+            },
+            {
+              "file": "06_lexicon.png",
+              "content_box": [
+                0,
+                251,
+                720,
+                187
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.84375
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 269337,
+          "color_mad": [
+            0.6995,
+            0.0314,
+            0.0539,
+            0.0239,
+            0.0461,
+            0.0356
+          ],
+          "max_color_mad": 0.6995,
+          "source_sha256": "f195bc899078ff124341823efe01489f91450c5176f11a22e41cb0160e0ae1a7"
+        }
+      },
+      "reason": null,
+      "cover": "01_reading.png",
+      "still": "articles/assets/poc/poc_real_typewritten_ocr/01_reading.png",
+      "alt": {
+        "ja": "NACA TN 898 の 5 頁(試験頁)。箱 = segment_characters の字、下の字 = k-NN の読み。○青 = 正、×橙 = 誤、灰 = 字数が書き起こしと合わず採点の外。",
+        "en": "Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 97-98 %, and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed"
       }
     }
   }

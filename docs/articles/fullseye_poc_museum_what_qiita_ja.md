@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **142 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **143 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 46 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 47 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -669,6 +669,8 @@ fullseye は OCR の前処理までで止まり「どこに文字があるか」
 [![文字はどこにあるか、を学習なしで ―― 描いた文字を真値に、ストローク幅の検出器を採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene.png)
 
 *↑ **文字はどこにあるか、を学習なしで ―― 描いた文字を真値に、ストローク幅の検出器を採点する** ―― fullseye は OCR の前処理までで止まり「どこに文字があるか」を出す層が無かった。認識器(学習済みモデル)は載せない方針なので、文字の幾何 ―― ストロークの幅がほぼ一定 ―― だけで領域を出す古典(Stroke Width Transform、Epshtein 2010)を 3 op にし、自分でフォント描画した文字(インク画素が 1 px 単位で既知)で採点した図。真値は 3 つ: 幅 w の矩形ストロークで SWT = w が全画素で厳密(エッジを文字側の内側境界画素と定め、幅 = 向かい合う境界画素の中心間距離 + 1 という規約で整数になる)、2 倍拡大で中央値 5 → 10、描いたインクのうち候補矩形に入った割合(再現率)。Latin は size ≥ 32 でインク再現率 80〜90 %、CJK(漢字・かな)は 60〜79 %、矩形の精度は約 50 %(矩形は字の余白を含む)。文字の大きさ 6 段 × 雑音 4 段の表で、落ちるのは雑音でなく小さい字(size 16 の落ち込みは 12 より低く未解明として印字)。CJK フォントが無い環境ではラテン文字だけで回り、その旨を印字する。*
+
+用語: OCR — 画像に写った文字を切り出して字種に分類し、文字列として読み取る処理。
 
 [![真値は描いたインク画素。再現率 = インクのうち候補矩形に入った割合。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin.png)
 
@@ -1482,6 +1484,8 @@ py -3.11 examples/poc_symbol_part_dpm.py
 
 *↑ **ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる** ―― 包装に CIJ で打つ 5x7 ドットのロット番号・期限と、熱転写の線の文字を合成し、古典の OCR(k 最近傍 + 区画濃度と射影の 88 次元の特徴量、学習の分布から決めた棄却)で読んだ。字種は 40 字、学習の型は書体ごとに 3840 個。きれいな印字は両方の書体で全件読め、切り出しの外接箱は真値と IoU 1.00。字種の外の '#' は '?' になり、別の字に化けない。13 字の行の可読性の POD は、ドットで d90 10.70 px・d90/95 10.40 px、線の書体で d90 11.62 px(字高 24 px)。字高の h90 は 9.61 px。誤読は別に数えた。d90 までのぼけでは誤読 0 行、直径 12.67 px では読めた 2 行に対して誤読 18 行、16.0 px では 6/6 行が誤読になる。ロット番号の誤読は回収の範囲を取り違える事故になるので、読めた率と誤読率を 1 つにしない。*
 
+用語: OCR — 画像に写った文字を切り出して字種に分類し、文字列として読み取る処理。
+
 [![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/02_lot_ocr_levels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/02_lot_ocr_levels.png)
 
 *↑ 測定の図*
@@ -1495,6 +1499,46 @@ py -3.11 examples/poc_symbol_lot_ocr.py
 この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_symbol_lot_ocr)
 
 使用 op(ノートへ): [`capture_degrade`](https://furuse.work/ops/symbol/symbol_capture/capture_degrade.html) · [`ocr_classify`](https://furuse.work/ops/symbol/ocr/ocr_classify.html) · [`ocr_features`](https://furuse.work/ops/symbol/ocr/ocr_features.html) · [`ocr_font`](https://furuse.work/ops/symbol/ocr/ocr_font.html) · [`ocr_read_line`](https://furuse.work/ops/symbol/ocr/ocr_read_line.html) · [`ocr_read_trials`](https://furuse.work/ops/symbol/ocr/ocr_read_trials.html) · [`ocr_render_text`](https://furuse.work/ops/symbol/ocr/ocr_render_text.html) · [`ocr_score`](https://furuse.work/ops/symbol/ocr/ocr_score.html) · [`ocr_segment_line`](https://furuse.work/ops/symbol/ocr/ocr_segment_line.html) · [`ocr_train`](https://furuse.work/ops/symbol/ocr/ocr_train.html) · [`symbol_read_pod`](https://furuse.work/ops/symbol/read_pod/symbol_read_pod.html)
+
+## No.2026.301 —— 1943 年のタイプ打ちの報告を古典的な OCR で読む ―― 4 種の分類器は 97〜98 %、辞書は語彙を閉じないと正しい語を壊す
+
+NACA の技術報告 TN 898(1943 年、NASA NTRS、著作権の欄は Public Use Permitted)の 300 dpi の実スキャン 3 頁を、行の傾き・字の切り出し・分類器・辞書の op だけで読み、画像を見て 1 行ずつ書き起こした 100 行と照合した。同じ特徴・同じ学習頁(1・3 頁、1,997 字)・別の試験頁(5 頁、1,562 字)で、GMM 0.969・k-NN 0.981・MLP 0.966・SVM 0.973 の正解率になり、k-NN と GMM(1 成分)は scikit-learn / scipy で書いた同じ式と予測が全数一致した。タイプライターの印字は書体が 1 つで、製造現場の刻印やラベルの印字と同じく汚れ・かすれ・傾きが実物の側にある。★漏れの確認: 学習と試験は頁が別、試験の字と同じ特徴の字は学習に無い(最小距離 0.3)、標準化と主成分は学習だけで決め、学習のラベルを混ぜると k-NN は 0.051(多数派 e の割合 0.121 より下)まで落ちる。学習に無い字種(/、6、7、;、=、V)が試験に 10 字あり、正解率の上限は 0.994。取り違えの多い組は 7→v、9→e、/→y、S→s。★傾き: `text_line_orientation` は頁を既知の角度で回すと ±28° を 0.007° 以内で当て、範囲(±30°)の外の 35° は 13° 外れる。傾き直した頁の行の下端を最小二乗で結んだ別の検算は ±0.01° 以内。scikit-image の小さく反った頁(BSD-3)では 0.3° 前後外れる。★傾斜: `text_line_slant` は直立した印字を既知の角度でせん断すると 5° 以上を 1.3° 以内で当てるが、±2° 以内は 0 と答える(縦画が約 20 画素なので 2° のせん断は 1 画素に届かない)。★切り出し: `segment_characters` の字数が書き起こしと合った行は 100 行中 82 行(max_gap 3 が掃引の最良、0 で 55 行・5 で 27 行)。外れは、かすれて割れた字・余白の汚れ・字間の詰まった大文字の見出し。`select_characters` は高さで選ぶので、落とした 25 字は全部 . - / ( ) の句読点だった。★辞書: 編集距離 1 で直すと、試験頁の語も入れた閉じた語彙(許される文字列が先に分かる現場の場合)は 4 種とも語の正解を増やし(k-NN 310→324 / 336 語、壊した語 0)、行の完全一致は 15→22 / 34 行。学習頁の語だけの開いた語彙では、正しく読めた part を apart に、hole を holes に直して 4 種とも語の正解が減った(壊した語 22〜23)。GMM の事後確率が 0.999 未満の字を含む語だけ直すと壊さないが、直せるのは 1〜2 語にとどまる(GMM の誤り 49 字のうち事後確率で拾えるのは 13 字、誤りの中央値も 1.000)。★再現性: 同じ seed で 2 回学習すると 4 種ともモデルの配列と予測が完全一致した。正解の文字列は配布元に無いので、画像を見て書き起こした(数字の 1 はこのタイプライターに無く小文字の l で打ってあるので l と書いた)。PDF は repo に入れず取得道具で SHA-256 を固定し、CI では scikit-image の頁の章だけを回す。
+
+[![1943 年のタイプ打ちの報告を古典的な OCR で読む ―― 4 種の分類器は 97〜98 %、辞書は語彙を閉じないと正しい語を壊す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/01_reading_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/01_reading.png)
+
+*↑ **1943 年のタイプ打ちの報告を古典的な OCR で読む ―― 4 種の分類器は 97〜98 %、辞書は語彙を閉じないと正しい語を壊す** ―― NACA TN 898 の 5 頁(試験頁、1943 年のタイプ打ち、300 dpi)。箱 = segment_characters の字、下の字 = k-NN の読み。○青 = 正、×橙 = 誤、灰 = 字数が書き起こしと合わず採点の外。*
+
+用語: OCR — 画像に写った文字を切り出して字種に分類し、文字列として読み取る処理。; GMM — データの分布を複数の正規分布の重み付き和で表すモデル。クラスごとに当てはめると事後確率で分類できる。; k-NN — 学習データの中で特徴が最も近い k 個のラベルの多数決で分類する手法。; MLP — 入力と出力の間に非線形の中間層を持つ全結合のニューラルネットワーク。; SVM — クラスの間の余白(マージン)が最大になる境界で分類する手法。
+
+[![頁を既知の角度で回して当てた。タイプ打ちの頁は ±0.01° 以内、曲がった小さな頁は 0.3° 前後。範囲外の 35° は誤差 13.3°(NACA)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/02_rotation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/02_rotation.png)
+
+*↑ 測定の図 ―― 頁を既知の角度で回して当てた。タイプ打ちの頁は ±0.01° 以内、曲がった小さな頁は 0.3° 前後。範囲外の 35° は誤差 13.3°(NACA)。*
+
+[![直立した印字を既知の角度でせん断した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/03_slant_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/03_slant.png)
+
+*↑ 直立した印字を既知の角度でせん断した。*
+
+[![小さいと、かすれて割れた字が 2 字に、大きいと詰まった大文字が 1 字になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/04_gap_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/04_gap_sweep.png)
+
+*↑ 小さいと、かすれて割れた字が 2 字に、大きいと詰まった大文字が 1 字になる。*
+
+[![同じ特徴(区画濃度・射影・重心、主成分 24)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/05_classifiers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/05_classifiers.png)
+
+*↑ 同じ特徴(区画濃度・射影・重心、主成分 24)。*
+
+[![開いた語彙 = 学習頁の語 230 語、閉じた語彙 = 試験頁の語も入れた 380 語(許される文字列が先に分かる場合の上限)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/06_lexicon_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/06_lexicon.png)
+
+*↑ 開いた語彙 = 学習頁の語 230 語、閉じた語彙 = 試験頁の語も入れた 380 語(許される文字列が先に分かる場合の上限)。*
+
+```
+py -3.11 examples/poc_real_typewritten_ocr.py
+```
+
+ソース: [examples/poc_real_typewritten_ocr.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_typewritten_ocr.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_typewritten_ocr)
+
+使用 op(ノートへ): [`area_center_gray`](https://furuse.work/ops/mv/gray/area_center_gray.html) · [`classify_class_gmm`](https://furuse.work/ops/mv/classify/classify_class_gmm.html) · [`classify_class_knn`](https://furuse.work/ops/mv/classify/classify_class_knn.html) · [`classify_class_mlp`](https://furuse.work/ops/mv/classify/classify_class_mlp.html) · [`classify_class_svm`](https://furuse.work/ops/mv/classify/classify_class_svm.html) · [`create_lexicon`](https://furuse.work/ops/mv/classify/create_lexicon.html) · [`evaluate_class_gmm`](https://furuse.work/ops/mv/classify/evaluate_class_gmm.html) · [`gray_histo`](https://furuse.work/ops/mv/gray/gray_histo.html) · [`gray_projections`](https://furuse.work/ops/mv/gray/gray_projections.html) · [`lookup_lexicon`](https://furuse.work/ops/mv/classify/lookup_lexicon.html) · [`segment_characters`](https://furuse.work/ops/mv/text/segment_characters.html) · [`select_characters`](https://furuse.work/ops/mv/text/select_characters.html) · [`suggest_lexicon`](https://furuse.work/ops/mv/classify/suggest_lexicon.html) · [`text_line_orientation`](https://furuse.work/ops/mv/text/text_line_orientation.html) · [`text_line_slant`](https://furuse.work/ops/mv/text/text_line_slant.html) · [`train_class_gmm`](https://furuse.work/ops/mv/classify/train_class_gmm.html) · [`train_class_knn`](https://furuse.work/ops/mv/classify/train_class_knn.html) · [`train_class_mlp`](https://furuse.work/ops/mv/classify/train_class_mlp.html) · [`train_class_svm`](https://furuse.work/ops/mv/classify/train_class_svm.html)
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 

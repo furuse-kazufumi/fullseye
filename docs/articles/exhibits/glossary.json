@@ -763,5 +763,61 @@
   "en": "The highest frequency a sampling grid can represent: half a cycle per sample. Finer patterns fold back and appear as a different, coarser pattern.",
   "source": "Shannon, Communication in the Presence of Noise, Proc. IRE 37, 1949",
   "review": false
+ },
+ "ocr": {
+  "match": [
+   "OCR",
+   "optical character recognition",
+   "光学文字認識"
+  ],
+  "ja": "画像に写った文字を切り出して字種に分類し、文字列として読み取る処理。",
+  "en": "Reading the characters in an image as text, by segmenting them and classifying each glyph.",
+  "source": "Mori, Suen and Yamamoto, Proceedings of the IEEE 80(7), 1992",
+  "review": false
+ },
+ "gmm": {
+  "match": [
+   "GMM",
+   "Gaussian mixture model",
+   "混合正規分布"
+  ],
+  "ja": "データの分布を複数の正規分布の重み付き和で表すモデル。クラスごとに当てはめると事後確率で分類できる。",
+  "en": "A model of a distribution as a weighted sum of Gaussians; fitted per class, it classifies by posterior probability.",
+  "source": "Dempster, Laird and Rubin, Journal of the Royal Statistical Society B 39(1), 1977",
+  "review": false
+ },
+ "knn": {
+  "match": [
+   "k-NN",
+   "k-nearest neighbours",
+   "k-nearest neighbors",
+   "k 近傍法"
+  ],
+  "ja": "学習データの中で特徴が最も近い k 個のラベルの多数決で分類する手法。",
+  "en": "A classifier that labels a sample by majority vote among the k training samples with the closest features.",
+  "source": "Cover and Hart, IEEE Transactions on Information Theory 13(1), 1967",
+  "review": false
+ },
+ "mlp": {
+  "match": [
+   "MLP",
+   "multilayer perceptron",
+   "多層パーセプトロン"
+  ],
+  "ja": "入力と出力の間に非線形の中間層を持つ全結合のニューラルネットワーク。",
+  "en": "A fully connected neural network with one or more nonlinear hidden layers between input and output.",
+  "source": "Rumelhart, Hinton and Williams, Nature 323, 1986",
+  "review": false
+ },
+ "svm": {
+  "match": [
+   "SVM",
+   "support vector machine",
+   "サポートベクターマシン"
+  ],
+  "ja": "クラスの間の余白(マージン)が最大になる境界で分類する手法。",
+  "en": "A classifier that separates classes by the boundary with the largest margin between them.",
+  "source": "Cortes and Vapnik, Machine Learning 20(3), 1995",
+  "review": false
  }
 }

@@ -5,6 +5,14 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## Unreleased
+
+### 追加 — PoC「1943 年のタイプ打ちの報告を古典的な OCR で読む」(収蔵 2026.301)
+
+- `examples/poc_real_typewritten_ocr.py`: NACA TN 898(1943、NASA NTRS 19930084880、Public Use Permitted)の 300 dpi の実スキャン 3 頁を、`text_line_orientation` / `text_line_slant` / `segment_characters` / `select_characters` / `train_class_gmm`・`knn`・`mlp`・`svm` と `classify_class_*` / `create_lexicon` / `lookup_lexicon` / `suggest_lexicon` / `gray_histo` / `gray_projections` / `area_center_gray` で読み、画像を見て書き起こした 100 行と照合する。同じ特徴・学習 2 頁(1,997 字)・別の試験頁(1,562 字)で GMM 0.969 / k-NN 0.981 / MLP 0.966 / SVM 0.973、k-NN と GMM(1 成分)は scikit-learn / scipy と予測が全数一致。傾きは既知の回転を ±28° で 0.007° 以内、傾斜は 5° 以上を 1.3° 以内(±2° 以内は 0 と答える)、切り出しは 100 行中 82 行で字数が一致。辞書は閉じた語彙なら 4 種とも語の正解を増やし、開いた語彙では正しい語を壊して減らす。
+- PDF(12 MB)は repo に入れず `tools/fetch_naca_tn898.py` で取得して SHA-256 を固定(頁ごとの JPEG も照合)。CI では scikit-image の `page`(BSD-3-Clause)で傾きの章だけを回し、NACA の章は記録値を印字する。
+- 展示の用語集に OCR / GMM / k-NN / MLP / SVM を足した。
+
 ## 1.0.0 — 2026-11-06
 
 1.0.0。`CONTRIBUTING.md` の 1.0 の条件を満たしたので出す: 下の破壊的変更(1.0 前の修正)を出し切ったうえで、以後は「Versioning」の約束をメジャーを上げずに守る。文書の門(`docs/I18N.md`: `OP_CATALOG` と知識ガイド 17 本の英語・中国語)は PR #274 で満たした。0.9.0 の後に入った GPU 一式 7 本の統合もこの版に含む。
