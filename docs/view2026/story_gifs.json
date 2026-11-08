@@ -18,7 +18,7 @@
   "crop_title_band_fraction": 0.12,
   "min_laplacian_density": 0.0005,
   "min_content_fraction": 0.36,
-  "manual_thumbnail_spec_count": 31,
+  "manual_thumbnail_spec_count": 32,
   "entries": {
     "poc_phase_measuring_deflectometry": {
       "representative": "03_photo_vs_pmd.png",
@@ -32981,10 +32981,17 @@
               "file": "02_equipment_at_a_glance.png",
               "content_box": [
                 0,
-                65,
+                0,
                 720,
-                560
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_equipment_selection_map/08_equipment_samples_square.png",
+                "frame": null,
+                "crop": null,
+                "mode": "square",
+                "rendered": "view2026/thumbs/poc_equipment_selection_map.jpg"
+              }
             },
             {
               "file": "01_equipment_map.png",
@@ -33045,17 +33052,17 @@
             1600,
             1600
           ],
-          "bytes": 712174,
+          "bytes": 805786,
           "color_mad": [
-            0.3349,
+            0.5111,
             0.7573,
             0.3598,
             0.0317,
             0.0394,
-            0.3156
+            0.1151
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "cb6f9ab86aa78fc7c70efa16b28b8ce5048012fe65b2228bb1148decb519dcd1"
+          "source_sha256": "d17c9e3cfb0a4fdf213b918723bf00d8c83afdde43a8d2ae21e335ef871d7ad6"
         },
         "en": {
           "path": "articles/assets/poc/poc_equipment_selection_map/story.en.gif",
@@ -33064,10 +33071,17 @@
               "file": "02_equipment_at_a_glance.png",
               "content_box": [
                 0,
-                65,
+                0,
                 720,
-                560
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_equipment_selection_map/08_equipment_samples_square.png",
+                "frame": null,
+                "crop": null,
+                "mode": "square",
+                "rendered": "view2026/thumbs/poc_equipment_selection_map.jpg"
+              }
             },
             {
               "file": "01_equipment_map.png",
@@ -33128,18 +33142,25 @@
             1600,
             1600
           ],
-          "bytes": 712174,
+          "bytes": 805786,
           "color_mad": [
-            0.3349,
+            0.5111,
             0.7573,
             0.3598,
             0.0317,
             0.0394,
-            0.3156
+            0.1151
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "bf4b8ec2a47db6b5553638002a4d41006b51596735d9e150eb2666496c4846c6"
+          "source_sha256": "f5e341cf4b352ca5edc0f8621ab2652fb618a663eedcffd7f57689b390196f51"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_equipment_selection_map/08_equipment_samples_square.png",
+        "frame": null,
+        "crop": null,
+        "mode": "square",
+        "rendered": "view2026/thumbs/poc_equipment_selection_map.jpg"
       },
       "reason": null,
       "cover": "02_equipment_at_a_glance.png",

@@ -1550,7 +1550,7 @@ A task is given in natural language and an LLM uses only Fullseye's MCP server (
 
 Terms: MCP — An open protocol through which an AI application calls external tools and data: it hands the AI each tool's name, argument schema and results.; LLM — A large neural network trained on text that writes prose or code on request; a smaller one run on one's own computer is called a local LLM.
 
-[![ろうそくの汚れ・欠け(試験画像、塗り = 検出、輪郭 = 真値の欠陥)。欠陥の画像は欠陥の輪郭に触れたら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real.png)
+[![ろうそくの汚れ・欠け(試験画像、塗り = 検出、輪郭 = 真値の欠陥)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real.png)
 
 *↑ The measurement ―― ろうそくの汚れ・欠け(試験画像、塗り = 検出、輪郭 = 真値の欠陥)。欠陥の画像は欠陥の輪郭に触れたら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも寄せていない)。検出は表示のため 2 画素太らせた。出典表示: VisA candle (Zou et al., ECCV 2022), github.com/amazon-science/spot-diff, CC BY 4.0; gray + 4x4 mean downsampling (figure labels are in Japanese; the numbers are the same)*
 

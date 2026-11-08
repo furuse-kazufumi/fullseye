@@ -55,6 +55,7 @@ SPEC = [
     ("poc_polarization_specular", _P + "poc_polarization_specular/01_raw_polarizer_mosaic_720.jpg", None, None),
     ("poc_photoelasticity", _P + "poc_photoelasticity/03_load_and_isoclinics.gif", 0.45, (0.0, 0.0, 1.0)),
     ("poc_thermography_ndt", _P + "poc_thermography_ndt/02_depth_map_720.jpg", None, None),
+    ("poc_equipment_selection_map", _P + "poc_equipment_selection_map/08_equipment_samples_square.png", None, None),
     ("poc_motion_magnification", _P + "poc_motion_magnification/05_magnify_video.gif", 0.3, None),
     ("poc_table_tennis_bounce", _P + "poc_table_tennis_bounce/01_drop_test.gif", 0.5, None),
     ("poc_compound_eye", _P + "poc_compound_eye/02_compound_eye_superposition_720.jpg", None, None),

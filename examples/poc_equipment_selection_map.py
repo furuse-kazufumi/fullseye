@@ -2022,7 +2022,9 @@ def make_glance_square():
     from PIL import Image, ImageDraw
     T, L, B = 392, 16, 58                                      # 枠の一辺、上の三角の帯、下の札の帯(名前と札の 2 行)
     W_ = 2 * T + 24
-    im = Image.new("RGB", (W_, W_), (14, 18, 24))
+    # ★地は白: 目玉の動くサムネイル(story GIF)は、この図を 1 コマ目に全面に敷き、その上に進みの点(白地に濃い輪)を
+    #   描いて 1 コマずつ 256 色に減色する。暗い地だと白が色の表に残らず、まだの点が灰色に潰れた(目玉に足したときの検査)。
+    im = Image.new("RGB", (W_, W_), (255, 255, 255))
     d = ImageDraw.Draw(im)
     for n, key in enumerate(SUBJ_KEYS):
         t, gain = GLANCE_TILES[key]
@@ -2037,10 +2039,11 @@ def make_glance_square():
         im.paste(Image.fromarray(u), (x0, y0 + L))
         c = x0 + T // 2                                        # 欠陥の位置(絵の中心)を上の帯の三角で示す
         d.polygon([(c - 9, y0 + 1), (c + 9, y0 + 1), (c, y0 + L - 1)], fill=(230, 159, 0))
-        _text(d, (x0 + 4, y0 + L + h + 2), SUBJECTS[key]["name"], size=22, bold=True, box=(x0, y0, x0 + T, y0 + T))
+        _text(d, (x0 + 4, y0 + L + h + 2), SUBJECTS[key]["name"], size=22, bold=True, fill=(20, 24, 30),
+              box=(x0, y0, x0 + T, y0 + T))
         # ★凹みは広げてならした絵なので、陰影の実際の大きさを札に必ず添える(8 回目の確認)
         tag = "×%.3g" % gain + ("・ならし・陰影%.1f%%" % (100.0 * GLANCE_SHADE[key]) if key == "S2" else "")
-        _text(d, (x0 + 4, y0 + L + h + 30), tag, size=18, fill=(255, 214, 102), box=(x0, y0, x0 + T, y0 + T))
+        _text(d, (x0 + 4, y0 + L + h + 30), tag, size=18, fill=(170, 90, 0), box=(x0, y0, x0 + T, y0 + T))
     figs.save("equipment_samples_square", np.asarray(im),
               "ViEW のサムネイル用: 図 02 の見本 4 枚(線傷・浅い凹み・黒い焼け・白い PE 片)を 2×2 に並べた。札の × は"
               "地で割った濃淡の表示倍率。凹みは %.3g 倍に広げ判定の大きさでならした(雑音なしの陰影は最大 %.1f %%)。"
