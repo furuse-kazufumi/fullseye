@@ -1578,7 +1578,7 @@ Inspection equipment is usually chosen one component at a time, each shown at it
 
 [![Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png)
 
-*↑ **Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread** ―― For each flaw, one example image where the flaw is visible, and the best camera and lens under each of the six lights (a90/95 median and min-max over three seed sets). Shorter bars mean smaller flaws are found. Grey hatched = not found within the tested range; dashed = flips with the seed set. Synthetic test.*
+*↑ **Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread** ―― For each flaw, one example image where the flaw is visible, and the best camera and lens under each of the six lights (a90/95 median and min-max over three seed sets). Shorter bars mean smaller flaws are found. Grey hatched = not found within the tested range; dashed = flips with the seed set. The display gain is written under each example; the dent example is stretched 80 times and smoothed to the detection scale, so it looks clearer than it is (noise-free shading at most 0.8 %). Synthetic test.*
 
 Terms: SWIR — The short-wave infrared band, roughly around 1 to 3 µm, where material absorption can distinguish objects that look alike in visible light.; a90/95 — The flaw size at which the lower one-sided 95% confidence bound on the POD reaches 90%.
 
@@ -1612,7 +1612,7 @@ py -3.11 examples/poc_equipment_selection_map.py
 
 Source: [examples/poc_equipment_selection_map.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_equipment_selection_map.py)
 
-This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_equipment_selection_map)
+This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_equipment_selection_map)
 
 Ops used (notes): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`carbon_black_absorption`](https://furuse.work/ops/optics/matprop/carbon_black_absorption.html) · [`hyperspectral_band_weights`](https://furuse.work/ops/optics/spectral/hyperspectral_band_weights.html) · [`ingaas_photodiode_qe`](https://furuse.work/ops/optics/spectral/ingaas_photodiode_qe.html) · [`material_nir_absorption`](https://furuse.work/ops/optics/matprop/material_nir_absorption.html) · [`nir_model_info`](https://furuse.work/ops/optics/matprop/nir_model_info.html) · [`pod_ahat_fit`](https://furuse.work/ops/spc/pod/pod_ahat_fit.html) · [`pod_false_call`](https://furuse.work/ops/spc/pod/pod_false_call.html) · [`pod_from_ahat`](https://furuse.work/ops/spc/pod/pod_from_ahat.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 
@@ -7066,9 +7066,9 @@ The author's wish: "if possible, do it on a Japanese map". The bundled maps of e
 
 *↑ 幅の由来: {'lanes': 192, 'default': 375, 'width': 19}(width タグ / lanes × 車線幅 / 種別の既定)。*
 
-[![停止線:…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed.png)
+[![停止線: [(3.3, 'intersection'), (15.2, 'intersection'), (133.1, 'intersection'), (396.4, 'intersection'](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed.png)
 
-*↑ 停止線:…*
+*↑ 停止線: [(3.3, 'intersection'), (15.2, 'intersection'), (133.1, 'intersection'), (396.4, 'intersection'), (419.3, 'intersection'), (432.1, 'intersection'), (453.6, 'intersection')]*
 
 [![左の車線中心を通して走る車載カメラ(JP 法規パック): 赤で停止 → 2 秒で青 → 発進、一時停止では止まって確認。道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Proje](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)
 

@@ -1767,6 +1767,32 @@ def hero_capture(key, lk, lens, cam, seed=3, band_ratio=False):
     return img, CAMERAS[cam]["k"]
 
 
+def hero_shade(key, lk, lens, cam, seed=3):
+    """見本の欠陥が地に対して何割の濃淡を作るか(雑音なし)。欠陥あり と 欠陥なし(大きさ 1e-6 µm = 実質 0)の
+    同じ部位を雑音を足す前の電子数で撮り、差の最大を地の中央値で割る。★凹みの見本は 80 倍に広げ判定の大きさで
+    ならして見せるので、目で見える濃さを実際より強く見せる —— その実際の大きさを見本の下に書くための数(7 回目の確認)。"""
+    dims, size = HERO[key]
+    cfg = SUBJECTS[key]
+    out = []
+    for sz in (size, 1e-6):
+        st = SiteSet(key, 1, 0, seed)
+        st.sizes[:] = sz
+        st.fx[:] = 0.1 * cfg["fov"]
+        st.fy[:] = 0.05 * cfg["fov"]
+        st.jit[:] = 0.0
+        st.slopes[:] = SLOPE_DEG
+        saved = dict(SUBJECTS[key])
+        SUBJECTS[key].update(dict(dims, px=cfg["px"]))
+        try:
+            b = render_bases(st, lk, lens, make_lights(cfg["fov"], cfg["wd"]), "hero")
+        finally:
+            SUBJECTS[key].clear()
+            SUBJECTS[key].update(saved)
+        W = camera_weights(cam, cfg["na"], cfg["px"])
+        out.append(np.asarray(sample_camera(clean_electrons(b, key, cam, W, None), cam), float))
+    return float(np.abs(out[0] - out[1]).max() / max(float(np.median(out[1])), 1e-12))
+
+
 def _font(size, bold=False):
     from PIL import ImageFont
     p = figs._japanese_font_path(bold=bold, fail_closed=False) or figs._japanese_font_path(fail_closed=False)
@@ -1880,6 +1906,24 @@ def _mark(d, x0, y0, w, h):
     d.polygon([(c - 7, y0 + h + 9), (c + 7, y0 + h + 9), (c, y0 + h + 1)], fill=col)
 
 
+#: 図 02 で撮った見本の絵と表示倍率(正方形の見本の図が同じ絵を使う)。
+GLANCE_TILES = {}
+#: 凹みの見本の陰影(雑音なし、地に対する割合)。図 02 の見本の下と図の説明に書く。
+GLANCE_SHADE = {}
+
+
+def glance_gain_label(key, gain):
+    """見本の表示倍率の札。★凹みは「80 倍に広げ判定の大きさでならした」ことと、陰影の実際の大きさを必ず添える
+    (雑音がほぼ消えて、凹みが実際よりはっきり見える。7 回目の確認)。"""
+    if key == "S2":
+        if key not in GLANCE_SHADE:
+            lk, lens, cam, _r = GLANCE_SHOW[key]
+            GLANCE_SHADE[key] = hero_shade(key, lk, lens, cam)
+        return "表示 ×%.3g・判定の大きさでならした\n(凹みの陰影は最大 %.1f %%、目ではまず見えない)" % (
+            gain, 100.0 * GLANCE_SHADE[key])
+    return "表示 ×%.3g(地で割った濃淡を広げた)" % gain
+
+
 #: 媒体の図の見本: 傷が目で分かる組(最良とは限らない。モノクロで撮れる題材はモノクロ)。
 GLANCE_SHOW = {"S1": ("coax", "tele", "mono", False), "S2": ("dark10", "tele", "mono", False),
                "S3a": ("ring30", "normal", "mono", False), "S3b": ("dome", "tele", "hsi", True)}
@@ -1927,11 +1971,12 @@ def make_glance_figure(grid):
         t = np.asarray(Image.fromarray(t).resize((S, S * t.shape[0] // t.shape[1]), Image.Resampling.LANCZOS))
         im.paste(Image.fromarray(t), (x0, y0 + 38))
         _mark(d, x0, y0 + 38, t.shape[1], t.shape[0])
-        lab = "%s・%s" % (l_s[lk], cam_s[cam])
-        if ratio:
-            lab = "分光 1210 nm ÷ 両隣・表示 ×%.2g" % LAST_GAIN[0]
-        _text(d, (x0, y0 + 38 + t.shape[0] + 12), "見本: %s(%s %g µm)" % (lab, cfg["unit"], HERO[key][1]), size=15,
-              fill=(200, 208, 218))
+        gain = LAST_GAIN[0]
+        GLANCE_TILES[key] = (t, gain)
+        lab = "分光 1210 nm ÷ 両隣" if ratio else "%s・%s" % (l_s[lk], cam_s[cam])
+        lines = ["見本: %s(%s %g µm)" % (lab, cfg["unit"], HERO[key][1]), glance_gain_label(key, gain)]
+        _text(d, (x0, y0 + 38 + t.shape[0] + 10), "\n".join(lines), size=15, fill=(200, 208, 218),
+              box=(x0, y0 + 38, x0 + S + 14, y0 + 518))
         bx0, bx1 = x0 + S + 20, x0 + 690
         lo, hi = math.log10(cfg["size"][0]), math.log10(cfg["size"][1])
         xp = lambda v: bx0 + (math.log10(min(max(v, cfg["size"][0]), cfg["size"][1])) - lo) / (hi - lo) * (bx1 - bx0)
@@ -1965,8 +2010,42 @@ def make_glance_figure(grid):
               "ViEW の入口用: 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95"
               "(種の組 3 つの中央値と最小〜最大。どの組でも見つかるものだけ)。見つからない照明は灰色の斜線の全長の棒、"
               "種の組で揺れる照明は破線の全長の棒。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明"
-              "以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げた。"
-              "PE 片は分光の 1210 nm の帯を両隣で割った吸収の深さ)。")
+              "以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げ、"
+              "倍率は見本の下に書いた。PE 片は分光の 1210 nm の帯を両隣で割った吸収の深さ)。凹みの見本は %.3g 倍に広げて"
+              "判定の大きさでならしたので、実際よりはっきり見える(雑音なしの陰影は最大 %.1f %%)。"
+              % (GLANCE_TILES["S2"][1], 100.0 * GLANCE_SHADE["S2"]))
+
+
+def make_glance_square():
+    """ViEW のサムネイル用の正方形の図: 図 02 の見本 4 枚を 2×2 に。★横長の図 02 を真ん中で正方形に切ると、線傷の
+    見本は右の端しか残らず傷の線が消えた(7 回目の確認)。絵は図 02 と同じもの(表示倍率も同じ、札に書く)。"""
+    from PIL import Image, ImageDraw
+    T, L, B = 392, 16, 36                                      # 枠の一辺、上の三角の帯、下の札の帯
+    W_ = 2 * T + 24
+    im = Image.new("RGB", (W_, W_), (14, 18, 24))
+    d = ImageDraw.Draw(im)
+    for n, key in enumerate(SUBJ_KEYS):
+        t, gain = GLANCE_TILES[key]
+        x0, y0 = 8 + (n % 2) * (T + 8), 8 + (n // 2) * (T + 8)
+        h = T - L - B
+        # 枠を覆う大きさに縮めて、はみ出した側を中央で切る(欠陥は絵の中心。横長の線傷の絵も枠いっぱいに)
+        sc = max(T / t.shape[1], h / t.shape[0])
+        u = np.asarray(Image.fromarray(t).resize((max(T, round(t.shape[1] * sc)), max(h, round(t.shape[0] * sc))),
+                                                 Image.Resampling.LANCZOS))
+        cy, cx = (u.shape[0] - h) // 2, (u.shape[1] - T) // 2
+        u = u[cy:cy + h, cx:cx + T]
+        im.paste(Image.fromarray(u), (x0, y0 + L))
+        c = x0 + T // 2                                        # 欠陥の位置(絵の中心)を上の帯の三角で示す
+        d.polygon([(c - 9, y0 + 1), (c + 9, y0 + 1), (c, y0 + L - 1)], fill=(230, 159, 0))
+        _text(d, (x0 + 4, y0 + L + h + 4), SUBJECTS[key]["name"], size=22, bold=True, box=(x0, y0, x0 + T, y0 + T))
+        tag = "×%.3g" % gain + ("・ならし" if key == "S2" else "")
+        _text(d, (x0 + T - 8 - d.textlength(tag, font=_font(20)), y0 + L + h + 6), tag, size=20,
+              fill=(255, 214, 102), box=(x0, y0, x0 + T, y0 + T))
+    figs.save("equipment_samples_square", np.asarray(im),
+              "ViEW のサムネイル用: 図 02 の見本 4 枚(線傷・浅い凹み・黒い焼け・白い PE 片)を 2×2 に並べた。札の × は"
+              "地で割った濃淡の表示倍率。凹みは %.3g 倍に広げ判定の大きさでならした(雑音なしの陰影は最大 %.1f %%)。"
+              "PE 片は分光の 1210 nm の帯を両隣で割った吸収の深さ。合成の試験。"
+              % (GLANCE_TILES["S2"][1], 100.0 * GLANCE_SHADE["S2"]))
 
 
 def make_hero_figure():
@@ -1998,11 +2077,12 @@ def make_hero_figure():
               "0.25 mm 下の径 500 µm の黒い焼け、径 1.5 mm の PE の破片。橙の三角 = 欠陥の位置、見本は視野の中心の近く)。"
               "光子・読み出しの雑音つき。表示は地(中央値)で割った濃淡を行ごとに同じ倍率で広げた(線傷 0.35 倍、凹み 80 倍、"
               "焼けと PE 3 倍、縞照明 0.5 倍。画像ごとの引き伸ばしはしない)ので、照明の間で濃淡の大きさを比べられる。凹みの行は"
-              "判定と同じ大きさ(凹みの σ/2)でならして表示した —— 凹みの陰影は 0.5 % 程度で、目ではまず見えない。縞照明は 16 コマのうちの 1 コマで、縞が 2 周期入るように視野を"
+              "判定と同じ大きさ(凹みの σ/2)でならして表示した —— 凹みの陰影は暗視野で最大 %.1f %% で、目ではまず見えない。縞照明は 16 コマのうちの 1 コマで、縞が 2 周期入るように視野を"
               "広げた(行の見出しの視野 ×k。線傷と樹脂は 10 倍に広げても縞の周期の方が長い)。線傷は同軸と高角リングでは研磨の筋と同じ暗線に、低角と"
               "暗視野では明るい線になる。凹みは斜光でかすかな陰影、縞照明で縞の曲がりとして見える。ドームは視野の中心の近くでは"
               "凹みを写さない —— 斜面にドームの穴の縁が映る位置(中心から 60〜80 mm)でだけ明るい塊になるので、視野全体の POD は"
-              "90 % に届かない(章 5 の (d))。PE の破片は可視ではどの照明でも写らない。")
+              "90 %% に届かない(章 5 の (d))。PE の破片は可視ではどの照明でも写らない。"
+              % (100.0 * hero_shade("S2", "dark10", "tele", "mono")))
 
 
 def make_camera_figure():
@@ -2266,6 +2346,7 @@ def _main():
         make_real_table(real)
         n = make_video(grid, cheap)
         print("動画 %d コマ" % n)
+        make_glance_square()                                   # 08: 番号を動かさないよう最後に
     assert not figs.errors(), figs.errors()
     print("\n門 %d 件中 NG %d 件" % (len(GATES), len(FAILS)))
     if FAILS:

@@ -182,6 +182,39 @@ _OPEN, _CLOSE = "(（[「『", ")）]」』"
 _ABBREV = ("e.g", "i.e", "et al", "Fig", "fig", "Figs", "vs", "U.S", "cf", "Eq", "eq", "No", "approx", "etc")
 
 
+#: 括弧の手前がこれより短いと、括弧の手前で切った説明は中身が無い(「停止線:…」、7 回目の確認)。
+_MIN_HEAD = 20
+
+
+def _scan_sentence(t: str, n: int):
+    """``t[:n]`` を 1 回なめて、括弧の外の文末(「。」と「. 」の位置の並び)と、括弧の外で開いた括弧の
+    [開いた位置, 閉じた直後の位置 or None] の並びを返す。「. 」は頭文字と略語の後では文末にしない。"""
+    ends = {"。": [], ". ": []}
+    groups = []
+    depth = 0
+    for i, ch in enumerate(t[:n]):
+        if ch in _OPEN:
+            if depth == 0:
+                groups.append([i, None])
+            depth += 1
+        elif ch in _CLOSE and depth > 0:
+            depth -= 1
+            if depth == 0:
+                groups[-1][1] = i + 1
+        elif depth == 0 and i > 0:
+            if ch == "。":
+                ends["。"].append(i + 1)
+            elif ch == "." and t[i + 1:i + 2] == " ":
+                head = t[:i]
+                word = head.split(" ")[-1]
+                initial = len(word) == 1 and word.isupper()
+                abbrev = any(head.endswith(a) and (len(head) == len(a) or not head[-len(a) - 1].isalnum())
+                             for a in _ABBREV)
+                if not initial and not abbrev:
+                    ends[". "].append(i + 1)
+    return ends, groups
+
+
 def _first_sentence(text: str, limit: int = 150) -> str:
     """説明の**最初の 1 文**だけを返す(記事の肥大を抑える)。
 
@@ -189,39 +222,31 @@ def _first_sentence(text: str, limit: int = 150) -> str:
     切っていて、「見本(上から … PE の破片。」のように括弧が閉じないまま、括弧の後ろの説明(表示倍率など)が記事から
     消えていた。「. 」は頭文字("E. ")と略語(e.g. / et al. / Fig. / vs. / U.S. など)の後では文末にしない。
     括弧の外の文末が 2 倍の長さまでに無ければ、長さで切るが**括弧の中では切らない**(開いた括弧の手前で切って「…」)。
+    ★ただし括弧の手前が ``_MIN_HEAD`` 字より短いときは、手前で切ると中身が無くなる(「停止線: [(3.3, …)]」が
+    「停止線:…」になった、7 回目の確認)。そのときは括弧を閉じるまで含め、その後ろの括弧の外の次の文末まで
+    (3 倍の長さまで)を返す。3 倍までに括弧が閉じなければ、手前で切るしかない(中身の無い説明はテストが拾う)。
     """
     t = (text or "").strip()
-    ends = {"。": None, ". ": None}
-    depth, opens = 0, []
-    for i, ch in enumerate(t[:2 * limit]):
-        if ch in _OPEN:
-            if depth == 0:
-                opens.append(i)
-            depth += 1
-        elif ch in _CLOSE and depth > 0:
-            depth -= 1
-        elif depth == 0 and i > 0:
-            if ch == "。" and ends["。"] is None:
-                ends["。"] = i + 1
-            elif ch == "." and t[i + 1:i + 2] == " " and ends[". "] is None:
-                head = t[:i]
-                word = head.split(" ")[-1]
-                initial = len(word) == 1 and word.isupper()
-                abbrev = any(head.endswith(a) and (len(head) == len(a) or not head[-len(a) - 1].isalnum())
-                             for a in _ABBREV)
-                if not initial and not abbrev:
-                    ends[". "] = i + 1
+    far = 3 * limit
+    ends, groups = _scan_sentence(t, far)
     for mark in ("。", ". "):
-        if ends[mark] is not None:
-            return t[:ends[mark]].strip()
+        first = [e for e in ends[mark] if e <= 2 * limit]
+        if first:
+            return t[:first[0]].strip()
     if len(t) <= limit:
         return t
-    cut = t[:limit]
-    inside = sum(cut.count(c) for c in _OPEN) > sum(cut.count(c) for c in _CLOSE)
-    before = [o for o in opens if o < limit]
-    if inside and before:
-        cut = t[:before[-1]]                                       # 括弧の中では切らない(手前が短くても)
-    return cut.rstrip() + "…"
+    inside = [g for g in groups if g[0] < limit and (g[1] is None or g[1] > limit)]
+    if not inside:
+        return t[:limit].rstrip() + "…"
+    o, close = inside[0]
+    if len(t[:o].strip()) >= _MIN_HEAD or close is None:
+        return t[:o].rstrip() + "…"                            # 括弧の中では切らない
+    later = sorted(e for m in ends.values() for e in m if e >= close)
+    if later:
+        return t[:later[0]].strip()
+    if len(t) <= far:
+        return t
+    return t[:close].rstrip() + "…"
 
 
 def _thumb(poc_id: str, file: str) -> str:

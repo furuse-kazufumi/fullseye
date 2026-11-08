@@ -5,6 +5,9 @@
 括弧の閉じないまま切れ、括弧の後ろの説明(表示倍率など)が記事から消えていた。長さで切るときも括弧の中で切っていた
 (「停止線: [(3.3, 'intersection'), …」)。ここでは切り方そのものと、生成済みの記事(展示館の棟と博物館の記事)の
 説明の行に括弧の閉じないものが無いことを確かめる。
+
+7 回目の確認: 括弧の中で切らない直しで、括弧の手前が短い説明が「停止線:…」だけになった(運転の PoC の図 07、
+4 記事と画像の alt)。括弧の手前が短いときは括弧を閉じるまで含める。中身の無い説明の行も検出する。
 """
 from __future__ import annotations
 
@@ -14,6 +17,8 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
+
+import re  # noqa: E402
 
 import gen_wingpoc_gallery as G  # noqa: E402
 
@@ -53,6 +58,50 @@ def test_length_cut_never_lands_inside_brackets():
     t = "both readings recover the radius to within half a voxel (" + "x" * 400 + ")"
     out = G._first_sentence(t)
     assert out.endswith("…") and _balanced(out), out
+
+
+def test_short_head_keeps_the_bracket_instead_of_an_empty_stub():
+    t = ("停止線: [(3.3, 'intersection'), (15.2, 'intersection'), (133.1, 'intersection'), (396.4, 'intersection'), "
+         "(419.3, 'intersection'), (432.1, 'intersection'), (453.6, 'intersection')]")
+    assert len(t) > 150
+    assert G._first_sentence(t) == t                           # 括弧を閉じるまで(全文が 3 倍の長さに収まる)
+    t2 = "短い見出し(" + "あ" * 200 + ")の後ろの文。次の文。"
+    assert G._first_sentence(t2) == "短い見出し(" + "あ" * 200 + ")の後ろの文。"
+    t3 = "見出しが二十字以上ある長めの説明の文で、ここから括弧(" + "い" * 200 + ")"
+    out = G._first_sentence(t3)
+    assert out == "見出しが二十字以上ある長めの説明の文で、ここから括弧…", out
+
+
+#: 「…」で終わる説明は、「…」の手前にこれだけの字が無いと中身が無い(「停止線:…」)。
+MIN_CUT_CAPTION = 20
+
+
+def _body(text):
+    """説明の行 / alt から、見出しの「X ―― 」と強調の ** を外した本文。"""
+    text = text.replace("**", "")
+    return text.split("―― ")[-1].strip()
+
+
+def test_generated_articles_have_no_empty_cut_captions():
+    files = (glob.glob(os.path.join(ROOT, "docs", "articles", "exhibits", "wingpoc.*.md"))
+             + glob.glob(os.path.join(ROOT, "docs", "articles", "fullseye_poc_museum*_qiita_*.md")))
+    assert len(files) >= 4, files
+    alt = re.compile(r"\[!\[(.*?)\]\(")
+    n, bad = 0, []
+    for f in files:
+        with open(f, encoding="utf-8") as fh:
+            for k, ln in enumerate(fh, 1):
+                texts = []
+                if ln.startswith("*↑"):
+                    texts.append(ln.rstrip().rstrip("*")[2:])
+                texts += alt.findall(ln)
+                for tx in texts:
+                    n += 1
+                    b = _body(tx)
+                    if b.endswith("…") and len(b[:-1].strip()) < MIN_CUT_CAPTION:
+                        bad.append((os.path.basename(f), k, tx[:80]))
+    assert n >= MIN_CAPTION_LINES, n
+    assert not bad, bad
 
 
 def test_generated_articles_have_no_caption_cut_inside_brackets():
