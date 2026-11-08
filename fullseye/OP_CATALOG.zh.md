@@ -591,7 +591,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_search_sweep_width` — op: `erf`, `gauss_filter`, `gray_tophat`, `integrate_funct_1d`, `laplace`, `ncc_locate`, `noise_sigma`, `photon_sample`, `relative_illumination`, `star_detect`, `tophat`, `vignette`(另有 1 个) `py -3.11 examples/poc_search_sweep_width.py`
 
 **tracking**
-- `poc_real_bg_kalman_tracking` — op: `atan2_image`, `create_bg_esti`, `ellipse`, `filter_kalman`, `give_bg_esti`, `opening_seg`, `run_bg_esti`, `threshold`, `update_bg_esti` `py -3.11 examples/poc_real_bg_kalman_tracking.py`
+- `poc_real_bg_kalman_tracking` — op: `atan2_image`, `create_bg_esti`, `ellipse`, `filter_kalman`, `give_bg_esti`, `kalman_smooth`, `opening_seg`, `run_bg_esti`, `threshold`, `update_bg_esti` `py -3.11 examples/poc_real_bg_kalman_tracking.py`
 
 **space**
 - `poc_star_tracker` — op:(没有 op 笔记链接到此例) `py -3.11 examples/poc_star_tracker.py`
@@ -2476,7 +2476,7 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `assign_hungarian` `matrix → table` GPU: 无 — 求解代价矩阵 (n, m) 的指派问题(Kuhn 1955 / Munkres 1957 的匈牙利算法，scipy 的实现)。 · 示例: `estimation_tour`
 - `crlb_gaussian` `signal × signal → table` GPU: 无 — 白高斯噪声(标准差 sigma)下的 Cramér–Rao 下界。 · 示例: `estimation_tour`
 - `hist_distance` `signal × signal → measurement` GPU: 无 — 2 个直方图(非负，按总和归一化)之间的距离与散度。 · 示例: `gallery_math_stats_linalg`
-- `kalman_smooth` `matrix × matrix × matrix × matrix × matrix × signal × matrix → table` GPU: 无 — 线性高斯状态空间模型 x_{k+1} = F x_k + w(w ~ N(0,Q))、z_k = H x_k + v(v ~ N(0,R))的 Kalman 滤波(前向)与 Rauch–Tung–Striebel 平滑(后向)。 · 示例: `estimation_tour`
+- `kalman_smooth` `matrix × matrix × matrix × matrix × matrix × signal × matrix → table` GPU: 无 — 线性高斯状态空间模型 x_{k+1} = F x_k + w(w ~ N(0,Q))、z_k = H x_k + v(v ~ N(0,R))的 Kalman 滤波(前向)与 Rauch–Tung–Striebel 平滑(后向)。 · 示例: `estimation_tour`, `poc_real_bg_kalman_tracking`
 - `mat_expm` `matrix → matrix` GPU: 无 — 矩阵指数函数 e^A(Padé 近似 + scaling-and-squaring，scipy)。 · 示例: `gallery_math_stats_linalg`
 - `mat_logm` `matrix → matrix` GPU: 无 — 矩阵的主对数 log A(满足 e^X = A 的 X 中，特征值虚部位于 (−π, π] 的那个，scipy)。 · 示例: `gallery_math_stats_linalg`
 - `se3_exp` `signal → matrix` GPU: 无 — SE(3) 的指数映射：6 维旋量 ξ = (v, ω)(平移速度 v、旋转向量 ω)→ 4×4 刚体变换。 · 示例: `estimation_tour`

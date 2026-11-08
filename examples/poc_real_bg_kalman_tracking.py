@@ -7,7 +7,8 @@ OpenCV's MOG2, and follow the person through an occlusion behind a pillar.
 
 主役の op(opsmv の新しい op): ``create_bg_esti`` / ``run_bg_esti`` / ``update_bg_esti`` /
 ``give_bg_esti``(画素ごとのカルマン背景、Ridder ほか 1995)、``filter_kalman``(線形カルマン 1 周期)、
-``opening_seg``(くびれで切り離して塊にする)、``atan2_image``(進む向き)。
+``opening_seg``(くびれで切り離して塊にする)、``atan2_image``(進む向き)。隠れていた区間の推定し直しに
+``kalman_smooth``(RTS 平滑化、前からある op)も使う。
 
 データ: LASIESTA(Universidad Politécnica de Madrid、CC BY-SA 4.0、Cuevas ほか 2016)の屋内 3 本
 (``I_SI_01`` = 3 人が順に横切る、``I_OC_01`` = 柱の裏を通る、``I_OC_02`` = 画面の外で折り返す)。
@@ -25,9 +26,14 @@ OpenCV's MOG2, and follow the person through an occlusion behind a pillar.
    ``update_bg_esti`` で背景へ取り込む段を足し、足す前と後の F 値を比べる。
 3. **推定した背景**(``give_bg_esti``)を、真値が背景と言う画素だけで取った時間の中央値と比べる。
 4. **追跡**: 塊の重心を等速モデルの ``filter_kalman`` で追い、99 % の NIS 門で対応づける。
-   塊の面積が直前の中央値の半分を切ったら「一部が隠れた」とみなして更新に使わない(重心が偏る)。
+   塊の面積が直前の中央値の半分を切るか、高さが 8 割を切るか、横縦比(幅 ÷ 高さ)が 6 割を切ったら
+   「一部が隠れた」とみなして更新に使わない(見えている部分の重心へ偏る。柱に半分入ると面積は半分を
+   切らずに幅だけが縮む)。柱の位置は真値から取らない。
    比べる相手は予測をしない最近傍の対応づけ。過程の雑音 q は ``I_SI_01`` で選ぶ。
    照合は真値の重心との距離、遮蔽をまたいで同じ番号が続くか、出てきたコマでの位置の誤差。
+   フィルタはそのコマまでの観測しか使えないので、隠れていた区間はその場の予測のままで、拾い直した
+   コマで跳ぶ。同じモデル・同じ観測で ``kalman_smooth`` を回して前後の観測から推定し直し、図には
+   こちらを引く(その場の予測は点線で並べる)。前向きの推定は ``filter_kalman`` の追跡と 4e-13 画素以内で一致する。
 5. 限界: 隠れている間に向きを変えると等速の予測は外れる。``I_OC_02`` は画面の右の外で
    折り返して戻ってくる。真値の重心から ``atan2_image`` で向きを出し、隠れる前と後の
    向きの差を測ってから、追跡の結果を読む。
@@ -41,14 +47,24 @@ OpenCV's MOG2, and follow the person through an occlusion behind a pillar.
   I_OC_02 では差が出ない(0.881 → 0.878)。推定した背景は MOG2 の方が真値の背景に近い
   (RMS 0.4 対 2.3〜3.1、0〜255)。
 * 追跡: I_OC_01 では柱の裏の 26 コマを等速の予測でつなぎ、同じ番号のまま拾い直した
-  (拾い直した時の誤差 5.7 画素、見えているコマの誤差の中央値 7.7 画素)。予測しない最近傍は
-  柱で見失う。I_OC_02 は隠れている間に向きが 165° 変わり、カルマンは新しい番号で拾い直す
-  (この列では最近傍も番号を継げない)。
+  (拾い直した時の誤差 3.8 画素、見えているコマの誤差の中央値 7.9 画素)。予測しない最近傍は
+  柱で見失う。出てきたコマ(第 194 コマ)での誤差は、その場の予測 60.2 画素、``kalman_smooth`` で
+  推定し直した位置 15.4 画素。その場の予測は隠れる直前の速さ(毎コマ 1.56 画素)のまま進むが、
+  真値の重心は隠れていた間に平均で毎コマ 3.51 画素進んだ。I_OC_02 は隠れている間に向きが 165° 変わり、
+  カルマンは新しい番号で拾い直す(この列では最近傍も番号を継げない)。
+* 2026-11-08 の直し(ユーザーの指摘「橙の線は軌跡の予測としてはカクカクし過ぎ」): 前の版は
+  「一部が隠れた」を画面の縁と面積だけで判定し、柱に半分入ったコマ(幅 104 → 41 画素、面積は直近の中央値の
+  57 %)を更新に使っていた。見えている半身の重心へ寄って予測が上へ傾き、拾い直したコマで一度に跳んだ。
+  高さと横縦比の判定を足すと、一部が隠れたとして更新に使わないコマは I_OC_01 で 25 → 36
+  (I_SI_01 35 → 36、I_OC_02 12 → 20)になり、予測は上へ傾かなくなった。
+  ただし、出てきたコマでのその場の予測の誤差は 31.8 → 60.2 画素に増えた。前の版は、隠れかけた
+  半身の重心が前へ寄ったことで速さを偶然大きく見積もっていた。拾い直した時の誤差は 5.7 → 3.8 画素、
+  見えているコマの誤差の中央値は 7.7 → 7.9 画素。
 
 正直に書いておくこと: 数値で選んだのは学習列(I_SI_01)での閾値・利得・吸収の有無・MOG2 の
 ``varThreshold``・過程の雑音 q だけ。追跡の作り(手すりで割れた体を 6 画素でまとめる、2 コマ
-続けて見えた塊から始める、左右の縁に触れる塊を「一部が隠れた」と扱う)は 3 本の列を見ながら
-決めた。評価列の数字はその分だけ楽観側に寄っている。
+続けて見えた塊から始める、左右の縁に触れる塊を「一部が隠れた」と扱う、高さ 8 割・横縦比 6 割の判定)は
+3 本の列を見ながら決めた。評価列の数字はその分だけ楽観側に寄っている。
 
 データが無い環境(CI)では取得せず、下の ``RECORDED`` を印字し、op の契約の門(OpenCV の
 ``cv2.KalmanFilter`` との一致、背景の分散の定常値 = リッカチ方程式の閉形式)だけを回す。
@@ -58,7 +74,7 @@ OpenCV's MOG2, and follow the person through an occlusion behind a pillar.
     py -3.11 tools/fetch_lasiesta.py
     py -3.11 examples/poc_real_bg_kalman_tracking.py
 
-図(``FULLSEYE_FIGURE_DIR`` があるときだけ): 柱を通り抜ける軌跡(代表図)、追跡の動画、
+図(``FULLSEYE_FIGURE_DIR`` があるときだけ): 柱を通り抜ける軌跡(代表図、推定し直した線とその場の予測)、追跡の動画、
 真値・Fullseye・MOG2 の切り出しの比較、推定した背景、追跡の誤差の時系列、F 値の表。
 """
 from __future__ import annotations
@@ -123,6 +139,11 @@ Q_CANDIDATES = (0.01, 0.05, 0.2)
 NN_RADIUS = 30.0
 #: 塊の面積が直前 10 回の中央値のこの割合を切ったら「一部が隠れた」とみなす。
 PARTIAL_AREA = 0.5
+#: 面積が足りていても、塊の高さが直近 10 回の中央値のこの割合を切るか、横縦比(幅 ÷ 高さ)が直近の
+#: 中央値のこの割合を切ったら「一部が隠れた」とみなす。柱に半分入ると幅だけが縮み(面積は半分を
+#: 切らないのに、見えている半身の重心へ寄る)、手すりや台の裏では高さが縮む。柱の位置は使わない。
+PARTIAL_HEIGHT = 0.8
+PARTIAL_ASPECT = 0.6
 #: 続けて見失ってよいコマ数(超えたら軌跡を閉じる)。
 MAX_MISS = 45
 #: 進む向きを測る真値の重心の区間[コマ]と、出てきた直後に飛ばすコマ数(体が出きるまで重心が偏る)。
@@ -141,14 +162,22 @@ RECORDED: dict = {'absorbed_frames': {'I_OC_01': 46, 'I_OC_02': 72, 'I_SI_01': 1
               'kalman_vs_opencv_max': 1.81899e-12,
               'mean_nis': 1.98888},
  'crossing': {'I_OC_01': {'hidden_frames': 26,
-                          'kalman_err_at_reacquire': 5.73,
+                          'kalman_err_at_reacquire': 3.78,
+                          'kalman_pred_err_at_reappear': 60.2,
                           'kalman_same_id': True,
+                          'kalman_smooth_err_at_reappear': 15.36,
+                          'kalman_speed_at_hide': 1.56,
                           'nn_same_id': False,
+                          'truth_speed_across_gap': 3.51,
                           'turn_deg': 10.1},
               'I_OC_02': {'hidden_frames': 29,
                           'kalman_err_at_reacquire': None,
+                          'kalman_pred_err_at_reappear': None,
                           'kalman_same_id': False,
+                          'kalman_smooth_err_at_reappear': None,
+                          'kalman_speed_at_hide': None,
                           'nn_same_id': False,
+                          'truth_speed_across_gap': 0.81,
                           'turn_deg': 164.6}},
  'date': '2026-11-08',
  'digests': {'I_OC_01': '2e8957ed8b95be18c00e14acd0e5c6fbc281199212874cd2e353c42ffbd0c117',
@@ -165,12 +194,12 @@ RECORDED: dict = {'absorbed_frames': {'I_OC_01': 46, 'I_OC_02': 72, 'I_SI_01': 1
                    'plain': [0.8531, 0.893, 0.8166]}},
  'q': 0.2,
  'selected': {'gain': 0.0, 'mog2_var': 64.0, 'plain_gain': 0.0, 'plain_threshold': 0.06, 'threshold': 0.05},
- 'tracks': {'I_OC_01': {'kalman': {'median_err': 7.74, 'n_tracks': 1, 'p90_err': 12.19},
-                        'nn': {'median_err': 10.26, 'n_tracks': 1, 'p90_err': 145.98}},
-            'I_OC_02': {'kalman': {'median_err': 15.38, 'n_tracks': 2, 'p90_err': 88.51},
-                        'nn': {'median_err': 13.87, 'n_tracks': 2, 'p90_err': 162.09}},
-            'I_SI_01': {'kalman': {'median_err': 8.83, 'n_tracks': 3, 'p90_err': 20.58},
-                        'nn': {'median_err': 8.5, 'n_tracks': 2, 'p90_err': 238.32}}}}
+ 'tracks': {'I_OC_01': {'kalman': {'median_err': 7.9, 'n_partial': 36, 'n_tracks': 1, 'p90_err': 13.62},
+                        'nn': {'median_err': 10.26, 'n_partial': 14, 'n_tracks': 1, 'p90_err': 145.98}},
+            'I_OC_02': {'kalman': {'median_err': 15.56, 'n_partial': 20, 'n_tracks': 2, 'p90_err': 90.0},
+                        'nn': {'median_err': 13.87, 'n_partial': 49, 'n_tracks': 2, 'p90_err': 162.09}},
+            'I_SI_01': {'kalman': {'median_err': 8.83, 'n_partial': 36, 'n_tracks': 3, 'p90_err': 20.58},
+                        'nn': {'median_err': 8.5, 'n_partial': 61, 'n_tracks': 2, 'p90_err': 238.32}}}}
 
 
 class TrackGateError(AssertionError):
@@ -331,8 +360,8 @@ def clean_plate(data: dict) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # 追跡
 # --------------------------------------------------------------------------- #
-def detections(mask: np.ndarray) -> list[tuple[float, float, int, bool]]:
-    """塊の (重心の行, 列, 面積, 左右の縁に触れるか)。
+def detections(mask: np.ndarray) -> list[tuple[float, float, int, bool, int, int]]:
+    """塊の (重心の行, 列, 面積, 左右の縁に触れるか, 外接矩形の高さ, 幅)。
 
     手すりの裏で体が何片にも割れるので、``GROUP_PX`` 画素まで離れた片は 1 つの塊にまとめる
     (まとめるのは番号だけで、重心と面積は元の前景の画素で数える)。左右の縁に触れる塊は体の
@@ -347,8 +376,11 @@ def detections(mask: np.ndarray) -> list[tuple[float, float, int, bool]]:
     if not idx:
         return []
     cents = ndi.center_of_mass(mask, lab, idx)
+    boxes = ndi.find_objects(lab)
     edge = set(np.unique(np.r_[lab[:, 0], lab[:, -1]]).tolist()) - {0}
-    return [(float(c[0]), float(c[1]), int(sizes[i - 1]), i in edge) for i, c in zip(idx, cents)]
+    return [(float(c[0]), float(c[1]), int(sizes[i - 1]), i in edge,
+             int(boxes[i - 1][0].stop - boxes[i - 1][0].start), int(boxes[i - 1][1].stop - boxes[i - 1][1].start))
+            for i, c in zip(idx, cents)]
 
 
 def _cv_model(q: float):
@@ -368,13 +400,19 @@ def track(masks: np.ndarray, q: float, predictive: bool = True) -> dict:
     返りの ``status`` は 0 = 観測なし、1 = 観測で更新、2 = 一部が隠れた(更新に使わない)。
     画像の左右の縁は遮蔽物と同じに扱う: 縁に触れる塊からは軌跡を始めず、対応した塊が縁に触れて
     いれば「一部が隠れた」として更新に使わない(入りかけ・出かけの体の重心は偏る)。
+    縁に触れなくても、面積が直近の中央値の ``PARTIAL_AREA`` を切るか、高さが ``PARTIAL_HEIGHT``、
+    横縦比が ``PARTIAL_ASPECT`` を切った塊は同じく「一部が隠れた」とする(高さと横縦比の履歴は対応した
+    塊すべてで取るので、急に縮んだときだけ効き、ゆっくり変わる見え方には追いつく)。
     軌跡は 2 コマ続けて ``INIT_RADIUS`` 以内に見えた塊から始め、速度はその 2 点の差で置く。
+    返りの ``pred`` はそのコマの観測を入れる前の予測(その場の予測)、``z`` は更新に使った観測、
+    ``inits`` は軌跡ごとの (始めたコマ, 状態, 共分散) で、:func:`smooth_track` が推定し直しに使う。
     """
     F, H, Q = _cv_model(q)
     shape = masks.shape[1:]
     n = len(masks)
     out = {"id": np.full(n, -1), "pos": np.full((n, 2), np.nan), "vel": np.full((n, 2), np.nan),
-           "status": np.zeros(n, int), "nis": np.full(n, np.nan)}
+           "status": np.zeros(n, int), "nis": np.full(n, np.nan), "pred": np.full((n, 2), np.nan),
+           "z": np.full((n, 2), np.nan), "inits": []}
     cur = None
     tentative = None
     n_tracks = 0
@@ -389,7 +427,9 @@ def track(masks: np.ndarray, q: float, predictive: bool = True) -> dict:
                     v = (d[0] - tentative[0], d[1] - tentative[1])
                     cur = {"id": n_tracks, "x": np.array([d[0], d[1], v[0], v[1]]),
                            "P": np.diag([MEAS_VAR, MEAS_VAR, 2 * MEAS_VAR, 2 * MEAS_VAR]), "miss": 0,
-                           "areas": [tentative[2], d[2]]}
+                           "areas": [tentative[2], d[2]],
+                           "shapes": [(tentative[4], tentative[5] / tentative[4]), (d[4], d[5] / d[4])]}
+                    out["inits"].append((k, cur["x"].copy(), cur["P"].copy()))
                     n_tracks += 1
                     tentative = None
                     out["id"][k], out["pos"][k], out["vel"][k], out["status"][k] = cur["id"], d[:2], v, 1
@@ -397,6 +437,7 @@ def track(masks: np.ndarray, q: float, predictive: bool = True) -> dict:
             tentative = max(whole, key=lambda d: d[2]) if whole else None
             continue
         pred = L.filter_kalman(cur["x"], cur["P"], None, F, H, Q, MEAS_VAR)
+        out["pred"][k] = pred["x"][:2]
         best = None
         if predictive:
             S_inv = np.linalg.inv(H @ pred["P"] @ H.T + MEAS_VAR * np.eye(2))
@@ -412,13 +453,20 @@ def track(masks: np.ndarray, q: float, predictive: bool = True) -> dict:
                     best = (dist, d)
         status = 0
         if best is not None:
-            whole = not best[1][3] and best[1][2] >= PARTIAL_AREA * float(np.median(cur["areas"][-10:]))
+            d = best[1]
+            h_med = float(np.median([s[0] for s in cur["shapes"][-10:]]))
+            a_med = float(np.median([s[1] for s in cur["shapes"][-10:]]))
+            whole = (not d[3] and d[2] >= PARTIAL_AREA * float(np.median(cur["areas"][-10:]))
+                     and d[4] >= PARTIAL_HEIGHT * h_med and d[5] / d[4] >= PARTIAL_ASPECT * a_med)
             status = 1 if whole else 2
+            if not d[3]:
+                cur["shapes"].append((d[4], d[5] / d[4]))
         if predictive:
             res = L.filter_kalman(cur["x"], cur["P"], best[1][:2] if status == 1 else None, F, H, Q, MEAS_VAR)
             cur["x"], cur["P"] = res["x"], res["P"]
             if status == 1:
                 out["nis"][k] = res["nis"]
+                out["z"][k] = best[1][:2]
         elif status:
             cur["x"] = np.array([best[1][0], best[1][1], best[1][0] - cur["x"][0], best[1][1] - cur["x"][1]])
         if status == 1:
@@ -431,6 +479,35 @@ def track(masks: np.ndarray, q: float, predictive: bool = True) -> dict:
             cur = None
     out["n_tracks"] = n_tracks
     return out
+
+
+def smooth_track(tr: dict, q: float, upto: int | None = None) -> dict:
+    """``kalman_smooth``(RTS 平滑化)で、各軌跡の位置を前後の観測から推定し直す。
+
+    ``filter_kalman`` の追跡はそのコマまでの観測しか使えないので、隠れていた区間はその場の予測の
+    ままで、拾い直したコマで一度に跳ぶ。ここでは同じ等速モデル・同じ初期値・同じ観測(更新に使った
+    コマだけ、ほかは欠測)を ``kalman_smooth`` に渡し、後ろ向きの平滑化で隠れていた区間を引き直す。
+    ``upto`` までの観測しか使わない(動画の各コマで、その時点までに分かることだけを描くため)。
+    返りの ``filter_max_diff`` は ``kalman_smooth`` の前向きの推定と追跡の位置の最大差(同じフィルタの
+    2 つの実装の照合)。
+    """
+    F, H, Q = _cv_model(q)
+    n = len(tr["id"])
+    upto = n - 1 if upto is None else upto
+    pos = np.full((n, 2), np.nan)
+    worst = 0.0
+    for t, (k0, x0, P0) in enumerate(tr["inits"]):
+        if k0 > upto:
+            break
+        ks = np.nonzero(tr["id"][:upto + 1] == t)[0]
+        if ks[0] != k0 or not np.array_equal(ks, np.arange(k0, ks[-1] + 1)):
+            raise TrackGateError("軌跡 %d のコマが続いていない" % t)
+        z = tr["z"][ks].copy()
+        z[0] = np.nan                      # 始めたコマの観測は x0 に入っている
+        res = L.kalman_smooth(z, F, H, Q, MEAS_VAR * np.eye(2), x0, P0)
+        pos[ks] = res["x_smooth"][:, :2]
+        worst = max(worst, float(np.abs(res["x_filt"][:, :2] - tr["pos"][ks]).max()))
+    return {"pos": pos, "filter_max_diff": worst}
 
 
 def truth_track(data: dict) -> dict:
@@ -462,24 +539,33 @@ def score_track(tr: dict, truth: dict) -> dict:
     err = np.hypot(tr["pos"][:, 0] - truth["centroid"][:, 0], tr["pos"][:, 1] - truth["centroid"][:, 1])
     on = vis & np.isfinite(err)
     ids = sorted(set(int(i) for i in tr["id"][vis] if i >= 0))
-    return {"err": err, "median_err": float(np.median(err[on])) if on.any() else float("nan"),
+    return {"n_partial": int((tr["status"] == 2).sum()), "err": err, "median_err": float(np.median(err[on])) if on.any() else float("nan"),
             "p90_err": float(np.percentile(err[on], 90)) if on.any() else float("nan"),
             "coverage": float(on.sum() / max(1, vis.sum())), "ids": ids, "n_tracks": int(tr["n_tracks"])}
 
 
-def crossing(tr: dict, truth: dict, gap: tuple[int, int]) -> dict:
-    """遮蔽の前後で同じ番号が続いたか、出てきてから 5 コマ以内に観測で更新できたか、その時の誤差。"""
+def crossing(tr: dict, truth: dict, gap: tuple[int, int], smooth: np.ndarray | None = None) -> dict:
+    """遮蔽の前後で同じ番号が続いたか、出てきてから 5 コマ以内に観測で更新できたか、その時の誤差。
+
+    出てきたコマ(真値が再び見えた最初のコマ)での位置の誤差を 2 つ返す: その場の予測(``pred``、
+    そのコマの観測を入れる前)と、``smooth``(:func:`smooth_track` が後の観測も使って推定し直した位置)。
+    """
     a, b = gap
     before = int(tr["id"][a])
     after_ids = [int(i) for i in tr["id"][b:b + 6]]
     reacquired = [k for k in range(b, min(b + 6, len(tr["id"]))) if tr["status"][k] == 1]
     k = reacquired[0] if reacquired else b
     err = float(np.hypot(*(tr["pos"][k] - truth["centroid"][k]))) if np.isfinite(tr["pos"][k]).all() else float("nan")
-    pred_b = tr["pos"][b - 1] if np.isfinite(tr["pos"][b - 1]).all() else tr["pos"][a]
+    pred_b = tr["pred"][b] if np.isfinite(tr["pred"][b]).all() else tr["pos"][a]
+    sm_b = smooth[b] if smooth is not None else np.full(2, np.nan)
+    vel_a = tr["vel"][a]
     return {"gap": [a, b], "hidden_frames": b - a - 1, "id_before": before,
             "same_id": before >= 0 and bool(reacquired) and all(i == before for i in after_ids[:k - b + 1]),
             "reacquired_frame": k if reacquired else None, "err_at_reacquire": err,
-            "prediction_err_at_reappear": float(np.hypot(*(pred_b - truth["centroid"][b])))}
+            "prediction_err_at_reappear": float(np.hypot(*(pred_b - truth["centroid"][b]))),
+            "smooth_err_at_reappear": float(np.hypot(*(sm_b - truth["centroid"][b]))),
+            "speed_at_hide": float(np.hypot(*vel_a)) if np.isfinite(vel_a).all() else float("nan"),
+            "truth_speed_across_gap": float(np.hypot(*(truth["centroid"][b] - truth["centroid"][a]))) / (b - a)}
 
 
 # --------------------------------------------------------------------------- #
@@ -581,8 +667,38 @@ def _polyline(draw, pts, color, width, scale):
         draw.line(seg, fill=color, width=width)
 
 
+def _dotted(draw, pts, color, width, scale, dash=7.0, gap=6.0):
+    """点線(``dash`` 画素描いて ``gap`` 画素空ける。区切りの位相は折れ目をまたいで続ける)。NaN で切る。"""
+    phase = 0.0
+    for a, b in zip(pts[:-1], pts[1:]):
+        if not (np.isfinite(a).all() and np.isfinite(b).all()):
+            phase = 0.0
+            continue
+        p0 = np.array([a[1], a[0]]) * scale
+        p1 = np.array([b[1], b[0]]) * scale
+        seg = float(np.hypot(*(p1 - p0)))
+        t = 0.0
+        while t < seg:
+            at = (phase + t) % (dash + gap)
+            if at < dash:
+                run = min(dash - at, seg - t)
+                q0 = p0 + (p1 - p0) * (t / seg)
+                q1 = p0 + (p1 - p0) * ((t + run) / seg)
+                draw.line([tuple(q0), tuple(q1)], fill=color, width=width)
+            else:
+                run = min(dash + gap - at, seg - t)
+            t += run
+        phase = (phase + seg) % (dash + gap)
+
+
 def render_track_frame(data: dict, k: int, kal: dict, nn: dict, truth: dict, scale: int = 2,
-                       upto: int | None = None, label: str = "") -> np.ndarray:
+                       upto: int | None = None, label: str = "", smooth: np.ndarray | None = None) -> np.ndarray:
+    """1 コマに軌跡を重ねる。
+
+    空色の太線 = 観測で更新したコマ、橙の実線 = 更新しなかったコマ(隠れた・一部が隠れた)。どちらも
+    ``smooth``(:func:`smooth_track` がそのコマまでの観測で推定し直した位置)を引く。赤紫の点線 = 更新
+    しなかったコマのその場の予測(``filter_kalman`` の位置、実線の上に重ねる)。朱 = 予測しない最近傍。
+    """
     upto = k if upto is None else upto
     base = _overlay(data["rgb"][k], data["fg"][k], (255, 255, 255), alpha=0.0)   # 真値の前景は白い輪郭だけ
     im = Image.fromarray(base).resize((base.shape[1] * scale, base.shape[0] * scale), Image.NEAREST)
@@ -593,10 +709,13 @@ def render_track_frame(data: dict, k: int, kal: dict, nn: dict, truth: dict, sca
     # 最近傍(予測なし): 番号が変わるところで線を切る
     _polyline(draw, np.where((nn["id"][:upto + 1] == nn["id"][max(0, int(np.argmax(nn["id"] >= 0)))])[:, None],
                              nn["pos"][:upto + 1], np.nan), fs.role_rgb8("wrong"), 3, scale)
-    meas = np.where((kal["status"][:upto + 1] == 1)[:, None], kal["pos"][:upto + 1], np.nan)
-    pred = kal["pos"][:upto + 1].copy()
-    _polyline(draw, pred, fs.role_rgb8("emphasis"), 2, scale)
-    _polyline(draw, meas, fs.role_rgb8("right"), 4, scale)
+    sm = (kal["pos"] if smooth is None else smooth)[:upto + 1]
+    hidden = kal["status"][:upto + 1] != 1
+    # 更新しなかった区間は、前後の観測のコマまで含めて線をつなぐ
+    around = hidden | np.r_[hidden[1:], False] | np.r_[False, hidden[:-1]]
+    _polyline(draw, np.where(around[:, None], sm, np.nan), fs.role_rgb8("emphasis"), 3, scale)
+    _polyline(draw, np.where((~hidden)[:, None], sm, np.nan), fs.role_rgb8("right"), 4, scale)
+    _dotted(draw, np.where(around[:, None], kal["pos"][:upto + 1], np.nan), fs.role_rgb8("baseline"), 2, scale)
     p = kal["pos"][upto]
     if np.isfinite(p).all():
         draw.ellipse([p[1] * scale - 7, p[0] * scale - 7, p[1] * scale + 7, p[0] * scale + 7],
@@ -636,25 +755,37 @@ def write_figures(res: dict) -> None:
     oc1 = res["data"]["I_OC_01"]
     tr = res["tracks"]["I_OC_01"]
     truth = res["truth"]["I_OC_01"]
-    gap = res["crossing"]["I_OC_01"]["kalman"]["gap"]
+    cx = res["crossing"]["I_OC_01"]["kalman"]
+    gap = cx["gap"]
     k_show = min(len(oc1["rgb"]) - 1, gap[1] + 12)
     figs.save("pillar_crossing",
               render_track_frame(oc1, k_show, tr["kalman"], tr["nn"], truth,
-                                 label="柱の裏 %d コマを等速の予測でつなぐ\n空色=観測で更新 / 橙=予測だけ / 朱=予測なしの最近傍"
-                                 % res["crossing"]["I_OC_01"]["kalman"]["hidden_frames"]),
-              caption="LASIESTA I_OC_01 の第 %d コマ。空色の太線 = filter_kalman が観測で更新した位置、橙の細線 = 予測だけで"
-                      "進めた区間(柱の裏 %d コマと一部が隠れたコマ)、朱 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、"
-                      "白点 = 真値の重心、白い輪郭 = 真値の前景。柱に半分入りかけたコマを更新に使ったので予測は上へ傾き、"
-                      "出てきたコマで %.0f 画素ずれたが、NIS の門の内側で同じ番号のまま拾い直した。"
-                      % (k_show + 1, res["crossing"]["I_OC_01"]["kalman"]["hidden_frames"],
-                         res["crossing"]["I_OC_01"]["kalman"]["prediction_err_at_reappear"]), source=SOURCE)
+                                 smooth=smooth_track(tr["kalman"], res["q"], upto=k_show)["pos"],
+                                 label="柱の裏 %d コマを予測でつなぎ、出てきた後に推定し直す\n"
+                                       "空色=観測で更新 / 橙=前後の観測で推定し直し\n"
+                                       "赤紫の点線=その場の予測 / 朱=予測なしの最近傍"
+                                 % cx["hidden_frames"]),
+              caption="LASIESTA I_OC_01 の第 %d コマ。空色の太線 = 観測で更新したコマ、橙の実線 = 更新に使わなかったコマ"
+                      "(柱の裏 %d コマと、体の一部が隠れたコマ)。どちらも kalman_smooth(RTS 平滑化)で前後の観測から"
+                      "推定し直した位置。赤紫の点線 = その場の予測(filter_kalman が等速で進めた位置で、拾い直したコマで跳ぶ)、"
+                      "朱 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。"
+                      "体の一部が隠れたかは、塊の面積・高さ・横縦比が直近の中央値から急に縮むことで決める(柱に半分入った"
+                      "コマは幅だけが縮む)。出てきたコマ(第 %d コマ)での真値の重心からの誤差は、その場の予測 %.0f 画素、"
+                      "推定し直し %.0f 画素。その場の予測は隠れる直前の速さ(毎コマ %.1f 画素)のまま進むが、真値の重心は"
+                      "隠れていた間に平均で毎コマ %.1f 画素進んだ。"
+                      % (k_show + 1, cx["hidden_frames"], cx["gap"][1] + 1, cx["prediction_err_at_reappear"],
+                         cx["smooth_err_at_reappear"], cx["speed_at_hide"], cx["truth_speed_across_gap"]),
+              source=SOURCE)
     frames = []
     lo = max(0, int(np.argmax(truth["visible"])) - 2)
     for k in range(lo, len(oc1["rgb"]), 4):
         frames.append(render_track_frame(oc1, k, tr["kalman"], tr["nn"], truth, scale=1,
-                                         label="第 %d コマ" % (k + 1)))
+                                         label="第 %d コマ" % (k + 1),
+                                         smooth=smooth_track(tr["kalman"], res["q"], upto=k)["pos"]))
     figs.save_gif("tracking_movie", frames, fps=10,
-                  caption="I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。")
+                  caption="I_OC_01 を 4 コマおきに再生。空色 = 観測で更新、橙 = 更新に使わなかったコマを、そのコマまでの"
+                          "観測で kalman_smooth が推定し直した位置、赤紫の点線 = その場の予測(filter_kalman)、朱 = 予測なしの"
+                          "最近傍。柱の裏では橙と点線が重なって進み、出てきた人を拾い直すと橙だけが引き直される。")
     sel = res["selected"]
     for seq, k in (("I_OC_01", 150), ("I_OC_02", 110)):
         figs.save("masks_%s" % seq.lower(),
@@ -786,16 +917,20 @@ def real_chapter(g: Gates, root: Path) -> dict:
         print("   q %.2f: 誤差の中央値 %.1f 画素、番号 %d(人は 3 人)" % (q, sc["median_err"], sc["n_tracks"]))
     q_best = min(q_rows)[1]
     print("   選んだ q = %.2f" % q_best)
-    tracks, scores, crossings = {}, {}, {}
+    tracks, scores, crossings, smooths = {}, {}, {}, {}
     for seq in (TRAIN,) + HELD_OUT:
         kal = track(mask_store[seq]["fullseye"], q_best, predictive=True)
         nn = track(mask_store[seq]["fullseye"], q_best, predictive=False)
+        sm = smooth_track(kal, q_best)
+        g.check("%s: kalman_smooth の前向きの推定 = 追跡の filter_kalman" % seq, sm["filter_max_diff"] < 1e-9,
+                "最大差 %.1e 画素" % sm["filter_max_diff"])
+        smooths[seq] = sm["pos"]
         tracks[seq] = {"kalman": kal, "nn": nn}
         scores[seq] = {"kalman": score_track(kal, truths[seq]), "nn": score_track(nn, truths[seq])}
         s = scores[seq]
-        print("   %s: カルマン 番号 %d・誤差の中央値 %.1f・90 %% 点 %.1f / 最近傍 番号 %d・%.1f・%.1f"
+        print("   %s: カルマン 番号 %d・誤差の中央値 %.1f・90 %% 点 %.1f・一部が隠れたコマ %d / 最近傍 番号 %d・%.1f・%.1f"
               % (seq, s["kalman"]["n_tracks"], s["kalman"]["median_err"], s["kalman"]["p90_err"],
-                 s["nn"]["n_tracks"], s["nn"]["median_err"], s["nn"]["p90_err"]))
+                 s["kalman"]["n_partial"], s["nn"]["n_tracks"], s["nn"]["median_err"], s["nn"]["p90_err"]))
         if seq in HELD_OUT:
             gaps = occlusion_gaps(truths[seq]["visible"])
             if len(gaps) != 1:
@@ -805,7 +940,8 @@ def real_chapter(g: Gates, root: Path) -> dict:
             h_before = heading_deg(cent, a - HEADING_SPAN, a)
             h_after = heading_deg(cent, b + HEADING_SKIP, b + HEADING_SKIP + HEADING_SPAN)
             turn = abs((h_after - h_before + 180.0) % 360.0 - 180.0)
-            crossings[seq] = {"kalman": crossing(kal, truths[seq], gaps[0]), "nn": crossing(nn, truths[seq], gaps[0]),
+            crossings[seq] = {"kalman": crossing(kal, truths[seq], gaps[0], smooths[seq]),
+                              "nn": crossing(nn, truths[seq], gaps[0]),
                               "heading_before_deg": h_before, "heading_after_deg": h_after, "turn_deg": turn}
             c = crossings[seq]
             print("      隠れたコマ %d(第 %d〜%d)、向き 前 %.0f° 後 %.0f°(変化 %.0f°)" %
@@ -815,6 +951,10 @@ def real_chapter(g: Gates, root: Path) -> dict:
                 print("      %s: 同じ番号 %s、拾い直し 第 %s コマ、その時の誤差 %.1f 画素、出てきたコマでの予測の誤差 %.1f 画素"
                       % (name, x["same_id"], None if x["reacquired_frame"] is None else x["reacquired_frame"] + 1,
                          x["err_at_reacquire"], x["prediction_err_at_reappear"]))
+            print("      kalman_smooth で推定し直した位置の、出てきたコマ(第 %d コマ)での誤差 %.1f 画素"
+                  % (b + 1, c["kalman"]["smooth_err_at_reappear"]))
+            print("      隠れる直前のフィルタの速さ %.2f 画素/コマ、隠れていた間の真値の重心の平均の速さ %.2f 画素/コマ"
+                  % (c["kalman"]["speed_at_hide"], c["kalman"]["truth_speed_across_gap"]))
     c1, c2 = crossings["I_OC_01"], crossings["I_OC_02"]
     g.check("I_OC_01: 向きはほぼ変わらない(< 30°)", c1["turn_deg"] < 30.0, "%.0f°" % c1["turn_deg"])
     g.check("I_OC_01: カルマンは柱の裏を同じ番号で通り抜ける", c1["kalman"]["same_id"]
@@ -823,6 +963,9 @@ def real_chapter(g: Gates, root: Path) -> dict:
             "%.1f" % c1["kalman"]["err_at_reacquire"])
     g.check("I_OC_01: 予測しない最近傍は柱で見失う", not c1["nn"]["same_id"],
             "番号 %s" % scores["I_OC_01"]["nn"]["ids"])
+    g.check("所見: I_OC_01 の出てきたコマでは、推定し直した位置の方がその場の予測より真値に近い",
+            c1["kalman"]["smooth_err_at_reappear"] < c1["kalman"]["prediction_err_at_reappear"],
+            "%.1f 対 %.1f 画素" % (c1["kalman"]["smooth_err_at_reappear"], c1["kalman"]["prediction_err_at_reappear"]))
     g.check("I_OC_01: 見えているコマの誤差の中央値 < 10 画素(カルマン)", scores["I_OC_01"]["kalman"]["median_err"] < 10.0,
             "%.1f" % scores["I_OC_01"]["kalman"]["median_err"])
     # 限界(変わったら書き換える): 隠れている間に折り返すと、等速の予測は画面の外へ出ていく。
@@ -831,7 +974,8 @@ def real_chapter(g: Gates, root: Path) -> dict:
     finite = [v for s in scores.values() for t in s.values() for v in (t["median_err"], t["p90_err"])]
     g.check("追跡の数値が全部有限", all(math.isfinite(v) for v in finite))
     return {"data": data, "selected": sel, "f": f_scores, "masks": mask_store, "plates": plates, "bg_images": bg_images,
-            "bg_err": bg_err, "q": q_best, "tracks": tracks, "scores": scores, "crossing": crossings, "truth": truths}
+            "bg_err": bg_err, "q": q_best, "tracks": tracks, "scores": scores, "crossing": crossings, "truth": truths,
+            "smooth": smooths}
 
 
 def _record(res: dict, contract: dict) -> dict:
@@ -843,12 +987,21 @@ def _record(res: dict, contract: dict) -> dict:
                     if isinstance(v, dict)} for seq, f in res["f"].items()},
         "absorbed_frames": {seq: f["absorbed_frames"] for seq, f in res["f"].items()},
         "bg_rms_255": {seq: {k: round(v, 3) for k, v in e.items()} for seq, e in res["bg_err"].items()},
-        "tracks": {seq: {k: {"n_tracks": v["n_tracks"], "median_err": round(v["median_err"], 2),
+        "tracks": {seq: {k: {"n_tracks": v["n_tracks"], "n_partial": v["n_partial"], "median_err": round(v["median_err"], 2),
                              "p90_err": round(v["p90_err"], 2)} for k, v in s.items()} for seq, s in res["scores"].items()},
         "crossing": {seq: {"turn_deg": round(c["turn_deg"], 1), "hidden_frames": c["kalman"]["hidden_frames"],
                            "kalman_same_id": c["kalman"]["same_id"], "nn_same_id": c["nn"]["same_id"],
                            "kalman_err_at_reacquire": (round(c["kalman"]["err_at_reacquire"], 2)
-                                                       if math.isfinite(c["kalman"]["err_at_reacquire"]) else None)}
+                                                       if math.isfinite(c["kalman"]["err_at_reacquire"]) else None),
+                           "kalman_pred_err_at_reappear": (round(c["kalman"]["prediction_err_at_reappear"], 2)
+                                                           if math.isfinite(c["kalman"]["prediction_err_at_reappear"])
+                                                           else None),
+                           "kalman_smooth_err_at_reappear": (round(c["kalman"]["smooth_err_at_reappear"], 2)
+                                                             if math.isfinite(c["kalman"]["smooth_err_at_reappear"])
+                                                             else None),
+                           "kalman_speed_at_hide": (round(c["kalman"]["speed_at_hide"], 2)
+                                                    if math.isfinite(c["kalman"]["speed_at_hide"]) else None),
+                           "truth_speed_across_gap": round(c["kalman"]["truth_speed_across_gap"], 2)}
                      for seq, c in res["crossing"].items()},
         "contract": {k: float("%.6g" % v) for k, v in contract.items()},
     }
