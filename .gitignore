@@ -62,3 +62,7 @@ rust/fullseye_core/examples/csharp/obj/
 # CI が checkout 内に作る wheel 検査用の venv と wheel 置き場(門の再現にも使う)
 .wheelenv/
 dist_check/
+
+# cProfile のダンプ(手元の絶対パスが入る。2026-11-08 に誤って commit した)
+prof.out
+*.prof

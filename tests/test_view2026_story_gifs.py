@@ -122,7 +122,11 @@ def test_the_thirty_text_only_crops_stay_excluded():
     excluded = [frame for item in LEDGER["entries"].values()
                 for frame in item.get("excluded_frames", [])
                 if frame["reason"] == "crop_text_only"]
-    assert len(excluded) == 30
+    # 2026-11-09: 収蔵 2026.309 の 03_numbers.png(数字だけの表)が 31 枚目として外れる。
+    assert len(excluded) == 31
+    assert ("poc_3d_sensor_modalities", "03_numbers.png") in {
+        (pid, frame["file"]) for pid, item in LEDGER["entries"].items()
+        for frame in item.get("excluded_frames", []) if frame["reason"] == "crop_text_only"}
 
 
 def test_the_three_reported_graph_and_table_frames_are_contained_whole():

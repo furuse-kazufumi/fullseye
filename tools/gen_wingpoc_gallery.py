@@ -175,14 +175,45 @@ def _more_statics(figs, pick, second):
     return [rest[min(int(i * step), len(rest) - 1)] for i in range(MORE_STATICS)]
 
 
+_OPEN, _CLOSE = "(（[「『", ")）]」』"
+
+
 def _first_sentence(text: str, limit: int = 150) -> str:
-    """説明の**最初の 1 文**だけを返す(記事の肥大を抑える)。"""
+    """説明の**最初の 1 文**だけを返す(記事の肥大を抑える)。
+
+    ★文の終わりは**括弧の外の**「。」(無ければ括弧の外の「. 」、頭文字 "E. " などは除く)(2026-11-09、5 回目の確認)。
+    以前は括弧の中の「。」で切っていて、「見本(上から … PE の破片。」のように括弧が閉じないまま、括弧の後ろの説明
+    (表示倍率など)が消えていた。括弧の外の文末が 2 倍の長さまでに無ければ、開いた括弧の手前で切って「…」を付ける
+    (括弧の途中で切らない)。ただし手前が 20 文字に満たなければ、これまでどおり長さで切る。
+    """
     t = (text or "").strip()
+    ends = {"。": None, ". ": None}
+    depth, opens = 0, []
+    for i, ch in enumerate(t[:2 * limit]):
+        if ch in _OPEN:
+            if depth == 0:
+                opens.append(i)
+            depth += 1
+        elif ch in _CLOSE and depth > 0:
+            depth -= 1
+        elif depth == 0 and i > 0:
+            if ch == "。" and ends["。"] is None:
+                ends["。"] = i + 1
+            elif ch == "." and t[i + 1:i + 2] == " " and ends[". "] is None:
+                word = t[:i].split(" ")[-1]
+                if not (len(word) == 1 and word.isupper()):        # "E." のような頭文字では切らない("m." の単位では切る)
+                    ends[". "] = i + 1
     for mark in ("。", ". "):
-        i = t.find(mark)
-        if 0 < i <= limit:
-            return t[:i + len(mark)].strip()
-    return t[:limit].rstrip() + ("…" if len(t) > limit else "")
+        if ends[mark] is not None:
+            return t[:ends[mark]].strip()
+    if len(t) <= limit:
+        return t
+    cut = t[:limit]
+    inside = sum(cut.count(c) for c in _OPEN) > sum(cut.count(c) for c in _CLOSE)
+    before = [o for o in opens if o < limit]
+    if inside and before and before[-1] >= 20:
+        cut = t[:before[-1]]
+    return cut.rstrip() + "…"
 
 
 def _thumb(poc_id: str, file: str) -> str:

@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **108 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **109 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -664,9 +664,9 @@ py -3.11 examples/poc_zebra_stripes_fly_eye.py
 
 *↑ 【2 章】3 枚のフレームに dr・dc ∈ ±0.1 px、回転 ±2 mrad、露出 ±2 % を注入し、物理の経路(ポアソン + 読み出し雑音 + 丸め)で撮って合わせた。*
 
-[![【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals.png)
+[![【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。赤 = 正、青 = 負)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals.png)
 
-*↑ 【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。*
+*↑ 【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。赤 = 正、青 = 負)。*
 
 [![【5 章】半画素シフト 4 枚(白黒)で、開口率・レンズの Q = λN/p・3 枚のずれを合わせ、pixel_shift_resolution_budget の閉形式(|sinc(f·開口率)| ×](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget.png)
 
@@ -1334,7 +1334,7 @@ py -3.11 examples/poc_video_cube.py
 
 [![error of the re-created frames against the removed ones, as the motion per step grows: below about o](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/06_interpolation_regimes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/06_interpolation_regimes.png)
 
-*↑ error of the re-created frames against the removed ones, as the motion per step grows: below about one blob width a linear blend is as good (the warp'…*
+*↑ error of the re-created frames against the removed ones, as the motion per step grows: below about one blob width a linear blend is as good…*
 
 [![Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4): pathlines of the 3-D flow between consecuti](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/09_ctc_pathlines_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/09_ctc_pathlines.png)
 
@@ -3668,9 +3668,9 @@ py -3.11 examples/poc_pallet_load_utilization.py
 
 *↑ 測定の図 ―― 下の帯の細くなっている所が管底腐食。*
 
-[![真の減肉 [mm)(縦 = z 0..300 mm、横 = θ 0..360 度。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth.png)
+[![真の減肉 [mm)(縦 = z 0..300 mm、横 = θ 0..360 度。±1.6 mm で切って塗った。正 = 肉が減った、溶接ビードは負)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth.png)
 
-*↑ 真の減肉 [mm](縦 = z 0..300 mm、横 = θ 0..360 度。*
+*↑ 真の減肉 [mm](縦 = z 0..300 mm、横 = θ 0..360 度。±1.6 mm で切って塗った。正 = 肉が減った、溶接ビードは負)*
 
 [![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/07_map_false_flag_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/07_map_false_flag.png)
 
@@ -4055,6 +4055,48 @@ py -3.11 examples/poc_bga_ball_type_roundtrip.py
 この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip)
 
 使用 op(ノートへ): [`angles_to_normals`](https://furuse.work/ops/reprconv/direction/angles_to_normals.html) · [`correlation_score`](https://furuse.work/ops/reprconv/score/correlation_score.html) · [`curvature_to_shape_index`](https://furuse.work/ops/reprconv/curvature/curvature_to_shape_index.html) · [`curvature_to_table`](https://furuse.work/ops/reprconv/curvature/curvature_to_table.html) · [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`flow_apply`](https://furuse.work/ops/reprconv/flow/flow_apply.html) · [`flow_speed`](https://furuse.work/ops/reprconv/flow/flow_speed.html) · [`gaussians_to_points`](https://furuse.work/ops/reprconv/gaussians/gaussians_to_points.html) · [`gaussians_to_voxel`](https://furuse.work/ops/3d/transform/gaussians_to_voxel.html) · [`graph_components`](https://furuse.work/ops/conngraph/stats/graph_components.html) · [`graph_laplacian_spectrum`](https://furuse.work/ops/conngraph/stats/graph_laplacian_spectrum.html) · [`indices_to_labels`](https://furuse.work/ops/reprconv/index/indices_to_labels.html) · [`keypoints_from_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_from_image2d.html) · [`keypoints_rowcol_to_uv`](https://furuse.work/ops/reprconv/keypoint/keypoints_rowcol_to_uv.html) · [`keypoints_to_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_to_image2d.html) · [`keypoints_uv_to_points`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_points.html) · [`keypoints_uv_to_rowcol`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_rowcol.html) · [`knn_graph`](https://furuse.work/ops/3d/geodesic/knn_graph.html) · [`knn_graph_to_conn_graph`](https://furuse.work/ops/reprconv/structure/knn_graph_to_conn_graph.html) · [`labels_to_indices`](https://furuse.work/ops/reprconv/index/labels_to_indices.html) · [`mesh_volume`](https://furuse.work/ops/3d/mesh_process/mesh_volume.html) · [`normals_to_angles`](https://furuse.work/ops/reprconv/direction/normals_to_angles.html) · [`normals_to_egi`](https://furuse.work/ops/reprconv/direction/normals_to_egi.html) …(他 13)
+
+## No.2026.309 —— 同じ部品を 3-D センサの 5 方式で測る ―― 縞投影・間接 ToF・光切断・照度差ステレオ・ステレオは、どの材質のどこで壊れるか
+
+展示会のブースは自社の 1 方式を最良の部品で見せる。ここでは段差 3 mm・止まり穴・斜面 26.6°・V 溝・リブ・浅い打痕(50 / 15 µm)を持つ同じ部品を、つや消し・金属光沢・半透明の樹脂・黒の 4 材質で、ステレオ・縞投影(位相シフト格子投影)・間接 ToF・光切断・照度差ステレオの 5 方式で撮り、寸法表の真値と比べた。撮像は物理で描き(反射、影、加工の筋、内部散乱、レンズのぼけと周辺減光、コヒーレントなスペックル、鏡面の 1 回反射、V 溝の相互反射、12 bit のセンサ雑音)、形の外れは全方式に共通の物差し 0.1 mm / 1 mm で数え、一様な偏りは別に出した。三角測量の角はステレオ・縞投影・光切断とも 30°、露光はどの方式もつや消しの 8 倍までの自動露光にそろえた。★つや消しの雑音は縞投影 4.5 µm・ステレオ 6.6 µm・光切断 14.3 µm(平らな板)・ToF 1.34 mm。順は条件で動く(ステレオを ±5° にすると 20.9 µm)。ToF(画素 0.4 mm)はつや消しでも 94 % が 0.1 mm を超えて外れる。★金属光沢: 縞投影の V 溝は 56 % が鏡面の 2 回反射で外れ(つや消し 10 %)、ToF は露光が鏡面の返りに合わさって 86 % が 1 mm を超えて外れる。★半透明の樹脂: ステレオは模様がにじんで 75 % 欠測、縞投影は一様に −67 µm 沈むが平らな所の形の外れは 10 %。★照度差ステレオは段差を 3.5 mm 失う(乱数の種 3 通りで同じ)。打痕 50 µm は照度差ステレオ +7 µm・縞投影 +3 µm・光切断 −3 µm で読み、ToF は読めない。★光切断のスペックルは、同じ条件の op の独立な 2-D コヒーレント結像のシミュと 0.87〜0.96 倍で合う(画素 0.05 mm で 13 % 低い分は未解決)。Dorsch の式そのもの(10.35 µm)の 1.09〜1.38 倍、op の経験則 √(w/L) をつけた値の 0.74〜0.85 倍(縞投影と ToF の雑音の式は同じ雑音モデルの検算)。★受入試験の物差し(poc_virtual_acceptance_3d と同じ評価 op、直径 8 mm の球 2 つと平らな板)で探針の誤差 PF は、点を 200 にそろえて 200 回選び直した中央値でつや消しの縞投影 0.027・照度差ステレオ 0.038・ステレオ 0.380・ToF 4.87 mm。光切断は 0.104 mm(5〜95 % 0.077〜0.129、全部の点 0.173 mm)で、0.1 mm 以下とは言えない(限界)。金属光沢にすると縞投影は 0.238 mm。PF は最大 − 最小なので点が多いほど大きく、点の数に依らない残差 RMS も表に並べた。★★実データが支えるのは段差の縁の外側の向きだけ: 相関で対応を取る方式は上の面の高さのまま「太り」、ToF は物体と背景の間に「浮く」。実写ステレオ(Middlebury 2014)は太る 39 % / 浮く 9 %。T-LESS の同じ場面では、構造化光の深度センサが太る 34 % / 浮く 5 %、ToF の深度センサが浮く 48 % / 太る 18 %。深度の元の画素で数え直しても向きは同じ(浮く ToF 52 % / 構造化光 11 %)。材質の値は著者が置いた値で、材質の主張はシミュだけ。既存の方式別の深掘り(受入試験、ToF 3 本、縞の相互反射、光切断の床 2 本、実写ステレオ 2 本、照度差ステレオ)と違うのは、同じ部品・同じ材質を 5 方式とも生の画像から描いて復号し、方式をまたいで同じ物差しで並べたこと。判定の「0.1 mm で測れる」は 0.1 mm 超 5 % 以下・1 mm 超 1 % 以下・欠測 20 % 以下。
+
+[![同じ部品を 3-D センサの 5 方式で測る ―― 縞投影・間接 ToF・光切断・照度差ステレオ・ステレオは、どの材質のどこで壊れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map.png)
+
+*↑ **同じ部品を 3-D センサの 5 方式で測る ―― 縞投影・間接 ToF・光切断・照度差ステレオ・ステレオは、どの材質のどこで壊れるか** ―― 同じ部品を 4 つの材質で、ステレオ・縞投影・間接 ToF・光切断・照度差ステレオの 5 方式で測った形を斜め前から見た立体(灰 = 欠測、橙 = 全方式共通の 0.1 mm を超える外れ)。一番上は真値。照度差ステレオの高さの定数は真値に合わせた。*
+
+[![装置が撮る生の画像(上 = つや消し、下 = 金属光沢)。ステレオの左、縞投影の 1 枚(周期 1 mm)、ToF の振幅(画素 0.4 mm)、光切断の 1 コマ(部屋の明かりつき)、照度差ステレオの 1 灯目。カメラの像はレンズのぼけと](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/02_raw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/02_raw.png)
+
+*↑ 測定の図 ―― 装置が撮る生の画像(上 = つや消し、下 = 金属光沢)。ステレオの左、縞投影の 1 枚(周期 1 mm)、ToF の振幅(画素 0.4 mm)、光切断の 1 コマ(部屋の明かりつき)、照度差ステレオの 1 灯目。カメラの像はレンズのぼけと周辺減光を通してある。*
+
+[![雑音 = 平らな所の真値との差の頑健な標準偏差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/03_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/03_numbers.png)
+
+*↑ 雑音 = 平らな所の真値との差の頑健な標準偏差。*
+
+[![ステレオの輻輳角・カメラの画素・ToF の画素を振った雑音。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/04_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/04_conditions.png)
+
+*↑ ステレオの輻輳角・カメラの画素・ToF の画素を振った雑音。*
+
+[![VDI/VDE 2634 Part 2 の考え方の評価量(準拠ではない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/05_acceptance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/05_acceptance.png)
+
+*↑ VDI/VDE 2634 Part 2 の考え方の評価量(準拠ではない)。*
+
+[![実データ: 同じ場面を構造化光と ToF の深度センサで撮った深度(T-LESS)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/06_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/06_real.png)
+
+*↑ 実データ: 同じ場面を構造化光と ToF の深度センサで撮った深度(T-LESS)。*
+
+[![何を入れ(同じ部品・4 材質)→ 何を比べ(5 方式の生の画像と測った形)→ 何が分かったか(どこで壊れるか)を約 51 秒で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/07_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/07_explained.gif)
+
+*↑ 動く図 ―― 何を入れ(同じ部品・4 材質)→ 何を比べ(5 方式の生の画像と測った形)→ 何が分かったか(どこで壊れるか)を約 51 秒で。*
+
+```
+py -3.11 examples/poc_3d_sensor_modalities.py
+```
+
+ソース: [examples/poc_3d_sensor_modalities.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_3d_sensor_modalities.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_3d_sensor_modalities)
+
+使用 op(ノートへ): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`binocular_disparity_ms`](https://furuse.work/ops/mv/stereo/binocular_disparity_ms.html) · [`cast_shadow`](https://furuse.work/ops/3d/render/cast_shadow.html) · [`form_factors_2d`](https://furuse.work/ops/optics/light_transport/form_factors_2d.html) · [`groove_profile`](https://furuse.work/ops/optics/light_transport/groove_profile.html) · [`integrate_normals`](https://furuse.work/ops/3d/photometric/integrate_normals.html) · [`itof_capture`](https://furuse.work/ops/optics/itof/itof_capture.html) · [`itof_flying_pixel_mask`](https://furuse.work/ops/optics/itof/itof_flying_pixel_mask.html) · [`itof_noise_budget`](https://furuse.work/ops/optics/itof/itof_noise_budget.html) · [`itof_phase_amplitude`](https://furuse.work/ops/optics/itof/itof_phase_amplitude.html) · [`laser_line_center_centroid`](https://furuse.work/ops/optics/light_section/laser_line_center_centroid.html) · [`light_section_speckle_floor`](https://furuse.work/ops/optics/light_section/light_section_speckle_floor.html) · [`photometric_stereo_robust`](https://furuse.work/ops/specular/photometric/photometric_stereo_robust.html) · [`plane_flatness_error`](https://furuse.work/ops/acceptance/evaluate/plane_flatness_error.html) · [`sphere_probing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_probing_error.html) · [`sphere_spacing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_spacing_error.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 
 
 

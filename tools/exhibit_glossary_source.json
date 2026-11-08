@@ -1028,5 +1028,30 @@
   "review": false,
   "_short_ja": "勾配の大きさの総和",
   "_short_en": "sum of gradient magnitudes"
+ },
+ "mcp": {
+  "match": [
+   "MCP",
+   "Model Context Protocol"
+  ],
+  "ja": "AI のアプリが外部の道具やデータを呼び出すための公開の取り決め。道具の名前・引数の形・返り値を AI に渡し、AI はそれを呼んで結果を読む。",
+  "en": "An open protocol through which an AI application calls external tools and data: it hands the AI each tool's name, argument schema and results.",
+  "source": "Model Context Protocol specification, modelcontextprotocol.io, revision 2025-06-18",
+  "review": false,
+  "_short_ja": "AI が道具を呼ぶ取り決め",
+  "_short_en": "Model Context Protocol"
+ },
+ "llm": {
+  "match": [
+   "LLM",
+   "大規模言語モデル",
+   "large language model"
+  ],
+  "ja": "大量の文章で学習し、指示に応じて文やプログラムを書く大きなニューラルネット。手元の計算機で動かす小さめのものをローカル LLM と呼ぶ。",
+  "en": "A large neural network trained on text that writes prose or code on request; a smaller one run on one's own computer is called a local LLM.",
+  "source": "Brown et al., Language Models are Few-Shot Learners, NeurIPS 2020",
+  "review": false,
+  "_short_ja": "大規模言語モデル",
+  "_short_en": "large language model"
  }
 }

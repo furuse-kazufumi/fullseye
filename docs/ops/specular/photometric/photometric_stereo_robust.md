@@ -5,7 +5,7 @@ category: photometric
 in: images
 out: normalmap
 gpu: なし
-examples: [poc_shape_from_polarization, specular_photometric]
+examples: [poc_3d_sensor_modalities, poc_shape_from_polarization, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -185,6 +185,7 @@ repair).
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_3d_sensor_modalities](../../../../examples/poc_3d_sensor_modalities.py) — `py -3.11 examples/poc_3d_sensor_modalities.py`
 - [poc_shape_from_polarization](../../../../examples/poc_shape_from_polarization.py) — `py -3.11 examples/poc_shape_from_polarization.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`
 

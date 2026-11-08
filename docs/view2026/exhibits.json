@@ -8326,6 +8326,57 @@
     "hi": "1943 की टाइप की गई रिपोर्ट को क्लासिकल OCR से पढ़ना",
     "fr": "Lire un rapport dactylographié de 1943 par OCR classique"
    }
+  },
+  {
+   "id": "poc_3d_sensor_modalities",
+   "group": "wing_threed",
+   "media": "01_map.png",
+   "motion": false,
+   "thumb_src": "01_map.png",
+   "label": {
+    "ja": "同じ部品を 3-D センサ 5 方式で測る",
+    "en": "One part, five 3-D sensing methods",
+    "zh": "用 5 种三维传感方式测量同一零件",
+    "tw": "用 5 種三維感測方式量測同一零件",
+    "ko": "같은 부품을 5가지 3-D 센서 방식으로 측정",
+    "de": "Ein Bauteil, fünf 3-D-Messverfahren",
+    "hi": "एक ही पुर्जा, पाँच 3-D sensing तरीके",
+    "fr": "Une pièce, cinq méthodes de mesure 3-D"
+   }
+  },
+  {
+   "id": "poc_ai_built_inspection_scored",
+   "group": "wing_industrial",
+   "media": "01_crack_real.png",
+   "motion": false,
+   "thumb_src": "01_crack_real.png",
+   "label": {
+    "ja": "AI が組んだ検査を実データの真値で採点",
+    "en": "Scoring inspections built by an AI on real data",
+    "zh": "用真实数据的真值为 AI 组建的检测打分",
+    "tw": "用真實資料的真值為 AI 組建的檢測評分",
+    "ko": "AI가 짠 검사를 실데이터의 참값으로 채점",
+    "de": "Von einer KI gebaute Prüfungen an echten Daten bewerten",
+    "hi": "AI द्वारा बनाए निरीक्षण को वास्तविक डेटा के सत्य से अंकित करना",
+    "fr": "Noter sur données réelles des inspections construites par une IA"
+   }
+  },
+  {
+   "id": "poc_equipment_selection_map",
+   "group": "wing_industrial",
+   "media": "02_equipment_at_a_glance.png",
+   "motion": false,
+   "thumb_src": "02_equipment_at_a_glance.png",
+   "label": {
+    "ja": "照明 × カメラ × レンズ 60 通りで同じ傷を撮る機材選びの地図",
+    "en": "Equipment map: the same flaws through 60 light, camera and lens sets",
+    "zh": "器材选型地图:用 60 种照明×相机×镜头组合拍同一缺陷",
+    "tw": "器材選型地圖:用 60 種照明×相機×鏡頭組合拍同一缺陷",
+    "ko": "조명×카메라×렌즈 60조합으로 같은 결함을 찍는 장비 선택 지도",
+    "de": "Gerätekarte: dieselben Fehler mit 60 Licht-, Kamera- und Objektivkombinationen",
+    "hi": "उपकरण चयन मानचित्र: 60 light, camera और lens संयोजनों से वही दोष",
+    "fr": "Carte de choix du matériel : les mêmes défauts vus par 60 combinaisons éclairage, caméra, objectif"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

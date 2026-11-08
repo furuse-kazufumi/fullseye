@@ -5,7 +5,7 @@ category: anomaly_eval
 in: signal × signal
 out: table
 gpu: なし
-examples: [anomaly_eval_metrics, poc_good_sample_variation_model, poc_patch_anomaly]
+examples: [anomaly_eval_metrics, poc_ai_built_inspection_scored, poc_good_sample_variation_model, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -38,6 +38,7 @@ all images carry the same label (AUROC undefined).
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [anomaly_eval_metrics](../../../../examples/anomaly_eval_metrics.py) — `py -3.11 examples/anomaly_eval_metrics.py`
+- [poc_ai_built_inspection_scored](../../../../examples/poc_ai_built_inspection_scored.py) — `py -3.11 examples/poc_ai_built_inspection_scored.py`
 - [poc_good_sample_variation_model](../../../../examples/poc_good_sample_variation_model.py) — `py -3.11 examples/poc_good_sample_variation_model.py`
 - [poc_patch_anomaly](../../../../examples/poc_patch_anomaly.py) — `py -3.11 examples/poc_patch_anomaly.py`
 

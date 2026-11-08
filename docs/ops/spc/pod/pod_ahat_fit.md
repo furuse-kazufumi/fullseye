@@ -5,7 +5,7 @@ category: pod
 in: table
 out: table
 gpu: なし
-examples: [poc_pod_lighting, poc_sam_hybrid_bonding_voids]
+examples: [poc_equipment_selection_map, poc_pod_lighting, poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -56,6 +56,7 @@ version: 1.0.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_equipment_selection_map](../../../../examples/poc_equipment_selection_map.py) — `py -3.11 examples/poc_equipment_selection_map.py`
 - [poc_pod_lighting](../../../../examples/poc_pod_lighting.py) — `py -3.11 examples/poc_pod_lighting.py`
 - [poc_sam_hybrid_bonding_voids](../../../../examples/poc_sam_hybrid_bonding_voids.py) — `py -3.11 examples/poc_sam_hybrid_bonding_voids.py`
 

@@ -259,7 +259,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 305 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 308 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -278,7 +278,7 @@ PoC 305 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>産業検査</b> (57)</summary>
+<details class="vall"><summary><b>産業検査</b> (59)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../articles/assets/poc/poc_barcode_1d/story.ja.gif" alt="同じ画像・同じ二値化で、run 数を検査するかどうかだけが違う。" loading="lazy" width="200" height="200"></picture><span>1 次元バーコード</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../articles/assets/poc/poc_battery_electrode_tortuosity/story.ja.gif" alt="左と中は同じ球状粒子床の直交する 2 断面。右はカレンダリングで潰した粒子(空隙率はほぼ同じ、屈曲度は 3.7 倍)。" loading="lazy" width="200" height="200"></picture><span>電極の屈曲度</span></a>
@@ -337,6 +337,8 @@ PoC 305 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symbol_part_dpm.jpg" alt="ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる" width="200" height="200"><span>ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる</span></a>
 <a href="../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symbol_lot_ocr.jpg" alt="ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる" width="200" height="200"><span>ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる</span></a>
 <a href="../articles/assets/poc/poc_real_typewritten_ocr/01_reading.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_typewritten_ocr/01_reading.png"><img src="../articles/assets/poc/poc_real_typewritten_ocr/story.ja.gif" alt="NACA TN 898 の 5 頁(試験頁)。箱 = segment_characters の字、下の字 = k-NN の読み。○青 = 正、×橙 = 誤、灰 = 字数が書き起こしと合わず採点の外。" loading="lazy" width="200" height="200"></picture><span>1943 年のタイプ打ちの報告を古典 OCR で読む</span></a>
+<a href="../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><img src="../articles/assets/poc/poc_ai_built_inspection_scored/story.ja.gif" alt="コンクリートのひび割れ(試験画像、塗り = 検出)。欠陥の画像は NG なら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも寄せていない)。検出は表示のため 2 画素太らせた。出典表示: Özgenel, Ç. F. (2019). Concrete Crack Images for Classification. Mendeley Data, v2. doi:10.17632/5y9wdsg2zt.2. CC BY 4.0; converted to gray" loading="lazy" width="200" height="200"></picture><span>AI が組んだ検査を実データの真値で採点</span></a>
+<a href="../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><img src="../articles/assets/poc/poc_equipment_selection_map/story.ja.gif" alt="ViEW の入口用: 題材ごとに、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(中央値と最小〜最大。どの種の組でも見つかるものだけ、無ければ「見つからない」)と、題材の最良の組で撮った見本。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げた)。" loading="lazy" width="200" height="200"></picture><span>照明 × カメラ × レンズ 60 通りで同じ傷を撮る機材選びの地図</span></a>
 </div>
 </details>
 
@@ -405,7 +407,7 @@ PoC 305 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 形状</b> (21)</summary>
+<details class="vall"><summary><b>3-D 形状</b> (22)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="../articles/assets/poc/poc_battery_ct_degradation/story.ja.gif" alt="真正面(0 度)なら空隙の影までは見える。ただし奥行きに積算されているので厚みも深さも出ない。22 度傾けると層の縞そのものが重なって消える —— 投影では姿勢が結果を決めてしまう。だから断層に落とす。" loading="lazy" width="200" height="200"></picture><span>電池の CT 劣化</span></a>
 <a href="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="../articles/assets/poc/poc_bev_sensor_fusion/story.ja.gif" alt="評価窓は前方 3-30 m。既知でない領域(車体内部・陰)は評価から外す。" loading="lazy" width="200" height="200"></picture><span>鳥瞰図の融合</span></a>
@@ -428,6 +430,7 @@ PoC 305 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_plateau_venue_lod2.jpg" alt="会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに" width="200" height="200"><span>会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに</span></a>
 <a href="../view2026/anim3d/star_tracker_anim3d.html?lang=ja"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png"><img src="../articles/assets/poc/poc_star_tracker/story.ja.gif" alt="PSF・光子雑音・読み出し雑音を含む合成像。真の星16個に、星表に無いホットピクセル2個を加えた。" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>合成星像から衛星姿勢を推定する</span></a>
 <a href="../articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_bga_ball_type_roundtrip.jpg" alt="画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個" width="200" height="200"><span>画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個</span></a>
+<a href="../articles/assets/poc/poc_3d_sensor_modalities/01_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_3d_sensor_modalities/01_map.png"><img src="../articles/assets/poc/poc_3d_sensor_modalities/story.ja.gif" alt="同じ部品(段差・止まり穴・斜面・V 溝・リブ・浅い打痕)を 4 つの材質で、ステレオ・縞投影・間接 ToF・光切断・照度差ステレオの 5 方式で測った形。灰 = 欠測、橙 = 全方式共通の 0.1 mm を超える外れ。三角測量の角はステレオ・縞投影・光切断とも 30°。撮像は物理で描き、高さへの戻しは Fullseye の op。照度差ステレオの高さの定数は真値に合わせた(形の外れは偏りを引いて数えるので、合わせ方に依らない)。" loading="lazy" width="200" height="200"></picture><span>同じ部品を 3-D センサ 5 方式で測る</span></a>
 </div>
 </details>
 

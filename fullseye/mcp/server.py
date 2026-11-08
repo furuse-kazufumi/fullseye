@@ -217,13 +217,13 @@ TOOLS: dict[str, dict] = {
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     "fullseye_list_samples": {
-        "description": "同梱のサンプル画像(来歴・ライセンスつき)。load_image に渡せるパスを返す。",
+        "description": "読める画像名(files=作業場所、samples=同梱)。load_image の path に渡す。",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     "fullseye_load_image": {
         "description": (
-            "画像を読み込んでハンドルを返す。読めるのはサンドボックス根の下だけ"
-            "(既定は同梱サンプル、FULLSEYE_MCP_ROOT で追加)。画素は返さず、数値統計と判定を返す。"),
+            "画像を読みハンドルを返す。path は課題のファイル名か list_samples の名前。"
+            "無ければ近い名前を添えて断る。返すのは数値統計。"),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -1095,8 +1095,12 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             schema_names = set(schema) | set(physical)
             unknown_params=sorted(set(spec.get("params",{}))-schema_names)
             if unknown_params:
-                errors.append({"layer":"stage","stage":i,"reason":"unknown_parameter","value":unknown_params,
-                               "candidates":sorted(schema_names)})
+                err = {"layer":"stage","stage":i,"reason":"unknown_parameter","value":unknown_params,
+                       "candidates":sorted(schema_names)}
+                if {"a", "b"} & set(unknown_params):
+                    # ★2026-11-08: a/b を params の中に入れた形は、知らない引数として断るだけでは直し方が分からない
+                    err["detail"] = "a と b は params の中ではなく段の直下に書く: {\"op\": ..., \"a\": 0.5}"
+                errors.append(err)
             missing=[n for n,p in schema.items() if p.get("required") and n not in spec.get("params",{})]
             if missing:
                 errors.append({"layer":"stage","stage":i,"reason":"missing_parameter","value":missing,"candidates":[]})
@@ -1124,7 +1128,20 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                     except (TypeError,ValueError) as exc:
                         errors.append({"layer":"stage","stage":i,"reason":"unknown_profile",
                                        "value":pvalue.get("profile"),"detail":str(exc),"candidates":[]})
-            ka, kb = float(spec.get("a", 0.5)), float(spec.get("b", 0.5))
+            # ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、
+            #   pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
+            knob_bad = {}
+            for knob in ("a", "b"):
+                if knob in spec:
+                    v = spec[knob]
+                    if isinstance(v, bool) or not isinstance(v, (int, float)) or not (0.0 <= float(v) <= 1.0):
+                        knob_bad[knob] = v
+            if knob_bad:
+                errors.append({"layer":"stage","stage":i,"reason":"knob_out_of_range","value":knob_bad,
+                               "detail":"a と b は 0〜1 の数(つまみの位置)。物理量で渡すなら op カードの名前つき params",
+                               "candidates":[]})
+            ka = 0.5 if "a" in knob_bad else float(spec.get("a", 0.5))
+            kb = 0.5 if "b" in knob_bad else float(spec.get("b", 0.5))
             named_used = {}
             if physical:
                 conflicts = sorted(name0 for name0, ps in physical.items()
@@ -2176,8 +2193,9 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name == "fullseye_list_samples":
         rows = store.samples()
         names=[r["name"] for r in rows]
-        text="samples: "+", ".join(names)
-        return tool_result(text, {"samples": names},
+        files = store.root_files()
+        text = ("files: " + (", ".join(files) if files else "(なし)") + "\nsamples: " + ", ".join(names))
+        return tool_result(text, {"files": files, "samples": names},
                            max_structured_bytes=max_structured_bytes)
     try:
         if name == "fullseye_load_image":
