@@ -5,7 +5,7 @@ category: colorspace
 in: rgbimage
 out: lab
 gpu: なし
-examples: [image_quality_metrics, poc_colormap_readability, poc_leaf_disease_area, poc_solder_fillet_aoi]
+examples: [image_quality_metrics, poc_colormap_readability, poc_leaf_disease_area, poc_metal_grain_size, poc_solder_fillet_aoi]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -54,6 +54,7 @@ sRGB → CIE L\*a\*b\*(D65)。ΔE を測る前段。
 - [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
 - [poc_colormap_readability](../../../../examples/poc_colormap_readability.py) — `py -3.11 examples/poc_colormap_readability.py`
 - [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
+- [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
 - [poc_solder_fillet_aoi](../../../../examples/poc_solder_fillet_aoi.py) — `py -3.11 examples/poc_solder_fillet_aoi.py`
 
 ## 型が繋がる次の op(`lab` を入力に取れる)

@@ -5,7 +5,7 @@ category: interface
 in: signal
 out: signal
 gpu: あり(許可リスト)
-examples: [example_polarization_metal, glass_and_mirror_optics, poc_material_optical_library]
+examples: [example_polarization_metal, glass_and_mirror_optics, poc_material_optical_library, poc_polarization_specular]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [example_polarization_metal](../../../../examples/example_polarization_metal.py) — `py -3.11 examples/example_polarization_metal.py`
 - [glass_and_mirror_optics](../../../../examples/glass_and_mirror_optics.py) — `py -3.11 examples/glass_and_mirror_optics.py`
 - [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
+- [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

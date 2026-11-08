@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""PoC: 肉の中の骨片とガラスを、2 つのエネルギーで材質ごとに色分けする(デュアルエナジー / フォトンカウンティング X 線)
+"""PoC: 肉の中の骨片とガラスを、2 つのエネルギーで見つける ―― 材質まで読めるのは平らな板の場面だけ(デュアルエナジー / フォトンカウンティング X 線)
 
     py -3.11 examples/poc_dual_energy_xray.py
 
@@ -23,6 +23,9 @@
      「分けられなくなる Al の厚さ」(誤り率 5 %)の閉形式と実測を比べる。肉 40 mm の下では境界が動く。
   3. **分解の雑音 = CRLB**: 基底分解の推定の分散が、Fisher 情報の逆行列(Cramér–Rao の下限)と一致すること。
      窓のしきい値を振って σ が最小になる位置と、同じ光子数の 2 管電圧(エネルギー積分)との比較。
+  5. **実物らしいトレイ(代表の図)**: 切り身の重なり・霜降り・PP のトレイ・コンベアベルト・画素の利得のむらの場面で、
+     1 枚の像の 2 つの手法(大域しきい値・局所の背景差)と 2 エネルギーを比べ、撮る側の応答が分解の模型とずれた場合も見る。
+     見つけることはできても、細い物・厚い肉の上では材質の粗い分類が外れる。
   4. **壊れるところ**: 検出器の電荷共有とエネルギー分解能を知らずに分解すると、肉が「Al」に化ける
      (偽の異物)。単色の近似で分解すると、厚みとともに偏る(ビーム硬化)。測れない入力は値を返さず拒否。
 
@@ -368,13 +371,95 @@ def main():
     refused = _refusals(L, ch, sig)
     check(refused == 6, "測れない入力は黙って値を返さず拒否する", "%d / 6" % refused)
 
+    print("== 5. 実物らしいトレイ(代表の図) ==")
+    rt = real_tray(ch, zref, aref)
+    top_mm = RT_TOPHAT_PX * RT_PX_MM
+    lo_name = "1 枚の像・トップハット(%s)" % ("同じ検出率" if rt["local_reached"] else "同じ検出率に届かない")
+    for key, name in (("global", "1 枚の像・大域しきい値"), ("local", lo_name), ("dual", "2 エネルギー・模型どおり")):
+        r = rt[key]
+        print("  %-26s 異物の無い肉の %5.2f %%、偽の塊 %2d 個、拾った画素の割合 %s"
+              % (name, 100 * r["fp"], r["false"], " / ".join("%.2f" % h for h in r["hit"])))
+    for name, r in rt["mismatch"]:
+        print("  2 エネルギー・撮る側が %-18s 偽の塊 %2d 個、拾った画素の割合 %s"
+              % (name, r["false"], " / ".join("%.2f" % h for h in r["hit"])))
+    print("  (拾った画素の割合の順: %s。光子雑音の種 0 = 図の 1 枚)" % " / ".join(n for n, _, _ in RT_FOREIGN))
+    for bl in rt["blobs"]:
+        print("  塊 (%3.0f, %3.0f) %4d 画素: 見かけの Z %.1f → %s(仕込んだ物: %s)"
+              % (bl["yx"][0], bl["yx"][1], bl["mask"].sum(), bl["z"], CLASS_NAMES[bl["cls"]],
+                 "・".join(RT_FOREIGN[i][0] for i in bl["truth"]) or "無し"))
+    check(rt["n_rej"] == 0 and 0.8 < rt["z_mad"] < 1.25,
+          "実物らしいトレイ: Al の像の画素の雑音が、肉の厚さごとのクラメール・ラオの下限(閉形式)と 25 % 以内",
+          "下限で割った値の MAD %.3f、拒否 %d 画素" % (rt["z_mad"], rt["n_rej"]))
+    # ★同じ検出率に届かなければ、1 枚の像との比べ方そのものが成り立たない(2026-11-08 の敵対的レビュー: 構造要素
+    #   15 px・61 px では届かないのに「同じ検出率」と印字して通っていた)。
+    lb = rt["local_best"]
+    check(rt["local_reached"],
+          "実物らしいトレイ: 1 枚の像の局所の手法(トップハット %.2f mm)が骨片とガラス片で 2 エネルギーと同じ検出率に届く"
+          " —— 届かなければ比べる相手として不成立" % top_mm,
+          ("上位 %.1f %% で届いた" % (100 - rt["local_q"])) if rt["local_reached"] else
+          ("上位 15 %% まで下げても骨片 %.2f / ガラス片 %.2f(2 エネルギー %.2f / %.2f)"
+           % (lb[0], lb[1], rt["dual"]["hit"][0], rt["dual"]["hit"][1])))
+    # 光子雑音の種を振った範囲(種 0 = 図)。主張はこの範囲で書く(種 1 本の値で書かない)。
+    rows = rt["seed_rows"]
+    sds = list(RT_NOISE_SEEDS)
+    col = lambda i: np.array([rows[s][i] for s in sds], dtype=float)
+    d_false, l_false, n_bl, n_ms, n_mg = col(0), col(8), col(5), col(6), col(7)
+    hits = np.array([rows[s][1:5] for s in sds], dtype=float)
+    check(not rt["seed_bad"],
+          "実物らしいトレイ: 光子雑音の種 %d 本の数が記録と一致(%s)—— 場面を変えて黙って動かないための記録の照合"
+          % (len(sds), "全本を計算し直した" if RT_FULL else "CI は種 0 だけ計算し直し、残りは記録"),
+          "; ".join(rt["seed_bad"]) or "一致")
+    print("  光子雑音の種 %d 本(%s): 2 エネルギーの偽の塊 %d〜%d 個、骨片・ガラス片・針金・小石の拾い %s、"
+          "1 枚の像の局所の手法の偽の塊 %d〜%d 個、局所の手法が同じ検出率に届いた種 %d / %d 本"
+          % (len(sds), ",".join(str(s) for s in sds), d_false.min(), d_false.max(),
+             " / ".join("%.2f〜%.2f" % (hits[:, j].min(), hits[:, j].max()) for j in range(4)),
+             l_false.min(), l_false.max(), sum(rows[s][9] for s in sds), len(sds)))
+    # 「1 個以下」と過半(0.5)は種 5 本を見てから置いた(2026-11-08。種 1 では偽の塊が 1 個出るので、旧「偽の塊 0」は外した)。
+    # ★この「1 個以下」は余白 0 の門: 記録の種 1 と、記録の外の種 11 ではちょうど 1 個で、境目に乗っている(2026-11-09 の確認で指摘)。種や場面を
+    #   変えて 2 個になったら、門を緩めず主張(偽の塊の範囲)を書き直す。
+    check(d_false.max() <= 1 and hits.min() > 0.5,
+          "実物らしいトレイ: 2 エネルギーは光子雑音の種 %d 本とも骨片・ガラス片・針金・小石の画素の過半を拾い、偽の塊は"
+          " 1 個以下(%.0f σ)" % (len(sds), RT_SIGMA),
+          "偽の塊 %s、拾った割合の最小 %.2f" % ("/".join("%d" % v for v in d_false), hits.min()))
+    check(all(rows[s][9] for s in sds) and d_false.max() < l_false.min(),
+          "実物らしいトレイ: 種 %d 本とも、同じ検出率の 1 枚の像(局所の手法)より 2 エネルギーの偽の塊が少ない" % len(sds),
+          "2 エネルギー 最大 %d 個 / 1 枚の像 最小 %d 個" % (d_false.max(), l_false.min()))
+    mild = rt["mismatch"][:-1]
+    # 「1 個以下」と 0.3 は実測を見て置いた。分解の模型が撮る側と少しずれても(管電圧 +2 kV・ろ過 +0.5 mm・
+    # 電荷共有 10 %、白は実測)見つける力が保たれるかの門。大きなずれ(最後の組)は門にせず限界として印字する。
+    check(all(r["false"] <= 1 and all(h > 0.3 for h in r["hit"]) for _, r in mild),
+          "実物らしいトレイ: 検出器の応答が模型から少しずれても(%s)4 つを全部拾い、偽の塊は 1 個以下(種 0)"
+          % "・".join(n for n, _ in mild),
+          " / ".join("%s: 偽 %d" % (n, r["false"]) for n, r in mild))
+    wn, wr = rt["mismatch"][-1]
+    print("  ★限界: 撮る側が %s のずれを知らずに分解すると、偽の塊は %d 個だがガラス片の画素は %.2f しか拾えない"
+          "(章 4 と同じ壊れ方。応答の較正が要る)。" % (wn, wr["false"], wr["hit"][1]))
+    lw = rt["local"]["where"]
+    print("  ★比べる相手: 1 枚の像は大域しきい値で偽の塊 %d 個。局所の手法(トップハット %.2f mm・輪郭の 3 mm 内側だけ・"
+          "骨片とガラス片を 2 エネルギーと%sしきい値 = 上位 %.1f %%)でも偽の塊 %d 個(重心の場所: 2 切れの重なりの中 %d・"
+          "脂身の割合 %.0f %% 以上の所 %d・それ以外 %d。種 %d 本では %d〜%d 個)。どちらも門にはしない(1 枚の像の失敗を固定しない)。"
+          % (rt["global"]["false"], top_mm, "同じ割合だけ拾う" if rt["local_reached"] else "同じ割合までは拾えない",
+             100 - rt["local_q"], rt["local"]["false"], lw[0], 100 * RT_FAT_SPLIT, lw[1], lw[2], len(sds),
+             l_false.min(), l_false.max()))
+    mg = rt["metal_glass"]
+    print("  ★正直に: 見つけることはできても、材質の粗い分類は外れる —— 図の種 0 では %d 塊のうち %d 塊、光子雑音の種 %d 本では"
+          " %d〜%d 塊のうち %d〜%d 塊。細い針金はぼけで肉と混ざり軽い無機物に、ガラス片の一部は金属と読まれる"
+          "(種 %d 本で %d〜%d 塊。図の種では %s)。章 1 の Z の読みは平らな板の場面での話で、細い物・厚い肉の上では効かない。"
+          "代表の図は材質で塗らず、見つけた塊だけを示す。"
+          % (len(rt["blobs"]), len(rt["miss"]), len(sds), n_bl.min(), n_bl.max(), n_ms.min(), n_ms.max(), len(sds),
+             n_mg.min(), n_mg.max(), ("%d 塊、Z %s" % (len(mg), " / ".join("%.1f" % bl["z"] for bl in mg))) if mg else "0 塊"))
+    print("  (光子雑音の種を振った計算: CPU %.1f 秒。下の所要時間の門には含めない)" % rt["sweep_cpu"])
+
     elapsed = time.time() - t0
     cpu = time.process_time() - c0
-    check(cpu < 120.0, "所要時間(この PoC 自身の CPU 時間)", "CPU %.1f 秒(壁時計 %.1f 秒)" % (cpu, elapsed))
+    cpu -= rt["sweep_cpu"]                                 # 種を振った分(手元・図つきだけ)は除く。以前の計時と同じ範囲
+    check(cpu < 120.0, "所要時間(この PoC 自身の CPU 時間。BLAS 1 スレッド、図の生成と光子雑音の種の振りは含まない)",
+          "CPU %.1f 秒(壁時計 %.1f 秒)" % (cpu, elapsed))
 
     if figs.enabled():
         _figures(L, spec, ch, q, th, mats, masks, total, fat, sig, single, b, extra, zmap, rows1, (zest, z_exact), ztrue,
                  conf, cr, sweep, t_best, s_pc, s_kv, wrong, real, noise_al, hvl_rows, lin)
+        _rt_figure(rt)
     assert not figs.errors(), figs.errors()
 
     bad = [ck for ck in CHECKS if not ck[0]]
@@ -384,6 +469,348 @@ def main():
             print("  NG:", label, detail)
         raise SystemExit(1)
     print("PASS")
+
+
+# --------------------------------------------------------------------------- #
+# 5. 実物らしいトレイ(代表の図)                                                #
+# --------------------------------------------------------------------------- #
+#: 章 5 の画素(0.25 mm)と大きさ。1 画素の光子は章 1 と同じ線量(面積あたり)にする。
+RT_PX_MM = 0.25
+RT_H, RT_W = 360, 520
+RT_PHOTONS = PHOTONS * (RT_PX_MM / PX_MM) ** 2
+RT_BLUR_PX = 0.5          # 焦点の大きさと変換層の広がり(σ 0.125 mm)を光子の平均にかける
+RT_MATS = ["MUSCLE_ICRU44", "ADIPOSE_ICRU44", "POLYPROPYLENE", "BONE_CORTICAL_ICRU44", "SODA_LIME_GLASS",
+           "STAINLESS_STEEL_304", "CALCITE", "PVC"]
+RT_TOPHAT_PX = 25         # 1 枚の像の局所の手法: 白いトップハットの構造要素(6.25 mm、骨片の幅 7 mm より少し小さい)
+RT_FAT_SPLIT = 0.3        # 偽の塊の場所を分ける脂身の割合(これ以上を「脂身の多い所」と数える)
+#: 光子雑音の種(0 = 図の 1 枚。k > 0 は乱数の鍵の末尾に k を足す)。★2026-11-08 の敵対的レビュー: 「偽の塊 0」
+#: 「7 塊中 4 塊」は種 1 本の値で、種 1 では偽の塊が 1 個出て門が落ち、分類の外れも 4〜6 塊と動いた。主張は種 5 本の範囲で書く。
+RT_NOISE_SEEDS = (0, 1, 2, 3, 4)
+#: 種ごとの記録(2026-11-08、5 本を全部走らせて記録)。並び = (2 エネルギーの偽の塊, 骨片・ガラス片・針金・小石の
+#: 拾った画素の割合, 塊の数, 分類の外れの数, 金属と読まれたガラス片の塊, 局所の手法の偽の塊, 局所の手法が同じ検出率に
+#: 届いたか)。CI(``FULLSEYE_POC_BUDGET=reduced``、CI の既定)は種 0 だけを計算し直して照合し、残りは記録の行を使う。
+#: 手元・図つき(``full``)は 5 本を全部計算し直して照合する(1 本 CPU 8 秒ほど)。
+RT_SEED_RECORDED = {
+    0: (0, 0.65, 0.6, 1.0, 1.0, 7, 4, 2, 25, True),
+    1: (1, 0.66, 0.59, 1.0, 0.99, 7, 6, 0, 22, True),
+    2: (0, 0.66, 0.63, 1.0, 0.99, 7, 4, 1, 31, True),
+    3: (0, 0.67, 0.61, 1.0, 0.99, 7, 4, 1, 25, True),
+    4: (0, 0.67, 0.62, 1.0, 0.99, 6, 6, 1, 28, True),
+}
+RT_FULL = os.environ.get("FULLSEYE_POC_BUDGET", "reduced" if CI else "full") == "full"
+RT_GAIN_RES = 0.003       # 白補正の後に残る検出器の画素ごとの利得のむら(列ごと = ベルトの向きの縞)
+#: 撮る側の検出器の応答を名目の模型からずらす組(名前, 管電圧 kV, ろ過 Al mm, 電荷共有, 分解能 FWHM keV)。
+#: 分解は名目(80 kV・Al 2.5 mm・理想の検出器)のまま。最後の組は章 4 と同じ大きなずれで、限界として見せる。
+RT_MISMATCH = (("管電圧 82 kV", 82.0, 2.5, 0.0, 0.0), ("ろ過 Al 3.0 mm", 80.0, 3.0, 0.0, 0.0),
+               ("電荷共有 10 %", 80.0, 2.5, 0.10, 0.0), ("電荷共有 25 %・分解能 8 keV", 80.0, 2.5, 0.25, 8.0))
+#: 仕込む異物(名前, 厚み図の段, 期待する粗い分類)
+RT_FOREIGN = (("骨片", 3, 1), ("ガラス片", 4, 1), ("針金", 5, 3), ("小石", 6, 2))
+RT_SIGMA = 4.0            # 検出のしきい値(CRLB で割った Al の像を σ 1 px で均した値の MAD の何倍か)
+RT_MIN_PX = 24            # 塊の最小の画素数(1.5 mm²)
+
+
+def _rt_field(seed, sigma, aniso=(1.0, 1.0)):
+    rng = np.random.default_rng([seed, 2026, 11, 8])
+    f = ndimage.gaussian_filter(rng.standard_normal((RT_H, RT_W)), (sigma * aniso[0], sigma * aniso[1]), mode="reflect")
+    return (f - f.mean()) / f.std()
+
+
+def _rt_blob(yy, xx, cy, cx, ry, rx, rot, seed, rough=0.12):
+    """輪郭の揺れた塊の正規化半径(< 1 が中)。輪郭の揺れは 2〜8 次の三角関数の和。"""
+    c, s = math.cos(rot), math.sin(rot)
+    u = ((xx - cx) * c + (yy - cy) * s) / rx
+    v = (-(xx - cx) * s + (yy - cy) * c) / ry
+    th = np.arctan2(v, u)
+    rng = np.random.default_rng([seed, 7])
+    k = np.arange(2, 9)
+    amp = rough * rng.standard_normal(len(k)) / k
+    ph = rng.uniform(0, 2 * np.pi, len(k))
+    edge = 1.0 + np.sum(amp[:, None, None] * np.cos(k[:, None, None] * th[None] + ph[:, None, None]), axis=0)
+    return np.hypot(u, v) / edge
+
+
+def _rt_poly(yy, xx, pts):
+    """多角形の中(ガラスの破片の鋭い縁)。偶奇規則の交差判定。"""
+    inside = np.zeros(yy.shape, bool)
+    n = len(pts)
+    for i in range(n):
+        x1, y1 = pts[i]
+        x2, y2 = pts[(i + 1) % n]
+        cross = (y1 > yy) != (y2 > yy)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            xint = x1 + (yy - y1) * (x2 - x1) / (y2 - y1)
+        inside ^= cross & (xx < xint)
+    return inside
+
+
+def real_tray_scene():
+    """実物らしい肉のトレイの厚み図 (7, H, W) [cm]: 豚の切り身 2 切れ(一部重なる、縁は丸い、筋の繊維・霜降り・
+    脂身の層)、PP のトレイ(底 0.6 mm と立ち上がりの壁)、割れた管状骨の破片(皮質の殻が濃い)、板ガラスの破片 2 つ、
+    曲がったステンレスの針金(φ 0.5 mm)、小石、PVC のコンベアベルト(厚さ 1.2 mm、織り目 ±5 %)。異物は肉を押しのける。
+    返り値: (厚み図, {"meat": 肉の厚み, "over": 2 切れの重なり, "fat": 脂身の割合})。"""
+    yy, xx = np.mgrid[0:RT_H, 0:RT_W].astype(np.float64)
+
+    def piece(cy, cx, ry, rx, rot, seed, hmax):
+        rr = _rt_blob(yy, xx, cy, cx, ry, rx, rot, seed)
+        inside = rr < 1.0
+        d = ndimage.distance_transform_edt(inside) * RT_PX_MM
+        prof = hmax * np.sqrt(np.clip(1.0 - (1.0 - np.clip(d / 9.0, 0, 1)) ** 2, 0, 1))
+        return np.where(inside, prof * (1.0 + 0.12 * _rt_field(seed + 11, 22)), 0.0), inside, rr
+
+    m1, in1, rr1 = piece(170, 200, 120, 165, 0.25, 1, 32.0)
+    m2, in2, _ = piece(205, 360, 105, 125, -0.5, 2, 26.0)
+    meat = (m1 + m2) / 10.0 * (1.0 + 0.04 * _rt_field(6, 1.2, aniso=(0.6, 3.0)))   # 筋の繊維
+    vein = np.abs(_rt_field(3, 3.0, aniso=(1.0, 2.6)))
+    marb = ndimage.gaussian_filter(np.clip(0.45 - vein, 0, None) / 0.45, 0.8)
+    cap = np.clip((1.0 - rr1) / 0.18, 0, 1) * in1 * ((yy - 150 + 25 * _rt_field(5, 40)) < 0)
+    fatfrac = np.clip(0.05 + 0.7 * marb ** 1.3 + 0.8 * cap, 0, 0.92)
+    tin = (np.abs(yy - RT_H / 2) < RT_H / 2 - 14) & (np.abs(xx - RT_W / 2) < RT_W / 2 - 14)
+    tout = (np.abs(yy - RT_H / 2) < RT_H / 2 - 4) & (np.abs(xx - RT_W / 2) < RT_W / 2 - 4)
+    tray = ndimage.gaussian_filter(0.06 * tout + 1.4 * (tout & ~tin), 1.0) / 10.0 * tout
+    # 骨片: 外径 7 mm・内径 3.9 mm の管を斜めに割った破片。投影は弦の長さ(殻が濃く、髄腔に海綿骨)
+    bone_in = _rt_blob(yy, xx, 120, 150, 14, 34, 0.6, 21, rough=0.35) < 1.0
+    vb = (-(xx - 150) * math.sin(0.6) + (yy - 120) * math.cos(0.6)) / 14.0
+    inner = np.sqrt(np.clip(0.55 ** 2 - vb ** 2, 0, 1))
+    shell = np.sqrt(np.clip(1 - vb ** 2, 0, 1)) - inner
+    bone = np.where(bone_in, (shell + 0.35 * np.clip(_rt_field(22, 1.3), 0, None) * inner) * 14 * RT_PX_MM / 10.0, 0.0)
+    bone = ndimage.gaussian_filter(bone, 0.6)
+    glass = (np.where(_rt_poly(yy, xx, [(330, 150), (372, 141), (361, 168), (378, 190), (341, 183)]),
+                      0.20 * (1.0 + 0.15 * (xx - 350) / 30.0), 0.0)
+             + np.where(_rt_poly(yy, xx, [(255, 255), (268, 247), (262, 266)]), 0.15, 0.0))
+    t = np.linspace(0, 1, 100)
+    dist = np.full((RT_H, RT_W), 1e9)
+    for x0, y0 in zip(120 + 70 * t, 245 + 18 * np.sin(3.0 * t)):
+        dist = np.minimum(dist, np.hypot(xx - x0, yy - y0))
+    rw = 0.25 / RT_PX_MM
+    steel = np.where(dist < rw, 2 * np.sqrt(np.clip(rw ** 2 - dist ** 2, 0, None)) * RT_PX_MM / 10.0, 0.0)
+    rs = _rt_blob(yy, xx, 250, 420, 9, 12, 0.3, 31, rough=0.25)
+    stone = np.where(rs < 1.0, 0.25 * np.sqrt(np.clip(1 - rs ** 2, 0, 1)), 0.0)
+    left = np.clip(meat - bone - glass - steel - stone, 0, None)
+    weave = np.cos(2 * np.pi * xx * RT_PX_MM / 2.0) * np.cos(2 * np.pi * yy * RT_PX_MM / 2.0)
+    belt = 0.12 * (1.0 + 0.05 * weave)
+    return (np.stack([left * (1 - fatfrac), left * fatfrac, tray, bone, glass, steel, stone, belt]),
+            {"meat": meat, "over": in1 & in2, "fat": fatfrac})
+
+
+def _rt_blobs(m):
+    lab, n = ndimage.label(m)
+    if n == 0:
+        return m & False
+    sz = np.asarray(ndimage.sum(m, lab, np.arange(1, n + 1)))
+    return np.isin(lab, 1 + np.where(sz >= RT_MIN_PX)[0])
+
+
+def _rt_shoot(th, ch_true, seed=0):
+    """真の検出器の応答 ``ch_true`` で撮る: 光子の平均 → 焦点と変換層のぼけ → 検出器の画素ごとの利得の残り
+    (ラインセンサの白補正の後に残る ±RT_GAIN_RES、列ごとに一定 = コンベアの向きの縞)→ Poisson。"""
+    mean = _proj(th, RT_MATS, ch_true, RT_PHOTONS, noise=False)
+    mean = ndimage.gaussian_filter(mean, (0, RT_BLUR_PX, RT_BLUR_PX))
+    gain = 1.0 + RT_GAIN_RES * np.random.default_rng([2026, 11, 8, 9]).standard_normal(RT_W)
+    key = [2026, 11, 8, 5] + ([seed] if seed else [])         # 種 0 は以前と同じ鍵(図の 1 枚)
+    return np.random.default_rng(key).poisson(mean * gain[None, None, :]).astype(np.float64)
+
+
+def _rt_dual(sig, ch_model, flat=None):
+    """2 エネルギーの検出: 模型の応答 ``ch_model`` で赤身 + Al に分解し、Al の高域を画素ごとの CRLB で割って
+    σ 1 px で均し、その MAD の RT_SIGMA 倍で拾う。``flat`` は空気の撮影(白)の実測(None = 模型から計算)。"""
+    L = fs.ledger
+    b = _decomp(sig, ch_model, BASIS, RT_PHOTONS, flat=flat)
+    n_rej = int(np.isnan(b).any(axis=0).sum())
+    b = np.nan_to_num(b)
+    tg = np.linspace(0.0, 8.0, 33)
+    sg = np.array([L.basis_decomposition_crlb((t, 0.0), BASIS, ch_model, RT_PHOTONS)["sigma_cm"][1] for t in tg])
+    al_hp = b[1] - ndimage.median_filter(b[1], size=41, mode="reflect")
+    z = al_hp / np.interp(ndimage.median_filter(b[0], size=9, mode="reflect"), tg, sg)
+    z_mad = 1.4826 * float(np.median(np.abs(z - np.median(z))))
+    zs = ndimage.gaussian_filter(z, 1.0)
+    zs_mad = 1.4826 * float(np.median(np.abs(zs - np.median(zs))))
+    return {"b": b, "zs": zs, "det": _rt_blobs(zs > RT_SIGMA * zs_mad), "n_rej": n_rej, "z_mad": z_mad}
+
+
+def _rt_local(single, truth, dual_hit):
+    """1 枚の像の局所の手法(現場の普通の前処理): 白いトップハット(構造要素 RT_TOPHAT_PX 画素、背景のなだらかな厚みを
+    引く)と、像から決めた品物の輪郭の 3 mm 内側だけを見る(輪郭の段差は異物と紛れるので外す)。しきい値は 2 エネルギーと
+    同じだけ骨片とガラス片の画素を拾うところに置く(同じ検出率で比べる)。
+
+    返り値: (検出, 分位 q, 届いたか, 届かなかったときに拾えた骨片・ガラス片の割合の最大)。★届かなければ ``reached`` は
+    False で、呼ぶ側はそれを不成立として扱う(2026-11-08 の敵対的レビュー: 以前は最後の分位で黙って数えていた)。"""
+    obj = ndimage.gaussian_filter(single, 2.0) > float(np.percentile(single, 30.0)) + 0.15
+    inner = ndimage.binary_erosion(obj, iterations=12)
+    loc = ndimage.gaussian_filter(ndimage.white_tophat(single, size=RT_TOPHAT_PX), 1.0)
+    loc_in = np.where(inner, loc, -np.inf)
+    best = [0.0, 0.0]
+    det = None
+    for q in np.linspace(99.9, 85.0, 75):                   # 0.2 % 刻み
+        det = _rt_blobs(loc_in > float(np.percentile(loc[inner], q)))
+        hb, hg = float(det[truth[0]].mean()), float(det[truth[1]].mean())
+        best = [max(best[0], hb), max(best[1], hg)]
+        if hb >= dual_hit[0] and hg >= dual_hit[1]:
+            return det, float(q), True, best
+    return det, float(q), False, best
+
+
+def _rt_eval(th, aux, sig, ch, zref, aref):
+    """1 回の撮影 ``sig`` を、1 枚の像(大域しきい値・局所の手法)と 2 エネルギーで探し、見つけた塊の材質を読む。"""
+    flat = RT_PHOTONS * ch["weights"].sum(axis=1)
+    tot = sig.sum(axis=0)
+    single = -np.log(np.maximum(tot, 1.0) / flat.sum())
+    truth = [th[k] > 0.01 for _, k, _ in RT_FOREIGN]
+    near = ndimage.binary_dilation(np.any(truth, axis=0), iterations=6)
+    on_meat = (aux["meat"] > 0.3) & ~near
+    core = ndimage.binary_erosion(truth[0] | truth[1], iterations=1)
+    single_s = ndimage.gaussian_filter(single, 1.0)
+    det_global = _rt_blobs(single_s >= float(np.percentile(single_s[core], 10.0)))
+    d = _rt_dual(sig, ch)
+    dual_hit = [float(d["det"][m].mean()) for m in truth]
+    det_local, loc_q, reached, best = _rt_local(single, truth, dual_hit)
+
+    def score(det):
+        lab, n = ndimage.label(det & ~near)
+        out = {"det": det, "fp": float(np.mean(det[on_meat])), "false": int(n),
+               "hit": [float(det[m].mean()) for m in truth]}
+        # 偽の塊の場所(重心の画素で分ける): 2 切れの重なりの中 / 脂身の割合 RT_FAT_SPLIT 以上 / それ以外
+        where = [0, 0, 0]
+        for c in ndimage.center_of_mass(det & ~near, lab, np.arange(1, n + 1)) if n else []:
+            yy, xx = int(round(c[0])), int(round(c[1]))
+            where[0 if aux["over"][yy, xx] else (1 if aux["fat"][yy, xx] >= RT_FAT_SPLIT else 2)] += 1
+        out["where"] = where
+        return out
+
+    out = {"single": single, "b": d["b"], "zs": d["zs"], "truth": truth, "n_rej": d["n_rej"], "z_mad": d["z_mad"],
+           "meat": aux["meat"], "global": score(det_global), "local": score(det_local), "dual": score(d["det"]),
+           "local_q": loc_q, "local_reached": reached, "local_best": best, "d": d}
+    # 見つけた塊ごとの材質: 塊の周りの環(3〜12 画素)に 2 次曲面を当てた背景との差の、基底の向き → 見かけの Z
+    b = d["b"]
+    yy, xx = np.mgrid[0:RT_H, 0:RT_W].astype(np.float64)
+    comps, n = ndimage.label(d["det"])
+    blobs = []
+    for k in range(1, n + 1):
+        c = comps == k
+        ring = ndimage.binary_dilation(c, iterations=12) & ~ndimage.binary_dilation(c, iterations=3) & ~d["det"]
+        y0, x0 = yy[c].mean(), xx[c].mean()
+        A = lambda m: np.stack([np.ones(m.sum()), yy[m] - y0, xx[m] - x0, (yy[m] - y0) ** 2,
+                                (yy[m] - y0) * (xx[m] - x0), (xx[m] - x0) ** 2], axis=1)
+        dd = [float(np.mean(b[j][c] - A(c) @ np.linalg.lstsq(A(ring), b[j][ring], rcond=None)[0])) for j in (0, 1)]
+        zap = float(_angle_to_z(math.atan2(dd[1], dd[0]), aref, zref))
+        which = [i for i, m in enumerate(truth) if (m & c).any()]
+        blobs.append({"mask": c, "z": zap, "cls": zclass(zap), "truth": which, "yx": (y0, x0)})
+    out["blobs"] = blobs
+    want = {i: w for i, (_, _, w) in enumerate(RT_FOREIGN)}
+    out["miss"] = [bl for bl in blobs if not (len(bl["truth"]) == 1 and bl["cls"] == want[bl["truth"][0]])]
+    out["metal_glass"] = [bl for bl in blobs if bl["truth"] == [1] and bl["cls"] == 3]
+    return out
+
+
+def _rt_row(e):
+    """種ごとの記録の 1 行(RT_SEED_RECORDED と同じ並び)。"""
+    du, lo = e["dual"], e["local"]
+    return (du["false"],) + tuple(round(h, 2) for h in du["hit"]) + (
+        len(e["blobs"]), len(e["miss"]), len(e["metal_glass"]), lo["false"], bool(e["local_reached"]))
+
+
+def _rt_row_mismatch(seed, row):
+    """計算し直した行と記録の食い違い(数と真偽は一致、拾った画素の割合は 0.011 まで)。"""
+    rec = RT_SEED_RECORDED[seed]
+    keys = ("2 エネルギーの偽の塊", "骨片の拾い", "ガラス片の拾い", "針金の拾い", "小石の拾い", "塊の数", "分類の外れ",
+            "金属と読まれたガラス片",
+            "局所の手法の偽の塊", "局所の手法が同じ検出率に届いた")
+    return ["雑音の種 %d の %s: 記録 %s / 実測 %s" % (seed, k, a, b) for k, a, b in zip(keys, rec, row)
+            if (abs(a - b) > 0.011 if isinstance(a, float) else a != b)]
+
+
+def real_tray(ch, zref, aref):
+    """章 5: 実物らしいトレイを撮り、1 枚の像(2 つの手法)と 2 エネルギーで異物を探す。数を返す(門は main で)。"""
+    L = fs.ledger
+    th, aux = real_tray_scene()
+    out = _rt_eval(th, aux, _rt_shoot(th, ch), ch, zref, aref)
+    # 光子雑音の種を振る(種 0 = 図の 1 枚)。CI は種 0 だけを計算し直して記録と照合し、残りは記録の行を使う。
+    t_sw = time.process_time()
+    rows, bad = {}, []
+    for sd in RT_NOISE_SEEDS:
+        if sd == 0:
+            rows[sd] = _rt_row(out)
+        elif RT_FULL:
+            rows[sd] = _rt_row(_rt_eval(th, aux, _rt_shoot(th, ch, seed=sd), ch, zref, aref))
+        else:
+            rows[sd] = RT_SEED_RECORDED[sd]
+        bad += _rt_row_mismatch(sd, rows[sd])
+    out["seed_rows"], out["seed_bad"], out["sweep_cpu"] = rows, bad, time.process_time() - t_sw
+    # 模型のずれ: 撮る側の応答だけを変え、分解は名目の模型(80 kV・Al 2.5 mm・理想の検出器)のまま。白は実測する。
+    truth, near = out["truth"], ndimage.binary_dilation(np.any(out["truth"], axis=0), iterations=6)
+    out["mismatch"] = []
+    for name, kv, filt, cs, res in RT_MISMATCH:
+        kw = {}
+        if cs:
+            kw["charge_sharing"] = cs
+        if res:
+            kw["energy_resolution_fwhm_kev"] = res
+        ch_true = L.photon_counting_channels(L.xray_tube_spectrum(kv, filtration=(("AL", filt),)), THRESHOLDS, **kw)
+        dm = _rt_dual(_rt_shoot(th, ch_true), ch, flat=RT_PHOTONS * ch_true["weights"].sum(axis=1))
+        out["mismatch"].append((name, {"det": dm["det"], "false": int(ndimage.label(dm["det"] & ~near)[1]),
+                                       "hit": [float(dm["det"][m].mean()) for m in truth]}))
+    return out
+
+
+def _rt_figure(rt):
+    """代表の図(2 × 3): 1 枚の透過像(灰)、その像の 2 つの手法(大域しきい値・局所の背景差)の検出、2 エネルギーの
+    Al の像、2 エネルギーの検出(模型どおり)、検出器の応答が模型とずれたときの検出。材質では塗らない。"""
+    single = rt["single"]
+    hi = float(np.percentile(single, 99.7))
+    g = 1.0 - np.clip(single / hi, 0, 1) ** 0.8                 # 空気 = 白、厚い所 = 暗い(検査機の表示の向き)
+    grey = np.repeat(g[..., None], 3, axis=-1)
+
+    def overlay(mask, col, alpha=0.55):
+        o = grey.copy()
+        o[mask] = (1 - alpha) * o[mask] + alpha * np.asarray(col)
+        return o
+
+    def outline(mask, col):
+        o = grey.copy()
+        o[ndimage.binary_dilation(mask, iterations=2) & ~mask] = col
+        return o
+
+    lab = lambda o: (np.clip(o, 0, 1) * 255).astype(np.uint8)
+    al = np.clip(0.5 - rt["zs"] / 24.0, 0, 1)
+    gl, lo, du = rt["global"], rt["local"], rt["dual"]
+    worst_name, worst = rt["mismatch"][-1]
+    rows, mg = rt["seed_rows"], rt["metal_glass"]
+    ns = len(rows)
+    rng = lambda i: (min(r[i] for r in rows.values()), max(r[i] for r in rows.values()))
+    figs.save_grid("real_tray_xray",
+                   [lab(grey), lab(overlay(gl["det"], (1.0, 0.15, 0.1))), lab(overlay(lo["det"], (1.0, 0.15, 0.1))),
+                    al, lab(outline(du["det"], (0.1, 0.8, 0.2))), lab(outline(worst["det"], (0.1, 0.8, 0.2)))],
+                   ["1 枚の透過像(80 kV、0.25 mm/画素)",
+                    "1 枚の像: 大域しきい値(偽の塊 %d)" % gl["false"],
+                    "1 枚の像: トップハット・%s(偽の塊 %d)" % ("同じ検出率" if rt["local_reached"] else "同じ検出率に届かない",
+                                                           lo["false"]),
+                    "2 エネルギーの Al の像(雑音で割った値)",
+                    "2 エネルギー: 模型どおり(偽の塊 %d)" % du["false"],
+                    "2 エネルギー: %s(偽の塊 %d)" % (worst_name, worst["false"])],
+                   title="肉のトレイの X 線: 1 枚の像は肉の厚みと重なりも拾い、2 エネルギーは異物だけを拾う(合成)",
+                   ncols=3, gray=[False, False, False, True, False, False],
+                   caption="合成の場面: 豚の切り身 2 切れ(厚さ最大 32 mm、重なり・霜降り・脂身の層・筋の繊維)を PP のトレイに"
+                           "載せて PVC のコンベアベルトの上で撮り、割れた管状骨の破片・板ガラスの破片 2 つ・φ 0.5 mm のステンレスの"
+                           "針金・小石を埋めた。80 kV の管のスペクトルを 2 つの窓で数え、光子の Poisson 雑音・検出器のぼけ"
+                           "(σ 0.125 mm)・白補正の後に残る画素の利得のむら(±%.1f %%、ベルトの向きの縞)を入れた。"
+                           "上段: 1 枚の透過像と、現場で使う 1 枚の像の 2 つの手法。大域しきい値(骨片とガラスの 90 %% を拾う値)は"
+                           "肉の重なりと厚い所を拾い(異物の無い肉の %.1f %%、偽の塊 %d 個)、局所の手法(白いトップハット %.2f mm、像から決めた"
+                           "品物の輪郭の 3 mm 内側だけ、骨片とガラス片を 2 エネルギーと%sしきい値)でも偽の塊 %d 個"
+                           "(重心の場所: 2 切れの重なりの中 %d・脂身の多い所 %d・それ以外 %d。光子雑音の種 %d 本では %d〜%d 個)。"
+                           "下段: 2 つの窓を赤身と Al に分けた Al の像(画素ごとのクラメール・ラオの下限で割った値、暗いほど Al が"
+                           "多い)では肉の厚みと重なりは消えるが、脂身の層の縁は薄く残る。%.0f σ の規則で拾うと偽の塊 %d 個"
+                           "(骨片・ガラス片・針金・小石の画素の %s を拾う。種 %d 本では偽の塊 %d〜%d 個、拾いは %.2f 以上)。右下は撮る側の検出器が %s で、分解は名目の模型の"
+                           "まま(白は実測)—— 偽の塊は %d 個だが、ガラス片は画素の %.2f しか拾えない。"
+                           "材質の粗い分類はこの図では %d 塊のうち %d 塊で外れ(種 %d 本では %d〜%d 塊のうち %d〜%d 塊)、金属と読まれる"
+                           "ガラス片は %s(種 %d 本で %d〜%d 塊)なので、色分けはしていない。真値は仕込んだ厚み。"
+                           % (100 * RT_GAIN_RES, 100 * gl["fp"], gl["false"], RT_TOPHAT_PX * RT_PX_MM,
+                              "同じ割合だけ拾う" if rt["local_reached"] else "同じ割合までは拾えない", lo["false"],
+                              lo["where"][0], lo["where"][1], lo["where"][2], ns, rng(8)[0], rng(8)[1],
+                              RT_SIGMA, du["false"], " / ".join("%.2f" % h for h in du["hit"]), ns, rng(0)[0], rng(0)[1],
+                              min(min(r[1:5]) for r in rows.values()), worst_name,
+                              worst["false"], worst["hit"][1], len(rt["blobs"]), len(rt["miss"]), ns, rng(5)[0], rng(5)[1],
+                              rng(6)[0], rng(6)[1],
+                              ("%d 塊(Z %s)" % (len(mg), " / ".join("%.1f" % bl["z"] for bl in mg))) if mg else "0 塊",
+                              ns, rng(7)[0], rng(7)[1]))
 
 
 # --------------------------------------------------------------------------- #
@@ -727,4 +1154,10 @@ def _figures(L, spec, ch, q, th, mats, masks, total, fat, sig, single, b, extra,
 
 
 if __name__ == "__main__":
-    main()
+    # ★2026-11-08: 所要時間の門は process_time(全スレッドの合計)を測る。BLAS のスレッドが既定のままだと、機械が
+    #   混んでいるときに待ちのスレッドの空回りまで数えて CPU 131〜184 秒に膨らんだ(単独では 48 秒、敵対的レビュー)。
+    #   門の 120 秒は変えず、測る範囲を「この PoC 自身の計算」に揃えるため BLAS を 1 スレッドに固定して走らせる。
+    from threadpoolctl import threadpool_limits
+
+    with threadpool_limits(limits=1):
+        main()

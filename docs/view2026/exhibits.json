@@ -3162,9 +3162,9 @@
   {
    "id": "poc_crack_width",
    "group": "wing_industrial",
-   "media": "01_width_sweep.png",
+   "media": "05_real_crack_rebin.png",
    "motion": false,
-   "thumb_src": "01_width_sweep_720.jpg",
+   "thumb_src": "05_real_crack_rebin_720.jpg",
    "label": {
     "ja": "ひび割れ幅",
     "en": "Crack width",
@@ -3179,9 +3179,9 @@
   {
    "id": "poc_fabric_defect",
    "group": "wing_industrial",
-   "media": "01_auc_by_type.png",
+   "media": "06_real_defects.png",
    "motion": false,
-   "thumb_src": "01_auc_by_type_720.jpg",
+   "thumb_src": "06_real_defects_720.jpg",
    "label": {
     "ja": "織物の欠陥",
     "en": "Fabric defects",
@@ -3332,9 +3332,9 @@
   {
    "id": "poc_solar_el_inspection",
    "group": "wing_industrial",
-   "media": "01_zero_point_map.png",
+   "media": "10_real_el_overlay.png",
    "motion": false,
-   "thumb_src": "01_zero_point_map_720.jpg",
+   "thumb_src": "10_real_el_overlay_720.jpg",
    "label": {
     "ja": "太陽電池の EL",
     "en": "Solar EL",
@@ -3536,9 +3536,9 @@
   {
    "id": "poc_weld_bead_profile",
    "group": "wing_industrial",
-   "media": "01_laser_images.png",
+   "media": "05_real_laser_line.png",
    "motion": false,
-   "thumb_src": "01_laser_images_720.jpg",
+   "thumb_src": "05_real_laser_line.png",
    "label": {
     "ja": "溶接ビード断面",
     "en": "Weld bead profile",
@@ -3842,9 +3842,9 @@
   {
    "id": "poc_metal_grain_size",
    "group": "wing_metrology",
-   "media": "01_scene.png",
+   "media": "15_real_tbm_breaks.png",
    "motion": false,
-   "thumb_src": "01_scene_720.jpg",
+   "thumb_src": "15_real_tbm_breaks_720.jpg",
    "label": {
     "ja": "結晶粒度",
     "en": "Grain size",
@@ -4267,9 +4267,9 @@
   {
    "id": "poc_shape_from_polarization",
    "group": "wing_metrology",
-   "media": "05_normals.png",
+   "media": "11_real_dome_and_lens.png",
    "motion": false,
-   "thumb_src": "05_normals_720.jpg",
+   "thumb_src": "11_real_dome_and_lens_720.jpg",
    "label": {
     "ja": "偏光で測る黒光沢とガラス",
     "en": "Shape from polarisation",
@@ -4573,9 +4573,9 @@
   {
    "id": "poc_nir_silicon_transmission",
    "group": "wing_color",
-   "media": "05_best_led_sweep.gif",
-   "motion": true,
-   "thumb_src": "03_three_leds_through_wafer.png",
+   "media": "07_die_through_wafer.png",
+   "motion": false,
+   "thumb_src": "07_die_through_wafer_720.jpg",
    "label": {
     "ja": "Si ウェハ越しの近赤外透過(LED の波長を選ぶ)",
     "en": "Near-infrared through a silicon wafer (choosing the LED)",
@@ -4641,9 +4641,9 @@
   {
    "id": "poc_battery_ct_degradation",
    "group": "wing_threed",
-   "media": "01_xray_projection.png",
+   "media": "17_same_outline_ct.png",
    "motion": false,
-   "thumb_src": "01_xray_projection_720.jpg",
+   "thumb_src": "17_same_outline_ct.png",
    "label": {
     "ja": "電池の CT 劣化",
     "en": "Battery CT ageing",
@@ -4957,18 +4957,18 @@
   {
    "id": "poc_camera_calibration",
    "group": "wing_geometry",
-   "media": "05_calibration_convergence.mp4",
-   "motion": true,
-   "thumb_src": "05_calibration_convergence.gif",
+   "media": "06_real_board.png",
+   "motion": false,
+   "thumb_src": "06_real_board.png",
    "label": {
-    "ja": "カメラ校正",
-    "en": "Camera calibration",
-    "zh": "相机标定",
-    "tw": "相機校正",
-    "ko": "카메라 보정",
-    "de": "Kamerakalibrierung",
-    "hi": "Camera calibration",
-    "fr": "Calibrage de caméra"
+    "ja": "再投影誤差が小さくても焦点距離は狂う",
+    "en": "Small reprojection error, wrong focal length",
+    "zh": "重投影误差很小，焦距仍会偏",
+    "tw": "重投影誤差很小，焦距仍會偏",
+    "ko": "재투영 오차가 작아도 초점거리는 틀린다",
+    "de": "Kleiner Reprojektionsfehler, falsche Brennweite",
+    "hi": "Reprojection error कम, फिर भी focal length गलत",
+    "fr": "Faible erreur de reprojection, focale fausse"
    }
   },
   {
@@ -5008,18 +5008,18 @@
   {
    "id": "poc_registration_basin",
    "group": "wing_geometry",
-   "media": "05_icp_basin_iterations.mp4",
+   "media": "06_real_scan_icp.mp4",
    "motion": true,
-   "thumb_src": "05_icp_basin_iterations.gif",
+   "thumb_src": "06_real_scan_icp.gif",
    "label": {
-    "ja": "点群位置合わせ",
-    "en": "Point-cloud ICP",
-    "zh": "点云配准",
-    "tw": "點雲對位",
-    "ko": "점군 정합",
-    "de": "Punktwolken-ICP",
-    "hi": "Point cloud ICP",
-    "fr": "Recalage de nuages de points"
+    "ja": "実物の深度では ICP の収束域が狭まる",
+    "en": "ICP's basin shrinks on real depth",
+    "zh": "真实深度下 ICP 收敛域变窄",
+    "tw": "真實深度下 ICP 收斂域變窄",
+    "ko": "실측 깊이에서는 ICP 수렴 영역이 좁아진다",
+    "de": "Auf echter Tiefe schrumpft das ICP-Konvergenzgebiet",
+    "hi": "असली depth पर ICP का convergence basin छोटा हो जाता है",
+    "fr": "Sur une vraie profondeur, le bassin de l'ICP rétrécit"
    }
   },
   {
@@ -5616,9 +5616,9 @@
   {
    "id": "poc_polarization_specular",
    "group": "wing_color",
-   "media": "08_analyzer_sweep_explained.mp4",
-   "motion": true,
-   "thumb_src": "08_analyzer_sweep_explained.gif",
+   "media": "09_glare_removed_label.png",
+   "motion": false,
+   "thumb_src": "09_glare_removed_label_720.jpg",
    "label": {
     "ja": "偏光で鏡面除去",
     "en": "Polarization",
@@ -5630,14 +5630,14 @@
     "fr": "Suppression des reflets spéculaires par polarisation"
    },
    "see": {
-    "ja": "入射角で鏡面分離の誤差が変わり、ブリュースター角近傍で最小になる",
-    "en": "Separation error changes with incidence angle and bottoms out near the Brewster angle",
-    "zh": "镜面分离误差随入射角变化，并在布儒斯特角附近最小",
-    "tw": "鏡面分離誤差隨入射角變化，並在布魯斯特角附近最小",
-    "ko": "정반사 분리 오차는 입사각에 따라 바뀌며 브루스터각 부근에서 가장 작다",
-    "de": "Der Trennfehler hängt vom Einfallswinkel ab und ist nahe dem Brewster-Winkel am kleinsten",
-    "hi": "separation error आपतन कोण के साथ बदलती है और Brewster angle के पास सबसे कम होती है",
-    "fr": "L’erreur de séparation varie avec l’incidence et atteint son minimum près de l’angle de Brewster"
+    "ja": "偏光で鏡面の映り込みを剥がす。剥がし残りは入射角で変わり、ブリュースター角で最小(掃引は合成の縞の場面)",
+    "en": "Polarisation strips specular glare; what remains changes with incidence angle and is smallest near the Brewster angle (swept on a synthetic fringe scene)",
+    "zh": "偏振可去除镜面反光;残留部分随入射角变化,在布儒斯特角附近最小(扫描使用合成条纹场景)",
+    "tw": "偏光可去除鏡面反光;殘留部分隨入射角變化,在布魯斯特角附近最小(掃描使用合成條紋場景)",
+    "ko": "편광으로 정반사를 걷어 낼 수 있다. 남는 반사는 입사각에 따라 바뀌며 브루스터각 부근에서 가장 작다(스윕은 합성 줄무늬 장면)",
+    "de": "Polarisation entfernt spiegelnde Reflexe; der Rest hängt vom Einfallswinkel ab und ist nahe dem Brewster-Winkel am kleinsten (Durchlauf an einer synthetischen Streifenszene)",
+    "hi": "Polarization specular चमक हटा देता है; बचा हिस्सा आपतन कोण के साथ बदलता है और Brewster angle के पास सबसे कम होता है (sweep एक synthetic fringe scene पर)",
+    "fr": "La polarisation retire les reflets spéculaires ; le reste varie avec l’incidence et atteint son minimum près de l’angle de Brewster (balayage sur une scène synthétique à franges)"
    }
   },
   {
@@ -5779,18 +5779,18 @@
   {
    "id": "poc_template_tracking",
    "group": "wing_xyt",
-   "media": "05_twin_vs_flat_occluder.mp4",
+   "media": "06_real_candle_twin.mp4",
    "motion": true,
-   "thumb_src": "05_twin_vs_flat_occluder.gif",
+   "thumb_src": "06_real_candle_twin.gif",
    "label": {
-    "ja": "テンプレート追跡",
-    "en": "Template tracking",
-    "zh": "模板跟踪",
-    "tw": "模板追蹤",
-    "ko": "템플릿 추적",
-    "de": "Template-Tracking",
-    "hi": "Template tracking",
-    "fr": "Suivi par modèle"
+    "ja": "同じ形の隣とは相関の差が 1 % しかない",
+    "en": "Only a 1 % correlation gap to an identical neighbour",
+    "zh": "与同形相邻件的相关差只有 1 %",
+    "tw": "與同形相鄰件的相關差只有 1 %",
+    "ko": "같은 모양의 이웃과 상관 차이는 1 %뿐",
+    "de": "Nur 1 % Korrelationsabstand zum gleichen Nachbarteil",
+    "hi": "एक जैसे पड़ोसी part से correlation का अंतर सिर्फ़ 1 %",
+    "fr": "Seulement 1 % d'écart de corrélation avec un voisin identique"
    }
   },
   {
@@ -6646,9 +6646,9 @@
   {
    "id": "poc_pv_thermal_survey",
    "group": "wing_astroenv",
-   "media": "01_norm_table.png",
+   "media": "11_real_dtu_conditions.png",
    "motion": false,
-   "thumb_src": "01_norm_table_720.jpg",
+   "thumb_src": "11_real_dtu_conditions.png",
    "label": {
     "ja": "太陽光の熱画像",
     "en": "PV thermal survey",
@@ -7598,18 +7598,18 @@
   {
    "id": "poc_dual_energy_xray",
    "group": "wing_industrial",
-   "media": "04_tray_single_vs_basis.png",
+   "media": "13_real_tray_xray.png",
    "motion": false,
-   "thumb_src": "05_material_colour.png",
+   "thumb_src": "13_real_tray_xray.png",
    "label": {
-    "ja": "肉の中の骨片とガラスを 2 つのエネルギーで分ける(デュアルエナジー X 線)",
-    "en": "Bone and glass in meat, separated with two X-ray energies (dual-energy X-ray)",
-    "zh": "用两种能量把肉中的骨片与玻璃分开(双能 X 射线)",
-    "tw": "用兩種能量把肉中的骨片與玻璃分開(雙能 X 射線)",
-    "ko": "고기 속 뼛조각과 유리를 두 에너지로 가른다(듀얼 에너지 X선)",
-    "de": "Knochen- und Glassplitter im Fleisch mit zwei Röntgenenergien trennen (Dual-Energy-Röntgen)",
-    "hi": "मांस में हड्डी और काँच के टुकड़े, दो X-ray energies से अलग (dual-energy X-ray)",
-    "fr": "Os et verre dans la viande, séparés par deux énergies de rayons X (rayons X bi-énergie)"
+    "ja": "肉の中の骨片とガラスを 2 つのエネルギーで見つける(デュアルエナジー X 線)",
+    "en": "Finding bone and glass in meat with two X-ray energies (dual-energy X-ray)",
+    "zh": "用两种能量找出肉中的骨片与玻璃(双能 X 射线)",
+    "tw": "用兩種能量找出肉中的骨片與玻璃(雙能 X 射線)",
+    "ko": "고기 속 뼛조각과 유리를 두 에너지로 찾아낸다(듀얼 에너지 X선)",
+    "de": "Knochen- und Glassplitter im Fleisch mit zwei Röntgenenergien finden (Dual-Energy-Röntgen)",
+    "hi": "मांस में हड्डी और काँच के टुकड़े दो X-ray energies से ढूँढना (dual-energy X-ray)",
+    "fr": "Trouver os et verre dans la viande avec deux énergies de rayons X (rayons X bi-énergie)"
    }
   },
   {
@@ -9518,14 +9518,14 @@
      "fr": "Suppression des reflets spéculaires par polarisation"
     },
     "line": {
-     "ja": "入射角で鏡面分離の誤差が変わり、ブリュースター角近傍で最小になる",
-     "en": "Separation error changes with incidence angle and bottoms out near the Brewster angle",
-     "zh": "镜面分离误差随入射角变化，并在布儒斯特角附近最小",
-     "tw": "鏡面分離誤差隨入射角變化，並在布魯斯特角附近最小",
-     "ko": "정반사 분리 오차는 입사각에 따라 바뀌며 브루스터각 부근에서 가장 작다",
-     "de": "Der Trennfehler hängt vom Einfallswinkel ab und ist nahe dem Brewster-Winkel am kleinsten",
-     "hi": "separation error आपतन कोण के साथ बदलती है और Brewster angle के पास सबसे कम होती है",
-     "fr": "L’erreur de séparation varie avec l’incidence et atteint son minimum près de l’angle de Brewster"
+     "ja": "偏光で鏡面の映り込みを剥がす。剥がし残りは入射角で変わり、ブリュースター角で最小(掃引は合成の縞の場面)",
+     "en": "Polarisation strips specular glare; what remains changes with incidence angle and is smallest near the Brewster angle (swept on a synthetic fringe scene)",
+     "zh": "偏振可去除镜面反光;残留部分随入射角变化,在布儒斯特角附近最小(扫描使用合成条纹场景)",
+     "tw": "偏光可去除鏡面反光;殘留部分隨入射角變化,在布魯斯特角附近最小(掃描使用合成條紋場景)",
+     "ko": "편광으로 정반사를 걷어 낼 수 있다. 남는 반사는 입사각에 따라 바뀌며 브루스터각 부근에서 가장 작다(스윕은 합성 줄무늬 장면)",
+     "de": "Polarisation entfernt spiegelnde Reflexe; der Rest hängt vom Einfallswinkel ab und ist nahe dem Brewster-Winkel am kleinsten (Durchlauf an einer synthetischen Streifenszene)",
+     "hi": "Polarization specular चमक हटा देता है; बचा हिस्सा आपतन कोण के साथ बदलता है और Brewster angle के पास सबसे कम होता है (sweep एक synthetic fringe scene पर)",
+     "fr": "La polarisation retire les reflets spéculaires ; le reste varie avec l’incidence et atteint son minimum près de l’angle de Brewster (balayage sur une scène synthétique à franges)"
     }
    },
    {

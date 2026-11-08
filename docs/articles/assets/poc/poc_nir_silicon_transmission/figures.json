@@ -62,5 +62,16 @@
    768,
    3
   ]
+ },
+ {
+  "file": "07_die_through_wafer.png",
+  "name": "die_through_wafer",
+  "caption": "公開のダイ写真から取った実物のアルミ配線を Si の裏に置き、同じ光子数で近赤外の LED を替えて撮った。775 µm のウェハでは 1065 nm(最良)と 1050 nm がほぼ同じで形 IoU 0.94、1200 nm は 0.89 —— 波長の差は「同じ像質に要る光の量」(電子の比 28 倍は Ohno 形・半値全幅 50 nm の LED の場合)。850 nm はウェハが不透明。50 µm のダイでは 1050 nm の電子は最良(935 nm)の 1/3.4 で、最良が IoU 0.9 に届く最小の光では 0.93 対 0.84。焦点をウェハの厚さだけ機械的に下げると IoU 0.17 に崩れる。",
+  "shape": [
+   1016,
+   1848,
+   3
+  ],
+  "source": "ダイ写真: ZeptoBars (Mikhail Svarichevsky), Wikimedia Commons, CC BY 3.0 (https://creativecommons.org/licenses/by/3.0)。配線の形を明るさのしきい値で取り出す改変あり"
  }
 ]

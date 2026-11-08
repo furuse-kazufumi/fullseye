@@ -2,7 +2,7 @@
  {
   "file": "01_raw_polarizer_mosaic.png",
   "name": "raw_polarizer_mosaic",
-  "caption": "Raw four-angle 2x2 mosaic at sensor resolution; glare clipping and extinction leakage are retained.",
+  "caption": "検査台(フィルムで包んだ箱のラベルと鋼のナット)を 4 方位の画素偏光子センサで撮った生のモザイク(等倍)。2x2 画素ごとに 0/45/90/135 度。鋼の映り込みの白飛びと偏光子の消光比 1/120 の漏れを残してある。",
   "shape": [
    1024,
    1024
@@ -11,7 +11,7 @@
  {
   "file": "02_analyzer_samples.png",
   "name": "analyzer_samples",
-  "caption": "Half-resolution analyzer samples separated from the mosaic (one quarter of the pixels each).",
+  "caption": "モザイクから方位ごとに 1/4 の画素を抜き出した 4 枚(1/2 解像度、補間しない)。フィルムの映り込みは 0 度と 90 度で明るさが大きく変わり、鋼の映り込みはあまり変わらない。",
   "shape": [
    564,
    2098,
@@ -21,7 +21,7 @@
  {
   "file": "03_stokes_and_glare.png",
   "name": "stokes_and_glare",
-  "caption": "Stokes fields, polarization degree, hue-wheel angle and the minimum-polarized component. Low-degree regions retain angle noise.",
+  "caption": "Stokes の 3 成分、偏光度、偏光の方位(色相)、偏光成分を引いた像。偏光度の低い所(ベルト・ラベルの紙)は方位が雑音になる。",
   "shape": [
    1118,
    1576,
@@ -73,7 +73,7 @@
  {
   "file": "08_analyzer_sweep_explained.gif",
   "name": "analyzer_sweep_explained",
-  "caption": "検光子を0〜177.5度まで回すと、プラスチックの光沢Aだけが強く呼吸し、拡散地Cは動かない。観測DoLPはA/B/C = 0.90/0.16/0.000、最大/最小比は 23.96/1.35/1.00。",
+  "caption": "検光子を0〜177.5度まで回すと、包装フィルムの映り込みAだけが強く呼吸し、鋼のナットの映り込みBはわずかしか変わらず、ベルトの地Cは動かない。観測DoLPはA/B/C = 0.66/0.45/0.006、最大/最小比は 57.85/1.81/1.00。",
   "shape": [
    360,
    640,
@@ -89,6 +89,16 @@
   "video_shape": [
    720,
    1280,
+   3
+  ]
+ },
+ {
+  "file": "09_glare_removed_label.png",
+  "name": "glare_removed_label",
+  "caption": "フィルムで包んだ箱のラベルと鋼のナットを、4 方位の画素偏光子センサで 1 枚撮った(1024 画素の描画)。左から 偏光子なし / 最適角の偏光フィルタ 1 枚(同じモザイクから組んだ像)/ 偏光カメラで剥がした像。印字の CNR は 1.5 / 8.0 / 7.6(全画素で撮るフィルタなら 8.3)—— この場面(小さなソフトボックス 1 灯)では固定のフィルタで足りる。全画素で撮る固定のフィルタ(同じ画素数)と比べた比は、しわだけを 4 倍にして 0.92→0.97、照明だけを大きな面照明へ広げて 1.07、両方で 1.36(CNR 2.13 対 1.56、どちらも印字は読めない)。しわも照明の広さも差を広げる。この 1024 画素では 1 に届いたのは照明を広げたときだけだが、512 画素では互角で、種によってしわとの順序も入れ替わる。読める水準の差は 1 割未満。鋼の映り込みは短い露光(飽和なし)で 29 % 消え、描画と同じ金属のフレネルの式の 28 % と合う(実装の検算)。図の白いナットは飽和。",
+  "shape": [
+   802,
+   1560,
    3
   ]
  }

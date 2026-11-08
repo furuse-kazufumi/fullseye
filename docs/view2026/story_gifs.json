@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 214,
+  "target_count": 216,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -1696,13 +1696,13 @@
       }
     },
     "poc_dual_energy_xray": {
-      "representative": "04_tray_single_vs_basis.png",
+      "representative": "13_real_tray_xray.png",
       "status": "gif",
       "selected": [
-        "04_tray_single_vs_basis.png",
+        "13_real_tray_xray.png",
         "01_spectrum_and_windows.png",
         "02_mass_attenuation.png",
-        "07_r_value_scatter.png",
+        "04_tray_single_vs_basis.png",
         "10_threshold_sweep.png",
         "12_beam_hardening_bias.png"
       ],
@@ -1712,12 +1712,12 @@
           "path": "articles/assets/poc/poc_dual_energy_xray/story.ja.gif",
           "frames": [
             {
-              "file": "04_tray_single_vs_basis.png",
+              "file": "13_real_tray_xray.png",
               "content_box": [
                 0,
-                2,
+                152,
                 720,
-                686
+                385
               ]
             },
             {
@@ -1743,15 +1743,13 @@
               "source_aspect": 1.684211
             },
             {
-              "file": "07_r_value_scatter.png",
+              "file": "04_tray_single_vs_basis.png",
               "content_box": [
                 0,
-                162,
+                2,
                 720,
-                365
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.971591
+                686
+              ]
             },
             {
               "file": "10_threshold_sweep.png",
@@ -1781,28 +1779,28 @@
             1600,
             1600
           ],
-          "bytes": 396099,
+          "bytes": 525375,
           "color_mad": [
-            1.0161,
+            0.3859,
             0.0822,
             0.1827,
-            0.0718,
+            1.0162,
             0.0226,
             0.0485
           ],
-          "max_color_mad": 1.0161,
-          "source_sha256": "2fe20b46bcd3b7c04e362891fc152e78e71fb2f4e2baa5d3a7e2b63b1bdc92f1"
+          "max_color_mad": 1.0162,
+          "source_sha256": "0a71d8a465d6a7a2127bef440c43daa218585a45fa4918c15fff908a88d482a5"
         },
         "en": {
           "path": "articles/assets/poc/poc_dual_energy_xray/story.en.gif",
           "frames": [
             {
-              "file": "04_tray_single_vs_basis.png",
+              "file": "13_real_tray_xray.png",
               "content_box": [
                 0,
-                2,
+                152,
                 720,
-                686
+                385
               ]
             },
             {
@@ -1828,15 +1826,13 @@
               "source_aspect": 1.684211
             },
             {
-              "file": "07_r_value_scatter.png",
+              "file": "04_tray_single_vs_basis.png",
               "content_box": [
                 0,
-                162,
+                2,
                 720,
-                365
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.971591
+                686
+              ]
             },
             {
               "file": "10_threshold_sweep.png",
@@ -1866,25 +1862,25 @@
             1600,
             1600
           ],
-          "bytes": 396099,
+          "bytes": 525375,
           "color_mad": [
-            1.0161,
+            0.3859,
             0.0822,
             0.1827,
-            0.0718,
+            1.0162,
             0.0226,
             0.0485
           ],
-          "max_color_mad": 1.0161,
-          "source_sha256": "4aabca24ef07877f23e2cb0724d8653c226b67d6bd13824729feee7f35ef2ed0"
+          "max_color_mad": 1.0162,
+          "source_sha256": "e3106b1ab6bec6c7678c061af07493f67ab4c2ea8688818b95035b7b717c8c24"
         }
       },
       "reason": null,
-      "cover": "04_tray_single_vs_basis.png",
-      "still": "articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png",
+      "cover": "13_real_tray_xray.png",
+      "still": "articles/assets/poc/poc_dual_energy_xray/13_real_tray_xray.png",
       "alt": {
-        "ja": "上段左: 仕込んだ肉の厚さ(25〜60 mm のむら、左に赤身の折り返し +6 mm、右に脂身の塊 +8 mm)。上段右: 1 枚の透過像 —— 骨片とガラスの段差は肉のむらの 0.86 倍・0.88 倍で、しきい値 1 本では肉の 86 % が引っかかる。下段左: 高域を取ると異物は見えるが、肉の重なりの縁も同じ明るさで残る(偽の塊 2 個)。下段右: 2 つの窓を赤身と Al に分けた Al の像 —— 肉の厚みも重なりも赤身の側に入り、異物だけが残る(偽の塊 0 個)。",
-        "en": "In a food X-ray image, thick meat and a thin hard fragment can look the same. Counting photons in 2 energy windows and separating thickness from material removed false fragments made by overlapping meat. The thinnest aluminium that can still be told apart matched the closed-form prediction."
+        "ja": "合成の場面: 豚の切り身 2 切れ(厚さ最大 32 mm、重なり・霜降り・脂身の層・筋の繊維)を PP のトレイに載せて PVC のコンベアベルトの上で撮り、割れた管状骨の破片・板ガラスの破片 2 つ・φ 0.5 mm のステンレスの針金・小石を埋めた。80 kV の管のスペクトルを 2 つの窓で数え、光子の Poisson 雑音・検出器のぼけ(σ 0.125 mm)・白補正の後に残る画素の利得のむら(±0.3 %、ベルトの向きの縞)を入れた。上段: 1 枚の透過像と、現場で使う 1 枚の像の 2 つの手法。大域しきい値(骨片とガラスの 90 % を拾う値)は肉の重なりと厚い所を拾い(異物の無い肉の 24.2 %、偽の塊 13 個)、局所の手法(白いトップハット 6.25 mm、像から決めた品物の輪郭の 3 mm 内側だけ、骨片とガラス片を 2 エネルギーと同じ割合だけ拾うしきい値)でも偽の塊 25 個(重心の場所: 2 切れの重なりの中 17・脂身の多い所 0・それ以外 8。光子雑音の種 5 本では 22〜31 個)。下段: 2 つの窓を赤身と Al に分けた Al の像(画素ごとのクラメール・ラオの下限で割った値、暗いほど Al が多い)では肉の厚みと重なりは消えるが、脂身の層の縁は薄く残る。4 σ の規則で拾うと偽の塊 0 個(骨片・ガラス片・針金・小石の画素の 0.65 / 0.60 / 1.00 / 1.00 を拾う。種 5 本では偽の塊 0〜1 個、拾いは 0.59 以上)。右下は撮る側の検出器が 電荷共有 25 %・分解能 8 keV で、分解は名目の模型のまま(白は実測)—— 偽の塊は 0 個だが、ガラス片は画素の 0.21 しか拾えない。材質の粗い分類はこの図では 7 塊のうち 4 塊で外れ(種 5 本では 6〜7 塊のうち 4〜6 塊)、金属と読まれるガラス片は 2 塊(Z 21.8 / 21.8)(種 5 本で 0〜2 塊)なので、色分けはしていない。真値は仕込んだ厚み。",
+        "en": "In a food X-ray image, thick meat and a thin hard fragment can look the same. Counting photons by energy and separating thickness left at most 1 false lump on a synthetic tray across five photon-noise seeds. The material itself could not be read for a thin wire or under thick meat."
       }
     },
     "poc_weld_radiograph_porosity": {
@@ -3449,13 +3445,12 @@
       }
     },
     "poc_crack_width": {
-      "representative": "01_width_sweep.png",
+      "representative": "05_real_crack_rebin.png",
       "status": "gif",
       "selected": [
-        "01_width_sweep.png",
-        "02_scene.png",
-        "03_crossover.png",
-        "04_max_vs_mean.png"
+        "05_real_crack_rebin.png",
+        "07_real_crack_samples.png",
+        "08_real_crack_ratio_spread.png"
       ],
       "excluded_frames": [],
       "variants": {
@@ -3463,137 +3458,118 @@
           "path": "articles/assets/poc/poc_crack_width/story.ja.gif",
           "frames": [
             {
-              "file": "01_width_sweep.png",
+              "file": "05_real_crack_rebin.png",
               "content_box": [
                 0,
-                113,
+                135,
                 720,
-                463
+                420
               ]
             },
             {
-              "file": "02_scene.png",
-              "content_box": [
-                40,
-                0,
-                640,
-                690
-              ]
-            },
-            {
-              "file": "03_crossover.png",
+              "file": "07_real_crack_samples.png",
               "content_box": [
                 0,
-                113,
+                144,
                 720,
-                463
-              ]
-            },
-            {
-              "file": "04_max_vs_mean.png",
-              "content_box": [
-                0,
-                156,
-                720,
-                378
+                402
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.90625
+              "source_aspect": 1.78907
+            },
+            {
+              "file": "08_real_crack_ratio_spread.png",
+              "content_box": [
+                0,
+                161,
+                720,
+                367
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.963889
             }
           ],
-          "frame_count": 4,
+          "frame_count": 3,
           "durations_ms": [
             2500,
             1600,
-            1600,
             1600
           ],
-          "bytes": 280436,
+          "bytes": 406757,
           "color_mad": [
-            0.1412,
-            0.3723,
-            0.1609,
-            0.0516
+            0.3215,
+            0.5299,
+            0.1518
           ],
-          "max_color_mad": 0.3723,
-          "source_sha256": "2f936102b70084d6ab31a6127626c43d9126493c5f63607efde6009e10021a36"
+          "max_color_mad": 0.5299,
+          "source_sha256": "fb0a2d8298698a86304c595824c7ea10cb56528e2d4b63567e27b339e3858408"
         },
         "en": {
           "path": "articles/assets/poc/poc_crack_width/story.en.gif",
           "frames": [
             {
-              "file": "01_width_sweep.png",
+              "file": "05_real_crack_rebin.png",
               "content_box": [
                 0,
-                113,
+                135,
                 720,
-                463
+                420
               ]
             },
             {
-              "file": "02_scene.png",
-              "content_box": [
-                40,
-                0,
-                640,
-                690
-              ]
-            },
-            {
-              "file": "03_crossover.png",
+              "file": "07_real_crack_samples.png",
               "content_box": [
                 0,
-                113,
+                144,
                 720,
-                463
-              ]
-            },
-            {
-              "file": "04_max_vs_mean.png",
-              "content_box": [
-                0,
-                156,
-                720,
-                378
+                402
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.90625
+              "source_aspect": 1.78907
+            },
+            {
+              "file": "08_real_crack_ratio_spread.png",
+              "content_box": [
+                0,
+                161,
+                720,
+                367
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.963889
             }
           ],
-          "frame_count": 4,
+          "frame_count": 3,
           "durations_ms": [
             2500,
             1600,
-            1600,
             1600
           ],
-          "bytes": 280436,
+          "bytes": 406757,
           "color_mad": [
-            0.1412,
-            0.3723,
-            0.1609,
-            0.0516
+            0.3215,
+            0.5299,
+            0.1518
           ],
-          "max_color_mad": 0.3723,
-          "source_sha256": "8ac12a5ce8d193368c54ac58c8e126f75b1c4806d4eb63058f6f2bd68f5a194c"
+          "max_color_mad": 0.5299,
+          "source_sha256": "2c8427155f9a76776a4de2819a66ec18e74b4fcade19dfe6de723a47fcc831eb"
         }
       },
       "reason": null,
-      "cover": "01_width_sweep.png",
-      "still": "articles/assets/poc/poc_crack_width/01_width_sweep.png",
+      "cover": "05_real_crack_rebin.png",
+      "still": "articles/assets/poc/poc_crack_width/05_real_crack_rebin.png",
       "alt": {
-        "ja": "2 値化の 2 本は階段。0.20 mm(1 px)以下ではマスクが空になり 0(= 未検出)へ落ちる。積分法は 0.05 mm (0.25 px)まで直線 y=x に乗る。",
-        "en": "Concrete Crack Width Is Thinner Than a Pixel — Counting Width Versus Integrating Width"
+        "ja": "12701_1.jpg。橙の輪郭は 2 値化(欠損 > 0.5)のマスク。幅は元の画素の単位。四分位は積分 0.97〜1.44 / 2 値化 1.22〜1.78。Özgenel, Concrete Crack Images for Classification, Mendeley Data v2, DOI 10.17632/5y9wdsg2zt.2, CC BY 4.0",
+        "en": "Real cracks are re-imaged with coarser pixels to compare thresholding with the integrated deficit. Across 159 public photos the typical width ratio stays closer to one for integration, but the quartiles overlap. Real crack cores are grey, so thresholding inflates thin cracks instead of losing them."
       }
     },
     "poc_fabric_defect": {
-      "representative": "01_auc_by_type.png",
+      "representative": "06_real_defects.png",
       "status": "gif",
       "selected": [
-        "01_auc_by_type.png",
-        "02_roc_by_type.png",
-        "03_period_error.png",
-        "04_scene.png"
+        "06_real_defects.png",
+        "07_real_input_defects.png",
+        "09_real_limit_lowcut_diff.png"
       ],
       "excluded_frames": [],
       "variants": {
@@ -3601,127 +3577,101 @@
           "path": "articles/assets/poc/poc_fabric_defect/story.ja.gif",
           "frames": [
             {
-              "file": "01_auc_by_type.png",
+              "file": "06_real_defects.png",
               "content_box": [
                 0,
-                205,
+                80,
                 720,
-                279
+                529
               ]
             },
             {
-              "file": "02_roc_by_type.png",
+              "file": "07_real_input_defects.png",
+              "content_box": [
+                0,
+                128,
+                720,
+                434
+              ]
+            },
+            {
+              "file": "09_real_limit_lowcut_diff.png",
               "content_box": [
                 0,
                 113,
                 720,
                 463
               ]
-            },
-            {
-              "file": "03_period_error.png",
-              "content_box": [
-                0,
-                165,
-                720,
-                360
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.0
-            },
-            {
-              "file": "04_scene.png",
-              "content_box": [
-                71,
-                0,
-                578,
-                690
-              ]
             }
           ],
-          "frame_count": 4,
+          "frame_count": 3,
           "durations_ms": [
             2500,
             1600,
-            1600,
             1600
           ],
-          "bytes": 380267,
+          "bytes": 732165,
           "color_mad": [
-            0.0616,
-            0.1709,
-            0.0011,
-            0.7248
+            0.4276,
+            0.4969,
+            0.0865
           ],
-          "max_color_mad": 0.7248,
-          "source_sha256": "715820c56bdd2c4af239fb5f8293cb49d9a53f04e20f5aa1543aeb14394b5c28"
+          "max_color_mad": 0.4969,
+          "source_sha256": "062908f9e27600b737be93790443830fbb63e3906d1a55a40fac007f054aa3ba"
         },
         "en": {
           "path": "articles/assets/poc/poc_fabric_defect/story.en.gif",
           "frames": [
             {
-              "file": "01_auc_by_type.png",
+              "file": "06_real_defects.png",
               "content_box": [
                 0,
-                205,
+                80,
                 720,
-                279
+                529
               ]
             },
             {
-              "file": "02_roc_by_type.png",
+              "file": "07_real_input_defects.png",
+              "content_box": [
+                0,
+                128,
+                720,
+                434
+              ]
+            },
+            {
+              "file": "09_real_limit_lowcut_diff.png",
               "content_box": [
                 0,
                 113,
                 720,
                 463
               ]
-            },
-            {
-              "file": "03_period_error.png",
-              "content_box": [
-                0,
-                165,
-                720,
-                360
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.0
-            },
-            {
-              "file": "04_scene.png",
-              "content_box": [
-                71,
-                0,
-                578,
-                690
-              ]
             }
           ],
-          "frame_count": 4,
+          "frame_count": 3,
           "durations_ms": [
             2500,
             1600,
-            1600,
             1600
           ],
-          "bytes": 380267,
+          "bytes": 732165,
           "color_mad": [
-            0.0616,
-            0.1709,
-            0.0011,
-            0.7248
+            0.4276,
+            0.4969,
+            0.0865
           ],
-          "max_color_mad": 0.7248,
-          "source_sha256": "f6db9f6d0d27909633af48f22cfd19e8aeb0bb3ba0d51dd16b8ad10a7e2c3f29"
+          "max_color_mad": 0.4969,
+          "source_sha256": "bb97adc3ea8c997ca605e4cdf92c589c7aec2a696b011581e380b258ecf56979"
         }
       },
       "reason": null,
-      "cover": "01_auc_by_type.png",
-      "still": "articles/assets/poc/poc_fabric_defect/01_auc_by_type.png",
+      "cover": "06_real_defects.png",
+      "still": "articles/assets/poc/poc_fabric_defect/06_real_defects.png",
       "alt": {
-        "ja": "織物の欠陥",
-        "en": "Defects Buried in a Periodic Background — What a Pooled ROC (true-positive versus false-positive curve) Hides"
+        "ja": "データ付属の欠陥マスク(橙の輪郭)で画素ごとに採点。マスクは欠陥より太い(骨格上の幅の中央値 16 px)ので、太いマスクの画素 AUC は 0.5 側へ寄る。芯 = 骨格 ±2 px を陽性、マスクを 6 px太らせた外を陰性にした採点。上段は 2 手法の AUC が全体の中央値に近い 1 個、下段は暗い欠陥のうち面積が最大の 1 個(選び方は結果を見ずに決めた規則)。スコアは同じ 99.5 % 分位で切った灰色。RAW-FABRID — R. Pérez-Llorens, T. Albero-Albero, J. Silvestre-Blanes, Mendeley Data db6g85xsyg v1 (doi:10.17632/db6g85xsyg.1), CC BY 4.0",
+        "en": "Real fabric defects are scored against the supplied masks to compare textbook detectors for weave flaws. Counting only the core of the wide masks raises the same detector to an AUC of 0.66. Removing low frequencies erases painted mura, but on real defects the drop is much smaller."
       }
     },
     "poc_leak_localization": {
@@ -4895,15 +4845,14 @@
       }
     },
     "poc_solar_el_inspection": {
-      "representative": "01_zero_point_map.png",
+      "representative": "10_real_el_overlay.png",
       "status": "gif",
       "selected": [
-        "01_zero_point_map.png",
-        "02_by_type.png",
-        "03_scene_map.png",
-        "05_grain_contrast.png",
-        "06_crack_width.png",
-        "08_snr.png"
+        "10_real_el_overlay.png",
+        "11_real_input_masks.png",
+        "12_real_process_degrid.png",
+        "13_real_result_scatter.png",
+        "14_real_limit_s7_dimming.png"
       ],
       "excluded_frames": [],
       "variants": {
@@ -4911,25 +4860,7 @@
           "path": "articles/assets/poc/poc_solar_el_inspection/story.ja.gif",
           "frames": [
             {
-              "file": "01_zero_point_map.png",
-              "content_box": [
-                0,
-                202,
-                720,
-                286
-              ]
-            },
-            {
-              "file": "02_by_type.png",
-              "content_box": [
-                0,
-                129,
-                720,
-                431
-              ]
-            },
-            {
-              "file": "03_scene_map.png",
+              "file": "10_real_el_overlay.png",
               "content_box": [
                 0,
                 73,
@@ -4938,18 +4869,27 @@
               ]
             },
             {
-              "file": "05_grain_contrast.png",
+              "file": "11_real_input_masks.png",
               "content_box": [
+                49,
                 0,
-                170,
-                720,
-                350
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.058333
+                622,
+                690
+              ]
             },
             {
-              "file": "06_crack_width.png",
+              "file": "12_real_process_degrid.png",
+              "content_box": [
+                0,
+                202,
+                720,
+                286
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.513402
+            },
+            {
+              "file": "13_real_result_scatter.png",
               "content_box": [
                 0,
                 113,
@@ -4958,7 +4898,7 @@
               ]
             },
             {
-              "file": "08_snr.png",
+              "file": "14_real_limit_s7_dimming.png",
               "content_box": [
                 0,
                 113,
@@ -4967,50 +4907,30 @@
               ]
             }
           ],
-          "frame_count": 6,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
-            1600,
             1600
           ],
-          "bytes": 546119,
+          "bytes": 733021,
           "color_mad": [
-            0.7052,
-            0.051,
-            0.8254,
-            0.1094,
-            0.1978,
-            0.0808
+            0.5941,
+            0.1863,
+            0.2207,
+            0.096,
+            0.0462
           ],
-          "max_color_mad": 0.8254,
-          "source_sha256": "def2790a42a913967fec8f701767168b8dd748ffd60711f280e5eab684617674"
+          "max_color_mad": 0.5941,
+          "source_sha256": "2ec6b041ecc427982403a891ff263a3a5a70c2a131586bcd4469527a81b8d198"
         },
         "en": {
           "path": "articles/assets/poc/poc_solar_el_inspection/story.en.gif",
           "frames": [
             {
-              "file": "01_zero_point_map.png",
-              "content_box": [
-                0,
-                202,
-                720,
-                286
-              ]
-            },
-            {
-              "file": "02_by_type.png",
-              "content_box": [
-                0,
-                129,
-                720,
-                431
-              ]
-            },
-            {
-              "file": "03_scene_map.png",
+              "file": "10_real_el_overlay.png",
               "content_box": [
                 0,
                 73,
@@ -5019,18 +4939,27 @@
               ]
             },
             {
-              "file": "05_grain_contrast.png",
+              "file": "11_real_input_masks.png",
               "content_box": [
+                49,
                 0,
-                170,
-                720,
-                350
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.058333
+                622,
+                690
+              ]
             },
             {
-              "file": "06_crack_width.png",
+              "file": "12_real_process_degrid.png",
+              "content_box": [
+                0,
+                202,
+                720,
+                286
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.513402
+            },
+            {
+              "file": "13_real_result_scatter.png",
               "content_box": [
                 0,
                 113,
@@ -5039,7 +4968,7 @@
               ]
             },
             {
-              "file": "08_snr.png",
+              "file": "14_real_limit_s7_dimming.png",
               "content_box": [
                 0,
                 113,
@@ -5048,34 +4977,32 @@
               ]
             }
           ],
-          "frame_count": 6,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
-            1600,
             1600
           ],
-          "bytes": 546119,
+          "bytes": 733021,
           "color_mad": [
-            0.7052,
-            0.051,
-            0.8254,
-            0.1094,
-            0.1978,
-            0.0808
+            0.5941,
+            0.1863,
+            0.2207,
+            0.096,
+            0.0462
           ],
-          "max_color_mad": 0.8254,
-          "source_sha256": "6127b64c087b78d5ef31d7dbb3b767f77546fb9177b3c2b1e0cf8f27177ffa74"
+          "max_color_mad": 0.5941,
+          "source_sha256": "71a31a6a383503dca54d9f59125f95d4c9e5c2936a02697e7919ab1767e4c7bf"
         }
       },
       "reason": null,
-      "cover": "01_zero_point_map.png",
-      "still": "articles/assets/poc/poc_solar_el_inspection/01_zero_point_map.png",
+      "cover": "10_real_el_overlay.png",
+      "still": "articles/assets/poc/poc_solar_el_inspection/10_real_el_overlay.png",
       "alt": {
-        "ja": "単位は % of セル面積。暗画素の 4 割はフィンガーとバスバー、3 割は結晶粒とビネッティング。",
-        "en": "Power loss from solar-cell EL images — dark is not the same as inactive"
+        "ja": "SIPV-EL(Zenodo 14439369、CC BY 4.0)の実セル。上: セル表面に置いた遮光マスク(中央の大円)。下: S7(論文の分類 7「その他の欠陥」と推定)のうち、出力低下が S7 の中央値 8.9 % に最も近いセル。灰色は実測の EL 強度、色は判定の重ね。出力低下は同じセル・同じ電流の I-V から。",
+        "en": "On real EL images the dark area is counted after dividing out the fingers and busbars, then compared with the power loss measured by I-V curves. Across 32 masked cells, dividing out only the narrow grid component ranks the losses best. For defects that dim the whole cell, the dark area does not track the power loss."
       }
     },
     "poc_solder_fillet_aoi": {
@@ -6845,9 +6772,10 @@
       }
     },
     "poc_weld_bead_profile": {
-      "representative": "01_laser_images.png",
+      "representative": "05_real_laser_line.png",
       "status": "gif",
       "selected": [
+        "05_real_laser_line.png",
         "01_laser_images.png",
         "02_profile.png",
         "03_undercut_vs_angle.png",
@@ -6859,13 +6787,24 @@
           "path": "articles/assets/poc/poc_weld_bead_profile/story.ja.gif",
           "frames": [
             {
+              "file": "05_real_laser_line.png",
+              "content_box": [
+                0,
+                133,
+                720,
+                424
+              ]
+            },
+            {
               "file": "01_laser_images.png",
               "content_box": [
                 0,
                 188,
                 720,
                 313
-              ]
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.298305
             },
             {
               "file": "02_profile.png",
@@ -6895,34 +6834,47 @@
               ]
             }
           ],
-          "frame_count": 4,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
+            1600,
             1600
           ],
-          "bytes": 264194,
+          "bytes": 420510,
           "color_mad": [
-            0.2865,
-            0.0939,
+            0.1904,
+            0.2852,
+            0.0972,
             0.0701,
             0.0575
           ],
-          "max_color_mad": 0.2865,
-          "source_sha256": "458b3ec99ecbfc7e8e69a245bcc7bb4b0c122e053dc741247c21d6a82352887a"
+          "max_color_mad": 0.2852,
+          "source_sha256": "4693c633d232c383e2339b268776018cb1054527c84d1e96cd58bff7043280c9"
         },
         "en": {
           "path": "articles/assets/poc/poc_weld_bead_profile/story.en.gif",
           "frames": [
             {
+              "file": "05_real_laser_line.png",
+              "content_box": [
+                0,
+                133,
+                720,
+                424
+              ]
+            },
+            {
               "file": "01_laser_images.png",
               "content_box": [
                 0,
                 188,
                 720,
                 313
-              ]
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.298305
             },
             {
               "file": "02_profile.png",
@@ -6952,30 +6904,32 @@
               ]
             }
           ],
-          "frame_count": 4,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
+            1600,
             1600
           ],
-          "bytes": 264194,
+          "bytes": 420510,
           "color_mad": [
-            0.2865,
-            0.0939,
+            0.1904,
+            0.2852,
+            0.0972,
             0.0701,
             0.0575
           ],
-          "max_color_mad": 0.2865,
-          "source_sha256": "2bbc8d16dc2b0ed693fb2806a938a3fafb8465b5fe2aaebb623c627c7814999b"
+          "max_color_mad": 0.2852,
+          "source_sha256": "e542a5ec31e4c692d273387f6e65152730f9796058c48488a48c5034acb5c748"
         }
       },
       "reason": null,
-      "cover": "01_laser_images.png",
-      "still": "articles/assets/poc/poc_weld_bead_profile/01_laser_images.png",
+      "cover": "05_real_laser_line.png",
+      "still": "articles/assets/poc/poc_weld_bead_profile/05_real_laser_line.png",
       "alt": {
-        "ja": "row = r0 + K·h なので、**下にあるほど高い** ——ビードは画像では下に凸に見える。遮蔽 60 度では左つま先の輝線が消えている。",
-        "en": "Weld Bead From a Laser-Triangulation Profile — The Sin of Writing 0 Where Nothing Was Measured"
+        "ja": "合成の画像(描画の種 5 の 1 枚): 赤のレーザーをビードに斜め 60 度から当て、45 度のカメラで撮った輝線(上、灰のまま原寸。高いほど上に見えるよう上下を返して表示)。光条は 1/e² 半幅 60 µm の細い線で、粗い鋼の面での干渉によるスペックル(粒径 42 µm)、右の斜面の鏡面反射で明るくなり芯の一部が飽和する所(飽和画素 0.39 %)、その反射が母材を照らした 2 次反射の偽の線(右のつま先の外、位置は簡易模型)、尾を引くスパッタ、光子雑音・10 bit を入れた。左のつま先はビードの影で輝線が切れる。下: 列ごとに隣の列との連続性で山を選んで読んだ断面(水色)は真の断面(黄)に沿い、照らされた列の高さの誤差は RMS 21.8 µm —— Dorsch の閉形式の床 18.3 µm(光条の幅で平均)と 1 列だけの床 38.0 µm の間。いちばん明るい山だけを取ると 14 列が偽の線に乗る(桃)。スペックルの暗い粒による 8 列未満の脱落 27 列は補間して(緑)「測れた」と数え、それより長い欠けだけを未測定とした。影の列(赤の帯)を 0 で埋めると左のアンダーカットは 0.000 mm(真値 0.45)で「健全」として通る。未測定の区間に掛かる量を返さなければ左の UC・脚長・幅は「不能」になるが、返した右の UC は 0.286 mm(真値 0.25)—— 答えない方針でもスペックルの偏りは止まらない。描画の種(スペックル・スパッタ・雑音)を 12 本振ると: 連続性で選んでも偽の線に乗る列は 0〜2 列(12 本中 7 本で 0 列。明るい山だけなら 0〜16 列)、照らされた列の RMS は中央値 22.9 µm(12 本中 11 本が2 つの床の間)、返した右の UC は 12 本とも深く出て +14〜+129 µm(中央値 +45 µm)。★限界: 12 本中 5 本では影に落ちたスパッタを輝線と拾い、そのうち 2 本では 0 で埋めた左の UC が「健全」でなく嘘の深さになる。真値は断面の閉形式。",
+        "en": "A weld bead profile is read from the rows of a laser line. Filling the shadowed toe with 0 erased the undercut and the bead passed. Refusing to report unmeasured quantities stops that error, but the depth bias from speckle remains."
       }
     },
     "poc_weld_bead_scan_angle": {
@@ -8821,15 +8775,14 @@
       }
     },
     "poc_metal_grain_size": {
-      "representative": "01_scene.png",
+      "representative": "15_real_tbm_breaks.png",
       "status": "gif",
       "selected": [
-        "01_scene.png",
-        "02_controls.png",
-        "05_cliff_break_sweep.png",
-        "07_failure_intercept.png",
-        "09_duplex_map.png",
-        "11_duplex_table.png"
+        "15_real_tbm_breaks.png",
+        "12_real_tbm_input.png",
+        "13_real_tbm_detect.png",
+        "14_real_tbm_color_detect.png",
+        "16_real_tbm_cliff.png"
       ],
       "excluded_frames": [],
       "variants": {
@@ -8837,175 +8790,157 @@
           "path": "articles/assets/poc/poc_metal_grain_size/story.ja.gif",
           "frames": [
             {
-              "file": "01_scene.png",
+              "file": "15_real_tbm_breaks.png",
               "content_box": [
-                46,
                 0,
-                627,
-                690
+                138,
+                720,
+                413
               ]
             },
             {
-              "file": "02_controls.png",
+              "file": "12_real_tbm_input.png",
               "content_box": [
                 0,
-                263,
+                138,
                 720,
-                163
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 4.42
-            },
-            {
-              "file": "05_cliff_break_sweep.png",
-              "content_box": [
-                0,
-                183,
-                720,
-                323
+                413
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.230556
+              "source_aspect": 1.742149
             },
             {
-              "file": "07_failure_intercept.png",
+              "file": "13_real_tbm_detect.png",
+              "content_box": [
+                0,
+                138,
+                720,
+                413
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.742149
+            },
+            {
+              "file": "14_real_tbm_color_detect.png",
+              "content_box": [
+                0,
+                138,
+                720,
+                413
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.742149
+            },
+            {
+              "file": "16_real_tbm_cliff.png",
               "content_box": [
                 0,
                 113,
                 720,
                 463
               ]
-            },
-            {
-              "file": "09_duplex_map.png",
-              "content_box": [
-                46,
-                0,
-                627,
-                690
-              ]
-            },
-            {
-              "file": "11_duplex_table.png",
-              "content_box": [
-                0,
-                45,
-                720,
-                599
-              ]
             }
           ],
-          "frame_count": 6,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
-            1600,
             1600
           ],
-          "bytes": 667406,
+          "bytes": 852223,
           "color_mad": [
-            1.019,
-            0.0433,
-            0.1124,
-            0.1417,
-            2.6482,
-            0.0405
+            2.4549,
+            2.3718,
+            2.5129,
+            2.5447,
+            0.1772
           ],
-          "max_color_mad": 2.6482,
-          "source_sha256": "990fa936c94062807f813d8736257b5c87ffcee7d7ff882d3eaa987d59b69cbe"
+          "max_color_mad": 2.5447,
+          "source_sha256": "22e73b3b4d416a0c36d7e924a77d634930bdb5c89056e4aab734a8195d086b26"
         },
         "en": {
           "path": "articles/assets/poc/poc_metal_grain_size/story.en.gif",
           "frames": [
             {
-              "file": "01_scene.png",
+              "file": "15_real_tbm_breaks.png",
               "content_box": [
-                46,
                 0,
-                627,
-                690
+                138,
+                720,
+                413
               ]
             },
             {
-              "file": "02_controls.png",
+              "file": "12_real_tbm_input.png",
               "content_box": [
                 0,
-                263,
+                138,
                 720,
-                163
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 4.42
-            },
-            {
-              "file": "05_cliff_break_sweep.png",
-              "content_box": [
-                0,
-                183,
-                720,
-                323
+                413
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.230556
+              "source_aspect": 1.742149
             },
             {
-              "file": "07_failure_intercept.png",
+              "file": "13_real_tbm_detect.png",
+              "content_box": [
+                0,
+                138,
+                720,
+                413
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.742149
+            },
+            {
+              "file": "14_real_tbm_color_detect.png",
+              "content_box": [
+                0,
+                138,
+                720,
+                413
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.742149
+            },
+            {
+              "file": "16_real_tbm_cliff.png",
               "content_box": [
                 0,
                 113,
                 720,
                 463
               ]
-            },
-            {
-              "file": "09_duplex_map.png",
-              "content_box": [
-                46,
-                0,
-                627,
-                690
-              ]
-            },
-            {
-              "file": "11_duplex_table.png",
-              "content_box": [
-                0,
-                45,
-                720,
-                599
-              ]
             }
           ],
-          "frame_count": 6,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
-            1600,
             1600
           ],
-          "bytes": 667406,
+          "bytes": 852223,
           "color_mad": [
-            1.019,
-            0.0433,
-            0.1124,
-            0.1417,
-            2.6482,
-            0.0405
+            2.4549,
+            2.3718,
+            2.5129,
+            2.5447,
+            0.1772
           ],
-          "max_color_mad": 2.6482,
-          "source_sha256": "6ae977a8c698e915ff34f5122a5ec5d527b28aa9f2498b21a8327976a96a67fc"
+          "max_color_mad": 2.5447,
+          "source_sha256": "740523d8ba2baecac3e1b57722fe41e344ad5f01800bf583ff71179f511888b6"
         }
       },
       "reason": null,
-      "cover": "01_scene.png",
-      "still": "articles/assets/poc/poc_metal_grain_size/01_scene.png",
+      "cover": "15_real_tbm_breaks.png",
+      "still": "articles/assets/poc/poc_metal_grain_size/15_real_tbm_breaks.png",
       "alt": {
-        "ja": "結晶粒度",
-        "en": "Metallographic Grain Size — The Planimetric and Intercept Methods Fall Off Different Cliffs"
+        "ja": "途切れは人工(相関長 8 px)。粒界は専門家の手描きで、写真から検出したものではない。TBM: Texture Boundary in Metallography, Zenodo 8386997 (doi:10.5281/zenodo.8386997), CC BY 4.0",
+        "en": "Gaps are cut into hand-traced real grain boundaries to see where the two counting methods drift by a full step. The intercept count holds until 33.1 % of the traced lines are gone, far longer than the planimetric count. Image processing that expects dark boundaries finds almost none of them on tint-etched photos."
       }
     },
     "poc_particle_sizing": {
@@ -10522,10 +10457,10 @@
       }
     },
     "poc_shape_from_polarization": {
-      "representative": "05_normals.png",
+      "representative": "11_real_dome_and_lens.png",
       "status": "gif",
       "selected": [
-        "05_normals.png",
+        "11_real_dome_and_lens.png",
         "01_fresnel.png",
         "02_scene.png",
         "06_height.png",
@@ -10538,12 +10473,12 @@
           "path": "articles/assets/poc/poc_shape_from_polarization/story.ja.gif",
           "frames": [
             {
-              "file": "05_normals.png",
+              "file": "11_real_dome_and_lens.png",
               "content_box": [
                 0,
-                171,
+                18,
                 720,
-                348
+                653
               ]
             },
             {
@@ -10609,28 +10544,28 @@
             1600,
             1600
           ],
-          "bytes": 228465,
+          "bytes": 384148,
           "color_mad": [
-            1.2538,
+            0.749,
             0.0654,
             0.2967,
             0.0005,
             0.3932,
             0.0333
           ],
-          "max_color_mad": 1.2538,
-          "source_sha256": "77dd764b9fd930158f44bc2496a303e721af14a287459e02b216b98cf49a811b"
+          "max_color_mad": 0.749,
+          "source_sha256": "9ec57090e22c0f4cf815c52139c0f29efd83cfc33dfaa1d2d38b7a91c37039ef"
         },
         "en": {
           "path": "articles/assets/poc/poc_shape_from_polarization/story.en.gif",
           "frames": [
             {
-              "file": "05_normals.png",
+              "file": "11_real_dome_and_lens.png",
               "content_box": [
                 0,
-                171,
+                18,
                 720,
-                348
+                653
               ]
             },
             {
@@ -10696,24 +10631,24 @@
             1600,
             1600
           ],
-          "bytes": 228465,
+          "bytes": 384148,
           "color_mad": [
-            1.2538,
+            0.749,
             0.0654,
             0.2967,
             0.0005,
             0.3932,
             0.0333
           ],
-          "max_color_mad": 1.2538,
-          "source_sha256": "0a3dd243819c539fc9d0c4aa85af030cb628152e71eba9e24ed5811142d3349b"
+          "max_color_mad": 0.749,
+          "source_sha256": "c2d0b51f652d54b80ab1a8507fa1225ea0e232e5fed10a5fbdb4f286694fcd40"
         }
       },
       "reason": null,
-      "cover": "05_normals.png",
-      "still": "articles/assets/poc/poc_shape_from_polarization/05_normals.png",
+      "cover": "11_real_dome_and_lens.png",
+      "still": "articles/assets/poc/poc_shape_from_polarization/11_real_dome_and_lens.png",
       "alt": {
-        "ja": "照度差ステレオは光沢の点しか見えず、法線を Lambert の式に無理に乗せる。",
+        "ja": "黒光沢樹脂のドーム(n 1.57)とガラスのレンズ(n 1.52)。上段左は天井のパネル照明の部屋で斜めから見た姿、下段は測るときのドーム照明で真上から撮った 1 枚(黒光沢が一様に明るく、陰影が無い)。上段右はその 1 枚の偏光から復元した形で、色は法線の誤差。誤差の中央値は測れた所でドーム 2.4° / レンズ 1.9°、部品全体ではドーム 3.6° / レンズ 2.0°(測れた割合 64 % / 98 %)。真上のカメラの穴と台を映す所は暗く、像だけから測れないと分かる。部品の位置(mask)と高さの原点は描画の真値から与えた(偏光から出したのは法線と形だけ)。",
         "en": "Measuring Black-Gloss and Glass from Polarisation - No Shading, but the Polarisation Remembers the Slope"
       }
     },
@@ -13055,9 +12990,10 @@
       }
     },
     "poc_nir_silicon_transmission": {
-      "representative": "05_best_led_sweep.gif",
+      "representative": "07_die_through_wafer.png",
       "status": "gif",
       "selected": [
+        "07_die_through_wafer.png",
         "01_wavelength_contradiction.png",
         "02_best_led_vs_thickness.png",
         "03_three_leds_through_wafer.png",
@@ -13070,13 +13006,24 @@
           "path": "articles/assets/poc/poc_nir_silicon_transmission/story.ja.gif",
           "frames": [
             {
+              "file": "07_die_through_wafer.png",
+              "content_box": [
+                0,
+                147,
+                720,
+                396
+              ]
+            },
+            {
               "file": "01_wavelength_contradiction.png",
               "content_box": [
                 0,
                 182,
                 720,
                 325
-              ]
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.213889
             },
             {
               "file": "02_best_led_vs_thickness.png",
@@ -13127,36 +13074,49 @@
               "laplacian_density": 0.06855966
             }
           ],
-          "frame_count": 5,
+          "frame_count": 6,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
+            1600,
             1600
           ],
-          "bytes": 528451,
+          "bytes": 761689,
           "color_mad": [
-            0.1228,
-            0.2319,
-            0.067,
-            0.0397,
+            0.8793,
+            0.1223,
+            0.2315,
+            0.0691,
+            0.0394,
             0.1634
           ],
-          "max_color_mad": 0.2319,
-          "source_sha256": "0357ca80b877c49fc3934bed01b7248a1db82b4480810651e153258b316bcbd6"
+          "max_color_mad": 0.8793,
+          "source_sha256": "8b5634ce1b73b5ba5c3d245ee4ce669b99e53ce1a06e19588b502334824397fe"
         },
         "en": {
           "path": "articles/assets/poc/poc_nir_silicon_transmission/story.en.gif",
           "frames": [
             {
+              "file": "07_die_through_wafer.png",
+              "content_box": [
+                0,
+                147,
+                720,
+                396
+              ]
+            },
+            {
               "file": "01_wavelength_contradiction.png",
               "content_box": [
                 0,
                 182,
                 720,
                 325
-              ]
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.213889
             },
             {
               "file": "02_best_led_vs_thickness.png",
@@ -13207,31 +13167,33 @@
               "laplacian_density": 0.06855966
             }
           ],
-          "frame_count": 5,
+          "frame_count": 6,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
+            1600,
             1600
           ],
-          "bytes": 528451,
+          "bytes": 761689,
           "color_mad": [
-            0.1228,
-            0.2319,
-            0.067,
-            0.0397,
+            0.8793,
+            0.1223,
+            0.2315,
+            0.0691,
+            0.0394,
             0.1634
           ],
-          "max_color_mad": 0.2319,
-          "source_sha256": "d9798dfb7cefddac1ae9336d7b935336bea6ed6d66d71b070f77e7a0f166758b"
+          "max_color_mad": 0.8793,
+          "source_sha256": "e476ef9b759dc65a3dbc2631e81a6866f712e205178f145779c688980ec6fd54"
         }
       },
       "reason": null,
-      "cover": "01_wavelength_contradiction.png",
-      "still": "articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction.png",
+      "cover": "07_die_through_wafer.png",
+      "still": "articles/assets/poc/poc_nir_silicon_transmission/07_die_through_wafer.png",
       "alt": {
-        "ja": "ウェハは 1.1 µm より長波長で透け、Si センサは同じ波長で感じなくなる。積は 1065 nm 付近で最大 4.6e-04 —— 光子 1 万個で電子 3〜4 個。1e-7 未満は図の床に置いた。",
+        "ja": "公開のダイ写真から取った実物のアルミ配線を Si の裏に置き、同じ光子数で近赤外の LED を替えて撮った。775 µm のウェハでは 1065 nm(最良)と 1050 nm がほぼ同じで形 IoU 0.94、1200 nm は 0.89 —— 波長の差は「同じ像質に要る光の量」(電子の比 28 倍は Ohno 形・半値全幅 50 nm の LED の場合)。850 nm はウェハが不透明。50 µm のダイでは 1050 nm の電子は最良(935 nm)の 1/3.4 で、最良が IoU 0.9 に届く最小の光では 0.93 対 0.84。焦点をウェハの厚さだけ機械的に下げると IoU 0.17 に崩れる。",
         "en": "Near-Infrared Inspection Through a Silicon Wafer — Choosing the LED Wavelength from the Source × Wafer × Sensor Integral"
       }
     },
@@ -13624,13 +13586,13 @@
       }
     },
     "poc_battery_ct_degradation": {
-      "representative": "01_xray_projection.png",
+      "representative": "17_same_outline_ct.png",
       "status": "gif",
       "selected": [
+        "17_same_outline_ct.png",
         "01_xray_projection.png",
         "02_scene.png",
         "03_outer_profile.png",
-        "04_visible_fraction.png",
         "12_sweep_resolution.png",
         "16_sweep_beamhardening.png"
       ],
@@ -13640,13 +13602,24 @@
           "path": "articles/assets/poc/poc_battery_ct_degradation/story.ja.gif",
           "frames": [
             {
+              "file": "17_same_outline_ct.png",
+              "content_box": [
+                0,
+                90,
+                720,
+                509
+              ]
+            },
+            {
               "file": "01_xray_projection.png",
               "content_box": [
                 0,
                 149,
                 720,
                 392
-              ]
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.838202
             },
             {
               "file": "02_scene.png",
@@ -13669,15 +13642,6 @@
               ],
               "contain_reason": "aspect_within_2_4",
               "source_aspect": 2.030556
-            },
-            {
-              "file": "04_visible_fraction.png",
-              "content_box": [
-                0,
-                113,
-                720,
-                463
-              ]
             },
             {
               "file": "12_sweep_resolution.png",
@@ -13711,29 +13675,40 @@
             1600,
             1600
           ],
-          "bytes": 386728,
+          "bytes": 589192,
           "color_mad": [
+            0.32,
             0.6297,
             0.8858,
             0.1073,
-            0.0314,
             0.083,
             0.0595
           ],
           "max_color_mad": 0.8858,
-          "source_sha256": "7d92d57c02cd27c2f292b44f6c10f6137752211cb6c47a79b1b0d424d8af49f2"
+          "source_sha256": "344d5b1346a71e2bda2d4e7a03d88bfd1cab2a2ec32d3ba748e7a1b78d8a4441"
         },
         "en": {
           "path": "articles/assets/poc/poc_battery_ct_degradation/story.en.gif",
           "frames": [
             {
+              "file": "17_same_outline_ct.png",
+              "content_box": [
+                0,
+                90,
+                720,
+                509
+              ]
+            },
+            {
               "file": "01_xray_projection.png",
               "content_box": [
                 0,
                 149,
                 720,
                 392
-              ]
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.838202
             },
             {
               "file": "02_scene.png",
@@ -13756,15 +13731,6 @@
               ],
               "contain_reason": "aspect_within_2_4",
               "source_aspect": 2.030556
-            },
-            {
-              "file": "04_visible_fraction.png",
-              "content_box": [
-                0,
-                113,
-                720,
-                463
-              ]
             },
             {
               "file": "12_sweep_resolution.png",
@@ -13798,25 +13764,25 @@
             1600,
             1600
           ],
-          "bytes": 386728,
+          "bytes": 589192,
           "color_mad": [
+            0.32,
             0.6297,
             0.8858,
             0.1073,
-            0.0314,
             0.083,
             0.0595
           ],
           "max_color_mad": 0.8858,
-          "source_sha256": "1b0c20eabde41001f0af63b015cfeeea1537229b29b99f81c4ba23e01705777c"
+          "source_sha256": "1793d1cff98ac1003f71048e2aa45c36a4d94b70a3773c46bb0aef34aaf55543"
         }
       },
       "reason": null,
-      "cover": "01_xray_projection.png",
-      "still": "articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png",
+      "cover": "17_same_outline_ct.png",
+      "still": "articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png",
       "alt": {
-        "ja": "真正面(0 度)なら空隙の影までは見える。ただし奥行きに積算されているので厚みも深さも出ない。22 度傾けると層の縞そのものが重なって消える —— 投影では姿勢が結果を決めてしまう。だから断層に落とす。",
-        "en": "Battery cells with the same exterior can hide different causes of swelling or voiding. Known defects were put into stacked electrodes and imaged by CT; only 29.4 % of electrode swelling reached the outside. Cells with matching can heights separate internally, so outside dimensions cannot identify the cause."
+        "ja": "外形が同じでも中身は違う(合成の角形セル)。健全と、外形が揃うように膨れの倍率を合わせた(局所 0.2736 / ガス 0.3021)一様膨れ・局所膨れ・層間ガス空隙の 3 つのセルを、X 線 120 方向の投影(ビームハードニング・検出器のリング・光子雑音つき)から FBP で再構成した z 中央の断面(灰色、同じ窓)。外形の中央は 3 つとも 6.313 / 6.313 / 6.313 mm —— 揃えたのは作り方で、発見ではない。断面では隙間の消え方・層の波打ち・ガスの穴(矢印、位置は仕込んだ真値)が違い、内部指標(層厚 0.190 / 0.187 / 0.173 mm、空隙率 0.00 / 0.00 / 5.20 %(ガスの真値 5.81 %)、平面度 RMS 0.0156 / 0.0428 / 0.0784 mm)が分ける。明るい層 = 正極の合材、暗めの層 = 負極の合材、細い明線 = Cu 箔。★数値は単一材質の模型(1〜8 節)で測った値で、層の材質の明暗はこの図の描画だけ(材質つきの像で測り直した値はパネルの括弧内)。実セルを縮めた模型(全幅 3.2 mm・17 層)。中央の同心円はリングの痕。 再構成は別実装 skimage の iradon と相関 0.974(向きは定義から決めた)。",
+        "en": "In synthetic prismatic cells whose swelling was scaled so their exteriors match, CT slices still show closed clearance, waving layers or gas holes. Only 29.4 % of the electrode swelling reaches the outside. Outside dimensions alone cannot identify the cause."
       }
     },
     "poc_bev_sensor_fusion": {
@@ -15812,6 +15778,171 @@
       "alt": {
         "ja": "同じ θ の繊維を 12 本ずつ、θ を 3 通り描いたもの。★**S² の緯線 1 本が、3 次元では 1 枚のトーラス面**になる —— 3 つの色が入れ子の殻をつくる。S² の北極と南極に対応する 2 本だけは、直線と単位円になる(この図には入れていない)。",
         "en": "Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators"
+      }
+    },
+    "poc_camera_calibration": {
+      "representative": "06_real_board.png",
+      "status": "gif",
+      "selected": [
+        "06_real_board.png",
+        "01_reproj_vs_truth.png",
+        "02_fx_z_coupling.png",
+        "03_frame_fill.png",
+        "04_noise_amplification.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_camera_calibration/story.ja.gif",
+          "frames": [
+            {
+              "file": "06_real_board.png",
+              "content_box": [
+                0,
+                0,
+                720,
+                690
+              ]
+            },
+            {
+              "file": "01_reproj_vs_truth.png",
+              "content_box": [
+                0,
+                260,
+                720,
+                169
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.269737
+            },
+            {
+              "file": "02_fx_z_coupling.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_frame_fill.png",
+              "content_box": [
+                0,
+                203,
+                720,
+                284
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.534091
+            },
+            {
+              "file": "04_noise_amplification.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 5,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 424077,
+          "color_mad": [
+            0.9104,
+            0.0396,
+            0.0664,
+            0.0528,
+            0.063
+          ],
+          "max_color_mad": 0.9104,
+          "source_sha256": "96fd917be73f327a4ecfd2204e7e06340ac8ba8c86c26817f3fb18cd6edef452"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_camera_calibration/story.en.gif",
+          "frames": [
+            {
+              "file": "06_real_board.png",
+              "content_box": [
+                0,
+                0,
+                720,
+                690
+              ]
+            },
+            {
+              "file": "01_reproj_vs_truth.png",
+              "content_box": [
+                0,
+                260,
+                720,
+                169
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.269737
+            },
+            {
+              "file": "02_fx_z_coupling.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_frame_fill.png",
+              "content_box": [
+                0,
+                203,
+                720,
+                284
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.534091
+            },
+            {
+              "file": "04_noise_amplification.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 5,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 424077,
+          "color_mad": [
+            0.9104,
+            0.0396,
+            0.0664,
+            0.0528,
+            0.063
+          ],
+          "max_color_mad": 0.9104,
+          "source_sha256": "32c88624fc69d5711bf092fd2e33d093861472f847c66180f52857ab81a948e4"
+        }
+      },
+      "reason": null,
+      "cover": "06_real_board.png",
+      "still": "articles/assets/poc/poc_camera_calibration/06_real_board.png",
+      "alt": {
+        "ja": "上: 実写の校正板(OpenCV が配布する 13 枚、Apache-2.0)から 4 枚を選ぶ 715 通りを校正し直した。再投影の外れの 1 枚(left02.jpg)を含む組は RMS が大きく、含まない 495 組では 12 枚の推定 fx との差が -1.46〜+2.53 % 散り、RMS と |差| の相関は -0.045(基準を 13 枚の推定にすると値が変わる)。含まない組の RMS が 0.3 px 付近に固まる 165 組は 2 番目に外れた left13.jpg を含む。外れを RMS の大きい順に 1 / 2 / 3 枚除くと相関は -0.045 / -0.055 / +0.244 で、3 枚除くと門の 0.3 に近づく。下: 最も正面に近い 1 枚の板面の質感を、13 枚の推定値を真値に置いたカメラで傾き 32 / 8 / 2 度に 10 視点ずつ描き直し、OpenCV で角点を拾って校正した結果。再投影 RMS は 0.148 / 0.154 / 0.152 px でほぼ同じなのに、|fx 誤差| は 0.033 / 0.22 / 3.99 %(雑音の種 5 個の平均、傾き 2 度は種ごとに 3.05〜4.97 %)。警報になるのは sigma_fx(0.26 → 34.6 px)。合成の点(第 4 章)では 0.026 / 0.445 / 7.326 % だった。描いた板の背景で、写っていた板を埋めた部分が見えている画素は平均 3.7 %(最大 6.4 %)。",
+        "en": "A small reprojection error does not guarantee a correct focal length. Re-rendering a real board almost face-on with its real texture kept the reprojection error about the same while the focal-length error reached 3.99 %. The warning comes from the spread of the focal-length estimate, not from the reprojection error."
       }
     },
     "poc_real_stereo_depth": {
@@ -18263,6 +18394,219 @@
       "alt": {
         "ja": "平均すると全部消える。近赤外の差分は剥落部で盲目、近赤外 1 枚は面ごとには完璧でも全体では 1 本引けない。",
         "en": "Peeling Layers With Many Wavelengths — Underdrawing, Ground, Glaze and Fading, Truth in Hand"
+      }
+    },
+    "poc_polarization_specular": {
+      "representative": "09_glare_removed_label.png",
+      "status": "gif",
+      "selected": [
+        "09_glare_removed_label.png",
+        "01_raw_polarizer_mosaic.png",
+        "02_analyzer_samples.png",
+        "04_fresnel.png",
+        "05_angle_error.png",
+        "07_saturation.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_polarization_specular/story.ja.gif",
+          "frames": [
+            {
+              "file": "09_glare_removed_label.png",
+              "content_box": [
+                0,
+                0,
+                720,
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_polarization_specular/09_glare_removed_label_720.jpg",
+                "frame": null,
+                "crop": null,
+                "mode": "square",
+                "rendered": "view2026/thumbs/poc_polarization_specular.jpg"
+              }
+            },
+            {
+              "file": "01_raw_polarizer_mosaic.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
+            },
+            {
+              "file": "02_analyzer_samples.png",
+              "content_box": [
+                0,
+                248,
+                720,
+                194
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.719858
+            },
+            {
+              "file": "04_fresnel.png",
+              "content_box": [
+                0,
+                186,
+                720,
+                318
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.263889
+            },
+            {
+              "file": "05_angle_error.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "07_saturation.png",
+              "content_box": [
+                0,
+                220,
+                720,
+                249
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.897321
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 728672,
+          "color_mad": [
+            0.52,
+            0.0,
+            0.0362,
+            0.1151,
+            0.091,
+            0.0304
+          ],
+          "max_color_mad": 0.52,
+          "source_sha256": "3838e4bfb622e18a826062861acb5f3d69d3f05de181ac5e2c7e6c33e3480bd1"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_polarization_specular/story.en.gif",
+          "frames": [
+            {
+              "file": "09_glare_removed_label.png",
+              "content_box": [
+                0,
+                0,
+                720,
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_polarization_specular/09_glare_removed_label_720.jpg",
+                "frame": null,
+                "crop": null,
+                "mode": "square",
+                "rendered": "view2026/thumbs/poc_polarization_specular.jpg"
+              }
+            },
+            {
+              "file": "01_raw_polarizer_mosaic.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
+            },
+            {
+              "file": "02_analyzer_samples.png",
+              "content_box": [
+                0,
+                248,
+                720,
+                194
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.719858
+            },
+            {
+              "file": "04_fresnel.png",
+              "content_box": [
+                0,
+                186,
+                720,
+                318
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.263889
+            },
+            {
+              "file": "05_angle_error.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "07_saturation.png",
+              "content_box": [
+                0,
+                220,
+                720,
+                249
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.897321
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 728672,
+          "color_mad": [
+            0.52,
+            0.0,
+            0.0362,
+            0.1151,
+            0.091,
+            0.0304
+          ],
+          "max_color_mad": 0.52,
+          "source_sha256": "c80343526f685751031440a668e89ae77d652607886091ddc47d9ae723d80269"
+        }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_polarization_specular/09_glare_removed_label_720.jpg",
+        "frame": null,
+        "crop": null,
+        "mode": "square",
+        "rendered": "view2026/thumbs/poc_polarization_specular.jpg"
+      },
+      "reason": null,
+      "cover": "09_glare_removed_label.png",
+      "still": "articles/assets/poc/poc_polarization_specular/09_glare_removed_label.png",
+      "alt": {
+        "ja": "フィルムで包んだ箱のラベルと鋼のナットを、4 方位の画素偏光子センサで 1 枚撮った(1024 画素の描画)。左から 偏光子なし / 最適角の偏光フィルタ 1 枚(同じモザイクから組んだ像)/ 偏光カメラで剥がした像。印字の CNR は 1.5 / 8.0 / 7.6(全画素で撮るフィルタなら 8.3)—— この場面(小さなソフトボックス 1 灯)では固定のフィルタで足りる。全画素で撮る固定のフィルタ(同じ画素数)と比べた比は、しわだけを 4 倍にして 0.92→0.97、照明だけを大きな面照明へ広げて 1.07、両方で 1.36(CNR 2.13 対 1.56、どちらも印字は読めない)。しわも照明の広さも差を広げる。この 1024 画素では 1 に届いたのは照明を広げたときだけだが、512 画素では互角で、種によってしわとの順序も入れ替わる。読める水準の差は 1 割未満。鋼の映り込みは短い露光(飽和なし)で 29 % 消え、描画と同じ金属のフレネルの式の 28 % と合う(実装の検算)。図の白いナットは飽和。",
+        "en": "Polarisation separates the glare on a shiny surface from its diffuse colour. The diffuse error vanishes at 56.31 degrees, Brewster's angle. At shallow incidence the polarisation method gains little."
       }
     },
     "poc_real_stain_unmix": {
@@ -22212,41 +22556,37 @@
       }
     },
     "poc_pv_thermal_survey": {
-      "representative": "01_norm_table.png",
+      "representative": "11_real_dtu_conditions.png",
       "status": "gif",
       "selected": [
-        "01_norm_table.png",
+        "11_real_dtu_conditions.png",
         "02_wind_sweep.png",
-        "03_gsd_sweep.png",
         "06_scene.png",
         "07_false_map.png",
         "09_orthorectified_detection.png"
       ],
-      "excluded_frames": [],
+      "excluded_frames": [
+        {
+          "file": "01_norm_table.png",
+          "reason": "crop_text_only",
+          "source_aspect": 4.611842
+        }
+      ],
       "variants": {
         "ja": {
           "path": "articles/assets/poc/poc_pv_thermal_survey/story.ja.gif",
           "frames": [
             {
-              "file": "01_norm_table.png",
+              "file": "11_real_dtu_conditions.png",
               "content_box": [
+                100,
                 0,
-                267,
-                720,
-                156
+                520,
+                690
               ]
             },
             {
               "file": "02_wind_sweep.png",
-              "content_box": [
-                0,
-                113,
-                720,
-                463
-              ]
-            },
-            {
-              "file": "03_gsd_sweep.png",
               "content_box": [
                 0,
                 113,
@@ -22276,58 +22616,47 @@
               "file": "09_orthorectified_detection.png",
               "content_box": [
                 0,
-                190,
+                178,
                 720,
-                310
+                333
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.322695
+              "source_aspect": 2.165289
             }
           ],
-          "frame_count": 6,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
-            1600,
             1600
           ],
-          "bytes": 382221,
+          "bytes": 516263,
           "color_mad": [
-            0.038,
-            0.2443,
-            0.1235,
-            0.6231,
-            0.3937,
-            0.6181
+            0.5547,
+            0.2403,
+            0.6221,
+            0.2901,
+            0.6903
           ],
-          "max_color_mad": 0.6231,
-          "source_sha256": "29fc08dc6a85289400bdc46d8d4a485bd7c8a7387bacd038a14927e04a31c5f2"
+          "max_color_mad": 0.6903,
+          "source_sha256": "7f8a434a2bfdfb64997eb2db79121328ba1a2d6d7a40cca6aafe9f0165ac79f7"
         },
         "en": {
           "path": "articles/assets/poc/poc_pv_thermal_survey/story.en.gif",
           "frames": [
             {
-              "file": "01_norm_table.png",
+              "file": "11_real_dtu_conditions.png",
               "content_box": [
+                100,
                 0,
-                267,
-                720,
-                156
+                520,
+                690
               ]
             },
             {
               "file": "02_wind_sweep.png",
-              "content_box": [
-                0,
-                113,
-                720,
-                463
-              ]
-            },
-            {
-              "file": "03_gsd_sweep.png",
               "content_box": [
                 0,
                 113,
@@ -22357,42 +22686,40 @@
               "file": "09_orthorectified_detection.png",
               "content_box": [
                 0,
-                190,
+                178,
                 720,
-                310
+                333
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.322695
+              "source_aspect": 2.165289
             }
           ],
-          "frame_count": 6,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
-            1600,
             1600
           ],
-          "bytes": 382221,
+          "bytes": 516263,
           "color_mad": [
-            0.038,
-            0.2443,
-            0.1235,
-            0.6231,
-            0.3937,
-            0.6181
+            0.5547,
+            0.2403,
+            0.6221,
+            0.2901,
+            0.6903
           ],
-          "max_color_mad": 0.6231,
-          "source_sha256": "7351b51a9a40609bd12b9c716ab00c1b366832fe1cf27067ba238821818478bf"
+          "max_color_mad": 0.6903,
+          "source_sha256": "0a7a7e4df5b9cb06fccc2a81400beb3f21e76137e659395c39aec1f4c4a0d9a4"
         }
       },
       "reason": null,
-      "cover": "01_norm_table.png",
-      "still": "articles/assets/poc/poc_pv_thermal_survey/01_norm_table.png",
+      "cover": "11_real_dtu_conditions.png",
+      "still": "articles/assets/poc/poc_pv_thermal_survey/11_real_dtu_conditions.png",
       "alt": {
-        "ja": "「偽」= 故障でも影でも汚れでもない場所に出た塊。しきい値 3.0 K、風速 1.0 m/s。",
-        "en": "Drone Thermography of a PV Plant — You Think You Are Measuring Temperature Difference, but You Are Measuring Wind and Viewing Angle"
+        "ja": "公開のドローン熱画像(DTU の PV 発電所、正対化済みの温度の画像、R. del Prado Santamaría et al., DTU PV plant - Drone Infrared Thermography Dataset: Influence of Irradiance and Altitude, DTU Data, doi:10.11583/DTU.29665346.v1 (CC BY 4.0))。色はモジュールの中央値からの温度差 -3〜25 K(鉄色)、白枠はこの PoC の判定(GSD 19 mm に揃え、モジュール中央値・3 K・面積の門)。上段: 同じモジュール 6 を日射 200〜800 超で(高さ 10 m)—— 200 W/m² では 10 m で ΔT 1.0 K、4 つの高さの最大でも 1.1 K しか出ず見逃す(日射 600 以上ではバイパスダイオードの短絡 84 / 84 枚すべて検出)。下段: モジュール 3 を高さ 8〜20 m で —— ピークの ΔT は高いほど下がる(20 m / 8 m の比の中央値 0.77。ただしモジュール全体の温度も中央値 -1.9 K 動いており、高さごとの撮影は同時でないので画素の大きさの効果だけとは言えない)。3 段目: 汚れのモジュール(配布元の分類の 1 つ。電気的な故障ではない)—— 同じ判定で 72 / 144 枚が上がる。上がった塊は画像の上の本物の温度差(雑音ではない)。現地の IV が付く 2 台の性能比(実測 / 模型の Pmax)は47.3 % / 30.3 % だが、清掃の前後や健全なモジュールとの比較は配布物に無く、出力の低下の原因は分けられない。温度のしきい値は原因(汚れか電気的な故障か)を分けない。改変: 配布物の温度の画像を 7 x 7 の面積平均で判定し、表示はモジュールの中央値からの差を鉄色で塗り、判定の白枠と見出しを重ねた。",
+        "en": "Public drone heat images of a real PV plant were screened for modules running hot. Soiled modules were flagged in 72 frames, just like electrical faults. Temperature alone does not tell soiling from an electrical fault."
       }
     },
     "poc_real_sky_photometry": {

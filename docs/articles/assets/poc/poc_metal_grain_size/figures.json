@@ -112,5 +112,55 @@
   ],
   "csv": "11_duplex_table.csv",
   "tsv": "11_duplex_table.tsv"
+ },
+ {
+  "file": "12_real_tbm_input.png",
+  "name": "real_tbm_input",
+  "caption": "10-0-768 の 4 枚。白い溝は配布物のタイルの境(貼り合わせない)。TBM: Texture Boundary in Metallography, Zenodo 8386997 (doi:10.5281/zenodo.8386997), CC BY 4.0",
+  "shape": [
+   605,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "13_real_tbm_detect.png",
+  "name": "real_tbm_detect",
+  "caption": "1〜7 節の道具をそのまま写真に掛けた。切片法の横切りの再現率 0.02、偽 0.03 本 / 真の 1 本。TBM: Texture Boundary in Metallography, Zenodo 8386997 (doi:10.5281/zenodo.8386997), CC BY 4.0",
+  "shape": [
+   605,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "14_real_tbm_color_detect.png",
+  "name": "real_tbm_color_detect",
+  "caption": "rgb_to_lab の勾配の尾根を 1〜7 節と同じ局所しきい値で取り、細線化した。色の経路は 1 本だけ試した。TBM: Texture Boundary in Metallography, Zenodo 8386997 (doi:10.5281/zenodo.8386997), CC BY 4.0",
+  "shape": [
+   605,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "15_real_tbm_breaks.png",
+  "name": "real_tbm_breaks",
+  "caption": "途切れは人工(相関長 8 px)。粒界は専門家の手描きで、写真から検出したものではない。TBM: Texture Boundary in Metallography, Zenodo 8386997 (doi:10.5281/zenodo.8386997), CC BY 4.0",
+  "shape": [
+   605,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "16_real_tbm_cliff.png",
+  "name": "real_tbm_cliff",
+  "caption": "専門家の粒界 320 枚と Voronoi に同じ途切れを入れて数えた。崖の 95 % 区間(80 領域の復元抽出): 面積法 7.5〜8.0 %、切片法 32.9〜33.4 %。",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
  }
 ]
