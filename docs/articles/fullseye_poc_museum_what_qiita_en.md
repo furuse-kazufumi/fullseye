@@ -1586,7 +1586,7 @@ Inspection equipment is usually chosen one component at a time, each shown at it
 
 [![Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png)
 
-*↑ **Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread** ―― For each flaw, the best camera and lens under each of the six lights (a90/95 median and min-max over three seed sets, only where found under every seed set), with an example image from the best set. Shorter bars mean smaller flaws are found. Synthetic test.*
+*↑ **Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread** ―― For each flaw, one example image where the flaw is visible, and the best camera and lens under each of the six lights (a90/95 median and min-max over three seed sets). Shorter bars mean smaller flaws are found. Grey hatched = not found within the tested range; dashed = flips with the seed set. Synthetic test.*
 
 Terms: SWIR — The short-wave infrared band, roughly around 1 to 3 µm, where material absorption can distinguish objects that look alike in visible light.; a90/95 — The flaw size at which the lower one-sided 95% confidence bound on the POD reaches 90%.
 

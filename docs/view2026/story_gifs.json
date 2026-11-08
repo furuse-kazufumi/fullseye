@@ -32981,9 +32981,9 @@
               "file": "02_equipment_at_a_glance.png",
               "content_box": [
                 0,
-                50,
+                65,
                 720,
-                590
+                560
               ]
             },
             {
@@ -33045,9 +33045,9 @@
             1600,
             1600
           ],
-          "bytes": 744114,
+          "bytes": 752199,
           "color_mad": [
-            0.3366,
+            0.3202,
             0.7573,
             0.3598,
             0.5288,
@@ -33055,7 +33055,7 @@
             0.0394
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "fc27470ce5e3e4d0de572d1bc456c93a702fb0ddd110a918dd5ba375e0276fe2"
+          "source_sha256": "7b9ea0468b45be85e544d91ae544f8f7e65ee0f289e9b8d472fb09d6fbfb92f5"
         },
         "en": {
           "path": "articles/assets/poc/poc_equipment_selection_map/story.en.gif",
@@ -33064,9 +33064,9 @@
               "file": "02_equipment_at_a_glance.png",
               "content_box": [
                 0,
-                50,
+                65,
                 720,
-                590
+                560
               ]
             },
             {
@@ -33128,9 +33128,9 @@
             1600,
             1600
           ],
-          "bytes": 744114,
+          "bytes": 752199,
           "color_mad": [
-            0.3366,
+            0.3202,
             0.7573,
             0.3598,
             0.5288,
@@ -33138,14 +33138,14 @@
             0.0394
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "c5b606f5f9b1c7f312454776833f804c8ab24ce12ee9cd25ac2064a57a4fd674"
+          "source_sha256": "3bd7fbe72fa59ca92ed3bfe82bde54e2414f04d78bec30bb53917a3e70aafec9"
         }
       },
       "reason": null,
       "cover": "02_equipment_at_a_glance.png",
       "still": "articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png",
       "alt": {
-        "ja": "ViEW の入口用: 題材ごとに、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(中央値と最小〜最大。どの種の組でも見つかるものだけ、無ければ「見つからない」)と、題材の最良の組で撮った見本。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げた)。",
+        "ja": "ViEW の入口用: 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大。どの組でも見つかるものだけ)。見つからない照明は灰色の斜線の全長の棒、種の組で揺れる照明は破線の全長の棒。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げた。PE 片は分光の 1210 nm の帯を両隣で割った吸収の深さ)。",
         "en": "Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread"
       }
     }

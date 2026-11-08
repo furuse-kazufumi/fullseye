@@ -178,13 +178,17 @@ def _more_statics(figs, pick, second):
 _OPEN, _CLOSE = "(（[「『", ")）]」』"
 
 
+#: 「. 」で終わっても文末ではない略語(この後では切らない)。
+_ABBREV = ("e.g", "i.e", "et al", "Fig", "fig", "Figs", "vs", "U.S", "cf", "Eq", "eq", "No", "approx", "etc")
+
+
 def _first_sentence(text: str, limit: int = 150) -> str:
     """説明の**最初の 1 文**だけを返す(記事の肥大を抑える)。
 
-    ★文の終わりは**括弧の外の**「。」(無ければ括弧の外の「. 」、頭文字 "E. " などは除く)(2026-11-09、5 回目の確認)。
-    以前は括弧の中の「。」で切っていて、「見本(上から … PE の破片。」のように括弧が閉じないまま、括弧の後ろの説明
-    (表示倍率など)が消えていた。括弧の外の文末が 2 倍の長さまでに無ければ、開いた括弧の手前で切って「…」を付ける
-    (括弧の途中で切らない)。ただし手前が 20 文字に満たなければ、これまでどおり長さで切る。
+    ★文の終わりは**括弧の外の**「。」(無ければ括弧の外の「. 」)(2026-11-09、5・6 回目の確認)。以前は括弧の中の「。」で
+    切っていて、「見本(上から … PE の破片。」のように括弧が閉じないまま、括弧の後ろの説明(表示倍率など)が記事から
+    消えていた。「. 」は頭文字("E. ")と略語(e.g. / et al. / Fig. / vs. / U.S. など)の後では文末にしない。
+    括弧の外の文末が 2 倍の長さまでに無ければ、長さで切るが**括弧の中では切らない**(開いた括弧の手前で切って「…」)。
     """
     t = (text or "").strip()
     ends = {"。": None, ". ": None}
@@ -200,8 +204,12 @@ def _first_sentence(text: str, limit: int = 150) -> str:
             if ch == "。" and ends["。"] is None:
                 ends["。"] = i + 1
             elif ch == "." and t[i + 1:i + 2] == " " and ends[". "] is None:
-                word = t[:i].split(" ")[-1]
-                if not (len(word) == 1 and word.isupper()):        # "E." のような頭文字では切らない("m." の単位では切る)
+                head = t[:i]
+                word = head.split(" ")[-1]
+                initial = len(word) == 1 and word.isupper()
+                abbrev = any(head.endswith(a) and (len(head) == len(a) or not head[-len(a) - 1].isalnum())
+                             for a in _ABBREV)
+                if not initial and not abbrev:
                     ends[". "] = i + 1
     for mark in ("。", ". "):
         if ends[mark] is not None:
@@ -211,8 +219,8 @@ def _first_sentence(text: str, limit: int = 150) -> str:
     cut = t[:limit]
     inside = sum(cut.count(c) for c in _OPEN) > sum(cut.count(c) for c in _CLOSE)
     before = [o for o in opens if o < limit]
-    if inside and before and before[-1] >= 20:
-        cut = t[:before[-1]]
+    if inside and before:
+        cut = t[:before[-1]]                                       # 括弧の中では切らない(手前が短くても)
     return cut.rstrip() + "…"
 
 

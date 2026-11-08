@@ -1578,7 +1578,7 @@ py -3.11 examples/poc_ai_built_inspection_scored.py
 
 [![機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png)
 
-*↑ **機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする** ―― 題材ごとに、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大。どの組でも見つかるものだけ)と、題材の最良の組で撮った見本。棒が短いほど小さい傷まで見つかる。合成の試験。*
+*↑ **機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする** ―― 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大)。棒が短いほど小さい傷まで見つかる。灰色の斜線 = 試した範囲で見つからない、破線 = 種の組で揺れる。合成の試験。*
 
 用語: SWIR — おおむね1〜3 µm付近の短波赤外域で、可視光では似た材料の吸収差を捉えられる波長帯。; a90/95 — POD曲線で検出確率90%を、片側95%信頼下限でも満たす欠陥寸法。
 
@@ -7064,9 +7064,9 @@ py -3.11 examples/poc_driving_town.py
 
 *↑ 幅の由来: {'lanes': 192, 'default': 375, 'width': 19}(width タグ / lanes × 車線幅 / 種別の既定)。*
 
-[![停止線: [(3.3, 'intersection'), (15.2, 'intersection'), (133.1, 'intersection'), (396.4, 'intersection'](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed.png)
+[![停止線:…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed.png)
 
-*↑ 停止線: [(3.3, 'intersection'), (15.2, 'intersection'), (133.1, 'intersection'), (396.4, 'intersection'), (419.3, 'intersection'), (432.1, 'intersection'…*
+*↑ 停止線:…*
 
 [![左の車線中心を通して走る車載カメラ(JP 法規パック): 赤で停止 → 2 秒で青 → 発進、一時停止では止まって確認。道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Proje](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)
 
