@@ -840,11 +840,11 @@ def main() -> None:
          "橙 = 誤り、黒 = 無効。bad2 [%%](SGBM): 段差 %.1f(%.1f)/ 光沢 %.1f(%.1f)/ 無地 %.1f(%.1f、負け)"
          % (by["段差の近く"][2]["bad"], by["段差の近く"][3]["bad"], by["見え方が変わる面"][2]["bad"],
             by["見え方が変わる面"][3]["bad"], by["無地"][2]["bad"], by["無地"][3]["bad"])],
-        title="壊れ方の地図(真値視差で採点): bad2 %.2f %%(SGBM %.2f %%)、無効も誤り %.1f %%(%.1f %%)、%.0f 倍遅い"
-              % (s_ms["bad"], s_cv["bad"], s_ms["bad_all"], s_cv["bad_all"], t_ms / t_cv), ncols=1,
+        title="壊れ方の地図(真値視差で採点): bad2 %.2f %%(SGBM %.2f %%)、無効も誤り %.1f %%(%.1f %%)、数十倍遅い"
+              % (s_ms["bad"], s_cv["bad"], s_ms["bad_all"], s_cv["bad_all"]), ncols=1,
         caption="遮蔽は左右一致で無効に落ち、誤りは段差の近くと見え方が変わる面(光沢)に残る。無地では SGBM に負け、"
-                "両方が有効な画素の平均誤差も SGBM がわずかに小さい(%.3f 対 %.3f px)。処理時間 %.1f 秒(SGBM %.2f 秒)。 "
-                % (e_ms.mean(), e_cv.mean(), t_ms, t_cv)
+                "両方が有効な画素の平均誤差も SGBM がわずかに小さい(%.3f 対 %.3f px)。処理時間は SGBM の数十倍(機械と負荷で変わる)。 "
+                % (e_ms.mean(), e_cv.mean())
                 + " / ".join("%s bad2 %.1f %% 無効 %.1f %%" % (r[0], r[2]["bad"], 100 - r[2]["density"]) for r in cls_rows))
 
     wr0, wr1, wc0, wc1 = 230, 400, 110, 310

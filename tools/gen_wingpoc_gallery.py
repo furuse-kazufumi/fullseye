@@ -40,6 +40,7 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _ROOT)
 sys.path.insert(0, os.path.join(_ROOT, "tools"))
 from exhibit_glossary import glossary_line, load_glossary
+import share_alike
 
 EXHIBITS = os.path.join(_ROOT, "docs", "articles", "exhibits")
 ASSETS = os.path.join(_ROOT, "docs", "articles", "assets", "poc")
@@ -414,6 +415,13 @@ def _ops_line(poc_id: str, lang: str, declared: list[str] | None = None) -> str:
     return label + links + more
 
 
+def _sa_lines(poc_id: str, file: str, lang: str) -> list:
+    """継承条件つきのデータのコマを含む図なら、図の説明の直後に置く帰属表示の行。"""
+    if not share_alike.is_share_alike_file(poc_id, file):
+        return []
+    return ["*%s*" % share_alike.attribution(poc_id, lang), ""]
+
+
 def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
                 second: dict | None = None, thumb2: str | None = None,
                 extras: list | None = None, more: list | None = None) -> str:
@@ -439,7 +447,7 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         "",
         "*↑ **%s** ―― %s*" % (title, cap),
         "",
-    ]
+    ] + _sa_lines(ex["id"], pick["file"], lang)
     if term_line:
         lines += [term_line, ""]
     if second is not None and thumb2 is not None:
@@ -454,7 +462,7 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         else:
             tail = "" if ex.get("second_figure_caption_en") else " (figure labels are in Japanese; the numbers are the same)"
             cap_line = ("*↑ The measurement ―― %s%s*" % (translated_sub, tail)) if translated_sub else ("*↑ The measurement%s*" % tail)
-        lines += ["[![%s](%s)](%s)" % (alt, th2, full2), "", cap_line, ""]
+        lines += ["[![%s](%s)](%s)" % (alt, th2, full2), "", cap_line, ""] + _sa_lines(ex["id"], second["file"], lang)
     # 看板にも 2 枚目にも入らなかった**動く図**は全部出す —— GIF を落とすと「クリックしないと
     # 動かない絵」になり、動きが主題の展示ではそれで意味が消える(2026-09-21、GIF 2 本の展示で気づいた)。
     # ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい
@@ -465,7 +473,7 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         sub_ = _first_sentence(fig.get("caption") or "")
         alt = (sub_[:100] if sub_ else "図").replace("]", ")")
         cap_line = ("*↑ %s*" % sub_) if sub_ else "*↑ この回の図*"
-        lines += ["[![%s](%s)](%s)" % (alt, th4, full4), "", cap_line, ""]
+        lines += ["[![%s](%s)](%s)" % (alt, th4, full4), "", cap_line, ""] + _sa_lines(ex["id"], fig["file"], lang)
     for fig in (extras or []):
         full3 = RAW + ex["id"] + "/" + fig["file"]
         sub = (fig.get("caption") or "").strip()
@@ -474,7 +482,7 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
             cap_line = ("*↑ 動く図 ―― %s*" % sub) if sub else "*↑ 動く図*"
         else:
             cap_line = ("*↑ The animation ―― %s*" % sub) if sub else "*↑ The animation*"
-        lines += ["[![%s](%s)](%s)" % (alt, full3, full3), "", cap_line, ""]
+        lines += ["[![%s](%s)](%s)" % (alt, full3, full3), "", cap_line, ""] + _sa_lines(ex["id"], fig["file"], lang)
     # 生成の内幕(サムネ URL・FULLSEYE_FIGURE_DIR・数字の出所)は記事に出さない
     # (ユーザー指示 2026-09-07「読者の ROI と関係ない独自ルールは書かない」)。
     lines += [

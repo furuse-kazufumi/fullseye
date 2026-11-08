@@ -58,11 +58,15 @@ OpenCV's MOG2, and follow the person through an occlusion behind a pillar.
   毎コマ 2.65 画素。前の版が書いた「真値の重心は隠れていた間に毎コマ 3.51 画素進んだ」は、隠れる直前
   (体の 34 % が見える)と出てきたコマ(26 %)の、見えている一部の重心どうしの差で、柱の両側へ外向きに
   偏った値だった(記録には ``partial_centroid_speed_across_gap`` として残す)。外れた本当の原因は、隠れる
-  直前の 3 回の更新でフィルタの速さが 2.27 → 1.91 → 1.56 画素/コマへ落ちたこと。第 163 コマの真値の体は
-  96 % 見えていて、柱の遮蔽ではない。観測の重心が歩く向きに対して後ろへ取り残されていた(それまでの中央値
-  −3.5 → 最後の更新 −9.1 画素): 体の後ろの床の誤検出(その塊 1,892 画素のうち 431 画素、うち 230 画素は
-  10 コマ前も誤検出 = 動かない)が ``GROUP_PX`` で同じ塊にまとめられ、重心を後ろへ引いた。
-  レビューは「第 162 コマの部分遮蔽の見逃し」と見立てたが、真値ではそのコマの体は 96 % 見えている。
+  前の最後の更新(第 163 コマ)でフィルタの速さが 1.56 画素/コマまで落ちていたこと。落ち始めは第 145 コマ
+  (3.87)で、第 155 コマで 1.85、第 159 コマでいったん 2.86 へ戻ってから最後の 3 回で 2.27 → 1.91 → 1.56。第 163 コマの
+  真値の体は 96 % 見えていて、柱の遮蔽ではない。観測の重心が歩く向きに対して後ろへ取り残されていた
+  (それまでの中央値 −3.5 → 最後の更新 −9.1 画素、塊から誤検出を除くと −0.4 画素): その塊 1,892 画素のうち
+  431 画素が誤検出で、うち 230 画素は 10 コマ前も誤検出、その中の 136 画素は 10〜30 コマ前に人の足がいた
+  画素。人が通った跡が背景の更新の遅れで誤検出として残り(この PoC が「幽霊」と呼ぶ ``run_bg_esti`` の
+  性質。床にもとからある汚れではない)、``GROUP_PX`` で同じ塊にまとめられて重心を後ろへ引いた。
+  背景差分の誤差が後段の追跡を壊す連鎖。レビューは最初「第 162 コマの部分遮蔽の見逃し」と見立てたが、
+  再レビューで撤回された(真値ではそのコマの体は 96 % 見えている)。
   判定を厳しくする方向(塊の横縦比が直近の中央値の 1.5 / 1.3 / 1.2 倍を超えたら更新に使わない)を
   試したが、学習列 I_SI_01 の誤差の 90 % 点が 20.6 → 55.8 画素に悪化し、I_OC_01 の出てきたコマの
   予測の誤差は 1.3・1.2 倍で 60.2 → 40〜42 画素に下がるだけ(1.5 倍では変わらない)で、採らなかった。
@@ -201,12 +205,17 @@ RECORDED: dict = {'absorbed_frames': {'I_OC_01': 46, 'I_OC_02': 72, 'I_SI_01': 1
                           'kalman_smooth_err_at_reappear': 15.36,
                           'kalman_speed_at_hide': 1.56,
                           'kalman_speeds_last_updates': [2.27, 1.91, 1.56],
-                          'lag': {'blob_fp_px': 431,
+                          'lag': {'blob_fp_ghost_px': 136,
+                                  'blob_fp_px': 431,
                                   'blob_fp_static_px': 230,
                                   'blob_px': 1892,
+                                  'lag_at_peak': -0.22,
                                   'lag_early_median': -3.48,
                                   'lag_last': -9.06,
-                                  'last_update': 162},
+                                  'lag_without_fp': -0.43,
+                                  'last_update': 162,
+                                  'speed_peak': 3.87,
+                                  'speed_peak_frame': 144},
                           'nn_same_id': False,
                           'partial_centroid_speed_across_gap': 3.51,
                           'turn_deg': 10.1,
@@ -644,7 +653,10 @@ def lag_diagnosis(masks: np.ndarray, data: dict, tr: dict, truth: dict, cx: dict
 
     観測の重心と真値の重心の差を、隠れる前の歩く向き(真値)へ射影する(負 = 後ろへ取り残された)。
     最後に更新したコマの塊(:func:`detections` と同じく ``GROUP_PX`` でまとめた片)のうち、真値が背景と
-    言う画素(誤検出)の数と、そのうち 10 コマ前も誤検出だった(動かない)画素の数を返す。
+    言う画素(誤検出)の数と、そのうち 10 コマ前も誤検出だった(動かない)画素の数、さらにその中で
+    10〜30 コマ前に真値の前景だった(人の体がいた)画素の数を返す。最後のものは、人が通った跡が背景の
+    更新の遅れで残った誤検出(``run_bg_esti`` の「幽霊」)。誤検出を除いた塊の重心の遅れと、遅れが
+    始まる前後のフィルタの速さ(最後の更新から 25 コマ以内の最大とそのコマ)も返す。
     """
     last = cx["last_update"]
     kb1 = cx["last_whole_before"]
@@ -659,8 +671,17 @@ def lag_diagnosis(masks: np.ndarray, data: dict, tr: dict, truth: dict, cx: dict
     fp = blob & ~data["fg"][last] & ~data["ignore"][last]
     prev = masks[last - 10] & ~data["fg"][last - 10] & ~data["ignore"][last - 10]
     early = [lag[j] for j in upd if j <= last - 20][-10:]
+    static = fp & prev
+    ghost = static & data["fg"][max(0, last - 30):last - 9].any(0)
+    rr, cc = np.nonzero(blob & ~fp)
+    lag_clean = float(np.dot(np.array([rr.mean(), cc.mean()]) - cent[last], u))
+    recent = [j for j in upd if j >= last - 25]
+    speeds = {j: float(np.hypot(*tr["vel"][j])) for j in recent}
+    k_peak = max(speeds, key=lambda j: speeds[j])
     return {"last_update": last, "lag_last": lag[last], "lag_early_median": float(np.median(early)),
-            "blob_px": int(blob.sum()), "blob_fp_px": int(fp.sum()), "blob_fp_static_px": int((fp & prev).sum())}
+            "lag_without_fp": lag_clean, "lag_at_peak": lag[k_peak],
+            "blob_px": int(blob.sum()), "blob_fp_px": int(fp.sum()), "blob_fp_static_px": int(static.sum()),
+            "blob_fp_ghost_px": int(ghost.sum()), "speed_peak": speeds[k_peak], "speed_peak_frame": int(k_peak)}
 
 
 # --------------------------------------------------------------------------- #
@@ -869,8 +890,8 @@ def write_figures(res: dict) -> None:
                       "推定し直し %.0f 画素。ただしこのコマの真値は体の %.0f %% しか見えない一部の重心で、体の中心から偏る"
                       "(体の 9 割以上が見えた第 %d コマでは推定し直し %.0f 画素)。人は柱の裏で速くなっていない: 体の 9 割以上が"
                       "見えるコマの歩く速さは、隠れる前 %.2f・出た後 %.2f 画素/コマ。予測が外れたのは、隠れる直前の更新で"
-                      "フィルタの速さが %s 画素/コマへ落ちたから(体の後ろの床の動かない誤検出が同じ塊にまとめられ、観測の重心が"
-                      "後ろへ %.0f 画素取り残された)。柱の裏の橙の線は真値が無いので採点していない。"
+                      "フィルタの速さが %s 画素/コマへ落ちたから(人が通った跡が背景の更新の遅れで誤検出として残り(幽霊)、"
+                      "同じ塊にまとめられて観測の重心が後ろへ %.0f 画素取り残された)。柱の裏の橙の線は真値が無いので採点していない。"
                       % (k_show + 1, cx["hidden_frames"], cx["gap"][1] + 1, cx["prediction_err_at_reappear"],
                          cx["smooth_err_at_reappear"], 100 * cx["visible_frac_at_reappear"], cx["first_whole_after"] + 1,
                          cx["smooth_err_at_first_whole"], cx["body_speed_before"], cx["body_speed_after"],
@@ -1072,10 +1093,13 @@ def real_chapter(g: Gates, root: Path) -> dict:
             if x["same_id"] and x["last_update"] is not None:
                 lagd = lag_diagnosis(mask_store[seq]["fullseye"], data[seq], kal, truths[seq], x)
                 c["lag"] = lagd
-                print("      観測の重心の遅れ(歩く向き、負 = 後ろ): それより前の更新の中央値 %.1f → 最後の更新(第 %d コマ)%.1f 画素。"
-                      "その塊 %d 画素のうち誤検出 %d 画素、うち 10 コマ前も誤検出だった(動かない)画素 %d"
-                      % (lagd["lag_early_median"], lagd["last_update"] + 1, lagd["lag_last"], lagd["blob_px"],
-                         lagd["blob_fp_px"], lagd["blob_fp_static_px"]))
+                print("      観測の重心の遅れ(歩く向き、負 = 後ろ): それより前の更新の中央値 %.1f → 最後の更新(第 %d コマ)%.1f 画素"
+                      "(誤検出を除いた塊なら %.1f)。その塊 %d 画素のうち誤検出 %d 画素、うち 10 コマ前も誤検出だった画素 %d、"
+                      "その中で 10〜30 コマ前に人の体がいた画素(幽霊)%d"
+                      % (lagd["lag_early_median"], lagd["last_update"] + 1, lagd["lag_last"], lagd["lag_without_fp"],
+                         lagd["blob_px"], lagd["blob_fp_px"], lagd["blob_fp_static_px"], lagd["blob_fp_ghost_px"]))
+                print("      フィルタの速さは第 %d コマの %.2f(遅れ %.1f)から落ち始める"
+                      % (lagd["speed_peak_frame"] + 1, lagd["speed_peak"], lagd["lag_at_peak"]))
     c1, c2 = crossings["I_OC_01"], crossings["I_OC_02"]
     g.check("I_OC_01: 向きはほぼ変わらない(< 30°)", c1["turn_deg"] < 30.0, "%.0f°" % c1["turn_deg"])
     g.check("I_OC_01: カルマンは柱の裏を同じ番号で通り抜ける", c1["kalman"]["same_id"]
@@ -1097,12 +1121,17 @@ def real_chapter(g: Gates, root: Path) -> dict:
     g.check("所見: I_OC_01 の隠れる直前のフィルタの速さは歩く速さの 7 割未満",
             k1["speed_at_hide"] < 0.7 * k1["body_speed_before"],
             "%.2f 対 %.2f 画素/コマ" % (k1["speed_at_hide"], k1["body_speed_before"]))
-    # 速さが落ちたのは、観測の重心が後ろへ取り残されたから(体の後ろの床の動かない誤検出が同じ塊にまとめられる)。
+    # 速さが落ちたのは、観測の重心が後ろへ取り残されたから。人が通った跡が背景の更新の遅れで誤検出として残り
+    # (run_bg_esti の「幽霊」)、GROUP_PX で同じ塊にまとめられて重心を後ろへ引く。
+    # 閾値(5 画素・半分・2 画素)は実測(遅れ −3.5 → −9.1、誤検出を除くと −0.4、幽霊 136 / 230)を見て置いた値。
     lagd = c1["lag"]
-    g.check("所見: I_OC_01 の最後の更新で観測の重心が後ろへ 5 画素以上取り残され、その塊の誤検出の半分以上が動かない",
-            lagd["lag_last"] - lagd["lag_early_median"] < -5.0 and 2 * lagd["blob_fp_static_px"] > lagd["blob_fp_px"],
-            "遅れ %.1f → %.1f 画素、誤検出 %d 画素のうち動かない %d"
-            % (lagd["lag_early_median"], lagd["lag_last"], lagd["blob_fp_px"], lagd["blob_fp_static_px"]))
+    g.check("所見: I_OC_01 の最後の更新で観測の重心が後ろへ 5 画素以上取り残され、誤検出を除くと 2 画素以内に戻る",
+            lagd["lag_last"] - lagd["lag_early_median"] < -5.0 and abs(lagd["lag_without_fp"]) < 2.0,
+            "遅れ %.1f → %.1f 画素、誤検出を除くと %.1f"
+            % (lagd["lag_early_median"], lagd["lag_last"], lagd["lag_without_fp"]))
+    g.check("所見: I_OC_01 のその塊の動かない誤検出の半分以上は、10〜30 コマ前に人の体がいた画素(幽霊)",
+            2 * lagd["blob_fp_ghost_px"] > lagd["blob_fp_static_px"] > 0,
+            "動かない誤検出 %d 画素のうち幽霊 %d" % (lagd["blob_fp_static_px"], lagd["blob_fp_ghost_px"]))
     # 出てきたコマの真値は体の一部の重心なので、推定し直しの誤差はその偏りを含む。体が見えたコマでは小さい。
     g.check("所見: I_OC_01 の推定し直しの誤差は、体の 9 割以上が見えた最初のコマの方が出てきたコマより小さい",
             k1["smooth_err_at_first_whole"] < k1["smooth_err_at_reappear"],

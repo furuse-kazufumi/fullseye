@@ -744,7 +744,7 @@ FULLSEYE_FIGURE_DIR=out/figs py -3.11 examples/<name>.py
 
 | script | 何を示すか |
 |---|---|
-| [`poc_real_bg_kalman_tracking.py`](poc_real_bg_kalman_tracking.py)<br>実写の固定カメラで人を切り出し、柱の裏をカルマン予測で通り抜ける(画素ごとのカルマン背景対 MOG2) | LASIESTA(CC BY-SA 4.0)の屋内 3 本で create_bg_esti / run_bg_esti の画素ごとのカルマン背景と OpenCV の MOG2 を、真値の前景との F 値(CDnet の数え方)で比べる。パラメータは I_SI_01 だけで選ぶ。★F 値: Fullseye 0.890 / 0.878、MOG2 0.987 / 0.884(I_OC_01 / I_OC_02)。★動かない塊を update_bg_esti で取り込むと I_OC_01 の F が 0.794 → 0.890。★filter_kalman の等速モデルと NIS の門で、柱の裏の 26 コマを予測でつなぎ同じ番号で拾い直す(誤差 3.8 画素)。予測しない最近傍は見失う。★出てきたコマでその場の予測は 60.2 画素外れる: 人は速くなっていない(体の 9 割以上が見えるコマで前後とも 2.65 画素/コマ)。隠れる直前に体の後ろの床の動かない誤検出が同じ塊にまとめられ、フィルタの速さが 2.27 → 1.56 に落ちたため。図は CC BY-SA 4.0。★限界: I_OC_02 は隠れている間に 165° 折り返し(atan2_image)、カルマンは新しい番号になる。filter_kalman は cv2.KalmanFilter と 1.8e-12 で一致。 |
+| [`poc_real_bg_kalman_tracking.py`](poc_real_bg_kalman_tracking.py)<br>実写の固定カメラで人を切り出し、柱の裏をカルマン予測で通り抜ける(画素ごとのカルマン背景対 MOG2) | LASIESTA(CC BY-SA 4.0)の屋内 3 本で create_bg_esti / run_bg_esti の画素ごとのカルマン背景と OpenCV の MOG2 を、真値の前景との F 値(CDnet の数え方)で比べる。パラメータは I_SI_01 だけで選ぶ。★F 値: Fullseye 0.890 / 0.878、MOG2 0.987 / 0.884(I_OC_01 / I_OC_02)。★動かない塊を update_bg_esti で取り込むと I_OC_01 の F が 0.794 → 0.890。★filter_kalman の等速モデルと NIS の門で、柱の裏の 26 コマを予測でつなぎ同じ番号で拾い直す(誤差 3.8 画素)。予測しない最近傍は見失う。★出てきたコマでその場の予測は 60.2 画素外れる: 人は速くなっていない(体の 9 割以上が見えるコマで前後とも 2.65 画素/コマ)。人が通った跡が背景の更新の遅れで誤検出として残り(幽霊)、同じ塊にまとめられて観測の重心を後ろへ引き、フィルタの速さが第 145 コマの 3.87 から隠れる直前の 1.56 まで落ちたため。図は CC BY-SA 4.0。★限界: I_OC_02 は隠れている間に 165° 折り返し(atan2_image)、カルマンは新しい番号になる。filter_kalman は cv2.KalmanFilter と 1.8e-12 で一致。 |
 
 ## 超解像 — `upscaling`(1 本)
 
