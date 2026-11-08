@@ -5,7 +5,7 @@ category: estimation
 in: matrix × matrix × matrix × matrix × matrix × signal × matrix
 out: table
 gpu: なし
-examples: [estimation_tour]
+examples: [estimation_tour, poc_real_bg_kalman_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -54,6 +54,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [estimation_tour](../../../../examples/estimation_tour.py) — `py -3.11 examples/estimation_tour.py`
+- [poc_real_bg_kalman_tracking](../../../../examples/poc_real_bg_kalman_tracking.py) — `py -3.11 examples/poc_real_bg_kalman_tracking.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

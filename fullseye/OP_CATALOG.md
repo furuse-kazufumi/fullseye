@@ -2474,7 +2474,7 @@ _計 3841 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `assign_hungarian` `matrix → table` GPU: なし — コスト行列 (n, m) の割当問題を解く(Kuhn 1955 / Munkres 1957 の Hungarian 法、scipy の実装)。 · 例: `estimation_tour`
 - `crlb_gaussian` `signal × signal → table` GPU: なし — 白色ガウス雑音(標準偏差 sigma)の下での Cramér–Rao 下界。 · 例: `estimation_tour`
 - `hist_distance` `signal × signal → measurement` GPU: なし — 2 つのヒストグラム(非負、和で正規化する)の距離・発散。 · 例: `gallery_math_stats_linalg`
-- `kalman_smooth` `matrix × matrix × matrix × matrix × matrix × signal × matrix → table` GPU: なし — 線形ガウス状態空間モデル x_{k+1} = F x_k + w(w ~ N(0,Q))、z_k = H x_k + v(v ~ N(0,R))の Kalman フィルタ(前向き)と Rauch–Tung–Striebel 平滑化(後ろ向き)。 · 例: `estimation_tour`
+- `kalman_smooth` `matrix × matrix × matrix × matrix × matrix × signal × matrix → table` GPU: なし — 線形ガウス状態空間モデル x_{k+1} = F x_k + w(w ~ N(0,Q))、z_k = H x_k + v(v ~ N(0,R))の Kalman フィルタ(前向き)と Rauch–Tung–Striebel 平滑化(後ろ向き)。 · 例: `estimation_tour`, `poc_real_bg_kalman_tracking`
 - `mat_expm` `matrix → matrix` GPU: なし — 行列の指数関数 e^A(Padé 近似 + scaling-and-squaring、scipy)。 · 例: `gallery_math_stats_linalg`
 - `mat_logm` `matrix → matrix` GPU: なし — 行列の主対数 log A(e^X = A となる X のうち固有値の虚部が (−π, π] のもの、scipy)。 · 例: `gallery_math_stats_linalg`
 - `se3_exp` `signal → matrix` GPU: なし — SE(3) の指数写像: 6 次元のねじれ ξ = (v, ω)(並進速度 v、回転ベクトル ω)→ 4×4 の剛体変換。 · 例: `estimation_tour`

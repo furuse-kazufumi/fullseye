@@ -31649,17 +31649,17 @@
             1600,
             1600
           ],
-          "bytes": 507403,
+          "bytes": 501646,
           "color_mad": [
-            1.7184,
+            1.6894,
             1.0128,
             1.0635,
             0.0001,
-            0.0788,
+            0.0748,
             0.0317
           ],
-          "max_color_mad": 1.7184,
-          "source_sha256": "882774b442d099760f975f4dc0afde6652fa1e38c9f80cafaf2043d689ede39a"
+          "max_color_mad": 1.6894,
+          "source_sha256": "b04c942a917effdd0a8ec560ff805c954895535db287f3f3fcdb6c106598765f"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_bg_kalman_tracking/story.en.gif",
@@ -31736,24 +31736,24 @@
             1600,
             1600
           ],
-          "bytes": 507403,
+          "bytes": 501646,
           "color_mad": [
-            1.7184,
+            1.6894,
             1.0128,
             1.0635,
             0.0001,
-            0.0788,
+            0.0748,
             0.0317
           ],
-          "max_color_mad": 1.7184,
-          "source_sha256": "081d6e34427b5b723c510d4f7d564b37621f46a10942913e61c4fb1239c6f167"
+          "max_color_mad": 1.6894,
+          "source_sha256": "ce32457951060548a46f202e5d875f52e93947a0d5ebdb1449e3a20d45bb849e"
         }
       },
       "reason": null,
       "cover": "01_pillar_crossing.png",
       "still": "articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png",
       "alt": {
-        "ja": "LASIESTA I_OC_01 の第 206 コマ。空色の太線 = filter_kalman が観測で更新した位置、橙の細線 = 予測だけで進めた区間(柱の裏 26 コマと一部が隠れたコマ)、朱 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。柱に半分入りかけたコマを更新に使ったので予測は上へ傾き、出てきたコマで 31 画素ずれたが、NIS の門の内側で同じ番号のまま拾い直した。",
+        "ja": "LASIESTA I_OC_01 の第 206 コマ。空色の太線 = 観測で更新したコマ、橙の実線 = 更新に使わなかったコマ(柱の裏 26 コマと、体の一部が隠れたコマ)。どちらも kalman_smooth(RTS 平滑化)で前後の観測から推定し直した位置。赤紫の点線 = その場の予測(filter_kalman が等速で進めた位置で、拾い直したコマで跳ぶ)、朱 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。体の一部が隠れたかは、塊の面積・高さ・横縦比が直近の中央値から急に縮むことで決める(柱に半分入ったコマは幅だけが縮む)。出てきたコマ(第 194 コマ)での真値の重心からの誤差は、その場の予測 60 画素、推定し直し 15 画素。その場の予測は隠れる直前の速さ(毎コマ 1.6 画素)のまま進むが、真値の重心は隠れていた間に平均で毎コマ 3.5 画素進んだ。",
         "en": "Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels"
       }
     },

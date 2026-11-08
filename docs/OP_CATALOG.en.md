@@ -591,7 +591,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_search_sweep_width` — ops: `erf`, `gauss_filter`, `gray_tophat`, `integrate_funct_1d`, `laplace`, `ncc_locate`, `noise_sigma`, `photon_sample`, `relative_illumination`, `star_detect`, `tophat`, `vignette` (+1 more) `py -3.11 examples/poc_search_sweep_width.py`
 
 **tracking**
-- `poc_real_bg_kalman_tracking` — ops: `atan2_image`, `create_bg_esti`, `ellipse`, `filter_kalman`, `give_bg_esti`, `opening_seg`, `run_bg_esti`, `threshold`, `update_bg_esti` `py -3.11 examples/poc_real_bg_kalman_tracking.py`
+- `poc_real_bg_kalman_tracking` — ops: `atan2_image`, `create_bg_esti`, `ellipse`, `filter_kalman`, `give_bg_esti`, `kalman_smooth`, `opening_seg`, `run_bg_esti`, `threshold`, `update_bg_esti` `py -3.11 examples/poc_real_bg_kalman_tracking.py`
 
 **space**
 - `poc_star_tracker` — ops: (not linked from any op note) `py -3.11 examples/poc_star_tracker.py`
@@ -2476,7 +2476,7 @@ Math ops that support visual measurement (linear algebra / statistics / interpol
 - `assign_hungarian` `matrix → table` GPU: none — Solves the assignment problem for a cost matrix (n, m) (Hungarian method of Kuhn 1955 / Munkres 1957, scipy implementation). · examples: `estimation_tour`
 - `crlb_gaussian` `signal × signal → table` GPU: none — Cramér–Rao lower bound under white Gaussian noise (standard deviation sigma). · examples: `estimation_tour`
 - `hist_distance` `signal × signal → measurement` GPU: none — Distance and divergence between 2 histograms (non-negative, normalized by their sum). · examples: `gallery_math_stats_linalg`
-- `kalman_smooth` `matrix × matrix × matrix × matrix × matrix × signal × matrix → table` GPU: none — Kalman filter (forward) and Rauch–Tung–Striebel smoother (backward) for the linear Gaussian state-space model x_{k+1} = F x_k + w (w ~ N(0,Q)), z_k = H x_k + v (v ~ N(0,R)). · examples: `estimation_tour`
+- `kalman_smooth` `matrix × matrix × matrix × matrix × matrix × signal × matrix → table` GPU: none — Kalman filter (forward) and Rauch–Tung–Striebel smoother (backward) for the linear Gaussian state-space model x_{k+1} = F x_k + w (w ~ N(0,Q)), z_k = H x_k + v (v ~ N(0,R)). · examples: `estimation_tour`, `poc_real_bg_kalman_tracking`
 - `mat_expm` `matrix → matrix` GPU: none — Matrix exponential e^A (Padé approximation + scaling-and-squaring, scipy). · examples: `gallery_math_stats_linalg`
 - `mat_logm` `matrix → matrix` GPU: none — Principal matrix logarithm log A (the X with e^X = A whose eigenvalues have imaginary parts in (−π, π], scipy). · examples: `gallery_math_stats_linalg`
 - `se3_exp` `signal → matrix` GPU: none — Exponential map of SE(3): 6-dimensional twist ξ = (v, ω) (translational velocity v, rotation vector ω) → 4×4 rigid-body transform. · examples: `estimation_tour`
