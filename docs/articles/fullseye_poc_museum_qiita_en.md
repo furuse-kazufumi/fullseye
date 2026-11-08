@@ -62,11 +62,11 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 ## Recently added (newest first)
 
 - 2026-11-08 — No.2026.305 Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels
-- 2026-11-08 — No.2026.306 Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not
+- 2026-11-08 — No.2026.306 Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography — A Failure Report: Per-Image Grain Size Does Not Even Rank Correctly (rho -0.16), and Boundary Placement Loses to Watershed
 - 2026-11-08 — No.2026.302 Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks
 - 2026-11-08 — No.2026.303 Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing
 - 2026-11-08 — No.2026.304 Reconstructing a Measured Cone-Beam CT Scan of a Walnut with FDK and Iterative Methods, Scored Against the Providers' Reference — TV Holds Up When Views Are Thinned, Nothing Recovers a Missing Angular Range
-- 2026-11-08 — No.2026.301 Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 97-98 %, and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed
+- 2026-11-08 — No.2026.301 Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 96.6-98.1 % on Lines Segmented Correctly (95.4-97.1 % End to End), and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed
 - 2026-11-04 — No.2026.289 Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF
 - 2026-11-04 — No.2026.290 Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner
 

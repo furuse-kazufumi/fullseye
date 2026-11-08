@@ -46,10 +46,14 @@
 
 * motorcycle で有効画素の bad-2 **4.67 %**・平均誤差 0.960 px・密度 90.0 %(OpenCV SGBM 7.27 % /
   1.315 px / 88.4 %)。無効を誤りに数えると 14.23 %(SGBM 18.00 %)。両方が有効な画素だけで比べると
-  4.45 % 対 4.95 % で差は縮む —— 差の半分は「どこを無効にするか」から来ている。
+  4.45 % 対 4.95 % で差は縮む —— 差の半分は「どこを無効にするか」から来ている。同じ画素の
+  **平均誤差は SGBM の方がわずかに小さい**(0.918 対 0.912 px)。**処理時間は SGBM の 55〜78 倍**(単独で 2.8 秒対 0.04 秒、ほかの処理と並べて 8.9 秒対 0.16 秒。負荷で変わるので門は 10 倍)。
+  比べた SGBM は MODE_SGBM・blockSize 5 の既定に近い設定で、uniquenessRatio・speckle や MODE_HH は振って
+  いない(参照側の手間は ms と揃っていない)。
 * ★**失敗する場所**: 遮蔽(真値から幾何で数えた 6.9 %)は 57 % が左右一致で無効に落ちる。誤りが
   残るのは奥行きの段差の近く(bad-2 14.1 %)と見え方が変わる面(11.5 %)で、それ以外は 0.85 %。
   ★「無地で壊れる」は、この場面では**最も平らな 1.2 %(7x7 の標準偏差 < 0.003)だけ**に当たる。
+  ただし**その無地の区分では SGBM に大きく負ける**(SGBM bad-2 0.31 %・無効 0.0 %、ms 4.14 %・14.5 %)。
   0.01〜0.02 の段(床のコンクリート)は bad-2 0.68 % で全段で最もよく合う。
 * **集約の向き**: paths 4 は 2 より bad-2 が 0.88 点下がる(5.55 → 4.67 %)。1/2 に縮めた段は
   8.31 % で、無地の区分では密度が 85.5 → 95.7 % に上がる代わりに bad-2 が 4.14 → 6.47 % に悪化する。
@@ -65,7 +69,8 @@
   400 点では 16.27 %。スコア 0.9 以上の 180 点に絞ると 2.22 %。``find_ncc_models`` は OpenCV の
   ``matchTemplate`` と最良位置が全点一致、スコアの差 5e-6。
 * ★★**MiddEval3 の 15 場面**(nocc、有効画素の bad-2 の中央): 6.52 % 対 SGBM 10.20 %、14 / 15 場面で
-  下回る。条件を 1 つだけ変えた対で性格が分かれる: 露出を変えると ms −0.18 点・SGBM +4.99 点、
+  下回る。無効も誤りに数える(Middlebury の公式の数え方に近い)と 12 / 15 場面で、Playroom・Playtable・
+  Shelves では SGBM が上。条件を 1 つだけ変えた対で性格が分かれる: 露出を変えると ms −0.18 点・SGBM +4.99 点、
   照明を変えると ms +0.94 点(ただし無効が増え、無効も誤りにすると +14.35 点)・SGBM +18.08 点。
   ★逆に**平行化だけが違う対**(Playtable、縦の残差 平均 0.24 px)では ms が +12.12 点悪化し、
   SGBM は +0.59 点しか動かない —— 縦のずれに弱い。理由はまだ確かめていない(census の窓の
@@ -563,6 +568,13 @@ def main() -> None:
           100 * (e_ms > BAD_THR).mean() < 100 * (e_cv > BAD_THR).mean(), (frac > 1e-9).mean() > 0.5]
     if not all(g1):
         raise GateError("章 1: %s / %s" % (g1, s_ms))
+    # 所見(変わったら書き換える、負けの記録): 両方が有効な画素の平均誤差は SGBM の方がわずかに小さく、
+    # 処理時間は SGBM の 10 倍以上かかる(この機械で約 55 倍)。
+    print("   ★負けた所: 両方が有効な画素の平均誤差は SGBM の方が %.3f px 小さい。処理時間は SGBM の %.0f 倍"
+          % (e_ms.mean() - e_cv.mean(), t_ms / t_cv))
+    g1b = [e_cv.mean() <= e_ms.mean(), t_ms > 10.0 * t_cv]
+    if not all(g1b):
+        raise GateError("章 1 の所見: %s" % g1b)
 
     # --- 2 失敗する場所 ------------------------------------------------------ #
     cls = failure_classes(L, R, G)
@@ -593,7 +605,11 @@ def main() -> None:
           by["見え方が変わる面"][2]["bad"] > 3 * rest_r["bad"],
           by["無地"][2]["bad_all"] > rest_r["bad_all"],
           min(c[3] for c in curve) == min(c[3] for c in curve[1:5]),
-          all(r[1] > 0.5 for r in cls_rows)]
+          all(r[1] > 0.5 for r in cls_rows),
+          # 所見(負けの記録): 無地の区分では SGBM の方が誤りも無効も少ない
+          by["無地"][3]["bad"] < by["無地"][2]["bad"] and by["無地"][3]["density"] > by["無地"][2]["density"]]
+    print("   ★負けた所: 無地では SGBM が bad2 %.2f %%・無効 %.1f %%、ms は %.2f %%・%.1f %%"
+          % (by["無地"][3]["bad"], 100 - by["無地"][3]["density"], by["無地"][2]["bad"], 100 - by["無地"][2]["density"]))
     if not all(g2):
         raise GateError("章 2: %s" % g2)
 
@@ -780,10 +796,16 @@ def main() -> None:
               % (base, other, what, dm, dma, dc, dca))
     wins = sum(r[2] < r[6] for r in mrows)
     print("   有効画素の bad2 で SGBM を下回った場面 %d / 15" % wins)
+    wins_all = sum(r[4] < r[8] for r in mrows)
+    lose_all = [r[0] for r in mrows if not r[4] < r[8]]
+    print("   無効も誤りに数えた bad2(nocc)で SGBM を下回った場面 %d / 15(SGBM が上: %s)"
+          % (wins_all, ", ".join(lose_all)))
     g7 = [len(mrows) == 15, med[7] > 90.0, med[0] < med[4],
           abs(deltas["露出"][2]) < 2.0 and deltas["露出"][3] > 5.0,
           abs(deltas["照明"][0]) < 2.0 and deltas["照明"][1] > 10.0 and deltas["照明"][2] < deltas["照明"][3] / 1.5,
-          deltas["平行化"][0] > 8.0 and abs(deltas["平行化"][1]) < 2.0 and abs(deltas["平行化"][3]) < 2.0]
+          deltas["平行化"][0] > 8.0 and abs(deltas["平行化"][1]) < 2.0 and abs(deltas["平行化"][3]) < 2.0,
+          # 所見: 無効も誤りに数えると勝つ場面は減る(有効だけの勝ち数は無効を減らした側を有利にする)
+          wins_all < wins]
     if not all(g7):
         raise GateError("章 7: %s" % g7)
 
@@ -813,10 +835,19 @@ def main() -> None:
     emap[ok & np.isfinite(D) & ~err] = emap[ok & np.isfinite(D) & ~err] + 0.3
     figs.save_grid(
         "failure_map", [over, emap],
-        ["区分: 橙 遮蔽 / 黄 段差の近く / 青 無地 / 桃 見え方が変わる面 / 灰 それ以外",
-         "橙 = 誤り(|d - 真値| > 2 px)、黒 = 無効(左右一致で落とした)"],
-        title="失敗する場所 —— 遮蔽は無効に、段差の近くと光沢は誤りに", ncols=1,
-        caption=" / ".join("%s bad2 %.1f %% 無効 %.1f %%" % (r[0], r[2]["bad"], 100 - r[2]["density"]) for r in cls_rows))
+        ["区分: 橙 遮蔽 %.1f %% / 黄 段差の近く %.1f %% / 青 無地 %.1f %% / 桃 見え方が変わる面 %.1f %% / 灰 それ以外"
+         % tuple(by[k][1] for k in ("遮蔽", "段差の近く", "無地", "見え方が変わる面")),
+         "橙 = 誤り(|d − 真値| > 2 px)、黒 = 無効。bad2: 段差の近く %.1f %%(SGBM %.1f)/ 光沢 %.1f %%(%.1f)/ "
+         "無地 %.1f %%(SGBM %.1f、負け)/ それ以外 %.2f %%(%.2f)"
+         % (by["段差の近く"][2]["bad"], by["段差の近く"][3]["bad"], by["見え方が変わる面"][2]["bad"],
+            by["見え方が変わる面"][3]["bad"], by["無地"][2]["bad"], by["無地"][3]["bad"],
+            by["それ以外"][2]["bad"], by["それ以外"][3]["bad"])],
+        title="壊れ方の地図(真値視差で採点): bad2 %.2f %%(SGBM %.2f %%)、無効も誤り %.1f %%(%.1f %%)、%.0f 倍遅い"
+              % (s_ms["bad"], s_cv["bad"], s_ms["bad_all"], s_cv["bad_all"], t_ms / t_cv), ncols=1,
+        caption="遮蔽は左右一致で無効に落ち、誤りは段差の近くと見え方が変わる面(光沢)に残る。無地では SGBM に負け、"
+                "両方が有効な画素の平均誤差も SGBM がわずかに小さい(%.3f 対 %.3f px)。処理時間 %.1f 秒(SGBM %.2f 秒)。 "
+                % (e_ms.mean(), e_cv.mean(), t_ms, t_cv)
+                + " / ".join("%s bad2 %.1f %% 無効 %.1f %%" % (r[0], r[2]["bad"], 100 - r[2]["density"]) for r in cls_rows))
 
     wr0, wr1, wc0, wc1 = 230, 400, 110, 310
     crop = np.dstack([L] * 3)[wr0:wr1, wc0:wc1]

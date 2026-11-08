@@ -8262,9 +8262,9 @@
   {
    "id": "poc_real_stereo_multiscanline",
    "group": "wing_geometry",
-   "media": "01_scene.png",
+   "media": "02_failure_map.png",
    "motion": false,
-   "thumb_src": "01_scene.png",
+   "thumb_src": "02_failure_map.png",
    "label": {
     "ja": "実写のステレオで視差・面・円の姿勢",
     "en": "Disparity, surface and circle pose from real stereo",
@@ -8296,9 +8296,9 @@
   {
    "id": "poc_real_walnut_cbct",
    "group": "wing_imaging",
-   "media": "01_methods_sparse_limited.png",
+   "media": "07_geometry_mistakes.png",
    "motion": false,
-   "thumb_src": "01_methods_sparse_limited_720.jpg",
+   "thumb_src": "07_geometry_mistakes.png",
    "label": {
     "ja": "実測のコーンビーム CT を再構成する",
     "en": "Reconstructing a measured cone-beam CT scan",

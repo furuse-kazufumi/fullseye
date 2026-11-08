@@ -373,7 +373,8 @@ WALNUT_CBCT_URL = "https://zenodo.org/api/records/2686726/files/Walnut1.zip/cont
 WALNUT_CBCT_ZIP_BYTES = 6_058_580_169
 WALNUT_CBCT_DATASET_DOI = "10.5281/zenodo.2686726"
 WALNUT_CBCT_PAPER_DOI = "10.1038/s41597-019-0235-y"
-WALNUT_CBCT_LICENSE = "CC BY 4.0"
+#: 配布元(Zenodo record 2686726)の記載のまま: "Creative Commons Attribution 4.0 International"。
+WALNUT_CBCT_LICENSE = "CC BY 4.0 (Creative Commons Attribution 4.0 International)"
 #: 使う標本と軌道(2 = 中段の線源位置。配布元の FDK 参照 ``fdk_pos2`` と同じ軌道)。
 WALNUT_CBCT_SAMPLE = 1
 WALNUT_CBCT_ORBIT = 2

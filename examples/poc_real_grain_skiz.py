@@ -73,7 +73,7 @@ import time
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from scipy import ndimage as ndi
 from scipy.stats import spearmanr
 
@@ -367,7 +367,8 @@ def real_chapter(g: Gates, root: Path) -> dict:
     data = load_tbm(root)
     images = data["images"]
     print("  %d 枚、SHA-256 %s…" % (len(images), data["digest"][:16]))
-    g.check("4 フォルダ × 320 枚の SHA-256 が台帳と一致", True)
+    g.check("4 フォルダ × 320 枚の SHA-256 が台帳(TBM_DIGEST)と一致",
+            data["digest"] == TBM_DIGEST and len(images) == N_IMAGES, "%s…(%d 枚)" % (data["digest"][:16], len(images)))
     train = [n for n in images if images[n]["source_image"] % 2 == 0]
     test = [n for n in images if images[n]["source_image"] % 2 == 1]
     print("  学習 %d 枚(元画像 %d 枚)/ 評価 %d 枚(元画像 %d 枚)" % (
@@ -547,22 +548,72 @@ def render_overlay(im: dict, skiz: np.ndarray, scale: int = 3) -> np.ndarray:
     return np.hstack([_enlarge(base, scale), gap, _enlarge(over, scale)])
 
 
+def _font(size: int):
+    path = figs._japanese_font_path(fail_closed=False)
+    return ImageFont.truetype(str(path), size) if path else ImageFont.load_default()
+
+
+def _text_strip(width: int, lines: list[tuple[str, int]], legend: list[tuple[tuple, str]] | None = None,
+                bg=(32, 32, 32), fg=(255, 255, 255)) -> np.ndarray:
+    """文字の帯(暗い地に白い字)。``lines`` は (文, 字の大きさ)、``legend`` は (色, 説明) の並び。"""
+    pad = 8
+    h = pad + sum(sz + 6 for _, sz in lines) + (26 if legend else 0) + pad
+    im = Image.new("RGB", (width, h), bg)
+    dr = ImageDraw.Draw(im)
+    y = pad
+    for text, sz in lines:
+        dr.text((pad, y), text, fill=fg, font=_font(sz))
+        y += sz + 6
+    if legend:
+        x = pad
+        f = _font(17)
+        for col, text in legend:
+            dr.rectangle([x, y + 4, x + 26, y + 18], fill=tuple(int(v) for v in col), outline=(160, 160, 160))
+            x += 34
+            dr.text((x, y), text, fill=fg, font=f)
+            x += int(dr.textlength(text, font=f)) + 24
+    return np.asarray(im)
+
+
 def write_figures(res: dict) -> None:
     if not figs.enabled():
         return
-    rows = sorted(res["rows"], key=lambda r: r["f_skiz"][2])
-    pick = [rows[len(rows) // 2], rows[int(len(rows) * 0.9)], rows[int(len(rows) * 0.1)]]
-    tiles = [render_overlay(res["images"][r["name"]], r["skiz"]) for r in pick]
-    gap = np.full((8, tiles[0].shape[1], 3), 255, np.uint8)
-    sheet = np.vstack([x for t in tiles for x in (t, gap)][:-1])
+    # 代表図は「粒の大きさに追従しない」が 10 秒で見える 2 枚: 専門家の線で粒が大きい 1 枚と小さい 1 枚
+    # (評価の 168 枚を専門家の平均切片長で並べた 90 % 点と 10 % 点)。どちらも SKIZ の切片長はほぼ同じになる。
+    ell = []
+    for r in res["rows"]:
+        ps, lt = intercepts(r["skiz"])
+        pe, _ = intercepts(res["images"][r["name"]]["thin"])
+        if ps and pe:
+            ell.append((lt / pe, lt / ps, r))
+    ell.sort(key=lambda t: t[0])
+    pick = [ell[int(len(ell) * 0.9)], ell[int(len(ell) * 0.1)]]
+    width = render_overlay(res["images"][pick[0][2]["name"]], pick[0][2]["skiz"]).shape[1]
+    parts = [_text_strip(width, [
+        ("失敗の報告: SKIZ の粒界は粒の大きさに追従しない", 22),
+        ("評価 %d 枚で 1 枚ずつの平均切片長の順位 Spearman ρ %.2f(専門家と合わない)" % (res["n_test"], res["rho"]), 17),
+        ("粒界の位置 F %.3f は同じ種の watershed %.3f に負け、粒の数は専門家の %.0f 倍"
+         % (res["f_skiz"][2], res["f_ws"][2], res["grain_counts"][1] / res["grain_counts"][0]), 17),
+    ], legend=[((255, 255, 255), "専門家の手描きの粒界"), (fs.role_rgb8("right"), "morph_skiz の粒界(右)。左 = 写真")])]
+    gap = np.full((8, width, 3), 255, np.uint8)
+    for (le, ls, r), what in zip(pick, ("専門家の粒が大きい 1 枚", "専門家の粒が小さい 1 枚")):
+        gc_ex = grain_count(~res["images"][r["name"]]["grains"])
+        gc_sk = grain_count(r["skiz"])
+        parts += [gap, _text_strip(width, [
+            ("%s: 平均切片長 専門家 %.1f 画素 → SKIZ %.1f 画素" % (what, le, ls), 18),
+            ("粒の数 専門家 %d・SKIZ %d / 境界 F SKIZ %.2f・watershed %.2f" % (gc_ex, gc_sk, r["f_skiz"][2], r["f_ws"][2]), 16),
+        ], bg=(235, 235, 235), fg=(20, 20, 20)), render_overlay(res["images"][r["name"]], r["skiz"])]
+    sheet = np.vstack(parts)
     figs.save("grain_boundaries", sheet,
-              caption="TBM の評価の 3 枚(上から F の中央値・上位 10 %%・下位 10 %%: %.2f / %.2f / %.2f)。左 = 実写の顕微鏡写真"
-                      "(色で腐食した金属組織、128 × 128 画素 ≈ 115 µm 角を 3 倍)、右 = 白が専門家の手描きの粒界、空色が "
-                      "morph_skiz の粒界(勾配の低い画素を opening_seg で種にした影響圏の境界)。"
-                      % tuple(r["f_skiz"][2] for r in pick), source=SOURCE)
+              caption="失敗の報告。TBM の評価の 168 枚を専門家の線の平均切片長で並べた 90 %% 点(粒が大きい)と 10 %% 点"
+                      "(粒が小さい)の 2 枚。専門家の切片長は %.1f と %.1f 画素で %.1f 倍違うのに、SKIZ は %.1f と %.1f 画素。"
+                      "左 = 実写の顕微鏡写真(色で腐食した金属組織、128 × 128 画素 ≈ 115 µm 角を 3 倍)、右 = 白が専門家の"
+                      "手描きの粒界、空色が morph_skiz の粒界(勾配の低い画素を opening_seg で種にした影響圏の境界)。"
+                      % (pick[0][0], pick[1][0], pick[0][0] / pick[1][0], pick[0][1], pick[1][1]), source=SOURCE)
     from skimage.morphology import skeletonize
     # 画像の上の縁で Golay は届き skeletonize は届かない箇所を、評価の代表の写真から順に探して切り出す
-    for r in [pick[0]] + rows:
+    rows = sorted(res["rows"], key=lambda r: r["f_skiz"][2])
+    for r in [rows[len(rows) // 2]] + rows:
         im = res["images"][r["name"]]
         gt, _ = golay_thin(im["thick"])
         sk = skeletonize(im["thick"])

@@ -2,7 +2,7 @@
  {
   "file": "01_methods_sparse_limited.png",
   "name": "methods_sparse_limited",
-  "caption": "行 = 全周 150 枚 / 全周 25 枚 / 150° / 90°、列 = 参照 / FDK / SIRT / TV。濃淡は全パネル共通の 0〜0.062 /mm。90° の TV は平らな塊を描き足すが、形は参照と違う。",
+  "caption": "行 = 全周 150 枚 / 全周 25 枚 / 150° / 90°、列 = FDK / SIRT / TV / TV − 参照(差、±0.03 /mm)。参照は配布元が 3 軌道 3600 枚から作った再構成(図 2)。濃淡は差の列を除き全パネル共通の 0〜0.062 /mm。90° の TV は平らな塊を描き足すが、差の列で形が参照と違うのが見える。",
   "shape": [
    1235,
    1066,
@@ -28,7 +28,7 @@
    1120,
    3
   ],
-  "source": "Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data collection designed for machine learning, Sci. Data 6, 215 (2019), doi:10.1038/s41597-019-0235-y; data doi:10.5281/zenodo.2686726, CC BY 4.0"
+  "source": "Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data collection designed for machine learning, Sci. Data 6, 215 (2019), doi:10.1038/s41597-019-0235-y; data doi:10.5281/zenodo.2686726, CC BY 4.0 (Creative Commons Attribution 4.0 International)"
  },
  {
   "file": "04_rmse_vs_arc.png",
@@ -39,7 +39,7 @@
    1120,
    3
   ],
-  "source": "Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data collection designed for machine learning, Sci. Data 6, 215 (2019), doi:10.1038/s41597-019-0235-y; data doi:10.5281/zenodo.2686726, CC BY 4.0"
+  "source": "Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data collection designed for machine learning, Sci. Data 6, 215 (2019), doi:10.1038/s41597-019-0235-y; data doi:10.5281/zenodo.2686726, CC BY 4.0 (Creative Commons Attribution 4.0 International)"
  },
  {
   "file": "05_cone_vertical.png",
@@ -60,15 +60,15 @@
    1120,
    3
   ],
-  "source": "Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data collection designed for machine learning, Sci. Data 6, 215 (2019), doi:10.1038/s41597-019-0235-y; data doi:10.5281/zenodo.2686726, CC BY 4.0"
+  "source": "Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data collection designed for machine learning, Sci. Data 6, 215 (2019), doi:10.1038/s41597-019-0235-y; data doi:10.5281/zenodo.2686726, CC BY 4.0 (Creative Commons Attribution 4.0 International)"
  },
  {
   "file": "07_geometry_mistakes.png",
   "name": "geometry_mistakes",
-  "caption": "隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。取り違えは参照と再投影の残差で見つける。",
+  "caption": "中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差)、下段 = 差 ±0.03 /mm。縦ずれを無視したデータも、それ自体は矛盾の無いデータなので、再構成した像を投影し直すとデータによく合う —— 残差では幾何の誤りが見えない。参照(外の真値)と比べて初めて分かる。横ずれと回転の向きの取り違えは残差にも出る。隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。",
   "shape": [
-   643,
-   1330,
+   1151,
+   2600,
    3
   ]
  },
