@@ -24,8 +24,8 @@ CI では ``skimage`` extra が 3 つの matrix 全部に入るので、実デ�
 
 EXTEND: 自前の撮影に差し替えるなら :func:`sample_photo` の戻り値
 (float64 / [0, 1] / 2 次元)に合わせてください。ステレオは
-:func:`sample_stereo_pair` が ``(左, 右, 真値視差)`` を返す形で、真値の NaN は
-「真値が無い画素」を表します(Middlebury の規約)。
+:func:`sample_stereo_pair` が ``(左, 右, 真値視差)`` を返す形で、真値が無い画素は
+NaN ではなく ``+inf`` で入っています(scikit-image 同梱の motorcycle。``np.isfinite`` で判定する)。
 """
 from __future__ import annotations
 
@@ -261,7 +261,8 @@ def sample_photo_rgb(name: str) -> np.ndarray:
 def sample_stereo_pair():
     """Middlebury 2014 motorcycle: ``(左, 右, 真値視差)``。
 
-    真値の NaN は「真値が無い画素」(実測 27,226 / 370,500 = 7.3 %)。
+    真値が無い画素は NaN ではなく ``+inf``(実測 +inf 27,226 / 370,500 = 7.3 %、NaN 0)。
+    ``np.nanmedian`` などは +inf を数に入れてしまうので、``np.isfinite`` で判定すること。
     視差は 7.19 〜 59.91 px、中央値 38.73 px。
 
     ★skimage の docstring は ``disp`` を ``(500, 741, 3)`` と書いているが、

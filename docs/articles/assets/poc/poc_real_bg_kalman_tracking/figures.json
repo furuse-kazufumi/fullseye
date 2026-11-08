@@ -2,18 +2,18 @@
  {
   "file": "01_pillar_crossing.png",
   "name": "pillar_crossing",
-  "caption": "LASIESTA I_OC_01 の第 206 コマ。空色の太線 = 観測で更新したコマ、橙の実線 = 更新に使わなかったコマ(柱の裏 26 コマと、体の一部が隠れたコマ)。どちらも kalman_smooth(RTS 平滑化)で前後の観測から推定し直した位置。赤紫の点線 = その場の予測(filter_kalman が等速で進めた位置で、拾い直したコマで跳ぶ)、朱 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。体の一部が隠れたかは、塊の面積・高さ・横縦比が直近の中央値から急に縮むことで決める(柱に半分入ったコマは幅だけが縮む)。出てきたコマ(第 194 コマ)での真値の重心からの誤差は、その場の予測 60 画素、推定し直し 15 画素。ただしこのコマの真値は体の 26 % しか見えない一部の重心で、体の中心から偏る(体の 9 割以上が見えた第 202 コマでは推定し直し 4 画素)。人は柱の裏で速くなっていない: 体の 9 割以上が見えるコマの歩く速さは、隠れる前 2.65・出た後 2.65 画素/コマ。予測が外れたのは、隠れる直前の更新でフィルタの速さが 2.27 → 1.91 → 1.56 画素/コマへ落ちたから(人が通った跡が背景の更新の遅れで誤検出として残り(幽霊)、同じ塊にまとめられて観測の重心が後ろへ 9 画素取り残された)。柱の裏の橙の線は真値が無いので採点していない。",
+  "caption": "LASIESTA I_OC_01 の第 206 コマ。空色の太線 = 観測で更新したコマ、橙の実線 = 更新に使わなかったコマ(柱の裏 26 コマと、体の一部が隠れたコマ)。どちらも kalman_smooth(RTS 平滑化)で前後の観測から推定し直した位置。赤紫の点線 = その場の予測(filter_kalman が等速で進めた位置で、拾い直したコマで跳ぶ。赤紫の丸から白い丸への矢印 = 出てきたコマでのその場の予測と真値の重心のずれ)、黄の破線 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。体の一部が隠れたかは、塊の面積・横縦比が直近の中央値から急に縮むことで決める(柱に半分入ったコマは幅だけが縮む)。出てきたコマ(第 194 コマ)での真値の重心からの誤差は、その場の予測 60 画素、推定し直し 15 画素。ただしこのコマの真値は体の 26 % しか見えない一部の重心で、体の中心から偏る(体の 9 割以上が見えた第 202 コマでは推定し直し 4 画素)。人は柱の裏で速くなっていない: 体の 9 割以上が見えるコマの歩く速さは、隠れる前 2.65・出た後 2.65 画素/コマ。予測が外れたのは、隠れる直前の更新でフィルタの速さが 2.27 → 1.91 → 1.56 画素/コマへ落ちたから(塊に混ざった動かない誤検出 —— 人の通った跡とそれ以外 —— が観測の重心を後ろへ 9 画素引いた)。柱の裏の橙の線は真値が無いので採点していない。",
   "shape": [
    576,
    704,
    3
   ],
-  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Frames shown unmodified except for drawn overlays. この図は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。This figure is licensed under CC BY-SA 4.0, not Apache-2.0 (see NOTICE). Changes: tracks, outlines and colour overlays drawn on the frames, panels placed side by side"
+  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Changes: tracks, outlines and colour overlays drawn on the frames; frames enlarged 2x (nearest neighbour) or shown at 1x, placed side by side with masks; a background image estimated from the frames; re-encoded as PNG / JPEG / GIF. この図は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。This figure is licensed under CC BY-SA 4.0, not Apache-2.0 (see NOTICE). Changes as listed in NOTICE"
  },
  {
   "file": "02_tracking_movie.gif",
   "name": "tracking_movie",
-  "caption": "I_OC_01 を 4 コマおきに再生。空色 = 観測で更新、橙 = 更新に使わなかったコマを、そのコマまでの観測で kalman_smooth が推定し直した位置、赤紫の点線 = その場の予測(filter_kalman)、朱 = 予測なしの最近傍。柱の裏では橙と点線が重なって進み、出てきた人を拾い直すと橙だけが引き直される。LASIESTA の実写のコマに線を重ねた動画で、この GIF は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/、Apache-2.0 ではない、NOTICE に列挙)。",
+  "caption": "I_OC_01 を 4 コマおきに再生。空色 = 観測で更新、橙 = 更新に使わなかったコマを、そのコマまでの観測で kalman_smooth が推定し直した位置、赤紫の点線 = その場の予測(filter_kalman)、予測なしの最近傍(黄の破線)。柱の裏では橙と点線が重なって進み、出てきた人を拾い直すと橙だけが引き直される。LASIESTA の実写のコマに線を重ねた動画で、この GIF は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/、Apache-2.0 ではない、NOTICE に列挙)。",
   "shape": [
    288,
    352,
@@ -33,7 +33,7 @@
    1426,
    3
   ],
-  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Frames shown unmodified except for drawn overlays. この図は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。This figure is licensed under CC BY-SA 4.0, not Apache-2.0 (see NOTICE). Changes: tracks, outlines and colour overlays drawn on the frames, panels placed side by side"
+  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Changes: tracks, outlines and colour overlays drawn on the frames; frames enlarged 2x (nearest neighbour) or shown at 1x, placed side by side with masks; a background image estimated from the frames; re-encoded as PNG / JPEG / GIF. この図は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。This figure is licensed under CC BY-SA 4.0, not Apache-2.0 (see NOTICE). Changes as listed in NOTICE"
  },
  {
   "file": "04_masks_i_oc_02.png",
@@ -44,7 +44,7 @@
    1426,
    3
   ],
-  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Frames shown unmodified except for drawn overlays. この図は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。This figure is licensed under CC BY-SA 4.0, not Apache-2.0 (see NOTICE). Changes: tracks, outlines and colour overlays drawn on the frames, panels placed side by side"
+  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Changes: tracks, outlines and colour overlays drawn on the frames; frames enlarged 2x (nearest neighbour) or shown at 1x, placed side by side with masks; a background image estimated from the frames; re-encoded as PNG / JPEG / GIF. この図は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。This figure is licensed under CC BY-SA 4.0, not Apache-2.0 (see NOTICE). Changes as listed in NOTICE"
  },
  {
   "file": "05_background.png",
@@ -54,7 +54,7 @@
    288,
    1784
   ],
-  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Frames shown unmodified except for drawn overlays. この図は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。This figure is licensed under CC BY-SA 4.0, not Apache-2.0 (see NOTICE). Changes: tracks, outlines and colour overlays drawn on the frames, panels placed side by side"
+  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Changes: tracks, outlines and colour overlays drawn on the frames; frames enlarged 2x (nearest neighbour) or shown at 1x, placed side by side with masks; a background image estimated from the frames; re-encoded as PNG / JPEG / GIF. この図は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。This figure is licensed under CC BY-SA 4.0, not Apache-2.0 (see NOTICE). Changes as listed in NOTICE"
  },
  {
   "file": "06_track_error.png",

@@ -31649,17 +31649,17 @@
             1600,
             1600
           ],
-          "bytes": 501646,
+          "bytes": 506101,
           "color_mad": [
-            1.6894,
+            1.6595,
             1.0128,
             1.0635,
             0.0001,
             0.0748,
             0.0317
           ],
-          "max_color_mad": 1.6894,
-          "source_sha256": "520516a3edae1eb441565e62fabe02eab3fb2a75e283046b976fad9fa30f29a9"
+          "max_color_mad": 1.6595,
+          "source_sha256": "8fd4e6ecf20a7d68a9f37a1545d584d6c2652f746a121ade8871ba3b5cf32040"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_bg_kalman_tracking/story.en.gif",
@@ -31736,24 +31736,24 @@
             1600,
             1600
           ],
-          "bytes": 501646,
+          "bytes": 506101,
           "color_mad": [
-            1.6894,
+            1.6595,
             1.0128,
             1.0635,
             0.0001,
             0.0748,
             0.0317
           ],
-          "max_color_mad": 1.6894,
-          "source_sha256": "eaba7914c42e946f96c98b6300a9bef9ff24e0e5cd689bb87f49adbf200fee08"
+          "max_color_mad": 1.6595,
+          "source_sha256": "c44c080c8f07f1953a776e93beb07f12b50e353df7ac9fa0a20017584d058cc9"
         }
       },
       "reason": null,
       "cover": "01_pillar_crossing.png",
       "still": "articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png",
       "alt": {
-        "ja": "LASIESTA I_OC_01 の第 206 コマ。空色の太線 = 観測で更新したコマ、橙の実線 = 更新に使わなかったコマ(柱の裏 26 コマと、体の一部が隠れたコマ)。どちらも kalman_smooth(RTS 平滑化)で前後の観測から推定し直した位置。赤紫の点線 = その場の予測(filter_kalman が等速で進めた位置で、拾い直したコマで跳ぶ)、朱 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。体の一部が隠れたかは、塊の面積・高さ・横縦比が直近の中央値から急に縮むことで決める(柱に半分入ったコマは幅だけが縮む)。出てきたコマ(第 194 コマ)での真値の重心からの誤差は、その場の予測 60 画素、推定し直し 15 画素。ただしこのコマの真値は体の 26 % しか見えない一部の重心で、体の中心から偏る(体の 9 割以上が見えた第 202 コマでは推定し直し 4 画素)。人は柱の裏で速くなっていない: 体の 9 割以上が見えるコマの歩く速さは、隠れる前 2.65・出た後 2.65 画素/コマ。予測が外れたのは、隠れる直前の更新でフィルタの速さが 2.27 → 1.91 → 1.56 画素/コマへ落ちたから(人が通った跡が背景の更新の遅れで誤検出として残り(幽霊)、同じ塊にまとめられて観測の重心が後ろへ 9 画素取り残された)。柱の裏の橙の線は真値が無いので採点していない。",
+        "ja": "LASIESTA I_OC_01 の第 206 コマ。空色の太線 = 観測で更新したコマ、橙の実線 = 更新に使わなかったコマ(柱の裏 26 コマと、体の一部が隠れたコマ)。どちらも kalman_smooth(RTS 平滑化)で前後の観測から推定し直した位置。赤紫の点線 = その場の予測(filter_kalman が等速で進めた位置で、拾い直したコマで跳ぶ。赤紫の丸から白い丸への矢印 = 出てきたコマでのその場の予測と真値の重心のずれ)、黄の破線 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。体の一部が隠れたかは、塊の面積・横縦比が直近の中央値から急に縮むことで決める(柱に半分入ったコマは幅だけが縮む)。出てきたコマ(第 194 コマ)での真値の重心からの誤差は、その場の予測 60 画素、推定し直し 15 画素。ただしこのコマの真値は体の 26 % しか見えない一部の重心で、体の中心から偏る(体の 9 割以上が見えた第 202 コマでは推定し直し 4 画素)。人は柱の裏で速くなっていない: 体の 9 割以上が見えるコマの歩く速さは、隠れる前 2.65・出た後 2.65 画素/コマ。予測が外れたのは、隠れる直前の更新でフィルタの速さが 2.27 → 1.91 → 1.56 画素/コマへ落ちたから(塊に混ざった動かない誤検出 —— 人の通った跡とそれ以外 —— が観測の重心を後ろへ 9 画素引いた)。柱の裏の橙の線は真値が無いので採点していない。",
         "en": "Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels"
       }
     },
@@ -32292,17 +32292,17 @@
             1600,
             1600
           ],
-          "bytes": 725738,
+          "bytes": 726685,
           "color_mad": [
-            0.5425,
+            0.5556,
             0.4656,
             0.0649,
             0.1242,
             0.144,
             0.0357
           ],
-          "max_color_mad": 0.5425,
-          "source_sha256": "d65e3a240165690cedb349efcaf8d5130c867b094c6fc04c9a4d4af64996c2dc"
+          "max_color_mad": 0.5556,
+          "source_sha256": "6825f39fb1fc93407f6e69863d000a93c38aaa6b62dfa289471ac5df11166f16"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_walnut_cbct/story.en.gif",
@@ -32377,17 +32377,17 @@
             1600,
             1600
           ],
-          "bytes": 725738,
+          "bytes": 726685,
           "color_mad": [
-            0.5425,
+            0.5556,
             0.4656,
             0.0649,
             0.1242,
             0.144,
             0.0357
           ],
-          "max_color_mad": 0.5425,
-          "source_sha256": "e6c9637c4d8fab723f2620e405fdbef8e986eb47281d33898c35ac91b8dab9b4"
+          "max_color_mad": 0.5556,
+          "source_sha256": "4fad8d2ac117e45d8d009d11a808f6ca7e6c0123c54eb4443df276203362562c"
         }
       },
       "reason": null,
@@ -32395,7 +32395,7 @@
       "still": "articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png",
       "alt": {
         "ja": "中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差。★ = 残差が正しい幾何以下)、左から 正しい / 面内回転 0.5° を無視 / 縦ずれ 7.2 画素を無視 / 横に 0.3 mm ずらす / 回転の向きを逆に。下段 = 差 ±0.03 /mm。縦ずれを無視したデータも、それ自体は矛盾の無いデータなので、再構成した像を投影し直すとデータによく合う —— 残差では幾何の誤りが見えない。参照(外の真値)と比べて初めて分かる。横ずれと回転の向きの取り違えは残差にも出る。隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。",
-        "en": "Reconstructing a Measured Cone-Beam CT Scan of a Walnut and Scoring It Against the Providers' Reference — Ignoring the Vertical Offset Puts It 2.6 Times Farther from the Reference, yet the Reprojection Residual Gets Smaller"
+        "en": "Reconstructing a Measured Cone-Beam CT Scan of a Walnut and Scoring It Against the Providers' Reference — Ignoring the Vertical Offset Puts It 2.6 Times Farther from the Reference, yet the Reprojection Residual Cannot Tell (2.3 % Apart)"
       }
     },
     "poc_real_typewritten_ocr": {

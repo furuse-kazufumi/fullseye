@@ -8300,14 +8300,14 @@
    "motion": false,
    "thumb_src": "07_geometry_mistakes.png",
    "label": {
-    "ja": "実測 CT: 縦ずれを無視しても残差は小さい(参照から 2.6 倍遠いのに)",
-    "en": "Measured CT: ignoring the vertical offset lowers the residual, yet lands 2.6x farther from the reference",
-    "zh": "实测 CT:忽略纵向偏移后残差反而更小(却离参考远 2.6 倍)",
-    "tw": "實測 CT:忽略縱向偏移後殘差反而更小(卻離參考遠 2.6 倍)",
-    "ko": "실측 CT: 세로 어긋남을 무시해도 잔차는 작다(참조에서 2.6배 먼데도)",
-    "de": "Gemessenes CT: Höhenversatz ignoriert – kleineres Residuum, doch 2,6-mal weiter von der Referenz",
-    "hi": "मापा गया CT: vertical offset अनदेखा करने पर residual छोटा, फिर भी reference से 2.6 गुना दूर",
-    "fr": "CT mesuré : ignorer le décalage vertical réduit le résidu, mais éloigne 2,6 fois de la référence"
+    "ja": "実測 CT: 縦ずれを無視して参照から 2.6 倍遠くても、残差では見分けられない",
+    "en": "Measured CT: ignoring the vertical offset lands 2.6x farther from the reference, yet the residual cannot tell",
+    "zh": "实测 CT:忽略纵向偏移后离参考远 2.6 倍,残差却分辨不出",
+    "tw": "實測 CT:忽略縱向偏移後離參考遠 2.6 倍,殘差卻分辨不出",
+    "ko": "실측 CT: 세로 어긋남을 무시해 참조에서 2.6배 멀어져도 잔차로는 구별되지 않는다",
+    "de": "Gemessenes CT: Höhenversatz ignoriert – 2,6-mal weiter von der Referenz, das Residuum merkt es nicht",
+    "hi": "मापा गया CT: vertical offset अनदेखा करने पर reference से 2.6 गुना दूर, फिर भी residual से पहचान नहीं होती",
+    "fr": "CT mesuré : ignorer le décalage vertical éloigne 2,6 fois de la référence, mais le résidu ne le voit pas"
    }
   },
   {
