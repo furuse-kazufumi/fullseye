@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 46 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 47 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -661,6 +661,8 @@ fullseye stopped at OCR pre-processing and had no layer answering "where is the 
 [![Where Is the Text, Without a Recogniser — Grading a Stroke-Width Detector on Text We Drew Ourselves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene.png)
 
 *↑ **Where Is the Text, Without a Recogniser — Grading a Stroke-Width Detector on Text We Drew Ourselves** ―― fullseye stopped at OCR pre-processing and had no layer answering "where is the text". Recognisers (trained models) stay out by design, so the geometry of text alone — a stroke has nearly constant width — drives a classical detector (Stroke Width Transform, Epshtein 2010) in three ops, graded on text we rendered ourselves (ink pixels known to the pixel). Three truths: for a rectangular stroke of width w the SWT equals w at every pixel (edges are defined as the inner boundary pixels on the ink side and width = centre-to-centre distance of opposing boundary pixels + 1, which makes it an exact integer); doubling the image doubles the median from 5 to 10; and the fraction of drawn ink that falls inside candidate boxes (recall). Latin text at size ≥ 32 reaches 80–90 % ink recall, CJK (kanji/kana) 60–79 %, box precision about 50 % (boxes include the glyphs' white space). A 6 sizes × 4 noise levels table shows that what breaks detection is small text, not noise (the dip at size 16 below size 12 is printed as unexplained). Without a CJK font the example runs Latin only and says so.*
+
+Terms: OCR — Reading the characters in an image as text, by segmenting them and classifying each glyph.
 
 [![真値は描いたインク画素。再現率 = インクのうち候補矩形に入った割合。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin.png)
 
@@ -1474,6 +1476,8 @@ Five-by-seven dot lot numbers and expiry dates printed by continuous inkjet, and
 
 *↑ **Past the Blur It Was Trained On, Lot-Number OCR Misreads Instead of Rejecting** ―― Five-by-seven dot lot numbers and expiry dates printed by continuous inkjet, and stroke characters printed by thermal transfer, are synthesised and read with classical OCR: k-nearest neighbours on 88 zone-density and projection features, with a rejection threshold set from the training distribution. The character set has 40 symbols and there are 3840 training samples per font. Clean prints are read in full in both fonts, with segmentation boxes at IoU 1.00 against the truth. An out-of-set '#' becomes '?' instead of turning into another character. The legibility POD for a 13-character line is d90 10.70 px and d90/95 10.40 px for dots, and d90 11.62 px for strokes (character height 24 px); the character-height h90 is 9.61 px. Misreads are counted separately: none up to the d90 blur, 18 misread lines against 2 read correctly at a 12.67 px blur, and 6 of 6 lines misread at 16.0 px. A misread lot number points a recall at the wrong batch, so the read rate and the misread rate are not merged into one number.*
 
+Terms: OCR — Reading the characters in an image as text, by segmenting them and classifying each glyph.; k-NN — A classifier that labels a sample by majority vote among the k training samples with the closest features.
+
 [![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/02_lot_ocr_levels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/02_lot_ocr_levels.png)
 
 *↑ The measurement (figure labels are in Japanese; the numbers are the same)*
@@ -1488,11 +1492,51 @@ This run produced **2 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`capture_degrade`](https://furuse.work/ops/symbol/symbol_capture/capture_degrade.html) · [`ocr_classify`](https://furuse.work/ops/symbol/ocr/ocr_classify.html) · [`ocr_features`](https://furuse.work/ops/symbol/ocr/ocr_features.html) · [`ocr_font`](https://furuse.work/ops/symbol/ocr/ocr_font.html) · [`ocr_read_line`](https://furuse.work/ops/symbol/ocr/ocr_read_line.html) · [`ocr_read_trials`](https://furuse.work/ops/symbol/ocr/ocr_read_trials.html) · [`ocr_render_text`](https://furuse.work/ops/symbol/ocr/ocr_render_text.html) · [`ocr_score`](https://furuse.work/ops/symbol/ocr/ocr_score.html) · [`ocr_segment_line`](https://furuse.work/ops/symbol/ocr/ocr_segment_line.html) · [`ocr_train`](https://furuse.work/ops/symbol/ocr/ocr_train.html) · [`symbol_read_pod`](https://furuse.work/ops/symbol/read_pod/symbol_read_pod.html)
 
+## No.2026.301 —— Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 97-98 %, and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed
+
+Three 300-dpi pages of the real scan of NACA Technical Note 898 (1943; NASA NTRS, copyright field: Public Use Permitted) are read with Fullseye's line-orientation, character-segmentation, classifier and dictionary operators, and scored against 100 lines transcribed by eye. With the same features, the same training pages (pages 1 and 3, 1,997 glyphs) and a separate test page (page 5, 1,562 glyphs), the accuracies are GMM 0.969, k-NN 0.981, MLP 0.966 and SVM 0.973; k-NN and the one-component GMM agree on every test glyph with the same formulas written with scikit-learn and scipy. Typewriter print has a single typeface and real smudges, broken strokes and tilt, much like stamped or printed markings on factory parts. Leakage checks: training and test pages differ, no test glyph has a feature vector identical to a training glyph (minimum distance 0.3), standardisation and principal components are fitted on the training pages only, and shuffling the training labels drops k-NN to 0.051 (below the 0.121 share of the most common letter e). Ten test glyphs belong to classes absent from training (/, 6, 7, ;, =, V), so the ceiling is 0.994; the most common confusions are 7 to v, 9 to e, / to y and S to s. Orientation: text_line_orientation recovers known rotations of a page to within 0.007 degrees over +/-28 degrees and misses 35 degrees, outside its +/-30 degree scan, by 13 degrees; an independent least-squares fit through the bottoms of x-height letters confirms the deskewed pages to within 0.01 degrees, while the small, curved scikit-image page (BSD-3) is off by about 0.3 degrees. Slant: text_line_slant recovers known shears of 5 degrees or more to within 1.3 degrees but reports 0 for shears within +/-2 degrees, because the vertical strokes are about 20 pixels tall and a 2-degree shear moves them by less than one pixel. Segmentation: segment_characters matches the transcribed glyph count on 82 of 100 lines (max_gap 3 is the best of a sweep: 55 lines at 0, 27 at 5); the misses are broken strokes, margin specks and tightly spaced capital headings. select_characters selects by height, so all 25 glyphs it drops are punctuation (. - / ( )). Dictionary: correcting to the nearest word within edit distance 1 with a closed vocabulary that includes the test page's words (the factory case where the allowed strings are known) raises word accuracy for all four classifiers without breaking any word (k-NN 310 to 324 of 336 words) and exact lines from 15 to 22 of 34. With an open vocabulary built from the training pages only, correct readings such as part and hole are turned into apart and holes, and word accuracy falls for all four (22-23 words broken). Correcting only words that contain a glyph with GMM posterior below 0.999 breaks nothing but fixes only one or two words: the posterior flags 13 of the GMM's 49 errors, and its median on wrong glyphs is still 1.000. Reproducibility: training twice with the same seed gives identical model arrays and predictions for all four classifiers. The data provider has no transcription, so the lines were transcribed by eye (this typewriter has no key for the digit 1, so it is typed and transcribed as a lower-case l). The PDF is not in the repository; a fetch tool pins it by SHA-256, and CI runs only the scikit-image page chapter.
+
+[![Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 97-98 %, and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/01_reading_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/01_reading.png)
+
+*↑ **Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 97-98 %, and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed** ―― Page 5 of NACA TN 898 (the test page; typewritten in 1943, scanned at 300 dpi). Boxes: glyphs from segment_characters; letters below: the k-NN reading. Blue (o) right, orange (x) wrong, grey: glyph count disagrees with the transcription, so the line is not scored.*
+
+Terms: OCR — Reading the characters in an image as text, by segmenting them and classifying each glyph.; GMM — A model of a distribution as a weighted sum of Gaussians; fitted per class, it classifies by posterior probability.; k-NN — A classifier that labels a sample by majority vote among the k training samples with the closest features.; MLP — A fully connected neural network with one or more nonlinear hidden layers between input and output.; SVM — A classifier that separates classes by the boundary with the largest margin between them.
+
+[![頁を既知の角度で回して当てた。タイプ打ちの頁は ±0.01° 以内、曲がった小さな頁は 0.3° 前後。範囲外の 35° は誤差 13.3°(NACA)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/02_rotation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/02_rotation.png)
+
+*↑ The measurement ―― 頁を既知の角度で回して当てた。タイプ打ちの頁は ±0.01° 以内、曲がった小さな頁は 0.3° 前後。範囲外の 35° は誤差 13.3°(NACA)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![直立した印字を既知の角度でせん断した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/03_slant_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/03_slant.png)
+
+*↑ 直立した印字を既知の角度でせん断した。*
+
+[![小さいと、かすれて割れた字が 2 字に、大きいと詰まった大文字が 1 字になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/04_gap_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/04_gap_sweep.png)
+
+*↑ 小さいと、かすれて割れた字が 2 字に、大きいと詰まった大文字が 1 字になる。*
+
+[![同じ特徴(区画濃度・射影・重心、主成分 24)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/05_classifiers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/05_classifiers.png)
+
+*↑ 同じ特徴(区画濃度・射影・重心、主成分 24)。*
+
+[![開いた語彙 = 学習頁の語 230 語、閉じた語彙 = 試験頁の語も入れた 380 語(許される文字列が先に分かる場合の上限)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/06_lexicon_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/06_lexicon.png)
+
+*↑ 開いた語彙 = 学習頁の語 230 語、閉じた語彙 = 試験頁の語も入れた 380 語(許される文字列が先に分かる場合の上限)。*
+
+```
+py -3.11 examples/poc_real_typewritten_ocr.py
+```
+
+Source: [examples/poc_real_typewritten_ocr.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_typewritten_ocr.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_typewritten_ocr)
+
+Ops used (notes): [`area_center_gray`](https://furuse.work/ops/mv/gray/area_center_gray.html) · [`classify_class_gmm`](https://furuse.work/ops/mv/classify/classify_class_gmm.html) · [`classify_class_knn`](https://furuse.work/ops/mv/classify/classify_class_knn.html) · [`classify_class_mlp`](https://furuse.work/ops/mv/classify/classify_class_mlp.html) · [`classify_class_svm`](https://furuse.work/ops/mv/classify/classify_class_svm.html) · [`create_lexicon`](https://furuse.work/ops/mv/classify/create_lexicon.html) · [`evaluate_class_gmm`](https://furuse.work/ops/mv/classify/evaluate_class_gmm.html) · [`gray_histo`](https://furuse.work/ops/mv/gray/gray_histo.html) · [`gray_projections`](https://furuse.work/ops/mv/gray/gray_projections.html) · [`lookup_lexicon`](https://furuse.work/ops/mv/classify/lookup_lexicon.html) · [`segment_characters`](https://furuse.work/ops/mv/text/segment_characters.html) · [`select_characters`](https://furuse.work/ops/mv/text/select_characters.html) · [`suggest_lexicon`](https://furuse.work/ops/mv/classify/suggest_lexicon.html) · [`text_line_orientation`](https://furuse.work/ops/mv/text/text_line_orientation.html) · [`text_line_slant`](https://furuse.work/ops/mv/text/text_line_slant.html) · [`train_class_gmm`](https://furuse.work/ops/mv/classify/train_class_gmm.html) · [`train_class_knn`](https://furuse.work/ops/mv/classify/train_class_knn.html) · [`train_class_mlp`](https://furuse.work/ops/mv/classify/train_class_mlp.html) · [`train_class_svm`](https://furuse.work/ops/mv/classify/train_class_svm.html)
+
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 48 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 49 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -3298,6 +3342,36 @@ This run produced **6 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`aperture_photometry`](https://furuse.work/ops/astrostack/photometry/aperture_photometry.html) · [`astro_fits_read`](https://furuse.work/ops/fileio/fits/astro_fits_read.html) · [`e57_read`](https://furuse.work/ops/fileio/e57/e57_read.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`em_mrc_read`](https://furuse.work/ops/fileio/mrc/em_mrc_read.html) · [`nifti_read`](https://furuse.work/ops/fileio/nifti/nifti_read.html) · [`ome_tiff_read`](https://furuse.work/ops/fileio/ome_tiff/ome_tiff_read.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`star_detect`](https://furuse.work/ops/astrostack/photometry/star_detect.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html) · [`vol_region_props`](https://furuse.work/ops/3d/regionprops/vol_region_props.html)
 
+## No.2026.306 —— Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not
+
+320 tint-etched polycrystalline micrographs from TBM (Zenodo 8386997, CC BY 4.0; 128 x 128 px, about 0.9 um per pixel) with grain boundaries drawn by a materials expert (thick and thin versions). Pixels of low Lab gradient are split by opening_seg into seeds and morph_skiz draws the boundaries of their zones of influence. Parameters are chosen on the 152 crops from even-numbered source images and scored on the 168 from odd-numbered ones. Boundary position: F 0.697 against the expert's thin line (3 px tolerance); a watershed from the same seeds gives 0.704 and wins on 68% of crops, because SKIZ draws its line midway between seeds and never looks at the image. Grain size (ASTM E112 lineal intercept, test lines every 16 px): the pooled mean intercept is 26.2 px for the expert and 21.1 px for SKIZ (ratio 0.805, delta G +0.63), yet the per-crop ranking does not agree (Spearman rho -0.16). The SKIZ intercept barely changes from crop to crop (coefficient of variation 0.145 against the expert's 0.311): seeds set by a gradient percentile have a density that does not follow grain size, and SKIZ finds three times as many grains (median 57 against 18). Operator checks: morph_skiz matches the zone boundaries of scikit-image's expand_labels pixel for pixel on all 168 crops and never yields fewer cells than seeds, but its right-or-lower-neighbour rule leaves one-pixel spurs on 82% of crops (counted with hit_or_miss_seq and the Golay E). Thinning: sequential thinning of the expert's thick line with the eight rotations of the Golay L follows the same path as skeletonize (F 0.991) with 1.4 times the pixels, being a 4-connected staircase. Of the 5,072 places where the thick line touches the image border, the Golay line reaches the border at 96% and skeletonize at 66%; through the one-pixel gaps skeletonize leaves, border grains merge with their neighbours and drop from 12.9 to 8.2 per crop (13.0 with Golay).
+
+[![Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries.png)
+
+*↑ **Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not** ―― Real tint-etched metallography from TBM (128 x 128 px, about 115 um square, shown 3x). Left: the micrograph; right: expert hand-drawn grain boundaries in white and morph_skiz boundaries in sky blue.*
+
+[![19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning.png)
+
+*↑ The measurement ―― 19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![16 画素おきの縦横の試験線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts.png)
+
+*↑ 16 画素おきの縦横の試験線。*
+
+[![学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers.png)
+
+*↑ 学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。*
+
+```
+py -3.11 examples/poc_real_grain_skiz.py
+```
+
+Source: [examples/poc_real_grain_skiz.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_grain_skiz.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_grain_skiz)
+
+Ops used (notes): [`hit_or_miss_golay`](https://furuse.work/ops/mv/morphology/hit_or_miss_golay.html) · [`hit_or_miss_seq`](https://furuse.work/ops/mv/morphology/hit_or_miss_seq.html) · [`morph_skiz`](https://furuse.work/ops/mv/morphology/morph_skiz.html) · [`opening_seg`](https://furuse.work/ops/mv/morphology/opening_seg.html) · [`percentile`](https://furuse.work/ops/2d/rank/percentile.html) · [`thinning`](https://furuse.work/ops/2d/region/thinning.html)
+
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
@@ -4894,7 +4968,7 @@ Ops used (notes): [`cover_ratio_grade`](https://furuse.work/ops/segmentation/pla
 
 ### The Image Quality and Restoration Wing — Looking Better and Getting Closer to the Truth Are Different Things
 
-Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 20 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
+Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 21 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
 
 Appearance metrics do not peak at the truth: a hazy input has higher contrast than the true scene; unsharp masking matches the true gradient energy while PSNR drops; adding noise raises PSNR. Conversely, a method can restore stripes finer than Nyquist while PSNR moves by only -0.01 dB.
 
@@ -5694,9 +5768,49 @@ This run produced **22 figures** in total - [see them all](https://github.com/fu
 
 Ops used (notes): [`bokeh_shape`](https://furuse.work/ops/optics/lensrender/bokeh_shape.html) · [`chief_ray`](https://furuse.work/ops/optics/design/chief_ray.html) · [`chromatic_shift`](https://furuse.work/ops/optics/design/chromatic_shift.html) · [`depth_of_field`](https://furuse.work/ops/optics/geometric/depth_of_field.html) · [`distortion_map`](https://furuse.work/ops/optics/imaging_sim/distortion_map.html) · [`exit_pupil_samples`](https://furuse.work/ops/optics/lensrender/exit_pupil_samples.html) · [`ghost_analysis`](https://furuse.work/ops/optics/noncoaxial/ghost_analysis.html) · [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`noncoaxial_system`](https://furuse.work/ops/optics/noncoaxial/noncoaxial_system.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`relative_illumination`](https://furuse.work/ops/optics/geometric/relative_illumination.html) · [`render_compare_prescriptions`](https://furuse.work/ops/optics/lensrender/render_compare_prescriptions.html) · [`render_ghost_overlay`](https://furuse.work/ops/optics/lensrender/render_ghost_overlay.html) · [`render_scene_through_lens`](https://furuse.work/ops/optics/lensrender/render_scene_through_lens.html) · [`spot_stats`](https://furuse.work/ops/optics/design/spot_stats.html) · [`trace_sensor_rays`](https://furuse.work/ops/optics/lensrender/trace_sensor_rays.html) · [`with_wavelength`](https://furuse.work/ops/optics/design/with_wavelength.html)
 
+## No.2026.304 —— Reconstructing a Measured Cone-Beam CT Scan of a Walnut with FDK and Iterative Methods, Scored Against the Providers' Reference — TV Holds Up When Views Are Thinned, Nothing Recovers a Missing Angular Range
+
+A publicly released, measured cone-beam CT scan (Der Sarkissian et al. 2019, one walnut, CC BY 4.0) is reconstructed with Fullseye's scan-mode operators, comparing FDK and three iterative methods (SIRT, OS-SART and total variation, TV) against the reference the providers built from all three of their orbits. It uses 300 of the 1200 projections of the middle orbit (1.2 degree steps), binned 6x6 for the mid-plane and 8x8 for 3-D; a fetch tool pulls only the needed members out of a 6 GB zip with HTTP Range requests (1309 members, pinned by a SHA-256 list). Geometry: read as the circular orbit of `ct_scan_geometry`, the providers' 300 vectors give the SOD and SDD of the scanner's settings file; the two things a circular orbit cannot express (a 0.50 degree in-plane detector roll and a 7.2 pixel vertical offset) are removed by resampling the projections with `warp_parametric`. Mid-plane: FDK on all 300 views scores RMSE 0.0023 /mm and SSIM 0.94 against the reference, and SSIM 0.96 with mean ratio 0.9988 against the providers' FDK (ASTRA, 1200 views). Most of the gap to that FDK's 0.0009 is the coarse grid: rebuilt at 0.1 mm and box-averaged it is 0.0013. At 25 views FDK, SIRT, OS-SART and TV give 0.0126, 0.0074, 0.0067 and 0.0046: TV holds up best, with its weight 1e-05 chosen without the reference, by the reprojection error on views it did not use. With a 90 degree range every method is over four times worse than 300-view FDK (TV 0.0110); TV fills the missing directions with flat patches whose shapes differ from the reference. 3-D: Fullseye's FDK and ASTRA's FDK correlate at 0.9946, and both degrade the same way towards the lower end (0.0026 to 0.0101 for Fullseye, 0.0008 to 0.0099 for ASTRA): a circular orbit does not fully measure the planes away from the mid-plane (Tuy's condition). Geometry mistakes: the adjoint identity <Ax,y> = <x,A^T y> holds to 1e-15 on this scanner's geometry, but it only says the projector pair is matched (mismatching the geometries of A and A^T gives 1.1). Ignoring the vertical offset worsens the RMSE to 0.0060, yet the reprojection residual drops to 0.0850 from 0.0870: a blind spot of the residual. A 0.3 mm lateral shift gives 0.0096 and a reversed rotation 0.0209; the 0.5 degree roll barely matters on a 0.3 mm mid-plane grid. Dual energy: the data hold one energy, so the second energy is a closed-form synthesis, not measured data. Its noise is built from the difference of two real projections taken at the same angle (inside the object the model underestimates the measured noise by a factor 1.25); basis 0 carries 5.06 times the single-energy noise (condition number 15.5). The flat fields are 3.5 times quieter than one projection at the same binning, so noise built from them would be underestimated.
+
+[![Reconstructing a Measured Cone-Beam CT Scan of a Walnut with FDK and Iterative Methods, Scored Against the Providers' Reference — TV Holds Up When Views Are Thinned, Nothing Recovers a Missing Angular Range](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png)
+
+*↑ **Reconstructing a Measured Cone-Beam CT Scan of a Walnut with FDK and Iterative Methods, Scored Against the Providers' Reference — TV Holds Up When Views Are Thinned, Nothing Recovers a Missing Angular Range** ―― Mid-plane of the measured walnut (at the source height). Columns: reference (three orbits), FDK, SIRT, TV; rows: 150 views over 360 degrees, 25 views, 150 degrees, 90 degrees. Numbers are RMSE against the reference in 1/mm.*
+
+Terms: cone-beam CT — A CT geometry in which a point source illuminates a flat-panel detector with a cone of X-rays, so one rotation records a whole volume.; FDK — An approximate cone-beam reconstruction that weights the projections, ramp-filters them row by row and back-projects them; it is exact only in the mid-plane of the orbit.; SIRT — An iterative reconstruction that back-projects the residual of all projections at once and corrects the image step by step, usable where no inversion formula exists.; OS-SART — An iterative method that splits the projections into ordered subsets and applies the SIRT update one subset at a time, which converges faster early on.; total variation — The sum of gradient magnitudes of an image; regularising with it favours piecewise-constant images and fills missing data with flat patches.
+
+[![中央面(線源の高さ)。参照は 0.1 mm の格子を 0.3 mm へ箱で平均した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/02_reference_vs_fdk_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/02_reference_vs_fdk.png)
+
+*↑ The measurement ―― 中央面(線源の高さ)。参照は 0.1 mm の格子を 0.3 mm へ箱で平均した。 (figure labels are in Japanese; the numbers are the same)*
+
+[![TV の重みは 50 枚の条件で、使わなかった 250 枚への再投影誤差が最小の 1e-05(参照は見ない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/03_rmse_vs_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/03_rmse_vs_views.png)
+
+*↑ TV の重みは 50 枚の条件で、使わなかった 250 枚への再投影誤差が最小の 1e-05(参照は見ない)。*
+
+[![FDK は 212°(180° + 扇の全角)未満で allow_incomplete=True。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/04_rmse_vs_arc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/04_rmse_vs_arc.png)
+
+*↑ FDK は 212°(180° + 扇の全角)未満で allow_incomplete=True。*
+
+[![2 つの FDK は下端で同じだけ崩れ、差(点線)は高さに依らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/06_cone_error_by_height_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/06_cone_error_by_height.png)
+
+*↑ 2 つの FDK は下端で同じだけ崩れ、差(点線)は高さに依らない。*
+
+[![低い側は実データ、高い側は閉形式の合成 + 実測の 2 枚から作った雑音。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/08_dual_energy_synthetic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/08_dual_energy_synthetic.png)
+
+*↑ 低い側は実データ、高い側は閉形式の合成 + 実測の 2 枚から作った雑音。*
+
+```
+py -3.11 tools/fetch_walnut_cbct.py && py -3.11 examples/poc_real_walnut_cbct.py
+```
+
+Source: [examples/poc_real_walnut_cbct.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_walnut_cbct.py)
+
+This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_walnut_cbct)
+
+Ops used (notes): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_scan/ct_adjoint_project.html) · [`ct_dual_energy_reconstruct`](https://furuse.work/ops/tomography/ct_scan/ct_dual_energy_reconstruct.html) · [`ct_forward_project`](https://furuse.work/ops/tomography/ct_scan/ct_forward_project.html) · [`ct_scan_geometry`](https://furuse.work/ops/tomography/ct_scan/ct_scan_geometry.html) · [`fdk_reconstruct`](https://furuse.work/ops/tomography/ct_scan/fdk_reconstruct.html) · [`os_sart_reconstruct`](https://furuse.work/ops/tomography/ct_scan/os_sart_reconstruct.html) · [`rmse`](https://furuse.work/ops/imgmetrics/fidelity/rmse.html) · [`sirt_reconstruct`](https://furuse.work/ops/tomography/ct_scan/sirt_reconstruct.html) · [`ssim`](https://furuse.work/ops/imgmetrics/fidelity/ssim.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html) · [`tv_reconstruct`](https://furuse.work/ops/tomography/ct_scan/tv_reconstruct.html)
+
 ### The Time-as-3-D Wing — A Video Is One Volume
 
-Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 21 exhibits here demonstrate exactly that.
+Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 22 exhibits here demonstrate exactly that.
 
 The time axis also brings its own traps. Rounding onto the frame grid always delays; pixel area makes merging look early. Mislinks come in two opposite kinds, so a single error rate cannot say which way the diffusion coefficient is wrong. Template tracking drifts quietly before it ever loses the target, and all 152 drifted frames report 'found'.
 
@@ -6516,9 +6630,47 @@ This run produced **9 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/window/moving_average_window.html) · [`perpetual_loop`](https://furuse.work/ops/generative/loop/perpetual_loop.html) · [`perpetual_loop_seam`](https://furuse.work/ops/generative/loop/perpetual_loop_seam.html) · [`three_frame_difference`](https://furuse.work/ops/videostream/motion/three_frame_difference.html)
 
+## No.2026.305 —— Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels
+
+Three indoor sequences of LASIESTA (Universidad Politécnica de Madrid, CC BY-SA 4.0; 352x288, 250-300 frames, per-pixel ground truth on every frame) are run through the new opsmv operators. create_bg_esti and run_bg_esti estimate a per-pixel Kalman background, opening_seg drops small blobs, and the F-measure is counted as in CDnet (all frames summed, contour pixels excluded). Parameters are chosen on I_SI_01 only and carried to I_OC_01 and I_OC_02. F-measure: Fullseye 0.890 / 0.878, OpenCV MOG2 (colour and shadow detection, varThreshold chosen on the same sequence) 0.987 / 0.884. The single-channel per-pixel Kalman loses by 0.10 on I_OC_01 and roughly ties on I_OC_02. Because run_bg_esti slows the update under the foreground, a blob that once became foreground through a floor reflection stays as a ghost to the end. Absorbing into the background, with update_bg_esti, only the blobs whose centroid has not moved for 8 frames raises I_OC_01 from 0.794 to 0.890 (precision 0.681 to 0.830) and changes nothing on I_OC_02 (0.881 to 0.878). The MOG2 background is closer to the ground-truth background than give_bg_esti (RMS 0.4 against 2.3-3.1 on 0-255). Tracking: blob centroids are followed by a constant-velocity filter_kalman with a 99% NIS gate, and blobs that drop below half their usual area are treated as partly hidden and not used for the update. On I_OC_01 the 26 frames behind a pillar are bridged by prediction alone and the person is picked up again under the same track number (5.7 px error at re-acquisition, median 7.7 px on visible frames); nearest-neighbour association without prediction loses him at the pillar. Limit: on I_OC_02 the person turns round outside the right edge; the heading from atan2_image on the ground-truth centroids changes by 165 degrees, the constant-velocity prediction leaves the frame, and the Kalman tracker starts a new track. filter_kalman matches cv2.KalmanFilter to 1.8e-12 over 1,000 frames with 3 of every 17 measurements missing, and the mean NIS under the true model is 1.99. In fairness: the tracker's design (grouping fragments within 6 px, starting from blobs seen in two consecutive frames, treating the left and right edges as occluders) was settled while looking at all three sequences.
+
+[![Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png)
+
+*↑ **Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels** ―― Real LASIESTA I_OC_01 footage. Sky blue: filter_kalman positions updated by measurements; orange: the 26 frames behind the pillar carried by the constant-velocity prediction alone; vermilion: nearest-neighbour association without prediction (lost at the pillar); white dots: ground-truth centroids.*
+
+[![I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)
+
+*↑ The measurement ―― I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。 (figure labels are in Japanese; the numbers are the same)*
+
+[![I_OC_01 の第 151 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01.png)
+
+*↑ I_OC_01 の第 151 コマ。*
+
+[![I_OC_02 の第 111 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02.png)
+
+*↑ I_OC_02 の第 111 コマ。*
+
+[![I_OC_01 の背景。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background.png)
+
+*↑ I_OC_01 の背景。*
+
+[![真値の物体が見えているコマだけを打った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error.png)
+
+*↑ 真値の物体が見えているコマだけを打った。*
+
+```
+py -3.11 examples/poc_real_bg_kalman_tracking.py
+```
+
+Source: [examples/poc_real_bg_kalman_tracking.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_bg_kalman_tracking.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking)
+
+Ops used (notes): [`atan2_image`](https://furuse.work/ops/mv/gray/atan2_image.html) · [`create_bg_esti`](https://furuse.work/ops/mv/tracking/create_bg_esti.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`filter_kalman`](https://furuse.work/ops/mv/tracking/filter_kalman.html) · [`give_bg_esti`](https://furuse.work/ops/mv/tracking/give_bg_esti.html) · [`opening_seg`](https://furuse.work/ops/mv/morphology/opening_seg.html) · [`run_bg_esti`](https://furuse.work/ops/mv/tracking/run_bg_esti.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html) · [`update_bg_esti`](https://furuse.work/ops/mv/tracking/update_bg_esti.html)
+
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 24 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 26 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -7363,6 +7515,70 @@ Source: [examples/poc_sheet_deformation_ffd.py](https://github.com/furuse-kazufu
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sheet_deformation_ffd)
 
 Ops used (notes): [`median`](https://furuse.work/ops/2d/rank/median.html) · [`piv_flow_magnitude`](https://furuse.work/ops/piv/field/piv_flow_magnitude.html) · [`register_accuracy_map`](https://furuse.work/ops/matchreg/intensityreg/register_accuracy_map.html) · [`register_ffd`](https://furuse.work/ops/matchreg/intensityreg/register_ffd.html) · [`registration_to_flow2d`](https://furuse.work/ops/matchreg/intensityreg/registration_to_flow2d.html)
+
+## No.2026.302 —— Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks
+
+From a real stereo pair (Middlebury 2014 motorcycle, with ground-truth disparity), binocular_disparity_ms gives disparity, binocular_distance_ms and reconstruct_surface_stereo give distance and surface, and get_circle_pose gives the pose of the rear wheel rim; all are scored against the ground-truth disparity and against OpenCV (SGBM, reprojectImageTo3D, matchTemplate). Valid-pixel bad-2 is 4.67% with mean error 0.960 px at 90.0% density (SGBM 7.27% / 1.315 px / 88.4%). Counting invalid pixels as errors gives 14.23% (SGBM 18.00%); on pixels where both are valid it is 4.45% vs 4.95%, so half of the gap comes from which pixels each method declares invalid. Where it breaks: occlusions (6.9%, counted geometrically from the ground truth) are 57% invalidated by the left-right check. Errors remain near depth discontinuities (bad-2 14.1%) and on surfaces whose brightness differs between the views at the true correspondence (a proxy for reflection and gloss, 11.5%); everything else is at 0.85%. 'Textureless fails' applies only to the flattest 1.2% of pixels; the concrete floor matches best at 0.68%. The 'ms' in the name means multi-scanline, not multi-scale: going from 2 to 4 aggregation paths takes bad-2 from 5.55% to 4.67%, and a half-resolution pass run outside the operator gives 8.31%. Distance with doffs has a median relative error of 0.37%, and the point cloud matches OpenCV to 0.0006 mm. The circle pose shows the operator is right and the geometry is ill-conditioned: on the rim (semi-major axis 62 px, 223 degrees of arc) the centre is 23.5 mm and the normal 7.74 degrees off, but points taken on the true circle give 1.2e-6 degrees. Adding noise equal to the 0.52 px gap between the edge points and the true circle gives a median normal error of 5.79 degrees (95th percentile 9.39). The two solutions differ by 0.007 px in reprojection and cannot be told apart, yet their normals are 50.7 degrees apart. The same edge lifted to 3-D with the estimated disparity gives 2.3 mm and 1.59 degrees. points_lepetit with crop_rectangle2, create_ncc_model and find_ncc_models gives bad-2 13.8% (random pixels 16.3%), 2.2% above score 0.9, with best positions identical to OpenCV's matchTemplate at every point. On the 15 MiddEval3 training scenes (non-occluded) the median bad-2 is 6.52% vs SGBM 10.20%, lower in 14 scenes. Changing exposure or lighting barely moves it (-0.18 / +0.94 points vs SGBM +4.99 / +18.08; under lighting it invalidates more pixels). But on the pair that differs only in rectification (Playtable, mean vertical residual 0.24 px) it worsens by 12.1 points while SGBM moves 0.6: it is sensitive to vertical misalignment (cause not yet verified).
+
+[![Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/01_scene.png)
+
+*↑ **Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks** ―― Left photo, binocular_disparity_ms disparity (invalid = black), ground-truth disparity, and the reconstruct_surface_stereo point cloud seen obliquely.*
+
+[![遮蔽 bad2 71.5 % 無効 57.0 % / 段差の近く bad2 14.1 % 無効 9.7 % / 無地 bad2 4.1 % 無効 14.5 % / 見え方が変わる面 bad2 11.5 % 無効 20.7 % / それ以外 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png)
+
+*↑ The measurement ―― 遮蔽 bad2 71.5 % 無効 57.0 % / 段差の近く bad2 14.1 % 無効 9.7 % / 無地 bad2 4.1 % 無効 14.5 % / 見え方が変わる面 bad2 11.5 % 無効 20.7 % / それ以外 bad2 0.8 % 無効 5.7 % (figure labels are in Japanese; the numbers are the same)*
+
+[![真値に近い解: 中心 23.5 mm・法線 7.74°。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/03_wheel_pose_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/03_wheel_pose.png)
+
+*↑ 真値に近い解: 中心 23.5 mm・法線 7.74°。*
+
+[![Lepetit 点 bad2 13.8 %、でたらめな画素 16.3 %。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/04_sparse_ncc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/04_sparse_ncc.png)
+
+*↑ Lepetit 点 bad2 13.8 %、でたらめな画素 16.3 %。*
+
+[![遮蔽は真値から幾何で数えた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/05_classes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/05_classes.png)
+
+*↑ 遮蔽は真値から幾何で数えた。*
+
+[![同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/06_middeval3_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/06_middeval3.png)
+
+*↑ 同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。*
+
+```
+py -3.11 examples/poc_real_stereo_multiscanline.py
+```
+
+Source: [examples/poc_real_stereo_multiscanline.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_stereo_multiscanline.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_stereo_multiscanline)
+
+Ops used (notes): [`binocular_disparity_ms`](https://furuse.work/ops/mv/stereo/binocular_disparity_ms.html) · [`binocular_distance_ms`](https://furuse.work/ops/mv/stereo/binocular_distance_ms.html) · [`create_ncc_model`](https://furuse.work/ops/mv/detect/create_ncc_model.html) · [`crop_rectangle2`](https://furuse.work/ops/mv/resample/crop_rectangle2.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`find_ncc_models`](https://furuse.work/ops/mv/detect/find_ncc_models.html) · [`get_circle_pose`](https://furuse.work/ops/mv/pose/get_circle_pose.html) · [`points_lepetit`](https://furuse.work/ops/mv/detect/points_lepetit.html) · [`reconstruct_surface_stereo`](https://furuse.work/ops/mv/stereo/reconstruct_surface_stereo.html)
+
+## No.2026.303 —— Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing
+
+Thirteen calibration-board photos distributed with OpenCV (640x480, 9x6 inner corners, Apache-2.0) are passed through change_radial_distortion_image, map_image and rectify_to_world_plane, and each output is scored by the straightness of corners re-detected in it with OpenCV and by their offset from a 40 px per-square grid. camera_calibration_lm reproduces OpenCV's calibrateCamera (intrinsics within 2.6e-7 px, reprojection 0.4087 px). A one-coefficient division-model kappa fitted only to the straightness of the board's rows and columns takes straightness from 0.655 to 0.157 px, on par with OpenCV's five coefficients (0.161 px). The two models differ by a median of only 0.49 px where the board was seen, but by 46.9 px in image corners the board never reached, and these 13 photos cannot say which is right. Corners re-detected in the 13 redrawn images go from a median straightness of 0.654 to 0.080 px (OpenCV's undistort: 0.089 px), and every image improves. map_image fed OpenCV's initUndistortRectifyMap tables matches remap to 9.6e-8 and refuses forward-mapping tables. The solve_pnp pose agrees with solvePnP to a median of 0.12 degrees, and corners in the front view sit a median RMS of 0.24 px (max 3.0 px) from the grid, with neighbour spacings of 39.80 to 40.02 px. points_lepetit does not land on X-shaped corners (0 of 54 within 1 px; the response peaks 2.6 px beside the corner), and 90-93% of its points lie on straight edges. A single-edge test isolates it: no points on an axis-aligned or unblurred edge, but 16 per 100 px on an edge tilted 10 degrees with 0.7 px blur. The test that should drop pixels on a line leaks there, recorded as a known gap.
+
+[![Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/01_board_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/01_board.png)
+
+*↑ **Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing** ―― The most distorted photo: original, distortion removed by change_radial_distortion_image, rectify_to_world_plane front view (orange: 40 px grid; blue: re-detected corners), and the difference after minus before.*
+
+[![直線性 = 角の 6 行・9 列に当てた直線からの垂直距離の RMS。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/02_per_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/02_per_image.png)
+
+*↑ The measurement ―― 直線性 = 角の 6 行・9 列に当てた直線からの垂直距離の RMS。 (figure labels are in Japanese; the numbers are the same)*
+
+[![応答の山は角の真上でなく脇に立つ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/03_lepetit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/03_lepetit.png)
+
+*↑ 応答の山は角の真上でなく脇に立つ。*
+
+```
+py -3.11 examples/poc_real_chessboard_undistort.py
+```
+
+Source: [examples/poc_real_chessboard_undistort.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_chessboard_undistort.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_chessboard_undistort)
+
+Ops used (notes): [`camera_calibration_lm`](https://furuse.work/ops/calib/calibrate/camera_calibration_lm.html) · [`change_radial_distortion_image`](https://furuse.work/ops/mv/resample/change_radial_distortion_image.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`map_image`](https://furuse.work/ops/mv/resample/map_image.html) · [`points_lepetit`](https://furuse.work/ops/mv/detect/points_lepetit.html) · [`rectify_to_world_plane`](https://furuse.work/ops/mv/resample/rectify_to_world_plane.html)
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 

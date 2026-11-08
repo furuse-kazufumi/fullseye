@@ -1,0 +1,97 @@
+[
+ {
+  "file": "01_methods_sparse_limited.png",
+  "name": "methods_sparse_limited",
+  "caption": "行 = 全周 150 枚 / 全周 25 枚 / 150° / 90°、列 = 参照 / FDK / SIRT / TV。濃淡は全パネル共通の 0〜0.062 /mm。90° の TV は平らな塊を描き足すが、形は参照と違う。",
+  "shape": [
+   1235,
+   1066,
+   3
+  ]
+ },
+ {
+  "file": "02_reference_vs_fdk.png",
+  "name": "reference_vs_fdk",
+  "caption": "中央面(線源の高さ)。参照は 0.1 mm の格子を 0.3 mm へ箱で平均した。",
+  "shape": [
+   347,
+   802,
+   3
+  ]
+ },
+ {
+  "file": "03_rmse_vs_views.png",
+  "name": "rmse_vs_views",
+  "caption": "TV の重みは 50 枚の条件で、使わなかった 250 枚への再投影誤差が最小の 1e-05(参照は見ない)。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data collection designed for machine learning, Sci. Data 6, 215 (2019), doi:10.1038/s41597-019-0235-y; data doi:10.5281/zenodo.2686726, CC BY 4.0"
+ },
+ {
+  "file": "04_rmse_vs_arc.png",
+  "name": "rmse_vs_arc",
+  "caption": "FDK は 212°(180° + 扇の全角)未満で allow_incomplete=True。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data collection designed for machine learning, Sci. Data 6, 215 (2019), doi:10.1038/s41597-019-0235-y; data doi:10.5281/zenodo.2686726, CC BY 4.0"
+ },
+ {
+  "file": "05_cone_vertical.png",
+  "name": "cone_vertical",
+  "caption": "0.4 mm、150 枚。下端で 2 つの FDK が同じ形に崩れる(円軌道は中央面の外を測り切らない: Tuy の条件)。",
+  "shape": [
+   287,
+   622,
+   3
+  ]
+ },
+ {
+  "file": "06_cone_error_by_height.png",
+  "name": "cone_error_by_height",
+  "caption": "2 つの FDK は下端で同じだけ崩れ、差(点線)は高さに依らない。上端の伸びは小さい(理由は確かめていない)。Fullseye の床が高いのは 0.4 mm に束ねた分(中央面の内訳を参照)。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data collection designed for machine learning, Sci. Data 6, 215 (2019), doi:10.1038/s41597-019-0235-y; data doi:10.5281/zenodo.2686726, CC BY 4.0"
+ },
+ {
+  "file": "07_geometry_mistakes.png",
+  "name": "geometry_mistakes",
+  "caption": "隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。取り違えは参照と再投影の残差で見つける。",
+  "shape": [
+   643,
+   1330,
+   3
+  ]
+ },
+ {
+  "file": "08_dual_energy_synthetic.png",
+  "name": "dual_energy_synthetic",
+  "caption": "低い側は実データ、高い側は閉形式の合成 + 実測の 2 枚から作った雑音。条件数 15.48。基底 0 の雑音は 1 エネルギーの ×5.06(|M⁻¹|₀₁ = 5.00)。基底 1 は殻の中で負(仮定した μ が実物と違う分)。",
+  "shape": [
+   347,
+   802,
+   3
+  ]
+ },
+ {
+  "file": "09_scores.png",
+  "name": "scores",
+  "caption": "門 52 本、外れ 0 本。",
+  "shape": [
+   496,
+   1259,
+   3
+  ],
+  "csv": "09_scores.csv",
+  "tsv": "09_scores.tsv"
+ }
+]

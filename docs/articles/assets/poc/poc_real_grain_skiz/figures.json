@@ -1,0 +1,47 @@
+[
+ {
+  "file": "01_grain_boundaries.png",
+  "name": "grain_boundaries",
+  "caption": "TBM の評価の 3 枚(上から F の中央値・上位 10 %・下位 10 %: 0.71 / 0.80 / 0.56)。左 = 実写の顕微鏡写真(色で腐食した金属組織、128 × 128 画素 ≈ 115 µm 角を 3 倍)、右 = 白が専門家の手描きの粒界、空色が morph_skiz の粒界(勾配の低い画素を opening_seg で種にした影響圏の境界)。",
+  "shape": [
+   1168,
+   772,
+   3
+  ],
+  "source": "TBM: Texture Boundary in Metallography (Zenodo record 8386997, doi:10.5281/zenodo.8386997), CC BY 4.0. Micrograph crops and expert boundary drawings shown unmodified except for nearest-neighbour enlargement and drawn overlays"
+ },
+ {
+  "file": "02_thinning.png",
+  "name": "thinning",
+  "caption": "19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。",
+  "shape": [
+   384,
+   1554,
+   3
+  ],
+  "source": "TBM: Texture Boundary in Metallography (Zenodo record 8386997, doi:10.5281/zenodo.8386997), CC BY 4.0. Micrograph crops and expert boundary drawings shown unmodified except for nearest-neighbour enlargement and drawn overlays"
+ },
+ {
+  "file": "03_intercepts.png",
+  "name": "intercepts",
+  "caption": "16 画素おきの縦横の試験線。1 画素 ≈ 0.9 µm(README の約 1.2 mm を 1328 画素で割った値)。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "TBM: Texture Boundary in Metallography (Zenodo record 8386997, doi:10.5281/zenodo.8386997), CC BY 4.0. Micrograph crops and expert boundary drawings shown unmodified except for nearest-neighbour enlargement and drawn overlays"
+ },
+ {
+  "file": "04_numbers.png",
+  "name": "numbers",
+  "caption": "学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。",
+  "shape": [
+   592,
+   948,
+   3
+  ],
+  "csv": "04_numbers.csv",
+  "tsv": "04_numbers.tsv"
+ }
+]

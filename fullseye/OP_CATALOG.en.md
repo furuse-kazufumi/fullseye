@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (475 examples)
+### 2-D image / signal / geometry (481 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -192,6 +192,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_lightfield_depth` — ops: `color_bar`, `lf_depth_from_focus`, `lf_disparity_to_depth`, `lf_epi`, `lf_epi_slope`, `lf_refocus`, `lf_to_mla` `py -3.11 examples/poc_lightfield_depth.py`
 - `poc_focus_stacking` — ops: `axes_frame`, `axes_transform`, `csi_height_map`, `defocus_blur`, `dilation_circle`, `gauss_filter`, `laplace`, `mean_image`, `optical_camera`, `plot_series`, `psnr`, `rms` (+4 more) `py -3.11 examples/poc_focus_stacking.py`
 - `poc_real_stereo_depth` — ops: (not linked from any op note) `py -3.11 examples/poc_real_stereo_depth.py`
+- `poc_real_stereo_multiscanline` — ops: `binocular_disparity_ms`, `binocular_distance_ms`, `create_ncc_model`, `crop_rectangle2`, `ellipse`, `find_ncc_models`, `get_circle_pose`, `points_lepetit`, `reconstruct_surface_stereo` `py -3.11 examples/poc_real_stereo_multiscanline.py`
 
 **optics**
 - `poc_compound_eye` — ops: `lf_all_in_focus`, `lf_aperture_mask`, `lf_depth_from_focus`, `lf_plenoptic_design`, `lf_subaperture`, `lf_synthesize`, `lf_synthetic_aperture`, `median` `py -3.11 examples/poc_compound_eye.py`
@@ -321,6 +322,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_public_camera_heading` — ops: `camera_orientation_from_skyline`, `camera_orientation_from_sun`, `dem_skyline`, `render_skyline_view`, `skyline_extract`, `sun_pixel_position`, `sun_position` `py -3.11 examples/poc_public_camera_heading.py`
 - `poc_thermal_drift_metrology` — ops: `lockin_thermal_wave`, `polygon_area`, `thermo_optic_coefficient` `py -3.11 examples/poc_thermal_drift_metrology.py`
 - `poc_calibration_truth_map` — ops: `calibration_error_map`, `calibration_next_pose`, `calibration_uncertainty_map`, `camera_calibration`, `camera_calibration_lm`, `checkerboard_points`, `find_checkerboard_corners`, `sim_checkerboard` `py -3.11 examples/poc_calibration_truth_map.py`
+- `poc_real_chessboard_undistort` — ops: `camera_calibration_lm`, `change_radial_distortion_image`, `ellipse`, `map_image`, `points_lepetit`, `rectify_to_world_plane` `py -3.11 examples/poc_real_chessboard_undistort.py`
 
 **visualization**
 - `interactive_poc_viewer` — ops: (not linked from any op note) `py -3.11 examples/interactive_poc_viewer.py`
@@ -341,6 +343,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 **morphology**
 - `poc_bilateral_asymmetry` — ops: `rms` `py -3.11 examples/poc_bilateral_asymmetry.py`
 - `poc_vessel_network` — ops: `blob_features`, `blob_label`, `distance_transform`, `gauss_filter`, `r2_split_skeleton_lines`, `sk_medial`, `skeleton`, `thinning` `py -3.11 examples/poc_vessel_network.py`
+- `poc_real_grain_skiz` — ops: `hit_or_miss_golay`, `hit_or_miss_seq`, `morph_skiz`, `opening_seg`, `percentile`, `thinning` `py -3.11 examples/poc_real_grain_skiz.py`
 
 **inspection**
 - `poc_symmetry_self_reference_inspection` — ops: `center_from_symmetric_edges`, `rotational_symmetry`, `symmetry_difference_map`, `symmetry_score` `py -3.11 examples/poc_symmetry_self_reference_inspection.py`
@@ -366,6 +369,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_symbol_package_1d` — ops: `barcode_scan_profiles`, `capture_degrade`, `decode_barcode_profile`, `ean_check_digit`, `encode_barcode1d`, `grade_barcode1d`, `grade_barcode_profile`, `read_barcode1d`, `read_symbols_zxing`, `render_symbol`, `symbol_read`, `symbol_read_pod` (+1 more) `py -3.11 examples/poc_symbol_package_1d.py`
 - `poc_symbol_part_dpm` — ops: `capture_degrade`, `dm_decode_modules`, `dm_encode`, `dm_locate`, `dm_read`, `dm_sample`, `grade_datacode2d`, `qr_decode_modules`, `qr_encode`, `qr_locate`, `qr_read`, `qr_sample` (+4 more) `py -3.11 examples/poc_symbol_part_dpm.py`
 - `poc_symbol_lot_ocr` — ops: `capture_degrade`, `ocr_classify`, `ocr_features`, `ocr_font`, `ocr_read_line`, `ocr_read_trials`, `ocr_render_text`, `ocr_score`, `ocr_segment_line`, `ocr_train`, `symbol_read_pod` `py -3.11 examples/poc_symbol_lot_ocr.py`
+- `poc_real_typewritten_ocr` — ops: `area_center_gray`, `classify_class_gmm`, `classify_class_knn`, `classify_class_mlp`, `classify_class_svm`, `create_lexicon`, `evaluate_class_gmm`, `gray_histo`, `gray_projections`, `lookup_lexicon`, `segment_characters`, `select_characters` (+7 more) `py -3.11 examples/poc_real_typewritten_ocr.py`
 - `poc_barcode_1d` — ops: `decode_barcode`, `gen_measure_rectangle2`, `measure_pos` `py -3.11 examples/poc_barcode_1d.py`
 
 **restoration**
@@ -549,6 +553,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_battery_ct_degradation` — ops: `beam_hardening_apply`, `fbp_volume`, `projection_angles`, `radon_volume`, `ring_artifact_apply` `py -3.11 examples/poc_battery_ct_degradation.py`
 - `poc_battery_electrode_tortuosity` — ops: `intersection` `py -3.11 examples/poc_battery_electrode_tortuosity.py`
 - `poc_die_tilt_tsv_overlay` — ops: `erf`, `procrustes_fit` `py -3.11 examples/poc_die_tilt_tsv_overlay.py`
+- `poc_real_walnut_cbct` — ops: `arc`, `ct_adjoint_project`, `ct_dual_energy_reconstruct`, `ct_forward_project`, `ct_scan_geometry`, `fdk_reconstruct`, `os_sart_reconstruct`, `rmse`, `sirt_reconstruct`, `ssim`, `threshold`, `tv_reconstruct` `py -3.11 examples/poc_real_walnut_cbct.py`
 
 **perception_templates**
 - `perception_pipeline` — ops: `elevation_map` `py -3.11 examples/perception_pipeline.py`
@@ -584,6 +589,9 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_si_wafer_pl_defect_visibility` — ops: `pl_diffusion_psf`, `pl_groove_visibility`, `pl_image_simulate`, `pod_hitmiss_fit` `py -3.11 examples/poc_si_wafer_pl_defect_visibility.py`
 - `poc_real_defect_floor` — ops: `annotate_inset`, `annotate_legend`, `laplace_of_gauss` `py -3.11 examples/poc_real_defect_floor.py`
 - `poc_search_sweep_width` — ops: `erf`, `gauss_filter`, `gray_tophat`, `integrate_funct_1d`, `laplace`, `ncc_locate`, `noise_sigma`, `photon_sample`, `relative_illumination`, `star_detect`, `tophat`, `vignette` (+1 more) `py -3.11 examples/poc_search_sweep_width.py`
+
+**tracking**
+- `poc_real_bg_kalman_tracking` — ops: `atan2_image`, `create_bg_esti`, `ellipse`, `filter_kalman`, `give_bg_esti`, `opening_seg`, `run_bg_esti`, `threshold`, `update_bg_esti` `py -3.11 examples/poc_real_bg_kalman_tracking.py`
 
 **space**
 - `poc_star_tracker` — ops: (not linked from any op note) `py -3.11 examples/poc_star_tracker.py`
@@ -1424,7 +1432,7 @@ Pipeline ops that take one image and return one image / region / contour / featu
 - `median_separate` (halcon: `median_separate`) `image → image` GPU: yes (median_separate) — The implementation is the same as ``median_image`` (``kind: "median"``, a 2D median over a square window). HALCON's ``median_separate`` (Separated median filtering with rectangle masks.) is a fast approximation operator that applies two passes of 1D medians separated into row and column directions, but this stand-in makes no distinction and returns an ordinary 2D median (results are often close, but strictly it is a different algorithm -- a limitation of this approximation). · examples: `gallery2d_smoothing_rank`
 - `median_weighted` (halcon: `median_weighted`) `image → image` GPU: yes (median_weighted) — A median filter. The implementation shares the ``median`` branch of ``_sh_rank`` with eliminate_min_max/median_image; it does no weighting by mask shape (circle, octagon, etc.) and simply returns the median of a square window. a sets the window size to 3/5/7/9, and b is unused. · examples: `gallery2d_smoothing_rank`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` GPU: yes (gray_erosion_rect) — Minimum filter within a rectangular window (equivalent to grayscale erosion). Equivalent to HALCON's ``gray_erosion_rect`` (Determine the minimum gray value within a rectangle.). · examples: `gallery2d_smoothing_rank`
-- `percentile` (halcon: `rank_image`) `image → image` GPU: yes (rank_percentile) — Rank filter for an arbitrary percentile. Equivalent to HALCON's ``rank_image`` (Compute a rank filter with arbitrary masks.). · examples: `gallery2d_smoothing_rank`, `poc_colormap_readability`
+- `percentile` (halcon: `rank_image`) `image → image` GPU: yes (rank_percentile) — Rank filter for an arbitrary percentile. Equivalent to HALCON's ``rank_image`` (Compute a rank filter with arbitrary masks.). · examples: `gallery2d_smoothing_rank`, `poc_colormap_readability`, `poc_real_grain_skiz`
 - `rank_image` (halcon: `rank_image`) `image → image` GPU: yes (rank_image) — A general-purpose rank filter (``ndimage.percentile_filter``) that sorts the pixel values in a window in ascending order and returns the value at the specified percentile position. It is a continuous generalization: percentile 0 corresponds to erosion, 100 to dilation, and 50 to median. Equivalent to HALCON's ``rank_image`` (Compute a rank filter with arbitrary masks.) (HALCON can take an arbitrarily shaped mask, but here it is fixed to a square mask). · examples: `gallery2d_smoothing_rank`, `poc_dehazing`
 - `rank_rect` (halcon: `rank_rect`) `image → image` GPU: yes (rank_rect) — The implementation is identical to ``rank_image`` (``kind: "rank"``, a percentile filter over a square window). In HALCON, ``rank_image`` (arbitrary mask) and ``rank_rect`` (restricted to rectangular masks) are separate operators, but in this stand-in both point to the same square-window implementation. A stand-in for HALCON's ``rank_rect`` (Compute a rank filter with rectangular masks.). · examples: `gallery2d_smoothing_rank`
 - `sk_median_disk` (halcon: `median_image`) `image → image` GPU: none — Median filter with a disk-shaped footprint. Unlike a regular square kernel, this gives isotropic smoothing that is closer to circular. · examples: `gallery2d_smoothing_rank`
@@ -1506,7 +1514,7 @@ Pipeline ops that take one image and return one image / region / contour / featu
 - `sk_thin` (halcon: `thinning`) `region → region` GPU: none — Morphological thinning. Similar to sk_skeleton in reducing to one-pixel width, but uses a different algorithm based on the hit-or-miss transform, and tends to produce fewer skeleton branches (spurs). · examples: `gallery2d_region`
 - `skeleton` (halcon: `skeleton`) `region → region` GPU: none — Thins a region to a 1-pixel-wide skeleton while preserving topology (``skimage.morphology.skeletonize``). Branch points and endpoints are preserved in position, so it is often used to analyze branching shapes (such as counting the number of fingers). Equivalent to HALCON's ``skeleton`` (Compute the skeleton of a region.). · examples: `gallery2d_region`, `poc_crack_width`, `poc_em_branch_territory`, `poc_fresco_craquelure`, `poc_real_sem_metal_layer`, `poc_swc_tree_truth`, `poc_vessel_network`
 - `smallest_rectangle1` (halcon: `smallest_rectangle1`) `region → region` GPU: inside a chain only (lbl_smallest_rectangle1) — Returns a region filled with the axis-aligned bounding box enclosing the region. a and b are unused. Returns all zeros if the region is empty. · examples: `gallery2d_region`
-- `thinning` (halcon: `thinning`) `region → region` GPU: none — Reduces a region to 1-pixel width using ``skimage.morphology.thin`` (a Zhang-Suen-family thinning algorithm). Its purpose is similar to ``skeleton``, but the internal algorithm differs, so results can differ slightly near branch points and similar areas. A stand-in for HALCON's ``thinning`` (Remove the result of a hit-or-miss operation from a region.). · examples: `gallery2d_region`, `poc_crack_width`, `poc_vessel_network`
+- `thinning` (halcon: `thinning`) `region → region` GPU: none — Reduces a region to 1-pixel width using ``skimage.morphology.thin`` (a Zhang-Suen-family thinning algorithm). Its purpose is similar to ``skeleton``, but the internal algorithm differs, so results can differ slightly near branch points and similar areas. A stand-in for HALCON's ``thinning`` (Remove the result of a hit-or-miss operation from a region.). · examples: `gallery2d_region`, `poc_crack_width`, `poc_real_grain_skiz`, `poc_vessel_network`
 - `thinning_golay` (halcon: `thinning_golay`) `region → region` GPU: none — Thins a region. The implementation uses skimage's ``thin`` (Guo-Hall-type iterative thinning), repeated until the region is completely 1 pixel wide; a and b are unused. · examples: `gallery2d_region`
 - `thinning_seq` (halcon: `thinning_seq`) `region → region` GPU: none — Thins a region. The implementation is identical to thinning_golay (skimage's ``thin``, Guo-Hall-type thinning iterated to convergence); a and b are unused. · examples: `gallery2d_region`
 - `xcv2_hitmiss` `region → region` GPU: none — Detects the cross pattern 'center is background, up/down/left/right are foreground' using the hit-or-miss transform (``cv2.MORPH_HITMISS``). · examples: `gallery2d_region`
@@ -1582,7 +1590,7 @@ Pipeline ops that take one image and return one image / region / contour / featu
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` GPU: none — Sauvola's local adaptive thresholding. Determines the threshold locally from the local mean and standard deviation around each pixel -- designed for binarizing (text extraction from) document images with uneven illumination. · examples: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` GPU: none — Superpixel segmentation by SLIC (Simple Linear Iterative Clustering). Performs k-means clustering in a combined color (here, gray value) and coordinate space, dividing the image into regions of roughly equal size. Here it returns the boundaries of the segmentation result as a region. · examples: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` GPU: yes (allow-list) — Global thresholding by Yen's maximum correlation criterion. Chooses the threshold by maximizing an entropy-based measure of the histogram -- yet another automatic thresholding method distinct from Otsu's and Li's methods. · examples: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` GPU: yes (threshold) — Global thresholding. Equivalent to HALCON's ``threshold`` (Segment an image using global threshold.). · examples: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_sem_metal_layer`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` GPU: yes (threshold) — Global thresholding. Equivalent to HALCON's ``threshold`` (Segment an image using global threshold.). · examples: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_bg_kalman_tracking`, `poc_real_sem_metal_layer`, `poc_real_walnut_cbct`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` GPU: none — Sauvola's local adaptive binarization (``skimage.filters.threshold_sauvola``, window size ``2*int(a*6)+3``). Since the threshold is determined using both the local mean and local standard deviation, it is more robust to uneven illumination and low-contrast documents than ``dyn_threshold``. An approximation corresponding to HALCON's ``var_threshold`` (Threshold an image by local mean and standard deviation analysis) -- the formulation follows a similar idea, but Sauvola's formula and HALCON's formula have different coefficients, so the numerical results are not identical. · examples: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` GPU: none — Watershed segmentation. Treats the gradient image as terrain, uses dark regions (``x < 0.2+0.3*a``) as markers to find the watershed lines, and returns those boundary lines. Corresponds to HALCON's ``watersheds`` (Extract watersheds and basins from an image). · examples: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` GPU: none — The implementation is identical to ``watersheds`` (``kind: "watershed"``). HALCON's ``watersheds_threshold`` (Extract watershed basins from an image using a threshold) is originally an operator with a depth threshold that merges adjacent catchment basins, but this substitute does not implement the merge threshold and returns the same result as ``watersheds`` (a limitation of the approximation). · examples: `gallery2d_segmentation`
@@ -4479,17 +4487,17 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `ring_artifact_remove` `sinogram → sinogram` GPU: none — Remove per-detector-bin offsets by flattening the angle-averaged profile. · examples: `ct_reconstruction`
 
 #### tomography / ct_scan (11)
-- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: none — The exact transpose ``A^T`` of :func:`ct_forward_project`. · examples: `ct_scan_modes`
-- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: none — Two scans of one geometry to two basis-material volumes.
-- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: none — Project a volume along every ray of *geometry*: the discrete operator ``A``. · examples: `ct_scan_modes`
-- `ct_scan_geometry` `no input → ctgeometry` GPU: none — Describe one CT scan: per view, where the source and the detector are. · examples: `ct_scan_modes`
+- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: none — The exact transpose ``A^T`` of :func:`ct_forward_project`. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: none — Two scans of one geometry to two basis-material volumes. · examples: `poc_real_walnut_cbct`
+- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: none — Project a volume along every ray of *geometry*: the discrete operator ``A``. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `ct_scan_geometry` `no input → ctgeometry` GPU: none — Describe one CT scan: per view, where the source and the detector are. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
 - `ellipsoid_phantom` `no input → voxel` GPU: none — Rasterise a sum of uniform ellipsoids onto a ``(Z, Y, X)`` grid. · examples: `ct_scan_modes`
 - `ellipsoid_projections` `ctgeometry → projstack` GPU: none — Exact line integrals of a sum of ellipsoids, for any scan in this family. · examples: `ct_scan_modes`
-- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Filtered back-projection for every scan with a formula: FDK and its relatives. · examples: `ct_scan_modes`
-- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: none — OS-SART: the SIRT update applied to one ordered subset of views at a time. · examples: `ct_scan_modes`
+- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Filtered back-projection for every scan with a formula: FDK and its relatives. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: none — OS-SART: the SIRT update applied to one ordered subset of views at a time. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
 - `shepp_logan_3d` `no input → voxel` GPU: none — The modified 3-D Shepp-Logan head phantom on a ``size``-cube. · examples: `ct_scan_modes`
-- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: none — SIRT: every view at once, ``x <- x + lam C A^T R (p - A x)``. · examples: `ct_scan_modes`
-- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Total-variation reconstruction by the Chambolle-Pock primal-dual method. · examples: `ct_scan_modes`
+- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: none — SIRT: every view at once, ``x <- x + lam C A^T R (p - A x)``. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Total-variation reconstruction by the Chambolle-Pock primal-dual method. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
 
 #### tomography / forward (3)
 - `ellipse_phantom` `no input → image2d` GPU: none — Rasterise a sum of uniform ellipses onto a *size* x *size* slice. · examples: `ct_reconstruction`, `poc_ct_fidelity`, `tomography_reconstruct`
@@ -4776,8 +4784,8 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `leader_line` `image2d × text → image2d` GPU: none — A leader line — from the note's position (``anchor_xy``) to its target (``target_xy``). · examples: `annotate_gallery`, `poc_kendama`
 
 #### annotate / shape (4)
-- `arc` `image2d → image2d` GPU: yes (allow-list) — A circular arc. Angles are in degrees, **clockwise from the screen x-axis** (because row points down). · examples: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` GPU: none — An ellipse (rotated by ``angle_deg``, filled with ``fill=True``). · examples: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
+- `arc` `image2d → image2d` GPU: yes (allow-list) — A circular arc. Angles are in degrees, **clockwise from the screen x-axis** (because row points down). · examples: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_real_walnut_cbct`, `poc_weld_radiograph_porosity`
+- `ellipse` `image2d → image2d` GPU: none — An ellipse (rotated by ``angle_deg``, filled with ``fill=True``). · examples: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_bg_kalman_tracking`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: yes (allow-list) — A filled polygon (even-odd crossing rule — :mod:`imagedraw` only outlines). · examples: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: yes (allow-list) — A rounded rectangle (filled with ``fill=True``). For backing plates and enclosing boxes. · examples: `annotate_gallery`, `poc_machine_condition_fusion`
 
@@ -4976,7 +4984,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 
 #### calib / calibrate (5)
 - `camera_calibration` (halcon: `camera_calibration`) `keypoints → table` GPU: none — [Partial] Estimates only the intrinsic matrix K from several views of a planar target by Zhang's method (camera_calibration). · examples: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_calibration_truth_map`, `poc_camera_calibration`
-- `camera_calibration_lm` `keypoints → table` GPU: none — Jointly refines intrinsics, distortion and all poses by LM from Zhang's initial estimate and returns them with their covariance (``table``). · examples: `poc_calibration_truth_map`
+- `camera_calibration_lm` `keypoints → table` GPU: none — Jointly refines intrinsics, distortion and all poses by LM from Zhang's initial estimate and returns them with their covariance (``table``). · examples: `poc_calibration_truth_map`, `poc_real_chessboard_undistort`
 - `find_marks_and_pose` (halcon: `find_marks_and_pose`) `image2d → table` GPU: none — Mark detection + pose estimation of the calibration plate (plane homography → pose) (find_marks_and_pose).
 - `hand_eye_calibration` (halcon: `hand_eye_calibration`) `no input → matrix` GPU: none — Solves AX=XB from a series of motion pairs and estimates X (4x4) (hand_eye_calibration).
 - `stereo_calibration_lm` `keypoints → table` GPU: none — Jointly refines both cameras' intrinsics and distortion, the board poses and the right camera's relative pose (R, T) by LM (``table``).
@@ -5082,71 +5090,71 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 ### mv (47 ops / 10 categories)
 
 #### mv / classify (12)
-- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: none — Return the class with the largest posterior for each row under a Gaussian mixture model. · examples: `machine_vision_tour`
-- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: none — Return the class per row by a k-nearest-neighbor majority vote (ties go to the smaller distance sum). · examples: `machine_vision_tour`
-- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: none — Classify feature rows with the multilayer perceptron from `train_class_mlp`. · examples: `machine_vision_tour`
-- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: none — Classify feature rows with the linear SVM from `train_class_svm` (one-vs-rest maximum margin). · examples: `machine_vision_tour`
-- `create_lexicon` (halcon: `create_lexicon`) `no input → table` GPU: none — Build a word list for matching (duplicates removed, order fixed). · examples: `machine_vision_tour`
-- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: none — Return the class posteriors and the overall log density for each row. · examples: `machine_vision_tour`
-- `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: none — Check whether a word is in the list by exact match and return 1.0 if so, otherwise 0.0. · examples: `machine_vision_tour`
-- `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: none — Return the word with the smallest edit distance and that distance. · examples: `machine_vision_tour`
-- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: none — Train a Gaussian mixture per class with EM. · examples: `machine_vision_tour`
-- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: none — Build a k-NN classifier (the features are standardized and kept). · examples: `machine_vision_tour`
-- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: none — Train an MLP classifier. · examples: `machine_vision_tour`
-- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: none — Train a linear SVM (hinge loss, one-vs-rest). · examples: `machine_vision_tour`
+- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: none — Return the class with the largest posterior for each row under a Gaussian mixture model. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: none — Return the class per row by a k-nearest-neighbor majority vote (ties go to the smaller distance sum). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: none — Classify feature rows with the multilayer perceptron from `train_class_mlp`. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: none — Classify feature rows with the linear SVM from `train_class_svm` (one-vs-rest maximum margin). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `create_lexicon` (halcon: `create_lexicon`) `no input → table` GPU: none — Build a word list for matching (duplicates removed, order fixed). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: none — Return the class posteriors and the overall log density for each row. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: none — Check whether a word is in the list by exact match and return 1.0 if so, otherwise 0.0. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: none — Return the word with the smallest edit distance and that distance. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: none — Train a Gaussian mixture per class with EM. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: none — Build a k-NN classifier (the features are standardized and kept). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: none — Train an MLP classifier. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: none — Train a linear SVM (hinge loss, one-vs-rest). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / curve (1)
 - `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: none — Find the control points of a non-rational B-spline through every point (global interpolation). · examples: `machine_vision_tour`
 
 #### mv / detect (3)
-- `create_ncc_model` (halcon: `create_ncc_model`) `image2d → table` GPU: none — Prepare an NCC model (a normalized template). · examples: `machine_vision_tour`
-- `find_ncc_models` (halcon: `find_ncc_models`) `table × image2d → table` GPU: none — Find one or more NCC models in one image. · examples: `machine_vision_tour`
-- `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: none — Detect interest points by comparing opposite pairs on a circle (the Lepetit-Fua detector). · examples: `machine_vision_tour`
+- `create_ncc_model` (halcon: `create_ncc_model`) `image2d → table` GPU: none — Prepare an NCC model (a normalized template). · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `find_ncc_models` (halcon: `find_ncc_models`) `table × image2d → table` GPU: none — Find one or more NCC models in one image. · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: none — Detect interest points by comparing opposite pairs on a circle (the Lepetit-Fua detector). · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`, `poc_real_stereo_multiscanline`
 
 #### mv / gray (5)
-- `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: none — Return the gray-weighted mass and centroid `(row, col)`. · examples: `machine_vision_tour`
-- `atan2_image` (halcon: `atan2_image`) `image2d × image2d → image2d` GPU: none — Return the per-pixel `atan2(image1, image2)` of two images in radians. · examples: `machine_vision_tour`
+- `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: none — Return the gray-weighted mass and centroid `(row, col)`. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `atan2_image` (halcon: `atan2_image`) `image2d × image2d → image2d` GPU: none — Return the per-pixel `atan2(image1, image2)` of two images in radians. · examples: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
 - `get_grayval_contour_xld` (halcon: `get_grayval_contour_xld`) `image2d × keypoints → signal` GPU: none — Read gray values along a contour by interpolation into one signal. · examples: `machine_vision_tour`
-- `gray_histo` (halcon: `gray_histo`) `image2d → table` GPU: none — Return the gray-value histogram as absolute and relative frequencies. · examples: `machine_vision_tour`
-- `gray_projections` (halcon: `gray_projections`) `image2d → table` GPU: none — Return the mean gray value per row and per column. · examples: `machine_vision_tour`
+- `gray_histo` (halcon: `gray_histo`) `image2d → table` GPU: none — Return the gray-value histogram as absolute and relative frequencies. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `gray_projections` (halcon: `gray_projections`) `image2d → table` GPU: none — Return the mean gray value per row and per column. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / morphology (9)
 - `golay_elements` (halcon: `golay_elements`) `no input → table` GPU: none — Build the 3x3 hit and miss structuring elements of a Golay letter with 45-degree rotation. · examples: `machine_vision_tour`
-- `hit_or_miss_golay` (halcon: `hit_or_miss_golay`) `mask → mask` GPU: none — Apply the hit-or-miss transform with one Golay letter (returns the matching center pixels). · examples: `machine_vision_tour`
-- `hit_or_miss_seq` (halcon: `hit_or_miss_seq`) `mask → mask` GPU: none — Return the union of the hit-or-miss transforms over all eight rotations of a Golay letter. · examples: `machine_vision_tour`
+- `hit_or_miss_golay` (halcon: `hit_or_miss_golay`) `mask → mask` GPU: none — Apply the hit-or-miss transform with one Golay letter (returns the matching center pixels). · examples: `machine_vision_tour`, `poc_real_grain_skiz`
+- `hit_or_miss_seq` (halcon: `hit_or_miss_seq`) `mask → mask` GPU: none — Return the union of the hit-or-miss transforms over all eight rotations of a Golay letter. · examples: `machine_vision_tour`, `poc_real_grain_skiz`
 - `morph_hat` (halcon: `morph_hat`) `mask × mask → mask` GPU: none — Return the union of the pixels removed by opening and the pixels added by closing. · examples: `machine_vision_tour`
-- `morph_skiz` (halcon: `morph_skiz`) `mask → mask` GPU: none — Compute the boundaries of the zones of influence (SKIZ) of the components in Euclidean distance. · examples: `machine_vision_tour`
-- `opening_seg` (halcon: `opening_seg`) `mask × mask → labels2d` GPU: none — Separate objects joined by necks with an erosion and grow them back inside the region as labels. · examples: `machine_vision_tour`
+- `morph_skiz` (halcon: `morph_skiz`) `mask → mask` GPU: none — Compute the boundaries of the zones of influence (SKIZ) of the components in Euclidean distance. · examples: `machine_vision_tour`, `poc_real_grain_skiz`
+- `opening_seg` (halcon: `opening_seg`) `mask × mask → labels2d` GPU: none — Separate objects joined by necks with an erosion and grow them back inside the region as labels. · examples: `machine_vision_tour`, `poc_real_bg_kalman_tracking`, `poc_real_grain_skiz`
 - `thickening_golay` (halcon: `thickening_golay`) `mask → mask` GPU: none — Thicken a region with one Golay letter. · examples: `machine_vision_tour`
 - `thickening_hit_miss` (halcon: `thickening`) `mask × mask × mask → mask` GPU: none — Thicken a region with an arbitrary structuring pair (`A ∪ HMT(A)`, `iterations` times). · examples: `machine_vision_tour`
 - `thickening_seq` (halcon: `thickening_seq`) `mask → mask` GPU: none — Thicken a region through the rotations of a Golay letter in turn until it stops changing. · examples: `machine_vision_tour`
 
 #### mv / pose (1)
-- `get_circle_pose` (halcon: `get_circle_pose`) `keypoints → table` GPU: none — Recover the center and normal of a circle of known radius from its image ellipse, in camera coordinates. · examples: `machine_vision_tour`
+- `get_circle_pose` (halcon: `get_circle_pose`) `keypoints → table` GPU: none — Recover the center and normal of a circle of known radius from its image ellipse, in camera coordinates. · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
 
 #### mv / resample (4)
-- `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: none — Redraw an image from one division-model camera into another distortion and intrinsics. · examples: `machine_vision_tour`
-- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: none — Read the inside of a rotated rectangle by linear interpolation and cut it out as an axis-aligned image. · examples: `machine_vision_tour`
-- `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: none — Resample an image through an inverse map (each output pixel reads an input coordinate). · examples: `machine_vision_tour`
-- `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: none — Rectify an image to a fronto-parallel view of the world plane z=0 (one pixel = `scale` world units). · examples: `machine_vision_tour`
+- `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: none — Redraw an image from one division-model camera into another distortion and intrinsics. · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
+- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: none — Read the inside of a rotated rectangle by linear interpolation and cut it out as an axis-aligned image. · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: none — Resample an image through an inverse map (each output pixel reads an input coordinate). · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
+- `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: none — Rectify an image to a fronto-parallel view of the world plane z=0 (one pixel = `scale` world units). · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
 
 #### mv / stereo (3)
-- `binocular_disparity_ms` (halcon: `binocular_disparity_ms`) `image2d × image2d → table` GPU: none — Compute rectified-stereo disparity with semi-global matching, verify it left-right and interpolate to subpixel. · examples: `machine_vision_tour`
-- `binocular_distance_ms` (halcon: `binocular_distance_ms`) `image2d × image2d → table` GPU: none — Compute the distance image of a rectified stereo pair (`Z = focal * baseline / (disparity + doffs)`). · examples: `machine_vision_tour`
-- `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: none — Map the valid pixels of a disparity image to 3-D points. · examples: `machine_vision_tour`
+- `binocular_disparity_ms` (halcon: `binocular_disparity_ms`) `image2d × image2d → table` GPU: none — Compute rectified-stereo disparity with semi-global matching, verify it left-right and interpolate to subpixel. · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `binocular_distance_ms` (halcon: `binocular_distance_ms`) `image2d × image2d → table` GPU: none — Compute the distance image of a rectified stereo pair (`Z = focal * baseline / (disparity + doffs)`). · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: none — Map the valid pixels of a disparity image to 3-D points. · examples: `machine_vision_tour`, `poc_real_stereo_multiscanline`
 
 #### mv / text (4)
-- `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: none — Split a text line image into a label image with one label per character column. · examples: `machine_vision_tour`
-- `select_characters` (halcon: `select_characters`) `labels2d → labels2d` GPU: none — Drop blobs whose height or width is off the median from a character label image and renumber from the left. · examples: `machine_vision_tour`
-- `text_line_orientation` (halcon: `text_line_orientation`) `image2d → scalar` GPU: none — Find the tilt of text lines in degrees by maximizing the sharpness of the projection. · examples: `machine_vision_tour`
-- `text_line_slant` (halcon: `text_line_slant`) `image2d → scalar` GPU: none — Find the character slant of a horizontal text line in degrees by maximizing the sharpness of the column projection. · examples: `machine_vision_tour`
+- `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: none — Split a text line image into a label image with one label per character column. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `select_characters` (halcon: `select_characters`) `labels2d → labels2d` GPU: none — Drop blobs whose height or width is off the median from a character label image and renumber from the left. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `text_line_orientation` (halcon: `text_line_orientation`) `image2d → scalar` GPU: none — Find the tilt of text lines in degrees by maximizing the sharpness of the projection. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `text_line_slant` (halcon: `text_line_slant`) `image2d → scalar` GPU: none — Find the character slant of a horizontal text line in degrees by maximizing the sharpness of the column projection. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / tracking (5)
-- `create_bg_esti` (halcon: `create_bg_esti`) `image2d → table` GPU: none — Create a per-pixel Kalman background model from the first image. · examples: `machine_vision_tour`
-- `filter_kalman` (halcon: `filter_kalman`) `no input → table` GPU: none — Run one predict-and-update cycle of a linear Kalman filter. · examples: `machine_vision_tour`
-- `give_bg_esti` (halcon: `give_bg_esti`) `table → image2d` GPU: none — Return a copy of the model's current background image. · examples: `machine_vision_tour`
-- `run_bg_esti` (halcon: `run_bg_esti`) `table × image2d → table` GPU: none — Update the background with one image and return the foreground region. · examples: `machine_vision_tour`
-- `update_bg_esti` (halcon: `update_bg_esti`) `table × image2d × mask → table` GPU: none — Update the background only inside the given region. · examples: `machine_vision_tour`
+- `create_bg_esti` (halcon: `create_bg_esti`) `image2d → table` GPU: none — Create a per-pixel Kalman background model from the first image. · examples: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `filter_kalman` (halcon: `filter_kalman`) `no input → table` GPU: none — Run one predict-and-update cycle of a linear Kalman filter. · examples: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `give_bg_esti` (halcon: `give_bg_esti`) `table → image2d` GPU: none — Return a copy of the model's current background image. · examples: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `run_bg_esti` (halcon: `run_bg_esti`) `table × image2d → table` GPU: none — Update the background with one image and return the foreground region. · examples: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
+- `update_bg_esti` (halcon: `update_bg_esti`) `table × image2d × mask → table` GPU: none — Update the background only inside the given region. · examples: `machine_vision_tour`, `poc_real_bg_kalman_tracking`
 
 ### generative (42 ops / 6 categories)
 
@@ -5225,8 +5233,8 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `ms_ssim` `image2d × image2d → scalar` GPU: none — Multi-scale SSIM (Wang, Simoncelli & Bovik, Asilomar Conf. 2003). · examples: `image_quality_metrics`
 - `mse` `image2d × image2d → scalar` GPU: none — Mean squared error. A raw quantity that does not depend on ``data_range``. · examples: `image_quality_metrics`
 - `psnr` `image2d × image2d → scalar` GPU: none — Returns the peak signal-to-noise ratio (PSNR, in dB) of two images. · examples: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_dehazing`, `poc_focus_stacking`, `poc_iqa_tid2013`, `poc_pixel_shift`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
-- `rmse` `image2d × image2d → scalar` GPU: none — Root mean squared error (in the same units as the pixel values). · examples: `ct_scan_modes`, `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_polarization_specular`, `poc_real_tless_6dof`, `poc_structure_4d_deterioration`
-- `ssim` `image2d × image2d → scalar` GPU: none — Structural similarity (Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004). · examples: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_ct_fidelity`, `poc_dehazing`, `poc_iqa_tid2013`, `poc_superresolution_limits`
+- `rmse` `image2d × image2d → scalar` GPU: none — Root mean squared error (in the same units as the pixel values). · examples: `ct_scan_modes`, `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_polarization_specular`, `poc_real_tless_6dof`, `poc_real_walnut_cbct`, `poc_structure_4d_deterioration`
+- `ssim` `image2d × image2d → scalar` GPU: none — Structural similarity (Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004). · examples: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_ct_fidelity`, `poc_dehazing`, `poc_iqa_tid2013`, `poc_real_walnut_cbct`, `poc_superresolution_limits`
 - `ssim_map` `image2d × image2d → image2d` GPU: none — The SSIM **map** (before averaging) — to see *where* the two differ, as a picture. · examples: `image_quality_metrics`, `poc_iqa_tid2013`
 
 #### imgmetrics / information (5)

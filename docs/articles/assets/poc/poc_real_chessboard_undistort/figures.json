@@ -1,0 +1,34 @@
+[
+ {
+  "file": "01_board.png",
+  "name": "board",
+  "caption": "left03.jpg: 直線性 0.875 → 0.080 px。正面図の角と格子のずれ RMS 0.23 px。",
+  "shape": [
+   1095,
+   1310,
+   3
+  ]
+ },
+ {
+  "file": "02_per_image.png",
+  "name": "per_image",
+  "caption": "直線性 = 角の 6 行・9 列に当てた直線からの垂直距離の RMS。",
+  "shape": [
+   784,
+   1133,
+   3
+  ],
+  "csv": "02_per_image.csv",
+  "tsv": "02_per_image.tsv"
+ },
+ {
+  "file": "03_lepetit.png",
+  "name": "lepetit",
+  "caption": "応答の山は角の真上でなく脇に立つ。点の 92 % はまっすぐな縁の上(直線の棄却が効かない)。",
+  "shape": [
+   573,
+   660,
+   3
+  ]
+ }
+]

@@ -6,7 +6,7 @@ in: image
 out: region
 halcon: threshold
 gpu: あり(threshold)
-examples: [gallery2d_segmentation, poc_bone_trabecular_thickness, poc_change_detection_misreg, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_metal_grain_size, poc_real_sem_metal_layer, poc_screw_thread_metrology, poc_tof_camera, poc_traffic_counting, poc_virtual_sem_kv_cd_bse, poc_water_level, tof_realdata, video_streaming]
+examples: [gallery2d_segmentation, poc_bone_trabecular_thickness, poc_change_detection_misreg, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_metal_grain_size, poc_real_bg_kalman_tracking, poc_real_sem_metal_layer, poc_real_walnut_cbct, poc_screw_thread_metrology, poc_tof_camera, poc_traffic_counting, poc_virtual_sem_kv_cd_bse, poc_water_level, tof_realdata, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -70,7 +70,9 @@ threshold 0.50 0.50
 - [poc_fresco_craquelure](../../../../examples/poc_fresco_craquelure.py) — `py -3.11 examples/poc_fresco_craquelure.py`
 - [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`
 - [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
+- [poc_real_bg_kalman_tracking](../../../../examples/poc_real_bg_kalman_tracking.py) — `py -3.11 examples/poc_real_bg_kalman_tracking.py`
 - [poc_real_sem_metal_layer](../../../../examples/poc_real_sem_metal_layer.py) — `py -3.11 examples/poc_real_sem_metal_layer.py`
+- [poc_real_walnut_cbct](../../../../examples/poc_real_walnut_cbct.py) — `py -3.11 examples/poc_real_walnut_cbct.py`
 - [poc_screw_thread_metrology](../../../../examples/poc_screw_thread_metrology.py) — `py -3.11 examples/poc_screw_thread_metrology.py`
 - [poc_tof_camera](../../../../examples/poc_tof_camera.py) — `py -3.11 examples/poc_tof_camera.py`
 - [poc_traffic_counting](../../../../examples/poc_traffic_counting.py) — `py -3.11 examples/poc_traffic_counting.py`
