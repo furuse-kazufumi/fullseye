@@ -1098,15 +1098,18 @@ def write_figures(fan: dict, cone: dict, mis: dict, dual: dict, g: Gates) -> Non
     panels = [_crop(mis["images"][n], mask) for n in names] + [_crop(mis["images"][n] - ref, mask) for n in names]
     byn = {r["name"]: r for r in mis["rows"]}
     okr, vo = byn["正しい"], byn["縦ずれ 7.2 画素を無視"]
-    caps = (["%s RMSE %.4f / 残差 %.4f%s" % (r["name"], r["rmse"], r["resid"],
-                                          "(正しい幾何より小さい)" if r["resid"] <= okr["resid"] and r is not okr else "")
+    short = {"正しい": "正しい", "面内回転 0.5° を無視": "回転無視", "縦ずれ 7.2 画素を無視": "縦ずれ無視",
+             "横に 1 画素(0.3 mm)ずらす": "横ずれ", "回転の向きを逆に": "向き逆"}
+    caps = (["%s %.4f / %.4f%s" % (short.get(r["name"], r["name"]), r["rmse"], r["resid"],
+                                     "★" if r["resid"] <= okr["resid"] and r is not okr else "")
              for r in mis["rows"]]
             + ["差(再構成 − 参照)" for _ in names])
     figs.save_grid("geometry_mistakes", panels, captions=caps, ncols=5, gray=[True] * 5 + [False] * 5,
                    signed=[False] * 5 + [True] * 5, vrange=[vr] * 5 + [(-0.03, 0.03)] * 5,
                    title="盲点: 縦ずれ 7.2 画素を無視すると参照から %.1f 倍遠いのに、再投影の残差は正しい幾何より小さい"
                          "(%.4f < %.4f)" % (vo["rmse"] / okr["rmse"], vo["resid"], okr["resid"]),
-                   caption="中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差)、下段 = 差 "
+                   caption="中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差。★ = 残差が正しい幾何以下)、"
+                           "左から 正しい / 面内回転 0.5° を無視 / 縦ずれ 7.2 画素を無視 / 横に 0.3 mm ずらす / 回転の向きを逆に。下段 = 差 "
                            "±0.03 /mm。縦ずれを無視したデータも、それ自体は矛盾の無いデータなので、再構成した像を投影し直すと"
                            "データによく合う —— 残差では幾何の誤りが見えない。参照(外の真値)と比べて初めて分かる。"
                            "横ずれと回転の向きの取り違えは残差にも出る。隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。")

@@ -31926,9 +31926,9 @@
             {
               "file": "02_failure_map.png",
               "content_box": [
-                117,
+                135,
                 0,
-                485,
+                450,
                 690
               ]
             },
@@ -31991,17 +31991,17 @@
             1600,
             1600
           ],
-          "bytes": 1121788,
+          "bytes": 1094234,
           "color_mad": [
-            1.8491,
+            1.7717,
             1.8243,
             0.4845,
             0.6191,
             0.0292,
             0.0265
           ],
-          "max_color_mad": 1.8491,
-          "source_sha256": "47cb455a56dd982902805b6ded04b2769f0c08f85f153be01b76e4e9461a5aed"
+          "max_color_mad": 1.8243,
+          "source_sha256": "a29c6da87bdb7dc316851c6495dcd1257192c807d1173806d8ff2d02ecb54881"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_stereo_multiscanline/story.en.gif",
@@ -32009,9 +32009,9 @@
             {
               "file": "02_failure_map.png",
               "content_box": [
-                117,
+                135,
                 0,
-                485,
+                450,
                 690
               ]
             },
@@ -32074,17 +32074,17 @@
             1600,
             1600
           ],
-          "bytes": 1121788,
+          "bytes": 1094234,
           "color_mad": [
-            1.8491,
+            1.7717,
             1.8243,
             0.4845,
             0.6191,
             0.0292,
             0.0265
           ],
-          "max_color_mad": 1.8491,
-          "source_sha256": "58e65f8bdbf0726f475f84f22deec059e1067f35813952ad31552e2692efab4c"
+          "max_color_mad": 1.8243,
+          "source_sha256": "507c7518582e51c9ee726e62be4a0f703c9fa70f079920103b3bfb70b1923abb"
         }
       },
       "reason": null,
@@ -32226,9 +32226,9 @@
               "file": "07_geometry_mistakes.png",
               "content_box": [
                 0,
-                185,
+                171,
                 720,
-                319
+                348
               ]
             },
             {
@@ -32292,17 +32292,17 @@
             1600,
             1600
           ],
-          "bytes": 723586,
+          "bytes": 725738,
           "color_mad": [
-            0.5906,
+            0.5425,
             0.4656,
             0.0649,
             0.1242,
             0.144,
             0.0357
           ],
-          "max_color_mad": 0.5906,
-          "source_sha256": "95e9d4b3640f7c8fd3604e7c32050f22e875c9e41363f60d8a0c88b4a931324f"
+          "max_color_mad": 0.5425,
+          "source_sha256": "d65e3a240165690cedb349efcaf8d5130c867b094c6fc04c9a4d4af64996c2dc"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_walnut_cbct/story.en.gif",
@@ -32311,9 +32311,9 @@
               "file": "07_geometry_mistakes.png",
               "content_box": [
                 0,
-                185,
+                171,
                 720,
-                319
+                348
               ]
             },
             {
@@ -32377,24 +32377,24 @@
             1600,
             1600
           ],
-          "bytes": 723586,
+          "bytes": 725738,
           "color_mad": [
-            0.5906,
+            0.5425,
             0.4656,
             0.0649,
             0.1242,
             0.144,
             0.0357
           ],
-          "max_color_mad": 0.5906,
-          "source_sha256": "b69db30fe2e02868d4de3bf009ff679ab5c0e69a4cf2333b7df2594ec0b50614"
+          "max_color_mad": 0.5425,
+          "source_sha256": "e6c9637c4d8fab723f2620e405fdbef8e986eb47281d33898c35ac91b8dab9b4"
         }
       },
       "reason": null,
       "cover": "07_geometry_mistakes.png",
       "still": "articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png",
       "alt": {
-        "ja": "中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差)、下段 = 差 ±0.03 /mm。縦ずれを無視したデータも、それ自体は矛盾の無いデータなので、再構成した像を投影し直すとデータによく合う —— 残差では幾何の誤りが見えない。参照(外の真値)と比べて初めて分かる。横ずれと回転の向きの取り違えは残差にも出る。隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。",
+        "ja": "中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差。★ = 残差が正しい幾何以下)、左から 正しい / 面内回転 0.5° を無視 / 縦ずれ 7.2 画素を無視 / 横に 0.3 mm ずらす / 回転の向きを逆に。下段 = 差 ±0.03 /mm。縦ずれを無視したデータも、それ自体は矛盾の無いデータなので、再構成した像を投影し直すとデータによく合う —— 残差では幾何の誤りが見えない。参照(外の真値)と比べて初めて分かる。横ずれと回転の向きの取り違えは残差にも出る。隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。",
         "en": "Reconstructing a Measured Cone-Beam CT Scan of a Walnut with FDK and Iterative Methods, Scored Against the Providers' Reference — TV Holds Up When Views Are Thinned, Nothing Recovers a Missing Angular Range"
       }
     },
