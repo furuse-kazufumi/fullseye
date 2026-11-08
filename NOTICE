@@ -30,8 +30,8 @@ Version 2.0. The dataset itself is not in this repository
   Sequences used: I_SI_01, I_OC_01, I_OC_02
   Changes made: tracks, outlines, markers, text and colour overlays drawn on
     the frames; frames placed side by side with masks; a background image
-    estimated from the frames; scaling, cropping, frame selection and
-    re-encoding (PNG / JPEG / GIF).
+    estimated from the frames; scaling (including 2x nearest-neighbour
+    enlargement), cropping, frame selection and re-encoding (PNG / JPEG / GIF).
 
   Files (CC BY-SA 4.0):
     docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png

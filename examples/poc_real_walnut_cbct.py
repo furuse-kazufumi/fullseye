@@ -1106,8 +1106,9 @@ def write_figures(fan: dict, cone: dict, mis: dict, dual: dict, g: Gates) -> Non
             + ["差(再構成 − 参照)" for _ in names])
     figs.save_grid("geometry_mistakes", panels, captions=caps, ncols=5, gray=[True] * 5 + [False] * 5,
                    signed=[False] * 5 + [True] * 5, vrange=[vr] * 5 + [(-0.03, 0.03)] * 5,
-                   title="盲点: 縦ずれ 7.2 画素を無視すると参照から %.1f 倍遠いのに、再投影の残差は正しい幾何より小さい"
-                         "(%.4f < %.4f)" % (vo["rmse"] / okr["rmse"], vo["resid"], okr["resid"]),
+                   title="盲点: 縦ずれ 7.2 画素を無視すると参照から %.1f 倍遠いのに、再投影の残差では見分けられない"
+                         "(%.4f 対 %.4f、差 %.1f %%)" % (vo["rmse"] / okr["rmse"], vo["resid"], okr["resid"],
+                                                    100 * abs(vo["resid"] - okr["resid"]) / okr["resid"]),
                    caption="中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差。★ = 残差が正しい幾何以下)、"
                            "左から 正しい / 面内回転 0.5° を無視 / 縦ずれ 7.2 画素を無視 / 横に 0.3 mm ずらす / 回転の向きを逆に。下段 = 差 "
                            "±0.03 /mm。縦ずれを無視したデータも、それ自体は矛盾の無いデータなので、再構成した像を投影し直すと"

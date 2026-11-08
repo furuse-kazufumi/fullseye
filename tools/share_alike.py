@@ -37,14 +37,14 @@ DATASETS = (
 )
 
 _LINE = {
-    "ja": "この図は {credit} の改変物で、{lic}({url})。Apache-2.0 ではない。",
-    "en": "This figure is adapted from {credit} and licensed {lic} ({url}), not Apache-2.0.",
-    "zh": "此图改编自 {credit},采用 {lic}({url}),不适用 Apache-2.0。",
-    "tw": "此圖改編自 {credit},採用 {lic}({url}),不適用 Apache-2.0。",
-    "ko": "이 그림은 {credit}의 개작물이며 {lic}({url})입니다. Apache-2.0이 아닙니다.",
-    "de": "Diese Abbildung ist eine Bearbeitung von {credit} und steht unter {lic} ({url}), nicht Apache-2.0.",
-    "hi": "यह चित्र {credit} का रूपांतरण है और {lic} ({url}) के अंतर्गत है, Apache-2.0 नहीं।",
-    "fr": "Cette figure est une adaptation de {credit}, sous licence {lic} ({url}), et non Apache-2.0.",
+    "ja": "この図は {credit}(出典 {src})の改変物で、{lic}({url})。Apache-2.0 ではない。改変の内容は NOTICE。",
+    "en": "This figure is adapted from {credit} (source: {src}) and licensed {lic} ({url}), not Apache-2.0; changes are listed in NOTICE.",
+    "zh": "此图改编自 {credit}(来源 {src}),采用 {lic}({url}),不适用 Apache-2.0。修改内容见 NOTICE。",
+    "tw": "此圖改編自 {credit}(來源 {src}),採用 {lic}({url}),不適用 Apache-2.0。修改內容見 NOTICE。",
+    "ko": "이 그림은 {credit}(출처 {src})의 개작물이며 {lic}({url})입니다. Apache-2.0이 아닙니다. 변경 내용은 NOTICE.",
+    "de": "Diese Abbildung ist eine Bearbeitung von {credit} (Quelle: {src}) und steht unter {lic} ({url}), nicht Apache-2.0; Änderungen siehe NOTICE.",
+    "hi": "यह चित्र {credit} (स्रोत: {src}) का रूपांतरण है और {lic} ({url}) के अंतर्गत है, Apache-2.0 नहीं; बदलाव NOTICE में।",
+    "fr": "Cette figure est une adaptation de {credit} (source : {src}), sous licence {lic} ({url}), et non Apache-2.0 ; modifications dans NOTICE.",
 }
 _SHORT = {"ja": "図: {name} · {lic}", "en": "Figure: {name} · {lic}", "zh": "图: {name} · {lic}",
           "tw": "圖: {name} · {lic}", "ko": "그림: {name} · {lic}", "de": "Abb.: {name} · {lic}",
@@ -102,7 +102,8 @@ def attribution(poc_id: str, lang: str) -> str | None:
     ds = dataset_for(poc_id)
     if ds is None:
         return None
-    return _LINE.get(lang, _LINE["en"]).format(credit=ds["credit"], lic=ds["license"], url=ds["license_url"])
+    return _LINE.get(lang, _LINE["en"]).format(credit=ds["credit"], src=ds["source_url"], lic=ds["license"],
+                                               url=ds["license_url"])
 
 
 def short_label(poc_id: str, lang: str) -> str | None:
