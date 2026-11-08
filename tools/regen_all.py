@@ -720,6 +720,7 @@ NOT_A_GENERATOR = {
                                                "dist は repo に入れない。"),
     "tools/mcp_agent_eval.py": "測定器(ローカル LLM に MCP ツールだけで課題を解かせ、真値で採点する)。LLM の応答で結果が変わり、出力は --output/--report の指定先(repo の外)。--validate-only は LLM なしの門で tests/test_mcp_agent_eval_tasks.py が回す。",
     "tools/fetch_sem_metal_layer.py": "取得器(実データ Metal-layer SEM 6.4 GB を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
+    "tools/fetch_walnut_cbct.py": "取得器(実測のコーンビーム CT、クルミ 1 の 6 GB の zip から 1309 要素だけを Range で repo の外へ取り出し、CRC-32 と SHA-256 の一覧で照合する)。生成物は無く、CI では回さない。",
     "tools/check_fallback_parity.py": "門の実測(min 構成 = cv2/skimage/PIL なしで op が別の答えを返さないか、full と ULP 照合)。出力は一時 dir か --out の指定先で、repo の生成物は無い。",
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
     "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",

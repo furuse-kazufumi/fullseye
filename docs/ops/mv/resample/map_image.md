@@ -6,7 +6,7 @@ in: image2d × table
 out: image2d
 halcon: map_image
 gpu: なし
-examples: [machine_vision_tour]
+examples: [machine_vision_tour, poc_real_chessboard_undistort]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -49,6 +49,7 @@ Returns:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [machine_vision_tour](../../../../examples/machine_vision_tour.py) — `py -3.11 examples/machine_vision_tour.py`
+- [poc_real_chessboard_undistort](../../../../examples/poc_real_chessboard_undistort.py) — `py -3.11 examples/poc_real_chessboard_undistort.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

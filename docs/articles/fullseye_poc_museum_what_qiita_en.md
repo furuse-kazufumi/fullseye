@@ -4,13 +4,13 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**142 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**144 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 46 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 47 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -669,6 +669,8 @@ fullseye stopped at OCR pre-processing and had no layer answering "where is the 
 [![Where Is the Text, Without a Recogniser — Grading a Stroke-Width Detector on Text We Drew Ourselves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene.png)
 
 *↑ **Where Is the Text, Without a Recogniser — Grading a Stroke-Width Detector on Text We Drew Ourselves** ―― fullseye stopped at OCR pre-processing and had no layer answering "where is the text". Recognisers (trained models) stay out by design, so the geometry of text alone — a stroke has nearly constant width — drives a classical detector (Stroke Width Transform, Epshtein 2010) in three ops, graded on text we rendered ourselves (ink pixels known to the pixel). Three truths: for a rectangular stroke of width w the SWT equals w at every pixel (edges are defined as the inner boundary pixels on the ink side and width = centre-to-centre distance of opposing boundary pixels + 1, which makes it an exact integer); doubling the image doubles the median from 5 to 10; and the fraction of drawn ink that falls inside candidate boxes (recall). Latin text at size ≥ 32 reaches 80–90 % ink recall, CJK (kanji/kana) 60–79 %, box precision about 50 % (boxes include the glyphs' white space). A 6 sizes × 4 noise levels table shows that what breaks detection is small text, not noise (the dip at size 16 below size 12 is printed as unexplained). Without a CJK font the example runs Latin only and says so.*
+
+Terms: OCR — Reading the characters in an image as text, by segmenting them and classifying each glyph.
 
 [![真値は描いたインク画素。再現率 = インクのうち候補矩形に入った割合。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin.png)
 
@@ -1482,6 +1484,8 @@ Five-by-seven dot lot numbers and expiry dates printed by continuous inkjet, and
 
 *↑ **Past the Blur It Was Trained On, Lot-Number OCR Misreads Instead of Rejecting** ―― Five-by-seven dot lot numbers and expiry dates printed by continuous inkjet, and stroke characters printed by thermal transfer, are synthesised and read with classical OCR: k-nearest neighbours on 88 zone-density and projection features, with a rejection threshold set from the training distribution. The character set has 40 symbols and there are 3840 training samples per font. Clean prints are read in full in both fonts, with segmentation boxes at IoU 1.00 against the truth. An out-of-set '#' becomes '?' instead of turning into another character. The legibility POD for a 13-character line is d90 10.70 px and d90/95 10.40 px for dots, and d90 11.62 px for strokes (character height 24 px); the character-height h90 is 9.61 px. Misreads are counted separately: none up to the d90 blur, 18 misread lines against 2 read correctly at a 12.67 px blur, and 6 of 6 lines misread at 16.0 px. A misread lot number points a recall at the wrong batch, so the read rate and the misread rate are not merged into one number.*
 
+Terms: OCR — Reading the characters in an image as text, by segmenting them and classifying each glyph.; k-NN — A classifier that labels a sample by majority vote among the k training samples with the closest features.
+
 [![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/02_lot_ocr_levels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/02_lot_ocr_levels.png)
 
 *↑ The measurement (figure labels are in Japanese; the numbers are the same)*
@@ -1496,11 +1500,51 @@ This run produced **2 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`capture_degrade`](https://furuse.work/ops/symbol/symbol_capture/capture_degrade.html) · [`ocr_classify`](https://furuse.work/ops/symbol/ocr/ocr_classify.html) · [`ocr_features`](https://furuse.work/ops/symbol/ocr/ocr_features.html) · [`ocr_font`](https://furuse.work/ops/symbol/ocr/ocr_font.html) · [`ocr_read_line`](https://furuse.work/ops/symbol/ocr/ocr_read_line.html) · [`ocr_read_trials`](https://furuse.work/ops/symbol/ocr/ocr_read_trials.html) · [`ocr_render_text`](https://furuse.work/ops/symbol/ocr/ocr_render_text.html) · [`ocr_score`](https://furuse.work/ops/symbol/ocr/ocr_score.html) · [`ocr_segment_line`](https://furuse.work/ops/symbol/ocr/ocr_segment_line.html) · [`ocr_train`](https://furuse.work/ops/symbol/ocr/ocr_train.html) · [`symbol_read_pod`](https://furuse.work/ops/symbol/read_pod/symbol_read_pod.html)
 
+## No.2026.301 —— Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 97-98 %, and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed
+
+Three 300-dpi pages of the real scan of NACA Technical Note 898 (1943; NASA NTRS, copyright field: Public Use Permitted) are read with Fullseye's line-orientation, character-segmentation, classifier and dictionary operators, and scored against 100 lines transcribed by eye. With the same features, the same training pages (pages 1 and 3, 1,997 glyphs) and a separate test page (page 5, 1,562 glyphs), the accuracies are GMM 0.969, k-NN 0.981, MLP 0.966 and SVM 0.973; k-NN and the one-component GMM agree on every test glyph with the same formulas written with scikit-learn and scipy. Typewriter print has a single typeface and real smudges, broken strokes and tilt, much like stamped or printed markings on factory parts. Leakage checks: training and test pages differ, no test glyph has a feature vector identical to a training glyph (minimum distance 0.3), standardisation and principal components are fitted on the training pages only, and shuffling the training labels drops k-NN to 0.051 (below the 0.121 share of the most common letter e). Ten test glyphs belong to classes absent from training (/, 6, 7, ;, =, V), so the ceiling is 0.994; the most common confusions are 7 to v, 9 to e, / to y and S to s. Orientation: text_line_orientation recovers known rotations of a page to within 0.007 degrees over +/-28 degrees and misses 35 degrees, outside its +/-30 degree scan, by 13 degrees; an independent least-squares fit through the bottoms of x-height letters confirms the deskewed pages to within 0.01 degrees, while the small, curved scikit-image page (BSD-3) is off by about 0.3 degrees. Slant: text_line_slant recovers known shears of 5 degrees or more to within 1.3 degrees but reports 0 for shears within +/-2 degrees, because the vertical strokes are about 20 pixels tall and a 2-degree shear moves them by less than one pixel. Segmentation: segment_characters matches the transcribed glyph count on 82 of 100 lines (max_gap 3 is the best of a sweep: 55 lines at 0, 27 at 5); the misses are broken strokes, margin specks and tightly spaced capital headings. select_characters selects by height, so all 25 glyphs it drops are punctuation (. - / ( )). Dictionary: correcting to the nearest word within edit distance 1 with a closed vocabulary that includes the test page's words (the factory case where the allowed strings are known) raises word accuracy for all four classifiers without breaking any word (k-NN 310 to 324 of 336 words) and exact lines from 15 to 22 of 34. With an open vocabulary built from the training pages only, correct readings such as part and hole are turned into apart and holes, and word accuracy falls for all four (22-23 words broken). Correcting only words that contain a glyph with GMM posterior below 0.999 breaks nothing but fixes only one or two words: the posterior flags 13 of the GMM's 49 errors, and its median on wrong glyphs is still 1.000. Reproducibility: training twice with the same seed gives identical model arrays and predictions for all four classifiers. The data provider has no transcription, so the lines were transcribed by eye (this typewriter has no key for the digit 1, so it is typed and transcribed as a lower-case l). The PDF is not in the repository; a fetch tool pins it by SHA-256, and CI runs only the scikit-image page chapter.
+
+[![Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 97-98 %, and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/01_reading_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/01_reading.png)
+
+*↑ **Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 97-98 %, and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed** ―― Page 5 of NACA TN 898 (the test page; typewritten in 1943, scanned at 300 dpi). Boxes: glyphs from segment_characters; letters below: the k-NN reading. Blue (o) right, orange (x) wrong, grey: glyph count disagrees with the transcription, so the line is not scored.*
+
+Terms: OCR — Reading the characters in an image as text, by segmenting them and classifying each glyph.; GMM — A model of a distribution as a weighted sum of Gaussians; fitted per class, it classifies by posterior probability.; k-NN — A classifier that labels a sample by majority vote among the k training samples with the closest features.; MLP — A fully connected neural network with one or more nonlinear hidden layers between input and output.; SVM — A classifier that separates classes by the boundary with the largest margin between them.
+
+[![頁を既知の角度で回して当てた。タイプ打ちの頁は ±0.01° 以内、曲がった小さな頁は 0.3° 前後。範囲外の 35° は誤差 13.3°(NACA)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/02_rotation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/02_rotation.png)
+
+*↑ The measurement ―― 頁を既知の角度で回して当てた。タイプ打ちの頁は ±0.01° 以内、曲がった小さな頁は 0.3° 前後。範囲外の 35° は誤差 13.3°(NACA)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![直立した印字を既知の角度でせん断した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/03_slant_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/03_slant.png)
+
+*↑ 直立した印字を既知の角度でせん断した。*
+
+[![小さいと、かすれて割れた字が 2 字に、大きいと詰まった大文字が 1 字になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/04_gap_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/04_gap_sweep.png)
+
+*↑ 小さいと、かすれて割れた字が 2 字に、大きいと詰まった大文字が 1 字になる。*
+
+[![同じ特徴(区画濃度・射影・重心、主成分 24)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/05_classifiers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/05_classifiers.png)
+
+*↑ 同じ特徴(区画濃度・射影・重心、主成分 24)。*
+
+[![開いた語彙 = 学習頁の語 230 語、閉じた語彙 = 試験頁の語も入れた 380 語(許される文字列が先に分かる場合の上限)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/06_lexicon_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/06_lexicon.png)
+
+*↑ 開いた語彙 = 学習頁の語 230 語、閉じた語彙 = 試験頁の語も入れた 380 語(許される文字列が先に分かる場合の上限)。*
+
+```
+py -3.11 examples/poc_real_typewritten_ocr.py
+```
+
+Source: [examples/poc_real_typewritten_ocr.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_typewritten_ocr.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_typewritten_ocr)
+
+Ops used (notes): [`area_center_gray`](https://furuse.work/ops/mv/gray/area_center_gray.html) · [`classify_class_gmm`](https://furuse.work/ops/mv/classify/classify_class_gmm.html) · [`classify_class_knn`](https://furuse.work/ops/mv/classify/classify_class_knn.html) · [`classify_class_mlp`](https://furuse.work/ops/mv/classify/classify_class_mlp.html) · [`classify_class_svm`](https://furuse.work/ops/mv/classify/classify_class_svm.html) · [`create_lexicon`](https://furuse.work/ops/mv/classify/create_lexicon.html) · [`evaluate_class_gmm`](https://furuse.work/ops/mv/classify/evaluate_class_gmm.html) · [`gray_histo`](https://furuse.work/ops/mv/gray/gray_histo.html) · [`gray_projections`](https://furuse.work/ops/mv/gray/gray_projections.html) · [`lookup_lexicon`](https://furuse.work/ops/mv/classify/lookup_lexicon.html) · [`segment_characters`](https://furuse.work/ops/mv/text/segment_characters.html) · [`select_characters`](https://furuse.work/ops/mv/text/select_characters.html) · [`suggest_lexicon`](https://furuse.work/ops/mv/classify/suggest_lexicon.html) · [`text_line_orientation`](https://furuse.work/ops/mv/text/text_line_orientation.html) · [`text_line_slant`](https://furuse.work/ops/mv/text/text_line_slant.html) · [`train_class_gmm`](https://furuse.work/ops/mv/classify/train_class_gmm.html) · [`train_class_knn`](https://furuse.work/ops/mv/classify/train_class_knn.html) · [`train_class_mlp`](https://furuse.work/ops/mv/classify/train_class_mlp.html) · [`train_class_svm`](https://furuse.work/ops/mv/classify/train_class_svm.html)
+
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 48 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 49 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -3305,6 +3349,36 @@ Source: [examples/poc_real_file_formats.py](https://github.com/furuse-kazufumi/f
 This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_file_formats)
 
 Ops used (notes): [`aperture_photometry`](https://furuse.work/ops/astrostack/photometry/aperture_photometry.html) · [`astro_fits_read`](https://furuse.work/ops/fileio/fits/astro_fits_read.html) · [`e57_read`](https://furuse.work/ops/fileio/e57/e57_read.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`em_mrc_read`](https://furuse.work/ops/fileio/mrc/em_mrc_read.html) · [`nifti_read`](https://furuse.work/ops/fileio/nifti/nifti_read.html) · [`ome_tiff_read`](https://furuse.work/ops/fileio/ome_tiff/ome_tiff_read.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`star_detect`](https://furuse.work/ops/astrostack/photometry/star_detect.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html) · [`vol_region_props`](https://furuse.work/ops/3d/regionprops/vol_region_props.html)
+
+## No.2026.306 —— Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not
+
+320 tint-etched polycrystalline micrographs from TBM (Zenodo 8386997, CC BY 4.0; 128 x 128 px, about 0.9 um per pixel) with grain boundaries drawn by a materials expert (thick and thin versions). Pixels of low Lab gradient are split by opening_seg into seeds and morph_skiz draws the boundaries of their zones of influence. Parameters are chosen on the 152 crops from even-numbered source images and scored on the 168 from odd-numbered ones. Boundary position: F 0.697 against the expert's thin line (3 px tolerance); a watershed from the same seeds gives 0.704 and wins on 68% of crops, because SKIZ draws its line midway between seeds and never looks at the image. Grain size (ASTM E112 lineal intercept, test lines every 16 px): the pooled mean intercept is 26.2 px for the expert and 21.1 px for SKIZ (ratio 0.805, delta G +0.63), yet the per-crop ranking does not agree (Spearman rho -0.16). The SKIZ intercept barely changes from crop to crop (coefficient of variation 0.145 against the expert's 0.311): seeds set by a gradient percentile have a density that does not follow grain size, and SKIZ finds three times as many grains (median 57 against 18). Operator checks: morph_skiz matches the zone boundaries of scikit-image's expand_labels pixel for pixel on all 168 crops and never yields fewer cells than seeds, but its right-or-lower-neighbour rule leaves one-pixel spurs on 82% of crops (counted with hit_or_miss_seq and the Golay E). Thinning: sequential thinning of the expert's thick line with the eight rotations of the Golay L follows the same path as skeletonize (F 0.991) with 1.4 times the pixels, being a 4-connected staircase. Of the 5,072 places where the thick line touches the image border, the Golay line reaches the border at 96% and skeletonize at 66%; through the one-pixel gaps skeletonize leaves, border grains merge with their neighbours and drop from 12.9 to 8.2 per crop (13.0 with Golay).
+
+[![Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries.png)
+
+*↑ **Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography, Compared with an Expert's Drawing — The Pooled Grain Size Agrees while the Per-Image Ranking Does Not** ―― Real tint-etched metallography from TBM (128 x 128 px, about 115 um square, shown 3x). Left: the micrograph; right: expert hand-drawn grain boundaries in white and morph_skiz boundaries in sky blue.*
+
+[![19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning.png)
+
+*↑ The measurement ―― 19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![16 画素おきの縦横の試験線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/03_intercepts.png)
+
+*↑ 16 画素おきの縦横の試験線。*
+
+[![学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers.png)
+
+*↑ 学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。*
+
+```
+py -3.11 examples/poc_real_grain_skiz.py
+```
+
+Source: [examples/poc_real_grain_skiz.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_grain_skiz.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_grain_skiz)
+
+Ops used (notes): [`hit_or_miss_golay`](https://furuse.work/ops/mv/morphology/hit_or_miss_golay.html) · [`hit_or_miss_seq`](https://furuse.work/ops/mv/morphology/hit_or_miss_seq.html) · [`morph_skiz`](https://furuse.work/ops/mv/morphology/morph_skiz.html) · [`opening_seg`](https://furuse.work/ops/mv/morphology/opening_seg.html) · [`percentile`](https://furuse.work/ops/2d/rank/percentile.html) · [`thinning`](https://furuse.work/ops/2d/region/thinning.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 

@@ -1,0 +1,66 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "bad2 4.67 %(有効だけ)/ 密度 90.0 %。OpenCV SGBM は 7.27 % / 88.4 %。",
+  "shape": [
+   1135,
+   1512,
+   3
+  ]
+ },
+ {
+  "file": "02_failure_map.png",
+  "name": "failure_map",
+  "caption": "遮蔽 bad2 71.5 % 無効 57.0 % / 段差の近く bad2 14.1 % 無効 9.7 % / 無地 bad2 4.1 % 無効 14.5 % / 見え方が変わる面 bad2 11.5 % 無効 20.7 % / それ以外 bad2 0.8 % 無効 5.7 %",
+  "shape": [
+   1135,
+   761,
+   3
+  ]
+ },
+ {
+  "file": "03_wheel_pose.png",
+  "name": "wheel_pose",
+  "caption": "真値に近い解: 中心 23.5 mm・法線 7.74°。もう 1 つの解は法線が 52.6° 違うのに再投影の差は 0.007 px。",
+  "shape": [
+   433,
+   830,
+   3
+  ]
+ },
+ {
+  "file": "04_sparse_ncc.png",
+  "name": "sparse_ncc",
+  "caption": "Lepetit 点 bad2 13.8 %、でたらめな画素 16.3 %。NCC は OpenCV と位置が全点一致。",
+  "shape": [
+   593,
+   761,
+   3
+  ]
+ },
+ {
+  "file": "05_classes.png",
+  "name": "classes",
+  "caption": "遮蔽は真値から幾何で数えた。",
+  "shape": [
+   400,
+   1194,
+   3
+  ],
+  "csv": "05_classes.csv",
+  "tsv": "05_classes.tsv"
+ },
+ {
+  "file": "06_middeval3.png",
+  "name": "middeval3",
+  "caption": "同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。",
+  "shape": [
+   880,
+   1028,
+   3
+  ],
+  "csv": "06_middeval3.csv",
+  "tsv": "06_middeval3.tsv"
+ }
+]

@@ -362,6 +362,108 @@ def e57_bunny_files(*, required: bool = True) -> dict[str, Path] | None:
     return present
 
 
+# --------------------------------------------------------------------------- #
+# 実測のコーンビーム CT: クルミ(Der Sarkissian ほか 2019、CC BY 4.0)
+# --------------------------------------------------------------------------- #
+#: Zenodo のレコード(標本 1〜8)。``tools/fetch_walnut_cbct.py`` が標本 1 の zip から一部だけ取る。
+WALNUT_CBCT_RECORD = "https://zenodo.org/records/2686726"
+WALNUT_CBCT_URL = "https://zenodo.org/api/records/2686726/files/Walnut1.zip/content"
+#: zip の大きさ(Zenodo の API が返した値。md5 は ``0ecd525f245e3029788538a44f5491e3``、全体を取らないので
+#: 照合は要素ごとの CRC-32 と下の一覧の SHA-256 で行う)。
+WALNUT_CBCT_ZIP_BYTES = 6_058_580_169
+WALNUT_CBCT_DATASET_DOI = "10.5281/zenodo.2686726"
+WALNUT_CBCT_PAPER_DOI = "10.1038/s41597-019-0235-y"
+WALNUT_CBCT_LICENSE = "CC BY 4.0"
+#: 使う標本と軌道(2 = 中段の線源位置。配布元の FDK 参照 ``fdk_pos2`` と同じ軌道)。
+WALNUT_CBCT_SAMPLE = 1
+WALNUT_CBCT_ORBIT = 2
+#: 投影の間引き: 1200 枚から 4 枚に 1 枚(配布元の ``angluar_sub_sampling`` と同じ数え方)。
+WALNUT_CBCT_ANGULAR_STEP = 4
+#: 同じ角度を 2 度撮った投影(0 番と 1200 番は同じ角度。配布元の FDK スクリプトの注記)。差が雑音だけになる。
+WALNUT_CBCT_REPEAT_INDEX = 0
+#: 配布元の参照再構成: 3 軌道すべてを使った非負最小二乗(Nesterov 50 回)と、軌道 2 の FDK。
+WALNUT_CBCT_RECONSTRUCTIONS = ("full_AGD_50", "fdk_pos2")
+WALNUT_CBCT_REFERENCE_SLICES = 501
+#: 取得物の一覧(名前・大きさ・SHA-256)の SHA-256。2026-11-07 に取得して固定した値。
+WALNUT_CBCT_MANIFEST_SHA256 = "af0d0d5cda5d55eb8e602c572bf1dd610eabeca9d892009e98975e0c3163c24d"
+WALNUT_CBCT_MANIFEST = "manifest_sha256.json"
+
+
+def walnut_cbct_projection_indices() -> list[int]:
+    """取得する投影のファイル番号(配布元の FDK スクリプトと同じく逆順: 1200, 1196, ...)。"""
+    return list(range(1200, 0, -WALNUT_CBCT_ANGULAR_STEP))
+
+
+def walnut_cbct_cache() -> Path:
+    """クルミ CT の repo 外キャッシュ先(``FULLSEYE_WALNUT_CBCT_DATA`` で上書き)。
+
+    開発 worktree が ``<root>/projects/<checkout>`` にあれば ``<root>/data/fullseye_poc_real/walnut_cbct``、
+    それ以外はユーザーキャッシュ(:func:`sem_metal_layer_cache` と同じ形)。
+    """
+    configured = os.environ.get("FULLSEYE_WALNUT_CBCT_DATA", "").strip()
+    if configured:
+        return Path(configured).expanduser()
+    here = Path(__file__).resolve().parent
+    if here.parent.name.lower() == "projects":
+        return here.parent.parent / "data" / "fullseye_poc_real" / "walnut_cbct"
+    return Path.home() / ".cache" / "fullseye" / "walnut_cbct"
+
+
+def _walnut_manifest_bytes(rows) -> bytes:
+    import json as _json
+
+    return _json.dumps(rows, ensure_ascii=True, separators=(",", ":"), sort_keys=True).encode("ascii")
+
+
+def walnut_cbct_write_manifest(root: Path, names) -> str:
+    """取得した全要素の (名前, 大きさ, SHA-256) を書き、その SHA-256 を返す(取得道具が呼ぶ)。"""
+    rows = []
+    for name in sorted(names):
+        p = Path(root) / name
+        rows.append([name, p.stat().st_size, _sha256_file(p)])
+    raw = _walnut_manifest_bytes(rows)
+    (Path(root) / WALNUT_CBCT_MANIFEST).write_bytes(raw)
+    import hashlib
+
+    return hashlib.sha256(raw).hexdigest()
+
+
+def walnut_cbct_root(*, required: bool = True, root: Path | None = None, deep: bool = True) -> Path | None:
+    """取得済みのクルミ CT の置き場を、一覧の SHA-256(と各要素の SHA-256)を照合してから返す。
+
+    無ければ ``required=False`` で ``None``(CI の既定)。一覧が台帳と違う・要素が欠ける・中身が
+    違う場合は黙って使わず :class:`RealDataError` にする(取得物は untrusted として照合してから読む)。
+    """
+    import hashlib
+    import json as _json
+
+    root = Path(root) if root is not None else walnut_cbct_cache()
+    mpath = root / WALNUT_CBCT_MANIFEST
+    if not mpath.is_file():
+        if required:
+            raise RealDataError("クルミ CT が無い: %s。tools/fetch_walnut_cbct.py で取得する" % root)
+        return None
+    raw = mpath.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if WALNUT_CBCT_MANIFEST_SHA256 is None or digest != WALNUT_CBCT_MANIFEST_SHA256:
+        raise RealDataError("クルミ CT の一覧の SHA-256 %s が台帳 %s と違う" % (digest, WALNUT_CBCT_MANIFEST_SHA256))
+    rows = _json.loads(raw.decode("ascii"))
+    for name, size, sha in rows:
+        p = root / name
+        if not p.is_file() or p.stat().st_size != size:
+            raise RealDataError("クルミ CT の要素が欠けている / 大きさが違う: %s" % name)
+        if deep and _sha256_file(p) != sha:
+            raise RealDataError("クルミ CT の要素の SHA-256 が一覧と違う: %s" % name)
+    return root
+
+
+def walnut_cbct_credit() -> str:
+    """クルミのコーンビーム CT の帰属表記(論文とデータの DOI、ライセンス)を返す。図と実行ログへ載せる。"""
+    return ("Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data "
+            "collection designed for machine learning, Sci. Data 6, 215 (2019), doi:%s; data doi:%s, %s"
+            % (WALNUT_CBCT_PAPER_DOI, WALNUT_CBCT_DATASET_DOI, WALNUT_CBCT_LICENSE))
+
+
 if __name__ == "__main__":                                      # pragma: no cover
     ok, ng = [], []
     for name in sorted(SAMPLE_PHOTOS):

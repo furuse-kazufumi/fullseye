@@ -1,0 +1,82 @@
+[
+ {
+  "file": "01_pillar_crossing.png",
+  "name": "pillar_crossing",
+  "caption": "LASIESTA I_OC_01 の第 206 コマ。空色の太線 = filter_kalman が観測で更新した位置、橙の細線 = 予測だけで進めた区間(柱の裏 26 コマと一部が隠れたコマ)、朱 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。柱に半分入りかけたコマを更新に使ったので予測は上へ傾き、出てきたコマで 31 画素ずれたが、NIS の門の内側で同じ番号のまま拾い直した。",
+  "shape": [
+   576,
+   704,
+   3
+  ],
+  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Frames shown unmodified except for drawn overlays"
+ },
+ {
+  "file": "02_tracking_movie.gif",
+  "name": "tracking_movie",
+  "caption": "I_OC_01 を 4 コマおきに再生。空色 = カルマンの観測更新、橙 = 予測だけ、朱 = 予測なしの最近傍。",
+  "shape": [
+   288,
+   352,
+   3
+  ],
+  "animated": true,
+  "frames": 40,
+  "frames_written": 40,
+  "fps": 10.0
+ },
+ {
+  "file": "03_masks_i_oc_01.png",
+  "name": "masks_i_oc_01",
+  "caption": "I_OC_01 の第 151 コマ。左から 実写 / 真値(白 = 前景、灰 = 判定しない輪郭)/ Fullseye(閾値 0.05、動かない塊の吸収あり)/ MOG2(varThreshold 64)。空色 = 正しい前景、朱 = 誤検出、白 = 見逃し。",
+  "shape": [
+   288,
+   1426,
+   3
+  ],
+  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Frames shown unmodified except for drawn overlays"
+ },
+ {
+  "file": "04_masks_i_oc_02.png",
+  "name": "masks_i_oc_02",
+  "caption": "I_OC_02 の第 111 コマ。左から 実写 / 真値(白 = 前景、灰 = 判定しない輪郭)/ Fullseye(閾値 0.05、動かない塊の吸収あり)/ MOG2(varThreshold 64)。空色 = 正しい前景、朱 = 誤検出、白 = 見逃し。",
+  "shape": [
+   288,
+   1426,
+   3
+  ],
+  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Frames shown unmodified except for drawn overlays"
+ },
+ {
+  "file": "05_background.png",
+  "name": "background",
+  "caption": "I_OC_01 の背景。左から 真値の背景画素の時間の中央値 / give_bg_esti(吸収なし)/ give_bg_esti(吸収あり)/ 差の 4 倍(吸収なし)/ 差の 4 倍(吸収あり)。",
+  "shape": [
+   288,
+   1784
+  ],
+  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Frames shown unmodified except for drawn overlays"
+ },
+ {
+  "file": "06_track_error.png",
+  "name": "track_error",
+  "caption": "真値の物体が見えているコマだけを打った。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Frames shown unmodified except for drawn overlays"
+ },
+ {
+  "file": "07_scores.png",
+  "name": "scores",
+  "caption": "F 値は CDnet の数え方(輪郭の灰色を除く全コマの和)。パラメータは I_SI_01 だけで選んだ。",
+  "shape": [
+   304,
+   1334,
+   3
+  ],
+  "csv": "07_scores.csv",
+  "tsv": "07_scores.tsv"
+ }
+]

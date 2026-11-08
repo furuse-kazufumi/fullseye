@@ -8224,6 +8224,108 @@
     "hi": "वास्तविक वैज्ञानिक data file पढ़ना",
     "fr": "Lire de vrais fichiers de données scientifiques"
    }
+  },
+  {
+   "id": "poc_real_bg_kalman_tracking",
+   "group": "wing_xyt",
+   "media": "01_pillar_crossing.png",
+   "motion": false,
+   "thumb_src": "01_pillar_crossing.png",
+   "label": {
+    "ja": "柱の裏をカルマン予測で通り抜ける",
+    "en": "Tracking through a pillar with a Kalman filter",
+    "zh": "用卡尔曼预测穿过柱子背后",
+    "tw": "用卡爾曼預測穿過柱子背後",
+    "ko": "칼만 예측으로 기둥 뒤를 통과하기",
+    "de": "Mit dem Kalman-Filter hinter der Säule hindurch",
+    "hi": "Kalman prediction से खंभे के पीछे tracking",
+    "fr": "Suivre derrière un pilier avec un filtre de Kalman"
+   }
+  },
+  {
+   "id": "poc_real_grain_skiz",
+   "group": "wing_metrology",
+   "media": "01_grain_boundaries.png",
+   "motion": false,
+   "thumb_src": "01_grain_boundaries.png",
+   "label": {
+    "ja": "金属組織の粒界を影響圏で引く",
+    "en": "Grain boundaries from zones of influence",
+    "zh": "用影响区划出金属晶界",
+    "tw": "用影響區畫出金屬晶界",
+    "ko": "영향권으로 금속 결정립계 긋기",
+    "de": "Korngrenzen aus Einflusszonen",
+    "hi": "Zones of influence से grain boundary",
+    "fr": "Joints de grains par zones d'influence"
+   }
+  },
+  {
+   "id": "poc_real_stereo_multiscanline",
+   "group": "wing_geometry",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene.png",
+   "label": {
+    "ja": "実写のステレオで視差・面・円の姿勢",
+    "en": "Disparity, surface and circle pose from real stereo",
+    "zh": "用真实立体像对求视差、曲面与圆的位姿",
+    "tw": "用真實立體像對求視差、曲面與圓的位姿",
+    "ko": "실제 스테레오로 시차·면·원의 자세",
+    "de": "Disparität, Fläche und Kreislage aus echtem Stereo",
+    "hi": "वास्तविक stereo से disparity, सतह और वृत्त की pose",
+    "fr": "Disparité, surface et pose de cercle en stéréo réelle"
+   }
+  },
+  {
+   "id": "poc_real_chessboard_undistort",
+   "group": "wing_geometry",
+   "media": "01_board.png",
+   "motion": false,
+   "thumb_src": "01_board.png",
+   "label": {
+    "ja": "実写の校正板で歪みを直し正面図へ",
+    "en": "Undistorting real calibration boards to a front view",
+    "zh": "用真实标定板去畸变并校正为正视图",
+    "tw": "用真實校正板去畸變並校正為正視圖",
+    "ko": "실제 보정판의 왜곡 보정과 정면도",
+    "de": "Echte Kalibrierplatten entzerren und frontal abbilden",
+    "hi": "वास्तविक calibration board का विरूपण सुधार और सामने का दृश्य",
+    "fr": "Corriger la distorsion de vraies mires et les redresser de face"
+   }
+  },
+  {
+   "id": "poc_real_walnut_cbct",
+   "group": "wing_imaging",
+   "media": "01_methods_sparse_limited.png",
+   "motion": false,
+   "thumb_src": "01_methods_sparse_limited_720.jpg",
+   "label": {
+    "ja": "実測のコーンビーム CT を再構成する",
+    "en": "Reconstructing a measured cone-beam CT scan",
+    "zh": "重建实测的锥束 CT",
+    "tw": "重建實測的錐束 CT",
+    "ko": "실측 콘빔 CT 재구성",
+    "de": "Einen gemessenen Kegelstrahl-CT-Scan rekonstruieren",
+    "hi": "मापे गए cone-beam CT scan का reconstruction",
+    "fr": "Reconstruire un scanner CT à faisceau conique mesuré"
+   }
+  },
+  {
+   "id": "poc_real_typewritten_ocr",
+   "group": "wing_industrial",
+   "media": "01_reading.png",
+   "motion": false,
+   "thumb_src": "01_reading.png",
+   "label": {
+    "ja": "1943 年のタイプ打ちの報告を古典 OCR で読む",
+    "en": "Reading a 1943 typewritten report with classical OCR",
+    "zh": "用经典 OCR 读取 1943 年的打字报告",
+    "tw": "用經典 OCR 讀取 1943 年的打字報告",
+    "ko": "1943년 타자 보고서를 고전 OCR로 읽기",
+    "de": "Einen Schreibmaschinenbericht von 1943 mit klassischer OCR lesen",
+    "hi": "1943 की टाइप की गई रिपोर्ट को क्लासिकल OCR से पढ़ना",
+    "fr": "Lire un rapport dactylographié de 1943 par OCR classique"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

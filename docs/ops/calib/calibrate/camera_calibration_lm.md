@@ -5,7 +5,7 @@ category: calibrate
 in: keypoints
 out: table
 gpu: なし
-examples: [poc_calibration_truth_map]
+examples: [poc_calibration_truth_map, poc_real_chessboard_undistort]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -56,6 +56,7 @@ rotation vector. Skew is fixed at 0.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_calibration_truth_map](../../../../examples/poc_calibration_truth_map.py) — `py -3.11 examples/poc_calibration_truth_map.py`
+- [poc_real_chessboard_undistort](../../../../examples/poc_real_chessboard_undistort.py) — `py -3.11 examples/poc_real_chessboard_undistort.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

@@ -6,7 +6,7 @@ in: table × image2d
 out: table
 halcon: run_bg_esti
 gpu: なし
-examples: [machine_vision_tour]
+examples: [machine_vision_tour, poc_real_bg_kalman_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -46,6 +46,7 @@ Returns:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [machine_vision_tour](../../../../examples/machine_vision_tour.py) — `py -3.11 examples/machine_vision_tour.py`
+- [poc_real_bg_kalman_tracking](../../../../examples/poc_real_bg_kalman_tracking.py) — `py -3.11 examples/poc_real_bg_kalman_tracking.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
