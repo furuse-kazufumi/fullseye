@@ -82,6 +82,9 @@ def test_view2026_pages_show_the_attribution():
                 assert not bare, "%s: %s のタイルにライセンスの表記が無い" % (page.relative_to(ROOT), poc)
                 assert ds["license_url"] in text and ds["source_url"] in text, \
                     "%s: %s のライセンスと出典へのリンクが無い" % (page.relative_to(ROOT), poc)
+                # 2026-11-09: 改変の内容は NOTICE に書いてあるので、ViEW のページからも NOTICE へ辿れること(記事側の門と揃える)。
+                assert share_alike.NOTICE_URL in text, \
+                    "%s: %s の帰属表示から NOTICE へのリンクが無い" % (page.relative_to(ROOT), poc)
     assert checked >= 8, "ViEW のページで継承条件つきの展示を 1 つも確かめていない(%d)" % checked
 
 
