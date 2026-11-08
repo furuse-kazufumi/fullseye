@@ -646,7 +646,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 ## 图的许可(相同方式共享)
 
-- **用卡尔曼预测穿过柱子背后**: 此图改编自 LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid)(来源 https://www.gti.ssr.upm.es/data/lasiesta_database),采用 CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/),不适用 Apache-2.0。修改内容见 NOTICE。 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
+- **用卡尔曼预测穿过柱子背后**: 此图改编自 LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid)(来源 https://www.gti.ssr.upm.es/data/lasiesta_database),采用 CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/),不适用 Apache-2.0。修改内容见 [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE)。 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
 
 ## 能看到什么/测得的数字
 

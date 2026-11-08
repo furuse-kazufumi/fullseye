@@ -646,7 +646,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 ## 그림 라이선스(동일조건변경허락)
 
-- **칼만 예측으로 기둥 뒤를 통과하기**: 이 그림은 LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid)(출처 https://www.gti.ssr.upm.es/data/lasiesta_database)의 개작물이며 CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)입니다. Apache-2.0이 아닙니다. 변경 내용은 NOTICE. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
+- **칼만 예측으로 기둥 뒤를 통과하기**: 이 그림은 LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid)(출처 https://www.gti.ssr.upm.es/data/lasiesta_database)의 개작물이며 CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)입니다. Apache-2.0이 아닙니다. 변경 내용은 [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE). [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
 
 ## 무엇이 보이나·측정한 숫자
 

@@ -98,5 +98,5 @@ def test_gallery_articles_label_every_share_alike_figure():
                 checked += 1
                 ds = share_alike.dataset_for(poc)
                 after = "\n".join(lines[i + 1:i + 6])
-                assert ds["license"] in after and ds["license_url"] in after and ds["source_url"] in after,                     "%s:%d: %s の下にライセンス・ライセンスの URL・出典の URL のどれかが無い" % (md.relative_to(ROOT), i + 1, name)
+                assert ds["license"] in after and ds["license_url"] in after and ds["source_url"] in after                     and share_alike.NOTICE_URL in after,                     "%s:%d: %s の下にライセンス・ライセンスの URL・出典の URL のどれかが無い" % (md.relative_to(ROOT), i + 1, name)
     assert checked >= 4, "記事で継承条件つきの図を 1 つも確かめていない(%d)" % checked

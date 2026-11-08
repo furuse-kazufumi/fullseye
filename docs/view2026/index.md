@@ -661,7 +661,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 ## 図のライセンス(継承条件つき)
 
-- **柱の裏をカルマン予測で通り抜ける**: この図は LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid)(出典 https://www.gti.ssr.upm.es/data/lasiesta_database)の改変物で、CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。Apache-2.0 ではない。改変の内容は NOTICE。 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
+- **柱の裏をカルマン予測で通り抜ける**: この図は LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid)(出典 https://www.gti.ssr.upm.es/data/lasiesta_database)の改変物で、CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。Apache-2.0 ではない。改変の内容は [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE)。 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
 
 ## 何が見えるか・測った数字
 

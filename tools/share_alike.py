@@ -21,6 +21,8 @@ ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "docs" / "articles" / "assets" / "poc"
 VIEW_THUMBS = ROOT / "docs" / "view2026" / "thumbs" / "all"
 IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg", ".gif")
+#: 読者がたどれる NOTICE(改変の内容と継承条件つきのファイルの一覧)。
+NOTICE_URL = "https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE"
 
 #: 継承条件つきのデータセット。``match`` は図の出典・説明にこの語があれば当たり(大文字小文字を区別しない)。
 DATASETS = (
@@ -37,14 +39,14 @@ DATASETS = (
 )
 
 _LINE = {
-    "ja": "この図は {credit}(出典 {src})の改変物で、{lic}({url})。Apache-2.0 ではない。改変の内容は NOTICE。",
-    "en": "This figure is adapted from {credit} (source: {src}) and licensed {lic} ({url}), not Apache-2.0; changes are listed in NOTICE.",
-    "zh": "此图改编自 {credit}(来源 {src}),采用 {lic}({url}),不适用 Apache-2.0。修改内容见 NOTICE。",
-    "tw": "此圖改編自 {credit}(來源 {src}),採用 {lic}({url}),不適用 Apache-2.0。修改內容見 NOTICE。",
-    "ko": "이 그림은 {credit}(출처 {src})의 개작물이며 {lic}({url})입니다. Apache-2.0이 아닙니다. 변경 내용은 NOTICE.",
-    "de": "Diese Abbildung ist eine Bearbeitung von {credit} (Quelle: {src}) und steht unter {lic} ({url}), nicht Apache-2.0; Änderungen siehe NOTICE.",
-    "hi": "यह चित्र {credit} (स्रोत: {src}) का रूपांतरण है और {lic} ({url}) के अंतर्गत है, Apache-2.0 नहीं; बदलाव NOTICE में।",
-    "fr": "Cette figure est une adaptation de {credit} (source : {src}), sous licence {lic} ({url}), et non Apache-2.0 ; modifications dans NOTICE.",
+    "ja": "この図は {credit}(出典 {src})の改変物で、{lic}({url})。Apache-2.0 ではない。改変の内容は [NOTICE]({notice})。",
+    "en": "This figure is adapted from {credit} (source: {src}) and licensed {lic} ({url}), not Apache-2.0; changes are listed in [NOTICE]({notice}).",
+    "zh": "此图改编自 {credit}(来源 {src}),采用 {lic}({url}),不适用 Apache-2.0。修改内容见 [NOTICE]({notice})。",
+    "tw": "此圖改編自 {credit}(來源 {src}),採用 {lic}({url}),不適用 Apache-2.0。修改內容見 [NOTICE]({notice})。",
+    "ko": "이 그림은 {credit}(출처 {src})의 개작물이며 {lic}({url})입니다. Apache-2.0이 아닙니다. 변경 내용은 [NOTICE]({notice}).",
+    "de": "Diese Abbildung ist eine Bearbeitung von {credit} (Quelle: {src}) und steht unter {lic} ({url}), nicht Apache-2.0; Änderungen siehe [NOTICE]({notice}).",
+    "hi": "यह चित्र {credit} (स्रोत: {src}) का रूपांतरण है और {lic} ({url}) के अंतर्गत है, Apache-2.0 नहीं; बदलाव [NOTICE]({notice}) में।",
+    "fr": "Cette figure est une adaptation de {credit} (source : {src}), sous licence {lic} ({url}), et non Apache-2.0 ; modifications dans [NOTICE]({notice}).",
 }
 _SHORT = {"ja": "図: {name} · {lic}", "en": "Figure: {name} · {lic}", "zh": "图: {name} · {lic}",
           "tw": "圖: {name} · {lic}", "ko": "그림: {name} · {lic}", "de": "Abb.: {name} · {lic}",
@@ -103,7 +105,7 @@ def attribution(poc_id: str, lang: str) -> str | None:
     if ds is None:
         return None
     return _LINE.get(lang, _LINE["en"]).format(credit=ds["credit"], src=ds["source_url"], lic=ds["license"],
-                                               url=ds["license_url"])
+                                               url=ds["license_url"], notice=NOTICE_URL)
 
 
 def short_label(poc_id: str, lang: str) -> str | None:

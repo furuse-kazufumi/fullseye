@@ -646,7 +646,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 ## चित्रों का लाइसेंस (share-alike)
 
-- **Kalman prediction से खंभे के पीछे tracking**: यह चित्र LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (स्रोत: https://www.gti.ssr.upm.es/data/lasiesta_database) का रूपांतरण है और CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/) के अंतर्गत है, Apache-2.0 नहीं; बदलाव NOTICE में। [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
+- **Kalman prediction से खंभे के पीछे tracking**: यह चित्र LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (स्रोत: https://www.gti.ssr.upm.es/data/lasiesta_database) का रूपांतरण है और CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/) के अंतर्गत है, Apache-2.0 नहीं; बदलाव [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE) में। [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
 
 ## क्या दिखता है, और मापी गई संख्या
 

@@ -646,7 +646,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 ## Licences des figures (partage dans les mêmes conditions)
 
-- **Suivre derrière un pilier avec un filtre de Kalman**: Cette figure est une adaptation de LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (source : https://www.gti.ssr.upm.es/data/lasiesta_database), sous licence CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), et non Apache-2.0 ; modifications dans NOTICE. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
+- **Suivre derrière un pilier avec un filtre de Kalman**: Cette figure est une adaptation de LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (source : https://www.gti.ssr.upm.es/data/lasiesta_database), sous licence CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), et non Apache-2.0 ; modifications dans [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE). [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
 
 ## Ce que l'on voit et la valeur mesurée
 

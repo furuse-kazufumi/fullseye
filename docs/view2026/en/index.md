@@ -648,7 +648,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 ## Figure licences (share-alike)
 
-- **Tracking through a pillar with a Kalman filter**: This figure is adapted from LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (source: https://www.gti.ssr.upm.es/data/lasiesta_database) and licensed CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), not Apache-2.0; changes are listed in NOTICE. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
+- **Tracking through a pillar with a Kalman filter**: This figure is adapted from LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (source: https://www.gti.ssr.upm.es/data/lasiesta_database) and licensed CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), not Apache-2.0; changes are listed in [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE). [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
 
 ## What you see, and the measured number
 

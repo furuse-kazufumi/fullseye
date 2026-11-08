@@ -646,7 +646,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 ## Lizenzen der Abbildungen (Weitergabe unter gleichen Bedingungen)
 
-- **Mit dem Kalman-Filter hinter der Säule hindurch**: Diese Abbildung ist eine Bearbeitung von LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (Quelle: https://www.gti.ssr.upm.es/data/lasiesta_database) und steht unter CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), nicht Apache-2.0; Änderungen siehe NOTICE. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
+- **Mit dem Kalman-Filter hinter der Säule hindurch**: Diese Abbildung ist eine Bearbeitung von LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (Quelle: https://www.gti.ssr.upm.es/data/lasiesta_database) und steht unter CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), nicht Apache-2.0; Änderungen siehe [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE). [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [LASIESTA](https://www.gti.ssr.upm.es/data/lasiesta_database)
 
 ## Was zu sehen ist, und die gemessene Zahl
 
