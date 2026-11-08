@@ -2020,7 +2020,7 @@ def make_glance_square():
     """ViEW のサムネイル用の正方形の図: 図 02 の見本 4 枚を 2×2 に。★横長の図 02 を真ん中で正方形に切ると、線傷の
     見本は右の端しか残らず傷の線が消えた(7 回目の確認)。絵は図 02 と同じもの(表示倍率も同じ、札に書く)。"""
     from PIL import Image, ImageDraw
-    T, L, B = 392, 16, 36                                      # 枠の一辺、上の三角の帯、下の札の帯
+    T, L, B = 392, 16, 58                                      # 枠の一辺、上の三角の帯、下の札の帯(名前と札の 2 行)
     W_ = 2 * T + 24
     im = Image.new("RGB", (W_, W_), (14, 18, 24))
     d = ImageDraw.Draw(im)
@@ -2037,10 +2037,10 @@ def make_glance_square():
         im.paste(Image.fromarray(u), (x0, y0 + L))
         c = x0 + T // 2                                        # 欠陥の位置(絵の中心)を上の帯の三角で示す
         d.polygon([(c - 9, y0 + 1), (c + 9, y0 + 1), (c, y0 + L - 1)], fill=(230, 159, 0))
-        _text(d, (x0 + 4, y0 + L + h + 4), SUBJECTS[key]["name"], size=22, bold=True, box=(x0, y0, x0 + T, y0 + T))
-        tag = "×%.3g" % gain + ("・ならし" if key == "S2" else "")
-        _text(d, (x0 + T - 8 - d.textlength(tag, font=_font(20)), y0 + L + h + 6), tag, size=20,
-              fill=(255, 214, 102), box=(x0, y0, x0 + T, y0 + T))
+        _text(d, (x0 + 4, y0 + L + h + 2), SUBJECTS[key]["name"], size=22, bold=True, box=(x0, y0, x0 + T, y0 + T))
+        # ★凹みは広げてならした絵なので、陰影の実際の大きさを札に必ず添える(8 回目の確認)
+        tag = "×%.3g" % gain + ("・ならし・陰影%.1f%%" % (100.0 * GLANCE_SHADE[key]) if key == "S2" else "")
+        _text(d, (x0 + 4, y0 + L + h + 30), tag, size=18, fill=(255, 214, 102), box=(x0, y0, x0 + T, y0 + T))
     figs.save("equipment_samples_square", np.asarray(im),
               "ViEW のサムネイル用: 図 02 の見本 4 枚(線傷・浅い凹み・黒い焼け・白い PE 片)を 2×2 に並べた。札の × は"
               "地で割った濃淡の表示倍率。凹みは %.3g 倍に広げ判定の大きさでならした(雑音なしの陰影は最大 %.1f %%)。"

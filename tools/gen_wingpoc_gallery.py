@@ -520,7 +520,9 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         # 図に説明が付いていなければ機械名(`auc_by_type` など)は出さない
         sub = (second.get("caption") or "").strip()
         translated_sub = (ex.get("second_figure_caption_" + lang) or sub).strip()
-        alt = (sub[:120] if sub else ("測定の図" if lang == "ja" else "measurement")).replace("]", ")")
+        # ★alt も本文の説明と同じ切り方(括弧の中で切らない)。長さだけで切ると 6400 本中 200 本が括弧の途中で
+        #   終わっていた(2026-11-09、機材選びの 8 回目の確認)
+        alt = (_first_sentence(sub, 120) if sub else ("測定の図" if lang == "ja" else "measurement")).replace("]", ")")
         if lang == "ja":
             cap_line = ("*↑ 測定の図 ―― %s*" % translated_sub) if translated_sub else "*↑ 測定の図*"
         else:
@@ -535,13 +537,13 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         full4 = RAW + ex["id"] + "/" + fig["file"]
         th4 = RAW + ex["id"] + "/" + _thumb(ex["id"], fig["file"])
         sub_ = _first_sentence(fig.get("caption") or "")
-        alt = (sub_[:100] if sub_ else "図").replace("]", ")")
+        alt = (sub_ if sub_ else "図").replace("]", ")")             # 説明の行と同じ 1 文(括弧は閉じている)
         cap_line = ("*↑ %s*" % sub_) if sub_ else "*↑ この回の図*"
         lines += ["[![%s](%s)](%s)" % (alt, th4, full4), "", cap_line, ""] + _sa_lines(ex["id"], fig["file"], lang)
     for fig in (extras or []):
         full3 = RAW + ex["id"] + "/" + fig["file"]
         sub = (fig.get("caption") or "").strip()
-        alt = (sub[:120] if sub else ("動く図" if lang == "ja" else "animation")).replace("]", ")")
+        alt = (_first_sentence(sub, 120) if sub else ("動く図" if lang == "ja" else "animation")).replace("]", ")")
         if lang == "ja":
             cap_line = ("*↑ 動く図 ―― %s*" % sub) if sub else "*↑ 動く図*"
         else:

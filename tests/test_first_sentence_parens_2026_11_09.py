@@ -108,7 +108,8 @@ def test_generated_articles_have_no_caption_cut_inside_brackets():
     files = (glob.glob(os.path.join(ROOT, "docs", "articles", "exhibits", "wingpoc.*.md"))
              + glob.glob(os.path.join(ROOT, "docs", "articles", "fullseye_poc_museum*_qiita_*.md")))
     assert len(files) >= 4, files
-    n, bad = 0, []
+    alt = re.compile(r"\[!\[(.*?)\]\(")
+    n, n_alt, bad = 0, 0, []
     for f in files:
         with open(f, encoding="utf-8") as fh:
             for k, ln in enumerate(fh, 1):
@@ -116,5 +117,10 @@ def test_generated_articles_have_no_caption_cut_inside_brackets():
                     n += 1
                     if not _balanced(ln):                       # 「…*」で終わる行も数える
                         bad.append((os.path.basename(f), k, ln[:80]))
+                for a in alt.findall(ln):                       # 画像の alt も(8 回目の確認: 200 本が括弧の途中で終わった)
+                    n_alt += 1
+                    if not _balanced(a):
+                        bad.append((os.path.basename(f), k, "alt: " + a[:80]))
     assert n >= MIN_CAPTION_LINES, n
-    assert not bad, bad
+    assert n_alt >= MIN_CAPTION_LINES, n_alt
+    assert not bad, (len(bad), bad[:20])

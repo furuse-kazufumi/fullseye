@@ -33045,17 +33045,17 @@
             1600,
             1600
           ],
-          "bytes": 722873,
+          "bytes": 712174,
           "color_mad": [
             0.3349,
             0.7573,
             0.3598,
             0.0317,
             0.0394,
-            0.3043
+            0.3156
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "381c349c1efeebf1a091440df5aaa3e46825c773a71a31eff2d13d273edb0771"
+          "source_sha256": "cb6f9ab86aa78fc7c70efa16b28b8ce5048012fe65b2228bb1148decb519dcd1"
         },
         "en": {
           "path": "articles/assets/poc/poc_equipment_selection_map/story.en.gif",
@@ -33128,17 +33128,17 @@
             1600,
             1600
           ],
-          "bytes": 722873,
+          "bytes": 712174,
           "color_mad": [
             0.3349,
             0.7573,
             0.3598,
             0.0317,
             0.0394,
-            0.3043
+            0.3156
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "000a0c7b266103115db1f91e2ab2405596072c5025b1a321cd99ad93419d9722"
+          "source_sha256": "bf4b8ec2a47db6b5553638002a4d41006b51596735d9e150eb2666496c4846c6"
         }
       },
       "reason": null,

@@ -26,7 +26,7 @@ Shepp-Logan re-imaged with 180 down to 12 projections, FBP (filtered back-projec
 
 Terms: FBP — A tomographic reconstruction method that filters projection data and then back-projects it over all measured angles.
 
-[![RMSE で見ると 12 本は空白画像 0.2420 より悪い。相関とストリークは別のことを言う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_fidelity/02_fidelity_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_fidelity/02_fidelity_table.png)
+[![RMSE で見ると 12 本は空白画像 0.2420 より悪い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_fidelity/02_fidelity_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_fidelity/02_fidelity_table.png)
 
 *↑ The measurement ―― RMSE で見ると 12 本は空白画像 0.2420 より悪い。相関とストリークは別のことを言う。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -114,11 +114,11 @@ A white-light interferometer reads a step from the height at which the fringe co
 
 *↑ The animation ―― 48 raw uint8 coherence-scan frames; the localized envelope sweeps over the tilted step.*
 
-[![動画(148 コマ): 仕込む段差を 0 → 0.90 µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。左は低い側・高い側 1 画素ずつのコヒーレンス走査の信号で、縦線は csi_height_map(gaussian)が](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/08_step_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/08_step_sweep.gif)
+[![動画(148 コマ): 仕込む段差を 0 → 0.90 µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/08_step_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/08_step_sweep.gif)
 
 *↑ The animation ―― 動画(148 コマ): 仕込む段差を 0 → 0.90 µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。左は低い側・高い側 1 画素ずつのコヒーレンス走査の信号で、縦線は csi_height_map(gaussian)が包絡線から読んだ高さ。右は測った段差 vs 仕込んだ段差。包絡線(だいだい)は全域で対角線に乗り、誤差は最大 8.5e-11 nm —— 包絡線には周期が無いので巻き戻らない。位相シフト法(水色、4 段)は段差 0.153 µm(λ/4 = 0.150 µm の直後)で初めて λ/2 ぶん飛び、以後 λ/2 ごとに鋸の歯になる。*
 
-[![白色干渉の48面走査で、縞のコントラストが立つ高さと表面高さが一致する様子を示す。傾斜を除いた段差は測定 0.661 µm、真値 0.650 µm、差 +11 nm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/09_csi_scan_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/09_csi_scan_explained.gif)
+[![白色干渉の48面走査で、縞のコントラストが立つ高さと表面高さが一致する様子を示す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/09_csi_scan_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/09_csi_scan_explained.gif)
 
 *↑ The animation ―― 白色干渉の48面走査で、縞のコントラストが立つ高さと表面高さが一致する様子を示す。傾斜を除いた段差は測定 0.661 µm、真値 0.650 µm、差 +11 nm。*
 
@@ -204,7 +204,7 @@ Polarisation separates the glare on a shiny surface from its diffuse colour. The
 
 *↑ 残差はローブと同じ形。*
 
-[![検光子を0〜177.5度まで回すと、プラスチックの光沢Aだけが強く呼吸し、拡散地Cは動かない。観測DoLPはA/B/C = 0.90/0.16/0.000、最大/最小比は 23.96/1.35/1.00。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/08_analyzer_sweep_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/08_analyzer_sweep_explained.gif)
+[![検光子を0〜177.5度まで回すと、プラスチックの光沢Aだけが強く呼吸し、拡散地Cは動かない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/08_analyzer_sweep_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/08_analyzer_sweep_explained.gif)
 
 *↑ The animation ―― 検光子を0〜177.5度まで回すと、プラスチックの光沢Aだけが強く呼吸し、拡散地Cは動かない。観測DoLPはA/B/C = 0.90/0.16/0.000、最大/最小比は 23.96/1.35/1.00。*
 
@@ -226,7 +226,7 @@ A megawatt PV array synthesised from a closed-form steady-state heat balance, se
 
 *↑ **Drone Thermography of a PV Plant — You Think You Are Measuring Temperature Difference, but You Are Measuring Wind and Viewing Angle** ―― A megawatt PV array synthesised from a closed-form steady-state heat balance, seeded with known electrical faults (an in-cell hotspot, a bypassed string) and with real-but-not-electrical temperature differences (shading, soiling). A hotspot dissipating 320 W/m² is 11.20 K before dilution yet reaches the camera as 4.23 K — and the dilution comes not from the lateral conduction we expected (x0.960) but from the camera (x0.511). A control scene containing no electrical fault at all still raises 6 blobs when the whole-image mean is the reference (1 healthy, 5 non-fault). The cliff is set by the minimum-area gate rather than the threshold: the hotspot disappears at 1.0 m/s of wind, matching the area-based prediction of 1.1 m/s while the peak-based prediction of 3.0 m/s is wrong. Row-to-row shading warms the sunlit cells of the same string by +4.68 K, only 0.87 K away from the genuine string fault at +5.55 K.*
 
-[![「偽」= 故障でも影でも汚れでもない場所に出た塊。しきい値 3.0 K、風速 1.0 m/s。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/01_norm_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/01_norm_table.png)
+[![「偽」= 故障でも影でも汚れでもない場所に出た塊。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/01_norm_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/01_norm_table.png)
 
 *↑ The measurement ―― 「偽」= 故障でも影でも汚れでもない場所に出た塊。しきい値 3.0 K、風速 1.0 m/s。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -266,7 +266,7 @@ DN noise uses EMVA-1288-style variance and is not double-counted with NETD. Assu
 
 Terms: EMVA 1288 — A standard measurement procedure and set of quantities for sensitivity, noise, saturation, and non-uniformity of machine-vision image sensors.; GUM — The international guide on how to evaluate and report measurement uncertainty, combining the spread of each input into the uncertainty of the result.
 
-[![LWIR・350 K・ε=0.95。校正表と直接積分の相対差は最大 8.9e-16。以下の誤差はすべてこの床の上。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_radiometry/01_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_radiometry/01_floor.png)
+[![LWIR・350 K・ε=0.95。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_radiometry/01_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_radiometry/01_floor.png)
 
 *↑ The measurement ―― LWIR・350 K・ε=0.95。校正表と直接積分の相対差は最大 8.9e-16。以下の誤差はすべてこの床の上。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -304,7 +304,7 @@ A flash warms the surface, and the cooling thermal images reveal how deep a hidd
 
 *↑ **Depth of a Subsurface Defect by Pulsed Thermography** ―― Surface temperature after a flash, generated from the exact 1-D heat-conduction solution, with delamination depth estimated from the image sequence. Where the diameter is at least four times the depth the estimate lands within a few percent; at 0.5 mm deep and 2 mm across it is off by +627 %. The cause is not lateral diffusion but the fitting window: shortening it from 25 s to 4 s brings that case back to -9 %.*
 
-[![右下三角(直径が深さの 4 倍以上)は数 %。左上は横拡散で壊れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/01_depth_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/01_depth_table.png)
+[![右下三角(直径が深さの 4 倍以上)は数 %。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/01_depth_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/01_depth_table.png)
 
 *↑ The measurement ―― 右下三角(直径が深さの 4 倍以上)は数 %。左上は横拡散で壊れる。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -324,7 +324,7 @@ A flash warms the surface, and the cooling thermal images reveal how deep a hidd
 
 *↑ The animation ―― Forty-eight uint8 cooling frames after a non-uniform flash.*
 
-[![冷却像と TSR の 25 秒窓・4 秒窓の深さ地図を同じ計算で並べる。深さ 0.5 mm・直径 2 mm の誤差は +612 % から -9 % に縮む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/07_window_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/07_window_explained.gif)
+[![冷却像と TSR の 25 秒窓・4 秒窓の深さ地図を同じ計算で並べる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/07_window_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/07_window_explained.gif)
 
 *↑ The animation ―― 冷却像と TSR の 25 秒窓・4 秒窓の深さ地図を同じ計算で並べる。深さ 0.5 mm・直径 2 mm の誤差は +612 % から -9 % に縮む。*
 
@@ -348,7 +348,7 @@ The quantum efficiency η, system gain K, dark noise σ_d, saturation, SNR, dyna
 
 Terms: EMVA 1288 — A standard measurement procedure and set of quantities for sensitivity, noise, saturation, and non-uniformity of machine-vision image sensors.; DSNU — Spatial pixel-to-pixel variation of the mean dark signal when an image sensor receives no light.; PRNU — Spatial pixel-to-pixel variation in an image sensor's response under uniform illumination.
 
-[![平坦画像2枚の差（時間雑音）｜平坦平均−暗平均（空間雑音）｜6σ欠陥画素図。固定模様を無効化する検査では中央の空間模様が消え、ゲートは赤になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/02_temporal_spatial_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/02_temporal_spatial_defects.png)
+[![平坦画像2枚の差（時間雑音）｜平坦平均−暗平均（空間雑音）｜6σ欠陥画素図。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/02_temporal_spatial_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/02_temporal_spatial_defects.png)
 
 *↑ The measurement ―― 平坦画像2枚の差（時間雑音）｜平坦平均−暗平均（空間雑音）｜6σ欠陥画素図。固定模様を無効化する検査では中央の空間模様が消え、ゲートは赤になる。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -368,7 +368,7 @@ Terms: EMVA 1288 — A standard measurement procedure and set of quantities for 
 
 *↑ 暗画像の分散が 0.24 DN² より小さいと、規格は σ_d を推定しない(式 53・54)。*
 
-[![露光を上げながら同じ露光で 2 枚ずつ撮り、平均と時間分散(2 枚の差から、式 18)を 1 点ずつ置く。直線の傾きがシステムゲイン K = 0.2086 DN/e⁻(仕込み 0.21)。飽和の近くでは分散が潰れるので、規格は 0〜70 %](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/07_photon_transfer.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/07_photon_transfer.gif)
+[![露光を上げながら同じ露光で 2 枚ずつ撮り、平均と時間分散(2 枚の差から、式 18)を 1 点ずつ置く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/07_photon_transfer.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/07_photon_transfer.gif)
 
 *↑ The animation ―― 露光を上げながら同じ露光で 2 枚ずつ撮り、平均と時間分散(2 枚の差から、式 18)を 1 点ずつ置く。直線の傾きがシステムゲイン K = 0.2086 DN/e⁻(仕込み 0.21)。飽和の近くでは分散が潰れるので、規格は 0〜70 % の点だけで当てる。*
 
@@ -470,7 +470,7 @@ A black-glossy resin dome (n 1.57) and a glass lens (n 1.52), measured from one 
 
 *↑ **Measuring Black-Gloss and Glass from Polarisation - No Shading, but the Polarisation Remembers the Slope** ―― A black-glossy resin dome (n 1.57) and a glass lens (n 1.52), measured from one raw mosaic of a 4-direction on-chip polariser sensor; the truth is the analytic normals and heights used to render them. Median normal error 0.53 deg on the dome and 1.09 deg on the lens, dome height RMS 0.62 px out of 37.9 px; photometric stereo with four lights sees only the highlights on the same dome and is off by a median 26.4 deg (50x; 2,408 of 7,921 pixels get no normal at all). The ambiguity is kept: before disambiguation every pixel has four normals (two zeniths straddling Brewster's angle x the pi azimuth), the two zeniths merging on the 57.5 deg Brewster ring; convexity plus the Brewster ridge picks one. A calibration ball gives n = 1.5691 (truth 1.57) by fitting the Fresnel curve, while reading tan(theta) at the DoLP maximum gives 1.715 - a noise spike. Where it breaks: assuming n = 1.50 costs 0.89 deg and 1.40 costs 2.21 deg (exactly 0 at the truth); noise concentrates on the Brewster ring (1.27 deg) and at the apex (4.87 deg) against 0.57 deg on the flanks; 30 % diffuse light mixed in costs 7.4 deg (the two polarisations are 90 deg apart and cancel).*
 
-[![鏡面の DoLP は Brewster 角でちょうど 1 になり、その両側に同じ値が 2 回出る。拡散は単調だが弱い(最大 (n²−1)/(n²+1))。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/01_fresnel_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/01_fresnel.png)
+[![鏡面の DoLP は Brewster 角でちょうど 1 になり、その両側に同じ値が 2 回出る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/01_fresnel_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/01_fresnel.png)
 
 *↑ The measurement ―― 鏡面の DoLP は Brewster 角でちょうど 1 になり、その両側に同じ値が 2 回出る。拡散は単調だが弱い(最大 (n²−1)/(n²+1))。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -490,7 +490,7 @@ A black-glossy resin dome (n 1.57) and a glass lens (n 1.52), measured from one 
 
 *↑ 較正球で測れば 0.01 以内に入る([4])。*
 
-[![検光子を 0〜180° 回したときの明るさ。黒い蝶ネクタイが回る —— 暗くなる向きが、その画素の面の傾きの向き(鏡面では入射面に直交)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/03_analyser.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/03_analyser.gif)
+[![検光子を 0〜180° 回したときの明るさ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/03_analyser.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/03_analyser.gif)
 
 *↑ The animation ―― 検光子を 0〜180° 回したときの明るさ。黒い蝶ネクタイが回る —— 暗くなる向きが、その画素の面の傾きの向き(鏡面では入射面に直交)。*
 
@@ -512,27 +512,27 @@ Parts made by metal additive manufacturing are examined in public X-ray CT slice
 
 *↑ **Metal-AM Thermography and X-ray CT — Separate Experiments** ―― Thermography is a single track on bare In718; CT is Overhang Part X4 from a separate experiment and build, so no linkage is claimed. Recorded values: 4095 DL is 1401 C at emissivity 1 and 1641 C at 0.3. CT/design Dice is 0.981; protrusion is 63 micrometres down-facing versus 32 up-facing, but only 1.16 times at comparable slope. No internal void was found above about 63 micrometres.*
 
-[![calibration T = 14388/(a ln(c eps/x + 1)) - b/a (reading of the file's model string is our assumption). 4095 DL = 1402 C](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/02_dl_to_celsius_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/02_dl_to_celsius.png)
+[![calibration T = 14388/(a ln(c eps/x + 1)) - b/a (reading of the file's model string is our assumption).](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/02_dl_to_celsius_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/02_dl_to_celsius.png)
 
 *↑ The measurement ―― calibration T = 14388/(a ln(c eps/x + 1)) - b/a (reading of the file's model string is our assumption). 4095 DL = 1402 C at eps=1, 1641 C at eps=0.3. Pixels >= 2759 DL are above the liquidus for any eps <= 1. Source: National Institute of Standards and Technology (NIST), doi:10.18434/mds2-2716 (thermography) and doi:10.18434/mds2-2291 (XCT, measured at Georgia Tech); subsets extracted 2026-10-02, thresholded/cropped/false-coloured here (modified). Provided AS IS, https://www.nist.gov/open/license (figure labels are in Japanese; the numbers are the same)*
 
-[![Line_0_1, row 300: 19 saturated frames are only a lower bound; the curve stops at frame 189 where th](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/03_cooling_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/03_cooling_curve.png)
+[![Line_0_1, row 300: 19 saturated frames are only a lower bound; the curve stops at frame 189 where the camera reports 0 (below 100 DL) instead of falli…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/03_cooling_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/03_cooling_curve.png)
 
 *↑ Line_0_1, row 300: 19 saturated frames are only a lower bound; the curve stops at frame 189 where the camera reports 0 (below 100 DL) instead of falli…*
 
-[![Y pad: the command (XYPT, no time step stored) and the staring camera agree on the count and on the ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/04_time_axis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/04_time_axis.png)
+[![Y pad: the command (XYPT, no time step stored) and the staring camera agree on the count and on the long last interval, yet drift apart by 2.3 % per period; unresolved.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/04_time_axis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/04_time_axis.png)
 
 *↑ Y pad: the command (XYPT, no time step stored) and the staring camera agree on the count and on the long last interval, yet drift apart by 2.3 % per period; unresolved.*
 
-[![slice at z = 4.00 mm just below the crown of the 4 mm hole: particles hang into the hole from the do](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/07_ct_hole_crown_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/07_ct_hole_crown.png)
+[![slice at z = 4.00 mm just below the crown of the 4 mm hole: particles hang into the hole from the down-facing surface; red = design.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/07_ct_hole_crown_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/07_ct_hole_crown.png)
 
 *↑ slice at z = 4.00 mm just below the crown of the 4 mm hole: particles hang into the hole from the down-facing surface; red = design.*
 
-[![XCT vs STL: protrusion = p95 of the signed distance (outward positive) after subtracting the median ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/08_protrusion_by_facing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/08_protrusion_by_facing.png)
+[![XCT vs STL: protrusion = p95 of the signed distance (outward positive) after subtracting the median of each 0.25 mm surface cell (form error); line = the 4 mm hole per n_z bin (bins with >= 200 points), dots = 45 deg notch and vertical walls.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/08_protrusion_by_facing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/08_protrusion_by_facing.png)
 
 *↑ XCT vs STL: protrusion = p95 of the signed distance (outward positive) after subtracting the median of each 0.25 mm surface cell (form error); line = the 4 mm hole per n_z bin (bins with >= 200 points), dots = 45 deg notch and vertical walls.*
 
-[![XCT slices 121..320 (z = 1.75..4.16 mm, build direction) with the STL cross-section in red. Note the powder/dross hangin](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/06_ct_slices.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/06_ct_slices.gif)
+[![XCT slices 121..320 (z = 1.75..4.16 mm, build direction) with the STL cross-section in red.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/06_ct_slices.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/06_ct_slices.gif)
 
 *↑ The animation ―― XCT slices 121..320 (z = 1.75..4.16 mm, build direction) with the STL cross-section in red. Note the powder/dross hanging under the hole crown and the 45 deg notch. Source: National Institute of Standards and Technology (NIST), doi:10.18434/mds2-2716 (thermography) and doi:10.18434/mds2-2291 (XCT, measured at Georgia Tech); subsets extracted 2026-10-02, thresholded/cropped/false-coloured here (modified). Provided AS IS, https://www.nist.gov/open/license*
 
@@ -556,7 +556,7 @@ SEM slope contrast and a finite PSF (point spread function) broaden a step respo
 
 Terms: PSF — The spatial response of an imaging system to a point object, describing how that point is blurred in the image.
 
-[![0.5 nm/pixel で再計算した 256 nm 視野。明帯幅は PSF とともに増える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_edge_rim_zoom_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_edge_rim_zoom.png)
+[![0.5 nm/pixel で再計算した 256 nm 視野。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_edge_rim_zoom_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_edge_rim_zoom.png)
 
 *↑ The measurement ―― 0.5 nm/pixel で再計算した 256 nm 視野。明帯幅は PSF とともに増える。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -590,7 +590,7 @@ Ten measured metal-2 SEM images from Rothaug et al. (14.65 nm/px, CC BY 4.0, DOI
 
 *↑ **Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?** ―― A measured metal-2 BSE image of a commercial 128 nm IC, with SVG track outlines in green and deduplicated via outlines in red.*
 
-[![大津。緑=一致、赤=太り、青=欠け、橙=画像端から続くラベル欠け(採点除外)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference.png)
+[![大津。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference.png)
 
 *↑ The measurement ―― 大津。緑=一致、赤=太り、青=欠け、橙=画像端から続くラベル欠け(採点除外)。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -620,7 +620,7 @@ How much of a km-scale Michelson interferometer reading a strain of 1e-21 can be
 
 *↑ **A Pseudo-Simulation of a Gravitational-Wave Detector — Cavity Optics, the Quantum-Noise Budget and the Matched Filter in Closed Form, Scored on the Real GW150914 Data** ―― How much of a km-scale Michelson interferometer reading a strain of 1e-21 can be reproduced in closed form, scored on the public GW150914 data (GWOSC) and the published numbers. Twelve new ops: the arm cavity (`fabry_perot_response` gives finesse 445 and a 42 Hz pole from the public aLIGO design values, `cavity_strain_transfer`, `michelson_dc_readout`, `pdh_error_signal` with the slope of Black 2001 to 0.9999), the quantum-noise budget (`quantum_noise_budget`: shot x radiation pressure = SQL^2/2 as an identity, and the second implementation gwinc 0.6.2 agrees within 0.96 to 1.12 at eight frequencies) and the signal side (`psd_welch` -> `whiten_by_psd` -> `matched_filter_snr` / `optimal_snr`, `chirp_newtonian`, `chirp_mass_from_track`, `coincidence_delay`). On the real data, whitening plus a 35-350 Hz band correlates at 0.959 / 0.935 with the published Fig. 1 of PRL 116, 061102; the matched filter with the numerical-relativity waveform gives SNR 19.0 (H1) / 13.1 (L1) against the published ~20 / 13, a network SNR of 23.1 against 24, and L1 leading by 7.1 ms against 6.9 ms. The Newtonian chirp reaches only 9.1 / 5.6 (no merger or ringdown). The ratio to the design curve (T1800044) is 0.42 at 20 Hz, 1.99 at 100 Hz and 0.33 at 1 kHz, which the table attributes to signal recycling and thermal noise. The take-home for inspection: a known waveform in 1/f^2 coloured noise is recovered by the whitened matched filter at the injected height, while plain correlation keeps 0.98 for a narrowband tone but only 0.50 for a chirp and 0.37 for a ring-down. The real-data stage runs when the files are placed and says 'not placed' otherwise. Nothing is learned, nothing is calibrated.*
 
-[![単極 1/√(1+(f/f_p)²) × 往復伝搬の sinc(2πfL/c)。極で 1/√2、FSR = c/2L で零。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/01_cavity_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/01_cavity_transfer.png)
+[![単極 1/√(1+(f/f_p)²) × 往復伝搬の sinc(2πfL/c)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/01_cavity_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/01_cavity_transfer.png)
 
 *↑ The measurement ―― 単極 1/√(1+(f/f_p)²) × 往復伝搬の sinc(2πfL/c)。極で 1/√2、FSR = c/2L で零。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -640,7 +640,7 @@ How much of a km-scale Michelson interferometer reading a strain of 1e-21 can be
 
 *↑ 雑音が 1/f² のとき、波形が低周波を含むほど素の相関は損をし、白色化した整合フィルタは最適 SNR どおりに拾う。*
 
-[![入射光量 100 W → 100 kW: 散射雑音は 1/√P で下がり、輻射圧雑音は √P で上がる。総和は K = 1 の周波数で SQL に触れ、その点が光量とともに高い周波数へ動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif)
+[![入射光量 100 W → 100 kW: 散射雑音は 1/√P で下がり、輻射圧雑音は √P で上がる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif)
 
 *↑ The animation ―― 入射光量 100 W → 100 kW: 散射雑音は 1/√P で下がり、輻射圧雑音は √P で上がる。総和は K = 1 の周波数で SQL に触れ、その点が光量とともに高い周波数へ動く。*
 
@@ -662,7 +662,7 @@ A very shallow dent in glossy paint is practically invisible in an ordinary phot
 
 *↑ **Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen — Phase-Measuring Deflectometry** ―― A dent a few micrometres deep in a glossy surface (a painted car panel, a cover glass) is all but invisible in a lit photograph, because a mirror only shows the light. Put a screen in front of the surface, show phase-shifted fringes and photograph their mirror image: a tilt of 1e-3 rad moves the reflected point 0.6 mm on a screen 30 cm away. Six new ops (`deflectometry`, category `deflectometry` of `opsspecular`): the rig, the screen pattern, the forward render (height field to fringe mirror image, with a diffuse fraction, scatter, the back reflection of glass, aperture-integrated focus and noise), phase to normals (via `match3d.normal_from_reflection`), slope to curvature (one derivative, no integration) and the closed-form sensitivity. On a painted panel with 3 µm and 1 µm dents, 0.8 µm waviness and 0.12 µm polishing marks the photograph's defect signal peaks at 0.00066 (0.17 of one 8-bit step) while the curvature map shows the dents at SNR 110 and 57, and the integrated depth is within 0.5 % of the truth. Phase noise matches sqrt(2/N) sigma/b at 1.00 and slope noise is 0.67 of sigma_u/(2d), the sqrt(4/9) of bilinear resampling. Where it breaks: lifting the part by 0.3 mm adds the apparent tilt dz sin(theta)/d (to 0.1 %) and a 388 m bowl while the dent depth moves 0.7 %; a 2 % screen-distance error makes dents 2.3 % shallower; a 1 µm dent survives a diffuse fraction of 0.85 and fringe orders start to jump at 0.9; on uncoated cover glass the back-surface light is bent the other way by the dent's wedge, so the slope sensitivity shrinks to the closed-form 0.246 (measured 0.246) and dents look a quarter as deep; with an 8 mm aperture, focusing on the surface leaves 0.60 of the fringe amplitude and focusing on the screen leaves 0.52 of the depth. Nothing learned, nothing calibrated, 22 gates.*
 
-[![面の前の画面(520 × 320 mm)にこの 4 枚を順に出し、面に映った鏡像を撮る。縦縞は画面の u(入射面内)を、同じ 4 枚を横縞にしたものが v を符号化する。粗い縞(周期 160 mm)の 4 枚で次数を決める。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/01_screen_patterns_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/01_screen_patterns.png)
+[![面の前の画面(520 × 320 mm)にこの 4 枚を順に出し、面に映った鏡像を撮る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/01_screen_patterns_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/01_screen_patterns.png)
 
 *↑ The measurement ―― 面の前の画面(520 × 320 mm)にこの 4 枚を順に出し、面に映った鏡像を撮る。縦縞は画面の u(入射面内)を、同じ 4 枚を横縞にしたものが v を符号化する。粗い縞(周期 160 mm)の 4 枚で次数を決める。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -682,7 +682,7 @@ A very shallow dent in glossy paint is practically invisible in an ordinary phot
 
 *↑ 基準(打撃の前の 30 枚の平均)からの位相の変化(巻き込み、±π)。*
 
-[![拡散成分 k_d = 0, 0.5, 0.8, 0.85, 0.9, 0.95, 0.98, 0.99, 0.995 と上げていったときの平均曲率(±2.5e-3 /mm)。雑音が 1/(1 − k_d) で増え、浅い凹み B が先に沈み、](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/09_diffuse_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/09_diffuse_sweep.gif)
+[![拡散成分 k_d = 0, 0.5, 0.8, 0.85, 0.9, 0.95, 0.98, 0.99, 0.995 と上げていったときの平均曲率(±2.5e-3 /mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/09_diffuse_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/09_diffuse_sweep.gif)
 
 *↑ The animation ―― 拡散成分 k_d = 0, 0.5, 0.8, 0.85, 0.9, 0.95, 0.98, 0.99, 0.995 と上げていったときの平均曲率(±2.5e-3 /mm)。雑音が 1/(1 − k_d) で増え、浅い凹み B が先に沈み、最後は粗い縞の次数が飛ぶ。*
 
@@ -746,7 +746,7 @@ The lead chapter runs on real raw data: four pixel-shift frames from a 35 mm ful
 
 Terms: MTF — The magnitude of the optical transfer function, showing how image contrast is transferred at each spatial frequency.
 
-[![基板の配線・織物・網点・解像チャート(上から)。左 = 3 色を各画素で取る理想センサ、中 = Bayer 1 枚 + 双線形デモザイク、右 = 1 画素シフト 4 枚。44 × 44 画素を最近傍で 5 倍。静止・誤差 0 では 4 枚の](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/01_four_shot_false_color_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/01_four_shot_false_color.png)
+[![基板の配線・織物・網点・解像チャート(上から)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/01_four_shot_false_color_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/01_four_shot_false_color.png)
 
 *↑ The measurement ―― 基板の配線・織物・網点・解像チャート(上から)。左 = 3 色を各画素で取る理想センサ、中 = Bayer 1 枚 + 双線形デモザイク、右 = 1 画素シフト 4 枚。44 × 44 画素を最近傍で 5 倍。静止・誤差 0 では 4 枚の偽色は定義上 0(4・5 章が壊れる条件)。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -766,7 +766,7 @@ Terms: MTF — The magnitude of the optical transfer function, showing how image
 
 *↑ 4 枚のピクセルシフトは雑音を下げるためのものではない(R・B は 1 枚と同じ)。*
 
-[![左 = その枚の Bayer の生の値(画素ごとにフィルタの色で表示、センサの位置へずらして描く)、右 = 合わせた格子に R・G・B が揃っていく様子。最後は 1 枚のデモザイクと 4 枚の合成(24 × 24 画素を 10 倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif)
+[![左 = その枚の Bayer の生の値(画素ごとにフィルタの色で表示、センサの位置へずらして描く)、右 = 合わせた格子に R・G・B が揃っていく様子。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif)
 
 *↑ The animation ―― 左 = その枚の Bayer の生の値(画素ごとにフィルタの色で表示、センサの位置へずらして描く)、右 = 合わせた格子に R・G・B が揃っていく様子。最後は 1 枚のデモザイクと 4 枚の合成(24 × 24 画素を 10 倍)。*
 
@@ -788,7 +788,7 @@ An indirect ToF camera measures distance from the phase delay of modulated light
 
 *↑ **Indirect Time of Flight, Multi-Frequency — Higher Frequencies Measure Finer, but Wrapping, Multipath, Flying Pixels and Harmonics Break It** ―― Continuous-wave indirect time of flight (modulated light, correlation sampled at four phase steps) taken from raw buckets to depth and into its failure modes. Eight new ops (`itof`, category `itof` of `opsoptics`): a capture model with shot noise, ambient light, extra paths and pixel-aperture mixing; phase, amplitude and offset; the closed-form noise budget; multi-frequency unwrapping by exhaustive maximum-likelihood hypotheses, `residue_crt` or the two-frequency beat; a wrong-order probability bound; two-path separation by matrix pencil; a flying-pixel mask; and cyclic-error correction. Depth noise matches c/(4πf)·√((B+σ_r²)/2)/A to 0.999-1.029 over 11 conditions with SNR ≥ 3, and Lange's formula exactly. 16/80/120 MHz is unambiguous to 18.7 m; the wrong-order rate is 0.116 at σ_φ = 0.33 rad (union bound 0.132). On the same raw signal `residue_crt` gives 0.1161, on par with maximum likelihood, because it now picks its anchor the Wang-Xia way (the band with the smallest noise variance); anchoring on 16 MHz, as before the fix, gave 0.556. With 80/100/120 MHz, shelves beyond 7.5 m silently fold to near range. A box under packaging film is pulled forward at one frequency (matching `tof_multipath_phase`); an 8-frequency matrix pencil (20-160 MHz) recovers every pixel to 2 cm at 0.8 m separation but nothing at 0.2 m or less. A room corner reads 8-99 mm too far everywhere, matching the one-bounce transport to 1e-15 m. The mask flags 97 % of the pixels floating off box edges and removes 0.03 % of step-free pixels. The ±84.8 mm square-wave cyclic error matches atan(u/(1−u)) and inverts to the 2.1 mm noise floor. Sunlight at 50 times the signal raises far wrong-order errors from 12 % to 93 %. Direct ToF on the same tabletop neither floats edges nor shifts under the film. On public raw sensor data (3 frequencies × 3 steps; Lawin, Forssén, Ovrén, ECCV 2016; Zenodo; CC BY 4.0) jumps over 30 cm are 0.131 for maximum likelihood and 0.131 for `residue_crt` (10-frame average; 0.293 before the anchor fix); discarding low-margin pixels keeps 68 % at 0.020. Nothing learned; calibrated only by 16 rail points and the left half of the real data; 30 gates.*
 
-[![平らな板(距離は一様乱数)で信号を振り、次数を誤った画素の割合を数えた。破線は候補ごとのガウスの 2 仮説の誤りの和(和集合の上界)、点線はその最大の 1 項。実測は 2 本の間に入る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/02_unwrap_error_rate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/02_unwrap_error_rate.png)
+[![平らな板(距離は一様乱数)で信号を振り、次数を誤った画素の割合を数えた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/02_unwrap_error_rate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/02_unwrap_error_rate.png)
 
 *↑ The measurement ―― 平らな板(距離は一様乱数)で信号を振り、次数を誤った画素の割合を数えた。破線は候補ごとのガウスの 2 仮説の誤りの和(和集合の上界)、点線はその最大の 1 項。実測は 2 本の間に入る。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -808,7 +808,7 @@ An indirect ToF camera measures distance from the phase delay of modulated light
 
 *↑ σ_d = c/(4πf)·√((B + σ_r²)/2)/A。*
 
-[![左の箱の点群を回して見る。横から見ると、縁から背後の床へ視線に沿って伸びる赤い点の列(フライングピクセル)が現れる。右は印を除いたもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/14_flying_pixels_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/14_flying_pixels_orbit.gif)
+[![左の箱の点群を回して見る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/14_flying_pixels_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/14_flying_pixels_orbit.gif)
 
 *↑ The animation ―― 左の箱の点群を回して見る。横から見ると、縁から背後の床へ視線に沿って伸びる赤い点の列(フライングピクセル)が現れる。右は印を除いたもの。*
 
@@ -832,7 +832,7 @@ We want to see the layers of paint and multilayer film in depth without cutting 
 
 Terms: OCT — A non-contact method that uses low-coherence interference to measure depth-resolved reflectivity and form cross-sectional images.
 
-[![屈折率は論文と同じ 1.56(透明層)・1.64(着色層)。表のどの行がどのファイルかは論文に無く、透明層の厚さで決めた(推定)。着色層はその対応と独立の突き合わせ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/02_real_thickness_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/02_real_thickness_table.png)
+[![屈折率は論文と同じ 1.56(透明層)・1.64(着色層)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/02_real_thickness_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/02_real_thickness_table.png)
 
 *↑ The measurement ―― 屈折率は論文と同じ 1.56(透明層)・1.64(着色層)。表のどの行がどのファイルかは論文に無く、透明層の厚さで決めた(推定)。着色層はその対応と独立の突き合わせ。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -852,7 +852,7 @@ Terms: OCT — A non-contact method that uses low-coherence interference to meas
 
 *↑ 横 1.2 mm、縦は光路 25〜440 µm。*
 
-[![試料腕に溶融石英 12 mm の分散の不一致。補償の係数 a2 を 0 から 35.6 µm² まで動かすと、PMMA / PC / PS の 3 層の界面がにじみから線に締まる(横 0.6 mm、光路 130〜380 µm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/15_dispersion_compensation.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/15_dispersion_compensation.gif)
+[![試料腕に溶融石英 12 mm の分散の不一致。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/15_dispersion_compensation.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/15_dispersion_compensation.gif)
 
 *↑ The animation ―― 試料腕に溶融石英 12 mm の分散の不一致。補償の係数 a2 を 0 から 35.6 µm² まで動かすと、PMMA / PC / PS の 3 層の界面がにじみから線に締まる(横 0.6 mm、光路 130〜380 µm)。*
 
@@ -874,7 +874,7 @@ Oxide thickness on silicon can be read from interference fringes and colours in 
 
 *↑ **Thin-Film Thickness by Spectral Reflectometry — Scored on Public Measured Data, then Fringes, Interference Colours, FFT versus Model Fit and Thickness Maps** ―― Five ops (`filmoptics`, category `film` of `opsoptics`) measure the thickness of SiO₂ on silicon from the interference fringes of its reflectance; films and substrates are keys of the material table. The core is scoring on other people's measured data (both CC BY 4.0). In the microspectroscopy of Schwarz et al. (2024) the measured reflectance of bare silicon agrees with the table's silicon to 0.4 % (median); a normal-incidence fit gives 92.9 nm against the 98.5 nm reference (−5.7 %), and choosing the NA by the residual (0.5) gives 95.8 nm (−2.7 %); the coverage of the measurement spot is read back over 11 spectra with a mean error of 0.6 points. From the real colour micrograph of the same sample, a white balance on the bare silicon alone gives a per-pixel thickness map with a median of 87.4 nm (−11 %, camera sensitivities unknown). With the low-cost spectrometers of Sánchez-Arriaga et al. (2023) the 476.3 nm standard is within 2 % in all five spectra; the 198.7 nm standard reads a median of 6.6 % thick, and in one spectrum the best candidate is 51 nm while the right value is the second candidate. The FFT method flags the 98 nm film as unreliable (closed-form limit 554 nm). Synthetic chapters: Airy agreement 3e-15, fringe count within one, FFT limit 538 nm closed form versus 525 nm measured, closed-form biases for wrong index, angle and NA, 59 % hue agreement with the published colour chart in the first three orders (a weak gate), and a modelled wafer (radial comet to the edge, edge bead, off-centre rings, each tied to the literature or labelled a model) mapped within 0.17 nm RMS by a 31-band camera while 14 % of RGB pixels keep several candidates. Nothing learned, 37 gates.*
 
-[![実測の反射スペクトルに film_thickness_fit を当てた。直入射のモデルは 92.9 nm、残差が最小の NA 0.5 で 95.8 nm。裸の Si は材料表の Si と中央値 -0.4 % 差。出典: Schwarz ら,](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/02_real_spectra_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/02_real_spectra.png)
+[![実測の反射スペクトルに film_thickness_fit を当てた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/02_real_spectra_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/02_real_spectra.png)
 
 *↑ The measurement ―― 実測の反射スペクトルに film_thickness_fit を当てた。直入射のモデルは 92.9 nm、残差が最小の NA 0.5 で 95.8 nm。裸の Si は材料表の Si と中央値 -0.4 % 差。出典: Schwarz ら, Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502、データ Zenodo 10.5281/zenodo.13753754(CC BY 4.0)。改変: 表から 2 本を選び、モデルの曲線を重ねた。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -916,7 +916,7 @@ This numerical model builds a chromatic confocal sensor from a lens prescription
 
 *↑ **Chromatic Confocal Displacement Sensor — A Rainbow Ruler from Glass Dispersion, Reading Height from the Colour that Comes Back** ―― This numerical model builds a chromatic confocal sensor from a lens prescription and material dispersion. The 450–700 nm focus range is 1,191 um; paraxial focus and axial-response width match closed forms. Estimator biases are 0.060, 0.108, 0.293 and 2.04 um for Gaussian, parabolic, centroid and peak-bin methods; after synthetic moving-mirror calibration they are 0.014 and 0.090 um for Gaussian and parabolic fits. Plate readout uses apparent depth as seen from air and converts it back to physical thickness. After fixing an erroneous extra /n in first-layer spherical aberration and using an independent Snell-ray expression, the 500 um borosilicate-crown plate is −1.81 um with paraxial correction and −0.053 um after NA correction; the maximum relative error over four plates including sapphire and PMMA is 7.75e-4. The pupil-overlap formula differs from Monte Carlo by at most 0.0011. Dividing by gold reflectance or a white reference uses the same curve used in synthesis and is therefore an ideal upper bound, not validation of an instrument calibration. Values read from the public paper figures, including 66.095 um, are recorded values from a stage that runs only when its environment variable is provided and were not checked in this run. The numerical model alone does not establish real-instrument plate-correction accuracy.*
 
-[![左: 単レンズの範囲 1191 µm、ハイパークロマート 1842 µm(焦点距離あたり 1.63 倍)。近軸焦点は閉形式と 4e-12 µm で一致(点)。右: 鏡で較正したピークは近軸焦点から縦球面収差のほぼ半分だけずれる —— 450](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/02_calibration_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/02_calibration_curve.png)
+[![左: 単レンズの範囲 1191 µm、ハイパークロマート 1842 µm(焦点距離あたり 1.63 倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/02_calibration_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/02_calibration_curve.png)
 
 *↑ The measurement ―― 左: 単レンズの範囲 1191 µm、ハイパークロマート 1842 µm(焦点距離あたり 1.63 倍)。近軸焦点は閉形式と 4e-12 µm で一致(点)。右: 鏡で較正したピークは近軸焦点から縦球面収差のほぼ半分だけずれる —— 450 nm で -20.0 µm。575 nm では 0(非球面で消した色)。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -936,7 +936,7 @@ This numerical model builds a chromatic confocal sensor from a lens prescription
 
 *↑ (a) 鏡面の傾きが 8.8°(sin 2θ = 2NA)を超えると何も戻らない(瞳の光線のモンテカルロと一致)。*
 
-[![上: 虹のものさし(焦点付近の光線)と面(灰色の縦線)。下: ピンホールへ戻るスペクトル(棒の色はその波長の色、ピーク 3000 光子 + 読出し雑音)。面を遠ざけると、ピントの合う色が青から赤へ移り、戻る色が変わる。ピーク波長を較正表で引](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif)
+[![上: 虹のものさし(焦点付近の光線)と面(灰色の縦線)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif)
 
 *↑ The animation ―― 上: 虹のものさし(焦点付近の光線)と面(灰色の縦線)。下: ピンホールへ戻るスペクトル(棒の色はその波長の色、ピーク 3000 光子 + 読出し雑音)。面を遠ざけると、ピントの合う色が青から赤へ移り、戻る色が変わる。ピーク波長を較正表で引くと高さになる。*
 
@@ -958,7 +958,7 @@ An SEM image is not a photo of the surface but a tally of electrons escaping aft
 
 *↑ **A Virtual SEM — Fire Electrons One by One into the Solid, and the Image and the Measured Line Width Change with the Voltage (Scored against Measured Data)** ―― An SEM image is not a photograph of the surface: it is a tally of what comes out of the interaction volume of primary electrons scattering inside the solid. Eight new ops (`sem_electron_mc`, `sem_yield_curve`, `sem_se_universal_curve`, `sem_line_profile`, `sem_cd_measure`, `sem_image`, `sem_charging_series`, `sem_se_escape_fraction`) and the material-table op `material_electron_properties` build a Monte Carlo that tracks electrons one by one (Joy's single scattering, Browning's 1994 Mott fit for elastic scattering, the Joy-Luo stopping power), and every stage is scored against outside measurements. The backscatter coefficient for 7 elements (C to Au) at 5/10/20/30 keV falls inside the measured bands of Joy's database plus or minus 0.04; switching back to screened Rutherford fails for W and Au. The maximum penetration is 0.83 to 1.04 of the Kanaya-Okayama range and the depth grows as E^1.75 (Si) and E^1.52 (Au) against 1.67. The shape of the secondary-electron yield matches the Lin and Joy 2005 universal curve within RMS 0.076 for C to Ag, with Emax within -4 to +7 % of their table (not fitted); W and Au have heavier tails (SE2 dominates, unresolved). The user's guess that W on Si is invisible in SE but stands out in backscatter Z contrast holds only for flush W at 1 kV (SE +5 %, BSE +96 %); at 5 kV SE shows it too (+80 %) because the SE2 made by exiting backscattered electrons carries Z. W buried 150 nm deep shows +3 % at 1 kV even in backscatter and +154 % at 20 kV (information depth). For CD-SEM, a PMMA line (40 nm at the base) with an 88 degree sidewall measures 39.1 nm at 1 kV and 39.9 nm at 20 kV by threshold: low voltage measures high on the sidewall (0.33), high voltage at the foot (0.03); at 80 degrees the difference is small and reversed, so this is no general rule. A vertical sidewall reads wide at every voltage (+0.3 to +1.0 nm). Charging: at 0.5 kV (eta + delta > 1) the insulator charges positive, darkens and stops at the potential that solves eta + delta F(V*) = 1 by an independent bisection (to 2e-15 V); at 20 kV it keeps charging negative and brightens (phenomenological). A defect found on the way is kept on record: free paths were drawn in the starting material and walked straight through material boundaries, so a 0.01 nm Si cap changed W's eta from 0.425 to 0.329 (now truncated at the boundary, with a regression gate). No real-image chapter yet: no CC BY CD-SEM images with ground-truth line widths were found.*
 
-[![δ(E) を各元素の MC の山(Emax, δmax)で割った形(横軸は対数)。破線は Lin & Joy 2005 の普遍曲線(式 12)。C〜Ag の 5 元素は重なる。W と Au(赤)は E > 3 Emax で裾が厚い —— 重](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/02_sem_se_universal_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/02_sem_se_universal_curve.png)
+[![δ(E) を各元素の MC の山(Emax, δmax)で割った形(横軸は対数)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/02_sem_se_universal_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/02_sem_se_universal_curve.png)
 
 *↑ The measurement ―― δ(E) を各元素の MC の山(Emax, δmax)で割った形(横軸は対数)。破線は Lin & Joy 2005 の普遍曲線(式 12)。C〜Ag の 5 元素は重なる。W と Au(赤)は E > 3 Emax で裾が厚い —— 重元素は反射電子が多く、表面を抜けるときに作る SE2 が主になるので、SE1 だけを仮定した普遍曲線からずれる(未解決のまま数で固定)。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -978,7 +978,7 @@ An SEM image is not a photo of the surface but a tally of electrons escaping aft
 
 *↑ 各パネルは Si の水準で割った信号(0〜3 で共通の濃淡)。*
 
-[![Si の上の PMMA の線を 5 kV で 24 コマ走査し続けた像。PMMA だけが負に帯電して明るくなり、接地した Si は変わらない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/09_sem_charging_pmma_line.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/09_sem_charging_pmma_line.gif)
+[![Si の上の PMMA の線を 5 kV で 24 コマ走査し続けた像。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/09_sem_charging_pmma_line.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/09_sem_charging_pmma_line.gif)
 
 *↑ The animation ―― Si の上の PMMA の線を 5 kV で 24 コマ走査し続けた像。PMMA だけが負に帯電して明るくなり、接地した Si は変わらない。*
 
@@ -1002,7 +1002,7 @@ In a transmission electron microscope, defocus decides whether fine detail looks
 
 Terms: Thon rings — Concentric rings in a TEM image power spectrum that follow CTF zeros and sign changes and are used to estimate defocus and astigmatism.; CTF — In transmission electron microscopy, the function describing the sign and strength with which specimen spatial frequencies transfer to the image under aberration and defocus.
 
-[![焦点外れ Δf を 0.3 → 3 µm と振る(300 kV、Cs 2.7 mm、非晶質炭素 50 Å、40 e/Å² 相当の雑音)。左はパワースペクトル(k ≤ 0.25 Å⁻¹、動径の背景で割った)、右は同じ写真の一部。Thon リン](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif)
+[![焦点外れ Δf を 0.3 → 3 µm と振る(300 kV、Cs 2.7 mm、非晶質炭素 50 Å、40 e/Å² 相当の雑音)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif)
 
 *↑ The measurement ―― 焦点外れ Δf を 0.3 → 3 µm と振る(300 kV、Cs 2.7 mm、非晶質炭素 50 Å、40 e/Å² 相当の雑音)。左はパワースペクトル(k ≤ 0.25 Å⁻¹、動径の背景で割った)、右は同じ写真の一部。Thon リングは Δf とともに内側へ詰まり、写真の粒状の模様が細かくなる。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -1040,7 +1040,7 @@ The hyperspectral PoC used a 10 nm band and the chromatic confocal PoC a spectro
 
 *↑ **Spectrometer and Illumination Trains — Where the Bandwidth Comes From, and Whether the Lamp Shows in the Field** ―― The hyperspectral PoC used a 10 nm band and the chromatic confocal PoC a spectrometer line width as given numbers. This exhibit builds those numbers from the entrance slit, the grating grooves, the mirror focal lengths and the detector pixels with the grating equation, and the unevenness of microscope and coaxial lighting from which plane of the source is imaged where. Eight new ops: in `gratingspec` (new category `spectrometer` of `opsoptics`) the grating equation with dispersion, resolving power mN and overlapping orders; the first-order Czerny-Turner design with Shafer's coma condition; the bandpass as the FWHM of slit image, pixel and diffraction convolved, with the etendue; smile and keystone from the 3-D grating equation that keeps the direction cosine along the grooves; and the detector reading of an input spectrum with second- and third-order overlap. In `illumdesign`: the Koehler or critical illumination train, the specimen irradiance by paraxial backward tracing to the source, and the coaxial half mirror with its round-trip R·T and the image of a mirror-like or matte part. Against two published spectrometers (CC BY 4.0 papers) the Shafer angle comes out 14.9679° (published 14.968°), the camera focal length 68.88 mm (r = 136 mm), the slit-image widths 39.2 / 43.7 / 52.6 µm (40 / 43 / 50) and the resolution 0.397 nm (0.385 to 0.391); only the 0.4 nm centre resolution of Feng 2021 disagrees, the slit image alone giving 0.49 nm from the paper's own values, and the gap is left open. Narrow slits stop at the diffraction floor 0.886 λ/(mN) (within 5e-4 for a rectangular pupil), wide slits keep light times resolution constant; the mercury pair at 576.96 / 579.07 nm splits with a 50 µm slit and merges into one false peak at 150 µm. A 4 mm slit image bows 41.9 µm (3 pixels) towards longer wavelengths, within 0.2 % of the closed form, and the Littrow curvature radius matches f/(2 tan β); a broken model that reuses the in-plane equation shows no smile and fails the gate. The 253.65 and 365.02 nm mercury lines appear in second order as false lines at 507.30 and 730.04 nm and vanish behind a 400 nm long-pass filter. For an InGaAs spectrometer at 900 to 1700 nm the hyperspectral 10 nm corresponds to a 75 µm slit (trapezoidal, not Gaussian). Widening the visible spectrometer slit of the chromatic confocal sensor merges the two surfaces of thin glass plates until the readout refuses them. Critical illumination copies a coiled filament into the field (CV 0.53), Koehler illumination removes it (CV 2e-16), and moving the aperture stop 4 mm off the condenser focal plane lets the stripes leak back. The coaxial round trip is R·T = 1/4 at 50/50, matching the optscene coaxial light. Nothing learned, nothing calibrated, 40 gates.*
 
-[![スリットの幅で帯域の幅とエタンデュがどう動くか(1200 本/mm、M 型 2025 の設計、625 nm)。左: 細いスリットは回折の床 0.886 λ / (mN) で止まり、NA を上げて照らす溝を増やすと床が下がる。右: 広いスリッ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/01_resolution_vs_throughput_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/01_resolution_vs_throughput.png)
+[![スリットの幅で帯域の幅とエタンデュがどう動くか(1200 本/mm、M 型 2025 の設計、625 nm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/01_resolution_vs_throughput_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/01_resolution_vs_throughput.png)
 
 *↑ The measurement ―― スリットの幅で帯域の幅とエタンデュがどう動くか(1200 本/mm、M 型 2025 の設計、625 nm)。左: 細いスリットは回折の床 0.886 λ / (mN) で止まり、NA を上げて照らす溝を増やすと床が下がる。右: 広いスリットでは光の量と分解能の積が一定(傾き −1)、細くしていくと床に当たって光だけを失う。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -1080,7 +1080,7 @@ A grating interferometer's dark field (the loss of fringe amplitude) shows what 
 
 Terms: Talbot effect — A near-field diffraction effect in which coherent illumination of a periodic structure reproduces its image, or fractional images, at specific free-space distances without a lens.; Lau — An interferometric arrangement that divides a spatially incoherent extended source with a source grating and uses a period condition to recover visibility at another grating.; Talbot carpet — A two-dimensional plot of intensity behind a periodic grating versus transverse position and propagation distance, showing self-images and fractional self-images as a woven pattern.
 
-[![位相 π の格子(28 keV、p1 = 4.36 µm)の後ろの強度 I(x, z)。横 = 第 1 格子からの距離 0〜z_T/2(429 mm)、縦 = 2 周期。周期 p1/2 の縞が結ぶ距離が分数タルボ距離 (m − 1/2)p1](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/01_talbot_carpet_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/01_talbot_carpet.png)
+[![位相 π の格子(28 keV、p1 = 4.36 µm)の後ろの強度 I(x, z)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/01_talbot_carpet_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/01_talbot_carpet.png)
 
 *↑ The measurement ―― 位相 π の格子(28 keV、p1 = 4.36 µm)の後ろの強度 I(x, z)。横 = 第 1 格子からの距離 0〜z_T/2(429 mm)、縦 = 2 周期。周期 p1/2 の縞が結ぶ距離が分数タルボ距離 (m − 1/2)p1²/(4λ) = 54, 161, 268, 376 mm。z = 0 は純粋な位相格子なので強度は一様(縞が無い)。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -1100,7 +1100,7 @@ Terms: Talbot effect — A near-field diffraction effect in which coherent illum
 
 *↑ 正直な限界: 鋭い縁の 1 画素だけが π を超える板は、折り返した値が背景と π 以内に収まるので見えずに通る(中央の厚さ -857 µm、真値 2000 µm)。*
 
-[![格子の向きを 0〜180° に回したときの暗視野(4 方位から戻した a、b、θ で描く)。繊維が格子の感度の向きに直交すると暗くなり、明暗の帯が向きの場に沿って流れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/07_rotating_grating.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/07_rotating_grating.gif)
+[![格子の向きを 0〜180° に回したときの暗視野(4 方位から戻した a、b、θ で描く)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/07_rotating_grating.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/07_rotating_grating.gif)
 
 *↑ The animation ―― 格子の向きを 0〜180° に回したときの暗視野(4 方位から戻した a、b、θ で描く)。繊維が格子の感度の向きに直交すると暗くなり、明暗の帯が向きの場に沿って流れる。*
 
@@ -1122,7 +1122,7 @@ In a food X-ray image, thick meat and a thin hard fragment can look the same. Co
 
 *↑ **Bone and Glass in Meat, Separated by Material with Two X-ray Energies (Dual-Energy and Photon-Counting X-ray)** ―― A single X-ray transmission image of food measures one number per pixel, L = -ln(I/I0), so a thick piece of meat and a thin hard foreign body cannot be told apart. A detector that counts photons in two energy windows can: the shape of mu(E) differs by material, so thickness and material separate in every pixel (the Alvarez and Macovski 1976 basis decomposition). Fourteen new ops (`spectral_xray` in `opstomography`): the X-ray columns of the material table (`material_xray_attenuation` and three more, a subset of NIST SRD 126 plus a mixture rule) and ten `dualxray` ops (tube spectrum, beam quality, detector channels, projection, basis decomposition, CRLB, R value, effective Z, discrimination error rate). mu/rho matches the NIST published values (Cu at 8 keV 52.55; across the K edge 38.4 to 278.4), and the tube model's half-value layers agree with the eight IEC 61267 qualities to within 5.8 % (the model was shaped on a public spectrum calculator (MIT); the IEC values were not used to fit it). On a meat tray 25 to 60 mm thick the bone-and-glass step is 0.9 times the meat unevenness, one threshold flags 86 % of the meat, and even the high band shows two false lumps at the edge of a meat overlap, whereas the Al image from a lean-meat plus Al decomposition has 0 false lumps. A confounded pair of thick PE and thin Al gives d' = 0 in one window; the two-window error rate Phi(-d'/2) agrees with Monte Carlo to 0.004, and the Al thickness below which they cannot be separated (5 % error) is 0.125 mm in closed form and 0.126 mm measured, 0.364 mm under 40 mm of meat. The decomposition noise reaches 0.995 and 0.997 times the Cramer-Rao bound. How it breaks: decomposing without knowing 25 % charge sharing turns meat into Al, and a monochromatic approximation biases Al by -1.5 mm under 6 cm of meat; the apparent Z of a buried foreign body also moves with density (PVC at 13.9 reads as 18.7). Learning 0, calibration 0, 21 gates.*
 
-[![W 陽極の管(Kramers の厚い陽極 + 自己吸収 + K 線 59 / 67 keV)を Al 2.5 mm で濾した光子スペクトル(半価層 2.74 mm Al、平均 42.6 keV)。CdTe 2 mm の吸収効率をかけ、堆積エ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/01_spectrum_and_windows_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/01_spectrum_and_windows.png)
+[![W 陽極の管(Kramers の厚い陽極 + 自己吸収 + K 線 59 / 67 keV)を Al 2.5 mm で濾した光子スペクトル(半価層 2.74 mm Al、平均 42.6 keV)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/01_spectrum_and_windows_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/01_spectrum_and_windows.png)
 
 *↑ The measurement ―― W 陽極の管(Kramers の厚い陽極 + 自己吸収 + K 線 59 / 67 keV)を Al 2.5 mm で濾した光子スペクトル(半価層 2.74 mm Al、平均 42.6 keV)。CdTe 2 mm の吸収効率をかけ、堆積エネルギーで 2 つの窓に分ける。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -1162,7 +1162,7 @@ A public triplet prescription receives explicit rows for curvature, thickness, r
 
 Terms: MTF — The magnitude of the optical transfer function, showing how image contrast is transferred at each spatial frequency.; Wilson 95 % — A binomial-proportion confidence interval obtained by inverting the normal score test, generally more reliable than the Wald interval for small samples.
 
-[![同じ試行から得た MTF と RMS spot。赤線は合否限界。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/02_histograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/02_histograms.png)
+[![同じ試行から得た MTF と RMS spot。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/02_histograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/02_histograms.png)
 
 *↑ The measurement ―― 同じ試行から得た MTF と RMS spot。赤線は合否限界。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -1214,11 +1214,11 @@ Terms: EPI — A slice of a light field over one spatial and one angular coordin
 
 *↑ F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.*
 
-[![15 x 15 decoded views; ray-traced parallax +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 /](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi.png)
+[![15 x 15 decoded views; ray-traced parallax +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 / 1.8 m.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi.png)
 
 *↑ 15 x 15 decoded views; ray-traced parallax +0.169 / -0.029 / -0.163 lenslets per view at 0.6 / 1.0 / 1.8 m.*
 
-[![Ray-traced truth vs focus-sweep estimate; median error +51 mm / +22 mm / +224 mm at 0.6 / 1.0 / 1.8 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map.png)
+[![Ray-traced truth vs focus-sweep estimate; median error +51 mm / +22 mm / +224 mm at 0.6 / 1.0 / 1.8 m (paraxial relation; spherical aberration).](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map.png)
 
 *↑ Ray-traced truth vs focus-sweep estimate; median error +51 mm / +22 mm / +224 mm at 0.6 / 1.0 / 1.8 m (paraxial relation; spherical aberration).*
 
@@ -1290,7 +1290,7 @@ The same 320 by 240 scene is shown as IR amplitude, colour-coded distance over 1
 
 *↑ **Indirect and Direct Time of Flight on One 3-D Scene — Multipath, Mixed Pixels, Pile-up and Volume Error** ―― The same 320 by 240 scene is shown as IR amplitude, colour-coded distance over 1.5–6.0 m, and a point cloud. The amplitude-distribution W1 distance between synthesis and measurement is 0.145 (gate 0.594). The remaining figures add physical effects one at a time; compare amplitude with range noise (log slope -0.878 in measurements and -1.027 in synthesis); reproduce wall-junction bowing (-551 mm measured and +75 mm synthetic, with matching signs after aligning profile direction); separate transparent-pane returns 1.35 m apart; expose mixed pixels around a thin pole; show direct time-of-flight histograms and decoded depth; and tabulate three box-volume errors (+0.16, +0.47 and +0.29 percent). The final animation is a 48-frame, 576 by 432, 8 fps light front moving from 1.4 to 6.2 m. Real frames are not redistributed: only curves and aggregate measurements are shown. No new ops, no learning, no calibration, 13 gates.*
 
-[![全パネル同じ距離範囲。暗部の荒れと隅の湾曲が順に現れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/02_effects_added_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/02_effects_added.png)
+[![全パネル同じ距離範囲。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/02_effects_added_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/02_effects_added.png)
 
 *↑ The measurement ―― 全パネル同じ距離範囲。暗部の荒れと隅の湾曲が順に現れる。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -1310,7 +1310,7 @@ The same 320 by 240 scene is shown as IR amplitude, colour-coded distance over 1
 
 *↑ 強い画素では最初の光子が早い側へ偏る。*
 
-[![48枚、576×432。各時刻を99パーセンタイル・γ=0.5で階調化。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/09_dtof_light_front.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/09_dtof_light_front.gif)
+[![48枚、576×432。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/09_dtof_light_front.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/09_dtof_light_front.gif)
 
 *↑ The animation ―― 48枚、576×432。各時刻を99パーセンタイル・γ=0.5で階調化。*
 
@@ -1340,7 +1340,7 @@ A synthetic 3 m-radius tunnel is captured by two fisheyes and stitched back to a
 
 *↑ Measured seam MAE 0.0157; blind pixels 0.000 % (reported, never filled silently).*
 
-[![Horizontal half-height width ratio 0.314; defect solid angle 0.03687 sr versus unweighted 0.02399 sr](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/03_latitude_processing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/03_latitude_processing.png)
+[![Horizontal half-height width ratio 0.314; defect solid angle 0.03687 sr versus unweighted 0.02399 sr.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/03_latitude_processing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/03_latitude_processing.png)
 
 *↑ Horizontal half-height width ratio 0.314; defect solid angle 0.03687 sr versus unweighted 0.02399 sr.*
 
