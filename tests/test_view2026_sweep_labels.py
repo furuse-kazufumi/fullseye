@@ -108,10 +108,29 @@ def test_sweep_title_and_watch_are_specific_and_watch_contains_numbers(sweep):
     assert all(re.search(r"\d", spec["subtitle"][lang]) for lang in pv.LANGS)
 
 
+def _exhibit(data: dict, pid: str) -> dict:
+    """目玉(exhibits)か、ぜんぶ見る(all)にある展示。どちらにも無ければ落とす。
+
+    2026-11-08: 目玉を約 40 件に絞り、平らな図形の掃引 5 件は all へ移した。see は all 側にも持たせてある。
+    """
+    found = [e for e in data["exhibits"] + data["all"] if e["id"] == pid]
+    assert found, "%s が exhibits にも all にも無い" % pid
+    return found[0]
+
+
+def test_missing_sweep_exhibit_fails():
+    data = json.loads((ROOT / "docs" / "view2026" / "exhibits.json").read_text(encoding="utf-8"))
+    with pytest.raises(AssertionError):
+        _exhibit(data, "poc_no_such_sweep")
+    stripped = dict(data, exhibits=[], all=[e for e in data["all"] if e["id"] != "poc_focus_stacking"])
+    with pytest.raises(AssertionError):
+        _exhibit(stripped, "poc_focus_stacking")
+
+
 def test_view2026_see_and_viewer_line_match_each_sweep_title(sweep):
     _, spec, _, *_ = sweep
     data = json.loads((ROOT / "docs" / "view2026" / "exhibits.json").read_text(encoding="utf-8"))
-    exhibit = next(e for e in data["exhibits"] if e["id"] == spec["id"])
+    exhibit = _exhibit(data, spec["id"])
     viewer = next(e for e in data["viewers"]["items"] if e["id"] == spec["id"])
     assert exhibit["see"] == spec["title"]
     assert viewer["line"] == spec["title"]
