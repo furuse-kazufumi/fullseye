@@ -40,5 +40,57 @@
    542,
    3
   ]
+ },
+ {
+  "file": "05_real_fabric.png",
+  "name": "real_fabric",
+  "caption": "欠陥 3 種は合成と同じ位置・形で**描き足した**もの(本物の欠陥ではない)。振幅の倍率 α = 0.35 は目で見て「うっすら」に決めた値。スコア 2 枚は同じ 99.5 % 分位で切った灰色。描き足したムラの AUC は格子のみ 0.96、低周波除去を足すと 0.50。本物の欠陥 360 個での結果は別の図。RAW-FABRID — R. Pérez-Llorens, T. Albero-Albero, J. Silvestre-Blanes, Mendeley Data db6g85xsyg v1 (doi:10.17632/db6g85xsyg.1), CC BY 4.0",
+  "shape": [
+   605,
+   1576,
+   3
+  ]
+ },
+ {
+  "file": "06_real_defects.png",
+  "name": "real_defects",
+  "caption": "データ付属の欠陥マスク(橙の輪郭)で画素ごとに採点。マスクは欠陥より太い(骨格上の幅の中央値 16 px)ので、太いマスクの画素 AUC は 0.5 側へ寄る。芯 = 骨格 ±2 px を陽性、マスクを 6 px太らせた外を陰性にした採点。上段は 2 手法の AUC が全体の中央値に近い 1 個、下段は暗い欠陥のうち面積が最大の 1 個(選び方は結果を見ずに決めた規則)。スコアは同じ 99.5 % 分位で切った灰色。RAW-FABRID — R. Pérez-Llorens, T. Albero-Albero, J. Silvestre-Blanes, Mendeley Data db6g85xsyg v1 (doi:10.17632/db6g85xsyg.1), CC BY 4.0",
+  "shape": [
+   1159,
+   1576,
+   3
+  ]
+ },
+ {
+  "file": "07_real_input_defects.png",
+  "name": "real_input_defects",
+  "caption": "ラインスキャン 4 px/mm の生機。各 256 px = 64 mm 角。RAW-FABRID — R. Pérez-Llorens, T. Albero-Albero, J. Silvestre-Blanes, Mendeley Data db6g85xsyg v1 (doi:10.17632/db6g85xsyg.1), CC BY 4.0",
+  "shape": [
+   647,
+   1074,
+   3
+  ]
+ },
+ {
+  "file": "08_real_result_auc_table.png",
+  "name": "real_result_auc_table",
+  "caption": "区間は画像単位のブートストラップ 2000 回。RAW-FABRID — R. Pérez-Llorens, T. Albero-Albero, J. Silvestre-Blanes, Mendeley Data db6g85xsyg v1 (doi:10.17632/db6g85xsyg.1), CC BY 4.0",
+  "shape": [
+   352,
+   1398,
+   3
+  ],
+  "csv": "08_real_result_auc_table.csv",
+  "tsv": "08_real_result_auc_table.tsv"
+ },
+ {
+  "file": "09_real_limit_lowcut_diff.png",
+  "name": "real_limit_lowcut_diff",
+  "caption": "本物の欠陥 1 個ごとの差を小さい順に。区間は芯 -0.118〜-0.082、太いマスク -0.067〜-0.043(画像単位のブートストラップ)。",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
  }
 ]

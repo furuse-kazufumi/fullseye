@@ -38,9 +38,9 @@ EXTEND: 実写に差し替えるなら :func:`thermal_field` が返す辞書の 
    104 % 残る)。
 4. ★★**崖はしきい値ではなく面積の門が決める**。h = 5.7 + 3.8 v
    (McAdams)なので ΔT は 1/U(v) で薄まる。「ピークが 3.0 K を割る」
-   予測は 3.0 m/s だが、実測で塊が消えるのは **1.0 m/s**。塊の面積
-   2π σ_tot² ln(P/θ) が門(4 px)を割る風速を予測すると **1.1 m/s** で
-   一致した。面積の広いストリング故障は門が効かず、ピーク基準の予測
+   予測は 3.0 m/s だが、実測では **1.0 m/s までは上がり 2.0 m/s で消える**
+   (掃引の刻み 1 m/s)。塊の面積 2π σ_tot² ln(P/θ) が門(4 px)を割る風速を
+   予測すると **1.1 m/s** で、その刻みの中に入った。面積の広いストリング故障は門が効かず、ピーク基準の予測
    4.6 m/s と実測 4.0 m/s(掃引の刻み 1 m/s)が合う。**同じ日の朝と昼で、
    同じ故障が出たり消えたりする**。
 5. ★★**影は本物のストリング故障を偽造する**。列間影に入ったセルは
@@ -65,6 +65,19 @@ EXTEND: 実写に差し替えるなら :func:`thermal_field` が返す辞書の 
    塊の総面積は 1620 → 1892 px でほとんど変わらない。**同じ帯が雑音で
    ちぎれているだけ** —— 個数で報告すると雑音が「発見」に化ける。
 
+9. ★★**実データ(DTU の PV 発電所のドローン熱画像、CC BY 4.0)で同じ判定を回す**。
+   バイパスダイオードが短絡したモジュールは日射 600 W/m² 以上で 84 / 84 枚すべて上がるが、
+   日射 200 では 7 台のうち 2 台が 4 つの高さすべてで消える(ΔT 1.1 / 2.0 K)—— 合成の
+   4 節と同じ「同じ故障が条件で出たり消えたりする」。高さ 8 → 20 m でピークの ΔT は
+   21 / 21 組で下がる(比の中央値 0.77。ただしモジュール全体の温度も高さとともに動いており、
+   撮影の時刻・大気の経路と分けられていない)。★★汚れ(配布元の分類の 1 つ。電気的な故障ではない)の
+   モジュールも同じ判定で 144 枚中 72 枚が上がる —— 温度のしきい値は原因(汚れか電気的な故障か)を
+   分けない(合成の 2・5 節と同じ形)。汚れの 2 台の現地の IV 曲線の性能比は 47.3 % / 30.3 %
+   (実測の Pmax を測定器の模型の Pmax で割った値。清掃の前後や健全なモジュールの IV は配布物に無く、
+   台数も 2 台なので、出力の低下が汚れによるかは分けられない)。★限界: セルの割れと配線の不良(EL で確かめた本物の故障)は
+   256 枚で 1 度も上がらない(熱画像のしきい値では見逃し率 100 %)。データが無ければこの章だけ飛ばす
+   (``tools/fetch_dtu_pv_irt.py`` で取得、置き場は ``FULLSEYE_PV_IRT_DATA``)。
+
 【グラウンドトゥルース】
 パネル 1 画素の温度は**定常熱収支の閉形式**で決める:
 
@@ -85,6 +98,7 @@ Fresnel の式 —— 誘電体界面の角度依存反射率(見かけ放射率
 """
 from __future__ import annotations
 
+import os
 import sys
 import time
 from pathlib import Path
@@ -464,43 +478,140 @@ def capture(t_fine: np.ndarray, gsd: float = GSD, theta_deg: float = VIEW_DEG,
     return t_app + netd * rng.standard_normal(t_app.shape)
 
 
+#: 斜めの空撮のカメラ(DTU の公開データと同じ 8〜20 m の高さ、640 x 512、水平画角 32°)
+AERIAL_ALT = 9.0           # 高さ [m]
+AERIAL_TILT = 32.0         # 鉛直からの傾き [deg]
+AERIAL_HFOV = 32.0         # 水平画角 [deg]
+FRAME_EPS = 0.80           # アルマイトの枠の放射率
+GROUND_EPS = 0.95          # 草地の放射率
+
+
+def _aerial_camera(h: int = 512, w: int = 640):
+    """画素 -> 地面 (x, y) [m] と、地面 -> 画素の 2 つの写像(ピンホール、地面は z = 0)。
+
+    カメラは配列の中心の手前(+y 側)の上空 ``AERIAL_ALT`` m から、鉛直から ``AERIAL_TILT``°
+    傾けて配列の中心を見る。画像の上が奥(-y)。
+    """
+    f = 0.5 * w / np.tan(np.radians(0.5 * AERIAL_HFOV))
+    t = np.radians(AERIAL_TILT)
+    cx_w, cy_w = 0.5 * WORLD_W, 0.5 * WORLD_H
+    cam = np.array([cx_w, cy_w + AERIAL_ALT * np.tan(t), AERIAL_ALT])
+    fwd = np.array([0.0, -np.sin(t), -np.cos(t)])          # 光軸
+    right = np.array([1.0, 0.0, 0.0])
+    down = np.cross(fwd, right)                              # 画像の下向き
+    down = -down if down[1] < 0 else down                    # 画像の下 = 手前(+y)
+
+    def pix_to_world(u, v):
+        d = (fwd[:, None] * f + right[:, None] * (np.ravel(u) - 0.5 * w)
+             + down[:, None] * (np.ravel(v) - 0.5 * h))
+        s = -cam[2] / d[2]
+        p = cam[:, None] + s * d
+        view = np.degrees(np.arccos(np.clip(-d[2] / np.linalg.norm(d, axis=0), -1, 1)))
+        dist = s * np.linalg.norm(d, axis=0)
+        shape = np.shape(u)
+        return p[0].reshape(shape), p[1].reshape(shape), view.reshape(shape), dist.reshape(shape)
+
+    def world_to_pix(x, y):
+        q = np.array([x, y, 0.0]) - cam
+        z = q @ fwd
+        return float(0.5 * w + f * (q @ right) / z), float(0.5 * h + f * (q @ down) / z)
+
+    return pix_to_world, world_to_pix
+
+
+def _aerial_true_temperature(xw, yw, gnd) -> tuple[np.ndarray, np.ndarray]:
+    """地面の座標での真の表面温度 [K] と放射率。測る 3 x 3 の外にも健全なアレイが続く。
+
+    パネルの中は :func:`thermal_field` の閉形式(故障・影・汚れ入り)に、閉形式に入れていない
+    細部を足す: セルごとのばらつき(±0.35 K)、セルの隙間に見える裏面シート(-0.8 K)、
+    枠への熱の逃げ(縁から 8 cm で -1.5 K)、裏の端子箱(+2 K)、枠(アルマイト、ε 0.80)。
+    地面は草地(多重解像度の揺らぎ)と、アレイの列の地面の影(-6 K)。
+    """
+    L = layout()
+    sc = thermal_field(V_REF)["T"]
+    dt_ok = (ALPHA_SOL * G0 - ETA_EL * G0) / u_total(V_REF)
+    px, py = MOD_W + GAP_X, MOD_H + GAP_Y
+    # 3 x 3 の格子を左右に 2 列ずつ、上下に 2 段ずつ延ばす(健全なモジュール)
+    gx = np.floor((xw - MARGIN) / px)
+    gy = np.floor((yw - MARGIN) / py)
+    lx = (xw - MARGIN) - gx * px
+    ly = (yw - MARGIN) - gy * py
+    in_mod = (lx >= 0) & (lx < MOD_W) & (ly >= 0) & (ly < MOD_H) & (np.abs(gx - 1) <= 3) & (gy >= -3) & (gy <= 4)
+    measured = in_mod & (gx >= 0) & (gx < NMX) & (gy >= 0) & (gy < NMY)
+    # 地面: 草地の揺らぎ(粗い + 細かい)と列の影(パネルの奥 = -y 側の地面が日陰)
+    gi = np.clip(((yw + 6.0) / 0.02).astype(int), 0, 899)
+    gj = np.clip(((xw + 6.0) / 0.02).astype(int), 0, 899)
+    t = T_AIR + GROUND_RISE + gnd[gi, gj]
+    row_shadow = (ly >= MOD_H) & (ly < MOD_H + 0.75 * GAP_Y) & (np.abs(gx - 1) <= 3) & (gy >= -3) & (gy <= 4)
+    t = np.where(row_shadow, T_AIR + 4.0 + 0.3 * gnd[gi, gj], t)
+    eps = np.full(xw.shape, GROUND_EPS)
+    # 健全なモジュールの温度(モジュールごとの差 ±4.5 %)
+    mod_key = ((gy + 3) * 16 + (gx + 4)).astype(int)
+    mod_f = 1.0 + 0.045 * np.random.default_rng(SEED + 11).standard_normal(16 * 16)
+    t_mod = T_AIR + dt_ok / mod_f[np.clip(mod_key, 0, 255)] * (1.0 + IRR_DRIFT * (yw / WORLD_H - 0.5))
+    # 測る 3 x 3 は閉形式の場をそのまま読む
+    si = np.clip((yw / FINE).astype(int), 0, NY - 1)
+    sj = np.clip((xw / FINE).astype(int), 0, NX - 1)
+    t_mod = np.where(measured & L["panel"][si, sj], sc[si, sj], t_mod)
+    # セルごとのばらつき・隙間・縁の冷え・端子箱
+    cr = np.clip((ly / CELL).astype(int), 0, NC_Y - 1)
+    cc = np.clip((lx / CELL).astype(int), 0, NC_X - 1)
+    cell_key = (mod_key * 64 + cr * NC_X + cc) % (1 << 16)
+    cell_off = 0.35 * np.random.default_rng(SEED + 12).standard_normal(1 << 16)
+    t_mod = t_mod + cell_off[cell_key]
+    gap = (np.minimum(np.mod(lx, CELL), CELL - np.mod(lx, CELL)) < 0.0015) | \
+          (np.minimum(np.mod(ly, CELL), CELL - np.mod(ly, CELL)) < 0.0015)
+    t_mod = t_mod - 0.8 * gap
+    edge = np.minimum.reduce([lx, MOD_W - lx, ly, MOD_H - ly])
+    t_mod = t_mod - 1.5 * np.exp(-edge / 0.08)
+    jb = ((lx - 0.5 * MOD_W) / 0.09) ** 2 + ((ly - 0.10) / 0.06) ** 2
+    t_mod = t_mod + 2.0 * np.exp(-jb)
+    frame = in_mod & (edge < 0.035)
+    t_frame = T_AIR + 0.45 * (t_mod - T_AIR)
+    t = np.where(in_mod, np.where(frame, t_frame, t_mod), t)
+    eps = np.where(in_mod, np.where(frame, FRAME_EPS, -1.0), eps)   # -1 = ガラス(角度で決める)
+    return t, eps
+
+
 def render_aerial_frame(with_nuc: bool = True, seed: int = 78) -> np.ndarray:
-    """Render a 640 by 512 oblique aerial temperature frame in kelvin."""
+    """斜めの空撮 640 x 512 の見かけ温度 [K]。
+
+    地面 -> 画素はピンホールのカメラ(:func:`_aerial_camera`)。1 画素を 3 x 3 で標本化して
+    受光面で平均し、放射はガラスの見かけ放射率 ε(θ)(Fresnel、θ は画素ごとの視線の角度)と
+    快晴の空の映り込み、大気(距離ごとの Beer-Lambert)、カメラの既定設定(ε 0.95)で
+    見かけ温度に直す。そのあと光学 PSF(σ 0.7 px)、NETD、行と列の固定パターン雑音、
+    周辺の落ち込み(``with_nuc``)、0.01 K の量子化。
+    """
     rng = np.random.default_rng(seed)
     h, w = 512, 640
-    yy, xx = np.mgrid[0:h, 0:w]
-    ground = T_AIR + 13.0 + gaussian_filter(rng.standard_normal((h, w)), 10.0) * 0.9
-    ground += 0.5 * np.sin(xx / 17.0) + 0.25 * np.sin((xx + yy) / 7.0)
-
-    ortho = capture(thermal_field(V_REF)["T"], netd=0.0)
-    yn = (yy - 72.0) / 370.0
-    left = 78.0 + 92.0 * yn
-    right = 584.0 - 55.0 * yn
-    inside = (yn >= 0.0) & (yn <= 1.0) & (xx >= left) & (xx <= right)
-    sx = (xx - left) / np.maximum(right - left, 1.0) * (ortho.shape[1] - 1)
-    sy = yn * (ortho.shape[0] - 1)
-    warped = gaussian_filter(ortho, 0.55)
-    sample = gaussian_filter(
-        map_coordinates(warped, [sy, sx], order=1, mode="nearest"),
-        (0.65, 1.1), mode="nearest")
-    frame = np.where(inside, sample, ground)
-
-    # Glass sky reflection, cell-edge/busbar texture and slight along-track blur.
-    reflection = 0.9 * (1.0 - yn) * inside
-    cell_edges = ((np.mod(sx, max(ortho.shape[1] / 30.0, 2.0)) < 0.8)
-                  | (np.mod(sy, max(ortho.shape[0] / 18.0, 2.0)) < 0.8)) & inside
-    busbars = (np.mod(sx, max(ortho.shape[1] / 90.0, 2.0)) < 0.35) & inside
-    frame = frame - reflection - 0.18 * cell_edges - 0.10 * busbars
-    frame = gaussian_filter(frame, (0.45, 0.9), mode="nearest")
-    frame += rng.normal(0.0, NETD, frame.shape)
+    pix_to_world, _ = _aerial_camera(h, w)
+    ss = 3
+    off = (np.arange(ss) + 0.5) / ss - 0.5
+    g = np.random.default_rng(seed + 5).standard_normal((900, 900))
+    gnd = gaussian_filter(g, 30.0) * 40.0 + gaussian_filter(g, 3.0) * 2.5 + gaussian_filter(g, 1.0) * 0.6
+    acc = np.zeros((h, w))
+    vv, uu = np.mgrid[0:h, 0:w].astype(np.float64)
+    for dy in off:
+        for dx in off:
+            xw, yw, view, dist = pix_to_world(uu + dx, vv + dy)
+            t, eps = _aerial_true_temperature(xw, yw, gnd)
+            eps = np.where(eps < 0, apparent_emissivity(view), eps)
+            tau = np.asarray(fs.ledger.beer_lambert_transmittance(dist * 1000.0, ATM_K))
+            l_obj = eps * _sb(t) + (1.0 - eps) * _sb(T_SKY)
+            l_cam = tau * l_obj + (1.0 - tau) * _sb(T_AIR)
+            acc += (l_cam - (1.0 - EPS_SET) * _sb(T_AIR)) / EPS_SET
+    frame = (np.maximum(acc / ss ** 2, 1.0) / SIGMA_SB) ** 0.25
+    frame = gaussian_filter(frame, PSF_PX, mode="nearest")
+    frame = frame + rng.normal(0.0, NETD, frame.shape)
     if with_nuc:
+        yy, xx = vv, uu
         row = gaussian_filter(rng.normal(0.0, 1.0, h), 9.0)
         col = gaussian_filter(rng.normal(0.0, 1.0, w), 13.0)
         row *= 0.045 / max(float(np.std(row)), 1e-12)
         col *= 0.040 / max(float(np.std(col)), 1e-12)
         vignette = -0.35 * (((xx - w / 2) / (w / 2)) ** 2 + ((yy - h / 2) / (h / 2)) ** 2)
-        frame += row[:, None] + col[None, :] + vignette
-    return frame.astype(np.float32)
+        frame = frame + row[:, None] + col[None, :] + vignette
+    return (np.round(frame / 0.01) * 0.01).astype(np.float32)
 
 
 def realism_evidence():
@@ -534,18 +645,15 @@ def save_aerial_figures(base: dict, norms: dict) -> None:
     import annotate as ann
     from PIL import Image
     resize = lambda a, wh: np.asarray(Image.fromarray(np.rint(255 * np.clip(a, 0, 1)).astype(np.uint8)).resize(wh, Image.Resampling.LANCZOS))  # noqa: E731
-    raw_rgb = np.asarray(fs.apply_cmap(raw, "inferno", vmin=314.0, vmax=338.0))
+    lo, hi = (float(np.floor(np.percentile(raw, 0.5))), float(np.ceil(np.percentile(raw, 99.8))))
+    raw_rgb = np.asarray(fs.apply_cmap(raw, "inferno", vmin=lo, vmax=hi))
     ortho_rgb = np.asarray(fs.apply_cmap(ortho, "inferno", vmin=314.0, vmax=338.0))
     overlay = np.asarray(fs.overlay_mask(ortho_rgb, det["mask"], color=(1.0, 1.0, 1.0),
                                          alpha=0.95, mode="margin", line_width=2))
-    cy, cx = hot_pixel(GSD, ortho.shape)
-    h0, w0 = ortho.shape
-    hy, hx = hot_pixel(GSD, ortho.shape)
-    hot_yn = hy / max(h0 - 1, 1)
-    hot_left = 78.0 + 92.0 * hot_yn
-    hot_right = 584.0 - 55.0 * hot_yn
-    hot_x = int(round(hot_left + hx / max(w0 - 1, 1) * (hot_right - hot_left)))
-    hot_y = int(round(72.0 + 370.0 * hot_yn))
+    _, world_to_pix = _aerial_camera()
+    hy_m, hx_m = hot_centre()
+    fx, fy = world_to_pix(hx_m, hy_m)
+    hot_x, hot_y = int(round(fx)), int(round(fy))
     crop = raw_rgb[max(0, hot_y - 45):min(512, hot_y + 45),
                    max(0, hot_x - 55):min(640, hot_x + 55)]
     zoom = resize(crop, (640, 560))
@@ -553,16 +661,24 @@ def save_aerial_figures(base: dict, norms: dict) -> None:
     iron_lut = np.asarray(fs.apply_cmap(np.linspace(0, 1, 256)[:, None], "inferno"))[:, 0]
     raw_display = np.asarray(ann.color_bar(raw_display.astype(np.float64) / 255.0,
                                            iron_lut, (1130, 110, 22, 700),
-                                           vmin=314.0, vmax=338.0, unit="K", font_size=18))
+                                           vmin=lo, vmax=hi, unit="K", font_size=18))
     ortho_display = resize(ortho_rgb, (640, 512))
     overlay_display = resize(overlay, (640, 512))
     figs.save("raw_aerial_thermal", raw_display,
-              "Oblique 640 by 512 raw thermal frame; iron-like palette, 314-338 K; PSF, NETD, NUC and motion blur included.")
+              "合成の斜めの空撮(高さ %.0f m・鉛直から %.0f°・水平画角 %.0f°、640 x 512 を 2 倍で表示、%.0f〜%.0f K)。"
+              "パネルの温度は定常熱収支の閉形式に、セルごとのばらつき・セルの隙間・枠への熱の逃げ・裏の端子箱・"
+              "アルマイトの枠(ε %.2f)を足し、ガラスの放射率は視線の角度ごとの Fresnel で空(%.0f K)を映す。"
+              "1 画素 3 x 3 の標本化・光学 PSF・NETD %.0f mK・固定パターン雑音・周辺の落ち込みを入れた。"
+              "測る 3 x 3 モジュールの外にも健全なアレイが続く。黒い帯と円は支柱と雑草の**影**(汚れではない): "
+              "直達光が遮られて日射が %.0f %% になり、閉形式で周りより約 18 K 冷える。汚れは下段の帯で、わずかに温かい。"
+              % (AERIAL_ALT, AERIAL_TILT, AERIAL_HFOV, lo, hi, FRAME_EPS, T_SKY, 1e3 * NETD, 100 * SHADE_FRAC))
     figs.save_grid("orthorectified_detection", [ortho_display, overlay_display],
-                   ["orthorectified module map", "detection overlay; hotspot ΔT %.2f K" % predict_hotspot(V_REF)],
-                   ncols=2, caption="Module-level correction preserves the detection chapters and their thresholds.")
+                   ["正対の見かけ温度(GSD %.0f mm)" % (1e3 * GSD),
+                    "検出した塊(白枠、ホットスポットの予測 ΔT %.2f K)" % predict_hotspot(V_REF)],
+                   ncols=2, title="合成: 正対に戻した格子での判定",
+                   caption="合成の場面。判定はこの正対の格子で行う(しきい値と面積の門は本文の章と同じ)。")
     figs.save("hot_cell_zoom", zoom,
-              "Hot-cell neighbourhood; cell edges and busbar-scale cooling remain visible after the camera PSF.")
+              "合成の場面。ホットスポットのセルの近く(斜めの空撮の切り出し)。セルのモザイクと枠は光学 PSF の後も見える。")
 
 
 def hot_centre() -> tuple[float, float]:
@@ -1302,10 +1418,11 @@ def section_figures(base: dict, norms: dict) -> None:
                     "ΔT(モジュール中央値基準、±%.0f K)" % clip,
                     "検出された塊(白枠)"],
                    ncols=2,
-                   title="メガソーラーのドローン熱画像(GSD %.0f mm、風速 %.1f m/s)"
+                   title="合成: 熱画像の模型(GSD %.0f mm、風速 %.1f m/s)"
                          % (1e3 * GSD, V_REF),
-                   caption="真値の赤はセル内ホットスポットとストリング故障、"
-                           "黄は影と汚れ(本物の温度差だが電気的故障ではない)。")
+                   caption="合成の場面(定常熱収支の閉形式)。真値の赤はセル内ホットスポットとストリング故障、"
+                           "黄は影と汚れ(本物の温度差だが電気的故障ではない)。影は日射 %.0f %% で約 18 K 冷える。"
+                           % (100 * SHADE_FRAC))
 
     # 偽の故障の地図 —— 対照群 (a) 故障ゼロ
     t0 = capture(thermal_field(V_REF, faults=False, extras=True)["T"])
@@ -1319,9 +1436,364 @@ def section_figures(base: dict, norms: dict) -> None:
                     "ΔT モジュール中央値基準(±%.0f K)" % clip,
                     "そこで上がった塊"],
                    ncols=2,
-                   title="対照群: 電気的故障を 1 つも置いていない場面",
+                   title="合成の対照群: 電気的故障を 1 つも置いていない場面",
                    caption="上段の塊はすべて偽か非故障の温度差。基準の取り方"
                            "だけで消える。")
+
+
+# --------------------------------------------------------------------------- #
+# 9b. 実データ —— DTU の PV 発電所のドローン熱画像(CC BY 4.0)                 #
+# --------------------------------------------------------------------------- #
+#: 故障の種類(配布物の dir 名)とモジュールの数。種類は EL 画像と IV 曲線で配布元が確かめたもの。
+REAL_CATEGORIES = (
+    ("05_Short-circuited Bypass Diode", "バイパスダイオードの短絡", 7),
+    ("01_Cell Cracks", "セルの割れ", 8),
+    ("02_Cell Interconnects", "セル間の配線の不良", 8),
+    ("03_PID", "PID(電位誘起劣化)", 6),
+    ("04_Glass Cracks", "ガラスの割れ", 2),
+)
+#: 配布物の .raw は 60 セル(6 x 10)のモジュールを 363 x 605 画素に正対化したもの。幅 0.99 m とすると
+#: 1 画素 2.73 mm なので、7 x 7 の面積平均で 19.1 mm —— この PoC の GSD 20 mm にほぼ揃えて、
+#: 合成の章とまったく同じ判定(モジュール中央値・σ 1 px の平滑・3 K・面積 4 px)を通す。
+REAL_BIN = 7
+#: 汚れの 2 種(配布元の分類の 1 つ。電気的な故障ではない。IV 曲線は 2 台だけ付き、比べる相手(清掃後・健全)の IV は無い)。日射は 3 段(800 超が無い)・高さ 4 段・各 6 台 = 144 枚。
+#: ★2026-11-08 の初版はファイル名の形が違うので読み口に合わず、黙って集計から外れていた(敵対的レビューで発覚)。
+REAL_SOILING = (
+    ("06_Soiling 1", "汚れ 1(電気的な故障ではない)", 6),
+    ("07_Soiling 2", "汚れ 2(電気的な故障ではない)", 6),
+)
+REAL_SOIL_IRR = ("200", "600", "800")
+#: 汚れの .raw 144 枚の内容をつないだ SHA-256(故障の 496 枚の固定値 REAL_USED_SHA256 とは別に持つ)。
+REAL_SOIL_SHA256 = "2fafcd962d74df33001fd96a695e452b9048ef019980e5fd661840b0b85330cb"
+#: 使う .raw 全部(種類 → モジュール → 日射 → 高さの順)の内容をつないだ SHA-256(2026-11-08)。
+#: アーカイブの SHA-256 は realdata.DTU_PV_IRT_SHA256。展開物が書き換わっていたら読まずに止める。
+REAL_USED_SHA256 = "8a863e0a9dfa1b0cba99b96f45654dcb6d8e8787a85bc7f3f2fb514526f8ac1d"
+#: 実データの章の記録値(2026-11-08、データありの実行の印字から)。CI(データ無し)では記録値の中身の整合と
+#: 台帳のキャプションとの一致を門にし、データありでは実測が記録値と一致することを門にする。
+REAL_RECORDED = {
+    "n_frames": 496, "n_soil": 144,
+    "n_strong": 84, "n_strong_hit": 84,            # バイパスダイオードの短絡・日射 600 以上
+    "weak_missed": 2, "weak_peaks": (1.1, 2.0),     # 日射 200 で 4 つの高さとも見逃した台数と、その ΔT の最大
+    "weak_peak_10m": 1.0,                           # 図 11 (a) の 1 台・10 m の ΔT
+    "n_nt": 256, "n_nt_hit": 0,                     # セルの割れ・配線の不良
+    "n_soil_hit": 72,
+    "n_ratio": 21, "n_fall": 21, "ratio_med": 0.77,
+    "pid": (4, 96),
+    "soil_pf": (47.3, 30.3),                        # 汚れ 2 台の現地 IV の性能比 [%]
+}
+
+
+def recorded_consistent(rec: dict = REAL_RECORDED) -> list:
+    """記録値の中身の整合(CI でも回る)。分子 <= 分母、枚数が配布物の構成(種類 x モジュール x 日射 x 高さ)と一致、
+    台帳のキャプションが記録値の数を書いているか。食い違いの文の並びを返す(空 = 整合)。"""
+    import json
+    bad = []
+    n_alt, n_irr = 4, 4
+    if rec["n_frames"] != sum(n for _, _, n in REAL_CATEGORIES) * n_irr * n_alt:
+        bad.append("故障の枚数 %d が構成と違う" % rec["n_frames"])
+    if rec["n_soil"] != sum(n for _, _, n in REAL_SOILING) * len(REAL_SOIL_IRR) * n_alt:
+        bad.append("汚れの枚数 %d が構成と違う" % rec["n_soil"])
+    if rec["n_strong"] != REAL_CATEGORIES[0][2] * 3 * n_alt:
+        bad.append("日射 600 以上の短絡の枚数 %d が構成と違う" % rec["n_strong"])
+    if rec["n_nt"] != (REAL_CATEGORIES[1][2] + REAL_CATEGORIES[2][2]) * n_irr * n_alt:
+        bad.append("割れ・配線の枚数 %d が構成と違う" % rec["n_nt"])
+    if rec["n_ratio"] != REAL_CATEGORIES[0][2] * 3:
+        bad.append("高さの比の組 %d が構成と違う" % rec["n_ratio"])
+    for num, den in (("n_strong_hit", "n_strong"), ("n_nt_hit", "n_nt"), ("n_soil_hit", "n_soil"),
+                     ("n_fall", "n_ratio")):
+        if not 0 <= rec[num] <= rec[den]:
+            bad.append("%s %d が 0..%s %d の外" % (num, rec[num], den, rec[den]))
+    if not (0 <= rec["pid"][0] <= rec["pid"][1] and rec["pid"][1] == REAL_CATEGORIES[3][2] * n_irr * n_alt):
+        bad.append("PID の枚数 %s が構成と違う" % (rec["pid"],))
+    if len(rec["weak_peaks"]) != rec["weak_missed"] or not rec["weak_peak_10m"] <= max(rec["weak_peaks"]):
+        bad.append("見逃した台の ΔT の記録が台数・10 m の値と合わない")
+    cap_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "docs", "articles", "exhibits",
+                            "poc_captions.json")
+    with open(cap_path, encoding="utf-8") as fh:
+        cap = next(e for e in json.load(fh)["exhibits"] if e["id"] == "poc_pv_thermal_survey")
+    want = ["%d / %d" % (rec["n_strong_hit"], rec["n_strong"]), "%d / %d" % (rec["n_soil_hit"], rec["n_soil"]),
+            "%d / %d" % (rec["n_nt_hit"], rec["n_nt"]), "%d / %d" % (rec["n_fall"], rec["n_ratio"]),
+            "%.2f" % rec["ratio_med"], " / ".join("%.1f" % v for v in rec["weak_peaks"]),
+            " / ".join("%.1f %%" % v for v in rec["soil_pf"])]
+    miss = [w for w in want if w not in cap["caption_ja"]]
+    if miss:
+        bad.append("台帳のキャプション(caption_ja)に記録値が無い: %s" % miss)
+    return bad
+
+
+def recorded_matches(real: dict, rec: dict = REAL_RECORDED) -> list:
+    """データありの実行で、実測が記録値と一致するか(整数は一致、比は小数 2 桁、ΔT と性能比は小数 1 桁)。"""
+    got = {"n_frames": real["n_frames"], "n_soil": real["n_soil"], "n_strong": real["n_strong"],
+           "n_strong_hit": real["n_strong_hit"], "weak_missed": len(real["weak_missed"]),
+           "weak_peaks": tuple(round(real["weak_peaks"][m], 1) for m in real["weak_missed"]),
+           "weak_peak_10m": round(real["weak_peak_10m"], 1), "n_nt": real["n_nt"], "n_nt_hit": real["n_nt_hit"],
+           "n_soil_hit": real["n_soil_hit"], "n_ratio": real["n_ratio"], "n_fall": real["n_fall"],
+           "ratio_med": round(real["ratio_med"], 2), "pid": real["pid"],
+           "soil_pf": tuple(round(v, 1) for v in real["soil_pf"])}
+    return ["%s: 記録 %s / 実測 %s" % (k, rec[k], got[k]) for k in rec if rec[k] != got[k]]
+
+
+def _real_frames():
+    """使う .raw を決まった順に並べる: (種類, モジュール, 日射, 高さ, path)。"""
+    import realdata as rd
+    out = []
+    for cat, _, n in REAL_CATEGORIES:
+        for m in range(1, n + 1):
+            for irr in rd.DTU_PV_IRT_IRRADIANCES:
+                for alt in rd.DTU_PV_IRT_ALTITUDES:
+                    out.append((cat, m, irr, alt, rd.dtu_pv_irt_frame(cat, m, alt, irr)))
+    return out
+
+
+def _real_soil_frames():
+    """汚れの .raw を決まった順に並べる: (種類, モジュール, 日射, 高さ, path)。"""
+    import realdata as rd
+    return [(cat, m, irr, alt, rd.dtu_pv_irt_frame(cat, m, alt, irr))
+            for cat, _, n in REAL_SOILING for m in range(1, n + 1)
+            for irr in REAL_SOIL_IRR for alt in rd.DTU_PV_IRT_ALTITUDES]
+
+
+def _soil_iv() -> dict:
+    """汚れのモジュールに付く現地の IV 曲線(Solmetric PVA の CSV)から、Pmax の実測と模型・性能比・日射を読む。
+    配布物に CSV があるモジュールだけ(2026-11-08 時点で 2 台)。読めない行があれば黙って使わず、その台を外す。"""
+    import realdata as rd
+    root = rd.dtu_pv_irt_root(required=False)
+    out = {}
+    if root is None:
+        return out
+    for cat, _, n in REAL_SOILING:
+        for m in range(1, n + 1):
+            for path in sorted((root / cat / ("Module %d" % m)).glob("*.csv")):
+                vals = {}
+                for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+                    cells = [c.strip() for c in line.split(",")]
+                    if len(cells) >= 2 and cells[0] in ("Pmax", "Performance Factor (%)", "Irradiance (W/m^2)"):
+                        vals[cells[0]] = cells[1:]
+                try:
+                    out[(cat, m)] = {"pmax": float(vals["Pmax"][0]), "pmax_model": float(vals["Pmax"][1]),
+                                     "pf": float(vals["Performance Factor (%)"][0]),
+                                     "irr": float(vals["Irradiance (W/m^2)"][0])}
+                except (KeyError, IndexError, ValueError):
+                    continue
+    return out
+
+
+def section_real() -> dict | None:
+    """実データで同じ判定を回す。データが無ければ印を出して ``None``(CI の既定)。"""
+    import hashlib
+
+    import realdata as rd
+    print("\n" + "=" * 78)
+    print("9) 実データ —— 公開のドローン熱画像で、同じ判定を回す")
+    print("=" * 78)
+    if rd.dtu_pv_irt_root(required=False) is None:
+        print("  [SKIP] 実データが無い(tools/fetch_dtu_pv_irt.py で取得、置き場は FULLSEYE_PV_IRT_DATA)。"
+              "合成の章は上で全部走った。")
+        return None
+    print("  出典: " + rd.dtu_pv_irt_credit())
+    frames = _real_frames()
+    h = hashlib.sha256()
+    res = {}
+    for cat, m, irr, alt, path in frames:
+        raw = path.read_bytes()
+        h.update(path.name.encode("utf-8") + b"\0" + raw)
+        a = rd.dtu_pv_irt_load(path)
+        b = block_mean(a, REAL_BIN)
+        gt = {"panel": np.ones(b.shape, bool), "mod_id": np.zeros(b.shape, int)}
+        det = detect(b, gt, "モジュール中央値")
+        res[(cat, m, irr, alt)] = {"hit": bool(det["mask"].any()), "peak": float(det["delta"].max()),
+                                   "median_c": float(np.median(a)), "raw": a, "det": det}
+    digest = h.hexdigest()
+    if digest != REAL_USED_SHA256:
+        raise SystemExit("実データの .raw の中身が固定値と違う(%s)。読まずに止める" % digest)
+    soil_frames = _real_soil_frames()
+    hs = hashlib.sha256()
+    for cat, m, irr, alt, path in soil_frames:
+        hs.update(path.name.encode("utf-8") + b"\0" + path.read_bytes())
+        a = rd.dtu_pv_irt_load(path)
+        b = block_mean(a, REAL_BIN)
+        gt = {"panel": np.ones(b.shape, bool), "mod_id": np.zeros(b.shape, int)}
+        det = detect(b, gt, "モジュール中央値")
+        res[(cat, m, irr, alt)] = {"hit": bool(det["mask"].any()), "peak": float(det["delta"].max()),
+                                   "median_c": float(np.median(a)), "raw": a, "det": det}
+    soil_digest = hs.hexdigest()
+    if soil_digest != REAL_SOIL_SHA256:
+        raise SystemExit("汚れの .raw の中身が固定値と違う(%s)。読まずに止める" % soil_digest)
+    rd.mark_read("dtu_pv_irt")
+    print("  読んだ .raw %d 枚(SHA-256 %s…)。7 x 7 の面積平均で 1 画素 %.1f mm に揃え、合成の章と同じ"
+          "判定(モジュール中央値・3 K・面積 %d px)を通した。" % (len(frames), digest[:12], 0.99 / 363 * REAL_BIN * 1e3, A_MIN))
+    print("  汚れの .raw %d 枚(SHA-256 %s…)も同じ判定に通した(汚れは配布元の分類の 1 つ。電気的な故障ではない)。"
+          % (len(soil_frames), soil_digest[:12]))
+
+    rows = []
+    for cat, name, n in REAL_CATEGORIES:
+        row = [name]
+        for irr in rd.DTU_PV_IRT_IRRADIANCES:
+            hits = sum(res[(cat, m, irr, alt)]["hit"] for m in range(1, n + 1) for alt in rd.DTU_PV_IRT_ALTITUDES)
+            row.append("%d / %d" % (hits, n * len(rd.DTU_PV_IRT_ALTITUDES)))
+        rows.append(row)
+        print("  %-22s 日射 200 / 600 / 800 / 800 超 で検出: %s" % (name, " | ".join(row[1:])))
+    soil_rows = []
+    for cat, name, n in REAL_SOILING:
+        row = [name]
+        for irr in rd.DTU_PV_IRT_IRRADIANCES:
+            if irr not in REAL_SOIL_IRR:
+                row.append("—")
+                continue
+            hits = sum(res[(cat, m, irr, alt)]["hit"] for m in range(1, n + 1) for alt in rd.DTU_PV_IRT_ALTITUDES)
+            row.append("%d / %d" % (hits, n * len(rd.DTU_PV_IRT_ALTITUDES)))
+        soil_rows.append(row)
+        print("  %-22s 日射 200 / 600 / 800 / 800 超 で検出: %s" % (name, " | ".join(row[1:])))
+    soil_keys = [(c, m, irr, alt) for c, _, n in REAL_SOILING for m in range(1, n + 1)
+                 for irr in REAL_SOIL_IRR for alt in rd.DTU_PV_IRT_ALTITUDES]
+    n_soil = len(soil_keys)
+    n_soil_hit = sum(res[k]["hit"] for k in soil_keys)
+    soil_peaks = [res[k]["peak"] for k in soil_keys]
+
+    byp = REAL_CATEGORIES[0]
+    strong = [res[(byp[0], m, irr, alt)] for m in range(1, byp[2] + 1) for irr in ("600", "800", "abv800")
+              for alt in rd.DTU_PV_IRT_ALTITUDES]
+    n_strong_hit = sum(r["hit"] for r in strong)
+    weak_missed = [m for m in range(1, byp[2] + 1)
+                   if not any(res[(byp[0], m, "200", alt)]["hit"] for alt in rd.DTU_PV_IRT_ALTITUDES)]
+    weak_peaks = {m: max(res[(byp[0], m, "200", alt)]["peak"] for alt in rd.DTU_PV_IRT_ALTITUDES) for m in weak_missed}
+    nonthermal = [c for c in REAL_CATEGORIES if c[0] in ("01_Cell Cracks", "02_Cell Interconnects")]
+    n_nt = sum(c[2] for c in nonthermal) * 16
+    n_nt_hit = sum(res[(c[0], m, irr, alt)]["hit"] for c in nonthermal for m in range(1, c[2] + 1)
+                   for irr in rd.DTU_PV_IRT_IRRADIANCES for alt in rd.DTU_PV_IRT_ALTITUDES)
+    ratios = [res[(byp[0], m, irr, 20)]["peak"] / res[(byp[0], m, irr, 8)]["peak"]
+              for m in range(1, byp[2] + 1) for irr in ("600", "800", "abv800")]
+    n_fall = sum(r < 1.0 for r in ratios)
+    # 高さの比の交絡: 同じモジュール・同じ日射の段でも、高さごとの撮影は同時でない(配布物に時刻・日射の
+    # 記録は無く、IV の CSV にも高さ別の条件は無い)。モジュール全体の中央値温度の差で、条件が揃っているかを見る。
+    dmed = [res[(byp[0], m, irr, 20)]["median_c"] - res[(byp[0], m, irr, 8)]["median_c"]
+            for m in range(1, byp[2] + 1) for irr in ("600", "800", "abv800")]
+    print("  ★バイパスダイオードの短絡は日射 600 以上で %d / %d 枚すべて検出。日射 200 では %d 台が 4 つの高さすべてで"
+          "見逃し(ΔT の最大 %s K)—— **同じ故障が、撮った条件で出たり消えたりする**(合成の 4 節と同じ形)。"
+          % (n_strong_hit, len(strong), len(weak_missed),
+             " / ".join("%.1f" % weak_peaks[m] for m in weak_missed)))
+    print("  ★高さ 8 m → 20 m で、ホットスポットのピークの ΔT は %d / %d 組で下がる(比の中央値 %.2f、範囲 %.2f〜%.2f)"
+          " —— 高いほど 1 画素が広くなり、カメラが熱源を薄める(合成の 1 節・6 節と同じ向き)。"
+          % (n_fall, len(ratios), float(np.median(ratios)), min(ratios), max(ratios)))
+    print("     ★ただし交絡がある: 同じ組でモジュール全体の中央値温度も 8 m → 20 m で中央値 %+.1f K(範囲 %+.1f〜%+.1f K)"
+          "動く。配布物には高さごとの時刻・日射の記録が無く、高さは同時に撮っていない。比 %.2f は画素の大きさ"
+          "だけの効果と分けられていない(大気の経路・撮影時刻の差も入りうる)。"
+          % (float(np.median(dmed)), min(dmed), max(dmed), float(np.median(ratios))))
+    print("  ★★汚れ(電気的な故障ではない)も同じ判定で %d / %d 枚が上がる(ピークの ΔT の中央値 %.1f K、"
+          "最大 %.1f K)—— **温度のしきい値は、原因(汚れか電気的な故障か)を分けない**(合成の 2・5 節と同じ形)。"
+          "上がった塊は汚れで陰ったセルが発熱した本物の温度差で、保守では対応の要る異常の大きさ。"
+          "配布物には健全なモジュールが無いので、特異度そのものは測れない。"
+          % (n_soil_hit, n_soil, float(np.median(soil_peaks)), max(soil_peaks)))
+    iv = _soil_iv()
+    if iv:
+        print("  汚れの現地の IV 曲線(配布物に付く 2 台): " + " / ".join(
+            "%s M%d 性能比 %.1f %%(Pmax 実測 %.1f W・模型 %.1f W、日射 %.0f W/m²)"
+            % (k[0][-1], k[1], v["pf"], v["pmax"], v["pmax_model"], v["irr"]) for k, v in sorted(iv.items()))
+              + "。性能比は実測の Pmax を測定器の模型の Pmax で割った値 —— 清掃の前後や健全なモジュールの IV は"
+                "配布物に無く台数も 2 台なので、出力の低下が汚れによるかは分けられない。")
+    print("  ★正直な限界: セルの割れと配線の不良(EL で確かめた本物の故障)で上がるのは %d / %d 枚"
+          "(見逃し率 %.0f %%)—— 熱を出さない故障は熱画像のしきい値では見逃す。PID も %d / %d 枚だけ。"
+          % (n_nt_hit, n_nt, 100.0 * (1.0 - n_nt_hit / n_nt), sum(res[(REAL_CATEGORIES[3][0], m, irr, alt)]["hit"] for m in range(1, 7)
+                                 for irr in rd.DTU_PV_IRT_IRRADIANCES for alt in rd.DTU_PV_IRT_ALTITUDES), 6 * 16))
+    print("  ★日射 200 で見逃した 2 台は外気の冷たい日(モジュールの中央値 %s °C)の撮影で、日射だけでなく"
+          "気温と風も違う —— 実データの条件は 1 つずつは振れていない。"
+          % " / ".join("%.1f" % res[(byp[0], m, "200", 10)]["median_c"] for m in weak_missed))
+    # 門は「本物の故障を拾う」向きと読み口の健全さだけに置く。日射 200 の見逃し・熱を出さない故障の見逃し・
+    # 汚れが上がることは**検出器の限界の記録**なので、門にせず数を印字する(★2026-11-08 の初版は
+    # 「見逃すこと」を門にしていた —— 検出器が良くなると落ちる逆向きの門。敵対的レビューで外した)。
+    assert n_strong_hit == len(strong), "日射 600 以上のバイパスダイオードの短絡を見逃した"
+    assert n_soil == 144 and len(frames) == 496, "読んだ .raw の枚数が配布物と違う(故障 %d・汚れ %d)" % (len(frames), n_soil)
+    assert n_fall == len(ratios), "高さとともにピークの ΔT が下がらない組がある"
+    pid = (sum(res[(REAL_CATEGORIES[3][0], m, irr, alt)]["hit"] for m in range(1, REAL_CATEGORIES[3][2] + 1)
+               for irr in rd.DTU_PV_IRT_IRRADIANCES for alt in rd.DTU_PV_IRT_ALTITUDES), REAL_CATEGORIES[3][2] * 16)
+    out = {"n_frames": len(frames), "pid": pid,
+           "weak_peak_10m": res[(byp[0], weak_missed[0], "200", 10)]["peak"] if weak_missed else float("nan"),
+           "soil_pf": tuple(v["pf"] for _, v in sorted(iv.items()))}
+    out.update({"res": res, "rows": rows, "n_strong": len(strong), "n_strong_hit": n_strong_hit,
+            "weak_missed": weak_missed, "weak_peaks": weak_peaks, "n_nt": n_nt, "n_nt_hit": n_nt_hit,
+            "ratio_med": float(np.median(ratios)), "ratio_min": min(ratios), "ratio_max": max(ratios),
+            "n_fall": n_fall, "n_ratio": len(ratios), "digest": digest, "soil_rows": soil_rows,
+            "n_soil": n_soil, "n_soil_hit": n_soil_hit, "soil_peak_med": float(np.median(soil_peaks)),
+            "dmed_med": float(np.median(dmed)), "dmed_min": min(dmed), "dmed_max": max(dmed)})
+    bad = recorded_matches(out)
+    print("  実測と記録値(REAL_RECORDED)の照合: %s" % ("一致(%d 項目)" % len(REAL_RECORDED) if not bad else bad))
+    assert not bad, "実データの実測が記録値と違う: %s" % bad
+    return out
+
+
+def save_real_figures(real: dict | None) -> None:
+    """実データの図: 同じモジュールを日射 4 段と高さ 4 段で並べ、判定の塊を白枠で重ねる。"""
+    if real is None or not figs.enabled():
+        return
+    import realdata as rd
+    res = real["res"]
+    byp = REAL_CATEGORIES[0][0]
+    m_weak = real["weak_missed"][0]
+    m_alt = 3
+    lo, hi = -3.0, 25.0
+    import annotate as ann
+    iron_lut = np.asarray(fs.apply_cmap(np.linspace(0, 1, 256)[:, None], "inferno"))[:, 0]
+
+    def panel(key):
+        r = res[key]
+        d = r["raw"] - float(np.median(r["raw"]))
+        rgb = np.asarray(fs.apply_cmap(d, "inferno", vmin=lo, vmax=hi))
+        mask = np.kron(r["det"]["mask"].astype(np.uint8), np.ones((REAL_BIN, REAL_BIN), np.uint8)).astype(bool)
+        full = np.zeros(d.shape, bool)
+        full[:mask.shape[0], :mask.shape[1]] = mask
+        if full.any():
+            rgb = np.asarray(fs.overlay_mask(rgb, full, color=(1.0, 1.0, 1.0), alpha=1.0,
+                                             mode="margin", line_width=3))
+        return rgb
+
+    irr_label = {"200": "200", "600": "600", "800": "800", "abv800": "800 超"}
+    panels, caps = [], []
+    for irr in rd.DTU_PV_IRT_IRRADIANCES:
+        r = res[(byp, m_weak, irr, 10)]
+        panels.append(panel((byp, m_weak, irr, 10)))
+        caps.append("日射 %s・10 m: %.1f K %s" % (irr_label[irr], r["peak"], "検出" if r["hit"] else "見逃し"))
+    for alt in rd.DTU_PV_IRT_ALTITUDES:
+        r = res[(byp, m_alt, "800", alt)]
+        panels.append(panel((byp, m_alt, "800", alt)))
+        caps.append("高さ %d m・日射 800: %.1f K" % (alt, r["peak"]))
+    soil_show = []
+    for cat, _, n in REAL_SOILING:
+        keys = sorted(((cat, m, irr, 10) for m in range(1, n + 1) for irr in ("600", "800")),
+                      key=lambda k: -res[k]["peak"])
+        miss = [k for k in keys if not res[k]["hit"]]
+        soil_show += [keys[0], miss[0] if miss else keys[1]]
+    for k in soil_show:
+        r = res[k]
+        panels.append(panel(k))
+        caps.append("汚れ %s・M%d・日射 %s: %.1f K %s" % (k[0][-1], k[1], k[2], r["peak"], "上がる" if r["hit"] else "上がらない"))
+    panels[3] = np.asarray(ann.color_bar(np.asarray(panels[3], np.float64) / (255.0 if np.asarray(panels[3]).dtype == np.uint8 else 1.0),
+                                         iron_lut, (300, 330, 18, 240), vmin=lo, vmax=hi, unit="K", font_size=14))
+    figs.save_grid("real_dtu_conditions", panels, caps, ncols=4,
+                   title="実データ: 故障のモジュールと汚れのモジュールの熱画像(DTU、CC BY 4.0)",
+                   caption="公開のドローン熱画像(DTU の PV 発電所、正対化済みの温度の画像、%s)。色はモジュールの中央値からの"
+                           "温度差 %.0f〜%.0f K(鉄色)、白枠はこの PoC の判定(GSD 19 mm に揃え、モジュール中央値・3 K・面積の門)。"
+                           "上段: 同じモジュール %d を日射 200〜800 超で(高さ 10 m)—— 200 W/m² では 10 m で ΔT %.1f K、"
+                           "4 つの高さの最大でも %.1f K しか出ず見逃す"
+                           "(日射 600 以上ではバイパスダイオードの短絡 %d / %d 枚すべて検出)。下段: モジュール %d を高さ 8〜20 m で"
+                           " —— ピークの ΔT は高いほど下がる(20 m / 8 m の比の中央値 %.2f。ただしモジュール全体の温度も"
+                           "中央値 %+.1f K 動いており、高さごとの撮影は同時でないので画素の大きさの効果だけとは言えない)。"
+                           "3 段目: 汚れのモジュール(配布元の分類の 1 つ。電気的な故障ではない)—— 同じ判定で %d / %d 枚が上がる。"
+                           "上がった塊は画像の上の本物の温度差(雑音ではない)。現地の IV が付く 2 台の性能比(実測 / 模型の Pmax)は"
+                           "%.1f %% / %.1f %% だが、清掃の前後や健全なモジュールとの比較は配布物に無く、出力の低下の原因は分けられない。"
+                           "温度のしきい値は原因(汚れか電気的な故障か)を分けない。改変: 配布物の温度の画像を 7 x 7 の面積平均で判定し、"
+                           "表示はモジュールの中央値からの差を鉄色で塗り、判定の白枠と見出しを重ねた。"
+                           % (rd.dtu_pv_irt_credit(), lo, hi, m_weak, real["weak_peak_10m"], real["weak_peaks"][m_weak],
+                              real["n_strong_hit"], real["n_strong"], m_alt, real["ratio_med"], real["dmed_med"],
+                              real["n_soil_hit"], real["n_soil"], *real["soil_pf"]))
+    figs.save_table("real_detection_table", ["故障の種類(EL・IV で確認)", "日射 200", "日射 600", "日射 800", "日射 800 超"],
+                    real["rows"] + real["soil_rows"],
+                    title="実データ: 同じ判定で上がった枚数(各セル = モジュール数 x 高さ 4 段)",
+                    caption="熱を出す故障(バイパスダイオードの短絡)は日射 600 以上で全部上がり、200 では一部が消える。"
+                            "熱を出さない故障(セルの割れ・配線の不良)は 1 度も上がらない(見逃し率 100 %%)。"
+                            "汚れ(電気的な故障ではない)も %d / %d 枚が上がる(汚れは日射 800 超の撮影が無い)—— 温度のしきい値は"
+                            "原因を分けない。"
+                            "改変: 配布物の温度の画像を 7 x 7 の面積平均にして判定した。出典: %s"
+                            % (real["n_soil_hit"], real["n_soil"], rd.dtu_pv_irt_credit()))
 
 
 # --------------------------------------------------------------------------- #
@@ -1390,6 +1862,12 @@ def main() -> int:
     netd = section_netd()
     section_figures(base, norms)
     save_aerial_figures(base, norms)
+    real = section_real()
+    rec_bad = recorded_consistent()
+    print("\n  実データの記録値(REAL_RECORDED)の中身の整合: %s(データの有無に関係なく回る門)"
+          % ("整合" if not rec_bad else rec_bad))
+    assert not rec_bad, "実データの記録値の中身が食い違う: %s" % rec_bad
+    save_real_figures(real)
     pv_gate = realism_evidence()
     assert 3.0 <= pv_gate["hotspot_delta_k"] <= 20.0
     assert 0.2 <= pv_gate["module_spread_k"] <= 5.0
@@ -1407,7 +1885,16 @@ def main() -> int:
                        measured=pv_gate["module_spread_k"], expected="0.2..5", relation="inside"),
             GateResult("fresnel-gradient", pv_gate["fresnel_gradient_error"] <= 0.02,
                        measured=pv_gate["fresnel_gradient_error"], expected=0.02, relation="<="),
-        ],
+        ]
+        + [GateResult("real-recorded-consistent", not rec_bad, measured=len(rec_bad), expected=0, relation="==")]
+        + ([GateResult("real-recorded-matches", not recorded_matches(real), measured=len(recorded_matches(real)),
+                       expected=0, relation="=="),
+            GateResult("real-bypass-detected-600plus", real["n_strong_hit"] == real["n_strong"],
+                       measured=real["n_strong_hit"], expected=real["n_strong"], relation="=="),
+            GateResult("real-soiling-frames-read", real["n_soil"] == 144,
+                       measured=real["n_soil"], expected=144, relation="=="),
+            GateResult("real-peak-falls-with-altitude", real["n_fall"] == real["n_ratio"],
+                       measured=real["n_fall"], expected=real["n_ratio"], relation="==")] if real else []),
         metrics={"hotspot_delta_k": pv_gate["hotspot_delta_k"]},
         artifacts=artifacts_from_manifest(figs.manifest()), seed=SEED,
         provenance={"migration": "P0-A"},
@@ -1433,8 +1920,8 @@ def main() -> int:
           % (a_mean["n_false"], a_mean["n_nonfault"],
              a_med["n_false"], a_med["n_nonfault"]))
     print("  * 風速の崖: ホットスポットは**面積の門**で落ちる(予測 %.1f m/s、"
-          "実測 %.1f m/s。ピーク基準の予測 %.1f m/s は外れ)。ストリングは"
-          "ピーク基準どおり(予測 %.1f / 実測 %.1f m/s)。"
+          "実測は %.1f m/s まで上がり次の刻みで消える。ピーク基準の予測 %.1f m/s は外れ)。ストリングは"
+          "ピーク基準どおり(予測 %.1f / 実測は %.1f m/s まで上がる)。"
           % (wind["v_area"], wind["last_hot"], wind["v_hot"],
              wind["v_str"], wind["last_str"]))
     print("  * 影はストリング故障を偽造する: 日向側 %+.2f K 対 本物 %+.2f K"

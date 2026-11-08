@@ -40,5 +40,47 @@
   ],
   "csv": "04_max_vs_mean.csv",
   "tsv": "04_max_vs_mean.tsv"
+ },
+ {
+  "file": "05_real_crack_rebin.png",
+  "name": "real_crack_rebin",
+  "caption": "12701_1.jpg。橙の輪郭は 2 値化(欠損 > 0.5)のマスク。幅は元の画素の単位。四分位は積分 0.97〜1.44 / 2 値化 1.22〜1.78。Özgenel, Concrete Crack Images for Classification, Mendeley Data v2, DOI 10.17632/5y9wdsg2zt.2, CC BY 4.0",
+  "shape": [
+   547,
+   938,
+   3
+  ]
+ },
+ {
+  "file": "06_real_crack_ratio.png",
+  "name": "real_crack_ratio",
+  "caption": "中央値は k=4 で積分法のほうが 1 に近いが、四分位は重なり、k=3 では差 0.03。合成なら積分法は 1 のまま(1 % 以内)。",
+  "shape": [
+   352,
+   1104,
+   3
+  ],
+  "csv": "06_real_crack_ratio.csv",
+  "tsv": "06_real_crack_ratio.tsv"
+ },
+ {
+  "file": "07_real_crack_samples.png",
+  "name": "real_crack_samples",
+  "caption": "緑はひびの中心ではなく片側の縁に寄りやすく、地や別のひびへ飛ぶ列もある(断面の最大が経路から 3 px より外の断面は 1 枚あたり中央値 18 %、経路が断面の半値幅の区間の外に出る断面は 9 %)。見た目の幅は断面の半値幅。積分は「幅 x 深さ」なので芯の欠損で割って並べた。2 値化(欠損 > 0.5)は芯が灰色のひびで芯の一部しか拾わない。Özgenel, Concrete Crack Images for Classification, Mendeley Data v2, DOI 10.17632/5y9wdsg2zt.2, CC BY 4.0",
+  "shape": [
+   1043,
+   1866,
+   3
+  ]
+ },
+ {
+  "file": "08_real_crack_ratio_spread.png",
+  "name": "real_crack_ratio_spread",
+  "caption": "比は各手法の自己整合で、幅の正しさは言わない。0〜3 の外の点(積分法 25 点・2 値化 11 点、粗い画素でベースラインの当てはめが壊れた断面を含む)は描いていない。",
+  "shape": [
+   720,
+   1414,
+   3
+  ]
  }
 ]

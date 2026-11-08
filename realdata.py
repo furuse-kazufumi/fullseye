@@ -466,6 +466,92 @@ def walnut_cbct_credit() -> str:
             % (WALNUT_CBCT_PAPER_DOI, WALNUT_CBCT_DATASET_DOI, WALNUT_CBCT_LICENSE))
 
 
+# ---------------------------------------------------------------------------
+# DTU の PV 発電所のドローン熱画像(CC BY 4.0、太陽光の熱画像点検の PoC が読む)
+# ---------------------------------------------------------------------------
+#: Del Prado Santamaría ほか、DTU Data(figshare)の「DTU PV plant - Drone Infrared Thermography
+#: Dataset: Influence of Irradiance and Altitude」。故障の種類(EL 画像と IV 曲線で確かめた)ごとに
+#: モジュールを分け、各モジュールを 4 つの日射(200 / 600 / 800 / 800 超 W/m²)と 4 つの高さ
+#: (8 / 10 / 14 / 20 m)で撮った温度の画像(.raw = float32、605 x 363、°C)。
+#: 原本は repo に入れず ``tools/fetch_dtu_pv_irt.py`` が取得して展開する。
+DTU_PV_IRT_DOI = "10.11583/DTU.29665346.v1"
+DTU_PV_IRT_LICENSE = "CC BY 4.0"
+DTU_PV_IRT_BYTES = 642_610_942
+#: 2026-11-08 に取得した ``IRT DATASET.7z`` の SHA-256(配布元の MD5 2ca8adbcf45639f6eefc668eceac3fe7 とも一致)。
+DTU_PV_IRT_SHA256 = "3af1c066145fb4fc0ff80b7acf02d84b238b5d83c65c686364c01a9f1afb63c3"
+DTU_PV_IRT_SHAPE = (605, 363)
+DTU_PV_IRT_ALTITUDES = (8, 10, 14, 20)
+DTU_PV_IRT_IRRADIANCES = ("200", "600", "800", "abv800")
+
+
+def dtu_pv_irt_cache() -> Path:
+    """DTU の PV 熱画像の repo 外の置き場(``FULLSEYE_PV_IRT_DATA`` で上書き)。
+
+    開発 worktree が ``<root>/projects/<checkout>`` にあれば ``<root>/data/fullseye_poc_real/dtu_pv_irt``、
+    それ以外はユーザーキャッシュ(:func:`sem_metal_layer_cache` と同じ形。手元の絶対パスを焼き込まない)。
+    """
+    configured = os.environ.get("FULLSEYE_PV_IRT_DATA", "").strip()
+    if configured:
+        return Path(configured).expanduser()
+    here = Path(__file__).resolve().parent
+    if here.parent.name.lower() == "projects":
+        return here.parent.parent / "data" / "fullseye_poc_real" / "dtu_pv_irt"
+    return Path.home() / ".cache" / "fullseye" / "dtu_pv_irt"
+
+
+def dtu_pv_irt_root(*, required: bool = True) -> Path | None:
+    """展開済みの ``IRT DATASET`` の dir。無ければ ``required=False`` で ``None``(CI の既定)。"""
+    cache = dtu_pv_irt_cache()
+    for cand in (cache / "extracted" / "IRT DATASET", cache / "IRT DATASET"):
+        if cand.is_dir():
+            return cand
+    if required:
+        raise RealDataError("DTU の PV 熱画像が無い: %s。tools/fetch_dtu_pv_irt.py で取得する" % cache)
+    return None
+
+
+def dtu_pv_irt_frame(category: str, module: int, altitude_m: int, irradiance: str) -> Path:
+    """故障の種類の dir 名・モジュール番号・高さ・日射の組の ``.raw`` を 1 つだけ返す(0 個 / 2 個以上は例外)。
+
+    配布物のファイル名は 2 つの形がある: 故障の 5 種は ``T10_10m_200_APV771.raw``(高さ → 日射)、
+    汚れの 2 種は ``T_200_10m - Copy_PD.raw`` / ``T_800_10m_PD.png_S1.raw``(日射 → 高さ、後ろに
+    任意の飾り)。★2026-11-08 までは前者の形しか見ておらず、汚れの 144 枚が読み口に合わずに集計から
+    黙って外れていた(敵対的レビューの指摘)。2 つの形は先頭(``T10_`` か ``T_<日射>_``)が違うので
+    互いに混ざらない —— 故障の 5 種の選択は前と同じ。
+    """
+    import re
+
+    if altitude_m not in DTU_PV_IRT_ALTITUDES or irradiance not in DTU_PV_IRT_IRRADIANCES:
+        raise ValueError("altitude / irradiance が配布物の条件に無い: %r %r" % (altitude_m, irradiance))
+    root = dtu_pv_irt_root(required=True)
+    assert root is not None
+    folder = root / category / ("Module %d" % int(module)) / "IRT"
+    pat = re.compile(r"_%dm_%s(_|\.raw$)" % (int(altitude_m), re.escape(irradiance)))
+    pat_soil = re.compile(r"^T_%s_%dm[ _.]" % (re.escape(irradiance), int(altitude_m)))
+    hits = sorted(p for p in folder.glob("*.raw") if pat.search(p.name) or pat_soil.match(p.name))
+    if len(hits) != 1:
+        raise RealDataError("%s の %d m・%s の .raw が %d 個(1 個のはず)" % (folder, altitude_m, irradiance, len(hits)))
+    return hits[0]
+
+
+def dtu_pv_irt_load(path: Path) -> np.ndarray:
+    """``.raw``(float32、605 x 363、°C)を読む。バイト数が違えば黙って読まず例外。"""
+    path = Path(path)
+    want = DTU_PV_IRT_SHAPE[0] * DTU_PV_IRT_SHAPE[1] * 4
+    if path.stat().st_size != want:
+        raise RealDataError("%s のバイト数 %d が %d(605 x 363 の float32)と違う" % (path, path.stat().st_size, want))
+    a = np.fromfile(path, dtype="<f4").reshape(DTU_PV_IRT_SHAPE).astype(np.float64)
+    if not np.all(np.isfinite(a)) or a.min() < -60.0 or a.max() > 150.0:
+        raise RealDataError("%s の温度が範囲外(-60〜150 °C)" % path)
+    return a
+
+
+def dtu_pv_irt_credit() -> str:
+    """DTU の PV 熱画像の帰属表記(著者・題・DOI・CC BY 4.0)を 1 行の文字列で返す。図のキャプションと実行ログに載せる。"""
+    return ("R. del Prado Santamaría et al., DTU PV plant - Drone Infrared Thermography Dataset: "
+            "Influence of Irradiance and Altitude, DTU Data, doi:%s (%s)" % (DTU_PV_IRT_DOI, DTU_PV_IRT_LICENSE))
+
+
 if __name__ == "__main__":                                      # pragma: no cover
     ok, ng = [], []
     for name in sorted(SAMPLE_PHOTOS):

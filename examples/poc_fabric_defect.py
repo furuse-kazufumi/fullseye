@@ -43,6 +43,25 @@ ROC は種別ごとの盲点を隠す」なので、1 枚の「欠陥」マス�
 6. ★**折り返し平均(位相で畳む)は周期の誤差に桁で弱い**。ε=0.5 % で残差は
    既に 4.5 倍(ノッチは 1.0 倍)。位相のずれが視野の端まで積み上がるから。
    周期が既知でないなら、ノッチのほうが安全側。
+7. ★★**本物の欠陥では、採点の仕方で数が変わる**(9b 節)。公開の織物の実写 RAW-FABRID
+   (CC BY 4.0、ラインスキャン 4 px/mm)に付いた欠陥マスク 360 個で採点する。配布物のマスクは
+   欠陥より太い(骨格上の幅の中央値 16 px)。太いマスクの画素で格子のみ 0.557(折り返し 0.525、
+   格子+低周波除去 0.503)だが、マスクの芯(骨格 ±2 px)を陽性・6 px 外を陰性にすると
+   芯で格子のみ 0.657、折り返し 0.614 —— 同じ検出器・同じ欠陥が 0.56 にも 0.66 にもなる。
+   どちらの採点でも、合成の「格子を除けば欠陥はほぼ全部取れる(AUC 1.00)」には遠い。
+   ★ゼロ点(局所平均との差)は 0.5 を下回るが当て推量ではなく**符号が逆**(本物の欠陥は周りより
+   織り目の凹凸が少ない)で、符号を反転すれば 0.717(芯)。★この反転は結果(0.5 未満)を見てから
+   決めた事後の選択なので、反転していない他の 3 手法と並べた順位(「4 手法で最良」)は主張しない
+   (同じ規則「0.5 未満なら反転」を他の 3 手法に当てても、どれも 0.5 を超えるので値は変わらない)。
+   ★芯の採点は陰性からマスクのすぐ外 6 px(いちばん紛らわしい地)を除くので、太いマスクより甘くなる
+   向きがある。芯の値を「本当の AUC」とは読まない —— 言えるのは「採点の規則で 0.1 動く」まで。
+   ★低周波除去を足すと芯で平均 -0.100(画像単位の区間 -0.118〜-0.082、360 個中 290 個で下がる)、
+   太いマスクでは -0.054 —— 向きは合成と同じだが、大きさは合成の 0.9998 → 0.4746 とは桁が違う。
+   注記は 1 種類だけで、本物の中にムラが在るかは分からない。★「低周波除去がムラを消す」を
+   0.96 → 0.50 の大きさで示せたのは、実写の地に**描き足した**ムラだけ(9a 節、機構の説明。
+   描き足したムラで格子のみ 0.96、低周波除去つき 0.50。振幅の倍率は目で決めた)。
+   ★前の版は太いマスクの画素 AUC だけで「どの手法も当て推量に近い」と書き、さらに前の版は 7 個
+   だけを見て「低周波除去で悪くならない」と読める数を出していた。
 
 【グラウンドトゥルース】
 地は**閉形式の周期関数**(格子の基本波 + 2 次高調波 + 交差項)。欠陥は既知の
@@ -61,12 +80,13 @@ import time
 from pathlib import Path
 
 import numpy as np
-from scipy.ndimage import gaussian_filter, uniform_filter
+from scipy.ndimage import binary_dilation, distance_transform_edt, gaussian_filter, uniform_filter
 from scipy.stats import rankdata
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
+import realdata                                                  # noqa: E402
 
 # --- 場面の諸元 -------------------------------------------------------------- #
 N = 256                    # 視野 [px](周期の整数倍にしてスペクトル漏れを消す)
@@ -698,6 +718,604 @@ def section_tool_gaps() -> None:
 
 
 # --------------------------------------------------------------------------- #
+# 9. 実写の地(RAW-FABRID)で同じ測定をやり直す                                  #
+# --------------------------------------------------------------------------- #
+#: 実データの置き場の環境変数(``<root>/raw_fabrid/`` を探す)。
+REAL_DATA_ENV = "FULLSEYE_POC_REAL_DATA"
+REAL_DATASET = "mendeley:db6g85xsyg/RAW-FABRID"
+#: 図と印字に添える帰属表記(配布元 Mendeley Data のライセンス欄は "CC BY 4.0")。
+REAL_CREDIT = ("RAW-FABRID — R. Pérez-Llorens, T. Albero-Albero, J. Silvestre-Blanes, "
+               "Mendeley Data db6g85xsyg v1 (doi:10.17632/db6g85xsyg.1), CC BY 4.0")
+#: 1 枚の実写から切り出す 256 px 角の位置(縦・横の割合)。決定的に選ぶ。
+REAL_CROPS = ((0.30, 0.30), (0.70, 0.65))
+#: 撮像の分解能(データの Readme: "a spatial resolution of 4 pixels per millimeter")。
+REAL_PX_PER_MM = 4.0
+#: 欠陥の振幅の倍率 α の掃引。合成では「振幅 / 検出器が見る残差 σ(= 撮像雑音)」が
+#: 線 7・斑点 11・ムラ 4.5。実写では同じ比を α 倍して足す(α = 1 が合成と同じ見え方)。
+REAL_ALPHAS = (0.1, 0.2, 0.35, 0.5, 1.0)
+#: 本文と図で使う α(ムラの振幅が残差 σ の 1.6 倍 —— 目で見て「うっすら」の強さ)。
+REAL_ALPHA = 0.35
+#: 照明のゆるい傾きを抜く平滑の σ [px](周期の推定の前にだけ使う)。
+REAL_DETREND = 16.0
+
+#: 実データで出た数値(2026-11-08、Python 3.11、``section_real_fabric`` の stdout から転記)。
+#: データの無い CI ではこれを印字し、:func:`check_recorded` が中身(鍵・有限・docstring との一致)を
+#: 検査する。データありでは実測と完全一致を求める(変えたら記録と docstring を一緒に直す)。
+RECORDED_REAL: dict = {
+    "n_grounds": 14, "alpha": 0.35, "keep_ratio": 0.969,
+    "mura_notch": 0.9645, "mura_lowcut": 0.4998, "mura_lowcut_max_over_alpha": 0.5063,
+    "pooled_notch": 0.9653, "pooled_lowcut": 0.7623,
+    "defects_n": 360, "defects_images": 201,
+    "defects_auc": [0.3479, 0.5575, 0.5031, 0.5255],
+    "auc_ci": [[0.3305, 0.5377, 0.4835, 0.5075], [0.3659, 0.5778, 0.5247, 0.544]],
+    "lowcut_minus_notch": -0.0544, "lowcut_minus_notch_ci": [-0.0667, -0.0433],
+    "n_lowcut_worse": 255, "n_drop_gt_0p2": 33, "n_drop_gt_0p2_dark": 33,
+    "n_dark": 118, "n_bright": 242,
+    "dark_auc": [0.2697, 0.6152, 0.4611, 0.5622],
+    "bright_auc": [0.3861, 0.5294, 0.5236, 0.5075],
+    "mask_width_px": 16.0,
+    "core_auc": [0.2826, 0.6567, 0.5572, 0.6141],
+    "core_auc_ci": [[0.2554, 0.6256, 0.5262, 0.5828], [0.3121, 0.6904, 0.5906, 0.6482]],
+    "core_lowcut_minus_notch": -0.0995, "core_lowcut_minus_notch_ci": [-0.118, -0.0818],
+    "core_n_lowcut_worse": 290, "zero_flipped_core": 0.7174,
+}
+
+
+def real_data_root() -> Path:
+    """実データ一式の repo 外の置き場(``FULLSEYE_POC_REAL_DATA`` で上書き)。
+
+    開発の作業木が ``<root>/projects/<checkout>`` にあれば ``<root>/data/fullseye_poc_real``、
+    それ以外はユーザーのキャッシュ。手元の絶対パスをソースに書かないための分岐。
+    """
+    import os
+
+    configured = os.environ.get(REAL_DATA_ENV, "").strip()
+    if configured:
+        return Path(configured).expanduser()
+    root = Path(__file__).resolve().parents[1]
+    if root.parent.name.lower() == "projects":
+        return root.parent.parent / "data" / "fullseye_poc_real"
+    return Path.home() / ".cache" / "fullseye" / "poc_real"
+
+
+def _fabrid_dir() -> Path | None:
+    """展開済みの RAW-FABRID(``images/`` と メタデータ CSV がある所)。無ければ None。"""
+    base = real_data_root() / "raw_fabrid" / "extracted" / "RAW_FABRID"
+    if (base / "images").is_dir() and (base / "RAW_FABRID_HighRes_Metadata.csv").is_file():
+        return base
+    return None
+
+
+def _fabrid_pick(base: Path) -> tuple[list, list]:
+    """ロール(織物の種類)ごとに、欠陥なしの最初の 1 枚と欠陥ありの最初の 1 枚を返す。"""
+    import csv
+
+    with open(base / "RAW_FABRID_HighRes_Metadata.csv", encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    good, bad = {}, {}
+    for r in rows:
+        tgt = good if r["has_defect"] == "False" else bad
+        tgt.setdefault(r["roll_id"], r["filename"])
+    return sorted(good.items()), sorted(bad.items())
+
+
+def _gray(path: Path) -> np.ndarray:
+    from PIL import Image
+
+    with Image.open(path) as im:
+        return np.asarray(im.convert("L"), np.float64) / 255.0
+
+
+def notch_transfer_xy(shape, period_y: float, period_x: float, radius: float = 1.0,
+                      harmonics: int = 8, low_cut: float = 0.0) -> np.ndarray:
+    """:func:`notch_transfer` の縦横で周期が違う版(実写の織りは縦糸と横糸で密度が違う)。"""
+    h, w = shape
+    v = np.fft.fftshift(np.fft.fftfreq(h)) * h
+    u = np.fft.fftshift(np.fft.fftfreq(w)) * w
+    uu, vv = np.meshgrid(u, v)
+    hf = np.ones(shape)
+    f0y, f0x = h / period_y, w / period_x
+    for my in range(-harmonics, harmonics + 1):
+        for mx in range(-harmonics, harmonics + 1):
+            if my == 0 and mx == 0:
+                continue
+            cy, cx = my * f0y, mx * f0x
+            if abs(cy) > h / 2 or abs(cx) > w / 2:
+                continue
+            hf[(uu - cx) ** 2 + (vv - cy) ** 2 <= radius ** 2] = 0.0
+    if low_cut > 0:
+        hf[uu ** 2 + vv ** 2 <= low_cut ** 2] = 0.0
+    return hf
+
+
+def _notch_residual(img: np.ndarray, period_y: float, period_x: float,
+                    low_cut: float = 0.0) -> np.ndarray:
+    hf = notch_transfer_xy(img.shape, period_y, period_x, low_cut=low_cut)
+    return np.real(np.asarray(fs.cx_ifft(fs.cx_apply_transfer_function(fs.cx_fft(img), hf))))
+
+
+def _real_detectors(period_y: float, period_x: float) -> dict:
+    """DETECTORS と同じ 4 つを、実写から推定した周期で組む(折り返しは横の周期)。"""
+    return {
+        "ゼロ点(局所平均)": lambda im: det_local_mean(im, 5),
+        "ノッチ(格子のみ)": lambda im: _score(_notch_residual(im, period_y, period_x)),
+        "ノッチ+低周波除去": lambda im: _score(_notch_residual(im, period_y, period_x, low_cut=6.0)),
+        "折り返し平均差": lambda im: det_fold(im, period_x),
+    }
+
+
+def _outline(mask: np.ndarray) -> np.ndarray:
+    """マスクの**外側**に 2 px 離して描く輪(欠陥そのものを線で隠さないため)。"""
+    from scipy.ndimage import binary_dilation
+
+    return binary_dilation(mask, iterations=4) & ~binary_dilation(mask, iterations=2)
+
+
+def _gray_view(img: np.ndarray) -> np.ndarray:
+    """実写を 0.5〜99.5 % 分位で [0,1] に伸ばした灰色の RGB(擬似色は使わない)。"""
+    lo, hi = np.quantile(img, [0.005, 0.995])
+    base = np.clip((img - lo) / max(hi - lo, 1e-9), 0, 1)
+    return np.repeat(base[..., None], 3, axis=2)
+
+
+def _real_figure(g: np.ndarray, img: np.ndarray, masks: dict, s_notch: np.ndarray,
+                 s_low: np.ndarray, a_notch: float, a_low: float, roll: str) -> None:
+    """機構の図: 実写の地 + 描き足した欠陥の輪郭 / 格子のみのスコア / 格子+低周波除去のスコア。
+
+    ★欠陥は**描き足し**(合成の 1〜8 節と同じ形)。本物の欠陥での結果は :func:`_real_defect_figures`。
+    """
+    if not figs.enabled():
+        return
+    colors = {"線(糸抜け)": (0.15, 0.55, 1.0), "斑点(汚れ)": (1.0, 0.75, 0.1),
+              "ムラ(輝度低下)": (1.0, 0.25, 0.25)}
+    rgb = _gray_view(img)
+    for nm, m in masks.items():
+        rgb[_outline(m)] = colors[nm]
+    q = float(np.quantile(s_notch, 0.995))
+    # 糸の 1 本が 3 px なので、画素を最近傍で 2 倍に広げて織り目を見せる(補間で糸をぼかさない)
+    up = lambda v: np.repeat(np.repeat(v, 2, axis=0), 2, axis=1)            # noqa: E731
+    figs.save_grid(
+        "real_fabric",
+        [up(rgb), up(np.clip(s_notch, 0, q) / q), up(np.clip(s_low, 0, q) / q)],
+        ["実写の生機 + **描き足した**欠陥(青=線 黄=斑点 赤=ムラ)",
+         "格子のみ: 描き足したムラ AUC %.2f" % a_notch,
+         "格子+低周波除去: 描き足したムラ AUC %.2f" % a_low],
+        ncols=3, gray=[False, True, True], vrange=[None, (0.0, 1.0), (0.0, 1.0)],
+        title="機構の説明: 実写の地(RAW-FABRID %s)に描き足したムラは、低周波除去の 1 行で消える" % roll,
+        caption=("欠陥 3 種は合成と同じ位置・形で**描き足した**もの(本物の欠陥ではない)。振幅の倍率"
+                 " α = %.2f は目で見て「うっすら」に決めた値。スコア 2 枚は同じ 99.5 %% 分位で切った灰色。"
+                 "描き足したムラの AUC は格子のみ %.2f、低周波除去を足すと %.2f。本物の欠陥 %d 個での"
+                 "結果は別の図。%s" % (REAL_ALPHA, a_notch, a_low, RECORDED_REAL["defects_n"], REAL_CREDIT)))
+
+
+# --------------------------------------------------------------------------- #
+# 9b. 本物の欠陥(データ付属のマスク)で 4 つの検出器を採点する                 #
+# --------------------------------------------------------------------------- #
+#: 欠陥 1 個ごとに、注記の外接矩形の中心で 256 px 角を切り出して採点する。
+REAL_DEFECT_BOOT = 2000          # 画像単位のブートストラップの回数(同じ画像の欠陥はまとめて引く)
+#: ★配布物のマスクは欠陥より太い(骨格上の幅の中央値は実測で 16 px 前後)。太いマスクの画素 AUC は
+#: 欠陥の周りの正常な織り目を陽性に数えるので 0.5 側へ寄る。そこで**芯**でも採点する:
+#: 陽性 = マスクの骨格を REAL_CORE_PX だけ太らせた帯(マスクの内側に限る)、
+#: 陰性 = マスクを REAL_GUARD_PX 太らせた外。どちらの採点も並べて出す(どちらか一方に寄せない)。
+REAL_CORE_PX = 2
+REAL_GUARD_PX = 6
+REAL_DET_NAMES = ("ゼロ点(局所平均)", "ノッチ(格子のみ)", "ノッチ+低周波除去", "折り返し平均差")
+
+
+def _real_defects(base: Path) -> list[dict]:
+    """COCO の注記 1 個 = 1 行。切り出し・マスク・4 検出器の AUC・明暗・形を返す。
+
+    陽性 = 切り出しの中でマスクが立つ画素(同じ画像の別の欠陥も含む)、陰性 = それ以外。
+    周期は画像ごとに照明の傾きを抜いてから推す(1〜8 節と同じ :func:`estimate_period`)。
+    """
+    import json
+
+    coco = json.loads((base / "RAW_FABRID_HighRes_COCO.json").read_text(encoding="utf-8"))
+    names = {i["id"]: i["file_name"] for i in coco["images"]}
+    cache: dict = {}
+    rows = []
+    for a in coco["annotations"]:
+        fn = names[a["image_id"]]
+        mp = base / "masks" / fn
+        if not mp.is_file():
+            continue
+        if fn not in cache:
+            cache.clear()                                    # 注記は画像の順に並ぶ。1 枚だけ持つ
+            img = _gray(base / "images" / fn)
+            flat = img - gaussian_filter(img, REAL_DETREND)
+            cache[fn] = (img, _gray(mp) > 0.5, estimate_period(flat.T)["fine"],
+                         estimate_period(flat)["fine"])
+        img, m, per_y, per_x = cache[fn]
+        x, y, w, h = a["bbox"]
+        r0 = int(np.clip(y + h / 2 - N / 2, 0, img.shape[0] - N))
+        c0 = int(np.clip(x + w / 2 - N / 2, 0, img.shape[1] - N))
+        crop, mc = img[r0:r0 + N, c0:c0 + N], m[r0:r0 + N, c0:c0 + N]
+        if mc.sum() < 20 or (~mc).sum() < 20:
+            continue
+        scores = [fn_(crop) for fn_ in _real_detectors(per_y, per_x).values()]
+        aucs = [auc(sc, mc, ~mc) for sc in scores]
+        skel = np.asarray(fs.apply(mc.astype(np.float64), "thinning")) > 0.5
+        core = binary_dilation(skel, iterations=REAL_CORE_PX) & mc
+        neg_g = ~binary_dilation(mc, iterations=REAL_GUARD_PX)
+        if not core.any():                                   # 骨格が空の小さいマスクは全体を芯とみなす
+            core = mc
+        aucs_core = [auc(sc, core, neg_g) for sc in scores]
+        width = 2.0 * float(distance_transform_edt(mc)[skel].mean()) if skel.any() else float("nan")
+        rows.append({"file": fn, "roll": fn.split("_")[0], "area": float(a["area"]),
+                     "aspect": max(w, h) / max(1.0, min(w, h)), "auc": aucs, "auc_core": aucs_core,
+                     "width": width,
+                     "contrast": float((np.mean(crop[mc]) - np.median(crop[~mc])) / np.std(crop[~mc])),
+                     "r0": r0, "c0": c0, "py": per_y, "px": per_x})
+    return rows
+
+
+def _cluster_boot(rows: list[dict], stat, n: int = REAL_DEFECT_BOOT, seed: int = 0):
+    """画像単位のブートストラップ(同じ画像の欠陥は独立でないのでまとめて引く)の 95 % 区間。"""
+    files = sorted({r["file"] for r in rows})
+    by = {f: [r for r in rows if r["file"] == f] for f in files}
+    rng = np.random.default_rng(seed)
+    vals = []
+    for _ in range(n):
+        pick = rng.choice(len(files), len(files))
+        vals.append(stat([r for i in pick for r in by[files[i]]]))
+    return np.percentile(np.asarray(vals), [2.5, 97.5], axis=0)
+
+
+def _real_defect_figures(base: Path, rows: list[dict], res: dict) -> None:
+    """本物の欠陥の図 4 枚(代表・入力の一覧・結果の表・限界)。名前は story GIF 用に real_ を頭に付ける。"""
+    if not figs.enabled():
+        return
+    a = np.array([r["auc"] for r in rows])
+    med = np.median(a[:, 1:3], axis=0)
+    i_med = int(np.argmin(np.abs(a[:, 1] - med[0]) + np.abs(a[:, 2] - med[1])))
+    dark = [i for i, r in enumerate(rows) if r["contrast"] < 0]
+    i_dark = max(dark, key=lambda i: rows[i]["area"]) if dark else i_med
+    orange = (1.0, 0.55, 0.0)
+
+    def panels(i):
+        r = rows[i]
+        img = _gray(base / "images" / r["file"])
+        m = _gray(base / "masks" / r["file"]) > 0.5
+        crop = img[r["r0"]:r["r0"] + N, r["c0"]:r["c0"] + N]
+        mc = m[r["r0"]:r["r0"] + N, r["c0"]:r["c0"] + N]
+        rgb = _gray_view(crop)
+        rgb[_outline(mc)] = orange
+        det = _real_detectors(r["py"], r["px"])
+        s1, s2 = det[REAL_DET_NAMES[1]](crop), det[REAL_DET_NAMES[2]](crop)
+        q = float(np.quantile(s1, 0.995))
+        return rgb, np.clip(s1, 0, q) / q, np.clip(s2, 0, q) / q, crop, mc
+
+    p1, p2 = panels(i_med), panels(i_dark)
+    r1, r2 = rows[i_med], rows[i_dark]
+    figs.save_grid(
+        "real_defects",
+        [p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]],
+        ["本物の欠陥(%s、AUC が中央値に近い 1 個)" % r1["roll"],
+         "格子のみ: 太いマスク %.2f / 芯 %.2f" % (r1["auc"][1], r1["auc_core"][1]),
+         "格子+低周波除去: 太いマスク %.2f / 芯 %.2f" % (r1["auc"][2], r1["auc_core"][2]),
+         "本物の暗い欠陥(%s、暗い %d 個で面積最大)" % (r2["roll"], len(dark)),
+         "格子のみ: 太いマスク %.2f / 芯 %.2f" % (r2["auc"][1], r2["auc_core"][1]),
+         "格子+低周波除去: 太いマスク %.2f / 芯 %.2f" % (r2["auc"][2], r2["auc_core"][2])],
+        ncols=3, gray=[False, True, True, False, True, True],
+        vrange=[None, (0.0, 1.0), (0.0, 1.0), None, (0.0, 1.0), (0.0, 1.0)],
+        title="本物の織物の欠陥 %d 個: 格子のみの AUC は採点の仕方で %.2f にも %.2f にもなる(太いマスク / 芯)"
+              % (res["defects_n"], res["defects_auc"][1], res["core_auc"][1]),
+        caption=("データ付属の欠陥マスク(橙の輪郭)で画素ごとに採点。マスクは欠陥より太い(骨格上の幅の"
+                 "中央値 %.0f px)ので、太いマスクの画素 AUC は 0.5 側へ寄る。芯 = 骨格 ±%d px を陽性、マスクを %d px"
+                 "太らせた外を陰性にした採点。上段は 2 手法の AUC が全体の中央値に"
+                 "近い 1 個、下段は暗い欠陥のうち面積が最大の 1 個(選び方は結果を見ずに決めた規則)。"
+                 "スコアは同じ 99.5 %% 分位で切った灰色。%s"
+                 % (res["mask_width_px"], REAL_CORE_PX, REAL_GUARD_PX, REAL_CREDIT)))
+    # 入力の一覧(scene): ロールごとに最初の欠陥 1 個 + 上の暗い 1 個
+    firsts = []
+    for roll in sorted({r["roll"] for r in rows}):
+        firsts.append(next(i for i, r in enumerate(rows) if r["roll"] == roll))
+    if i_dark not in firsts:
+        firsts.append(i_dark)
+    tiles, caps = [], []
+    for i in firsts[:8]:
+        rgb = panels(i)[0]
+        tiles.append(rgb)
+        caps.append("%s 格子 %.2f / +低周波 %.2f" % (rows[i]["roll"], rows[i]["auc"][1], rows[i]["auc"][2]))
+    figs.save_grid("real_input_defects", tiles, caps, ncols=4,
+                   title="入力: 本物の欠陥(データ付属のマスクを橙の輪郭で)、ロールごとに最初の 1 個",
+                   caption="ラインスキャン 4 px/mm の生機。各 256 px = 64 mm 角。%s" % REAL_CREDIT)
+    # 結果の表(result)
+    hdr = ["検出器", "太いマスク 全 %d 個" % res["defects_n"], "芯 全体", "芯の 95 % 区間",
+           "太いマスク 暗い %d" % res["n_dark"], "太いマスク 明るい %d" % res["n_bright"]]
+    body = []
+    for k, dn in enumerate(REAL_DET_NAMES):
+        body.append([dn, "%.3f" % res["defects_auc"][k], "%.3f" % res["core_auc"][k],
+                     "%.3f〜%.3f" % (res["core_auc_ci"][0][k], res["core_auc_ci"][1][k]),
+                     "%.3f" % res["dark_auc"][k], "%.3f" % res["bright_auc"][k]])
+    figs.save_table("real_result_auc_table", hdr, body,
+                    title="本物の欠陥での平均 AUC: 太いマスクと芯(ゼロ点の 0.5 未満は符号が逆)",
+                    caption="区間は画像単位のブートストラップ %d 回。%s" % (REAL_DEFECT_BOOT, REAL_CREDIT))
+    # 限界(limit): 欠陥ごとの「低周波除去を足した差」を並べる
+    d = np.sort(a[:, 2] - a[:, 1])
+    ac_ = np.array([r["auc_core"] for r in rows])
+    dc = np.sort(ac_[:, 2] - ac_[:, 1])
+    x = np.arange(d.size, dtype=np.float64)
+    figs.save_plot("real_limit_lowcut_diff",
+                   [("差(太いマスク)", x, d), ("差(芯)", x, dc), ("差なし", x, np.zeros_like(x))],
+                   xlabel="欠陥(差の小さい順)", ylabel="AUC の差",
+                   title="低周波除去を足した AUC の差: 芯で平均 %+.3f、太いマスクで %+.3f"
+                         % (res["core_lowcut_minus_notch"], res["lowcut_minus_notch"]),
+                   caption="本物の欠陥 1 個ごとの差を小さい順に。区間は芯 %+.3f〜%+.3f、太いマスク %+.3f〜%+.3f"
+                           "(画像単位のブートストラップ)。"
+                           % (tuple(res["core_lowcut_minus_notch_ci"]) + tuple(res["lowcut_minus_notch_ci"])))
+
+
+def section_real_defects(base: Path) -> dict:
+    """本物の欠陥(マスク付き 204 枚・注記 361 個)で、4 検出器を外の真値で採点する。"""
+    print("\n  ---- 9b) 本物の欠陥(データ付属のマスク)で採点する ----")
+    t0 = time.perf_counter()
+    rows = _real_defects(base)
+    n_img = len({r["file"] for r in rows})
+    print("  注記は 1 種類だけ(category 'fabric_defect')—— 糸抜け・汚れ・ムラの区別は配布物に無い。")
+    print("  欠陥 %d 個(画像 %d 枚・ロール %d 本)。注記の外接矩形の中心で 256 px 角を切り出す。"
+          % (len(rows), n_img, len({r["roll"] for r in rows})))
+    a = np.array([r["auc"] for r in rows])
+    con = np.array([r["contrast"] for r in rows])
+    asp = np.array([r["aspect"] for r in rows])
+    big = np.array([r["area"] for r in rows]) >= 5000
+    dark, bright = con < 0, con >= 0
+    ci = _cluster_boot(rows, lambda rr: np.mean([r["auc"] for r in rr], axis=0))
+    diff = a[:, 2] - a[:, 1]
+    dci = _cluster_boot(rows, lambda rr: float(np.mean([r["auc"][2] - r["auc"][1] for r in rr])))
+    print("\n   検出器                全体 [95 %% 区間]        暗い %3d   明るい %3d   線状 %3d   大きい %3d"
+          % (dark.sum(), bright.sum(), (asp >= 4).sum(), big.sum()))
+    for k, dn in enumerate(REAL_DET_NAMES):
+        print("   %-20s %.3f [%.3f〜%.3f]   %.3f      %.3f        %.3f      %.3f"
+              % (dn, a[:, k].mean(), ci[0][k], ci[1][k], a[dark, k].mean(), a[bright, k].mean(),
+                 a[asp >= 4, k].mean(), a[big, k].mean()))
+    print("  (線状 = 外接矩形の縦横比 4 以上、大きい = 面積 5000 px = 3.1 cm² 以上。形だけの代わりの分類)")
+    print("\n  ★★太いマスクの画素で採点すると、最良の格子のみでも %.3f。合成の「格子除去で欠陥が"
+          "ほぼ全部取れる(AUC 1.00)」は本物の欠陥では成り立たない(芯の採点は下)。" % a[:, 1].mean())
+    print("  ★低周波除去を足すと平均 %+.3f(区間 %+.3f〜%+.3f)、%d 個中 %d 個で下がる。"
+          % (diff.mean(), dci[0], dci[1], len(rows), int((diff < 0).sum())))
+    print("     向きは合成と同じ(低周波除去は欠陥の一部を消す)だが、大きさは合成の 0.96 → 0.50 とは"
+          "桁が違う。暗い欠陥では %.3f → %.3f。" % (a[dark, 1].mean(), a[dark, 2].mean()))
+    drop = diff < -0.2
+    print("  ★大きく下がる(-0.2 より)のは %d 個で、%d 個とも周りより暗い欠陥(全体では暗いのは %.0f %%)。"
+          % (int(drop.sum()), int((drop & dark).sum()), 100 * dark.mean()))
+    print("     その %d 個の平均 AUC は格子のみ %.3f → +低周波 %.3f。低周波除去が消すのは暗い欠陥の側。"
+          % (int(drop.sum()), a[drop, 1].mean(), a[drop, 2].mean()))
+    ac = np.array([r["auc_core"] for r in rows])
+    wid = float(np.nanmedian([r["width"] for r in rows]))
+    cci = _cluster_boot(rows, lambda rr: np.mean([r["auc_core"] for r in rr], axis=0))
+    dcore = ac[:, 2] - ac[:, 1]
+    dcci = _cluster_boot(rows, lambda rr: float(np.mean([r["auc_core"][2] - r["auc_core"][1] for r in rr])))
+    print("\n  ★★採点の仕方で数が変わる。配布物のマスクは欠陥より太い(骨格上の幅の中央値 %.1f px、"
+          "糸 1 本の傷にも帯)。" % wid)
+    print("     太いマスクの画素 AUC は欠陥の周りの正常な織り目を陽性に数える。芯(骨格 ±%d px)を陽性、"
+          "マスクを %d px 太らせた外を陰性にすると:" % (REAL_CORE_PX, REAL_GUARD_PX))
+    print("   検出器                太いマスク   芯 [95 % 区間]")
+    for k, dn in enumerate(REAL_DET_NAMES):
+        print("   %-20s %.3f        %.3f [%.3f〜%.3f]" % (dn, a[:, k].mean(), ac[:, k].mean(), cci[0][k], cci[1][k]))
+    print("  ★格子のみは太いマスクで %.3f、芯で %.3f —— 同じ検出器・同じ欠陥が、採点の仕方で 0.56 にも"
+          " 0.66 にもなる。" % (a[:, 1].mean(), ac[:, 1].mean()))
+    print("  ★低周波除去の害は芯の採点では平均 %+.3f(区間 %+.3f〜%+.3f)、%d 個中 %d 個で下がる。"
+          % (round(float(dcore.mean()), 4), dcci[0], dcci[1], len(rows), int((dcore < 0).sum())))
+    print("  ★ゼロ点(局所平均との差)は 太いマスク %.3f / 芯 %.3f で 0.5 を**下回る** —— 当て推量ではなく"
+          % (a[:, 0].mean(), ac[:, 0].mean()))
+    print("     **符号が逆**: 本物の欠陥の画素は周りより織り目の凹凸が少ない(糸抜け・汚れで地の模様が")
+    print("     消える)。スコアの符号を反転すれば 1 − AUC = %.3f(芯)。" % (1.0 - ac[:, 0].mean()))
+    print("     ★反転は結果(0.5 未満)を見てから決めた事後の選択。反転しない他の 3 手法(芯 %s)と並べた"
+          % " / ".join("%.3f" % v for v in ac[:, 1:].mean(axis=0)))
+    print("     順位は主張しない(同じ規則「0.5 未満なら反転」を当てても他の 3 手法はどれも 0.5 超で変わらない)。")
+    print("  ★芯の採点は陰性からマスクのすぐ外 %d px(いちばん紛らわしい地)を除くので、太いマスクより甘くなる"
+          "向きがある。芯の値を本当の AUC とは読まない。" % REAL_GUARD_PX)
+    print("  ★7 枚(ロールごとに最初の 1 枚)だけで見た前の版は 格子のみ 0.575 / +低周波 0.582 で、"
+          "低周波除去で悪くならないように見えた。全 %d 個では逆。" % len(rows))
+    res = {"defects_n": len(rows), "defects_images": n_img,
+           "defects_auc": [round(float(v), 4) for v in a.mean(axis=0)],
+           "auc_ci": [[round(float(v), 4) for v in ci[0]], [round(float(v), 4) for v in ci[1]]],
+           "lowcut_minus_notch": round(float(diff.mean()), 4),
+           "lowcut_minus_notch_ci": [round(float(dci[0]), 4), round(float(dci[1]), 4)],
+           "n_lowcut_worse": int((diff < 0).sum()),
+           "n_drop_gt_0p2": int(drop.sum()), "n_drop_gt_0p2_dark": int((drop & dark).sum()),
+           "n_dark": int(dark.sum()), "n_bright": int(bright.sum()),
+           "dark_auc": [round(float(v), 4) for v in a[dark].mean(axis=0)],
+           "bright_auc": [round(float(v), 4) for v in a[bright].mean(axis=0)],
+           "mask_width_px": round(wid, 1),
+           "core_auc": [round(float(v), 4) for v in ac.mean(axis=0)],
+           "core_auc_ci": [[round(float(v), 4) for v in cci[0]], [round(float(v), 4) for v in cci[1]]],
+           "core_lowcut_minus_notch": round(float(dcore.mean()), 4),
+           "core_lowcut_minus_notch_ci": [round(float(dcci[0]), 4), round(float(dcci[1]), 4)],
+           "core_n_lowcut_worse": int((dcore < 0).sum()),
+           "zero_flipped_core": round(float(1.0 - ac[:, 0].mean()), 4)}
+    _real_defect_figures(base, rows, res)
+    print("  所要 %.1f 秒" % (time.perf_counter() - t0))
+    return res
+
+
+#: RECORDED_REAL に必ず在る鍵(CI 経路の門が中身を検査する)。
+RECORDED_KEYS = ("n_grounds", "alpha", "keep_ratio", "mura_notch", "mura_lowcut",
+                 "mura_lowcut_max_over_alpha", "pooled_notch", "pooled_lowcut",
+                 "defects_n", "defects_images", "defects_auc", "auc_ci", "lowcut_minus_notch",
+                 "lowcut_minus_notch_ci", "n_lowcut_worse", "n_drop_gt_0p2", "n_drop_gt_0p2_dark",
+                 "n_dark", "n_bright", "dark_auc",
+                 "bright_auc", "mask_width_px", "core_auc", "core_auc_ci", "core_lowcut_minus_notch",
+                 "core_lowcut_minus_notch_ci", "core_n_lowcut_worse", "zero_flipped_core")
+
+
+def _flat_numbers(v) -> list[float]:
+    if isinstance(v, (list, tuple)):
+        return [x for e in v for x in _flat_numbers(e)]
+    return [float(v)]
+
+
+def check_recorded(measured: dict | None) -> None:
+    """記録値の門。CI(データ無し)では中身、データありでは実測との一致を見る。
+
+    * 中身: 鍵が全部在り、数が全部有限。見出しの数(本物の欠陥の個数・格子のみ / +低周波の AUC・
+      差・下がった個数、描き足したムラの 2 つの AUC)が module docstring に**同じ書式で**載っている
+      (記録値と本文の数が食い違えば鳴る)。
+    * データあり: 実測を同じ丸めにして記録値と完全一致(実データは決定的に処理している)。
+    """
+    missing = [k for k in RECORDED_KEYS if k not in RECORDED_REAL]
+    assert not missing, "RECORDED_REAL に鍵が無い: %s" % missing
+    nums = [x for k in RECORDED_KEYS for x in _flat_numbers(RECORDED_REAL[k])]
+    assert all(np.isfinite(nums)), "RECORDED_REAL に有限でない数"
+    doc = __doc__ or ""
+    r = RECORDED_REAL
+    # ★短い数字の部分一致(「360」など)は別の文脈の数でも通るので、文脈つきの句で照合する。
+    heads = ["欠陥マスク %d 個" % r["defects_n"],
+             "太いマスクの画素で格子のみ %.3f" % r["defects_auc"][1],
+             "芯で格子のみ %.3f" % r["core_auc"][1],
+             "折り返し %.3f" % r["core_auc"][3],
+             "符号を反転すれば %.3f" % r["zero_flipped_core"],
+             "低周波除去を足すと芯で平均 %+.3f" % r["core_lowcut_minus_notch"],
+             "太いマスクでは %+.3f" % r["lowcut_minus_notch"],
+             "幅の中央値 %.0f px" % r["mask_width_px"],
+             "格子のみ %.2f、低周波除去つき %.2f" % (r["mura_notch"], r["mura_lowcut"])]
+    absent = [h for h in heads if h not in doc]
+    assert not absent, "記録値の見出しの数が docstring に無い: %s" % absent
+    if measured is not None:
+        diff = {k: (RECORDED_REAL[k], measured[k]) for k in RECORDED_KEYS
+                if not np.allclose(_flat_numbers(RECORDED_REAL[k]), _flat_numbers(measured[k]),
+                                   rtol=0.0, atol=1e-9)}
+        assert not diff, "実測と RECORDED_REAL が違う(記録を更新すること): %s" % diff
+
+
+def section_real_fabric() -> dict | None:
+    print("\n" + "=" * 78)
+    print("9) 実写(RAW-FABRID): 9a 描き足したムラで機構を見る / 9b 本物の欠陥で採点する")
+    print("=" * 78)
+    import os
+
+    base = _fabrid_dir()
+    if (os.environ.get("CI") and not os.environ.get(REAL_DATA_ENV)) or base is None:
+        print("  実データが無いので実データの章を飛ばす。取得は py -3.11 tools/fetch_realinsp_data.py raw_fabrid")
+        print("  記録値(RECORDED_REAL, 2026-11-08): %s" % RECORDED_REAL)
+        check_recorded(None)
+        print("  記録値の門: 鍵 %d 個・有限・見出しの数が docstring と一致" % len(RECORDED_KEYS))
+        return None
+    t0 = time.perf_counter()
+    good, bad = _fabrid_pick(base)
+    print("  データ: %s" % REAL_CREDIT)
+    print("  地 = 欠陥なしの実写、ロール(織物)ごとに最初の 1 枚 x 切り出し %d か所 = %d 面。"
+          % (len(REAL_CROPS), len(good) * len(REAL_CROPS)))
+    print("  ---- 9a) 機構の説明: 実写の地に欠陥 3 種を**描き足す**(本物の欠陥ではない) ----")
+    print("  欠陥 3 種は合成と同じ位置・形で描き足すので、真値マスクは足した幾何で決まる。")
+    print("  振幅の決め方: 合成の「振幅 / 検出器が見る残差 σ」(線 7・斑点 11・ムラ 4.5)を、")
+    print("  実写の地をノッチに通した残差 σ_r に当てて α 倍する: 振幅 = α · 合成の振幅 · σ_r / %.3f。"
+          % NOISE)
+
+    names = list(DEFECTS)
+    grounds = []
+    for roll, fname in good:
+        a = _gray(base / "images" / fname)
+        flat = a - gaussian_filter(a, REAL_DETREND)       # 照明の傾きを抜いてから周期を推す
+        per_x = estimate_period(flat)["fine"]
+        per_y = estimate_period(flat.T)["fine"]
+        h, w = a.shape
+        for fy, fx in REAL_CROPS:
+            r0, c0 = int(fy * (h - N)), int(fx * (w - N))
+            g = a[r0:r0 + N, c0:c0 + N]
+            g = 0.5 + (g - g.mean())
+            sr = float(np.std(_notch_residual(g, per_y, per_x)))
+            grounds.append({"roll": roll, "file": fname, "g": g, "py": per_y, "px": per_x,
+                            "sr": sr, "sg": float(g.std())})
+    realdata.mark_read(REAL_DATASET)
+
+    print("\n   ロール     横の周期 px (本/cm)   縦の周期 px (本/cm)   地の σ   ノッチ後の σ_r")
+    seen = set()
+    for gr in grounds:
+        if gr["roll"] in seen:
+            continue
+        seen.add(gr["roll"])
+        print("   %-8s   %6.3f (%4.1f)          %6.3f (%4.1f)          %.3f    %.3f"
+              % (gr["roll"], gr["px"], 10 * REAL_PX_PER_MM / gr["px"],
+                 gr["py"], 10 * REAL_PX_PER_MM / gr["py"], gr["sg"], gr["sr"]))
+    keep = float(np.mean([gr["sr"] / gr["sg"] for gr in grounds]))
+    print("  ★格子除去で消えた地は σ の %.0f %% だけ(ノッチ後 / 前 = %.2f)。合成の地は"
+          " 0.14 → 雑音 0.010 まで消えた。" % (100 * (1 - keep), keep))
+    print("    実写の生機の地は**大半が周期でない**(糸むら・毛羽)—— 残差が地そのものになる。")
+
+    def run(alpha: float, keep_maps: bool = False):
+        per = {}
+        maps = None
+        for i, gr in enumerate(grounds):
+            img = gr["g"].copy()
+            masks = {}
+            for nm in names:
+                f, m = _defect_field(nm)
+                img = img + alpha * gr["sr"] / NOISE * f
+                masks[nm] = m
+            anym = np.zeros((N, N), bool)
+            for m in masks.values():
+                anym |= m
+            neg = ~anym
+            for dn, fn in _real_detectors(gr["py"], gr["px"]).items():
+                s = fn(img)
+                per.setdefault(dn, []).append(
+                    [auc(s, anym, neg)] + [auc(s, masks[n], neg) for n in names])
+                if keep_maps and i == 0 and dn in ("ノッチ(格子のみ)", "ノッチ+低周波除去"):
+                    maps = maps or {"img": img, "masks": masks, "g": gr["g"], "roll": gr["roll"]}
+                    maps[dn] = s
+        return {dn: np.mean(v, axis=0) for dn, v in per.items()}, maps
+
+    print("\n  α を振る(%d 面の平均 AUC。列: まとめ / %s)" % (len(grounds), " / ".join(names)))
+    sweep = {}
+    for alpha in REAL_ALPHAS:
+        tab, _ = run(alpha)
+        sweep[alpha] = tab
+        print("   α=%.2f  " % alpha + "  ".join(
+            "%s %s" % (dn[:4], "/".join("%.2f" % v for v in tab[dn])) for dn in tab))
+
+    tab, maps = run(REAL_ALPHA, keep_maps=True)
+    i_sh = names.index("ムラ(輝度低下)")
+    print("\n  α=%.2f の表(ムラの振幅 = 残差 σ_r の %.1f 倍)"
+          % (REAL_ALPHA, REAL_ALPHA * abs(DEFECTS["ムラ(輝度低下)"]["amp"]) / NOISE))
+    print("   検出器                まとめ    " + "  ".join("%-14s" % n for n in names))
+    for dn, v in tab.items():
+        print("   %-20s %.4f    " % (dn, v[0]) + "  ".join("%-14.4f" % x for x in v[1:]))
+    a_notch, a_low = float(tab["ノッチ(格子のみ)"][1 + i_sh]), float(tab["ノッチ+低周波除去"][1 + i_sh])
+    low_max = max(float(sweep[a]["ノッチ+低周波除去"][1 + i_sh]) for a in REAL_ALPHAS)
+    print("  ★描き足したムラでは合成と同じ: ムラの AUC は格子のみ %.4f、低周波除去を足すと"
+          " %.4f。" % (a_notch, a_low))
+    print("    ただしこれは**ムラの形(なめらかなガウス)とフィルタの性質**で決まり、実写の地は"
+          "ほとんど効かない。本物の欠陥では 9b。")
+    print("     α を 0.1〜1.0 で振っても、低周波除去つきのムラは最大 %.3f(でたらめ = 0.5)。"
+          "振幅を上げても戻らない。" % low_max)
+    print("  ★合成と違ったところ: 合成の格子のみは地が消えたので AUC 1.00 だったが、実写では"
+          " α=%.2f で %.2f。" % (REAL_ALPHA, float(tab["ノッチ(格子のみ)"][0])))
+    print("     ノッチが消せるのは周期の部分だけで、糸むらは残る —— **検出の限界は地の周期でない部分**。")
+
+    _real_figure(maps["g"], maps["img"], maps["masks"], maps["ノッチ(格子のみ)"],
+                 maps["ノッチ+低周波除去"], a_notch, a_low, maps["roll"])
+    dt = time.perf_counter() - t0
+    print("  所要 %.1f 秒" % dt)
+    out = {"n_grounds": len(grounds), "alpha": REAL_ALPHA, "keep_ratio": round(keep, 3),
+           "mura_notch": round(a_notch, 4), "mura_lowcut": round(a_low, 4),
+           "mura_lowcut_max_over_alpha": round(low_max, 4),
+           "pooled_notch": round(float(tab["ノッチ(格子のみ)"][0]), 4),
+           "pooled_lowcut": round(float(tab["ノッチ+低周波除去"][0]), 4),
+           }
+    out.update(section_real_defects(base))
+    print("  RECORDED_REAL 用: %s" % out)
+    # --- 所見を固定する(壊れたら鳴る) --------------------------------------- #
+    # 描き足したムラ(機構の説明)。閾値は実データを見て置いた(合成の 0.9998 / 0.4746 と同じ向き)。
+    assert a_notch > 0.9, a_notch
+    assert a_low < 0.6, a_low
+    assert low_max < 0.6, low_max
+    # 本物の欠陥。閾値はどれも実データ(2026-11-08)を見て置いた —— 主張する向きだけを固定する:
+    # 件数の下限、低周波除去で下がる(太いマスク・芯の両方の区間)、採点の仕方で数が変わる。
+    # ★「どの手法も 0.65 未満」「ゼロ点 0.45 未満」は検出器が悪いことを固定する逆向きの門だったので
+    #   外した(値は RECORDED_REAL の defects_auc / core_auc に記録として残る)。
+    assert out["defects_n"] >= 300, out["defects_n"]
+    assert out["lowcut_minus_notch_ci"][1] < 0.0, out["lowcut_minus_notch_ci"]
+    assert out["core_lowcut_minus_notch_ci"][1] < 0.0, out["core_lowcut_minus_notch_ci"]
+    assert out["core_auc"][1] - out["defects_auc"][1] > 0.05, (out["core_auc"], out["defects_auc"])
+    assert out["n_lowcut_worse"] > out["defects_n"] // 2, out["n_lowcut_worse"]
+    assert out["n_drop_gt_0p2_dark"] == out["n_drop_gt_0p2"] > 0, out          # 大きく下がるのは暗い欠陥だけ
+    check_recorded(out)
+    return out
+
+
+# --------------------------------------------------------------------------- #
 def main() -> None:
     t0 = time.perf_counter()
     print("=" * 78)
@@ -713,6 +1331,7 @@ def main() -> None:
     pe = section_period_error()
     section_figure(roc)
     section_tool_gaps()
+    real = section_real_fabric()
 
     print("\n" + "=" * 78)
     print("まとめ")
@@ -739,6 +1358,13 @@ def main() -> None:
              pe["rms"][5] / pe["base_rms"]))
     print("  * 折り返し平均は同じ ε=0.5 %% で既に %.1f 倍 —— 位相で畳む方式は"
           "周期の誤差に桁で弱い。" % (pe["fold"][2] / pe["fold"][0]))
+    rec = real if real is not None else RECORDED_REAL
+    print("  * 本物の欠陥(RAW-FABRID %d 個%s): 格子のみの AUC は太いマスクの画素で %.3f、芯で %.3f ——"
+          " 採点の仕方で変わる。ゼロ点は符号が逆(結果を見てから反転して %.3f、順位には使わない)。低周波除去で 芯 %+.3f / 太いマスク %+.3f。"
+          % (rec["defects_n"], "" if real is not None else "、記録値", rec["defects_auc"][1], rec["core_auc"][1],
+             rec["zero_flipped_core"], rec["core_lowcut_minus_notch"], rec["lowcut_minus_notch"]))
+    print("  * 描き足したムラ(機構の説明): 格子のみ %.4f、低周波除去つき %.4f。"
+          % (rec["mura_notch"], rec["mura_lowcut"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
