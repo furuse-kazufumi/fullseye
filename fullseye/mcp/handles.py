@@ -82,10 +82,46 @@ class HandleStore:
                 "根の外のパスは読まない: %s(読めるのは <root> の下だけ。"
                 "FULLSEYE_MCP_ROOT で根を足せる)" % self.display_path(real))
         if os.path.splitext(real)[1].lower() not in IMAGE_EXT:
-            raise HandleError("読める拡張子は %s: %s" % (IMAGE_EXT, self.display_path(real)))
+            raise HandleError("読める拡張子は %s: %s%s" % (IMAGE_EXT, self.display_path(real), self._nearby(path)))
         if not os.path.isfile(real):
-            raise HandleError("ファイルが無い: %s" % self.display_path(real))
+            raise HandleError("ファイルが無い: %s%s" % (self.display_path(real), self._nearby(path)))
         return real
+
+    def root_files(self, limit: int = 200) -> list[str]:
+        """同梱サンプル以外の根(``FULLSEYE_MCP_ROOT``)にある読めるファイルの名前(根からの相対、最大 200 件)。
+
+        並べるのは根の直下と、その 1 段下のディレクトリの中まで(根 + 1 段)。名前が ``.`` で始まるファイルと
+        ディレクトリは出さない。
+
+        ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): ``list_samples`` が同梱サンプルしか返さず、
+        課題で渡された開発用画像は名前を推測するしかなかった(32B の模型が load_image を 20 回推測で外した回がある)。
+        Readable files under the non-sample roots, relative to their root (never a host path).
+        """
+        sample = os.path.realpath(SAMPLE_DIR)
+        out: list[str] = []
+        for root in self.roots:
+            if root == sample or not os.path.isdir(root):
+                continue
+            for dirpath, dirnames, filenames in os.walk(root):
+                rel = os.path.relpath(dirpath, root)
+                depth = 0 if rel == "." else rel.count(os.sep) + 1        # 根 = 0、1 段下 = 1
+                dirnames[:] = sorted(d for d in dirnames if not d.startswith(".")) if depth < 1 else []
+                for fn in sorted(filenames):
+                    if not fn.startswith(".") and os.path.splitext(fn)[1].lower() in IMAGE_EXT:
+                        out.append(os.path.relpath(os.path.join(dirpath, fn), root).replace(os.sep, "/"))
+                        if len(out) >= limit:
+                            return out
+        return out
+
+    def _nearby(self, path) -> str:
+        """拒否の文に添える「読める名前」(近い順に 8 件まで)。根の外の名前やホストのパスは出さない。"""
+        import difflib
+        names = self.root_files() + [r["name"] for r in self.samples() if r.get("name")]
+        if not names:
+            return ""
+        key = os.path.basename(str(path))
+        near = difflib.get_close_matches(key, names, n=8, cutoff=0.0)
+        return "。読める名前(近い順): %s" % ", ".join(near)
 
     def samples(self) -> list[dict]:
         """同梱サンプルの一覧(manifest の来歴つき)。"""

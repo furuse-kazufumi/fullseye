@@ -244,7 +244,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 305 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 308 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -263,7 +263,7 @@ PoC 305 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>工業檢測</b> (57)</summary>
+<details class="vall"><summary><b>工業檢測</b> (59)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../../articles/assets/poc/poc_barcode_1d/story.en.gif" alt="Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers." loading="lazy" width="200" height="200"></picture><span>一維條碼</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../../articles/assets/poc/poc_battery_electrode_tortuosity/story.en.gif" alt="Electrode tortuosity from CT — the rule of thumb only sees porosity" loading="lazy" width="200" height="200"></picture><span>電極曲折度</span></a>
@@ -322,6 +322,8 @@ PoC 305 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_part_dpm.jpg" alt="點針刻印的 Data Matrix 要模糊後 zxing-cpp 才能讀出" width="200" height="200"><span>點針刻印的 Data Matrix 要模糊後 zxing-cpp 才能讀出</span></a>
 <a href="../../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_lot_ocr.jpg" alt="超出訓練範圍的模糊下,批號 OCR 從拒識變為誤讀" width="200" height="200"><span>超出訓練範圍的模糊下,批號 OCR 從拒識變為誤讀</span></a>
 <a href="../../articles/assets/poc/poc_real_typewritten_ocr/01_reading.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_typewritten_ocr/01_reading.png"><img src="../../articles/assets/poc/poc_real_typewritten_ocr/story.en.gif" alt="Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 96.6-98.1 % on Lines Segmented Correctly (95.4-97.1 % End to End), and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed" loading="lazy" width="200" height="200"></picture><span>用經典 OCR 讀取 1943 年的打字報告</span></a>
+<a href="../../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><img src="../../articles/assets/poc/poc_ai_built_inspection_scored/story.en.gif" alt="Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)" loading="lazy" width="200" height="200"></picture><span>用真實資料的真值為 AI 組建的檢測評分</span></a>
+<a href="../../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><img src="../../articles/assets/poc/poc_equipment_selection_map/story.en.gif" alt="Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread" loading="lazy" width="200" height="200"></picture><span>器材選型地圖:用 60 種照明×相機×鏡頭組合拍同一缺陷</span></a>
 </div>
 </details>
 
@@ -390,7 +392,7 @@ PoC 305 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>三維形狀</b> (21)</summary>
+<details class="vall"><summary><b>三維形狀</b> (22)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="../../articles/assets/poc/poc_battery_ct_degradation/story.en.gif" alt="Battery cells with the same exterior can hide different causes of swelling or voiding. Known defects were put into stacked electrodes and imaged by CT; only 29.4 % of electrode swelling reached the outside. Cells with matching can heights separate internally, so outside dimensions cannot identify the cause." loading="lazy" width="200" height="200"></picture><span>電池 CT 劣化</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="../../articles/assets/poc/poc_bev_sensor_fusion/story.en.gif" alt="For distant vehicles, a small image calibration error becomes a physical shift in a bird's-eye map. Opposite-side range sensors were fused on one grid, tracing the reprojection shift at 22 m. Complementary views create the gain, but growing yaw error makes fusion worse than one sensor." loading="lazy" width="200" height="200"></picture><span>鳥瞰圖融合</span></a>
@@ -413,6 +415,7 @@ PoC 305 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="會場建築與小行星糸川同一把尺:把 PLATEAU 的 CityGML LOD2 變成網格" width="200" height="200"><span>會場建築與小行星糸川同一把尺:把 PLATEAU 的 CityGML LOD2 變成網格</span></a>
 <a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=tw"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png"><img src="../../articles/assets/poc/poc_star_tracker/story.en.gif" alt="How One Star Image Reveals Satellite Attitude" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 <a href="../../articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bga_ball_type_roundtrip.jpg" alt="從影像傳到點雲、體積、網格和圖,焊球數在三種型別中都是 71 個" width="200" height="200"><span>從影像傳到點雲、體積、網格和圖,焊球數在三種型別中都是 71 個</span></a>
+<a href="../../articles/assets/poc/poc_3d_sensor_modalities/01_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_3d_sensor_modalities/01_map.png"><img src="../../articles/assets/poc/poc_3d_sensor_modalities/story.en.gif" alt="One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material" loading="lazy" width="200" height="200"></picture><span>用 5 種三維感測方式量測同一零件</span></a>
 </div>
 </details>
 

@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 47 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 49 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -118,7 +118,7 @@ A symmetric part agrees with its own reflected or rotated copy when defect-free.
 
 [![n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 p](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise.png)
 
-*↑ n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise…*
+*↑ n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise 0.000 で低下（1未満 27 格子）。*
 
 [![noise 0.010 では振幅 3.16 から検出；noise 0.025 では振幅 5.47 から検出；noise 0.050 では振幅 8.23 から検出。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone.png)
 
@@ -1532,6 +1532,90 @@ This run produced **6 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`area_center_gray`](https://furuse.work/ops/mv/gray/area_center_gray.html) · [`classify_class_gmm`](https://furuse.work/ops/mv/classify/classify_class_gmm.html) · [`classify_class_knn`](https://furuse.work/ops/mv/classify/classify_class_knn.html) · [`classify_class_mlp`](https://furuse.work/ops/mv/classify/classify_class_mlp.html) · [`classify_class_svm`](https://furuse.work/ops/mv/classify/classify_class_svm.html) · [`create_lexicon`](https://furuse.work/ops/mv/classify/create_lexicon.html) · [`evaluate_class_gmm`](https://furuse.work/ops/mv/classify/evaluate_class_gmm.html) · [`gray_histo`](https://furuse.work/ops/mv/gray/gray_histo.html) · [`gray_projections`](https://furuse.work/ops/mv/gray/gray_projections.html) · [`lookup_lexicon`](https://furuse.work/ops/mv/classify/lookup_lexicon.html) · [`segment_characters`](https://furuse.work/ops/mv/text/segment_characters.html) · [`select_characters`](https://furuse.work/ops/mv/text/select_characters.html) · [`suggest_lexicon`](https://furuse.work/ops/mv/classify/suggest_lexicon.html) · [`text_line_orientation`](https://furuse.work/ops/mv/text/text_line_orientation.html) · [`text_line_slant`](https://furuse.work/ops/mv/text/text_line_slant.html) · [`train_class_gmm`](https://furuse.work/ops/mv/classify/train_class_gmm.html) · [`train_class_knn`](https://furuse.work/ops/mv/classify/train_class_knn.html) · [`train_class_mlp`](https://furuse.work/ops/mv/classify/train_class_mlp.html) · [`train_class_svm`](https://furuse.work/ops/mv/classify/train_class_svm.html)
 
+## No.2026.308 —— Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)
+
+A task is given in natural language and an LLM uses only Fullseye's MCP server (minimal profile) to find operators (index search), check the type chain and, as instructed, try candidates on six development images before returning a recipe (an operator chain), scored against the ground truth of public real data. Only a local generator script calls the LLM; every recipe, including runs that returned none, is saved as JSON with a pinned fingerprint and replayed deterministically through the same entry point as MCP. Tasks: cracks in concrete walls (Özgenel 2019, CC BY 4.0; 400 test images with the provider's labels) and the VisA candle set (CC BY 4.0; 197 test images with pixel masks). A recipe 'sorts' when the lower end of the 95% interval of its balanced accuracy is above 0.5 and it does not flag 95% or more of the images; this is beating chance, not a usable inspection. How the runs were redone (found by a review independent of the author): batch 1 sent no context length and the server default of 4,096 tokens very likely dropped the task text. The development images were read in 1 of 40 runs in batch 1, 40 of 40 in batch 2 (context 32,768) and 39 of 40 in batch 3, after fixing the MCP server (task files listed, missing names refused with readable names, out-of-range knobs rejected by the validator, a fix for knobs inside params, crack and stain queries reaching bothat and hx_plane_deviation). Results (local 14B and 32B code-tuned models, ten runs each per task): recipes that sort cracks: 1, 3 and 1 of 20 in batches 1-3 (0 to 2 per model and batch), so the local models rarely succeed and do not repeat it. The best of them on cracks, a batch-2 14B recipe (0.995 detected, 0.45 false alarms, balanced accuracy 0.773), beats every cloud run; none sort candles in any batch. Most batch 2 and 3 recipes were edge detectors flagging 95% or more of the images (26 of 40 and 31 of 40); without the rule that excludes them, batch-3 crack counts would be 32B 1/10, 14B 4/10. The MCP fixes did not raise success, and from batch 2 on almost every failure is attributed to the model (batch 1 failures were all attributed to the tool; the MCP rule alone would claim 23 of its 39 failures). A cloud LLM agent (separate column, MCP before the fixes) had the same MCP, task text, system prompt, no pixels and a 24-call cap (the local tool counted calls only at the start of a turn and ran up to 33; the 10 runs over the cap are scored with the recipe cut at call 24). Not matched: the local runs get one nudge each for answering without a trial or without JSON, the cloud model's product name is deliberately not written and its temperature is not exposed by the general-purpose coding agent that ran it, and all six cloud runs cut or parsed the printed responses with their own commands (a breach of the brief; the local models read the whole truncated response). All three cloud runs sort cracks, but with 0.32-0.52 false alarms, i.e. only above chance (best 0.81 detected, 0.32 false alarms); one of three sorts candles (0.26, 0.12). References: on cracks, an existing recipe (the hairline-scratch recipe applied unchanged) detects 0.69 with 0.01 false alarms, above the best cloud run. The developer-built recipe (by the cloud LLM that develops this PoC, knowing the internals, from the same six images with no trial limit; not a human) detects 0.98 with 0.08 false alarms and the learned-from-good baseline (memory bank, 20 good images to learn, 10 others for the threshold; not callable through MCP) 0.98 and 0.18. On candles the developer recipe also stays at chance (0.63, 0.73: the wick hole cannot be excluded and the per-image normalisation of the black top-hat reverses the area ranking); the learned baseline gives 0.53 and 0.13. Model names are generic and the LLM endpoint is never recorded. A 72B model was stopped after its first request did not return within 600 s.
+
+[![Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png)
+
+*↑ **Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)** ―― Three test images of concrete walls (top two rows cracked, bottom row the first good test image) with the detections (filled) of the developer-built recipe, the best local-LLM recipe after the MCP fixes, the best cloud-LLM recipe and the existing learned-from-good baseline. o = verdict matches the label, x = it does not. Data: Özgenel 2019, CC BY 4.0.*
+
+Terms: MCP — An open protocol through which an AI application calls external tools and data: it hands the AI each tool's name, argument schema and results.; LLM — A large neural network trained on text that writes prose or code on request; a smaller one run on one's own computer is called a local LLM.
+
+[![ろうそくの汚れ・欠け(試験画像、塗り = 検出、輪郭 = 真値の欠陥)。欠陥の画像は欠陥の輪郭に触れたら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real.png)
+
+*↑ The measurement ―― ろうそくの汚れ・欠け(試験画像、塗り = 検出、輪郭 = 真値の欠陥)。欠陥の画像は欠陥の輪郭に触れたら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも寄せていない)。検出は表示のため 2 画素太らせた。出典表示: VisA candle (Zou et al., ECCV 2022), github.com/amazon-science/spot-diff, CC BY 4.0; gray + 4x4 mean downsampling (figure labels are in Japanese; the numbers are the same)*
+
+[![左上ほど良い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/03_crack_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/03_crack_scores.png)
+
+*↑ 左上ほど良い。*
+
+[![左上ほど良い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/04_candle_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/04_candle_scores.png)
+
+*↑ 左上ほど良い。*
+
+[![選り分けた = 平衡正解率の 95 % 区間の下限が 0.5 を超える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/05_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/05_summary.png)
+
+*↑ 選り分けた = 平衡正解率の 95 % 区間の下限が 0.5 を超える。*
+
+[![第 1 便 = 道具が文脈長を渡していなかった(古い発言が捨てられた疑い)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/06_attribution_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/06_attribution.png)
+
+*↑ 第 1 便 = 道具が文脈長を渡していなかった(古い発言が捨てられた疑い)。*
+
+```
+py -3.11 examples/poc_ai_built_inspection_scored.py
+```
+
+Source: [examples/poc_ai_built_inspection_scored.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ai_built_inspection_scored.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ai_built_inspection_scored)
+
+Ops used (notes): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_image_auroc.html) · [`anomaly_region_overlap`](https://furuse.work/ops/spc/anomaly_eval/anomaly_region_overlap.html) · [`bothat`](https://furuse.work/ops/2d/morphology/bothat.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`hx_plane_deviation`](https://furuse.work/ops/2d/halcon_ext/hx_plane_deviation.html) · [`invert`](https://furuse.work/ops/2d/gray/invert.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`patchbank_fit`](https://furuse.work/ops/spc/anomaly_patch/patchbank_fit.html) · [`patchbank_score`](https://furuse.work/ops/spc/anomaly_patch/patchbank_score.html) · [`select_shape`](https://furuse.work/ops/2d/region/select_shape.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
+
+## No.2026.307 —— Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread
+
+Inspection equipment is usually chosen one component at a time, each shown at its best by its own vendor. This synthetic test images the same parts and flaws with six lights (coaxial, dome, 70-degree ring, 30-degree ring, 10-degree dark field, and a phase-shifted fringe screen for deflectometry) x five cameras (monochrome, colour, polarisation, SWIR, hyperspectral) x two lenses (telecentric, ordinary), and reports a90/95 (MIL-HDBK-1823A). Every cell sets its threshold for a 1 % false-call rate on the flaw-free sites it is scored on (a definition for comparing at equal false-call rate; a threshold carried over from training gives 1.1 % pooled and up to 8 % in a single cell). Exposure is capped at 10 ms per field of view (photon counts are not equalised), the coaxial diffuser is twice the field width, and three site seed sets give median and min-max. Machined aluminium scratch parallel to the polishing lines: coaxial light with a telecentric lens is among the best (monochrome 39 um, colour 34 um); dark field with monochrome finds it under every seed set at 76-79 um, and a 30-degree ring with monochrome at 73-74 um at the full budget (at the small CI budget it flips to x with the seeds). Whether bright field needs a telecentric lens depends on the coaxial size: with a diffuser as wide as the field, an ordinary lens detects the largest scratches 80 % of the time (telecentric 100 %); at twice the field an ordinary lens also finds them (92 um, 2.4 times the telecentric value). Dome and high ring confuse the scratch with the polishing lines; the hyperspectral camera's 128 um pixel is too coarse. Shallow paint dent: coaxial, dome and 30-degree ring find nothing with any camera. The fringe screen finds it in all 10 cells (best 21 um) and raking dark field also in all 10 (best 28 um, 1.3 times the fringe value with a cheaper light). The floor is orange peel: cutting its slope from 0.10 to 0.02 degrees takes the fringe a90/95 from 22 to 4.8 um. Raking light wobbles at the small CI budget but settles at the full budget. The dome shows a dent as a bright blob only where its camera hole is mirrored in the slope (60-80 mm from the field centre), so detection moves between 0.33 and 0.92 across the field. The line-scan hyperspectral answer depends on the exposure cap: for the raking-light dent it is 214 um at 10 ms per field (a 30 kHz line rate no real instrument reaches), 16 um at 100 ms, 9.6 um at 1 s, and 9.9 um with the bands simply summed, so it wins on electrons. Black burn speck in resin: found by every set except the fringe screen; a 30-degree ring with a colour camera and ordinary lens (89 um) is enough. White PE fragment in white PP: no visible camera finds it, which is the input (the material table gives both the same visible absorption), not a finding; one SWIR band sees -0.22 % and fails; the 10 nm x 71 band camera finds it under the dome at 678-746 um (about 2 mm under coaxial light). 67 cells hit the exposure cap. Real data (both CC BY 4.0) support only the camera-band axis for polymers, as pixel-level AUC: plastic pieces on pork belly (Ghimpeteanu et al., Zenodo doi:10.5281/zenodo.17242553) go from 0.493 (chance) with one SWIR band to 0.937 / 0.959 / 0.994 with 2 / 6 / 184 bands; PP vs PE fragments (Arbash et al., RODARE doi:10.14278/rodare.3390) reach about 0.63 with monochrome, colour or one SWIR band and 0.882 with 950-1650 nm spectra in 20 nm bins (0.754 when extended to 2231 nm with 110 training pixels). The binning, the window and the real-data gate thresholds were chosen after seeing the data. Lighting, lens and the um values are comparisons inside this synthetic test, not hardware specs; many material values, light levels and price tiers are estimates.
+
+[![Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png)
+
+*↑ **Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread** ―― For each flaw, the best camera and lens under each of the six lights (a90/95 median and min-max over three seed sets, only where found under every seed set), with an example image from the best set. Shorter bars mean smaller flaws are found. Synthetic test.*
+
+Terms: SWIR — The short-wave infrared band, roughly around 1 to 3 µm, where material absorption can distinguish objects that look alike in visible light.; a90/95 — The flaw size at which the lower one-sided 95% confidence bound on the POD reaches 90%.
+
+[![4 種の欠陥を、照明 6(同軸落射・ドーム・リング高角 70°・低角 30°・暗視野 10°・縞照明)× カメラ 5 × レンズ 2 で撮った合成の試験の a90/95(MIL-HDBK-1823A の â vs a)。どのマスも判定閾値を](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/01_equipment_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/01_equipment_map.png)
+
+*↑ The measurement ―― 4 種の欠陥を、照明 6(同軸落射・ドーム・リング高角 70°・低角 30°・暗視野 10°・縞照明)× カメラ 5 × レンズ 2 で撮った合成の試験の a90/95(MIL-HDBK-1823A の â vs a)。どのマスも判定閾値を試験の無欠陥の部位で誤検出 1 % にそろえ、露光の上限は視野 1 枚 10 ms(縞照明は 16 コマで分け、ラインスキャンの分光は 1 ラインずつ。光子の数をそろえたのではない)。同軸の拡散面は視野の 2 倍。部位の種の組を 3 つ変えて回し、中央値と最小〜最大を書いた。 (figure labels are in Japanese; the numbers are the same)*
+
+[![同じ部位を照明だけ変えてモノクロ・テレセンで撮った見本(上から 幅 60 µm の線傷、深さ 80 µm の凹み、0.25 mm 下の径 500 µm の黒い焼け、径 1.5 mm の PE の破片。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/03_same_part_six_lights_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/03_same_part_six_lights.png)
+
+*↑ 同じ部位を照明だけ変えてモノクロ・テレセンで撮った見本(上から 幅 60 µm の線傷、深さ 80 µm の凹み、0.25 mm 下の径 500 µm の黒い焼け、径 1.5 mm の PE の破片。橙の三角 = 欠陥の位置、見本は視野の中心の近く)。*
+
+[![同じ部位・同じ照明をカメラ 5 種で撮った見本(テレセン、露光の上限 10 ms)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/04_same_part_five_cameras_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/04_same_part_five_cameras.png)
+
+*↑ 同じ部位・同じ照明をカメラ 5 種で撮った見本(テレセン、露光の上限 10 ms)。*
+
+[![同じ傷・同じ誤検出(1 %)で照明だけを変えた POD(a)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/05_s1_pod_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/05_s1_pod_curves.png)
+
+*↑ 同じ傷・同じ誤検出(1 %)で照明だけを変えた POD(a)。*
+
+[![公開の分光画像 2 つの画素を、カメラの帯の重みで束ねて同じ手順で分けた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/06_real_data_ladder_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/06_real_data_ladder.png)
+
+*↑ 公開の分光画像 2 つの画素を、カメラの帯の重みで束ねて同じ手順で分けた。*
+
+[![同じ 4 種の欠陥を照明 6 × レンズ 2 で撮った見本を左に、その組の a90/95(種の組の中央値)を右の地図に埋めていく。最後に題材ごとに分かったことと、最良・安くて足りる組を枠で示す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/07_equipment_map_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/07_equipment_map_explained.gif)
+
+*↑ The animation ―― 同じ 4 種の欠陥を照明 6 × レンズ 2 で撮った見本を左に、その組の a90/95(種の組の中央値)を右の地図に埋めていく。最後に題材ごとに分かったことと、最良・安くて足りる組を枠で示す。*
+
+```
+py -3.11 examples/poc_equipment_selection_map.py
+```
+
+Source: [examples/poc_equipment_selection_map.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_equipment_selection_map.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_equipment_selection_map)
+
+Ops used (notes): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`carbon_black_absorption`](https://furuse.work/ops/optics/matprop/carbon_black_absorption.html) · [`hyperspectral_band_weights`](https://furuse.work/ops/optics/spectral/hyperspectral_band_weights.html) · [`ingaas_photodiode_qe`](https://furuse.work/ops/optics/spectral/ingaas_photodiode_qe.html) · [`material_nir_absorption`](https://furuse.work/ops/optics/matprop/material_nir_absorption.html) · [`nir_model_info`](https://furuse.work/ops/optics/matprop/nir_model_info.html) · [`pod_ahat_fit`](https://furuse.work/ops/spc/pod/pod_ahat_fit.html) · [`pod_false_call`](https://furuse.work/ops/spc/pod/pod_false_call.html) · [`pod_from_ahat`](https://furuse.work/ops/spc/pod/pod_from_ahat.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
+
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
@@ -2318,7 +2402,7 @@ The third exhibit of the second physics-simulation × Fullseye round (the first 
 
 [![重ね合わせた場(傾き 1 N·mm + ねじり 0.5 N·mm + 並進 1 px)を 3 つに分ける: 発散の双極子が傾き(M1 = 1.015 N·mm、真値 0.991、窓 a + 当てはめ半](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/03_tactorque_decomposition_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/03_tactorque_decomposition_maps.png)
 
-*↑ 重ね合わせた場(傾き 1 N·mm + ねじり 0.5 N·mm + 並進 1 px)を 3 つに分ける: 発散の双極子が傾き(M1 = 1.015 N·mm、真値 0.991、窓 a + 当てはめ半径)、剛体回転の最小二乗がねじり(M_z = 0.497 N·mm、真値 0.500、窓 0.9a)…*
+*↑ 重ね合わせた場(傾き 1 N·mm + ねじり 0.5 N·mm + 並進 1 px)を 3 つに分ける: 発散の双極子が傾き(M1 = 1.015 N·mm、真値 0.991、窓 a + 当てはめ半径)、剛体回転の最小二乗がねじり(M_z = 0.497 N·mm、真値 0.500、窓 0.9a)、平均が並進(1.038 px、真値 1)。*
 
 [![第 2 真値: 有限要素の節点変位(有限厚のドーム状ゲル、Robo-Touch/Taxim リポジトリ同梱、MIT、節点 15,230・間隔 0.155 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/04_tactorque_fem_oblique_vs_normal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/04_tactorque_fem_oblique_vs_normal.png)
 
@@ -3830,9 +3914,9 @@ A neuron cut out of serial EM sections becomes a graph of branches once skeleton
 
 *↑ The measurement ―― z projection of the synthetic dendrite: every voxel gets the branch whose skeleton is nearest, so the branch volumes can be counted; cutting balls around the junctions instead either fails to separate the branches or throws volume away (figure labels are in Japanese; the numbers are the same)*
 
-[![both readings recover the radius of every branch to within half a voxel (the surface voxel centre si](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/03_radius_recovery_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/03_radius_recovery.png)
+[![both readings recover the radius of every branch to within half a voxel…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/03_radius_recovery_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/03_radius_recovery.png)
 
-*↑ both readings recover the radius of every branch to within half a voxel (the surface voxel centre sits half a voxel inside the boundary, hence the +0.…*
+*↑ both readings recover the radius of every branch to within half a voxel…*
 
 [![volume per branch comes from the territory; the junction-cut rows show that no ball radius separates](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/04_branch_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/04_branch_numbers.png)
 
@@ -5622,9 +5706,9 @@ Sim-to-real calibration (simcal) of pixel-shift offsets, pixel aperture and the 
 
 *↑ 【2 章】3 枚のフレームに dr・dc ∈ ±0.1 px、回転 ±2 mrad、露出 ±2 % を注入し、物理の経路(ポアソン + 読み出し雑音 + 丸め)で撮って合わせた。*
 
-[![【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals.png)
+[![【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。赤 = 正、青 = 負)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals.png)
 
-*↑ 【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。*
+*↑ 【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。赤 = 正、青 = 負)。*
 
 [![【5 章】半画素シフト 4 枚(白黒)で、開口率・レンズの Q = λN/p・3 枚のずれを合わせ、pixel_shift_resolution_budget の閉形式(|sinc(f·開口率)| ×](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget.png)
 
@@ -6292,7 +6376,7 @@ A video generator invents plausible motion. The new family live4d (14 ops, numpy
 
 [![error of the re-created frames against the removed ones, as the motion per step grows: below about o](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/06_interpolation_regimes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/06_interpolation_regimes.png)
 
-*↑ error of the re-created frames against the removed ones, as the motion per step grows: below about one blob width a linear blend is as good (the warp'…*
+*↑ error of the re-created frames against the removed ones, as the motion per step grows: below about one blob width a linear blend is as good…*
 
 [![Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4): pathlines of the 3-D flow between consecuti](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/09_ctc_pathlines_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/09_ctc_pathlines.png)
 
@@ -8712,7 +8796,7 @@ Hokusai's Great Wave (Met Open Access, CC0) turned into one closed line and then
 
 [![while the strokes do not overlap the ink fraction is length x width / area, so the width that reprod](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/05_pen_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/05_pen.png)
 
-*↑ while the strokes do not overlap the ink fraction is length x width / area, so the width that reproduces the mean tone is solved in closed form (0.90…*
+*↑ while the strokes do not overlap the ink fraction is length x width / area, so the width that reproduces the mean tone is solved in closed form (0.90 px here).*
 
 [![every row is measured by an operator in this run; the harmonic rows are predicted in closed form bef](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/08_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/08_numbers.png)
 
@@ -9390,9 +9474,9 @@ A synthetic pipe carries a pit, a full-circumference thinning band, invert corro
 
 *↑ The measurement ―― 下の帯の細くなっている所が管底腐食。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真の減肉 [mm)(縦 = z 0..300 mm、横 = θ 0..360 度。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth.png)
+[![真の減肉 [mm)(縦 = z 0..300 mm、横 = θ 0..360 度。±1.6 mm で切って塗った。正 = 肉が減った、溶接ビードは負)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth.png)
 
-*↑ 真の減肉 [mm](縦 = z 0..300 mm、横 = θ 0..360 度。*
+*↑ 真の減肉 [mm](縦 = z 0..300 mm、横 = θ 0..360 度。±1.6 mm で切って塗った。正 = 肉が減った、溶接ビードは負)*
 
 [![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/07_map_false_flag_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/07_map_false_flag.png)
 
@@ -9777,6 +9861,48 @@ Source: [examples/poc_bga_ball_type_roundtrip.py](https://github.com/furuse-kazu
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip)
 
 Ops used (notes): [`angles_to_normals`](https://furuse.work/ops/reprconv/direction/angles_to_normals.html) · [`correlation_score`](https://furuse.work/ops/reprconv/score/correlation_score.html) · [`curvature_to_shape_index`](https://furuse.work/ops/reprconv/curvature/curvature_to_shape_index.html) · [`curvature_to_table`](https://furuse.work/ops/reprconv/curvature/curvature_to_table.html) · [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`flow_apply`](https://furuse.work/ops/reprconv/flow/flow_apply.html) · [`flow_speed`](https://furuse.work/ops/reprconv/flow/flow_speed.html) · [`gaussians_to_points`](https://furuse.work/ops/reprconv/gaussians/gaussians_to_points.html) · [`gaussians_to_voxel`](https://furuse.work/ops/3d/transform/gaussians_to_voxel.html) · [`graph_components`](https://furuse.work/ops/conngraph/stats/graph_components.html) · [`graph_laplacian_spectrum`](https://furuse.work/ops/conngraph/stats/graph_laplacian_spectrum.html) · [`indices_to_labels`](https://furuse.work/ops/reprconv/index/indices_to_labels.html) · [`keypoints_from_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_from_image2d.html) · [`keypoints_rowcol_to_uv`](https://furuse.work/ops/reprconv/keypoint/keypoints_rowcol_to_uv.html) · [`keypoints_to_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_to_image2d.html) · [`keypoints_uv_to_points`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_points.html) · [`keypoints_uv_to_rowcol`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_rowcol.html) · [`knn_graph`](https://furuse.work/ops/3d/geodesic/knn_graph.html) · [`knn_graph_to_conn_graph`](https://furuse.work/ops/reprconv/structure/knn_graph_to_conn_graph.html) · [`labels_to_indices`](https://furuse.work/ops/reprconv/index/labels_to_indices.html) · [`mesh_volume`](https://furuse.work/ops/3d/mesh_process/mesh_volume.html) · [`normals_to_angles`](https://furuse.work/ops/reprconv/direction/normals_to_angles.html) · [`normals_to_egi`](https://furuse.work/ops/reprconv/direction/normals_to_egi.html) … (+13)
+
+## No.2026.309 —— One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material
+
+Trade-show booths show one method on its best part. Here one part with a 3 mm step, a blind hole, a 26.6 degree slope, a V-groove, a rib and shallow dents (50 and 15 um) is measured in four materials (matte, glossy metal, translucent resin, black) by five methods (stereo, fringe projection with phase shifting, indirect ToF, light section and photometric stereo) and compared with the dimension table. Imaging is rendered physically (reflection, shadows, machining texture, subsurface scattering, lens blur and vignetting, coherent speckle, one specular bounce, V-groove interreflection, 12-bit sensor noise). Shape errors are counted on one common scale for every method, 0.1 mm and 1 mm, and a uniform offset is reported separately. Stereo, fringe projection and light section all triangulate at 30 degrees, and every method uses auto-exposure capped at 8x the matte exposure. On matte, noise is 4.5 um for fringe projection, 6.6 um for stereo, 14.3 um for light section (flat plate) and 1.34 mm for ToF. The order depends on conditions (stereo at +/-5 degrees gives 20.9 um). ToF with 0.4 mm pixels has 94% of pixels off by more than 0.1 mm even on matte. On glossy metal, 56% of the V-groove is off in fringe projection from the specular double bounce (10% on matte), and ToF, whose exposure locks onto the specular return, has 86% off by more than 1 mm. On translucent resin, stereo loses its texture (75% missing), while fringe projection sinks uniformly by -67 um but its flat-area shape errors stay at 10%. Photometric stereo loses the step by 3.5 mm (the same for three random seeds). The 50 um dent is read by photometric stereo to +7 um, fringe projection to +3 um and light section to -3 um; ToF cannot read it. Light-section speckle noise agrees with the operator's independent 2-D coherent-imaging simulation under the same conditions (ratio 0.87 to 0.96; the 13% shortfall at 0.05 mm pixels is unresolved). It is 1.09 to 1.38 times the Dorsch formula itself (10.35 um) and 0.74 to 0.85 times the value with the operator's empirical sqrt(w/L) factor (the fringe and ToF noise formulas are self-consistency checks of the same noise model). Real data support only the edge behaviour: just outside a step, correlation-based methods fatten (keep the upper height) while ToF floats between object and background. Real stereo (Middlebury 2014) fattens 39% / floats 9%; on the same T-LESS scene the structured-light depth sensor fattens 34% / floats 5% and the ToF depth sensor floats 48% / fattens 18%, and counting in the depth sensors' native pixels keeps the direction (ToF floats 52%, structured light 11%). Material parameters are the author's values; the material claims are simulation only. On the acceptance-test yardstick (the same evaluation operators as poc_virtual_acceptance_3d, two 8 mm spheres and a flat plate) the probing form error PF on matte, as the median over 200 random 200-point subsets, is 0.027 mm for fringe projection, 0.038 for photometric stereo, 0.380 for stereo and 4.87 for ToF. Light section gives 0.104 mm (5-95%: 0.077 to 0.129; 0.173 with all points), so it cannot be said to be within 0.1 mm (a limit). On glossy metal fringe projection rises to 0.238 mm. PF is a range and grows with the point count, so the density-independent residual RMS is listed too. Unlike the earlier single-method deep dives (acceptance testing, three ToF exhibits, fringe interreflection, two light-section floors, two real-stereo exhibits, photometric stereo), this one renders the same part in the same materials from raw images for all five methods and decodes them on one yardstick. The verdict 'measurable to 0.1 mm' means at most 5% of pixels beyond 0.1 mm, at most 1% beyond 1 mm and at most 20% missing.
+
+[![One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map.png)
+
+*↑ **One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material** ―― The same part in four materials measured by stereo, fringe projection, indirect ToF, light section and photometric stereo, rendered obliquely (grey: missing, orange: off by more than a common 0.1 mm). Top row: ground truth. Photometric stereo's height offset is fitted to the truth.*
+
+[![装置が撮る生の画像(上 = つや消し、下 = 金属光沢)。ステレオの左、縞投影の 1 枚(周期 1 mm)、ToF の振幅(画素 0.4 mm)、光切断の 1 コマ(部屋の明かりつき)、照度差ステレオの 1 灯目。カメラの像はレンズのぼけと](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/02_raw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/02_raw.png)
+
+*↑ The measurement ―― 装置が撮る生の画像(上 = つや消し、下 = 金属光沢)。ステレオの左、縞投影の 1 枚(周期 1 mm)、ToF の振幅(画素 0.4 mm)、光切断の 1 コマ(部屋の明かりつき)、照度差ステレオの 1 灯目。カメラの像はレンズのぼけと周辺減光を通してある。 (figure labels are in Japanese; the numbers are the same)*
+
+[![雑音 = 平らな所の真値との差の頑健な標準偏差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/03_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/03_numbers.png)
+
+*↑ 雑音 = 平らな所の真値との差の頑健な標準偏差。*
+
+[![ステレオの輻輳角・カメラの画素・ToF の画素を振った雑音。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/04_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/04_conditions.png)
+
+*↑ ステレオの輻輳角・カメラの画素・ToF の画素を振った雑音。*
+
+[![VDI/VDE 2634 Part 2 の考え方の評価量(準拠ではない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/05_acceptance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/05_acceptance.png)
+
+*↑ VDI/VDE 2634 Part 2 の考え方の評価量(準拠ではない)。*
+
+[![実データ: 同じ場面を構造化光と ToF の深度センサで撮った深度(T-LESS)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/06_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/06_real.png)
+
+*↑ 実データ: 同じ場面を構造化光と ToF の深度センサで撮った深度(T-LESS)。*
+
+[![何を入れ(同じ部品・4 材質)→ 何を比べ(5 方式の生の画像と測った形)→ 何が分かったか(どこで壊れるか)を約 51 秒で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/07_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/07_explained.gif)
+
+*↑ The animation ―― 何を入れ(同じ部品・4 材質)→ 何を比べ(5 方式の生の画像と測った形)→ 何が分かったか(どこで壊れるか)を約 51 秒で。*
+
+```
+py -3.11 examples/poc_3d_sensor_modalities.py
+```
+
+Source: [examples/poc_3d_sensor_modalities.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_3d_sensor_modalities.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_3d_sensor_modalities)
+
+Ops used (notes): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`binocular_disparity_ms`](https://furuse.work/ops/mv/stereo/binocular_disparity_ms.html) · [`cast_shadow`](https://furuse.work/ops/3d/render/cast_shadow.html) · [`form_factors_2d`](https://furuse.work/ops/optics/light_transport/form_factors_2d.html) · [`groove_profile`](https://furuse.work/ops/optics/light_transport/groove_profile.html) · [`integrate_normals`](https://furuse.work/ops/3d/photometric/integrate_normals.html) · [`itof_capture`](https://furuse.work/ops/optics/itof/itof_capture.html) · [`itof_flying_pixel_mask`](https://furuse.work/ops/optics/itof/itof_flying_pixel_mask.html) · [`itof_noise_budget`](https://furuse.work/ops/optics/itof/itof_noise_budget.html) · [`itof_phase_amplitude`](https://furuse.work/ops/optics/itof/itof_phase_amplitude.html) · [`laser_line_center_centroid`](https://furuse.work/ops/optics/light_section/laser_line_center_centroid.html) · [`light_section_speckle_floor`](https://furuse.work/ops/optics/light_section/light_section_speckle_floor.html) · [`photometric_stereo_robust`](https://furuse.work/ops/specular/photometric/photometric_stereo_robust.html) · [`plane_flatness_error`](https://furuse.work/ops/acceptance/evaluate/plane_flatness_error.html) · [`sphere_probing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_probing_error.html) · [`sphere_spacing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_spacing_error.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 
 ### The Instrument Wing — From Raw Output to Instrument-Specific Failure
 
@@ -10292,7 +10418,7 @@ Parts made by metal additive manufacturing are examined in public X-ray CT slice
 
 [![Y pad: the command (XYPT, no time step stored) and the staring camera agree on the count and on the ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/04_time_axis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/04_time_axis.png)
 
-*↑ Y pad: the command (XYPT, no time step stored) and the staring camera agree on the count and on the long last interval, yet drift apart by 2.3 % per p…*
+*↑ Y pad: the command (XYPT, no time step stored) and the staring camera agree on the count and on the long last interval, yet drift apart by 2.3 % per period; unresolved.*
 
 [![slice at z = 4.00 mm just below the crown of the 4 mm hole: particles hang into the hole from the do](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/07_ct_hole_crown_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/07_ct_hole_crown.png)
 
@@ -10300,7 +10426,7 @@ Parts made by metal additive manufacturing are examined in public X-ray CT slice
 
 [![XCT vs STL: protrusion = p95 of the signed distance (outward positive) after subtracting the median ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/08_protrusion_by_facing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/08_protrusion_by_facing.png)
 
-*↑ XCT vs STL: protrusion = p95 of the signed distance (outward positive) after subtracting the median of each 0.25 mm surface cell (form error); line =…*
+*↑ XCT vs STL: protrusion = p95 of the signed distance (outward positive) after subtracting the median of each 0.25 mm surface cell (form error); line = the 4 mm hole per n_z bin (bins with >= 200 points), dots = 45 deg notch and vertical walls.*
 
 [![XCT slices 121..320 (z = 1.75..4.16 mm, build direction) with the STL cross-section in red. Note the powder/dross hangin](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/06_ct_slices.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/06_ct_slices.gif)
 

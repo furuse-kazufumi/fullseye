@@ -5,7 +5,7 @@ category: evaluate
 in: points
 out: table
 gpu: なし
-examples: []
+examples: [poc_3d_sensor_modalities]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -45,7 +45,7 @@ refitting once. Definition as described in Carfagni et al. 2019 for VDI/VDE 2634
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_3d_sensor_modalities](../../../../examples/poc_3d_sensor_modalities.py) — `py -3.11 examples/poc_3d_sensor_modalities.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

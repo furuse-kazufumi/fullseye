@@ -244,7 +244,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-305 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+308 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -263,7 +263,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrial inspection</b> (57)</summary>
+<details class="vall"><summary><b>Industrial inspection</b> (59)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../../articles/assets/poc/poc_barcode_1d/story.en.gif" alt="Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers." loading="lazy" width="200" height="200"></picture><span>1-D barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../../articles/assets/poc/poc_battery_electrode_tortuosity/story.en.gif" alt="Electrode tortuosity from CT — the rule of thumb only sees porosity" loading="lazy" width="200" height="200"></picture><span>Electrode tortuosity</span></a>
@@ -322,6 +322,8 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_part_dpm.jpg" alt="डॉट-पीन Data Matrix को zxing-cpp तभी पढ़ता है जब वह धुंधली हो" width="200" height="200"><span>डॉट-पीन Data Matrix को zxing-cpp तभी पढ़ता है जब वह धुंधली हो</span></a>
 <a href="../../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_lot_ocr.jpg" alt="प्रशिक्षित धुंधलेपन से आगे लॉट-नंबर OCR अस्वीकार करने के बजाय गलत पढ़ता है" width="200" height="200"><span>प्रशिक्षित धुंधलेपन से आगे लॉट-नंबर OCR अस्वीकार करने के बजाय गलत पढ़ता है</span></a>
 <a href="../../articles/assets/poc/poc_real_typewritten_ocr/01_reading.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_typewritten_ocr/01_reading.png"><img src="../../articles/assets/poc/poc_real_typewritten_ocr/story.en.gif" alt="Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 96.6-98.1 % on Lines Segmented Correctly (95.4-97.1 % End to End), and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed" loading="lazy" width="200" height="200"></picture><span>1943 की टाइप की गई रिपोर्ट को क्लासिकल OCR से पढ़ना</span></a>
+<a href="../../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><img src="../../articles/assets/poc/poc_ai_built_inspection_scored/story.en.gif" alt="Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)" loading="lazy" width="200" height="200"></picture><span>AI द्वारा बनाए निरीक्षण को वास्तविक डेटा के सत्य से अंकित करना</span></a>
+<a href="../../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><img src="../../articles/assets/poc/poc_equipment_selection_map/story.en.gif" alt="Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread" loading="lazy" width="200" height="200"></picture><span>उपकरण चयन मानचित्र: 60 light, camera और lens संयोजनों से वही दोष</span></a>
 </div>
 </details>
 
@@ -390,7 +392,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D shape</b> (21)</summary>
+<details class="vall"><summary><b>3-D shape</b> (22)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="../../articles/assets/poc/poc_battery_ct_degradation/story.en.gif" alt="Battery cells with the same exterior can hide different causes of swelling or voiding. Known defects were put into stacked electrodes and imaged by CT; only 29.4 % of electrode swelling reached the outside. Cells with matching can heights separate internally, so outside dimensions cannot identify the cause." loading="lazy" width="200" height="200"></picture><span>Battery CT</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="../../articles/assets/poc/poc_bev_sensor_fusion/story.en.gif" alt="For distant vehicles, a small image calibration error becomes a physical shift in a bird's-eye map. Opposite-side range sensors were fused on one grid, tracing the reprojection shift at 22 m. Complementary views create the gain, but growing yaw error makes fusion worse than one sensor." loading="lazy" width="200" height="200"></picture><span>BEV sensor fusion</span></a>
@@ -413,6 +415,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="आयोजन-स्थल की इमारतें और क्षुद्रग्रह Itokawa एक ही पैमाने पर: PLATEAU CityGML LOD2 को mesh में" width="200" height="200"><span>आयोजन-स्थल की इमारतें और क्षुद्रग्रह Itokawa एक ही पैमाने पर: PLATEAU CityGML LOD2 को mesh में</span></a>
 <a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=hi"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png"><img src="../../articles/assets/poc/poc_star_tracker/story.en.gif" alt="How One Star Image Reveals Satellite Attitude" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 <a href="../../articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bga_ball_type_roundtrip.jpg" alt="image से point cloud, volume, mesh और graph तक ले जाने पर भी तीनों प्रकारों में ball की गिनती 71 रहती है" width="200" height="200"><span>image से point cloud, volume, mesh और graph तक ले जाने पर भी तीनों प्रकारों में ball की गिनती 71 रहती है</span></a>
+<a href="../../articles/assets/poc/poc_3d_sensor_modalities/01_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_3d_sensor_modalities/01_map.png"><img src="../../articles/assets/poc/poc_3d_sensor_modalities/story.en.gif" alt="One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material" loading="lazy" width="200" height="200"></picture><span>एक ही पुर्जा, पाँच 3-D sensing तरीके</span></a>
 </div>
 </details>
 

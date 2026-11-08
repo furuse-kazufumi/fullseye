@@ -1,6 +1,10 @@
 {
  "_note": "収蔵台帳。追記のみ。収蔵番号は受け入れた瞬間に 1 回だけ発行し、以後変えない・再利用しない。番号は「どこに展示しているか」とは独立なので、記事間の移動でも 棟の分割でも動かない。除籍は retired に理由つきで記録し、番号は欠番のまま残す。訂正は消さずに note 欄へ。発行は tools/gen_exhibit_numbers.py。",
  "issued": {
+  "poc_3d_sensor_modalities": {
+   "accessioned": "2026-11-08",
+   "no": "2026.309"
+  },
   "poc_active_contours": {
    "accessioned": "2026-10-02",
    "no": "2026.186"
@@ -8,6 +12,10 @@
   "poc_agv_fleet": {
    "accessioned": "2026-10-03",
    "no": "2026.189"
+  },
+  "poc_ai_built_inspection_scored": {
+   "accessioned": "2026-11-08",
+   "no": "2026.308"
   },
   "poc_air_hockey_intercept": {
    "accessioned": "2026-10-04",
@@ -324,6 +332,10 @@
   "poc_endless_zoom_and_turning_solids": {
    "accessioned": "2026-09-24",
    "no": "2026.146"
+  },
+  "poc_equipment_selection_map": {
+   "accessioned": "2026-11-08",
+   "no": "2026.307"
   },
   "poc_exoplanet_transit": {
    "accessioned": "2026-09-07",

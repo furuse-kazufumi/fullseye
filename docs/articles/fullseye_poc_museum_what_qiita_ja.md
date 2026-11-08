@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **144 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **146 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 47 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 49 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -126,7 +126,7 @@ py -3.11 examples/poc_bearing_diagnosis.py
 
 [![n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 p](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise.png)
 
-*↑ n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise…*
+*↑ n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise 0.000 で低下（1未満 27 格子）。*
 
 [![noise 0.010 では振幅 3.16 から検出；noise 0.025 では振幅 5.47 から検出；noise 0.050 では振幅 8.23 から検出。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone.png)
 
@@ -1540,6 +1540,90 @@ py -3.11 examples/poc_real_typewritten_ocr.py
 
 使用 op(ノートへ): [`area_center_gray`](https://furuse.work/ops/mv/gray/area_center_gray.html) · [`classify_class_gmm`](https://furuse.work/ops/mv/classify/classify_class_gmm.html) · [`classify_class_knn`](https://furuse.work/ops/mv/classify/classify_class_knn.html) · [`classify_class_mlp`](https://furuse.work/ops/mv/classify/classify_class_mlp.html) · [`classify_class_svm`](https://furuse.work/ops/mv/classify/classify_class_svm.html) · [`create_lexicon`](https://furuse.work/ops/mv/classify/create_lexicon.html) · [`evaluate_class_gmm`](https://furuse.work/ops/mv/classify/evaluate_class_gmm.html) · [`gray_histo`](https://furuse.work/ops/mv/gray/gray_histo.html) · [`gray_projections`](https://furuse.work/ops/mv/gray/gray_projections.html) · [`lookup_lexicon`](https://furuse.work/ops/mv/classify/lookup_lexicon.html) · [`segment_characters`](https://furuse.work/ops/mv/text/segment_characters.html) · [`select_characters`](https://furuse.work/ops/mv/text/select_characters.html) · [`suggest_lexicon`](https://furuse.work/ops/mv/classify/suggest_lexicon.html) · [`text_line_orientation`](https://furuse.work/ops/mv/text/text_line_orientation.html) · [`text_line_slant`](https://furuse.work/ops/mv/text/text_line_slant.html) · [`train_class_gmm`](https://furuse.work/ops/mv/classify/train_class_gmm.html) · [`train_class_knn`](https://furuse.work/ops/mv/classify/train_class_knn.html) · [`train_class_mlp`](https://furuse.work/ops/mv/classify/train_class_mlp.html) · [`train_class_svm`](https://furuse.work/ops/mv/classify/train_class_svm.html)
 
+## No.2026.308 —— AI が組んだ検査を公開実データの真値で採点する ―― 失敗を道具・MCP・模型に分け、直す前と後を並べる(ローカル LLM のひび割れは 20 回に 1〜3 本で再現せず、クラウド LLM は 3 本とも偶然を超えるが既存レシピに届かない)
+
+課題を自然言語で渡し、LLM に Fullseye の MCP(minimal)だけを道具として op を探させ(索引の検索)、型の鎖を確かめさせ、開発用の 6 枚で試すよう指示してレシピ(op の列)を組ませ、公開実データの真値で採点した。AI を呼ぶのは手元の生成道具だけで、レシピは返せなかった回も含めて全部 JSON に保存し(記録の指紋を固定)、PoC と CI はそれを MCP と同じ入口で決定的に走らせる。題材はコンクリート壁のひび割れ(Özgenel 2019、CC BY 4.0、配布元のラベルで試験 400 枚)と、VisA のろうそく(CC BY 4.0、配布元の画素マスクで試験 197 枚)。「選り分けた」は平衡正解率の 95 % 区間の下限が 0.5 を超え(偶然を有意に超え)、かつ 95 % 以上を NG にする偏りでないもの —— 実用の水準ではない。★取り直しの経緯(作者と独立の検証で発見): 第 1 便は LLM を呼ぶ道具が文脈長を渡しておらず、サーバの既定 4,096 トークンで課題文が捨てられていた疑いが強い(同じ口で 24k トークンの文の先頭を答えられないことを手元で再現)。開発用画像を読んだのは第 1 便 1 / 40 回、文脈長 32,768 の第 2 便 40 / 40 回、MCP の不備(作業場所のファイルを一覧に出さない、無い名前の拒否に読める名前を添えない、検証が a/b の範囲外を通す、a/b を params に入れた形に直し方を返さない、ひび割れ・汚れの問い合わせに bothat・hx_plane_deviation が出ない)も直した第 3 便 39 / 40 回。★結果(ローカル LLM 14B と 32B のコード向け、課題・模型ごとに 10 回): ひび割れで選り分けたのは第 1 便 1・第 2 便 3・第 3 便 1 本(各 20 回、模型と便ごとに 0〜2 本)で、まれにしか組めず再現しない。ひび割れで組めた中の最良(第 2 便の 14B)は検出 0.995・誤報 0.45・平衡正解率 0.773 で、クラウド LLM のどの回より高い。ろうそくは 3 便とも 0 本。第 2・3 便の多くは canny などの縁の検出で 95 % 以上を NG にした(第 2 便 26 / 40、第 3 便 31 / 40)。この偏りを除く規則が無ければ、第 3 便のひび割れは 32B 1/10、14B 4/10 になる。MCP を直しても成功は増えず、第 2 便以降の失敗はほぼ全部が模型の弱さに帰属した(第 1 便は失敗を全部「道具」に寄せた。MCP の規則だけを当てると第 1 便の失敗 39 本のうち 23 本が MCP)。★クラウドの LLM エージェント(別の列、MCP は直す前): そろえた条件は同じ MCP・同じ課題文と指示文・画素なし・呼び出し 24 回まで(ローカルの道具は発言の頭でしか数えず最大 33 回まで走ったので、上限を超えた 10 回は 24 回目までで切ったレシピで採点した)。そろっていない条件は、ローカルだけにある 1 回ずつの催促、クラウドの模型の製品名は書かない方針で温度は土台が出さないこと、クラウドの 6 本が CLI の応答を自前のコマンドで切り出して読んだこと(依頼文違反。ローカルは同じ長さの応答を全文読む)。ひび割れは 3 本とも選り分けたが誤報は 0.32〜0.52 で、「偶然を超える」という意味でしかない(最良 検出 0.81・誤報 0.32)。ろうそくは 3 本中 1 本(検出 0.26・誤報 0.12)。★比べる基準: ひび割れでは、既存レシピ(金属のヘアラインの傷用を直さずに当てた)が検出 0.69・誤報 0.01 でクラウド LLM の最良より上。開発側の手組み(開発に使っているクラウド LLM が内部を知った上で、同じ 6 枚だけで上限なしに組んだ。人ではない)は検出 0.98・誤報 0.08、既存の良品学習(記憶バンク、良品 20 枚で学習・別の良品 10 枚で閾値を較正、MCP からは呼べない)は 0.98・0.18。ろうそくでは手組みも偶然を超えない(検出 0.63・誤報 0.73、芯の穴を外せず、黒トップハットの画像ごとの正規化で面積の順位が逆転)。良品学習は 0.53・0.13。模型の名前は一般名で書き、LLM の所在は環境変数から読んで記録しない。72B の模型は 1 回目の要求が 600 秒で返らず打ち切った。
+
+[![AI が組んだ検査を公開実データの真値で採点する ―― 失敗を道具・MCP・模型に分け、直す前と後を並べる(ローカル LLM のひび割れは 20 回に 1〜3 本で再現せず、クラウド LLM は 3 本とも偶然を超えるが既存レシピに届かない)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png)
+
+*↑ **AI が組んだ検査を公開実データの真値で採点する ―― 失敗を道具・MCP・模型に分け、直す前と後を並べる(ローカル LLM のひび割れは 20 回に 1〜3 本で再現せず、クラウド LLM は 3 本とも偶然を超えるが既存レシピに届かない)** ―― コンクリート壁の試験画像 3 枚(上 2 段 = ひび割れあり、下 = 試験の最初の良品)に、開発側の手組み・ローカル LLM 最良(MCP を直した後)・クラウド LLM 最良・既存の良品学習の検出(塗り)を重ねた。○ = 判定が真値と一致、× = 不一致。出典表示: Özgenel 2019, CC BY 4.0。*
+
+用語: MCP — AI のアプリが外部の道具やデータを呼び出すための公開の取り決め。道具の名前・引数の形・返り値を AI に渡し、AI はそれを呼んで結果を読む。; LLM — 大量の文章で学習し、指示に応じて文やプログラムを書く大きなニューラルネット。手元の計算機で動かす小さめのものをローカル LLM と呼ぶ。
+
+[![ろうそくの汚れ・欠け(試験画像、塗り = 検出、輪郭 = 真値の欠陥)。欠陥の画像は欠陥の輪郭に触れたら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real.png)
+
+*↑ 測定の図 ―― ろうそくの汚れ・欠け(試験画像、塗り = 検出、輪郭 = 真値の欠陥)。欠陥の画像は欠陥の輪郭に触れたら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも寄せていない)。検出は表示のため 2 画素太らせた。出典表示: VisA candle (Zou et al., ECCV 2022), github.com/amazon-science/spot-diff, CC BY 4.0; gray + 4x4 mean downsampling*
+
+[![左上ほど良い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/03_crack_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/03_crack_scores.png)
+
+*↑ 左上ほど良い。*
+
+[![左上ほど良い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/04_candle_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/04_candle_scores.png)
+
+*↑ 左上ほど良い。*
+
+[![選り分けた = 平衡正解率の 95 % 区間の下限が 0.5 を超える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/05_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/05_summary.png)
+
+*↑ 選り分けた = 平衡正解率の 95 % 区間の下限が 0.5 を超える。*
+
+[![第 1 便 = 道具が文脈長を渡していなかった(古い発言が捨てられた疑い)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/06_attribution_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/06_attribution.png)
+
+*↑ 第 1 便 = 道具が文脈長を渡していなかった(古い発言が捨てられた疑い)。*
+
+```
+py -3.11 examples/poc_ai_built_inspection_scored.py
+```
+
+ソース: [examples/poc_ai_built_inspection_scored.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ai_built_inspection_scored.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ai_built_inspection_scored)
+
+使用 op(ノートへ): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_image_auroc.html) · [`anomaly_region_overlap`](https://furuse.work/ops/spc/anomaly_eval/anomaly_region_overlap.html) · [`bothat`](https://furuse.work/ops/2d/morphology/bothat.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`hx_plane_deviation`](https://furuse.work/ops/2d/halcon_ext/hx_plane_deviation.html) · [`invert`](https://furuse.work/ops/2d/gray/invert.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`patchbank_fit`](https://furuse.work/ops/spc/anomaly_patch/patchbank_fit.html) · [`patchbank_score`](https://furuse.work/ops/spc/anomaly_patch/patchbank_score.html) · [`select_shape`](https://furuse.work/ops/2d/region/select_shape.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
+
+## No.2026.307 —— 機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする
+
+外観検査の機材は照明・カメラ・レンズを別々のブースで、それぞれ最良の条件で見せられて選ぶことが多い。この PoC は同じ部品・同じ傷を、照明 6 種(同軸落射・ドーム・リング高角 70°・低角 30°・暗視野 10°・縞照明 = 位相シフトの偏向法)× カメラ 5 種(モノクロ・カラー・偏光・SWIR・ハイパースペクトル)× レンズ 2 種(テレセン・通常)で撮り、MIL-HDBK-1823A の手順で 90 % 見つかる大きさ a90/95 を出した合成の試験である。どのマスも判定閾値は採点に使う無欠陥の部位で誤検出 1 % に置いた(同じ誤検出率で比べるための定義。学習側の閾値を持ち込むと全回を合わせて 1.1 %、マスごとには最大 8 %)。露光の上限は視野 1 枚 10 ms(光子の数をそろえたのではない)、同軸の拡散面は視野の 2 倍、部位の種の組を 3 つ変えて中央値と最小〜最大を出した。★切削アルミの線傷(研磨の筋と平行)は、同軸 + テレセンが最良級(モノクロ 39 µm、カラー 34 µm)で、暗視野のモノクロはどの組でも 76〜79 µm、低角 30° のモノクロは full の予算でどの組でも 73〜74 µm(部位の少ない縮小版では種の組で × と入れ替わる)。「明視野にはテレセンが要る」は同軸の大きさで決まり、拡散面が視野と同じ大きさなら通常レンズの大きい傷の検出率は 0.80(テレセン 1.00)、視野の 2 倍なら通常レンズでも見つかる(92 µm、テレセンの 2.4 倍)。ドーム・高角は研磨の筋の暗線と取り違える。分光(物体側の画素 128 µm)は線傷には粗い。★塗装パネルの浅い凹みは、同軸・ドーム・低角 30° がどのカメラでも見つけない。縞照明は 10 マス全部で最良 21 µm、斜光(暗視野 10°)も 10 マス全部で最良 28 µm(縞の 1.3 倍で、照明は安い)。床はゆず肌で、傾きを 0.10° → 0.02° にすると縞照明の a90/95 が 22 → 4.8 µm。斜光の値は部位の少ない縮小版では大きく揺れるが、full の予算では収まる。ドームが凹みを明るい塊として写すのは、斜面にドームの穴の縁が映る位置(視野の中心から 60〜80 mm)だけで、検出率は視野の位置で 0.33〜0.92 に動く。★ラインスキャンの分光は露光の上限で答えが変わる: 斜光の凹みは視野 1 枚 10 ms(ライン速度 3 万 Hz、実機では届かない)で 214 µm、100 ms で 16 µm、1 s で 9.6 µm、帯を足すだけ(分光を使わない)でも 9.9 µm —— 勝つのは電子数のせい。★樹脂の中の黒い焼けは縞照明以外のどの組でも見つかり、低角 30°・カラー・通常 89 µm で足りる。★白い PP の中の白い PE の破片は、可視の 3 カメラでは見つからない —— 材料表で可視の吸収を同じに置いた入力で、発見ではない。SWIR の 1 帯でも差は −0.22 % で見つからず、10 nm × 71 帯の分光がドームで 678〜746 µm(同軸では 2 mm 台)で見つける。露光の上限に当たったマスは 67 個。★実データ(どちらも CC BY 4.0)が支えるのは「カメラの帯で樹脂を分けられるか」の軸だけで、画素ごとの AUC: 豚バラの上の樹脂片(Ghimpeteanu ら、Zenodo doi:10.5281/zenodo.17242553)は SWIR 1 帯 0.493(当て推量)→ 2 帯 0.937 → 6 帯 0.959 → 全 184 帯 0.994。PP と PE の破片(Arbash ら、RODARE doi:10.14278/rodare.3390)はモノクロ・カラー・SWIR 1 帯 0.63 前後に対し、20 nm に束ねた分光 950〜1650 nm が 0.882(2231 nm まで広げると学習の画素 110 では 0.754)。束ね方・窓・実データの門の閾値は実データを見てから選んだ。照明・レンズの軸と地図の µm の値は合成の中の比べ合いで、実機の性能値として読まない。材料の多く・照明の明るさ・価格帯は推定。
+
+[![機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png)
+
+*↑ **機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする** ―― 題材ごとに、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大。どの組でも見つかるものだけ)と、題材の最良の組で撮った見本。棒が短いほど小さい傷まで見つかる。合成の試験。*
+
+用語: SWIR — おおむね1〜3 µm付近の短波赤外域で、可視光では似た材料の吸収差を捉えられる波長帯。; a90/95 — POD曲線で検出確率90%を、片側95%信頼下限でも満たす欠陥寸法。
+
+[![4 種の欠陥を、照明 6(同軸落射・ドーム・リング高角 70°・低角 30°・暗視野 10°・縞照明)× カメラ 5 × レンズ 2 で撮った合成の試験の a90/95(MIL-HDBK-1823A の â vs a)。どのマスも判定閾値を](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/01_equipment_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/01_equipment_map.png)
+
+*↑ 測定の図 ―― 4 種の欠陥を、照明 6(同軸落射・ドーム・リング高角 70°・低角 30°・暗視野 10°・縞照明)× カメラ 5 × レンズ 2 で撮った合成の試験の a90/95(MIL-HDBK-1823A の â vs a)。どのマスも判定閾値を試験の無欠陥の部位で誤検出 1 % にそろえ、露光の上限は視野 1 枚 10 ms(縞照明は 16 コマで分け、ラインスキャンの分光は 1 ラインずつ。光子の数をそろえたのではない)。同軸の拡散面は視野の 2 倍。部位の種の組を 3 つ変えて回し、中央値と最小〜最大を書いた。*
+
+[![同じ部位を照明だけ変えてモノクロ・テレセンで撮った見本(上から 幅 60 µm の線傷、深さ 80 µm の凹み、0.25 mm 下の径 500 µm の黒い焼け、径 1.5 mm の PE の破片。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/03_same_part_six_lights_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/03_same_part_six_lights.png)
+
+*↑ 同じ部位を照明だけ変えてモノクロ・テレセンで撮った見本(上から 幅 60 µm の線傷、深さ 80 µm の凹み、0.25 mm 下の径 500 µm の黒い焼け、径 1.5 mm の PE の破片。橙の三角 = 欠陥の位置、見本は視野の中心の近く)。*
+
+[![同じ部位・同じ照明をカメラ 5 種で撮った見本(テレセン、露光の上限 10 ms)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/04_same_part_five_cameras_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/04_same_part_five_cameras.png)
+
+*↑ 同じ部位・同じ照明をカメラ 5 種で撮った見本(テレセン、露光の上限 10 ms)。*
+
+[![同じ傷・同じ誤検出(1 %)で照明だけを変えた POD(a)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/05_s1_pod_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/05_s1_pod_curves.png)
+
+*↑ 同じ傷・同じ誤検出(1 %)で照明だけを変えた POD(a)。*
+
+[![公開の分光画像 2 つの画素を、カメラの帯の重みで束ねて同じ手順で分けた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/06_real_data_ladder_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/06_real_data_ladder.png)
+
+*↑ 公開の分光画像 2 つの画素を、カメラの帯の重みで束ねて同じ手順で分けた。*
+
+[![同じ 4 種の欠陥を照明 6 × レンズ 2 で撮った見本を左に、その組の a90/95(種の組の中央値)を右の地図に埋めていく。最後に題材ごとに分かったことと、最良・安くて足りる組を枠で示す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/07_equipment_map_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/07_equipment_map_explained.gif)
+
+*↑ 動く図 ―― 同じ 4 種の欠陥を照明 6 × レンズ 2 で撮った見本を左に、その組の a90/95(種の組の中央値)を右の地図に埋めていく。最後に題材ごとに分かったことと、最良・安くて足りる組を枠で示す。*
+
+```
+py -3.11 examples/poc_equipment_selection_map.py
+```
+
+ソース: [examples/poc_equipment_selection_map.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_equipment_selection_map.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_equipment_selection_map)
+
+使用 op(ノートへ): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`carbon_black_absorption`](https://furuse.work/ops/optics/matprop/carbon_black_absorption.html) · [`hyperspectral_band_weights`](https://furuse.work/ops/optics/spectral/hyperspectral_band_weights.html) · [`ingaas_photodiode_qe`](https://furuse.work/ops/optics/spectral/ingaas_photodiode_qe.html) · [`material_nir_absorption`](https://furuse.work/ops/optics/matprop/material_nir_absorption.html) · [`nir_model_info`](https://furuse.work/ops/optics/matprop/nir_model_info.html) · [`pod_ahat_fit`](https://furuse.work/ops/spc/pod/pod_ahat_fit.html) · [`pod_false_call`](https://furuse.work/ops/spc/pod/pod_false_call.html) · [`pod_from_ahat`](https://furuse.work/ops/spc/pod/pod_from_ahat.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
+
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
@@ -2324,7 +2408,7 @@ py -3.11 examples/poc_tacsim_marker_shear.py
 
 [![重ね合わせた場(傾き 1 N·mm + ねじり 0.5 N·mm + 並進 1 px)を 3 つに分ける: 発散の双極子が傾き(M1 = 1.015 N·mm、真値 0.991、窓 a + 当てはめ半](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/03_tactorque_decomposition_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/03_tactorque_decomposition_maps.png)
 
-*↑ 重ね合わせた場(傾き 1 N·mm + ねじり 0.5 N·mm + 並進 1 px)を 3 つに分ける: 発散の双極子が傾き(M1 = 1.015 N·mm、真値 0.991、窓 a + 当てはめ半径)、剛体回転の最小二乗がねじり(M_z = 0.497 N·mm、真値 0.500、窓 0.9a)…*
+*↑ 重ね合わせた場(傾き 1 N·mm + ねじり 0.5 N·mm + 並進 1 px)を 3 つに分ける: 発散の双極子が傾き(M1 = 1.015 N·mm、真値 0.991、窓 a + 当てはめ半径)、剛体回転の最小二乗がねじり(M_z = 0.497 N·mm、真値 0.500、窓 0.9a)、平均が並進(1.038 px、真値 1)。*
 
 [![第 2 真値: 有限要素の節点変位(有限厚のドーム状ゲル、Robo-Touch/Taxim リポジトリ同梱、MIT、節点 15,230・間隔 0.155 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/04_tactorque_fem_oblique_vs_normal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/04_tactorque_fem_oblique_vs_normal.png)
 
@@ -2889,6 +2973,8 @@ py -3.11 examples/poc_zernike_aberrations.py
 [![速くする工夫は、全部おなじ数の別の括り方だった —— 注意機構を恒等式で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/01_attention_masks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/01_attention_masks.png)
 
 *↑ **速くする工夫は、全部おなじ数の別の括り方だった —— 注意機構を恒等式で採点する** ―― **LLM に至る系譜に出てくる高速化・省メモリ化は、どれも近似ではなく恒等式の括り直しで、その等式は機械精度で検算できる** —— 使うのは新しい族 `llmcore`(10 op、**numpy だけ・torch を使わない**)。入力は**画像のパッチ列**にしてある(64×64 を 8×8 で切った 64 トークン)ので、注意がそのまま ViT の入口になり、絵の側でも主張が立つ。★★芯 1: **FlashAttention は近似ではない。** タイル + online softmax は一括と一致する —— タイルの大きさを 7 通り(1 行〜64 行)振って最悪 **1.33e-15**。速さの出どころは計算を変えたことではなく、**(T, T) の行列を作らない**こと。★外した予言: 「タイルを細かくするほど誤差が積もる」→ 積もりはするが **64 枚 1.33e-15 対 1 枚 1.22e-15 = 1.1 倍**にしかならない。★★芯 2: **線形 Attention は結合則そのもの。** (QKᵀ)V == Q(KᵀV) が **1.18e-15**、因果つきの累積状態でも **9.39e-16**。O(T²d) と O(Td²) は同じ数の別の括り方で、**演算回数の比は厳密に T/d**(T=2048 で 32 倍、整数)—— 交差点が **T == d** にあるのはその帰結。★予言は途中で外れる —— 実測の時間比は 32 倍に届かず **15〜16 倍で頭打ち**(二次の側が帯域律速)。★★時間は機械が決める(同じ commit で手元 11.6 倍・CI の走者 2.0 倍)ので、**この PoC は演算回数の恒等式だけを合否にし、時間は報告に落としている**。★★芯 3: **因果マスクの下では、未来を書き換えても前の出力が 1 ビットも動かない**(**0.0e+00**)。これは同義反復ではない —— 実際に 32 行目から先の key/value を**別の乱数に差し替えて**測っており、後半は **0.403** 動く。KV Cache が成り立つ根拠がこれで、逐次に 1 行ずつ進めた結果は一括と **5.92e-16**。★★芯 4: **注意の疎さは整数で数えられる。** 因果マスクの非ゼロは厳密に **T(T+1)/2 = 2080**、幅 9 の窓は **Σ min(i+1, W) = 540** —— どちらも**浮動小数の許容差が要らない**主張。★★芯 5: **位置符号が無ければ、注意はパッチの順番を見ていない。** パッチを並べ替えて出力を戻すと**元と一致する**(**4.4e-16**)。RoPE を入れると一致しない(**0.018**)—— **それが位置符号の仕事**で、絵で見ると「同じ絵」と「別の絵」になる。★★芯 6: **RoPE は回転なのでノルムを保ち、内積は相対位置だけで決まる。** ノルムの差は 64 本すべてで **4.44e-16**、位置の差を 7 に固定して絶対位置を 40 通り動かした内積の幅が **1.11e-15**。★★芯 7: **GQA の両端は厳密に既存の 2 つ。** `n_kv_heads == n_heads` で MHA、`== 1` で MQA と **0.0e+00** で一致し、中間(`n_kv_heads=2`)はどちらとも **0.942** 違う。「中間を取る」という主張が端で検算できる。ほかに: **RMS 正規化の出力は RMS が厳密に 1**(ずれ 2.22e-16、eps=1e-6 を入れると 1.53e-04 ずれる —— それが eps の値段)/ **注意は凸結合なので値域を出ない**が(出力 [0.474, 0.502] ⊂ 入力 [0.025, 1.000])**同時に幅が 35.4 倍に潰れる**(平均は対比を消す)/ **最大値を引くのは飾りではない**(スコアを大きくすると素の exp は 64 行のうち **15 行**が inf/NaN になり、引けば 0 行)。★**外した予言をもう 1 つ残してある**: online softmax の途中の状態が答えに単調に近づくと読んだが、**単調ではない**(0.10 / 0.17 / 0.19 / 0.15 / 0.11 / 0.07 / 0.02 / 0.00 と上がってから下がる)——走っている最大値が更新されるたびに分母が組み替わるので、途中の値は答えの近似ですらない。★**8 通りの誤りが全部 op 名を名乗って止まる**(どの op が何を拒んだかが読める)。検査 26 件・図 10 枚。*
+
+用語: LLM — 大量の文章で学習し、指示に応じて文やプログラムを書く大きなニューラルネット。手元の計算機で動かす小さめのものをローカル LLM と呼ぶ。
 
 [![縦軸は **1e-16 単位**。タイルを 64 枚に割っても相対差は **1.3e-15** —— 近似ではなく、同じ和を別の順で足しているだけ。★外した予言: 誤差はタイル数に比例して積もる → **64 倍のタイル数で 1.1 倍**](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/02_tiled_exactness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/02_tiled_exactness.png)
 
@@ -3834,9 +3920,9 @@ EM 連続断面から切り出したニューロンは骨格化すれば枝の�
 
 *↑ 測定の図 ―― z projection of the synthetic dendrite: every voxel gets the branch whose skeleton is nearest, so the branch volumes can be counted; cutting balls around the junctions instead either fails to separate the branches or throws volume away*
 
-[![both readings recover the radius of every branch to within half a voxel (the surface voxel centre si](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/03_radius_recovery_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/03_radius_recovery.png)
+[![both readings recover the radius of every branch to within half a voxel…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/03_radius_recovery_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/03_radius_recovery.png)
 
-*↑ both readings recover the radius of every branch to within half a voxel (the surface voxel centre sits half a voxel inside the boundary, hence the +0.…*
+*↑ both readings recover the radius of every branch to within half a voxel…*
 
 [![volume per branch comes from the territory; the junction-cut rows show that no ball radius separates](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/04_branch_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/04_branch_numbers.png)
 

@@ -2028,6 +2028,24 @@
   },
   "設定を振る実験点を作る": {
    "en": "Create experimental points that vary the settings"
+  },
+  "周りより暗い小さな汚れ・穴・筋を浮かせる(黒トップハット)": {
+   "en": "Lift small spots, pits and streaks darker than their surroundings (black top-hat)"
+  },
+  "周りより明るい小さな異物・傷を浮かせる(白トップハット)": {
+   "en": "Lift small foreign matter and scratches brighter than their surroundings (white top-hat)"
+  },
+  "照明の傾き(最小二乗の面)を引き、暗い所・明るい所を同じ閾値で拾えるようにする": {
+   "en": "Subtract the lighting slope (a least-squares plane) so dark and bright defects share one threshold"
+  },
+  "面積の小さな粒(雑音・表面の模様)を捨てて欠陥だけを残す": {
+   "en": "Drop small blobs (noise, surface texture) by area and keep the defects"
+  },
+  "コンクリートや表面のひび割れ(周りより暗い筋)を浮かせる": {
+   "en": "Lift cracks in concrete or other surfaces (streaks darker than their surroundings)"
+  },
+  "照明むらを面で引いて、ひび割れの暗い筋を 1 つの閾値で拾う": {
+   "en": "Remove uneven lighting with a plane so the dark streak of a crack is caught with one threshold"
   }
  }
 }

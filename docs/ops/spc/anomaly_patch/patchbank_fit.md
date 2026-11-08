@@ -5,7 +5,7 @@ category: anomaly_patch
 in: video
 out: table
 gpu: なし
-examples: [poc_patch_anomaly]
+examples: [poc_ai_built_inspection_scored, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -46,6 +46,7 @@ or a stack that would exceed the memory guard.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_ai_built_inspection_scored](../../../../examples/poc_ai_built_inspection_scored.py) — `py -3.11 examples/poc_ai_built_inspection_scored.py`
 - [poc_patch_anomaly](../../../../examples/poc_patch_anomaly.py) — `py -3.11 examples/poc_patch_anomaly.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

@@ -6,7 +6,7 @@ in: image
 out: image
 halcon: median_image
 gpu: あり(median_image)
-examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, genspark_external_review, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_am_thermal_to_ct, poc_astro_photometry, poc_compound_eye, poc_dtof_ranging, poc_geodetic_height_frames, poc_hyperspectral_foreign_matter, poc_lidar_terrain_change, poc_nuclei_ploidy, poc_pv_thermal_survey, poc_river_surface_velocity, poc_sheet_deformation_ffd, poc_tacscalib_sphere_lut, poc_web_roll_periodicity, poc_weld_bead_profile, quickstart, specular_photometric]
+examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, genspark_external_review, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_ai_built_inspection_scored, poc_am_thermal_to_ct, poc_astro_photometry, poc_compound_eye, poc_dtof_ranging, poc_geodetic_height_frames, poc_hyperspectral_foreign_matter, poc_lidar_terrain_change, poc_nuclei_ploidy, poc_pv_thermal_survey, poc_river_surface_velocity, poc_sheet_deformation_ffd, poc_tacscalib_sphere_lut, poc_web_roll_periodicity, poc_weld_bead_profile, quickstart, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -77,6 +77,7 @@ median 0.50 0.50
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
 - [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
 - [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`
+- [poc_ai_built_inspection_scored](../../../../examples/poc_ai_built_inspection_scored.py) — `py -3.11 examples/poc_ai_built_inspection_scored.py`
 - [poc_am_thermal_to_ct](../../../../examples/poc_am_thermal_to_ct.py) — `py -3.11 examples/poc_am_thermal_to_ct.py`
 - [poc_astro_photometry](../../../../examples/poc_astro_photometry.py) — `py -3.11 examples/poc_astro_photometry.py`
 - [poc_compound_eye](../../../../examples/poc_compound_eye.py) — `py -3.11 examples/poc_compound_eye.py`

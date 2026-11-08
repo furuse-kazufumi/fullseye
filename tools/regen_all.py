@@ -408,6 +408,14 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    # ---- 2026-11-09: 看板 PoC 3 本(2026.307〜309)の統合で分類 ----
+    "tools/gen_ai_inspection_recipes.py": ("ローカル LLM に MCP(minimal)だけで検査レシピを組ませ、"
+                                           "examples/data/ai_inspection_recipes_2026_11_08.json に固定する手元専用の道具。"
+                                           "LLM サーバ(OLLAMA_HOST)が要り、出力は揺れるので CI では回さない。"
+                                           "PoC poc_ai_built_inspection_scored は保存した JSON を決定的に採点するだけ(収蔵 2026.308)。"),
+    "tools/mcp_replay_session.py": ("クラウドの LLM エージェントに同じ MCP で 1 回ずつ道具を呼ばせる CLI と、"
+                                    "その記録をレシピの JSON へ取り込む道具。LLM エージェントが操作するので手で回す。"
+                                    "CI では回さない(収蔵 2026.308)。"),
     "tools/record_real_data_runs.py": ("能力ノートが名指す data: real の例を門と同じ条件(手元のキャッシュ無し)で走らせ、"
                                        "実データを読んだ印(realdata.mark_read)を docs/real_data_runs.json に残す実測器。"
                                        "例 1 本に分単位かかるので手で回して commit する。gen_maturity(鎖の段)は記録を読むだけ。"
@@ -704,6 +712,7 @@ NOT_A_GENERATOR = {
                     "repo の外の印のファイルだけ(tools/record_real_data_runs.py と PoC の門が一時ディレクトリに立てる)。"
                     "__main__ は取り口の自己診断で、コミット物を書かない(敵対的検証 2026-11-05 第 2 巡 D6)。"),
     "tools/fetch_tless.py": "取得器(T-LESS を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
+    "tools/fetch_tless_v2_sensors.py": "取得器(T-LESS v2 の試験場面 1 つと CAD を repo の外へ落とし、大きさと SHA-256 を照合する。収蔵 2026.309)。生成物は無く、CI では回さない。",
     # ---- 2026-11-01: ViEW2026 の目玉 14 本の受け取り検査(生成物を書かない) ----
     "tools/check_view2026_figure_scale.py": "検査。図が最近傍拡大でなく描画倍率どおりかを数えて表にする(repo の生成物は書かない)。",
     "tools/make_view2026_before_after.py": "検査用の比較画像を repo の外(--output)へ書く。受け取りで目視するためだけに手で回す。",

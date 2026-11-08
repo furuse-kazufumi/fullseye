@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 211,
+  "target_count": 214,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -32584,6 +32584,569 @@
       "alt": {
         "ja": "NACA TN 898 の 5 頁(試験頁)。箱 = segment_characters の字、下の字 = k-NN の読み。○青 = 正、×橙 = 誤、灰 = 字数が書き起こしと合わず採点の外。",
         "en": "Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 96.6-98.1 % on Lines Segmented Correctly (95.4-97.1 % End to End), and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed"
+      }
+    },
+    "poc_3d_sensor_modalities": {
+      "representative": "01_map.png",
+      "status": "gif",
+      "selected": [
+        "01_map.png",
+        "02_raw.png",
+        "04_conditions.png",
+        "05_acceptance.png",
+        "06_real.png"
+      ],
+      "excluded_frames": [
+        {
+          "file": "03_numbers.png",
+          "reason": "crop_text_only",
+          "source_aspect": 1.910714
+        }
+      ],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_3d_sensor_modalities/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_map.png",
+              "content_box": [
+                44,
+                0,
+                631,
+                690
+              ]
+            },
+            {
+              "file": "02_raw.png",
+              "content_box": [
+                0,
+                227,
+                720,
+                235
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.066946
+            },
+            {
+              "file": "04_conditions.png",
+              "content_box": [
+                0,
+                197,
+                720,
+                296
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.431686
+            },
+            {
+              "file": "05_acceptance.png",
+              "content_box": [
+                0,
+                194,
+                720,
+                301
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.390625
+            },
+            {
+              "file": "06_real.png",
+              "content_box": [
+                0,
+                163,
+                720,
+                364
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.980132
+            }
+          ],
+          "frame_count": 5,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 546207,
+          "color_mad": [
+            0.8492,
+            0.2389,
+            0.0218,
+            0.0343,
+            0.8082
+          ],
+          "max_color_mad": 0.8492,
+          "source_sha256": "e3275abd447ecb753ef7fd29465ba3f7432343087bacdad70172bc9c38b22e95"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_3d_sensor_modalities/story.en.gif",
+          "frames": [
+            {
+              "file": "01_map.png",
+              "content_box": [
+                44,
+                0,
+                631,
+                690
+              ]
+            },
+            {
+              "file": "02_raw.png",
+              "content_box": [
+                0,
+                227,
+                720,
+                235
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.066946
+            },
+            {
+              "file": "04_conditions.png",
+              "content_box": [
+                0,
+                197,
+                720,
+                296
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.431686
+            },
+            {
+              "file": "05_acceptance.png",
+              "content_box": [
+                0,
+                194,
+                720,
+                301
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.390625
+            },
+            {
+              "file": "06_real.png",
+              "content_box": [
+                0,
+                163,
+                720,
+                364
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.980132
+            }
+          ],
+          "frame_count": 5,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 546207,
+          "color_mad": [
+            0.8492,
+            0.2389,
+            0.0218,
+            0.0343,
+            0.8082
+          ],
+          "max_color_mad": 0.8492,
+          "source_sha256": "8ac893afeddedd8970ae2834b16a71989cf1a7aa3cb5a116890bcaa139c4914f"
+        }
+      },
+      "reason": null,
+      "cover": "01_map.png",
+      "still": "articles/assets/poc/poc_3d_sensor_modalities/01_map.png",
+      "alt": {
+        "ja": "同じ部品(段差・止まり穴・斜面・V 溝・リブ・浅い打痕)を 4 つの材質で、ステレオ・縞投影・間接 ToF・光切断・照度差ステレオの 5 方式で測った形。灰 = 欠測、橙 = 全方式共通の 0.1 mm を超える外れ。三角測量の角はステレオ・縞投影・光切断とも 30°。撮像は物理で描き、高さへの戻しは Fullseye の op。照度差ステレオの高さの定数は真値に合わせた(形の外れは偏りを引いて数えるので、合わせ方に依らない)。",
+        "en": "One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material"
+      }
+    },
+    "poc_ai_built_inspection_scored": {
+      "representative": "01_crack_real.png",
+      "status": "gif",
+      "selected": [
+        "01_crack_real.png",
+        "02_candle_real.png",
+        "03_crack_scores.png",
+        "04_candle_scores.png",
+        "05_summary.png",
+        "06_attribution.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_ai_built_inspection_scored/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_crack_real.png",
+              "content_box": [
+                0,
+                86,
+                720,
+                517
+              ]
+            },
+            {
+              "file": "02_candle_real.png",
+              "content_box": [
+                0,
+                117,
+                720,
+                455
+              ]
+            },
+            {
+              "file": "03_crack_scores.png",
+              "content_box": [
+                0,
+                203,
+                720,
+                283
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.540909
+            },
+            {
+              "file": "04_candle_scores.png",
+              "content_box": [
+                0,
+                203,
+                720,
+                283
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.540909
+            },
+            {
+              "file": "05_summary.png",
+              "content_box": [
+                0,
+                158,
+                720,
+                374
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.924107
+            },
+            {
+              "file": "06_attribution.png",
+              "content_box": [
+                0,
+                222,
+                720,
+                246
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.923077
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 541482,
+          "color_mad": [
+            0.5169,
+            0.945,
+            0.0551,
+            0.0547,
+            0.0177,
+            0.0196
+          ],
+          "max_color_mad": 0.945,
+          "source_sha256": "44670da235d546f9b6e625300267d5bda8d053c6994c0d7ef8b54f614b20eb0a"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_ai_built_inspection_scored/story.en.gif",
+          "frames": [
+            {
+              "file": "01_crack_real.png",
+              "content_box": [
+                0,
+                86,
+                720,
+                517
+              ]
+            },
+            {
+              "file": "02_candle_real.png",
+              "content_box": [
+                0,
+                117,
+                720,
+                455
+              ]
+            },
+            {
+              "file": "03_crack_scores.png",
+              "content_box": [
+                0,
+                203,
+                720,
+                283
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.540909
+            },
+            {
+              "file": "04_candle_scores.png",
+              "content_box": [
+                0,
+                203,
+                720,
+                283
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.540909
+            },
+            {
+              "file": "05_summary.png",
+              "content_box": [
+                0,
+                158,
+                720,
+                374
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.924107
+            },
+            {
+              "file": "06_attribution.png",
+              "content_box": [
+                0,
+                222,
+                720,
+                246
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.923077
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 541482,
+          "color_mad": [
+            0.5169,
+            0.945,
+            0.0551,
+            0.0547,
+            0.0177,
+            0.0196
+          ],
+          "max_color_mad": 0.945,
+          "source_sha256": "7e20b7cf764185268c3cc256961535283593d27af29d7761a4b24fc5bfd21bf4"
+        }
+      },
+      "reason": null,
+      "cover": "01_crack_real.png",
+      "still": "articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png",
+      "alt": {
+        "ja": "コンクリートのひび割れ(試験画像、塗り = 検出)。欠陥の画像は NG なら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも寄せていない)。検出は表示のため 2 画素太らせた。出典表示: Özgenel, Ç. F. (2019). Concrete Crack Images for Classification. Mendeley Data, v2. doi:10.17632/5y9wdsg2zt.2. CC BY 4.0; converted to gray",
+        "en": "Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)"
+      }
+    },
+    "poc_equipment_selection_map": {
+      "representative": "02_equipment_at_a_glance.png",
+      "status": "gif",
+      "selected": [
+        "02_equipment_at_a_glance.png",
+        "01_equipment_map.png",
+        "03_same_part_six_lights.png",
+        "04_same_part_five_cameras.png",
+        "05_s1_pod_curves.png",
+        "06_real_data_ladder.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_equipment_selection_map/story.ja.gif",
+          "frames": [
+            {
+              "file": "02_equipment_at_a_glance.png",
+              "content_box": [
+                0,
+                50,
+                720,
+                590
+              ]
+            },
+            {
+              "file": "01_equipment_map.png",
+              "content_box": [
+                0,
+                163,
+                720,
+                364
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.977778
+            },
+            {
+              "file": "03_same_part_six_lights.png",
+              "content_box": [
+                0,
+                103,
+                720,
+                484
+              ]
+            },
+            {
+              "file": "04_same_part_five_cameras.png",
+              "content_box": [
+                0,
+                36,
+                720,
+                617
+              ]
+            },
+            {
+              "file": "05_s1_pod_curves.png",
+              "content_box": [
+                0,
+                125,
+                720,
+                440
+              ]
+            },
+            {
+              "file": "06_real_data_ladder.png",
+              "content_box": [
+                0,
+                149,
+                720,
+                392
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.834459
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 744114,
+          "color_mad": [
+            0.3366,
+            0.7573,
+            0.3598,
+            0.5288,
+            0.0317,
+            0.0394
+          ],
+          "max_color_mad": 0.7573,
+          "source_sha256": "fc27470ce5e3e4d0de572d1bc456c93a702fb0ddd110a918dd5ba375e0276fe2"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_equipment_selection_map/story.en.gif",
+          "frames": [
+            {
+              "file": "02_equipment_at_a_glance.png",
+              "content_box": [
+                0,
+                50,
+                720,
+                590
+              ]
+            },
+            {
+              "file": "01_equipment_map.png",
+              "content_box": [
+                0,
+                163,
+                720,
+                364
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.977778
+            },
+            {
+              "file": "03_same_part_six_lights.png",
+              "content_box": [
+                0,
+                103,
+                720,
+                484
+              ]
+            },
+            {
+              "file": "04_same_part_five_cameras.png",
+              "content_box": [
+                0,
+                36,
+                720,
+                617
+              ]
+            },
+            {
+              "file": "05_s1_pod_curves.png",
+              "content_box": [
+                0,
+                125,
+                720,
+                440
+              ]
+            },
+            {
+              "file": "06_real_data_ladder.png",
+              "content_box": [
+                0,
+                149,
+                720,
+                392
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.834459
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 744114,
+          "color_mad": [
+            0.3366,
+            0.7573,
+            0.3598,
+            0.5288,
+            0.0317,
+            0.0394
+          ],
+          "max_color_mad": 0.7573,
+          "source_sha256": "c5b606f5f9b1c7f312454776833f804c8ab24ce12ee9cd25ac2064a57a4fd674"
+        }
+      },
+      "reason": null,
+      "cover": "02_equipment_at_a_glance.png",
+      "still": "articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png",
+      "alt": {
+        "ja": "ViEW の入口用: 題材ごとに、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(中央値と最小〜最大。どの種の組でも見つかるものだけ、無ければ「見つからない」)と、題材の最良の組で撮った見本。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げた)。",
+        "en": "Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread"
       }
     }
   }

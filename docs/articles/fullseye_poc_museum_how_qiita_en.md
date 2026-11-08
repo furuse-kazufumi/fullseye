@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**108 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**109 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -664,9 +664,9 @@ Sim-to-real calibration (simcal) of pixel-shift offsets, pixel aperture and the 
 
 *↑ 【2 章】3 枚のフレームに dr・dc ∈ ±0.1 px、回転 ±2 mrad、露出 ±2 % を注入し、物理の経路(ポアソン + 読み出し雑音 + 丸め)で撮って合わせた。*
 
-[![【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals.png)
+[![【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。赤 = 正、青 = 負)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals.png)
 
-*↑ 【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。*
+*↑ 【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。赤 = 正、青 = 負)。*
 
 [![【5 章】半画素シフト 4 枚(白黒)で、開口率・レンズの Q = λN/p・3 枚のずれを合わせ、pixel_shift_resolution_budget の閉形式(|sinc(f·開口率)| ×](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget.png)
 
@@ -1334,7 +1334,7 @@ A video generator invents plausible motion. The new family live4d (14 ops, numpy
 
 [![error of the re-created frames against the removed ones, as the motion per step grows: below about o](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/06_interpolation_regimes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/06_interpolation_regimes.png)
 
-*↑ error of the re-created frames against the removed ones, as the motion per step grows: below about one blob width a linear blend is as good (the warp'…*
+*↑ error of the re-created frames against the removed ones, as the motion per step grows: below about one blob width a linear blend is as good…*
 
 [![Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4): pathlines of the 3-D flow between consecuti](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/09_ctc_pathlines_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/09_ctc_pathlines.png)
 
@@ -3668,9 +3668,9 @@ A synthetic pipe carries a pit, a full-circumference thinning band, invert corro
 
 *↑ The measurement ―― 下の帯の細くなっている所が管底腐食。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真の減肉 [mm)(縦 = z 0..300 mm、横 = θ 0..360 度。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth.png)
+[![真の減肉 [mm)(縦 = z 0..300 mm、横 = θ 0..360 度。±1.6 mm で切って塗った。正 = 肉が減った、溶接ビードは負)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth.png)
 
-*↑ 真の減肉 [mm](縦 = z 0..300 mm、横 = θ 0..360 度。*
+*↑ 真の減肉 [mm](縦 = z 0..300 mm、横 = θ 0..360 度。±1.6 mm で切って塗った。正 = 肉が減った、溶接ビードは負)*
 
 [![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/07_map_false_flag_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/07_map_false_flag.png)
 
@@ -4055,6 +4055,48 @@ Source: [examples/poc_bga_ball_type_roundtrip.py](https://github.com/furuse-kazu
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_bga_ball_type_roundtrip)
 
 Ops used (notes): [`angles_to_normals`](https://furuse.work/ops/reprconv/direction/angles_to_normals.html) · [`correlation_score`](https://furuse.work/ops/reprconv/score/correlation_score.html) · [`curvature_to_shape_index`](https://furuse.work/ops/reprconv/curvature/curvature_to_shape_index.html) · [`curvature_to_table`](https://furuse.work/ops/reprconv/curvature/curvature_to_table.html) · [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`flow_apply`](https://furuse.work/ops/reprconv/flow/flow_apply.html) · [`flow_speed`](https://furuse.work/ops/reprconv/flow/flow_speed.html) · [`gaussians_to_points`](https://furuse.work/ops/reprconv/gaussians/gaussians_to_points.html) · [`gaussians_to_voxel`](https://furuse.work/ops/3d/transform/gaussians_to_voxel.html) · [`graph_components`](https://furuse.work/ops/conngraph/stats/graph_components.html) · [`graph_laplacian_spectrum`](https://furuse.work/ops/conngraph/stats/graph_laplacian_spectrum.html) · [`indices_to_labels`](https://furuse.work/ops/reprconv/index/indices_to_labels.html) · [`keypoints_from_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_from_image2d.html) · [`keypoints_rowcol_to_uv`](https://furuse.work/ops/reprconv/keypoint/keypoints_rowcol_to_uv.html) · [`keypoints_to_image2d`](https://furuse.work/ops/reprconv/keypoint/keypoints_to_image2d.html) · [`keypoints_uv_to_points`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_points.html) · [`keypoints_uv_to_rowcol`](https://furuse.work/ops/reprconv/keypoint/keypoints_uv_to_rowcol.html) · [`knn_graph`](https://furuse.work/ops/3d/geodesic/knn_graph.html) · [`knn_graph_to_conn_graph`](https://furuse.work/ops/reprconv/structure/knn_graph_to_conn_graph.html) · [`labels_to_indices`](https://furuse.work/ops/reprconv/index/labels_to_indices.html) · [`mesh_volume`](https://furuse.work/ops/3d/mesh_process/mesh_volume.html) · [`normals_to_angles`](https://furuse.work/ops/reprconv/direction/normals_to_angles.html) · [`normals_to_egi`](https://furuse.work/ops/reprconv/direction/normals_to_egi.html) … (+13)
+
+## No.2026.309 —— One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material
+
+Trade-show booths show one method on its best part. Here one part with a 3 mm step, a blind hole, a 26.6 degree slope, a V-groove, a rib and shallow dents (50 and 15 um) is measured in four materials (matte, glossy metal, translucent resin, black) by five methods (stereo, fringe projection with phase shifting, indirect ToF, light section and photometric stereo) and compared with the dimension table. Imaging is rendered physically (reflection, shadows, machining texture, subsurface scattering, lens blur and vignetting, coherent speckle, one specular bounce, V-groove interreflection, 12-bit sensor noise). Shape errors are counted on one common scale for every method, 0.1 mm and 1 mm, and a uniform offset is reported separately. Stereo, fringe projection and light section all triangulate at 30 degrees, and every method uses auto-exposure capped at 8x the matte exposure. On matte, noise is 4.5 um for fringe projection, 6.6 um for stereo, 14.3 um for light section (flat plate) and 1.34 mm for ToF. The order depends on conditions (stereo at +/-5 degrees gives 20.9 um). ToF with 0.4 mm pixels has 94% of pixels off by more than 0.1 mm even on matte. On glossy metal, 56% of the V-groove is off in fringe projection from the specular double bounce (10% on matte), and ToF, whose exposure locks onto the specular return, has 86% off by more than 1 mm. On translucent resin, stereo loses its texture (75% missing), while fringe projection sinks uniformly by -67 um but its flat-area shape errors stay at 10%. Photometric stereo loses the step by 3.5 mm (the same for three random seeds). The 50 um dent is read by photometric stereo to +7 um, fringe projection to +3 um and light section to -3 um; ToF cannot read it. Light-section speckle noise agrees with the operator's independent 2-D coherent-imaging simulation under the same conditions (ratio 0.87 to 0.96; the 13% shortfall at 0.05 mm pixels is unresolved). It is 1.09 to 1.38 times the Dorsch formula itself (10.35 um) and 0.74 to 0.85 times the value with the operator's empirical sqrt(w/L) factor (the fringe and ToF noise formulas are self-consistency checks of the same noise model). Real data support only the edge behaviour: just outside a step, correlation-based methods fatten (keep the upper height) while ToF floats between object and background. Real stereo (Middlebury 2014) fattens 39% / floats 9%; on the same T-LESS scene the structured-light depth sensor fattens 34% / floats 5% and the ToF depth sensor floats 48% / fattens 18%, and counting in the depth sensors' native pixels keeps the direction (ToF floats 52%, structured light 11%). Material parameters are the author's values; the material claims are simulation only. On the acceptance-test yardstick (the same evaluation operators as poc_virtual_acceptance_3d, two 8 mm spheres and a flat plate) the probing form error PF on matte, as the median over 200 random 200-point subsets, is 0.027 mm for fringe projection, 0.038 for photometric stereo, 0.380 for stereo and 4.87 for ToF. Light section gives 0.104 mm (5-95%: 0.077 to 0.129; 0.173 with all points), so it cannot be said to be within 0.1 mm (a limit). On glossy metal fringe projection rises to 0.238 mm. PF is a range and grows with the point count, so the density-independent residual RMS is listed too. Unlike the earlier single-method deep dives (acceptance testing, three ToF exhibits, fringe interreflection, two light-section floors, two real-stereo exhibits, photometric stereo), this one renders the same part in the same materials from raw images for all five methods and decodes them on one yardstick. The verdict 'measurable to 0.1 mm' means at most 5% of pixels beyond 0.1 mm, at most 1% beyond 1 mm and at most 20% missing.
+
+[![One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map.png)
+
+*↑ **One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material** ―― The same part in four materials measured by stereo, fringe projection, indirect ToF, light section and photometric stereo, rendered obliquely (grey: missing, orange: off by more than a common 0.1 mm). Top row: ground truth. Photometric stereo's height offset is fitted to the truth.*
+
+[![装置が撮る生の画像(上 = つや消し、下 = 金属光沢)。ステレオの左、縞投影の 1 枚(周期 1 mm)、ToF の振幅(画素 0.4 mm)、光切断の 1 コマ(部屋の明かりつき)、照度差ステレオの 1 灯目。カメラの像はレンズのぼけと](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/02_raw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/02_raw.png)
+
+*↑ The measurement ―― 装置が撮る生の画像(上 = つや消し、下 = 金属光沢)。ステレオの左、縞投影の 1 枚(周期 1 mm)、ToF の振幅(画素 0.4 mm)、光切断の 1 コマ(部屋の明かりつき)、照度差ステレオの 1 灯目。カメラの像はレンズのぼけと周辺減光を通してある。 (figure labels are in Japanese; the numbers are the same)*
+
+[![雑音 = 平らな所の真値との差の頑健な標準偏差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/03_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/03_numbers.png)
+
+*↑ 雑音 = 平らな所の真値との差の頑健な標準偏差。*
+
+[![ステレオの輻輳角・カメラの画素・ToF の画素を振った雑音。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/04_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/04_conditions.png)
+
+*↑ ステレオの輻輳角・カメラの画素・ToF の画素を振った雑音。*
+
+[![VDI/VDE 2634 Part 2 の考え方の評価量(準拠ではない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/05_acceptance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/05_acceptance.png)
+
+*↑ VDI/VDE 2634 Part 2 の考え方の評価量(準拠ではない)。*
+
+[![実データ: 同じ場面を構造化光と ToF の深度センサで撮った深度(T-LESS)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/06_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/06_real.png)
+
+*↑ 実データ: 同じ場面を構造化光と ToF の深度センサで撮った深度(T-LESS)。*
+
+[![何を入れ(同じ部品・4 材質)→ 何を比べ(5 方式の生の画像と測った形)→ 何が分かったか(どこで壊れるか)を約 51 秒で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/07_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/07_explained.gif)
+
+*↑ The animation ―― 何を入れ(同じ部品・4 材質)→ 何を比べ(5 方式の生の画像と測った形)→ 何が分かったか(どこで壊れるか)を約 51 秒で。*
+
+```
+py -3.11 examples/poc_3d_sensor_modalities.py
+```
+
+Source: [examples/poc_3d_sensor_modalities.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_3d_sensor_modalities.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_3d_sensor_modalities)
+
+Ops used (notes): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`binocular_disparity_ms`](https://furuse.work/ops/mv/stereo/binocular_disparity_ms.html) · [`cast_shadow`](https://furuse.work/ops/3d/render/cast_shadow.html) · [`form_factors_2d`](https://furuse.work/ops/optics/light_transport/form_factors_2d.html) · [`groove_profile`](https://furuse.work/ops/optics/light_transport/groove_profile.html) · [`integrate_normals`](https://furuse.work/ops/3d/photometric/integrate_normals.html) · [`itof_capture`](https://furuse.work/ops/optics/itof/itof_capture.html) · [`itof_flying_pixel_mask`](https://furuse.work/ops/optics/itof/itof_flying_pixel_mask.html) · [`itof_noise_budget`](https://furuse.work/ops/optics/itof/itof_noise_budget.html) · [`itof_phase_amplitude`](https://furuse.work/ops/optics/itof/itof_phase_amplitude.html) · [`laser_line_center_centroid`](https://furuse.work/ops/optics/light_section/laser_line_center_centroid.html) · [`light_section_speckle_floor`](https://furuse.work/ops/optics/light_section/light_section_speckle_floor.html) · [`photometric_stereo_robust`](https://furuse.work/ops/specular/photometric/photometric_stereo_robust.html) · [`plane_flatness_error`](https://furuse.work/ops/acceptance/evaluate/plane_flatness_error.html) · [`sphere_probing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_probing_error.html) · [`sphere_spacing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_spacing_error.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 
 
 

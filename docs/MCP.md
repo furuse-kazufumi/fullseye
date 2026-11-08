@@ -58,8 +58,8 @@ retrieval 無しでは使えない)。
 | `fullseye_validate_pipeline` | op 名、型連鎖、a/b の範囲、段数を実行せず検査し、段番号つきの理由と候補を返す |
 | `fullseye_op_help` | op の知識層ノート(使い方・つまみ a/b の実効・HALCON 相当)+ 生成済みで実行が検証された図を `resource_link` で |
 | `fullseye_catalog_coverage` | カタログ 5 層の交差。検索がどれだけの機能を見えているか |
-| `fullseye_list_samples` | 同梱サンプル(来歴・ライセンスつき) |
-| `fullseye_load_image` | 画像 → ハンドル。画素は返さず、数値統計 + 判定 |
+| `fullseye_list_samples` | `samples` = 同梱サンプル(来歴・ライセンスつき)、`files` = 作業場所(`FULLSEYE_MCP_ROOT`)の読める画像の名前(根からの相対名、根の直下と 1 段下まで、`.` で始まる名前は出さない、最大 200 件)。どちらも `load_image` の `path` にそのまま渡せる。ホストのパスは出さない |
+| `fullseye_load_image` | 画像 → ハンドル。画素は返さず、数値統計 + 判定。無い名前・読めない拡張子は、読める名前(作業場所のファイル名と同梱サンプル名)を近い順に 8 件まで添えて断る(根の外のパスには添えない) |
 | `fullseye_load_template` | 位置決め用の登録見本 → ハンドル。`fullseye_pipeline.template_handle`へ明示的に渡す |
 | `fullseye_load_stack` | 複数画像 → `images` / `seq<image>` / `polsweep` の束ハンドル |
 | `fullseye_apply` | ハンドルに op を 1 つ。出力ハンドル + 数値統計 + 判定 + 劣化台帳 |
@@ -276,5 +276,5 @@ Function Hijacking(tool 選択の乗っ取り ASR 70〜100 %)—— と、TRIZ �
 公開する計画入口は `fullseye_plan`、`fullseye_describe`、`fullseye_choose` の3つだけである。
 未計測の制約は推測で補わず、fail-closedの理由として返す。`tools/list` に
 `{"profile":"minimal"}` を渡すか、`FULLSEYE_MCP_PROFILE=minimal`を設定すると実行に必要な10道具を公開する。
-`docs/mcp_context_benchmark.json`を生成する実測では、全22道具が3,682トークン、最小10道具が1,497トークンである。
+`docs/mcp_context_benchmark.json`を生成する実測では、全22道具が3,680トークン、最小10道具が1,495トークンである。
 未検証の設計パターンと重複した計画入口はMCP一覧に出さない。

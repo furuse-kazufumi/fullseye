@@ -5,7 +5,7 @@ category: spectral
 in: 
 out: pairs
 gpu: なし
-examples: [poc_nir_silicon_transmission, poc_simcal_thin_film, poc_thin_film_reflectometry]
+examples: [poc_equipment_selection_map, poc_nir_silicon_transmission, poc_simcal_thin_film, poc_thin_film_reflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -50,6 +50,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_equipment_selection_map](../../../../examples/poc_equipment_selection_map.py) — `py -3.11 examples/poc_equipment_selection_map.py`
 - [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 - [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 - [poc_thin_film_reflectometry](../../../../examples/poc_thin_film_reflectometry.py) — `py -3.11 examples/poc_thin_film_reflectometry.py`
