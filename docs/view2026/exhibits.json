@@ -8262,9 +8262,9 @@
   {
    "id": "poc_real_stereo_multiscanline",
    "group": "wing_geometry",
-   "media": "01_scene.png",
+   "media": "02_failure_map.png",
    "motion": false,
-   "thumb_src": "01_scene.png",
+   "thumb_src": "02_failure_map.png",
    "label": {
     "ja": "実写のステレオで視差・面・円の姿勢",
     "en": "Disparity, surface and circle pose from real stereo",
@@ -8296,18 +8296,18 @@
   {
    "id": "poc_real_walnut_cbct",
    "group": "wing_imaging",
-   "media": "01_methods_sparse_limited.png",
+   "media": "07_geometry_mistakes.png",
    "motion": false,
-   "thumb_src": "01_methods_sparse_limited_720.jpg",
+   "thumb_src": "07_geometry_mistakes.png",
    "label": {
-    "ja": "実測のコーンビーム CT を再構成する",
-    "en": "Reconstructing a measured cone-beam CT scan",
-    "zh": "重建实测的锥束 CT",
-    "tw": "重建實測的錐束 CT",
-    "ko": "실측 콘빔 CT 재구성",
-    "de": "Einen gemessenen Kegelstrahl-CT-Scan rekonstruieren",
-    "hi": "मापे गए cone-beam CT scan का reconstruction",
-    "fr": "Reconstruire un scanner CT à faisceau conique mesuré"
+    "ja": "実測 CT: 縦ずれを無視しても残差は小さい(参照から 2.6 倍遠いのに)",
+    "en": "Measured CT: ignoring the vertical offset lowers the residual, yet lands 2.6x farther from the reference",
+    "zh": "实测 CT:忽略纵向偏移后残差反而更小(却离参考远 2.6 倍)",
+    "tw": "實測 CT:忽略縱向偏移後殘差反而更小(卻離參考遠 2.6 倍)",
+    "ko": "실측 CT: 세로 어긋남을 무시해도 잔차는 작다(참조에서 2.6배 먼데도)",
+    "de": "Gemessenes CT: Höhenversatz ignoriert – kleineres Residuum, doch 2,6-mal weiter von der Referenz",
+    "hi": "मापा गया CT: vertical offset अनदेखा करने पर residual छोटा, फिर भी reference से 2.6 गुना दूर",
+    "fr": "CT mesuré : ignorer le décalage vertical réduit le résidu, mais éloigne 2,6 fois de la référence"
    }
   },
   {

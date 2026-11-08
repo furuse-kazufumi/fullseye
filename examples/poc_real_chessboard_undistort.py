@@ -32,19 +32,30 @@ CI(写真が無い)では取得せず、手元で測った記録値 ``RECORDED``
 
 所見(2026-11-08 の実測):
 
-* ``camera_calibration_lm`` は OpenCV の ``calibrateCamera`` と同じ値(内部パラメータの差 2.6e-7 px、
-  歪み係数の差 4e-9、再投影 0.4087 px)。
+* ``camera_calibration_lm`` は OpenCV の ``calibrateCamera`` と同じ値(内部パラメータの差 2.1e-7 px、
+  歪み係数の差 3.8e-9、再投影 0.4087 px)。前の版の記録は小数 6 桁に丸めていて差が 0.0 に潰れ、
+  説明の 2.6e-7 と実行の 2.1e-7 の食い違いを検出できなかった。いまは有効数字 6 桁で記録する。
 * ★**1 係数の除算モデルで足りる**: 直線性だけで当てた κ = −1.10e-6 /px² で、板の行と列の直線性は
-  0.655 → 0.157 px。OpenCV の 5 係数で戻した 0.161 px と同等。ただし 2 つのモデルは板の写った範囲では
-  中央 0.49 px しか違わないのに、**板が一度も写っていない画像の隅では 46.9 px 食い違う** —— どちらが
-  正しいかはこの 13 枚からは言えない(外挿)。
+  0.655 → 0.157 px。OpenCV の 5 係数で戻した 0.161 px と同等。ただしこれは 13 枚の直線性で当てて同じ
+  13 枚の直線性で採点した値(目的関数 = 評価指標)で、再投影誤差で当てた OpenCV より有利な比べ方になる。
+  そこで 1 枚抜きの交差検証をした: 残り 12 枚で κ と OpenCV の 5 係数を当て、抜いた 1 枚の直線性で比べると
+  κ 0.158 px / OpenCV 0.162 px(写真ごとに κ が OpenCV 以下 11 / 13 枚、負けた 2 枚の差は最大 0.006 px)。
+  κ は 12 枚の選び方で −1.113e-6〜−1.099e-6 しか動かない。主張は「板が写った範囲の直線性では」に限る。
+  2 つのモデルは板の写った範囲では中央 0.49 px しか違わないのに、**板が一度も写っていない画像の隅では
+  46.9 px 食い違う** —— どちらが正しいかはこの 13 枚からは言えない(外挿、真値なし)。
 * ``change_radial_distortion_image`` で描き直した 13 枚から OpenCV で角を拾い直すと、直線性は中央
   0.654 → 0.080 px(OpenCV の ``undistort`` は 0.089 px)。13 枚すべてで直り、13 枚とも OpenCV 以下。
+  交差検証(抜いた 1 枚を残り 12 枚の κ / OpenCV で描き直す)でも中央 0.082 対 0.091 px、13 / 13 枚。
 * ``map_image`` は OpenCV の ``initUndistortRectifyMap`` の表で ``remap`` と最大 9.6e-8 の差(線形補間の
   一致)。順写像 ``x_map`` / ``y_map`` を渡すと拒否する。
 * ``rectify_to_world_plane``: ``solve_pnp`` の姿勢は OpenCV ``solvePnP`` と回転 中央 0.12°、並進 0.21 %。
-  正面図から拾い直した角は 1 マス 40 px の格子から RMS 中央 0.24 px、最悪の写真でも最大 3.0 px
-  (0.075 マス)。隣の角との間隔は 39.80〜40.02 px。
+  正面図から拾い直した角は 1 マス 40 px の格子から RMS 中央 0.24 px。隣の角との間隔は 39.80〜40.02 px。
+  ★外れが 1 枚ある(left02): ``solve_pnp`` の再投影 1.34 px(ほかは 0.19〜0.51 px)、正面図のずれ RMS
+  1.37 px・最大 3.0 px(0.075 マス)。この写真は OpenCV の 5 係数の校正でも再投影 1.22 px(ほかは
+  0.16〜0.46 px)で、1 係数のモデルのせいではない(角の検出か写真そのものの問題。どちらかはまだ
+  切り分けていない)。13 枚とも正面図のずれ RMS は姿勢の再投影 RMS から 0.053 px 以内で、平行化と
+  拾い直しが足す誤差は小さい。門「5 格子に乗る」の最大 3.0 px は、この外れの実測 2.998 px を見てから
+  置いた値で、根拠のある閾値ではない(緩めずに残し、外れの理由は別の 2 本の門で押さえる)。
 * ★``points_lepetit`` は X 字の角に乗らない(1 px 以内 0 / 54)。応答の山は角から 2.6 px 脇に立ち、
   角の真上の応答は山の 11 %。★★さらに点の 90〜93 % は**まっすぐな縁の上**にある。1 本の縁で
   切り分けると、軸に沿った縁・ぼけの無い縁では 0 点なのに、**傾き 10°・ぼけ 0.7 px の縁で 100 px
@@ -92,24 +103,67 @@ SUBPIX_WIN = (11, 11)
 #: 写真があれば測り直し、同じ形で印字する。
 RECORDED = {'n_images': 13,
  'shape': [480, 640],
- 'calib': {'fx': 536.073453,
-           'fy': 536.016363,
-           'cx': 342.370468,
-           'cy': 235.536871,
-           'dist': [-0.26509, -0.046742, 0.001833, -0.000315, 0.252312],
+ 'calib': {'fx': 536.073,
+           'fy': 536.016,
+           'cx': 342.37,
+           'cy': 235.537,
+           'dist': [-0.26509, -0.0467422, 0.00183302, -0.000314692, 0.252312],
            'rms_cv': 0.408695,
            'rms_lm': 0.408695,
-           'dK': 0.0,
-           'dD': 0.0,
-           'sec': 0.096533},
- 'kappa': {'kappa': -1e-06,
+           'dK': 2.06811e-07,
+           'dD': 3.83012e-09,
+           'sec': 0.114116,
+           'rms_cv_per_image': [0.193372,
+                                1.2198,
+                                0.175353,
+                                0.193979,
+                                0.159384,
+                                0.18258,
+                                0.237545,
+                                0.243428,
+                                0.300612,
+                                0.167912,
+                                0.2017,
+                                0.461994,
+                                0.174978]},
+ 'kappa': {'kappa': -1.10308e-06,
            'line_k': 0.157204,
            'line_0': 0.655425,
            'line_cv': 0.160575,
            'gap_in_med': 0.487417,
-           'gap_in_max': 4.200753,
-           'gap_out_max': 46.939426,
+           'gap_in_max': 4.20075,
+           'gap_out_max': 46.9394,
            'frac_in': 0.559115},
+ 'kappa_loo': {'line_k': 0.158165,
+               'line_cv': 0.162381,
+               'kappa_min': -1.11278e-06,
+               'kappa_max': -1.09859e-06,
+               'per_k': [0.0876677,
+                         0.385853,
+                         0.0849842,
+                         0.0758125,
+                         0.073146,
+                         0.0712633,
+                         0.128238,
+                         0.126662,
+                         0.184964,
+                         0.0629882,
+                         0.0975386,
+                         0.244815,
+                         0.0716187],
+               'per_cv': [0.0871517,
+                          0.380171,
+                          0.0873941,
+                          0.087718,
+                          0.0746253,
+                          0.0759612,
+                          0.135633,
+                          0.14184,
+                          0.185676,
+                          0.0846413,
+                          0.11761,
+                          0.248305,
+                          0.0913216]},
  'change': {'before': [0.459274,
                        0.700001,
                        0.874848,
@@ -123,154 +177,180 @@ RECORDED = {'n_images': 13,
                        0.754829,
                        0.464504,
                        0.575913],
-            'fs': [0.087369,
+            'fs': [0.0873692,
                    0.235031,
-                   0.080132,
-                   0.080094,
-                   0.078244,
-                   0.074265,
-                   0.054546,
+                   0.0801315,
+                   0.0800941,
+                   0.0782445,
+                   0.0742646,
+                   0.0545462,
                    0.123497,
                    0.126102,
-                   0.060018,
-                   0.093597,
-                   0.097071,
-                   0.068624],
+                   0.0600184,
+                   0.0935972,
+                   0.0970706,
+                   0.0686235],
             'cv': [0.088171,
                    0.343096,
-                   0.081126,
+                   0.0811262,
                    0.089702,
-                   0.079531,
-                   0.077553,
-                   0.068802,
+                   0.0795311,
+                   0.0775529,
+                   0.0688021,
                    0.132095,
                    0.148243,
-                   0.083018,
+                   0.0830181,
                    0.106259,
                    0.1098,
-                   0.089001],
-            'sec': 0.057124,
-            'roundtrip_mean': 0.007297,
-            'roundtrip_p99': 0.060604},
- 'map_image': {'max_diff': 0.0, 'refused_forward': True},
- 'rectify': [{'rot': 0.088917,
-              'dt': 0.032732,
-              'tnorm': 16.847185,
+                   0.0890013],
+            'sec': 0.0702518,
+            'roundtrip_mean': 0.0072966,
+            'roundtrip_p99': 0.0606038},
+ 'change_loo': {'fs': [0.0878236,
+                       0.267401,
+                       0.0816261,
+                       0.0790389,
+                       0.0777344,
+                       0.0750153,
+                       0.0554334,
+                       0.126821,
+                       0.126104,
+                       0.0600388,
+                       0.0935037,
+                       0.0977434,
+                       0.0702038],
+                'cv': [0.0886506,
+                       0.346209,
+                       0.0853481,
+                       0.0907406,
+                       0.0801373,
+                       0.0807398,
+                       0.0715234,
+                       0.1383,
+                       0.146941,
+                       0.0836055,
+                       0.112588,
+                       0.109815,
+                       0.0916088]},
+ 'map_image': {'max_diff': 9.60541e-08, 'refused_forward': True},
+ 'rectify': [{'rot': 0.0889172,
+              'dt': 0.0327322,
+              'tnorm': 16.8472,
               'pnp_rms': 0.19565,
               'err_rms': 0.241053,
               'err_max': 0.454705,
-              'sp_mean': 40.006274,
-              'sp_cv': 0.005546},
+              'sp_mean': 40.0063,
+              'sp_cv': 0.0055463},
              {'rot': 0.103383,
-              'dt': 0.028172,
-              'tnorm': 14.72596,
-              'pnp_rms': 1.339843,
-              'err_rms': 1.372145,
-              'err_max': 2.997776,
-              'sp_mean': 39.796668,
-              'sp_cv': 0.00734},
-             {'rot': 0.163791,
-              'dt': 0.028146,
-              'tnorm': 13.443222,
+              'dt': 0.0281715,
+              'tnorm': 14.726,
+              'pnp_rms': 1.33984,
+              'err_rms': 1.37214,
+              'err_max': 2.99778,
+              'sp_mean': 39.7967,
+              'sp_cv': 0.00734028},
+             {'rot': 0.16379,
+              'dt': 0.0281458,
+              'tnorm': 13.4432,
               'pnp_rms': 0.257506,
               'err_rms': 0.229269,
               'err_max': 0.478658,
-              'sp_mean': 40.003825,
-              'sp_cv': 0.003311},
-             {'rot': 0.165927,
-              'dt': 0.031988,
-              'tnorm': 14.071177,
+              'sp_mean': 40.0038,
+              'sp_cv': 0.00331058},
+             {'rot': 0.165928,
+              'dt': 0.0319878,
+              'tnorm': 14.0712,
               'pnp_rms': 0.241571,
               'err_rms': 0.239251,
               'err_max': 0.408779,
-              'sp_mean': 40.00707,
-              'sp_cv': 0.004254},
-             {'rot': 0.078545,
+              'sp_mean': 40.0071,
+              'sp_cv': 0.00425394},
+             {'rot': 0.0785457,
               'dt': 0.032416,
-              'tnorm': 13.703697,
+              'tnorm': 13.7037,
               'pnp_rms': 0.23126,
               'err_rms': 0.229526,
               'err_max': 0.512659,
-              'sp_mean': 39.990521,
-              'sp_cv': 0.004384},
-             {'rot': 0.225397,
-              'dt': 0.069315,
-              'tnorm': 15.259682,
+              'sp_mean': 39.9905,
+              'sp_cv': 0.00438436},
+             {'rot': 0.225398,
+              'dt': 0.0693146,
+              'tnorm': 15.2597,
               'pnp_rms': 0.214317,
               'err_rms': 0.25101,
               'err_max': 0.560918,
-              'sp_mean': 40.017586,
-              'sp_cv': 0.00466},
-             {'rot': 0.323602,
-              'dt': 0.030878,
-              'tnorm': 15.861874,
+              'sp_mean': 40.0176,
+              'sp_cv': 0.00465987},
+             {'rot': 0.323603,
+              'dt': 0.0308775,
+              'tnorm': 15.8619,
               'pnp_rms': 0.237704,
               'err_rms': 0.244774,
               'err_max': 0.540518,
-              'sp_mean': 39.986573,
-              'sp_cv': 0.004711},
+              'sp_mean': 39.9866,
+              'sp_cv': 0.0047106},
              {'rot': 0.129356,
-              'dt': 0.034501,
-              'tnorm': 13.523466,
+              'dt': 0.0345016,
+              'tnorm': 13.5235,
               'pnp_rms': 0.249933,
               'err_rms': 0.253963,
               'err_max': 0.468661,
-              'sp_mean': 39.982539,
-              'sp_cv': 0.004653},
-             {'rot': 0.051737,
-              'dt': 0.024514,
-              'tnorm': 11.897228,
+              'sp_mean': 39.9825,
+              'sp_cv': 0.00465273},
+             {'rot': 0.0517378,
+              'dt': 0.0245142,
+              'tnorm': 11.8972,
               'pnp_rms': 0.344325,
               'err_rms': 0.321322,
               'err_max': 0.935936,
-              'sp_mean': 39.978432,
-              'sp_cv': 0.004657},
-             {'rot': 0.107051,
-              'dt': 0.026741,
-              'tnorm': 14.358635,
+              'sp_mean': 39.9784,
+              'sp_cv': 0.00465667},
+             {'rot': 0.107052,
+              'dt': 0.0267411,
+              'tnorm': 14.3586,
               'pnp_rms': 0.186712,
               'err_rms': 0.205542,
               'err_max': 0.374119,
-              'sp_mean': 40.01078,
-              'sp_cv': 0.004027},
-             {'rot': 0.122074,
-              'dt': 0.033737,
-              'tnorm': 13.679955,
+              'sp_mean': 40.0108,
+              'sp_cv': 0.00402695},
+             {'rot': 0.122075,
+              'dt': 0.0337369,
+              'tnorm': 13.68,
               'pnp_rms': 0.210725,
               'err_rms': 0.223677,
               'err_max': 0.464912,
-              'sp_mean': 39.987672,
-              'sp_cv': 0.004909},
+              'sp_mean': 39.9877,
+              'sp_cv': 0.00490856},
              {'rot': 0.101267,
-              'dt': 0.020184,
-              'tnorm': 12.302885,
+              'dt': 0.0201842,
+              'tnorm': 12.3029,
               'pnp_rms': 0.513332,
               'err_rms': 0.460529,
-              'err_max': 1.127071,
-              'sp_mean': 39.950885,
-              'sp_cv': 0.004939},
-             {'rot': 0.148713,
-              'dt': 0.020321,
-              'tnorm': 13.350593,
+              'err_max': 1.12707,
+              'sp_mean': 39.9509,
+              'sp_cv': 0.00493916},
+             {'rot': 0.148714,
+              'dt': 0.0203212,
+              'tnorm': 13.3506,
               'pnp_rms': 0.193365,
               'err_rms': 0.20502,
               'err_max': 0.397617,
-              'sp_mean': 40.013767,
-              'sp_cv': 0.003913}],
+              'sp_mean': 40.0138,
+              'sp_cv': 0.0039132}],
  'rectify_shape': [281, 401],
- 'lepetit': {'per_image': [[1191, 0, 2.475207],
+ 'lepetit': {'per_image': [[1191, 0, 2.47521],
                            [1500, 0, 2.55393],
-                           [1521, 0, 2.604934],
-                           [1023, 0, 2.488934],
-                           [1512, 0, 2.486896],
-                           [1463, 0, 2.573983],
+                           [1521, 0, 2.60493],
+                           [1023, 0, 2.48893],
+                           [1512, 0, 2.4869],
+                           [1463, 0, 2.57398],
                            [1492, 0, 2.48273],
-                           [1550, 0, 2.402179],
-                           [1462, 0, 2.562038],
-                           [1495, 0, 2.498954],
-                           [1206, 0, 2.418765],
-                           [1470, 0, 2.369584],
-                           [1556, 0, 2.586085]],
+                           [1550, 0, 2.40218],
+                           [1462, 0, 2.56204],
+                           [1495, 0, 2.49895],
+                           [1206, 0, 2.41876],
+                           [1470, 0, 2.36958],
+                           [1556, 0, 2.58609]],
              'on_edge': [0.903442,
                          0.926,
                          0.923734,
@@ -284,7 +364,7 @@ RECORDED = {'n_images': 13,
                          0.906302,
                          0.920408,
                          0.923522],
-             'peak_offset_med': 2.596023,
+             'peak_offset_med': 2.59602,
              'at_corner_over_peak_med': 0.108085}}
 
 SOURCE = ("OpenCV samples/data left01-14.jpg (Apache License 2.0, https://github.com/opencv/opencv, "
@@ -423,6 +503,11 @@ def measure(cv2, paths):
     # --- 1 校正 ---------------------------------------------------------------- #
     rms_cv, K, dist, _rv, _tv = cv2.calibrateCamera([obj.astype(np.float32)] * len(ims),
                                                      [c.astype(np.float32) for c in corners], (W, H), None, None)
+    per_cv = []
+    for c, rv, tv in zip(corners, _rv, _tv):
+        pr, _ = cv2.projectPoints(obj.astype(np.float32), rv, tv, K, dist)
+        e = np.hypot(*(pr.reshape(-1, 2) - c).T)
+        per_cv.append(float(np.sqrt(np.mean(e * e))))
     t = time.perf_counter()
     lm = LG.camera_calibration_lm(obj[:, :2], [c[:, ::-1] for c in corners], image_shape=(H, W))
     t_lm = time.perf_counter() - t
@@ -430,7 +515,7 @@ def measure(cv2, paths):
     dK = max(abs(lm["fx"] - fx), abs(lm["fy"] - fy), abs(lm["cx"] - cx), abs(lm["cy"] - cy))
     dD = float(np.abs(np.asarray(lm["dist"]) - dist.ravel()).max())
     rec["calib"] = dict(fx=fx, fy=fy, cx=cx, cy=cy, dist=[float(x) for x in dist.ravel()], rms_cv=float(rms_cv),
-                        rms_lm=float(lm["reproj_rms"]), dK=float(dK), dD=dD, sec=t_lm)
+                        rms_lm=float(lm["reproj_rms"]), dK=float(dK), dD=dD, sec=t_lm, rms_cv_per_image=per_cv)
 
     # --- 2 κ ------------------------------------------------------------------- #
     kappa, line_k, line_0 = fit_kappa_plumb(corners, cx, cy)
@@ -451,6 +536,24 @@ def measure(cv2, paths):
     rec["kappa"] = dict(kappa=float(kappa), line_k=line_k, line_0=line_0, line_cv=cv_line,
                         gap_in_med=float(np.median(gap[inside])), gap_in_max=float(gap[inside].max()),
                         gap_out_max=float(gap[~inside].max()), frac_in=float(inside.mean()))
+    # 上の κ は 13 枚の直線性で当て、同じ 13 枚の直線性で採点している(目的関数 = 評価指標)。OpenCV の 5 係数は
+    # 再投影誤差で当てたものなので、直線性で比べれば直線性で当てた側が有利になる。そこで 1 枚抜きの交差検証:
+    # 残り 12 枚で κ を当て、OpenCV も残り 12 枚で calibrateCamera し、抜いた 1 枚の角の直線性で両者を比べる。
+    loo = []
+    for i in range(len(ims)):
+        tr = [j for j in range(len(ims)) if j != i]
+        _r, K2, d2, _a, _b = cv2.calibrateCamera([obj.astype(np.float32)] * len(tr),
+                                                 [corners[j].astype(np.float32) for j in tr], (W, H), None, None)
+        k2, _, _ = fit_kappa_plumb([corners[j] for j in tr], K2[0, 2], K2[1, 2])
+        c = corners[i]
+        ux, uy = mvimage.undistort_division(c[:, 0] - K2[0, 2], c[:, 1] - K2[1, 2], k2)
+        u = cv2.undistortPoints(c.reshape(-1, 1, 2), K2, d2, P=K2).reshape(-1, 2)
+        loo.append(dict(K=K2, dist=d2, kappa=float(k2), res_k=line_residuals(np.c_[ux, uy]), res_cv=line_residuals(u)))
+    pool = lambda key: float(np.sqrt(np.mean(np.concatenate([x[key] for x in loo]) ** 2)))  # noqa: E731
+    rec["kappa_loo"] = dict(line_k=pool("res_k"), line_cv=pool("res_cv"),
+                            kappa_min=min(x["kappa"] for x in loo), kappa_max=max(x["kappa"] for x in loo),
+                            per_k=[float(np.sqrt(np.mean(x["res_k"] ** 2))) for x in loo],
+                            per_cv=[float(np.sqrt(np.mean(x["res_cv"] ** 2))) for x in loo])
 
     # --- 3 change_radial_distortion_image ---------------------------------------- #
     cam_in = {"fx": fx, "fy": fy, "cx": cx, "cy": cy, "kappa": kappa}
@@ -476,6 +579,20 @@ def measure(cv2, paths):
     rec["change"] = dict(before=[float(x) for x in per[:, 0]], fs=[float(x) for x in per[:, 1]],
                          cv=[float(x) for x in per[:, 2]], sec=t_ch,
                          roundtrip_mean=float(rt.mean()), roundtrip_p99=float(np.quantile(rt, 0.99)))
+    # 交差検証: 抜いた 1 枚を、残り 12 枚で当てた κ(change_radial_distortion_image)と OpenCV(undistort)で
+    # 描き直し、OpenCV で角を拾い直して直線性を比べる。
+    fs_loo, cv_loo = [], []
+    for g, x in zip(ims, loo):
+        K2, d2 = x["K"], x["dist"]
+        ci = {"fx": K2[0, 0], "fy": K2[1, 1], "cx": K2[0, 2], "cy": K2[1, 2], "kappa": x["kappa"]}
+        co = dict(ci, kappa=0.0)
+        c_fs = detect(cv2, np.asarray(LG.change_radial_distortion_image(g, ci, co)))
+        c_cv = detect(cv2, cv2.undistort(g.astype(np.float32), K2, d2))
+        if c_fs is None or c_cv is None:
+            raise GateError("交差検証で歪みを直した画像の角を拾えなかった")
+        fs_loo.append(straightness(c_fs))
+        cv_loo.append(straightness(c_cv))
+    rec["change_loo"] = dict(fs=fs_loo, cv=cv_loo)
 
     # --- 4 map_image ------------------------------------------------------------- #
     m1, m2 = cv2.initUndistortRectifyMap(K, dist, None, K, (W, H), cv2.CV_32FC1)
@@ -587,6 +704,13 @@ def report(rec, recorded=False):
           "(OpenCV の 5 係数で戻すと %.3f px)" % (k["kappa"], rec["n_images"], k["line_0"], k["line_k"], k["line_cv"]))
     print("   2 つのモデルの食い違い: 板の写った範囲(画像の %.0f %%)で中央 %.2f px・最大 %.2f px、"
           "その外の隅で最大 %.1f px" % (100 * k["frac_in"], k["gap_in_med"], k["gap_in_max"], k["gap_out_max"]))
+    kl = rec["kappa_loo"]
+    print("   ↑ は 13 枚の直線性で当てて同じ 13 枚で採点した値(標本内)。1 枚抜きの交差検証(残り 12 枚で κ と"
+          " OpenCV の 5 係数を当て、抜いた 1 枚で測る): κ %.3f px / OpenCV %.3f px(κ は %.4g〜%.4g)"
+          % (kl["line_k"], kl["line_cv"], kl["kappa_min"], kl["kappa_max"]))
+    pk, pc = np.array(kl["per_k"]), np.array(kl["per_cv"])
+    print("   写真ごと(交差検証): κ が OpenCV 以下 %d / %d 枚、差の最大 %+.3f px"
+          % (int((pk <= pc).sum()), len(pk), float(np.max(pk - pc))))
     ch = rec["change"]
     b, f_, v = (np.array(ch[x]) for x in ("before", "fs", "cv"))
     print("\n3. change_radial_distortion_image%s(κ → 0、%.2f 秒/枚)" % (tag, ch["sec"]))
@@ -596,6 +720,10 @@ def report(rec, recorded=False):
           % ("はい" if bool((f_ < b).all()) else "いいえ", int((f_ <= v).sum()), len(f_)))
     print("   κ を往復させた画像の差(板の範囲、灰色 0..1): 平均 %.4f、99 %% 点 %.4f(線形補間 2 回の損)"
           % (ch["roundtrip_mean"], ch["roundtrip_p99"]))
+    cl = rec["change_loo"]
+    fl, vl = np.array(cl["fs"]), np.array(cl["cv"])
+    print("   交差検証(抜いた 1 枚を残り 12 枚の κ / OpenCV で描き直す): 中央 Fullseye %.3f px / OpenCV %.3f px、"
+          "Fullseye が OpenCV 以下 %d / %d 枚" % (np.median(fl), np.median(vl), int((fl <= vl).sum()), len(fl)))
     m = rec["map_image"]
     print("\n4. map_image%s: OpenCV の initUndistortRectifyMap の表で remap と最大差 %.2g(13 枚)、"
           "順写像 x_map/y_map の拒否 %s" % (tag, m["max_diff"], "した" if m["refused_forward"] else "しない"))
@@ -612,6 +740,16 @@ def report(rec, recorded=False):
           % (np.median(rot), rot.max(), 100 * np.median(dt)))
     print("   拾い直した角と格子のずれ: RMS 中央 %.2f px(最大の写真 %.2f px)、最大 %.2f px = %.3f マス"
           % (np.median(er), er.max(), em.max(), em.max() / SQUARE_PX))
+    pnp = np.array([r["pnp_rms"] for r in r5])
+    per_cv = np.array(c["rms_cv_per_image"])
+    worst = int(np.argmax(pnp))
+    print("   外れの 1 枚(写真の番号 %d): solve_pnp の再投影 %.2f px(ほかは %.2f〜%.2f px)、正面図のずれ RMS %.2f px・"
+          "最大 %.2f px。同じ写真は OpenCV の 5 係数の校正でも再投影 %.2f px(ほかは %.2f〜%.2f px)で、1 係数の"
+          "モデルのせいではない(角の検出か写真そのものの問題。どちらかはまだ切り分けていない)"
+          % (worst, pnp[worst], np.delete(pnp, worst).min(), np.delete(pnp, worst).max(), er[worst], em[worst],
+             per_cv[worst], np.delete(per_cv, worst).min(), np.delete(per_cv, worst).max()))
+    print("   正面図のずれ RMS − 姿勢の再投影 RMS: 最大 %+.3f px(平行化と拾い直しが足す誤差)"
+          % float(np.max(np.abs(er - pnp))))
     print("   隣の角との間隔: 平均 %.2f〜%.2f px(13 枚)、ばらつき(変動係数)中央 %.2f %%"
           % (sp.min(), sp.max(), 100 * np.median(cvs)))
     lp = rec["lepetit"]
@@ -638,13 +776,23 @@ def report(rec, recorded=False):
         "1 Fullseye の LM が OpenCV と同じ値": c["dK"] < 1e-3 and c["dD"] < 1e-5 and abs(c["rms_lm"] - c["rms_cv"]) < 1e-6,
         "2 κ で直線性が 3 倍以上よくなる": k["line_k"] < k["line_0"] / 3.0,
         "2 1 係数の κ が OpenCV 5 係数と同等(10 % 以内)": k["line_k"] < 1.1 * k["line_cv"],
+        "2 交差検証(1 枚抜き)でも 1 係数の κ が OpenCV 5 係数と同等(10 % 以内)":
+            kl["line_k"] < 1.1 * kl["line_cv"],
         "2 板の外の隅でモデルが食い違う(外挿)": k["gap_out_max"] > 5.0 * k["gap_in_max"],
         "3 13 枚すべてで直る": bool((f_ < b).all()) and np.median(f_) < np.median(b) / 3.0,
         "3 OpenCV undistort と同程度(中央 1.5 倍以内)": np.median(f_) < 1.5 * np.median(v),
+        "3 交差検証でも OpenCV undistort と同程度(中央 1.5 倍以内)": np.median(fl) < 1.5 * np.median(vl),
         "3 往復の損は小さい": ch["roundtrip_mean"] < 0.02,
         "4 remap と一致": m["max_diff"] < 1e-5 and m["refused_forward"],
         "5 姿勢が OpenCV と一致": np.median(rot) < 0.2 and np.median(dt) < 0.01,
+        # em.max() < 3.0 は実測(最悪の写真 2.998 px)を見てから置いた値で、根拠のある閾値ではない(記録のため
+        # 緩めずに残す)。その最悪の 1 枚は姿勢の当てはめの残差そのもので、下の 2 本の門で説明する。
         "5 格子に乗る": np.median(er) < 1.0 and em.max() < 3.0 and abs(np.median(sp) - SQUARE_PX) < 0.5,
+        # 平行化と拾い直しが足す誤差は小さい: 各写真の正面図のずれ RMS は solve_pnp の再投影 RMS から 0.1 px 以内
+        # (0.1 px は実測の最大 0.053 px を見て置いた値)。
+        "5 正面図のずれは姿勢の残差で決まる(各写真 ±0.1 px)": float(np.max(np.abs(er - pnp))) < 0.1,
+        "5 外れの 1 枚は OpenCV の 5 係数でも再投影が最大(歪みのモデルのせいではない)":
+            int(np.argmax(per_cv)) == worst and per_cv[worst] > 2.0 * np.median(per_cv),
         "6 X 字の角には当たらない": hits.max() <= 5 and lp["peak_offset_med"] > 1.5 and lp["at_corner_over_peak_med"] < 0.6,
         "6 記録した穴: 点の大半がまっすぐな縁に乗る": min(lp["on_edge"]) > 0.6,
         "6 切り分け: 傾いてぼけた縁でだけ漏れる": probe[(0.0, 0.0)] == 0 and probe[(0.0, 0.7)] == 0
@@ -665,8 +813,11 @@ def to_plain(x):
         return {k: to_plain(v) for k, v in x.items()}
     if isinstance(x, (list, tuple)):
         return [to_plain(v) for v in x]
+    if isinstance(x, np.ndarray):
+        return [to_plain(v) for v in x.tolist()]
     if isinstance(x, (np.floating, float)):
-        return round(float(x), 6)
+        # 有効数字 6 桁(前は小数 6 桁に丸めていて、内部パラメータの差 2e-7 px が 0.0 に潰れていた)
+        return float("%.6g" % float(x))
     if isinstance(x, (np.integer, int)) and not isinstance(x, bool):
         return int(x)
     if isinstance(x, np.bool_):

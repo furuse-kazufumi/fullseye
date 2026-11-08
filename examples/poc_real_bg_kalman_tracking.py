@@ -49,9 +49,27 @@ OpenCV's MOG2, and follow the person through an occlusion behind a pillar.
 * 追跡: I_OC_01 では柱の裏の 26 コマを等速の予測でつなぎ、同じ番号のまま拾い直した
   (拾い直した時の誤差 3.8 画素、見えているコマの誤差の中央値 7.9 画素)。予測しない最近傍は
   柱で見失う。出てきたコマ(第 194 コマ)での誤差は、その場の予測 60.2 画素、``kalman_smooth`` で
-  推定し直した位置 15.4 画素。その場の予測は隠れる直前の速さ(毎コマ 1.56 画素)のまま進むが、
-  真値の重心は隠れていた間に平均で毎コマ 3.51 画素進んだ。I_OC_02 は隠れている間に向きが 165° 変わり、
-  カルマンは新しい番号で拾い直す(この列では最近傍も番号を継げない)。
+  推定し直した位置 15.4 画素。ただし第 194 コマの真値は体の 26 % しか見えない一部の重心で、柱の側へ
+  偏っている。体の 9 割以上が見えた最初のコマ(第 202 コマ)では推定し直しの誤差は 4.0 画素。
+  I_OC_02 は隠れている間に向きが 165° 変わり、カルマンは新しい番号で拾い直す(この列では最近傍も
+  番号を継げない)。
+* 予測が外れた理由(2026-11-08 の独立レビューの指摘を実測で確かめ直した): 人は柱の裏で速くなっていない。
+  体の 9 割以上が見えるコマで測った歩く速さは、隠れる前(第 139〜163 コマ)・出た後(第 202〜226 コマ)とも
+  毎コマ 2.65 画素。前の版が書いた「真値の重心は隠れていた間に毎コマ 3.51 画素進んだ」は、隠れる直前
+  (体の 34 % が見える)と出てきたコマ(26 %)の、見えている一部の重心どうしの差で、柱の両側へ外向きに
+  偏った値だった(記録には ``partial_centroid_speed_across_gap`` として残す)。外れた本当の原因は、隠れる
+  前の最後の更新(第 163 コマ)でフィルタの速さが 1.56 画素/コマまで落ちていたこと。落ち始めは第 145 コマ
+  (3.87)で、第 155 コマで 1.85、第 159 コマでいったん 2.86 へ戻ってから最後の 3 回で 2.27 → 1.91 → 1.56。第 163 コマの
+  真値の体は 96 % 見えていて、柱の遮蔽ではない。観測の重心が歩く向きに対して後ろへ取り残されていた
+  (それまでの中央値 −3.5 → 最後の更新 −9.1 画素、塊から誤検出を除くと −0.4 画素): その塊 1,892 画素のうち
+  431 画素が誤検出で、うち 230 画素は 10 コマ前も誤検出、その中の 136 画素は 10〜30 コマ前に人の足がいた
+  画素。人が通った跡が背景の更新の遅れで誤検出として残り(この PoC が「幽霊」と呼ぶ ``run_bg_esti`` の
+  性質。床にもとからある汚れではない)、``GROUP_PX`` で同じ塊にまとめられて重心を後ろへ引いた。
+  背景差分の誤差が後段の追跡を壊す連鎖。レビューは最初「第 162 コマの部分遮蔽の見逃し」と見立てたが、
+  再レビューで撤回された(真値ではそのコマの体は 96 % 見えている)。
+  判定を厳しくする方向(塊の横縦比が直近の中央値の 1.5 / 1.3 / 1.2 倍を超えたら更新に使わない)を
+  試したが、学習列 I_SI_01 の誤差の 90 % 点が 20.6 → 55.8 画素に悪化し、I_OC_01 の出てきたコマの
+  予測の誤差は 1.3・1.2 倍で 60.2 → 40〜42 画素に下がるだけ(1.5 倍では変わらない)で、採らなかった。
 * 2026-11-08 の直し(ユーザーの指摘「橙の線は軌跡の予測としてはカクカクし過ぎ」): 前の版は
   「一部が隠れた」を画面の縁と面積だけで判定し、柱に半分入ったコマ(幅 104 → 41 画素、面積は直近の中央値の
   57 %)を更新に使っていた。見えている半身の重心へ寄って予測が上へ傾き、拾い直したコマで一度に跳んだ。
@@ -103,6 +121,16 @@ L = fs.ledger
 SOURCE = ("LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, "
           "103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), "
           "CC BY-SA 4.0. Frames shown unmodified except for drawn overlays")
+#: 実写のコマ(とその画素から作った背景)を含む図の出典。図そのものが CC BY-SA 4.0 で、repo の
+#: Apache-2.0 ではない(NOTICE に列挙)。変更 = 線・枠・色の重ね描き、横に並べた比較、縮小。
+FIG_LICENSE = ("この図は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。"
+               "This figure is licensed under CC BY-SA 4.0, not Apache-2.0 (see NOTICE). "
+               "Changes: tracks, outlines and colour overlays drawn on the frames, panels placed side by side")
+FIG_SOURCE = SOURCE + ". " + FIG_LICENSE
+#: コマの画素を含まない図(グラフ)の出典: 真値のラベルに対して測った数だけ。
+SOURCE_NUMBERS = ("LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, "
+                  "103-117 (2016), doi:10.1016/j.cviu.2016.08.005), CC BY-SA 4.0. Numbers measured against the "
+                  "dataset's labels; no frame pixels in this figure")
 
 #: 学習(パラメータを選ぶ)と評価(持ち込むだけ)の列。
 TRAIN = "I_SI_01"
@@ -151,6 +179,11 @@ HEADING_SPAN = 12
 HEADING_SKIP = 6
 #: 真値の物体が「見えている」とみなす面積(その列の中央値に対する割合)。
 VISIBLE_FRAC = 0.25
+#: 真値の体が「ほぼ全部見えている」とみなす面積の割合。歩く速さと、出てきた後の誤差はこのコマで測る
+#: (一部しか見えないコマの重心は、見えている側へ偏るので体の中心ではない)。
+WHOLE_FRAC = 0.9
+#: 歩く速さを測る区間[コマ](隠れる前の最後の WHOLE_FRAC のコマまで / 出てきた後の最初の WHOLE_FRAC のコマから)。
+BODY_SPAN = 24
 
 # 実データを走らせた後、stdout の ``RECORDED_JSON`` と同じ値へ固定する。
 RECORDED: dict = {'absorbed_frames': {'I_OC_01': 46, 'I_OC_02': 72, 'I_SI_01': 113},
@@ -161,24 +194,48 @@ RECORDED: dict = {'absorbed_frames': {'I_OC_01': 46, 'I_OC_02': 72, 'I_SI_01': 1
               'bg_variance_steady': 0.000270156,
               'kalman_vs_opencv_max': 1.81899e-12,
               'mean_nis': 1.98888},
- 'crossing': {'I_OC_01': {'hidden_frames': 26,
+ 'crossing': {'I_OC_01': {'body_speed_after': 2.65,
+                          'body_speed_before': 2.65,
+                          'first_whole_after': 201,
+                          'hidden_frames': 26,
                           'kalman_err_at_reacquire': 3.78,
                           'kalman_pred_err_at_reappear': 60.2,
                           'kalman_same_id': True,
+                          'kalman_smooth_err_at_first_whole': 4.02,
                           'kalman_smooth_err_at_reappear': 15.36,
                           'kalman_speed_at_hide': 1.56,
+                          'kalman_speeds_last_updates': [2.27, 1.91, 1.56],
+                          'lag': {'blob_fp_ghost_px': 136,
+                                  'blob_fp_px': 431,
+                                  'blob_fp_static_px': 230,
+                                  'blob_px': 1892,
+                                  'lag_at_peak': -0.22,
+                                  'lag_early_median': -3.48,
+                                  'lag_last': -9.06,
+                                  'lag_without_fp': -0.43,
+                                  'last_update': 162,
+                                  'speed_peak': 3.87,
+                                  'speed_peak_frame': 144},
                           'nn_same_id': False,
-                          'truth_speed_across_gap': 3.51,
-                          'turn_deg': 10.1},
-              'I_OC_02': {'hidden_frames': 29,
+                          'partial_centroid_speed_across_gap': 3.51,
+                          'turn_deg': 10.1,
+                          'visible_frac_at_reappear': 0.26},
+              'I_OC_02': {'body_speed_after': 4.36,
+                          'body_speed_before': 7.05,
+                          'first_whole_after': 167,
+                          'hidden_frames': 29,
                           'kalman_err_at_reacquire': None,
                           'kalman_pred_err_at_reappear': None,
                           'kalman_same_id': False,
+                          'kalman_smooth_err_at_first_whole': None,
                           'kalman_smooth_err_at_reappear': None,
                           'kalman_speed_at_hide': None,
+                          'kalman_speeds_last_updates': [],
+                          'lag': None,
                           'nn_same_id': False,
-                          'truth_speed_across_gap': 0.81,
-                          'turn_deg': 164.6}},
+                          'partial_centroid_speed_across_gap': 0.81,
+                          'turn_deg': 164.6,
+                          'visible_frac_at_reappear': 0.26}},
  'date': '2026-11-08',
  'digests': {'I_OC_01': '2e8957ed8b95be18c00e14acd0e5c6fbc281199212874cd2e353c42ffbd0c117',
              'I_OC_02': '7c34e911f9e677b26dc64ff6c2ed936d8ff11481c72708667f18eef234263825',
@@ -514,11 +571,12 @@ def truth_track(data: dict) -> dict:
     """真値の前景(1 コマに物体は 1 つ)の重心と、見えているコマ。"""
     fg = data["fg"]
     area = fg.sum((1, 2))
-    vis = area > VISIBLE_FRAC * float(np.median(area[area > 0]))
+    med = float(np.median(area[area > 0]))
+    vis = area > VISIBLE_FRAC * med
     cent = np.full((len(fg), 2), np.nan)
     for k in np.nonzero(area)[0]:
         cent[k] = ndi.center_of_mass(fg[k])
-    return {"area": area, "visible": vis, "centroid": cent}
+    return {"area": area, "visible": vis, "whole": area >= WHOLE_FRAC * med, "frac": area / med, "centroid": cent}
 
 
 def occlusion_gaps(visible: np.ndarray, min_gap: int = 4) -> list[tuple[int, int]]:
@@ -559,13 +617,71 @@ def crossing(tr: dict, truth: dict, gap: tuple[int, int], smooth: np.ndarray | N
     pred_b = tr["pred"][b] if np.isfinite(tr["pred"][b]).all() else tr["pos"][a]
     sm_b = smooth[b] if smooth is not None else np.full(2, np.nan)
     vel_a = tr["vel"][a]
+    cent = truth["centroid"]
+    whole = truth["whole"]
+    # 体がほぼ全部見えるコマで測った歩く速さ(隠れる前の最後の BODY_SPAN コマ / 出てきた後の最初の BODY_SPAN コマ)
+    kb1 = max((j for j in range(a + 1) if whole[j]), default=None)
+    ka0 = min((j for j in range(b, len(whole)) if whole[j]), default=None)
+    def _speed(k0, k1):
+        if k0 is None or k1 is None or k0 < 0 or k1 >= len(whole) or not (whole[k0] and whole[k1]):
+            return float("nan")
+        return float(np.hypot(*(cent[k1] - cent[k0]))) / (k1 - k0)
+    body_before = _speed(None if kb1 is None else kb1 - BODY_SPAN, kb1)
+    body_after = _speed(ka0, None if ka0 is None else ka0 + BODY_SPAN)
+    # 隠れる前に観測で更新した最後の 3 コマのフィルタの速さ(予測はこの最後の値のまま進む)
+    upd = [j for j in range(a + 1) if tr["status"][j] == 1 and tr["id"][j] == before]
+    speeds_last = [float(np.hypot(*tr["vel"][j])) for j in upd[-3:]]
+    sm_w = smooth[ka0] if (smooth is not None and ka0 is not None) else np.full(2, np.nan)
     return {"gap": [a, b], "hidden_frames": b - a - 1, "id_before": before,
             "same_id": before >= 0 and bool(reacquired) and all(i == before for i in after_ids[:k - b + 1]),
             "reacquired_frame": k if reacquired else None, "err_at_reacquire": err,
-            "prediction_err_at_reappear": float(np.hypot(*(pred_b - truth["centroid"][b]))),
-            "smooth_err_at_reappear": float(np.hypot(*(sm_b - truth["centroid"][b]))),
+            "prediction_err_at_reappear": float(np.hypot(*(pred_b - cent[b]))),
+            "smooth_err_at_reappear": float(np.hypot(*(sm_b - cent[b]))),
             "speed_at_hide": float(np.hypot(*vel_a)) if np.isfinite(vel_a).all() else float("nan"),
-            "truth_speed_across_gap": float(np.hypot(*(truth["centroid"][b] - truth["centroid"][a]))) / (b - a)}
+            # 隠れる直前と出てきたコマの「見えている一部」の重心どうしの差。柱の両側へ外向きに偏るので、
+            # 歩く速さではない(記録のためだけに残す。説明には body_speed_* を使う)。
+            "partial_centroid_speed_across_gap": float(np.hypot(*(cent[b] - cent[a]))) / (b - a),
+            "visible_frac_at_hide": float(truth["frac"][a]), "visible_frac_at_reappear": float(truth["frac"][b]),
+            "body_speed_before": body_before, "body_speed_after": body_after,
+            "last_whole_before": kb1, "first_whole_after": ka0,
+            "speeds_last_updates": speeds_last, "last_update": upd[-1] if upd else None,
+            "smooth_err_at_first_whole": float(np.hypot(*(sm_w - cent[ka0]))) if ka0 is not None else float("nan")}
+
+
+def lag_diagnosis(masks: np.ndarray, data: dict, tr: dict, truth: dict, cx: dict) -> dict:
+    """隠れる前にフィルタの速さが落ちた理由を、観測の重心の遅れと、塊にまとめられた誤検出で確かめる。
+
+    観測の重心と真値の重心の差を、隠れる前の歩く向き(真値)へ射影する(負 = 後ろへ取り残された)。
+    最後に更新したコマの塊(:func:`detections` と同じく ``GROUP_PX`` でまとめた片)のうち、真値が背景と
+    言う画素(誤検出)の数と、そのうち 10 コマ前も誤検出だった(動かない)画素の数、さらにその中で
+    10〜30 コマ前に真値の前景だった(人の体がいた)画素の数を返す。最後のものは、人が通った跡が背景の
+    更新の遅れで残った誤検出(``run_bg_esti`` の「幽霊」)。誤検出を除いた塊の重心の遅れと、遅れが
+    始まる前後のフィルタの速さ(最後の更新から 25 コマ以内の最大とそのコマ)も返す。
+    """
+    last = cx["last_update"]
+    kb1 = cx["last_whole_before"]
+    cent = truth["centroid"]
+    d = cent[kb1] - cent[kb1 - BODY_SPAN]
+    u = d / max(float(np.hypot(*d)), 1e-9)
+    upd = [j for j in range(last + 1) if tr["status"][j] == 1 and truth["whole"][j] and tr["id"][j] == cx["id_before"]]
+    lag = {j: float(np.dot(tr["z"][j] - cent[j], u)) for j in upd}
+    groups, _ = ndi.label(ndi.binary_dilation(masks[last], iterations=GROUP_PX))
+    r, c = (int(round(v)) for v in tr["z"][last])
+    blob = (groups == groups[r, c]) & masks[last]
+    fp = blob & ~data["fg"][last] & ~data["ignore"][last]
+    prev = masks[last - 10] & ~data["fg"][last - 10] & ~data["ignore"][last - 10]
+    early = [lag[j] for j in upd if j <= last - 20][-10:]
+    static = fp & prev
+    ghost = static & data["fg"][max(0, last - 30):last - 9].any(0)
+    rr, cc = np.nonzero(blob & ~fp)
+    lag_clean = float(np.dot(np.array([rr.mean(), cc.mean()]) - cent[last], u))
+    recent = [j for j in upd if j >= last - 25]
+    speeds = {j: float(np.hypot(*tr["vel"][j])) for j in recent}
+    k_peak = max(speeds, key=lambda j: speeds[j])
+    return {"last_update": last, "lag_last": lag[last], "lag_early_median": float(np.median(early)),
+            "lag_without_fp": lag_clean, "lag_at_peak": lag[k_peak],
+            "blob_px": int(blob.sum()), "blob_fp_px": int(fp.sum()), "blob_fp_static_px": int(static.sum()),
+            "blob_fp_ghost_px": int(ghost.sum()), "speed_peak": speeds[k_peak], "speed_peak_frame": int(k_peak)}
 
 
 # --------------------------------------------------------------------------- #
@@ -771,11 +887,16 @@ def write_figures(res: dict) -> None:
                       "朱 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。"
                       "体の一部が隠れたかは、塊の面積・高さ・横縦比が直近の中央値から急に縮むことで決める(柱に半分入った"
                       "コマは幅だけが縮む)。出てきたコマ(第 %d コマ)での真値の重心からの誤差は、その場の予測 %.0f 画素、"
-                      "推定し直し %.0f 画素。その場の予測は隠れる直前の速さ(毎コマ %.1f 画素)のまま進むが、真値の重心は"
-                      "隠れていた間に平均で毎コマ %.1f 画素進んだ。"
+                      "推定し直し %.0f 画素。ただしこのコマの真値は体の %.0f %% しか見えない一部の重心で、体の中心から偏る"
+                      "(体の 9 割以上が見えた第 %d コマでは推定し直し %.0f 画素)。人は柱の裏で速くなっていない: 体の 9 割以上が"
+                      "見えるコマの歩く速さは、隠れる前 %.2f・出た後 %.2f 画素/コマ。予測が外れたのは、隠れる直前の更新で"
+                      "フィルタの速さが %s 画素/コマへ落ちたから(人が通った跡が背景の更新の遅れで誤検出として残り(幽霊)、"
+                      "同じ塊にまとめられて観測の重心が後ろへ %.0f 画素取り残された)。柱の裏の橙の線は真値が無いので採点していない。"
                       % (k_show + 1, cx["hidden_frames"], cx["gap"][1] + 1, cx["prediction_err_at_reappear"],
-                         cx["smooth_err_at_reappear"], cx["speed_at_hide"], cx["truth_speed_across_gap"]),
-              source=SOURCE)
+                         cx["smooth_err_at_reappear"], 100 * cx["visible_frac_at_reappear"], cx["first_whole_after"] + 1,
+                         cx["smooth_err_at_first_whole"], cx["body_speed_before"], cx["body_speed_after"],
+                         " → ".join("%.2f" % v for v in cx["speeds_last_updates"]), -res["crossing"]["I_OC_01"]["lag"]["lag_last"]),
+              source=FIG_SOURCE)
     frames = []
     lo = max(0, int(np.argmax(truth["visible"])) - 2)
     for k in range(lo, len(oc1["rgb"]), 4):
@@ -785,14 +906,16 @@ def write_figures(res: dict) -> None:
     figs.save_gif("tracking_movie", frames, fps=10,
                   caption="I_OC_01 を 4 コマおきに再生。空色 = 観測で更新、橙 = 更新に使わなかったコマを、そのコマまでの"
                           "観測で kalman_smooth が推定し直した位置、赤紫の点線 = その場の予測(filter_kalman)、朱 = 予測なしの"
-                          "最近傍。柱の裏では橙と点線が重なって進み、出てきた人を拾い直すと橙だけが引き直される。")
+                          "最近傍。柱の裏では橙と点線が重なって進み、出てきた人を拾い直すと橙だけが引き直される。"
+                          "LASIESTA の実写のコマに線を重ねた動画で、この GIF は CC BY-SA 4.0"
+                          "(https://creativecommons.org/licenses/by-sa/4.0/、Apache-2.0 ではない、NOTICE に列挙)。")
     sel = res["selected"]
     for seq, k in (("I_OC_01", 150), ("I_OC_02", 110)):
         figs.save("masks_%s" % seq.lower(),
                   render_mask_compare(res["data"][seq], k, res["masks"][seq]["fullseye"][k], res["masks"][seq]["mog2"][k]),
                   caption="%s の第 %d コマ。左から 実写 / 真値(白 = 前景、灰 = 判定しない輪郭)/ Fullseye(閾値 %.2f、"
                           "動かない塊の吸収あり)/ MOG2(varThreshold %g)。空色 = 正しい前景、朱 = 誤検出、白 = 見逃し。"
-                          % (seq, k + 1, sel["threshold"], sel["mog2_var"]), source=SOURCE)
+                          % (seq, k + 1, sel["threshold"], sel["mog2_var"]), source=FIG_SOURCE)
     plate = res["plates"]["I_OC_01"]
     bg_fs = res["bg_images"]["I_OC_01"]["fullseye"]
     bg_plain = res["bg_images"]["I_OC_01"]["plain"]
@@ -802,7 +925,7 @@ def write_figures(res: dict) -> None:
     row = np.hstack([x for p in panels for x in (p, white)][:-1])
     figs.save("background", row, gray=True,
               caption="I_OC_01 の背景。左から 真値の背景画素の時間の中央値 / give_bg_esti(吸収なし)/ give_bg_esti(吸収あり)/ "
-                      "差の 4 倍(吸収なし)/ 差の 4 倍(吸収あり)。", source=SOURCE)
+                      "差の 4 倍(吸収なし)/ 差の 4 倍(吸収あり)。", source=FIG_SOURCE)
     kal_err = res["scores"]["I_OC_01"]["kalman"]["err"]
     nn_err = res["scores"]["I_OC_01"]["nn"]["err"]
     ks = np.arange(len(kal_err)) + 1                      # コマの番号は 1 始まり(配布物の名前と同じ)
@@ -813,7 +936,7 @@ def write_figures(res: dict) -> None:
                    kinds=["scatter", "scatter"], colors=["right", "wrong"],
                    xlabel="コマ", ylabel="真値の重心からの距離 [画素](軌跡が無いコマは −5)",
                    title="I_OC_01: 柱の裏(第 %d〜%d コマ)の後で差が開く" % (gap[0] + 2, gap[1]),
-                   caption="真値の物体が見えているコマだけを打った。", source=SOURCE)
+                   caption="真値の物体が見えているコマだけを打った。", source=SOURCE_NUMBERS)
     header = ["列", "Fullseye F(吸収なし)", "Fullseye F(吸収あり)", "MOG2 F", "カルマン 番号の数", "最近傍 番号の数"]
     rows = []
     for seq in (TRAIN,) + HELD_OUT:
@@ -835,7 +958,9 @@ def real_chapter(g: Gates, root: Path) -> dict:
     for seq, d in data.items():
         print("  %s: %d コマ %s、前景の画素 %d、SHA-256 %s…" % (seq, len(d["rgb"]), d["rgb"].shape[1:3],
                                                          int(d["fg"].sum()), d["digest"][:16]))
-    g.check("3 本ともコマと真値の SHA-256 が台帳と一致", True)
+    g.check("3 本ともコマと真値の SHA-256 が台帳(FRAME_DIGESTS)と一致",
+            all(d["digest"] == FRAME_DIGESTS[seq][1] and len(d["rgb"]) == FRAME_DIGESTS[seq][0] for seq, d in data.items()),
+            " / ".join("%s %s…" % (seq, d["digest"][:12]) for seq, d in data.items()))
 
     # 1. 学習列で選ぶ
     print("\n-- 1. 背景差分のパラメータを %s だけで選ぶ" % TRAIN)
@@ -951,10 +1076,30 @@ def real_chapter(g: Gates, root: Path) -> dict:
                 print("      %s: 同じ番号 %s、拾い直し 第 %s コマ、その時の誤差 %.1f 画素、出てきたコマでの予測の誤差 %.1f 画素"
                       % (name, x["same_id"], None if x["reacquired_frame"] is None else x["reacquired_frame"] + 1,
                          x["err_at_reacquire"], x["prediction_err_at_reappear"]))
-            print("      kalman_smooth で推定し直した位置の、出てきたコマ(第 %d コマ)での誤差 %.1f 画素"
-                  % (b + 1, c["kalman"]["smooth_err_at_reappear"]))
-            print("      隠れる直前のフィルタの速さ %.2f 画素/コマ、隠れていた間の真値の重心の平均の速さ %.2f 画素/コマ"
-                  % (c["kalman"]["speed_at_hide"], c["kalman"]["truth_speed_across_gap"]))
+            x = c["kalman"]
+            print("      kalman_smooth で推定し直した位置の、出てきたコマ(第 %d コマ、真値の体の %.0f %% が見える)での誤差 %.1f 画素"
+                  % (b + 1, 100 * x["visible_frac_at_reappear"], x["smooth_err_at_reappear"]))
+            if x["first_whole_after"] is not None:
+                print("      体の %.0f %% 以上が見えた最初のコマ(第 %d コマ)での誤差: 推定し直し %.1f 画素"
+                      % (100 * WHOLE_FRAC, x["first_whole_after"] + 1, x["smooth_err_at_first_whole"]))
+            print("      歩く速さ(体の %.0f %% 以上が見えるコマ、%d コマ間): 隠れる前 %.2f / 出た後 %.2f 画素/コマ"
+                  % (100 * WHOLE_FRAC, BODY_SPAN, x["body_speed_before"], x["body_speed_after"]))
+            print("      隠れる前に更新した最後の 3 コマのフィルタの速さ %s 画素/コマ(予測は最後の値のまま進む)"
+                  % " → ".join("%.2f" % v for v in x["speeds_last_updates"]))
+            print("      (参考: 隠れる直前と出てきたコマの、見えている一部の重心どうしの速さ %.2f 画素/コマ。"
+                  "見えている割合 %.0f %% / %.0f %% で柱の両側へ偏る)"
+                  % (x["partial_centroid_speed_across_gap"], 100 * x["visible_frac_at_hide"],
+                     100 * x["visible_frac_at_reappear"]))
+            if x["same_id"] and x["last_update"] is not None:
+                lagd = lag_diagnosis(mask_store[seq]["fullseye"], data[seq], kal, truths[seq], x)
+                c["lag"] = lagd
+                print("      観測の重心の遅れ(歩く向き、負 = 後ろ): それより前の更新の中央値 %.1f → 最後の更新(第 %d コマ)%.1f 画素"
+                      "(誤検出を除いた塊なら %.1f)。その塊 %d 画素のうち誤検出 %d 画素、うち 10 コマ前も誤検出だった画素 %d、"
+                      "その中で 10〜30 コマ前に人の体がいた画素(幽霊)%d"
+                      % (lagd["lag_early_median"], lagd["last_update"] + 1, lagd["lag_last"], lagd["lag_without_fp"],
+                         lagd["blob_px"], lagd["blob_fp_px"], lagd["blob_fp_static_px"], lagd["blob_fp_ghost_px"]))
+                print("      フィルタの速さは第 %d コマの %.2f(遅れ %.1f)から落ち始める"
+                      % (lagd["speed_peak_frame"] + 1, lagd["speed_peak"], lagd["lag_at_peak"]))
     c1, c2 = crossings["I_OC_01"], crossings["I_OC_02"]
     g.check("I_OC_01: 向きはほぼ変わらない(< 30°)", c1["turn_deg"] < 30.0, "%.0f°" % c1["turn_deg"])
     g.check("I_OC_01: カルマンは柱の裏を同じ番号で通り抜ける", c1["kalman"]["same_id"]
@@ -966,6 +1111,32 @@ def real_chapter(g: Gates, root: Path) -> dict:
     g.check("所見: I_OC_01 の出てきたコマでは、推定し直した位置の方がその場の予測より真値に近い",
             c1["kalman"]["smooth_err_at_reappear"] < c1["kalman"]["prediction_err_at_reappear"],
             "%.1f 対 %.1f 画素" % (c1["kalman"]["smooth_err_at_reappear"], c1["kalman"]["prediction_err_at_reappear"]))
+    k1 = c1["kalman"]
+    # 予測が外れた理由を数で押さえる(2026-11-08 の独立レビューの指摘を実測で確かめた)。
+    # 人は柱の裏で速くなっていない: 体がほぼ全部見えるコマの歩く速さは、隠れる前と後で同じ。
+    g.check("所見: I_OC_01 の歩く速さ(体の 9 割以上が見えるコマ)は隠れる前と後で 10 % 以内",
+            abs(k1["body_speed_after"] - k1["body_speed_before"]) < 0.1 * k1["body_speed_before"],
+            "%.2f / %.2f 画素/コマ" % (k1["body_speed_before"], k1["body_speed_after"]))
+    # 外れたのは、隠れる直前にフィルタの速さが歩く速さの 7 割を割ったから。
+    g.check("所見: I_OC_01 の隠れる直前のフィルタの速さは歩く速さの 7 割未満",
+            k1["speed_at_hide"] < 0.7 * k1["body_speed_before"],
+            "%.2f 対 %.2f 画素/コマ" % (k1["speed_at_hide"], k1["body_speed_before"]))
+    # 速さが落ちたのは、観測の重心が後ろへ取り残されたから。人が通った跡が背景の更新の遅れで誤検出として残り
+    # (run_bg_esti の「幽霊」)、GROUP_PX で同じ塊にまとめられて重心を後ろへ引く。
+    # 閾値(5 画素・半分・2 画素)は実測(遅れ −3.5 → −9.1、誤検出を除くと −0.4、幽霊 136 / 230)を見て置いた値。
+    lagd = c1["lag"]
+    g.check("所見: I_OC_01 の最後の更新で観測の重心が後ろへ 5 画素以上取り残され、誤検出を除くと 2 画素以内に戻る",
+            lagd["lag_last"] - lagd["lag_early_median"] < -5.0 and abs(lagd["lag_without_fp"]) < 2.0,
+            "遅れ %.1f → %.1f 画素、誤検出を除くと %.1f"
+            % (lagd["lag_early_median"], lagd["lag_last"], lagd["lag_without_fp"]))
+    g.check("所見: I_OC_01 のその塊の動かない誤検出の半分以上は、10〜30 コマ前に人の体がいた画素(幽霊)",
+            2 * lagd["blob_fp_ghost_px"] > lagd["blob_fp_static_px"] > 0,
+            "動かない誤検出 %d 画素のうち幽霊 %d" % (lagd["blob_fp_static_px"], lagd["blob_fp_ghost_px"]))
+    # 出てきたコマの真値は体の一部の重心なので、推定し直しの誤差はその偏りを含む。体が見えたコマでは小さい。
+    g.check("所見: I_OC_01 の推定し直しの誤差は、体の 9 割以上が見えた最初のコマの方が出てきたコマより小さい",
+            k1["smooth_err_at_first_whole"] < k1["smooth_err_at_reappear"],
+            "%.1f 対 %.1f 画素(出てきたコマで見える体は %.0f %%)"
+            % (k1["smooth_err_at_first_whole"], k1["smooth_err_at_reappear"], 100 * k1["visible_frac_at_reappear"]))
     g.check("I_OC_01: 見えているコマの誤差の中央値 < 10 画素(カルマン)", scores["I_OC_01"]["kalman"]["median_err"] < 10.0,
             "%.1f" % scores["I_OC_01"]["kalman"]["median_err"])
     # 限界(変わったら書き換える): 隠れている間に折り返すと、等速の予測は画面の外へ出ていく。
@@ -976,6 +1147,10 @@ def real_chapter(g: Gates, root: Path) -> dict:
     return {"data": data, "selected": sel, "f": f_scores, "masks": mask_store, "plates": plates, "bg_images": bg_images,
             "bg_err": bg_err, "q": q_best, "tracks": tracks, "scores": scores, "crossing": crossings, "truth": truths,
             "smooth": smooths}
+
+
+def _r2(v: float):
+    return round(v, 2) if math.isfinite(v) else None
 
 
 def _record(res: dict, contract: dict) -> dict:
@@ -1001,7 +1176,15 @@ def _record(res: dict, contract: dict) -> dict:
                                                              else None),
                            "kalman_speed_at_hide": (round(c["kalman"]["speed_at_hide"], 2)
                                                     if math.isfinite(c["kalman"]["speed_at_hide"]) else None),
-                           "truth_speed_across_gap": round(c["kalman"]["truth_speed_across_gap"], 2)}
+                           "partial_centroid_speed_across_gap": round(c["kalman"]["partial_centroid_speed_across_gap"], 2),
+                           "visible_frac_at_reappear": round(c["kalman"]["visible_frac_at_reappear"], 2),
+                           "body_speed_before": _r2(c["kalman"]["body_speed_before"]),
+                           "body_speed_after": _r2(c["kalman"]["body_speed_after"]),
+                           "kalman_speeds_last_updates": [round(v, 2) for v in c["kalman"]["speeds_last_updates"]],
+                           "kalman_smooth_err_at_first_whole": _r2(c["kalman"]["smooth_err_at_first_whole"]),
+                           "first_whole_after": c["kalman"]["first_whole_after"],
+                           "lag": ({k: (round(v, 2) if isinstance(v, float) else v) for k, v in c["lag"].items()}
+                                   if "lag" in c else None)}
                      for seq, c in res["crossing"].items()},
         "contract": {k: float("%.6g" % v) for k, v in contract.items()},
     }

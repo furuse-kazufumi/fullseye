@@ -30,7 +30,7 @@ doi:10.1038/s41597-019-0235-y; Zenodo doi:10.5281/zenodo.2686726, CC BY 4.0。
 
 * 幾何: 配布元のベクトルを ``ct_scan_geometry`` の円軌道に読み替え、表せない 2 つ
   (検出器の 0.5° の面内回転と 7.2 画素の縦のずれ)は投影を ``warp_parametric`` で引き直す。
-* 中央面(fan): FDK・SIRT・OS-SART・TV を、全 300 枚 / 間引き(100・50・25 枚)/
+* 中央面(fan): FDK・SIRT・OS-SART・TV を、全 300 枚 / 間引き(150・50・25 枚)/
   限られた角度(240°・150°・90°)で比べる。TV の重みは参照を見ずに、使わなかった投影への
   再投影誤差で選ぶ。
 * 3-D(cone): FDK を ASTRA の FDK と比べ、高さごとの誤差が 3 軌道の参照に対して
@@ -730,8 +730,9 @@ def chapter_fan(root: Path, proj: dict, geo: dict, g: Gates) -> dict:
     g.check("中央面", "150 → 25 枚で誤差の伸びは TV が FDK より小さい", tv_growth < fdk_growth,
             "TV ×%.2f、FDK ×%.2f" % (tv_growth, fdk_growth))
     narrow = "%g°" % LIMITED_ARCS[-1]
-    g.check("中央面", "90° ではどの手法も 300 枚の FDK の 1.5 倍より悪い(欠けた向きは戻らない)",
-            min(r(narrow, m) for m in METHODS) > 1.5 * r(full, "FDK"),
+    # 説明と見出しは「4 倍以上悪い」と言うので、門も 4 倍で守る(前の版は 1.5 倍で、主張より緩かった)。
+    g.check("中央面", "90° ではどの手法も 300 枚の FDK の 4 倍より悪い(欠けた向きは戻らない)",
+            min(r(narrow, m) for m in METHODS) > 4.0 * r(full, "FDK"),
             "最良 %.4f / 300 枚の FDK %.4f" % (min(r(narrow, m) for m in METHODS), r(full, "FDK")))
     short = "%g°" % LIMITED_ARCS[0]
     g.check("中央面", "240°(180° + 扇の全角 32° を超える)の FDK は Parker の重みで、同じ 2.4° 刻みの全周 150 枚の 1.5 倍以内",
@@ -1039,16 +1040,18 @@ def write_figures(fan: dict, cone: dict, mis: dict, dual: dict, g: Gates) -> Non
     conds = ["150 枚", "25 枚", "150°", "90°"]
     panels, caps = [], []
     for cnd in conds:
-        panels.append(_crop(ref, mask))
-        caps.append("参照(3 軌道 3600 枚)")
         for meth in ("FDK", "SIRT", "TV"):
             panels.append(_crop(fan["images"][(cnd, meth)], mask))
             row = next(x for x in fan["rows"] if x["cond"] == cnd and x["method"] == meth)
             caps.append("%s %s RMSE %.4f" % (cnd, meth, row["rmse"]))
-    figs.save_grid("methods_sparse_limited", panels, captions=caps, ncols=4, gray=True, vrange=vr,
+        panels.append(_crop(fan["images"][(cnd, "TV")] - ref, mask))
+        caps.append("%s TV − 参照(±0.03)" % cnd)
+    figs.save_grid("methods_sparse_limited", panels, captions=caps, ncols=4, gray=[True, True, True, False] * 4,
+                   signed=[False, False, False, True] * 4, vrange=[vr, vr, vr, (-0.03, 0.03)] * 4,
                    title="実測クルミの中央面: 投影を減らすと手法の差が出る(参照との RMSE [1/mm])",
-                   caption="行 = 全周 150 枚 / 全周 25 枚 / 150° / 90°、列 = 参照 / FDK / SIRT / TV。濃淡は全パネル共通の "
-                           "0〜%.3f /mm。90° の TV は平らな塊を描き足すが、形は参照と違う。" % vr[1])
+                   caption="行 = 全周 150 枚 / 全周 25 枚 / 150° / 90°、列 = FDK / SIRT / TV / TV − 参照(差、±0.03 /mm)。"
+                           "参照は配布元が 3 軌道 3600 枚から作った再構成(図 2)。濃淡は差の列を除き全パネル共通の "
+                           "0〜%.3f /mm。90° の TV は平らな塊を描き足すが、差の列で形が参照と違うのが見える。" % vr[1])
     figs.save_grid("reference_vs_fdk", [_crop(ref, mask), _crop(fan["ref_fdk"], mask),  # gray-ok: CT の減弱係数の断面。キャプションの「高さ」は線源の高さで、高さの場ではない
                                         _crop(fan["images"][("300 枚", "FDK")], mask)],
                    captions=["参照: 3 軌道 3600 枚", "配布元の FDK 1200 枚", "Fullseye FDK 300 枚"],
@@ -1093,12 +1096,23 @@ def write_figures(fan: dict, cone: dict, mis: dict, dual: dict, g: Gates) -> Non
                            "Fullseye の床が高いのは 0.4 mm に束ねた分(中央面の内訳を参照)。")
     names = [r["name"] for r in mis["rows"]]
     panels = [_crop(mis["images"][n], mask) for n in names] + [_crop(mis["images"][n] - ref, mask) for n in names]
-    caps = (["%s %.4f" % (r["name"], r["rmse"]) for r in mis["rows"]]
+    byn = {r["name"]: r for r in mis["rows"]}
+    okr, vo = byn["正しい"], byn["縦ずれ 7.2 画素を無視"]
+    short = {"正しい": "正しい", "面内回転 0.5° を無視": "回転無視", "縦ずれ 7.2 画素を無視": "縦ずれ無視",
+             "横に 1 画素(0.3 mm)ずらす": "横ずれ", "回転の向きを逆に": "向き逆"}
+    caps = (["%s %.4f / %.4f%s" % (short.get(r["name"], r["name"]), r["rmse"], r["resid"],
+                                     "★" if r["resid"] <= okr["resid"] and r is not okr else "")
+             for r in mis["rows"]]
             + ["差(再構成 − 参照)" for _ in names])
     figs.save_grid("geometry_mistakes", panels, captions=caps, ncols=5, gray=[True] * 5 + [False] * 5,
                    signed=[False] * 5 + [True] * 5, vrange=[vr] * 5 + [(-0.03, 0.03)] * 5,
-                   title="幾何の取り違え(中央面の FDK、参照との RMSE [1/mm]、下段は差 ±0.03 /mm)",
-                   caption="隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。取り違えは参照と再投影の残差で見つける。")
+                   title="盲点: 縦ずれ 7.2 画素を無視すると参照から %.1f 倍遠いのに、再投影の残差は正しい幾何より小さい"
+                         "(%.4f < %.4f)" % (vo["rmse"] / okr["rmse"], vo["resid"], okr["resid"]),
+                   caption="中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差。★ = 残差が正しい幾何以下)、"
+                           "左から 正しい / 面内回転 0.5° を無視 / 縦ずれ 7.2 画素を無視 / 横に 0.3 mm ずらす / 回転の向きを逆に。下段 = 差 "
+                           "±0.03 /mm。縦ずれを無視したデータも、それ自体は矛盾の無いデータなので、再構成した像を投影し直すと"
+                           "データによく合う —— 残差では幾何の誤りが見えない。参照(外の真値)と比べて初めて分かる。"
+                           "横ずれと回転の向きの取り違えは残差にも出る。隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。")
     lim1 = float(np.percentile(np.abs(dual["basis_1"][mask]), 99.5))
     figs.save_grid("dual_energy_synthetic", [dual["shell"], dual["basis_0"], dual["basis_1"]],
                    captions=["殻(参照の上位 10 %)", "基底 0(殻)", "基底 1(殻以外、符号つき)"], ncols=3,

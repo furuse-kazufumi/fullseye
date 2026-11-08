@@ -15,7 +15,8 @@ License"。論文: C. Cuevas, E. M. Yáñez, N. García, "Labeled dataset for in
 moving object detection algorithms: LASIESTA", Computer Vision and Image Understanding 152,
 103-117 (2016), doi:10.1016/j.cviu.2016.08.005。
 
-repo には入れない(容量。CC BY-SA の継承条件を repo の Apache-2.0 と混ぜない)。既定の置き場は
+データ自体は repo に入れない(容量)。BY-SA のコマを含む図(線を重ねた改変物)は repo の NOTICE に
+ファイル名を列挙し、その図だけを CC BY-SA 4.0 で配る(コードは Apache-2.0 のまま)。既定の置き場は
 ``examples/poc_real_bg_kalman_tracking.py`` の :func:`lasiesta_cache` と同じ
 (上書きは ``FULLSEYE_LASIESTA_DATA``)。
 

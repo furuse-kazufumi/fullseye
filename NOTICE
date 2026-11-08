@@ -5,3 +5,50 @@ This product includes software developed by Kazufumi Furuse
 (https://github.com/furuse-kazufumi).
 
 Licensed under the Apache License, Version 2.0. See the LICENSE file.
+
+Third-party material under a different license (CC BY-SA 4.0)
+-------------------------------------------------------------
+
+The figure files listed below contain frames of the LASIESTA dataset and are
+derivative works of it. These files are NOT licensed under the Apache License,
+Version 2.0: each of them is licensed under the Creative Commons
+Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0,
+https://creativecommons.org/licenses/by-sa/4.0/). The code that produced them
+(examples/poc_real_bg_kalman_tracking.py) stays under the Apache License,
+Version 2.0. The dataset itself is not in this repository
+(tools/fetch_lasiesta.py fetches it outside the repository).
+
+  Original work: LASIESTA database, Grupo de Tratamiento de Imágenes (GTI),
+    Universidad Politécnica de Madrid,
+    https://www.gti.ssr.upm.es/data/lasiesta_database
+    ("This dataset is licensed under the Creative Commons
+    Attribution-ShareAlike 4.0 International License")
+  Reference: C. Cuevas, E. M. Yáñez, N. García, "Labeled dataset for integral
+    evaluation of moving object detection algorithms: LASIESTA", Computer
+    Vision and Image Understanding 152, 103-117 (2016),
+    doi:10.1016/j.cviu.2016.08.005
+  Sequences used: I_SI_01, I_OC_01, I_OC_02
+  Changes made: tracks, outlines, markers, text and colour overlays drawn on
+    the frames; frames placed side by side with masks; a background image
+    estimated from the frames; scaling, cropping, frame selection and
+    re-encoding (PNG / JPEG / GIF).
+
+  Files (CC BY-SA 4.0):
+    docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png
+    docs/articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing_720.jpg
+    docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif
+    docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01.png
+    docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01_720.jpg
+    docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02.png
+    docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02_720.jpg
+    docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background.png
+    docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background_720.jpg
+    docs/articles/assets/poc/poc_real_bg_kalman_tracking/story.ja.gif
+    docs/articles/assets/poc/poc_real_bg_kalman_tracking/story.en.gif
+    docs/view2026/thumbs/all/poc_real_bg_kalman_tracking.jpg
+
+  The other files of that PoC (06_track_error.*, 07_scores.*, figures.json)
+  contain numbers measured against the dataset's labels but no frame pixels.
+
+  (ja) 上の一覧のファイルは LASIESTA の実写のコマを含む改変物で、CC BY-SA 4.0
+  で配る(Apache-2.0 ではない)。原作者・出典・変更内容は上に記した。

@@ -38,8 +38,20 @@ NTRS の 19930084880、"Public Use Permitted")。1 字ごとの幅が同じタ�
 データは repo に入れない。``tools/fetch_naca_tn898.py`` が NTRS から PDF を取得して SHA-256 で
 固定し、この PoC が PDF の中の 3 頁の JPEG をそのまま取り出す(頁ごとにも SHA-256 を照合)。
 置き場は ``FULLSEYE_NACA_TN898_DATA``、無ければ開発の作業木の隣の ``data/fullseye_poc_real/naca_tn898``。
-取得していない環境(CI)では、scikit-image に同梱の実スキャン ``page``(BSD-3-Clause)で 1 と 2 の
-門だけを回し、NACA の章は下の ``RECORDED``(手元で実データを回した値)を印字する。
+取得していない環境(CI)では、scikit-image に同梱の実スキャン ``page``(BSD-3-Clause)で 1(行の傾き、
+既知の回転の復元と範囲外の外れ)の門 2 本だけを回し、NACA の章(2 の傾斜を含む)は下の ``RECORDED``
+(手元で実データを回した値)を印字する。
+
+正直に書いておくこと(2026-11-08 の独立レビューで直した):
+
+* 分類器の正解率(GMM 0.969 / k-NN 0.981 / MLP 0.966 / SVM 0.973)は、字の切り出しの数が書き起こしと
+  合った試験頁の 34 行(1,562 字)だけで数えた値。切り出しの誤りも含めた端から端までの字の正解率
+  (試験頁の書き起こした 42 行・1,881 字に対し、行ごとに読みと正解の編集距離を引いた割合)も出す:
+  GMM 0.959 / k-NN 0.971 / MLP 0.954 / SVM 0.964。字数が合わなかった 8 行・319 字だけでは 0.897〜0.925。
+* scikit-learn の MLP(0.981)と線形 SVM(0.981)は、同じ特徴・同じ学習で Fullseye の MLP(0.966)・
+  SVM(0.973)より高い。門は差が 0.03 未満であることしか見ていないので、負けを所見の門として書く。
+* ``MAX_GAP`` = 3 は、学習頁(1・3 頁)だけの掃引の最良で選ぶ(48 行)。前の版は試験頁を含む 100 行の
+  掃引の最良(82 行)で確かめていた。値は同じだが、試験頁を見て決めた形を外した。
 
 実行例::
 
@@ -236,94 +248,98 @@ ROT_OUTSIDE = 35.0
 SLANT_ANGLES = (-30.0, -20.0, -10.0, -5.0, -2.0, -1.0, 1.0, 2.0, 5.0, 10.0, 20.0, 30.0, 40.0)
 
 #: 実データを手元で回した値(``RECORDED_JSON`` と同じもの)。CI はこれを印字する。
-RECORDED: dict = {'acc': {'gmm': 0.9686299615877081,
-                           'knn': 0.9807938540332907,
-                           'mlp': 0.9660691421254801,
-                           'svm': 0.9724711907810499},
-                   'acc_ref': {'gmm': 0.9686299615877081,
-                               'knn': 0.9807938540332907,
-                               'mlp': 0.9807938540332907,
-                               'svm': 0.9814340588988476},
-                   'acc_seen': {'gmm': 0.9748711340206185,
-                                'knn': 0.9871134020618557,
-                                'mlp': 0.9722938144329897,
-                                'svm': 0.9787371134020618},
-                   'agree': {'gmm': 1.0, 'knn': 1.0, 'mlp': 0.9737516005121639, 'svm': 0.9827144686299616},
-                   'baseline_residual_deg': {'2': -0.001485529909300999, '4': 0.009970302803805632, '6': -0.005569105280269482},
-                   'ceiling': 0.9935979513444302,
-                   'control': 0.05057618437900128,
-                   'counts': {'2': {'glyphs_seg': 1049, 'glyphs_true': 1052, 'lines': 27, 'matched': 21, 'over': 3, 'under': 3},
-                              '4': {'glyphs_seg': 1349, 'glyphs_true': 1351, 'lines': 31, 'matched': 27, 'over': 2, 'under': 2},
-                              '6': {'glyphs_seg': 1880,
-                                    'glyphs_true': 1881,
-                                    'lines': 42,
-                                    'matched': 34,
-                                    'over': 4,
-                                    'under': 4}},
-                   'date': '2026-11-08',
-                   'failed': 0,
-                   'gap_sweep': {'0': 55, '1': 70, '2': 79, '3': 82, '4': 57, '5': 27},
-                   'gates': 30,
-                   'gmm2_acc': [0.9622279129321383, 0.9622279129321383, 0.9635083226632523],
-                   'gmm_posterior': {'flagged': 17,
-                                     'flagged_wrong': 13,
-                                     'right_median': 1.0,
-                                     'wrong': 49,
-                                     'wrong_median': 0.9999999463455533},
-                   'lexicon': {'gmm': {'before': 297,
-                                       'closed': {'after': 314, 'broken': 0, 'fixed': 17, 'lines_exact_after': 19},
-                                       'gated': {'after': 299, 'broken': 0, 'fixed': 2, 'lines_exact_after': 14},
-                                       'lines': 34,
-                                       'lines_exact_before': 13,
-                                       'open': {'after': 279, 'broken': 22, 'fixed': 4, 'lines_exact_after': 8},
-                                       'split_ok_lines': 33,
-                                       'words': 336},
-                               'knn': {'before': 310,
-                                       'closed': {'after': 324, 'broken': 0, 'fixed': 14, 'lines_exact_after': 22},
-                                       'gated': {'after': 311, 'broken': 0, 'fixed': 1, 'lines_exact_after': 16},
-                                       'lines': 34,
-                                       'lines_exact_before': 15,
-                                       'open': {'after': 291, 'broken': 22, 'fixed': 3, 'lines_exact_after': 10},
-                                       'split_ok_lines': 33,
-                                       'words': 336},
-                               'mlp': {'before': 290,
-                                       'closed': {'after': 315, 'broken': 0, 'fixed': 25, 'lines_exact_after': 18},
-                                       'gated': {'after': 292, 'broken': 0, 'fixed': 2, 'lines_exact_after': 9},
-                                       'lines': 34,
-                                       'lines_exact_before': 9,
-                                       'open': {'after': 274, 'broken': 23, 'fixed': 7, 'lines_exact_after': 6},
-                                       'split_ok_lines': 33,
-                                       'words': 336},
-                               'svm': {'before': 298,
-                                       'closed': {'after': 321, 'broken': 0, 'fixed': 23, 'lines_exact_after': 21},
-                                       'gated': {'after': 299, 'broken': 0, 'fixed': 1, 'lines_exact_after': 12},
-                                       'lines': 34,
-                                       'lines_exact_before': 12,
-                                       'open': {'after': 281, 'broken': 22, 'fixed': 5, 'lines_exact_after': 8},
-                                       'split_ok_lines': 33,
-                                       'words': 336}},
-                   'n_test': 1562,
-                   'n_train': 1997,
-                   'n_unseen': 10,
-                   'naca_page_angles_deg': {'2': 0.6491612139879992, '4': -0.14190635898101198, '6': 0.08739376494572614},
-                   'page_rotation_max_err_deg': 0.28482218433333295,
-                   'pdf_sha256': '57166092520582608a31459c50627334130d8250996f96d58a659a1849972f18',
-                   'rotation_max_err_deg': 0.006923554774893481,
-                   'rotation_outside_err_deg': 13.28761432169825,
-                   'select_dropped': {'(': 1, ')': 1, '-': 10, '.': 11, '/': 2},
-                   'slant_rows': [[-30.0, -30.114],
-                                  [-20.0, -19.872],
-                                  [-10.0, -9.813],
-                                  [-5.0, -6.323],
-                                  [-2.0, -0.044],
-                                  [-1.0, -0.017],
-                                  [1.0, 0.024],
-                                  [2.0, 0.057],
-                                  [5.0, 5.397],
-                                  [10.0, 9.772],
-                                  [20.0, 19.623],
-                                  [30.0, 30.156],
-                                  [40.0, 40.022]]}
+RECORDED: dict = {'acc': {'gmm': 0.9686299615877081, 'knn': 0.9807938540332907, 'mlp': 0.9660691421254801, 'svm': 0.9724711907810499},
+ 'acc_ref': {'gmm': 0.9686299615877081,
+             'knn': 0.9807938540332907,
+             'mlp': 0.9807938540332907,
+             'svm': 0.9814340588988476},
+ 'acc_seen': {'gmm': 0.9748711340206185,
+              'knn': 0.9871134020618557,
+              'mlp': 0.9722938144329897,
+              'svm': 0.9787371134020618},
+ 'agree': {'gmm': 1.0, 'knn': 1.0, 'mlp': 0.9737516005121639, 'svm': 0.9827144686299616},
+ 'baseline_residual_deg': {'2': -0.001485529909300999, '4': 0.009970302803805632, '6': -0.005569105280269482},
+ 'ceiling': 0.9935979513444302,
+ 'control': 0.05057618437900128,
+ 'counts': {'2': {'glyphs_seg': 1049, 'glyphs_true': 1052, 'lines': 27, 'matched': 21, 'over': 3, 'under': 3},
+            '4': {'glyphs_seg': 1349, 'glyphs_true': 1351, 'lines': 31, 'matched': 27, 'over': 2, 'under': 2},
+            '6': {'glyphs_seg': 1880, 'glyphs_true': 1881, 'lines': 42, 'matched': 34, 'over': 4, 'under': 4}},
+ 'date': '2026-11-08',
+ 'e2e': {'acc': {'gmm': 0.9585326953748007,
+                 'knn': 0.9712918660287081,
+                 'mlp': 0.9542796384901648,
+                 'svm': 0.9638490164805954},
+         'acc_bad': {'gmm': 0.9090909090909091,
+                     'knn': 0.9247648902821317,
+                     'mlp': 0.896551724137931,
+                     'svm': 0.9216300940438872},
+         'chars': 1881,
+         'lines': 42,
+         'ok_chars': 1562,
+         'ok_lines': 34},
+ 'failed': 0,
+ 'gap_sweep': {'0': 55, '1': 70, '2': 79, '3': 82, '4': 57, '5': 27},
+ 'gap_sweep_train': {'0': 30, '1': 40, '2': 45, '3': 48, '4': 36, '5': 20},
+ 'gates': 33,
+ 'gmm2_acc': [0.9622279129321383, 0.9622279129321383, 0.9635083226632523],
+ 'gmm_posterior': {'flagged': 17,
+                   'flagged_wrong': 13,
+                   'right_median': 1.0,
+                   'wrong': 49,
+                   'wrong_median': 0.9999999463455533},
+ 'lexicon': {'gmm': {'before': 297,
+                     'closed': {'after': 314, 'broken': 0, 'fixed': 17, 'lines_exact_after': 19},
+                     'gated': {'after': 299, 'broken': 0, 'fixed': 2, 'lines_exact_after': 14},
+                     'lines': 34,
+                     'lines_exact_before': 13,
+                     'open': {'after': 279, 'broken': 22, 'fixed': 4, 'lines_exact_after': 8},
+                     'split_ok_lines': 33,
+                     'words': 336},
+             'knn': {'before': 310,
+                     'closed': {'after': 324, 'broken': 0, 'fixed': 14, 'lines_exact_after': 22},
+                     'gated': {'after': 311, 'broken': 0, 'fixed': 1, 'lines_exact_after': 16},
+                     'lines': 34,
+                     'lines_exact_before': 15,
+                     'open': {'after': 291, 'broken': 22, 'fixed': 3, 'lines_exact_after': 10},
+                     'split_ok_lines': 33,
+                     'words': 336},
+             'mlp': {'before': 290,
+                     'closed': {'after': 315, 'broken': 0, 'fixed': 25, 'lines_exact_after': 18},
+                     'gated': {'after': 292, 'broken': 0, 'fixed': 2, 'lines_exact_after': 9},
+                     'lines': 34,
+                     'lines_exact_before': 9,
+                     'open': {'after': 274, 'broken': 23, 'fixed': 7, 'lines_exact_after': 6},
+                     'split_ok_lines': 33,
+                     'words': 336},
+             'svm': {'before': 298,
+                     'closed': {'after': 321, 'broken': 0, 'fixed': 23, 'lines_exact_after': 21},
+                     'gated': {'after': 299, 'broken': 0, 'fixed': 1, 'lines_exact_after': 12},
+                     'lines': 34,
+                     'lines_exact_before': 12,
+                     'open': {'after': 281, 'broken': 22, 'fixed': 5, 'lines_exact_after': 8},
+                     'split_ok_lines': 33,
+                     'words': 336}},
+ 'n_test': 1562,
+ 'n_train': 1997,
+ 'n_unseen': 10,
+ 'naca_page_angles_deg': {'2': 0.6491612139879992, '4': -0.14190635898101198, '6': 0.08739376494572614},
+ 'page_rotation_max_err_deg': 0.28482218433333295,
+ 'rotation_max_err_deg': 0.006923554774893481,
+ 'rotation_outside_err_deg': 13.28761432169825,
+ 'select_dropped': {'(': 1, ')': 1, '-': 10, '.': 11, '/': 2},
+ 'slant_rows': [[-30.0, -30.114],
+                [-20.0, -19.872],
+                [-10.0, -9.813],
+                [-5.0, -6.323],
+                [-2.0, -0.044],
+                [-1.0, -0.017],
+                [1.0, 0.024],
+                [2.0, 0.057],
+                [5.0, 5.397],
+                [10.0, 9.772],
+                [20.0, 19.623],
+                [30.0, 30.156],
+                [40.0, 40.022]]}
 
 
 class OcrGateError(AssertionError):
@@ -599,6 +615,55 @@ def stack_glyphs(pages: dict, which) -> tuple[np.ndarray, np.ndarray, list]:
     return np.asarray(X, np.float64), np.asarray(y), where
 
 
+def _edit_distance(a: str, b: str) -> int:
+    """Levenshtein の編集距離(置換・挿入・削除が 1)。"""
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        prev = cur
+    return prev[-1]
+
+
+def end_to_end(page: dict, pca: dict, models: dict) -> dict:
+    """切り出しの誤りも含めた字の正解率: 書き起こした全行で、切り出した字をすべて読み、行ごとの
+    読みの文字列と正解(空白を除く)の編集距離を合計して 1 − Σ距離 / Σ正解の字数 にする。
+
+    字数が合った行では、編集距離 = 読み違えた字の数(置換だけ)なので、``acc_ok`` は字数が合った行だけの
+    正解率と一致する(門で確かめる)。
+    """
+    dist = {k: 0 for k in models}
+    dist_ok = {k: 0 for k in models}
+    n = n_ok = lines_ok = 0
+    for row in page["lines"]:
+        want = row["text"].replace(" ", "")
+        feats = []
+        for i, sl in enumerate(ndi.find_objects(row["lab"]), 1):
+            if sl is None:
+                continue
+            m = row["lab"][:, sl[1]] == i
+            feats.append(glyph_features(row["crop"][:, sl[1]], m, float(row["rows"][1] - row["rows"][0])))
+        if feats:
+            pred = predict_all(models, pca_apply(pca, np.asarray(feats, np.float64)))
+        else:
+            pred = {k: np.array([], str) for k in models}
+        n += len(want)
+        if row["ok"]:
+            n_ok += len(want)
+            lines_ok += 1
+        for k in models:
+            d = _edit_distance("".join(str(c) for c in pred[k]), want)
+            dist[k] += d
+            if row["ok"]:
+                dist_ok[k] += d
+    acc = {k: 1.0 - dist[k] / n for k in models}
+    acc_ok = {k: 1.0 - dist_ok[k] / n_ok for k in models}
+    acc_bad = {k: 1.0 - (dist[k] - dist_ok[k]) / max(1, n - n_ok) for k in models}
+    return {"lines": len(page["lines"]), "chars": n, "ok_lines": lines_ok, "ok_chars": n_ok,
+            "acc": acc, "acc_ok": acc_ok, "acc_bad": acc_bad}
+
+
 def pca_fit(X: np.ndarray, k: int) -> dict:
     mu, sd = X.mean(0), X.std(0)
     sd = np.where(sd > 0, sd, 1.0)
@@ -818,12 +883,19 @@ def chapter_naca(g: Gates, raw_pages: dict) -> dict:
     n_match = sum(c["matched"] for c in counts.values())
     g.check("切り出し", "書き起こした 100 行", n_lines == 100, "%d 行" % n_lines)
     g.check("切り出し", "字数が書き起こしと合う行 ≥ 75 %", n_match >= 75, "%d / %d 行" % (n_match, n_lines))
-    sweep = {}
+    sweep, sweep_train = {}, {}
     for mg in range(0, 6):
-        sweep[mg] = sum(sum(r["ok"] for r in read_page(raw_pages[p], p, max_gap=mg)["lines"]) for p in pages)
+        per = {p: sum(r["ok"] for r in read_page(raw_pages[p], p, max_gap=mg)["lines"]) for p in pages}
+        sweep[mg] = sum(per.values())
+        sweep_train[mg] = sum(per[p] for p in TRAIN_PAGES)
     res["gap_sweep"] = sweep
-    print("  max_gap と字数が合う行: %s" % ", ".join("%d→%d" % kv for kv in sweep.items()))
-    g.check("切り出し", "max_gap = %d が掃引の最良" % MAX_GAP, sweep[MAX_GAP] == max(sweep.values()), str(sweep))
+    res["gap_sweep_train"] = sweep_train
+    print("  max_gap と字数が合う行(3 頁): %s" % ", ".join("%d→%d" % kv for kv in sweep.items()))
+    print("  max_gap と字数が合う行(学習頁 %s だけ): %s" % (TRAIN_PAGES, ", ".join("%d→%d" % kv for kv in sweep_train.items())))
+    # max_gap は学習頁だけで選ぶ(試験頁は見ない)。
+    g.check("切り出し", "max_gap = %d が学習頁だけの掃引の最良" % MAX_GAP,
+            sweep_train[MAX_GAP] == max(sweep_train.values()) and
+            sum(v == sweep_train[MAX_GAP] for v in sweep_train.values()) == 1, str(sweep_train))
     # select_characters は高さで選ぶ: 句読点(. , - など)は字の高さの中央値の半分に届かず落ちる。
     test_ok = [r for r in test["lines"] if r["ok"]]
     dropped = Counter()
@@ -884,6 +956,22 @@ def chapter_naca(g: Gates, raw_pages: dict) -> dict:
     g.check("分類", "MLP・SVM は外の実装と正解率の差 < 0.03(別の最適化なので予測の完全一致は求めない)",
             abs(acc["mlp"] - acc_ref["mlp"]) < 0.03 and abs(acc["svm"] - acc_ref["svm"]) < 0.03,
             "MLP %+.4f / SVM %+.4f" % (acc["mlp"] - acc_ref["mlp"], acc["svm"] - acc_ref["svm"]))
+    # 所見(変わったら書き換える): 同じ特徴・同じ学習で、scikit-learn の MLP と線形 SVM は Fullseye より高い。
+    g.check("分類", "所見: scikit-learn の MLP・線形 SVM は Fullseye の MLP・SVM より正解率が高い(負けの記録)",
+            acc_ref["mlp"] > acc["mlp"] and acc_ref["svm"] > acc["svm"],
+            "MLP %.4f 対 %.4f / SVM %.4f 対 %.4f" % (acc_ref["mlp"], acc["mlp"], acc_ref["svm"], acc["svm"]))
+    # 端から端まで(切り出し込み): 試験頁の書き起こした全行で、切り出した字をすべて読み、正解との編集距離を引く。
+    e2e = end_to_end(test, model, models)
+    res_e2e = e2e
+    print("  端から端まで(切り出し込み、試験頁の %d 行・%d 字、行ごとの編集距離): %s"
+          % (e2e["lines"], e2e["chars"], " / ".join("%s %.4f" % (k, e2e["acc"][k]) for k in ("gmm", "knn", "mlp", "svm"))))
+    print("    うち字数が合った %d 行・%d 字だけなら上の正解率、合わなかった %d 行・%d 字では %s"
+          % (e2e["ok_lines"], e2e["ok_chars"], e2e["lines"] - e2e["ok_lines"], e2e["chars"] - e2e["ok_chars"],
+             " / ".join("%s %.4f" % (k, e2e["acc_bad"][k]) for k in ("gmm", "knn", "mlp", "svm"))))
+    g.check("分類", "端から端まで: 字数が合った行だけの正解率に一致する部分を含む(k-NN、同じ予測)",
+            abs(e2e["acc_ok"]["knn"] - acc["knn"]) < 1e-12, "%.6f 対 %.6f" % (e2e["acc_ok"]["knn"], acc["knn"]))
+    g.check("分類", "所見: 端から端までの正解率は、字数が合った行だけの値より 4 種とも低い",
+            all(e2e["acc"][k] < acc[k] for k in acc), ", ".join("%s %.4f < %.4f" % (k, e2e["acc"][k], acc[k]) for k in acc))
     # 対照: 学習のラベルを混ぜると、正解率は多数派の字の割合の近くまで落ちる(特徴が漏れていない)。
     rng = np.random.default_rng(12345)
     shuffled = rng.permutation(ytr)
@@ -898,7 +986,7 @@ def chapter_naca(g: Gates, raw_pages: dict) -> dict:
                 "unseen": unseen, "n_unseen": n_unseen, "acc": acc, "acc_seen": acc_seen, "acc_ref": acc_ref,
                 "agree": agree, "control": ctrl, "prior": prior, "ceiling": ceiling, "dmin": dmin,
                 "confusions": confusions.most_common(10), "pred": pred, "yte": yte, "wte": wte,
-                "t_train_s": t_train})
+                "t_train_s": t_train, "e2e": res_e2e})
 
     # ---- 6. 再現性
     models_b = train_all(Ptr, ytr, seed=0)
@@ -1066,6 +1154,8 @@ def _recordable(res: dict, page_res: dict, g: Gates) -> dict:
         "n_train": res["n_train"], "n_test": res["n_test"], "n_unseen": res["n_unseen"], "ceiling": res["ceiling"],
         "acc": res["acc"], "acc_seen": res["acc_seen"], "acc_ref": res["acc_ref"], "agree": res["agree"],
         "control": res["control"], "gmm2_acc": res["gmm2_acc"], "gmm_posterior": res["gmm_posterior"],
+        "gap_sweep_train": res["gap_sweep_train"], "date": "2026-11-08",
+        "e2e": {k: res["e2e"][k] for k in ("lines", "chars", "ok_lines", "ok_chars", "acc", "acc_bad")},
         "lexicon": {k: {kk: vv for kk, vv in v.items()} for k, v in res["lexicon"].items()},
         "gates": len(g.rows), "failed": len(g.failed()),
     }

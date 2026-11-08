@@ -28,6 +28,17 @@ fail-closed:
 
 取得は ``curl`` で行う(Zenodo は Python の urllib からの接続に応えないことがある。2026-11-07 に
 手元で確認。``CONTRIBUTING.md`` にも Zenodo の API が応えない記録がある)。
+
+ライセンス(配布元の記載のまま、https://zenodo.org/records/2686726 、2026-11-08 に確認。記録の
+license id は ``cc-by-4.0``、法的な全文は https://creativecommons.org/licenses/by/4.0/legalcode):
+
+    "Creative Commons Attribution 4.0 International"
+    "The Creative Commons Attribution license allows re-distribution and re-use of a licensed work
+    on the condition that the creator is appropriately credited."
+
+帰属: Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, "A cone-beam X-ray CT data
+collection designed for machine learning", Sci. Data 6, 215 (2019), doi:10.1038/s41597-019-0235-y;
+data doi:10.5281/zenodo.2686726。図と実行ログには :func:`realdata.walnut_cbct_credit` を載せる。
 """
 from __future__ import annotations
 
