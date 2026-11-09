@@ -245,7 +245,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 308 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 309 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -264,7 +264,7 @@ PoC 308 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>工业检测</b> (59)</summary>
+<details class="vall"><summary><b>工业检测</b> (60)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../../articles/assets/poc/poc_barcode_1d/story.en.gif" alt="Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers." loading="lazy" width="200" height="200"></picture><span>一维条码</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../../articles/assets/poc/poc_battery_electrode_tortuosity/story.en.gif" alt="Electrode tortuosity from CT — the rule of thumb only sees porosity" loading="lazy" width="200" height="200"></picture><span>电极曲折度</span></a>
@@ -323,6 +323,7 @@ PoC 308 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_part_dpm.jpg" alt="点针刻印的 Data Matrix 要模糊后 zxing-cpp 才能读出" width="200" height="200"><span>点针刻印的 Data Matrix 要模糊后 zxing-cpp 才能读出</span></a>
 <a href="../../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_lot_ocr.jpg" alt="超出训练范围的模糊下,批号 OCR 从拒识变为误读" width="200" height="200"><span>超出训练范围的模糊下,批号 OCR 从拒识变为误读</span></a>
 <a href="../../articles/assets/poc/poc_real_typewritten_ocr/01_reading.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_typewritten_ocr/01_reading.png"><img src="../../articles/assets/poc/poc_real_typewritten_ocr/story.en.gif" alt="Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 96.6-98.1 % on Lines Segmented Correctly (95.4-97.1 % End to End), and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed" loading="lazy" width="200" height="200"></picture><span>用经典 OCR 读取 1943 年的打字报告</span></a>
+<a href="../../articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.mp4"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png"><img src="../../articles/assets/poc/poc_mixed_case_depalletizing/story.en.gif" alt="Packed cartons with identical prints are told apart from overhead depth and colour, then unloaded. A depth step splits none, and whether depth dips or dark colour lines win flips across 28 flap-seam builds. With identical prints, deep grooves favour colour; only wide, untaped cuts over shallow grooves favour depth." loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>用深度台阶、V 形缝或彩色分开混载托盘上的纸箱</span></a>
 <a href="../../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><img src="../../articles/assets/poc/poc_ai_built_inspection_scored/story.en.gif" alt="Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)" loading="lazy" width="200" height="200"></picture><span>用真实数据的真值为 AI 组建的检测打分</span></a>
 <a href="../../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><img src="../../articles/assets/poc/poc_equipment_selection_map/story.en.gif" alt="Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread" loading="lazy" width="200" height="200"></picture><span>器材选型地图:用 60 种照明×相机×镜头组合拍同一缺陷</span></a>
 </div>
