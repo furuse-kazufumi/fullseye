@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 657 of 1823. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 657 of 1829. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `_archive_tarxz.py`
@@ -1062,7 +1062,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_phase_measuring_deflectometry.py`
 
-- **L498** _(ja)_ — ★2026-10-15: 手元 23 秒の計算が、CI の並列のシャード(py3.12 3/4)では壁時計 120.6 秒になり、この門だけが赤に なった。壁時計は同じ機械で走る他のテストの負荷を数えてしまう。この門が抑えたいのは「この PoC 自身の計算量」 なので、プロセスの CPU 時間で測る(壁時計は併記する。テスト側の 600 秒の打ち切りは別にある)。
+- **L500** _(ja)_ — ★2026-10-15: 手元 23 秒の計算が、CI の並列のシャード(py3.12 3/4)では壁時計 120.6 秒になり、この門だけが赤に なった。壁時計は同じ機械で走る他のテストの負荷を数えてしまう。この門が抑えたいのは「この PoC 自身の計算量」 なので、プロセスの CPU 時間で測る(壁時計は併記する。テスト側の 600 秒の打ち切りは別にある)。
 
 ## `examples/poc_photoelasticity.py`
 
@@ -1885,6 +1885,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L495** _(ja)_ — ★2026-11-02: 相対改善が許容未満まで来たあとは、merit が丸めの床に当たって次の手が棄却される。 以前はこれも stalled にしていて、converged / stalled が最下位ビットの丸めで入れ替わった (_intersect_conic の安定化で 1e-15 mm 動いただけで test_lensopt の判定が反転)。 許容未満の改善を見たあとで下げる手が尽きたなら収束、そうでなければ stalled。
 
+## `lightsection.py`
+
+- **L241** _(ja)_ — 飽和と見なす台: 3 行以上、または 2 行以上で頂が画像全体の最大値(天井)。★2 行だけの同値は 量子化した飽和していない光条で日常的に起きる(uint8・σ3 px・頂 200 で 6.2 %、頂 60 で 15.2 % の列、 2026-11-09 の独立レビュー)ので、天井に届かない 2 行の同値は台と見なさない。台でない列は lo = hi = argmax で、直す前と bit 一致
+- **L512** _(ja)_ — 縁の 3σ 以内は微分フィルタの外挿が断面を曲げる → 無効(fail-closed)。★推定した法線では判定しない: 外挿は法線そのものも曲げる(45° の線の上端で n_y 0.71 → 0.43、誤差 0.88 px が valid で残った、 2026-11-09 の独立レビュー)。点の位置だけで決め、画像の外の点は無条件に無効
+
 ## `matappear.py`
 
 - **L167** — ★Passing a 0-dimensional (scalar) value made `r.shape[-1]` throw a **bare IndexError** (caught in the adversarial audit of 2026-09-04). A spectral reflectance has at least a wavelength axis -- a scalar is not 'a value per wavelength', so the guard explicitly refuses it.
@@ -1961,7 +1966,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `measuring1d.py`
 
-- **L375** _(ja)_ — ★空の表は名指しで拒否する(2026-10-12 の空入力の方針 A)。空 list を空 list で返すと、 測定が 1 件も取れなかったことが mm 換算の後ろで見えなくなる。
+- **L429** _(ja)_ — ★空の表は名指しで拒否する(2026-10-12 の空入力の方針 A)。空 list を空 list で返すと、 測定が 1 件も取れなかったことが mm 換算の後ろで見えなくなる。
 
 ## `medial.py`
 
@@ -2484,6 +2489,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `specularity.py`
 
 - **L1492** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K4 の兄弟): 退化の床を入力の最大輝度に対する相対量に (photometric._albedo_floor と同じ。絶対 1e-8 では強度 ×1e-8 で全法線が (0, 0, 1))。
+- **L1627** _(ja)_ — 返していた(σ 0.001 の暗い半面で DoLP の中央値 1.000)。★最初の版は「上位 99 百分位の 1e-2」という雑音を見ない床で、独立レビューで両向きに黙って間違うことが分かった: ハイライト 5 % と暗い拡散物体(S0 0.008、SNR 80、真の DoLP 0.3)で物体全体を DoLP 0 にし、明るい所が 画像の 1 % 未満だと床が暗部に落ちて DoLP 1.0 に戻った。
+- **L1649** _(ja)_ — σ̂ は a0 > 0 の全画素の残差の中央値。★a0 で画素を選ぶ(暗い側だけ)と、0 でクリップした雑音では 「a0 が小さい = 標本が 0 に貼りつく = 残差も小さい」の偏りで σ̂ が小さく出て、暗い雑音が 1〜11 % 通った(2026-11-09 実測)。掃引に合わないフレーム(残差が信号の桁)では σ̂ が信号の桁になり、 全画素が「偏光度を定義できない」になる —— それはその掃引の正しい答え(fail-closed)
 
 ## `studio.py`
 
@@ -3054,6 +3061,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L496** _(ja)_ — ★2026-10-02: 同じ台帳に score(segeval)/world(segworld)のカテゴリが足された。HALCON の 9 本は 4 カテゴリの中にちょうど 9 本、他のカテゴリの op は segmentation.py の物ではない。
 - **L499** _(ja)_ — ★2026-10-18(統合 8 第 2 波): 同じ「classify」カテゴリに cropweed の Fisher 判別 2 本が入った。HALCON 章の 9 本は 実体が segmentation.py の物なので、module で絞る(カテゴリ名だけで数えると汎用の判別が混ざる)。
+
+## `tests/test_sfpolar.py`
+
+- **L388** _(ja)_ — ★2026-11-09: 合わないフレームは残差を信号の桁に上げ、暗さの床(雑音基準)で残りの画素も 「偏光度を定義できない」になる。以前は 73 % の画素が 3 倍のフレームから作った法線を valid で 返していた。exclude でも残る画素が無いので拒む(fail-closed)
+- **L480** _(ja)_ — 素の周期解(integrate_gradients)は傾き(直流)を落とす。★2026-11-09 まではここで integrate_normals を比べていた —— その op が傾きを捨てる欠陥を「約束」として固定していた
 
 ## `tests/test_shapestats.py`
 
