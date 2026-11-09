@@ -70,6 +70,8 @@ retrieval 無しでは使えない)。
 | `fullseye_export_json` | ハンドルの中身を **JSON 封筒で持ち出す**。`structuredContent` に `fullseye.from_jsonable` で bit そのまま戻せる封筒、本文に `fullseye.to_markdown` の読める描画。`readable=true` で数をリストに。上限(512 KB)超の大きな画像は `isError` で断る(画像はハンドル/小図で扱う) |
 | `fullseye_write_viewer` | PoC の結果を**自己完結した 1 枚の HTML ビューア**にして書く(タブ・正直なバッジ `passed` / `limit` / `null`・数字・3-D の点群/メッシュ・2-D 動画と時系列・前後の分割・ja/en/zh/tw/ko/de/hi/fr の切り替え)。`spec`(JSON)・`lang`(言語の配列、先頭が既定)・`name`。`spec` は信頼境界で再検証し、形違い・NaN・未知のバッジ/種類・欠けた訳は `-32602`。書き先はサンドボックスだけで、`resource_link` で返す |
 | `fullseye_estimate_distortion` | 本来まっすぐな**線群の点列**(`lines`=`[[x,y],…]` を並べた配列、2 本以上・各線 3 点以上)と 3x3 内部行列 `K` から Brown–Conrady 歪み係数 `dist=[k1,k2,p1,p2,k3]` を推定(plumb-line 法、チェッカー不要)。`radial`=1/2/3、`tangential` 真偽。返す `dist` は `undistort_image` にそのまま渡せる。`lines`/`K` は信頼境界で再検証し、形が違えば `-32602`、推定不能は `isError` |
+| `fullseye_make_task` | **真値付きの課題**を作る(`kind` = 族、`seed`、`params` = 族ごとの難度つまみ)。返すのは入力画像のハンドル・課題文・出力の型と単位・指標と許容範囲・`task_id`。**真値はサーバが持ち、返さない**。同じ `(kind, seed, params)` からは同じ課題・同じ `task_id`。知らない族・つまみ・範囲外は `-32602` |
+| `fullseye_score_pipeline` | `task_id` と `fullseye_pipeline` と同じ形の `stages` を受け、課題の入力で走らせて**真値で採点**する。型の門を先に通し、指標ごとの誤差の大きさ・許容範囲・合否と外れ方の説明を返す(真値と誤差の符号は返さない)。例外・型の不一致・NaN / 空 / 定数の出力・知らない / 期限切れの `task_id` は合格を返さず `reason` を書く |
 
 小さな LLM は、候補を絞ってから短い説明だけを渡す。推奨順は
 `find_ops / plan → op_cards → validate_pipeline → pipeline`。
@@ -209,6 +211,120 @@ fix_text(mode=repair_flagged, 床=0.0505 from typeface, 書体 3 本) → fullse
   線が `(N,2)` でない、非有限が混ざる、線が 2 本未満は `-32602`。各線 3 点未満など道具側の拒否は `isError`。
 * 主点=歪み中心は `K` 固定(1 枚では中心と `p1,p2` が縮退)。向きの違う線を混ぜ、画面いっぱいに張るほど安定。
 
+## 真値付きの課題を作り、組んだ処理を採点する(`fullseye_make_task` / `fullseye_score_pipeline`)
+
+> **使い方の範囲(2026-11-10、独立レビュー第 3 巡)**
+>
+> 1. **公開モードは、対話で処理を直させるための道具。能力の比較(LLM+Fullseye / LLM だけ / 人)には使えない。**
+>    公開の生成器と返された `seed`・`params` から真値も隠れた双子の入力も計算でき、`detailed` の誤差の大きさからは
+>    真値を符号の 2 択まで絞れるため。
+> 2. **結果は pass@k で報告し、pass@1 は必ず添える。** 合格したかだけでなく、合格までに使った試行回数 k(監査記録の
+>    `attempt`)を添え、pass@1 と pass@k を並べる。32 回まで出し直せるので、合否だけでも選び直しの経路になる。
+>    直した後も残る数字(独立レビュー第 5 巡): 半分しか正しくない処理(照明むらを補正しない計数)が、32 回以内に
+>    合格する課題が 20 課題中 9 課題ある。そうして合格した処理は、別の seed では 50 課題中 3〜38 課題にしか合わない。
+>    pass@k だけでは「出し直せば通った」ことと「処理が正しい」ことを区別できない。
+> 3. **隠れた双子の検査は、正しい処理も断ることがある。** 正しい処理を seed 50〜99 で数えると、誤って断った率は
+>    計数・寸法・位相で 0/50(公開・実験の両モード)、キズ(比較実験から外した族)で公開 3/49、実験 5/42
+>    (双子を試行ごとに替えた後、1 回目の試行)。実験モードの率は秘密値で変わる(課題も双子も秘密値で決まるため。
+>    キズは秘密値と版によって 3/42、4/49、5/42 になった)。
+> 4. **入力に依存しない op の一覧は既定のつまみだけで判定している。** つまみの端で定数になる op は一覧に載らない
+>    (隠れた双子の検査で補う)。一覧に無いことは、その op が入力に依存する保証ではない。
+> 5. **回数ファイル(`<AUDIT_PATH>.attempts.json`)と監査ファイルは、agent が読めず書けない場所に置く。** 回数ファイルを
+>    消せば新しいセッションの回数が戻り、監査ファイルには詳しい誤差がある。
+>
+> **実験モードは、独立レビューで測り終えるまでは比較実験に使わない。**
+
+「LLM が組む → 型の門 → 実行」だけでは、型は合うがもっともらしく間違った処理(照明むらを大域の
+二値化で拾う、位相を展開し忘れる、しきい値の高さで端を測る)を落とせない。この 2 つの道具は、
+シミュレーションで真値の決まる課題を作り、組んだ処理の**出力**を真値と比べて数値で採点する。
+走る一式は [`examples/mcp_task_score.py`](../examples/mcp_task_score.py)(LLM の役を手書きの処理で演じる)。
+
+```json
+{"name":"fullseye_make_task","arguments":{"kind":"blob_count","seed":11}}
+{"name":"fullseye_score_pipeline","arguments":{"task_id":"fullseye://task/<16 hex>","stages":[{"op":"gaussian"},{"op":"tophat","params":{"window_px":9}},{"op":"otsu"},{"op":"count_obj"}]}}
+```
+
+| 族 (`kind`) | 分野 | 入力 | 採点する出力 | 指標と許容範囲 |
+|---|---|---|---|---|
+| `blob_count` | 二値化と計数 | 照明むらのある板の粒(image 128×128) | feature(スカラー) | 数え違い = 0 |
+| `edge_subpixel` | サブピクセルの寸法 | ぼけた水平の帯(image 96×64) | contour / points / matrix の `[row, col]` | 上端・下端の位置の誤差 ≤ 0.15 px |
+| `defect_inspect` | キズの検出 | 加工目のある面の暗い打痕(image 128×128) | region | 重心の誤差 ≤ 1.5 px、面積の相対誤差 ≤ 0.30、1 − IoU ≤ 0.40 |
+| `fringe_phase` | 3-D 計測(位相シフト) | 4 歩の縞(seq<image> 4×64×96) | image / depth(連続位相、rad) | rms(大域の 2πm は許す)≤ max(0.05, 3σ) rad |
+
+* **許容範囲は事前登録。** 値と根拠は [`fullseye/mcp/task_tolerances.py`](../fullseye/mcp/task_tolerances.py)。
+  許容・指標・根拠を変えるときは、その表だけの commit を先に作り(採点の結果・合格数はまだ含めない)、
+  同じ commit で `SCORING_VERSION` を上げる。その後の commit で実装と結果を足す(比較実験の事前登録)。
+  キズの族の IoU(1 − IoU ≤ 0.40)はこの作法で、IoU を 1 つも測る前に登録した。
+* **段が読めるのは課題の入力と前段だけ。** 段の `inputs` と `params` の `{"ref": …}` に書けるのは
+  `have:<課題の入力の型>` と `stage:N` だけで、他の `fullseye://` ハンドル(`fullseye_import_json` で取り込んだ答え、
+  他の課題の入力)は `foreign_input` で断る。入力を読まない段(生成源)と、課題の入力に依存の経路で
+  辿り着かない最終段も `foreign_input`。入力は課題の画像に固定で、`handle` は渡せない。
+* **入力の中身を読まない処理は断る(`input_independent`)。** 生成の op(`hx_gen_checker_region` /
+  `hx_gen_ellipse` など)は `have:` を形のためだけに読むので、参照を辿る門は通ってしまう(画像を見ない処理で
+  計数の 50 課題中 9 課題が 3 回以内に合格した)。2 段で断る: (1) 実行できる 1 入力の op を中身の違う 7 枚に
+  通して出力が同じ物を機械的に洗い出した一覧
+  ([`fullseye/data/MCP_INPUT_INDEPENDENT.json`](../fullseye/data/MCP_INPUT_INDEPENDENT.json)、
+  `tools/gen_mcp_input_independent.py`、既定のつまみで判定)にある op を断る。(2) 採点のたびに、同じ族・同じ
+  つまみで真値の違う隠れた双子の課題で同じ処理を走らせる。最終段の出力がバイト単位で同じなら `input_independent`、
+  本体が合格したのに双子の真値には合格しなければ不合格(固定の答えは真値の違う 2 つの課題の両方には合格できない)。
+  双子の側の誤差は返さない。走り切らなければ `input_check_failed`。
+  - **双子の決め方**: `sha256("alt|<kind>|<seed>|<k>|" + 秘密値の要約 [+ "|attempt=<n>"])` の先頭 4 バイトを seed の範囲に
+    畳み、k = 1, 2, … の順に、真値が本体とどの鍵でも違う最初の seed を使う。公開モードは秘密値が空で試行の番号も
+    混ぜない(公開の生成器から計算できる)。実験モードは秘密値と試行の番号を混ぜ、**試行ごとに双子を替える**。
+  - **reason の出し分け**: `detailed` では双子で落ちたことを `hidden_check_failed` で返す(対話で直すため)。
+    `pass_fail` / `coarse` では区別せず、許容外の不合格と同じ `out_of_tolerance` と同じ形で返す(`coarse` の段階は
+    落ちた側 = 双子の指標から作る)。区別は監査記録の `hidden_seed_check` にだけ残す。区別して返すと
+    「本体には合っていた」ことが分かり、本体と双子の探索を 2 回に分けられた(独立レビュー第 4 巡: 計数の
+    20 課題中 13 課題が 20 回以内に合格)。試行ごとに双子を替えるのも、この分けた探索を効かなくするため。
+* **params の値は 数・文字列・真偽・null と `{"ref": have|stage}` だけ**(`param_not_allowed`)。配列や入れ子の辞書で
+  データを持ち込めない(`decode_fringe` の `ref_phase` に配列を書いて答えを注入できた)。
+* **採点の回数は真値ごと。** 真値は `(kind, seed)` で決まり、難度のつまみ(`params`)は入力を変えても真値を変えない
+  (どの族もテストで確かめている)。だから回数は `(kind, seed)` ごとに 32 回までで、課題を作り直しても・つまみを
+  微小に変えても・他の課題で追い出されても・寿命(3,600 秒)が切れても戻らない。雑音 0 の「双子」の課題も
+  同じ真値なので回数を共有する(易しい双子で解いた処理を難しい側に出すことは止めない —— それは同じ真値への
+  正当な解答)。回数の表は、公開モードでは 1 セッション(1 つのサーバ・プロセス)の中で数え、実験モードでは
+  ファイルに残してセッションをまたいで数える(下)。作れる真値は 1 セッションで 4,096 個まで。
+* **返す細かさ(`feedback`)。** `detailed`(既定)は指標ごとの誤差の大きさ・許容・倍率・合否と外れ方の説明。
+  `coarse` は指標ごとの合否と許容の何倍か(`<=1x` / `<=2x` / `<=5x` / `>5x`)だけ。`pass_fail` は全体の合否だけ。
+  詳しい値は `FULLSEYE_TASK_AUDIT_PATH` の監査記録(JSON Lines)にだけ書く。**stderr には task_id・試行回数・合否
+  だけ**を出す(MCP のクライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が誤差を
+  読めてしまう)。サーバの上限(環境変数 `FULLSEYE_TASK_FEEDBACK`)より詳しい要求は上限まで粗くし、
+  `feedback_capped: true` を付ける。
+* **2 つのモード。** 公開モード(既定)は誰でも同じ課題を作り直せる —— 公開の生成器と返された `seed`・`params` から
+  真値も作り直せる(再現のための性質で、採点の秘匿にはならない)。比較実験には実験モードを使う:
+  環境変数 `FULLSEYE_TASK_SECRET` を設定すると、その秘密値を乱数の種と `task_id` に混ぜ、公開の生成器では
+  作り直せなくなる。秘密値は返り値にも記録にも出さない。実験モードの `feedback` の上限は既定で `pass_fail`、
+  `scoring_version` の末尾に `+secret` が付く。実験モードは次が揃わないと課題を作らない(fail-closed):
+  秘密値が 32 文字以上、`FULLSEYE_TASK_AUDIT_PATH`(実験者だけが読む場所。MCP の根の外)がある。
+  採点の回数は `<AUDIT_PATH>.attempts.json` にも残し、**セッションをまたいで**数える。読み書きは
+  `<AUDIT_PATH>.attempts.json.lock` への OS のファイル lock(Windows は `msvcrt.locking`、他は `fcntl.flock`)で守る。
+  持ち主のプロセスが落ちれば OS が lock を外すので、古い lock を消す判断は要らない(以前の O_EXCL + 時刻の方式は、
+  古い lock を 2 つのプロセスが続けて消すと回数が 1 つ減った)。取れなければ 10 秒で `attempt_store_unavailable`。
+  中身が壊れた回数ファイル(数でない・負・小数)や書けない回数ファイルも `attempt_store_unavailable` で断る
+  (推測で読まない。返す文にファイルの場所は入れない)。
+  **秘密値と監査記録は agent のシェルから見えない場所に置く**: 秘密値はサーバのプロセスの環境だけ
+  (例: `.mcp.json` の `env`)に書き、agent が使うシェルの環境変数やファイルには置かない。
+* **比較実験の報告は pass@k で。** 合否だけでも、32 回まで出し直せば選び直しの経路になる。合格したかだけでなく、
+  合格までに使った試行回数 k(監査記録の `attempt`)を添え、pass@1・pass@k(k = 使った回数の上限)を並べて報告する。
+* 採点の返り値は誤差の**大きさ**だけで、符号と段の出力の値・統計は載せない。ただし `detailed` では、誤差の大きさと
+  自分の出力を合わせれば真値は符号の 2 択まで絞れる(計数は特に)。秘匿が要る場面では `coarse` / `pass_fail` を使う。
+* 採点できた不合格は `passed: false`・`reason: out_of_tolerance`・`isError: false`。採点が成り立たない不合格は
+  `isError: true` で、`reason` は `foreign_input` / `param_not_allowed` / `input_independent` / `hidden_check_failed` /
+  `input_check_failed` / `attempt_store_unavailable` / `type_gate` / `output_sort_mismatch` / `pipeline_refused` /
+  `exception` / `execution_failed` / `invalid_output`(NaN・Inf)/ `empty_output` / `constant_output` /
+  `output_shape_mismatch` / `unscorable_output` / `unknown_task` / `task_expired` / `attempts_exhausted` のどれか。
+* 実行は `fullseye_pipeline` と同じ実行器(同じ検証済みの op だけ、CPU)。
+* **比較実験に使える族は `blob_count` / `edge_subpixel` / `fringe_phase` の 3 つ**(`fullseye.mcp.tasks.COMPARISON_FAMILIES`、
+  課題の返り値の `comparison_ready`)。**`defect_inspect` は正誤の分け方が弱い**: 加工目を処理しない処理
+  (反転 → 最大エントロピーの二値化 → 最大の領域)が seed 0〜49 で 20/50、seed 50〜249 で 78/200 合格する。
+  IoU(1 − IoU ≤ 0.40、事前登録)を足しても変わらなかった。落とせる閾値を結果を見てから選ぶと門を結果に
+  合わせて動かすことになるので、許容は締めずに比較実験から外した(課題の返り値の `known_weakness` にも書く)。
+  族の作り直し(加工目を強くする等)は v2 として、新しい seed の範囲で事前登録してから測る。
+* 正しい処理の選び方(テストと例の処理): 窓幅など(top-hat 9 px、横 7 px の平均)は **seed 0〜49 で選んだ**(調整用)。
+  選んだ後に別の seed 50〜249 で数え直した合格数は、正しい処理が計数 200/200・寸法 200/200・キズ 192/200・
+  位相 200/200、もっともらしく間違えた処理は 4 族とも 0/200。加工目を処理しない処理(反転 → 最大エントロピーの
+  二値化 → 最大の領域)はキズの族で 78/200 が合格する(IoU を足しても変わらない。下の CHANGELOG を参照)。
+
 ## 型付き結果に JSON 封筒 + Markdown が自動で付く(`fullseye_apply` / `fullseye_pipeline` / `fullseye_inspect`)
 
 `apply` / `pipeline` / `inspect` の結果が**小さい型付きの値**(scalar / feature / table / points / matrix /
@@ -276,5 +392,5 @@ Function Hijacking(tool 選択の乗っ取り ASR 70〜100 %)—— と、TRIZ �
 公開する計画入口は `fullseye_plan`、`fullseye_describe`、`fullseye_choose` の3つだけである。
 未計測の制約は推測で補わず、fail-closedの理由として返す。`tools/list` に
 `{"profile":"minimal"}` を渡すか、`FULLSEYE_MCP_PROFILE=minimal`を設定すると実行に必要な10道具を公開する。
-`docs/mcp_context_benchmark.json`を生成する実測では、全22道具が3,680トークン、最小10道具が1,495トークンである。
+`docs/mcp_context_benchmark.json`を生成する実測では、全24道具が4,204トークン、最小10道具が1,495トークンである。
 未検証の設計パターンと重複した計画入口はMCP一覧に出さない。

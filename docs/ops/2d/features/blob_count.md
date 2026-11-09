@@ -6,7 +6,7 @@ in: region
 out: feature
 halcon: count_obj
 gpu: 鎖の中だけ(lbl_blob_count)
-examples: [gallery2d_features, poc_real_coin_metrology, quickstart]
+examples: [gallery2d_features, mcp_task_score, poc_real_coin_metrology, quickstart]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -67,6 +67,7 @@ blob_count 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+- [mcp_task_score](../../../../examples/mcp_task_score.py) — `py -3.11 examples/mcp_task_score.py`
 - [poc_real_coin_metrology](../../../../examples/poc_real_coin_metrology.py) — `py -3.11 examples/poc_real_coin_metrology.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`
 

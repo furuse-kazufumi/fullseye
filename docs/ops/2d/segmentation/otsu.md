@@ -6,7 +6,7 @@ in: image
 out: region
 halcon: binary_threshold
 gpu: あり(otsu)
-examples: [ct_inspection, degenerate_inputs, example_inner_diameter_mm, find_ops_by_meaning, gallery2d_segmentation, genspark_external_review, line_handshake, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_real_file_formats, poc_real_sem_metal_layer, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_vegetation_cover, poc_water_inspection_images, quickstart, segment_and_classify, threshold_family_agreement, typed_results_json]
+examples: [ct_inspection, degenerate_inputs, example_inner_diameter_mm, find_ops_by_meaning, gallery2d_segmentation, genspark_external_review, line_handshake, mcp_task_score, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_real_file_formats, poc_real_sem_metal_layer, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_vegetation_cover, poc_water_inspection_images, quickstart, segment_and_classify, threshold_family_agreement, typed_results_json]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -70,6 +70,7 @@ otsu 0.50 0.50
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
 - [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 - [line_handshake](../../../../examples/line_handshake.py) — `py -3.11 examples/line_handshake.py`
+- [mcp_task_score](../../../../examples/mcp_task_score.py) — `py -3.11 examples/mcp_task_score.py`
 - [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
 - [poc_colocalization_crosstalk](../../../../examples/poc_colocalization_crosstalk.py) — `py -3.11 examples/poc_colocalization_crosstalk.py`
 - [poc_dimensional_inspection](../../../../examples/poc_dimensional_inspection.py) — `py -3.11 examples/poc_dimensional_inspection.py`

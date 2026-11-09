@@ -64,7 +64,7 @@ Die 101 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, vo
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 9 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 493 Beispielen werden 489 tatsächlich von einem Gate ausgeführt.
+Von 494 Beispielen werden 490 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
