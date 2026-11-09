@@ -153,8 +153,10 @@ def decode(h, p, q, rig, z_ref=0.0, decode_rig=None, **kw):
 def integrate(n, sp):
     """法線マップ → 高さ [mm]。既存の `sfp_height`(Frankot–Chellappa を鏡像拡張した領域で解く)を使う。
 
-    ★周期境界のままの `photometric.integrate_normals` は傾きの平均(直流)を表せず、一様な傾きを捨てる ——
-    「部品を浮かせると傾いて見える」が高さに出なかった。鏡像拡張なら傾いた平面がそのまま戻る。"""
+    ★素の周期境界の Frankot–Chellappa(`photometric.integrate_gradients`)は傾きの平均(直流)を表せず、
+    一様な傾きを捨てる —— 「部品を浮かせると傾いて見える」が高さに出なかった。鏡像拡張なら傾いた平面が
+    そのまま戻る。(`photometric.integrate_normals` は 2026-11-09 から平均の勾配を足し戻すので一様な傾きは
+    戻るが、周期境界の端の歪みは残る。ここでは鏡像拡張の sfp_height を使い続ける。)"""
     return fs.ledger.sfp_height(np.where(np.isfinite(n), n, [0.0, 0.0, 1.0])) * sp
 
 

@@ -7,7 +7,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>측정선 위의 에지 위치(서브픽셀)와 진폭을 추출한다(measure_pos).</p>
 <p>각 에지: <code style="color:#22d3bf">pos</code>(샘플 index, 사각형은 시작점부터의 px) / <code style="color:#22d3bf">dist</code>(시작점부터의거리 [px]) / <code style="color:#22d3bf">row</code>, <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">amplitude</code>(부호 있는 그레이 차) / <code style="color:#22d3bf">polarity</code> (&quot;positive&quot; = 측정 방향으로 밝아진다). <code style="color:#22d3bf">threshold</code> 는 |amplitude| 의 하한, <code style="color:#22d3bf">transition</code> 은 &quot;all&quot; / &quot;positive&quot; / &quot;negative&quot;.</p>
-<p>빈 입력(<code style="color:#22d3bf">image</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
+<p>빈 입력(<code style="color:#22d3bf">image</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다. ★입력의 관문(2026-11-09): 비유한 화소(NaN/inf)를 포함한 영상은 ValueError(에지의 1 화소 앞의 NaN으로 에지가 조용히 사라지고, 멀리 있으면 조용히 통과했다). <code style="color:#22d3bf">sigma &lt; 0</code>도 ValueError (<code style="color:#22d3bf">sigma = 0</code>은 평활 없음, 음수는 조용히 0과 같아졌다). 측정선의 점(<code style="color:#22d3bf">rows</code>/<code style="color:#22d3bf">cols</code>)이 영상 밖 <code style="color:#22d3bf">[-0.5, H-0.5] × [-0.5, W-0.5]</code>로 나가면 RuntimeWarning (밖은 최근방 외삽으로, 보이지 않는 곳을 재고 있다), 전부 밖이면 ValueError(반환값이 list이므로 표시를 돌려줄 수 없다). 올바른 입력의 결과는 변하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

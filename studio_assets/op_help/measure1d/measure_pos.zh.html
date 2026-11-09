@@ -7,7 +7,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>提取测量线上的边缘位置(亚像素)和幅值(measure_pos)。</p>
 <p>各边缘: <code style="color:#22d3bf">pos</code>(采样 index，矩形为距起点的 px)/ <code style="color:#22d3bf">dist</code>(距起点的距离 [px])/ <code style="color:#22d3bf">row</code>, <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">amplitude</code>(带符号的灰度差)/ <code style="color:#22d3bf">polarity</code> (&quot;positive&quot; = 沿测量方向变亮)。<code style="color:#22d3bf">threshold</code> 是 |amplitude| 的下限，<code style="color:#22d3bf">transition</code> 为 &quot;all&quot; / &quot;positive&quot; / &quot;negative&quot;。</p>
-<p>空输入(<code style="color:#22d3bf">image</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>空输入(<code style="color:#22d3bf">image</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。★输入的关卡(2026-11-09):含非有限像素(NaN/inf)的图像引发 ValueError(边缘外 1 像素处的 NaN 会让边缘静默消失,更远处则静默通过)。<code style="color:#22d3bf">sigma &lt; 0</code> 也引发 ValueError (<code style="color:#22d3bf">sigma = 0</code> 表示不平滑,负值以前会静默地与 0 相同)。测量线的点(<code style="color:#22d3bf">rows</code>/<code style="color:#22d3bf">cols</code>)超出图像 <code style="color:#22d3bf">[-0.5, H-0.5] × [-0.5, W-0.5]</code> 时发出 RuntimeWarning (外侧是最近邻外推,测的是看不到的地方),全部在外侧时引发 ValueError(返回值是 list,无法返回标记)。正确输入的结果不变。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

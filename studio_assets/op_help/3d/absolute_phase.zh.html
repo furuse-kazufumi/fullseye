@@ -12,6 +12,8 @@
 <p>返回值:绝对相位 [rad] (2D float64)。无效像素(任一方为 NaN)为 NaN。</p>
 <p>为何需要(与空间解包裹的区别):<code style="color:#22d3bf">unwrap_phase_2d</code> 沿相邻像素追踪来连接 2π 跳变, 因此 (a) 残留全局偏移 +2πm,(b) 在被遮挡切开的孤岛之间级次无法传播。本 op 逐像素独立确定级次,因此<b>即使在分成孤岛的场景中也是绝对的</b>, 也不需要传播。代价是要求 coarse 的误差小于半个周期(π)。</p>
 <p>要求(fail-closed):|coarse − Φ_true| &lt; π。违反时 round 会选中相邻级次, 仅该像素静默偏移 2π(= 1 条条纹对应的深度)。请选择条纹数 freq,使 Gray code 的粗略度(±0.5 列) 换算为相位后的量不超过半个周期(例:投影仪宽度 512 px、freq 24 → 1 个周期 21.3 px,Gray 的 ±0.5 px 完全在范围内)。</p>
+<p>★级次错误无法从返回值看出(2026-11-09 实测):在多频时间解包裹(16/4/1 mm、比 4、20 万像素)中,相位噪声 σφ = 0.10/0.20/0.30/0.40/0.60 rad 时, 有 0/0.097/2.57/11.6/36.8 % 的像素弄错 2π 级次,且全部以有限值返回。<b>请看残差</b>:</p>
+<p>令 <code style="color:#22d3bf">Phi = absolute_phase(w, c); resid = c - Phi</code>,把 <code style="color:#22d3bf">|resid| &gt; 0.8π</code> 左右的像素视为可疑并舍弃(上述条件下可捕获 33〜74 % 的错误,是要求 |coarse − Φ| &lt; π 被破坏的迹象)。coarse 的单位(弧度)也不检查 —— 传入角度会静默返回 1106 rad(真值 19.35)这样的值。目前还没有确认级次的其他 op(返回残差与标记的 op 将按添加 op 的流程加入)。</p>
 <p>Raises:形状不一致、非 2D、wrapped 大幅超出 (-π,π] 时抛出 ValueError。</p>
 <p>来源(公开文献):结合 Gray code 与相移获得绝对相位的合成法 — Sansoni et al., *Appl. Opt.* 38(31) 1999 / Zhang, *Opt. Lasers Eng.* 48 2010(综述)。Gray code 本身的投影见 Inokuchi et al., *ICPR* 1984。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

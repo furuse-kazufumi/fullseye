@@ -25,21 +25,33 @@ Speckle floor of a light-section height, simulated and in closed form side by si
 (高さは乱数、部品ごとに別の位相スクリーン)描き、``method`` の中心抽出で列ごとの中心を取り、
 長さ ``length_um``(既定 = 光条の幅)ごとに平均して高さに直す(``z = Δrow · pixel / sin θ``、
 coherent の三角測量の約束)。真の高さとの差の標準偏差が ``sim_delta_z_um``(95 % の χ² 区間つき)。
-閉形式: ``δz = C λ / (2π sin u_obs sin θ) · √(w/L)``、C = 1/√(n_patterns · polarizations)
-(:func:`coherent.speckle_reduction`)。読み出し雑音 ``noise_rel``(光条の頂の平均に対する比)は
+閉形式の側: ``δz = C λ / (2π sin u_obs sin θ) · √(w/L)``、C = 1/√(n_patterns · polarizations)
+(:func:`coherent.speckle_reduction`)。★前半 ``C λ / (2π sin u sin θ)`` が Dorsch らの式
+(``dorsch_delta_z_um``)で、後ろの ``√(w/L)``(``averaging_factor``)は長さ L の平均の
+**実測の規則**であって Dorsch の式の一部ではない。``closed_form_delta_z_um`` はその積
+(L < w では Dorsch の式より大きい: w 173.2 µm・L 50 µm で 1.86 倍)。読み出し雑音 ``noise_rel``(光条の頂の平均に対する比)は
 シミュに入り、閉形式の側は :func:`light_section_uncertainty_budget` の雑音の項と合わせて
 ``closed_form_total_um`` に入る。
 
 Simulates ``n_trials`` speckled lines with :func:`coherent.laser_line_coherent`, extracts the
 centre per column with ``method``, averages over ``length_um`` (default = the line width) and
 converts to height (``z = Δrow · pixel / sin θ``). Returns the simulated standard deviation
-(with its χ² 95 % interval), the Dorsch closed form, their ratio, and the additive-noise
-term. ``smooth_surface=True`` renders a mirror-smooth part (phase 0: no speckle, contrast 0)
+(with its χ² 95 % interval), the closed form ``closed_form_delta_z_um`` = Dorsch × √(w/L)
+(the √(w/L) averaging over ``length_um`` is a measured rule, not part of Dorsch's formula),
+the pure Dorsch value ``dorsch_delta_z_um`` with ``averaging_factor`` = √(w/L) and
+``ratio_sim_to_dorsch``, the ratios, and the additive-noise term. ``smooth_surface=True`` renders a mirror-smooth part (phase 0: no speckle, contrast 0)
 so that only ``noise_rel`` is left — the gate for the budget's read-noise term. ``center_kw`` overrides the estimator's settings (defaults: centroid over the whole
 column without clipping; gauss with ``half_window`` = the line's 1/e² half-width in pixels;
 steger with ``sigma = w/(pixel·√3)``). ★Columns within one block share speckle; blocks are treated as independent samples
 (the χ² interval assumes that). ★The 2π constant is from the open-access Ettl et al. 2014,
 which cites Dorsch et al. 1994; the primary text was not read.
+
+★The fine step ``pixel_um / pixel_oversample`` must be at most the intensity's Nyquist
+``λ/(4 sin_u_obs)`` (``|E|²`` has bandwidth ``2 sin_u/λ``), else ValueError naming the
+smallest ``pixel_oversample``; up to ``λ/(5 sin_u_obs)`` a RuntimeWarning (the floor
+converges from there). Checking only the field's band let steps of up to ``λ/(2 sin u)``
+through and the simulated floor came out 0.5–0.8 of its converged value (2026-11-09).
+Both numbers are returned as ``fine_step_um`` / ``intensity_nyquist_um``.
 
 ## ファミリ共通の入力契約(fail-closed)
 

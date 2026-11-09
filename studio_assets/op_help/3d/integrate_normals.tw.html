@@ -7,10 +7,14 @@
 <p>法線場 → 高度場 z,用 Frankot-Chellappa 積分。→ z HxW(常數項自由,以平均 0 為基準)。</p>
 <p>步驟:把法線 <code style="color:#22d3bf">(H,W,3)</code> 轉為梯度 <code style="color:#22d3bf">p = -nx/nz</code>、<code style="color:#22d3bf">q = -ny/nz</code>(<code style="color:#22d3bf">|nz| &lt; 1e-6</code> 的像素把 nz 替換為 ±1e-6 以避免除以零),在 FFT 域中求最小平方解 <code style="color:#22d3bf">Z(wx,wy) = (-j·wx·P - j·wy·Q) / (wx² + wy²)</code>(直流分量為 0),逆變換後減去平均值使其為 0。給出 <code style="color:#22d3bf">mask</code> (bool HxW) 時,先把 mask 外的梯度設為 0 再積分(該區域被當作平坦處理)。回傳值為 float64 的 <code style="color:#22d3bf">(H,W)</code>。</p>
 <p>注意事項:</p>
-<p style="margin:2px 0 2px 12px">• 由於假定週期邊界,邊緣會像影像上下、左右相連那樣發生畸變。</p>
+<p style="margin:2px 0 2px 12px">• 由於假定週期邊界,邊緣會像影像上下、左右相連那樣發生畸變(整體傾斜由下面的★補回)。</p>
 <p style="margin:2px 0 2px 12px">• 絕對高度無法確定(平均為 0)。以 1 像素的網格間距積分,因此 <code style="color:#22d3bf">z</code> 也是像素單位的高度,換算為實際尺寸需乘以像素間距。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nz ≈ 0</code>(輪廓附近、與視線平行的面)處梯度發散,波紋會擴散到周圍。請以 <code style="color:#22d3bf">mask</code> 排除或事先平滑法線。</p>
-<p>沒有輸入驗證(<code style="color:#22d3bf">(H,W,3)</code> 以外會在內部索引處失敗)。<code style="color:#22d3bf">surface_normals</code> 是其逆變換, 把 <code style="color:#22d3bf">photometric_stereo</code> 的法線傳到這裡即可得到形狀(高度場)。空輸入(<code style="color:#22d3bf">normals</code> 為 0 個元素)會引發 ValueError。</p>
+<p><code style="color:#22d3bf">surface_normals</code> 是其逆變換,把 <code style="color:#22d3bf">photometric_stereo</code> 的法線傳到這裡即可得到形狀(高度場)。空輸入(<code style="color:#22d3bf">normals</code> 為 0 個元素)會引發 ValueError。</p>
+<p>★整體傾斜(2026-11-09):週期邊界的 Frankot-Chellappa 把梯度的平均(直流)設為 0, 以前會把傾斜的平面還原成水平(傾斜 0.2 px/px → 恢復 0.0000、rms 5.5 px)。積分之後把平均梯度的一次項 <code style="color:#22d3bf">mean(p)·(x − x̄) + mean(q)·(y − ȳ)</code> 加回(平均取整個網格,包括 <code style="color:#22d3bf">mask</code> 外的 0)。傾斜平面嚴格恢復,平均梯度為 0 的面(加 mask 的球等)只會有捨入誤差級的變化。</p>
+<p>需要原始週期解時用 <code style="color:#22d3bf">integrate_gradients</code>。★補回的傾斜是<b>平均值</b>,因此對離群值很弱(獨立審查 2026-11-09):平坦面上只要有 20 個像素的法線朝同一方向大幅傾斜(nz 0.002,能通過 1e-3 的截斷),rms 誤差就從 10.7 變為 27.9 px(惡化 2.6 倍)。沿輪廓一側排列的傾斜法線在實際資料中很常見,請先以 <code style="color:#22d3bf">mask</code> 去掉再傳入。不改用中位數等穩健估計, 是因為在台階側壁這類由少數大梯度承擔真實傾斜的面上會遺失傾斜。</p>
+<p>另一個限制:傾斜是<b>量到的</b>法線的平均,照度差立體拍不到的台階側壁等不包括在內 —— 有台階的零件上補回的傾斜與真值的平均梯度不同(三維方式比較的 PoC 中為 −0.066〜−0.084, 真值 +0.0125 px/px)。</p>
+<p>★輸入的關卡:<code style="color:#22d3bf">(H,W,3)</code> 以外、非有限的法線(1 個 NaN 像素會經 FFT 使所有像素變為 NaN)引發 ValueError。<code style="color:#22d3bf">|nz| &lt; 1e-3</code>(梯度超過 1000,輪廓、與視線平行的面)的像素把梯度設為 0 並從積分中排除,並以 RuntimeWarning 告知個數(nz=0 的 1 個像素曾讓高度擺動 2.3e5 px)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

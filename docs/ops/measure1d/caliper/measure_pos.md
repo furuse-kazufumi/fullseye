@@ -29,6 +29,12 @@ version: 1.0.0  # fullseye lib version this note was generated for
 ``transition`` は "all" / "positive" / "negative"。
 
 空の入力(``image`` が 0 要素)は ValueError。
+★入力の門(2026-11-09): 非有限の画素(NaN/inf)を含む画像は ValueError(エッジの 1 画素先の
+NaN でエッジが黙って消え、遠くなら黙って通っていた)。``sigma < 0`` も ValueError
+(``sigma = 0`` は平滑化なし、負の値は黙って 0 と同じになっていた)。測定線の点
+(``rows``/``cols``)が画像の外 ``[-0.5, H-0.5] × [-0.5, W-0.5]`` に出ると RuntimeWarning
+(外は最近傍の外挿で、見えていない所を測っている)、全部が外なら ValueError(戻り値が
+list なので印は返せない)。正しい入力の結果は変わらない。
 
 ## 詳しい使い方ガイド
 

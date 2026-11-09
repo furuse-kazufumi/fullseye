@@ -41,6 +41,15 @@ total variance ``σ² = σ_line² + sigma²`` and a start pixel at offset ``δ``
 the error is ``−δ³ / (σ² − δ²)`` (≤ 0.125/σ² px for |δ| ≤ 0.5). Steger's condition
 ``sigma ≥ w/√3`` (w = the line's half-width) keeps the profile's second derivative single-signed.
 
+★Near the border (2026-11-09): the derivative filters extend the image by ``mode="nearest"``,
+which bends the profile across the line — and the estimated normal with it, so the test does
+not use the normal: every centre within ``3·sigma`` of any image border, and every centre
+outside the image, is returned with ``valid=False`` and ``near_border=True``. Before, such
+points were valid with errors of up to 1.43 px (σ_line 2, sigma 3, true row 2.2 → 0.774), and a
+first fix that looked at the estimated normal still let a 45° line through with 0.88 px (the
+border had turned its normal from 0.71 to 0.43). A horizontal line therefore loses its first and
+last ``3·sigma`` columns too; render or crop a margin when every column is needed.
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

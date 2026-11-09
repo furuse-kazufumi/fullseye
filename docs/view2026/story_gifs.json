@@ -33192,16 +33192,16 @@
             1600,
             1600
           ],
-          "bytes": 546207,
+          "bytes": 546173,
           "color_mad": [
-            0.8492,
+            0.8281,
             0.2389,
             0.0218,
-            0.0343,
+            0.0358,
             0.8082
           ],
-          "max_color_mad": 0.8492,
-          "source_sha256": "e3275abd447ecb753ef7fd29465ba3f7432343087bacdad70172bc9c38b22e95"
+          "max_color_mad": 0.8281,
+          "source_sha256": "05a428c5176279b1961eb8a6035f7199b6a2535b9a886d0a5b8de5f334ee3a5e"
         },
         "en": {
           "path": "articles/assets/poc/poc_3d_sensor_modalities/story.en.gif",
@@ -33268,16 +33268,16 @@
             1600,
             1600
           ],
-          "bytes": 546207,
+          "bytes": 546173,
           "color_mad": [
-            0.8492,
+            0.8281,
             0.2389,
             0.0218,
-            0.0343,
+            0.0358,
             0.8082
           ],
-          "max_color_mad": 0.8492,
-          "source_sha256": "8ac893afeddedd8970ae2834b16a71989cf1a7aa3cb5a116890bcaa139c4914f"
+          "max_color_mad": 0.8281,
+          "source_sha256": "a29eb869e4d1d12e69f5ca51217e6bae45635945b943d353c844b65387a0f683"
         }
       },
       "reason": null,

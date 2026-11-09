@@ -7,10 +7,13 @@
 <p>法線場 → 高さ場 z を Frankot-Chellappa 積分。→ z HxW(定数分の自由度あり・平均0基準)。</p>
 <p>手順: 法線 <code style="color:#22d3bf">(H,W,3)</code> を勾配 <code style="color:#22d3bf">p = -nx/nz</code>、<code style="color:#22d3bf">q = -ny/nz</code> に直し(<code style="color:#22d3bf">|nz| &lt; 1e-6</code> の画素は nz を ±1e-6 に置き換えて零割を避ける)、FFT 領域で最小二乗解 <code style="color:#22d3bf">Z(wx,wy) = (-j·wx·P - j·wy·Q) / (wx² + wy²)</code> を求め(直流成分は 0)、逆変換して平均を 0 に引く。<code style="color:#22d3bf">mask</code> (bool HxW) を与えると mask 外の勾配を 0 にしてから積分する(その領域は平坦として扱われる)。返り値は float64 の <code style="color:#22d3bf">(H,W)</code>。</p>
 <p>注意点:</p>
-<p style="margin:2px 0 2px 12px">• 周期境界を仮定するため、画像の上下・左右がつながるように端が歪む。</p>
+<p style="margin:2px 0 2px 12px">• 周期境界を仮定するため、画像の上下・左右がつながるように端が歪む(全体の傾きは下の★で戻す)。</p>
 <p style="margin:2px 0 2px 12px">• 絶対高さは決まらない(平均 0)。格子間隔 1 画素で積分するので <code style="color:#22d3bf">z</code> も画素単位の高さになり、実寸には画素ピッチを掛ける。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nz ≈ 0</code>(輪郭付近・視線に平行な面)は勾配が発散し、波打ちを周囲へ広げる。<code style="color:#22d3bf">mask</code> で除くか法線を事前に平滑する。</p>
-<p>入力検証は無い(<code style="color:#22d3bf">(H,W,3)</code> 以外は内部の添字で失敗)。<code style="color:#22d3bf">surface_normals</code> が逆変換で、<code style="color:#22d3bf">photometric_stereo</code> の法線をここへ渡すと形状(高さ場)が得られる。空の入力(<code style="color:#22d3bf">normals</code> が 0 要素)は ValueError。</p>
+<p><code style="color:#22d3bf">surface_normals</code> が逆変換で、<code style="color:#22d3bf">photometric_stereo</code> の法線をここへ渡すと形状(高さ場)が得られる。空の入力(<code style="color:#22d3bf">normals</code> が 0 要素)は ValueError。</p>
+<p>★全体の傾き(2026-11-09): 周期境界の Frankot-Chellappa は勾配の平均(直流)を 0 に落とし、傾いた平面を水平に戻していた(傾き 0.2 px/px → 復元 0.0000、rms 5.5 px)。積分の後に平均の勾配の一次の項 <code style="color:#22d3bf">mean(p)·(x − x̄) + mean(q)·(y − ȳ)</code> を足し戻す(平均は <code style="color:#22d3bf">mask</code> 外の 0 も含む格子全体)。傾いた平面は厳密に戻り、平均の勾配が 0 の面(マスクした球など)は丸め屑しか動かない。</p>
+<p>素の周期解が要るときは <code style="color:#22d3bf">integrate_gradients</code>。★足し戻す傾きは<b>平均</b>なので外れ値に弱い(独立レビュー 2026-11-09): 平らな面に、同じ向きに大きく傾いた法線(nz 0.002、1e-3 の切りは通る)が 20 画素あるだけで rms 誤差 10.7 → 27.9 px(2.6 倍悪化)。輪郭の片側に並ぶ斜めの法線は実データで普通に出るので、<code style="color:#22d3bf">mask</code> で外してから渡す。中央値などの頑健な推定に替えないのは、段差の壁のように「少数の大きな勾配」が正しい傾きを担う面で傾きを失うため。もう 1 つの限界: 傾きは<b>測れた法線</b>の平均で、照度差ステレオが撮れない段差の壁などは入らない —— 段差のある部品では足し戻した傾きが真値の平均勾配と違う(3-D 方式比べの PoC で −0.066〜−0.084 vs 真値 +0.0125 px/px)。</p>
+<p>★入力の門: <code style="color:#22d3bf">(H,W,3)</code> 以外・非有限の法線(NaN 1 画素で FFT が全画素を NaN にしていた)は ValueError。<code style="color:#22d3bf">|nz| &lt; 1e-3</code>(勾配が 1000 を超える、輪郭・視線に平行な面)の画素は勾配を 0 にして積分から外し、件数を RuntimeWarning で知らせる(nz=0 の 1 画素が高さを 2.3e5 px 振っていた)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

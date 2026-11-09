@@ -7,7 +7,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>測定線上のエッジ位置(サブピクセル)と振幅を抽出(measure_pos)。</p>
 <p>各エッジ: <code style="color:#22d3bf">pos</code>(サンプル index、矩形は始点からの px)/ <code style="color:#22d3bf">dist</code>(始点からの距離 [px])/ <code style="color:#22d3bf">row</code>, <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">amplitude</code>(符号つきグレー差)/ <code style="color:#22d3bf">polarity</code> (&quot;positive&quot; = 測定方向に明るくなる)。<code style="color:#22d3bf">threshold</code> は |amplitude| の下限、<code style="color:#22d3bf">transition</code> は &quot;all&quot; / &quot;positive&quot; / &quot;negative&quot;。</p>
-<p>空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。★入力の門(2026-11-09): 非有限の画素(NaN/inf)を含む画像は ValueError(エッジの 1 画素先の NaN でエッジが黙って消え、遠くなら黙って通っていた)。<code style="color:#22d3bf">sigma &lt; 0</code> も ValueError (<code style="color:#22d3bf">sigma = 0</code> は平滑化なし、負の値は黙って 0 と同じになっていた)。測定線の点(<code style="color:#22d3bf">rows</code>/<code style="color:#22d3bf">cols</code>)が画像の外 <code style="color:#22d3bf">[-0.5, H-0.5] × [-0.5, W-0.5]</code> に出ると RuntimeWarning (外は最近傍の外挿で、見えていない所を測っている)、全部が外なら ValueError(戻り値が list なので印は返せない)。正しい入力の結果は変わらない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
