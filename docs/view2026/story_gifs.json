@@ -18,7 +18,7 @@
   "crop_title_band_fraction": 0.12,
   "min_laplacian_density": 0.0005,
   "min_content_fraction": 0.36,
-  "manual_thumbnail_spec_count": 31,
+  "manual_thumbnail_spec_count": 32,
   "entries": {
     "poc_phase_measuring_deflectometry": {
       "representative": "03_photo_vs_pmd.png",
@@ -33295,9 +33295,9 @@
         "02_equipment_at_a_glance.png",
         "01_equipment_map.png",
         "03_same_part_six_lights.png",
-        "04_same_part_five_cameras.png",
         "05_s1_pod_curves.png",
-        "06_real_data_ladder.png"
+        "06_real_data_ladder.png",
+        "08_equipment_samples_square.png"
       ],
       "excluded_frames": [],
       "variants": {
@@ -33308,10 +33308,17 @@
               "file": "02_equipment_at_a_glance.png",
               "content_box": [
                 0,
-                50,
+                0,
                 720,
-                590
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_equipment_selection_map/08_equipment_samples_square.png",
+                "frame": null,
+                "crop": null,
+                "mode": "square",
+                "rendered": "view2026/thumbs/poc_equipment_selection_map.jpg"
+              }
             },
             {
               "file": "01_equipment_map.png",
@@ -33334,15 +33341,6 @@
               ]
             },
             {
-              "file": "04_same_part_five_cameras.png",
-              "content_box": [
-                0,
-                36,
-                720,
-                617
-              ]
-            },
-            {
               "file": "05_s1_pod_curves.png",
               "content_box": [
                 0,
@@ -33361,6 +33359,15 @@
               ],
               "contain_reason": "aspect_within_2_4",
               "source_aspect": 1.834459
+            },
+            {
+              "file": "08_equipment_samples_square.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
             }
           ],
           "frame_count": 6,
@@ -33372,17 +33379,17 @@
             1600,
             1600
           ],
-          "bytes": 744114,
+          "bytes": 805786,
           "color_mad": [
-            0.3366,
+            0.5111,
             0.7573,
             0.3598,
-            0.5288,
             0.0317,
-            0.0394
+            0.0394,
+            0.1151
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "fc27470ce5e3e4d0de572d1bc456c93a702fb0ddd110a918dd5ba375e0276fe2"
+          "source_sha256": "d17c9e3cfb0a4fdf213b918723bf00d8c83afdde43a8d2ae21e335ef871d7ad6"
         },
         "en": {
           "path": "articles/assets/poc/poc_equipment_selection_map/story.en.gif",
@@ -33391,10 +33398,17 @@
               "file": "02_equipment_at_a_glance.png",
               "content_box": [
                 0,
-                50,
+                0,
                 720,
-                590
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_equipment_selection_map/08_equipment_samples_square.png",
+                "frame": null,
+                "crop": null,
+                "mode": "square",
+                "rendered": "view2026/thumbs/poc_equipment_selection_map.jpg"
+              }
             },
             {
               "file": "01_equipment_map.png",
@@ -33417,15 +33431,6 @@
               ]
             },
             {
-              "file": "04_same_part_five_cameras.png",
-              "content_box": [
-                0,
-                36,
-                720,
-                617
-              ]
-            },
-            {
               "file": "05_s1_pod_curves.png",
               "content_box": [
                 0,
@@ -33444,6 +33449,15 @@
               ],
               "contain_reason": "aspect_within_2_4",
               "source_aspect": 1.834459
+            },
+            {
+              "file": "08_equipment_samples_square.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
             }
           ],
           "frame_count": 6,
@@ -33455,24 +33469,31 @@
             1600,
             1600
           ],
-          "bytes": 744114,
+          "bytes": 805786,
           "color_mad": [
-            0.3366,
+            0.5111,
             0.7573,
             0.3598,
-            0.5288,
             0.0317,
-            0.0394
+            0.0394,
+            0.1151
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "c5b606f5f9b1c7f312454776833f804c8ab24ce12ee9cd25ac2064a57a4fd674"
+          "source_sha256": "f5e341cf4b352ca5edc0f8621ab2652fb618a663eedcffd7f57689b390196f51"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_equipment_selection_map/08_equipment_samples_square.png",
+        "frame": null,
+        "crop": null,
+        "mode": "square",
+        "rendered": "view2026/thumbs/poc_equipment_selection_map.jpg"
       },
       "reason": null,
       "cover": "02_equipment_at_a_glance.png",
       "still": "articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png",
       "alt": {
-        "ja": "ViEW の入口用: 題材ごとに、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(中央値と最小〜最大。どの種の組でも見つかるものだけ、無ければ「見つからない」)と、題材の最良の組で撮った見本。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げた)。",
+        "ja": "ViEW の入口用: 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大。どの組でも見つかるものだけ)。見つからない照明は灰色の斜線の全長の棒、種の組で揺れる照明は破線の全長の棒。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げ、倍率は見本の下に書いた。PE 片は分光の 1210 nm の帯を両隣で割った吸収の深さ)。凹みの見本は 80 倍に広げて判定の大きさでならしたので、実際よりはっきり見える(雑音なしの陰影は最大 0.8 %)。",
         "en": "Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread"
       }
     }

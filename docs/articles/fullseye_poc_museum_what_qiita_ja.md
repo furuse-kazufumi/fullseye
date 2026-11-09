@@ -24,7 +24,7 @@
 
 *↑ **1 次元バーコードが読めなくなる境界 ―― 誤読と読み取り不能を分けて数える** ―― 自作の簡易符号(実在規格ではない)を 4 通りに壊し、成功 / 誤読 / 読み取り不能を分けて数えた図。壊れ始めてからの 384 枚で、構造を検査する厳格デコーダは誤読 7.3 %、必ず 9 桁返す寛容デコーダは誤読 46.1 % ―― 成功率は寛容のほうが高い(47.7 % 対 40.1 %)。傾きの崖は幾何だけで決まり(予測 15.95 度)、実測は 15 度と 16 度のあいだ。*
 
-[![小さい汚れは行が「読めてしまう」ので誤った票を投じる。大きい汚れは棄権するので多数決が効く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_barcode_1d/02_smudge_nonmonotone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_barcode_1d/02_smudge_nonmonotone.png)
+[![小さい汚れは行が「読めてしまう」ので誤った票を投じる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_barcode_1d/02_smudge_nonmonotone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_barcode_1d/02_smudge_nonmonotone.png)
 
 *↑ 測定の図 ―― 小さい汚れは行が「読めてしまう」ので誤った票を投じる。大きい汚れは棄権するので多数決が効く。*
 
@@ -56,7 +56,7 @@ py -3.11 examples/poc_barcode_1d.py
 
 用語: Bruggeman — 多孔質媒体の有効輸送特性を空隙率のべき乗で近似する関係で、電極では屈曲度や有効拡散係数の基準式として使われる。
 
-[![左: 上端 1 / 下端 0 の濃度場。等濃度線が固相を避けて曲がる分が遠回り。右: bond ごとの散逸(明るいほど流れが集中している = 首)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/02_map_transport_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/02_map_transport.png)
+[![左: 上端 1 / 下端 0 の濃度場。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/02_map_transport_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/02_map_transport.png)
 
 *↑ 測定の図 ―― 左: 上端 1 / 下端 0 の濃度場。等濃度線が固相を避けて曲がる分が遠回り。右: bond ごとの散逸(明るいほど流れが集中している = 首)。*
 
@@ -94,7 +94,7 @@ py -3.11 examples/poc_battery_electrode_tortuosity.py
 
 *↑ **合成軸受信号の7段階SNR掃引 ―― 生スペクトルと包絡線の検出率** ―― 閉形式BPFO 104.556 Hzの合成衝撃列を7段階SNR、各10 seedで評価した。10/10だった最小試験点は生-0.9 dB、包絡線-18.4 dBだが、経験的境界であり検出限界ではない。10/10でも母検出率の片側95%下限は74.1%。独立null 20本で誤警報0/20、片側95%上限13.9%。*
 
-[![どちらも最悪条件では 0 に落ちる。包絡線は万能ではなく、崖が悪い SNR 側へ動くだけ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/02_detection_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/02_detection_sweep.png)
+[![どちらも最悪条件では 0 に落ちる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/02_detection_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/02_detection_sweep.png)
 
 *↑ 測定の図 ―― どちらも最悪条件では 0 に落ちる。包絡線は万能ではなく、崖が悪い SNR 側へ動くだけ。*
 
@@ -120,11 +120,11 @@ py -3.11 examples/poc_bearing_diagnosis.py
 
 *↑ **2-D対称性の自己参照検査 ―― 正解画像なしで欠陥だけを残す** ―― 対称模様と線形照明むらを持つ部品へ非対称欠陥を1個入れ、推定軸で鏡映した自身との差を取った。一次面を除いた差分は欠陥領域で平均0.193、模様・照明領域で1.5e-15。片側を欠いた円板の中心誤差はエッジ対0.231 px、面積重心3.171 pxだが、欠け無しでは重心の方が精密だった。回転次数はn=2,3,4,6と雑音・ぼけ3条件の12/12で正答した。*
 
-[![片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/02_center_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/02_center_tradeoff.png)
+[![片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/02_center_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/02_center_tradeoff.png)
 
 *↑ 測定の図 ―― 片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。*
 
-[![n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 p](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise.png)
+[![n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise 0.000 で低下（1未満 27 格子）。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise.png)
 
 *↑ n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise 0.000 で低下（1未満 27 格子）。*
 
@@ -188,7 +188,7 @@ py -3.11 examples/poc_bump_coplanarity.py
 
 *↑ **コンクリートのひび割れ幅 ―― 数える幅と積分する幅、画素を粗くして実写で比べる** ―― 公開のコンクリートひび割れ写真(Özgenel、Mendeley Data、CC BY 4.0)を 4 倍粗い画素で撮り直した図。橙は 2 値化のマスク。159 枚で幅の比の中央値は積分法 1.13 倍、2 値化 1.44 倍だが、四分位は0.97〜1.44 と 1.22〜1.78 で重なる。*
 
-[![2 値化の 2 本は階段。0.20 mm(1 px)以下ではマスクが空になり 0(= 未検出)へ落ちる。積分法は 0.05 mm (0.25 px)まで直線 y=x に乗る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/01_width_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/01_width_sweep.png)
+[![2 値化の 2 本は階段。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/01_width_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/01_width_sweep.png)
 
 *↑ 測定の図 ―― 2 値化の 2 本は階段。0.20 mm(1 px)以下ではマスクが空になり 0(= 未検出)へ落ちる。積分法は 0.05 mm (0.25 px)まで直線 y=x に乗る。*
 
@@ -204,7 +204,7 @@ py -3.11 examples/poc_bump_coplanarity.py
 
 *↑ 中央値は k=4 で積分法のほうが 1 に近いが、四分位は重なり、k=3 では差 0.03。*
 
-[![緑はひびの中心ではなく片側の縁に寄りやすく、地や別のひびへ飛ぶ列もある(断面の最大が経路から 3 px より外の断面は 1 枚あたり中央値 18 %、経路が断面の半値幅の区間の外に出る断面は 9 %)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/07_real_crack_samples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/07_real_crack_samples.png)
+[![緑はひびの中心ではなく片側の縁に寄りやすく、地や別のひびへ飛ぶ列もある(断面の最大が経路から 3 px より外の断面は 1 枚あたり中央値 18 %、経路が断面の半値幅の区間の外に出る断面は 9 %)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/07_real_crack_samples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/07_real_crack_samples.png)
 
 *↑ 緑はひびの中心ではなく片側の縁に寄りやすく、地や別のひびへ飛ぶ列もある(断面の最大が経路から 3 px より外の断面は 1 枚あたり中央値 18 %、経路が断面の半値幅の区間の外に出る断面は 9 %)。*
 
@@ -304,7 +304,7 @@ py -3.11 examples/poc_leak_localization.py
 
 *↑ **熱・振動・形状を束ねる設備保全 —— 3 つ見ても、同じものを 3 回見ていることがある** ―― 回転機械の 6 状態(正常・芯ずれ・アンバランス・軸受外輪傷・潤滑不良・ゆるみ)を、欠陥周波数の閉形式・板の定常フィン方程式の厳密解・仕込んだ芯ずれ量から作り、3 センサで識別します。基準条件の融合は 100.0 % ですが振動のみでも 100.0 % —— 熱も形状も 1 ポイントも足しません。芯ずれは振動・熱・形状のどれ 1 個でも 100.0 %(真値の重症度との相関 0.843 / 0.841 / 0.978 で、3 つは同じ数字の別の顔)。逆に熱だけでは 正常・アンバランス・ゆるみ が互いの中で 48/48 回まわり、振動を抜くと 100.0 % → 50.0 % / 31.2 % に落ちます。融合が効くのは振動が壊れてからで、雑音 σ=1.6 で 45.8 % → 78.1 %。崖は特徴 1 個の上で予測しました: 0.5X の次数ビンは T>2/f_r=68.6 ms(実測 50→70 ms の段で d' 2.45→4.32)、熱の広がりは半値直径 66 mm(実測 64 mm から崩れ 96 mm で d' 0.00)。側帯波は 1/T<FTF=86.1 ms と予測して外し、読み取り窓 1.2/FTF=103 ms が正しい条件でした。*
 
-[![軸受外輪傷は狭く熱く、潤滑不良は広く熱い。最高温度だけ見ると同じ顔になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_machine_condition_fusion/02_thermal_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_machine_condition_fusion/02_thermal_maps.png)
+[![軸受外輪傷は狭く熱く、潤滑不良は広く熱い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_machine_condition_fusion/02_thermal_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_machine_condition_fusion/02_thermal_maps.png)
 
 *↑ 測定の図 ―― 軸受外輪傷は狭く熱く、潤滑不良は広く熱い。最高温度だけ見ると同じ顔になる。*
 
@@ -342,7 +342,7 @@ QR と同型のレイアウトに乱数ビットを置いた符号(誤り訂正�
 
 *↑ **2 値マトリクスコードを読む ―― 先に死ぬのはいつも幾何** ―― QR と同型のレイアウトに乱数ビットを置いた符号(誤り訂正なし)を、ぼけ・傾き・遮蔽で壊してビット誤り率を数えた図。ゼロ点は当てずっぽうの 0.5 に張り付き(0.526 / 0.507)、読める側は 0.0000。崖は傾き 78 度、位置検出パターンの遮蔽 2 モジュール ―― 真のホモグラフィを渡した条件と並べると、先に落ちるのはいつも定位。*
 
-[![自力検出の線は sigma/m 0.50 を最後に途切れる(0.60 では位置検出パターンが見つからない)。標本化はそこでまだ BER 0.07 で読めている。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_matrix_code_reading/02_blur_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_matrix_code_reading/02_blur_cliff.png)
+[![自力検出の線は sigma/m 0.50 を最後に途切れる(0.60 では位置検出パターンが見つからない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_matrix_code_reading/02_blur_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_matrix_code_reading/02_blur_cliff.png)
 
 *↑ 測定の図 ―― 自力検出の線は sigma/m 0.50 を最後に途切れる(0.60 では位置検出パターンが見つからない)。標本化はそこでまだ BER 0.07 で読めている。*
 
@@ -374,7 +374,7 @@ py -3.11 examples/poc_matrix_code_reading.py
 
 用語: Moiré — 周期や向きがわずかに異なる二つの模様を重ねたとき、差の空間周波数として現れる長周期の縞。
 
-[![σ≈8 px で漏れと減衰が釣り合う。合計だけ見ると「良い測り方」に見える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_screen/01_failure_split_plot_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_screen/01_failure_split_plot.png)
+[![σ≈8 px で漏れと減衰が釣り合う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_screen/01_failure_split_plot_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_screen/01_failure_split_plot.png)
 
 *↑ 測定の図 ―― σ≈8 px で漏れと減衰が釣り合う。合計だけ見ると「良い測り方」に見える。*
 
@@ -404,7 +404,7 @@ py -3.11 examples/poc_moire_screen.py
 
 *↑ **印刷の版ずれを刷り上がりから測る ―― 網点は格子なので、答えは 1 つに決まらない** ―― オフセット・ラベル印刷の**版ずれ**を刷り上がりから測る。CMYK 4 版に慣行のスクリーン角(C 15°/M 75°/Y 0°/K 45°、133 lpi、1200 dpi でピッチ 9.02 px)と既知のずれを仕込んだ図。★★**網点は格子なので、相関で出るのは版ずれ d ではなく d mod Λ_θ** —— 軸方向で |d| ≤ p/2 = 4.51 px、対角で p/√2 = 6.38 px を超えると折り返す。これは測る前に閉形式で書けて、4 版 × 37 点 = 148 点のうち**144 点で予測と実測の差が 0.1096 px 以内**。残り 4 点は基本セルの境界のタイ(セル余裕 ≤ 0.165 px)で、格子で簡約した残差なら全点が合う —— **推定器は間違えておらず、格子で等価な答えのどれかを返している**(独立な 2 つの推定器が同じ折り返しをする)。★★効き方が具体的に効く: 真値 9.64 px は公差 2.0 px の 4.8 倍なのに、スクリーン角の違いだけで版ごとに 1.09〜3.32 px に見え、**4 版中 2 版が「合格」に見える** —— 同じ紙が同じだけずれた結果。★ゼロ点(インク重心)は折り返さない代わりに**縮尺が狂う**。傾きは閉形式 k = 1-β(β = 下地だけのインク量 ÷ 実際のインク量)で予測 0.3983 に対し実測 0.3711(差 0.0272)。★予測していなかったものが出た: 直線からの外れ 0.9864 px は網点ピッチ周期のさざ波で、**窓の縁で網点の列が出入りする**ため —— テーパ窓の対照群で 0.0048 px に落ちて原因が確定した。★対照群 (a): FM(確率)スクリーンに替えるだけで誤差は全域で最大 0.0029 px、折り返しゼロ。**崖の原因は推定器ではなく AM 網点の周期性**(代償はコントラスト 0.91 倍)。★対照群 (b): レジストマークを含む窓は当たる(0.0823 px)が、紙の伸び 0.600 %・版の傾き 0.120° があると誤差は距離に比例し(0.006319 px/px)、公差を超えるのは**予測 316.5 px / 実測 322.5 px** から —— 紙の 44 % が公差外。★★物差しを 2 つ置くと勝者が入れ替わる: 精度 1 位は素の相関 0.0071 px なのに判定一致率は 67.6 % で最下位、低域通過は判定 89.2 % でも精度が 94 倍悪い。**鈍い方で代表元を選び、鋭い方で詰める二段**なら両方勝つ(0.0071 px / 94.6 %)。成立条件「粗の誤差 < 基本セルの半径 4.511 px」も実測で確かめ、**二段が壊れた 2 点はすべて粗の誤差がその半径を超えた点**だった。絵柄をベタに寄せると 6 点中 3 点で丸ごと 1 格子跳ぶ。★合成器そのものが罠だった: 1200 dpi / 150 lpi(ピッチがちょうど 8.00 px)だと**全網点の標本位相が揃う**ので0.5 px ずらすたびに重心が 1.4 px 跳ねる。133 lpi にして解消した —— **整数比を避けるのが本質**で、スーパーサンプリングでは直らない。★★用途外の op を当てたら自信満々で外した: `fs.frame_align` は `inlier_ratio` **1.00** / `rms_px` 0.645 を返しながら真値 (0.00, +1.30) に対して **80.85 px** 外す(しかもその答えは網点格子のベクトルですらない = 折り返しとは別種の失敗)。**この PoC の指摘で op 側を直した** —— docstring に「繰り返し構造には使えない」を測った数字つきで書き、投票の**2 番手の山 / 1 番手**を `vote_margin` として返すようにした。賛成率はどちらの場合も 1.00 だが、`vote_margin` は網点 **1.000** / 星野 **0.143** で区別できる。*
 
-[![スクリーン角が違うので格子の向きが違う。ピッチはどれも 9.02 px。同じ物理的なずれでも、この格子の違いが「見かけのずれ」を版ごとに変える(5 節)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_registration/01_plates_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_registration/01_plates.png)
+[![スクリーン角が違うので格子の向きが違う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_registration/01_plates_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_registration/01_plates.png)
 
 *↑ 測定の図 ―― スクリーン角が違うので格子の向きが違う。ピッチはどれも 9.02 px。同じ物理的なずれでも、この格子の違いが「見かけのずれ」を版ごとに変える(5 節)*
 
@@ -442,11 +442,11 @@ py -3.11 examples/poc_print_registration.py
 
 *↑ **薄い欠陥はどこまで見えるか —— 実写の地に真値を仕込んで検出限界を測る** ―― 「うちのラインでどこまで薄い傷が見えるか」を見積もるとき、いちばん普通のやり方は**平らな地に白色雑音を載せた合成画像**で限界を測ることだ。その見積もりがどれだけ甘いかを、真値を厳密に持ったまま実写で測る。地は CC0 の実写テクスチャ 3 種(brick / grass / gravel)、仕込むのは**位置・大きさ・振幅が既知のガウシアン欠陥**。比較相手は **検出器が実際に見る残差 σ を実写に揃えた**合成の地 —— 「雑音の量」を同じにしてから、構造の効果だけを取り出す。判定は「仕込んだ位置が応答の最大点になる最小の振幅」で、閾値を使わないので op 側の正規化に左右されない。★★**雑音を揃えても実写の限界は 2.03〜3.47 倍高い**。限界を決めているのは雑音ではなく**地の構造**だった。背景窓 3 通り × 欠陥 σ 2 通り × 地 3 種の **18 通り全部**で比は 1 を超え(1.72〜4.56)、整合フィルタと `laplace_of_gauss` という独立な 2 つの検出器でも残る。★**予測を外した**: 「欠陥が大きいほど差が開く」と書こうとしたが、それは**振幅の刻みが作った差**だった —— 34 段では σ=1.5 と σ=3.0 が別の格子点に丸まって差が見えるが、60 段にすると両方 3.30 倍で消える。刻みもノブである。★★**「実写だから場所で変わる」も誤り**。場所による限界の散らばりは brick が 16.8 倍と突出する一方、grass 2.4 倍・gravel 3.3 倍は**σ を揃えた合成の 3.3 倍と区別がつかない**。散らばりを生むのは「実写であること」ではなく**目地という構造**。★★そして**ゼロ点**(背景を引かず、生の画素の最大点を取るだけ)が、**「当てる」という 1 つの物差しでは整合フィルタに勝つ**(0.65〜0.90 倍で先に当てる。整合フィルタは地の構造も一緒に増幅するので損をする)。無欠陥面での空振りも brick では 0 対 0 の引き分けだった。分かれるのは**照明が 2 % ずれた瞬間**で、ゼロ点は 1 万画素あたり 10.3 回鳴り、整合フィルタは 0.0 回のまま —— 生の画素の閾値は明るさの絶対値だからだ。**当てる力・空振り・ずれへの強さを別々に数えないと、役に立たない検出器を勝たせられる。***
 
-[![同じ欠陥を振幅 0.02 から 1.20 まで上げていく。左=実写の brick、右=**残差 σ を揃えた**合成の地。雑音の量は同じなのに、右のほうが先に見えてくる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/02_defect_floor_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/02_defect_floor_sweep.gif)
+[![同じ欠陥を振幅 0.02 から 1.20 まで上げていく。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/02_defect_floor_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/02_defect_floor_sweep.gif)
 
 *↑ 測定の図 ―― 同じ欠陥を振幅 0.02 から 1.20 まで上げていく。左=実写の brick、右=**残差 σ を揃えた**合成の地。雑音の量は同じなのに、右のほうが先に見えてくる。*
 
-[![同じ欠陥を実写 brick と残差 σ を揃えた合成の地へ仕込み、整合フィルタの応答が 99.99 % 閾値を越えるまでを示す。検出限界は brick 0.475、合成 0.137、閾値は 0.836 / 0.275。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/03_defect_floor_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/03_defect_floor_explained.gif)
+[![同じ欠陥を実写 brick と残差 σ を揃えた合成の地へ仕込み、整合フィルタの応答が 99.99 % 閾値を越えるまでを示す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/03_defect_floor_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/03_defect_floor_explained.gif)
 
 *↑ 動く図 ―― 同じ欠陥を実写 brick と残差 σ を揃えた合成の地へ仕込み、整合フィルタの応答が 99.99 % 閾値を越えるまでを示す。検出限界は brick 0.475、合成 0.137、閾値は 0.836 / 0.275。*
 
@@ -538,7 +538,7 @@ py -3.11 examples/poc_recycling_sorting.py
 
 *↑ **太陽電池セルの EL 実画像の暗部を I-V の出力低下で採点する ―― 遮光マスクでは追い、全体が暗くなる欠陥では追わない** ―― 公開の EL 実画像 SIPV-EL(Zenodo 14439369、CC BY 4.0)。上はセル表面に遮光マスク(中央の大円)を置いたセル、下は「その他の欠陥」と推定される S7 のうち、出力低下が S7 の中央値 8.9 % に最も近いセル。橙は大域しきい値の暗画素、青は格子の細い成分を割った暗部。遮光マスクでは両方とも暗部の面積が出力低下を追うが、下のセルではゼロ点が暗部を +50 pt と数え、格子を割る経路は +1 pt で過小に言う。*
 
-[![単位は % of セル面積。暗画素の 41 % はフィンガーとバスバー、35 % は結晶粒とビネッティング。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map.png)
+[![単位は % of セル面積。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map.png)
 
 *↑ 測定の図 ―― 単位は % of セル面積。暗画素の 41 % はフィンガーとバスバー、35 % は結晶粒とビネッティング。*
 
@@ -578,7 +578,7 @@ py -3.11 examples/poc_solar_el_inspection.py
 
 用語: GGX — 粗い鏡面を微小面の法線分布で表す反射モデルで、長い裾を持つTrowbridge–Reitz分布を使う。
 
-[![鏡面なら窓の端が階段になる。傾き 40° を超えるとどのリングも届かない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solder_fillet_aoi/01_ring_lut_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solder_fillet_aoi/01_ring_lut.png)
+[![鏡面なら窓の端が階段になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solder_fillet_aoi/01_ring_lut_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solder_fillet_aoi/01_ring_lut.png)
 
 *↑ 測定の図 ―― 鏡面なら窓の端が階段になる。傾き 40° を超えるとどのリングも届かない。*
 
@@ -648,7 +648,7 @@ py -3.11 examples/poc_spc.py
 
 *↑ **どのセンサーも正常値なのに、設備は異常 ―― MT 法が単変量 3σ の見逃しを拾う量** ―― 設備保全 PoC(振動・熱・形状の 3 センサ、20 特徴量)の健全 48 本を MT 法(マハラノビス・タグチ)の単位空間にし、健全の別標本 32 本で「単変量 max|z|」と「MD」の閾値を両方とも誤警報 0 に揃えて比べた図。健全な設備では特徴量どうしが強く相関する(継手温度と全体温度で ρ=0.999)ので、相関が壊れた標本は各特徴量が正常範囲のままでも距離では遠い。単変量が『全特徴量とも正常範囲』と言った 169 標本のうち MT 法は 79 本(47 %)を異常と言う。散布図の左上(単変量の閾値より左・MT の閾値より上)がその領域。恒等式は 2 つ: 単位空間の MD² 平均 = (N−1)/N(ddof=1 の定義から厳密)、2 特徴で点 (+z, −z) の MD² = z²/(1−ρ)(閉形式)。慣習の |z|>3 は 20 特徴では偶然に 12.5 % 鳴る。軽い故障は正常(0)と故障(1)の線形内挿 ―― 元 PoC の「重症度 × 故障値」は軽い側で正常より静かで冷たい別の異常になり、検出率が重症度に単調でなかった。素材は合成で、この割合はこの相関構造の上界。*
 
-[![芯ずれ。差が最大なのは重症度 0.05 で、単変量 25.0 % に対し MT 法 100.0 %。重症度 0.50 以上は両方式とも 100 %。閾値は健全の別標本 32 本で両方式とも誤警報 0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mt_hidden_fault/02_mt_vs_univariate_misalignment_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mt_hidden_fault/02_mt_vs_univariate_misalignment.png)
+[![芯ずれ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mt_hidden_fault/02_mt_vs_univariate_misalignment_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mt_hidden_fault/02_mt_vs_univariate_misalignment.png)
 
 *↑ 測定の図 ―― 芯ずれ。差が最大なのは重症度 0.05 で、単変量 25.0 % に対し MT 法 100.0 %。重症度 0.50 以上は両方式とも 100 %。閾値は健全の別標本 32 本で両方式とも誤警報 0。*
 
@@ -688,7 +688,7 @@ fullseye は OCR の前処理までで止まり「どこに文字があるか」
 
 用語: OCR — 画像に写った文字を切り出して字種に分類し、文字列として読み取る処理。
 
-[![真値は描いたインク画素。再現率 = インクのうち候補矩形に入った割合。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin.png)
+[![真値は描いたインク画素。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin.png)
 
 *↑ 測定の図 ―― 真値は描いたインク画素。再現率 = インクのうち候補矩形に入った割合。*
 
@@ -714,7 +714,7 @@ py -3.11 examples/poc_text_region_truth.py
 
 *↑ **カメラの熱ドリフトが寸法計測に効く量** ―― 温度 ΔT で焦点距離・架台・主点が漂うカメラで一辺 40 mm のワークを測り、誤差を半径の 1 次式 a + b·R に分けた図。ΔT = 15 K で定数項 a = +224.5 ppm(片方だけ動かした対照条件 +225.3 ppm)。雑音の床(25 枚平均で 23 ppm)を超えるのは ΔT = 1.6 K から ―― それ以下では「温度の影響は見えない」が正しい報告。*
 
-[![焦点距離ドリフトは R に依らない。主点ドリフトは R に比例(歪みを外す中心がずれるため)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_drift_metrology/01_separate_drifts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_drift_metrology/01_separate_drifts.png)
+[![焦点距離ドリフトは R に依らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_drift_metrology/01_separate_drifts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_drift_metrology/01_separate_drifts.png)
 
 *↑ 測定の図 ―― 焦点距離ドリフトは R に依らない。主点ドリフトは R に比例(歪みを外す中心がずれるため)。*
 
@@ -778,7 +778,7 @@ py -3.11 examples/poc_veiling_glare.py
 
 用語: DSNU — 光を遮ったときの平均信号が画素ごとに異なる、画像センサの固定的な暗信号むら。; PRNU — 同じ光を当てても画素ごとに感度が異なる、画像センサの空間的な応答むら。; EMVA 1288 — 産業用画像センサの感度・雑音・飽和・不均一性などを、共通の測定手順と量で表す標準。
 
-[![拒否 = η > 1 で絶対感度しきい値(式 26)の op が拒んだ。DSNU・PRNU は照明が一様なので高域フィルタなし。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/02_datasheet_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/02_datasheet_numbers.png)
+[![拒否 = η > 1 で絶対感度しきい値(式 26)の op が拒んだ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/02_datasheet_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/02_datasheet_numbers.png)
 
 *↑ 測定の図 ―― 拒否 = η > 1 で絶対感度しきい値(式 26)の op が拒んだ。DSNU・PRNU は照明が一様なので高域フィルタなし。*
 
@@ -850,7 +850,7 @@ py -3.11 examples/poc_web_roll_periodicity.py
 
 *↑ **レーザー三角測量の断面から溶接ビードを測る ―― 測れなかったところを 0 と書く罪** ―― 輝線 1 本の行位置から断面 h(x) を戻し、余盛高さ・幅・アンダーカットを読む図。ゼロ点(各列の最大値の行)に対し重心は 9.3 倍良く、雑音ゼロなら対数放物線は機械精度(素の放物線と 12 桁差)なのに、雑音 1 % では 0.00272 対 0.00260 mm で区別がつかない。スパッタ 5 点で 3 種の推定量がそろって 0.11 mm(40 倍)へ壊れる ―― 効くのは精緻化ではなく、どのピークを選ぶか。代表の図は同じビードを実物らしい輝線で撮り直した合成の画像(描画の種 5 の 1 枚。1296 × 320 px、1 px = 13.9 µm、1/e² 半幅 60 µm の細い光条に、スペックル・右の斜面の鏡面反射で芯の一部が飽和する所・2 次反射の偽の線・尾を引くスパッタ・影・光子雑音・10 bit): 照らされた列の高さの誤差は RMS 21.8 µm で、Dorsch の閉形式の床 18.3 µm(光条の幅で平均)と 1 列だけの床 38.0 µm の間。いちばん明るい山だけを取ると 14 列が 2 次反射の偽の線に乗り、隣の列との連続性で選べば 0 列(この種の値)。スペックルの暗い粒による 8 列未満の脱落 27 列は補間して測れたと数え、それより長い欠けだけを未測定とした。影に入った左つま先を 0 で埋めると左のアンダーカットは 0.000 mm(真値 0.450)で「健全」になる。答えない方針は左の 3 量を返さないが、返した右のアンダーカットは 0.286 mm(真値 0.250)で、スペックルの偏りは止まらない。描画の種(スペックル・スパッタ・雑音)を 12 本振ると、連続性で選んでも偽の線に乗る列は 0〜2 列(12 本中 7 本で 0 列。明るい山だけなら 0〜16 列)、照らされた列の RMS は中央値 22.9 µm(12 本中 11 本が 2 つの床の間)、答えない方針は 12 本とも左の 3 量を返さず、返した右のアンダーカットは 12 本とも深く出て +14〜+129 µm(中央値 +45 µm)。★限界: 12 本中 5 本では影に落ちたスパッタを輝線と拾い、そのうち 2 本では 0 で埋めた左のアンダーカットが「健全」でなく嘘の深さになる。*
 
-[![row = r0 + K·h なので、**下にあるほど高い** ——ビードは画像では下に凸に見える。遮蔽 60 度では左つま先の輝線が消えている。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images.png)
+[![row = r0 + K·h なので、**下にあるほど高い** ——ビードは画像では下に凸に見える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images.png)
 
 *↑ 測定の図 ―― row = r0 + K·h なので、**下にあるほど高い** ——ビードは画像では下に凸に見える。遮蔽 60 度では左つま先の輝線が消えている。*
 
@@ -922,7 +922,7 @@ py -3.11 examples/poc_weld_bead_scan_angle.py
 
 *↑ **画像の誤字を認識せずに見つけて直す ―― 閾値は書体の違いから導く** ―― 正しい文字列を入力で貰えるので、6000 通りの多クラス分類は要らず、各マスを指定の 1 字と比べるだけで済む。閾値は勘で置かず、同じ字を別の書体で描いたときの距離の 95 % 点(0.058)から導いた。距離は平均でなく 99 パーセンタイル ―― 取り違えは部首を共有したまま一部だけ入れ替わるので、平均では 検 と 横 の距離が 0.0171 と書体雑音の床より下に沈み、原理的に検出できない。合成した掲示では壊した 4 字を全部検出して誤検出ゼロ、置換後の距離は 0.0805 から 0.0325 に下がり 4 字とも床を下回った。*
 
-[![床を超えたマスが誤字。壊した位置は 2, 3, 5, 7。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_glyph_typo_detection/02_cell_distance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_glyph_typo_detection/02_cell_distance.png)
+[![床を超えたマスが誤字。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_glyph_typo_detection/02_cell_distance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_glyph_typo_detection/02_cell_distance.png)
 
 *↑ 測定の図 ―― 床を超えたマスが誤字。壊した位置は 2, 3, 5, 7。*
 
@@ -944,11 +944,11 @@ py -3.11 examples/poc_glyph_typo_detection.py
 
 *↑ **3D プリンタの層検査 ―― 形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる** ―― 3D プリンタのデータは「形(メッシュ)→ 層(スライス)→ 経路(G-code)→ 印刷中の層画像」と流れる。新族 printpath(11 op、numpy + 標準ライブラリ、新語なし)でこの往復が既存の語彙(mesh / voxel / table / image2d)だけで閉じるので、真値を自分で仕込める。角穴つきの箱と歯車状の柱(穴つき)を 0.2 mm で切った層マスクの面積は閉形式の真値と一致(184.00 mm² と 0.07 %)、穴だけが残る層は空(三角形の法線で輪郭に向きを付けて nonzero winding)、輪郭を周回する G-code の押し出し量は「周長 × 線幅 × 層厚 / フィラメント断面積」と厳密一致、G-code は読み書きで往復(相対座標・相対 E・リトラクト・G92・インチも読み、円弧と座標の欠けは拒む)、3MF も往復。層検査: 期待の層画像(gcode_layer_image)に欠け 6 か所・はみ出し 6 か所(1〜4 mm)を注入した観測を print_layer_defect_map が符号つきで捕まえ、許容 3 px(0.3 mm)で再現率 0.959・偽陽性 0。カメラを 0.2 mm ずらすと再現率 0.895・精度 0.946 に落ちる(ずれの分だけ欠陥の縁を許容に食われる)—— 許容を振った曲線をそのまま出した。*
 
-[![gear-like boss with a round hole sliced at 0.2 mm into 30 layer masks (mesh_slice_stack) and rendered as a solid, grey =](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/01_slice_stack_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/01_slice_stack.png)
+[![gear-like boss with a round hole sliced at 0.2 mm into 30 layer masks (mesh_slice_stack) and rendered as a solid, grey =…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/01_slice_stack_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/01_slice_stack.png)
 
 *↑ 測定の図 ―― gear-like boss with a round hole sliced at 0.2 mm into 30 layer masks (mesh_slice_stack) and rendered as a solid, grey = height*
 
-[![precision and recall of the defect map against the injected truth as the tolerance grows, without an](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/03_tolerance_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/03_tolerance_curve.png)
+[![precision and recall of the defect map against the injected truth as the tolerance grows, without and with a 0.2 mm camera shift: a small tolerance ab…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/03_tolerance_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/03_tolerance_curve.png)
 
 *↑ precision and recall of the defect map against the injected truth as the tolerance grows, without and with a 0.2 mm camera shift: a small tolerance ab…*
 
@@ -982,7 +982,7 @@ py -3.11 examples/poc_print_layer_inspection.py
 
 *↑ 同じ 12 台の計画を、遅れの確率ごとに 200 通り走らせたデッドロックの割合。*
 
-[![優先度付き計画が、どちらを先にしても解けない問題(CBS の総コスト 9)。CBS は片方に道を譲らせて解く](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/04_agv_prioritized_counterexample.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/04_agv_prioritized_counterexample.gif)
+[![優先度付き計画が、どちらを先にしても解けない問題(CBS の総コスト 9)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/04_agv_prioritized_counterexample.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/04_agv_prioritized_counterexample.gif)
 
 *↑ 動く図 ―― 優先度付き計画が、どちらを先にしても解けない問題(CBS の総コスト 9)。CBS は片方に道を譲らせて解く*
 
@@ -1006,7 +1006,7 @@ py -3.11 examples/poc_agv_fleet.py
 
 用語: SAM — 集束した超音波を試料上で走査し、反射波の振幅・位相・到達時間から内部界面や欠陥を画像化する装置。; Airy — 平行平板内で繰り返す多重反射を無限級数として合成し、透過率を表す式。
 
-[![接合面のエコーは表面エコーの 1 割未満。ボイドのエコーは反転、誘電体とパッドは直交(微分形)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/01_ascan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/01_ascan.png)
+[![接合面のエコーは表面エコーの 1 割未満。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/01_ascan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/01_ascan.png)
 
 *↑ 測定の図 ―― 接合面のエコーは表面エコーの 1 割未満。ボイドのエコーは反転、誘電体とパッドは直交(微分形)。*
 
@@ -1026,7 +1026,7 @@ py -3.11 examples/poc_agv_fleet.py
 
 *↑ 閾値は同じ規則(良品の部位の平均 + 3.09σ、パッドと誘電体の厳しい方)。*
 
-[![150 → 350 MHz。左 = 振幅(各コマで正規化)、右 = cos(位相)。周波数を上げると像は締まるが、水の減衰で雑音に沈んでいく。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/04_frequency_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/04_frequency_sweep.gif)
+[![150 → 350 MHz。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/04_frequency_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/04_frequency_sweep.gif)
 
 *↑ 動く図 ―― 150 → 350 MHz。左 = 振幅(各コマで正規化)、右 = cos(位相)。周波数を上げると像は締まるが、水の減衰で雑音に沈んでいく。*
 
@@ -1050,7 +1050,7 @@ py -3.11 examples/poc_sam_hybrid_bonding_voids.py
 
 用語: PSF — 点状の物体を撮ったときに像がどのように広がるかを表す、撮像系の空間応答。
 
-[![同じ幅 3 µm の溝を拡散長 L = 4 / 16 / 64 µm で描いた PL 像(雑音 1 %)。上段 = 影の溝(励起の欠け): L が長いほど拡散が埋めて消える。下段 = 沈みの溝(再結合の線): L が長いほど深く・広く見える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_si_wafer_pl_defect_visibility/01_pl_groove_vs_diffusion_length_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_si_wafer_pl_defect_visibility/01_pl_groove_vs_diffusion_length.png)
+[![同じ幅 3 µm の溝を拡散長 L = 4 / 16 / 64 µm で描いた PL 像(雑音 1 %)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_si_wafer_pl_defect_visibility/01_pl_groove_vs_diffusion_length_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_si_wafer_pl_defect_visibility/01_pl_groove_vs_diffusion_length.png)
 
 *↑ 測定の図 ―― 同じ幅 3 µm の溝を拡散長 L = 4 / 16 / 64 µm で描いた PL 像(雑音 1 %)。上段 = 影の溝(励起の欠け): L が長いほど拡散が埋めて消える。下段 = 沈みの溝(再結合の線): L が長いほど深く・広く見える。良質なウェハで隠れるのは影だけ。*
 
@@ -1076,7 +1076,7 @@ py -3.11 examples/poc_si_wafer_pl_defect_visibility.py
 
 *↑ **照明の円錐と観察の NA ―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする** ―― 鏡面に近い金属部品の浅い打痕・ヘアラインの上の傷・梨地のムラは、光源の種類より先に、各点に届く光の円錐の半角 α と向きを、カメラが受け取る円錐(物体側 NA、半角 β)に対してどう置くかで見え方が決まる(顕微鏡のケーラー照明の照明 NA と対物 NA、シュリーレン法のナイフエッジと同じ幾何)。鏡面の反射は方向の球の上の等長写像なので、明るさは 2 つの球冠の交わりという閉形式になり、傾き θ が |α − β|/2 より小さければ見えず、(α + β)/2 を越えると暗い。新 op 5 本(`illumdesign` の `solid_angle_light` / `solid_angle_boundaries` / `solid_angle_brightness` / `solid_angle_sweep` / `solid_angle_render`)。閉形式とレンズの瞳の数値積分(射影立体角の重み)の差は 0.002。NA 0.033 のテレセンで、深さ 2 µm の打痕(最大傾き 0.25°)は α = β でだけ輪になり(画像のコントラスト −0.091、閉形式と 1e-4)、α = 0.5° と 7° では閉形式の予言どおり 0 になる。ヘアラインの筋(傾きの 99 % 点 0.82°)を消して斜面 4° の傷だけを黒くする α は閉形式で 3.5〜6.1° と決まり、α = 4° で筋の揺れが α = β の 0.014 倍、傷のコントラスト −1.00。円錐を β 傾けると平らな地が 0.39 の明るさになり、打痕の左右の斜面が 0.53 と 0.25(閉形式 0.54 / 0.25)に分かれて傾きの符号が読める。梨地の斑(微小面の広がり 1.3° 対 0.8°)は α = β で −0.20、α = 7° で −0.02。★壊れる条件: 面のうねり ±0.25° があると α = β では地の揺れが打痕の沈みの 1.6 倍になり、しきい値で打痕だけを拾えない。微小面の広がり σ が 0.25° でもコントラストは 1/3、4° では α をどう選んでも 0.001。照明の立体角だけを変えて同じワークを撮った比較写真は、再利用できるライセンスでは見つからなかった(実画像との突合は未了)。学習 0、較正 0、門 15 件。*
 
-[![鏡面の傾き θ と、カメラの瞳が反射した光の円錐で覆われる割合(閉形式)。α = 7° と 0.5° は傾き |α − β|/2 まで平らで、そこまでの傾きは見えない。α = β は 0 から下がり始めるので最も小さな傾きが見える。β だけ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/01_brightness_vs_slope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/01_brightness_vs_slope.png)
+[![鏡面の傾き θ と、カメラの瞳が反射した光の円錐で覆われる割合(閉形式)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/01_brightness_vs_slope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/01_brightness_vs_slope.png)
 
 *↑ 測定の図 ―― 鏡面の傾き θ と、カメラの瞳が反射した光の円錐で覆われる割合(閉形式)。α = 7° と 0.5° は傾き |α − β|/2 まで平らで、そこまでの傾きは見えない。α = β は 0 から下がり始めるので最も小さな傾きが見える。β だけ傾けた円錐は平らな地が半分の明るさで、傾きの向きで明るくも暗くもなる。*
 
@@ -1092,7 +1092,7 @@ py -3.11 examples/poc_si_wafer_pl_defect_visibility.py
 
 *↑ α を 0.5〜3° から選んだ最大のコントラスト。*
 
-[![ヘアラインの上の傷を、照明の円錐の半角 α だけを 0.4〜8° で往復させて撮る。α ≈ β で筋が最も目立ち、α ≈ 4° で筋が消えて傷が黒く残り、広げすぎると傷も薄れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif)
+[![ヘアラインの上の傷を、照明の円錐の半角 α だけを 0.4〜8° で往復させて撮る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif)
 
 *↑ 動く図 ―― ヘアラインの上の傷を、照明の円錐の半角 α だけを 0.4〜8° で往復させて撮る。α ≈ β で筋が最も目立ち、α ≈ 4° で筋が消えて傷が黒く残り、広げすぎると傷も薄れる。*
 
@@ -1116,7 +1116,7 @@ py -3.11 examples/poc_illumination_cone_vs_na.py
 
 用語: OCM — 各画素の輝度勾配方向を離散符号に変え、符号差でテンプレートと画像を照合する方法。
 
-[![公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/02_breakdown_highlight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/02_breakdown_highlight.png)
+[![公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/02_breakdown_highlight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/02_breakdown_highlight.png)
 
 *↑ 測定の図 ―― 公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。*
 
@@ -1136,7 +1136,7 @@ py -3.11 examples/poc_illumination_cone_vs_na.py
 
 *↑ 雑音の無い場面の増分 Δ と σ から、組ごとの一致確率 Φ(Δ/(√2σ)) が決まる。*
 
-[![飽和したハイライトを 0 → 60 % まで広げる(camera、CC0)。白 = 正解、橙 = NCC、青 = OCM、緑 = ISC、紫 = SCC。NCC は最初の数コマで光の縁へ飛ぶ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif)
+[![飽和したハイライトを 0 → 60 % まで広げる(camera、CC0)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif)
 
 *↑ 動く図 ―― 飽和したハイライトを 0 → 60 % まで広げる(camera、CC0)。白 = 正解、橙 = NCC、青 = OCM、緑 = ISC、紫 = SCC。NCC は最初の数コマで光の縁へ飛ぶ。*
 
@@ -1158,7 +1158,7 @@ py -3.11 examples/poc_code_matching_breakdown.py
 
 *↑ **良品を並べて「いつもと違う」を言う ―― 誤検出率を宣言した変動モデルと、それが実画像で破れる所** ―― 外観検査の古典「良品を何枚も撮り、画素ごとにいつもの値とばらつきを覚え、外れた画素を欠陥とする」を、帯の幅を手で決めず、1 画素あたりの誤検出率を宣言して決める op 族にした(新 op 5 本 varmodel_* と、方法に依存しない評価の物差し anomeval 4 本)。正規の良品なら新しい 1 枚の偏差は t 分布の予測区間に従うので、帯の幅は閉形式で出る。合成の良品で数えた誤検出率は、画素ごとの標準偏差・全画素で 1 つの分散・経験ベイズの縮小(Smyth 2004)・中央値と MAD の 4 種とも宣言の二項 4σ の帯に入り、画素ごとに雑音が違うのに 1 つの分散を使うと外れる。良品 5 枚では標準偏差の帯の幅は 9.4 倍(t₄ の裾)になり、縮小すると 5.0 倍、5σ の傷の検出率は 0.13 → 0.52。1〜2 px ずれた良品群は拒否され、無理に通すと縁の上の帯が 22 倍に太って縁の上の傷を 1 つも見つけない。並進を 1/20 px で測って Fourier シフトで合わせると 1.07 倍に戻る。3 枚に同じ傷のある「良品」群では標準偏差は傷を見逃し(0.00)、中央値と MAD は見つける(0.98)。公開実データ VisA pcb1(CC BY 4.0、試験 200 枚)では、合わせた帯の画素 AUROC 0.808・AUPRO 0.678 に対し、合わせない帯は 0.705・0.460。ゴールデン比較は画素 AUROC 0.826 と上回るが、欠陥を 1 つずつ数える AUPRO は 0.519 で下回る。宣言 1e-3 の誤検出率は実画像では 3.8 % で守られず、学習に使わなかった良品で帯を測り直しても 2.4 % —— 並進で取れない撮影の違いが残る。確率的なテクスチャ(DAGM 2007、CC BY 4.0)は平均像に構造が無く、位置合わせは「測れない」と報告され、検出は偶然並み(画素 AUROC 0.465)。この方法が効く所と効かない所の両方を数で示した。*
 
-[![20 枚の良品のうち 3 枚の同じ場所(右上の四角)に +0.3 の傷。std は傷を良品のばらつきとして覚え、帯が太る(左上)ので、同じ場所の本物の傷(+0.2 = 雑音の 10 倍)の z が小さい。中央値と MAD は 3 枚の外れを](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/02_contaminated_good_set_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/02_contaminated_good_set.png)
+[![20 枚の良品のうち 3 枚の同じ場所(右上の四角)に +0.3 の傷。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/02_contaminated_good_set_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/02_contaminated_good_set.png)
 
 *↑ 測定の図 ―― 20 枚の良品のうち 3 枚の同じ場所(右上の四角)に +0.3 の傷。std は傷を良品のばらつきとして覚え、帯が太る(左上)ので、同じ場所の本物の傷(+0.2 = 雑音の 10 倍)の z が小さい。中央値と MAD は 3 枚の外れを無視する。左下の傷は汚れていない場所の対照。*
 
@@ -1232,7 +1232,7 @@ py -3.11 examples/poc_patch_anomaly.py
 
 *↑ **密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す** ―― 重なった泡は距離変換の山として現れ、くびれが浅くなるほど「2 個か 1 個か」が画像から決まらなくなる。既存の連鎖(`blob_distance` → `blob_seeds` → `blob_split`)は h を 1 つ選んで必ず 1 つの数を返すので、重なり率 0.8 の 2 円も1 個と言い切る。新 op `blob_count_interval` は山ごとに突出度(0 次元パーシステンス)を測り、相対突出度が帯の中なら区間、数えた山の内接円で面積を説明できなければ上限を開く。等しい 2 円の相対突出度は閉形式 1 − sqrt(1 − (1 − o)²) と1.6 px 以内、2 倍に拡大しても答えは同じ。自信をもった誤りは、和集合が縦横比 1.1 の楕円と区別できなくなる重なり率(閉形式で 0.86〜0.90)から先だけ。BBBC005(CC0)の真値マスクでは小さい物体の個数の相対誤差 0.34 %(連結成分 9.4 %)、重なりの深い大きい物体は 300 枚中 286 枚で数を返さず、自信をもった誤りは 0。水電解の酸素の泡(PEMWE、CC BY 4.0、手作業マスク)の形を重なり率を振って並べた半合成で、自信をもった誤り 2/65、ALCON2009 型の採点(重心が泡ごとの矩形に入るか、自前で実装)は答えた塊で 0.95。★形の許しを孤立した泡の 95 % を通す値まで広げると、隠れた泡も通して誤りが 3 % から 19 % に増える —— 数える力と黙って間違わないことの矛盾を掃引で示した。いびつな泡が深く食い込むと、決まらないと答えた区間の上限も 1 個外れる(op の限界として明記)。*
 
-[![等しい 2 円の 2 番目の山の相対突出度。閉形式(破線)は半径によらない。実測は格子の量子化で閉形式より最大 1.5 px 低い。点線の帯の中に落ちた山は『あいまい』。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap.png)
+[![等しい 2 円の 2 番目の山の相対突出度。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap.png)
 
 *↑ 測定の図 ―― 等しい 2 円の 2 番目の山の相対突出度。閉形式(破線)は半径によらない。実測は格子の量子化で閉形式より最大 1.5 px 低い。点線の帯の中に落ちた山は『あいまい』。*
 
@@ -1252,7 +1252,7 @@ py -3.11 examples/poc_patch_anomaly.py
 
 *↑ 緑の矩形 = 置いた泡(真値)、赤の十字 = 決まった塊の重心。*
 
-[![2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)
+[![2 つの泡が近づいて融合していく。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)
 
 *↑ 動く図 ―― 2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。*
 
@@ -1274,7 +1274,7 @@ py -3.11 examples/poc_dense_bubble_count.py
 
 *↑ **フーリエ・タイコグラフィ ―― 4 倍の対物の広い視野のまま、20 倍相当の分解能と位相を、反復の位相回復で得る** ―― 低倍率の対物の広い視野のまま、LED アレイで照明の角度を変えて撮った像の組を周波数空間でつなぎ、20 倍相当の分解能と位相を反復の位相回復(収束型の演算)で得る。新 op 6 本(`fourierptycho`、`opsoptics` の `fpm`): `fp_design`(合成 NA・遮断周期・隣り合う瞳の重なり率・LED の数・画素の標本化・境の LED を撮る前に)/ `fp_usaf_target` / `fp_capture`(斜めの平面波 → 瞳 → 強度、雑音・収差・LED アレイのずれ・反射型の高さ)/ `fp_stack_from_images`(実データの入口)/ `fp_reconstruct`(逐次の位相回復 + 瞳の同時推定 + LED の位置の補正。収束の履歴・止めた理由・合成 NA を返し、収束しなければ拒否)/ `fp_element_contrast`(USAF の要素ごとの3 本の棒の変調)。4 倍 / NA 0.1・LED 13 × 13 で合成 NA 0.424、4 倍の 1 枚は G7 E4(5.53 µm、閉形式 λ/NA 5.32 µm)まで、FP は G9 E5(1.22 µm、閉形式 1.25 µm)まで分解し、20 倍 / NA 0.40 のコヒーレント像と同じ要素。位相だけの物体は帯域制限した真値と rms 0.13 rad、反射型の 20〜40 nm の段差は rms 4.0 nm。重なりを 64 → 7 % に下げると、43 % 以上は収束、32 % 以下は「2 本の初期値が別の答えに着いた」か回数切れで拒否 —— 境が公表の下限 35 % を挟む。★残差だけでは見抜けない(重なり 18 % の残差は 64 % より小さい)。瞳の同時推定は収差 rms 0.12 波を 0.005 波まで戻し、LED アレイのずれ (0.6, −0.4) mm・1°・1.5 mm を (0.62, −0.36) mm・0.93°・1.25 mm と読み戻す。★k の符号の反転は位相の符号が反転した像に着き、残差は同じ(強度では区別できない)。実データ(公開の USAF の FP データ、repo に入れずデータがあるときだけ)では、公表の装置の値からの遮断周期 1.60 µm に対し G9 E3(1.55 µm)まで分解(生の 1 枚は G7 E3)。学習 0、較正 0、門 33 件。*
 
-[![G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(1.22 µm)まで 3 本の棒が分かれる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/02_group9_zoom_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/02_group9_zoom.png)
+[![G9(周期 1.95〜1.06 µm)を 3 倍に拡大。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/02_group9_zoom_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/02_group9_zoom.png)
 
 *↑ 測定の図 ―― G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(1.22 µm)まで 3 本の棒が分かれる。*
 
@@ -1406,7 +1406,7 @@ py -3.11 examples/poc_slanted_edge_sfr_limits.py
 
 用語: IoU — 二つの領域の共通部分の面積を和集合の面積で割った、領域の重なりを0から1で表す指標。
 
-[![基準像で選んだ値を各条件へそのまま移した結果。棒上の数値はIoU。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/02_transfer_iou_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/02_transfer_iou.png)
+[![基準像で選んだ値を各条件へそのまま移した結果。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/02_transfer_iou_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/02_transfer_iou.png)
 
 *↑ 測定の図 ―― 基準像で選んだ値を各条件へそのまま移した結果。棒上の数値はIoU。*
 
@@ -1530,7 +1530,7 @@ NACA の技術報告 TN 898(1943 年、NASA NTRS、著作権の欄は Public Use
 
 用語: OCR — 画像に写った文字を切り出して字種に分類し、文字列として読み取る処理。; GMM — データの分布を複数の正規分布の重み付き和で表すモデル。クラスごとに当てはめると事後確率で分類できる。; k-NN — 学習データの中で特徴が最も近い k 個のラベルの多数決で分類する手法。; MLP — 入力と出力の間に非線形の中間層を持つ全結合のニューラルネットワーク。; SVM — クラスの間の余白(マージン)が最大になる境界で分類する手法。
 
-[![頁を既知の角度で回して当てた。タイプ打ちの頁は ±0.01° 以内、曲がった小さな頁は 0.3° 前後。範囲外の 35° は誤差 13.3°(NACA)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/02_rotation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/02_rotation.png)
+[![頁を既知の角度で回して当てた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/02_rotation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_typewritten_ocr/02_rotation.png)
 
 *↑ 測定の図 ―― 頁を既知の角度で回して当てた。タイプ打ちの頁は ±0.01° 以内、曲がった小さな頁は 0.3° 前後。範囲外の 35° は誤差 13.3°(NACA)。*
 
@@ -1570,7 +1570,7 @@ py -3.11 examples/poc_real_typewritten_ocr.py
 
 用語: MCP — AI のアプリが外部の道具やデータを呼び出すための公開の取り決め。道具の名前・引数の形・返り値を AI に渡し、AI はそれを呼んで結果を読む。; LLM — 大量の文章で学習し、指示に応じて文やプログラムを書く大きなニューラルネット。手元の計算機で動かす小さめのものをローカル LLM と呼ぶ。
 
-[![ろうそくの汚れ・欠け(試験画像、塗り = 検出、輪郭 = 真値の欠陥)。欠陥の画像は欠陥の輪郭に触れたら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real.png)
+[![ろうそくの汚れ・欠け(試験画像、塗り = 検出、輪郭 = 真値の欠陥)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real.png)
 
 *↑ 測定の図 ―― ろうそくの汚れ・欠け(試験画像、塗り = 検出、輪郭 = 真値の欠陥)。欠陥の画像は欠陥の輪郭に触れたら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも寄せていない)。検出は表示のため 2 画素太らせた。出典表示: VisA candle (Zou et al., ECCV 2022), github.com/amazon-science/spot-diff, CC BY 4.0; gray + 4x4 mean downsampling*
 
@@ -1606,15 +1606,15 @@ py -3.11 examples/poc_ai_built_inspection_scored.py
 
 [![機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png)
 
-*↑ **機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする** ―― 題材ごとに、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大。どの組でも見つかるものだけ)と、題材の最良の組で撮った見本。棒が短いほど小さい傷まで見つかる。合成の試験。*
+*↑ **機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする** ―― 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大)。棒が短いほど小さい傷まで見つかる。灰色の斜線 = 試した範囲で見つからない、破線 = 種の組で揺れる。見本の下に表示倍率を書いた。凹みの見本は 80 倍に広げ判定の大きさでならしたので、実際よりはっきり見える(雑音なしの陰影は最大 0.8 %)。合成の試験。*
 
 用語: SWIR — おおむね1〜3 µm付近の短波赤外域で、可視光では似た材料の吸収差を捉えられる波長帯。; a90/95 — POD曲線で検出確率90%を、片側95%信頼下限でも満たす欠陥寸法。
 
-[![4 種の欠陥を、照明 6(同軸落射・ドーム・リング高角 70°・低角 30°・暗視野 10°・縞照明)× カメラ 5 × レンズ 2 で撮った合成の試験の a90/95(MIL-HDBK-1823A の â vs a)。どのマスも判定閾値を](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/01_equipment_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/01_equipment_map.png)
+[![4 種の欠陥を、照明 6(同軸落射・ドーム・リング高角 70°・低角 30°・暗視野 10°・縞照明)× カメラ 5 × レンズ 2 で撮った合成の試験の a90/95(MIL-HDBK-1823A の â vs a)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/01_equipment_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/01_equipment_map.png)
 
 *↑ 測定の図 ―― 4 種の欠陥を、照明 6(同軸落射・ドーム・リング高角 70°・低角 30°・暗視野 10°・縞照明)× カメラ 5 × レンズ 2 で撮った合成の試験の a90/95(MIL-HDBK-1823A の â vs a)。どのマスも判定閾値を試験の無欠陥の部位で誤検出 1 % にそろえ、露光の上限は視野 1 枚 10 ms(縞照明は 16 コマで分け、ラインスキャンの分光は 1 ラインずつ。光子の数をそろえたのではない)。同軸の拡散面は視野の 2 倍。部位の種の組を 3 つ変えて回し、中央値と最小〜最大を書いた。*
 
-[![同じ部位を照明だけ変えてモノクロ・テレセンで撮った見本(上から 幅 60 µm の線傷、深さ 80 µm の凹み、0.25 mm 下の径 500 µm の黒い焼け、径 1.5 mm の PE の破片。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/03_same_part_six_lights_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/03_same_part_six_lights.png)
+[![同じ部位を照明だけ変えてモノクロ・テレセンで撮った見本(上から 幅 60 µm の線傷、深さ 80 µm の凹み、0.25 mm 下の径 500 µm の黒い焼け、径 1.5 mm の PE の破片。橙の三角 = 欠陥の位置、見本は視野の中心の近く)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/03_same_part_six_lights_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/03_same_part_six_lights.png)
 
 *↑ 同じ部位を照明だけ変えてモノクロ・テレセンで撮った見本(上から 幅 60 µm の線傷、深さ 80 µm の凹み、0.25 mm 下の径 500 µm の黒い焼け、径 1.5 mm の PE の破片。橙の三角 = 欠陥の位置、見本は視野の中心の近く)。*
 
@@ -1630,7 +1630,7 @@ py -3.11 examples/poc_ai_built_inspection_scored.py
 
 *↑ 公開の分光画像 2 つの画素を、カメラの帯の重みで束ねて同じ手順で分けた。*
 
-[![同じ 4 種の欠陥を照明 6 × レンズ 2 で撮った見本を左に、その組の a90/95(種の組の中央値)を右の地図に埋めていく。最後に題材ごとに分かったことと、最良・安くて足りる組を枠で示す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/07_equipment_map_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/07_equipment_map_explained.gif)
+[![同じ 4 種の欠陥を照明 6 × レンズ 2 で撮った見本を左に、その組の a90/95(種の組の中央値)を右の地図に埋めていく。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/07_equipment_map_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/07_equipment_map_explained.gif)
 
 *↑ 動く図 ―― 同じ 4 種の欠陥を照明 6 × レンズ 2 で撮った見本を左に、その組の a90/95(種の組の中央値)を右の地図に埋めていく。最後に題材ごとに分かったことと、最良・安くて足りる組を枠で示す。*
 
@@ -1640,7 +1640,7 @@ py -3.11 examples/poc_equipment_selection_map.py
 
 ソース: [examples/poc_equipment_selection_map.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_equipment_selection_map.py)
 
-この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_equipment_selection_map)
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_equipment_selection_map)
 
 使用 op(ノートへ): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`carbon_black_absorption`](https://furuse.work/ops/optics/matprop/carbon_black_absorption.html) · [`hyperspectral_band_weights`](https://furuse.work/ops/optics/spectral/hyperspectral_band_weights.html) · [`ingaas_photodiode_qe`](https://furuse.work/ops/optics/spectral/ingaas_photodiode_qe.html) · [`material_nir_absorption`](https://furuse.work/ops/optics/matprop/material_nir_absorption.html) · [`nir_model_info`](https://furuse.work/ops/optics/matprop/nir_model_info.html) · [`pod_ahat_fit`](https://furuse.work/ops/spc/pod/pod_ahat_fit.html) · [`pod_false_call`](https://furuse.work/ops/spc/pod/pod_false_call.html) · [`pod_from_ahat`](https://furuse.work/ops/spc/pod/pod_from_ahat.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 
@@ -1698,7 +1698,7 @@ py -3.11 examples/poc_aoi_ct_traceability.py
 
 *↑ **竣工した部屋の壁を測る —— 外接直方体は寸法でなく部屋の向きを測っている** ―― 内法 6.0 x 4.0 x 2.7 m の室内点群に、壁の倒れ(1.20〜9.00 mrad)・平面図の振れ 5.00 mrad・面外のふくらみ 9 mm を仕込み、素朴な外接直方体(AABB)と平面当てはめを同じ点群で突き合わせた。AABB は東西 +19.1 mm 過大で、部屋を走査軸に対して 1 度回すだけで +80.1 mm、10 度で +611.1 mm——これは施工誤差ではなく W cosψ + D sinψ という部屋の向きの式で、平面 2 枚の距離は ψ を振っても +2.24 mm から動かない。さらに AABB は点を 256 倍にすると +14.9 → +19.7 mm と広がり(雑音の最大値統計 2σ√(2 ln N))、測点を増やすほど悪くなる。外れ点(出 450 mm の家具)への壊れ方は 2 種類で、最小二乗は 10 % 混入で真値の 11 倍(66.3 mrad、閉形式の予測 63.8 と 4 % 以内)、RANSAC は 45 % まで持ちこたえて 55 % で棚へ乗り換える——そのとき倒れの誤差は 0.13 mrad と小さいまま面だけが 449.9 mm ずれるので、1 つの数字では破綻が見えない。面のふくらみ 1 個が倒れ(-1.258 mrad)・直交度(+0.500 mrad)・内法(+2.2 mm)の 3 つの判定を同時に汚し、どれも閉形式で 0.06 mrad 以内に予測できた。*
 
-[![許容 ±10 mm。AABB は ψ=0.5 度で既に外れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_asbuilt_wall_deviation/02_aabb_vs_yaw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_asbuilt_wall_deviation/02_aabb_vs_yaw.png)
+[![許容 ±10 mm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_asbuilt_wall_deviation/02_aabb_vs_yaw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_asbuilt_wall_deviation/02_aabb_vs_yaw.png)
 
 *↑ 測定の図 ―― 許容 ±10 mm。AABB は ψ=0.5 度で既に外れる。*
 
@@ -1774,7 +1774,7 @@ py -3.11 examples/poc_battery_electrode_breathing.py
 
 *↑ **左右非対称性を測る ―― 対称面は変形に引きずられる** ―― 厳密に左右対称な合成頭蓋の片側に既知の膨らみを入れ、鏡映して重ねた図。完全対称な標本でも床は 0 にならず、点対点 1.33 mm → 点対面 0.030 mm → 近傍平滑 0.012 mm。残差を最小にする面は 6.33 mm の膨らみで 2.92 mm / 1.72 度引きずられ、非対称量の 46 % が消える。*
 
-[![完全対称な標本を測った残差。点対点は点間隔がそのまま床になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/01_floor_vs_spacing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/01_floor_vs_spacing.png)
+[![完全対称な標本を測った残差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/01_floor_vs_spacing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/01_floor_vs_spacing.png)
 
 *↑ 測定の図 ―― 完全対称な標本を測った残差。点対点は点間隔がそのまま床になる。*
 
@@ -1806,7 +1806,7 @@ py -3.11 examples/poc_bilateral_asymmetry.py
 
 用語: DIC — 変形前後の表面模様を小領域ごとに相関照合し、変位場とその空間微分であるひずみを測る方法。
 
-[![変形は補間ではなく斑点の再描画。だから真値が厳密。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/01_speckle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/01_speckle.png)
+[![変形は補間ではなく斑点の再描画。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/01_speckle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/01_speckle.png)
 
 *↑ 測定の図 ―― 変形は補間ではなく斑点の再描画。だから真値が厳密。*
 
@@ -1818,7 +1818,7 @@ py -3.11 examples/poc_bilateral_asymmetry.py
 
 *↑ 窓を広げると尖頭が下がり幅が広がる(空間分解能の限界)。*
 
-[![引張試験の荷重を 48 段で上げる過程(lk、窓 31)。真のひずみを 0 → 3000 µε、同時に試験機が 0 → 2.0 度回る。変形像は毎段、斑点を写して描き直す(補間なし)。最終段で微小ひずみ ∂u/∂x の領域平均は 2341 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/05_tensile_ramp.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/05_tensile_ramp.gif)
+[![引張試験の荷重を 48 段で上げる過程(lk、窓 31)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/05_tensile_ramp.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/05_tensile_ramp.gif)
 
 *↑ 動く図 ―― 引張試験の荷重を 48 段で上げる過程(lk、窓 31)。真のひずみを 0 → 3000 µε、同時に試験機が 0 → 2.0 度回る。変形像は毎段、斑点を写して描き直す(補間なし)。最終段で微小ひずみ ∂u/∂x の領域平均は 2341 µε(理論 (1+e)cosθ-1 = 2389 µε)—— 材料は 3000 µε 伸びているのに、回転が約 611 µε 少なく見せる。Green-Lagrange は 2961 µε(理論 e+e²/2 = 3005 µε)。地図の色は全コマ共通の尺度。*
 
@@ -1840,7 +1840,7 @@ py -3.11 examples/poc_dic_strain.py
 
 *↑ **ダイの傾きと TSV の位置ずれを 1 つの CT から分ける ―― 傾きは回転まで偽装する** ―― 上下 2 枚のダイに 7×7 の TSV を仕込み、真の位置ずれ (+0.800, −0.450) µm・回転 +0.01500°・傾き (1.20°, 0.70°) を与えた CT ボリューム 1 個だけで測り返す。上面の開口をそのまま比べるゼロ点は 2.419 µm 外し(仕様 ±1.0 µm の 2.4 倍、真の位置ずれ 0.918 µm より大きい)、その偽装量は「ダイ厚 × 上面法線の横成分」の閉形式と比 0.996 / 0.999 で一致する。ビアの軸で下面へ引き直すと 0.0023 µm まで戻る。★予想は外れた ―― 傾きは並進だけでなく回転も偽装する(Rx Ry のせん断 sinα sinβ 由来、予測 +0.00733° に対し対照群との差で実測 +0.00696°)。これは軸補正では消えず、測った傾きで逆投影して初めて対照群と同じ値に戻る。崖は 0.491° の予測に対し実測 0.492°。*
 
-[![雲ごと 2.42 µm ずれるのが傾きの偽装。散らばりの広がりは測定精度。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_die_tilt_tsv_overlay/02_overlay_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_die_tilt_tsv_overlay/02_overlay_scatter.png)
+[![雲ごと 2.42 µm ずれるのが傾きの偽装。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_die_tilt_tsv_overlay/02_overlay_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_die_tilt_tsv_overlay/02_overlay_scatter.png)
 
 *↑ 測定の図 ―― 雲ごと 2.42 µm ずれるのが傾きの偽装。散らばりの広がりは測定精度。*
 
@@ -1876,7 +1876,7 @@ py -3.11 examples/poc_die_tilt_tsv_overlay.py
 
 用語: PSF — 点状の物体を撮ったときに像がどのように広がるかを表す、撮像系の空間応答。
 
-[![偏りはどちらも正(対が互いを押し広げる)。符号が一定なので繰り返し測っても消えない。下端 -4 は表示の打ち切り(|偏り| < 1e-4 px)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dimensional_inspection/02_blur_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dimensional_inspection/02_blur_cliff.png)
+[![偏りはどちらも正(対が互いを押し広げる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dimensional_inspection/02_blur_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dimensional_inspection/02_blur_cliff.png)
 
 *↑ 測定の図 ―― 偏りはどちらも正(対が互いを押し広げる)。符号が一定なので繰り返し測っても消えない。下端 -4 は表示の打ち切り(|偏り| < 1e-4 px)。*
 
@@ -2020,7 +2020,7 @@ py -3.11 examples/poc_metal_grain_size.py
 
 *↑ **多ビーム測深で海底が笑う ―― 直下較正後も外側ビームに残る音速誤差** ―― 多ビーム音響測深では、音速プロファイルを取り違えると平らな海底が反り返る。表面音速をそのまま使う条件では直下も +0.670 m ずれ、平均音速を直下で較正した条件では直下誤差が 0 になる一方、65 度に −2.697 m が残る。IHO S-44 Order 1a の TVU(50 m) は 0.8201 m。第 1 層の Snell 処理を修正する前に規格を割った値は層分割ではなく実装誤りであり、修正後の中点一定近似は 65 度・2 層で −0.016 m、約 2 次で収束して規格内である。合成モデルでは外側ほど振幅ピーク検出の偏りが増え、位相検出の利点と整合する。この PoC が実装した真値不要の自己整合検査は隣接測線の重なり比較で、端の差は 2.697 m。上向き屈折では限界角超のビームは記録されない一方、届く 65 度ビームにも +5.919 m の誤差が残る。一定勾配の当てはめは最大誤差を 5.357 m から 1.253 mへ 77 %減らすが、TVU 超の残差と直下 +0.262 m が残る。根拠は数値模型と一定勾配層の閉形式で、この PoC だけから実機の設計理由は確定できない。*
 
-[![エコーは beamform_delay_sum の角度応答 × Lambert 後方散乱で海底の帯を足し上げて合成。find_peaks + peak_subbin で検出。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/01_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/01_floor.png)
+[![エコーは beamform_delay_sum の角度応答 × Lambert 後方散乱で海底の帯を足し上げて合成。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/01_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/01_floor.png)
 
 *↑ 測定の図 ―― エコーは beamform_delay_sum の角度応答 × Lambert 後方散乱で海底の帯を足し上げて合成。find_peaks + peak_subbin で検出。*
 
@@ -2040,7 +2040,7 @@ py -3.11 examples/poc_metal_grain_size.py
 
 *↑ ○ = 在る。*
 
-[![主図(動画、640 × 360・30 fps・12 秒): 深さ 50 m の平らな海底を、船が 2 本の測線(間隔 101.4 m)で測る。水色は真の音線(水柱の音速差 -40 m/s の線形プロファイルで円弧に曲がる)、白い点と面は直下](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/17_survey.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/17_survey.gif)
+[![主図(動画、640 × 360・30 fps・12 秒): 深さ 50 m の平らな海底を、船が 2 本の測線(間隔 101.4 m)で測る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/17_survey.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/17_survey.gif)
 
 *↑ 動く図 ―― 主図(動画、640 × 360・30 fps・12 秒): 深さ 50 m の平らな海底を、船が 2 本の測線(間隔 101.4 m)で測る。水色は真の音線(水柱の音速差 -40 m/s の線形プロファイルで円弧に曲がる)、白い点と面は直下較正した等音速の処理が記録する海底で、色は「測った − 真の深さ」(高さの誤差だけ画面上 5 倍)。直下は +0.000 m、65 度は -2.697 m —— 平らな海底が外側だけ持ち上がる「スマイル」。最後に重なり帯を回り込むと、同じ海底を直下と最外ビームで測った 2.697 m の段差(TVU 0.820 m の 3.3 倍)が立っている。*
 
@@ -2062,7 +2062,7 @@ py -3.11 examples/poc_multibeam_bathymetry.py
 
 *↑ **粒度分布を画像から測る ―― 融合と縁切れが逆向きに効き、途中で打ち消し合う** ―― 粒子を撒いた合成画像から D10 / D50 / D90 を出し、融合(大きい側へ)と縁切れ(小さい側へ)を別々に数えた図。面積率 13.8 % で D50 誤差 +0.55 % ―― 融合 28 件と縁切れ 19 件が釣り合っているだけ。個数基準と面積基準では同じ塊から D50 が 26.9 µm と 44.7 µm(1.66 倍)。*
 
-[![薄いところで 0 なのは正確だから。濃いところで 0 をまたぐのは融合と縁切れが釣り合っただけ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_sizing/02_density_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_sizing/02_density_sweep.png)
+[![薄いところで 0 なのは正確だから。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_sizing/02_density_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_sizing/02_density_sweep.png)
 
 *↑ 測定の図 ―― 薄いところで 0 なのは正確だから。濃いところで 0 をまたぐのは融合と縁切れが釣り合っただけ。*
 
@@ -2102,11 +2102,11 @@ py -3.11 examples/poc_particle_sizing.py
 
 用語: Mueller matrix — 偏光状態を表すストークスベクトルに作用し、光学素子や試料による偏光変化を記述する4×4実行列。
 
-[![左下 2 枚が「壊れる予報」。予報は当たるが、外せば直るとは限らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap.png)
+[![左下 2 枚が「壊れる予報」。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap.png)
 
 *↑ 測定の図 ―― 左下 2 枚が「壊れる予報」。予報は当たるが、外せば直るとは限らない。*
 
-[![動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)
+[![動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)
 
 *↑ 動く図 ―― 動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷重に比例して 2.38 まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 2 回)。後半は荷重 500 N のまま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点で、中央の真値 θ の図で白く塗った点と重なる。偏光系は fullseye の mueller_element / mueller_apply(暗視野)と sin²(2(θ-β))·sin²(δ/2)(平面)。*
 
@@ -2236,7 +2236,7 @@ py -3.11 examples/poc_screw_thread_metrology.py
 
 *↑ **堆積物の在庫量 ―― 誰も測っていない「山の下の地面」が答えを決める** ―― 鉱山・骨材・港湾の**堆積物の在庫量**を 3-D スキャンから出す。山と地面を別々の式で置き、安息角 37 度の円錐 3 個の**和**にしたので体積が解析的に閉じる(3572.6089 m^3、セル 0.025 m の数値積分と一致)。★★**在庫量という 1 個の数字は、誰も測っていない面 —— 山の下の地面 —— の仮定で決まる**。★崖 (a) 底面の仮定は閉形式 ΔV = -A・Δh で先に印字してから測り、7 通りで差 **0.0000 m^3**。驚きは一致ではなく大きさのほうで、**測量では誤差とも呼ばない 5 cm が在庫の 1.269 %、かさ 1.6 t/m^3 なら 72.5 t**(トラック 3 台分)。★崖 (b) 遮蔽は「円錐は線織面」から可視率 = arccos((H-h_s)/(D tanφ))/π。6 通りで差 ≤ 0.0201 で、その差はセルを 1.2 → 0.6 → 0.4 m にすると 0.0339 → 0.0171 → 0.0120 と **1 次で縮む** —— **模型の誤りではなく離散化**だと切り分けられる。★★予測を 1 つ外した: 遮蔽部を補間すると体積は**過小**に出ると思っていた(円錐面は凹なので弦は下を通る)が、実測は **+17.20 % の過大**。裏側が法尻まで丸ごと見えないため三角形の相手が「山の上」ではなく**山の外の地面**になり、稜線から 30 m 先へ張った弦の勾配 0.37 m/m が真の斜面 0.75 m/m の**上**を通る。「凹だから過小」は両端が山の上にあるときの話だった。★★相殺の罠が出た: 同じ 1 か所スキャンで、真の地面を底面にすると **+17.20 %**、現場の手(外周平均の水平底面)だと **+0.51 %**。良くなったのではなく、外周の高さも同じ補間で **+0.728 m** 持ち上がって引き算で消えているだけ —— 証拠に、外周のうち**実際に見えた点だけ**で底面を決めると **+12.05 %** に戻る。**汚染された物差しで汚染された対象を測ると、誤差は消えたように見える**。★同じ形が §7 にも: 法尻に残土の土手を混ぜると**外れ値に強い RANSAC のほうが数字は悪い**(+2.48 % 対 TLS +0.61 %)が、RANSAC は土手を正しく捨てて「土手なし」の答え +1.91 % へ戻っただけで、TLS が良く見えるのは土手の持ち上げがうねりの偏りをたまたま打ち消したから。★外周平均の水平底面は footprint が概ね対称なら地面の**傾きを勝手に打ち消す**(平らな対照群 +0.01 %)。残る +1.79 % は全部うねりで、**傾いた平面を当てはめると悪化する**(+1.91 %)—— 「自由度を増やせば良くなる」は成立しない。★物差しで勝者が入れ替わる: 体積は水平底面が僅かに良く、**重心は平面当てはめが 6 分の 1**(0.07 m 対 0.42 m)。積込計画に効くのは重心のほう。★★2 つの誤差は**足し算にならない**(-0.70 % のはずが +0.51 %)—— 遮蔽の補間が底面を決める外周まで動かすので、2 つは絡む。誤差収支を「底面 x % + 遮蔽 y %」と足す報告は、この時点で嘘になる。★★道具のバグを 1 つ見つけて、その場で直した: `dem_viewshed` が**観測者の目線より高いセルを軒並み「見えない」と返していた**(平地に置いた円錐の頂点が可視 0.0、目線より高い 1541 セルの可視 0 個、底面の遮蔽率 0.8863 対 閉形式 0.5710)。視線の標本が `np.rint` で**目標セル自身**に丸まる自己遮蔽で、標本が目標セルに乗った回を数えないよう修正した(いま 頂点 1.0 / 遮蔽率 0.5900)。★**それまでの門が通した理由**が収穫で、可視領域の試験は「平地」と「壁の**向こう側**」しか見ておらず、**壁そのものが見えるか**を一度も確かめていなかった。*
 
-[![A = 906.5 m^2。閉形式は測る前に印字してある。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/01_base_offset_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/01_base_offset.png)
+[![A = 906.5 m^2。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/01_base_offset_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/01_base_offset.png)
 
 *↑ 測定の図 ―― A = 906.5 m^2。閉形式は測る前に印字してある。*
 
@@ -2256,7 +2256,7 @@ py -3.11 examples/poc_screw_thread_metrology.py
 
 *↑ 対照群(平ら/全周)で 2 つを切り分けてから、両方入れる。*
 
-[![主図(動画、640 × 360・30 fps・12 秒): うねりのある地面に置いた山の周りを一周しながら、走査位置を 1 → 2 → 3 か所と増やす。描いているのは補間で埋めた DSM(在庫計算が信じている面)で、色は「補間 − 真の面](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/07_scan_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/07_scan_orbit.gif)
+[![主図(動画、640 × 360・30 fps・12 秒): うねりのある地面に置いた山の周りを一周しながら、走査位置を 1 → 2 → 3 か所と増やす。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/07_scan_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/07_scan_orbit.gif)
 
 *↑ 動く図 ―― 主図(動画、640 × 360・30 fps・12 秒): うねりのある地面に置いた山の周りを一周しながら、走査位置を 1 → 2 → 3 か所と増やす。描いているのは補間で埋めた DSM(在庫計算が信じている面)で、色は「補間 − 真の面」(最大 5.23 m)。見えなかった割合は 0.660 → 0.315 → 0.014。在庫量の誤差は真の底面で +17.20 % → +3.05 % → +0.05 %、外周平均の水平底面で +0.51 % → +2.41 % → +1.83 % —— 3 か所で遮蔽は塞がるが、うねり由来の偏りは残る。高さは実寸。*
 
@@ -2278,7 +2278,7 @@ py -3.11 examples/poc_stockpile_volume.py
 
 *↑ **クリープ試験のひずみ履歴 ―― 累積か直接か** ―― 1 時間のクリープを 25 コマ撮り、隣接コマの累積と基準フレームとの直接比較でひずみ履歴を出した図。終端で累積 61 µε / 直接 1878 µε と累積が 31 倍良く、教科書の「時刻で入れ替わる」交点は無い(入れ替わるのは雑音の軸)。コマを 24 → 4 歩に間引くと累積は -60 → -606 µε と悪化 ―― 効くのは歩数でなく 1 歩あたりの変形量。*
 
-[![直接の偏りだけが伸びる。累積は偏りも散らばりも頭打ちで、しかも散らばりより偏りのほうが大きい ——ランダムウォークではない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/02_errors_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/02_errors.png)
+[![直接の偏りだけが伸びる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/02_errors_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/02_errors.png)
 
 *↑ 測定の図 ―― 直接の偏りだけが伸びる。累積は偏りも散らばりも頭打ちで、しかも散らばりより偏りのほうが大きい ——ランダムウォークではない。*
 
@@ -2290,7 +2290,7 @@ py -3.11 examples/poc_stockpile_volume.py
 
 *↑ 予測 = w=1 の偏り + 閉形式(中央はなまり、因果は遅れ)。*
 
-[![動画(720 × 458、8 fps、127 コマ): クリープ試験を 25 コマ撮る。左はその時刻のスペックル像に、t=0 との直接 PIV の変位を 3 倍の矢印で重ねたもの(中心から外へ伸びる)。右上は真ひずみ(白、閉形式)と測った値](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/05_history_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/05_history_video.gif)
+[![動画(720 × 458、8 fps、127 コマ): クリープ試験を 25 コマ撮る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/05_history_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/05_history_video.gif)
 
 *↑ 動く図 ―― 動画(720 × 458、8 fps、127 コマ): クリープ試験を 25 コマ撮る。左はその時刻のスペックル像に、t=0 との直接 PIV の変位を 3 倍の矢印で重ねたもの(中心から外へ伸びる)。右上は真ひずみ(白、閉形式)と測った値(青 = 隣のコマどうしの増分を足す累積、朱 = いつも t=0 と比べる直接)、右下はその誤差。直接の誤差だけが変形とともに伸び、終端で 累積 -49 µε / 直接 -1888 µε(雑音の実現 1 通り、第 2 節と同じ種)。*
 
@@ -2312,7 +2312,7 @@ py -3.11 examples/poc_strain_history.py
 
 *↑ **表面粗さ Sa / Sq / Sz は標本化とカットオフにどこまで耐えるか** ―― 指定PSDから合成した表面を測った。生のrmsをSqと呼ぶと20倍、平面だけ除いても1.8倍の過大。標本間隔8マイクロメートルではSaが-3.5%、Szが-19.8%。Sqの変化が小さいのは今回のPSD・位相・標本条件であり、間引きが2次モーメントを一般に保存するわけではない。この合成面では試した評価領域でSzが頭打ちにならず、面積と帯域に依存しない単一値は得られなかった。最大高低差は標準RzではなくRt。*
 
-[![dx=8 µm では Sa が ±5 % 合格で Sz が不合格。同じデータでも見るパラメータで結論が反転する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/02_sampling_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/02_sampling_cliff.png)
+[![dx=8 µm では Sa が ±5 % 合格で Sz が不合格。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/02_sampling_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/02_sampling_cliff.png)
 
 *↑ 測定の図 ―― dx=8 µm では Sa が ±5 % 合格で Sz が不合格。同じデータでも見るパラメータで結論が反転する。*
 
@@ -2342,7 +2342,7 @@ py -3.11 examples/poc_surface_roughness.py
 
 *↑ **視触覚センサ(弾性膜 + カメラ)の合成と逆算 ―― Hertz 接触とフォトメトリックステレオの閉形式を門に、球の押し込みから力を読む** ―― 物理シミュ × Fullseye 系列の第 2 弾(「自作の罠は限界: 真値・門・被験者の 1 つを外から」)。外から来るものは閉形式 2 系統。弾性接触 = Hertz(Johnson, Contact Mechanics, CUP 1985: a³ = 3FR/(4E*)、δ = a²/R、p(r) = p0√(1 − r²/a²)、半空間の表面変位は内側 δ − r²/(2R)・外側 式 3.42a、r = a で値 δ/2 と傾き −a/R が連続)。光学 = Woodham 1980 のフォトメトリックステレオ N = L⁻¹I と Frankot-Chellappa 1988 の法線積分(弾性膜を 3 色の方向照明で撮って 1 枚で法線を読む原理は Johnson & Adelson, CVPR 2009)。自分で作ったのは 3 つ: 外側解の半径方向スロープの閉形式 dh/dr = (2/πR)[r arcsin(a/r) − a√(1 − a²/r²)](導出、数値微分と 5e-9 で一致)、それを法線場のスロープ分布に 1 パラメータ a で当てる逆算(高さの積分を通らないので FFT 積分の振幅減衰・有限窓・オフセットの影響を受けない)、δ の 1D 積分に Boussinesq の遠方場 ū_z ≈ F/(πE*r) の裾 r_max·s̄(r_max) を足す窓打ち切りの補正。被験者は Fullseye の既存 op(photometric_stereo / integrate_normals / surface_normals / render_lambertian、measure.fit_circle)。新モジュール tacsim 14 op。図は圧痕まわりの等倍切り出し(62.5 µm/px、a = 0.88 mm = 14 px)、球・円柱・直線エッジ・F 字スタンプの合成像と復元高さ、荷重を 0.005 → 0.12 N に上げる GIF(左 合成像、右 Hertz の a–F 曲線に点が増える)、復元高さと真値の断面、スロープ分布と Hertz 模型、a–F に 2 経路の測定点、壊れる場所(較正ずれ・雑音)。門 17 本: 複合弾性率の極限、Hertz の恒等式(1e-9)、圧力の面積分 = F・線積分 = F/L(0.1 %)、表面変位の内外連続とスロープの導出検算、Frankot-Chellappa の往復 0.11 µm(δ = 261 µm)、Woodham の厳密性(中央 0.0001°)、当てはめ経路 a 0.05〜0.26 %・F 0.14〜0.79 %(0.02〜0.12 N)、δ 経路 δ 0.28〜0.84 %・F 0.43〜1.26 %、模型なしのリングは −8.2〜−4.9 %(分解能の予測 −0.7 px/a = −7.8〜−4.3 % と 1 pt 以内)、a ∝ F^{1/3}(指数 0.3335)、窓打ち切りの不足 4.37 %(閉形式 ū_z(r_max)/δ = 4.7 %)、ambient 0.03 を引かないと δ が 3.17 % 低い(予測 ambient/sin 55° = 3.7 %)、仰角 15° の較正ずれは斜面 0.00° → 5.69°・平坦域 0.05°、雑音 σ = 0.03 で法線 2.7° でも F 0.5 %、4 形状の往復 RMS 0.4〜0.6 µm(スタンプは 60° の壁の付着影で 10.8 µm)、円柱の幾何接触半幅 √(2Rd − d²) = 1.308 mm(実測 1.312)、tac_contact_mask は recall 0.92 だが面積 1.78 倍。正直に: 小変形 Hertz(δ/R ≈ 0.09)、Lambertian・影なし・鏡面なし、半無限の膜、粘弾性・マーカーなし。模型なしのリングは a = 14 px では 5 % 内側(当てはめ経路が主、リングは第 2 実装)。踏んだ罠: |∇h| のしきい値の帯は非対称なカスプで 9 % 内側に寄る、FFT 積分は深い局所のへこみを 13 % 減衰、ambient 項が法線を 3.7 % 寝かせる(実機の参照フレーム較正に当たる引き算が要る)。門だけ 0.7 s、図込み 12 s。*
 
-[![球・円柱・直線エッジ・F 字スタンプを 0.3 mm 押し込んだ膜(幾何学的な追従、弾性の裾なし、46.9 µm/px、中央 ±1.9 mm を 3 倍)。上 = 3 色照明の合成像、下 = フォトメトリックステレオ + Frankot-C](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/02_tacsim_four_shapes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/02_tacsim_four_shapes.png)
+[![球・円柱・直線エッジ・F 字スタンプを 0.3 mm 押し込んだ膜(幾何学的な追従、弾性の裾なし、46.9 µm/px、中央 ±1.9 mm を 3 倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/02_tacsim_four_shapes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/02_tacsim_four_shapes.png)
 
 *↑ 測定の図 ―― 球・円柱・直線エッジ・F 字スタンプを 0.3 mm 押し込んだ膜(幾何学的な追従、弾性の裾なし、46.9 µm/px、中央 ±1.9 mm を 3 倍)。上 = 3 色照明の合成像、下 = フォトメトリックステレオ + Frankot-Chellappa で復元した高さ(接触域の RMS を併記)。*
 
@@ -2350,7 +2350,7 @@ py -3.11 examples/poc_surface_roughness.py
 
 *↑ 中央行の断面。*
 
-[![法線場から取った半径方向スロープの方位平均(点)と、1 パラメータ a で当てた Hertz のスロープ模型(破線: 内側 r/R、外側 (2/πR)[r arcsin(a/r) − a√(1−a²/](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/05_tacsim_slope_profile_fit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/05_tacsim_slope_profile_fit.png)
+[![法線場から取った半径方向スロープの方位平均(点)と、1 パラメータ a で当てた Hertz のスロープ模型(破線: 内側 r/R、外側 (2/πR)[r arcsin(a/r) − a√(1−a²/r²)))。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/05_tacsim_slope_profile_fit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/05_tacsim_slope_profile_fit.png)
 
 *↑ 法線場から取った半径方向スロープの方位平均(点)と、1 パラメータ a で当てた Hertz のスロープ模型(破線: 内側 r/R、外側 (2/πR)[r arcsin(a/r) − a√(1−a²/r²)])。*
 
@@ -2362,7 +2362,7 @@ py -3.11 examples/poc_surface_roughness.py
 
 *↑ 壊れる場所: 法線の角誤差 [deg]。*
 
-[![荷重を 0.005 → 0.12 N に上げる(12 コマ)。左 = 圧痕まわり ±2.0 mm の合成像(62.5 µm/px を 4 倍)、右 = Hertz の a–F 曲線(破線 = 閉形式)に、各コマの像から当てはめ経路で読んだ ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/03_tacsim_force_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/03_tacsim_force_sweep.gif)
+[![荷重を 0.005 → 0.12 N に上げる(12 コマ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/03_tacsim_force_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/03_tacsim_force_sweep.gif)
 
 *↑ 動く図 ―― 荷重を 0.005 → 0.12 N に上げる(12 コマ)。左 = 圧痕まわり ±2.0 mm の合成像(62.5 µm/px を 4 倍)、右 = Hertz の a–F 曲線(破線 = 閉形式)に、各コマの像から当てはめ経路で読んだ a が点として増えていく。*
 
@@ -2384,7 +2384,7 @@ py -3.11 examples/poc_tacsim_elastic_membrane.py
 
 *↑ **視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む ―― Cattaneo–Mindlin の閉形式と有限要素の節点変位を門に** ―― 物理シミュ × Fullseye 系列 第 2 弾の第 2 本(第 1 本 = 法線荷重の押し込みから力)。外から来るものは 2 系統。閉形式(Johnson, Contact Mechanics, CUP 1985): Cattaneo 1938 / Mindlin 1949 の部分滑り(§7.2)―― 球を法線 P で押したまま接線 Q < μP を掛けると固着円 c/a = (1 − Q/μP)^{1/3}、接線トラクション q = q′ − q″(Hertz 形 2 つの差、滑り環では Coulomb の限界 μp(r) に張り付く)、剛体球の接線変位 δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}]、初期接線剛性 kt = 8Ga/(2−ν)、固着円内の表面変位は一様。Hertz 形接線トラクションの円内解(式 3.91)、法線荷重の半径変位(式 3.41b)、接線点荷重の半空間解 = Cerruti(式 3.22)。有限要素の節点変位(有限厚のドーム状ゲル、Robo-Touch/Taxim リポジトリ同梱、MIT。環境変数 FULLSEYE_TAXIM_DATA があるときだけ、repo には入れない)。公表の定性値(Yuan, Dong, Adelson, Sensors 2017): 滑りは周縁から、変位ヒストグラムのエントロピーは部分滑りで増える。自分で作ったのは 3 つ: 接触円の外側と滑り環の接線変位には閉形式が無いので Cerruti 核を画素平均(中心画素は解析積分 4h ln(1+√2))で離散化して FFT で畳む(円内の 3.91 と ūx 0.017 %・ūy 0.03 %、固着円の一様性 std 0.006 %)、任意の固着半径の場を相似則 g(x) − (c/a)²g(x·a/c) で出す逆算模型(畳み込み 1 回、真の変位で c/a 0.001)、マーカー像は変位で中心を移してから描く(補間しない)。被験者は Fullseye の既存 op: blob2d.blob_label / blob_features(重心)、pivops.piv_cross_correlate(窓相関、第 2 実装)、backends_subpix の副画素極値、backends_tactile.tac_shear_field(別被験者)、measure.fit_circle、tacsim の Hertz と膜の合成。新モジュール tacslip 20 op。寸法は分解能の罠を先に潰して決めた: R = 6 mm・P = 0.5 N・E 0.2 MPa・ν 0.48 → a = 2.05 mm = 32.9 px(62.5 µm/px)、マーカー 0.5 mm = 8 px(半径 2.5 px)で接触円内 53 個、全滑り δx = 514 µm = 8.2 px、μ = 0.5 は仮定(計画書の錨 70.5 µm を再現する値)。図は基準像/荷重後/追跡ベクトルの 3 連(固着円の中は一様に動き、滑り環で遅れ、外側は 1/r)、接線力を 0 → μP に上げる GIF(閉形式の固着円 緑と画像から当てた c 赤が重なり、全滑りで核が消える)、q(r) の 2 項、δx–Q(閉形式線と固着核の中央値)、エントロピー vs Q/μP、有限要素 vs 半空間(r·u の減衰と dx(θ) の角度依存)、壊れる場所(格子エイリアス・密度・雑音)。門 20 本(有限要素の 2 本はデータがあるとき、門だけ 2.8 s、図込み 19 s): ∫q dA = Q(6e-7)、c/a の閉形式と全滑りの印、dδx/dQ(0) = 1/kt(1e-6)と錨 70.6 µm、ūr(a)/δ = 2(1−2ν)/(3π(1−ν)) = 1.6 %(導出)、Cerruti 畳み込み vs 3.91、固着円の一様性、遠方 1/r(3a で 1.016)、重心の往復(反復ガウス重み 0.003 px・二値 0.16 px、格子共通のバイアス 0.010 → 0.004 px)、法線荷重だけでは最大 0.187 px = |ūr| の最大(r = 0.93a、ūr(a) の 1.022 倍)、追跡 RMS 0.007〜0.010 px(Q/μP 0.25〜0.9、961/961 対応)、PIV は 8 px 格子を 5 px ずらすと −3.000 px(ジッタ格子で 4.999)・探索を ±3.8 px に絞れば固着円で 0.03 px、逆算 Q/μP 誤差 0.026 → 0.007・c/a 0.011・Q 0.4〜0.9 %・μ 10.2 → 1.2 %(μ と Q は G・ν・a 既知なら別々に決まるが、μ の誤差は c/a の 2c/(1−c²) 倍 = 10.4 → 1.2 倍に増幅)、模型なしの固着半径は 2.3〜4.7 px(= ピッチの分解能)、全滑りで c/a 0.000・核のばらつき 42 %、指数 0.341(閉形式 1/3)、エントロピー 0.078 → 0.677 で単調非減少、tac_shear_field は核 0.043・環 0.039 で分けない、マーカー間隔 16 px(円内 13 個)でも Q/μP 0.03 以内・画素雑音 σ 0.05 で追跡 RMS 0.031 px、有限要素は r·dz が 1/r から 2 倍外れる r½ = 2.27 mm(1 mm 0.88・2 mm 0.57・3 mm 0.32)、斜め荷重の dx(θ) は r = 1.5〜2 mm で Cerruti の A + B cos²θ(R² 0.78〜0.80)に乗り ν 0.49〜0.51、r = 3 mm では比 2.4 > 半空間の上限 2。正直に: 半空間・小変形・剛体球・Coulomb・準静的(incipient slip の時間発展・粘弾性なし、全滑り近くの縁はせん断ひずみ 0.25 で線形の外)、μ は低 Q で決まりにくい(Q/μP 0.25 で 10 %)、有限要素は点荷重状(接触 < 節点間隔 0.16 mm)で固着円は試せず荷重も不明(形の比較だけ、dz ケースにも dy/dz = 0.25 の非対称)、相関と最近傍は |u| ≥ ピッチ/2 を原理的に測れない(対応は「視野の縁は遠方場」という前提に依る)、53 個のマーカーではエントロピーに段がつく。踏んだ罠: 規則格子に相関を当てると格子周期でエイリアス(多段 64→32 は第 1 段が ±8/±16 に飛ぶ)、核の変位 6.4 px は隣の基準位置から 1.6 px なので最近傍の種も飛ぶ(縁から連続性で伸ばす)、半径 2 px の円盤の重心は ±0.03 px の pixel-locking が格子共通モードになり c/a を 0.02 ずらす(半径 2.5 px + 反復ガウス重みで 3 分の 1、剛体シフト項は 1/r の尾と縮退して逆効果)、ūr の最大は縁でなく 0.93a、滑り環で隣接間隔が 8 → 6 px に縮み低しきい値の縞が繋がる、c/a 格子の線形補間模型は 0.01 ずれる。δx_full ≈ マーカーピッチは最悪の組 ―― 実機設計はピッチ > 2·δx_full か非周期配置。*
 
-[![接線力を 0 → μP に上げる(12 コマ)。左 = マーカー像 + 追跡ベクトル(4 倍)、緑 = 閉形式の固着円 c = a(1 − Q/μP)^{1/3}、赤 = 画像から当てた c、白 = 接触円 a。右 = c/a の閉形式(破](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/02_tacslip_stick_circle_shrinks.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/02_tacslip_stick_circle_shrinks.gif)
+[![接線力を 0 → μP に上げる(12 コマ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/02_tacslip_stick_circle_shrinks.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/02_tacslip_stick_circle_shrinks.gif)
 
 *↑ 測定の図 ―― 接線力を 0 → μP に上げる(12 コマ)。左 = マーカー像 + 追跡ベクトル(4 倍)、緑 = 閉形式の固着円 c = a(1 − Q/μP)^{1/3}、赤 = 画像から当てた c、白 = 接触円 a。右 = c/a の閉形式(破線)に各コマの推定点が増える。Q = μP で核が消え全滑り。*
 
@@ -2422,11 +2422,11 @@ py -3.11 examples/poc_tacsim_marker_shear.py
 
 *↑ **視触覚センサのマーカー場から「触覚双極子」で把持内の傾き・ねじりトルクを読む ―― Gauss の法則が半空間で恒等式になることを門に** ―― 物理シミュ × Fullseye 系列 第 2 弾の第 3 本(第 1 本 = 法線荷重の押し込みから力、第 2 本 = マーカー配列からせん断と固着/滑り)。再実装した方法は Fuchioka & Hamaya, ICRA 2024(arXiv 2404.15626): 学習なし・光学模型なしで、マーカー変位場 v の発散 ∇·v を「電荷」(法線力の分布、Gauss の法則の類推)と見て双極子 p = (1/N) Σ r_i (∇·v)_i を取り(原点は正負の電荷の重心の中点)、傾きトルクは双極子に直交 τ = [c_x p_y, −c_y p_x](係数 c は力覚センサで線形に較正)。手順の要は把持後に零点を取ること。著者のコードは無ライセンスなので読まず、本文の式だけから書いた。センサは retrographic sensing(Johnson & Adelson 2009)系。外から来るものは 2 系統。閉形式(Johnson, Contact Mechanics, CUP 1985): 平頭円形押し込み子の圧 p = P/(2πa√(a²−r²))(式 3.34)に傾きモーメントの反対称項 3Mx/(2πa³√(a²−r²))(∫ x p dA = M、離れない条件 M ≤ Pa/3、導出)、法線点荷重の半空間表面変位 = Boussinesq(§3.2: ū_r = −(1−2ν)P/(4πGr)、ū_z = (1−ν)P/(2πGr))、Hertz 圧の表面変位(式 3.41b・3.42a)、楕円 Hertz 圧(式 4.24)、無滑りねじり(Reissner–Sagoci)q_θ = 3M_z r/(4πa³√(a²−r²))・β = 3M_z/(16Ga³)、Cattaneo–Mindlin の部分滑り(前作)。有限要素の節点変位(有限厚のドーム状ゲル、Robo-Touch/Taxim リポジトリ同梱、MIT。環境変数 FULLSEYE_TAXIM_DATA があるときだけ、repo には入れない)。自分で導いたのは 3 つ(全部門に): Gauss の法則は半空間で厳密 —— 2 次元で ∇·(r̂/r) = 2πδ² なので ∇·ū = −(1−2ν)p/(2G)、だから面積重みの双極子は圧力の 1 次モーメント(= 傾きモーメント M)に比例し押し込み子の形に依らない(ただし係数 −(1−2ν)/(2G) は ν → 0.5 で消える: 実機の信号は有限厚ゲルの膨らみから来る); Cerruti 点荷重の場の発散 −(1−ν)Qx/(2πGr³) —— 純せん断は窓全体に (1−ν)/(1−2ν)·Q·R の偽の傾き(ν 0.48 で 13·Q·R)を作るので窓を固着円に限る(傾きは縁の特異点に電荷が集中するので窓 ≥ a + 1.5 ピッチが要り、両立しないから小さい窓では固定比 0.47 を較正で吸収する); 基線形式(|u| を電荷に)は零点後の対称な傾きで |u| が M の偶関数なので恒等的に 0。被験者 = 既存 op: tacslip.marker_track(重心と対応)、tacslip.cerruti_kernel の畳み込み(ねじりの独立実装)、sceneflow.flow_divergence / flow_curl(格子の第 2 実装)、pivops.piv_vorticity(符号規約 (dy, dx) で −curl)。新モジュール tactorque 17 op。寸法: 平頭 a = 3 mm、P = 2 N(離れの限界 M = 2 N·mm)、視野 16 mm、門の格子 128 px(125 µm/px)、像の格子 256 px(62.5 µm/px)、マーカー 0.5 mm。図: マーカー像 + 追跡ベクトル(40 倍)+ 双極子矢印(等倍切り出し)と追跡場の発散地図、M を 0 → 1.5 N·mm に上げる GIF(双極子が伸び、点が閉形式の線に乗る)、分解の地図(発散 → 傾き、curl → ねじり、平均 → 並進)、FEM の法線 vs 斜め(発散の散布 + 半径プロファイル)、壊れる場所(雑音 ∝ σ、窓半径で 6 桁動くせん断漏れ、窓中心 2 mm ずれで −57 %)、3 形状の係数。門 17 本(FEM 2 本はデータがあるとき、FEM なしの実測で門だけ 2.0 s、図込み 29 s): 平頭圧の格子積分 Σp h² = P 0.57 %・Σx p h² = M 0.86 %(縁 1/√ の格子誤差)と離れの fail-closed、Boussinesq 核 vs 3.41b 0.03 % / 3.42a 0.01 % / 平頭 u_z 0.35 %、Gauss 恒等式 0.21 %(ν 0.48 と 0.3 で同じ = (1−2ν) スケーリングの確認)、純法線で双極子 8e-16(3 形式)、D ∝ M は R² = 1.000000・係数は閉形式と 0.035 %・D_y/D_x 4e-4・原点不変 1e-4(格子の正味電荷 −8e-4)、基線形式 3e-4、3 形状(平頭・球・稜)で係数のばらつき 密 0.001 % / 0.5 mm 格子 0.25 %、ねじり ∫r q dA = M_z 0.99・β −0.47 %・一様性 0.14 %・剛体回転 −0.5 %・curl −0.5 %・piv_vorticity = −curl 1e-16(平頭押し込み子は q/(μp) の最大 0.238 で無滑りが厳密)、Hertz 接触のねじりの部分滑り(全滑りまでの比 0.5 / 0.8 の像)を既定の読みで ×0.999 / ×1.000、0.4.0 の無滑りの関係なら ×1.330 / ×1.851 過大(2026-10-06 の直し: 旧の門は合成も読みも無滑りだったので過大に気づかなかった)、重ね合わせの分解 傾き 2.35 %(ねじり → 傾きの漏れ、傾き単独 0.22 %)・ねじり 0.5 %・並進 0.038 px、純せん断の漏れ ≤ 0.0012 N·mm(固着円 − 当てはめ半径)/ 32.5 N·mm(全窓、導出 31.2)、雑音 0.03 px → σ_M = 0.114 N·mm(窓 1.5a、252 個)・全窓 0.72・0.01 px で 0.038(∝ σ)、綴り壊し 11/11 + nan ≠ 0、散在最小二乗 = 中心差分 1e-15(5 点; 9 点は縁で 11 % 違う)、像から M1 誤差 0.7 %・追跡 RMS 0.0054 px・961/961 対応、FEM は核の発散 +0.019 と環 −0.0036(膨らみ、半空間と符号が逆)、斜め荷重の双極子 ΔD_x = −6.4e-11 m³ で Δt_x = +19 µm(せん断漏れの符号)。正直に: 半空間の係数は実機(有限厚・ほぼ非圧縮)の大きさを与えない(ν 0.48 で 1 N·mm が 0.06 px、実機は較正という論文の立場と同じ)、Johnson の式番号のうち傾いた平頭・平頭の u_z・Reissner–Sagoci は本文で未確認(独立実装で数値検証)、Lubkin 1951 の部分滑りねじりの閉形式は未実装(部分滑りは cuttouch の数値解で直す)、論文の「係数は物体ごとに違う」は有限厚で起きること(半空間では形状不変)で本 PoC では実機を試していない、粘弾性・incipient slip の時間発展・optical flow は扱わない。踏んだ罠: 9 点(3×3)の平面当ては行平均の差分で縁で 11 % ずれる(5 点で中心差分と一致)、平均 curl/2 は縁で 11 % 低い(剛体回転の最小二乗で)、格子の副画素位相の非対称をねじりが拾って傾きに 2 % 漏れる、原点不変の門は格子の正味電荷 1e-3 で破れるので 1e-6 でなく 1e-3。*
 
-[![傾きモーメントを 0 → 1.5 N·mm に 7 段で上げる。左 = マーカー 1 個ごとの発散(赤 +・青 −、押し込み子の縁に正負の対が立つ)と変位(60 倍)、赤矢印 = 双極子(長さ ∝ M)。右 = 格子マーカーの双極子 D_x](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/02_tactorque_dipole_grows_with_M.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/02_tactorque_dipole_grows_with_M.gif)
+[![傾きモーメントを 0 → 1.5 N·mm に 7 段で上げる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/02_tactorque_dipole_grows_with_M.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/02_tactorque_dipole_grows_with_M.gif)
 
 *↑ 測定の図 ―― 傾きモーメントを 0 → 1.5 N·mm に 7 段で上げる。左 = マーカー 1 個ごとの発散(赤 +・青 −、押し込み子の縁に正負の対が立つ)と変位(60 倍)、赤矢印 = 双極子(長さ ∝ M)。右 = 格子マーカーの双極子 D_x が閉形式の線 −(1−2ν)/2G·M1(破線)に乗る: R² = 1.000000、傾きの比 0.9997。*
 
-[![重ね合わせた場(傾き 1 N·mm + ねじり 0.5 N·mm + 並進 1 px)を 3 つに分ける: 発散の双極子が傾き(M1 = 1.015 N·mm、真値 0.991、窓 a + 当てはめ半](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/03_tactorque_decomposition_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/03_tactorque_decomposition_maps.png)
+[![重ね合わせた場(傾き 1 N·mm + ねじり 0.5 N·mm + 並進 1 px)を 3 つに分ける: 発散の双極子が傾き(M1 = 1.015 N·mm、真値 0.991、窓 a + 当てはめ半径)、剛体回転の最小二乗がねじり(M_z = 0.497 N·mm、真値 0.500、窓 0.9a)、平均が並進(1.038 px、真値 1)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/03_tactorque_decomposition_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/03_tactorque_decomposition_maps.png)
 
 *↑ 重ね合わせた場(傾き 1 N·mm + ねじり 0.5 N·mm + 並進 1 px)を 3 つに分ける: 発散の双極子が傾き(M1 = 1.015 N·mm、真値 0.991、窓 a + 当てはめ半径)、剛体回転の最小二乗がねじり(M_z = 0.497 N·mm、真値 0.500、窓 0.9a)、平均が並進(1.038 px、真値 1)。*
 
@@ -2460,7 +2460,7 @@ py -3.11 examples/poc_tactile_dipole_torque.py
 
 *↑ **粉体の山を画像で測る ―― 安息角・体積・質量・流動性・排出率を規則だけで、真値は閉形式・公表値・MuJoCo** ―― 物理シミュ × Fullseye 系列(pegsim / tacsim / tacslip / tactorque / puck / pegfail に続く)。先行研究の粉体計量(Kadokawa, Hamaya, Tanaka, IROS 2023, doi 10.1109/iros55552.2023.10342463)は秤の質量だけを観測に使い、視覚は無い。ここは山の形(側面像・高さ図)から安息角・体積・質量・流動性・排出率を読む側を、新モジュール granular(23 op + mujoco の facade 2)で学習なしに組む。外から来る真値は 4 系統。(1) 閉形式: 円錐 V = (π/3)R²H、H = R tan φ、m = ρ_b V; Beverloo, Leniger, van de Velde 1961 の排出則 W = C ρ_b √g (D₀ − k d)^{5/2}(C ≈ 0.58、k ≈ 1.4、Nedderman 1992 の整理)。(2) 公表の表: USP 一般章 <1174> Powder Flow の Table 1(安息角 → 流動性区分、原典 Carr 1965)—— 表は整数の度なので四捨五入して引く(30.4 → excellent、30.5 → good、25 度未満は表の外)。(3) 公表値: 1 mm ガラス球の安息角 25.2 ± 0.8 度(Sunday, Murdoch, Tardivel, Schwartz, Michel, MNRAS 2020、arXiv 2009.10448 §5.4)。側面像の上縁に左右別々に直線を当て、裾と頂を除く測り方(§5.3)も同論文から取った。(4) 第 2 実装(--full): MuJoCo 3 の剛体球 1,200 個(r 4 mm、滑り摩擦 0.16、転がり 0.09·R)を平底ホッパの正方孔(48 mm)から流して山を作る。側面像の計測は縁の画素の被覆率をそのまま副画素の位置に読む(edge 法): 被覆率に一様雑音 ±0.1 を足しても 0.0064 度。★列和法(被覆率の列和 = 粉の高さ)は [0, 1] に切った雑音で粉の平均値が 0.975 になり、tan φ がその比で縮んで −0.63 度 —— 最初は「裾の丸みの偏り」と誤読しかけ、丸みを 0 にしても残ったので気づいた。高さ図は demops.dem_slope の勾配ヒストグラムの最頻(雑音は勾配を上にしか動かさない: σ 0.05 px で +0.12 度、0.1 px で +0.37 度)。★傾いた基準面 β = 5 度は安息角に足し算される: 左右の斜面は 33.62 / 26.10 度 = 閉形式 atan(tan φ ± tan β)、左右差 7.52 度で警報(datum_tilt_check)、tan の引き算で 30.0000 度に戻る。高さ図の最頻は 5.00 度 = 地面そのもの(地面のセルがヒストグラムを乗っ取る; datum を渡せば 29.9994)。せん断型(datum)とカメラのロール(回転型)は片側の斜面で 1 次で違う(33.62 対 35.00 度)ので補正の種類を取り違えない。図: 側面像に当てた 2 直線(等倍)、勾配ヒストグラム、分解能で壊れる場所(山の幅 25〜400 px)、裾の丸み・頂の鈍り・傾いた基準面・幅 50 px の山(10 倍で画素が見える)、Beverloo の W(D₀)、流動性の帯に公表値と MuJoCo の値、スプーンの傾け、基準面の傾きを −8〜+8 度で振る GIF; --full: 球が孔から流れて山になる GIF(壁と底板の線つき)、球の山の側面に当てた直線と公表値 25.2 度の斜面、高さ図、排出の質量の列と Beverloo の傾き、MuJoCo と外の真値の表。門 20 本(numpy、1.3 s)+ --full 5 本(MuJoCo、34 s): 円錐の往復 1.8e-16、高さ図の体積 3.5e-7、側面像の往復 0.0000 度、Beverloo の指数 n = 2.5074・C = 0.5894(合成排出の高さ図の列 6 本、σ 0.5 mm; 雑音なし n = 2.5000000)、W(30 mm, 1 mm, 1500) = 0.3769 kg/s、裾の丸み −0.248 → 裾 15 % 除外で −0.001 度、頂の鈍り −0.554 → −0.004 度、分解能(雑音 ±0.1、4 角度 × 6 seed: 山の幅 50 px で側面 0.197 度、25 px で 0.624 度、高さ図は 50 px で 1.097 度)、流動性区分の境界 16 点、綴り壊しと山が写っていない・切れている場合の ValueError、スプーンの規則 θ_c = φ − atan(2h₀/L)(自分の導出: L 50 mm・h₀ 5 mm で 18.69 度、h₀ → 0 で φ。2026-10-05 に楔の傾きを小角の近似 tan φ − tan θ(この時 20.67 度)から厳密な tan(φ − θ) に直し、口に壁の無い器は θ = 0⁺ からこぼれる扱いを足した)、容器の充填率 0.6300 / 粉面の傾き 3.000 度、動画からの質量(同じ円錐を両辺に入れるので配管の検査)、MJCF 文字列、入口の棚卸し; --full: 山ができた(逃げ 0、ビンに残る滞留層 114、高さ 38.4 mm = 4.8 粒径)、側面 4 方位(22.4 / 23.0 / 18.9 / 24.4 度)の平均 22.17 度 vs 公表値 25.2 ± 0.8 → −3.03 度(門 −7〜+1)、2 粒径で平滑した高さ図の中央値 25.74 度(平滑なしの最頻 65.5 度 = 球の縁)、排出率 0.906 kg/s vs Beverloo(正方孔を等価直径 54.2 mm に、ρ_b 1312 kg/m³ はビンの実測)0.911 kg/s。正直に: 合成の側面像は縁の模型が計測と同じなので雑音なしの往復は配管の検査で、独立な被験者は雑音と MuJoCo の球だけ。MuJoCo の山が公表値より 3 度低い理由(剛体の軟接触で付着なし、転がり摩擦の模型が DEM と違う、山が 5 粒径しか無い、正方孔の流れで方位ごとに 18.9〜24.4 度)は切り分けていない。Beverloo との比 0.99 は一致が良すぎるので信用せず桁の門に留める(前の構成では 1.02 / 1.14、D₀/d = 6.8 は詰まりの限界付近、帯のコマ 14)。Al-Hashemi & Al-Amoudi 2018(CC BY 4.0)の材料別の表は取得できず未収録、Zhou ほか 2002 の経験式は未読。mg 級の計量は画像の体積分解能では無理(g 級の砕石・ビーズで成立、mg 級は秤に譲る)。容器の充填率は内寸 = 画像の仮定(壁の検出は未実装)。踏んだ罠: 滑らかな台(μ 0.16)では 1,200 球が半径 0.15 m の単層に広がり山にならなかった —— 1 球の実測で転がり抵抗は滑り摩擦の限界 μ_s g で飽和する(転がり係数 0.01 でも 0.1 でも減速 1.6 m/s²)ので粗い台 μ 1.0 にした(実験で底に紙やすりを貼るのと同じ)。軟接触の時定数 < 2·timestep は発散(op が拒否)、Newton 解法は密な山で 280 s を超えて止まる → CG + 楕円錐。*
 
-[![高さ図の勾配ヒストグラム(demops.dem_slope)。雑音なしは 1 ビンに立つ。σ = 0.1 px の雑音で最頻が +0.12 度ずれる(|∇| は雑音で増えるだけ)—— 同じ大きさの雑音で側面像は 0.01 度も動かない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/02_granular_slope_histogram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/02_granular_slope_histogram.png)
+[![高さ図の勾配ヒストグラム(demops.dem_slope)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/02_granular_slope_histogram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/02_granular_slope_histogram.png)
 
 *↑ 測定の図 ―― 高さ図の勾配ヒストグラム(demops.dem_slope)。雑音なしは 1 ビンに立つ。σ = 0.1 px の雑音で最頻が +0.12 度ずれる(|∇| は雑音で増えるだけ)—— 同じ大きさの雑音で側面像は 0.01 度も動かない。*
 
@@ -2480,11 +2480,11 @@ py -3.11 examples/poc_tactile_dipole_torque.py
 
 *↑ 同じ山の高さ図(単位 mm、球面の最大高さ、1.5 mm/セルを 3 倍の最近傍で表示)。*
 
-[![基準面の傾き β を −8〜+8 度で振る(32 コマ)。左右の斜面が atan(tan φ ± tan β) で割れ、左右差 ≈ 2β が 1 度を超えると警報。tan の引き算で 30 度に戻る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/11_granular_datum_tilt_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/11_granular_datum_tilt_sweep.gif)
+[![基準面の傾き β を −8〜+8 度で振る(32 コマ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/11_granular_datum_tilt_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/11_granular_datum_tilt_sweep.gif)
 
 *↑ 動く図 ―― 基準面の傾き β を −8〜+8 度で振る(32 コマ)。左右の斜面が atan(tan φ ± tan β) で割れ、左右差 ≈ 2β が 1 度を超えると警報。tan の引き算で 30 度に戻る。*
 
-[![剛体球 1200 個(r 4 mm、滑り摩擦 0.16、転がり 0.09·R、粗い台)が平底ホッパ(青灰の線 = 壁と底板)の正方孔(48 mm)から流れて山になる(0.5 mm/px、67 コマ)。φ = 22.17 度(4 方位の平均)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/12_granular_mujoco_heap_render_settling.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/12_granular_mujoco_heap_render_settling.gif)
+[![剛体球 1200 個(r 4 mm、滑り摩擦 0.16、転がり 0.09·R、粗い台)が平底ホッパ(青灰の線 = 壁と底板)の正方孔(48 mm)から流れて山になる(0.5 mm/px、67 コマ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/12_granular_mujoco_heap_render_settling.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/12_granular_mujoco_heap_render_settling.gif)
 
 *↑ 動く図 ―― 剛体球 1200 個(r 4 mm、滑り摩擦 0.16、転がり 0.09·R、粗い台)が平底ホッパ(青灰の線 = 壁と底板)の正方孔(48 mm)から流れて山になる(0.5 mm/px、67 コマ)。φ = 22.17 度(4 方位の平均)。*
 
@@ -2506,7 +2506,7 @@ py -3.11 examples/poc_granular_heap_repose.py
 
 *↑ **食材の切断を画像で測る ―― 刃の追跡・切片の厚み・切断面の粗さ・手首のたわみからの切断力、真値は閉形式と MuJoCo** ―― 物理シミュ × Fullseye 系列。題材はロボットの食材スライスの研究(arXiv:2404.02569、ICRA 2024)。学習はせず規則だけで「画像 → 刃の高さ → 柔らかい手首のたわみ → 力 → 靱性 R」の鎖を閉じる。新モジュール cutting 16 op + mujoco の facade 1。外から来る真値は 3 つ。(1) 閉形式の切断力学: Atkins, Interface Focus 6:20160019 (2016) の式 1.1〜1.4(摩擦なしの押し + 引き、V/(Rw) = 1/(1+ξ²)、H = ξV、F_res/(Rw) = 1/√(1+ξ²))と本文の数(H/Rw は ξ = 1 で最大 0.5、傾けた刃を縦に動かすと ξ = tan i)、Williams & Patel, Interface Focus 6:20150108 (2016) の式 2.6(くさび + Coulomb 摩擦、最小 1/(1 − sin β))と本文の例(μ = 0.2 で θo = 79°・最小 1.24)。摩擦と刃角を含む slice/push の式は未読なので実装せず、組み合わせは ValueError。(2) 物理エンジン = MuJoCo(--full): 正射影カメラで描いた刃を同じ追跡器で追い、食材の抵抗を関節の摩擦損失として毎歩 R·w_eff·g(ξ) に置き換えた手首の拘束力と比べる。柔体は剛性の桁が合うが破断しない(刃は潜り込む)ことも門で固定。(3) 有限要素の刃の力(--full、任意、非商用): arXiv:2105.12244 が公開した CSV(CC BY-NC 4.0)を環境変数から読み、形の比較だけ(データは repo に入れず、図にも載せない)。★厚みの縁は行の 3 色(背景・食材・刃)の線形分解で読む: 背景の割合は端面で 1 → 0、刃の割合は刃の面で 0 → 1 の純粋な段なので、窓の中の和が縁の位置になる。ぼけは割合の和を変えないので、窓を端面の段の 2 次モーメントから広げれば偏らない —— ぼけ 4 px の厚みの偏り −18 µm → +11 µm、8 px は刃の帯がぼけに比べて細すぎるので拒否(試作は −37 µm で黙って通った)。★薄い切片の食材の参照色は刃の向こうの本体から取るので照明の左右勾配で 13 % ずれる: 刃の帯の輝度から照明を推定して戻し 66 → 5 µm。図: 合成の切断の GIF(推定の刃先線・隠れた所は破線・真値・先端・力の曲線)、刃先方向の像と両縁、40 枚の厚みの分布と散布、切断面の断面、壊れる場所、slice/push の閉形式; --full: MuJoCo の GIF、柔体に刃を押した力。門 14 本(numpy、CPU 0.95 s)+ --full 7 本: 閉形式 1e-16、H/Rw の最大 0.5000 @ ξ 1.000、θo 78.69°・最小 1.2440、角度 0.017°、隠れた中央の刃先 8.2 µm、先端 0.24 mm、深さ 29 µm(0.12 px)、厚み 0.1〜5 mm の偏り 6.9 µm・行ごとの RMS 18.5 µm・傾き 0.021°、粗さの床 Rq 11 µm、R 393.6(真値 400、−1.6 %)・ξ 0.561(真値 0.570)、力 1.25 倍の世界で R 500.0(自己申告); --full(8 px/mm・20 px/mm): 角度 0.0014°・刃先 1.1 µm・深さ 2.2 µm・厚みの偏り 2.8 µm・RMS 10.4 µm、雑音 0.05 まで ≤ 5 µm で 0.1 は拒否、MuJoCo 柔体 F/(E·A·δ/H) 1.106 / 1.074 / 1.059、刃は 0.76 N で頭打ち、描画 → 追跡 0.9 µm・0.0007°、手首の力 0.083 N ≤ c·v 0.150 N、FEM 6 本の残差 / 定常値 ≤ 0.068。正直に: 力の真値は外から来ていない —— 合成の力も当てはめも同じ Atkins の模型で作るので、画像 → R の鎖は配管の検査(力 1.25 倍の世界でも R が 1.25 倍に出るだけで靱性と摩擦を分けられない)。食材は変形しない、刃先は直線、片刃を仮定。靱性の実測値は引用しない。画像つきの切断の公開データは見つからなかった。MuJoCo の柔体は保持中も ±5〜11 % 揺れ続ける。踏んだ罠: 画像の中心は ((H−1)/2, (W−1)/2)(H/2 だと 62.5 µm ずれる)、MuJoCo の摩擦損失は既定だと粘性のように柔らかい、入り始めの軌跡で ξ を出すと 0.63(真値 0.57)。*
 
-[![刃先方向の像(20 px/mm、等倍): 片刃の平らな面と食材の端面の距離 = 切片の厚み。破線 = 推定の両縁。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/02_edge_view_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/02_edge_view_thickness.png)
+[![刃先方向の像(20 px/mm、等倍): 片刃の平らな面と食材の端面の距離 = 切片の厚み。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/02_edge_view_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/02_edge_view_thickness.png)
 
 *↑ 測定の図 ―― 刃先方向の像(20 px/mm、等倍): 片刃の平らな面と食材の端面の距離 = 切片の厚み。破線 = 推定の両縁。*
 
@@ -2526,7 +2526,7 @@ py -3.11 examples/poc_granular_heap_repose.py
 
 *↑ 摩擦なしの slice/push の閉形式。*
 
-[![MuJoCo の正射影カメラで描いた刃(柔らかい手首 4 N/mm、抵抗 = 摩擦損失 = Atkins の切断力)を同じ追跡器で追う。破線 = 推定の刃先線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/08_mujoco_wrist_track.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/08_mujoco_wrist_track.gif)
+[![MuJoCo の正射影カメラで描いた刃(柔らかい手首 4 N/mm、抵抗 = 摩擦損失 = Atkins の切断力)を同じ追跡器で追う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/08_mujoco_wrist_track.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/08_mujoco_wrist_track.gif)
 
 *↑ 動く図 ―― MuJoCo の正射影カメラで描いた刃(柔らかい手首 4 N/mm、抵抗 = 摩擦損失 = Atkins の切断力)を同じ追跡器で追う。破線 = 推定の刃先線。*
 
@@ -2548,7 +2548,7 @@ py -3.11 examples/poc_food_cutting_measure.py
 
 *↑ **ドーム状の柔らかい指先を平らな物に押す大変形接触を、スケーリング則と連続体の厳密解で門にする ―― 原文の式 (3) の 1 次の係数は活字どおりだと円柱で力が負、本文の模型から 2n/(1+n) を導いた** ―― 物理シミュ × Fullseye 系列(視触覚)、tacsim(Hertz の膜、小変形)の先。一次情報は T. Mu ほか "A scaling law for large-deformation contact in soft materials"(arXiv:2509.18581、2025)の PDF。ドーム状の柔らかい指先センサ(半球、高さ L = 半径 R = 8 mm、μ = 0.1 MPa は設計の仮定)が平らな物に押される形で成り立たせた。枠組みは断面 f = c rᵖ の線形解 F_L = C δⁿ(n = 1 + 1/p)、大変形 F = κₙ(δ/L) F_L、接触半径の式 (4)(不完全ベータ)、普遍形 κ = (1 − 10/9·δ/L)⁻¹。新モジュール tacdome 12 op、全部 numpy。★式 (3) の 1 次の係数: 原文の頁を 400 dpi の画像にして読んだ活字 (4+2n)/(1+n) では円柱で κ₁(0.5) = −1.667(力が負)。本文の模型(1D 断面の各点に長さ L − g の neo-Hookean 円柱ばね)を積分すると c₁ = 2n/(1+n)・c₂ = n/(2+n)、接触半径は式 (4) と一字一句同じ —— 2 次と式 (4) は活字と一致し、1 次だけが違う。ばねの長さを全部 L にした別の模型は係数 (1.008, 0.258) でどちらの読みにも合わない。付録は arXiv に無く未読。外から来る真値は 3 系統: 非圧縮 neo-Hookean の円柱の一軸圧縮の厳密解(導出した κ₁ と 1.9e-15)、Hertz の小変形極限(被験者 tacsim と 1e-12)、論文の普遍形 k = 10/9(導出した κ₁⁻¹ の最小二乗 1.1060、0.5 % 差)。第 2 実装 = ばね列の中点則(閉形式と 8.5e-9)、式 (4) は 3 経路が 1e-15 で一致。導出した κ⁻¹(0.5) = 0.429 / 0.493 / 0.545(n = 1 / 1.5 / 2)は論文の図 4B の挿入図と同じ並び。被験者の結果 —— 観測量で外れ方が変わる: 半球の指先で押し込みから読む Hertz の力は δ/L = 0.05 / 0.3 / 0.5 で −4.10 / −27.79 / −50.70 %、半径は −1.71 / −11.70 / −22.20 %。ところが接触半径から Hertz で力を読む(視触覚センサの読み方)と κ と半径の伸びがほぼ打ち消して max +5.39 %(d = 0.4)。円錐は打ち消さず d = 0.5 で −18.95 %、平頭は半径が δ を決めないので読めない。内側カメラの接触像(192 px、0.117 mm/px)から面積法(被覆率を切らずに線形和)で半径 max 0.004 %、力の逆算 max 0.013 %、雑音 σ = 0.03 で 0.411 %。縁の画素に measure.fit_circle を当てると −0.61〜−2.51 %。--full: 512 px の 20 点で半径 0.0049 %・力 0.0146 %、MuJoCo の柔体(線形弾性の立方体を摩擦なしで圧縮)は小ひずみの剛性比 0.98〜0.99 で線形極限だけ合い、ε = 0.31 で 0.18 につぶれる = 大変形の真値には使えない(門は小ひずみだけ)。図: 押し込みの GIF(内側カメラの像・ばね列・力の曲線)、3 形状の力、κ⁻¹ の帯と 3 つの読み、a/a_L と円柱の厳密解、Hertz の誤差、接触像の縁の 24 倍; --full: 柔体の剛性比。門 13 本(既定 0.2 s)+ --full 2 本(図込み 41 s)。正直に: 図 5C(半径 vs 力)は再現できない(導出では同じ力の半径の差 0〜1.7 %、付録のセンサ寸法が未読)。「全形状が普遍形の狭い帯に入る」も導出では再現しない(普遍形が球より 10.9 %・円錐より 22.7 % 高い)。円柱の実験値は摩擦込みなので門にしていない。半球は放物線で近似、摩擦なし・準静的・非圧縮、照明は理想化。踏んだ罠: 図の説明文の画素ピッチを m の値のまま mm と書いていた(0.000 mm/px、組み込みの検分で直した)。*
 
-[![球(p = 2、n = 1.5)・円錐(p = 1、n = 2、傾き 1)・平頭の円柱(p = ∞、n = 1、半径 = L)の力(無次元、縦軸は対数)。破線 = 線形解(球は Hertz)、実線 = 大変形 F = κₙ F_L。δ/L ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/02_tacdome_force_three_shapes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/02_tacdome_force_three_shapes.png)
+[![球(p = 2、n = 1.5)・円錐(p = 1、n = 2、傾き 1)・平頭の円柱(p = ∞、n = 1、半径 = L)の力(無次元、縦軸は対数)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/02_tacdome_force_three_shapes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/02_tacdome_force_three_shapes.png)
 
 *↑ 測定の図 ―― 球(p = 2、n = 1.5)・円錐(p = 1、n = 2、傾き 1)・平頭の円柱(p = ∞、n = 1、半径 = L)の力(無次元、縦軸は対数)。破線 = 線形解(球は Hertz)、実線 = 大変形 F = κₙ F_L。δ/L = 0.3 を超えると開き、平頭が最も大きく外れる(全ばねが最大ひずみ)。*
 
@@ -2586,7 +2586,7 @@ py -3.11 examples/poc_tacdome_large_deformation.py
 
 *↑ **研削・研磨・拭き取りを画像で測る ―― 削れた深さ・拭けた帯の幅・面積を Preston の式と接触圧の閉形式と MuJoCo で、柔らかい手首は板の高さの誤差 2 mm でも帯がそろい硬い手首は途中で浮いて拭けない** ―― 物理シミュ × Fullseye 系列の続き。研削の模倣学習(DIPCOM、arXiv:2410.19235)と可変コンプライアンスの拭き(Comp-ACT、arXiv:2406.14990)は接触を保つ剛性を学習で決める。台帳では「視覚が薄い」と保留していたが、仕事の結果(削れた量・拭けた範囲)は画像で測れるので、学習なしで残る部品として成立させた。新モジュール polish 13 op + mujoco の facade 3。外から来るもの: Preston の式 dh/dt = k_p p v(原文 1927 は未読、式の形と k_p の桁 = セリアでガラス 2e-13〜2e-12 m²/N は Shen ほか 2018、J. Am. Ceram. Soc. の式 (1) と本文から)、接触圧(平板 = 一様、球 = Hertz、tacsim の hertz_sphere)、導出した閉形式(直線の一筆の断面、拭けた帯の幅と拭ける最小の力、平行な一筆の面積、弾性床のパッドで粗さが exp(−k_p k_w v t) で減ること)、MuJoCo。(1) 除去の地図の 2 実装(小区間ごとの直接の積分 / 軌跡の線密度と圧力の窓の FFT 畳み込み)が rms 差 0.37 % of peak、体積比 3.6e-4。(2) 一筆の断面 = 閉形式(平板 2k_p p √(a² − y²)、Hertz k_p (E*/R)(a² − y²) で曲率が力に依らない、回る平板の asinh の式)が 0.26 % 以内、体積 / 長さ = k_p F(0.99964 / 1.00002)。(3) 膜の画像(Beer–Lambert、雑音 1 %)から Otsu で読んだ帯の幅 = 閉形式が平板・Hertz 各 4 力で 0.28 % 以内。罠: Otsu のしきい値は残膜 h0 の約 1/3 を意味し、戻さないと最大 36 % 外れる。拭ける最小の力 1.90 N の下で「きれい」な画素 0、平行な 4 本の一筆の面積は 4 つの間隔で 0.30 % 以内(型を画素の中心に置くと縁が 1 列まるごと落ちて −1.7 %、0.3 画素ずらした)。(4) 前後の高さ図(粗さ 20 nm・雑音 1 nm・載せ直し)から削れた深さ 240 nm を rms 1.41 nm で読み、Preston 係数を 0.04 % で当てた(外周の枠を参照にすると 42 % 外れる)。(5) 弾性床: 全面が当たる間 rms は exp に 0.20 % 以内、roughness の Sq 比 0.1351 vs 0.1353。山だけが当たると 19 % 外れる。(6) MuJoCo(--full): 円柱の工具を手首のばね(300 N/m と 10 kN/m)で板に押して動かす。柔らかい手首の力 = ばねの閉形式(99 % 点 0.05 %)、摩擦 = μ、硬い手首は閉形式の 19.8 mm に対し 19.2 mm で浮く。MuJoCo の力で拭いた跡の帯の幅 = 力が変わる一筆の閉形式(中央値 0.55 % / 0.17 %)。帯の幅の変動係数 柔らかい 0.02 %・硬い 13 %、拭けない列 83 / 309 —— 可変コンプライアンスで拭く理由を学習なしで帯の幅の画像から。図: 平行に拭く動く図、一筆の断面と閉形式、帯の幅と力、高さ図と深さの読み、弾性床の粗さの減り、面積と間隔; --full: 一筆の間の力、MuJoCo の力で拭いた跡。門 10 本(既定 1.9 s)+ --full 5 本(図込み 15 s)。正直に: 拭き取りの膜の除去係数は仮の値(帯の幅の門は同じ係数で閉形式と画像が合うかを見るもの)。平板の一様な圧力は剛な平板の仮定(縁で立つ Boussinesq の圧力は入れていない)。弾性床は仮定、高さ図は横にずれない前提。MuJoCo の既定の接触は柔らかすぎて力が 6〜17 % 小さく出たので、接触を硬くし楕円の錐にした。研削の切りくずの模型は扱っていない。*
 
-[![半径 5 mm の平らなパッドで、長さ 30 mm の一筆を間隔 1.2a で 4 本(持ち上げて戻る)。暗い所 = 残った膜(Beer–Lambert)、青い輪 = 工具。最後の画像で拭けた面積 961.8 mm²、閉形式 (2a + (](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/01_polish_raster_wipe_coat.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/01_polish_raster_wipe_coat.gif)
+[![半径 5 mm の平らなパッドで、長さ 30 mm の一筆を間隔 1.2a で 4 本(持ち上げて戻る)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/01_polish_raster_wipe_coat.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/01_polish_raster_wipe_coat.gif)
 
 *↑ 測定の図 ―― 半径 5 mm の平らなパッドで、長さ 30 mm の一筆を間隔 1.2a で 4 本(持ち上げて戻る)。暗い所 = 残った膜(Beer–Lambert)、青い輪 = 工具。最後の画像で拭けた面積 961.8 mm²、閉形式 (2a + (N−1)min(s, 2a))L + Nπa² − (N−1)lens(s) = 1087.1 mm²。縁は膜が薄くなるだけで消えきらない所があり(パッドの縁は通過の弦が短い)、Otsu のしきい値がその途中に入る。*
 
@@ -2626,7 +2626,7 @@ py -3.11 examples/poc_polish_wipe_measure.py
 
 用語: PIV — 粒子模様を短い時間差で撮影し、小領域どうしの変位から流れの速度場を求める計測法。
 
-[![縦長の盛り(楕円錐 1.6 : 1)を直交する 2 方向から見た像(等倍)。2 方向の楕円の和は体素の真値に -0.01 %、片方だけの回転体は -37 % / +60 % 外れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/02_scoop_elliptic_heap_two_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/02_scoop_elliptic_heap_two_views.png)
+[![縦長の盛り(楕円錐 1.6 : 1)を直交する 2 方向から見た像(等倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/02_scoop_elliptic_heap_two_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/02_scoop_elliptic_heap_two_views.png)
 
 *↑ 測定の図 ―― 縦長の盛り(楕円錐 1.6 : 1)を直交する 2 方向から見た像(等倍)。2 方向の楕円の和は体素の真値に -0.01 %、片方だけの回転体は -37 % / +60 % 外れる。*
 
@@ -2646,11 +2646,11 @@ py -3.11 examples/poc_polish_wipe_measure.py
 
 *↑ 流れの像から読んだ流量(3 高さの平均)と MuJoCo で線を横切った数。*
 
-[![合成の流れ(3000 個/s、半径 1 mm、幅 8 mm、0.5 mm/px を 2 倍の最近傍、1.5 ms/コマ)。破線 = 流量を読む 3 つの帯。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/03_scoop_stream_synthetic_frames.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/03_scoop_stream_synthetic_frames.gif)
+[![合成の流れ(3000 個/s、半径 1 mm、幅 8 mm、0.5 mm/px を 2 倍の最近傍、1.5 ms/コマ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/03_scoop_stream_synthetic_frames.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/03_scoop_stream_synthetic_frames.gif)
 
 *↑ 動く図 ―― 合成の流れ(3000 個/s、半径 1 mm、幅 8 mm、0.5 mm/px を 2 倍の最近傍、1.5 ms/コマ)。破線 = 流量を読む 3 つの帯。*
 
-[![口の開いた樋(青 = 床と奥壁、床 80 mm、幅 24 mm、滑らかな側壁)を口の縁を軸に 15 度/s で傾ける(剛体球 665 個、0.5 mm/px、陰影つき正射影)。数は傾け始めに器にあった球のうち口を越えた数。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/09_scoop_mujoco_pour_render.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/09_scoop_mujoco_pour_render.gif)
+[![口の開いた樋(青 = 床と奥壁、床 80 mm、幅 24 mm、滑らかな側壁)を口の縁を軸に 15 度/s で傾ける(剛体球 665 個、0.5 mm/px、陰影つき正射影)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/09_scoop_mujoco_pour_render.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/09_scoop_mujoco_pour_render.gif)
 
 *↑ 動く図 ―― 口の開いた樋(青 = 床と奥壁、床 80 mm、幅 24 mm、滑らかな側壁)を口の縁を軸に 15 度/s で傾ける(剛体球 665 個、0.5 mm/px、陰影つき正射影)。数は傾け始めに器にあった球のうち口を越えた数。*
 
@@ -2672,7 +2672,7 @@ py -3.11 examples/poc_powder_scoop_pour.py
 
 *↑ **乳鉢の粉砕を測る ―― 粒度分布の D50、粉砕則、独立 3 回のばらつき、AE の帯域電力。真値は公開されたレーザー回折の実測、D50 の定義の違いが 1 区間 = 12 % の偏り** ―― 物理シミュ × Fullseye 系列、粉体の 3 本目(granular / scoop の続き)。題材はロボットが乳鉢で粉を挽き、音響放射(AE)で挽き具合を見張る研究。その公開データ(Zenodo 概念 DOI 10.5281/zenodo.18064323、CC BY 4.0)のレーザー回折の粒度分布(NaCl / クエン酸 / グルタミン酸ナトリウム × 独立 3 回 × 粉砕 3〜25 min の 7 時点、+ 粉砕前・60 min・手作業)と AE の生波形 6 本を外の真値にした。データは repo に入れない(粒度分布 117 本と AE 6 本だけを抜き、環境変数 FULLSEYE_GRIND_DATA で渡す。無い CI では numpy の 12 門だけ走る)。新モジュール grind 13 op、facade なし。(1) D50 の定義: 装置の CSV の区間の端と体積の行の対応を読み、ヘッダの Dx(50) は「端の累積を log(径) で線形補間」と全 117 本で一致(最大差 3.2e-15)。公開の解析コードのある段は累積を区間の下の端に置くので 1 区間分(比 1.136)小さい: −11.80〜−11.98 %。(2) 粉砕則(Reddy の式 (1)・(5)〜(7)、dE = −C dx/xⁿ、Kick n = 1・Bond 1.5・Rittinger 2)を正味の粉砕時間に当てはめると(log D50 の rms、21 点)NaCl は Rittinger 0.050、クエン酸は Bond 0.100、MSG は Bond 0.156。Kick はどの材料でも最良にならない。ところが、その材料の時点・縮み・残差で 3 則を作り直したモンテカルロで正しい則が勝つ割合はクエン酸 92〜100 %(縮み 20 倍)、MSG 70〜92 %、NaCl 58〜78 %(縮み 2.7 倍)—— NaCl の「Rittinger が最良」は当てにならない。粉砕前への外挿(当てはめに使っていない測定)は最良の則で −6 / −18 / −11 %、n を自由にすると +34 / +57 % と悪化(当てはめ過ぎ)。(3) 独立 3 回のばらつき(D50 の cv、7 時点の二乗平均)は NaCl 5.2 %・クエン酸 6.5 %・MSG 13.2 %。同じ粉の繰り返し測定の cv は 0.8〜17.1 % で、独立試行より小さいとは限らない。25 min の D50 は全ての組で標準誤差の 12 倍以上離れる。(4) 篩上 R(200 µm) の見かけの一次の速度(Deniz 2004 の式、出典 Austin)は 0.17〜0.20 /min、前半より後半が遅い(一次から外れる)。(5) AE の帯域電力(0.1〜1 MHz)は公開の解析コードの定義を同じ 6 本で走らせた値と差 0.0、acoustics.stft の密度の帯域積分とは Parseval で 0.982〜1.052。3 min → 25 min で NaCl 185 → 31 mV²、クエン酸 806 → 7.1、MSG 2209 → 184、どれも D50 と同じ向き。(6) 60 min のクエン酸は 25 min の 11.4 µm より粗い 39.9 µm(凝集)で、単調に細かくなる則はどれも表せない。図: 合成の粒子と体積基準 vs 個数基準、則の見分け(合成)、3 材料の D50 の曲線と 3 則、粒度分布が細かくなる GIF、AE のスペクトログラム(挽き始めと挽き終わりを同じ色の尺度で)、AE の帯域電力 vs D50、コマごとの帯域電力、篩上の一次の速度、60 min で則が破れる表、実データの設計での見分けの表。門 12 本(numpy、0.6 s)+ データ 10 本、--full はモンテカルロ 10 倍(図込み 25 s)。正直に: エネルギー ∝ 正味の時間は仮定(則どうしの比較にしか使っていない)。AE は材料ごとに 2 点なので単調性も指数も 2 点の比で、相関の強さは言えない。論文本文は未読、Bond 1952 と Austin の原著も未読。60 min と粉砕前の測定は装置の設定が違う。画像からの D50 は合成の門だけ。*
 
-[![同じ画像の同じ粒子でも、体積基準の D50 は個数基準の 1.39 倍。レーザー回折は体積基準。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/02_image_volume_vs_number_basis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/02_image_volume_vs_number_basis.png)
+[![同じ画像の同じ粒子でも、体積基準の D50 は個数基準の 1.39 倍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/02_image_volume_vs_number_basis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/02_image_volume_vs_number_basis.png)
 
 *↑ 測定の図 ―― 同じ画像の同じ粒子でも、体積基準の D50 は個数基準の 1.39 倍。レーザー回折は体積基準。*
 
@@ -2714,7 +2714,7 @@ grind(乳鉢の粉砕を測る)の続き。よく混ざった粉から 1 回分�
 
 *↑ **何分すり潰せば 1 回分の薬の量が揃うか ―― 粒径から含量のばらつきを閉形式と Monte Carlo で、粉砕則で必要な時間を逆算。写真の CV が低く出た正体は同じ 12 枚の縮尺違い** ―― grind(乳鉢の粉砕を測る)の続き。よく混ざった粉から 1 回分を取ると、薬の粒の数が Poisson で揺らぐだけで含量がばらつく。複合 Poisson から CV² = (πρ/6)·D63³/D を導出し(D63 = 個数基準の 6 次 / 3 次モーメントの比の 3 乗根)、体積基準の粒度分布からは恒等式 D63³ = E_v[d³] で形を仮定せずに出す。粉砕則を D63 に当てて、CV が目標(受入値 15 相当の 6.25 %、または第 1 段の合格の確率)まで下がる時間を逆算する。閉形式 vs Monte Carlo(径を引いて足すだけ)は 8 条件で差 / 標準誤差 最大 1.72、恒等式は 1e-16。★試走の「写真から出した CV が 4 つの径で一貫して −6 %」は、4 つの径が画素の単位で同じ 12 枚の画像だったための見かけ(門 4)。独立な束に分けると主因は縁に触れる粒の取りこぼし(0.956)、Miles–Lantuéjoul の重み + 対数正規で 1.001・散らばりは ±0.102 → ±0.060。「AV ≤ 15 相当」の CV 6.25 % の粉は第 1 段を約半分しか通らない(χ² 0.563、平均のずれの項込みで 0.501)。実データ(公開のレーザー回折、repo の外・FULLSEYE_GRIND_DATA)では D16/D50/D84 の対数正規が CV を中央値 1,336 倍に見積もる(二峰)ので使えず、5 mg で CV 6.25 % に要る時間は NaCl 24 min・クエン酸 28 min・MSG 31 min(後 2 つは外挿)、0.1 mg は 96〜206 min。正直に: CV は粒の数の揺らぎだけの下限、受入値の数は二次資料、粉砕則を D63 に当てるのは仮定。門 13 本(データ無しの CI は 11 本、2.3 s)、既定は Monte Carlo 1,000 回・画像 30 束、--full は 8,000 回・200 束。*
 
-[![レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。3 則の必要時間 24〜24 min。目標が測った範囲の近くなので則はほぼ同じ答えを返す。0.1 mg(100〜206 min)のような遠い外挿では則で大](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/02_cv_vs_grinding_NaCl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/02_cv_vs_grinding_NaCl.png)
+[![レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/02_cv_vs_grinding_NaCl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/02_cv_vs_grinding_NaCl.png)
 
 *↑ 測定の図 ―― レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。3 則の必要時間 24〜24 min。目標が測った範囲の近くなので則はほぼ同じ答えを返す。0.1 mg(100〜206 min)のような遠い外挿では則で大きく開く。*
 
@@ -2752,7 +2752,7 @@ cutting(食材の切断を画像で測る)× pegtactile(2 本指の膜で接触�
 
 *↑ **包丁を指先の視触覚だけで持って切る ―― 手首の力センサなしに靱性と刃の当たり位置、持てる柄の長さの限界。既存の読み手のねじりの過大(比 0.5 で +33 %)を部分滑りの数値解で直す** ―― cutting(食材の切断を画像で測る)× pegtactile(2 本指の膜で接触レンチ)の連鎖。包丁の背を 2 枚のパッドで挟み、膜の像だけから押し V・引き H・モーメント M_x を復元し、刃の当たり位置 Ly = (M_x + Lz·H)/V、slice/push 比 ξ̂ = H/V、靱性 R を読む。★見つけて直したこと: pegtactile.pad_tactile_read はパッドのねじりを無滑り(Reissner–Sagoci)で読むが、Hertz 接触のねじりは縁から必ず滑るので M を過大に読む —— 部分滑りの像で比 0.5 で ×1.328、0.85 で ×2.022(数値解の予測と 0.4 % 以内)。接触円を 64 環に分け Cerruti 核の影響行列で部分滑りを解き(両端は閉形式: c → a で β/β_RS 0.9986、c → 0 で全滑りのトルク +0.11 %)、補正後 0.2 % 以内。MuJoCo の切断(既定の門は 4 コマ、図は 14 コマ)→ パッドの像だけで R̂ 59.86 J/m²(設定 60)、ξ̂ 0.0701(tan θ 0.0699)、当たり位置の誤差 中央値 0.01 mm・最大 0.48 mm(無滑りの読みのままだと 6.09 mm)。持てる柄の長さの限界: 把持力 4 N では刃の当たりが把持点から 6.0 mm を超えると読めない(8 N で 13.2 mm、16 N で 31.3 mm)、範囲の外は readable = False の印。正直に: 膜の合成と補正は同じ数値解(本物のゲルが半空間の部分滑りどおりかは未確認)、せん断とねじりは重ね合わせ、V は MuJoCo の摩擦損失に書いた式そのもの、H は H = ξV で作った。門 13 本(3.0 s、mujoco が無ければ閉形式の切断で代える)、--full は全 79 コマ・96 環・17 点。*
 
-[![押し 2 N の切断で、刃の当たり位置が指から離れるほどパッドのねじりが増え、固着円が縮む。把持力 4 N では -3.5〜6.0 mm の外で読めなくなり、-4.5〜7.0 mm の外で全滑り。把持力を 4 倍にすると範囲は約 6.3 倍](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/01_handle_length_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/01_handle_length_limit.png)
+[![押し 2 N の切断で、刃の当たり位置が指から離れるほどパッドのねじりが増え、固着円が縮む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/01_handle_length_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/01_handle_length_limit.png)
 
 *↑ 測定の図 ―― 押し 2 N の切断で、刃の当たり位置が指から離れるほどパッドのねじりが増え、固着円が縮む。把持力 4 N では -3.5〜6.0 mm の外で読めなくなり、-4.5〜7.0 mm の外で全滑り。把持力を 4 倍にすると範囲は約 6.3 倍(全滑りのトルク ∝ P a ∝ P^{4/3})。*
 
@@ -2768,7 +2768,7 @@ cutting(食材の切断を画像で測る)× pegtactile(2 本指の膜で接触�
 
 *↑ パッドのねじれ(周方向の変位 ÷ 半径)。*
 
-[![MuJoCo の柔らかい手首で刃を押し下げる(上)。下は包丁の背を挟む 2 枚のパッドの膜の像 —— この像だけで力と当たり位置を読む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/06_cut_with_fingertip_pads.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/06_cut_with_fingertip_pads.gif)
+[![MuJoCo の柔らかい手首で刃を押し下げる(上)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/06_cut_with_fingertip_pads.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/06_cut_with_fingertip_pads.gif)
 
 *↑ 動く図 ―― MuJoCo の柔らかい手首で刃を押し下げる(上)。下は包丁の背を挟む 2 枚のパッドの膜の像 —— この像だけで力と当たり位置を読む。*
 
@@ -2792,7 +2792,7 @@ py -3.11 examples/poc_knife_tactile_toughness.py
 
 用語: Gauge R&R — 同じ部品を複数の測定者が反復測定し、測定系のばらつきを反復性と再現性に分けて評価する測定システム解析。
 
-[![測定の行為(GRR)が総変動に占めるのは 7.8 %、部品どうしの差が 92.2 %。どちらも公表値と一致する(最大差 1.5e-06)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/02_components_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/02_components.png)
+[![測定の行為(GRR)が総変動に占めるのは 7.8 %、部品どうしの差が 92.2 %。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/02_components_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/02_components.png)
 
 *↑ 測定の図 ―― 測定の行為(GRR)が総変動に占めるのは 7.8 %、部品どうしの差が 92.2 %。どちらも公表値と一致する(最大差 1.5e-06)。*
 
@@ -2808,11 +2808,11 @@ py -3.11 examples/poc_knife_tactile_toughness.py
 
 *↑ 電圧と電流の相関だけを振った(他の 2 つは実測値で固定)。*
 
-[![校正証明書に「±a」とだけ書いてあるとき、それを標準不確かさへ直す除数は**形で決まります** —— 矩形なら a/√3、三角なら a/√6、両端に寄る U 字(温度の上下動など)なら a/√2、「9](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/18_divisors_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/18_divisors.png)
+[![校正証明書に「±a」とだけ書いてあるとき、それを標準不確かさへ直す除数は**形で決まります** —— 矩形なら a/√3、三角なら a/√6、両端に寄る U 字(温度の上下動など)なら a/√2、「95 % の幅」と書いてあるなら 1.959964 で割る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/18_divisors_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/18_divisors.png)
 
 *↑ 校正証明書に「±a」とだけ書いてあるとき、それを標準不確かさへ直す除数は**形で決まります** —— 矩形なら a/√3、三角なら a/√6、両端に寄る U 字(温度の上下動など)なら a/√2、「95 % の幅」と書いてあるなら 1.959964 で割る。*
 
-[![評価点 x₁ を 0 から 0.026 へ動かしたもの。★左端では真の分布が**原点に肩を持つ指数**(u²χ²₂)で、伝播則は感度 c = 2x₁ が 0 になるため区間が**1 点に潰れる**。少し動かすと今度は区間が**負の損失**へ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/16_breakdown_movie.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/16_breakdown_movie.gif)
+[![評価点 x₁ を 0 から 0.026 へ動かしたもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/16_breakdown_movie.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/16_breakdown_movie.gif)
 
 *↑ 動く図 ―― 評価点 x₁ を 0 から 0.026 へ動かしたもの。★左端では真の分布が**原点に肩を持つ指数**(u²χ²₂)で、伝播則は感度 c = 2x₁ が 0 になるため区間が**1 点に潰れる**。少し動かすと今度は区間が**負の損失**へ張り出す(物理的にありえない)。さらに離れると真の分布が正規に近づき、両者はようやく重なる —— **壊れ方は連続ではなく、3 つの段階がある**。*
 
@@ -2870,7 +2870,7 @@ py -3.11 examples/poc_pod_lighting.py
 
 *↑ **レーザー光切断の誤差の床はスペックルが決める ―― 平均しても消えない、推定器の順位も入れ替わる** ―― 溶接ビード PoC の続編。同じ光条をなめらかな帯 + 加法雑音ではなくコヒーレント結像(粗面の位相 → 観察開口の瞳 → |E|²)で描き直した。真値は描画に入れた高さ。★★加法雑音で輝度最大の画素より 8.6 倍良かった 3 点の対数放物線は、スペックルでは輝度最大と同じ誤差(12.7 vs 13.1 µm)に落ちて重心(6.4 µm)の 2 倍悪い —— 山の 3 点はいちばん明るい粒を追う。列ごとの重心は Dorsch の床 C·λ/(2π sin u sin θ) = 6.9 µm の 0.93 倍。★★静止した部品は 100 枚平均しても 6.91 → 6.79 µm、部品を動かすと 1/√N(0.099 倍)。加法雑音のモデルは静止のまま下がると言ってしまう。★開口と三角測量角を振った誤差は式の線に傾き −0.94 / −0.99 で乗り、実測 / 式は 0.84〜0.90。★★画素を 4 倍にすると見た目のコントラストは 1.02 → 0.80 に鈍るが、重心は 1.6e-13 µm しか動かない。検査 17 件・図 5 枚。*
 
-[![列ごとの高さの RMS 誤差。加法雑音で最良の 3 点当てはめは、スペックルではいちばん明るい粒を追う。光条全体を平均する重心だけが床に着く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/02_estimators_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/02_estimators.png)
+[![列ごとの高さの RMS 誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/02_estimators_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/02_estimators.png)
 
 *↑ 測定の図 ―― 列ごとの高さの RMS 誤差。加法雑音で最良の 3 点当てはめは、スペックルではいちばん明るい粒を追う。光条全体を平均する重心だけが床に着く。*
 
@@ -2904,7 +2904,7 @@ py -3.11 examples/poc_laser_line_speckle_floor.py
 
 *↑ **白い溝でも縞投影は外れる ―― 相互反射を直接光と分け、誤差を撮る前に予測し、マイクロ位相シフトで消す** ―― 幅 1 mm の溝 3 本(90° の内角・60° の V 溝・R つきのポケット)を持つ**真っ白な Lambert の部品**(反射率 0.85、光沢も金属も無し)を縞投影で測る。真値は輸送行列(Hottel の crossed-strings 則の形態係数で解いた 2-D のラジオシティ)と、反射 0 回の直接光だけの描画。★★溝に平行な縞を 8 回ずらして直接光と大域光を分けると(Nayar ら 2006)、大域光は凹みの中だけが光り、内角の底では直接光の 1.28 倍・60° の溝では 5.1 倍。真値との差は直接 2.2 %・大域 6.3 %、縞の周期 128 → 8 px で単調に減り、画素の足跡より細い 4 px では 54 % に崩れる。★★縞の位相の誤差は撮る前に予測できる: 輸送行列から出した「直接 + 大域のフェーザの偏角」が、描いた縞を wrapped_phase で復号した誤差と 1e-15 rad で重なり、上限 asin(大域 / 直接) も超えない。視野 4 mm に縞 1 本では高さ誤差 RMS 282 / 579 / 183 µm(深さ 0.5 mm の内角で 282 µm)。★2 段の位相接続(縞 1 本 → 16 px)は 480 画素中 329 画素で次数を最大 7 段取り違え、ほとんど救えない。★★マイクロ位相シフト(Gupta & Nayar 2012、周期 16 / 16.2 / 15.8 px、うなり 1296 px)で 0.76 / 1.97 / 0.02 µm(溝 3 本で 386 → 1.2 µm)。V 溝の頂点の数画素には最大 19 µm 残る(隣のパッチどうしは縞の位相が近く、平均されない)。★ToF も同じ: 白い壁の部屋の隅(4 m、20 MHz)は相互反射で丸く・最大 24 cm 遠く見える。Lambert と押し出し形状(2-D)だけで、鏡面の相互反射(実物のはんだ・金属)は Mitsuba が要ることは docstring に明記。検査 15 件・約 0.3 秒。*
 
-[![反射率 0.85 の Lambert 面。光沢も金属も無い。カメラは真上、プロジェクタは 20° 傾けて縞を溝に平行に投影。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/01_part_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/01_part.png)
+[![反射率 0.85 の Lambert 面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/01_part_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/01_part.png)
 
 *↑ 測定の図 ―― 反射率 0.85 の Lambert 面。光沢も金属も無い。カメラは真上、プロジェクタは 20° 傾けて縞を溝に平行に投影。*
 
@@ -2924,7 +2924,7 @@ py -3.11 examples/poc_laser_line_speckle_floor.py
 
 *↑ 白い壁(0.8)の 90° の隅を 20 MHz の連続波 ToF で。*
 
-[![縞をずらしながら撮った 8 枚。縞が当たっていない画素も、溝の中では向かいの面からの光で暗くならない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/03_stripes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/03_stripes.gif)
+[![縞をずらしながら撮った 8 枚。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/03_stripes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/03_stripes.gif)
 
 *↑ 動く図 ―― 縞をずらしながら撮った 8 枚。縞が当たっていない画素も、溝の中では向かいの面からの光で暗くならない。*
 
@@ -2948,7 +2948,7 @@ py -3.11 examples/poc_interreflection_fringe_error.py
 
 用語: Zernike Polynomials — 単位円上で直交する多項式系で、瞳面の波面収差をデフォーカスや非点収差などの係数へ分解する。; Strehl — 収差のある光学系の点像中心強度を、同じ開口の無収差系の中心強度で割った像質指標。
 
-[![**波面を立体に起こす**(箱の `render3d` で描画)。左上がデフォーカス(お椀)、右上が非点収差(鞍)、左下がコマ、右下が球面収差。収差の名前は、この形の名前です。立体にしても採点は変わりません —— 係数は絵ではなく多項式に属](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/02_wavefront_3d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/02_wavefront_3d.png)
+[![**波面を立体に起こす**(箱の `render3d` で描画)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/02_wavefront_3d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/02_wavefront_3d.png)
 
 *↑ 測定の図 ―― **波面を立体に起こす**(箱の `render3d` で描画)。左上がデフォーカス(お椀)、右上が非点収差(鞍)、左下がコマ、右下が球面収差。収差の名前は、この形の名前です。立体にしても採点は変わりません —— 係数は絵ではなく多項式に属しているからで、後の図で**絵を回しても数が動かないこと**を見せます。*
 
@@ -2968,11 +2968,11 @@ py -3.11 examples/poc_interreflection_fringe_error.py
 
 *↑ `wavefront_stats` が返すストレール比はマレシャル近似 exp(−(2πσ)²) です。*
 
-[![**スルーフォーカス** —— デフォーカスを −0.55 波から +0.55 波まで振って戻します。輪が**同心のまま**伸縮するのがデフォーカスの特徴で、ピントの前後で絵が対称になります(だから往復させても継ぎ目が見えません)。中央の ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/06_through_focus.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/06_through_focus.gif)
+[![**スルーフォーカス** —— デフォーカスを −0.55 波から +0.55 波まで振って戻します。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/06_through_focus.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/06_through_focus.gif)
 
 *↑ 動く図 ―― **スルーフォーカス** —— デフォーカスを −0.55 波から +0.55 波まで振って戻します。輪が**同心のまま**伸縮するのがデフォーカスの特徴で、ピントの前後で絵が対称になります(だから往復させても継ぎ目が見えません)。中央の 1 コマだけが無収差のエアリーで、そこだけストレール比が厳密に **1.000000000000** です。*
 
-[![**絵は回るのに、測った数は動きません。** 左が波面(コマ 0.62 ＋ 非点収差 0.35 ＋ 球面収差 0.18)、右がその点像。1 周ぶん回しています。回転は係数を exp(−imθ) 倍するだけなので、対の振幅 √(c₊²+c₋²](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/07_rotating_coma.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/07_rotating_coma.gif)
+[![**絵は回るのに、測った数は動きません。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/07_rotating_coma.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/07_rotating_coma.gif)
 
 *↑ 動く図 ―― **絵は回るのに、測った数は動きません。** 左が波面(コマ 0.62 ＋ 非点収差 0.35 ＋ 球面収差 0.18)、右がその点像。1 周ぶん回しています。回転は係数を exp(−imθ) 倍するだけなので、対の振幅 √(c₊²+c₋²) は**厳密に**不変 —— 6 通りの角度で最大 **1.1e-16**。しかも**絵に描いてから `fit_zernike` で読み返しても**、3 通りの回転で振幅の幅は **1.1e-09** しかありません(真値 0.664831)。★球面収差(m = 0)だけは絵そのものが回りません —— m = 0 は回転で変わらないモードだからで、これも絵から読めます。*
 
@@ -2996,7 +2996,7 @@ py -3.11 examples/poc_zernike_aberrations.py
 
 用語: LLM — 大量の文章で学習し、指示に応じて文やプログラムを書く大きなニューラルネット。手元の計算機で動かす小さめのものをローカル LLM と呼ぶ。
 
-[![縦軸は **1e-16 単位**。タイルを 64 枚に割っても相対差は **1.3e-15** —— 近似ではなく、同じ和を別の順で足しているだけ。★外した予言: 誤差はタイル数に比例して積もる → **64 倍のタイル数で 1.1 倍**](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/02_tiled_exactness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/02_tiled_exactness.png)
+[![縦軸は **1e-16 単位**。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/02_tiled_exactness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/02_tiled_exactness.png)
 
 *↑ 測定の図 ―― 縦軸は **1e-16 単位**。タイルを 64 枚に割っても相対差は **1.3e-15** —— 近似ではなく、同じ和を別の順で足しているだけ。★外した予言: 誤差はタイル数に比例して積もる → **64 倍のタイル数で 1.1 倍**にしかならない。*
 
@@ -3070,7 +3070,7 @@ py -3.11 examples/poc_residue_crt.py
 
 用語: Moiré — 周期や向きがわずかに異なる二つの模様を重ねたとき、差の空間周波数として現れる長周期の縞。
 
-[![(a)〜(c) は同じカメラ(画素 0.5 µm、ぼけ σ 1.5 µm)と同じ雑音(σ 0.01)。2 µm の格子はカメラでは消えるが、2 枚の積の差の周波数(1/2.00 − 1/2.04 /µm)だけが残る。(d) は雑音なしの差動](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/01_marks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/01_marks.png)
+[![(a)〜(c) は同じカメラ(画素 0.5 µm、ぼけ σ 1.5 µm)と同じ雑音(σ 0.01)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/01_marks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/01_marks.png)
 
 *↑ 測定の図 ―― (a)〜(c) は同じカメラ(画素 0.5 µm、ぼけ σ 1.5 µm)と同じ雑音(σ 0.01)。2 µm の格子はカメラでは消えるが、2 枚の積の差の周波数(1/2.00 − 1/2.04 /µm)だけが残る。(d) は雑音なしの差動のマーク: 橙の線が A と B の境目、青の破線 = ずれ 0 の暗い縞、橙の実線と矢印 = ウェハを 600 nm 動かした後の同じ縞(A は -30.0 µm、B は +30.6 µm)。像全体が流れると両方が同じ向きに動くので、差を取ればずれだけが残る。*
 
@@ -3090,7 +3090,7 @@ py -3.11 examples/poc_residue_crt.py
 
 *↑ 印刷の版ずれと同じ不定性。*
 
-[![上: 20 µm の線を直接撮った像、下: モアレ。ずれを 1 コマ 51 nm ずつ、計 2.04 µm(ウェハのピッチ 1 つ)動かす。線は 0.1 画素ずつしか動かず見えないが、縞は 1 コマ 2.55 µm(5 画素)流れ、1 周し](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif)
+[![上: 20 µm の線を直接撮った像、下: モアレ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif)
 
 *↑ 動く図 ―― 上: 20 µm の線を直接撮った像、下: モアレ。ずれを 1 コマ 51 nm ずつ、計 2.04 µm(ウェハのピッチ 1 つ)動かす。線は 0.1 画素ずつしか動かず見えないが、縞は 1 コマ 2.55 µm(5 画素)流れ、1 周して元に戻る(= 折り返し)。*
 
@@ -3112,7 +3112,7 @@ py -3.11 examples/poc_moire_alignment.py
 
 *↑ **テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える** ―― 主役は実画像: 論文(Stark ほか, Sci. Rep. 15, 28690, 2025、CC BY 4.0)のテレセン生画像を Fullseye の計測 op で測り、論文の値と突き合わせる。29.5° 傾いたアライメント板(円の間隔 1 mm)の 8 本のリングを、放射状の測定線(measure_pos)で取った線の中心へ「中心と形を共有する楕円の族」で当てると、長軸の伸びは 252.13 ± 0.04 px/mm で論文の K1 = 252.0 px/mm と +0.05 %(論文自身の K1・K2 が ±0.25 % 散っているので、それより細かい一致とは読まない)。★テレセンの証拠: 傾いた板の同心円の中心は r² に比例してずれない(β = 0.0035 ± 0.0034 px/mm²。同じ板を通常 f=25 で写すと 1.40 で、外側のリングの中心が 101 px ずれる)—— 入射瞳は 10.5 m より遠い。★リングごとに自由な楕円を当てると、影で弧が 36〜180° しか見えない外側のリングの長半径が外挿で狂う(弧 36° のリングで 768 px、正しくは 2142 px)。★樹脂の 3D プリント球(公称半径 2.5 mm)は輪郭の閾値で半径が 8 % 動き、真値にならない(2.400 / 2.452 mm。論文の計量級の球の生画像は公開データに無い)。以下は合成の章で、失敗条件を掃引する補助。ダイのボンディングやコネクタのピンは、高さの違う面の寸法を 1 枚の画像で測る。通常のレンズは近い面ほど大きく写すので段差の上と下で同じ寸法が違って写り、テレセントリックレンズは絞りを焦点に置いて主光線を光軸に平行にしてこれを消す。新 op 7 本(`telecentric`、`opsoptics` の `telecentric`): `telecentric_lens`(同じ BK7 相当の単レンズ f = 100 mm の絞りの位置だけを変えた通常 / 物体側 / 両側テレセン)/ `chief_ray_angle`(光線を入射瞳でなく絞りへ Newton 法で狙うので、入射瞳が無限遠でも動く —— `raytrace.chief_ray` はここで止まる)/ `magnification_vs_depth` / `telecentricity_error` / `defocus_spot_vs_depth` / `vignetting_vs_field` / `lens_equivalent_pinhole`(入射瞳に置いた `render3d` のピンホール)。像面を固定して物体を +5 mm 近づけると、作動距離 75 mm の FA レンズ(f = 25 mm)は倍率 +6.9 %、通常 f = 100 mm は +1.7 %、テレセンは −0.013 % で、実光線は閉形式 L/(L − Δz) と 7e-5 で一致する。オートフォーカスで合わせ直しても m = −f/(s − f) で +2.6 % 動き、戻らない。ピン(高さ 5 mm)・電極つきのダイ・穴(深さ 5 mm)を 3 種のレンズで描くと、FA レンズは画像から測ったピン上面の径を 6.9 % 大きく読み(閉形式と 7e-4)、ワークが 6 mm 上下すると読みが 8.6 % 動き、穴の内壁が 2,053 画素見えて底が 0.948 しか見えない(円の重なりの閉形式 0.949)。両側テレセンでは底が全部見え、内壁は 0 画素。部品はアルミの治具プレート・金めっきのピン・黒い樹脂モールドと銀色のリードの質感で描き(metalfinish の削り目と金属の複素屈折率の色、surfacelib の上塗り、影と AO)、照明を同軸落射・ドーム・低角リングに変えても、描いた画像から円の計測モデル(metrology)で測ったピン上面の径は閉形式と 0.33 % 以内、6 mm の上下で通常 f=25 は +8.3〜8.4 %、両側テレセンは ±0.16 % 以内。★物体で 47 µm/画素に粗くすると低角リングでは 2 % 外れた(暗視野で上面の縁が弱い)。★テレセンでも残る: 単レンズは瞳の球面収差で物高 8 mm のテレセン度が 0.05°(h³ で育つ)、物体側テレセンの歪曲は 3 %(両側の対称な配置では 0.005 %)。絞りのずれ δ は Newton の式で入射瞳を −f²/δ に動かし、物高 0.5 mm では閉形式と 0.04 %、8 mm では 11.8 % 大きい。テレセン度 0.1° が残ると段差 5 mm で 9.2 µm ずれる(閉形式 8.7 µm)。視野は前玉で決まり、50 % 点 11.6 mm は近軸の閉形式 12.4 mm より 0.8 mm 手前(瞳収差で光束が外へずれて太る)。ぼけの RMS の傾きは |m|·NA/√2 と 0.5 % 以内で、22 µm を回折で潰さない NA 0.033 では被写界深度は 0.68 mm が上限。第二の実装として OSS の optiland(MIT)と主光線の像の高さが 9e-8 mm で一致(屈折率は同じ公開の硝材カタログの係数なので、見ているのは光線追跡と狙いの実装)。学習 0、較正 0、門 29 件。*
 
-[![同じ BK7 相当の等凸レンズ(f = 100 mm)で、絞り(赤)の位置だけを変えた 3 種。物高 ±6 mm の主光線(実線)は、通常のレンズでは絞りへ向かって傾き、絞りを後側焦点に置くと物体側で光軸に平行になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/01_lens_layouts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/01_lens_layouts.png)
+[![同じ BK7 相当の等凸レンズ(f = 100 mm)で、絞り(赤)の位置だけを変えた 3 種。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/01_lens_layouts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/01_lens_layouts.png)
 
 *↑ 測定の図 ―― 同じ BK7 相当の等凸レンズ(f = 100 mm)で、絞り(赤)の位置だけを変えた 3 種。物高 ±6 mm の主光線(実線)は、通常のレンズでは絞りへ向かって傾き、絞りを後側焦点に置くと物体側で光軸に平行になる。*
 
@@ -3132,7 +3132,7 @@ py -3.11 examples/poc_moire_alignment.py
 
 *↑ 【実画像】リングごとに形(向き・縦横比・長半径)を族の値に固定して中心だけを解き直し、短軸方向のずれを取った。*
 
-[![ワークを ±3 mm 上下させる。通常のレンズだけ像が伸び縮みし(水色の線 = 合焦面の輪郭)、穴の底が隠れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif)
+[![ワークを ±3 mm 上下させる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif)
 
 *↑ 動く図 ―― ワークを ±3 mm 上下させる。通常のレンズだけ像が伸び縮みし(水色の線 = 合焦面の輪郭)、穴の底が隠れる。*
 
@@ -3154,7 +3154,7 @@ py -3.11 examples/poc_telecentric_metrology.py
 
 *↑ **光学系の図面を計算から出す ―― レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で、書いたファイルを読み戻して採点する** ―― 外観検査・計測の打ち合わせでは、レンズの断面図と装置の設置図(作動距離・視野・照明の角度)が共通言語で、レンズの製作を頼むには ISO 10110 の製作図が要る。Fullseye は処方を実光線で評価し、撮像系の光学バジェットも出すが、図を 1 枚も出さなかった。新 op 8 本(`optdraw`、`opsoptics` の `drawing`): `lens_section_drawing`(子午断面。面は処方の sag、コバと座・絞り・像面、絞りを狙って追跡した実光線を視野ごとに色分け、EFL・BFL・全長・像高の寸法線と処方表)/ `vision_setup_drawing`(側面図と上面図。視野の錐・作動距離・DOF の帯、照明 5 種と仰角)/ `lens_element_drawing`(ISO 10110 の 3 欄の表。公差は `tolerance_analysis` の辞書から写し、同じ公差の Monte-Carlo の EFL の幅を注記)/ `drawing_svg` / `drawing_dxf`(標準ライブラリだけ。SVG は 100 % で縮尺どおり、DXF は R12 で層と線種つき)/ `drawing_raster` / `svg_entities` / `dxf_entities`(読み戻し)。門は見た目でなく、書いたファイルから読み戻した線と文字で採点する: 教科書の Cooke triplet 2 本の EFL は公表値と 7e-6 / 2e-5、面の座標は球面の sag の閉形式と 6e-7 mm、光線の折れ点は面の上に 5e-7 mm、主光線は `raytrace.chief_ray` と 5e-7 mm、寸法と処方表の数字は表示の桁で一致。入射瞳が無限遠のテレセンも描け、主光線の傾きは `telecentric.chief_ray_angle`(別の実装)と 3e-7°。製作図の n_d・ν_d は公開の硝材カタログ値どおり、注記の EFL は厚肉レンズの公式どおり。SVG / DXF の往復は 11 枚で 1e-6 mm、OSS の DXF ライブラリ(MIT)も 11 枚を監査エラー 0 で読んだ。★等倍の検分で、設置図の視野 28.26 mm(センサー × WD / f)と倍率 0.1429(f/(WD − f))が同じ図の中で 14 % 食い違うのが見つかった。原因は `optscene.vision_layout` がピンホールの距離に焦点距離を渡していたことで、作動距離に合焦させた像距離 f·WD/(WD − f) に直した(視野は 24.73 mm)。当時の門は視野を同じ WD / f の式で採点していて素通しした(両辺に同じ模型)。いまは撮った画像の上で幅 12 mm の板が 124 画素(= 12 × m / 画素 = 124.2)に写ることも見る。★壊した図(sag の符号の反転・光線を 0.01 mm ずらす・EFL の数字の書き換え・DXF の頂点の欠け・像距離を焦点距離に戻す)で門が赤になることを確かめた。学習 0、較正 0、門 53 件。*
 
-[![教科書の Cooke triplet(f = 50 mm、F/5、半画角 20°)の子午断面。面は処方の sag、光線は絞りを狙って追跡した実光線で、視野 0 / 14 / 20° を青・緑・赤に分けた。寸法線の BFL 42.42・EFL](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/01_cooke_a_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/01_cooke_a.png)
+[![教科書の Cooke triplet(f = 50 mm、F/5、半画角 20°)の子午断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/01_cooke_a_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/01_cooke_a.png)
 
 *↑ 測定の図 ―― 教科書の Cooke triplet(f = 50 mm、F/5、半画角 20°)の子午断面。面は処方の sag、光線は絞りを狙って追跡した実光線で、視野 0 / 14 / 20° を青・緑・赤に分けた。寸法線の BFL 42.42・EFL 50.00(H′ → F′)・全長 60.18・像高 18.14 は paraxial_trace の値で、SVG / DXF から読み戻した文字と表示の桁で一致する。縮尺 2:1。*
 
@@ -3192,7 +3192,7 @@ py -3.11 examples/poc_optics_drawings.py
 
 *↑ **加工ポケットの相互反射を収束まで数える ―― 直接光だけのモデルは「反射率 1.32」で合い、収束解は真値に戻る** ―― 加工ポケットのような凹んだ部品では、向かいの壁で反射した光が底を照らす(相互反射)。直接光だけの検査用描画 render_optscene はそれを数えず、多重反射を解く render_studio は明るさの絶対値に意味が無かった。新 op 7 本(radiosity3d)の render_optscene_gi は、同じシーン・同じ照明のまま直接光の測光を 1e-16 で保ち、反射を n 回か収束まで(Cohen ら 1988 の漸進 ラジオシティ)足す。反射率 0.7 のポケットでは底の明るさの 48 % が相互反射。simcal で反射率と照明の強さを合わせると、直接光だけの モデルは反射率 1.32(エネルギー保存に反する)で合い、χ²/ν 24・残差 PCA 4 成分で不合格、1 回反射は 0.87 で χ²/ν 7.9、収束解は 0.6996 / 0.9999(真値 0.70 / 1.00)で χ²/ν 1.01・残差は白色。反射は 7 回数えれば雑音(1.3 %)に埋もれる(観測収束比 0.51、GCI 型の見積もり)。Howell の表の形態係数 0.199825 / 0.200044 を閉形式と数値の両方で再現し、実測の論文(Bulczak ら 2018、CC BY 4.0)の表 2 —— 1 回反射を足すと誤差 0.20〜0.47 倍 —— と、本 PoC の 0.53 倍を並べた。*
 
-[![同じシーン・同じドーム照明・同じカメラで、直接光だけの検査用描画(左上)と、反射を収束まで数えた描画(右上)。ポケットの底は相互反射で平均 48 % 明るく、角ほど強い(右下は像に占める相互反射の割合)。反射 0 回の render_opt](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/01_renders_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/01_renders.png)
+[![同じシーン・同じドーム照明・同じカメラで、直接光だけの検査用描画(左上)と、反射を収束まで数えた描画(右上)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/01_renders_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/01_renders.png)
 
 *↑ 測定の図 ―― 同じシーン・同じドーム照明・同じカメラで、直接光だけの検査用描画(左上)と、反射を収束まで数えた描画(右上)。ポケットの底は相互反射で平均 48 % 明るく、角ほど強い(右下は像に占める相互反射の割合)。反射 0 回の render_optscene_gi は render_optscene と 1e-12 以内で一致する。*
 
@@ -3230,7 +3230,7 @@ py -3.11 examples/poc_pocket_interreflection.py
 
 *↑ **非共軸の光学系 ―― 同軸落射の半透鏡が鏡面の部品に偽の欠陥を写し、膜と傾きで消す。折り返しで装置を小さくする** ―― 外観検査の光学系は、光軸が 1 本の直線とは限らない。鏡面の部品を真上から照らす同軸落射は 45° の半透鏡を通して見るし、装置を小さくするには折り返しミラーで光路を曲げ、傾いた面を全面で合焦させるには撮像素子を傾ける。`raytrace` は共軸の系しか組めず、半透鏡の裏面が作るゴースト(2 回反射でできる像)も計算できなかった。新 op 13 本(`raytrace3d`、`opsoptics` の `noncoaxial`)と `optdraw.noncoaxial_drawing`: 面ごとに 3-D の姿勢を持たせ(座標の切り替えは偏心 → x → y → z の順、戻しは逆順)、`raytrace` の面の式のまま追跡する。共軸の処方 8 本では交点・光路長が `raytrace.trace_rays` と 0(1e-12 以内)。45° の鏡で折った像は展開した像の Householder 鏡映と 3e-14 mm、反射 1 回で像は裏返り 2 回で戻る。同軸落射の検査レンズのカメラ側を 2 枚の鏡で折り返すと装置の高さが 393 → 249 mm に縮み、像は変わらない。傾いた平板の横ずれ(Smith)は実光線と 1e-12 mm、非点隔差(Coddington から導出、接線像が遠い)は 1e-6 mm、シャインプルーフの像面の傾き tanθ' = m·tanθ は実光線と 2e-4°。★半透鏡(3 mm、前面 R 50 %)の裏面と前面の 2 回反射のゴーストはエネルギー比 2.6 %(入射角 28° の Fresnel と 1e-6)で、鏡面の部品の凹みのずれた写し(倍率 × 2t·tanθ'·cosθ = 2.6 mm)を作り、単純な欠陥の検出で偽の凹みが予測位置から 0.010 mm に出る。MgF₂ の λ/4 単層は 45° では反射率 2.1 % にしか下がらず(垂直なら 1.25 %)、入射角に合わせた 2 層の膜(0.38 %)でゴーストは 0.19 % に落ちて偽の凹みが消え、裏面を 1° 傾けた楔ではゴーストが 9.5 mm ずれて撮像素子の外へ出る。第 2 実装として OSS の光線追跡 optiland(MIT)で同じ姿勢の面を絶対座標で組み、6 系(複合傾き・偏心した傾いたレンズ・半透鏡・軸外し放物面を含む)の全ての面の交点が 1e-13 mm で一致した(CI では記録値と 1e-7 mm で照合)。壊した座標系の曲げ・折り返しの切り替えの順序・ゴーストの逆向きの区間で門が赤になる。学習 0、較正 0、門 19 件。*
 
-[![同軸落射の検査レンズ(物体 → 45° の半透鏡 → 2 枚玉 → カメラ)の設置図。左はまっすぐ、右はカメラ側を 2 枚の 45° の鏡で折った版で、装置の高さが 393 → 249 mm に縮む。像の RMS は変わらない(門)。図は ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_noncoaxial_optics/01_folded_setup_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_noncoaxial_optics/01_folded_setup.png)
+[![同軸落射の検査レンズ(物体 → 45° の半透鏡 → 2 枚玉 → カメラ)の設置図。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_noncoaxial_optics/01_folded_setup_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_noncoaxial_optics/01_folded_setup.png)
 
 *↑ 測定の図 ―― 同軸落射の検査レンズ(物体 → 45° の半透鏡 → 2 枚玉 → カメラ)の設置図。左はまっすぐ、右はカメラ側を 2 枚の 45° の鏡で折った版で、装置の高さが 393 → 249 mm に縮む。像の RMS は変わらない(門)。図は noncoaxial_drawing が大域の座標で描いた実寸の断面で、光線は絞り(L1)を狙った実光線。*
 
@@ -3268,7 +3268,7 @@ py -3.11 examples/poc_noncoaxial_optics.py
 
 *↑ **テレセンの実画像から撮像模型の係数を合わせる ―― 倍率は論文と合い、入射瞳は「1 m より遠い」までしか言えない** ―― 29.5° 傾いたアライメント板の実画像(Stark ほか Sci. Rep. 2025、CC BY 4.0)のリングの中心線に、板の傾き・向き・倍率・歪曲 k1・入射瞳までの距離の逆数 1/L(テレセン度)を持つ撮像の模型を simcal で合わせた。模型と独立な雑音(局所 2 次式の純粋誤差 1.12 px)で合わせると絶対の門(χ² の上側確率 p = 7e-9)が落ちて数を取り下げる —— 残差 1.35 px には、リングごとの滑らかな食い違い(板と縁の読み)がある。その分を白い分散として足すと 6 つの門を通り、リングのジャックナイフと Laplace の不確かさが同じ大きさになることを確かめてから数を出す: 倍率 252.14 ± 0.18 px/mm(論文の K1 = 252.0)、1/L = 0.50 ± 0.18 /m で入射瞳は 1.16 m より遠い(2σ)—— 通常の f = 100 mm(302 mm)と f = 25 mm は否定。合成では 8 係数を下界どおりに回収し、通常レンズの 1/L = 3.31 /m を閉形式と 0.1σ で当て、傾けない板では向きを「効かない」として返さず、低次の食い違いを入れると Laplace が 2.4 倍楽観的になるのをジャックナイフが見抜く。★1/L が 0 から 2.7σ なのは未解決。学習 0。*
 
-[![【1〜3 章・実画像】入射瞳までの距離の逆数 1/L の標準誤差を 2 通りで出した。Laplace = 白い雑音を仮定したFisher 情報の逆、ジャックナイフ = リングを 1 本ずつ抜いて解き直した散らばり。食い違いの無い合成では2 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/01_laplace_vs_jackknife_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/01_laplace_vs_jackknife.png)
+[![【1〜3 章・実画像】入射瞳までの距離の逆数 1/L の標準誤差を 2 通りで出した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/01_laplace_vs_jackknife_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/01_laplace_vs_jackknife.png)
 
 *↑ 測定の図 ―― 【1〜3 章・実画像】入射瞳までの距離の逆数 1/L の標準誤差を 2 通りで出した。Laplace = 白い雑音を仮定したFisher 情報の逆、ジャックナイフ = リングを 1 本ずつ抜いて解き直した散らばり。食い違いの無い合成では2 つは同じ大きさ、リングごとに 0〜6 次の滑らかな食い違い(RMS 0.7 px、リングの半径と中心の癖を含む)を足すと Laplace が 2.4 倍小さく出る(楽観的)。実画像では食い違いを白い分散として足したあと、2 つは同じ大きさ(ジャックナイフ / Laplace = 0.8)—— この板の食い違いは係数の形を真似るほど低次ではない。*
 
@@ -3294,7 +3294,7 @@ py -3.11 examples/poc_simcal_telecentric.py
 
 *↑ **深い傷は平均線を凹ませる ―― ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか** ―― 粗さ計測でうねりを引くと、深い傷に線形ガウスの平均線が引かれ、傷の脇の健全な面が山に化ける(傷の標本 4.3 % の断面で粗さが真値の 2.5 倍)。`roughness` 族の新 op 3 本は Tukey の biweight で傷の重みを下げて反復し、平均線を守る(ロバストは 0.97 倍)。伝達関数は閉形式に合う(λc で 0.5、既存 `surface_filter` は規格の文面の打ち切りで 0.5095 だったが、打ち切りを広げて直した)。破綻点は汚染 35 % と 40 % のあいだで、40 % では 3.5 µm 外れて線形と並ぶ。重み関数を 1 にすると門が落ち、収束しなければ値を返さず拒否する。真値は閉形式と合成したうねりで、実スタイラス断面での検証は未了。*
 
-[![λ = λc = 80 µm でガウス・スプラインとも 0.5。点は閉形式の線の上に乗る(ガウス 1e-7、スプライン 1e-12 の差)。スプラインは遮断が鋭い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions.png)
+[![λ = λc = 80 µm でガウス・スプラインとも 0.5。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions.png)
 
 *↑ 測定の図 ―― λ = λc = 80 µm でガウス・スプラインとも 0.5。点は閉形式の線の上に乗る(ガウス 1e-7、スプライン 1e-12 の差)。スプラインは遮断が鋭い。*
 
@@ -3326,7 +3326,7 @@ py -3.11 examples/poc_robust_profile_filter.py
 
 用語: lock-in — 既知の基準周波数と同相・直交の成分を相関で取り出し、広帯域雑音の中から周期信号の振幅と位相を測る方法。
 
-[![Walsh 符号 3 本で断続する 3 灯。分離した灯 1 は真値と 1e-12 で一致する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/02_daylighting_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/02_daylighting.png)
+[![Walsh 符号 3 本で断続する 3 灯。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/02_daylighting_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/02_daylighting.png)
 
 *↑ 測定の図 ―― Walsh 符号 3 本で断続する 3 灯。分離した灯 1 は真値と 1e-12 で一致する。*
 
@@ -3424,7 +3424,7 @@ py -3.11 examples/poc_light_section_step_weld_floor.py
 
 *↑ **実物の科学データファイルを 5 形式読む ―― 外の読み手と公表値で採点し、読み手の不具合を 1 つ直す** ―― SDSS r バンドの NGC 2420。青 = star_detect の検出、緑 = SDSS DR16 の星表の星(飽和なし 15〜20 等)と 1″ 以内で対応、赤 = 対応なし。*
 
-[![nanomaggy の画素を開口(半径 4 画素)で足し、零点 22.5 で等級にした。破線は y = x。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/02_magnitudes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/02_magnitudes.png)
+[![nanomaggy の画素を開口(半径 4 画素)で足し、零点 22.5 で等級にした。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/02_magnitudes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_file_formats/02_magnitudes.png)
 
 *↑ 測定の図 ―― nanomaggy の画素を開口(半径 4 画素)で足し、零点 22.5 で等級にした。破線は y = x。*
 
@@ -3462,7 +3462,7 @@ TBM(Zenodo 8386997、CC BY 4.0)の色で腐食した多結晶の金属組織 320
 
 *↑ **実写の金属組織で影響圏の骨格から粒界を引く ―― 失敗の報告: 粒の大きさは 1 枚ずつ順位も合わず(ρ −0.16)、粒界の位置も watershed に負ける** ―― 失敗の報告。TBM の実写の金属組織(色で腐食、128 × 128 画素 ≈ 115 µm 角を 3 倍)で、専門家の粒が大きい 1 枚と小さい 1 枚(評価の 168 枚の 90 % 点と 10 % 点)。専門家の平均切片長は 38.6 と 20.1 画素で 1.9 倍違うのに、SKIZ は 18.5 と 19.9 画素でほとんど変わらない。左 = 写真、右 = 白が専門家の手描きの粒界、空色が morph_skiz の粒界。*
 
-[![19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning.png)
+[![19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/02_thinning.png)
 
 *↑ 測定の図 ―― 19-256-1024-128-0 の左上の隅の 32 × 32 画素(12 倍、黒 = 線、下地 = 同じ場所の写真を薄くしたもの、上端と左端 = 画像の縁)。左から 専門家の太い線 / Golay の L の 8 回転の逐次細線化 / scikit-image の skeletonize / 専門家自身の細い線。Golay の線は 4 連結の階段なので画素が多く、画像の縁まで届く(skeletonize は線の端を縁から 1 画素引き離す)。*
 
@@ -3538,7 +3538,7 @@ py -3.11 examples/poc_bone_trabecular_thickness.py
 
 *↑ **重なった細胞をどう数えるか ―― 個数・過分割・過統合を別々に測る** ―― 重なった細胞の合成画像で、個数・過分割・過統合を別々に数えた図。いちばん密な条件でゼロ点は 78 個中 25 個を取りこぼし、失点は全部過統合。種の間引きを振ると釣り合う点があり、個数の偏り +0.3 個なのに分割誤りは 13.3 件残る ―― 個数だけ報告すれば最良の設定として通る。*
 
-[![誤り合計の谷と |偏り| の谷は同じ場所に来ない。どちらを最適と呼ぶかで答えが変わる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cell_counting/02_h_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cell_counting/02_h_tradeoff.png)
+[![誤り合計の谷と |偏り| の谷は同じ場所に来ない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cell_counting/02_h_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cell_counting/02_h_tradeoff.png)
 
 *↑ 測定の図 ―― 誤り合計の谷と |偏り| の谷は同じ場所に来ない。どちらを最適と呼ぶかで答えが変わる。*
 
@@ -3646,7 +3646,7 @@ DNA 量 D と面積 A を別々のばらつきで撒いた蛍光核で、倍数�
 
 *↑ **蛍光核の積分輝度から倍数性を出す ―― 面積では分かれない** ―― DNA 量 D と面積 A を別々のばらつきで撒いた蛍光核で、倍数性を面積と積分輝度から分けた図。真の面積でも誤分類 15.4 %、積分輝度は 0 %。背景を引き忘れると分類は生き残ったまま DNA 指数だけが 2.115 → 1.702(-20 %)壊れる ―― 分類だけを見ていたら気づけない。*
 
-[![累積分布。積分輝度の 4n は 2.1 付近に固まり、面積の 2 本は大きく重なる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nuclei_ploidy/01_histograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nuclei_ploidy/01_histograms.png)
+[![累積分布。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nuclei_ploidy/01_histograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nuclei_ploidy/01_histograms.png)
 
 *↑ 測定の図 ―― 累積分布。積分輝度の 4n は 2.1 付近に固まり、面積の 2 本は大きく重なる。*
 
@@ -3710,7 +3710,7 @@ mm 平面に置いた星形の創面(面積は閉形式)をピンホールカメ
 
 *↑ **創傷面積の経時変化 ―― 較正の誤差は面積に 2 乗で効く** ―― mm 平面に置いた星形の創面(面積は閉形式)をピンホールカメラで日ごとに撮り、治癒定数 k を推定した図。距離が 4 % 違うだけで面積が 7.7 % 動き、日ごとに 1.2 % 漂うと真の k = 0.1200 に対しゼロ点は 0.1424(+18.7 %)。しかもその標準偏差 0.0049 は毎回較正の 0.0059 より小さい ―― いちばん安定して、いちばん間違った答え。*
 
-[![ゼロ点の面積誤差。実測は閉形式の 2 乗則に乗り、線形近似からは外れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/01_dist_square_law_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/01_dist_square_law.png)
+[![ゼロ点の面積誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/01_dist_square_law_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/01_dist_square_law.png)
 
 *↑ 測定の図 ―― ゼロ点の面積誤差。実測は閉形式の 2 乗則に乗り、線形近似からは外れる。*
 
@@ -3726,7 +3726,7 @@ mm 平面に置いた星形の創面(面積は閉形式)をピンホールカメ
 
 *↑ ゼロ点は散らばりがいちばん小さく、偏りがいちばん大きい。*
 
-[![動画(800 × 544、12 fps、143 コマ): 真の面積 A0·exp(-kt)(k = 0.12 /day)で縮む創面を 8 日撮る。撮影距離は 1 日 +1.2 % 漂い(この 1 本では 448 → 495 mm)、傾き・方](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/06_healing_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/06_healing_video.gif)
+[![動画(800 × 544、12 fps、143 コマ): 真の面積 A0·exp(-kt)(k = 0.12 /day)で縮む創面を 8 日撮る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/06_healing_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/06_healing_video.gif)
 
 *↑ 動く図 ―― 動画(800 × 544、12 fps、143 コマ): 真の面積 A0·exp(-kt)(k = 0.12 /day)で縮む創面を 8 日撮る。撮影距離は 1 日 +1.2 % 漂い(この 1 本では 448 → 495 mm)、傾き・方位・回転も毎回変わる(日と日の間は条件を補間した仮想の撮影、整数日のコマが門と同じ 1 枚)。左 = カメラの像(水色 = 測った塊、紫の十字 = 較正標識)、右 = 正対化した像。M0(1 枚目だけで較正)は0 日目 +10.7 % から 7 日目 -9.9 % へ真値の下へ漂い、下の対数グラフで M0 の傾きだけが急になる。この 1 本の k は M0 0.1473 / M1 0.1253 / M2 0.1174(真値 0.1200)、8 seed の平均は M0 0.1424(+18.7 %)/ M1 0.1225(+2.1 %)/ M2 0.1200(+0.0 %)。*
 
@@ -3774,11 +3774,11 @@ py -3.11 examples/poc_larval_connectome_reservoir.py
 
 *↑ **ハエの脳の立体の上で、刺激の波が配線を伝わるのを見る ―― コネクトーム vs 次数保存 shuffle** ―― 前の展示は「読み出し精度ではコネクトームと乱数グラフの差が出ない」で終わった。この展示は同じ reservoir を**見る**ことに使う: MaleCNS(雄の全中枢神経系)で soma の座標を持つニューロンのうちシナプス総数の上位 3,000 体の部分グラフ(344,719 辺)に、右の視葉だけへ刺激を入れ、活動が伝わる様子を脳と VNC の立体(灰 = 141,781 個の soma、橙 = 右、青 = 左)を回しながら描く。隣は各ニューロンの入出次数を保って辺を繋ぎ替えたグラフに**同じ刺激・同じ入力行列**。実測: コネクトームでは刺激の重心からの活動の平均距離が 88 → 230 µm と 17 步かけて伸び、点く順は視葉(潜時 0)→ 中枢(2)→ 下行(2)で、36 步では VNC に届かない。shuffle は 3 步で 300 µm に散り、遠い 1/4 のニューロンの 93 % が最初の周期内に点く(コネクトームは 0 %)。精度では見えなかった配線の空間構造が、動きでは見える。輝度の尺度は全コマで 1 つ。回転する図のほかに、同じ瞬間を背側・側面・体軸方向の 3 方向から同時に見る図も置く(`views=`)。生データは repo に入れない(手元の feather から部分グラフを作ってキャッシュ、無ければ距離依存の合成の代替で同じ経路)。*
 
-[![a pulse into the right optic lobe (orange = right, blue = left somata; grey = all 141781 somata) propagates through the ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/01_activity_wave_connectome_vs_shuffle.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/01_activity_wave_connectome_vs_shuffle.gif)
+[![a pulse into the right optic lobe (orange = right, blue = left somata; grey = all 141781 somata) propagates through the…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/01_activity_wave_connectome_vs_shuffle.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/01_activity_wave_connectome_vs_shuffle.gif)
 
 *↑ 測定の図 ―― a pulse into the right optic lobe (orange = right, blue = left somata; grey = all 141781 somata) propagates through the real wiring (left) and through the same degrees rewired at random (right); 3000 neurons, 344719 edges, 36 steps, one brightness scale for every frame*
 
-[![when each neuron first lights up (yellow = step 0, orange = step 3, blue = step 6 or later, grey = n](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/03_activation_latency_map_connectome_vs_shuffle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/03_activation_latency_map_connectome_vs_shuffle.png)
+[![when each neuron first lights up (yellow = step 0, orange = step 3, blue = step 6 or later, grey = never within 36 steps): connectome | shuffle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/03_activation_latency_map_connectome_vs_shuffle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/03_activation_latency_map_connectome_vs_shuffle.png)
 
 *↑ when each neuron first lights up (yellow = step 0, orange = step 3, blue = step 6 or later, grey = never within 36 steps): connectome | shuffle*
 
@@ -3804,7 +3804,7 @@ MaleCNS の注釈には視葉ニューロンごとに六角柱(網膜の個眼�
 
 *↑ **複眼が見る像と、脳のどこが反応するかを並べる ―― 個眼を指でなぞると応答が配線を伝わる** ―― MaleCNS の注釈には視葉ニューロンごとに六角柱(網膜の個眼に対応する柱)が付いている。右眼の 892 柱それぞれの視葉ニューロン(柱ごとに上位 3 体)と中枢・下行のハブ 1,400 体を部分グラフ(4,076 体・150,487 辺)にし、個眼 1 つ分の解像度で刺激を入れる。動く図 1: 刺激する柱を眼の一行に沿って動かすと、応答(黄 = 刺激ノード、橙 = 右、青 = 左、尺度 = 刺激を除いた応答の最大)が視葉の中を同じ向きに動く —— 刺激した柱の座標と応答重心の相関はコネクトームで −0.92、次数保存 shuffle(同じ入力行列)で +0.01。網膜部位対応(retinotopy)が配線にあり、乱数には無い。動く図 2: 縦縞が視野を横切る像を `fly_hex_resample` で個眼に落とし、個眼の明るさをそのまま柱の刺激にして脳に入れると、応答が縞を追う(背側と側面の 2 方向)。Studio では Tools ▸ Compound eye → brain が同じ部品で対話的に動く: マウスが指す個眼の柱を刺激し、ドラッグで視点を変え、Studio の画像を眼に通し、shuffle と切り替える。柱と個眼の対応は六角座標の正規化による近似。生データも部分グラフも commit しない(手元の feather からキャッシュ、無ければ六角柱つきの合成の代替で同じ経路)。*
 
-[![a stimulus of one eye column (+ its 6 neighbours) moves along a row of the right eye; yellow = stimulated neurons, orang](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/01_eye_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/01_eye_sweep.gif)
+[![a stimulus of one eye column (+ its 6 neighbours) moves along a row of the right eye; yellow = stimulated neurons, orang…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/01_eye_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/01_eye_sweep.gif)
 
 *↑ 測定の図 ―― a stimulus of one eye column (+ its 6 neighbours) moves along a row of the right eye; yellow = stimulated neurons, orange/blue = response (scale = response peak); the connectome answers retinotopically, the shuffle does not*
 
@@ -3812,7 +3812,7 @@ MaleCNS の注釈には視葉ニューロンごとに六角柱(網膜の個眼�
 
 *↑ |x|-weighted centroid of the responding optic-lobe neurons vs the stimulated column*
 
-[![fly_hex_quantize(mode=log): a low-contrast soft bar (0.5 + 0.3, sigma 6 px) crossing the visual fiel](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/04_retinotopy_vs_bits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/04_retinotopy_vs_bits.png)
+[![fly_hex_quantize(mode=log): a low-contrast soft bar (0.5 + 0.3, sigma 6 px) crossing the visual field is quantized to n bits per ommatidium before ent…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/04_retinotopy_vs_bits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/04_retinotopy_vs_bits.png)
 
 *↑ fly_hex_quantize(mode=log): a low-contrast soft bar (0.5 + 0.3, sigma 6 px) crossing the visual field is quantized to n bits per ommatidium before ent…*
 
@@ -3834,7 +3834,7 @@ py -3.11 examples/poc_eye_to_brain.py
 
 *↑ **EM 連結体校正のセカンドオピニオン ―― 膜はラベルの境界にしか無いはず** ―― 電子顕微鏡の連続断面からニューロンを切り出した自動分割には融合(2 細胞が 1 id)と分断(1 細胞が 2 id)が残り、先行研究はどれも深層学習で候補を出す。この PoC は学習なしで同じ 2 種類を数える: 「細胞膜(暗い稜線)はラベルの境界にしか無い」を 2 通りに ―― 内部を横切る膜の弦 = 融合の疑い(閉じた輪 = ミトコンドリアは穴で除く)、膜の無い境界 = 分断の疑い。CREMI sample A(512² 断面 12 枚、生データは commit しない)の正解ラベルに人工の融合・分断を仕込み、閾値を前半 6 枚で選んで後半 6 枚で測ると、分断は AUC 1.00(TPR 1.00 / FPR 0.11)、融合は面積で揃えた負例に対して AUC 0.83(TPR 0.12 / FPR 0.01、乱数 0.53、面積だけ 0.70)。融合は弱い: 内部に膜の多い細胞が弦と同じ形で高く出る。仕込んだ融合は「大きな 2 ラベルの和」なので、面積で揃えずに測ると「大きいラベル = 怪しい」だけで 0.87 が出てしまう ―― 閾値を選ぶ断面と測る断面を分ける holdout_threshold を op にした理由。動く図は断面を z に積んだ立方体の上で疑わしい箇所(マゼンタ = 融合、シアン = 分断、明るさ = スコア)を回す。新族 emproof(7 op、numpy + scipy のみ)。*
 
-[![suspects on the stacked cube: magenta = merge suspects (membrane chords), cyan = split suspects (membrane-free boundarie](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/02_suspects_on_the_cube.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/02_suspects_on_the_cube.gif)
+[![suspects on the stacked cube: magenta = merge suspects (membrane chords), cyan = split suspects…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/02_suspects_on_the_cube.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/02_suspects_on_the_cube.gif)
 
 *↑ 測定の図 ―― suspects on the stacked cube: magenta = merge suspects (membrane chords), cyan = split suspects (membrane-free boundaries), brightness = score, grey = all label boundaries*
 
@@ -3842,7 +3842,7 @@ py -3.11 examples/poc_eye_to_brain.py
 
 *↑ ROC on the held-out slices; thresholds were chosen on the other half*
 
-[![tau = smallest threshold with train FPR <= 5 %; every number in the test columns comes from slices t](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/04_holdout_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/04_holdout_numbers.png)
+[![tau = smallest threshold with train FPR <= 5 %; every number in the test columns comes from slices the threshold never saw](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/04_holdout_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/04_holdout_numbers.png)
 
 *↑ tau = smallest threshold with train FPR <= 5 %; every number in the test columns comes from slices the threshold never saw*
 
@@ -3864,19 +3864,19 @@ py -3.11 examples/poc_em_second_opinion.py
 
 *↑ **動きの量子化 ―― 脳から筋へ、命令の次元はどこで落ちるか(ハエの首と RL の関節を同じ物差しで)** ―― 人は手を上げるとき筋肉を 1 本ずつ意識しない。脳の何万もの状態は体を動かす段階で少数の命令に畳まれているはずで、ハエではその場所が配線に見える: MaleCNS v1.0(Janelia、CC BY 4.0)で中枢脳の介在 32,164 体 → 下行ニューロン(DN)1,314 体の細い首 → 腹髄の介在 13,161 体 → 運動ニューロン(MN)708 体。conngraph に足した 4 op(graph_layer_propagate / graph_block_shuffle / states_participation_ratio / states_layer_dimension)で、脳 → DN → 腹髄 → MN の部分グラフ(4,022 体)に乱数の疎な刺激 400 通りを前向きに通し、各層の状態の実効次元(participation ratio、Gao ら 2017)を読んだ。疎な発火(kWTA 10 %)で 282 > 61 > 8.7 > 2.4 と単調に落ち、脳の状態から MN と同じ 708 列を抜いても 249 なので層の大きさのせいではない。各受け手の入力重みを保って送り手だけ混ぜた対照では MN が 21.9 残る —— 腹髄 → 筋の圧縮は配線の特異性、首(DN)の段は対照と同じ(61 vs 62)で収束そのもの。正直な内訳: 生の PR は少数の刺激が MN を強く駆動する裾の重さ(応答ノルムの最大は中央値の 17 倍)にも引かれるので、各刺激を単位ノルムに揃えた向きだけの次元も測った —— それでも実配線 25 vs 対照 54(kWTA)、線形では 7 vs 42。同じ数式を Physical AI に当てると、人型ロボットの RL 歩行・走行の関節軌道は 1.5〜4.1(中央値 3.2)、ダンス 9.3・格闘 11.9、evis の筋活動(最大 73 本)は 5.8〜9.6。桁の比較であって同一性の主張ではない。生データと部分グラフは commit しない。*
 
-[![effective dimension of the states each layer takes under 400 random sparse stimuli of the brain layer: real wiring vs a ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/01_funnel_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/01_funnel.png)
+[![effective dimension of the states each layer takes under 400 random sparse stimuli of the brain layer: real wiring vs a…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/01_funnel_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/01_funnel.png)
 
 *↑ 測定の図 ―― effective dimension of the states each layer takes under 400 random sparse stimuli of the brain layer: real wiring vs a control that keeps every receiver's input weights but shuffles who sends them; the neck (DN) compresses by convergence alone, the VNC -> MN stage compresses by the specific wiring*
 
-[![the same funnel after every stimulus response is scaled to unit norm (magnitude removed, direction k](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/02_funnel_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/02_funnel_direction.png)
+[![the same funnel after every stimulus response is scaled to unit norm (magnitude removed, direction kept): the real wiring still leaves fewer MN direct…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/02_funnel_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/02_funnel_direction.png)
 
 *↑ the same funnel after every stimulus response is scaled to unit norm (magnitude removed, direction kept): the real wiring still leaves fewer MN direct…*
 
-[![the 400 stimuli projected on the first two principal components of the MN states: real wiring folds ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/04_command_space_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/04_command_space.png)
+[![the 400 stimuli projected on the first two principal components of the MN states: real wiring folds them onto a few directions, the shuffled control s…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/04_command_space_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/04_command_space.png)
 
 *↑ the 400 stimuli projected on the first two principal components of the MN states: real wiring folds them onto a few directions, the shuffled control s…*
 
-[![participation ratio of joint-angle trajectories (a humanoid robot, RL policies and mocap retargets),](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/05_physical_ai_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/05_physical_ai.png)
+[![participation ratio of joint-angle trajectories (a humanoid robot, RL policies and mocap retargets), next to the fly's MN command dimension (2.4) unde…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/05_physical_ai_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/05_physical_ai.png)
 
 *↑ participation ratio of joint-angle trajectories (a humanoid robot, RL policies and mocap retargets), next to the fly's MN command dimension (2.4) unde…*
 
@@ -3902,11 +3902,11 @@ MICrONS(マウス V1 + 高次視覚野の約 1 mm³)は、同じニューロン�
 
 *↑ **MICrONS の脳の波 ―― 1 mm³ の視覚野で、配線は実測の応答をどこまで説明するか** ―― MICrONS(マウス V1 + 高次視覚野の約 1 mm³)は、同じニューロンについて電子顕微鏡の配線と 2 光子の活動の両方を持つ唯一級のデータ。Ding ら 2025(Nature)の公開表 —— 12,894 体の soma 位置・視覚野・自然動画への試行平均応答 120 コマと、校正済みの軸索 148 本から出る 1.69 M 対(Connected 8,128 / ADP = 軸索と樹状突起が触れているのに結合していない 287 k / Same region 1.40 M)—— を、生データも部分グラフも commit せずに読む。実測の応答をそのまま 1 mm³ の脳の波として points_activity_video で回し(各細胞が自分の上位 1/4 にいる瞬間だけ点く)、配線がその波をどこまで説明するかを 3 つの物差しで測った。(1) like-to-like の再現: 信号相関は Connected 0.071 > ADP 0.045 > Same region 0.025 で、軸索ごとに札を混ぜる置換帰無(SD 0.0018)に対して差 0.027 は 15 SD。ADP と Connected の soma 間距離は同じ(289 vs 295 µm)なので ADP が距離を揃えた対照になる。(2) 配線は近接以上を足す: 各軸索の応答と「相手の応答の平均」の相関(同じ 120 コマ上の類似度で、holdout の予測ではない)は、結合相手 0.24 > 同数の触れている相手 0.18 > 同数の同領域 0.12、軸索ごとの対で 73 % が結合相手を勝たせる。(3) 配線の波: 148 本の実測応答を conngraph の reservoir(4,096 体の部分グラフ、軸索 → 軸索の辺 269 本は落とす)に流し、1 コマ遅れの post の状態と実測の相関は 0.085、次数保存シャッフル 20 本は平均 0.048 ± 0.002(最大 0.053)で全部下、利得を 0.3 / 3 倍にしても順序は同じ。正直な内訳: 絶対値は小さい —— 校正済みの軸索 148 本から post 1 体あたり 1.8 本しか入力のない一段のグラフで、波の広がり(軸索からの平均距離 316 µm)は対照と同じ。空間の局所性は候補の集合(ADP)に既に入っていて、誰を選ぶかには入っていない。データが無ければ合成の皮質(潜在 8 本 + 近接候補からの like-to-like 結合)で同じ手順を回し、合成では順序だけを検査する。*
 
-[![signal correlation of the in vivo responses: pairs in the same region binned by soma distance (curve), against the means](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/02_like_to_like_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/02_like_to_like.png)
+[![signal correlation of the in vivo responses: pairs in the same region binned by soma distance (curve), against the means…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/02_like_to_like_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/02_like_to_like.png)
 
 *↑ 測定の図 ―― signal correlation of the in vivo responses: pairs in the same region binned by soma distance (curve), against the means of the connected pairs and of the ADP pairs whose axon and dendrite touch without a synapse; the per-axon permutation null of Connected - ADP has sd 0.0018*
 
-[![each axon's response predicted from the mean response of its connected partners (y) versus the same ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/03_wiring_vs_proximity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/03_wiring_vs_proximity.png)
+[![each axon's response predicted from the mean response of its connected partners (y) versus the same number of touching-but-unconnected partners (x): a…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/03_wiring_vs_proximity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/03_wiring_vs_proximity.png)
 
 *↑ each axon's response predicted from the mean response of its connected partners (y) versus the same number of touching-but-unconnected partners (x): a…*
 
@@ -3914,7 +3914,7 @@ MICrONS(マウス V1 + 高次視覚野の約 1 mm³)は、同じニューロン�
 
 *↑ every number, with the bar it had to clear*
 
-[![the measured responses of the 148 proofread axons (pale yellow) driven through the reservoir of the 4096-node connected ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif)
+[![the measured responses of the 148 proofread axons (pale yellow) driven through the reservoir of the 4096-node connected…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif)
 
 *↑ 動く図 ―― the measured responses of the 148 proofread axons (pale yellow) driven through the reservoir of the 4096-node connected subgraph over all somata (grey): a target lights when the drive it receives through its real synapses is in its own top quartile; correlation of the reservoir states with the measured responses 0.085 vs 0.048 for a degree-preserving shuffle*
 
@@ -3936,7 +3936,7 @@ EM 連続断面から切り出したニューロンは骨格化すれば枝の�
 
 *↑ **枝の縄張り ―― 骨格が「どこ」かだけでなく「どの枝が近いか」を体積に配ると、枝ごとの体積と半径が測れる** ―― EM 連続断面から切り出したニューロンは骨格化すれば枝のグラフになるが、形態計測が要る枝ごとの体積・半径(ケーブル理論の区画パラメータ)は、体積の各 voxel が「どの枝に属するか」を決めて初めて数えられる。距離変換は最近の骨格までの距離(値)を返すが、どの骨格 voxel が最近か(向き)を捨てるので、そのままでは枝の縄張りは引けない。半径の違う 5 本の枝 + 分断された 1 片 + ごみ 6 個の合成樹状突起(真値の枝ラベルつき)で、vol_rle_components で片ごとに持って体積で選び(8 成分 → 2 を残しごみ 6 を落とす)、skeletonize_vol → skeleton_branches3d の枝 id を骨格に載せ、vol_nearest_label で空間の全 voxel に最近の枝 id を配って(ボロノイ分割)片の中に切ると、縄張りの voxel 一致率は 0.978、枝ごとの体積誤差は 2.9 % 以内。半径は vol_nearest_seed_vector(表面 → 骨格の変位)の長さ + 0.5(表面 voxel の中心は境界の半 voxel 内側)で全枝 0.24 voxel 以内 —— 骨格上の距離変換という古典(0.23 voxel 以内)と同じ精度で、こちらは表面の全 voxel に半径が付く。値だけの古典(接合点の周りを球で削って連結成分に分ける)は、球を小さくすると枝が分かれず(r=0〜4 で一致率 0.63〜0.65)、大きくすると体積を捨てる(r=6 で 0.78、22 % が未割当)—— 向きが要る証拠。正直な内訳: 骨格の枝は接合点で切れるので幹は 3 本の枝 id に分かれ(9 本 → 真値 6 本、重なりの多数決で対応)、半径の +0.5 は離散化の既知の偏りを明示的に足したもの。*
 
-[![z projection of the synthetic dendrite: every voxel gets the branch whose skeleton is nearest, so the branch volumes can](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/01_territories_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/01_territories.png)
+[![z projection of the synthetic dendrite: every voxel gets the branch whose skeleton is nearest, so the branch volumes can…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/01_territories_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/01_territories.png)
 
 *↑ 測定の図 ―― z projection of the synthetic dendrite: every voxel gets the branch whose skeleton is nearest, so the branch volumes can be counted; cutting balls around the junctions instead either fails to separate the branches or throws volume away*
 
@@ -3944,7 +3944,7 @@ EM 連続断面から切り出したニューロンは骨格化すれば枝の�
 
 *↑ both readings recover the radius of every branch to within half a voxel…*
 
-[![volume per branch comes from the territory; the junction-cut rows show that no ball radius separates](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/04_branch_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/04_branch_numbers.png)
+[![volume per branch comes from the territory; the junction-cut rows show that no ball radius separates the branches without throwing volume away](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/04_branch_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/04_branch_numbers.png)
 
 *↑ volume per branch comes from the territory; the junction-cut rows show that no ball radius separates the branches without throwing volume away*
 
@@ -3968,7 +3968,7 @@ C. elegans 雌雄同体の化学シナプス配線(Cook 2019、n=300、|E|=3,669
 
 用語: Jaccard — 二つの集合の共通部分の大きさを和集合の大きさで割った、0から1の類似度。
 
-[![C. elegans 雌雄同体・化学シナプス(Cook 2019)。98 組のうち上位 10 組が非対称辺の 20 %(一様なら 10 %)。水平線は全体の Jaccard からの期待率 1 − J。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/02_lr_pair_asymmetry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/02_lr_pair_asymmetry.png)
+[![C. elegans 雌雄同体・化学シナプス(Cook 2019)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/02_lr_pair_asymmetry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/02_lr_pair_asymmetry.png)
 
 *↑ 測定の図 ―― C. elegans 雌雄同体・化学シナプス(Cook 2019)。98 組のうち上位 10 組が非対称辺の 20 %(一様なら 10 %)。水平線は全体の Jaccard からの期待率 1 − J。*
 
@@ -3990,7 +3990,7 @@ py -3.11 examples/poc_connectome_lr_symmetry.py
 
 *↑ **同じ線虫の配線は、個体が違うとどこまで同じか ―― 8 匹の発生系列で「全員に在る結合」を数える** ―― 遺伝的に同一な C. elegans 8 匹(Witvliet 2021、生直後〜成虫)の化学シナプス配線を、8 匹全員に在る 183 細胞の上で重ね、各結合が何匹に在るかを graph_edge_consensus で数えた図。8 匹全員に在る結合は 442 本で、各個体の入次数・出次数を保ったまま独立に組み替えた次数保存ヌルでは 20 標本の最大でも 0 本。この核は和集合 2,977 本の 15 % の結合で、8 匹合計のシナプスの 57 % を担う。一方、2 匹どうしの Jaccard は推定齢の差とともに下がり(隣り合う段階の平均 0.51、生直後と成虫で 0.33〜0.34)、同齢の成虫 2 匹どうしでも 0.53 と隣り合う発生段階と同程度にとどまる。発生順に見ると、途中から現れて最後まで残る結合が 701 本、途中で消える結合は 55 本。真値は合成系列の閉形式 ―― 核 C 本を全員に、固有 u 本を個体ごとに重ならず置くと h[K]=C・h[1]=K·u・どの 2 匹の Jaccard も C/(C+2u)・stable/added/lost/flicker = C/u/u/(K−2)u で、整数まで op と一致する。公表値との照合: 論文は 7 匹以上に在る結合を stable とし成虫の結合の約 43 % とするが、細胞単位で素朴に数えると 34.5 %。著者の結合ごとの分類表と照合すると、論文は左右の対でまとめた結合が 7 匹以上に在れば対の細胞単位の結合すべてに stable の札を付けており(48.9 %)、それだけで論文の stable 792 本のうち 789 本(99.6 %)を再現する。variable・dynamic を先に除くと 45.4 %。データは同梱せず(nemanode.org のデータには明示のライセンスが無い)、無ければ合成の系列で回る。*
 
-[![生まれた直後から成虫まで 8 匹の配線を順に。色は全体での出現回数なので、早い段階から在る結合ほど明るい。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/02_wiring_across_development.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/02_wiring_across_development.gif)
+[![生まれた直後から成虫まで 8 匹の配線を順に。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/02_wiring_across_development.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/02_wiring_across_development.gif)
 
 *↑ 測定の図 ―― 生まれた直後から成虫まで 8 匹の配線を順に。色は全体での出現回数なので、早い段階から在る結合ほど明るい。*
 
@@ -4056,7 +4056,7 @@ Witvliet 2021 の C. elegans 8 匹(生直後〜成虫)の神経突起の骨格�
 
 *↑ **線虫の神経突起は、生まれてから何倍に伸びるか ―― 8 匹の骨格を op で測り、論文の値と並べる** ―― Witvliet 2021 の C. elegans 8 匹(生直後〜成虫)の神経突起の骨格を SWC の木に直し、tree_from_swc / tree_morphometry / tree_sholl で測った図。木は 1,727 本(途中で途切れて断片に分かれた骨格 61 個は断片ごとに測って合算)で、構造の約束(根 1 つ・親 id < 子 id・節点 = 辺 + 1)と Sholl の閉形式(曲線の下の面積 = Σ|d_子 − d_親|)をすべて通過。第 2 実装: 断片が 1 つの骨格 1,586 本で、op の最長経路が著者の節点ごとの dist_to_root の最大と相対 1.75e-9 で一致。★検査が見つけたもの: 著者の length は線分の長さの合計ではなく(中央値 0.89 倍、1,586 本中 1,360 本が不一致)門にならない。dist_to_root には座標の無い節点も混ざる(1 匹目で 196 本中 54 本)ので、座標のある節点だけで比べる。SWC に座標を小数 3 桁で書くと丸めで 1.9e-6 ずれた。総長は生直後 2,806 µm → 成虫 12,038 µm で 4.29 倍(8 匹に共通の 195 本だけなら 3.86 倍)、論文は約 5 倍。著者の length を足しても 3.95 倍で、5 倍そのものはこのファイルの単純な合計からは出ない(同じ桁までは合う)。L3 の個体の総長が L2 とほぼ同じなのは標本の縮みで、著者は 1.1 倍に補正している。データは同梱しない。*
 
-[![同じ名前のニューロン AVAL を 4 つの発生段階で。3-D の Sholl なので回転に依らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/02_sholl_through_development_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/02_sholl_through_development.png)
+[![同じ名前のニューロン AVAL を 4 つの発生段階で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/02_sholl_through_development_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/02_sholl_through_development.png)
 
 *↑ 測定の図 ―― 同じ名前のニューロン AVAL を 4 つの発生段階で。3-D の Sholl なので回転に依らない。*
 
@@ -4100,7 +4100,7 @@ py -3.11 examples/poc_em_split_merge_score.py
 
 *↑ **切り出しの誤りは、配線図のどこを壊すか ―― 画素の採点は分断を重く、融合を軽く数える** ―― コネクトームは切り出した神経の上にシナプスの注釈(前の点・後の点)を落として読むので、切り出しの誤りは配線図の誤りに化ける ―― ただし全部ではない。seg_wiring_variation は画素の VOI をシナプスの端 2n 点だけで取り直す。この構成は Plaza ら 2014(Focused proofreading)の synapse VI と同じで、ここでのものは numpy だけの実装・接続ごとの水準・誤りを仕込む実験・校正の順番の比較。CREMI sample A(z 125 枚 × xy 625²、シナプス 115 個・接続 107 本)の正解に、シナプスのある神経 54 本それぞれ「x の中央で半分に切る」「いちばん広く接する隣と貼る」誤りを 1 件ずつ仕込むと、端の VOI は全 108 件で閉形式 (s/2n)·H2(s1/s) と一致した(最大誤差 1.4e-17)。分断の 23 / 54 件は配線を 1 ビットも変えない(切った面の片側に端が無い)。画素 1 ビットあたりの配線の損傷(中央値)は融合 1.30 / 分断 0.58、画素と端の順位相関は 0.60。画素の VOI の大きい順に上位 20 件を直すと配線の損傷は 41 % 消え、でたらめ(19 %)よりずっと効くが、配線の順(49 %)には届かない。★検査が見つけたもの: 条件つきエントロピーを H(a,b) − H(a) の差で出すと、名前の付け替えだけの比較に 8.9e-16 の屑が残り「同一なら 0」の門に落ちた —— 直接の和 −Σ p log2(n_ij / n_i) に変えて厳密に 0。接続ごとに束ねた VOI だけでは、シナプス 1 個の接続が切られても 0 のまま(107 本の大半がそれ)なので、端の水準を主にした。同じ誤りを NRI(Reilly 2018、端の対の F 値。新しい op seg_synapse_nri、端の上の 1 − adapted Rand error と厳密に一致)でも採点し、端の VOI が 0 の誤りは NRI の損失も 0 であることを門にした。NRI の損失と端の VOI の順位相関は 1.00、画素の VOI とは 0.59。比 1.30 / 0.58 の中身: 誤り 1 件の 配線 / 画素 は恒等的に 密度 × 偏り(全 108 件で門)。融合は偏り ≈ 1 で比は密度、分断の割引は端の個数の少なさ(中央値 3 個、一様に散っていても 2 項分布で H2 の期待 0.62、実測 0.53)が主因。新 op seg_wiring_exposure は端の個数だけからの予言(上限 s/2n、2 項分布の期待値)を神経ごとに返す(分断 54 件の合計: 実測 0.677 / 予言 0.788 / 上限 1.000 ビット)。生データは同梱しない。*
 
-[![1 点 = 仕込んだ誤り 1 件。順位相関 0.60。分断の 23 / 54 件は配線を 1 ビットも変えない(横軸の上に並ぶ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/02_pixel_vs_wiring_cost_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/02_pixel_vs_wiring_cost.png)
+[![1 点 = 仕込んだ誤り 1 件。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/02_pixel_vs_wiring_cost_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/02_pixel_vs_wiring_cost.png)
 
 *↑ 測定の図 ―― 1 点 = 仕込んだ誤り 1 件。順位相関 0.60。分断の 23 / 54 件は配線を 1 ビットも変えない(横軸の上に並ぶ)。*
 
@@ -4130,7 +4130,7 @@ Witvliet 2021 の 8 匹は、同じ個体に骨格(形)と配線(シナプス)�
 
 *↑ **シナプスは神経突起に比例して増えるか ―― 8 匹の線虫で、形の成長と配線の成長を細胞ごとに並べる** ―― Witvliet 2021 の 8 匹は、同じ個体に骨格(形)と配線(シナプス)の両方がある。tree op で測った神経突起の総長と化学シナプスの総数から、密度は L1 生直後の 0.462 /µm から L1 16 時間の 0.611 へ ×1.32 上がり、L1 以後の揺れ(最大 / 最小)は 1.14 ――論文の「L1 を除けば密度は保たれる」と矛盾しない(門は「L1 の上がり > その後の揺れ」で、数字を当てはめない)。細胞ごとに並べると、1 匹目と 8 匹目の両方に骨格とシナプスがある 178 細胞で、突起の伸び(中央値 ×3.7)とシナプスの増え(中央値 ×6.0)の順位相関は 0.23(細胞をシャッフルした零分布の 97.5 % 点 0.17)。0 ではないが、形だけでは決まらない。密度が上がった細胞は 82 %。新しい op graph_strength_growth で 1 匹目と 8 匹目の行列を比べると、新しいシナプス 6,674 個のうち既存の接続を太らせたのが 3,232、新しい接続が 3,627、消えた −159、細った −26(4 つの和は厳密に 6,674)。生まれた時の相手の数と増分の順位相関は入力 0.58 / 出力 0.51、上位 1 割のハブの取り分は入力 34 % → 28 %、出力 24 % → 20 % と下がる ―― 「ハブは入力を不釣り合いに増やす」は、この定義では出ない(論文の量とは定義が違うので矛盾とは言わない)。生データは同梱しない。*
 
-[![1 点 = 細胞 178 個。順位相関 0.23(零分布 97.5 % 点 0.17)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/02_cell_growth_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/02_cell_growth_scatter.png)
+[![1 点 = 細胞 178 個。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/02_cell_growth_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/02_cell_growth_scatter.png)
 
 *↑ 測定の図 ―― 1 点 = 細胞 178 個。順位相関 0.23(零分布 97.5 % 点 0.17)。*
 
@@ -4156,7 +4156,7 @@ py -3.11 examples/poc_worm_synapses_vs_neurites.py
 
 *↑ **走行長は小さな融合を許さない ―― 同じ誤りを、ERL と VOI は違う重さで数える** ―― 自動切り出しの採点には、分割表から出す VOI(split / merge)と、正解の骨格の上を「同じ物体のまま何 µm 走れるか」で測る ERL(expected run length、Januszewski 2018)がある。新しい op tree_run_length は、骨格の節点に候補のラベルを塗った走行を数え、融合した物体の走行を 0 とみなす。Witvliet 2021 の骨格 1,713 本(12 節点以上)を正解に、候補のラベル付けを 1 つずつ仕込んだ(候補は合成で、切り出し器の出力ではない)。分断 1 つの ERL は閉形式 (A² + (L − A − |e|)²)/L(A = 切った側の部分木のケーブル、第 2 の走査で数える)と全 1,713 本で一致(相対 4e-15)、VOI の split は (m/N)·H2 と一致(3.5e-16)。分岐の無い骨格 100 本では、真ん中で切ると ERL は 0.48 L、端(1 割)で切ると 0.80 L。骨格 a の遠い側 q を骨格 b の物体に貼る融合(856 組)では、VOI の merge は q = 5 % の 0.142 ビットから 50 % の 0.662 へ単調に増えるが、貼られた側 b の ERL は q に依らず 0(損失 1.000)、a の損失は分断と同じ 1 − (1 − q)²。分岐の無い骨格 65 本をケーブルの上で一様に 3 点で切ると、走行の割合は Dirichlet(1,…,1) に従い、平均 Σl²/L'² ÷ 2/(m+2) = 1.023。★検査が見つけたもの: 最初の版は「貼った側 a の損失が q に依らず一定」と主張していた —— 誤り。ERL が 0 にするのは融合した物体の走行で、a の残りは無傷のまま残る。一定の損失を受けるのはその物体に丸ごと覆われる b。また、切る位置を節点番号の上で一様に取ると期待値との比が 0.945 にずれた —— 辺の長さが揃っていないので、ケーブルの上で一様に取る。生データは同梱しない。*
 
-[![1 点 = 骨格 1 本。真ん中で切ると ERL は L の約 1/2、端で切ると約 0.8 L。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/02_cut_position_erl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/02_cut_position_erl.png)
+[![1 点 = 骨格 1 本。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/02_cut_position_erl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/02_cut_position_erl.png)
 
 *↑ 測定の図 ―― 1 点 = 骨格 1 本。真ん中で切ると ERL は L の約 1/2、端で切ると約 0.8 L。*
 
@@ -4178,7 +4178,7 @@ py -3.11 examples/poc_skeleton_run_length_vs_voi.py
 
 *↑ **粘菌の管は迷路を解く ―― 太る・細るだけの力学が最短路に収束することを、定理と Dijkstra で挟む** ―― 粘菌 Physarum は、管を流れる流量で管を太らせ・細らせるだけで迷路の最短路を残す(Tero 2010)。その力学(キルヒホッフで圧力を解き、dD/dt = |Q| − D)は、最短路が一意なら導電度がその指示関数に収束することが証明されている(Bonifaci 2012)。新しい op 2 本 graph_physarum_path(重み付きグラフ)と physarum_route(コスト画像、隣の画素を長さ (c_u+c_v)/2 の管で結ぶ)で回し、真値は Dijkstra(scipy)と route_through_array(skimage)。15×15 の格子 5 通り・21×21 の完全迷路・32×32 の地形の全部で粘菌の道は最小コスト経路と一致(差 < 1e-9)。格子は 600 反復の時点で 5/5 が一致(afterman の PoC は 4/5)、3,000 反復で指示関数(最短路の管 > 0.99、他 < 0.01)に収束したのは 3/5 で、打ち切りの 2 つは「2 番目に短い道との差」(最短路の辺を1 本ずつ外した Dijkstra の最小 = 厳密)が 0.009・0.032 と小さく、拮抗する 2 本目が残る —— 収束の速さはこの差が決める。Lyapunov 関数 V = Σ L·D は迷路で 227,280 → 133.60(最短路 133.59)へ 23 区間で一度も増えず。単位流量の長さ Σ|Q|L ≥ 最短路の不等式は全件で厳密に成立。一様なコストのように同じ長さの道が何本もある(タイ)場合は 1 本に収束しないので op は拒否する。*
 
-[![同じ迷路、24 コマ。行き止まりから順に細り、最後に最短路だけが残る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/02_maze_tubes_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/02_maze_tubes_gif.gif)
+[![同じ迷路、24 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/02_maze_tubes_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/02_maze_tubes_gif.gif)
 
 *↑ 測定の図 ―― 同じ迷路、24 コマ。行き止まりから順に細り、最後に最短路だけが残る。*
 
@@ -4208,7 +4208,7 @@ py -3.11 examples/poc_physarum_maze.py
 
 *↑ **粘菌は最適輸送を解く ―― 源と吸込を質量の分布にすると、同じ管の力学が Earth Mover 距離へ収束する** ―― 迷路の PoC は源 1 つ・吸込 1 つだった。源と吸込を供給ベクトル(Σ = 0)にすると、同じ力学(キルヒホッフで圧力、Q = D (p_u − p_v)/L、dD/dt = |Q| − D)がグラフ上の L1 最適輸送(Beckmann 問題 = 1-Wasserstein 距離)の解へ収束する(Bonifaci 2017、Facca–Karrenbauer–Kolev–Mehlhorn 2020、連続体は Facca–Cardin–Putti 2018)。新しい op 2 本 graph_physarum_transport(重み付きグラフ + 供給)と physarum_transport_image(質量画像 2 枚、画素を長さ 1 の管で結ぶ = マンハッタン距離の EMD)は、費用 Σ L|Q|(上界)と一緒に Kantorovich–Rubinstein の下界 ―― 圧力を 1-Lipschitz にした McShane 包絡 φ の bᵀφ ―― を返す。真の距離は必ずその間に在るので、隙間が「最適から幾ら離れているか」の証明書になり、隙間が閉じたら止まる。真値 10 件と照合: 乱数の木 5 本では閉形式 Σ L_e|部分木の供給| と相対 1.7e-15 で一致(木では流れが一意で 37〜38 反復)、不等間隔の 1 次元格子では既存 op wasserstein_1d と 0.316477 で一致、12 点 ↔ 12 点の完全 2 部グラフでは Hungarian 法の最小割当 0.163242 に対し 0.163244(459 反復)で、生き残った管の集合が最適割当そのもの(割当の管 ≥ 1.00、それ以外 ≤ 0.001)、6×6 格子の乱数質量では LP(HiGHS)と 0.591849 で一致、円盤を (5, 8) 画素ずらした画像との EMD は定理どおり 13.000086 = |dr| + |dc|、源 1・吸込 1 では下界が Dijkstra の距離 9.367260049 と厳密に一致(圧力の包絡 = 最短路のポテンシャル)。距離の公理(対称・長さと質量に線形・三角不等式)も成立。円盤 → 2 円盤(24×24)では EMD 12.0001 に 183 反復で来て、管が張られていく 36 コマの動く図を撮った。合計 9.1 秒。正直に: 粘菌は Hungarian 法やネットワーク単体法より速くはない。売りは局所則だけで解に来ること、バッチで完全並列なこと、そして証明書を自前で返すこと。*
 
-[![EMD 12.0001(画素単位)。粘菌の費用 12.0001、Kantorovich–Rubinstein の下界 12.0000。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/02_transport_tubes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/02_transport_tubes.png)
+[![EMD 12.0001(画素単位)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/02_transport_tubes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/02_transport_tubes.png)
 
 *↑ 測定の図 ―― EMD 12.0001(画素単位)。粘菌の費用 12.0001、Kantorovich–Rubinstein の下界 12.0000。*
 
@@ -4220,7 +4220,7 @@ py -3.11 examples/poc_physarum_maze.py
 
 *↑ 円盤 → 2 円盤。*
 
-[![木 seed 0 16.34; 木 seed 1 13.71; 木 seed 2 14.19; 木 seed 3 15.71; 木 seed 4 14.44; 1 次元 0.3165; 割当 12×1](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/05_five_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/05_five_truths.png)
+[![木 seed 0 16.34; 木 seed 1 13.71; 木 seed 2 14.19; 木 seed 3 15.71; 木 seed 4 14.44; 1 次元 0.3165; 割当 12×12 0.1632; 格子 6×6 LP 0.5918; 平行移動 (5, 8) 13; 単一対 7×…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/05_five_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/05_five_truths.png)
 
 *↑ 木 seed 0 16.34; 木 seed 1 13.71; 木 seed 2 14.19; 木 seed 3 15.71; 木 seed 4 14.44; 1 次元 0.3165; 割当 12×12 0.1632; 格子 6×6 LP 0.5918; 平行移動 (5, 8) 13; 単一対 7×…*
 
@@ -4268,7 +4268,7 @@ Witvliet 2021 の 8 匹(生後 0 時間 → 成虫)の化学シナプス配線�
 
 *↑ **線虫の脳の核は生まれた時から在る ―― 8 匹の発生系列で「最も深い殻」に居続ける細胞を数える** ―― Witvliet 2021 の 8 匹(生後 0 時間 → 成虫)の化学シナプス配線を、新しい op graph_kcore(k-core / 重み付き s-core、入・出・総・無向)・graph_rich_club_curve(rich club 係数を全 k で、次数保存ヌルで割る)・graph_core_persistence(K 匹の最深殻に居続ける細胞)で剥く。門は定理: 完全グラフの殻の指数は n − 1、木は 1、閉路は 2、0/1 行列の s-core は k-core と厳密一致、重み c 倍で指数 c 倍、無向は networkx と全節点一致、φ(k) は 1 点ずつの graph_rich_club と全 k で一致。シナプス数で剥いた最深殻(入・s-core)は発生を通じて 6〜10 細胞と小さいまま指数が 7 → 55 と深くなり、介在神経 RIA の左右対は 8 匹全員の最深殻に居る(運動神経 10 種・介在神経 2 種、筋肉とグリアは入らない)。0/1 で剥く k-core は成虫でも指数 3〜5 で最深殻が 150 細胞に膨らみ核を見分けられない。入・出 × k・s の 4 種のどれかで持続する細胞は 51 個で Yadav & Singh 2026(bioRxiv)の公表値と一致、ただし論文の「頭部の神経では AIBR・RIBL・RIAR の 3 個」は 4 種すべてで持続する RIAL・RIAR とは定義が合わず、そのまま記す。rich club の帯は全段で在り、比の最大は 1.4〜3.3 倍、成虫で k = 1〜28 に広がる。図は 8 匹の配線を神経の位置(骨格の根、体軸方向から)に載せ、成虫の向きに Procrustes で揃えた 8 面と、段の間を補間して配線が生え核が入れ替わる動く図。所要 ≈ 17 s。*
 
-[![同じ 8 匹。0/1 の k-core は成虫でも指数 5、最深殻が 179 細胞まで膨らむ。シナプス数で剥く s-core は最深殻が 6〜10 細胞のまま深くなる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/01_core_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/01_core_depth.png)
+[![同じ 8 匹。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/01_core_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/01_core_depth.png)
 
 *↑ 測定の図 ―― 同じ 8 匹。0/1 の k-core は成虫でも指数 5、最深殻が 179 細胞まで膨らむ。シナプス数で剥く s-core は最深殻が 6〜10 細胞のまま深くなる。*
 
@@ -4276,7 +4276,7 @@ Witvliet 2021 の 8 匹(生後 0 時間 → 成虫)の化学シナプス配線�
 
 *↑ 次数保存ヌル 20 標本。*
 
-[![生後 0 時間から成虫まで。結合が生え、最深殻(橙)が入れ替わる中で、赤の細胞(RIAL RIAR)は一度も外れない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/04_core_map_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/04_core_map_gif.gif)
+[![生後 0 時間から成虫まで。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/04_core_map_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/04_core_map_gif.gif)
 
 *↑ 動く図 ―― 生後 0 時間から成虫まで。結合が生え、最深殻(橙)が入れ替わる中で、赤の細胞(RIAL RIAR)は一度も外れない。*
 
@@ -4298,7 +4298,7 @@ MaleCNS v1.0(Janelia FlyEM × Google Research、雄の全中枢神経系、CC BY
 
 *↑ **ハエ(雄)の脳を、細胞体 12 万 6 千個の点のまま描く ―― 点群を描く op を足し、絵の外の 4 つの答えで採点する** ―― MaleCNS v1.0(Janelia FlyEM × Google Research、雄の全中枢神経系、CC BY 4.0)の注釈から、脳の細胞体 126,104 個(VNC・上行を除く)の位置と上位クラスを取り、点群のまま正面・側面・背面と回転で描いた(視葉の内在 81,055・中枢脳の内在 31,997・視覚の投射 9,162・下行 1,308 …)。Fullseye には点群を色の絵にする op が無く、ViEW 2026 の名刺の裏の脳は手書きの numpy で点を置いていた。新 op `points_render`(ops3d / render)は、小数画素の足跡(gaussian / disc / point)を深さの順にアルファ合成するか、光の総量を保って加算する。門は描画器が自分で計算していない値で採点する: 注釈の左右ラベルで L の細胞体の 99.5 % が正面図の右半分に(前から見るとハエの左は右)、細胞型の名前で引いた Kenyon 細胞 4,050 個が触角葉ニューロン 437 個より背側・後ろに、正面図と背面図(別のカメラ)の列の和が左右反転で 1.8e-15 まで一致、加算の像の総和が点の数と 1.2e-16 で一致、クラスごとの像の重心が閉じた式の射影と 1.4e-5 画素。op の単体の門は 37 件(z-buffer は render_point_depth と全画素で一致、光軸まわり 90 度 = numpy.rot90)、壊して確かめた 10 通り(深さの順を外す・半画素ずらす・回転を転置する・透過率を 1 つずらす など)はどれも赤。★3σ で足跡を切ると重心が 0.017 画素ずれ、円で切ると列の和が行の位置に 1e-5 依存した —— 4σ・軸ごとの切り口に直した。生データは repo に入れない(手元の feather からキャッシュ、無ければ合成の脳で同じ門を回し記録値を印字)。*
 
-[![回転の 1 コマ目(静止画の代わり)。正面から見たところ。MaleCNS v1.0(CC BY 4.0)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/02_rotation_first_frame_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/02_rotation_first_frame.png)
+[![回転の 1 コマ目(静止画の代わり)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/02_rotation_first_frame_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/02_rotation_first_frame.png)
 
 *↑ 測定の図 ―― 回転の 1 コマ目(静止画の代わり)。正面から見たところ。MaleCNS v1.0(CC BY 4.0)*
 
@@ -4306,7 +4306,7 @@ MaleCNS v1.0(Janelia FlyEM × Google Research、雄の全中枢神経系、CC BY
 
 *↑ points_render のノブ: footprint(point / disc / gaussian)と composite(over / add)。*
 
-[![背腹の軸まわりに 1 周(36 コマ)。どのコマも points_render の 1 回の呼び出し。MaleCNS v1.0(CC BY 4.0)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)
+[![背腹の軸まわりに 1 周(36 コマ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)
 
 *↑ 動く図 ―― 背腹の軸まわりに 1 周(36 コマ)。どのコマも points_render の 1 回の呼び出し。MaleCNS v1.0(CC BY 4.0)*
 
@@ -4336,7 +4336,7 @@ py -3.11 examples/poc_flybrain_pointcloud.py
 
 *↑ **全天カメラの雲量 ―― 画素を数えると位置で偏る** ―― 魚眼(等距離射影)の空に球冠の雲(立体角は閉形式)を置き、画素数比と立体角重みで雲量を数えた図。同じ雲が天頂角 0 → 82 度で 0.00789 → 0.01142(1.45 倍)に読める。幾何だけの誤差 -5.02 % と検出だけの誤差 +37.95 % が、素朴な数え方では +29.73 % に打ち消し合う。*
 
-[![画素数比は天頂で 0.81、地平線側で 1.17。重みを掛けると 1 に張り付く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_allsky_cloud_cover/01_jacobian_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png)
+[![画素数比は天頂で 0.81、地平線側で 1.17。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_allsky_cloud_cover/01_jacobian_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png)
 
 *↑ 測定の図 ―― 画素数比は天頂で 0.81、地平線側で 1.17。重みを掛けると 1 に張り付く。*
 
@@ -4366,7 +4366,7 @@ py -3.11 examples/poc_allsky_cloud_cover.py
 
 *↑ **何枚重ねると、星の明るさは何 % の精度で測れるか** ―― 指定どおりに置いた星野を N 枚重ね、開口測光の誤差が 1/√N で落ちるかを見た図。N = 1 → 16 で中央誤差 0.6350 % → 0.1616 %、8 通りすべてで理論から 4.6 % 以内。宇宙線 1 発で単純平均は +5.89 %、κ-σ なら +0.30 % ―― 棄却率は動かないので「棄却率が上がったから効いた」とは言えない。*
 
-[![単純平均だけが 5.9 % 残る。κ-σ は汚染なしと区別できないところまで戻すが、棄却率はほとんど動かない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_astro_photometry/02_cosmic_ray_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_astro_photometry/02_cosmic_ray.png)
+[![単純平均だけが 5.9 % 残る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_astro_photometry/02_cosmic_ray_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_astro_photometry/02_cosmic_ray.png)
 
 *↑ 測定の図 ―― 単純平均だけが 5.9 % 残る。κ-σ は汚染なしと区別できないところまで戻すが、棄却率はほとんど動かない。*
 
@@ -4398,7 +4398,7 @@ py -3.11 examples/poc_astro_photometry.py
 
 用語: PSF — 点状の物体を撮ったときに像がどのように広がるかを表す、撮像系の空間応答。
 
-[![0.35 px までゼロ、そこから立ち上がる。比例則は崖を説明しない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_change_detection_misreg/01_plot_fp_vs_shift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_change_detection_misreg/01_plot_fp_vs_shift.png)
+[![0.35 px までゼロ、そこから立ち上がる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_change_detection_misreg/01_plot_fp_vs_shift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_change_detection_misreg/01_plot_fp_vs_shift.png)
 
 *↑ 測定の図 ―― 0.35 px までゼロ、そこから立ち上がる。比例則は崖を説明しない。*
 
@@ -4436,7 +4436,7 @@ py -3.11 examples/poc_change_detection_misreg.py
 
 *↑ **疎な温度センサから 3-D 熱場を復元する ―― 格子の死角がラックを消す** ―― サーバ室 12 x 8.4 x 3.0 m の温度場を式で置き、格子状の温度センサから復元してホットスポット 3 台を探す。★ゼロ点(全センサの平均 = 場は平らとみなす)は RMSE 2.192 °C でホットスポットを 1 台も見つけない。最良の RBF は 0.214 °C = 10.2 倍。★★崖は測る前に閉形式で言える: 間隔 d の 3-D 格子でピークからいちばん遠い点はセル中心の d√3/2 なので、見えるピークは **exp(-3d²/8σ²)** 倍に落ち、半減間隔は d* = 1.3596σ。幾何だけを取り出した実測との差は最大 **1.2e-15** —— 完全に一致する。★**外れたのは閉形式ではなく「現場で測れる量」のほう**。復元した場のピークには背景の復元誤差が同じ場所に載るので、素朴な実測は予測を最大 +0.2598 超過する —— つまり**崖は実際より浅く見える**。σ=0.22 m のラックは d=1.20 m で幾何の回復 0.000014(消滅)なのに、素朴に測ると 0.1609 残って見える。残っているのは背景の誤差。★閉形式は曲線ではなく**床**: 同じ d=0.60 m でもラックが格子のどこに落ちるかで回復は 0.0615(セル中心)から 1.0(センサ直上)まで跳ぶ。設計に使えるのは最悪位相の値だけで、「平均すればこれくらい見える」はそのラックには通じない。★対照群 a(格子 vs 乱数、同じ本数): 乱数は死角を**消さない。どのラックが死角に落ちるかを振るだけ**。格子の最悪距離を超える乱数点は実測 6.17 %(Poisson の予測 6.58 %、差 0.41 ポイント)。格子は幾何の下限を 1 度も割らないが、乱数は 3 台中 2 台で割った —— 同じ本数でも「最悪でもここまで見える」と設計時に言い切れるかが違う。★★対照群 b(補間法 3 種): **動かないのは指数、動くのは係数**。log 回復 vs d² の傾きは予測 -3.0612 /m² に対し 3 手法とも最大 3.05 % 差。しかし「崖の位置は手法で動かない」という予測は外した —— 薄板スプラインは内挿なのに節点の値を超えて一律 1.372 倍持ち上がり、半減間隔を 0.4777 → 0.6015 m(26 %)ずらす。最近傍と線形が小数点以下まで一致するのは、どちらも節点を超えないため。★「持ち上がる手法は偽の峰も同じだけ立てる」も外した: 床は最近傍 0.975 °C(雑音 0.15 °C の 6.5 倍 = 滑らかな背景を階段で近似した段差)に対し線形 0.132 / RBF 0.164 で、**持ち上がる側のほうが低い**。★物差し 3 つ(場の RMSE / ピーク温度の誤差 / 位置の誤差)を同時に勝つ手法は無い。線形補間は d=1.20 m で評価点の 71.2 % が凸包の外に出て最近傍に化ける —— センサを部屋の内側にしか置けない以上、外挿しない手法は端で必ず別の手法になる。★この PoC が炙り出した道具の穴を、その場で埋めた: 散らばった N-D 点から場を作る `fs.interp_scattered`(nearest / linear / rbf)。設計で効いたのは**凸包の外に出た割合を返り値に入れた**こと —— この PoC が測った 71.2 % は黙って NaN か別手法に化ける量なので、戻り値に居るべきだった。使ってみて `neighbors`(RBF を近傍だけで解く)も足した —— 全体解は O(n³) で1400 / 4000 / 8000 点が 0.55 / 1.76 / 7.53 秒。**op は使って初めて足りない引数が分かる**。*
 
-[![幾何の実測は予測と最大 1.2e-15 しか違わない。素朴な実測が上に浮くぶんが背景の復元誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_datacenter_thermal_field/02_cliff_prediction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_datacenter_thermal_field/02_cliff_prediction.png)
+[![幾何の実測は予測と最大 1.2e-15 しか違わない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_datacenter_thermal_field/02_cliff_prediction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_datacenter_thermal_field/02_cliff_prediction.png)
 
 *↑ 測定の図 ―― 幾何の実測は予測と最大 1.2e-15 しか違わない。素朴な実測が上に浮くぶんが背景の復元誤差。*
 
@@ -4474,7 +4474,7 @@ py -3.11 examples/poc_datacenter_thermal_field.py
 
 *↑ **地形を測る ―― 傾斜・水の流れ・日当たりを閉形式と突き合わせる** ―― 平面・円錐・ガウス丘で傾斜・曲率・天空率を閉形式と突き合わせた図。ガウス丘の曲率誤差はセルを半分にすると約 4 分の 1 ―― 離散化の誤差であって式の誤りではない。天空率は 513×513・8 方位で 2.03 秒 ―― 書き直す前は 41.9 秒かかっていて、テストは「動く」ことしか確かめていなかった。*
 
-[![参照線と平行 = 2 次収束 = 離散化の誤差。式が違えばセルを細かくしても誤差は下げ止まる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/02_curvature_convergence_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/02_curvature_convergence.png)
+[![参照線と平行 = 2 次収束 = 離散化の誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/02_curvature_convergence_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/02_curvature_convergence.png)
 
 *↑ 測定の図 ―― 参照線と平行 = 2 次収束 = 離散化の誤差。式が違えばセルを細かくしても誤差は下げ止まる。*
 
@@ -4486,7 +4486,7 @@ py -3.11 examples/poc_datacenter_thermal_field.py
 
 *↑ 陰影の平均は 北向き 0.354 / 東向き 0.811 / 南向き 0.811 / 西向き 0.354。*
 
-[![主図(動画、640 × 360・30 fps・11 秒): 800 m 四方の地形(セル 5 m)を南南西から北へ回り込み、止まって太陽を一周させる。陰影は描画の光でなく dem_hillshade(仰角 35 度)の出力で塗り、青は de](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/05_terrain_flight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/05_terrain_flight.gif)
+[![主図(動画、640 × 360・30 fps・11 秒): 800 m 四方の地形(セル 5 m)を南南西から北へ回り込み、止まって太陽を一周させる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/05_terrain_flight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/05_terrain_flight.gif)
 
 *↑ 動く図 ―― 主図(動画、640 × 360・30 fps・11 秒): 800 m 四方の地形(セル 5 m)を南南西から北へ回り込み、止まって太陽を一周させる。陰影は描画の光でなく dem_hillshade(仰角 35 度)の出力で塗り、青は dem_flow_accumulation の集水量 150 セル以上。南向き斜面の陰影の平均は太陽方位 187 度で最大 0.719、北向き斜面は 1 度で最大 0.709 —— 日当たりは斜面の向きで決まる(§6 の平面と同じ結論)。高さは画面上だけ 2.5 倍。*
 
@@ -4508,7 +4508,7 @@ py -3.11 examples/poc_dem_terrain.py
 
 *↑ **系外惑星トランジットを開口測光で取り出す ―― 深さと継続時間は別々に壊れる** ―― 合成星野 240 枚に目標星だけ 10 ppt の周辺減光つきトランジットを仕込み、透明度変動・副画素ドリフト・フラット不均一・光子雑音を別々の乱数で載せて、fullseye の star_detect → frame_align → aperture_photometry で光度曲線を取り出す。ゼロ点(目標星の開口積分)は雲で深さ +72 ppt に壊れ、比較星との比なら -0.13 ppt / T14 -0.9 fr。比較星の選び方で残差 rms は 1.91〜11.43 ppt(6.0 倍)、逆分散重みは生の分散で決めると雲に騙されて単純和より 1.52 倍悪い。開口 1σ の崖は予想した重心誤差ではなく op の開口マスクの階段(supersample=8、不動の星で理論比 1.69 → 32 で 0.93)。検出限界 SNR=5 は暦既知で実測 1.48 / 理論 1.45 ppt、暦未知は 2.0 ppt で深さより先に継続時間が壊れる。ドリフト 2 px とフラット 3 % は単独で 0.16 / 0.08 ppt だが掛け算で 0.94 ppt、4 px で 2.97 ppt(真値の 30 %)の偽の深さ。*
 
-[![前/入/最深部/出/後の各段階で平均した画像からトランジット外の平均を引いた [e-)。4 倍拡大](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_exoplanet_transit/02_frames_transit_phases_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_exoplanet_transit/02_frames_transit_phases.png)
+[![前/入/最深部/出/後の各段階で平均した画像からトランジット外の平均を引いた [e-)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_exoplanet_transit/02_frames_transit_phases_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_exoplanet_transit/02_frames_transit_phases.png)
 
 *↑ 測定の図 ―― 前/入/最深部/出/後の各段階で平均した画像からトランジット外の平均を引いた [e-]。4 倍拡大*
 
@@ -4546,7 +4546,7 @@ GNSS が返すのは**楕円体高 h**、地図と設計図が使うのは**標�
 
 *↑ **座標は「もっともらしい数字」のまま数十メートル間違う ―― 楕円体高・測地成果・平面近似** ―― GNSS が返すのは**楕円体高 h**、地図と設計図が使うのは**標高 H**。関係は `H = h - N`(N = ジオイド高。日本付近で 30〜40 m)。この取り違えが**どの量に効き、どの量では消えるか**を、合成のジオイド場で真値を植てて測る。★**床を二重に取る**: 既存 op の往復は 3D で 1.07e-06 m。それに加えて**独立実装(反復法)との差**を緯度 7.2e-07 m / 高さ 8.6e-07 m で測った —— **往復だけでは「往きと復りが同じ向きに誤っている」を排除できない**から。★**閉形式の予測が当たったもの**: 傾斜への影響の上限 `atan|∇N|` は予測 0.008771 度 / 実測 0.008600 度(N 一定の対照群は **2.0e-14 度 = 厳密に 0**)、土量 `ΔV = A·N̄` は差 **1.5e-08 m³**、平地の流向が反転する割合は予測 76.1 % / 実測 76.2 %(42787/56169。D8 では 97.2 %)、測地成果の相対誤差 `(a_B-a_W)/a_W` は予測 -116.0 ppm / 実測 -106.1 ppm(1 km 基線で -0.1059 m)。★★**外した予測**: 視通への影響の上限を `|∇N|·d = 2.60 m` と置いたが、実測は **0.052 m(50 分の 1)**。理由は **N の線形部が視線にも地面にも同じだけ乗って消える**こと —— 絞り直した上限 `|N''|d²/8 = 0.144 m` の 36 % に収まった。判定が変わった組は 3/2120(0.14 %)で、**曲率落ち 14.2 m のほうが 276 倍効く**。★★**崖は閉形式で出るが、1 つの数字では出ない**: 局所平面近似の落ち `d²/2R` は 10 km で予測 -7.8481 m。実測は**南北 -7.8652 m / 東西 -7.8303 m** —— 子午線曲率半径 6357143 m と卯酉線 6385412 m の差で、平均半径の予測は**両者のあいだ**に来る(30 km で 0.316 m 開く)。大気屈折(k≈0.13)を入れると崖は `1/√(1-k) = 1.072` 倍だけ遠くへ動く(5 mm を割るのが 252 m → 271 m)。★**この展示の主題**: **同じ 36 m が、量によって全部効いたり全く効かなかったりする**。差を取る量(傾斜 0.0086 度・視通 0.052 m)ではほぼ消え、絶対量では全部効く(土量 **+3.97e+07 m³**、浸水面積 41.9 % → **0.0 %**、逆向きの誤りなら 100 %)。★0 %/100 % は分母 58081 の**構造的な全滅**で、小標本の産物ではないことも明記した。★対照群で「**設計面も同じ GNSS で作る**」と誤差が **0.0 m³** になる —— **汚染された物差しで汚染された対象を測ると、誤差は消えたように見える**。★測地成果(datum)の取り違えは平均 **446.6 m**(281.6〜592.7)ずれるのに、相対検査(基線長の比較)が見せるのは 1 km あたり 0.106 m = **4216 分の 1**。**大きさではなく『もっともらしさ』が問題**で、例外は出ず地図にも載る。★epoch(座標の時刻)も静かに効く: プレート運動 2.5 cm/年 なら Scan-to-BIM の 5 mm を **0.2 年**で、土木の出来形 25 mm を 1.0 年で割る。**成果に epoch を書かないと、古い成果ほど静かにずれ続ける**。★★**静かに間違う / うるさく壊れる を分けて数えた**(標本 3600、全球格子)。**例外が出たのは緯経の入れ替えだけ、それも 1800/3600 = 50.0 %**(`lat_deg must be within [-90,90]` に当たるのは |経度|>90 のときだけ)。ラジアンを度として渡す(8883 km)、経度の符号反転(4800 km)、ECEF の x と y の入れ替え(4849 km、**返った緯度経度が妥当な範囲に収まった点 3600/3600 = 100 %**)、高さがフィート(228 m)は**例外 0 件**。まとめ表 11 項目のうち **静かに間違うものが 10 件**。★★**道具の穴を見つけて、その場で直した**: `dem_ecef_to_geodetic` が地球の中心付近で **緯度 180 度**を返していた —— 緯度として存在せず、しかも**自分の逆関数が拒否する**値。原因は楕円体の**縮閉線の内側では測地緯度が一意でない**ことで、閉形式 `(a·r)^(2/3) + (b·|z|)^(2/3) < (a²-b²)^(2/3)` で判定して fail-closed にした(境界 42697.7 m は実測ともちょうど一致)。★docstring の往復誤差も**中央値を最大値として**書いていたので、標本の範囲つきで測り直した。*
 
-[![分母 58081 セル。真値 24325(41.9 %)に対し、誤用は 0 と 58081。**どちらの絵も「もっともらしい」**(全面浸水は津波の図に見える)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_height_frames/02_flood_masks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_height_frames/02_flood_masks.png)
+[![分母 58081 セル。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_height_frames/02_flood_masks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_height_frames/02_flood_masks.png)
 
 *↑ 測定の図 ―― 分母 58081 セル。真値 24325(41.9 %)に対し、誤用は 0 と 58081。**どちらの絵も「もっともらしい」**(全面浸水は津波の図に見える)。*
 
@@ -4584,7 +4584,7 @@ py -3.11 examples/poc_geodetic_height_frames.py
 
 *↑ **葉の病斑面積率 ―― 色の軸は照明に勝つが、等級は葉マスクと縁の定義で決まる** ―― 閉形式の葉輪郭に既知面積の病斑を植え、土・片側照明・白飛び・影を重ねた合成葉で、病斑面積率(病斑画素/葉画素)を測る。緑チャネルの固定しきい値(ゼロ点)は土の背景だけで +65.2 pt 外れ、白色方向を射影で消した G で葉を切り Lab の a* で病斑を切ると標準場面で -0.8 pt に収まる。照明むらは 50 % まで a* を動かさないが、白飛びの鏡面反射は a* に偽陽性だけを出し(20 % で +12.6 pt、偽陰性 0.0)、白を足しても動かない色相なら +2.0 pt。病斑の縁のぼけ幅 4 px では「不透明度 25 %/75 % のどちらを境界にするか」だけで面積率が ±3.5 pt 動き(Steiner の式が 0.4 pt 以内で予測)、等級境界 ±3 pt に置いた 40 枚は土の上ではどの手法も 19〜35 枚が誤等級 ―― 黒布の上で明るさで葉を切ると色相の固定しきい値で 8 枚。*
 
-[![FN(青)の大きな塊は影と鏡面反射が重なった病斑(葉マスクごと落ちる)。FP(赤)は鏡面反射の下と病斑の縁。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leaf_disease_area/02_error_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leaf_disease_area/02_error_map.png)
+[![FN(青)の大きな塊は影と鏡面反射が重なった病斑(葉マスクごと落ちる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leaf_disease_area/02_error_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leaf_disease_area/02_error_map.png)
 
 *↑ 測定の図 ―― FN(青)の大きな塊は影と鏡面反射が重なった病斑(葉マスクごと落ちる)。FP(赤)は鏡面反射の下と病斑の縁。*
 
@@ -4672,7 +4672,7 @@ py -3.11 examples/poc_real_sky_photometry.py
 
 *↑ この回の図*
 
-[![動画(60 コマ、30 fps で撮った 2 秒を 1/3 の速さで再生): 左上 = 斜めカメラ(泡が右へ流れ、空の映り込みは動かない)、右上 = 既知ホモグラフィで正射化したコマと、いま足した対の PIV 変位(矢印 × 8)。下段は対](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/13_accumulate_pairs.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/13_accumulate_pairs.gif)
+[![動画(60 コマ、30 fps で撮った 2 秒を 1/3 の速さで再生): 左上 = 斜めカメラ(泡が右へ流れ、空の映り込みは動かない)、右上 = 既知ホモグラフィで正射化したコマと、いま足した対の PIV 変位(矢印 × 8)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/13_accumulate_pairs.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/13_accumulate_pairs.gif)
 
 *↑ 動く図 ―― 動画(60 コマ、30 fps で撮った 2 秒を 1/3 の速さで再生): 左上 = 斜めカメラ(泡が右へ流れ、空の映り込みは動かない)、右上 = 既知ホモグラフィで正射化したコマと、いま足した対の PIV 変位(矢印 × 8)。下段は対を 1 つずつ足した平均から出した表面流速 u(y)(橙)と流量 Q の推移。1 対だけで Q = 11.68 m³/s(-7.3 %)、本文と同じ 20 対で 11.62 m³/s(-7.8 %、閉形式 12.6)、59 対で 11.63 m³/s(-7.7 %)—— **対を足しても流量の誤差はほとんど動かない**。平均で減るのは偶然誤差だけで、u(y) が真値より低めに出る偏りと岸 0 の台形則(だけで約 -2.5 %)は残る。紫は斜め画像のまま 1 尺度で直したゼロ点(近岸で速く遠岸で遅い)*
 
@@ -4728,7 +4728,7 @@ py -3.11 examples/poc_sea_ice_concentration.py
 
 用語: POD — 欠陥の大きさなどの説明変数に対し、定めた検査手順が欠陥を検出する確率を表す曲線。
 
-[![半幅 500 m に一様に撒いた 400000 個。予測 W/2X = 0.2562、モンテカルロの標準偏差 0.0007。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_search_sweep_width/02_sweep_width_equivalence_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_search_sweep_width/02_sweep_width_equivalence.png)
+[![半幅 500 m に一様に撒いた 400000 個。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_search_sweep_width/02_sweep_width_equivalence_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_search_sweep_width/02_sweep_width_equivalence.png)
 
 *↑ 測定の図 ―― 半幅 500 m に一様に撒いた 400000 個。予測 W/2X = 0.2562、モンテカルロの標準偏差 0.0007。*
 
@@ -4864,7 +4864,7 @@ py -3.11 examples/poc_tree_ring_dendro.py
 
 *↑ **畑の緑を数える ―― 被覆率の真値を画素ごとの葉の面積率で持つ** ―― 4 バンドの圃場像から被覆率を出し、画素ごとの葉の面積率を真値にした図。ゼロ点(緑チャネルに大津)は中期で +16.3 pp 上振れし、散らばりはどの手法も 0.5 pp 以下なので、効いている差はほぼ全部が偏り。発芽期・湿った土では被覆率の偏り -0.2 pp なのに適合率も再現率も 0.000 ―― 数字だけ合っていて画素が 1 つも当たっていない。*
 
-[![影ゼロならゼロ点も悪くない。影は『暗さ』を手掛かりにする手法に直接刺さる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vegetation_cover/02_shadow_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vegetation_cover/02_shadow_sweep.png)
+[![影ゼロならゼロ点も悪くない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vegetation_cover/02_shadow_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vegetation_cover/02_shadow_sweep.png)
 
 *↑ 測定の図 ―― 影ゼロならゼロ点も悪くない。影は『暗さ』を手掛かりにする手法に直接刺さる。*
 
@@ -4932,7 +4932,7 @@ py -3.11 examples/poc_water_level.py
 
 *↑ the risk-aware path trims the peaks of the upper band at almost no extra length*
 
-[![GP's uniform noise is too wide on gentle slopes, too narrow on steep ones, and reverts to the mean p](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/04_slip_band_gp_vs_quantile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/04_slip_band_gp_vs_quantile.png)
+[![GP's uniform noise is too wide on gentle slopes, too narrow on steep ones, and reverts to the mean past the data](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/04_slip_band_gp_vs_quantile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/04_slip_band_gp_vs_quantile.png)
 
 *↑ GP's uniform noise is too wide on gentle slopes, too narrow on steep ones, and reverts to the mean past the data*
 
@@ -4966,15 +4966,15 @@ py -3.11 examples/poc_rover_slip_risk_path.py
 
 *↑ **高さは 2 つある・実データ編 ―― 公開された測量成果 523 点で、高さの取り違えを検出器にかける** ―― 合成(poc_geodetic_height_frames)では「楕円体高と標高を混ぜると 30〜40 m ずれる」を**自分で作った数字**で示した。ここは同じ主張を**他人が測って公開した値**で確かめる回。NOAA/NGS の datasheet は 1 つの基準点について楕円体高 h(NAD 83(2011))・正標高 H(NAVD 88)・ジオイド高 N(GEOID18)・地心直交座標 (x,y,z) を**全部公開している**ので、コロラド州フロントレンジ(ロッキーの縁 = ジオイドの勾配が大きく、補間の誤差が出るなら出る場所)から 523 点を取った。★**既存 op を外の値と突き合わせた**: dem_geodetic_to_ecef は公開されている (x,y,z) と rms 0.5 mm・最大 0.8 mm で一致。逆変換は最大 7.1e-09 度ずれるが、これは公開座標の mm 丸めが作る床 9.0e-09 度の内側 —— **データより細かい一致は観測できない**。この op はこれまで自分との往復しか測っておらず、往復は実装が一貫していることしか言わない。★**粗い格子を引く誤りのほうが、モデルを 1 世代取り違える誤りより大きい**: 0.25 度の GEOID18 格子をdem_geoid_height で双一次補間した値と同じ点の公開値の差は rms 11.1 cm・最大 44.5 cm、いっぽうGEOID18 と旧 GEOID12B のモデル差は平均 −1.0 cm(幅 −9.8〜+6.3 cm)。格子を細かくするほうが先に効く。★**格子の外は端で埋めず拒否する**: 523 点のうち 15 点が外に落ち、拒否が実際に働いた(外挿した undulation は測量値ではない)。★**取り違えは外れ値に見えない**: 楕円体高をそのまま標高の列に入れると、残差は**全点が例外なく直線 −N に乗り**中央値 16.75 m 持ち上がる —— 桁で間違うのではなく全部が同じだけずれるので、数字を眺めても気づけない。★★**残差は測量の等級を、言われないまま並べ替える**: dem_height_frame_residual は成果の由来を 1 文字も読まないのに、|h−H−N| の中央値は水準測量 1.6 cm < 網調整 1.9 cm < GPS 観測 3.8 cm < VERTCON3(モデルによる基準換算)8.3 cm・最大 1.02 m の順に並ぶ。**基準が噛み合っているかを数えるだけで、由来の弱い点が浮く。** なお公開値どうしでも残差はぴったり 0 ではない(rms 10.6 cm): NAVD 88 は水準、GEOID18 は重力から作られていて、その食い違いが出る。局所 ENU は基準点が厳密に原点、往復は緯度 1.4e-14 度、既存 ECEF op を経由した別経路と 1.5e-11 m で一致し、20 km より遠い 461 点は接平面から平均 372 m 沈む(誤差ではなく地球の丸み)。同梱するのは集計 1 枚(点ごとに 10 列 + ジオイド格子 2 枚、56 KB)で、生データは commit しない。*
 
-[![523 NGS marks, each publishing ellipsoidal height h (NAD 83), orthometric height H (NAVD 88) and geoid height N (GEOID18](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted.png)
+[![523 NGS marks, each publishing ellipsoidal height h (NAD 83), orthometric height H (NAVD 88) and geoid height N (GEOID18).](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted.png)
 
 *↑ 測定の図 ―― 523 NGS marks, each publishing ellipsoidal height h (NAD 83), orthometric height H (NAVD 88) and geoid height N (GEOID18). The residual h - H - N is not exactly zero: NAVD 88 and GEOID18 were built from different measurements, and the mismatch shows up here at the centimetre level (rms 0.106 m, median -0.004 m). 74 of 523 marks exceed 0.1 m*
 
-[![dem_height_frame_residual reads only the three height columns — never the metadata saying how each m](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/02_by_provenance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/02_by_provenance.png)
+[![dem_height_frame_residual reads only the three height columns — never the metadata saying how each mark was measured.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/02_by_provenance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/02_by_provenance.png)
 
 *↑ dem_height_frame_residual reads only the three height columns — never the metadata saying how each mark was measured.*
 
-[![the published GEOID18 undulation on a 0.25-degree grid over the Colorado Front Range (-19.40 to -11.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/04_geoid_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/04_geoid_grid.png)
+[![the published GEOID18 undulation on a 0.25-degree grid over the Colorado Front Range (-19.40 to -11.15 m, 9x7 nodes).](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/04_geoid_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/04_geoid_grid.png)
 
 *↑ the published GEOID18 undulation on a 0.25-degree grid over the Colorado Front Range (-19.40 to -11.15 m, 9x7 nodes).*
 
@@ -5004,7 +5004,7 @@ py -3.11 examples/poc_geodetic_benchmarks_real.py
 
 *↑ **重力レンズの像を、産業用の測定 op で採点する** ―― **重力レンズには、絵から直接測れる厳密な不変量がある** —— しかも測る道具はこの箱にある平凡な 2-D の op(連結成分・面積・重心)でよい。点質量レンズをアインシュタイン半径 1 の単位で書くと、光源位置 `u` に対し像は `θ± = (u ± √(u²+4))/2`、倍率は `μ± = (u²+2)/(2u√(u²+4)) ± 1/2` になり、**光源がどこにあっても** `θ₊·θ₋ = −1` と **`μ₊ − μ₋ = 1`(整数)** が成り立つ。9 通りの光源位置で前者は **8.9e-16**、後者は **2.2e-16** しか動かない。★★芯 1: **その整数が、絵から出る。** 像面の画素を光源面へ引き戻して描いた絵を `blob_label` で 2 つの像に分け、面積を測って引き算すると、`μ₊ − |μ₋|` の 1 からのずれが格子 801 → 1601 → 3201 で **0.0660 → 0.0216 → 0.0126** と縮む —— モデルの数字ではなく**描いた絵を測って**出している。★★芯 2: **面輝度は厳密に変わらない。** リウヴィルの定理どおり、像の内部の値は u を振っても **1.000000000000000** のままで、変わるのは面積だけ(2,322 → 480 画素)。同じ 1 枚から「変わらない量」と「変わる量」が同時に出る。★★芯 3: **環の太さは光源の半径に等しい。** アインシュタイン環の上では動径方向の倍率が厳密に 1/2 なので、半径 ρ の光源は太さ ρ の環になる(4 通りで最大のずれ **7.2e-05**)。★★芯 4: **特異点がちょうど 1 画素の偽の像を作る。** 光源が真後ろ(u = 0)のとき像は環 **1 本**のはずなのに、連結成分は **2 個**になる —— 増えた 1 個はレンズ中心の 1 画素で、そこは偏向角が発散する点。**個数を数える門は、ここで嘘をつく。** ★★芯 5: **外した予言を 2 つ残してある。** (a)「絵から測るのが苦しいのは暗い像が小さくなる u = 1.5 の側だろう」は**外れ**で、どの解像度でも **u = 0.3(焦線に近い側)が最悪**だった(u = 1.5 の暗い像は格子 3201 で 209 画素ある)—— 苦しいのは像が小さいほうではなく**引き伸ばされて細い弧になる**ほう。(b) 縁のアンチエイリアスを光源面の距離で作っていたのが系統誤差の元で、距離場を像面での変化率 `|∇d|` で割るだけで u = 0.3 のずれが **0.0214 → 0.0126** に下がった —— **写像の先で測った距離を、そのまま手前の画素に使ってはいけない。** ほかに、特異等温球では像の間隔が**光源位置に依らず 2θ_E**(4 通りで最大のずれ 9.3e-03)、光源が横切る動画では |u| ≥ 0.3 で測った倍率が閉形式と相対差 0.009 まで一致し、焦線に近い |u| < 0.3 では 0.161 まで開く(**測れる範囲を主張と一緒に出す**)。図は光源を**校正ターゲット**(同心円 4 本 + 放射スポーク 12 本)にして歪みを目で読めるようにした。**新しい op は 1 つも足していない。** 検査 20 件・図 12 枚(動く図 1 枚を含む)。*
 
-[![面積を測るのに模様は要らない。明るいほうの像は外側(θ₊ > 1)、暗いほうは内側(|θ₋| < 1)に出て、離れるほど内側の像は小さく暗くなる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/02_disc_images_vs_u_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/02_disc_images_vs_u.png)
+[![面積を測るのに模様は要らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/02_disc_images_vs_u_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/02_disc_images_vs_u.png)
 
 *↑ 測定の図 ―― 面積を測るのに模様は要らない。明るいほうの像は外側(θ₊ > 1)、暗いほうは内側(|θ₋| < 1)に出て、離れるほど内側の像は小さく暗くなる。*
 
@@ -5024,7 +5024,7 @@ py -3.11 examples/poc_geodetic_benchmarks_real.py
 
 *↑ 重心は `blob_label` で分けた成分ごとに、被覆率で重みを付けて出している。*
 
-[![光源がレンズの裏を横切る(図は校正ターゲット)。最接近で 2 つの像が伸びて環に近づく。**倍率の数字は同じ光源位置を無地の円盤で描き直して測ったもの**で、最大 19.61 倍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/10_source_crossing.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/10_source_crossing.gif)
+[![光源がレンズの裏を横切る(図は校正ターゲット)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/10_source_crossing.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/10_source_crossing.gif)
 
 *↑ 動く図 ―― 光源がレンズの裏を横切る(図は校正ターゲット)。最接近で 2 つの像が伸びて環に近づく。**倍率の数字は同じ光源位置を無地の円盤で描き直して測ったもの**で、最大 19.61 倍。*
 
@@ -5046,7 +5046,7 @@ py -3.11 examples/poc_gravitational_lens_invariants.py
 
 *↑ **水田の雑草イネ被度 ―― 深層学習なしの教師あり線形判別** ―― UAV水田RGBを16画素格子に分け、trainで10特徴の教師ありFisher LDAを学習し、valで方式を選び、test 148枚を一度だけ評価した。境界は事前に5、25、50%と宣言。段階一致0.574、カッパ0.424、被度相関0.826、IoU 0.397。撮影日を丸ごと外すと季節の異なる1日は日内相関0.14だった。*
 
-[![作物は細く濃い葉が畝の向きに揃い、雑草は広く明るい葉がばらばらの向き。雑草の割合は乱数場の分位点で厳密に置いた。判定は 16 px 角の区画ごとの Fisher 判別。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/01_synthetic_paddy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/01_synthetic_paddy.png)
+[![作物は細く濃い葉が畝の向きに揃い、雑草は広く明るい葉がばらばらの向き。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/01_synthetic_paddy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/01_synthetic_paddy.png)
 
 *↑ 測定の図 ―― 作物は細く濃い葉が畝の向きに揃い、雑草は広く明るい葉がばらばらの向き。雑草の割合は乱数場の分位点で厳密に置いた。判定は 16 px 角の区画ごとの Fisher 判別。*
 

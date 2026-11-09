@@ -1710,7 +1710,7 @@ def fringe_hero_zoom(key):
     return int(min(10, max(1, math.ceil(2.0 * fringe_period(key) / field))))
 
 
-def hero_capture(key, lk, lens, cam, seed=3):
+def hero_capture(key, lk, lens, cam, seed=3, band_ratio=False):
     """題材の見本の 1 枚(大きめの部位に代表の大きさの欠陥 1 つ)をカメラで撮った画像(地で割った表示用の [0,1])。
     縞照明は細かい x の縞の 1 コマ(δ = 0)を、縞が見えるよう視野を広げて見せる。露光は地図と同じ決め方。
     ★見本は視野の中心の近く(中心から 0.1 視野)に置く: 初版の作り直しは 0.3 視野に置き、浅い凹みでドームの穴の縁が
@@ -1739,6 +1739,10 @@ def hero_capture(key, lk, lens, cam, seed=3):
     x = capture(e, cam, t, seed)[0]
     if cam == "polar":
         x = x.mean(-1, keepdims=True)
+    elif cam == "hsi" and band_ratio:
+        # 分光: 1210 nm の帯を両隣(1150 / 1270 nm)の平均で割る(C-H の吸収の深さ)。PE と PP の差はこの帯に出る
+        bi = lambda c: int(np.argmin(np.abs(HSI_CENTERS - c)))
+        x = x[..., [bi(1210.0)]] / np.maximum(0.5 * (x[..., [bi(1150.0)]] + x[..., [bi(1270.0)]]), 1e-9)
     elif cam == "hsi":
         x = x[..., [int(np.argmin(np.abs(HSI_CENTERS - 1210.0)))]]
     if key == "S2" and lk != "fringe":
@@ -1761,6 +1765,32 @@ def hero_capture(key, lk, lens, cam, seed=3):
         img = img[..., 0]
     LAST_GAIN[0] = gain
     return img, CAMERAS[cam]["k"]
+
+
+def hero_shade(key, lk, lens, cam, seed=3):
+    """見本の欠陥が地に対して何割の濃淡を作るか(雑音なし)。欠陥あり と 欠陥なし(大きさ 1e-6 µm = 実質 0)の
+    同じ部位を雑音を足す前の電子数で撮り、差の最大を地の中央値で割る。★凹みの見本は 80 倍に広げ判定の大きさで
+    ならして見せるので、目で見える濃さを実際より強く見せる —— その実際の大きさを見本の下に書くための数(7 回目の確認)。"""
+    dims, size = HERO[key]
+    cfg = SUBJECTS[key]
+    out = []
+    for sz in (size, 1e-6):
+        st = SiteSet(key, 1, 0, seed)
+        st.sizes[:] = sz
+        st.fx[:] = 0.1 * cfg["fov"]
+        st.fy[:] = 0.05 * cfg["fov"]
+        st.jit[:] = 0.0
+        st.slopes[:] = SLOPE_DEG
+        saved = dict(SUBJECTS[key])
+        SUBJECTS[key].update(dict(dims, px=cfg["px"]))
+        try:
+            b = render_bases(st, lk, lens, make_lights(cfg["fov"], cfg["wd"]), "hero")
+        finally:
+            SUBJECTS[key].clear()
+            SUBJECTS[key].update(saved)
+        W = camera_weights(cam, cfg["na"], cfg["px"])
+        out.append(np.asarray(sample_camera(clean_electrons(b, key, cam, W, None), cam), float))
+    return float(np.abs(out[0] - out[1]).max() / max(float(np.median(out[1])), 1e-12))
 
 
 def _font(size, bold=False):
@@ -1876,68 +1906,149 @@ def _mark(d, x0, y0, w, h):
     d.polygon([(c - 7, y0 + h + 9), (c + 7, y0 + h + 9), (c, y0 + h + 1)], fill=col)
 
 
+#: 図 02 で撮った見本の絵と表示倍率(正方形の見本の図が同じ絵を使う)。
+GLANCE_TILES = {}
+#: 凹みの見本の陰影(雑音なし、地に対する割合)。図 02 の見本の下と図の説明に書く。
+GLANCE_SHADE = {}
+
+
+def glance_gain_label(key, gain):
+    """見本の表示倍率の札。★凹みは「80 倍に広げ判定の大きさでならした」ことと、陰影の実際の大きさを必ず添える
+    (雑音がほぼ消えて、凹みが実際よりはっきり見える。7 回目の確認)。"""
+    if key == "S2":
+        if key not in GLANCE_SHADE:
+            lk, lens, cam, _r = GLANCE_SHOW[key]
+            GLANCE_SHADE[key] = hero_shade(key, lk, lens, cam)
+        return "表示 ×%.3g・判定の大きさでならした\n(凹みの陰影は最大 %.1f %%、目ではまず見えない)" % (
+            gain, 100.0 * GLANCE_SHADE[key])
+    return "表示 ×%.3g(地で割った濃淡を広げた)" % gain
+
+
+#: 媒体の図の見本: 傷が目で分かる組(最良とは限らない。モノクロで撮れる題材はモノクロ)。
+GLANCE_SHOW = {"S1": ("coax", "tele", "mono", False), "S2": ("dark10", "tele", "mono", False),
+               "S3a": ("ring30", "normal", "mono", False), "S3b": ("dome", "tele", "hsi", True)}
+
+
+def _hatched(d, box, fill, line, dashed=False):
+    """全長の棒: 灰色に斜線(見つからない)か、破線の枠(一部の種の組だけ)。"""
+    x0, y0, x1, y1 = box
+    if dashed:
+        for xx in range(int(x0), int(x1), 12):
+            d.line((xx, y0, min(xx + 6, x1), y0), fill=line, width=2)
+            d.line((xx, y1, min(xx + 6, x1), y1), fill=line, width=2)
+        return
+    d.rectangle(box, fill=fill)
+    for xx in range(int(x0) - int(y1 - y0), int(x1), 10):
+        a, b = max(xx, x0), min(xx + (y1 - y0), x1)
+        if b > a:
+            d.line((a, y1 - (a - xx), b, y1 - (b - xx)), fill=line, width=1)
+
+
 def make_glance_figure(grid):
-    """ViEW の媒体: 題材ごとに、最良の組で撮った 1 枚(実写風の見本)と、どの種の組でも見つかる組の a90/95(中央値と
-    最小〜最大)の順位を横棒で並べる。10 秒で「どの組なら何 µm から見つかるか」が読めることを狙う。"""
+    """ViEW の媒体: 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種それぞれで最良のカメラ・レンズの a90/95。
+
+    ★棒は短いほど小さい傷まで見つかる。見つからない照明は**全長の灰色の斜線の棒**(試した範囲の上限より大)、一部の種の
+    組だけ見つかる照明は**破線の全長の棒** —— 空の溝にすると、いちばん短い(= 最良)に見えた(5 回目の確認)。
+    見本は大きく、文字は少なく(200 px のサムネイルでも何の絵か分かるように)。"""
     from PIL import Image, ImageDraw
-    W_, H_ = 1440, 1180
+    W_, H_ = 1440, 1120
     im = Image.new("RGB", (W_, H_), (14, 18, 24))
     d = ImageDraw.Draw(im)
     _text(d, (20, 12), "同じ傷を照明 6 × カメラ 5 × レンズ 2 で撮ると、どの組なら何 µm から見つかるか", size=26, bold=True)
-    _text(d, (20, 52), "a90/95(90 % 見つかる大きさの 95 % 上限)の中央値と、種の組 3 つの最小〜最大。誤検出 1 %・露光の上限 "
-          "10 ms・合成の試験", size=17, fill=(190, 200, 212))
     cam_s = {"mono": "モノクロ", "color": "カラー", "polar": "偏光", "swir": "SWIR", "hsi": "分光"}
     l_s = {"coax": "同軸", "dome": "ドーム", "ring70": "高角70°", "ring30": "低角30°", "dark10": "暗視野", "fringe": "縞"}
-    blocks = {"S1": (20, 92), "S2": (730, 92), "S3a": (20, 630), "S3b": (730, 630)}
+    blocks = {"S1": (20, 60), "S2": (730, 60), "S3a": (20, 580), "S3b": (730, 580)}
+    S = 340                                                    # 見本の一辺
     for key in SUBJ_KEYS:
         x0, y0 = blocks[key]
         cfg = SUBJECTS[key]
         cells = sorted([(summary(rs)["med"], k, summary(rs)) for k, rs in grid.items() if k[0] == key
                         and robust(summary(rs))], key=lambda c: c[0])
-        n_none = sum(1 for k, rs in grid.items() if k[0] == key and summary(rs)["n"] == 0)
-        _text(d, (x0, y0), "%s(%s %g〜%g µm を試した)" % (cfg["name"], cfg["unit"], *cfg["size"]), size=20, bold=True)
-        if cells:
-            bk = cells[0][1]
-            img, k = hero_capture(key, bk[1], bk[2], bk[3])
-            t = _to_rgb8(img, k=k)
-            t = np.asarray(Image.fromarray(t).resize((260, 260 * t.shape[0] // t.shape[1]), Image.Resampling.LANCZOS))
-            im.paste(Image.fromarray(t), (x0, y0 + 34))
-            _mark(d, x0, y0 + 34, t.shape[1], t.shape[0])
-            _text(d, (x0, y0 + 34 + t.shape[0] + 12), "見本: %s・%s・%s\n%s %g µm" % (
-                l_s[bk[1]], cam_s[bk[3]], LENS_NAMES[bk[2]], cfg["unit"], HERO[key][1]), size=15)
-        # 横棒: 対数の目盛りで、試した範囲の下限〜上限
-        bx0, bx1 = x0 + 290, x0 + 680
+        _text(d, (x0, y0), cfg["name"], size=22, bold=True)
+        lk, lens, cam, ratio = GLANCE_SHOW[key]
+        img, k = hero_capture(key, lk, lens, cam, band_ratio=ratio)
+        t = _to_rgb8(img, k=k)
+        t = np.asarray(Image.fromarray(t).resize((S, S * t.shape[0] // t.shape[1]), Image.Resampling.LANCZOS))
+        im.paste(Image.fromarray(t), (x0, y0 + 38))
+        _mark(d, x0, y0 + 38, t.shape[1], t.shape[0])
+        gain = LAST_GAIN[0]
+        GLANCE_TILES[key] = (t, gain)
+        lab = "分光 1210 nm ÷ 両隣" if ratio else "%s・%s" % (l_s[lk], cam_s[cam])
+        lines = ["見本: %s(%s %g µm)" % (lab, cfg["unit"], HERO[key][1]), glance_gain_label(key, gain)]
+        _text(d, (x0, y0 + 38 + t.shape[0] + 10), "\n".join(lines), size=15, fill=(200, 208, 218),
+              box=(x0, y0 + 38, x0 + S + 14, y0 + 518))
+        bx0, bx1 = x0 + S + 20, x0 + 690
         lo, hi = math.log10(cfg["size"][0]), math.log10(cfg["size"][1])
         xp = lambda v: bx0 + (math.log10(min(max(v, cfg["size"][0]), cfg["size"][1])) - lo) / (hi - lo) * (bx1 - bx0)
-        # 照明ごとに 1 行: その照明で、どの種の組でも見つかるカメラ × レンズのうち最良(無ければ「見つからない」)
         best_all = cells[0][0] if cells else None
-        for i, lk in enumerate(LIGHT_KEYS):
-            yy = y0 + 40 + i * 62
-            mine = [c for c in cells if c[1][1] == lk]
-            d.rectangle((bx0, yy + 22, bx1, yy + 40), fill=(32, 40, 52))
+        for i, lkk in enumerate(LIGHT_KEYS):
+            yy = y0 + 40 + i * 64
+            mine = [c for c in cells if c[1][1] == lkk]
+            box = (bx0, yy + 24, bx1, yy + 44)
             if mine:
                 med, k3, sm = mine[0]
                 gold = med == best_all
-                _text(d, (bx0, yy), "%s ― %s・%s" % (LIGHT_NAMES[lk].replace("(偏向法)", ""), cam_s[k3[3]],
-                                                    LENS_NAMES[k3[2]]), size=15)
-                d.rectangle((bx0, yy + 22, xp(med), yy + 40), fill=(240, 190, 80) if gold else (64, 140, 210))
-                d.line((xp(sm["min"]), yy + 31, xp(sm["max"]), yy + 31), fill=(240, 244, 248), width=2)
-                _text(d, (bx1 - 110, yy), "%s µm" % ("%.0f" % med if med >= 10 else "%.1f" % med), size=15,
+                _text(d, (bx0, yy), "%s %s・%s" % (l_s[lkk], cam_s[k3[3]], LENS_NAMES[k3[2]]), size=15)
+                d.rectangle(box, fill=(32, 40, 52))
+                d.rectangle((bx0, yy + 24, xp(med), yy + 44), fill=(240, 190, 80) if gold else (64, 140, 210))
+                d.line((xp(sm["min"]), yy + 34, xp(sm["max"]), yy + 34), fill=(240, 244, 248), width=2)
+                _text(d, (bx1 - 70, yy), ("%.0f" % med if med >= 10 else "%.1f" % med) + " µm", size=15,
                       fill=(255, 214, 102) if gold else (235, 240, 245))
             else:
-                part = any(summary(rs)["n"] > 0 for k, rs in grid.items() if k[0] == key and k[1] == lk)
-                _text(d, (bx0, yy), "%s ― %s" % (LIGHT_NAMES[lk].replace("(偏向法)", ""),
-                                                 "一部の種の組だけ見つかる" if part else "どの組でも見つからない"),
-                      size=15, fill=(150, 160, 172))
-        _text(d, (bx0, y0 + 40 + 6 * 62), "どの種の組でも見つかる組 %d、見つからない組 %d(60 組中)" % (
-            len(cells), n_none), size=14, fill=(190, 200, 212))
-    _text(d, (20, H_ - 32), "行 = 照明、そのうち最良のカメラ・レンズ。棒が短いほど小さい傷まで見つかる(中央値、対数の目盛り)。"
-          "白線 = 種の組の最小〜最大、黄 = 題材の最良。材料・照明の明るさは推定。", size=15, fill=(190, 200, 212))
+                part = any(summary(rs)["n"] > 0 for kk, rs in grid.items() if kk[0] == key and kk[1] == lkk)
+                if part:
+                    _hatched(d, box, None, (150, 160, 172), dashed=True)
+                    _text(d, (bx0, yy), "%s 種の組で揺れる" % l_s[lkk], size=15, fill=(160, 170, 182))
+                else:
+                    _hatched(d, box, (52, 56, 62), (96, 102, 110))
+                    _text(d, (bx0, yy), "%s 見つからない(> %g µm)" % (l_s[lkk], cfg["size"][1]), size=15,
+                          fill=(160, 170, 182))
+        _text(d, (bx0, y0 + 40 + 6 * 64 + 2), "%g〜%g µm(対数)" % cfg["size"], size=13, fill=(150, 160, 172))
+    _text(d, (20, H_ - 34), "棒が短いほど小さい傷まで見つかる(a90/95 の中央値、白線 = 種の組の最小〜最大、黄 = 最良)。"
+          "斜線 = 試した範囲で見つからない、破線 = 種の組で揺れる。合成の試験。", size=15, fill=(190, 200, 212))
     figs.save("equipment_at_a_glance", np.asarray(im),
-              "ViEW の入口用: 題材ごとに、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(中央値と最小〜最大。どの種の組でも"
-              "見つかるものだけ、無ければ「見つからない」)と、題材の最良の組で撮った見本。"
-              "線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明以外のどの照明でも、白い PE 片は分光だけ。"
-              "見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げた)。")
+              "ViEW の入口用: 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95"
+              "(種の組 3 つの中央値と最小〜最大。どの組でも見つかるものだけ)。見つからない照明は灰色の斜線の全長の棒、"
+              "種の組で揺れる照明は破線の全長の棒。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明"
+              "以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げ、"
+              "倍率は見本の下に書いた。PE 片は分光の 1210 nm の帯を両隣で割った吸収の深さ)。凹みの見本は %.3g 倍に広げて"
+              "判定の大きさでならしたので、実際よりはっきり見える(雑音なしの陰影は最大 %.1f %%)。"
+              % (GLANCE_TILES["S2"][1], 100.0 * GLANCE_SHADE["S2"]))
+
+
+def make_glance_square():
+    """ViEW のサムネイル用の正方形の図: 図 02 の見本 4 枚を 2×2 に。★横長の図 02 を真ん中で正方形に切ると、線傷の
+    見本は右の端しか残らず傷の線が消えた(7 回目の確認)。絵は図 02 と同じもの(表示倍率も同じ、札に書く)。"""
+    from PIL import Image, ImageDraw
+    T, L, B = 392, 16, 58                                      # 枠の一辺、上の三角の帯、下の札の帯(名前と札の 2 行)
+    W_ = 2 * T + 24
+    # ★地は白: 目玉の動くサムネイル(story GIF)は、この図を 1 コマ目に全面に敷き、その上に進みの点(白地に濃い輪)を
+    #   描いて 1 コマずつ 256 色に減色する。暗い地だと白が色の表に残らず、まだの点が灰色に潰れた(目玉に足したときの検査)。
+    im = Image.new("RGB", (W_, W_), (255, 255, 255))
+    d = ImageDraw.Draw(im)
+    for n, key in enumerate(SUBJ_KEYS):
+        t, gain = GLANCE_TILES[key]
+        x0, y0 = 8 + (n % 2) * (T + 8), 8 + (n // 2) * (T + 8)
+        h = T - L - B
+        # 枠を覆う大きさに縮めて、はみ出した側を中央で切る(欠陥は絵の中心。横長の線傷の絵も枠いっぱいに)
+        sc = max(T / t.shape[1], h / t.shape[0])
+        u = np.asarray(Image.fromarray(t).resize((max(T, round(t.shape[1] * sc)), max(h, round(t.shape[0] * sc))),
+                                                 Image.Resampling.LANCZOS))
+        cy, cx = (u.shape[0] - h) // 2, (u.shape[1] - T) // 2
+        u = u[cy:cy + h, cx:cx + T]
+        im.paste(Image.fromarray(u), (x0, y0 + L))
+        c = x0 + T // 2                                        # 欠陥の位置(絵の中心)を上の帯の三角で示す
+        d.polygon([(c - 9, y0 + 1), (c + 9, y0 + 1), (c, y0 + L - 1)], fill=(230, 159, 0))
+        _text(d, (x0 + 4, y0 + L + h + 2), SUBJECTS[key]["name"], size=22, bold=True, fill=(20, 24, 30),
+              box=(x0, y0, x0 + T, y0 + T))
+        # ★凹みは広げてならした絵なので、陰影の実際の大きさを札に必ず添える(8 回目の確認)
+        tag = "×%.3g" % gain + ("・ならし・陰影%.1f%%" % (100.0 * GLANCE_SHADE[key]) if key == "S2" else "")
+        _text(d, (x0 + 4, y0 + L + h + 30), tag, size=18, fill=(170, 90, 0), box=(x0, y0, x0 + T, y0 + T))
+    figs.save("equipment_samples_square", np.asarray(im),
+              "ViEW のサムネイル用: 図 02 の見本 4 枚(線傷・浅い凹み・黒い焼け・白い PE 片)を 2×2 に並べた。札の × は"
+              "地で割った濃淡の表示倍率。凹みは %.3g 倍に広げ判定の大きさでならした(雑音なしの陰影は最大 %.1f %%)。"
+              "PE 片は分光の 1210 nm の帯を両隣で割った吸収の深さ。合成の試験。"
+              % (GLANCE_TILES["S2"][1], 100.0 * GLANCE_SHADE["S2"]))
 
 
 def make_hero_figure():
@@ -1969,11 +2080,12 @@ def make_hero_figure():
               "0.25 mm 下の径 500 µm の黒い焼け、径 1.5 mm の PE の破片。橙の三角 = 欠陥の位置、見本は視野の中心の近く)。"
               "光子・読み出しの雑音つき。表示は地(中央値)で割った濃淡を行ごとに同じ倍率で広げた(線傷 0.35 倍、凹み 80 倍、"
               "焼けと PE 3 倍、縞照明 0.5 倍。画像ごとの引き伸ばしはしない)ので、照明の間で濃淡の大きさを比べられる。凹みの行は"
-              "判定と同じ大きさ(凹みの σ/2)でならして表示した —— 凹みの陰影は 0.5 % 程度で、目ではまず見えない。縞照明は 16 コマのうちの 1 コマで、縞が 2 周期入るように視野を"
+              "判定と同じ大きさ(凹みの σ/2)でならして表示した —— 凹みの陰影は暗視野で最大 %.1f %% で、目ではまず見えない。縞照明は 16 コマのうちの 1 コマで、縞が 2 周期入るように視野を"
               "広げた(行の見出しの視野 ×k。線傷と樹脂は 10 倍に広げても縞の周期の方が長い)。線傷は同軸と高角リングでは研磨の筋と同じ暗線に、低角と"
               "暗視野では明るい線になる。凹みは斜光でかすかな陰影、縞照明で縞の曲がりとして見える。ドームは視野の中心の近くでは"
               "凹みを写さない —— 斜面にドームの穴の縁が映る位置(中心から 60〜80 mm)でだけ明るい塊になるので、視野全体の POD は"
-              "90 % に届かない(章 5 の (d))。PE の破片は可視ではどの照明でも写らない。")
+              "90 %% に届かない(章 5 の (d))。PE の破片は可視ではどの照明でも写らない。"
+              % (100.0 * hero_shade("S2", "dark10", "tele", "mono")))
 
 
 def make_camera_figure():
@@ -2237,6 +2349,7 @@ def _main():
         make_real_table(real)
         n = make_video(grid, cheap)
         print("動画 %d コマ" % n)
+        make_glance_square()                                   # 08: 番号を動かさないよう最後に
     assert not figs.errors(), figs.errors()
     print("\n門 %d 件中 NG %d 件" % (len(GATES), len(FAILS)))
     if FAILS:
