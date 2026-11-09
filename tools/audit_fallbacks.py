@@ -19,6 +19,9 @@ MODULES = (
     "ops.py", "fslib.py", "image_gen.py", "geometry2d.py", "regions_gen.py",
     "regions_setops.py", "region_morph.py", "opsblob.py", "blob2d.py",
     "imagemorph.py", "morph_minkowski.py",
+    # ★2026-11-09 独立レビュー(op 点検 geom): ops.RT / run_stages の op は backend_safe.guard が
+    #   例外を握って fallback 値を返す。この経路(NaN 画像で ncc_locate → [0,0,0] 等)を勘定に入れる。
+    "backend_safe.py",
 )
 
 
@@ -49,11 +52,20 @@ def _classification(kind: str, qualname: str, fn_doc: str,
                     returned: str) -> tuple[str, str]:
     if kind == "early_return":
         return "legitimate_empty", "空入力を明示的に検査して空の値を返す経路"
+    # ★2026-11-09 独立レビュー: 本体が raise だけの節(素の ``raise`` で送り直す)は fail-closed。
+    #   手書きの documented 表より先に見る(guard.w の MissingDependencyError 節が documented に
+    #   数えられていた)。
+    if handler is not None and handler.body and all(isinstance(n, ast.Raise) for n in handler.body):
+        return "fail_closed", "捕捉した例外をそのまま(または別の例外として)送出する経路"
     documented = {
         "_have_cv2": "optional backendの既存選択機構が不在をFalseとして扱う",
         "_MatchCtx.__getitem__": "docstringにスレッドローカル値の共有fallbackが明記されている",
         "<module>": "optional backendの失敗をFAILED_BACKENDSと台帳へ記録する既存機構",
         "_label_guarded_functions_with_their_op_name": "変更不能なbuiltin/partialを飛ばす補助的なラベル処理",
+        "guard.w": ("op の例外を record() で fs.fallbacks() に記録し(初回は警告)、sort の既定値"
+                    "(match は [0,0,0])か op ごとの on_fail(ops._ON_FAIL_BY_OP: shape_locate は"
+                    " 4 要素 [0,0,0,0])を返す。strict mode と MissingDependencyError は送出する"),
+        "_fmt_exc": "例外の str() 自体が失敗したときに型名だけの表示へ落とす(記録の文字列化の補助)",
     }
     if qualname in documented:
         return "documented_fallback", documented[qualname]
@@ -124,6 +136,18 @@ class _Scanner(ast.NodeVisitor):
             for stmt in node.body:
                 if isinstance(stmt, ast.Return):
                     value = _value(stmt.value)
+                    if "nan_to_num" in value:
+                        # ★2026-11-09 独立レビュー: 代替値への置換は「空入力」ではない
+                        self.sites.append({
+                            "module": self.module, "function": self._qualname(),
+                            "line": stmt.lineno, "exception_types": [],
+                            "returned_or_assigned": value,
+                            "classification": "documented_fallback",
+                            "reason": "早期 return で np.nan_to_num の結果を返す経路(どの関数にも効く"
+                                      "一般規則): 非有限値を代替値へ置き換えるのであって空入力ではない"
+                                      "(置換値は呼び出しの引数どおり)",
+                        })
+                        continue
                     if value == "None" or any(token in value for token in ("zeros", "empty", "[:0", "[]", "{}", "0")):
                         self.sites.append({
                             "module": self.module, "function": self._qualname(),

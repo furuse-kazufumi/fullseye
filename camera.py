@@ -49,6 +49,7 @@ import numpy as np
 __all__ = [
     "intrinsic_matrix", "decompose_intrinsics", "projection_matrix",
     "project_points", "backproject", "depth_to_points", "normals_from_depth",
+    "normals_from_depth_edgeaware",
     "triangulate", "reprojection_error", "solve_pnp",
     "rodrigues", "rotation_log",
     "fundamental_matrix", "essential_matrix", "essential_from_fundamental",
@@ -235,7 +236,12 @@ def normals_from_depth(depth, K, smooth: int = 0) -> np.ndarray:
     orients every normal toward the camera (``-Z``). This is the organized-cloud
     shortcut to :func:`pointcloud.estimate_normals` — no neighbour search needed
     because the depth grid already encodes adjacency. Normals are ``NaN`` where the
-    depth (or a neighbour it needs) is invalid. ``smooth`` optionally box-blurs the
+    depth itself is invalid (non-finite or ``<= 0``), where a neighbour it needs is
+    invalid, and on the one-pixel image border. Every finite normal satisfies
+    ``n · X <= 0`` (faces the camera). Central differences straddle depth steps, so
+    the one-pixel band along a step (box edge over a floor) gets a wrong normal —
+    about 80 deg off in the box-on-floor probe; use
+    :func:`normals_from_depth_edgeaware` when steps matter. ``smooth`` optionally box-blurs the
     depth first to tame stereo noise. Feeds grasp approach directions and terrain
     foothold scoring."""
     Z = np.asarray(depth, np.float64)
@@ -268,6 +274,97 @@ def normals_from_depth(depth, K, smooth: int = 0) -> np.ndarray:
     dotp = np.einsum("...i,...i->...", n, grid)
     flip = dotp > 0
     n[flip] *= -1.0
+    # ★2026-11-09 敵対的点検: 中心差分は左右・上下の隣しか使わないので、無効画素
+    #   (NaN / 0)そのものにも有限の法線が出ていた。しかも向き合わせの n·X > 0 は
+    #   X = NaN で False になり反転されず、穴の画素は全部カメラと逆向きだった
+    #   (傾き平面・1 % の穴で 735 画素中 696 画素)。docstring の約束どおり NaN にする。
+    n[~np.isfinite(grid).all(axis=-1)] = np.nan
+    return n
+
+
+def normals_from_depth_edgeaware(depth, K, max_jump_rel: float = 0.02) -> np.ndarray:
+    """Per-pixel surface normal (H, W, 3) that does not straddle depth steps.
+
+    Same geometry and conventions as :func:`normals_from_depth` (points from
+    :func:`depth_to_points`, tangents along image columns/rows, normal = their
+    cross product, oriented so that ``n · X <= 0``), but each tangent is chosen
+    per pixel:
+
+    * central difference ``X[c+1] - X[c-1]`` when neither neighbour jumps;
+    * a one-sided difference (``X[c+1] - X[c]`` or ``X[c] - X[c-1]``) when only
+      one side jumps or is invalid / off the image;
+    * ``NaN`` when both sides jump (an isolated pixel, a one-pixel-wide sliver).
+
+    A neighbour "jumps" when ``|Z_nb - Z| > max_jump_rel · Z`` (relative depth
+    step, so the same value works at any range and unit). Invalid depth
+    (non-finite or ``<= 0``) gives ``NaN``.
+
+    Measured (2026-11-09, box top z=0.8 m on a floor z=1.0 m, 320x240,
+    fx=300): :func:`normals_from_depth` is ~80 deg off on the 716-pixel band
+    along the edge; this function puts every band pixel within 2 deg (or NaN).
+    On a step-free surface it equals :func:`normals_from_depth` to ``1e-12``
+    in the interior and additionally fills the one-pixel image border.
+
+    Limits: a surface seen so obliquely that consecutive pixels differ by more
+    than ``max_jump_rel`` in depth is treated as a step (raise the threshold for
+    grazing views); a real fold without a depth jump is not detected; no
+    smoothing is applied (pre-filter the depth, e.g. bilateral, for noisy
+    stereo).
+
+    Raises:
+        ValueError: ``depth`` is not 2-D, or ``max_jump_rel`` is not a finite
+            positive number.
+    """
+    Z = np.asarray(depth, np.float64)
+    if Z.ndim != 2:
+        raise ValueError("depth must be a 2-D (H, W) map")
+    try:
+        thr = float(max_jump_rel)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("max_jump_rel must be a positive number") from exc
+    if not np.isfinite(thr) or thr <= 0.0:
+        raise ValueError("max_jump_rel must be a finite positive number, got %r" % (max_jump_rel,))
+    grid = depth_to_points(Z, K, organized=True)              # (H,W,3), NaN invalid
+    valid = np.isfinite(grid).all(axis=-1)
+    Zv = np.where(valid, Z, np.nan)
+
+    def _tangent(axis):
+        # neighbours along ``axis`` (+1 / -1); off-image neighbours are NaN
+        P = grid
+        nxt = np.full_like(P, np.nan)
+        prv = np.full_like(P, np.nan)
+        zn = np.full_like(Zv, np.nan)
+        zp = np.full_like(Zv, np.nan)
+        sl_a = [slice(None)] * 2
+        sl_b = [slice(None)] * 2
+        sl_a[axis] = slice(0, -1)
+        sl_b[axis] = slice(1, None)
+        nxt[tuple(sl_a)] = P[tuple(sl_b)]
+        prv[tuple(sl_b)] = P[tuple(sl_a)]
+        zn[tuple(sl_a)] = Zv[tuple(sl_b)]
+        zp[tuple(sl_b)] = Zv[tuple(sl_a)]
+        with np.errstate(invalid="ignore"):
+            ok_n = np.isfinite(zn) & (np.abs(zn - Zv) <= thr * Zv)
+            ok_p = np.isfinite(zp) & (np.abs(zp - Zv) <= thr * Zv)
+        t = np.full_like(P, np.nan)
+        both = ok_n & ok_p
+        t[both] = nxt[both] - prv[both]
+        only_n = ok_n & ~ok_p
+        t[only_n] = nxt[only_n] - P[only_n]
+        only_p = ok_p & ~ok_n
+        t[only_p] = P[only_p] - prv[only_p]
+        return t
+
+    du = _tangent(1)                                           # d/dx (columns)
+    dv = _tangent(0)                                           # d/dy (rows)
+    n = np.cross(du, dv)
+    norm = np.linalg.norm(n, axis=-1, keepdims=True)
+    tang = (np.linalg.norm(du, axis=-1) * np.linalg.norm(dv, axis=-1))[..., None]
+    with np.errstate(invalid="ignore"):
+        n = n / np.where(norm > 1e-12 * tang, norm, np.nan)
+    dotp = np.einsum("...i,...i->...", n, grid)
+    n[dotp > 0] *= -1.0
+    n[~valid] = np.nan
     return n
 
 

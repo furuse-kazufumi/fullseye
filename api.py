@@ -101,7 +101,10 @@ from stereo import (  # noqa: E402,F401
 )
 from measure import (line_profile, distance, angle,  # noqa: E402,F401
                      fit_line, fit_circle, fit_circle_geometric,
-                     fit_curve_principal_axis, fit_ellipse, fit_rectangle2)
+                     fit_curve_principal_axis, fit_ellipse, fit_rectangle2,
+                     fit_rectangle2_lsq)
+# 2026-11-09 op 点検: はみ出しを扱う NCC / 刻み指定の回転照合(ncc_locate / shape_locate の契約は不変)
+from matching import ncc_map_partial, ncc_locate_ex, shape_locate_fine  # noqa: E402,F401
 # Exact geometric predicates (robust orientation / in-circle / in-sphere): the
 # correct SIGN even when float64 rounds a near-degenerate determinant to the wrong
 # side. Used by the convex hull; exposed for robust user-side geometry.
@@ -185,6 +188,7 @@ except Exception as _e:   # noqa: BLE001 - installed but BROKEN is not the same 
         globals()[_n] = _pipeline3d_missing(_n, _e)
 from registration import (  # noqa: E402,F401
     kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register, feature_register,
+    icp_gated, point_to_plane_icp_gated,
 )
 from ppf import ppf_model, surface_match, find_surface_pose  # noqa: E402,F401
 from pointcloud import (  # noqa: E402,F401
@@ -232,6 +236,7 @@ from render3d import (  # noqa: E402,F401
 from camera import (  # noqa: E402,F401
     intrinsic_matrix, decompose_intrinsics, projection_matrix,
     project_points, backproject, depth_to_points, normals_from_depth,
+    normals_from_depth_edgeaware,
     triangulate, reprojection_error, solve_pnp, rodrigues, rotation_log,
     fundamental_matrix, essential_matrix, essential_from_fundamental,
     decompose_essential, recover_pose, epipolar_lines,
@@ -1185,6 +1190,8 @@ __all__ = [
     "NORMS", "QUALITATIVE", "PERCEPTUAL_SAFE", "CVD_SAFE", "CYCLIC",
     "detect", "segment_objects", "object_descriptor", "nearest_prototype", "draw_objects",
     "registration", "kabsch", "icp", "point_to_plane_icp", "apply_transform",
+    "icp_gated", "point_to_plane_icp_gated",
+    "ncc_map_partial", "ncc_locate_ex", "shape_locate_fine",
     "pca_align", "register", "feature_register",
     "ppf", "ppf_model", "surface_match", "find_surface_pose",
     "pointcloud", "estimate_normals", "voxel_downsample",
@@ -1216,6 +1223,7 @@ __all__ = [
     "mesh_to_sdf", "voxelize_solid", "marching_cubes",
     "camera", "intrinsic_matrix", "decompose_intrinsics", "projection_matrix",
     "project_points", "backproject", "depth_to_points", "normals_from_depth",
+    "normals_from_depth_edgeaware",
     "triangulate", "reprojection_error", "solve_pnp", "rodrigues", "rotation_log",
     "fundamental_matrix", "essential_matrix", "essential_from_fundamental",
     "decompose_essential", "recover_pose", "epipolar_lines",
@@ -1275,7 +1283,7 @@ __all__ = [
     "match_descriptors", "match_keypoints",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
-    "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2",
+    "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2", "fit_rectangle2_lsq",
     "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3", "fit_surface_principal_axes",
     "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
     "measure3d", "regionprops3d", "ops3d", "pipeline3d",

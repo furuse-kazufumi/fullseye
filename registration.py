@@ -15,6 +15,7 @@ from __future__ import annotations
 import numpy as np
 
 __all__ = ["kabsch", "apply_transform", "icp", "point_to_plane_icp",
+           "icp_gated", "point_to_plane_icp_gated",
            "pca_align", "register", "feature_register"]
 
 
@@ -62,6 +63,29 @@ def _cloud_size(Q: np.ndarray) -> float:
     return L if np.isfinite(L) else 0.0
 
 
+def _checked_trim(trim, n_src, *, strict_count=False, who="icp"):
+    """Validate *trim* (fraction of the worst matches to drop, ``0 <= trim < 1``).
+
+    ★2026-11-09 独立レビュー: ``trim=1.5`` / ``1.0`` は 3 点だけで見かけ上よい rmse を、
+    ``trim=-0.5`` は黙って無視されていた。範囲外は ``ValueError``。``strict_count`` のとき
+    (``*_gated``)は、残す点が 3 未満になる trim も ``ValueError``(従来の ``icp`` は 3 点へ
+    切り上げる挙動を互換のため残す)。
+    """
+    if trim is None:
+        return n_src
+    try:
+        tr = float(trim)
+    except (TypeError, ValueError):
+        raise ValueError("%s: trim must be a number in [0, 1), got %r" % (who, trim)) from None
+    if not (np.isfinite(tr) and 0.0 <= tr < 1.0):
+        raise ValueError("%s: trim must be in [0, 1) (fraction of matches to drop), got %r" % (who, trim))
+    keep = int(round((1.0 - tr) * n_src))
+    if strict_count and keep < 3:
+        raise ValueError("%s: trim=%r keeps %d of %d source points; at least 3 are needed"
+                         % (who, trim, keep, n_src))
+    return max(3, keep)
+
+
 def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
         init=None, trim: float | None = None, reproducible: bool = False):
     """Iterative Closest Point: align *src* to *dst* without known correspondences.
@@ -77,6 +101,14 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
     distance each iteration (Trimmed ICP) — this rejects outliers and non-overlap,
     the usual case when an observed cloud only partially matches a CAD model; the
     reported ``rmse`` is then over the kept inliers.
+
+    ★There is **no correspondence-distance limit** (Open3D's
+    ``max_correspondence_distance`` = infinity) and no robust loss: every source
+    point pulls on the pose. With background / edge points in the source, use
+    *trim* or :func:`icp_gated`. Measured 2026-11-09 (bracket 500 pts + 100
+    uniform outliers, start 20 deg off, 20 trials): this function median 3.4 deg
+    (4.15 deg in the audit probe; identical to Open3D without a limit),
+    :func:`icp_gated` with a limit of 5 % of the diameter 1.36 deg.
 
     *tol* is **relative to the size of dst** (its bounding-box diagonal ``L``): iteration
     stops once the RMSE changes by less than ``tol·L``, so the same call converges the same
@@ -112,9 +144,7 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
         R_tot = np.asarray(init[0], np.float64).copy()
         t_tot = np.asarray(init[1], np.float64).copy()
         cur = move(P0, R_tot, t_tot)
-    keep_n = P0.shape[0]
-    if trim is not None:
-        keep_n = max(3, int(round((1.0 - float(trim)) * P0.shape[0])))
+    keep_n = _checked_trim(trim, P0.shape[0], who="icp")
     prev = np.inf
     rmse = np.inf
     for _ in range(max_iter):
@@ -154,6 +184,14 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
     as in :func:`icp`. Returns ``(R, t, aligned, rmse)`` where ``rmse`` is the
     point-to-plane residual.
 
+    ★No correspondence-distance limit and no robust loss (as :func:`icp`). Measured
+    2026-11-09: bracket 500 pts + 100 uniform outliers, start 20 deg off — median
+    27.7 deg, 0/20 within 3 deg (Open3D without a limit fails the same way);
+    :func:`point_to_plane_icp_gated` with a limit of 5 % of the diameter 0.4 deg.
+    On real T-LESS part 22 frames (started at the truth) 6.6 deg vs 2.3 deg with
+    ``trim=0.2``. Pass *trim* or use the gated variant whenever the source holds
+    points that are not on the destination surface.
+
     ``reproducible=True`` replaces the least-squares solve by the 6x6 normal equations
     ``(JᵀJ) x = Jᵀb`` with both products from :mod:`ozakimm` (independent of point order
     and BLAS threads), applies the transform element by element and sums the RMS with
@@ -191,7 +229,7 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
         R_tot = np.asarray(init[0], np.float64).copy()
         t_tot = np.asarray(init[1], np.float64).copy()
         cur = move(P0, R_tot, t_tot)
-    keep_n = P0.shape[0] if trim is None else max(3, int(round((1.0 - float(trim)) * P0.shape[0])))
+    keep_n = _checked_trim(trim, P0.shape[0], who="point_to_plane_icp")
     prev = np.inf
     rmse = np.inf
     for _ in range(max_iter):
@@ -228,6 +266,193 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
            if keep_n < P0.shape[0] else slice(None))
     rmse = rms(rowdot(cur[sel] - Q[idx[sel]], N[idx[sel]]))
     return R_tot, t_tot, cur, rmse
+
+
+def _gate_value(max_corr_dist) -> float:
+    try:
+        g = float(max_corr_dist)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("max_corr_dist must be a positive number") from exc
+    if not (g > 0.0) or np.isnan(g):
+        raise ValueError("max_corr_dist must be > 0 (a length in the cloud's units), got %r"
+                         % (max_corr_dist,))
+    return g
+
+
+def _gated_selection(dist, gate, keep_n):
+    """Indices of the pairs used this iteration: within *gate*, then the best *keep_n*."""
+    cand = np.flatnonzero(dist <= gate)
+    if cand.size > keep_n:
+        cand = cand[np.argpartition(dist[cand], keep_n - 1)[:keep_n]]
+    if cand.size < 3:
+        raise ValueError(
+            "icp_gated: only %d correspondence(s) within max_corr_dist=%g (need >= 3); "
+            "raise max_corr_dist or give a better init" % (cand.size, gate))
+    return cand
+
+
+def icp_gated(src, dst, max_corr_dist, max_iter: int = 50, tol: float = 1e-8,
+              init=None, trim: float | None = None, reproducible: bool = False):
+    """Point-to-point ICP that ignores pairs farther apart than *max_corr_dist*.
+
+    Same algorithm and arguments as :func:`icp` plus a hard correspondence gate:
+    each iteration a source point whose nearest destination point lies farther than
+    *max_corr_dist* (in the cloud's units) is left out of the Kabsch solve — the
+    meaning of Open3D's ``max_correspondence_distance``. *trim* then keeps the best
+    ``1 - trim`` fraction of the **source** count among the gated pairs. With
+    ``max_corr_dist`` larger than every distance the result equals :func:`icp`
+    (rotation difference < 1e-6 deg in the regression test).
+
+    Measured 2026-11-09 (bracket 500 pts + 100 uniform outliers, start 20 deg off,
+    20 trials, ``tests/test_opfix_geom3d_2026_11_09.py``): :func:`icp` median
+    3.4 deg; this function with a gate of 5 % of the diameter 1.36 deg, 20/20
+    within 3 deg (Open3D, same gate, 0.93 deg in the audit probe).
+
+    Choose the gate from the expected residual after a coarse alignment (a few
+    point spacings to a few % of the object size). Too small a gate starves the
+    solve when the start is far off — use a coarse initialiser first
+    (:func:`pca_align`, :func:`feature_register`, PPF).
+
+    Returns ``(R, t, aligned, rmse, fitness)``: the first four as in :func:`icp`
+    (``rmse`` over the gated, kept pairs of the returned pose) and ``fitness`` =
+    fraction of source points with a destination point within the gate at the
+    returned pose (Open3D's fitness).
+
+    Raises:
+        ValueError: ``max_corr_dist`` not a positive number, or fewer than 3
+            pairs within the gate at any iteration (fail-closed; no pose is
+            invented from too few pairs).
+    """
+    from scipy.spatial import cKDTree
+
+    gate = _gate_value(max_corr_dist)
+    P0 = np.asarray(src, np.float64)
+    Q = np.asarray(dst, np.float64)
+    if reproducible:
+        import ozakimm
+        move = ozakimm._apply_rigid
+        rms = ozakimm._rms
+    else:
+        move = apply_transform
+
+        def rms(d):
+            return float(np.sqrt(np.mean(d ** 2)))
+    tree = cKDTree(Q)
+    tol_abs = float(tol) * _cloud_size(Q)
+    if init is None:
+        R_tot = np.eye(3)
+        t_tot = np.zeros(3)
+        cur = P0.copy()
+    else:
+        R_tot = np.asarray(init[0], np.float64).copy()
+        t_tot = np.asarray(init[1], np.float64).copy()
+        cur = move(P0, R_tot, t_tot)
+    keep_n = _checked_trim(trim, P0.shape[0], strict_count=True, who="icp_gated")
+    prev = np.inf
+    for _ in range(max_iter):
+        dist, idx = tree.query(cur)
+        sel = _gated_selection(dist, gate, keep_n)
+        rmse = rms(dist[sel])
+        R, t = kabsch(cur[sel], Q[idx[sel]], reproducible=reproducible)
+        cur = move(cur, R, t)
+        R_tot = R @ R_tot
+        t_tot = R @ t_tot + t
+        if abs(prev - rmse) < tol_abs:
+            break
+        prev = rmse
+    dist, _ = tree.query(cur)
+    sel = _gated_selection(dist, gate, keep_n)
+    rmse = rms(dist[sel])
+    fitness = float(np.mean(dist <= gate)) if dist.size else 0.0
+    return R_tot, t_tot, cur, rmse, fitness
+
+
+def point_to_plane_icp_gated(src, dst, max_corr_dist, dst_normals=None,
+                             k_normals: int = 16, max_iter: int = 50, tol: float = 1e-8,
+                             init=None, trim: float | None = None,
+                             reproducible: bool = False):
+    """Point-to-plane ICP that ignores pairs farther apart than *max_corr_dist*.
+
+    Same algorithm and arguments as :func:`point_to_plane_icp` plus the hard
+    correspondence gate of :func:`icp_gated` (Open3D's
+    ``max_correspondence_distance``; the gate is on the point-to-point distance of
+    the nearest-neighbour pair, the residual minimised is point-to-plane). With a
+    gate larger than every distance the result equals :func:`point_to_plane_icp`.
+
+    Measured 2026-11-09 (bracket 500 pts + 100 uniform outliers, start 20 deg off,
+    20 trials): :func:`point_to_plane_icp` median 27.2 deg (0/20 within 3 deg);
+    this function with a gate of 5 % of the diameter 0.37 deg, 20/20 within
+    3 deg, fitness 0.80 (= the 500 of 600 source points that are not outliers;
+    Open3D, same gate, 0.40 deg in the audit probe).
+
+    Returns ``(R, t, aligned, rmse, fitness)`` — ``rmse`` is the point-to-plane
+    residual over the gated, kept pairs of the returned pose, ``fitness`` the
+    fraction of source points within the gate.
+
+    Raises:
+        ValueError: ``max_corr_dist`` not a positive number, or fewer than 3
+            pairs within the gate at any iteration.
+    """
+    from scipy.spatial import cKDTree
+    from scipy.spatial.transform import Rotation
+    import pointcloud
+
+    gate = _gate_value(max_corr_dist)
+    P0 = np.asarray(src, np.float64)
+    Q = np.asarray(dst, np.float64)
+    N = (np.asarray(dst_normals, np.float64) if dst_normals is not None
+         else pointcloud.estimate_normals(Q, k=k_normals))
+    tree = cKDTree(Q)
+    L = _cloud_size(Q)
+    tol_abs = float(tol) * L
+    col = np.array([1.0 / L] * 3 + [1.0] * 3) if L > 0 else np.ones(6)
+    if reproducible:
+        import ozakimm
+        move, rowdot, rms = ozakimm._apply_rigid, ozakimm._rowdot, ozakimm._rms
+    else:
+        move = apply_transform
+
+        def rowdot(a, b):
+            return np.einsum("ij,ij->i", a, b)
+
+        def rms(d):
+            return float(np.sqrt(np.mean(d ** 2)))
+    if init is None:
+        R_tot = np.eye(3)
+        t_tot = np.zeros(3)
+        cur = P0.copy()
+    else:
+        R_tot = np.asarray(init[0], np.float64).copy()
+        t_tot = np.asarray(init[1], np.float64).copy()
+        cur = move(P0, R_tot, t_tot)
+    keep_n = _checked_trim(trim, P0.shape[0], strict_count=True, who="point_to_plane_icp_gated")
+    prev = np.inf
+    for _ in range(max_iter):
+        dist, idx = tree.query(cur)
+        sel = _gated_selection(dist, gate, keep_n)
+        p, q, n = cur[sel], Q[idx[sel]], N[idx[sel]]
+        A = np.concatenate([np.cross(p, n), n], axis=1)
+        b = -rowdot(p - q, n)
+        if reproducible:
+            AtA = ozakimm._matmul_repro_any(A.T, A) * np.outer(col, col)
+            Atb = ozakimm._matmul_repro_any(A.T, b[:, None])[:, 0] * col
+            x = col * np.linalg.solve(AtA + 1e-12 * np.eye(6), Atb)
+        else:
+            x, *_ = np.linalg.lstsq(A, b, rcond=None)
+        R_inc = Rotation.from_rotvec(x[:3]).as_matrix()
+        t_inc = x[3:]
+        cur = move(cur, R_inc, t_inc) if reproducible else cur @ R_inc.T + t_inc
+        R_tot = R_inc @ R_tot
+        t_tot = R_inc @ t_tot + t_inc
+        rmse = rms(rowdot(cur[sel] - q, n))
+        if abs(prev - rmse) < tol_abs:
+            break
+        prev = rmse
+    dist, idx = tree.query(cur)
+    sel = _gated_selection(dist, gate, keep_n)
+    rmse = rms(rowdot(cur[sel] - Q[idx[sel]], N[idx[sel]]))
+    fitness = float(np.mean(dist <= gate)) if dist.size else 0.0
+    return R_tot, t_tot, cur, rmse, fitness
 
 
 def pca_align(src, dst):

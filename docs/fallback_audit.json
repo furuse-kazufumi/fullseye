@@ -13,17 +13,71 @@
       "opsblob.py",
       "blob2d.py",
       "imagemorph.py",
-      "morph_minkowski.py"
+      "morph_minkowski.py",
+      "backend_safe.py"
     ]
   },
   "counts": {
-    "fail_closed": 3,
-    "documented_fallback": 6,
+    "fail_closed": 4,
+    "documented_fallback": 10,
     "silent_fallback": 1,
-    "legitimate_empty": 18,
+    "legitimate_empty": 19,
     "undecided": 1
   },
   "sites": [
+    {
+      "module": "backend_safe.py",
+      "function": "missing_dependency",
+      "line": 102,
+      "exception_types": [
+        "Exception"
+      ],
+      "returned_or_assigned": "pass",
+      "classification": "documented_fallback",
+      "reason": "docstringに代替経路が明記されている"
+    },
+    {
+      "module": "backend_safe.py",
+      "function": "_fmt_exc",
+      "line": 180,
+      "exception_types": [
+        "Exception"
+      ],
+      "returned_or_assigned": "'%s: <unprintable>' % type(exc).__name__",
+      "classification": "documented_fallback",
+      "reason": "例外の str() 自体が失敗したときに型名だけの表示へ落とす(記録の文字列化の補助)"
+    },
+    {
+      "module": "backend_safe.py",
+      "function": "guard.w",
+      "line": 307,
+      "exception_types": [
+        "MissingDependencyError"
+      ],
+      "returned_or_assigned": "-",
+      "classification": "fail_closed",
+      "reason": "捕捉した例外をそのまま(または別の例外として)送出する経路"
+    },
+    {
+      "module": "backend_safe.py",
+      "function": "guard.w",
+      "line": 309,
+      "exception_types": [
+        "Exception"
+      ],
+      "returned_or_assigned": "out = None",
+      "classification": "documented_fallback",
+      "reason": "op の例外を record() で fs.fallbacks() に記録し(初回は警告)、sort の既定値(match は [0,0,0])か op ごとの on_fail(ops._ON_FAIL_BY_OP: shape_locate は 4 要素 [0,0,0,0])を返す。strict mode と MissingDependencyError は送出する"
+    },
+    {
+      "module": "backend_safe.py",
+      "function": "_finite",
+      "line": 602,
+      "exception_types": [],
+      "returned_or_assigned": "np.nan_to_num(real, nan=0.0, posinf=1.0, neginf=0.0)",
+      "classification": "documented_fallback",
+      "reason": "早期 return で np.nan_to_num の結果を返す経路(どの関数にも効く一般規則): 非有限値を代替値へ置き換えるのであって空入力ではない(置換値は呼び出しの引数どおり)"
+    },
     {
       "module": "blob2d.py",
       "function": "_convex_area",
@@ -69,7 +123,7 @@
       ],
       "returned_or_assigned": "-",
       "classification": "fail_closed",
-      "reason": "捕捉した例外をリポジトリ側の例外として送出する経路"
+      "reason": "捕捉した例外をそのまま(または別の例外として)送出する経路"
     },
     {
       "module": "fslib.py",
@@ -174,7 +228,7 @@
       ],
       "returned_or_assigned": "-",
       "classification": "fail_closed",
-      "reason": "捕捉した例外をリポジトリ側の例外として送出する経路"
+      "reason": "捕捉した例外をそのまま(または別の例外として)送出する経路"
     },
     {
       "module": "image_gen.py",
@@ -185,7 +239,7 @@
       ],
       "returned_or_assigned": "-",
       "classification": "fail_closed",
-      "reason": "捕捉した例外をリポジトリ側の例外として送出する経路"
+      "reason": "捕捉した例外をそのまま(または別の例外として)送出する経路"
     },
     {
       "module": "ops.py",
@@ -210,7 +264,7 @@
     {
       "module": "ops.py",
       "function": "_ncc_locate",
-      "line": 1894,
+      "line": 1932,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -219,7 +273,16 @@
     {
       "module": "ops.py",
       "function": "_shape_locate",
-      "line": 2221,
+      "line": 2261,
+      "exception_types": [],
+      "returned_or_assigned": "np.array([0.0, 0.0, 0.0, 0.0])",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "ops.py",
+      "function": "_shape_locate",
+      "line": 2268,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -228,7 +291,7 @@
     {
       "module": "ops.py",
       "function": "module_requirements",
-      "line": 2628,
+      "line": 2676,
       "exception_types": [
         "Exception"
       ],
@@ -239,7 +302,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2697,
+      "line": 2745,
       "exception_types": [
         "Exception"
       ],
@@ -250,7 +313,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2705,
+      "line": 2753,
       "exception_types": [
         "Exception"
       ],
@@ -261,7 +324,7 @@
     {
       "module": "ops.py",
       "function": "_label_guarded_functions_with_their_op_name",
-      "line": 2974,
+      "line": 3032,
       "exception_types": [
         "AttributeError, TypeError"
       ],
@@ -272,7 +335,7 @@
     {
       "module": "ops.py",
       "function": "apply_genome",
-      "line": 3088,
+      "line": 3146,
       "exception_types": [
         "Exception"
       ],

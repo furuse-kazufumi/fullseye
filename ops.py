@@ -1856,16 +1856,52 @@ def _ncc_map(v, T):
     (★2026-11-05 敵対的検証: the absolute ``1e-12`` floors zeroed the whole map for an
     image scaled by 1e-7, and the uncentred ``E[v²] − E[v]²`` lost a 1e-3 contrast on a
     1e5 offset).
+
+    **Border rule (contract)**: only full-overlap positions are scored, exactly like
+    ``cv2.matchTemplate`` (valid).  A target cut by the image border therefore scores 0 at
+    its true position and the peak can silently move to a look-alike elsewhere
+    (★2026-11-09 op 点検: a 39×39 target 2 px past the left edge scored 0.0 instead of
+    0.9987 and the peak hopped 101 px to its twin).  For partial overlap use
+    ``matching.ncc_map_partial`` (masked NCC, NaN = not searched) or
+    ``matching.ncc_locate_ex`` (reports the overlap and whether the border was hit).
+
+    **Non-finite image** (★2026-11-09): a NaN/inf pixel raises ``FsValueError`` (as
+    ``matching._ncc_map`` does).  It used to turn the whole map into 0 silently, so
+    ``ncc_locate`` returned ``[0, 0, 0]`` for one NaN pixel.  ``matching.ncc_map_partial``
+    treats such pixels as missing instead.
+
+    **Speed** (★2026-11-09): 2-D maps are computed by ``matching._ncc_map`` (FFT
+    correlation + integral images, exact recomputation of unstable windows) and placed at
+    the window centres; the values agree with the former direct ``ndimage.correlate``
+    path to rounding: max |diff| < 1e-12 on uniform-random images (512², 480×640 and 30
+    random sizes); on a smooth image with a 1e5 DC offset both paths are ~2.5e-8 from
+    the exact (centred) correlation for a 15² template and ~7e-11 for 63² (the image is
+    centred on its mean before the FFT — without that the error was 1.16e-4).  512×512
+    with a 63×63 template went from 0.47–0.74 s to ~0.03 s; 15×15 is unchanged.
     """
     v = np.asarray(v, np.float64)
     T = np.asarray(T, np.float64)
     if T.ndim != v.ndim:
         return np.zeros_like(v)
+    if v.size and not np.isfinite(v).all():
+        raise FsValueError("ncc_locate: image input contains NaN or infinity — mask or fill it "
+                           "first, or use matching.ncc_map_partial (treats them as missing)")
     Tz = T - float(T.mean())
     tnorm = float(np.sqrt(np.sum(Tz * Tz)))
     t_mag = float(np.max(np.abs(T))) if T.size else 0.0
     if not np.isfinite(tnorm) or tnorm == 0.0 or tnorm <= 1e-12 * t_mag * np.sqrt(T.size):
         return np.zeros_like(v)
+    if v.ndim == 2:
+        import matching as _matching                         # 遅延 import(循環を避ける)
+        # ★2026-11-09 独立レビュー: 先に画像全体の平均を引く(旧経路と同じ中心化)。引かずに
+        #   FFT へ渡すと、DC 1e5 の滑らかな画像で誤差が 3.8e-8 → 1.16e-4 に悪化した。
+        vc = v - float(v.mean()) if v.size else v
+        valid = _matching._ncc_map(T, vc)                    # (H-h+1, W-w+1)、左上の取り決め
+        out = np.zeros_like(v)
+        if valid.size:
+            r0, c0 = T.shape[0] // 2, T.shape[1] // 2        # 中心の取り決めへ
+            out[r0:r0 + valid.shape[0], c0:c0 + valid.shape[1]] = valid
+        return out
     if v.size:
         v = v - float(v.mean())                              # NCC は v の定数加算に不変
     num = ndimage.correlate(v, Tz, mode="constant")          # sum(Tz) == 0 -> mean-free
@@ -1888,7 +1924,9 @@ def _ncc_map(v, T):
 def _ncc_locate(v, a, b):
     """正規化相互相関（NCC）によるテンプレートマッチングで最良位置を探す。HALCON の ``find_ncc_model``（Find the best matches of an NCC model in an image.）に相当。
 
-``a``, ``b`` は未使用——テンプレートは引数ではなく ``set_match_template`` でスレッドローカルな ``_MATCH_CTX`` に事前登録しておく（マッチング系 op 共通の作法、``_MatchCtx`` の docstring 参照）。``_ncc_map``（NCC 相関マップ、Lewis 1995 の定義で ``[-1,1]``）を計算し、その最大値の位置を ``[相関値, y, x]`` で返す。テンプレート未設定、または入力が 2 次元画像でない場合は ``[0,0,0]``（no-match）を返す——fail-closed。回転・スケール変化には非対応（``_shape_locate`` は回転を扱う）。"""
+``a``, ``b`` は未使用——テンプレートは引数ではなく ``set_match_template`` でスレッドローカルな ``_MATCH_CTX`` に事前登録しておく（マッチング系 op 共通の作法、``_MatchCtx`` の docstring 参照）。``_ncc_map``（NCC 相関マップ、Lewis 1995 の定義で ``[-1,1]``）を計算し、その最大値の位置を ``[相関値, y, x]`` で返す。テンプレート未設定、または入力が 2 次元画像でない場合は ``[0,0,0]``（no-match）を返す——fail-closed。回転・スケール変化には非対応（``_shape_locate`` は回転を扱う）。
+
+**縁の規則**: 調べるのはテンプレートの窓が画像に全部入る位置だけ（``cv2.matchTemplate`` の valid と同じ）。画像の縁で切れた対象は真の位置で調べられず、別の位置（同形の別物体など）を答えることがある。はみ出しを扱うのは ``fullseye.ncc_map_partial`` / ``fullseye.ncc_locate_ex``（重なった画素だけで相関を計り、重なり率と状態を返す）。**NaN / inf を含む画像**は例外 ``FsValueError``（``fs.op.ncc_locate`` / ``fs.apply`` は入口で拒否）。パイプライン経路（``ops.RT`` / ``run_stages``）では例外を guard が握って no-match の ``[0,0,0]`` を返し、``fs.fallbacks()`` に記録する（★2026-11-09 op 点検: 以前は NaN 1 画素でマップ全体が黙って 0 になり、記録なしに ``[0,0,0]`` を返していた）。"""
     T = _MATCH_CTX.get("template")
     if T is None or not (isinstance(v, np.ndarray) and v.ndim == 2):
         return np.array([0.0, 0.0, 0.0])
@@ -2215,13 +2253,23 @@ def _adaptive_gauss_thresh(v, a, b):
 def _shape_locate(v, a, b):
     """回転を考慮したテンプレートマッチング（shape-based matching）。HALCON の ``find_shape_model``（Find the best matches of a shape model in an image.）に相当。
 
-``a``, ``b`` は未使用——テンプレートは ``_ncc_locate`` と同じく ``set_match_template`` で事前登録する。テンプレートを ``0°〜330°`` まで ``30°`` 刻みで回転させながらそれぞれ ``_ncc_map``（NCC）を計算し、全位置・全角度を通じて最良の相関を ``[相関値, y, x, 角度]`` で返す。角度の刻みが粗い（30°）ぶん、HALCON の ``find_shape_model`` のような連続的な角度精度は出ない——大まかな向き検出用。テンプレート未設定時は ``[0,0,0,0]``。"""
+``a``, ``b`` は未使用——テンプレートは ``_ncc_locate`` と同じく ``set_match_template`` で事前登録する。テンプレートを ``0°〜330°`` まで ``30°`` 刻みで回転させながらそれぞれ ``_ncc_map``（NCC）を計算し、全位置・全角度を通じて最良の相関を ``[相関値, y, x, 角度]`` で返す。角度の刻みが粗い（30°）ぶん、HALCON の ``find_shape_model`` のような連続的な角度精度は出ない——大まかな向き検出用（刻みを指定し副刻みまで詰めるのは ``matching.shape_locate_fine``）。テンプレート未設定時は ``[0,0,0,0]``。
+
+**回転テンプレートの四隅は相関に入れない**（★2026-11-09 op 点検）。``reshape=False`` で回すと四隅が外から来るので、その画素をマスクで除き、残りの画素だけで Pearson 相関を計る（``matching._MaskedNCC``）。以前は四隅を 0 で埋めたまま相関を取っていたので、背景が 0 でない画像では正しい角度でも得点が構造的に下がった（背景 0.5・30° 回転で 0.7794 → 修正後 0.981）。調べる位置は、回したテンプレートの有効画素が全部画像の内側に入る位置だけ（角度 0 では ``ncc_locate`` の full-overlap と同じで、得点も丸め誤差で一致）。NaN / inf を含む画像は ``FsValueError``（パイプライン経路 ``ops.RT`` / ``run_stages`` では 4 要素の ``[0,0,0,0]`` を返して ``fs.fallbacks()`` に記録）。"""
     T = _MATCH_CTX.get("template")
     if T is None or not (isinstance(v, np.ndarray) and v.ndim == 2):
         return np.array([0.0, 0.0, 0.0, 0.0])
+    import matching as _matching                             # 遅延 import(循環を避ける)
+    v = np.asarray(v, np.float64)
+    T = np.asarray(T, np.float64)
+    if v.size and not np.isfinite(v).all():
+        raise FsValueError("shape_locate: image input contains NaN or infinity")
+    if T.ndim != 2 or T.size == 0 or not np.isfinite(T).all():
+        return np.array([0.0, 0.0, 0.0, 0.0])
+    engine = _matching._MaskedNCC(v, T.shape)
     best = [-1e18, 0.0, 0.0, 0.0]
     for ang in range(0, 360, 30):
-        corr = _ncc_map(v, ndimage.rotate(T, ang, reshape=False))   # NCC per rotation
+        corr = _matching._shape_scores(engine, T, ang)       # masked NCC per rotation
         idx = np.unravel_index(int(np.argmax(corr)), corr.shape)
         m = float(corr[idx])
         if m > best[0]:
@@ -2851,6 +2899,15 @@ UNIT_RANGE_IS_NOT_THE_CONTRACT = {
 _COMPLEX_OUT_SORTS = frozenset({"cimage", "beatcube"})
 
 
+#: ★2026-11-09 独立レビュー: ``match`` sort の既定の fallback は 3 要素 ``[0, 0, 0]``
+#: (``backend_safe.fallback``)。4 要素 ``[得点, 行, 列, 角度]`` を返す op が例外で
+#: fallback に落ちると、返りの長さが 3 に変わっていた(``shape_locate`` が NaN 1 画素で
+#: ``[0,0,0]``)。長さが既定と違う op はここで fallback の形を揃える。
+_ON_FAIL_BY_OP = {
+    "shape_locate": lambda v: np.zeros(4),
+}
+
+
 def _wrap_unguarded() -> int:
     """登録済みで未ガードの op を ``guard`` で包む。包んだ数を返す。"""
     import backend_safe as _bs
@@ -2875,7 +2932,8 @@ def _wrap_unguarded() -> int:
                                finish=lambda out, v, _s=_op.out_sort, _n=_op.name, _bs=_bs:
                                _bs._keep_complex(out, v, _s, _n))
         else:
-            _op.fn = _bs.guard(_op.fn, _op.out_sort, name=_op.name)
+            _op.fn = _bs.guard(_op.fn, _op.out_sort, name=_op.name,
+                               on_fail=_ON_FAIL_BY_OP.get(_op.name))
         n += 1
     return n
 
