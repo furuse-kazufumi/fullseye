@@ -33540,9 +33540,9 @@
               "file": "05_s1_pod_curves.png",
               "content_box": [
                 0,
-                125,
+                79,
                 720,
-                440
+                532
               ]
             },
             {
@@ -33575,17 +33575,17 @@
             1600,
             1600
           ],
-          "bytes": 805786,
+          "bytes": 805640,
           "color_mad": [
             0.5111,
             0.7573,
             0.3598,
-            0.0317,
+            0.0109,
             0.0394,
             0.1151
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "d17c9e3cfb0a4fdf213b918723bf00d8c83afdde43a8d2ae21e335ef871d7ad6"
+          "source_sha256": "644d3ac9ffe00a156e040e8723c292336e3a188cb014e12d959b8c0569f68bf9"
         },
         "en": {
           "path": "articles/assets/poc/poc_equipment_selection_map/story.en.gif",
@@ -33630,9 +33630,9 @@
               "file": "05_s1_pod_curves.png",
               "content_box": [
                 0,
-                125,
+                79,
                 720,
-                440
+                532
               ]
             },
             {
@@ -33665,17 +33665,17 @@
             1600,
             1600
           ],
-          "bytes": 805786,
+          "bytes": 805640,
           "color_mad": [
             0.5111,
             0.7573,
             0.3598,
-            0.0317,
+            0.0109,
             0.0394,
             0.1151
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "f5e341cf4b352ca5edc0f8621ab2652fb618a663eedcffd7f57689b390196f51"
+          "source_sha256": "72c01cab8d58ddf2c984563c247b1b752f883c687e2f52458dbdc714eb6090cd"
         }
       },
       "thumbnail": {
