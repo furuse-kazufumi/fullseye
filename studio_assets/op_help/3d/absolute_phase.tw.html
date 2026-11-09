@@ -12,6 +12,8 @@
 <p>回傳值:絕對相位 [rad] (2D float64)。無效像素(任一方為 NaN)為 NaN。</p>
 <p>為何需要(與空間展開的區別):<code style="color:#22d3bf">unwrap_phase_2d</code> 沿相鄰像素追蹤來連接 2π 跳變, 因此 (a) 殘留全域偏移 +2πm,(b) 在被遮擋切開的孤島之間級次無法傳播。本 op 逐像素獨立確定級次,因此<b>即使在分成孤島的場景中也是絕對的</b>, 也不需要傳播。代價是要求 coarse 的誤差小於半個週期(π)。</p>
 <p>要求(fail-closed):|coarse − Φ_true| &lt; π。違反時 round 會選中相鄰級次, 僅該像素靜默偏移 2π(= 1 條條紋對應的深度)。請選擇條紋數 freq,使 Gray code 的粗略度(±0.5 行) 換算為相位後的量不超過半個週期(例:投影機寬度 512 px、freq 24 → 1 個週期 21.3 px,Gray 的 ±0.5 px 完全在範圍內)。</p>
+<p>★級次錯誤無法從回傳值看出(2026-11-09 實測):在多頻時間展開(16/4/1 mm、比 4、20 萬像素)中,相位雜訊 σφ = 0.10/0.20/0.30/0.40/0.60 rad 時, 有 0/0.097/2.57/11.6/36.8 % 的像素弄錯 2π 級次,且全部以有限值回傳。<b>請看殘差</b>:</p>
+<p>令 <code style="color:#22d3bf">Phi = absolute_phase(w, c); resid = c - Phi</code>,把 <code style="color:#22d3bf">|resid| &gt; 0.8π</code> 左右的像素視為可疑並捨棄(上述條件下可捕捉 33〜74 % 的錯誤,是要求 |coarse − Φ| &lt; π 被破壞的跡象)。coarse 的單位(弧度)也不檢查 —— 傳入角度會靜默回傳 1106 rad(真值 19.35)這樣的值。目前還沒有確認級次的其他 op(回傳殘差與標記的 op 將依新增 op 的流程加入)。</p>
 <p>Raises:形狀不一致、非 2D、wrapped 大幅超出 (-π,π] 時拋出 ValueError。</p>
 <p>來源(公開文獻):結合 Gray code 與相移獲得絕對相位的合成法 — Sansoni et al., *Appl. Opt.* 38(31) 1999 / Zhang, *Opt. Lasers Eng.* 48 2010(綜述)。Gray code 本身的投影見 Inokuchi et al., *ICPR* 1984。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

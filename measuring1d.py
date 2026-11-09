@@ -25,7 +25,29 @@ from scipy.ndimage import map_coordinates, gaussian_filter1d
 def gen_measure_rectangle2(row, col, phi, length1, length2, shape):
     """回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義
     (gen_measure_rectangle2)。サンプル数 n = max(2, round(2*length1)+1)、始点は
-    中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。"""
+    中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。
+
+    ★長さの意味(2026-11-09 に実装へ合わせて明記。値は変えていない):
+      * ``length1`` は**半長**(プロファイルは中心 ± length1)。HALCON の Length1 と同じ。
+      * ``length2`` は**全幅**: ``measure_pos`` は法線方向の ``np.linspace(-w/2, w/2, max(2, w))``
+        (``w = int(length2)``)の w 本を平均し、``w ≤ 1`` なら平均しない。HALCON の Length2 は
+        **半高**(Half height of the rectangle、HALCON の reference)で、同じライブラリの
+        ``gen_rectangle2_contour_xld`` も length2 を半幅(角が ±length2)として描く —— 同じ
+        数字を渡すと、ここでは半分の幅しか平均しない。★HALCON の整数 offset −L2..+L2(2·L2+1 本)を
+        そのまま作る length2 は無い: ``length2 = 2·L2 + 1`` を渡すと本数は 2·L2+1 だが、offset は
+        ±(L2 + 0.5) の範囲に間隔 (2·L2+1)/(2·L2) で並ぶ(L2=2 → w=5 で −2.5, −1.25, 0, 1.25, 2.5)——
+        整数でなく幅も 1 画素広い。辺が測定線に直交していれば平均の結果は近いが、幅方向に構造が
+        あると別の矩形を測る。
+      * w が偶数のとき標本は中心の行を通らない(w=2 は offset ±1 の 2 本だけ、w=4 は
+        ±2, ±0.67)。中心を含めたいなら奇数の w。
+    ★角の向き: プロファイルは ``(row + t·sin φ, col + t·cos φ)`` に進む。行が下向きの
+    画像座標で φ を時計回りに数える(φ = +π/2 は画面の下向き)。HALCON の Phi は水平からの
+    「数学的に正」の角(gen_rectangle2 の reference)で、行が下向きの画像では反時計回り
+    (φ = π/2 は上向き)と読める —— 符号が逆。HALCON の Phi を移すなら ``phi = −Phi``
+    (極性 positive/negative と並び順が HALCON と揃う)。★HALCON の実機での照合はしていない
+    (reference の文言からの読み)。ライブラリ内では ``gen_rectangle2_contour_xld`` も同じ +sin
+    で一貫している。
+    """
     n = max(2, int(round(2.0 * float(length1))) + 1)
     t = np.arange(n, dtype=float) - (n - 1) / 2.0
     ca, sa = np.cos(phi), np.sin(phi)
@@ -124,6 +146,31 @@ def _lobe_amplitude(sm, ag, i):
     return float(sm[hi] - sm[lo])
 
 
+def _check_measure_input(image, measure, sigma, op):
+    """measure_pos 族の入力の門: 非有限の画素・負の sigma は拒否、画像の外の測定線は警告/拒否。"""
+    im = np.asarray(image)
+    if im.dtype.kind in "fc" and not np.isfinite(im).all():
+        raise ValueError("%s: image has %d non-finite value(s) (nan/inf) — an edge next to one "
+                         "vanishes without a sign; fill or mask them first"
+                         % (op, int(np.count_nonzero(~np.isfinite(im)))))
+    s = float(sigma)
+    if not np.isfinite(s) or s < 0:
+        raise ValueError("%s: sigma must be a finite number >= 0 (0 = no smoothing), got %r" % (op, sigma))
+    if im.ndim == 2:
+        H, W = im.shape
+        r = np.asarray(measure["rows"], float)
+        c = np.asarray(measure["cols"], float)
+        out = (r < -0.5) | (r > H - 0.5) | (c < -0.5) | (c > W - 0.5)
+        if out.all():
+            raise ValueError("%s: the whole measure line lies outside the %dx%d image — nothing to "
+                             "measure (the profile would be extrapolated)" % (op, H, W))
+        if out.any():
+            import warnings  # noqa: PLC0415
+            warnings.warn("%s: %d of %d measure point(s) lie outside the %dx%d image; the profile "
+                          "there is extrapolated from the nearest pixel" % (op, int(out.sum()), out.size, H, W),
+                          RuntimeWarning, stacklevel=3)
+
+
 def measure_pos(image, measure, sigma=1.0, threshold=0.1, transition="all"):
     """測定線上のエッジ位置(サブピクセル)と振幅を抽出(measure_pos)。
 
@@ -133,9 +180,16 @@ def measure_pos(image, measure, sigma=1.0, threshold=0.1, transition="all"):
     ``transition`` は "all" / "positive" / "negative"。
 
     空の入力(``image`` が 0 要素)は ValueError。
+    ★入力の門(2026-11-09): 非有限の画素(NaN/inf)を含む画像は ValueError(エッジの 1 画素先の
+    NaN でエッジが黙って消え、遠くなら黙って通っていた)。``sigma < 0`` も ValueError
+    (``sigma = 0`` は平滑化なし、負の値は黙って 0 と同じになっていた)。測定線の点
+    (``rows``/``cols``)が画像の外 ``[-0.5, H-0.5] × [-0.5, W-0.5]`` に出ると RuntimeWarning
+    (外は最近傍の外挿で、見えていない所を測っている)、全部が外なら ValueError(戻り値が
+    list なので印は返せない)。正しい入力の結果は変わらない。
     """
     if (len(image) if isinstance(image, (list, tuple)) else np.asarray(image).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("measure_pos: image is empty — pass at least one element")
+    _check_measure_input(image, measure, sigma, "measure_pos")
     n = len(measure["rows"])
     spacing = float(measure.get("spacing", 1.0))
     k = int(np.ceil(3.0 * max(float(sigma), 0.0))) + 2

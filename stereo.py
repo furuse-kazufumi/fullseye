@@ -315,26 +315,46 @@ def _aggregate_dir(C: np.ndarray, sy: int, sx: int, P1: float, P2: float) -> np.
     return L
 
 
+def _sgm_step_into(prev: np.ndarray, cost: np.ndarray, out: np.ndarray, tmp: np.ndarray,
+                   P1: float, P2: float) -> None:
+    """``out = cost + _sgm_penalty(prev, P1, P2)`` without temporaries (bit for bit the same).
+
+    ★2026-11-09(binocular_disparity_ms の遅さの内訳): 1 歩ごとに ``full_like`` の一時配列を
+    3〜4 枚作っていたのが集約の時間の大半だった。min は丸めの無い演算なので並べ方を変えても
+    値は同じ、引き算と足し算は元と同じ順 —— 出力は bit 一致(tests/test_op_audit_optical_2026_11_09.py)。
+    """
+    mn = prev.min(1, keepdims=True)
+    out[:, 0] = np.inf                                   # left = prev[d-1] + P1
+    np.add(prev[:, :-1], P1, out=out[:, 1:])
+    np.minimum(out, prev, out=out)
+    tmp[:, -1] = np.inf                                  # right = prev[d+1] + P1
+    np.add(prev[:, 1:], P1, out=tmp[:, :-1])
+    np.minimum(tmp, mn + P2, out=tmp)
+    np.minimum(out, tmp, out=out)
+    np.subtract(out, mn, out=out)
+    np.add(cost, out, out=out)
+
+
 def _aggregate_dir_into(C: np.ndarray, S: np.ndarray, sy: int, sx: int,
                         P1: float, P2: float) -> None:
     """Aggregate one direction using only its previous row/column and add to ``S``."""
     H, W, _ = C.shape
     if sx != 0:
-        prev = C[:, 0 if sx > 0 else W - 1, :].copy()
-        S[:, 0 if sx > 0 else W - 1, :] += prev
-        xs = range(1, W) if sx > 0 else range(W - 2, -1, -1)
-        for x in xs:
-            cur = C[:, x, :] + _sgm_penalty(prev, P1, P2)
-            S[:, x, :] += cur
-            prev = cur
+        lines, n, first = (lambda i: C[:, i, :]), W, (0 if sx > 0 else W - 1)
+        sl = lambda i: (slice(None), i, slice(None))     # noqa: E731
+        order = range(1, W) if sx > 0 else range(W - 2, -1, -1)
     else:
-        prev = C[0 if sy > 0 else H - 1, :, :].copy()
-        S[0 if sy > 0 else H - 1, :, :] += prev
-        ys = range(1, H) if sy > 0 else range(H - 2, -1, -1)
-        for y in ys:
-            cur = C[y, :, :] + _sgm_penalty(prev, P1, P2)
-            S[y, :, :] += cur
-            prev = cur
+        lines, n, first = (lambda i: C[i, :, :]), H, (0 if sy > 0 else H - 1)
+        sl = lambda i: (i, slice(None), slice(None))     # noqa: E731
+        order = range(1, H) if sy > 0 else range(H - 2, -1, -1)
+    prev = lines(first).copy()
+    S[sl(first)] += prev
+    cur = np.empty_like(prev)
+    tmp = np.empty_like(prev)
+    for i in order:
+        _sgm_step_into(prev, lines(i), cur, tmp, P1, P2)
+        S[sl(i)] += cur
+        prev, cur = cur, prev
 
 
 def disparity_sgm(left, right, max_disp: int = 16, window: int = 5,

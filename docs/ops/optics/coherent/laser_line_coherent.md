@@ -40,6 +40,15 @@ The true centre row is returned implicitly by the formula above; see
 in focus, no foreshortening of the line width with θ, no Scheimpflug, phase screen
 uncorrelated between fine samples.
 
+★The fine step ``dx = pixel_um / pixel_oversample`` must resolve the **intensity**, not
+only the field: the field passes ``sin_u/λ`` but ``|E|²`` carries ``2 sin_u/λ``, so the
+intensity's Nyquist is ``dx ≤ λ/(4 sin_u)``. A coarser step is refused (ValueError naming
+the smallest ``pixel_oversample``): the pixel integral of an aliased intensity lowered the
+centroid floor of :func:`lightsection.light_section_speckle_floor` to 0.5–0.8 of its
+converged value without any sign (measured 2026-11-09: λ 0.65, sin u 0.02, pixel 80 µm,
+dx 16/13.3/10 µm → ratio 0.51/0.67/0.79, converged 0.88 from dx ≲ λ/(5 sin u)).
+``λ/(5 sin_u) < dx ≤ λ/(4 sin_u)`` passes with a RuntimeWarning (still ≈ 7 % low).
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

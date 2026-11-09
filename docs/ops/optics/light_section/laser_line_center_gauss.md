@@ -31,6 +31,18 @@ around the column's peak; the centre is ``p − b / (2c)``. ``half_window=1`` is
 three-point log-parabola. Non-positive samples are dropped; columns with fewer than three
 samples, ``c ≥ 0`` or a centre outside the window are ``valid=False``.
 
+★Saturation: as in :func:`laser_line_center_centroid` the peak is the plateau of rows
+within 1e-9 of the column maximum; the window runs ``half_window`` rows beyond each end of
+it and the plateau's samples are **left out of the fit** (clipped values are not the
+Gaussian — censored). The flanks of a clipped Gaussian still give its centre exactly; a
+window that holds fewer than three unclipped samples is ``valid=False`` (it used to fit the
+flat top at its first row: −6.2 px, ``valid=True``). ``saturated`` (and the plateau
+handling) uses the rule of :func:`laser_line_center_centroid`: ≥ 3 rows, or ≥ 2 rows at
+the image's maximum; other columns are unchanged bit for bit. A two-row plateau at the
+ceiling cannot be told from an unclipped line centred exactly between two rows, so with
+fewer than three flank samples (``half_window=1``) its two samples stay in the fit. A plateau
+broken by a 1 LSB dip is not detected (see :func:`laser_line_center_centroid`).
+
 Ground truth (theorem): the log of a Gaussian is a quadratic, so a point-sampled Gaussian
 line comes back at its sub-pixel centre to 1e-9 px. ★Pixel-integrated (box-filtered)
 profiles are not exactly Gaussian; the bias is then measured, not zero. Also returns

@@ -7,7 +7,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>擷取量測線上的邊緣位置(次像素)與振幅(measure_pos)。</p>
 <p>各邊緣: <code style="color:#22d3bf">pos</code>(取樣 index，矩形為距起點的 px)/ <code style="color:#22d3bf">dist</code>(距起點的距離 [px])/ <code style="color:#22d3bf">row</code>, <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">amplitude</code>(帶正負號的灰階差)/ <code style="color:#22d3bf">polarity</code> (&quot;positive&quot; = 沿量測方向變亮)。<code style="color:#22d3bf">threshold</code> 是 |amplitude| 的下限，<code style="color:#22d3bf">transition</code> 為 &quot;all&quot; / &quot;positive&quot; / &quot;negative&quot;。</p>
-<p>空輸入(<code style="color:#22d3bf">image</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>空輸入(<code style="color:#22d3bf">image</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。★輸入的關卡(2026-11-09):含非有限像素(NaN/inf)的影像引發 ValueError(邊緣外 1 像素處的 NaN 會讓邊緣靜默消失,更遠處則靜默通過)。<code style="color:#22d3bf">sigma &lt; 0</code> 也引發 ValueError (<code style="color:#22d3bf">sigma = 0</code> 表示不平滑,負值以前會靜默地與 0 相同)。量測線的點(<code style="color:#22d3bf">rows</code>/<code style="color:#22d3bf">cols</code>)超出影像 <code style="color:#22d3bf">[-0.5, H-0.5] × [-0.5, W-0.5]</code> 時發出 RuntimeWarning (外側是最近鄰外插,量的是看不到的地方),全部在外側時引發 ValueError(回傳值是 list,無法回傳標記)。正確輸入的結果不變。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

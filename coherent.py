@@ -64,6 +64,7 @@
 from __future__ import annotations
 
 import math
+import warnings
 
 import numpy as np
 
@@ -390,6 +391,32 @@ def speckle_statistics(image, roi=None, upsample=4):
 # --------------------------------------------------------------------------- #
 # 光切断の光条
 # --------------------------------------------------------------------------- #
+def _intensity_nyquist_um(wavelength_um, sin_u_obs):
+    """細格子の刻みの上限 = 強度 |E|² の帯域 2 sin u/λ のナイキスト λ/(4 sin u) [µm](内部の補助)。"""
+    return wavelength_um / (4.0 * sin_u_obs)
+
+
+def _check_intensity_nyquist(op, lam, su, pix, s):
+    """強度のナイキストを越える刻みは断り、λ/(5 sin u) までの境目は警告する(fail-closed)。
+
+    場の帯域 sin u/λ だけを見ると λ/(4 sin u) < dx ≤ λ/(2 sin u) の刻みが黙って通り、
+    画素で積分した強度が折り返して重心の床が 0.5〜0.8 倍に下がる(2026-11-09 実測)。
+    """
+    dx = pix / s
+    nyq = _intensity_nyquist_um(lam, su)
+    if dx > nyq * (1.0 + 1e-12):
+        need = int(math.ceil(pix * 4.0 * su / lam - 1e-12))
+        raise ValueError("%s: the fine step pixel_um/pixel_oversample = %.4g µm is coarser than the "
+                         "intensity's Nyquist λ/(4 sin_u) = %.4g µm (|E|² has bandwidth 2 sin_u/λ) — "
+                         "use pixel_oversample >= %d (or smaller pixels)" % (op, dx, nyq, need))
+    if dx > 0.8 * nyq * (1.0 + 1e-12):
+        need = int(math.ceil(pix * 5.0 * su / lam - 1e-12))
+        warnings.warn("%s: the fine step %.4g µm is within 25 %% of the intensity's Nyquist %.4g µm; "
+                      "the simulated speckle statistics converge from λ/(5 sin_u) — "
+                      "pixel_oversample >= %d is safer" % (op, dx, nyq, need), RuntimeWarning, stacklevel=3)
+    return dx, nyq
+
+
 def laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0,
                         line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None,
                         polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None,
@@ -414,6 +441,15 @@ def laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pix
     :func:`triangulation_speckle_limit` for the floor this sets. Limits: scalar, paraxial,
     in focus, no foreshortening of the line width with θ, no Scheimpflug, phase screen
     uncorrelated between fine samples.
+
+    ★The fine step ``dx = pixel_um / pixel_oversample`` must resolve the **intensity**, not
+    only the field: the field passes ``sin_u/λ`` but ``|E|²`` carries ``2 sin_u/λ``, so the
+    intensity's Nyquist is ``dx ≤ λ/(4 sin_u)``. A coarser step is refused (ValueError naming
+    the smallest ``pixel_oversample``): the pixel integral of an aliased intensity lowered the
+    centroid floor of :func:`lightsection.light_section_speckle_floor` to 0.5–0.8 of its
+    converged value without any sign (measured 2026-11-09: λ 0.65, sin u 0.02, pixel 80 µm,
+    dx 16/13.3/10 µm → ratio 0.51/0.67/0.79, converged 0.88 from dx ≲ λ/(5 sin u)).
+    ``λ/(5 sin_u) < dx ≤ λ/(4 sin_u)`` passes with a RuntimeWarning (still ≈ 7 % low).
     """
     op = "laser_line_coherent"
     if method not in {"exact", "fast"}:
@@ -443,6 +479,7 @@ def laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pix
         raise ValueError("%s: the pupil cut-off sin_u/λ = %.4g /µm is above the fine grid's "
                          "Nyquist (%.4g /µm) — raise pixel_oversample or use smaller pixels"
                          % (op, su / lam, 0.5 / dx))
+    _check_intensity_nyquist(op, lam, su, pix, s)
     fy, fx = ny * s, nx * s
     if fy * fx > MAX_FINE_PIXELS:
         raise ValueError("%s: the fine grid %dx%d is over the %d-pixel cap" % (op, fy, fx, MAX_FINE_PIXELS))

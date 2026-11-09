@@ -25,6 +25,27 @@ version: 1.0.0  # fullseye lib version this note was generated for
 (gen_measure_rectangle2)。サンプル数 n = max(2, round(2*length1)+1)、始点は
 中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。
 
+★長さの意味(2026-11-09 に実装へ合わせて明記。値は変えていない):
+  * ``length1`` は**半長**(プロファイルは中心 ± length1)。HALCON の Length1 と同じ。
+  * ``length2`` は**全幅**: ``measure_pos`` は法線方向の ``np.linspace(-w/2, w/2, max(2, w))``
+    (``w = int(length2)``)の w 本を平均し、``w ≤ 1`` なら平均しない。HALCON の Length2 は
+    **半高**(Half height of the rectangle、HALCON の reference)で、同じライブラリの
+    ``gen_rectangle2_contour_xld`` も length2 を半幅(角が ±length2)として描く —— 同じ
+    数字を渡すと、ここでは半分の幅しか平均しない。★HALCON の整数 offset −L2..+L2(2·L2+1 本)を
+    そのまま作る length2 は無い: ``length2 = 2·L2 + 1`` を渡すと本数は 2·L2+1 だが、offset は
+    ±(L2 + 0.5) の範囲に間隔 (2·L2+1)/(2·L2) で並ぶ(L2=2 → w=5 で −2.5, −1.25, 0, 1.25, 2.5)——
+    整数でなく幅も 1 画素広い。辺が測定線に直交していれば平均の結果は近いが、幅方向に構造が
+    あると別の矩形を測る。
+  * w が偶数のとき標本は中心の行を通らない(w=2 は offset ±1 の 2 本だけ、w=4 は
+    ±2, ±0.67)。中心を含めたいなら奇数の w。
+★角の向き: プロファイルは ``(row + t·sin φ, col + t·cos φ)`` に進む。行が下向きの
+画像座標で φ を時計回りに数える(φ = +π/2 は画面の下向き)。HALCON の Phi は水平からの
+「数学的に正」の角(gen_rectangle2 の reference)で、行が下向きの画像では反時計回り
+(φ = π/2 は上向き)と読める —— 符号が逆。HALCON の Phi を移すなら ``phi = −Phi``
+(極性 positive/negative と並び順が HALCON と揃う)。★HALCON の実機での照合はしていない
+(reference の文言からの読み)。ライブラリ内では ``gen_rectangle2_contour_xld`` も同じ +sin
+で一貫している。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)
