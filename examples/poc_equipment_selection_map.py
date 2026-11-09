@@ -57,6 +57,12 @@
 樹脂の中の散乱は Kubelka–Munk の 2 層と横方向のガウスのぼけ。照明の明るさ(放射輝度)は 6 種とも同じと置き、価格帯は
 推定の序列。地図の µm の値は、この合成の試験の中での比べ合いに使い、実機の性能値として読まない。
 
+★a90/95 の上限の出し方(2026-11-09、POD の op の点検で開示): 地図の a90/95 は Wald 法(デルタ法)の 95 % 上側の
+限界。各当てはめの欠陥の部位は full で 90 点(MIL-HDBK-1823A 4.5.2.2 b が â の試験に勧める 40 点以上)、縮小版(CI)は
+36 点で 40 点に届かない。Wald の上限は名目より甘い: 真の a90 が分かる合成データで 2000 回試すと、上限が真の a90 以上に
+なる割合は 40 点で 0.89(尤度比の上限 0.92)、100 点で 0.92(同 0.93)で、名目 95 % に届かない。この PoC の当てはめで
+尤度比の上限は Wald より中央値で full 4 %・縮小版 13 % 大きい(full でも上位 1/4 は 39 % 以上)。数は Wald のまま書いた。
+
 走らせ方: ``py -3.11 examples/poc_equipment_selection_map.py``(既定は縮小版で数分)。展示の図と数字は
 ``FULLSEYE_POC_BUDGET=full``(手元で 20 分前後)で、図は ``FULLSEYE_FIGURE_DIR`` を指定したときだけ書く。
 """
@@ -2140,11 +2146,31 @@ def make_pod_figure(grid):
         ser.append(("%s(この曲線の a90 %.0f µm)" % (LIGHT_NAMES[lk], a90), np.log10(p["a"]), p["pod"]))
         cols.append(col)
     ratio = pick[-1][0] / pick[0][0] if len(pick) >= 2 else float("nan")
-    figs.save_plot("s1_pod_curves", ser, xlabel="log10 線傷の幅 [µm]", ylabel="POD", colors=cols,
-                   title="線傷・モノクロ・テレセン: 照明だけで a90 が %.1f 倍違う(種の組 1 の曲線)" % ratio, size=(720, 440),
-                   caption="同じ傷・同じ誤検出(1 %)で照明だけを変えた POD(a)。曲線とラベルは種の組 1 つ目の結果(地図の数は"
-                           "種の組 3 つの a90/95 の中央値で、別の量)。どの種の組でも見つかる照明から、a90 の最小・最大と、どちらとも"
-                           " 1.3 倍以上離れた中間を選んだ。")
+    n_fit = int(np.sum(np.asarray(pick[0][2]["a"]) > 0))       # 1 回の当てはめに使う欠陥の部位の数
+    if figs.target_dir() is None:
+        return
+    from PIL import Image, ImageDraw
+    plot = figs.render_plot(ser, xlabel="log10 線傷の幅 [µm]", ylabel="POD", colors=cols,
+                            title="線傷・モノクロ・テレセン: 照明だけで a90 が %.1f 倍違う(種の組 1 の曲線)" % ratio,
+                            size=(720, 440))
+    plot = (np.clip(np.asarray(plot, dtype=np.float64), 0.0, 1.0) * 255).astype(np.uint8)
+    # ★上限の出し方の注記(2026-11-09、POD の op の点検): 被覆率 0.89 / 0.92 と尤度比との差は、この PoC の外の測定
+    #   (真の a90 が分かる合成データで 2000 回、op の点検の試験)と、この PoC を点検版の pod で回した記録から。
+    im = Image.new("RGB", (plot.shape[1], plot.shape[0] + 92), (255, 255, 255))
+    im.paste(Image.fromarray(plot), (0, 0))
+    d = ImageDraw.Draw(im)
+    note = ("注: 地図の a90/95 は Wald 法(デルタ法)の 95 %% 上限。各当てはめの欠陥は %d 点\n"
+            "(MIL-HDBK-1823A が â の試験に勧める 40 点以上。CI の縮小版は 36 点)。真の a90 が分かる\n"
+            "合成データでは、この上限が真の a90 以上になる割合は 40 点で 0.89・100 点で 0.92(名目 0.95)。\n"
+            "尤度比の上限なら中央値で約 4 %% 大きい。" % n_fit)
+    _text(d, (12, plot.shape[0] + 6), note, size=14, fill=(40, 46, 56), box=(0, plot.shape[0], im.width, im.height))
+    figs.save("s1_pod_curves", np.asarray(im),
+              "同じ傷・同じ誤検出(1 %%)で照明だけを変えた POD(a)。曲線とラベルは種の組 1 つ目の結果(地図の数は"
+              "種の組 3 つの a90/95 の中央値で、別の量)。どの種の組でも見つかる照明から、a90 の最小・最大と、どちらとも"
+              " 1.3 倍以上離れた中間を選んだ。下の注: 地図の a90/95 は Wald 法(デルタ法)の上限で、各当てはめの欠陥は %d 点"
+              "(MIL-HDBK-1823A 4.5.2.2 b が â の試験に勧める 40 点以上。CI の縮小版は 36 点で届かない)。真の a90 が分かる"
+              "合成データで 2000 回試すと、この上限が真の a90 以上になる割合は 40 点で 0.89、100 点で 0.92 で、名目 95 %% に"
+              "届かない。尤度比の上限にすると中央値で約 4 %% 大きい(上位 1/4 は 39 %% 以上)。数は Wald のまま。" % n_fit)
 
 
 def make_real_table(real):
