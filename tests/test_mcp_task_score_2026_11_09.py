@@ -735,6 +735,7 @@ def test_r4_concurrent_processes_never_lose_or_exceed_the_count(tmp_path):
     import concurrent.futures
     with concurrent.futures.ThreadPoolExecutor(4) as pool:
         runs = list(pool.map(lambda _: _child(tmp_path, "claim", "12"), range(4)))
+    assert len(runs) == 4
     assert all(r.returncode == 0 for r in runs), [r.stderr[-400:] for r in runs]
     assert sum(int(r.stdout.strip()) for r in runs) == T.TASK_MAX_ATTEMPTS
     ts = T.TaskStore(secret="experiment-secret-0123456789abcdef-XYZ", audit_path=str(tmp_path / "a.jsonl"))
@@ -742,25 +743,34 @@ def test_r4_concurrent_processes_never_lose_or_exceed_the_count(tmp_path):
 
 
 def test_r4_an_unwritable_attempts_file_is_fail_closed_without_the_path(cat, tmp_path, monkeypatch):
-    import stat
+    """書けない回数ファイル: 書き込みの OSError(文にパスを含む)を attempt_store_unavailable に包む。
+
+    ★2026-11-10(PR #295 の CI): 以前は回数ファイルを chmod で読み取り専用にしていた。Linux の CI は権限が
+    効かない環境(root)で、書けてしまい断られなかった。OS の権限に頼らず、置き換えの段(os.replace)で
+    パスを含む OSError を出させて、どの OS でも同じに試す。
+    """
     monkeypatch.setenv(T.SECRET_ENV, "experiment-secret-0123456789abcdef-XYZ")
     monkeypatch.setenv(T.AUDIT_ENV, str(tmp_path / "audit.jsonl"))
     store = _store()
     tid = _make(cat, store, "blob_count", 0)["structuredContent"]["task_id"]
     path = store._fullseye_tasks.attempts_path
-    with open(path, "w", encoding="utf-8") as fh:
-        fh.write("{}")
-    os.chmod(path, stat.S_IREAD)
-    try:
-        sc = _refused(_score(cat, store, tid, PIPELINES["blob_count"][0]), "attempt_store_unavailable")
-        everything = json.dumps(sc, ensure_ascii=False)
-        assert str(tmp_path) not in everything and "attempts.json" not in everything, everything
-        ts = store._fullseye_tasks
-        with pytest.raises(T.TaskError) as exc:
-            ts._write_file({"k": 1})
-        assert exc.value.reason == "attempt_store_unavailable" and str(tmp_path) not in str(exc.value)
-    finally:
-        os.chmod(path, stat.S_IREAD | stat.S_IWRITE)
+    calls = []
+
+    def refuse_replace(src, dst):
+        calls.append(dst)
+        raise PermissionError(13, "Permission denied", dst)       # 本物と同じく文にパスが入る
+    monkeypatch.setattr(T.os, "replace", refuse_replace)
+    sc = _refused(_score(cat, store, tid, PIPELINES["blob_count"][0]), "attempt_store_unavailable")
+    assert calls == [path], calls                                  # 書き込みの段まで来て、そこで断られた
+    everything = json.dumps(sc, ensure_ascii=False)
+    assert str(tmp_path) not in everything and "attempts.json" not in everything, everything
+    with pytest.raises(T.TaskError) as exc:
+        store._fullseye_tasks._write_file({"k": 1})
+    assert exc.value.reason == "attempt_store_unavailable" and str(tmp_path) not in str(exc.value)
+    assert not os.path.exists(path + ".tmp")                       # 書きかけの一時ファイルを残さない
+    monkeypatch.undo()
+    monkeypatch.delenv(T.SECRET_ENV, raising=False)
+    assert store._fullseye_tasks.attempts_of("blob_count", 0) == 0   # 書けなかった回は数えていない
 
 
 def test_r5_an_unreadable_attempts_file_is_fail_closed_without_the_path(cat, tmp_path, monkeypatch):
@@ -841,6 +851,7 @@ def test_r4c_the_twin_never_shares_any_truth_with_the_task():
         for seed in range(200 if kind == "blob_count" else 30):
             rec = ts.make(kind, seed)
             alt = ts.alternate(rec)
+            assert len(rec.truth) >= 1
             for key in rec.truth:
                 assert not np.array_equal(np.asarray(alt.truth[key]), np.asarray(rec.truth[key])), (kind, seed, key)
 
@@ -991,7 +1002,9 @@ def test_every_metric_has_a_failing_example():
     assert [m["passed"] for m in top_only] == [False, True]
     bottom_only = T.score_output(r, _edge_points(t, b - 0.3))
     assert [m["passed"] for m in bottom_only] == [True, False]
-    assert all(m["passed"] for m in T.score_output(r, _edge_points(t + 0.1, b - 0.1)))
+    within = T.score_output(r, _edge_points(t + 0.1, b - 0.1))
+    assert len(within) == 2
+    assert all(m["passed"] for m in within)
     r = _record("defect_inspect")
     m = r.truth["mask"]
     exact = {x["name"]: x for x in T.score_output(r, m)}
