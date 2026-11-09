@@ -31,7 +31,9 @@ version: 1.0.0  # fullseye lib version this note was generated for
 
 回転を考慮したテンプレートマッチング（shape-based matching）。HALCON の ``find_shape_model``（Find the best matches of a shape model in an image.）に相当。
 
-``a``, ``b`` は未使用——テンプレートは ``_ncc_locate`` と同じく ``set_match_template`` で事前登録する。テンプレートを ``0°〜330°`` まで ``30°`` 刻みで回転させながらそれぞれ ``_ncc_map``（NCC）を計算し、全位置・全角度を通じて最良の相関を ``[相関値, y, x, 角度]`` で返す。角度の刻みが粗い（30°）ぶん、HALCON の ``find_shape_model`` のような連続的な角度精度は出ない——大まかな向き検出用。テンプレート未設定時は ``[0,0,0,0]``。
+``a``, ``b`` は未使用——テンプレートは ``_ncc_locate`` と同じく ``set_match_template`` で事前登録する。テンプレートを ``0°〜330°`` まで ``30°`` 刻みで回転させながらそれぞれ ``_ncc_map``（NCC）を計算し、全位置・全角度を通じて最良の相関を ``[相関値, y, x, 角度]`` で返す。角度の刻みが粗い（30°）ぶん、HALCON の ``find_shape_model`` のような連続的な角度精度は出ない——大まかな向き検出用（刻みを指定し副刻みまで詰めるのは ``matching.shape_locate_fine``）。テンプレート未設定時は ``[0,0,0,0]``。
+
+**回転テンプレートの四隅は相関に入れない**（★2026-11-09 op 点検）。``reshape=False`` で回すと四隅が外から来るので、その画素をマスクで除き、残りの画素だけで Pearson 相関を計る（``matching._MaskedNCC``）。以前は四隅を 0 で埋めたまま相関を取っていたので、背景が 0 でない画像では正しい角度でも得点が構造的に下がった（背景 0.5・30° 回転で 0.7794 → 修正後 0.981）。調べる位置は、回したテンプレートの有効画素が全部画像の内側に入る位置だけ（角度 0 では ``ncc_locate`` の full-overlap と同じで、得点も丸め誤差で一致）。NaN / inf を含む画像は ``FsValueError``（パイプライン経路 ``ops.RT`` / ``run_stages`` では 4 要素の ``[0,0,0,0]`` を返して ``fs.fallbacks()`` に記録）。
 
 ## 詳しい使い方ガイド
 

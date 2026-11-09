@@ -52,11 +52,14 @@
 12. 速度と、測らなかったこと
 13. 実写 —— 同じ形のキャンドル 4 個(VisA、CC BY 4.0): 隣との相関の差と、事前のしきい値。無ければ記録値
 
-【★ この PoC が出した道具の穴(op 本体は直していない)】
+【★ この PoC が出した道具の穴(2026-11-09 の op 点検で (a)(d)(f) の一部を op 側で直した)】
 (a) **``ncc_locate`` は相関マップを返さない**。返るのは ``[相関値, 行, 列]`` の
     3 要素だけ。**突出度(2 番目のピークとの差)が公開 API では計算できない**。
     第 10 章の主題そのものが公開 API の外にある。マップを作る ``_ncc_map`` は
     private で、``fs`` ファサードにも ``fs.op`` にも出てこない。
+    → 2026-11-09: ``fs.ncc_map_partial(template, image, min_overlap)`` が相関マップを
+    返す(はみ出しも扱う masked NCC。ファサードにもある)。この PoC は ``ops._ncc_map`` と
+    同じ「full-overlap のみ」の地図が要るので、本文では引き続き private を借りている。
 (b) **2 次元だけ副画素がない**。``accel_match.ncc_locate_3d`` には
     ``subvoxel=True``(相関ピーク近傍の重心)があり ``ncc_locate_3d_pyramid``
     まであるのに、2 次元の ``ncc_locate`` / ``ncc_locate_batch`` はどちらも
@@ -70,11 +73,20 @@
     自分で切って、返ってきた座標にオフセットを足し戻すしかない
     (この PoC の ``locate_local``)。切り出しが小さすぎると
     full-overlap 位置が消えて **黙って ``[0,0,0]``** が返る。
+    → 2026-11-09: 契約 op ``ncc_locate`` は full-overlap のみのまま(``cv2.matchTemplate``
+    の valid と同じ)だが、``fs.ncc_locate_ex`` は重なった画素だけで相関を計り、
+    重なり率と ``flags``(``border`` / ``missing`` / ``ambiguous`` / ``unsearched``)を返すので
+    「縁で調べなかった」「双子と区別できない」が区別できる(第 0 章の検算 5: 双子のいる
+    別フレームで、公開 op は双子へ 51 px 外れ、ncc_locate_ex は 1.31 px・flags に
+    ambiguous と border)。NaN 画素は ``ncc_locate`` では ``FsValueError``
+    (以前はマップ全体が黙って 0)。
 (e) **返り値の座標系が ``(行, 列)``**。この PoC の幾何は ``(x, y)`` なので
     毎回入れ替えている。取り違えても例外は出ない(第 0 章で検算した)。
 (f) **``shape_locate`` の角度刻みは 30 度固定**で、刻みを渡す引数が無い。
-    さらに回転テンプレートを ``reshape=False`` で作るので **四隅がゼロで
-    埋まり**、その分だけ相関値が構造的に下がる。第 6 章で実測する。
+    回転テンプレートを ``reshape=False`` で作るので四隅がゼロで埋まり、その分だけ
+    相関値が構造的に下がっていた —— **2026-11-09 に op 側で直した**(四隅をマスクで
+    除く。30 度の対象で 0.531 → 0.950)。刻みは契約 op では 30 度のままで、刻みを指定し
+    副刻みまで詰めるのは ``matching.shape_locate_fine``。第 6 章で実測する。
 (g) **追跡の状態を持つ入口が無い**。``track_points``(疎な点の Lucas-Kanade)は
     あるが、テンプレート追跡の系(更新方針・予測・見失い判定)は無い。
     第 3 章の 4 系はすべてこの PoC の自前である。
@@ -95,6 +107,7 @@ import examplefig as figs   # ★fullseye を先に import しないと解決し
 #    第 0 章で公開 op ``fs.op.ncc_locate`` と一致することを検算してから使う。
 import ops
 import annotate as AN       # 動画のコマに文字・グラフ
+import matching             # 2026-11-09: はみ出しを扱う ncc_locate_ex / 刻み指定の shape_locate_fine
 
 T_START = time.perf_counter()
 
@@ -303,6 +316,22 @@ def peak_and_prominence(corr):
     j = np.unravel_index(int(np.argmax(m)), m.shape)
     return (peak, np.array([float(idx[1]), float(idx[0])]),
             peak - float(m[j]), float(np.hypot(j[0] - idx[0], j[1] - idx[1])))
+
+
+def _nearest_tied_second(corr, xy, second, tol=1e-9):
+    """2 位(``second``)と差 ``tol`` 以内の峰のうち、ピークに最も近いものの距離と峰の数。
+
+    ピーク近傍(± ``TPL``)は ``peak_and_prominence`` と同じく除く。峰 = 3x3 の極大。
+    """
+    from scipy.ndimage import maximum_filter
+    r, c = int(round(xy[1])), int(round(xy[0]))
+    m = corr.copy()
+    m[max(0, r - TPL):r + TPL + 1, max(0, c - TPL):c + TPL + 1] = -2.0
+    peaks = (m >= second - tol) & (m == maximum_filter(m, size=3, mode="nearest"))
+    pos = np.argwhere(peaks)
+    if not len(pos):
+        return float("nan"), 0
+    return float(np.hypot(pos[:, 0] - r, pos[:, 1] - c).min()), int(len(pos))
 
 
 def locate_full(img, tpl):
@@ -887,6 +916,31 @@ def main():
     assert _chk1 < 1e-9 and _chk2 < 1e-9 and _chk3 < 1e-9, "舞台の真値が閉じていない"
     print("→ 真値は閉じている。以降のずれはすべて **推定の誤差** である。")
 
+    # 検算 5: 対象が画像の縁で切れたとき(2026-11-09 に足した入口の確認)。
+    #   ★独立レビュー: 1 枚目の自己一致では弱いので、**別のフレーム**(6 枚目、雑音・8 bit 量子化
+    #   が独立)に **そっくりな別物体**(右上 44 px / 26 px、少しぼかした複製)がいる場面で切る。
+    _fr5, _tr5, _, _ = make_sequence(world, _tg, n=6, step=2.0, twin=True)
+    _t5 = crop_template(_fr5[0], _tr5[0])
+    _x5, _y5 = _tr5[-1]
+    _cut = 5                                        # 対象の窓を左端から 5 px 外へ出す
+    _c_left = int(round(_x5)) - HALF + _cut
+    _crop = _fr5[-1][:, _c_left:]
+    _true_xy = np.array([_x5 - _c_left, _y5])       # 切り出しの中の真値 (x, y)
+    fs.set_match_template(_t5)
+    _leg = fs.op.ncc_locate(_crop)
+    fs.set_match_template(None)
+    _ex = matching.ncc_locate_ex(_t5, _crop, min_overlap=0.75)
+    _e_leg = float(np.hypot(_leg[2] - _true_xy[0], _leg[1] - _true_xy[1]))
+    _e_ex = float(np.hypot(_ex["col"] - _true_xy[0], _ex["row"] - _true_xy[1]))
+    print(f"検算 5  6 枚目(双子つき)で対象を左端から {_cut} px 出した切り出し(見えている割合 "
+          f"{(TPL - _cut) / TPL:.2f}、真値 (x, y) = ({_true_xy[0]:.2f}, {_true_xy[1]:.2f})):")
+    print(f"        公開 op ncc_locate  得点 {_leg[0]:.4f} 位置誤差 {_e_leg:6.2f} px"
+          f"(full-overlap のみ = 縁の対象は調べない)")
+    print(f"        ncc_locate_ex       得点 {_ex['score']:.4f} 位置誤差 {_e_ex:6.2f} px"
+          f" 重なり {_ex['overlap']:.2f} flags={_ex['flags']}")
+    assert _e_ex < 2.0 and "border" in _ex["flags"], "縁で切れた対象を ncc_locate_ex が見つけない"
+    assert _e_leg > LOST_PX, "公開 op が縁の対象を見つけた(契約が変わった?)"
+
     # =======================================================================
     rule("1. 4 つの対象の素性 —— 追う前に、そのテンプレートが一意かどうか")
     # =======================================================================
@@ -905,18 +959,25 @@ def main():
         T0[name], F0[name] = t0, f0
         corr = ops._ncc_map(f0, t0)
         corr_maps[name] = corr
-        pk, xy, prom, d2 = peak_and_prominence(corr)
+        pk, xy, prom, _d2_any = peak_and_prominence(corr)
+        # ★2026-11-09 独立レビュー: 2 位が同点(繰返 では相関 1.000 の峰が複数)だと、
+        #   peak_and_prominence の距離は丸め 1e-13 でどの同点を拾うかで決まる任意の値になる
+        #   (FFT 化で 44 → 66 px に変わった)。表には **同点の峰のうち最も近いもの** の距離と
+        #   同点の数を出す(どちらも丸めに依らない)。
+        d2, n_tie = _nearest_tied_second(corr, xy, pk - prom)
         # 開口問題の指標: ピークから ±3 px の相関の落ち方が最も緩い方向
         r, c = int(round(xy[1])), int(round(xy[0]))
         drops = [1.0 - corr[r + dy * 3, c + dx * 3]
                  for dy, dx in ((0, 1), (1, 0), (1, 1), (1, -1))]
-        profile[name] = dict(second=pk - prom, prom=prom, d2=d2, flat=min(drops))
+        profile[name] = dict(second=pk - prom, prom=prom, d2=d2, n_tie=n_tie, flat=min(drops))
         print(f"{name:<8}{pk - prom:>12.4f}{prom:>10.4f}{d2:>16.1f}{min(drops):>16.4f}")
     print("-" * 64)
     print("「縁方向の平坦さ」= ピークから 3 px ずらしたときの相関の落ちが最小の方向の値。")
     print("小さいほど、その方向へずれても相関が下がらない = 位置が決まらない。")
-    print(f"→ 繰返 の 2 位は {profile['繰返']['second']:.3f} で、"
-          f"しかも {profile['繰返']['d2']:.0f} px 離れている(= 別の字形)。")
+    print("「2 位までの距離」= 2 位と同点(差 1e-9 以内)の峰のうち、最も近いものまでの距離。")
+    print(f"→ 繰返 の 2 位は {profile['繰返']['second']:.3f} で、同点の峰が "
+          f"{profile['繰返']['n_tie']} 個ある(最も近いものが {profile['繰返']['d2']:.0f} px 先 = 別の字形)。")
+    print("   どの同点を「2 位」と呼ぶかは任意なので、距離は最も近いものに決めて出している。")
     print(f"→ 直線縁 は縁方向の落ちが {profile['直線縁']['flat']:.4f} しかない = 開口問題。")
     print("→ **この表は動かす前に作れる**。追跡が失敗しそうな対象は事前に分かる。")
     # 相関は符号つき(-1..+1)なので発散 LUT。0 が中間色になり、山と谷が見える。
@@ -1238,11 +1299,29 @@ def main():
         print(f"{true_ang:>10.1f}{e_n:>14.2f}{pk_n:>12.3f}{e_s:>16.2f}"
               f"{s[3]:>10.0f}{s[0]:>14.3f}")
     print("-" * 76)
-    print("★ 穴 (f): 角度は 30 度刻み固定(引数が無い)。真の角度 10 度・20 度はどちらも")
-    print("   0 度か 30 度に丸められる。さらに回転テンプレートを reshape=False で作るので")
-    print("   **四隅がゼロで埋まり**、0 度以外は相関値が構造的に下がる。実測では")
-    print(f"   0 度の shape ピーク {ch6h[0][5]:.3f} に対し 30 度で {ch6h[3][5]:.3f}。")
-    print("   0 度でも ncc と一致しないのは、この四隅のゼロが効いているため。")
+    print("★ 穴 (f): 角度は 30 度刻み固定(引数が無い)。真の角度 10 度・20 度・45 度は")
+    print("   0 / 30 / 60 度のどれかに丸められる。回転テンプレートの四隅(reshape=False で")
+    print("   外から来る画素)は 2026-11-09 から相関に入れない(以前は 0 埋めのまま入れて")
+    print("   30 度の対象で 0.531 しか出なかった)。実測では")
+    print(f"   0 度の shape ピーク {ch6h[0][5]:.3f}、30 度で {ch6h[3][5]:.3f}、"
+          f"60 度で {ch6h[5][5]:.3f}。0 度では ncc と一致する(同じ相関)。")
+    print("\n[刻みを指定する入口] matching.shape_locate_fine(刻み 5 度 + 放物線で副刻み)。")
+    print(f"{'真の角度':>10}{'位置誤差':>12}{'推定角':>10}{'ピーク':>10}")
+    print("-" * 42)
+    ch6f = []
+    for rd in (0.0, 10.0, 20.0, 30.0, 45.0, 60.0):
+        fr, tr, an, _ = make_sequence(world, TARGETS["一意"], n=6, step=2.0, rot_deg=rd)
+        t0 = crop_template(fr[0], tr[0])
+        img, true_xy, true_ang = fr[-1], tr[-1], an[-1]
+        f = matching.shape_locate_fine(t0, img, step_deg=5.0)
+        e_f = float(np.hypot(f["col"] - true_xy[0], f["row"] - true_xy[1]))
+        ch6f.append((true_ang, e_f, f["angle_deg"], f["score"]))
+        print(f"{true_ang:>10.1f}{e_f:>12.2f}{f['angle_deg']:>10.1f}{f['score']:>10.3f}")
+    print("-" * 42)
+    print("   推定角は shape_locate と同じ向き(scipy.ndimage.rotate の角度)。")
+    print(f"   20 度以上は角度も合う。0 度・10 度は {ch6f[0][2]:.1f} / {ch6f[1][2]:.1f} 度を返す ——")
+    print("   位置を整数画素で探すので、副画素のずれを回転が肩代わりして小さい角度の得点が")
+    print("   0 度より高くなる(位置は合っている)。数度以下の角度はこの入口でも決まらない。")
 
     # =======================================================================
     rule("7. ★ 崖 (d) 照明変化 —— NCC は本当に明るさ変化に強いのか")
@@ -1564,7 +1643,7 @@ def main():
     print("    「あれば床がどれだけ下がるか」は測っていない(提案は末尾)。")
 
     # =======================================================================
-    rule("道具の穴(op 本体は直していない)")
+    rule("道具の穴(2026-11-09 に (d)(f) の一部を op 側で直した)")
     # =======================================================================
     print("(a) ncc_locate が相関マップを返さない → 突出度が公開 API で計算できない。")
     print("    第 10 章の主題(繰り返し模様の誤ロック検出)は公開 API の外にある。")
@@ -1575,9 +1654,11 @@ def main():
     print("    差し替える処理なので、この設計と最も相性が悪い。")
     print("(d) 探索範囲を渡せない。局所探索は呼ぶ側が画像を切るしかなく、")
     print("    切り出しが小さいと full-overlap 位置が消えて黙って [0,0,0] が返る。")
+    print("    → fs.ncc_locate_ex が重なり率と flags(border / missing / ambiguous)を返す(検算 5)。")
     print("(e) 返りは (行, 列)。幾何側の (x, y) と取り違えても例外は出ない。")
-    print("(f) shape_locate の角度刻みは 30 度固定(引数なし)+ 回転テンプレートの")
-    print(f"    四隅がゼロ埋め。実測で 0 度 {ch6h[0][5]:.3f} → 30 度 {ch6h[3][5]:.3f}。")
+    print("(f) shape_locate の角度刻みは 30 度固定(引数なし)。回転テンプレートの四隅の")
+    print("    ゼロ埋めは 2026-11-09 に直した(30 度で 0.531 →"
+          f" {ch6h[3][5]:.3f})。刻みの指定は matching.shape_locate_fine。")
     print("(g) 追跡の系(更新方針・予測・見失い判定)が無い。第 3 章の 4 系は自前。")
     print("(h) 信頼度の語彙が無い。返る相関値は第 10 章のとおり条件で嘘をつく。")
     print("\n[足すとよい op(この PoC が実際に自前で書いたもの)]")
@@ -1594,7 +1675,7 @@ def main():
     print("      **roi_width を一緒に返すのが肝** —— 第 9 章のとおり、探索窓を変えると")
     print("      突出度の意味が変わる。窓を書き添えない突出度は比較できない。")
     print("  shape_locate(..., angle_step=30.0, angle_range=(0, 360), pad='reflect')")
-    print("      刻みを引数に出す + 回転テンプレートの四隅をゼロで埋めない(穴 f)。")
+    print("      刻みを引数に出す(穴 f。四隅は直した。刻みは matching.shape_locate_fine)。")
     print("  track_template(frames, template, update='none'|'every'|'k'|'confidence',")
     print("                 roi=None, predict='constant_velocity') -> table")
     print("      第 3 章の 4 系を 1 つの op に。返りは位置列・信頼度列・更新した")
@@ -1657,6 +1738,12 @@ def main():
     # (10) shape_locate の角度は 30 度刻みに丸められる
     assert set(a[4] for a in ch6h) <= set(float(x) for x in range(0, 360, 30)), \
         "shape_locate が 30 度刻み以外を返した"
+    # (10b) 四隅を除いたので、刻みにちょうど乗る角度(30 / 60 度)は 0 度並みに当たる
+    assert ch6h[3][5] > 0.9 and ch6h[5][5] > 0.9 and ch6h[3][3] < LOST_PX, \
+        "shape_locate の回転テンプレートの四隅が相関に入っている(2026-11-09 の修正が戻った?)"
+    # (10c) 刻み 5 度の入口は中間の角度でも見失わない
+    assert all(e < LOST_PX for _, e, _, _ in ch6f), "shape_locate_fine が中間の角度で見失った"
+    assert all(abs(((ag - ta) + 180.0) % 360.0 - 180.0) < 1.0 for ta, _, ag, _ in ch6f if ta >= 20.0),         "shape_locate_fine が 20 度以上の角度を外した"
 
     if figs.enabled():          # 動画は図を出すときだけ。失敗しても本文(数字)は落とさない
         try:
