@@ -8849,16 +8849,16 @@
             1600,
             1600
           ],
-          "bytes": 852223,
+          "bytes": 852063,
           "color_mad": [
             2.4549,
             2.3718,
-            2.5129,
+            2.5586,
             2.5447,
             0.1772
           ],
-          "max_color_mad": 2.5447,
-          "source_sha256": "22e73b3b4d416a0c36d7e924a77d634930bdb5c89056e4aab734a8195d086b26"
+          "max_color_mad": 2.5586,
+          "source_sha256": "8f9c083ad35f54c39acc78ff29027d8e97a1d477818f302366f6265d68eb6aef"
         },
         "en": {
           "path": "articles/assets/poc/poc_metal_grain_size/story.en.gif",
@@ -8923,16 +8923,16 @@
             1600,
             1600
           ],
-          "bytes": 852223,
+          "bytes": 852063,
           "color_mad": [
             2.4549,
             2.3718,
-            2.5129,
+            2.5586,
             2.5447,
             0.1772
           ],
-          "max_color_mad": 2.5447,
-          "source_sha256": "740523d8ba2baecac3e1b57722fe41e344ad5f01800bf583ff71179f511888b6"
+          "max_color_mad": 2.5586,
+          "source_sha256": "54621ac5df4dac7ab52a4d12cda63cb0df4b43da08c1e9de85068e08b45bcd75"
         }
       },
       "reason": null,

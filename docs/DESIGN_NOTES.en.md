@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 657 of 1871. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 657 of 1872. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `_archive_tarxz.py`
@@ -996,6 +996,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L586** — ★The measurement is slower than that. The fraction of grain-boundary pixels actually erased on the mask, f_eff, is smaller than f (the blur leaks the neighbouring black into the 1 px at both ends of the gap, and the local threshold picks it up), so compare against the prediction re-derived with f_eff, ΔG0 + 6.64 log10(1-f_eff).
 - **L823** _(ja)_ — ★配布物の注記は 128 px 角ごとに描かれていて、**各タイルの外周 1 画素に人工の粒界**がある (外周の行・列の粒界の画素密度 0.15、内側の 0.05 の 3 倍)。貼り合わせると継ぎ目に人工の粒界が 並ぶので、この章は**タイル単位**で、外周 1 画素を落とした 126 px 角で数える。
+- **L839** _(ja)_ — ★2026-11-09: bin_threshold が中核の otsu(実データの範囲で 256 ビン)を通るようになり、photo_err_area が 3.02 → 2.99 に動いた(ほかの鍵は不変)。同じ stdout の RECORDED_REAL から転記し直した。 データがあるときは実測とこの値を同じ丸めで照合し、無いときは中身と docstring の一致を見る。
 
 ## `examples/poc_mixed_case_depalletizing.py`
 

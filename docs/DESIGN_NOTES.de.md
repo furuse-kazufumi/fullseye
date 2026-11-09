@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1871. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1872. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -996,6 +996,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L586** — ★Die Messung ist langsamer als das. Der Anteil der auf der Maske tatsächlich getilgten Korngrenzen-Pixel, f_eff, ist kleiner als f (die Unschärfe lässt das benachbarte Schwarz in die 1 px an beiden Enden des Spalts durchsickern, und die lokale Schwelle greift es auf), also vergleiche mit der über f_eff neu abgeleiteten Vorhersage ΔG0 + 6.64 log10(1-f_eff).
 - **L823** _(ja)_ — ★配布物の注記は 128 px 角ごとに描かれていて、**各タイルの外周 1 画素に人工の粒界**がある (外周の行・列の粒界の画素密度 0.15、内側の 0.05 の 3 倍)。貼り合わせると継ぎ目に人工の粒界が 並ぶので、この章は**タイル単位**で、外周 1 画素を落とした 126 px 角で数える。
+- **L839** _(ja)_ — ★2026-11-09: bin_threshold が中核の otsu(実データの範囲で 256 ビン)を通るようになり、photo_err_area が 3.02 → 2.99 に動いた(ほかの鍵は不変)。同じ stdout の RECORDED_REAL から転記し直した。 データがあるときは実測とこの値を同じ丸めで照合し、無いときは中身と docstring の一致を見る。
 
 ## `examples/poc_mixed_case_depalletizing.py`
 
