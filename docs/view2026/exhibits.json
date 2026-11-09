@@ -8377,6 +8377,23 @@
    }
   },
   {
+   "id": "poc_mixed_case_depalletizing",
+   "group": "wing_industrial",
+   "media": "08_depal_robot_video.mp4",
+   "motion": true,
+   "thumb_src": "08_depal_robot_video.gif",
+   "label": {
+    "ja": "混載パレットの箱: 深度の段差・V 字・カラーの溝で分ける",
+    "en": "Mixed cartons: depth step, V-groove or colour groove",
+    "zh": "用深度台阶、V 形缝或彩色分开混载托盘上的纸箱",
+    "tw": "用深度台階、V 形縫或彩色分開混載棧板上的紙箱",
+    "ko": "혼재 팔레트 상자를 깊이 단차·V자 홈·컬러로 나누기",
+    "de": "Gemischte Kartons trennen: Tiefenstufe, V-Nut oder Farbe",
+    "hi": "Mixed pallet cartons: depth step, V-groove या colour",
+    "fr": "Cartons mélangés : marche de profondeur, rainure en V ou couleur"
+   }
+  },
+  {
    "id": "poc_3d_sensor_modalities",
    "group": "wing_threed",
    "media": "01_map.png",

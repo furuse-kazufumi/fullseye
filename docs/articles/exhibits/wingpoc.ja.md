@@ -2,7 +2,7 @@
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 49 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 50 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -1551,6 +1551,48 @@ py -3.11 examples/poc_real_typewritten_ocr.py
 この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_typewritten_ocr)
 
 使用 op(ノートへ): [`area_center_gray`](https://furuse.work/ops/mv/gray/area_center_gray.html) · [`classify_class_gmm`](https://furuse.work/ops/mv/classify/classify_class_gmm.html) · [`classify_class_knn`](https://furuse.work/ops/mv/classify/classify_class_knn.html) · [`classify_class_mlp`](https://furuse.work/ops/mv/classify/classify_class_mlp.html) · [`classify_class_svm`](https://furuse.work/ops/mv/classify/classify_class_svm.html) · [`create_lexicon`](https://furuse.work/ops/mv/classify/create_lexicon.html) · [`evaluate_class_gmm`](https://furuse.work/ops/mv/classify/evaluate_class_gmm.html) · [`gray_histo`](https://furuse.work/ops/mv/gray/gray_histo.html) · [`gray_projections`](https://furuse.work/ops/mv/gray/gray_projections.html) · [`lookup_lexicon`](https://furuse.work/ops/mv/classify/lookup_lexicon.html) · [`segment_characters`](https://furuse.work/ops/mv/text/segment_characters.html) · [`select_characters`](https://furuse.work/ops/mv/text/select_characters.html) · [`suggest_lexicon`](https://furuse.work/ops/mv/classify/suggest_lexicon.html) · [`text_line_orientation`](https://furuse.work/ops/mv/text/text_line_orientation.html) · [`text_line_slant`](https://furuse.work/ops/mv/text/text_line_slant.html) · [`train_class_gmm`](https://furuse.work/ops/mv/classify/train_class_gmm.html) · [`train_class_knn`](https://furuse.work/ops/mv/classify/train_class_knn.html) · [`train_class_mlp`](https://furuse.work/ops/mv/classify/train_class_mlp.html) · [`train_class_svm`](https://furuse.work/ops/mv/classify/train_class_svm.html)
+
+## No.2026.310 —— 混載デパレタイズ: 継ぎ目が詰まると深度の段差では箱を分けられない —— 深度の V 字の溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の深さ・すき間・テープで入れ替わる(地図)
+
+詰めて並んだ同じ柄の段ボールを、天井の深度カメラとカラーで見分けて下ろす。深度の段差では同じ柄の箱を分けられず、深度の浅い溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の作り 28 通りの地図で入れ替わった。同じ柄では合わせ目が深いとカラー、切り口が広く開きテープが無く溝が浅いときだけ深度の溝が上になる。
+
+[![混載デパレタイズ: 継ぎ目が詰まると深度の段差では箱を分けられない —— 深度の V 字の溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の深さ・すき間・テープで入れ替わる(地図)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png)
+
+*↑ **混載デパレタイズ: 継ぎ目が詰まると深度の段差では箱を分けられない —— 深度の V 字の溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の深さ・すき間・テープで入れ替わる(地図)** ―― 同じ柄の箱が詰めて並んだ混載パレット(種 0、Blender Cycles で描画、天井の RGB-D)。上 = カラー・深度(陰影つき、黒 = 欠測)・空いている箱の真の天面・深度の段差、下 = 深度の V 字・カラーだけ・カラーの溝・両方(AND)で切り分けた天面(空色 = 一致、橙 = 外れ)。種 0 は V 字に有利な種(V 字 7/10、10 種の中央 0.23)で、閾値を決めた種でもある。*
+
+[![5 つの条件(難しい順)のカラーと深度(陰影つき)、天面の再現率(種 10 本の中央値)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/02_difficulty_ladder_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/02_difficulty_ladder.png)
+
+*↑ 測定の図 ―― 5 つの条件(難しい順)のカラーと深度(陰影つき)、天面の再現率(種 10 本の中央値)。*
+
+[![種ごとの再現率の中央値と幅。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/03_first_frame_recall_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/03_first_frame_recall.png)
+
+*↑ 種ごとの再現率の中央値と幅。*
+
+[![1 個ずつ下ろしたときの成功率(条件ごと、5 通り)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/05_success_rate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/05_success_rate.png)
+
+*↑ 1 個ずつ下ろしたときの成功率(条件ごと、5 通り)。*
+
+[![継ぎ目の V 字の溝は縁の丸みが作る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/07_edge_radius_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/07_edge_radius_sweep.png)
+
+*↑ 継ぎ目の V 字の溝は縁の丸みが作る。*
+
+[![HOPE の箱型の物体の面を、同じ op の組(切り分けと閾値は別実装)で測った結果。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/10_hope_real_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/10_hope_real_depth.png)
+
+*↑ HOPE の箱型の物体の面を、同じ op の組(切り分けと閾値は別実装)で測った結果。*
+
+[![条件ごとに、ロボットが「カラーの溝」のやり方で選んだ天面を吸って下ろす手(成功と失敗)と、天井カメラの差し込み。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.gif)
+
+*↑ 動く図 ―― 条件ごとに、ロボットが「カラーの溝」のやり方で選んだ天面を吸って下ろす手(成功と失敗)と、天井カメラの差し込み。*
+
+```
+py -3.11 examples/poc_mixed_case_depalletizing.py
+```
+
+ソース: [examples/poc_mixed_case_depalletizing.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_mixed_case_depalletizing.py)
+
+この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_mixed_case_depalletizing)
+
+使用 op(ノートへ): [`bilateral_filter_depth`](https://furuse.work/ops/3d/depth_denoise/bilateral_filter_depth.html) · [`crop_rectangle2`](https://furuse.work/ops/mv/resample/crop_rectangle2.html) · [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`normals_from_depth`](https://furuse.work/ops/3d/range_image/normals_from_depth.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`ransac_plane`](https://furuse.work/ops/3d/robust_fit/ransac_plane.html) · [`srgb_to_linear`](https://furuse.work/ops/gfx2d/colorspace/srgb_to_linear.html) · [`watersheds_marker`](https://furuse.work/ops/segmentation/watershed/watersheds_marker.html)
 
 ## No.2026.308 —— AI が組んだ検査を公開実データの真値で採点する ―― 失敗を道具・MCP・模型に分け、直す前と後を並べる(ローカル LLM のひび割れは 20 回に 1〜3 本で再現せず、クラウド LLM は 3 本とも偶然を超えるが既存レシピに届かない)
 
