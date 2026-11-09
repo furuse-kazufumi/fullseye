@@ -62,12 +62,18 @@
     2026-09-06 の対応は (1) しきい値は据え置き (2) 比を
     ``orientation_rank_ratio`` として返す (3) 後段の門の文言に「板を傾けよ」を
     入れる —— 直せないものを直したことにせず、判断材料を渡す形にした。
-(c2) **``camera_calibration`` は不確かさも条件数も返さない**。返るのは
-    ``reproj_rms`` だけ —— まさに本 PoC が「保証しない」と示している数字である。
+    2026-11-09 に、比とは別の**雑音込みの門**が足された(op 監査 g2_calib_ct): 閉形式を
+    解いたあと、ホモグラフィの残差で画像点を揺らして 32 回解き直し、K の相対標準偏差が
+    5 % を超えたら拒否する。第 6 章の表では傾き 5 度を拒否するようになった(広がり 10.6 %、
+    通していた頃の fx 誤差 −31.8 %)。ただし歪みによる**偏り**は測らない(8 度は広がり 2.5 % で
+    通過し、fx を 18.5 % 誤る)。
+(c2) **``camera_calibration`` は偏りを含む不確かさを返さない**。返るのは ``reproj_rms``
+    —— まさに本 PoC が「保証しない」と示している数字 —— と、2026-11-09 からは雑音だけから
+    見積もった広がり ``intrinsics_rel_std``(偏りは含まない、上の (c) を見よ)。
     第 3・4 章で見るとおり、配置の良し悪しを映すのは ``sigma_fx`` / ``sigma_cx``
     (ヤコビアンの逆行列の対角)であって再投影誤差ではない。
-(c3) **閉形式は歪みを無視するので答えとしては使えない**。傾き 5 度で fx を
-    41 %、傾き 32 度でも 2.7 % 誤る(k1 = -0.18 のレンズ)。初期値としては
+(c3) **閉形式は歪みを無視するので答えとしては使えない**。傾き 8 度で fx を
+    18.5 %、傾き 32 度でも 3.1 % 誤る(k1 = -0.18 のレンズ)。初期値としては
     使えるが、``camera_calibration`` の戻り値をそのまま K として使う利用者は
     その旨を docstring から読み取れない。
 (d) **座標規約が兄弟 API と食い違う**。``camera.project_points`` は (x, y) を
@@ -638,7 +644,9 @@ def main():
             print(f"  {tilt:>9.1f}{ratio:>15.2e}{z['fx']:>13.1f}"
                   f"{100 * abs(z['fx'] - TRUE_FX) / TRUE_FX:>10.1f}  通過")
         except ValueError as exc:
-            gate = ("零空間の次元" if "degenerate calibration views" in exc.args[0]
+            msg = exc.args[0]
+            gate = ("零空間の次元" if "degenerate calibration views" in msg
+                    else "雑音込み(K が決まらない)" if "do not determine K" in msg
                     else "K が非有限/非正")
             print(f"  {tilt:>9.1f}{ratio:>15.2e}{'—':>13}{'—':>10}  {gate}")
     print("      → ★ **退化検出の門は歪みのあるカメラでは発火しない**。歪みなしなら")
@@ -648,8 +656,10 @@ def main():
     print("         現場で止めているのは後段の「fx が nan」の門のほう。")
     print("         しきい値を上げても直らない —— 歪みありでは完全退化 1.92e-06 と")
     print("         傾き 2 度 4.42e-06 の差が 2.3 倍しかなく、線が引けない。")
-    print("      → 閉形式は 5 度で生き返るが fx を 41 % 誤る(歪みを無視するため)。")
-    print("         非線形最適化の初期値としては使えるが、答えとしては使えない。")
+    print("      → 2026-11-09 から閉形式の後に雑音込みの門がある(残差で点を揺らして解き直し、")
+    print("         K の相対標準偏差が 5 % を超えたら拒否)。上の表の 5 度はこれで止まる。")
+    print("      → 閉形式は 8 度で通るが fx を 18.5 % 誤る(歪みを無視した偏り。雑音込みの")
+    print("         門は偏りを測らない)。非線形最適化の初期値としては使えるが、答えとしては使えない。")
     flat = make_poses(N_VIEWS, tilt_deg=0.0, offset_m=0.14, z_lo=0.55, z_hi=0.85)
     ob = observe(obj, flat, sigma_px=0.05, seed=4)
     rflat = calibrate(obj, ob)
@@ -685,7 +695,8 @@ def main():
     print("         中央にはその信号が無い)。")
     print("      注: 1 % の行は条件が悪く、本体ライブラリの版で値が動く(同じこのコードで、2026-11-05 より前の本体では")
     print("         fx 誤差 0.069 % / |dcx| 13.26 / |dk1| 0.063、それ以降は 0.122 % / 2.90 / 0.436 —— Zhang 法の初期値の変更で")
-    print("         LM の行き先が変わる)。この行の数は『決まらない』ことの例として読み、値そのものは読まない。")
+    print("         LM の行き先が変わる。2026-11-09 に solve_pnp の平面の初期値を正規化してからは 0.069 % / 13.28 / 0.064)。")
+    print("         この行の数は『決まらない』ことの例として読み、値そのものは読まない。")
 
     print("  (c) 雑音 —— 良い配置と悪い配置で感度がどれだけ違うか")
     print(f"  {'雑音 px':>9}{'良: RMS':>10}{'良: fx%':>10}{'悪: RMS':>10}{'悪: fx%':>10}{'比':>8}")
@@ -827,13 +838,13 @@ REAL_RECORDED = {
         '相関(RMS と |fx の差|): 13 枚基準・全組 +0.030 / 12 枚基準・全組 +0.536 / 12 枚基準・外れを含まない 495 組 -0.045',
         '外れを含まない組: RMS 0.148〜0.318 px、fx の差 -1.46〜+2.53 %',
         '外れを順に除いた相関: 1 枚除き 495 組 -0.045 / 2 枚除き 330 組 -0.055 / 3 枚除き 210 組 +0.244',
-        '描いた板 傾き 32 度: 角点の誤差 0.154 px、再投影 RMS 0.148 px、|fx 誤差| 0.033 %(種ごと 0.02〜0.05 %)、sigma_fx 0.26 px',
-        '描いた板 傾き 8 度: 角点の誤差 0.158 px、再投影 RMS 0.154 px、|fx 誤差| 0.217 %(種ごと 0.18〜0.28 %)、sigma_fx 2.22 px',
-        '描いた板 傾き 2 度: 角点の誤差 0.157 px、再投影 RMS 0.152 px、|fx 誤差| 3.991 %(種ごと 3.05〜4.97 %)、sigma_fx 34.58 px',
+        '描いた板 傾き 32 度: 角点の誤差 0.152 px、再投影 RMS 0.146 px、|fx 誤差| 種 5 個で 0.02〜0.08 %、sigma_fx 0.3 px',
+        '描いた板 傾き 8 度: 角点の誤差 0.158 px、再投影 RMS 0.154 px、|fx 誤差| 種 5 個で 0.22〜0.43 %、sigma_fx 2.2 px',
+        '描いた板 傾き 2 度: 角点の誤差 0.157 px、再投影 RMS 0.153 px、|fx 誤差| 種 5 個で 2.14〜7.38 %、sigma_fx 35.3 px',
     ],
-    'sub_corr': -0.0449,
-    'render_fx': {'32': 0.0326, '8': 0.2169, '2': 3.9911},
-    'render_rms': {'32': 0.1483, '8': 0.1538, '2': 0.1522},
+    'sub_corr': -0.0448,
+    'render_fx': {'32': 0.0475, '8': 0.3483, '2': 5.4052},
+    'render_rms': {'32': 0.1463, '8': 0.1541, '2': 0.1525},
 }
 
 
@@ -1183,7 +1194,12 @@ def real_chessboard_chapter(syn_fx):
           " —— 門は平均で見る(最大は 5 % を超える視点がある)")
     g, b = rend[REAL_TILTS[0]], rend[REAL_TILTS[-1]]
     print(f"  → 再投影 RMS は {g['rms']:.3f} / {b['rms']:.3f} px(比 {b['rms'] / g['rms']:.2f})でほぼ同じなのに、"
-          f"|fx 誤差| は {g['fx']:.3f} % と {b['fx']:.2f} %(種ごとに {b['fx_lo']:.2f}〜{b['fx_hi']:.2f} %)。")
+          f"|fx 誤差| は種 {len(REAL_SEEDS)} 個で 32 度 {g['fx_lo']:.2f}〜{g['fx_hi']:.2f} %、"
+          f"2 度 {b['fx_lo']:.1f}〜{b['fx_hi']:.1f} %(2 度のいちばん小さい値でも 32 度のいちばん大きい値の "
+          f"{b['fx_lo'] / g['fx_hi']:.0f} 倍)。")
+    print("    ★値は範囲で読む: 描き直しの経路は敏感で、真値(13 枚の推定)が 1e-5 px 動くだけで描いた画像と角点が")
+    print("      動き(角点で中央値 0.03 px、2026-11-09 実測)、雑音の実現が別物になって種ごとの値が入れ替わる")
+    print("      (傾き 2 度の平均は本体の版で 3.99 % にも 5.41 % にもなった)。1 つの種・1 つの平均の有効数字に意味は無い。")
     print(f"    合成の点(第 4 章、雑音 0.05 px)では {syn_fx[0]:.3f} % と {syn_fx[-1]:.3f} %。角点の誤差は {b['cerr']:.2f} px"
           f"(合成の 0.05 px の約 {b['cerr'] / 0.05:.1f} 倍)。正面寄りの誤差は種で 2 倍ほど揺れるが、どれも同じ向き。")
     print(f"    警報になるのは sigma_fx(傾き 2 度で {b['sigma']:.1f} px、32 度で {g['sigma']:.2f} px)—— 再投影 RMS ではない。")
@@ -1191,6 +1207,8 @@ def real_chessboard_chapter(syn_fx):
     assert corr < 0.3, "外れを除いた部分集合で再投影 RMS が fx のずれを言い当てた —— 結論を書き直せ"
     assert 0.5 < b["rms"] / g["rms"] < 2.0, "描いた板で再投影 RMS が同程度でない"
     assert b["fx"] > 10.0 * g["fx"], "描いた板で fx 誤差が桁で違わない"
+    # ★展示台帳の lead の「28 倍以上」は 1 回の実現の値(門は 10 倍)。データありの実行で REAL_RECORDED が変わったら、lead も見直すこと。
+    assert b["fx_lo"] > 10.0 * g["fx_hi"], "描いた板で fx 誤差の範囲が桁で離れていない(主張は範囲で書いている)"
     assert b["sigma"] > 10.0 * g["sigma"], "描いた板で sigma_fx が配置の差を映さない"
     assert seen_frac < 0.05, "埋めた背景が 5 %% 以上見えている(%.3f)—— 背景の作り方を見直す" % seen_frac
 
@@ -1203,8 +1221,8 @@ def real_chessboard_chapter(syn_fx):
         % (corr13, corr12_all, len(clean), corr),
         "外れを含まない組: RMS %.3f〜%.3f px、fx の差 %+.2f〜%+.2f %%" % (clean[:, 0].min(), clean[:, 0].max(), dc.min(), dc.max()),
         "外れを順に除いた相関: " + " / ".join("%d 枚除き %d 組 %+.3f" % (a_, c_, r_) for a_, _d, c_, r_, _m in seq),
-    ] + ["描いた板 傾き %.0f 度: 角点の誤差 %.3f px、再投影 RMS %.3f px、|fx 誤差| %.3f %%(種ごと %.2f〜%.2f %%)、sigma_fx %.2f px"
-         % (t, rend[t]["cerr"], rend[t]["rms"], rend[t]["fx"], rend[t]["fx_lo"], rend[t]["fx_hi"], rend[t]["sigma"])
+    ] + ["描いた板 傾き %.0f 度: 角点の誤差 %.3f px、再投影 RMS %.3f px、|fx 誤差| 種 %d 個で %.2f〜%.2f %%、sigma_fx %.1f px"
+         % (t, rend[t]["cerr"], rend[t]["rms"], len(REAL_SEEDS), rend[t]["fx_lo"], rend[t]["fx_hi"], rend[t]["sigma"])
          for t in REAL_TILTS]
     rec = {"lines": lines, "sub_corr": round(corr, 4),
            "render_fx": {"%.0f" % t: round(rend[t]["fx"], 4) for t in REAL_TILTS},
@@ -1301,24 +1319,27 @@ def fig_real_board(photo, photo_pts, photo_name, K, rms, n_photos, shown, rend, 
         im, p, _r = shown[t]
         bad = t == REAL_TILTS[-1]
         rt = rend[t]
-        subt = ("RMS %.3f px → |fx 誤差| %.2f %%(種で %.1f〜%.1f)・sigma_fx %.1f"
-                % (rt["rms"], rt["fx"], rt["fx_lo"], rt["fx_hi"], rt["sigma"]) if bad else
-                "RMS %.3f px → |fx 誤差| %.2f %%、sigma_fx %.2f px" % (rt["rms"], rt["fx"], rt["sigma"]))
+        subt = ("RMS %.3f px → |fx 誤差| %.1f〜%.1f %%(種 %d 個)・sigma_fx %.1f"
+                % (rt["rms"], rt["fx_lo"], rt["fx_hi"], len(REAL_SEEDS), rt["sigma"]) if bad else
+                "RMS %.3f px → |fx 誤差| %.2f〜%.2f %%(種 %d 個)、sigma_fx %.2f px"
+                % (rt["rms"], rt["fx_lo"], rt["fx_hi"], len(REAL_SEEDS), rt["sigma"]))
         photo_panel(i, im, p, "描き直した板 傾き %.0f 度 × 10 視点(真値 = 13 枚の推定)" % t, subt,
                     (255, 120, 90) if bad else (120, 230, 140))
-    d.text((GAP, Hh - 30), "十字 = OpenCV が拾った角点。傾き 8 度は |fx 誤差| %.2f %%。描いた板の背景はカメラに固定した同じ写真。"
-           "写真: OpenCV samples/data(Apache-2.0)" % rend[8.0]["fx"], font=font_s, fill=(190, 190, 190))
+    d.text((GAP, Hh - 30), "十字 = OpenCV が拾った角点。傾き 8 度は |fx 誤差| %.2f〜%.2f %%。描いた板の背景はカメラに固定した同じ写真。"
+           "写真: OpenCV samples/data(Apache-2.0)" % (rend[8.0]["fx_lo"], rend[8.0]["fx_hi"]), font=font_s, fill=(190, 190, 190))
     cap = ("上: 実写の校正板(OpenCV が配布する 13 枚、Apache-2.0)から 4 枚を選ぶ %d 通りを校正し直した。再投影の外れの 1 枚(%s)を"
            "含む組は RMS が大きく、含まない %d 組では 12 枚の推定 fx との差が %+.2f〜%+.2f %% 散り、RMS と |差| の相関は %+.3f"
            "(基準を 13 枚の推定にすると値が変わる)。含まない組の RMS が 0.3 px 付近に固まる %d 組は 2 番目に外れた %s を含む。"
            "外れを RMS の大きい順に 1 / 2 / 3 枚除くと相関は %+.3f / %+.3f / %+.3f で、3 枚除くと門の 0.3 に近づく。"
            "下: 最も正面に近い 1 枚の板面の質感を、13 枚の推定値を真値に置いた"
            "カメラで傾き 32 / 8 / 2 度に 10 視点ずつ描き直し、OpenCV で角点を拾って校正した結果。再投影 RMS は "
-           "%.3f / %.3f / %.3f px でほぼ同じなのに、|fx 誤差| は %.3f / %.2f / %.2f %%(雑音の種 %d 個の平均、傾き 2 度は種ごとに "
-           "%.2f〜%.2f %%)。警報になるのは sigma_fx(%.2f → %.1f px)。合成の点(第 4 章)では %.3f / %.3f / %.3f %% だった。"
+           "%.3f / %.3f / %.3f px でほぼ同じなのに、|fx 誤差| は雑音の種 %d 個で %.2f〜%.2f / %.2f〜%.2f / %.1f〜%.1f %%。"
+           "警報になるのは sigma_fx(%.2f → %.1f px)。合成の点(第 4 章)では %.3f / %.3f / %.3f %% だった。"
+           "値は範囲で読む: 描き直しの経路は敏感で、真値が 1e-5 px 動くだけで角点が中央値 0.03 px 動いて雑音の実現が変わる。"
            "描いた板の背景で、写っていた板を埋めた部分が見えている画素は平均 %.1f %%(最大 %.1f %%)。"
-           % (len(sub), out_name, int((~has).sum()), sub[~has, 1].min(), sub[~has, 1].max(), corr, n_sec, sec_name, seq[0][3], seq[1][3], seq[2][3], g["rms"], rend[8.0]["rms"], b["rms"], g["fx"], rend[8.0]["fx"], b["fx"], len(REAL_SEEDS),
-              b["fx_lo"], b["fx_hi"], g["sigma"], b["sigma"], syn_fx[0], syn_fx[1], syn_fx[2],
+           % (len(sub), out_name, int((~has).sum()), sub[~has, 1].min(), sub[~has, 1].max(), corr, n_sec, sec_name, seq[0][3], seq[1][3], seq[2][3], g["rms"], rend[8.0]["rms"], b["rms"], len(REAL_SEEDS), g["fx_lo"],
+              g["fx_hi"], rend[8.0]["fx_lo"], rend[8.0]["fx_hi"], b["fx_lo"], b["fx_hi"], g["sigma"], b["sigma"],
+              syn_fx[0], syn_fx[1], syn_fx[2],
               100 * seen_mean, 100 * seen_max))
     return figs.save("real_board", np.asarray(sheet, np.float64) / 255.0, caption=cap)
 

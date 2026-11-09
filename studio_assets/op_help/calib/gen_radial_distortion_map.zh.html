@@ -6,6 +6,8 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成径向畸变的逆映射(row_map, col_map)(gen_radial_distortion_map)。</p>
+<p>输出像素 (row, col) → 输入坐标。模型是<b>一阶多项式</b>:对相对主点的像素 <code style="color:#22d3bf">(x, y)</code>、<code style="color:#22d3bf">r^2 = x^2 + y^2</code>,<code style="color:#22d3bf">输入 = 主点 + (x, y) * (1 + kappa r^2)</code>(<code style="color:#22d3bf">kappa</code> 的单位为 1/像素²,不使用 <code style="color:#22d3bf">cam_par</code> 的 fx/fy)。★它不是除法模型(<code style="color:#22d3bf">mvimage.distort_division</code> / <code style="color:#22d3bf">undistort_division</code>,<code style="color:#22d3bf">u = d / (1 + kappa |d|^2)</code>)的精确逆, 而是其一阶近似。两者使用同一 <code style="color:#22d3bf">kappa</code> 会悄悄不一致:</p>
+<p>640x480、主点 (320, 240) 时,<code style="color:#22d3bf">kappa = -5e-7</code> 最大 4.28 px,<code style="color:#22d3bf">-2e-6</code> 最大 46.73 px (2026-11-09 实测)。要精确去除除法模型的畸变,用 <code style="color:#22d3bf">mvimage.change_radial_distortion_image</code> (<code style="color:#22d3bf">cam_out</code> 的 <code style="color:#22d3bf">kappa</code> 设为 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecalib:camera_calibration">camera_calibration 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

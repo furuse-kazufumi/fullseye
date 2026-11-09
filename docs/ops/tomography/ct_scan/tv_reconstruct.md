@@ -37,7 +37,9 @@ behaves alike across grid sizes.
 :param initial: starting volume; ``None`` gives zeros.
 :param nonnegative: enforce ``x >= 0``.
 :param device: ``"auto"``, ``"cpu"`` or ``"cuda"``.
-:param on_iter: optional ``on_iter(iteration, volume)``.
+:param on_iter: optional ``on_iter(iteration, volume)``; returning a boolean
+    ``True`` (``bool`` or ``numpy.bool_``) stops after that iteration, any other
+    return value is ignored (same rule as :func:`sirt_reconstruct`).
 :returns: ``(Z, Y, X)`` float volume.
 :raises ValueError: on a shape that disagrees with the geometry or a negative
     weight. Empty input (``projections`` with 0 elements) raises ``ValueError``.

@@ -22,7 +22,7 @@
  {
   "file": "03_rmse_vs_views.png",
   "name": "rmse_vs_views",
-  "caption": "TV の重みは 50 枚の条件で、使わなかった 250 枚への再投影誤差が最小の 1e-05(参照は見ない)。",
+  "caption": "TV の重みは 50 枚の条件で、使わなかった 250 枚への再投影誤差が最小の 1e-05(参照は見ない)。反復の回数も同じ規則で選んだ(SIRT 400・OS-SART 60・TV 150 回)。",
   "shape": [
    720,
    1120,
@@ -85,10 +85,10 @@
  {
   "file": "09_scores.png",
   "name": "scores",
-  "caption": "門 52 本、外れ 0 本。",
+  "caption": "門 54 本、外れ 0 本。",
   "shape": [
    496,
-   1259,
+   1287,
    3
   ],
   "csv": "09_scores.csv",

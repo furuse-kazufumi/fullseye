@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1830. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1833. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -225,9 +225,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `calib.py`
 
-- **L301** _(ja)_ — ★2026-11-05(敵対的検証 geometry): H は H[2,2] = 1 に揃えてあるが、H[2,2] は平面座標の 原点の取り方で変わる(原点をずらすと h3 だけが変わる)。そのまま V に積むと視点ごとの 行の重みが原点で変わり、K も退化判定の比も原点の取り方に依存した(物体座標に 1000 mm 足しただけで「退化」と拒否)。原点に依らない h1, h2 の長さで各 H の倍率を揃える。
-- **L312** — ★Am 2026-09-06 haben wir gemessen, dass dieses Gate **bei einer echten Kamera nicht auslöst**. Auf verzerrungsfreien synthetischen Daten funktioniert es wie entworfen (Verhältnis 3.8e-14 bei 0 Grad Neigung, 8.6e-10 bei 0.05 Grad, beide verweigert). Aber mit realistischer Tonnenverzeichnung k1=-0.18 passt das planare Homographie-Modell von vornherein nicht mehr, und das Verhältnis **bleibt unabhängig von der Neigung um 1.9e-06 kleben** (0 Grad 1.916e-06 / 0.05 Grad 1.935e-06 / 0.2 Grad 2.005e-06).
-- **L318** — ★Nur wenn zwei Bedingungen zusammen erfüllt sind: dass **Verzeichnung vorliegt** und dass sich **die Platte zwischen den Blickpunkten seitlich bewegt**. Mit nur einer von beiden klingelt das Gate wie entworfen (die Trennung sind die 3 in tests/test_calib.py). Und eine tatsächliche Kalibriersitzung hat immer beides, da man die Platte von Hand bewegt, während man aufnimmt. Es reicht auch nicht, nur die Schwelle anzuheben —— bei Verzeichnung beträgt der Abstand zwischen voller Entartung 1.92e-06 und 2 Grad Neigung 4.42e-06 nur das 2.3-fache, und es lässt sich keine Trennlinie ziehen. Daher: * die Schwelle unverändert lassen (bei verzeichnungskorrigierten Punkten wirkt sie korrekt) * das Verhältnis selbst als ``orientation_rank_ratio`` **zurückgeben** * das spätere Gate, das tatsächlich stoppt, "neige die Platte" sagen lassen (unten). Statt es zu beheben, geben wir dem Nutzer das Material zur Beurteilung.
+- **L264** _(ja)_ — ★5 % は先に 2 % を試し、既存テストの正当な配置(tests/test_calib.py の 4 視点・雑音 0.2 px、 広がり 3.3 %、fx 誤差 < 1 %)と tests/test_calibration_loop.py(2.9 %)が落ちたあとに選んだ値で、 理論から導いた線ではない(後付けの選択であることを開示する)。
+- **L268** _(ja)_ — 揺らす回数と乱数の種(同じ入力なら同じ判定になる)。★32 回の見積もり自体が ±25 % ほど揺れるので、 広がりが 5 % 近くの配置では、入力(雑音の実現)や種を少し変えるだけで判定が反転する (独立レビュー 2026-11-09: 歪みなし 0.05 px・2 度で種 40 個中 7 個が通過、k1=−0.18・6 度で 26/40、 0.2 px・4 度で 3/40)。回数を 4 倍にしても揺れは半分にしかならず、反転は無くならない。
+- **L412** _(ja)_ — ★2026-11-05(敵対的検証 geometry): H は H[2,2] = 1 に揃えてあるが、H[2,2] は平面座標の 原点の取り方で変わる(原点をずらすと h3 だけが変わる)。そのまま V に積むと視点ごとの 行の重みが原点で変わり、K も退化判定の比も原点の取り方に依存した(物体座標に 1000 mm 足しただけで「退化」と拒否)。原点に依らない h1, h2 の長さで各 H の倍率を揃える。
+- **L423** — ★Am 2026-09-06 haben wir gemessen, dass dieses Gate **bei einer echten Kamera nicht auslöst**. Auf verzerrungsfreien synthetischen Daten funktioniert es wie entworfen (Verhältnis 3.8e-14 bei 0 Grad Neigung, 8.6e-10 bei 0.05 Grad, beide verweigert). Aber mit realistischer Tonnenverzeichnung k1=-0.18 passt das planare Homographie-Modell von vornherein nicht mehr, und das Verhältnis **bleibt unabhängig von der Neigung um 1.9e-06 kleben** (0 Grad 1.916e-06 / 0.05 Grad 1.935e-06 / 0.2 Grad 2.005e-06).
+- **L429** — ★Nur wenn zwei Bedingungen zusammen erfüllt sind: dass **Verzeichnung vorliegt** und dass sich **die Platte zwischen den Blickpunkten seitlich bewegt**. Mit nur einer von beiden klingelt das Gate wie entworfen (die Trennung sind die 3 in tests/test_calib.py). Und eine tatsächliche Kalibriersitzung hat immer beides, da man die Platte von Hand bewegt, während man aufnimmt. Es reicht auch nicht, nur die Schwelle anzuheben —— bei Verzeichnung beträgt der Abstand zwischen voller Entartung 1.92e-06 und 2 Grad Neigung 4.42e-06 nur das 2.3-fache, und es lässt sich keine Trennlinie ziehen. Daher: * die Schwelle unverändert lassen (bei verzeichnungskorrigierten Punkten wirkt sie korrekt) * das Verhältnis selbst als ``orientation_rank_ratio`` **zurückgeben** * das spätere Gate, das tatsächlich stoppt, "neige die Platte" sagen lassen (unten). Statt es zu beheben, geben wir dem Nutzer das Material zur Beurteilung.
 
 ## `caltab.py`
 
@@ -544,21 +546,22 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_camera_calibration.py`
 
-- **L152** — ── Kalibrierung (eine selbstgebaute minimale Bündelausgleichung. ★ Lücke (e)) ──────────────────────────────────── #
-- **L181** — ★ Lücke (d): Die Bildpunkte von camera_calibration sind (row, col). project_points sind (x, y).
-- **L519** — ★ Lücke (b): reprojection_error kennt die Verzerrung nicht. Selbst wenn man die wahren Werte übergibt, wird es nicht 0.
-- **L743** — 2. ★ Der Hauptpunkt: Der Reprojektions-RMS ist nahezu gleich, doch der fx-Fehler unterscheidet sich um mehr als eine Größenordnung
-- **L751** — 3. ★ Der Kompensationsmechanismus: Das Verhältnis von fx stimmt mit dem Verhältnis von Z überein
-- **L757** — 4b. ★ Eine ehrliche Aufzeichnung einer Niederlage: bei engem Sichtfeld + 0.30 px Rauschen ist der Nullpunkt B, der den Hauptpunkt auf die Bildmitte fixiert, korrekter als ihn zu schätzen (eine Bedingung, unter der man nicht besser sein kann, existiert wirklich)
-- **L773** — ★ Lücke (c): Da die Punkte verzerrt sind, hat es nicht das Degenerationsgatter gestoppt, sondern das nachgelagerte nicht-endliche K-Gatter. Wir prüfen sogar, dass dessen Meldung "neige die Platte" enthält (hinzugefügt 2026-09-06).
-- **L781** — 5b. ★ Lücke (c3): Die geschlossene Form weicht systematisch um den Betrag der Verzerrung ab (nur als Startwert)
-- **L785** — 6. ★ Lücke (b): reprojection_error kennt die Verzerrung nicht -> selbst wenn man die wahren Werte übergibt, bleibt er groß
-- **L791** — 7. ★ Lücke (a) [Behoben 2026-09-19]: Die Schätzung der intrinsischen Parameter ist jetzt über die Fassade zugänglich. Früher war sie von `fs` aus unsichtbar, und dieser Stolperdraht meldete stets „sobald geschlossen, den Docstring aktualisieren“. Jetzt ist sie als `fs.camera_calibration` aufrufbar (Fähigkeitsnotiz `camera-intrinsics-calibration`). Sie ist allerdings eine Fassadenfunktion und kein Op in der Registry (da nicht in der festen Form `(Bild, a, b)`).
-- **L1047** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
-- **L1088** _(ja)_ — (a) 4 枚の部分集合 715 通り。★2026-11-08 の再レビュー: 13 枚の推定を基準にした「相関 +0.03」は基準の 取り方の産物だった —— 再投影の外れた 1 枚(left02)が 13 枚の推定を引っ張り、その 1 枚を含む組は全部 RMS が大きい。基準と組を変えると相関が +0.03 にも +0.54 にもなる。ここでは外れの 1 枚をデータから 決めて明示し、その 1 枚を除いた 12 枚の推定を基準に、除いた組(495 通り)で見る。
-- **L1125** _(ja)_ — ★再々レビュー: 外れを含まない組の RMS は 0.2 と 0.3 の 2 つの塊に分かれる。0.3 の塊は 2 番目に外れた写真を 含む組。外れの数を 1 → 2 → 3 枚と増やして除き、そのたびに基準も残りの写真で推定し直した相関も出す。
-- **L1148** _(ja)_ — (b) 実写の質感で描いた板: 真の K・歪み = 13 枚の自前の推定値(★外から来た真値ではない —— 描いた板の 真値として置いただけ。外から来ているのは板の質感・部屋の背景と OpenCV の角点検出)。
-- **L1213** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる。CI(データ無し)の門は記録値どうしの 比較なので、記録が古くなっても気づけない —— その穴はここで塞ぐ(決定的な計算なので許容幅は丸めの分だけ)。
+- **L158** — ── Kalibrierung (eine selbstgebaute minimale Bündelausgleichung. ★ Lücke (e)) ──────────────────────────────────── #
+- **L187** — ★ Lücke (d): Die Bildpunkte von camera_calibration sind (row, col). project_points sind (x, y).
+- **L525** — ★ Lücke (b): reprojection_error kennt die Verzerrung nicht. Selbst wenn man die wahren Werte übergibt, wird es nicht 0.
+- **L754** — 2. ★ Der Hauptpunkt: Der Reprojektions-RMS ist nahezu gleich, doch der fx-Fehler unterscheidet sich um mehr als eine Größenordnung
+- **L762** — 3. ★ Der Kompensationsmechanismus: Das Verhältnis von fx stimmt mit dem Verhältnis von Z überein
+- **L768** — 4b. ★ Eine ehrliche Aufzeichnung einer Niederlage: bei engem Sichtfeld + 0.30 px Rauschen ist der Nullpunkt B, der den Hauptpunkt auf die Bildmitte fixiert, korrekter als ihn zu schätzen (eine Bedingung, unter der man nicht besser sein kann, existiert wirklich)
+- **L784** — ★ Lücke (c): Da die Punkte verzerrt sind, hat es nicht das Degenerationsgatter gestoppt, sondern das nachgelagerte nicht-endliche K-Gatter. Wir prüfen sogar, dass dessen Meldung "neige die Platte" enthält (hinzugefügt 2026-09-06).
+- **L792** — 5b. ★ Lücke (c3): Die geschlossene Form weicht systematisch um den Betrag der Verzerrung ab (nur als Startwert)
+- **L796** — 6. ★ Lücke (b): reprojection_error kennt die Verzerrung nicht -> selbst wenn man die wahren Werte übergibt, bleibt er groß
+- **L802** — 7. ★ Lücke (a) [Behoben 2026-09-19]: Die Schätzung der intrinsischen Parameter ist jetzt über die Fassade zugänglich. Früher war sie von `fs` aus unsichtbar, und dieser Stolperdraht meldete stets „sobald geschlossen, den Docstring aktualisieren“. Jetzt ist sie als `fs.camera_calibration` aufrufbar (Fähigkeitsnotiz `camera-intrinsics-calibration`). Sie ist allerdings eine Fassadenfunktion und kein Op in der Registry (da nicht in der festen Form `(Bild, a, b)`).
+- **L1058** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
+- **L1099** _(ja)_ — (a) 4 枚の部分集合 715 通り。★2026-11-08 の再レビュー: 13 枚の推定を基準にした「相関 +0.03」は基準の 取り方の産物だった —— 再投影の外れた 1 枚(left02)が 13 枚の推定を引っ張り、その 1 枚を含む組は全部 RMS が大きい。基準と組を変えると相関が +0.03 にも +0.54 にもなる。ここでは外れの 1 枚をデータから 決めて明示し、その 1 枚を除いた 12 枚の推定を基準に、除いた組(495 通り)で見る。
+- **L1136** _(ja)_ — ★再々レビュー: 外れを含まない組の RMS は 0.2 と 0.3 の 2 つの塊に分かれる。0.3 の塊は 2 番目に外れた写真を 含む組。外れの数を 1 → 2 → 3 枚と増やして除き、そのたびに基準も残りの写真で推定し直した相関も出す。
+- **L1159** _(ja)_ — (b) 実写の質感で描いた板: 真の K・歪み = 13 枚の自前の推定値(★外から来た真値ではない —— 描いた板の 真値として置いただけ。外から来ているのは板の質感・部屋の背景と OpenCV の角点検出)。
+- **L1210** _(ja)_ — ★展示台帳の lead の「28 倍以上」は 1 回の実現の値(門は 10 倍)。データありの実行で REAL_RECORDED が変わったら、lead も見直すこと。
+- **L1231** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる。CI(データ無し)の門は記録値どうしの 比較なので、記録が古くなっても気づけない —— その穴はここで塞ぐ(決定的な計算なので許容幅は丸めの分だけ)。
 
 ## `examples/poc_cell_counting.py`
 
@@ -1875,8 +1878,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `intensityreg.py`
 
-- **L411** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F7): history の各値は**更新前の** W の相関なので、反復の上限で抜けると history[-1] は返す W の相関ではない(報告 0.8242、返した変換の相関 0.9945 —— min_rho=0.9 で正しい 答えを拒否し、逆向きなら悪い答えを通しうる)。metric と min_rho の判定は返す W(最も細かい段の Wl)で 測り直した相関で行う。収束で抜けたときは W が更新されていないので history[-1] と同じ値。 history は従来どおり反復ごとの値(長さ = iterations)のまま。
-- **L1018** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F9): 以前は 4 群とも両端を含む [lo, hi] で、境界の値(同値の多い 場では全部)が隣の群にも数えられた(有効 576 画素で各群 576、合計 2304)。群は排他的に: [lo, hi) で、最後の群だけ最大値を含む [lo, hi]。全部同じ値なら最後の群に全部が入る。
+- **L456** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F7): history の各値は**更新前の** W の相関なので、反復の上限で抜けると history[-1] は返す W の相関ではない(報告 0.8242、返した変換の相関 0.9945 —— min_rho=0.9 で正しい 答えを拒否し、逆向きなら悪い答えを通しうる)。metric と min_rho の判定は返す W(最も細かい段の Wl)で 測り直した相関で行う。収束で抜けたときは W が更新されていないので history[-1] と同じ値。 history は従来どおり反復ごとの値(長さ = iterations)のまま。
+- **L1063** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F9): 以前は 4 群とも両端を含む [lo, hi] で、境界の値(同値の多い 場では全部)が隣の群にも数えられた(有効 576 画素で各群 576、合計 2304)。群は排他的に: [lo, hi) で、最後の群だけ最大値を含む [lo, hi]。全部同じ値なら最後の群に全部が入る。
 
 ## `lens_gpu.py`
 

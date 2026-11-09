@@ -674,10 +674,13 @@ def _views_uv(image_points_list, n_obj, op, name="image_points_list"):
 
 
 def _init_mono(obj, uv_views, image_shape, op):
-    """Zhang の閉形式(calib.camera_calibration)で K の初期値、ホモグラフィで姿勢の初期値。"""
+    """Zhang の閉形式(calib.camera_calibration)で K の初期値、ホモグラフィで姿勢の初期値。
+
+    初期値なので、公開 op の雑音込みの門(K の相対標準偏差 5 %、2026-11-09)は通さず閉形式の
+    本体を直接呼ぶ(不確かさは LM の共分散が報告する)。比の門と非正 K の門は残る。"""
     init = {"method": "zhang"}
     try:
-        z = _calib.camera_calibration(obj, [u[:, ::-1] for u in uv_views])
+        z = _calib._zhang_closed_form(*_calib._zhang_views(obj, [u[:, ::-1] for u in uv_views]))
         K = np.array([[z["fx"], 0.0, z["cx"]], [0.0, z["fy"], z["cy"]], [0, 0, 1.0]])
         init.update(fx=z["fx"], fy=z["fy"], cx=z["cx"], cy=z["cy"],
                     orientation_rank_ratio=z["orientation_rank_ratio"])
