@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1825. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1823. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -984,6 +984,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L586** — ★Die Messung ist langsamer als das. Der Anteil der auf der Maske tatsächlich getilgten Korngrenzen-Pixel, f_eff, ist kleiner als f (die Unschärfe lässt das benachbarte Schwarz in die 1 px an beiden Enden des Spalts durchsickern, und die lokale Schwelle greift es auf), also vergleiche mit der über f_eff neu abgeleiteten Vorhersage ΔG0 + 6.64 log10(1-f_eff).
 - **L823** _(ja)_ — ★配布物の注記は 128 px 角ごとに描かれていて、**各タイルの外周 1 画素に人工の粒界**がある (外周の行・列の粒界の画素密度 0.15、内側の 0.05 の 3 倍)。貼り合わせると継ぎ目に人工の粒界が 並ぶので、この章は**タイル単位**で、外周 1 画素を落とした 126 px 角で数える。
 
+## `examples/poc_mixed_case_depalletizing.py`
+
+- **L1778** _(ja)_ — と同じ 5 mm にした。★この値は scene 1・2 の真値を見て決めたので、scene 1・2 は「調整に使った」、 scene 3〜10 は「見ていない」として結果を分けて出す(``split_by_tuning``)。
+- **L1787** _(ja)_ — ≈ 3 px。★感度: scene 1・2 の 10 枚で 0 px → 長辺 −13 / 短辺 −4.5 mm、6 px → −0.3 / +4.1 mm (6 px では遮る縁の 深度カメラの「縁の太り」まで拾って外へ伸びる)。真値で合わせ込まず見積もりの 3 にした。 全 50 枚の 0 / 3 / 6 の比較(下書きの段で出した): 再現率 0.705 / 0.705 / 0.674、誤検出 14.8 / 43.1 / 52.2 枚あたり。 全 50 枚の実測(2026-11-08): 0 px → 再現率 0.705・長 −7.8・短 −2.6 mm・誤検出 14.8 枚/画像 / 3 px → 0.705・−2.0・+2.9・43.1 / 6 px → 0.674・+0.4・+5.8・52.2。再現率は変わらず、寸法の偏りと 誤検出の数の綱引き(太らせると雑音の小片まで矩形らしくなる)。
+- **L1966** _(ja)_ — ★scipy の binary_dilation は iterations=0 で「変わらなくなるまで」太らせる(= 切り出し全体)。0 は太らせない。
+- **L3220** _(ja)_ — ★これらの門は、天面の合わせ目を入れた場面の結果を見てから置いた。全部の種と見ていない種 3〜9 の両方で確かめる。
+
 ## `examples/poc_moire_screen.py`
 
 - **L586** _(ja)_ — ★2026-09-23: 語の網を ("notch", "destripe", "mura") に狭めた。npr 族が入って 'moire' と 'periodic' が引っかかるようになったが、`halftone_moire_period` は **うなりの周期を予言する** op であって**落とす** op ではない —— 穴は残っている。 「語で引く穴の固定」は、別の意味で同じ語を使う族が来た瞬間に偽陽性になる (この PoC は (a) で `fly_hex_lattice` の例を既に書いている)。**穴の主張は 語でなく「何ができないか」で書くこと**: ここで無いのは「特定の (fx, fy) を 落とす」op であって、「モアレという語を含む op」ではない。
@@ -1055,7 +1062,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_phase_measuring_deflectometry.py`
 
-- **L500** _(ja)_ — ★2026-10-15: 手元 23 秒の計算が、CI の並列のシャード(py3.12 3/4)では壁時計 120.6 秒になり、この門だけが赤に なった。壁時計は同じ機械で走る他のテストの負荷を数えてしまう。この門が抑えたいのは「この PoC 自身の計算量」 なので、プロセスの CPU 時間で測る(壁時計は併記する。テスト側の 600 秒の打ち切りは別にある)。
+- **L498** _(ja)_ — ★2026-10-15: 手元 23 秒の計算が、CI の並列のシャード(py3.12 3/4)では壁時計 120.6 秒になり、この門だけが赤に なった。壁時計は同じ機械で走る他のテストの負荷を数えてしまう。この門が抑えたいのは「この PoC 自身の計算量」 なので、プロセスの CPU 時間で測る(壁時計は併記する。テスト側の 600 秒の打ち切りは別にある)。
 
 ## `examples/poc_photoelasticity.py`
 
@@ -1878,11 +1885,6 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L495** _(ja)_ — ★2026-11-02: 相対改善が許容未満まで来たあとは、merit が丸めの床に当たって次の手が棄却される。 以前はこれも stalled にしていて、converged / stalled が最下位ビットの丸めで入れ替わった (_intersect_conic の安定化で 1e-15 mm 動いただけで test_lensopt の判定が反転)。 許容未満の改善を見たあとで下げる手が尽きたなら収束、そうでなければ stalled。
 
-## `lightsection.py`
-
-- **L241** _(ja)_ — 飽和と見なす台: 3 行以上、または 2 行以上で頂が画像全体の最大値(天井)。★2 行だけの同値は 量子化した飽和していない光条で日常的に起きる(uint8・σ3 px・頂 200 で 6.2 %、頂 60 で 15.2 % の列、 2026-11-09 の独立レビュー)ので、天井に届かない 2 行の同値は台と見なさない。台でない列は lo = hi = argmax で、直す前と bit 一致
-- **L512** _(ja)_ — 縁の 3σ 以内は微分フィルタの外挿が断面を曲げる → 無効(fail-closed)。★推定した法線では判定しない: 外挿は法線そのものも曲げる(45° の線の上端で n_y 0.71 → 0.43、誤差 0.88 px が valid で残った、 2026-11-09 の独立レビュー)。点の位置だけで決め、画像の外の点は無条件に無効
-
 ## `matappear.py`
 
 - **L167** — ★Das Uebergeben eines 0-dimensionalen (skalaren) Werts liess `r.shape[-1]` einen **nackten IndexError** werfen (im adversarialen Audit vom 2026-09-04 aufgedeckt). Ein spektraler Reflexionsgrad hat mindestens eine Wellenlaengenachse -- ein Skalar ist kein 'Wert pro Wellenlaenge', daher weist der Waechter ihn ausdruecklich ab.
@@ -1959,7 +1961,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `measuring1d.py`
 
-- **L429** _(ja)_ — ★空の表は名指しで拒否する(2026-10-12 の空入力の方針 A)。空 list を空 list で返すと、 測定が 1 件も取れなかったことが mm 換算の後ろで見えなくなる。
+- **L375** _(ja)_ — ★空の表は名指しで拒否する(2026-10-12 の空入力の方針 A)。空 list を空 list で返すと、 測定が 1 件も取れなかったことが mm 換算の後ろで見えなくなる。
 
 ## `medial.py`
 
@@ -2482,8 +2484,6 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `specularity.py`
 
 - **L1492** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 K4 の兄弟): 退化の床を入力の最大輝度に対する相対量に (photometric._albedo_floor と同じ。絶対 1e-8 では強度 ×1e-8 で全法線が (0, 0, 1))。
-- **L1627** _(ja)_ — 返していた(σ 0.001 の暗い半面で DoLP の中央値 1.000)。★最初の版は「上位 99 百分位の 1e-2」という雑音を見ない床で、独立レビューで両向きに黙って間違うことが分かった: ハイライト 5 % と暗い拡散物体(S0 0.008、SNR 80、真の DoLP 0.3)で物体全体を DoLP 0 にし、明るい所が 画像の 1 % 未満だと床が暗部に落ちて DoLP 1.0 に戻った。
-- **L1649** _(ja)_ — σ̂ は a0 > 0 の全画素の残差の中央値。★a0 で画素を選ぶ(暗い側だけ)と、0 でクリップした雑音では 「a0 が小さい = 標本が 0 に貼りつく = 残差も小さい」の偏りで σ̂ が小さく出て、暗い雑音が 1〜11 % 通った(2026-11-09 実測)。掃引に合わないフレーム(残差が信号の桁)では σ̂ が信号の桁になり、 全画素が「偏光度を定義できない」になる —— それはその掃引の正しい答え(fail-closed)
 
 ## `studio.py`
 
@@ -3055,11 +3055,6 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L496** _(ja)_ — ★2026-10-02: 同じ台帳に score(segeval)/world(segworld)のカテゴリが足された。HALCON の 9 本は 4 カテゴリの中にちょうど 9 本、他のカテゴリの op は segmentation.py の物ではない。
 - **L499** _(ja)_ — ★2026-10-18(統合 8 第 2 波): 同じ「classify」カテゴリに cropweed の Fisher 判別 2 本が入った。HALCON 章の 9 本は 実体が segmentation.py の物なので、module で絞る(カテゴリ名だけで数えると汎用の判別が混ざる)。
 
-## `tests/test_sfpolar.py`
-
-- **L388** _(ja)_ — ★2026-11-09: 合わないフレームは残差を信号の桁に上げ、暗さの床(雑音基準)で残りの画素も 「偏光度を定義できない」になる。以前は 73 % の画素が 3 倍のフレームから作った法線を valid で 返していた。exclude でも残る画素が無いので拒む(fail-closed)
-- **L480** _(ja)_ — 素の周期解(integrate_gradients)は傾き(直流)を落とす。★2026-11-09 まではここで integrate_normals を比べていた —— その op が傾きを捨てる欠陥を「約束」として固定していた
-
 ## `tests/test_shapestats.py`
 
 - **L196** — ★**Gibt man die Ebene frei, wird eine gleichförmige Ausbreitung auf einer Seite komplett aufgesogen** (gemessen 4.9e-35). Der Mittelpunkt bewegt sich nur zur Hälfte und die Ebene bewegt sich dorthin mit, sodass es nicht als Links-rechts-Differenz übrig bleibt. Das ist eine Grenze dieser Definition, kein Defekt —— will man es sehen, gibt man die Ebene von außen vor oder fügt einen Landmark auf der Mittellinie (midline) hinzu.
@@ -3441,9 +3436,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L117** — ★2026-10-15: ohne `--md` **schrieb es nichts** (es gab nur eine Zusammenfassung auf stdout aus). docs/CONVERSION_MATRIX.md blieb auf dem Stand vom 2026-09-02 ("59 Typen / 164 Konversionspaare") stehen, und da --check "eine Stufe, die nichts schreibt" nicht als Drift sieht, lief es sechs Wochen lang durch. Jetzt weist `trace_problems()` eine Stufe zurück, die ihre deklarierten Ausgaben nicht einmal berührt.
 - **L133** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
 - **L390** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
-- **L820** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L835** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L883** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
+- **L827** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L842** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L890** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `tools_geom.py`
 

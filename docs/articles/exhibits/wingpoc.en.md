@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 49 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 50 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1551,6 +1551,48 @@ Source: [examples/poc_real_typewritten_ocr.py](https://github.com/furuse-kazufum
 This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_typewritten_ocr)
 
 Ops used (notes): [`area_center_gray`](https://furuse.work/ops/mv/gray/area_center_gray.html) · [`classify_class_gmm`](https://furuse.work/ops/mv/classify/classify_class_gmm.html) · [`classify_class_knn`](https://furuse.work/ops/mv/classify/classify_class_knn.html) · [`classify_class_mlp`](https://furuse.work/ops/mv/classify/classify_class_mlp.html) · [`classify_class_svm`](https://furuse.work/ops/mv/classify/classify_class_svm.html) · [`create_lexicon`](https://furuse.work/ops/mv/classify/create_lexicon.html) · [`evaluate_class_gmm`](https://furuse.work/ops/mv/classify/evaluate_class_gmm.html) · [`gray_histo`](https://furuse.work/ops/mv/gray/gray_histo.html) · [`gray_projections`](https://furuse.work/ops/mv/gray/gray_projections.html) · [`lookup_lexicon`](https://furuse.work/ops/mv/classify/lookup_lexicon.html) · [`segment_characters`](https://furuse.work/ops/mv/text/segment_characters.html) · [`select_characters`](https://furuse.work/ops/mv/text/select_characters.html) · [`suggest_lexicon`](https://furuse.work/ops/mv/classify/suggest_lexicon.html) · [`text_line_orientation`](https://furuse.work/ops/mv/text/text_line_orientation.html) · [`text_line_slant`](https://furuse.work/ops/mv/text/text_line_slant.html) · [`train_class_gmm`](https://furuse.work/ops/mv/classify/train_class_gmm.html) · [`train_class_knn`](https://furuse.work/ops/mv/classify/train_class_knn.html) · [`train_class_mlp`](https://furuse.work/ops/mv/classify/train_class_mlp.html) · [`train_class_svm`](https://furuse.work/ops/mv/classify/train_class_svm.html)
+
+## No.2026.310 —— Mixed-Case Depalletizing: With Tight Seams a Depth Step Cannot Separate the Cartons — Whether a Depth V-Groove or a Dark Colour Groove Wins Flips with the Depth, Gap and Tape of the Flap Seam (a Map)
+
+Packed cartons with identical prints are told apart from overhead depth and colour, then unloaded. A depth step splits none, and whether depth dips or dark colour lines win flips across 28 flap-seam builds. With identical prints, deep grooves favour colour; only wide, untaped cuts over shallow grooves favour depth.
+
+[![Mixed-Case Depalletizing: With Tight Seams a Depth Step Cannot Separate the Cartons — Whether a Depth V-Groove or a Dark Colour Groove Wins Flips with the Depth, Gap and Tape of the Flap Seam (a Map)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png)
+
+*↑ **Mixed-Case Depalletizing: With Tight Seams a Depth Step Cannot Separate the Cartons — Whether a Depth V-Groove or a Dark Colour Groove Wins Flips with the Depth, Gap and Tape of the Flap Seam (a Map)** ―― A mixed pallet with identical cartons packed tight (seed 0, rendered with Blender Cycles, overhead RGB-D). Top: colour, depth (shaded, black = missing), the true top faces of the free cartons, depth step. Bottom: depth V-groove, colour only, colour groove and both (AND) (sky blue = matched, orange = wrong). Seed 0 favours the V-groove (7/10 against a median of 0.23 over 10 seeds) and was used to set thresholds.*
+
+[![5 つの条件(難しい順)のカラーと深度(陰影つき)、天面の再現率(種 10 本の中央値)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/02_difficulty_ladder_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/02_difficulty_ladder.png)
+
+*↑ The measurement ―― 5 つの条件(難しい順)のカラーと深度(陰影つき)、天面の再現率(種 10 本の中央値)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![種ごとの再現率の中央値と幅。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/03_first_frame_recall_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/03_first_frame_recall.png)
+
+*↑ 種ごとの再現率の中央値と幅。*
+
+[![1 個ずつ下ろしたときの成功率(条件ごと、5 通り)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/05_success_rate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/05_success_rate.png)
+
+*↑ 1 個ずつ下ろしたときの成功率(条件ごと、5 通り)。*
+
+[![継ぎ目の V 字の溝は縁の丸みが作る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/07_edge_radius_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/07_edge_radius_sweep.png)
+
+*↑ 継ぎ目の V 字の溝は縁の丸みが作る。*
+
+[![HOPE の箱型の物体の面を、同じ op の組(切り分けと閾値は別実装)で測った結果。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/10_hope_real_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/10_hope_real_depth.png)
+
+*↑ HOPE の箱型の物体の面を、同じ op の組(切り分けと閾値は別実装)で測った結果。*
+
+[![条件ごとに、ロボットが「カラーの溝」のやり方で選んだ天面を吸って下ろす手(成功と失敗)と、天井カメラの差し込み。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.gif)
+
+*↑ The animation ―― 条件ごとに、ロボットが「カラーの溝」のやり方で選んだ天面を吸って下ろす手(成功と失敗)と、天井カメラの差し込み。*
+
+```
+py -3.11 examples/poc_mixed_case_depalletizing.py
+```
+
+Source: [examples/poc_mixed_case_depalletizing.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_mixed_case_depalletizing.py)
+
+This run produced **12 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_mixed_case_depalletizing)
+
+Ops used (notes): [`bilateral_filter_depth`](https://furuse.work/ops/3d/depth_denoise/bilateral_filter_depth.html) · [`crop_rectangle2`](https://furuse.work/ops/mv/resample/crop_rectangle2.html) · [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`normals_from_depth`](https://furuse.work/ops/3d/range_image/normals_from_depth.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`ransac_plane`](https://furuse.work/ops/3d/robust_fit/ransac_plane.html) · [`srgb_to_linear`](https://furuse.work/ops/gfx2d/colorspace/srgb_to_linear.html) · [`watersheds_marker`](https://furuse.work/ops/segmentation/watershed/watersheds_marker.html)
 
 ## No.2026.308 —— Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)
 

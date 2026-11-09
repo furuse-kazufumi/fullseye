@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(484 例)
+### 2-D 画像/信号/幾何(485 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -151,6 +151,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする(学習器なし、実データは雑草イネの UAV 画像)** — 新 op 5 本(`cropweed`、台帳 `opssegmentation` の `plant` / `classify`): `plant_color_index`(ExG・ExR・ExGR・CIVE・NGRDI・VEG、暗い画素は値を作らない)/ `superpixel_color_texture_features`(領域ごとの色と肌理の 10 特徴、向きの揃い)/ `fisher_lda_fit`・`fisher_lda_score`(2 クラスの Fisher 判別、閉形式)/ `cover_ratio_grade`(被度を評価前に宣言した境 5 / 25 / 50 % で 4 段階)。合成の水田(雑草の割合を分位点で厳密に置く)で κ 0.876、作物と雑草の色を入れ替えると被度の順位相関 −0.999(判定は色で決まる)。★実データ WeedyRice-RGBMS(UAV の RGB と雑草イネの注釈 734 組、CC BY 4.0、repo に入れない): val で格子を選び(SNIC 超画素より良い)、test 148 枚で段階の一致 0.574(多数派だけ 0.345)・κ 0.424 [0.313, 0.520]・並べ替え p 0.0005・被度の相関 0.826・IoU 0.397(ばらまき 0.189)。R と G を入れ替えると κ −0.023。撮影日を丸ごと外すと季節の違う 1 日は日の中の相関 0.14 —— 付属の分割の数字は見た飛行の別のコマの成績。コンテストの画像は使っておらず、数字はコンテストの得点と比べられない。学習器 0、門 16 件(CI は合成の 10 件)。 `py -3.11 examples/poc_weed_rice_ratio.py`
 - **MRI バイアス場と組織面積(GM と WM は逆向きに壊れ、足すと隠れる)** — 楕円殻の脳ファントムで 3 組織の真値面積を握り、乗算場と Rician 雑音を掛けて 3 クラス大津で測る。★★振幅 30 % で **GM +20.2 % / WM -7.7 % なのに GM+WM は +0.0 %**(脳実質体積は両方間違っても動かない)。★雑音を止めると符号が反転(GM -11.8 %)し、崖は幾何予測 30 % に対し実測 17.5 %。★★log I をそのまま平滑する補正は**場が無くても GM +81.8 %** 壊す(解剖が場に見える)が、分割残差の Wells 型反復なら 40 % でも +1.8 %。周波数の崖は基底で決まり(多項式 32 / ガウス 16 / 格子 B スプライン 8 px)、4 px では理想補正だけが残る。SNR 15 で場なしでも GM +8.5 %(裾の予測 +6.3 %)。 `py -3.11 examples/poc_mri_bias_field.py`
 - **葉の病斑面積率(等級は色の軸より葉マスクと縁の定義で決まる)** — 閉形式の葉と既知面積の病斑に土・照明むら・白飛び・影を重ねた合成葉。緑の固定しきい値は土だけで **+65.2 pt**、射影 G で葉を切り a* で病斑を切ると標準場面で -0.8 pt。★白飛びの鏡面反射は a* に**偽陽性しか出さない**(20 % で +12.6 pt、偽陰性 0.0 ―― 予想した符号の逆転は起きない)、白を足しても動かない色相なら +2.0 pt。★★縁のぼけ幅 4 px では境界を 25 %/75 % 線のどちらに置くかだけで **±3.5 pt** 動き(Steiner の式が 0.4 pt 以内で予測)、等級境界 ±3 pt の 40 枚は土の上では 19〜35 枚が誤等級、黒布 + 明るさ葉マスク + 色相固定なら 8 枚。 `py -3.11 examples/poc_leaf_disease_area.py`
+- **混載デパレタイズ: 継ぎ目が詰まると深度の段差では分けられない —— 深度の V 字とカラーの溝の勝ち負けは天面の合わせ目の作りで入れ替わる(地図)** — JIS T11 パレットに大きさ・印字・テープ・つぶれ・シュリンク包装の違う段ボールを 2 段に混載し、天井の RGB-D で撮る(カラーは Blender Cycles、深度は同じ幾何から縞・パターン投影のセンサの物理)。5 条件 × 10 枚で、天面を 深度の段差 / 深度の V 字 / カラーだけ / カラーの溝 / 両方(AND)で切り分ける。★基本の場面の再現率(種 10 本の中央値): 継ぎ目が詰まる 0.39 / 0.63 / 0.29 / 0.64 / 0.45、同じ柄 0.00 / 0.23 / 0.17 / 0.69 / 0.67。★合わせ目の地図(溝 0.2〜2 mm × すき間 0〜1.5 mm × テープ 3 種): 溝が 2 mm だとカラーの溝(0.83 対 0.29)、すき間 1.5 mm・テープ無し・溝 1 mm 以下で V 字(1.00 対 0.71)が上(同じ柄)。★1 個ずつ下ろす成功率(規則で判定): 同じ柄 0.12 / 0.28 / 0.23 / 0.53 / 0.44。★実データの章: HOPE(実深度、数値だけ)で面の再現率 0.705(見出しの主張は支えない)。 `py -3.11 examples/poc_mixed_case_depalletizing.py`
 
 **terrain**
 - **地形を測る(傾斜・水の流れ・日当たりを閉形式と突き合わせる)** — 平面・円錐・ガウス丘という解析曲面で傾斜と曲率を検算し、離散化の誤差と式の誤りを2 次収束で区別する。欠測(水面)の扱いで集水量がどう変わるかを 3 通り並べ、日当たりを向き別に出す。**この PoC が天空率の 18 倍の遅さを暴いた**。 `py -3.11 examples/poc_dem_terrain.py`
@@ -1427,7 +1428,7 @@ _計 3841 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `gray_range_rect` (halcon: `gray_range_rect`) `image → image` GPU: あり(gray_range_rect@twin) — 矩形窓内の最大値と最小値の差(局所レンジ)を正規化して返す。テクスチャの 局所的な起伏の激しさ(コントラスト量)を可視化する。HALCON の ``gray_range_rect``（Determine the gray value range within a rectangle.） に相当。 · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` GPU: あり(gray_dilation_rect) — 矩形窓内の最大値フィルタ（グレースケール膨張に相当）。HALCON の ``gray_dilation_rect``（Determine the maximum gray value within a rectangle.）に相当。 · 例: `gallery2d_smoothing_rank`
 - `mean_sp` (halcon: `mean_sp`) `image → image` GPU: あり(許可リスト) — ロバスト平滑化フィルタ。窓内の 20 パーセンタイルと 80 パーセンタイルの平均を返す（トリム平均、trimmed mean）ことで、極端に明るい/暗い外れ値（ソルト&ペッパー雑音など）の影響を抑える。a が窓サイズを 3/5/7/9 に振る（``_k(a)``）。b は未使用。 · 例: `gallery2d_smoothing_rank`
-- `median` (halcon: `median_image`) `image → image` GPU: あり(median_image) — メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。 · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_ai_built_inspection_scored`, `poc_am_thermal_to_ct`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_hyperspectral_foreign_matter`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_sheet_deformation_ffd`, `poc_solar_el_inspection`, `poc_tacscalib_sphere_lut`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` GPU: あり(median_image) — メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。 · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_ai_built_inspection_scored`, `poc_am_thermal_to_ct`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_hyperspectral_foreign_matter`, `poc_lidar_terrain_change`, `poc_mixed_case_depalletizing`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_sheet_deformation_ffd`, `poc_solar_el_inspection`, `poc_tacscalib_sphere_lut`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
 - `median_image` (halcon: `median_image`) `image → image` GPU: あり(median_image@twin) — メディアンフィルタ(``ndimage.median_filter``、正方窓)。窓内の中央値で 置き換えるノイズ除去で、平均フィルタと違いエッジを保ったまま塩胡椒ノイズを 除去できる。HALCON の ``median_image``（Compute a median filter with various masks.）に相当(HALCON は円形・八角形等の任意マスクを選べるが、 ここでは正方形マスクに固定)。 · 例: `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `genspark_external_review`, `poc_prnu_camera_fingerprint`
 - `median_rect` (halcon: `median_rect`) `image → image` GPU: あり(median_rect) — 矩形メディアンフィルタ。``median_image`` と同じ ``scipy`` 実装だが、 高さと幅を独立に指定できる(``size=(k_a, k_b)``)。HALCON の ``median_rect`` （Compute a median filter with rectangular masks.）に相当。 · 例: `gallery2d_smoothing_rank`, `poc_tree_ring_dendro`, `poc_weld_radiograph_porosity`
 - `median_separate` (halcon: `median_separate`) `image → image` GPU: あり(median_separate) — 実装は ``median_image`` と同じ(``kind: "median"``、正方窓の 2 次元 メディアン)。HALCON の ``median_separate``（Separated median filtering with rectangle masks.）は行方向・列方向に分離した 1 次元メディアンを 2 パス 掛ける高速近似演算子だが、この代役では区別せず通常の 2 次元メディアンを 返す(結果は近い場合が多いが厳密には別アルゴリズム ―― 近似の限界)。 · 例: `gallery2d_smoothing_rank`
@@ -1462,7 +1463,7 @@ _計 3841 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `erosion_golay` (halcon: `erosion_golay`) `region → region` GPU: あり(erosion_golay) — 円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値の収縮（erosion）。b は未使用。 · 例: `gallery2d_region`
 - `erosion_rectangle1` (halcon: `erosion_rectangle1`) `region → region` GPU: 鎖の中だけ(許可リスト) — 正方形構造要素による二値収縮。``erosion_circle`` との違いは構造要素の 形のみ(円ではなく正方形)。HALCON の ``erosion_rectangle1``（Erode a region with a rectangular structuring element.）に相当。 · 例: `gallery2d_region`
 - `erosion_seq` (halcon: `erosion_seq`) `region → region` GPU: あり(erosion_seq) — 既定の十字形構造要素（4 近傍）で、a に応じて 1〜4 回反復して収縮（erosion）する逐次的収縮。b は未使用。反復回数を増やすほど収縮量が大きくなる（1 回あたり半径 1 画素相当）。 · 例: `gallery2d_region`
-- `fill_holes` (halcon: `fill_up`) `region → region` GPU: あり(fill_holes) — 領域内の穴埋め。HALCON の ``fill_up``（Fill up holes in regions.）に相当。 · 例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`, `poc_leaf_disease_area`, `poc_mesh_quality_repair`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_symmetry_restoration`
+- `fill_holes` (halcon: `fill_up`) `region → region` GPU: あり(fill_holes) — 領域内の穴埋め。HALCON の ``fill_up``（Fill up holes in regions.）に相当。 · 例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`, `poc_leaf_disease_area`, `poc_mesh_quality_repair`, `poc_mixed_case_depalletizing`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_symmetry_restoration`
 - `fill_up` (halcon: `fill_up`) `region → region` GPU: あり(fill_up) — 領域内部の穴(背景に完全に囲まれた領域)を埋める (``ndimage.binary_fill_holes``)。外周とつながっていない背景の孔だけが 埋まり、外周とつながった凹みは埋まらない。HALCON の ``fill_up``（Fill up holes in regions.）に相当。 · 例: `gallery2d_region`, `poc_bev_sensor_fusion`
 - `fill_up_shape` (halcon: `fill_up_shape`) `region → region` GPU: 鎖の中だけ(lbl_fill_up_shape) — 領域内の小さな穴を埋める。``area_threshold = 16+200a`` 画素以下の穴だけを埋める（skimage の ``remove_small_holes``）。b は未使用。 · 例: `gallery2d_region`
 - `get_region_contour` (halcon: `get_region_contour`) `region → region` GPU: 鎖の中だけ(許可リスト) — 領域の輪郭（境界線、1 画素幅）を抽出する。領域からその収縮版（1 回の二値収縮）を引いて輪郭を残す。**穴のある領域では外周だけでなく穴の輪郭も返る**（実測 2026-09-16: 8x8 の枠に 4x4 の穴を開けた入力で、穴に隣接する前景 20 画素のうち 16 画素が輪郭として立つ）。「領域 − 収縮版」は定義上、外側からも穴の側からも 1 画素を残すので、外周だけが欲しいなら穴を先に埋めること。a, b は未使用。``boundary`` seed op と同じ実装。 · 例: `gallery2d_region`, `poc_document_scan`
@@ -4785,8 +4786,8 @@ _計 3841 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `leader_line` `image2d × text → image2d` GPU: なし — 引き出し線 —— 注記の位置(``anchor_xy``)から対象(``target_xy``)へ。 · 例: `annotate_gallery`, `poc_kendama`
 
 #### annotate / shape(4)
-- `arc` `image2d → image2d` GPU: あり(許可リスト) — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_real_walnut_cbct`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` GPU: なし — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_camera_calibration`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_bg_kalman_tracking`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
+- `arc` `image2d → image2d` GPU: あり(許可リスト) — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_mixed_case_depalletizing`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_real_walnut_cbct`, `poc_weld_radiograph_porosity`
+- `ellipse` `image2d → image2d` GPU: なし — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_camera_calibration`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_mixed_case_depalletizing`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_bg_kalman_tracking`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: あり(許可リスト) — 多角形の塗り(偶奇規則の交差判定 ―― :mod:`imagedraw` は輪郭のみ)。 · 例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: あり(許可リスト) — 角丸の矩形(``fill=True`` で塗り)。下敷きや囲みに使う。 · 例: `annotate_gallery`, `poc_machine_condition_fusion`
 
@@ -4801,7 +4802,7 @@ _計 3841 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### gfx2d / colorspace(2)
 - `linear_to_srgb` `rgb → rgb` GPU: あり(許可リスト) — Linear light back to sRGB encoding. Exact inverse of :func:`srgb_to_linear`. · 例: `gfx2d_scene`, `poc_leaf_disease_area`, `poc_pigment_unmixing`, `poc_white_balance`
-- `srgb_to_linear` `rgb → rgb` GPU: あり(許可リスト) — sRGB-encoded values to linear light (IEC 61966-2-1). · 例: `gfx2d_scene`, `poc_leaf_disease_area`
+- `srgb_to_linear` `rgb → rgb` GPU: あり(許可リスト) — sRGB-encoded values to linear light (IEC 61966-2-1). · 例: `gfx2d_scene`, `poc_leaf_disease_area`, `poc_mixed_case_depalletizing`
 
 #### gfx2d / composite(6)
 - `alpha_composite` `rgba × rgba → rgba` GPU: あり(許可リスト) — Porter–Duff **over** on straight-alpha ``rgba`` (Porter & Duff 1984). · 例: `gfx2d_scene`
@@ -5135,7 +5136,7 @@ _計 3841 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### mv / resample(4)
 - `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: なし — 除算モデルの歪みを持つカメラの画像を、別の歪み・内部パラメータの画像へ描き直す。 · 例: `machine_vision_tour`, `poc_real_chessboard_undistort`
-- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: なし — 回転矩形の内側を線形補間で読み、軸に沿った画像として切り出す(crop_rectangle2)。 · 例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: なし — 回転矩形の内側を線形補間で読み、軸に沿った画像として切り出す(crop_rectangle2)。 · 例: `machine_vision_tour`, `poc_mixed_case_depalletizing`, `poc_real_stereo_multiscanline`
 - `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: なし — 逆写像表を画像へ適用して再標本化する(出力の画素ごとに入力の座標を読む)。 · 例: `machine_vision_tour`, `poc_real_chessboard_undistort`
 - `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: なし — 画像をワールド平面 z=0 の正面図へ平行化する(1 画素 = ``scale`` のワールド単位)。 · 例: `machine_vision_tour`, `poc_real_chessboard_undistort`
 
@@ -5925,7 +5926,7 @@ _計 3841 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `threshold_triangle` `image2d → table` GPU: なし — 三角法(Zack–Rogers–Latt 1977): 山頂 (b_p, h_p) と、裾の長い側の端のビン (b_e, 0) を結ぶ線から、間のビンの (b, h_b) までの符号つき垂直距離が最大のビンを閾値にする(線の下側を正)。返す: ``threshold``(そのビンの中心)、 ``mask`` = image > threshold、``bin``、``distance``(各ビンの距離、範囲外は nan)。端点の高さ 0・裾の側の選び方は skimage / ImageJ と同じ規約(原典は要確認)。 · 例: `poc_graph_hierarchy_segmentation`
 
 #### segmentation / watershed(1)
-- `watersheds_marker` (halcon: `watersheds_marker`) `image2d × labels2d → labels2d` GPU: なし — マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。 · 例: `halcon_segmentation_tour`, `poc_sem_tem_same_particle`
+- `watersheds_marker` (halcon: `watersheds_marker`) `image2d × labels2d → labels2d` GPU: なし — マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。 · 例: `halcon_segmentation_tour`, `poc_mixed_case_depalletizing`, `poc_sem_tem_same_particle`
 
 #### segmentation / watershed3d(3)
 - `distance_peaks` `voxel → labels` GPU: なし — 前景距離変換の局所極大を ``min_distance`` NMS で間引いた int マーカ配列を返す。 · 例: `watershed3d_tour`

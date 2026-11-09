@@ -34,7 +34,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 
 | Article | Wings | Exhibits |
 |---|---|---:|
-| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 146 |
+| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 147 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 109 |
 | [A Metrology Museum on Paper — The Instrument Wing (sensors and instruments reproduced from physics)](https://qiita.com/furuse-kazufumi/items/43e090b439d9d9183f60) | The Instrument | 33 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
@@ -67,8 +67,8 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 - 2026-11-08 — No.2026.303 Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing
 - 2026-11-08 — No.2026.304 Reconstructing a Measured Cone-Beam CT Scan of a Walnut and Scoring It Against the Providers' Reference — Ignoring the Vertical Offset Puts It 2.6 Times Farther from the Reference, yet the Reprojection Residual Cannot Tell (2.3 % Apart)
 - 2026-11-08 — No.2026.301 Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 96.6-98.1 % on Lines Segmented Correctly (95.4-97.1 % End to End), and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed
+- 2026-11-08 — No.2026.310 Mixed-Case Depalletizing: With Tight Seams a Depth Step Cannot Separate the Cartons — Whether a Depth V-Groove or a Dark Colour Groove Wins Flips with the Depth, Gap and Tape of the Flap Seam (a Map)
 - 2026-11-08 — No.2026.309 One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material
-- 2026-11-08 — No.2026.308 Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)
 
 ## Applying it to your own problem
 

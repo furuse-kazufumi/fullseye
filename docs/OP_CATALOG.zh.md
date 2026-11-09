@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(484 例)
+### 2-D 图像/信号/几何(485 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -153,6 +153,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_weed_rice_ratio` — op: `cover_ratio_grade`, `fisher_lda_fit`, `fisher_lda_score`, `msa_attribute_agreement`, `plant_color_index`, `snic_superpixels`, `superpixel_color_texture_features` `py -3.11 examples/poc_weed_rice_ratio.py`
 - `poc_mri_bias_field` — op: `dc_homomorphic`, `erf`, `overlay_labels`, `xsk2_multiotsu` `py -3.11 examples/poc_mri_bias_field.py`
 - `poc_leaf_disease_area` — op: `access_channel`, `blob_features`, `blob_label`, `blob_overlay`, `fill_holes`, `gaussian`, `linear_to_srgb`, `plant_color_index`, `reg_close`, `reg_erode`, `rgb_to_lab`, `select_largest`(另有 4 个) `py -3.11 examples/poc_leaf_disease_area.py`
+- `poc_mixed_case_depalletizing` — op: `arc`, `crop_rectangle2`, `ellipse`, `fill_holes`, `median`, `srgb_to_linear`, `watersheds_marker` `py -3.11 examples/poc_mixed_case_depalletizing.py`
 
 **terrain**
 - `poc_dem_terrain` — op: `color_bar`, `dem_aspect`, `dem_curvature`, `dem_fill_sinks`, `dem_flow_accumulation`, `dem_hillshade`, `dem_sky_view_factor`, `dem_slope`, `text_box` `py -3.11 examples/poc_dem_terrain.py`
@@ -1429,7 +1430,7 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `gray_range_rect` (halcon: `gray_range_rect`) `image → image` GPU: 有(gray_range_rect@twin) — 返回矩形窗口内最大值与最小值之差(局部范围)并归一化。可视化纹理局部起伏的剧烈程度(对比度量)。相当于 HALCON 的 ``gray_range_rect``(Determine the gray value range within a rectangle.)。 · 示例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` GPU: 有(gray_dilation_rect) — 矩形窗口内的最大值滤波器（相当于灰度膨胀）。相当于 HALCON 的 ``gray_dilation_rect``（Determine the maximum gray value within a rectangle.）。 · 示例: `gallery2d_smoothing_rank`
 - `mean_sp` (halcon: `mean_sp`) `image → image` GPU: 有(许可列表) — 稳健平滑滤波器。返回窗口内 20 百分位与 80 百分位的平均值（截尾均值，trimmed mean），从而抑制极端明暗离群值（如椒盐噪声）的影响。a 将窗口大小分为 3/5/7/9（``_k(a)``）。b 未使用。 · 示例: `gallery2d_smoothing_rank`
-- `median` (halcon: `median_image`) `image → image` GPU: 有(median_image) — 中值滤波器。相当于 HALCON 的 ``median_image``（Compute a median filter with various masks.）。 · 示例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_ai_built_inspection_scored`, `poc_am_thermal_to_ct`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_hyperspectral_foreign_matter`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_sheet_deformation_ffd`, `poc_solar_el_inspection`, `poc_tacscalib_sphere_lut`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` GPU: 有(median_image) — 中值滤波器。相当于 HALCON 的 ``median_image``（Compute a median filter with various masks.）。 · 示例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_ai_built_inspection_scored`, `poc_am_thermal_to_ct`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_hyperspectral_foreign_matter`, `poc_lidar_terrain_change`, `poc_mixed_case_depalletizing`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_sheet_deformation_ffd`, `poc_solar_el_inspection`, `poc_tacscalib_sphere_lut`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
 - `median_image` (halcon: `median_image`) `image → image` GPU: 有(median_image@twin) — 中值滤波(``ndimage.median_filter``,方形窗)。这是一种以窗口内中位数替换像素的降噪方法,与均值滤波不同,它能在保留边缘的同时去除椒盐噪声。相当于 HALCON 的 ``median_image``(Compute a median filter with various masks.)(HALCON 可选择圆形、八边形等任意遮罩,这里固定为方形遮罩)。 · 示例: `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `genspark_external_review`, `poc_prnu_camera_fingerprint`
 - `median_rect` (halcon: `median_rect`) `image → image` GPU: 有(median_rect) — 矩形中值滤波。与 ``median_image`` 使用相同的 ``scipy`` 实现,但可以独立指定高度和宽度(``size=(k_a, k_b)``)。相当于 HALCON 的 ``median_rect``(Compute a median filter with rectangular masks.)。 · 示例: `gallery2d_smoothing_rank`, `poc_tree_ring_dendro`, `poc_weld_radiograph_porosity`
 - `median_separate` (halcon: `median_separate`) `image → image` GPU: 有(median_separate) — 实现与 ``median_image`` 相同(``kind: "median"``,方形窗的二维中值)。HALCON 的 ``median_separate``(Separated median filtering with rectangle masks.)是一种快速近似算子,将行方向和列方向分离的一维中值分两个通道执行,但此替代实现不作区分,直接返回普通的二维中值(结果多数情况下相近,但严格来说是不同的算法 —— 此近似的局限)。 · 示例: `gallery2d_smoothing_rank`
@@ -1464,7 +1465,7 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `erosion_golay` (halcon: `erosion_golay`) `region → region` GPU: 有(erosion_golay) — 使用圆形结构元素（disk，半径 ``_rad(a)``=1〜4）进行二值腐蚀（erosion）。b 未使用。 · 示例: `gallery2d_region`
 - `erosion_rectangle1` (halcon: `erosion_rectangle1`) `region → region` GPU: 仅在链中(许可列表) — 使用正方形结构元素的二值侵蚀。与``erosion_circle``的差异仅在于结构元素的形状(正方形而非圆形)。相当于HALCON的``erosion_rectangle1``(Erode a region with a rectangular structuring element.)。 · 示例: `gallery2d_region`
 - `erosion_seq` (halcon: `erosion_seq`) `region → region` GPU: 有(erosion_seq) — 使用固定十字形结构元素（4 邻域），根据 a 重复 1〜4 次收缩（erosion）的顺序腐蚀。b 未使用。迭代次数越多，腐蚀量越大（每次约相当于半径 1 像素）。 · 示例: `gallery2d_region`
-- `fill_holes` (halcon: `fill_up`) `region → region` GPU: 有(fill_holes) — 填充区域内的孔洞。相当于 HALCON 的 ``fill_up``（Fill up holes in regions.）。 · 示例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`, `poc_leaf_disease_area`, `poc_mesh_quality_repair`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_symmetry_restoration`
+- `fill_holes` (halcon: `fill_up`) `region → region` GPU: 有(fill_holes) — 填充区域内的孔洞。相当于 HALCON 的 ``fill_up``（Fill up holes in regions.）。 · 示例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`, `poc_leaf_disease_area`, `poc_mesh_quality_repair`, `poc_mixed_case_depalletizing`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_symmetry_restoration`
 - `fill_up` (halcon: `fill_up`) `region → region` GPU: 有(fill_up) — 填补区域内部的孔洞(完全被背景包围的区域)(``ndimage.binary_fill_holes``)。只有未与外周相连的背景孔洞会被填补,与外周相连的凹陷不会被填补。相当于 HALCON 的 ``fill_up``(Fill up holes in regions.)。 · 示例: `gallery2d_region`, `poc_bev_sensor_fusion`
 - `fill_up_shape` (halcon: `fill_up_shape`) `region → region` GPU: 仅在链中(lbl_fill_up_shape) — 填补区域内的小孔。仅填补面积在 ``area_threshold = 16+200a`` 像素以下的孔（skimage 的 ``remove_small_holes``）。b 未使用。 · 示例: `gallery2d_region`
 - `get_region_contour` (halcon: `get_region_contour`) `region → region` GPU: 仅在链中(许可列表) — 提取区域的轮廓（边界线，1 像素宽）。通过从区域中减去其一次二值腐蚀版本来保留轮廓。**对于带孔的区域，除外周之外也会返回孔的轮廓**（实测 2026-09-16：在 8x8 的框上开 4x4 的孔，与孔相邻的 20 个前景像素中有 16 个成为轮廓）。「区域 − 腐蚀版」按定义会在外侧和孔侧各留下 1 个像素，因此若只需要外周，请先填孔。a、b 未使用。与 ``boundary`` seed op 实现相同。 · 示例: `gallery2d_region`, `poc_document_scan`
@@ -4787,8 +4788,8 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `leader_line` `image2d × text → image2d` GPU: 无 — 引出线 —— 从注记位置(``anchor_xy``)指向对象(``target_xy``)。 · 示例: `annotate_gallery`, `poc_kendama`
 
 #### annotate / shape (4)
-- `arc` `image2d → image2d` GPU: 有(许可列表) — 圆弧。角度以度计,**从屏幕 x 轴顺时针**(因为 row 朝下)。 · 示例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_real_walnut_cbct`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` GPU: 无 — 椭圆(用 ``angle_deg`` 旋转,``fill=True`` 时填充)。 · 示例: `annotate_gallery`, `poc_camera_calibration`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_bg_kalman_tracking`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
+- `arc` `image2d → image2d` GPU: 有(许可列表) — 圆弧。角度以度计,**从屏幕 x 轴顺时针**(因为 row 朝下)。 · 示例: `annotate_gallery`, `poc_mixed_case_depalletizing`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_real_walnut_cbct`, `poc_weld_radiograph_porosity`
+- `ellipse` `image2d → image2d` GPU: 无 — 椭圆(用 ``angle_deg`` 旋转,``fill=True`` 时填充)。 · 示例: `annotate_gallery`, `poc_camera_calibration`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_mixed_case_depalletizing`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_bg_kalman_tracking`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: 有(许可列表) — 多边形填充(奇偶交叉规则 —— :mod:`imagedraw` 只画轮廓)。 · 示例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: 有(许可列表) — 圆角矩形(``fill=True`` 时填充)。用作衬底或外框。 · 示例: `annotate_gallery`, `poc_machine_condition_fusion`
 
@@ -4803,7 +4804,7 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### gfx2d / colorspace (2)
 - `linear_to_srgb` `rgb → rgb` GPU: 有(许可列表) — 把线性光转回 sRGB 编码。:func:`srgb_to_linear` 的精确逆。 · 示例: `gfx2d_scene`, `poc_leaf_disease_area`, `poc_pigment_unmixing`, `poc_white_balance`
-- `srgb_to_linear` `rgb → rgb` GPU: 有(许可列表) — 把 sRGB 编码的值转为线性光(IEC 61966-2-1)。 · 示例: `gfx2d_scene`, `poc_leaf_disease_area`
+- `srgb_to_linear` `rgb → rgb` GPU: 有(许可列表) — 把 sRGB 编码的值转为线性光(IEC 61966-2-1)。 · 示例: `gfx2d_scene`, `poc_leaf_disease_area`, `poc_mixed_case_depalletizing`
 
 #### gfx2d / composite (6)
 - `alpha_composite` `rgba × rgba → rgba` GPU: 有(许可列表) — 对直通 alpha 的 ``rgba`` 施加 Porter–Duff 的 **over**(Porter & Duff 1984)。 · 示例: `gfx2d_scene`
@@ -5137,7 +5138,7 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### mv / resample (4)
 - `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: 无 — 把除法模型相机的图像重绘为另一组畸变与内参的图像。 · 示例: `machine_vision_tour`, `poc_real_chessboard_undistort`
-- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: 无 — 用线性插值读取旋转矩形内部，并裁剪为轴对齐图像。 · 示例: `machine_vision_tour`, `poc_real_stereo_multiscanline`
+- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: 无 — 用线性插值读取旋转矩形内部，并裁剪为轴对齐图像。 · 示例: `machine_vision_tour`, `poc_mixed_case_depalletizing`, `poc_real_stereo_multiscanline`
 - `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: 无 — 用逆映射表对图像重采样（每个输出像素读取一个输入坐标）。 · 示例: `machine_vision_tour`, `poc_real_chessboard_undistort`
 - `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: 无 — 把图像校正为世界平面 z=0 的正视图（1 像素 = `scale` 世界单位）。 · 示例: `machine_vision_tour`, `poc_real_chessboard_undistort`
 
@@ -5927,7 +5928,7 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `threshold_triangle` `image2d → table` GPU: 无 — 三角法（Zack–Rogers–Latt 1977）：连接峰顶 (b_p, h_p) 与长尾一侧端点的箱 (b_e, 0)，取其间各箱 (b, h_b) 到该线的有符号垂直距离最大的箱为阈值（线的下侧为正）。返回：``threshold``（该箱的中心）、``mask`` = image > threshold、``bin``、``distance``（各箱的距离，范围外为 nan）。端点高度为 0、尾侧的选法与 skimage / ImageJ 的约定相同（原文待确认）（threshold_triangle）。 · 示例: `poc_graph_hierarchy_segmentation`
 
 #### segmentation / watershed (1)
-- `watersheds_marker` (halcon: `watersheds_marker`) `image2d × labels2d → labels2d` GPU: 无 — 标记控制的分水岭分割；markers 为整数标签图像(0 = 未分配)(watersheds_marker)。 · 示例: `halcon_segmentation_tour`, `poc_sem_tem_same_particle`
+- `watersheds_marker` (halcon: `watersheds_marker`) `image2d × labels2d → labels2d` GPU: 无 — 标记控制的分水岭分割；markers 为整数标签图像(0 = 未分配)(watersheds_marker)。 · 示例: `halcon_segmentation_tour`, `poc_mixed_case_depalletizing`, `poc_sem_tem_same_particle`
 
 #### segmentation / watershed3d (3)
 - `distance_peaks` `voxel → labels` GPU: 无 — 返回前景距离变换的局部极大值经 ``min_distance`` NMS 稀疏化后的 int 标记数组。 · 示例: `watershed3d_tour`

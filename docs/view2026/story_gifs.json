@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 216,
+  "target_count": 217,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -32911,6 +32911,202 @@
       "alt": {
         "ja": "NACA TN 898 の 5 頁(試験頁)。箱 = segment_characters の字、下の字 = k-NN の読み。○青 = 正、×橙 = 誤、灰 = 字数が書き起こしと合わず採点の外。",
         "en": "Reading a 1943 Typewritten Report with Classical OCR — Four Classifiers Reach 96.6-98.1 % on Lines Segmented Correctly (95.4-97.1 % End to End), and a Dictionary Breaks Correct Words Unless the Vocabulary Is Closed"
+      }
+    },
+    "poc_mixed_case_depalletizing": {
+      "representative": "08_depal_robot_video.mp4",
+      "status": "gif",
+      "selected": [
+        "01_overview_same_pattern.png",
+        "02_difficulty_ladder.png",
+        "06_valley_threshold_sweep.png",
+        "07_edge_radius_sweep.png",
+        "11_flap_seam_map_table.png",
+        "12_flap_seam_map.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_mixed_case_depalletizing/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_overview_same_pattern.png",
+              "content_box": [
+                0,
+                162,
+                720,
+                366
+              ]
+            },
+            {
+              "file": "02_difficulty_ladder.png",
+              "content_box": [
+                0,
+                210,
+                720,
+                270
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.663185
+            },
+            {
+              "file": "06_valley_threshold_sweep.png",
+              "content_box": [
+                0,
+                237,
+                720,
+                216
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.336694
+            },
+            {
+              "file": "07_edge_radius_sweep.png",
+              "content_box": [
+                0,
+                255,
+                720,
+                179
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.011161
+            },
+            {
+              "file": "11_flap_seam_map_table.png",
+              "content_box": [
+                149,
+                0,
+                422,
+                690
+              ]
+            },
+            {
+              "file": "12_flap_seam_map.png",
+              "content_box": [
+                0,
+                221,
+                720,
+                247
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.913738
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 476766,
+          "color_mad": [
+            1.4267,
+            1.8501,
+            0.0206,
+            0.0199,
+            0.0202,
+            0.6475
+          ],
+          "max_color_mad": 1.8501,
+          "source_sha256": "fef66ab76a2c23908b2ddeb5db51f5519c9972d28e00e0fe22e80f7f6676b2cd"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_mixed_case_depalletizing/story.en.gif",
+          "frames": [
+            {
+              "file": "01_overview_same_pattern.png",
+              "content_box": [
+                0,
+                162,
+                720,
+                366
+              ]
+            },
+            {
+              "file": "02_difficulty_ladder.png",
+              "content_box": [
+                0,
+                210,
+                720,
+                270
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.663185
+            },
+            {
+              "file": "06_valley_threshold_sweep.png",
+              "content_box": [
+                0,
+                237,
+                720,
+                216
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.336694
+            },
+            {
+              "file": "07_edge_radius_sweep.png",
+              "content_box": [
+                0,
+                255,
+                720,
+                179
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.011161
+            },
+            {
+              "file": "11_flap_seam_map_table.png",
+              "content_box": [
+                149,
+                0,
+                422,
+                690
+              ]
+            },
+            {
+              "file": "12_flap_seam_map.png",
+              "content_box": [
+                0,
+                221,
+                720,
+                247
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.913738
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 476766,
+          "color_mad": [
+            1.4267,
+            1.8501,
+            0.0206,
+            0.0199,
+            0.0202,
+            0.6475
+          ],
+          "max_color_mad": 1.8501,
+          "source_sha256": "1e0153d0dd6da74a333b8308460abb7438994594877d61a362f1ff3608732c3d"
+        }
+      },
+      "reason": null,
+      "cover": "01_overview_same_pattern.png",
+      "still": "articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png",
+      "alt": {
+        "ja": "同じ柄の箱が詰めて並んだパレット(種 0)を、5 通りの手がかりで切り分けた天面。種 0 は V 字に有利な種(図の下の注)。",
+        "en": "Packed cartons with identical prints are told apart from overhead depth and colour, then unloaded. A depth step splits none, and whether depth dips or dark colour lines win flips across 28 flap-seam builds. With identical prints, deep grooves favour colour; only wide, untaped cuts over shallow grooves favour depth."
       }
     },
     "poc_3d_sensor_modalities": {

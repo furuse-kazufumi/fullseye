@@ -731,6 +731,13 @@ NOT_A_GENERATOR = {
     "tools/mcp_agent_eval.py": "測定器(ローカル LLM に MCP ツールだけで課題を解かせ、真値で採点する)。LLM の応答で結果が変わり、出力は --output/--report の指定先(repo の外)。--validate-only は LLM なしの門で tests/test_mcp_agent_eval_tasks.py が回す。",
     "tools/fetch_sem_metal_layer.py": "取得器(実データ Metal-layer SEM 6.4 GB を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
     "tools/fetch_walnut_cbct.py": "取得器(実測のコーンビーム CT、クルミ 1 の 6 GB の zip から 1309 要素だけを Range で repo の外へ取り出し、CRC-32 と SHA-256 の一覧で照合する)。生成物は無く、CI では回さない。",
+    # ---- 2026-11-08: 混載デパレタイズ(examples/poc_mixed_case_depalletizing.py)の描画と取得(生成物は repo の外) ----
+    "tools/fetch_hope_bop.py": "取得器(BOP の HOPE val と模型を repo の外へ落とし SHA-256 を照合して展開する)。生成物は無く、CI では回さない。",
+    "tools/depal_blender_run.py": "手元の描画器の駆動(Blender Cycles の天井カメラのコマを、PoC が要るだけ repo の外 FULLSEYE_DEPAL_RENDERS へ描く)。repo の生成物は書かない。",
+    "tools/depal_blender_render.py": "Blender の中で走る描画の本体(bpy)。書くのは引数の出力先(repo の外)だけ。",
+    "tools/depal_blender_video.py": "Blender の中で走る動画のコマの描画(bpy)。書くのは引数の出力先(repo の外)だけ。",
+    "tools/depal_video_run.py": "手元の動画のコマの駆動(UR10e の動きを計画し Blender で描く)。出力は repo の外(FULLSEYE_DEPAL_RENDERS/video)。",
+    "tools/depal_robot_motion.py": "ライブラリ + 自己診断(MuJoCo Menagerie の UR10e の逆運動学と時刻ごとの部品の姿勢)。__main__ の検分用出力は repo の外。",
     "tools/fetch_die_photo.py": "取得器(poc_nir_silicon_transmission 第 7 章のダイ写真 CC BY 3.0 を repo の外へ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
     "tools/check_fallback_parity.py": "門の実測(min 構成 = cv2/skimage/PIL なしで op が別の答えを返さないか、full と ULP 照合)。出力は一時 dir か --out の指定先で、repo の生成物は無い。",
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
