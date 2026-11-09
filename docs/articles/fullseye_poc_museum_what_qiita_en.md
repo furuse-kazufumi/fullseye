@@ -180,25 +180,33 @@ This run produced **6 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`auto_threshold`](https://furuse.work/ops/2d/segmentation/auto_threshold.html) · [`background_flatten`](https://furuse.work/ops/3d/surface_fit/background_flatten.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`eval_poly_surface`](https://furuse.work/ops/3d/surface_fit/eval_poly_surface.html) · [`fit_poly_surface`](https://furuse.work/ops/3d/surface_fit/fit_poly_surface.html) · [`surface_form_error`](https://furuse.work/ops/3d/surface_fit/surface_form_error.html)
 
-## No.2026.009 —— Concrete Crack Width Is Thinner Than a Pixel — Counting Width Versus Integrating Width
+## No.2026.009 —— Concrete Crack Width — Counting Versus Integrating, Compared on Real Photos at Coarser Pixels
 
-Cracks from 0.05 to 2.0 mm wide in a field where 1 px = 0.20 mm, measured by thresholding-and-counting and by integrating the intensity deficit across the crack. Thresholding returns nothing at or below 0.20 mm and reports 0.200 mm for all four true widths between 0.25 and 0.40 mm. Integration tracks continuously down to 0.05 mm (0.25 px), but curved illumination adds a +0.1741 mm offset under a first-order baseline (+0.0062 mm with second order).
+Real cracks are re-imaged with coarser pixels to compare thresholding with the integrated deficit. Across 159 public photos the typical width ratio stays closer to one for integration, but the quartiles overlap. Real crack cores are grey, so thresholding inflates thin cracks instead of losing them.
 
-[![Concrete Crack Width Is Thinner Than a Pixel — Counting Width Versus Integrating Width](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/02_scene.png)
+[![Concrete Crack Width — Counting Versus Integrating, Compared on Real Photos at Coarser Pixels](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/05_real_crack_rebin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/05_real_crack_rebin.png)
 
-*↑ **Concrete Crack Width Is Thinner Than a Pixel — Counting Width Versus Integrating Width** ―― Cracks from 0.05 to 2.0 mm wide in a field where 1 px = 0.20 mm, measured by thresholding-and-counting and by integrating the intensity deficit across the crack. Thresholding returns nothing at or below 0.20 mm and reports 0.200 mm for all four true widths between 0.25 and 0.40 mm. Integration tracks continuously down to 0.05 mm (0.25 px), but curved illumination adds a +0.1741 mm offset under a first-order baseline (+0.0062 mm with second order).*
+*↑ **Concrete Crack Width — Counting Versus Integrating, Compared on Real Photos at Coarser Pixels** ―― A public concrete-crack photo (Özgenel, Mendeley Data, CC BY 4.0) re-imaged with 4x coarser pixels; orange outlines the thresholded mask. Over 159 photos the median width ratio is 1.13 for integration and 1.44 for thresholding, but the interquartile ranges (0.97–1.44, 1.22–1.78) overlap.*
 
 [![2 値化の 2 本は階段。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/01_width_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/01_width_sweep.png)
 
 *↑ The measurement ―― 2 値化の 2 本は階段。0.20 mm(1 px)以下ではマスクが空になり 0(= 未検出)へ落ちる。積分法は 0.05 mm (0.25 px)まで直線 y=x に乗る。 (figure labels are in Japanese; the numbers are the same)*
 
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/02_scene.png)
+
+*↑ この回の図*
+
 [![点ごとでは 2 値化が下に見えるが、経路平均に直すと積分法の散らばりは消え、2 値化の偏りは残る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/03_crossover_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/03_crossover.png)
 
 *↑ 点ごとでは 2 値化が下に見えるが、経路平均に直すと積分法の散らばりは消え、2 値化の偏りは残る。*
 
-[![真の幅は 0.60 mm 固定。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/04_max_vs_mean_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/04_max_vs_mean.png)
+[![中央値は k=4 で積分法のほうが 1 に近いが、四分位は重なり、k=3 では差 0.03。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/06_real_crack_ratio_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/06_real_crack_ratio.png)
 
-*↑ 真の幅は 0.60 mm 固定。*
+*↑ 中央値は k=4 で積分法のほうが 1 に近いが、四分位は重なり、k=3 では差 0.03。*
+
+[![緑はひびの中心ではなく片側の縁に寄りやすく、地や別のひびへ飛ぶ列もある(断面の最大が経路から 3 px より外の断面は 1 枚あたり中央値 18 %、経路が断面の半値幅の区間の外に出る断面は 9 %)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/07_real_crack_samples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/07_real_crack_samples.png)
+
+*↑ 緑はひびの中心ではなく片側の縁に寄りやすく、地や別のひびへ飛ぶ列もある(断面の最大が経路から 3 px より外の断面は 1 枚あたり中央値 18 %、経路が断面の半値幅の区間の外に出る断面は 9 %)。*
 
 ```
 py -3.11 examples/poc_crack_width.py
@@ -206,17 +214,17 @@ py -3.11 examples/poc_crack_width.py
 
 Source: [examples/poc_crack_width.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py)
 
-This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_crack_width)
+This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_crack_width)
 
 Ops used (notes): [`distance_transform`](https://furuse.work/ops/2d/region/distance_transform.html) · [`sk_medial`](https://furuse.work/ops/2d/region/sk_medial.html) · [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html) · [`thinning`](https://furuse.work/ops/2d/region/thinning.html) · [`vol_distance_transform`](https://furuse.work/ops/3d/medial/vol_distance_transform.html)
 
-## No.2026.017 —— Defects Buried in a Periodic Background — What a Pooled ROC (true-positive versus false-positive curve) Hides
+## No.2026.017 —— 360 Real Fabric Defects — The Same Detector Scores an AUC of 0.56 or 0.66 Depending on How It Is Counted
 
-Three defect classes (thread break, stain, dim patch) buried in a weave of period 8 px, with the detector's score map and per-class ROC (true-positive versus false-positive curve) curves side by side. The everyday recipe 'notch out the grid, remove low frequencies' pools to an AUC of 0.8113 and looks like a pass, but the dim-patch class alone scores 0.4746, worse than chance. The one line that removes low frequencies was deleting the defect along with the lighting; drop it and the class recovers to 0.9998.
+Real fabric defects are scored against the supplied masks to compare textbook detectors for weave flaws. Counting only the core of the wide masks raises the same detector to an AUC of 0.66. Removing low frequencies erases painted mura, but on real defects the drop is much smaller.
 
-[![Defects Buried in a Periodic Background — What a Pooled ROC (true-positive versus false-positive curve) Hides](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/04_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/04_scene.png)
+[![360 Real Fabric Defects — The Same Detector Scores an AUC of 0.56 or 0.66 Depending on How It Is Counted](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/06_real_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/06_real_defects.png)
 
-*↑ **Defects Buried in a Periodic Background — What a Pooled ROC (true-positive versus false-positive curve) Hides** ―― Three defect classes (thread break, stain, dim patch) buried in a weave of period 8 px, with the detector's score map and per-class ROC (true-positive versus false-positive curve) curves side by side. The everyday recipe 'notch out the grid, remove low frequencies' pools to an AUC of 0.8113 and looks like a pass, but the dim-patch class alone scores 0.4746, worse than chance. The one line that removes low frequencies was deleting the defect along with the lighting; drop it and the class recovers to 0.9998.*
+*↑ **360 Real Fabric Defects — The Same Detector Scores an AUC of 0.56 or 0.66 Depending on How It Is Counted** ―― Real defects from the public RAW-FABRID set (Mendeley Data, CC BY 4.0, line-scan, 4 px/mm), 360 of them, scored against the supplied masks (orange). The masks are wider than the defects (median 16 px), so the lattice-only AUC is 0.56 when every mask pixel counts and 0.66 when only the mask core counts. Core scoring drops the 6 px just outside the mask from the negatives, so it leans lenient; 0.66 is not the true value. Top: the defect closest to the median AUC; bottom: the largest dark defect.*
 
 Terms: ROC — A curve of true-positive rate against false-positive rate as the decision threshold varies, showing a binary detector's trade-off.
 
@@ -232,15 +240,23 @@ Terms: ROC — A curve of true-positive rate against false-positive rate as the 
 
 *↑ 欠陥の無い地だけで測った残差。*
 
+[![欠陥 3 種は合成と同じ位置・形で**描き足した**もの(本物の欠陥ではない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/05_real_fabric_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/05_real_fabric.png)
+
+*↑ 欠陥 3 種は合成と同じ位置・形で**描き足した**もの(本物の欠陥ではない)。*
+
+[![区間は画像単位のブートストラップ 2000 回。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/08_real_result_auc_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/08_real_result_auc_table.png)
+
+*↑ 区間は画像単位のブートストラップ 2000 回。*
+
 ```
 py -3.11 examples/poc_fabric_defect.py
 ```
 
 Source: [examples/poc_fabric_defect.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fabric_defect.py)
 
-This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_fabric_defect)
+This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_fabric_defect)
 
-
+Ops used (notes): [`thinning`](https://furuse.work/ops/2d/region/thinning.html)
 
 ## No.2026.069 —— Digging Where the Sound Says — A Clean Correlation Still Digs in the Wrong Place
 
@@ -514,33 +530,33 @@ This run produced **14 figures** in total - [see them all](https://github.com/fu
 
 Ops used (notes): [`overlay_labels`](https://furuse.work/ops/annotate/overlay/overlay_labels.html) · [`spectrum`](https://furuse.work/ops/oned/signal/spectrum.html)
 
-## No.2026.084 —— Power loss from solar-cell EL images — dark is not the same as inactive
+## No.2026.084 —— Scoring dark areas in real solar-cell EL images against I-V power loss — they track opaque masks but not whole-cell dimming
 
-A crystalline-silicon cell (100 fingers, 3 busbars, 70 grains) is rendered in closed form as an EL image with two electrically isolated regions (true inactive area 4.77 %), 5 cracks and 8 finger interruptions, then imaged through cos^4 vignetting and photon noise. The zero-point global threshold reports a dark-pixel fraction of 21.7 % as the inactive area, but 42 % of those pixels are fingers and busbars and 33 % are grains and vignetting; only 20 % are truly inactive. Dividing out the grid with row/column profiles and gating each defect type separately gives 4.61 % (-0.15 points), crack recall 0.88–1.00 and 8/8 interruptions. Because sk_frangi normalises by the per-image maximum, a calibration line only fixes the scale if it is the strongest ridge in the image (a line like the real cracks responds 0.69, a 3 px black line 1.00); without calibration the defect-free cell produces 147 px of false cracks. From grain contrast c=0.24 false cracks and swallowed interruption bands start together, and the crack-width cliff at 1.25 px follows the linear width-times-depth rule (predicted 1.38 px).
+On real EL images the dark area is counted after dividing out the fingers and busbars, then compared with the power loss measured by I-V curves. Across 32 masked cells, dividing out only the narrow grid component ranks the losses best. For defects that dim the whole cell, the dark area does not track the power loss.
 
-[![Power loss from solar-cell EL images — dark is not the same as inactive](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map.png)
+[![Scoring dark areas in real solar-cell EL images against I-V power loss — they track opaque masks but not whole-cell dimming](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/10_real_el_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/10_real_el_overlay.png)
 
-*↑ **Power loss from solar-cell EL images — dark is not the same as inactive** ―― A crystalline-silicon cell (100 fingers, 3 busbars, 70 grains) is rendered in closed form as an EL image with two electrically isolated regions (true inactive area 4.77 %), 5 cracks and 8 finger interruptions, then imaged through cos^4 vignetting and photon noise. The zero-point global threshold reports a dark-pixel fraction of 21.7 % as the inactive area, but 42 % of those pixels are fingers and busbars and 33 % are grains and vignetting; only 20 % are truly inactive. Dividing out the grid with row/column profiles and gating each defect type separately gives 4.61 % (-0.15 points), crack recall 0.88–1.00 and 8/8 interruptions. Because sk_frangi normalises by the per-image maximum, a calibration line only fixes the scale if it is the strongest ridge in the image (a line like the real cracks responds 0.69, a 3 px black line 1.00); without calibration the defect-free cell produces 147 px of false cracks. From grain contrast c=0.24 false cracks and swallowed interruption bands start together, and the crack-width cliff at 1.25 px follows the linear width-times-depth rule (predicted 1.38 px).*
+*↑ **Scoring dark areas in real solar-cell EL images against I-V power loss — they track opaque masks but not whole-cell dimming** ―― Real EL images from the public SIPV-EL set (Zenodo 14439369, CC BY 4.0). Top: a cell with an opaque mask placed on its surface (big central circle). Bottom: of the S7 images (inferred to be "other defects"), the cell whose power loss is closest to the S7 median of 8.9 %. Orange = dark pixels under a global threshold; blue = dark area after dividing out the narrow grid component. Under masks the dark area tracks the power loss for both, but on the bottom cell the zero point counts +50 pt while the grid-divided path says +1 pt, too low.*
 
-[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/02_by_type_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/02_by_type.png)
+[![単位は % of セル面積。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map.png)
 
-*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― 単位は % of セル面積。暗画素の 41 % はフィンガーとバスバー、35 % は結晶粒とビネッティング。 (figure labels are in Japanese; the numbers are the same)*
 
-[![孤立領域 2 つ・クラック 5 本・断線 8 本。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/03_scene_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/03_scene_map.png)
-
-*↑ 孤立領域 2 つ・クラック 5 本・断線 8 本。*
-
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/04_frangi_norm_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/04_frangi_norm.png)
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/02_by_type_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/02_by_type.png)
 
 *↑ この回の図*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/06_crack_width_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/06_crack_width.png)
+[![面積率は c=0.60 でも 3 ポイント以内。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/05_grain_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/05_grain_contrast.png)
+
+*↑ 面積率は c=0.60 でも 3 ポイント以内。*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/08_snr_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/08_snr.png)
 
 *↑ この回の図*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/07_vignette_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/07_vignette.png)
+[![灰色は格子を割った後の像(1.25 で割って [0,1))、青は暗部判定。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/12_real_process_degrid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/12_real_process_degrid.png)
 
-*↑ この回の図*
+*↑ 灰色は格子を割った後の像(1.25 で割って [0,1])、青は暗部判定。*
 
 ```
 py -3.11 examples/poc_solar_el_inspection.py
@@ -548,9 +564,9 @@ py -3.11 examples/poc_solar_el_inspection.py
 
 Source: [examples/poc_solar_el_inspection.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 
-This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_solar_el_inspection)
+This run produced **14 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_solar_el_inspection)
 
-Ops used (notes): [`aug_vignette`](https://furuse.work/ops/2d/augmentation/aug_vignette.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`gray_closing`](https://furuse.work/ops/2d/morphology/gray_closing.html) · [`hysteresis_threshold`](https://furuse.work/ops/2d/segmentation/hysteresis_threshold.html) · [`lines_gauss`](https://furuse.work/ops/2d/contour/lines_gauss.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_frangi`](https://furuse.work/ops/2d/texture/sk_frangi.html) · [`sk_skeleton`](https://furuse.work/ops/2d/region/sk_skeleton.html) · [`total_length`](https://furuse.work/ops/2d/features/total_length.html) · [`vignette`](https://furuse.work/ops/gfx2d/post/vignette.html)
+Ops used (notes): [`aug_vignette`](https://furuse.work/ops/2d/augmentation/aug_vignette.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`gray_closing`](https://furuse.work/ops/2d/morphology/gray_closing.html) · [`hysteresis_threshold`](https://furuse.work/ops/2d/segmentation/hysteresis_threshold.html) · [`lines_gauss`](https://furuse.work/ops/2d/contour/lines_gauss.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_frangi`](https://furuse.work/ops/2d/texture/sk_frangi.html) · [`sk_skeleton`](https://furuse.work/ops/2d/region/sk_skeleton.html) · [`total_length`](https://furuse.work/ops/2d/features/total_length.html) · [`vignette`](https://furuse.work/ops/gfx2d/post/vignette.html)
 
 ## No.2026.085 —— Solder fillet AOI — three ring lights are a 3-level tilt quantiser, and 70 % of the fillet height sits in the dark
 
@@ -828,15 +844,19 @@ Ops used (notes): [`cepstrum`](https://furuse.work/ops/acoustics/bearing/cepstru
 
 ## No.2026.050 —— Weld Bead From a Laser-Triangulation Profile — The Sin of Writing 0 Where Nothing Was Measured
 
-The profile h(x) recovered from the row position of a single laser line, with reinforcement height, width and undercut read off it. The centroid beats the null (integer argmax per column) by 9.3x, and with zero noise the log-parabola is exact to machine precision, 12 orders better than a plain parabola; at 1 % noise the two are 0.00272 versus 0.00260 mm, indistinguishable. Five spatter points break all three estimators together to 0.11 mm (40x); what matters is not refinement but which peak you pick.
+A weld bead profile is read from the rows of a laser line. Filling the shadowed toe with 0 erased the undercut and the bead passed. Refusing to report unmeasured quantities stops that error, but the depth bias from speckle remains.
 
-[![Weld Bead From a Laser-Triangulation Profile — The Sin of Writing 0 Where Nothing Was Measured](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images.png)
+[![Weld Bead From a Laser-Triangulation Profile — The Sin of Writing 0 Where Nothing Was Measured](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/05_real_laser_line_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/05_real_laser_line.png)
 
-*↑ **Weld Bead From a Laser-Triangulation Profile — The Sin of Writing 0 Where Nothing Was Measured** ―― The profile h(x) recovered from the row position of a single laser line, with reinforcement height, width and undercut read off it. The centroid beats the null (integer argmax per column) by 9.3x, and with zero noise the log-parabola is exact to machine precision, 12 orders better than a plain parabola; at 1 % noise the two are 0.00272 versus 0.00260 mm, indistinguishable. Five spatter points break all three estimators together to 0.11 mm (40x); what matters is not refinement but which peak you pick.*
+*↑ **Weld Bead From a Laser-Triangulation Profile — The Sin of Writing 0 Where Nothing Was Measured** ―― The profile h(x) recovered from the row position of a single laser line, with reinforcement height, width and undercut read off it. The centroid beats the null (integer argmax per column) by 9.3x, and with zero noise the log-parabola is exact to machine precision, 12 orders better than a plain parabola; at 1 % noise the two are 0.00272 versus 0.00260 mm, indistinguishable. Five spatter points break all three estimators together to 0.11 mm (40x); what matters is not refinement but which peak you pick. The headline figure re-images the same bead as a synthetic but realistic laser line (one frame, rendering seed 5; 1296 x 320 px, 13.9 um per pixel, a thin line of 60 um 1/e^2 half-width with speckle, a brighter partly saturated core on the specular right flank, a false line from secondary reflection, streaking spatter, shadow, photon noise and 10-bit quantisation): the height error over the lit columns is 21.8 um RMS, between the Dorsch closed-form floor of 18.3 um (averaged over the line width) and the single-column floor of 38.0 um. Taking only the brightest peak puts 14 columns on the secondary-reflection line; choosing by continuity with the neighbouring columns puts 0 there (for this seed). Dropouts shorter than 8 columns from dark speckle grains (27 columns) are interpolated and counted as measured; only longer gaps count as unmeasured. Filling the shadowed left toe with 0 turns the left undercut into 0.000 mm (truth 0.450), a pass. The refuse-to-answer policy withholds the three left-hand quantities, yet the right undercut it does return is 0.286 mm (truth 0.250): speckle bias is not stopped by refusing. Over 12 rendering seeds (speckle, spatter, noise), continuity still leaves 0 to 2 columns on the false line (0 in 7 of 12; 0 to 16 with the brightest peak only), the RMS over the lit columns has a median of 22.9 um (between the two floors in 11 of 12), the refusing policy withholds the three left-hand quantities in all 12, and the right undercut comes out deeper in all 12, by +14 to +129 um (median +45 um). Limit: in 5 of 12 seeds spatter that lands in the shadow is taken for the line, and in 2 of those the zero-filled left undercut becomes a false depth rather than a pass.*
+
+[![row = r0 + K·h なので、**下にあるほど高い** ——ビードは画像では下に凸に見える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images.png)
+
+*↑ The measurement ―― row = r0 + K·h なので、**下にあるほど高い** ——ビードは画像では下に凸に見える。遮蔽 60 度では左つま先の輝線が消えている。 (figure labels are in Japanese; the numbers are the same)*
 
 [![0 で埋めた線は影の区間で h=0 に張り付き、左のアンダーカットが消えて偽のつま先ができる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/02_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/02_profile.png)
 
-*↑ The measurement ―― 0 で埋めた線は影の区間で h=0 に張り付き、左のアンダーカットが消えて偽のつま先ができる。 (figure labels are in Japanese; the numbers are the same)*
+*↑ 0 で埋めた線は影の区間で h=0 に張り付き、左のアンダーカットが消えて偽のつま先ができる。*
 
 [![真値 0.45 mm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/03_undercut_vs_angle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/03_undercut_vs_angle.png)
 
@@ -852,9 +872,9 @@ py -3.11 examples/poc_weld_bead_profile.py
 
 Source: [examples/poc_weld_bead_profile.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_weld_bead_profile.py)
 
-This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_weld_bead_profile)
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_weld_bead_profile)
 
-Ops used (notes): [`gen_measure_rectangle2`](https://furuse.work/ops/measure1d/caliper/gen_measure_rectangle2.html) · [`laser_line_center_centroid`](https://furuse.work/ops/optics/light_section/laser_line_center_centroid.html) · [`measure_pos`](https://furuse.work/ops/measure1d/caliper/measure_pos.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`smooth_funct_1d_mean`](https://furuse.work/ops/oned/function/smooth_funct_1d_mean.html)
+Ops used (notes): [`gen_measure_rectangle2`](https://furuse.work/ops/measure1d/caliper/gen_measure_rectangle2.html) · [`laser_line_center_centroid`](https://furuse.work/ops/optics/light_section/laser_line_center_centroid.html) · [`laser_line_coherent`](https://furuse.work/ops/optics/coherent/laser_line_coherent.html) · [`measure_pos`](https://furuse.work/ops/measure1d/caliper/measure_pos.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`smooth_funct_1d_mean`](https://furuse.work/ops/oned/function/smooth_funct_1d_mean.html) · [`triangulation_speckle_limit`](https://furuse.work/ops/optics/coherent/triangulation_speckle_limit.html)
 
 ## No.2026.115 —— Light-section scanning of a weld bead — resolution and occlusion share one knob
 
@@ -1956,19 +1976,19 @@ Ops used (notes): [`blob_boundaries`](https://furuse.work/ops/blob/extract/blob_
 
 ## No.2026.073 —— Metallographic Grain Size — The Planimetric and Intercept Methods Fall Off Different Cliffs
 
-Grains are synthesized as a 2-D Voronoi tessellation with 2-px boundaries, then etching unevenness, noise and boundary gaps are added; ASTM E112 grain size G is measured by the planimetric method (Otsu + connected components) and the lineal-intercept method (local threshold + test lines in 4 directions). The planimetric method survives noise alone (-0.02) and etching unevenness alone (-0.40) but dies under both (+3.82), and loses one G step at 7.2 % boundary gaps; the intercept method holds to 40.7 % — the predicted 29.3 % was wrong because only 0.76 f of the boundary actually disappears in the mask. A duplex structure gives a whole-field G of 7.82 that matches neither the fine (9.01) nor the coarse (6.15) population; only 4 of 64 tiles fall within ±0.5 of it.
+Gaps are cut into hand-traced real grain boundaries to see where the two counting methods drift by a full step. The intercept count holds until 33.1 % of the traced lines are gone, far longer than the planimetric count. Image processing that expects dark boundaries finds almost none of them on tint-etched photos.
 
-[![Metallographic Grain Size — The Planimetric and Intercept Methods Fall Off Different Cliffs](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/01_scene.png)
+[![Metallographic Grain Size — The Planimetric and Intercept Methods Fall Off Different Cliffs](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/15_real_tbm_breaks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/15_real_tbm_breaks.png)
 
-*↑ **Metallographic Grain Size — The Planimetric and Intercept Methods Fall Off Different Cliffs** ―― Grains are synthesized as a 2-D Voronoi tessellation with 2-px boundaries, then etching unevenness, noise and boundary gaps are added; ASTM E112 grain size G is measured by the planimetric method (Otsu + connected components) and the lineal-intercept method (local threshold + test lines in 4 directions). The planimetric method survives noise alone (-0.02) and etching unevenness alone (-0.40) but dies under both (+3.82), and loses one G step at 7.2 % boundary gaps; the intercept method holds to 40.7 % — the predicted 29.3 % was wrong because only 0.76 f of the boundary actually disappears in the mask. A duplex structure gives a whole-field G of 7.82 that matches neither the fine (9.01) nor the coarse (6.15) population; only 4 of 64 tiles fall within ±0.5 of it.*
+*↑ **Metallographic Grain Size — The Planimetric and Intercept Methods Fall Off Different Cliffs** ―― A public metallographic micrograph from TBM (Zenodo 8386997, CC BY 4.0) with expert hand-traced grain boundaries. Without any image processing, removing 5 % of the boundary (red) merges neighbouring grains (yellow); over 320 tiles the planimetric G shifts by -0.7 and the intercept G by -0.1.*
 
 Terms: Otsu — A histogram thresholding method that chooses the threshold maximizing the variance between the two resulting classes.
 
-[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/02_controls_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/02_controls.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/01_scene.png)
 
 *↑ The measurement (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/03_stages_intercept_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/03_stages_intercept.png)
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/02_controls_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/02_controls.png)
 
 *↑ この回の図*
 
@@ -1976,13 +1996,13 @@ Terms: Otsu — A histogram thresholding method that chooses the threshold maxim
 
 *↑ 面積法は 1 本の途切れで 2 粒が融合するので、切片法の 6 分の 1 の途切れで 1 段落ちる。*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/07_failure_intercept_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/07_failure_intercept.png)
-
-*↑ この回の図*
-
 [![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/09_duplex_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/09_duplex_map.png)
 
 *↑ この回の図*
+
+[![10-0-768 の 4 枚。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/12_real_tbm_input_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/12_real_tbm_input.png)
+
+*↑ 10-0-768 の 4 枚。*
 
 ```
 py -3.11 examples/poc_metal_grain_size.py
@@ -1990,9 +2010,9 @@ py -3.11 examples/poc_metal_grain_size.py
 
 Source: [examples/poc_metal_grain_size.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_metal_grain_size.py)
 
-This run produced **11 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_metal_grain_size)
+This run produced **16 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_metal_grain_size)
 
-Ops used (notes): [`bin_threshold`](https://furuse.work/ops/2d/segmentation/bin_threshold.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`bothat`](https://furuse.work/ops/2d/morphology/bothat.html) · [`dyn_threshold`](https://furuse.work/ops/2d/segmentation/dyn_threshold.html) · [`gray_bothat`](https://furuse.work/ops/2d/morphology/gray_bothat.html) · [`hx_close_edges`](https://furuse.work/ops/2d/halcon_ext/hx_close_edges.html) · [`invert_image`](https://furuse.work/ops/2d/gray/invert_image.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
+Ops used (notes): [`bin_threshold`](https://furuse.work/ops/2d/segmentation/bin_threshold.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`bothat`](https://furuse.work/ops/2d/morphology/bothat.html) · [`dyn_threshold`](https://furuse.work/ops/2d/segmentation/dyn_threshold.html) · [`gray_bothat`](https://furuse.work/ops/2d/morphology/gray_bothat.html) · [`hx_close_edges`](https://furuse.work/ops/2d/halcon_ext/hx_close_edges.html) · [`invert_image`](https://furuse.work/ops/2d/gray/invert_image.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`rgb_to_lab`](https://furuse.work/ops/imgmetrics/colorspace/rgb_to_lab.html) · [`thinning`](https://furuse.work/ops/2d/region/thinning.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
 
 ## No.2026.100 —— Why the Seafloor Smiles — Sound-Speed Error Remaining on Outer Beams After Nadir Calibration
 

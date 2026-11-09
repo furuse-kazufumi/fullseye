@@ -54,7 +54,7 @@
  {
   "file": "06_scene.png",
   "name": "scene",
-  "caption": "真値の赤はセル内ホットスポットとストリング故障、黄は影と汚れ(本物の温度差だが電気的故障ではない)。",
+  "caption": "合成の場面(定常熱収支の閉形式)。真値の赤はセル内ホットスポットとストリング故障、黄は影と汚れ(本物の温度差だが電気的故障ではない)。影は日射 12 % で約 18 K 冷える。",
   "shape": [
    545,
    546,
@@ -74,7 +74,7 @@
  {
   "file": "08_raw_aerial_thermal.png",
   "name": "raw_aerial_thermal",
-  "caption": "Oblique 640 by 512 raw thermal frame; iron-like palette, 314-338 K; PSF, NETD, NUC and motion blur included.",
+  "caption": "合成の斜めの空撮(高さ 9 m・鉛直から 32°・水平画角 32°、640 x 512 を 2 倍で表示、306〜335 K)。パネルの温度は定常熱収支の閉形式に、セルごとのばらつき・セルの隙間・枠への熱の逃げ・裏の端子箱・アルマイトの枠(ε 0.80)を足し、ガラスの放射率は視線の角度ごとの Fresnel で空(283 K)を映す。1 画素 3 x 3 の標本化・光学 PSF・NETD 50 mK・固定パターン雑音・周辺の落ち込みを入れた。測る 3 x 3 モジュールの外にも健全なアレイが続く。黒い帯と円は支柱と雑草の**影**(汚れではない): 直達光が遮られて日射が 12 % になり、閉形式で周りより約 18 K 冷える。汚れは下段の帯で、わずかに温かい。",
   "shape": [
    1024,
    1280,
@@ -84,9 +84,9 @@
  {
   "file": "09_orthorectified_detection.png",
   "name": "orthorectified_detection",
-  "caption": "Module-level correction preserves the detection chapters and their thresholds.",
+  "caption": "合成の場面。判定はこの正対の格子で行う(しきい値と面積の門は本文の章と同じ)。",
   "shape": [
-   564,
+   605,
    1310,
    3
   ]
@@ -94,11 +94,33 @@
  {
   "file": "10_hot_cell_zoom.png",
   "name": "hot_cell_zoom",
-  "caption": "Hot-cell neighbourhood; cell edges and busbar-scale cooling remain visible after the camera PSF.",
+  "caption": "合成の場面。ホットスポットのセルの近く(斜めの空撮の切り出し)。セルのモザイクと枠は光学 PSF の後も見える。",
   "shape": [
    560,
    640,
    3
   ]
+ },
+ {
+  "file": "11_real_dtu_conditions.png",
+  "name": "real_dtu_conditions",
+  "caption": "公開のドローン熱画像(DTU の PV 発電所、正対化済みの温度の画像、R. del Prado Santamaría et al., DTU PV plant - Drone Infrared Thermography Dataset: Influence of Irradiance and Altitude, DTU Data, doi:10.11583/DTU.29665346.v1 (CC BY 4.0))。色はモジュールの中央値からの温度差 -3〜25 K(鉄色)、白枠はこの PoC の判定(GSD 19 mm に揃え、モジュール中央値・3 K・面積の門)。上段: 同じモジュール 6 を日射 200〜800 超で(高さ 10 m)—— 200 W/m² では 10 m で ΔT 1.0 K、4 つの高さの最大でも 1.1 K しか出ず見逃す(日射 600 以上ではバイパスダイオードの短絡 84 / 84 枚すべて検出)。下段: モジュール 3 を高さ 8〜20 m で —— ピークの ΔT は高いほど下がる(20 m / 8 m の比の中央値 0.77。ただしモジュール全体の温度も中央値 -1.9 K 動いており、高さごとの撮影は同時でないので画素の大きさの効果だけとは言えない)。3 段目: 汚れのモジュール(配布元の分類の 1 つ。電気的な故障ではない)—— 同じ判定で 72 / 144 枚が上がる。上がった塊は画像の上の本物の温度差(雑音ではない)。現地の IV が付く 2 台の性能比(実測 / 模型の Pmax)は47.3 % / 30.3 % だが、清掃の前後や健全なモジュールとの比較は配布物に無く、出力の低下の原因は分けられない。温度のしきい値は原因(汚れか電気的な故障か)を分けない。改変: 配布物の温度の画像を 7 x 7 の面積平均で判定し、表示はモジュールの中央値からの差を鉄色で塗り、判定の白枠と見出しを重ねた。",
+  "shape": [
+   1992,
+   1502,
+   3
+  ]
+ },
+ {
+  "file": "12_real_detection_table.png",
+  "name": "real_detection_table",
+  "caption": "熱を出す故障(バイパスダイオードの短絡)は日射 600 以上で全部上がり、200 では一部が消える。熱を出さない故障(セルの割れ・配線の不良)は 1 度も上がらない(見逃し率 100 %)。汚れ(電気的な故障ではない)も 72 / 144 枚が上がる(汚れは日射 800 超の撮影が無い)—— 温度のしきい値は原因を分けない。改変: 配布物の温度の画像を 7 x 7 の面積平均にして判定した。出典: R. del Prado Santamaría et al., DTU PV plant - Drone Infrared Thermography Dataset: Influence of Irradiance and Altitude, DTU Data, doi:10.11583/DTU.29665346.v1 (CC BY 4.0)",
+  "shape": [
+   496,
+   974,
+   3
+  ],
+  "csv": "12_real_detection_table.csv",
+  "tsv": "12_real_detection_table.tsv"
  }
 ]

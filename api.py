@@ -313,6 +313,7 @@ from realdata import (  # noqa: E402,F401
     sem_metal_layer_credit, e57_bunny_cache, e57_bunny_files,
     walnut_cbct_projection_indices, walnut_cbct_cache, walnut_cbct_write_manifest,
     walnut_cbct_root, walnut_cbct_credit,
+    dtu_pv_irt_cache, dtu_pv_irt_root, dtu_pv_irt_frame, dtu_pv_irt_load, dtu_pv_irt_credit,
 )
 from deformreg import (  # noqa: E402,F401
     warp_by_field, demons_register, field_magnitude, residual_ssd,
@@ -1250,6 +1251,7 @@ __all__ = [
     "sample_stereo_pair", "sample_photo_credit",
     "sem_metal_layer_cache", "sem_metal_layer_root", "sem_metal_layer_pairs",
     "sem_metal_layer_credit", "e57_bunny_cache", "e57_bunny_files",
+    "dtu_pv_irt_cache", "dtu_pv_irt_root", "dtu_pv_irt_frame", "dtu_pv_irt_load", "dtu_pv_irt_credit",
     "STAIN_VECTORS",
     "BandMeta", "read_envi", "write_envi", "spec_band", "spec_rgb_composite",
     "spec_nearest_band", "spec_band_ratio", "spec_index", "spec_angle_mapper", "spec_pca",

@@ -28,6 +28,30 @@ HDR 合成する方が、偏光子の角度較正に手をかけるより効く�
    誤差は閉形式 ``R_p * E`` に厳密一致し、ブリュースター角で 0 になる。
 4. **壊れる条件を数字で** —— 雑音・偏光子角度の較正誤差・白飛びの 3 つ。
 
+10. **実物に見える場面で** —— フィルムで包んだ箱のラベルと鋼のナットを、高さ場の光線追跡・
+   フレネルの s/p 反射率(誘電体と金属は glassmirror の別の式)・レンズのぼけ・消光比・
+   ショット雑音・12 bit・飽和で撮った生モザイク 1 枚から分離する。フィルムの映り込みは 9 割
+   消えて印字が読めるようになり、残りは閉形式 R_p * E と 1 割以内で合う。**ゼロ点は偏光フィルタ
+   1 枚(最適角)**: この場面(小さなソフトボックス 1 灯)では固定のフィルタの方が良い。固定のフィルタは 2 通り
+   作る —— 偏光カメラと同じモザイクから組んだもの(角度を選べることだけを比べる)と、全画素で撮る別のカメラ
+   (同じセンサ・同じ露光、角度は雑音の無い像で選んだ最良、2x2 を足して偏光カメラと同じ画素数)。しわの深さ
+   だけ・照明の広さだけを振ると、**どちらも比(偏光カメラ / 固定のフィルタ)を偏光カメラ側へ押し上げる**。
+   全画素のフィルタと比べると、狭い照明ではしわを 4 倍にしても比は 1 に届かず(固定のフィルタで足りる)、
+   照明だけを大きな面照明まで広げると比は 1 前後(1024 画素・種 6 本で 1.03〜1.07、512 画素・種 13 本で
+   0.94〜1.05 —— 読める水準での差は 1 割未満)。両方が大きいと偏光カメラがはっきり勝つ(1.13〜1.43)が、
+   CNR は 2 前後でどちらも印字は読めない。言えるのは「しわも照明の広さも差を広げる。1024 画素では比を 1 より
+   上へ出したのは照明を広げたときだけ」まで —— **512 画素では互角で、種によってはしわとの順序も入れ替わる**
+   (種 137: 照明だけ 0.944 < しわだけ 0.955)。勝敗を決める量(映り込みの入射面の向きのばらつき)は測っていない。
+   モザイクから組んだフィルタとの勝ち負け(前の版の門)は種で入れ替わる(512 画素・種 137 の大きな面照明で
+   偏光カメラ 6.60 < フィルタ 6.64)ので門にせず、全画素のフィルタとの比だけを門にした。
+   モザイクから組んだフィルタは全画素のものより CNR が 2〜7 % 低く、その分だけ偏光カメラを有利に見せていた
+   (前の版の「大きな面照明ならしわ 1 倍でも勝つ」は 1024 画素で 11 % → 全画素のフィルタとは 7 %、512 画素では
+   互角)。袋の膨らみ(ピロー包装)でも試したが、固定のフィルタに勝てなかった(使っていない)。鋼は飽和しない短い露光で測り直し、消える割合は描画と同じ
+   金属のフレネルの式(3 割弱)と合う —— これは実装の検算(雑音・ぼけ・モザイクを通しても式どおり出るか)
+   で、外の真値ではない。図の白いナットは飽和。数は図つき実行(1024 画素)と CI(512 画素)で少し違う。
+   場面・真値とも自作の描画で、フレネルの式も描画と照合で同じ glassmirror(探した範囲では、
+   再配布できる許諾の偏光カメラの公開データが見つからなかった)。
+
 ★ この PoC が出した道具の穴は末尾の「所見」節に 5 件まとめた。要点は
 ``polarization_separate`` の返す "diffuse" が **``R_p * E`` だけ系統的に大きい**
 こと、そしてその補正に必要な入射角の口が op に無いこと。
@@ -56,44 +80,316 @@ AZIMUTH = 22.5                  # 入射面の方位。4 方位の格子から�
 THETAS = (20.0, 40.0, THETA_B, 70.0)
 
 
-def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0, return_truth=False):
-    """Create a four-angle focal-plane mosaic of a glossy inspection scene."""
+#: ---- 実物に見える検査台の場面(2026-11-08)------------------------------------
+#: 旧版は平らな楕円 2 個に光沢の山を置いた絵だった。ここでは検査ラインでいちばん
+#: 偏光が効く場面 —— **透明フィルムで包んだ箱のラベル**(フィルムの映り込みで印字が
+#: 読めない)と、隣の **鋼の六角ナット**(金属の映り込みは偏光しない)—— を、
+#: 高さ場の光線追跡・フレネルの s/p 反射率(誘電体 = glassmirror.fresnel_dielectric、
+#: 金属 = glassmirror.fresnel_conductor)・面の向きから決まる偏光の方位・レンズのぼけ・
+#: 消光比・ショット雑音・読出し雑音・12 bit の量子化・飽和で撮る。
+TILT_DEG = 50.0                 # カメラの光軸の傾き(台の法線から)= 平らな面への入射角
+FILM_N = 1.57                   # 包装フィルム(PET)の屈折率
+STEEL_NK = (2.90, 3.00)         # 鋼(鉄)の複素屈折率 n + ik、可視の中央付近
+FULL_WELL_E = 10000.0           # 飽和電子数
+READ_E = 3.0                    # 読出し雑音 [e-]
+ADC_BITS = 12
+
+
+def _smooth_noise(rng, shape, sigma):
+    from scipy import ndimage as _nd
+    a = _nd.gaussian_filter(rng.standard_normal(shape), sigma, mode="wrap")
+    return a / max(float(a.std()), 1e-12)
+
+
+def _label_albedo(h, w, seed):
+    """ラベルの印字(白い紙に黒の文字・バーコード・枠)を PIL で描いた反射率 (h, w)。"""
+    from PIL import Image, ImageDraw, ImageFont
+    rng = np.random.default_rng(seed)
+    scale = 4
+    im = Image.new("L", (w * scale, h * scale), 225)
+    d = ImageDraw.Draw(im)
+    W_, H_ = w * scale, h * scale
+    d.rectangle((int(0.04 * W_), int(0.05 * H_), int(0.96 * W_), int(0.95 * H_)), outline=30, width=3 * scale)
+    font_path = str(figs._japanese_font_path(bold=True))
+    f_big = ImageFont.truetype(font_path, int(0.105 * W_))
+    f_mid = ImageFont.truetype(font_path, int(0.064 * W_))
+    d.text((int(0.08 * W_), int(0.09 * H_)), "精密部品 FS-2611", font=f_big, fill=15)
+    d.text((int(0.08 * W_), int(0.27 * H_)), "LOT 261108-A   数量 50", font=f_mid, fill=20)
+    d.text((int(0.08 * W_), int(0.39 * H_)), "保管: 直射日光を避ける", font=f_mid, fill=20)
+    # バーコード(幅 1〜4 単位の黒白の帯)。実在の符号系の規則は使わない —— 縞の見え方だけ
+    x = int(0.08 * W_)
+    y0, y1 = int(0.55 * H_), int(0.86 * H_)
+    unit = max(2, int(0.0042 * W_))
+    black = True
+    while x < int(0.62 * W_):
+        wbar = unit * int(rng.integers(1, 5))
+        if black:
+            d.rectangle((x, y0, x + wbar - 1, y1), fill=12)
+        x += wbar
+        black = not black
+    d.text((int(0.66 * W_), int(0.64 * H_)), "検査済", font=f_mid, fill=25)
+    a = np.asarray(im.resize((w, h), Image.Resampling.LANCZOS), dtype=np.float64) / 255.0
+    return 0.03 + 0.85 * a
+
+
+def _hex_nut(xx, yy, cx, cy, r_flat, hole, height):
+    """六角ナット(面取りつき)の高さ場と mask。"""
+    dx, dy = xx - cx, yy - cy
+    ang = np.arctan2(dy, dx)
+    rr = np.hypot(dx, dy)
+    # 六角形: 対辺距離 r_flat の多角形の「半径」(中心から辺まで)
+    sector = np.mod(ang + np.pi / 6.0, np.pi / 3.0) - np.pi / 6.0
+    d_hex = rr * np.cos(sector)                    # 辺の法線方向の距離
+    body = d_hex < r_flat
+    # 面取り: 外接円近くで円錐状に落とす(実物の 30 度面取り)
+    cham = np.clip((r_flat * 1.08 - rr) / (0.16 * r_flat), 0.0, 1.0)
+    top = height * np.minimum(1.0, 0.55 + 0.45 * cham)
+    z = np.where(body, top, 0.0)
+    # ねじ穴(内側へ円錐の面取り)
+    in_hole = rr < hole
+    cone = (rr < hole * 1.25) & ~in_hole
+    z = np.where(cone, height - (hole * 1.25 - rr) * 0.9, z)
+    z = np.where(in_hole, 0.0, z)
+    return np.where(body, z, 0.0), body & ~in_hole
+
+
+def _env_radiance(dirs, rough, soft=(9.0, 14.0)):
+    """検査室の環境の輝度(無偏光): 光軸の鏡像側の大きなソフトボックス + 天井の蛍光灯 + 暗い壁。
+
+    dirs (..., 3) は表面から外へ向かう単位ベクトル。rough は面の粗さ(縁のぼけの幅、ラジアン)。
+    """
+    x, y, z = dirs[..., 0], dirs[..., 1], dirs[..., 2]
+    el = np.arcsin(np.clip(z, -1.0, 1.0))
+    az = np.arctan2(x, y)                          # 光源側(+y、カメラの反対)を 0
+    t = math.radians(TILT_DEG)
+    soft_el, soft_az = math.pi / 2 - t, 0.0        # 平らな面での鏡像方向 = 光源の中心
+    w_el, w_az = math.radians(soft[0]), math.radians(soft[1])
+    edge = 0.025 + rough
+
+    def box(c_el, c_az, h_el, h_az, e):
+        a = 0.5 * (1.0 + np.tanh((h_el - np.abs(el - c_el)) / e))
+        b = 0.5 * (1.0 + np.tanh((h_az - np.abs(np.angle(np.exp(1j * (az - c_az))))) / e))
+        return a * b
+
+    L = 0.05 + 0.10 * np.clip(z, 0.0, 1.0)         # 壁と天井の照り返し
+    L = L + 14.0 * box(soft_el, soft_az, w_el, w_az, edge)
+    for c_az in (-0.9, 0.95, 2.6):                 # 天井の蛍光灯の帯
+        L = L + 1.6 * box(math.radians(72.0), c_az, math.radians(2.0), math.radians(28.0), 0.015 + rough)
+    return L * (z > -0.05)
+
+
+def _bilinear(img, x, y):
+    h, w = img.shape
+    x = np.clip(x, 0.0, w - 1.001)
+    y = np.clip(y, 0.0, h - 1.001)
+    x0 = np.floor(x).astype(np.int64)
+    y0 = np.floor(y).astype(np.int64)
+    fx, fy = x - x0, y - y0
+    return ((1 - fx) * (1 - fy) * img[y0, x0] + fx * (1 - fy) * img[y0, x0 + 1]
+            + (1 - fx) * fy * img[y0 + 1, x0] + fx * fy * img[y0 + 1, x0 + 1])
+
+
+def render_bench_stokes(size=1024, seed=33, wrinkle=1.0, soft=(9.0, 14.0)):
+    """検査台を傾けたカメラで撮った、雑音の無い線形の Stokes (S0, S1, S2) と成分の内訳。
+
+    返り値の各場は (size, size)。``diffuse`` は無偏光の拡散(ラベル・ベルト)、``film`` と
+    ``metal`` はフィルムと鋼の鏡面の S0、``theta_deg`` は鏡面の入射角、``rs``/``rp`` は
+    画素ごとのフレネル反射率(フィルムだけ)。
+    """
+    import glassmirror
+    from scipy import ndimage as _nd
+
+    rng = np.random.default_rng(seed)
+    t = math.radians(TILT_DEG)
+    s = size / 1024.0
+    N = size
+    M = int(math.ceil(size / math.cos(t))) + 2     # 台の上の y の範囲(画面の縦が奥行きに伸びる)
+    # 透視の視野は画面の端で台の外まで届くので、台の座標は周りに余白を足して持つ
+    ox, oy = int(0.30 * N), int(0.45 * M)
+    Mt, Nt = M + 2 * oy, N + 2 * ox
+    yy, xx = np.mgrid[0:Mt, 0:Nt].astype(np.float64)
+    yy -= oy
+    xx -= ox
+    # --- 高さ場と材質 -------------------------------------------------------- #
+    box_x0, box_x1 = 0.06 * N, 0.62 * N
+    box_y0, box_y1 = 0.22 * M, 0.80 * M
+    box_h = 26.0 * s
+    in_box = (xx > box_x0) & (xx < box_x1) & (yy > box_y0) & (yy < box_y1)
+    # フィルムのしわ: 低周波のうねり + 斜めの折れ筋(実物の熱収縮フィルムの見え方)
+    wr = wrinkle * (2.4 * s * _smooth_noise(rng, (Mt, Nt), 38 * s) + 0.9 * s * _smooth_noise(rng, (Mt, Nt), 9 * s))
+    crease = np.zeros((Mt, Nt))
+    for k in range(5):
+        a = rng.uniform(-0.6, 0.6)
+        c = rng.uniform(box_x0, box_x1)
+        dist = (xx - c - a * (yy - 0.5 * M)) / np.hypot(1.0, a)
+        crease += 1.6 * s * np.exp(-(dist / (5.0 * s)) ** 2) * rng.choice([-1.0, 1.0])
+    # 箱の縁でフィルムが丸く回り込む
+    ex = np.minimum(xx - box_x0, box_x1 - xx)
+    ey = np.minimum(yy - box_y0, box_y1 - yy)
+    e = np.minimum(ex, ey)
+    rim = np.clip(e / (14.0 * s), 0.0, 1.0)
+    z_box = np.where(in_box, box_h * np.sqrt(np.clip(1 - (1 - rim) ** 2, 0, 1)) + (wr + crease) * rim, 0.0)
+    nut_cx, nut_cy, nut_r = 0.80 * N, 0.40 * M, 0.11 * N
+    z_nut, nut = _hex_nut(xx, yy, nut_cx, nut_cy, nut_r, 0.45 * nut_r, 44.0 * s)
+    # 小さい座金(ワッシャ)
+    rr2 = np.hypot(xx - 0.80 * N, yy - 0.70 * M)
+    wa = (rr2 < 0.075 * N) & (rr2 > 0.035 * N)
+    z_wa = np.where(wa, 6.0 * s * (1.0 - 0.3 * ((rr2 - 0.055 * N) / (0.02 * N)) ** 2), 0.0)
+    z_wa = np.clip(z_wa, 0.0, None)
+    z = z_box + z_nut + z_wa
+    z = _nd.gaussian_filter(z, 0.7 * s)
+    mat = np.zeros((Mt, Nt), np.int8)                # 0 ベルト / 1 フィルムの箱 / 2 鋼
+    mat[in_box & (z > 0.4 * box_h)] = 1
+    mat[(nut | wa) & (z > 1.0)] = 2
+    # ラベル(箱の上面に貼った紙)
+    lab = np.full((Mt, Nt), 0.62)                    # 段ボールの側面・余白
+    ly0, ly1 = int(box_y0 + 0.08 * (box_y1 - box_y0)), int(box_y1 - 0.08 * (box_y1 - box_y0))
+    lx0, lx1 = int(box_x0 + 0.06 * (box_x1 - box_x0)), int(box_x1 - 0.06 * (box_x1 - box_x0))
+    # 画面の上 = 台の奥(+y)なので、台の座標では上下を返して貼る
+    lab[oy + ly0:oy + ly1, ox + lx0:ox + lx1] = _label_albedo(ly1 - ly0, lx1 - lx0, seed)[::-1]
+    # ベルト(黒いゴム、細かい布目)
+    belt = 0.10 + 0.012 * _smooth_noise(rng, (Mt, Nt), 1.2 * s) + 0.01 * np.sin(2 * np.pi * yy / (7.0 * s))
+    # 鋼の研削目(同心円の筋)と粗さ
+    rr_n = np.hypot(xx - nut_cx, yy - nut_cy)
+    brushed = 1.0 + 0.10 * np.sin(rr_n / (1.3 * s)) * _smooth_noise(rng, (Mt, Nt), 3 * s)
+    gy, gx = np.gradient(z)
+    nx, ny, nz = -gx, -gy, np.ones_like(z)
+    nn = np.sqrt(nx * nx + ny * ny + nz * nz)
+    nrm = np.stack([nx / nn, ny / nn, nz / nn])
+
+    # --- 透視のカメラで光線を飛ばす(画角 ±13 度。鏡像方向が画面の中で動くので
+    #     ソフトボックスの映り込みが「面の一部だけ」に乗る —— 実際のカメラの見え方) ---- #
+    d0 = np.array([0.0, math.sin(t), -math.cos(t)])     # 光軸(奥 = +y へ、下へ)
+    ex = np.array([1.0, 0.0, 0.0])
+    ey = np.array([0.0, math.cos(t), math.sin(t)])       # 画面の上向き
+    f_px = 2.2 * N
+    centre = np.array([0.5 * N, 0.5 * M, 0.0])
+    cam = centre - f_px * d0                             # 中心で 1 画素 = 台の 1 単位
+    rows, cols = np.mgrid[0:N, 0:N].astype(np.float64)
+    du = (cols - 0.5 * (N - 1)) / f_px
+    dv = -(rows - 0.5 * (N - 1)) / f_px
+    D = d0[None, None, :] + du[..., None] * ex + dv[..., None] * ey
+    D /= np.linalg.norm(D, axis=-1, keepdims=True)
+    zmax = float(z.max()) + 2.0
+    tt0 = (zmax - cam[2]) / D[..., 2]
+    tt1 = (0.0 - cam[2]) / D[..., 2]
+    step = 0.8
+    n_steps = int(math.ceil(float((tt1 - tt0).max()) / step)) + 2
+    # 速くするための近道(結果は同じ): 光線が台に当たる点の周り(光線が高さ zmax から降りる間に横へ進む距離)に
+    # 高さが 0 でない所が無ければ、交点は台の上 —— 行進しない。行進は残りの光線だけ
+    reach = int(math.ceil(zmax * math.tan(t + 0.25))) + 2
+    z_dil = _nd.maximum_filter(z, size=2 * reach + 1)
+    gx_ = cam[0] + tt1 * D[..., 0] + ox
+    gy_ = cam[1] + tt1 * D[..., 1] + oy
+    flat = _bilinear(z_dil, gx_, gy_) <= 0.0
+    hit = np.where(flat, tt1, np.nan)
+    act = np.nonzero(~flat)
+    Da = D[act]
+    t0a, t1a = tt0[act], tt1[act]
+    hit_a = np.full(t0a.shape, np.nan)
+    prev_t = t0a.copy()
+    prev_f = np.ones(t0a.shape)
+    for k in range(1, n_steps + 1):
+        tk = np.minimum(t0a + k * step, t1a)
+        qx = cam[0] + tk * Da[:, 0]
+        qy = cam[1] + tk * Da[:, 1]
+        qz = cam[2] + tk * Da[:, 2]
+        f = qz - _bilinear(z, qx + ox, qy + oy)
+        new = np.isnan(hit_a) & (f <= 0.0)
+        if new.any():
+            a_ = prev_f[new] / np.maximum(prev_f[new] - f[new], 1e-12)
+            hit_a[new] = prev_t[new] + a_ * (tk[new] - prev_t[new])
+        prev_t, prev_f = tk, f
+        if not np.isnan(hit_a).any():
+            break
+    hit[act] = hit_a
+    hit = np.where(np.isnan(hit), tt1, hit)
+    px = cam[0] + hit * D[..., 0] + ox
+    py = cam[1] + hit * D[..., 1] + oy
+    n_img = np.stack([_bilinear(nrm[i], px, py) for i in range(3)], axis=-1)
+    n_img /= np.linalg.norm(n_img, axis=-1, keepdims=True)
+    m_img = _bilinear(mat.astype(np.float64), px, py)
+    is_film = m_img > 0.5
+    is_film &= m_img < 1.5
+    is_metal = m_img > 1.5
+    alb = _bilinear(lab, px, py)
+    belt_i = _bilinear(belt, px, py)
+    brush_i = _bilinear(brushed, px, py)
+    # 接地の影(箱とナットの足元を暗く): 高さ場をぼかした差 = 簡単な遮蔽
+    occl = np.clip(1.0 - 0.035 * np.maximum(_nd.gaussian_filter(z, 10 * s) - z, 0.0) / s, 0.35, 1.0)
+    occ_i = _bilinear(occl, px, py)
+
+    # --- 陰影 ---------------------------------------------------------------- #
+    V = -D
+    cos_i = np.clip(np.sum(n_img * V, axis=-1), 1e-4, 1.0)
+    R = 2.0 * cos_i[..., None] * n_img - V               # 鏡像方向
+    theta = np.degrees(np.arccos(cos_i))
+    # s 偏光の向き = 入射面の法線 n × V、画面の座標(列 = 右、行 = 下)へ射影
+    sv = np.cross(n_img, V)
+    sn = np.linalg.norm(sv, axis=-1, keepdims=True)
+    sv = np.where(sn > 1e-9, sv / np.maximum(sn, 1e-12), np.array([1.0, 0.0, 0.0]))
+    psi = np.arctan2(-(sv @ ey), sv[..., 0])             # 画面の右から下へ測る角
+    # 拡散の照度: ソフトボックスの中心方向 + 環境
+    Lc = np.array([0.0, math.sin(t), math.cos(t)])
+    E = 0.35 + 1.1 * np.clip(n_img @ Lc, 0.0, None)
+    # フィルム: 誘電体、ほぼ鏡面(しわの粗さだけ)
+    rs_f = glassmirror.fresnel_dielectric(cos_i, 1.0, FILM_N, "s")
+    rp_f = glassmirror.fresnel_dielectric(cos_i, 1.0, FILM_N, "p")
+    rs_m = glassmirror.fresnel_conductor(cos_i, STEEL_NK[0], STEEL_NK[1], "s")
+    rp_m = glassmirror.fresnel_conductor(cos_i, STEEL_NK[0], STEEL_NK[1], "p")
+    L_f = _env_radiance(R, 0.01, soft)
+    L_m = _env_radiance(R, 0.05, soft) * brush_i
+    # ベルトのゴムは粗い誘電体: 鏡面は弱くぼけて、偏光は少し
+    L_b = _env_radiance(R, 0.35, soft)
+    rs_b, rp_b = 0.06 * rs_f / np.maximum(rs_f + rp_f, 1e-12), 0.06 * rp_f / np.maximum(rs_f + rp_f, 1e-12)
+    trans = (1.0 - 0.5 * (rs_f + rp_f)) ** 2                # 往復のフィルム透過(無偏光とみなす)
+    diffuse = np.where(is_film, alb * trans, np.where(is_metal, 0.0, belt_i)) * E * occ_i
+    spec_s = np.where(is_film, rs_f * L_f, np.where(is_metal, rs_m * L_m, rs_b * L_b * 0.5)) * 0.5
+    spec_p = np.where(is_film, rp_f * L_f, np.where(is_metal, rp_m * L_m, rp_b * L_b * 0.5)) * 0.5
+    spec_s = spec_s * occ_i
+    spec_p = spec_p * occ_i
+    s0 = diffuse + spec_s + spec_p
+    pol = spec_s - spec_p
+    s1 = pol * np.cos(2.0 * psi)
+    s2 = pol * np.sin(2.0 * psi)
+    film_spec = np.where(is_film, spec_s + spec_p, 0.0)
+    metal_spec = np.where(is_metal, spec_s + spec_p, 0.0)
+    return {"stokes": np.stack([s0, s1, s2]), "diffuse": diffuse, "film": film_spec,
+            "metal": metal_spec, "spec_p": spec_p, "spec_s": spec_s,
+            "theta_deg": theta, "is_film": is_film, "is_metal": is_metal,
+            "psi_deg": np.degrees(psi), "rs_film": rs_f, "rp_film": rp_f,
+            "albedo": np.where(is_film, alb, 0.0)}
+
+
+def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0, return_truth=False, exposure_scale=1.0,
+                          bench=None):
+    """検査台(フィルム包装のラベル + 鋼のナット)を 4 方位の画素偏光子を持つセンサで撮った生のモザイク。
+
+    ``render_bench_stokes`` の線形 Stokes に、露光・レンズのぼけ(ガウス σ 0.7 画素)・偏光子の
+    消光比(反対向きの成分が 1/extinction_ratio 漏れる)・ショット雑音(飽和 10000 電子)・読出し雑音
+    3 電子・12 bit の量子化・飽和をこの順で掛ける。鋼のナットの映り込みは飽和する(白飛びを残す)。
+    ``return_truth=True`` は同じ露光の雑音の無い線形の真値(飽和しない HDR)も返す。
+    """
     if size < 64 or size % 2:
         raise ValueError("size must be an even integer of at least 64")
+    from scipy import ndimage as _nd
+
     rng = np.random.default_rng(seed)
-    yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
-    xn, yn = xx / size, yy / size
-    matte = 0.13 + 0.035 * rng.standard_normal((size, size))
-    matte = (matte + np.roll(matte, 1, 0) + np.roll(matte, 1, 1)) / 3.0
-    diffuse = np.clip(matte, 0.035, 0.25)
-    metal = ((xn - 0.32) / 0.25) ** 2 + ((yn - 0.48) / 0.18) ** 2 < 1.0
-    plastic = ((xn - 0.73) / 0.16) ** 2 + ((yn - 0.56) / 0.25) ** 2 < 1.0
-    diffuse[metal] += 0.20
-    diffuse[plastic] += 0.27
-    glare = np.exp(-(((xn - 0.70) / 0.052) ** 2 + ((yn - 0.39) / 0.10) ** 2)) * plastic
-    metal_glare = np.exp(-(((xn - 0.27) / 0.035) ** 2 + ((yn - 0.39) / 0.13) ** 2)) * metal
-    az = 28.0
-    if return_truth:
-        # 入口動画は検光子の理想応答を教えるため、飽和する既存カメラ露光とは分け、
-        # 同じ幾何・拡散・光沢ローブの線形 HDR 真値を返す。既定値 False の既存シーン、
-        # 戻り値、図、数値は一切変えない。
-        s0 = diffuse + 0.45 * glare + 0.35 * metal_glare
-        dolp_true = np.clip(0.92 * glare / np.max(glare)
-                            + 0.15 * metal_glare / np.max(metal_glare), 0.0, 0.995)
-    else:
-        s0 = diffuse + 2.25 * glare + 1.35 * metal_glare
-        dolp_true = np.clip(0.995 * glare / np.maximum(s0, 1e-9)
-                            + 0.18 * metal_glare / np.maximum(s0, 1e-9), 0.0, 0.995)
-    phase = np.deg2rad(2.0 * az)
-    s1 = s0 * dolp_true * np.cos(phase)
-    s2 = s0 * dolp_true * np.sin(phase)
-    ideal = np.stack([0.5 * (s0 + s1), 0.5 * (s0 + s2),
-                      0.5 * (s0 - s1), 0.5 * (s0 - s2)])
+    b = bench if bench is not None else render_bench_stokes(size=size, seed=seed)
+    film = b["is_film"]
+    # 露光: フィルム越しのラベルの拡散(95 % 点)が飽和の 0.40 に来るように絞る
+    expo = exposure_scale * 0.40 / max(float(np.percentile(b["diffuse"][film], 95.0)), 1e-9)
+    s0, s1, s2 = (expo * a for a in b["stokes"])
+    blur = [_nd.gaussian_filter(a, 0.7) for a in (s0, s1, s2)]
+    ang = np.radians(np.asarray(ANGLES))
+    ideal = np.stack([0.5 * (blur[0] + blur[1] * np.cos(2 * a) + blur[2] * np.sin(2 * a)) for a in ang])
     leak = 1.0 / extinction_ratio
     opposite = ideal[[2, 3, 0, 1]]
     measured = (ideal + leak * opposite) / (1.0 + leak)
-    measured += rng.normal(0.0, 0.004, measured.shape)
-    measured = np.clip(measured, 0.0, 1.0)
+    electrons = rng.poisson(np.clip(measured, 0.0, None) * FULL_WELL_E).astype(np.float64)
+    electrons += rng.normal(0.0, READ_E, electrons.shape)
+    levels = 2 ** ADC_BITS - 1
+    measured = np.round(np.clip(electrons / FULL_WELL_E, 0.0, 1.0) * levels) / levels
     raw = np.empty((size, size), dtype=np.float64)
     raw[0::2, 0::2] = measured[0, 0::2, 0::2]
     raw[0::2, 1::2] = measured[1, 0::2, 1::2]
@@ -106,16 +402,21 @@ def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0, return_tru
     st2 = analyzers[1] - analyzers[3]
     dolp = np.hypot(st1, st2) / np.maximum(st0, 1e-9)
     aolp = np.mod(0.5 * np.degrees(np.arctan2(st2, st1)), 180.0)
-    glare_removed = np.clip(st0 - np.hypot(st1, st2), 0.0, 1.0)
+    glare_removed = np.clip(st0 - np.hypot(st1, st2), 0.0, 2.0)
     result = {"raw_mosaic": raw, "analyzers": analyzers,
               "stokes": np.stack([st0, st1, st2]), "dolp": dolp,
               "aolp_deg": aolp, "glare_removed": glare_removed,
-              "scene_masks": {"metal": metal, "plastic": plastic},
-              "azimuth_deg": az, "extinction_ratio": extinction_ratio}
+              "scene_masks": {"metal": b["is_metal"], "plastic": film},
+              "azimuth_deg": float(np.median(b["psi_deg"][film])),
+              "extinction_ratio": extinction_ratio, "exposure": expo}
     if return_truth:
+        dolp_true = np.hypot(s1, s2) / np.maximum(s0, 1e-12)
         result.update({"truth_stokes": np.stack([s0, s1, s2]),
-                       "truth_dolp": dolp_true, "truth_diffuse": diffuse,
-                       "truth_glare": glare, "truth_metal_glare": metal_glare})
+                       "truth_dolp": dolp_true, "truth_diffuse": expo * b["diffuse"],
+                       "truth_glare": expo * b["film"], "truth_metal_glare": expo * b["metal"],
+                       "truth_spec_p": expo * b["spec_p"], "truth_albedo": b["albedo"],
+                       "truth_theta_deg": b["theta_deg"], "truth_rp_film": b["rp_film"],
+                       "truth_rs_film": b["rs_film"]})
     return result
 
 
@@ -148,10 +449,12 @@ def fig_dofp_camera():
         return None
     r = dofp_inspection_scene(size=1024, seed=33)
     figs.save("raw_polarizer_mosaic", r["raw_mosaic"], gray=True,
-              caption="Raw four-angle 2x2 mosaic at sensor resolution; glare clipping and extinction leakage are retained.")
+              caption="検査台(フィルムで包んだ箱のラベルと鋼のナット)を 4 方位の画素偏光子センサで撮った生のモザイク(等倍)。"
+                      "2x2 画素ごとに 0/45/90/135 度。鋼の映り込みの白飛びと偏光子の消光比 1/120 の漏れを残してある。")
     figs.save_grid("analyzer_samples", list(r["analyzers"]),
                    ["0 deg", "45 deg", "90 deg", "135 deg"], ncols=4, gray=True,
-                   caption="Half-resolution analyzer samples separated from the mosaic (one quarter of the pixels each).")
+                   caption="モザイクから方位ごとに 1/4 の画素を抜き出した 4 枚(1/2 解像度、補間しない)。"
+                           "フィルムの映り込みは 0 度と 90 度で明るさが大きく変わり、鋼の映り込みはあまり変わらない。")
     s0, s1, s2 = r["stokes"]
     hue = np.mod(r["aolp_deg"], 180.0) / 180.0
     h6 = hue * 6.0
@@ -178,11 +481,15 @@ def fig_dofp_camera():
         for j in range(3):
             lr[..., j][ls == k] = channels[j][ls == k]
     rgb[-24:] = lr
-    figs.save_grid("stokes_and_glare", [s0, s1, s2, r["dolp"], rgb, r["glare_removed"]],
-                   ["S0", "S1", "S2", "DoLP", "AoLP: 0..180 deg", "glare reduced"],
+    # 偏光度は S0 の小さい画素(影・黒い印字)で 0 割りに近くなり、桁違いの値が表示の範囲を潰す。
+    # S0 が中央値の 5 % 未満の画素は 0 にし、0..1 に固定して塗る
+    dolp_show = np.where(s0 > 0.05 * float(np.median(s0)), np.clip(r["dolp"], 0.0, 1.0), 0.0)
+    figs.save_grid("stokes_and_glare", [s0, s1, s2, dolp_show, rgb, r["glare_removed"]],
+                   ["S0", "S1", "S2", "DoLP(0..1)", "AoLP: 0..180 deg", "glare reduced"],
+                   vrange=[None, None, None, (0.0, 1.0), None, None],
                    ncols=3, gray=[True, False, False, True, False, True],
                    signed=[False, True, True, False, False, False],
-                   caption="Stokes fields, polarization degree, hue-wheel angle and the minimum-polarized component. Low-degree regions retain angle noise.")
+                   caption="Stokes の 3 成分、偏光度、偏光の方位(色相)、偏光成分を引いた像。偏光度の低い所(ベルト・ラベルの紙)は方位が雑音になる。")
     return r
 
 
@@ -198,12 +505,17 @@ def fig_analyzer_sweep_explained():
     glare = np.asarray(r["truth_glare"])
     metal_glare = np.asarray(r["truth_metal_glare"])
     diffuse = np.asarray(r["truth_diffuse"])
-    a_yx = np.unravel_index(np.argmax(glare), glare.shape)
-    b_yx = np.unravel_index(np.argmax(metal_glare), metal_glare.shape)
+    # A = フィルムの映り込みが強い画素(映り込みが最大値の半分以上)のうち、偏光度が最大の点
+    #     (黒い印字の上の映り込み = 拡散が少なく、映り込みだけが呼吸する)。
+    # B = 鋼の映り込みが飽和しない画素(真値で 0.9 未満)のうち、映り込みが最大の点。
+    tdolp = np.asarray(r["truth_dolp"])
+    strong = glare > 0.5 * float(glare.max())
+    a_yx = np.unravel_index(np.argmax(np.where(strong, tdolp, -1.0)), glare.shape)
+    b_yx = np.unravel_index(np.argmax(np.where(s0 < 0.9, metal_glare, -1.0)), metal_glare.shape)
     # C は拡散が中央値付近、両光沢ローブが実質ゼロの候補から、観測 DoLP が
     # 最小の点を機械的に選ぶ。「動かない地」を目で選ばない。
     med = float(np.median(diffuse))
-    candidates = (np.abs(diffuse - med) < 0.003) & (glare < 1e-6) & (metal_glare < 1e-6)
+    candidates = (np.abs(diffuse - med) < 0.01 * max(med, 1e-9)) & (glare < 1e-6) & (metal_glare < 1e-6)
     cy, cx = np.nonzero(candidates)
     ci = int(np.argmin(r["dolp"][cy // 2, cx // 2]))
     c_yx = (int(cy[ci]), int(cx[ci]))
@@ -323,16 +635,257 @@ def fig_analyzer_sweep_explained():
 
         draw_graph(im, k)
         ImageDraw.Draw(im).rectangle((0, 680, 1279, 719), fill=(31, 38, 51))
-        put_text(im, "Fullseye: polarization_separate(4方位→Stokes)。鏡面=偏光成分、拡散=無偏光。ブリュースター角近傍で分離が最良。",
+        put_text(im, "A = フィルムの映り込み(強く偏光)  B = 鋼の映り込み(偏光は弱い)  C = ベルト。入射角 約50°",
                  (12, 679), size=22, pad=0)
         frames.append(np.asarray(im, dtype=np.uint8))
 
     figs.save_video("analyzer_sweep_explained", frames, fps=12.0, gif_every=2, gif_width=640,
-                    caption="検光子を0〜177.5度まで回すと、プラスチックの光沢Aだけが強く呼吸し、拡散地Cは動かない。"
+                    caption="検光子を0〜177.5度まで回すと、包装フィルムの映り込みAだけが強く呼吸し、鋼のナットの映り込みBは"
+                            "わずかしか変わらず、ベルトの地Cは動かない。"
                             "観測DoLPはA/B/C = %.2f/%.2f/%.3f、最大/最小比は %.2f/%.2f/%.2f。"
                             % (*dolps, *ratios))
     return {"dolp": dict(zip(labels, dolps)), "max_min_ratio": dict(zip(labels, ratios)),
             "sample_yx": dict(zip(labels, samples))}
+
+
+#: 10 節で振る 2 つの条件: 照明の広さ(ソフトボックスの半角 仰角 x 方位、小さなソフトボックス ±9°x±14° 〜
+#: 大きな面照明 ±30°x±80°)と しわの深さ(1〜4 倍)。片方だけを振る 2 本の掃引(しわだけ = 小さな照明で、
+#: 照明だけ = しわ 1 倍で)と、両方が大きい 1 点を測る。
+LIGHTS = {"小さなソフトボックス": (9.0, 14.0), "面照明 ±15°x±30°": (15.0, 30.0),
+          "面照明 ±22°x±55°": (22.0, 55.0), "大きな面照明": (30.0, 80.0)}
+WRINKLES = (1.0, 2.0, 3.0, 4.0)
+#: 測る条件(照明の名前, しわの倍率): しわだけの掃引 + 照明だけの掃引 + 両方が大きい 1 点
+SWEEP = ([("小さなソフトボックス", w) for w in WRINKLES] + [(n, 1.0) for n in LIGHTS if n != "小さなソフトボックス"]
+         + [("大きな面照明", 4.0)])
+#: 2026-11-08 の探針(10 節と同じ関数、種 = 描画の乱数、雑音の種は +2)の 偏光カメラ / 全画素の固定フィルタ の比。
+#: 門はこの表で種によらず成り立つものだけ(結果を見てから置いた門 —— 余白は門の所に書く)。
+#:   1024 画素・種 33/41/57: しわだけ(小さな照明)1→2→3→4 倍 0.92→0.96→0.97→0.97(3 本とも同じ形)、
+#:     照明だけ(しわ 1 倍)±9°→±15°→±22°→±30° 0.92→0.95→1.01〜1.04→1.04〜1.07、両方 1.36〜1.43
+#:   512 画素・種 33/41/57/71/89: しわだけ 0.84〜0.86→0.91〜0.92→0.94〜0.95→0.95〜0.96、
+#:     照明だけ 0.84〜0.86→0.86〜0.92→0.92〜1.03→0.96〜1.05、両方 1.13〜1.19
+#: 2026-11-09 の確認(独立の探針、種 101/113/127/131/137/149/163/179):
+#:   512 画素: しわだけの最大 0.947〜0.966、照明だけ(大きな面照明)0.944〜1.025(1 を超えたのは 8 本中 3 本)、
+#:     両方 1.145〜1.352。種 137 は照明だけ 0.944 < しわだけ 0.955 で順序が逆 —— 「1 に届いたのは照明だけ」は
+#:     1024 画素の所見で、512 画素では言えない。モザイクのフィルタとの勝ち負けは種 137 で逆転(6.60 < 6.64)
+#:   1024 画素・種 101/113/127: しわだけの最大 0.969〜0.978、照明だけ 1.033〜1.059、両方 1.331〜1.371
+LOW_EXPOSURE = 1.0 / 8.0          # 鋼を飽和させずに測るための短い露光(HDR の短い方の 1 枚)
+
+
+def _half(a, h2):
+    """真値をモザイクの 1/2 解像度にそろえる(2x2 平均)。"""
+    a = np.asarray(a, dtype=np.float64)
+    return a.reshape(h2, 2, h2, 2).mean(axis=(1, 3))
+
+
+def _label_cnr_tools(r, h2):
+    """印字の読みやすさ: 黒い印字と白い紙の明るさの差 / 紙の上の揺らぎ。飽和した画素は数えない。"""
+    film = _half(r["scene_masks"]["plastic"], h2) > 0.99
+    alb = _half(r["truth_albedo"], h2)
+    unsat = r["analyzers"].max(axis=0) < 0.999
+    ink = film & unsat & (alb < 0.15)
+    paper = film & unsat & (alb > 0.75)
+
+    def cnr(img):
+        return float((img[paper].mean() - img[ink].mean()) / max(img[paper].std(), 1e-12))
+    return cnr
+
+
+def fixed_polarizer_best(r, cnr):
+    """ゼロ点: レンズの前に偏光フィルタを 1 枚、最適な角度で固定する(2.5° 刻みで 0〜180° を全部試す)。
+
+    同じ生モザイクの Stokes から ``2·I(θ) = S0 + S1 cos 2θ + S2 sin 2θ`` を組む(フィルタを付けた普通の
+    カメラと同じ明るさの尺度)。★実物の固定フィルタはモザイクを持たないので全画素を使え、透過率も
+    違う —— ここでは同じセンサの同じ画素数で比べ、角度を選べることだけを比べる。
+    """
+    s0, s1, s2 = r["stokes"]
+    best = (-np.inf, 0.0, None)
+    for th in np.arange(0.0, 180.0, 2.5):
+        t = math.radians(th)
+        img = s0 + s1 * math.cos(2 * t) + s2 * math.sin(2 * t)
+        c = cnr(img)
+        if c > best[0]:
+            best = (c, th, img)
+    return best
+
+
+def fixed_polarizer_fullres(bench, r, cnr, seed):
+    """ゼロ点の 2 本目: 全画素で撮る固定の偏光フィルタのカメラ(モザイクを持たない別のカメラ)。
+
+    偏光カメラと同じセンサ(飽和 10000 電子・読出し 3 電子・12 bit)・同じ露光・同じぼけ・同じ消光比 1/120 で、
+    全画素が角度 θ の透過 I(θ) を受ける。角度は**雑音の無い像**で印字の CNR が最良になるものを 2.5° 刻みで
+    選ぶ(フィルタに有利な選び方)。偏光カメラ(1/2 解像度)と同じ画素数にそろえるため 2x2 を足す(光子も 4 画素分
+    —— これもフィルタに有利)。返り値は (雑音入りの CNR, 角度, 雑音の無い CNR)。
+    """
+    from scipy import ndimage as _nd
+    expo = r["exposure"]
+    s0, s1, s2 = (_nd.gaussian_filter(expo * a, 0.7) for a in bench["stokes"])
+    leak = 1.0 / r["extinction_ratio"]
+    h2 = s0.shape[0] // 2
+
+    def through(th):
+        t = math.radians(th)
+        c, si = math.cos(2 * t), math.sin(2 * t)
+        a = 0.5 * (s0 + s1 * c + s2 * si)
+        b = 0.5 * (s0 - s1 * c - s2 * si)                  # 直交する成分(消光比の分だけ漏れる)
+        return (a + leak * b) / (1.0 + leak)
+
+    def bin2(a):
+        return a.reshape(h2, 2, h2, 2).sum(axis=(1, 3))
+    clean, th_best = max((cnr(bin2(through(th))), th) for th in np.arange(0.0, 180.0, 2.5))
+    m = through(th_best)
+    rng = np.random.default_rng(seed + 7)
+    e = rng.poisson(np.clip(m, 0.0, None) * FULL_WELL_E).astype(np.float64) + rng.normal(0.0, READ_E, m.shape)
+    levels = 2 ** ADC_BITS - 1
+    q = np.round(np.clip(e / FULL_WELL_E, 0.0, 1.0) * levels) / levels
+    return cnr(bin2(q)), float(th_best), float(clean)
+
+
+def bench_glare_numbers(size=1024, seed=33):
+    """10 節: 実物に見える検査台で、偏光の分離が何を消して何を残すかを数える。
+
+    真値は描画の内訳(拡散・フィルムの鏡面・鋼の鏡面、s と p)で、分離そのものは
+    雑音・ぼけ・消光比・量子化・飽和の入った**生のモザイク**から計算する。
+    比べるもの: (1) 分離で残る映り込みと閉形式 2 * I_p = R_p * E(4 節と同じ式を、画素ごとに
+    違う入射角で)、(2) ゼロ点 = 偏光子なし / 最適角の偏光フィルタ 1 枚(同じモザイクから組む / 全画素の別の
+    カメラ)を、しわだけ・照明の広さだけを振った 2 本の掃引と両方が大きい 1 点で、
+    (3) 鋼は飽和しない短い露光で、金属のフレネルの式から出る「偏光している割合」と。★真値も場面も
+    自作の描画で、(3) の式は描画と同じ glassmirror.fresnel_conductor —— 実装の検算であって外の真値ではない。
+    """
+    from scipy import ndimage as _nd
+    h2 = size // 2
+    bench = render_bench_stokes(size=size, seed=seed)
+    r = dofp_inspection_scene(size=size, seed=seed, return_truth=True, bench=bench)
+    s0_t = _half(_nd.gaussian_filter(r["truth_stokes"][0], 0.7), h2)
+    d_t = _half(_nd.gaussian_filter(r["truth_diffuse"], 0.7), h2)
+    sp_t = _half(_nd.gaussian_filter(r["truth_spec_p"], 0.7), h2)
+    film_g = _half(r["truth_glare"], h2)
+    film = _half(r["scene_masks"]["plastic"], h2) > 0.99
+    metal = _half(r["scene_masks"]["metal"], h2) > 0.99
+    before = r["stokes"][0]                         # 偏光子の無いカメラが撮る明るさ(4 方位の和の半分 x 2)
+    after = r["glare_removed"]
+    unsat = r["analyzers"].max(axis=0) < 0.999
+    gl = film & unsat & (film_g > 0.25 * float(film_g[film].max()))
+    resid_meas = float(np.mean(after[gl] - d_t[gl]))
+    resid_pred = float(np.mean(2.0 * sp_t[gl]))
+    glare_mean = float(np.mean(s0_t[gl] - d_t[gl]))
+    film_removed = 1.0 - resid_meas / glare_mean
+    cnr = _label_cnr_tools(r, h2)
+    fixed = fixed_polarizer_best(r, cnr)
+    sat_metal = float((~unsat & metal).sum() / max(metal.sum(), 1))
+    # 鋼: 同じ場面を 1/8 の露光で(飽和しない)。分離で消える割合を、金属のフレネルの式から出る値と比べる
+    r_lo = dofp_inspection_scene(size=size, seed=seed + 1, return_truth=True, bench=bench, exposure_scale=LOW_EXPOSURE)
+    unsat_lo = r_lo["analyzers"].max(axis=0) < 0.999
+    mg_t = _half(r_lo["truth_metal_glare"], h2)
+    mg = metal & unsat_lo & (mg_t > 0.25 * float(mg_t[metal].max()))
+    metal_removed = 1.0 - float(np.mean(r_lo["glare_removed"][mg])) / float(np.mean(r_lo["stokes"][0][mg]))
+    th_m = np.radians(_half(r_lo["truth_theta_deg"], h2)[mg])
+    import glassmirror
+    rs = glassmirror.fresnel_conductor(np.cos(th_m), STEEL_NK[0], STEEL_NK[1], "s")
+    rp = glassmirror.fresnel_conductor(np.cos(th_m), STEEL_NK[0], STEEL_NK[1], "p")
+    w = mg_t[mg]                                    # 映り込みの明るさで重みを付けた、偏光している割合
+    metal_pred = float(np.sum(w * (rs - rp) / (rs + rp)) / np.sum(w))
+    # しわだけ・照明の広さだけの掃引(小さなソフトボックス x しわ 1 倍 = 上の場面)。描画の乱数は同じ種なので、
+    # しわの形・ラベル・ナットは同じで、振った量だけが違う
+    grid = {}
+    for lname, wk in SWEEP:
+        soft = LIGHTS[lname]
+        if lname == "小さなソフトボックス" and wk == 1.0:
+            bg, rg, cg = bench, r, cnr
+        else:
+            bg = render_bench_stokes(size=size, seed=seed, wrinkle=wk, soft=soft)
+            rg = dofp_inspection_scene(size=size, seed=seed + 2, return_truth=True, bench=bg)
+            cg = _label_cnr_tools(rg, h2)
+        fg = fixed_polarizer_best(rg, cg)
+        ff = fixed_polarizer_fullres(bg, rg, cg, seed)
+        grid[(lname, wk)] = {"none": cg(rg["stokes"][0]), "fixed": fg[0], "fixed_deg": fg[1], "dofp": cg(rg["glare_removed"]),
+                             "fixed_full": ff[0], "fixed_full_deg": ff[1], "fixed_full_clean": ff[2]}
+    theta = _half(r["truth_theta_deg"], h2)
+    return {"r": r, "film_removed": film_removed, "metal_removed": metal_removed, "metal_pred": metal_pred,
+            "resid_meas": resid_meas, "resid_pred": resid_pred, "glare_mean": glare_mean,
+            "cnr_before": cnr(before), "cnr_after": cnr(after), "cnr_fixed": fixed[0], "fixed_deg": fixed[1],
+            "fixed_img": fixed[2], "sat_metal": sat_metal, "sat_metal_lo": float((~unsat_lo & metal).sum() / max(metal.sum(), 1)),
+            "theta_film": float(np.median(theta[gl])), "n_glare_px": int(gl.sum()), "size": size,
+            "dolp_film": float(np.median(r["dolp"][gl])), "before": before, "after": after,
+            "grid": grid}
+
+
+def _ratio_full(g, light, wrinkle):
+    """偏光カメラ / 全画素の固定フィルタ の印字 CNR の比。"""
+    v = g["grid"][(light, wrinkle)]
+    return v["dofp"] / v["fixed_full"]
+
+
+def fig_glare_removed_label(g):
+    """代表の図: 偏光子なし / 最適角の偏光フィルタ 1 枚 / 偏光カメラで剥がした像 を原寸(1/2 解像度の画素)で並べる。"""
+    if not figs.enabled():
+        return None
+    from PIL import Image, ImageDraw
+    import annotate as AN
+    white = float(np.percentile(g["before"][g["r"]["scene_masks"]["plastic"][0::2, 0::2]], 99.5))
+
+    def enc(a):
+        q = np.clip(np.asarray(a) / white, 0.0, 1.0) ** (1.0 / 2.2)
+        return np.repeat(np.rint(q * 255).astype(np.uint8)[..., None], 3, axis=2)
+
+    tiles = [enc(g["before"]), enc(g["fixed_img"]), enc(g["after"])]
+    h, w = tiles[0].shape[:2]
+    gap, head, foot = 12, 104, 186
+    W_ = 3 * w + 2 * gap
+    im = Image.new("RGB", (W_, h + head + foot), (24, 26, 30))
+    for i, t in enumerate(tiles):
+        im.paste(Image.fromarray(t), (i * (w + gap), head))
+    d = ImageDraw.Draw(im)
+
+    def text(s, xy, size=24, fill=(240, 240, 240)):
+        m = AN.measure_text(s, font_size=size, min_font_size=size, wrap=False)
+        if xy[0] + m["width"] > im.width - 4 or xy[1] + m["height"] > im.height:
+            raise ValueError("図の文字がはみ出す: %r" % s)
+        for i, line in enumerate(m["lines"]):
+            d.text((xy[0], xy[1] + i * m["line_height"]), line, font=m["font"], fill=fill)
+    cols = [(255, 190, 120), (200, 230, 160), (140, 220, 255)]
+    heads = [("偏光子なし", "映り込みで印字が読めない", "印字の CNR %.1f" % g["cnr_before"]),
+             ("偏光フィルタ 1 枚(%.1f° に固定)" % g["fixed_deg"], "角度を選べば同じ程度に消える(同じモザイクから組んだ像)",
+              "印字の CNR %.1f(全画素で撮るフィルタなら %.1f)" % (g["cnr_fixed"], g["grid"][("小さなソフトボックス", 1.0)]["fixed_full"])),
+             ("偏光カメラで剥がす(S0 − |S1,S2|)", "映り込み %.0f %% 減" % (100 * g["film_removed"]),
+              "印字の CNR %.1f" % g["cnr_after"])]
+    for i, (a, b, c) in enumerate(heads):
+        x = i * (w + gap) + 12
+        text(a, (x, 8), size=22)
+        text(b, (x, 42), size=18, fill=cols[i])
+        text(c, (x, 70), size=18, fill=cols[i])
+    y0 = h + head + 8
+    lines = [
+        "4 方位の画素偏光子センサの生モザイク 1 枚(雑音・ぼけ・消光比 1/120・12 bit・飽和入り、%d 画素の描画)。入射角 約 %.0f°。"
+        % (g["size"], g["theta_film"]),
+        "この場面(小さなソフトボックス 1 灯)では固定の偏光フィルタ 1 枚で足りる。以下の比は 偏光カメラ / 全画素で撮る固定フィルタ:",
+        "しわだけ 1→4 倍で %.2f→%.2f、照明だけ大きな面照明へ広げて %.2f、両方で %.2f(CNR %.1f 対 %.1f、どちらも読めない)。"
+        % (_ratio_full(g, "小さなソフトボックス", 1.0), _ratio_full(g, "小さなソフトボックス", 4.0),
+           _ratio_full(g, "大きな面照明", 1.0), _ratio_full(g, "大きな面照明", 4.0),
+           g["grid"][("大きな面照明", 4.0)]["dofp"], g["grid"][("大きな面照明", 4.0)]["fixed_full"]),
+        "しわも照明も差を広げる。%d 画素では 1 に届いたのは照明だけ(512 画素では互角で、種によってしわとの順序も入れ替わる)。" % g["size"],
+        "鋼のナットが白いのは飽和(鋼の %.0f %%)。飽和しない短い露光では、鋼の映り込みは %.0f %% 消える(描画と同じ式で %.0f %%)。"
+        % (100 * g["sat_metal"], 100 * g["metal_removed"], 100 * g["metal_pred"]),
+        "剥がした後に残るしわの筋は R_p·E(フレネルの p 成分): 実測 %.4f / 閉形式 %.4f(差 %.0f %%)。"
+        % (g["resid_meas"], g["resid_pred"], 100 * abs(g["resid_meas"] / g["resid_pred"] - 1))]
+    for i, line in enumerate(lines):
+        text(line, (14, y0 + 29 * i), size=17, fill=(210, 210, 210))
+    figs.save("glare_removed_label", np.asarray(im),
+              caption="フィルムで包んだ箱のラベルと鋼のナットを、4 方位の画素偏光子センサで 1 枚撮った(%d 画素の描画)。"
+                      "左から 偏光子なし / 最適角の偏光フィルタ 1 枚(同じモザイクから組んだ像)/ 偏光カメラで剥がした像。"
+                      "印字の CNR は %.1f / %.1f / %.1f(全画素で撮るフィルタなら %.1f)—— "
+                      "この場面(小さなソフトボックス 1 灯)では固定のフィルタで足りる。全画素で撮る固定のフィルタ(同じ画素数)と比べた比は、"
+                      "しわだけを 4 倍にして %.2f→%.2f、照明だけを大きな面照明へ広げて %.2f、両方で %.2f(CNR %.2f 対 %.2f、どちらも"
+                      "印字は読めない)。しわも照明の広さも差を広げる。この %d 画素では 1 に届いたのは照明を広げたときだけだが、512 画素では"
+                      "互角で、種によってしわとの順序も入れ替わる。読める水準の差は 1 割未満。"
+                      "鋼の映り込みは短い露光(飽和なし)で %.0f %% 消え、描画と同じ金属のフレネルの式の %.0f %% と合う"
+                      "(実装の検算)。図の白いナットは飽和。"
+                      % (g["size"], g["cnr_before"], g["cnr_fixed"], g["cnr_after"],
+                         g["grid"][("小さなソフトボックス", 1.0)]["fixed_full"],
+                         _ratio_full(g, "小さなソフトボックス", 1.0), _ratio_full(g, "小さなソフトボックス", 4.0),
+                         _ratio_full(g, "大きな面照明", 1.0), _ratio_full(g, "大きな面照明", 4.0),
+                         g["grid"][("大きな面照明", 4.0)]["dofp"], g["grid"][("大きな面照明", 4.0)]["fixed_full"],
+                         g["size"], 100 * g["metal_removed"], 100 * g["metal_pred"]))
+    return True
 
 
 # --------------------------------------------------------------------------- #
@@ -797,6 +1350,40 @@ def main():
     print("     **偏光板を付けない理由に計算コストは使えない。**")
 
     # ---------------------------------------------------------------- #
+    print("\n=== 10. 実物に見える検査台 —— フィルムで包んだラベルと鋼のナット ===")
+    size10 = 1024 if figs.enabled() else 512
+    g10 = bench_glare_numbers(size10)
+    print(f"  {size10}x{size10} の生モザイク 1 枚(雑音・ぼけ・消光比 1/120・12 bit・飽和入り)")
+    print(f"  フィルムの映り込み(入射角の中央値 {g10['theta_film']:.1f} 度、{g10['n_glare_px']} 画素): "
+          f"偏光度 {g10['dolp_film']:.2f}、分離で {100 * g10['film_removed']:.1f} % 消える")
+    print(f"  分離の後に残る映り込み: 実測 {g10['resid_meas']:.4f} / 閉形式 2*I_p = R_p*E "
+          f"{g10['resid_pred']:.4f}(差 {100 * abs(g10['resid_meas'] / g10['resid_pred'] - 1):.1f} %、映り込みの平均 {g10['glare_mean']:.4f})")
+    print(f"  印字の CNR(黒い印字と白い紙の差 / 紙の揺らぎ): 偏光子なし {g10['cnr_before']:.2f} / "
+          f"偏光フィルタ 1 枚(最適角 {g10['fixed_deg']:.1f}°){g10['cnr_fixed']:.2f} / 偏光カメラ {g10['cnr_after']:.2f}")
+    print("  しわだけ / 照明の広さだけを振る(印字の CNR: 偏光子なし / 固定のフィルタ(モザイクから組む)/"
+          " 固定のフィルタ(全画素の別のカメラ、2x2 を足す)/ 偏光カメラ)")
+    for (lname, wk), v in g10["grid"].items():
+        print(f"    {lname:<14} しわ {wk:.0f} 倍: {v['none']:.2f} / {v['fixed']:.2f}(最適角 {v['fixed_deg']:.1f}°)/ "
+              f"{v['fixed_full']:.2f}(最適角 {v['fixed_full_deg']:.1f}°)/ {v['dofp']:.2f}   偏光カメラ / フィルタ = "
+              f"{v['dofp'] / v['fixed']:.2f}(モザイク)/ {v['dofp'] / v['fixed_full']:.2f}(全画素)")
+    rw = [_ratio_full(g10, "小さなソフトボックス", w) for w in WRINKLES]
+    rl = [_ratio_full(g10, n, 1.0) for n in LIGHTS]
+    print("  → 全画素の固定フィルタとの比: しわだけ " + " → ".join("%.2f" % x for x in rw)
+          + "、照明の広さだけ " + " → ".join("%.2f" % x for x in rl)
+          + "、両方 %.2f" % _ratio_full(g10, "大きな面照明", 4.0))
+    print("     しわも照明の広さも比を偏光カメラ側へ押し上げる。1024 画素では 1 に届いたのは照明を広げたときだけだが、")
+    print("     512 画素では互角で、種によってしわとの順序も入れ替わる(種 137: 照明だけ 0.944 < しわだけ 0.955)。")
+    print("     読める水準(CNR > 3)での差は 1 割未満。両方が大きいときの大差は CNR 2 前後(どちらも読めない)。モザイクから組んだフィルタは")
+    print("     全画素のものより CNR が低く、その分だけ偏光カメラを有利に見せる(勝ち負けは種で入れ替わるので門にしない)。")
+    print("     数は %d 画素・種 1 本(種を振った表は" % size10)
+    print("     docstring の SWEEP の上に記録)。")
+    print(f"  鋼のナット: 通常の露光では {100 * g10['sat_metal']:.1f} % が飽和。1/8 の露光(飽和 {100 * g10['sat_metal_lo']:.1f} %)で"
+          f"分離で消える割合 {100 * g10['metal_removed']:.1f} %、描画と同じ金属のフレネルの式(n {STEEL_NK[0]}, k {STEEL_NK[1]}、実装の検算)で "
+          f"{100 * g10['metal_pred']:.1f} %")
+    print("  → 誘電体(フィルム)の映り込みは偏光で 9 割剥がれ、残りは R_p*E の 1 割以内。偏光カメラが固定のフィルタを")
+    print("     読める水準で上回る差は小さい(照明を広げたときに 1 割未満)。鋼の映り込みが残るのは偏光が弱いこと(式どおり)と飽和の両方。")
+    fig_glare_removed_label(g10)
+
     print("\n所見(想定と違ったこと):")
     print("   (1) 「ブリュースター角付近が最良」は正しかったが、**理由が予想と")
     print("       違った**。最初は「鏡面が強く偏光するから分離しやすい」と書こうと")
@@ -946,6 +1533,38 @@ def main():
     # 9. ゼロ点の妥当性(そもそもゼロ点が真値そのものになっていないこと)
     assert rmse(null_no_separation(frames), d_true) > 1e-3
     assert rmse(null_frame_min(frames), d_true) > 1e-2
+
+    # 10. 実物に見える検査台: フィルムは剥がれ、鋼は剥がれず、残りは閉形式 R_p*E
+    assert g10["film_removed"] > 0.85, f"フィルムの映り込みが剥がれない: {g10['film_removed']:.3f}"
+    assert g10["metal_removed"] < 0.60, f"鋼の映り込みまで剥がれた: {g10['metal_removed']:.3f}"
+    assert g10["film_removed"] - g10["metal_removed"] > 0.30, "誘電体と金属の差が出ない"
+    assert g10["sat_metal_lo"] < 0.01, "短い露光でも鋼が飽和している(飽和と偏光を分けて数えられない)"
+    assert abs(g10["metal_removed"] - g10["metal_pred"]) < 0.10, (
+        f"鋼の消える割合がフレネルの金属の式と合わない: {g10['metal_removed']:.3f} vs {g10['metal_pred']:.3f}")
+    # ゼロ点(偏光フィルタ 1 枚、最適角)。★2026-11-08 の探針(種 5 本 x 512 画素・3 本 x 1024 画素)と 11-09 の確認
+    # (種 8 本 x 512・3 本 x 1024、SWEEP の上の表)を見てから置いた門。モザイクから組んだフィルタとの勝ち負けの門
+    # (前の版から)は 512 画素・種 137 の大きな面照明で逆転する(6.60 < 6.64)ので外し、全画素のフィルタとの比に一本化した。
+    gr = g10["grid"]
+    assert max(gr[("大きな面照明", 4.0)]["dofp"], gr[("大きな面照明", 4.0)]["fixed"],
+               gr[("大きな面照明", 4.0)]["fixed_full"]) < 3.0, (
+        "深いしわ + 面照明で印字が読める CNR になった(「どちらも読めない」の所見が変わった)")
+    # 全画素の固定フィルタとの門(探針の種 13 本 x 512・6 本 x 1024 の最小の余白)。CI は 512 画素で走るので、効く余白は
+    # 512 画素の列: しわだけでは 1 に届かない(512 の最大 0.966 = 余白 3.4 %。1024 の最大 0.978 = 余白 2.2 % は図つき
+    # 実行でだけ効き、CI では効かない)、しわは比を上げる(+0.05 以上、余白 0.03)、照明だけでも比を上げる(512 の種 137 で
+    # +0.089、余白 0.039)、照明だけの大きな面照明で差は 1 割未満(0.944〜1.07、余白 4.4 %)、両方が大きいと 1.1 倍を超える
+    # (最小 1.13)。「1 に届いたのは照明だけ」は 512 画素で種により成り立たないので門にしない(文で条件を付ける)
+    rw = [_ratio_full(g10, "小さなソフトボックス", w) for w in WRINKLES]
+    assert max(rw) < 1.0, f"狭い照明でしわだけを深くして全画素の固定フィルタに勝った(所見が変わった): {rw}"
+    assert rw[-1] > rw[0] + 0.02, f"しわを深くしても比が上がらない: {rw}"
+    r_large = _ratio_full(g10, "大きな面照明", 1.0)
+    assert r_large > rw[0] + 0.05, f"照明を広げても比が上がらない: {rw[0]:.3f} → {r_large:.3f}"
+    assert abs(r_large - 1.0) < 0.10, f"照明だけを広げたときの差が 1 割を超えた(所見が変わった): {r_large:.3f}"
+    assert _ratio_full(g10, "大きな面照明", 4.0) > 1.10, "深いしわ + 面照明で全画素のフィルタとの差が出ない"
+    assert all(v["fixed_full"] > 0 and v["fixed"] > 0 for v in gr.values()), "固定のフィルタの CNR が正でない"
+    assert abs(g10["resid_meas"] - g10["resid_pred"]) < 0.15 * g10["resid_pred"], (
+        f"残る映り込みが R_p*E と合わない: {g10['resid_meas']:.4f} vs {g10['resid_pred']:.4f}")
+    assert g10["cnr_after"] > 3.0 * g10["cnr_before"], "剥がしても印字が読みやすくならない"
+    assert 45.0 < g10["theta_film"] < 55.0, "入射角がカメラの傾き 50 度の近くにない(幾何が壊れた)"
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

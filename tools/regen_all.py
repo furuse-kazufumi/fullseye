@@ -711,6 +711,7 @@ NOT_A_GENERATOR = {
     "realdata.py": ("実写データの取り口(ライブラリ)。書くのは mark_read が環境変数 FULLSEYE_REAL_DATA_LOG の指す "
                     "repo の外の印のファイルだけ(tools/record_real_data_runs.py と PoC の門が一時ディレクトリに立てる)。"
                     "__main__ は取り口の自己診断で、コミット物を書かない(敵対的検証 2026-11-05 第 2 巡 D6)。"),
+    "tools/fetch_realinsp_data.py": "取得器(検査 PoC 4 本の公開実データを repo の外へ落とし SHA-256 を照合して展開する)。生成物は無く、CI では回さない。",
     "tools/fetch_tless.py": "取得器(T-LESS を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
     "tools/fetch_tless_v2_sensors.py": "取得器(T-LESS v2 の試験場面 1 つと CAD を repo の外へ落とし、大きさと SHA-256 を照合する。収蔵 2026.309)。生成物は無く、CI では回さない。",
     # ---- 2026-11-01: ViEW2026 の目玉 14 本の受け取り検査(生成物を書かない) ----
@@ -730,6 +731,7 @@ NOT_A_GENERATOR = {
     "tools/mcp_agent_eval.py": "測定器(ローカル LLM に MCP ツールだけで課題を解かせ、真値で採点する)。LLM の応答で結果が変わり、出力は --output/--report の指定先(repo の外)。--validate-only は LLM なしの門で tests/test_mcp_agent_eval_tasks.py が回す。",
     "tools/fetch_sem_metal_layer.py": "取得器(実データ Metal-layer SEM 6.4 GB を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
     "tools/fetch_walnut_cbct.py": "取得器(実測のコーンビーム CT、クルミ 1 の 6 GB の zip から 1309 要素だけを Range で repo の外へ取り出し、CRC-32 と SHA-256 の一覧で照合する)。生成物は無く、CI では回さない。",
+    "tools/fetch_die_photo.py": "取得器(poc_nir_silicon_transmission 第 7 章のダイ写真 CC BY 3.0 を repo の外へ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
     "tools/check_fallback_parity.py": "門の実測(min 構成 = cv2/skimage/PIL なしで op が別の答えを返さないか、full と ULP 照合)。出力は一時 dir か --out の指定先で、repo の生成物は無い。",
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
     "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",

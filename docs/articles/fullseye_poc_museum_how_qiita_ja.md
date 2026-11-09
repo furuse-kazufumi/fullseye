@@ -1090,15 +1090,19 @@ py -3.11 examples/poc_settlement_significance.py
 
 ## No.2026.041 —— テンプレート追跡は「見失う」より先に「静かにずれる」
 
-既知の相似変換でカメラを動かし、テンプレート追跡が「見失う」「静かにずれる」「自信満々で間違える」の 3 通りで壊れるのを見た図。ずれていた 152 フレームの 152 フレーム全部が、遮蔽なしで校正したピークのしきい値を通って「見つけた」と報告した。真値なしで測れる絶対量は往復追跡の不一致だけ。
+同じ形の部品が並ぶと、テンプレートの相関は対象と隣でわずかしか違わない。実写のキャンドルの上をカメラが横切り、両方見えているフレームで測ると、対象のほうが毎回高いものの差は平均 0.0097 だった。部品の種類を見つけるために事前に決めた値では、隣へ乗り移った後も全部「見つけた」と報告された。
 
-[![テンプレート追跡は「見失う」より先に「静かにずれる」](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps.png)
+[![テンプレート追跡は「見失う」より先に「静かにずれる」](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/06_real_candle_twin.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/06_real_candle_twin.gif)
 
-*↑ **テンプレート追跡は「見失う」より先に「静かにずれる」** ―― 既知の相似変換でカメラを動かし、テンプレート追跡が「見失う」「静かにずれる」「自信満々で間違える」の 3 通りで壊れるのを見た図。ずれていた 152 フレームの 152 フレーム全部が、遮蔽なしで校正したピークのしきい値を通って「見つけた」と報告した。真値なしで測れる絶対量は往復追跡の不一致だけ。*
+*↑ **テンプレート追跡は「見失う」より先に「静かにずれる」** ―― 既知の相似変換でカメラを動かし、テンプレート追跡が「見失う」「静かにずれる」「自信満々で間違える」の 3 通りで壊れるのを見た図。合成では、ずれていた 152 フレームの 152 フレーム全部が、遮蔽なしで校正したピークのしきい値を通って「見つけた」と報告した。実写(VisA の同じ形のキャンドル 4 個、写真 1 枚の上での平行移動)では、対象と隣が両方見えるとき相関は毎フレーム対象のほうが高いが差は平均 0.0097 しかなく、対象のテンプレートの窓が視野からはみ出して(全域探索ははみ出す位置を調べない)隣へ乗り移った 14 フレームは、別の写真 20 枚のキャンドルが全部見つかる値として事前に決めたしきい値で 14 / 14 が「見つけた」と判定された(答えを見てから置くしきい値なら 0 / 14)。事前のしきい値は同形 80 個が全部通る値なので、同形の隣を通すのはほぼ必然。テンプレートは対象そのものから切ったので、対象側の相関は高めに出る。真値なしで測れる絶対量は往復追跡の不一致だけ。*
+
+[![2 位の相関は 一意 0.556 / 繰返 1.000 / 直線縁 1.000 / 片側 0.998。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps.png)
+
+*↑ 測定の図 ―― 2 位の相関は 一意 0.556 / 繰返 1.000 / 直線縁 1.000 / 片側 0.998。繰返 は同じ高さの峰が周期的に並び、直線縁 は縁に沿った尾根になる(その方向は位置が決まらない)。*
 
 [![同じ遮蔽率でも、そっくりな別物体が視野に居るだけで崖がはるかに手前へ来る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/02_occlusion_vs_twin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/02_occlusion_vs_twin.png)
 
-*↑ 測定の図 ―― 同じ遮蔽率でも、そっくりな別物体が視野に居るだけで崖がはるかに手前へ来る。*
+*↑ 同じ遮蔽率でも、そっくりな別物体が視野に居るだけで崖がはるかに手前へ来る。*
 
 [![更新なしは平らなまま。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/03_drift_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/03_drift_curves.png)
 
@@ -1118,7 +1122,7 @@ py -3.11 examples/poc_template_tracking.py
 
 ソース: [examples/poc_template_tracking.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py)
 
-この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_template_tracking)
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_template_tracking)
 
 使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`ncc_locate`](https://furuse.work/ops/2d/matching/ncc_locate.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`shape_locate`](https://furuse.work/ops/2d/matching/shape_locate.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
@@ -1730,11 +1734,11 @@ py -3.11 examples/poc_real_bg_kalman_tracking.py
 
 ## No.2026.006 —— 再投影誤差 0.05 px は何も保証しない
 
-カメラ校正では、再投影誤差が小さくても焦点距離まで正しいとは限らない。既知の姿勢で格子点を投影し直し、板の傾きが浅い条件で焦点距離誤差7.334 %を測った。再投影の値はほぼ変わらないまま内部パラメータだけが崩れ、最適化はもっともらしい答えを返す。
+再投影誤差が小さいことは、焦点距離が正しいことの保証にならない。実写の校正板の質感で板をほぼ正面に描き直すと、再投影誤差はほぼ同じまま焦点距離の誤差が 3.99 % になった。警報になるのは再投影誤差ではなく、焦点距離の推定のばらつきのほうだ。
 
-[![再投影誤差 0.05 px は何も保証しない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill.png)
+[![再投影誤差 0.05 px は何も保証しない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/06_real_board_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/06_real_board.png)
 
-*↑ **再投影誤差 0.05 px は何も保証しない** ―― 既知の内部パラメータと姿勢で格子点を投影し、校正し直して成分ごとに誤差を出した図。板の傾き 32 / 8 / 2 度で再投影 RMS は 0.0688〜0.0690 px(比 1.00)なのに、fx の誤差は 0.026〜7.334 %(281 倍)。歪みのあるカメラでは退化検出の門が発火せず、非線形最適化は正面配置でも答えを返す。*
+*↑ **再投影誤差 0.05 px は何も保証しない** ―― 既知の内部パラメータと姿勢で格子点を投影し、校正し直して成分ごとに誤差を出した図。板の傾き 32 / 8 / 2 度で再投影 RMS は 0.0688〜0.0690 px(比 1.00)なのに、fx の誤差は 0.026〜7.326 %(281 倍)。実写の校正板(OpenCV が配布する 13 枚)では、再投影の外れた 1 枚(left02)を含む 4 枚組は RMS が大きく、それを除く 495 組では RMS 0.148〜0.318 px のまま fx が 12 枚の推定から −1.46〜+2.53 % 散る(RMS と |差| の相関 −0.045。基準を 13 枚の推定にすると相関の値は変わる)。含まない組の RMS 0.3 px 付近の塊は 2 番目に外れた left13 を含む 165 組で、外れを RMS の大きい順に 1 / 2 / 3 枚除くと相関は −0.045 / −0.055 / +0.244 と動く。13 枚の推定を真値に置き、実写の質感で同じ 3 配置を描き直すと、再投影 RMS 0.148〜0.154 px のまま |fx 誤差| は 0.033 / 0.22 / 3.99 %(傾き 2 度は雑音の種ごとに 3.05〜4.97 %)。歪みのあるカメラでは退化検出の門が発火せず、非線形最適化は正面配置でも答えを返す。*
 
 [![RMS は 1.00 倍しか動かないのに fx 誤差は 281 倍動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/01_reproj_vs_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/01_reproj_vs_truth.png)
 
@@ -1744,13 +1748,17 @@ py -3.11 examples/poc_real_bg_kalman_tracking.py
 
 *↑ 2 本は重なる。*
 
+[![RMS はどの行も 0.067 px(= 0.05·√2)で動かない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill.png)
+
+*↑ RMS はどの行も 0.067 px(= 0.05·√2)で動かない。*
+
 [![どちらも雑音 0 では真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/04_noise_amplification_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/04_noise_amplification.png)
 
 *↑ どちらも雑音 0 では真値。*
 
 [![第 1 部: 同じ雑音 0.05 px の観測を、傾き 32 度(左)と 2 度(右)の配置で解く反復。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/05_calibration_convergence.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/05_calibration_convergence.gif)
 
-*↑ 動く図 ―― 第 1 部: 同じ雑音 0.05 px の観測を、傾き 32 度(左)と 2 度(右)の配置で解く反復。再投影 RMS はどちらも 0.069 / 0.069 px まで下がるが、fx は左が 1199.7(誤差 0.026 %)、右が 1112.0(誤差 7.33 %)で止まる。第 2 部: fx を真値の 0.92〜1.08 倍に固定して残りを解き直すと、左は RMS が 0.54 / 0.45 px(両端)まで跳ね上がるのに、右は 0.069 / 0.069 px とほとんど動かない —— 板までの距離 Z が fx と同じ比で動いて(Z 比 0.920 / 1.080)、画素の位置を保つため。右の配置では再投影誤差が焦点距離について何も言っていない。*
+*↑ 動く図 ―― 第 1 部: 同じ雑音 0.05 px の観測を、傾き 32 度(左)と 2 度(右)の配置で解く反復。再投影 RMS はどちらも 0.069 / 0.069 px まで下がるが、fx は左が 1199.7(誤差 0.026 %)、右が 1112.1(誤差 7.33 %)で止まる。第 2 部: fx を真値の 0.92〜1.08 倍に固定して残りを解き直すと、左は RMS が 0.54 / 0.45 px(両端)まで跳ね上がるのに、右は 0.069 / 0.069 px とほとんど動かない —— 板までの距離 Z が fx と同じ比で動いて(Z 比 0.920 / 1.080)、画素の位置を保つため。右の配置では再投影誤差が焦点距離について何も言っていない。*
 
 ```
 py -3.11 examples/poc_camera_calibration.py
@@ -1758,9 +1766,9 @@ py -3.11 examples/poc_camera_calibration.py
 
 ソース: [examples/poc_camera_calibration.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_camera_calibration.py)
 
-この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_camera_calibration)
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_camera_calibration)
 
-使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`camera_calibration`](https://furuse.work/ops/calib/calibrate/camera_calibration.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`reprojection_error`](https://furuse.work/ops/3d/pose_estimation/reprojection_error.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
+使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`camera_calibration`](https://furuse.work/ops/calib/calibrate/camera_calibration.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`reprojection_error`](https://furuse.work/ops/3d/pose_estimation/reprojection_error.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
 ## No.2026.028 —— 隣どうしを鎖でつなぐと、一周して元に戻れない
 
@@ -1872,17 +1880,21 @@ py -3.11 examples/poc_real_stereo_depth.py
 
 ## No.2026.034 —— 点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか
 
-点群を毎試行取り直し、初期姿勢のずれに対する ICP(反復最近点法) の成功率を等高線にした図。並進ずれ 0 で成功率が 50 % を切るのは点対点 90 度、点対面 120 度。球や円柱は残差が同じまま姿勢が任意で、大域手法では 16/16 が見かけ上収束しつつ姿勢は誤り ―― 残差では検出できない。
+実物の部品の深度では、反復最近点法の収束域が全周の点で合わせたときより狭い。同じ部品で比べると、成功率が半分を切る初期回転は、半分の切り方によらず全周の点より 7.9 度以上手前に来た(点対面)。片面しか見えないことと深度の雑音のどちらがどれだけ効くかは、乱数の種で揺れて言えない。
 
-[![点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin.png)
+[![点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/06_real_scan_icp.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/06_real_scan_icp.gif)
 
-*↑ **点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか** ―― 点群を毎試行取り直し、初期姿勢のずれに対する ICP(反復最近点法) の成功率を等高線にした図。並進ずれ 0 で成功率が 50 % を切るのは点対点 90 度、点対面 120 度。球や円柱は残差が同じまま姿勢が任意で、大域手法では 16/16 が見かけ上収束しつつ姿勢は誤り ―― 残差では検出できない。*
+*↑ **点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか** ―― 点群を毎試行取り直し、初期姿勢のずれに対する ICP(反復最近点法) の成功率を等高線にした図。並進ずれ 0 で成功率が 50 % を切るのは点対点 90 度、点対面 120 度。実物の部品(T-LESS の部品 22、構造化光センサの深度 26 フレーム)では、同じ部品・同じ判定で点対面の 50 % 角が全周の点 72.9〜84.0 度、片面の点 58.3〜66.0 度、実測の深度 44.2〜54.0 度(乱数の種 5 本の幅)。実測は全周より狭く(最初に切る所で取ると 19.6〜31.5 度、最後に切る所で取ると 7.9〜30.0 度。点対点は最後に切る所で 1.7 度まで縮む)、これはどの種でもどちらの取り方でも成り立つが、片面と実測の内訳は種で揺れる(判定は真値から始めた ICP の行き先に戻れたか。実測の行き先は真値から中央値 5.3 度ずれる)。50 % 角は最初に 50 % を切る所で取った値で、最後に切る所で取ると実測は 45.0〜65.0 度。初期ずれ 15 度でも実測の成功率は 73〜88 %(全周は 100 %)。球や円柱は残差が同じまま姿勢が任意で、大域手法では 16/16 が見かけ上収束しつつ姿勢は誤り ―― 残差では検出できない。*
 
 用語: ICP — 二つの点群で最近点対応と剛体変換の推定を交互に繰り返し、位置合わせする方法。
 
+[![100 % から 0 % へ落ちる位置が収束域の縁。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin.png)
+
+*↑ 測定の図 ―― 100 % から 0 % へ落ちる位置が収束域の縁。並進ずれを足すと縁が左へ動く(15 試行/点)。*
+
 [![非対称性が消えると 4 候補が形として区別できず、選択が崩れる(選ばれた解が第 1 候補から離れる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant.png)
 
-*↑ 測定の図 ―― 非対称性が消えると 4 候補が形として区別できず、選択が崩れる(選ばれた解が第 1 候補から離れる)。*
+*↑ 非対称性が消えると 4 候補が形として区別できず、選択が崩れる(選ばれた解が第 1 候補から離れる)。*
 
 [![平らな線ほど「広い」。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/03_width_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/03_width.png)
 
@@ -1902,9 +1914,9 @@ py -3.11 examples/poc_registration_basin.py
 
 ソース: [examples/poc_registration_basin.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py)
 
-この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_registration_basin)
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_registration_basin)
 
-使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`farthest_point_sampling`](https://furuse.work/ops/3d/geodesic/farthest_point_sampling.html) · [`find_surface_pose`](https://furuse.work/ops/3d/match_pose/find_surface_pose.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
+使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`farthest_point_sampling`](https://furuse.work/ops/3d/geodesic/farthest_point_sampling.html) · [`find_surface_pose`](https://furuse.work/ops/3d/match_pose/find_surface_pose.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
 ## No.2026.117 —— 「回転しても同じ」と言える量はどれか —— 実写の硬貨を 72 角度で回して数える
 
@@ -2774,15 +2786,19 @@ py -3.11 examples/poc_material_optical_library.py
 
 ## No.2026.230 —— Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ
 
-Si のダイやウェハの裏側は、Si が透ける近赤外の光で見る。ところが Si が透ける波長は Si のセンサが感じない波長でもあり、同じ材料の吸収端が観察対象では窓・センサでは壁になる。材料表(`materials`)の 1 つの Si のレコード(Green 2008)を、ウェハの透過率とフォトダイオードの QE の両方に使った。新 op 9 本(`spectralrad`、`opsoptics` の `spectral`): `blackbody_spectrum` / `cie_illuminant_a` / `led_spectrum` / `bandpass_spectrum` / `silicon_photodiode_qe` / `energy_to_photons` / `spectral_product` / `spectral_integral` / `spectral_stats`、どれも材料の曲線と同じ pairs(λ nm, 値)。光源は CIE A の表を定義式で 1.6e-6、黒体は Wien と Stefan–Boltzmann、QE は閉形式と 4e-19。最良の LED のピークはウェハが厚いほど長波長へ動く(50 µm → 935 nm、775 µm → 1065 nm)。定番の 1050 nm の LED は厚いウェハでは最良と 5 % 差だが、50 µm のダイでは最良の 1/3.4 しか電子が出ない。ウェハが最もよく透ける 1200 nm は、Si センサでは最良の 1/28。集める深さを 3 → 50 µm にすると電子は 16 倍だが、最良のピークは動かない(最適はウェハが決める)。775 µm 越しに CNR 20 を得るには開口 1 画素に 1.2e6 光子が要る。像から測った CNR は理論 e/√(e + 読出し²) と 10 % 以内。ウェハの厚さだけ機械的に焦点を下げると像は t(1 − 1/n) = 557 µm ずれ(W20 = 2.6 波長、回折の PSF)、縁の幅が 8 倍に崩れる。第 6 章(2026-10-15)は同じウェハと裏の配線を 3-D のシーンに置き、`optscene` の波長積分(LED のスペクトルを 15 本の波長に割り、材料表の Si の n と k、テレセンのレンズ、Si センサの QE)で光線で撮った。開口の画素は独立に書いた波長積分 ∫LED·λ·(1 − R)²e^{−αt}·QE と 0.3 %(1200 nm は 2.8 %)、850 nm ではウェハが不透明(5e-9)、配線の影は幾何の真値の画素と 1 画素も違わない。学習 0、較正 0、門 26 件。
+Si のダイやウェハの裏側は、Si が透ける近赤外の光で見る。ところが Si が透ける波長は Si のセンサが感じない波長でもあり、同じ材料の吸収端が観察対象では窓・センサでは壁になる。材料表(`materials`)の 1 つの Si のレコード(Green 2008)を、ウェハの透過率とフォトダイオードの QE の両方に使った。新 op 9 本(`spectralrad`、`opsoptics` の `spectral`): `blackbody_spectrum` / `cie_illuminant_a` / `led_spectrum` / `bandpass_spectrum` / `silicon_photodiode_qe` / `energy_to_photons` / `spectral_product` / `spectral_integral` / `spectral_stats`、どれも材料の曲線と同じ pairs(λ nm, 値)。光源は CIE A の表を定義式で 1.6e-6、黒体は Wien と Stefan–Boltzmann、QE は閉形式と 4e-19。最良の LED のピークはウェハが厚いほど長波長へ動く(50 µm → 935 nm、775 µm → 1065 nm)。定番の 1050 nm の LED は厚いウェハでは最良と 5 % 差だが、50 µm のダイでは最良の 1/3.4 しか電子が出ない。ウェハが最もよく透ける 1200 nm は、Si センサでは最良の 1/28(Ohno 形・半値全幅 50 nm の LED の場合。1200 nm の LED の電子は分光の短波長の裾から来るので、半値全幅 30〜100 nm では 1/75〜1/6.6、Gauss 形 50 nm では 1/58 と桁が動く)。集める深さを 3 → 50 µm にすると電子は 16 倍だが、最良のピークは動かない(最適はウェハが決める)。775 µm 越しに CNR 20 を得るには開口 1 画素に 1.2e6 光子が要る。第 4 章の像(PSF を掛けない)から測った CNR は閉形式 e/√(e + 読出し²) と 10 % 以内。ウェハの厚さだけ機械的に焦点を下げると像は t(1 − 1/n) = 557 µm ずれ(W20 = 2.6 波長、回折の PSF)、縁の幅が 8 倍に崩れる。第 6 章(2026-10-15)は同じウェハと裏の配線を 3-D のシーンに置き、`optscene` の波長積分(LED のスペクトルを 15 本の波長に割り、材料表の Si の n と k、テレセンのレンズ、Si センサの QE)で光線で撮った。開口の画素は独立に書いた波長積分 ∫LED·λ·(1 − R)²e^{−αt}·QE と 0.3 %(1200 nm は 2.8 %)、850 nm ではウェハが不透明(5e-9)、配線の影は幾何の真値の画素と 1 画素も違わない。学習 0、較正 0、門 34 件(写真の無い CI は 33 件)。 ★第 7 章(2026-11-08): 公開のダイ写真(CC BY 3.0)から取った実物の配線をウェハの裏に置くと、775 µm では最良の LED と 1050 nm がほぼ同じ(形 IoU 0.943 / 0.943、σ 1 のぼかしの後。真値の mask は写真の粒 = 辺 8 µm 未満の穴と島を消した形)、1200 nm は 0.889 —— 同じ形(IoU 0.9)に要る光は 2 倍刻みの格子で最良の 32 倍。電子の比 28 倍だけ光を足すと開口の電子数が最良と同じになる(構成上そうなる。違いは PSF の λ だけなので門にはしない)。像の CNR は雑音の無い像 + Poisson の式と最大 1.0 % で合い、回折の PSF の裾の分だけ閉形式より 5〜30 % 低い。850 nm はウェハが不透明で測れない。50 µm のダイでは、同じ光子数で最良の 935 nm の CNR 60.6 に対し 1050 nm は 38.9。最良が IoU 0.9 に届く最小の光(第 4 章の 1/256)で撮ると 935 nm は 0.929、1050 nm は 0.839。焦点を機械的に下げると 0.172。
 
-[![Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction.png)
+[![Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/07_die_through_wafer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/07_die_through_wafer.png)
 
-*↑ **Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ** ―― Si のダイやウェハの裏側は、Si が透ける近赤外の光で見る。ところが Si が透ける波長は Si のセンサが感じない波長でもあり、同じ材料の吸収端が観察対象では窓・センサでは壁になる。材料表(`materials`)の 1 つの Si のレコード(Green 2008)を、ウェハの透過率とフォトダイオードの QE の両方に使った。新 op 9 本(`spectralrad`、`opsoptics` の `spectral`): `blackbody_spectrum` / `cie_illuminant_a` / `led_spectrum` / `bandpass_spectrum` / `silicon_photodiode_qe` / `energy_to_photons` / `spectral_product` / `spectral_integral` / `spectral_stats`、どれも材料の曲線と同じ pairs(λ nm, 値)。光源は CIE A の表を定義式で 1.6e-6、黒体は Wien と Stefan–Boltzmann、QE は閉形式と 4e-19。最良の LED のピークはウェハが厚いほど長波長へ動く(50 µm → 935 nm、775 µm → 1065 nm)。定番の 1050 nm の LED は厚いウェハでは最良と 5 % 差だが、50 µm のダイでは最良の 1/3.4 しか電子が出ない。ウェハが最もよく透ける 1200 nm は、Si センサでは最良の 1/28。集める深さを 3 → 50 µm にすると電子は 16 倍だが、最良のピークは動かない(最適はウェハが決める)。775 µm 越しに CNR 20 を得るには開口 1 画素に 1.2e6 光子が要る。像から測った CNR は理論 e/√(e + 読出し²) と 10 % 以内。ウェハの厚さだけ機械的に焦点を下げると像は t(1 − 1/n) = 557 µm ずれ(W20 = 2.6 波長、回折の PSF)、縁の幅が 8 倍に崩れる。第 6 章(2026-10-15)は同じウェハと裏の配線を 3-D のシーンに置き、`optscene` の波長積分(LED のスペクトルを 15 本の波長に割り、材料表の Si の n と k、テレセンのレンズ、Si センサの QE)で光線で撮った。開口の画素は独立に書いた波長積分 ∫LED·λ·(1 − R)²e^{−αt}·QE と 0.3 %(1200 nm は 2.8 %)、850 nm ではウェハが不透明(5e-9)、配線の影は幾何の真値の画素と 1 画素も違わない。学習 0、較正 0、門 26 件。*
+*↑ **Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ** ―― Si のダイやウェハの裏側は、Si が透ける近赤外の光で見る。ところが Si が透ける波長は Si のセンサが感じない波長でもあり、同じ材料の吸収端が観察対象では窓・センサでは壁になる。材料表(`materials`)の 1 つの Si のレコード(Green 2008)を、ウェハの透過率とフォトダイオードの QE の両方に使った。新 op 9 本(`spectralrad`、`opsoptics` の `spectral`): `blackbody_spectrum` / `cie_illuminant_a` / `led_spectrum` / `bandpass_spectrum` / `silicon_photodiode_qe` / `energy_to_photons` / `spectral_product` / `spectral_integral` / `spectral_stats`、どれも材料の曲線と同じ pairs(λ nm, 値)。光源は CIE A の表を定義式で 1.6e-6、黒体は Wien と Stefan–Boltzmann、QE は閉形式と 4e-19。最良の LED のピークはウェハが厚いほど長波長へ動く(50 µm → 935 nm、775 µm → 1065 nm)。定番の 1050 nm の LED は厚いウェハでは最良と 5 % 差だが、50 µm のダイでは最良の 1/3.4 しか電子が出ない。ウェハが最もよく透ける 1200 nm は、Si センサでは最良の 1/28(Ohno 形・半値全幅 50 nm の LED の場合。1200 nm の LED の電子は分光の短波長の裾から来るので、半値全幅 30〜100 nm では 1/75〜1/6.6、Gauss 形 50 nm では 1/58 と桁が動く)。集める深さを 3 → 50 µm にすると電子は 16 倍だが、最良のピークは動かない(最適はウェハが決める)。775 µm 越しに CNR 20 を得るには開口 1 画素に 1.2e6 光子が要る。第 4 章の像(PSF を掛けない)から測った CNR は閉形式 e/√(e + 読出し²) と 10 % 以内。ウェハの厚さだけ機械的に焦点を下げると像は t(1 − 1/n) = 557 µm ずれ(W20 = 2.6 波長、回折の PSF)、縁の幅が 8 倍に崩れる。第 6 章(2026-10-15)は同じウェハと裏の配線を 3-D のシーンに置き、`optscene` の波長積分(LED のスペクトルを 15 本の波長に割り、材料表の Si の n と k、テレセンのレンズ、Si センサの QE)で光線で撮った。開口の画素は独立に書いた波長積分 ∫LED·λ·(1 − R)²e^{−αt}·QE と 0.3 %(1200 nm は 2.8 %)、850 nm ではウェハが不透明(5e-9)、配線の影は幾何の真値の画素と 1 画素も違わない。学習 0、較正 0、門 34 件(写真の無い CI は 33 件)。 ★第 7 章(2026-11-08): 公開のダイ写真(CC BY 3.0)から取った実物の配線をウェハの裏に置くと、775 µm では最良の LED と 1050 nm がほぼ同じ(形 IoU 0.943 / 0.943、σ 1 のぼかしの後。真値の mask は写真の粒 = 辺 8 µm 未満の穴と島を消した形)、1200 nm は 0.889 —— 同じ形(IoU 0.9)に要る光は 2 倍刻みの格子で最良の 32 倍。電子の比 28 倍だけ光を足すと開口の電子数が最良と同じになる(構成上そうなる。違いは PSF の λ だけなので門にはしない)。像の CNR は雑音の無い像 + Poisson の式と最大 1.0 % で合い、回折の PSF の裾の分だけ閉形式より 5〜30 % 低い。850 nm はウェハが不透明で測れない。50 µm のダイでは、同じ光子数で最良の 935 nm の CNR 60.6 に対し 1050 nm は 38.9。最良が IoU 0.9 に届く最小の光(第 4 章の 1/256)で撮ると 935 nm は 0.929、1050 nm は 0.839。焦点を機械的に下げると 0.172。*
+
+[![ウェハは 1.1 µm より長波長で透け、Si センサは同じ波長で感じなくなる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction.png)
+
+*↑ 測定の図 ―― ウェハは 1.1 µm より長波長で透け、Si センサは同じ波長で感じなくなる。積は 1065 nm 付近で最大 4.6e-04 —— 光子 1 万個で電子 3〜4 個。1e-7 未満は図の床に置いた。*
 
 [![最良のピーク: 50 µm → 935 nm、150 µm → 1000 nm、300 µm → 1030 nm、775 µm → 1065 nm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/02_best_led_vs_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/02_best_led_vs_thickness.png)
 
-*↑ 測定の図 ―― 最良のピーク: 50 µm → 935 nm、150 µm → 1000 nm、300 µm → 1030 nm、775 µm → 1065 nm。薄いダイは吸収端の手前の 1.0 µm 台でも透け、センサが感じる短い側が勝つ。厚いウェハは吸収端の肩まで押し出される。*
+*↑ 最良のピーク: 50 µm → 935 nm、150 µm → 1000 nm、300 µm → 1030 nm、775 µm → 1065 nm。*
 
 [![775 µm の Si ウェハの裏の配線を、同じ光子数(開口 1 画素に 1.2e+06)の 3 つの LED で撮った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/03_three_leds_through_wafer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/03_three_leds_through_wafer.png)
 
@@ -2806,9 +2822,9 @@ py -3.11 examples/poc_nir_silicon_transmission.py
 
 ソース: [examples/poc_nir_silicon_transmission.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 
-この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_nir_silicon_transmission)
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_nir_silicon_transmission)
 
-使用 op(ノートへ): [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`camera_rays`](https://furuse.work/ops/optics/scene/camera_rays.html) · [`cie_illuminant_a`](https://furuse.work/ops/optics/spectral/cie_illuminant_a.html) · [`defocus_from_shift`](https://furuse.work/ops/optics/wave/defocus_from_shift.html) · [`energy_to_photons`](https://furuse.work/ops/optics/spectral/energy_to_photons.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`layout_capture`](https://furuse.work/ops/optics/scene/layout_capture.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`lens_spec`](https://furuse.work/ops/optics/scene/lens_spec.html) · [`light_spec`](https://furuse.work/ops/optics/scene/light_spec.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`plate_focus_shift`](https://furuse.work/ops/optics/matprop/plate_focus_shift.html) · [`pupil_blur`](https://furuse.work/ops/optics/wave/pupil_blur.html) · [`render_optscene`](https://furuse.work/ops/optics/scene/render_optscene.html) · [`scene_box`](https://furuse.work/ops/optics/scene/scene_box.html) · [`scene_material`](https://furuse.work/ops/optics/scene/scene_material.html) · [`sensor_spec`](https://furuse.work/ops/optics/scene/sensor_spec.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`spectral_integral_table`](https://furuse.work/ops/optics/spectral/spectral_integral_table.html) · [`spectral_product`](https://furuse.work/ops/optics/spectral/spectral_product.html) · [`spectral_stats`](https://furuse.work/ops/optics/spectral/spectral_stats.html) …(他 2)
+使用 op(ノートへ): [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`camera_rays`](https://furuse.work/ops/optics/scene/camera_rays.html) · [`cie_illuminant_a`](https://furuse.work/ops/optics/spectral/cie_illuminant_a.html) · [`defocus_from_shift`](https://furuse.work/ops/optics/wave/defocus_from_shift.html) · [`energy_to_photons`](https://furuse.work/ops/optics/spectral/energy_to_photons.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`layout_capture`](https://furuse.work/ops/optics/scene/layout_capture.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`lens_spec`](https://furuse.work/ops/optics/scene/lens_spec.html) · [`light_spec`](https://furuse.work/ops/optics/scene/light_spec.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`measure_text`](https://furuse.work/ops/annotate/text/measure_text.html) · [`plate_focus_shift`](https://furuse.work/ops/optics/matprop/plate_focus_shift.html) · [`pupil_blur`](https://furuse.work/ops/optics/wave/pupil_blur.html) · [`render_optscene`](https://furuse.work/ops/optics/scene/render_optscene.html) · [`scene_box`](https://furuse.work/ops/optics/scene/scene_box.html) · [`scene_material`](https://furuse.work/ops/optics/scene/scene_material.html) · [`sensor_spec`](https://furuse.work/ops/optics/scene/sensor_spec.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`spectral_integral_table`](https://furuse.work/ops/optics/spectral/spectral_integral_table.html) · [`spectral_product`](https://furuse.work/ops/optics/spectral/spectral_product.html) …(他 3)
 
 ## No.2026.231 —— 光ファイバとライトガイド ―― 材料表の溶融石英から、モード・分散・モード径・照明の効率まで
 
@@ -3250,11 +3266,11 @@ py -3.11 examples/poc_video_physics_consistency.py
 
 ## No.2026.054 —— 電池セルの内部劣化を CT で測る ―― 膨れは外から見え、原因は中にある
 
-電池セルの外形が同じでも、内部では膨れや空隙の原因が異なることがある。既知の劣化を入れた積層電極をCT撮像し、電極の膨れのうち外形に現れる割合29.4 %を測った。図では缶の高さが揃ったセルでも内部指標が分かれ、外側の寸法だけでは原因を選べない。
+合成の角形セルで、外形が揃うように膨れの倍率を合わせても、CT の断面では隙間・層の波打ち・ガスの穴が違う。電極の膨れのうち外形に現れるのは 29.4 % だけだった。外側の寸法だけでは膨れの原因を選べない。
 
-[![電池セルの内部劣化を CT で測る ―― 膨れは外から見え、原因は中にある](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene.png)
+[![電池セルの内部劣化を CT で測る ―― 膨れは外から見え、原因は中にある](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png)
 
-*↑ **電池セルの内部劣化を CT で測る ―― 膨れは外から見え、原因は中にある** ―― 角形リチウムイオンセルの積層電極とアルミ缶を真値つきで組み、劣化を既知の場(一様膨れ・局所膨れ・層間ガス空隙・電極ずれ)として与えて、順投影 → ビームハードニング → 光子雑音 → FBP(フィルタ補正逆投影) 再構成という実際の撮像を通してから測った。電極が 10 % 膨れても外形に出るのは 29.4 % だけで、しかも中央のノギスは体積等価な平均の 3.6 倍(+0.235 対 +0.066 mm)を読む。外形のふくらみを揃えた 3 つのセルは缶の高さが 0.000 mm しか違わないのに、内部指標は空隙率 0.00 対 5.20 %、層の平面度 0.0156 対 0.0784 mm で分かれ、その内部指標が壊れる崖は電極厚 0.200 mm ではなく層間の隙間 0.120 mm が決めた(voxel/層厚 = 0.30、標本化定理からの予測 0.80 は外れ)。*
+*↑ **電池セルの内部劣化を CT で測る ―― 膨れは外から見え、原因は中にある** ―― 角形リチウムイオンセルの積層電極とアルミ缶を真値つきで組み、劣化を既知の場(一様膨れ・局所膨れ・層間ガス空隙・電極ずれ)として与えて、順投影 → ビームハードニング → 光子雑音 → FBP(フィルタ補正逆投影) 再構成という実際の撮像を通してから測った。電極が 10 % 膨れても外形に出るのは 29.4 % だけで、しかも中央のノギスは体積等価な平均の 3.6 倍(+0.235 対 +0.066 mm)を読む。外形が揃うように膨れの倍率を合わせた(局所 0.2736 / ガス 0.3021)3 つのセルでも、内部指標は空隙率 0.00 対 5.20 %(ガスの真値 5.81 %)、層の平面度 0.0156 対 0.0784 mm で分かれ、その内部指標が壊れる崖は電極厚 0.200 mm ではなく層間の隙間 0.120 mm が決めた(voxel/層厚 = 0.30、標本化定理からの予測 0.80 は外れ)。代表の図は合成の角形セルの FBP 再構成の灰色断面で、明るい正極・暗めの負極(黒鉛)・Cu 箔の明線と、いちばん暗い隙間(セパレータと電解液)の交互の層を描いた。数値は単一材質の模型で測った値で、層の材質の明暗はこの図の描画だけ。材質つきの像で測り直しても、層厚 0.182 / 0.176 / 0.167 mm、空隙率 0.00 / 0.00 / 5.09 %、平面度 0.0114 / 0.0424 / 0.0662 mm で、分かれ方は変わらない。実セルを縮めた模型(全幅 3.2 mm・17 層)。再構成は別実装 skimage の iradon と相関 0.974(向きは定義から決めた)。*
 
 用語: FBP — 投影データを周波数フィルタで補正してから各方向へ逆投影し、断層像を再構成する手法。
 
@@ -3262,17 +3278,17 @@ py -3.11 examples/poc_video_physics_consistency.py
 
 *↑ 測定の図 ―― 真正面(0 度)なら空隙の影までは見える。ただし奥行きに積算されているので厚みも深さも出ない。22 度傾けると層の縞そのものが重なって消える —— 投影では姿勢が結果を決めてしまう。だから断層に落とす。*
 
-[![端板は周辺で固定なので中央だけが出る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/03_outer_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/03_outer_profile.png)
+[![缶(明)・電極(中)・電解液(暗)・ガス(最暗)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene.png)
 
-*↑ 端板は周辺で固定なので中央だけが出る。*
+*↑ 缶(明)・電極(中)・電解液(暗)・ガス(最暗)。*
 
-[![一様膨れは平らなまま上がる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/06_flatness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/06_flatness.png)
+[![17 本の山が電極。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/05_profile_layers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/05_profile_layers.png)
 
-*↑ 一様膨れは平らなまま上がる。*
+*↑ 17 本の山が電極。*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/10_void_slices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/10_void_slices.png)
+[![位置は当たる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/09_void_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/09_void_map.png)
 
-*↑ この回の図*
+*↑ 位置は当たる。*
 
 [![空隙体積は崖の手前から単調に痩せる(部分体積効果)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/13_sweep_resolution_err_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/13_sweep_resolution_err.png)
 
@@ -3284,7 +3300,7 @@ py -3.11 examples/poc_battery_ct_degradation.py
 
 ソース: [examples/poc_battery_ct_degradation.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_battery_ct_degradation.py)
 
-この回が作った図は全部で **16 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_battery_ct_degradation)
+この回が作った図は全部で **17 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_battery_ct_degradation)
 
 使用 op(ノートへ): [`beam_hardening_apply`](https://furuse.work/ops/tomography/artifact/beam_hardening_apply.html) · [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) · [`fbp_volume`](https://furuse.work/ops/tomography/volume/fbp_volume.html) · [`grid_coords`](https://furuse.work/ops/3d/sdf_csg/grid_coords.html) · [`plane_sdf`](https://furuse.work/ops/3d/sdf_csg/plane_sdf.html) · [`projection_angles`](https://furuse.work/ops/tomography/layout/projection_angles.html) · [`radon_volume`](https://furuse.work/ops/tomography/volume/radon_volume.html) · [`render_volume_projection`](https://furuse.work/ops/3d/render/render_volume_projection.html) · [`ring_artifact_apply`](https://furuse.work/ops/tomography/artifact/ring_artifact_apply.html) · [`sdf_intersect`](https://furuse.work/ops/3d/sdf_csg/sdf_intersect.html) · [`sdf_subtract`](https://furuse.work/ops/3d/sdf_csg/sdf_subtract.html) · [`sdf_to_occupancy`](https://furuse.work/ops/3d/transform/sdf_to_occupancy.html) · [`sdf_union`](https://furuse.work/ops/3d/sdf_csg/sdf_union.html) · [`vol_bounding_box`](https://furuse.work/ops/3d/domain/vol_bounding_box.html) · [`vol_edge_probe`](https://furuse.work/ops/3d/probe/vol_edge_probe.html) · [`vol_fft_lowpass`](https://furuse.work/ops/3d/frequency/vol_fft_lowpass.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html) · [`vol_profile_line`](https://furuse.work/ops/3d/probe/vol_profile_line.html) · [`vol_region_props`](https://furuse.work/ops/3d/regionprops/vol_region_props.html) · [`vol_resize`](https://furuse.work/ops/3d/geom_transform/vol_resize.html) · [`vol_wall_thickness`](https://furuse.work/ops/3d/probe/vol_wall_thickness.html)
 

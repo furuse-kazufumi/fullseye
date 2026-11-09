@@ -716,10 +716,7 @@ def build_polarization_sweep():
         ss,sp=P.specular_components(l,float(v)); raw=P.render_sweep(d,ss,sp); sep=P.separate(raw)
         diffuse=np.asarray(sep[0] if isinstance(sep,tuple) else sep); frames.append(_gray(diffuse,0,0.7)); err.append(P.rmse(diffuse,d))
     best=int(np.argmin(err))
-    title=TX.T("入射角で鏡面分離の誤差が変わり、ブリュースター角近傍で最小になる", "Separation error changes with incidence angle and bottoms out near the Brewster angle",
-               "镜面分离误差随入射角变化，并在布儒斯特角附近最小", "鏡面分離誤差隨入射角變化，並在布魯斯特角附近最小",
-               "정반사 분리 오차는 입사각에 따라 바뀌며 브루스터각 부근에서 가장 작다", "Der Trennfehler hängt vom Einfallswinkel ab und ist nahe dem Brewster-Winkel am kleinsten",
-               "separation error आपतन कोण के साथ बदलती है और Brewster angle के पास सबसे कम होती है", "L’erreur de séparation varie avec l’incidence et atteint son minimum près de l’angle de Brewster")
+    title=TX.T("偏光で鏡面の映り込みを剥がす。剥がし残りは入射角で変わり、ブリュースター角で最小(掃引は合成の縞の場面)", "Polarisation strips specular glare; what remains changes with incidence angle and is smallest near the Brewster angle (swept on a synthetic fringe scene)", "偏振可去除镜面反光;残留部分随入射角变化,在布儒斯特角附近最小(扫描使用合成条纹场景)", "偏光可去除鏡面反光;殘留部分隨入射角變化,在布魯斯特角附近最小(掃描使用合成條紋場景)", "편광으로 정반사를 걷어 낼 수 있다. 남는 반사는 입사각에 따라 바뀌며 브루스터각 부근에서 가장 작다(스윕은 합성 줄무늬 장면)", "Polarisation entfernt spiegelnde Reflexe; der Rest hängt vom Einfallswinkel ab und ist nahe dem Brewster-Winkel am kleinsten (Durchlauf an einer synthetischen Streifenszene)", "Polarization specular चमक हटा देता है; बचा हिस्सा आपतन कोण के साथ बदलता है और Brewster angle के पास सबसे कम होता है (sweep एक synthetic fringe scene पर)", "La polarisation retire les reflets spéculaires ; le reste varie avec l’incidence et atteint son minimum près de l’angle de Brewster (balayage sur une scène synthétique à franges)")
     watch=TX.fmt(TX.T(
         "入射角でフレネル反射の s/p 成分が変わり、曲線は分離した拡散像と真値の RMSE。{xb:.1f}° で {yb:.5f} と最小になり、両端 {x0:.0f}° / {x1:.0f}° では {y0:.5f} / {y1:.5f}。",
         "Incidence angle changes the Fresnel s/p components; the curve is RMSE between the separated diffuse image and truth. It bottoms out at {yb:.5f} near {xb:.1f}°, versus {y0:.5f} / {y1:.5f} at the {x0:.0f}° / {x1:.0f}° endpoints.",

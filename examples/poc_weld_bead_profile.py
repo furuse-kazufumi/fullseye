@@ -67,11 +67,13 @@ Trucco, Fisher, Fitzgibbon & Naidu, *Image Vision Comput.* 16 (1998) 99 ——
 """
 from __future__ import annotations
 
+import os
 import sys
 import time
 from pathlib import Path
 
 import numpy as np
+from scipy import ndimage
 from scipy.ndimage import median_filter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -684,6 +686,358 @@ def section8_figures(truth: dict, curve: dict) -> None:
                     caption="遮蔽が無ければ全部 1 % 以内。壊れるのは 6 章から。")
 
 
+# --------------------------------------------------------------------------- #
+# 9) 実物らしい輝線 —— スペックル・鏡面の飽和・スパッタ・影を 1 枚に(代表の図)  #
+# --------------------------------------------------------------------------- #
+REAL_SCALE = 4             # 1〜7 章の画像の 4 倍の画素(1 px = 13.9 µm、1296 × 320 px)
+REAL_WAVE_UM = 0.65        # 赤の半導体レーザー
+REAL_SIN_U = 0.008         # 観察開口(被写界深度のために絞る → 粒径 0.5145 λ / sin u = 42 µm = 3 px)
+REAL_LINE_W_UM = 60.0      # 光条の 1/e² 半幅(σ 30 µm = 2.2 px、FWHM 約 5 px —— 実機の細い線)
+REAL_AMP = 0.45            # 平らな母材での光条の山の平均(満杯に対する比)。鏡面の斜面だけが飽和する
+REAL_LASER_DEG = 60.0      # 6 章で左つま先が影に入る角度
+REAL_FULL_WELL = 4000.0    # 満杯の電子数(光子雑音)
+REAL_READ_E = 8.0          # 読み出し雑音 [e-]
+REAL_BITS = 10
+REAL_SPEC = 6.0            # 鏡面反射の山(平らな母材の光条に対する比)。右の斜面の光条が飽和して白く潰れる
+REAL_SPEC_W = 0.25         # 鏡面の起きる傾きの幅(dh/dx の 1σ)。研磨していない溶接金属のぼけた鏡面ローブ
+REAL_GHOST = 0.35          # 右の斜面の鏡面反射が母材を照らして写る偽の線(2 次反射)の明るさ(本物の線に対する比)
+REAL_WIN = 10              # 中心を取る窓(行、±)
+REAL_DETECT = 0.06         # 窓の中の山がこれに届かない列は「測れなかった」(平らな母材の山 0.45 の 1/7、環境光 0.01〜0.04 の上)
+REAL_GAP_COLS = 8          # これより短い欠け(0.11 mm、粒 3 つ)はスペックルの暗い粒による脱落とみなして補間する
+REAL_PSF_COLS = 3          # 観察開口の点像の幅 0.5145 λ / sin u = 42 µm = 3 列 —— 影の縁から光がこれだけ滲む
+
+
+def _ghost_height(x):
+    """2 次反射の偽の線の見かけの高さ [mm](簡易模型): 右のつま先の外 0.2〜2.4 mm に、母材より 0.35〜0.65 mm 低く
+    写る線。光切断の平面の外で照らされた点は、三角測量では違う高さに見える。返り値の NaN は偽の線が無い列。"""
+    toe_r = BEAD_X + BEAD_W / 2.0
+    u = (x - toe_r - 0.2) / 2.2
+    return np.where((u >= 0) & (u <= 1), -0.35 - 0.30 * u, np.nan)
+
+
+def real_render(coherent=True, seed=5, ghost=True):
+    """1〜7 章と同じビードを、実機のカメラが撮る輝線として描く。
+
+    輝線は ``fs.ledger.laser_line_coherent``(粗面の位相 → 観察開口 → |E|² → 画素の積分)で描くのでスペックルの粒が
+    出る(``coherent=False`` は同じ幅のなめらかなガウスの帯 = スペックルの無い理想)。明るさは列ごとに、ビードの
+    波目(周期 0.9 mm の ±25 %)・鏡面の飽和(4 章の鏡面条件 dh/dx = −tan(θ/2))・影(6 章の :func:`lit_mask`)を
+    かける。右の斜面の鏡面反射が母材を照らした 2 次反射の偽の線(:func:`_ghost_height`)、帯域フィルタ越しの
+    環境光で薄く写る母材、尾を引くスパッタの輝点、光子雑音(満杯 4000 e⁻)・読み出し雑音 8 e⁻・10 bit の量子化と
+    飽和を入れる。
+
+    返り値: (DN の画像 (320, 1296) を 0〜1 に割ったもの, 各列の x [mm], 真の h [mm], 照らされた列, 偽の線の h)。
+    """
+    ny, nx = IMG_H * REAL_SCALE, N_COL * REAL_SCALE
+    pix_um = 1000.0 / (PX_PER_MM * REAL_SCALE)
+    x = (np.arange(nx) - (nx - 1) / 2.0) / (PX_PER_MM * REAL_SCALE)
+    hv = height(x)
+    sin_t = np.sin(np.deg2rad(CAM_TILT_DEG))
+    row0 = ROW0 * REAL_SCALE
+    rows = np.arange(ny)[:, None]
+
+    def band(h_mm, sd):
+        if coherent:
+            return np.asarray(fs.ledger.laser_line_coherent(
+                shape=(ny, nx), wavelength_um=REAL_WAVE_UM, sin_u_obs=REAL_SIN_U, pixel_um=pix_um,
+                line_width_um=REAL_LINE_W_UM, height_um=h_mm * 1000.0, sin_theta=sin_t, row0=row0,
+                pixel_oversample=2, noise=0.0, seed=sd))
+        centre = row0 + h_mm * 1000.0 * sin_t / pix_um
+        return np.exp(-2.0 * ((rows - centre[None, :]) * pix_um) ** 2 / REAL_LINE_W_UM ** 2)
+
+    lit = lit_mask(x, hv, REAL_LASER_DEG)
+    ripple = 1.0 + 0.25 * np.cos(2 * np.pi * x / 0.9) * (np.abs(x - BEAD_X) < BEAD_W / 2.0)
+    phi0 = -np.tan(np.deg2rad(REAL_LASER_DEG / 2.0))
+    amp = REAL_AMP * ripple + REAL_SPEC * REAL_AMP * np.exp(-((slope(x) - phi0) ** 2) / (2 * REAL_SPEC_W ** 2))
+    sensor = band(hv, seed) * amp[None, :] * lit[None, :]
+    hg = _ghost_height(x)
+    if ghost:
+        has = np.isfinite(hg)
+        taper = np.sin(np.pi * np.clip((x - np.nanmin(np.where(has, x, np.nan))) / 2.2, 0, 1)) * has
+        sensor = sensor + REAL_GHOST * REAL_AMP * taper[None, :] * band(np.where(has, hg, 0.0), seed + 1)
+    rng = np.random.default_rng([seed, 2026, 11, 8])
+    sensor = sensor + np.clip(0.012 * (1.0 + 2.0 * ndimage.gaussian_filter(rng.standard_normal((ny, nx)), (2.0, 6.0))),
+                              0, None)
+    cols = np.arange(nx)[None, :]
+    for _ in range(16):                                                  # スパッタ: 向きのある尾を引いた輝点
+        r, c, a = rng.uniform(20, ny - 20), rng.uniform(0, nx), rng.uniform(0.5, 1.6)
+        ang, ln, wd = rng.uniform(0, np.pi), rng.uniform(2.0, 14.0), rng.uniform(0.8, 1.8)
+        du = (cols - c) * np.cos(ang) + (rows - r) * np.sin(ang)
+        dv = -(cols - c) * np.sin(ang) + (rows - r) * np.cos(ang)
+        tail = np.where(du > 0, np.exp(-np.clip(du, 0, None) / ln), np.exp(np.clip(du, None, 0) / 1.5))
+        sensor = sensor + a * tail * np.exp(-dv ** 2 / (2 * wd * wd)) * (np.abs(du) < 4 * ln)
+    # 満杯を超えた電荷は列に沿って隣の画素へあふれる(ブルーミング、上下に 1/e で 3 画素)
+    over = np.clip(sensor - 1.0 / 0.9, 0, None)
+    if over.any():
+        sensor = sensor + ndimage.convolve1d(over, np.exp(-np.abs(np.arange(-9, 10)) / 3.0) * 0.25, axis=0)
+    e = rng.poisson(np.clip(sensor, 0, None) * REAL_FULL_WELL * 0.9) + rng.normal(0.0, REAL_READ_E, sensor.shape)
+    full = 2 ** REAL_BITS - 1
+    dn = np.clip(np.round(e / REAL_FULL_WELL * full), 0, full)
+    return dn / full, x, hv, lit, hg
+
+
+def real_centre(img, continuity=True):
+    """輝線の中心(列ごと)。``continuity=True``: 縦に均した山を隣の列の中央値(41 列)で選び直し(5 章の連続性)、
+    ±REAL_WIN 行の窓で背景を引いた重心。``False``: 各列のいちばん明るい山のまわりの重心(選び直さない)。
+    山が 0.25 に届かない列は「測れなかった」(NaN)。"""
+    ny = img.shape[0]
+    sm = ndimage.gaussian_filter(img, (1.5, 1.0))
+    k = sm.argmax(axis=0)
+    seed_ok = sm.max(axis=0) > 0.1
+    if continuity:
+        prior = median_filter(np.where(seed_ok, k, np.median(k[seed_ok])).astype(np.float64), size=41, mode="nearest")
+    else:
+        prior = k.astype(np.float64)
+    rows = np.arange(ny)[:, None]
+    ok = np.where(np.abs(rows - prior[None, :]) <= REAL_WIN, sm, -1.0).max(axis=0) > REAL_DETECT
+    w = np.clip(img - np.median(img, axis=0)[None, :] - 0.03, 0, None) * (np.abs(rows - prior[None, :]) <= REAL_WIN)
+    s = w.sum(axis=0)
+    c = (w * rows).sum(axis=0) / np.maximum(s, 1e-9)
+    valid = ok & (s > 0.3)
+    h = np.where(valid, (c - ROW0 * REAL_SCALE) / (K_PX_MM * REAL_SCALE), np.nan)
+    return h, valid
+
+
+def fill_dropouts(h, valid, max_cols=REAL_GAP_COLS):
+    """短い欠け(``max_cols`` 列未満)だけを両隣の線形補間で埋め、長い欠け(影)は NaN のまま残す。
+    返り値: (埋めた h, 埋めた後の有効マスク, 埋めた列の数)。狭い光条ではスペックルの暗い粒が列ごとの脱落を作る
+    —— それを「未測定」と数えると、答えない方針がすべての量を拒否してしまう(2026-11-08 実測)。"""
+    h = h.copy()
+    v = valid.copy()
+    lab, n = ndimage.label(~valid)
+    idx = np.arange(h.size)
+    filled = 0
+    for k in range(1, n + 1):
+        g = np.where(lab == k)[0]
+        if len(g) >= max_cols or g[0] == 0 or g[-1] == h.size - 1:
+            continue
+        a, b = g[0] - 1, g[-1] + 1
+        h[g] = np.interp(idx[g], [a, b], [h[a], h[b]])
+        v[g] = True
+        filled += len(g)
+    return h, v, filled
+
+
+#: 8 章の描画の種(スペックルの位相・スパッタの位置・光子雑音)。図は種 REAL_FIG_SEED の 1 枚。
+#: ★2026-11-08 の敵対的レビュー: 門と「連続性で選べば偽の線 0 列」は種 5 の 1 本だけの値で、種を 1〜12 に振ると
+#: 12 本中 7 本で門が落ちた(直す前の版でも同じ 7 本)。主張は 12 本の中央値と幅で書き、門は種によらず成り立つ
+#: ものだけにした(下の門はどれも 12 本を見てから置いた)。
+REAL_SEEDS = tuple(range(1, 13))
+REAL_FIG_SEED = 5
+#: 種ごとの記録(2026-11-08、12 本を全部走らせて記録)。並び = (影の列で輝線を拾った列, いちばん明るい山だけを取って
+#: 2 次反射の偽の線に乗る列, 連続性で選んでも乗る列, 照らされた列の高さの RMS [µm], 0 で埋めた左の UC [mm],
+#: 答えない方針が左の 3 量を返さず右の UC を返したか, 右の UC の誤差 [µm])。
+#: CI(``FULLSEYE_POC_BUDGET=reduced``、CI の既定)は図の種だけを計算し直して記録と照合し、種を振った主張は記録の
+#: 12 行から数える。手元・図つき(``full``)は 12 本を全部計算し直して照合する(1 本 4〜5 秒)。
+REAL_SEED_RECORDED = {
+    1: (13, 5, 2, 22.0, 1.283, True, 96.2),
+    2: (0, 16, 1, 22.4, 0.0, True, 128.8),
+    3: (0, 8, 2, 20.8, 0.0, True, 68.6),
+    4: (12, 6, 0, 21.9, 0.0, True, 39.6),
+    5: (0, 14, 0, 21.8, 0.0, True, 36.1),
+    6: (28, 9, 1, 22.6, 0.116, True, 62.3),
+    7: (0, 7, 0, 25.0, 0.0, True, 51.2),
+    8: (5, 14, 2, 24.3, 0.0, True, 93.5),
+    9: (0, 3, 0, 23.1, 0.0, True, 20.6),
+    10: (0, 1, 0, 23.5, 0.0, True, 18.0),
+    11: (36, 0, 0, 76.8, 0.0, True, 17.9),
+    12: (0, 4, 0, 26.7, 0.0, True, 14.3),
+}
+REAL_FULL = os.environ.get("FULLSEYE_POC_BUDGET", "reduced" if os.environ.get("CI") else "full") == "full"
+
+
+def real_seed_row(truth: dict, seed: int, keep: bool = False) -> dict:
+    """種 ``seed`` で実物らしい輝線を描き、8 章の数を測る(門は呼ぶ側)。``keep`` なら図に要る配列も返す。"""
+    img, x, hv, lit, hg = real_render(coherent=True, seed=seed)
+    h_raw, valid_raw = real_centre(img)
+    h, valid, n_fill = fill_dropouts(h_raw, valid_raw)
+    h_plain, v_plain = real_centre(img, continuity=False)
+    m = valid & lit
+    rms = 1000.0 * float(np.sqrt(np.mean((h - hv)[m] ** 2)))
+    on_ghost = np.isfinite(hg)
+    hijack = lambda hh, vv: int(np.sum(vv & lit & on_ghost & (np.abs(hh - hg) < np.abs(hh - hv))))
+    # 影の縁(観察開口の点像の幅 3 列)は除く。2026-11-08 に光条を細く(1/e² 半幅 60 µm)したとき、縁の 1 列に
+    # 点像で滲んだ光を拾ったので足した(光が実際に届く幅で、推定器の都合ではない)。
+    psf = ndimage.binary_dilation(lit != np.roll(lit, 1), iterations=REAL_PSF_COLS)
+    qn = quantities(x, h, valid=valid, strict=True)
+    qz = quantities(x, np.where(valid, h, 0.0))
+    refuse = bool(all(not np.isfinite(qn[k]) for k in ("ucL", "legL", "width")) and np.isfinite(qn["ucR"]))
+    row = {"shadow": int(np.sum(valid & ~lit & ~psf)), "plain": hijack(h_plain, v_plain), "cont": hijack(h, valid),
+           "rms": rms, "qzL": float(qz["ucL"]), "refuse": refuse,
+           "err": 1000.0 * float(qn["ucR"] - truth["ucR"]) if np.isfinite(qn["ucR"]) else float("nan")}
+    if keep:
+        row.update({"img": img, "x": x, "hv": hv, "lit": lit, "h": h, "valid": valid, "qz": qz, "qn": qn,
+                    "sat": float(np.mean(img >= 1.0)), "hg": hg, "n_ghost": int(on_ghost.sum()),
+                    "h_plain": h_plain, "v_plain": v_plain, "n_fill": n_fill, "valid_raw": valid_raw,
+                    "n_nan": int(np.sum(~valid)), "n_nan_shadow": int((~valid & ~lit).sum()),
+                    "n_nan_lit": int((~valid & lit).sum()), "rms_s": None})
+    return row
+
+
+_ROW_KEYS = ("shadow", "plain", "cont", "rms", "qzL", "refuse", "err")
+
+
+def _row_tuple(r: dict) -> tuple:
+    return (r["shadow"], r["plain"], r["cont"], round(r["rms"], 1), round(r["qzL"], 3), r["refuse"], round(r["err"], 1))
+
+
+def _row_mismatch(seed: int, r: dict) -> list:
+    """計算し直した行と記録の食い違い(列の数と真偽は一致、RMS と誤差は 0.15 µm、左の UC は 0.002 mm まで)。"""
+    rec = REAL_SEED_RECORDED[seed]
+    got = _row_tuple(r)
+    tol = (0, 0, 0, 0.15, 0.002, 0, 0.15)
+    return ["種 %d の %s: 記録 %s / 実測 %s" % (seed, k, a, b) for k, a, b, t in zip(_ROW_KEYS, rec, got, tol)
+            if (a != b if t == 0 else not abs(a - b) <= t)]
+
+
+def section8_real(truth: dict) -> dict:
+    print()
+    print("=" * 78)
+    print("9) 実物らしい輝線 —— スペックル・鏡面の飽和・2 次反射・スパッタ・影を 1 枚に")
+    print("=" * 78)
+    r = real_seed_row(truth, REAL_FIG_SEED, keep=True)
+    img, x, hv, lit, hg, h, valid, qz, qn = (r[k] for k in ("img", "x", "hv", "lit", "hg", "h", "valid", "qz", "qn"))
+    smooth = real_render(coherent=False, ghost=False, seed=REAL_FIG_SEED)[0]
+    hs, vs = real_centre(smooth)
+    r["rms_s"] = 1000.0 * float(np.sqrt(np.mean((hs - hv)[vs & lit] ** 2)))
+    lim = fs.ledger.triangulation_speckle_limit(REAL_WAVE_UM, REAL_SIN_U, np.sin(np.deg2rad(CAM_TILT_DEG)), 1.0)
+    pix_um = 1000.0 / (PX_PER_MM * REAL_SCALE)
+    lim_col = lim["delta_z_um"] * np.sqrt(REAL_LINE_W_UM / pix_um)     # 1 列(長さ = 画素)だけで平均したときの床
+    print("  図の種 %d: %d x %d px(1 px = %.1f µm)、光条の 1/e² 半幅 %.0f µm、レーザー %.0f 度、飽和画素 %.2f %%、"
+          "影の列 %d / %d" % (REAL_FIG_SEED, img.shape[1], img.shape[0], pix_um, REAL_LINE_W_UM, REAL_LASER_DEG,
+                              100 * r["sat"], int((~lit).sum()), lit.size))
+    print("  高さの RMS(照らされた列): スペックル %.1f µm。Dorsch の床 δz = %.1f µm(長さ = 光条の幅で平均したとき)、"
+          "1 列だけで平均したときの床 δz·√(w/画素) = %.1f µm(閉形式)。参考: スペックルの無い理想の帯は %.1f µm"
+          % (r["rms"], lim["delta_z_um"], lim_col, r["rms_s"]))
+    print("  測れた列: 補間の前 %d / 補間の後 %d(全 %d 列)。スペックルの暗い粒による %d 列未満の脱落 %d 列を補間し、"
+          "補間した列は「測れた」と数える(答えない方針の未測定は %d 列以上の欠けだけ)。NaN のまま残るのは %d 列"
+          " = 影 %d 列 + 影の縁で輝線が暗く測れなかった %d 列"
+          % (int(r["valid_raw"].sum()), int(valid.sum()), valid.size, REAL_GAP_COLS, r["n_fill"], REAL_GAP_COLS,
+             r["n_nan"], r["n_nan_shadow"], r["n_nan_lit"]))
+    print("  2 次反射の偽の線(%d 列): いちばん明るい山を取ると %d 列が偽の線に乗る / 隣の列との連続性で選ぶと %d 列"
+          % (r["n_ghost"], r["plain"], r["cont"]))
+    for k, lab in (("ucL", "UC 深さ 左"), ("ucR", "UC 深さ 右"), ("legL", "脚長 左"), ("width", "ビード幅")):
+        f = lambda v: "不能" if not np.isfinite(v) else "%.3f" % v
+        print("  %-10s 真値 %.3f / 0 で埋める %s / 答えない %s" % (lab, truth[k], f(abs(qz[k]) if k == "ucL" else qz[k]), f(qn[k])))
+
+    # --- 描画の種を振る(図の種の 1 本で主張しない) --- #
+    t_sw = time.perf_counter()
+    rows = {}
+    bad = _row_mismatch(REAL_FIG_SEED, r)
+    for sd in REAL_SEEDS:
+        if sd == REAL_FIG_SEED:
+            rows[sd] = _row_tuple(r)
+        elif REAL_FULL:
+            rr = real_seed_row(truth, sd)
+            bad += _row_mismatch(sd, rr)
+            rows[sd] = _row_tuple(rr)
+        else:
+            rows[sd] = REAL_SEED_RECORDED[sd]
+    assert not bad, "種ごとの記録と実測が食い違う(場面や推定器を変えたら記録を測り直す): " + "; ".join(bad)
+    n_sd = len(REAL_SEEDS)
+    col = lambda i: np.array([rows[sd][i] for sd in REAL_SEEDS], dtype=float)
+    shadow, plain, cont, rmsv, qzl, refuse, err = (col(i) for i in range(7))
+    picked = shadow > 0
+    erased = np.abs(qzl) < 0.05
+    print("  描画の種 %d 本(スペックル・スパッタ・雑音を振る。%s、%.1f 秒): 種 %s" % (
+        n_sd, "全本を計算し直して記録と照合" if REAL_FULL else "図の種だけ計算し直し、残りは記録の値",
+        time.perf_counter() - t_sw, ",".join(str(s) for s in REAL_SEEDS)))
+    print("    偽の線に乗る列: いちばん明るい山 %d〜%d 列(中央値 %.0f、合計 %d)/ 連続性で選ぶ %d〜%d 列(合計 %d、"
+          "%d 本中 %d 本で 0 列)" % (plain.min(), plain.max(), np.median(plain), plain.sum(), cont.min(), cont.max(),
+                                 cont.sum(), n_sd, int((cont == 0).sum())))
+    print("    照らされた列の RMS: 中央値 %.1f µm(%.1f〜%.1f)、2 つの閉形式の床(%.1f〜%.1f µm)の間に入るのは %d 本中 %d 本"
+          % (np.median(rmsv), rmsv.min(), rmsv.max(), lim["delta_z_um"], lim_col, n_sd,
+             int(((rmsv > lim["delta_z_um"]) & (rmsv < lim_col)).sum())))
+    print("    0 で埋めた左の UC が消える(< 0.05 mm): %d 本中 %d 本。答えない方針が左の 3 量を返さない: %d 本中 %d 本"
+          % (n_sd, int(erased.sum()), n_sd, int(refuse.sum())))
+    print("    返した右の UC の誤差: %d 本とも%s(%+.0f〜%+.0f µm、中央値 %+.0f µm)。1 列の床の 3 倍 %.0f µm を超えるのは %d 本"
+          % (n_sd, "深い側" if (err > 0).all() else "同じ向きではない", err.min(), err.max(), np.median(err),
+             3 * lim_col, int((np.abs(err) >= 3 * lim_col).sum())))
+    print("  ★限界: %d 本中 %d 本では、影に落ちたスパッタを輝線と拾う(%s 列)。そのうち %d 本では 0 で埋めた左の UC が"
+          "スパッタの高さで %s mm と出る(「健全」でもなく、嘘の深さ)。連続性も、影の中の孤立した輝点は止めない。"
+          % (n_sd, int(picked.sum()), "・".join("%d" % v for v in shadow[picked]), int((picked & ~erased).sum()),
+             " / ".join("%.3f" % v for v in qzl[~erased])))
+    # 門(外の真値 = 断面の閉形式と Dorsch の式)。どれも種 12 本で成り立つ形にした(2026-11-08、12 本を見てから置いた)。
+    assert refuse.all(), "答えない方針が、種によっては左の 3 量を返した / 右の UC を返さなかった: %s" % refuse
+    assert erased[~picked].all(), "影の列で輝線を拾っていないのに、0 で埋めた左の UC が残った: %s" % qzl[~picked]
+    assert (cont <= plain).all() and cont.sum() < plain.sum(), \
+        "連続性で選んでも偽の線に乗る列が、明るい山だけのときより減らない: %s / %s" % (cont, plain)
+    assert lim["delta_z_um"] < np.median(rmsv) < lim_col, "スペックルの誤差の中央値が 2 つの閉形式の床の間に無い: %.1f(%.1f〜%.1f)" % (
+        np.median(rmsv), lim["delta_z_um"], lim_col)
+    # 右の UC の誤差の上限: 1 列の床(閉形式 δz·√(w/画素))の 3 倍を、種 12 本の中央値に置く(両側。偏りが消えても
+    # 落ちない)。種 1 本ごとの上限は種 2(+129 µm)で落ちるので、1 本ごとの主張はしない。
+    assert abs(np.median(err)) < 3.0 * lim_col, "右の UC の誤差の中央値が 1 列の床の 3 倍を超えた: %+.1f µm" % np.median(err)
+    print("  → 影の左つま先を 0 で埋めると、図の種では UC 深さ %.3f(真値 %.2f)で「健全」。答えない方針は %d 本とも左の 3 量を"
+          "返さない。返した右の UC は %d 本とも深く出る —— 未測定は止められても、スペックルの偏りは止まらない。"
+          % (abs(qz["ucL"]), truth["ucL"], n_sd, n_sd))
+    r.update({"lim": lim["delta_z_um"], "lim_col": lim_col, "n_plain": r["plain"],
+              "sweep": {"n": n_sd, "plain": plain, "cont": cont, "rms": rmsv, "err": err, "shadow": shadow,
+                        "qzl": qzl, "picked": picked, "erased": erased}})
+    return r
+
+
+def real_figure(truth: dict, r: dict) -> None:
+    """代表の図: 上 = カメラが撮った輝線(灰、原寸)、下 = 同じ画像に読んだ断面・真の断面・影を 0 で埋めた所・
+    いちばん明るい山だけを取ったときに 2 次反射の偽の線に乗った列を重ねたもの。"""
+    img = r["img"]
+    g = np.clip(img, 0, 1) ** (1 / 2.2)
+    raw = np.repeat(g[..., None], 3, axis=-1)
+    ov = raw * 0.75
+    ny, nx = img.shape
+    K = K_PX_MM * REAL_SCALE
+    r0 = ROW0 * REAL_SCALE
+    cols = np.arange(nx)
+    v = r["valid"]
+
+    def dot(rr, cc, col, rad=1):
+        for dr in range(-rad, rad + 1):
+            for dc in range(-rad, rad + 1):
+                y, xq = np.round(rr).astype(int) + dr, cc + dc
+                ok = (y >= 0) & (y < ny) & (xq >= 0) & (xq < nx)
+                ov[y[ok], xq[ok]] = col
+
+    dot(r0 + K * r["hv"], cols, (1.0, 0.85, 0.1), 0)                     # 真の断面(黄、細)
+    dot(r0 + K * r["h"][v], cols[v], (0.1, 0.9, 1.0), 1)                 # 読んだ断面(水色)
+    fill = v & ~r["valid_raw"]
+    dot(r0 + K * r["h"][fill], cols[fill], (0.2, 1.0, 0.2), 1)           # 補間した脱落の列(緑)
+    hp, vp = r["h_plain"], r["v_plain"]
+    wrong = vp & r["lit"] & np.isfinite(r["hg"]) & (np.abs(hp - r["hg"]) < np.abs(hp - r["hv"]))
+    dot(r0 + K * hp[wrong], cols[wrong], (1.0, 0.3, 1.0), 1)             # 明るい山だけを取ると偽の線に乗る列(桃)
+    shadow = ~r["lit"]
+    dot(np.full(int(shadow.sum()), r0), cols[shadow], (1.0, 0.2, 0.2), 1)  # 0 で埋めた所(赤)
+    ov[ny - 10:, shadow] = (1.0, 0.2, 0.2)
+    # 表示は上下を返す(高いほど上 = ビードが山に見える向き。カメラを逆さに付けたのと同じで、画素の値は変えない)
+    raw, ov = raw[::-1], ov[::-1]
+    lab = lambda a: (np.clip(a, 0, 1) * 255).astype(np.uint8)
+    q, qn = r["qz"], r["qn"]
+    sw = r["sweep"]
+    figs.save_grid("real_laser_line", [lab(raw), lab(ov)],
+                   ["カメラの輝線(1296 × 320 px、1 px = 13.9 µm、レーザー 60 度)",
+                    "読んだ断面(水色)・補間した脱落(緑)・真の断面(黄)・影を 0 で埋めた所(赤)・明るい山だけなら偽の線(桃)"],
+                   ncols=1, title="溶接ビードの光切断: 影に入った左のつま先を 0 で埋めると、アンダーカットが消える(合成)",
+                   caption="合成の画像(描画の種 %d の 1 枚): 赤のレーザーをビードに斜め 60 度から当て、45 度のカメラで撮った輝線(上、灰のまま原寸。"
+                           "高いほど上に見えるよう上下を返して表示)。光条は 1/e² 半幅 60 µm の細い線で、粗い鋼の面での干渉による"
+                           "スペックル(粒径 42 µm)、右の斜面の鏡面反射で明るくなり芯の一部が飽和する所(飽和画素 %.2f %%)、その反射が母材を照らした 2 次反射の"
+                           "偽の線(右のつま先の外、位置は簡易模型)、尾を引くスパッタ、光子雑音・10 bit を入れた。左のつま先はビードの"
+                           "影で輝線が切れる。下: 列ごとに隣の列との連続性で山を選んで読んだ断面(水色)は真の断面(黄)に沿い、"
+                           "照らされた列の高さの誤差は RMS %.1f µm —— Dorsch の閉形式の床 %.1f µm(光条の幅で平均)と 1 列だけの床 "
+                           "%.1f µm の間。いちばん明るい山だけを取ると %d 列が偽の線に乗る(桃)。スペックルの暗い粒による %d 列未満の"
+                           "脱落 %d 列は補間して(緑)「測れた」と数え、それより長い欠けだけを未測定とした。影の列(赤の帯)を 0 で埋めると左のアンダーカットは %.3f mm(真値 %.2f)で「健全」として"
+                           "通る。未測定の区間に掛かる量を返さなければ左の UC・脚長・幅は「不能」になるが、返した右の UC は %.3f mm"
+                           "(真値 %.2f)—— 答えない方針でもスペックルの偏りは止まらない。"
+                           "描画の種(スペックル・スパッタ・雑音)を %d 本振ると: 連続性で選んでも偽の線に乗る列は %d〜%d 列"
+                           "(%d 本中 %d 本で 0 列。明るい山だけなら %d〜%d 列)、照らされた列の RMS は中央値 %.1f µm(%d 本中 %d 本が"
+                           "2 つの床の間)、返した右の UC は %d 本とも深く出て %+.0f〜%+.0f µm(中央値 %+.0f µm)。★限界: %d 本中 %d 本では"
+                           "影に落ちたスパッタを輝線と拾い、そのうち %d 本では 0 で埋めた左の UC が「健全」でなく嘘の深さになる。"
+                           "真値は断面の閉形式。"
+                           % (REAL_FIG_SEED, 100 * r["sat"], r["rms"], r["lim"], r["lim_col"], r["n_plain"], REAL_GAP_COLS, r["n_fill"],
+                              abs(q["ucL"]), truth["ucL"], qn["ucR"], truth["ucR"],
+                              sw["n"], sw["cont"].min(), sw["cont"].max(), sw["n"], int((sw["cont"] == 0).sum()),
+                              sw["plain"].min(), sw["plain"].max(), np.median(sw["rms"]), sw["n"],
+                              int(((sw["rms"] > r["lim"]) & (sw["rms"] < r["lim_col"])).sum()), sw["n"],
+                              sw["err"].min(), sw["err"].max(), np.median(sw["err"]), sw["n"], int(sw["picked"].sum()),
+                              int((sw["picked"] & ~sw["erased"]).sum())))
+
+
 def section9_tool_gaps() -> None:
     print()
     print("=" * 78)
@@ -765,7 +1119,10 @@ def main() -> None:
     section5_spatter(truth)
     curve = section6_occlusion(truth)
     section7_strict(truth)
+    real = section8_real(truth)
     section8_figures(truth, curve)
+    if figs.enabled():
+        real_figure(truth, real)
     section9_tool_gaps()
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():

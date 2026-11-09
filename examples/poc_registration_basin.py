@@ -428,6 +428,484 @@ def video_icp_basin():
 
 
 # ---------------------------------------------------------------------------
+# 7. 実物の走査点群 —— BOP T-LESS(CC BY 4.0)の実機 RGB-D と、走査から作った部品モデル
+# ---------------------------------------------------------------------------
+# データ: T-LESS(Hodaň et al., WACV 2017)の BOP19 test_primesense と models_reconst。
+#   取得 ``py -3.11 tools/fetch_tless.py``。置き場は環境変数 FULLSEYE_TLESS_DATA(未設定なら
+#   ``~/fullseye_data/tless`` を見る。そこにも無ければ記録値を印字する —— 手元で実データの章を回すには
+#   FULLSEYE_TLESS_DATA を展開先へ向ける)。一次配布 https://bop.felk.cvut.cz/datasets/ の T-LESS 欄に
+#   "license: CC BY 4.0"。
+# 読むのは 場面 10 の部品 22(models_info に対称の記載が無い = 姿勢が 1 つに決まる部品)が 95 % 以上
+# 見えている BOP19 の全フレーム。使う要素は下の一覧の SHA-256 で固定する。センサは市販の構造化光 RGB-D
+# センサ(図と字幕には製品名を出さない)。
+#
+# ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を
+#   **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ
+#   フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、
+#   (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。
+#   以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
+REAL_ENV = "FULLSEYE_TLESS_DATA"
+REAL_SCENE, REAL_OBJ, REAL_VISIB = 10, 22, 0.95
+REAL_PART_JA = "3 口の電源タップ"              # 図に出す部品の呼び名(写真で確かめた一般名)
+REAL_N_SRC, REAL_N_DST = 500, 3000            # 動かす点(毎試行取り直す)/ モデルの点(最遠点で固定)
+REAL_ROTS = (0.0, 15.0, 30.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0, 80.0, 90.0, 120.0, 150.0)
+REAL_CONDS = (("全周", "full"), ("片面", "side"), ("実測", "real"))
+REAL_SEED = 20261108
+#: 種(試行ごとの点の取り直しと回転軸)。1 本の値で語らない —— 50 % 角は種の幅で示す。
+REAL_SEEDS = (20261108, 1, 2, 3, 4)
+#: 使う要素(モデル 1 + models_info + 場面の JSON 3 + 深度と見えている範囲の印)の (名前, SHA-256) を
+#: 並べた一覧の SHA-256。2026-11-08 に手元の取得物から計算した値。
+REAL_MANIFEST_SHA256 = "36b5bd5da9a3c56adf2f98c11f4f9ac97db654f2bedad651aa943bbf07a7bb7e"
+#: 手元で測った記録値(CI ではデータが無いのでこれを印字する)。データがあるときは実測と突き合わせる。
+REAL_RECORDED = {
+    "lines": [
+        '部品 22(対称の記載なし、直径 92.25 mm = BOP)、実測 26 フレーム、毎試行 500 点、モデル 3000 点',
+        '真値で置いた実測点とモデルの距離 中央値 1.99 mm / 90 % 点 4.46 mm',
+        '50 % を切る角度 点対点(種 5 本の 最小〜最大): 全周 57.5〜62.5 / 片面 49.2〜52.5 / 実測 39.2〜51.0 度',
+        '50 % を切る角度 点対面(種 5 本の 最小〜最大): 全周 72.9〜84.0 / 片面 58.3〜66.0 / 実測 44.2〜54.0 度',
+        '床と真値のずれ(中央値、実測): 点対点 4.23 度・3.72 mm / 点対面 5.30 度・4.31 mm',
+        '真値基準の成功(初期ずれ 0、実測): 点対点 0 % / 点対面 4 %',
+        '50 % を最後に切る所(点対面): 全周 72.9〜84.0 / 片面 58.3〜66.0 / 実測 45.0〜65.0 度',
+        '15 度での成功率(点対面): 全周 100〜100 % / 片面 100〜100 % / 実測 73〜88 %',
+    ],
+    'rate': {'p2p': {'full': {'0': 1.0, '15': 1.0, '30': 1.0, '40': 0.8846, '45': 0.7692, '50': 0.6923, '55': 0.7692, '60': 0.5769, '65': 0.4231, '70': 0.2692, '80': 0.0, '90': 0.0385, '120': 0.0, '150': 0.0}, 'side': {'0': 1.0, '15': 0.9231, '30': 0.9615, '40': 0.7308, '45': 0.7692, '50': 0.5385, '55': 0.4231, '60': 0.3846, '65': 0.2308, '70': 0.1538, '80': 0.0, '90': 0.0, '120': 0.0, '150': 0.0}, 'real': {'0': 1.0, '15': 0.7692, '30': 0.9231, '40': 0.4615, '45': 0.6538, '50': 0.5, '55': 0.3077, '60': 0.2308, '65': 0.1923, '70': 0.1154, '80': 0.0, '90': 0.0, '120': 0.0, '150': 0.0}}, 'p2pl': {'full': {'0': 1.0, '15': 1.0, '30': 1.0, '40': 0.9231, '45': 1.0, '50': 0.8846, '55': 0.8077, '60': 0.6538, '65': 0.7692, '70': 0.6538, '80': 0.3846, '90': 0.3462, '120': 0.0385, '150': 0.0}, 'side': {'0': 1.0, '15': 1.0, '30': 1.0, '40': 0.9615, '45': 0.8846, '50': 0.7308, '55': 0.6923, '60': 0.5, '65': 0.3462, '70': 0.4615, '80': 0.1538, '90': 0.0385, '120': 0.0, '150': 0.0}, 'real': {'0': 1.0, '15': 0.7692, '30': 0.6923, '40': 0.6923, '45': 0.4615, '50': 0.5385, '55': 0.5, '60': 0.3846, '65': 0.1538, '70': 0.2692, '80': 0.1538, '90': 0.1154, '120': 0.0385, '150': 0.0}}},
+    'half': {'p2p': {'full': [57.5, 61.7, 62.5], 'side': [49.2, 51.7, 52.5], 'real': [39.2, 45.0, 51.0]}, 'p2pl': {'full': [72.9, 75.7, 84.0], 'side': [58.3, 60.0, 66.0], 'real': [44.2, 53.3, 54.0]}},
+    'half_last': {'p2p': {'full': [57.5, 62.5], 'side': [49.2, 60.0], 'real': [44.0, 55.8]}, 'p2pl': {'full': [72.9, 84.0], 'side': [58.3, 66.0], 'real': [45.0, 65.0]}},
+    'narrow_min': {'p2p': 10.7, 'p2pl': 19.6},
+    'narrow_min_last': {'p2p': 1.7, 'p2pl': 7.9},
+}
+
+
+def _real_root():
+    import os
+    root = Path(os.environ.get(REAL_ENV, str(Path.home() / "fullseye_data" / "tless")))
+    model = root / "models_reconst" / f"obj_{REAL_OBJ:06d}.ply"
+    scene = root / "test_primesense" / f"{REAL_SCENE:06d}"
+    if not model.is_file() or not (scene / "scene_gt.json").is_file():
+        return None
+    return root
+
+
+def _real_load(root):
+    """部品 22 のモデル(走査の再構成)と、各フレームの実測点(モデル座標へ真値で戻したもの)。
+
+    取得物は信頼しない入力として扱う: 使う要素の一覧の SHA-256 を台帳と照合してから読む。
+    直径は BOP の定義(models_info.json の diameter = モデル上の 2 点の最大距離)をそのまま使う。
+    """
+    import hashlib
+    import json
+
+    from PIL import Image
+
+    scene = root / "test_primesense" / f"{REAL_SCENE:06d}"
+    model_path = root / "models_reconst" / f"obj_{REAL_OBJ:06d}.ply"
+    info_path = root / "models_reconst" / "models_info.json"
+    js = {n: json.loads((scene / n).read_text(encoding="utf-8"))
+          for n in ("scene_gt.json", "scene_gt_info.json", "scene_camera.json")}
+    picks = []
+    for im in sorted(js["scene_gt.json"], key=int):
+        for k, (g, inf) in enumerate(zip(js["scene_gt.json"][im], js["scene_gt_info.json"][im])):
+            if g["obj_id"] == REAL_OBJ and inf["visib_fract"] > REAL_VISIB:
+                picks.append((int(im), k, g))
+    used = [model_path, info_path] + [scene / n for n in sorted(js)]
+    for im, k, _g in picks:
+        used += [scene / "depth" / f"{im:06d}.png", scene / "mask_visib" / f"{im:06d}_{k:06d}.png"]
+
+    def sha(p):
+        h = hashlib.sha256()
+        with p.open("rb") as fh:
+            for blk in iter(lambda: fh.read(1 << 20), b""):
+                h.update(blk)
+        return h.hexdigest()
+
+    listing = "\n".join("%s %s" % (p.relative_to(root).as_posix(), sha(p)) for p in used).encode("ascii")
+    digest = hashlib.sha256(listing).hexdigest()
+    if REAL_MANIFEST_SHA256 is not None and digest != REAL_MANIFEST_SHA256:
+        raise ValueError("T-LESS の要素の一覧の SHA-256 %s が台帳 %s と違う" % (digest, REAL_MANIFEST_SHA256))
+    info = json.loads(info_path.read_text(encoding="utf-8"))[str(REAL_OBJ)]
+    bop_diam = float(info["diameter"])
+    if "symmetries_discrete" in info or "symmetries_continuous" in info:
+        raise ValueError("部品 %d に対称の記載がある —— 姿勢が 1 つに決まらないので選び直す" % REAL_OBJ)
+
+    # 頂点と法線(T-LESS の ASCII PLY。先頭 6 列が xyz / nxyz であることを確かめてから読む)
+    with model_path.open("r", encoding="ascii") as fh:
+        head = []
+        while True:
+            line = fh.readline()
+            if not line:
+                raise ValueError("PLY に end_header が無い")
+            head.append(line.strip())
+            if line.strip() == "end_header":
+                break
+        nv = int(next(h for h in head if h.startswith("element vertex ")).split()[2])
+        props = [h.split()[-1] for h in head if h.startswith("property ")]
+        if props[:6] != ["x", "y", "z", "nx", "ny", "nz"]:
+            raise ValueError("PLY の先頭 property が xyz / nxyz でない: %s" % props[:6])
+        v = np.loadtxt(fh, dtype=np.float64, max_rows=nv)
+    mp, mn = v[:, :3], v[:, 3:6] / np.linalg.norm(v[:, 3:6], axis=1, keepdims=True)
+    idx = fs.farthest_point_sampling(mp, REAL_N_DST)
+    model, normals = mp[idx], mn[idx]
+
+    frames = []
+    for im, k, g in picks:
+        cam = js["scene_camera.json"][str(im)]
+        K = np.asarray(cam["cam_K"], np.float64).reshape(3, 3)
+        depth = np.asarray(Image.open(scene / "depth" / f"{im:06d}.png"), np.float64) * float(cam["depth_scale"])
+        mask = np.asarray(Image.open(scene / "mask_visib" / f"{im:06d}_{k:06d}.png")) > 0
+        P = fs.depth_to_points(np.where(mask, depth, 0.0), K)
+        P = P[np.isfinite(P).all(axis=1) & (P[:, 2] > 0)]
+        R = np.asarray(g["cam_R_m2c"], np.float64).reshape(3, 3)
+        t = np.asarray(g["cam_t_m2c"], np.float64)
+        frames.append(dict(image=im, inst=k, pts=(P - t) @ R, R=R, t=t, K=K,       # 真値でモデル座標へ戻す
+                           side=_visible_side(mp, mn, R, t, K)))
+    return model, normals, mp, frames, digest, len(used), bop_diam
+
+
+def _visible_side(mp, mn, R, t, K, cell=2.0):
+    """真値の姿勢でカメラから見えるモデルの面(対照 B)。裏向きの面を捨て、z バッファ(画素 ``cell`` 角)で
+    手前の点だけを残す。返りはモデル座標の点。"""
+    pc = mp @ R.T + t
+    nc = mn @ R.T
+    front = np.einsum("ij,ij->i", nc, -pc / np.linalg.norm(pc, axis=1, keepdims=True)) > 0.05
+    pc, keep = pc[front], np.flatnonzero(front)
+    uv = (pc @ K.T)[:, :2] / pc[:, 2:3]
+    key = np.floor(uv / cell).astype(np.int64)
+    order = np.lexsort((pc[:, 2], key[:, 1], key[:, 0]))
+    k2 = key[order]
+    first = np.ones(len(order), bool)
+    first[1:] = np.any(k2[1:] != k2[:-1], axis=1)
+    near = order[first]
+    zmin = dict(zip(map(tuple, key[near]), pc[near, 2]))
+    zref = np.array([zmin[tuple(kk)] for kk in key])
+    vis = pc[:, 2] <= zref + 3.0                                  # 同じ画素で最も手前から 3 mm 以内
+    return mp[keep[vis]]
+
+
+def _real_trial(method, src, dst, dn, deg, rng, diam):
+    """1 試行: 真値から始めた到達点(床)と、ずらして始めた到達点を比べる。
+
+    実測の点はセンサの系統誤差と真値の誤差を含むので、真値そのものには届かない。そこで
+    「真値から始めた ICP の行き先」を床とし、**同じ床に戻れたか** を盆地の判定にする(3 条件とも同じ判定)。
+    床と真値のずれは別に返す(精度の軸。盆地とは混ぜない)。
+    """
+    dstT, dnT, R_true, t_true = make_pair(dst, dn, deg, 0.0, diam, rng)
+    if method == "p2p":
+        Rf, tf = fs.icp(src, dstT, max_iter=60, init=(R_true, t_true))[:2]
+        R, t = m_icp(src, dstT, dnT)
+    else:
+        Rf, tf = fs.point_to_plane_icp(src, dstT, dst_normals=dnT, max_iter=60, init=(R_true, t_true))[:2]
+        R, t = m_p2pl(src, dstT, dnT)
+    c = src.mean(0)
+    Rf, tf, R, t = (np.asarray(a, np.float64) for a in (Rf, tf, R, t))
+    to_floor = (rot_error_deg(R, Rf), float(np.linalg.norm((R @ c + t) - (Rf @ c + tf))))
+    floor_gt = (rot_error_deg(Rf, R_true), cen_error(Rf, tf, R_true, t_true, c))
+    return ok(to_floor[0], to_floor[1], diam), to_floor, floor_gt
+
+
+def _half_angle(rates, last=False):
+    """成功率が 50 % を切る角度を、隣の格子点の間で線形補間して返す(切らなければ 180)。
+
+    ★成功率は 1 フレーム = 3.8 % の粒度で上下するので、50 % を下向きに横切る所が 2 か所以上ある行がある。
+    既定(``last=False``)は**最初に**切る所、``last=True`` は**最後に**切る所。両方を出し、幅として読む。
+    """
+    xs = list(REAL_ROTS)
+    hits = []
+    for i in range(1, len(xs)):
+        r0, r1 = rates["%.0f" % xs[i - 1]], rates["%.0f" % xs[i]]
+        if r0 >= 0.5 > r1:
+            hits.append(float(xs[i - 1] + (r0 - 0.5) / (r0 - r1) * (xs[i] - xs[i - 1])))
+    if not hits:
+        return 180.0
+    return hits[-1] if last else hits[0]
+
+
+def real_scan_chapter(syn_half):
+    """第 7 章。``syn_half`` は合成の当て金の 50 % 角(参考に印字するだけ。形が違うので比べない)。"""
+    print("\n=== 7. 実物の走査点群 —— T-LESS の実機 RGB-D(構造化光センサ)と走査から作った部品モデル ===")
+    root = _real_root()
+    if root is None:
+        print(f"  T-LESS が手元に無い(CI の既定)。取得: py -3.11 tools/fetch_tless.py(置き場は {REAL_ENV})")
+        if REAL_RECORDED is None:
+            raise AssertionError("記録値 REAL_RECORDED が空 —— 手元でデータありの実行をして転記する")
+        for line in REAL_RECORDED["lines"]:
+            print("  [記録値] " + line)
+        # ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
+        assert min(REAL_RECORDED["narrow_min"].values()) > 0, "記録値: 実測の盆地が全周より狭くない種がある"
+        assert min(REAL_RECORDED["narrow_min_last"].values()) > 0, "記録値: 最後に切る所で実測が全周より狭くない種がある"
+        return REAL_RECORDED
+    model, normals, mp, frames, digest, n_used, diam = _real_load(root)
+    import realdata
+    realdata.mark_read("bop_tless:test_primesense/%06d:obj%02d" % (REAL_SCENE, REAL_OBJ))
+    print(f"  部品 {REAL_OBJ}({REAL_PART_JA}、対称の記載なし)。直径 {diam:.2f} mm(BOP の models_info = 2 点の最大距離)。"
+          f"モデル = 走査の再構成 {REAL_N_DST} 点(最遠点抽出、点間隔 {spacing_of(model):.2f} mm)")
+    print(f"  実測 = 場面 {REAL_SCENE} の BOP19 フレームのうち 95 % 以上見えている {len(frames)} 枚の深度。"
+          f"1 枚あたり {min(len(f['pts']) for f in frames)}〜{max(len(f['pts']) for f in frames)} 点 → 毎試行 "
+          f"{REAL_N_SRC} 点を取り直す")
+    print(f"  使った要素 {n_used} 個の一覧の SHA-256 {digest}")
+    tree = cKDTree(model)
+    fit = np.concatenate([tree.query(f["pts"])[0] for f in frames])
+    print(f"  真値の姿勢で置いた実測点からモデルまでの距離: 中央値 {np.median(fit):.2f} mm、90 % 点 {np.percentile(fit, 90):.2f} mm"
+          "(センサの雑音 + 真値の誤差 + 走査モデルの誤差の和)")
+    print("  同じ部品で 3 条件: 全周 = モデル表面から一様に / 片面 = 実測と同じ視点で見える面だけ(雑音なし)/ 実測 = 深度")
+    print("  1 試行 = フレームを 1 枚(順に巡回)+ 回転軸を乱数で選び、初期回転ずれだけを与えて ICP(並進ずれ 0)。")
+    print("  判定 = 真値から始めた ICP の行き先(床)に、回転 3 度 / 重心 直径の 1 % 以内で戻れたか(3 条件とも同じ)。")
+    def basin(seed, show):
+        rng = np.random.default_rng(seed)
+        rate = {m: {c: {} for _, c in REAL_CONDS} for m in ("p2p", "p2pl")}
+        floor = {m: {c: [] for _, c in REAL_CONDS} for m in ("p2p", "p2pl")}
+        if show:
+            print(f"  {'初期回転 [度]':<16}" + "".join(f"{d:>6.0f}" for d in REAL_ROTS) + f"   (種 {seed})")
+        for meth in ("p2p", "p2pl"):
+            for label, cond in REAL_CONDS:
+                row = []
+                for deg in REAL_ROTS:
+                    oks = []
+                    for fr in frames:
+                        pool = {"full": mp, "side": fr["side"], "real": fr["pts"]}[cond]
+                        src = pool[rng.choice(len(pool), REAL_N_SRC, replace=False)]
+                        good, _tf, fg = _real_trial(meth, src, model, normals, deg, rng, diam)
+                        oks.append(good)
+                        if deg == 0.0:
+                            floor[meth][cond].append(fg)
+                    rate[meth][cond]["%.0f" % deg] = round(float(np.mean(oks)), 4)
+                    row.append(np.mean(oks))
+                if show:
+                    print(f"  {('点対点 ' if meth == 'p2p' else '点対面 ') + label:<14}"
+                          + "".join(f"{100 * v:>5.0f}%" for v in row))
+        return rate, floor
+
+    runs = [basin(sd, k == 0) for k, sd in enumerate(REAL_SEEDS)]
+    rate, floor = runs[0]
+    halves = {m: {c: [round(_half_angle(r[m][c]), 1) for r, _f in runs] for _, c in REAL_CONDS} for m in rate}
+    halves_last = {m: {c: [round(_half_angle(r[m][c], last=True), 1) for r, _f in runs] for _, c in REAL_CONDS}
+                   for m in rate}
+    half = {m: {c: [min(v), float(np.median(v)), max(v)] for c, v in halves[m].items()} for m in halves}
+    fl = {m: {c: np.median(np.asarray(floor[m][c]), axis=0) for _, c in REAL_CONDS} for m in floor}
+    gt_ok = {m: float(np.mean([(a < ROT_OK_DEG) and (b < CEN_OK_FRAC * diam) for a, b in floor[m]["real"]])) for m in floor}
+    print(f"  成功率が 50 % を切る角度(格子の間を線形補間)、種 {len(REAL_SEEDS)} 本の 最小 / 中央 / 最大:")
+    for m in ("p2p", "p2pl"):
+        print(f"    {'点対点' if m == 'p2p' else '点対面'}: "
+              + " / ".join(f"{lab} {half[m][c][0]:.1f}〜{half[m][c][2]:.1f}(中央 {half[m][c][1]:.1f})度" for lab, c in REAL_CONDS))
+    hl = {m: {c: [min(v), max(v)] for c, v in halves_last[m].items()} for m in halves_last}
+    print("  同じ角を『最後に』50 % を切る所で取ると(上下する行で値が変わる):")
+    for m in ("p2p", "p2pl"):
+        print(f"    {'点対点' if m == 'p2p' else '点対面'}: "
+              + " / ".join(f"{lab} {hl[m][c][0]:.1f}〜{hl[m][c][1]:.1f} 度" for lab, c in REAL_CONDS))
+    k_narrow = int(np.argmin(halves["p2pl"]["real"]))
+    print(f"  動画と上の表の種 {REAL_SEEDS[0]} は、実測の 50 % 角(点対面、最初に切る所)が 5 本の中で"
+          f"{'最も狭く出る種' if k_narrow == 0 else '最も狭い種ではない(最も狭いのは種 %d)' % REAL_SEEDS[k_narrow]}。")
+    small = {c: [r["p2pl"][c]["15"] for r, _f in runs] for _, c in REAL_CONDS}
+    print("  初期ずれの小さい側(15 度、点対面、種 5 本の最小〜最大): "
+          + " / ".join(f"{lab} {100 * min(small[c]):.0f}〜{100 * max(small[c]):.0f} %" for lab, c in REAL_CONDS)
+          + f" —— 実測では 15 度でも {100 - 100 * max(small['real']):.0f}〜{100 - 100 * min(small['real']):.0f} % が床に戻れない。")
+    dd = {m: {"side": [halves[m]["full"][k] - halves[m]["side"][k] for k in range(len(REAL_SEEDS))],
+              "real": [halves[m]["side"][k] - halves[m]["real"][k] for k in range(len(REAL_SEEDS))],
+              "all": [halves[m]["full"][k] - halves[m]["real"][k] for k in range(len(REAL_SEEDS))]} for m in halves}
+    print(f"  床と真値のずれ(中央値、実測、種 {REAL_SEEDS[0]}): 点対点 {fl['p2p']['real'][0]:.2f} 度・{fl['p2p']['real'][1]:.2f} mm / "
+          f"点対面 {fl['p2pl']['real'][0]:.2f} 度・{fl['p2pl']['real'][1]:.2f} mm(全周では {fl['p2pl']['full'][0]:.2f} 度)")
+    print(f"  ★真値を基準にすると、実測では初期ずれ 0 でも 3 度 / 直径の 1 % に入るのは 点対点 {100 * gt_ok['p2p']:.0f} %・"
+          f"点対面 {100 * gt_ok['p2pl']:.0f} % —— この章の『成功』は精度ではなく『同じ床に戻れたか』(盆地の広さ)。")
+    print(f"  (参考: 形の違う合成の当て金の 50 % 角は 点対点 {syn_half['p2p']:.0f} 度・点対面 {syn_half['p2pl']:.0f} 度。"
+          "部品が違うので比べない)")
+    for m in ("p2p", "p2pl"):
+        print(f"  → {'点対点' if m == 'p2p' else '点対面'}: 全周 → 実測で {min(dd[m]['all']):.1f}〜{max(dd[m]['all']):.1f} 度狭まる"
+              f"(うち全周 → 片面 {min(dd[m]['side']):.1f}〜{max(dd[m]['side']):.1f}、片面 → 実測 "
+              f"{min(dd[m]['real']):.1f}〜{max(dd[m]['real']):.1f} 度)。")
+    dd_last = {m: [halves_last[m]["full"][k] - halves_last[m]["real"][k] for k in range(len(REAL_SEEDS))] for m in halves_last}
+    for m in ("p2p", "p2pl"):
+        print(f"  → {'点対点' if m == 'p2p' else '点対面'}: 『最後に切る所』で取ると、全周 → 実測の狭まりは種ごとに "
+              + " / ".join("%.1f" % v for v in dd_last[m]) + f" 度(最小 {min(dd_last[m]):.1f} 度)。")
+    print("    全周より実測が狭いことは種にも取り方にもよらない(ただし差の大きさは取り方で 2 倍以上変わる)。")
+    print("    片面と実測の分け方は種で大きく揺れるので、内訳は言わない。")
+    print(f"    1 フレーム = {100 / len(frames):.1f} % の粒度で、隣の角度どうしの成功率は数フレームぶん前後する(単調でない行がある)。")
+    # 門(種によらない主張だけ)
+    for r_, _f in runs:
+        for m in ("p2p", "p2pl"):
+            assert r_[m]["real"]["0"] == 1.0 and r_[m]["full"]["0"] == 1.0, "真値から始めて床に戻れない(判定の作りが壊れた)"
+    for m in ("p2p", "p2pl"):
+        assert min(dd[m]["all"]) > 0, "種によって実測の盆地が全周より狭くない —— 結論を書き直せ"
+        assert min(dd_last[m]) > 0, "『最後に切る所』で取ると実測の盆地が全周より狭くない種がある —— 結論を書き直せ"
+    lines = [
+        "部品 %d(対称の記載なし、直径 %.2f mm = BOP)、実測 %d フレーム、毎試行 %d 点、モデル %d 点"
+        % (REAL_OBJ, diam, len(frames), REAL_N_SRC, REAL_N_DST),
+        "真値で置いた実測点とモデルの距離 中央値 %.2f mm / 90 %% 点 %.2f mm" % (np.median(fit), np.percentile(fit, 90)),
+    ] + ["50 %% を切る角度 %s(種 %d 本の 最小〜最大): 全周 %.1f〜%.1f / 片面 %.1f〜%.1f / 実測 %.1f〜%.1f 度"
+         % (lab, len(REAL_SEEDS), half[m]["full"][0], half[m]["full"][2], half[m]["side"][0], half[m]["side"][2],
+            half[m]["real"][0], half[m]["real"][2])
+         for m, lab in (("p2p", "点対点"), ("p2pl", "点対面"))] + [
+        "床と真値のずれ(中央値、実測): 点対点 %.2f 度・%.2f mm / 点対面 %.2f 度・%.2f mm"
+        % (fl["p2p"]["real"][0], fl["p2p"]["real"][1], fl["p2pl"]["real"][0], fl["p2pl"]["real"][1]),
+        "真値基準の成功(初期ずれ 0、実測): 点対点 %.0f %% / 点対面 %.0f %%" % (100 * gt_ok["p2p"], 100 * gt_ok["p2pl"]),
+    ]
+    lines += ["50 %% を最後に切る所(点対面): 全周 %.1f〜%.1f / 片面 %.1f〜%.1f / 実測 %.1f〜%.1f 度"
+              % (hl["p2pl"]["full"][0], hl["p2pl"]["full"][1], hl["p2pl"]["side"][0], hl["p2pl"]["side"][1],
+                 hl["p2pl"]["real"][0], hl["p2pl"]["real"][1]),
+              "15 度での成功率(点対面): " + " / ".join("%s %.0f〜%.0f %%" % (lab, 100 * min(small[c]), 100 * max(small[c]))
+                                                for lab, c in REAL_CONDS)]
+    rec = {"lines": lines, "rate": rate, "half": half, "half_last": hl,
+           "narrow_min": {m: round(min(dd[m]["all"]), 1) for m in dd},
+           "narrow_min_last": {m: round(min(dd_last[m]), 1) for m in dd_last}}
+    print("  REAL_RECORDED = %r" % (rec,))
+    # ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
+    if REAL_RECORDED is not None:
+        assert rec == REAL_RECORDED, "REAL_RECORDED が実測と違う(記録を転記し直す)"
+    seed_note = ("本文の表に出す代表の種は、実測の 50 % 角が 5 本の中で最も狭く出る種。" if k_narrow == 0 else
+                 "本文の表に出す代表の種は、実測の 50 %% 角が 5 本の中で最も狭い種ではない(最も狭いのは種 %d)。" % REAL_SEEDS[k_narrow])
+    video_real_scan(root, model, normals, frames, diam, rate, half, float(fl["p2pl"]["real"][0]), hl, small, seed_note)
+    return rec
+
+
+REAL_VIDEO_ROTS = (30.0, 60.0, 120.0)
+
+
+def video_real_scan(root, model, normals, frames, diam, rate, half, floor_med, hl, small, seed_note):
+    """代表の動画: 実機の写真の上に、ICP が今そう推定している姿勢の部品モデルを重ねる(点対面、30 / 60 / 120 度)。"""
+    if not figs.enabled():
+        return None
+    from PIL import Image, ImageDraw, ImageFont
+
+    fr = frames[0]
+    rgb = np.asarray(Image.open(root / "test_primesense" / f"{REAL_SCENE:06d}" / "rgb" / f"{fr['image']:06d}.png")
+                     .convert("RGB"))
+    rng = np.random.default_rng(REAL_SEED + 1)
+    src = fr["pts"][rng.choice(len(fr["pts"]), REAL_N_SRC, replace=False)]
+    c_src = src.mean(0)
+    cases = []
+    for deg in REAL_VIDEO_ROTS:
+        R_true = rot_axis_angle(VIDEO_AXIS, deg)
+        t_true = np.zeros(3)
+        dst = fs.apply_transform(model, R_true, t_true)
+        dn = normals @ R_true.T
+        Rf, tf = fs.point_to_plane_icp(src, dst, dst_normals=dn, max_iter=60, init=(R_true, t_true))[:2]
+        Rf, tf = np.asarray(Rf, float), np.asarray(tf, float)
+        R, t = np.eye(3), np.zeros(3)
+        Rs, ts, rot = [R], [t], [rot_error_deg(R, Rf)]
+        for _ in range(VIDEO_ITERS):
+            R, t = fs.point_to_plane_icp(src, dst, dst_normals=dn, max_iter=1, init=(R, t))[:2]
+            R, t = np.asarray(R, float), np.asarray(t, float)
+            Rs.append(R)
+            ts.append(t)
+            rot.append(rot_error_deg(R, Rf))
+        cen = float(np.linalg.norm((R @ c_src + t) - (Rf @ c_src + tf)))
+        cases.append(dict(deg=deg, R_true=R_true, Rs=Rs, ts=ts, rot=np.array(rot), ok=ok(rot[-1], cen, diam)))
+    print("  [動画] 点対面 ICP、フレーム %d(実測): " % fr["image"]
+          + "、".join("%.0f 度 → 床との差 %.1f 度(%s)" % (c["deg"], c["rot"][-1], "成功" if c["ok"] else "失敗")
+                     for c in cases))
+
+    font = lambda n, b=False: ImageFont.truetype(str(figs._japanese_font_path(bold=b)), n)
+    W, H = 960, 600
+    # 写真の切り抜き(部品の周り)。推定の姿勢のモデルをこの写真へ投影して重ねる。
+    uv0 = (fr["pts"] @ fr["R"].T + fr["t"]) @ fr["K"].T
+    uv0 = uv0[:, :2] / uv0[:, 2:3]
+    cx, cy = np.median(uv0, axis=0)
+    hw = 120
+    x0 = int(np.clip(cx - hw, 0, rgb.shape[1] - 2 * hw))
+    y0 = int(np.clip(cy - hw, 0, rgb.shape[0] - 2 * hw))
+    crop = Image.fromarray(rgb[y0:y0 + 2 * hw, x0:x0 + 2 * hw])
+    PS = 300                                                     # 1 枠の表示の大きさ
+    sc = PS / (2.0 * hw)
+    cols = [(255, 170, 0), (0, 200, 140), (230, 110, 200)]
+
+    def overlay(c, k):
+        """推定 (R, t) のときに部品モデルがカメラのどこに来るか: src ≈ R^T (R_true x − t) を真値でカメラへ。"""
+        R, t = c["Rs"][k], c["ts"][k]
+        xm = (model @ c["R_true"].T - t) @ R                      # モデル座標(推定の姿勢)
+        pc = xm @ fr["R"].T + fr["t"]
+        uv = pc @ fr["K"].T
+        uv = uv[:, :2] / uv[:, 2:3]
+        im = crop.resize((PS, PS), Image.Resampling.LANCZOS)
+        d = ImageDraw.Draw(im)
+        q = (uv - np.array([x0, y0])) * sc
+        for (u, v) in q[::2]:
+            if 0 <= u < PS and 0 <= v < PS:
+                d.point((u, v), fill=cols[REAL_VIDEO_ROTS.index(c["deg"])])
+        return im
+
+    def card(lines, pic=None):
+        im = Image.new("RGB", (W, H), (12, 16, 22))
+        d = ImageDraw.Draw(im)
+        y = 36
+        for i, s_ in enumerate(lines):
+            d.text((36, y), s_, font=font(28 if i == 0 else 21, i == 0), fill=(240, 240, 240) if i == 0 else (205, 210, 220))
+            y += 52 if i == 0 else 34
+        if pic is not None:
+            im.paste(pic, (W - pic.width - 30, H - pic.height - 24))   # 文字の下に置く(重ねない)
+        return np.asarray(im)
+
+    frames_v = []
+    big = crop.resize((300, 300), Image.Resampling.LANCZOS)
+    frames_v += [card(["入れるもの: 実物の部品の走査点群(T-LESS の部品 %d)" % REAL_OBJ,
+                       "%s(対称の記載なし、直径 %.0f mm)" % (REAL_PART_JA, diam),
+                       "・実測: 構造化光 RGB-D センサの深度から、部品の見えている面 %d 点" % REAL_N_SRC,
+                       "・モデル: 走査から再構成した 3-D モデル %d 点" % REAL_N_DST,
+                       "初期姿勢を 30 / 60 / 120 度ずらして点対面 ICP を回し、",
+                       "真値から始めたときと同じ姿勢(床)に戻れるかを見る。"], big)] * 32
+    hold = [0] * 8 + [i for i in range(VIDEO_ITERS + 1) for _ in range(2)] + [VIDEO_ITERS] * 16
+    for k in hold:
+        im = Image.new("RGB", (W, H), (12, 16, 22))
+        d = ImageDraw.Draw(im)
+        d.text((16, 10), "実機の写真に、ICP がいま推定している姿勢の部品モデル(色の点)を重ねる", font=font(20), fill=(235, 235, 235))
+        for j, c in enumerate(cases):
+            xo = 15 + j * (PS + 15)
+            im.paste(overlay(c, k), (xo, 44))
+            verdict = ""
+            if k == VIDEO_ITERS:
+                verdict = " → 戻れた" if c["ok"] else " → 戻れない"
+            d.rectangle((xo, 44, xo + PS, 96), fill=(0, 0, 0))
+            d.text((xo + 6, 48), "初期 %.0f 度 / 反復 %d" % (c["deg"], k), font=font(18, True), fill=(240, 240, 240))
+            d.text((xo + 6, 72), "床との回転差 %.1f 度%s" % (c["rot"][k], verdict), font=font(18),
+                   fill=(255, 140, 120) if (k == VIDEO_ITERS and not c["ok"]) else (220, 220, 220))
+        gx0, gy0, gw, gh = 70, 390, 860, 150
+        d.rectangle((gx0, gy0, gx0 + gw, gy0 + gh), outline=(150, 150, 150))
+        lo, hi = np.log10(0.3), np.log10(400.0)
+        yv = lambda v: gy0 + gh - (np.log10(np.clip(v, 0.3, 400.0)) - lo) / (hi - lo) * gh
+        xv = lambda i: gx0 + i / VIDEO_ITERS * gw
+        for tk in (1, 3, 10, 30, 100):
+            d.text((gx0 - 40, yv(tk) - 10), "%g" % tk, font=font(15), fill=(180, 180, 180))
+        d.line((gx0, yv(ROT_OK_DEG), gx0 + gw, yv(ROT_OK_DEG)), fill=(110, 110, 110), width=1)
+        for j, c in enumerate(cases):
+            pts_ = [(xv(i), yv(c["rot"][i])) for i in range(k + 1)]
+            if len(pts_) >= 2:
+                d.line(pts_, fill=cols[j], width=3)
+        d.text((gx0, gy0 - 26), "床との回転差 [度](対数、灰線 = 判定のしきい値 %.0f 度)" % ROT_OK_DEG, font=font(17), fill=(210, 210, 210))
+        d.text((gx0 + gw // 2 - 40, gy0 + gh + 6), "反復の回数", font=font(17), fill=(210, 210, 210))
+        frames_v.append(np.asarray(im))
+    fin = Image.new("RGB", (W, H), (12, 16, 22))
+    d = ImageDraw.Draw(fin)
+    d.text((36, 30), "何が分かったか(同じ部品・同じ判定、%d フレーム × 乱数の回転軸)" % len(frames), font=font(26, True), fill=(240, 240, 240))
+    d.text((36, 82), "成功率が 50 %% を切る初期回転(点対面 ICP、種 %d 本の幅)" % len(REAL_SEEDS), font=font(22),
+           fill=(205, 210, 220))
+    for i, (lab, cnd, note) in enumerate((("全周の点", "full", "モデルの表面から一様に"),
+                                         ("片面の点", "side", "実測と同じ視点で見える面だけ、雑音なし"),
+                                         ("実測の深度", "real", "構造化光センサ"))):
+        d.text((56, 126 + 44 * i), "%s  %.0f〜%.0f 度" % (lab, half["p2pl"][cnd][0], half["p2pl"][cnd][2]),
+               font=font(26, True), fill=(240, 240, 240))
+        d.text((400, 130 + 44 * i), note, font=font(19), fill=(190, 195, 205))
+    d.text((36, 262), "最初に 50 %% を切る所で取った値。最後に切る所で取ると 実測 %.0f〜%.0f 度(成功率が上下する行がある)。"
+           % (hl["p2pl"]["real"][0], hl["p2pl"]["real"][1]), font=font(17), fill=(200, 205, 215))
+    d.text((36, 286), "15 度での成功率: 全周 %.0f〜%.0f %% / 実測 %.0f〜%.0f %%。実測は全周より狭い(どの種でも)。"
+           % (100 * min(small["full"]), 100 * max(small["full"]), 100 * min(small["real"]), 100 * max(small["real"])),
+           font=font(17), fill=(225, 225, 225))
+    d.text((36, 312), "★判定は『真値から始めた ICP の行き先(床)に戻れたか』。実測の床は真値から", font=font(19), fill=(255, 190, 120))
+    d.text((36, 338), "  中央値 %.1f 度ずれる —— 盆地の広さを測っており、精度は測っていない。" % floor_med,
+           font=font(19), fill=(255, 190, 120))
+    fin.paste(crop.resize((220, 220), Image.Resampling.LANCZOS), (W - 250, H - 260))
+    d.text((36, H - 40), "データ: T-LESS(Hodaň et al., WACV 2017)、CC BY 4.0", font=font(16), fill=(170, 170, 170))
+    frames_v += [np.asarray(fin)] * 48
+    cap = ("実物の部品(T-LESS の部品 %d = %s、CC BY 4.0)で ICP の収束域を測った動画。構造化光 RGB-D センサの深度から切り出した"
+           "見えている面 %d 点を、走査から再構成したモデル %d 点へ点対面 ICP で合わせ、推定中の姿勢のモデルを実機の写真に重ねる。"
+           "同じ部品・同じ判定(真値から始めた ICP の行き先に戻れたか)で、成功率が 50 %% を切る初期回転は "
+           "全周の点 %.0f〜%.0f 度・片面の点 %.0f〜%.0f 度・実測の深度 %.0f〜%.0f 度(点対面、%d フレーム、乱数の種 %d 本の幅)。"
+           "実測が全周より狭いことはどの種でも成り立つが、片面と実測の内訳は種で揺れる。50 %% 角は最初に 50 %% を切る所で取った値で、"
+           "最後に切る所で取ると実測は %.0f〜%.0f 度。"
+           % (REAL_OBJ, REAL_PART_JA, REAL_N_SRC, REAL_N_DST, half["p2pl"]["full"][0], half["p2pl"]["full"][2],
+              half["p2pl"]["side"][0], half["p2pl"]["side"][2], half["p2pl"]["real"][0], half["p2pl"]["real"][2],
+              len(frames), len(REAL_SEEDS), hl["p2pl"]["real"][0], hl["p2pl"]["real"][1]) + seed_note)
+    return figs.save_video("real_scan_icp", [f.astype(np.float64) / 255.0 for f in frames_v], fps=8, gif_every=4,
+                           gif_width=720, caption=cap)
+
+
+# ---------------------------------------------------------------------------
 def main():
     t_start = time.perf_counter()
 
@@ -985,6 +1463,7 @@ def main():
     assert (nan_out["rmse"] < 1.0) is False, "nan の比較が False にならない"
 
     video_icp_basin()
+    real_scan_chapter({"p2p": float(edges["点対点 ICP"] or 180.0), "p2pl": float(edges["点対面 ICP"] or 180.0)})
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

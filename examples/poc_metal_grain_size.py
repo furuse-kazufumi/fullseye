@@ -61,6 +61,23 @@ EXTEND: 実写に差し替えるなら :func:`make_scene` が返す辞書の ``i
    (対数ヒストグラムの山 1 個、ℓ/√2〜ℓ√2 に入る切片は 25.8 % で単一組織の 42.8 % より
    少ないだけ)—— Voronoi の弦長分布は広いので 3 倍違う 2 集団が 1 本の滑らかな曲線に
    溶ける。混粒は**地図**で見るしかない。
+8. ★★**実写(公開の金相写真 TBM、CC BY 4.0、専門家が手でなぞった粒界 320 枚)**で 2 つを測る。
+   (a) 画像処理を写真そのものに掛ける。1〜7 節の黒い線前提の道具は灰色化した写真でほぼ何も拾わない
+   (切片法 ΔG -8.52、横切りの再現率 0.02)。この写真は色腐食で、粒界は黒い線ではなく色の境なので、
+   色の境を取る経路は ΔG -0.46 になるが、★これは粒界を取れたという値ではない: 横切りの再現率 0.44、
+   偽の横切り 0.37 本 / 真の 1 本で、取り逃し(横切りが減る)と偽(増える)が打ち消し合って 0 に寄った
+   (横切りの合計は真の 0.82 倍。偽が無ければ ΔG -2.34)。言えるのは「黒い線の道具は色腐食の写真に
+   向かない」までで、色の経路も 1 本試しただけ・再現率は半分。(b) 画像処理は通さず、専門家の粒界の
+   マスクに直接途切れを入れると、1 段ずれる途切れ率は 面積法 7.8 %(Voronoi 6.1 %)/ 切片法 33.1 %
+   (Voronoi 36.8 %、閉形式 1 − 1/√2 = 29.3 %)。★切片法の崖は 閉形式 < 実写 < Voronoi の順で、
+   Voronoi と実写の差は粒界マスクの太さで説明できる —— 介入で確かめた: Voronoi の粒界を
+   細線化すると崖 32.5 %(実写に寄る)、実写の粒界を 1 画素太らせると崖 40.7 %(4 枚に 1 枚の 80 枚、
+   1 回だけ。門の余白 2.0 pt は実データを見てから置いた)。★ただし太さで閉形式との差は消えない:
+   細線化した Voronoi でも閉形式から 3.2 pt(Voronoi)、実写(もとの太さ、走り 1.36 px)は 3.8 pt 残り、
+   その原因は確かめていない。
+   ★前の版は 128 px 角を貼り合わせて継ぎ目の人工の粒界を数に入れ、「実物のほうが 2 割早く
+   落ちる」と書いた —— 誤りだったので、外周 1 画素を落としたタイル単位で数え直した。
+   データは repo に入れない(``tools/fetch_tbm.py``)。無い環境では記録値を印字する。
 
 【グラウンドトゥルース】
 粒は 2-D Voronoi 分割(種は視野の外まで一様に撒く、Poisson 個数)。粒界は種の所属が
@@ -79,6 +96,7 @@ Random Voronoi Tessellations* (Springer, 1994) —— Poisson-Voronoi の L_A = 
 """
 from __future__ import annotations
 
+import os
 import sys
 import time
 from pathlib import Path
@@ -791,6 +809,488 @@ def section_tool_gaps(ctrl: dict) -> None:
     print("  (e) blob_features は touches_border を返すが、縁の粒を半分に数える(Jeffries)"
           "規約は呼び手が組む。")
 
+# --------------------------------------------------------------------------- #
+# 8. 実写 —— 専門家が粒界をなぞった公開の金相写真                               #
+# --------------------------------------------------------------------------- #
+#: 実写データ: TBM(Texture Boundary in Metallography)、Zenodo record 8386997
+#: (doi:10.5281/zenodo.8386997)、ライセンス "Creative Commons Attribution 4.0 International"。
+#: 金相写真(README: 約 1.2 mm x 0.8 mm の視野)を 128 px 角に切った 320 枚と、材料の専門家が
+#: 手でなぞった粒界(太い版 / 細い版)。取得は ``tools/fetch_tbm.py``(repo には入れない)。
+TBM_CREDIT = ("TBM: Texture Boundary in Metallography, Zenodo 8386997 "
+              "(doi:10.5281/zenodo.8386997), CC BY 4.0")
+TBM_FIELD_MM = 1.2         # README の視野の幅(近似)。画素の大きさは元画像の幅で割って画像ごとに出す
+TBM_TILE = 128             # 配布物の 1 枚の一辺 [px]
+#: ★配布物の注記は 128 px 角ごとに描かれていて、**各タイルの外周 1 画素に人工の粒界**がある
+#: (外周の行・列の粒界の画素密度 0.15、内側の 0.05 の 3 倍)。貼り合わせると継ぎ目に人工の粒界が
+#: 並ぶので、この章は**タイル単位**で、外周 1 画素を落とした 126 px 角で数える。
+TBM_CROP = 1
+TBM_N = TBM_TILE - 2 * TBM_CROP
+#: 途切れ率の掃引。崖の近く(面積法 5〜8 %、切片法 25〜35 %)は細かく刻む。
+REAL_FRACS = (0.0, 0.025, 0.04, 0.05, 0.06, 0.07, 0.08, 0.10, 0.15, 0.20, 0.25, 0.275, 0.30,
+              0.325, 0.35, 0.40, 0.50, 0.60)
+REAL_SEEDS = (7, 19, 31)
+REAL_BOOT = 200            # 崖の区間: 80 枚の元領域を単位に復元抽出する回数
+REAL_SHOW = "10-0-768"     # 図に出す領域(配布物の名前の頭)
+#: 切片法の閉形式: 途切れを粒界のマスクへ直接入れると横切りは (1 - f) 倍になり、
+#: ΔG_L = 6.6439·log10(1 - f)、1 段ずれる f = 1 - 1/√2 = 29.3 %。
+E112_L_SLOPE = 6.6439
+
+#: 実データで出た数値(2026-11-08、Python 3.11。下の section_real の stdout から転記)。
+#: データがあるときは実測とこの値を同じ丸めで照合し、無いときは中身と docstring の一致を見る。
+RECORDED_REAL = {'tiles': 320, 'g_truth_median': 7.45, 'cliff_area_real': 7.8, 'cliff_intercept_real': 33.1,
+                 'cliff_area_ci': [7.5, 8.0], 'cliff_intercept_ci': [32.9, 33.4], 'closed_form_max_dev': 0.21,
+                 'voronoi_max_dev': 0.48, 'cliff_area_voronoi': 6.1, 'cliff_intercept_voronoi': 36.8,
+                 'photo_err_area': 3.02, 'photo_err_intercept': -8.52, 'photo_recall': 0.02,
+                 'run_px_real': 1.36, 'run_px_voronoi': 2.61, 'cliff_intercept_voronoi_thinned': 32.5,
+                 'cliff_intercept_real_dilated': 40.7, 'photo_color_err_intercept': -0.46,
+                 'photo_color_recall': 0.44, 'photo_color_false': 0.37, 'photo_color_count_ratio': 0.82,
+                 'photo_color_dg_from_counts': -0.59, 'photo_color_dg_no_false': -2.34,
+                 'thinned_minus_closed_voronoi': 3.2, 'thinned_minus_closed_real': 3.8}
+#: docstring の 8 番の項に同じ書式で載っていなければならない値(記録と文の食い違いを止める)。
+RECORDED_IN_DOC = {"cliff_area_real": "面積法 %.1f %%", "cliff_intercept_real": "切片法 %.1f %%",
+                   "cliff_area_voronoi": "(Voronoi %.1f %%)", "cliff_intercept_voronoi": "(Voronoi %.1f %%、",
+                   "cliff_intercept_voronoi_thinned": "細線化すると崖 %.1f %%",
+                   "cliff_intercept_real_dilated": "太らせると崖 %.1f %%",
+                   "photo_color_err_intercept": "色の境を取る経路は ΔG %.2f",
+                   "photo_color_false": "偽の横切り %.2f 本 / 真の 1 本",
+                   "photo_color_count_ratio": "横切りの合計は真の %.2f 倍",
+                   "photo_color_dg_no_false": "偽が無ければ ΔG %.2f",
+                   "thinned_minus_closed_voronoi": "閉形式から %.1f pt(Voronoi)",
+                   "thinned_minus_closed_real": "走り 1.36 px)は %.1f pt 残り"}
+
+
+def real_data_root() -> Path:
+    """公開実データの置き場の根。
+
+    ``FULLSEYE_POC_REAL_DATA`` があればそれ、無ければ開発の作業木(``<root>/projects/<checkout>``)
+    の隣の ``<root>/data/fullseye_poc_real``、それ以外はユーザーキャッシュ。手元の絶対パスを
+    ソースに書かないための分岐。
+    """
+    configured = os.environ.get("FULLSEYE_POC_REAL_DATA", "").strip()
+    if configured:
+        return Path(configured).expanduser()
+    root = Path(__file__).resolve().parents[1]
+    if root.parent.name.lower() == "projects":
+        return root.parent.parent / "data" / "fullseye_poc_real"
+    return Path.home() / ".cache" / "fullseye" / "poc_real"
+
+
+def _tbm_dir():
+    """TBM の展開先(``FULLSEYE_TBM_DATA`` が最優先)。CI(指定なし)やデータが無いときは ``None``。"""
+    if os.environ.get("CI") and not (os.environ.get("FULLSEYE_POC_REAL_DATA")
+                                     or os.environ.get("FULLSEYE_TBM_DATA")):
+        return None
+    tbm = os.environ.get("FULLSEYE_TBM_DATA", "").strip()
+    base = Path(tbm).expanduser() if tbm else real_data_root() / "tbm"
+    d = base / "TBM"
+    return d if (d / "input_image").is_dir() else None
+
+
+def load_tbm_tiles(d: Path) -> list[dict]:
+    """配布物の 320 枚を、外周 1 画素を落とした 126 px 角のタイルとして返す。
+
+    各タイル: ``rgb``(写真)・``thin``(専門家の細い粒界)・``region``(元領域の名前の頭)・
+    ``pos``(元領域内の位置)・``px_mm``(元画像の幅で割った画素の大きさ、近似)。
+    """
+    from PIL import Image
+    names = sorted(p.stem for p in (d / "input_image").glob("*.png"))
+    if len(names) != 320:
+        raise RuntimeError("TBM の写真が %d 枚(配布物は 320 枚): %s" % (len(names), d))
+    widths = {}
+    out = []
+    c = TBM_CROP
+    for n in names:
+        head, r, col = n.rsplit("-", 2)
+        img_id = head.split("-")[0]
+        if img_id not in widths:
+            with Image.open(d / "full_metallographic_images_for_reference" / (img_id + ".png")) as im:
+                widths[img_id] = im.size[0]
+        rgb = np.asarray(Image.open(d / "input_image" / (n + ".png")).convert("RGB"), np.float64) / 255.0
+        tp = next((d / "expert_inv_label_thin").glob(n + ".*"))
+        thin = np.asarray(Image.open(tp).convert("L")) > 127                      # JPEG なので 127 で切る
+        out.append({"rgb": rgb[c:TBM_TILE - c, c:TBM_TILE - c], "thin": thin[c:TBM_TILE - c, c:TBM_TILE - c],
+                    "region": head, "pos": (int(r), int(col)), "px_mm": TBM_FIELD_MM / widths[img_id]})
+    return out
+
+
+def _labels_from_boundary(bound: np.ndarray) -> np.ndarray:
+    """粒界で区切られた粒の番号(4 近傍)を、粒界の画素は最寄りの粒に配って返す。"""
+    lab, _ = nd_label(~bound)
+    _, (iy, ix) = distance_transform_edt(lab == 0, return_indices=True)
+    return lab[iy, ix]
+
+
+def _count_g(grains: np.ndarray, n_cross: int, total_len: float, n_pix: int, px_mm: float):
+    """粒の領域(bool)の連結成分と横切りの数から、面積法と切片法の G。"""
+    lab, n = nd_label(grains)
+    edge = np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]]))
+    n_touch = int(np.count_nonzero(edge > 0))
+    n_eff = (n - n_touch) + 0.5 * n_touch
+    g_a = g_from_area(max(n_eff, 0.5) / (n_pix * px_mm) ** 2)
+    g_l = g_from_intercept(total_len / max(n_cross, 1) * px_mm)
+    return g_a, g_l
+
+
+def _mask_g(drawn: np.ndarray, lines: list[dict], n_pix: int, px_mm: float) -> tuple[float, float]:
+    """粒界マスク(途切れ込み)から、面積法と切片法の G を同じ数え方で出す。
+
+    面積法 = 粒界の外の連結成分(4 近傍、縁に触れる粒は 0.5 個)。切片法 = 試験線が粒界の
+    走りを横切る回数。**画像処理は通さない** —— 違うのは粒界の形(Voronoi か実物か)だけ。
+    """
+    on = drawn > 0.0
+    n_cross = sum(_run_centers(on.astype(np.float64), ln).size for ln in lines)
+    return _count_g(~on, n_cross, sum(ln["len"] for ln in lines), n_pix, px_mm)
+
+
+def _cliff(fracs, dg) -> float:
+    """|ΔG| が初めて 1 段に届く途切れ率 [%](線形補間)。届かなければ最大の f を返す。"""
+    dg = np.abs(np.asarray(dg))
+    for i in range(1, len(fracs)):
+        if dg[i] >= 1.0:
+            f0, f1, d0, d1 = fracs[i - 1], fracs[i], dg[i - 1], dg[i]
+            return float(100.0 * (f0 + (1.0 - d0) * (f1 - f0) / max(d1 - d0, 1e-12)))
+    return float(100.0 * fracs[-1])
+
+
+def _sweep_each(bounds, n_pix, px_mms) -> np.ndarray:
+    """マスクごとに ΔG(面積法・切片法)を f で掃引する。戻り値 (マスク, 2, f)。"""
+    lines = test_lines(n_pix=n_pix)
+    out = np.zeros((len(bounds), 2, len(REAL_FRACS)))
+    for j, (b, px) in enumerate(zip(bounds, px_mms)):
+        soft = b.astype(np.float64)
+        g0a, g0l = _mask_g(soft, lines, n_pix, px)
+        for i, f in enumerate(REAL_FRACS):
+            acc = []
+            for sd in REAL_SEEDS:
+                drawn, _ = _break_boundary(soft, float(f), np.random.default_rng(sd + 1000))
+                ga, gl = _mask_g(drawn, lines, n_pix, px)
+                acc.append((ga - g0a, gl - g0l))
+            out[j, :, i] = np.mean(acc, axis=0)
+    return out
+
+
+def _run_length(bounds, n_pix) -> float:
+    """試験線が粒界を横切るときの走りの長さ [px] の平均(横切り 1 本が何画素でできているか)。"""
+    lines = test_lines(n_pix=n_pix)
+    lens = []
+    for b in bounds:
+        for ln in lines:
+            v = b[ln["r"], ln["c"]]
+            d = np.diff(np.concatenate([[0], v.astype(np.int8), [0]]))
+            lens.extend((np.nonzero(d == -1)[0] - np.nonzero(d == 1)[0]).tolist())
+    return float(np.mean(lens))
+
+
+def color_boundary(rgb: np.ndarray, sigma: float = 1.5) -> np.ndarray:
+    """色の境を取る経路: ``rgb_to_lab`` → 3 チャネルを平滑して Sobel の勾配の大きさ → 99 % 分位で
+    正規化 → 1〜7 節と同じ ``dyn_threshold``(明るい線 = 勾配の尾根)→ ``thinning``。
+
+    色腐食の写真では粒界は暗い線ではなく**色が変わる所**なので、灰色化せずに色の差を取る。
+    """
+    from scipy.ndimage import gaussian_filter as _g, sobel as _sobel
+    lab = np.asarray(fs.rgb_to_lab(rgb), np.float64)
+    g2 = np.zeros(rgb.shape[:2])
+    for c in range(3):
+        sm = _g(lab[..., c], sigma)
+        g2 += _sobel(sm, 0) ** 2 + _sobel(sm, 1) ** 2
+    g = np.sqrt(g2)
+    gn = np.clip(g / max(float(np.percentile(g, 99)), 1e-9), 0.0, 1.0)
+    m = np.asarray(fs.apply(gn, "dyn_threshold", a=DYN_A, b=DYN_B)) > 0.5
+    return np.asarray(fs.apply(m.astype(np.float64), "thinning")) > 0.5
+
+
+def _detect_on_photo(tiles: list[dict]) -> dict:
+    """1〜7 節の画像処理(面積法 = 大津 + 連結成分、切片法 = invert → dyn_threshold)と、色の境を
+    取る経路(:func:`color_boundary`)を**実写の写真そのもの**に掛け、専門家の粒界から出した G と比べる。"""
+    lines = test_lines(n_pix=TBM_N)
+    total = sum(ln["len"] for ln in lines)
+    rows = []
+    for t in tiles:
+        gray = t["rgb"] @ np.array([0.2125, 0.7154, 0.0721])
+        lab_t = _labels_from_boundary(t["thin"])
+        st_t = intercept_stats(lab_t, t["thin"].astype(np.float64), lines)
+        g_a_t, g_l_t = _count_g(~t["thin"], st_t["n_est"], total, TBM_N, t["px_mm"])
+        bm = boundary_masks(gray)
+        st = intercept_stats(lab_t, bm["dyn"], lines)
+        bw = np.asarray(fs.apply(gray, "bin_threshold")) > 0.5
+        g_a, _ = _count_g(bw, 1, total, TBM_N, t["px_mm"])
+        g_l = g_from_intercept(st["ell_est_px"] * t["px_mm"])
+        cb = color_boundary(t["rgb"])
+        st_c = intercept_stats(lab_t, cb.astype(np.float64), lines)
+        rows.append({"g_a_true": g_a_t, "g_l_true": g_l_t, "g_a": g_a, "g_l": g_l,
+                     "matched": st["matched"], "n_true": st["n_true"], "false": st["false"],
+                     "dyn": bm["dyn"], "otsu": bw, "color": cb,
+                     "g_l_color": g_from_intercept(st_c["ell_est_px"] * t["px_mm"]),
+                     "matched_c": st_c["matched"], "false_c": st_c["false"]})
+    return {"rows": rows,
+            "err_a": float(np.median([r["g_a"] - r["g_a_true"] for r in rows])),
+            "err_l": float(np.median([r["g_l"] - r["g_l_true"] for r in rows])),
+            "recall_l": float(sum(r["matched"] for r in rows) / max(sum(r["n_true"] for r in rows), 1)),
+            "false_per_true": float(sum(r["false"] for r in rows) / max(sum(r["n_true"] for r in rows), 1)),
+            "err_l_color": float(np.median([r["g_l_color"] - r["g_l_true"] for r in rows])),
+            "recall_color": float(sum(r["matched_c"] for r in rows) / max(sum(r["n_true"] for r in rows), 1)),
+            "false_color": float(sum(r["false_c"] for r in rows) / max(sum(r["n_true"] for r in rows), 1))}
+
+
+def _recorded_gate(measured) -> None:
+    """記録値の門。データがあれば実測と記録値を同じ丸めで照合し、無ければ記録値の中身と
+    docstring の一致を見る(「記録値の辞書が空でない」だけの門は常に真なので置かない)。"""
+    need = {"tiles", "g_truth_median", "cliff_area_real", "cliff_intercept_real", "cliff_area_ci",
+            "cliff_intercept_ci", "closed_form_max_dev", "voronoi_max_dev", "cliff_area_voronoi",
+            "cliff_intercept_voronoi", "photo_err_area", "photo_err_intercept", "photo_recall",
+            "run_px_real", "run_px_voronoi", "cliff_intercept_voronoi_thinned",
+            "cliff_intercept_real_dilated", "photo_color_err_intercept", "photo_color_recall",
+            "photo_color_false", "photo_color_count_ratio", "photo_color_dg_from_counts", "photo_color_dg_no_false",
+            "thinned_minus_closed_voronoi", "thinned_minus_closed_real"}
+    missing = need - set(RECORDED_REAL)
+    assert not missing, "記録値の鍵が足りない: %s" % sorted(missing)
+    for k, v in RECORDED_REAL.items():
+        vals = v if isinstance(v, (list, tuple)) else [v]
+        assert all(np.isfinite(float(x)) for x in vals), (k, v)
+    doc = __doc__ or ""
+    for k, fmt in RECORDED_IN_DOC.items():
+        txt = fmt % RECORDED_REAL[k]
+        assert txt in doc, "docstring に記録値 %s の文「%s」が無い" % (k, txt)
+    if measured is not None:
+        diff = {k: (measured[k], RECORDED_REAL[k]) for k in need if measured[k] != RECORDED_REAL[k]}
+        assert not diff, "実測と記録値が違う(記録を実行ログから転記し直す): %s" % diff
+
+
+def section_real():
+    print("\n" + "=" * 78)
+    print("8) 実写 —— 専門家が粒界をなぞった公開の金相写真")
+    print("=" * 78)
+    d = _tbm_dir()
+    if d is None:
+        print("  実データが無いので実データの章を飛ばす。取得は "
+              "py -3.11 tools/fetch_tbm.py")
+        print("  記録値(RECORDED_REAL): %s" % RECORDED_REAL)
+        _recorded_gate(None)
+        return None
+    import realdata
+    tiles = load_tbm_tiles(d)
+    realdata.mark_read("zenodo:8386997/TBM")
+    print("  データ: %s" % TBM_CREDIT)
+    print("  真値 = 専門家が手でなぞった細い粒界。%d 枚(%d 領域)を、外周 1 画素(注記の人工の粒界)を"
+          % (len(tiles), len({t["region"] for t in tiles})))
+    print("  落とした %d px 角のタイル単位で数える(貼り合わせると継ぎ目に人工の粒界が並ぶため)。" % TBM_N)
+    lines = test_lines(n_pix=TBM_N)
+    g_true = [g_from_intercept(intercept_stats(_labels_from_boundary(t["thin"]), None, lines)["ell_true_px"]
+                               * t["px_mm"]) for t in tiles]
+    print("  専門家の粒界から出した G(切片法、画素の大きさは元画像の幅から): 中央値 %.2f(%.2f〜%.2f)"
+          % (np.median(g_true), np.min(g_true), np.max(g_true)))
+
+    # --- (a) 実写の写真に 1〜7 節の画像処理を掛ける ---
+    det = _detect_on_photo(tiles)
+    print("\n  (a) 1〜7 節の画像処理を**写真そのもの**に掛けて、専門家の G と比べる(%d 枚の中央値):"
+          % len(tiles))
+    print("      面積法(大津 + 連結成分) ΔG %+.2f / 切片法(局所しきい値) ΔG %+.2f、"
+          "横切りの再現率 %.2f、偽の横切り %.2f 本 / 真の 1 本"
+          % (det["err_a"], det["err_l"], det["recall_l"], det["false_per_true"]))
+    print("      色の境を取る経路(rgb_to_lab の勾配 → dyn_threshold → 細線化): 切片法 ΔG %+.2f、"
+          "横切りの再現率 %.2f、偽 %.2f 本 / 真の 1 本" % (det["err_l_color"], det["recall_color"], det["false_color"]))
+    cnt = det["recall_color"] + det["false_color"]
+    dg_cnt = E112_L_SLOPE * np.log10(cnt)
+    dg_nf = E112_L_SLOPE * np.log10(max(det["recall_color"], 1e-9))
+    print("      ★色の経路の ΔG %+.2f は**粒界を取れた値ではない**。内訳: 真の横切りの %.2f を拾い、偽を真の 1 本あたり"
+          % (det["err_l_color"], det["recall_color"]))
+    print("        %.2f 本足すので、横切りの合計は真の %.2f 倍(全タイルの合計から ΔG = %.4f·log10(%.2f) = %+.2f。"
+          % (det["false_color"], cnt, E112_L_SLOPE, cnt, dg_cnt))
+    print("        上の %+.2f はタイルごとの中央値)。偽が無ければ ΔG %+.2f —— 取り逃しと偽が打ち消し合って 0 に寄った。"
+          % (det["err_l_color"], dg_nf))
+    print("      ★この写真は色腐食で、粒界は**黒い線ではなく色の境**。「粒界 = 暗い線」を前提にした 1〜7 節の")
+    print("        道具は灰色化した写真ではほぼ何も拾わない。色の差を取れば半分近くを拾うが、偽も同じくらい出る。")
+    print("        言えるのは「黒い線の道具は色腐食の写真に向かない」まで —— 色の経路も再現率は半分で、")
+    print("        実用の精度とは言えない(色の経路は 1 本だけ試した)。")
+
+    # --- (b) 専門家の粒界に途切れを入れる(画像処理は通さない) ---
+    print("\n  (b) 画像処理は通さず、**専門家の粒界のマスクに直接**途切れを入れる。比べる相手は同じ")
+    print("      数え方の Voronoi(1〜7 節の組織)と、切片法の閉形式 ΔG_L = %.4f·log10(1 − f)。" % E112_L_SLOPE)
+    each = _sweep_each([t["thin"] for t in tiles], TBM_N, [t["px_mm"] for t in tiles])
+    real = each.mean(axis=0)
+    vor = [_thin_boundary(make_scene(sd)["labels"]) for sd in SWEEP_SEEDS]
+    syn = _sweep_each(vor, N_PIX, [PX_MM] * len(vor)).mean(axis=0)
+    fr = np.asarray(REAL_FRACS)
+    closed = E112_L_SLOPE * np.log10(1.0 - fr)
+    print("\n   途切れ   面積法 ΔG(実写 / Voronoi)   切片法 ΔG(実写 / Voronoi / 閉形式)")
+    for i, f in enumerate(REAL_FRACS):
+        print("   %5.1f %%     %+6.2f / %+6.2f              %+6.2f / %+6.2f / %+6.2f"
+              % (100 * f, real[0, i], syn[0, i], real[1, i], syn[1, i], closed[i]))
+    dev_r = float(np.max(np.abs(real[1] - closed)))
+    dev_s = float(np.max(np.abs(syn[1] - closed)))
+    c_a, c_l = _cliff(REAL_FRACS, real[0]), _cliff(REAL_FRACS, real[1])
+    s_a, s_l = _cliff(REAL_FRACS, syn[0]), _cliff(REAL_FRACS, syn[1])
+    regions = sorted({t["region"] for t in tiles})
+    idx = {r: [i for i, t in enumerate(tiles) if t["region"] == r] for r in regions}
+    rng = np.random.default_rng(2026)
+    boot = []
+    for _ in range(REAL_BOOT):
+        pick = np.concatenate([idx[r] for r in rng.choice(regions, len(regions))])
+        m = each[pick].mean(axis=0)
+        boot.append((_cliff(REAL_FRACS, m[0]), _cliff(REAL_FRACS, m[1])))
+    boot = np.asarray(boot)
+    ci_a = np.percentile(boot[:, 0], [2.5, 97.5])
+    ci_l = np.percentile(boot[:, 1], [2.5, 97.5])
+    print("\n  1 段ずれる途切れ率(95 %% 区間は 80 領域の復元抽出 %d 回):" % REAL_BOOT)
+    print("    面積法  実写 %.1f %%(%.1f〜%.1f)/ Voronoi %.1f %%" % (c_a, ci_a[0], ci_a[1], s_a))
+    print("    切片法  実写 %.1f %%(%.1f〜%.1f)/ Voronoi %.1f %% / 閉形式 %.1f %%"
+          % (c_l, ci_l[0], ci_l[1], s_l, 100 * (1 - 1 / np.sqrt(2))))
+    run_r = _run_length([t["thin"] for t in tiles], TBM_N)
+    run_s = _run_length(vor, N_PIX)
+    # 太さの介入: Voronoi の粒界を細線化し、実写の粒界を 1 画素太らせて、崖が動くかを見る
+    from scipy.ndimage import binary_dilation as _dil
+    vor_thin = [np.asarray(fs.apply(v.astype(np.float64), "thinning")) > 0.5 for v in vor]
+    sub = [t for i, t in enumerate(tiles) if i % 4 == 0]               # 時間のため 4 枚に 1 枚(決定的)
+    thick = [_dil(t["thin"]) for t in sub]
+    s_thin = _sweep_each(vor_thin, N_PIX, [PX_MM] * len(vor_thin)).mean(axis=0)
+    r_thick = _sweep_each(thick, TBM_N, [t["px_mm"] for t in sub]).mean(axis=0)
+    c_vt, c_rt = _cliff(REAL_FRACS, s_thin[1]), _cliff(REAL_FRACS, r_thick[1])
+    run_vt, run_rt = _run_length(vor_thin, N_PIX), _run_length(thick, TBM_N)
+    print("  ★切片法の崖は 閉形式 29.3 %% < 実写 %.1f %% < Voronoi %.1f %% の順(閉形式からのずれの最大"
+          % (c_l, s_l))
+    print("    実写 %.2f 段 / Voronoi %.2f 段)。ずれの向きはどちらも「後ろ」。Voronoi と実写の差は**粒界マスクの太さ**で"
+          % (dev_r, dev_s))
+    print("    説明できる: 試験線が粒界を横切る走りの長さは 実写 %.2f px / Voronoi %.2f px。走りが複数画素だと、"
+          % (run_r, run_s))
+    print("    一部が消えても横切りが残る。閉形式は「横切り 1 本 = 1 画素」の極限。")
+    print("  ★介入で確かめた: Voronoi の粒界を細線化すると走り %.2f px・崖 %.1f %%(実写 %.1f %% に寄る)、"
+          % (run_vt, c_vt, c_l))
+    print("    実写の粒界を 1 画素太らせると走り %.2f px・崖 %.1f %%(%d 枚、1 回だけ)。太さを変えると崖が動く。"
+          % (run_rt, c_rt, len(sub)))
+    cf = 100 * (1 - 1 / np.sqrt(2))
+    print("  ★ただし太さで閉形式との差は消えない: 細線化した Voronoi(走り %.2f px)でも閉形式から %.1f pt、"
+          % (run_vt, c_vt - cf))
+    print("    実写(走り %.2f px)で %.1f pt 残る。この残りの原因は確かめていない(「太さで決まる」とは言わない)。"
+          % (run_r, c_l - cf))
+    print("  ★前の版(256 px に貼り合わせ)は「実物のほうが 2 割早く落ちる」と書いた —— 誤り。継ぎ目の")
+    print("    人工の粒界(試験線と直交する長い直線、走り 1〜2 px)が実写を閉形式へ引き寄せていた。")
+    print("  ★面積法の崖は 実写 %.1f %% / Voronoi %.1f %%。どちらも 1 割に届かず、切片法の 4 倍以上早い。"
+          % (c_a, s_a))
+    rec = {"tiles": len(tiles), "g_truth_median": round(float(np.median(g_true)), 2),
+           "cliff_area_real": round(c_a, 1), "cliff_intercept_real": round(c_l, 1),
+           "cliff_area_ci": [round(float(x), 1) for x in ci_a],
+           "cliff_intercept_ci": [round(float(x), 1) for x in ci_l],
+           "closed_form_max_dev": round(dev_r, 2), "voronoi_max_dev": round(dev_s, 2),
+           "cliff_area_voronoi": round(s_a, 1), "cliff_intercept_voronoi": round(s_l, 1),
+           "photo_err_area": round(det["err_a"], 2), "photo_err_intercept": round(det["err_l"], 2),
+           "photo_recall": round(det["recall_l"], 2),
+           "run_px_real": round(run_r, 2), "run_px_voronoi": round(run_s, 2),
+           "cliff_intercept_voronoi_thinned": round(c_vt, 1), "cliff_intercept_real_dilated": round(c_rt, 1),
+           "photo_color_err_intercept": round(det["err_l_color"], 2),
+           "photo_color_recall": round(det["recall_color"], 2),
+           "photo_color_false": round(det["false_color"], 2), "photo_color_count_ratio": round(cnt, 2),
+           "photo_color_dg_from_counts": round(float(dg_cnt), 2), "photo_color_dg_no_false": round(float(dg_nf), 2),
+           "thinned_minus_closed_voronoi": round(float(c_vt - cf), 1),
+           "thinned_minus_closed_real": round(float(c_l - cf), 1)}
+    print("\n  RECORDED_REAL = %s" % rec)
+    _recorded_gate(rec)
+    # --- 所見を固定する(実データがあるときだけ) ---
+    assert len(tiles) == 320, len(tiles)
+    # 閉形式(外の式)< 実写 < Voronoi の順を、崖の区間ごと固定する(この順は実データを見てから置いた)
+    assert 100 * (1 - 1 / np.sqrt(2)) < ci_l[0] and ci_l[1] < s_l, (ci_l, s_l)
+    # 太さの介入: 細くすると崖は前へ、太くすると後ろへ動く(主張「Voronoi と実写の差は太さで説明できる」の
+    # 因果の向き)。余白 2.0 pt は実データを見てから置いた。太らせた側は 80 枚・1 回だけ。
+    assert c_vt < s_l - 2.0 and c_rt > c_l + 2.0, (c_vt, s_l, c_rt, c_l)
+    assert dev_r < dev_s and run_r < run_s, (dev_r, dev_s, run_r, run_s)
+    # 面積法は切片法の 4 倍以上早い(4 倍と 10 % は実データを見て置いた値)
+    assert ci_a[1] < 10.0 and ci_l[0] > 4.0 * ci_a[1], (ci_a, ci_l)
+    _real_figure(tiles, det, real, syn, closed, (c_a, c_l), (ci_a, ci_l))
+    return {"rec": rec}
+
+
+def _overlay_edges(rgb, mask, color):
+    out = rgb.copy()
+    out[mask] = color
+    return out
+
+
+def _real_figure(tiles, det, real, syn, closed, cliffs, cis) -> None:
+    """実写の図 4 枚: 写真と専門家の粒界 / 写真への画像処理 / 途切れ / 崖の折れ線。"""
+    if not figs.enabled():
+        return
+    show = [i for i, t in enumerate(tiles) if t["region"] == REAL_SHOW] or [0, 1, 2, 3]
+    gut = 4
+
+    def mosaic(fn):
+        """同じ領域の 4 枚を、白い溝を挟んで並べる(貼り合わせない = 継ぎ目を作らない)。
+        さらに最近傍で 2 倍にする(双三次で拡大されてぼけるのを避ける)。"""
+        tl = {tiles[i]["pos"]: fn(i) for i in show}
+        n = TBM_N
+        m = np.ones((2 * n + gut, 2 * n + gut, 3))
+        for (r, c), a in tl.items():
+            y, x = (0 if r == 0 else n + gut), (0 if c == 0 else n + gut)
+            m[y:y + n, x:x + n] = a
+        return np.kron(m, np.ones((2, 2, 1)))
+
+    black, red, orange, cyan = (0.05, 0.05, 0.05), (0.95, 0.15, 0.1), (1.0, 0.55, 0.0), (0.1, 0.8, 0.95)
+    r_by = {i: det["rows"][i] for i in show}
+    figs.save_grid(
+        "real_tbm_input",
+        [mosaic(lambda i: tiles[i]["rgb"]), mosaic(lambda i: _overlay_edges(tiles[i]["rgb"], tiles[i]["thin"], black))],
+        ["実写の金相写真(色腐食、128 px 角 4 枚)", "専門家が手でなぞった粒界(真値)"],
+        ncols=2, title="公開の金相写真 TBM と、材料の専門家が手でなぞった粒界",
+        caption="%s の 4 枚。白い溝は配布物のタイルの境(貼り合わせない)。%s" % (REAL_SHOW, TBM_CREDIT))
+    figs.save_grid(
+        "real_tbm_detect",
+        [mosaic(lambda i: _overlay_edges(tiles[i]["rgb"], r_by[i]["dyn"] > 0.5, orange)),
+         mosaic(lambda i: _overlay_edges(_overlay_edges(tiles[i]["rgb"], ~r_by[i]["otsu"], cyan), tiles[i]["thin"], black))],
+        ["暗い線の局所しきい値(橙): 切片法 ΔG %+.1f" % det["err_l"],
+         "大津の暗い側(水色)と真値(黒): 面積法 ΔG %+.1f" % det["err_a"]],
+        ncols=2,
+        title="黒い粒界を前提にした画像処理は色腐食の実写で外れる(%d 枚の中央値)" % len(tiles),
+        caption="1〜7 節の道具をそのまま写真に掛けた。切片法の横切りの再現率 %.2f、偽 %.2f 本 / 真の 1 本。%s"
+                % (det["recall_l"], det["false_per_true"], TBM_CREDIT))
+    figs.save_grid(
+        "real_tbm_color_detect",
+        [mosaic(lambda i: _overlay_edges(tiles[i]["rgb"], tiles[i]["thin"], black)),
+         mosaic(lambda i: _overlay_edges(tiles[i]["rgb"], r_by[i]["color"], orange))],
+        ["専門家の粒界(真値)", "色の境を取る経路(橙): 再現率 %.2f、偽 %.2f 本 / 真の 1 本"
+         % (det["recall_color"], det["false_color"])],
+        ncols=2,
+        title="色の差で取る経路: 再現率 %.2f と偽 %.2f 本 / 真の 1 本が打ち消し合い ΔG %+.2f(%d 枚)"
+              % (det["recall_color"], det["false_color"], det["err_l_color"], len(tiles)),
+        caption="rgb_to_lab の勾配の尾根を 1〜7 節と同じ局所しきい値で取り、細線化した。ΔG が 0 に近いのは粒界を"
+                "取れたからではなく、取り逃し(横切りが減る)と偽(増える)が打ち消し合ったから。色の経路は 1 本だけ"
+                "試した。%s" % TBM_CREDIT)
+    f_show = 0.05
+
+    def broken(i):
+        b = tiles[i]["thin"]
+        drawn, _ = _break_boundary(b.astype(np.float64), f_show, np.random.default_rng(REAL_SEEDS[0] + 1000))
+        on = drawn > 0
+        lab0, _ = nd_label(~b)
+        lab1, n1 = nd_label(~on)
+        pair = np.unique(np.stack([lab0[lab0 > 0], lab1[lab0 > 0]]), axis=1)
+        cnt = np.bincount(pair[1], minlength=n1 + 1)
+        merged = np.isin(lab1, np.nonzero(cnt >= 2)[0]) & (lab1 > 0)
+        a = tiles[i]["rgb"].copy()
+        a[merged] = 0.55 * a[merged] + 0.45 * np.array([1.0, 0.85, 0.2])
+        a[on] = black
+        a[b & ~on] = red
+        return a
+    i5 = list(REAL_FRACS).index(f_show)
+    figs.save_grid(
+        "real_tbm_breaks",
+        [mosaic(lambda i: _overlay_edges(tiles[i]["rgb"], tiles[i]["thin"], black)), mosaic(broken)],
+        ["専門家の粒界(途切れ無し)", "粒界の %.0f %% を消す(赤)と粒がつながる(黄)" % (100 * f_show)],
+        ncols=2,
+        title="画像処理は通さず真値の粒界を %.0f %% 消す: 面積法 %+.1f 段、切片法 %+.1f 段(%d 枚の平均)"
+              % (100 * f_show, real[0, i5], real[1, i5], len(tiles)),
+        caption="途切れは人工(相関長 %.0f px)。粒界は専門家の手描きで、写真から検出したものではない。%s"
+                % (GAP_LEN, TBM_CREDIT))
+    fr = 100.0 * np.asarray(REAL_FRACS)
+    figs.save_plot("real_tbm_cliff",
+                   [("切片法(実写)", fr, real[1]), ("切片法の閉形式", fr, closed),
+                    ("切片法(Voronoi)", fr, syn[1]), ("面積法(実写)", fr, real[0]),
+                    ("面積法(Voronoi)", fr, syn[0])],
+                   xlabel="粒界の途切れ率 [%]", ylabel="ΔG(途切れ無しとの差)",
+                   title="1 段ずれる途切れ率: 切片法 実写 %.1f %%(閉形式 29.3 %%)、面積法 %.1f %%"
+                         % (cliffs[1], cliffs[0]),
+                   caption="専門家の粒界 %d 枚と Voronoi に同じ途切れを入れて数えた。崖の 95 %% 区間"
+                           "(80 領域の復元抽出): 面積法 %.1f〜%.1f %%、切片法 %.1f〜%.1f %%。"
+                           % (len(tiles), cis[0][0], cis[0][1], cis[1][0], cis[1][1]))
+
+
 
 # --------------------------------------------------------------------------- #
 def main() -> int:
@@ -806,6 +1306,7 @@ def main() -> int:
     cliff = section_cliff(tr["gap_median"], tr["edge_mean"])
     dup = section_duplex()
     section_tool_gaps(ctrl)
+    real = section_real()
 
     print("\n" + "=" * 78)
     print("まとめ")
@@ -820,6 +1321,15 @@ def main() -> int:
              cliff["cliff"]["closed"]))
     print("  * 混粒の全体 G %.2f は細粒 %.2f にも粗粒 %.2f にも無い(± 0.5 のタイル %d / %d)。"
           % (dup["g_mix"], dup["g_f"], dup["g_c"], dup["in_dup"], dup["n_tiles"]))
+    rec = real["rec"] if real else RECORDED_REAL
+    print("  * 実写(専門家の粒界 %d 枚): 1 段ずれる途切れ率は 面積法 %.1f %% / 切片法 %.1f %%"
+          "(閉形式 29.3 %%、Voronoi %.1f %%)。写真への画像処理は 面積法 ΔG %+.2f / 切片法 ΔG %+.2f%s。"
+          % (rec["tiles"], rec["cliff_area_real"], rec["cliff_intercept_real"], rec["cliff_intercept_voronoi"],
+             rec["photo_err_area"], rec["photo_err_intercept"], "" if real else "(記録値)"))
+    print("  * 色の境を取る経路は ΔG %+.2f だが、再現率 %.2f と偽 %.2f 本 / 真の 1 本が打ち消し合った値"
+          "(偽が無ければ ΔG %+.2f)。粒界を取れてはいない。"
+          % (rec["photo_color_err_intercept"], rec["photo_color_recall"], rec["photo_color_false"],
+             rec["photo_color_dg_no_false"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     # --- 所見を固定する(壊れたら鳴る) --------------------------------------- #

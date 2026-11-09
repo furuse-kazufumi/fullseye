@@ -5,7 +5,7 @@ category: text
 in: text
 out: table
 gpu: なし
-examples: [annotate_gallery, annotate_paper_tour, poc_diabolo_model_and_vision, poc_interferometry_step, poc_polarization_specular]
+examples: [annotate_gallery, annotate_paper_tour, poc_diabolo_model_and_vision, poc_interferometry_step, poc_nir_silicon_transmission, poc_polarization_specular, poc_shape_from_polarization]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -84,7 +84,9 @@ ValueError
 - [annotate_paper_tour](../../../../examples/annotate_paper_tour.py) — `py -3.11 examples/annotate_paper_tour.py`
 - [poc_diabolo_model_and_vision](../../../../examples/poc_diabolo_model_and_vision.py) — `py -3.11 examples/poc_diabolo_model_and_vision.py`
 - [poc_interferometry_step](../../../../examples/poc_interferometry_step.py) — `py -3.11 examples/poc_interferometry_step.py`
+- [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 - [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
+- [poc_shape_from_polarization](../../../../examples/poc_shape_from_polarization.py) — `py -3.11 examples/poc_shape_from_polarization.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
