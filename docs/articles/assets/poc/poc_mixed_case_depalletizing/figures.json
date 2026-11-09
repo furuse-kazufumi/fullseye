@@ -1,0 +1,146 @@
+[
+ {
+  "file": "01_overview_same_pattern.png",
+  "name": "overview_same_pattern",
+  "caption": "同じ柄の箱が詰めて並んだパレット(種 0)を、5 通りの手がかりで切り分けた天面。種 0 は V 字に有利な種(図の下の注)。",
+  "shape": [
+   988,
+   1944,
+   3
+  ]
+ },
+ {
+  "file": "02_difficulty_ladder.png",
+  "name": "difficulty_ladder",
+  "caption": "5 つの条件(難しい順)のカラーと深度(陰影つき)、天面の再現率(種 10 本の中央値)。",
+  "shape": [
+   766,
+   2040,
+   3
+  ]
+ },
+ {
+  "file": "03_first_frame_recall.png",
+  "name": "first_frame_recall",
+  "caption": "種ごとの再現率の中央値と幅。閾値は種 0〜2 を見て決め、種 3〜9 は見ていない。",
+  "shape": [
+   1360,
+   1814,
+   3
+  ],
+  "csv": "03_first_frame_recall.csv",
+  "tsv": "03_first_frame_recall.tsv"
+ },
+ {
+  "file": "04_outcomes.png",
+  "name": "outcomes",
+  "caption": "結果の数。成否は規則(パッドの足跡・天面の凹凸・モーメント比・可搬)で判定した。",
+  "shape": [
+   1360,
+   2021,
+   3
+  ],
+  "csv": "04_outcomes.csv",
+  "tsv": "04_outcomes.tsv"
+ },
+ {
+  "file": "05_success_rate.png",
+  "name": "success_rate",
+  "caption": "1 個ずつ下ろしたときの成功率(条件ごと、5 通り)。",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "06_valley_threshold_sweep.png",
+  "name": "valley_threshold_sweep",
+  "caption": "採用した 0.5 mm は種 0〜2 の場面を見てから置いた。1.3 mm から上では V 字が効かない。",
+  "shape": [
+   496,
+   1655,
+   3
+  ],
+  "csv": "06_valley_threshold_sweep.csv",
+  "tsv": "06_valley_threshold_sweep.tsv"
+ },
+ {
+  "file": "07_edge_radius_sweep.png",
+  "name": "edge_radius_sweep",
+  "caption": "継ぎ目の V 字の溝は縁の丸みが作る。丸みが小さいと深度の V 字は効かない。最後の行は天面の合わせ目とふくらみを外した場面。",
+  "shape": [
+   448,
+   1797,
+   3
+  ],
+  "csv": "07_edge_radius_sweep.csv",
+  "tsv": "07_edge_radius_sweep.tsv"
+ },
+ {
+  "file": "08_depal_robot_video.gif",
+  "name": "depal_robot_video",
+  "caption": "条件ごとに、ロボットが「カラーの溝」のやり方で選んだ天面を吸って下ろす手(成功と失敗)と、天井カメラの差し込み。",
+  "shape": [
+   226,
+   360,
+   3
+  ],
+  "animated": true,
+  "frames": 119,
+  "frames_written": 78,
+  "fps": 2.5,
+  "video": "08_depal_robot_video.mp4",
+  "video_frames": 952,
+  "video_fps": 20.0,
+  "video_shape": [
+   604,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "09_failure_gallery.png",
+  "name": "failure_gallery",
+  "caption": "結果の種類ごとの見本(両方の成功・失敗と、他のやり方の典型の失敗)。",
+  "shape": [
+   798,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "10_hope_real_depth.png",
+  "name": "hope_real_depth",
+  "caption": "HOPE の箱型の物体の面を、同じ op の組(切り分けと閾値は別実装)で測った結果。画像は NC のため出さない。",
+  "shape": [
+   880,
+   1186,
+   3
+  ],
+  "csv": "10_hope_real_depth.csv",
+  "tsv": "10_hope_real_depth.tsv"
+ },
+ {
+  "file": "11_flap_seam_map_table.png",
+  "name": "flap_seam_map_table",
+  "caption": "天面の合わせ目の溝の深さ・切り口のすき間・テープを全部の箱でそろえた場面の再現率と外れ。",
+  "shape": [
+   2848,
+   1743,
+   3
+  ],
+  "csv": "11_flap_seam_map_table.csv",
+  "tsv": "11_flap_seam_map_table.tsv"
+ },
+ {
+  "file": "12_flap_seam_map.png",
+  "name": "flap_seam_map",
+  "caption": "どの作りならどのやり方が勝つか: 升目の色 = カラーの溝 − 深度の V 字 の再現率(数字は両者)。",
+  "shape": [
+   626,
+   1824,
+   3
+  ]
+ }
+]
