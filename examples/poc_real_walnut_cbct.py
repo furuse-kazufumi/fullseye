@@ -31,8 +31,12 @@ doi:10.1038/s41597-019-0235-y; Zenodo doi:10.5281/zenodo.2686726, CC BY 4.0。
 * 幾何: 配布元のベクトルを ``ct_scan_geometry`` の円軌道に読み替え、表せない 2 つ
   (検出器の 0.5° の面内回転と 7.2 画素の縦のずれ)は投影を ``warp_parametric`` で引き直す。
 * 中央面(fan): FDK・SIRT・OS-SART・TV を、全 300 枚 / 間引き(150・50・25 枚)/
-  限られた角度(240°・150°・90°)で比べる。TV の重みは参照を見ずに、使わなかった投影への
-  再投影誤差で選ぶ。
+  限られた角度(240°・150°・90°)で比べる。TV の重みと、反復法 3 つの**反復の回数**は、
+  参照を見ずに、使わなかった投影への再投影誤差で選ぶ(回数は「候補の最小の 3 % 以内に入る
+  いちばん少ない回数」)。★2026-11-09 まで回数は固定(SIRT 60・OS-SART 10・TV 100)で、
+  どれも収束前だった: 50 枚で SIRT の RMSE は 60 回 0.0055 → 400 回 0.0036、OS-SART は
+  10 回 0.0048 → 40 回 0.0036、TV は 100 回 0.0031 → 200 回 0.0029(op 監査 g2_calib_ct)。
+  収束前の解で手法を比べると、遅い手法(SIRT)ほど不利に見える。
 * 3-D(cone): FDK を ASTRA の FDK と比べ、高さごとの誤差が 3 軌道の参照に対して
   中央面から離れるほど増えること(Tuy の条件)を、Fullseye と ASTRA の両方で測る。
 * 幾何の取り違え: 隣接の恒等式 <Ax,y> = <x,Aᵀy> は射影の対が整合しているかを測るだけで、
@@ -89,9 +93,14 @@ EVAL_RADIUS_MM = 17.5
 SPARSE_STEPS = (2, 6, 12)
 LIMITED_ARCS = (240.0, 150.0, 90.0)
 LIMITED_STEP = 2
-#: 反復の回数(全条件で共通。条件ごとに選び直さない)。
-SIRT_ITERS, OSSART_ITERS, TV_ITERS = 60, 10, 100
-#: TV の重みの候補。50 枚の条件で、使わなかった 250 枚への再投影誤差が最小のものを使う。
+#: 反復の回数の候補(全条件で共通。50 枚の条件で 1 回だけ選び、条件ごとに選び直さない)。
+#: 使わなかった 250 枚への再投影誤差が、候補の最小の ``ITER_TOL`` 以内に入るいちばん少ない回数を使う
+#: (反復法は再投影誤差が単調に下がり続けるので、最小そのものを取ると常に最大の候補になる)。
+ITER_MARKS = {"SIRT": (20, 40, 60, 100, 150, 200, 300, 400, 600),
+              "OS-SART": (5, 10, 15, 20, 30, 40, 60, 80),
+              "TV": (50, 100, 150, 200, 300)}
+ITER_TOL = 0.03
+#: TV の重みの候補。50 枚の条件で、使わなかった 250 枚への再投影誤差(TV の最大の回数で)が最小のものを使う。
 TV_WEIGHTS = (3e-6, 1e-5, 3e-5, 1e-4)
 #: 二重エネルギーの仮定(合成の第 2 エネルギー用、物理の値ではない): 殻と、それ以外。
 DE_MU_LOW, DE_MU_HIGH = (1.0, 0.6), (0.55, 0.45)
@@ -105,11 +114,11 @@ RECORDED = {'adjoint': {'cone': 5.960611570152381e-16, 'fan': 1.0751682582755414
                        0.010122513401233822,
                        0.0007789778301918565,
                        0.009900971877370794],
-          'seconds': 6.088041600014549,
+          'seconds': 17.818959000054747,
           'upper': [0.0025491359885181693, 0.0019380139043844074],
           'vs_astra': 0.002074113555348673},
  'dataset_manifest_sha256': 'af0d0d5cda5d55eb8e602c572bf1dd610eabeca9d892009e98975e0c3163c24d',
- 'date': '2026-11-08',
+ 'date': '2026-11-09',
  'dual': {'condition': 15.477054890909018,
           'flat_quieter': 3.51316838483778,
           'gain_flat': 0.47276399172188693,
@@ -127,152 +136,152 @@ RECORDED = {'adjoint': {'cone': 5.960611570152381e-16, 'fan': 1.0751682582755414
           'method': 'FDK',
           'rmse': 0.002282681988180712,
           'scale': 1.0151853778714464,
-          'seconds': 0.5653601000085473,
+          'seconds': 0.9826537000481039,
           'ssim': 0.9395462959780277},
          {'cond': '150 枚',
           'method': 'FDK',
           'rmse': 0.0027576647119979107,
           'scale': 1.0153486073815863,
-          'seconds': 0.38711259997216985,
+          'seconds': 0.4146475999150425,
           'ssim': 0.8860217499162143},
          {'cond': '150 枚',
           'method': 'SIRT',
-          'rmse': 0.004669765422011968,
-          'scale': 1.0066766039846435,
-          'seconds': 18.32520399999339,
-          'ssim': 0.9037942134969006},
+          'rmse': 0.0020275223983681158,
+          'scale': 1.007477636088166,
+          'seconds': 123.12634120008443,
+          'ssim': 0.9553401347823143},
          {'cond': '150 枚',
           'method': 'OS-SART',
-          'rmse': 0.0038112021364527693,
-          'scale': 1.0069302868814474,
-          'seconds': 4.38619099999778,
-          'ssim': 0.9314253304218726},
+          'rmse': 0.0021014031817102787,
+          'scale': 1.007157095309195,
+          'seconds': 24.0070406999439,
+          'ssim': 0.9533456420748496},
          {'cond': '150 枚',
           'method': 'TV',
-          'rmse': 0.0026436423061859454,
-          'scale': 1.0079811078211414,
-          'seconds': 32.13941339997109,
-          'ssim': 0.9644506625782745},
+          'rmse': 0.002066916014453229,
+          'scale': 1.0070401290292235,
+          'seconds': 46.18653710000217,
+          'ssim': 0.9776200548973577},
          {'cond': '50 枚',
           'method': 'FDK',
           'rmse': 0.006867054174062506,
           'scale': 1.0146835211625622,
-          'seconds': 0.09786549996351823,
+          'seconds': 0.13897900003939867,
           'ssim': 0.6610244365095885},
          {'cond': '50 枚',
           'method': 'SIRT',
-          'rmse': 0.005514479014413534,
-          'scale': 1.002659812555097,
-          'seconds': 6.398228999983985,
-          'ssim': 0.8423072501928909},
+          'rmse': 0.0036011812690961527,
+          'scale': 1.006774348232201,
+          'seconds': 40.83863280003425,
+          'ssim': 0.8940047626382615},
          {'cond': '50 枚',
           'method': 'OS-SART',
-          'rmse': 0.004766115795551143,
-          'scale': 1.0031662272463693,
-          'seconds': 1.305520499998238,
-          'ssim': 0.8701729859566275},
+          'rmse': 0.003610438221649672,
+          'scale': 1.0060470075240995,
+          'seconds': 7.955895100021735,
+          'ssim': 0.8960368524181168},
          {'cond': '50 枚',
           'method': 'TV',
-          'rmse': 0.003060609470512624,
-          'scale': 1.006964179134826,
-          'seconds': 11.353741900005843,
-          'ssim': 0.9484285288851169},
+          'rmse': 0.002885052223512494,
+          'scale': 1.0065345018193936,
+          'seconds': 16.90949989994988,
+          'ssim': 0.957336007276427},
          {'cond': '25 枚',
           'method': 'FDK',
           'rmse': 0.012635505794267305,
           'scale': 1.0151988851915155,
-          'seconds': 0.04711799998767674,
+          'seconds': 0.08996950008440763,
           'ssim': 0.49789358001584044},
          {'cond': '25 枚',
           'method': 'SIRT',
-          'rmse': 0.007447085177753234,
-          'scale': 0.9977669694951548,
-          'seconds': 3.3982744999811985,
-          'ssim': 0.7413055296143521},
+          'rmse': 0.005615045016919867,
+          'scale': 1.0055658447541704,
+          'seconds': 42.643633200088516,
+          'ssim': 0.8203074336752733},
          {'cond': '25 枚',
           'method': 'OS-SART',
-          'rmse': 0.006743352792062496,
-          'scale': 0.9986949924528424,
-          'seconds': 0.6723294000257738,
-          'ssim': 0.776857526677192},
+          'rmse': 0.005535400736023228,
+          'scale': 1.0030130958195507,
+          'seconds': 23.662223399966024,
+          'ssim': 0.8276912887854938},
          {'cond': '25 枚',
           'method': 'TV',
-          'rmse': 0.004646030776906719,
-          'scale': 1.0060782616527586,
-          'seconds': 6.073194199998397,
-          'ssim': 0.8825889508673398},
+          'rmse': 0.004512013695703279,
+          'scale': 1.0059918982052463,
+          'seconds': 21.196861000033095,
+          'ssim': 0.8878681231226695},
          {'cond': '240°',
           'method': 'FDK',
           'rmse': 0.0033966295114732418,
           'scale': 1.014914393219449,
-          'seconds': 0.21475320000899956,
+          'seconds': 0.6854113999288529,
           'ssim': 0.8521209082527161},
          {'cond': '240°',
           'method': 'SIRT',
-          'rmse': 0.005104695926825912,
-          'scale': 1.005701518251249,
-          'seconds': 12.11423599999398,
-          'ssim': 0.8816124446061328},
+          'rmse': 0.002499233875323519,
+          'scale': 1.0074938036051388,
+          'seconds': 119.73652080004103,
+          'ssim': 0.9420139815333698},
          {'cond': '240°',
           'method': 'OS-SART',
-          'rmse': 0.004195373513901503,
-          'scale': 1.0065511955188922,
-          'seconds': 2.7238622000440955,
-          'ssim': 0.9144810254309488},
+          'rmse': 0.002564183348621982,
+          'scale': 1.007439339269362,
+          'seconds': 99.25885220000055,
+          'ssim': 0.939827492161582},
          {'cond': '240°',
           'method': 'TV',
-          'rmse': 0.0027901983037930344,
-          'scale': 1.0072457430011754,
-          'seconds': 22.765794200007804,
-          'ssim': 0.9579317570805356},
+          'rmse': 0.0023764603283676134,
+          'scale': 1.0069908179804061,
+          'seconds': 46.16916199994739,
+          'ssim': 0.9717425785651322},
          {'cond': '150°',
           'method': 'FDK',
           'rmse': 0.009109808652350936,
           'scale': 0.849513626916559,
-          'seconds': 0.12234040000475943,
+          'seconds': 0.5346359999384731,
           'ssim': 0.5950373077794755},
          {'cond': '150°',
           'method': 'SIRT',
-          'rmse': 0.007552494858228185,
-          'scale': 1.0001594529478348,
-          'seconds': 8.394766100042034,
-          'ssim': 0.7890833619362471},
+          'rmse': 0.005296048662401778,
+          'scale': 1.0088448437263673,
+          'seconds': 81.73482510005124,
+          'ssim': 0.8621736618628673},
          {'cond': '150°',
           'method': 'OS-SART',
-          'rmse': 0.006991063390331167,
-          'scale': 1.0030952532362274,
-          'seconds': 1.8353970000171103,
-          'ssim': 0.8127374790053695},
+          'rmse': 0.005227709035696325,
+          'scale': 1.009113712634217,
+          'seconds': 21.525671100011095,
+          'ssim': 0.8650140285932356},
          {'cond': '150°',
           'method': 'TV',
-          'rmse': 0.004297202751262529,
-          'scale': 1.0097717842166725,
-          'seconds': 14.523066299967468,
-          'ssim': 0.9228532154131622},
+          'rmse': 0.003988925678651521,
+          'scale': 1.008968042347153,
+          'seconds': 29.995242799981497,
+          'ssim': 0.9366927433266794},
          {'cond': '90°',
           'method': 'FDK',
           'rmse': 0.016647603172916647,
           'scale': 0.5128143109240855,
-          'seconds': 0.06988550000824034,
+          'seconds': 0.2818675000453368,
           'ssim': 0.35521769536261},
          {'cond': '90°',
           'method': 'SIRT',
-          'rmse': 0.012814213953581071,
-          'scale': 0.9661589572946788,
-          'seconds': 5.035178100049961,
-          'ssim': 0.5880872582061885},
+          'rmse': 0.011985067107298252,
+          'scale': 0.9844027406341206,
+          'seconds': 56.81788340001367,
+          'ssim': 0.6349850816746406},
          {'cond': '90°',
           'method': 'OS-SART',
-          'rmse': 0.012636026463707864,
-          'scale': 0.9719577857762801,
-          'seconds': 1.0047617999953218,
-          'ssim': 0.6023735630473384},
+          'rmse': 0.01189990576568698,
+          'scale': 0.9860381862386148,
+          'seconds': 18.479540300089866,
+          'ssim': 0.6375760067966126},
          {'cond': '90°',
           'method': 'TV',
-          'rmse': 0.011009455759068074,
-          'scale': 0.9919567449073664,
-          'seconds': 8.889871299965307,
-          'ssim': 0.6803346816446988}],
+          'rmse': 0.010672678232567585,
+          'scale': 0.9933544880749747,
+          'seconds': 19.75102369999513,
+          'ssim': 0.6917786964894502}],
  'fan_baseline_astra_vs_ref': {'rmse': 0.0009328917286845592,
                                'scale': 1.016422139863835,
                                'ssim': 0.9720249575050047},
@@ -282,7 +291,7 @@ RECORDED = {'adjoint': {'cone': 5.960611570152381e-16, 'fan': 1.0751682582755414
  'fan_fullseye_vs_astra': {'rmse': 0.0020562849537197813,
                            'scale': 0.9987832201367101,
                            'ssim': 0.9615594857091206},
- 'gates': 52,
+ 'gates': 54,
  'geometry': {'da_mm': -0.0015075906119849016,
               'dh_mm': 1.0799000000000092,
               'dsd': 199.00618806264296,
@@ -291,6 +300,29 @@ RECORDED = {'adjoint': {'cone': 5.960611570152381e-16, 'fan': 1.0751682582755414
               'src_z': 0.317124735999994,
               'step_deg': 1.2000000013349768,
               'theta_deg': 0.5000000000139884},
+ 'iter_holdout_rmse': {'OS-SART': {'10': 0.02154428627654312,
+                                   '15': 0.018664467613388233,
+                                   '20': 0.017340965528322202,
+                                   '30': 0.016089750330356634,
+                                   '40': 0.015512386358365257,
+                                   '5': 0.03131477070206197,
+                                   '60': 0.01500185239954597,
+                                   '80': 0.014800094059975533},
+                       'SIRT': {'100': 0.020082973208130423,
+                                '150': 0.017773581801078717,
+                                '20': 0.051375461511832816,
+                                '200': 0.016697309636791575,
+                                '300': 0.015682652363441178,
+                                '40': 0.032177766766406254,
+                                '400': 0.015219140326511997,
+                                '60': 0.02525288050756554,
+                                '600': 0.014826018975282983},
+                       'TV': {'100': 0.013912178598453695,
+                              '150': 0.013434746725905116,
+                              '200': 0.01337411262722294,
+                              '300': 0.013373303435268004,
+                              '50': 0.02003430218809167}},
+ 'iters': {'OS-SART': 60, 'SIRT': 400, 'TV': 150},
  'measured_angles_rule': 'full',
  'mistakes': [{'name': '正しい',
                'resid': 0.08701961268602337,
@@ -312,10 +344,10 @@ RECORDED = {'adjoint': {'cone': 5.960611570152381e-16, 'fan': 1.0751682582755414
                'resid': 0.1740126970808635,
                'rmse': 0.02089230422045125,
                'ssim': 0.26005924283023685}],
- 'tv_holdout_rmse': {'0.0001': 0.016956553353902105,
-                     '1e-05': 0.013912178598453695,
-                     '3e-05': 0.014409524800484817,
-                     '3e-06': 0.014561771379847316},
+ 'tv_holdout_rmse': {'0.0001': 0.0168232009295413,
+                     '1e-05': 0.013373303435268004,
+                     '3e-05': 0.014043236779881292,
+                     '3e-06': 0.01379999537789437},
  'tv_weight': 1e-05}
 
 
@@ -607,17 +639,20 @@ def fan_data(proj: dict, fit: dict, *, roll=True, voff=True) -> np.ndarray:
     return to_ideal(proj["fan"], W, 1, DET_COLS // FAN_BIN)
 
 
-def _reconstruct(method: str, p: np.ndarray, geom: dict, tv_weight: float, allow: bool):
+def _reconstruct(method: str, p: np.ndarray, geom: dict, tv_weight: float, allow: bool,
+                 iters: dict | None = None, on_iter=None):
+    """``iters`` は手法ごとの反復の回数(``choose_iters`` が選んだもの)。"""
     t0 = time.perf_counter()
+    n = None if method == "FDK" else int(iters[method])
     if method == "FDK":
         x = ctscan.fdk_reconstruct(p, geom, device="cpu", allow_incomplete=allow)
     elif method == "SIRT":
-        x = ctscan.sirt_reconstruct(p, geom, n_iter=SIRT_ITERS, device="cpu")
+        x = ctscan.sirt_reconstruct(p, geom, n_iter=n, device="cpu", on_iter=on_iter)
     elif method == "OS-SART":
-        x = ctscan.os_sart_reconstruct(p, geom, n_iter=OSSART_ITERS, n_subsets=min(10, geom["n_views"]),
-                                       device="cpu")
+        x = ctscan.os_sart_reconstruct(p, geom, n_iter=n, n_subsets=min(10, geom["n_views"]),
+                                       device="cpu", on_iter=on_iter)
     elif method == "TV":
-        x = ctscan.tv_reconstruct(p, geom, tv_weight=tv_weight, n_iter=TV_ITERS, device="cpu")
+        x = ctscan.tv_reconstruct(p, geom, tv_weight=tv_weight, n_iter=n, device="cpu", on_iter=on_iter)
     else:
         raise ValueError(method)
     return np.asarray(x)[0], time.perf_counter() - t0
@@ -626,19 +661,42 @@ def _reconstruct(method: str, p: np.ndarray, geom: dict, tv_weight: float, allow
 METHODS = ("FDK", "SIRT", "OS-SART", "TV")
 
 
-def choose_tv_weight(p_all: np.ndarray, fit: dict) -> tuple[float, dict]:
-    """50 枚(6 枚に 1 枚)で TV を回し、使わなかった 250 枚への再投影誤差が最小の重みを選ぶ(参照は見ない)。"""
+def holdout_curve(method: str, p_all: np.ndarray, fit: dict, tv_weight: float = 0.0) -> dict:
+    """50 枚(6 枚に 1 枚)で ``method`` を ``ITER_MARKS`` の最大まで 1 回だけ回し、各候補の回数での
+    使わなかった 250 枚への再投影 RMSE を返す(参照は見ない)。"""
     use = np.arange(0, 300, 6)
     held = np.setdiff1d(np.arange(300), use)
     g_use = fan_geometry(fit, use)
     g_all = fan_geometry(fit, np.arange(300))
+    marks = set(ITER_MARKS[method])
     errs = {}
-    for w in TV_WEIGHTS:
-        x, _ = _reconstruct("TV", p_all[use], g_use, w, False)
-        re = ctscan.ct_forward_project(x[None], g_all, device="cpu")
-        errs[w] = float(np.sqrt(np.mean((re[held] - p_all[held]) ** 2)))
-    best = min(errs, key=errs.get)
-    return best, errs
+
+    def cb(k, v):
+        if k + 1 in marks:
+            re = ctscan.ct_forward_project(np.asarray(v), g_all, device="cpu")
+            errs[k + 1] = float(np.sqrt(np.mean((re[held] - p_all[held]) ** 2)))
+    _reconstruct(method, p_all[use], g_use, tv_weight, False, {method: max(marks)}, on_iter=cb)
+    return errs
+
+
+def pick_iters(curve: dict) -> int:
+    """再投影 RMSE が候補の最小の ``ITER_TOL`` 以内に入る、いちばん少ない回数。"""
+    lo = min(curve.values())
+    return min(k for k, e in curve.items() if e <= (1.0 + ITER_TOL) * lo)
+
+
+def choose_iters(p_all: np.ndarray, fit: dict) -> tuple[float, dict, dict, dict]:
+    """TV の重みと、SIRT・OS-SART・TV の反復の回数を、50 枚で選ぶ(参照は見ない)。
+
+    TV の重みは最大の回数での再投影誤差が最小のもの。返り値 ``(tv_weight, tv_errs, iters, curves)``。"""
+    tv_curves = {w: holdout_curve("TV", p_all, fit, w) for w in TV_WEIGHTS}
+    top = max(ITER_MARKS["TV"])
+    tv_errs = {w: c[top] for w, c in tv_curves.items()}
+    best = min(tv_errs, key=tv_errs.get)
+    curves = {"SIRT": holdout_curve("SIRT", p_all, fit), "OS-SART": holdout_curve("OS-SART", p_all, fit),
+              "TV": tv_curves[best]}
+    iters = {m: pick_iters(c) for m, c in curves.items()}
+    return best, tv_errs, iters, curves
 
 
 def chapter_fan(root: Path, proj: dict, geo: dict, g: Gates) -> dict:
@@ -653,11 +711,19 @@ def chapter_fan(root: Path, proj: dict, geo: dict, g: Gates) -> dict:
     base = score(ref_fdk, ref, mask)
     print("  配布元どうし(ASTRA の FDK 1200 枚 vs 3 軌道): RMSE %.4f /mm、SSIM %.3f" % (base["rmse"], base["ssim"]))
 
-    tv_w, tv_errs = choose_tv_weight(p_all, fit)
-    print("  TV の重み: 使わなかった 250 枚への再投影 RMSE %s → %.0e"
-          % (", ".join("%.0e: %.4f" % kv for kv in tv_errs.items()), tv_w))
+    tv_w, tv_errs, iters, curves = choose_iters(p_all, fit)
+    print("  TV の重み(%d 回): 使わなかった 250 枚への再投影 RMSE %s → %.0e"
+          % (max(ITER_MARKS["TV"]), ", ".join("%.0e: %.4f" % kv for kv in tv_errs.items()), tv_w))
     g.check("中央面", "選んだ TV の重みは候補の端でない(候補の範囲が足りている)",
             TV_WEIGHTS[0] < tv_w < TV_WEIGHTS[-1], "%.0e(候補 %s)" % (tv_w, ", ".join("%.0e" % w for w in TV_WEIGHTS)))
+    for m in ("SIRT", "OS-SART", "TV"):
+        print("  %s の回数: 再投影 RMSE %s → %d 回(最小の %.0f %% 以内で最少)"
+              % (m, ", ".join("%d: %.5f" % kv for kv in sorted(curves[m].items())), iters[m], 100 * ITER_TOL))
+    g.check("中央面", "選んだ反復の回数は候補の最大でない(候補の範囲が足りている)",
+            all(iters[m] < max(ITER_MARKS[m]) for m in iters), ", ".join("%s %d" % kv for kv in iters.items()))
+    g.check("中央面", "反復法の再投影誤差は回数とともに下がる(最小の回数 > 選んだ回数の 1.2 倍)",
+            all(curves[m][min(ITER_MARKS[m])] > 1.2 * curves[m][iters[m]] for m in iters),
+            ", ".join("%s %.4f → %.4f" % (m, curves[m][min(ITER_MARKS[m])], curves[m][iters[m]]) for m in iters))
     conds = [("300 枚", "full", 300, 360.0, p_all, fan_geometry(fit, np.arange(300)), ("FDK",))]
     for s in SPARSE_STEPS:
         views = np.arange(0, 300, s)
@@ -671,7 +737,7 @@ def chapter_fan(root: Path, proj: dict, geo: dict, g: Gates) -> dict:
     for label, kind, nview, arc, p, geom, methods in conds:
         allow = kind == "limited"
         for meth in methods:
-            x, sec = _reconstruct(meth, p, geom, tv_w, allow)
+            x, sec = _reconstruct(meth, p, geom, tv_w, allow, iters)
             sc = score(x, ref, mask)
             rows.append({"cond": label, "kind": kind, "views": nview, "arc": arc, "method": meth,
                          "rmse": sc["rmse"], "ssim": sc["ssim"], "scale": sc["scale"], "seconds": sec})
@@ -739,7 +805,7 @@ def chapter_fan(root: Path, proj: dict, geo: dict, g: Gates) -> dict:
             r(short, "FDK") < 1.5 * r(half, "FDK"), "%.4f / %.4f /mm" % (r(short, "FDK"), r(half, "FDK")))
     return {"rows": rows, "images": images, "ref": ref, "ref_fdk": ref_fdk, "mask": mask, "baseline": base,
             "vs_astra": vs_astra, "flip_ssim": flip_ssim, "fine": fine,
-            "tv_weight": tv_w, "tv_errs": tv_errs, "p_all": p_all}
+            "tv_weight": tv_w, "tv_errs": tv_errs, "iters": iters, "iter_curves": curves, "p_all": p_all}
 
 
 # --------------------------------------------------------------------------- #
@@ -1068,7 +1134,8 @@ def write_figures(fan: dict, cone: dict, mis: dict, dual: dict, g: Gates) -> Non
                    xlabel="投影の枚数(360° を等間隔)", ylabel="参照との RMSE [1/mm]",
                    title="間引くと FDK が先に崩れる", source=SOURCE,
                    caption="TV の重みは 50 枚の条件で、使わなかった 250 枚への再投影誤差が最小の %.0e(参照は見ない)。"
-                           % fan["tv_weight"])
+                           "反復の回数も同じ規則で選んだ(SIRT %d・OS-SART %d・TV %d 回)。"
+                           % (fan["tv_weight"], fan["iters"]["SIRT"], fan["iters"]["OS-SART"], fan["iters"]["TV"]))
     lim = [x for x in fan["rows"] if x["kind"] == "limited" or x["cond"] == "150 枚"]
     series = []
     for meth in METHODS:
@@ -1175,6 +1242,8 @@ def main() -> None:
         "fan_baseline_astra_vs_ref": fan["baseline"], "fan_fullseye_vs_astra": fan["vs_astra"],
         "fan_fine_0p1mm_boxed": fan["fine"],
         "tv_weight": fan["tv_weight"], "tv_holdout_rmse": {"%g" % k: v for k, v in fan["tv_errs"].items()},
+        "iters": fan["iters"],
+        "iter_holdout_rmse": {m: {str(k): v for k, v in c.items()} for m, c in fan["iter_curves"].items()},
         "cone": {"seconds": cone["seconds"], "vs_astra": cone["vs_astra"], "astra_vs_ref": cone["astra_vs_ref"],
                  "corr": cone["corr"], "near_far": cone["near_far"], "upper": cone["upper"],
                  "diff_peak": cone["diff_peak"]},

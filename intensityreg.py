@@ -125,14 +125,59 @@ def warp_parametric(image, W, out_shape=None, order=3):
     """``out(p) = image(W⁻¹ p)``(W は image の (x, y) → out の (x, y) の 3×3)。→ (H, W) float64。
 
     合成の道具。``order=3`` の 3 次スプライン(位置合わせ側の双線形と違う補間にして、補間の型の
-    一致による甘さを避ける)。外側は 0。
+    一致による甘さを避ける)。外側は 0。向きは ``cv2.warpPerspective``(``WARP_INVERSE_MAP`` なし)と
+    同じで、有効域の値は ``order=1`` で cv2 の線形と 1.1e-2(cv2 の 1/32 画素の量子化)、``order=3``
+    で cv2 の 3 次と 3.4e-2(補間核の違い)以内。
+
+    - 入口: ``image`` は空でない 2-D の有限な配列、``out_shape`` は正の整数 2 つ、``order`` は 0〜5 の
+      整数。外れると ``ValueError``。2026-11-09 より前は検査が無く、NaN が 1 画素あると 3 次スプラインの
+      前処理が NaN を全画素へ広げ、そのあと非有限を 0 に置き換えるので**全画素 0**(512² で
+      262144/262144)を例外なしで返していた。RGB は scipy の RuntimeError、空は空配列だった。
+    - 3 次スプラインは段差で行き過ぎる(0/1 の段差で −0.10〜1.10、自然画で −0.036〜1.06)。
+      線積分・濃度・個数のように**負にならない量**を引き直すなら ``order=1``(行き過ぎない)。
+    - 速さ: 射影の行が (0, 0, 1) のアフィンは ``scipy.ndimage.affine_transform``(2048² の 3 次で
+      0.86 s → 0.33 s)。``map_coordinates`` との**ビット一致は W[2,2] = 1 で渡したときだけ**:
+      同じ変換を定数倍した同次表現(例えば W を 2.5 倍)では正規化の順が違い、最大 1e-13 の差が
+      出る。射影変換は
+      ``map_coordinates``。それでも cv2.warpPerspective の 3 次(2048² で 0.03 s)より 1 桁遅い。
     """
-    a = np.asarray(image, np.float64)
-    Wm = _as_warp(W, "warp_parametric")
-    shp = a.shape if out_shape is None else (int(out_shape[0]), int(out_shape[1]))
+    op = "warp_parametric"
+    a = np.asarray(image)
+    if a.dtype == object or not (np.issubdtype(a.dtype, np.number) or a.dtype == bool):
+        raise ValueError("%s: image must be a numeric 2-D array" % op)
+    a = a.astype(np.float64)
+    if a.ndim != 2:
+        raise ValueError("%s: image must be a 2-D gray image, got shape %r (warp each channel "
+                         "separately)" % (op, a.shape))
+    if a.size == 0:
+        raise ValueError("%s: image is empty, got shape %r" % (op, a.shape))
+    if not np.isfinite(a).all():
+        raise ValueError("%s: image has %d non-finite pixels (NaN/Inf); the cubic spline would "
+                         "spread them over the whole output" % (op, int((~np.isfinite(a)).sum())))
+    if isinstance(order, bool) or not isinstance(order, (int, np.integer)) or not 0 <= int(order) <= 5:
+        raise ValueError("%s: order must be an integer in 0..5, got %r" % (op, order))
+    Wm = _as_warp(W, op)
+    if out_shape is None:
+        shp = a.shape
+    else:
+        try:
+            shp = tuple(int(v) for v in out_shape)
+        except (TypeError, ValueError):
+            raise ValueError("%s: out_shape must be two positive integers, got %r" % (op, out_shape)) from None
+        if len(shp) != 2 or min(shp) <= 0 or any(float(v) != int(v) for v in out_shape):
+            raise ValueError("%s: out_shape must be two positive integers, got %r" % (op, out_shape))
+    Wi = np.linalg.inv(Wm)
+    if Wi[2, 0] == 0 and Wi[2, 1] == 0 and Wi[2, 2] != 0:
+        Wi = Wi / Wi[2, 2]
+        # (row, col) 座標の行列: row_in = Wi[1,0] x + Wi[1,1] y + Wi[1,2]、col_in = Wi[0,0] x + ...
+        M = np.array([[Wi[1, 1], Wi[1, 0]], [Wi[0, 1], Wi[0, 0]]])
+        off = np.array([Wi[1, 2], Wi[0, 2]])
+        out = ndimage.affine_transform(a, M, offset=off, output_shape=shp, order=int(order),
+                                       mode="constant", cval=0.0)
+        return out
     yy, xx = _grid(shp)
-    X, Y = _map(np.linalg.inv(Wm), xx, yy)
-    return _sample(a, X, Y, order=order)
+    X, Y = _map(Wi, xx, yy)
+    return _sample(a, X, Y, order=int(order))
 
 
 def _as_warp(W, op):

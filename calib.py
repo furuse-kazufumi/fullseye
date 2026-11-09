@@ -226,7 +226,17 @@ def contour_to_world_plane_xld(contour, homography):
 
 
 def gen_radial_distortion_map(cam_par, kappa, shape):
-    """半径歪みの逆マップ(row_map, col_map)を生成(gen_radial_distortion_map)。"""
+    """半径歪みの逆マップ(row_map, col_map)を生成(gen_radial_distortion_map)。
+
+    出力の画素 (row, col) → 入力の座標。模型は**一次の多項式**: 主点からの画素 ``(x, y)``、
+    ``r^2 = x^2 + y^2`` に対し ``入力 = 主点 + (x, y) * (1 + kappa r^2)``(``kappa`` の単位は
+    1/画素²、``cam_par`` の fx/fy は使わない)。
+    ★除算模型(``mvimage.distort_division`` / ``undistort_division``、``u = d / (1 + kappa |d|^2)``)
+    の厳密な逆ではなく、その一次近似にあたる。同じ ``kappa`` を両方に使うと黙って食い違う:
+    640x480・主点 (320, 240) で ``kappa = -5e-7`` なら最大 4.28 px、``-2e-6`` なら最大 46.73 px
+    (2026-11-09 実測)。除算模型の厳密な歪み除去には ``mvimage.change_radial_distortion_image``
+    (``cam_out`` の ``kappa`` を 0)を使う。
+    """
     op = "gen_radial_distortion_map"
     K = _K(cam_par, op); H, W = _shape2(shape, op)
     kappa = _finite_scalar(kappa, "kappa", op)
@@ -246,6 +256,66 @@ def _vij(H, i, j):
                      H[2, i] * H[0, j] + H[0, i] * H[2, j],
                      H[2, i] * H[1, j] + H[1, i] * H[2, j],
                      H[2, i] * H[2, j]])
+
+
+#: 雑音込みの退化の門(2026-11-09 op 監査 g2_calib_ct)。観測の残差から見積もった雑音で
+#: 画像点を揺らして閉形式を解き直し、内部パラメータの相対標準偏差(fx, fy, cx, cy を
+#: 焦点距離で割った値)のどれかがこれを超えたら「配置が K を決めていない」として拒否する。
+#: ★5 % は先に 2 % を試し、既存テストの正当な配置(tests/test_calib.py の 4 視点・雑音 0.2 px、
+#: 広がり 3.3 %、fx 誤差 < 1 %)と tests/test_calibration_loop.py(2.9 %)が落ちたあとに選んだ値で、
+#: 理論から導いた線ではない(後付けの選択であることを開示する)。
+_K_REL_STD_MAX = 0.05
+#: 揺らす回数と乱数の種(同じ入力なら同じ判定になる)。★32 回の見積もり自体が ±25 % ほど揺れるので、
+#: 広がりが 5 % 近くの配置では、入力(雑音の実現)や種を少し変えるだけで判定が反転する
+#: (独立レビュー 2026-11-09: 歪みなし 0.05 px・2 度で種 40 個中 7 個が通過、k1=−0.18・6 度で 26/40、
+#: 0.2 px・4 度で 3/40)。回数を 4 倍にしても揺れは半分にしかならず、反転は無くならない。
+_K_MC_TRIALS = 32
+_K_MC_SEED = 0
+
+
+def _zhang_views(object_points, image_points_list):
+    """入口検査: (N,2) 物体点と、各視点の (N,2) 画素 (row, col) を返す。"""
+    obj = _finite_array(object_points, "object_points", "camera_calibration", cols=2)
+    views = [np.asarray(ip, float).reshape(-1, 2) for ip in image_points_list]
+    if len(views) < 3:
+        raise ValueError(f"camera_calibration needs >= 3 views (got {len(views)}); "
+                         "Zhang's method solves 5 intrinsics from 2 constraints per view")
+    for k, ip in enumerate(views):
+        if len(ip) != len(obj) or len(ip) < 4:
+            raise ValueError(f"view {k}: {len(ip)} image points vs {len(obj)} object points "
+                             "(need equal counts, >= 4)")
+        if not np.all(np.isfinite(ip)):
+            raise ValueError(f"view {k}: non-finite image points")
+    return obj, views
+
+
+def _k_rel_std(obj, views, base):
+    """観測雑音での K の相対標準偏差を、画像点を揺らした解き直しで見積もる。
+
+    各視点の雑音 σ はホモグラフィ残差 ``reproj_rms`` から(1 成分あたり、自由度 2N−8 で補正)。
+    返り値 ``(rel_std dict, n_fail)``。点が 4 個の視点があると残差の自由度が 0 で雑音が
+    見積もれないので、全部 nan・失敗 0 を返す(門は効かない)。"""
+    n = len(obj)
+    keys = ("fx", "fy", "cx", "cy")
+    if n <= 4:
+        return {k: float("nan") for k in keys}, 0
+    dof = 1.0 - 8.0 / (2.0 * n)
+    sig = [r / np.sqrt(2.0) / np.sqrt(dof) for r in base["reproj_rms"]]
+    rng = np.random.default_rng(_K_MC_SEED)
+    ks, n_fail = [], 0
+    for _ in range(_K_MC_TRIALS):
+        pv = [v + rng.normal(scale=s, size=v.shape) for v, s in zip(views, sig)]
+        try:
+            o = _zhang_closed_form(obj, pv)
+        except ValueError:
+            n_fail += 1
+            continue
+        ks.append([o[k] for k in keys])
+    f = 0.5 * (base["fx"] + base["fy"])
+    if len(ks) < 2:
+        return {k: float("inf") for k in keys}, n_fail
+    sd = np.std(np.asarray(ks), axis=0) / f
+    return {k: float(v) for k, v in zip(keys, sd)}, n_fail
 
 
 def camera_calibration(object_points, image_points_list):
@@ -277,18 +347,59 @@ def camera_calibration(object_points, image_points_list):
     比 1.00 倍のまま、fx の誤差は 0.026 % から **7.33 %(281 倍)**になった。
     この比のほうは 129 倍動く。ただし**歪み補正前の点では意味を持たない**
     (下の門の注記を見よ)。
+
+    **雑音込みの退化の門(2026-11-09)**: 上の比の門(``<= 1e-8``)は雑音ゼロでしか鳴らない。
+    歪みなしでも観測雑音 0.05 px があると、全視点が正面平行(傾き 0 度)で比が 1.7e-7 になって
+    門を抜け、fx を真値の 33 倍(+3222 %)にした K を例外なしで返していた。そこで閉形式を
+    解いたあと、各視点のホモグラフィ残差から雑音 σ を見積もり、画像点を σ で揺らして
+    解き直す(32 回、種は固定で同じ入力なら同じ判定)。fx, fy, cx, cy の標準偏差を焦点距離で
+    割った値のどれかが 5 % を超えるか、揺らした解き直しが 1 回でも非有限/非正の K になったら
+    ``ValueError``(「この配置と雑音では K が決まらない」)。実測(10 視点 9x6 格子、歪みなし、
+    雑音 0.05 px): 傾き 0 度 → 拒否(相対標準偏差 65 %、32 回中 10 回が非正の K)、2 度 → 拒否
+    (5.1 %、実際の fx 誤差 −6.6 %)、5 度 → 通過(0.8 %、誤差 −1.3 %)、30 度 → 通過(0.04 %、
+    誤差 −0.03 %)。雑音 0.2 px では 2 度で 65 %(誤差 +28 %)→ 拒否、5 度で 3.4 %(誤差 −4.7 %)
+    → 通過。見積もりは戻り値の ``intrinsics_rel_std`` に入る。**これは 1σ の広がりで、上限では
+    ない**: 視点の種を 10 個変えると、通過した組の実際の fx 誤差は歪みなしでも最大 14.7 %
+    (0.05 px・2 度、10 個中 4 個が通過)、0.2 px・5 度で最大 10.7 % になる。精度の保証が要るなら
+    ``calib_lm.camera_calibration_lm`` の共分散を見る。しきい値 5 % の由来と、境目では判定が
+    種・入力で反転することは定数 ``_K_REL_STD_MAX`` / ``_K_MC_TRIALS`` の注記を見よ(5 % は 2 % で
+    既存テストが落ちたあとに選んだ値)。限界: (1) 歪みのある点では残差が歪みの合わなさを含み、
+    それを雑音として扱う(k1=−0.18・0.05 px では 5 度で 10 個中 1 個だけ通過、8 度以上は全部通過)。
+    偏り(歪みを無視したことによる系統誤差)は測らない: 視点の種 10 個で、通過した組の fx 誤差は
+    8 度で最大 20.0 %(中央値 9.3 %)、10 度で最大 13.8 %、30 度でも最大 7.2 %(cv2 は歪み込みで
+    8 度でも最大 0.51 %)。歪みのあるレンズの K は ``calib_lm.camera_calibration_lm`` で求める。(2) 視点の点が 4 個だと残差の
+    自由度が 0 で雑音を見積もれず、``intrinsics_rel_std`` は nan で門は効かない(``reproj_rms``
+    も 0 になり健全性を映さない)。(3) 閉形式を 33 回解くぶん遅い(10 視点 54 点で門の前
+    2.4 ms、門の後 13〜80 ms。計算機の混み具合で振れる)。
+
+    **スキューは自由に推定する**(5 自由度)。cv2.calibrateCamera はスキューを 0 に固定する。
+    歪みのあるレンズでは、歪みを無視した閉形式のしわ寄せがスキューと主点に出る: 傾き 30 度・
+    k1=−0.18, k2=0.03 の 10 視点で skew −6.5 px、cx +8.2 px、fy +0.98 %(cv2 は歪み込みで
+    fx −0.08 %、cx +0.15 px)。歪みなしでは skew 0.09 px と良い。スキュー 0 固定・歪み込みの
+    cv2 相当の答えが要るなら、これを初期値に使う ``calib_lm.camera_calibration_lm``
+    (K のスキューは 0、歪み 5 係数と全姿勢を同時に詰める)を使う。
     """
-    obj = _finite_array(object_points, "object_points", "camera_calibration", cols=2)
-    views = [np.asarray(ip, float).reshape(-1, 2) for ip in image_points_list]
-    if len(views) < 3:
-        raise ValueError(f"camera_calibration needs >= 3 views (got {len(views)}); "
-                         "Zhang's method solves 5 intrinsics from 2 constraints per view")
-    for k, ip in enumerate(views):
-        if len(ip) != len(obj) or len(ip) < 4:
-            raise ValueError(f"view {k}: {len(ip)} image points vs {len(obj)} object points "
-                             "(need equal counts, >= 4)")
-        if not np.all(np.isfinite(ip)):
-            raise ValueError(f"view {k}: non-finite image points")
+    obj, views = _zhang_views(object_points, image_points_list)
+    out = _zhang_closed_form(obj, views)
+    rel, n_fail = _k_rel_std(obj, views, out)
+    worst = max(rel.values())
+    if n_fail > 0 or worst > _K_REL_STD_MAX:
+        raise ValueError(
+            "camera_calibration: the views do not determine K at the observed noise level "
+            f"(re-solving with image points perturbed by the measured residual: {n_fail}/"
+            f"{_K_MC_TRIALS} non-finite/non-positive K, relative std fx {rel['fx']:.1%} "
+            f"fy {rel['fy']:.1%} cx {rel['cx']:.1%} cy {rel['cy']:.1%} of the focal length, "
+            f"limit {_K_REL_STD_MAX:.0%}; rank ratio {out['orientation_rank_ratio']:.2e}) — "
+            "tilt the target more between views (>= 5-10 degrees) or add views")
+    out["intrinsics_rel_std"] = rel
+    return out
+
+
+def _zhang_closed_form(obj, views):
+    """Zhang の閉形式の本体(入口検査済みの obj, views を受け取る)。
+
+    退化の比の門と、K が非有限/非正の門だけを持つ。雑音込みの門は :func:`camera_calibration`
+    の側(非線形最適化の初期値に使う ``calib_lm`` はこちらを直接呼ぶ)。"""
     Hs, reproj = [], []
     for ip in views:
         xy = ip[:, ::-1]                                   # (row,col) -> (x=col, y=row)

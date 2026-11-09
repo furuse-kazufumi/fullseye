@@ -6836,11 +6836,11 @@ py -3.11 examples/poc_real_bg_kalman_tracking.py
 
 ## No.2026.006 —— 再投影誤差 0.05 px は何も保証しない
 
-再投影誤差が小さいことは、焦点距離が正しいことの保証にならない。実写の校正板の質感で板をほぼ正面に描き直すと、再投影誤差はほぼ同じまま焦点距離の誤差が 3.99 % になった。警報になるのは再投影誤差ではなく、焦点距離の推定のばらつきのほうだ。
+再投影誤差が小さいことは、焦点距離が正しいことの保証にならない。実写の校正板の質感で板をほぼ正面に描き直すと、再投影誤差はほぼ同じまま、焦点距離の誤差は斜めに置いた板の 28 倍以上になった。警報になるのは再投影誤差ではなく、焦点距離の推定のばらつきのほうだ。
 
 [![再投影誤差 0.05 px は何も保証しない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/06_real_board_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/06_real_board.png)
 
-*↑ **再投影誤差 0.05 px は何も保証しない** ―― 既知の内部パラメータと姿勢で格子点を投影し、校正し直して成分ごとに誤差を出した図。板の傾き 32 / 8 / 2 度で再投影 RMS は 0.0688〜0.0690 px(比 1.00)なのに、fx の誤差は 0.026〜7.326 %(281 倍)。実写の校正板(OpenCV が配布する 13 枚)では、再投影の外れた 1 枚(left02)を含む 4 枚組は RMS が大きく、それを除く 495 組では RMS 0.148〜0.318 px のまま fx が 12 枚の推定から −1.46〜+2.53 % 散る(RMS と |差| の相関 −0.045。基準を 13 枚の推定にすると相関の値は変わる)。含まない組の RMS 0.3 px 付近の塊は 2 番目に外れた left13 を含む 165 組で、外れを RMS の大きい順に 1 / 2 / 3 枚除くと相関は −0.045 / −0.055 / +0.244 と動く。13 枚の推定を真値に置き、実写の質感で同じ 3 配置を描き直すと、再投影 RMS 0.148〜0.154 px のまま |fx 誤差| は 0.033 / 0.22 / 3.99 %(傾き 2 度は雑音の種ごとに 3.05〜4.97 %)。歪みのあるカメラでは退化検出の門が発火せず、非線形最適化は正面配置でも答えを返す。*
+*↑ **再投影誤差 0.05 px は何も保証しない** ―― 既知の内部パラメータと姿勢で格子点を投影し、校正し直して成分ごとに誤差を出した図。板の傾き 32 / 8 / 2 度で再投影 RMS は 0.0688〜0.0690 px(比 1.00)なのに、fx の誤差は 0.026〜7.326 %(281 倍)。実写の校正板(OpenCV が配布する 13 枚)では、再投影の外れた 1 枚(left02)を含む 4 枚組は RMS が大きく、それを除く 495 組では RMS 0.148〜0.318 px のまま fx が 12 枚の推定から −1.46〜+2.53 % 散る(RMS と |差| の相関 −0.045。基準を 13 枚の推定にすると相関の値は変わる)。含まない組の RMS 0.3 px 付近の塊は 2 番目に外れた left13 を含む 165 組で、外れを RMS の大きい順に 1 / 2 / 3 枚除くと相関は −0.045 / −0.055 / +0.244 と動く。13 枚の推定を真値に置き、実写の質感で同じ 3 配置を描き直すと、再投影 RMS 0.146〜0.154 px のまま |fx 誤差| は雑音の種 5 個で 0.02〜0.08 / 0.22〜0.43 / 2.1〜7.4 %(傾き 2 度のいちばん小さい値でも 32 度のいちばん大きい値の 28 倍)。描き直しの経路は敏感で、真値が 1e-5 px 動くだけで角点が動いて雑音の実現が変わるので、値は範囲で読む。歪みのあるカメラでは比による退化検出の門が発火せず(雑音込みの門は傾き 5 度を止めるが 8 度は通し、fx を 18.5 % 誤る)、非線形最適化は正面配置でも答えを返す。*
 
 [![RMS は 1.00 倍しか動かないのに fx 誤差は 281 倍動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/01_reproj_vs_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/01_reproj_vs_truth.png)
 
@@ -6860,7 +6860,7 @@ py -3.11 examples/poc_real_bg_kalman_tracking.py
 
 [![第 1 部: 同じ雑音 0.05 px の観測を、傾き 32 度(左)と 2 度(右)の配置で解く反復。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/05_calibration_convergence.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/05_calibration_convergence.gif)
 
-*↑ 動く図 ―― 第 1 部: 同じ雑音 0.05 px の観測を、傾き 32 度(左)と 2 度(右)の配置で解く反復。再投影 RMS はどちらも 0.069 / 0.069 px まで下がるが、fx は左が 1199.7(誤差 0.026 %)、右が 1112.1(誤差 7.33 %)で止まる。第 2 部: fx を真値の 0.92〜1.08 倍に固定して残りを解き直すと、左は RMS が 0.54 / 0.45 px(両端)まで跳ね上がるのに、右は 0.069 / 0.069 px とほとんど動かない —— 板までの距離 Z が fx と同じ比で動いて(Z 比 0.920 / 1.080)、画素の位置を保つため。右の配置では再投影誤差が焦点距離について何も言っていない。*
+*↑ 動く図 ―― 第 1 部: 同じ雑音 0.05 px の観測を、傾き 32 度(左)と 2 度(右)の配置で解く反復。再投影 RMS はどちらも 0.069 / 0.069 px まで下がるが、fx は左が 1199.7(誤差 0.026 %)、右が 1112.0(誤差 7.33 %)で止まる。第 2 部: fx を真値の 0.92〜1.08 倍に固定して残りを解き直すと、左は RMS が 0.54 / 0.45 px(両端)まで跳ね上がるのに、右は 0.069 / 0.069 px とほとんど動かない —— 板までの距離 Z が fx と同じ比で動いて(Z 比 0.920 / 1.080)、画素の位置を保つため。右の配置では再投影誤差が焦点距離について何も言っていない。*
 
 ```
 py -3.11 examples/poc_camera_calibration.py

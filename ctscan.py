@@ -767,8 +767,21 @@ def _clip_positive(b, x):
 
 
 def _report(on_iter, b, k, x):
-    if on_iter is not None:
-        on_iter(k, b.host(x))
+    """Call ``on_iter(k, volume)``; True when it asks to stop.
+
+    Only a boolean ``True`` stops: a Python ``bool`` or a ``numpy.bool_`` (what
+    ``rel < 1e-3`` returns). Every other return value — ``None``, a number, a
+    dict, an array — is ignored and the iteration continues, so a callback that
+    records and happens to return something (``curve.append(...)`` returns None,
+    ``d.setdefault(...)`` and a residual-returning lambda do not) is never cut
+    short and an array return never raises. History (independent reviews
+    2026-11-09): ``is True`` ignored ``numpy.True_`` (30/30 iterations ran);
+    the truthiness rule that replaced it stopped value-returning recorders after
+    1 of 20 iterations and raised on arrays."""
+    if on_iter is None:
+        return False
+    r = on_iter(k, b.host(x))
+    return isinstance(r, (bool, np.bool_)) and bool(r)
 
 
 def sirt_reconstruct(projections, geometry, n_iter=50, relaxation=1.0, initial=None,
@@ -786,11 +799,26 @@ def sirt_reconstruct(projections, geometry, n_iter=50, relaxation=1.0, initial=N
     :param initial: starting volume; ``None`` gives zeros.
     :param nonnegative: clip to ``>= 0`` after each iteration.
     :param device: ``"auto"``, ``"cpu"`` or ``"cuda"``.
-    :param on_iter: optional ``on_iter(iteration, volume)`` for a convergence curve.
+    :param on_iter: optional ``on_iter(iteration, volume)`` for a convergence curve;
+        returning a boolean ``True`` (``bool`` or ``numpy.bool_``) stops after
+        that iteration; any other return value (``None``, numbers, dicts,
+        arrays) is ignored.
     :returns: ``(Z, Y, X)`` float volume.
     :raises ValueError: on a shape that disagrees with the geometry or a relaxation
         outside ``(0, 2)``. Empty input (``projections`` with 0 elements) raises
         ``ValueError``.
+
+    **The default 50 iterations is not converged.** SIRT moves slowly. On
+    consistent data (24^3 Shepp-Logan, cone, 20 views) the relative residual is
+    0.0318 at 50 iterations and 0.0087 at 200, and the nRMS to the truth drops
+    from 0.0407 to 0.0232 (43 %); on the measured walnut (fan, 50 views) the RMSE
+    to the reference is 0.0055 /mm at 60 iterations and 0.0036 at 400 (2026-11-09
+    audit). Comparing methods at the defaults makes SIRT look worse than it is.
+    Choose ``n_iter`` from a curve: ``on_iter`` can compute the residual
+    ``|A x - p| / |p|`` (``ct_forward_project``) or the error on held-out views,
+    and return ``True`` once its relative change falls below e.g. ``1e-3``. With
+    noisy data the error to the truth reaches a minimum and then rises again
+    (semi-convergence), so the residual alone is not a stopping rule there.
     """
     op = "sirt_reconstruct"
     geom, b, p, n_it, lam, x = _iter_args(projections, geometry, device, n_iter, relaxation,
@@ -803,7 +831,8 @@ def sirt_reconstruct(projections, geometry, n_iter=50, relaxation=1.0, initial=N
         x = x + lam * cols * _gpu._adjoint(b, resid, geom)
         if nonnegative:
             x = _clip_positive(b, x)
-        _report(on_iter, b, k, x)
+        if _report(on_iter, b, k, x):
+            break
     return b.host(x)
 
 
@@ -823,11 +852,20 @@ def os_sart_reconstruct(projections, geometry, n_iter=10, n_subsets=16, relaxati
     :param initial: starting volume; ``None`` gives zeros.
     :param nonnegative: clip to ``>= 0`` after each subset.
     :param device: ``"auto"``, ``"cpu"`` or ``"cuda"``.
-    :param on_iter: optional ``on_iter(iteration, volume)``.
+    :param on_iter: optional ``on_iter(iteration, volume)``, called after each full
+        pass; returning a boolean ``True`` (``bool`` or ``numpy.bool_``) stops
+        there, any other return value is ignored.
     :returns: ``(Z, Y, X)`` float volume.
     :raises ValueError: on a shape that disagrees with the geometry, a relaxation
         outside ``(0, 2)``, or more subsets than views. Empty input (``projections``
         with 0 elements) raises ``ValueError``.
+
+    **The default 10 passes is not converged.** On consistent data (24^3
+    Shepp-Logan, cone, 20 views, 16 subsets) the relative residual is 0.0135 at
+    10 passes and 0.0044 at 40, nRMS to the truth 0.0278 -> 0.0176 (37 %); on the
+    measured walnut (fan, 50 views, 10 subsets) the RMSE to the reference is
+    0.0048 /mm at 10 passes and 0.0036 at 40 (2026-11-09 audit). Pick the count
+    from a curve (``on_iter``, see :func:`sirt_reconstruct`).
     """
     op = "os_sart_reconstruct"
     geom, b, p, n_it, lam, x = _iter_args(projections, geometry, device, n_iter, relaxation,
@@ -848,7 +886,8 @@ def os_sart_reconstruct(projections, geometry, n_iter=10, n_subsets=16, relaxati
             x = x + lam * c * _gpu._adjoint(b, resid, geom, s)
             if nonnegative:
                 x = _clip_positive(b, x)
-        _report(on_iter, b, k, x)
+        if _report(on_iter, b, k, x):
+            break
     return b.host(x)
 
 
@@ -919,7 +958,9 @@ def tv_reconstruct(projections, geometry, tv_weight=3e-4, n_iter=200, initial=No
     :param initial: starting volume; ``None`` gives zeros.
     :param nonnegative: enforce ``x >= 0``.
     :param device: ``"auto"``, ``"cpu"`` or ``"cuda"``.
-    :param on_iter: optional ``on_iter(iteration, volume)``.
+    :param on_iter: optional ``on_iter(iteration, volume)``; returning a boolean
+        ``True`` (``bool`` or ``numpy.bool_``) stops after that iteration, any other
+        return value is ignored (same rule as :func:`sirt_reconstruct`).
     :returns: ``(Z, Y, X)`` float volume.
     :raises ValueError: on a shape that disagrees with the geometry or a negative
         weight. Empty input (``projections`` with 0 elements) raises ``ValueError``.
@@ -957,7 +998,8 @@ def tv_reconstruct(projections, geometry, tv_weight=3e-4, n_iter=200, initial=No
             new = _clip_positive(b, new)
         bar = 2.0 * new - x
         x = new
-        _report(on_iter, b, k, x)
+        if _report(on_iter, b, k, x):
+            break
     return b.host(x)
 
 

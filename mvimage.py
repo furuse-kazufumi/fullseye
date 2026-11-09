@@ -6,6 +6,11 @@ docstring に書く。比較で測っていない優劣は書かない。
 
 写像表(``row_map`` / ``col_map``)の向きは ``calib.gen_radial_distortion_map`` と同じで、
 **出力の画素 → 入力の座標**。出力の画素を順に埋めるための逆写像なので穴が開かない。
+★向きは同じだが**歪みの模型は違う**: ``gen_radial_distortion_map`` は一次の多項式模型
+``r_in = r_out (1 + kappa r_out^2)`` で、ここの除算模型の厳密な逆(``distort_division``)では
+ない。同じ ``kappa`` を両方に渡すと、640x480・主点中央で ``kappa = -5e-7`` なら最大 4.3 px、
+``-2e-6`` なら最大 46.7 px 食い違う(2026-11-09 実測)。除算模型で歪みを除く画像は
+``change_radial_distortion_image``(``cam_out`` の ``kappa`` を 0)で作る。
 """
 from __future__ import annotations
 
@@ -55,10 +60,22 @@ def distort_division(x, y, kappa):
 
 
 def undistort_division(x, y, kappa):
-    """歪んだ座標を除算モデルで戻す(``u = d / (1 + kappa |d|^2)``)。"""
+    """歪んだ座標を除算モデルで戻す(``u = d / (1 + kappa |d|^2)``、``distort_division`` の逆)。
+
+    ``x`` / ``y`` は**主点からの画素**(列 − cx、行 − cy)、``kappa`` の単位は 1/画素²。
+    有効な半径: ``kappa < 0`` のとき ``|d| < 1/sqrt(-kappa)``。その半径で分母
+    ``1 + kappa |d|^2`` が 0 になり、外側では符号が反転して主点の反対側へ折り返す
+    (物理的に意味が無い)ので、分母が 0 以下の座標は **NaN** を返す(``distort_division`` が
+    像を持たない座標に NaN を返すのと対称)。2026-11-09 より前は、``kappa = -2e-6`` の
+    r = 707.1 px で ``(inf, nan)``、r = 848.5 px で −1928.5(符号反転)を黙って返していた。
+    有効域での往復誤差は 4e-13 px。``kappa >= 0`` では全域で有効。
+    出典: R. Lenz and D. Fritsch, ISPRS J. Photogramm. Remote Sens. 45(2), 90-110 (1990)。
+    """
     x = np.asarray(x, dtype=np.float64)
     y = np.asarray(y, dtype=np.float64)
-    f = 1.0 / (1.0 + float(kappa) * (x * x + y * y))
+    den = 1.0 + float(kappa) * (x * x + y * y)
+    ok = den > 0.0
+    f = np.where(ok, 1.0 / np.where(ok, den, 1.0), np.nan)
     return x * f, y * f
 
 

@@ -32,11 +32,26 @@ formula, so it is the route for tomosynthesis, few views and limited angle.
 :param initial: starting volume; ``None`` gives zeros.
 :param nonnegative: clip to ``>= 0`` after each iteration.
 :param device: ``"auto"``, ``"cpu"`` or ``"cuda"``.
-:param on_iter: optional ``on_iter(iteration, volume)`` for a convergence curve.
+:param on_iter: optional ``on_iter(iteration, volume)`` for a convergence curve;
+    returning a boolean ``True`` (``bool`` or ``numpy.bool_``) stops after
+    that iteration; any other return value (``None``, numbers, dicts,
+    arrays) is ignored.
 :returns: ``(Z, Y, X)`` float volume.
 :raises ValueError: on a shape that disagrees with the geometry or a relaxation
     outside ``(0, 2)``. Empty input (``projections`` with 0 elements) raises
     ``ValueError``.
+
+**The default 50 iterations is not converged.** SIRT moves slowly. On
+consistent data (24^3 Shepp-Logan, cone, 20 views) the relative residual is
+0.0318 at 50 iterations and 0.0087 at 200, and the nRMS to the truth drops
+from 0.0407 to 0.0232 (43 %); on the measured walnut (fan, 50 views) the RMSE
+to the reference is 0.0055 /mm at 60 iterations and 0.0036 at 400 (2026-11-09
+audit). Comparing methods at the defaults makes SIRT look worse than it is.
+Choose ``n_iter`` from a curve: ``on_iter`` can compute the residual
+``|A x - p| / |p|`` (``ct_forward_project``) or the error on held-out views,
+and return ``True`` once its relative change falls below e.g. ``1e-3``. With
+noisy data the error to the truth reaches a minimum and then rises again
+(semi-convergence), so the residual alone is not a stopping rule there.
 
 ## 参考(サンプルデータ・文献)
 

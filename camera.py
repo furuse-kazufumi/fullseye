@@ -380,16 +380,21 @@ def _pnp_planar(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
     Kinv = np.linalg.inv(K)
     m = np.hstack([uv, np.ones((uv.shape[0], 1))]) @ Kinv.T
     m = m[:, :2] / m[:, 2:3]
-    # homography DLT: p2 (homogeneous) -> m
+    # homography DLT: p2 (homogeneous) -> m, on Hartley-normalised coordinates
+    # (H&Z Alg. 4.2). Without the normalisation the 3 outliers of a 20-point
+    # board pulled the start to t_z = 0 (true 2.5) and LM never recovered
+    # (median translation error 90 %, cv2.solvePnP 5.5 %; 2026-11-09 audit).
     N = X.shape[0]
+    p2h, T1 = _normalize_2d(p2)
+    mh, T2 = _normalize_2d(m)
     A = np.zeros((2 * N, 9))
     for i in range(N):
-        x, y = p2[i]
-        u, v = m[i]
+        x, y = p2h[i, :2]
+        u, v = mh[i, :2]
         A[2 * i] = [-x, -y, -1, 0, 0, 0, u * x, u * y, u]
         A[2 * i + 1] = [0, 0, 0, -x, -y, -1, v * x, v * y, v]
     _, _, Vt2 = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
-    H = Vt2[-1].reshape(3, 3)
+    H = np.linalg.inv(T2) @ Vt2[-1].reshape(3, 3) @ T1
     best = None
     for s in (1.0, -1.0):
         lam = s / max(0.5 * (np.linalg.norm(H[:, 0]) + np.linalg.norm(H[:, 1])), 1e-12)
@@ -409,38 +414,53 @@ def _pnp_planar(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
     return best[1], best[2]
 
 
+# General DLT resection is rank-deficient long before the exact-coplanarity gate
+# (1e-6) fires: on a 0.6 m board with sub-millimetre relief (thickness ratio
+# 4e-6 .. 4e-2) it returned translations 90-100 % wrong (2026-11-09 audit,
+# 20 points / 0.5 px noise / 30 poses: 30/30, 27/30, 12/30 failures at ratios
+# 4e-6, 4e-4, 4e-3; cv2.solvePnP 0/30). The first fix tried the planar start only
+# below a thickness ratio of 0.1, which left a step at the switch (independent
+# review 2026-11-09: 8 points, ratios 0.11-0.36, 1 of 30 poses lost per cell; with
+# 3 outliers the median translation error jumped from 0.044 to 0.48). The planar
+# start is now always a candidate; the cost is one extra LM run.
+
+
+def _thickness_ratio(X: np.ndarray) -> float:
+    """Smallest / largest singular value of the centred 3-D points (0 = planar)."""
+    c = X - X.mean(0)
+    s = np.linalg.svd(c, compute_uv=False)
+    return float(s[-1] / s[0]) if s[0] > 0 else 0.0
+
+
 def _pnp_init(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
-    """Initial pose for PnP: homography-based for coplanar targets, DLT otherwise."""
+    """Initial pose for PnP: homography-based for coplanar targets, DLT otherwise.
+
+    Single-candidate start kept for callers that want one guess; :func:`solve_pnp`
+    itself refines every pose from :func:`_pnp_candidates`."""
     if _coplanar(X):
         return _pnp_planar(X, uv, K)
     return _pnp_dlt(X, uv, K)
 
 
-def solve_pnp(points3d, uv, K, iters: int = 30, refine: bool = True):
-    """Recover object/camera 6-DoF pose ``(R, t)`` from >=6 3-D<->2-D matches.
+def _pnp_candidates(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
+    """Initial poses to refine. Exactly coplanar -> planar only; otherwise both the
+    DLT start and the planar (best-fit plane homography) start, whatever the
+    thickness — the caller keeps the refined pose with the lower cost, so there is
+    no switch point at which the accuracy steps."""
+    if _coplanar(X):
+        return [_pnp_planar(X, uv, K)]
+    cands = []
+    try:
+        cands.append(_pnp_dlt(X, uv, K))
+    except np.linalg.LinAlgError:
+        pass
+    cands.append(_pnp_planar(X, uv, K))
+    return cands
 
-    Given a known 3-D model (``points3d``, N>=6) and where its points land in the
-    image (``uv``) under a calibrated camera (``K``), returns the rotation ``R``
-    (3, 3) and translation ``t`` (3,) that map the model into the camera frame
-    (``X_cam = R @ X_model + t``). This is the "perspective-n-point" problem — the
-    2-D-to-6-DoF step a robot uses to know where a recognised object sits before
-    grasping it. DLT initialisation (H&Z §7.1) followed by Gauss-Newton /
-    Levenberg-Marquardt refinement of the reprojection error.
 
-    Returns ``(R, t, rms)`` where ``rms`` is the final RMS reprojection error in
-    pixels (a small value certifies the fit)."""
-    X = _pts3(points3d)
-    uv = _pts2(uv)
-    K = _K3(K)
-    if X.shape[0] != uv.shape[0]:
-        raise ValueError("points3d and uv must have the same length")
-    if X.shape[0] < 6:
-        raise ValueError("PnP needs at least 6 correspondences, got %d" % X.shape[0])
-    R0, t0 = _pnp_init(X, uv, K)
-    if not refine:
-        rms = float(np.sqrt(np.mean(reprojection_error(X, uv, K, R0, t0) ** 2)))
-        return R0, t0, rms
-
+def _pnp_refine(X, uv, K, R0, t0, iters):
+    """Levenberg-Marquardt refinement of the reprojection error from (R0, t0).
+    Returns (R, t, cost) with cost = sum of squared pixel residuals."""
     xi = np.concatenate([rotation_log(R0), t0])                # (6,)
     lam = 1e-3
 
@@ -473,8 +493,63 @@ def solve_pnp(points3d, uv, K, iters: int = 30, refine: bool = True):
                 break
         else:
             lam = min(lam * 4.0, 1e6)
-    R = rodrigues(xi[:3])
-    t = xi[3:]
+    return rodrigues(xi[:3]), xi[3:], cost
+
+
+def solve_pnp(points3d, uv, K, iters: int = 30, refine: bool = True):
+    """Recover object/camera 6-DoF pose ``(R, t)`` from >=6 3-D<->2-D matches.
+
+    Given a known 3-D model (``points3d``, N>=6) and where its points land in the
+    image (``uv``) under a calibrated camera (``K``), returns the rotation ``R``
+    (3, 3) and translation ``t`` (3,) that map the model into the camera frame
+    (``X_cam = R @ X_model + t``). This is the "perspective-n-point" problem — the
+    2-D-to-6-DoF step a robot uses to know where a recognised object sits before
+    grasping it. DLT initialisation (H&Z §7.1) followed by Gauss-Newton /
+    Levenberg-Marquardt refinement of the reprojection error.
+
+    Returns ``(R, t, rms)`` where ``rms`` is the final RMS reprojection error in
+    pixels (a small value certifies the fit).
+
+    Initialisation: exactly coplanar models use the plane->image homography;
+    every other model gets *both* the homography of its best-fit plane and the
+    DLT start, each refined, and the pose with the lower reprojection cost
+    (points in front of the camera first) is returned. (Thin models — a machined
+    plate with sub-millimetre relief, a planar marker with height error — are
+    where DLT alone fails; trying both everywhere avoids a step at any
+    thickness threshold.)
+    Before 2026-11-09 thin models went to DLT alone, which is rank-deficient
+    there and returned translations 90-100 % wrong with rms 500-2000 px
+    (cv2.solvePnP was correct on the same input).
+
+    Limits (read ``rms``):
+
+    - Not robust to outliers: this is plain least squares. With mismatched
+      correspondences use :func:`pnp3d.pnp_ransac` (``fs.pnp_ransac``). A
+      ``rms`` far above the measurement noise (several px for sub-pixel
+      corners) means the pose is not trustworthy.
+    - Raises ``ValueError`` for non-finite ``points3d`` / ``uv`` / ``K``,
+      mismatched lengths or fewer than 6 points."""
+    X = _pts3(points3d)
+    uv = _pts2(uv)
+    K = _K3(K)
+    if X.shape[0] != uv.shape[0]:
+        raise ValueError("points3d and uv must have the same length")
+    if X.shape[0] < 6:
+        raise ValueError("PnP needs at least 6 correspondences, got %d" % X.shape[0])
+    if not (np.isfinite(X).all() and np.isfinite(uv).all() and np.isfinite(K).all()):
+        raise ValueError("solve_pnp: points3d, uv and K must be finite (NaN/inf found)")
+    best = None
+    for R0, t0 in _pnp_candidates(X, uv, K):
+        if refine:
+            R, t, cost = _pnp_refine(X, uv, K, R0, t0, iters)
+        else:
+            R, t = R0, t0
+            cost = float(np.sum(reprojection_error(X, uv, K, R, t) ** 2))
+        front = float(((X @ R.T + t)[:, 2] > 0).mean())
+        score = (front, -cost)
+        if best is None or score > best[0]:
+            best = (score, R, t)
+    R, t = best[1], best[2]
     rms = float(np.sqrt(np.mean(reprojection_error(X, uv, K, R, t) ** 2)))
     return R, t, rms
 

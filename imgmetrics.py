@@ -719,6 +719,33 @@ def _ssim_channel(fa, fb, dr, win_size, sigma, K1, K2, crop_border):
     return smap
 
 
+#: SSIM で float の幅 1.0 を推定してよい、実際の値の幅(max − min)の下限。
+_SSIM_MIN_SPAN_FOR_UNIT_RANGE = 0.25
+
+
+def _ssim_span_guard(a, b, data_range):
+    """SSIM で float の幅を自動推定(1.0)するのは、値の幅が 1/4 以上のときだけ許す。
+
+    SSIM の安定化定数 ``C1 = (K1 dr)^2``・``C2 = (K2 dr)^2`` は ``dr`` に比例するので、値の幅
+    0.05 の画像(CT の減弱係数 0〜0.05 /mm など)を 1.0 とみなすと定数が実際の分散を覆い、
+    SSIM が水増しされる: cameraman を 0.05 倍して雑音を足すと、正しい dr=0.05 で 0.515 の
+    ところ自動 1.0 で 0.993(雑音 6 倍では 0.081 → 0.842)。2026-11-09 まで例外なしで返していた。
+    PSNR は ``dr`` の取り違えが dB のずれになるだけで順位は変わらないので、ここ(SSIM)だけで止める。
+    形・窓の検査のあとに呼ぶ(小さすぎる画像は従来どおり窓の文言で止める)。"""
+    if data_range is None:
+        aa, bb = np.asarray(a), np.asarray(b)
+        if np.issubdtype(aa.dtype, np.floating) and aa.size and bb.size:
+            span = max(float(np.max(aa)), float(np.max(bb))) - min(float(np.min(aa)), float(np.min(bb)))
+            if span < _SSIM_MIN_SPAN_FOR_UNIT_RANGE:
+                raise MetricContractError(
+                    f"float images span only {span:.4g} (< {_SSIM_MIN_SPAN_FOR_UNIT_RANGE}) of the "
+                    "assumed [0, 1] range; SSIM's constants scale with data_range, so guessing 1.0 "
+                    "inflates it (values 0..0.05: 0.52 -> 0.99). Pass data_range= explicitly "
+                    "(the range the quantity can take, e.g. 1.0 for a dark [0, 1] photo, or the "
+                    "attenuation range for CT)"
+                )
+
+
 def _prep_ssim(a, b, data_range, win_size, sigma, channel_axis):
     fa, fb = _as_float_pair(a, b)
     dr = data_range_of(a, b, data_range=data_range)
@@ -738,6 +765,7 @@ def _prep_ssim(a, b, data_range, win_size, sigma, channel_axis):
         raise MetricContractError(
             f"each spatial axis must be at least win_size={win_size}, got {spatial}"
         )
+    _ssim_span_guard(a, b, data_range)
     return planes, dr, spatial
 
 
@@ -753,8 +781,14 @@ def ssim_map(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03,
     ``C1 = (K1 dr)^2``、``C2 = (K2 dr)^2``、``dr`` は ``data_range``。分散は母分散
     (``n/(n-1)`` 補正なし)。この平均が ``ssim``。
 
-    - ``data_range``: 整数 dtype は自動、float は ``[0, 1]`` のときだけ 1.0 と推定し、
-      それ以外は明示必須(``data_range_of`` の契約、外れると ``MetricContractError``)。
+    - ``data_range``: 整数 dtype は自動、float は ``[0, 1]`` に収まり**かつ値の幅(max − min)が
+      0.25 以上**のときだけ 1.0 と推定し、それ以外は明示必須(外れると ``MetricContractError``)。
+      幅の条件は 2026-11-09 から: 値の幅 0.05 の float を 1.0 とみなすと SSIM が 0.52 → 0.99 に
+      水増しされていた(定数 C1, C2 が dr に比例するため)。暗い [0, 1] の写真なら
+      ``data_range=1.0``、CT の減弱係数なら取りうる幅を渡す。
+      ★この門は 2 枚を合わせた値の幅しか見ないので、**熱い画素 1 つで抜ける**: 値域 0〜0.05 の
+      画像に 0.3 の画素が 1 つあるだけで推定は 1.0 に戻り、SSIM 0.993 を返す(正しい dr=0.05 では
+      0.871)。物理量(減弱係数・反射率など)の画像では門に頼らず、必ず ``data_range`` を渡す。
     - ``win_size``: 3 以上の奇数。各空間軸はこれ以上の長さが必要。
     - ``crop_border=True``(既定)は窓半径 ``(win_size-1)//2`` ぶんの縁を落とすので、
       返り値は ``(H - 2p, W - 2p)``。落とした後に何も残らない小画像は例外。
@@ -836,6 +870,7 @@ def ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03,
             f"{need} px, got {fa.shape}; use fewer scales (weights=) or a bigger image "
             "(silently dropping a scale would produce a number that is not comparable)"
         )
+    _ssim_span_guard(a, b, data_range)
 
     C1 = (K1 * dr) ** 2
     C2 = (K2 * dr) ** 2
