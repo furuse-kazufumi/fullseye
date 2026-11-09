@@ -309,15 +309,16 @@ def _count(v, name, lo, hi, op):
 # =========================================================================== #
 # 1. â vs a — 打ち切りつきの回帰(Tobit 型の最尤法)
 # =========================================================================== #
-def _tobit_terms(gam, th, X, y, st, sp):
+def _tobit_terms(gam, th, X, y, st, sp, off=0.0):
     """Olsen の再パラメータ化 (γ = β/σ, θ = 1/σ) での対数尤度・勾配・ヘッセ行列。
 
     ★この座標では対数尤度が**大域的に凹**(Olsen 1978)なので、ニュートン法が
     初期値によらず唯一の最大へ行く。``st`` は -1 = 左打ち切り(y はその閾値)、
-    0 = 観測、+1 = 右打ち切り。
+    0 = 観測、+1 = 右打ち切り。``off`` は ``η = Xγ + off`` の定数項(θ を掛けない)
+    —— a90 を固定したプロファイル尤度で使う(凹性は線形の制約の下でも保たれる)。
     """
     k = X.shape[1]
-    eta = X @ gam
+    eta = X @ gam + off
     ll = 0.0
     g = np.zeros(k + 1)
     H = np.zeros((k + 1, k + 1))
@@ -354,6 +355,50 @@ def _tobit_terms(gam, th, X, y, st, sp):
     return ll, g, H
 
 
+def _tobit_newton(gam, th, X, y, st, sp, op, off=0.0):
+    """Olsen 座標でのニュートン法(直線探索つき)。``(γ, θ, ℓ, g, H, 反復数)`` を返す。"""
+    gam = np.asarray(gam, dtype=np.float64)
+    ll, g, H = _tobit_terms(gam, th, X, y, st, sp, off)
+    k = gam.size
+    it = 0
+    for it in range(1, 201):
+        try:
+            step = np.linalg.solve(-H, g)
+        except np.linalg.LinAlgError as exc:
+            raise ValueError("%s: the information matrix is singular — the data do not "
+                             "identify the model" % op) from exc
+        t = 1.0
+        while True:
+            th_n = th + t * step[k]
+            if th_n > 0:
+                gn = gam + t * step[:k]
+                lln, g2, H2 = _tobit_terms(gn, th_n, X, y, st, sp, off)
+                if lln >= ll - 1e-12 * abs(ll):
+                    break
+            t *= 0.5
+            if t < 1e-12:
+                raise ValueError("%s: the likelihood maximisation stalled" % op)
+        gam, th, ll, g, H = gn, th_n, lln, g2, H2
+        if float(np.max(np.abs(t * step) / np.maximum(1.0, np.abs(np.r_[gam, th])))) < 1e-11:
+            break
+    else:
+        raise ValueError("%s: Newton iteration did not converge in 200 steps" % op)
+    return gam, th, ll, g, H, it
+
+
+#: 床・天井に張り付いた疑いを立てる同値の個数(``pod_ahat_fit`` の ``suspected_floor``)。
+SUSPECTED_PILE_MIN = 3
+#: 1823A が â vs a に勧める最小の試料数。これ未満は ``small_sample``(Wald の a90/95 が楽観側)。
+SMALL_SAMPLE_N = 40
+
+
+def _pile(ah, at_min):
+    """応答の最小値(最大値)に同じ値が ``SUSPECTED_PILE_MIN`` 個以上並べば ``(値, 個数)``、無ければ None。"""
+    v = float(ah.min() if at_min else ah.max())
+    cnt = int((ah == v).sum())
+    return (v, cnt) if cnt >= SUSPECTED_PILE_MIN else None
+
+
 def pod_ahat_fit(table, size="a", response="ahat", log_size=False, log_response=False,
                  censor_low=None, censor_high=None):
     """â vs a の回帰を、左右の打ち切りつき最尤法で当てる(``table``)。
@@ -379,6 +424,11 @@ def pod_ahat_fit(table, size="a", response="ahat", log_size=False, log_response=
     ``n`` ``n_left`` ``n_right`` ``n_censored`` ``loglik`` ``iterations``、座標の印
     ``log_size`` ``log_response``、打ち切り閾値、大きさの範囲 ``size_min`` / ``size_max``、
     当てに使った ``x`` ``y`` ``status``(-1 左 / 0 観測 / +1 右)。
+
+    ★``suspected_floor`` / ``suspected_ceiling``: ``censor_low`` (``censor_high``)を渡さず、応答の
+    最小値(最大値)に同じ値が 3 個以上並ぶと ``(値, 個数)``、ほかは None。雑音床や飽和に張り付いた
+    点を普通の最小二乗に入れると傾きが寝て a90 が楽観側に出る(床に 60 点中 11 点の合成で傾き
+    0.951 対 打ち切りあり 1.053・真値 1.1)。立ったら、その値を ``censor_low`` に渡して当て直すこと。
 
     空の入力(``table`` が 0 行、または空の dict)は ValueError。
     拒否(``ValueError``): 空の表・列の欠け・長さ違い・非有限・文字列、観測(打ち切り
@@ -439,31 +489,7 @@ def pod_ahat_fit(table, size="a", response="ahat", log_size=False, log_response=
 
     sp = _special()
     th = 1.0 / s0
-    gam = b0 * th
-    ll, g, H = _tobit_terms(gam, th, X, y, st, sp)
-    it = 0
-    for it in range(1, 201):
-        try:
-            step = np.linalg.solve(-H, g)
-        except np.linalg.LinAlgError as exc:
-            raise ValueError("%s: the information matrix is singular — the data do not "
-                             "identify the model" % op) from exc
-        t = 1.0
-        while True:
-            th_n = th + t * step[2]
-            if th_n > 0:
-                gn = gam + t * step[:2]
-                lln, g2, H2 = _tobit_terms(gn, th_n, X, y, st, sp)
-                if lln >= ll - 1e-12 * abs(ll):
-                    break
-            t *= 0.5
-            if t < 1e-12:
-                raise ValueError("%s: the likelihood maximisation stalled" % op)
-        gam, th, ll, g, H = gn, th_n, lln, g2, H2
-        if float(np.max(np.abs(t * step) / np.maximum(1.0, np.abs(np.r_[gam, th])))) < 1e-11:
-            break
-    else:
-        raise ValueError("%s: Newton iteration did not converge in 200 steps" % op)
+    gam, th, ll, g, H, it = _tobit_newton(b0 * th, th, X, y, st, sp, op)
 
     sigma = 1.0 / th
     beta = gam * sigma
@@ -490,6 +516,8 @@ def pod_ahat_fit(table, size="a", response="ahat", log_size=False, log_response=
         "size_min": float(a.min()), "size_max": float(a.max()),
         "ols_beta0": float(b_all[0]), "ols_beta1": float(b_all[1]), "ols_sigma": ols_sigma,
         "x": x, "y": y, "status": st,
+        "suspected_floor": _pile(ah, True) if lo is None else None,
+        "suspected_ceiling": _pile(ah, False) if hi is None else None,
     }
 
 
@@ -568,6 +596,22 @@ def pod_from_ahat(fit, a_dec, level=0.95, n_grid=200, a=None):
     ``bound_monotone`` が False のとき(``σ_pod`` が自分の標準誤差の z 倍に届かない =
     データが少なすぎる)下限曲線は 1 価にならず、読まないこと。
 
+    ★Wald の a90/95 は点数が少ないと信頼水準に届かない。真の a90 が既知の合成(log-log、σ = 0.4、
+    2000 反復)で「a90/95 ≥ 真の a90」の割合は名目 95 % に対し n = 10 で 0.79、n = 40 で 0.89、
+    n = 100 で 0.92(2026-11-09 実測)。そこで ``a90_95_lr`` も返す: a90 を固定して (β1, σ) について
+    最大化した**プロファイル対数尤度**が ``ℓmax − χ²₁(2·level − 1)/2`` まで落ちる大きさ
+    (``pod_hitmiss_fit`` と同じ作り、打ち切りも尤度に入る)。同じ合成で被覆率は n = 10 で 0.86、
+    n = 40 で 0.92、n = 100 で 0.93(打ち切りありでも同じ) —— Wald より水準に近いが、少数点では足りないことに変わりはない。
+    尤度が十分に落ちないときは ``None`` と ``lr_status = "unbounded"``、上限が元の単位で表せないほど
+    大きい(対数座標の exp が溢れる)ときは ``None`` と ``"overflow"``、プロファイルの最大化が途中で
+    失敗したときは ``None`` と ``"profile_failed"``(失敗を棄却と数えると上限が楽観側に出るため)、``fit`` に当てに使った
+    ``x`` ``y`` ``status`` が無いときは ``None`` と ``"no_data"``。``n`` < 40(1823A の推奨最小)
+    なら ``small_sample`` が True。
+
+    ★``a_dec_below_floor`` が True のとき、``a_dec`` は ``fit`` の ``censor_low``(記録の下限)より
+    下 —— 床より下の応答は観測されていないので、その閾値の POD は回帰の外挿だけで決まる
+    (1823A は ``a_dec`` ≥ 記録の閾値を前提にする)。``a_dec_above_ceiling`` は ``censor_high`` の上で同じ。
+
     ★``a90_95_beyond_data`` が True のとき、a90/95 は**試した最大の大きさより先**にある
     —— 回帰の直線を試験の外へ延ばした外挿で、1823A が「データの外で POD を語るな」と
     いう領域。数は返すが、その数で合否を決めてはいけないことを旗で同伴させる
@@ -593,6 +637,13 @@ def pod_from_ahat(fit, a_dec, level=0.95, n_grid=200, a=None):
     z90 = float(st.norm.ppf(0.9))
     mu, sp, cpod = _pod_params_from_ahat(b0, b1, s, cov, yd)
     x90, x9095, se90 = _quantile_upper(mu, sp, cpod, z90, zl)
+    lr, lr_status, crit = _ahat_lr_upper(fit, b0, b1, s, yd, float(x90), float(se90), z90, lv, st, op)
+    if lr is not None and not math.isfinite(float(_from_x(lr, lsz))):
+        # ★2026-11-09: 対数座標で上限が exp の範囲を超える(試験の外への極端な外挿)と inf になり、
+        #   状態は "ok" のままだった(PoC poc_equipment_selection_map の 350 件中 1 件、Wald 5e10)。
+        lr, lr_status = None, "overflow"
+    n_fit = fit.get("n")
+    lo_rec, hi_rec = fit.get("censor_low"), fit.get("censor_high")
     if a is None:
         grid = _size_grid(float(fit["size_min"]), float(fit["size_max"]), lsz, ng)
     else:
@@ -607,8 +658,76 @@ def pod_from_ahat(fit, a_dec, level=0.95, n_grid=200, a=None):
         "a_dec": float(a_dec), "y_dec": float(yd), "level": lv,
         "log_size": lsz, "bound_monotone": _bound_is_monotone(sp, cpod, zl),
         "a90_95_beyond_data": bool(_from_x(x9095, lsz) > float(fit["size_max"])),
+        "a90_95_lr": None if lr is None else float(_from_x(lr, lsz)), "lr_status": lr_status,
+        "lr_chi2": crit,
+        "n": None if n_fit is None else int(n_fit),
+        "small_sample": None if n_fit is None else bool(int(n_fit) < SMALL_SAMPLE_N),
+        "a_dec_below_floor": bool(lo_rec is not None and float(a_dec) < float(lo_rec)),
+        "a_dec_above_ceiling": bool(hi_rec is not None and float(a_dec) > float(hi_rec)),
         "a": grid, "pod": pod, "pod_lower": st.norm.cdf(qlo),
     }
+
+
+def _ahat_lr_upper(fit, b0, b1, s, yd, x90, se90, z90, lv, st, op):
+    """â vs a の a90 の尤度比(プロファイル)上限を x 座標で。``(値 or None, 状態, χ² の臨界値)``。
+
+    a90 = t を固定すると ``β0 = y_dec + z_0.9 σ − β1 t``。Olsen 座標では
+    ``η_i = θ y_dec + z_0.9 + γ1 (x_i − t)`` なので、``y' = y − y_dec``、説明変数 ``x − t``、
+    定数項 ``z_0.9`` の打ち切り回帰を (γ1, θ) について最大化すればよい(凹)。
+    """
+    crit = float(st.chi2.ppf(2.0 * lv - 1.0, 1))
+    if not all(k in fit for k in ("x", "y", "status")):
+        return None, "no_data", crit
+    x = np.asarray(fit["x"], dtype=np.float64)
+    y = np.asarray(fit["y"], dtype=np.float64)
+    sts = np.asarray(fit["status"], dtype=np.int64)
+    if not (x.shape == y.shape == sts.shape and x.ndim == 1 and np.isfinite(x).all()
+            and np.isfinite(y).all()):
+        return None, "no_data", crit
+    sp = _special()
+    X = np.column_stack([np.ones_like(x), x])
+    llmax = _tobit_terms(np.array([b0, b1]) / s, 1.0 / s, X, y, sts, sp)[0]
+    yv = y - yd
+
+    failed = []
+
+    def prof_dev(t):
+        # ★2026-11-09 独立レビュー R7: 最大化に失敗した点を inf(= 棄却)と数えると上限が楽観側に出る。
+        #   失敗は記録して、上限を返さない("profile_failed")。
+        try:
+            gam, _, lp, _, _, _ = _tobit_newton(np.array([b1 / s]), 1.0 / s, (x - t)[:, None], yv,
+                                                sts, sp, op, off=z90)
+        except ValueError:
+            failed.append(t)
+            return math.inf
+        if gam[0] <= 0:
+            failed.append(t)
+            return math.inf
+        return 2.0 * (llmax - lp)
+
+    stepx = max(se90, 1e-6 * max(1.0, abs(x90)))
+    lo_t, hi_t = x90, None
+    for kk in range(0, 14):
+        t = x90 + stepx * (2.0 ** kk)
+        if prof_dev(t) > crit:
+            hi_t = t
+            break
+        lo_t = t
+    if failed:
+        return None, "profile_failed", crit
+    if hi_t is None:
+        return None, "unbounded", crit
+    for _ in range(80):
+        mid = 0.5 * (lo_t + hi_t)
+        if prof_dev(mid) > crit:
+            hi_t = mid
+        else:
+            lo_t = mid
+        if hi_t - lo_t <= 1e-13 * max(1.0, abs(mid)):
+            break
+    if failed:
+        return None, "profile_failed", crit
+    return 0.5 * (lo_t + hi_t), "ok", crit
 
 
 # =========================================================================== #
@@ -913,7 +1032,9 @@ def pod_decision_tradeoff(fit, noise, a_dec_grid=None, n_grid=25, level=0.95):
     各行は ``pod_from_ahat`` と ``pod_false_call`` を同じ閾値で呼んだものと一致する。
 
     返り: 列 ``a_dec`` ``a50`` ``a90`` ``a90_95`` ``pfp_normal`` ``pfp_empirical``
-    ``pfp50`` ``pfp95``(すべて長さ ``n_grid`` か ``len(a_dec_grid)``)。
+    ``pfp50`` ``pfp95`` ``a_dec_below_floor``(すべて長さ ``n_grid`` か ``len(a_dec_grid)``)。
+    ``a_dec_below_floor`` が True の行は、閾値が ``fit`` の ``censor_low`` より下で POD が外挿
+    (``pod_from_ahat`` の同名の旗と同じ)。
 
     空の入力(``fit`` が空の dict)は ValueError。
     拒否(``ValueError``): ``pod_ahat_fit`` の表でない・``β1`` が 0 と区別できない、雑音が空・定数・
@@ -952,10 +1073,12 @@ def pod_decision_tradeoff(fit, noise, a_dec_grid=None, n_grid=25, level=0.95):
         k = int((v > ad).sum())
         pe[i] = k / v.size
         p50[i], _, p95[i] = _pfp_bounds(k, v.size)
+    lo_rec = fit.get("censor_low")
     return {
         "a_dec": grid, "a50": a50, "a90": a90, "a90_95": a9095,
         "pfp_normal": st.norm.sf((ys - m) / sd), "pfp_empirical": pe,
         "pfp50": p50, "pfp95": p95, "level": lv,
+        "a_dec_below_floor": (grid < float(lo_rec)) if lo_rec is not None else np.zeros(grid.size, bool),
     }
 
 

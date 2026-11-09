@@ -13,13 +13,15 @@
 <p><b>default 1.0 = pixel में ही</b> ।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">n</code> (वस्तुओं की संख्या), <code style="color:#22d3bf">spacing</code>, <code style="color:#22d3bf">units</code> (item → इकाई का मेल), और</p>
+<p><code style="color:#22d3bf">n</code> (वस्तुओं की संख्या = वास्तव में मौजूद labels की संख्या), <code style="color:#22d3bf">spacing</code>, <code style="color:#22d3bf">units</code> (item → इकाई का मेल), और</p>
 <p>लंबाई <code style="color:#22d3bf">n</code> के 19 arrays (<code style="color:#22d3bf">FEATURE_KEYS</code>)। वस्तुएँ 0 हों तब भी</p>
-<p>सभी keys खाली arrays के साथ लौटती हैं (caller को branch नहीं करना पड़ता)।</p>
+<p>सभी keys खाली arrays के साथ लौटती हैं (caller को branch नहीं करना पड़ता)। labels में अंतराल हों तो</p>
+<p><code style="color:#22d3bf">n</code> <code style="color:#22d3bf">labels.max()</code> से छोटा होता है -- वस्तुओं को <code style="color:#22d3bf">f[&quot;label&quot;]</code> column से खोजें</p>
+<p>(<code style="color:#22d3bf">f[&quot;area&quot;][label - 1]</code> अंतराल के बाद खिसक जाता है)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle</code> <b>matrix coordinate system</b> का झुकाव है (+column → +row धनात्मक = screen पर clockwise)।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> <b>समान 2nd-order moments वाले ellipse</b> की axis लंबाई हैं (<code style="color:#22d3bf">4 sqrt(lambda)</code>)। यह pixels की व्यवस्था का बाहरी घेरा नहीं है, इसलिए square के लिए भुजा की लंबाई से थोड़ा लंबा आता है -- यह definition के अनुसार है, त्रुटि नहीं।</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> <code style="color:#22d3bf">4 pi A / P^2</code> है। <b>HALCON का <code style="color:#22d3bf">circularity</code> &quot;क्षेत्रफल / सबसे दूर के point को radius मानकर बने circle का क्षेत्रफल&quot; है, यानी अलग चीज़</b>, इसलिए मानों की तुलना करते समय definition जाँच लें।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> <code style="color:#22d3bf">4 pi A / P^2</code> को <b>1 पर सीमित</b> करके लिया गया मान है (कुछ pixels की वस्तुओं में परिधि का अनुमान क्षेत्रफल की तुलना में छोटा आता है और अनुपात 1 से ऊपर जाता है -- 1-pixel blob में 1.75 -- पर वृत्त से गोल कोई आकार नहीं)। <b>HALCON का <code style="color:#22d3bf">circularity</code> &quot;क्षेत्रफल / सबसे दूर के point को radius मानकर बने circle का क्षेत्रफल&quot; है, यानी अलग चीज़</b>, इसलिए मानों की तुलना करते समय definition जाँच लें।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">touches_border</code> True वाली वस्तुओं का क्षेत्रफल और परिधि दोनों <b>कटे हुए हिस्से जितने छोटे</b> होते हैं। गिनने से पहले इन्हें छोड़ दें, या ground truth की ओर भी इसी परंपरा से गिनें।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>

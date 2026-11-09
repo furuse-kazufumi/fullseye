@@ -536,12 +536,15 @@ def patchbank_fit(stack, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=("gra
     selection, so ``seed`` and ``proj_dim`` have no effect).
 
     Returns the model: ``bank`` (m, D'), ``mean`` / ``std`` (D), ``n_total`` patches, ``n_memory``,
-    ``fraction``, ``covering_radius``, the feature parameters and ``image_shape``.
+    ``fraction``, ``covering_radius``, the feature parameters, ``image_shape`` and the pixel scale
+    of the good images: ``input_range`` (min, max) and ``input_integer`` (integer dtype or not).
+    ``patchbank_score`` refuses an image on another scale (see there).
 
     Raises ``ValueError`` for invalid parameters, a feature that is constant over all good patches,
     or a stack that would exceed the memory guard.
     """
     op = "patchbank_fit"
+    integer_in = _integer_input(stack)
     st = _images(stack, "stack", op, min_n=1)
     spec = _spec(patch, stride, scales, groups, n_orient, op)
     frac = _num(coreset, "coreset", op, 0.0, 1.0, lo_open=True)
@@ -576,7 +579,40 @@ def patchbank_fit(stack, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=("gra
             "n_memory": int(m), "fraction": float(m) / z.shape[0], "covering_radius": radius,
             "position_weight": pw, "names": names, "grid": (gh, gw), "image_shape": tuple(st.shape[1:3]),
             "colour": st.ndim == 4, "patch": spec["patch"], "stride": spec["stride"],
-            "scales": spec["scales"], "groups": spec["groups"], "n_orient": spec["n_orient"]}
+            "scales": spec["scales"], "groups": spec["groups"], "n_orient": spec["n_orient"],
+            "input_range": (float(st.min()), float(st.max())), "input_integer": integer_in}
+
+
+def _integer_input(x):
+    """Whether the images come as an integer dtype (uint8 / uint16 …) — the scale the model was fitted on."""
+    first = x[0] if isinstance(x, (list, tuple)) and len(x) else x
+    return np.asarray(first).dtype.kind in "iu"
+
+
+def _check_scale(image, img, model, op):
+    """Refuse an image whose pixel scale differs from the good images the model was fitted on.
+
+    ★2026-11-09 audit: the model did not remember the scale. Fitted on float [0, 1] and scored on
+    the same good image as uint8, ``image_score`` went 8.08 -> 4366 with no error (every image an
+    anomaly). The dtype family must match, and the image range must lie within the training range
+    widened by one training span on each side (a real defect may be brighter or darker than any
+    good pixel, but not by the factor 255 of a dtype mix-up).
+    """
+    if "input_range" not in model:                      # model from before 2026-11-09: nothing to compare
+        return
+    integer_in = _integer_input(image)
+    if bool(model.get("input_integer")) != integer_in:
+        raise ValueError("%s: the model was fitted on %s images but this image is %s — convert it to the "
+                         "training scale first (e.g. uint8 -> float: / 255)"
+                         % (op, "integer" if model.get("input_integer") else "float",
+                            np.asarray(image).dtype))
+    lo, hi = (float(v) for v in model["input_range"])
+    span = max(hi - lo, 1e-12)
+    vlo, vhi = float(img.min()), float(img.max())
+    if vlo < lo - span or vhi > hi + span:
+        raise ValueError("%s: image values span [%g, %g] but the good images spanned [%g, %g] — a different "
+                         "pixel scale (dtype or normalisation) would make every image an anomaly; rescale "
+                         "the image to the training scale" % (op, vlo, vhi, lo, hi))
 
 
 def _knn_dist(q, bank, k, chunk=256):
@@ -623,11 +659,14 @@ def patchbank_score(image, model, k=1, smooth=4.0):
     the smoothed map), ``k`` and ``smooth``.
 
     Raises ``ValueError`` for a model that is not a ``patchbank_fit`` result, a different image
-    shape, ``k`` larger than the bank, or a negative / non-finite ``smooth``.
+    shape, ``k`` larger than the bank, a negative / non-finite ``smooth``, or an image on another
+    pixel scale than the good images (integer vs float dtype, or values outside the training range
+    widened by one training span on each side).
     """
     op = "patchbank_score"
     spec = _spec_of(model, op, "patchbank")
     img = _one(image, "image", op)
+    _check_scale(image, img, model, op)
     sm = _num(smooth, "smooth", op, 0.0, 64.0)
     bank = model["bank"]
     kk = _int(k, "k", op, 1, bank.shape[0])

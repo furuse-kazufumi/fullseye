@@ -39,21 +39,63 @@ OpenCV's MOG2, and follow the person through an occlusion behind a pillar.
    折り返して戻ってくる。真値の重心から ``atan2_image`` で向きを出し、隠れる前と後の
    向きの差を測ってから、追跡の結果を読む。
 
-結果(2026-11-08、この機械で実測。``RECORDED`` と同じ値):
+結果(2026-11-09、この機械で実測。``RECORDED`` と同じ値):
 
-* 背景差分(評価列の F): Fullseye は I_OC_01 0.890 / I_OC_02 0.878、MOG2 は 0.987 / 0.884。
-  灰色 1 枚の画素ごとのカルマンは、色と影の判定を持つ MOG2 に I_OC_01 で 0.10 負け、I_OC_02 は
-  ほぼ並ぶ。動かない塊の吸収(``update_bg_esti``)は I_OC_01 で F を 0.794 → 0.890(適合率
-  0.681 → 0.830)に上げた。床の反射で一度前景になった塊が、吸収なしでは最後まで残る。
-  I_OC_02 では差が出ない(0.881 → 0.878)。推定した背景は MOG2 の方が真値の背景に近い
-  (RMS 0.4 対 2.3〜3.1、0〜255)。
+* 背景差分(評価列の F): Fullseye は I_OC_01 0.898 / I_OC_02 0.887、MOG2 は 0.987 / 0.902。
+  灰色 1 枚の画素ごとのカルマンは、色と影の判定を持つ MOG2 に I_OC_01 で 0.09 負け、I_OC_02 は
+  ほぼ並ぶ。動かない塊の吸収(``update_bg_esti``)は I_OC_01 で F を 0.809 → 0.898(適合率
+  0.704 → 0.844)に上げた。床の反射で一度前景になった塊が、吸収なしでは最後まで残る。
+  I_OC_02 では差が出ない(0.896 → 0.887)。推定した背景は MOG2 の方が真値の背景に近い
+  (RMS 0.4 対 2.4〜3.4、0〜255)。
 * 追跡: I_OC_01 では柱の裏の 26 コマを等速の予測でつなぎ、同じ番号のまま拾い直した
-  (拾い直した時の誤差 3.8 画素、見えているコマの誤差の中央値 7.9 画素)。予測しない最近傍は
-  柱で見失う。出てきたコマ(第 194 コマ)での誤差は、その場の予測 60.2 画素、``kalman_smooth`` で
-  推定し直した位置 15.4 画素。ただし第 194 コマの真値は体の 26 % しか見えない一部の重心で、柱の側へ
+  (拾い直した時の誤差 3.8 画素、見えているコマの誤差の中央値 7.8 画素)。予測しない最近傍は
+  柱で見失う。出てきたコマ(第 194 コマ)での誤差は、その場の予測 69.1 画素、``kalman_smooth`` で
+  推定し直した位置 15.5 画素。ただし第 194 コマの真値は体の 26 % しか見えない一部の重心で、柱の側へ
   偏っている。体の 9 割以上が見えた最初のコマ(第 202 コマ)では推定し直しの誤差は 4.0 画素。
   I_OC_02 は隠れている間に向きが 165° 変わり、カルマンは新しい番号で拾い直す(この列では最近傍も
   番号を継げない)。
+* 予測が外れた理由: 人は柱の裏で速くなっていない。体の 9 割以上が見えるコマで測った歩く速さは、
+  隠れる前(第 139〜163 コマ)・出た後(第 202〜226 コマ)とも毎コマ 2.65 画素(見えている一部の重心どうしの
+  差 3.51 画素/コマは柱の両側へ外向きに偏った値で、``partial_centroid_speed_across_gap`` として残す)。
+  外れた原因は、隠れる前の最後の更新(第 163 コマ)でフィルタの速さが 1.30 画素/コマまで落ちていたこと
+  (第 146 コマの 4.02 から落ち始め、最後の 3 回で 2.22 → 1.69 → 1.30)。第 163 コマの真値の体は 96 % 見えて
+  いて、柱の遮蔽ではない。観測の重心が歩く向きに対して後ろへ取り残されていた(それまでの中央値 −4.7 →
+  最後の更新 −9.7 画素、塊から誤検出を除くと −0.5 画素): その塊 1,846 画素のうち 389 画素が誤検出で、
+  うち 235 画素は 10 コマ前も誤検出、その中の 141 画素は 10〜30 コマ前に人の足がいた画素(人が通った跡が
+  背景の更新の遅れで誤検出として残ったもの。以下「通った跡」)。これらが ``GROUP_PX`` で同じ塊に
+  まとめられて重心を後ろへ引いた。
+  ★原因の切り分け: 誤検出を種類ごとに消して追跡をやり直すと、第 163 コマの速さは 消さない 1.30 /
+  通った跡だけ消す 2.11 / 通った跡でない動かない誤検出だけ消す 1.91 / 動く誤検出だけ消す 1.77 /
+  全部消す 2.25(真の歩く速さ 2.65)画素/コマ。出てきたコマの予測の誤差は 69.1 → 35.1 / 46.7 / 5.8 / 47.3
+  画素。どの種類を消しても速さは一部戻り、原因を 1 つの種類に帰せない。出てきたコマの予測が最も
+  合うのは動く誤検出だけを消した版(5.8 画素)で、そのとき最後の更新は第 166 コマまで延び、フィルタの速さは
+  3.39 と真の 2.65 を上回る(全部消すと最後の更新は同じ第 166 コマで 1.70)。この版で予測が合う理由は
+  確かめていない(門にもしていない)。背景差分の誤差が後段の追跡を壊す連鎖。
+* 横縦比の判定の効き目(外す → 入れる、:func:`aspect_sensitivity`、真値で): 更新に使わないコマ 28 → 32、
+  拾い直した時の誤差 5.8 → 3.8 画素は良くなり、隠れる前のフィルタの向きのずれ(13.8° → 13.9°)・
+  速さ(1.30 → 1.30)・出てきたコマのその場の予測(69.1 → 69.1 画素)は変わらず、推定し直し
+  15.9 → 15.5 画素はわずかに良くなる。見えているコマの誤差の 90 % 点 12.6 → 14.0 画素、中央値
+  7.7 → 7.8 画素、隠れた区間の推定し直しの直線からのずれ 6.8 → 7.7 画素は悪くなる。位置の誤差では判定を
+  入れない方が良い。拾い直しのために残しているが、真値の位置の指標では負けていることをここに記録する。
+* 隠れていた区間全体: 真値は無いので、隠れる前と出た後の体が見えるコマ(第 163・202 コマ)の真値の重心を
+  直線で結び、等速・直進と仮定した位置と比べる(歩く速さは前後とも 2.65 画素/コマ、向きの変化 10°)。
+  推定し直しは平均 7.7 / 最大 14.4 画素、その場の予測は平均 37.0 / 最大 68.1 画素ずれる。この物差しは
+  等速・直進の仮定の上にしか立たない。
+* ★2026-11-09: ``opening_seg`` を直して(以前は収縮で種を失った小さな塊に、背景を跨いで隣の塊の番号を
+  配っていた)上の数値がすべて動いた。``opening_seg`` だけを元に戻すと 2026-11-08 の記録値と完全に一致する。
+  この PoC は「3×3 の収縮に残らない細かい塊を落とす」つもりで ``opening_seg`` を使っていて、直した後が
+  その意図どおり。主な変化: F は全列で上がり(I_OC_01 吸収なし 0.794 → 0.809・吸収あり 0.890 → 0.898、
+  MOG2 も同じ後処理を通すので 0.884 → 0.902)、出てきたコマのその場の予測は 60.2 → 69.1 画素に悪化。
+  切り分けの結論が変わった: 前の版の「動く誤検出を消しても戻らない(原因は動かない誤検出の側)」は、
+  直した後は成り立たない(1.30 → 1.77)ので、その門は外した(代わりの門は置かない)。動かない塊の吸収は
+  吸収したコマ数が I_SI_01 113 → 10・I_OC_01 46 → 16・I_OC_02 72 → 14 に減った(細かい塊が隣の番号をもらって
+  大きな塊として残っていた分が消えた)。学習列 I_SI_01 のカルマンの誤差の 90 % 点は 20.6 → 27.4 画素(+33 %)に悪化。
+  横縦比の判定を足した理由だった向きのずれの改善(32.6° → 15.0°)は、この修正の後は判定の有無で変わらない
+  (13.8° → 13.9°)。判定は拾い直しのために残しているが、足した理由の一つは消えた。
+  以下の「経緯」は 2026-11-08 の版の記録で、数値はどれも opening_seg の修正の前の値。失敗の記録として残す。
+
+経緯(2026-11-08 の版。数値は opening_seg の修正の前):
+
 * 予測が外れた理由(2026-11-08 の独立レビューの指摘を実測で確かめ直した): 人は柱の裏で速くなっていない。
   体の 9 割以上が見えるコマで測った歩く速さは、隠れる前(第 139〜163 コマ)・出た後(第 202〜226 コマ)とも
   毎コマ 2.65 画素。前の版が書いた「真値の重心は隠れていた間に毎コマ 3.51 画素進んだ」は、隠れる直前
@@ -92,10 +134,6 @@ OpenCV's MOG2, and follow the person through an occlusion behind a pillar.
   中央値 7.7 → 7.9 画素、隠れた区間の推定し直しの直線からのずれ 5.7 → 7.1 画素は悪くなる。速さは
   3.28 → 1.56(真の 2.65 を挟んで、外すと多め・入れると少なめ)。位置の誤差では判定を入れない方が良い。
   向きと拾い直しのために残しているが、真値の位置の指標では負けていることをここに記録する。
-* 隠れていた区間全体: 真値は無いので、隠れる前と出た後の体が見えるコマ(第 163・202 コマ)の真値の重心を
-  直線で結び、等速・直進と仮定した位置と比べる(歩く速さは前後とも 2.65 画素/コマ、向きの変化 10°)。
-  推定し直しは平均 7.1 / 最大 13.8 画素、その場の予測は平均 32.3 / 最大 58.7 画素ずれる。この物差しは
-  等速・直進の仮定の上にしか立たない。
 
 正直に書いておくこと: 数値で選んだのは学習列(I_SI_01)での閾値・利得・吸収の有無・MOG2 の
 ``varThreshold``・過程の雑音 q だけ。追跡の作り(手すりで割れた体を 6 画素でまとめる、2 コマ
@@ -209,90 +247,90 @@ WHOLE_FRAC = 0.9
 BODY_SPAN = 24
 
 # 実データを走らせた後、stdout の ``RECORDED_JSON`` と同じ値へ固定する。
-RECORDED: dict = {'absorbed_frames': {'I_OC_01': 46, 'I_OC_02': 72, 'I_SI_01': 113},
- 'bg_rms_255': {'I_OC_01': {'fullseye': 3.136, 'mog2': 0.412, 'plain': 3.578},
-                'I_OC_02': {'fullseye': 2.349, 'mog2': 0.401, 'plain': 2.139},
-                'I_SI_01': {'fullseye': 3.079, 'mog2': 0.544, 'plain': 3.772}},
+RECORDED: dict = {'absorbed_frames': {'I_OC_01': 16, 'I_OC_02': 14, 'I_SI_01': 10},
+ 'bg_rms_255': {'I_OC_01': {'fullseye': 3.276, 'mog2': 0.412, 'plain': 3.578},
+                'I_OC_02': {'fullseye': 2.449, 'mog2': 0.401, 'plain': 2.139},
+                'I_SI_01': {'fullseye': 3.399, 'mog2': 0.544, 'plain': 3.772}},
  'contract': {'bg_variance_closed_form': 0.000270156,
               'bg_variance_steady': 0.000270156,
               'kalman_vs_opencv_max': 1.81899e-12,
               'mean_nis': 1.98888},
  'crossing': {'I_OC_01': {'ablation': {'no_fp': {'last_update': 165,
-                                                 'pred_err': 47.38,
+                                                 'pred_err': 47.32,
                                                  'ref_frame': 162,
-                                                 'removed_px': 28010,
+                                                 'removed_px': 25145,
                                                  'same_id': True,
                                                  'speed_at_hide': 1.7,
-                                                 'speed_at_ref': 2.26},
-                                       'no_moving': {'last_update': 162,
-                                                     'pred_err': 89.12,
+                                                 'speed_at_ref': 2.25},
+                                       'no_moving': {'last_update': 165,
+                                                     'pred_err': 5.85,
                                                      'ref_frame': 162,
-                                                     'removed_px': 19993,
+                                                     'removed_px': 17796,
                                                      'same_id': True,
-                                                     'speed_at_hide': 0.79,
-                                                     'speed_at_ref': 0.79},
+                                                     'speed_at_hide': 3.39,
+                                                     'speed_at_ref': 1.77},
                                        'no_static_other': {'last_update': 162,
-                                                           'pred_err': 38.55,
+                                                           'pred_err': 46.69,
                                                            'ref_frame': 162,
-                                                           'removed_px': 4847,
+                                                           'removed_px': 4500,
                                                            'same_id': True,
-                                                           'speed_at_hide': 2.16,
-                                                           'speed_at_ref': 2.16},
-                                       'no_trail': {'last_update': 162,
-                                                    'pred_err': 33.6,
+                                                           'speed_at_hide': 1.91,
+                                                           'speed_at_ref': 1.91},
+                                       'no_trail': {'last_update': 164,
+                                                    'pred_err': 35.09,
                                                     'ref_frame': 162,
-                                                    'removed_px': 3170,
+                                                    'removed_px': 2849,
                                                     'same_id': True,
-                                                    'speed_at_hide': 2.3,
-                                                    'speed_at_ref': 2.3},
+                                                    'speed_at_hide': 2.74,
+                                                    'speed_at_ref': 2.11},
                                        'none': {'last_update': 162,
-                                                'pred_err': 60.2,
+                                                'pred_err': 69.06,
                                                 'ref_frame': 162,
                                                 'removed_px': 0,
                                                 'same_id': True,
-                                                'speed_at_hide': 1.56,
-                                                'speed_at_ref': 1.56}},
-                          'aspect': {'off': {'err_at_reacquire': 5.73,
-                                             'heading_err_deg': 32.59,
-                                             'line_dev_smooth_mean': 5.7,
-                                             'median_err': 7.74,
-                                             'n_partial': 25,
-                                             'p90_err': 12.19,
-                                             'pred_err': 31.01,
-                                             'smooth_err': 14.81,
-                                             'speed_at_hide': 3.28},
-                                     'on': {'err_at_reacquire': 3.78,
-                                            'heading_err_deg': 15.04,
-                                            'line_dev_smooth_mean': 7.11,
-                                            'median_err': 7.9,
-                                            'n_partial': 36,
-                                            'p90_err': 13.62,
-                                            'pred_err': 60.2,
-                                            'smooth_err': 15.36,
-                                            'speed_at_hide': 1.56}},
+                                                'speed_at_hide': 1.3,
+                                                'speed_at_ref': 1.3}},
+                          'aspect': {'off': {'err_at_reacquire': 5.79,
+                                             'heading_err_deg': 13.83,
+                                             'line_dev_smooth_mean': 6.77,
+                                             'median_err': 7.67,
+                                             'n_partial': 28,
+                                             'p90_err': 12.59,
+                                             'pred_err': 69.08,
+                                             'smooth_err': 15.86,
+                                             'speed_at_hide': 1.3},
+                                     'on': {'err_at_reacquire': 3.79,
+                                            'heading_err_deg': 13.85,
+                                            'line_dev_smooth_mean': 7.74,
+                                            'median_err': 7.79,
+                                            'n_partial': 32,
+                                            'p90_err': 13.96,
+                                            'pred_err': 69.06,
+                                            'smooth_err': 15.49,
+                                            'speed_at_hide': 1.3}},
                           'body_speed_after': 2.65,
                           'body_speed_before': 2.65,
                           'first_whole_after': 201,
                           'hidden_frames': 26,
-                          'kalman_err_at_reacquire': 3.78,
-                          'kalman_pred_err_at_reappear': 60.2,
+                          'kalman_err_at_reacquire': 3.79,
+                          'kalman_pred_err_at_reappear': 69.06,
                           'kalman_same_id': True,
                           'kalman_smooth_err_at_first_whole': 4.02,
-                          'kalman_smooth_err_at_reappear': 15.36,
-                          'kalman_speed_at_hide': 1.56,
-                          'kalman_speeds_last_updates': [2.27, 1.91, 1.56],
-                          'lag': {'blob_fp_px': 431,
-                                  'blob_fp_static_px': 230,
-                                  'blob_fp_trail_px': 136,
-                                  'blob_px': 1892,
-                                  'lag_at_peak': -0.22,
-                                  'lag_early_median': -3.48,
-                                  'lag_last': -9.06,
-                                  'lag_without_fp': -0.43,
+                          'kalman_smooth_err_at_reappear': 15.49,
+                          'kalman_speed_at_hide': 1.3,
+                          'kalman_speeds_last_updates': [2.22, 1.69, 1.3],
+                          'lag': {'blob_fp_px': 389,
+                                  'blob_fp_static_px': 235,
+                                  'blob_fp_trail_px': 141,
+                                  'blob_px': 1846,
+                                  'lag_at_peak': -0.65,
+                                  'lag_early_median': -4.72,
+                                  'lag_last': -9.72,
+                                  'lag_without_fp': -0.46,
                                   'last_update': 162,
-                                  'speed_peak': 3.87,
-                                  'speed_peak_frame': 144},
-                          'line_dev': {'filter': [32.26, 58.74], 'smooth': [7.11, 13.77]},
+                                  'speed_peak': 4.02,
+                                  'speed_peak_frame': 145},
+                          'line_dev': {'filter': [37.01, 68.09], 'smooth': [7.74, 14.36]},
                           'nn_same_id': False,
                           'partial_centroid_speed_across_gap': 3.51,
                           'turn_deg': 10.1,
@@ -316,27 +354,49 @@ RECORDED: dict = {'absorbed_frames': {'I_OC_01': 46, 'I_OC_02': 72, 'I_SI_01': 1
                           'partial_centroid_speed_across_gap': 0.81,
                           'turn_deg': 164.6,
                           'visible_frac_at_reappear': 0.26}},
- 'date': '2026-11-08',
+ 'date': '2026-11-09',
  'digests': {'I_OC_01': '2e8957ed8b95be18c00e14acd0e5c6fbc281199212874cd2e353c42ffbd0c117',
              'I_OC_02': '7c34e911f9e677b26dc64ff6c2ed936d8ff11481c72708667f18eef234263825',
              'I_SI_01': '520a7403cacf259c6f7e06d17da9e4dad05938ccc6657acc3fca85ff5812e6eb'},
- 'f': {'I_OC_01': {'absorb': [0.8898, 0.8297, 0.9593],
-                   'mog2': [0.9868, 0.9933, 0.9804],
-                   'plain': [0.7944, 0.6813, 0.9525]},
-       'I_OC_02': {'absorb': [0.8779, 0.8581, 0.8987],
-                   'mog2': [0.8841, 0.8502, 0.9209],
-                   'plain': [0.8813, 0.8813, 0.8814]},
-       'I_SI_01': {'absorb': [0.8679, 0.8935, 0.8437],
-                   'mog2': [0.947, 0.9887, 0.9087],
-                   'plain': [0.8531, 0.893, 0.8166]}},
+ 'f': {'I_OC_01': {'absorb': [0.8983, 0.8445, 0.9594],
+                   'mog2': [0.9871, 0.9941, 0.9803],
+                   'plain': [0.809, 0.7036, 0.9515]},
+       'I_OC_02': {'absorb': [0.8867, 0.8772, 0.8965],
+                   'mog2': [0.9022, 0.8852, 0.9198],
+                   'plain': [0.8958, 0.914, 0.8784]},
+       'I_SI_01': {'absorb': [0.8758, 0.9149, 0.84],
+                   'mog2': [0.9478, 0.9925, 0.9069],
+                   'plain': [0.8696, 0.9351, 0.8127]}},
  'q': 0.2,
- 'selected': {'gain': 0.0, 'mog2_var': 64.0, 'plain_gain': 0.0, 'plain_threshold': 0.06, 'threshold': 0.05},
- 'tracks': {'I_OC_01': {'kalman': {'median_err': 7.9, 'n_partial': 36, 'n_tracks': 1, 'p90_err': 13.62},
-                        'nn': {'median_err': 10.26, 'n_partial': 14, 'n_tracks': 1, 'p90_err': 145.98}},
-            'I_OC_02': {'kalman': {'median_err': 15.56, 'n_partial': 15, 'n_tracks': 2, 'p90_err': 90.0},
-                        'nn': {'median_err': 13.87, 'n_partial': 48, 'n_tracks': 2, 'p90_err': 162.09}},
-            'I_SI_01': {'kalman': {'median_err': 8.83, 'n_partial': 36, 'n_tracks': 3, 'p90_err': 20.58},
-                        'nn': {'median_err': 8.5, 'n_partial': 61, 'n_tracks': 2, 'p90_err': 238.32}}}}
+ 'selected': {'gain': 0.0,
+              'mog2_var': 64.0,
+              'plain_gain': 0.0,
+              'plain_threshold': 0.06,
+              'threshold': 0.05},
+ 'tracks': {'I_OC_01': {'kalman': {'median_err': 7.79,
+                                   'n_partial': 32,
+                                   'n_tracks': 1,
+                                   'p90_err': 13.96},
+                        'nn': {'median_err': 10.07,
+                               'n_partial': 11,
+                               'n_tracks': 1,
+                               'p90_err': 146.03}},
+            'I_OC_02': {'kalman': {'median_err': 14.03,
+                                   'n_partial': 12,
+                                   'n_tracks': 2,
+                                   'p90_err': 87.09},
+                        'nn': {'median_err': 14.1,
+                               'n_partial': 52,
+                               'n_tracks': 1,
+                               'p90_err': 165.75}},
+            'I_SI_01': {'kalman': {'median_err': 9.61,
+                                   'n_partial': 35,
+                                   'n_tracks': 3,
+                                   'p90_err': 27.36},
+                        'nn': {'median_err': 8.85,
+                               'n_partial': 41,
+                               'n_tracks': 3,
+                               'p90_err': 233.22}}}}
 
 
 class TrackGateError(AssertionError):
@@ -1324,21 +1384,27 @@ def real_chapter(g: Gates, root: Path) -> dict:
     g.check("所見: I_OC_01 の隠れる直前のフィルタの速さは歩く速さの 7 割未満",
             k1["speed_at_hide"] < 0.7 * k1["body_speed_before"],
             "%.2f 対 %.2f 画素/コマ" % (k1["speed_at_hide"], k1["body_speed_before"]))
-    # 速さが落ちたのは、観測の重心が後ろへ取り残されたから。塊に混ざった動かない誤検出(通った跡とそれ以外)が
-    # GROUP_PX で同じ塊にまとめられて重心を後ろへ引く。
-    # 閾値(5 画素・半分・2 画素・0.5 画素/コマ・8 割)は実測(遅れ −3.5 → −9.1、誤検出を除くと −0.4、通った跡 136 / 230、
-    # 切り分けの速さ 1.56 → 2.30 / 2.16 / 2.26)を見て置いた値。
+    # 速さが落ちたのは、観測の重心が後ろへ取り残されたから。塊に混ざった誤検出が GROUP_PX で同じ塊に
+    # まとめられて重心を後ろへ引く。どの種類の誤検出がどれだけ効くかは下の切り分けを見る(1 つの種類に帰せない)。
+    # 閾値(半分・2 画素・0.5 画素/コマ・8 割。5 画素は下の理由で外した)は 2026-11-08 の実測(遅れ −3.5 → −9.1、誤検出を除くと −0.4、
+    # 通った跡 136 / 230、切り分けの速さ 1.56 → 2.30 / 2.16 / 2.26)を見て置いた値で、2026-11-09 の opening_seg の修正の
+    # 後も動かしていない(実測は −4.7 → −9.7、−0.5、141 / 235、1.30 → 2.11 / 1.91 / 2.25)。
+    # ★2026-11-09: 修正の後は取り残しの差が 5 画素にわずかに届かず(−4.72 → −9.72、表示の丸めでちょうど 5.0)、
+    #   門の前半「5 画素以上取り残され」は成り立たない。門の値は動かさず、前半(取り残しの差)を門から外した ——
+    #   差は印字にだけ残し、門は「誤検出を除くと 2 画素以内に戻る」だけ。
     lagd = c1["lag"]
-    g.check("所見: I_OC_01 の最後の更新で観測の重心が後ろへ 5 画素以上取り残され、誤検出を除くと 2 画素以内に戻る",
-            lagd["lag_last"] - lagd["lag_early_median"] < -5.0 and abs(lagd["lag_without_fp"]) < 2.0,
+    print("   (門なし)最後の更新での取り残しの増え %.2f 画素(それまでの中央値 %.2f → %.2f)"
+          % (lagd["lag_last"] - lagd["lag_early_median"], lagd["lag_early_median"], lagd["lag_last"]))
+    g.check("所見: I_OC_01 の最後の更新で、塊から誤検出を除くと観測の重心は 2 画素以内に戻る",
+            abs(lagd["lag_without_fp"]) < 2.0,
             "遅れ %.1f → %.1f 画素、誤検出を除くと %.1f"
             % (lagd["lag_early_median"], lagd["lag_last"], lagd["lag_without_fp"]))
     # 構成(原因の証拠ではない): 動かない誤検出の半分以上は人の通った跡。
     g.check("構成: I_OC_01 のその塊の動かない誤検出の半分以上は、10〜30 コマ前に人の体がいた画素(通った跡)",
             2 * lagd["blob_fp_trail_px"] > lagd["blob_fp_static_px"] > 0,
             "動かない誤検出 %d 画素のうち通った跡 %d" % (lagd["blob_fp_static_px"], lagd["blob_fp_trail_px"]))
-    # 原因の切り分け: 種類ごとに消して追跡をやり直す。通った跡だけでなく、通った跡でない動かない誤検出を消しても
-    # 同じくらい速さが戻る —— 原因は「塊に混ざった動かない誤検出」で、通った跡はその一部。
+    # 原因の切り分け: 種類ごとに消して追跡をやり直す。どの種類を消しても速さは一部戻る —— 原因を 1 つの種類に
+    # 帰せない(2026-11-09 の opening_seg の修正の前は、動く誤検出を消しても戻らなかった)。
     abl = c1["ablation"]
     base = abl["none"]["speed_at_ref"]
     fr = abl["none"]["ref_frame"] + 1
@@ -1349,26 +1415,32 @@ def real_chapter(g: Gates, root: Path) -> dict:
     g.check("切り分け: I_OC_01 で誤検出を全部消すと、第 %d コマの速さは歩く速さの 8 割以上に戻る" % fr,
             abl["no_fp"]["speed_at_ref"] >= 0.8 * k1["body_speed_before"],
             "%.2f 対 %.2f 画素/コマ" % (abl["no_fp"]["speed_at_ref"], k1["body_speed_before"]))
-    g.check("切り分け: I_OC_01 で動く誤検出だけを消しても第 %d コマの速さは戻らない(原因は動かない誤検出の側)" % fr,
-            abl["no_moving"]["speed_at_ref"] <= base + 0.1,
-            "%.2f → %.2f" % (base, abl["no_moving"]["speed_at_ref"]))
+    # ★2026-11-09: 修正前にあった門「動く誤検出だけを消しても速さは戻らない(原因は動かない誤検出の側)」は、
+    #   opening_seg の修正の後は成り立たない(1.30 → 1.77)ので外した。代わりの門は置かない —— 実測を挟む帯を
+    #   後から引くと、主張の無い門になる(独立レビューの指摘)。数値は印字と RECORDED にだけ残す。
+    print("   切り分け(門なし): 動く誤検出だけを消すと第 %d コマの速さ %.2f → %.2f、最後の更新は第 %d コマで %.2f、"
+          "出てきたコマの予測の誤差 %.1f 画素"
+          % (fr, base, abl["no_moving"]["speed_at_ref"], abl["no_moving"]["last_update"] + 1,
+             abl["no_moving"]["speed_at_hide"], abl["no_moving"]["pred_err"]))
     # 区間全体: 真値の無い隠れた区間を、前後の体が見えるコマの真値を結ぶ直線(等速・直進の仮定)と比べる。
     g.check("所見: I_OC_01 の隠れていた区間で、推定し直しは直線からのずれがその場の予測より小さい(平均と最大)",
             ld["smooth"][0] < ld["filter"][0] and ld["smooth"][1] < ld["filter"][1],
             "平均 %.1f 対 %.1f、最大 %.1f 対 %.1f 画素" % (ld["smooth"][0], ld["filter"][0], ld["smooth"][1], ld["filter"][1]))
-    # 横縦比の判定(評価列を見て決めた): 真値に対しては拾い直しと向きだけ良くし、予測・90 % 点・推定し直しは悪くする。
+    # 横縦比の判定(評価列を見て決めた): 真値に対しては拾い直しを良くし、見えているコマの 90 % 点は悪くする。
+    # ★2026-11-09: opening_seg の修正の後は、修正前の門の一部が成り立たない —— 向きのずれ(修正前 32.6° → 15.0°、
+    #   今は 13.8° → 13.9°)と、出てきたコマの予測・推定し直しの悪化(修正前 31.0 → 60.2・14.8 → 15.4、今は
+    #   69.1 → 69.1・15.9 → 15.5)。その条件を外し、成り立つ部分(拾い直し・90 % 点)だけを門に残した。新しい条件は足していない。
     sn = c1["aspect"]
-    g.check("所見: 横縦比の判定は拾い直した時の誤差と隠れる前の向きのずれを小さくする",
-            sn["on"]["err_at_reacquire"] < sn["off"]["err_at_reacquire"]
-            and sn["on"]["heading_err_deg"] < sn["off"]["heading_err_deg"],
-            "%.1f → %.1f 画素、%.1f° → %.1f°" % (sn["off"]["err_at_reacquire"], sn["on"]["err_at_reacquire"],
-                                            sn["off"]["heading_err_deg"], sn["on"]["heading_err_deg"]))
-    g.check("所見(負け): 横縦比の判定は出てきたコマの予測と推定し直し・見えているコマの 90 % 点を悪くする",
-            sn["on"]["pred_err"] > sn["off"]["pred_err"] and sn["on"]["smooth_err"] > sn["off"]["smooth_err"]
-            and sn["on"]["p90_err"] > sn["off"]["p90_err"],
-            "予測 %.1f → %.1f、推定し直し %.1f → %.1f、90 %% 点 %.1f → %.1f"
-            % (sn["off"]["pred_err"], sn["on"]["pred_err"], sn["off"]["smooth_err"], sn["on"]["smooth_err"],
-               sn["off"]["p90_err"], sn["on"]["p90_err"]))
+    g.check("所見: 横縦比の判定は拾い直した時の誤差を小さくする",
+            sn["on"]["err_at_reacquire"] < sn["off"]["err_at_reacquire"],
+            "%.1f → %.1f 画素(門なしの参考: 向きのずれ %.1f° → %.1f°)"
+            % (sn["off"]["err_at_reacquire"], sn["on"]["err_at_reacquire"],
+               sn["off"]["heading_err_deg"], sn["on"]["heading_err_deg"]))
+    g.check("所見(負け): 横縦比の判定は見えているコマの誤差の 90 % 点を悪くする",
+            sn["on"]["p90_err"] > sn["off"]["p90_err"],
+            "90 %% 点 %.1f → %.1f(門なしの参考: 中央値 %.1f → %.1f、予測 %.1f → %.1f、推定し直し %.1f → %.1f)"
+            % (sn["off"]["p90_err"], sn["on"]["p90_err"], sn["off"]["median_err"], sn["on"]["median_err"],
+               sn["off"]["pred_err"], sn["on"]["pred_err"], sn["off"]["smooth_err"], sn["on"]["smooth_err"]))
     # 出てきたコマの真値は体の一部の重心なので、推定し直しの誤差はその偏りを含む。体が見えたコマでは小さい。
     g.check("所見: I_OC_01 の推定し直しの誤差は、体の 9 割以上が見えた最初のコマの方が出てきたコマより小さい",
             k1["smooth_err_at_first_whole"] < k1["smooth_err_at_reappear"],
@@ -1396,7 +1468,7 @@ def _r2(v: float):
 
 def _record(res: dict, contract: dict) -> dict:
     return {
-        "date": "2026-11-08",
+        "date": "2026-11-09",
         "digests": {seq: d["digest"] for seq, d in res["data"].items()},
         "selected": res["selected"], "q": res["q"],
         "f": {seq: {k: (round(v["F"], 4), round(v["precision"], 4), round(v["recall"], 4)) for k, v in f.items()

@@ -4915,16 +4915,16 @@
             1600,
             1600
           ],
-          "bytes": 733021,
+          "bytes": 733452,
           "color_mad": [
-            0.5941,
+            0.5968,
             0.1863,
             0.2207,
-            0.096,
+            0.0949,
             0.0462
           ],
-          "max_color_mad": 0.5941,
-          "source_sha256": "2ec6b041ecc427982403a891ff263a3a5a70c2a131586bcd4469527a81b8d198"
+          "max_color_mad": 0.5968,
+          "source_sha256": "93bf050fdf0afaa278c205603b981ae2e8bd23ef86901f1c0b7da43949552f32"
         },
         "en": {
           "path": "articles/assets/poc/poc_solar_el_inspection/story.en.gif",
@@ -4985,16 +4985,16 @@
             1600,
             1600
           ],
-          "bytes": 733021,
+          "bytes": 733452,
           "color_mad": [
-            0.5941,
+            0.5968,
             0.1863,
             0.2207,
-            0.096,
+            0.0949,
             0.0462
           ],
-          "max_color_mad": 0.5941,
-          "source_sha256": "71a31a6a383503dca54d9f59125f95d4c9e5c2936a02697e7919ab1767e4c7bf"
+          "max_color_mad": 0.5968,
+          "source_sha256": "21ff400d3a135f16af6d7c78020b28107ddaf027d9f78ebd1459a01cae8ebcec"
         }
       },
       "reason": null,
@@ -9383,15 +9383,15 @@
             1600,
             1600
           ],
-          "bytes": 285611,
+          "bytes": 283648,
           "color_mad": [
-            0.5801,
-            0.8457,
-            0.073,
-            0.0392
+            0.8842,
+            1.844,
+            0.0739,
+            0.04
           ],
-          "max_color_mad": 0.8457,
-          "source_sha256": "ac8ff237a2ccc9a19a1ad61f86f52e7bcf7e497d035ef8422451b8da3d020ae7"
+          "max_color_mad": 1.844,
+          "source_sha256": "bff43aa7bfd288b61fabb4200bf7559a8182d8ef2a47cef248c888cf5cc38e48"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_coin_metrology/story.en.gif",
@@ -9442,15 +9442,15 @@
             1600,
             1600
           ],
-          "bytes": 285611,
+          "bytes": 283648,
           "color_mad": [
-            0.5801,
-            0.8457,
-            0.073,
-            0.0392
+            0.8842,
+            1.844,
+            0.0739,
+            0.04
           ],
-          "max_color_mad": 0.8457,
-          "source_sha256": "abbe07737136e358d9e5f2e2c197fb3eb03889a7ee258dea6e14f922dafea2bc"
+          "max_color_mad": 1.844,
+          "source_sha256": "6a44838dd0b6658349eb793e0d04e1064555092a8826e82195d48707be06825d"
         }
       },
       "reason": null,
@@ -31976,17 +31976,17 @@
             1600,
             1600
           ],
-          "bytes": 506101,
+          "bytes": 503998,
           "color_mad": [
-            1.6595,
-            1.0128,
-            1.0635,
+            1.638,
+            1.0131,
+            0.9833,
             0.0001,
-            0.0748,
-            0.0317
+            0.0824,
+            0.0311
           ],
-          "max_color_mad": 1.6595,
-          "source_sha256": "8fd4e6ecf20a7d68a9f37a1545d584d6c2652f746a121ade8871ba3b5cf32040"
+          "max_color_mad": 1.638,
+          "source_sha256": "ea3f65a6a3c28100efef47b4a4002fe4de5437adf1cd43b81baff2d242ee2bf2"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_bg_kalman_tracking/story.en.gif",
@@ -32063,24 +32063,24 @@
             1600,
             1600
           ],
-          "bytes": 506101,
+          "bytes": 503998,
           "color_mad": [
-            1.6595,
-            1.0128,
-            1.0635,
+            1.638,
+            1.0131,
+            0.9833,
             0.0001,
-            0.0748,
-            0.0317
+            0.0824,
+            0.0311
           ],
-          "max_color_mad": 1.6595,
-          "source_sha256": "c44c080c8f07f1953a776e93beb07f12b50e353df7ac9fa0a20017584d058cc9"
+          "max_color_mad": 1.638,
+          "source_sha256": "eb5a54ffbe7e2bb7941750a130f5870dee1f64600e9260dbbf7b224d58056317"
         }
       },
       "reason": null,
       "cover": "01_pillar_crossing.png",
       "still": "articles/assets/poc/poc_real_bg_kalman_tracking/01_pillar_crossing.png",
       "alt": {
-        "ja": "LASIESTA I_OC_01 の第 206 コマ。空色の太線 = 観測で更新したコマ、橙の実線 = 更新に使わなかったコマ(柱の裏 26 コマと、体の一部が隠れたコマ)。どちらも kalman_smooth(RTS 平滑化)で前後の観測から推定し直した位置。赤紫の点線 = その場の予測(filter_kalman が等速で進めた位置で、拾い直したコマで跳ぶ。赤紫の丸から白い丸への矢印 = 出てきたコマでのその場の予測と真値の重心のずれ)、黄の破線 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。体の一部が隠れたかは、塊の面積・横縦比が直近の中央値から急に縮むことで決める(柱に半分入ったコマは幅だけが縮む)。出てきたコマ(第 194 コマ)での真値の重心からの誤差は、その場の予測 60 画素、推定し直し 15 画素。ただしこのコマの真値は体の 26 % しか見えない一部の重心で、体の中心から偏る(体の 9 割以上が見えた第 202 コマでは推定し直し 4 画素)。人は柱の裏で速くなっていない: 体の 9 割以上が見えるコマの歩く速さは、隠れる前 2.65・出た後 2.65 画素/コマ。予測が外れたのは、隠れる直前の更新でフィルタの速さが 2.27 → 1.91 → 1.56 画素/コマへ落ちたから(塊に混ざった動かない誤検出 —— 人の通った跡とそれ以外 —— が観測の重心を後ろへ 9 画素引いた)。柱の裏の橙の線は真値が無いので採点していない。",
+        "ja": "LASIESTA I_OC_01 の第 206 コマ。空色の太線 = 観測で更新したコマ、橙の実線 = 更新に使わなかったコマ(柱の裏 26 コマと、体の一部が隠れたコマ)。どちらも kalman_smooth(RTS 平滑化)で前後の観測から推定し直した位置。赤紫の点線 = その場の予測(filter_kalman が等速で進めた位置で、拾い直したコマで跳ぶ。赤紫の丸から白い丸への矢印 = 出てきたコマでのその場の予測と真値の重心のずれ)、黄の破線 = 予測しない最近傍(柱で見失い、出てきた人を拾えない)、白点 = 真値の重心、白い輪郭 = 真値の前景。体の一部が隠れたかは、塊の面積・横縦比が直近の中央値から急に縮むことで決める(柱に半分入ったコマは幅だけが縮む)。出てきたコマ(第 194 コマ)での真値の重心からの誤差は、その場の予測 69 画素、推定し直し 15 画素。ただしこのコマの真値は体の 26 % しか見えない一部の重心で、体の中心から偏る(体の 9 割以上が見えた第 202 コマでは推定し直し 4 画素)。人は柱の裏で速くなっていない: 体の 9 割以上が見えるコマの歩く速さは、隠れる前 2.65・出た後 2.65 画素/コマ。予測が外れたのは、隠れる直前の更新でフィルタの速さが 2.22 → 1.69 → 1.30 画素/コマへ落ちたから(塊に混ざった動かない誤検出 —— 人の通った跡とそれ以外 —— が観測の重心を後ろへ 10 画素引いた)。柱の裏の橙の線は真値が無いので採点していない。",
         "en": "Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels"
       }
     },
@@ -32111,18 +32111,12 @@
               "file": "02_thinning.png",
               "content_box": [
                 0,
-                195,
+                256,
                 720,
-                300
+                178
               ],
-              "crop": [
-                0,
-                0,
-                921,
-                384
-              ],
-              "source_aspect": 4.046875,
-              "laplacian_density": 0.00361766
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.046875
             },
             {
               "file": "03_intercepts.png",
@@ -32150,15 +32144,15 @@
             1600,
             1600
           ],
-          "bytes": 350693,
+          "bytes": 350571,
           "color_mad": [
-            2.3472,
-            0.6139,
-            0.075,
-            0.034
+            2.2947,
+            0.6399,
+            0.0797,
+            0.0339
           ],
-          "max_color_mad": 2.3472,
-          "source_sha256": "53c57e36a7e806bc6b2441d5d31599cbaa27a4fc5aea8cce54acdc94554e5168"
+          "max_color_mad": 2.2947,
+          "source_sha256": "7cb09fec781557ea188f64f4b5fa493b2a283dc8345830c40a62e1264a899db8"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_grain_skiz/story.en.gif",
@@ -32176,18 +32170,12 @@
               "file": "02_thinning.png",
               "content_box": [
                 0,
-                195,
+                256,
                 720,
-                300
+                178
               ],
-              "crop": [
-                0,
-                0,
-                921,
-                384
-              ],
-              "source_aspect": 4.046875,
-              "laplacian_density": 0.00361766
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.046875
             },
             {
               "file": "03_intercepts.png",
@@ -32215,23 +32203,23 @@
             1600,
             1600
           ],
-          "bytes": 350693,
+          "bytes": 350571,
           "color_mad": [
-            2.3472,
-            0.6139,
-            0.075,
-            0.034
+            2.2947,
+            0.6399,
+            0.0797,
+            0.0339
           ],
-          "max_color_mad": 2.3472,
-          "source_sha256": "d510b68a54091b37f6bfc02176695e7c2f8e4f3d39068ef1bfe119a6084d58c3"
+          "max_color_mad": 2.2947,
+          "source_sha256": "cbe4126316d88720ac63bd3f2455655c266c3148236419b44cebc8dad82492b9"
         }
       },
       "reason": null,
       "cover": "01_grain_boundaries.png",
       "still": "articles/assets/poc/poc_real_grain_skiz/01_grain_boundaries.png",
       "alt": {
-        "ja": "失敗の報告。TBM の評価の 168 枚を専門家の線の平均切片長で並べた 90 % 点(粒が大きい)と 10 % 点(粒が小さい)の 2 枚。専門家の切片長は 38.6 と 20.1 画素で 1.9 倍違うのに、SKIZ は 18.5 と 19.9 画素。左 = 実写の顕微鏡写真(色で腐食した金属組織、128 × 128 画素 ≈ 115 µm 角を 3 倍)、右 = 白が専門家の手描きの粒界、空色が morph_skiz の粒界(勾配の低い画素を opening_seg で種にした影響圏の境界)。",
-        "en": "Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography — A Failure Report: Per-Image Grain Size Does Not Even Rank Correctly (rho -0.16), and Boundary Placement Loses to Watershed"
+        "ja": "失敗の報告。TBM の評価の 168 枚を専門家の線の平均切片長で並べた 90 % 点(粒が大きい)と 10 % 点(粒が小さい)の 2 枚。専門家の切片長は 38.6 と 20.1 画素で 1.9 倍違うのに、SKIZ は 20.3 と 23.8 画素。左 = 実写の顕微鏡写真(色で腐食した金属組織、128 × 128 画素 ≈ 115 µm 角を 3 倍)、右 = 白が専門家の手描きの粒界、空色が morph_skiz の粒界(勾配の低い画素を opening_seg で種にした影響圏の境界)。",
+        "en": "Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography — A Failure Report: Per-Image Grain Size Does Not Even Rank Correctly (rho -0.17), and Boundary Placement Loses to Watershed"
       }
     },
     "poc_real_stereo_multiscanline": {

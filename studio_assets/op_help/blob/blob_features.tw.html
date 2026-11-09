@@ -13,13 +13,15 @@
 <p><b>預設 1.0 = 保持像素單位</b>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">n</code>(物體數)、<code style="color:#22d3bf">spacing</code>、<code style="color:#22d3bf">units</code>(項目 → 單位的對應)，以及</p>
+<p><code style="color:#22d3bf">n</code>(物體數 = 實際存在的標籤數)、<code style="color:#22d3bf">spacing</code>、<code style="color:#22d3bf">units</code>(項目 → 單位的對應)，以及</p>
 <p>長度為 <code style="color:#22d3bf">n</code> 的陣列 19 個(<code style="color:#22d3bf">FEATURE_KEYS</code>)。即使物體為 0 個，</p>
-<p>也會備齊所有鍵並以空陣列回傳(呼叫方無需分支)。</p>
+<p>也會備齊所有鍵並以空陣列回傳(呼叫方無需分支)。標籤有缺號時</p>
+<p><code style="color:#22d3bf">n</code> 小於 <code style="color:#22d3bf">labels.max()</code> —— 請按 <code style="color:#22d3bf">f[&quot;label&quot;]</code> 欄查找物體</p>
+<p>(<code style="color:#22d3bf">f[&quot;area&quot;][label - 1]</code> 在缺號之後會錯位)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle</code> 是<b>矩陣座標系</b>中的傾角(+行 → +列 為正 = 螢幕上為順時針)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> 是<b>具有相同 2 階矩的橢圓</b>的軸長(<code style="color:#22d3bf">4 sqrt(lambda)</code>)。並非像素排列的外接範圍，因此對於正方形會比邊長略長 —— 這符合定義，不是誤差。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> 為 <code style="color:#22d3bf">4 pi A / P^2</code>。<b>HALCON 的 <code style="color:#22d3bf">circularity</code> 是「面積 / 以最遠點為半徑的圓的面積」，是另一回事</b>，因此對照數值時請確認定義。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> 為 <code style="color:#22d3bf">4 pi A / P^2</code> <b>以 1 為上限</b>截斷的值(幾個像素的物體其周長估計相對面積偏短，會超過 1 —— 1 個像素的塊為 1.75 —— 但沒有比圓更圓的形狀)。<b>HALCON 的 <code style="color:#22d3bf">circularity</code> 是「面積 / 以最遠點為半徑的圓的面積」，是另一回事</b>，因此對照數值時請確認定義。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">touches_border</code> 為 True 的物體，面積與周長都會<b>小掉被截斷的部分</b>。請在計數前捨棄，或讓真值一側也依相同約定計數。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>

@@ -7,7 +7,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Create a per-pixel Kalman background model from the first image.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各画素の背景はランダムウォークと見なし、過程の雑音 <code style="color:#22d3bf">process_noise</code> と観測の雑音 <code style="color:#22d3bf">measurement_noise</code> の分散からゲインが決まる。前景と判定された画素はゲインに <code style="color:#22d3bf">foreground_gain</code> を掛けて弱く更新し、通過する物体を背景に取り込まない。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>各画素の背景はランダムウォークと見なし、過程の雑音 <code style="color:#22d3bf">process_noise</code> と観測の雑音 <code style="color:#22d3bf">measurement_noise</code> の分散からゲインが決まる。前景と判定された画素はゲインに <code style="color:#22d3bf">foreground_gain</code> を掛けて弱く更新し、通過する物体を背景に取り込まない。画素値は <b>[0, 1] の float</b>(<code style="color:#22d3bf">threshold</code> と雑音の分散も同じ尺度)。整数 dtype の画像と [0, 1] の外の値は ValueError(uint8 は <code style="color:#22d3bf">/ 255</code> してから渡す)。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
 <p>Args:</p>
 <p>image: 最初の画像 (H, W)。</p>
 <p>process_noise: 過程の雑音の分散(&gt; 0)。</p>

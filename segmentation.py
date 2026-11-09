@@ -135,17 +135,53 @@ def regiongrowing_n(feature_images, tol=0.05, min_size=1):
 def watersheds_marker(image, markers):
     """マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。
 
-    空の入力(``image`` が 0 要素)は ValueError。
+    空の入力(``image`` が 0 要素)は ValueError。``image`` と形の違う ``markers``、整数でない・
+    負・非有限の ``markers`` も ValueError(整数値の float と bool は受ける)。
+    ``skimage.segmentation.watershed`` をそのまま呼び、scikit-image が無ければ
+    MissingDependencyError(画像を見ない最近傍へは落ちない)。
     """
+    # ★2026-11-09 点検: 以前は except Exception で「マーカーからの最近傍」(画像を一切見ない
+    #   Voronoi)へ黙って落ち、image 80x80 に markers 60x60 を渡すと例外なしで 60x60 を返した。
+    #   float の markers は切り捨てで 0.9→0 になりマーカーが消えた。numpy だけで同じ答えを出す
+    #   双子は無い(平坦部の同値の割り振りが違う)ので代替は置かない。numpy+scipy だけで閉じる
+    #   分水嶺は blob2d.blob_split。
     if (len(image) if isinstance(image, (list, tuple)) else np.asarray(image).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("watersheds_marker: image is empty — pass at least one element")
-    from scipy import ndimage
+    im = _img(image)
+    mk = _as_marker_labels(markers, im.shape)
     try:
         from skimage.segmentation import watershed
-        return watershed(_img(image), markers=np.asarray(markers, int))
-    except Exception:
-        # skimage 不在時の代替: マーカーからの測地的最近傍(距離変換ベース)
-        mk = np.asarray(markers, int)
-        idx = ndimage.distance_transform_edt(mk == 0, return_distances=False,
-                                             return_indices=True)
-        return mk[tuple(idx)]
+    except ImportError as exc:   # ★2026-11-09: 不在のときだけ、名指しで拒否(他の例外は外へ出す)
+        from backend_safe import missing_dependency
+        raise missing_dependency("skimage", "marker-controlled watershed has no numpy twin with the same answer",
+                                 op="watersheds_marker") from exc
+    return watershed(im, markers=mk)
+
+
+def _as_marker_labels(markers, shape):
+    """``markers`` を検査して int64 のラベル画像にする(watersheds_marker の入力の門)。
+
+    ★2026-11-09: ``np.asarray(markers, int)`` は 0.9→0・1.8→1 と切り捨て、マーカー 1 個が
+    黙って消えて番号もずれた。整数値でない float は ValueError にする。
+    """
+    m = np.asarray(markers)
+    if m.shape != tuple(shape):
+        raise ValueError("watersheds_marker: markers shape %s != image shape %s — pass a label image "
+                         "of the same shape as the image" % (m.shape, tuple(shape)))
+    if m.dtype.kind == "b":
+        return m.astype(np.int64)
+    if m.dtype.kind in "iu":
+        out = m.astype(np.int64)
+    elif m.dtype.kind == "f":
+        if not np.isfinite(m).all():
+            raise ValueError("watersheds_marker: markers contain NaN/inf — labels must be finite integers")
+        if not np.array_equal(m, np.round(m)):
+            bad = m[m != np.round(m)]
+            raise ValueError("watersheds_marker: markers must be integer labels; got non-integer values "
+                             "such as %r (truncating them would merge or drop markers)" % (float(bad.flat[0]),))
+        out = m.astype(np.int64)
+    else:
+        raise ValueError("watersheds_marker: markers must be an integer label image, got dtype %s" % m.dtype)
+    if out.size and out.min() < 0:
+        raise ValueError("watersheds_marker: markers must be >= 0 (0 = unassigned), got min %d" % int(out.min()))
+    return out

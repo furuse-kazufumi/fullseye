@@ -1447,26 +1447,28 @@ def _sigma_threshold(v, a, b):
 def _otsu(v, a, b):
     """大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。
 
-``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。値が ``[0,1]`` に収まっていればその範囲を、はみ出していれば**入力の実際の範囲**を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するビンを全探索して選び、**そのビンの上端**をしきい値として、それ以上の画素を前景とする(ビンの中点で切ると argmax ビンに居る背景画素が前景側に混ざる —— 2026-09-26 に直した。``docs/hardening/otsu-threshold-at-the-bin-midpoint.md``)。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。
+``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。**入力の実際の範囲**(有限な画素の最小〜最大)を 256 ビンのヒストグラムに分け(``[0,1]`` の固定の幅ではない —— 値域の狭い像でも分解能が落ちず、アフィン変換に等変。``bin_threshold`` / ``binary_threshold`` / ``auto_threshold`` も同じ関数を通る)、クラス間分散 ``ω(1-ω)`` を最大化するビンを全探索して選び、**そのビンの上端**をしきい値として、それ以上の画素を前景とする(ビンの中点で切ると argmax ビンに居る背景画素が前景側に混ざる —— 2026-09-26 に直した。``docs/hardening/otsu-threshold-at-the-bin-midpoint.md``)。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。
 
 **判別できない入力の扱い**（2026-09-19 の外部レビュー #7 / #8 で明文化）: 有限の画素が 1 つも無い入力（全 NaN / inf）はしきい値が定義できないので ``ValueError`` を投げる（``fullseye.apply`` の既定の方針では台帳に記録して region の既定値へ落ち、``on_error="raise"`` でそのまま止まる。以前は numpy の RuntimeWarning を出しつつ黙って全 0 を返していた）。空白フレーム（定数画像）は山が 1 つも無いので、値が 0 なら全画素が背景、0 より大きければ**全画素が前景**になる（``docs/op_blank_frame.json`` に測定あり）。定数かどうかは呼ぶ側で ``np.ptp`` 等で先に弾くこと。"""
     x = np.asarray(v, np.float64)
     if x.size and not np.isfinite(x).any():
         raise ValueError("otsu: no finite pixel in the input (all NaN/inf) — a threshold is undefined; "
                          "mask or fill the NaN first (e.g. np.nan_to_num) or check np.isfinite(img).any()")
-    lo = float(np.nanmin(x)) if x.size else 0.0
-    hi = float(np.nanmax(x)) if x.size else 1.0
+    finite = np.isfinite(x)
+    lo = float(x[finite].min()) if x.size else 0.0
+    hi = float(x[finite].max()) if x.size else 1.0
     # [0,1] の外を clip すると**判別の対象そのものが潰れる**。0..255 の float
     # (8 bit 相当)を渡すと全画素が 1 に飽和し、「全画素が前景」が返っていた
     # (2026-09-06 実測: 正解との IoU が 1.0000 -> 0.2578。警告も例外も無し)。
     # 大津のしきい値はアフィン変換に等変であるべきなので、これは仕様ではなく穴。
-    # 範囲外のときだけ実データの範囲でビンを張る —— [0,1] 内の入力に対する
-    # 結果は**一切変えない**。
-    if hi > 1.0 or lo < 0.0:
-        span = (lo, hi) if hi > lo else (lo, lo + 1.0)
-    else:
-        x = np.clip(x, 0, 1); span = (0.0, 1.0)
-    hist, edges = np.histogram(x, 256, span)
+    # ★2026-11-09 点検: [0,1] に収まる入力だけは [0,1] を 256 ビンに切っていたので、値域 0.40〜0.45 の
+    #   像では分解能が全幅の 1/256 に落ち、誤分類 3.59 %(実データの範囲で切る skimage・bin_threshold は
+    #   3.09 %)。同じ大津を名乗る bin_threshold と答えが割れた。いつも実データの範囲を [0,1] に
+    #   伸ばしてから同じ 256 ビンに切る(定数の像は下の「正なら前景」)。
+    if not hi > lo:
+        return (x > 0).astype(np.float64)
+    x = (x - lo) / (hi - lo)
+    hist, edges = np.histogram(x, 256, (0.0, 1.0))
     p = hist.astype(np.float64) / max(1, hist.sum()); omega = np.cumsum(p)
     mids = (edges[:-1] + edges[1:]) / 2; mu = np.cumsum(p * mids); mu_t = mu[-1]
     den = omega * (1 - omega); sb = np.where(den > 1e-12, (mu_t * omega - mu) ** 2 / np.maximum(den, 1e-12), 0.0)

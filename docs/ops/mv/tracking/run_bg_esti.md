@@ -24,7 +24,8 @@ version: 1.0.0  # fullseye lib version this note was generated for
 画像 1 枚で背景を更新し、前景の領域を返す。
 
 背景との差の絶対値が ``threshold`` を超える画素を前景にする。入力の ``model`` は書き換えず、
-更新後のモデルを ``model`` の鍵で返す。空の入力(``image`` が 0 要素)は ValueError。
+更新後のモデルを ``model`` の鍵で返す。画素値は :func:`create_bg_esti` と同じ [0, 1] の float
+(整数 dtype と範囲外は ValueError)。空の入力(``image`` が 0 要素)は ValueError。
 
 Args:
     model: :func:`create_bg_esti` の返り。

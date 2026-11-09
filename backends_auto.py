@@ -992,8 +992,12 @@ def _sh_threshold(p):
         if method == "fixed":
             return ((x > a) & (x < (a + 0.5 + 0.5 * b))).astype(np.float64)
         if method == "otsu":
-            # 2026-10-25 まで skimage 無しでは**画像平均**をしきい値にしていた(別の答え)。双子は同じ 256 ビンの Otsu。
-            return (x > _threshold_otsu(x)).astype(np.float64)
+            # 2026-10-25 まで skimage 無しでは**画像平均**をしきい値にしていた(別の答え)。
+            # ★2026-11-09 点検: [0,1] へ clip してから skimage の大津をかけていたので、0..255 の float は全画素 1 に
+            #   飽和して前景 0 %(真 44 %)、定数 0.4 の像は全背景(otsu は全前景)と、同じ大津を名乗る 2 つの op が
+            #   逆の答えを返した。中核の ops._otsu(実データの範囲を 256 ビン、argmax ビンの上端で切る)をそのまま使う。
+            from ops import _otsu as _core_otsu
+            return _core_otsu(v, a, b)
         if method == "sauvola":
             _require_dep(_HAS_SK, "skimage", "skimage.filters.threshold_sauvola (integral-image mean/std, Cython)")
             return (x > skfilters.threshold_sauvola(x, window_size=2 * int(a * 6) + 3)).astype(np.float64)
@@ -1906,7 +1910,7 @@ SEED: list[tuple] = [
     ("gray_tophat", "morphology", IMG, IMG, "graymorph", {"op": "tophat"},
      'ホワイトトップハット(元画像 − オープニング)。周囲より明るい小さな\n構造(スポット・細線)だけを抽出する。``_norm`` で正規化して返すため、\n絶対的な明るさではなく相対的な突出度になる。HALCON の ``gray_tophat``\n（Perform a gray value top hat transformation on an image.）に相当。\n\n``a`` が矩形構造要素のサイズを ``{3,5,7,9}`` で振る。``b`` は未使用。'),
     ("gray_bothat", "morphology", IMG, IMG, "graymorph", {"op": "bothat"},
-     'ブラックトップハット(クロージング − 元画像)。周囲より暗い小さな構造\n(穴・くぼみ)だけを抽出する、``gray_tophat`` と明暗が逆の演算。HALCON の\n``gray_bothat``（Perform a gray value bottom hat transformation on an\nimage.）に相当。\n\n``a`` が矩形構造要素のサイズを ``{3,5,7,9}`` で振る。``b`` は未使用。'),
+     'ブラックトップハット(クロージング − 元画像)。周囲より暗い小さな構造\n(穴・くぼみ)だけを抽出する、``gray_tophat`` と明暗が逆の演算。HALCON の\n``gray_bothat``（Perform a gray value bottom hat transformation on an\nimage.）に相当。\n\n``a`` が矩形構造要素のサイズを ``{3,5,7,9}`` で振る。``b`` は未使用。\n**出力は像の中の最大応答で割った値**(最大が 1.0。応答が全部 0 なら 0 のまま)。\n後段のしきい値は像ごとの最大の 1 点で決まり、離れた所に暗い画素を 1 つ足す\nだけで動く(128 × 128 の像でしきい値 0.5 の前景が 3,726 画素変わった例)。\n絶対値が要るなら ``scipy.ndimage.black_tophat`` を直接使う。'),
     # ---- Filters: edges (named kernels) ----------------------------------
     ("sobel_amp", "edges", IMG, IMG, "edge", {"kind": "sobel"},
      'Sobel 勾配の振幅(``hypot(sobel_x, sobel_y)`` を正規化)。縦横それぞれの\n1 次微分カーネルから勾配ベクトルの大きさを求める最も基本的なエッジ検出。\nHALCON の ``sobel_amp``（Detect edges (amplitude) using the Sobel\noperator.）に相当。\n\n``a``, ``b`` は未使用 ―― 固定カーネル 1 種類のみで、シグマや閾値のような\n調整点は無い(ぼかしてから使いたい場合は前段に ``gauss_filter`` 等を挟む)。'),
@@ -1983,7 +1987,7 @@ SEED: list[tuple] = [
     ("threshold", "segmentation", IMG, REG, "threshold", {"method": "fixed"},
      '帯域しきい値処理(``a < x < a+0.5+0.5*b`` を満たす画素を前景とする)。\nHALCON の ``threshold``(Segment an image using global threshold.)は\nMin/Max の 2 値を直接指定する演算子だが、この代役では下限を ``a`` から、\n帯域幅を ``b`` から導出する 1 パラメータ相当の簡略化になっている。登録名は\n``threshold`` が Python 側で予約語的に扱われるため ``h_threshold`` になる\n(spec の ``halcon`` フィールドは ``threshold`` のまま)。\n\n``a`` が下限しきい値(0〜1)を、``b`` が帯域幅(0〜0.5 の追加分)を振る。\n両方が使われる。'),
     ("binary_threshold", "segmentation", IMG, REG, "threshold", {"method": "otsu"},
-     "大津の判別分析法(Otsu's method)による自動しきい値二値化\n(``skimage.filters.threshold_otsu``、無ければ平均値で代用)。クラス間分散\nを最大化するしきい値を画像のヒストグラムから自動決定する。HALCON の\n``binary_threshold``（Segment an image using binary thresholding.）に\n相当(HALCON は Otsu 以外の複数アルゴリズムを選べるが、ここでは Otsu 固定)。\n\n``a``, ``b`` は未使用 ―― ヒストグラムから自動決定されるため調整点は無い。"),
+     "大津の判別分析法(Otsu's method)による自動しきい値二値化\n(中核の ``otsu`` と同じ関数: 実データの範囲を 256 ビンに分け、argmax ビンの上端で切る)。クラス間分散\nを最大化するしきい値を画像のヒストグラムから自動決定する。HALCON の\n``binary_threshold``（Segment an image using binary thresholding.）に\n相当(HALCON は Otsu 以外の複数アルゴリズムを選べるが、ここでは Otsu 固定)。\n\n``a``, ``b`` は未使用 ―― ヒストグラムから自動決定されるため調整点は無い。"),
     ("auto_threshold", "segmentation", IMG, REG, "threshold", {"method": "otsu"},
      '実装は ``binary_threshold`` と同一(Otsu の判別分析法による自動\nしきい値化)。HALCON の ``auto_threshold``（Segment an image using\nthresholds determined from its histogram.）は本来ヒストグラムの複数の谷\nから**複数のしきい値**(多クラス分割)を決める演算子だが、この代役では\n単一の Otsu しきい値による二値化に単純化している(近似の限界)。\n\n``a``, ``b`` は未使用。'),
     ("dyn_threshold", "segmentation", IMG, REG, "threshold", {"method": "dyn"},

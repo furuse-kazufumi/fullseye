@@ -23,7 +23,10 @@ version: 1.0.0  # fullseye lib version this note was generated for
 
 マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。
 
-空の入力(``image`` が 0 要素)は ValueError。
+空の入力(``image`` が 0 要素)は ValueError。``image`` と形の違う ``markers``、整数でない・
+負・非有限の ``markers`` も ValueError(整数値の float と bool は受ける)。
+``skimage.segmentation.watershed`` をそのまま呼び、scikit-image が無ければ
+MissingDependencyError(画像を見ない最近傍へは落ちない)。
 
 ## 詳しい使い方ガイド
 
