@@ -139,13 +139,21 @@ def test_image_range_contract_is_fail_closed_under_extra_checks():
 
     g = opb.structured_image(48)
     um = g * 50.0
-    loose = float(np.asarray(fs.apply(um, "auto_threshold")).sum())
-    tight = float(np.asarray(fs.apply(g, "auto_threshold")).sum())
-    assert loose == 2256.0 and tight == 668.0, (loose, tight)   # 台帳の数字
+    # ★2026-11-09: auto_threshold(大津)は実データの範囲で 256 ビンを張るようになり、尺度に不変になった
+    #   (µm でも [0,1] でも 621 画素)。以前の門の数字 668 → 2,256 は大津が [0,1] へ clip していた穴の値で、
+    #   その穴は直った(KNOWN_ISSUES 42.5 に追記)。尺度に縛られる op(絶対値のしきい値を持つ op、328 本)の
+    #   危険はそのまま残るので、実演は固定しきい値の ``threshold`` に移した(969 → 2,209 画素)。
+    loose = float(np.asarray(fs.apply(um, "threshold")).sum())
+    tight = float(np.asarray(fs.apply(g, "threshold")).sum())
+    assert loose == 2209.0 and tight == 969.0, (loose, tight)   # 台帳の数字
+    otsu_um = float(np.asarray(fs.apply(um, "auto_threshold")).sum())
+    otsu_g = float(np.asarray(fs.apply(g, "auto_threshold")).sum())
+    assert otsu_um == otsu_g == 621.0, (otsu_um, otsu_g)
     with fs.system(extra_checks="on"):
-        assert float(np.asarray(fs.apply(g, "auto_threshold")).sum()) == tight
-        with pytest.raises(ValueError, match=r"contract is float in \[0, 1\]"):
-            fs.apply(um, "auto_threshold", on_error="raise")
+        for name, want in (("threshold", tight), ("auto_threshold", otsu_g)):
+            assert float(np.asarray(fs.apply(g, name)).sum()) == want
+            with pytest.raises(ValueError, match=r"contract is float in \[0, 1\]"):
+                fs.apply(um, name, on_error="raise")
 
 
 def test_the_range_check_costs_nothing_when_it_is_off():

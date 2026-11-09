@@ -28,7 +28,9 @@ exactly by brute force, interpolated to the image size and smoothed by a Gaussia
 the smoothed map), ``k`` and ``smooth``.
 
 Raises ``ValueError`` for a model that is not a ``patchbank_fit`` result, a different image
-shape, ``k`` larger than the bank, or a negative / non-finite ``smooth``.
+shape, ``k`` larger than the bank, a negative / non-finite ``smooth``, or an image on another
+pixel scale than the good images (integer vs float dtype, or values outside the training range
+widened by one training span on each side).
 
 ## 参考(サンプルデータ・文献)
 

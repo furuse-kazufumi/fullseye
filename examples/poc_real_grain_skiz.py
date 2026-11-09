@@ -29,29 +29,36 @@ SHA-256 も固定する(:data:`TBM_DIGEST`)。
    平均切片長 ℓ = L / P。専門家の線と SKIZ の ℓ の比を、評価の全枚数を合わせた値と 1 枚ずつで出し、
    粒度番号の差 ΔG = −6.644 log10(ℓ_SKIZ / ℓ_専門家) にする(画素の大きさが約しか分からなくても
    ΔG は比だけで決まる)。
-4. **op の確かめ**: ``morph_skiz`` の境界が scikit-image の ``expand_labels`` の影響圏の境界と画素で
-   一致すること、区画(4 連結)が種の数を下回らない = 2 つの影響圏がつながらないこと。
+4. **op の確かめ**: ``morph_skiz`` の境界が、成分ごとに距離変換を取る厳密な影響圏から作った境界と
+   画素で一致すること、区画(4 連結)が種の数を下回らない = 2 つの影響圏がつながらないこと。
    ``hit_or_miss_seq`` の E で線の端点を拾い、縁と種から離れた端点(1 画素のひげ)を数える。
 5. **細線化**: 専門家の太い線を Golay の L の 8 回転で細線化し、scikit-image の ``skeletonize`` と
    専門家自身の細い線と比べる(位置の F 値、画素数、粒の数が太い線と同じか、線が画像の縁まで届くか)。
 
-結果(2026-11-08、この機械で実測。``RECORDED`` と同じ値):
+結果(2026-11-09、この機械で実測。``RECORDED`` と同じ値):
 
-* 粒界の位置: 評価の 168 枚で SKIZ の境界 F 0.697(適合率 0.655、再現率 0.772)。同じ種からの
-  watershed は 0.704 で、68 % の枚数で SKIZ より上。SKIZ は種と種の真ん中に線を引き、画像の境を見ない。
-* 粒の大きさ: 合わせた平均切片長は専門家 26.2 画素、SKIZ 21.1 画素(比 0.805、ΔG +0.63)。
-  ところが 1 枚ずつは順位が合わない(Spearman ρ −0.16)。SKIZ の切片長は画像ごとにほとんど
-  変わらない(変動係数 0.145、専門家は 0.311): 種を勾配の分位点で決めるので、種の密度が粒の大きさに
-  追従しない。粒の数は専門家の 3 倍(中央値 57 対 18)。合わせた値が 1 に近いのは偶然の側にある。
-* op の確かめ: ``morph_skiz`` は 168 枚すべてで ``expand_labels`` の影響圏の境界と画素で一致し、
-  区画は種の数を下回らない。ただし右か下の隣で境界を決める規則から、1 画素のひげが 82 % の枚数に出る。
+* 粒界の位置: 評価の 168 枚で SKIZ の境界 F 0.633(適合率 0.630、再現率 0.662)。同じ種からの
+  watershed は 0.677 で、168 枚すべてで SKIZ より上。SKIZ は種と種の真ん中に線を引き、画像の境を見ない。
+* 粒の大きさ: 合わせた平均切片長は専門家 26.2 画素、SKIZ 25.6 画素(比 0.977、ΔG +0.07)。
+  ところが 1 枚ずつは順位が合わない(Spearman ρ −0.17、これは門)。SKIZ の切片長は画像ごとの変化が
+  専門家より小さく(変動係数 0.176 対 0.311)、粒の数は専門家より多い(中央値 31 対 18)。種を勾配の分位点で
+  決めるので、種の密度が粒の大きさに追従しない。合わせた値が 1 に近いのは偶然の側にある。
+  (2026-11-08 の版はこの 2 つを「半分以下」「2 倍以上」の門にしていたが、opening_seg の修正の後は成り立たない
+  ので門から外した。)
+* op の確かめ: ``morph_skiz`` は 168 枚すべてで厳密な影響圏の境界と画素で一致し、区画は種の数を
+  下回らない。1 画素のひげは 99 % の枚数に出る(同距離の画素と、偶数幅の隙間で 2 画素になる線の端)。
+* 2026-11-09 に op を 2 つ直して数値が動いた(``opening_seg`` が背景を跨いで種を配らなくなった・
+  ``morph_skiz`` の境界が上・左へ寄らなくなった)。片方ずつ戻して分けると、動いたのはほぼ
+  ``opening_seg`` の側: 種を失った小さな塊が隣の番号をもらって種になっていたのが 0 になり、粒の数
+  57 → 31、切片長の比 0.80 → 0.98、境界 F 0.697 → 0.633(再現率 0.77 → 0.66)。``morph_skiz`` の
+  対称化だけでは F 0.697 → 0.687、ひげ 265 → 1,116(線が対称になった分、端点が増えた)。
 * 細線化: Golay の線は skeletonize と同じ場所を通る(F 0.991)が、4 連結の階段なので画素が 1.4 倍。
   太い線が画像の縁に触れる 5,072 箇所のうち、Golay は 96 % で縁まで届き、skeletonize は 66 %。
   skeletonize が残した 1 画素の隙間から縁の粒が隣とつながり、縁に触れる粒が 1 枚あたり 12.9 → 8.2 個に
   減る(Golay は 13.0 個)。縁に触れない粒はどちらも減らさない。
 
 データが無い環境(CI)では取得せず ``RECORDED`` を印字し、op の契約の門(合成でない
-scikit-image 同梱の実写 ``coins`` で SKIZ と ``expand_labels`` の一致、Golay の細線化の
+scikit-image 同梱の実写 ``coins`` で SKIZ と厳密な影響圏の一致、Golay の細線化の
 1 画素幅と連結の保存)だけを回す。
 
 実行例::
@@ -109,28 +116,28 @@ PIXEL_MM_APPROX = 1.2 / 1328.0
 #: 粒として数える最小の面積[画素]。
 MIN_GRAIN_PX = 5
 
-RECORDED: dict = {'G_approx': [7.51143, 8.13867],
+RECORDED: dict = {'G_approx': [7.51143, 7.57858],
  'contract': {'coins_objects': 51.0,
               'golay_iters': 24.0,
               'golay_over_skeletonize_px': 1.55123,
               'skiz_agree': 1.0},
- 'cv': [0.310725, 0.145288],
- 'dG': 0.627232,
- 'date': '2026-11-08',
+ 'cv': [0.310725, 0.176411],
+ 'dG': 0.067143,
+ 'date': '2026-11-09',
  'digest': '31e79d054ddf1d94cbb019e36d3bc9a9e5b07eea26ec9fb2b0191173c7e51761',
- 'ell_pool': [26.2144, 21.0927],
+ 'ell_pool': [26.2144, 25.6114],
  'ends_thin': 171,
- 'extra_cells': 192,
- 'f_skiz': [0.6551, 0.771528, 0.696948],
- 'f_ws': [0.662309, 0.777825, 0.703875],
- 'grain_counts_median': [18.0, 57.0],
+ 'extra_cells': 143,
+ 'f_skiz': [0.630484, 0.662037, 0.63269],
+ 'f_ws': [0.682253, 0.69836, 0.677421],
+ 'grain_counts_median': [18.0, 31.0],
  'n_split': [152, 168],
  'params': {'percentile': 60, 'radius': 2, 'sigma': 2.0},
- 'ratio_pool': 0.804622,
- 'ratio_quartiles': [0.674576, 0.83875, 1.0],
- 'rho': -0.159246,
- 'spur_images': 0.815476,
- 'spurs': 265,
+ 'ratio_pool': 0.976999,
+ 'ratio_quartiles': [0.823828, 1.02767, 1.22679],
+ 'rho': -0.168963,
+ 'spur_images': 0.994048,
+ 'spurs': 865,
  'thin': {'border_reach': [0.962539, 0.65832],
           'f': [0.991144, 0.998321, 0.996663],
           'golay_4conn': 0.928125,
@@ -138,8 +145,8 @@ RECORDED: dict = {'G_approx': [7.51143, 8.13867],
           'keep_inner': [0.934375, 0.85],
           'outer_mean': [12.875, 12.975, 8.20312],
           'px_median': [1218.5, 857.5, 886.0]},
- 'train_F': 0.707245,
- 'ws_wins': 0.678571}
+ 'train_F': 0.653131,
+ 'ws_wins': 1.0}
 
 
 class GrainGateError(AssertionError):
@@ -297,13 +304,28 @@ def golay_thin(region: np.ndarray, max_iter: int = 500) -> tuple[np.ndarray, int
 
 
 def skiz_reference(seed: np.ndarray) -> np.ndarray:
-    """scikit-image の ``expand_labels`` で影響圏を作り、右か下の隣と違う種の外の画素を境界にする。"""
-    from skimage.segmentation import expand_labels
-    labels, _ = ndi.label(seed, structure=np.ones((3, 3), bool))
-    zone = expand_labels(labels, distance=float(sum(seed.shape)))
-    edge = np.zeros(seed.shape, bool)
-    edge[:-1] |= zone[:-1] != zone[1:]
-    edge[:, :-1] |= zone[:, :-1] != zone[:, 1:]
+    """成分ごとに距離変換を取る**厳密な**影響圏から SKIZ を作る(op とは別の作り方の参照)。
+
+    各成分 k への距離 D_k を 1 枚ずつ求め、最も近い成分の集合 S = {k : D_k = min D} を正確に出す。
+    境界 = 同距離の成分が 2 つ以上ある画素 + 4 近傍の隣と S が重ならない対の、自分の成分から遠い側
+    (等しければ両方)。op は 8 通りの走査の向きから集合を集めるので作り方が違う。
+    ★2026-11-09: 以前は ``expand_labels`` の影響圏に「右か下の隣と違う画素」の規則を当てた参照で、
+    op の片寄り(上・左へ 1 画素)まで写していた。
+    """
+    labels, n = ndi.label(seed, structure=np.ones((3, 3), bool))
+    if n < 2:
+        return np.zeros(seed.shape, bool)
+    D = np.stack([ndi.distance_transform_edt(labels != k) for k in range(1, n + 1)])
+    d = D.min(axis=0)
+    S = D == d[None]                                     # 最も近い成分の集合(n, H, W)
+    del D
+    edge = S.sum(axis=0) >= 2
+    for sl_a, sl_b in (((slice(None, -1), slice(None)), (slice(1, None), slice(None))),
+                       ((slice(None), slice(None, -1)), (slice(None), slice(1, None)))):
+        dj = ~(S[(slice(None),) + sl_a] & S[(slice(None),) + sl_b]).any(axis=0)
+        da, db = d[sl_a], d[sl_b]
+        edge[sl_a] |= dj & (da >= db)
+        edge[sl_b] |= dj & (db >= da)
     return edge & ~seed
 
 
@@ -320,7 +342,7 @@ def contract_gates(g: Gates) -> dict:
     sk = L.morph_skiz(blobs)
     ref = skiz_reference(blobs)
     agree = float((sk == ref).mean())
-    g.check("morph_skiz の境界 = expand_labels の影響圏の境界(coins の %d 個)" % n_obj, agree == 1.0,
+    g.check("morph_skiz の境界 = 厳密な影響圏の境界(coins の %d 個)" % n_obj, agree == 1.0,
             "一致 %.6f、境界 %d 画素" % (agree, int(sk.sum())))
     g.check("SKIZ は種に重ならず、種の数 ≥ 2 で空でない", sk.any() and not (sk & blobs).any())
     cells = ndi.label(~sk & ~blobs | blobs, structure=None)[1]
@@ -402,7 +424,7 @@ def real_chapter(g: Gates, root: Path) -> dict:
 
     # op の確かめ(実写の種で)
     agree = min(float((r["skiz"] == skiz_reference(r["seed"])).mean()) for r in rows)
-    g.check("評価の全枚数で morph_skiz = expand_labels の影響圏の境界", agree == 1.0, "最小の一致 %.6f" % agree)
+    g.check("評価の全枚数で morph_skiz = 厳密な影響圏の境界", agree == 1.0, "最小の一致 %.6f" % agree)
     eight = np.ones((3, 3), bool)
     extra = np.array([ndi.label(~r["skiz"])[1] - ndi.label(r["seed"], structure=eight)[1] for r in rows])
     g.check("評価の全枚数で SKIZ の区画(4 連結)は種の数以上 = 2 つの影響圏がつながらない", (extra >= 0).all(),
@@ -420,7 +442,7 @@ def real_chapter(g: Gates, root: Path) -> dict:
     print("   SKIZ の線から生えた 1 画素のひげ(hit_or_miss_seq の E): 合計 %d、%.0f %% の枚数に在る" %
           (spurs.sum(), 100 * (spurs > 0).mean()))
     print("   専門家の細い線の内側の端点: 合計 %d(閉じていない線、1 枚あたり中央値 %.0f)" % (ends_thin.sum(), np.median(ends_thin)))
-    g.check("記録した癖: morph_skiz の線には 1 画素のひげが出る(右か下の隣で境界を決める規則)", spurs.sum() > 0,
+    g.check("記録した癖: morph_skiz の線には 1 画素のひげが出る(同距離の画素と偶数幅の 2 画素の線の端)", spurs.sum() > 0,
             "合計 %d" % spurs.sum())
 
     print("\n-- 3. 粒の大きさ(ASTM E112 の切断法、試験線 %d 画素おき)" % LINE_STEP)
@@ -454,12 +476,13 @@ def real_chapter(g: Gates, root: Path) -> dict:
     print("   1 枚ずつの切片長の変動係数: 専門家 %.3f / SKIZ %.3f(種を勾配の分位点で決めるので種の密度が画像によらない)"
           % tuple(cv))
     g.check("切片長の比(合わせた値)が 1 ± 0.25(|ΔG| ≤ 0.83)", abs(ratio_pool - 1) <= 0.25, "%.3f(ΔG %+.2f)" % (ratio_pool, dG))
-    # 所見(変わったら書き換える): 合わせた値は 1 に近いが、粒の数は 3 倍で、1 枚ずつは順位も合わない。
+    # 所見(変わったら書き換える): 合わせた値は 1 に近いが、粒の数は 1.7 倍で、1 枚ずつは順位も合わない。
+    # ★2026-11-09: opening_seg の修正で粒の数が 57 → 31(専門家 18)、変動係数が 0.145 → 0.176 に動き、
+    #   門「SKIZ の粒の数は専門家の 2 倍以上」「変動係数は専門家の半分以下」が成り立たなくなった。門の値を実測の
+    #   直上へ動かすのは緩めになるので、2 本とも門から外し、数値は印字と RECORDED にだけ残す(主張は本文で縮めた)。
     g.check("所見: 1 枚ずつの切片長は専門家と順位が合わない(Spearman ρ < 0.3)", rho < 0.3, "%.3f" % rho)
-    g.check("所見: SKIZ の切片長は画像ごとの変化が専門家の半分以下(変動係数)", cv[1] <= 0.5 * cv[0],
-            "%.3f 対 %.3f" % (cv[1], cv[0]))
-    g.check("所見: SKIZ の粒の数は専門家の 2 倍以上(小さい種が粒になる)", np.median(gc_sk) >= 2 * np.median(gc_ex),
-            "中央値 %.0f 対 %.0f" % (np.median(gc_sk), np.median(gc_ex)))
+    print("   (門なし)切片長の変動係数 SKIZ %.3f 対 専門家 %.3f、粒の数の中央値 SKIZ %.0f 対 専門家 %.0f"
+          % (cv[1], cv[0], np.median(gc_sk), np.median(gc_ex)))
     g.check("切片長の数値が全部有限で正", all(math.isfinite(v) and v > 0 for v in ell_sk + ell_ex))
 
     print("\n-- 4. 細線化: 専門家の太い線を Golay の L で細くし、skeletonize と専門家の細い線と比べる(全 320 枚)")
@@ -592,7 +615,7 @@ def write_figures(res: dict) -> None:
     parts = [_text_strip(width, [
         ("失敗の報告: SKIZ の粒界は粒の大きさに追従しない", 22),
         ("評価 %d 枚で 1 枚ずつの平均切片長の順位 Spearman ρ %.2f(専門家と合わない)" % (res["n_test"], res["rho"]), 17),
-        ("粒界の位置 F %.3f は同じ種の watershed %.3f に負け、粒の数は専門家の %.0f 倍"
+        ("粒界の位置 F %.3f は同じ種の watershed %.3f に負け、粒の数は専門家の %.1f 倍"
          % (res["f_skiz"][2], res["f_ws"][2], res["grain_counts"][1] / res["grain_counts"][0]), 17),
     ], legend=[((255, 255, 255), "専門家の手描きの粒界"), (fs.role_rgb8("right"), "morph_skiz の粒界(右)。左 = 写真")])]
     gap = np.full((8, width, 3), 255, np.uint8)
@@ -666,7 +689,7 @@ def write_figures(res: dict) -> None:
 
 def _record(res: dict, contract: dict) -> dict:
     r6 = lambda v: float("%.6g" % v)  # noqa: E731
-    return {"date": "2026-11-08", "digest": res["data"]["digest"], "params": res["params"],
+    return {"date": "2026-11-09", "digest": res["data"]["digest"], "params": res["params"],
             "train_F": r6(res["train_F"]), "f_skiz": [r6(v) for v in res["f_skiz"]], "f_ws": [r6(v) for v in res["f_ws"]],
             "ws_wins": r6(res["ws_wins"]), "extra_cells": res["extra_cells"], "n_split": [res["n_train"], res["n_test"]],
             "spurs": res["spurs"], "spur_images": r6(res["spur_images"]),

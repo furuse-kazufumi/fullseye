@@ -6,7 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像 1 枚で背景を更新し、前景の領域を返す。</p>
-<p>背景との差の絶対値が <code style="color:#22d3bf">threshold</code> を超える画素を前景にする。入力の <code style="color:#22d3bf">model</code> は書き換えず、更新後のモデルを <code style="color:#22d3bf">model</code> の鍵で返す。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>背景との差の絶対値が <code style="color:#22d3bf">threshold</code> を超える画素を前景にする。入力の <code style="color:#22d3bf">model</code> は書き換えず、更新後のモデルを <code style="color:#22d3bf">model</code> の鍵で返す。画素値は <code style="color:#22d3bf">create_bg_esti</code> と同じ [0, 1] の float (整数 dtype と範囲外は ValueError)。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
 <p>Args:</p>
 <p>model: <code style="color:#22d3bf">create_bg_esti</code> の返り。</p>
 <p>image: 現在の画像(モデルと同じ形)。</p>

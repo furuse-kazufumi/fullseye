@@ -90,7 +90,7 @@
     {
       "module": "blob2d.py",
       "function": "blob_select",
-      "line": 534,
+      "line": 541,
       "exception_types": [],
       "returned_or_assigned": "np.zeros_like(lab)",
       "classification": "legitimate_empty",
@@ -99,7 +99,7 @@
     {
       "module": "blob2d.py",
       "function": "blob_select_largest",
-      "line": 559,
+      "line": 566,
       "exception_types": [],
       "returned_or_assigned": "np.zeros_like(lab)",
       "classification": "legitimate_empty",
@@ -264,7 +264,7 @@
     {
       "module": "ops.py",
       "function": "_ncc_locate",
-      "line": 1932,
+      "line": 1934,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -273,7 +273,7 @@
     {
       "module": "ops.py",
       "function": "_shape_locate",
-      "line": 2261,
+      "line": 2263,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -282,7 +282,7 @@
     {
       "module": "ops.py",
       "function": "_shape_locate",
-      "line": 2268,
+      "line": 2270,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -291,7 +291,7 @@
     {
       "module": "ops.py",
       "function": "module_requirements",
-      "line": 2676,
+      "line": 2678,
       "exception_types": [
         "Exception"
       ],
@@ -302,7 +302,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2745,
+      "line": 2747,
       "exception_types": [
         "Exception"
       ],
@@ -313,7 +313,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2753,
+      "line": 2755,
       "exception_types": [
         "Exception"
       ],
@@ -324,7 +324,7 @@
     {
       "module": "ops.py",
       "function": "_label_guarded_functions_with_their_op_name",
-      "line": 3032,
+      "line": 3034,
       "exception_types": [
         "AttributeError, TypeError"
       ],
@@ -335,7 +335,7 @@
     {
       "module": "ops.py",
       "function": "apply_genome",
-      "line": 3146,
+      "line": 3148,
       "exception_types": [
         "Exception"
       ],

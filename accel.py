@@ -287,13 +287,24 @@ def _otsu(t, a, b, dev):
     """core _otsu の逐語移植: 256-bin ヒストグラム → 間クラス分散 argmax → x >= そのビンの上端。"""
     # ヒストグラムと最終比較は float64 で行う(P3: f32 だと bin 境界直下の値が
     # 境界へ丸まり argmax が動く。histc の f64 規約は np.histogram と完全一致を実測)
-    x = t.clamp(0, 1)
+    # ★2026-11-09: clamp(0, 1) はしない —— 範囲外の入力で中核(実データの範囲で切る)と答えが割れた(独立レビュー R4)。
+    x = t
     B = x.shape[0]
     outs = []
     edges = torch.linspace(0.0, 1.0, 257, dtype=torch.float64, device=t.device)
     mids = (edges[:-1] + edges[1:]) / 2
     for i in range(B):
         xi = x[i].double()
+        # ★2026-11-09: core と同じく有限な画素の最小〜最大を [0,1] に伸ばしてから 256 ビン(定数の像は伸ばさない)。
+        fin = torch.isfinite(xi)
+        if xi.numel() and not bool(fin.any()):
+            # ★2026-11-09(2 回目の確認): 中核と同じく、有限な画素が 1 つも無ければ拒否する(以前は黙って値を返した)。
+            raise ValueError("otsu: no finite pixel in the input (all NaN/inf) — a threshold is undefined; "
+                             "mask or fill the NaN first (e.g. np.nan_to_num) or check np.isfinite(img).any()")
+        if bool(fin.any()):
+            lo_i, hi_i = xi[fin].min(), xi[fin].max()
+            if bool(hi_i > lo_i):
+                xi = (xi - lo_i) / (hi_i - lo_i)
         hist = torch.histc(xi, bins=256, min=0.0, max=1.0)
         p = hist / hist.sum().clamp_min(1.0)
         omega = torch.cumsum(p, 0)

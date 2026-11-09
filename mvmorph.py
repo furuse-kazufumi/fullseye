@@ -238,12 +238,49 @@ def morph_hat(region, se):
     return (a & ~opened) | (closed & ~a)
 
 
+def _nearest_zone_sets(labels):
+    """背景の各画素の「最も近い連結成分」の集合を、格子の 8 通りの対称(反転・転置)から集める。
+
+    ``distance_transform_edt`` の最近傍は同距離のとき走査の向きで 1 つを選ぶ。8 通りの向きで
+    選ばせた番号を全部持てば、集合は像の反転・転置に対して共変になる(同距離の成分が複数なら
+    集合の要素も複数)。返り: 距離 ``d``(H, W)と番号 ``Z``(8, H, W)。
+    """
+    zs = []
+    d = None
+    for tr in (False, True):
+        base = labels.T if tr else labels
+        for fr in (False, True):
+            for fc in (False, True):
+                sl = (slice(None, None, -1 if fr else 1), slice(None, None, -1 if fc else 1))
+                lab = base[sl]
+                dd, idx = ndimage.distance_transform_edt(lab == 0, return_indices=True)
+                z = lab[idx[0], idx[1]][sl]
+                if tr:
+                    z = z.T
+                zs.append(z)
+                if d is None:
+                    d = dd[sl].T if tr else dd[sl]
+    return d, np.stack(zs)
+
+
+def _sets_disjoint(Zp, Zq):
+    """画素ごとに 2 つの番号の集合((8, ...) の 2 枚)が共通の要素を持たないか。"""
+    common = np.zeros(Zp.shape[1:], bool)
+    for i in range(Zp.shape[0]):
+        common |= (Zp[i][None] == Zq).any(axis=0)
+    return ~common
+
+
 def morph_skiz(region):
     """領域の連結成分の影響圏の境界(SKIZ)をユークリッド距離で求める。
 
-    背景の各画素を最も近い連結成分へ割り当て、右か下の隣と割り当てが違う背景の画素を境界に
-    する。連結成分が 1 つなら境界は無く、全部 False を返す(理由: 影響圏が 1 つで境界が無い)。
-    空の入力(``region`` が 0 要素)は ValueError。
+    背景の各画素について最も近い連結成分(8 連結)の集合を求め、(1) 同距離の成分が 2 つ以上ある
+    画素と、(2) 4 近傍の隣と集合が重ならない対のうち、自分の成分から遠い側(等しければ両方)の
+    画素を境界にする。規則は対の両側を同じに扱うので、境界は像の上下・左右の反転と転置に対して
+    対称(偶数幅の隙間では中央の 2 列、奇数幅では中央の 1 列)。その代わり線は 1 画素幅とは限らず、同距離の
+    画素から 1 画素のひげ(端点)が出やすい(実写の金属組織 168 枚で、片側の規則の 265 本に対し 1,116 本)。
+    1 画素幅の線や端点の数が要るなら、後段で細線化すること。連結成分が 1 つなら境界は無く、
+    全部 False を返す(理由: 影響圏が 1 つで境界が無い)。空の入力(``region`` が 0 要素)は ValueError。
 
     Args:
         region: 2-D の領域。
@@ -251,24 +288,52 @@ def morph_skiz(region):
     Returns:
         ``region`` と同じ形の bool 配列。
     """
+    # ★2026-11-09 点検: 以前は「右か下の隣と割り当てが違う画素」だけに印を付けたので境界が上・左へ
+    #   1 画素寄り、像を 180° 回して戻すと 147 画素(境界 105 画素)が一致しなかった。偶数幅の隙間で
+    #   境界の列が 19(元)対 20(反転して戻す)。成分ごとに距離変換を取る厳密な参照と一致する。
     op = "morph_skiz"
     a = _region(region, op)
     labels, n = ndimage.label(a, structure=np.ones((3, 3), bool))
     if n < 2:
         return np.zeros(a.shape, bool)
-    idx = ndimage.distance_transform_edt(labels == 0, return_distances=False, return_indices=True)
-    zone = labels[idx[0], idx[1]]
-    edge = np.zeros(a.shape, bool)
-    edge[:-1, :] |= zone[:-1, :] != zone[1:, :]
-    edge[:, :-1] |= zone[:, :-1] != zone[:, 1:]
+    d, Z = _nearest_zone_sets(labels)
+    edge = Z.min(axis=0) != Z.max(axis=0)                 # 同距離の成分が 2 つ以上(二等分線の上)
+    dj = _sets_disjoint(Z[:, :-1, :], Z[:, 1:, :])
+    edge[:-1, :] |= dj & (d[:-1, :] >= d[1:, :])
+    edge[1:, :] |= dj & (d[1:, :] >= d[:-1, :])
+    dj = _sets_disjoint(Z[:, :, :-1], Z[:, :, 1:])
+    edge[:, :-1] |= dj & (d[:, :-1] >= d[:, 1:])
+    edge[:, 1:] |= dj & (d[:, 1:] >= d[:, :-1])
     return edge & ~a
+
+
+def _same_value_components(lab, mask):
+    """``mask`` の中で ``lab`` の値が等しい画素どうしの 8 連結成分の番号(scipy.sparse.csgraph)。"""
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import connected_components
+    h, w = lab.shape
+    ids = np.arange(h * w).reshape(h, w)
+    rows, cols = [], []
+    for dr, dc in ((0, 1), (1, 0), (1, 1), (1, -1)):
+        r0, r1 = slice(0, h - dr), slice(dr, h)
+        c0, c1 = (slice(0, w - dc), slice(dc, w)) if dc >= 0 else (slice(-dc, w), slice(0, w + dc))
+        ok = mask[r0, c0] & mask[r1, c1] & (lab[r0, c0] == lab[r1, c1])
+        rows.append(ids[r0, c0][ok])
+        cols.append(ids[r1, c1][ok])
+    r = np.concatenate(rows)
+    c = np.concatenate(cols)
+    g = coo_matrix((np.ones(r.size, np.int8), (r, c)), shape=(h * w, h * w))
+    return connected_components(g, directed=False)[1].reshape(h, w)
 
 
 def opening_seg(region, se):
     """くびれで繋がった物体を収縮で切り離し、元の領域の中で広げ直してラベルにする。
 
-    構造要素で収縮 → 連結成分 → 各成分を最寄りの画素へ広げる(``region`` の中だけ)。収縮で
-    全部消えると全 0 のラベルを返す(理由: 切り離す種が残らない)。
+    構造要素で収縮 → 連結成分 → 各種を ``region`` の中だけを通って(測地的に)広げる。各画素は
+    最寄りの種の番号を受けるが、その番号の区画が ``region`` の中で種とつながらない画素(背景を
+    跨いだ割り当て)は、つながった区画から 8 近傍で 1 画素ずつ広げ直す。**種を 1 つも持たない
+    連結成分(収縮で消えた小さな塊)は 0**(隣の物体の番号をもらわない)。収縮で全部消えると全 0 の
+    ラベルを返す(理由: 切り離す種が残らない)。
     空の入力(``region`` が 0 要素)は ValueError。
 
     Args:
@@ -286,5 +351,61 @@ def opening_seg(region, se):
     seeds, n = ndimage.label(ndimage.binary_erosion(a, structure=s))
     if n == 0:
         return np.zeros(a.shape, dtype=np.int32)
+    # ★2026-11-09 点検: 以前は最近傍の種の番号をそのまま配ったので、背景を跨いで割り当てた。
+    #   大物体 30x25 から 3 px 離れた 3x3 の塊(5x5 の収縮で種が消える)が大物体の番号 1 をもらった。
+    #   最近傍の区画が種と領域の中でつながる画素はそのまま(単一の凸な物体では以前と 0 px 差)。
     idx = ndimage.distance_transform_edt(seeds == 0, return_distances=False, return_indices=True)
-    return np.where(a, seeds[idx[0], idx[1]], 0).astype(np.int32)
+    lab = np.where(a, seeds[idx[0], idx[1]], 0)
+    comp = _same_value_components(lab, a)
+    seeded = np.zeros(int(comp.max()) + 1, bool)
+    seeded[comp[seeds > 0]] = True
+    ok = a & seeded[comp]
+    out = np.where(ok, lab, 0)
+    todo = a & ~ok
+    if todo.any():
+        _grow_geodesic(out, ok, todo)                     # 種へ領域の中を通って行けない画素は 0 のまま
+    return out.astype(np.int32)
+
+
+_EIGHT_OFFSETS = np.array([(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)])
+
+
+def _grow_geodesic(out, ok, todo):
+    """``todo`` の画素へ、``ok`` の区画から 8 近傍で 1 画素ずつ番号を広げる(``out``・``ok``・``todo`` をその場で書き換える)。
+
+    各層の画素は、最も近い ``ok`` の画素(距離 1 か √2 の隣)の番号を受ける。最近傍は、層の画素を
+    ``todo`` の連結成分(8 連結)ごとに分け、その成分の前線を囲む小さな窓の中だけで ``distance_transform_edt``
+    を取って決める —— 隣は窓の中に必ず在り、別の成分の画素は隣にならないので、全画面で取るのと同じ答え
+    (同距離の選び方も含めて一致することを全画面版の参照で確かめている)。
+    ★2026-11-09 独立レビュー: 以前は層ごとに全画面の距離変換を回したので、背景を跨いで別の種に近い長さ L の
+    細長い部分があると O(L × H × W) になり、1024² で 21.4 s(修正前の opening_seg は 0.03 s)かかった。
+    前線全体を 1 つの窓で囲んだ版では、細長い部分が左上と右下に 1 本ずつあると窓が画面全体に広がり 1024² で
+    5.24 s に戻った(2 回目の確認)ので、窓を連結成分ごとに分けた。
+    """
+    h, w = out.shape
+    comp, _ = ndimage.label(todo, structure=np.ones((3, 3), bool))
+    fr = np.nonzero(ndimage.binary_dilation(ok, structure=np.ones((3, 3), bool)) & todo)
+    while fr[0].size:
+        cid = comp[fr]
+        order = np.argsort(cid, kind="stable")
+        rs, cs, cid = fr[0][order], fr[1][order], cid[order]
+        cuts = np.flatnonzero(np.diff(cid)) + 1
+        labs = np.empty(rs.size, dtype=out.dtype)
+        for a, b in zip(np.r_[0, cuts], np.r_[cuts, rs.size]):
+            pr, pc = rs[a:b], cs[a:b]
+            r0, r1 = max(int(pr.min()) - 2, 0), min(int(pr.max()) + 3, h)
+            c0, c1 = max(int(pc.min()) - 2, 0), min(int(pc.max()) + 3, w)
+            jr, jc = ndimage.distance_transform_edt(~ok[r0:r1, c0:c1], return_distances=False,
+                                                    return_indices=True)
+            labs[a:b] = out[jr[pr - r0, pc - c0] + r0, jc[pr - r0, pc - c0] + c0]
+        fr = (rs, cs)
+        out[fr] = labs
+        ok[fr] = True
+        todo[fr] = False
+        nr = (fr[0][:, None] + _EIGHT_OFFSETS[None, :, 0]).ravel()
+        nc = (fr[1][:, None] + _EIGHT_OFFSETS[None, :, 1]).ravel()
+        inside = (nr >= 0) & (nr < h) & (nc >= 0) & (nc < w)
+        nr, nc = nr[inside], nc[inside]
+        keep = todo[nr, nc]
+        flat = np.unique(nr[keep] * w + nc[keep])
+        fr = (flat // w, flat % w)

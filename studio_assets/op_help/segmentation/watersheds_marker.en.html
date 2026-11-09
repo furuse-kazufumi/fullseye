@@ -6,7 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Marker-controlled watershed segmentation; markers is an int label image (0 = unassigned) (watersheds_marker).</p>
-<p>Empty input (<code style="color:#22d3bf">image</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">image</code> with 0 elements) raises ValueError. <code style="color:#22d3bf">markers</code> of a different shape from <code style="color:#22d3bf">image</code> and non-integer, negative or non-finite <code style="color:#22d3bf">markers</code> also raise ValueError (integer-valued floats and booleans are accepted). It calls <code style="color:#22d3bf">skimage.segmentation.watershed</code> directly; without scikit-image it raises MissingDependencyError (it does not fall back to an image-blind nearest-marker map).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

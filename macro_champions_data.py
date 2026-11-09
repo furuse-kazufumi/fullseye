@@ -67,7 +67,7 @@ MACROS = [{'name': 'macro_denoise',
                  'pop': 28,
                  'selected_seed': 7,
                  'captured': '2026-08-15',
-                 'score': {'train': 0.9694, 'holdout': 0.9468, 'locked_holdout': 0.9059},
+                 'score': {'train': 0.9692, 'holdout': 0.9468, 'locked_holdout': 0.9057},
                  'recorded_evolution_score': {'train': 0.9697,
                                               'holdout': 0.9475,
                                               'locked_holdout': 0.9062},
@@ -92,7 +92,11 @@ MACROS = [{'name': 'macro_denoise',
                                 'DNA は `otsu` を最終段に持つので、**進化した当時の値では測り直せない** —— '
                                 '`recorded_evolution_score` は当時のまま残し、`score` '
                                 'を今のレジストリで測り直した値に更新し、`overridden_ops` に `otsu` '
-                                'を載せた。数字が動いたことを消さずに書くのが本来の用途。'}},
+                                'を載せた。数字が動いたことを消さずに書くのが本来の用途。 2026-11-09: `otsu` が [0,1] '
+                                'に収まる像も実データの範囲で 256 ビンを張るようになり(点検 g4_2d_stats)、`score` を '
+                                'champion_to_macro.build_entry で測り直した(train 0.9694 → '
+                                '0.9692、holdout 0.9468 → 0.9468、locked_holdout 0.9059 → '
+                                '0.9057)。`recorded_evolution_score` は当時のまま。'}},
  {'name': 'macro_binarize',
   'category': 'macro',
   'problem': 'binarize',
