@@ -360,7 +360,7 @@ def test_count_durations_of_an_unreadable_file_is_none(tmp_path):
 def test_state_dir_must_be_a_linux_path():
     assert cl.check_state_dir_arg("~/fullseye-ci-local", True) == "~/fullseye-ci-local"
     assert cl.check_state_dir_arg("/home/u/ci", False) == "/home/u/ci"
-    for bad in ("C:/Users/u/AppData/Local/Temp/zzz", "C:\\Users\\u\\zzz", "rel/dir"):
+    for bad in ("C:/Program Files/Git/tmp/zzz", "E:\\work\\zzz", "rel/dir"):
         with pytest.raises(cl.UsageError):
             cl.check_state_dir_arg(bad, True)
     with pytest.raises(cl.UsageError):
