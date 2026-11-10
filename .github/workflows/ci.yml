@@ -30,8 +30,11 @@ on:
 # ★2026-11-10(独立レビュー 2 回目): master への push は 1 つの group にまとめる(打ち切りはしない)。
 #   run ごとの group だと、マージが続いたとき 3 版 × 6 片 = 18 ジョブの run が本数ぶん積み上がり、PR が待たされる。
 #   同じ group で cancel-in-progress が偽なら、走っている run は最後まで走り、待ちは最新の 1 本だけが残る。
-#   置き換えられた待ちの run の commit は、残った最新の run が全部含む(failure-record は「前に完了した全数の
-#   run から後の commit」を残すので、範囲に穴は空かない)。
+#   置き換えられた待ちの run の commit は、残った最新の run が引き受ける。
+# ★2026-11-10(独立レビュー 3 回目): 引き受けるのは「範囲」を**テストが実際に走った最後の run** から取るから
+#   (`changes` の classify と `failure-record` の prev。artifact `ci-result-<sha>` のある run)。
+#   直前の push(github.event.before)から取ると、コードの push の待ちを docs だけの push が置き換えたとき、
+#   その run は docs だけと判定して全部飛ばし、置き換えられたコードは全数を通らない。取れなければ全部回す。
 concurrency:
   group: ${{ github.event_name == 'pull_request' && format('ci-{0}-{1}', github.workflow, github.ref) || github.event_name == 'push' && format('ci-{0}-push-{1}', github.workflow, github.ref) || format('ci-{0}-run-{1}', github.workflow, github.run_id) }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -66,12 +69,34 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
           BASE_REF: ${{ github.base_ref }}
-          BEFORE: ${{ github.event.before }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
         run: |
           if [[ "$EVENT_NAME" == pull_request ]]; then
             range="origin/$BASE_REF...HEAD"
-          elif [[ "$EVENT_NAME" == push && "$BEFORE" != 0000000000000000000000000000000000000000 ]]; then
-            range="$BEFORE..HEAD"
+          elif [[ "$EVENT_NAME" == push ]]; then
+            # `test` が実際に走った最後の run = artifact `ci-result-<その run の sha>` を上げた run(failure-record は
+            # test が skip・打ち切りのとき走らない)。docs だけの run・途中で止まった run・待ちのまま置き換えられた run は数えない。
+            base=""
+            if runs=$(gh run list --workflow CI --branch master --status completed --limit 50 \
+                      --json databaseId,event,headSha \
+                      --jq '.[] | select(.event=="push" or .event=="schedule") | "\(.databaseId) \(.headSha)"'); then
+              while read -r id sha; do
+                [[ -n "$id" && -n "$sha" && "$id" != "$RUN_ID" ]] || continue
+                if names=$(gh api "repos/$REPO/actions/runs/$id/artifacts?name=ci-result-$sha" --jq '.artifacts[].name') \
+                   && grep -qxF "ci-result-$sha" <<<"$names"; then
+                  base="$sha"; break
+                fi
+              done <<<"$runs"
+            fi
+            if [[ -n "$base" ]] && git cat-file -e "$base^{commit}" 2>/dev/null && git merge-base --is-ancestor "$base" HEAD; then
+              range="$base..HEAD"
+            else
+              echo "docs-only=false" >> "$GITHUB_OUTPUT"
+              echo "## CI selection: full suite (no earlier run that ran the tests was found)" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
           else
             echo "docs-only=false" >> "$GITHUB_OUTPUT"
             echo "## CI selection: full suite (scheduled/manual run)" >> "$GITHUB_STEP_SUMMARY"
@@ -846,7 +871,9 @@ jobs:
     permissions:
       contents: read
       actions: read
-    needs: [changes, test]
+    # ★regen・gates の結果も読む(2026-11-10、独立レビュー 3 回目): 片と別のジョブにしたので、そこだけが落ちた run は
+    #   test_result が success のまま記録に残っていた。走る条件(test が走ったこと)は変えない。
+    needs: [changes, test, regen, gates]
     if: always() && github.event_name != 'pull_request' && needs.test.result != 'skipped' && needs.test.result != 'cancelled'
     runs-on: ubuntu-latest
     steps:
@@ -859,29 +886,46 @@ jobs:
           pattern: junit-*
           path: junit
           merge-multiple: true
-      # ★commit の範囲は「前に**最後まで走った**全数の run の commit」から(2026-11-10、独立レビュー)。
+      # ★commit の範囲は「前に**テストが実際に走った**全数の run の commit」から(2026-11-10、独立レビュー 1・3 回目)。
       #   github.event.before は直前の push だけを指すので、途中で止まった run の commit が範囲から抜ける。
-      - name: The previous completed full run
+      #   結論(success / failure)で選ぶと、docs だけの run(全部 skip で success)も数えてしまう。
+      #   `changes` の classify と同じ条件(artifact `ci-result-<sha>` のある run)で選ぶ。
+      - name: The previous run that ran the tests
         id: prev
         env:
           GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
           RUN_ID: ${{ github.run_id }}
         run: |
-          sha=$(gh run list --workflow CI --branch master --status completed --limit 50 \
-                --json databaseId,event,conclusion,headSha \
-                --jq "[.[] | select((.event==\"push\" or .event==\"schedule\") and (.conclusion==\"success\" or .conclusion==\"failure\") and .databaseId != $RUN_ID)][0].headSha" || true)
-          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
-          echo "previous completed full run: ${sha:-none}"
+          # `test` が実際に走った最後の run = artifact `ci-result-<その run の sha>` を上げた run(failure-record は
+          # test が skip・打ち切りのとき走らない)。docs だけの run・途中で止まった run・待ちのまま置き換えられた run は数えない。
+          base=""
+          if runs=$(gh run list --workflow CI --branch master --status completed --limit 50 \
+                    --json databaseId,event,headSha \
+                    --jq '.[] | select(.event=="push" or .event=="schedule") | "\(.databaseId) \(.headSha)"'); then
+            while read -r id sha; do
+              [[ -n "$id" && -n "$sha" && "$id" != "$RUN_ID" ]] || continue
+              if names=$(gh api "repos/$REPO/actions/runs/$id/artifacts?name=ci-result-$sha" --jq '.artifacts[].name') \
+                 && grep -qxF "ci-result-$sha" <<<"$names"; then
+                base="$sha"; break
+              fi
+            done <<<"$runs"
+          fi
+          echo "sha=${base}" >> "$GITHUB_OUTPUT"
+          echo "previous run that ran the tests: ${base:-none}"
       - name: Failed tests and the commit range
         env:
           EVENT_NAME: ${{ github.event_name }}
           BEFORE: ${{ steps.prev.outputs.sha || github.event.before }}
           RUN_ID: ${{ github.run_id }}
           TEST_RESULT: ${{ needs.test.result }}
+          REGEN_RESULT: ${{ needs.regen.result }}
+          GATES_RESULT: ${{ needs.gates.result }}
         run: >
           python3 tools/ci_failure_record.py junit
           --sha "$GITHUB_SHA" --before "$BEFORE" --event "$EVENT_NAME" --run-id "$RUN_ID"
-          --test-result "$TEST_RESULT" -o ci_result.json --summary "$GITHUB_STEP_SUMMARY"
+          --test-result "$TEST_RESULT" --regen-result "$REGEN_RESULT" --gates-result "$GATES_RESULT"
+          -o ci_result.json --summary "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: ci-result-${{ github.sha }}

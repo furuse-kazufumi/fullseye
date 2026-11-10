@@ -408,10 +408,14 @@ def test_ci_yml_does_not_cancel_full_runs_and_never_starts_on_a_label():
     doc = yaml.safe_load(raw)
     on = doc[True] if True in doc else doc["on"]          # YAML 1.1 は `on` を真偽値に読む
     assert on["pull_request"]["types"] == ["opened", "synchronize", "reopened"]
-    conc = doc["concurrency"]
-    assert conc["cancel-in-progress"] == "${{ github.event_name == 'pull_request' }}"
-    assert "github.run_id" in conc["group"]             # schedule・手動は run ごと
-    assert "ci-{0}-push-{1}" in conc["group"]           # master への push は 1 つの group
+    # 式は完全一致で見る(部分文字列だと、PR を 1 つの group にまとめる・push を run ごとへ戻す、が通る)。
+    # PR = 枝ごと(打ち切る)/ master への push = 1 つの group(打ち切らない)/ schedule・手動 = run ごと
+    assert doc["concurrency"] == {
+        "group": ("${{ github.event_name == 'pull_request' && format('ci-{0}-{1}', github.workflow, github.ref)"
+                  " || github.event_name == 'push' && format('ci-{0}-push-{1}', github.workflow, github.ref)"
+                  " || format('ci-{0}-run-{1}', github.workflow, github.run_id) }}"),
+        "cancel-in-progress": "${{ github.event_name == 'pull_request' }}",
+    }
     for job in ("changes", "core-minimal", "lint"):
         assert "if" not in doc["jobs"][job], job         # ラベルで飛ばすジョブは無い
     # payload のラベルは run を作った時点の写し(再実行でも変わらない)なので、判定に使わない
@@ -426,8 +430,10 @@ def test_ci_yml_does_not_cancel_full_runs_and_never_starts_on_a_label():
     sel = next(s for s in steps if s.get("id") == "select")["run"]
     assert '"$FULL_LABEL" != false' in sel                # 空(出力なし)も full に倒す
     assert "tools/ci_select_tests\\.py" in sel and "_ci_select_tests_base.py" in sel
+    # 範囲の起点は run の結論では選ばない(docs だけの run は全部 skip で success になる)。挙動は下の
+    # test_the_failure_record_range_starts_at_the_same_run_as_the_docs_only_check が実行して見る
     prev = next(s for s in doc["jobs"]["failure-record"]["steps"] if s.get("id") == "prev")["run"]
-    assert '"success"' in prev.replace('\\"', '"') and "cancelled" not in prev
+    assert "ci-result-$sha" in prev and "conclusion" not in prev
 
 
 # --------------------------------------------------------------------------- #
@@ -641,3 +647,313 @@ def test_the_shards_still_run_everything_the_gates_job_runs(selector):
     regen_steps = [(name, r) for name, job in jobs.items() for r in _runs(job) if "regen_all.py --check" in r]
     assert [name for name, _ in regen_steps] == ["regen"]
     assert "event_name" not in jobs["regen"]["if"] and "mode" not in jobs["regen"]["if"]
+
+
+# --------------------------------------------------------------------------- #
+# 独立レビュー 3 回目(2026-11-10): 文字列の個数ではなく挙動と完全一致で門にする           #
+# --------------------------------------------------------------------------- #
+# ci.yml を 1 か所ずつ壊す 18 通りのうち 15 が、それまでの構造テストを通っていた(赤が緑に見える壊し方)。
+# (1) シェルの step は取り出して実行する (2) continue-on-error と step の if は一覧と一致
+# (3) 門の run は行の完全一致、片の引数は許可リスト (4) concurrency は式の完全一致(上のテスト)。
+import shutil
+
+
+def _bash():
+    """bash の実体。Linux(CI)に無ければ**失敗**(skip にしない)。Windows は Git の bash を探す
+    (System32 の bash は WSL の起動口で、Windows のパスを読めない)。"""
+    if sys.platform != "win32":
+        found = shutil.which("bash")
+        assert found, "bash is required to run the workflow's shell steps"
+        return found
+    cands = []
+    git = shutil.which("git")
+    if git:
+        here = os.path.dirname(os.path.realpath(git))
+        for up in (os.path.dirname(here), os.path.dirname(os.path.dirname(here))):
+            cands += [os.path.join(up, "bin", "bash.exe"), os.path.join(up, "usr", "bin", "bash.exe")]
+    which = shutil.which("bash")
+    if which and "system32" not in which.lower():
+        cands.append(which)
+    for c in cands:
+        if os.path.isfile(c):
+            return c
+    pytest.skip("no Git Bash on this Windows machine (the Linux runners always run this)")
+
+
+# 偽の gh: 応答は $FAKE_GH_DIR のファイル(--jq を通した後の形を書いておく)。FAKE_GH_MODE=fail は全部失敗。
+_FAKE_GH = """#!/bin/sh
+if [ "$FAKE_GH_MODE" = fail ]; then exit 1; fi
+case "$1 $2" in
+  "run list") cat "$FAKE_GH_DIR/runs" ;;
+  "api repos/o/r/pulls/7") cat "$FAKE_GH_DIR/labels" ;;
+  "api repos/o/r/actions/runs/"*)
+    id=${2#repos/o/r/actions/runs/}; id=${id%%/*}
+    [ -f "$FAKE_GH_DIR/artifacts_$id" ] || exit 1
+    cat "$FAKE_GH_DIR/artifacts_$id" ;;
+  *) exit 1 ;;
+esac
+"""
+
+
+def _posix(path):
+    return str(path).replace("\\", "/")
+
+
+def _run_step(tmp_path, script, env, *, cwd=None, mode="ok"):
+    """workflow の step の ``run`` を、偽の gh を PATH の先頭に置いて ``bash -e`` で走らせ、GITHUB_OUTPUT の行を返す。"""
+    bash = _bash()
+    bindir = tmp_path / "fake_bin"
+    bindir.mkdir(exist_ok=True)
+    gh = bindir / "gh"
+    gh.write_text(_FAKE_GH, encoding="utf-8", newline="\n")
+    gh.chmod(0o755)
+    step = tmp_path / "step.sh"
+    step.write_text(script, encoding="utf-8", newline="\n")
+    out = tmp_path / "github_output.txt"
+    out.write_text("", encoding="utf-8")
+    full = dict(os.environ)
+    full.update(env)
+    full.update(PATH=os.pathsep.join([str(bindir), os.path.dirname(bash), os.environ.get("PATH", "")]),
+                FAKE_GH_MODE=mode, FAKE_GH_DIR=_posix(tmp_path), REPO="o/r", GH_TOKEN="not-a-token",
+                GITHUB_OUTPUT=_posix(out), GITHUB_STEP_SUMMARY=_posix(tmp_path / "summary.md"))
+    r = subprocess.run([bash, "-e", _posix(step)], cwd=str(cwd or tmp_path), env=full, capture_output=True,
+                       text=True, encoding="utf-8", errors="replace")
+    assert r.returncode == 0, r.stdout + r.stderr
+    return out.read_text(encoding="utf-8").splitlines()
+
+
+def _step(job, step_id):
+    return next(s for s in _workflow_jobs()[job]["steps"] if s.get("id") == step_id)
+
+
+def _write(path, *lines):
+    path.write_text("".join("%s\n" % ln for ln in lines), encoding="utf-8", newline="\n")
+
+
+def test_the_label_step_runs_everything_when_the_labels_cannot_be_read(tmp_path):
+    """label の step を実際に走らせる。読めない → full(選んだテストだけ、には倒れない)。"""
+    script = _step("changes", "label")["run"]
+    env = {"PR": "7"}
+    unreadable = _run_step(tmp_path, script, env, mode="fail")
+    assert "full=true" in unreadable and "full=false" not in unreadable
+    _write(tmp_path / "labels", "bug", "ci:full")
+    labelled = _run_step(tmp_path, script, env)
+    assert "full=true" in labelled and "full=false" not in labelled
+    _write(tmp_path / "labels", "bug", "ci:fuller", "not ci:full", "CI:FULL")     # 完全一致・大文字小文字を区別
+    assert _run_step(tmp_path, script, env) == ["full=false"]
+    _write(tmp_path / "labels")
+    assert _run_step(tmp_path, script, env) == ["full=false"]
+
+
+def _git(cwd, *args):
+    r = subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "commit.gpgsign=false",
+                        "-c", "core.hooksPath=.git/no-hooks", "-c", "core.autocrlf=false", *args],
+                       cwd=str(cwd), capture_output=True, text=True, encoding="utf-8", errors="replace")
+    assert r.returncode == 0, r.stderr
+    return r.stdout.strip()
+
+
+def test_a_docs_push_that_replaced_a_waiting_code_push_still_runs_the_full_suite(tmp_path):
+    """push の docs-only の範囲は「テストが実際に走った最後の run」から(直前の push からではない)。
+
+    レビューの手順: c0 の run は全数を走った → c1(コード)の run は待ちのまま c2(docs だけ)に置き換えられた。
+    c2 の run が c1..c2 だけを見ると docs だけと判定して全部飛ばし、c1 は全数を通らない。
+    """
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q")
+    shas = []
+    for name in ("a.py", "b.py", "notes.md"):
+        (repo / name).write_text("x\n", encoding="utf-8")
+        _git(repo, "add", name)
+        _git(repo, "commit", "-q", "--no-verify", "-m", name)
+        shas.append(_git(repo, "rev-parse", "HEAD"))
+    c0, c1, c2 = shas
+    script = _step("changes", "classify")["run"]
+    env = {"EVENT_NAME": "push", "BASE_REF": "", "RUN_ID": "99"}
+
+    def classify(mode="ok"):
+        return _run_step(tmp_path, script, env, cwd=repo, mode=mode)
+
+    def runs(*rows):
+        _write(tmp_path / "runs", *("%s %s" % r for r in rows))
+
+    def artifacts(run, *names):
+        _write(tmp_path / ("artifacts_%s" % run), *names)
+
+    runs((99, c2), (20, c0))
+    artifacts(99, "ci-result-" + c2)                 # 自分の run(再実行で artifact が残っていても)は数えない
+    artifacts(20, "ci-result-" + c0)
+    assert classify() == ["docs-only=false"]
+    # c1 の run が「docs だけ」で全部 skip(success、artifact なし)だった場合も、c1 は範囲に残る
+    runs((99, c2), (30, c1), (20, c0))
+    artifacts(30)
+    assert classify() == ["docs-only=false"]
+    # c1 の run がテストを走らせていれば、c2 は docs だけ(docs-only の省略そのものは生きている)
+    artifacts(30, "ci-result-" + c1)
+    assert classify() == ["docs-only=true"]
+    # 名前は run の sha と完全一致で見る(別の sha の記録・別の artifact では数えない)
+    artifacts(30, "ci-result-" + c0, "junit-py3.11-shard1", "ci-result-" + c1 + "-x")
+    assert classify() == ["docs-only=false"]
+    # 取れないときは全部回す: gh の失敗 / artifact のある run が無い / この木に無い sha
+    artifacts(30, "ci-result-" + c1)
+    assert classify(mode="fail") == ["docs-only=false"]
+    artifacts(30)
+    artifacts(20)
+    assert classify() == ["docs-only=false"]
+    runs((30, "0" * 40))
+    artifacts(30, "ci-result-" + "0" * 40)
+    assert classify() == ["docs-only=false"]
+
+
+def test_the_failure_record_range_starts_at_the_same_run_as_the_docs_only_check(tmp_path):
+    """failure-record の prev も同じ条件で選ぶ(同じ行)。regen・gates の結果も記録の道具へ渡す。"""
+    prev = _step("failure-record", "prev")["run"]
+    core = [ln.strip() for ln in prev.splitlines()]
+    block = core[core.index('base=""'): core.index('done <<<"$runs"') + 2]
+    assert block[-1] == "fi" and len(block) == 12
+    other = [ln.strip() for ln in _step("changes", "classify")["run"].splitlines()]
+    at = other.index(block[0])
+    assert other[at: at + len(block)] == block
+    a, b, c = "a" * 40, "b" * 40, "c" * 40
+    env = {"RUN_ID": "99"}
+    _write(tmp_path / "runs", "99 " + c, "30 " + b, "20 " + a)
+    _write(tmp_path / "artifacts_99", "ci-result-" + c)
+    _write(tmp_path / "artifacts_30")                 # docs だけの run: 完了して success だが、テストは走っていない
+    _write(tmp_path / "artifacts_20", "ci-result-" + a)
+    assert _run_step(tmp_path, prev, env) == ["sha=" + a]
+    assert _run_step(tmp_path, prev, env, mode="fail") == ["sha="]
+    job = _workflow_jobs()["failure-record"]
+    assert job["needs"] == ["changes", "test", "regen", "gates"]
+    rec = next(s for s in job["steps"] if "ci_failure_record.py" in s.get("run", ""))
+    assert rec["env"]["BEFORE"] == "${{ steps.prev.outputs.sha || github.event.before }}"
+    for flag, var in (("--test-result", "TEST"), ("--regen-result", "REGEN"), ("--gates-result", "GATES")):
+        assert '%s "$%s_RESULT"' % (flag, var) in rec["run"]
+        assert rec["env"]["%s_RESULT" % var] == "${{ needs.%s.result }}" % var.lower()
+
+
+def test_failure_record_keeps_the_results_of_the_regen_and_gates_jobs(tmp_path):
+    junit = tmp_path / "junit"
+    junit.mkdir()
+    out, summary = tmp_path / "r.json", tmp_path / "s.md"
+    assert CFR.main([str(junit), "--sha", "0" * 40, "--test-result", "success", "--regen-result", "failure",
+                     "--gates-result", "success", "-o", str(out), "--summary", str(summary)]) == 0
+    rec = json.loads(out.read_text(encoding="utf-8"))
+    assert (rec["test_result"], rec["regen_result"], rec["gates_result"]) == ("success", "failure", "success")
+    text = summary.read_text(encoding="utf-8")
+    assert "`regen (regen_all --check)` job did not succeed: failure" in text
+    assert "`gates` job did not succeed" not in text
+
+
+# job と step の `if`: ここに無い条件が 1 つでも付けば赤(門を条件つきで飛ばす壊し方を作りごと防ぐ)。
+_STEP_IFS = {
+    "gates": {
+        "The test selection (PR only)": "needs.changes.outputs.mode == 'selected'",
+        "Freshness forecast (test_test_durations_is_fresh on the session its shard will see)":
+            "${{ !cancelled() && (steps.early.conclusion == 'success' || steps.early.conclusion == 'failure') }}",
+    },
+    "regen": {},
+    "test": {
+        "Record the installed versions (main)":
+            "github.event_name != 'pull_request' && matrix.python-version == '3.11' && matrix.shard == 1",
+        "Optional backends (py3.11 only — 不変条件を実際に走らせる)": "matrix.python-version == '3.11'",
+        "Record the installed versions (with the optional backends)":
+            "github.event_name != 'pull_request' && matrix.python-version == '3.11' && matrix.shard == 1",
+        "Upload the installed versions (baseline for PR dependency checks)":
+            "github.event_name != 'pull_request' && matrix.python-version == '3.11' && matrix.shard == 1",
+        "The test selection (PR only)": "needs.changes.outputs.mode == 'selected'",
+        "Name this shard's duration data": "always()",
+        "Upload test durations": "always()",
+        "Upload JUnit (失敗の記録へ)": "always()",
+        "Upload coverage data (py3.11, this shard)":
+            "matrix.python-version == '3.11' && needs.changes.outputs.mode == 'full'",
+    },
+}
+_NEVER_IN_A_GATE = ("|| true", "|| :", "set +e", "exit 0", "continue-on-error")
+
+
+def _lines(run):
+    return [ln.strip() for ln in run.strip().splitlines()]
+
+
+def test_the_blocking_jobs_cannot_turn_green_without_running_their_gates():
+    """gates・regen・test: 落ちても緑(continue-on-error・`|| true`・`set +e`)と、走らず緑(if・絞る引数)を拒む。"""
+    jobs = _workflow_jobs()
+    for name, expected in _STEP_IFS.items():
+        job = jobs[name]
+        assert job["needs"] == "changes" and job["if"] == "needs.changes.outputs.docs-only != 'true'", name
+        assert "continue-on-error" not in job and "defaults" not in job, name
+        assert [s.get("name") for s in job["steps"] if "continue-on-error" in s or "shell" in s] == [], name
+        assert {s.get("name"): s["if"] for s in job["steps"] if "if" in s} == expected, name
+    gates = {s.get("name"): s for s in jobs["gates"]["steps"]}
+    # 門の run は行の完全一致(1 行足す・`|| true`・`head`・`exit 0` を許さない)
+    assert _lines(gates["List the early tests (tools/ci_select_tests.py --early-list)"]["run"]) == [
+        'python tools/ci_select_tests.py --early-list ci_early_tests.txt --summary "$GITHUB_STEP_SUMMARY"']
+    assert _lines(gates["Run the early tests"]["run"]) == [
+        "mapfile -t files < <(sed -e '/^$/d' ci_early_tests.txt)",
+        '[[ ${#files[@]} -gt 0 ]] || { echo "empty early list"; exit 1; }',
+        'pytest -ra -q --durations=15 "${files[@]}"',
+    ]
+    forecast = gates["Freshness forecast (test_test_durations_is_fresh on the session its shard will see)"]["run"]
+    assert _lines(forecast) == [
+        "files=()",
+        "selection=()",
+        'if [[ "$MODE" == selected ]]; then',
+        "mapfile -t files < <(grep -v '^#' ci-selection/ci_selected_tests.txt | sed -e 's/::.*$//' -e '/^$/d' | sort -u)",
+        '[[ ${#files[@]} -gt 0 ]] || { echo "empty selection"; exit 1; }',
+        "selection=(--selection ci-selection/ci_selected_tests.txt)",
+        "fi",
+        'pytest --collect-only -q "${files[@]}" > ci_collected.txt || { tail -n 60 ci_collected.txt; exit 1; }',
+        "tail -n 1 ci_collected.txt",
+        'python tools/ci_select_tests.py --freshness-forecast ci_collected.txt --nshards "$NSHARDS" "${selection[@]}"',
+    ]
+    regen = [s for s in jobs["regen"]["steps"] if "regen_all" in s.get("run", "")]
+    assert [_lines(s["run"]) for s in regen] == [["python tools/regen_all.py --check"]]
+    assert jobs["regen"]["steps"][-1] is regen[0]
+    # 片: pytest に渡す引数は許可リスト(--collect-only・-k・--deselect などは 1 つも足せない)。呼び出しは最後の 1 行
+    shard = [s for s in jobs["test"]["steps"] if s.get("name", "").startswith("Run tests with coverage")]
+    assert len(shard) == 1
+    lines = _lines(shard[0]["run"])
+    assert lines[-1] == 'pytest "${args[@]}"' and sum("pytest" in ln for ln in lines) == 1
+    tokens = [tok for ln in lines for m in re.finditer(r"args\+?=\(([^)]*)\)", ln) for tok in m.group(1).split()]
+    assert sorted(tokens) == sorted([
+        "-ra", '"--junitxml=junit-py$PYV-shard$SHARD.xml"', "--durations-path", ".test_durations",
+        "--store-durations", "-v", "--timeout-method=signal", "-q", "--cov", '"${files[@]}"'])
+    assert sum(ln.count("args") for ln in lines) == 6            # 5 つの代入 + 呼び出し。ほかの形で args を触らない
+    scripts = [(job, s.get("name"), s["run"]) for job in ("gates", "regen") for s in jobs[job]["steps"]
+               if s.get("run")]
+    assert len(scripts) >= 10                                  # 空の一覧を見て通るのを防ぐ(今は 7 + 5)
+    assert [(job, name, bad) for job, name, run in scripts for bad in _NEVER_IN_A_GATE if bad in run] == []
+    assert not [bad for bad in _NEVER_IN_A_GATE if bad in shard[0]["run"]]
+
+
+def test_hand_edited_inputs_of_the_early_list_are_refused(tmp_path):
+    """実績の表は tests/ の下のテストのファイルだけ。必ず回す一覧の打ち間違いは黙って落とさない(rc 2)。"""
+    with open(os.path.join(ROOT, CST.FAILURE_HISTORY), encoding="utf-8") as f:
+        good = json.load(f)
+    path = tmp_path / "history.json"
+    for bad in ("tools/ci_select_tests.py", "tests/conftest.py", "../tests/test_x.py", "tests/test_x.py::test_a",
+                "--deselect=tests/test_x.py", "tests/test_x.py --collect-only", "examples/poc_x.py"):
+        files = dict(good["files"])
+        files[bad] = {"failed_runs": 1, "branches": 1}
+        path.write_text(json.dumps(dict(good, files=files)), encoding="utf-8")
+        with pytest.raises(ValueError, match="not a test file under tests/"):
+            CST.load_failure_history(path)
+    # 形の正しい名前でこの木に無いもの(消したテスト)は読める。先頭の一覧には入らず、理由つきで残る
+    files = dict(good["files"])
+    files["tests/test_removed_long_ago.py"] = {"failed_runs": 50, "branches": 9}
+    path.write_text(json.dumps(dict(good, files=files)), encoding="utf-8")
+    plan = CST.early_plan([], CST.load_failure_history(path))
+    gone = [r for r in plan["rows"] if r["file"] == "tests/test_removed_long_ago.py"]
+    assert len(gone) == 1 and gone[0]["early"] is False and gone[0]["why"] == "not in this tree"
+    assert "tests/test_removed_long_ago.py" not in plan["tests"]
+    # 必ず回す一覧の打ち間違い: 一覧を書かずに rc 2
+    with open(os.path.join(ROOT, "tools", "ci_always_run.txt"), encoding="utf-8") as f:
+        real = f.read()
+    always = tmp_path / "always.txt"
+    always.write_text(real + "\ntests/test_this_gate_was_mistyped.py\n", encoding="utf-8")
+    target = tmp_path / "early.txt"
+    r = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "ci_select_tests.py"), "--early-list", str(target),
+                        "--always-file", str(always)], capture_output=True, text=True, encoding="utf-8", errors="replace")
+    assert r.returncode == 2 and "tests/test_this_gate_was_mistyped.py" in r.stderr
+    assert not target.exists()

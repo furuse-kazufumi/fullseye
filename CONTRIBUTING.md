@@ -269,7 +269,9 @@ How the selection works (`py -3.11 tools/ci_select_tests.py --base origin/master
   the always-run gates plus every test file that failed on two or more branches in the recent failed
   runs (`tools/ci_failure_history.json`), orders them by the number of failed runs, and keeps what
   fits in 8 minutes of recorded time (`EARLY_BUDGET_SECONDS`; a file that does not fit is skipped and
-  the next one is tried). **Nothing is removed from the shards**: every test of the `gates` job also
+  the next one is tried). "Gates first" is therefore not "every gate first": the order is by failed
+  runs, so an always-run gate that does not fit the budget is left to its shard (the job's log and
+  summary name each one with the reason; on 2026-11-10 three of the ten were left out). **Nothing is removed from the shards**: every test of the `gates` job also
   runs in its shard, so the job pays for its tests twice. The two script runners are never in the
   list. `test_test_durations_is_fresh` answers a different question on a small session, so the job
   does not pass it to pytest: it collects the suite, rebuilds the session of the shard that holds the
@@ -289,7 +291,12 @@ How the selection works (`py -3.11 tools/ci_select_tests.py --base origin/master
 A full run that has started is never cancelled by a newer run; only PR runs cancel their
 predecessor. Scheduled and manual runs each get their own concurrency group. Pushes to `master`
 share one group: the running one finishes and only the newest waiting one is kept, so a burst of
-merges cannot pile up 18-job runs (the kept run contains the commits of the ones it replaced).
+merges cannot pile up 18-job runs. The kept run takes over the commits of the ones it replaced
+because a push run does not look at its own push alone: both the documentation-only check and the
+failure record take their commit range from the last run whose tests really ran (the run that
+uploaded `ci-result-<sha>`), so a documentation-only push that replaces a waiting code push still
+runs the full suite. If no such run can be found, the run is a full one. The failure record also
+keeps the results of the `regen` and `gates` jobs (`regen_result`, `gates_result`).
 Adding a label never starts a run -- a run whose jobs are all skipped would show as passing on
 top of a real failure -- so `ci:full` is read from the API when a run starts, and an unreadable
 label state means the full suite.

@@ -93,6 +93,8 @@ def main(argv=None) -> int:
     ap.add_argument("--event", default="")
     ap.add_argument("--run-id", default="")
     ap.add_argument("--test-result", default="", help="needs.test.result(success / failure)")
+    ap.add_argument("--regen-result", default="", help="needs.regen.result(regen_all --check のジョブ)")
+    ap.add_argument("--gates-result", default="", help="needs.gates.result(先頭のジョブ)")
     ap.add_argument("-o", "--output", default="ci_result.json")
     ap.add_argument("--summary", help="GITHUB_STEP_SUMMARY のパス")
     args = ap.parse_args(argv)
@@ -100,6 +102,7 @@ def main(argv=None) -> int:
     rec = {
         "sha": args.sha, "before": args.before or None, "event": args.event,
         "run_id": args.run_id, "test_result": args.test_result,
+        "regen_result": args.regen_result, "gates_result": args.gates_result,
         "tests_reported": n, "failed": failed, "unreadable_junit": bad,
         "commits": commit_range(args.sha, args.before),
     }
@@ -117,6 +120,11 @@ def main(argv=None) -> int:
             if args.test_result not in ("", "success") and not failed:
                 fh.write("\nThe test job did not succeed but no failing test case was found in the "
                          "JUnit files (a shard may have died before writing it).\n")
+            # 片と別のジョブ(regen・gates)だけが落ちた run も、ここに名前が出るようにする
+            for job, res in (("regen (regen_all --check)", args.regen_result), ("gates", args.gates_result)):
+                if res not in ("", "success"):
+                    fh.write("\nThe `%s` job did not succeed: %s. Its failures are not in the JUnit files "
+                             "above; read that job's log.\n" % (job, res))
             if bad:
                 fh.write("\nUnreadable JUnit: %s\n" % ", ".join(bad))
     print("tests=%d failed=%d" % (n, len(failed)))

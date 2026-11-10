@@ -833,6 +833,9 @@ FAILURE_HISTORY = "tools/ci_failure_history.json"
 #: (片では 4,000 件に対する 95 %、先頭のジョブでは数百件に対する 95 %)。先頭のジョブでは pytest に渡さず、
 #: 片と同じ session を作って門の本体を呼ぶ(``freshness_forecast``)。
 FRESHNESS_GATE = "tests/test_test_durations_is_fresh.py"
+# 実績の表に書いてよい名前 = tests/ の下のテストのファイル。表は手で直せるので、ほかの実在するファイル
+# (tools/*.py など)が pytest に渡らないように形で拒む(2026-11-10、独立レビュー 3 回目)。
+_TEST_FILE = re.compile(r"tests/(?:[A-Za-z0-9_.-]+/)*test_[A-Za-z0-9_.-]+\.py")
 
 
 def load_failure_history(path: Path | None = None) -> dict:
@@ -844,6 +847,8 @@ def load_failure_history(path: Path | None = None) -> dict:
         raise ValueError("%s has no 'files' table" % path)
     table: dict[str, dict] = {}
     for name, row in files.items():
+        if not (isinstance(name, str) and _TEST_FILE.fullmatch(name)):
+            raise ValueError("%s: %r is not a test file under tests/" % (path, name))
         runs = row.get("failed_runs") if isinstance(row, dict) else None
         branches = row.get("branches") if isinstance(row, dict) else None
         if not (isinstance(runs, int) and isinstance(branches, int) and 1 <= branches <= runs):
@@ -863,7 +868,9 @@ def early_plan(always: list[str], history: dict, *, budget: float = EARLY_BUDGET
     * 候補 = 門(*always* = 明示の一覧 + repo を走査するテスト)全部と、実績で *min_branches* 本以上の
       ブランチで落ちたファイル。
     * 外すもの = 鮮度の門(``FRESHNESS_GATE``)と台本を走らせる門(``SCRIPT_RUNNERS``)。どちらも判定や
-      所要時間が session で決まる。この木に無いファイル(実績は別のブランチのもの)も外す。
+      所要時間が session で決まる。この木に無いファイル(実績は別のブランチのもの・消したテスト)も外す
+      (rows に理由つきで残る)。実績の表の名前の形は ``load_failure_history`` が、必ず回す一覧の実在は
+      ``--early-list`` の入口が、それぞれエラーにする。
     * 並べ方 = 落ちた run の数が多い順 → 記録時間が短い順 → 名前。上から見て、合計が *budget* を
       超えないものを入れる(入らないものは飛ばして次を見る)。記録の無いファイルはファイルの平均で仮置き。
     * 返り値の ``tests`` は**回す順**(落ちやすいものが先)。``rows`` は候補全部と、入れた / 外した理由。
@@ -958,7 +965,13 @@ def _main_early(args) -> int:
     """``--early-list`` / ``--freshness-forecast``。入力が使えないときは 2(黙って緑にしない)。"""
     try:
         if args.early_list:
-            always = Selector(Index(ROOT), load_always(args.always_file)).always
+            listed = load_always(args.always_file)
+            # 打ち間違いの行を「この木に無い」で黙って落とさない(門が 1 本、先頭から消えるだけで緑のままになる)
+            missing = [f for f in listed if not (ROOT / f).is_file()]
+            if missing:
+                raise ValueError("the always-run list names files that are not in this tree: %s"
+                                 % ", ".join(missing))
+            always = Selector(Index(ROOT), listed).always
             plan = early_plan(always, load_failure_history())
             Path(args.early_list).write_text("\n".join(plan["tests"]) + "\n", encoding="utf-8")
             head = ("early tests: %d files, %.0f s recorded (budget %d s); ranked by %d failed runs (%s)"
