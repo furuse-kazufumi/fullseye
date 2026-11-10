@@ -299,9 +299,13 @@ it is then compared by its total, and the summary says so. Skips that depend on 
 be told from their reason text and are not subtracted; when the missing apt packages (or tools)
 differ from the baseline, the summary says so, also on the line that reports a jump. The baseline is the smallest such count recorded so far: it
 only moves down, so a series of small increases cannot raise it step by step — they are caught once
-their sum crosses the line. Only a run whose missing tools are the same as the baseline's can lower
-it; a run whose tools differ leaves the baseline where it was, and the summary says so (its compared
-count is an estimate, and taking it in would hide a breakage from every later run with those tools). When a run skips more than the baseline by over 10 % (and by over 20
+their sum crosses the line. A run whose missing tools are the same as the baseline's can lower it,
+and so can a run that only has more tools installed (its missing tools are a strict subset of the
+baseline's): nothing is taken out of such a run's count, so when its compared count is below the
+baseline's, its total count and its set of missing tools become the baseline, and the summary says
+the tools were installed. A run missing a tool the baseline had leaves the baseline where it was (its
+compared count is an estimate, and taking it in would hide a breakage from every later run with
+those tools); the summary says so and says how to make that run the baseline (`--accept-skips`). When a run skips more than the baseline by over 10 % (and by over 20
 tests) the summary says so near the top, lists the skip reasons that grew and names the record's
 location, and the last line gets a short notice; the baseline is left as it was. This is a notice,
 not a failure — the 95 % floor is the failure. A record written by the first version of the tool
@@ -310,9 +314,9 @@ form by the next recording run, by the same smallest-count rule. A record that c
 (empty, with a BOM, not JSON, another format version, or fields of the wrong type) is not compared
 and not overwritten; the summary says why and where the file is, and the run is not failed for it.
 If an increase is legitimate, run again with `--accept-skips "<reason>"` (the reason is required):
-if that run's verdict is one that may record and it either jumped or found the record unreadable,
-its count becomes the new baseline, and the record keeps a history entry (previous and new
-baseline, the compared counts, reason, commit, time). A run that did not jump has nothing to accept:
+if that run's verdict is one that may record and it jumped, found the record unreadable, or has
+other missing tools than the baseline, its count becomes the new baseline, and the record keeps a history entry (previous and new
+baseline, the compared counts, reason, commit, time). A run that did not jump and has the baseline's missing tools has nothing to accept:
 it says so, and the baseline follows the usual rule (it can only move down). A failed, partial or
 different-conditions run does not accept, and says so. A run whose summary cannot be made is a
 failed run too: whatever it had already written to the record (including an accepted baseline) is

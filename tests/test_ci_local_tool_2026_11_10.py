@@ -2470,3 +2470,100 @@ def test_the_within_line_comparison_says_tool_skips_could_not_be_taken_out(tmp_p
     assert ("。基準の記録に skip の理由が無いので、基準だけ無い道具(cargo)の skip を引けなかった(全体の件数で比べた)"
             in lines[0])
     assert _record(inner)["base"]["skipped"] == 30  # 組が違う run なので基準は動かさない(F1)
+
+
+# ---- 6 回目のレビューの続き G1: 道具を入れた後も基準を下げられる・組の違う基準から抜けられる -------------
+
+ALL3 = ["cargo", "node", "Chrome"]
+#: 3 つとも無い run の、道具のための skip 48 件
+TOOL_48 = _skips(30, "embed ビルドを建てられない: cargo が無い") + _skips(10, "node が無い") + _skips(
+    8, "Chrome / Chromium not found")
+
+
+def _run_with(tmp_path, monkeypatch, tools, skips, accept=None):
+    """無い道具 ``tools`` の run を 1 本、finish まで通す。返り値 = (inner, result.json, summary.md)。"""
+    inner = _suite_inner(tmp_path, 100, **({"accept_skips": accept} if accept else {}))
+    inner.st.update(tools_missing=list(tools))
+    _run_suite(inner, [(0, _junit_text(900, skipped=skips))])
+    result = _complete(inner, monkeypatch, tools_missing=list(tools))
+    return inner, result, (inner.out / "summary.md").read_text(encoding="utf-8")
+
+
+def _optional(n: int) -> list:
+    return _skips(n, "optional data not present")
+
+
+def test_installing_the_tools_lets_the_baseline_move_down_again_g1(tmp_path, monkeypatch):
+    # レビューの再現: 基準 = 3 つとも無い run(148 件、うち道具のため 48 件)。3 つとも入れて、その他を 100 → 70 → 95 → 110
+    _run_with(tmp_path, monkeypatch, ALL3, _optional(100) + TOOL_48)
+    inner, _, _ = _run_with(tmp_path, monkeypatch, [], _optional(100))
+    assert (_record(inner)["base"]["skipped"], _record(inner)["base"]["tools_missing"]) == (148, ALL3)  # 減っていない
+    inner, _, summary = _run_with(tmp_path, monkeypatch, [], _optional(70))
+    assert (_record(inner)["base"]["skipped"], _record(inner)["base"]["tools_missing"]) == (70, [])
+    assert ("道具が入った(無い道具: 基準 Chrome、cargo、node → 今回 なし)ので、基準を今回の 70 件と今回の無い道具の組に"
+            "下げた(比べた件数 100 → 70 件)") in summary
+    line = cl.skip_jump_allowed(70)
+    for n in (95, 110):
+        inner, result, _ = _run_with(tmp_path, monkeypatch, [], _optional(n))
+        assert n - 70 > line
+        assert inner.st["skip_jump"].startswith(f"**skip が基準の記録から大きく増えた**: 70 → {n} 件(+{n - 70}。"
+                                                f"知らせる線は +{line})")
+        assert result["skip_baseline"]["jump"] == n - 70
+        assert _record(inner)["base"]["skipped"] == 70
+
+
+@pytest.mark.parametrize(("optional", "why"), [(121, "跳ねた(比べる件数 108 → 129。全体では 148 → 129 と減っている)"),
+                                                (100, "同じ"), (110, "線の内側で増えた")], ids=["jump", "same", "grew"])
+def test_installing_tools_does_not_move_the_baseline_unless_the_compared_count_drops(optional, why, tmp_path, monkeypatch):
+    _run_with(tmp_path, monkeypatch, ALL3, _optional(100) + TOOL_48)
+    inner, _, _ = _run_with(tmp_path, monkeypatch, ["Chrome"], _optional(optional) + _skips(8, "Chrome / Chromium not found"))
+    assert (_record(inner)["base"]["skipped"], _record(inner)["base"]["tools_missing"]) == (148, ALL3), why
+
+
+@pytest.mark.parametrize(("base_tools", "base_skips"), [([], _optional(100)),
+                                                        (["cargo"], _optional(100) + TOOL_48[:30])],
+                         ids=["now-only", "crossing"])
+def test_a_run_missing_a_tool_only_now_never_lowers_the_baseline_and_says_how_to_accept(base_tools, base_skips, tmp_path,
+                                                                                      monkeypatch):
+    # 今回だけ node が無い(F1-3 が残っていること)。交差する組(基準だけ cargo が無い)も同じ
+    _run_with(tmp_path, monkeypatch, base_tools, base_skips)
+    inner, _, summary = _run_with(tmp_path, monkeypatch, ["node"], _optional(80) + TOOL_48[30:40])
+    assert inner.st.get("skip_jump") is None
+    assert _record(inner)["base"]["skipped"] == len(base_skips)
+    assert "道具の組が基準と違うので、基準は動かしていない" in summary
+    assert ("この run の組と件数を基準にするなら、`--accept-skips \"<理由>\"` を付けて回し直す(記録 `" in summary)
+
+
+def test_accept_skips_takes_a_run_with_other_tools_even_without_a_jump(tmp_path, monkeypatch):
+    reason = "node を外した機械に移った"
+    _run_with(tmp_path, monkeypatch, [], _optional(100))
+    inner, _, summary = _run_with(tmp_path, monkeypatch, ["node"], _optional(80) + TOOL_48[30:40], accept=reason)
+    assert inner.st.get("skip_jump") is None
+    rec = _record(inner)
+    assert (rec["base"]["skipped"], rec["base"]["tools_missing"], rec["base"]["accepted"]) == (90, ["node"], reason)
+    entry = rec["accepted"][-1]
+    assert (entry["from"], entry["to"], entry["reason"], entry["sha"]) == (100, 90, reason, SHA)
+    assert re.fullmatch(r"\d{4}-\d\d-\d\d \d\d:\d\d", entry["when"])
+    assert "**skip の基準を受け入れた**(--accept-skips「" + reason + "」): skip の基準を 100 件 → 90 件にした" in summary
+    # 次の run は同じ組なので、全体の件数どうしで比べる(90 → 90 + 線 + 1 で知らせる)
+    extra = cl.skip_jump_allowed(90) + 1
+    nxt, _, _ = _run_with(tmp_path, monkeypatch, ["node"], _optional(80 + extra) + TOOL_48[30:40])
+    assert nxt.st["skip_jump"].startswith(f"**skip が基準の記録から大きく増えた**: 90 → {90 + extra} 件(+{extra}。")
+
+
+# ---- G2: 1 つの理由が 2 つの道具に当たっても、二重に引かない ----------------------------------------------
+
+def test_a_reason_naming_two_missing_tools_is_taken_out_once():
+    both = "node と Chrome が無い"
+    assert cl.github_only_skips({both: 10}, ["node", "Chrome"]) == (10, {"node": 10, "Chrome": 10})
+    base = {"skipped": 313, "tools_missing": [], "skip_reasons": {"optional data not present": 313}}
+
+    def now(k: int) -> dict:
+        reasons = {"optional data not present": 313 + k, both: 10}
+        return {"skipped": sum(reasons.values()), "tools_missing": ["Chrome", "node"], "skip_reasons": reasons}
+
+    assert cl.comparable_skips(base, now(0))[:2] == (313, 313)  # 引くのは 10 件(20 件ではない)
+    line = cl.skip_jump_allowed(313)
+    assert cl.skip_jump(base, now(line)) is None and cl.skip_jump(base, now(line + 1)) is not None
+    # 基準の側でも同じ(基準だけ 2 つとも無い)
+    assert cl.comparable_skips(now(0), base)[:2] == (313, 313)

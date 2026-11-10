@@ -1697,12 +1697,17 @@ class Inner:
         if accept:
             # 5 回目のレビュー E6: 受け入れるのは、跳ねたときと記録が読めないときだけ(跳ねていない run の
             # 受け入れで基準を上げると、--accept-skips を付けたままの alias で C2 のラチェットが戻る)
-            if self.st.get("skip_jump") or (self.st.get("skip_baseline") or {}).get("state") == "unreadable":
+            # 6 回目のレビューの続き G1: 組が違う run は通常の規則では基準を動かさないことがあるので、
+            # 跳ねていなくても受け入れる(それが無いと、組の違う基準から抜ける手段が無かった)
+            prior = self.read_skip_baseline()
+            differs = prior["state"] == "ok" and prior["base"] is not None and tools_set_differs(prior["base"], now)
+            if (self.st.get("skip_jump") or (self.st.get("skip_baseline") or {}).get("state") == "unreadable"
+                    or differs):
                 self.accept_skip_baseline(now, accept)
                 return
             self.st["skip_notices"].append(
                 "**skip の基準を受け入れていない**(--accept-skips): 基準より大きく増えていない(跳ねていない)ので、"
-                "受け入れるものが無い。基準は通常の規則(下がる向きにしか動かさない)で扱った")
+                "受け入れるものが無い(道具の組も基準と同じ)。基準は通常の規則(下がる向きにしか動かさない)で扱った")
         if self.st.get("skip_jump"):
             return  # 基準は増える前のまま(次の run でも知らせる。文面は skip_jump の行)
         rec = self.read_skip_baseline()
@@ -1711,18 +1716,26 @@ class Inner:
             return
         base = rec["base"]
         before, after = comparable_skips(base, now)[:2] if base is not None else (None, now["skipped"])
-        # 6 回目のレビュー F1: 組が違う run の「比べた件数」は理由の文面からの推定を引いた値なので、基準を
-        # 下げる根拠にしない(壊れた run の件数が基準に入り、以後その組の run では二度と知らせなくなった)
+        # 6 回目のレビュー F1: 今回の側から推定で引いた run(今回だけ無い道具がある run)の「比べた件数」は、
+        # 基準を下げる根拠にしない(壊れた run の件数が基準に入り、以後その組の run では二度と知らせなくなった)。
+        # G1: 道具を入れただけの run(今回の無い道具の組が基準の真部分集合)は今回の側から何も引かないので、
+        # 今回の件数は推定を含まない実数。比べる件数で減っていれば、今回の記録に下げる(下げないと、道具を
+        # 入れた後は組が永久に違い、基準が二度と下がらなかった)
         differ = base is not None and tools_set_differs(base, now)
-        if base is None or (after < before and not differ):
+        installed = differ and set(now.get("tools_missing") or []) < set(base.get("tools_missing") or [])
+        if base is None or (after < before and (not differ or installed)):
             new_base, how = now, ("最初の記録にした" if base is None else
-                                  f"基準を {before:,} → {after:,} 件に下げた(比べた件数)")
+                                  f"道具が入った(無い道具: 基準 {'、'.join(sorted(base.get('tools_missing') or []))} → 今回 "
+                                  f"{'、'.join(sorted(now.get('tools_missing') or [])) or 'なし'})ので、基準を今回の "
+                                  f"{now['skipped']:,} 件と今回の無い道具の組に下げた(比べた件数 {before:,} → {after:,} 件)"
+                                  if installed else f"基準を {before:,} → {after:,} 件に下げた(比べた件数)")
         else:
             new_base = {k: val for k, val in base.items() if k != "legacy"}
             if base.get("legacy"):
                 new_base["from"] = "最初の版の形の記録から引き継いだ"
-            how = (f"道具の組が基準と違うので、基準は動かしていない(基準 {base['skipped']:,} 件のまま。基準を下げられるのは"
-                   "無い道具の組が基準と同じ run だけ)" if differ else
+            how = (f"道具の組が基準と違うので、基準は動かしていない(基準 {base['skipped']:,} 件のまま。今回の側から推定で"
+                   "引いた run と、比べる件数が減っていない run は基準を下げない)。この run の組と件数を基準にするなら"
+                   f"、`--accept-skips \"<理由>\"` を付けて回し直す(記録 `{self.skip_baseline_shown()}`)" if differ else
                    f"基準 {before:,} 件は動かさない(下がる向きにしか動かさない。比べた件数)")
         data = {"format": SKIP_BASELINE_FORMAT, "base": new_base,
                 "last": {k: now[k] for k in ("skipped", "tests", "sha", "when", "tools_missing", "apt_missing")},
