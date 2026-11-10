@@ -19,12 +19,19 @@ git は ``tmp_path`` の中の本物の repo で動かす(git が無ければ sk
 比べる(R05。テストの source が実物の形 ``.../.git`` でなかった)・``--allow-other-python`` の判定が版の中身を見ない(R09)。
 あわせて、道具が無い run が ``full_ok`` になる・線以内の増加の繰り返しで skip の基準が上がり続ける・端末に verdict が
 出ない、を直した分のテストがある。
+
+4 回目のレビューは skip の基準の記録まわりに 7 件の穴を示した(D1〜D7): 型の違う記録で全数の段が落ち、空・版の違う
+記録は「無い」と読まれて黙って上書きされる・正当な増加を受け入れる手段がファイルの削除だけで、通知が最後の行に出ない・
+道具の有無で基準がずれる・apt の違いを知らせない・外側が例外で止まると最後の行が出ない・本物の ``probe_tools`` が
+道具の揃った場合を一度も通らない(変異 M2)・記録の一言を要約の本文で見ていない(変異 M3)・道具の欠けが題に出ない。
+末尾の節がそれぞれを、直す前は落ちる形で見る。
 """
 from __future__ import annotations
 
 import importlib.util
 import json
 import math
+import re
 from pathlib import Path
 
 import pytest
@@ -1259,6 +1266,9 @@ def test_skip_record_is_not_touched_by_a_run_that_is_not_all_green_under_github_
     else:
         assert not path.exists()
     assert sum(f"この run の verdict は `{want}`" in r and "記録を書かない" in r for r in inner.remarks) == 1
+    # 要約の本文にも載る(4 回目のレビュー D6 の M3: 記録を要約の後で書くと、一言が summary.md から消えていた)
+    summary = (inner.out / "summary.md").read_text(encoding="utf-8")
+    assert sum(f"この run の verdict は `{want}`" in ln and "記録を書かない" in ln for ln in summary.splitlines()) == 1
 
 
 def test_skip_record_of_the_first_version_is_kept_as_the_base_and_never_raised(tmp_path, monkeypatch):
@@ -1279,10 +1289,13 @@ def test_skip_record_of_the_first_version_is_kept_as_the_base_and_never_raised(t
     jumped = _suite_inner(tmp_path, 1000)
     _run_suite(jumped, [(0, _junit_text(960, skipped=_skips(51, "optional data")))])  # 実行 960 は床 950 の上
     assert "30 → 51 件(+21。知らせる線は +20)" in jumped.st["skip_jump"]
-    # 読めない形・版の違う形は基準にしない(比べない)
+    # 読めない形・版の違う形は基準にしない(比べない)。「無い」とも言わない(4 回目のレビュー D1)
     for text in ("[30]", "{", json.dumps({"format": 99, "base": {"skipped": 1}}), json.dumps({"format": 2})):
         (state / cl.SKIP_BASELINE_FILE).write_text(text, encoding="utf-8")
-        assert ok.read_skip_baseline() is None
+        got = ok.read_skip_baseline()
+        assert (got["state"], got["base"]) == ("unreadable", None) and got["reason"]
+    (state / cl.SKIP_BASELINE_FILE).unlink()
+    assert ok.read_skip_baseline() == {"state": "absent", "base": None, "accepted": [], "reason": None}
 
 
 def _lint_inner(tmp_path: Path, with_ruff: bool = True, **job_over):
@@ -1588,7 +1601,9 @@ def test_verdict_line_names_every_verdict_and_never_reads_as_green_when_unknown(
     ({"verdict": "full_ok", "exit_code": 0}, 0, "verdict: full_ok — 全段・GitHub と同じ条件で ok"),
     ({"verdict": "failed", "exit_code": 1}, 1, "verdict: failed — 失敗"),
     (None, 1, "verdict: 不明 — result.json が無いか読めない。緑の証拠にしない"),
-], ids=["deviating", "full", "failed", "no-result"])
+    ({"verdict": "full_ok", "exit_code": 0, "skip_baseline": {"state": "ok", "jump": 21, "accepted": False}}, 0,
+     "verdict: full_ok — 全段・GitHub と同じ条件で ok。skip が基準より +21 件(要約の先頭を見る)"),
+], ids=["deviating", "full", "failed", "no-result", "skip-jump"])
 def test_host_prints_the_verdict_as_the_last_line_and_keeps_the_exit_code(result, want_rc, want_last, tmp_path,
                                                                           monkeypatch, capsys):
     out = tmp_path / "out"
@@ -1607,3 +1622,347 @@ def test_host_prints_the_verdict_as_the_last_line_and_keeps_the_exit_code(result
     lines = [ln for ln in capsys.readouterr().out.splitlines() if ln.strip()]
     assert rc == want_rc  # 終了コードの意味は変えない(0 = 走った段が ok)
     assert lines[-1] == want_last
+
+
+# ---- 4 回目のレビュー D1: 読めない記録は比べず、上書きせず、段を落とさない -------------------------
+
+#: 読めない記録(レビューの探針 P1 の場合分け + 版・型の境目)。どれも「無い」とも「読めた」とも扱わない。
+UNREADABLE_RECORDS = [
+    ("empty", ""),
+    ("bom", "\ufeff" + json.dumps({"skipped": 30})),
+    ("not-json", "{"),
+    ("not-a-dict", "[30]"),
+    ("format-as-string", json.dumps({"format": "2", "base": {"skipped": 30}})),
+    ("format-as-float", '{"format": 2.0, "base": {"skipped": 30}}'),
+    ("format-99", json.dumps({"format": 99, "base": {"skipped": 30}})),
+    ("no-base", json.dumps({"format": 2})),
+    ("legacy-skipped-true", json.dumps({"skipped": True})),
+    ("legacy-skipped-negative", json.dumps({"skipped": -5})),
+    ("legacy-skipped-string", json.dumps({"skipped": "30"})),
+    ("legacy-tools-int", json.dumps({"skipped": 30, "tools_missing": 5})),
+    ("legacy-tools-str", json.dumps({"skipped": 30, "tools_missing": "cargo"})),
+    ("legacy-reason-null", json.dumps({"skipped": 30, "skip_reasons": {"r": None}})),
+    ("legacy-reason-str", json.dumps({"skipped": 30, "skip_reasons": {"r": "x"}})),
+    ("legacy-reason-bool", json.dumps({"skipped": 30, "skip_reasons": {"r": True}})),
+    ("v2-tools-ints", json.dumps({"format": 2, "base": {"skipped": 30, "tools_missing": [1, 2]}})),
+    ("v2-apt-str", json.dumps({"format": 2, "base": {"skipped": 30, "apt_missing": "libegl1"}})),
+    ("v2-accepted-not-list", json.dumps({"format": 2, "base": {"skipped": 30}, "accepted": "yes"})),
+    ("not-utf8", b"\xff\xfe{}"),
+    ("directory", None),
+]
+
+
+def _put_record(path: Path, content) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if content is None:
+        path.mkdir()
+    elif isinstance(content, bytes):
+        path.write_bytes(content)
+    else:
+        path.write_text(content, encoding="utf-8")
+
+
+def _snapshot(path: Path):
+    return "<dir>" if path.is_dir() else path.read_bytes()
+
+
+@pytest.mark.parametrize("kind,content", UNREADABLE_RECORDS, ids=[k for k, _ in UNREADABLE_RECORDS])
+def test_unreadable_skip_record_is_reported_never_compared_and_never_overwritten(kind, content, tmp_path,
+                                                                                  monkeypatch):
+    inner = _blas_inner(tmp_path)  # BLAS の回し直しも止めないことを見る
+    path = inner.state / cl.SKIP_BASELINE_FILE
+    _put_record(path, content)
+    before = _snapshot(path)
+    got = inner.read_skip_baseline()
+    assert (got["state"], got["base"]) == ("unreadable", None) and got["reason"]
+    # 線の外まで skip が増えた全数(読めていれば跳ねる件数)と、BLAS の skip
+    fake = _run_suite(inner, [(0, _junit_text(95, skipped=BLAS_CASES + _skips(60, "optional data"))),
+                              (0, _junit_text(0, ran=BLAS_IDS))])
+    assert len(fake.calls) == 2  # BLAS の回し直しも走った
+    assert inner.results["tests"]["state"] == "ok"
+    assert "skip_jump" not in inner.st
+    result = _complete(inner, monkeypatch)
+    assert (result["verdict"], result["exit_code"]) == ("full_ok", 0)  # 全数の段を落とさない
+    assert _snapshot(path) == before  # 上書きしない(「無い」と取り違えて黙って新しい基準を書かない)
+    summary = (inner.out / "summary.md").read_text(encoding="utf-8")
+    notice = [ln for ln in summary.splitlines() if "**skip の基準: 記録を読めない**" in ln]
+    assert len(notice) == 1
+    assert notice[0].startswith(f"- **skip の基準: 記録を読めない**({got['reason']})。比べていない・上書きしていない。")
+    assert "`--accept-skips \"<理由>\"` で置き換える(記録 `" in notice[0]
+    assert notice[0].endswith(f"/{cl.SKIP_BASELINE_FILE}`)")
+    assert "記録が無い" not in summary and "skip の基準比" not in summary
+    assert result["skip_baseline"]["state"] == "unreadable"
+    assert cl.verdict_line(result) == "verdict: full_ok — 全段・GitHub と同じ条件で ok。skip の記録を読めない(比べていない)"
+
+
+def test_skip_record_is_replaced_atomically_and_a_failed_write_keeps_the_old_record(tmp_path, monkeypatch):
+    first = _suite_inner(tmp_path, 1000)
+    _run_suite(first, [(0, _junit_text(990, skipped=_skips(10, "optional data")))])
+    _complete(first, monkeypatch)
+    path = first.state / cl.SKIP_BASELINE_FILE
+    before = path.read_bytes()
+    assert json.loads(before)["base"]["skipped"] == 10
+    assert sorted(p.name for p in first.state.iterdir()) == ["repo", cl.SKIP_BASELINE_FILE]  # 一時ファイルは残らない
+    moves = []
+
+    def refuse(src, dst):
+        moves.append((Path(src).name, Path(dst).name))
+        raise OSError("disk full")
+
+    monkeypatch.setattr(cl.os, "replace", refuse)
+    fewer = _suite_inner(tmp_path, 1000)  # 基準を下げる(= 記録を書く)run
+    _run_suite(fewer, [(0, _junit_text(995, skipped=_skips(5, "optional data")))])
+    _complete(fewer, monkeypatch)
+    assert moves == [(f".{cl.SKIP_BASELINE_FILE}.{cl.os.getpid()}.tmp", cl.SKIP_BASELINE_FILE)]
+    assert path.read_bytes() == before  # 書き込みが途中で止まっても、元の記録はそのまま
+    assert sorted(p.name for p in fewer.state.iterdir()) == ["repo", cl.SKIP_BASELINE_FILE]
+    summary = (fewer.out / "summary.md").read_text(encoding="utf-8")
+    assert sum("skip の記録を書けなかった(OSError)" in ln for ln in summary.splitlines()) == 1  # D6 の M3 も
+
+
+# ---- D2: 正当な増加を受け入れる明示の手段。通知を最後の行にも ----------------------------------------
+
+def test_skip_jump_reaches_the_last_line_and_points_to_accept_skips_and_the_record(tmp_path, monkeypatch):
+    ten = _skips(10, "optional data not present")
+    first = _suite_inner(tmp_path, 1000)
+    _run_suite(first, [(0, _junit_text(990, skipped=ten))])
+    _complete(first, monkeypatch)
+    jumped = _suite_inner(tmp_path, 1000)
+    _run_suite(jumped, [(0, _junit_text(969, skipped=ten + _skips(21, "could not import 'torch'")))])
+    msg = jumped.st["skip_jump"]
+    assert "`--accept-skips \"<理由>\"` を付けて回し直すと、その run の件数を基準にする" in msg
+    assert "を消す" not in msg  # 受け入れる手段はファイルの削除ではない
+    assert msg.endswith(f"記録 `{jumped.skip_baseline_shown()}`)")
+    result = _complete(jumped, monkeypatch)
+    assert result["skip_baseline"]["jump"] == 21 and result["skip_baseline"]["accepted"] is False
+    assert cl.verdict_line(result) == ("verdict: full_ok — 全段・GitHub と同じ条件で ok。"
+                                       "skip が基準より +21 件(要約の先頭を見る)")
+    # 末尾は result.json の欄から読む。形の違う値では足さない(verdict の語と `verdict: <語> — ` は変えない)
+    for junk in (None, [], {"jump": True}, {"jump": "21"}, {"jump": -3}, {"jump": 0}, {"accepted": "yes"}):
+        assert cl.verdict_line({"verdict": "full_ok", "skip_baseline": junk}) == "verdict: full_ok — 全段・GitHub と同じ条件で ok"
+    for v in ("full_ok", "ok_missing_tools", "partial_ok", "deviating_ok", "failed", "busy"):
+        line = cl.verdict_line({"verdict": v, "skip_baseline": {"jump": 5, "accepted": True, "state": "unreadable"}})
+        assert line.startswith(f"verdict: {v} — ")
+        assert line.endswith("。skip が基準より +5 件(要約の先頭を見る)。skip の基準を受け入れた(--accept-skips)。"
+                             "skip の記録を読めない(比べていない)")
+
+
+def test_accept_skips_makes_this_run_the_baseline_and_keeps_the_history(tmp_path, monkeypatch):
+    reason = "skip 付きのテストを 50 件足した"
+    ten = _skips(10, "optional data not present")
+    first = _suite_inner(tmp_path, 1000)
+    _run_suite(first, [(0, _junit_text(990, skipped=ten))])
+    _complete(first, monkeypatch)
+    grown_skips = ten + _skips(50, "needs the new dataset")
+    grown = _suite_inner(tmp_path, 1000, accept_skips=reason)
+    _run_suite(grown, [(0, _junit_text(950, skipped=grown_skips))])
+    assert "10 → 60 件(+50。知らせる線は +20)" in grown.st["skip_jump"]
+    result = _complete(grown, monkeypatch)
+    assert (result["verdict"], result["exit_code"]) == ("full_ok", 0)  # 検査の中身は変えないので verdict も変えない
+    rec = _record(grown)
+    assert (rec["base"]["skipped"], rec["base"]["accepted"], rec["last"]["skipped"]) == (60, reason, 60)
+    assert len(rec["accepted"]) == 1
+    entry = rec["accepted"][0]
+    assert (entry["from"], entry["from_skipped"], entry["to"], entry["to_skipped"]) == (10, 10, 60, 60)
+    assert (entry["reason"], entry["sha"], entry["replaced_unreadable"]) == (reason, SHA, None)
+    assert re.fullmatch(r"\d{4}-\d\d-\d\d \d\d:\d\d", entry["when"])
+    summary = (grown.out / "summary.md").read_text(encoding="utf-8")
+    assert sum(f"**skip の基準を受け入れた**(--accept-skips「{reason}」): 道具に依らない skip の基準を 10 件 → "
+               "60 件にした" in ln for ln in summary.splitlines()) == 1
+    line = cl.verdict_line(result)
+    assert line.startswith("verdict: full_ok — 全段・GitHub と同じ条件で ok。")
+    assert "skip が基準より +50 件" in line and line.endswith("skip の基準を受け入れた(--accept-skips)")
+    # 次の run は同じ件数なら知らせない。履歴は残ったまま
+    again = _suite_inner(tmp_path, 1000)
+    _run_suite(again, [(0, _junit_text(950, skipped=grown_skips))])
+    assert "skip_jump" not in again.st
+    _complete(again, monkeypatch)
+    rec2 = _record(again)
+    assert (rec2["base"]["skipped"], rec2["accepted"]) == (60, rec["accepted"])
+
+
+#: 受け入れてはいけない run(記録を書けない verdict と、全数を比べていない run)。
+ACCEPT_REFUSED = [
+    ("pytest-exit-1", {}, "failed", "この run の verdict は `failed`"),
+    ("no-merge", {"tree": _tree(mode="tip", tested=SHA)}, "deviating_ok", "この run の verdict は `deviating_ok`"),
+    ("skip-a-phase", {"skip": ["regen"], "selected": ["lint", "gates", "core", "tests"]}, "partial_ok",
+     "この run の verdict は `partial_ok`"),
+    ("extra-pytest-args", {"pytest_args": ["-k", "smoke"]}, "partial_ok", "この run は全数の skip を基準と比べていない"),
+]
+
+
+@pytest.mark.parametrize("kind,job_over,want,why", ACCEPT_REFUSED, ids=[k for k, *_ in ACCEPT_REFUSED])
+def test_accept_skips_is_refused_by_a_run_that_cannot_record(kind, job_over, want, why, tmp_path, monkeypatch):
+    first = _suite_inner(tmp_path, 1000)
+    _run_suite(first, [(0, _junit_text(990, skipped=_skips(10, "optional data")))])
+    _complete(first, monkeypatch)
+    path = first.state / cl.SKIP_BASELINE_FILE
+    before = path.read_bytes()
+    inner = _suite_inner(tmp_path, 1000, accept_skips="受け入れたい", **job_over)
+    _run_suite(inner, [(1 if kind == "pytest-exit-1" else 0, _junit_text(950, skipped=_skips(60, "optional data")))])
+    result = _complete(inner, monkeypatch, python_versions={"full": "3.11.9"})
+    assert result["verdict"] == want
+    assert path.read_bytes() == before
+    summary = (inner.out / "summary.md").read_text(encoding="utf-8")
+    refused = [ln for ln in summary.splitlines() if "**skip の基準を受け入れていない**(--accept-skips)" in ln]
+    assert len(refused) == 1 and why in refused[0] and "基準はそのまま" in refused[0]
+    assert "受け入れた" not in cl.verdict_line(result)
+
+
+def test_accept_skips_replaces_an_unreadable_record_but_keeps_it_under_another_name(tmp_path, monkeypatch):
+    inner = _suite_inner(tmp_path, 1000, accept_skips="記録を手で壊した")
+    path = inner.state / cl.SKIP_BASELINE_FILE
+    path.write_text('{"skipped": true}', encoding="utf-8")
+    _run_suite(inner, [(0, _junit_text(990, skipped=_skips(10, "optional data")))])
+    _complete(inner, monkeypatch)
+    kept = [p for p in inner.state.iterdir() if p.name.startswith(cl.SKIP_BASELINE_FILE + ".unreadable-")]
+    assert len(kept) == 1 and kept[0].read_text(encoding="utf-8") == '{"skipped": true}'
+    rec = _record(inner)
+    assert rec["base"]["skipped"] == 10
+    assert (rec["accepted"][0]["from"], rec["accepted"][0]["replaced_unreadable"]) == (None, kept[0].name)
+    summary = (inner.out / "summary.md").read_text(encoding="utf-8")
+    assert f"読めなかった記録は `{kept[0].name}` として同じ場所に残した" in summary
+    assert "基準を 記録なし → 10 件にした" in summary
+
+
+@pytest.mark.parametrize("reason", ["", "   ", "\n\t"], ids=["empty", "spaces", "whitespace"])
+def test_accept_skips_needs_a_reason(reason, tmp_path, capsys):
+    args = cl.build_parser().parse_args(["--accept-skips", reason])
+    with pytest.raises(cl.UsageError, match="--accept-skips には理由を渡す"):
+        cl.build_job(args, tmp_path, {})
+    assert cl._host_main(args) == cl.EXIT_USAGE  # 外側から: 終了コード 2、最後の行は「実行していない」
+    out, err = capsys.readouterr()
+    assert [ln for ln in out.splitlines() if ln.strip()][-1] == "verdict: usage — 引数か起動場所の誤り。実行していない"
+    assert "--accept-skips には理由を渡す" in err
+
+
+# ---- D3・D4: 道具・apt の有無で基準がずれない。違いは跳ねた行にも出す ---------------------------------
+
+def test_skip_baseline_compares_the_skips_that_do_not_depend_on_local_tools(tmp_path, monkeypatch):
+    # 線の数値(定数は動かさない): 2026-11-10 の実測 427 件(うち道具のため 114 件)なら、道具に依らない 313 件で線は
+    # +32。全体で比べていたときの +43 より締まる向き。小さい基準では下限 20 のまま
+    assert (cl.SKIP_JUMP_RATIO, cl.SKIP_JUMP_MIN) == (0.10, 20)
+    assert (cl.skip_jump_allowed(313), cl.skip_jump_allowed(427), cl.skip_jump_allowed(30)) == (32, 43, 20)
+    cargo = _skips(40, "embed ビルドを建てられない: cargo が無い")
+    other = _skips(30, "optional data not present")
+    a = _suite_inner(tmp_path, 1000)  # cargo の無い run が最初の記録(全体 70、道具に依らない 30)
+    a.st.update(tools_missing=["cargo"])
+    _run_suite(a, [(0, _junit_text(960, skipped=cargo + other))])
+    _complete(a, monkeypatch, tools_missing=["cargo"])
+    assert _record(a)["base"]["skipped"] == 70
+    b = _suite_inner(tmp_path, 1000)  # cargo のある run: 全体は 70 → 31 に減ったが、道具に依らない skip は 30 → 31
+    _run_suite(b, [(0, _junit_text(969, skipped=other + _skips(1, "optional data not present")))])
+    line = [r for r in b.remarks if r.startswith("skip の基準比: ")]
+    assert len(line) == 1 and line[0].startswith("skip の基準比: 30 → 31 件(道具に依らない skip。")
+    assert "全体は 70 → 31 件" in line[0] and "**手元に無い道具が基準と違う**(基準 cargo → 今回 なし)" in line[0]
+    _complete(b, monkeypatch)
+    assert _record(b)["base"]["skipped"] == 70  # 全体の数で基準を 31 に下げない
+    c = _suite_inner(tmp_path, 1000)  # cargo の無い run に戻る: 全体 70。全体で比べていたら 31 → 70 で毎回跳ねた
+    c.st.update(tools_missing=["cargo"])
+    _run_suite(c, [(0, _junit_text(960, skipped=cargo + other))])
+    assert "skip_jump" not in c.st
+    # 道具の違う run で本当に増えたら跳ねる。道具の違いの一言は跳ねた行にも出る(早い return で消さない)
+    d = _suite_inner(tmp_path, 1000)
+    d.st.update(tools_missing=["cargo", "node"])
+    _run_suite(d, [(0, _junit_text(960, skipped=cargo + other + _skips(25, "could not import 'torch'")))])
+    msg = d.st["skip_jump"]
+    assert msg.startswith("**skip が基準の記録から大きく増えた**: 30 → 55 件(+25。知らせる線は +20)。道具に依らない skip で"
+                          "比べた(全体 70 → 95 件から、手元に無い道具のための skip 40 → 40 件を引いた)")
+    assert "**手元に無い道具が基準と違う**(基準 cargo → 今回 cargo、node)" in msg
+    assert [r for r in d.remarks if r.startswith("skip の基準比")] == []
+
+
+def test_skip_baseline_says_when_the_missing_apt_packages_differ_and_does_not_subtract_them(tmp_path, monkeypatch):
+    ten = _skips(10, "optional data not present")
+    a = _suite_inner(tmp_path, 1000)
+    _run_suite(a, [(0, _junit_text(990, skipped=ten))])
+    _complete(a, monkeypatch)
+    note = ("**手元に無い apt パッケージが基準と違う**(基準 なし → 今回 libegl1)。apt に依る skip は理由の文面から"
+            "数えられないので、件数からは引いていない")
+    b = _suite_inner(tmp_path, 1000)
+    b.st.update(apt_missing=["libegl1"])
+    _run_suite(b, [(0, _junit_text(985, skipped=ten + _skips(5, "Qt が無い")))])
+    assert "skip_jump" not in b.st
+    assert sum(r.startswith("skip の基準比: 10 → 15 件") and note in r for r in b.remarks) == 1
+    c = _suite_inner(tmp_path, 1000)
+    c.st.update(apt_missing=["libegl1"])
+    _run_suite(c, [(0, _junit_text(965, skipped=ten + _skips(25, "Qt が無い")))])
+    assert c.st["skip_jump"].startswith("**skip が基準の記録から大きく増えた**: 10 → 35 件(+25。")  # 引いていない
+    assert note in c.st["skip_jump"]
+    # 版の欄が無い旧形式は apt を記録していない: 今回も無ければ黙る、今回あれば「記録なし」と言う
+    legacy = {"skipped": 10, "tools_missing": []}
+    assert cl.baseline_condition_notes(legacy, {"apt_missing": []}) == []
+    assert "(基準 記録なし → 今回 libegl1)" in cl.baseline_condition_notes(legacy, {"apt_missing": ["libegl1"]})[0]
+
+
+# ---- D5: 外側が止まっても最後の行は verdict ------------------------------------------------------
+
+HOST_STOPS = [
+    ("no-wsl", FileNotFoundError("wsl.exe"), cl.EXIT_FAILED,
+     "verdict: failed — 外側が止まった(FileNotFoundError)。緑の証拠にしない", "FileNotFoundError"),
+    ("ctrl-c", KeyboardInterrupt(), 130, "verdict: failed — 中断した(Ctrl-C)。緑の証拠にしない", "KeyboardInterrupt"),
+    ("usage", cl.UsageError("--ref nope を commit に解決できない"), cl.EXIT_USAGE,
+     "verdict: usage — 引数か起動場所の誤り。実行していない", "ci_local: --ref nope を commit に解決できない"),
+]
+
+
+@pytest.mark.parametrize("kind,exc,want_rc,want_last,want_err", HOST_STOPS, ids=[k for k, *_ in HOST_STOPS])
+def test_host_prints_a_verdict_as_the_last_line_even_when_it_stops_early(kind, exc, want_rc, want_last, want_err,
+                                                                         tmp_path, monkeypatch, capsys):
+    out = tmp_path / "out"
+    job = _job(state_dir="~/fullseye-ci-local")
+
+    def stop(*a, **k):
+        raise exc
+
+    if kind == "usage":
+        monkeypatch.setattr(cl, "build_job", stop)
+    else:
+        monkeypatch.setattr(cl, "build_job", lambda args, cwd, environ: (job, out, tmp_path / "src.git"))
+        monkeypatch.setattr(cl, "_to_wsl", lambda path, distro: str(path))
+        monkeypatch.setattr(cl.subprocess, "call", stop)
+    rc = cl._host_main(cl.build_parser().parse_args([]))
+    captured = capsys.readouterr()
+    assert rc == want_rc and rc != 0
+    assert cl.EXIT_INTERRUPTED == 130
+    assert [ln for ln in captured.out.splitlines() if ln.strip()][-1] == want_last
+    assert want_err in captured.err
+    if kind != "usage":
+        assert "Traceback" in captured.err  # トレースバックは最後の行の前(stderr)に出す
+    assert not (out / "result.json").exists()  # verdict の種類は増やさない(最後の行だけの語)
+
+
+# ---- D6: 本物の probe_tools を、道具が全部ある状態で通す(変異 M2) ----------------------------------
+
+def test_real_probe_tools_with_every_tool_present_makes_a_full_ok_run(tmp_path, monkeypatch):
+    monkeypatch.setattr(cl.platform, "freedesktop_os_release", lambda: {"PRETTY_NAME": "TestOS"}, raising=False)
+    inner, ran = _main_inner(tmp_path / "all", {})
+    inner.probe_tools = cl.Inner.probe_tools.__get__(inner)
+    monkeypatch.setattr(cl.shutil, "which", lambda name, path=None: f"/usr/bin/{name}")
+    calls = []
+    monkeypatch.setattr(cl.subprocess, "call", lambda cmd, **k: calls.append(list(cmd)) or 0)  # dpkg -s: 全部ある
+    assert inner.main() == 0 and ran == list(cl.PHASE_KEYS)
+    result, summary = _finished(inner)
+    assert (result["verdict"], result["tools_probed"], result["tools_missing"], result["apt_missing"]) == (
+        "full_ok", True, [], [])
+    assert calls == [["dpkg", "-s", p] for p in cl.APT_PKGS]
+    assert "- 結論: **全段 ok**(5 段)" in summary
+    assert "- 手元に無い道具: なし(cargo・node・Chrome・apt の 6 個とも有る)" in summary
+    assert summary.splitlines()[0] == "### 手元の CI 相当の検査(Linux)— tools/ci_local.py"
+
+
+# ---- D7: 道具の欠けも題に印を付ける(部分実行・違う条件と同じ並び) -----------------------------------
+
+def test_title_marks_a_run_with_missing_tools_like_partial_and_deviating_runs():
+    def title(st: dict) -> str:
+        return cl.render_summary(st).splitlines()[0]
+
+    base = "### 手元の CI 相当の検査(Linux)— tools/ci_local.py"
+    mark = " — 手元に無い道具あり(GitHub でしか確かめられないテストがある)"
+    assert title(_state(_job(), _all_ok())) == base
+    assert title(_state(_job(), _all_ok(), tools_missing=["cargo"])) == base + mark
+    assert title(_state(_job(), _all_ok(), apt_missing=["libegl1"])) == base + mark
+    assert title(_state(_job(), _all_ok(), tools_probed=False)) == base + " — 道具の有無を調べていない"
+    st = _state(_job(only="lint", selected=["lint"], tree=_tree(fetched="no_fetch")), {"lint": _ok()},
+                tools_missing=["node"])
+    assert title(st) == base + " — 部分実行(全数ではない) — GitHub の CI とは違う条件" + mark
