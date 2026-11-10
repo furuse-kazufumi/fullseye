@@ -219,6 +219,7 @@ local green is not a CI green (see "What it does not check").
 py -3.11 tools/ci_local.py                 # Windows: HEAD merged with origin/master, in WSL2
 python3 tools/ci_local.py                  # Linux: the same, without WSL
 py -3.11 tools/ci_local.py --only core     # one stage (the summary then says "partial run")
+py -3.11 tools/ci_local.py --accept-skips "added 60 tests that skip without the dataset"
 ```
 
 **What is tested.** By default the tool fetches `origin/master` and tests the *merge* of your
@@ -256,16 +257,77 @@ both `--python` and `--allow-other-python`.
 title and the conclusion then say "different conditions from GitHub's CI" instead of "all stages
 ok", name the difference, and say that the result is not evidence that GitHub's CI passes.
 
-**Exit code.** 0 means "everything that ran passed"; 1 a failure, 2 a usage error, 3 a busy state
-directory. A partial run and a run under different conditions also exit 0 — a script that needs to
-tell them from a full green reads `verdict` in `result.json`: `full_ok`, `partial_ok`,
-`deviating_ok`, `failed` or `busy`.
+A run in which a tool the runner has is missing on your machine (cargo, node, Chrome or one of the
+apt packages) is not called a full green either, even when all five stages pass: the conclusion
+reads "all stages ok — but N tests can only be confirmed on GitHub, because tools are missing here"
+and the verdict is `ok_missing_tools`. `--require-tools` instead fails such a run at the start
+(exit 1, verdict `failed`); pass it when you want either `full_ok` or a failure.
 
-**Skips.** The state directory keeps the skip count of the last run of the whole suite (no extra
-pytest arguments) whose JUnit was usable and met the floor. When a later run skips more than that
-by over 10 % (and by over 20 tests) the summary says so near the top and lists the skip reasons
-that grew; the record is then left as it was. This is a notice, not a failure — the 95 % floor is
-the failure.
+**Exit code and verdict.** 0 means "everything that ran passed"; 1 a failure, 2 a usage error, 3 a
+busy state directory, 130 an interrupt (Ctrl-C). A partial run, a run under different conditions and a run with missing tools
+also exit 0 — the exit code keeps that meaning so that `--only lint` or an offline `--no-fetch` run
+is not mistaken for a failure. What the 0 means is in `verdict` in `result.json` (`full_ok`,
+`ok_missing_tools`, `partial_ok`, `deviating_ok`, `failed` or `busy`), and the tool prints it as its
+last line, e.g. `verdict: deviating_ok — GitHub と違う条件。緑の証拠にしない`. **If you chain the tool
+into `&& git push`, check the verdict in `result.json`, not just the exit code** — `ci_local && git
+push` pushes after a partial or a different-conditions run too. Only `full_ok` says "every stage,
+under GitHub's conditions". The last line is a verdict line even when the tool stops before the
+Linux side runs: a usage error — an unknown option, an option without its value, a value that is
+not one of the choices, or an argument the tool rejects — ends with `verdict: usage — …` (exit 2),
+and a missing `wsl.exe`, an exception or Ctrl-C with `verdict: failed — …` (the traceback, if any,
+comes before it). These two
+words exist only on the last line; `result.json` keeps its six verdicts. A skip notice (see below)
+is appended to the last line after the verdict, e.g. `verdict: full_ok — …。skip が基準より +21 件…`;
+the `verdict: <word> — ` prefix itself never changes.
+
+**Skips.** The state directory keeps a skip record (`skip_baseline.json`), written only by runs
+whose verdict is `full_ok` or `ok_missing_tools` — every stage passed, no extra pytest arguments,
+GitHub's conditions, the BLAS rerun included. Failed, partial and different-conditions runs are
+compared but never recorded. What is compared is the total skip count. Only when the set of
+missing tools (cargo, node, Chrome) differs between the baseline and this run are the skips of the
+tools that differ taken out — from the baseline the skips of tools missing only there, from this
+run the skips of tools missing only here (estimated from the reason text) — so a run with cargo and
+a run without it share one baseline. A run with the same tools is judged exactly as before: nothing
+is taken out, so every skip counts. When the tools differ, what is taken out per tool is the number
+of skips whose reason names the tool on the side without it minus the number on the side with it
+(never below zero), so reasons both sides share are not taken out; a tool's name is matched only as
+a whole word, so a name that merely continues it (`node2vec`, `chrome-trace`, `rust_ext`) is not
+taken for the tool. A reason that names the tool as a word (`Rust 拡張`) cannot be told apart from a
+real tool skip and is taken out while that tool differs. The line is taken
+from the compared baseline count. A record without skip reasons cannot have tool skips taken out;
+it is then compared by its total, and the summary says so. Skips that depend on apt packages cannot
+be told from their reason text and are not subtracted; when the missing apt packages (or tools)
+differ from the baseline, the summary says so, also on the line that reports a jump. The baseline is the smallest such count recorded so far: it
+only moves down, so a series of small increases cannot raise it step by step — they are caught once
+their sum crosses the line. A run whose missing tools are the same as the baseline's can lower it,
+and so can a run that only has more tools installed (its missing tools are a strict subset of the
+baseline's): nothing is taken out of such a run's count, so when its compared count is below the
+baseline's, its total count and its set of missing tools become the baseline, and the summary says
+the tools were installed. A run missing a tool the baseline had leaves the baseline where it was (its
+compared count is an estimate, and taking it in would hide a breakage from every later run with
+those tools); the summary says so and says how to make that run the baseline (`--accept-skips`). When a run skips more than the baseline by over 10 % (and by over 20
+tests) the summary says so near the top, lists the skip reasons that grew and names the record's
+location, and the last line gets a short notice; the baseline is left as it was. This is a notice,
+not a failure — the 95 % floor is the failure. A record written by the first version of the tool
+(no `format` field; it may come from a failed run) is read as the baseline and moved to the new
+form by the next recording run, by the same smallest-count rule. A record that cannot be read
+(empty, with a BOM, not JSON, another format version, or fields of the wrong type) is not compared
+and not overwritten; the summary says why and where the file is, and the run is not failed for it.
+If an increase is legitimate, run again with `--accept-skips "<reason>"` (the reason is required):
+if that run's verdict is one that may record and it jumped, found the record unreadable, or has
+other missing tools than the baseline, its count becomes the new baseline, and the record keeps a history entry (previous and new
+baseline, the compared counts, reason, commit, time). A run that did not jump and has the baseline's missing tools has nothing to accept:
+it says so, and the baseline follows the usual rule (it can only move down). A failed, partial or
+different-conditions run does not accept, and says so. A run whose summary cannot be made is a
+failed run too: whatever it had already written to the record (including an accepted baseline) is
+put back. An unreadable record is kept under another
+name (`skip_baseline.json.unreadable-<time>`) before it is replaced; if the new record then cannot be
+written, the kept record is moved back, and the summary and the last line say that the record could
+not be written. Accepting a run whose missing tools differ from the baseline's makes that run's total
+count and its set of missing tools the new baseline (nothing taken out), and the summary says so. `--accept-skips` does not
+change what is checked, so it does not change the verdict; the summary always says that the
+baseline was accepted. The record is written to a temporary file and renamed into place, so an
+interrupted write leaves the previous record.
 
 **One run per state directory.** The state directory is locked; a second run prints the owner
 (pid, start time, commit) and exits with code 3 at once. A directory without the tool's marker
