@@ -13,13 +13,15 @@
 <p><b>既定 1.0 = 画素のまま</b>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">n</code>(物体数)、<code style="color:#22d3bf">spacing</code>、<code style="color:#22d3bf">units</code>(項目 → 単位の対応)と、</p>
+<p><code style="color:#22d3bf">n</code>(物体数 = 実際に在るラベルの数)、<code style="color:#22d3bf">spacing</code>、<code style="color:#22d3bf">units</code>(項目 → 単位の対応)と、</p>
 <p>長さ <code style="color:#22d3bf">n</code> の配列 19 本(<code style="color:#22d3bf">FEATURE_KEYS</code>)。物体が 0 個でも</p>
-<p>鍵は全部揃えて空配列で返す(呼び手が分岐しなくて済む)。</p>
+<p>鍵は全部揃えて空配列で返す(呼び手が分岐しなくて済む)。ラベルに歯抜けがあると</p>
+<p><code style="color:#22d3bf">n</code> は <code style="color:#22d3bf">labels.max()</code> より小さい —— 物体は <code style="color:#22d3bf">f[&quot;label&quot;]</code> の列で引くこと</p>
+<p>(<code style="color:#22d3bf">f[&quot;area&quot;][label - 1]</code> は歯抜けの後ろでずれる)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle</code> は<b>行列座標系</b>の傾き(+列 → +行 が正 = 画面では時計回り)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> は<b>同じ 2 次モーメントを持つ楕円</b>の軸長(<code style="color:#22d3bf">4 sqrt(lambda)</code>)。画素の並びの外接ではないので、正方形に対しては辺長より少し長く出る —— これは定義どおりで、誤差ではない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> は <code style="color:#22d3bf">4 pi A / P^2</code>。<b>HALCON の <code style="color:#22d3bf">circularity</code> は「面積 / 最遠点を半径とする円の面積」で別物</b>なので、値を突き合わせるときは定義を確かめること。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> は <code style="color:#22d3bf">4 pi A / P^2</code> を <b>1 で頭打ち</b>にした値(数画素の物体では周長の推定が面積に比べて短く出て 1 を超える —— 1 画素の塊で 1.75 —— が、円より丸い形は無い)。<b>HALCON の <code style="color:#22d3bf">circularity</code> は「面積 / 最遠点を半径とする円の面積」で別物</b>なので、値を突き合わせるときは定義を確かめること。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">touches_border</code> が True の物体は、面積も周長も<b>切れた分だけ小さい</b>。数える前に捨てるか、真値の側も同じ規約で数えること。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>

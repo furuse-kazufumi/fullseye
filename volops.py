@@ -429,6 +429,13 @@ def vol_distance_transform(vol_binary, spacing=None):
     is thresholded at ``> 0.5``.
 
     Returns a ``(D, H, W)`` float64 distance field (0 on the background).
+    Outside the volume is **not** background (a foreground slab touching the edge keeps
+    growing towards it). With no background voxel at all the nearest background is
+    infinitely far: every voxel is ``inf`` (the 2-D ``distance_transform`` returns its
+    normalised maximum 1.0 in the same case). This op returns absolute distances, so the
+    2-D convention (normalise to 1.0) does not carry over; ``inf`` was chosen over raising so
+    that a mixed batch keeps its shape. Dividing by the maximum afterwards gives NaN —
+    check ``np.isinf`` first.
     Reference: Felzenszwalb & Huttenlocher, Theory of Computing 2012.
 
     Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
@@ -438,6 +445,10 @@ def vol_distance_transform(vol_binary, spacing=None):
     m = _as_binary(vol_binary)
     _check_voxels(m, MAX_VOXELS, "vol_distance_transform", "MAX_VOXELS")
     sp = _spacing_tuple(spacing)
+    if m.all():
+        # ★2026-11-09 点検: 背景が 1 つも無いと scipy は (-1, …) に背景があるかのような斜面
+        #   (1×8×8 で最小 1.0・最大 9.95)を返した。2-D 側(2026-11-05)と同じく定義どおりにする。
+        return np.full(m.shape, np.inf, dtype=np.float64)
     dt = ndimage.distance_transform_edt(m, sampling=sp)
     return np.ascontiguousarray(dt, dtype=np.float64)
 

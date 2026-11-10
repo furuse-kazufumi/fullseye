@@ -33,6 +33,8 @@ For a 14B–32B local model, keep context short and use this order:
 2. `fullseye_op_cards` only for shortlisted names, with a token budget.
 3. `fullseye_validate_pipeline`; repair every machine-readable error.
 4. `fullseye_pipeline` only after validation succeeds.
+5. To check a pipeline against ground truth, `fullseye_make_task` (simulated task, truth stays on the server)
+   then `fullseye_score_pipeline` (same `stages`); fix the stage the per-metric errors point at.
 
 Search and planning include representative-input probe status. A failed probe means the
 op did not run on that input; it is selection evidence, not proof that the op is broken.

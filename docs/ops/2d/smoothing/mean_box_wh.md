@@ -6,7 +6,7 @@ in: image
 out: image
 halcon: mean_image
 gpu: あり(許可リスト)
-examples: [gallery2d_smoothing_rank]
+examples: [gallery2d_smoothing_rank, mcp_task_score]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -69,6 +69,7 @@ mean_box_wh 0.35 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
+- [mcp_task_score](../../../../examples/mcp_task_score.py) — `py -3.11 examples/mcp_task_score.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

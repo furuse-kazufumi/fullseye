@@ -6,7 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>marker-controlled watershed segmentation (watersheds_marker)। markers: int label image (0=असाइन नहीं)।</p>
-<p>खाली इनपुट (<code style="color:#22d3bf">image</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">image</code> में 0 तत्व) पर ValueError उठता है। <code style="color:#22d3bf">image</code> से अलग आकार वाले <code style="color:#22d3bf">markers</code> तथा गैर-पूर्णांक, ऋणात्मक या अपरिमित <code style="color:#22d3bf">markers</code> पर भी ValueError उठता है (पूर्णांक मान वाले float और bool स्वीकार्य हैं)। यह <code style="color:#22d3bf">skimage.segmentation.watershed</code> को सीधे बुलाता है; scikit-image न होने पर MissingDependencyError उठता है (छवि को न देखने वाले निकटतम-मार्कर पर वापस नहीं जाता)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

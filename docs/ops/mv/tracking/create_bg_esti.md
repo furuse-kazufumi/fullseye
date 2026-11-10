@@ -26,6 +26,8 @@ version: 1.0.0  # fullseye lib version this note was generated for
 各画素の背景はランダムウォークと見なし、過程の雑音 ``process_noise`` と観測の雑音
 ``measurement_noise`` の分散からゲインが決まる。前景と判定された画素はゲインに
 ``foreground_gain`` を掛けて弱く更新し、通過する物体を背景に取り込まない。
+画素値は **[0, 1] の float**(``threshold`` と雑音の分散も同じ尺度)。整数 dtype の画像と
+[0, 1] の外の値は ValueError(uint8 は ``/ 255`` してから渡す)。
 空の入力(``image`` が 0 要素)は ValueError。
 
 Args:

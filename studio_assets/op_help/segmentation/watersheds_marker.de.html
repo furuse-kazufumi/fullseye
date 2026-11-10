@@ -6,7 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Markergesteuerte Wasserscheiden-Segmentierung; markers ist ein Integer-Labelbild (0 = nicht zugewiesen) (watersheds_marker).</p>
-<p>Leere Eingabe (<code style="color:#22d3bf">image</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">image</code> mit 0 Elementen) löst ValueError aus. <code style="color:#22d3bf">markers</code> mit anderer Form als <code style="color:#22d3bf">image</code> sowie nicht ganzzahlige, negative oder nicht endliche <code style="color:#22d3bf">markers</code> lösen ebenfalls ValueError aus (ganzzahlige Float-Werte und Booleans werden akzeptiert). Ruft <code style="color:#22d3bf">skimage.segmentation.watershed</code> direkt auf; ohne scikit-image wird MissingDependencyError ausgelöst (kein Rückfall auf eine bildblinde Nächster-Marker-Zuordnung).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -836,11 +836,13 @@ REAL_SHOW = "10-0-768"     # 図に出す領域(配布物の名前の頭)
 E112_L_SLOPE = 6.6439
 
 #: 実データで出た数値(2026-11-08、Python 3.11。下の section_real の stdout から転記)。
+#: ★2026-11-09: bin_threshold が中核の otsu(実データの範囲で 256 ビン)を通るようになり、photo_err_area が
+#:   3.02 → 2.99 に動いた(ほかの鍵は不変)。同じ stdout の RECORDED_REAL から転記し直した。
 #: データがあるときは実測とこの値を同じ丸めで照合し、無いときは中身と docstring の一致を見る。
 RECORDED_REAL = {'tiles': 320, 'g_truth_median': 7.45, 'cliff_area_real': 7.8, 'cliff_intercept_real': 33.1,
                  'cliff_area_ci': [7.5, 8.0], 'cliff_intercept_ci': [32.9, 33.4], 'closed_form_max_dev': 0.21,
                  'voronoi_max_dev': 0.48, 'cliff_area_voronoi': 6.1, 'cliff_intercept_voronoi': 36.8,
-                 'photo_err_area': 3.02, 'photo_err_intercept': -8.52, 'photo_recall': 0.02,
+                 'photo_err_area': 2.99, 'photo_err_intercept': -8.52, 'photo_recall': 0.02,
                  'run_px_real': 1.36, 'run_px_voronoi': 2.61, 'cliff_intercept_voronoi_thinned': 32.5,
                  'cliff_intercept_real_dilated': 40.7, 'photo_color_err_intercept': -0.46,
                  'photo_color_recall': 0.44, 'photo_color_false': 0.37, 'photo_color_count_ratio': 0.82,

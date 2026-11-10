@@ -13,13 +13,15 @@
 <p><b>기본값 1.0 = 화소 그대로</b>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">n</code>(물체 수), <code style="color:#22d3bf">spacing</code>, <code style="color:#22d3bf">units</code>(항목 → 단위의 대응)와,</p>
+<p><code style="color:#22d3bf">n</code>(물체 수 = 실제로 있는 라벨의 수), <code style="color:#22d3bf">spacing</code>, <code style="color:#22d3bf">units</code>(항목 → 단위의 대응)와,</p>
 <p>길이 <code style="color:#22d3bf">n</code> 의 배열 19 개(<code style="color:#22d3bf">FEATURE_KEYS</code>). 물체가 0 개여도</p>
-<p>키는 전부 갖추어 빈 배열로 반환한다(호출자가 분기하지 않아도 된다).</p>
+<p>키는 전부 갖추어 빈 배열로 반환한다(호출자가 분기하지 않아도 된다). 라벨에 빠진 번호가 있으면</p>
+<p><code style="color:#22d3bf">n</code> 은 <code style="color:#22d3bf">labels.max()</code> 보다 작다 —— 물체는 <code style="color:#22d3bf">f[&quot;label&quot;]</code> 열로 찾을 것</p>
+<p>(<code style="color:#22d3bf">f[&quot;area&quot;][label - 1]</code> 은 빠진 번호 뒤에서 어긋난다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle</code> 은 <b>행렬 좌표계</b>의 기울기(+열 → +행 이 양 = 화면에서는 시계 방향).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> 는 <b>같은 2 차 모멘트를 갖는 타원</b>의 축 길이(<code style="color:#22d3bf">4 sqrt(lambda)</code>). 화소 나열의 외접이 아니므로, 정사각형에 대해서는변 길이보다 조금 길게 나온다 —— 이것은 정의대로이며 오차가 아니다.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> 는 <code style="color:#22d3bf">4 pi A / P^2</code>. <b>HALCON 의 <code style="color:#22d3bf">circularity</code> 는 &quot;면적 / 최원점을 반지름으로 하는 원의 면적&quot;으로 다른 것</b>이므로, 값을 대조할때는 정의를 확인할 것.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> 는 <code style="color:#22d3bf">4 pi A / P^2</code> 를 <b>1 로 상한 처리</b>한 값(몇 화소짜리 물체는 둘레 추정이 면적에 비해 짧게 나와 1 을 넘는다 —— 1 화소 덩어리에서 1.75 —— 하지만 원보다 둥근 모양은 없다). <b>HALCON 의 <code style="color:#22d3bf">circularity</code> 는 &quot;면적 / 최원점을 반지름으로 하는 원의 면적&quot;으로 다른 것</b>이므로, 값을 대조할때는 정의를 확인할 것.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">touches_border</code> 가 True 인 물체는 면적도 둘레도 <b>잘린 만큼 작다</b>. 세기 전에 버리거나, 참값 쪽도 같은 규약으로 셀 것.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>

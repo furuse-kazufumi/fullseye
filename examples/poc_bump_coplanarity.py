@@ -545,7 +545,9 @@ def section_tool_gaps() -> None:
           "(残差の (H,W) も rms も取れない)。この PoC の残差の絵は"
           "\n      fit_poly_surface + eval_poly_surface で作り直している。")
 
-    # (f) 進化 op は画像を [0,1] とみなす —— 単位つきの量をそのまま渡すと切る位置が狂う
+    # (f) 進化 op の auto_threshold は以前、画像を [0,1] とみなして clip した —— 単位つきの量をそのまま渡すと切る位置が狂った。
+    #     ★2026-11-09: auto_threshold / binary_threshold / bin_threshold が中核の otsu(実データの範囲で 256 ビン)を通るように
+    #     なり、穴が塞がった。記録した落とし穴は「直った」ことの門に書き換えた(直した後は前景 437 画素 = 正解 437)。
     n = 64
     ramp = np.linspace(-60.0, 13.0, n)[None, :] * np.ones((n, 1))   # 背景のうねり [µm]
     yy, xx = np.mgrid[0:n, 0:n]
@@ -554,12 +556,11 @@ def section_tool_gaps() -> None:
     raw = int((np.asarray(fs.apply(z, "auto_threshold")) > 0.5).sum())
     lo, hi = z.min(), z.max()
     nrm = int((np.asarray(fs.apply((z - lo) / (hi - lo), "auto_threshold")) > 0.5).sum())
-    assert raw > 2 * int(disc.sum()), (raw, int(disc.sum()))
+    assert raw == nrm, (raw, nrm)
     assert abs(nrm - int(disc.sum())) < 0.2 * int(disc.sum()), (nrm, int(disc.sum()))
-    print("  (f) ★進化 op の auto_threshold は値域を [0,1] とみなす。背景が -60〜+13 µm、"
-          "前景 +200 µm の\n      高さ場をそのまま渡すと前景 %d 画素(正解 %d)—— "
-          "0.5 **µm** の位置で切っている。\n      正規化してから渡せば %d 画素。"
-          "単位つきの量を進化 op に渡すときの落とし穴。"
+    print("  (f) 進化 op の auto_threshold は実データの範囲で切る(2026-11-09 に直った。以前は [0,1] へ clip した)。"
+          "背景が -60〜+13 µm、前景 +200 µm の\n      高さ場をそのまま渡しても前景 %d 画素(正解 %d)、"
+          "正規化してから渡しても %d 画素で同じ。"
           % (raw, int(disc.sum()), nrm))
 
 

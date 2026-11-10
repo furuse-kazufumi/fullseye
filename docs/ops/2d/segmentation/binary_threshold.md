@@ -36,7 +36,7 @@ version: 1.0.0  # fullseye lib version this note was generated for
 ## 使い方
 
 大津の判別分析法(Otsu's method)による自動しきい値二値化
-(``skimage.filters.threshold_otsu``、無ければ平均値で代用)。クラス間分散
+(中核の ``otsu`` と同じ関数: 実データの範囲を 256 ビンに分け、argmax ビンの上端で切る)。クラス間分散
 を最大化するしきい値を画像のヒストグラムから自動決定する。HALCON の
 ``binary_threshold``（Segment an image using binary thresholding.）に
 相当(HALCON は Otsu 以外の複数アルゴリズムを選べるが、ここでは Otsu 固定)。

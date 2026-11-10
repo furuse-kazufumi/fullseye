@@ -6,7 +6,7 @@
 | 形式 | 拡張子 | 読む関数 | 書く関数 | 公開 op | 依存 | テスト | 独立の読み手で検証 |
 |---|---|---|---|---|---|---|---|
 | Zemax glass catalog | `.agf` | `materials.read_glass_catalog_agf` | — | `read_glass_catalog_agf` | stdlib / core | `tests/test_lensfile.py`<br>`tests/test_materials.py` | — |
-| XYZ text | `.asc` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_abi_apply.py`<br>`tests/test_abi_wheel.py`<br>+22 | — |
+| XYZ text | `.asc` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_abi_apply.py`<br>`tests/test_abi_wheel.py`<br>+23 | — |
 | AVI video | `.avi` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | BMP | `.bmp` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_iqatid.py`<br>`tests/test_raster.py`<br>+1 | — |
 | CSV | `.csv` | `cutting.cut_force_csv_load`<br>`fileio.table_read_csv`<br>`grind.ae_read_csv` | `fileio.table_write_csv` | `ae_read_csv`<br>`cut_force_csv_load`<br>`table_read_csv`<br>`table_write_csv` | stdlib / core | `tests/test_audit_extra_2026_11_04.py`<br>`tests/test_audit_file_formats.py`<br>+14 | `csv`<br>`pandas` |
@@ -53,8 +53,8 @@
 | STL | `.stl` | `fileio.mesh_read_stl`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_stl`<br>`mesh.write_mesh` | `mesh_read_stl`<br>`mesh_write_stl` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_fileio_mesh.py`<br>+6 | `stl`<br>`trimesh` |
 | TIFF | `.tif` | `raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `imgio.save`<br>`volio.write_volume` | — | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+73 | — |
 | TIFF | `.tiff` | `fileio.ome_tiff_read`<br>`raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `fileio.ome_tiff_write`<br>`imgio.save`<br>`volio.write_volume` | `ome_tiff_read`<br>`ome_tiff_write` | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+73 | — |
-| Text/XYZ | `.txt` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_acquire_contract.py`<br>`tests/test_anim3d_i18n_builders_2026_10_25.py`<br>+24 | — |
-| VOL | `.vol` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_ctscan.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+26 | — |
+| Text/XYZ | `.txt` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_acquire_contract.py`<br>`tests/test_anim3d_i18n_builders_2026_10_25.py`<br>+23 | — |
+| VOL | `.vol` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_ctscan.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+27 | — |
 | WAV | `.wav` | `dsp.read_wav` | `dsp.write_wav` | `read_wav`<br>`write_wav` | stdlib / core | `tests/test_chain_type_contracts.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+19 | — |
 | WebM video | `.webm` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | Excel workbook | `.xlsx` | — | `fullseye.xlsxio.save_xlsx_report` | — | optional: openpyxl | `tests/test_inspect_batch.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+2 | — |

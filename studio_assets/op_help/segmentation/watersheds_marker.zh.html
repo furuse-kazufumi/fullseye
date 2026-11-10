@@ -6,7 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>标记控制的分水岭分割；markers 为整数标签图像(0 = 未分配)(watersheds_marker)。</p>
-<p>空输入(<code style="color:#22d3bf">image</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>空输入(<code style="color:#22d3bf">image</code> 为 0 个元素)会引发 ValueError。与 <code style="color:#22d3bf">image</code> 形状不同的 <code style="color:#22d3bf">markers</code>,以及非整数、负数或非有限的 <code style="color:#22d3bf">markers</code> 也会引发 ValueError(接受整数值的 float 和 bool)。直接调用 <code style="color:#22d3bf">skimage.segmentation.watershed</code>;没有 scikit-image 时引发 MissingDependencyError(不会退回到不看图像的最近标记)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

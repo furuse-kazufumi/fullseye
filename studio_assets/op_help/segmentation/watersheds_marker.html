@@ -6,7 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。</p>
-<p>空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。<code style="color:#22d3bf">image</code> と形の違う <code style="color:#22d3bf">markers</code>、整数でない・負・非有限の <code style="color:#22d3bf">markers</code> も ValueError(整数値の float と bool は受ける)。<code style="color:#22d3bf">skimage.segmentation.watershed</code> をそのまま呼び、scikit-image が無ければ MissingDependencyError(画像を見ない最近傍へは落ちない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
