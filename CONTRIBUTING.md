@@ -235,7 +235,7 @@ gives their count).
 | stage | what | time |
 |---|---|---|
 | `lint` | `ruff check .` with the newest `ruff>=0.4`, then `tools/pip_audit_gate.py` (needs the network; `--no-pip-audit` skips it) | ~1 min |
-| `regen` | `tools/regen_all.py --check` | ~9 min |
+| `regen` | `tools/regen_all.py --check` | ~11 min |
 | `gates` | the files in `tools/ci_always_run.txt` if the tested tree has it, else the built-in copy (the summary says which) | ~1 min |
 | `core` | the `core-minimal` job in the same order, in a venv rebuilt every run | ~2 min |
 | `tests` | the whole suite with the `test` job's dependencies and environment, under pytest-xdist | ~20 min |
@@ -247,18 +247,43 @@ The first run also builds the environment (several minutes), and a full venv old
 With `--only`, `--skip`, `--no-pip-audit` or extra pytest arguments the title and the conclusion say
 "partial run (not the full suite)" and the stages that did not run stay in the table as "not run".
 A missing, broken or empty JUnit file fails its stage. Without extra pytest arguments the full
-suite must execute at least 90 % of the number of entries in `.test_durations`. The Python of each
-venv is read back and must be 3.11.
+suite must execute at least 95 % of the number of entries in `.test_durations` (skipped tests do
+not count as executed). The Python of each venv is read back and must be 3.11, unless you pass
+both `--python` and `--allow-other-python`.
+
+`--no-merge`, `--no-fetch`, a `--base` that is not `<remote>/<branch>` (so nothing is fetched) and
+`--allow-other-python` make the tested tree or the interpreter differ from what GitHub tests. The
+title and the conclusion then say "different conditions from GitHub's CI" instead of "all stages
+ok", name the difference, and say that the result is not evidence that GitHub's CI passes.
+
+**Exit code.** 0 means "everything that ran passed"; 1 a failure, 2 a usage error, 3 a busy state
+directory. A partial run and a run under different conditions also exit 0 — a script that needs to
+tell them from a full green reads `verdict` in `result.json`: `full_ok`, `partial_ok`,
+`deviating_ok`, `failed` or `busy`.
+
+**Skips.** The state directory keeps the skip count of the last run of the whole suite (no extra
+pytest arguments) whose JUnit was usable and met the floor. When a later run skips more than that
+by over 10 % (and by over 20 tests) the summary says so near the top and lists the skip reasons
+that grew; the record is then left as it was. This is a notice, not a failure — the 95 % floor is
+the failure.
 
 **One run per state directory.** The state directory is locked; a second run prints the owner
 (pid, start time, commit) and exits with code 3 at once. A directory without the tool's marker
-file is never cleaned. Pass `--state-dir` (a Linux path) for a second location. The environment
+file is not cleaned, with one exception: a directory made by the first version of the tool (it
+holds the tool's venv stamp but no marker) is adopted, and only if its `repo/` is absent or is a
+git clone whose origin is the repository being tested and whose `pyproject.toml` names Fullseye.
+Anything else stops the run before `checkout -f` / `clean -fdx`. Pass `--state-dir` (a Linux path)
+for a second location. The environment
 variables `FULLSEYE_CI_LOCAL_DIR` and `FULLSEYE_CI_LOCAL_WORKERS` are read on the side you start
 the tool from and handed to the Linux side as arguments (a Windows variable does not reach WSL by
 itself).
 
-**Environment.** Nothing is inherited from your shell: fresh `HOME`, no `PYTHONPATH`, no
-`FULLSEYE_*_DATA`. The tool sets what the runner and `ci.yml` set. `CI=true` is deliberate — it is
+**Environment.** The tests get a fresh `HOME` and an environment built from scratch: no
+`PYTHONPATH`, no `FULLSEYE_*_DATA`, no `PYTEST_ADDOPTS`. Two things do come from your machine.
+The tool looks for cargo, node and Chrome on your `PATH` (and in `~/.cargo/bin`) and appends the
+directories where it finds them to the tests' `PATH` — everything else in those directories comes
+along. If `~/.cargo/bin/cargo` exists, `CARGO_HOME` and `RUSTUP_HOME` point at your own `~/.cargo`
+and `~/.rustup`. Otherwise the tool sets what the runner and `ci.yml` set. `CI=true` is deliberate — it is
 the value GitHub's runner really sets, and two examples branch on `CI == "1"`; setting `CI=1`
 locally would test a branch GitHub does not take.
 
@@ -267,7 +292,7 @@ locally would test a branch GitHub does not take.
 - Python 3.12 and 3.14 (run on master), 3.13 (weekly) and the 3.15 preview. Local is 3.11 only.
 - The per-shard view. CI splits the suite into 6 shards, each its own session; a gate whose answer
   depends on the session (`test_test_durations_is_fresh`) can pass in one local session and fail in
-  one shard (PR #294, shard 6, 94.8 %).
+  one shard.
 - Serial order. A shard runs serially, the local run is parallel; order dependence is the nightly
   `order-shuffle` job's business. Conversely a few tests fail only under local parallelism now and
   then (known: `test_example_scripts_run[gallery2d_smoothing_rank.py]` and the planner test in
@@ -281,6 +306,12 @@ locally would test a branch GitHub does not take.
 - Dependency versions newer than your last venv refresh, and a master that moved after the fetch.
 - Lines *added* to `ci.yml`. The dependency lists in the tool are hand copies; a test checks that
   each copy still appears in `ci.yml`, not the reverse.
+- Leftover processes of a killed run. The lock belongs to the tool's own process. If that process
+  is killed (`kill -9`, a closed terminal) while pytest is running, the lock is released but the
+  pytest children may live on, and the next run cleans the tree under them. After killing a run,
+  check that no pytest is left before starting the next one.
 
 BLAS threads are capped at `CPUs / workers` during the parallel run; the handful of tests that skip
-because of that cap are rerun serially without it afterwards, and the summary reports how many ran.
+because of that cap are rerun serially without it afterwards. The summary reports how many ran, and
+the stage fails if the rerun fails or if any of them still did not run (still skipped, or missing
+from the rerun).

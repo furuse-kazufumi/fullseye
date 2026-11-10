@@ -19,6 +19,12 @@ GitHub の CI の代わりではない(確かめないものは下の一覧と�
 ``fullseye-ci-local/<時刻>-<commit>``。前回の成果物が残っていれば消してから始める)。
 終了コード: 0 = 走った段が全部 ok / 1 = 失敗 / 2 = 引数の誤り(1 段も走らない組み合わせを含む)/
 3 = 状態ディレクトリを別の ci_local が使っている。
+0 の意味は「走った段が ok」で、「全数が GitHub と同じ条件で通った」ではない。部分実行(``--only`` など)と、
+GitHub と違う条件の run(``--no-merge``・``--no-fetch``・``--allow-other-python``)も 0 を返す。どちらも
+呼び出した側が引数で選んだ範囲・条件で、選んだ範囲の中の失敗だけを終了コードにする(条件の違いを非 0 に
+すると、オフラインの ``--no-fetch`` や 1 段だけの ``--only`` が「落ちた」と区別できなくなる)。緑との区別は
+要約の題と結論、``result.json`` の ``verdict`` でする(``full_ok`` だけが「全段・同じ条件で ok」。ほかは
+``partial_ok``・``deviating_ok``・``failed``・``busy``)。
 
 ## 何を検査するか
 
@@ -35,7 +41,10 @@ GitHub の CI の代わりではない(確かめないものは下の一覧と�
   ``core.autocrlf=true`` の作業木は CRLF で権限ビットも無く、Linux の CI と同じ木にならないこと。
 * 状態ディレクトリは**排他**(flock)。別の ci_local が使っていれば、持ち主(pid・開始時刻・commit)を出して
   すぐ終了コード 3 で終わる。目印のファイル(``.fullseye-ci-local``)の無い既存のディレクトリでは
-  何も消さずに失敗する。段の終わりごとに clone の HEAD が検査対象のままかを確かめる。
+  何も消さずに失敗する。例外は 1 つ: 目印を置く前の版が作った置き場(venv の stamp がある)は、``repo/`` が
+  「origin が検査する repo で、``pyproject.toml`` の name が fullseye の clone」のときだけ引き継ぐ
+  (``repo/`` が別物なら、目印も置かず何も消さずに失敗する)。
+  段の終わりごとに clone の HEAD が検査対象のままかを確かめる。
 * 段は**落ちやすくて軽いものから順に、直列で** 5 つ回す:
   1. lint —— ci.yml の ``lint`` ジョブ: ``ruff check .``(ruff は毎回 ``ruff>=0.4`` の最新に上げる)と
      ``tools/pip_audit_gate.py``(利用者に入る依存の既知脆弱性。ネットワークが要る。``--no-pip-audit`` で外す)。
@@ -47,16 +56,23 @@ GitHub の CI の代わりではない(確かめないものは下の一覧と�
      ここで初めて ``pytest`` → packaging → wheel からの MCP / fs_apply)。
   5. tests —— ci.yml の ``test`` ジョブ(py3.11、optional backend 全部入り)と同じ依存と環境変数で、
      pytest-xdist で並列に回す。門も外さない(範囲を減らさない)。追加の pytest 引数が無いときは、
-     実行件数が ``.test_durations`` の行数の 90 % を下回ったら失敗(``SUITE_FLOOR_RATIO``)。
+     実行件数が ``.test_durations`` の行数の 95 % を下回ったら失敗(``SUITE_FLOOR_RATIO``)。skip の件数は
+     状態ディレクトリに記録し、前回の記録から大きく増えたら要約の先頭で知らせる(失敗にはしない)。
   前の段が落ちたらそこで止めて要約を書く(``--keep-going`` で最後まで回す)。
   ``--only``・``--skip``・``--no-pip-audit``・追加の pytest 引数のどれかがあれば、要約の題と結論は
   「部分実行(全数ではない)」になり、走らなかった段は表に「未実行」と残る。
+  ``--no-merge``・``--no-fetch``(と、fetch できない形の ``--base``)・``--allow-other-python`` は、走る段は
+  同じでも GitHub と違う木・違う Python を検査する。題と結論は「GitHub の CI とは違う条件」になり、
+  「全段 ok」とは書かない。
 * 環境変数は**継承しない**(``env -i`` 相当)。手元の ``FULLSEYE_*_DATA`` や ``~/.cache/fullseye`` の
   実データが見えると CI と違う分岐を通るので、HOME も run ごとの空のディレクトリにする。
   入れるのは GitHub の runner と ci.yml が与えるもの: ``CI=true`` ``GITHUB_ACTIONS=true``
   ``PYTHONUTF8=1`` ``QT_QPA_PLATFORM=offscreen`` ``LANG=C.UTF-8`` ``TZ=UTC`` と、門・全数だけ
   ``FULLSEYE_REQUIRE_OPTIONAL=1`` ``FULLSEYE_FIGURES=off``。PYTHONPATH は無し、pytest は
   ``python -m pytest`` でなく ``pytest`` で起動する(cwd が sys.path に入らない = CI と同じ)。
+  例外は道具の置き場だけ: cargo・node・Chrome は手元の PATH と ``~/.cargo/bin`` で探し、見つけた実行ファイルの
+  ディレクトリをテストの PATH に足す(rustup の ``CARGO_HOME``・``RUSTUP_HOME`` も渡す)。同じディレクトリに
+  ある他の実行ファイルもテストから見える。
   ★``CI=true`` は設計判断: GitHub の runner が実際に与える値が ``true`` で、``os.environ.get("CI") == "1"``
   で分岐する PoC が 2 本ある(examples/poc_omni360_inspection.py・poc_plenoptic_camera.py)。``CI=1`` に
   すると手元だけ「CI 用の小さい設定」を通り、GitHub と違う分岐を検査することになる。
@@ -65,8 +81,7 @@ GitHub の CI の代わりではない(確かめないものは下の一覧と�
 
 * Python 3.12 / 3.14(master で GitHub が回す)、3.13(週次)、3.15 の preview。手元は 3.11 だけ。
 * 片ごとの見え方。GitHub は全数を 6 片に分け、片ごとの session で回す。``test_test_durations_is_fresh``
-  のように session の構成で答えが変わる門は、全件 1 session の手元と片で結論が違いうる
-  (2026-11-09 の PR #294 の赤は片 6 だけの 94.8 %)。
+  のように session の構成で答えが変わる門は、全件 1 session の手元と片で結論が違いうる。
 * 直列の順序。CI の片の中は直列、手元は xdist の並列。順序依存は夜間の order-shuffle が見る。
   逆に、並列でだけ時々落ちる手元だけの赤もある。
 * runner にある道具(cargo・node・Chrome)が手元に無いと、それに依るテストは skip する。開始時に有無を
@@ -81,7 +96,11 @@ GitHub の CI の代わりではない(確かめないものは下の一覧と�
   tests/test_ci_local_tool_2026_11_10.py が見るが、ci.yml に**足された**行は見つけない。
 * fetch したあとに master が進めば、GitHub が作る merge commit は手元で検査したものと違う。
 * BLAS のスレッド数は ``CPU 数 / 並列数`` に絞る(付けないと 12 並列 × 24 スレッドで詰まる)。絞ったせいで
-  「BLAS が 4 スレッド以上要る」と skip したテストは、全数のあとで絞らずに直列で回し直す。
+  「BLAS が 4 スレッド以上要る」と skip したテストは、全数のあとで絞らずに直列で回し直す。回し直しても
+  走らないテストが残れば失敗にする(回し直しの目的が「走らせること」なので)。
+* 持ち主が殺されたあとに残る子プロセス。排他は内側の Python が持つ flock で、内側だけが ``kill -9`` されると
+  ロックは外れるが、子(pytest など)は残りうる。その間に次の run が同じ clone を ``clean -fdx`` することは
+  防いでいない(止めるときは内側だけでなくプロセスの木ごと止め、pytest が残っていないのを見てから次を回す)。
 """
 from __future__ import annotations
 
@@ -147,11 +166,13 @@ PHASE_LABEL = dict(PHASES)
 PHASE_ALIASES = {"ruff": "lint"}
 
 #: 全数の段の件数の床 = ``.test_durations`` の行数 × この割合(追加の pytest 引数が無いときだけ)。
-#: 根拠: 2026-11-10 の実測で全数の JUnit は 28,020 件(skip 426)、同じ commit の ``.test_durations`` は
-#: 27,6xx 行 = 実行件数は行数のほぼ 1.0 倍。鮮度の門(行数が session の 95 % 以上)が逆向きを縛るので、
-#: 比が 0.9 を割るのは「一部しか収集していない・大半が skip した」場合だけ。10 % の余裕は、消したテストの
-#: 行が ``.test_durations`` に残っている分と skip の増減のため。
-SUITE_FLOOR_RATIO = 0.90
+#: 根拠(2026-11-10 の全数 2 回、同じ commit): 実行 27,710 件 / ``.test_durations`` 27,699 行 = 1.0004。
+#: 行は skip したテストにも付く(JUnit の skip 425 件のうち 418 件に行がある)ので、比が一番小さくなるのは
+#: 行を全部取り直した直後で、そのとき 実行 27,710 / 収集 28,148 = 0.984。0.95 はそこから 3.4 %(約 970 件)
+#: 下で、鮮度の門(行数が session の 95 % 以上)と対になる。0.90 のときは約 2,780 件が消えても通った
+#: (2 回目のレビューの指摘)。床が止めるのは「大量に消えた・大量に skip した」で、それより小さい skip の
+#: 増加は ``skip_jump`` が前回の記録と比べて要約で知らせる。
+SUITE_FLOOR_RATIO = 0.95
 #: ``.test_durations`` が読めない木での床(ci.yml の夜間 order-shuffle の ``--min-executed`` と同じ)。
 SUITE_FLOOR_ABSOLUTE = 10_000
 
@@ -170,6 +191,13 @@ TOOL_SKIP_PATTERNS = {
     "Chrome": r"(?<![A-Za-z])(Chrome|Chromium|chrome|chromium)(?![A-Za-z])",
 }
 BLAS_SKIP_PATTERN = r"needs a BLAS with"
+
+#: 全数の skip が前回の記録からこれを超えて増えたら要約で知らせる(前回の件数 × 割合と、件数の下限の大きい方)。
+#: 2026-11-10 の実測は skip 427 件(うち道具が無いため 114 件)なので、線は +43 件。
+SKIP_JUMP_RATIO = 0.10
+SKIP_JUMP_MIN = 20
+#: skip の前回の記録(状態ディレクトリの中。追加の pytest 引数が無い全数の run だけが書く)。
+SKIP_BASELINE_FILE = "skip_baseline.json"
 
 MARKER = ".fullseye-ci-local"
 LOCK_FILE = ".ci_local.lock"
@@ -222,6 +250,50 @@ def partial_reasons(job: dict) -> list[str]:
     if job.get("pip_audit") is False:
         out.append("--no-pip-audit")
     return out
+
+
+def deviation_reasons(job: dict, python_versions: dict | None = None) -> list[str]:
+    """走る段は同じでも、検査の条件が GitHub の CI と違う理由(空なら同じ条件)。
+
+    ``--no-merge``・``--no-fetch``・fetch できない形の ``--base``・``--allow-other-python``。どれも GitHub が
+    検査する木・Python と違うものを検査するので、全部 ok でも結論を「全段 ok」にしない。
+    """
+    tree = job.get("tree") or {}
+    out = []
+    if tree.get("mode") == "tip":
+        out.append("--no-merge(base との merge でなく、対象の先端だけ)")
+    if tree.get("fetched") == "no_fetch":
+        out.append("--no-fetch(base は手元の追跡 ref のまま。GitHub の master より古いかもしれない)")
+    elif tree.get("fetched") == "not_remote":
+        out.append(f"--base {tree.get('base_ref') or '?'} は `<remote>/<branch>` の形でないので fetch していない")
+    if job.get("allow_other_python"):
+        other = sorted({str(v) for v in (python_versions or {}).values() if not str(v).startswith("3.11.")})
+        out.append("--allow-other-python(" + (f"Python {'・'.join(other)}。" if other else "")
+                   + "CI のこの構成は 3.11)")
+    return out
+
+
+def skip_jump(prev: dict | None, now: dict) -> str | None:
+    """全数の skip が前回の記録から大きく増えたときに要約へ出す 1 行(増えていなければ None)。失敗にはしない。
+
+    件数の床(``SUITE_FLOOR_RATIO``)が止めるのは「大量に消えた」まで。その手前 —— full venv の optional 依存が
+    1 つ壊れて数十〜数百件が skip に回る —— は床を割らないので、前回の記録と比べる。
+    """
+    if not isinstance(prev, dict) or not isinstance(prev.get("skipped"), int):
+        return None
+    before, after = prev["skipped"], int(now.get("skipped", 0))
+    allowed = max(SKIP_JUMP_MIN, math.ceil(before * SKIP_JUMP_RATIO))
+    if after - before <= allowed:
+        return None
+    old = prev.get("skip_reasons") if isinstance(prev.get("skip_reasons"), dict) else {}
+    grew = sorted(((n - int(old.get(r, 0)), r) for r, n in (now.get("skip_reasons") or {}).items()
+                   if n > int(old.get(r, 0))), key=lambda t: (-t[0], t[1]))
+    top = ";".join(f"+{d:,} 件「{r.replace('|', '/')}」" for d, r in grew[:3])
+    return (f"**skip が前回の記録から大きく増えた**: {before:,} → {after:,} 件(+{after - before:,}。知らせる線は "
+            f"+{allowed:,})。前回 = {prev.get('when', '?')} の `{str(prev.get('sha', '?'))[:12]}`"
+            + (f"。増えた理由の上位: {top}" if top else "")
+            + "。床を割っていなくても、依存が壊れて skip に回った可能性がある(失敗にはしていない。記録は増える前の"
+              f"まま残した。正当な増加なら状態ディレクトリの `{SKIP_BASELINE_FILE}` を消す)")
 
 
 def junit_counts(path: Path) -> dict:
@@ -334,6 +406,44 @@ def exit_code(st: dict) -> int:
     return EXIT_OK if all(results[k]["state"] == "ok" for k in ran) else EXIT_FAILED
 
 
+def verdict(st: dict) -> str:
+    """機械が読む結論(``result.json`` の ``verdict``)。終了コード 0 の中身を 3 つに分ける。
+
+    ``full_ok`` だけが「5 段を既定のまま、GitHub と同じ条件(fetch した base との merge・Python 3.11)で回して
+    全部 ok」。``partial_ok`` = 走った段は ok だが全数ではない。``deviating_ok`` = 5 段とも ok だが条件が違う。
+    """
+    code = exit_code(st)
+    if code == EXIT_BUSY:
+        return "busy"
+    if code != EXIT_OK:
+        return "failed"
+    job, results = st["job"], st["results"]
+    ran = [k for k in PHASE_KEYS if results.get(k, {}).get("state") in ("ok", "failed")]
+    if partial_reasons(job) or len(ran) < len(PHASE_KEYS):
+        return "partial_ok"
+    if deviation_reasons(job, st.get("python_versions")):
+        return "deviating_ok"
+    return "full_ok"
+
+
+def junit_case_ids(path: Path) -> set | None:
+    """JUnit にある (classname, name) の集合。読めなければ None。"""
+    try:
+        root = ET.parse(path).getroot()
+    except (ET.ParseError, OSError):
+        return None
+    return {(c.get("classname", ""), c.get("name", "")) for c in root.iter("testcase")}
+
+
+def blas_rerun_outcome(cases: list, rerun_ids: set | None, rerun_skipped: set) -> dict:
+    """BLAS の回し直しで、最初に skip した各テストがどうなったか(走った / skip のまま / 回し直しに現れない)。"""
+    ids = rerun_ids or set()
+    absent = [c for c in cases if tuple(c) not in ids]
+    still = [c for c in cases if tuple(c) in ids and tuple(c) in rerun_skipped]
+    return {"first": len(cases), "recovered": len(cases) - len(absent) - len(still),
+            "still_skipped": len(still), "absent": len(absent)}
+
+
 def tree_line(tree: dict) -> str:
     """検査した木が何と何か(両方の sha を必ず書く)。"""
     sha, base, ref = tree.get("sha", "?")[:12], (tree.get("base_sha") or "?")[:12], tree.get("base_ref") or "?"
@@ -366,11 +476,13 @@ def render_summary(st: dict) -> str:
     """要約(Markdown)。状態の dict だけから作る(ファイルもプロセスも触らない)。"""
     job, results = st["job"], st["results"]
     partial = partial_reasons(job)
+    deviating = deviation_reasons(job, st.get("python_versions"))
     ran = [k for k in PHASE_KEYS if results.get(k, {}).get("state") in ("ok", "failed")]
     failed = [k for k in ran if results[k]["state"] == "failed"]
     not_run = [k for k in PHASE_KEYS if k not in ran]
     lines = ["### 手元の CI 相当の検査(Linux)— tools/ci_local.py"
-             + (" — 部分実行(全数ではない)" if partial else ""), ""]
+             + (" — 部分実行(全数ではない)" if partial else "")
+             + (" — GitHub の CI とは違う条件" if deviating else ""), ""]
     if st.get("busy"):
         concl = "**実行していない** —— 状態ディレクトリを別の ci_local が使っている"
     elif not ran:
@@ -379,10 +491,16 @@ def render_summary(st: dict) -> str:
         concl = "**失敗**" + (": " + "、".join(PHASE_LABEL[k] for k in failed) if failed else "")
     elif partial or not_run:
         concl = "**部分実行(全数ではない)** —— 走った段(" + "、".join(PHASE_LABEL[k] for k in ran) + ")は ok"
+    elif deviating:
+        concl = ("**GitHub の CI とは違う条件での検査** —— 走った段(" + "、".join(PHASE_LABEL[k] for k in ran)
+                 + ")は ok")
     else:
         concl = f"**全段 ok**({len(ran)} 段)"
     if partial and ran:
         concl += "。絞った引数: " + " / ".join(partial) + "。**この結果を全数の証拠にしない**"
+    if deviating and ran:
+        concl += ("。GitHub と違う点: " + " / ".join(deviating)
+                  + "。**この結果を GitHub の CI が通る証拠にしない**")
     if not_run and not st.get("busy"):
         concl += "。未実行: " + "、".join(PHASE_LABEL[k] for k in not_run)
     lines.append(f"- 結論: {concl}")
@@ -395,6 +513,8 @@ def render_summary(st: dict) -> str:
                          "(GitHub でしか確かめられない。件数は下の skip の集計)")
         else:
             lines.append("- 手元に無い道具: なし(cargo・node・Chrome・apt の 6 個とも有る)")
+    if st.get("skip_jump"):
+        lines.append(f"- {st['skip_jump']}")
     lines.append(tree_line(st.get("tree") or {}))
     lines.append(f"- 対象: `{job.get('sha', '?')[:12]}` {job.get('subject', '')}({job.get('target', '?')})")
     n_dirty = job.get("dirty_count", 0)
@@ -446,8 +566,12 @@ def render_summary(st: dict) -> str:
                       "GitHub でしか確かめられない"
                       + ("。内訳: " + "、".join(f"{t} {n}" for t, n in per.items()) if per else "") + ")。"]
         if blas:
+            stuck = blas.get("still_skipped", 0) + blas.get("absent", 0)
             lines.append(f"BLAS のスレッドを絞ったための skip {blas.get('first', 0)} 件は、絞らずに直列で回し直した: "
-                         f"{blas.get('recovered', 0)} 件が走った({blas.get('detail', '')})。")
+                         f"{blas.get('recovered', 0)} 件が走った"
+                         + (f"、**{stuck} 件は走らないまま = 失敗**(skip のまま {blas.get('still_skipped', 0)} 件・"
+                            f"回し直しに現れない {blas.get('absent', 0)} 件)" if stuck else "")
+                         + f"({blas.get('detail', '')})。")
         lines += ["", "| 件数 | 理由 |", "|---|---|"]
         top = sorted(reasons.items(), key=lambda kv: (-kv[1], kv[0]))
         lines += [f"| {n:,} | {r.replace('|', '/')} |" for r, n in top[:15]]
@@ -693,8 +817,12 @@ class Inner:
     def git(self, *args: str, check: bool = True) -> int:
         return self.run(["git", "-C", str(self.repo), *args], log="setup.log", check=check)
 
+    def capture(self, cmd: list[str], *, env: dict | None = None) -> str:
+        """出力を読むだけの呼び出し(失敗は空文字)。"""
+        return subprocess.run(cmd, capture_output=True, text=True, env=env).stdout.strip()
+
     def git_out(self, *args: str) -> str:
-        return subprocess.run(["git", "-C", str(self.repo), *args], capture_output=True, text=True).stdout.strip()
+        return self.capture(["git", "-C", str(self.repo), *args])
 
     def base_env(self, venv: Path, home: Path) -> dict:
         """CI の runner が与える環境だけ(手元の環境変数は継承しない)。"""
@@ -724,6 +852,33 @@ class Inner:
     # ---- 状態ディレクトリ: 目印と排他 ------------------------------------------------------
     def claim_state_dir(self) -> None:
         """目印の無い既存のディレクトリでは何も消さない。排他が取れなければ Busy。"""
+        self.check_marker()
+        self.take_lock()
+
+    def foreign_repo_reason(self) -> str | None:
+        """目印の無い置き場の ``repo/`` が、この道具の作った Fullseye の clone でない理由(clone なら None)。
+
+        2 回目のレビューの実行: stamp だけある置き場の ``repo/`` が別の git repo で、引き継いだあとの
+        ``checkout -f``・``clean -fdx`` が未追跡ファイルを消した。stamp は venv の出どころしか言わない。
+        """
+        if not self.repo.exists():
+            return None  # 掃除する相手が無い(clone し直すだけ)
+        if not (self.repo / ".git").exists():
+            return "`repo/` が git の clone でない"
+        origin = self.git_out("config", "--get", "remote.origin.url")
+        want = str(self.job.get("source") or "")
+
+        def norm(p: str) -> str:
+            return os.path.normcase(os.path.realpath(p)).rstrip("/\\") if p else ""
+
+        if not origin or norm(origin) != norm(want):
+            return "`repo/` の origin が、検査する repo と違う"
+        if not is_fullseye_pyproject(self.git_out("show", "HEAD:pyproject.toml")):
+            return "`repo/` の HEAD の pyproject.toml の name が fullseye でない"
+        return None
+
+    def check_marker(self) -> None:
+        """目印を確かめる(無ければ、空の置き場か、旧版の置き場と確かめられたときだけ置く)。"""
         marker = self.state / MARKER
         if not self.state.exists():
             self.state.mkdir(parents=True)
@@ -732,13 +887,24 @@ class Inner:
             if not any(self.state.iterdir()):
                 marker.write_text("tools/ci_local.py の状態ディレクトリ(消してよい。中身は作り直せる)\n", encoding="utf-8")
             elif any((self.state / v / ".ci_local_stamp.json").exists() for v in ("venv-full", "venv-core")):
-                # 目印を置く前の版(2026-11-10 の最初の版)が作った置き場: venv の stamp はこの道具しか書かない
+                # 目印を置く前の版(2026-11-10 の最初の版)が作った置き場: venv の stamp はこの道具しか書かない。
+                # ただし stamp が言うのは venv のことだけなので、掃除する相手の repo/ は別に確かめる
+                foreign = self.foreign_repo_reason()
+                if foreign:
+                    raise RuntimeError(
+                        f"状態ディレクトリに目印 {MARKER} が無く、venv の stamp はあるが {foreign}。この道具の clone と"
+                        "確かめられないので、目印を置かず、checkout -f・clean -fdx を走らせずに止めた"
+                        "(--state-dir で空か新しい場所を渡す)")
                 marker.write_text("tools/ci_local.py の状態ディレクトリ(旧版から引き継いだ)\n", encoding="utf-8")
-                self.setup_notes.append("状態ディレクトリ: 目印の無い旧版の置き場を引き継いだ(venv の stamp で確認)")
+                self.setup_notes.append("状態ディレクトリ: 目印の無い旧版の置き場を引き継いだ(venv の stamp と、"
+                                        "repo/ の origin・pyproject.toml で確認)")
             else:
                 raise RuntimeError(
                     f"状態ディレクトリに目印 {MARKER} が無い。既存の別のディレクトリかもしれないので、checkout -f・"
                     "clean -fdx・rmtree を走らせずに止めた(--state-dir で空か新しい場所を渡す)")
+
+    def take_lock(self) -> None:
+        """状態ディレクトリの排他(flock)。取れなければ持ち主を書いて Busy。"""
         import fcntl  # Linux の内側だけ
         self._lock_fh = open(self.state / LOCK_FILE, "a+", encoding="utf-8")
         try:
@@ -980,7 +1146,7 @@ class Inner:
         if not ruff.exists():
             self.set_result("lint", False, "(ruff を入れられなかった。setup.log)", t0)
             return
-        ver = subprocess.run([str(ruff), "--version"], capture_output=True, text=True, env=env).stdout.strip()
+        ver = self.capture([str(ruff), "--version"], env=env)
         parts, ok = [], True
         rc = self.run([str(ruff), "check", "."], env=env, cwd=self.repo, log="ruff.log", check=False)
         ok = ok and rc == 0
@@ -1123,6 +1289,8 @@ class Inner:
         bad = junit_verdict(jc, floor)
         if bad:
             why.append(bad)
+        if not extra and not bad:  # 床を割った・壊れた JUnit の skip 件数は、次回の比べる相手にしない
+            self.note_skip_baseline(jc)
         blas_note = self.rerun_blas(jc, env)
         if blas_note:
             why.append(blas_note)
@@ -1133,8 +1301,37 @@ class Inner:
             counts += "。**追加引数つき(全数ではない)**: `" + " ".join(extra) + "`"
         self.set_result("tests", not why, ("(" + ";".join(why) + ")" if why else "") + counts, t0)
 
+    def note_skip_baseline(self, jc: dict) -> None:
+        """全数の skip を前回の記録と比べ、大きく増えていたら要約に出す。増えていなければ記録を更新する。"""
+        path = self.state / SKIP_BASELINE_FILE
+        try:
+            prev = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            prev = None
+        now = {"skipped": jc["skipped"], "tests": jc["tests"], "sha": self.tested or self.job["sha"],
+               "when": time.strftime("%Y-%m-%d %H:%M"), "tools_missing": self.st.get("tools_missing") or [],
+               "skip_reasons": jc.get("skip_reasons") or {}}
+        jump = skip_jump(prev, now)
+        if jump:
+            self.st["skip_jump"] = jump
+            return  # 記録は増える前のまま残す(次の run でも知らせる)
+        if isinstance(prev, dict) and isinstance(prev.get("skipped"), int):
+            self.remarks.append(f"skip の前回比: {prev['skipped']:,} → {jc['skipped']:,} 件(前回 = "
+                                f"{prev.get('when', '?')} の `{str(prev.get('sha', '?'))[:12]}`。知らせる線は前回 + "
+                                f"{max(SKIP_JUMP_MIN, math.ceil(prev['skipped'] * SKIP_JUMP_RATIO)):,} 件)。")
+        else:
+            self.remarks.append(f"skip の前回比: 記録が無かったので、今回の {jc['skipped']:,} 件を最初の記録にした。")
+        try:
+            path.write_text(json.dumps(now, ensure_ascii=False, indent=1), encoding="utf-8")
+        except OSError as exc:
+            self.remarks.append(f"skip の記録を書けなかった({type(exc).__name__})。")
+
     def rerun_blas(self, jc: dict, env: dict) -> str | None:
-        """BLAS を絞ったせいで skip したテストを、絞らずに直列で回し直す。返り値 = 失敗の理由(無ければ None)。"""
+        """BLAS を絞ったせいで skip したテストを、絞らずに直列で回し直す。返り値 = 失敗の理由(無ければ None)。
+
+        回し直しの目的は「走らせること」なので、回し直しても走らないテスト(skip のまま・回し直しに現れない)が
+        1 件でも残れば失敗にする。
+        """
         cases = [(c, nm) for c, nm, reason in jc.get("skipped_cases", []) if re.search(BLAS_SKIP_PATTERN, reason)]
         if not cases:
             return None
@@ -1147,20 +1344,24 @@ class Inner:
                     files.add(cand)
                     break
         if not files:
-            self.st["blas"] = {"first": len(cases), "recovered": 0, "detail": "ファイルを特定できなかった"}
-            return None
+            self.st["blas"] = {"first": len(cases), "recovered": 0, "still_skipped": 0, "absent": len(cases),
+                               "detail": "テストのファイルを特定できなかった"}
+            return f"BLAS を絞ったための skip {len(cases)} 件を回し直せなかった(テストのファイルを特定できない)"
         loose = {k: v for k, v in env.items() if not k.endswith("_NUM_THREADS")}
         junit = self.out / "junit-blas.xml"
         rc = self.run([str(self.venv_full / "bin/pytest"), "-q", "-ra", f"--junitxml={junit}", *sorted(files)],
                       env=loose, cwd=self.repo, log="blas.log", check=False)
         bj = junit_counts(junit)
-        still = {(c, nm) for c, nm, _ in bj.get("skipped_cases", [])}
-        recovered = len([c for c in cases if c not in still]) if not bj.get("broken") else 0
-        self.st["blas"] = {"first": len(cases), "recovered": recovered,
-                           "detail": f"{len(files)} ファイルを絞らずに直列で、計 {bj['tests']} 件・失敗 "
-                                     f"{bj['failures'] + bj['errors']} 件。junit-blas.xml"}
+        res = blas_rerun_outcome(cases, None if bj.get("broken") else junit_case_ids(junit),
+                                 {(c, nm) for c, nm, _ in bj.get("skipped_cases", [])})
+        self.st["blas"] = dict(res, detail=f"{len(files)} ファイルを絞らずに直列で、計 {bj['tests']} 件・失敗 "
+                                           f"{bj['failures'] + bj['errors']} 件。junit-blas.xml")
         if rc != 0 or bj.get("broken"):
             return f"BLAS を絞らない回し直しが失敗(exit {rc}、blas.log)"
+        stuck = res["still_skipped"] + res["absent"]
+        if stuck:
+            return (f"BLAS を絞らずに回し直しても {stuck} 件が走らない(skip のまま {res['still_skipped']} 件・"
+                    f"回し直しに現れない {res['absent']} 件。junit-blas.xml)")
         return None
 
     # ---- 要約 ------------------------------------------------------------------------------
@@ -1216,6 +1417,13 @@ class Inner:
                 slim[name] = {k: v for k, v in st[name].items() if k != "skipped_cases"}
         slim["exit_code"] = rc
         try:
+            slim["verdict"] = verdict(st) if rc != EXIT_FAILED else "failed"
+            slim["partial"] = partial_reasons(self.job)
+            slim["deviations"] = deviation_reasons(self.job, st.get("python_versions"))
+        except Exception as exc:  # noqa: BLE001 — 要約が書けなかった run でも result.json は残す
+            slim["verdict"] = "failed"
+            _log(f"verdict を作れなかった: {type(exc).__name__}: {exc}")
+        try:
             (self.out / "result.json").write_text(json.dumps(slim, ensure_ascii=False, indent=1, default=str),
                                                   encoding="utf-8")
         except (OSError, TypeError, ValueError) as exc:
@@ -1266,8 +1474,9 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--base", default="origin/master",
                     help="merge の相手(既定 origin/master。`<remote>/<branch>` の形なら先に fetch し直す)")
     ap.add_argument("--no-merge", action="store_true",
-                    help="base との merge を作らず、対象の先端だけを検査する(要約にそう書く)")
-    ap.add_argument("--no-fetch", action="store_true", help="fetch しない(手元の追跡 ref のまま。要約にそう書く)")
+                    help="base との merge を作らず、対象の先端だけを検査する(要約は「GitHub の CI とは違う条件」になる)")
+    ap.add_argument("--no-fetch", action="store_true",
+                    help="fetch しない(手元の追跡 ref のまま。要約は「GitHub の CI とは違う条件」になる)")
     ap.add_argument("--out", help="要約・JUnit・ログの置き場(既定 = 一時ディレクトリ。前回の成果物は消してから始める)")
     ap.add_argument("--state-dir",
                     help=f"Linux 側の状態ディレクトリ(clone と venv。既定 {DEFAULT_STATE_DIR}。環境変数 "
@@ -1291,7 +1500,8 @@ def build_parser() -> argparse.ArgumentParser:
                     help="これより古い full venv は依存をその日の最新に揃え直す(CI は毎回最新を入れる)")
     ap.add_argument("--python", help="venv を作る Python(既定 = python3.11 か uv の 3.11)")
     ap.add_argument("--allow-other-python", action="store_true",
-                    help="--python で渡した Python が 3.11 でなくても続ける(要約に版を書く)")
+                    help="--python で渡した Python が 3.11 でなくても続ける(要約に版を書き、"
+                         "「GitHub の CI とは違う条件」になる)")
     ap.add_argument("--require-tools", action="store_true",
                     help="runner にある道具(cargo・node・Chrome・apt の 6 個)が手元に無ければ失敗にする")
     ap.add_argument("--install-apt", action="store_true",
