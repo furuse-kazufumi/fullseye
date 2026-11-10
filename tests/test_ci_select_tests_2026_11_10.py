@@ -19,6 +19,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -324,3 +325,86 @@ def test_the_resolved_requirements_are_the_ones_the_test_job_installs():
     assert 'pip install "opencv-contrib-python>=4.8.1.78"' in opt
     assert CDD.OPTIONAL_REQUIREMENTS == ("torch>=2.13", "kornia>=0.9", "mahotas>=1.4",
                                          "opencv-contrib-python>=4.8.1.78")
+
+
+# --------------------------------------------------------------------------- 7
+# 独立レビュー(2026-11-10)の指摘への門
+_REVIEW_WALKERS = ("tests/test_provenance_naming.py", "tests/test_no_invalid_escape_sequences.py",
+                   "tests/test_svd_full_matrices.py", "tests/test_fssystem.py",
+                   "tests/test_docs_liquid_safe.py", "tests/test_no_stray_root_images_2026_11_01.py",
+                   "tests/test_review_fixes_lib2_2026_10_07.py")
+
+#: 探針(``walks_repo`` とは別の読み方): repo の根から走査する書き方。
+_WALK_PROBE = re.compile(
+    r"os\.walk\(\s*_?(?:ROOT|REPO|REPO_ROOT)\b|\b_?(?:ROOT|REPO|REPO_ROOT)\.rglob\(|ls-files"
+    r"|glob\(\s*os\.path\.join\(\s*_?(?:ROOT|REPO)\s*,\s*[\"']\*\*")
+
+
+def test_the_review_gates_are_named_in_the_always_run_list():
+    assert set(_REVIEW_WALKERS) <= set(CST.load_always())
+
+
+def test_every_test_that_walks_the_repo_runs_on_every_pr(selector):
+    """tests/ の中で repo の根から走査するテストは、どの PR でも必ず回る(機械で見つける)。"""
+    probed = []
+    for name in sorted(os.listdir(os.path.join(ROOT, "tests"))):
+        if not (name.startswith("test_") and name.endswith(".py")):
+            continue
+        with open(os.path.join(ROOT, "tests", name), encoding="utf-8", errors="ignore") as f:
+            src = f.read()
+        if _WALK_PROBE.search(src):
+            probed.append("tests/" + name)
+    assert len(probed) >= 6, probed                       # 探針が壊れて 0 本で通るのを防ぐ
+    missing = sorted(set(probed) - set(selector.always))
+    assert missing == [], missing
+    assert set(_REVIEW_WALKERS) <= set(selector.always)
+    res = selector.select(["examples/hessian_numpy_chain.py"])
+    assert res["mode"] == "selected" and set(selector.always) <= set(res["tests"])
+
+
+def test_walks_repo_reads_the_root_but_not_a_subdirectory():
+    assert CST.walks_repo("import os\nfor dp, dn, fn in os.walk(ROOT):\n    pass\n")
+    assert CST.walks_repo("for p in ROOT.rglob('*.py'):\n    pass\n")
+    assert CST.walks_repo("subprocess.run(['git', 'ls-files'])\n")
+    assert CST.walks_repo("def f(base):\n    os.listdir(base)\n")                 # 起点が読めない
+    assert not CST.walks_repo("import os\nos.walk(os.path.join(ROOT, 'docs', 'ops'))\n")
+    assert not CST.walks_repo("DOCS = ROOT / 'docs'\nfor p in DOCS.rglob('*.md'):\n    pass\n")
+    assert not CST.walks_repo("def t(tmp_path):\n    list(tmp_path.iterdir())\n")
+
+
+def test_review_repro_opsfileio_selects_the_two_gates(selector):
+    """レビューの再現: ``opsfileio.py`` にベンダ名と不正なエスケープを入れた改変で、2 本の門が選ばれる。"""
+    res = selector.select(["opsfileio.py"])
+    assert res["mode"] == "selected", res
+    assert _selected(res, "tests/test_provenance_naming.py")
+    assert _selected(res, "tests/test_no_invalid_escape_sequences.py")
+
+
+def test_root_level_files_match_double_star_patterns():
+    assert CST.ref_matches("**/*.py", "opsfileio.py")
+    assert CST.ref_matches("docs/**/*.md", "docs/x.md")
+    assert not CST.ref_matches("**/*.md", "opsfileio.py")
+
+
+def test_string_registries_and_spec_directories_are_dependencies(selector):
+    """``("opsfileio", "OPSFILEIO")`` のような文字列のレジストリと、``data/auto_specs`` の広い参照。"""
+    assert "opsfileio.py" in selector.ix.deps.get("opassist.py", set())
+    res = selector.select(["data/auto_specs/filters.json"])
+    assert res["mode"] == "selected", res
+    assert _selected(res, "tests/test_gpu_fill3.py")          # レビューで選ばれなかった検出器
+    assert _selected(res, "tests/test_op_contracts.py")
+
+
+def test_ci_yml_does_not_cancel_full_runs_and_ignores_other_labels():
+    yaml = pytest.importorskip("yaml")
+    with open(os.path.join(ROOT, ".github", "workflows", "ci.yml"), encoding="utf-8") as f:
+        doc = yaml.safe_load(f)
+    conc = doc["concurrency"]
+    assert conc["cancel-in-progress"] == "${{ github.event_name == 'pull_request' }}"
+    assert "github.run_id" in conc["group"] and "ci:full" in conc["group"]
+    for job in ("changes", "core-minimal", "lint"):
+        assert "ci:full" in doc["jobs"][job]["if"], job
+    sel = next(s for s in doc["jobs"]["changes"]["steps"] if s.get("id") == "select")["run"]
+    assert "tools/ci_select_tests\\.py" in sel and "_ci_select_tests_base.py" in sel
+    prev = next(s for s in doc["jobs"]["failure-record"]["steps"] if s.get("id") == "prev")["run"]
+    assert '"success"' in prev.replace('\\"', '"') and "cancelled" not in prev

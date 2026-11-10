@@ -240,19 +240,44 @@ How the selection works (`py -3.11 tools/ci_select_tests.py --base origin/master
   `api.py`, `fslib.py`, `fullseye/__init__.py`, conftest, CI config, `pyproject.toml`,
   `tools/regen_all.py`, the selector itself — see `CORE_PATTERNS`), any changed file that no
   test is known to depend on, a deleted file nobody references, or an unparsable `.py` turn the
-  PR into a full run. Broad directory references from *library* modules (`"docs"`,
-  `ROOT / "examples"`) are not counted (otherwise every docs change would select ~93 % of the
-  suite); file-specific references are. Gates under `tests/` and `tools/` count every reference.
-* **Always-run gates.** Repo-wide gates that can fail on any change
-  (`test_vacuous_assertions`, `test_type_alias_ledger`, `test_test_durations_is_fresh`, …) are
-  listed in `tools/ci_always_run.txt` and run on every PR regardless of the selection.
-  `regen_all --check` runs on shard 1 of every PR.
+  PR into a full run. So does a change to the selection tooling itself (`tools/ci_select_tests.py`,
+  `tools/ci_always_run.txt`, `tools/ci_deps_drift.py`, conftest, `.github/`): that check is done in
+  the workflow, and for every other PR the rules are taken from the **base** branch's copy of the
+  selector, not the PR's.
+* **What counts as a reference.** In *library* modules (repo root, `fullseye/`, `examples/`) a
+  directory reference with at most one literal component (`"docs"`, `ROOT / "examples"`, `*.md`) is
+  ignored (otherwise every docs change would select ~93 % of the suite); file-specific references
+  and directory references with two or more literal components (`data/auto_specs`, `docs/ops`)
+  count. In `tests/` and `tools/` every path literal counts, but a test that walks from the repo
+  root with a variable (`os.walk(ROOT)`, `ROOT.rglob(...)`, `git ls-files`) produces no path
+  literal at all, so the graph cannot see what it reads: those tests are always-run (next item).
+  A bare string equal to a repo-root module name (string-keyed registries such as
+  `("opsfileio", "OPSFILEIO")` in `opassist.py`) counts as an import of that module.
+* **Always-run gates.** Repo-wide gates that can fail on any change run on every PR regardless of
+  the selection: the ones listed in `tools/ci_always_run.txt` (`test_vacuous_assertions`,
+  `test_type_alias_ledger`, `test_test_durations_is_fresh`, `test_provenance_naming`,
+  `test_no_invalid_escape_sequences`, …) **plus every test the selector finds walking the repo**
+  (`walks_repo`: `os.walk` / `os.listdir` / `rglob` / `iterdir` / `glob("**")` whose start is not a
+  literal sub-directory, and `git ls-files`). `tests/test_ci_select_tests_2026_11_10.py` checks with
+  an independent probe that every such test is always-run. `regen_all --check` runs on shard 1 of
+  every PR.
+* **How much the replay proves.** In the replay of #270-#295, six PRs had a failing CI run (seven
+  runs); four of them (#270, #272, #294, #295) went full because of the core-file rule, and only
+  #271 and #276 were in selected mode. #276's failure was
+  an always-run gate, and #271's (a dependency released that day) is caught only by the
+  dependency-version check, not by the graph. The graph itself is therefore checked mainly by
+  re-running it without the core rule (it reached every failure) and by the tests above.
 * **Sharding is per file.** `tests/conftest.py` splits the (selected) tests into shards by
   whole test files (LPT on `.test_durations`), so module/session fixtures are built once per run
   instead of once per shard. pytest-split is used only to record durations.
 
+Full runs (push to `master`, schedule, manual) are never cancelled by a newer run: each gets its
+own concurrency group, and only PR runs cancel their predecessor. A label other than `ci:full`
+starts a run whose jobs are all skipped and which cancels nothing.
+
 When `master` or the nightly run fails, the `failure-record` job keeps `ci_result.json` (failed
-node ids + the commits that run brought in) for 90 days. To find the culprit: the commits listed
+node ids + the commits since the previous full run that completed, so a run that was stopped
+leaves no gap) for 90 days. To find the culprit: the commits listed
 since the previous green run are the candidates; if there are several, bisect with
 `git bisect run py -3.11 -m pytest -q <failing node id>`. (Proposal, not enabled: open an Issue
 automatically from that job; it would need `issues: write`.)

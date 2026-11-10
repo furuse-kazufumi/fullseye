@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1853. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1855. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -3221,7 +3221,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tools/ci_select_tests.py`
 
 - **L74** _(ja)_ — ★足すのは自由、外すときは「全テストに効かない」根拠を書くこと。
-- **L374** _(ja)_ — ★ライブラリ(repo 直下・fullseye/・examples/ …)の**広い**参照は数えない。 ops.py が全 backend を import するので、ライブラリの閉包はほぼ全部のテストに入る。 そこで ``"docs"`` や ``ROOT / "examples"`` のような 1 か所の広い参照を数えると、 docs・examples のどの変更でもほぼ全部が選ばれて、判定が意味を失う(実測 93 %)。 ファイルを名指しする参照(``data/macro_champions.json`` など)は数える。 ここで落ちた依存は master と毎日の full suite が拾う。どのテストも名指ししない ファイルを触った PR は「対応が分からない」で full になる。
+- **L451** _(ja)_ — ★ライブラリ(repo 直下・fullseye/・examples/ …)の**広い**参照は数えない。 ops.py が全 backend を import するので、ライブラリの閉包はほぼ全部のテストに入る。 そこで ``"docs"`` や ``ROOT / "examples"`` のような 1 か所の広い参照を数えると、 docs・examples のどの変更でもほぼ全部が選ばれて、判定が意味を失う(実測 93 %)。 ファイルを名指しする参照(``data/macro_champions.json`` など)は数える。 ここで落ちた依存は master と毎日の full suite が拾う。どのテストも名指ししない ファイルを触った PR は「対応が分からない」で full になる。
+- **L458** _(ja)_ — ★2026-11-10(独立レビュー): ``data/auto_specs`` / ``docs/ops`` のように**字面が 2 段以上** あるディレクトリの参照は数える(backends_auto が data/auto_specs/*.json を読み込んで op を登録するのに、捨てていたので auto_specs の変更が 93 本しか選ばなかった)。 捨てるのは字面が 1 段以下(``"docs"`` / ``ROOT / "examples"`` / ``*.md``)だけ。
+- **L465** _(ja)_ — ★文字列で引くレジストリ(``opassist.py`` の ``("opsfileio", "OPSFILEIO")`` など)。 repo 直下のモジュール名と同じ字面の単語は、そのモジュールへの辺にする(多めに選ぶ側)。
 
 ## `tools/ci_wheel_check.py`
 

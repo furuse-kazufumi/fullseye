@@ -300,6 +300,11 @@ def _component_runs(path: str) -> list[str]:
 _GATE_DIRS = ("tests/", "tools/")
 
 
+def _literal_parts(ref: str) -> list[str]:
+    """参照の成分のうち、型(``*`` など)でない字面のもの。"""
+    return [c for c in ref.lstrip("~").split("/") if c and not _is_glob(c)]
+
+
 def _is_broad(ref: str) -> bool:
     """ディレクトリ丸ごとを指す参照か(単語だけ・ファイル名の無いパス・``dir/*`` / ``*.py`` の型)。"""
     if ref.startswith("~"):
@@ -326,9 +331,76 @@ def ref_matches(ref: str, path: str) -> bool:
         return path == word or path.startswith(word + "/")
     if _is_glob(ref):
         base = path.rsplit("/", 1)[-1]
-        return (fnmatch.fnmatchcase(path, ref) or fnmatch.fnmatchcase(base, ref)
-                or fnmatch.fnmatchcase(path, "*/" + ref))
+        # ``**/`` は 0 段のディレクトリにも当てる(``ROOT.rglob("*.py")`` は repo 直下の .py も読む。
+        # 2026-11-10 の独立レビュー: ``**/*.py`` が直下の ``opsfileio.py`` に当たっていなかった)。
+        pats = {ref, ref.replace("/**/", "/")}
+        while True:
+            more = {x[3:] for x in pats if x.startswith("**/")} - pats
+            if not more:
+                break
+            pats |= more
+        return any(fnmatch.fnmatchcase(path, x) or fnmatch.fnmatchcase(base, x)
+                   or fnmatch.fnmatchcase(path, "*/" + x) for x in pats)
     return ("/" + ref + "/") in ("/" + path + "/")
+
+
+_WALK_FUNCS = {"walk", "listdir", "scandir"}          # os.walk / os.listdir / os.scandir(target)
+_WALK_METHODS = {"rglob", "iterdir"}                    # target.rglob(...) / target.iterdir()
+
+
+def walks_repo(src: str) -> bool:
+    """テストが **repo 全体**(特定の下位ディレクトリでなく)を走査するか。
+
+    ★2026-11-10(独立レビュー): ``os.walk(ROOT)`` / ``ROOT.rglob("*.py")`` / ``git ls-files`` で repo の
+    全ファイルを読む門は、どのファイルの変更でも落ちうる(ベンダ名・不正なエスケープ・迷子の画像)。
+    依存の判定では拾い切れなかった(``opsfileio.py`` の改変で 7 本中 6 本が選ばれなかった)ので、
+    機械で見つけて毎回回す。走査の起点が**字面の下位ディレクトリ**(``ROOT / "docs"`` など、
+    モジュールの先頭で代入した名前も辿る)なら repo 全体ではない。起点が読めなければ repo 全体とみなす。
+    """
+    if "ls-files" in src:
+        return True
+    try:
+        tree = ast.parse(src)
+    except SyntaxError:
+        return True
+    named: dict[str, str | None] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+            named[node.targets[0].id] = _fold_path(node.value, set())
+
+    def subdir(expr) -> bool:
+        if isinstance(expr, ast.Name) and expr.id.startswith(("tmp", "tempdir")):
+            return True                                   # pytest の tmp_path / tmpdir(repo の外)
+        if isinstance(expr, ast.Name):
+            folded = named.get(expr.id)
+        else:
+            folded = _fold_path(expr, set())
+        return bool(folded) and len(_literal_parts(folded)) >= 1
+
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        fn = node.func
+        name = fn.attr if isinstance(fn, ast.Attribute) else getattr(fn, "id", "")
+        if name in _WALK_FUNCS and isinstance(fn, ast.Attribute) and getattr(fn.value, "id", "") == "os":
+            if node.args and not subdir(node.args[0]):
+                return True
+        elif name in _WALK_METHODS and isinstance(fn, ast.Attribute):
+            if not subdir(fn.value):
+                return True
+        elif name == "glob" and isinstance(fn, ast.Attribute) and node.args:
+            pat = _const_str(node.args[0])
+            if getattr(fn.value, "id", "") == "glob":           # glob.glob(join(X, "**", ...))
+                folded = _fold_path(node.args[0], set()) or pat or ""
+                if "**" in folded and not _literal_parts(folded.split("**", 1)[0]):
+                    return True
+            elif pat and "**" in pat and not subdir(fn.value):  # X.glob("**/...")
+                return True
+        elif name == "iglob" and node.args:
+            folded = _fold_path(node.args[0], set()) or _const_str(node.args[0]) or ""
+            if "**" in folded and not _literal_parts(folded.split("**", 1)[0]):
+                return True
+    return False
 
 
 class Index:
@@ -363,6 +435,8 @@ class Index:
         self.refs: dict[str, set[str]] = {}
         self.executes: set[str] = set()
         self.unparsable: list[str] = []
+        #: repo 全体を走査するテスト(``walks_repo``)。判定にかかわらず毎回回す。
+        self.repo_walkers: set[str] = set()
         for f in self.files:
             try:
                 src = (root / f).read_text(encoding="utf-8", errors="replace")
@@ -370,6 +444,9 @@ class Index:
             except SyntaxError:
                 self.unparsable.append(f)
                 src, imports, refs = "", set(), set()
+            words = {r[1:] for r in refs if r.startswith("~")}
+            if re.fullmatch(r"tests/test_[^/]*\.py", f) and src and walks_repo(src):
+                self.repo_walkers.add(f)
             if not f.startswith(_GATE_DIRS):
                 # ★ライブラリ(repo 直下・fullseye/・examples/ …)の**広い**参照は数えない。
                 #   ops.py が全 backend を import するので、ライブラリの閉包はほぼ全部のテストに入る。
@@ -378,9 +455,19 @@ class Index:
                 #   ファイルを名指しする参照(``data/macro_champions.json`` など)は数える。
                 #   ここで落ちた依存は master と毎日の full suite が拾う。どのテストも名指ししない
                 #   ファイルを触った PR は「対応が分からない」で full になる。
-                refs = {r for r in refs if not _is_broad(r)}
+                #   ★2026-11-10(独立レビュー): ``data/auto_specs`` / ``docs/ops`` のように**字面が 2 段以上**
+                #   あるディレクトリの参照は数える(backends_auto が data/auto_specs/*.json を読み込んで
+                #   op を登録するのに、捨てていたので auto_specs の変更が 93 本しか選ばなかった)。
+                #   捨てるのは字面が 1 段以下(``"docs"`` / ``ROOT / "examples"`` / ``*.md``)だけ。
+                refs = {r for r in refs if not (_is_broad(r) and len(_literal_parts(r)) <= 1)}
             self.refs[f] = refs
             deps = {r for n in imports for r in self._resolve(n, f) if r != f}
+            # ★文字列で引くレジストリ(``opassist.py`` の ``("opsfileio", "OPSFILEIO")`` など)。
+            #   repo 直下のモジュール名と同じ字面の単語は、そのモジュールへの辺にする(多めに選ぶ側)。
+            for w in words:
+                tgt = self.mod2file.get(w)
+                if tgt and "/" not in tgt and tgt != f:
+                    deps.add(tgt)
             if f == "ops.py":                       # 名前の並びで __import__ する backend
                 for m in re.findall(r'"(backends(?:_\w+)?)"', src):
                     if m + ".py" in self.file_set:
@@ -483,7 +570,8 @@ class _Deps:
 class Selector:
     def __init__(self, index: Index, always: list[str]):
         self.ix = index
-        self.always = always
+        self.explicit_always = list(always)
+        self.always = sorted(set(always) | index.repo_walkers)
         self.tests = index.test_files()
         self.deps: dict[str, _Deps] = {}
         self.runner_own: dict[str, _Deps] = {}
@@ -724,13 +812,14 @@ def changed_from_git(base: str, head: str = "HEAD") -> list[str]:
     return [line.strip() for line in out.splitlines() if line.strip()]
 
 
-def decide(changed: list[str] | None, *, full_reason: str | None = None) -> dict:
+def decide(changed: list[str] | None, *, full_reason: str | None = None,
+           always_file: Path | None = None) -> dict:
     if full_reason:
         res = {"mode": "full", "reasons": [full_reason]}
     elif changed is None:
         res = {"mode": "full", "reasons": ["changed files unavailable"]}
     else:
-        res = Selector(Index(ROOT), load_always()).select(changed)
+        res = Selector(Index(ROOT), load_always(always_file)).select(changed)
     res["seconds"] = round(estimate_seconds(res.get("tests") if res["mode"] == "selected" else None))
     res["shards"] = shards_for(res["seconds"]) if res["mode"] == "selected" else MAX_SHARDS
     return res
@@ -768,6 +857,8 @@ def main(argv=None) -> int:
     ap.add_argument("--tests-file", default="ci_selected_tests.txt",
                     help="選んだテストの一覧を書くファイル(selected のときだけ)")
     ap.add_argument("--summary", help="GITHUB_STEP_SUMMARY のパス")
+    ap.add_argument("--always-file", type=Path,
+                    help="毎回回す門の一覧(既定 tools/ci_always_run.txt。CI は base の版を渡す)")
     ap.add_argument("--deps-drift", nargs=2, metavar=("CODE_FILE", "TEXT_FILE"),
                     help="tools/ci_deps_drift.py --compare の終了コードと出力。0 以外なら full "
                          "(依存の版が最後の全数の run と違う / 比べられない)")
@@ -787,7 +878,7 @@ def main(argv=None) -> int:
         else:
             full_reason = "no --base / --files given"
     try:
-        res = decide(changed, full_reason=full_reason)
+        res = decide(changed, full_reason=full_reason, always_file=args.always_file)
     except Exception as e:  # noqa: BLE001 - 判定の故障は全部回す側へ倒す(黙って少なく回さない)
         res = {"mode": "full", "reasons": ["selector crashed: %s: %s" % (type(e).__name__, e)],
                "seconds": round(estimate_seconds(None)), "shards": MAX_SHARDS}
