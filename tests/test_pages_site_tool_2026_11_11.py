@@ -241,13 +241,15 @@ def test_broken_internal_links_are_reported_not_gated(tmp_path):
     rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
     assert rep["ok"]
     targets = {b["target"] for b in rep["broken_internal_links"]}
-    assert targets == {"no/such/page.html"}
-    assert rep["broken_internal_links_count"] == 1
+    # upper.png(実在は UPPER.png)は repo でも解決できない assets への参照なので、黙って捨てず切れたリンクに数える
+    assert targets == {"no/such/page.html", "articles/assets/upper.png"}
+    assert rep["broken_internal_links_count"] == 2
 
 
 def test_size_gate_boundary(tmp_path):
     site, docs = make_site(tmp_path)
-    total = sum(ps.walk_files(str(site)).values())
+    files = ps.walk_files(str(site))
+    total = sum(files.values()) + len(files) * ps.TAR_HEADER_BYTES  # 門 2 は tar の見出しの見積もり込み
     assert ps.run_check(str(site), str(docs), total, 1, 1)["gates"]["gate2_size"]  # ちょうどは通る
     rep = ps.run_check(str(site), str(docs), total - 1, 1, 1)
     assert not rep["gates"]["gate2_size"] and not rep["ok"]
@@ -262,6 +264,7 @@ def test_floor_gates(tmp_path):
     assert not ps.run_check(str(site), str(docs), 10**9, 4, 1)["gates"]["gate3_min_pages"]
     n_assets = sum(1 for p in ps.walk_files(str(site)) if p.startswith(A))
     assert ps.run_check(str(site), str(docs), 10**9, 1, n_assets)["gates"]["gate3_min_kept_assets"]
+    (docs / "articles" / "assets" / "extra_in_repo.png").write_bytes(b"x")  # --source-docs の床を満たす
     assert not ps.run_check(str(site), str(docs), 10**9, 1, n_assets + 1)["gates"]["gate3_min_kept_assets"]
 
 
@@ -402,8 +405,6 @@ def test_pages_workflow_triggers_and_top_permissions():
     assert wf["permissions"] == {"contents": "read"}
     # 組むジョブは読むだけ(jekyll-build-pages の github-metadata が Pages の cname を読むのに pages: read が要る)。
     assert wf["jobs"]["build"]["permissions"] == {"contents": "read", "pages": "read"}, "組むジョブに書き込みの権限を足さない"
-    conc = wf["concurrency"]
-    assert "'pages'" in conc["group"] and "pull_request" in conc["cancel-in-progress"]
 
 
 def test_deploy_job_runs_only_on_master_outside_pull_requests():
@@ -594,3 +595,121 @@ def test_gate4_fails_on_a_site_without_any_internal_stylesheet(tmp_path):
     assert rep["wiring_internal_stylesheets"] == 0
     assert rep["wiring_missing"] == [] and rep["baseurl_prefixed_pages_count"] == 0
     assert not rep["gates"]["gate4_page_wiring"]
+
+
+# ---- 独立レビューの指摘(2026-11-11)----
+
+def _write(base, rel, text="x"):
+    p = base / rel
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(text, encoding="utf-8")
+
+
+def test_f1_directory_and_extensionless_asset_pages_are_kept_and_checked(tmp_path):
+    """href が assets の下のディレクトリ(index.html)・拡張子なし(.html)を指す形。prune が残し、消えたら門 1。"""
+    site, docs = make_site(tmp_path)
+    for base in (site, docs):
+        _write(base, A + "demo/index.html", "<p>demo</p>")
+        _write(base, A + "page.html", "<p>page</p>")
+    _write(site, "links.html", '<a href="/articles/assets/demo/">d</a><a href="/articles/assets/page">p</a>')
+    plan = ps.plan_prune(str(site))
+    assert A + "demo/index.html" not in plan["remove"] and A + "page.html" not in plan["remove"]
+    lst = tmp_path / "built.txt"
+    assert run_cli("snapshot", "--site", str(site), "--out", str(lst)).returncode == 0
+    for rel in (A + "demo/index.html", A + "page.html"):
+        os.remove(os.path.join(site, *rel.split("/")))
+        r = run_cli(*check_args(site, docs, extra=("--built-list", str(lst))))
+        assert r.returncode == 1, rel
+        assert "links.html" in r.stderr
+        _write(site, rel, "<p>back</p>")
+
+
+def test_f1_unresolvable_asset_reference_is_counted_as_broken(tmp_path):
+    site, docs = make_site(tmp_path)
+    _write(site, "links.html", '<img src="/articles/assets/nowhere.png">')
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert rep["ok"]
+    assert "articles/assets/nowhere.png" in {b["target"] for b in rep["broken_internal_links"]}
+    built = set(ps.walk_files(str(site)))  # 一覧を渡しても、どこにも無いものは切れたリンクに数える
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1, built=built)
+    assert rep["ok"] and "articles/assets/nowhere.png" in {b["target"] for b in rep["broken_internal_links"]}
+
+
+def test_f2a_built_list_must_cover_the_site(tmp_path):
+    site, docs = make_site(tmp_path)
+    lst = tmp_path / "built.txt"
+    lst.write_text("index.html\n", encoding="utf-8")  # 無関係な・prune の後に取った一覧
+    r = run_cli(*check_args(site, docs, extra=("--built-list", str(lst))))
+    assert r.returncode == 2 and "--built-list" in r.stderr
+
+
+def test_f2b_only_underscore_or_dot_names_may_be_not_built(tmp_path):
+    site, docs = make_site(tmp_path)
+    _write(docs, A + "plain_missing.md")
+    _write(docs, A + "_hidden.md")
+    _write(docs, A + ".dot/x.md")
+    _write(site, "links.html", '<a href="articles/assets/_hidden.md">h</a><a href="articles/assets/.dot/x.md">d</a>')
+    lst = tmp_path / "built.txt"
+    assert run_cli("snapshot", "--site", str(site), "--out", str(lst)).returncode == 0
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1, built=set(lst.read_text(encoding="utf-8").splitlines()))
+    assert rep["ok"] and rep["not_built_assets_count"] == 2
+    _write(site, "links2.html", '<a href="articles/assets/plain_missing.md">p</a>')
+    built = set(lst.read_text(encoding="utf-8").splitlines()) | {"links2.html"}
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1, built=built)
+    assert not rep["gates"]["gate1_assets_present"]
+    assert [m["target"] for m in rep["missing_assets"]] == [A + "plain_missing.md"]
+
+
+def test_f2c_source_docs_needs_the_assets_floor(tmp_path):
+    site, _docs = make_site(tmp_path)
+    wrong = tmp_path / "wrong_docs"
+    wrong.mkdir()
+    _write(wrong, "index.md")
+    r = run_cli(*check_args(site, wrong))
+    assert r.returncode == 2 and "--source-docs" in r.stderr
+
+
+def test_f6_size_gate_counts_tar_headers_and_reports_percent(tmp_path):
+    site, docs = make_site(tmp_path)
+    files = ps.walk_files(str(site))
+    total = sum(files.values())
+    est = total + len(files) * ps.TAR_HEADER_BYTES
+    rep = ps.run_check(str(site), str(docs), est, 1, 1)
+    assert rep["gates"]["gate2_size"] and rep["site_bytes_with_tar_headers"] == est
+    assert rep["tar_header_estimate_bytes"] == len(files) * 1024
+    assert not ps.run_check(str(site), str(docs), est - 1, 1, 1)["gates"]["gate2_size"]
+    assert not ps.run_check(str(site), str(docs), total, 1, 1)["gates"]["gate2_size"]  # 中身だけでは足りない
+    md = tmp_path / "s.md"
+    run_cli(*check_args(site, docs, extra=("--summary-md", str(md))))
+    assert "1 GB まで残り" in md.read_text(encoding="utf-8") and " %)" in md.read_text(encoding="utf-8")
+
+
+def test_f8_www_host_and_extensionless_html_resolution(tmp_path):
+    assert ps.strict_resolve("a/b.html", "https://www.furuse.work/articles/assets/x.png") == "articles/assets/x.png"
+    assert ps.loose_candidates("a/b.html", "https://www.furuse.work/articles/assets/x.png") >= {"articles/assets/x.png"}
+    files = {"page.html": 1, "d/index.html": 1, "f.txt": 1}
+    dirs = ps.dirs_of(files)
+    assert ps._resolve_file("page", files, dirs) == "page.html"
+    assert ps._resolve_file("d", files, dirs) == "d/index.html"
+    assert ps._resolve_file("d/", files, dirs) == "d/index.html"
+    assert ps._resolve_file("f.txt", files, dirs) == "f.txt"
+    assert ps._resolve_file("f.txt/", files, dirs) is None
+    assert ps._resolve_file("nope", files, dirs) is None
+    assert ps._resolves_in("page", files, dirs)
+    site, docs = make_site(tmp_path)
+    _write(site, "about.html", "<p>a</p>")
+    _write(site, "links.html", '<a href="about">a</a><img src="https://www.furuse.work/articles/assets/abs1.gif">')
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert "about" not in {b["target"] for b in rep["broken_internal_links"]}
+    os.remove(site / "articles" / "assets" / "abs1.gif")
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert "links.html" in {m["page"] for m in rep["missing_assets"]}
+
+
+def test_workflow_concurrency_is_per_job():
+    jobs = _pages_wf()["jobs"]
+    assert "concurrency" not in _pages_wf()
+    assert jobs["deploy"]["concurrency"] == {"group": "pages", "cancel-in-progress": False}
+    b = jobs["build"]["concurrency"]
+    assert b["group"].startswith("pages-build-") and "github.ref" in b["group"]
+    assert "pull_request" in b["cancel-in-progress"]

@@ -21,7 +21,10 @@ repo からは消さない(Qiita が読む)。配備物からだけ外す。
     門 1: 厳密に読んだ参照のうち、解決先が ``articles/assets/`` の下で ``--source-docs``(repo の docs)に
           実在するものは、サイトにも実在すること(repo を真値にする。prune の結果は真値に使わない)。
           ``--built-list``(``snapshot`` が prune の前に書いた os.walk の一覧)を渡すと、repo にあっても
-          Jekyll が元から配信しないもの(``_`` で始まる名前など)は門 1 でなく報告に分ける。
+          Jekyll が元から配信しないもの(パスの要素が ``_`` か ``.`` で始まる名前だけ)は門 1 でなく報告に分ける。
+          いまのサイトが一覧の部分集合でなければ、一覧の取り違えとして終了コード 2。
+          ``--source-docs`` の assets が ``--min-kept-assets`` 未満でも終了コード 2(違う docs を渡した)。
+          どこでも解決できない assets への参照は、報告だけの切れたリンクに数える。
     門 2: サイトの総バイト数が ``--max-bytes`` 以下。
     門 3: 読んだ html のページ数が ``--min-pages`` 以上、残った assets が ``--min-kept-assets`` 以上
           (空のサイト・違うディレクトリを通さない床)。
@@ -29,6 +32,9 @@ repo からは消さない(Qiita が読む)。配備物からだけ外す。
           ルート相対の参照が ``/fullseye/`` で始まるページが 0(baseurl が repo 名に倒れた印)。
           サイト内の stylesheet が 0 本のサイトも落とす(空を通さない)。
     報告だけ: assets 以外で解決できない内部リンク(元からある切れたリンク)の件数と一覧。
+
+対象外(読まない): JS が文字列を組み立てて作る URL、fetch した JSON の中身から作る URL。prune は json・js の
+字句を緩く拾うので多くは残るが、check はそれを検めない(2026-11-11 の調査では view2026 に無かった)。
 
 判定は ``os.walk`` で集めた相対パス(posix 形)の集合で行う。``os.path.exists`` は使わない
 (Windows は大文字小文字を区別しないので、Linux の配信と結果が変わる)。
@@ -50,6 +56,10 @@ from urllib.parse import unquote
 
 #: prune の対象。この下だけを消す。
 ASSETS_PREFIX = "articles/assets/"
+
+#: 門 2 で足す、配備の tar の 1 ファイルあたりの見出しの見積もり(ustar の 512 B の見出し + 末尾の詰め物
+#: の平均 512 B)。GitHub の 1 GB の上限は tar の大きさに掛かるので、中身の合計だけでは甘い。
+TAR_HEADER_BYTES = 1024
 
 #: 緩い読み方で読むテキストの拡張子。
 TEXT_EXT = (".html", ".htm", ".css", ".js", ".mjs", ".cjs", ".json", ".jsonl", ".svg", ".xml",
@@ -212,6 +222,8 @@ def loose_candidates(src: str, token: str) -> set[str]:
         for c in (_norm(posixpath.join(src_dir, path)), _norm(path)):
             if c:
                 out.add(c)
+    # 配信と同じ解決(check の _resolve_file と同じ規則): ディレクトリ → index.html、拡張子なし → .html
+    out |= {c + "/index.html" for c in out} | {c + ".html" for c in out}
     return out
 
 
@@ -394,6 +406,25 @@ def strict_references(site: str, files: dict[str, int]) -> tuple[list[tuple[str,
     return refs, n_html
 
 
+def _resolve_file(tgt: str, files, dirs) -> str | None:
+    """配信で解決したときのファイル(ファイル / ディレクトリ + index.html / 拡張子なし + .html)。無ければ None。"""
+    t = tgt.rstrip("/")
+    if t == "":
+        return "index.html" if "index.html" in files else None
+    if not tgt.endswith("/") and t in files:
+        return t
+    if t in dirs and t + "/index.html" in files:
+        return t + "/index.html"
+    if not tgt.endswith("/") and t + ".html" in files:
+        return t + ".html"
+    return None
+
+
+def _not_served_name(path: str) -> bool:
+    """パスの要素のどこかが ``_`` か ``.`` で始まる(Jekyll が既定で配信しない名前)。"""
+    return any(part[:1] in ("_", ".") for part in path.split("/"))
+
+
 def _resolves_in(tgt: str, files, dirs) -> bool:
     """配信で解決できるか(ファイル、または ディレクトリ + index.html)。"""
     if tgt in ("", "/"):
@@ -530,25 +561,50 @@ def run_check(site: str, source_docs: str, max_bytes: int, min_pages: int, min_k
     """
     files = walk_files(site)
     src_files = walk_files(source_docs)
+    n_src_assets = sum(1 for q in src_files if q.startswith(ASSETS_PREFIX))
+    if n_src_assets < min_kept_assets:
+        raise SiteError(f"--source-docs の {ASSETS_PREFIX} が {n_src_assets} 本(床 {min_kept_assets} 未満)。"
+                        "repo の docs を渡しているか確かめる")
+    if built is not None and not set(files) <= built:
+        extra = sorted(set(files) - built)
+        raise SiteError(f"--built-list に無いファイルがサイトにある({len(extra)} 本、例 {extra[0]})。"
+                        "一覧は prune の前の同じサイトで取ったものか")
     dirs = dirs_of(files)
+    src_dirs = dirs_of(src_files)
+    built_dirs = dirs_of(built) if built is not None else None
     refs, n_html = strict_references(site, files)
     missing = []
     not_built = []
     broken = []
     for src, url, tgt in refs:
         if tgt.startswith(ASSETS_PREFIX):
-            if tgt in src_files and tgt not in files:
-                if built is not None and tgt not in built:
-                    not_built.append({"page": src, "url": url, "target": tgt})
+            if _resolve_file(tgt, files, dirs):
+                continue
+            item = {"page": src, "url": url, "target": tgt}
+            in_src = _resolve_file(tgt, src_files, src_dirs)
+            if built is not None:
+                in_built = _resolve_file(tgt, built, built_dirs)
+                if in_built:
+                    missing.append(item)  # 組んだ直後は解決できた = prune が消した
+                elif in_src and _not_served_name(in_src):
+                    not_built.append(item)  # repo にあるが Jekyll が元から配信しない名前
+                elif in_src:
+                    missing.append(item)  # repo にあり配信される名前なのに組んだ直後にも無い = 疑わしい
                 else:
-                    missing.append({"page": src, "url": url, "target": tgt})
+                    broken.append(item)  # どこにも無い(元から切れている)
+            elif in_src:
+                missing.append(item)
+            else:
+                broken.append(item)
         elif not _resolves_in(tgt, files, dirs):
             broken.append({"page": src, "url": url, "target": tgt})
     kept_assets = sum(1 for p in files if p.startswith(ASSETS_PREFIX))
     total = sum(files.values())
+    tar_headers = len(files) * TAR_HEADER_BYTES
+    total_est = total + tar_headers
     gates = {
         "gate1_assets_present": not missing,
-        "gate2_size": total <= max_bytes,
+        "gate2_size": total_est <= max_bytes,
         "gate3_min_pages": n_html >= min_pages,
         "gate3_min_kept_assets": kept_assets >= min_kept_assets,
     }
@@ -563,8 +619,10 @@ def run_check(site: str, source_docs: str, max_bytes: int, min_pages: int, min_k
         "kept_assets": kept_assets,
         "kept_assets_bytes": sum(v for p, v in files.items() if p.startswith(ASSETS_PREFIX)),
         "site_bytes": total,
+        "tar_header_estimate_bytes": tar_headers,
+        "site_bytes_with_tar_headers": total_est,
         "max_bytes": max_bytes,
-        "margin_bytes": max_bytes - total,
+        "margin_bytes": max_bytes - total_est,
         "min_pages": min_pages,
         "min_kept_assets": min_kept_assets,
         "missing_assets": missing,
@@ -608,14 +666,15 @@ def check_summary(rep: dict) -> str:
         "",
         f"- 門 1 repo にある assets への参照が全部サイトに在る: {mark[g['gate1_assets_present']]}"
         f"(欠け {len(rep['missing_assets'])} 件 / assets への参照 {rep['strict_asset_references']:,} 件)",
-        f"- 門 2 総量 {rep['site_bytes']:,} B ≤ {rep['max_bytes']:,} B: {mark[g['gate2_size']]}"
-        f"(余裕 {rep['margin_bytes']:,} B = {_mib(rep['margin_bytes'])})",
+        f"- 門 2 総量 {rep['site_bytes']:,} B + tar の見出しの見積もり {rep['tar_header_estimate_bytes']:,} B"
+        f" = {rep['site_bytes_with_tar_headers']:,} B ≤ {rep['max_bytes']:,} B: {mark[g['gate2_size']]}"
+        f"(1 GB まで残り {_mib(rep['margin_bytes'])} = {100 * rep['margin_bytes'] / rep['max_bytes']:.1f} %)",
         f"- 門 3 html {rep['html_pages']:,} ≥ {rep['min_pages']:,}: {mark[g['gate3_min_pages']]}"
         f" / 残った assets {rep['kept_assets']:,} ≥ {rep['min_kept_assets']:,}: {mark[g['gate3_min_kept_assets']]}",
         f"- 門 4 サイト内の stylesheet・script が全部在り、`/fullseye/` 前置のページが無い: {mark[g['gate4_page_wiring']]}"
         f"(stylesheet {rep['wiring_internal_stylesheets']:,} 本・script {rep['wiring_internal_scripts']:,} 本、"
         f"欠け {len(rep['wiring_missing'])} 件、`/fullseye/` 前置 {rep['baseurl_prefixed_pages_count']} ページ)",
-        f"- 報告だけ: assets 以外で解決できない内部リンク {rep['broken_internal_links_count']:,} 件",
+        f"- 報告だけ: 解決できない内部リンク(repo でも解決できない assets への参照を含む) {rep['broken_internal_links_count']:,} 件",
         f"- 報告だけ: repo にあるが組んだ直後のサイトにも無い assets への参照(Jekyll が配信しない名前)"
         f" {rep['not_built_assets_count']:,} 件",
         f"- 所要 {rep['seconds']:.1f} 秒",

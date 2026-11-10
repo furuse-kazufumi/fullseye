@@ -193,13 +193,15 @@ tag is shown on the record page but is not among them.
 
 ## Publishing the site (GitHub Pages)
 
-`https://furuse.work/` is deployed by `.github/workflows/pages.yml` (GitHub Actions source), not by
-the legacy "build `/docs` from `master`" source. The legacy build grew to 1.54 GB, over the 1 GB Pages
+`https://furuse.work/` is to be deployed by `.github/workflows/pages.yml`. The deploy job takes effect only
+after the repository's Pages source is switched from the legacy "build `/docs` from `master`" to
+"GitHub Actions"; until then the legacy build keeps serving the site. The legacy build grew to 1.54 GB, over the 1 GB Pages
 limit, and its deploy step sometimes hit the 10-minute timeout, which `actions/deploy-pages` cannot raise.
 
-What the workflow does on every push to `master` that touches `docs/**` (and, without deploying, on pull
-requests): build `docs/` with `actions/jekyll-build-pages` (same Jekyll as before, `docs/_config.yml`
-unchanged) → `tools/pages_site.py prune --apply` removes the files under `articles/assets/` that no page,
+What the workflow does on every push to `master` that touches `docs/**`, `tools/pages_site.py` or
+`.github/workflows/pages.yml` (and, without deploying, on pull requests that touch them): build `docs/`
+with `actions/jekyll-build-pages` (the `github-pages` gem; whether its version matches the legacy build
+is not verified, so compare the build sample in the job summary) → `tools/pages_site.py prune --apply` removes the files under `articles/assets/` that no page,
 stylesheet, script or data file of the built site refers to → `tools/pages_site.py check` → upload and
 deploy. The assets stay in the repository: Qiita articles read them through `raw.githubusercontent.com`
 URLs, so only the deployed copy is smaller.
@@ -211,7 +213,8 @@ URLs, so only the deployed copy is smaller.
    site (the job summary lists the reference and the page that holds it). Files that are in `docs/`
    but were never in the built site either (Jekyll does not serve names starting with `_`) are listed
    separately and do not fail: `--built-list` is the file list taken right after the build;
-2. the site is larger than 1,000,000,000 bytes (GitHub's limit; the summary prints the margin);
+2. the site plus an estimate of the tar headers (1024 B per file) is larger than 1,000,000,000 bytes
+   (GitHub's limit; the summary prints what is left, in MiB and %);
 3. fewer HTML pages or fewer kept assets than the floor in the workflow (so an empty or wrong directory
    cannot pass).
 4. a page's `<link rel="stylesheet">` or `<script src>` that points into the site does not exist, any page
@@ -220,7 +223,10 @@ URLs, so only the deployed copy is smaller.
    `baseurl` so this should not happen; the summary also prints the stylesheet, canonical, `og:url`,
    title and generator of `index.html` and `view2026/index.html` to compare with the legacy build.
 
-Broken internal links outside the assets are counted in the summary but do not fail the job.
+Broken internal links (and asset references that resolve nowhere, not even in `docs/`) are counted in
+the summary but do not fail the job. Not covered: URLs that JavaScript assembles from strings or builds
+from fetched JSON; `prune` keeps most of them because it reads JS and JSON loosely, but `check` does not
+verify them.
 
 To check a built site locally (any `_site`, for example the extracted `artifact.tar` of a run's `github-pages`
 artifact):
