@@ -40,7 +40,21 @@ def _otsu_mask(g):
     return an all-empty mask. The threshold is the **upper edge** of the
     winning bin (2026-09-26): taking its mid-point let the background pixels
     that live in that same bin cross into the foreground."""
-    x = np.clip(np.asarray(g, np.float64), 0, 1)
+    x = np.asarray(g, np.float64)
+    # ★2026-11-09: ops._otsu と同じく、有限な画素の最小〜最大を [0,1] に伸ばしてから 256 ビン(値域の狭い像で
+    #   分解能が落ちない)。以前は先に [0,1] へ clip したので、範囲外の入力(0..255 の float など)では中核と
+    #   答えが割れた(独立レビュー R4: 7,269 px)。clip はしない。
+    fin = np.isfinite(x)
+    if x.size and not fin.any():
+        # ★2026-11-09(2 回目の確認): 中核と同じく、有限な画素が 1 つも無ければ拒否する(以前は黙って値を返した)。
+        raise ValueError("otsu: no finite pixel in the input (all NaN/inf) — a threshold is undefined; "
+                         "mask or fill the NaN first (e.g. np.nan_to_num) or check np.isfinite(img).any()")
+    if x.size:
+        lo, hi = float(x[fin].min()), float(x[fin].max())
+        if not hi > lo:
+            # 定数の像は中核と同じ「正なら前景」(定数 300 で全背景を返して中核と逆になっていた)。
+            return x > 0
+        x = (x - lo) / (hi - lo)
     hist, edges = np.histogram(x, 256, (0, 1))
     hist = hist.astype(np.float64)
     w = np.cumsum(hist)
@@ -78,6 +92,17 @@ def segment_objects(image, threshold="otsu", invert: bool = False,
     Each record is a dict: label, area, centroid (y, x), bbox (y0, x0, y1, x1),
     eccentricity, extent, solidity, orientation (rad), equiv_diameter, hu (7,),
     and mask (full-image bool). Records are sorted by area, largest first.
+
+    With ``threshold='otsu'`` the mask is the same as the core ``otsu`` op
+    (changed 2026-11-09):
+
+    * values outside [0, 1] are **not clipped** — the finite min..max of the
+      image is stretched to [0, 1] before the 256-bin histogram (previously a
+      0..255 float image was clipped and gave a different mask);
+    * a **constant** image is all foreground if its value is > 0 and all
+      background otherwise (a constant image above 1 used to come out empty);
+    * an image with **no finite pixel** (all NaN / inf) raises ``ValueError``
+      (it used to return an empty list).
     """
     g = np.asarray(image, np.float64)
     if threshold == "none":

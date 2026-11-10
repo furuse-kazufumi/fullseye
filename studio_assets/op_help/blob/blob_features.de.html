@@ -13,13 +13,15 @@
 <p><b>Standard 1.0 = bleibt in Pixeln</b>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">n</code> (Anzahl der Objekte), <code style="color:#22d3bf">spacing</code>, <code style="color:#22d3bf">units</code> (Zuordnung Merkmal → Einheit) sowie</p>
+<p><code style="color:#22d3bf">n</code> (Anzahl der Objekte = Anzahl der tatsächlich vorhandenen Labels), <code style="color:#22d3bf">spacing</code>, <code style="color:#22d3bf">units</code> (Zuordnung Merkmal → Einheit) sowie</p>
 <p>19 Arrays der Länge <code style="color:#22d3bf">n</code> (<code style="color:#22d3bf">FEATURE_KEYS</code>). Auch bei 0 Objekten</p>
-<p>sind alle Schlüssel mit leeren Arrays vorhanden (der Aufrufer muss nicht verzweigen).</p>
+<p>sind alle Schlüssel mit leeren Arrays vorhanden (der Aufrufer muss nicht verzweigen). Haben die Labels Lücken,</p>
+<p>ist <code style="color:#22d3bf">n</code> kleiner als <code style="color:#22d3bf">labels.max()</code> -- Objekte über die Spalte <code style="color:#22d3bf">f[&quot;label&quot;]</code> nachschlagen</p>
+<p>(<code style="color:#22d3bf">f[&quot;area&quot;][label - 1]</code> verschiebt sich hinter einer Lücke).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle</code> ist die Neigung im <b>Matrixkoordinatensystem</b> (+Spalte → +Zeile ist positiv = auf dem Bildschirm im Uhrzeigersinn).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> sind die Achslängen <b>der Ellipse mit denselben Momenten 2. Ordnung</b> (<code style="color:#22d3bf">4 sqrt(lambda)</code>). Es ist nicht die umschließende Ausdehnung der Pixelanordnung, daher fällt sie bei einem Quadrat etwas länger als die Seitenlänge aus -- das entspricht der Definition und ist kein Fehler.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> ist <code style="color:#22d3bf">4 pi A / P^2</code>. <b>HALCONs <code style="color:#22d3bf">circularity</code> ist &quot;Fläche / Fläche des Kreises mit dem entferntesten Punkt als Radius&quot;, also etwas anderes</b>; beim Abgleich von Werten die Definition prüfen.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> ist <code style="color:#22d3bf">4 pi A / P^2</code> <b>auf 1 begrenzt</b> (bei Objekten aus wenigen Pixeln fällt die Umfangsschätzung im Verhältnis zur Fläche zu kurz aus und der Wert überschreitet 1 -- 1.75 bei einem 1-Pixel-Fleck --, doch keine Form ist runder als ein Kreis). <b>HALCONs <code style="color:#22d3bf">circularity</code> ist &quot;Fläche / Fläche des Kreises mit dem entferntesten Punkt als Radius&quot;, also etwas anderes</b>; beim Abgleich von Werten die Definition prüfen.</p>
 <p style="margin:2px 0 2px 12px">• Bei Objekten mit <code style="color:#22d3bf">touches_border</code> True sind Fläche und Umfang <b>um den abgeschnittenen Teil kleiner</b>. Vor dem Zählen verwerfen oder die Ground-Truth-Seite nach derselben Konvention zählen.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>

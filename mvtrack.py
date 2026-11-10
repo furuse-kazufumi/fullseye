@@ -76,11 +76,22 @@ def filter_kalman(x, P, z, F, H, Q, R):
 
 
 def _bg_image(image, op, shape=None):
-    a = np.asarray(image, dtype=np.float64)
-    if a.size == 0:
+    raw = np.asarray(image)
+    if raw.size == 0:
         raise ValueError("%s: image is empty — pass at least one pixel" % op)
+    # ★2026-11-09 点検: 既定の threshold=0.1・measurement_noise=1e-3 は [0, 1] の画素値の尺度。
+    #   uint8 の静止場面(±2 DN の雑音だけ)をそのまま渡すと前景率 79 % を黙って返した。
+    if raw.dtype.kind in "iu":
+        raise ValueError("%s: image has integer dtype %s — the background model works on [0, 1] "
+                         "float pixels (threshold and noise variances are on that scale); convert "
+                         "first, e.g. img.astype(np.float64) / 255.0" % (op, raw.dtype))
+    a = np.asarray(raw, dtype=np.float64)
     if a.ndim != 2 or not np.isfinite(a).all():
         raise ValueError("%s: image must be a finite 2-D array" % op)
+    if a.min() < -1e-9 or a.max() > 1.0 + 1e-9:
+        raise ValueError("%s: image values span [%g, %g] — the background model expects [0, 1] "
+                         "(threshold and noise variances are on that scale); rescale first"
+                         % (op, float(a.min()), float(a.max())))
     if shape is not None and a.shape != tuple(shape):
         raise ValueError("%s: image shape %r differs from the model %r" % (op, a.shape, tuple(shape)))
     return a
@@ -101,6 +112,8 @@ def create_bg_esti(image, process_noise=1e-4, measurement_noise=1e-3, threshold=
     各画素の背景はランダムウォークと見なし、過程の雑音 ``process_noise`` と観測の雑音
     ``measurement_noise`` の分散からゲインが決まる。前景と判定された画素はゲインに
     ``foreground_gain`` を掛けて弱く更新し、通過する物体を背景に取り込まない。
+    画素値は **[0, 1] の float**(``threshold`` と雑音の分散も同じ尺度)。整数 dtype の画像と
+    [0, 1] の外の値は ValueError(uint8 は ``/ 255`` してから渡す)。
     空の入力(``image`` が 0 要素)は ValueError。
 
     Args:
@@ -138,7 +151,8 @@ def run_bg_esti(model, image):
     """画像 1 枚で背景を更新し、前景の領域を返す。
 
     背景との差の絶対値が ``threshold`` を超える画素を前景にする。入力の ``model`` は書き換えず、
-    更新後のモデルを ``model`` の鍵で返す。空の入力(``image`` が 0 要素)は ValueError。
+    更新後のモデルを ``model`` の鍵で返す。画素値は :func:`create_bg_esti` と同じ [0, 1] の float
+    (整数 dtype と範囲外は ValueError)。空の入力(``image`` が 0 要素)は ValueError。
 
     Args:
         model: :func:`create_bg_esti` の返り。

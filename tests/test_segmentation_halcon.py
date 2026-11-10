@@ -415,7 +415,11 @@ def test_watersheds_marker_matches_a_priority_flood_second_implementation():
 
 
 def test_watersheds_marker_keeps_marker_labels_and_fallback_is_nearest_marker():
-    """marker の番号は保存される。skimage 不在時の代替(最近傍)の形も固定しておく。"""
+    """marker の番号は保存される。最近傍の Voronoi(2026-11-09 まで skimage 不在時の代替だった)とは別物。
+
+    ★2026-11-09: 代替経路は廃止(skimage 不在は MissingDependencyError)。下の「最近傍」は
+    比較のための参照として残す —— 画像を見ない Voronoi が watershed と同じ名前で返っていた。
+    """
     rng = _rng()
     im = rng.random((10, 10))
     mk = np.zeros((10, 10), int)

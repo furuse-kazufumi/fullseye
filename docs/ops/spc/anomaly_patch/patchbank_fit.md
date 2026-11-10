@@ -33,7 +33,9 @@ distance from any good patch to the bank. ``coreset=1`` keeps everything (radius
 selection, so ``seed`` and ``proj_dim`` have no effect).
 
 Returns the model: ``bank`` (m, D'), ``mean`` / ``std`` (D), ``n_total`` patches, ``n_memory``,
-``fraction``, ``covering_radius``, the feature parameters and ``image_shape``.
+``fraction``, ``covering_radius``, the feature parameters, ``image_shape`` and the pixel scale
+of the good images: ``input_range`` (min, max) and ``input_integer`` (integer dtype or not).
+``patchbank_score`` refuses an image on another scale (see there).
 
 Raises ``ValueError`` for invalid parameters, a feature that is constant over all good patches,
 or a stack that would exceed the memory guard.

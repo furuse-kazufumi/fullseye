@@ -29,6 +29,13 @@ rather than voxels; otherwise unit spacing is assumed. A non-``{0, 1}`` input
 is thresholded at ``> 0.5``.
 
 Returns a ``(D, H, W)`` float64 distance field (0 on the background).
+Outside the volume is **not** background (a foreground slab touching the edge keeps
+growing towards it). With no background voxel at all the nearest background is
+infinitely far: every voxel is ``inf`` (the 2-D ``distance_transform`` returns its
+normalised maximum 1.0 in the same case). This op returns absolute distances, so the
+2-D convention (normalise to 1.0) does not carry over; ``inf`` was chosen over raising so
+that a mixed batch keeps its shape. Dividing by the maximum afterwards gives NaN —
+check ``np.isinf`` first.
 Reference: Felzenszwalb & Huttenlocher, Theory of Computing 2012.
 
 Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
