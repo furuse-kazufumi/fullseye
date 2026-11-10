@@ -10,6 +10,15 @@
 # 全部 404 だった。「門は事故の起きる場所に立てる」の再演 —— 配信側の規則は
 # 配信側でしか見えない。`tests/test_docs_index_reachable.py` が、リンクされて
 # いる `_` ディレクトリがここに列挙されていることを確かめる。
+# ★url と baseurl を明示する(2026-11-11)。legacy の配備でも同じ値(canonical = https://furuse.work/…、
+# CSS = /assets/css/style.css)なので挙動は変わらない。Actions 方式の jekyll-build-pages では、
+# jekyll-github-metadata(github-pages 232 = 2.16.1)が Pages の情報を読めないと url を
+# https://<owner>.github.io、baseurl を /fullseye に倒すおそれがある。同 gem の site_github_munger.rb は
+# `site.config["url"] ||= …`(書いてあれば上書きしない)、baseurl は nil か "/" のときだけ上書きする
+# (v2.16.1 のソースで確認)ので、"" を書けば倒れない。倒れたら tools/pages_site.py check の門 4 が落とす。
+url: "https://furuse.work"
+baseurl: ""
+
 include:
   - _fig
 

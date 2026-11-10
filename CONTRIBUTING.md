@@ -214,6 +214,11 @@ URLs, so only the deployed copy is smaller.
 2. the site is larger than 1,000,000,000 bytes (GitHub's limit; the summary prints the margin);
 3. fewer HTML pages or fewer kept assets than the floor in the workflow (so an empty or wrong directory
    cannot pass).
+4. a page's `<link rel="stylesheet">` or `<script src>` that points into the site does not exist, any page
+   has a root-relative reference starting with `/fullseye/` (the sign that `baseurl` fell back to the
+   repository name), or the site has no internal stylesheet at all. `docs/_config.yml` pins `url` and
+   `baseurl` so this should not happen; the summary also prints the stylesheet, canonical, `og:url`,
+   title and generator of `index.html` and `view2026/index.html` to compare with the legacy build.
 
 Broken internal links outside the assets are counted in the summary but do not fail the job.
 

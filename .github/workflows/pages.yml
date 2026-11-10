@@ -45,6 +45,13 @@ jobs:
     name: build site (jekyll) + prune unreferenced assets + check
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # ★pages: read(2026-11-11): jekyll-build-pages の jekyll-github-metadata は、この GITHUB_TOKEN で
+    # Pages の情報(独自ドメイン furuse.work)を読む。読めないと url/baseurl が https://<owner>.github.io/fullseye
+    # に倒れ、全ページの CSS が /fullseye/assets/... で 404 になる(docs/_config.yml でも url/baseurl を固定した。
+    # 倒れたら check の門 4 が落とす)。書き込みは足さない(配備のジョブだけが pages: write)。
+    permissions:
+      contents: read
+      pages: read
     steps:
       # 組むのに要るのは docs と道具だけ(repo 全体は要らない)。
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -68,12 +75,14 @@ jobs:
         run: >
           python3 tools/pages_site.py prune --site _site --apply
           --report-json pages-prune.json --summary-md "$GITHUB_STEP_SUMMARY"
+      # 門 4: サイト内を指す stylesheet・script が全部在り、/fullseye/ 前置のページが 0(baseurl が倒れた印)。
+      # 要約に index.html と view2026/index.html の組み方の見本(CSS の href・canonical・og:url・title・generator)。
       # 門 1: repo にある assets への参照が全部サイトに在る(repo にあっても組んだ直後の一覧に無いもの =
       # Jekyll が配信しない _ 始まりの名前は報告だけ。実物で 7 件、articles/index.html の _*_snippet.md)。門 2: 総量が GitHub の上限 1 GB 以下
       # (この数は上限から決めた。結果を見て動かさない)。門 3: 空を通さない床 = 2026-11-11 に実物
       # (8bc7ab22f7 を GitHub が組んだ _site)で測った値のおよそ半分(html 4,456 ページ →
       # 2200、残った assets 800 本 → 400)。実物での余裕は 1 GB まで 99.2 MiB(896,000,530 B)。
-      - name: Check the pruned site (gates 1-3)
+      - name: Check the pruned site (gates 1-4)
         run: >
           python3 tools/pages_site.py check --site _site --source-docs docs --built-list pages-built.txt
           --max-bytes 1000000000 --min-pages 2200 --min-kept-assets 400

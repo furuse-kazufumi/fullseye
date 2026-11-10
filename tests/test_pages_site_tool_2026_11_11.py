@@ -303,7 +303,8 @@ def test_check_report_json_fields_cli(tmp_path):
                 "site_bytes", "max_bytes", "margin_bytes", "missing_assets", "broken_internal_links_count",
                 "broken_internal_links", "gates", "ok", "seconds"):
         assert key in rep, key
-    assert set(rep["gates"]) == {"gate1_assets_present", "gate2_size", "gate3_min_pages", "gate3_min_kept_assets"}
+    assert set(rep["gates"]) == {"gate1_assets_present", "gate2_size", "gate3_min_pages", "gate3_min_kept_assets",
+                                 "gate4_page_wiring"}
     assert rep["strict_asset_references"] >= len(set(REFERENCED.values()))
     assert "門 1" in md.read_text(encoding="utf-8")
 
@@ -399,7 +400,8 @@ def test_pages_workflow_triggers_and_top_permissions():
     assert set(on["pull_request"]["paths"]) == want
     assert "workflow_dispatch" in on
     assert wf["permissions"] == {"contents": "read"}
-    assert "permissions" not in wf["jobs"]["build"], "組むジョブに書き込みの権限を足さない"
+    # 組むジョブは読むだけ(jekyll-build-pages の github-metadata が Pages の cname を読むのに pages: read が要る)。
+    assert wf["jobs"]["build"]["permissions"] == {"contents": "read", "pages": "read"}, "組むジョブに書き込みの権限を足さない"
     conc = wf["concurrency"]
     assert "'pages'" in conc["group"] and "pull_request" in conc["cancel-in-progress"]
 
@@ -506,3 +508,89 @@ def test_built_list_and_snapshot_refuse_empty(tmp_path):
     assert run_cli(*check_args(site, docs, extra=("--built-list", str(tmp_path / "nope.txt")))).returncode == 2
     (tmp_path / "e").mkdir()
     assert run_cli("snapshot", "--site", str(tmp_path / "e"), "--out", str(tmp_path / "o.txt")).returncode == 2
+
+
+# ---- 門 4(ページの組み方: stylesheet・script・baseurl)----
+
+THEME_HEAD = ('<html><head><title>T | fullseye</title><meta name="generator" content="Jekyll v3.10.0">'
+              '<link rel="canonical" href="https://furuse.work/view2026/">'
+              '<meta property="og:url" content="https://furuse.work/view2026/">'
+              '<link rel="Stylesheet" href="/assets/css/style.css?v=abc#x">'  # rel は大文字小文字を区別しない
+              '<script src="https://cdn.example.com/x.js"></script></head><body>ok</body></html>')
+
+
+def make_themed_site(tmp_path):
+    site, docs = make_site(tmp_path)
+    for base in (site, docs):
+        (base / "assets" / "css").mkdir(parents=True)
+        (base / "assets" / "css" / "style.css").write_text("body{}", encoding="utf-8")
+        (base / "view2026" / "index.html").write_text(THEME_HEAD, encoding="utf-8")
+    return site, docs
+
+
+def test_gate4_passes_on_a_well_wired_site_and_writes_the_build_sample(tmp_path):
+    site, docs = make_themed_site(tmp_path)
+    md = tmp_path / "s.md"
+    r = run_cli(*check_args(site, docs, extra=("--summary-md", str(md))))
+    assert r.returncode == 0, r.stdout + r.stderr
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert rep["gates"]["gate4_page_wiring"]
+    assert rep["wiring_internal_stylesheets"] == 2  # index.html と view2026/index.html
+    smp = rep["build_samples"]["view2026/index.html"]
+    assert smp == {"stylesheet": ["/assets/css/style.css?v=abc#x"], "canonical": "https://furuse.work/view2026/",
+                   "og:url": "https://furuse.work/view2026/", "title": "T | fullseye", "generator": "Jekyll v3.10.0"}
+    text = md.read_text(encoding="utf-8")
+    assert "組み方の見本" in text and "`view2026/index.html` canonical: `https://furuse.work/view2026/`" in text
+
+
+def test_gate4_fails_when_the_theme_css_is_missing(tmp_path):
+    site, docs = make_themed_site(tmp_path)
+    os.remove(site / "assets" / "css" / "style.css")
+    r = run_cli(*check_args(site, docs))
+    assert r.returncode == 1
+    assert "WIRING view2026/index.html stylesheet" in r.stderr and "assets/css/style.css" in r.stderr
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert not rep["gates"]["gate4_page_wiring"]
+    assert rep["gates"]["gate1_assets_present"]  # assets の外なので門 1 では見えない(門 4 の役目)
+
+
+def test_gate4_fails_when_an_internal_script_is_missing(tmp_path):
+    site, docs = make_themed_site(tmp_path)
+    os.remove(site / "articles" / "assets" / "app.js")
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert not rep["gates"]["gate4_page_wiring"]
+    assert {(m["kind"], m["target"]) for m in rep["wiring_missing"]} == {("script", "articles/assets/app.js")}
+
+
+def test_gate4_fails_on_a_baseurl_fallen_to_the_repo_name(tmp_path):
+    # url/baseurl が https://<owner>.github.io/fullseye に倒れると、全ページの CSS が /fullseye/... になる
+    site, docs = make_themed_site(tmp_path)
+    fallen = THEME_HEAD.replace('href="/assets/css/style.css', 'href="/fullseye/assets/css/style.css')
+    (site / "view2026" / "index.html").write_text(fallen, encoding="utf-8")
+    r = run_cli(*check_args(site, docs))
+    assert r.returncode == 1
+    assert "BASEURL view2026/index.html -> /fullseye/assets/css/style.css" in r.stderr
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert rep["baseurl_prefixed_pages_count"] == 1
+
+
+def test_gate4_counts_fullseye_prefix_even_when_the_file_exists(tmp_path):
+    # 実在しても /fullseye/ 前置は furuse.work では 404 になる配置の印なので落とす(欠けの数とは別に数える)
+    site, docs = make_themed_site(tmp_path)
+    (site / "fullseye" / "x").mkdir(parents=True)
+    (site / "fullseye" / "x" / "a.png").write_bytes(b"x")
+    (site / "view2026" / "index.html").write_text(THEME_HEAD + '<img src="/fullseye/x/a.png">', encoding="utf-8")
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert rep["wiring_missing"] == [] and rep["baseurl_prefixed_pages_count"] == 1
+    assert not rep["gates"]["gate4_page_wiring"]
+
+
+def test_gate4_fails_on_a_site_without_any_internal_stylesheet(tmp_path):
+    # 空を通さない: サイト内の stylesheet が 0 本(テーマが付かなかった)なら落とす
+    site, docs = make_site(tmp_path)
+    idx = site / "index.html"
+    idx.write_text(idx.read_text(encoding="utf-8").replace('rel="stylesheet" ', 'rel="preload" '), encoding="utf-8")
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert rep["wiring_internal_stylesheets"] == 0
+    assert rep["wiring_missing"] == [] and rep["baseurl_prefixed_pages_count"] == 0
+    assert not rep["gates"]["gate4_page_wiring"]
