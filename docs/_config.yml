@@ -1,5 +1,9 @@
 # GitHub Pages(Jekyll)の設定。docs/ をそのまま https://furuse.work/ として配信する。
 #
+# ★配備は .github/workflows/pages.yml(Actions 方式、2026-11-11 から)。この設定で組んだ _site から、
+# どのページからも参照されていない articles/assets/** を外してから配備する(配備物が 1 GB の上限を超えたため)。
+# repo からは消さない(Qiita が raw URL で読む)。外し方と門は tools/pages_site.py と CONTRIBUTING.md。
+#
 # ★`include` が要る理由(2026-09-07): Jekyll は `_` で始まるディレクトリを
 # **配信しない**(Jekyll の内部ディレクトリ規約)。op ごとの図を `docs/ops/_fig/`
 # に置いたところ、手元では全リンクが通り、門も緑で、公開サイトでは 724 枚が

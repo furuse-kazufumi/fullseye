@@ -1,0 +1,116 @@
+# Fullseye の公開サイト(https://furuse.work/)を GitHub Actions 方式で配備する。
+#
+# ★legacy 方式(master の /docs を GitHub が Jekyll で組んで配備)をやめた理由(2026-11-11):
+# 組んだ配備物が 1.54 GB になり、Pages の上限 1 GB を超えた。deploy が 10 分のタイムアウトで時々落ち
+# (直近 8 回で失敗 3)、master にマージしたページ(ViEW2026 の案内など)が公開に出なかった。
+# actions/deploy-pages の timeout は 600000 ms(10 分)が上限で延ばせない(MAX_TIMEOUT)ので、
+# 配備物を小さくするしかない。
+#
+# ★何を外すか: 組んだ _site から、どのページからも参照されていない articles/assets/** だけを外す
+# (tools/pages_site.py prune。緩い読み方で、迷ったら残す)。外した後のサイトを別の読み方
+# (html.parser で属性を読む)で検め、repo にある assets への参照が 1 本でも欠けたら落とす(check の門 1)。
+# ★repo からは消さない: Qiita の記事が raw.githubusercontent.com の URL で docs/articles/assets を読む。
+# 配備物から外しても Qiita の図は消えない。
+#
+# 門が落ちたら: job の Summary に欠けた参照と参照元のページが出る。手元で確かめる方法は CONTRIBUTING.md の
+# 「Publishing the site (GitHub Pages)」。
+name: Pages
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "docs/**"
+      - ".github/workflows/pages.yml"
+      - "tools/pages_site.py"
+  pull_request:
+    paths:
+      - "docs/**"
+      - ".github/workflows/pages.yml"
+      - "tools/pages_site.py"
+  workflow_dispatch:
+
+# GITHUB_TOKEN は読むだけ。配備のジョブだけ pages: write と id-token: write を足す(2026-11-11)。
+permissions:
+  contents: read
+
+# 配備は 1 本ずつ、途中の配備を打ち切らない(打ち切ると半端な配備が残る)。group は pages 1 つ。
+# PR の組むだけの run は配備しないので、同じ PR の古い run を打ち切ってよい(PR ごとの group)。
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('pages-pr-{0}', github.event.pull_request.number) || 'pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: build site (jekyll) + prune unreferenced assets + check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # 組むのに要るのは docs と道具だけ(repo 全体は要らない)。
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            docs
+            tools
+      # legacy 方式と同じ github-pages の Jekyll で、docs/_config.yml のとおりに組む。
+      - uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697  # v1.0.13
+        with:
+          source: ./docs
+          destination: ./_site
+      # jekyll-build-pages は Docker で動くので _site は root の持ち物。消す前に持ち主を戻す。
+      - name: Take ownership of _site
+        run: sudo chown -R "$(id -u):$(id -g)" _site
+      # 組んだ直後のファイル一覧(門 1 で「repo にあっても Jekyll が元から配信しない名前」を分けるため)。
+      - name: List the built site before pruning
+        run: python3 tools/pages_site.py snapshot --site _site --out pages-built.txt
+      - name: Prune unreferenced articles/assets from the built site
+        run: >
+          python3 tools/pages_site.py prune --site _site --apply
+          --report-json pages-prune.json --summary-md "$GITHUB_STEP_SUMMARY"
+      # 門 1: repo にある assets への参照が全部サイトに在る(repo にあっても組んだ直後の一覧に無いもの =
+      # Jekyll が配信しない _ 始まりの名前は報告だけ。実物で 7 件、articles/index.html の _*_snippet.md)。門 2: 総量が GitHub の上限 1 GB 以下
+      # (この数は上限から決めた。結果を見て動かさない)。門 3: 空を通さない床 = 2026-11-11 に実物
+      # (8bc7ab22f7 を GitHub が組んだ _site)で測った値のおよそ半分(html 4,456 ページ →
+      # 2200、残った assets 800 本 → 400)。実物での余裕は 1 GB まで 99.2 MiB(896,000,530 B)。
+      - name: Check the pruned site (gates 1-3)
+        run: >
+          python3 tools/pages_site.py check --site _site --source-docs docs --built-list pages-built.txt
+          --max-bytes 1000000000 --min-pages 2200 --min-kept-assets 400
+          --report-json pages-check.json --summary-md "$GITHUB_STEP_SUMMARY"
+      # 消した一覧と門の結果(JSON)を残す。門が落ちた run でも見られるように always()。
+      - name: Upload the prune/check reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: pages-reports
+          path: |
+            pages-built.txt
+            pages-prune.json
+            pages-check.json
+          if-no-files-found: ignore
+          retention-days: 14
+      # PR では配備しないので上げない(1 GB 近い tar を作って上げる時間を省く)。
+      - name: Upload the pruned site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9  # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    name: deploy to GitHub Pages
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Pages の設定を読む(pages の権限が要るので、配備のジョブに置く)。
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d  # v6.0.0
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346  # v5.0.1
