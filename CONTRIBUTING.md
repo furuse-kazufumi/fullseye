@@ -272,8 +272,10 @@ last line, e.g. `verdict: deviating_ok — GitHub と違う条件。緑の証拠
 into `&& git push`, check the verdict in `result.json`, not just the exit code** — `ci_local && git
 push` pushes after a partial or a different-conditions run too. Only `full_ok` says "every stage,
 under GitHub's conditions". The last line is a verdict line even when the tool stops before the
-Linux side runs: a usage error ends with `verdict: usage — …` and a missing `wsl.exe`, an
-exception or Ctrl-C with `verdict: failed — …` (the traceback, if any, comes before it). These two
+Linux side runs: a usage error — an unknown option, an option without its value, a value that is
+not one of the choices, or an argument the tool rejects — ends with `verdict: usage — …` (exit 2),
+and a missing `wsl.exe`, an exception or Ctrl-C with `verdict: failed — …` (the traceback, if any,
+comes before it). These two
 words exist only on the last line; `result.json` keeps its six verdicts. A skip notice (see below)
 is appended to the last line after the verdict, e.g. `verdict: full_ok — …。skip が基準より +21 件…`;
 the `verdict: <word> — ` prefix itself never changes.
@@ -281,12 +283,16 @@ the `verdict: <word> — ` prefix itself never changes.
 **Skips.** The state directory keeps a skip record (`skip_baseline.json`), written only by runs
 whose verdict is `full_ok` or `ok_missing_tools` — every stage passed, no extra pytest arguments,
 GitHub's conditions, the BLAS rerun included. Failed, partial and different-conditions runs are
-compared but never recorded. What is compared is the number of skips that do not depend on local
-tools: the total minus the skips whose reason names a tool missing on that run (cargo, node,
-Chrome; estimated from the reason text), so a run with cargo and a run without it share one
-baseline. Skips that depend on apt packages cannot be told from their reason text and are not
-subtracted; when the missing apt packages (or tools) differ from the baseline, the summary says so,
-also on the line that reports a jump. The baseline is the smallest such count recorded so far: it
+compared but never recorded. What is compared is the total skip count. Only when the set of
+missing tools (cargo, node, Chrome) differs between the baseline and this run are the skips of the
+tools that differ taken out — from the baseline the skips of tools missing only there, from this
+run the skips of tools missing only here (estimated from the reason text) — so a run with cargo and
+a run without it share one baseline, while a run with the same tools is judged exactly as before
+(a skip whose reason merely mentions a tool, such as `node2vec`, still counts). The line is taken
+from the compared baseline count. A record without skip reasons cannot have tool skips taken out;
+it is then compared by its total, and the summary says so. Skips that depend on apt packages cannot
+be told from their reason text and are not subtracted; when the missing apt packages (or tools)
+differ from the baseline, the summary says so, also on the line that reports a jump. The baseline is the smallest such count recorded so far: it
 only moves down, so a series of small increases cannot raise it step by step — they are caught once
 their sum crosses the line. When a run skips more than the baseline by over 10 % (and by over 20
 tests) the summary says so near the top, lists the skip reasons that grew and names the record's
@@ -297,9 +303,13 @@ form by the next recording run, by the same smallest-count rule. A record that c
 (empty, with a BOM, not JSON, another format version, or fields of the wrong type) is not compared
 and not overwritten; the summary says why and where the file is, and the run is not failed for it.
 If an increase is legitimate, run again with `--accept-skips "<reason>"` (the reason is required):
-if that run's verdict is one that may record, its count becomes the new baseline, and the record
-keeps a history entry (previous and new baseline, reason, commit, time). A failed, partial or
-different-conditions run does not accept, and says so. An unreadable record is kept under another
+if that run's verdict is one that may record and it either jumped or found the record unreadable,
+its count becomes the new baseline, and the record keeps a history entry (previous and new
+baseline, the compared counts, reason, commit, time). A run that did not jump has nothing to accept:
+it says so, and the baseline follows the usual rule (it can only move down). A failed, partial or
+different-conditions run does not accept, and says so. A run whose summary cannot be made is a
+failed run too: whatever it had already written to the record (including an accepted baseline) is
+put back. An unreadable record is kept under another
 name (`skip_baseline.json.unreadable-<time>`) before it is replaced. `--accept-skips` does not
 change what is checked, so it does not change the verdict; the summary always says that the
 baseline was accepted. The record is written to a temporary file and renamed into place, so an

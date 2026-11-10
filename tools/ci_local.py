@@ -63,9 +63,9 @@ GitHub と違う条件の run(``--no-merge``・``--no-fetch``・``--allow-other-
      pytest-xdist で並列に回す。門も外さない(範囲を減らさない)。追加の pytest 引数が無いときは、
      実行件数が ``.test_durations`` の行数の 95 % を下回ったら失敗(``SUITE_FLOOR_RATIO``)。skip の件数は
      状態ディレクトリに記録し、基準(これまでの記録の最小)から大きく増えたら要約の先頭と端末の最後の行で
-     知らせる(失敗にはしない)。比べるのは「道具に依らない skip」= 全体から、手元に無い道具(cargo・node・
-     Chrome)のための skip(理由の文面からの推定)を引いた件数で、道具の有無が run ごとに違っても基準が
-     ずれない。記録を書くのは verdict が ``full_ok`` か ``ok_missing_tools`` の run だけ(失敗・部分実行・
+     知らせる(失敗にはしない)。比べるのは全体の件数で、手元に無い道具(cargo・node・Chrome)の組が基準と
+     今回で違うときだけ、有無の違う道具の skip(理由の文面からの推定)を、その道具が無かった側から引く
+     (道具の有無が run ごとに入れ替わっても基準がずれない。組が同じなら何も引かない)。記録を書くのは verdict が ``full_ok`` か ``ok_missing_tools`` の run だけ(失敗・部分実行・
      違う条件の run の件数は比べる相手にしない)。基準は下がる向きにしか動かないので、線以内の増加を
      繰り返しても基準は上がらず、累積で線を超えたところで知らせる。正当な増加は ``--accept-skips "<理由>"``
      で、その run の件数を基準に受け入れる(記録に前の基準・理由・sha・日時を残す)。記録が読めない
@@ -209,8 +209,9 @@ TOOL_SKIP_PATTERNS = {
 BLAS_SKIP_PATTERN = r"needs a BLAS with"
 
 #: 全数の skip が基準の記録からこれを超えて増えたら要約で知らせる(基準の件数 × 割合と、件数の下限の大きい方)。
-#: 件数は「道具に依らない skip」(``tool_free_skips``)。2026-11-10 の実測は skip 427 件(うち道具が無いため
-#: 114 件)なので、道具に依らない skip は 313 件、線は +32 件(全体で比べていたときの +43 件より締まる向き)。
+#: 件数は ``comparable_skips``(無い道具の組が同じなら全体。違えば有無の違う道具の skip を引いた件数)。
+#: 2026-11-10 の実測は skip 427 件(うち道具が無いため 114 件)。同じ道具の組の run どうしなら線は +43 件
+#: (ceaa600d39 と同じ判定)。基準だけ cargo が無かった(98 件)なら、比べる基準は 329 件で線は +33 件。
 SKIP_JUMP_RATIO = 0.10
 SKIP_JUMP_MIN = 20
 #: skip の記録(状態ディレクトリの中)。書くのは verdict が ``SKIP_RECORD_VERDICTS`` の run だけ。
@@ -369,16 +370,31 @@ def parse_skip_baseline(text: str) -> dict:
     return {"state": "ok", "base": dict(data["base"]), "accepted": list(accepted), "reason": None}
 
 
-def tool_free_skips(rec: dict) -> int:
-    """基準と比べる量 = 道具に依らない skip(全体 − 手元に無い道具のための skip。理由の文面からの推定)。
+def comparable_skips(prev: dict, now: dict) -> tuple[int, int, list[str]]:
+    """基準と今回の、比べる件数 = (基準側, 今回側, 一言の list)。
 
-    4 回目のレビュー D3: 全体の件数で比べると、道具が全部ある run が基準を下げたあと道具の無い run に戻るたびに
-    「+114 件。依存が壊れた可能性」と知らせ続けた。記録には ``skip_reasons`` と ``tools_missing`` があるので、
-    古い記録からも同じ量を計算できる。apt に依る skip は理由の文面から数えられないので引かない。
+    無い道具の組が同じなら、どちらも全体の件数(何も引かない = ceaa600d39 と同じ判定)。違うときだけ、
+    基準でだけ無かった道具の skip を基準から、今回だけ無い道具の skip を今回から引く(理由の文面からの推定)。
+    5 回目のレビュー E1: 両側から無い道具の skip を全部引くと、道具の名前を理由に含む skip(``node2vec`` が node に
+    当たる・Rust 拡張)が何件増えても知らせなくなった。E7: 引くべき側に ``skip_reasons`` が無ければ引けないので
+    全体で比べ、そう言う。apt に依る skip は理由の文面から数えられないので、どちらでも引かない。
     """
-    total = int(rec.get("skipped") or 0)
-    tools, _ = github_only_skips(rec.get("skip_reasons") or {}, list(rec.get("tools_missing") or []))
-    return max(0, total - tools)
+    was, got = set(prev.get("tools_missing") or []), set(now.get("tools_missing") or [])
+    before, after = int(prev.get("skipped") or 0), int(now.get("skipped") or 0)
+    notes: list[str] = []
+    for side, rec, only in (("基準", prev, sorted(was - got)), ("今回", now, sorted(got - was))):
+        if not only:
+            continue
+        if "skip_reasons" not in rec:
+            notes.append(f"{side}の記録に skip の理由が無いので、{side}だけ無い道具({'、'.join(only)})の skip を"
+                         "引けなかった(全体の件数で比べた)")
+            continue
+        n, _ = github_only_skips(rec.get("skip_reasons") or {}, only)
+        if side == "基準":
+            before = max(0, before - n)
+        else:
+            after = max(0, after - n)
+    return before, after, notes
 
 
 def skip_jump_allowed(before: int) -> int:
@@ -392,7 +408,7 @@ def baseline_condition_notes(prev: dict, now: dict) -> list[str]:
     was, got = sorted(prev.get("tools_missing") or []), sorted(now.get("tools_missing") or [])
     if was != got:
         notes.append(f"**手元に無い道具が基準と違う**(基準 {'、'.join(was) or 'なし'} → 今回 {'、'.join(got) or 'なし'})"
-                     "。道具のための skip は理由の文面から数えて、基準と今回の両方の件数から引いてある")
+                     "。有無の違う道具の skip だけを、その道具が無かった側の件数から引いてある(理由の文面からの推定)")
     got_apt = sorted(now.get("apt_missing") or [])
     if "apt_missing" in prev or got_apt:
         was_apt = sorted(prev.get("apt_missing") or [])
@@ -408,14 +424,14 @@ def skip_jump(prev: dict | None, now: dict, where: str = SKIP_BASELINE_FILE) -> 
 
     ``prev`` は基準(これまでの記録の最小)。前回の run と比べると、線以内の増加を繰り返すたびに基準が
     上がり、一度も知らせずに数百件が基準に入る(3 回目のレビュー C2 のラチェット)。比べるのは
-    ``tool_free_skips``(道具に依らない skip)。``where`` は記録ファイルの場所(要約に出す形)。
+    ``comparable_skips``、線もその基準側の件数で決める。``where`` は記録ファイルの場所(要約に出す形)。
 
     件数の床(``SUITE_FLOOR_RATIO``)が止めるのは「大量に消えた」まで。その手前 —— full venv の optional 依存が
     1 つ壊れて数十〜数百件が skip に回る —— は床を割らないので、基準の記録と比べる。
     """
     if skip_record_problem(prev) or skip_record_problem(now):
         return None
-    before, after = tool_free_skips(prev), tool_free_skips(now)
+    before, after, cant = comparable_skips(prev, now)
     allowed = skip_jump_allowed(before)
     if after - before <= allowed:
         return None
@@ -423,12 +439,12 @@ def skip_jump(prev: dict | None, now: dict, where: str = SKIP_BASELINE_FILE) -> 
     grew = sorted(((n - int(old.get(r, 0)), r) for r, n in (now.get("skip_reasons") or {}).items()
                    if n > int(old.get(r, 0))), key=lambda t: (-t[0], t[1]))
     top = ";".join(f"+{d:,} 件「{r.replace('|', '/')}」" for d, r in grew[:3])
-    tools_before, tools_after = prev["skipped"] - before, now["skipped"] - after
+    off_before, off_after = prev["skipped"] - before, now["skipped"] - after
     breakdown = ""
-    if tools_before or tools_after:
-        breakdown = (f"。道具に依らない skip で比べた(全体 {prev['skipped']:,} → {now['skipped']:,} 件から、手元に無い"
-                     f"道具のための skip {tools_before:,} → {tools_after:,} 件を引いた)")
-    notes = "".join("。" + n for n in baseline_condition_notes(prev, now))
+    if off_before or off_after:
+        breakdown = (f"。有無の違う道具の skip を引いて比べた(全体 {prev['skipped']:,} → {now['skipped']:,} 件から、"
+                     f"基準でだけ無かった道具の skip {off_before:,} 件・今回だけ無い道具の skip {off_after:,} 件を引いた)")
+    notes = "".join("。" + n for n in cant + baseline_condition_notes(prev, now))
     return (f"**skip が基準の記録から大きく増えた**: {before:,} → {after:,} 件(+{after - before:,}。知らせる線は "
             f"+{allowed:,})" + breakdown
             + f"。基準 = {prev.get('when', '?')} の `{str(prev.get('sha', '?'))[:12]}`(これまでの最小)"
@@ -1055,6 +1071,7 @@ class Inner:
         self._py311: str | None = None
         self._lock_fh = None
         self.skip_now: dict | None = None  # 全数の skip(記録を書くかは finish が verdict で決める)
+        self._skip_undo: list[tuple[str, object]] = []  # この run が記録にしたこと(要約が作れなければ戻す)
 
     # ---- 共通 ------------------------------------------------------------------------------
     def run(self, cmd: list[str], *, env: dict | None = None, cwd: Path | None = None, log: str | None = None,
@@ -1607,20 +1624,22 @@ class Inner:
                                 f"最初の記録にする。記録 `{where}`)。")
             return
         jump = skip_jump(base, now, where)
-        before, after = tool_free_skips(base), tool_free_skips(now)
+        before, after, cant = comparable_skips(base, now)
         if jump:
             self.st["skip_jump"] = jump
             info["jump"] = after - before
             return
-        line = (f"skip の基準比: {before:,} → {after:,} 件(道具に依らない skip。基準 = {base.get('when', '?')} の "
-                f"`{str(base.get('sha', '?'))[:12]}`。これまでの最小。知らせる線は基準 + "
-                f"{skip_jump_allowed(before):,} 件")
-        if before != base["skipped"] or after != now["skipped"]:
+        subtracted = before != base["skipped"] or after != now["skipped"]
+        line = (f"skip の基準比: {before:,} → {after:,} 件("
+                + ("有無の違う道具の skip を引いた件数。" if subtracted else "")
+                + f"基準 = {base.get('when', '?')} の `{str(base.get('sha', '?'))[:12]}`。これまでの最小。知らせる線は"
+                  f"基準 + {skip_jump_allowed(before):,} 件")
+        if subtracted:
             line += f"。全体は {base['skipped']:,} → {now['skipped']:,} 件"
         line += ")"
         if base.get("legacy"):
             line += "。基準は最初の版の形の記録(失敗した run の件数のことがある)"
-        line += "".join("。" + n for n in baseline_condition_notes(base, now))
+        line += "".join("。" + n for n in cant + baseline_condition_notes(base, now))
         self.remarks.append(line + "。")
 
     def write_skip_baseline(self, data: dict) -> str | None:
@@ -1628,8 +1647,10 @@ class Inner:
         path = self.state / SKIP_BASELINE_FILE
         tmp = self.state / f".{SKIP_BASELINE_FILE}.{os.getpid()}.tmp"
         try:
+            prior = path.read_bytes() if path.is_file() else None
             tmp.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
             os.replace(tmp, path)
+            self._skip_undo.append(("write", prior))
         except OSError as exc:
             try:
                 tmp.unlink(missing_ok=True)
@@ -1659,8 +1680,14 @@ class Inner:
                     "基準にしない)。基準はそのまま")
             return
         if accept:
-            self.accept_skip_baseline(now, accept)
-            return
+            # 5 回目のレビュー E6: 受け入れるのは、跳ねたときと記録が読めないときだけ(跳ねていない run の
+            # 受け入れで基準を上げると、--accept-skips を付けたままの alias で C2 のラチェットが戻る)
+            if self.st.get("skip_jump") or (self.st.get("skip_baseline") or {}).get("state") == "unreadable":
+                self.accept_skip_baseline(now, accept)
+                return
+            self.st["skip_notices"].append(
+                "**skip の基準を受け入れていない**(--accept-skips): 基準より大きく増えていない(跳ねていない)ので、"
+                "受け入れるものが無い。基準は通常の規則(下がる向きにしか動かさない)で扱った")
         if self.st.get("skip_jump"):
             return  # 基準は増える前のまま(次の run でも知らせる。文面は skip_jump の行)
         rec = self.read_skip_baseline()
@@ -1668,15 +1695,15 @@ class Inner:
             self.remarks.append("skip の記録: 記録を読めないので、記録を書かない(上書きしていない。要約の先頭を見る)。")
             return
         base = rec["base"]
-        if base is None or tool_free_skips(now) < tool_free_skips(base):
+        before, after = comparable_skips(base, now)[:2] if base is not None else (None, now["skipped"])
+        if base is None or after < before:
             new_base, how = now, ("最初の記録にした" if base is None else
-                                  f"基準を {tool_free_skips(base):,} → {tool_free_skips(now):,} 件に下げた"
-                                  "(道具に依らない skip)")
+                                  f"基準を {before:,} → {after:,} 件に下げた(比べた件数)")
         else:
             new_base = {k: val for k, val in base.items() if k != "legacy"}
             if base.get("legacy"):
                 new_base["from"] = "最初の版の形の記録から引き継いだ"
-            how = f"基準 {tool_free_skips(base):,} 件は動かさない(下がる向きにしか動かさない)"
+            how = f"基準 {before:,} 件は動かさない(下がる向きにしか動かさない。比べた件数)"
         data = {"format": SKIP_BASELINE_FORMAT, "base": new_base,
                 "last": {k: now[k] for k in ("skipped", "tests", "sha", "when", "tools_missing", "apt_missing")},
                 "accepted": rec["accepted"]}
@@ -1684,8 +1711,7 @@ class Inner:
         if failed:
             self.remarks.append(f"skip の記録を書けなかった({failed})。")
             return
-        self.remarks.append(f"skip の記録: 今回 {now['skipped']:,} 件(道具に依らない skip {tool_free_skips(now):,} 件)。"
-                            f"{how}。")
+        self.remarks.append(f"skip の記録: 今回 {now['skipped']:,} 件。{how}。")
 
     def accept_skip_baseline(self, now: dict, reason: str) -> None:
         """``--accept-skips``: この run の件数を新しい基準にし、受け入れた履歴を記録に残す(4 回目のレビュー D2)。
@@ -1700,15 +1726,16 @@ class Inner:
             kept = f"{SKIP_BASELINE_FILE}.unreadable-{time.strftime('%Y%m%d-%H%M%S')}"
             try:
                 os.replace(self.state / SKIP_BASELINE_FILE, self.state / kept)
+                self._skip_undo.append(("move", kept))
             except OSError as exc:
                 self.st["skip_notices"].append(
                     f"**skip の基準を受け入れられなかった**(--accept-skips): 読めない記録を別名で残せなかった"
                     f"({type(exc).__name__})。基準はそのまま(記録 `{where}`)")
                 return
         prev = rec["base"]
-        entry = {"from": None if prev is None else tool_free_skips(prev),
-                 "from_skipped": None if prev is None else prev["skipped"],
-                 "to": tool_free_skips(now), "to_skipped": now["skipped"], "reason": reason,
+        before, after = comparable_skips(prev, now)[:2] if prev is not None else (None, now["skipped"])
+        entry = {"from": None if prev is None else prev["skipped"], "to": now["skipped"],
+                 "compared": {"before": before, "after": after}, "reason": reason,
                  "sha": now["sha"], "when": now["when"], "replaced_unreadable": kept}
         data = {"format": SKIP_BASELINE_FORMAT, "base": dict(now, accepted=reason),
                 "last": {k: now[k] for k in ("skipped", "tests", "sha", "when", "tools_missing", "apt_missing")},
@@ -1721,12 +1748,33 @@ class Inner:
             self.remarks.append(f"skip の記録を書けなかった({failed})。")
             return
         (self.st.get("skip_baseline") or {})["accepted"] = True
-        was = "記録なし" if prev is None else f"{entry['from']:,} 件"
+        was = "記録なし" if prev is None else f"{prev['skipped']:,} 件"
+        compared = "" if prev is None or (before, after) == (prev["skipped"], now["skipped"]) else (
+            f"。有無の違う道具の skip を引いて比べた件数では {before:,} → {after:,} 件")
         self.st["skip_notices"].append(
-            f"**skip の基準を受け入れた**(--accept-skips「{reason}」): 道具に依らない skip の基準を {was} → "
-            f"{entry['to']:,} 件にした(全体 {now['skipped']:,} 件。記録に前の基準・理由・sha・日時を残した"
+            f"**skip の基準を受け入れた**(--accept-skips「{reason}」): skip の基準を {was} → {now['skipped']:,} 件にした"
+            f"(記録に前の基準・理由・sha・日時を残した{compared}"
             + (f"。読めなかった記録は `{kept}` として同じ場所に残した" if kept else "")
             + f"。記録 `{where}`)")
+
+    def undo_skip_record(self) -> bool:
+        """この run が書き換えた skip の記録を元に戻す(要約の作成が例外になった run。5 回目のレビュー E2)。戻したら True。"""
+        path = self.state / SKIP_BASELINE_FILE
+        undone = bool(self._skip_undo)
+        for kind, value in reversed(self._skip_undo):
+            if kind == "write":
+                if value is None:
+                    path.unlink(missing_ok=True)
+                else:
+                    tmp = self.state / f".{SKIP_BASELINE_FILE}.{os.getpid()}.undo.tmp"
+                    tmp.write_bytes(value)
+                    os.replace(tmp, path)
+            elif kind == "move":
+                os.replace(self.state / value, path)
+        self._skip_undo.clear()
+        if isinstance(self.st.get("skip_baseline"), dict):
+            self.st["skip_baseline"]["accepted"] = False
+        return undone
 
     def rerun_blas(self, jc: dict, env: dict) -> str | None:
         """BLAS を絞ったせいで skip したテストを、絞らずに直列で回し直す。返り値 = 失敗の理由(無ければ None)。
@@ -1814,6 +1862,12 @@ class Inner:
             text = ("### 手元の CI 相当の検査(Linux)— tools/ci_local.py\n\n"
                     f"- 結論: **失敗 —— 要約を作れなかった**({type(exc).__name__}: {exc})\n")
             rc = EXIT_FAILED
+            # 失敗した run は skip の記録を書かない(5 回目のレビュー E2: 記録は要約の前に書くので、書いた分を戻す)
+            try:
+                if self.undo_skip_record():
+                    text += "- skip の記録: この run が書き換えた分は元に戻した(失敗した run は記録を書かない)\n"
+            except OSError as undo_exc:
+                text += f"- **skip の記録を元に戻せなかった**({type(undo_exc).__name__})。記録を確かめる\n"
         (self.out / "summary.md").write_text(text, encoding="utf-8")
         slim = {k: v for k, v in st.items() if k not in ("scrub", "junit_full", "junit_gates")}
         for name in ("junit_full", "junit_gates"):
@@ -1870,9 +1924,24 @@ class Inner:
         return self.finish(time.time() - t0)
 
 
+class _Parser(argparse.ArgumentParser):
+    """引数の誤り(知らない引数・値の無い引数・選べない値)でも、最後の行を ``verdict: usage — …`` にする。
+
+    5 回目のレビュー E5: argparse の ``error`` は usage と誤りを stderr に出して exit 2 で終わり、最後の行が
+    ``verdict:`` にならなかった。終了コードは 2 のまま。
+    """
+
+    def error(self, message: str):  # type: ignore[override]
+        self.print_usage(sys.stderr)
+        sys.stderr.write(f"{self.prog}: error: {message}\n")
+        sys.stderr.flush()
+        print(host_stop_line("usage", "引数か起動場所の誤り。実行していない"), flush=True)
+        sys.exit(EXIT_USAGE)
+
+
 def build_parser() -> argparse.ArgumentParser:
-    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0], allow_abbrev=False,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = _Parser(description=__doc__.split("\n\n")[0], allow_abbrev=False,
+                 formatter_class=argparse.RawDescriptionHelpFormatter)
     names = [*PHASE_KEYS, *PHASE_ALIASES]
     ap.add_argument("--ref", default="HEAD", help="検査する commit(既定 HEAD。作業木の未 commit 変更は含まない)")
     ap.add_argument("--base", default="origin/master",
