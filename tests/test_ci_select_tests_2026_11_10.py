@@ -395,16 +395,36 @@ def test_string_registries_and_spec_directories_are_dependencies(selector):
     assert _selected(res, "tests/test_op_contracts.py")
 
 
-def test_ci_yml_does_not_cancel_full_runs_and_ignores_other_labels():
+def test_ci_yml_does_not_cancel_full_runs_and_never_starts_on_a_label():
+    """ラベルでは run を起こさない(全部飛ばした run の check が本物の失敗に重なるのを作りごと防ぐ)。
+
+    `ci:full` は run の開始時に API で読み、読めなければ full。master への push は 1 つの group で、
+    走っている run は打ち切らない。
+    """
     yaml = pytest.importorskip("yaml")
-    with open(os.path.join(ROOT, ".github", "workflows", "ci.yml"), encoding="utf-8") as f:
-        doc = yaml.safe_load(f)
+    path = os.path.join(ROOT, ".github", "workflows", "ci.yml")
+    with open(path, encoding="utf-8") as f:
+        raw = f.read()
+    doc = yaml.safe_load(raw)
+    on = doc[True] if True in doc else doc["on"]          # YAML 1.1 は `on` を真偽値に読む
+    assert on["pull_request"]["types"] == ["opened", "synchronize", "reopened"]
     conc = doc["concurrency"]
     assert conc["cancel-in-progress"] == "${{ github.event_name == 'pull_request' }}"
-    assert "github.run_id" in conc["group"] and "ci:full" in conc["group"]
+    assert "github.run_id" in conc["group"]             # schedule・手動は run ごと
+    assert "ci-{0}-push-{1}" in conc["group"]           # master への push は 1 つの group
     for job in ("changes", "core-minimal", "lint"):
-        assert "ci:full" in doc["jobs"][job]["if"], job
-    sel = next(s for s in doc["jobs"]["changes"]["steps"] if s.get("id") == "select")["run"]
+        assert "if" not in doc["jobs"][job], job         # ラベルで飛ばすジョブは無い
+    # payload のラベルは run を作った時点の写し(再実行でも変わらない)なので、判定に使わない
+    assert "github.event.pull_request.labels" not in raw
+    assert "github.event.label" not in raw
+    steps = doc["jobs"]["changes"]["steps"]
+    ids = [s.get("id") for s in steps]
+    assert ids.index("label") < ids.index("select")
+    label = next(s for s in steps if s.get("id") == "label")["run"]
+    assert label.count("full=true") == 2 and label.count("full=false") == 1   # 読めないときも full
+    assert doc["jobs"]["changes"]["permissions"]["pull-requests"] == "read"
+    sel = next(s for s in steps if s.get("id") == "select")["run"]
+    assert '"$FULL_LABEL" != false' in sel                # 空(出力なし)も full に倒す
     assert "tools/ci_select_tests\\.py" in sel and "_ci_select_tests_base.py" in sel
     prev = next(s for s in doc["jobs"]["failure-record"]["steps"] if s.get("id") == "prev")["run"]
     assert '"success"' in prev.replace('\\"', '"') and "cancelled" not in prev

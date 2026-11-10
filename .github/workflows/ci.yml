@@ -8,9 +8,11 @@ name: CI
 on:
   push:
     branches: [master]
-  # labeled: PR に `ci:full` を付けた瞬間に全数で回し直すため(CONTRIBUTING.md の「CI: which tests run where」)。
+  # ★labeled では起動しない(2026-11-10、独立レビュー 2 回目): ラベルを付けるたびに同じ commit に新しい run ができ、
+  #   ジョブを全部飛ばした run の check(skip は合格の表示)が、本物の run の失敗の上に重なって見えうる。
+  #   `ci:full` は run の開始時に API で読む(下の `label` step)。付けた後は「Re-run all jobs」か push で効く。
   pull_request:
-    types: [opened, synchronize, reopened, labeled]
+    types: [opened, synchronize, reopened]
   schedule:
     # 順序シャッフル + 並列と 3.13 は毎回やると遅いので週次(月曜 03:00 UTC = 12:00 JST)。
     - cron: "0 3 * * 1"
@@ -24,11 +26,14 @@ on:
 # 積み上がった。古い commit の結果はもう誰も見ないので、待ち時間と資源の無駄。
 # ★2026-11-10(独立レビュー): PR だけ打ち切る。master への push と schedule(全数)は**打ち切らない**
 #   —— PR が選ばなかったテストはそこでしか走らないので、途中で捨てると原因の commit の範囲に穴が空く。
-#   push・schedule・手動は run ごとに別の group(run_id)にして、互いに打ち切らない・待たせない。
-#   `ci:full` 以外のラベルを付けた labeled も run ごとの group にする(走っている PR の run を打ち切らない。
-#   その run の中のジョブは下の `if` で全部飛ばす)。
+#   schedule・手動は run ごとに別の group(run_id)にして、互いに打ち切らない・待たせない。
+# ★2026-11-10(独立レビュー 2 回目): master への push は 1 つの group にまとめる(打ち切りはしない)。
+#   run ごとの group だと、マージが続いたとき 3 版 × 6 片 = 18 ジョブの run が本数ぶん積み上がり、PR が待たされる。
+#   同じ group で cancel-in-progress が偽なら、走っている run は最後まで走り、待ちは最新の 1 本だけが残る。
+#   置き換えられた待ちの run の commit は、残った最新の run が全部含む(failure-record は「前に完了した全数の
+#   run から後の commit」を残すので、範囲に穴は空かない)。
 concurrency:
-  group: ${{ (github.event_name == 'pull_request' && (github.event.action != 'labeled' || github.event.label.name == 'ci:full')) && format('ci-{0}-{1}', github.workflow, github.ref) || format('ci-{0}-run-{1}', github.workflow, github.run_id) }}
+  group: ${{ github.event_name == 'pull_request' && format('ci-{0}-{1}', github.workflow, github.ref) || github.event_name == 'push' && format('ci-{0}-push-{1}', github.workflow, github.ref) || format('ci-{0}-run-{1}', github.workflow, github.run_id) }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 # GITHUB_TOKEN は読むだけ(2026-10-24 に明示)。どのジョブも書き込みを要らない
@@ -39,13 +44,13 @@ permissions:
 jobs:
   changes:
     name: classify changes
-    # `ci:full` 以外のラベルの labeled では何もしない(needs で下流も全部飛ぶ)。
-    if: github.event.action != 'labeled' || github.event.label.name == 'ci:full'
     runs-on: ubuntu-latest
     # actions: read = 最後の全数の run の artifact(pip freeze)を読むため(依存の版の比較)。
+    # pull-requests: read = PR の今のラベル(`ci:full`)を API で読むため。
     permissions:
       contents: read
       actions: read
+      pull-requests: read
     outputs:
       docs-only: ${{ steps.classify.outputs.docs-only }}
       # full | selected(PR で変更に関係するテストだけ。tools/ci_select_tests.py)
@@ -88,6 +93,28 @@ jobs:
             echo "## CI selection: full suite" >> "$GITHUB_STEP_SUMMARY"
           fi
           printf '%s\n' "${changed[@]}" | sed 's/^/- `/' | sed 's/$/`/' >> "$GITHUB_STEP_SUMMARY"
+      # ★`ci:full` は event の payload ではなく、API で今の値を読む(2026-11-10)。payload は run を作った時点の
+      #   写しで、「Re-run all jobs」でも変わらない —— 後から付けたラベルを拾えるのは API だけ。
+      #   読めなければ full(迷ったら全部)。
+      - id: label
+        name: Read the ci:full label (live; unreadable = full suite)
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          if names=$(gh api "repos/$REPO/pulls/$PR" --jq '.labels[].name'); then
+            if grep -qxF 'ci:full' <<<"$names"; then
+              echo "full=true" >> "$GITHUB_OUTPUT"
+              echo "reason=label ci:full" >> "$GITHUB_OUTPUT"
+            else
+              echo "full=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "full=true" >> "$GITHUB_OUTPUT"
+            echo "reason=the PR labels could not be read" >> "$GITHUB_OUTPUT"
+          fi
       # ★PR では変更に関係するテストだけを回す(2026-11-10)。判定は import の依存グラフ +
       #   文字列のパス参照(tools/ci_select_tests.py、標準ライブラリだけで動くので runner の python3 で走らせる)。
       #   迷ったら全部: 中核・CI の設定・依存の定義・対応の分からないファイルを触ったら full、
@@ -97,14 +124,14 @@ jobs:
       #   変更から辿れない。テストのジョブと同じ要求を dry-run で解決し(何も入れない)、最後の全数の run が
       #   実際に入れた版(artifact pip-freeze-py3.11)と 1 つでも違えば full にする。取れなければ full。
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
-        if: github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:full')
+        if: github.event_name == 'pull_request' && steps.label.outputs.full == 'false'
         with:
           python-version: "3.11"
       - name: pip と証明書を更新(eMudhra / emSign の中間 CA 失効 = pip>=26.2.2・certifi>=2026.10.19)
         run: python -m pip install --upgrade "pip>=26.2.2" "certifi>=2026.10.19"
-        if: github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:full')
+        if: github.event_name == 'pull_request' && steps.label.outputs.full == 'false'
       - name: Dependency versions vs the last full run (PR only)
-        if: github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:full')
+        if: github.event_name == 'pull_request' && steps.label.outputs.full == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -131,13 +158,15 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
           BASE_REF: ${{ github.base_ref }}
-          FULL_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') }}
+          FULL_LABEL: ${{ steps.label.outputs.full }}
+          FULL_REASON: ${{ steps.label.outputs.reason }}
         run: |
           if [[ "$EVENT_NAME" != pull_request ]]; then
             python3 tools/ci_select_tests.py --full "$EVENT_NAME run" \
               --github-output "$GITHUB_OUTPUT" --summary "$GITHUB_STEP_SUMMARY"
-          elif [[ "$FULL_LABEL" == true ]]; then
-            python3 tools/ci_select_tests.py --full "label ci:full" \
+          elif [[ "$FULL_LABEL" != false ]]; then
+            # ★「false」と読めたときだけ判定へ進む。空(label step が出力しなかった)も full。
+            python3 tools/ci_select_tests.py --full "${FULL_REASON:-the ci:full label state is unknown}" \
               --github-output "$GITHUB_OUTPUT" --summary "$GITHUB_STEP_SUMMARY"
           elif git diff --name-only "origin/$BASE_REF...HEAD" | grep -qE '^(tools/ci_select_tests\.py|tools/ci_always_run\.txt|tools/ci_deps_drift\.py|tests/conftest\.py|\.github/)'; then
             # ★判定の道具・CI の設定を PR で書き換えたら全数。判断は PR の版の道具に任せない(自己参照)。
@@ -202,7 +231,6 @@ jobs:
 
   core-minimal:
     name: core (numpy+scipy only)
-    if: github.event.action != 'labeled' || github.event.label.name == 'ci:full'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -307,7 +335,6 @@ jobs:
     # 同種の重複が他に 3 組、到達不能な未定義名(F821)が 5 件。
     # ルールは pyproject.toml の [tool.ruff.lint] で**絞ってある**(無効化には理由を書く)。
     name: lint (ruff)
-    if: github.event.action != 'labeled' || github.event.label.name == 'ci:full'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1

@@ -219,7 +219,7 @@ on every push to `master` and every night.
 | Event | What runs |
 |---|---|
 | PR (default) | tests selected by `tools/ci_select_tests.py` + the always-run gates (`tools/ci_always_run.txt`), py3.11, 1-6 shards sized by the selection's recorded duration |
-| PR with label `ci:full` | the full suite (adding the label re-runs CI) |
+| PR with label `ci:full` | the full suite (the label is read when a run starts: add it, then "Re-run all jobs" or push) |
 | PR that touches a core file / an unmapped file / > 1,500 files, or the selector fails | the full suite (fail-safe) |
 | push to `master` | the full suite on 3.11 / 3.12 / 3.14 |
 | nightly (`0 18 * * *` UTC) | the full suite on 3.11 / 3.12 / 3.14 |
@@ -271,9 +271,13 @@ How the selection works (`py -3.11 tools/ci_select_tests.py --base origin/master
   whole test files (LPT on `.test_durations`), so module/session fixtures are built once per run
   instead of once per shard. pytest-split is used only to record durations.
 
-Full runs (push to `master`, schedule, manual) are never cancelled by a newer run: each gets its
-own concurrency group, and only PR runs cancel their predecessor. A label other than `ci:full`
-starts a run whose jobs are all skipped and which cancels nothing.
+A full run that has started is never cancelled by a newer run; only PR runs cancel their
+predecessor. Scheduled and manual runs each get their own concurrency group. Pushes to `master`
+share one group: the running one finishes and only the newest waiting one is kept, so a burst of
+merges cannot pile up 18-job runs (the kept run contains the commits of the ones it replaced).
+Adding a label never starts a run -- a run whose jobs are all skipped would show as passing on
+top of a real failure -- so `ci:full` is read from the API when a run starts, and an unreadable
+label state means the full suite.
 
 When `master` or the nightly run fails, the `failure-record` job keeps `ci_result.json` (failed
 node ids + the commits since the previous full run that completed, so a run that was stopped
