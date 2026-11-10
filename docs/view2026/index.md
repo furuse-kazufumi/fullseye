@@ -111,6 +111,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="thumbs/evis_bean_track.jpg" alt="箸先カメラで豆を見失わずに追う(シミュレータ)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>箸先カメラで豆を見失わずに追う(シミュレータ)</span></a>
 <a href="../articles/assets/media/evis_stereo_fullseye.mp4"><img src="thumbs/evis_stereo_depth.jpg" alt="両眼ステレオで豆までの距離を測る(シミュレータ)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>両眼ステレオで豆までの距離を測る(シミュレータ)</span></a>
 <a href="https://youtu.be/XN1mGAftSlY"><img src="thumbs/carla_iroha_haze.jpg" alt="霞のヘアピンを登る(CARLA)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>霞のヘアピンを登る(CARLA)</span></a>
+<a href="https://youtu.be/6J3chWv5yHg"><img src="thumbs/driving_evolution.jpg" alt="部品を足す前と後(運転の 9 章)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>部品を足す前と後(運転の 9 章)</span></a>
 </div>
 
 ## シリーズ記事
@@ -791,6 +792,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [霞のヘアピンを登る(CARLA)](https://youtu.be/XN1mGAftSlY) (動画): CARLA の模擬カメラと LiDAR を Fullseye で読み、ルールで操舵と速さを決めて霞の山道を登る。白線が見える距離の中で止まれる速さまで落とす。本編は YouTube の長尺動画。
   霞の中のヘアピンを登る 11.5 秒(本編 251.5〜263 秒)。白線が見える距離からその中で止まれる速さを出し、画面の「速さを決めた理由: 見通し」のとおり目標の速さを止まれる速さ 22.8 km/h に合わせる。 出典: 地形 国土地理院 DEM5A(PDL1.0。左右反転、道路と標識は自作)、CARLA(コード MIT・アセット CC-BY)。 **本編(登り 3.38 km)で衝突 0、車線中央からのずれ 中央値 0.066 m・最大 0.418 m、標識 9 枚中 2 枚を読み読み違い 0(審判は地図と CARLA)。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/driveenv.py) [YouTube](https://youtu.be/XN1mGAftSlY)
+  使った Fullseye の op: `driveenv.sight_stop_speed` · `driveenv.mor_from_beta` · `driveenv.road_row_distance` · `drivelateral.curve_speed_limit` · `drivelateral.pure_pursuit_curvature` · `drivettc.ttc_from_range` · `pcseg.remove_ground` · `pcseg.euclidean_clusters` · `matching.create_ncc_model` · `matching.find_ncc_model` · `carlabridge.carla_intrinsics`
+- [部品を足す前と後(運転の 9 章)](https://youtu.be/6J3chWv5yHg) (動画): Fullseye の運転の部品(すべてルールベース)を、2026-09-28 から 2026-11-05 までにどの場面で足したかを、時代順の 9 章にまとめた長尺動画の抜粋。各章は、ある版が失敗する場面と、部品を足した版が越える場面を左右に並べる。本編は YouTube の長尺動画。
+  第 9 章「森の影と白線」の霞の日の 11.0 秒(本編 194.6〜205.6 秒)。左(橙)は git の前の版(2026-11-02)のコードを今回 2026-11-05 の森で走らせた絵、右(青)は 2026-11-05 の版の当時の画面で、同じ地図・同じ出発点。前の版は森の影で白線を見失い、対向車線の外へ出る。失敗する側の正体は章ごとに違う(この章は git の前の版)。走行は各 1 回。霞が無くても前の版は同じヘアピンで失敗した(原因は霞だけではない)。左右の版の差は車線認識の 4 か所と運転のスクリプトで、どれが効いたかは切り分けていない。ほかの章の限界(第 8 章の衝突 1 件、第 7 章は場面に合わせて選んだ設定)は動画の概要欄にある。この章の運転のスクリプトは非公開で、使った op は公開。 出典: 地形 国土地理院 DEM5A(PDL1.0。左右反転、道路と標識は自作)、CARLA(コード MIT・アセット CC-BY)。 **審判(地図の真値、この動画のために書いた審判)、霞の日: 前の版は 100 m で車線外 440 / 644 コマ・衝突 0、2026-11-05 の版は 964 m で車線外 0 コマ・衝突 0。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/opsdrive.py) [YouTube](https://youtu.be/6J3chWv5yHg)
   使った Fullseye の op: `driveenv.sight_stop_speed` · `driveenv.mor_from_beta` · `driveenv.road_row_distance` · `drivelateral.curve_speed_limit` · `drivelateral.pure_pursuit_curvature` · `drivettc.ttc_from_range` · `pcseg.remove_ground` · `pcseg.euclidean_clusters` · `matching.create_ncc_model` · `matching.find_ncc_model` · `carlabridge.carla_intrinsics`
 
 **ロボットの目(Fullseye が知覚を担当)**
