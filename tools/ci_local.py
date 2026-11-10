@@ -24,7 +24,9 @@ GitHub と違う条件の run(``--no-merge``・``--no-fetch``・``--allow-other-
 呼び出した側が引数で選んだ範囲・条件で、選んだ範囲の中の失敗だけを終了コードにする(条件の違いを非 0 に
 すると、オフラインの ``--no-fetch`` や 1 段だけの ``--only`` が「落ちた」と区別できなくなる)。緑との区別は
 要約の題と結論、``result.json`` の ``verdict`` でする(``full_ok`` だけが「全段・同じ条件で ok」。ほかは
-``partial_ok``・``deviating_ok``・``failed``・``busy``)。
+``ok_missing_tools``・``partial_ok``・``deviating_ok``・``failed``・``busy``)。端末の最後の行にも
+``verdict: <値> — <一言>`` を出す(``ci_local && git push`` のように終了コードだけを見ると、0 の 4 つの意味を
+区別できない。push に繋ぐなら result.json の ``verdict`` が ``full_ok`` かを見る)。
 
 ## 何を検査するか
 
@@ -57,7 +59,10 @@ GitHub と違う条件の run(``--no-merge``・``--no-fetch``・``--allow-other-
   5. tests —— ci.yml の ``test`` ジョブ(py3.11、optional backend 全部入り)と同じ依存と環境変数で、
      pytest-xdist で並列に回す。門も外さない(範囲を減らさない)。追加の pytest 引数が無いときは、
      実行件数が ``.test_durations`` の行数の 95 % を下回ったら失敗(``SUITE_FLOOR_RATIO``)。skip の件数は
-     状態ディレクトリに記録し、前回の記録から大きく増えたら要約の先頭で知らせる(失敗にはしない)。
+     状態ディレクトリに記録し、基準(これまでの記録の最小)から大きく増えたら要約の先頭で知らせる(失敗に
+     はしない)。記録を書くのは verdict が ``full_ok`` か ``ok_missing_tools`` の run だけ(失敗・部分実行・
+     違う条件の run の件数は比べる相手にしない)。基準は下がる向きにしか動かないので、線以内の増加を
+     繰り返しても基準は上がらず、累積で線を超えたところで知らせる。
   前の段が落ちたらそこで止めて要約を書く(``--keep-going`` で最後まで回す)。
   ``--only``・``--skip``・``--no-pip-audit``・追加の pytest 引数のどれかがあれば、要約の題と結論は
   「部分実行(全数ではない)」になり、走らなかった段は表に「未実行」と残る。
@@ -86,7 +91,10 @@ GitHub と違う条件の run(``--no-merge``・``--no-fetch``・``--allow-other-
   逆に、並列でだけ時々落ちる手元だけの赤もある。
 * runner にある道具(cargo・node・Chrome)が手元に無いと、それに依るテストは skip する。開始時に有無を
   調べて要約の先頭に書き、skip の理由を JUnit から集計して「GitHub でしか確かめられない件数」を出す。
-  ``--require-tools`` で、足りないことを失敗に変える。道具がシステムに何かを入れることはしない
+  道具が 1 つでも無い run は、全段 ok でも ``full_ok`` にしない(verdict = ``ok_missing_tools``、結論は
+  「全段 ok —— ただし手元に無い道具のため N 件は GitHub でしか確かめられない」)。``--require-tools`` は、
+  その場合を開始時の失敗(終了コード 1、verdict = ``failed``)に変える —— 「``full_ok`` か失敗か」の
+  どちらかが欲しいときに付ける。道具がシステムに何かを入れることはしない
   (apt パッケージも ``--install-apt`` で頼まれたときだけ)。
 * lint ジョブの 2 つ目の pip-audit(CI の道具そのものの監査。CI でも警告のみ)、coverage の結合
   (``--cov`` で計測だけは付く)、docs-only ジョブ(文書だけの PR で全数の代わりに回る部分集合)。
@@ -196,8 +204,16 @@ BLAS_SKIP_PATTERN = r"needs a BLAS with"
 #: 2026-11-10 の実測は skip 427 件(うち道具が無いため 114 件)なので、線は +43 件。
 SKIP_JUMP_RATIO = 0.10
 SKIP_JUMP_MIN = 20
-#: skip の前回の記録(状態ディレクトリの中。追加の pytest 引数が無い全数の run だけが書く)。
+#: skip の記録(状態ディレクトリの中)。書くのは verdict が ``SKIP_RECORD_VERDICTS`` の run だけ。
 SKIP_BASELINE_FILE = "skip_baseline.json"
+#: 記録を書いてよい verdict(全段 ok・追加引数なし・GitHub と同じ条件・BLAS の回し直しも ok)。
+#: ``ok_missing_tools`` を入れるのは、手元に無い道具は run ごとに変わらず、入れないと作者の機械では
+#: 記録が一度も書けないため(どの道具が無かったかは記録に残し、違えば要約で知らせる)。
+SKIP_RECORD_VERDICTS = ("full_ok", "ok_missing_tools")
+#: 記録の形の版。2 = ``{"format": 2, "base": <最小の記録>, "last": <最後に書いた run>}``。
+#: 1(版の欄が無い ``{"skipped": ...}``)は 2026-11-10 の最初の版が書いたもので、失敗した run の件数の
+#: ことがある。捨てると基準が緩む向きになりうるので、基準として読み、次に書くときに最小の規則で 2 へ移す。
+SKIP_BASELINE_FORMAT = 2
 
 MARKER = ".fullseye-ci-local"
 LOCK_FILE = ".ci_local.lock"
@@ -267,17 +283,25 @@ def deviation_reasons(job: dict, python_versions: dict | None = None) -> list[st
     elif tree.get("fetched") == "not_remote":
         out.append(f"--base {tree.get('base_ref') or '?'} は `<remote>/<branch>` の形でないので fetch していない")
     if job.get("allow_other_python"):
-        other = sorted({str(v) for v in (python_versions or {}).values() if not str(v).startswith("3.11.")})
-        out.append("--allow-other-python(" + (f"Python {'・'.join(other)}。" if other else "")
-                   + "CI のこの構成は 3.11)")
+        # 3.11 以外を許しただけで実際がすべて 3.11 なら、条件は同じ(3 回目のレビュー C6)。版を 1 つも読めて
+        # いない run は、何で回したか分からないので違う条件に数える
+        versions = [str(v) for v in (python_versions or {}).values()]
+        other = sorted({v for v in versions if not v.startswith("3.11.")})
+        if other:
+            out.append(f"--allow-other-python(Python {'・'.join(other)}。CI のこの構成は 3.11)")
+        elif not versions:
+            out.append("--allow-other-python(venv の Python の版を読めていない。CI のこの構成は 3.11)")
     return out
 
 
 def skip_jump(prev: dict | None, now: dict) -> str | None:
-    """全数の skip が前回の記録から大きく増えたときに要約へ出す 1 行(増えていなければ None)。失敗にはしない。
+    """全数の skip が基準の記録から大きく増えたときに要約へ出す 1 行(増えていなければ None)。失敗にはしない。
+
+    ``prev`` は基準(これまでの記録の最小)。前回の run と比べると、線以内の増加を繰り返すたびに基準が
+    上がり、一度も知らせずに数百件が基準に入る(3 回目のレビュー C2 のラチェット)。
 
     件数の床(``SUITE_FLOOR_RATIO``)が止めるのは「大量に消えた」まで。その手前 —— full venv の optional 依存が
-    1 つ壊れて数十〜数百件が skip に回る —— は床を割らないので、前回の記録と比べる。
+    1 つ壊れて数十〜数百件が skip に回る —— は床を割らないので、基準の記録と比べる。
     """
     if not isinstance(prev, dict) or not isinstance(prev.get("skipped"), int):
         return None
@@ -289,11 +313,11 @@ def skip_jump(prev: dict | None, now: dict) -> str | None:
     grew = sorted(((n - int(old.get(r, 0)), r) for r, n in (now.get("skip_reasons") or {}).items()
                    if n > int(old.get(r, 0))), key=lambda t: (-t[0], t[1]))
     top = ";".join(f"+{d:,} 件「{r.replace('|', '/')}」" for d, r in grew[:3])
-    return (f"**skip が前回の記録から大きく増えた**: {before:,} → {after:,} 件(+{after - before:,}。知らせる線は "
-            f"+{allowed:,})。前回 = {prev.get('when', '?')} の `{str(prev.get('sha', '?'))[:12]}`"
+    return (f"**skip が基準の記録から大きく増えた**: {before:,} → {after:,} 件(+{after - before:,}。知らせる線は "
+            f"+{allowed:,})。基準 = {prev.get('when', '?')} の `{str(prev.get('sha', '?'))[:12]}`(これまでの最小)"
             + (f"。増えた理由の上位: {top}" if top else "")
-            + "。床を割っていなくても、依存が壊れて skip に回った可能性がある(失敗にはしていない。記録は増える前の"
-              f"まま残した。正当な増加なら状態ディレクトリの `{SKIP_BASELINE_FILE}` を消す)")
+            + "。床を割っていなくても、依存が壊れて skip に回った可能性がある(失敗にはしていない。基準は動かして"
+              f"いない。正当な増加なら状態ディレクトリの `{SKIP_BASELINE_FILE}` を消す)")
 
 
 def junit_counts(path: Path) -> dict:
@@ -375,6 +399,23 @@ def github_only_skips(skip_reasons: dict, missing_tools: list[str]) -> tuple[int
     return total, per
 
 
+def missing_tools_of(st: dict) -> tuple[bool, str, int]:
+    """道具の欠け: (欠けがある・調べていない, 無い道具の文, 道具が無いための skip の件数)。
+
+    件数は全数の JUnit の skip の理由の文面からの推定(``github_only_skips``)。apt パッケージに依る skip は
+    理由の文面から数えられないので件数に入らない(文の側に書く)。
+    """
+    if not st.get("tools_probed"):
+        return True, "(道具の有無を調べていない)", 0
+    missing = list(st.get("tools_missing") or [])
+    apt = list(st.get("apt_missing") or [])
+    total, _ = github_only_skips((st.get("junit_full") or {}).get("skip_reasons") or {}, missing)
+    what = "、".join(missing + [f"apt:{p}" for p in apt])
+    if apt:
+        what += "。apt に依る skip は理由の文面から数えられないので件数に入っていない"
+    return bool(missing or apt), what, total
+
+
 def fill_not_run(results: dict, job: dict, stopped_at: str | None, crash: str | None, busy: bool = False) -> dict:
     """走らなかった段に「未実行」と理由を入れる(表から消さない)。"""
     selected = set(job.get("selected") or [])
@@ -407,10 +448,12 @@ def exit_code(st: dict) -> int:
 
 
 def verdict(st: dict) -> str:
-    """機械が読む結論(``result.json`` の ``verdict``)。終了コード 0 の中身を 3 つに分ける。
+    """機械が読む結論(``result.json`` の ``verdict``)。終了コード 0 の中身を 4 つに分ける。
 
-    ``full_ok`` だけが「5 段を既定のまま、GitHub と同じ条件(fetch した base との merge・Python 3.11)で回して
-    全部 ok」。``partial_ok`` = 走った段は ok だが全数ではない。``deviating_ok`` = 5 段とも ok だが条件が違う。
+    ``full_ok`` だけが「5 段を既定のまま、GitHub と同じ条件(fetch した base との merge・Python 3.11・runner に
+    ある道具が全部ある)で回して全部 ok」。``partial_ok`` = 走った段は ok だが全数ではない。``deviating_ok`` =
+    5 段とも ok だが条件が違う。``ok_missing_tools`` = 5 段とも同じ条件で ok だが、手元に無い道具(cargo・node・
+    Chrome・apt)のせいで GitHub では走るテストが手元では skip した(道具を調べていない run も含む)。
     """
     code = exit_code(st)
     if code == EXIT_BUSY:
@@ -423,7 +466,35 @@ def verdict(st: dict) -> str:
         return "partial_ok"
     if deviation_reasons(job, st.get("python_versions")):
         return "deviating_ok"
+    if missing_tools_of(st)[0]:
+        return "ok_missing_tools"
     return "full_ok"
+
+
+#: 端末の最後の行の一言(``verdict_line``)。``ok_missing_tools`` は件数を入れるので関数の中で作る。
+VERDICT_WORDS = {
+    "full_ok": "全段・GitHub と同じ条件で ok",
+    "deviating_ok": "GitHub と違う条件。緑の証拠にしない",
+    "partial_ok": "部分実行(全数ではない)。緑の証拠にしない",
+    "failed": "失敗",
+    "busy": "状態ディレクトリを別の ci_local が使っている。実行していない",
+}
+
+
+def verdict_line(result: dict | None) -> str:
+    """端末の最後に出す 1 行(``result.json`` の中身から)。読めなければ「不明」と言い、緑にしない。"""
+    v = result.get("verdict") if isinstance(result, dict) else None
+    if v == "ok_missing_tools":
+        tools = [str(t) for t in (result.get("tools_missing") or [])]
+        tools += [f"apt:{p}" for p in (result.get("apt_missing") or [])]
+        n = result.get("github_only_skips")
+        word = (f"全段 ok。ただし手元に無い道具({'、'.join(tools) or '有無を調べていない'})のため "
+                f"{n if isinstance(n, int) else '?'} 件は GitHub でしか確かめられない")
+    elif v in VERDICT_WORDS:
+        word = VERDICT_WORDS[v]
+    else:
+        return "verdict: 不明 — result.json が無いか読めない。緑の証拠にしない"
+    return f"verdict: {v} — {word}"
 
 
 def junit_case_ids(path: Path) -> set | None:
@@ -494,6 +565,10 @@ def render_summary(st: dict) -> str:
     elif deviating:
         concl = ("**GitHub の CI とは違う条件での検査** —— 走った段(" + "、".join(PHASE_LABEL[k] for k in ran)
                  + ")は ok")
+    elif missing_tools_of(st)[0]:
+        _, what, n_gh = missing_tools_of(st)
+        concl = (f"**全段 ok —— ただし手元に無い道具のため {n_gh:,} 件は GitHub でしか確かめられない**"
+                 f"({len(ran)} 段。無い道具: {what})")
     else:
         concl = f"**全段 ok**({len(ran)} 段)"
     if partial and ran:
@@ -760,6 +835,13 @@ def _host_main(args: argparse.Namespace) -> int:
     else:
         _log("要約が書かれなかった(内側が要約の前に落ちた)")
         rc = rc or EXIT_FAILED
+    try:
+        result = json.loads((out / "result.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        result = None
+    # 最後の行に verdict(終了コード 0 には 4 つの意味がある。終了コードの意味は変えない —— 変えると
+    # --only や --no-fetch の 0 が「落ちた」と区別できなくなる。区別はこの行と result.json でする)
+    print(verdict_line(result), flush=True)
     return rc
 
 
@@ -797,6 +879,7 @@ class Inner:
         self._full_ready = False
         self._py311: str | None = None
         self._lock_fh = None
+        self.skip_now: dict | None = None  # 全数の skip(記録を書くかは finish が verdict で決める)
 
     # ---- 共通 ------------------------------------------------------------------------------
     def run(self, cmd: list[str], *, env: dict | None = None, cwd: Path | None = None, log: str | None = None,
@@ -1289,8 +1372,8 @@ class Inner:
         bad = junit_verdict(jc, floor)
         if bad:
             why.append(bad)
-        if not extra and not bad:  # 床を割った・壊れた JUnit の skip 件数は、次回の比べる相手にしない
-            self.note_skip_baseline(jc)
+        if not extra and not bad:  # 床を割った・壊れた JUnit は比べない(記録を書くかは finish が verdict で決める)
+            self.compare_skip_baseline(jc)
         blas_note = self.rerun_blas(jc, env)
         if blas_note:
             why.append(blas_note)
@@ -1301,30 +1384,75 @@ class Inner:
             counts += "。**追加引数つき(全数ではない)**: `" + " ".join(extra) + "`"
         self.set_result("tests", not why, ("(" + ";".join(why) + ")" if why else "") + counts, t0)
 
-    def note_skip_baseline(self, jc: dict) -> None:
-        """全数の skip を前回の記録と比べ、大きく増えていたら要約に出す。増えていなければ記録を更新する。"""
-        path = self.state / SKIP_BASELINE_FILE
+    def read_skip_baseline(self) -> dict | None:
+        """skip の基準(これまでの記録の最小)。無い・読めない形なら None。旧形式は ``legacy`` 付きで返す。"""
         try:
-            prev = json.loads(path.read_text(encoding="utf-8"))
+            data = json.loads((self.state / SKIP_BASELINE_FILE).read_text(encoding="utf-8"))
         except (OSError, ValueError):
-            prev = None
+            return None
+        if not isinstance(data, dict):
+            return None
+        if data.get("format") == SKIP_BASELINE_FORMAT:
+            base = data.get("base")
+            return base if isinstance(base, dict) and isinstance(base.get("skipped"), int) else None
+        if "format" not in data and isinstance(data.get("skipped"), int):
+            return dict(data, legacy=True)  # 最初の版の形(失敗した run の件数のことがある)
+        return None
+
+    def compare_skip_baseline(self, jc: dict) -> None:
+        """全数の skip を基準と比べ、大きく増えていたら要約に出す。記録はここでは書かない(``record_skip_baseline``)。"""
+        base = self.read_skip_baseline()
         now = {"skipped": jc["skipped"], "tests": jc["tests"], "sha": self.tested or self.job["sha"],
                "when": time.strftime("%Y-%m-%d %H:%M"), "tools_missing": self.st.get("tools_missing") or [],
-               "skip_reasons": jc.get("skip_reasons") or {}}
-        jump = skip_jump(prev, now)
+               "apt_missing": self.st.get("apt_missing") or [], "skip_reasons": jc.get("skip_reasons") or {}}
+        self.skip_now = now
+        jump = skip_jump(base, now)
         if jump:
             self.st["skip_jump"] = jump
-            return  # 記録は増える前のまま残す(次の run でも知らせる)
-        if isinstance(prev, dict) and isinstance(prev.get("skipped"), int):
-            self.remarks.append(f"skip の前回比: {prev['skipped']:,} → {jc['skipped']:,} 件(前回 = "
-                                f"{prev.get('when', '?')} の `{str(prev.get('sha', '?'))[:12]}`。知らせる線は前回 + "
-                                f"{max(SKIP_JUMP_MIN, math.ceil(prev['skipped'] * SKIP_JUMP_RATIO)):,} 件)。")
+            return
+        if base is None:
+            self.remarks.append(f"skip の基準: 記録が無い(この run が全段 ok なら、今回の {jc['skipped']:,} 件を"
+                                "最初の記録にする)。")
+            return
+        line = (f"skip の基準比: {base['skipped']:,} → {jc['skipped']:,} 件(基準 = {base.get('when', '?')} の "
+                f"`{str(base.get('sha', '?'))[:12]}`。これまでの最小。知らせる線は基準 + "
+                f"{max(SKIP_JUMP_MIN, math.ceil(base['skipped'] * SKIP_JUMP_RATIO)):,} 件)")
+        if base.get("legacy"):
+            line += "。基準は最初の版の形の記録(失敗した run の件数のことがある)"
+        if sorted(base.get("tools_missing") or []) != sorted(now["tools_missing"]):
+            line += (f"。**手元に無い道具が基準と違う**(基準 {'、'.join(base.get('tools_missing') or []) or 'なし'} → "
+                     f"今回 {'、'.join(now['tools_missing']) or 'なし'})")
+        self.remarks.append(line + "。")
+
+    def record_skip_baseline(self, v: str) -> None:
+        """verdict が ``SKIP_RECORD_VERDICTS`` の run だけが記録を書く。基準は下がる向きにしか動かさない。"""
+        now = self.skip_now
+        if now is None:
+            return
+        if self.st.get("skip_jump"):
+            return  # 基準は増える前のまま(次の run でも知らせる。文面は skip_jump の行)
+        if v not in SKIP_RECORD_VERDICTS:
+            self.remarks.append(f"skip の記録: この run の verdict は `{v}`(全段 ok・GitHub と同じ条件ではない)"
+                                "なので、記録を書かない(基準はそのまま)。")
+            return
+        base = self.read_skip_baseline()
+        if base is None or now["skipped"] < base["skipped"]:
+            new_base, how = now, ("最初の記録にした" if base is None else
+                                  f"基準を {base['skipped']:,} → {now['skipped']:,} 件に下げた")
         else:
-            self.remarks.append(f"skip の前回比: 記録が無かったので、今回の {jc['skipped']:,} 件を最初の記録にした。")
+            new_base = {k: val for k, val in base.items() if k != "legacy"}
+            if base.get("legacy"):
+                new_base["from"] = "最初の版の形の記録から引き継いだ"
+            how = f"基準 {base['skipped']:,} 件は動かさない(下がる向きにしか動かさない)"
+        data = {"format": SKIP_BASELINE_FORMAT, "base": new_base,
+                "last": {k: now[k] for k in ("skipped", "tests", "sha", "when", "tools_missing", "apt_missing")}}
         try:
-            path.write_text(json.dumps(now, ensure_ascii=False, indent=1), encoding="utf-8")
+            (self.state / SKIP_BASELINE_FILE).write_text(json.dumps(data, ensure_ascii=False, indent=1),
+                                                         encoding="utf-8")
         except OSError as exc:
             self.remarks.append(f"skip の記録を書けなかった({type(exc).__name__})。")
+            return
+        self.remarks.append(f"skip の記録: 今回 {now['skipped']:,} 件。{how}。")
 
     def rerun_blas(self, jc: dict, env: dict) -> str | None:
         """BLAS を絞ったせいで skip したテストを、絞らずに直列で回し直す。返り値 = 失敗の理由(無ければ None)。
@@ -1388,6 +1516,8 @@ class Inner:
         try:
             st["results"] = fill_not_run(self.results, self.job, st.get("stopped_at"), st.get("crash"),
                                          bool(st.get("busy")))
+            st["github_only_skips"] = missing_tools_of(st)[2]
+            self.record_skip_baseline(verdict(st))
             osname = platform.freedesktop_os_release().get("PRETTY_NAME", "Linux") if hasattr(
                 platform, "freedesktop_os_release") else "Linux"
             wsl = " (WSL2)" if "microsoft" in platform.release().lower() else ""
@@ -1503,7 +1633,8 @@ def build_parser() -> argparse.ArgumentParser:
                     help="--python で渡した Python が 3.11 でなくても続ける(要約に版を書き、"
                          "「GitHub の CI とは違う条件」になる)")
     ap.add_argument("--require-tools", action="store_true",
-                    help="runner にある道具(cargo・node・Chrome・apt の 6 個)が手元に無ければ失敗にする")
+                    help="runner にある道具(cargo・node・Chrome・apt の 6 個)が手元に無ければ失敗にする"
+                         "(付けなければ、全段 ok でも verdict は full_ok でなく ok_missing_tools)")
     ap.add_argument("--install-apt", action="store_true",
                     help="足りない apt パッケージを sudo -n apt-get install で入れる(頼まれたときだけ)")
     ap.add_argument("--inside", metavar="JOB", help=argparse.SUPPRESS)

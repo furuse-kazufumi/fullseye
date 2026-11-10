@@ -14,6 +14,11 @@
 pip-audit と pytest の終了コードを無視・merge しない・環境変数の状態ディレクトリを読まない)。
 純関数だけを見ていたからで、後半のテストは ``build_job``・``sync_repo``・``phase_*``・``rerun_blas``・``Inner.main`` を通す。
 git は ``tmp_path`` の中の本物の repo で動かす(git が無ければ skip でなく失敗)。pytest・pip・ruff は差し替える。
+
+3 回目のレビューは、さらに 3 通りの見逃しを示した: 失敗した run が skip の記録を書く(R14)・origin を basename だけで
+比べる(R05。テストの source が実物の形 ``.../.git`` でなかった)・``--allow-other-python`` の判定が版の中身を見ない(R09)。
+あわせて、道具が無い run が ``full_ok`` になる・線以内の増加の繰り返しで skip の基準が上がり続ける・端末に verdict が
+出ない、を直した分のテストがある。
 """
 from __future__ import annotations
 
@@ -271,6 +276,11 @@ def test_summary_lists_missing_tools_first_and_counts_their_skips():
     lines = cl.render_summary(st).splitlines()
     assert lines[3].startswith("- **手元に無い道具(GitHub の runner にはある)**: cargo、node、Chrome")
     assert sum("手元の道具が無いための skip = 9 件" in ln for ln in lines) == 1
+    # 全段 ok でも、道具が無い run は「全段 ok」と書かない(3 回目のレビュー C1)
+    assert lines[2] == ("- 結論: **全段 ok —— ただし手元に無い道具のため 9 件は GitHub でしか確かめられない**"
+                        "(5 段。無い道具: cargo、node、Chrome)")
+    assert "**全段 ok**" not in "\n".join(lines)
+    assert (cl.verdict(st), cl.exit_code(st)) == ("ok_missing_tools", 0)
     assert "| 7 | optional data not present |" in lines
     assert sum("5 件が走った" in ln for ln in lines) == 1
 
@@ -533,6 +543,23 @@ def test_deviation_reasons_is_empty_for_the_default_run_and_lists_every_flag():
     assert "3.12.3" in every[2] and "3.11.9" not in every[2]
 
 
+def test_allow_other_python_is_a_deviation_only_when_the_interpreter_really_is_not_3_11():
+    job = _job(allow_other_python=True, python="/opt/py/bin/python3")
+    # 許しただけで、実際は全部 3.11 なら同じ条件(3 回目のレビュー C6)
+    assert cl.deviation_reasons(job, {"full": "3.11.9", "lint": "3.11.9", "core": "3.11.2"}) == []
+    assert cl.verdict(_state(job, _all_ok(), python_versions={"full": "3.11.9"})) == "full_ok"
+    # 1 つでも 3.11 でなければ違う条件で、その版を名指す
+    one = cl.deviation_reasons(job, {"full": "3.11.9", "core": "3.12.3"})
+    assert len(one) == 1 and "Python 3.12.3" in one[0] and "3.11.9" not in one[0]
+    assert cl.verdict(_state(job, _all_ok(), python_versions={"full": "3.11.9", "core": "3.12.3"})) == "deviating_ok"
+    # 版を 1 つも読めていない run は、何で回したか分からないので違う条件
+    for unknown in (None, {}):
+        got = cl.deviation_reasons(job, unknown)
+        assert len(got) == 1 and "版を読めていない" in got[0]
+    # 許していなければ、版は deviation に関わらない(3.11 以外は check_python が段を落とす)
+    assert cl.deviation_reasons(_job(), {}) == []
+
+
 def test_partial_run_under_other_conditions_carries_both_warnings():
     job = _job(only="lint", selected=["lint"], tree=_tree(fetched="no_fetch"))
     st = _state(job, {"lint": _ok()})
@@ -558,8 +585,13 @@ def test_verdict_separates_the_meanings_of_exit_code_zero():
         (_state(_job(tree=_tree(mode="tip", tested=SHA)), dict(_all_ok(), tests=failed)), "failed", 1),
         (_state(_job(), {}), "failed", 1),
         (_state(_job(), {}, busy=True, crash="別の ci_local が使っている"), "busy", 3),
+        (_state(_job(), _all_ok(), tools_missing=["cargo"]), "ok_missing_tools", 0),
+        (_state(_job(), _all_ok(), apt_missing=["libegl1"]), "ok_missing_tools", 0),
+        (_state(_job(), _all_ok(), tools_probed=False), "ok_missing_tools", 0),
+        # 違う条件と道具の欠けが重なれば、違う条件のほうを言う(どちらも full_ok ではない)
+        (_state(_job(tree=_tree(fetched="no_fetch")), _all_ok(), tools_missing=["node"]), "deviating_ok", 0),
     ]
-    assert len(cases) == 10
+    assert len(cases) == 14
     got = [(cl.verdict(st), cl.exit_code(st)) for st, _, _ in cases]
     assert got == [(want, code) for _, want, code in cases]
     # 「全段 ok」と書くのは full_ok のときだけ
@@ -579,7 +611,7 @@ def test_skip_jump_flags_a_large_increase_and_names_what_grew():
     msg = cl.skip_jump(prev, {"skipped": 471, "skip_reasons": {"cargo が無い": 114, "optional data not present": 300,
                                                                "could not import 'torch'": 44, "new | reason": 13}})
     assert msg is not None
-    assert msg.startswith("**skip が前回の記録から大きく増えた**: 427 → 471 件(+44。知らせる線は +43)")
+    assert msg.startswith("**skip が基準の記録から大きく増えた**: 427 → 471 件(+44。知らせる線は +43)")
     assert "+44 件「could not import 'torch'」;+13 件「new / reason」" in msg
     assert SHA[:12] in msg and "2026-11-10 18:40" in msg and cl.SKIP_BASELINE_FILE in msg
     assert "cargo が無い" not in msg  # 増えていない理由は挙げない
@@ -600,7 +632,7 @@ def test_summary_puts_the_skip_jump_right_under_the_tools_line():
     assert lines[3].startswith("- 手元に無い道具: なし")
     assert lines[4] == f"- {msg}"
     assert lines[5].startswith("- 検査した木: ")
-    assert sum("skip が前回の記録から大きく増えた" in ln for ln in lines) == 1
+    assert sum("skip が基準の記録から大きく増えた" in ln for ln in lines) == 1
     assert cl.exit_code(st) == 0  # 知らせるだけ(失敗にはしない)
     quiet = cl.render_summary(_state(_job(), _all_ok())).splitlines()
     assert quiet[4].startswith("- 検査した木: ")
@@ -849,9 +881,11 @@ def _listing(root: Path) -> list[str]:
 
 
 def test_old_state_dir_is_adopted_when_its_repo_is_a_clone_of_the_tested_repo(tmp_path):
-    origin = _origin(tmp_path)
+    # 外側が渡す source は git の common dir(``<repo>/.git``)で、clone の origin もその形になる
+    origin = _origin(tmp_path) / ".git"
     state = _stamped(tmp_path)
     _git(tmp_path, "clone", "-q", str(origin), str(state / "repo"))
+    assert _git(state / "repo", "config", "--get", "remote.origin.url").endswith(".git")
     (state / "repo" / "left-over.txt").write_text("x", encoding="utf-8")
     inner = cl.Inner(_job(state_dir=str(state), out=str(tmp_path / "out-a"), source=str(origin)))
     inner.check_marker()
@@ -869,20 +903,24 @@ def test_old_state_dir_without_a_repo_is_adopted_by_its_venv_stamp(tmp_path):
     assert len(inner.setup_notes) == 1 and "引き継いだ" in inner.setup_notes[0]
 
 
-FOREIGN_REPOS = ["other-origin", "not-fullseye", "no-origin", "not-git"]
+FOREIGN_REPOS = ["other-origin", "same-name-elsewhere", "not-fullseye", "no-origin", "not-git"]
 
 
 @pytest.mark.parametrize("kind", FOREIGN_REPOS)
 def test_old_state_dir_with_a_foreign_repo_is_refused_before_anything_is_cleaned(kind, tmp_path):
-    origin = _origin(tmp_path)
+    # source も origin も実物の形(``<repo>/.git``)。basename だけで比べると、どれも ``.git`` で一致してしまう
+    origin = _origin(tmp_path) / ".git"
     state = _stamped(tmp_path)
     repo = state / "repo"
     source = origin
     if kind == "other-origin":  # 別の Fullseye の clone(origin が、検査する repo と違う)
-        _git(tmp_path, "clone", "-q", str(_origin(tmp_path, "elsewhere")), str(repo))
+        _git(tmp_path, "clone", "-q", str(_origin(tmp_path, "elsewhere") / ".git"), str(repo))
+        want = "origin が、検査する repo と違う"
+    elif kind == "same-name-elsewhere":  # 同じ名前の repo の .git だが、別の場所(別の repo)
+        _git(tmp_path, "clone", "-q", str(_origin(tmp_path / "copy", "origin") / ".git"), str(repo))
         want = "origin が、検査する repo と違う"
     elif kind == "not-fullseye":  # origin は合うが、中身が Fullseye でない
-        source = _origin(tmp_path, "raptor", project="raptor")
+        source = _origin(tmp_path, "raptor", project="raptor") / ".git"
         _git(tmp_path, "clone", "-q", str(source), str(repo))
         want = "name が fullseye でない"
     elif kind == "no-origin":  # レビューの実行と同じ形: たまたま repo/ という名前の、別の git repo
@@ -1099,35 +1137,152 @@ def test_blas_rerun_that_still_does_not_run_the_tests_makes_the_phase_fail(tmp_p
     assert (nofile.st["blas"]["recovered"], nofile.st["blas"]["absent"]) == (0, 3)
 
 
-def test_full_suite_phase_records_skips_and_flags_a_jump_on_the_next_run(tmp_path):
-    def skips(n: int, reason: str) -> list:
-        return [("tests.test_opt", f"test_{reason[:3]}_{i}", reason) for i in range(n)]
+def _skips(n: int, reason: str) -> list:
+    return [("tests.test_opt", f"test_{reason[:3]}_{i}", reason) for i in range(n)]
 
-    base = skips(10, "optional data not present")
+
+def _complete(inner, monkeypatch, results=None, **st_over) -> dict:
+    """全数の段のあとを ``finish`` まで通す(ほかの段は ok、道具は全部ある)。返り値 = result.json。"""
+    monkeypatch.setattr(cl.platform, "freedesktop_os_release", lambda: {"PRETTY_NAME": "TestOS"}, raising=False)
+    for key in cl.PHASE_KEYS:
+        if key != "tests" and key in (inner.job.get("selected") or cl.PHASE_KEYS):
+            inner.results[key] = (results or {}).get(key, _ok())
+    inner.st.update({"tools_probed": True, "tools_missing": [], "apt_missing": [], **st_over})
+    inner.finish(1.0)
+    return json.loads((inner.out / "result.json").read_text(encoding="utf-8"))
+
+
+def _record(inner) -> dict:
+    return json.loads((inner.state / cl.SKIP_BASELINE_FILE).read_text(encoding="utf-8"))
+
+
+def test_skip_record_is_written_only_after_a_full_ok_run_and_its_base_never_rises(tmp_path, monkeypatch):
+    ten = _skips(10, "optional data not present")
     first = _suite_inner(tmp_path, 1000)
-    _run_suite(first, [(0, _junit_text(990, skipped=base))])
-    record = first.state / cl.SKIP_BASELINE_FILE
+    _run_suite(first, [(0, _junit_text(990, skipped=ten))])
     assert first.results["tests"]["state"] == "ok"
-    assert json.loads(record.read_text(encoding="utf-8"))["skipped"] == 10
+    # 段の中では書かない(書くかは、全段の結果と条件で決まる verdict を見てから)
+    assert not (first.state / cl.SKIP_BASELINE_FILE).exists()
+    assert _complete(first, monkeypatch)["verdict"] == "full_ok"
+    rec = _record(first)
+    assert (rec["format"], rec["base"]["skipped"], rec["last"]["skipped"]) == (2, 10, 10)
     assert sum("最初の記録にした" in r for r in first.remarks) == 1
-    # +21 件(線は +20): 床は割らないので ok のまま、要約の先頭で知らせる。記録は増える前のまま
+    # +21 件(線は +20): 床は割らないので ok のまま、要約の先頭で知らせる。記録は動かさない
     jumped = _suite_inner(tmp_path, 1000)
-    _run_suite(jumped, [(0, _junit_text(969, skipped=base + skips(21, "could not import 'torch'")))])
+    _run_suite(jumped, [(0, _junit_text(969, skipped=ten + _skips(21, "could not import 'torch'")))])
     assert jumped.results["tests"]["state"] == "ok"
     assert "10 → 31 件(+21。知らせる線は +20)" in jumped.st["skip_jump"]
     assert "+21 件「could not import 'torch'」" in jumped.st["skip_jump"]
-    assert json.loads(record.read_text(encoding="utf-8"))["skipped"] == 10
-    # +20 件ちょうどは知らせず、記録を更新する
+    _complete(jumped, monkeypatch)
+    assert _record(jumped) == rec
+    # +20 件ちょうどは知らせない。ただし基準は 10 のまま(上げない)で、最後の run だけを書く
     edge = _suite_inner(tmp_path, 1000)
-    _run_suite(edge, [(0, _junit_text(970, skipped=base + skips(20, "could not import 'torch'")))])
+    _run_suite(edge, [(0, _junit_text(970, skipped=ten + _skips(20, "could not import 'torch'")))])
     assert "skip_jump" not in edge.st
-    assert sum("skip の前回比: 10 → 30 件" in r for r in edge.remarks) == 1
-    assert json.loads(record.read_text(encoding="utf-8"))["skipped"] == 30
-    # 床を割った run の件数は、次回の比べる相手にしない
+    assert sum("skip の基準比: 10 → 30 件" in r for r in edge.remarks) == 1
+    _complete(edge, monkeypatch)
+    rec = _record(edge)
+    assert (rec["base"]["skipped"], rec["last"]["skipped"]) == (10, 30)
+    assert sum("基準 10 件は動かさない" in r for r in edge.remarks) == 1
+    # 線以内の増加を繰り返しても基準は上がらないので、累積で線を超えたところで知らせる(レビューのラチェット)
+    again = _suite_inner(tmp_path, 1000)
+    _run_suite(again, [(0, _junit_text(960, skipped=ten + _skips(30, "could not import 'torch'")))])
+    assert "10 → 40 件(+30。知らせる線は +20)" in again.st["skip_jump"]
+    _complete(again, monkeypatch)
+    assert _record(again)["base"]["skipped"] == 10
+    # 減ったら基準を下げる(締まる向きにだけ動く)
+    fewer = _suite_inner(tmp_path, 1000)
+    _run_suite(fewer, [(0, _junit_text(995, skipped=ten[:5]))])
+    _complete(fewer, monkeypatch)
+    rec = _record(fewer)
+    assert (rec["base"]["skipped"], rec["last"]["skipped"]) == (5, 5)
+    assert sum("基準を 10 → 5 件に下げた" in r for r in fewer.remarks) == 1
+    # 床を割った run は比べもしない
     low = _suite_inner(tmp_path / "low", 1000)
     _run_suite(low, [(0, _junit_text(10))])
     assert low.results["tests"]["state"] == "failed"
+    assert low.skip_now is None and [r for r in low.remarks if "skip の基準" in r] == []
+    _complete(low, monkeypatch)
     assert not (low.state / cl.SKIP_BASELINE_FILE).exists()
+
+
+def test_skip_record_is_written_by_a_run_that_lacks_tools_and_says_when_the_tools_differ(tmp_path, monkeypatch):
+    ten = _skips(10, "optional data not present")
+    first = _suite_inner(tmp_path, 1000)
+    first.st.update(tools_missing=["cargo"])  # 道具の有無は全数の前に調べてある(probe_tools)
+    _run_suite(first, [(0, _junit_text(990, skipped=ten))])
+    result = _complete(first, monkeypatch, tools_missing=["cargo"])
+    assert (result["verdict"], result["exit_code"]) == ("ok_missing_tools", 0)
+    assert _record(first)["last"]["tools_missing"] == ["cargo"]
+    second = _suite_inner(tmp_path, 1000)
+    second.st.update(tools_missing=["cargo", "node"])
+    _run_suite(second, [(0, _junit_text(990, skipped=ten))])
+    assert sum("**手元に無い道具が基準と違う**(基準 cargo → 今回 cargo、node)" in r for r in second.remarks) == 1
+
+
+#: 記録を書いてはいけない run(3 回目のレビュー C2・C3)。どれも skip が基準より少ない(書けば基準が下がる)。
+NOT_RECORDED = [
+    ("pytest-exit-1", {}, "failed"),
+    ("blas-rerun-failed", {}, "failed"),
+    ("earlier-phase-failed", {"keep_going": True}, "failed"),
+    ("no-merge", {"tree": _tree(mode="tip", tested=SHA)}, "deviating_ok"),
+    ("other-python", {"allow_other_python": True, "python": "python3.12"}, "deviating_ok"),
+    ("skip-a-phase", {"skip": ["regen"], "selected": ["lint", "gates", "core", "tests"]}, "partial_ok"),
+]
+
+
+@pytest.mark.parametrize("kind,job_over,want", NOT_RECORDED, ids=[k for k, _, _ in NOT_RECORDED])
+@pytest.mark.parametrize("had_record", [False, True], ids=["no-record", "with-record"])
+def test_skip_record_is_not_touched_by_a_run_that_is_not_all_green_under_github_conditions(
+        kind, job_over, want, had_record, tmp_path, monkeypatch):
+    blas_ids = [(c, n) for c, n, _ in BLAS_CASES]
+    inner = _blas_inner(tmp_path, with_files=True) if kind == "blas-rerun-failed" else _suite_inner(tmp_path, 100)
+    inner.job.update(job_over)
+    path = inner.state / cl.SKIP_BASELINE_FILE
+    before = None
+    if had_record:
+        inner.state.mkdir(parents=True, exist_ok=True)
+        before = json.dumps({"format": 2, "base": {"skipped": 50, "sha": BASE, "when": "2026-11-10 18:40"},
+                             "last": {"skipped": 50}})
+        path.write_text(before, encoding="utf-8")
+    if kind == "blas-rerun-failed":
+        script = [(0, _junit_text(97, skipped=BLAS_CASES)), (1, _junit_text(0, ran=blas_ids, failed=1))]
+    else:
+        script = [(1 if kind == "pytest-exit-1" else 0, _junit_text(97, skipped=_skips(3, "optional data")))]
+    _run_suite(inner, script)
+    regen_failed = {"regen": {"state": "failed", "detail": "失敗", "sec": 1.0}} if kind == "earlier-phase-failed" else {}
+    result = _complete(inner, monkeypatch, results=regen_failed,
+                       python_versions={"full": "3.12.3"} if kind == "other-python" else {"full": "3.11.9"})
+    assert result["verdict"] == want
+    if had_record:
+        assert path.read_text(encoding="utf-8") == before
+    else:
+        assert not path.exists()
+    assert sum(f"この run の verdict は `{want}`" in r and "記録を書かない" in r for r in inner.remarks) == 1
+
+
+def test_skip_record_of_the_first_version_is_kept_as_the_base_and_never_raised(tmp_path, monkeypatch):
+    # 最初の版の形(版の欄が無い)。失敗した run の件数のことがあるが、捨てると緩む向きになりうるので基準として読む
+    state = tmp_path / "state"
+    state.mkdir()
+    (state / cl.SKIP_BASELINE_FILE).write_text(json.dumps({"skipped": 30, "tests": 1000, "sha": BASE,
+                                                           "when": "2026-11-10 18:40", "tools_missing": []}),
+                                               encoding="utf-8")
+    ok = _suite_inner(tmp_path, 1000)
+    _run_suite(ok, [(0, _junit_text(955, skipped=_skips(45, "optional data")))])
+    assert "skip_jump" not in ok.st
+    assert sum("skip の基準比: 30 → 45 件" in r and "最初の版の形の記録" in r for r in ok.remarks) == 1
+    assert _complete(ok, monkeypatch)["verdict"] == "full_ok"
+    rec = _record(ok)
+    assert (rec["format"], rec["base"]["skipped"], rec["last"]["skipped"]) == (2, 30, 45)
+    assert rec["base"]["from"] == "最初の版の形の記録から引き継いだ" and "legacy" not in rec["base"]
+    jumped = _suite_inner(tmp_path, 1000)
+    _run_suite(jumped, [(0, _junit_text(960, skipped=_skips(51, "optional data")))])  # 実行 960 は床 950 の上
+    assert "30 → 51 件(+21。知らせる線は +20)" in jumped.st["skip_jump"]
+    # 読めない形・版の違う形は基準にしない(比べない)
+    for text in ("[30]", "{", json.dumps({"format": 99, "base": {"skipped": 1}}), json.dumps({"format": 2})):
+        (state / cl.SKIP_BASELINE_FILE).write_text(text, encoding="utf-8")
+        assert ok.read_skip_baseline() is None
 
 
 def _lint_inner(tmp_path: Path, with_ruff: bool = True, **job_over):
@@ -1354,6 +1509,16 @@ def test_inner_main_writes_a_verdict_that_tells_green_from_the_other_zero_exits(
     assert (result["verdict"], result["exit_code"], len(result["deviations"])) == ("deviating_ok", 0, 1)
     assert "**全段 ok**" not in summary and "GitHub の CI とは違う条件での検査" in summary
 
+    inner, ran = _main_inner(tmp_path / "tools", {})
+    inner.probe_tools = lambda: inner.st.update(tools_missing=["node"], apt_missing=["libegl1"], tools_probed=True)
+    assert inner.main() == 0
+    result, summary = _finished(inner)
+    assert (result["verdict"], result["exit_code"], result["deviations"]) == ("ok_missing_tools", 0, [])
+    assert result["github_only_skips"] == 0  # この偽の全数には JUnit が無い
+    assert "**全段 ok**" not in summary
+    assert "- 結論: **全段 ok —— ただし手元に無い道具のため 0 件は GitHub でしか確かめられない**" in summary
+    assert "apt に依る skip は理由の文面から数えられない" in summary
+
     inner, ran = _main_inner(tmp_path / "only", {}, only="lint", selected=["lint"])
     assert inner.main() == 0 and ran == ["lint"]
     result, summary = _finished(inner)
@@ -1380,8 +1545,65 @@ def test_inner_main_stops_at_the_first_failed_phase_unless_told_to_keep_going(tm
     def busy() -> None:
         raise cl.Busy("状態ディレクトリを別の ci_local が使っている")
 
+    # --require-tools: 道具が無ければ、段を回す前に失敗(「full_ok か失敗か」が欲しいとき)
+    for require, want_rc, want_verdict, want_ran in ((True, 1, "failed", []),
+                                                    (False, 0, "ok_missing_tools", list(cl.PHASE_KEYS))):
+        inner, ran = _main_inner(tmp_path / f"require-{require}", {}, require_tools=require)
+        inner.probe_tools = cl.Inner.probe_tools.__get__(inner)
+        monkeypatch.setattr(cl.shutil, "which", lambda name, path=None: None)
+        monkeypatch.setattr(cl.subprocess, "call", lambda *a, **k: 0)  # dpkg -s: apt は全部ある
+        assert inner.main() == want_rc and ran == want_ran
+        result, summary = _finished(inner)
+        assert (result["verdict"], result["tools_missing"]) == (want_verdict, ["cargo", "node", "Chrome"])
+        assert ("必要な道具が無い(--require-tools): cargo、node、Chrome" in summary) is require
+    monkeypatch.undo()
+    monkeypatch.setattr(cl.platform, "freedesktop_os_release", lambda: {"PRETTY_NAME": "TestOS"}, raising=False)
+
     inner, ran = _main_inner(tmp_path / "busy", {"claim": busy})
     assert inner.main() == cl.EXIT_BUSY and ran == []
     result, summary = _finished(inner)
     assert (result["verdict"], result["exit_code"]) == ("busy", 3)
     assert "- 結論: **実行していない**" in summary
+
+
+# ---- 外側: 端末の最後の行に verdict(3 回目のレビュー C5)-------------------------------------
+
+def test_verdict_line_names_every_verdict_and_never_reads_as_green_when_unknown():
+    lines = {v: cl.verdict_line({"verdict": v}) for v in ("full_ok", "deviating_ok", "partial_ok", "failed", "busy")}
+    assert lines["full_ok"] == "verdict: full_ok — 全段・GitHub と同じ条件で ok"
+    assert lines["deviating_ok"] == "verdict: deviating_ok — GitHub と違う条件。緑の証拠にしない"
+    assert lines["partial_ok"] == "verdict: partial_ok — 部分実行(全数ではない)。緑の証拠にしない"
+    assert lines["failed"] == "verdict: failed — 失敗"
+    assert lines["busy"].startswith("verdict: busy — ")
+    missing = cl.verdict_line({"verdict": "ok_missing_tools", "tools_missing": ["cargo", "node"],
+                               "apt_missing": ["libegl1"], "github_only_skips": 107})
+    assert missing == ("verdict: ok_missing_tools — 全段 ok。ただし手元に無い道具(cargo、node、apt:libegl1)のため "
+                       "107 件は GitHub でしか確かめられない")
+    unknown = "verdict: 不明 — result.json が無いか読めない。緑の証拠にしない"
+    assert [cl.verdict_line(r) for r in (None, {}, {"verdict": "green"}, [1])] == [unknown] * 4
+
+
+@pytest.mark.parametrize("result,want_rc,want_last", [
+    ({"verdict": "deviating_ok", "exit_code": 0}, 0, "verdict: deviating_ok — GitHub と違う条件。緑の証拠にしない"),
+    ({"verdict": "full_ok", "exit_code": 0}, 0, "verdict: full_ok — 全段・GitHub と同じ条件で ok"),
+    ({"verdict": "failed", "exit_code": 1}, 1, "verdict: failed — 失敗"),
+    (None, 1, "verdict: 不明 — result.json が無いか読めない。緑の証拠にしない"),
+], ids=["deviating", "full", "failed", "no-result"])
+def test_host_prints_the_verdict_as_the_last_line_and_keeps_the_exit_code(result, want_rc, want_last, tmp_path,
+                                                                          monkeypatch, capsys):
+    out = tmp_path / "out"
+    job = _job(state_dir="~/fullseye-ci-local")
+
+    def fake_inner(cmd):
+        if result is not None:  # 内側が書くもの。None = 内側が要約の前に落ちた
+            (out / "summary.md").write_text("### 要約\n", encoding="utf-8")
+            (out / "result.json").write_text(json.dumps(result), encoding="utf-8")
+        return result["exit_code"] if result else 1
+
+    monkeypatch.setattr(cl, "build_job", lambda args, cwd, environ: (job, out, tmp_path / "src.git"))
+    monkeypatch.setattr(cl, "_to_wsl", lambda path, distro: str(path))
+    monkeypatch.setattr(cl.subprocess, "call", fake_inner)
+    rc = cl._host_main(cl.build_parser().parse_args([]))
+    lines = [ln for ln in capsys.readouterr().out.splitlines() if ln.strip()]
+    assert rc == want_rc  # 終了コードの意味は変えない(0 = 走った段が ok)
+    assert lines[-1] == want_last

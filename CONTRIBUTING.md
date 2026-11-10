@@ -256,16 +256,33 @@ both `--python` and `--allow-other-python`.
 title and the conclusion then say "different conditions from GitHub's CI" instead of "all stages
 ok", name the difference, and say that the result is not evidence that GitHub's CI passes.
 
-**Exit code.** 0 means "everything that ran passed"; 1 a failure, 2 a usage error, 3 a busy state
-directory. A partial run and a run under different conditions also exit 0 — a script that needs to
-tell them from a full green reads `verdict` in `result.json`: `full_ok`, `partial_ok`,
-`deviating_ok`, `failed` or `busy`.
+A run in which a tool the runner has is missing on your machine (cargo, node, Chrome or one of the
+apt packages) is not called a full green either, even when all five stages pass: the conclusion
+reads "all stages ok — but N tests can only be confirmed on GitHub, because tools are missing here"
+and the verdict is `ok_missing_tools`. `--require-tools` instead fails such a run at the start
+(exit 1, verdict `failed`); pass it when you want either `full_ok` or a failure.
 
-**Skips.** The state directory keeps the skip count of the last run of the whole suite (no extra
-pytest arguments) whose JUnit was usable and met the floor. When a later run skips more than that
-by over 10 % (and by over 20 tests) the summary says so near the top and lists the skip reasons
-that grew; the record is then left as it was. This is a notice, not a failure — the 95 % floor is
-the failure.
+**Exit code and verdict.** 0 means "everything that ran passed"; 1 a failure, 2 a usage error, 3 a
+busy state directory. A partial run, a run under different conditions and a run with missing tools
+also exit 0 — the exit code keeps that meaning so that `--only lint` or an offline `--no-fetch` run
+is not mistaken for a failure. What the 0 means is in `verdict` in `result.json` (`full_ok`,
+`ok_missing_tools`, `partial_ok`, `deviating_ok`, `failed` or `busy`), and the tool prints it as its
+last line, e.g. `verdict: deviating_ok — GitHub と違う条件。緑の証拠にしない`. **If you chain the tool
+into `&& git push`, check the verdict in `result.json`, not just the exit code** — `ci_local && git
+push` pushes after a partial or a different-conditions run too. Only `full_ok` says "every stage,
+under GitHub's conditions".
+
+**Skips.** The state directory keeps a skip record, written only by runs whose verdict is
+`full_ok` or `ok_missing_tools` — every stage passed, no extra pytest arguments, GitHub's
+conditions, the BLAS rerun included. Failed, partial and different-conditions runs are compared but
+never recorded. The baseline is the smallest skip count recorded so far: it only moves down, so a
+series of small increases cannot raise it step by step — they are caught once their sum crosses the
+line. When a run skips more than the baseline by over 10 % (and by over 20 tests) the summary says so
+near the top and lists the skip reasons that grew; the baseline is left as it was. This is a notice,
+not a failure — the 95 % floor is the failure. A record written by the first version of the tool
+(no `format` field; it may come from a failed run) is read as the baseline and moved to the new
+form by the next recording run, by the same smallest-count rule. If an increase is legitimate,
+delete `skip_baseline.json` in the state directory.
 
 **One run per state directory.** The state directory is locked; a second run prints the owner
 (pid, start time, commit) and exits with code 3 at once. A directory without the tool's marker
