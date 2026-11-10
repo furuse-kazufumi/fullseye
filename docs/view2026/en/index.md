@@ -8,6 +8,8 @@
 
 Physics simulation and image processing, combined with AI and checked against ground truth.
 
+**Presenting: Thu 3 Dec 2026, 14:40–15:50 JST, Interactive Session 2, IS2-19** (Pacifico Yokohama)
+
 Tap a tile to open the video or figure (▶ = moving).
 
 [About Fullseye (reading)](about.md)

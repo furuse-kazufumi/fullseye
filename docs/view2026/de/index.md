@@ -8,6 +8,8 @@
 
 Physiksimulation und Bildverarbeitung, mit KI kombiniert und an Ground Truth geprüft.
 
+**Präsentation: Do., 3. Dez. 2026, 14:40–15:50 Uhr JST, Interaktive Session 2, IS2-19** (Pacifico Yokohama)
+
 Kachel antippen öffnet Video oder Abbildung (▶ = bewegt).
 
 <style>
