@@ -96,6 +96,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="젓가락 끝 카메라로 콩을 놓치지 않고 추적(시뮬레이터)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>젓가락 끝 카메라로 콩을 놓치지 않고 추적(시뮬레이터)</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="양안 스테레오로 콩까지 거리 측정(시뮬레이터)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>양안 스테레오로 콩까지 거리 측정(시뮬레이터)</span></a>
 <a href="https://youtu.be/XN1mGAftSlY"><img src="../thumbs/carla_iroha_haze.jpg" alt="안개 속 헤어핀(CARLA)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>안개 속 헤어핀(CARLA)</span></a>
+<a href="https://youtu.be/6J3chWv5yHg"><img src="../thumbs/driving_evolution.jpg" alt="부품을 더하기 전과 후(운전의 9 장)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>부품을 더하기 전과 후(운전의 9 장)</span></a>
 </div>
 
 ## 시리즈 기사 (Qiita의 영어 기사)
@@ -241,7 +242,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC가 아닌 사용 예 184개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC가 아닌 사용 예 185개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 전부 보기
 
@@ -763,6 +764,8 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [안개 속 헤어핀(CARLA)](https://youtu.be/XN1mGAftSlY) (동영상): Fullseye가 CARLA의 모의 카메라와 LiDAR를 읽고, 규칙으로 조향과 속도를 정해 안개 낀 산길을 오른다. 흰 선이 보이는 거리 안에서 멈출 수 있는 속도까지 줄인다. 본편은 YouTube의 장편 영상이다.
   안개 속 헤어핀을 오르는 11.5 초(본편 251.5〜263 초). 흰 선이 보이는 거리 안에서 멈출 수 있는 속도를 구하고, 화면의 "속도를 정한 이유: 시야"대로 목표 속도를 멈출 수 있는 속도 22.8 km/h로 맞춘다. 출처: 지형 일본 국토지리원 DEM5A(PDL1.0. 좌우 반전, 도로와 표지는 자작), CARLA(코드 MIT·에셋 CC-BY). **본편(오르막 3.38 km): 충돌 0, 차로 중앙에서의 어긋남 중앙값 0.066 m·최대 0.418 m, 표지 9 개 중 2 개 판독·오독 0(심판은 지도와 CARLA).** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/driveenv.py) [YouTube](https://youtu.be/XN1mGAftSlY)
+- [부품을 더하기 전과 후(운전의 9 장)](https://youtu.be/6J3chWv5yHg) (동영상): Fullseye의 운전 부품(모두 규칙 기반)을 2026-09-28부터 2026-11-05까지 어떤 장면에서 더했는지를 시간순 9 장으로 정리한 장편 영상의 발췌. 9 장 가운데 7 장은 어떤 판이 실패하는 장면과 부품을 더한 판이 넘어가는 장면을 좌우로 나란히 놓는다(제 1 장은 출발점, 제 8 장은 도달점이며, 실패와 개량의 짝을 만들지 않는다). 본편은 YouTube의 장편 영상이다.
+  제 9 장 "숲의 그림자와 흰 선"의 안개 낀 날 11.0 초(본편 194.6〜205.6 초). 왼쪽(주황)은 git의 이전 판(2026-11-02) 코드를 이번에 2026-11-05의 숲에서 달리게 한 그림, 오른쪽(파랑)은 2026-11-05 판의 당시 화면이며, 같은 지도·같은 출발점이다. 이전 판은 숲의 그림자에서 흰 선을 놓치고 반대 차로를 넘어 도로 밖으로 나간다. 실패하는 쪽의 정체는 장마다 다르다(이 장은 git의 이전 판). 주행은 각 1 회. 이전 판은 100 m에서 멈췄으므로, 비교한 거리는 100 m와 964 m로 서로 다르다. 안개가 없어도 이전 판은 같은 헤어핀에서 실패했다(원인은 안개만이 아니다). 두 판의 차이는 차로 인식의 4 곳과 운전 스크립트와 상한 속도(30 → 36 km/h)이며, 어느 것이 효과를 냈는지는 가려내지 않았다. 다른 장의 한계(제 8 장의 충돌 1 건, 제 7 장은 그 장면에 맞춰 고른 설정)는 영상의 설명란에 있다. 이 장의 운전 스크립트는 비공개이고, 사용한 op는 공개. 출처: 지형 일본 국토지리원 DEM5A(PDL1.0. 좌우 반전, 도로와 표지는 자작), CARLA(코드 MIT·에셋 CC-BY). **심판(지도의 참값, 이 영상을 위해 쓴 심판), 안개 낀 날: 이전 판은 차로 밖으로 나간 뒤 100 m에서 멈췄다(차로 이탈 440 프레임. 나간 뒤 멈춰 있던 시간을 포함한다. 기록은 644 프레임, 멈춰 있던 것은 243 프레임)·충돌 0, 2026-11-05 판은 964 m에서 차로 이탈 0 프레임·충돌 0.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/opsdrive.py) [YouTube](https://youtu.be/6J3chWv5yHg)
 
 **로봇의 눈(Fullseye가 지각 담당)**
 

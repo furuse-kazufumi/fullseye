@@ -118,7 +118,8 @@ def test_no_exhibit_disappears_from_the_full_list():
     assert len(ids) == len(set(ids))
     assert len(ids) >= 285, "all の件数が %d —— 目玉から外した展示を all から消していないか" % len(ids)
     featured_only = sorted({e["id"] for e in d["exhibits"]} - set(ids))
-    assert featured_only == ["carla_iroha_haze"], featured_only   # YouTube の本編へ飛ぶ 1 本だけは all に無い
+    # YouTube の本編へ飛ぶ 2 本だけは all に無い(2026-11-10 に運転の進化動画を足した)
+    assert featured_only == ["carla_iroha_haze", "driving_evolution"], featured_only
 
 
 def test_a_stale_translation_stops_the_generator():

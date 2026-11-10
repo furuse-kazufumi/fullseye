@@ -96,6 +96,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="chopstick-tip camera bean को नज़र में रखता है (simulator)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>chopstick-tip camera bean को नज़र में रखता है (simulator)</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="stereo आँखों से bean तक की दूरी (simulator)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>stereo आँखों से bean तक की दूरी (simulator)</span></a>
 <a href="https://youtu.be/XN1mGAftSlY"><img src="../thumbs/carla_iroha_haze.jpg" alt="धुंध में hairpin मोड़ (CARLA)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>धुंध में hairpin मोड़ (CARLA)</span></a>
+<a href="https://youtu.be/6J3chWv5yHg"><img src="../thumbs/driving_evolution.jpg" alt="हर driving part से पहले और बाद (9 chapters)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>हर driving part से पहले और बाद (9 chapters)</span></a>
 </div>
 
 ## Article series (Qiita पर English articles)
@@ -241,7 +242,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC के अलावा 184 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 185 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 
@@ -763,6 +764,8 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [धुंध में hairpin मोड़ (CARLA)](https://youtu.be/XN1mGAftSlY) (video): Fullseye CARLA के simulated camera और LiDAR को पढ़ता है, और rules धुंध भरी पहाड़ी सड़क पर चढ़ाई के लिए steering और speed तय करते हैं। गाड़ी उतनी धीमी होती है कि सफ़ेद रेखा जितनी दूर दिखती है उसके भीतर रुक सके। पूरी drive YouTube पर लंबे video में है।
   धुंध में hairpin मोड़ों पर चढ़ाई के 11.5 s (पूरे video के 251.5–263 s)। सफ़ेद रेखा जितनी दूर दिखती है, उसके भीतर रुक सकने वाली speed ही target बनती है, 22.8 km/h — जैसा screen पर "speed का कारण: दृश्यता" दिखाता है। स्रोत: terrain GSI DEM5A (PDL1.0; बाएँ-दाएँ उलटा, सड़क और signs हमारे); CARLA (code MIT, assets CC-BY)। **पूरा video (3.38 km चढ़ाई): 0 टक्कर, lane के बीच से विचलन median 0.066 m, max 0.418 m; 9 में से 2 signs पढ़े, 0 गलत (map और CARLA से जाँचा)।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/driveenv.py) [YouTube](https://youtu.be/XN1mGAftSlY)
+- [हर driving part से पहले और बाद (9 chapters)](https://youtu.be/6J3chWv5yHg) (video): एक लंबे video का अंश, जो समय के क्रम में 9 chapters में दिखाता है कि 2026-09-28 से 2026-11-05 तक Fullseye के driving parts (सभी rule-based) किन scenes में जोड़े गए। 9 में से 7 chapters में एक version जो scene में fail होता है, और part जोड़ने के बाद का version जो उसे पार कर जाता है, अगल-बगल रखे हैं (chapter 1 शुरुआती बिंदु है और chapter 8 पहुँचा हुआ स्तर, और इन दोनों में fail और सुधार की जोड़ी नहीं बनाई गई)। पूरा video YouTube पर है।
+  chapter 9 "जंगल की छाया और सफ़ेद रेखा" के धुंध वाले दिन के 11.0 s (पूरे video के 194.6–205.6 s)। बाएँ (नारंगी): git के पिछले version (2026-11-02) का code, जिसे अब 2026-11-05 के जंगल में चलाया गया। दाएँ (नीला): 2026-11-05 के version की उसी समय की recording। वही map, वही शुरुआती बिंदु। पिछला version जंगल की छाया में सफ़ेद रेखा खो देता है और सामने वाली lane पार करके सड़क से बाहर चला जाता है। fail होने वाला पक्ष क्या है, यह हर chapter में अलग है (यहाँ: git का पिछला version)। हर version का 1 run। पिछला version 100 m पर रुक गया, इसलिए तुलना की गई दूरियाँ अलग हैं, 100 m और 964 m। धुंध के बिना भी पिछला version उसी hairpin पर fail हुआ (धुंध अकेला कारण नहीं था)। दोनों versions में lane detection की 4 जगहों, driving script और अधिकतम गति (30 → 36 km/h) का अंतर है; किस बदलाव से फ़र्क पड़ा, यह अलग करके नहीं जाँचा गया। बाकी chapters की सीमाएँ (chapter 8 में 1 टक्कर; chapter 7 में setting उसी scene के लिए चुनी गई) video के description में हैं। इस chapter की driving script निजी है; इस्तेमाल हुए ops सार्वजनिक हैं। स्रोत: terrain GSI DEM5A (PDL1.0; बाएँ-दाएँ उलटा, सड़क और signs हमारे); CARLA (code MIT, assets CC-BY)। **Referee (map का ground truth, इसी video के लिए लिखा गया), धुंध वाला दिन: पिछला version lane से बाहर गया और 100 m पर रुक गया (lane से बाहर 440 frames, जिनमें बाहर जाने के बाद खड़े रहने का समय शामिल है। recording में 644 frames हैं और गाड़ी 243 frames में खड़ी थी), 0 टक्कर; 2026-11-05 का version 964 m चला, lane से बाहर 0 frames, 0 टक्कर।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/opsdrive.py) [YouTube](https://youtu.be/6J3chWv5yHg)
 
 **Robot की आँखें (perception Fullseye करता है)**
 

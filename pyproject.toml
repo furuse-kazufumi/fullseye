@@ -382,7 +382,10 @@ py-modules = [
               "data/gpu_auto_allow.json",
               # gpu_route が読む実測の台帳: 手書き経路の場面(領域の解析の族、tools/gen_gpu_routes.py)と
               # op 自身の device 引数の経路(native)。無いと前者は全部 single、後者は 1 件も選ばれない。
-              "data/GPU_ACCEL_USE.json", "data/GPU_NATIVE.json"]
+              "data/GPU_ACCEL_USE.json", "data/GPU_NATIVE.json",
+              # 採点(fullseye_score_pipeline)が断る「入力の中身に依存しない op」の一覧
+              # (tools/gen_mcp_input_independent.py が機械的に作る)
+              "data/MCP_INPUT_INDEPENDENT.json"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).

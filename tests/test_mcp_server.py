@@ -300,7 +300,7 @@ def test_every_declared_tool_has_a_body(cat):
              "fullseye_load_stack", "fullseye_apply", "fullseye_inspect",
              "fullseye_pipeline", "fullseye_fix_text",
              "fullseye_import_json", "fullseye_export_json", "fullseye_estimate_distortion",
-             "fullseye_write_viewer"]
+             "fullseye_write_viewer", "fullseye_make_task", "fullseye_score_pipeline"]
     assert set(order) == set(TOOLS), "tool を足したらこの表にも足すこと: %s" % (set(TOOLS) ^ set(order))
     ctx: dict = {}
     for n in order:
@@ -383,6 +383,11 @@ def test_every_declared_tool_has_a_body(cat):
                 {"id": "a", "label": t, "badge": "null", "text": t, "kind": "points",
                  "pos": [[0, 0, 0], [1, 0, 0], [0, 1, 1]], "val": [0.0, 0.5, 1.0],
                  "cbar": {"lo": 0, "hi": 1}}]}, "lang": ["ja", "en"]}
+        elif n == "fullseye_make_task":
+            a = {"kind": "blob_count", "seed": 0}
+        elif n == "fullseye_score_pipeline":
+            a = {"task_id": ctx["task_id"], "stages": [{"op": "gaussian"}, {"op": "tophat", "a": 0.9},
+                                                       {"op": "otsu"}, {"op": "count_obj"}]}
         else:
             a = {}
         res = call_tool(n, a, cat, store)
@@ -396,6 +401,10 @@ def test_every_declared_tool_has_a_body(cat):
             ctx["handle_out"] = sc["handle"]
         elif n == "fullseye_import_json":
             ctx["json_handle"] = sc["handle"]
+        elif n == "fullseye_make_task":
+            ctx["task_id"] = sc["task_id"]
+        elif n == "fullseye_score_pipeline":
+            assert sc["passed"] is True, sc
 
 
 # --------------------------------------------------------------------------- #

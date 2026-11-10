@@ -6,7 +6,7 @@ in: region
 out: region
 halcon: select_shape_std
 gpu: 鎖の中だけ(lbl_select_largest)
-examples: [gallery2d_region, poc_document_scan, poc_leaf_disease_area]
+examples: [gallery2d_region, mcp_task_score, poc_document_scan, poc_leaf_disease_area]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -68,6 +68,7 @@ select_largest 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
+- [mcp_task_score](../../../../examples/mcp_task_score.py) — `py -3.11 examples/mcp_task_score.py`
 - [poc_document_scan](../../../../examples/poc_document_scan.py) — `py -3.11 examples/poc_document_scan.py`
 - [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
 

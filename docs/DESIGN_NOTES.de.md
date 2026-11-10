@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1872. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1875. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -1754,21 +1754,24 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fullseye/mcp/server.py`
 
-- **L121** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): ハンドラは a.get("lang") を読むのに schema に無く、 additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
-- **L554** _(ja)_ — ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは FramingError(→ -32700)にしてループを続ける。
-- **L1101** _(ja)_ — ★2026-11-08: a/b を params の中に入れた形は、知らない引数として断るだけでは直し方が分からない
-- **L1131** _(ja)_ — ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、 pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
-- **L1204** _(ja)_ — ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の 台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。 印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
-- **L1315** _(ja)_ — ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、 値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
-- **L1561** _(ja)_ — ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、 extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。 全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
-- **L1733** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
-- **L1893** _(ja)_ — ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
-- **L2019** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal=" " が search_ops の ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
-- **L2044** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
-- **L2074** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
-- **L2174** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
-- **L2236** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
-- **L2283** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
+- **L122** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): ハンドラは a.get("lang") を読むのに schema に無く、 additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
+- **L461** _(ja)_ — ★2026-11-09: 真値付きの課題を作る道具と、組んだ処理を真値で採点する道具(full プロファイルだけ)。 「LLM が組む → 型の門 → 実行」の後ろに「真値で採点 → 合否 → 直させる」を足して輪を閉じる。 真値はサーバ側(fullseye/mcp/tasks.py の TaskStore)に task_id で持ち、返り値には載せない。
+- **L602** _(ja)_ — ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは FramingError(→ -32700)にしてループを続ける。
+- **L1149** _(ja)_ — ★2026-11-08: a/b を params の中に入れた形は、知らない引数として断るだけでは直し方が分からない
+- **L1179** _(ja)_ — ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、 pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
+- **L1252** _(ja)_ — ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の 台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。 印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
+- **L1363** _(ja)_ — ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、 値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
+- **L1609** _(ja)_ — ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、 extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。 全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
+- **L1781** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
+- **L1941** _(ja)_ — ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
+- **L2301** _(ja)_ — ★2026-11-10(独立レビュー第 4 巡): pass_fail / coarse では、双子で落ちたことを返り値で区別しない (reason は out_of_tolerance、形も許容外の不合格と同じ)。区別すると「本体には合っていた」ことが分かり、 本体と双子の探索を 2 回に分けられた(計数の 13/20 が 20 回以内に合格)。区別は監査記録にだけ残す。 coarse で見せる段階は、落ちた側(双子)の指標から作る。
+- **L2308** _(ja)_ — ★2026-11-10(独立レビュー第 2 巡 N2): 以前は stderr の score-audit 行に誤差を書いていた。MCP の クライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が pass_fail の 上限を迂回して誤差を読めた。
+- **L2372** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal=" " が search_ops の ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
+- **L2397** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
+- **L2427** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
+- **L2527** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
+- **L2593** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
+- **L2640** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
 
 ## `fullseye/opsearch.py`
 
@@ -2925,9 +2928,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L160** _(ja)_ — ★引数名を `name` にしていて `_call(4, "fullseye_op_help", name="gaussian")` が TypeError になり、**subprocess の実 stdio 往復が 1 度も走らないまま** 23 件が緑だった(2026-09-15)。走らなかった検査は無いのと同じ。
 - **L208** _(ja)_ — ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。 検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
-- **L427** _(ja)_ — ★以前の被験者は台帳経由で索引に入ったこと(= 索引が台帳を数えている)も見る
-- **L458** _(ja)_ — ★2026-09-17 に ``b`` は「未使用」から**端の扱いを選ぶつまみ**になった。 ノートがその意味と**歴史側の帯**を両方書いていることを固定する —— どちらか片方だけだと、保存済みプログラムを読む人が挙動を誤解する。
-- **L500** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+- **L436** _(ja)_ — ★以前の被験者は台帳経由で索引に入ったこと(= 索引が台帳を数えている)も見る
+- **L467** _(ja)_ — ★2026-09-17 に ``b`` は「未使用」から**端の扱いを選ぶつまみ**になった。 ノートがその意味と**歴史側の帯**を両方書いていることを固定する —— どちらか片方だけだと、保存済みプログラムを読む人が挙動を誤解する。
+- **L509** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
 
 ## `tests/test_mcp_wheel.py`
 
@@ -3516,10 +3519,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L109** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
 - **L117** — ★2026-10-15: ohne `--md` **schrieb es nichts** (es gab nur eine Zusammenfassung auf stdout aus). docs/CONVERSION_MATRIX.md blieb auf dem Stand vom 2026-09-02 ("59 Typen / 164 Konversionspaare") stehen, und da --check "eine Stufe, die nichts schreibt" nicht als Drift sieht, lief es sechs Wochen lang durch. Jetzt weist `trace_problems()` eine Stufe zurück, die ihre deklarierten Ausgaben nicht einmal berührt.
 - **L133** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
-- **L390** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
-- **L827** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L842** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L890** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
+- **L394** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
+- **L831** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L846** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L894** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `tools_geom.py`
 
