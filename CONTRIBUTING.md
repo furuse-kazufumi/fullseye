@@ -287,14 +287,21 @@ compared but never recorded. What is compared is the total skip count. Only when
 missing tools (cargo, node, Chrome) differs between the baseline and this run are the skips of the
 tools that differ taken out — from the baseline the skips of tools missing only there, from this
 run the skips of tools missing only here (estimated from the reason text) — so a run with cargo and
-a run without it share one baseline, while a run with the same tools is judged exactly as before
-(a skip whose reason merely mentions a tool, such as `node2vec`, still counts). The line is taken
+a run without it share one baseline. A run with the same tools is judged exactly as before: nothing
+is taken out, so every skip counts. When the tools differ, what is taken out per tool is the number
+of skips whose reason names the tool on the side without it minus the number on the side with it
+(never below zero), so reasons both sides share are not taken out; a tool's name is matched only as
+a whole word, so a name that merely continues it (`node2vec`, `chrome-trace`, `rust_ext`) is not
+taken for the tool. A reason that names the tool as a word (`Rust 拡張`) cannot be told apart from a
+real tool skip and is taken out while that tool differs. The line is taken
 from the compared baseline count. A record without skip reasons cannot have tool skips taken out;
 it is then compared by its total, and the summary says so. Skips that depend on apt packages cannot
 be told from their reason text and are not subtracted; when the missing apt packages (or tools)
 differ from the baseline, the summary says so, also on the line that reports a jump. The baseline is the smallest such count recorded so far: it
 only moves down, so a series of small increases cannot raise it step by step — they are caught once
-their sum crosses the line. When a run skips more than the baseline by over 10 % (and by over 20
+their sum crosses the line. Only a run whose missing tools are the same as the baseline's can lower
+it; a run whose tools differ leaves the baseline where it was, and the summary says so (its compared
+count is an estimate, and taking it in would hide a breakage from every later run with those tools). When a run skips more than the baseline by over 10 % (and by over 20
 tests) the summary says so near the top, lists the skip reasons that grew and names the record's
 location, and the last line gets a short notice; the baseline is left as it was. This is a notice,
 not a failure — the 95 % floor is the failure. A record written by the first version of the tool
@@ -310,7 +317,10 @@ it says so, and the baseline follows the usual rule (it can only move down). A f
 different-conditions run does not accept, and says so. A run whose summary cannot be made is a
 failed run too: whatever it had already written to the record (including an accepted baseline) is
 put back. An unreadable record is kept under another
-name (`skip_baseline.json.unreadable-<time>`) before it is replaced. `--accept-skips` does not
+name (`skip_baseline.json.unreadable-<time>`) before it is replaced; if the new record then cannot be
+written, the kept record is moved back, and the summary and the last line say that the record could
+not be written. Accepting a run whose missing tools differ from the baseline's makes that run's total
+count and its set of missing tools the new baseline (nothing taken out), and the summary says so. `--accept-skips` does not
 change what is checked, so it does not change the verdict; the summary always says that the
 baseline was accepted. The record is written to a temporary file and renamed into place, so an
 interrupted write leaves the previous record.

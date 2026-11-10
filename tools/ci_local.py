@@ -199,12 +199,14 @@ RUNNER_TOOLS = {
     "Chrome": ("google-chrome", "google-chrome-stable", "chromium", "chromium-browser", "chrome"),
 }
 #: skip の理由の文面から「その道具が無いための skip」を数えるための型。
-#: 前後が ASCII の英字でないことで区切る(``\b`` は日本語の文字も語の一部に数えるので「cargoが無い」を取りこぼす。
-#: 区切らないと robust・frustum が Rust に、monochrome が Chrome に当たる)。
+#: 前後が ASCII の英数字・``_``・``-`` でないことで区切る(``\b`` は日本語の文字も語の一部に数えるので
+#: 「cargoが無い」を取りこぼす。英字だけで区切ると robust・frustum が Rust に、monochrome が Chrome に当たり、
+#: 6 回目のレビュー F1 では ``node2vec``・``chrome-trace`` のような名前の続きにも当たった)。
+#: 2026-11-10 の実物の記録の理由に当たる件数は、締める前と同じ(cargo 98・node 9・Chrome 7 の計 114)。
 TOOL_SKIP_PATTERNS = {
-    "cargo": r"(?<![A-Za-z])(cargo|[Rr]ust|rustc)(?![A-Za-z])",
-    "node": r"(?<![A-Za-z])(node|Node\.js|npm)(?![A-Za-z])",
-    "Chrome": r"(?<![A-Za-z])(Chrome|Chromium|chrome|chromium)(?![A-Za-z])",
+    "cargo": r"(?<![A-Za-z0-9_\-])(cargo|[Rr]ust|rustc)(?![A-Za-z0-9_\-])",
+    "node": r"(?<![A-Za-z0-9_\-])(node|Node\.js|npm)(?![A-Za-z0-9_\-])",
+    "Chrome": r"(?<![A-Za-z0-9_\-])(Chrome|Chromium|chrome|chromium)(?![A-Za-z0-9_\-])",
 }
 BLAS_SKIP_PATTERN = r"needs a BLAS with"
 
@@ -375,6 +377,9 @@ def comparable_skips(prev: dict, now: dict) -> tuple[int, int, list[str]]:
 
     無い道具の組が同じなら、どちらも全体の件数(何も引かない = ceaa600d39 と同じ判定)。違うときだけ、
     基準でだけ無かった道具の skip を基準から、今回だけ無い道具の skip を今回から引く(理由の文面からの推定)。
+    引く量は道具ごとに「その道具が無い側で型に当たる件数 − ある側で型に当たる件数」(0 未満は 0。重なる理由が
+    あっても、無い側で型に当たる重複なしの件数を超えない)。6 回目のレビュー F1: 無い側で型に当たる件数を全部
+    引くと、ある側にもともとある同じ理由(``chrome-trace`` の 113 件)まで引かれて線が広がった。
     5 回目のレビュー E1: 両側から無い道具の skip を全部引くと、道具の名前を理由に含む skip(``node2vec`` が node に
     当たる・Rust 拡張)が何件増えても知らせなくなった。E7: 引くべき側に ``skip_reasons`` が無ければ引けないので
     全体で比べ、そう言う。apt に依る skip は理由の文面から数えられないので、どちらでも引かない。
@@ -389,12 +394,20 @@ def comparable_skips(prev: dict, now: dict) -> tuple[int, int, list[str]]:
             notes.append(f"{side}の記録に skip の理由が無いので、{side}だけ無い道具({'、'.join(only)})の skip を"
                          "引けなかった(全体の件数で比べた)")
             continue
-        n, _ = github_only_skips(rec.get("skip_reasons") or {}, only)
+        other = now if side == "基準" else prev
+        n_uniq, per = github_only_skips(rec.get("skip_reasons") or {}, only)
+        _, per_other = github_only_skips(other.get("skip_reasons") or {}, only)
+        n = min(n_uniq, sum(max(0, per[t] - per_other.get(t, 0)) for t in per))
         if side == "基準":
             before = max(0, before - n)
         else:
             after = max(0, after - n)
     return before, after, notes
+
+
+def tools_set_differs(prev: dict, now: dict) -> bool:
+    """手元に無い道具(cargo・node・Chrome)の組が、基準と今回で違うか。"""
+    return sorted(prev.get("tools_missing") or []) != sorted(now.get("tools_missing") or [])
 
 
 def skip_jump_allowed(before: int) -> int:
@@ -647,6 +660,8 @@ def skip_baseline_tail(info) -> list[str]:
         out.append("skip の基準を受け入れた(--accept-skips)")
     if info.get("state") == "unreadable":
         out.append("skip の記録を読めない(比べていない)")
+    if isinstance(info.get("write_failed"), str):
+        out.append("skip の記録を書けなかった(要約の先頭を見る)")
     return out
 
 
@@ -1696,20 +1711,26 @@ class Inner:
             return
         base = rec["base"]
         before, after = comparable_skips(base, now)[:2] if base is not None else (None, now["skipped"])
-        if base is None or after < before:
+        # 6 回目のレビュー F1: 組が違う run の「比べた件数」は理由の文面からの推定を引いた値なので、基準を
+        # 下げる根拠にしない(壊れた run の件数が基準に入り、以後その組の run では二度と知らせなくなった)
+        differ = base is not None and tools_set_differs(base, now)
+        if base is None or (after < before and not differ):
             new_base, how = now, ("最初の記録にした" if base is None else
                                   f"基準を {before:,} → {after:,} 件に下げた(比べた件数)")
         else:
             new_base = {k: val for k, val in base.items() if k != "legacy"}
             if base.get("legacy"):
                 new_base["from"] = "最初の版の形の記録から引き継いだ"
-            how = f"基準 {before:,} 件は動かさない(下がる向きにしか動かさない。比べた件数)"
+            how = (f"道具の組が基準と違うので、基準は動かしていない(基準 {base['skipped']:,} 件のまま。基準を下げられるのは"
+                   "無い道具の組が基準と同じ run だけ)" if differ else
+                   f"基準 {before:,} 件は動かさない(下がる向きにしか動かさない。比べた件数)")
         data = {"format": SKIP_BASELINE_FORMAT, "base": new_base,
                 "last": {k: now[k] for k in ("skipped", "tests", "sha", "when", "tools_missing", "apt_missing")},
                 "accepted": rec["accepted"]}
         failed = self.write_skip_baseline(data)
         if failed:
             self.remarks.append(f"skip の記録を書けなかった({failed})。")
+            (self.st.get("skip_baseline") or {})["write_failed"] = failed
             return
         self.remarks.append(f"skip の記録: 今回 {now['skipped']:,} 件。{how}。")
 
@@ -1742,15 +1763,31 @@ class Inner:
                 "accepted": [*rec["accepted"], entry]}
         failed = self.write_skip_baseline(data)
         if failed:
+            # 6 回目のレビュー F3: 別名へ移したままだと記録が「無い」状態で残り、次の run が人の判断なしに
+            # 「最初の記録」を書いた。移した記録を元の名前に戻す
+            restored = ""
+            if kept:
+                try:
+                    os.replace(self.state / kept, self.state / SKIP_BASELINE_FILE)
+                    self._skip_undo.remove(("move", kept))
+                    restored = "。別名へ移した読めない記録は、元の名前に戻した"
+                except OSError as exc:
+                    restored = (f"。別名へ移した読めない記録を戻せなかった({type(exc).__name__}。`{kept}` を "
+                                f"`{SKIP_BASELINE_FILE}` に戻す)")
             self.st["skip_notices"].append(
-                f"**skip の基準を受け入れられなかった**(--accept-skips): 記録を書けなかった({failed})。"
-                f"基準はそのまま(記録 `{where}`)")
-            self.remarks.append(f"skip の記録を書けなかった({failed})。")
+                f"**skip の基準を受け入れられなかった**(--accept-skips): skip の記録を書けなかった({failed})。"
+                f"基準はそのまま{restored}(記録 `{where}`)")
+            self.remarks.append(f"skip の記録を書けなかった({failed}){restored}。")
+            (self.st.get("skip_baseline") or {})["write_failed"] = failed
             return
         (self.st.get("skip_baseline") or {})["accepted"] = True
         was = "記録なし" if prev is None else f"{prev['skipped']:,} 件"
         compared = "" if prev is None or (before, after) == (prev["skipped"], now["skipped"]) else (
             f"。有無の違う道具の skip を引いて比べた件数では {before:,} → {after:,} 件")
+        if prev is not None and tools_set_differs(prev, now):
+            compared += (f"。道具の組が基準と違う(基準 {'、'.join(sorted(prev.get('tools_missing') or [])) or 'なし'} → 今回 "
+                         f"{'、'.join(sorted(now.get('tools_missing') or [])) or 'なし'})run を受け入れたので、新しい基準は"
+                         f"今回の全体 {now['skipped']:,} 件と今回の無い道具の組(引いていない件数)")
         self.st["skip_notices"].append(
             f"**skip の基準を受け入れた**(--accept-skips「{reason}」): skip の基準を {was} → {now['skipped']:,} 件にした"
             f"(記録に前の基準・理由・sha・日時を残した{compared}"
