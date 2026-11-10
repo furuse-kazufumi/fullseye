@@ -8,6 +8,8 @@
 
 Combiner simulation physique et traitement d'images avec l'IA, et vérifier le résultat par rapport à la vérité terrain.
 
+**Présentation : jeudi 3 décembre 2026, 14 h 40–15 h 50 JST, session interactive 2, IS2-19** (Pacifico Yokohama)
+
 Touchez une vignette pour ouvrir la vidéo ou la figure (▶ = animé).
 
 <style>

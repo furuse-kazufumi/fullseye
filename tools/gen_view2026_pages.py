@@ -420,7 +420,7 @@ def build(d: dict, lang: str) -> str:
         sw.append("**%s**" % name if l == lang else
                   "[%s](%s)" % (name, up + ("index.md" if l == "ja" else l + "/index.md")))
     out = ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
-           "# Fullseye — ViEW2026", "", ui["tagline"], "", ui["tap"], ""]
+           "# Fullseye — ViEW2026", "", ui["tagline"], "", ui["session"], "", ui["tap"], ""]
     if lang == "ja":
         out += ["[Fullseye とは(読み物)](about.md)", ""]
     elif lang == "en":

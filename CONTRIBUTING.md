@@ -307,3 +307,173 @@ leaves no gap) for 90 days. To find the culprit: the commits listed
 since the previous green run are the candidates; if there are several, bisect with
 `git bisect run py -3.11 -m pytest -q <failing node id>`. (Proposal, not enabled: open an Issue
 automatically from that job; it would need `issues: write`.)
+
+## Before you push: run the CI-equivalent checks locally (Linux / WSL2)
+
+`tools/ci_local.py` runs, on your own Linux (WSL2 on Windows), the checks that most often turn a
+push red: the `lint` job, `regen_all --check`, the gate tests, the `core-minimal` job and the
+Python 3.11 full suite. It reduces round trips; **it is not a replacement for GitHub CI**, and a
+local green is not a CI green (see "What it does not check").
+
+```
+py -3.11 tools/ci_local.py                 # Windows: HEAD merged with origin/master, in WSL2
+python3 tools/ci_local.py                  # Linux: the same, without WSL
+py -3.11 tools/ci_local.py --only core     # one stage (the summary then says "partial run")
+py -3.11 tools/ci_local.py --accept-skips "added 60 tests that skip without the dataset"
+```
+
+**What is tested.** By default the tool fetches `origin/master` and tests the *merge* of your
+commit with it — a GitHub pull request tests that merge commit, not your branch tip. The merge is
+made inside a separate clone on the Linux side (`--state-dir`, default `~/fullseye-ci-local`);
+nothing is written to your working tree. A conflict fails the run (merge master first).
+`--no-merge` tests the tip only. If master is already an ancestor of your commit the merge is the
+same tree as the tip; if your commit is an ancestor of master (or is master) the tip is tested as
+it is. The summary always names both commits. Uncommitted changes are not tested (the summary
+gives their count).
+
+**Stages**, in order, each stopping the run unless `--keep-going` (times: 24-CPU WSL2, `-n 12`):
+
+| stage | what | time |
+|---|---|---|
+| `lint` | `ruff check .` with the newest `ruff>=0.4`, then `tools/pip_audit_gate.py` (needs the network; `--no-pip-audit` skips it) | ~1 min |
+| `regen` | `tools/regen_all.py --check` | ~11 min |
+| `gates` | the files in `tools/ci_always_run.txt` if the tested tree has it, else the built-in copy (the summary says which) | ~1 min |
+| `core` | the `core-minimal` job in the same order, in a venv rebuilt every run | ~2 min |
+| `tests` | the whole suite with the `test` job's dependencies and environment, under pytest-xdist | ~20 min |
+
+The first run also builds the environment (several minutes), and a full venv older than
+`--refresh-hours` (24) is upgraded first.
+
+**Things the tool refuses to call green.** No stage selected (`--only X --skip X`) is exit code 2.
+With `--only`, `--skip`, `--no-pip-audit` or extra pytest arguments the title and the conclusion say
+"partial run (not the full suite)" and the stages that did not run stay in the table as "not run".
+A missing, broken or empty JUnit file fails its stage. Without extra pytest arguments the full
+suite must execute at least 95 % of the number of entries in `.test_durations` (skipped tests do
+not count as executed). The Python of each venv is read back and must be 3.11, unless you pass
+both `--python` and `--allow-other-python`.
+
+`--no-merge`, `--no-fetch`, a `--base` that is not `<remote>/<branch>` (so nothing is fetched) and
+`--allow-other-python` make the tested tree or the interpreter differ from what GitHub tests. The
+title and the conclusion then say "different conditions from GitHub's CI" instead of "all stages
+ok", name the difference, and say that the result is not evidence that GitHub's CI passes.
+
+A run in which a tool the runner has is missing on your machine (cargo, node, Chrome or one of the
+apt packages) is not called a full green either, even when all five stages pass: the conclusion
+reads "all stages ok — but N tests can only be confirmed on GitHub, because tools are missing here"
+and the verdict is `ok_missing_tools`. `--require-tools` instead fails such a run at the start
+(exit 1, verdict `failed`); pass it when you want either `full_ok` or a failure.
+
+**Exit code and verdict.** 0 means "everything that ran passed"; 1 a failure, 2 a usage error, 3 a
+busy state directory, 130 an interrupt (Ctrl-C). A partial run, a run under different conditions and a run with missing tools
+also exit 0 — the exit code keeps that meaning so that `--only lint` or an offline `--no-fetch` run
+is not mistaken for a failure. What the 0 means is in `verdict` in `result.json` (`full_ok`,
+`ok_missing_tools`, `partial_ok`, `deviating_ok`, `failed` or `busy`), and the tool prints it as its
+last line, e.g. `verdict: deviating_ok — GitHub と違う条件。緑の証拠にしない`. **If you chain the tool
+into `&& git push`, check the verdict in `result.json`, not just the exit code** — `ci_local && git
+push` pushes after a partial or a different-conditions run too. Only `full_ok` says "every stage,
+under GitHub's conditions". The last line is a verdict line even when the tool stops before the
+Linux side runs: a usage error — an unknown option, an option without its value, a value that is
+not one of the choices, or an argument the tool rejects — ends with `verdict: usage — …` (exit 2),
+and a missing `wsl.exe`, an exception or Ctrl-C with `verdict: failed — …` (the traceback, if any,
+comes before it). These two
+words exist only on the last line; `result.json` keeps its six verdicts. A skip notice (see below)
+is appended to the last line after the verdict, e.g. `verdict: full_ok — …。skip が基準より +21 件…`;
+the `verdict: <word> — ` prefix itself never changes.
+
+**Skips.** The state directory keeps a skip record (`skip_baseline.json`), written only by runs
+whose verdict is `full_ok` or `ok_missing_tools` — every stage passed, no extra pytest arguments,
+GitHub's conditions, the BLAS rerun included. Failed, partial and different-conditions runs are
+compared but never recorded. What is compared is the total skip count. Only when the set of
+missing tools (cargo, node, Chrome) differs between the baseline and this run are the skips of the
+tools that differ taken out — from the baseline the skips of tools missing only there, from this
+run the skips of tools missing only here (estimated from the reason text) — so a run with cargo and
+a run without it share one baseline. A run with the same tools is judged exactly as before: nothing
+is taken out, so every skip counts. When the tools differ, what is taken out per tool is the number
+of skips whose reason names the tool on the side without it minus the number on the side with it
+(never below zero), so reasons both sides share are not taken out; a tool's name is matched only as
+a whole word, so a name that merely continues it (`node2vec`, `chrome-trace`, `rust_ext`) is not
+taken for the tool. A reason that names the tool as a word (`Rust 拡張`) cannot be told apart from a
+real tool skip and is taken out while that tool differs. The line is taken
+from the compared baseline count. A record without skip reasons cannot have tool skips taken out;
+it is then compared by its total, and the summary says so. Skips that depend on apt packages cannot
+be told from their reason text and are not subtracted; when the missing apt packages (or tools)
+differ from the baseline, the summary says so, also on the line that reports a jump. The baseline is the smallest such count recorded so far: it
+only moves down, so a series of small increases cannot raise it step by step — they are caught once
+their sum crosses the line. A run whose missing tools are the same as the baseline's can lower it,
+and so can a run that only has more tools installed (its missing tools are a strict subset of the
+baseline's): nothing is taken out of such a run's count, so when its compared count is below the
+baseline's, its total count and its set of missing tools become the baseline, and the summary says
+the tools were installed. A run missing a tool the baseline had leaves the baseline where it was (its
+compared count is an estimate, and taking it in would hide a breakage from every later run with
+those tools); the summary says so and says how to make that run the baseline (`--accept-skips`). When a run skips more than the baseline by over 10 % (and by over 20
+tests) the summary says so near the top, lists the skip reasons that grew and names the record's
+location, and the last line gets a short notice; the baseline is left as it was. This is a notice,
+not a failure — the 95 % floor is the failure. A record written by the first version of the tool
+(no `format` field; it may come from a failed run) is read as the baseline and moved to the new
+form by the next recording run, by the same smallest-count rule. A record that cannot be read
+(empty, with a BOM, not JSON, another format version, or fields of the wrong type) is not compared
+and not overwritten; the summary says why and where the file is, and the run is not failed for it.
+If an increase is legitimate, run again with `--accept-skips "<reason>"` (the reason is required):
+if that run's verdict is one that may record and it jumped, found the record unreadable, or has
+other missing tools than the baseline, its count becomes the new baseline, and the record keeps a history entry (previous and new
+baseline, the compared counts, reason, commit, time). A run that did not jump and has the baseline's missing tools has nothing to accept:
+it says so, and the baseline follows the usual rule (it can only move down). A failed, partial or
+different-conditions run does not accept, and says so. A run whose summary cannot be made is a
+failed run too: whatever it had already written to the record (including an accepted baseline) is
+put back. An unreadable record is kept under another
+name (`skip_baseline.json.unreadable-<time>`) before it is replaced; if the new record then cannot be
+written, the kept record is moved back, and the summary and the last line say that the record could
+not be written. Accepting a run whose missing tools differ from the baseline's makes that run's total
+count and its set of missing tools the new baseline (nothing taken out), and the summary says so. `--accept-skips` does not
+change what is checked, so it does not change the verdict; the summary always says that the
+baseline was accepted. The record is written to a temporary file and renamed into place, so an
+interrupted write leaves the previous record.
+
+**One run per state directory.** The state directory is locked; a second run prints the owner
+(pid, start time, commit) and exits with code 3 at once. A directory without the tool's marker
+file is not cleaned, with one exception: a directory made by the first version of the tool (it
+holds the tool's venv stamp but no marker) is adopted, and only if its `repo/` is absent or is a
+git clone whose origin is the repository being tested and whose `pyproject.toml` names Fullseye.
+Anything else stops the run before `checkout -f` / `clean -fdx`. Pass `--state-dir` (a Linux path)
+for a second location. The environment
+variables `FULLSEYE_CI_LOCAL_DIR` and `FULLSEYE_CI_LOCAL_WORKERS` are read on the side you start
+the tool from and handed to the Linux side as arguments (a Windows variable does not reach WSL by
+itself).
+
+**Environment.** The tests get a fresh `HOME` and an environment built from scratch: no
+`PYTHONPATH`, no `FULLSEYE_*_DATA`, no `PYTEST_ADDOPTS`. Two things do come from your machine.
+The tool looks for cargo, node and Chrome on your `PATH` (and in `~/.cargo/bin`) and appends the
+directories where it finds them to the tests' `PATH` — everything else in those directories comes
+along. If `~/.cargo/bin/cargo` exists, `CARGO_HOME` and `RUSTUP_HOME` point at your own `~/.cargo`
+and `~/.rustup`. Otherwise the tool sets what the runner and `ci.yml` set. `CI=true` is deliberate — it is
+the value GitHub's runner really sets, and two examples branch on `CI == "1"`; setting `CI=1`
+locally would test a branch GitHub does not take.
+
+### What it does not check
+
+- Python 3.12 and 3.14 (run on master), 3.13 (weekly) and the 3.15 preview. Local is 3.11 only.
+- The per-shard view. CI splits the suite into 6 shards, each its own session; a gate whose answer
+  depends on the session (`test_test_durations_is_fresh`) can pass in one local session and fail in
+  one shard.
+- Serial order. A shard runs serially, the local run is parallel; order dependence is the nightly
+  `order-shuffle` job's business. Conversely a few tests fail only under local parallelism now and
+  then (known: `test_example_scripts_run[gallery2d_smoothing_rank.py]` and the planner test in
+  `test_op_facets_2026_10_28`) — rerun the file before believing them.
+- Tests that need tools the runner has and your machine may not: cargo, node, Chrome. The tool
+  probes them at start, lists the missing ones at the top of the summary, and counts from the JUnit
+  skip reasons how many tests only GitHub can confirm. `--require-tools` turns a missing tool into a
+  failure. The tool installs nothing into your system (`--install-apt` is the one opt-in).
+- The second, warning-only pip-audit of the CI's own tools; the coverage combine job (`--cov` only
+  measures); the `docs-only` job.
+- Dependency versions newer than your last venv refresh, and a master that moved after the fetch.
+- Lines *added* to `ci.yml`. The dependency lists in the tool are hand copies; a test checks that
+  each copy still appears in `ci.yml`, not the reverse.
+- Leftover processes of a killed run. The lock belongs to the tool's own process. If that process
+  is killed (`kill -9`, a closed terminal) while pytest is running, the lock is released but the
+  pytest children may live on, and the next run cleans the tree under them. After killing a run,
+  check that no pytest is left before starting the next one.
+
+BLAS threads are capped at `CPUs / workers` during the parallel run; the handful of tests that skip
+because of that cap are rerun serially without it afterwards. The summary reports how many ran, and
+the stage fails if the rerun fails or if any of them still did not run (still skipped, or missing
+from the rerun).
