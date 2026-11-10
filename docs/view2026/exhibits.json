@@ -2654,6 +2654,70 @@
     "matching.find_ncc_model",
     "carlabridge.carla_intrinsics"
    ]
+  },
+  {
+   "id": "driving_evolution",
+   "category": "driving",
+   "media": "",
+   "media_path": "view2026/media/driving_evolution_forest_shadow.mp4",
+   "thumb_path": "view2026/media/driving_evolution_forest_shadow.png",
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/opsdrive.py",
+   "provenance": "fullseye_shows(非公開)の長尺動画「自動運転の部品を、場面ごとに一つずつ足してきた」の本編 194.6〜205.6 s(第 9 章の霞の日)を 640×360・30 fps で切り出した抜粋と、その 1 コマ(本編 203.6 s)。数値は証拠の台帳 evidence/ch09_forest_shadow.json(referee_line と measured)・evidence/ch00_breakdown.json・evidence/film_chapters.json と、動画の概要欄・台本から",
+   "motion": true,
+   "label": {
+    "ja": "部品を足す前と後(運転の 9 章)",
+    "en": "Before and after each driving part (9 chapters)",
+    "zh": "加上部件之前与之后(驾驶的 9 章)",
+    "tw": "加上部件之前與之後(駕駛的 9 章)",
+    "ko": "부품을 더하기 전과 후(운전의 9 장)",
+    "de": "Vor und nach jedem Fahrbaustein (9 Kapitel)",
+    "hi": "हर driving part से पहले और बाद (9 chapters)",
+    "fr": "Avant et après chaque pièce de conduite (9 chapitres)"
+   },
+   "lead": {
+    "ja": "Fullseye の運転の部品(すべてルールベース)を、2026-09-28 から 2026-11-05 までにどの場面で足したかを、時代順の 9 章にまとめた長尺動画の抜粋。9 章のうち 7 章は、ある版が失敗する場面と、部品を足した版が越える場面を左右に並べる(第 1 章は出発点、第 8 章は到達点で、失敗と改良の対を作らない)。本編は YouTube の長尺動画。",
+    "en": "An excerpt from a long video that shows in 9 chapters, in date order, the scenes where Fullseye's driving parts (all rule-based) were added from 2026-09-28 to 2026-11-05. 7 of the 9 chapters put a version that fails a scene next to the version with the added part that gets through (chapter 1 is the starting point and chapter 8 the point reached, and neither is a failure-and-fix pair). The full video is on YouTube.",
+    "zh": "一段长视频的节选:按时间顺序分 9 章,记录从 2026-09-28 到 2026-11-05 在哪些场景里加上了 Fullseye 的驾驶部件(全部基于规则)。9 章中有 7 章把某个版本失败的场景与加上部件后通过的版本左右并排(第 1 章是出发点,第 8 章是到达点,不构成失败与改进的对照)。正片是 YouTube 上的长视频。",
+    "tw": "一段長影片的節選:依時間順序分 9 章,記錄從 2026-09-28 到 2026-11-05 在哪些場景裡加上了 Fullseye 的駕駛部件(全部以規則為基礎)。9 章中有 7 章把某個版本失敗的場景與加上部件後通過的版本左右並排(第 1 章是出發點,第 8 章是到達點,不構成失敗與改進的對照)。正片是 YouTube 上的長影片。",
+    "ko": "Fullseye의 운전 부품(모두 규칙 기반)을 2026-09-28부터 2026-11-05까지 어떤 장면에서 더했는지를 시간순 9 장으로 정리한 장편 영상의 발췌. 9 장 가운데 7 장은 어떤 판이 실패하는 장면과 부품을 더한 판이 넘어가는 장면을 좌우로 나란히 놓는다(제 1 장은 출발점, 제 8 장은 도달점이며, 실패와 개량의 짝을 만들지 않는다). 본편은 YouTube의 장편 영상이다.",
+    "de": "Ausschnitt aus einem langen Video, das in 9 Kapiteln in zeitlicher Reihenfolge zeigt, in welchen Szenen von 2026-09-28 bis 2026-11-05 die Fahrbausteine von Fullseye (alle regelbasiert) hinzukamen. 7 der 9 Kapitel stellen eine Version, die an einer Szene scheitert, neben die Version mit dem hinzugefügten Baustein, die sie bewältigt (Kapitel 1 ist der Ausgangspunkt, Kapitel 8 der erreichte Stand, und beide bilden kein Paar aus Scheitern und Verbesserung). Das ganze Video ist auf YouTube.",
+    "hi": "एक लंबे video का अंश, जो समय के क्रम में 9 chapters में दिखाता है कि 2026-09-28 से 2026-11-05 तक Fullseye के driving parts (सभी rule-based) किन scenes में जोड़े गए। 9 में से 7 chapters में एक version जो scene में fail होता है, और part जोड़ने के बाद का version जो उसे पार कर जाता है, अगल-बगल रखे हैं (chapter 1 शुरुआती बिंदु है और chapter 8 पहुँचा हुआ स्तर, और इन दोनों में fail और सुधार की जोड़ी नहीं बनाई गई)। पूरा video YouTube पर है।",
+    "fr": "Extrait d'une longue vidéo qui retrace en 9 chapitres, dans l'ordre chronologique, les scènes où les pièces de conduite de Fullseye (toutes à base de règles) ont été ajoutées du 2026-09-28 au 2026-11-05. 7 des 9 chapitres placent une version qui échoue sur une scène à côté de la version avec la pièce ajoutée qui la franchit (le chapitre 1 est le point de départ, le chapitre 8 le point atteint, et aucun des deux ne forme une paire échec-amélioration). La vidéo complète est sur YouTube."
+   },
+   "see": {
+    "ja": "第 9 章「森の影と白線」の霞の日の 11.0 秒(本編 194.6〜205.6 秒)。左(橙)は git の前の版(2026-11-02)のコードを今回 2026-11-05 の森で走らせた絵、右(青)は 2026-11-05 の版の当時の画面で、同じ地図・同じ出発点。前の版は森の影で白線を見失い、対向車線の外へ出る。失敗する側の正体は章ごとに違う(この章は git の前の版)。走行は各 1 回。前の版は 100 m で止まったので、比べた距離は 100 m と 964 m で違う。霞が無くても前の版は同じヘアピンで失敗した(原因は霞だけではない)。左右の版の差は車線認識の 4 か所と運転のスクリプトと上限速度(30 → 36 km/h)で、どれが効いたかは切り分けていない。ほかの章の限界(第 8 章の衝突 1 件、第 7 章は場面に合わせて選んだ設定)は動画の概要欄にある。この章の運転のスクリプトは非公開で、使った op は公開。 出典: 地形 国土地理院 DEM5A(PDL1.0。左右反転、道路と標識は自作)、CARLA(コード MIT・アセット CC-BY)。",
+    "en": "11.0 s of the hazy day in chapter 9, \"Forest shadows and lane paint\" (194.6–205.6 s of the full video). Left (orange): the code of the earlier git version (2026-11-02), run now in the forest of 2026-11-05. Right (blue): the screen recorded at the time with the 2026-11-05 version. Same map, same start. The earlier version loses the white line in the forest shadow and leaves the road across the oncoming lane. What the failing side is differs by chapter (here: an earlier git version). 1 run each. The earlier version stopped after 100 m, so the distances compared differ, 100 m and 964 m. Without haze the earlier version failed at the same hairpin too (haze was not the only cause). The two versions differ in 4 places of the lane detection, in the driving script and in the speed cap (30 → 36 km/h); which change mattered was not isolated. Limits of other chapters (1 collision in chapter 8; in chapter 7 the setting was chosen for that scene) are in the video description. The driving script of this chapter is private; the ops it uses are public. Sources: terrain GSI DEM5A (PDL1.0; mirrored, road and signs our own); CARLA (code MIT, assets CC-BY).",
+    "zh": "第 9 章「林影与白线」中雾天的 11.0 秒(正片 194.6〜205.6 秒)。左(橙)是把 git 的前一版(2026-11-02)的代码这次放到 2026-11-05 的森林里跑出的画面,右(蓝)是 2026-11-05 版当时录下的画面,同一张地图、同一个出发点。前一版在林影里丢失白线,越过对向车道驶出路外。失败一侧是什么,各章不同(本章是 git 的前一版)。每个版本各跑 1 次。前一版在 100 m 处停下,所以比较的距离不同,分别是 100 m 和 964 m。没有雾时前一版也在同一个发夹弯失败(原因不只是雾)。两个版本的差别是车道识别的 4 处、驾驶脚本和速度上限(30 → 36 km/h),没有区分是哪一处起了作用。其他章的局限(第 8 章碰撞 1 次,第 7 章的设定是按该场景挑选的)写在视频的说明栏里。本章的驾驶脚本不公开,所用的 op 公开。 出处: 地形 日本国土地理院 DEM5A(PDL1.0。左右镜像,道路与标志为自制),CARLA(代码 MIT、素材 CC-BY)。",
+    "tw": "第 9 章「林影與白線」中霧天的 11.0 秒(正片 194.6〜205.6 秒)。左(橙)是把 git 的前一版(2026-11-02)的程式碼這次放到 2026-11-05 的森林裡跑出的畫面,右(藍)是 2026-11-05 版當時錄下的畫面,同一張地圖、同一個出發點。前一版在林影裡丟失白線,越過對向車道駛出路外。失敗一側是什麼,各章不同(本章是 git 的前一版)。每個版本各跑 1 次。前一版在 100 m 處停下,所以比較的距離不同,分別是 100 m 和 964 m。沒有霧時前一版也在同一個髮夾彎失敗(原因不只是霧)。兩個版本的差別是車道辨識的 4 處、駕駛腳本和速度上限(30 → 36 km/h),沒有區分是哪一處起了作用。其他章的侷限(第 8 章碰撞 1 次,第 7 章的設定是依該場景挑選的)寫在影片的說明欄裡。本章的駕駛腳本不公開,所用的 op 公開。 出處: 地形 日本國土地理院 DEM5A(PDL1.0。左右鏡像,道路與標誌為自製),CARLA(程式碼 MIT、素材 CC-BY)。",
+    "ko": "제 9 장 \"숲의 그림자와 흰 선\"의 안개 낀 날 11.0 초(본편 194.6〜205.6 초). 왼쪽(주황)은 git의 이전 판(2026-11-02) 코드를 이번에 2026-11-05의 숲에서 달리게 한 그림, 오른쪽(파랑)은 2026-11-05 판의 당시 화면이며, 같은 지도·같은 출발점이다. 이전 판은 숲의 그림자에서 흰 선을 놓치고 반대 차로를 넘어 도로 밖으로 나간다. 실패하는 쪽의 정체는 장마다 다르다(이 장은 git의 이전 판). 주행은 각 1 회. 이전 판은 100 m에서 멈췄으므로, 비교한 거리는 100 m와 964 m로 서로 다르다. 안개가 없어도 이전 판은 같은 헤어핀에서 실패했다(원인은 안개만이 아니다). 두 판의 차이는 차로 인식의 4 곳과 운전 스크립트와 상한 속도(30 → 36 km/h)이며, 어느 것이 효과를 냈는지는 가려내지 않았다. 다른 장의 한계(제 8 장의 충돌 1 건, 제 7 장은 그 장면에 맞춰 고른 설정)는 영상의 설명란에 있다. 이 장의 운전 스크립트는 비공개이고, 사용한 op는 공개. 출처: 지형 일본 국토지리원 DEM5A(PDL1.0. 좌우 반전, 도로와 표지는 자작), CARLA(코드 MIT·에셋 CC-BY).",
+    "de": "11.0 s vom dunstigen Tag in Kapitel 9, \"Waldschatten und weiße Linie\" (194.6–205.6 s des ganzen Videos). Links (orange): der Code der früheren Git-Version (2026-11-02), jetzt im Wald von 2026-11-05 gefahren. Rechts (blau): die damalige Aufnahme der Version von 2026-11-05. Gleiche Karte, gleicher Startpunkt. Die frühere Version verliert im Waldschatten die weiße Linie und verlässt über die Gegenfahrbahn die Straße. Was die scheiternde Seite ist, unterscheidet sich je Kapitel (hier: eine frühere Git-Version). Je 1 Fahrt. Die frühere Version blieb nach 100 m stehen, daher sind die verglichenen Strecken verschieden, 100 m und 964 m. Auch ohne Dunst scheiterte die frühere Version an derselben Haarnadel (der Dunst war nicht die einzige Ursache). Die beiden Versionen unterscheiden sich an 4 Stellen der Spurerkennung, im Fahrskript und in der Höchstgeschwindigkeit (30 → 36 km/h); welche Änderung wirkte, wurde nicht getrennt untersucht. Grenzen anderer Kapitel (1 Kollision in Kapitel 8; in Kapitel 7 wurde die Einstellung für die Szene ausgewählt) stehen in der Videobeschreibung. Das Fahrskript dieses Kapitels ist nicht öffentlich; die verwendeten ops sind öffentlich. Quellen: Gelände GSI DEM5A (PDL1.0; gespiegelt, Straße und Schilder selbst gesetzt); CARLA (Code MIT, Assets CC-BY).",
+    "hi": "chapter 9 \"जंगल की छाया और सफ़ेद रेखा\" के धुंध वाले दिन के 11.0 s (पूरे video के 194.6–205.6 s)। बाएँ (नारंगी): git के पिछले version (2026-11-02) का code, जिसे अब 2026-11-05 के जंगल में चलाया गया। दाएँ (नीला): 2026-11-05 के version की उसी समय की recording। वही map, वही शुरुआती बिंदु। पिछला version जंगल की छाया में सफ़ेद रेखा खो देता है और सामने वाली lane पार करके सड़क से बाहर चला जाता है। fail होने वाला पक्ष क्या है, यह हर chapter में अलग है (यहाँ: git का पिछला version)। हर version का 1 run। पिछला version 100 m पर रुक गया, इसलिए तुलना की गई दूरियाँ अलग हैं, 100 m और 964 m। धुंध के बिना भी पिछला version उसी hairpin पर fail हुआ (धुंध अकेला कारण नहीं था)। दोनों versions में lane detection की 4 जगहों, driving script और अधिकतम गति (30 → 36 km/h) का अंतर है; किस बदलाव से फ़र्क पड़ा, यह अलग करके नहीं जाँचा गया। बाकी chapters की सीमाएँ (chapter 8 में 1 टक्कर; chapter 7 में setting उसी scene के लिए चुनी गई) video के description में हैं। इस chapter की driving script निजी है; इस्तेमाल हुए ops सार्वजनिक हैं। स्रोत: terrain GSI DEM5A (PDL1.0; बाएँ-दाएँ उलटा, सड़क और signs हमारे); CARLA (code MIT, assets CC-BY)।",
+    "fr": "11.0 s du jour de brume du chapitre 9, « Ombres de la forêt et ligne blanche » (194.6–205.6 s de la vidéo complète). À gauche (orange) : le code de la version git précédente (2026-11-02), exécuté aujourd'hui dans la forêt du 2026-11-05. À droite (bleu) : l'écran enregistré à l'époque avec la version du 2026-11-05. Même carte, même point de départ. La version précédente perd la ligne blanche dans l'ombre de la forêt et sort de la route en traversant la voie opposée. La nature du côté qui échoue varie selon le chapitre (ici : une version git précédente). 1 passage chacune. La version précédente s'est arrêtée au bout de 100 m, donc les distances comparées diffèrent, 100 m et 964 m. Sans brume, la version précédente a aussi échoué à la même épingle (la brume n'était pas la seule cause). Les deux versions diffèrent en 4 endroits de la détection de voie, par le script de conduite et par la vitesse maximale (30 → 36 km/h) ; l'effet de chaque changement n'a pas été isolé. Les limites des autres chapitres (1 collision au chapitre 8 ; au chapitre 7, le réglage a été choisi pour la scène) figurent dans la description de la vidéo. Le script de conduite de ce chapitre est privé ; les ops utilisés sont publics. Sources : relief GSI DEM5A (PDL1.0 ; inversé, route et panneaux de notre fait) ; CARLA (code MIT, assets CC-BY)."
+   },
+   "num": {
+    "ja": "審判(地図の真値、この動画のために書いた審判)、霞の日: 前の版は車線の外へ出て 100 m で止まった(車線外 440 コマ。出たあと止まっていた時間を含む。記録は 644 コマ、止まっていたのは 243 コマ)・衝突 0、2026-11-05 の版は 964 m で車線外 0 コマ・衝突 0。",
+    "en": "Referee (map ground truth, written for this video), hazy day: the earlier version left its lane and came to a stop after 100 m (440 frames out of lane, which includes the time it stood still after leaving. The record has 644 frames, and the car stood still in 243 of them), 0 collisions; the 2026-11-05 version drove 964 m with 0 frames out of lane and 0 collisions.",
+    "zh": "裁判(地图真值,为本视频编写),雾天:前一版驶出车道后在 100 m 处停下(驶出车道 440 帧,包含驶出后停着不动的时间。记录共 644 帧,其中停着不动 243 帧)、碰撞 0;2026-11-05 版行驶 964 m,驶出车道 0 帧、碰撞 0。",
+    "tw": "裁判(地圖真值,為本影片編寫),霧天:前一版駛出車道後在 100 m 處停下(駛出車道 440 幀,包含駛出後停著不動的時間。記錄共 644 幀,其中停著不動 243 幀)、碰撞 0;2026-11-05 版行駛 964 m,駛出車道 0 幀、碰撞 0。",
+    "ko": "심판(지도의 참값, 이 영상을 위해 쓴 심판), 안개 낀 날: 이전 판은 차로 밖으로 나간 뒤 100 m에서 멈췄다(차로 이탈 440 프레임. 나간 뒤 멈춰 있던 시간을 포함한다. 기록은 644 프레임, 멈춰 있던 것은 243 프레임)·충돌 0, 2026-11-05 판은 964 m에서 차로 이탈 0 프레임·충돌 0.",
+    "de": "Schiedsrichter (Kartenwahrheit, für dieses Video geschrieben), dunstiger Tag: die frühere Version verließ die Spur und blieb nach 100 m stehen (440 Bilder außerhalb der Spur, einschließlich der Zeit, in der sie danach stand. Die Aufzeichnung hat 644 Bilder, in 243 davon stand das Fahrzeug), 0 Kollisionen; Version von 2026-11-05 über 964 m mit 0 Bildern außerhalb der Spur und 0 Kollisionen.",
+    "hi": "Referee (map का ground truth, इसी video के लिए लिखा गया), धुंध वाला दिन: पिछला version lane से बाहर गया और 100 m पर रुक गया (lane से बाहर 440 frames, जिनमें बाहर जाने के बाद खड़े रहने का समय शामिल है। recording में 644 frames हैं और गाड़ी 243 frames में खड़ी थी), 0 टक्कर; 2026-11-05 का version 964 m चला, lane से बाहर 0 frames, 0 टक्कर।",
+    "fr": "Arbitre (vérité de la carte, écrit pour cette vidéo), jour de brume : la version précédente sort de sa voie et s'arrête au bout de 100 m (440 images hors voie, temps passé à l'arrêt après la sortie compris. L'enregistrement compte 644 images, dont 243 à l'arrêt), 0 collision ; la version du 2026-11-05 parcourt 964 m avec 0 image hors voie et 0 collision."
+   },
+   "youtube_url": "https://youtu.be/6J3chWv5yHg",
+   "ops": [
+    "driveenv.sight_stop_speed",
+    "driveenv.mor_from_beta",
+    "driveenv.road_row_distance",
+    "drivelateral.curve_speed_limit",
+    "drivelateral.pure_pursuit_curvature",
+    "drivettc.ttc_from_range",
+    "pcseg.remove_ground",
+    "pcseg.euclidean_clusters",
+    "matching.create_ncc_model",
+    "matching.find_ncc_model",
+    "carlabridge.carla_intrinsics"
+   ]
   }
  ],
  "featured_ids": [
@@ -2695,7 +2759,8 @@
   "poc_pegsim_insertion",
   "evis_bean_track",
   "evis_stereo_depth",
-  "carla_iroha_haze"
+  "carla_iroha_haze",
+  "driving_evolution"
  ],
  "series": [
   {

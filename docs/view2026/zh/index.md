@@ -96,6 +96,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="筷尖相机持续追踪豆子(模拟器)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>筷尖相机持续追踪豆子(模拟器)</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="用双眼立体测到豆子的距离(模拟器)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>用双眼立体测到豆子的距离(模拟器)</span></a>
 <a href="https://youtu.be/XN1mGAftSlY"><img src="../thumbs/carla_iroha_haze.jpg" alt="雾中的发夹弯(CARLA)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>雾中的发夹弯(CARLA)</span></a>
+<a href="https://youtu.be/6J3chWv5yHg"><img src="../thumbs/driving_evolution.jpg" alt="加上部件之前与之后(驾驶的 9 章)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>加上部件之前与之后(驾驶的 9 章)</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -763,6 +764,8 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [雾中的发夹弯(CARLA)](https://youtu.be/XN1mGAftSlY) (视频): 用 Fullseye 读取 CARLA 的模拟相机和 LiDAR,以规则决定转向和速度,在雾中的山路上爬坡。车速降到能在看得见白线的距离内停下。正片是 YouTube 上的长视频。
   在雾中爬发夹弯的 11.5 秒(正片 251.5〜263 秒)。由能看见白线的距离求出在其内能停下的速度,如画面「决定速度的理由: 视距」所示,目标速度取能停下的速度 22.8 km/h。 出处: 地形 日本国土地理院 DEM5A(PDL1.0。左右镜像,道路与标志为自制),CARLA(代码 MIT、素材 CC-BY)。 **正片(上坡 3.38 km):碰撞 0,偏离车道中心 中位数 0.066 m、最大 0.418 m,9 块标志读出 2 块、误读 0(以地图和 CARLA 评判)。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/driveenv.py) [YouTube](https://youtu.be/XN1mGAftSlY)
+- [加上部件之前与之后(驾驶的 9 章)](https://youtu.be/6J3chWv5yHg) (视频): 一段长视频的节选:按时间顺序分 9 章,记录从 2026-09-28 到 2026-11-05 在哪些场景里加上了 Fullseye 的驾驶部件(全部基于规则)。9 章中有 7 章把某个版本失败的场景与加上部件后通过的版本左右并排(第 1 章是出发点,第 8 章是到达点,不构成失败与改进的对照)。正片是 YouTube 上的长视频。
+  第 9 章「林影与白线」中雾天的 11.0 秒(正片 194.6〜205.6 秒)。左(橙)是把 git 的前一版(2026-11-02)的代码这次放到 2026-11-05 的森林里跑出的画面,右(蓝)是 2026-11-05 版当时录下的画面,同一张地图、同一个出发点。前一版在林影里丢失白线,越过对向车道驶出路外。失败一侧是什么,各章不同(本章是 git 的前一版)。每个版本各跑 1 次。前一版在 100 m 处停下,所以比较的距离不同,分别是 100 m 和 964 m。没有雾时前一版也在同一个发夹弯失败(原因不只是雾)。两个版本的差别是车道识别的 4 处、驾驶脚本和速度上限(30 → 36 km/h),没有区分是哪一处起了作用。其他章的局限(第 8 章碰撞 1 次,第 7 章的设定是按该场景挑选的)写在视频的说明栏里。本章的驾驶脚本不公开,所用的 op 公开。 出处: 地形 日本国土地理院 DEM5A(PDL1.0。左右镜像,道路与标志为自制),CARLA(代码 MIT、素材 CC-BY)。 **裁判(地图真值,为本视频编写),雾天:前一版驶出车道后在 100 m 处停下(驶出车道 440 帧,包含驶出后停着不动的时间。记录共 644 帧,其中停着不动 243 帧)、碰撞 0;2026-11-05 版行驶 964 m,驶出车道 0 帧、碰撞 0。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/opsdrive.py) [YouTube](https://youtu.be/6J3chWv5yHg)
 
 **机器人之眼(由 Fullseye 负责感知)**
 

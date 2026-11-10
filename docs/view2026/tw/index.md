@@ -96,6 +96,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="筷尖相機持續追蹤豆子(模擬器)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>筷尖相機持續追蹤豆子(模擬器)</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="以雙眼立體量測到豆子的距離(模擬器)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>以雙眼立體量測到豆子的距離(模擬器)</span></a>
 <a href="https://youtu.be/XN1mGAftSlY"><img src="../thumbs/carla_iroha_haze.jpg" alt="霧中的髮夾彎(CARLA)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>霧中的髮夾彎(CARLA)</span></a>
+<a href="https://youtu.be/6J3chWv5yHg"><img src="../thumbs/driving_evolution.jpg" alt="加上部件之前與之後(駕駛的 9 章)" loading="lazy" width="320" height="320"><b>&#9654;</b><span>加上部件之前與之後(駕駛的 9 章)</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -763,6 +764,8 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [霧中的髮夾彎(CARLA)](https://youtu.be/XN1mGAftSlY) (影片): 以 Fullseye 讀取 CARLA 的模擬相機與 LiDAR,以規則決定轉向與速度,在霧中的山路上爬坡。車速降到能在看得見白線的距離內停下。正片是 YouTube 上的長影片。
   在霧中爬髮夾彎的 11.5 秒(正片 251.5〜263 秒)。由能看見白線的距離求出在其內能停下的速度,如畫面「決定速度的理由: 視距」所示,目標速度取能停下的速度 22.8 km/h。 出處: 地形 日本國土地理院 DEM5A(PDL1.0。左右鏡像,道路與標誌為自製),CARLA(程式碼 MIT、素材 CC-BY)。 **正片(上坡 3.38 km):碰撞 0,偏離車道中心 中位數 0.066 m、最大 0.418 m,9 面標誌讀出 2 面、誤讀 0(以地圖與 CARLA 評判)。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/driveenv.py) [YouTube](https://youtu.be/XN1mGAftSlY)
+- [加上部件之前與之後(駕駛的 9 章)](https://youtu.be/6J3chWv5yHg) (影片): 一段長影片的節選:依時間順序分 9 章,記錄從 2026-09-28 到 2026-11-05 在哪些場景裡加上了 Fullseye 的駕駛部件(全部以規則為基礎)。9 章中有 7 章把某個版本失敗的場景與加上部件後通過的版本左右並排(第 1 章是出發點,第 8 章是到達點,不構成失敗與改進的對照)。正片是 YouTube 上的長影片。
+  第 9 章「林影與白線」中霧天的 11.0 秒(正片 194.6〜205.6 秒)。左(橙)是把 git 的前一版(2026-11-02)的程式碼這次放到 2026-11-05 的森林裡跑出的畫面,右(藍)是 2026-11-05 版當時錄下的畫面,同一張地圖、同一個出發點。前一版在林影裡丟失白線,越過對向車道駛出路外。失敗一側是什麼,各章不同(本章是 git 的前一版)。每個版本各跑 1 次。前一版在 100 m 處停下,所以比較的距離不同,分別是 100 m 和 964 m。沒有霧時前一版也在同一個髮夾彎失敗(原因不只是霧)。兩個版本的差別是車道辨識的 4 處、駕駛腳本和速度上限(30 → 36 km/h),沒有區分是哪一處起了作用。其他章的侷限(第 8 章碰撞 1 次,第 7 章的設定是依該場景挑選的)寫在影片的說明欄裡。本章的駕駛腳本不公開,所用的 op 公開。 出處: 地形 日本國土地理院 DEM5A(PDL1.0。左右鏡像,道路與標誌為自製),CARLA(程式碼 MIT、素材 CC-BY)。 **裁判(地圖真值,為本影片編寫),霧天:前一版駛出車道後在 100 m 處停下(駛出車道 440 幀,包含駛出後停著不動的時間。記錄共 644 幀,其中停著不動 243 幀)、碰撞 0;2026-11-05 版行駛 964 m,駛出車道 0 幀、碰撞 0。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/opsdrive.py) [YouTube](https://youtu.be/6J3chWv5yHg)
 
 **機器人之眼(由 Fullseye 負責感知)**
 
