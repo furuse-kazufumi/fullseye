@@ -369,8 +369,32 @@ def _excluded_scripts():
     return run, not_run
 
 
+def _named_in(ops, tests: str, tokens: set) -> list:
+    """*ops* のうち ``tests`` に ``\\b<op>\\b`` で現れるもの(順序は *ops* のまま)。
+
+    ★2026-11-10(CI の高速化): 以前は op ごとに 10 MB の試験ソースへ正規表現を掛けていて、
+    ``collect()`` 1 回が約 53 秒(その 98 % がこの検索、8,116 回)。``tests/test_validation_reports.py``
+    は ``collect()`` を 18 回呼ぶので、そのファイルだけで約 975 秒だった。
+    op 名が単語文字だけ(``\\w+``)なら、``\\b<op>\\b`` に当たるのは「``\\w+`` で切り出した語の
+    どれかが op 名と一致する」ときと**同じ**(前後が単語文字でない = その語そのもの)なので、
+    語の集合を 1 回作って引く。単語文字以外を含む名前だけ従来どおり正規表現で探す。
+    同じ答えになることは ``tests/test_maturity.py`` の門(コミット済みの台帳と生成結果の一致)と
+    ``tests/test_ci_speedup_equivalence_2026_11_10.py``(旧来の検索との突き合わせ)が見る。
+    """
+    out = []
+    for o in ops:
+        if re.fullmatch(r"\w+", o):
+            hit = o in tokens
+        else:
+            hit = re.search(r"\b%s\b" % re.escape(o), tests) is not None
+        if hit:
+            out.append(o)
+    return out
+
+
 def collect(registry_path: str = REGISTRY) -> dict:
     tests = _test_sources()
+    tokens = set(re.findall(r"\w+", tests))
     rows = []
     paths = sorted(glob.glob(os.path.join(SRC_DIR, "*.md")))
     cap_ids = {_front_matter(io.open(p, encoding="utf-8").read(), p)["id"] for p in paths}
@@ -382,7 +406,7 @@ def collect(registry_path: str = REGISTRY) -> dict:
         # ★これは**下界**。``tests/`` に op 名が literal で現れるかしか見ていないので、
         # 台帳を舐めて全 op を回す掃引型の試験(``for name in ledger: ...``)は数えない。
         # 「試験が無い」ではなく「**名指しの試験が無い**」と読むこと。
-        tested = [o for o in ops if re.search(r"\b%s\b" % re.escape(o), tests)]
+        tested = _named_in(ops, tests, tokens)
         examples = [_example_facts(e, real_runs) for e in meta["examples"]]
         rows.append({
             "id": meta["id"],

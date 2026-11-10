@@ -1,0 +1,16 @@
+# PR で**関係の判定にかかわらず必ず回す**門(tools/ci_select_tests.py が読む)。
+# repo 全体・台帳・生成物を見る門は、どのファイルの変更でも落ちうるので、依存では選ばない。
+tests/test_vacuous_assertions.py
+tests/test_type_alias_ledger.py
+tests/test_test_durations_is_fresh.py
+# ★2026-11-10(独立レビュー): repo 全体を走査する門。opsfileio.py にベンダ名と不正なエスケープを
+#   入れた改変で、依存の判定は 7 本中 6 本を選ばなかった(PR は緑・master で赤になる道)。
+#   ここに名指しで置き、加えて ci_select_tests.walks_repo が tests/ の走査を機械で見つけて足す
+#   (tests/test_ci_select_tests_2026_11_10.py が「走査するテストは必ず毎回回る」を確かめる)。
+tests/test_provenance_naming.py
+tests/test_no_invalid_escape_sequences.py
+tests/test_svd_full_matrices.py
+tests/test_fssystem.py
+tests/test_docs_liquid_safe.py
+tests/test_no_stray_root_images_2026_11_01.py
+tests/test_review_fixes_lib2_2026_10_07.py

@@ -7,6 +7,7 @@ value domain) plus correctness anchors and evolution-honesty invariants.
 from __future__ import annotations
 
 import contextlib
+import json
 import os
 import sys
 import warnings
@@ -496,3 +497,40 @@ def inputs_for(in_sort: str, op_name: str | None = None):
 def registry():
     import ops
     return ops
+
+
+# --------------------------------------------------------------------------- #
+# ★CI: PR では変更に関係するテストだけ / 片はファイル単位で分ける(2026-11-10)     #
+# --------------------------------------------------------------------------- #
+# どちらも環境変数があるときだけ働く(手元の `pytest` は何も変わらない)。
+#   FULLSEYE_CI_SELECTION=<一覧のファイル>  tools/ci_select_tests.py が書いた一覧に無いテストを外す
+#   FULLSEYE_CI_SHARD=k/N                  ファイル単位の LPT で N 片に分け、k 片目だけ残す
+# 選ぶ規則と、選ばなかったテストを master・毎日の full suite で回す約束は CONTRIBUTING.md の「CI: which tests run where」。
+# 一覧が読めない・1 件も当たらないときは**止める**(黙って 0 件で緑にしない)。
+@pytest.hookimpl(tryfirst=True)
+def pytest_collection_modifyitems(config, items):
+    selection = os.environ.get("FULLSEYE_CI_SELECTION", "")
+    shard = os.environ.get("FULLSEYE_CI_SHARD", "")
+    if not selection and not shard:
+        return
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "_fullseye_ci_select_tests", os.path.join(ROOT, "tools", "ci_select_tests.py"))
+    cst = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cst)
+    try:
+        info = cst.plan_session([it.nodeid for it in items], selection=selection or None,
+                                shard=shard or None)
+    except (OSError, ValueError) as e:
+        raise pytest.UsageError("fullseye CI selection/shard failed (fail-closed): %s" % e)
+    keep = set(info.pop("keep"))
+    kept = [it for it in items if it.nodeid in keep]
+    dropped = [it for it in items if it.nodeid not in keep]
+    items[:] = kept
+    if dropped:
+        config.hook.pytest_deselected(items=dropped)
+    unmatched = info.pop("unmatched", [])
+    print("\n[fullseye-ci] %s" % json.dumps(info, ensure_ascii=False))
+    if unmatched:
+        print("[fullseye-ci] %d selection entries matched no collected test (e.g. a script that "
+              "is not a parameter of its runner): %s" % (len(unmatched), unmatched[:20]))

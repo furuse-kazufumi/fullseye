@@ -8,18 +8,36 @@ name: CI
 on:
   push:
     branches: [master]
+  # ★labeled では起動しない(2026-11-10、独立レビュー 2 回目): ラベルを付けるたびに同じ commit に新しい run ができ、
+  #   ジョブを全部飛ばした run の check(skip は合格の表示)が、本物の run の失敗の上に重なって見えうる。
+  #   `ci:full` は run の開始時に API で読む(下の `label` step)。付けた後は「Re-run all jobs」か push で効く。
   pull_request:
-  # 順序シャッフル + 並列は毎回やると遅いので週次(月曜 03:00 UTC = 12:00 JST)。
+    types: [opened, synchronize, reopened]
   schedule:
+    # 順序シャッフル + 並列と 3.13 は毎回やると遅いので週次(月曜 03:00 UTC = 12:00 JST)。
     - cron: "0 3 * * 1"
+    # ★毎日の全数(2026-11-10): PR は変更に関係するテストだけを回すので、選ばなかったテストは
+    #   master への push とこの毎日の run が全部回す(18:00 UTC = 03:00 JST)。
+    - cron: "0 18 * * *"
   workflow_dispatch:
 
 # 同じ枝で新しい push が来たら、走っている古い run を打ち切る。
 # 2026-09-05: 連続で直して push した結果、35 分かかる全数スイートが 5 本同時に
 # 積み上がった。古い commit の結果はもう誰も見ないので、待ち時間と資源の無駄。
+# ★2026-11-10(独立レビュー): PR だけ打ち切る。master への push と schedule(全数)は**打ち切らない**
+#   —— PR が選ばなかったテストはそこでしか走らないので、途中で捨てると原因の commit の範囲に穴が空く。
+#   schedule・手動は run ごとに別の group(run_id)にして、互いに打ち切らない・待たせない。
+# ★2026-11-10(独立レビュー 2 回目): master への push は 1 つの group にまとめる(打ち切りはしない)。
+#   run ごとの group だと、マージが続いたとき 3 版 × 6 片 = 18 ジョブの run が本数ぶん積み上がり、PR が待たされる。
+#   同じ group で cancel-in-progress が偽なら、走っている run は最後まで走り、待ちは最新の 1 本だけが残る。
+#   置き換えられた待ちの run の commit は、残った最新の run が引き受ける。
+# ★2026-11-10(独立レビュー 3 回目): 引き受けるのは「範囲」を**テストが実際に走った最後の run** から取るから
+#   (`changes` の classify と `failure-record` の prev。artifact `ci-result-<sha>` のある run)。
+#   直前の push(github.event.before)から取ると、コードの push の待ちを docs だけの push が置き換えたとき、
+#   その run は docs だけと判定して全部飛ばし、置き換えられたコードは全数を通らない。取れなければ全部回す。
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.event_name == 'pull_request' && format('ci-{0}-{1}', github.workflow, github.ref) || github.event_name == 'push' && format('ci-{0}-push-{1}', github.workflow, github.ref) || format('ci-{0}-run-{1}', github.workflow, github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 # GITHUB_TOKEN は読むだけ(2026-10-24 に明示)。どのジョブも書き込みを要らない
 # (artifact の上げ下ろしは GITHUB_TOKEN の権限を使わない)。要るジョブが出たらそのジョブだけで上書きする。
@@ -30,8 +48,18 @@ jobs:
   changes:
     name: classify changes
     runs-on: ubuntu-latest
+    # actions: read = 最後の全数の run の artifact(pip freeze)を読むため(依存の版の比較)。
+    # pull-requests: read = PR の今のラベル(`ci:full`)を API で読むため。
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
     outputs:
       docs-only: ${{ steps.classify.outputs.docs-only }}
+      # full | selected(PR で変更に関係するテストだけ。tools/ci_select_tests.py)
+      mode: ${{ steps.select.outputs.mode }}
+      shards: ${{ steps.select.outputs.shards }}
+      nshards: ${{ steps.select.outputs.nshards }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
@@ -41,12 +69,34 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
           BASE_REF: ${{ github.base_ref }}
-          BEFORE: ${{ github.event.before }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
         run: |
           if [[ "$EVENT_NAME" == pull_request ]]; then
             range="origin/$BASE_REF...HEAD"
-          elif [[ "$EVENT_NAME" == push && "$BEFORE" != 0000000000000000000000000000000000000000 ]]; then
-            range="$BEFORE..HEAD"
+          elif [[ "$EVENT_NAME" == push ]]; then
+            # `test` が実際に走った最後の run = artifact `ci-result-<その run の sha>` を上げた run(failure-record は
+            # test が skip・打ち切りのとき走らない)。docs だけの run・途中で止まった run・待ちのまま置き換えられた run は数えない。
+            base=""
+            if runs=$(gh run list --workflow CI --branch master --status completed --limit 50 \
+                      --json databaseId,event,headSha \
+                      --jq '.[] | select(.event=="push" or .event=="schedule") | "\(.databaseId) \(.headSha)"'); then
+              while read -r id sha; do
+                [[ -n "$id" && -n "$sha" && "$id" != "$RUN_ID" ]] || continue
+                if names=$(gh api "repos/$REPO/actions/runs/$id/artifacts?name=ci-result-$sha" --jq '.artifacts[].name') \
+                   && grep -qxF "ci-result-$sha" <<<"$names"; then
+                  base="$sha"; break
+                fi
+              done <<<"$runs"
+            fi
+            if [[ -n "$base" ]] && git cat-file -e "$base^{commit}" 2>/dev/null && git merge-base --is-ancestor "$base" HEAD; then
+              range="$base..HEAD"
+            else
+              echo "docs-only=false" >> "$GITHUB_OUTPUT"
+              echo "## CI selection: full suite (no earlier run that ran the tests was found)" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
           else
             echo "docs-only=false" >> "$GITHUB_OUTPUT"
             echo "## CI selection: full suite (scheduled/manual run)" >> "$GITHUB_STEP_SUMMARY"
@@ -68,6 +118,105 @@ jobs:
             echo "## CI selection: full suite" >> "$GITHUB_STEP_SUMMARY"
           fi
           printf '%s\n' "${changed[@]}" | sed 's/^/- `/' | sed 's/$/`/' >> "$GITHUB_STEP_SUMMARY"
+      # ★`ci:full` は event の payload ではなく、API で今の値を読む(2026-11-10)。payload は run を作った時点の
+      #   写しで、「Re-run all jobs」でも変わらない —— 後から付けたラベルを拾えるのは API だけ。
+      #   読めなければ full(迷ったら全部)。
+      - id: label
+        name: Read the ci:full label (live; unreadable = full suite)
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          if names=$(gh api "repos/$REPO/pulls/$PR" --jq '.labels[].name'); then
+            if grep -qxF 'ci:full' <<<"$names"; then
+              echo "full=true" >> "$GITHUB_OUTPUT"
+              echo "reason=label ci:full" >> "$GITHUB_OUTPUT"
+            else
+              echo "full=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "full=true" >> "$GITHUB_OUTPUT"
+            echo "reason=the PR labels could not be read" >> "$GITHUB_OUTPUT"
+          fi
+      # ★PR では変更に関係するテストだけを回す(2026-11-10)。判定は import の依存グラフ +
+      #   文字列のパス参照(tools/ci_select_tests.py、標準ライブラリだけで動くので runner の python3 で走らせる)。
+      #   迷ったら全部: 中核・CI の設定・依存の定義・対応の分からないファイルを触ったら full、
+      #   判定の故障も full。repo 全体を見る門(tools/ci_always_run.txt)は毎回回す。
+      #   master への push・毎日の schedule・手動・`ci:full` ラベルの PR は判定せず full。
+      # ★依存の版の比較(2026-11-10): diff と無関係な失敗(#271 = 同じ日に出た threadpoolctl 3.8.0)は
+      #   変更から辿れない。テストのジョブと同じ要求を dry-run で解決し(何も入れない)、最後の全数の run が
+      #   実際に入れた版(artifact pip-freeze-py3.11)と 1 つでも違えば full にする。取れなければ full。
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        if: github.event_name == 'pull_request' && steps.label.outputs.full == 'false'
+        with:
+          python-version: "3.11"
+      - name: pip と証明書を更新(eMudhra / emSign の中間 CA 失効 = pip>=26.2.2・certifi>=2026.10.19)
+        run: python -m pip install --upgrade "pip>=26.2.2" "certifi>=2026.10.19"
+        if: github.event_name == 'pull_request' && steps.label.outputs.full == 'false'
+      - name: Dependency versions vs the last full run (PR only)
+        if: github.event_name == 'pull_request' && steps.label.outputs.full == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          mkdir -p deps-baseline
+          rid=$(gh run list --workflow CI --branch master --status completed --limit 30 \
+                --json databaseId,event --jq '[.[] | select(.event=="push" or .event=="schedule")] | .[].databaseId' \
+                | while read -r id; do
+                    if gh run download "$id" -n pip-freeze-py3.11 -D deps-baseline >/dev/null 2>&1; then echo "$id"; break; fi
+                  done)
+          echo "baseline run: ${rid:-none}"
+          python tools/ci_deps_drift.py --resolve deps-resolved > deps-resolve.log 2>&1
+          rc=$?
+          if [[ $rc -ne 0 ]]; then
+            echo 2 > deps-drift.code
+            { echo "resolve failed:"; tail -5 deps-resolve.log; } > deps-drift.txt
+          else
+            python tools/ci_deps_drift.py --compare deps-baseline deps-resolved > deps-drift.txt 2>&1
+            echo $? > deps-drift.code
+          fi
+          echo "deps-drift code=$(cat deps-drift.code)"; cat deps-drift.txt
+      - id: select
+        name: Select tests (PR only; master / nightly / ci:full run everything)
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          FULL_LABEL: ${{ steps.label.outputs.full }}
+          FULL_REASON: ${{ steps.label.outputs.reason }}
+        run: |
+          if [[ "$EVENT_NAME" != pull_request ]]; then
+            python3 tools/ci_select_tests.py --full "$EVENT_NAME run" \
+              --github-output "$GITHUB_OUTPUT" --summary "$GITHUB_STEP_SUMMARY"
+          elif [[ "$FULL_LABEL" != false ]]; then
+            # ★「false」と読めたときだけ判定へ進む。空(label step が出力しなかった)も full。
+            python3 tools/ci_select_tests.py --full "${FULL_REASON:-the ci:full label state is unknown}" \
+              --github-output "$GITHUB_OUTPUT" --summary "$GITHUB_STEP_SUMMARY"
+          elif git diff --name-only "origin/$BASE_REF...HEAD" | grep -qE '^(tools/ci_select_tests\.py|tools/ci_always_run\.txt|tools/ci_deps_drift\.py|tests/conftest\.py|\.github/)'; then
+            # ★判定の道具・CI の設定を PR で書き換えたら全数。判断は PR の版の道具に任せない(自己参照)。
+            python3 tools/ci_select_tests.py --full "the CI selection tooling itself changed" \
+              --github-output "$GITHUB_OUTPUT" --summary "$GITHUB_STEP_SUMMARY"
+          elif ! git cat-file -e "origin/$BASE_REF:tools/ci_select_tests.py" 2>/dev/null; then
+            python3 tools/ci_select_tests.py --full "the base branch has no selector yet" \
+              --github-output "$GITHUB_OUTPUT" --summary "$GITHUB_STEP_SUMMARY"
+          else
+            # ★規則は base の版で決める(PR が道具を触っていないことは上で確かめた。木は PR のもの)。
+            git show "origin/$BASE_REF:tools/ci_select_tests.py" > tools/_ci_select_tests_base.py
+            git show "origin/$BASE_REF:tools/ci_always_run.txt" > tools/_ci_always_run_base.txt
+            python3 tools/_ci_select_tests_base.py --base "origin/$BASE_REF" \
+              --always-file tools/_ci_always_run_base.txt \
+              --deps-drift deps-drift.code deps-drift.txt \
+              --tests-file ci_selected_tests.txt \
+              --github-output "$GITHUB_OUTPUT" --summary "$GITHUB_STEP_SUMMARY"
+          fi
+          [[ -f ci_selected_tests.txt ]] || echo "# full suite" > ci_selected_tests.txt
+      - name: Keep the selection for the test shards
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: ci-selection
+          path: ci_selected_tests.txt
+          if-no-files-found: error
 
   docs-only:
     name: documentation checks
@@ -247,12 +396,162 @@ jobs:
           pip install "pip-audit==2.10.1" "build==1.6.1"
           python tools/pip_audit_gate.py tools
 
+  # ★2026-11-10: 落ちやすくて軽いテストを、片と**並行して**先に回す(早く赤を出す)。
+  #   門も普通のテストも同じ片に混ぜていたので、門が落ちても片が終わる 30〜45 分後まで赤にならなかった。
+  #   何を先に回すかは**道具が決める**(tools/ci_select_tests.py --early-list): 門(tools/ci_always_run.txt +
+  #   repo を走査するテスト)と、直近の失敗した run の実績(tools/ci_failure_history.json)で 2 本以上の
+  #   ブランチで落ちたファイルを、落ちた run の数の順に、記録時間の合計 8 分まで。一覧をここへ手で写さない。
+  #   ★片の側は何も減らさない: ここで回すテストは片でも必ず回る(二重に回る分がこのジョブの費用)。
+  #   ★鮮度の門(test_test_durations_is_fresh)は pytest に渡さない: 判定が session に集まった件数で決まるので、
+  #     数百件だけ集めて回すと別の問いになる。片と同じ session を作って門の本体を呼ぶ(--freshness-forecast)。
+  #   ★`needs` に test を足さないこと(足すと片が終わるまで始まらず、このジョブの意味が無くなる)。
+  #   準備(apt・pip・optional backend)は test の py3.11 と同じ(tests/test_ci_select_tests_2026_11_10.py が比べる)。
+  gates:
+    name: gates first (fail-prone and light tests, py3.11)
+    needs: changes
+    if: needs.changes.outputs.docs-only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      QT_QPA_PLATFORM: offscreen
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: pip と証明書を更新(eMudhra / emSign の中間 CA 失効 = pip>=26.2.2・certifi>=2026.10.19)
+        run: python -m pip install --upgrade "pip>=26.2.2" "certifi>=2026.10.19"
+      - name: Qt offscreen system libraries
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3
+          # CJK フォント。素の ubuntu-latest には**日本語を描けるフォントが 1 つも無い**。
+          # 2026-09-05 実測: `fc-list :lang=ja` が空で DejaVuSans しか無く、annotate の
+          # 日本語ラベルが全部同じ豆腐(.notdef)になっていた —— それでもテストは緑だった。
+          # これを入れるだけで test_annotate.py の Linux 失敗 10 件が 0 件になる(実測)。
+          # ★CJK を **2 本**入れる。1 本だと「同じ字を別の書体で描いたときの
+          #   距離」= 判定の床が測れず、glyph 系の PoC が丸ごと skip して
+          #   落ちた(2026-09-17、run 35170653847)。ipafont は軽い。
+          sudo apt-get install -y -q fonts-noto-cjk fonts-ipafont-gothic
+      - name: Install with optional backends (no torch)
+        # matplotlib: one research-spike test imports it at collection time.
+        # sympy/ziglang: the algo-difftest suite proves emitted C against exact
+        # Python; gltf/lidar/pcd extras: small pure-python readers with real
+        # format tests. torch/mujoco stay out (their tests skip honestly).
+        run: >
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
+          pytest pytest-cov pytest-split matplotlib sympy ziglang hypothesis pytest-timeout
+      - name: Optional backends (py3.11 only — 不変条件を実際に走らせる)
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.13"
+          pip install "kornia>=0.9" "mahotas>=1.4"
+          pip uninstall -y opencv-python
+          pip install "opencv-contrib-python>=4.8.1.78"
+          python -c "import torch, kornia, mahotas, cv2; print(torch.__version__, cv2.__version__); assert hasattr(cv2, 'xfeatures2d')"
+      - name: The test selection (PR only)
+        if: needs.changes.outputs.mode == 'selected'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: ci-selection
+          path: ci-selection
+      - name: List the early tests (tools/ci_select_tests.py --early-list)
+        run: python tools/ci_select_tests.py --early-list ci_early_tests.txt --summary "$GITHUB_STEP_SUMMARY"
+      - name: Run the early tests
+        id: early
+        env:
+          FULLSEYE_REQUIRE_OPTIONAL: "1"
+        run: |
+          mapfile -t files < <(sed -e '/^$/d' ci_early_tests.txt)
+          [[ ${#files[@]} -gt 0 ]] || { echo "empty early list"; exit 1; }
+          pytest -ra -q --durations=15 "${files[@]}"
+      - name: Freshness forecast (test_test_durations_is_fresh on the session its shard will see)
+        if: ${{ !cancelled() && (steps.early.conclusion == 'success' || steps.early.conclusion == 'failure') }}
+        env:
+          FULLSEYE_REQUIRE_OPTIONAL: "1"
+          MODE: ${{ needs.changes.outputs.mode }}
+          NSHARDS: ${{ needs.changes.outputs.nshards }}
+        run: |
+          files=()
+          selection=()
+          if [[ "$MODE" == selected ]]; then
+            mapfile -t files < <(grep -v '^#' ci-selection/ci_selected_tests.txt | sed -e 's/::.*$//' -e '/^$/d' | sort -u)
+            [[ ${#files[@]} -gt 0 ]] || { echo "empty selection"; exit 1; }
+            selection=(--selection ci-selection/ci_selected_tests.txt)
+          fi
+          pytest --collect-only -q "${files[@]}" > ci_collected.txt || { tail -n 60 ci_collected.txt; exit 1; }
+          tail -n 1 ci_collected.txt
+          python tools/ci_select_tests.py --freshness-forecast ci_collected.txt --nshards "$NSHARDS" "${selection[@]}"
+
+  # 生成物の回し忘れ(regen_all --check)。
+  # これまで**人が手で `--check` を回すかどうか**にかかっていた —— つまり門はあっても経路が通っていなかった。
+  # 実測でも `docs/EXAMPLES_3D.md` が `ops3d = 347 op` のまま古びていた(実際は 357)。
+  # 全部作り直したあと作業ツリーがきれいであること、を CI で問う。
+  # ★2026-11-10: py3.11 の片 1 の**最後の step** から、片と並行する独立のジョブへ移した。片 1 の pytest が
+  #   落ちると走らず(always() が無かった)、通っても 13〜20 分(green の 5 run で 761〜1,196 秒)が片 1 の
+  #   後ろに付いていた。直近の失敗した 60 run のうち 7 run でこれが食い違いを見つけている。
+  #   条件は test と同じ: docs だけの変更以外は、PR・master への push・毎日・週次・手動の全部で走る。
+  #   gates と同じ木で同時には回さない(regen は木を書き換える。木を読む門と並べない)。別の runner なら互いに見えない。
+  regen:
+    name: generated files are up to date (regen_all --check)
+    needs: changes
+    if: needs.changes.outputs.docs-only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      QT_QPA_PLATFORM: offscreen
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: pip と証明書を更新(eMudhra / emSign の中間 CA 失効 = pip>=26.2.2・certifi>=2026.10.19)
+        run: python -m pip install --upgrade "pip>=26.2.2" "certifi>=2026.10.19"
+      - name: Qt offscreen system libraries
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3
+          # CJK フォント。素の ubuntu-latest には**日本語を描けるフォントが 1 つも無い**。
+          # 2026-09-05 実測: `fc-list :lang=ja` が空で DejaVuSans しか無く、annotate の
+          # 日本語ラベルが全部同じ豆腐(.notdef)になっていた —— それでもテストは緑だった。
+          # これを入れるだけで test_annotate.py の Linux 失敗 10 件が 0 件になる(実測)。
+          # ★CJK を **2 本**入れる。1 本だと「同じ字を別の書体で描いたときの
+          #   距離」= 判定の床が測れず、glyph 系の PoC が丸ごと skip して
+          #   落ちた(2026-09-17、run 35170653847)。ipafont は軽い。
+          sudo apt-get install -y -q fonts-noto-cjk fonts-ipafont-gothic
+      - name: Install with optional backends (no torch)
+        # matplotlib: one research-spike test imports it at collection time.
+        # sympy/ziglang: the algo-difftest suite proves emitted C against exact
+        # Python; gltf/lidar/pcd extras: small pure-python readers with real
+        # format tests. torch/mujoco stay out (their tests skip honestly).
+        run: >
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
+          pytest pytest-cov pytest-split matplotlib sympy ziglang hypothesis pytest-timeout
+      - name: Optional backends (py3.11 only — 不変条件を実際に走らせる)
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.13"
+          pip install "kornia>=0.9" "mahotas>=1.4"
+          pip uninstall -y opencv-python
+          pip install "opencv-contrib-python>=4.8.1.78"
+          python -c "import torch, kornia, mahotas, cv2; print(torch.__version__, cv2.__version__); assert hasattr(cv2, 'xfeatures2d')"
+      - name: 生成物の回し忘れ (regen_all --check)
+        run: python tools/regen_all.py --check
+
   test:
     # ★6 分割(2026-10-21): 4 片の実測が 24:54〜55:33 と偏ったため、履歴を使って6片に均す。
     #   各片の実測は artifact に残し、duration-baseline ジョブで次回用の1ファイルへ統合する。
     #   片の中は従来どおり直列(並列化ではない。並列の順序依存は nightly の order-shuffle が担当)。
     #   `.test_durations`(repo 直下、任意)があれば実測時間で均し、無ければ件数で割る。
-    name: full suite (py${{ matrix.python-version }}, shard ${{ matrix.shard }}/6)
+    # ★2026-11-10: 片は**ファイル単位**で分ける(tests/conftest.py + tools/ci_select_tests.py)。
+    #   pytest-split の least_duration はテストごとに散らすので、module fixture の重い準備
+    #   (台帳の探針・ページの生成)が片の数だけ作り直されていた。PR で選んだテストが少なければ
+    #   片の数も減らす(1 片 15 分を目安、上限 6。changes ジョブが決める)。
+    name: ${{ needs.changes.outputs.mode == 'selected' && 'selected tests' || 'full suite' }} (py${{ matrix.python-version }}, shard ${{ matrix.shard }}/${{ needs.changes.outputs.nshards }})
     needs: changes
     if: needs.changes.outputs.docs-only != 'true'
     runs-on: ubuntu-latest
@@ -267,8 +566,9 @@ jobs:
         #   手動 dispatch のフルマトリクスで拾う(coverage は元から py3.11 だけ)。
         # 2026-10-24: 3.10 を外して 3.14 に入れ替えた(push・手動は 3 版 × 6 片 = 18 ジョブのまま)。
         #   3.13 は schedule(週次)だけで足す —— 3.12 と 3.14 に挟まれていて、毎回払うほどの差は出にくい。
-        python-version: ${{ fromJSON(github.event_name == 'pull_request' && '["3.11"]' || github.event_name == 'schedule' && '["3.11", "3.12", "3.13", "3.14"]' || '["3.11", "3.12", "3.14"]') }}
-        shard: [1, 2, 3, 4, 5, 6]
+        #   毎日の schedule は master への push と同じ 3 版、週次(月曜)だけ 3.13 を足す。
+        python-version: ${{ fromJSON(github.event_name == 'pull_request' && '["3.11"]' || github.event.schedule == '0 3 * * 1' && '["3.11", "3.12", "3.13", "3.14"]' || '["3.11", "3.12", "3.14"]') }}
+        shard: ${{ fromJSON(needs.changes.outputs.shards) }}
     env:
       QT_QPA_PLATFORM: offscreen
       PYTHONUTF8: "1"
@@ -307,6 +607,10 @@ jobs:
         run: >
           pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
           pytest pytest-cov pytest-split matplotlib sympy ziglang hypothesis pytest-timeout
+      # 依存の版の基準(PR の changes ジョブが比べる。tools/ci_deps_drift.py)。master と毎日の全数だけ。
+      - name: Record the installed versions (main)
+        if: github.event_name != 'pull_request' && matrix.python-version == '3.11' && matrix.shard == 1
+        run: mkdir -p pip-freeze && python tools/ci_deps_drift.py --freeze pip-freeze/freeze-main.txt
       # ★py3.11 **だけ** optional backend を実際に入れる。
       #
       # 2026-09-05 まで、この workflow の注記には「torch/kornia は入れない
@@ -331,13 +635,36 @@ jobs:
           pip uninstall -y opencv-python
           pip install "opencv-contrib-python>=4.8.1.78"
           python -c "import torch, kornia, mahotas, cv2; print(torch.__version__, cv2.__version__); assert hasattr(cv2, 'xfeatures2d')"
-      - name: Run tests with coverage (shard ${{ matrix.shard }}/6)
+      - name: Record the installed versions (with the optional backends)
+        if: github.event_name != 'pull_request' && matrix.python-version == '3.11' && matrix.shard == 1
+        run: python tools/ci_deps_drift.py --freeze pip-freeze/freeze-full.txt
+      - name: Upload the installed versions (baseline for PR dependency checks)
+        if: github.event_name != 'pull_request' && matrix.python-version == '3.11' && matrix.shard == 1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: pip-freeze-py3.11
+          path: pip-freeze/
+          retention-days: 30
+          if-no-files-found: error
+      - name: The test selection (PR only)
+        if: needs.changes.outputs.mode == 'selected'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: ci-selection
+          path: ci-selection
+      - name: Run tests with coverage (shard ${{ matrix.shard }}/${{ needs.changes.outputs.nshards }})
         env:
           # py3.11 は全 backend を持っている前提。`requires_backend` の skip は
           # 「不変条件が実行されなかった」ことなので、ここでは**失敗**にする。
           FULLSEYE_REQUIRE_OPTIONAL: ${{ matrix.python-version == '3.11' && '1' || '0' }}
           # 片ごとの coverage データ。結合ジョブが `coverage combine` で 1 つにする。
           COVERAGE_FILE: .coverage.shard${{ matrix.shard }}
+          # 片分け(ファイル単位)と、PR で選んだテストの一覧(tests/conftest.py が読む)。
+          FULLSEYE_CI_SHARD: ${{ matrix.shard }}/${{ needs.changes.outputs.nshards }}
+          FULLSEYE_CI_SELECTION: ${{ needs.changes.outputs.mode == 'selected' && 'ci-selection/ci_selected_tests.txt' || '' }}
+          PYV: ${{ matrix.python-version }}
+          SHARD: ${{ matrix.shard }}
+          MODE: ${{ needs.changes.outputs.mode }}
         # `-ra` = 合格以外を全部要約に出す。`-rs`(skip だけ)だと**どのテストが
         # 失敗したのか要約に出ず**、生ログを掘る羽目になる(2026-09-05 に実際に踏んだ)。
         # ★2026-10-07: --cov は py3.11 だけ。ほかの版の coverage データはアップロードせず捨てていた
@@ -350,11 +677,21 @@ jobs:
         # py3.12 shard 4 stopped twice after its last quiet progress line.  Keep
         # each node id visible there, and use Linux's signal timeout so a C call
         # holding the GIL cannot also prevent pytest-timeout from firing.
-        run: >
-          pytest ${{ matrix.python-version == '3.12' && matrix.shard == 4 && '-v --timeout-method=signal' || '-q' }}
-          -ra ${{ matrix.python-version == '3.11' && '--cov' || '' }}
-          --splits 6 --group ${{ matrix.shard }} --splitting-algorithm least_duration
-          --durations-path .test_durations --store-durations
+        # ★2026-11-10: 片分けは pytest-split の --splits ではなく FULLSEYE_CI_SHARD(ファイル単位)。
+        #   pytest-split は --store-durations(実測の記録)にだけ使う。coverage は全数のときだけ測る
+        #   (選んだテストだけの coverage は結合しても意味が無い)。junit は失敗の記録(failure-record)へ渡す。
+        #   選んだときは**選んだファイルだけを集める**(全 27,000 件の収集は片あたり約 4 分、run 42594122086)。
+        #   ノード id(台本の門のパラメータ)は conftest が一覧から絞るので、引数にはそのファイルを渡す。
+        run: |
+          args=(-ra "--junitxml=junit-py$PYV-shard$SHARD.xml" --durations-path .test_durations --store-durations)
+          if [[ "$PYV" == 3.12 && "$SHARD" == 4 ]]; then args+=(-v --timeout-method=signal); else args+=(-q); fi
+          if [[ "$PYV" == 3.11 && "$MODE" == full ]]; then args+=(--cov); fi
+          if [[ "$MODE" == selected ]]; then
+            mapfile -t files < <(grep -v '^#' "$FULLSEYE_CI_SELECTION" | sed -e 's/::.*$//' -e '/^$/d' | sort -u)
+            [[ ${#files[@]} -gt 0 ]] || { echo "empty selection"; exit 1; }
+            args+=("${files[@]}")
+          fi
+          pytest "${args[@]}"
       - name: Name this shard's duration data
         if: always()
         run: cp .test_durations ".test_durations-py${{ matrix.python-version }}-shard${{ matrix.shard }}"
@@ -366,21 +703,22 @@ jobs:
           path: .test_durations-py${{ matrix.python-version }}-shard${{ matrix.shard }}
           include-hidden-files: true
           if-no-files-found: error
+      - name: Upload JUnit (失敗の記録へ)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: junit-py${{ matrix.python-version }}-shard${{ matrix.shard }}
+          path: junit-py${{ matrix.python-version }}-shard${{ matrix.shard }}.xml
+          if-no-files-found: ignore
       - name: Upload coverage data (py3.11, this shard)
-        if: matrix.python-version == '3.11'
+        if: matrix.python-version == '3.11' && needs.changes.outputs.mode == 'full'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: coverage-data-shard${{ matrix.shard }}
           path: .coverage.shard${{ matrix.shard }}
           include-hidden-files: true
           if-no-files-found: error
-      # 生成物の回し忘れは、これまで**人が手で `--check` を回すかどうか**に
-      # かかっていた —— つまり門はあっても経路が通っていなかった。実測でも
-      # `docs/EXAMPLES_3D.md` が `ops3d = 347 op` のまま古びていた(実際は 357)。
-      # 全部作り直したあと作業ツリーがきれいであること、を CI で問う。
-      - name: 生成物の回し忘れ (regen_all --check)
-        if: matrix.python-version == '3.11' && matrix.shard == 1
-        run: python tools/regen_all.py --check
+      # 生成物の回し忘れ(regen_all --check)は、2026-11-10 に独立のジョブ `regen` へ移した(片 1 の最後から)。
 
   duration-baseline:
     name: merge test durations
@@ -411,8 +749,8 @@ jobs:
   coverage:
     name: coverage (combine 6 shards)
     runs-on: ubuntu-latest
-    needs: test
-    if: always() && needs.test.result != 'skipped' && needs.test.result != 'cancelled'
+    needs: [changes, test]
+    if: always() && needs.changes.outputs.mode == 'full' && needs.test.result != 'skipped' && needs.test.result != 'cancelled'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
@@ -450,7 +788,7 @@ jobs:
   # ここで払う**。週次 + 手動。落ちても本流は止めない(調査は人がやる)。
   order-shuffle:
     name: order shuffle + parallel (nightly)
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event.schedule == '0 3 * * 1' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     continue-on-error: true
     env:
@@ -512,7 +850,7 @@ jobs:
   order-shuffle-ran:
     name: order shuffle actually ran tests (nightly)
     needs: order-shuffle
-    if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    if: always() && (github.event.schedule == '0 3 * * 1' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -523,3 +861,73 @@ jobs:
           path: junit
       - name: 走った件数の床(ファイルが無い・0 件・床未満は赤)
         run: python3 tools/ci_junit_floor.py junit/shuffle-serial.xml junit/shuffle-parallel.xml --min-executed 10000
+
+  # ★master と毎日の全数で落ちたとき、どの commit が持ち込んだかを追えるようにする(2026-11-10)。
+  # PR は変更に関係するテストだけを回すので、選ばれなかったテストの失敗は master か毎日の run で
+  # 初めて出る。各片の JUnit から「落ちたテスト × この run の commit 範囲」を 1 つの JSON にして
+  # 90 日残す(tools/ci_failure_record.py)。前の緑の run との間の commit を要約に並べる。
+  failure-record:
+    name: record full-suite failures (master / nightly)
+    permissions:
+      contents: read
+      actions: read
+    # ★regen・gates の結果も読む(2026-11-10、独立レビュー 3 回目): 片と別のジョブにしたので、そこだけが落ちた run は
+    #   test_result が success のまま記録に残っていた。走る条件(test が走ったこと)は変えない。
+    needs: [changes, test, regen, gates]
+    if: always() && github.event_name != 'pull_request' && needs.test.result != 'skipped' && needs.test.result != 'cancelled'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        continue-on-error: true
+        with:
+          pattern: junit-*
+          path: junit
+          merge-multiple: true
+      # ★commit の範囲は「前に**テストが実際に走った**全数の run の commit」から(2026-11-10、独立レビュー 1・3 回目)。
+      #   github.event.before は直前の push だけを指すので、途中で止まった run の commit が範囲から抜ける。
+      #   結論(success / failure)で選ぶと、docs だけの run(全部 skip で success)も数えてしまう。
+      #   `changes` の classify と同じ条件(artifact `ci-result-<sha>` のある run)で選ぶ。
+      - name: The previous run that ran the tests
+        id: prev
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          # `test` が実際に走った最後の run = artifact `ci-result-<その run の sha>` を上げた run(failure-record は
+          # test が skip・打ち切りのとき走らない)。docs だけの run・途中で止まった run・待ちのまま置き換えられた run は数えない。
+          base=""
+          if runs=$(gh run list --workflow CI --branch master --status completed --limit 50 \
+                    --json databaseId,event,headSha \
+                    --jq '.[] | select(.event=="push" or .event=="schedule") | "\(.databaseId) \(.headSha)"'); then
+            while read -r id sha; do
+              [[ -n "$id" && -n "$sha" && "$id" != "$RUN_ID" ]] || continue
+              if names=$(gh api "repos/$REPO/actions/runs/$id/artifacts?name=ci-result-$sha" --jq '.artifacts[].name') \
+                 && grep -qxF "ci-result-$sha" <<<"$names"; then
+                base="$sha"; break
+              fi
+            done <<<"$runs"
+          fi
+          echo "sha=${base}" >> "$GITHUB_OUTPUT"
+          echo "previous run that ran the tests: ${base:-none}"
+      - name: Failed tests and the commit range
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE: ${{ steps.prev.outputs.sha || github.event.before }}
+          RUN_ID: ${{ github.run_id }}
+          TEST_RESULT: ${{ needs.test.result }}
+          REGEN_RESULT: ${{ needs.regen.result }}
+          GATES_RESULT: ${{ needs.gates.result }}
+        run: >
+          python3 tools/ci_failure_record.py junit
+          --sha "$GITHUB_SHA" --before "$BEFORE" --event "$EVENT_NAME" --run-id "$RUN_ID"
+          --test-result "$TEST_RESULT" --regen-result "$REGEN_RESULT" --gates-result "$GATES_RESULT"
+          -o ci_result.json --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: ci-result-${{ github.sha }}
+          path: ci_result.json
+          retention-days: 90

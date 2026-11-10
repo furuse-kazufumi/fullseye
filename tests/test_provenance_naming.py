@@ -149,10 +149,13 @@ def _contains_vendor(text: str, vendor: str) -> bool:
     具体的な綴りは下の自己検査に実データとして置く(ここに実名を書くと、この
     docstring 自身が規律違反になる —— 実際 2026-09-15 にそれで落ちた)。
     """
-    target = re.sub(r"[^a-z0-9]", "", vendor.lower())
+    return _contains_target(_tokens(text), re.sub(r"[^a-z0-9]", "", vendor.lower()))
+
+
+def _contains_target(toks: list[str], target: str) -> bool:
+    """``_contains_vendor`` の本体(トークン列を受け取る。``_hits`` が 1 回の分割を使い回す)。"""
     if not target:
         return False
-    toks = _tokens(text)
     for i in range(len(toks)):
         joined = ""
         for j in range(i, len(toks)):
@@ -165,8 +168,39 @@ def _contains_vendor(text: str, vendor: str) -> bool:
 
 
 def _hits(text: str, relpath: str):
+    # ★2026-11-10(CI の高速化): 以前は禁止語 33 語のそれぞれで text を分割し直していた。
+    #   分割は語に依らないので 1 回にする(判定は ``_contains_vendor`` と同じ ``_contains_target``)。
+    toks = _tokens(text)
     return [w for w in _BANNED
-            if _contains_vendor(text, w) and not _allowed(w, relpath)]
+            if _contains_target(toks, re.sub(r"[^a-z0-9]", "", w.lower())) and not _allowed(w, relpath)]
+
+
+#: ★2026-11-10(CI の高速化): 下の 3 つの門は、同じ .py 全部を**それぞれ** ast.parse していた
+#: (合計約 190 秒、CI)。1 回の走査で 3 つの門が見る物(関数・クラス名、モジュール docstring、
+#: 関数・クラスの docstring)を抜き出して控える。見る範囲(``_py_files``)と抜き出し方
+#: (``ast.walk`` / ``ast.get_docstring``)は以前と同じ。AST そのものは控えない(メモリ)。
+_FACTS_CACHE: dict = {}
+
+
+def _source_facts():
+    """[(rel, [(lineno, 名前)], モジュール docstring, [(lineno, 名前, docstring)])]。"""
+    if ROOT not in _FACTS_CACHE:
+        out = []
+        for rel in _py_files():
+            try:
+                tree = ast.parse(open(os.path.join(ROOT, rel), encoding="utf-8").read())
+            except (SyntaxError, UnicodeDecodeError):
+                continue
+            names, docs = [], []
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                    names.append((node.lineno, node.name))
+                    doc = ast.get_docstring(node)
+                    if doc:
+                        docs.append((node.lineno, node.name, doc))
+            out.append((rel, names, ast.get_docstring(tree), docs))
+        _FACTS_CACHE[ROOT] = out
+    return _FACTS_CACHE[ROOT]
 
 
 # --------------------------------------------------------------------------- #
@@ -180,15 +214,12 @@ def test_no_vendor_name_in_module_filenames():
 def test_no_vendor_name_in_public_function_or_class_names():
     """op 名・公開関数名・クラス名。private (`_` 始まり) も同じ扱いにする。"""
     bad = []
-    for rel in _py_files():
-        try:
-            tree = ast.parse(open(os.path.join(ROOT, rel), encoding="utf-8").read())
-        except (SyntaxError, UnicodeDecodeError):
-            continue
-        for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                for w in _hits(node.name, rel):
-                    bad.append(f"{rel}:{node.lineno} {node.name} ({w})")
+    facts = _source_facts()
+    assert facts, "走査結果が空(門が何も見ていない)"
+    for rel, names, _mdoc, _docs in facts:
+        for lineno, name in names:
+            for w in _hits(name, rel):
+                bad.append(f"{rel}:{lineno} {name} ({w})")
     assert not bad, "関数/クラス名にベンダ名:\n" + "\n".join(bad)
 
 
@@ -198,12 +229,9 @@ def test_no_vendor_name_as_a_module_motivation():
     2026-09-01 に実際に混入したのはこの位置である(新モジュールの 5 行目)。
     """
     bad = []
-    for rel in _py_files():
-        try:
-            tree = ast.parse(open(os.path.join(ROOT, rel), encoding="utf-8").read())
-        except (SyntaxError, UnicodeDecodeError):
-            continue
-        doc = ast.get_docstring(tree)
+    facts = _source_facts()
+    assert facts, "走査結果が空(門が何も見ていない)"
+    for rel, _names, doc, _docs in facts:
         if not doc:
             continue
         for w in _hits(doc, rel):
@@ -216,17 +244,12 @@ def test_no_vendor_name_as_a_module_motivation():
 def test_no_vendor_name_in_public_docstrings():
     """関数・クラスの docstring も利用者に配られる面なので同じ規律。"""
     bad = []
-    for rel in _py_files():
-        try:
-            tree = ast.parse(open(os.path.join(ROOT, rel), encoding="utf-8").read())
-        except (SyntaxError, UnicodeDecodeError):
-            continue
-        for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                doc = ast.get_docstring(node)
-                if doc:
-                    for w in _hits(doc, rel):
-                        bad.append(f"{rel}:{node.lineno} {node.name}: {w}")
+    facts = _source_facts()
+    assert facts, "走査結果が空(門が何も見ていない)"
+    for rel, _names, _mdoc, docs in facts:
+        for lineno, name, doc in docs:
+            for w in _hits(doc, rel):
+                bad.append(f"{rel}:{lineno} {name}: {w}")
     assert not bad, "docstring にベンダ名:\n" + "\n".join(bad)
 
 

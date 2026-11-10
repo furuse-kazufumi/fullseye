@@ -1,0 +1,277 @@
+{
+ "schema": 1,
+ "source": "gh run list --workflow CI --status failure / gh run view <id> --log-failed (tools/ci_failure_history.py)",
+ "counted_jobs": [
+  "full suite",
+  "selected tests"
+ ],
+ "runs_read": 60,
+ "runs_with_test_failures": 57,
+ "runs_with_regen_drift": 7,
+ "window": [
+  "2026-11-01T00:49:12Z",
+  "2026-11-09T23:38:16Z"
+ ],
+ "files": {
+  "tests/test_vacuous_assertions.py": {
+   "failed_runs": 10,
+   "branches": 8
+  },
+  "tests/test_poc_scripts_run.py": {
+   "failed_runs": 6,
+   "branches": 5
+  },
+  "tests/test_public_reachability.py": {
+   "failed_runs": 6,
+   "branches": 6
+  },
+  "tests/test_test_durations_is_fresh.py": {
+   "failed_runs": 6,
+   "branches": 4
+  },
+  "tests/test_wingpoc_gallery.py": {
+   "failed_runs": 6,
+   "branches": 5
+  },
+  "tests/test_design_notes.py": {
+   "failed_runs": 5,
+   "branches": 5
+  },
+  "tests/test_example_scripts_run.py": {
+   "failed_runs": 4,
+   "branches": 3
+  },
+  "tests/test_regen_all.py": {
+   "failed_runs": 4,
+   "branches": 3
+  },
+  "tests/test_anim3d_i18n_photoelastic_2026_10_27.py": {
+   "failed_runs": 3,
+   "branches": 3
+  },
+  "tests/test_op_facets_2026_10_28.py": {
+   "failed_runs": 3,
+   "branches": 2
+  },
+  "tests/test_anim3d_i18n_dissolution_2026_10_27.py": {
+   "failed_runs": 2,
+   "branches": 1
+  },
+  "tests/test_audit_nan_inputs.py": {
+   "failed_runs": 2,
+   "branches": 2
+  },
+  "tests/test_chain_mine.py": {
+   "failed_runs": 2,
+   "branches": 2
+  },
+  "tests/test_device_default.py": {
+   "failed_runs": 2,
+   "branches": 1
+  },
+  "tests/test_examples2d.py": {
+   "failed_runs": 2,
+   "branches": 1
+  },
+  "tests/test_ledger_contracts.py": {
+   "failed_runs": 2,
+   "branches": 2
+  },
+  "tests/test_macro_ops.py": {
+   "failed_runs": 2,
+   "branches": 1
+  },
+  "tests/test_mcp_images.py": {
+   "failed_runs": 2,
+   "branches": 2
+  },
+  "tests/test_mcp_task_score_2026_11_09.py": {
+   "failed_runs": 2,
+   "branches": 1
+  },
+  "tests/test_mutation_probe.py": {
+   "failed_runs": 2,
+   "branches": 2
+  },
+  "tests/test_no_local_paths_in_shipped_code.py": {
+   "failed_runs": 2,
+   "branches": 2
+  },
+  "tests/test_pipeline_engine.py": {
+   "failed_runs": 2,
+   "branches": 1
+  },
+  "tests/test_studio_run_worker_shutdown_2026_10_21.py": {
+   "failed_runs": 2,
+   "branches": 2
+  },
+  "tests/test_anim3d_i18n_2026_10_25.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_anim3d_i18n_lens_aberrations_2026_10_25.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_aoi.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_audit_file_formats.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_barcode1d.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_device_rules.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_docs_index_numbers.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_example_figures.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_exhibit_glossary.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_explain_pipeline.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_fallback_policy.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_gen_poc_viewer.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_gpu_auto_sweep.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_gpu_fill3.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_h16_fault_injection_2026_10_22.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_halcon_partial_analogues_2026_11_03.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_hidden_function_defects_2026_10_02.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_impl_differential.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_ledger_entry_points_2026_11_03.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_mcp_agent_usability.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_op_card_calls_execute_2026_11_03.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_op_contracts.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_op_example_coverage.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_op_knob_liveness.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_opdocs.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_opdocs_gpu_route.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_opsearch.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_perf_polyfit_oct_radiosity_2026_10_20.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_ppf.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_rag_by_ops.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_rag_recall_airag.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_redteam2_state_2026_11_05.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_redteam_geometry_2026_11_05.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_release_0_2_1_gates_2026_09_20.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_reprconv.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_reprconv_type_connectivity_2026_11_03.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_review_fixes_lib2_2026_10_07.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_rotation_invariance.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_scale.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_svd_full_matrices.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_type_alias_ledger.py": {
+   "failed_runs": 1,
+   "branches": 1
+  },
+  "tests/test_unified_packaging.py": {
+   "failed_runs": 1,
+   "branches": 1
+  }
+ }
+}
