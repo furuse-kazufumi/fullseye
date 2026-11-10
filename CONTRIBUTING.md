@@ -207,3 +207,41 @@ executes the "core runs without extras" claim, plus the full suite with coverage
 on Python 3.11 / 3.12 / 3.14 (3.13 in the weekly scheduled run; 3.15 as an
 allowed-to-fail preview of the core). Tags `vX.Y.Z` build from a clean checkout and publish to
 PyPI automatically.
+
+## Before you push: run the full suite locally (Linux / WSL2)
+
+Run the whole CI on your own machine **before** pushing. On 2026-11-09/10 four
+push-fail-fix round trips (1.5 h each) were all failures a local Linux run would
+have shown: an empty assertion, the duration record, a recorded value that had
+drifted, Linux file permissions and locks.
+
+```bash
+py -3.11 tools/ci_local.py            # Windows: runs inside WSL2 (first run builds the venvs)
+python3 tools/ci_local.py             # Linux
+py -3.11 tools/ci_local.py --keep-going --ref origin/master -n 12
+```
+
+It tests the **commit** (`--ref`, default `HEAD`) in a separate Linux-side clone
+(`$FULLSEYE_CI_LOCAL_DIR`, default `~/fullseye-ci-local`), never the Windows working
+tree: uncommitted changes are *not* tested and the summary says so. The environment
+is the CI's (Python 3.11, the same extras and optional backends, `CI=true`, no
+`PYTHONPATH`, `FULLSEYE_REQUIRE_OPTIONAL=1`, `FULLSEYE_FIGURES=off`, an empty
+`HOME` so no local dataset is visible).
+
+Stages run one after another, cheapest and most failure-prone first, and stop at
+the first red one (`--keep-going` runs everything):
+
+| stage | what | measured (24 threads, WSL2) |
+|---|---|---|
+| ruff | `ruff check .` | < 1 s |
+| regen | `tools/regen_all.py --check` | ~9 min |
+| gates | `tools/ci_always_run.txt` | ~40 s |
+| core | numpy+scipy only install, wheel completeness, MCP from the wheel | ~1.5 min |
+| tests | the full suite, `pytest -n 12 --dist worksteal` | ~20 min |
+
+The result is `summary.md` (commit, branch, dirty-tree note, time per stage,
+passed / failed / skipped, failed test names) — paste it into the PR body. JUnit
+and logs sit next to it (`--out`). `--only gates`, `--skip regen` and
+`-- <pytest args>` narrow a run. What it does not cover: Python 3.12 / 3.14, the
+per-shard view of the suite, coverage (`--cov` to add it), and the day's newest
+dependency versions if the venv is older than `--refresh-hours`.
