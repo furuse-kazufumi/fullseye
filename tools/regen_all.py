@@ -708,6 +708,10 @@ EXCLUDED = {
 #: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
+    # ---- 2026-11-10: CI の道具(PR のテストの選択・依存の版の比較・全数の失敗の記録)。CI の作業場にだけ書く ----
+    "tools/ci_select_tests.py": "CI の道具。PR の変更から回すテストを選び、一覧(--tests-file)と GITHUB_OUTPUT を CI の作業場に書く。コミット物は書かない。",
+    "tools/ci_deps_drift.py": "CI の道具。pip freeze / dry-run の解決結果を CI の作業場に書き、最後の全数の run と版を比べる。コミット物は書かない。",
+    "tools/ci_failure_record.py": "CI の道具。全数の run の JUnit から落ちたテストと commit の範囲を ci_result.json(artifact)に書く。コミット物は書かない。",
     "realdata.py": ("実写データの取り口(ライブラリ)。書くのは mark_read が環境変数 FULLSEYE_REAL_DATA_LOG の指す "
                     "repo の外の印のファイルだけ(tools/record_real_data_runs.py と PoC の門が一時ディレクトリに立てる)。"
                     "__main__ は取り口の自己診断で、コミット物を書かない(敵対的検証 2026-11-05 第 2 巡 D6)。"),

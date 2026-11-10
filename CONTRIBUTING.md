@@ -203,7 +203,56 @@ py -3.11 studio.py             # the IDE
 ```
 
 CI (GitHub Actions) runs on every push/PR: a **minimal numpy+scipy job** that
-executes the "core runs without extras" claim, plus the full suite with coverage
+executes the "core runs without extras" claim, plus the test suite with coverage
 on Python 3.11 / 3.12 / 3.14 (3.13 in the weekly scheduled run; 3.15 as an
 allowed-to-fail preview of the core). Tags `vX.Y.Z` build from a clean checkout and publish to
 PyPI automatically.
+
+### CI: which tests run where (2026-11-10)
+
+The suite is ~26,600 tests and ~4.7 CPU-hours (`.test_durations`). Running all of it on
+every PR took 1-2 hours per PR and starved the free runners, so **a PR runs only the tests
+related to its change**. This narrows *where* a test runs, never *what* it asserts:
+**no gate, threshold, floor or ledger is relaxed**, and everything a PR skips is run in full
+on every push to `master` and every night.
+
+| Event | What runs |
+|---|---|
+| PR (default) | tests selected by `tools/ci_select_tests.py` + the always-run gates (`tools/ci_always_run.txt`), py3.11, 1-6 shards sized by the selection's recorded duration |
+| PR with label `ci:full` | the full suite (adding the label re-runs CI) |
+| PR that touches a core file / an unmapped file / > 1,500 files, or the selector fails | the full suite (fail-safe) |
+| push to `master` | the full suite on 3.11 / 3.12 / 3.14 |
+| nightly (`0 18 * * *` UTC) | the full suite on 3.11 / 3.12 / 3.14 |
+| weekly (Monday) | the full suite on 3.11-3.14 + order-shuffle / parallel |
+
+How the selection works (`py -3.11 tools/ci_select_tests.py --base origin/master` shows it locally):
+
+* **Import graph.** Every `*.py` is parsed (AST); `import`, `from … import`,
+  `importlib.import_module("x")` / `__import__("x")` with a literal name, and the backend
+  names `ops.py` imports by string are edges. A test depends on everything it reaches.
+* **Path references.** String literals that look like paths (`ROOT / "docs" / "x.json"` and
+  `os.path.join(…)` are folded, `glob` patterns are matched with `fnmatch`) count as "this file
+  reads that path". A file that runs scripts (`subprocess`, `runpy`, …) and names `*.py` targets
+  also depends on those scripts' import graphs. The two PoC/example runners
+  (`test_poc_scripts_run.py`, `test_example_scripts_run.py`) are narrowed to the scripts whose
+  dependencies changed (their session fixture runs only the selected parameters).
+* **When in doubt, run everything.** Core files (`ops.py`, `backends.py`, `backend_safe.py`,
+  `api.py`, `fslib.py`, `fullseye/__init__.py`, conftest, CI config, `pyproject.toml`,
+  `tools/regen_all.py`, the selector itself — see `CORE_PATTERNS`), any changed file that no
+  test is known to depend on, a deleted file nobody references, or an unparsable `.py` turn the
+  PR into a full run. Broad directory references from *library* modules (`"docs"`,
+  `ROOT / "examples"`) are not counted (otherwise every docs change would select ~93 % of the
+  suite); file-specific references are. Gates under `tests/` and `tools/` count every reference.
+* **Always-run gates.** Repo-wide gates that can fail on any change
+  (`test_vacuous_assertions`, `test_type_alias_ledger`, `test_test_durations_is_fresh`, …) are
+  listed in `tools/ci_always_run.txt` and run on every PR regardless of the selection.
+  `regen_all --check` runs on shard 1 of every PR.
+* **Sharding is per file.** `tests/conftest.py` splits the (selected) tests into shards by
+  whole test files (LPT on `.test_durations`), so module/session fixtures are built once per run
+  instead of once per shard. pytest-split is used only to record durations.
+
+When `master` or the nightly run fails, the `failure-record` job keeps `ci_result.json` (failed
+node ids + the commits that run brought in) for 90 days. To find the culprit: the commits listed
+since the previous green run are the candidates; if there are several, bisect with
+`git bisect run py -3.11 -m pytest -q <failing node id>`. (Proposal, not enabled: open an Issue
+automatically from that job; it would need `issues: write`.)

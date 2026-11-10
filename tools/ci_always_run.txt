@@ -1,0 +1,5 @@
+# PR で**関係の判定にかかわらず必ず回す**門(tools/ci_select_tests.py が読む)。
+# repo 全体・台帳・生成物を見る門は、どのファイルの変更でも落ちうるので、依存では選ばない。
+tests/test_vacuous_assertions.py
+tests/test_type_alias_ledger.py
+tests/test_test_durations_is_fresh.py
