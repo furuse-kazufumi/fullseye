@@ -27,6 +27,7 @@ import math
 import os
 import pathlib
 import sys
+import time
 from typing import Any
 
 import numpy as np
@@ -453,6 +454,53 @@ TOOLS: dict[str, dict] = {
             "required": ["spec"],
             "additionalProperties": False,
         },
+    },
+}
+
+
+# ★2026-11-09: 真値付きの課題を作る道具と、組んだ処理を真値で採点する道具(full プロファイルだけ)。
+#   「LLM が組む → 型の門 → 実行」の後ろに「真値で採点 → 合否 → 直させる」を足して輪を閉じる。
+#   真値はサーバ側(fullseye/mcp/tasks.py の TaskStore)に task_id で持ち、返り値には載せない。
+from .tasks import FAMILIES as _TASK_FAMILIES, MAX_SEED as _TASK_MAX_SEED  # noqa: E402
+
+TOOLS["fullseye_make_task"] = {
+    "description": (
+        "真値付きの課題を作る(真値はサーバが持ち、返さない)。kind=族、seed=乱数の種(同じ kind・seed・"
+        "params からは同じ課題)、params=族ごとの難度つまみ(省略は既定値)。入力画像のハンドル・課題文・"
+        "出力の型と単位・指標と許容範囲・task_id を返す。採点の回数は (kind, seed) ごとに数える。"
+        "族: %s。次に fullseye_score_pipeline を呼ぶ。"
+        % ", ".join("%s(%s)" % (k, f.field) for k, f in sorted(_TASK_FAMILIES.items()))),
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "kind": {"type": "string", "enum": sorted(_TASK_FAMILIES)},
+            "seed": {"type": "integer", "minimum": 0, "maximum": _TASK_MAX_SEED},
+            "params": {"type": "object",
+                       "description": "族ごとの難度つまみ(真値を決めない量だけ)。知らない名前・範囲外は -32602"},
+        },
+        "required": ["kind", "seed"],
+        "additionalProperties": False,
+    },
+}
+TOOLS["fullseye_score_pipeline"] = {
+    "description": (
+        "fullseye_make_task の課題を、組んだ処理(fullseye_pipeline と同じ形の stages)で解かせて真値で採点する。"
+        "入力は課題の画像に固定(handle は渡さない)。実行の前に型の門を通し、最終段の出力を族ごとの指標で"
+        "真値と比べ、指標ごとの誤差の大きさ・許容範囲・合否と外れ方の説明を返す(真値と誤差の符号は返さない)。"
+        "段が読めるのは have:<課題の入力の型> と stage:N だけ(他のハンドルは foreign_input で断る)。"
+        "例外・型の不一致・NaN/空/定数の出力・知らない/期限切れの task_id は合格を返さず reason を書く。"
+        "feedback=detailed/coarse/pass_fail で返す細かさを選ぶ(サーバの上限まで)。"),
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "task_id": {"type": "string", "maxLength": 64,
+                        "description": "fullseye://task/<16 hex>。fullseye_make_task が返す"},
+            "stages": TOOLS["fullseye_pipeline"]["inputSchema"]["properties"]["stages"],
+            "feedback": {"type": "string", "enum": ["detailed", "coarse", "pass_fail"],
+                         "description": "detailed=誤差の大きさ / coarse=許容の何倍かの段階 / pass_fail=合否だけ"},
+        },
+        "required": ["task_id", "stages"],
+        "additionalProperties": False,
     },
 }
 
@@ -1972,6 +2020,311 @@ def _estimate_distortion(a: dict) -> dict:
                               "n_lines": len(lines)})
 
 
+_TASK_STORE_LOCK = __import__("threading").Lock()
+
+
+def _task_store(store: HandleStore):
+    """``store`` に付いた課題の保管庫(1 つの MCP セッション = 1 つの store = 1 つの保管庫)。"""
+    tasks = getattr(store, "_fullseye_tasks", None)
+    if tasks is None:
+        with _TASK_STORE_LOCK:                                  # 遅延生成の取り合いで 2 つ作らない
+            tasks = getattr(store, "_fullseye_tasks", None)
+            if tasks is None:
+                from .tasks import TaskStore
+                try:
+                    tasks = TaskStore()
+                except ValueError as exc:                       # 実験モードの設定の不備は fail-closed
+                    raise ArgError("課題の保管庫を作れない(設定の不備): %s" % exc) from None
+                if tasks.audit_path and any(
+                        os.path.realpath(tasks.audit_path) == r or
+                        os.path.realpath(tasks.audit_path).startswith(r + os.sep) for r in store.roots):
+                    raise ArgError("FULLSEYE_TASK_AUDIT_PATH が MCP の根の中にある(load_image で読めてしまう)")
+                store._fullseye_tasks = tasks
+    return tasks
+
+
+_INPUT_INDEPENDENT: frozenset | None = None
+
+
+def _input_independent_ops() -> frozenset:
+    """出力が入力の中身に依存しない op の一覧(tools/gen_mcp_input_independent.py が機械的に作る)。"""
+    global _INPUT_INDEPENDENT
+    if _INPUT_INDEPENDENT is None:
+        path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                            "data", "MCP_INPUT_INDEPENDENT.json")
+        try:
+            with open(path, encoding="utf-8") as fh:
+                _INPUT_INDEPENDENT = frozenset(json.load(fh)["ops"])
+        except (OSError, ValueError, KeyError) as exc:          # 一覧が無ければ採点しない(fail-closed)
+            raise ArgError("入力に依存しない op の一覧が読めない: %s" % exc) from None
+    return _INPUT_INDEPENDENT
+
+
+def _bad_params(stages: list) -> list[dict]:
+    """採点で許す params の値は 数・文字列・真偽・null と ``{"ref": …}`` だけ。配列・入れ子の辞書は断る。
+
+    ★2026-11-10(独立レビュー第 2 巡 N3): ``decode_fringe`` の ``ref_phase`` に 64x96 の配列をそのまま
+    書くと受け付けられ、出力 = 復号 − 書いた配列 になって、答えを注入して合格できた。
+    """
+    bad = []
+    for i, stage in enumerate(stages, 1):
+        for name, value in (stage.get("params") or {}).items():
+            if value is None or isinstance(value, (bool, int, float, str)):
+                continue
+            if isinstance(value, dict) and set(value) == {"ref"}:
+                continue
+            bad.append({"stage": i, "op": stage.get("op"), "param": name, "type": type(value).__name__})
+    return bad
+
+
+def _same_output(a, b) -> bool:
+    """2 つの出力がバイト単位で同じか(配列・辞書・点列・スカラー)。"""
+    if isinstance(a, np.ndarray) or isinstance(b, np.ndarray) or isinstance(a, np.generic) or isinstance(b, np.generic):
+        a, b = np.asarray(a), np.asarray(b)
+        return a.shape == b.shape and a.dtype == b.dtype and np.array_equal(a, b)
+    if isinstance(a, dict) and isinstance(b, dict):
+        return a.keys() == b.keys() and all(_same_output(a[k], b[k]) for k in a)
+    if isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
+        return len(a) == len(b) and all(_same_output(x, y) for x, y in zip(a, b))
+    return type(a) is type(b) and a == b
+
+
+def _make_task(a: dict, store: HandleStore) -> dict:
+    """真値付きの課題を作る。真値は保管庫に残し、返り値には入力のハンドルと課題文だけを載せる。"""
+    from .tasks import FAMILIES, TaskError, public_task
+    tasks = _task_store(store)
+    try:
+        rec = tasks.make(a["kind"], a["seed"], a.get("params"))
+    except TaskError as exc:                                 # 知らない族・つまみ・範囲外は引数違反
+        raise ArgError("%s: %s" % (exc.reason, exc)) from None
+    fam = FAMILIES[rec.kind]
+    meta = store.put(rec.input, sort=fam.input_sort, provenance=[{"task": rec.task_id}])
+    body = public_task(rec, tasks.ttl_s, tasks.max_attempts)
+    body["input"]["handle"] = meta["handle"]
+    body["attempts_used"] = rec.attempts
+    body["mode"] = tasks.mode
+    body["feedback_cap"] = tasks.feedback_cap
+    body["scoring_version"] = tasks.scoring_version
+    body["next_call"] = {"tool": "fullseye_score_pipeline",
+                         "arguments": {"task_id": rec.task_id, "stages": [{"op": "<op>"}]}}
+    metrics = ", ".join("%s<=%g %s" % (m["name"], m["tolerance"], m["unit"]) for m in body["metrics"])
+    text = ("課題 %s(%s, seed=%d): %s\n入力: %s %s handle=%s(段の inputs は have:%s か stage:N だけ)\n"
+            "出力: %s(%s)\n許容: %s\n次: fullseye_score_pipeline(task_id=%s, stages=[...])"
+            % (rec.kind, fam.field, rec.seed, fam.statement, fam.input_sort, list(fam.shape),
+               meta["handle"], fam.input_sort, fam.output_form, "/".join(fam.output_sorts), metrics, rec.task_id))
+    _log("task", rec.task_id, rec.kind, "seed=%d" % rec.seed, "mode=%s" % tasks.mode)
+    return tool_result(text, body)
+
+
+def _foreign_refs(stages: list, input_sort: str) -> list[dict]:
+    """課題の入力(``have:<input_sort>``)と前段(``stage:N``)以外を読む参照を全部挙げる。
+
+    ★2026-11-10(独立レビュー F1): 以前は段の ``inputs`` に任意の ``fullseye://`` ハンドルを
+    書けた。``fullseye_import_json`` で取り込んだ答えや他の課題の入力を ``identity`` /
+    ``count_obj`` に通すだけで、画像処理をせずに合格できた(2 回の問い合わせで偽造)。
+    """
+    import re
+    have = "have:%s" % input_sort
+    bad = []
+    for i, stage in enumerate(stages, 1):
+        refs = [("inputs", r) for r in stage.get("inputs", []) or []]
+        refs += [("params.%s" % k, v["ref"]) for k, v in (stage.get("params") or {}).items()
+                 if isinstance(v, dict) and "ref" in v]
+        for where, ref in refs:
+            if not (isinstance(ref, str) and (ref == have or re.fullmatch(r"stage:[1-9][0-9]*", ref))):
+                bad.append({"stage": i, "op": stage.get("op"), "where": where, "ref": ref})
+    return bad
+
+
+def _depends_on_input(checked: dict, stages: list, input_sort: str) -> tuple[bool, list[int]]:
+    """最終段が課題の入力に(依存の経路をたどって)依存しているか。入力の無い段(生成源)も返す。"""
+    have = "have:%s" % input_sort
+    rows = {s["stage"]: s for s in checked["stages"]}
+    sources = [n for n, s in rows.items() if not s.get("inputs")]
+    memo: dict[int, bool] = {}
+
+    def dep(n: int) -> bool:
+        if n in memo:
+            return memo[n]
+        memo[n] = False                                         # 循環は validate が先に断る。保険
+        refs = list(rows[n].get("inputs") or [])
+        refs += [v["ref"] for v in (stages[n - 1].get("params") or {}).values()
+                 if isinstance(v, dict) and "ref" in v]
+        ok = False
+        for ref in refs:
+            if ref == have:
+                ok = True
+            elif isinstance(ref, str) and ref.startswith("stage:") and int(ref[6:]) in rows:
+                ok = ok or dep(int(ref[6:]))
+        memo[n] = ok
+        return ok
+    return dep(len(stages)), sources
+
+
+def _score_pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
+    """組んだ処理を課題の入力で走らせ、最終段の出力を真値で採点する(fail-closed)。
+
+    合格は「段が課題の入力と前段だけを読み、型の門を通り、例外なく走り、出力が有限・非空・非定数で、
+    全指標が許容内」のときだけ。それ以外は ``passed: false`` と ``reason``(機械が読む符号)を返す。
+    採点が成り立った不合格(``out_of_tolerance``)は ``isError: false``、採点が成り立たなかった不合格は
+    ``isError: true``。返り値に載せるのは段ごとの op・状態・型だけで、段の出力の値や統計は載せない
+    (正しい処理の出力は真値そのものに近いので、載せると採点の返り値から真値が読める)。
+    指標の詳しい値は ``feedback`` の段階に関わらず監査ログ(stderr)に残す。
+    """
+    from .tasks import (FAMILIES, TaskError, effective_feedback, render_feedback, score_output)
+    tasks = _task_store(store)
+    task_id = a["task_id"]
+    try:
+        level, capped = effective_feedback(a.get("feedback"), tasks.feedback_cap)
+    except TaskError as exc:
+        raise ArgError("%s: %s" % (exc.reason, exc)) from None
+
+    def refuse(reason: str, message: str, **extra) -> dict:
+        body = {"task_id": task_id, "passed": False, "reason": reason, "message": message,
+                "feedback_level": level, **extra}
+        _log("score", task_id, "refused", reason)
+        try:
+            tasks.audit({"task_id": task_id, "passed": False, "reason": reason, "attempt": extra.get("attempts_used"),
+                         "mode": tasks.mode, "stages": a.get("stages"), "time": time.time()})
+        except OSError:
+            pass
+        return _tool_error("不合格(%s): %s" % (reason, message), body)
+
+    try:
+        rec = tasks.claim(task_id)
+    except TaskError as exc:
+        return refuse(exc.reason, str(exc))
+    fam = FAMILIES[rec.kind]
+    base = {"kind": rec.kind, "attempts_used": rec.attempts, "max_attempts": tasks.max_attempts,
+            "mode": tasks.mode, "scoring_version": tasks.scoring_version}
+    if capped:
+        base["feedback_capped"] = True
+    stages = a["stages"]
+    # 0. 課題の入力に縛る(F1): 段が読めるのは have:<入力の型> と stage:N だけ
+    foreign = _foreign_refs(stages, fam.input_sort)
+    if foreign:
+        return refuse("foreign_input", "段が課題の入力と前段以外を読もうとした(読めるのは have:%s と stage:N だけ)"
+                      % fam.input_sort, refs=foreign, **base)
+    literal = _bad_params(stages)
+    if literal:
+        return refuse("param_not_allowed", "params に書けるのは 数・文字列・真偽・{\"ref\": …} だけ"
+                      "(配列や入れ子の辞書でデータを持ち込めない)", params=literal, **base)
+    # 0b. 入力の中身に依存しない op(生成の op など)を断る(N1、機械的に作った一覧)
+    independent = [{"stage": i, "op": st.get("op")} for i, st in enumerate(stages, 1)
+                   if st.get("op") in _input_independent_ops()]
+    if independent:
+        return refuse("input_independent", "入力の中身を読まない op がある(生成の op など): %s"
+                      % ", ".join("段 %d %s" % (r["stage"], r["op"]) for r in independent),
+                      ops=independent, **base)
+    handle = store.put(rec.input, sort=fam.input_sort, provenance=[{"task": rec.task_id}])["handle"]
+    # 1. 型の門(1 段も走らせない)。fullseye_pipeline と同じ検査器・同じ束縛名を使う。
+    checked = validate_pipeline(stages, fam.input_sort, cat,
+                                bindings={"have:%s" % fam.input_sort: handle}, store=store)
+    if not checked["valid"]:
+        return refuse("type_gate", "型の門で不合格(1 段も走らせていない)", errors=checked["errors"], **base)
+    if checked.get("out_sort") not in fam.output_sorts:
+        return refuse("output_sort_mismatch", "最終段の型 %s は採点できない(要るのは %s)"
+                      % (checked.get("out_sort"), "/".join(fam.output_sorts)), **base)
+    depends, sources = _depends_on_input(checked, stages, fam.input_sort)
+    if sources:
+        return refuse("foreign_input", "入力を読まない段(生成源)がある: 段 %s" % sources, **base)
+    if not depends:
+        return refuse("foreign_input", "最終段が課題の入力に依存していない", **base)
+    # 2. 実行(fullseye_pipeline と同じ実行器。返り値は内部でだけ使うので上限で落とさない)
+    try:
+        res = _pipeline_dag({"handle": handle, "stages": stages, "vision": "none"}, cat, store,
+                            max_structured_bytes=1 << 30)
+    except ArgError as exc:
+        return refuse("pipeline_refused", str(exc)[:400], **base)
+    except Exception as exc:                                    # noqa: BLE001 - 例外は不合格の理由
+        return refuse("exception", "%s: %s" % (type(exc).__name__, str(exc)[:300]), **base)
+    sc = res.get("structuredContent") or {}
+    summary = [{k: r[k] for k in ("stage", "op", "status", "out_sort", "reason") if r.get(k) is not None}
+               for r in sc.get("stages", [])]
+    if res.get("isError"):
+        bad = next((r for r in sc.get("stages", []) if r.get("status") == "failed"), {})
+        err = bad.get("error") or {}
+        reason = "invalid_output" if bad.get("reason") == "invalid_output" else "execution_failed"
+        return refuse(reason, "段 %s %s が失敗(%s%s)" % (
+            bad.get("stage"), bad.get("op"), bad.get("reason"),
+            (": %s: %s" % (err.get("type"), str(err.get("message"))[:200])) if err else ""),
+            stages=summary, **base)
+    rows = sc.get("outputs") or []
+    if not rows:
+        return refuse("empty_output", "最終段の出力が無い", stages=summary, **base)
+    try:
+        value = store.get(rows[-1]["handle"])[1]
+    except HandleError as exc:
+        return refuse("empty_output", str(exc), stages=summary, **base)
+    # 3. 真値と比べる
+    try:
+        metrics = score_output(rec, value)
+    except TaskError as exc:
+        return refuse(exc.reason, str(exc), stages=summary, **base)
+    except Exception as exc:                                    # noqa: BLE001 - 採点できない形は不合格
+        return refuse("unscorable_output", "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+                      stages=summary, **base)
+    # 3b. (採点できる形の出力だけ)隠れた双子の課題で同じ処理を走らせる(N1・R2、実行時の検査)
+    #   - 出力がバイト単位で同じ → 入力を読んでいない(input_independent)
+    #   - 本体が合格したなら、双子でもその真値に合格しなければならない(hidden_check_failed)。
+    #     固定の答えは真値の違う 2 つの課題の両方には合格できない。双子の誤差は返さない。
+    try:
+        alt_rec = tasks.alternate(rec)
+        alt = alt_rec.input
+        alt_handle = store.put(alt, sort=fam.input_sort, provenance=[{"task_alt": rec.task_id}])["handle"]
+        alt_res = _pipeline_dag({"handle": alt_handle, "stages": stages, "vision": "none"}, cat, store,
+                                max_structured_bytes=1 << 30)
+        alt_rows = (alt_res.get("structuredContent") or {}).get("outputs") or []
+        alt_value = store.get(alt_rows[-1]["handle"])[1] if (alt_rows and not alt_res.get("isError")) else None
+    except Exception as exc:                                    # noqa: BLE001 - 検査できなければ採点しない
+        return refuse("input_check_failed", "入力を変えた写しで走らせられなかった(%s)" % type(exc).__name__,
+                      stages=summary, **base)
+    if alt_value is None:
+        return refuse("input_check_failed", "入力を変えた写しでは処理が走り切らなかった", stages=summary, **base)
+    if _same_output(value, alt_value):
+        return refuse("input_independent", "入力を変えても最終段の出力が同じ(入力の中身を読んでいない)",
+                      stages=summary, **base)
+    hidden_passed = None
+    twin_metrics = None
+    if all(m["passed"] for m in metrics):
+        try:
+            twin_metrics = score_output(alt_rec, alt_value)
+            hidden_passed = all(m["passed"] for m in twin_metrics)
+        except Exception:                                       # noqa: BLE001 - 双子で採点できない形も不合格
+            hidden_passed = False
+        tasks.audit({"task_id": task_id, "hidden_seed_check": "passed" if hidden_passed else "failed",
+                     "attempt": rec.attempts, "time": time.time()})
+        if not hidden_passed and level == "detailed":
+            return refuse("hidden_check_failed", "隠れた双子の課題(真値の違う同じ族)では合格しなかった"
+                          "(固定の答え・課題の 1 枚にだけ合う処理は合格にしない)", stages=summary, **base)
+    passed = all(m["passed"] for m in metrics) and hidden_passed is not False
+    # ★2026-11-10(独立レビュー第 4 巡): pass_fail / coarse では、双子で落ちたことを返り値で区別しない
+    #   (reason は out_of_tolerance、形も許容外の不合格と同じ)。区別すると「本体には合っていた」ことが分かり、
+    #   本体と双子の探索を 2 回に分けられた(計数の 13/20 が 20 回以内に合格)。区別は監査記録にだけ残す。
+    #   coarse で見せる段階は、落ちた側(双子)の指標から作る。
+    shown_source = metrics if hidden_passed is not False else (twin_metrics or [
+        dict(m, passed=False, ratio=None) for m in metrics])
+    # 監査: 詳しい値は FULLSEYE_TASK_AUDIT_PATH の記録にだけ書く。stderr には合否と回数だけ
+    # ★2026-11-10(独立レビュー第 2 巡 N2): 以前は stderr の score-audit 行に誤差を書いていた。MCP の
+    #   クライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が pass_fail の
+    #   上限を迂回して誤差を読めた。
+    tasks.audit({"task_id": task_id, "kind": rec.kind, "seed": rec.seed, "mode": tasks.mode,
+                 "attempt": rec.attempts, "passed": passed, "feedback_level": level,
+                 "metrics": [{k: m[k] for k in ("name", "error", "tolerance", "passed")} for m in metrics],
+                 "stages": stages, "time": time.time()})
+    _log("score", task_id, "attempt=%d" % rec.attempts, "passed" if passed else "failed")
+    shown, explanation = render_feedback(shown_source, level)
+    body = {"task_id": task_id, "passed": passed, "feedback_level": level, "metrics": shown,
+            "explanation": explanation, "stages": summary, **base}
+    if not passed:
+        body["reason"] = "out_of_tolerance"
+    text = ("合格" if passed else "不合格(許容外)") + "(%s、試行 %d/%d、feedback=%s)" % (
+        rec.kind, rec.attempts, tasks.max_attempts, level)
+    if explanation:
+        text += "\n" + "\n".join(explanation)
+    return tool_result(text, body)
+
+
 def _write_viewer(a: dict, store: HandleStore) -> dict:
     """spec(JSON)→ 自己完結 HTML。書く先はサンドボックスの作業ディレクトリだけ(名前は検査する)。"""
     import re
@@ -2220,6 +2573,10 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             return _estimate_distortion(a)
         if name == "fullseye_write_viewer":
             return _write_viewer(a, store)
+        if name == "fullseye_make_task":
+            return _make_task(a, store)
+        if name == "fullseye_score_pipeline":
+            return _score_pipeline(a, cat, store)
     except HandleError as exc:
         raise ArgError(str(exc)) from exc
     raise ArgError("未実装の tool: %r" % name)                 # TOOLS に足して本体を忘れた

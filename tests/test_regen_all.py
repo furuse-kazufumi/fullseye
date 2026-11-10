@@ -108,7 +108,9 @@ _OLD_ORDER = [
     "tools/gen_mcp_data.py", "tools/gen_recipe_index.py", "tools/gen_recipe_retrieval_report.py", "tools/gen_rag_benchmark_report.py", "tools/conversion_matrix.py",
     "tools/type_connectivity.py",   # 2026-11-03 に鎖へ加わった段(索引を読むだけ。探針の逆順は増やさない)
     "tools/gen_design_notes.py",
-    "tools/gen_op_facets.py", "tools/measure_mcp_context.py",
+    "tools/gen_op_facets.py",
+    "tools/gen_mcp_input_independent.py",   # 2026-11-10 に足した段(OP_GRAPH を読むだけ。探針の逆順は増やさない)
+    "tools/measure_mcp_context.py",
     "tools/gen_doc_counts.py",
     # 2026-11-03 に足した段。旧順序の探針としては「docs 索引より後ろ」に置く(題を先に読まれる逆順)。
     "tools/gen_recipe_coverage.py",
