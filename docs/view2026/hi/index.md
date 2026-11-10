@@ -8,6 +8,8 @@
 
 physics simulation और image processing को AI के साथ जोड़कर ground truth से जाँचना।
 
+**प्रस्तुति: गुरुवार 3 दिसंबर 2026, 14:40–15:50 JST, Interactive Session 2, IS2-19** (Pacifico Yokohama)
+
 tile पर tap करने से video या figure खुलता है (▶ = चलता हुआ)।
 
 <style>
