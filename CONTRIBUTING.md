@@ -259,8 +259,23 @@ How the selection works (`py -3.11 tools/ci_select_tests.py --base origin/master
   `test_no_invalid_escape_sequences`, …) **plus every test the selector finds walking the repo**
   (`walks_repo`: `os.walk` / `os.listdir` / `rglob` / `iterdir` / `glob("**")` whose start is not a
   literal sub-directory, and `git ls-files`). `tests/test_ci_select_tests_2026_11_10.py` checks with
-  an independent probe that every such test is always-run. `regen_all --check` runs on shard 1 of
-  every PR.
+  an independent probe that every such test is always-run. `regen_all --check` runs in its own job
+  (`regen`, in parallel with the shards) on every run that is not docs-only: PR, push to `master`,
+  nightly, weekly and manual. Until 2026-11-10 it was the last step of shard 1, so it did not run
+  when that shard's tests failed and added 13-20 minutes behind them.
+* **Gates first (`gates` job).** In parallel with the shards, one py3.11 job runs the tests that are
+  most likely to fail, so a red result shows in minutes instead of when a shard ends (30-45 minutes).
+  The list is computed, not hand-picked: `python tools/ci_select_tests.py --early-list <file>` takes
+  the always-run gates plus every test file that failed on two or more branches in the recent failed
+  runs (`tools/ci_failure_history.json`), orders them by the number of failed runs, and keeps what
+  fits in 8 minutes of recorded time (`EARLY_BUDGET_SECONDS`; a file that does not fit is skipped and
+  the next one is tried). **Nothing is removed from the shards**: every test of the `gates` job also
+  runs in its shard, so the job pays for its tests twice. The two script runners are never in the
+  list. `test_test_durations_is_fresh` answers a different question on a small session, so the job
+  does not pass it to pytest: it collects the suite, rebuilds the session of the shard that holds the
+  gate and calls the gate's own function (`--freshness-forecast`). The history is counted by hand,
+  not in CI (it downloads one log per run): `python tools/ci_failure_history.py --runs 60` (read-only
+  `gh`), then commit the JSON. A stale history only means a stale order.
 * **How much the replay proves.** In the replay of #270-#295, six PRs had a failing CI run (seven
   runs); four of them (#270, #272, #294, #295) went full because of the core-file rule, and only
   #271 and #276 were in selected mode. #276's failure was

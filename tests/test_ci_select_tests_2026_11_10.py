@@ -428,3 +428,216 @@ def test_ci_yml_does_not_cancel_full_runs_and_never_starts_on_a_label():
     assert "tools/ci_select_tests\\.py" in sel and "_ci_select_tests_base.py" in sel
     prev = next(s for s in doc["jobs"]["failure-record"]["steps"] if s.get("id") == "prev")["run"]
     assert '"success"' in prev.replace('\\"', '"') and "cancelled" not in prev
+
+
+# --------------------------------------------------------------------------- #
+# 先頭のジョブ(gates): 落ちやすくて軽いテストを、片と並行して先に回す(2026-11-10)   #
+# --------------------------------------------------------------------------- #
+# 確かめるのは 3 つ: (1) gates は片を待たない (2) 先に回す一覧は道具が実績から出す(YAML に写さない)
+# (3) 片の側は 1 件も減っていない(先頭のジョブは「先にも回す」で、片から外すものではない)。
+CFH = _load("ci_failure_history")
+
+
+def _workflow_jobs():
+    yaml = pytest.importorskip("yaml")
+    with open(os.path.join(ROOT, ".github", "workflows", "ci.yml"), encoding="utf-8") as f:
+        return yaml.safe_load(f)["jobs"]
+
+
+def _runs(job):
+    return [s.get("run", "") for s in job["steps"]]
+
+
+def test_early_plan_ranks_by_failed_runs_and_skips_what_does_not_fit(tmp_path):
+    (tmp_path / "tests").mkdir()
+    for name in ("a", "b", "c", "gate", "one_branch"):
+        (tmp_path / "tests" / ("test_%s.py" % name)).write_text("def test_x():\n    assert 1 + 1 == 2\n", encoding="utf-8")
+    dur = tmp_path / "durations.json"
+    dur.write_text(json.dumps({"tests/test_a.py::test_x": 100.0, "tests/test_b.py::test_x": 300.0,
+                               "tests/test_c.py::test_x": 150.0, "tests/test_gate.py::test_x": 10.0,
+                               "tests/test_one_branch.py::test_x": 1.0}), encoding="utf-8")
+    history = {"runs_read": 9, "window": [], "files": {
+        "tests/test_a.py": {"failed_runs": 5, "branches": 3},
+        "tests/test_b.py": {"failed_runs": 4, "branches": 2},
+        "tests/test_c.py": {"failed_runs": 3, "branches": 2},
+        "tests/test_one_branch.py": {"failed_runs": 8, "branches": 1},   # 同じブランチの push し直し
+        "tests/test_gone.py": {"failed_runs": 7, "branches": 4},         # この木に無い
+    }}
+    always = ["tests/test_gate.py", CST.FRESHNESS_GATE]
+    plan = CST.early_plan(always, history, budget=300, durations_path=dur, root=tmp_path)
+    # a(100) の次の b(300) は入らないので飛ばし、c(150)・gate(10) を入れる。回す順 = 落ちた run の数の順
+    assert plan["tests"] == ["tests/test_a.py", "tests/test_c.py", "tests/test_gate.py"]
+    assert plan["seconds"] == 260.0 and plan["budget"] == 300
+    why = {r["file"]: r["why"] for r in plan["rows"]}
+    assert len(why) == 6 and "tests/test_one_branch.py" not in why
+    assert why["tests/test_b.py"].startswith("over the 300 s budget")
+    assert why["tests/test_gone.py"] == "not in this tree"
+    assert why[CST.FRESHNESS_GATE].startswith("session-dependent")
+    # 門は実績が 0 でも候補に入る(門を候補から落とすのは上限だけ)
+    assert [r["failed_runs"] for r in plan["rows"] if r["file"] == "tests/test_gate.py"] == [0]
+    with pytest.raises(ValueError, match="early list is empty"):
+        CST.early_plan(always, history, budget=0.5, durations_path=dur, root=tmp_path)
+
+
+def test_the_early_list_comes_from_the_failure_history_within_the_budget(selector, tmp_path):
+    history = CST.load_failure_history()
+    assert history["runs_read"] >= 30 and len(history["files"]) >= 20      # 数えた run が少なすぎる実績で選ばない
+    plan = CST.early_plan(selector.always, history)
+    rows = {r["file"]: r for r in plan["rows"]}
+    early = plan["tests"]
+    assert len(rows) == len(plan["rows"]) and len(early) == len(set(early)) >= 10
+    # 候補 = 門の全部 + 2 本以上のブランチで落ちたファイルの全部
+    recurring = [f for f, row in history["files"].items() if row["branches"] >= CST.EARLY_MIN_BRANCHES]
+    assert len(selector.always) >= 10 and len(recurring) >= 5
+    assert len(set(selector.always) - set(rows)) == 0 and len(set(recurring) - set(rows)) == 0
+    # 上限と順番
+    assert CST.EARLY_BUDGET_SECONDS == 480
+    assert 0 < plan["seconds"] <= CST.EARLY_BUDGET_SECONDS
+    assert abs(sum(rows[f]["seconds"] for f in early) - plan["seconds"]) < 0.06 * len(early)
+    counts = [rows[f]["failed_runs"] for f in early]
+    assert counts == sorted(counts, reverse=True) and counts[0] >= 2
+    # 外したものには理由があり、上限で外したものは、いま足しても入らない(入るのに外したものが無い)
+    later = [r for r in plan["rows"] if not r["early"]]
+    assert len(later) >= 3 and sum(1 for r in later if r["why"]) == len(later)
+    over = [r for r in later if r["why"].startswith("over the")]
+    assert sum(1 for r in over if plan["seconds"] + r["seconds"] > CST.EARLY_BUDGET_SECONDS) == len(over)
+    # 鮮度の門と台本の門は pytest に渡さない。渡すファイルは全部この木にある
+    assert CST.FRESHNESS_GATE in rows and CST.FRESHNESS_GATE not in early
+    assert len(set(CST.SCRIPT_RUNNERS) & set(early)) == 0
+    assert sum(os.path.isfile(os.path.join(ROOT, f)) for f in early) == len(early)
+    # CLI が書く一覧は同じもの(workflow はこのファイルを読む)
+    out = tmp_path / "early.txt"
+    assert CST.main(["--early-list", str(out)]) == 0
+    assert out.read_text(encoding="utf-8").split() == early
+
+
+def test_failure_history_is_fail_closed_and_counts_only_blocking_jobs(tmp_path):
+    bad = tmp_path / "h.json"
+    for payload in ({}, {"files": {}}, {"runs_read": 3, "files": {"tests/test_a.py": {"failed_runs": 0, "branches": 0}}},
+                    {"runs_read": 3, "files": {"tests/test_a.py": {"failed_runs": 2, "branches": 3}}},
+                    {"runs_read": 1, "files": {"tests/test_a.py": {"failed_runs": 2, "branches": 1}}}):
+        bad.write_text(json.dumps(payload), encoding="utf-8")
+        with pytest.raises(ValueError):
+            CST.load_failure_history(bad)
+    with pytest.raises(OSError):
+        CST.load_failure_history(tmp_path / "missing.json")
+    log = "\n".join([
+        "full suite (py3.11, shard 1/6)\tRun tests\t2026-11-09T00:00:00.0Z FAILED tests/test_a.py::test_x - AssertionError",
+        "full suite (py3.11, shard 1/6)\tRun tests\t2026-11-09T00:00:00.0Z FAILED tests/test_a.py::test_y - AssertionError",
+        "selected tests (py3.11, shard 1/2)\tRun tests\t2026-11-09T00:00:00.0Z ERROR tests/test_b.py - ImportError: x",
+        "python 3.15 preview (allowed to fail)\tRun tests\t2026-11-09T00:00:00.0Z FAILED tests/test_c.py::test_z",
+        "order shuffle\tRun tests\t2026-11-09T00:00:00.0Z FAILED tests/test_d.py::test_z",
+        "full suite (py3.11, shard 1/6)\tRun tests\t2026-11-09T00:00:00.0Z   the word FAILED tests/test_e.py in a traceback",
+        "full suite (py3.11, shard 1/6)\tregen\t2026-11-09T00:00:00.0Z " + CFH.REGEN_DRIFT_MARKS[0],
+    ])
+    files, drift = CFH.parse_log(log)
+    assert files == {"tests/test_a.py", "tests/test_b.py"} and drift is True
+    assert CFH.parse_log(log.rsplit("\n", 1)[0]) == ({"tests/test_a.py", "tests/test_b.py"}, False)
+    runs = [{"databaseId": 1, "createdAt": "2026-11-01T00:00:00Z", "headBranch": "pr/x"},
+            {"databaseId": 2, "createdAt": "2026-11-02T00:00:00Z", "headBranch": "pr/x"},
+            {"databaseId": 3, "createdAt": "2026-11-03T00:00:00Z", "headBranch": "master"}]
+    data = CFH.aggregate(runs, {1: log, 2: log, 3: "nothing failed here"})
+    assert data["runs_read"] == 3 and data["runs_with_test_failures"] == 2 and data["runs_with_regen_drift"] == 2
+    assert data["files"] == {"tests/test_a.py": {"failed_runs": 2, "branches": 1},
+                             "tests/test_b.py": {"failed_runs": 2, "branches": 1}}
+    assert data["window"] == ["2026-11-01T00:00:00Z", "2026-11-03T00:00:00Z"]
+    # 書いたものは、選ぶ側がそのまま読める(ブランチ名は書かない)
+    out = tmp_path / "ok.json"
+    out.write_text(CFH.dumps(data), encoding="utf-8")
+    assert CST.load_failure_history(out)["files"]["tests/test_a.py"] == {"failed_runs": 2, "branches": 1}
+    assert "pr/x" not in out.read_text(encoding="utf-8")
+
+
+def test_freshness_forecast_calls_the_real_gate_on_the_session_of_its_shard(tmp_path):
+    with open(os.path.join(ROOT, ".test_durations"), encoding="utf-8") as f:
+        durations = json.load(f)
+    gate = [n for n in durations if n.split("::", 1)[0] == CST.FRESHNESS_GATE]
+    assert len(gate) == 1
+    recorded = [n for n in sorted(durations) if n.split("::", 1)[0] != CST.FRESHNESS_GATE][:200] + gate
+    res = CST.freshness_forecast(recorded, nshards=1)
+    assert res == {"ok": True, "shard": "1/1", "in_shard": 201, "message": ""}
+    # 記録の無いテストが 30 件足されると 201/231 = 87.0 % で、門の本体が落とす(閾値は門のファイルにしか無い)
+    new = ["tests/test_zz_not_recorded_2026_11_10.py::test_%d" % i for i in range(30)]
+    res = CST.freshness_forecast(recorded + new, nshards=1)
+    assert res["ok"] is False and res["in_shard"] == 231 and "201/231" in res["message"]
+    # 片に分けたら、門が入った片の session だけで数える
+    res = CST.freshness_forecast(recorded + new, nshards=2)
+    assert res["shard"] in ("1/2", "2/2") and 0 < res["in_shard"] < 231
+    with pytest.raises(ValueError, match="no shard holds"):
+        CST.freshness_forecast(recorded[:-1], nshards=2)
+    # `pytest --collect-only -q` の出力を読む: 警告の行は数えず、件数が要約と合わなければ止める
+    listing = tmp_path / "collected.txt"
+    body = recorded + new + ["", "tests/test_a.py:12: UserWarning: a::b", "  warnings.warn('x::y')"]
+    listing.write_text("\n".join(body + ["231 tests collected in 1.23s"]) + "\n", encoding="utf-8")
+    assert CST.read_collected(str(listing)) == recorded + new
+    assert CST.main(["--freshness-forecast", str(listing), "--nshards", "1"]) == 1     # 落ちる予報は exit 1
+    assert CST.main(["--freshness-forecast", str(listing)]) == 2                         # 片の数が無い
+    listing.write_text("\n".join(recorded + ["201 tests collected in 1.23s"]) + "\n", encoding="utf-8")
+    assert CST.main(["--freshness-forecast", str(listing), "--nshards", "1"]) == 0
+    listing.write_text("\n".join(recorded + ["999 tests collected in 1.23s"]) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="summary says 999"):
+        CST.read_collected(str(listing))
+    assert CST.main(["--freshness-forecast", str(listing), "--nshards", "1"]) == 2     # 読めない入力は緑にしない
+
+
+def test_the_gates_job_does_not_wait_for_the_shards_and_reads_its_list_from_the_tool():
+    jobs = _workflow_jobs()
+    gates, regen, test = jobs["gates"], jobs["regen"], jobs["test"]
+    assert test["needs"] == "changes" and test["if"] == "needs.changes.outputs.docs-only != 'true'"
+    # 片を待たない(needs は changes だけ)。docs だけの PR の扱いは test と同じ条件
+    early_jobs = [j for j in (gates, regen) if j["needs"] == "changes" and j["if"] == test["if"]]
+    assert len(early_jobs) == 2
+    # 一覧は道具が書いたファイルから読む。YAML にテストのファイル名を 1 つも写していない
+    runs = _runs(gates)
+    lister = [r for r in runs if "tools/ci_select_tests.py --early-list" in r]
+    assert len(lister) == 1
+    target = re.search(r"--early-list (\S+)", lister[0]).group(1)
+    runner = [r for r in runs if re.search(r"^pytest -ra ", r, re.M)]
+    assert len(runner) == 1 and runner[0].count(target) == 1
+    lines = [ln.strip() for ln in runner[0].splitlines()]
+    assert sum(ln.startswith("mapfile -t files < <(") and ln.endswith(" %s)" % target) for ln in lines) == 1
+    # pytest には一覧の全部を渡し、絞る引数(-k・--deselect など)は付けない
+    assert [ln for ln in lines if ln.startswith("pytest ")] == ['pytest -ra -q --durations=15 "${files[@]}"']
+    assert runs.index(lister[0]) < runs.index(runner[0])
+    assert sum(r.count("tests/test_") for r in runs) == 0
+    assert "empty early list" in runner[0]                    # 0 件で緑にしない
+    # 鮮度の予報は、先に回したテストが落ちても出す
+    forecast = [s for s in gates["steps"] if "--freshness-forecast" in s.get("run", "")]
+    assert len(forecast) == 1 and "--nshards" in forecast[0]["run"] and "!cancelled()" in forecast[0]["if"]
+    # 準備(apt・pip・optional backend)は test の py3.11 と同じ文面
+    by_name = {s.get("name"): s.get("run") for s in test["steps"] if s.get("run")}
+    for job in (gates, regen):
+        same = [s for s in job["steps"] if s.get("run") and by_name.get(s.get("name")) == s["run"]]
+        assert len(same) == 4, [s.get("name") for s in same]
+        assert job["env"] == test["env"]
+        py = [s["with"]["python-version"] for s in job["steps"] if "setup-python" in s.get("uses", "")]
+        assert py == ["3.11"]
+
+
+def test_the_shards_still_run_everything_the_gates_job_runs(selector):
+    jobs = _workflow_jobs()
+    # 片の pytest は何も外していない(先頭のジョブの一覧を片は読まない)
+    shard_runs = "\n".join(_runs(jobs["test"]))
+    assert shard_runs.count('pytest "${args[@]}"') == 1
+    assert sum(shard_runs.count(w) for w in ("--ignore", "--deselect", "ci_early", "--early-list")) == 0
+    step = [s for s in jobs["test"]["steps"] if "FULLSEYE_CI_SHARD" in s.get("env", {})]
+    assert len(step) == 1 and step[0]["run"].count('pytest "${args[@]}"') == 1
+    assert sum(step[0]["run"].count(w) for w in (" -k ", " -m ", "-p no:")) == 0
+    assert sorted(k for k in step[0]["env"] if k.startswith("FULLSEYE_CI_")) == [
+        "FULLSEYE_CI_SELECTION", "FULLSEYE_CI_SHARD"]
+    # 全数の片分け: 先頭のジョブで回すファイルも門も、6 片のどれかにちょうど 1 回入る(件数は 1 件も減らない)
+    with open(os.path.join(ROOT, ".test_durations"), encoding="utf-8") as f:
+        durations = json.load(f)
+    early = CST.early_plan(selector.always, CST.load_failure_history())["tests"]
+    wanted = sorted(set(early) | set(selector.always))
+    recorded_files = {n.split("::", 1)[0] for n in durations}
+    nodeids = sorted(durations) + ["%s::test_not_recorded_yet" % f for f in wanted if f not in recorded_files]
+    plan = CST.shard_plan(nodeids, CST.MAX_SHARDS, durations)
+    assert len(plan) == 6 and sum(len(p) for p in plan) == len(nodeids) >= 20000
+    assert len(set().union(*[set(p) for p in plan])) == len(nodeids)
+    holders = {f: sum(1 for p in plan if any(n.split("::", 1)[0] == f for n in p)) for f in wanted}
+    assert len(wanted) >= 30 and sum(1 for f in wanted if holders[f] == 1) == len(wanted)
+    # 生成物の回し忘れは 1 か所で、PR・master・毎日のどれでも走る条件(イベントで絞らない)
+    regen_steps = [(name, r) for name, job in jobs.items() for r in _runs(job) if "regen_all.py --check" in r]
+    assert [name for name, _ in regen_steps] == ["regen"]
+    assert "event_name" not in jobs["regen"]["if"] and "mode" not in jobs["regen"]["if"]

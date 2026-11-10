@@ -50,15 +50,24 @@ repo 全体を見る門(``tools/ci_always_run.txt``: 台帳・生成物・負債
     python tools/ci_select_tests.py --base origin/master            # 変更を git から
     python tools/ci_select_tests.py --files a.py docs/x.md          # 変更を直接
     python tools/ci_select_tests.py --base origin/master --github-output "$GITHUB_OUTPUT"
+    python tools/ci_select_tests.py --early-list ci_early_tests.txt # 先頭のジョブで先に回すファイル
+    python tools/ci_select_tests.py --freshness-forecast collected.txt --nshards 6
 
 出力(``--json``)は ``{"mode": "full"|"selected", "reasons": [...], "tests": [...],
 "seconds": 推定秒, "shards": 片の数}``。
+
+先頭のジョブ(``gates``、片と並行)で先に回す一覧もここから出す(``early_plan``): 門の全部と、失敗の
+実績(``tools/ci_failure_history.json``)で 2 本以上のブランチで落ちたファイルを、落ちた run の数の順に、
+記録時間の合計 ``EARLY_BUDGET_SECONDS`` まで。**片からは何も外さない**(先頭のジョブは「先にも回す」)。
+鮮度の門は session で答えが変わるので pytest に渡さず、片と同じ session を作って門の本体を呼ぶ
+(``freshness_forecast``)。
 """
 from __future__ import annotations
 
 import argparse
 import ast
 import fnmatch
+import importlib.util
 import json
 import math
 import os
@@ -67,6 +76,7 @@ import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -806,6 +816,182 @@ def shards_for(seconds: float) -> int:
     return max(1, min(MAX_SHARDS, math.ceil(seconds / TARGET_SHARD_SECONDS)))
 
 
+# --------------------------------------------------------------------------- #
+# 先頭のジョブ(gates): 落ちやすくて軽いテストを、片と並行して先に回す(2026-11-10)   #
+# --------------------------------------------------------------------------- #
+# 門も普通のテストも同じ片に混ぜて回すと、門が落ちても片が終わる 30〜45 分後まで赤にならない。
+# 先頭のジョブは、**実績で落ちやすくて軽い**ファイルだけを先に回す。**片の側は何も減らさない**
+# (ここで選ぶのは「先にも回すもの」で、片から外すものではない)。
+#: 先頭のジョブで回すテストの ``.test_durations`` の合計の上限(秒)。入らないものは実績の順で外す。
+EARLY_BUDGET_SECONDS = 8 * 60
+#: 門でないテストを先頭のジョブへ入れる下限: 実績で**別々のブランチ**で落ちた数。
+#: 同じブランチの push し直しで 2 回落ちただけのものは、繰り返す失敗の証拠にならない。
+EARLY_MIN_BRANCHES = 2
+#: 失敗の実績(``tools/ci_failure_history.py`` が GitHub のログから数えて書く。手で書かない)。
+FAILURE_HISTORY = "tools/ci_failure_history.json"
+#: 鮮度の門。判定が「その session に何が集まったか」で決まるので、数本だけ集めて回すと別の問いになる
+#: (片では 4,000 件に対する 95 %、先頭のジョブでは数百件に対する 95 %)。先頭のジョブでは pytest に渡さず、
+#: 片と同じ session を作って門の本体を呼ぶ(``freshness_forecast``)。
+FRESHNESS_GATE = "tests/test_test_durations_is_fresh.py"
+
+
+def load_failure_history(path: Path | None = None) -> dict:
+    """失敗の実績の表。読めない・形が違うときは例外(fail-closed: 黙って「実績なし」にしない)。"""
+    path = path or (ROOT / FAILURE_HISTORY)
+    data = json.loads(path.read_text(encoding="utf-8"))
+    files = data.get("files") if isinstance(data, dict) else None
+    if not isinstance(files, dict) or not files:
+        raise ValueError("%s has no 'files' table" % path)
+    table: dict[str, dict] = {}
+    for name, row in files.items():
+        runs = row.get("failed_runs") if isinstance(row, dict) else None
+        branches = row.get("branches") if isinstance(row, dict) else None
+        if not (isinstance(runs, int) and isinstance(branches, int) and 1 <= branches <= runs):
+            raise ValueError("%s: bad row for %r: %r" % (path, name, row))
+        table[name] = {"failed_runs": runs, "branches": branches}
+    runs_read = data.get("runs_read")
+    if not isinstance(runs_read, int) or runs_read < max(r["failed_runs"] for r in table.values()):
+        raise ValueError("%s: runs_read=%r is smaller than a file's failed_runs" % (path, runs_read))
+    return {"runs_read": runs_read, "window": data.get("window") or [], "files": table}
+
+
+def early_plan(always: list[str], history: dict, *, budget: float = EARLY_BUDGET_SECONDS,
+               min_branches: int = EARLY_MIN_BRANCHES, durations_path: Path | None = None,
+               root: Path = ROOT) -> dict:
+    """先頭のジョブで回すテストのファイルを、失敗の実績の順に、時間の上限まで選ぶ。
+
+    * 候補 = 門(*always* = 明示の一覧 + repo を走査するテスト)全部と、実績で *min_branches* 本以上の
+      ブランチで落ちたファイル。
+    * 外すもの = 鮮度の門(``FRESHNESS_GATE``)と台本を走らせる門(``SCRIPT_RUNNERS``)。どちらも判定や
+      所要時間が session で決まる。この木に無いファイル(実績は別のブランチのもの)も外す。
+    * 並べ方 = 落ちた run の数が多い順 → 記録時間が短い順 → 名前。上から見て、合計が *budget* を
+      超えないものを入れる(入らないものは飛ばして次を見る)。記録の無いファイルはファイルの平均で仮置き。
+    * 返り値の ``tests`` は**回す順**(落ちやすいものが先)。``rows`` は候補全部と、入れた / 外した理由。
+
+    1 件も選べなければ例外(先頭のジョブが黙って 0 件で緑にならないように)。
+    """
+    durations_path = durations_path or (ROOT / ".test_durations")
+    per: dict[str, float] = defaultdict(float)
+    for k, v in json.loads(durations_path.read_text(encoding="utf-8")).items():
+        per[k.split("::", 1)[0]] += v
+    mean = (sum(per.values()) / len(per)) if per else 0.0
+    table = history["files"]
+    gates = set(always)
+    pool = gates | {f for f, row in table.items() if row["branches"] >= min_branches}
+    rows = []
+    for f in pool:
+        row = table.get(f, {"failed_runs": 0, "branches": 0})
+        rows.append({"file": f, "failed_runs": row["failed_runs"], "branches": row["branches"],
+                     "seconds": round(per.get(f, mean), 1), "recorded": f in per, "gate": f in gates})
+    rows.sort(key=lambda r: (-r["failed_runs"], r["seconds"], r["file"]))
+    total = 0.0
+    for r in rows:
+        if r["file"] == FRESHNESS_GATE:
+            r.update(early=False, why="session-dependent (checked by the freshness forecast instead)")
+        elif r["file"] in SCRIPT_RUNNERS:
+            r.update(early=False, why="script runner (its time and verdict depend on the session)")
+        elif not (root / r["file"]).is_file():
+            r.update(early=False, why="not in this tree")
+        elif total + r["seconds"] > budget:
+            r.update(early=False, why="over the %d s budget" % budget)
+        else:
+            total += r["seconds"]
+            r.update(early=True, why="")
+    tests = [r["file"] for r in rows if r["early"]]
+    if not tests:
+        raise ValueError("the early list is empty (budget %s s, %d candidates)" % (budget, len(rows)))
+    return {"tests": tests, "seconds": round(total, 1), "budget": budget, "rows": rows,
+            "runs_read": history["runs_read"], "window": history["window"]}
+
+
+def read_collected(path: str) -> list[str]:
+    """``pytest --collect-only -q`` の出力 -> ノード id(集めた順)。
+
+    末尾の「N tests collected」と件数が合わなければ例外(警告の行を拾った・行が欠けた、を黙って通さない)。
+    """
+    ids, total = [], None
+    for line in Path(path).read_text(encoding="utf-8", errors="replace").splitlines():
+        head = line.split("::", 1)[0]
+        if "::" in line and head.startswith("tests/") and head.endswith(".py") and " " not in head:
+            ids.append(line)
+            continue
+        m = re.match(r"^(\d+) tests? collected in ", line)
+        if m:
+            total = int(m.group(1))
+    if total is None or total != len(ids) or not ids:
+        raise ValueError("%s: read %d node ids but the summary says %r collected" % (path, len(ids), total))
+    return ids
+
+
+def freshness_forecast(nodeids: list[str], *, nshards: int, selection: str | None = None,
+                       durations_path: Path | None = None, gate_path: Path | None = None) -> dict:
+    """鮮度の門が片で出す答えを、片が終わる前に出す。
+
+    片と同じ手順(``plan_session``)で、鮮度の門が入る片の session を作り、**門の本体をそのまま呼ぶ**
+    (閾値も文言もここへ写さない)。門のファイルにテスト関数がちょうど 1 つ、が前提(違えば例外)。
+    """
+    gate_path = gate_path or (ROOT / FRESHNESS_GATE)
+    keep, shard = None, None
+    for k in range(1, nshards + 1):
+        info = plan_session(nodeids, selection=selection, shard="%d/%d" % (k, nshards),
+                            durations_path=durations_path)
+        if any(n.split("::", 1)[0] == FRESHNESS_GATE for n in info["keep"]):
+            keep, shard = info["keep"], info["shard"]
+            break
+    if keep is None:
+        raise ValueError("no shard holds %s (%d node ids, %d shards)" % (FRESHNESS_GATE, len(nodeids), nshards))
+    spec = importlib.util.spec_from_file_location("_fullseye_freshness_gate", gate_path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    funcs = [v for name, v in sorted(vars(mod).items()) if name.startswith("test_") and callable(v)]
+    if len(funcs) != 1:
+        raise ValueError("%s: expected exactly 1 test function, found %d" % (gate_path, len(funcs)))
+    request = SimpleNamespace(session=SimpleNamespace(items=[SimpleNamespace(nodeid=n) for n in keep]))
+    try:
+        funcs[0](request)
+    except AssertionError as e:
+        return {"ok": False, "shard": shard, "in_shard": len(keep), "message": str(e)}
+    return {"ok": True, "shard": shard, "in_shard": len(keep), "message": ""}
+
+
+def _main_early(args) -> int:
+    """``--early-list`` / ``--freshness-forecast``。入力が使えないときは 2(黙って緑にしない)。"""
+    try:
+        if args.early_list:
+            always = Selector(Index(ROOT), load_always(args.always_file)).always
+            plan = early_plan(always, load_failure_history())
+            Path(args.early_list).write_text("\n".join(plan["tests"]) + "\n", encoding="utf-8")
+            head = ("early tests: %d files, %.0f s recorded (budget %d s); ranked by %d failed runs (%s)"
+                    % (len(plan["tests"]), plan["seconds"], plan["budget"], plan["runs_read"],
+                       " .. ".join(plan["window"])))
+            print(head)
+            for r in plan["rows"]:
+                print("  %-5s %2d runs %7.1f s%s  %s%s" % ("run" if r["early"] else "later", r["failed_runs"],
+                                                         r["seconds"], " " if r["recorded"] else "*",
+                                                         r["file"], ("   <- " + r["why"]) if r["why"] else ""))
+            if args.summary:
+                with open(args.summary, "a", encoding="utf-8") as fh:
+                    fh.write("## %s\n\n| | failed runs | seconds | file |\n|---|---:|---:|---|\n" % head)
+                    for r in plan["rows"]:
+                        fh.write("| %s | %d | %.1f | `%s` %s |\n" % ("first" if r["early"] else "shards only",
+                                                                    r["failed_runs"], r["seconds"], r["file"], r["why"]))
+                    fh.write("\nEvery file above also runs in the shards. `*` in the log = no recorded time.\n")
+        if args.freshness_forecast:
+            if not args.nshards:
+                raise ValueError("--freshness-forecast needs --nshards")
+            res = freshness_forecast(read_collected(args.freshness_forecast), nshards=args.nshards,
+                                     selection=args.selection or None)
+            print("freshness forecast for shard %s (%d tests): %s"
+                  % (res["shard"], res["in_shard"], "ok" if res["ok"] else "FAIL"))
+            if not res["ok"]:
+                print(res["message"])
+                return 1
+    except (OSError, ValueError, KeyError) as e:
+        print("ci_select_tests: %s: %s" % (type(e).__name__, e), file=sys.stderr)
+        return 2
+    return 0
+
+
 def changed_from_git(base: str, head: str = "HEAD") -> list[str]:
     out = subprocess.run(["git", "diff", "--name-only", "--no-renames", base + "..." + head],
                          cwd=ROOT, check=True, capture_output=True, text=True).stdout
@@ -862,7 +1048,16 @@ def main(argv=None) -> int:
     ap.add_argument("--deps-drift", nargs=2, metavar=("CODE_FILE", "TEXT_FILE"),
                     help="tools/ci_deps_drift.py --compare の終了コードと出力。0 以外なら full "
                          "(依存の版が最後の全数の run と違う / 比べられない)")
+    ap.add_argument("--early-list", metavar="FILE",
+                    help="先頭のジョブ(gates)で先に回すテストのファイルを、回す順に FILE へ書く"
+                         "(失敗の実績 tools/ci_failure_history.json の順、合計 %d 秒まで)" % EARLY_BUDGET_SECONDS)
+    ap.add_argument("--freshness-forecast", metavar="COLLECTED",
+                    help="`pytest --collect-only -q` の出力から、鮮度の門が片で出す答えを先に出す(落ちるなら exit 1)")
+    ap.add_argument("--nshards", type=int, help="--freshness-forecast: 片の数")
+    ap.add_argument("--selection", help="--freshness-forecast: PR で選んだテストの一覧(selected のとき)")
     args = ap.parse_args(argv)
+    if args.early_list or args.freshness_forecast:
+        return _main_early(args)
     changed = None
     full_reason = args.full
     if not full_reason and args.deps_drift:
