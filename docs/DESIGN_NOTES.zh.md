@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：611 / 1877 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：611 / 1884 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `_archive_tarxz.py`
@@ -2602,14 +2602,15 @@
 
 ## `tests/conftest.py`
 
-- **L29** — ★ 把 Studio 的设置**在整个会话内**逃逸到一次性 ini。 # --------------------------------------------------------------------------- # `QSettings("Fullseye", "Studio")` 会写入原生存储库（Windows 上为注册表 HKCU\Software\Fullseye\Studio）。我们此前把隔离放在**各个测试文件**里，故被遗漏的文件污染了用户的真实注册表。2026-09-05 的审计确认了实害：10 个 `recent_files` 中有 8 个是 pytest 的临时路径，`system\operator_timeout_ms` 等实值也残留着。（隔离只在 3 个文件中的 2 个里，`test_studio_params.py` 是素通的。）不再逐个添加，而是**作为会话 autouse 在此只放一个**。环境变量是 `studio._settings()` 唯一查看的入口，故此举覆盖全部测试。
-- **L45** — ★ 需要 optional backend 的测试的声明。 # --------------------------------------------------------------------------- # CI 的注记长期写着“不安装 torch/kornia（**对应测试 graceful skip**）”，但 2026-09-05 的实测显示那**并非事实**——目标测试并未 skip，而是以 `ImportError: this operator needs the optional 'torch' backend` 失败（14 件）。只有注记，却没有用机器核实它的机制。此处把声明汇入单一入口。目标是**双向**：* 无 backend 的环境 → skip（让注记成为事实）* **理应有** backend 的环境 → 不许 skip，令其失败（`FULLSEYE_REQUIRE_OPTIONAL=1`。CI 的 py3.11 作业会立起它）只有单向时，真正的回归会悄然化为 skip（与 `feedback_failsoft_hides_permanently_dead_ops` 同形）。
-- **L222** _(ja)_ — ★2026-09-14 追加。ここまで探針バンクは 6 sort しか無く、**901 op のうち 151 本 (16.8 %)が契約ゲート 3 本(例外を投げない / 非有限を出さない / 決定的)を 一度も実行されていなかった** —— `PROBELESS_OPS_BUDGET = 151` というラチェットで 本数だけ凍結し、「本来の直しは BANKS を全 in_sort へ広げること」と自分で書いて あった。その本来の直しをここで入れる。 形の出どころは推測ではない: `backends_bridge._EMPTY_OF` が 12 sort すべての **正準の最小値**を宣言しており(そこが sort の定義そのもの)、`problems.py` の `_points_stack` / `_signal_stack` などが実データの作り方を持っている。 各バンクは既存の作法に合わせ、**普通の値・定数 0・定数 1・退化形**を混ぜる (定数と退化形が「走った」と「意味のある出力」を分ける —— [[feedback_ran_is_not_meaningful_output]])。 --------------------------------------------------------------------------- #
-- **L245** _(ja)_ — ★点群は**連結なものと非連結なものの両方**を置く。`tb_geodesic_distances` が 不達を `inf` で表すのは契約どおりで、`ops.NONFINITE_IS_MEANINGFUL` に 「1.0 に潰すと『届かない』が『近い』に化ける」と宣言済み。 ここで一度 `normal` をわざと連結にして有限性ゲートを緑にしかけたが、 それは**欠陥を隠す方向**だった —— 直すべきは門が台帳を見ていないこと。 `normal` は橋でつないだ現実的な形、`two_clusters` は非連結を撃つ探針。
-- **L312** _(ja)_ — ★**特異行列は必ず置く。** 一度ここから外しかけたが、それは誤りだった —— `tb_mat_cond` が特異行列で `inf` を返すのは**契約どおり**で、`ops.py` の `NONFINITE_IS_MEANINGFUL` に「厳密に特異な行列は s_min=0 なので inf が 正しい答え。有限に潰すと『十分に良条件』と読めてしまう」と**既に宣言済み** だった。落ちていたのは op ではなく、**有限性ゲートがその台帳を見ていない** こと。探針を削って緑にするのは、欠陥を隠す行為。 (同じ註に 2026-09-05 の教訓が書いてある ——「自分の probe では特異行列を 作っていなかったので tb_mat_cond を取りこぼした」。探針から外すのは その取りこぼしを**わざと再現する**ことになる。)
-- **L430** _(ja)_ — ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield / beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、 **一度に全部入れて切り分け不能にしない**よう次の段で足す。
-- **L438** _(ja)_ — ★第 3 段(2026-09-17): 戻りの橋 ``feature_to_img`` が入るまで、feature を **入力**に取る op は 1 本も無かった(作る op は 125 本ある)。門が「探針の 無い op が 1 本に増えた」と正しく落ちて教えた。
-- **L483** _(ja)_ — ★2026-10-07: ここに ``return`` があり、上の docstring(sort 既定の帯を捨てない) に反して override のある 10 op は sort 既定の帯を一度も通っていなかった。 sort 既定は「拒否が明示の fail-closed で記録される」ことの検査として通す (test_op_contracts.KNOWN_FALLS_BACK_ON_EDGE に by-design として載る)。
+- **L30** — ★ 把 Studio 的设置**在整个会话内**逃逸到一次性 ini。 # --------------------------------------------------------------------------- # `QSettings("Fullseye", "Studio")` 会写入原生存储库（Windows 上为注册表 HKCU\Software\Fullseye\Studio）。我们此前把隔离放在**各个测试文件**里，故被遗漏的文件污染了用户的真实注册表。2026-09-05 的审计确认了实害：10 个 `recent_files` 中有 8 个是 pytest 的临时路径，`system\operator_timeout_ms` 等实值也残留着。（隔离只在 3 个文件中的 2 个里，`test_studio_params.py` 是素通的。）不再逐个添加，而是**作为会话 autouse 在此只放一个**。环境变量是 `studio._settings()` 唯一查看的入口，故此举覆盖全部测试。
+- **L46** — ★ 需要 optional backend 的测试的声明。 # --------------------------------------------------------------------------- # CI 的注记长期写着“不安装 torch/kornia（**对应测试 graceful skip**）”，但 2026-09-05 的实测显示那**并非事实**——目标测试并未 skip，而是以 `ImportError: this operator needs the optional 'torch' backend` 失败（14 件）。只有注记，却没有用机器核实它的机制。此处把声明汇入单一入口。目标是**双向**：* 无 backend 的环境 → skip（让注记成为事实）* **理应有** backend 的环境 → 不许 skip，令其失败（`FULLSEYE_REQUIRE_OPTIONAL=1`。CI 的 py3.11 作业会立起它）只有单向时，真正的回归会悄然化为 skip（与 `feedback_failsoft_hides_permanently_dead_ops` 同形）。
+- **L223** _(ja)_ — ★2026-09-14 追加。ここまで探針バンクは 6 sort しか無く、**901 op のうち 151 本 (16.8 %)が契約ゲート 3 本(例外を投げない / 非有限を出さない / 決定的)を 一度も実行されていなかった** —— `PROBELESS_OPS_BUDGET = 151` というラチェットで 本数だけ凍結し、「本来の直しは BANKS を全 in_sort へ広げること」と自分で書いて あった。その本来の直しをここで入れる。 形の出どころは推測ではない: `backends_bridge._EMPTY_OF` が 12 sort すべての **正準の最小値**を宣言しており(そこが sort の定義そのもの)、`problems.py` の `_points_stack` / `_signal_stack` などが実データの作り方を持っている。 各バンクは既存の作法に合わせ、**普通の値・定数 0・定数 1・退化形**を混ぜる (定数と退化形が「走った」と「意味のある出力」を分ける —— [[feedback_ran_is_not_meaningful_output]])。 --------------------------------------------------------------------------- #
+- **L246** _(ja)_ — ★点群は**連結なものと非連結なものの両方**を置く。`tb_geodesic_distances` が 不達を `inf` で表すのは契約どおりで、`ops.NONFINITE_IS_MEANINGFUL` に 「1.0 に潰すと『届かない』が『近い』に化ける」と宣言済み。 ここで一度 `normal` をわざと連結にして有限性ゲートを緑にしかけたが、 それは**欠陥を隠す方向**だった —— 直すべきは門が台帳を見ていないこと。 `normal` は橋でつないだ現実的な形、`two_clusters` は非連結を撃つ探針。
+- **L313** _(ja)_ — ★**特異行列は必ず置く。** 一度ここから外しかけたが、それは誤りだった —— `tb_mat_cond` が特異行列で `inf` を返すのは**契約どおり**で、`ops.py` の `NONFINITE_IS_MEANINGFUL` に「厳密に特異な行列は s_min=0 なので inf が 正しい答え。有限に潰すと『十分に良条件』と読めてしまう」と**既に宣言済み** だった。落ちていたのは op ではなく、**有限性ゲートがその台帳を見ていない** こと。探針を削って緑にするのは、欠陥を隠す行為。 (同じ註に 2026-09-05 の教訓が書いてある ——「自分の probe では特異行列を 作っていなかったので tb_mat_cond を取りこぼした」。探針から外すのは その取りこぼしを**わざと再現する**ことになる。)
+- **L431** _(ja)_ — ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield / beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、 **一度に全部入れて切り分け不能にしない**よう次の段で足す。
+- **L439** _(ja)_ — ★第 3 段(2026-09-17): 戻りの橋 ``feature_to_img`` が入るまで、feature を **入力**に取る op は 1 本も無かった(作る op は 125 本ある)。門が「探針の 無い op が 1 本に増えた」と正しく落ちて教えた。
+- **L484** _(ja)_ — ★2026-10-07: ここに ``return`` があり、上の docstring(sort 既定の帯を捨てない) に反して override のある 10 op は sort 既定の帯を一度も通っていなかった。 sort 既定は「拒否が明示の fail-closed で記録される」ことの検査として通す (test_op_contracts.KNOWN_FALLS_BACK_ON_EDGE に by-design として載る)。
+- **L503** _(ja)_ — ★CI: PR では変更に関係するテストだけ / 片はファイル単位で分ける(2026-11-10) # --------------------------------------------------------------------------- # どちらも環境変数があるときだけ働く(手元の `pytest` は何も変わらない)。 FULLSEYE_CI_SELECTION=<一覧のファイル> tools/ci_select_tests.py が書いた一覧に無いテストを外す FULLSEYE_CI_SHARD=k/N ファイル単位の LPT で N 片に分け、k 片目だけ残す 選ぶ規則と、選ばなかったテストを master・毎日の full suite で回す約束は CONTRIBUTING.md の「CI: which tests run where」。 一覧が読めない・1 件も当たらないときは**止める**(黙って 0 件で緑にしない)。
 
 ## `tests/test_abi_apply.py`
 
@@ -3046,6 +3047,11 @@
 
 - **L206** _(ja)_ — ★2026-10-07: ``or True`` を外した。実測 none=-0.003086 < rigid=-0.001662 < 0.5*none=-0.001543
 
+## `tests/test_provenance_naming.py`
+
+- **L171** _(ja)_ — ★2026-11-10(CI の高速化): 以前は禁止語 33 語のそれぞれで text を分割し直していた。 分割は語に依らないので 1 回にする(判定は ``_contains_vendor`` と同じ ``_contains_target``)。
+- **L178** _(ja)_ — ★2026-11-10(CI の高速化): 下の 3 つの門は、同じ .py 全部を**それぞれ** ast.parse していた (合計約 190 秒、CI)。1 回の走査で 3 つの門が見る物(関数・クラス名、モジュール docstring、 関数・クラスの docstring)を抜き出して控える。見る範囲(``_py_files``)と抜き出し方 (``ast.walk`` / ``ast.get_docstring``)は以前と同じ。AST そのものは控えない(メモリ)。
+
 ## `tests/test_public_reachability.py`
 
 - **L81** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.vision.gsplat.<名前>` 経由で届く(2026-10-02 訂正: `fullseye.op.<名前>` は存在しない。 unified registry を公開経路として数えたら 17 モジュールが島でなくなり行を消した)。 ここに残る 1〜6 本は各モジュールのデモ入口(`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
@@ -3264,6 +3270,13 @@
 - **L1367** _(ja)_ — ★再利用のたびに中身を確かめる。2026-11-10 実測: 揃え直しが途中で落ちた venv(cv2 が空)を stamp だけ見て再利用し、全数の 720 件が「backend が無い」で落ちた。
 - **L1382** _(ja)_ — ★--force-reinstall: 揃え直しの道では上の `-e .[opencv]` が opencv-python を入れ直し、その uninstall が contrib と共有の cv2/ を消す。contrib は「最新なので何もしない」ため cv2 が空になった(2026-11-10 実測)。
 
+## `tools/ci_select_tests.py`
+
+- **L84** _(ja)_ — ★足すのは自由、外すときは「全テストに効かない」根拠を書くこと。
+- **L461** _(ja)_ — ★ライブラリ(repo 直下・fullseye/・examples/ …)の**広い**参照は数えない。 ops.py が全 backend を import するので、ライブラリの閉包はほぼ全部のテストに入る。 そこで ``"docs"`` や ``ROOT / "examples"`` のような 1 か所の広い参照を数えると、 docs・examples のどの変更でもほぼ全部が選ばれて、判定が意味を失う(実測 93 %)。 ファイルを名指しする参照(``data/macro_champions.json`` など)は数える。 ここで落ちた依存は master と毎日の full suite が拾う。どのテストも名指ししない ファイルを触った PR は「対応が分からない」で full になる。
+- **L468** _(ja)_ — ★2026-11-10(独立レビュー): ``data/auto_specs`` / ``docs/ops`` のように**字面が 2 段以上** あるディレクトリの参照は数える(backends_auto が data/auto_specs/*.json を読み込んで op を登録するのに、捨てていたので auto_specs の変更が 93 本しか選ばなかった)。 捨てるのは字面が 1 段以下(``"docs"`` / ``ROOT / "examples"`` / ``*.md``)だけ。
+- **L475** _(ja)_ — ★文字列で引くレジストリ(``opassist.py`` の ``("opsfileio", "OPSFILEIO")`` など)。 repo 直下のモジュール名と同じ字面の単語は、そのモジュールへの辺にする(多めに選ぶ側)。
+
 ## `tools/ci_wheel_check.py`
 
 - **L25** — ★**把这个脚本自身的所在位置从 sys.path 中移除。** Python 会把脚本的目录放到 sys.path[0]，所以从 checkout 的 `tools/` 启动时，即使在 wheel 侧的 venv 中也能 import 到 `tools/` 下（未随附的 chain_fuzz 等），于是就在「能看到 wheel 里没有的东西」的状态下计数。2026-09-05 的复查中，这个门**漏掉了 tb_* 143 op 的缺失**正是因为这个。同时也把 cwd 移到空的临时目录（cwd 是 checkout 的话会发生同样的事）。
@@ -3353,9 +3366,9 @@
 ## `tools/gen_maturity.py`
 
 - **L115** _(ja)_ — 任意キー。**ここに無いキーは拒む**(fail-closed)。★所属・勤務先・製品名の欄は 意図して持たない —— 報告者に求めない情報は、台帳に置く場所も作らない。
-- **L382** — ★这是**下界**。因为它只看 op 名是否在 ``tests/`` 中以 literal 出现，所以扫台账跑遍全部 op 的扫掠型测试（``for name in ledger: ...``）不计入。要读作「**没有指名的测试**」而非「没有测试」。
-- **L404** _(ja)_ — ★報告が付いた行にだけ鍵を足す(空の台帳で出力を動かさない)。 repo 内の判定は別の鍵に残す —— 1 つの段に畳まない。
-- **L433** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D7): ここは定数 0 だった。台帳の外のスクリプト (examples2d.EXCLUDED)を数えておらず、どの門も走らせない 4 本が見えていなかった。
+- **L406** — ★这是**下界**。因为它只看 op 名是否在 ``tests/`` 中以 literal 出现，所以扫台账跑遍全部 op 的扫掠型测试（``for name in ledger: ...``）不计入。要读作「**没有指名的测试**」而非「没有测试」。
+- **L428** _(ja)_ — ★報告が付いた行にだけ鍵を足す(空の台帳で出力を動かさない)。 repo 内の判定は別の鍵に残す —— 1 つの段に畳まない。
+- **L457** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D7): ここは定数 0 だった。台帳の外のスクリプト (examples2d.EXCLUDED)を数えておらず、どの門も走らせない 4 本が見えていなかった。
 
 ## `tools/gen_op_catalog.py`
 
@@ -3525,9 +3538,9 @@
 - **L117** — ★2026-10-15：没有 `--md`，**什么都没写**（只把摘要打印到标准输出）。docs/CONVERSION_MATRIX.md 停留在 2026-09-02 的“类型 59 / 转换对 164”而过时，而 --check 无法把“不写的阶段”视为 drift，于是通过了 6 周。现在由 `trace_problems()` 拒绝“连声明的输出都不碰的阶段”。
 - **L133** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
 - **L394** — * ★而且危险：刚生成的文章用**相对路径**写图像。公开版是改成 `raw.githubusercontent.com` 绝对 URL 后的（Qiita 用相对路径不显示图像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些绝对 URL 会回退 42 行。**要跑就一直跑到文章的公开步骤为止。** 排除项要**按文件名**写。用散文归纳（"wing*_gallery 的 10 本"）机器无法比对，下面的 `unclassified()` 就不工作了。
-- **L833** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L848** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L896** — ★位于 `tools/` 之外的生成物。只遍历 `tools/*.py` 永远发现不了它，实际上 `docs/OP_INDEX.json` 就一直被漏掉。
+- **L842** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L857** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L905** — ★位于 `tools/` 之外的生成物。只遍历 `tools/*.py` 永远发现不了它，实际上 `docs/OP_INDEX.json` 就一直被漏掉。
 
 ## `tools_geom.py`
 

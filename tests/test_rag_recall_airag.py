@@ -27,16 +27,35 @@ def _recall(found, relevant):
 _EXEC_DETAIL: dict = {}
 
 
+#: 問い合わせ -> (直接の検索, 計画の候補, 実行可能な計画) の控え(2026-11-10、CI の高速化)。
+#: 検索と計画は問い合わせ・始点・終点だけで決まり、``relevant``(正解)には依存しない。以前は
+#: 同じ 40 問を 1 セッションで 3 回(下の 2 つのテスト)計画し直していて、このファイルだけで
+#: 約 980 秒かかっていた。門の中身(正解との照合・閾値・1 問の劣化で落ちること)は変えず、
+#: 同じ入力の計画を 1 回にする。
+_PLAN_CACHE: dict = {}
+
+
+def _plan_query(query, start_sort, goal_sort):
+    key = (query, start_sort, goal_sort)
+    if key not in _PLAN_CACHE:
+        direct = [x["name"] for x in search_ops(query, 10)["ops"]]
+        plan = plan_chain(query, start_sort, goal_sort, k=10, max_depth=4)
+        planned = [x["name"] for stage in plan.get("stages", []) for x in stage["candidates"]]
+        # plan() は既定で plan_timeout_ms(900 ms)で打ち切る。CI の負荷で問い合わせ(mv01 は手元で 0.56 秒)が時間切れに
+        # なると実行可能な計画が空になり、報告(手元で生成)と食い違った(2026-11-04、#250 の CI)。上限を展開数の側に移す。
+        executable = plan_api(start_sort, goal_sort, goal=query, constraints={"timeout_ms": 120_000})
+        plans = [list(p["ops"]) for p in executable.get("plans", [])]
+        _PLAN_CACHE[key] = (tuple(direct), tuple(planned), tuple(tuple(p) for p in plans))
+    direct, planned, plans = _PLAN_CACHE[key]
+    return list(direct), list(planned), [list(p) for p in plans]
+
+
 def _measure(rows):
     queries = []
     by_category = defaultdict(lambda: {"search": [], "plan": [], "executable": []})
     for row in rows:
-        direct = [x["name"] for x in search_ops(row["query"], 10)["ops"]]
-        plan = plan_chain(row["query"], row["start_sort"], row["goal_sort"], k=10, max_depth=4)
-        planned = [x["name"] for stage in plan.get("stages", []) for x in stage["candidates"]]
-        # plan() は既定で plan_timeout_ms(900 ms)で打ち切る。CI の負荷で問い合わせ(mv01 は手元で 0.56 秒)が時間切れに
-        # なると実行可能な計画が空になり、報告(手元で生成)と食い違った(2026-11-04、#250 の CI)。上限を展開数の側に移す。
-        executable=plan_api(row["start_sort"],row["goal_sort"],goal=row["query"],constraints={"timeout_ms": 120_000})
+        direct, planned, plans = _plan_query(row["query"], row["start_sort"], row["goal_sort"])
+        executable = {"plans": [{"ops": p} for p in plans]}
         executable_names=[name for p in executable.get("plans",[]) for name in p["ops"]]
         sr, pr = _recall(direct, row["relevant"]), _recall(planned, row["relevant"])
         er=_recall(executable_names,row["relevant"])

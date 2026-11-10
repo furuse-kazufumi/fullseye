@@ -255,10 +255,110 @@ py -3.11 studio.py             # the IDE
 ```
 
 CI (GitHub Actions) runs on every push/PR: a **minimal numpy+scipy job** that
-executes the "core runs without extras" claim, plus the full suite with coverage
+executes the "core runs without extras" claim, plus the test suite with coverage
 on Python 3.11 / 3.12 / 3.14 (3.13 in the weekly scheduled run; 3.15 as an
 allowed-to-fail preview of the core). Tags `vX.Y.Z` build from a clean checkout and publish to
 PyPI automatically.
+
+### CI: which tests run where (2026-11-10)
+
+The suite is ~26,600 tests and ~4.7 CPU-hours (`.test_durations`). Running all of it on
+every PR took 1-2 hours per PR and starved the free runners, so **a PR runs only the tests
+related to its change**. This narrows *where* a test runs, never *what* it asserts:
+**no gate, threshold, floor or ledger is relaxed**, and everything a PR skips is run in full
+on every push to `master` and every night.
+
+| Event | What runs |
+|---|---|
+| PR (default) | tests selected by `tools/ci_select_tests.py` + the always-run gates (`tools/ci_always_run.txt`), py3.11, 1-6 shards sized by the selection's recorded duration |
+| PR with label `ci:full` | the full suite (the label is read when a run starts: add it, then "Re-run all jobs" or push) |
+| PR that touches a core file / an unmapped file / > 1,500 files, or the selector fails | the full suite (fail-safe) |
+| push to `master` | the full suite on 3.11 / 3.12 / 3.14 |
+| nightly (`0 18 * * *` UTC) | the full suite on 3.11 / 3.12 / 3.14 |
+| weekly (Monday) | the full suite on 3.11-3.14 + order-shuffle / parallel |
+
+How the selection works (`py -3.11 tools/ci_select_tests.py --base origin/master` shows it locally):
+
+* **Import graph.** Every `*.py` is parsed (AST); `import`, `from … import`,
+  `importlib.import_module("x")` / `__import__("x")` with a literal name, and the backend
+  names `ops.py` imports by string are edges. A test depends on everything it reaches.
+* **Path references.** String literals that look like paths (`ROOT / "docs" / "x.json"` and
+  `os.path.join(…)` are folded, `glob` patterns are matched with `fnmatch`) count as "this file
+  reads that path". A file that runs scripts (`subprocess`, `runpy`, …) and names `*.py` targets
+  also depends on those scripts' import graphs. The two PoC/example runners
+  (`test_poc_scripts_run.py`, `test_example_scripts_run.py`) are narrowed to the scripts whose
+  dependencies changed (their session fixture runs only the selected parameters).
+* **When in doubt, run everything.** Core files (`ops.py`, `backends.py`, `backend_safe.py`,
+  `api.py`, `fslib.py`, `fullseye/__init__.py`, conftest, CI config, `pyproject.toml`,
+  `tools/regen_all.py`, the selector itself — see `CORE_PATTERNS`), any changed file that no
+  test is known to depend on, a deleted file nobody references, or an unparsable `.py` turn the
+  PR into a full run. So does a change to the selection tooling itself (`tools/ci_select_tests.py`,
+  `tools/ci_always_run.txt`, `tools/ci_deps_drift.py`, conftest, `.github/`): that check is done in
+  the workflow, and for every other PR the rules are taken from the **base** branch's copy of the
+  selector, not the PR's.
+* **What counts as a reference.** In *library* modules (repo root, `fullseye/`, `examples/`) a
+  directory reference with at most one literal component (`"docs"`, `ROOT / "examples"`, `*.md`) is
+  ignored (otherwise every docs change would select ~93 % of the suite); file-specific references
+  and directory references with two or more literal components (`data/auto_specs`, `docs/ops`)
+  count. In `tests/` and `tools/` every path literal counts, but a test that walks from the repo
+  root with a variable (`os.walk(ROOT)`, `ROOT.rglob(...)`, `git ls-files`) produces no path
+  literal at all, so the graph cannot see what it reads: those tests are always-run (next item).
+  A bare string equal to a repo-root module name (string-keyed registries such as
+  `("opsfileio", "OPSFILEIO")` in `opassist.py`) counts as an import of that module.
+* **Always-run gates.** Repo-wide gates that can fail on any change run on every PR regardless of
+  the selection: the ones listed in `tools/ci_always_run.txt` (`test_vacuous_assertions`,
+  `test_type_alias_ledger`, `test_test_durations_is_fresh`, `test_provenance_naming`,
+  `test_no_invalid_escape_sequences`, …) **plus every test the selector finds walking the repo**
+  (`walks_repo`: `os.walk` / `os.listdir` / `rglob` / `iterdir` / `glob("**")` whose start is not a
+  literal sub-directory, and `git ls-files`). `tests/test_ci_select_tests_2026_11_10.py` checks with
+  an independent probe that every such test is always-run. `regen_all --check` runs in its own job
+  (`regen`, in parallel with the shards) on every run that is not docs-only: PR, push to `master`,
+  nightly, weekly and manual. Until 2026-11-10 it was the last step of shard 1, so it did not run
+  when that shard's tests failed and added 13-20 minutes behind them.
+* **Gates first (`gates` job).** In parallel with the shards, one py3.11 job runs the tests that are
+  most likely to fail, so a red result shows in minutes instead of when a shard ends (30-45 minutes).
+  The list is computed, not hand-picked: `python tools/ci_select_tests.py --early-list <file>` takes
+  the always-run gates plus every test file that failed on two or more branches in the recent failed
+  runs (`tools/ci_failure_history.json`), orders them by the number of failed runs, and keeps what
+  fits in 8 minutes of recorded time (`EARLY_BUDGET_SECONDS`; a file that does not fit is skipped and
+  the next one is tried). "Gates first" is therefore not "every gate first": the order is by failed
+  runs, so an always-run gate that does not fit the budget is left to its shard (the job's log and
+  summary name each one with the reason; on 2026-11-10 three of the ten were left out). **Nothing is removed from the shards**: every test of the `gates` job also
+  runs in its shard, so the job pays for its tests twice. The two script runners are never in the
+  list. `test_test_durations_is_fresh` answers a different question on a small session, so the job
+  does not pass it to pytest: it collects the suite, rebuilds the session of the shard that holds the
+  gate and calls the gate's own function (`--freshness-forecast`). The history is counted by hand,
+  not in CI (it downloads one log per run): `python tools/ci_failure_history.py --runs 60` (read-only
+  `gh`), then commit the JSON. A stale history only means a stale order.
+* **How much the replay proves.** In the replay of #270-#295, six PRs had a failing CI run (seven
+  runs); four of them (#270, #272, #294, #295) went full because of the core-file rule, and only
+  #271 and #276 were in selected mode. #276's failure was
+  an always-run gate, and #271's (a dependency released that day) is caught only by the
+  dependency-version check, not by the graph. The graph itself is therefore checked mainly by
+  re-running it without the core rule (it reached every failure) and by the tests above.
+* **Sharding is per file.** `tests/conftest.py` splits the (selected) tests into shards by
+  whole test files (LPT on `.test_durations`), so module/session fixtures are built once per run
+  instead of once per shard. pytest-split is used only to record durations.
+
+A full run that has started is never cancelled by a newer run; only PR runs cancel their
+predecessor. Scheduled and manual runs each get their own concurrency group. Pushes to `master`
+share one group: the running one finishes and only the newest waiting one is kept, so a burst of
+merges cannot pile up 18-job runs. The kept run takes over the commits of the ones it replaced
+because a push run does not look at its own push alone: both the documentation-only check and the
+failure record take their commit range from the last run whose tests really ran (the run that
+uploaded `ci-result-<sha>`), so a documentation-only push that replaces a waiting code push still
+runs the full suite. If no such run can be found, the run is a full one. The failure record also
+keeps the results of the `regen` and `gates` jobs (`regen_result`, `gates_result`).
+Adding a label never starts a run -- a run whose jobs are all skipped would show as passing on
+top of a real failure -- so `ci:full` is read from the API when a run starts, and an unreadable
+label state means the full suite.
+
+When `master` or the nightly run fails, the `failure-record` job keeps `ci_result.json` (failed
+node ids + the commits since the previous full run that completed, so a run that was stopped
+leaves no gap) for 90 days. To find the culprit: the commits listed
+since the previous green run are the candidates; if there are several, bisect with
+`git bisect run py -3.11 -m pytest -q <failing node id>`. (Proposal, not enabled: open an Issue
+automatically from that job; it would need `issues: write`.)
 
 ## Before you push: run the CI-equivalent checks locally (Linux / WSL2)
 

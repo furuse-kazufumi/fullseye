@@ -412,6 +412,11 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    # ---- 2026-11-10: CI の先頭のジョブ(gates)が読む、失敗の実績の表 ----
+    "tools/ci_failure_history.py": ("GitHub の直近の失敗した run のログ(gh run list / gh run view --log-failed、読むだけ)から"
+                                    "テストのファイルごとの落ちた run の数を数え、tools/ci_failure_history.json に書く手元専用の道具。"
+                                    "gh の認証とネットワークが要り、答えは run が増えるたびに変わるので drift 検査には入れない"
+                                    "(回し直す目安は月に 1 回。古くても先に回す順番が古いだけで、片の側は何も減らない)。"),
     # ---- 2026-11-09: 看板 PoC 3 本(2026.307〜309)の統合で分類 ----
     "tools/gen_ai_inspection_recipes.py": ("ローカル LLM に MCP(minimal)だけで検査レシピを組ませ、"
                                            "examples/data/ai_inspection_recipes_2026_11_08.json に固定する手元専用の道具。"
@@ -712,6 +717,10 @@ EXCLUDED = {
 #: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
+    # ---- 2026-11-10: CI の道具(PR のテストの選択・依存の版の比較・全数の失敗の記録)。CI の作業場にだけ書く ----
+    "tools/ci_select_tests.py": "CI の道具。PR の変更から回すテストを選び、一覧(--tests-file・--early-list)と GITHUB_OUTPUT を CI の作業場に書く。コミット物は書かない。",
+    "tools/ci_deps_drift.py": "CI の道具。pip freeze / dry-run の解決結果を CI の作業場に書き、最後の全数の run と版を比べる。コミット物は書かない。",
+    "tools/ci_failure_record.py": "CI の道具。全数の run の JUnit から落ちたテストと commit の範囲を ci_result.json(artifact)に書く。コミット物は書かない。",
     "tools/ci_local.py": ("検査の道具(CI 相当の検査を手元の Linux / WSL2 で回す)。書くのは --out の指す先の要約・ログ・JUnit と、"
                           "Linux 側の状態ディレクトリ(clone と venv)だけで、どちらも repo の外。コミット物を書かない。"),
     "realdata.py": ("実写データの取り口(ライブラリ)。書くのは mark_read が環境変数 FULLSEYE_REAL_DATA_LOG の指す "
