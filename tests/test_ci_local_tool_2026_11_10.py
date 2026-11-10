@@ -39,7 +39,7 @@ def _job(**over) -> dict:
     job = {"sha": SHA, "ref": "HEAD", "subject": "subject line", "branch": "feat/x", "target": "HEAD(feat/x)",
            "dirty_count": 0, "dirty_applies": True, "notes": [], "selected": list(cl.PHASE_KEYS), "only": None,
            "skip": [], "pytest_args": [], "pip_audit": True, "cov": False, "workers": 2, "dist": "worksteal",
-           "tree": {"sha": SHA, "base_ref": "origin/master", "base_sha": BASE, "fetched": True, "behind": 3,
+           "tree": {"sha": SHA, "base_ref": "origin/master", "base_sha": BASE, "fetched": "yes", "behind": 3,
                     "ahead": 2, "mode": "merge", "tested": MERGED}}
     job.update(over)
     return job
@@ -185,16 +185,69 @@ def test_stopped_run_keeps_the_later_phases_in_the_table_as_not_run():
 def test_tree_line_states_what_was_tested_in_every_mode():
     seen = []
     for mode in ("merge", "ahead", "is_base", "behind", "tip"):
-        line = cl.tree_line({"sha": SHA, "base_ref": "origin/master", "base_sha": BASE, "fetched": True,
+        line = cl.tree_line({"sha": SHA, "base_ref": "origin/master", "base_sha": BASE, "fetched": "yes",
                              "behind": 3, "ahead": 2, "mode": mode, "tested": MERGED})
         assert SHA[:12] in line and BASE[:12] in line, mode
         seen.append(line)
     assert len(set(seen)) == 5
     assert MERGED[:12] in seen[0] and "merge" in seen[0]
     assert "--no-merge" in seen[4] and "同じ木ではない" in seen[4]
-    unfetched = cl.tree_line({"sha": SHA, "base_ref": "origin/master", "base_sha": BASE, "fetched": False,
+    unfetched = cl.tree_line({"sha": SHA, "base_ref": "origin/master", "base_sha": BASE, "fetched": "no_fetch",
                               "behind": 0, "ahead": 1, "mode": "ahead", "tested": SHA})
-    assert "fetch していない" in unfetched
+    assert "**fetch していない**(--no-fetch" in unfetched
+    by_sha = cl.tree_line({"sha": SHA, "base_ref": BASE, "base_sha": BASE, "fetched": "not_remote",
+                           "behind": 0, "ahead": 1, "mode": "ahead", "tested": SHA})
+    assert "形でないので fetch していない" in by_sha and "--no-fetch" not in by_sha
+
+
+def test_tree_line_does_not_claim_a_merge_that_could_not_be_made():
+    line = cl.tree_line({"sha": SHA, "base_ref": "origin/master", "base_sha": BASE, "fetched": "yes",
+                         "behind": 4, "ahead": 1, "mode": "merge", "tested": None})
+    assert line.startswith("- 検査した木: **無い**")
+    assert "作れなかった" in line and "作った" not in line
+    assert SHA[:12] in line and BASE[:12] in line
+
+
+def test_busy_and_crashed_runs_say_why_nothing_ran():
+    job = _job(only="lint", selected=["lint"])
+    busy = cl.fill_not_run({}, job, None, "使用中", busy=True)
+    assert busy["lint"]["detail"] == "未実行(状態ディレクトリが使用中)"
+    assert busy["tests"]["detail"] == "未実行(--only lint)"
+    crashed = cl.fill_not_run({}, job, None, "RuntimeError: merge が衝突した")
+    assert crashed["lint"]["detail"] == "未実行(準備で止まった)"
+    st = {"job": job, "tree": dict(job["tree"], tested=None), "results": crashed, "total": 1.0,
+          "crash": "RuntimeError: merge が衝突した。**master を取り込んでから**やり直す"}
+    text = cl.render_summary(st)
+    assert cl.exit_code(st) == 1
+    assert "- 結論: **失敗 —— 1 段も走っていない**" in text
+    assert "master を取り込んでから" in text
+
+
+def _git(repo: Path, *args: str) -> str:
+    import subprocess
+
+    return subprocess.run(["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@invalid", "-c",
+                           "commit.gpgsign=false", *args], check=True, capture_output=True, text=True).stdout.strip()
+
+
+def test_head_that_moved_during_a_phase_fails_the_check(tmp_path):
+    state = tmp_path / "state"
+    inner = _inner(tmp_path, state, "a")
+    inner.repo.mkdir(parents=True)
+    _git(inner.repo, "init", "-q")
+    (inner.repo / "f.txt").write_text("1", encoding="utf-8")
+    _git(inner.repo, "add", "f.txt")
+    _git(inner.repo, "commit", "-q", "-m", "one")
+    first = _git(inner.repo, "rev-parse", "HEAD")
+    (inner.repo / "f.txt").write_text("2", encoding="utf-8")
+    _git(inner.repo, "commit", "-q", "-am", "two")
+    second = _git(inner.repo, "rev-parse", "HEAD")
+    assert first != second and len(first) == 40
+    inner.tested = second
+    inner.verify_tree("段の終わり")  # 一致していれば何も起きない
+    inner.tested = first
+    with pytest.raises(RuntimeError, match="検査中に木が差し替わった"):
+        inner.verify_tree("段の終わり")
 
 
 def test_summary_lists_missing_tools_first_and_counts_their_skips():

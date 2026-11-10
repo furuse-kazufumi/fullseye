@@ -303,7 +303,7 @@ def github_only_skips(skip_reasons: dict, missing_tools: list[str]) -> tuple[int
     return total, per
 
 
-def fill_not_run(results: dict, job: dict, stopped_at: str | None, crash: str | None) -> dict:
+def fill_not_run(results: dict, job: dict, stopped_at: str | None, crash: str | None, busy: bool = False) -> dict:
     """走らなかった段に「未実行」と理由を入れる(表から消さない)。"""
     selected = set(job.get("selected") or [])
     out = dict(results)
@@ -314,8 +314,10 @@ def fill_not_run(results: dict, job: dict, stopped_at: str | None, crash: str | 
             why = f"--only {job['only']}" if job.get("only") else "--skip"
         elif stopped_at:
             why = f"{stopped_at} が落ちて止めた。--keep-going で最後まで"
+        elif busy:
+            why = "状態ディレクトリが使用中"
         elif crash:
-            why = "途中で止まった"
+            why = "準備で止まった"
         else:
             why = "理由不明"
         out[key] = {"state": "not_run", "detail": f"未実行({why})", "sec": None}
@@ -335,11 +337,15 @@ def exit_code(st: dict) -> int:
 def tree_line(tree: dict) -> str:
     """検査した木が何と何か(両方の sha を必ず書く)。"""
     sha, base, ref = tree.get("sha", "?")[:12], (tree.get("base_sha") or "?")[:12], tree.get("base_ref") or "?"
-    fetched = "fetch 済み" if tree.get("fetched") else "**fetch していない**(--no-fetch。手元の追跡 ref のまま)"
+    fetched = {"yes": "fetch 済み", "no_fetch": "**fetch していない**(--no-fetch。手元の追跡 ref のまま)",
+               "not_remote": "`<remote>/<branch>` の形でないので fetch していない"}.get(tree.get("fetched"), "fetch は不明")
     behind, ahead = tree.get("behind"), tree.get("ahead")
     mode = tree.get("mode")
+    if mode == "merge" and not tree.get("tested"):
+        return (f"- 検査した木: **無い** —— 対象 `{sha}` と `{ref}` `{base}`({fetched})の merge を作れなかった"
+                f"(対象は {ref} から {behind} commit 遅れ・{ahead} commit 先)")
     if mode == "merge":
-        tested = (tree.get("tested") or "?")[:12]
+        tested = tree["tested"][:12]
         return (f"- 検査した木: `{tested}` = 対象 `{sha}` と `{ref}` `{base}`({fetched})の merge。"
                 f"Linux 側の clone の中で作った(対象は {ref} から {behind} commit 遅れ・{ahead} commit 先)")
     if mode == "ahead":
@@ -419,7 +425,7 @@ def render_summary(st: dict) -> str:
     if st.get("stopped_at"):
         lines += ["", f"**{st['stopped_at']} が落ちたので止めた**(最後まで回すなら --keep-going)。"]
     if st.get("crash"):
-        lines += ["", f"**途中で止まった**: {st['crash']}"]
+        lines += ["", ("**実行していない**: " if st.get("busy") else "**途中で止まった**: ") + st["crash"]]
     for text in st.get("remarks") or []:
         lines += ["", text]
     gj = st.get("junit_gates") or {}
@@ -523,10 +529,11 @@ def build_job(args: argparse.Namespace, cwd: Path, environ: dict) -> tuple[dict,
         raise UsageError("git の作業木の中で起動する(cwd が repo でない)")
     repo = Path(top)
     remotes = _git(repo, "remote").split()
-    fetched = False
+    fetched = "no_fetch"
     if not args.no_fetch:
-        for name in dict.fromkeys([args.base, args.ref]):
-            fetched = _fetch_ref(repo, name, remotes) or fetched
+        fetched = "yes" if _fetch_ref(repo, args.base, remotes) else "not_remote"
+        if args.ref != args.base:
+            _fetch_ref(repo, args.ref, remotes)
     sha = _git_ok(repo, "rev-parse", "--verify", "--quiet", f"{args.ref}^{{commit}}")
     if not sha:
         raise UsageError(f"--ref {args.ref} を commit に解決できない")
@@ -1178,7 +1185,8 @@ class Inner:
         st = self.st
         st["total"] = total
         try:
-            st["results"] = fill_not_run(self.results, self.job, st.get("stopped_at"), st.get("crash"))
+            st["results"] = fill_not_run(self.results, self.job, st.get("stopped_at"), st.get("crash"),
+                                         bool(st.get("busy")))
             osname = platform.freedesktop_os_release().get("PRETTY_NAME", "Linux") if hasattr(
                 platform, "freedesktop_os_release") else "Linux"
             wsl = " (WSL2)" if "microsoft" in platform.release().lower() else ""

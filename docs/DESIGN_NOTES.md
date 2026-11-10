@@ -3257,6 +3257,11 @@
 
 - **L456** — ★探針が作る ``text`` は ``"ラベル 73"`` のように**相対パスとしても成立する**。 台帳でパス引数を text と宣言している書き込み op にそれが渡ると、op は素直に cwd へ書く —— cwd は repo 直下である。ファザー側(``chain_fuzz.run_chain``) には 2026-09-23 から捨て場が在ったが、**採掘側のここには無かった**ので 2026-09-25 に repo 直下へ xlsx が 2 本生まれた。仕組みが在ることと、 全部の経路がそこを通ることは別([[feedback_count_wrapper_families_not_mechanisms]])。
 
+## `tools/ci_local.py`
+
+- **L911** — ★再利用のたびに中身を確かめる。2026-11-10 実測: 揃え直しが途中で落ちた venv(cv2 が空)を stamp だけ見て再利用し、全数の 720 件が「backend が無い」で落ちた。
+- **L926** — ★--force-reinstall: 揃え直しの道では上の `-e .[opencv]` が opencv-python を入れ直し、その uninstall が contrib と共有の cv2/ を消す。contrib は「最新なので何もしない」ため cv2 が空になった(2026-11-10 実測)。
+
 ## `tools/ci_wheel_check.py`
 
 - **L25** — ★**このスクリプト自身の置き場所を sys.path から外す。** Python はスクリプトの ディレクトリを sys.path[0] に載せるので、checkout の `tools/` から起動すると wheel 側の venv でも `tools/` 配下(非同梱の chain_fuzz 等)が import できてしまい、 「wheel に無いものが見える」状態で数えることになる。2026-09-05 のレビューで、 この門が **tb_* 143 op の欠落を見逃していた**のはまさにこれ。 併せて cwd も空の一時ディレクトリへ移す(cwd が checkout だと同じことが起きる)。

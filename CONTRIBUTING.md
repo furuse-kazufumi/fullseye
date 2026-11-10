@@ -208,40 +208,79 @@ on Python 3.11 / 3.12 / 3.14 (3.13 in the weekly scheduled run; 3.15 as an
 allowed-to-fail preview of the core). Tags `vX.Y.Z` build from a clean checkout and publish to
 PyPI automatically.
 
-## Before you push: run the full suite locally (Linux / WSL2)
+## Before you push: run the CI-equivalent checks locally (Linux / WSL2)
 
-Run the whole CI on your own machine **before** pushing. On 2026-11-09/10 four
-push-fail-fix round trips (1.5 h each) were all failures a local Linux run would
-have shown: an empty assertion, the duration record, a recorded value that had
-drifted, Linux file permissions and locks.
+`tools/ci_local.py` runs, on your own Linux (WSL2 on Windows), the checks that most often turn a
+push red: the `lint` job, `regen_all --check`, the gate tests, the `core-minimal` job and the
+Python 3.11 full suite. It reduces round trips; **it is not a replacement for GitHub CI**, and a
+local green is not a CI green (see "What it does not check").
 
-```bash
-py -3.11 tools/ci_local.py            # Windows: runs inside WSL2 (first run builds the venvs)
-python3 tools/ci_local.py             # Linux
-py -3.11 tools/ci_local.py --keep-going --ref origin/master -n 12
+```
+py -3.11 tools/ci_local.py                 # Windows: HEAD merged with origin/master, in WSL2
+python3 tools/ci_local.py                  # Linux: the same, without WSL
+py -3.11 tools/ci_local.py --only core     # one stage (the summary then says "partial run")
 ```
 
-It tests the **commit** (`--ref`, default `HEAD`) in a separate Linux-side clone
-(`$FULLSEYE_CI_LOCAL_DIR`, default `~/fullseye-ci-local`), never the Windows working
-tree: uncommitted changes are *not* tested and the summary says so. The environment
-is the CI's (Python 3.11, the same extras and optional backends, `CI=true`, no
-`PYTHONPATH`, `FULLSEYE_REQUIRE_OPTIONAL=1`, `FULLSEYE_FIGURES=off`, an empty
-`HOME` so no local dataset is visible).
+**What is tested.** By default the tool fetches `origin/master` and tests the *merge* of your
+commit with it — a GitHub pull request tests that merge commit, not your branch tip. The merge is
+made inside a separate clone on the Linux side (`--state-dir`, default `~/fullseye-ci-local`);
+nothing is written to your working tree. A conflict fails the run (merge master first).
+`--no-merge` tests the tip only. If master is already an ancestor of your commit the merge is the
+same tree as the tip; if your commit is an ancestor of master (or is master) the tip is tested as
+it is. The summary always names both commits. Uncommitted changes are not tested (the summary
+gives their count).
 
-Stages run one after another, cheapest and most failure-prone first, and stop at
-the first red one (`--keep-going` runs everything):
+**Stages**, in order, each stopping the run unless `--keep-going` (times: 24-CPU WSL2, `-n 12`):
 
-| stage | what | measured (24 threads, WSL2) |
+| stage | what | time |
 |---|---|---|
-| ruff | `ruff check .` | < 1 s |
-| regen | `tools/regen_all.py --check` | ~9 min |
-| gates | `tools/ci_always_run.txt` | ~40 s |
-| core | numpy+scipy only install, wheel completeness, MCP from the wheel | ~1.5 min |
-| tests | the full suite, `pytest -n 12 --dist worksteal` | ~20 min |
+| `lint` | `ruff check .` with the newest `ruff>=0.4`, then `tools/pip_audit_gate.py` (needs the network; `--no-pip-audit` skips it) | ~1 min |
+| `regen` | `tools/regen_all.py --check` | ~9 min |
+| `gates` | the files in `tools/ci_always_run.txt` if the tested tree has it, else the built-in copy (the summary says which) | ~1 min |
+| `core` | the `core-minimal` job in the same order, in a venv rebuilt every run | ~2 min |
+| `tests` | the whole suite with the `test` job's dependencies and environment, under pytest-xdist | ~20 min |
 
-The result is `summary.md` (commit, branch, dirty-tree note, time per stage,
-passed / failed / skipped, failed test names) — paste it into the PR body. JUnit
-and logs sit next to it (`--out`). `--only gates`, `--skip regen` and
-`-- <pytest args>` narrow a run. What it does not cover: Python 3.12 / 3.14, the
-per-shard view of the suite, coverage (`--cov` to add it), and the day's newest
-dependency versions if the venv is older than `--refresh-hours`.
+The first run also builds the environment (several minutes), and a full venv older than
+`--refresh-hours` (24) is upgraded first.
+
+**Things the tool refuses to call green.** No stage selected (`--only X --skip X`) is exit code 2.
+With `--only`, `--skip`, `--no-pip-audit` or extra pytest arguments the title and the conclusion say
+"partial run (not the full suite)" and the stages that did not run stay in the table as "not run".
+A missing, broken or empty JUnit file fails its stage. Without extra pytest arguments the full
+suite must execute at least 90 % of the number of entries in `.test_durations`. The Python of each
+venv is read back and must be 3.11.
+
+**One run per state directory.** The state directory is locked; a second run prints the owner
+(pid, start time, commit) and exits with code 3 at once. A directory without the tool's marker
+file is never cleaned. Pass `--state-dir` (a Linux path) for a second location. The environment
+variables `FULLSEYE_CI_LOCAL_DIR` and `FULLSEYE_CI_LOCAL_WORKERS` are read on the side you start
+the tool from and handed to the Linux side as arguments (a Windows variable does not reach WSL by
+itself).
+
+**Environment.** Nothing is inherited from your shell: fresh `HOME`, no `PYTHONPATH`, no
+`FULLSEYE_*_DATA`. The tool sets what the runner and `ci.yml` set. `CI=true` is deliberate — it is
+the value GitHub's runner really sets, and two examples branch on `CI == "1"`; setting `CI=1`
+locally would test a branch GitHub does not take.
+
+### What it does not check
+
+- Python 3.12 and 3.14 (run on master), 3.13 (weekly) and the 3.15 preview. Local is 3.11 only.
+- The per-shard view. CI splits the suite into 6 shards, each its own session; a gate whose answer
+  depends on the session (`test_test_durations_is_fresh`) can pass in one local session and fail in
+  one shard (PR #294, shard 6, 94.8 %).
+- Serial order. A shard runs serially, the local run is parallel; order dependence is the nightly
+  `order-shuffle` job's business. Conversely a few tests fail only under local parallelism now and
+  then (known: `test_example_scripts_run[gallery2d_smoothing_rank.py]` and the planner test in
+  `test_op_facets_2026_10_28`) — rerun the file before believing them.
+- Tests that need tools the runner has and your machine may not: cargo, node, Chrome. The tool
+  probes them at start, lists the missing ones at the top of the summary, and counts from the JUnit
+  skip reasons how many tests only GitHub can confirm. `--require-tools` turns a missing tool into a
+  failure. The tool installs nothing into your system (`--install-apt` is the one opt-in).
+- The second, warning-only pip-audit of the CI's own tools; the coverage combine job (`--cov` only
+  measures); the `docs-only` job.
+- Dependency versions newer than your last venv refresh, and a master that moved after the fetch.
+- Lines *added* to `ci.yml`. The dependency lists in the tool are hand copies; a test checks that
+  each copy still appears in `ci.yml`, not the reverse.
+
+BLAS threads are capped at `CPUs / workers` during the parallel run; the handful of tests that skip
+because of that cap are rerun serially without it afterwards, and the summary reports how many ran.
