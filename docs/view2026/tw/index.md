@@ -131,7 +131,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 耐光照不均、高光與遮擋的模板匹配(把亮度變化的方向作為符號比較,無法定位的模板則拒絕): [說明](../../capabilities/robust-code-matching.md) _(ja)_ · 範例 [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
 - 用超音波回波的相位而不是亮度找出混合鍵合中的空洞(掃描聲學顯微鏡的 C 掃描、頻率權衡、檢出機率): [說明](../../capabilities/sam-bond-voids.md) _(ja)_ · 範例 [poc_sam_hybrid_bonding_voids](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py)
 - 從點雲中以六自由度定位已知 3D 零件: [說明](../../capabilities/six-dof-surface-pose.md) _(ja)_ · 範例 [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py) · [poc_real_tless_6dof](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
-- 表面凹凸缺陷:從照明設計到檢測: [說明](../../capabilities/surface-defects-with-lighting.md) _(ja)_ · 範例 [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py)
+- 表面凹凸缺陷:從照明設計到檢測: [說明](../../capabilities/surface-defects-with-lighting.md) _(ja)_ · 範例 [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py) · [poc_surface_defect_classifiers](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_surface_defect_classifiers.py)
 - 定位(用樣板比對讓量測線跟隨): [說明](../../capabilities/template-alignment.md) _(ja)_ · 範例 [poc_template_tracking](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) · [gallery2d_contour_measure](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_contour_measure.py) · [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py)
 
 **量測**
@@ -248,7 +248,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 310 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -267,7 +267,7 @@ PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>工業檢測</b> (60)</summary>
+<details class="vall"><summary><b>工業檢測</b> (61)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../../articles/assets/poc/poc_barcode_1d/story.en.gif" alt="Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers." loading="lazy" width="200" height="200"></picture><span>一維條碼</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../../articles/assets/poc/poc_battery_electrode_tortuosity/story.en.gif" alt="Electrode tortuosity from CT — the rule of thumb only sees porosity" loading="lazy" width="200" height="200"></picture><span>電極曲折度</span></a>
@@ -329,6 +329,7 @@ PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.mp4"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png"><img src="../../articles/assets/poc/poc_mixed_case_depalletizing/story.en.gif" alt="Packed cartons with identical prints are told apart from overhead depth and colour, then unloaded. A depth step splits none, and whether depth dips or dark colour lines win flips across 28 flap-seam builds. With identical prints, deep grooves favour colour; only wide, untaped cuts over shallow grooves favour depth." loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>用深度台階、V 形縫或彩色分開混載棧板上的紙箱</span></a>
 <a href="../../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><img src="../../articles/assets/poc/poc_ai_built_inspection_scored/story.en.gif" alt="Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)" loading="lazy" width="200" height="200"></picture><span>用真實資料的真值為 AI 組建的檢測評分</span></a>
 <a href="../../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><img src="../../articles/assets/poc/poc_equipment_selection_map/story.en.gif" alt="Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread" loading="lazy" width="200" height="200"></picture><span>器材選型地圖:用 60 種照明×相機×鏡頭組合拍同一缺陷</span></a>
+<a href="../../articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png"><img src="../../articles/assets/poc/poc_surface_defect_classifiers/story.en.gif" alt="Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected" loading="lazy" width="200" height="200"></picture><span>用訓練的分類器分揀金屬表面缺陷:沿研磨紋的刮痕四條漏三條,未見過的蝕坑拒識 95 %</span></a>
 </div>
 </details>
 

@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — PoC「金属の表面の欠陥を学習した分類器で仕分け、知らない欠陥は拒否させる」(収蔵 2026.316)
+
+- `examples/poc_surface_defect_classifiers.py`: これまでどの PoC からも使われていなかった分類の op(`learn_ndim_norm` / `class_ndim_norm` / `class_2dim_sup` / `class_2dim_unsup` / `classify_image_class_lut` / `train_class_gmm` / `classify_class_gmm` / `evaluate_class_gmm` / `train_class_mlp` / `train_class_svm` / `train_class_knn` と各 classify)を、研削した金属の小片の検査で使う。データは**自作の合成**(傷・打痕・腐食の孔は高さ(陰影)だけ、汚れは反射率の色だけを変える描画。実測データではない)。学習 300 / 検証 120 / 評価 180 枚を種ごとに層化して分け、しきい値は学習・検証側だけで決める。新 op なし。
+- 門: `learn_ndim_norm` / `train_class_gmm`(成分 1)が閉形式の平均・共分散と一致、GMM(1) が scipy の 2 次判別と 100 % 一致、k-NN が総当たりと 100 % 一致 / scikit-learn の第 2 実装(無ければ scipy の多項ロジスティック回帰)との正解率・再現率の差が 3·sqrt(2p(1−p)/n) + 1/n の内(最大 0.41 倍)/ 種 5 本の正解率 0.871〜0.886(±0.015〜0.022)/ 学習に無い腐食の孔の拒否 0.948(既知の誤拒否 0.060 < 0.072)/ ラベル入れ替えで 0.238 / 汚れの再現率 100 % は色度の差の隙間(0.055 > 0.009)で説明 / 誤りは薄い欠陥に集まる。
+- 所見(限界): 研削の筋から 15° 以内の傷は再現率 0.275(45° 超は 0.949)—— 筋を消すために選んだ勾配の向きが筋に沿う傷も消す。`class_2dim_sup` は最小最大の箱で LUT に負け(IoU 0.729 対 0.915)、`class_2dim_unsup` は標準化しない k-means で輝度の筋に割れる(0.333、標準化で 0.535)。
+- 登録: examples2d・exhibit_numbers(2026.316)・poc_captions・view2026 exhibits・能力ノート(surface-defects-with-lighting)・tests/test_poc_surface_defect_classifiers.py。生成物は各生成器で作り直した。
+
 ### 追加 — MCP の道具「真値付きの課題を作る」と「組んだ処理を採点する」(2026-11-09)
 
 - 独立レビューの直し(2026-11-10、SCORING_VERSION 2026-11-10.1):

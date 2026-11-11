@@ -8525,6 +8525,23 @@
     "hi": "उपकरण चयन मानचित्र: 60 light, camera और lens संयोजनों से वही दोष",
     "fr": "Carte de choix du matériel : les mêmes défauts vus par 60 combinaisons éclairage, caméra, objectif"
    }
+  },
+  {
+   "id": "poc_surface_defect_classifiers",
+   "group": "wing_industrial",
+   "media": "01_defect_patches.png",
+   "motion": false,
+   "thumb_src": "01_defect_patches.png",
+   "label": {
+    "ja": "金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する",
+    "en": "Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected",
+    "zh": "用训练的分类器分拣金属表面缺陷:沿磨削纹的划痕四条漏三条,未见过的蚀坑拒识 95 %",
+    "tw": "用訓練的分類器分揀金屬表面缺陷:沿研磨紋的刮痕四條漏三條,未見過的蝕坑拒識 95 %",
+    "ko": "학습한 분류기로 금속 표면 결함을 가른다: 연삭 결을 따르는 긁힘은 4개 중 3개를 놓치고, 처음 보는 부식 구멍은 95 % 거부한다",
+    "de": "Metalloberflächenfehler mit trainierten Klassifikatoren sortiert: Kratzer entlang der Schleifriefen werden zu drei Vierteln übersehen, unbekannte Poren zu 95 % abgelehnt",
+    "hi": "प्रशिक्षित वर्गीकारकों से धातु सतह दोषों की छँटाई: घिसाई की धारियों के साथ की खरोंचें 4 में 3 छूटती हैं, अनदेखे गड्ढे 95 % अस्वीकृत",
+    "fr": "Trier les défauts de surface métallique par classifieurs appris : les rayures le long des stries de meulage sont manquées trois fois sur quatre, les piqûres inconnues rejetées à 95 %"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

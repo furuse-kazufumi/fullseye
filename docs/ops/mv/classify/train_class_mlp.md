@@ -6,7 +6,7 @@ in: matrix
 out: table
 halcon: train_class_mlp
 gpu: なし
-examples: [machine_vision_tour, poc_real_typewritten_ocr]
+examples: [machine_vision_tour, poc_real_typewritten_ocr, poc_surface_defect_classifiers]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -42,6 +42,7 @@ MLP 分類器を学習(train_class_mlp)。
 
 - [machine_vision_tour](../../../../examples/machine_vision_tour.py) — `py -3.11 examples/machine_vision_tour.py`
 - [poc_real_typewritten_ocr](../../../../examples/poc_real_typewritten_ocr.py) — `py -3.11 examples/poc_real_typewritten_ocr.py`
+- [poc_surface_defect_classifiers](../../../../examples/poc_surface_defect_classifiers.py) — `py -3.11 examples/poc_surface_defect_classifiers.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (486 examples)
+### 2-D image / signal / geometry (487 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -352,6 +352,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_symmetry_self_reference_inspection` — ops: `center_from_symmetric_edges`, `rotational_symmetry`, `symmetry_difference_map`, `symmetry_score` `py -3.11 examples/poc_symmetry_self_reference_inspection.py`
 - `poc_print_layer_inspection` — ops: `contours_to_gcode`, `gcode_extrusion_volume`, `gcode_layer_image`, `gcode_read`, `gcode_time_estimate`, `gcode_write`, `mesh_slice_contours`, `mesh_slice_stack`, `print_layer_defect_map`, `prism_mesh`, `read_3mf`, `vol_render_transfer` (+1 more) `py -3.11 examples/poc_print_layer_inspection.py`
 - `poc_em_second_opinion` — ops: `holdout_threshold`, `points_activity_video`, `seg_boundary_membrane_gap`, `seg_inject_merge`, `seg_inject_split`, `seg_label_changes`, `seg_membrane_chord_score`, `seg_membrane_response` `py -3.11 examples/poc_em_second_opinion.py`
+- `poc_surface_defect_classifiers` — ops: `class_2dim_sup`, `class_2dim_unsup`, `class_ndim_norm`, `classify_class_gmm`, `classify_class_knn`, `classify_class_mlp`, `classify_class_svm`, `classify_image_class_lut`, `evaluate_class_gmm`, `learn_ndim_norm`, `train_class_gmm`, `train_class_knn` (+2 more) `py -3.11 examples/poc_surface_defect_classifiers.py`
 - `poc_equipment_selection_map` — ops: `bandpass_spectrum`, `blackbody_spectrum`, `carbon_black_absorption`, `hyperspectral_band_weights`, `ingaas_photodiode_qe`, `material_nir_absorption`, `nir_model_info`, `pod_ahat_fit`, `pod_false_call`, `pod_from_ahat`, `silicon_photodiode_qe`, `spectral_integral` `py -3.11 examples/poc_equipment_selection_map.py`
 - `poc_illumination_cone_vs_na` — ops: `blast_normals`, `metal_mirror_rgb`, `micro_normals`, `solid_angle_boundaries`, `solid_angle_brightness`, `solid_angle_light`, `solid_angle_render`, `solid_angle_sweep`, `text_box` `py -3.11 examples/poc_illumination_cone_vs_na.py`
 - `poc_hdr_glossy_metal_inspection` — ops: `camera_response_debevec`, `camera_response_linear`, `camera_response_robertson`, `exposure_fusion_mertens`, `hdr_dynamic_range`, `hdr_exposure_series_simulate`, `hdr_merge`, `hdr_radiance_error` `py -3.11 examples/poc_hdr_glossy_metal_inspection.py`
@@ -5095,18 +5096,18 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 ### mv (47 ops / 10 categories)
 
 #### mv / classify (12)
-- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: none — Return the class with the largest posterior for each row under a Gaussian mixture model. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: none — Return the class per row by a k-nearest-neighbor majority vote (ties go to the smaller distance sum). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: none — Classify feature rows with the multilayer perceptron from `train_class_mlp`. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: none — Classify feature rows with the linear SVM from `train_class_svm` (one-vs-rest maximum margin). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: none — Return the class with the largest posterior for each row under a Gaussian mixture model. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: none — Return the class per row by a k-nearest-neighbor majority vote (ties go to the smaller distance sum). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: none — Classify feature rows with the multilayer perceptron from `train_class_mlp`. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: none — Classify feature rows with the linear SVM from `train_class_svm` (one-vs-rest maximum margin). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
 - `create_lexicon` (halcon: `create_lexicon`) `no input → table` GPU: none — Build a word list for matching (duplicates removed, order fixed). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: none — Return the class posteriors and the overall log density for each row. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: none — Return the class posteriors and the overall log density for each row. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
 - `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: none — Check whether a word is in the list by exact match and return 1.0 if so, otherwise 0.0. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
 - `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: none — Return the word with the smallest edit distance and that distance. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: none — Train a Gaussian mixture per class with EM. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: none — Build a k-NN classifier (the features are standardized and kept). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: none — Train an MLP classifier. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: none — Train a linear SVM (hinge loss, one-vs-rest). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: none — Train a Gaussian mixture per class with EM. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: none — Build a k-NN classifier (the features are standardized and kept). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: none — Train an MLP classifier. · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: none — Train a linear SVM (hinge loss, one-vs-rest). · examples: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
 
 #### mv / curve (1)
 - `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: none — Find the control points of a non-rational B-spline through every point (global interpolation). · examples: `machine_vision_tour`
@@ -5866,13 +5867,13 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 ### segmentation (59 ops / 11 categories)
 
 #### segmentation / classify (7)
-- `class_2dim_sup` (halcon: `class_2dim_sup`) `image2d × image2d × mask → mask` GPU: none — Supervised classification in a 2-channel feature space: pixels inside the distribution of ref_region (class_2dim_sup). · examples: `halcon_segmentation_tour`
-- `class_2dim_unsup` (halcon: `class_2dim_unsup`) `image2d × image2d → labels2d` GPU: yes (allow-list) — Unsupervised k-means classification in a 2-channel feature space; returns a label image (class_2dim_unsup). · examples: `halcon_segmentation_tour`
-- `class_ndim_norm` (halcon: `class_ndim_norm`) `images × table → mask` GPU: yes (allow-list) — Classify N-D feature images with a learned normal-distribution class (Mahalanobis distance < thresh) (class_ndim_norm). · examples: `halcon_segmentation_tour`
-- `classify_image_class_lut` (halcon: `classify_image_class_lut`) `image2d × signal → labels2d` GPU: yes (allow-list) — Pixel classification through a gray-value LUT (threshold / label table) (classify_image_class_lut). · examples: `halcon_segmentation_tour`
+- `class_2dim_sup` (halcon: `class_2dim_sup`) `image2d × image2d × mask → mask` GPU: none — Supervised classification in a 2-channel feature space: pixels inside the distribution of ref_region (class_2dim_sup). · examples: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
+- `class_2dim_unsup` (halcon: `class_2dim_unsup`) `image2d × image2d → labels2d` GPU: yes (allow-list) — Unsupervised k-means classification in a 2-channel feature space; returns a label image (class_2dim_unsup). · examples: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
+- `class_ndim_norm` (halcon: `class_ndim_norm`) `images × table → mask` GPU: yes (allow-list) — Classify N-D feature images with a learned normal-distribution class (Mahalanobis distance < thresh) (class_ndim_norm). · examples: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
+- `classify_image_class_lut` (halcon: `classify_image_class_lut`) `image2d × signal → labels2d` GPU: yes (allow-list) — Pixel classification through a gray-value LUT (threshold / label table) (classify_image_class_lut). · examples: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
 - `fisher_lda_fit` `matrix × signal → table` GPU: none — Fit a two-class Fisher linear discriminant (closed form, no iteration). · examples: `poc_weed_rice_ratio`
 - `fisher_lda_score` `table × matrix → table` GPU: none — Score features with a discriminant fitted by ``fisher_lda_fit`` (score > 0 means class 1). · examples: `poc_weed_rice_ratio`
-- `learn_ndim_norm` (halcon: `learn_ndim_norm`) `matrix → table` GPU: none — Learn a normal-distribution class (mean and covariance) from feature vectors (learn_ndim_norm). · examples: `halcon_segmentation_tour`
+- `learn_ndim_norm` (halcon: `learn_ndim_norm`) `matrix → table` GPU: none — Learn a normal-distribution class (mean and covariance) from feature vectors (learn_ndim_norm). · examples: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
 
 #### segmentation / compare (1)
 - `check_difference` (halcon: `check_difference`) `image2d × image2d → mask` GPU: yes (allow-list) — Pixels whose difference from the reference image exceeds tol, as a region (check_difference). · examples: `halcon_segmentation_tour`

@@ -1061,6 +1061,9 @@ EXAMPLES = [
      "name": "部品の DPM Data Matrix とラベルの QR: 等級の閉形式と読める限界の POD",
      "summary": "刻印の SC = 0.35、傾きの AN = 2(1−cos t)/(1+cos t)、k 語の欠けの UEC が閉形式どおり。四角い刻印では 2 つの"
                 "読み取り器の d90 が数 % で一致。★zxing-cpp はくっきりしたドットピーンを 24 方向中 0 しか読まず、POD が非単調。"},
+    {"id": "poc_surface_defect_classifiers", "task": "inspection", "data": "synthetic",
+     "name": "金属の表面の欠陥(傷・打痕・汚れ)を学習した分類器で仕分け、知らない欠陥は「分からない」と言わせる",
+     "summary": "研削の筋の上に傷・打痕・汚れ・腐食の孔を物理的に描き、`learn_ndim_norm` / `class_ndim_norm` で異常な画素、`classify_image_class_lut` / `class_2dim_sup` / `class_2dim_unsup` で汚れの画素を塗り(IoU 0.915 / 0.729 / 0.535)、領域の特徴 7 個で `train_class_gmm` / `train_class_mlp` / `train_class_svm` / `train_class_knn` を学習する。種 5 本の正解率 0.871〜0.886(±0.02)、scikit-learn との差は許容差の 0.41 倍以内、GMM(成分 1)は閉形式の 2 次判別と 100 % 一致。学習に無い孔は `evaluate_class_gmm` の対数密度で 94.8 % 拒否(既知の誤拒否 6.0 %)。ラベルを入れ替えると 0.238。★研削の筋から 15° 以内の傷は再現率 0.275(45° 超は 0.949)。新 op なし。"},
     {"id": "poc_symbol_lot_ocr", "task": "decoding", "data": "synthetic",
      "name": "ロット番号の CIJ 印字を古典 OCR で読む: 可読性の POD と誤読の数え方",
      "summary": "5x7 ドットと線の内蔵書体、k 最近傍 + 棄却。字種外の字は棄却。デフォーカスと字高の可読性 POD。"

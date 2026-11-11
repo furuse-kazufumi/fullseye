@@ -1,0 +1,6 @@
+﻿Fullseye,accuracy,second implementation,accuracy,|d acc| / tol,agreement
+gmm1,0.884 +- 0.017,GaussianMixture(1),0.884 +- 0.017,0.00,1.000
+gmm2,0.881 +- 0.017,GaussianMixture(2),0.874 +- 0.018,0.24,0.929
+mlp,0.884 +- 0.015,MLPClassifier,0.868 +- 0.021,0.41,0.903
+svm,0.871 +- 0.022,LinearSVC,0.878 +- 0.022,0.11,0.989
+knn,0.886 +- 0.015,KNeighbors(5),0.882 +- 0.015,0.11,0.996
