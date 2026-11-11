@@ -41,6 +41,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `ballistics.fit_spin_aero`(新 op、`fit_spin` の C_d 自由版): (p₀, v₀, ω, C_d)の 10 パラメータ(`fit_cl=True` で C_L の係数 κ も自由にして 11)。条件数・相関行列・線形化した共分散・C_d と ω⊥ / 初速の相関・ω の平行 / 垂直成分の標準偏差を返す(読めないものを返り値に出す)。定数 C_L の `bp` は ValueError(|ω| が原理的に読めない)。`bp["cl_scale"]` を足した(無ければ従来と bit 一致)。
 - `examples/poc_cd_spin_joint.py`: 世界(C_d が Re 依存、C_L に谷。仮の値)と当てはめ(定数)を別模型にして inverse crime を避ける。ω を模様から取り軌跡から (C_d, C_L) を読む分担は実効値と 2 % 以内。軌跡だけで同時に読むと ω は 5 割ほど偏るが、原因は谷そのものでなく C_L 模型の係数ずれ(谷のない世界で係数 0.6 / 0.8 / 1.2 倍でも ω が −58 / −34 / +53 %、1.5〜2.7 倍に増幅。谷の深さ 0 で偏り 0 は κ = 1 が真だから当然)。ω と κ の縮退は S の振れ幅が狭い遅い球の結論で、速い球(25 m/s・300 rad/s)では κ 自由でも ω⊥ の標準偏差が 12 %(遅い球 419 %)。C_d の 0.4 % 以内は「ほぼ平ら」と実効値の定義が当てはめ向きだから当然で、Re 依存を効かせても誤差は小さく外れは rms にだけ出る。真値は全部自作の世界の値。`drag_coefficient_sphere` の docstring の「卓球で 0.4〜0.5」を実測の 0.39〜0.41(Re 1.6 × 10⁴ で 0.392)に直した(挙動は変えない)。`fit_spin_aero` の `cond` / `corr_cd_omega` は未定義のとき inf / NaN でなく None(`rank_deficient` を追加)。
 
+### 追加 — PoC「公開の実測 RGB-D で位置合わせを採点する」(収蔵 2026.314、2026-11-11)
+
+- `examples/poc_real_tum_rgbd_slam.py`: TUM RGB-D の freiburg1_xyz(Sturm ほか IROS 2012、CC BY 4.0)から深度 32 枚(3.9 MB、SHA-256 固定)を同梱し、隣り合う 31 組を `icp_point2plane` で合わせて、モーションキャプチャの真値で RPE・ATE を採点した。
+- 実測: 並進の RPE は 26.2 mm(合わせない 62.8 mm の 0.42 倍)。ただし等速の仮定(23.8 mm)とほぼ同じ水準で、比の 95 % 区間は 0.12〜0.67。`trim` の選択は分割しだいで変わる(8 通りで比 0.10〜0.42)。
+- 窓の平面残差は距離とともに増えるが、量子化と窓の広さが混ざり、Z² の形は支持も反証もしない(雑音の測定ではない)と明記した。
+- 限界: 1 系列 32 枚・深度の絶対誤差は測れない・公開された SLAM 手法との直接対決はしない。門 21 本、`tests/test_poc_real_tum_rgbd_slam.py` 23 本。
+
 ### 追加 — PoC「円マークの校正板を端から端まで」(収蔵 2026.315)
 
 - `examples/poc_caltab_chain_truth.py`: `create_caltab` の円マーク板(7x9、15 mm)を、真の K・樽型歪み・8 姿勢のカメラで撮り(画素から板へ逆に引く描画。推定と式を共有しない)、`find_caltab` → `camera_calibration_lm` で校正して真値と突き合わせる。新 op なし。
