@@ -2732,9 +2732,9 @@
             {
               "file": "02_unwrap.png",
               "content_box": [
-                71,
+                46,
                 0,
-                578,
+                628,
                 690
               ]
             }
@@ -2745,14 +2745,14 @@
             1600,
             1600
           ],
-          "bytes": 624942,
+          "bytes": 642416,
           "color_mad": [
             0.3037,
             1.0699,
-            1.1089
+            1.2689
           ],
-          "max_color_mad": 1.1089,
-          "source_sha256": "e9f065f40e5036654d0be2eec4a69569a5535a872eb580633ee792cc1af4974f"
+          "max_color_mad": 1.2689,
+          "source_sha256": "05c196cb5410c6bfa0ce2581aeb66fc7109504a1735dbd03e38e52ded6b428fd"
         },
         "en": {
           "path": "articles/assets/poc/poc_photoelasticity/story.en.gif",
@@ -2789,9 +2789,9 @@
             {
               "file": "02_unwrap.png",
               "content_box": [
-                71,
+                46,
                 0,
-                578,
+                628,
                 690
               ]
             }
@@ -2802,14 +2802,14 @@
             1600,
             1600
           ],
-          "bytes": 624942,
+          "bytes": 642416,
           "color_mad": [
             0.3037,
             1.0699,
-            1.1089
+            1.2689
           ],
-          "max_color_mad": 1.1089,
-          "source_sha256": "4403eb5da3b876847372b1c0cb19223fdd5d33a6bf86e2fef004aed3165cbc7c"
+          "max_color_mad": 1.2689,
+          "source_sha256": "2a5315e3a6f1d5a93cc63c33f75fb39ec9a4e69b0b969310c8189357c6b6cc82"
         }
       },
       "thumbnail": {
@@ -2827,8 +2827,8 @@
       "cover": "03_load_and_isoclinics.gif",
       "still": "articles/assets/poc/poc_photoelasticity/01_polariscope.png",
       "alt": {
-        "ja": "動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷重に比例して 2.38 まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 2 回)。後半は荷重 500 N のまま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点で、中央の真値 θ の図で白く塗った点と重なる。偏光系は fullseye の mueller_element / mueller_apply(暗視野)と sin²(2(θ-β))·sin²(δ/2)(平面)。",
-        "en": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops."
+        "ja": "動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷重に比例して 2.38 まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 2 回)。後半は荷重 500 N のまま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点で、中央の真値 θ の図で白く塗った点と重なる。応力場と偏光像は光弾性の族の op(brazilian_disc_stress / principal_stress / photoelastic_retardation / polariscope_intensity)。",
+        "en": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping."
       }
     },
     "walker2d_terrain_vision": {

@@ -2115,14 +2115,14 @@
     "fr": "Les contraintes d'un disque comprimé en franges (photoélasticité)"
    },
    "see": {
-    "ja": "検光子を回すと光弾性縞が動き、平均輝度が周期的に変わる",
-    "en": "Rotating the analyser moves the photoelastic fringes and cycles their mean intensity",
-    "zh": "转动检偏器会移动光弹性条纹，并使平均亮度周期变化",
-    "tw": "轉動檢偏器會移動光彈性條紋，並使平均亮度週期變化",
-    "ko": "검광자를 돌리면 광탄성 무늬가 움직이고 평균 명암이 주기적으로 바뀐다",
-    "de": "Beim Drehen des Analysators wandern die spannungsoptischen Streifen und ihre mittlere Intensität schwingt",
-    "hi": "analyser घुमाने पर photoelastic fringes चलते हैं और उनकी औसत तीव्रता आवर्ती बदलती है",
-    "fr": "Tourner l’analyseur déplace les franges photoélastiques et fait osciller leur intensité moyenne"
+    "ja": "検光子を回すと光弾性縞が動き、円板内の平均輝度が変わる(0〜135° の範囲)",
+    "en": "Rotating the analyser moves the photoelastic fringes and changes the mean intensity inside the disc (over 0–135°)",
+    "zh": "转动检偏器会移动光弹性条纹，圆盘内的平均亮度随之变化（0–135° 范围）",
+    "tw": "轉動檢偏器會移動光彈性條紋，圓盤內的平均亮度隨之變化（0–135° 範圍）",
+    "ko": "검광자를 돌리면 광탄성 무늬가 움직이고 원판 안의 평균 명암이 바뀐다(0–135° 범위)",
+    "de": "Beim Drehen des Analysators wandern die spannungsoptischen Streifen und die mittlere Intensität in der Scheibe ändert sich (im Bereich 0–135°)",
+    "hi": "analyser घुमाने पर photoelastic fringes चलते हैं और disc के भीतर औसत तीव्रता बदलती है (0–135° की सीमा में)",
+    "fr": "Tourner l’analyseur déplace les franges photoélastiques et modifie l’intensité moyenne dans le disque (sur 0–135°)"
    },
    "num": {
     "ja": "中心の縞次数 2.38(閉形式どおり)。op の偏光系は教科書の式と最大差 2.2e-16。",
@@ -2136,21 +2136,28 @@
    },
    "youtube_url": "",
    "lead": {
-    "ja": "透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。戻しが最初に失敗するのは、応力の大きい所ではなく縞の変調が落ちる等方点だった。",
-    "en": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops.",
-    "zh": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops.",
-    "tw": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops.",
-    "ko": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops.",
-    "de": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops.",
-    "hi": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops.",
-    "fr": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops."
+    "ja": "透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。巻き戻した後に外れた画素は、ほとんどが巻きではなく符号の二義性によるものだった。",
+    "en": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping.",
+    "zh": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping.",
+    "tw": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping.",
+    "ko": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping.",
+    "de": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping.",
+    "hi": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping.",
+    "fr": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping."
    },
    "ops": [
     "axes_frame",
     "axes_transform",
+    "brazilian_disc_stress",
     "mueller_apply",
     "mueller_element",
+    "photoelastic_phase_estimate",
+    "photoelastic_polarization_images",
+    "photoelastic_retardation",
     "plot_series",
+    "polariscope_intensity",
+    "principal_stress",
+    "retardation_convert",
     "text_box",
     "ticks",
     "unwrap_phase_2d"
@@ -9682,14 +9689,14 @@
      "fr": "Contraintes en photoélasticimétrie"
     },
     "line": {
-     "ja": "検光子を回すと光弾性縞が動き、平均輝度が周期的に変わる",
-     "en": "Rotating the analyser moves the photoelastic fringes and cycles their mean intensity",
-     "zh": "转动检偏器会移动光弹性条纹，并使平均亮度周期变化",
-     "tw": "轉動檢偏器會移動光彈性條紋，並使平均亮度週期變化",
-     "ko": "검광자를 돌리면 광탄성 무늬가 움직이고 평균 명암이 주기적으로 바뀐다",
-     "de": "Beim Drehen des Analysators wandern die spannungsoptischen Streifen und ihre mittlere Intensität schwingt",
-     "hi": "analyser घुमाने पर photoelastic fringes चलते हैं और उनकी औसत तीव्रता आवर्ती बदलती है",
-     "fr": "Tourner l’analyseur déplace les franges photoélastiques et fait osciller leur intensité moyenne"
+     "ja": "検光子を回すと光弾性縞が動き、円板内の平均輝度が変わる(0〜135° の範囲)",
+     "en": "Rotating the analyser moves the photoelastic fringes and changes the mean intensity inside the disc (over 0–135°)",
+     "zh": "转动检偏器会移动光弹性条纹，圆盘内的平均亮度随之变化（0–135° 范围）",
+     "tw": "轉動檢偏器會移動光彈性條紋，圓盤內的平均亮度隨之變化（0–135° 範圍）",
+     "ko": "검광자를 돌리면 광탄성 무늬가 움직이고 원판 안의 평균 명암이 바뀐다(0–135° 범위)",
+     "de": "Beim Drehen des Analysators wandern die spannungsoptischen Streifen und die mittlere Intensität in der Scheibe ändert sich (im Bereich 0–135°)",
+     "hi": "analyser घुमाने पर photoelastic fringes चलते हैं और disc के भीतर औसत तीव्रता बदलती है (0–135° की सीमा में)",
+     "fr": "Tourner l’analyseur déplace les franges photoélastiques et modifie l’intensité moyenne dans le disque (sur 0–135°)"
     }
    },
    {
