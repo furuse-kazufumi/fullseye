@@ -1688,25 +1688,25 @@ py -3.11 examples/poc_equipment_selection_map.py
 
 ## No.2026.311 —— 鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない
 
-Al の鋳物(32³、0.25 mm)に楕円体の空隙 3 個(24〜84 ボクセル)を置き、コーンビーム CT を 3 条件で撮った。真値は解析的な楕円体そのもので、描いた空隙の体積は 4/3πabc と 0.2 % 以内、離散の投影は閉形式の投影と相対 L2 4.0 %(64³ で 2.6 %)、投影と逆投影の随伴性は 3.8e-16。データは閉形式の投影に雑音を足したもので、再構成と同じ離散の投影では作っていない。RMSE の順位は 360° に 36 投影で OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053、12 投影と 110° では TV が 1 位(代数の良いほうに対し 0.77 / 0.78 倍)。ところが 12 投影でRMSE 最下位の FDK は、欠損で測る空隙の体積が閉形式と 0.9 % で、1 位の TV(5.9 %)より正しい。110° の FDK は空隙を 1 個も拾わない。半値で 2 値化した体積は真値そのものでも 16.7 % 偏るので、それより良く見える数字は偏りの打ち消し合いと注記した。TV の重み 3e-3 は評価に使わない較正用の鋳物で選び、評価用で後知恵に回した最良と同じだった。デュアルエナジーでは鉄の入れ子の体積が −8.7 %、分けた代わりに Al の基底の雑音が 41.65 倍(閉形式 41.00 倍)。単色・ガウス雑音・凸の空隙・例示の減衰係数の合成である。
+Al の鋳物(32³、0.25 mm)に楕円体の空隙 3 個(24〜84 ボクセル)を置き、コーンビーム CT を 3 条件で撮った。真値は解析的な楕円体そのもので、描いた空隙の体積は 4/3πabc と 0.2 % 以内、離散の投影は閉形式の投影と相対 L2 4.0 %(64³ で 2.6 %)、投影と逆投影の随伴性は 3.8e-16。データは閉形式の投影に雑音を足したもので、再構成と同じ離散の投影では作っていない。RMSE の順位は 360° に 36 投影で OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053、12 投影と 110° では TV が 1 位(代数の良いほうに対し 0.77 / 0.78 倍)。ところが 12 投影で RMSE が最下位の FDK は、欠損で測る空隙の体積が閉形式と 0.9 % で、1 位の TV(5.9 %)より正しい。110° の FDK は空隙を 1 個も拾わない。半値で 2 値化した体積は真値そのものでも 16.7 % 偏るので、それより良く見える数字は偏りの打ち消し合いと注記した。TV の重み 3e-3 は評価に使わない較正用の鋳物で選んだ。評価用で 5 点を後知恵に回すと、限られた角度では同じ 3e-3 が最良、少数投影では 1e-2 が 2.4 % 良く、TV の欠損で測る体積誤差は重みで 2.3〜59 % に動く(FDK に負けるのはこの重みの選び方では、という条件つき)。雑音の乱数を 4 通りに振り直しても順位は反転しない。デュアルエナジーでは鉄の入れ子の体積が −8.7 %、分けた代わりに Al の基底の雑音が 41.65 倍(閉形式 41.00 倍)。単色・ガウス雑音・凸の空隙・例示の減衰係数の合成である。
 
 [![鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/01_slices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png)
 
-*↑ **鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない** ―― Al の鋳物(32³、0.25 mm)に楕円体の空隙 3 個(24〜84 ボクセル)を置き、コーンビーム CT を 3 条件で撮った。真値は解析的な楕円体そのもので、描いた空隙の体積は 4/3πabc と 0.2 % 以内、離散の投影は閉形式の投影と相対 L2 4.0 %(64³ で 2.6 %)、投影と逆投影の随伴性は 3.8e-16。データは閉形式の投影に雑音を足したもので、再構成と同じ離散の投影では作っていない。RMSE の順位は 360° に 36 投影で OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053、12 投影と 110° では TV が 1 位(代数の良いほうに対し 0.77 / 0.78 倍)。ところが 12 投影でRMSE 最下位の FDK は、欠損で測る空隙の体積が閉形式と 0.9 % で、1 位の TV(5.9 %)より正しい。110° の FDK は空隙を 1 個も拾わない。半値で 2 値化した体積は真値そのものでも 16.7 % 偏るので、それより良く見える数字は偏りの打ち消し合いと注記した。TV の重み 3e-3 は評価に使わない較正用の鋳物で選び、評価用で後知恵に回した最良と同じだった。デュアルエナジーでは鉄の入れ子の体積が −8.7 %、分けた代わりに Al の基底の雑音が 41.65 倍(閉形式 41.00 倍)。単色・ガウス雑音・凸の空隙・例示の減衰係数の合成である。*
+*↑ **鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない** ―― Al の鋳物(32³、0.25 mm)に楕円体の空隙 3 個(24〜84 ボクセル)を置き、コーンビーム CT を 3 条件で撮った。真値は解析的な楕円体そのもので、描いた空隙の体積は 4/3πabc と 0.2 % 以内、離散の投影は閉形式の投影と相対 L2 4.0 %(64³ で 2.6 %)、投影と逆投影の随伴性は 3.8e-16。データは閉形式の投影に雑音を足したもので、再構成と同じ離散の投影では作っていない。RMSE の順位は 360° に 36 投影で OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053、12 投影と 110° では TV が 1 位(代数の良いほうに対し 0.77 / 0.78 倍)。ところが 12 投影で RMSE が最下位の FDK は、欠損で測る空隙の体積が閉形式と 0.9 % で、1 位の TV(5.9 %)より正しい。110° の FDK は空隙を 1 個も拾わない。半値で 2 値化した体積は真値そのものでも 16.7 % 偏るので、それより良く見える数字は偏りの打ち消し合いと注記した。TV の重み 3e-3 は評価に使わない較正用の鋳物で選んだ。評価用で 5 点を後知恵に回すと、限られた角度では同じ 3e-3 が最良、少数投影では 1e-2 が 2.4 % 良く、TV の欠損で測る体積誤差は重みで 2.3〜59 % に動く(FDK に負けるのはこの重みの選び方では、という条件つき)。雑音の乱数を 4 通りに振り直しても順位は反転しない。デュアルエナジーでは鉄の入れ子の体積が −8.7 %、分けた代わりに Al の基底の雑音が 41.65 倍(閉形式 41.00 倍)。単色・ガウス雑音・凸の空隙・例示の減衰係数の合成である。*
 
 用語: cone-beam CT — 点の線源から円錐状に広がる X 線を平面の検出器で受け、1 回の回転で立体をまとめて撮る CT の方式。
 
-[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/02_ranking_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/02_ranking.png)
+[![12 通り(3 条件 × 4 手法)の RMSE・空隙の体積誤差(2 値と欠損)・重心誤差・見落とし・偽の空隙。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/02_ranking_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/02_ranking.png)
 
-*↑ 測定の図*
+*↑ 測定の図 ―― 12 通り(3 条件 × 4 手法)の RMSE・空隙の体積誤差(2 値と欠損)・重心誤差・見落とし・偽の空隙。limited の FDK は空隙を 3 個とも見落とすので重心誤差が nan になる。*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/03_tv_weight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/03_tv_weight.png)
+[![TV の重みと RMSE を、少数投影と限られた角度の 2 条件で見た。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/03_tv_weight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/03_tv_weight.png)
 
-*↑ この回の図*
+*↑ TV の重みと RMSE を、少数投影と限られた角度の 2 条件で見た。*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy.png)
+[![鉄の入れ子を鋳込んだ鋳物を低・高エネルギーの 2 回撮って Al と Fe の基底に分けた断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy.png)
 
-*↑ この回の図*
+*↑ 鉄の入れ子を鋳込んだ鋳物を低・高エネルギーの 2 回撮って Al と Fe の基底に分けた断面。*
 
 ```
 py -3.11 examples/poc_ct_casting_sparse_views.py

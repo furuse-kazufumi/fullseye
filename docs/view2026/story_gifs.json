@@ -33743,15 +33743,15 @@
             1600,
             1600
           ],
-          "bytes": 316265,
+          "bytes": 312458,
           "color_mad": [
             0.1023,
             0.0258,
-            0.1548,
-            0.0637
+            0.1502,
+            0.0718
           ],
-          "max_color_mad": 0.1548,
-          "source_sha256": "3b7c4e291ff1ed95edb45095eb3e7d7beb26a0c3c91fca0e4de49eac492bb614"
+          "max_color_mad": 0.1502,
+          "source_sha256": "3301925a7cba176cfae5f26c99e977b95506a23ff4e5bc962d0d21c3b9bdcab1"
         },
         "en": {
           "path": "articles/assets/poc/poc_ct_casting_sparse_views/story.en.gif",
@@ -33804,22 +33804,22 @@
             1600,
             1600
           ],
-          "bytes": 316265,
+          "bytes": 312458,
           "color_mad": [
             0.1023,
             0.0258,
-            0.1548,
-            0.0637
+            0.1502,
+            0.0718
           ],
-          "max_color_mad": 0.1548,
-          "source_sha256": "dee25ce8a0ee93d087e41d628de8263f3660bf350a3a57671a68080d91b5032a"
+          "max_color_mad": 0.1502,
+          "source_sha256": "2ee5fa37ea7048e81624ef2e7f03d31add71d804045c0121f79633d654bd3ac2"
         }
       },
       "reason": null,
       "cover": "01_slices.png",
       "still": "articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png",
       "alt": {
-        "ja": "鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない",
+        "ja": "360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。",
         "en": "CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume"
       }
     }

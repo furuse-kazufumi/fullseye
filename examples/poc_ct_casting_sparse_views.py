@@ -36,14 +36,21 @@
   < FDK(0.0529)で、TV は代数的な 2 手法の良いほうに対し 1.037 倍(勝たない)。12 投影と 110° では
   TV が 1 位に上がり、比は 0.771 / 0.783。FDK は 3 条件とも最下位で、110° では 0.2135。
 * ★★**RMSE の順位は空隙の体積の順位ではない。** 12 投影で RMSE が最下位の FDK は、欠損で測る空隙の
-  体積が閉形式と平均 0.9 % で、1 位の TV(5.9 %)より正しい。線形の再構成は欠損の積分(質量)を
-  保存し、TV は縁を平らに塗って積分を動かす。
+  体積が閉形式と平均 0.9 % で、1 位の TV(5.9 %)より正しい。★理由は検証していない: 同じ線形の SIRT
+  (5.1 %)・OS-SART(9.4 %)の欠損誤差は FDK より大きく、「線形だから質量が保存される」では説明がつかない。
+  ここで言えるのは数字の事実(FDK が 4 手法で最良、TV は重みしだいで 2.3〜59 % に動く)まで。
 * ★**限られた角度の FDK は空隙を 1 個も拾わない**(見落とし 3・偽の空隙 2)。反復の 3 手法は 3 個とも拾う。
 * ★**2 値の体積は真値そのものでも 16.7 % 偏る**(半値で切る部分体積)。110° の SIRT の 2 値の誤差
   4.3 % のように真値より良く見える数字は、ぼけと 2 値化の偏りの打ち消し合いで、正しさではない
   (欠損で測ると 15.4 %)。PoC はこの形の数字すべてに注を印字する。
-* ★**TV の勝ちの内訳**: 重みは較正用の鋳物で 3e-4 / 3e-3 / 3e-2 から選び、3 条件とも 3e-3(格子の内側)。
-  評価用で後知恵に格子を回しても最良は同じ 3e-3 で、選んだ値との差は 0。
+* ★**TV の勝ちの内訳**: 重みは較正用の鋳物で 3e-4 / 3e-3 / 3e-2 の 3 点から選び、3 条件とも 3e-3(格子の内側)。
+  評価用で後知恵に 5 点(3e-4 / 1e-3 / 3e-3 / 1e-2 / 3e-2)を回すと、限られた角度の最良は同じ 3e-3、
+  少数投影の最良は 1e-2(RMSE 0.0333)で、選んだ 3e-3(0.0341)は 2.4 % 悪い(後知恵の最良との差を開示)。
+  ★TV の欠損で測る体積誤差は重みで大きく動く(少数投影で 3e-4: 2.5 %、3e-3: 5.9 %、1e-2: 15.2 %、3e-2: 59.1 %)。
+  FDK の 0.9 % が TV に負けるのは、この重みの選び方では、という条件つき。
+* ★**雑音の乱数を振り直しても順位は反転しない**(seed 11〜14、TV の重み 3e-3 固定、本体は seed 1):
+  FDK は 3 条件とも RMSE 最下位、TV / 代数は 36 投影で 1.031〜1.037、12 投影で 0.769〜0.776、110° で 0.783〜0.785。
+  12 投影の欠損で測る体積誤差は FDK 1.1〜1.5 % 対 TV 5.1〜5.7 %、110° の FDK は 4 通りとも 3 個見落とし・偽 2。
 * **デュアルエナジー**: 鉄の入れ子の体積は −8.7 %、交差は Al 0.038・Fe 0.0133。分けた代わりに Al の
   基底の雑音は 1 回の撮影の 41.65 倍(閉形式 ||inv(M)|| の行 41.00 倍、条件数 39.3)。
 
@@ -53,11 +60,16 @@
     (最大の線積分の 0.5 %)で、光子計数の Poisson ではない。
   * デュアルエナジーの減衰係数は Al・Fe の 60 / 150 keV のおおよその桁に合わせた**例示の値**で、
     XCOM の表から引いたものではない。
-  * 反復法の回数(SIRT 40、OS-SART 6 周、TV 40)は先に決めて固定した。少数投影の SIRT は
-    回数そのものが正則化として効く(半収束)ので、評価用の鋳物で回数ごとの RMSE も印字して開示する。
+  * 反復法の回数(SIRT 40、OS-SART 6 周、TV 40)は先に決めて固定した。SIRT は回数そのものが正則化として
+    効く(半収束)ので、評価用の鋳物で 100 回までの RMSE を印字して開示する(full のみ): 36 投影と 12 投影は
+    40 回目が最良で増やすと悪化、110° だけ 100 回目が最良(0.0804、40 回目 0.0867 より 7.8 % 良い。それでも TV の
+    0.0679 には届かない)。OS-SART の欠損誤差(12 投影で 9.4 %)は 6 周に固定した値で、回数を変えた場合と TV の
+    回数を増やした場合は PoC では測っていない。
   * 大きさは CPU で数分に収まるよう 32³。空隙は 24〜84 ボクセルなので、2 値の体積には部分体積の分が
     大きく入る。``FULLSEYE_POC_BUDGET=reduced``(CI の既定)は格子を縮めず、TV の重みの較正と後知恵の
-    格子を省いて full が選んだ値を使う(24³ に縮めると結論が変わったため)。
+    格子と SIRT の回数の走査を省いて full が選んだ値を使う(24³ に縮めると結論が変わったため)。★その段の門
+    (TV の重み 10 本・SIRT の数え違い 3 本)は reduced では判定されず、門の件数は full より少ない
+    (実行の最後に印字する)。seed の振り直し(3b)は reduced でも回す(seed 2 通り、full は 4 通り)。
   * 反復法の比較は回数を固定した比較。TV は Chambolle-Pock を 40 回しか回しておらず、弱い重みでは
     最小二乗に届く前で止まっている(弱い重みの TV が SIRT より悪いのはそのため)。
 """
@@ -89,7 +101,11 @@ TV_FULL_CHOICE = 3e-3
 VOX = 0.25                                       # ボクセルの 1 辺 [mm]
 NOISE = 0.005                                    # 線積分の雑音(最大の線積分に対する比)
 SIRT_IT, OSSART_IT, TV_IT = 40, 6, 40
-TV_GRID = (3e-4, 3e-3, 3e-2)
+TV_GRID = (3e-4, 3e-3, 3e-2)                     # 較正用の格子(3 点。ここから 1 つ選ぶ)
+#: 評価用の後知恵の格子は 5 点。較正の 3 点より細かくして、選んだ重みが「格子の最良に一致する」だけの恒真の門にしない
+ORACLE_GRID = (3e-4, 1e-3, 3e-3, 1e-2, 3e-2)
+SIRT_SCAN = 100                                  # SIRT の回数ごとの RMSE を見る上限(full のみ。reduced は 40 回まで)
+SEEDS = (11, 12, 13, 14)                         # 雑音の乱数を振り直す(本体は seed 1、較正は seed 2)
 METHODS = ("fdk", "sirt", "os_sart", "tv")
 CONDITIONS = (("full", "360° に 36 投影"), ("few", "360° に 12 投影(少数投影)"),
               ("limited", "110° に 30 投影(限られた角度)"))
@@ -359,7 +375,7 @@ def chapter_methods():
             p_c = noisy(LG.ellipsoid_projections(g, table_c, device=DEV), 2)
             w, cal_scores = choose_tv_weight(g, p_c, truth_c)
             # 後知恵の格子は TV が勝つと言う条件(少数投影・限られた角度)だけ回す(時間の都合)
-            grid = TV_GRID if cond != "full" else (w,)
+            grid = ORACLE_GRID if cond != "full" else (w,)
         tv_recon = {ww: run_method("tv", p, g, tv_weight=ww) for ww in grid}
         oracle = {ww: rms_error(x, truth) for ww, x in tv_recon.items()}
         tv_info[cond] = (w, cal_scores, oracle)
@@ -379,6 +395,14 @@ def chapter_methods():
                   % (m, s["rms_err"], 100 * s["vol_err"], " / ".join("%.0f" % (100 * e) for e in s["vol_rel"]),
                      100 * s["def_err"], " / ".join("%.0f" % (100 * e) for e in s["def_rel"]),
                      s["cen_err"], s["missed"], s["false"], time.time() - t))
+        if not REDUCED:
+            # 回数を 40 に固定した比較なので、40 回が SIRT の最良かを 100 回まで見て開示する(門ではない)
+            ext = []
+            LG.sirt_reconstruct(p, g, n_iter=SIRT_SCAN, device=DEV,
+                                on_iter=lambda k, x, _c=ext: _c.append(rms_error(x, truth)))
+            check(abs(ext[SIRT_IT - 1] / results[(cond, "sirt")]["rms_err"] - 1) < 1e-9,
+                  "%s: 回数を 100 に伸ばした SIRT の 40 回目が、固定 40 回の結果と一致(回数の数え違いが無い)" % cond)
+            curve = ext
         sirt_curves[cond] = curve
         order = sorted(METHODS, key=lambda mm: results[(cond, mm)]["rms_err"])
         print("    順位(RMSE): %s" % " < ".join(order))
@@ -390,9 +414,12 @@ def chapter_methods():
         if len(oracle) > 1:
             print("               評価用で後知恵に回すと %s"
                   % ", ".join("%.0e:%.4f" % kv for kv in sorted(oracle.items())))
+            print("               その欠損で測る空隙の体積誤差(重みしだいで動く) %s"
+                  % ", ".join("%.0e:%.1f %%" % (ww, 100 * summarize(tv_recon[ww], truth, VOIDS_TEST)["def_err"])
+                              for ww in sorted(tv_recon)))
         k_best = int(np.argmin(curve))
-        print("    SIRT の回数ごとの RMSE(評価用): 最良 %d 回目 %.4f、使った %d 回目 %.4f"
-              % (k_best + 1, curve[k_best], SIRT_IT, curve[-1]))
+        print("    SIRT の回数ごとの RMSE(評価用、%d 回まで見た): 最良 %d 回目 %.4f、使った %d 回目 %.4f"
+              % (len(curve), k_best + 1, curve[k_best], SIRT_IT, curve[SIRT_IT - 1]))
     return results, tv_info, recons, truth, sirt_curves
 
 
@@ -427,7 +454,8 @@ def gate_methods(results, tv_info, sirt_curves, truth):
           "少数投影・限られた角度では TV が RMSE の 1 位に上がる(比 < 0.9)",
           "(%.3f / %.3f)" % (ratio["few"], ratio["limited"]))
     # ★RMSE の順位は空隙の体積の順位ではない: 少数投影の FDK は RMSE が最下位でも、欠損で測る体積は
-    #   線形の再構成なので質量が保存され、TV より正しい(TV は縁を平らに塗るので欠損の積分を動かす)。
+    #   TV より正しい。★理由は検証していない: 同じ線形の SIRT・OS-SART の欠損誤差は FDK より悪く(5.1 / 9.4 %)、
+    #   「線形だから質量が保存される」では説明がつかない。ここで言うのは数字の事実だけ。
     few = {m: results[("few", m)] for m in METHODS}
     check(rank(results, "few")[-1] == "fdk" and few["fdk"]["def_err"] < few["tv"]["def_err"],
           "少数投影: RMSE が最下位の FDK のほうが、1 位の TV より欠損で測る空隙の体積が正しい",
@@ -457,13 +485,60 @@ def gate_methods(results, tv_info, sirt_curves, truth):
               "(%.0e vs %.0e)" % (w, TV_FULL_CHOICE))
         if len(oracle) > 1:
             best = min(oracle.values())
+            ws = sorted(oracle)
+            w_best = min(oracle, key=oracle.get)
             check(oracle[w] <= 1.15 * best,
-                  "%s: 較正用で選んだ重みの RMSE は、評価用の後知恵の最良と 15 %% 以内" % cond,
-                  "(%.4f vs %.4f、%.0e vs %.0e)" % (oracle[w], best, w, min(oracle, key=oracle.get)))
+                  "%s: 較正用で選んだ重みの RMSE は、評価用の後知恵の最良(格子 %d 点)と 15 %% 以内" % (cond, len(ws)),
+                  "(%.4f vs %.4f、%.0e vs %.0e)" % (oracle[w], best, w, w_best))
+            # 歯: 格子が細かいので、選んだ点が最良と別の点でも通る。最良から 1 点より離れたら落ちる
+            check(abs(ws.index(w) - ws.index(w_best)) <= 1,
+                  "%s: 較正で選んだ重みは、評価用の後知恵の最良の重みから格子で 1 点以内" % cond)
     for cond, curve in sirt_curves.items():
         k = int(np.argmin(curve))
-        print("    %-8s SIRT の RMSE は %d 回目が最良(使った %d 回目との差 %.1f %%)"
-              % (cond, k + 1, SIRT_IT, 100 * (curve[-1] / curve[k] - 1)))
+        print("    %-8s SIRT の RMSE は、見た %d 回の範囲では %d 回目が最良(使った %d 回目との差 %+.1f %%)"
+              % (cond, len(curve), k + 1, SIRT_IT, 100 * (curve[SIRT_IT - 1] / curve[k] - 1)))
+
+
+# --------------------------------------------------------------------------- 3b) 雑音の乱数を振り直す
+def chapter_seeds(truth):
+    """本体は雑音の乱数が seed 1 の 1 通りなので、seed を振り直して結論が反転しないかを見る(TV の重みは固定)。"""
+    seeds = SEEDS[:2] if REDUCED else SEEDS             # reduced(CI)は時間の都合で 2 通り
+    print()
+    print("=" * 78)
+    print("3b) 雑音の乱数を %s に振り直す(TV の重み %.0e 固定、本体は seed 1)" % (list(seeds), TV_FULL_CHOICE))
+    print("=" * 78)
+    table_t = (CAST,) + VOIDS_TEST
+    for cond, _ in CONDITIONS:
+        g = geometry(cond)
+        exact = LG.ellipsoid_projections(g, table_t, device=DEV)
+        rows = []
+        for sd in seeds:
+            p = noisy(exact, sd)
+            r = {m: summarize(run_method(m, p, g, tv_weight=TV_FULL_CHOICE), truth, VOIDS_TEST) for m in METHODS}
+            ratio = r["tv"]["rms_err"] / min(r["sirt"]["rms_err"], r["os_sart"]["rms_err"])
+            rows.append((sd, r, ratio))
+            print("    %-8s seed %2d  順位 %s  TV / 代数 %.3f  欠損誤差 FDK %.1f %% / TV %.1f %%  FDK 見落とし %d 偽 %d"
+                  % (cond, sd, " < ".join(rank({(cond, m): r[m] for m in METHODS}, cond)), ratio,
+                     100 * r["fdk"]["def_err"], 100 * r["tv"]["def_err"], r["fdk"]["missed"], r["fdk"]["false"]))
+        check(all(max(METHODS, key=lambda m: r[m]["rms_err"]) == "fdk" for _, r, _ in rows),
+              "%s: seed %s のどれでも RMSE の最下位は FDK" % (cond, list(seeds)))
+        ratios = [x for _, _, x in rows]
+        if cond == "full":
+            check(min(ratios) > 0.95, "full: seed を振っても TV は SIRT・OS-SART に勝たない(比 > 0.95)",
+                  "(%.3f〜%.3f)" % (min(ratios), max(ratios)))
+        else:
+            check(max(ratios) < 0.9, "%s: seed を振っても TV が RMSE の 1 位に上がる(比 < 0.9)" % cond,
+                  "(%.3f〜%.3f)" % (min(ratios), max(ratios)))
+        if cond == "few":
+            fd = [r["fdk"]["def_err"] for _, r, _ in rows]
+            tvd = [r["tv"]["def_err"] for _, r, _ in rows]
+            check(all(a < b for a, b in zip(fd, tvd)),
+                  "few: seed を振っても FDK の欠損で測る体積誤差が TV より小さい",
+                  "(FDK %.1f〜%.1f %%、TV %.1f〜%.1f %%)" % (100 * min(fd), 100 * max(fd), 100 * min(tvd), 100 * max(tvd)))
+        if cond == "limited":
+            check(all(r["fdk"]["missed"] == len(VOIDS_TEST) and all(r[m]["missed"] == 0 for m in ("sirt", "os_sart", "tv"))
+                      for _, r, _ in rows),
+                  "limited: seed を振っても FDK は空隙を 1 個も拾わず、反復の 3 手法は 3 個とも拾う")
 
 
 # --------------------------------------------------------------------------- 4) デュアルエナジー
@@ -521,7 +596,7 @@ def chapter_dual_energy():
         amp.append((meas, pred))
         print("  %s の雑音 / 1 回の撮影の雑音: 実測 %.2f 倍、閉形式 ||inv(M)_k|| = %.2f 倍" % (key, meas, pred))
         check(abs(meas / pred - 1) < 0.1, "%s の雑音の増幅が閉形式と 10 %% 以内" % key)
-    return de, clean, truth_al, truth_fe, amp
+    return de, clean, truth_al, truth_fe, amp, single
 
 
 # --------------------------------------------------------------------------- 図
@@ -530,7 +605,7 @@ def mid(vol, z=None):
     return v[v.shape[0] // 2 if z is None else z]
 
 
-def figures(recons, truth, results, tv_info, de, truth_al, truth_fe):
+def figures(recons, truth, results, tv_info, de, truth_al, truth_fe, single):
     if not figs.enabled():
         return
     z = int(round(void_center_vox(VOIDS_TEST[0])[0]))
@@ -542,7 +617,9 @@ def figures(recons, truth, results, tv_info, de, truth_al, truth_fe):
             panels.append(mid(recons[(cond, m)], z))
             caps.append("%s / %s RMSE %.3f" % (cond, m, results[(cond, m)]["rms_err"]))
     figs.save_grid("slices", panels, caps, ncols=5, vrange=(0.0, 1.2), gray=True,
-                   title="鋳物の断面(行 = 36 投影 / 12 投影 / 110° に 30 投影、列 = 真値・FDK・SIRT・OS-SART・TV)")
+                   title="鋳物の断面(行 = 36 投影 / 12 投影 / 110° に 30 投影、列 = 真値・FDK・SIRT・OS-SART・TV)",
+                   caption="360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)"
+                           "を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。")
     header = ["条件", "手法", "RMSE", "体積誤差 2 値 %", "体積誤差 欠損 %", "重心誤差 mm", "見落とし", "偽"]
     rows = []
     for cond, _ in CONDITIONS:
@@ -550,7 +627,9 @@ def figures(recons, truth, results, tv_info, de, truth_al, truth_fe):
             s = results[(cond, m)]
             rows.append([cond, m, "%.4f" % s["rms_err"], "%.1f" % (100 * s["vol_err"]), "%.1f" % (100 * s["def_err"]),
                          "%.3f" % s["cen_err"], str(s["missed"]), str(s["false"])])
-    figs.save_table("ranking", header, rows, title="3 条件 × 4 手法(空隙 3 個、真値の閉形式と比べる)")
+    figs.save_table("ranking", header, rows, title="3 条件 × 4 手法(空隙 3 個、真値の閉形式と比べる)",
+                    caption="12 通り(3 条件 × 4 手法)の RMSE・空隙の体積誤差(2 値と欠損)・重心誤差・見落とし・偽の空隙。"
+                            "limited の FDK は空隙を 3 個とも見落とすので重心誤差が nan になる。")
     series, styles = [], []
     for cond, _ in CONDITIONS:
         _w, cal, oracle = tv_info[cond]
@@ -559,14 +638,24 @@ def figures(recons, truth, results, tv_info, de, truth_al, truth_fe):
         ws = sorted(oracle)
         series.append(("%s(評価用・後知恵)" % cond, np.log10(ws), [oracle[w] for w in ws]))
         styles.append(None)
-        series.append(("%s(較正用・選ぶ側)" % cond, np.log10(ws), [cal[w] for w in ws]))
+        wc = sorted(cal)
+        series.append(("%s(較正用・選ぶ側)" % cond, np.log10(wc), [cal[w] for w in wc]))
         styles.append("dashed")
-    figs.save_plot("tv_weight", series, xlabel="log10 tv_weight", ylabel="RMSE", styles=styles,
-                   title="TV の重みと RMSE: 較正用(破線)で選んだ 3e-3 は評価用(実線)でも最良")
+    if series:                                   # reduced は後知恵の格子を回さないので、この図は full だけ
+        figs.save_plot("tv_weight", series, xlabel="log10 tv_weight", ylabel="RMSE", styles=styles,
+                       title="TV の重みと RMSE(2 条件・TV 40 回)",
+                       caption="TV の重みと RMSE を、少数投影と限られた角度の 2 条件で見た。破線は較正用の鋳物(3 点)、実線は評価用の鋳物(後知恵、5 点)。"
+                               "較正で選んだ 3e-3 は評価用の 5 点の最良(限られた角度)か、最良 1e-2 の 2.4 % 増(少数投影)で、"
+                               "点の間の谷の底や TV の回数を増やした場合は見ていない(40 回に固定)。")
     big = [np.kron(mid(v), np.ones((8, 8))) for v in (de["basis_0"], truth_al, de["basis_1"], truth_fe)]
+    sd1 = float(np.std(single))
     figs.save_grid("dual_energy", big, ["Al の基底(雑音あり)", "Al の真値", "Fe の基底(雑音あり)", "Fe の真値"],
                    ncols=4, vrange=(-0.2, 1.2), gray=True,
-                   title="デュアルエナジー: 鉄の入れ子を Al と Fe に分ける(Al の雑音は 1 回の撮影の約 41 倍)")
+                   title="デュアルエナジー: 左の大穴は鉄の入れ子の抜け、空隙は右の小穴(Al の雑音は 1 回の撮影の約 41 倍、基準は図に無い)",
+                   caption="鉄の入れ子を鋳込んだ鋳物を低・高エネルギーの 2 回撮って Al と Fe の基底に分けた断面。Al の基底の左の大きい暗い穴は"
+                           "鉄の入れ子の抜け(Fe の基底に写る)で空隙ではなく、空隙は右の小さい暗い穴。Al の基底のざらつきの標準偏差は、"
+                           "1 回の撮影の雑音だけを同じ FDK で再構成したもの(標準偏差 %.1e、単位が線減衰でこの表示幅では真っ黒になるので図には"
+                           "並べていない)の 41.65 倍(閉形式 41.00 倍)。真値の縁の灰色は部分体積。" % sd1)
     assert not figs.errors(), figs.errors()
 
 
@@ -577,9 +666,14 @@ def main() -> int:
     chapter_truth()
     results, tv_info, recons, truth, sirt_curves = chapter_methods()
     gate_methods(results, tv_info, sirt_curves, truth)
-    de, _clean, truth_al, truth_fe, _amp = chapter_dual_energy()
-    figures(recons, truth, results, tv_info, de, truth_al, truth_fe)
+    chapter_seeds(truth)
+    de, _clean, truth_al, truth_fe, _amp, single = chapter_dual_energy()
+    figures(recons, truth, results, tv_info, de, truth_al, truth_fe, single)
     bad = [c for c in CHECKS if not c[0]]
+    if REDUCED:
+        print()
+        print("開示: reduced(CI の既定)は TV の重みの較正・後知恵の格子と SIRT の回数の走査を回さないため、"
+              "その段の門は判定しない。門の件数は full より少ない(今回 %d 本)。" % len(CHECKS))
     print()
     print("門: %d / %d 合格(%.1f 秒)" % (len(CHECKS) - len(bad), len(CHECKS), time.time() - t0))
     if not bad:
