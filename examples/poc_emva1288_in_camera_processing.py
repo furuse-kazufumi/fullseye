@@ -80,15 +80,46 @@ def make_sensor():
             "prnu": 1.0 + prnu_pix + prnu_col, "prnu_pix": prnu_pix, "prnu_col": prnu_col}
 
 
+def clip_dn(x, hi=MAXDN):
+    """x を**その場で** [0, hi] に収める。``np.clip(x, 0, hi)`` と同じ値で、一時配列を作らない。
+
+    渡してよいのは、呼ぶ側が作ったばかりの配列だけ(センサの地図や時間フィルタの状態を渡さない)。
+    ``np.clip`` との違いは 1 つだけ: -0.0 は +0.0 になる(数値としては同じ。``round_clip_dn`` も同じ)。
+    """
+    np.maximum(x, 0, out=x)
+    np.minimum(x, hi, out=x)
+    return x
+
+
+def round_clip_dn(x, hi=MAXDN):
+    """丸めて [0, hi] に収めた**新しい**配列。``np.clip(np.round(x), 0, hi)`` と同じ値(x は書き換えない)。"""
+    return clip_dn(np.rint(x), hi)
+
+
 def box3_wrap(y):
-    """周期の境界で 3 × 3 の箱(分けて 2 回の 1-D の和)。"""
-    r = y + np.roll(y, 1, 0) + np.roll(y, -1, 0)
-    return (r + np.roll(r, 1, 1) + np.roll(r, -1, 1)) / 9.0
+    """周期の境界で 3 × 3 の箱(分けて 2 回の 1-D の和)。足す順は左から(値を変えない)。"""
+    r = y + np.roll(y, 1, 0)
+    r += np.roll(y, -1, 0)
+    s = r + np.roll(r, 1, 1)
+    s += np.roll(r, -1, 1)
+    s /= 9.0
+    return s
 
 
 def blend_with_box(a, b):
     """y' = a·y + b·(3 × 3 の箱)。カーネルは a·δ + b·(1/9)。雑音除去(a = 0.7, b = 0.3)と輪郭強調(1.5, −0.5)。"""
-    return lambda y: np.clip(np.round(a * y + b * box3_wrap(y)), 0, MAXDN)
+    def f(y):
+        t = box3_wrap(y)
+        t *= b
+        t += a * y
+        np.rint(t, out=t)
+        return clip_dn(t)
+    return f
+
+
+def gain2_clip(y):
+    """デジタルゲイン ×2 をかけて [0, MAXDN] に収めた新しい配列。``np.clip(2.0 * y, 0, MAXDN)`` と同じ値。"""
+    return clip_dn(2.0 * y)
 
 
 W_GAIN = np.array([[2.0]])
@@ -115,18 +146,34 @@ class Camera:
         self.proc, self.temporal, self.out_max, self.kernel = proc, temporal, out_max, kernel
 
     def raw(self, mu_p):
+        # 式は clip(round(K·(e + N(0, σ_d)) + OFF + DSNU))。1 回の実行で 1,600 回余り呼ぶので、
+        # 同じ順の演算をその場で重ねて一時配列を作らない(乱数の列も値も変えない)。
         e = self.rng.poisson(ETA * mu_p * self.s["prnu"])
-        return np.clip(np.round(K * (e + self.rng.normal(0.0, SD, (H, W))) + OFF + self.s["dsnu"]), 0, MAXDN)
+        x = self.rng.normal(0.0, SD, (H, W))
+        x += e
+        x *= K
+        x += OFF
+        x += self.s["dsnu"]
+        np.rint(x, out=x)
+        return clip_dn(x)
+
+    def _iir(self, st, mu_p):
+        """α·(新しい画像) + (1 − α)·st を st に上書きして返す。"""
+        r = self.raw(mu_p)
+        r *= self.temporal
+        st *= 1 - self.temporal
+        st += r
+        return st
 
     def frames(self, mu_p, n, burn=4):
         if self.temporal is not None:
-            st = self.raw(mu_p)
+            st = self.raw(mu_p)             # st はこの関数だけが持つ(その場で書き換えてよい)
             for _ in range(burn):           # 立ち上がりを捨てる: 初めの画像の分散の重みは (1 − α)^(2·burn) = 2.6e-6
-                st = self.temporal * self.raw(mu_p) + (1 - self.temporal) * st
+                st = self._iir(st, mu_p)
             out = []
             for _ in range(n):
-                st = self.temporal * self.raw(mu_p) + (1 - self.temporal) * st
-                out.append(np.clip(np.round(st), 0, MAXDN))
+                st = self._iir(st, mu_p)
+                out.append(round_clip_dn(st))
             return out
         return [self.raw(mu_p) if self.proc is None else self.proc(self.raw(mu_p)) for _ in range(n)]
 
@@ -248,7 +295,7 @@ def main():
     rng = np.random.default_rng(2026)
     cams = [
         Camera("raw", "前処理なし", sensor, rng),
-        Camera("gain2", "デジタルゲイン ×2", sensor, rng, proc=lambda y: np.clip(2.0 * y, 0, MAXDN), kernel=W_GAIN),
+        Camera("gain2", "デジタルゲイン ×2", sensor, rng, proc=gain2_clip, kernel=W_GAIN),
         Camera("denoise", "雑音除去(3×3 を 3 割)", sensor, rng, proc=blend_with_box(0.7, 0.3), kernel=W_DENOISE),
         Camera("sharpen", "輪郭強調(強さ 0.5)", sensor, rng, proc=blend_with_box(1.5, -0.5), kernel=W_SHARPEN),
         Camera("tnr", "時間の雑音除去 α = 0.8", sensor, rng, temporal=ALPHA, kernel=np.array([[1.0]])),
