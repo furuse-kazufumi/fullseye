@@ -75,7 +75,7 @@ for phi in (0.0, 22.5, 45.0):
 
 ## 代替
 
-視野全体の偏光状態だけなら `polarization_stokes`、試料の Mueller 行列を丸ごと取るなら `mueller_from_intensities`、空間的につながった位相を 1 波長でつなぐなら `unwrap_phase_2d`(等方点の近くで壊れることに注意)。
+視野全体の偏光状態だけなら `polarization_stokes`、試料の Mueller 行列を丸ごと取るなら `mueller_from_intensities`、空間的につながった位相を 1 波長でつなぐなら `unwrap_phase_2d`(縞が 1 縞 2 画素未満に細かくなる所で壊れることに注意。符号の二義性は巻き戻しの前に別に残る)。
 
 ## 限界
 

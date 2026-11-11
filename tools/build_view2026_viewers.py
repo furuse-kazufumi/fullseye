@@ -735,25 +735,25 @@ def build_polarization_sweep():
 def build_photoelastic_sweep():
     P=_load("poc_photoelasticity"); _,theta,delta=P.build_fields()
     vals=np.linspace(0,135,25); images=[P.polariscope_image(delta,theta,float(v)) for v in vals]
-    frames=[_gray(im,0,1) for im in images]; mean_intensity=[float(np.mean(im)) for im in images]
-    title=TX.T("検光子を回すと光弾性縞が動き、平均輝度が周期的に変わる", "Rotating the analyser moves the photoelastic fringes and cycles their mean intensity",
-               "转动检偏器会移动光弹性条纹，并使平均亮度周期变化", "轉動檢偏器會移動光彈性條紋，並使平均亮度週期變化",
-               "검광자를 돌리면 광탄성 무늬가 움직이고 평균 명암이 주기적으로 바뀐다", "Beim Drehen des Analysators wandern die spannungsoptischen Streifen und ihre mittlere Intensität schwingt",
-               "analyser घुमाने पर photoelastic fringes चलते हैं और उनकी औसत तीव्रता आवर्ती बदलती है", "Tourner l’analyseur déplace les franges photoélastiques et fait osciller leur intensité moyenne")
+    frames=[_gray(im,0,1) for im in images]; mean_intensity=[float(np.mean(im[P.IN_DISC])) for im in images]
+    title=TX.T("検光子を回すと光弾性縞が動き、円板内の平均輝度が変わる(0〜135° の範囲)", "Rotating the analyser moves the photoelastic fringes and changes the mean intensity inside the disc (over 0–135°)",
+               "转动检偏器会移动光弹性条纹，圆盘内的平均亮度随之变化（0–135° 范围）", "轉動檢偏器會移動光彈性條紋，圓盤內的平均亮度隨之變化（0–135° 範圍）",
+               "검광자를 돌리면 광탄성 무늬가 움직이고 원판 안의 평균 명암이 바뀐다(0–135° 범위)", "Beim Drehen des Analysators wandern die spannungsoptischen Streifen und die mittlere Intensität in der Scheibe ändert sich (im Bereich 0–135°)",
+               "analyser घुमाने पर photoelastic fringes चलते हैं और disc के भीतर औसत तीव्रता बदलती है (0–135° की सीमा में)", "Tourner l’analyseur déplace les franges photoélastiques et modifie l’intensité moyenne dans le disque (sur 0–135°)")
     watch=TX.fmt(TX.T(
-        "検光子角は試料後の偏光を選び、応力場の縞模様を動かす。平均輝度は {x0:.0f}° の {y0:.4f} から {x1:.0f}° の {y1:.4f} へ変わり、掃引中は {ymin:.4f}〜{ymax:.4f}。",
-        "The analyser angle selects the polarisation after the specimen and moves the stress fringes. Mean intensity changes from {y0:.4f} at {x0:.0f}° to {y1:.4f} at {x1:.0f}°, spanning {ymin:.4f}–{ymax:.4f} in the sweep.",
-        "检偏器角度选择试样后的偏振并移动应力条纹。平均亮度从 {x0:.0f}° 的 {y0:.4f} 变到 {x1:.0f}° 的 {y1:.4f}，扫描范围为 {ymin:.4f}–{ymax:.4f}。",
-        "檢偏器角度選擇試樣後的偏振並移動應力條紋。平均亮度從 {x0:.0f}° 的 {y0:.4f} 變到 {x1:.0f}° 的 {y1:.4f}，掃引範圍為 {ymin:.4f}–{ymax:.4f}。",
-        "검광자 각도는 시편 뒤의 편광을 골라 응력 무늬를 움직인다. 평균 명암은 {x0:.0f}°의 {y0:.4f}에서 {x1:.0f}°의 {y1:.4f}로 바뀌며 스윕 범위는 {ymin:.4f}–{ymax:.4f}다.",
-        "Der Analysatorwinkel wählt die Polarisation hinter der Probe und verschiebt die Spannungsstreifen. Die mittlere Intensität geht von {y0:.4f} bei {x0:.0f}° auf {y1:.4f} bei {x1:.0f}° und umfasst {ymin:.4f}–{ymax:.4f}.",
-        "analyser angle नमूने के बाद का polarization चुनता है और stress fringes को चलाता है। औसत तीव्रता {x0:.0f}° पर {y0:.4f} से {x1:.0f}° पर {y1:.4f} होती है और sweep में {ymin:.4f}–{ymax:.4f} रहती है।",
-        "L’angle de l’analyseur sélectionne la polarisation après l’éprouvette et déplace les franges de contrainte. L’intensité moyenne passe de {y0:.4f} à {x0:.0f}° à {y1:.4f} à {x1:.0f}°, entre {ymin:.4f} et {ymax:.4f} sur le balayage."),
+        "検光子角は試料後の偏光を選び、応力場の縞模様を動かす。円板内(半径 0.9R まで)の平均輝度は {x0:.0f}° の {y0:.4f} から {x1:.0f}° の {y1:.4f} へ変わり、掃引中は {ymin:.4f}〜{ymax:.4f}。",
+        "The analyser angle selects the polarisation after the specimen and moves the stress fringes. Mean intensity inside the disc (out to 0.9R) changes from {y0:.4f} at {x0:.0f}° to {y1:.4f} at {x1:.0f}°, spanning {ymin:.4f}–{ymax:.4f} in the sweep.",
+        "检偏器角度选择试样后的偏振并移动应力条纹。圆盘内（半径 0.9R 以内）的平均亮度从 {x0:.0f}° 的 {y0:.4f} 变到 {x1:.0f}° 的 {y1:.4f}，扫描范围为 {ymin:.4f}–{ymax:.4f}。",
+        "檢偏器角度選擇試樣後的偏振並移動應力條紋。圓盤內（半徑 0.9R 以內）的平均亮度從 {x0:.0f}° 的 {y0:.4f} 變到 {x1:.0f}° 的 {y1:.4f}，掃引範圍為 {ymin:.4f}–{ymax:.4f}。",
+        "검광자 각도는 시편 뒤의 편광을 골라 응력 무늬를 움직인다. 원판 안(반지름 0.9R까지)의 평균 명암은 {x0:.0f}°의 {y0:.4f}에서 {x1:.0f}°의 {y1:.4f}로 바뀌며 스윕 범위는 {ymin:.4f}–{ymax:.4f}다.",
+        "Der Analysatorwinkel wählt die Polarisation hinter der Probe und verschiebt die Spannungsstreifen. Die mittlere Intensität in der Scheibe (bis 0,9 R) geht von {y0:.4f} bei {x0:.0f}° auf {y1:.4f} bei {x1:.0f}° und umfasst {ymin:.4f}–{ymax:.4f}.",
+        "analyser angle नमूने के बाद का polarization चुनता है और stress fringes को चलाता है। disc के भीतर (0.9R तक) औसत तीव्रता {x0:.0f}° पर {y0:.4f} से {x1:.0f}° पर {y1:.4f} होती है और sweep में {ymin:.4f}–{ymax:.4f} रहती है।",
+        "L’angle de l’analyseur sélectionne la polarisation après l’éprouvette et déplace les franges de contrainte. L’intensité moyenne dans le disque (jusqu’à 0,9 R) passe de {y0:.4f} à {x0:.0f}° à {y1:.4f} à {x1:.0f}°, entre {ymin:.4f} et {ymax:.4f} sur le balayage."),
         x0=vals[0], x1=vals[-1], y0=mean_intensity[0], y1=mean_intensity[-1],
         ymin=min(mean_intensity), ymax=max(mean_intensity))
     return _sweep("poc_photoelasticity", TX.T("検光子角", "analyser angle", "检偏器角度", "檢偏器角度", "검광자 각도", "Analysatorwinkel", "विश्लेषक कोण", "angle de l’analyseur"), "°", vals, frames,
                   title=title, watch=watch, metric=mean_intensity,
-                  metric_label=TX.T("平均輝度 (0–1)", "Mean intensity (0–1)", "平均亮度（0–1）", "平均亮度（0–1）", "평균 명암 (0–1)", "Mittlere Intensität (0–1)", "औसत तीव्रता (0–1)", "Intensité moyenne (0–1)"))
+                  metric_label=TX.T("円板内の平均輝度 (0–1)", "Mean intensity inside the disc (0–1)", "圆盘内的平均亮度（0–1）", "圓盤內的平均亮度（0–1）", "원판 안의 평균 명암 (0–1)", "Mittlere Intensität in der Scheibe (0–1)", "disc के भीतर औसत तीव्रता (0–1)", "Intensité moyenne dans le disque (0–1)"))
 
 
 

@@ -77,7 +77,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_water_level` — op: `gen_measure_rectangle2`, `mat_svd`, `measure_pos`, `projective_trans_image`, `threshold` `py -3.11 examples/poc_water_level.py`
 - `poc_weld_bead_profile` — op: `gen_measure_rectangle2`, `laser_line_center_centroid`, `laser_line_coherent`, `measure_pos`, `median`, `rms`, `smooth_funct_1d_mean`, `triangulation_speckle_limit` `py -3.11 examples/poc_weld_bead_profile.py`
 - `poc_wound_area_tracking` — op: `axes_frame`, `axes_transform`, `blob_features`, `blob_label`, `blob_select_largest`, `contour_to_world_plane_xld`, `data_to_pixel`, `gaussian`, `hom_vector_to_proj_hom_mat2d`, `image_to_world_plane`, `log`, `plot_series`(另有 2 个) `py -3.11 examples/poc_wound_area_tracking.py`
-- `poc_photoelasticity` — op: `axes_frame`, `axes_transform`, `mueller_apply`, `mueller_element`, `plot_series`, `text_box`, `ticks` `py -3.11 examples/poc_photoelasticity.py`
+- `poc_photoelasticity` — op: `axes_frame`, `axes_transform`, `brazilian_disc_stress`, `mueller_apply`, `mueller_element`, `photoelastic_phase_estimate`, `photoelastic_polarization_images`, `photoelastic_retardation`, `plot_series`, `polariscope_intensity`, `principal_stress`, `retardation_convert`(另有 2 个) `py -3.11 examples/poc_photoelasticity.py`
 - `profile_shape_inspection` — op: `profile_camber`, `profile_chord_frame`, `profile_deviation`, `profile_leading_edge_radius`, `profile_perturb`, `profile_synth_naca4`, `profile_thickness`, `profile_trailing_edge_gap`, `rms` `py -3.11 examples/profile_shape_inspection.py`
 - `profile_frame_tour` — op: `profile_align`, `profile_chord_frame`, `profile_normalise`, `profile_resample`, `profile_sides`, `profile_synth_naca4` `py -3.11 examples/profile_frame_tour.py`
 - `poc_industrial_oct` — op: `glass`, `material_optical_constants`, `oct_ascan`, `oct_bscan`, `oct_bscan_boundaries`, `oct_bscan_flatten`, `oct_bscan_simulate`, `oct_design`, `oct_dispersion_broadening`, `oct_dispersion_compensate`, `oct_dispersion_estimate`, `oct_from_spectra`(另有 3 个) `py -3.11 examples/poc_industrial_oct.py`
@@ -2969,15 +2969,15 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `optimize_lens` `table → table` GPU: 无 — 对处方做阻尼最小二乘(Levenberg–Marquardt)优化(``table``)。 · 示例: `lens_optimize_demo`, `poc_lens_file_roundtrip`
 
 #### optics / photoelastic (12)
-- `brazilian_disc_stress` `无输入 → table` GPU: 无 — 径向受压圆盘(巴西圆盘)平面应力 σx、σy、τxy 的闭式解 → dict。 · 示例: `photoelastic_roundtrip`
+- `brazilian_disc_stress` `无输入 → table` GPU: 无 — 径向受压圆盘(巴西圆盘)平面应力 σx、σy、τxy 的闭式解 → dict。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
 - `cubic_photoelastic_birefringence` `image2d × image2d × image2d → table` GPU: 无 — 立方晶体 {100} 面(如 Si 晶圆)的应力双折射 Δn 与慢轴 → dict。 · 示例: `photoelastic_roundtrip`
 - `kirsch_plate_stress` `无输入 → table` GPU: 无 — 含孔无限大板单轴拉伸(Kirsch 解)的 σx、σy、τxy 及极坐标分量闭式解 → dict。 · 示例: `photoelastic_roundtrip`
-- `photoelastic_phase_estimate` `polsweep → table` GPU: 无 — 由偏振图像以闭式反求相位延迟 δ 与主轴 θ → dict。 · 示例: `photoelastic_roundtrip`
-- `photoelastic_polarization_images` `image2d → polsweep` GPU: 无 — 以偏振相机(0/45/90/135 度)或六强度偏振计拍摄圆偏振光照明下试样的图像 → (K, H, W)。 · 示例: `photoelastic_roundtrip`
-- `photoelastic_retardation` `image2d → table` GPU: 无 — 各向同性材料的应力光学定律 δ = 2π t C (σ1−σ2)/λ → dict(rad、nm、条纹级数与材料条纹值)。 · 示例: `photoelastic_roundtrip`
-- `polariscope_intensity` `image2d → image2d` GPU: 有(许可列表) — 平面与圆偏振仪暗场、明场强度(等色线、等倾线)的闭式解。 · 示例: `photoelastic_roundtrip`
-- `principal_stress` `image2d × image2d × image2d → table` GPU: 无 — 平面应力的主应力 σ1 ≥ σ2、主应力差与 σ1 的方向(等倾角)→ dict。 · 示例: `photoelastic_roundtrip`
-- `retardation_convert` `image2d → image2d` GPU: 仅在链中(许可列表) — 相位延迟的单位换算(rad / deg / nm / waves = 条纹级数)。 · 示例: `photoelastic_roundtrip`
+- `photoelastic_phase_estimate` `polsweep → table` GPU: 无 — 由偏振图像以闭式反求相位延迟 δ 与主轴 θ → dict。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `photoelastic_polarization_images` `image2d → polsweep` GPU: 无 — 以偏振相机(0/45/90/135 度)或六强度偏振计拍摄圆偏振光照明下试样的图像 → (K, H, W)。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `photoelastic_retardation` `image2d → table` GPU: 无 — 各向同性材料的应力光学定律 δ = 2π t C (σ1−σ2)/λ → dict(rad、nm、条纹级数与材料条纹值)。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `polariscope_intensity` `image2d → image2d` GPU: 有(许可列表) — 平面与圆偏振仪暗场、明场强度(等色线、等倾线)的闭式解。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `principal_stress` `image2d × image2d × image2d → table` GPU: 无 — 平面应力的主应力 σ1 ≥ σ2、主应力差与 σ1 的方向(等倾角)→ dict。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `retardation_convert` `image2d → image2d` GPU: 仅在链中(许可列表) — 相位延迟的单位换算(rad / deg / nm / waves = 条纹级数)。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
 - `retardation_from_birefringence` `image2d → table` GPU: 仅在链中(许可列表) — 由双折射 Δn 求相位延迟 → dict(并列返回 rad、nm 与条纹级数)。 · 示例: `photoelastic_roundtrip`
 - `retardation_unwrap_multiwavelength` `images → table` GPU: 有(许可列表) — 由多个波长的折叠相位延迟确定绝对相位延迟(nm)(假定无色散)→ dict。 · 示例: `photoelastic_roundtrip`
 - `silicon_piezo_optic_coefficients` `无输入 → table` GPU: 无 — 返回单晶硅的压光系数 π11−π12、π44 [Pa⁻¹] 及其出处 → dict。 · 示例: `photoelastic_roundtrip`
