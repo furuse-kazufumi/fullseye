@@ -8,7 +8,7 @@ gpu: なし
 examples: [lensfile_tolerance_worst_mtf, poc_lens_tolerancing]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # tolerance_monte_carlo — OPTICS `tolerancing` op

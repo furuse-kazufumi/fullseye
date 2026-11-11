@@ -7,6 +7,43 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+## 1.1.0 — 2026-11-12
+
+1.1.0。1.0.0 の後に、既存の op の出力や失敗の仕方が変わる修正が入ったので、patch(1.0.x)でなく minor で出す。`CONTRIBUTING.md` の「Versioning」は「minor の桁が破壊的変更の合図」で、「既定の数値が変わる」「黙って通していた入力を明示的に拒否する(fail-soft から fail-closed へ)」を minor の条件に挙げている。下の「挙動の変更」の項目がそれに当たる(新しい op・PoC・文書・速度の改善だけなら patch だった)。op の削除・改名はない。既定の `device` は `"cpu"` のまま。
+
+### 挙動の変更(1.0.0 から。既存の op の出力・失敗の仕方が変わるもの)
+
+根拠は各項目のコミット(`git log v1.0.0..` で読める)と、この節の下に残した 1.0.0 以後の記述。数値はそのコミットの本文にある実測値で、この版の準備では再測していない。
+
+**黙って通していたものを、明示的に拒否する(fail-soft → fail-closed)**
+
+- MCP `validate_pipeline`: つまみ a / b が 0〜1 の外なら `knob_out_of_range` で断る。実行は断っていたのに、検証が通していた。a / b を `params` に入れた形には直し方を添える(8b5a899a09、下の「「AI が組んだ検査」の取り直しと MCP の入口の不備」)。
+- `ncc_locate`: NaN を含む画像は `FsValueError`。以前は NaN 1 画素でマップ全体が黙って 0 になった。パイプライン経路(`ops.RT` / `run_stages`)は `[0,0,0]` を返して `fs.fallbacks()` に記録する(af7a82898d)。
+- `voxel_downsample`: 非有限の点は `ValueError`。以前は NaN 1 点で出力が NaN 1 点に潰れた(af7a82898d)。
+- `icp` / `point_to_plane_icp`: `trim` を [0, 1) で検査し、範囲外は `ValueError`(af7a82898d)。
+- `watersheds_marker`: 形の違う markers、整数でない・負・非有限の markers は `ValueError`、skimage が無ければ `MissingDependencyError`。以前は skimage の例外を飲み、画像を見ない Voronoi へ落ちて 60x60 を返した(78407add98)。
+- mvtrack の背景推定: 整数 dtype と [0,1] の外は `ValueError`(uint8 で前景率 79 % を黙って返していた)。`patchbank_score`: 学習時と違う尺度は `ValueError`(uint8 で採点すると image_score が 540 倍だった)。`detect.segment_objects`: 全部が非有限の像は `ValueError`(以前は空の結果)(78407add98)。
+- 光学・計測: `laser_line_coherent` / `light_section_speckle_floor` は細格子の刻みが強度のナイキスト λ/(4 sin u) より粗いと `ValueError`(λ/(5 sin u) までは `RuntimeWarning`)、`measure_pos` は非有限の画素・sigma < 0・全部が画像の外の測定線を `ValueError`、`integrate_normals` は非有限の法線を `ValueError`(77640ef0bf)。
+
+**同じ入力で返す値が変わる**
+
+- `otsu` / `bin_threshold` / `binary_threshold` / `auto_threshold`: 4 つとも、実データの範囲を 256 ビンに切る同じ関数を通る。以前は [0,1] の 256 ビンと clip のせいで、同じ大津を名乗る op の答えが割れた(値域 0.40〜0.45 の像で誤分類 3.59 %、0..255 の float で前景 0 %、定数の像で答えが逆)。`auto_threshold` に µm の高さ場を渡したときの前景は、以前は [0,1] 換算で 668 画素・µm のままで 2,256 画素と割れていたのが、どちらでも 621 画素になる。双子実装(`detect._otsu_mask`・`accel._otsu`)も、範囲外・定数・全部が非有限の像で中核と揃えた。`detect.segment_objects` は範囲外の値を clip せずに伸ばし、1 を超える定数の像は全部前景(78407add98)。
+- `shape_locate`: 回転したテンプレートの四隅をマスクで除いた。背景 0.5・30° でのピークが 0.7794 → 0.981。NaN でパイプライン経路の fallback は 4 要素(af7a82898d)。
+- `ppf.surface_match` / `find_surface_pose`: 場面側の既定の法線をモデル側と同じ向き付き法線にし、既定の法線では両方の符号で投票する。成功率は 54 → 79 %(当て金・48 試行・種 7)、代償は時間が 1.84〜2.05 倍(af7a82898d)。
+- `normals_from_depth`: 無効画素を約束どおり NaN にした(穴 735 画素のうち 696 画素が逆向きの有限値だった)。`fit_rectangle2`: 角度 ±90 は +90 に寄せ、ほかの角度も丸めで最大 2.8e-14 度動く(af7a82898d)。
+- `ncc_locate` の 2-D は FFT 経路になった(512² 画像・63² テンプレートで 0.50 → 0.03 s、平均を引いて渡すので DC 1e5 の画像でも旧経路と同じ精度)。縁の規則(full-overlap のみ)は変えず、docstring と help に書いた(af7a82898d)。
+- 光切断・偏光・ToF: `laser_line_center_centroid` / `_gauss` は飽和した平らな台の窓を台の両端から取る(20 倍飽和で −5.7 px → −0.04 px)、`laser_line_center_steger` は縁から 3σ 以内・画像の外の点を点の位置で無効にする(30〜80° の斜めの線で 0.21〜0.69 px → 0.006 px 以下)、`integrate_normals` は平均勾配の一次の項を足し戻す(傾いた平面が水平に戻っていた)、`sfp_normals` / `polarization_dolp_map` / `polarization_stokes_map` は暗い画素(a0 ≤ 3·σ_A)を DoLP 未定義にし `dark` / `dolp_noise` を返す、`itof_phase_amplitude` は完全飽和・B ≤ 0 かつ読み出し雑音 0 の画素の sigma を inf にする(77640ef0bf)。
+- 領域・ラベル: `opening_seg` は背景を跨いで種の番号を配らず、測地的に広げる(種を持たない成分は 0)。`morph_skiz` は境界が上・左へ寄っていたのを 8 通りの対称から最近傍を集めて直した。`blob_features` の `n` は実際の物体数(歯抜けのラベルで 5 だったのが 4)、`vol_distance_transform` は全部が前景のとき全部 inf を返す(78407add98)。
+- 動いた PoC の数値(op の修正の結果として): `poc_real_grain_skiz` の粒の数 57 → 31(専門家 18)、`poc_template_tracking` の第 6 章 `shape_locate` 30° のピーク 0.531 → 0.950、`poc_3d_sensor_modalities` の照度差ステレオ(つや消し)の雑音 1.6168 → 0.2226 mm(78407add98、af7a82898d、77640ef0bf)。
+- `op_find` の説明文: docs/ops の無い環境(wheel)で、doc の無い registry op の説明が既定でドイツ語になっていた(961/1037 件)のを、英語(無ければ原文)に固定した(76a0d2a396)。
+
+### 既知の課題(`docs/KNOWN_ISSUES.md`。1.1.0 でも直していない)
+
+- §34: 2-D 用の op に `(H, W, 3)` のカラー画像を渡すと、近傍演算が色を跨ぐ(image 78 本 + region 11 本 = 89 本)。チャネルごとに 3 回呼ぶ方法は自己正規化する op でチャネル間の比が消える(灰色エッジ法の角度誤差 4.17 度 → 27.86 度)。fail-closed にするかどうか(3 択)は未決で、既定の数値は変えていない。同じ根で、立体を 2-D の op に渡しても通る(image / region 用の op 688 本のうち 415 本が `(8, 8, 8)` を `on_error="raise"` でも受け入れる)。`extra_checks='on'` のときだけ拒否する opt-in を足した。既定で拒否するのは minor 相当の変更になるので、この版では見送った。
+- §50: 形状特徴の「絶対値」は周囲長の規約に載っている。`skimage.measure.perimeter` は軸平行の境界に寄り、円で大きくなるほど外れ +5.2 %(r=96)。`perimeter_crofton` は円で 1.0016 だが、正方形で −5.4 % に落ち着く。HALCON がどちらを使うか文書に無く、合わせる相手が定まらないため、記録だけにしてある。
+- §52: `moments_region_2nd` と `moments_region_2nd_invar` は、定義上 Hu の第 1 不変モーメントで常に同じ数を返す(HALCON では別の演算子で、5 値と 3 値を返す)。moments 族を `match` 型にして成分を全部返すか、どちらかの op をやめるかは未決。
+- §53: `radon_transform`(32×32)の sinogram を `filtered_backprojection` に渡すと、既定の出力は 33×33 になる(検出器 47 本から 32 も 33 も同じように逆算でき、「入力に合わせる」既定が決められない)。既定を変えると既存の数値が動くので変えず、元の格子へ戻すときは `size=<元の辺>` を渡す。
+
 ### 追加 — 背景の縞の歪みからガラス瓶を逆に測る(シミュレーション): `watervision` 2 op(収蔵 2026.312)
 
 - `bottle_background_map`(`bottle_image` と同じ瓶・カメラで、画素の光線が背景の平らな板に着く座標 u の地図。全反射の画素は NaN と数える)と `bottle_fit_from_pattern`(u の地図から外半径・壁厚・n_glass・n_liquid・液面を最小二乗で当てはめ、標準偏差・相関行列・条件数・最も弱い方向・`separated` の旗を返す)。観測を作る追跡と当てはめの閉形式は別の導出で、近軸の 2×2 行列で中心の傾きを検算した。追跡の内部 `_trace_rows` に出射位置を返す任意の出力を足した(`bottle_image` の出力は変えていない。origin/master の 4 条件との照合値をテストに固定)。

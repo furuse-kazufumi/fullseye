@@ -8,7 +8,7 @@ gpu: なし
 examples: [image_quality_metrics, poc_colormap_readability, poc_leaf_disease_area, poc_metal_grain_size, poc_solder_fillet_aoi]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # rgb_to_lab — IMGMETRICS `colorspace` op

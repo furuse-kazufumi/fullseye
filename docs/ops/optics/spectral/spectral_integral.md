@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_equipment_selection_map, poc_fiber_light_guide, poc_nir_silicon_transmission]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # spectral_integral — OPTICS `spectral` op

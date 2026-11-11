@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery_nary_image_algebra, optics_four_f_processor, poc_em_branch_territory, poc_food_cutting_measure, poc_part_locate_features]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # identity — 2D `misc` op

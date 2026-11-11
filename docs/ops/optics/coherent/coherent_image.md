@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [poc_fourier_ptychography, poc_laser_line_speckle_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # coherent_image — OPTICS `coherent` op

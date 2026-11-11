@@ -8,7 +8,7 @@ gpu: なし
 examples: [acoustic_condition_monitoring, poc_emva1288_sensor, poc_gw_detector_pseudo_simulation]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # spectrogram — ONED `signal` op

@@ -8,7 +8,7 @@ gpu: なし
 examples: [photon_timeresolved, poc_dtof_ranging]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # tcspc_background_subtract — PHOTON `tcspc` op

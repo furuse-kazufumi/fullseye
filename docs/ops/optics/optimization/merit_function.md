@@ -8,7 +8,7 @@ gpu: なし
 examples: [lens_optimize_demo, poc_lens_file_roundtrip, poc_lens_merit_operands]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # merit_function — OPTICS `optimization` op

@@ -8,7 +8,7 @@ gpu: なし
 examples: [lensfile_tolerance_worst_mtf, optical_design_metrics, poc_lens_file_roundtrip, poc_lens_solves_afocal, poc_zmx_public_verify, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # lens_file_read — OPTICS `lensfile` op

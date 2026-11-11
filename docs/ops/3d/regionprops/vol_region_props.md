@@ -8,7 +8,7 @@ gpu: なし
 examples: [vessel_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # vol_region_props — 3D `regionprops` op

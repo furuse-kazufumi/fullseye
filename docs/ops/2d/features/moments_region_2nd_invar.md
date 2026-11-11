@@ -9,7 +9,7 @@ gpu: あり(lbl_moments_region_2nd_invar)
 examples: [gallery2d_features, poc_rotation_invariance_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # moments_region_2nd_invar — 2D `features` op

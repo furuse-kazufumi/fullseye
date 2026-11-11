@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [annotate_gallery, poc_mri_bias_field, poc_recycling_sorting]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # overlay_labels — ANNOTATE `overlay` op

@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_geodetic_height_frames, poc_water_inspection_images, poc_water_transparent_media]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # water_attenuation — OPTICS `watermedia` op

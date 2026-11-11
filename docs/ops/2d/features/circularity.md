@@ -9,7 +9,7 @@ gpu: 鎖の中だけ(lbl_circularity)
 examples: [gallery2d_features, poc_cell_counting, poc_particle_sizing, poc_rotation_invariance_audit, shape_factors_closed_form]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # circularity — 2D `features` op

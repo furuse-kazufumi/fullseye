@@ -8,7 +8,7 @@ gpu: なし
 examples: [raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # raw_black_level — GFX2D `isp` op

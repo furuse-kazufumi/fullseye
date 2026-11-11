@@ -9,7 +9,7 @@ gpu: なし
 examples: [example_inner_diameter_mm, poc_calipers_under_illusion, poc_dimensional_inspection, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # add_metrology_object_circle_measure — MEASURE1D `model` op

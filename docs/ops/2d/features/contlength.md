@@ -9,7 +9,7 @@ gpu: あり(lbl_contlength)
 examples: [gallery2d_features, scale_law_of_features]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # contlength — 2D `features` op
