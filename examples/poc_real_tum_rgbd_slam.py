@@ -14,13 +14,24 @@
    (σ_Z = (m / f b) Z² σ_d′)と述べる。局所の平面(24 × 24 画素の窓)の当てはめ残差
    (``fit_plane_3d``)を距離ごとの中央値で見て、増え方がその形に乗るかを測る。
 
+★基準は 3 つある。「合わせない」(単位行列)は**最弱**で、RPE は真値の動きの大きさそのもの、ATE は真値の経路の広がりにすぎない
+(ICP の出発点も単位行列なので、比べているのは ICP 自身の出発点との比)。そこで**等速**(直前の組の真値の相対姿勢をそのまま使う。真値を
+使う oracle)を足した。ICP は等速とほぼ同じ水準で、設定(trim)によっては勝つが、ここでは「等速よりはっきり良い」とは言わない。
+
 ★ここで**測っていない**もの: 密な深度の真値は無いので深度の絶対誤差は測れない(姿勢と平面性だけ)。
 標本は 1 系列・32 枚。公開された SLAM 手法との直接対決はしない(標本が違う)。
 一次文献の**式の形**(距離の 2 乗)は確認したが、本文の係数 ``|m/(f b)| = 2.85e-5`` の**単位は本文から確認できなかった**ので、
 係数の絶対値は門に使わず、傾きと増え方だけで採点する。
 
 ★門は結果を見てから置いた(1 系列を見ながら決めた)。ICP の ``trim``(下位の対応を捨てる割合)は前半 15 組で
-選び、後半 16 組で採点する(1 回きりの分割)。分割の外(全 31 組)の数字も印字する。
+選び、後半 16 組で採点する。**この 1 回の分割だけの話で、一般化しない**: 他の 7 通りの分割(後半→前半・偶数→奇数・奇数→偶数・
+4 分割)も印字する。後半 16 組の RMS は 3 組(組 16〜18、分割の直後の 1 つの失敗)が二乗和の大半を占めるので、
+それを除いた値・中央値・組の復元抽出による比の区間も印字する。
+
+★雑音の門(「単調に増える」「遠い側が近い側の 1.5 倍以上」)は、距離に比例しても 2 乗でも通る。**Z² を排除できる門ではない**
+(増えることの確認だけ)。窓の残差は (a) センサの雑音、(b) Kinect の視差の量子化(段差は Z² で増える)、(c) 窓の中の面の凹凸と
+窓の物理的な広さ(窓は遠いほど広い)の混ざりで、窓の大きさを替えると値が変わる(センサ雑音だけなら一定のはず)。
+この PoC は「雑音の距離依存を測った」とは言わず、「窓の残差が距離でどう増えるか」と、その中の量子化の寄与の見積りまでを言う。
 
 実行例::
 
@@ -316,7 +327,7 @@ def pair_errors(est: np.ndarray, gt_rel: np.ndarray) -> tuple[float, float]:
     return float(np.linalg.norm(E[:3, 3])), rotation_angle_deg(E[:3, :3])
 
 
-def rms(x) -> float:
+def rms_of(x) -> float:
     return float(np.sqrt(np.mean(np.square(np.asarray(x, float)))))
 
 
@@ -336,7 +347,7 @@ def ate_rmse(chain: list[np.ndarray], poses) -> tuple[float, np.ndarray]:
     ref = np.array([(inv0 @ np.append(p[:3, 3], 1.0))[:3] for p in poses])
     R, t = rigid_align(est, ref)
     err = np.linalg.norm(est @ R.T + t - ref, axis=1)
-    return rms(err), err
+    return rms_of(err), err
 
 
 def chain_of(rels: list[np.ndarray]) -> list[np.ndarray]:
@@ -360,7 +371,7 @@ def evaluate_registration(seq: dict, traj: dict, K=K_ROS) -> dict:
         est[trim] = e
         err_t[trim] = np.array([a for a, _ in pe])
         err_r[trim] = np.array([b for _, b in pe])
-    chosen = min(TRIM_CANDIDATES, key=lambda k: rms(err_t[k][:half]))
+    chosen = min(TRIM_CANDIDATES, key=lambda k: rms_of(err_t[k][:half]))
     return {"est": est, "err_t": err_t, "err_r": err_r, "half": half, "chosen": chosen,
             "n_points": [len(c[0]) for c in clouds], "n_pairs": n_pairs}
 
@@ -392,13 +403,13 @@ def tile_residuals(depth: np.ndarray, K=K_ROS, tile: int = TILE):
     return out
 
 
-def bin_medians(records: list) -> list[dict]:
+def bin_medians(records: list, edges=Z_EDGES) -> list[dict]:
     """距離の区間ごとの窓の残差の中央値。窓 30 個以上・5 枚以上の区間だけ返す。"""
     rows = []
     z = np.array([r[0] for r in records])
     s = np.array([r[1] for r in records])
     f = np.array([r[4] for r in records])
-    for lo, hi in zip(Z_EDGES[:-1], Z_EDGES[1:]):
+    for lo, hi in zip(edges[:-1], edges[1:]):
         m = (z >= lo) & (z < hi)
         n_frames = len(set(f[m].tolist()))
         if int(m.sum()) >= BIN_MIN_TILES and n_frames >= BIN_MIN_FRAMES:
@@ -451,6 +462,71 @@ def whole_plane_sigma(depth: np.ndarray, lo: float, hi: float, K=K_ROS) -> list[
     return out
 
 
+
+# --------------------------------------------------------------------------- #
+# 基準・分割・量子化(独立レビューの指摘への応答、2026-11-11)
+# --------------------------------------------------------------------------- #
+def constant_velocity_errors(rel: list[np.ndarray]) -> np.ndarray:
+    """等速の基準(oracle): 直前の組の**真値**の相対姿勢をそのまま推定として使った並進誤差[m]。組 1 以降の ``len(rel) - 1`` 個。"""
+    return np.array([pair_errors(rel[i - 1], rel[i])[0] for i in range(1, len(rel))])
+
+
+def split_scores(err_t: dict, ident: np.ndarray, n: int) -> list[dict]:
+    """trim を選択側の RMS 最小で選び、採点側の RMS を「合わせない」と比べる。8 通りの分割。"""
+    idx = np.arange(n)
+    h = n // 2
+    defs = [("前半→後半(本文の分割)", idx < h, idx >= h), ("後半→前半", idx >= h, idx < h),
+            ("偶数→奇数", idx % 2 == 0, idx % 2 == 1), ("奇数→偶数", idx % 2 == 1, idx % 2 == 0)]
+    for f in range(4):
+        te = (idx * 4 // n) == f
+        defs.append(("4 分割の %d 番目を採点" % (f + 1), ~te, te))
+    rows = []
+    for name, sel, sc in defs:
+        ch = min(TRIM_CANDIDATES, key=lambda k: rms_of(err_t[k][sel]))
+        icp, idn = rms_of(err_t[ch][sc]), rms_of(ident[sc])
+        rows.append({"name": name, "trim": ch, "icp": icp, "ident": idn, "ratio": icp / idn,
+                     "default": rms_of(err_t[None][sc])})
+    return rows
+
+
+def bootstrap_ratio(err: np.ndarray, ident: np.ndarray, idx, n_boot: int = 5000, seed: int = 0) -> tuple[float, float]:
+    """組を復元抽出して RMS の比(ICP / 合わせない)の 95 % 区間を出す(標本が 16 組と小さいので、点の比を精密に読まない)。"""
+    rng = np.random.default_rng(seed)
+    idx = np.asarray(idx)
+    ratios = [rms_of(err[s]) / rms_of(ident[s]) for s in (rng.choice(idx, len(idx)) for _ in range(n_boot))]
+    lo, hi = np.percentile(ratios, [2.5, 97.5])
+    return float(lo), float(hi)
+
+
+def fit_disparity_grid(depths: list[np.ndarray]) -> dict:
+    """同梱の深度の**実測の値**から、逆深度(≒視差)の量子化の格子(刻み・位相)を推定する。論文や校正の定数は使わない。
+
+    32 枚で現れた深度の値(0.5〜3 m)の逆数が等間隔の格子に乗るなら、位相を刻みで巻いたベクトルの平均の長さ(整列度)が 1 に近い。
+    刻みは 0.0025〜0.0035 /m を走査して整列度が最大のものを取る。
+    """
+    levels = np.unique(np.concatenate([np.unique(d[(d > 0.5) & (d < 3.0)]) for d in depths]))
+    inv = 1.0 / levels
+    deltas = np.linspace(0.0025, 0.0035, 2001)
+    coh = np.array([abs(np.mean(np.exp(2j * np.pi * inv / dl))) for dl in deltas])
+    k = int(np.argmax(coh))
+    delta = float(deltas[k])
+    offset = float(np.angle(np.mean(np.exp(2j * np.pi * inv / delta))) / (2 * np.pi) * delta)
+    return {"delta": delta, "offset": offset, "alignment": float(coh[k]), "n_levels": int(len(levels))}
+
+
+def quantize_disparity(depth: np.ndarray, grid: dict) -> np.ndarray:
+    """深度を逆深度の格子に丸め、16 bit の 1/5000 m に量子化する(雑音ゼロの視差量子化の模擬)。"""
+    inv = 1.0 / depth
+    q = grid["offset"] + grid["delta"] * np.round((inv - grid["offset"]) / grid["delta"])
+    return np.round(DEPTH_SCALE / q) / DEPTH_SCALE
+
+
+def quantization_only_sigma(grid: dict, z0: float, tilt_deg: float = 30.0) -> float:
+    """雑音ゼロの傾いた平面(中心の距離 z0)を視差量子化して、窓推定器にかけた残差の中央値[m]。"""
+    plane = synthetic_plane_depth(0.0, z0=z0, tilt_deg=tilt_deg)
+    res = [r[1] for r in tile_residuals(quantize_disparity(plane, grid))]
+    return float(np.median(res)) if res else float("nan")
+
 # --------------------------------------------------------------------------- #
 # 図
 # --------------------------------------------------------------------------- #
@@ -494,32 +570,42 @@ def write_figures(seq, traj, reg, noise, g: Gates) -> None:
                    caption="カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。",
                    source=SOURCE, aspect="equal")
     steps = list(range(1, reg["n_pairs"] + 1))
+    ymax = float(max(traj["ident_t"].max(), reg["err_t"][None].max()) * 1e3)
+    cut = noise["half"] + 0.5
     figs.save_plot("rpe_steps",
                    [("合わせない(真値の動きの大きさ)", steps, list(traj["ident_t"] * 1e3)),
+                    ("等速(直前の真値、oracle)", steps[1:], list(noise["cv"] * 1e3)),
                     ("ICP(trim なし、既定)", steps, list(reg["err_t"][None] * 1e3)),
-                    ("ICP(trim %s)" % chosen, steps, list(reg["err_t"][chosen] * 1e3))],
-                   kinds=["line", "line", "line"], styles=["dashed", None, None],
-                   colors=["reference", "wrong", "emphasis"], xlabel="隣り合う 2 枚の組(約 0.17 秒おき)",
-                   ylabel="相対姿勢の並進誤差 [mm]",
-                   title="RPE の組ごとの並進誤差(後半 %d 組が採点、前半は trim を選んだ組)" % (reg["n_pairs"] - reg["half"]),
-                   caption="破線は「合わせない」の誤差 = 真値の 1 組あたりの動き(約 60 mm)。ICP は大半の組で小さいが、"
-                           "動きが大きい組で外れることがある。", source=SOURCE)
+                    ("ICP(trim %s、前半で選んだ)" % chosen, steps, list(reg["err_t"][chosen] * 1e3)),
+                    ("ICP(trim 0.1、後半だけなら最良)", steps, list(reg["err_t"][0.1] * 1e3)),
+                    ("分割位置(前半 %d | 後半 %d)" % (noise["half"], reg["n_pairs"] - noise["half"]), [cut, cut], [0.0, ymax])],
+                   kinds=["line"] * 6, styles=["dashed", "dashed", None, None, None, "dotted"],
+                   colors=["reference", "neutral", "wrong", "emphasis", "right", "neutral"],
+                   xlabel="隣り合う 2 枚の組(約 0.17 秒おき)", ylabel="相対姿勢の並進誤差 [mm]",
+                   title="RPE の組ごとの並進誤差(分割の直後の組 16〜18 で ICP が外れる)",
+                   caption="破線は「合わせない」の誤差(= 真値の 1 組あたりの動き、約 60 mm)と、直前の真値を使う等速の誤差。"
+                           "点線は trim を選んだ前半 15 組と採点した後半 16 組の境。ICP は大半の組で小さいが、境の直後の 3 組"
+                           "(組 16〜18)で外れ、後半の二乗和の大半を占める。", source=SOURCE)
     rows = noise["bins"]
     z = [r["z"] for r in rows]
     s = [r["sigma"] * 1e3 for r in rows]
     zz = np.linspace(min(z) * 0.9, max(z) * 1.1, 30)
     anchor = rows[int(np.argmin([abs(r["z"] - 1.0) for r in rows]))]
     c2 = anchor["sigma"] * 1e3 / anchor["z"] ** 2
+    q_rows = noise["q_rows"]
     figs.save_plot("sigma_vs_z",
                    [("窓の残差の中央値(距離の区間ごと)", z, s),
+                    ("量子化だけの合成平面(雑音ゼロ)", [r["z"] for r in q_rows], [r["q"] * 1e3 for r in q_rows]),
                     ("σ ∝ Z²(形だけ。1 m 付近に合わせた)", list(zz), list(c2 * zz ** 2)),
                     ("σ ∝ Z(比較)", list(zz), list(anchor["sigma"] * 1e3 / anchor["z"] * zz))],
-                   kinds=["scatter", "line", "line"], styles=[None, "dashed", "dotted"],
-                   colors=["emphasis", "reference", "neutral"], xlabel="平面の距離 Z [m]",
+                   kinds=["scatter", "scatter", "line", "line"], styles=[None, None, "dashed", "dotted"],
+                   colors=["emphasis", "right", "reference", "neutral"], xlabel="平面の距離 Z [m]",
                    ylabel="深度方向の残差の標準偏差 [mm]",
-                   title="窓の残差は距離で増えるが、2 m 以下は Z に比例(傾き %.2f、Z² なら 2)" % noise["slope_le2"],
-                   caption="点は 24×24 画素の窓の残差の中央値。破線は Khoshelham & Elberink 2012 の式(7)の形(距離の 2 乗)を"
-                           "1 m 付近の点に合わせたもの(係数は実測に合わせたので、論文の係数との比較ではない)。",
+                   title="窓の残差(雑音+量子化+凹凸)は距離で増える: 2 m 以下の傾き %.2f〜%.2f" % (noise["slope_lo"], noise["slope_hi"]),
+                   caption="点は 24×24 画素の窓の残差の中央値(センサの雑音だけではなく、視差の量子化・窓の中の凹凸・窓の広さを含む)。"
+                           "水色の点は雑音ゼロの傾いた平面を、同梱の深度から推定した視差の格子で量子化したもの(1.4 m 以遠は実測の大半を説明する)。"
+                           "破線は式(7)の形(距離の 2 乗)を 1 m 付近の点に合わせたもの(係数は実測に合わせたので、論文の係数との比較ではない)。"
+                           "傾きは窓の大きさ(12・24・48 画素)と区間の取り方で変わる。",
                    source=SOURCE)
     header = ["門", "判定", "中身"]
     rows_t = [[n, "OK" if ok else "NG", dt] for n, ok, dt in g.rows]
@@ -572,26 +658,26 @@ def main() -> None:
     print("  trim 候補ごとの並進 RPE の RMS [mm](前半 %d 組 / 後半 %d 組 / 全 %d 組):" % (half, npair - half, npair))
     for trim in TRIM_CANDIDATES:
         et = reg["err_t"][trim]
-        print("    trim=%-5s %7.1f / %7.1f / %7.1f   回転 %.2f°" % (trim, 1e3 * rms(et[:half]), 1e3 * rms(et[half:]),
-                                                                 1e3 * rms(et), rms(reg["err_r"][trim])))
+        print("    trim=%-5s %7.1f / %7.1f / %7.1f   回転 %.2f°" % (trim, 1e3 * rms_of(et[:half]), 1e3 * rms_of(et[half:]),
+                                                                 1e3 * rms_of(et), rms_of(reg["err_r"][trim])))
     it, ir = traj["ident_t"], traj["ident_r"]
-    print("    合わせない %7.1f / %7.1f / %7.1f   回転 %.2f°" % (1e3 * rms(it[:half]), 1e3 * rms(it[half:]), 1e3 * rms(it), rms(ir)))
+    print("    合わせない %7.1f / %7.1f / %7.1f   回転 %.2f°" % (1e3 * rms_of(it[:half]), 1e3 * rms_of(it[half:]), 1e3 * rms_of(it), rms_of(ir)))
     print("  前半で選んだ trim = %s" % (chosen,))
-    best_b = min(TRIM_CANDIDATES, key=lambda k: rms(reg["err_t"][k][half:]))
+    best_b = min(TRIM_CANDIDATES, key=lambda k: rms_of(reg["err_t"][k][half:]))
     print("  ★選択は後半に移っていない: 後半だけで見ると最良は trim=%s(%.1f mm)で、前半で選んだ trim=%s は %.1f mm"
-          % (best_b, 1e3 * rms(reg["err_t"][best_b][half:]), chosen, 1e3 * rms(reg["err_t"][chosen][half:])))
+          % (best_b, 1e3 * rms_of(reg["err_t"][best_b][half:]), chosen, 1e3 * rms_of(reg["err_t"][chosen][half:])))
     et, er = reg["err_t"][chosen], reg["err_r"][chosen]
-    rpe_t_b, rpe_t_id_b = rms(et[half:]), rms(it[half:])
-    rpe_r_b, rpe_r_id_b = rms(er[half:]), rms(ir[half:])
+    rpe_t_b, rpe_t_id_b = rms_of(et[half:]), rms_of(it[half:])
+    rpe_r_b, rpe_r_id_b = rms_of(er[half:]), rms_of(ir[half:])
     print("  ★後半(採点): 並進 %.1f mm(合わせない %.1f mm、比 %.2f)、回転 %.2f°(合わせない %.2f°)、最大 %.1f mm、"
           "中央 %.1f mm" % (1e3 * rpe_t_b, 1e3 * rpe_t_id_b, rpe_t_b / rpe_t_id_b, rpe_r_b, rpe_r_id_b,
                            1e3 * float(et[half:].max()), 1e3 * float(np.median(et[half:]))))
     g.check("後半の並進 RPE が合わせないの半分未満", rpe_t_b < 0.5 * rpe_t_id_b,
             "%.1f mm 対 %.1f mm(比 %.2f)" % (1e3 * rpe_t_b, 1e3 * rpe_t_id_b, rpe_t_b / rpe_t_id_b))
     g.check("後半の回転 RPE が合わせないより小", rpe_r_b < rpe_r_id_b, "%.2f° 対 %.2f°" % (rpe_r_b, rpe_r_id_b))
-    default_t = rms(reg["err_t"][None])
-    g.check("既定(trim なし)でも並進 RPE が合わせないより小", default_t < rms(it),
-            "全 31 組で %.1f mm 対 %.1f mm(比 %.2f)" % (1e3 * default_t, 1e3 * rms(it), default_t / rms(it)))
+    default_t = rms_of(reg["err_t"][None])
+    g.check("既定(trim なし)でも並進 RPE が合わせないより小", default_t < rms_of(it),
+            "全 31 組で %.1f mm 対 %.1f mm(比 %.2f)" % (1e3 * default_t, 1e3 * rms_of(it), default_t / rms_of(it)))
     ch = chain_of(reg["est"][chosen])
     ate, ate_err = ate_rmse(ch, traj["poses"])
     ate_ident, _ = ate_rmse([np.eye(4)] * n, traj["poses"])
@@ -601,12 +687,56 @@ def main() -> None:
           "最終ドリフト %.1f mm)" % (1e3 * ate, 1e3 * ate_default, 1e3 * ate_ident, path, 1e3 * float(ate_err[-1])))
     g.check("ATE が合わせないの半分未満", ate < 0.5 * ate_ident,
             "%.1f mm 対 %.1f mm(全 %d 組の鎖)" % (1e3 * ate, 1e3 * ate_ident, npair))
+    # --- 基準を強くする(等速)・分割を替える・3 組の影響 ------------------------------ #
+    rel = traj["rel"]
+    cv = constant_velocity_errors(rel)                  # 組 1 以降(組 0 は直前が無い)
+    sl = slice(1, npair)
+    cv_rms, id1_rms = rms_of(cv), rms_of(it[sl])
+    print("\n[基準] 等速(直前の組の真値の相対姿勢をそのまま使う oracle、組 1〜%d の %d 組):" % (npair - 1, npair - 1))
+    print("    等速 %.1f mm / 合わせない %.1f mm / ICP(trim %s)%.1f mm / ICP(trim 0.1)%.1f mm / ICP(既定)%.1f mm"
+          % (1e3 * cv_rms, 1e3 * id1_rms, chosen, 1e3 * rms_of(et[sl]), 1e3 * rms_of(reg["err_t"][0.1][sl]),
+             1e3 * rms_of(reg["err_t"][None][sl])))
+    icp_over_cv = rms_of(et[sl]) / cv_rms
+    print("  ★選んだ trim の ICP は等速の %.2f 倍(%s)。「合わせない」比 %.2f だけを見ると良く見えるが、等速との比はこう。"
+          % (icp_over_cv, "ほぼ同じ" if 0.8 <= icp_over_cv <= 1.25 else ("ICP が良い" if icp_over_cv < 0.8 else "等速が良い"),
+             rms_of(et[sl]) / id1_rms))
+    t_mean = np.eye(4)
+    t_mean[:3, 3] = np.mean([r[:3, 3] for r in rel], axis=0)
+    ate_cv, _ = ate_rmse(chain_of([np.eye(4)] + [rel[i - 1] for i in range(1, npair)]), traj["poses"])
+    ate_mean, _ = ate_rmse(chain_of([t_mean] * npair), traj["poses"])
+    print("  ATE: 等速(oracle)の鎖 %.1f mm / 真値の平均の動きを足すだけの鎖 %.1f mm / 合わせない %.1f mm / ICP %.1f mm"
+          "(合わせないの ATE は真値の経路の広がりにすぎない)" % (1e3 * ate_cv, 1e3 * ate_mean, 1e3 * ate_ident, 1e3 * ate))
+    g.check("選んだ trim の ICP が等速の 1.5 倍以内", icp_over_cv <= 1.5,
+            "%.1f mm 対 %.1f mm(%.2f 倍。等速より良いとは言わない)" % (1e3 * rms_of(et[sl]), 1e3 * cv_rms, icp_over_cv))
+    e2 = et[half:]
+    sq = np.sort(e2 ** 2)
+    share3 = float(sq[-3:].sum() / sq.sum())
+    rms_wo3 = rms_of(np.sort(e2)[:-3])
+    worst = sorted(int(i) + 1 for i in np.argsort(e2)[-3:] + half)
+    worse = [i + 1 for i in range(npair) if et[i] > it[i]]
+    print("  後半 %d 組の RMS %.1f mm は、最悪の 3 組(組 %s)が二乗和の %.0f %%。3 組を除くと %.1f mm、中央値 %.1f mm。"
+          "この 3 組は分割の直後に連続する 1 つの失敗。trim %s が合わせないより悪い組: %s"
+          % (npair - half, 1e3 * rms_of(e2), worst, 100 * share3, 1e3 * rms_wo3, 1e3 * float(np.median(e2)), chosen, worse))
+    ci_lo, ci_hi = bootstrap_ratio(et, it, np.arange(half, npair))
+    print("  後半の比 %.2f の 95 %% 区間(組の復元抽出 5000 回): %.2f〜%.2f" % (rpe_t_b / rpe_t_id_b, ci_lo, ci_hi))
+    g.check("後半の比の 95 % 区間の上端が 1 未満", ci_hi < 1.0, "%.2f〜%.2f(点の 0.42 は精度過剰)" % (ci_lo, ci_hi))
+    splits = split_scores(reg["err_t"], it, npair)
+    print("  分割を替えると(trim は選択側の RMS 最小で選ぶ。ICP / 合わせない、mm):")
+    for r in splits:
+        print("    %-22s trim=%-5s %6.1f / %6.1f = %.2f(既定 %.1f)" % (r["name"], r["trim"], 1e3 * r["icp"], 1e3 * r["ident"],
+                                                                  r["ratio"], 1e3 * r["default"]))
+    ratios = [r["ratio"] for r in splits]
+    n01 = sum(r["trim"] == 0.1 for r in splits)
+    print("  ★比は %.2f〜%.2f(本文の分割は最悪の %.2f)。trim 0.1 が選ばれたのは 8 通り中 %d 通り、本文の分割だけ 0.2。"
+          "全 31 組では trim 0.1 が %.1f mm、0.2 が %.1f mm。「選択が後半に移らない」は**この 1 回の分割の話**で一般化しない。"
+          % (min(ratios), max(ratios), ratios[0], n01, 1e3 * rms_of(reg["err_t"][0.1]), 1e3 * rms_of(et)))
+    g.check("分割 8 通りのどれでも合わせないの半分未満", max(ratios) < 0.5, "比 %.2f〜%.2f" % (min(ratios), max(ratios)))
     # 内部パラメータの感度
     reg_ir = evaluate_registration(seq, traj, K_FR1_IR)
-    ir_t = rms(reg_ir["err_t"][chosen])
+    ir_t = rms_of(reg_ir["err_t"][chosen])
     print("  内部パラメータを IR の公称値(%s、歪み補正なし)にすると、同じ trim の全組の並進 RPE %.1f mm(ROS の既定 %.1f mm)"
-          % (K_FR1_IR, 1e3 * ir_t, 1e3 * rms(et)))
-    g.check("内部パラメータを替えても合わせないより良い", ir_t < rms(it), "%.1f mm 対 %.1f mm" % (1e3 * ir_t, 1e3 * rms(it)))
+          % (K_FR1_IR, 1e3 * ir_t, 1e3 * rms_of(et)))
+    g.check("内部パラメータを替えても合わせないより良い", ir_t < rms_of(it), "%.1f mm 対 %.1f mm" % (1e3 * ir_t, 1e3 * rms_of(it)))
 
     # --- 雑音 ------------------------------------------------------------- #
     print("\n[雑音] 窓(%d×%d 画素)の平面当てはめ残差(深度方向)を、距離の区間ごとの中央値で見る" % (TILE, TILE))
@@ -634,12 +764,51 @@ def main() -> None:
     ratio = far["sigma"] / near["sigma"]
     print("  対数の傾き(σ と Z): 全区間 %.2f、2 m 以下の区間だけ %.2f(式 (7) の形は 2、Z に比例なら 1)。遠い側(Z≈%.2f)/ 近い側(Z≈%.2f)= %.2f 倍"
           % (slope, slope_le2, far["z"], near["z"], ratio))
-    print("  ★2 m 以下では Z² でなくほぼ Z に比例(傾き %.2f)。全区間で 1.4 に見えるのは 2〜3 m の 1 区間(%.1f mm)が引き上げた分で、"
-          "その区間が遠方の斜めの壁など別の事情かは未確認。Z² の形は、この標本では確認できなかった。" % (slope_le2, 1e3 * bins[-1]["sigma"]))
+    print("  ★2 m 以下の傾きは %.2f。全区間で 1.4 に見えるのは 2〜3 m の 1 区間(%.1f mm)が引き上げた分(下の量子化だけの見積りは 7.8 mm で 6 割。残りは斜面の |n_z| での割り算などの可能性があるが未確認)。"
+          "Z² の形は、この標本では支持されなかった(反証ではない、下を参照)。" % (slope_le2, 1e3 * bins[-1]["sigma"]))
     mono = all(b["sigma"] >= a["sigma"] for a, b in zip(bins[:-1], bins[1:]))
-    g.check("区間の中央値が距離で単調に増える", mono,
+    g.check("区間の中央値が距離で単調に増える(Z でも Z² でも通る)", mono,
             " → ".join("%.2f" % (1e3 * r["sigma"]) for r in bins) + " mm")
-    g.check("遠い側が近い側の 1.5 倍以上", ratio >= 1.5, "1.1〜1.6 m 対 0.8 m 未満で %.2f 倍" % ratio)
+    g.check("遠い側が近い側の 1.5 倍以上(Z でも Z² でも通る)", ratio >= 1.5, "1.1〜1.6 m 対 0.8 m 未満で %.2f 倍" % ratio)
+    # --- 量子化・窓の大きさの寄与(独立レビュー S4) ----------------------------------- #
+    grid = fit_disparity_grid(seq["depth"])
+    print("  視差の量子化の格子(同梱の深度の値の逆数から推定): 刻み %.5f /m、整列度 %.2f(1 = 完全に等間隔、%d 水準)。"
+          "Z での段差 = 刻み × Z² = Z 1 m で %.2f mm、2 m で %.2f mm" % (grid["delta"], grid["alignment"], grid["n_levels"],
+                                                                     1e3 * grid["delta"], 4e3 * grid["delta"]))
+    q_rows = []
+    for z0 in (0.66, 1.0, 1.4, 1.7, 2.86):
+        meas = min(bins, key=lambda r: abs(r["z"] - z0))
+        qs = quantization_only_sigma(grid, z0)
+        q_rows.append({"z": z0, "q": qs, "meas": meas["sigma"], "meas_z": meas["z"]})
+    print("  量子化だけ(雑音ゼロの傾いた平面)の窓残差 / 実測の中央値 [mm]:")
+    for r in q_rows:
+        print("    Z %.2f m: 量子化だけ %.2f / 実測(Z≈%.2f)%.2f = %.0f %%" % (r["z"], 1e3 * r["q"], r["meas_z"],
+                                                                      1e3 * r["meas"], 100 * r["q"] / r["meas"]))
+    q_slope = float(np.polyfit(np.log([r["z"] for r in q_rows]), np.log([r["q"] for r in q_rows]), 1)[0])
+    far_share = min(r["q"] / r["meas"] for r in q_rows if r["z"] >= 1.4)
+    print("  量子化だけの窓残差の対数の傾き %.2f(Z² なら 2)。1.4 m 以遠は実測の %.0f %% 以上を量子化だけで説明する"
+          "(1.4 m より近い側は実測が量子化の 2 倍前後 = センサの雑音・面の凹凸・窓の広さが残る)。" % (q_slope, 100 * far_share))
+    g.check("視差の量子化だけで窓残差が Z² に近く増える(傾き 1.5 以上)", q_slope >= 1.5, "傾き %.2f" % q_slope)
+    g.check("1.4 m 以遠は量子化だけで実測の半分以上", far_share >= 0.5, "最小 %.0f %%" % (100 * far_share))
+    win = {}
+    for tile in (12, 24, 48):
+        recs = []
+        for i, d in enumerate(seq["depth"]):
+            recs += [(*r[:4], i) for r in tile_residuals(d, tile=tile)]
+        wb = bin_medians(recs)
+        w1 = [r for r in wb if r["lo"] == 0.9][0]
+        win[tile] = {"sigma_1m": w1["sigma"], "slope_le2": loglog_slope([r for r in wb if r["hi"] <= 2.0]), "n": len(recs)}
+    print("  窓の大きさを替える(センサの雑音だけなら窓によらず一定のはず): Z 0.9〜1.1 m の中央値 %s mm、2 m 以下の傾き %s"
+          % (" / ".join("%d 画素 %.2f" % (t, 1e3 * v["sigma_1m"]) for t, v in win.items()),
+             " / ".join("%.2f" % v["slope_le2"] for v in win.values())))
+    all_recs = [(*r[:4], i) for i, d in enumerate(seq["depth"]) for r in tile_residuals(d)]
+    edge_sets = ((0.5, 0.8, 1.1, 1.4, 1.7, 2.0), (0.5, 0.6, 0.8, 1.0, 1.2, 1.5, 2.0), (0.5, 1.0, 1.5, 2.0))
+    slopes = [v["slope_le2"] for v in win.values()] + [loglog_slope(bin_medians(all_recs, e)) for e in edge_sets]
+    print("  2 m 以下の傾きは窓・区間の取り方で %.2f〜%.2f(本文の 1.07 は点推定として過精度)。"
+          "Z² を支持しないが、反証でもない(量子化は Z² で、窓の広さ・面の凹凸と混ざる)。" % (min(slopes), max(slopes)))
+    win_ratio = win[48]["sigma_1m"] / win[12]["sigma_1m"]
+    g.check("窓の大きさで窓残差が変わる(48 画素 / 12 画素 が 1.5 倍以上)", win_ratio >= 1.5,
+            "%.2f 倍(センサの雑音だけの量ではない)" % win_ratio)
     # 参考(門にしない): 画像全体の面の残差との違い
     lo, hi = 0.9, 1.1
     whole = [x for d in seq["depth"] for x in whole_plane_sigma(d, lo, hi)]
@@ -652,16 +821,25 @@ def main() -> None:
     print("  一次文献: 式 (7) σ_Z = (m / f b) Z² σ_d′、本文の |m/(f b)| = %.2e と σ_d′ = 1/2 画素。本文は単位を書かず、"
           "単位を決められないので係数の絶対値は未確認(門にしていない)。" % kh_coef)
 
-    noise = {"bins": bins, "slope": slope, "slope_le2": slope_le2, "ratio": ratio, "ate": ate, "ate_ident": ate_ident}
+    noise = {"bins": bins, "slope": slope, "slope_le2": slope_le2, "ratio": ratio, "ate": ate, "ate_ident": ate_ident,
+             "q_rows": q_rows, "slope_lo": min(slopes), "slope_hi": max(slopes), "cv": cv, "half": half}
     record = {
         "n_frames": n, "n_pairs": npair, "chosen_trim": chosen,
         "rpe_t_mm": {"b_icp": round(1e3 * rpe_t_b, 2), "b_ident": round(1e3 * rpe_t_id_b, 2),
-                     "all_icp": round(1e3 * rms(et), 2), "all_ident": round(1e3 * rms(it), 2),
+                     "all_icp": round(1e3 * rms_of(et), 2), "all_ident": round(1e3 * rms_of(it), 2),
                      "all_default": round(1e3 * default_t, 2)},
         "rpe_r_deg": {"b_icp": round(rpe_r_b, 3), "b_ident": round(rpe_r_id_b, 3)},
         "ate_mm": {"icp": round(1e3 * ate, 2), "default": round(1e3 * ate_default, 2), "ident": round(1e3 * ate_ident, 2)},
         "sigma_z_mm": [[r["z"], round(1e3 * r["sigma"], 3)] for r in bins], "slope": round(slope, 3),
-        "slope_le2m": round(slope_le2, 3),
+        "slope_le2m": round(slope_le2, 3), "slope_range": [round(min(slopes), 2), round(max(slopes), 2)],
+        "baseline": {"cv_mm": round(1e3 * cv_rms, 2), "icp_over_cv": round(icp_over_cv, 2), "ate_cv_mm": round(1e3 * ate_cv, 1),
+                     "ate_mean_motion_mm": round(1e3 * ate_mean, 1)},
+        "worst3": {"pairs": worst, "share": round(share3, 3), "rms_without_mm": round(1e3 * rms_wo3, 2),
+                   "ci95": [round(ci_lo, 2), round(ci_hi, 2)]},
+        "splits": [{"name": r["name"], "trim": r["trim"], "ratio": round(r["ratio"], 2)} for r in splits],
+        "quantization": {"delta": round(grid["delta"], 5), "alignment": round(grid["alignment"], 2),
+                         "slope": round(q_slope, 2), "far_share_min": round(far_share, 2)},
+        "window": {str(t): round(1e3 * v["sigma_1m"], 2) for t, v in win.items()},
         "gates": len(g.rows), "failed": len(g.failed()),
     }
     print("\nRECORDED_JSON=" + json.dumps(record, ensure_ascii=False, sort_keys=True))

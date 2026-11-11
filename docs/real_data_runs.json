@@ -102,13 +102,6 @@
    "exit": 0,
    "printed_pass": true
   },
-  "poc_real_tum_rgbd_slam": {
-   "datasets_read": [
-    "tum-rgbd-fr1-xyz"
-   ],
-   "exit": 0,
-   "printed_pass": true
-  },
   "poc_sem_wafer_defect_edge_bias": {
    "datasets_read": [],
    "exit": 0,

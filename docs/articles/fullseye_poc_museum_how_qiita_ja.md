@@ -4114,25 +4114,25 @@ py -3.11 examples/poc_3d_sensor_modalities.py
 
 使用 op(ノートへ): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`binocular_disparity_ms`](https://furuse.work/ops/mv/stereo/binocular_disparity_ms.html) · [`cast_shadow`](https://furuse.work/ops/3d/render/cast_shadow.html) · [`form_factors_2d`](https://furuse.work/ops/optics/light_transport/form_factors_2d.html) · [`groove_profile`](https://furuse.work/ops/optics/light_transport/groove_profile.html) · [`integrate_normals`](https://furuse.work/ops/3d/photometric/integrate_normals.html) · [`itof_capture`](https://furuse.work/ops/optics/itof/itof_capture.html) · [`itof_flying_pixel_mask`](https://furuse.work/ops/optics/itof/itof_flying_pixel_mask.html) · [`itof_noise_budget`](https://furuse.work/ops/optics/itof/itof_noise_budget.html) · [`itof_phase_amplitude`](https://furuse.work/ops/optics/itof/itof_phase_amplitude.html) · [`laser_line_center_centroid`](https://furuse.work/ops/optics/light_section/laser_line_center_centroid.html) · [`light_section_speckle_floor`](https://furuse.work/ops/optics/light_section/light_section_speckle_floor.html) · [`photometric_stereo_robust`](https://furuse.work/ops/specular/photometric/photometric_stereo_robust.html) · [`plane_flatness_error`](https://furuse.work/ops/acceptance/evaluate/plane_flatness_error.html) · [`sphere_probing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_probing_error.html) · [`sphere_spacing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_spacing_error.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 
-## No.2026.314 —— 実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせる前より誤差は 0.42 倍に減ったが、前半で選んだ設定は後半に移らず、雑音は距離の 2 乗でなく距離に近かった(TUM RGB-D)
+## No.2026.314 —— 実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせないよりは良いが等速の仮定とほぼ同じ水準で、設定の選び方は分割しだい、窓の残差は距離の 2 乗かどうかを決められなかった(TUM RGB-D)
 
-机の上を撮った公開データの深度画像で、隣り合う画像の位置合わせをモーションキャプチャの真値と比べた。合わせないときの 0.42 倍まで並進の誤差は減ったが、前半で選んだ設定は後半の最良ではなかった。小さな窓の平面の残差は距離とともに増えたが、距離の二乗の形にはならなかった。
+机の上を撮った公開データの深度画像で、隣り合う画像の位置合わせをモーションキャプチャの真値と比べた。合わせないときの 0.42 倍まで誤差は減ったが、直前の動きを使う等速の仮定とほぼ同じ水準だった。小さな窓の平面の残差は距離とともに増えたが、量子化と窓の広さが混ざり、距離の二乗かどうかは決められなかった。
 
-[![実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせる前より誤差は 0.42 倍に減ったが、前半で選んだ設定は後半に移らず、雑音は距離の 2 乗でなく距離に近かった(TUM RGB-D)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles.png)
+[![実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせないよりは良いが等速の仮定とほぼ同じ水準で、設定の選び方は分割しだい、窓の残差は距離の 2 乗かどうかを決められなかった(TUM RGB-D)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles.png)
 
-*↑ **実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせる前より誤差は 0.42 倍に減ったが、前半で選んだ設定は後半に移らず、雑音は距離の 2 乗でなく距離に近かった(TUM RGB-D)** ―― 同梱 32 枚のうち 5 枚目の深度[m](黒 = 欠測)と、24×24 画素の窓ごとの平面当てはめ残差[mm](黒 = 窓なし)。窓は欠測・遮蔽の縁・急な傾きを外した所だけ。*
+*↑ **実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせないよりは良いが等速の仮定とほぼ同じ水準で、設定の選び方は分割しだい、窓の残差は距離の 2 乗かどうかを決められなかった(TUM RGB-D)** ―― 同梱 32 枚のうち 5 枚目の深度[m](黒 = 欠測)と、24×24 画素の窓ごとの平面当てはめ残差[mm](黒 = 窓なし)。窓は欠測・遮蔽の縁・急な傾きを外した所だけ。*
 
 [![カメラ位置の軌跡を真値の主軸 2 本へ投影した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png)
 
 *↑ 測定の図 ―― カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。*
 
-[![破線は「合わせない」の誤差 = 真値の 1 組あたりの動き(約 60 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps.png)
+[![破線は「合わせない」の誤差(= 真値の 1 組あたりの動き、約 60 mm)と、直前の真値を使う等速の誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps.png)
 
-*↑ 破線は「合わせない」の誤差 = 真値の 1 組あたりの動き(約 60 mm)。*
+*↑ 破線は「合わせない」の誤差(= 真値の 1 組あたりの動き、約 60 mm)と、直前の真値を使う等速の誤差。*
 
-[![点は 24×24 画素の窓の残差の中央値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z.png)
+[![点は 24×24 画素の窓の残差の中央値(センサの雑音だけではなく、視差の量子化・窓の中の凹凸・窓の広さを含む)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z.png)
 
-*↑ 点は 24×24 画素の窓の残差の中央値。*
+*↑ 点は 24×24 画素の窓の残差の中央値(センサの雑音だけではなく、視差の量子化・窓の中の凹凸・窓の広さを含む)。*
 
 [![結果を見てから置いた門を含む(docstring の限界を参照)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/05_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/05_verdicts.png)
 

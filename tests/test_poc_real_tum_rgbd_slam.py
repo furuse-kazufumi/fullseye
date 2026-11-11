@@ -153,3 +153,44 @@ def test_bin_medians_requires_enough_tiles_and_frames():
     rows = poc.bin_medians(rec)
     assert [round(r["z"], 1) for r in rows] == [0.8]       # 0.6 は 29 個で足りず、1 枚からなので落ちる
     assert poc.bin_medians([]) == []
+
+
+def test_constant_velocity_baseline_is_zero_for_uniform_motion_and_counts_pairs():
+    step = np.eye(4)
+    step[:3, 3] = [0.01, 0.0, 0.0]
+    err = poc.constant_velocity_errors([step] * 5)
+    assert len(err) == 4 and float(np.max(err)) < 1e-12
+    bent = [step, step, np.eye(4)]
+    assert abs(float(poc.constant_velocity_errors(bent)[-1]) - 0.01) < 1e-12      # 止まった組では直前の動きぶん外れる
+
+
+def test_split_scores_pick_the_trim_on_the_selection_side_only():
+    n = 8
+    ident = np.full(n, 0.06)
+    err = {None: np.full(n, 0.05), 0.1: np.r_[np.full(4, 0.001), np.full(4, 0.03)],
+           0.2: np.full(n, 0.01), 0.3: np.full(n, 0.02)}
+    rows = poc.split_scores(err, ident, n)
+    assert len(rows) == 8
+    first = rows[0]                                  # 前半で選ぶ → 0.1(前半は 0.001)、後半は 0.03 で採点
+    assert first["trim"] == 0.1 and abs(first["icp"] - 0.03) < 1e-12 and abs(first["ratio"] - 0.5) < 1e-12
+    assert rows[1]["trim"] == 0.2                    # 後半で選ぶ → 0.2(0.01 < 0.03)
+
+
+def test_bootstrap_ratio_interval_contains_the_point_ratio_and_is_deterministic():
+    rng = np.random.default_rng(1)
+    err, ident = rng.uniform(0.01, 0.03, 16), rng.uniform(0.05, 0.07, 16)
+    lo, hi = poc.bootstrap_ratio(err, ident, np.arange(16))
+    assert lo <= poc.rms_of(err) / poc.rms_of(ident) <= hi
+    assert (lo, hi) == poc.bootstrap_ratio(err, ident, np.arange(16))
+
+
+def test_disparity_grid_is_recovered_from_synthetic_levels_and_quantisation_grows_like_z_squared():
+    delta, offset = 0.0030, 0.0007
+    k = np.arange(100, 330)
+    z = np.round(5000.0 / (offset + delta * k)) / 5000.0           # 格子に乗った深度の水準(1/5000 m に丸め)
+    depth = np.zeros(poc.IMG_SHAPE)
+    depth.flat[:len(z)] = z
+    grid = poc.fit_disparity_grid([depth])
+    assert abs(grid["delta"] - delta) < 2e-5 and grid["alignment"] > 0.95
+    s1, s2 = poc.quantization_only_sigma(grid, 1.0), poc.quantization_only_sigma(grid, 2.0)
+    assert 3.0 < s2 / s1 < 5.5                                      # Z² なら 4 倍

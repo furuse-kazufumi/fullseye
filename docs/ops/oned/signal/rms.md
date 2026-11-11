@@ -5,7 +5,7 @@ category: signal
 in: signal
 out: measurement
 gpu: なし
-examples: [lens_design_demo, lightfield_depth, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_calipers_under_illusion, poc_camera_calibration, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_fourier_ptychography, poc_lens_solves_afocal, poc_panorama_drift, poc_print_registration, poc_real_tum_rgbd_slam, poc_river_surface_velocity, poc_screw_thread_metrology, poc_shape_from_polarization, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_table_tennis_bounce, poc_tacscalib_sphere_lut, poc_tacsim_elastic_membrane, poc_tacsim_marker_shear, poc_thermal_radiometry, poc_weld_bead_profile, profile_shape_inspection]
+examples: [lens_design_demo, lightfield_depth, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_calipers_under_illusion, poc_camera_calibration, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_fourier_ptychography, poc_lens_solves_afocal, poc_panorama_drift, poc_print_registration, poc_river_surface_velocity, poc_screw_thread_metrology, poc_shape_from_polarization, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_table_tennis_bounce, poc_tacscalib_sphere_lut, poc_tacsim_elastic_membrane, poc_tacsim_marker_shear, poc_thermal_radiometry, poc_weld_bead_profile, profile_shape_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -48,7 +48,6 @@ Empty input (``x`` with 0 elements) raises ``ValueError``.
 - [poc_lens_solves_afocal](../../../../examples/poc_lens_solves_afocal.py) — `py -3.11 examples/poc_lens_solves_afocal.py`
 - [poc_panorama_drift](../../../../examples/poc_panorama_drift.py) — `py -3.11 examples/poc_panorama_drift.py`
 - [poc_print_registration](../../../../examples/poc_print_registration.py) — `py -3.11 examples/poc_print_registration.py`
-- [poc_real_tum_rgbd_slam](../../../../examples/poc_real_tum_rgbd_slam.py) — `py -3.11 examples/poc_real_tum_rgbd_slam.py`
 - [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`
 - [poc_screw_thread_metrology](../../../../examples/poc_screw_thread_metrology.py) — `py -3.11 examples/poc_screw_thread_metrology.py`
 - [poc_shape_from_polarization](../../../../examples/poc_shape_from_polarization.py) — `py -3.11 examples/poc_shape_from_polarization.py`
