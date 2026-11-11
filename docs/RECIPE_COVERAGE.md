@@ -66,7 +66,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | multivar | 18 | 3 | 5 |
 | mv | 47 | 1 | 1 |
 | oned | 49 | 3 | 8 |
-| optics | 504 | 14 | 37 |
+| optics | 506 | 14 | 37 |
 | photon | 17 | 3 | 7 |
 | piv | 29 | 4 | 8 |
 | printpath | 23 | 1 | 3 |

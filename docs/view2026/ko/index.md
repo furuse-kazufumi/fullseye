@@ -193,7 +193,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 광원 × 대상 × 센서의 분광 사슬(플랑크・CIE A・LED・필터・Si의 QE): [설명](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · 예제 [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - TDI 라인 스캔과 라인 스캔용 렌즈(단수와 SNR, 동기 오차의 MTF, 상고별 조도와 MTF): [설명](../../capabilities/tdi-linescan-and-lens.md) _(ja)_ · 예제 [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
 - 분광 반사율로 박막 두께 측정(전달 행렬 → 간섭색 → FFT와 모델 맞춤 → 두께 지도): [설명](../../capabilities/thin-film-reflectometry.md) _(ja)_ · 예제 [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
-- 물이 검사 이미지에 어떻게 보이는가(수영장 바닥의 코스틱, 병의 측면 이미지와 액면, 젖은 표면, 수중의 선체): [설명](../../capabilities/water-inspection-images.md) _(ja)_ · 예제 [poc_water_inspection_images](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_inspection_images.py)
+- 물이 검사 이미지에 어떻게 보이는가(수영장 바닥의 코스틱, 병의 측면 이미지와 액면, 젖은 표면, 수중의 선체): [설명](../../capabilities/water-inspection-images.md) _(ja)_ · 예제 [poc_water_inspection_images](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_inspection_images.py) · [poc_bottle_pattern_inverse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bottle_pattern_inverse.py)
 - 물과 투명 매질(바다 파도, 수면의 프레넬과 굴절, 수중의 색과 산란, 병의 렌즈 작용): [설명](../../capabilities/water-transparent-media.md) _(ja)_ · 예제 [poc_water_transparent_media](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_transparent_media.py)
 
 **파동과 신호**
@@ -248,7 +248,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 309개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 310개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -455,7 +455,7 @@ PoC 309개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>촬상 품질·복원</b> (25)</summary>
+<details class="vall"><summary><b>촬상 품질·복원</b> (26)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="줄무늬에 다가가는 파리의 눈" width="200" height="200"><b>&#9654;</b><span>줄무늬에 다가가는 파리의 눈</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="손떨림 복원" width="200" height="200"><b>&#9654;</b><span>손떨림 복원</span></a>
@@ -478,6 +478,7 @@ PoC 309개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_water_transparent_media/05_pool_views.png"><img src="../../articles/assets/poc/poc_water_transparent_media/story.en.gif" alt="Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations" loading="lazy" width="200" height="200"></picture><span>물과 투명 매질: 바다 파도, 수영장 굴절, 수중의 색, 병의 초점선</span></a>
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="../../articles/assets/poc/poc_photograph_through_prescription/story.en.gif" alt="Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace" loading="lazy" width="200" height="200"></picture><span>처방 그대로의 렌즈를 통해 3차원 장면을 촬영: 피사계 심도, 고양이 눈 보케, 모서리 조도, 색수차, 고스트</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="../../articles/assets/poc/poc_water_inspection_images/story.en.gif" alt="How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods" loading="lazy" width="200" height="200"></picture><span>물이 검사 이미지에 어떻게 보이는가: 수영장 바닥의 코스틱, 병의 측면, 젖은 판, 수중의 선체</span></a>
+<a href="../../articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png"><img src="../../articles/assets/poc/poc_bottle_pattern_inverse/story.en.gif" alt="Reading a Glass Bottle Back from the Distortion of a Background Stripe Pattern — Radius, Wall, Indices and Fill Line Scored Against the Simulated Truth, and What Cannot Be Separated" loading="lazy" width="200" height="200"></picture><span>배경 줄무늬의 왜곡에서 유리병을 역으로 측정: 반지름·벽 두께·굴절률·액면, 그리고 분리되지 않는 양</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="../../articles/assets/poc/poc_simcal_pixel_shift/story.en.gif" alt="Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only" loading="lazy" width="200" height="200"></picture><span>픽셀 시프트 어긋남과 개구 보정(결정되지 않는 지도)</span></a>
 <a href="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="../../articles/assets/poc/poc_plenoptic_camera/story.en.gif" alt="A Prescription-Based Plenoptic Camera" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>처방 기반 플렌옵틱 카메라: 원시 마이크로영상에서 재초점과 거리까지</span></a>
 <a href="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><img src="../../articles/assets/poc/poc_tof_camera/story.en.gif" alt="Indirect and Direct Time of Flight on One 3-D Scene — Multipath, Mixed Pixels, Pile-up and Volume Error" loading="lazy" width="200" height="200"></picture><span>하나의 3차원 장면에서 간접 및 직접 비행시간: 다중 경로, 혼합 화소, pile-up, 부피 오차</span></a>

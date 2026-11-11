@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 217,
+  "target_count": 218,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -27667,6 +27667,198 @@
       "alt": {
         "ja": "背面光: 満の部分は中央の帯だけが明るく、空の部分は縁近くまで明るい。気泡は暗い輪(中央は細く明るい)。前面光は壁の映り込み(右の縦の筋)が出る。",
         "en": "How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods"
+      }
+    },
+    "poc_bottle_pattern_inverse": {
+      "representative": "01_checker_through_bottle.png",
+      "status": "gif",
+      "selected": [
+        "01_checker_through_bottle.png",
+        "02_profile_fit.png",
+        "03_recovery_table.png",
+        "04_noise_trials.png",
+        "06_thin_wall.png",
+        "09_level_two_ways.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_bottle_pattern_inverse/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_checker_through_bottle.png",
+              "content_box": [
+                0,
+                32,
+                720,
+                626
+              ]
+            },
+            {
+              "file": "02_profile_fit.png",
+              "content_box": [
+                0,
+                155,
+                720,
+                379
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.9
+            },
+            {
+              "file": "03_recovery_table.png",
+              "content_box": [
+                0,
+                129,
+                720,
+                431
+              ]
+            },
+            {
+              "file": "04_noise_trials.png",
+              "content_box": [
+                0,
+                263,
+                720,
+                163
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.417614
+            },
+            {
+              "file": "06_thin_wall.png",
+              "content_box": [
+                0,
+                204,
+                720,
+                281
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.56
+            },
+            {
+              "file": "09_level_two_ways.png",
+              "content_box": [
+                0,
+                121,
+                720,
+                447
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 368004,
+          "color_mad": [
+            0.1106,
+            0.0831,
+            0.0336,
+            0.0417,
+            0.0747,
+            0.0294
+          ],
+          "max_color_mad": 0.1106,
+          "source_sha256": "5ec89e7682058484a28667b859ad826f182bed8ce8c4a33fb3eb879f5a5a16aa"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_bottle_pattern_inverse/story.en.gif",
+          "frames": [
+            {
+              "file": "01_checker_through_bottle.png",
+              "content_box": [
+                0,
+                32,
+                720,
+                626
+              ]
+            },
+            {
+              "file": "02_profile_fit.png",
+              "content_box": [
+                0,
+                155,
+                720,
+                379
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.9
+            },
+            {
+              "file": "03_recovery_table.png",
+              "content_box": [
+                0,
+                129,
+                720,
+                431
+              ]
+            },
+            {
+              "file": "04_noise_trials.png",
+              "content_box": [
+                0,
+                263,
+                720,
+                163
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.417614
+            },
+            {
+              "file": "06_thin_wall.png",
+              "content_box": [
+                0,
+                204,
+                720,
+                281
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.56
+            },
+            {
+              "file": "09_level_two_ways.png",
+              "content_box": [
+                0,
+                121,
+                720,
+                447
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 368004,
+          "color_mad": [
+            0.1106,
+            0.0831,
+            0.0336,
+            0.0417,
+            0.0747,
+            0.0294
+          ],
+          "max_color_mad": 0.1106,
+          "source_sha256": "ca01cef88670ef210e0e746efd67171b9acbdd58ad3a95a3758d53691eb98f7b"
+        }
+      },
+      "reason": null,
+      "cover": "01_checker_through_bottle.png",
+      "still": "articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png",
+      "alt": {
+        "ja": "R 30 mm・壁 1.5 mm・n 1.52 の瓶、水 1.333。各画素の光線を追跡して背景のどこを見ているか(u)を求め、そこの市松を描いた。逆から見ると、この歪みが瓶を測る手がかり。",
+        "en": "Reading a Glass Bottle Back from the Distortion of a Background Stripe Pattern — Radius, Wall, Indices and Fill Line Scored Against the Simulated Truth, and What Cannot Be Separated"
       }
     },
     "poc_lens_global_search": {

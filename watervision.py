@@ -11,6 +11,8 @@ The ops::
     caustic_irradiance(height_field, extent_m, depth_m, light_dir)  -> the irradiance on a flat floor below a wavy surface
     bottle_image(radius_mm, wall_mm, height_mm, fill_fraction, ...)  -> a side view of a (part-)filled bottle, backlit or frontlit
     fill_level_from_image(image, pixel_pitch_um)                    -> the fill line (mm) measured from such an image
+    bottle_background_map(radius_mm, wall_mm, ...)                  -> where on a flat patterned background each pixel of that bottle looks
+    bottle_fit_from_pattern(u_map, x_mm, ...)                       -> radius, wall, indices and fill line read back from the distorted pattern
     wet_surface_appearance(albedo, roughness, water_film_um, ...)   -> why a wet surface is darker (Lekner & Dorf 1988) and glossier
     wet_dry_inspection_pair(texture, defect_mask, roughness, ...)   -> the same textured plate dry and wet, and the defect contrast
     underwater_inspection_image(scene_albedo, distance_map_m, ...)  -> a lamp-at-the-camera hull image, the veil and the SNR
@@ -29,13 +31,15 @@ the hull lamp veil uses a single-scattering profile with an assumed beam shape.
 from __future__ import annotations
 
 import math
+import warnings
 
 import numpy as np
 
 import watermedia as _wm
 from watermedia import _array, _choice, _int, _real, _water_index
 
-__all__ = ["caustic_irradiance", "bottle_image", "fill_level_from_image", "wet_surface_appearance",
+__all__ = ["caustic_irradiance", "bottle_image", "fill_level_from_image", "bottle_background_map", "bottle_fit_from_pattern",
+           "wet_surface_appearance",
            "wet_dry_inspection_pair", "underwater_inspection_image", "caustic_floor_segmentation"]
 
 #: the most rays one caustic call traces
@@ -310,7 +314,7 @@ def _circle_t(px, py, dx, dy, cx, cy, r):
     return np.where(ok, t, np.inf)
 
 
-def _trace_rows(xpix, mode, rc, bubbles, ng, nl, na, R, Ri, dc, light):
+def _trace_rows(xpix, mode, rc, bubbles, ng, nl, na, R, Ri, dc, light, track=False):
     """Ray-cast the rows of one batch: a pinhole at distance ``dc`` looks through the horizontal section of the bottle.
 
     ``mode`` (nr,) is 0 for an air core, 1 for a liquid core, 2 for a meniscus row (liquid between ``rc`` and the wall, air
@@ -328,6 +332,8 @@ def _trace_rows(xpix, mode, rc, bubbles, ng, nl, na, R, Ri, dc, light):
     ex_dx, ex_dy = dx.copy(), dy.copy()
     r_first = np.zeros(n)
     rf_dx, rf_dy = np.zeros(n), np.zeros(n)
+    ex_px, ex_py = px.copy(), py.copy()
+    tir_any = np.zeros(n, dtype=bool)
     active = np.arange(n)
     for step in range(_MAX_STEPS):
         if active.size == 0:
@@ -346,6 +352,7 @@ def _trace_rows(xpix, mode, rc, bubbles, ng, nl, na, R, Ri, dc, light):
             g = a[gone]
             exited[g] = True
             ex_dx[g], ex_dy[g] = dx[g], dy[g]
+            ex_px[g], ex_py[g] = px[g], py[g]
         hit = ~gone
         a, rows, which, tmin = a[hit], rows[hit], which[hit], tmin[hit]
         pxa, pya, dxa, dya = pxa[hit], pya[hit], dxa[hit], dya[hit]
@@ -382,6 +389,7 @@ def _trace_rows(xpix, mode, rc, bubbles, ng, nl, na, R, Ri, dc, light):
         eta = n1 / n_after
         kk = 1.0 - eta * eta * (1.0 - ci * ci)
         tir = (kk < 0.0) & ~same
+        tir_any[a[tir]] = True
         ct = np.sqrt(np.where(kk > 0.0, kk, 0.0))
         rs = (n1 * ci - n_after * ct) / (n1 * ci + n_after * ct)
         rp = (n_after * ci - n1 * ct) / (n_after * ci + n1 * ct)
@@ -405,6 +413,7 @@ def _trace_rows(xpix, mode, rc, bubbles, ng, nl, na, R, Ri, dc, light):
         done = a[out]
         exited[done] = True
         ex_dx[done], ex_dy[done] = dx[done], dy[done]
+        ex_px[done], ex_py[done] = px[done], py[done]
         active = a[~out]
     unresolved = int(active.size)
     fwd = ex_dx > 1e-12
@@ -414,6 +423,10 @@ def _trace_rows(xpix, mode, rc, bubbles, ng, nl, na, R, Ri, dc, light):
     else:
         rad = r_first * _env_radiance(rf_dx, rf_dy) + w * np.where(fwd, FRONT_WALL_RADIANCE, _env_radiance(ex_dx, ex_dy))
     rad = np.where(exited, rad, 0.0)
+    if track:
+        info = {"px": ex_px.reshape(nr, nw), "py": ex_py.reshape(nr, nw), "dx": ex_dx.reshape(nr, nw), "dy": ex_dy.reshape(nr, nw),
+                "w": w.reshape(nr, nw), "exited": exited.reshape(nr, nw), "tir": tir_any.reshape(nr, nw)}
+        return rad.reshape(nr, nw), unresolved, info
     return rad.reshape(nr, nw), unresolved
 
 
@@ -618,6 +631,461 @@ def fill_level_from_image(image, pixel_pitch_um, method="edge") -> dict:
     conf = abs(step) / (abs(step) + 2.0 * sigma) if (abs(step) + sigma) > 0.0 else 0.0
     return {"level_mm": (nr - row) * pitch, "row": row, "confidence": conf, "step": step, "method": method,
             "profile": prof, "pixel_pitch_mm": pitch}
+
+
+# --------------------------------------------------------------------------- 2b. the background pattern seen through a bottle, and the bottle read back from it
+#: sign of every refraction turn of the closed-form section model (``+1`` is Snell's law; the PoC flips it to see the gate go red)
+_SNELL_ROTATION = 1.0
+#: the residual (mm of background) given to a pixel that the observation resolved but the model says is blocked (a total internal reflection)
+_BLOCKED_RESIDUAL_MM = 1.0
+
+
+def _section_u(xs, R, Ri, ng, nc, dc, db, soft=False):
+    """Closed-form background coordinate of the pinhole ray of each pixel ``xs`` through concentric circles -> (u, ok).
+
+    Independent of :func:`_trace_rows` (no ray-circle intersections, no vector Snell): a line in the section is described by its
+    direction angle ``a`` (from the depth axis) and its signed distance ``b`` from the axis. Crossing a circle of radius ``r``
+    the incidence angle is ``asin(b / r)``, the refracted one ``asin(n1 b / (n2 r))``; entering turns ``a`` by minus the
+    difference, leaving by plus it, and the new distance is ``r sin(refracted)``. Through the wall and the core every ray turns
+    by ``-2 (th1 - th2) - 2 (th3 - th4)`` and leaves at the distance it came with. ``ok`` is False where the ray meets a total
+    internal reflection at the inner wall (the tracer drops those pixels too). ``soft=True`` carries such a ray on as a grazing
+    one (the sine of the refraction angle clipped to 1) so that the fit sees a continuous model; ``ok`` then only says the ray goes forward."""
+    a0 = np.arctan2(xs, dc)
+    b0 = dc * np.sin(a0)
+    hit = np.abs(b0) < R
+    s1 = np.where(hit, b0, 0.0) / R
+    th1 = np.arcsin(s1)
+    s2 = s1 / ng
+    th2 = np.arcsin(s2)
+    b1 = R * s2
+    inner = hit & (np.abs(b1) < Ri)
+    s3 = np.where(inner, b1, 0.0) / Ri
+    s4 = ng * s3 / nc
+    tir = inner & (np.abs(s4) >= 1.0)
+    use = inner & (~tir | soft)
+    th3 = np.arcsin(s3)
+    th4 = np.arcsin(np.where(use, np.clip(s4, -1.0, 1.0), 0.0))
+    turn = -2.0 * (th1 - th2) - 2.0 * np.where(use, th3 - th4, 0.0)
+    a4 = a0 + _SNELL_ROTATION * turn
+    ca = np.cos(a4)
+    ok = (~tir | soft) & (ca > 1e-9)
+    u_hit = (b0 + db * np.sin(a4)) / np.where(ca > 1e-9, ca, 1.0)
+    u = np.where(hit, u_hit, xs * (dc + db) / dc)
+    return np.where(ok, u, np.nan), ok
+
+
+def bottle_background_map(radius_mm, wall_mm, height_mm, fill_fraction, n_glass, n_liquid, background_distance_mm=150.0,
+                          camera_distance_mm=500.0, pixel_pitch_um=20.0, size=None, n_air=1.0) -> dict:
+    """Where on a flat patterned background each pixel of a (part-)filled bottle looks -> dict (the map ``u`` in mm).
+
+    The same bottle and camera as :func:`bottle_image` (outer radius ``radius_mm``, glass wall ``wall_mm``, height ``height_mm``,
+    axis vertical, base at z = 0, pinhole ``camera_distance_mm`` from the axis, rows are the horizontal sections, ``pixel_pitch_um``
+    in the plane of the axis, row ``j`` at ``z = height - (j + 0.5) pitch``), but instead of a brightness it returns the coordinate
+    ``u`` (mm, along the image rows) at which the ray of every pixel meets a flat pattern ``background_distance_mm`` behind the
+    axis. A pattern drawn on that plane (stripes, a checkerboard) is then seen at ``pattern(u)``: that is the distortion the bottle
+    imposes. The liquid (``n_liquid``) fills the bottle to ``fill_fraction * height_mm`` with a flat surface; no meniscus, no bubbles.
+    The ray of every row is traced through the circles of the section (outer wall, inner wall) with the vector form of
+    Snell's law; the vertical position on the background is the row's own height (the rows are independent, as in
+    :func:`bottle_image`: no refraction at the shoulder or the base, no tilt out of the section).
+
+    The table has ``u_mm`` (rows, cols; NaN where the pixel cannot be used), ``valid`` (True where ``u_mm`` is a number),
+    ``weight`` (the Fresnel transmittance product of the ray, 1 outside the bottle; multiply the pattern contrast by it),
+    ``u_straight_mm`` (the column coordinate without a bottle, ``x (dc + db) / dc``), ``x_mm``, ``z_mm``, ``pixel_pitch_mm``,
+    ``fill_row_from_top``, ``liquid_rows``, ``fill_z_mm``, the counts ``tir_rays`` (rays that met a total internal reflection),
+    ``backward_rays`` and ``unresolved_rays`` (all of them left NaN, never a guess) and the inputs echoed. Rows of equal geometry are
+    computed once, so they are bit identical. ``n_glass <= 1``, ``n_liquid <= 1``, ``n_air < 1`` or not below both, a fill outside
+    [0, 1], a wall not thinner than the radius, a background not behind the bottle and a camera not further than one
+    diameter are refused."""
+    op = "bottle_background_map"
+    R = _real(radius_mm, "radius_mm", op, lo=0.0, lo_open=True)
+    t = _real(wall_mm, "wall_mm", op, lo=0.0, lo_open=True)
+    if t >= R:
+        raise ValueError("%s: wall_mm (%g) must be thinner than radius_mm (%g)" % (op, t, R))
+    H = _real(height_mm, "height_mm", op, lo=0.0, lo_open=True)
+    fill = _real(fill_fraction, "fill_fraction", op, lo=0.0, hi=1.0)
+    ng = _real(n_glass, "n_glass", op, lo=1.0, lo_open=True, hi=4.0)
+    nl = _real(n_liquid, "n_liquid", op, lo=1.0, lo_open=True, hi=4.0)
+    na = _real(n_air, "n_air", op, lo=1.0, hi=4.0)
+    if na >= min(ng, nl):
+        raise ValueError("%s: n_air (%g) must be below n_glass (%g) and n_liquid (%g)" % (op, na, ng, nl))
+    dc = _real(camera_distance_mm, "camera_distance_mm", op, lo=0.0, lo_open=True)
+    if dc <= 2.0 * R:
+        raise ValueError("%s: the camera (%g mm) must be further than one diameter from the axis" % (op, dc))
+    db = _real(background_distance_mm, "background_distance_mm", op, lo=0.0, lo_open=True)
+    if db <= R:
+        raise ValueError("%s: the background (%g mm behind the axis) must be behind the bottle (radius %g mm)" % (op, db, R))
+    pitch_um = _real(pixel_pitch_um, "pixel_pitch_um", op, lo=0.0, lo_open=True)
+    p = pitch_um / 1000.0
+    Ri = R - t
+    if size is None:
+        nrows = max(int(round(H / p)), 1)
+        ncols = max(int(math.ceil(2.3 * R / p)), 3)
+    else:
+        s = _array(size, "size", op, ndim=1, allow_scalar=False)
+        if s.size != 2 or (s < 1).any() or (s != np.round(s)).any():
+            raise ValueError("%s: size is (rows, cols) with positive integers, got %r" % (op, s.tolist()))
+        nrows, ncols = int(s[0]), int(s[1])
+    if nrows * ncols > MAX_PIXELS:
+        raise ValueError("%s: %d x %d pixels are over the cap of %d" % (op, nrows, ncols, MAX_PIXELS))
+    xpix = (np.arange(ncols) - 0.5 * (ncols - 1)) * p
+    zrow = H - (np.arange(nrows) + 0.5) * p
+    in_bottle = (zrow >= 0.0) & (zrow <= H)
+    z0 = fill * H
+    mode = np.zeros(nrows, dtype=int)
+    if fill > 0.0:
+        mode[zrow < z0] = 1
+    u_straight = xpix * (dc + db) / dc
+    u = np.tile(u_straight, (nrows, 1))
+    wgt = np.ones((nrows, ncols))
+    valid = np.ones((nrows, ncols), dtype=bool)
+    tir_n = back_n = unres_n = 0
+    for m in (0, 1):
+        rows = np.nonzero(in_bottle & (mode == m))[0]
+        if rows.size == 0:
+            continue
+        rad, un, info = _trace_rows(xpix, np.array([m]), np.zeros(1), [], ng, nl, na, R, Ri, dc, "backlight", track=True)
+        ok = info["exited"] & (info["dx"] > 1e-12) & ~info["tir"]
+        um = np.where(ok, info["py"] + (db - info["px"]) * info["dy"] / np.where(ok, info["dx"], 1.0), np.nan)
+        u[rows] = um[0][None, :]
+        valid[rows] = ok[0][None, :]
+        wgt[rows] = np.where(ok, info["w"], 0.0)[0][None, :]
+        tir_n += int(info["tir"].sum()) * rows.size
+        back_n += int((info["exited"] & (info["dx"] <= 1e-12) & ~info["tir"]).sum()) * rows.size
+        unres_n += int((~info["exited"]).sum()) * rows.size
+    u = np.where(valid, u, np.nan)
+    liquid = (zrow < z0) & in_bottle if fill > 0.0 else np.zeros(nrows, dtype=bool)
+    first_liquid = int(np.argmax(liquid)) if liquid.any() else nrows
+    return {"u_mm": u, "valid": valid, "weight": wgt, "u_straight_mm": u_straight, "x_mm": xpix, "z_mm": zrow,
+            "pixel_pitch_mm": p, "fill_row_from_top": first_liquid, "liquid_rows": int(liquid.sum()), "fill_z_mm": z0,
+            "tir_rays": tir_n, "backward_rays": back_n, "unresolved_rays": unres_n, "radius_mm": R, "wall_mm": t,
+            "height_mm": H, "fill_fraction": fill, "n_glass": ng, "n_liquid": nl, "n_air": na,
+            "camera_distance_mm": dc, "background_distance_mm": db}
+
+
+_FIT_NAMES = ("radius_mm", "wall_mm", "n_glass", "n_liquid")
+_FIT_BOUNDS = {"radius_mm": (0.5, 1.0e4), "wall_mm": (1e-3, None), "n_glass": (1.01, 3.0), "n_liquid": (1.0, 3.0),
+               "background_distance_mm": (None, 1.0e5)}
+#: a step between two neighbouring rows of the pattern map counts as the liquid surface when it is this many times the typical row-to-row step
+_LEVEL_RATIO = 8.0
+#: a pixel is displaced by the bottle when its pattern coordinate leaves the straight line by more than this (mm); the silhouette is the outermost one
+_SILHOUETTE_MM = 0.5
+#: the fit leaves out this many pixels inside the silhouette
+_EDGE_TRIM_PX = 3
+#: a fitted quantity whose 1 sigma is more than this fraction of its value is called poorly determined (not separated from the others)
+_POOR_REL_SIGMA = 0.25
+
+
+def _nanmedian(a, axis=None):
+    """``np.nanmedian`` without the warning for an all-NaN slice (the result there is NaN)."""
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)
+        return np.nanmedian(a, axis=axis)
+
+
+def _fit_level(u):
+    """Row of the first liquid row from the jump of the pattern between rows -> (found, row, jump_mm).
+
+    A liquid row and an air row bend the background pattern differently, so the map jumps by millimetres at the surface where it
+    only changes by noise elsewhere. The jump of a boundary is the median over the columns of the absolute difference of its
+    two rows (columns where either is NaN do not count)."""
+    nr = u.shape[0]
+    if nr < 4:
+        return False, nr, 0.0
+    d = np.abs(np.diff(u, axis=0))
+    jump = np.array([_nanmedian(d[k]) if np.isfinite(d[k]).any() else np.nan for k in range(nr - 1)])
+    if not np.isfinite(jump).any():
+        return False, nr, 0.0
+    k = int(np.nanargmax(jump))
+    others = np.delete(jump, k)
+    base = float(_nanmedian(others)) if np.isfinite(others).any() else 0.0
+    top = float(jump[k])
+    found = top > _LEVEL_RATIO * max(base, 1e-9) and top > 1e-6
+    return bool(found), k + 1, top
+
+
+def _fit_bounded(x, names):
+    out = np.array(x, dtype=float)
+    for i, nm in enumerate(names):
+        lo, hi = _FIT_BOUNDS[nm]
+        if lo is not None:
+            out[i] = max(out[i], lo)
+        if hi is not None:
+            out[i] = min(out[i], hi)
+    return out
+
+
+def bottle_fit_from_pattern(u_map, x_mm, pixel_pitch_um, camera_distance_mm, background_distance_mm, known=None,
+                            free_background=False, rows_per_section=None, restarts=3) -> dict:
+    """Read the bottle back from the distortion of a background pattern -> dict (radius, wall, indices, fill line, and how well each is known).
+
+    ``u_map`` (rows, cols) is the background coordinate (mm) each pixel looks at (the ``u_mm`` of :func:`bottle_background_map`, or
+    a phase-shifting measurement of it; NaN where unusable); ``x_mm`` the column positions in the plane of the axis,
+    ``pixel_pitch_um`` the pitch, the camera and the pattern are ``camera_distance_mm`` and ``background_distance_mm`` from the
+    axis (known from the set-up). The fill line is found first, from the jump of the map between rows (the liquid and the air
+    bend the pattern differently): rows above it are the empty section, rows below the filled one (``level_mm`` as in
+    :func:`fill_level_from_image`: ``(rows below the boundary) * pitch``). Each section is reduced to one profile (the median over its
+    rows, ``rows_per_section`` of them if given, the two rows next to the boundary left out) and a closed-form model of
+    concentric circles, written without the tracer (an angle and an impact parameter per ray), is fitted by Levenberg-Marquardt
+    over ``radius_mm``, ``wall_mm``, ``n_glass`` and ``n_liquid`` (the filled section; a bottle with no fill line is one section
+    whose core index is fitted). ``known`` is a dict of values held fixed (``"radius_mm"``, ``"wall_mm"``, ``"n_glass"``,
+    ``"n_liquid"``); ``free_background=True`` also fits the distance of the pattern. The start is a scan of the radius from the
+    silhouette (where the map leaves the straight line) with ``restarts`` (1 to 3) different index starts; the table reports how far the
+    starts that reach the same cost disagree (``start_spread``).
+
+    The table has ``radius_mm``, ``wall_mm``, ``n_glass``, ``n_liquid``, ``background_distance_mm``, ``free`` (the fitted names),
+    ``sigma`` (1 sigma of each free name from the Gauss-Newton covariance with the residual scatter as the noise, None if not free),
+    ``corr`` (correlation matrix of the free names) with ``corr_names``, ``cond`` (condition number of the Jacobian with unit-length
+    columns: a large value means some combination of the parameters is hardly seen), ``singular_values``, ``weak_direction`` (the
+    combination with the smallest singular value, one number per free name) and ``weak_rel_sigma`` (the 1 sigma relative change along
+    it), ``residual_rms_mm``, ``n_columns`` and ``columns_rejected`` (resolved pixels the model calls blocked), ``converged``,
+    ``iterations``, ``level_found`` / ``level_mm`` / ``level_row`` / ``level_jump_mm`` (False and None when the rows do not
+    jump: an empty or a full bottle has no fill line to read; ``level_mm`` is then None), ``fill_state`` (``"partial"`` or ``"uniform"``).
+    ``poorly_determined`` lists the fitted names whose 1 sigma exceeds 25 % of the value or that sit on a bound, and ``separated`` is
+    True only when the fit converged and that list is empty. Quantities that barely move the pattern (a thin wall against the
+    glass index when the edge pixels are lost, the pattern distance against the liquid index) come back there, with a large
+    ``sigma`` and ``cond``; they are not separated, and the table says so rather than giving a number without it. A map with
+    fewer than 12 usable columns, a wrong shape, an unknown ``known`` name or a camera not beyond one diameter are refused."""
+    op = "bottle_fit_from_pattern"
+    if isinstance(u_map, (str, bytes)) or u_map is None or np.ma.isMaskedArray(u_map) or np.iscomplexobj(u_map):
+        raise ValueError("%s: u_map must be a real 2-D array (NaN marks an unusable pixel), got %r" % (op, type(u_map).__name__))
+    try:
+        u = np.asarray(u_map, dtype=np.float64)
+    except (TypeError, ValueError):
+        raise ValueError("%s: u_map is not a numeric array" % op) from None
+    if u.ndim != 2 or u.size == 0 or np.isinf(u).any():
+        raise ValueError("%s: u_map must be a non-empty 2-D array without infinities (NaN marks an unusable pixel), got shape %r" % (op, u.shape))
+    x = _array(x_mm, "x_mm", op, ndim=1, allow_scalar=False)
+    if x.size != u.shape[1] or x.size < 12:
+        raise ValueError("%s: x_mm has %d entries for %d columns (at least 12 needed)" % (op, x.size, u.shape[1]))
+    pitch = _real(pixel_pitch_um, "pixel_pitch_um", op, lo=0.0, lo_open=True) / 1000.0
+    if not np.allclose(np.diff(x), pitch, rtol=1e-6, atol=1e-9):
+        raise ValueError("%s: x_mm is not uniformly spaced by pixel_pitch_um (%g um)" % (op, pitch * 1000.0))
+    dc = _real(camera_distance_mm, "camera_distance_mm", op, lo=0.0, lo_open=True)
+    db0 = _real(background_distance_mm, "background_distance_mm", op, lo=0.0, lo_open=True)
+    nstart = _int(restarts, "restarts", op, 1, 3)
+    known = {} if known is None else dict(known)
+    for k in known:
+        if k not in _FIT_NAMES:
+            raise ValueError("%s: known has an unknown name %r (allowed: %s)" % (op, k, list(_FIT_NAMES)))
+    kv = {k: _real(v, "known[%s]" % k, op, lo=0.0, lo_open=True) for k, v in known.items()}
+    rps = None if rows_per_section is None else _int(rows_per_section, "rows_per_section", op, 1, u.shape[0])
+    if int(np.isfinite(u).sum()) < 12:
+        raise ValueError("%s: fewer than 12 usable pixels in u_map" % op)
+    if float(np.ptp(u[np.isfinite(u)])) == 0.0:
+        raise ValueError("%s: u_map is constant; there is no bottle in it" % op)
+    # the fill line and the two sections
+    found, row, jump = _fit_level(u)
+    nr = u.shape[0]
+    margin = 2
+
+    def profile(rows):
+        if rps is not None:
+            rows = rows[:rps]
+        if rows.size == 0:
+            return None
+        return _nanmedian(u[rows], axis=0) if rows.size > 1 else u[rows[0]]
+
+    sections = []
+    if found:
+        top = profile(np.arange(0, max(row - margin, 0)))
+        bot = profile(np.arange(min(row + margin, nr), nr))
+        if top is not None and np.isfinite(top).sum() >= 8:
+            sections.append((top, False))
+        if bot is not None and np.isfinite(bot).sum() >= 8:
+            sections.append((bot, True))
+    else:
+        allp = profile(np.arange(nr))
+        if allp is not None:
+            sections.append((allp, True))
+    if not sections:
+        raise ValueError("%s: no section of the map has 8 usable pixels" % op)
+    has_core = any(core for _, core in sections)
+    names = [n for n in _FIT_NAMES if n not in kv and (n != "n_liquid" or has_core)]
+    if free_background:
+        names.append("background_distance_mm")
+    if not names:
+        raise ValueError("%s: nothing is left to fit (every parameter is known)" % op)
+    straight = x * (dc + db0) / dc
+    # silhouette: the outermost column where the pattern leaves the straight line
+    edge = 0.0
+    trimmed = []
+    for prof, core in sections:
+        disp = np.abs(prof - straight)
+        idx = np.nonzero(np.isfinite(disp) & (disp > _SILHOUETTE_MM))[0]
+        if idx.size:
+            e_ = float(np.abs(x[idx]).max())
+            edge = max(edge, e_)
+            # the outermost pixels sit on the silhouette, where the model jumps from the straight line to the refracted one:
+            # a staircase the optimiser cannot climb, so they are left out (their information is not used either)
+            prof = np.where(np.abs(x) <= e_ - _EDGE_TRIM_PX * pitch, prof, np.nan)
+        trimmed.append((prof, core))
+    if edge <= 0.0:
+        raise ValueError("%s: the pattern is not displaced anywhere (no bottle in the map)" % op)
+    sections = trimmed
+    if any(int(np.isfinite(p_).sum()) < 8 for p_, _ in sections):
+        raise ValueError("%s: a section of the map has fewer than 8 usable pixels inside the silhouette" % op)
+    R0 = dc * math.sin(math.atan(edge / dc))
+
+    def full(vec, base):
+        d = dict(kv)
+        d.update(zip(names, vec))
+        d.setdefault("background_distance_mm", db0)
+        if "n_liquid" not in d:
+            d["n_liquid"] = base
+        return d
+
+    def resid(vec, mask_in=None):
+        d = full(vec, 1.0)
+        Ri = d["radius_mm"] - d["wall_mm"]
+        out, masks = [], []
+        for si, (prof, core) in enumerate(sections):
+            res = np.zeros_like(prof)
+            ok_obs = np.isfinite(prof)
+            nc = d["n_liquid"] if core else 1.0
+            um_, okm = _section_u(x, d["radius_mm"], Ri, d["n_glass"], nc, dc, d["background_distance_mm"], soft=True)
+            good = ok_obs & okm
+            blocked = ok_obs & ~okm
+            res = np.where(good, um_ - prof, 0.0)
+            res = np.where(blocked, _BLOCKED_RESIDUAL_MM, res)
+            out.append(res[ok_obs])
+            masks.append(good[ok_obs])
+        return np.concatenate(out), np.concatenate(masks)
+
+    def start_vec(rs, gs, ls, ts=None):
+        d = {"radius_mm": R0 * rs, "wall_mm": 0.05 * R0 * rs if ts is None else ts, "n_glass": gs, "n_liquid": ls,
+             "background_distance_mm": db0}
+        d.update(kv)
+        return np.array([d[n] for n in names], dtype=float)
+
+    def jac(vec, scale):
+        r0, m0 = resid(vec)
+        J = np.zeros((r0.size, len(names)))
+        for i in range(len(names)):
+            h = 1e-6 * scale[i]
+            vp, vm = vec.copy(), vec.copy()
+            vp[i] += h
+            vm[i] -= h
+            rp, _ = resid(vp)
+            rm, _ = resid(vm)
+            col = (rp - rm) / (2.0 * h)
+            J[:, i] = np.where(m0, col, 0.0)
+        return r0, J
+
+    def lm(vec):
+        scale = np.maximum(np.abs(vec), 1e-3)
+        lam = 1e-3
+        r, J = jac(vec, scale)
+        cost = float(r @ r)
+        it = 0
+        conv = False
+        for it in range(1, 121):
+            Js = J * scale[None, :]
+            A = Js.T @ Js
+            g = Js.T @ r
+            improved = False
+            for _ in range(12):
+                step = -np.linalg.solve(A + lam * np.diag(np.maximum(np.diag(A), 1e-12)), g)
+                vn = _fit_bounded(vec + step * scale, names)
+                rn, _ = resid(vn)
+                cn = float(rn @ rn)
+                if np.isfinite(cn) and cn < cost:
+                    dec = cost - cn
+                    vec, cost = vn, cn
+                    lam = max(lam / 5.0, 1e-12)
+                    improved = True
+                    break
+                lam *= 8.0
+            if not improved:
+                conv = True
+                break
+            r, J = jac(vec, scale)
+            if dec <= 1e-16 * max(cost, 1e-30) + 1e-30 or float(np.abs(step).max()) < 1e-11:
+                conv = True
+                break
+        return vec, cost, conv, it
+
+    # starts: a coarse scan of (radius, wall, glass index, core index) around the silhouette radius; the best ``restarts``
+    # scan points start a Levenberg-Marquardt each (a bottle with no fill line scans the core index from air upward)
+    cores = (1.33, 1.40, 1.47) if found or not has_core else (1.0, 1.33, 1.47)
+    # stage 1: the radius on a fine grid (generic wall and indices); stage 2: wall x glass index x core index at the two best radii
+    g1 = 1.5
+    l1 = cores[1]
+    rscan = []
+    for rs in np.linspace(0.96, 1.12, 17):
+        v = _fit_bounded(start_vec(rs, g1, l1, 0.05 * R0 * rs), names)
+        r, _ = resid(v)
+        rscan.append((float(r @ r), rs))
+    rscan.sort()
+    rbest = [rscan[0][1]]
+    for _, rs in rscan[1:]:
+        if all(abs(rs - q) > 0.025 for q in rbest):
+            rbest.append(rs)
+        if len(rbest) == 2:
+            break
+    best_of = {}
+    for rs in rbest:
+        for tf in (0.015, 0.05, 0.12, 0.2):
+            for gs in (1.42, 1.52, 1.62):
+                for ls in cores:
+                    v = _fit_bounded(start_vec(rs, gs, ls, tf * R0 * rs), names)
+                    r, _ = resid(v)
+                    c_ = float(r @ r)
+                    if (tf, gs) not in best_of or c_ < best_of[(tf, gs)][0]:
+                        best_of[(tf, gs)] = (c_, v)
+    # one start per (wall, glass index) cell, so that the starts differ in the directions that trap a local search
+    starts = [v for _, v in sorted(best_of.values(), key=lambda c_: c_[0])[:nstart]]
+    results = [lm(v0) for v0 in starts]
+    results.sort(key=lambda t_: t_[1])
+    vec, cost, conv, iters = results[0]
+    r, J = jac(vec, np.maximum(np.abs(vec), 1e-3))
+    n_obs = r.size
+    dof = max(n_obs - len(names), 1)
+    rms = math.sqrt(cost / max(n_obs, 1))
+    sig2 = cost / dof
+    d = full(vec, 1.0)
+    # the covariance, the correlation, and how weakly each combination is seen
+    JtJ = J.T @ J
+    colnorm = np.sqrt(np.diag(JtJ))
+    colnorm = np.where(colnorm > 0.0, colnorm, 1.0)
+    Jn = J / colnorm[None, :]
+    _, sv, vh = np.linalg.svd(Jn, full_matrices=False)
+    cond = float(sv[0] / sv[-1]) if sv[-1] > 0.0 else float("inf")
+    cov = sig2 * np.linalg.pinv(JtJ, rcond=1e-14)
+    sd = np.sqrt(np.clip(np.diag(cov), 0.0, None))
+    with np.errstate(all="ignore"):
+        corr = cov / np.outer(sd, sd)
+    corr = np.where(np.isfinite(corr), corr, 0.0)
+    Jr = J * np.maximum(np.abs(vec), 1e-12)[None, :]
+    svr_min = float(np.linalg.svd(Jr, compute_uv=False)[-1])
+    weak_rel = math.sqrt(sig2) / svr_min if svr_min > 0.0 else float("inf")
+    wd = vh[-1] * (1.0 if vh[-1][np.argmax(np.abs(vh[-1]))] > 0 else -1.0)
+    sigma = {n: None for n in _FIT_NAMES + ("background_distance_mm",)}
+    for i, n in enumerate(names):
+        sigma[n] = float(sd[i])
+    close = [t_ for t_ in results if t_[1] <= cost * 1.0001 + 1e-18]
+    spread = {n: float(np.ptp([t_[0][i] for t_ in close])) if len(close) > 1 else 0.0 for i, n in enumerate(names)}
+    _, m_all = resid(vec)
+    blocked_n = int(sum(int((np.isfinite(p) & ~_section_u(x, d["radius_mm"], d["radius_mm"] - d["wall_mm"], d["n_glass"],
+                                                          d["n_liquid"] if c else 1.0, dc, d["background_distance_mm"])[1]).sum())
+                        for p, c in sections))
+    level_mm = (nr - row) * pitch if found else None
+    poor = []
+    for i, n in enumerate(names):
+        lo, hi = _FIT_BOUNDS[n]
+        pinned = (lo is not None and vec[i] <= lo * (1.0 + 1e-9)) or (hi is not None and vec[i] >= hi * (1.0 - 1e-9))
+        if pinned or not (sd[i] <= _POOR_REL_SIGMA * abs(vec[i])):
+            poor.append(n)
+    return {"radius_mm": float(d["radius_mm"]), "wall_mm": float(d["wall_mm"]), "n_glass": float(d["n_glass"]),
+            "n_liquid": float(d["n_liquid"]) if has_core else float("nan"),
+            "background_distance_mm": float(d["background_distance_mm"]), "free": list(names), "sigma": sigma,
+            "corr": corr.tolist(), "corr_names": list(names), "cond": cond, "singular_values": sv.tolist(),
+            "weak_direction": {n: float(wd[i]) for i, n in enumerate(names)}, "weak_rel_sigma": float(weak_rel) if math.isfinite(weak_rel) else None,
+            "residual_rms_mm": rms, "n_columns": int(n_obs), "columns_rejected": blocked_n, "converged": bool(conv),
+            "iterations": int(iters), "start_spread": spread, "start_costs": [float(t_[1]) for t_ in results],
+            "level_found": bool(found), "level_mm": None if level_mm is None else float(level_mm), "level_row": int(row) if found else -1,
+            "level_jump_mm": float(jump), "fill_state": "partial" if found else "uniform", "initial_radius_mm": float(R0),
+            "poorly_determined": poor, "separated": bool(conv) and not poor,
+            "pixel_pitch_mm": pitch, "camera_distance_mm": dc, "sections": len(sections)}
 
 
 # --------------------------------------------------------------------------- 3. a wet surface

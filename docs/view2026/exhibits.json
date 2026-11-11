@@ -7635,6 +7635,23 @@
    }
   },
   {
+   "id": "poc_bottle_pattern_inverse",
+   "group": "wing_imaging",
+   "media": "01_checker_through_bottle.png",
+   "motion": false,
+   "thumb_src": "01_checker_through_bottle.png",
+   "label": {
+    "ja": "背景の縞の歪みからガラス瓶を逆に測る: 半径・壁厚・屈折率・液面と、分けられない量",
+    "en": "Reading a glass bottle back from the distortion of background stripes: radius, wall, indices, fill line, and what cannot be separated",
+    "zh": "从背景条纹的畸变反推玻璃瓶:半径、壁厚、折射率、液面,以及无法分开的量",
+    "tw": "從背景條紋的畸變反推玻璃瓶:半徑、壁厚、折射率、液面,以及無法分開的量",
+    "ko": "배경 줄무늬의 왜곡에서 유리병을 역으로 측정: 반지름·벽 두께·굴절률·액면, 그리고 분리되지 않는 양",
+    "de": "Eine Glasflasche aus der Verzerrung eines Streifenhintergrunds zurücklesen: Radius, Wand, Brechzahlen, Füllstand und was sich nicht trennen lässt",
+    "hi": "पृष्ठभूमि की धारियों की विकृति से काँच की बोतल को वापस पढ़ना: त्रिज्या, दीवार, अपवर्तनांक, तरल-सतह, और जो अलग नहीं हो सकता",
+    "fr": "Relire une bouteille en verre à partir de la distorsion de rayures en arrière-plan : rayon, paroi, indices, niveau, et ce qui ne se sépare pas"
+   }
+  },
+  {
    "id": "poc_lens_global_search",
    "group": "wing_color",
    "media": "01_lens_global_search.png",

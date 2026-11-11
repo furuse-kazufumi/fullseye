@@ -1,0 +1,100 @@
+[
+ {
+  "file": "01_checker_through_bottle.png",
+  "name": "checker_through_bottle",
+  "caption": "R 30 mm・壁 1.5 mm・n 1.52 の瓶、水 1.333。各画素の光線を追跡して背景のどこを見ているか(u)を求め、そこの市松を描いた。逆から見ると、この歪みが瓶を測る手がかり。",
+  "shape": [
+   935,
+   1075,
+   3
+  ]
+ },
+ {
+  "file": "02_profile_fit.png",
+  "name": "profile_fit",
+  "caption": "縞の位相を 8 bit・雑音つきで撮ってほどいた u から直線(瓶なし)を引いた量。破線が閉形式の当てはめで、観測に重なる。",
+  "shape": [
+   800,
+   1520,
+   3
+  ]
+ },
+ {
+  "file": "03_recovery_table.png",
+  "name": "recovery_table",
+  "caption": "8 bit・雑音 1.5 階調。真値は自分で作ったシミュレーションの入力で、実物の測定ではない。",
+  "shape": [
+   640,
+   1068,
+   3
+  ],
+  "csv": "03_recovery_table.csv",
+  "tsv": "03_recovery_table.tsv"
+ },
+ {
+  "file": "04_noise_trials.png",
+  "name": "noise_trials",
+  "caption": "雑音だけが誤差なら、1 行ずつの最悪の場合でも R・n_liquid は 1e-4 以下で、予測 σ は経験の σ に 0.67〜1.00 倍で合う。ただし較正の誤りは別(下の表)。",
+  "shape": [
+   352,
+   1555,
+   3
+  ],
+  "csv": "04_noise_trials.csv",
+  "tsv": "04_noise_trials.tsv"
+ },
+ {
+  "file": "05_window_sigma.png",
+  "name": "window_sigma",
+  "caption": "共分散から予測した 1σ(窓 1.0 は全幅)。縁近くの光線ほど壁と屈折率に敏感なので、窓が狭いと壁厚と n_glass は互いに取り替えがきく。R と n_liquid は最後まで残る。",
+  "shape": [
+   800,
+   1440,
+   3
+  ]
+ },
+ {
+  "file": "06_thin_wall.png",
+  "name": "thin_wall",
+  "caption": "雑音 20 回、各区間 1 行。縁まで使えれば 0.1 mm の壁も戻る(1.00)が、中心 25 % だけだと戻らず、当てはめ自身も「分けられていない」と申告する(予測 σ が壁の 97 %)。",
+  "shape": [
+   800,
+   2048,
+   3
+  ]
+ },
+ {
+  "file": "07_wall_glass_valley.png",
+  "name": "wall_glass_valley",
+  "caption": "色は残差 / 雑音の床(倍)。他の 2 量(R・n_liquid)は各点で当て直した。壁を厚く・n_glass を下げる(または逆)の対角に細長い谷があり、谷の上の点は雑音の中では見分けがつかない(谷の点の相関 -0.95)。",
+  "shape": [
+   573,
+   772,
+   3
+  ]
+ },
+ {
+  "file": "08_calibration_bias.png",
+  "name": "calibration_bias",
+  "caption": "カメラ距離・背景距離・画素位置は「既知」として渡す前提。背景距離 1 mm の誤りは n_glass を 0.011(雑音の σ の 355 倍)動かし、残差は雑音の床より約 2 倍に増えるだけなので、残差だけでは較正の誤りか屈折率の違いか区別しにくい。",
+  "shape": [
+   352,
+   1242,
+   3
+  ],
+  "csv": "08_calibration_bias.csv",
+  "tsv": "08_calibration_bias.tsv"
+ },
+ {
+  "file": "09_level_two_ways.png",
+  "name": "level_two_ways",
+  "caption": "2 系統は互いに 1 画素(0.05 mm)以内で一致し、どちらも真値(充填 × 80 mm)に 1 画素以内。空の瓶・満の瓶は液面「無し」と返す。",
+  "shape": [
+   640,
+   1032,
+   3
+  ],
+  "csv": "09_level_two_ways.csv",
+  "tsv": "09_level_two_ways.tsv"
+ }
+]

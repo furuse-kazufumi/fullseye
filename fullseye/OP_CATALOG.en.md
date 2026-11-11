@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (486 examples)
+### 2-D image / signal / geometry (487 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -523,6 +523,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `omni360_roundtrip` — ops: `anaglyph_from_ods`, `cubemap_from_equirect`, `equirect_from_cubemap`, `equirect_from_perspectives`, `ods_render`, `s_psnr`, `stereo360_sbs`, `stereo360_top_bottom`, `stereo_pack`, `viewport`, `viewport_from_equirect`, `ws_psnr` `py -3.11 examples/omni360_roundtrip.py`
 - `poc_water_transparent_media` — ops: `beer_lambert_transmittance`, `cylinder_lens_caustic`, `fresnel_water_air`, `ocean_height_field`, `ocean_spectrum`, `phase_function_hg`, `refract_rays`, `refracted_view`, `scattering_phase_petzold`, `snell_window`, `underwater_image`, `water_attenuation` `py -3.11 examples/poc_water_transparent_media.py`
 - `poc_water_inspection_images` — ops: `bottle_image`, `canny`, `caustic_floor_segmentation`, `caustic_irradiance`, `fill_level_from_image`, `fresnel_water_air`, `ocean_height_field`, `otsu`, `underwater_inspection_image`, `water_attenuation`, `wet_dry_inspection_pair`, `wet_surface_appearance` `py -3.11 examples/poc_water_inspection_images.py`
+- `poc_bottle_pattern_inverse` — ops: `bottle_background_map`, `bottle_fit_from_pattern`, `bottle_image`, `fill_level_from_image` `py -3.11 examples/poc_bottle_pattern_inverse.py`
 - `poc_lens_solves_afocal` — ops: `afocal_system`, `chief_ray`, `lens_afocal_report`, `lens_apply_solves`, `lens_file_read`, `lens_file_write`, `lens_image_surface`, `lens_petzval_radius`, `lens_solve_clear`, `lens_solve_set`, `lens_solves_list`, `lens_system` (+8 more) `py -3.11 examples/poc_lens_solves_afocal.py`
 - `poc_pocket_interreflection` — ops: `camera_rays`, `form_factor_matrix`, `form_factor_parallel_rects`, `form_factor_perpendicular_rects`, `form_factor_polygons`, `intensity`, `light_source`, `log`, `optical_camera`, `radiosity_patches`, `radiosity_progressive_3d`, `render_optscene` (+12 more) `py -3.11 examples/poc_pocket_interreflection.py`
 - `poc_optics_drawings` — ops: `arc`, `chief_ray`, `chief_ray_angle`, `drawing_dxf`, `drawing_raster`, `drawing_svg`, `dxf_entities`, `glass`, `glass_map`, `layout_capture`, `lens_element_drawing`, `lens_section_drawing` (+11 more) `py -3.11 examples/poc_optics_drawings.py`
@@ -839,9 +840,9 @@ Ops that do not fit the one-image pipeline (two images, point sequences, variabl
 
 ## Operators by family (family → category, all ops)
 
-_3841 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
+_3843 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
 
-Families: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 741 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+Families: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 741 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -2578,7 +2579,7 @@ Math ops that support visual measurement (linear algebra / statistics / interpol
 - `wave_nodal_lines` `matrix → mask` GPU: none — Where a signed field changes sign — the nodal set, as a mask. · examples: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `no input → image2d` GPU: none — Two-slit interference on a screen — built from the physics, not the fringe formula. · examples: `poc_beats_fringes_and_screens`
 
-### optics (504 ops / 55 categories)
+### optics (506 ops / 55 categories)
 
 The layer above the lens and below the pixel. Geometric optics (thin-lens imaging, ABCD ray transfer, depth of field, cos⁴ vignetting) / wave optics (Airy pattern, angular-spectrum propagation, Fraunhofer diffraction, Gaussian beams) / imaging quality (PSF→MTF, diffraction-limited MTF, Zernike wavefront statistics) / polarisation (Jones, Stokes, Mueller) / material property tables (matprop), optical fibres (fiber), sensor characteristics (sensorchar), global light transport and more.
 
@@ -3176,11 +3177,13 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 - `underwater_image` `rgbimage × image2d × image2d → table` GPU: none — The image of a scene recorded through water (revised Jaffe-McGlamery model) -> dict. · examples: `poc_water_transparent_media`
 - `water_attenuation` `no input → table` GPU: none — Absorption, scattering and diffuse attenuation of water, and the transmittance over depth -> dict. · examples: `poc_geodetic_height_frames`, `poc_water_inspection_images`, `poc_water_transparent_media`
 
-#### optics / watervision (7)
-- `bottle_image` `no input → table` GPU: none — A side view of a cylindrical bottle, part filled with a liquid, ray-cast row by row -> dict. · examples: `poc_water_inspection_images`
+#### optics / watervision (9)
+- `bottle_background_map` `no input → table` GPU: none — Where on a flat patterned background each pixel of a (part-)filled bottle looks -> dict (the map ``u`` in mm). · examples: `poc_bottle_pattern_inverse`
+- `bottle_fit_from_pattern` `no input → table` GPU: none — Read the bottle back from the distortion of a background pattern -> dict (radius, wall, indices, fill line, and how well each is known). · examples: `poc_bottle_pattern_inverse`
+- `bottle_image` `no input → table` GPU: none — A side view of a cylindrical bottle, part filled with a liquid, ray-cast row by row -> dict. · examples: `poc_bottle_pattern_inverse`, `poc_water_inspection_images`
 - `caustic_floor_segmentation` `image2d → table` GPU: inside a chain only (allow-list) — Segment the caustic lines of a floor irradiance image -> dict (mask, threshold, line period). · examples: `poc_water_inspection_images`
 - `caustic_irradiance` `image2d → table` GPU: none — The irradiance a collimated light leaves on a flat floor below a wavy water surface -> dict. · examples: `poc_water_inspection_images`
-- `fill_level_from_image` `image2d → table` GPU: none — The fill line measured from a side-view bottle image -> dict (level in mm above the bottom row, row, confidence). · examples: `poc_water_inspection_images`
+- `fill_level_from_image` `image2d → table` GPU: none — The fill line measured from a side-view bottle image -> dict (level in mm above the bottom row, row, confidence). · examples: `poc_bottle_pattern_inverse`, `poc_water_inspection_images`
 - `underwater_inspection_image` `rgbimage × image2d → table` GPU: none — A hull or pipe inspection image: a lamp at the camera lights a wall through water -> dict (image, per-pixel SNR). · examples: `poc_water_inspection_images`
 - `wet_dry_inspection_pair` `image2d × image2d → table` GPU: none — The same textured plate rendered dry and wet, and the contrast of its defect in each -> dict. · examples: `poc_water_inspection_images`
 - `wet_surface_appearance` `no input → table` GPU: none — The darkening and the gloss of a surface under a thin water film (Lekner & Dorf 1988; Twomey et al. 1986) -> dict. · examples: `poc_water_inspection_images`

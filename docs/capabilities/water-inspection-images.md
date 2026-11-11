@@ -3,8 +3,8 @@ id: water-inspection-images
 title: 水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像)
 title_en: How water looks in inspection images (caustics on a pool floor, a bottle seen from the side with its fill line, a wet surface, a hull seen through water)
 category: 光と色
-ops: [caustic_irradiance, bottle_image, fill_level_from_image, wet_surface_appearance, wet_dry_inspection_pair, underwater_inspection_image, caustic_floor_segmentation]
-examples: [poc_water_inspection_images]
+ops: [caustic_irradiance, bottle_image, fill_level_from_image, bottle_background_map, bottle_fit_from_pattern, wet_surface_appearance, wet_dry_inspection_pair, underwater_inspection_image, caustic_floor_segmentation]
+examples: [poc_water_inspection_images, poc_bottle_pattern_inverse]
 version: 0.7.1
 inputs: [image2d, rgbimage]
 pipeline: [caustic_irradiance, caustic_floor_segmentation]
@@ -17,15 +17,19 @@ calibration: 瓶はカメラ距離・画素の大きさ(物体面)・壁厚・�
 
 ## できること
 
-`watermedia` の物理を、検査カメラが記録する絵にする 7 本です。`caustic_irradiance` は波のある水面の高さの場から、平行光が水底に作る照度を 2 つの方法で作ります。光子の方法は、規則格子の光線をスネルのベクトル式で曲げて、双線形に床へ撒きます(重みの合計が保存されるので、周期境界では光子の総量が入射 × 平均透過率に一致します)。波面の方法は、水面から床への写像のヤコビアンの逆数を照度とし、折り目(行列式 → 0)では inf と旗を返します。`caustic_floor_segmentation` はその照度から明るい線・網を大津の方法か曲率の稜線で切り出します。ひび割れ検出器はコースティクスの縁をひびと取り違えるので、この分割で縁を除くか、照度で割って平坦化します。
+`watermedia` の物理を、検査カメラが記録する絵にする 9 本です。`caustic_irradiance` は波のある水面の高さの場から、平行光が水底に作る照度を 2 つの方法で作ります。光子の方法は、規則格子の光線をスネルのベクトル式で曲げて、双線形に床へ撒きます(重みの合計が保存されるので、周期境界では光子の総量が入射 × 平均透過率に一致します)。波面の方法は、水面から床への写像のヤコビアンの逆数を照度とし、折り目(行列式 → 0)では inf と旗を返します。`caustic_floor_segmentation` はその照度から明るい線・網を大津の方法か曲率の稜線で切り出します。ひび割れ検出器はコースティクスの縁をひびと取り違えるので、この分割で縁を除くか、照度で割って平坦化します。
 
 `bottle_image` は円柱の瓶を横から見た画像で、画素ごとの光線を水平の断面で追跡します(外壁・内壁・メニスカスの縁・気泡の円、スネルの式とフレネル透過率、全反射)。背面光では、液体のある部分は円柱レンズなので中央の帯だけが明るくなり、空の部分は縁近くまで明るくなります。気泡は暗い輪(中央は細く明るい)になり、外径は 2 r × 倍率です。`fill_level_from_image` はこの画像から液面を、行平均の最大の段(edge)か 2 水準の当てはめ(brightness)で測り、水準と確信度を返します。
 
 `wet_surface_appearance` は Lekner & Dorf(1988)の濡れた面です。水膜の水–空気界面は内側からの光を全反射で閉じ込めるので、拡散の反照率は a から a (1 − R_s)(1 − r) / (1 − a r) に下がります(r は内部反射率の半球平均、約 0.476)。a = 0.5 で濡れ / 乾 = 0.673 と、暗い面ほど相対的に大きく暗くなります。同時に、膜の滑らかな面が細い鏡面の山を作ります。`wet_dry_inspection_pair` は同じ板を乾湿で描き、局所の法線(粗さに合わせた固定の乱数の高さ)からてかりを出して、欠陥のコントラストを返します。`underwater_inspection_image` はカメラの横のランプで壁を照らす船体の検査で、直接光・後方散乱のベール・画素ごとの SNR を返します(ランプとカメラの視野が重なる中央でベールが最大)。
 
+`bottle_background_map` は同じ瓶・同じカメラで、明るさの代わりに「画素の光線が背景の平らな板のどこ(u)に着くか」を返し(全反射の画素は NaN と数え、推測しない)、`bottle_fit_from_pattern` はその u の地図(縞の位相シフトで測ったもの)から外半径・壁厚・n_glass・n_liquid・液面を当てはめます。観測を作る追跡と当てはめの閉形式(同心円の角度と軸からの距離)は別の導出で、標準偏差・相関行列・条件数・最も弱い方向・「分けられたか」の旗を返します。壁厚と n_glass は縁の画素(強く屈折する光線)があれば分かれ、中心だけでは分かれません。背景距離を未知にすると n_liquid と縮退し、カメラ距離・背景距離の較正の誤りは雑音より桁違いに推定値を動かします(PoC `poc_bottle_pattern_inverse`)。
+
 ## What it does
 
-Seven ops in `watervision` (category `watervision` of `opsoptics`) turn the water physics of `watermedia` into the pictures an inspection camera records. `caustic_irradiance` gives the irradiance a collimated light leaves on a floor below a wavy surface by a photon count (vector Snell refraction, bilinear splatting, energy conserved) or by the Jacobian of the surface-to-floor map (inf and a flag at the folds); `caustic_floor_segmentation` cuts the bright web out of it so that a crack detector is not fooled. `bottle_image` ray-casts the horizontal section of every image row of a bottle (glass wall, liquid with a meniscus, bubbles; Snell, Fresnel, total internal reflection) backlit or frontlit, and `fill_level_from_image` reads the fill line back. `wet_surface_appearance` is the Lekner and Dorf (1988) model of why a wet surface is darker (trapped light: a (1 - R_s)(1 - r) / (1 - a r)) and glossier; `wet_dry_inspection_pair` renders one textured plate dry and wet and returns the defect contrast; `underwater_inspection_image` is a lamp-at-the-camera hull view with the backscatter veil and the per-pixel SNR.
+Nine ops in `watervision` (category `watervision` of `opsoptics`) turn the water physics of `watermedia` into the pictures an inspection camera records. `caustic_irradiance` gives the irradiance a collimated light leaves on a floor below a wavy surface by a photon count (vector Snell refraction, bilinear splatting, energy conserved) or by the Jacobian of the surface-to-floor map (inf and a flag at the folds); `caustic_floor_segmentation` cuts the bright web out of it so that a crack detector is not fooled. `bottle_image` ray-casts the horizontal section of every image row of a bottle (glass wall, liquid with a meniscus, bubbles; Snell, Fresnel, total internal reflection) backlit or frontlit, and `fill_level_from_image` reads the fill line back. `wet_surface_appearance` is the Lekner and Dorf (1988) model of why a wet surface is darker (trapped light: a (1 - R_s)(1 - r) / (1 - a r)) and glossier; `wet_dry_inspection_pair` renders one textured plate dry and wet and returns the defect contrast; `underwater_inspection_image` is a lamp-at-the-camera hull view with the backscatter veil and the per-pixel SNR.
+
+`bottle_background_map` takes the same bottle and camera and returns, instead of a brightness, where on a flat patterned background the ray of each pixel lands (u; total internal reflection is NaN and counted, never guessed), and `bottle_fit_from_pattern` fits radius, wall, n_glass, n_liquid and the fill line to that u map (as a phase-shifting measurement gives it). The trace that makes the observation and the closed form inside the fit (an angle and a distance from the axis on concentric circles) are separate derivations, and the result carries standard deviations, the correlation matrix, a condition number, the weakest direction and a flag for whether the quantities were separated. Wall and n_glass separate when the edge pixels (the steeply refracted rays) are used and do not with the middle alone; with the pattern distance unknown it trades off against n_liquid, and errors of the calibrated camera and pattern distances move the estimates far more than noise does (PoC `poc_bottle_pattern_inverse`).
 
 ## 向くところ / 向かないところ
 
@@ -45,6 +49,7 @@ Seven ops in `watervision` (category `watervision` of `opsoptics`) turn the wate
 
 ## 限界
 
+- `bottle_fit_from_pattern` は理想の針穴カメラ・完全な円筒・分散なし・既知のカメラ距離と背景距離・点の標本化(画素の開口で縞が平均されない)を仮定する。真値は自作のシミュレーションで、雑音なしで 1e-12 に戻るのは同じ幾何光学の式に 2 つの導出が同じ入力を渡した結果であり、実物の瓶での精度の証拠ではない。縁の画素を落とすと壁厚と n_glass は分けられなくなり、背景距離を未知にすると n_liquid と縮退する(`separated` と `poorly_determined` が申告する)。縦の屈折(肩・底)は扱わない。
 - 瓶は水平の断面ごとの追跡で、カメラから縦に離れた行の光線の傾きを無視する。垂直な円柱の傾きは実効屈折率 sqrt(n² − sin²α) に置き換えて厳密に扱え、本設定(カメラ 500 mm、高さ 150 mm)の最大の傾き 8.5 度では明るい帯の半幅が約 2 % 動く。傾き 40 度では約 29 % 動き、肩の曲面ではこの置き換えも使えない。
 - 壁や界面の内部反射は(全反射を除いて)追わない。前面光では外壁の最初の反射(R × 環境の放射輝度)だけを足す。
 - 濡れた面の膜は波長より十分厚いとして干渉を無視する。被覆率 1 − exp(−膜厚 / 2 µm) は仮定で、てかりの山の幅(ガウス、0.03 rad)と膜による狭まり(半分)も仮定。

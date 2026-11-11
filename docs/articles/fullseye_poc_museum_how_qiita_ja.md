@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **109 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **110 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 撮像品質・復元ウィング ―― 絵が良くなることと真値に近づくことは別
 
-手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 21 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
+手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 22 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
 
 見た目の指標は真値を最大値としません。霞んだ入力の対比が真値より高い、アンシャープで勾配は真値に一致するのに PSNR は落ちる、雑音を足すと PSNR が上がる。逆に、ナイキストより細かい縞を戻したのに PSNR が -0.01 dB しか動かない場面もあります。
 
@@ -769,6 +769,44 @@ py -3.11 examples/poc_water_inspection_images.py
 この回が作った図は全部で **16 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_water_inspection_images)
 
 使用 op(ノートへ): [`bottle_image`](https://furuse.work/ops/optics/watervision/bottle_image.html) · [`canny`](https://furuse.work/ops/2d/segmentation/canny.html) · [`caustic_floor_segmentation`](https://furuse.work/ops/optics/watervision/caustic_floor_segmentation.html) · [`caustic_irradiance`](https://furuse.work/ops/optics/watervision/caustic_irradiance.html) · [`fill_level_from_image`](https://furuse.work/ops/optics/watervision/fill_level_from_image.html) · [`fresnel_water_air`](https://furuse.work/ops/optics/watermedia/fresnel_water_air.html) · [`ocean_height_field`](https://furuse.work/ops/optics/watermedia/ocean_height_field.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`underwater_inspection_image`](https://furuse.work/ops/optics/watervision/underwater_inspection_image.html) · [`water_attenuation`](https://furuse.work/ops/optics/watermedia/water_attenuation.html) · [`wet_dry_inspection_pair`](https://furuse.work/ops/optics/watervision/wet_dry_inspection_pair.html) · [`wet_surface_appearance`](https://furuse.work/ops/optics/watervision/wet_surface_appearance.html)
+
+## No.2026.312 —— 背景の縞の歪みからガラス瓶を逆に測る ―― 外半径・壁厚・屈折率・液面を真値で採点し、分けられない量は分けられないと出す
+
+透明な瓶は後ろの縞を歪めて見せる。画素ごとに「背景のどこを見ているか(u)」を求め、そこから外半径・壁厚・n_glass・n_liquid・液面を逆に当てはめる。新 op 2 本(`watervision`、`opsoptics` の `watervision`): `bottle_background_map`(`bottle_image` と同じ瓶・カメラで、明るさでなく背景の座標 u を返す)/ `bottle_fit_from_pattern`(u の地図から当てはめ、標準偏差・相関行列・条件数・弱い方向・「分けられたか」の旗を返す)。★真値の開示: 真値は自分で作ったシミュレーション(R 30 mm・壁 1.5 mm・n_glass 1.52・水 1.333 / 油 1.47・充填 5 通り)の入力で、実物の測定ではない。観測を作る描画(ベクトルのスネルの式の追跡)と当てはめの順モデル(同心円の閉形式: 角度と軸からの距離)は別の導出で、近軸の 2×2 行列で中心の傾きを検算した(2.2e-5)。(1) 雑音なしで 10 構成の R・壁・n_glass・n_liquid が相対 9.5e-13、残差 5.6e-11 mm、液面は行境界で 0。空の瓶と満の瓶は液面「無し」(屈折率は戻る)。(2) 周期 256・32・4 mm の 4 ステップ縞を 8 bit・雑音 1.5 階調で撮って u を戻し(雑音 7.1 µm = 0.11 画素)、10 構成すべてで R が 1.4e-6、n_liquid が 2.8e-6 以内、液面は 0 画素。雑音 300 回(各区間 1 行)でも最大 R 1.8e-5・n_liquid 1.7e-5、共分散から予測した σ は経験の σ の 0.67〜1.00 倍。液面は縞の行間の不連続と背面光の明暗(`fill_level_from_image`)の 2 系統が 0 画素差で一致。(3) ★分けられない量: 壁厚と n_glass の相関は −0.92(cond 11)。縁の画素(強く屈折する光線)があれば 0.1 mm の壁も戻る(25 % 以内 1.00)が、使える窓を中心 25 % に狭めると壁厚の相対 σ は 800 倍(1.8 %)、0.1 mm の壁は戻らず(0.05)、壁が外れた 41 回のうち当てはめが「分けられた」と言ったのは 4 回(9.8 %)。背景距離を未知にすると n_liquid との相関が −0.999、cond は 11 → 181。(4) ★精度 ≠ 正確さ: 雑音だけなら n_glass の σ は 3e-5 だが、背景距離を 1 mm 誤ると n_glass が 0.011(355 倍)動く。(5) 壊して確かめる: n_glass を 1.4 に固定すると残差が 414 倍、スネルの式の向きを逆にすると 8 万倍で門が赤になる。縦の屈折(肩・底)は扱わない。学習 0、較正 0(距離は既知)、門 32 件。
+
+[![背景の縞の歪みからガラス瓶を逆に測る ―― 外半径・壁厚・屈折率・液面を真値で採点し、分けられない量は分けられないと出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png)
+
+*↑ **背景の縞の歪みからガラス瓶を逆に測る ―― 外半径・壁厚・屈折率・液面を真値で採点し、分けられない量は分けられないと出す** ―― 透明な瓶は後ろの縞を歪めて見せる。画素ごとに「背景のどこを見ているか(u)」を求め、そこから外半径・壁厚・n_glass・n_liquid・液面を逆に当てはめる。新 op 2 本(`watervision`、`opsoptics` の `watervision`): `bottle_background_map`(`bottle_image` と同じ瓶・カメラで、明るさでなく背景の座標 u を返す)/ `bottle_fit_from_pattern`(u の地図から当てはめ、標準偏差・相関行列・条件数・弱い方向・「分けられたか」の旗を返す)。★真値の開示: 真値は自分で作ったシミュレーション(R 30 mm・壁 1.5 mm・n_glass 1.52・水 1.333 / 油 1.47・充填 5 通り)の入力で、実物の測定ではない。観測を作る描画(ベクトルのスネルの式の追跡)と当てはめの順モデル(同心円の閉形式: 角度と軸からの距離)は別の導出で、近軸の 2×2 行列で中心の傾きを検算した(2.2e-5)。(1) 雑音なしで 10 構成の R・壁・n_glass・n_liquid が相対 9.5e-13、残差 5.6e-11 mm、液面は行境界で 0。空の瓶と満の瓶は液面「無し」(屈折率は戻る)。(2) 周期 256・32・4 mm の 4 ステップ縞を 8 bit・雑音 1.5 階調で撮って u を戻し(雑音 7.1 µm = 0.11 画素)、10 構成すべてで R が 1.4e-6、n_liquid が 2.8e-6 以内、液面は 0 画素。雑音 300 回(各区間 1 行)でも最大 R 1.8e-5・n_liquid 1.7e-5、共分散から予測した σ は経験の σ の 0.67〜1.00 倍。液面は縞の行間の不連続と背面光の明暗(`fill_level_from_image`)の 2 系統が 0 画素差で一致。(3) ★分けられない量: 壁厚と n_glass の相関は −0.92(cond 11)。縁の画素(強く屈折する光線)があれば 0.1 mm の壁も戻る(25 % 以内 1.00)が、使える窓を中心 25 % に狭めると壁厚の相対 σ は 800 倍(1.8 %)、0.1 mm の壁は戻らず(0.05)、壁が外れた 41 回のうち当てはめが「分けられた」と言ったのは 4 回(9.8 %)。背景距離を未知にすると n_liquid との相関が −0.999、cond は 11 → 181。(4) ★精度 ≠ 正確さ: 雑音だけなら n_glass の σ は 3e-5 だが、背景距離を 1 mm 誤ると n_glass が 0.011(355 倍)動く。(5) 壊して確かめる: n_glass を 1.4 に固定すると残差が 414 倍、スネルの式の向きを逆にすると 8 万倍で門が赤になる。縦の屈折(肩・底)は扱わない。学習 0、較正 0(距離は既知)、門 32 件。*
+
+[![縞の位相を 8 bit・雑音つきで撮ってほどいた u から直線(瓶なし)を引いた量。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/02_profile_fit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/02_profile_fit.png)
+
+*↑ 測定の図 ―― 縞の位相を 8 bit・雑音つきで撮ってほどいた u から直線(瓶なし)を引いた量。破線が閉形式の当てはめで、観測に重なる。*
+
+[![8 bit・雑音 1.5 階調。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/03_recovery_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/03_recovery_table.png)
+
+*↑ 8 bit・雑音 1.5 階調。*
+
+[![雑音だけが誤差なら、1 行ずつの最悪の場合でも R・n_liquid は 1e-4 以下で、予測 σ は経験の σ に 0.67〜1.00 倍で合う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/04_noise_trials_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/04_noise_trials.png)
+
+*↑ 雑音だけが誤差なら、1 行ずつの最悪の場合でも R・n_liquid は 1e-4 以下で、予測 σ は経験の σ に 0.67〜1.00 倍で合う。*
+
+[![雑音 20 回、各区間 1 行。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/06_thin_wall_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/06_thin_wall.png)
+
+*↑ 雑音 20 回、各区間 1 行。*
+
+[![カメラ距離・背景距離・画素位置は「既知」として渡す前提。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/08_calibration_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/08_calibration_bias.png)
+
+*↑ カメラ距離・背景距離・画素位置は「既知」として渡す前提。*
+
+```
+py -3.11 examples/poc_bottle_pattern_inverse.py
+```
+
+ソース: [examples/poc_bottle_pattern_inverse.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bottle_pattern_inverse.py)
+
+この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_bottle_pattern_inverse)
+
+使用 op(ノートへ): [`bottle_background_map`](https://furuse.work/ops/optics/watervision/bottle_background_map.html) · [`bottle_fit_from_pattern`](https://furuse.work/ops/optics/watervision/bottle_fit_from_pattern.html) · [`bottle_image`](https://furuse.work/ops/optics/watervision/bottle_image.html) · [`fill_level_from_image`](https://furuse.work/ops/optics/watervision/fill_level_from_image.html)
 
 ## No.2026.269 —— 処方どおりのレンズ越しに 3 次元の場面を撮る ―― 被写界深度・猫の目のボケ・隅の光量・色収差・ゴーストを、閉形式と既存の op と独立の追跡で採点
 

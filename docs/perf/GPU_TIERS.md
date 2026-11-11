@@ -20,8 +20,8 @@
 | `required` | 49 |
 | `suitable` | 2200 |
 | `partial` | 650 |
-| `none` | 936 |
-| **合計** | **3835** |
+| `none` | 938 |
+| **合計** | **3837** |
 
 ## GPU 対応率
 
@@ -168,6 +168,7 @@
 | sem | 0 | 5 | 1 | 3 | 9 |
 | structured_light | 0 | 9 | 0 | 0 | 9 |
 | ttc | 0 | 6 | 1 | 2 | 9 |
+| watervision | 0 | 5 | 0 | 4 | 9 |
 | curvature | 0 | 6 | 2 | 0 | 8 |
 | fit | 0 | 4 | 2 | 2 | 8 |
 | grating_interf | 0 | 3 | 0 | 5 | 8 |
@@ -204,7 +205,6 @@
 | stroke | 0 | 4 | 3 | 0 | 7 |
 | telecentric | 0 | 0 | 3 | 4 | 7 |
 | ultrasonic | 0 | 0 | 1 | 6 | 7 |
-| watervision | 0 | 5 | 0 | 2 | 7 |
 | augment | 0 | 0 | 6 | 0 | 6 |
 | caliper | 0 | 3 | 0 | 3 | 6 |
 | coherent | 0 | 4 | 0 | 2 | 6 |

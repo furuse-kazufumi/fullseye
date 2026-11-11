@@ -193,7 +193,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 光源 × 對象 × 感測器的光譜鏈(普朗克・CIE A・LED・濾光片・Si 的 QE): [說明](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · 範例 [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - TDI 線掃描與線掃描鏡頭(級數與訊噪比、同步誤差的 MTF、各像高的照度與 MTF): [說明](../../capabilities/tdi-linescan-and-lens.md) _(ja)_ · 範例 [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
 - 以光譜反射率量測薄膜厚度(傳輸矩陣 → 干涉色 → FFT 與模型擬合 → 膜厚圖): [說明](../../capabilities/thin-film-reflectometry.md) _(ja)_ · 範例 [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
-- 水在檢測影像中的樣子(泳池底的焦散、瓶子的側視圖與液面、濕潤的表面、水下的船體): [說明](../../capabilities/water-inspection-images.md) _(ja)_ · 範例 [poc_water_inspection_images](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_inspection_images.py)
+- 水在檢測影像中的樣子(泳池底的焦散、瓶子的側視圖與液面、濕潤的表面、水下的船體): [說明](../../capabilities/water-inspection-images.md) _(ja)_ · 範例 [poc_water_inspection_images](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_inspection_images.py) · [poc_bottle_pattern_inverse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bottle_pattern_inverse.py)
 - 水與透明介質(海浪、水面的菲涅耳與折射、水下的顏色與散射、瓶子的透鏡作用): [說明](../../capabilities/water-transparent-media.md) _(ja)_ · 範例 [poc_water_transparent_media](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_transparent_media.py)
 
 **波與訊號**
@@ -248,7 +248,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 310 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -455,7 +455,7 @@ PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>成像品質與復原</b> (25)</summary>
+<details class="vall"><summary><b>成像品質與復原</b> (26)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="逼近條紋的蠅眼" width="200" height="200"><b>&#9654;</b><span>逼近條紋的蠅眼</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="手震去模糊" width="200" height="200"><b>&#9654;</b><span>手震去模糊</span></a>
@@ -478,6 +478,7 @@ PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_water_transparent_media/05_pool_views.png"><img src="../../articles/assets/poc/poc_water_transparent_media/story.en.gif" alt="Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations" loading="lazy" width="200" height="200"></picture><span>水與透明介質:海浪、泳池折射、水下顏色、瓶子的焦散線</span></a>
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="../../articles/assets/poc/poc_photograph_through_prescription/story.en.gif" alt="Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace" loading="lazy" width="200" height="200"></picture><span>依處方參數透過鏡頭拍攝三維場景:景深、貓眼虛化、邊角照度、色差、鬼影</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="../../articles/assets/poc/poc_water_inspection_images/story.en.gif" alt="How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods" loading="lazy" width="200" height="200"></picture><span>水在檢測影像中的樣子:泳池底的焦散、瓶子的側視圖、濕潤的板、水下的船體</span></a>
+<a href="../../articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png"><img src="../../articles/assets/poc/poc_bottle_pattern_inverse/story.en.gif" alt="Reading a Glass Bottle Back from the Distortion of a Background Stripe Pattern — Radius, Wall, Indices and Fill Line Scored Against the Simulated Truth, and What Cannot Be Separated" loading="lazy" width="200" height="200"></picture><span>從背景條紋的畸變反推玻璃瓶:半徑、壁厚、折射率、液面,以及無法分開的量</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="../../articles/assets/poc/poc_simcal_pixel_shift/story.en.gif" alt="Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only" loading="lazy" width="200" height="200"></picture><span>像素位移的偏移與開口校準(無法確定的地圖)</span></a>
 <a href="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="../../articles/assets/poc/poc_plenoptic_camera/story.en.gif" alt="A Prescription-Based Plenoptic Camera" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>基於處方的光場相機:從原始微影像到重聚焦與距離</span></a>
 <a href="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><img src="../../articles/assets/poc/poc_tof_camera/story.en.gif" alt="Indirect and Direct Time of Flight on One 3-D Scene — Multipath, Mixed Pixels, Pile-up and Volume Error" loading="lazy" width="200" height="200"></picture><span>同一三維場景的間接與直接飛行時間:多路徑、混合像素、堆積和體積誤差</span></a>

@@ -5,7 +5,7 @@ category: watervision
 in: image2d
 out: table
 gpu: なし
-examples: [poc_water_inspection_images]
+examples: [poc_bottle_pattern_inverse, poc_water_inspection_images]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -55,6 +55,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_bottle_pattern_inverse](../../../../examples/poc_bottle_pattern_inverse.py) — `py -3.11 examples/poc_bottle_pattern_inverse.py`
 - [poc_water_inspection_images](../../../../examples/poc_water_inspection_images.py) — `py -3.11 examples/poc_water_inspection_images.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
@@ -63,7 +64,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`watervision`)
 
-[caustic_irradiance](caustic_irradiance.md) · [bottle_image](bottle_image.md) · [wet_surface_appearance](wet_surface_appearance.md) · [wet_dry_inspection_pair](wet_dry_inspection_pair.md) · [underwater_inspection_image](underwater_inspection_image.md) · [caustic_floor_segmentation](caustic_floor_segmentation.md)
+[caustic_irradiance](caustic_irradiance.md) · [bottle_image](bottle_image.md) · [bottle_background_map](bottle_background_map.md) · [bottle_fit_from_pattern](bottle_fit_from_pattern.md) · [wet_surface_appearance](wet_surface_appearance.md) · [wet_dry_inspection_pair](wet_dry_inspection_pair.md) · [underwater_inspection_image](underwater_inspection_image.md) · [caustic_floor_segmentation](caustic_floor_segmentation.md)
 
 ---
 *Provenance: watervision.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

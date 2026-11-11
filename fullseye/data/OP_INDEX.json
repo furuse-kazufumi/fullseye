@@ -1,8 +1,8 @@
 {
- "n_ops": 3835,
+ "n_ops": 3837,
  "tiers": {
   "color": 12,
-  "ledger": 2871,
+  "ledger": 2873,
   "nary": 17,
   "registry": 935
  },
@@ -2933,6 +2933,30 @@
    "in_sorts": [
     "table"
    ],
+   "gpu_tier": "none"
+  },
+  {
+   "name": "bottle_background_map",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [],
+   "gpu_tier": "none"
+  },
+  {
+   "name": "bottle_fit_from_pattern",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [],
    "gpu_tier": "none"
   },
   {

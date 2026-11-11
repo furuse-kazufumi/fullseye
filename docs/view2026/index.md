@@ -208,7 +208,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 光源 × 対象 × センサの分光の鎖(Planck・CIE A・LED・フィルタ・Si の QE、曲線の積と積分): [説明](../capabilities/spectral-radiometry-chain.md) · 例 [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF): [説明](../capabilities/tdi-linescan-and-lens.md) · 例 [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
 - 薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ): [説明](../capabilities/thin-film-reflectometry.md) · 例 [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
-- 水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像): [説明](../capabilities/water-inspection-images.md) · 例 [poc_water_inspection_images](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_inspection_images.py)
+- 水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像): [説明](../capabilities/water-inspection-images.md) · 例 [poc_water_inspection_images](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_inspection_images.py) · [poc_bottle_pattern_inverse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bottle_pattern_inverse.py)
 - 水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用): [説明](../capabilities/water-transparent-media.md) · 例 [poc_water_transparent_media](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_transparent_media.py)
 
 **波と信号**
@@ -263,7 +263,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 309 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 310 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -470,7 +470,7 @@ PoC 309 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>撮像品質・復元</b> (25)</summary>
+<details class="vall"><summary><b>撮像品質・復元</b> (26)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="縞に近づくハエの眼" width="200" height="200"><b>&#9654;</b><span>縞に近づくハエの眼</span></a>
 <a href="../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_camera_shake_deblur.jpg" alt="手ブレ補正" width="200" height="200"><b>&#9654;</b><span>手ブレ補正</span></a>
@@ -493,6 +493,7 @@ PoC 309 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_water_transparent_media/05_pool_views.png"><img src="../articles/assets/poc/poc_water_transparent_media/story.ja.gif" alt="見上げた魚眼の中央が空(窓)、外側は全反射で底が鏡に映る。黄の輪が臨界角 48.6°(窓の半径は深さ 1 m で 1.13 m)。(c) の最大のずれは 18.5 cm。" loading="lazy" width="200" height="200"></picture><span>水と透明媒質: 海の波・プールの屈折・水中の色・瓶の焦線</span></a>
 <a href="../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="../articles/assets/poc/poc_photograph_through_prescription/story.ja.gif" alt="左は市松 1 mm・傾いた刃 2 本・シーメンススター(24 本)が読める。右は RMS スポットが 5.0 倍(軸上 11 → 53 µm)で、市松のコントラストは落ち、スターは中心から先にぼけ、刃の縁に色が付く。1 画素 4 µm、ショットノイズ・読み出しノイズ・12 bit の量子化つき。" loading="lazy" width="200" height="200"></picture><span>処方どおりのレンズ越しに 3 次元の場面を撮る: 被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト</span></a>
 <a href="../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="../articles/assets/poc/poc_water_inspection_images/story.ja.gif" alt="背面光: 満の部分は中央の帯だけが明るく、空の部分は縁近くまで明るい。気泡は暗い輪(中央は細く明るい)。前面光は壁の映り込み(右の縦の筋)が出る。" loading="lazy" width="200" height="200"></picture><span>水が検査画像にどう写るか: プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像</span></a>
+<a href="../articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png"><img src="../articles/assets/poc/poc_bottle_pattern_inverse/story.ja.gif" alt="R 30 mm・壁 1.5 mm・n 1.52 の瓶、水 1.333。各画素の光線を追跡して背景のどこを見ているか(u)を求め、そこの市松を描いた。逆から見ると、この歪みが瓶を測る手がかり。" loading="lazy" width="200" height="200"></picture><span>背景の縞の歪みからガラス瓶を逆に測る: 半径・壁厚・屈折率・液面と、分けられない量</span></a>
 <a href="../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="../articles/assets/poc/poc_simcal_pixel_shift/story.ja.gif" alt="【3 章・見せ場】シーメンススター(腕 32 本)を 8 画素の升に区切り、升ごとにフレームのずれ (dr, dc) を合わせた。升の色 = simcal_fit の分類(緑 = 両方決まる、橙 = 組でしか決まらない、灰 = 効かない)。赤い楕円 = Cramér-Rao の1σ(Fisher 行列の逆の dr・dc の部分)の形と向き(升ごとに長軸を升の幅の 0.84 に揃えた。大きさは升ごとに違う)。星の腕の上では縞が放射状の 1 方向なので、楕円は半径の向きに伸びる —— 縞に沿ったずれ(半径の向き)は画像を変えない。橙の升の「決まる組」は接線の向きと、升が見込む角度の半分以内で揃う(最大 2.5°)。星の外の板は何も決まらない。" loading="lazy" width="200" height="200"></picture><span>ピクセルシフトのずれと開口の較正(決まらない地図)</span></a>
 <a href="../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="../articles/assets/poc/poc_plenoptic_camera/story.ja.gif" alt="480 x 480 raw frame; 32 x 32 lenslets and 15-pixel microimages." loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>処方から撮るプレノプティックカメラ: 生のマイクロ像から撮影後の再合焦と距離へ</span></a>
 <a href="../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><img src="../articles/assets/poc/poc_tof_camera/story.ja.gif" alt="振幅の照明むら、色距離の段差、点群の床・壁・荷物が同じ画素からつながる。" loading="lazy" width="200" height="200"></picture><span>同じ3次元場面の間接ToFと直接ToF: 多経路・混合画素・pile-up・体積誤差</span></a>

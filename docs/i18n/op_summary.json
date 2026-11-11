@@ -32158,6 +32158,24 @@
    "de": "Aus einem Seitenansichtsbild der Flasche gemessene Füllhöhe -> dict (Pegel in mm über der untersten Zeile, Zeile, Konfidenz).",
    "hi": "बोतल के पार्श्व-दृश्य चित्र से मापी गई तरल-सतह -> dict (सबसे निचली पंक्ति से ऊपर स्तर mm में, पंक्ति, विश्वसनीयता)।"
   },
+  "optics/bottle_background_map": {
+   "fp": "3036b9bcd375",
+   "ja": "液体を途中まで入れた瓶の各画素が、模様のある平らな背景のどこを見ているか -> dict(背景の座標 u [mm] の地図)。",
+   "zh": "部分装有液体的瓶子的每个像素在带图案的平面背景上看向何处 -> 字典(背景坐标 u 的地图,单位 mm)。",
+   "tw": "部分裝有液體的瓶子的每個像素在帶圖案的平面背景上看向何處 -> 字典(背景座標 u 的地圖,單位 mm)。",
+   "ko": "액체가 일부 채워진 병의 각 픽셀이 무늬가 있는 평평한 배경의 어디를 보는지 -> dict(배경 좌표 u의 맵, mm 단위).",
+   "de": "Wohin jeder Pixel einer teilweise gefüllten Flasche auf einem flachen gemusterten Hintergrund blickt -> dict (die Karte der Hintergrundkoordinate u in mm).",
+   "hi": "आंशिक रूप से भरी बोतल का प्रत्येक पिक्सेल एक समतल पैटर्न वाली पृष्ठभूमि पर कहाँ देखता है -> dict (पृष्ठभूमि निर्देशांक u का मानचित्र, mm में)।"
+  },
+  "optics/bottle_fit_from_pattern": {
+   "fp": "b467e89e4919",
+   "ja": "背景の模様の歪みから瓶を逆に読み取る -> dict(半径・壁厚・屈折率・液面と、それぞれがどこまで分かるか)。",
+   "zh": "从背景图案的畸变反推瓶子 -> 字典(半径、壁厚、折射率、液面,以及各量能确定到什么程度)。",
+   "tw": "從背景圖案的畸變反推瓶子 -> 字典(半徑、壁厚、折射率、液面,以及各量能確定到什麼程度)。",
+   "ko": "배경 무늬의 왜곡에서 병을 역으로 읽어 낸다 -> dict(반지름, 벽 두께, 굴절률, 액면, 그리고 각각이 얼마나 정해지는지).",
+   "de": "Die Flasche aus der Verzerrung eines Hintergrundmusters zurücklesen -> dict (Radius, Wandstärke, Brechzahlen, Füllstand und wie gut jede Größe bestimmt ist).",
+   "hi": "पृष्ठभूमि पैटर्न की विकृति से बोतल को वापस पढ़ना -> dict (त्रिज्या, दीवार की मोटाई, अपवर्तनांक, तरल-सतह, और प्रत्येक कितनी अच्छी तरह निर्धारित है)।"
+  },
   "optics/wet_surface_appearance": {
    "fp": "0a7b3abba1ab",
    "ja": "薄い水膜の下の面の暗化と光沢(Lekner & Dorf 1988、Twomey ほか 1986)-> dict。",

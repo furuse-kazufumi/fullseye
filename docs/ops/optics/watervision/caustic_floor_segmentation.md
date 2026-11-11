@@ -64,7 +64,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`watervision`)
 
-[caustic_irradiance](caustic_irradiance.md) · [bottle_image](bottle_image.md) · [fill_level_from_image](fill_level_from_image.md) · [wet_surface_appearance](wet_surface_appearance.md) · [wet_dry_inspection_pair](wet_dry_inspection_pair.md) · [underwater_inspection_image](underwater_inspection_image.md)
+[caustic_irradiance](caustic_irradiance.md) · [bottle_image](bottle_image.md) · [fill_level_from_image](fill_level_from_image.md) · [bottle_background_map](bottle_background_map.md) · [bottle_fit_from_pattern](bottle_fit_from_pattern.md) · [wet_surface_appearance](wet_surface_appearance.md) · [wet_dry_inspection_pair](wet_dry_inspection_pair.md) · [underwater_inspection_image](underwater_inspection_image.md)
 
 ---
 *Provenance: watervision.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

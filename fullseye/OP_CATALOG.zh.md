@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(486 例)
+### 2-D 图像/信号/几何(487 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -523,6 +523,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `omni360_roundtrip` — op: `anaglyph_from_ods`, `cubemap_from_equirect`, `equirect_from_cubemap`, `equirect_from_perspectives`, `ods_render`, `s_psnr`, `stereo360_sbs`, `stereo360_top_bottom`, `stereo_pack`, `viewport`, `viewport_from_equirect`, `ws_psnr` `py -3.11 examples/omni360_roundtrip.py`
 - `poc_water_transparent_media` — op: `beer_lambert_transmittance`, `cylinder_lens_caustic`, `fresnel_water_air`, `ocean_height_field`, `ocean_spectrum`, `phase_function_hg`, `refract_rays`, `refracted_view`, `scattering_phase_petzold`, `snell_window`, `underwater_image`, `water_attenuation` `py -3.11 examples/poc_water_transparent_media.py`
 - `poc_water_inspection_images` — op: `bottle_image`, `canny`, `caustic_floor_segmentation`, `caustic_irradiance`, `fill_level_from_image`, `fresnel_water_air`, `ocean_height_field`, `otsu`, `underwater_inspection_image`, `water_attenuation`, `wet_dry_inspection_pair`, `wet_surface_appearance` `py -3.11 examples/poc_water_inspection_images.py`
+- `poc_bottle_pattern_inverse` — op: `bottle_background_map`, `bottle_fit_from_pattern`, `bottle_image`, `fill_level_from_image` `py -3.11 examples/poc_bottle_pattern_inverse.py`
 - `poc_lens_solves_afocal` — op: `afocal_system`, `chief_ray`, `lens_afocal_report`, `lens_apply_solves`, `lens_file_read`, `lens_file_write`, `lens_image_surface`, `lens_petzval_radius`, `lens_solve_clear`, `lens_solve_set`, `lens_solves_list`, `lens_system`(另有 8 个) `py -3.11 examples/poc_lens_solves_afocal.py`
 - `poc_pocket_interreflection` — op: `camera_rays`, `form_factor_matrix`, `form_factor_parallel_rects`, `form_factor_perpendicular_rects`, `form_factor_polygons`, `intensity`, `light_source`, `log`, `optical_camera`, `radiosity_patches`, `radiosity_progressive_3d`, `render_optscene`(另有 12 个) `py -3.11 examples/poc_pocket_interreflection.py`
 - `poc_optics_drawings` — op: `arc`, `chief_ray`, `chief_ray_angle`, `drawing_dxf`, `drawing_raster`, `drawing_svg`, `dxf_entities`, `glass`, `glass_map`, `layout_capture`, `lens_element_drawing`, `lens_section_drawing`(另有 11 个) `py -3.11 examples/poc_optics_drawings.py`
@@ -839,9 +840,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 
 ## Operators by family(族 → 类别，全部 op)
 
-_共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
+_共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
 
-族一览: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 741 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族一览: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 741 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -2578,7 +2579,7 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `wave_nodal_lines` `matrix → mask` GPU: 无 — 带符号的场改变符号的位置 —— 以掩膜返回节集。 · 示例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `无输入 → image2d` GPU: 无 — 屏幕上的双缝干涉 —— 由物理构建,而非套用条纹公式。 · 示例: `poc_beats_fringes_and_screens`
 
-### optics (504 ops / 55 categories)
+### optics (506 ops / 55 categories)
 
 位于镜头之上、像素之下的层。几何光学(薄透镜成像、ABCD 光线传递、景深、cos⁴ 渐晕)/ 波动光学(Airy 图样、角谱传播、Fraunhofer 衍射、高斯光束)/ 成像质量(PSF→MTF、衍射极限 MTF、Zernike 波前统计)/ 偏振(Jones、Stokes、Mueller)/ 材料物性表(matprop)、光纤(fiber)、传感器特性(sensorchar)、全局光传输等。
 
@@ -3176,11 +3177,13 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `underwater_image` `rgbimage × image2d × image2d → table` GPU: 无 — 透过水记录的场景图像(修订版 Jaffe–McGlamery 模型)-> 字典。 · 示例: `poc_water_transparent_media`
 - `water_attenuation` `无输入 → table` GPU: 无 — 水的吸收、散射与漫衰减系数,以及随深度的透过率 -> 字典。 · 示例: `poc_geodetic_height_frames`, `poc_water_inspection_images`, `poc_water_transparent_media`
 
-#### optics / watervision (7)
-- `bottle_image` `无输入 → table` GPU: 无 — 部分装有液体的圆柱形瓶子的侧视图,逐行进行光线追迹 -> 字典。 · 示例: `poc_water_inspection_images`
+#### optics / watervision (9)
+- `bottle_background_map` `无输入 → table` GPU: 无 — 部分装有液体的瓶子的每个像素在带图案的平面背景上看向何处 -> 字典(背景坐标 u 的地图,单位 mm)。 · 示例: `poc_bottle_pattern_inverse`
+- `bottle_fit_from_pattern` `无输入 → table` GPU: 无 — 从背景图案的畸变反推瓶子 -> 字典(半径、壁厚、折射率、液面,以及各量能确定到什么程度)。 · 示例: `poc_bottle_pattern_inverse`
+- `bottle_image` `无输入 → table` GPU: 无 — 部分装有液体的圆柱形瓶子的侧视图,逐行进行光线追迹 -> 字典。 · 示例: `poc_bottle_pattern_inverse`, `poc_water_inspection_images`
 - `caustic_floor_segmentation` `image2d → table` GPU: 仅在链中(许可列表) — 从地面照度图像中分割出焦散线 -> 字典(掩码、阈值、线的周期)。 · 示例: `poc_water_inspection_images`
 - `caustic_irradiance` `image2d → table` GPU: 无 — 平行光在波动水面下方平坦底面上形成的照度 -> 字典。 · 示例: `poc_water_inspection_images`
-- `fill_level_from_image` `image2d → table` GPU: 无 — 从瓶子侧视图像中测得的液面 -> 字典(距最下行的液位 mm、行号、置信度)。 · 示例: `poc_water_inspection_images`
+- `fill_level_from_image` `image2d → table` GPU: 无 — 从瓶子侧视图像中测得的液面 -> 字典(距最下行的液位 mm、行号、置信度)。 · 示例: `poc_bottle_pattern_inverse`, `poc_water_inspection_images`
 - `underwater_inspection_image` `rgbimage × image2d → table` GPU: 无 — 船体或管道检测图像:位于相机处的灯穿过水照亮墙面 -> 字典(图像、逐像素信噪比)。 · 示例: `poc_water_inspection_images`
 - `wet_dry_inspection_pair` `image2d × image2d → table` GPU: 无 — 分别渲染同一块有纹理的板的干燥与湿润状态,并给出各自缺陷的对比度 -> 字典。 · 示例: `poc_water_inspection_images`
 - `wet_surface_appearance` `无输入 → table` GPU: 无 — 薄水膜下表面的变暗与光泽(Lekner & Dorf 1988;Twomey 等 1986)-> 字典。 · 示例: `poc_water_inspection_images`

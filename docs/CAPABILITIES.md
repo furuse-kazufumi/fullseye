@@ -1089,9 +1089,9 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 ### [水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像)](capabilities/water-inspection-images.md)
 
-`watermedia` の物理を、検査カメラが記録する絵にする 7 本です。`caustic_irradiance` は波のある水面の高さの場から、平行光が水底に作る照度を 2 つの方法で作ります。光子の方法は、規則格子の光線をスネルのベクトル式で曲げて、双線形に床へ撒きます(重みの合計が保存されるので、周期境界では光子の総量が入射 × 平均透過率に一致します)。波面の方法は、水面から床への写像のヤコビアンの逆数を照度とし、折り目(行列式 → 0)では inf と旗を返します。`caustic_floor_segmentation` はその照度から明るい線・網を大津の方法か曲率の稜線で切り出します。ひび割れ検出器はコースティクスの縁をひびと取り違えるので、この分割で縁を除くか、照度で割って平坦化します。
+`watermedia` の物理を、検査カメラが記録する絵にする 9 本です。`caustic_irradiance` は波のある水面の高さの場から、平行光が水底に作る照度を 2 つの方法で作ります。光子の方法は、規則格子の光線をスネルのベクトル式で曲げて、双線形に床へ撒きます(重みの合計が保存されるので、周期境界では光子の総量が入射 × 平均透過率に一致します)。波面の方法は、水面から床への写像のヤコビアンの逆数を照度とし、折り目(行列式 → 0)では inf と旗を返します。`caustic_floor_segmentation` はその照度から明るい線・網を大津の方法か曲率の稜線で切り出します。ひび割れ検出器はコースティクスの縁をひびと取り違えるので、この分割で縁を除くか、照度で割って平坦化します。
 
-使う op: `caustic_irradiance`, `bottle_image`, `fill_level_from_image`, `wet_surface_appearance`, `wet_dry_inspection_pair`, `underwater_inspection_image`, `caustic_floor_segmentation`
+使う op: `caustic_irradiance`, `bottle_image`, `fill_level_from_image`, `bottle_background_map`, `bottle_fit_from_pattern`, `wet_surface_appearance`, `wet_dry_inspection_pair`, `underwater_inspection_image`, `caustic_floor_segmentation`
 
 推奨パイプライン: [`caustic_irradiance`](ops/optics/watervision/caustic_irradiance.md) → [`caustic_floor_segmentation`](ops/optics/watervision/caustic_floor_segmentation.md)
 
@@ -1101,7 +1101,7 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 実寸校正: 瓶はカメラ距離・画素の大きさ(物体面)・壁厚・屈折率を実物に合わせる。背面板の放射の角度範囲(既定 ±8 度)は板の仕様に合わせる。濡れた面は膜厚と粗さを実測の光沢度から選ぶ。水中画像は水の種類(ジャーロフ型)を実測の Kd から選び、ランプの出力とカメラとの距離で SNR が決まる。
 
-動く例: `poc_water_inspection_images`
+動く例: `poc_water_inspection_images`, `poc_bottle_pattern_inverse`
 
 ### [水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用)](capabilities/water-transparent-media.md)
 

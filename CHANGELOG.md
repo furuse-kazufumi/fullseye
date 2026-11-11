@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 背景の縞の歪みからガラス瓶を逆に測る: `watervision` 2 op(収蔵 2026.312)
+
+- `bottle_background_map`(`bottle_image` と同じ瓶・カメラで、画素の光線が背景の平らな板に着く座標 u の地図。全反射の画素は NaN と数える)と `bottle_fit_from_pattern`(u の地図から外半径・壁厚・n_glass・n_liquid・液面を最小二乗で当てはめ、標準偏差・相関行列・条件数・最も弱い方向・`separated` の旗を返す)。観測を作る追跡と当てはめの閉形式は別の導出で、近軸の 2×2 行列で中心の傾きを検算した。追跡の内部 `_trace_rows` に出射位置を返す任意の出力を足した(`bottle_image` の出力は変えていない)。
+- 真値の開示: 真値は自作のシミュレーションの入力で、実物の測定ではない。雑音なしで 10 構成が相対 9.5e-13、縞を 8 bit で撮っても R 1.4e-6、雑音 300 回で最大 1.8e-5。壁厚と n_glass は縁の画素があれば分かれ(相関 −0.92)、使える窓を中心 25 % にすると相対 σ が 800 倍・0.1 mm の壁は戻らない(外れた 41 回のうち「分けられた」と言ったのは 4 回)。背景距離 1 mm の誤りは n_glass を雑音の σ の 355 倍動かす(精度 ≠ 正確さ)。
+- 手書きの件数・要約 6 言語・能力ノート `water-inspection-images`・展示(撮像ウィング)・ViEW2026 の一覧を更新。門 `tests/test_bottle_pattern_inverse.py`。PoC `poc_bottle_pattern_inverse`(門 32 件、CPU 約 105 s)。
+
 ### 追加 — MCP の道具「真値付きの課題を作る」と「組んだ処理を採点する」(2026-11-09)
 
 - 独立レビューの直し(2026-11-10、SCORING_VERSION 2026-11-10.1):
