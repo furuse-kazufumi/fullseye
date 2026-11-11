@@ -294,3 +294,23 @@ def test_legacy_reference_keeps_its_own_physics(L):
     assert 1e-3 < noise < 1e-2 and np.isfinite(noise)
     rates = {k: 100.0 * a / b for k, (a, b) in L["ok_counts"].items()}
     assert rates["そのまま(マスク無し)"] > 90.0 > rates["標本化不足 + 低変調を外す"]
+
+
+def test_unwrap_misses_are_mostly_the_sign_ambiguity(P):
+    """5 節の所見をテスト本体で数え直す(fixture の run() の assert に頼らない)。"""
+    import fullseye as fs
+    _, _, delta = P.build_fields()
+    m = IN_DISC
+    out = P.run_out
+    w = lambda a: np.mod(a + np.pi, 2 * np.pi) - np.pi
+    un = np.asarray(fs.ledger.unwrap_phase_2d(w(out["d_hat"])))
+    bad = m & ~(np.abs(un - np.median((un - delta)[m]) - delta) < 0.5 * np.pi)
+    flipped = out["flipped"]
+    assert bad.sum() > 0 and (bad & flipped).sum() / bad.sum() > 0.9
+    ut = np.asarray(fs.ledger.unwrap_phase_2d(w(delta)))
+    bad_t = m & ~(np.abs(ut - np.median((ut - delta)[m]) - delta) < 0.5 * np.pi)
+    assert bad_t.sum() / m.sum() < 0.005
+    n = np.asarray(P.pe.retardation_convert(delta, "rad", "waves"))
+    assert n[m].min() > 0.1                      # 評価域に等方点は無い
+    low = m & (np.hypot(*P.stokes_from_frames(P.specimen_frames(delta, P.build_fields()[1]))[1:3]) < 0.05)
+    assert np.max(np.abs(2 * n[low] - np.round(2 * n[low]))) / 2 < 0.01   # N が 0.5 の倍数の帯

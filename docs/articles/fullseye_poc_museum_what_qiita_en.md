@@ -2136,23 +2136,23 @@ This run produced **7 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`blob_region`](https://furuse.work/ops/blob/extract/blob_region.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`circularity`](https://furuse.work/ops/2d/features/circularity.html) · [`distance_transform`](https://furuse.work/ops/2d/region/distance_transform.html)
 
-## No.2026.031 —— Stress by Photoelasticity — Unwrapping Fails First at the Isotropic Point
+## No.2026.031 —— Stress by Photoelasticity — Most Unwrapping Errors Are the Sign Ambiguity
 
-Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops.
+Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping.
 
-[![Stress by Photoelasticity — Unwrapping Fails First at the Isotropic Point](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
+[![Stress by Photoelasticity — Most Unwrapping Errors Are the Sign Ambiguity](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 
-*↑ **Stress by Photoelasticity — Unwrapping Fails First at the Isotropic Point** ―― The closed-form stress field of a diametrally loaded disc (4.2441 MPa at the centre, fringe order 2.380) turned into polariscope images by the photoelasticity ops and read back to stress. The polariscope is cross-checked against a chain of Mueller-matrix (4-by-4 polarization-transfer matrix) elements, which matches the textbook formula to 2.2e-16 across 125 cases. Phase wraps in the 84.2 % of pixels above fringe order 0.5, and unwrapping breaks first not where stress is highest but at the isotropic point, where modulation vanishes.*
+*↑ **Stress by Photoelasticity — Most Unwrapping Errors Are the Sign Ambiguity** ―― The closed-form stress field of a diametrally loaded disc (4.2441 MPa at the centre, fringe order 2.380) turned into polariscope images by the photoelasticity ops and read back to stress. The polariscope is cross-checked against a chain of Mueller-matrix (4-by-4 polarization-transfer matrix) elements, which matches the textbook formula to 2.2e-16 across 125 cases. Phase wraps in the 84.2 % of pixels above fringe order 0.5. Of the 2.98 % of pixels that unwrapping then gets wrong, 93.7 % are wrong because of the (δ,θ) ↔ (-δ,θ+90°) sign ambiguity, not because of the wrapping; with the sign right the miss is 0.13 %, only where the fringes are finest near the load points. Masking out low-modulation pixels lowers the agreement from 97.0 % to 81.9 %.*
 
 Terms: Mueller matrix — A real 4-by-4 matrix acting on a Stokes vector to describe how an optical element or sample changes polarization.
 
-[![左下 2 枚が「壊れる予報」。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap.png)
+[![右下が外れの場所。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap.png)
 
-*↑ The measurement ―― 左下 2 枚が「壊れる予報」。予報は当たるが、外せば直るとは限らない。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― 右下が外れの場所。ほとんどが 4 節の符号の二義性で、符号が正しければ外すのは荷重点のそばの縞が細かい所だけ。低変調の帯(左上の暗い帯)は外れの原因ではない。 (figure labels are in Japanese; the numbers are the same)*
 
 [![動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)
 
-*↑ The animation ―― 動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷重に比例して 2.38 まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 2 回)。後半は荷重 500 N のまま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点で、中央の真値 θ の図で白く塗った点と重なる。偏光系は fullseye の mueller_element / mueller_apply(暗視野)と sin²(2(θ-β))·sin²(δ/2)(平面)。*
+*↑ The animation ―― 動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷重に比例して 2.38 まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 2 回)。後半は荷重 500 N のまま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点で、中央の真値 θ の図で白く塗った点と重なる。応力場と偏光像は光弾性の族の op(brazilian_disc_stress / principal_stress / photoelastic_retardation / polariscope_intensity)。*
 
 ```
 py -3.11 examples/poc_photoelasticity.py

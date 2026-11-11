@@ -7,9 +7,10 @@
 実験力学の教室でいちばん普通の問い —「透明な試験片を偏光板ではさんで縞を撮った。
 この縞から応力が何 MPa か言えるか。どこで言えなくなるか」。
 答えは「主応力差は **±2 % 台**で言える。ただし縞次数が 0.5 を超えた瞬間に
-位相が巻き、**巻きを解く手順を持たない限り応力は多価**になる。しかも
-巻き戻しが最初に失敗するのは応力が大きい所ではなく、**主応力差がゼロになる
-等方点(isotropic point)**という、いちばん応力が小さい所」。
+位相が巻き、**巻きを解く手順を持たない限り応力は多価**になる。巻き戻した後に
+外れる画素(約 3 %)は、**ほとんどが巻きではなく (δ,θ) ↔ (-δ,θ+90°) の符号の
+二義性**で外れている。符号が正しければ巻き戻しが外すのは荷重点のそばの縞が細かい
+所だけで、低変調の画素をマスクで外すと、かえって悪くなる」。
 
 【グラウンドトゥルース(自分で仕込んだ真値)】
 円板を直径方向に圧縮したときの平面応力場には**閉形式**がある(Hondros / Frocht)。
@@ -32,7 +33,7 @@
  2) ★ゼロ点 —— 「一様応力 P/(Dh) と答える」推定器に勝てるか
  3) 暗視野 1 枚から縞次数を数える —— 整数の縞しか読めない
  4) ★位相シフト —— δ と θ を分ける
- 5) ★★位相の巻き —— 壊れるのは応力が大きい所ではなく**等方点**
+ 5) ★★位相の巻き —— 巻き戻しの外れは、ほとんどが巻きでなく符号の二義性
  6) 雑音と 8 bit 量子化
  7) 所見
 """
@@ -161,8 +162,8 @@ def section1_check():
     # ★所見を固定する: これは fullseye の Mueller op に対する**厳密な**検算で、
     #   δ を 15 度刻みで一周・θ を 5 通り振っても機械精度で一致する(実測 2.2e-16)。
     #   ここが緩んだら 3 節以降で測っているのは「読み取り手順」ではなく op のバグ。
-    # 族の op(閉形式)と optics の素子の鎖は別の実装なので、後の 2 行も自己一致ではない。
     assert n_case == 125
+    # 族の op(閉形式)と optics の素子の鎖は別の実装なので、後の検算も自己一致ではない。
     assert worst_t < 1e-12 and worst_i < 1e-12 and worst_s < 1e-12, (worst_t, worst_i, worst_s)
 
     # (b) 応力場が力の釣り合いを満たすか(水平直径上の σyy を積分すると -P/h)。
@@ -301,13 +302,19 @@ def section4_phase_shift(dsig, theta, delta, m):
     #       平面偏光の θ を経由した上の手順は同じ |δ| を出す。
     assert abs_err < 1e-12, abs_err
     assert fold_gap < 1e-12, fold_gap
-    return d_hat, th_hat, s1, s2, s3, abs_err, agree
+    # 符号が反転した画素(δ → -δ)。5 節が「巻き戻しの外れ」と突き合わせる。
+    wrap = lambda a: np.mod(a + np.pi, 2 * np.pi) - np.pi
+    e_same, e_flip = np.abs(wrap(d_hat - delta)), np.abs(wrap(d_hat + delta))
+    flipped = IN_DISC & (e_flip < e_same) & (e_same > 1e-6)
+    print("  符号が反転した画素(δ → -δ の方が近い): %d 画素(評価域の %.2f %%)"
+          % (flipped.sum(), 100 * flipped.sum() / IN_DISC.sum()))
+    return d_hat, th_hat, s1, s2, s3, abs_err, agree, flipped
 
 
-def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
+def section5_wrapping(dsig, delta, d_hat, s1, s2, s3, flipped):
     print()
     print("=" * 78)
-    print("5) ★★位相の巻きを解く —— 壊れる場所は 2 つ、どちらも予測できる")
+    print("5) ★★位相の巻きを解く —— 外れの大半は巻きでなく符号の二義性")
     print("=" * 78)
     n_true = pe.retardation_convert(delta, "rad", "waves")
     print("  縞次数 N: 最小 %.3f / 中央 %.3f / 最大 %.3f(半径 0.9R まで)"
@@ -323,10 +330,10 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
           % (np.median(px_per_fringe[IN_DISC]), px_per_fringe[IN_DISC].min(),
              100 * aliased.sum() / IN_DISC.sum()))
 
-    # 変調度 = sinδ と cosδ の振幅。等方点(δ→0 mod 2π)でゼロに落ちる。
+    # 変調度 = sinδ の大きさ。δ が π の整数倍(N が 0.5 の倍数)の帯でゼロに落ちる。
     modulation = np.hypot(np.hypot(s1, s2), s3)
     lowmod = IN_DISC & (np.hypot(s1, s2) < 0.05)
-    print("  変調度 |sinδ| < 0.05(等方点および N が整数の帯): %.1f %%"
+    print("  変調度 |sinδ| < 0.05(N が 0.5 の倍数の帯): %.1f %%"
           % (100 * lowmod.sum() / IN_DISC.sum()))
     print("  (Stokes の大きさは %.4f〜%.4f = 減偏光なし。変調が落ちるのは"
           % (modulation[IN_DISC].min(), modulation[IN_DISC].max()))
@@ -337,6 +344,7 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
     print("  %-34s %12s" % ("巻き戻しの入力", "一致率(<π/2)"))
     print("  " + "-" * 50)
     rates = {}
+    bad_plain = None
     for label, mask in [("そのまま(マスク無し)", None),
                         ("標本化不足を外す", ~aliased),
                         ("標本化不足 + 低変調を外す", ~aliased & ~lowmod)]:
@@ -346,6 +354,8 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
         off = float(np.median((unwrapped - delta)[valid]))
         ok = np.abs(unwrapped - off - delta) < 0.5 * np.pi
         rates[label] = 100 * float(np.mean(ok[valid]))
+        if mask is None:
+            bad_plain = IN_DISC & ~ok          # マスク無しの巻き戻しの外れ
         print("  %-34s %11.1f %%  (評価画素 %d)" % (label, rates[label], valid.sum()))
     print()
     # ★所見を固定する。
@@ -357,30 +367,78 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
     #   (2) ★★実測は「マスクを渡すと直る」という素朴な期待の**逆**を言っている:
     #       マスク無し 97.0 % / 標本化不足を外して 97.1 % / **低変調まで外すと 81.9 %**。
     #       低変調の画素を抜くと領域が分断され、skimage の unwrap が島ごとに
-    #       別の 2π オフセットを選ぶため。「どちらもマスクで外せる」は
-    #       **予報としては正しいが、処方としては誤り**。実測のほうを固定しておく。
+    #       別の 2π オフセットを選ぶため。低変調の画素は外れの原因ではないので、
+    #       マスクで外す処方は**効かないどころか逆効果**。実測のほうを固定しておく。
     assert rates["そのまま(マスク無し)"] > 90.0, rates
     assert rates["標本化不足 + 低変調を外す"] < 90.0, rates
+
+    # --- 外れの中身を測る -------------------------------------------------- #
+    n_in = int(IN_DISC.sum())
+    n_bad = int(bad_plain.sum())
+    n_flip_bad = int((bad_plain & flipped).sum())
+    overlap = 100.0 * n_flip_bad / n_bad
+    print("  (a) 巻き戻しの外れ %d 画素(%.2f %%)のうち、4 節で符号が反転した画素: %d 画素(%.1f %%)"
+          % (n_bad, 100 * n_bad / n_in, n_flip_bad, overlap))
+    # 符号の反転が無い真の位相を、同じ手順で巻き戻す(外れが巻きによるものか調べる)。
+    wrapped_true = np.mod(delta + np.pi, 2 * np.pi) - np.pi
+    un_t = np.asarray(fs.ledger.unwrap_phase_2d(wrapped_true))
+    off_t = float(np.median((un_t - delta)[IN_DISC]))
+    bad_true = IN_DISC & ~(np.abs(un_t - off_t - delta) < 0.5 * np.pi)
+    n_bt = int(bad_true.sum())
+    rate_bt = 100.0 * n_bt / n_in
+    y_over_r = np.abs(_F["disc"]["y"]) / (R_MM * 1e-3)
+    al_bt = float(np.mean(aliased[bad_true])) if n_bt else 0.0
+    print("  (b) 符号が正しい真の位相を巻き戻した外れ: %d 画素(%.2f %%)。|y|/R %.3f〜%.3f、"
+          "N %.1f〜%.1f、うち 1 縞 2 画素未満 %.0f %%"
+          % (n_bt, rate_bt, y_over_r[bad_true].min(), y_over_r[bad_true].max(),
+             n_true[bad_true].min(), n_true[bad_true].max(), 100 * al_bt))
+    n_min = float(n_true[IN_DISC].min())
+    i_min = int(np.argmin(np.where(IN_DISC, n_true, np.inf)))
+    x_min = float(_F["disc"]["x"].ravel()[i_min]) / (R_MM * 1e-3)
+    print("  (c) 評価域の縞次数 N の最小 %.3f(x/R = %+.2f の縁)。主応力差がゼロの等方点は"
+          "評価域に無い。" % (n_min, x_min))
+    dev = np.abs(2 * n_true[lowmod] - np.round(2 * n_true[lowmod])) / 2.0
+    dev_max = float(dev.max())
+    n_low_bad = int((bad_plain & lowmod).sum())
+    print("  (d) 低変調の画素 %d: N と最寄りの 0.5 の倍数との差は最大 %.4f。外れとの重なりは %d 画素。"
+          % (lowmod.sum(), dev_max, n_low_bad))
+    # ★所見を固定する(いずれも測った事実。門は動かさない)。
+    #   (a) 外れの大半は 4 節の符号の反転と同じ画素。
+    assert overlap > 90.0, overlap
+    #   (b) 符号が正しければ、巻き戻しの外れは 0.5 % 未満で、荷重点のそばの
+    #       縞が細かい所(N が大きく、大半が 1 縞 2 画素未満)にしか出ない。
+    assert rate_bt < 0.5, rate_bt
+    assert n_true[bad_true].min() > 3.0 and al_bt > 0.8, (n_true[bad_true].min(), al_bt)
+    #   (c) 評価域に等方点は無い(縞次数は 0 に届かない)。
+    assert n_min > 0.1, n_min
+    #   (d) 低変調の帯は N が 0.5 の倍数(δ が π の整数倍)の帯で、外れの主因ではない。
+    assert dev_max < 0.01, dev_max
+    assert n_low_bad < 0.1 * n_bad, (n_low_bad, n_bad)
+
+    # 図: 1 縞あたりの画素数は 1 画素が勾配 0 で 1e12 になるので 99 % 点で切る。
+    ppf_cap = float(np.percentile(px_per_fringe[IN_DISC], 99.0))
+    cause = np.where(bad_plain & flipped, 1.0, np.where(bad_plain, 2.0, 0.0))
     figs.save_grid("unwrap",
                    [np.where(IN_DISC, wrapped, np.nan),
                     np.where(IN_DISC, np.hypot(s1, s2), np.nan),
-                    np.where(IN_DISC, px_per_fringe, np.nan),
-                    np.where(IN_DISC, n_true, np.nan)],
-                   ["巻いたままの δ [rad]", "変調度 |sinδ|(小さい所で壊れる)",
-                    "1 縞あたりの画素数(2 未満で壊れる)", "縞次数 N(真値)"],
-                   title="巻き戻しが壊れる場所は撮る前に分かる",
+                    np.where(IN_DISC, np.minimum(px_per_fringe, ppf_cap), np.nan),
+                    np.where(IN_DISC, cause, np.nan)],
+                   ["巻いたままの δ [rad]", "変調度 |sinδ|(N が 0.5 の倍数の帯で 0)",
+                    "1 縞あたりの画素数(上限 = 99 % 点)",
+                    "巻き戻しの外れ(0 = 合う / 1 = 符号反転と重なる / 2 = その他)"],
+                   title="巻き戻しの外れは、ほとんどが符号の反転",
                    signed=[True, False, False, False],
-                   caption="左下 2 枚が「壊れる予報」。予報は当たるが、外せば直るとは限らない。")
-    print("  → ★壊れる場所は 2 つあり、**どちらも撮る前に分かる**:")
-    print("     (1) 縞が細かすぎる(1 縞 2 画素未満)—— 標本化定理。荷重点の近く。")
-    print("     (2) 変調が落ちる —— δ が 2π の整数倍に近い帯と、主応力差が")
-    print("         ゼロになる等方点。**いちばん応力が小さい所**が含まれる。")
-    print("  → ★★ところが実測は「予報した画素を外せば直る」の**逆**を言う:")
+                   vrange=[None, None, None, (0.0, 2.0)],
+                   caption="右下が外れの場所。ほとんどが 4 節の符号の二義性で、"
+                           "符号が正しければ外すのは荷重点のそばの縞が細かい所だけ。"
+                           "低変調の帯(左上の暗い帯)は外れの原因ではない。")
+    print("  → ★外れの %.1f %% は 4 節の符号の反転と同じ画素。符号が正しければ" % overlap)
+    print("     巻き戻しの外れは %.2f %% で、荷重点のそばの縞が細かい所(標本化不足)だけ。" % rate_bt)
+    print("  → ★★低変調の画素は外れの原因ではなく、マスクで外すと悪くなる:")
     print("     マスク無し %.1f %% / 標本化不足だけ外して %.1f %% / 低変調まで外すと %.1f %%。"
           % (rates["そのまま(マスク無し)"], rates["標本化不足を外す"],
              rates["標本化不足 + 低変調を外す"]))
-    print("     外すほど領域が分断され、`unwrap_phase_2d` が島ごとに別の 2π を")
-    print("     選ぶため。**予報としては正しいが、処方としては誤り** ——")
+    print("     外すほど領域が分断され、`unwrap_phase_2d` が島ごとに別の 2π を選ぶため。")
     print("     信頼できない画素は「捨てる」のでなく「重みを下げて繋いだまま解く」")
     print("     必要がある(重みつきアンラップ。いまの薄いラッパには口が無い)。")
     return rates
@@ -451,9 +509,9 @@ def section7_findings():
       この版は op の規約(進相軸 = σ1 + 90°)に合わせた。
 
   (c) ★★**位相アンラップに「信頼度の重み」の口が無い**。
-      `unwrap_phase_2d` は skimage の実装で、5 節のとおり**等方点の近くで
-      必ず壊れる**。壊れる場所は事前に分かる(変調度 = 明視野+暗視野の
-      振幅が小さい所)が、★**その画素をマスクで外すと一致率はむしろ下がる**
+      `unwrap_phase_2d` は skimage の実装で、5 節のとおり巻き戻しの外れの大半は
+      巻きでなく符号の二義性で、符号が正しければ外すのは荷重点のそばの縞が
+      細かい所だけ。評価域に等方点は無い。★**低変調の画素をマスクで外すと一致率はむしろ下がる**
       —— 領域が分断され、島ごとに別の 2π が選ばれるため。要るのは
       「捨てる口」ではなく**重みつきアンラップ**(信頼度の低い画素を
       繋いだまま従属させる)で、それが無い。干渉計・位相シフト法・InSAR
@@ -598,11 +656,12 @@ def run():
     dsig, theta, delta = _F["dsig"], _F["theta"], _F["delta"]
     naive, m, err0 = section2_zero_point(dsig, delta)
     e3, gain3 = section3_dark_field(dsig, theta, delta, naive, m)
-    d_hat, _th, s1, s2, s3, abs_err, agree = section4_phase_shift(dsig, theta, delta, m)
-    rates = section5_wrapping(dsig, delta, d_hat, s1, s2, s3)
+    d_hat, _th, s1, s2, s3, abs_err, agree, flipped = section4_phase_shift(dsig, theta, delta, m)
+    rates = section5_wrapping(dsig, delta, d_hat, s1, s2, s3, flipped)
     rows = section6_noise(dsig, theta, delta, m)
     return {"n_centre": n_centre, "err0": err0, "e3": e3, "gain3": gain3, "agree": agree,
-            "abs_err": abs_err, "rates": rates, "rows": rows, "d_hat": d_hat}
+            "abs_err": abs_err, "rates": rates, "rows": rows, "d_hat": d_hat,
+            "flipped": flipped}
 
 
 def main():
