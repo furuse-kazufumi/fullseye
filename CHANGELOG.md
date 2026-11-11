@@ -36,6 +36,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `import fullseye` の時間: `physarum_search` の先頭の `import torch`(opsgraph 経由)が全体の過半を占めていた。他の族と同じ遅延プロキシ(`torch_lazy`)にした。公開 API は変えない。
 - 追加(opt-in、既定は変えない): `extra_checks='on'` のとき、image / region 用の op に最終軸が 1/3/4 でない 3 次元配列(立体)を渡すと拒否する。既定は従来どおり通す(docs/KNOWN_ISSUES.md §34)。
 
+### 追加 — 軌跡から抗力と回転を同時に読む op `fit_spin_aero` と PoC(収蔵 2026.313、2026-11-11)
+
+- `ballistics.fit_spin_aero`(新 op、`fit_spin` の C_d 自由版): (p₀, v₀, ω, C_d)の 10 パラメータ(`fit_cl=True` で C_L の係数 κ も自由にして 11)。条件数・相関行列・線形化した共分散・C_d と ω⊥ / 初速の相関・ω の平行 / 垂直成分の標準偏差を返す(読めないものを返り値に出す)。定数 C_L の `bp` は ValueError(|ω| が原理的に読めない)。`bp["cl_scale"]` を足した(無ければ従来と bit 一致)。
+- `examples/poc_cd_spin_joint.py`: 世界(C_d が Re 依存、C_L に谷。仮の値)と当てはめ(定数)を別模型にして inverse crime を避ける。ω を模様から取り軌跡から (C_d, C_L) を読む分担は実効値と 2 % 以内。軌跡だけで同時に読むと ω は 5 割ほど偏るが、原因は谷そのものでなく C_L 模型の係数ずれ(谷のない世界で係数 0.6 / 0.8 / 1.2 倍でも ω が −58 / −34 / +53 %、1.5〜2.7 倍に増幅。谷の深さ 0 で偏り 0 は κ = 1 が真だから当然)。ω と κ の縮退は S の振れ幅が狭い遅い球の結論で、速い球(25 m/s・300 rad/s)では κ 自由でも ω⊥ の標準偏差が 12 %(遅い球 419 %)。C_d の 0.4 % 以内は「ほぼ平ら」と実効値の定義が当てはめ向きだから当然で、Re 依存を効かせても誤差は小さく外れは rms にだけ出る。真値は全部自作の世界の値。`drag_coefficient_sphere` の docstring の「卓球で 0.4〜0.5」を実測の 0.39〜0.41(Re 1.6 × 10⁴ で 0.392)に直した(挙動は変えない)。`fit_spin_aero` の `cond` / `corr_cd_omega` は未定義のとき inf / NaN でなく None(`rank_deficient` を追加)。
+
 ### 追加 — MCP の道具「真値付きの課題を作る」と「組んだ処理を採点する」(2026-11-09)
 
 - 独立レビューの直し(2026-11-10、SCORING_VERSION 2026-11-10.1):

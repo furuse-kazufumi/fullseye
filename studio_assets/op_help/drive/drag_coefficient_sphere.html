@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.drag_coefficient_sphere(reynolds) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballistics; ballistics.drag_coefficient_sphere(reynolds) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;drag_coefficient_sphere&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>滑らかな球の抗力係数の経験式(Morrison 2013、Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。卓球の球(Re ≈ 1〜5 × 10⁴)で ≈ 0.4〜0.5。</p>
+<p>滑らかな球の抗力係数の経験式(Morrison 2013、Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。卓球の球(Re ≈ 1〜5 × 10⁴)で 0.39〜0.41(Re 1.6 × 10⁴ = 6 m/s で 0.392、5 × 10⁴ で 0.406、1 × 10⁵ で 0.426。Re ≈ 3 × 10⁵ の抗力危機で 0.17 へ落ちる)。</p>
 <p>空の入力(<code style="color:#22d3bf">reynolds</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery_drive_ballistics">gallery_drive_ballistics</a> — <code style="color:#22d3bf">py -3.11 examples/gallery_drive_ballistics.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_cd_spin_joint">poc_cd_spin_joint</a> — <code style="color:#22d3bf">py -3.11 examples/poc_cd_spin_joint.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opdrive:flight_vacuum">flight_vacuum</a> · <a style="color:#22d3bf" href="opdrive:magnus_lift_coefficient">magnus_lift_coefficient</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_apexes">restitution_from_apexes</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_intervals">restitution_from_intervals</a> · <a style="color:#22d3bf" href="opdrive:fit_parabola">fit_parabola</a> · <a style="color:#22d3bf" href="opdrive:flight_fit">flight_fit</a> · <a style="color:#22d3bf" href="opdrive:fit_aero">fit_aero</a> · <a style="color:#22d3bf" href="opdrive:fit_spin">fit_spin</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">ball</code>)</h3>

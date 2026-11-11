@@ -6112,6 +6112,23 @@
    }
   },
   {
+   "id": "poc_cd_spin_joint",
+   "group": "wing_xyt",
+   "media": "01_estimates_by_mode.png",
+   "motion": false,
+   "thumb_src": "01_estimates_by_mode.png",
+   "label": {
+    "ja": "卓球の球の抗力と回転を軌跡から同時に読む(読めない量も測る)",
+    "en": "Table-tennis drag and spin from one trajectory, and what cannot be read",
+    "zh": "从一条轨迹同时读出乒乓球的阻力与旋转(以及读不出的量)",
+    "tw": "從一條軌跡同時讀出桌球的阻力與旋轉(以及讀不出的量)",
+    "ko": "한 궤적에서 탁구공의 항력과 회전을 동시에 읽기(읽을 수 없는 것도 측정)",
+    "de": "Tischtennis: Luftwiderstand und Spin aus einer Flugbahn, und was nicht lesbar ist",
+    "hi": "Table tennis: एक trajectory से drag और spin, और जो पढ़ा नहीं जा सकता",
+    "fr": "Tennis de table : traînée et rotation depuis une seule trajectoire, et ce qui reste illisible"
+   }
+  },
+  {
    "id": "poc_table_tennis_bounce",
    "group": "wing_xyt",
    "media": "01_drop_test.mp4",

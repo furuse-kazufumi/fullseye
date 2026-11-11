@@ -19964,13 +19964,13 @@
    "hi": "spin ratio S = rω/|v| से lift coefficient C_L = 1 / (2 + 1/S) (S → 0 पर 0, S → ∞ पर 0.5; गेंद के साहित्य में व्यापक रूप से प्रयुक्त empirical सूत्र)।"
   },
   "drive/drag_coefficient_sphere": {
-   "fp": "e9a464b395a7",
-   "en": "Empirical formula for the drag coefficient of a smooth sphere (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). ≈ 0.4–0.5 for a table tennis ball (Re ≈ 1–5 × 10⁴).",
-   "zh": "光滑球阻力系数的经验式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。乒乓球(Re ≈ 1–5 × 10⁴)约为 0.4–0.5。",
-   "tw": "光滑球阻力係數的經驗式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。桌球(Re ≈ 1–5 × 10⁴)約為 0.4–0.5。",
-   "ko": "매끄러운 구의 항력계수 경험식(Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). 탁구공(Re ≈ 1–5 × 10⁴)에서 ≈ 0.4–0.5.",
-   "de": "Empirische Formel für den Widerstandsbeiwert einer glatten Kugel (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). Für einen Tischtennisball (Re ≈ 1–5 × 10⁴) ≈ 0.4–0.5.",
-   "hi": "चिकने गोले के drag coefficient का empirical सूत्र (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)। table tennis की गेंद (Re ≈ 1–5 × 10⁴) के लिए ≈ 0.4–0.5।"
+   "fp": "729aa20d0bcb",
+   "en": "Empirical formula for the drag coefficient of a smooth sphere (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). For a table tennis ball (Re ≈ 1–5 × 10⁴) it is 0.39–0.41 (0.392 at Re 1.6 × 10⁴ = 6 m/s, 0.406 at 5 × 10⁴, 0.426 at 1 × 10⁵; it drops to 0.17 in the drag crisis near Re ≈ 3 × 10⁵).",
+   "zh": "光滑球阻力系数的经验式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。乒乓球(Re ≈ 1–5 × 10⁴)为 0.39–0.41(Re 1.6 × 10⁴ = 6 m/s 时为 0.392，5 × 10⁴ 时为 0.406，1 × 10⁵ 时为 0.426；在 Re ≈ 3 × 10⁵ 的阻力危机处降至 0.17)。",
+   "tw": "光滑球阻力係數的經驗式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。桌球(Re ≈ 1–5 × 10⁴)為 0.39–0.41(Re 1.6 × 10⁴ = 6 m/s 時為 0.392，5 × 10⁴ 時為 0.406，1 × 10⁵ 時為 0.426；在 Re ≈ 3 × 10⁵ 的阻力危機處降至 0.17)。",
+   "ko": "매끄러운 구의 항력계수 경험식(Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). 탁구공(Re ≈ 1–5 × 10⁴)에서는 0.39–0.41(Re 1.6 × 10⁴ = 6 m/s에서 0.392, 5 × 10⁴에서 0.406, 1 × 10⁵에서 0.426. Re ≈ 3 × 10⁵의 항력 위기에서 0.17로 떨어짐).",
+   "de": "Empirische Formel für den Widerstandsbeiwert einer glatten Kugel (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). Für einen Tischtennisball (Re ≈ 1–5 × 10⁴) ergibt sich 0.39–0.41 (0.392 bei Re 1.6 × 10⁴ = 6 m/s, 0.406 bei 5 × 10⁴, 0.426 bei 1 × 10⁵; in der Widerstandskrise um Re ≈ 3 × 10⁵ fällt er auf 0.17).",
+   "hi": "चिकने गोले के drag coefficient का empirical सूत्र (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)। table tennis की गेंद (Re ≈ 1–5 × 10⁴) के लिए 0.39–0.41 (Re 1.6 × 10⁴ = 6 m/s पर 0.392, 5 × 10⁴ पर 0.406, 1 × 10⁵ पर 0.426; Re ≈ 3 × 10⁵ के drag crisis में यह 0.17 तक गिर जाता है)।"
   },
   "drive/bounce": {
    "fp": "ffa625851d7c",
@@ -25850,13 +25850,13 @@
    "hi": "spin ratio S = rω/|v| से lift coefficient C_L = 1 / (2 + 1/S) (S → 0 पर 0, S → ∞ पर 0.5। sphere पर literature में व्यापक रूप से इस्तेमाल होने वाला empirical formula)।"
   },
   "2d/tb_drag_coefficient_sphere": {
-   "fp": "e9a464b395a7",
-   "en": "Empirical formula for the drag coefficient of a smooth sphere (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). For a table-tennis ball (Re ≈ 1 to 5 × 10⁴) it is ≈ 0.4 to 0.5.",
-   "zh": "光滑球体阻力系数的经验公式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。对乒乓球(Re ≈ 1〜5 × 10⁴)约为 ≈ 0.4〜0.5。",
-   "tw": "光滑球體阻力係數的經驗公式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。對桌球(Re ≈ 1〜5 × 10⁴)約為 ≈ 0.4〜0.5。",
-   "ko": "매끄러운 구의 항력계수 경험식(Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). 탁구공(Re ≈ 1~5 × 10⁴)에서는 ≈ 0.4~0.5.",
-   "de": "Empirische Formel für den Widerstandsbeiwert einer glatten Kugel (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). Für einen Tischtennisball (Re ≈ 1 bis 5 × 10⁴) ergibt sich ≈ 0.4 bis 0.5.",
-   "hi": "smooth sphere के drag coefficient का empirical formula (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)। table-tennis ball (Re ≈ 1 से 5 × 10⁴) के लिए ≈ 0.4 से 0.5।"
+   "fp": "729aa20d0bcb",
+   "en": "Empirical formula for the drag coefficient of a smooth sphere (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). For a table-tennis ball (Re ≈ 1 to 5 × 10⁴) it is 0.39 to 0.41 (0.392 at Re 1.6 × 10⁴ = 6 m/s, 0.406 at 5 × 10⁴, 0.426 at 1 × 10⁵; it drops to 0.17 in the drag crisis near Re ≈ 3 × 10⁵).",
+   "zh": "光滑球体阻力系数的经验公式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。对乒乓球(Re ≈ 1〜5 × 10⁴)为 0.39〜0.41(Re 1.6 × 10⁴ = 6 m/s 时为 0.392，5 × 10⁴ 时为 0.406，1 × 10⁵ 时为 0.426；在 Re ≈ 3 × 10⁵ 的阻力危机处降至 0.17)。",
+   "tw": "光滑球體阻力係數的經驗公式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。對桌球(Re ≈ 1〜5 × 10⁴)為 0.39〜0.41(Re 1.6 × 10⁴ = 6 m/s 時為 0.392，5 × 10⁴ 時為 0.406，1 × 10⁵ 時為 0.426；在 Re ≈ 3 × 10⁵ 的阻力危機處降至 0.17)。",
+   "ko": "매끄러운 구의 항력계수 경험식(Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). 탁구공(Re ≈ 1~5 × 10⁴)에서는 0.39~0.41(Re 1.6 × 10⁴ = 6 m/s에서 0.392, 5 × 10⁴에서 0.406, 1 × 10⁵에서 0.426. Re ≈ 3 × 10⁵의 항력 위기에서 0.17로 떨어짐).",
+   "de": "Empirische Formel für den Widerstandsbeiwert einer glatten Kugel (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). Für einen Tischtennisball (Re ≈ 1 bis 5 × 10⁴) ergibt sich 0.39 bis 0.41 (0.392 bei Re 1.6 × 10⁴ = 6 m/s, 0.406 bei 5 × 10⁴, 0.426 bei 1 × 10⁵; in der Widerstandskrise um Re ≈ 3 × 10⁵ fällt er auf 0.17).",
+   "hi": "smooth sphere के drag coefficient का empirical formula (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)। table-tennis ball (Re ≈ 1 से 5 × 10⁴) के लिए 0.39 से 0.41 (Re 1.6 × 10⁴ = 6 m/s पर 0.392, 5 × 10⁴ पर 0.406, 1 × 10⁵ पर 0.426; Re ≈ 3 × 10⁵ के drag crisis में यह 0.17 तक गिर जाता है)।"
   },
   "2d/tb_intrinsics_to_fullseye": {
    "fp": "6971196e664e",
@@ -33903,6 +33903,15 @@
    "ko": "NCC 모델(정규화 템플릿)을 준비한다.",
    "de": "Bereitet ein NCC-Modell vor (normierte Vorlage).",
    "hi": "NCC मॉडल (सामान्यीकृत टेम्पलेट) तैयार करता है।"
+  },
+  "drive/fit_spin_aero": {
+   "fp": "dceb251f9724",
+   "en": "**Reads drag and spin together** (:func:`fit_spin` with a free C_d): fits the drag + Magnus equations of motion to a trajectory (t_i, p_i) (an interval without bounces) with the 10 parameters (p₀, v₀, ω, C_d) by Levenberg–Marquardt (``fit_cl=True`` frees the lift coefficient scale κ too, for 11 parameters).",
+   "zh": "**同时读出阻力与旋转**(:func:`fit_spin` 的 C_d 自由版)：以 (p₀, v₀, ω, C_d) 的 10 个参数，用 Levenberg–Marquardt 将含阻力 + 马格努斯的运动方程拟合到轨迹 (t_i, p_i)(不含弹跳的区间)(``fit_cl=True`` 时连升力系数的比例 κ 也设为自由量，共 11 个参数)。",
+   "tw": "**同時讀出阻力與旋轉**(:func:`fit_spin` 的 C_d 自由版)：以 (p₀, v₀, ω, C_d) 的 10 個參數，用 Levenberg–Marquardt 將含阻力 + 馬格努斯的運動方程擬合到軌跡 (t_i, p_i)(不含彈跳的區間)(``fit_cl=True`` 時連升力係數的比例 κ 也設為自由量，共 11 個參數)。",
+   "ko": "**항력과 회전을 동시에 읽습니다**(:func:`fit_spin`의 C_d 자유 버전): 궤적 (t_i, p_i)(바운드를 포함하지 않는 구간)에 항력 + 마그누스의 운동 방정식을 (p₀, v₀, ω, C_d)의 10개 매개변수로 Levenberg–Marquardt로 피팅합니다(``fit_cl=True``이면 양력 계수의 배율 κ도 자유롭게 하여 11개 매개변수).",
+   "de": "**Liest Luftwiderstand und Spin gemeinsam**(:func:`fit_spin` mit freiem C_d): passt die Bewegungsgleichungen mit Luftwiderstand + Magnus an eine Trajektorie (t_i, p_i) (ein Intervall ohne Abpraller) mit den 10 Parametern (p₀, v₀, ω, C_d) per Levenberg–Marquardt an (``fit_cl=True`` gibt auch den Auftriebs-Skalenfaktor κ frei, also 11 Parameter).",
+   "hi": "**drag और spin को एक साथ पढ़ता है** (:func:`fit_spin` का C_d-मुक्त रूप): trajectory (t_i, p_i) (बिना उछाल वाला अंतराल) पर drag + Magnus के गति समीकरणों को (p₀, v₀, ω, C_d) के 10 parameters से Levenberg–Marquardt द्वारा fit करता है (``fit_cl=True`` से lift coefficient का scale κ भी मुक्त हो जाता है, कुल 11 parameters)।"
   }
  }
 }

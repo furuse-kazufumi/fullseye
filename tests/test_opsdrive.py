@@ -55,7 +55,8 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     # 717 → 741: 歩行と足場 24(walkterrain 12: terrain の既存 12 を台帳へ、slope_map は dem_slope に寄せて載せない・
     #   surface_normals は elevation_normals・traversability は elevation_traversability の名で・step_edges は cell の効かない台帳の入口 elevation_step_edges / locomotion 12: 既存 5 +
     #   線分の余裕・LIPM の捕捉点と捕捉の余裕・一歩の取り出し・足の滑り・足場の列・静的な接触力の LP、2026-11-06。numpy + scipy)
-    assert len(opsdrive.OPSDRIVE) == 741
+    # 741 → 742: 抗力と回転の同時推定 1(ballistics.fit_spin_aero: fit_spin の C_d 自由版、条件数・相関・共分散を返す、2026-11-11。numpy)
+    assert len(opsdrive.OPSDRIVE) == 742
     # 台帳の op は実装モジュールの __all__ に在る(逆は要らない: 補助関数は台帳に載せない)
     import drivecourse, driveworld, lidarsim, drivettc, rsssafety, driveterrain, ballistics, balltrack, ballworld, racket
     import roadjp
@@ -129,7 +130,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "drive"]
-    assert len(rows) == 741
+    assert len(rows) == 742
     assert {r[3] for r in rows} == {"table", "image2d", "signal", "matrix", "scalar", "any", "points", "rgba", "rgb", "voxel", "normalmap",
                                  "depth", "mask", "measurement", "keypoints"}
 

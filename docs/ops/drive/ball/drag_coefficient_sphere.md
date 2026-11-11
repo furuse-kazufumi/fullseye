@@ -5,7 +5,7 @@ category: ball
 in: signal
 out: signal
 gpu: なし
-examples: [gallery_drive_ballistics]
+examples: [gallery_drive_ballistics, poc_cd_spin_joint]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -20,7 +20,7 @@ version: 1.0.0  # fullseye lib version this note was generated for
 ## 使い方
 
 滑らかな球の抗力係数の経験式(Morrison 2013、Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8)
-+ 0.25(Re/1e6)/(1 + Re/1e6)。卓球の球(Re ≈ 1〜5 × 10⁴)で ≈ 0.4〜0.5。
++ 0.25(Re/1e6)/(1 + Re/1e6)。卓球の球(Re ≈ 1〜5 × 10⁴)で 0.39〜0.41(Re 1.6 × 10⁴ = 6 m/s で 0.392、5 × 10⁴ で 0.406、1 × 10⁵ で 0.426。Re ≈ 3 × 10⁵ の抗力危機で 0.17 へ落ちる)。
 
 空の入力(``reynolds`` が 0 要素)は ValueError。
 
@@ -33,6 +33,7 @@ version: 1.0.0  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery_drive_ballistics](../../../../examples/gallery_drive_ballistics.py) — `py -3.11 examples/gallery_drive_ballistics.py`
+- [poc_cd_spin_joint](../../../../examples/poc_cd_spin_joint.py) — `py -3.11 examples/poc_cd_spin_joint.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
