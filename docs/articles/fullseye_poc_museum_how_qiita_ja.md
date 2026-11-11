@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **109 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **110 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -4113,6 +4113,40 @@ py -3.11 examples/poc_3d_sensor_modalities.py
 この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_3d_sensor_modalities)
 
 使用 op(ノートへ): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`binocular_disparity_ms`](https://furuse.work/ops/mv/stereo/binocular_disparity_ms.html) · [`cast_shadow`](https://furuse.work/ops/3d/render/cast_shadow.html) · [`form_factors_2d`](https://furuse.work/ops/optics/light_transport/form_factors_2d.html) · [`groove_profile`](https://furuse.work/ops/optics/light_transport/groove_profile.html) · [`integrate_normals`](https://furuse.work/ops/3d/photometric/integrate_normals.html) · [`itof_capture`](https://furuse.work/ops/optics/itof/itof_capture.html) · [`itof_flying_pixel_mask`](https://furuse.work/ops/optics/itof/itof_flying_pixel_mask.html) · [`itof_noise_budget`](https://furuse.work/ops/optics/itof/itof_noise_budget.html) · [`itof_phase_amplitude`](https://furuse.work/ops/optics/itof/itof_phase_amplitude.html) · [`laser_line_center_centroid`](https://furuse.work/ops/optics/light_section/laser_line_center_centroid.html) · [`light_section_speckle_floor`](https://furuse.work/ops/optics/light_section/light_section_speckle_floor.html) · [`photometric_stereo_robust`](https://furuse.work/ops/specular/photometric/photometric_stereo_robust.html) · [`plane_flatness_error`](https://furuse.work/ops/acceptance/evaluate/plane_flatness_error.html) · [`sphere_probing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_probing_error.html) · [`sphere_spacing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_spacing_error.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
+
+## No.2026.314 —— 実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせる前より誤差は 0.42 倍に減ったが、前半で選んだ設定は後半に移らず、雑音は距離の 2 乗でなく距離に近かった(TUM RGB-D)
+
+机の上を撮った公開データの深度画像で、隣り合う画像の位置合わせをモーションキャプチャの真値と比べた。合わせないときの 0.42 倍まで並進の誤差は減ったが、前半で選んだ設定は後半の最良ではなかった。小さな窓の平面の残差は距離とともに増えたが、距離の二乗の形にはならなかった。
+
+[![実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせる前より誤差は 0.42 倍に減ったが、前半で選んだ設定は後半に移らず、雑音は距離の 2 乗でなく距離に近かった(TUM RGB-D)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles.png)
+
+*↑ **実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせる前より誤差は 0.42 倍に減ったが、前半で選んだ設定は後半に移らず、雑音は距離の 2 乗でなく距離に近かった(TUM RGB-D)** ―― 同梱 32 枚のうち 5 枚目の深度[m](黒 = 欠測)と、24×24 画素の窓ごとの平面当てはめ残差[mm](黒 = 窓なし)。窓は欠測・遮蔽の縁・急な傾きを外した所だけ。*
+
+[![カメラ位置の軌跡を真値の主軸 2 本へ投影した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png)
+
+*↑ 測定の図 ―― カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。*
+
+[![破線は「合わせない」の誤差 = 真値の 1 組あたりの動き(約 60 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps.png)
+
+*↑ 破線は「合わせない」の誤差 = 真値の 1 組あたりの動き(約 60 mm)。*
+
+[![点は 24×24 画素の窓の残差の中央値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z.png)
+
+*↑ 点は 24×24 画素の窓の残差の中央値。*
+
+[![結果を見てから置いた門を含む(docstring の限界を参照)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/05_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/05_verdicts.png)
+
+*↑ 結果を見てから置いた門を含む(docstring の限界を参照)。*
+
+```
+py -3.11 examples/poc_real_tum_rgbd_slam.py
+```
+
+ソース: [examples/poc_real_tum_rgbd_slam.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tum_rgbd_slam.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam)
+
+使用 op(ノートへ): [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`euclidean_cluster`](https://furuse.work/ops/3d/segment/euclidean_cluster.html) · [`fit_plane_3d`](https://furuse.work/ops/3d/geometry/fit_plane_3d.html) · [`normals_from_depth`](https://furuse.work/ops/3d/range_image/normals_from_depth.html) · [`occlusion_edges`](https://furuse.work/ops/3d/range_image/occlusion_edges.html) · [`plane_segmentation`](https://furuse.work/ops/3d/segment/plane_segmentation.html)
 
 
 

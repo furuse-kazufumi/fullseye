@@ -86,7 +86,7 @@
 | [目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画)](capabilities/pictures-that-carry-their-own-truth.md) | Pictures that carry their own ground truth (illusions, endless drawing, seamless loops) | 描く | `verified-synthetic` | 15/16 | `poc_illusions_and_perpetual_drawing` synthetic → tests/test_poc_scripts_run.py |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks) | 光と色 | `verified-synthetic` | 6/6 | `poc_pixel_shift` synthetic → tests/test_poc_scripts_run.py |
 | [PL 像で細い溝が見えなくなる理由を、キャリア拡散の PSF と欠陥の種類で切り分ける(Si ウェハ・太陽電池の PL/EL 検査)](capabilities/pl-carrier-diffusion-visibility.md) | Why a thin groove disappears in a PL image — the carrier-diffusion PSF and the kind of defect decide the visibility (PL/EL inspection of wafers and solar cells) | 見つける | `verified-synthetic` | 4/4 | `poc_si_wafer_pl_defect_visibility` real(**門の実行では実データを読まない**) → tests/test_poc_scripts_run.py |
-| [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | Flatness of a surface from a 3-D point cloud | 測る | `verified-synthetic` | 4/4 | `geometry_metrology` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_bump_coplanarity` synthetic → tests/test_poc_scripts_run.py<br>`poc_scan_to_bim_asbuilt` synthetic → tests/test_poc_scripts_run.py |
+| [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | Flatness of a surface from a 3-D point cloud | 測る | `validated-public-real-data` | 4/4 | `geometry_metrology` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_bump_coplanarity` synthetic → tests/test_poc_scripts_run.py<br>`poc_scan_to_bim_asbuilt` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_tum_rgbd_slam` real(門の実行で実データを読む) → tests/test_poc_scripts_run.py |
 | [処方から撮るプレノプティックカメラ](capabilities/plenoptic-camera.md) | Prescription-based plenoptic camera | 描く | `verified-synthetic` | 6/6 | `poc_plenoptic_camera` synthetic → tests/test_poc_scripts_run.py |
 | [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md) | Draw a point cloud as a colour picture | 見せる | `verified-synthetic` | 3/3 | `points_render_basics` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_flybrain_pointcloud` real(**門の実行では実データを読まない**) → tests/test_poc_scripts_run.py<br>`poc_real_tless_6dof` real(**門の実行では実データを読まない**) → tests/test_poc_scripts_run.py |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | Find small point-like targets and locate them below the pixel | 見つける | `verified-synthetic` | 4/4 | `poc_search_sweep_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_astro_photometry` synthetic → tests/test_poc_scripts_run.py |
@@ -139,10 +139,10 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 486 |
-| `tests/test_poc_scripts_run.py` が走らせる | 309 |
+| 2-D 台帳の例 | 487 |
+| `tests/test_poc_scripts_run.py` が走らせる | 310 |
 | `tests/test_example_scripts_run.py` が走らせる | 177 |
-| ディスク上の例のスクリプト(`examples/*.py`) | 494 |
+| ディスク上の例のスクリプト(`examples/*.py`) | 495 |
 | うち 2-D 台帳の外(`examples2d.EXCLUDED`) | 8 |
 | 台帳の外だが、名指しの試験が走らせる | 4 |
 | **どの門も走らせていない** | **4** |

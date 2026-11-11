@@ -1,0 +1,3 @@
+# TUM RGB-D files are pinned byte-for-byte by SHA-256 (examples/poc_real_tum_rgbd_slam.py).
+# Never convert line endings or recompress the PNGs.
+* -text

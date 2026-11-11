@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(486 例)
+### 2-D 图像/信号/几何(487 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -363,6 +363,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_template_tracking` — op: `axes_frame`, `axes_transform`, `ncc_locate`, `plot_series`, `shape_locate`, `text_box`, `ticks` `py -3.11 examples/poc_template_tracking.py`
 - `poc_change_detection_misreg` — op: `affine_trans_image`, `erf`, `histogram_match`, `opening_circle`, `piv_cross_correlate`, `piv_outlier_mask`, `procrustes_fit`, `threshold` `py -3.11 examples/poc_change_detection_misreg.py`
 - `poc_real_tless_6dof` — op: `axes_frame`, `axes_transform`, `data_to_pixel`, `ellipse`, `grid_lines`, `legend_box`, `plot_series`, `rmse`, `text_box`, `ticks` `py -3.11 examples/poc_real_tless_6dof.py`
+- `poc_real_tum_rgbd_slam` — op: `rms` `py -3.11 examples/poc_real_tum_rgbd_slam.py`
 - `poc_print_registration` — op: `fly_hex_lattice`, `fly_vogel_lattice`, `frame_align`, `halftone_moire_period`, `halftone_screen`, `lattice_moire_peak`, `peak_subbin`, `piv_cross_correlate`, `rms` `py -3.11 examples/poc_print_registration.py`
 - `poc_part_locate_features` — op: `features_accuracy_table`, `features_match`, `features_orb`, `features_sift`, `identity`, `ransac_homography` `py -3.11 examples/poc_part_locate_features.py`
 - `poc_multimodal_mi_registration` — op: `register_ecc`, `register_image`, `register_mi` `py -3.11 examples/poc_multimodal_mi_registration.py`
@@ -5332,7 +5333,7 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `point_spectrum` `positions → table` GPU: 无 — **事件位置**的周期图——缺陷、冲击、计数、到达。 · 示例: `poc_web_roll_periodicity`, `type_connectivity_tour`
 - `quantize` `signal → signal` GPU: 无 — 给出误差模型的标量量化器(可选抖动)。 · 示例: `poc_cold_chain_excursion`
 - `resample` `signal → signal` GPU: 有(许可列表) — 把信号重采样到 *new_rate*(傅里叶法)。 · 示例: `poc_driving_school`
-- `rms` `signal → measurement` GPU: 无 — RMS 电平。对整个信号为标量；给定 *frame* 时为逐帧数组(随时间变化的振动/能量包络)。 · 示例: `lens_design_demo`, `lightfield_depth`, `poc_battery_electrode_breathing`, `poc_bilateral_asymmetry`, `poc_bump_coplanarity`, `poc_cad_scan_deviation`, `poc_calipers_under_illusion`, `poc_camera_calibration`, `poc_dimensional_inspection`, `poc_exoplanet_transit`, `poc_fabric_defect`, `poc_focus_stacking`, `poc_fourier_ptychography`, `poc_lens_solves_afocal`, `poc_panorama_drift`, `poc_print_registration`, `poc_river_surface_velocity`, `poc_screw_thread_metrology`, `poc_shape_from_polarization`, `poc_solar_limb_darkening`, `poc_strain_history`, `poc_surface_roughness`, `poc_symmetry_restoration`, `poc_table_tennis_bounce`, `poc_tacscalib_sphere_lut`, `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`, `poc_thermal_radiometry`, `poc_weld_bead_profile`, `profile_shape_inspection`
+- `rms` `signal → measurement` GPU: 无 — RMS 电平。对整个信号为标量；给定 *frame* 时为逐帧数组(随时间变化的振动/能量包络)。 · 示例: `lens_design_demo`, `lightfield_depth`, `poc_battery_electrode_breathing`, `poc_bilateral_asymmetry`, `poc_bump_coplanarity`, `poc_cad_scan_deviation`, `poc_calipers_under_illusion`, `poc_camera_calibration`, `poc_dimensional_inspection`, `poc_exoplanet_transit`, `poc_fabric_defect`, `poc_focus_stacking`, `poc_fourier_ptychography`, `poc_lens_solves_afocal`, `poc_panorama_drift`, `poc_print_registration`, `poc_real_tum_rgbd_slam`, `poc_river_surface_velocity`, `poc_screw_thread_metrology`, `poc_shape_from_polarization`, `poc_solar_limb_darkening`, `poc_strain_history`, `poc_surface_roughness`, `poc_symmetry_restoration`, `poc_table_tennis_bounce`, `poc_tacscalib_sphere_lut`, `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`, `poc_thermal_radiometry`, `poc_weld_bead_profile`, `profile_shape_inspection`
 - `signal_features` `signal → table` GPU: 无 — 用于异常检测的紧凑声学/振动特征向量：``rms``、``peak``、``crest_factor``、``zcr``、``spectral_centroid``(Hz)、``peak_freq``(Hz)、``bandwidth``(Hz)。全部有限——含 NaN / Inf 的样本会抛出 ``ValueError``，而不是产生 NaN 特征(自 2026-10-12 起空信号亦然；此前返回零)。 · 示例: `gallery_oned_audio_funct`
 - `spectrogram` `signal → image2d` GPU: 无 — STFT 幅度谱图 -> ``(freqs, times, S)``，``S`` 的形状为 ``(n_freqs, n_frames)``。加汉宁窗；*hop* 默认为 ``win//2``。 · 示例: `acoustic_condition_monitoring`, `poc_emva1288_sensor`, `poc_gw_detector_pseudo_simulation`
 - `spectrum` `signal → pairs` GPU: 有(许可列表) — 原始单边幅度谱 -> ``(freqs, magnitude)``(``np.fft.rfft``)。 · 示例: `acoustic_condition_monitoring`, `anim3d_lens_aberrations`, `poc_bearing_diagnosis`, `poc_gear_tooth_metrology`, `poc_machine_condition_fusion`, `poc_pipe_wall_loss`, `poc_recycling_sorting`, `poc_thin_film_reflectometry`, `poc_web_roll_periodicity`, `type_connectivity_tour`

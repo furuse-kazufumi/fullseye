@@ -9982,6 +9982,40 @@ This run produced **7 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`binocular_disparity_ms`](https://furuse.work/ops/mv/stereo/binocular_disparity_ms.html) · [`cast_shadow`](https://furuse.work/ops/3d/render/cast_shadow.html) · [`form_factors_2d`](https://furuse.work/ops/optics/light_transport/form_factors_2d.html) · [`groove_profile`](https://furuse.work/ops/optics/light_transport/groove_profile.html) · [`integrate_normals`](https://furuse.work/ops/3d/photometric/integrate_normals.html) · [`itof_capture`](https://furuse.work/ops/optics/itof/itof_capture.html) · [`itof_flying_pixel_mask`](https://furuse.work/ops/optics/itof/itof_flying_pixel_mask.html) · [`itof_noise_budget`](https://furuse.work/ops/optics/itof/itof_noise_budget.html) · [`itof_phase_amplitude`](https://furuse.work/ops/optics/itof/itof_phase_amplitude.html) · [`laser_line_center_centroid`](https://furuse.work/ops/optics/light_section/laser_line_center_centroid.html) · [`light_section_speckle_floor`](https://furuse.work/ops/optics/light_section/light_section_speckle_floor.html) · [`photometric_stereo_robust`](https://furuse.work/ops/specular/photometric/photometric_stereo_robust.html) · [`plane_flatness_error`](https://furuse.work/ops/acceptance/evaluate/plane_flatness_error.html) · [`sphere_probing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_probing_error.html) · [`sphere_spacing_error`](https://furuse.work/ops/acceptance/evaluate/sphere_spacing_error.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 
+## No.2026.314 —— Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Error Fell to 0.42 of Not Aligning, but the Setting Picked on the First Half Did Not Transfer, and Noise Tracked Distance Rather Than Its Square (TUM RGB-D)
+
+On public depth images of a desk, frame-to-frame alignment was checked against motion-capture truth. Translation error dropped to 0.42 times that of no alignment, yet the knob tuned on one half failed on the other. Small-window plane residuals grew with distance, but less steeply than the noise formula predicts.
+
+[![Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Error Fell to 0.42 of Not Aligning, but the Setting Picked on the First Half Did Not Transfer, and Noise Tracked Distance Rather Than Its Square (TUM RGB-D)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles.png)
+
+*↑ **Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Error Fell to 0.42 of Not Aligning, but the Setting Picked on the First Half Did Not Transfer, and Noise Tracked Distance Rather Than Its Square (TUM RGB-D)** ―― Depth in metres of the fifth of the 32 bundled frames (black = missing) and the plane-fit residual in mm per 24 x 24 pixel window (black = no window). Windows exclude missing pixels, occlusion edges and steep slopes.*
+
+[![カメラ位置の軌跡を真値の主軸 2 本へ投影した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png)
+
+*↑ The measurement ―― カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![破線は「合わせない」の誤差 = 真値の 1 組あたりの動き(約 60 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps.png)
+
+*↑ 破線は「合わせない」の誤差 = 真値の 1 組あたりの動き(約 60 mm)。*
+
+[![点は 24×24 画素の窓の残差の中央値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z.png)
+
+*↑ 点は 24×24 画素の窓の残差の中央値。*
+
+[![結果を見てから置いた門を含む(docstring の限界を参照)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/05_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/05_verdicts.png)
+
+*↑ 結果を見てから置いた門を含む(docstring の限界を参照)。*
+
+```
+py -3.11 examples/poc_real_tum_rgbd_slam.py
+```
+
+Source: [examples/poc_real_tum_rgbd_slam.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tum_rgbd_slam.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam)
+
+Ops used (notes): [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`euclidean_cluster`](https://furuse.work/ops/3d/segment/euclidean_cluster.html) · [`fit_plane_3d`](https://furuse.work/ops/3d/geometry/fit_plane_3d.html) · [`normals_from_depth`](https://furuse.work/ops/3d/range_image/normals_from_depth.html) · [`occlusion_edges`](https://furuse.work/ops/3d/range_image/occlusion_edges.html) · [`plane_segmentation`](https://furuse.work/ops/3d/segment/plane_segmentation.html)
+
 ### The Instrument Wing — From Raw Output to Instrument-Specific Failure
 
 It is easy to borrow an instrument's name and produce a convenient image. The 33 exhibits in this room instead build raw output from photons, electrons, interference, heat diffusion, scanning and ray tracing, then carry that output through to the quantity normally reported.

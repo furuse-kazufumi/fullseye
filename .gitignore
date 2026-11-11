@@ -29,6 +29,8 @@ data/*
 !data/itokawa_shape/
 # 3-D building models of the ViEW2026 venue from MLIT Project PLATEAU (PDL1.0 / CC BY 4.0 compatible, a small derived extract; source and changes in its README.md).
 !data/plateau_yokohama/
+# 32 depth frames and the motion-capture trajectory of the TUM RGB-D benchmark (freiburg1_xyz, CC BY 4.0, byte-for-byte as distributed; source, licence and SHA-256 in its README.md).
+!data/tum_rgbd_fr1_xyz/
 
 # packaging build artifacts
 *.egg-info/

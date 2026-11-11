@@ -1,0 +1,57 @@
+[
+ {
+  "file": "01_depth_and_tiles.png",
+  "name": "depth_and_tiles",
+  "caption": "TUM RGB-D fr1/xyz の深度(Kinect、机の上)。右は窓ごとの当てはめ残差(深度方向)。窓は欠測・縁・急な傾きを外した平らに近い所だけ。距離ごとの中央値は別の図。",
+  "shape": [
+   573,
+   1534,
+   3
+  ]
+ },
+ {
+  "file": "02_trajectory.png",
+  "name": "trajectory",
+  "caption": "カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "TUM RGB-D benchmark, freiburg1_xyz (Sturm, Engelhard, Endres, Burgard, Cremers, IROS 2012), CC BY 4.0, https://cvg.cit.tum.de/data/datasets/rgbd-dataset; 5 枚おき 32 枚の深度のみ、画像は無改変"
+ },
+ {
+  "file": "03_rpe_steps.png",
+  "name": "rpe_steps",
+  "caption": "破線は「合わせない」の誤差 = 真値の 1 組あたりの動き(約 60 mm)。ICP は大半の組で小さいが、動きが大きい組で外れることがある。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "TUM RGB-D benchmark, freiburg1_xyz (Sturm, Engelhard, Endres, Burgard, Cremers, IROS 2012), CC BY 4.0, https://cvg.cit.tum.de/data/datasets/rgbd-dataset; 5 枚おき 32 枚の深度のみ、画像は無改変"
+ },
+ {
+  "file": "04_sigma_vs_z.png",
+  "name": "sigma_vs_z",
+  "caption": "点は 24×24 画素の窓の残差の中央値。破線は Khoshelham & Elberink 2012 の式(7)の形(距離の 2 乗)を1 m 付近の点に合わせたもの(係数は実測に合わせたので、論文の係数との比較ではない)。",
+  "shape": [
+   720,
+   1120,
+   3
+  ],
+  "source": "TUM RGB-D benchmark, freiburg1_xyz (Sturm, Engelhard, Endres, Burgard, Cremers, IROS 2012), CC BY 4.0, https://cvg.cit.tum.de/data/datasets/rgbd-dataset; 5 枚おき 32 枚の深度のみ、画像は無改変"
+ },
+ {
+  "file": "05_verdicts.png",
+  "name": "verdicts",
+  "caption": "結果を見てから置いた門を含む(docstring の限界を参照)。",
+  "shape": [
+   880,
+   1345,
+   3
+  ],
+  "csv": "05_verdicts.csv",
+  "tsv": "05_verdicts.tsv"
+ }
+]

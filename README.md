@@ -104,11 +104,11 @@ The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebu
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 92 |
-| `validated-public-real-data` | an example on public measured data runs in a gate | 9 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 91 |
+| `validated-public-real-data` | an example on public measured data runs in a gate | 10 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 494 examples, 490 are actually run by a gate.
+Of 495 examples, 491 are actually run by a gate.
 
 ### Operator counts by version
 
