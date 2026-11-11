@@ -2752,7 +2752,7 @@
             1.2689
           ],
           "max_color_mad": 1.2689,
-          "source_sha256": "d00f58c3e935123c27572edd5f6dee28684111767f80cbd017a3991d47d3392e"
+          "source_sha256": "05c196cb5410c6bfa0ce2581aeb66fc7109504a1735dbd03e38e52ded6b428fd"
         },
         "en": {
           "path": "articles/assets/poc/poc_photoelasticity/story.en.gif",
@@ -2809,7 +2809,7 @@
             1.2689
           ],
           "max_color_mad": 1.2689,
-          "source_sha256": "739baaad957d840d66dd80349f943f752234335d976991c91e1156b1d4e0b0b3"
+          "source_sha256": "2a5315e3a6f1d5a93cc63c33f75fb39ec9a4e69b0b969310c8189357c6b6cc82"
         }
       },
       "thumbnail": {

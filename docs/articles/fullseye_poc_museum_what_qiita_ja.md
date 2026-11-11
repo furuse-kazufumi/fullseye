@@ -2140,13 +2140,13 @@ py -3.11 examples/poc_particle_sizing.py
 
 [![光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 
-*↑ **光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性** ―― 円板圧縮の閉形式応力場(中心 4.2441 MPa、縞次数 2.380)を光弾性の族の op で偏光像にし、縞から応力へ戻す図。偏光系は Mueller 行列(偏光変化を表す4×4行列)の素子を並べた鎖で検算し、教科書式と 125 通りで最大差 2.2e-16。縞次数が 0.5 を超える 84.2 % の画素で位相が巻く。巻き戻した後に外れる 2.98 % の画素の 93.7 % は、巻きではなく (δ,θ)↔(-δ,θ+90°) の符号の二義性で外れていて、符号が正しければ外れは 0.13 %(荷重点のそばの縞が細かい所だけ)。低変調の画素をマスクで外すと、一致率は 97.0 % から 81.9 % に下がる。*
+*↑ **光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性** ―― 円板圧縮の閉形式応力場(中心 4.2441 MPa、縞次数 2.380)を光弾性の族の op で偏光像にし、縞から応力へ戻す図。偏光系は Mueller 行列(偏光変化を表す4×4行列)の素子を並べた鎖で検算し、教科書式と 125 通りで最大差 2.2e-16。縞次数が 0.5 を超える 84.2 % の画素で位相が巻く。巻き戻した後に外れる 2.98 % の画素の 93.7 % は、巻きではなく (δ,θ)↔(-δ,θ+90°) の符号の二義性で外れていて、符号が正しければ外れは 0.13 %(測定の符号だけ直すと 0.22 %)で、荷重点のそばの縞が細かい所だけ。符号が反転した入力では、低変調の画素をマスクで外しても一致率は上がらず 97.0 % から 81.9 % に下がる(符号が正しい入力では下がらず、機構は未解明)。*
 
 用語: Mueller matrix — 偏光状態を表すストークスベクトルに作用し、光学素子や試料による偏光変化を記述する4×4実行列。
 
 [![右下が外れの場所。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap.png)
 
-*↑ 測定の図 ―― 右下が外れの場所。ほとんどが 4 節の符号の二義性で、符号が正しければ外すのは荷重点のそばの縞が細かい所だけ。低変調の帯(左上の暗い帯)は外れの原因ではない。*
+*↑ 測定の図 ―― 右下が外れの場所。ほとんどが 4 節の符号の二義性で、符号が正しければ外すのは荷重点のそばの縞が細かい所だけ。低変調の帯(右上の暗い帯)は外れの原因ではない。*
 
 [![動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)
 

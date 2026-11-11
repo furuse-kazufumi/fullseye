@@ -10,7 +10,8 @@
 位相が巻き、**巻きを解く手順を持たない限り応力は多価**になる。巻き戻した後に
 外れる画素(約 3 %)は、**ほとんどが巻きではなく (δ,θ) ↔ (-δ,θ+90°) の符号の
 二義性**で外れている。符号が正しければ巻き戻しが外すのは荷重点のそばの縞が細かい
-所だけで、低変調の画素をマスクで外すと、かえって悪くなる」。
+所だけ。符号が反転した入力では、低変調の画素をマスクで外しても一致率は上がらず
+下がる(機構は未解明)」。
 
 【グラウンドトゥルース(自分で仕込んだ真値)】
 円板を直径方向に圧縮したときの平面応力場には**閉形式**がある(Hondros / Frocht)。
@@ -282,9 +283,9 @@ def section4_phase_shift(dsig, theta, delta, m):
     print("  → ★残りの %.1f %% は**符号が反転**している。原因は光弾性で有名な"
           % (100 - agree))
     print("     (δ, θ) ↔ (-δ, θ+90°) の二義性 —— 出てくる Stokes が同じなので、")
-    print("     **1 波長の 1 回の測定では原理的に分けられない**。等傾角の")
-    print("     復元も 4θ からなので θ は π/2 の周期しか決まらず、その飛びが")
-    print("     そのまま δ の符号の飛びになる。")
+    print("     **画素単独では(1 波長の 1 回の測定では)原理的に分けられない**。")
+    print("     等傾角の復元も 4θ からなので θ は π/2 の周期しか決まらず、その飛びが")
+    print("     そのまま δ の符号の飛びになる(空間のつながりを使えば別で、5 節で測る)。")
     # 符号を捨てた |δ| ∈ [0, π] は `photoelastic_phase_estimate`(6 強度)がそのまま返す。
     est = pe.photoelastic_phase_estimate(frames, "stokes6")
     fold_gap = float(np.max(np.abs(est["delta_rad"] - np.abs(d_hat))[IN_DISC]))
@@ -294,7 +295,8 @@ def section4_phase_shift(dsig, theta, delta, m):
     print("     op の |δ| と上の符号つき推定の絶対値の差: 最大 %.1e rad" % fold_gap)
     # ★所見を固定する。
     #   (1) 一致率は 95 % を超えるが、**100 % にはならない**。残りは (δ,θ) ↔ (-δ,θ+90°)
-    #       の二義性で符号が反転した画素で、1 波長 1 回の測定では原理的に消せない。
+    #       の二義性で符号が反転した画素で、画素単独では(1 波長 1 回の測定では)原理的に消せない。
+    #       空間のつながりを使えば別(5 節で測る)。
     #       「ほぼ合う」でも「完全に合う」でもない、という所見をそのまま固定する。
     assert 95.0 < agree < 99.5, agree
     #   (2) 符号を捨てて |δ| だけ使えば、巻きの無い領域では機械精度で戻る
@@ -308,6 +310,9 @@ def section4_phase_shift(dsig, theta, delta, m):
     flipped = IN_DISC & (e_flip < e_same) & (e_same > 1e-6)
     print("  符号が反転した画素(δ → -δ の方が近い): %d 画素(評価域の %.2f %%)"
           % (flipped.sum(), 100 * flipped.sum() / IN_DISC.sum()))
+    print("  ※上の 2.7 %% は『誤差 0.05 rad 以上の画素が全画素に占める割合』、この %.2f %% は"
+          % (100 * flipped.sum() / IN_DISC.sum()))
+    print("    『δ → -δ のほうが近い画素が評価域に占める割合』。定義が違うので数字が違う。")
     return d_hat, th_hat, s1, s2, s3, abs_err, agree, flipped
 
 
@@ -354,6 +359,7 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3, flipped):
         off = float(np.median((unwrapped - delta)[valid]))
         ok = np.abs(unwrapped - off - delta) < 0.5 * np.pi
         rates[label] = 100 * float(np.mean(ok[valid]))
+        un_last, off_last = unwrapped, off       # 最後 = 標本化不足 + 低変調を外した版
         if mask is None:
             bad_plain = IN_DISC & ~ok          # マスク無しの巻き戻しの外れ
         print("  %-34s %11.1f %%  (評価画素 %d)" % (label, rates[label], valid.sum()))
@@ -366,9 +372,10 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3, flipped):
         (float(modulation[IN_DISC].min()), float(modulation[IN_DISC].max()))
     #   (2) ★★実測は「マスクを渡すと直る」という素朴な期待の**逆**を言っている:
     #       マスク無し 97.0 % / 標本化不足を外して 97.1 % / **低変調まで外すと 81.9 %**。
-    #       低変調の画素を抜くと領域が分断され、skimage の unwrap が島ごとに
-    #       別の 2π オフセットを選ぶため。低変調の画素は外れの原因ではないので、
-    #       マスクで外す処方は**効かないどころか逆効果**。実測のほうを固定しておく。
+    #       低変調の画素は外れの原因ではなく、符号が反転した入力に対しては、
+    #       低変調を外しても一致率は上がらず下がる。符号が正しい入力に同じマスクを
+    #       かけると下がらない(下の測定)。領域の分断(島ごとの別の 2π)では
+    #       ないことも実測で確かめた。機構は未解明。実測のほうを固定しておく。
     assert rates["そのまま(マスク無し)"] > 90.0, rates
     assert rates["標本化不足 + 低変調を外す"] < 90.0, rates
 
@@ -392,6 +399,35 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3, flipped):
           "N %.1f〜%.1f、うち 1 縞 2 画素未満 %.0f %%"
           % (n_bt, rate_bt, y_over_r[bad_true].min(), y_over_r[bad_true].max(),
              n_true[bad_true].min(), n_true[bad_true].max(), 100 * al_bt))
+    # (b') 測定した d_hat の符号だけを、反転画素で直して巻き戻す(入力が理想でない版)。
+    d_fix = np.where(flipped, -d_hat, d_hat)
+    un_f = np.asarray(fs.ledger.unwrap_phase_2d(np.mod(d_fix + np.pi, 2 * np.pi) - np.pi))
+    off_f = float(np.median((un_f - delta)[IN_DISC]))
+    bad_fix = IN_DISC & ~(np.abs(un_f - off_f - delta) < 0.5 * np.pi)
+    rate_fix = 100.0 * int(bad_fix.sum()) / n_in
+    print("  (b') 測定の符号だけ直して巻き戻した外れ: %d 画素(%.2f %%)" % (bad_fix.sum(), rate_fix))
+    # (e) 同じマスクを『符号が正しい入力』にかける。マスク後の連結成分も数える
+    #     (分断されているか、島ごとに 2π がずれているか)。
+    from scipy import ndimage as ndi
+    rates_true = []
+    for mk in (None, ~aliased, ~aliased & ~lowmod):
+        kw_t = {} if mk is None else {"mask": mk}
+        un_m = np.asarray(fs.ledger.unwrap_phase_2d(wrapped_true, **kw_t))
+        v_m = IN_DISC & np.isfinite(un_m)
+        off_m = float(np.median((un_m - delta)[v_m]))
+        rates_true.append(100 * float(np.mean((np.abs(un_m - off_m - delta) < 0.5 * np.pi)[v_m])))
+    lab, n_lab = ndi.label(~aliased & ~lowmod & IN_DISC)
+    sizes = np.bincount(lab.ravel())[1:]
+    main_i = int(np.argmax(sizes)) + 1
+    main_frac = float(sizes.max()) / float(sizes.sum())
+    main_off = (float(np.median((un_last - delta)[lab == main_i])) - off_last) / (2 * np.pi)
+    small = np.sort(sizes)[:-1]
+    print("  (e) 同じ 3 種のマスクを符号が正しい入力にかけた一致率: %.1f / %.1f / %.1f %%"
+          % tuple(rates_true))
+    print("      マスク後の連結成分 %d 個(最大 %d 画素 = %.2f %%、残りは各 %d〜%d 画素)、"
+          "最大成分の 2π のずれ %.2f"
+          % (n_lab, sizes.max(), 100 * main_frac,
+             small.min() if small.size else 0, small.max() if small.size else 0, main_off))
     n_min = float(n_true[IN_DISC].min())
     i_min = int(np.argmin(np.where(IN_DISC, n_true, np.inf)))
     x_min = float(_F["disc"]["x"].ravel()[i_min]) / (R_MM * 1e-3)
@@ -400,8 +436,10 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3, flipped):
     dev = np.abs(2 * n_true[lowmod] - np.round(2 * n_true[lowmod])) / 2.0
     dev_max = float(dev.max())
     n_low_bad = int((bad_plain & lowmod).sum())
-    print("  (d) 低変調の画素 %d: N と最寄りの 0.5 の倍数との差は最大 %.4f。外れとの重なりは %d 画素。"
-          % (lowmod.sum(), dev_max, n_low_bad))
+    chance = n_bad * lowmod.sum() / n_in           # 無作為に外れるなら、重なる画素数
+    print("  (d) 低変調の画素 %d: N と最寄りの 0.5 の倍数との差は最大 %.4f。外れとの重なりは %d 画素"
+          "(外れの %.1f %%、無作為なら約 %.0f 画素)。"
+          % (lowmod.sum(), dev_max, n_low_bad, 100 * n_low_bad / n_bad, chance))
     # ★所見を固定する(いずれも測った事実。門は動かさない)。
     #   (a) 外れの大半は 4 節の符号の反転と同じ画素。
     assert overlap > 90.0, overlap
@@ -411,7 +449,16 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3, flipped):
     assert n_true[bad_true].min() > 3.0 and al_bt > 0.8, (n_true[bad_true].min(), al_bt)
     #   (c) 評価域に等方点は無い(縞次数は 0 に届かない)。
     assert n_min > 0.1, n_min
+    #   (e) 符号が正しい入力に同じマスクをかけても下がらず、マスク後の領域は
+    #       ほぼ 1 つの島(分断ではない)で、その島の 2π のずれは 0。
+    assert min(rates_true) > 99.0, rates_true
+    assert main_frac > 0.99 and abs(main_off) < 0.5, (main_frac, main_off)
+    #   (b') 測定の符号だけ直しても外れは 0.5 % 未満。
+    assert rate_fix < 0.5, rate_fix
     #   (d) 低変調の帯は N が 0.5 の倍数(δ が π の整数倍)の帯で、外れの主因ではない。
+    #       ※次の assert は**恒真**: 低変調を |sinδ| < 0.05 で選んでいるので、N と
+    #       0.5 の倍数との差は必ず asin(0.05)/2π = 0.00796 以内になる(定義の確認であって所見ではない)。
+    #       所見として効くのは、その次の「重なりが外れの 1 割未満」のほう。
     assert dev_max < 0.01, dev_max
     assert n_low_bad < 0.1 * n_bad, (n_low_bad, n_bad)
 
@@ -431,16 +478,19 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3, flipped):
                    vrange=[None, None, None, (0.0, 2.0)],
                    caption="右下が外れの場所。ほとんどが 4 節の符号の二義性で、"
                            "符号が正しければ外すのは荷重点のそばの縞が細かい所だけ。"
-                           "低変調の帯(左上の暗い帯)は外れの原因ではない。")
+                           "低変調の帯(右上の暗い帯)は外れの原因ではない。")
     print("  → ★外れの %.1f %% は 4 節の符号の反転と同じ画素。符号が正しければ" % overlap)
-    print("     巻き戻しの外れは %.2f %% で、荷重点のそばの縞が細かい所(標本化不足)だけ。" % rate_bt)
-    print("  → ★★低変調の画素は外れの原因ではなく、マスクで外すと悪くなる:")
+    print("     巻き戻しの外れは %.2f %%(測定の符号だけ直しても %.2f %%)で、" % (rate_bt, rate_fix))
+    print("     荷重点のそばの縞が細かい所(標本化不足)だけ。")
+    print("  → ★★符号が反転した入力に対しては、低変調を外しても一致率は上がらず下がる:")
     print("     マスク無し %.1f %% / 標本化不足だけ外して %.1f %% / 低変調まで外すと %.1f %%。"
           % (rates["そのまま(マスク無し)"], rates["標本化不足を外す"],
              rates["標本化不足 + 低変調を外す"]))
-    print("     外すほど領域が分断され、`unwrap_phase_2d` が島ごとに別の 2π を選ぶため。")
-    print("     信頼できない画素は「捨てる」のでなく「重みを下げて繋いだまま解く」")
-    print("     必要がある(重みつきアンラップ。いまの薄いラッパには口が無い)。")
+    print("     領域が分断されて島ごとに別の 2π、という説明は実測で否定された(上の (e):")
+    print("     最大成分が %.2f %%、その 2π のずれは %.2f)。符号が正しい入力では" % (100 * main_frac, main_off))
+    print("     同じマスクは害にならない(%.1f %%)。機構は未解明。低変調の帯は δ と -δ が" % rates_true[2])
+    print("     一致する所なので、符号の食い違う領域をつなぐ橋かもしれないが、検証していない。")
+    print("     重みつきアンラップが要るかは、符号が正しい入力では不要だったので、この PoC では言えない。")
     return rates
 
 
@@ -508,14 +558,15 @@ def section7_findings():
       ポラリスコープの検光子を 0°/90° 以外に回した像だけが変わる。
       この版は op の規約(進相軸 = σ1 + 90°)に合わせた。
 
-  (c) ★★**位相アンラップに「信頼度の重み」の口が無い**。
+  (c) ★★**符号が反転した入力に低変調のマスクを渡すと、巻き戻しの一致率が下がる**。
       `unwrap_phase_2d` は skimage の実装で、5 節のとおり巻き戻しの外れの大半は
       巻きでなく符号の二義性で、符号が正しければ外すのは荷重点のそばの縞が
-      細かい所だけ。評価域に等方点は無い。★**低変調の画素をマスクで外すと一致率はむしろ下がる**
-      —— 領域が分断され、島ごとに別の 2π が選ばれるため。要るのは
-      「捨てる口」ではなく**重みつきアンラップ**(信頼度の低い画素を
-      繋いだまま従属させる)で、それが無い。干渉計・位相シフト法・InSAR
-      すべてに効く。空間をたどらない道として、族には多波長で画素ごとに
+      細かい所だけ。評価域に等方点は無い。★**符号が反転した入力では、低変調の画素を
+      マスクで外しても一致率は上がらず下がる**(97.0 → 81.9 %)。符号が正しい入力では
+      同じマスクは害にならない。「領域が分断され島ごとに別の 2π」という説明は実測で
+      否定され、機構は未解明。重みつきアンラップが要るかは、符号が正しい入力では
+      不要だったので、この PoC の範囲では言えない(干渉計・位相シフト法・InSAR への
+      一般化もしない。1 つの入力の 1 例にすぎない)。空間をたどらない道として、族には多波長で画素ごとに
       次数を決める `retardation_unwrap_multiwavelength` があるが、
       撮る波長を増やす別の測定なので、この PoC(1 波長)の問いには使っていない。
 
