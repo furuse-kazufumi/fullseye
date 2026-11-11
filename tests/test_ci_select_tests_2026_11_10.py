@@ -22,6 +22,7 @@ import os
 import re
 import subprocess
 import sys
+import types
 
 import pytest
 
@@ -198,7 +199,10 @@ def test_shards_partition_by_file_and_keep_every_test():
         where = {x: i for i, p in enumerate(plan) for x in p}
         assert len({where[x] for x in ids if x.startswith("tests/test_a.py")}) == 1
         assert len({where[x] for x in ids if x.startswith("tests/test_b.py")}) == 1
-        assert len({where[x] for x in ids if "poc_scripts_run" in x}) == 1   # 台本の門もファイルごと
+        # ★2026-11-11: PoC の門(SPLIT_BY_TEST)だけはテスト単位で散らしてよい。各 PoC はちょうど 1 片
+        pocs = [x for x in ids if "poc_scripts_run" in x]
+        assert sorted(x for p in plan for x in p if x in pocs) == sorted(pocs)
+        assert [sum(1 for p in plan if x in p) for x in pocs] == [1] * len(pocs)
 
 
 def test_shard_plan_on_the_real_baseline_is_balanced():
@@ -207,7 +211,10 @@ def test_shard_plan_on_the_real_baseline_is_balanced():
     ids = sorted(d)
     assert len(ids) > 20000
     plan = CST.shard_plan(ids, 6, d)
-    loads = [sum(d[x] for x in p) for p in plan]
+    # ★2026-11-11: SPLIT_BY_TEST(PoC の門)の 1 件ごとの記録値は台本の重さではない(一括実行の時間が片の
+    #   最初の 1 件に付く)ので、そのファイルはファイルの記録の平均で数える(配る側と同じ物差し)
+    avg = CST._split_weights(d)
+    loads = [sum(avg.get(x.split("::", 1)[0], d[x]) for x in p) for p in plan]
     assert sum(len(p) for p in plan) == len(ids)
     assert max(loads) <= 1.10 * (sum(loads) / 6), loads
 
@@ -957,3 +964,100 @@ def test_hand_edited_inputs_of_the_early_list_are_refused(tmp_path):
                         "--always-file", str(always)], capture_output=True, text=True, encoding="utf-8", errors="replace")
     assert r.returncode == 2 and "tests/test_this_gate_was_mistyped.py" in r.stderr
     assert not target.exists()
+
+
+# --------------------------------------------------------------------------- #
+# ★PoC の門はテスト単位で片に散らす(2026-11-11、SPLIT_BY_TEST)                  #
+# --------------------------------------------------------------------------- #
+# run 42982984881: py3.12 片 1 = 71 分。片 1 は tests/test_poc_scripts_run.py の 310 本だけで、このファイル
+# 1 つ(3,738 秒)が 6 片の平均(約 3,507 秒)を超えるので、ファイル単位では持った片が必ず最長になっていた。
+_POC = "tests/test_poc_scripts_run.py"
+_POC_GATE = _POC + "::test_the_gate_actually_sees_all_of_them"
+
+
+def _poc_ids(m):
+    return [_POC + "::test_the_poc_runs_clean[poc_%03d.py]" % i for i in range(m)]
+
+
+def test_poc_runner_is_split_by_test_once_each_with_the_file_average_weight():
+    assert CST.SPLIT_BY_TEST == (_POC,)
+    others = ["tests/test_x%d.py::t" % i for i in range(5)]
+    ids = others + _poc_ids(40) + [_POC_GATE]
+    flat_rec = {x: 10.0 for x in ids}                    # 記録の合計 410 秒 / 41 本 = 10 秒ずつ
+    # 同じ合計を 1 件に寄せた記録(CI の実際の形: 一括実行の時間が最初の 1 件に付き、残りは 0 秒)
+    skew_rec = dict({x: 10.0 for x in others}, **{x: 0.0 for x in ids if x.startswith(_POC)})
+    skew_rec[_poc_ids(40)[0]] = 410.0
+    for n in (1, 2, 3, 6, 8):
+        plan = CST.shard_plan(ids, n, flat_rec)
+        flat = [x for p in plan for x in p]
+        assert len(flat) == len(set(flat)) == len(ids) and set(flat) == set(ids)   # 落とさない・重ねない
+        where = {x: i for i, p in enumerate(plan) for x in p}
+        assert sum(1 for p in plan if _POC_GATE in p) == 1                         # PoC 以外のテストも 1 片
+        assert len({where[x] for x in _poc_ids(40)}) == n                          # 全部の片に散る
+        # 1 件ごとの記録値は重さに使わない(ファイルの合計 ÷ 本数): 寄せた記録でも同じ答え
+        assert CST.shard_plan(ids, n, skew_rec) == plan
+        # 決定的で、PoC の並びに依らない(同じ重さの PoC は名前の順で配る)
+        rev = CST.shard_plan(others + list(reversed(_poc_ids(40))) + [_POC_GATE], n, flat_rec)
+        assert {x: i for i, p in enumerate(rev) for x in p} == where
+
+
+def test_poc_runner_split_on_the_real_baseline_shortens_the_longest_shard():
+    with open(os.path.join(ROOT, ".test_durations"), encoding="utf-8") as f:
+        d = json.load(f)
+    ids = sorted(d)
+    poc_total = sum(v for k, v in d.items() if k.startswith(_POC + "::"))
+    pocs = [x for x in ids if x.startswith(_POC + "::test_the_poc_runs_clean[")]
+    assert poc_total > 3000 and len(pocs) > 250
+    for n in (1, 2, 3, 6, 8):
+        plan, loads = CST._shard_plan_with_loads(ids, n, d)
+        assert sum(len(p) for p in plan) == len(ids) == len(set().union(*[set(p) for p in plan]))
+        holders = [sum(1 for p in plan if x in set(p)) for x in pocs]
+        assert holders == [1] * len(pocs)
+        assert abs(sum(loads) - sum(d.values())) < 1e-6 * sum(d.values())         # 重さの総量は変えない
+    plan, loads = CST._shard_plan_with_loads(ids, 6, d)
+    assert max(loads) < poc_total, (loads, poc_total)                              # 1 ファイルが下限ではなくなった
+    assert max(loads) <= 1.02 * (sum(loads) / 6), loads
+    info = CST.plan_session(ids, selection=None, shard="1/6", durations_path=CST.ROOT / ".test_durations")
+    assert info["est_seconds"] == round(loads[0]) and info["sizes"] == [len(p) for p in plan]
+
+
+def test_poc_runner_split_holds_with_a_pr_selection(tmp_path):
+    sel = tmp_path / "sel.txt"
+    chosen = _poc_ids(30)[::3]
+    sel.write_text(chr(10).join(["tests/test_x0.py"] + chosen) + chr(10), encoding="utf-8")
+    ids = ["tests/test_x0.py::a", "tests/test_x0.py::b", "tests/test_x1.py::c"] + _poc_ids(30) + [_POC_GATE]
+    dur = tmp_path / "d.json"
+    dur.write_text(json.dumps({x: 5.0 for x in ids}), encoding="utf-8")
+    for n in (1, 2, 3, 6):
+        kept = [CST.plan_session(ids, selection=str(sel), shard="%d/%d" % (k, n), durations_path=dur)["keep"]
+                for k in range(1, n + 1)]
+        flat = [x for p in kept for x in p]
+        assert sorted(flat) == sorted(["tests/test_x0.py::a", "tests/test_x0.py::b"] + chosen)
+        assert len(flat) == len(set(flat))
+    # PR の見積もり(片の数を決める側)も 1 件ごとの記録値ではなくファイルの平均で数える
+    skew = {x: 0.0 for x in _poc_ids(30)}
+    skew[_poc_ids(30)[0]] = 300.0
+    skew_path = tmp_path / "skew.json"
+    skew_path.write_text(json.dumps(skew), encoding="utf-8")
+    assert CST.estimate_seconds(chosen, skew_path) == pytest.approx(10.0 * len(chosen))
+    with pytest.raises(ValueError):
+        CST.plan_session(ids, selection=None, shard="7/6", durations_path=dur)      # 壊れた指定は止める
+
+
+def test_the_poc_fixture_runs_only_the_pocs_left_in_the_session(monkeypatch):
+    spec = importlib.util.spec_from_file_location("_poc_runner_t20261111", os.path.join(ROOT, _POC))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    ran = []
+    monkeypatch.delenv("PYTEST_XDIST_WORKER", raising=False)
+    monkeypatch.setattr(mod, "_run_one", lambda path: (ran.append(path.name), (path.name, 0, ""))[1])
+    names = [x.name for x in mod._poc_paths()]
+    assert len(names) > 50
+    keep = names[3:6]
+
+    def item(n):
+        return types.SimpleNamespace(originalname="test_the_poc_runs_clean", callspec=types.SimpleNamespace(params={"name": n}))
+    request = types.SimpleNamespace(session=types.SimpleNamespace(
+        items=[item(n) for n in keep] + [types.SimpleNamespace(originalname="test_the_gate_actually_sees_all_of_them")]))
+    out = mod.poc_results.__wrapped__(request)
+    assert sorted(ran) == sorted(keep) and sorted(out) == sorted(keep)
