@@ -771,6 +771,16 @@ class _LedgerNamespace:
         #   ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。
         #   ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
         _call.raw = fn
+        # ★ 署名の注釈(表示専用): ラッパーは (*args, **kw) だが、実体 ``fn`` の署名を
+        #   ``__signature__`` に載せ、補完 / ``inspect.signature`` / help() で引数名と既定値が見えるようにする。
+        #   呼び出し契約は変えない(受け方は ``mod.call(key, *args, **kw)`` のまま。束縛は実体が行う)。
+        #   アクセス時にだけ作る(import 時には何もしない)。署名が取れない実体は注釈なしで素通し。
+        #   Display-only signature annotation; the call contract is unchanged; built lazily per access.
+        try:
+            import inspect as _inspect
+            _call.__signature__ = _inspect.signature(fn)
+        except (TypeError, ValueError):
+            pass
         _call.__doc__ = "%s\n\n(台帳 %s / %s: %s -> %s)" % (
             (getattr(fn, "__doc__", None) or entry.get("doc") or ""),
             mod.__name__, entry.get("category"),

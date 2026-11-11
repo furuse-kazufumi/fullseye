@@ -18,6 +18,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - uint8 の画像(最も普通の入力)で「degraded to a fallback」と出ていた: 型変換(`dtype_converted`)は契約どおりの変換で劣化ではない。警告の文面を「input converted (uint8 -> float64 (/255) ...)」に変えた。**出し方の方針**(`backend_safe.is_dtype_conversion` の docstring): op 名ごとに最初の 1 回だけ警告し、以後は数えるだけ(`fallbacks()` / `fallback_counts()` は毎回記録)。`on_error="warn"` は明示の指定なので呼び出しごと。本当の劣化(op が例外・GPU 失敗・backend の import 失敗・sort 不一致)の文面と記録は変えていない。
 - `radon_transform`(32×32)→ `filtered_backprojection` の既定が 33×33 になる件: 再現したが**挙動は変えていない**(sinogram は元の大きさを持たず、既定は「検出器の本数から決まる内接正方形」の契約。変えると既定の大きさを前提にした既存の数値が動く)。docstring に `size=` を勧める注意を足し、`docs/KNOWN_ISSUES.md` §53 に記録した。
 
+### 直し — 使い勝手の指摘 4 件(2026-11-11、挙動の変更なし)
+
+- `fs.ledger.<op>` の署名: ラッパーが `(*args, **kw)` だったため、補完と `inspect.signature` から引数名・既定値が見えなかった。実体の署名を `__signature__` に載せた(表示専用。位置・キーワードの受け方は同じ。アクセス時にだけ作り、import 時間は増えない)。
+- `op_find` の説明文: docs/ops の無い環境(wheel)で、registry に doc の無い op の説明が `<op>.de.html`(ファイル名順で先頭)から取られ、既定でドイツ語(「Datenarten」「Aufruf」)になっていた(961/1037 件)。英語(`<op>.en.html`、無ければ原文)に固定。
+- `import fullseye` の時間: `physarum_search` の先頭の `import torch`(opsgraph 経由)が全体の過半を占めていた。他の族と同じ遅延プロキシ(`torch_lazy`)にした。公開 API は変えない。
+- 追加(opt-in、既定は変えない): `extra_checks='on'` のとき、image / region 用の op に最終軸が 1/3/4 でない 3 次元配列(立体)を渡すと拒否する。既定は従来どおり通す(docs/KNOWN_ISSUES.md §34)。
+
 ### 追加 — MCP の道具「真値付きの課題を作る」と「組んだ処理を採点する」(2026-11-09)
 
 - 独立レビューの直し(2026-11-10、SCORING_VERSION 2026-11-10.1):

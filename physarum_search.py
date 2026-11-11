@@ -36,11 +36,12 @@ from dataclasses import dataclass
 
 import numpy as np
 
-try:
-    import torch
-    _HAS_TORCH = True
-except Exception:                       # torch 不在でも numpy で動く
-    _HAS_TORCH = False
+# torch は optional extra。``import torch`` は 1.6 秒かかり ``import fullseye`` 全体(約 2.8 秒)の過半だったので、
+# 他の族と同じ遅延プロキシ(torch_lazy)にして **最初に属性を引く時**まで読まない(使い方は ``torch.xxx`` のまま)。
+# Lazy torch: ``import fullseye`` no longer pays ``import torch`` (measured 1.6 s of 2.8 s); the real module is
+# imported on first attribute access. ``_HAS_TORCH`` = installed (find_spec), as in the other lazy families.
+from torch_lazy import HAS_TORCH as _HAS_TORCH  # noqa: E402
+from torch_lazy import torch  # noqa: E402,F401
 
 
 # ── グラフの構築(迷路 -> ノード/辺) ───────────────────────────────────────── #
