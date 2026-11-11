@@ -616,7 +616,7 @@ def figures(recons, truth, results, tv_info, de, truth_al, truth_fe, single):
         for m in METHODS:
             panels.append(mid(recons[(cond, m)], z))
             caps.append("%s / %s RMSE %.3f" % (cond, m, results[(cond, m)]["rms_err"]))
-    figs.save_grid("slices", panels, caps, ncols=5, vrange=(0.0, 1.2), gray=True,
+    figs.save_grid("slices", panels, caps, ncols=5, vrange=(0.0, 1.2), gray=True,  # gray-ok: CT の減衰係数の断面で、距離・高さ場ではない(「高さ」は断面の位置の説明)
                    title="鋳物の断面(行 = 36 投影 / 12 投影 / 110° に 30 投影、列 = 真値・FDK・SIRT・OS-SART・TV)",
                    caption="360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)"
                            "を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。")
