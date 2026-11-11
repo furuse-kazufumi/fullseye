@@ -4432,6 +4432,20 @@
    "lead_en": ""
   },
   {
+   "id": "poc_caltab_chain_truth",
+   "wing": "wing_geometry",
+   "added": "2026-11-04",
+   "numbers_source": "log",
+   "figure": "caltab_chain",
+   "title_ja": "円マークの校正板を端から端まで ―― 雑音 0 でも fx は 0.45 % 外れ、その床は 2 値の重心が決める",
+   "title_en": "A Circle-Mark Calibration Plate End to End: fx Is 0.45 % Off Even Without Noise, and the Binary Centroid Sets That Floor",
+   "caption_ja": "create_caltab の円マーク板(7x9、15 mm)を、真の K・樽型歪み(k1 = −0.18)・8 姿勢のカメラで撮る。撮像は画素から板へ逆に引く描画(3x3 標本・ぼけ 0.7 px)で、推定とは式を共有しない。find_caltab で 63 点を拾い camera_calibration_lm で校正した。雑音 0 の検出のずれは 0.0939 px で、2 値の重心の量子化の理論値 1/sqrt(6πρ) = 0.0934 px(ρ = 6.08 px)と合う。画像の雑音 σ_I = 0.05 では 8 個の内部・歪みの誤差がすべて共分散の 1σ の 2 倍以内(白色化距離 d² = 11.2、χ²₈ の 99.9 % 点は 26.1)。fx は −0.42 % で、雑音 0 でも −0.45 % だから誤差のほとんどは量子化の床から来ている。姿勢の誤差は回転 0.23°・奥行き 2.4 mm で、内部パラメータの 1σ から伝わる許容の 0.5 倍以内。雑音を 0.02〜0.2 に振ると、fx のずれは検出点のずれに比例し(log-log の傾き 0.99)、共分散の利得から出した予測の 0.85〜0.92 倍になる。検出点のずれは画像の雑音の 0.56 乗でしか増えないので、画像の雑音を半分にしても校正の誤差は 1/√2 にしか減らない。k2 は 1σ 0.051 が真値 0.06 と同じ大きさで、符号まで逆に推定された。",
+   "caption_en": "A create_caltab circle-mark plate (7x9, 15 mm pitch) is imaged by a camera with a true K, barrel distortion (k1 = −0.18) and eight poses. The image is rendered by tracing each pixel back to the plate (3x3 samples, 0.7 px blur), so it shares no formula with the estimator. find_caltab finds all 63 marks and camera_calibration_lm calibrates from them. Without noise the detected marks are 0.0939 px off, matching the quantisation of a binary centroid, 1/sqrt(6πρ) = 0.0934 px for ρ = 6.08 px. At image noise σ_I = 0.05 all eight intrinsic and distortion errors are within 2 σ of the LM covariance (whitened distance d² = 11.2 against the χ²₈ 99.9 % point of 26.1). fx is off by −0.42 %, and by −0.45 % even without noise, so most of the error is the quantisation floor. Pose errors are 0.23° and 2.4 mm in depth, at most half the tolerance propagated from the intrinsic 1 σ. Sweeping the noise from 0.02 to 0.2, the fx deviation grows in proportion to the detection deviation (log-log slope 0.99) at 0.85-0.92 of the gain predicted by the covariance. The detection deviation itself grows only as the 0.56 power of the image noise, so halving the image noise shrinks the calibration error by just 1/√2. k2 has a 1 σ of 0.051, as large as its true value of 0.06, and came out with the wrong sign.",
+   "run": "py -3.11 examples/poc_caltab_chain_truth.py",
+   "lead_ja": "",
+   "lead_en": ""
+  },
+  {
    "id": "poc_calibration_truth_map",
    "wing": "wing_geometry",
    "added": "2026-11-04",

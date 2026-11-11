@@ -1802,7 +1802,7 @@ py -3.11 examples/poc_real_bg_kalman_tracking.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 26 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 27 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -2559,6 +2559,32 @@ py -3.11 examples/poc_simcal_thin_film.py
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_simcal_thin_film)
 
 使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`doe_decode`](https://furuse.work/ops/multivar/coding/doe_decode.html) · [`doe_orthogonal_array`](https://furuse.work/ops/multivar/plan/doe_orthogonal_array.html) · [`gamma`](https://furuse.work/ops/2d/gray/gamma.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`multilayer_reflectance`](https://furuse.work/ops/optics/film/multilayer_reflectance.html) · [`mv_confounding`](https://furuse.work/ops/multivar/identifiability/mv_confounding.html) · [`mv_pca`](https://furuse.work/ops/multivar/analysis/mv_pca.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_identifiability`](https://furuse.work/ops/simcal/check/simcal_identifiability.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_report`](https://furuse.work/ops/simcal/report/simcal_report.html) · [`simcal_screen`](https://furuse.work/ops/simcal/fit/simcal_screen.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_uncertainty`](https://furuse.work/ops/simcal/check/simcal_uncertainty.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`spectrum_to_srgb`](https://furuse.work/ops/optics/appearance/spectrum_to_srgb.html) …(他 2)
+
+## No.2026.315 —— 円マークの校正板を端から端まで ―― 雑音 0 でも fx は 0.45 % 外れ、その床は 2 値の重心が決める
+
+create_caltab の円マーク板(7x9、15 mm)を、真の K・樽型歪み(k1 = −0.18)・8 姿勢のカメラで撮る。撮像は画素から板へ逆に引く描画(3x3 標本・ぼけ 0.7 px)で、推定とは式を共有しない。find_caltab で 63 点を拾い camera_calibration_lm で校正した。雑音 0 の検出のずれは 0.0939 px で、2 値の重心の量子化の理論値 1/sqrt(6πρ) = 0.0934 px(ρ = 6.08 px)と合う。画像の雑音 σ_I = 0.05 では 8 個の内部・歪みの誤差がすべて共分散の 1σ の 2 倍以内(白色化距離 d² = 11.2、χ²₈ の 99.9 % 点は 26.1)。fx は −0.42 % で、雑音 0 でも −0.45 % だから誤差のほとんどは量子化の床から来ている。姿勢の誤差は回転 0.23°・奥行き 2.4 mm で、内部パラメータの 1σ から伝わる許容の 0.5 倍以内。雑音を 0.02〜0.2 に振ると、fx のずれは検出点のずれに比例し(log-log の傾き 0.99)、共分散の利得から出した予測の 0.85〜0.92 倍になる。検出点のずれは画像の雑音の 0.56 乗でしか増えないので、画像の雑音を半分にしても校正の誤差は 1/√2 にしか減らない。k2 は 1σ 0.051 が真値 0.06 と同じ大きさで、符号まで逆に推定された。
+
+[![円マークの校正板を端から端まで ―― 雑音 0 でも fx は 0.45 % 外れ、その床は 2 値の重心が決める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png)
+
+*↑ **円マークの校正板を端から端まで ―― 雑音 0 でも fx は 0.45 % 外れ、その床は 2 値の重心が決める** ―― create_caltab の円マーク板(7x9、15 mm)を、真の K・樽型歪み(k1 = −0.18)・8 姿勢のカメラで撮る。撮像は画素から板へ逆に引く描画(3x3 標本・ぼけ 0.7 px)で、推定とは式を共有しない。find_caltab で 63 点を拾い camera_calibration_lm で校正した。雑音 0 の検出のずれは 0.0939 px で、2 値の重心の量子化の理論値 1/sqrt(6πρ) = 0.0934 px(ρ = 6.08 px)と合う。画像の雑音 σ_I = 0.05 では 8 個の内部・歪みの誤差がすべて共分散の 1σ の 2 倍以内(白色化距離 d² = 11.2、χ²₈ の 99.9 % 点は 26.1)。fx は −0.42 % で、雑音 0 でも −0.45 % だから誤差のほとんどは量子化の床から来ている。姿勢の誤差は回転 0.23°・奥行き 2.4 mm で、内部パラメータの 1σ から伝わる許容の 0.5 倍以内。雑音を 0.02〜0.2 に振ると、fx のずれは検出点のずれに比例し(log-log の傾き 0.99)、共分散の利得から出した予測の 0.85〜0.92 倍になる。検出点のずれは画像の雑音の 0.56 乗でしか増えないので、画像の雑音を半分にしても校正の誤差は 1/√2 にしか減らない。k2 は 1σ 0.051 が真値 0.06 と同じ大きさで、符号まで逆に推定された。*
+
+[![every intrinsic and distortion error inside 4 sigma of the LM covariance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/02_caltab_chain_params_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/02_caltab_chain_params.png)
+
+*↑ 測定の図 ―― every intrinsic and distortion error inside 4 sigma of the LM covariance*
+
+[![image noise sigma_I 0.02-0.2, deviations from the noise-free run; fitted slope 0.99](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/03_caltab_chain_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/03_caltab_chain_noise.png)
+
+*↑ image noise sigma_I 0.02-0.2, deviations from the noise-free run; fitted slope 0.99*
+
+```
+py -3.11 examples/poc_caltab_chain_truth.py
+```
+
+ソース: [examples/poc_caltab_chain_truth.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_caltab_chain_truth.py)
+
+この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_caltab_chain_truth)
+
+使用 op(ノートへ): [`camera_calibration_lm`](https://furuse.work/ops/calib/calibrate/camera_calibration_lm.html) · [`create_caltab`](https://furuse.work/ops/calib/target/create_caltab.html) · [`find_caltab`](https://furuse.work/ops/calib/target/find_caltab.html) · [`find_marks_and_pose`](https://furuse.work/ops/calib/calibrate/find_marks_and_pose.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html)
 
 ## No.2026.290 —— 真値つきのカメラ校正 ―― 再投影 0.044 px でも隅では 0.568 px 誤る
 

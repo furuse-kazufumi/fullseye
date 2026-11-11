@@ -6,7 +6,7 @@ in: image2d
 out: table
 halcon: find_marks_and_pose
 gpu: なし
-examples: []
+examples: [poc_caltab_chain_truth]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -49,7 +49,7 @@ world は ``caltab["points"]`` の (y, x) をそのまま (x, y, 0) とする。
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_caltab_chain_truth](../../../../examples/poc_caltab_chain_truth.py) — `py -3.11 examples/poc_caltab_chain_truth.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
