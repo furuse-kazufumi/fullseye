@@ -220,7 +220,7 @@ def record(name, exc, out_sort=None, source: str = "op") -> dict:
         if first:
             _WARNED.add(key)
     if first and _WARN_ONCE and not getattr(_TL, "quiet", False):
-        if is_dtype_conversion(ev["error"]):
+        if _is_dtype_conversion(ev["error"]):
             # ★2026-11-11(外部ユーザー指摘): uint8 を渡す(最も普通の入力)だけで「degraded to a fallback」と
             #   出て、通常の型変換が劣化に読めた。結果は契約どおりで、劣化ではない —— 中立な文面にする。
             #   記録(fallbacks() / fallback_counts())は据え置き。本当の劣化の文面は下のまま。
@@ -237,7 +237,7 @@ def record(name, exc, out_sort=None, source: str = "op") -> dict:
     return ev
 
 
-def is_dtype_conversion(error) -> bool:
+def _is_dtype_conversion(error) -> bool:
     """True for the ledger text of a lossless-by-contract input dtype conversion (``api._contract_dtype``).
 
     Warning policy (one place, so it stays consistent): the **first** time an op name records any event in

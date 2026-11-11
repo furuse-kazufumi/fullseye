@@ -318,9 +318,10 @@ READS = {
                               "fullseye/data/GPU_ACCEL_USE.json"],
     "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "docs/ops/families.json",
                                   "docs/ops/families_timing.json"],
-    "tools/gen_recipe_index.py": ["fullseye/data/OP_SEARCH.json", "fullseye/data/OP_GRAPH.json"],
+    "tools/gen_recipe_index.py": ["fullseye/data/OP_SEARCH.json", "fullseye/data/OP_GRAPH.json",
+                                  "fullseye/data/OP_INDEX.json"],
     "tools/gen_mcp_input_independent.py": ["fullseye/data/OP_GRAPH.json"],
-    "tools/gen_recipe_coverage.py": ["fullseye/data/OP_GRAPH.json"],
+    "tools/gen_recipe_coverage.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_INDEX.json"],
     "tools/gen_recipe_retrieval_report.py": ["fullseye/data/RECIPE_INDEX.json"],
     "tools/measure_mcp_context.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_SEARCH.json",
                                       "fullseye/data/OP_CARDS.json", "fullseye/data/OP_PROBE.json",
@@ -353,7 +354,12 @@ _SHIPPED_DIAG = ("同梱の複製は `imgevolve.py index` の**標準出力の�
                  "索引を読むので後ろでなければならず、ここは構造的に循環する。")
 _DOCMAP_COUNT = ("gen_docs_index_ops は文書地図に載せるため AI_RAG_GUIDE の題だけを読む。"
                  "gen_doc_counts が後で変更するのは本文中の件数だけなので、地図の生成結果には影響しない。")
+_ATTR_HINT = ("`fullseye.<名前>` の属性が無いとき、失敗の文面に案内(2-D op / backend 不足 / 台帳 op)を足すために"
+              "同梱の索引を引く(fullseye/__init__._op_attr_hint)。生成器は hasattr 風に名前を探るので読むが、"
+              "**案内の文面にしか使わず、生成物の中身には入らない**。索引を作る gen_mcp_data は鎖の後ろ・"
+              "レシピ網羅(gen_recipe_coverage)はその前にあり、ここで順序を強いると循環する(gen_recipe_index は後ろなので例外なし)。")
 ORDER_EXEMPT = {
+    ("tools/gen_recipe_coverage.py", "fullseye/data/OP_INDEX.json"): _ATTR_HINT,
     ("tools/gen_trust_block.py", "docs/README.md"): _SHARED_README,
     ("tools/gen_trust_block.py", "docs/README.*.md"): _SHARED_README,
     ("imgevolve.py", "fullseye/data/OP_INDEX.json"): _SHIPPED_DIAG,

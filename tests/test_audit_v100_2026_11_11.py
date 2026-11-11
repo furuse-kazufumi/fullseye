@@ -134,4 +134,4 @@ def test_a_real_degradation_keeps_the_degraded_text():
         warnings.simplefilter("always")
         bs.record("zz_audit_op", RuntimeError("boom"), "image", source="op")
     assert any("degraded to a fallback" in str(m.message) for m in w)
-    assert not bs.is_dtype_conversion("RuntimeError: boom")
+    assert not bs._is_dtype_conversion("RuntimeError: boom")
