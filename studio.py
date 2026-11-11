@@ -6450,6 +6450,7 @@ def build_window(model=None):
         ``close_guard`` is installed below; it returns False to veto the close."""
         close_guard = None
         quiesce = None     # 実行ワーカーの QThread を止めて待つ(閉じる前に必ず)
+        _closing = False   # closeEvent が通った後は dock の可視変化を利用者操作として記録しない
 
         def closeEvent(self, ev):
             guard = self.close_guard
@@ -6464,6 +6465,10 @@ def build_window(model=None):
                     q()
                 except Exception as e:
                     _log_soft_failure("could not stop run workers before close", e)
+            # ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。
+            #   それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。
+            #   以後の visibilityChanged は利用者の操作ではないので記録しない。
+            self._closing = True
             try:                              # remember window position + panel layout
                 if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
                     s = _settings()
@@ -7407,7 +7412,7 @@ def build_window(model=None):
     # on-demand — the user keeps them undocked / shown only when needed — so they start
     # hidden and the image owns the workspace. Toolbar + Window ▸ Panels toggles bring
     # each back. Operators stays (compact) since it is the primary build tool.
-    for _d in (dock_vars, dock_pipe, dock_disp, dock_cmp, dock_ab):
+    for _d in (dock_vars, dock_disp, dock_cmp, dock_ab):     # Pipeline·Parameters stays: its tab must be visible on first run (P-15)
         _d.hide()
     win.resizeDocks([dock_ops], [420], QtCore.Qt.Horizontal)        # narrow right column → image keeps the rest
     win.resizeDocks([dock_code], [300], QtCore.Qt.Vertical)         # wide bottom code strip = 2nd largest
@@ -7498,11 +7503,15 @@ def build_window(model=None):
     act_find_panel.triggered.connect(find_panel_dialog)
     win.addAction(act_leave_focus)
     for _panel, _dock in win._docks.items():
-        def _record(visible, panel=_panel):
+        def _record(visible, panel=_panel, dock=_dock):
             if win._applying_layout or win._layout_state.focus_image:
                 return
+            if win._closing or not win.isVisible():
+                return                  # 窓ごと隠れた/閉じた由来の変化は利用者の選択ではない(P-01)
+            # visibilityChanged(False) は「タブの裏に回った」でも撃たれる(isHidden は False のまま)。
+            # 利用者が閉じた/隠したのは dock が実際に hide された時だけ(P-01・P-15)。
             win._layout_state = studio_layout.set_override(
-                win._layout_state, panel, visible=bool(visible), collapsed=False)
+                win._layout_state, panel, visible=not dock.isHidden(), collapsed=False)
             _save_layout_state()
         _dock.visibilityChanged.connect(_record)
     win._set_work_mode = set_work_mode
