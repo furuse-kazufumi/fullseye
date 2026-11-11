@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：611 / 1889 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：611 / 1890 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `_archive_tarxz.py`
@@ -3605,6 +3605,10 @@
 - **L1225** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
 - **L1324** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
 - **L1344** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
+
+## `watervision.py`
+
+- **L775** _(ja)_ — ★The value was put here AFTER measuring (2026-11-11): at 0.25 the flag said "separated" for 15-20 % of the wall estimates that were off by more than 25 % and for 73-76 % of the trials in which n_glass was off by more than 0.02 (two disjoint seed sets of 800 trials each: windows 1.0 / 0.6 / 0.4 / 0.25 x walls 0.2-1.5 mm, one row per section, 1.5 grey levels of fringe noise). At 0.01 no wrong trial was called separated in either set (0 of 269 and 0 of 266), at 0.02 it was 12 and 10 of them. The threshold was chosen on the first set and only then checked on the second; it is a rule of thumb for noise-only error, not a guarantee (a model error is not caught).
 
 ## `world_render.py`
 

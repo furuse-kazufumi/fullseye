@@ -771,8 +771,13 @@ _LEVEL_RATIO = 8.0
 _SILHOUETTE_MM = 0.5
 #: the fit leaves out this many pixels inside the silhouette
 _EDGE_TRIM_PX = 3
-#: a fitted quantity whose 1 sigma is more than this fraction of its value is called poorly determined (not separated from the others)
-_POOR_REL_SIGMA = 0.25
+#: a fitted quantity whose 1 sigma is more than this fraction of its value is called poorly determined (not separated from the others).
+#: ★The value was put here AFTER measuring (2026-11-11): at 0.25 the flag said "separated" for 15-20 % of the wall estimates that were
+#: off by more than 25 % and for 73-76 % of the trials in which n_glass was off by more than 0.02 (two disjoint seed sets of 800 trials each:
+#: windows 1.0 / 0.6 / 0.4 / 0.25 x walls 0.2-1.5 mm, one row per section, 1.5 grey levels of fringe noise). At 0.01 no wrong trial was
+#: called separated in either set (0 of 269 and 0 of 266), at 0.02 it was 12 and 10 of them. The threshold was chosen on the first set and
+#: only then checked on the second; it is a rule of thumb for noise-only error, not a guarantee (a model error is not caught).
+_POOR_REL_SIGMA = 0.01
 
 
 def _nanmedian(a, axis=None):
@@ -840,10 +845,17 @@ def bottle_fit_from_pattern(u_map, x_mm, pixel_pitch_um, camera_distance_mm, bac
     it), ``residual_rms_mm``, ``n_columns`` and ``columns_rejected`` (resolved pixels the model calls blocked), ``converged``,
     ``iterations``, ``level_found`` / ``level_mm`` / ``level_row`` / ``level_jump_mm`` (False and None when the rows do not
     jump: an empty or a full bottle has no fill line to read; ``level_mm`` is then None), ``fill_state`` (``"partial"`` or ``"uniform"``).
-    ``poorly_determined`` lists the fitted names whose 1 sigma exceeds 25 % of the value or that sit on a bound, and ``separated`` is
-    True only when the fit converged and that list is empty. Quantities that barely move the pattern (a thin wall against the
+    ``poorly_determined`` lists the fitted names whose 1 sigma exceeds 1 % of the value or that sit on a bound, and ``separated`` is
+    True only when the fit converged and that list is empty. This is a rule of thumb for the error of the noise, not a guarantee: the 1 %
+    was chosen after measuring (at 25 % the flag called 15-20 % of the wrong wall estimates, and 73-76 % of the trials with n_glass off
+    by more than 0.02, separated; at 1 % none of 535 wrong trials in two disjoint seed sets), the covariance assumes the model is exact, and a
+    model error such as an off-centre inner wall changes the estimates without changing the residual, the sigma or this flag.
+    ``n_liquid`` is None when no row of the map is left in the filled section. Quantities that barely move the pattern (a thin wall against the
     glass index when the edge pixels are lost, the pattern distance against the liquid index) come back there, with a large
-    ``sigma`` and ``cond``; they are not separated, and the table says so rather than giving a number without it. A map with
+    ``sigma`` and ``cond``; they are not separated, and the table says so rather than giving a number without it.
+    The model assumes concentric circles with a uniform wall, a horizontal 2-D section, an ideal pinhole, a flat background, exactly known
+    distances and pitch, no dispersion and a flat liquid surface; the maps of :func:`bottle_background_map` obey the same assumptions, so a test on
+    them proves consistency, not that a real bottle is recovered. A map with
     fewer than 12 usable columns, a wrong shape, an unknown ``known`` name or a camera not beyond one diameter are refused."""
     op = "bottle_fit_from_pattern"
     if isinstance(u_map, (str, bytes)) or u_map is None or np.ma.isMaskedArray(u_map) or np.iscomplexobj(u_map):
@@ -1076,7 +1088,7 @@ def bottle_fit_from_pattern(u_map, x_mm, pixel_pitch_um, camera_distance_mm, bac
         if pinned or not (sd[i] <= _POOR_REL_SIGMA * abs(vec[i])):
             poor.append(n)
     return {"radius_mm": float(d["radius_mm"]), "wall_mm": float(d["wall_mm"]), "n_glass": float(d["n_glass"]),
-            "n_liquid": float(d["n_liquid"]) if has_core else float("nan"),
+            "n_liquid": float(d["n_liquid"]) if has_core else None,
             "background_distance_mm": float(d["background_distance_mm"]), "free": list(names), "sigma": sigma,
             "corr": corr.tolist(), "corr_names": list(names), "cond": cond, "singular_values": sv.tolist(),
             "weak_direction": {n: float(wd[i]) for i, n in enumerate(names)}, "weak_rel_sigma": float(weak_rel) if math.isfinite(weak_rel) else None,

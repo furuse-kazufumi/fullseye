@@ -27677,8 +27677,8 @@
         "02_profile_fit.png",
         "03_recovery_table.png",
         "04_noise_trials.png",
-        "06_thin_wall.png",
-        "09_level_two_ways.png"
+        "09_level_two_ways.png",
+        "10_eccentric_model_error.png"
       ],
       "excluded_frames": [],
       "variants": {
@@ -27689,9 +27689,9 @@
               "file": "01_checker_through_bottle.png",
               "content_box": [
                 0,
-                32,
+                21,
                 720,
-                626
+                647
               ]
             },
             {
@@ -27726,23 +27726,21 @@
               "source_aspect": 4.417614
             },
             {
-              "file": "06_thin_wall.png",
-              "content_box": [
-                0,
-                204,
-                720,
-                281
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.56
-            },
-            {
               "file": "09_level_two_ways.png",
               "content_box": [
                 0,
                 121,
                 720,
                 447
+              ]
+            },
+            {
+              "file": "10_eccentric_model_error.png",
+              "content_box": [
+                0,
+                77,
+                720,
+                535
               ]
             }
           ],
@@ -27755,17 +27753,17 @@
             1600,
             1600
           ],
-          "bytes": 368004,
+          "bytes": 425634,
           "color_mad": [
-            0.1106,
-            0.0831,
-            0.0336,
+            0.1201,
+            0.0988,
+            0.0347,
             0.0417,
-            0.0747,
-            0.0294
+            0.0287,
+            0.0349
           ],
-          "max_color_mad": 0.1106,
-          "source_sha256": "5ec89e7682058484a28667b859ad826f182bed8ce8c4a33fb3eb879f5a5a16aa"
+          "max_color_mad": 0.1201,
+          "source_sha256": "15694849db8befa32690f18ac44466d66d0e3e0af948781c7665f4bd5390cc5c"
         },
         "en": {
           "path": "articles/assets/poc/poc_bottle_pattern_inverse/story.en.gif",
@@ -27774,9 +27772,9 @@
               "file": "01_checker_through_bottle.png",
               "content_box": [
                 0,
-                32,
+                21,
                 720,
-                626
+                647
               ]
             },
             {
@@ -27811,23 +27809,21 @@
               "source_aspect": 4.417614
             },
             {
-              "file": "06_thin_wall.png",
-              "content_box": [
-                0,
-                204,
-                720,
-                281
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.56
-            },
-            {
               "file": "09_level_two_ways.png",
               "content_box": [
                 0,
                 121,
                 720,
                 447
+              ]
+            },
+            {
+              "file": "10_eccentric_model_error.png",
+              "content_box": [
+                0,
+                77,
+                720,
+                535
               ]
             }
           ],
@@ -27840,17 +27836,17 @@
             1600,
             1600
           ],
-          "bytes": 368004,
+          "bytes": 425634,
           "color_mad": [
-            0.1106,
-            0.0831,
-            0.0336,
+            0.1201,
+            0.0988,
+            0.0347,
             0.0417,
-            0.0747,
-            0.0294
+            0.0287,
+            0.0349
           ],
-          "max_color_mad": 0.1106,
-          "source_sha256": "ca01cef88670ef210e0e746efd67171b9acbdd58ad3a95a3758d53691eb98f7b"
+          "max_color_mad": 0.1201,
+          "source_sha256": "f78a4047b71d1270d3d413e2d5b21834c2dda4b632984f871fff0abb618c5af4"
         }
       },
       "reason": null,
@@ -27858,7 +27854,7 @@
       "still": "articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png",
       "alt": {
         "ja": "R 30 mm・壁 1.5 mm・n 1.52 の瓶、水 1.333。各画素の光線を追跡して背景のどこを見ているか(u)を求め、そこの市松を描いた。逆から見ると、この歪みが瓶を測る手がかり。",
-        "en": "Reading a Glass Bottle Back from the Distortion of a Background Stripe Pattern — Radius, Wall, Indices and Fill Line Scored Against the Simulated Truth, and What Cannot Be Separated"
+        "en": "Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and What Cannot Be Detected"
       }
     },
     "poc_lens_global_search": {

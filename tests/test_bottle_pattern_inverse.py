@@ -237,3 +237,42 @@ def test_the_map_changes_nothing_in_bottle_image():
     assert im["image"].shape == (160, 276) and im["liquid_rows"] == 80
     assert np.array_equal(im["image"][0], im["image"][10]) and np.array_equal(im["image"][-1], im["image"][-10])
     assert float(im["image"].max()) <= 1.0 and abs(im["central_transmittance_filled"] - (1 - (0.52 / 2.52) ** 2) ** 2 * (1 - (0.187 / 2.853) ** 2) ** 2) < 1e-12
+
+
+# ---------------------------------------------------------------- 5. the results that the review found missing
+_MASTER_REF = {   # checksums of bottle_image on origin/master b1f3607750, taken before _trace_rows got its tracking output
+    ("backlight", False): (96496.29299729946, 24126.24282372152),
+    ("frontlight", False): (119978.2841083644, 29996.887324635012),
+    ("backlight", True): (94804.2118015296, 23699.22027772741),
+    ("frontlight", True): (120193.65758313793, 30049.370569378396),
+}
+
+
+@pytest.mark.parametrize("light", ["backlight", "frontlight"])
+@pytest.mark.parametrize("extra", [False, True])
+def test_bottle_image_is_unchanged_from_origin_master(light, extra):
+    kw = {"meniscus_mm": 2.0, "bubbles": [(0, 10, 1.5)]} if extra else {}
+    a = V.bottle_image(30, 1.5, 40, 0.5, 1.52, 1.333, pixel_pitch_um=250.0, light=light, **kw)["image"]
+    w = np.arange(a.size).reshape(a.shape) % 7 + 1.0
+    weighted, plain = _MASTER_REF[(light, extra)]
+    assert abs(float((a * w).sum()) / weighted - 1.0) < 1e-9 and abs(float(a.sum()) / plain - 1.0) < 1e-9
+
+
+def test_a_filled_section_with_no_row_left_gives_none_not_nan():
+    """Two liquid rows: the two next to the fill line are left out, so no filled section remains (n_liquid is not fitted)."""
+    m = V.bottle_background_map(30.0, 1.5, 80.0, 0.00125, 1.52, 1.333, DB, DC, 50.0)
+    r = _fit(m)
+    assert r["sections"] == 1 and r["n_liquid"] is None and "n_liquid" not in r["free"]
+    flat = [v for v in r.values() if isinstance(v, float)]
+    assert all(np.isfinite(flat)) and len(flat) > 5
+
+
+def test_the_separated_flag_needs_one_percent_sigma_so_a_loose_flag_cannot_come_back():
+    """At the old 25 % the flag called a noisy, off-by-0.05 n_glass 'separated'; at 1 % a central-window fit is not."""
+    m = _map(0.5, 1.333)
+    x = m["x_mm"]
+    rng = np.random.default_rng(5)
+    u = np.where(np.abs(x)[None, :] <= 0.25 * R_B, m["u_mm"] + rng.normal(0.0, 0.006, m["u_mm"].shape), np.nan)
+    r = _fit({"u_mm": u, "x_mm": x, "camera_distance_mm": DC, "background_distance_mm": DB}, rows_per_section=1)
+    assert r["sigma"]["n_glass"] > 0.01 * r["n_glass"] and not r["separated"] and "n_glass" in r["poorly_determined"]
+    assert V._POOR_REL_SIGMA == 0.01

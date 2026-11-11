@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""PoC: 背景の縞の歪みからガラス瓶を逆に測る ―― 外半径・壁厚・屈折率・液面を、シミュレーションの真値で採点し、分けられない量は分けられないと出す。
+"""PoC: 背景の縞の歪みからガラス瓶を逆に測る(シミュレーション)―― 外半径・壁厚・屈折率・液面を、**同じ仮定の下の**シミュレーションの真値で採点し、分けられない量は分けられないと出す。
 
 【問い】透明な瓶は、後ろに置いた縞模様を歪めて見せる。その歪み(画素ごとに「背景のどこを見ているか」u)から、瓶の外半径・壁の厚み・ガラスと液体の屈折率・液面を
 逆に当てはめられるか。当てはまるとして、どの量が本当に分かり、どの量は他の量と取り替えがきくか(分けられないか)。
@@ -12,6 +12,10 @@
 「向きの角と軸からの距離」で持ち、界面ごとに asin(b/r) で曲げる)は**別の導出**で、同じコードを共有しない。さらに第 3 の導出(近軸の 2 × 2 光線行列)で中心の傾きを検算し、
 別系統の液面(`bottle_image` の背面光の明暗 → `fill_level_from_image`)と突き合わせる。
 
+【観測と当てはめが共有する仮定(inverse crime の残り)】追跡と閉形式は別の導出だが、**同じ世界**を仮定している: (1) 内円と外円が同心で壁厚が一様(偏肉・偏心なし)、
+(2) 水平の 2 次元断面だけ(縦の屈折・縦に傾いた光線なし)、(3) 理想の針穴カメラ(レンズ歪み・開口なし)、(4) 背景は完全な平面で縞は正確に既知、(5) カメラ距離・背景距離・画素ピッチは既知で誤差なし、
+(6) 屈折率は波長に依らず(分散なし)、(7) 液面は水平な平面(メニスカス・気泡なし)、(8) 画素は点の標本(開口で縞が平均されない)。この 8 つが崩れる分は、観測を作る側が崩しても当てはめ側は知らないので、
+**推定値に黙って乗る**。章 5b で (1) を実測した: 内円を 0.3 mm ずらした観測(壁厚 1.5 mm の 20 %)を当てはめると、n_glass が 0.05 超動くのに、残差は雑音の床と同程度で、`separated`・`converged` も真のまま ―― **検出できない**。
 【真値の開示(「異常に良い結果は内訳を疑う」)】真値は**自分で作ったシミュレーションの入力**(R = 30 mm・壁 1.5 mm・n_glass 1.52・水 1.333 / 油 1.47・充填 5 通り)であって、
 実物の瓶の測定ではない。観測も当てはめも、理想の針穴カメラ・完全な円筒・分散なし・既知のカメラ距離と背景距離・点の標本化(画素の開口で縞が平均化されない)を仮定する。
 雑音なしで 1e-6 以下に戻るのは、2 つの独立な導出が同じ幾何光学の式に同じ入力を渡した結果であり、「実物でそうなる」ことの証拠ではない。
@@ -21,11 +25,15 @@
   1. **順問題の検算**: 2 つの導出(追跡と閉形式)が全画素で一致、近軸の行列が中心の傾きに一致、真っ直ぐな背景の外側は直線。
   2. **雑音なしの回収**: 水・油 × 充填 5 通りで R・壁・n_glass・n_liquid・液面を 1e-6 / 1 画素で回収。空の瓶は液面「無し」、満の瓶も液面「無し」(屈折率は戻る)。
   3. **縞を撮って u を戻す**: 周期 256・32・4 mm の 4 ステップ位相シフトを 8 bit・雑音つきで撮り、階層的にほどいて u を作る。雑音 300 回で R 1 %・液面 1 画素・n_liquid 2 % 以内。
-  4. **別系統の液面**: u の行間の不連続(この PoC)と、背面光の明暗(`fill_level_from_image`)が 1 画素以内で一致。
-  5. **分けられない量**: 壁厚と n_glass の相関、使える窓を狭めたときの標準偏差、薄い壁、背景距離と n_liquid の縮退、較正の誤差が引き起こす偏り。
+  4. **液面の 2 つの読み出し**: u の行間の不連続(この PoC)と、背面光の明暗(`fill_level_from_image`)が一致する。ただし両者は**同じ行分割 `z < 充填 × 高さ` を共有する**ので、独立の測定ではなく
+     「2 つの読み出しが行の切り替わりを拾えること」の確認にとどまる(液面はちょうど行境界で、差 0 は構成上のもの)。`bottle_image` にはメニスカスがあり、3 mm で明暗の 2 読みが割れる(下記)が、
+     `bottle_background_map` にはメニスカスが無く、縞の側で検証できない。
+  5. **分けられない量**: 壁厚と n_glass の相関、使える窓を狭めたときの標準偏差、薄い壁、背景距離と n_liquid の縮退、較正の誤差が引き起こす偏り(背景距離 +1 mm で n_glass 0.011、
+     カメラ距離 +1 mm で 0.0029)、**偏心(モデル誤差)が残差にも旗にも出ないこと**(5b)。`separated` 旗は「雑音だけの誤差」の目安で保証ではない(しきい値 1 % は 1600 試行を見てから置いた。
+     0.25 のときは壁が外れた回の 15〜20 %、n_glass が 0.02 外れた回の 73〜76 % を「分けられた」と言っていた)。
   6. **壊して確かめる**: n_glass を 1.4 に固定する / スネルの式の向きを逆にする → 残差が雑音床を越えて門が赤になる。
 
-★正直な限界: 上の「真値の開示」のとおり。さらに、縞を標本化する画素の開口を無視している(縁では 1 画素が縞の数周期に広がる; その画素は隣の列との差で除く)、
+★正直な限界: 上の「共有する仮定」と「真値の開示」のとおり。予測した σ は経験の σ の 0.67〜1.00 倍で、**常に同じか小さい(過小)**。さらに、縞を標本化する画素の開口を無視している(縁では 1 画素が縞の数周期に広がる; その画素は隣の列との差で除く)、
 使える画素は全反射で落ちる所と縁の 3 画素を除いた内側、雑音は加算ガウスと 8 bit 量子化だけ(固定パターン・光量の揺らぎ・背景の印刷誤差なし)。
 【学習】0。【較正】0(カメラと背景の距離は既知として渡す)。
 """
@@ -121,6 +129,64 @@ def fit(u, x, **kw):
 
 def rel(a, b):
     return abs(a - b) / abs(b)
+
+
+def _refract(d, n, n1, n2):
+    """単位ベクトル d が、法線 n の界面を n1 → n2 へ抜けた後の向き(全反射は None)。"""
+    if d @ n > 0:
+        n = -n
+    c = -(d @ n)
+    eta = n1 / n2
+    k = 1.0 - eta * eta * (1.0 - c * c)
+    if k < 0:
+        return None
+    return eta * d + (eta * c - math.sqrt(k)) * n
+
+
+def _hit(p, d, c, r, inside):
+    o = p - c
+    b = o @ d
+    disc = b * b - (o @ o - r * r)
+    if disc < 0:
+        return None
+    t = -b + math.sqrt(disc) if inside else -b - math.sqrt(disc)
+    return t if t > 1e-9 else None
+
+
+def eccentric_u(x, ex, ey, nc):
+    """内円を (ex, ey) mm ずらした瓶(外円は中心、壁厚は一様でない)の、針穴から x の画素の光線が背景に着く座標。ex は視線の向き(奥行き)、ey は画像の横。
+    op とも閉形式とも別に、ここで書いた 2 次元のスカラー追跡(同心の e = 0 は op の地図に 1e-7 mm 以内で一致することを門で確かめる)。NaN = 全反射・後ろ向き。"""
+    Ri = R_B - T_B
+    c0, ci = np.zeros(2), np.array([ex, ey])
+    p = np.array([-DC, 0.0])
+    d = np.array([DC, x])
+    d = d / np.hypot(*d)
+    t = _hit(p, d, c0, R_B, False)
+    if t is None:
+        return x * (DC + DB) / DC
+    p = p + t * d
+    d = _refract(d, (p - c0) / R_B, 1.0, N_G)
+    t = _hit(p, d, ci, Ri, False)
+    if t is None:                                    # 内円に当たらず、壁だけを通る
+        t = _hit(p, d, c0, R_B, True)
+        p = p + t * d
+        d = _refract(d, (p - c0) / R_B, N_G, 1.0)
+    else:
+        p = p + t * d
+        d = _refract(d, (p - ci) / Ri, N_G, nc)
+        if d is None:
+            return float("nan")
+        t = _hit(p, d, ci, Ri, True)
+        p = p + t * d
+        d = _refract(d, (p - ci) / Ri, nc, N_G)
+        if d is None:
+            return float("nan")
+        t = _hit(p, d, c0, R_B, True)
+        p = p + t * d
+        d = _refract(d, (p - c0) / R_B, N_G, 1.0)
+    if d is None or d[0] <= 1e-9:
+        return float("nan")
+    return p[1] + (DB - p[0]) * d[1] / d[0]
 
 
 # --------------------------------------------------------------------------- #
@@ -300,7 +366,7 @@ def chapter_trials():
         ratios.extend((v[3] / np.maximum(v[2], 1e-12)).tolist())
     r_min, r_max = min(ratios), max(ratios)
     print("   予測 σ / 経験 σ: %.2f 〜 %.2f(1 に近いほど共分散が信用できる)、%.1f 秒" % (r_min, r_max, time.time() - t0))
-    gate("共分散から予測した σ が経験の σ の 0.5〜2 倍(共分散を信用してよい範囲)", 0.5 < r_min and r_max < 2.0, "%.2f〜%.2f" % (r_min, r_max))
+    gate("共分散から予測した σ が経験の σ の 0.5〜2 倍(ただし 1 を超えない = 常に同じか過小。共分散を信用しすぎない)", 0.5 < r_min and r_max < 2.0, "%.2f〜%.2f(過小の最大 %.0f %%)" % (r_min, r_max, 100 * (1 - r_min)))
     NUMBERS["pred_over_emp_min"], NUMBERS["pred_over_emp_max"] = r_min, r_max
     NUMBERS["trial_worst_R"], NUMBERS["trial_worst_nl"] = worstR, worstL
     return summary
@@ -310,7 +376,7 @@ def chapter_trials():
 # 4. 別系統の液面                                                                #
 # --------------------------------------------------------------------------- #
 def chapter_level(keep):
-    print("\n4. 液面を 2 通りで: u の行間の不連続(縞)と、背面光の明暗(`fill_level_from_image`)")
+    print("\n4. 液面の 2 つの読み出し: u の行間の不連続(縞)と、背面光の明暗(`fill_level_from_image`)。★同じ行分割を共有するので独立の測定ではない")
     rows = []
     worst = 0.0
     worst_truth = 0.0
@@ -325,9 +391,61 @@ def chapter_level(keep):
             worst_truth = max(worst_truth, abs(lp - fill * H_B))
             rows.append((name, fill, fill * H_B, lp, lv, d))
             print("   %s 充填 %.1f: 真値 %.2f mm | 縞の不連続 %.2f mm | 明暗 %.2f mm | 差 %.3f mm" % (name, fill, fill * H_B, lp, lv, d))
-    gate("縞の不連続と明暗の 2 系統の液面が 1 画素以内で一致(10 構成)", worst <= PITCH + 1e-9, "最大 %.3f mm(画素 %.3f mm)" % (worst, PITCH))
-    gate("縞による液面が真値に 1 画素以内(10 構成)", worst_truth <= PITCH + 1e-9, "最大 %.3f mm" % worst_truth)
+    print("   ★液面は全構成で行境界ちょうど(充填 × 80 mm は 0.05 mm の整数倍)で、`bottle_image` と `bottle_background_map` は同じ規則 z < 充填 × 高さ で行を液 / 空に分ける。差 0 は構成上のもの")
+    gate("縞の不連続と明暗の 2 つの読み出しが 1 画素以内で一致(同じ行分割を共有する確認。独立の測定ではない)", worst <= PITCH + 1e-9, "最大 %.3f mm(画素 %.3f mm)" % (worst, PITCH))
+    gate("縞による液面が真値(行分割の規則)に 1 画素以内", worst_truth <= PITCH + 1e-9, "最大 %.3f mm" % worst_truth)
+    # メニスカス: bottle_image にはあり bottle_background_map には無い
+    imm = WV.bottle_image(R_B, T_B, H_B, 0.5, N_G, 1.333, meniscus_mm=3.0, pixel_pitch_um=PITCH_UM)
+    e_ = WV.fill_level_from_image(imm["image"], PITCH_UM, "edge")["level_mm"]
+    b_ = WV.fill_level_from_image(imm["image"], PITCH_UM, "brightness")["level_mm"]
+    print("   メニスカス 3 mm(`bottle_image` のみ): 明暗の edge %.2f mm / brightness %.2f mm(真値の液面 40.00 mm)= %.2f mm 割れる。`bottle_background_map` にメニスカスは無く、縞では検証できない" % (e_, b_, abs(b_ - e_)))
+    gate("メニスカス 3 mm では明暗の 2 読みが 0.5 mm 以上割れる(液面の不確かさは実瓶でこちらが本物。縞側は未検証と開示)", abs(b_ - e_) > 0.5, "%.2f mm" % abs(b_ - e_))
     NUMBERS["level_pair_worst_mm"] = worst
+    NUMBERS["meniscus_split_mm"] = abs(b_ - e_)
+    return rows
+
+
+# --------------------------------------------------------------------------- #
+# 5b. モデル誤差(偏心)は残差にも旗にも出ない                                        #
+# --------------------------------------------------------------------------- #
+def chapter_model_error():
+    print("\n5b. 偏心(内円のずれ)= 観測と当てはめが共有する「同心」の仮定が崩れたとき(観測は別に書いたスカラー追跡、各区間 1 行)")
+    rng = np.random.default_rng(31)
+    x = band_map(0.5, 1.333)["x_mm"]
+    rows = []
+    base = {}
+    plan = (("満", 0.0, 0.0), ("満", 0.05, 0.0), ("満", 0.10, 0.0), ("満", 0.30, 0.0),
+            ("満(雑音なし)", 0.0, 0.0), ("満(雑音なし)", 0.05, 0.0), ("満(雑音なし)", 0.10, 0.0), ("満(雑音なし)", 0.30, 0.0),
+            ("半分", 0.0, 0.0), ("半分", 0.05, 0.0), ("半分", 0.10, 0.0), ("半分", 0.30, 0.0), ("半分", 0.0, 0.10), ("半分", 0.0, 0.30))
+    for kind, ex, ey in plan:
+        ul = np.array([eccentric_u(xx, ex, ey, 1.333) for xx in x])
+        ue = np.array([eccentric_u(xx, ex, ey, 1.0) for xx in x])
+        if ex == 0.0 and ey == 0.0 and kind == "満":
+            m0 = band_map(0.5, 1.333)
+            diff = max(float(np.nanmax(np.abs(ul - m0["u_mm"][-1]))), float(np.nanmax(np.abs(ue - m0["u_mm"][0]))))
+            gate("別に書いたスカラー追跡は、同心で op の地図に 1e-7 mm 以内で一致(偏心の観測を信用してよい)", diff < 1e-7, "%.1e mm" % diff)
+        if kind.startswith("満"):                                  # 液だけ(行の違いが無い = 液面の無い満の瓶)
+            U = np.tile(ul, (BAND_ROWS, 1))
+        else:                                                      # 上半分が空、下半分が液
+            U = np.vstack([np.tile(ue, (BAND_ROWS // 2, 1)), np.tile(ul, (BAND_ROWS // 2, 1))])
+        mm = {"u_mm": U, "weight": np.ones(U.shape), "valid": np.isfinite(U), "x_mm": x}
+        um = U if "雑音なし" in kind else observe(mm, rng)         # 雑音なしは σ を残差から出す当てはめが「完璧に当たった」と信じる極端な場合
+        r = fit(um, x, restarts=3, rows_per_section=1)
+        base.setdefault(kind, r)
+        label = "%s・%s %.2f" % (kind, "奥行き" if ex else "横", ex or ey) if (ex or ey) else "%s・同心" % kind
+        rows.append((label, r["radius_mm"] - R_B, r["wall_mm"] - T_B, r["n_glass"] - N_G, r["residual_rms_mm"], bool(r["converged"]), bool(r["separated"]), r["sigma"]["n_glass"], kind))
+        print("   %s mm: ΔR %+.4f  Δ壁 %+.4f  Δn_g %+.4f  残差 %.4f mm(同心は %.4f)  converged %s  separated %s  雑音だけの σ(n_g) %.1e" % (
+            label, rows[-1][1], rows[-1][2], rows[-1][3], r["residual_rms_mm"], base[kind]["residual_rms_mm"], rows[-1][5], rows[-1][6], rows[-1][7]))
+    byl = {r_[0]: r_ for r_ in rows}
+    f3, h3, l3 = byl["満(雑音なし)・奥行き 0.30"], byl["半分・奥行き 0.30"], byl["半分・横 0.30"]
+    bf, bh = base["満"]["residual_rms_mm"], base["半分"]["residual_rms_mm"]          # 雑音ありの残差の床
+    gate("満の瓶(液面なし・雑音なし)で奥行き方向の偏心 0.3 mm(壁厚の 20 %)は n_glass を 0.05 超動かすのに、残差は雑音の床(同じ瓶の雑音あり)の 2 倍以内で converged も separated も真のまま = 検出できない(限界の実測)",
+         abs(f3[3]) > 0.05 and f3[4] < 2.0 * bf and f3[5] and f3[6], "Δn_g %+.3f、残差 %.4f / %.4f mm" % (f3[3], f3[4], bf))
+    gate("半分の瓶(空の区間もある)では同じ偏心の残差は同心の 3 倍以上に増えて気づけるが、n_glass は 0.02 超動き separated は真のまま(旗は偏心を知らない)",
+         abs(h3[3]) > 0.02 and h3[4] > 3.0 * bh and h3[6], "Δn_g %+.3f、残差 %.4f / %.4f mm" % (h3[3], h3[4], bh))
+    gate("横方向の偏心 0.3 mm は左右非対称なので残差が同心の 5 倍を越えて見える(検出できる偏心と、できない偏心がある)", l3[4] > 5.0 * bh, "残差 %.4f / %.4f mm" % (l3[4], bh))
+    NUMBERS["ecc_full03_dng"], NUMBERS["ecc_full01_dng"] = f3[3], byl["満(雑音なし)・奥行き 0.10"][3]
+    NUMBERS["ecc_half03_ratio"], NUMBERS["ecc_lateral03_ratio"], NUMBERS["ecc_full03_ratio"] = h3[4] / bh, l3[4] / bh, f3[4] / bf
     return rows
 
 
@@ -392,13 +510,14 @@ def chapter_identifiability(keep):
                 continue
             e = np.abs(est[:, 1] - t) / t
             eg = np.abs(est[:, 2] - N_G) / N_G
-            wrong = ~((e < 0.25) & tr["conv"])
+            wrong_wall = ~((e < 0.25) & tr["conv"])
+            wrong = wrong_wall | (np.abs(est[:, 2] - N_G) > 0.02)        # 壁厚が 25 % 超外れた、または n_glass が 0.02 超外れた、または未収束
             silent = wrong & tr["sep"]
             wrong_total += int(wrong.sum())
             wrong_silent += int(silent.sum())
-            trows.append((win, t, float(np.median(e)), float((~wrong).mean()), float(silent.sum() / max(wrong.sum(), 1)), float(np.median(sig[:, 1]) / t),
+            trows.append((win, t, float(np.median(e)), float((~wrong_wall).mean()), float(silent.sum() / max(wrong.sum(), 1)), float(np.median(sig[:, 1]) / t),
                           float(tr["sep"].mean()), float(np.median(eg))))
-            print("      窓 %.2f・壁 %.1f mm: 壁の誤差の中央値 %.3f、25 %% 以内 %.2f、外れ %d 回のうち「分けられた」と言った %d 回、予測 σ/壁 %.3f、n_g の誤差の中央値 %.3f、分けられたと言った割合 %.2f" % (
+            print("      窓 %.2f・壁 %.1f mm: 壁の誤差の中央値 %.3f、25 %% 以内 %.2f、外れ(壁厚 25 %% 超・n_glass 0.02 超・未収束)%d 回のうち「分けられた」と言った %d 回、予測 σ/壁 %.3f、n_g の誤差の中央値 %.3f、分けられたと言った割合 %.2f" % (
                 win, t, trows[-1][2], trows[-1][3], int(wrong.sum()), int(silent.sum()), trows[-1][5], trows[-1][7], trows[-1][6]))
     res["walls"] = trows
     by = {(r_[0], r_[1]): r_ for r_ in trows}
@@ -407,7 +526,8 @@ def chapter_identifiability(keep):
          "壁 0.1: %.2f / 壁 1.5: %.2f" % (by[(0.25, 0.1)][3], by[(0.25, 1.5)][3]))
     sil = wrong_silent / max(wrong_total, 1)
     print("      外れた %d 回のうち「分けられた」と言ったもの %d 回(%.1f %%)" % (wrong_total, wrong_silent, 100 * sil))
-    gate("壁厚が外れた試行のうち、当てはめが「分けられた」と言い張ったのは 20 % 以下(分けられない量を分けられたと書かない)", wrong_total > 0 and sil <= 0.2, "%d / %d" % (wrong_silent, wrong_total))
+    gate("壁厚か n_glass が外れた試行のうち、旗が「分けられた」と言ったのは 5 % 以下(旗の守る範囲は雑音だけの誤差。しきい値 1 % は 1600 試行を見てから置いた。モデル誤差は 5b のとおり対象外)",
+         wrong_total > 0 and sil <= 0.05, "%d / %d" % (wrong_silent, wrong_total))
     NUMBERS["silent_wrong_fraction"] = sil
     # (d) 背景距離を未知にすると n_liquid と縮退
     rd = fit(uo, x, free_background=True, restarts=3)
@@ -459,6 +579,14 @@ def chapter_identifiability(keep):
     print("   (f) 窓 40 %% の (壁厚 × n_glass) 面の残差 RMS: 最小 %.4f mm(雑音の床 %.4f mm)、床の 1.5 倍以内の格子 %d 個(%.0f %%)、その点の (壁厚, n_glass) の相関 %.3f" % (
         float(grid.min()), floor, int(ii.size), 100 * valley, corr_v))
     NUMBERS["valley_fraction"], NUMBERS["valley_corr"] = valley, corr_v
+    w_lo, w_hi = (float(ts_[jj].min()), float(ts_[jj].max())) if ii.size else (float("nan"),) * 2
+    g_lo, g_hi = (float(gs_[ii].min()), float(gs_[ii].max())) if ii.size else (float("nan"),) * 2
+    sw, sg = best["sigma"]["wall_mm"], best["sigma"]["n_glass"]
+    dchi = (1.5 ** 2 - 1.0) * best["n_columns"]                     # 残差 RMS が床の 1.5 倍のときの Δχ²(雑音 σ = 床の RMS として)
+    NUMBERS["valley_dchi2"], NUMBERS["valley_w_over_sigma"], NUMBERS["valley_g_over_sigma"] = dchi, (w_hi - w_lo) / max(sw, 1e-12), (g_hi - g_lo) / max(sg, 1e-12)
+    NUMBERS["valley_w_range"], NUMBERS["valley_g_range"] = (w_lo, w_hi), (g_lo, g_hi)
+    print("      谷の広がり: 壁 %.2f〜%.2f mm(共分散の σ %.4f mm の %.0f 倍)、n_glass %.3f〜%.3f(σ %.4f の %.0f 倍)、床の 1.5 倍は Δχ² ≈ %.0f ―― 雑音の中で見分けがつかない範囲ではない" % (
+        w_lo, w_hi, sw, NUMBERS["valley_w_over_sigma"], g_lo, g_hi, sg, NUMBERS["valley_g_over_sigma"], dchi))
     gate("(壁厚, n_glass) 面に、雑音の床の 1.5 倍以内に収まる細長い谷がある(格子の 4 点以上・半分未満で、壁厚と n_glass の相関 −0.9 より強い)", ii.size >= 4 and valley < 0.5 and corr_v < -0.9,
          "%d 点、%.0f %%、相関 %.3f" % (ii.size, 100 * valley, corr_v))
     return res
@@ -507,15 +635,15 @@ def checker_panel(m, size=8.0):
     return ch[:h // 4 * 4, :w // 4 * 4].reshape(h // 4, 4, w // 4, 4).mean(axis=(1, 3))
 
 
-def make_figures(maps, keep, trials, ident, lrows):
+def make_figures(maps, keep, trials, ident, lrows, merr):
     # 1 瓶越しの市松(水 6 枚)
     panels, caps = [], []
     for fill in (0.0, 0.1, 0.3, 0.5, 0.7, 0.9):
         m = maps.get(("水", fill)) or full_map(fill, 1.333)
         panels.append(checker_panel(m))
-        caps.append("充填 %d %%" % round(100 * fill))
+        caps.append("充填 %d %%(シミュレーション)" % round(100 * fill))
     figs.save_grid("checker_through_bottle", panels, gray=True, ncols=3, vrange=(0.0, 1.0), captions=caps,
-                   title="瓶越しに見た背景の市松(1 マス 8 mm): 液のある所だけ左右が反転し、空の所は縁で全反射して欠ける",
+                   title="瓶越しに見た背景の市松のシミュレーション(瓶の幅 60 mm・高さ 80 mm、1 マス 8 mm): 液のある所は強く歪み、空の所は縁で全反射して欠ける",
                    caption="R 30 mm・壁 1.5 mm・n 1.52 の瓶、水 1.333。各画素の光線を追跡して背景のどこを見ているか(u)を求め、そこの市松を描いた。逆から見ると、この歪みが瓶を測る手がかり。")
     # 2 u(x) の断面と当てはめ
     um, r, sd, frac = keep[("水", 0.5)]
@@ -531,10 +659,10 @@ def make_figures(maps, keep, trials, ident, lrows):
         k = np.isfinite(yv) & (np.abs(x) <= 29.0)
         return (label, x[k], yv[k])
     series = [fin("液のある行(観測)", bot - st), fin("空の行(観測)", top - st), fin("当てはめ(液)", np.where(okx, ux - st, np.nan)), fin("当てはめ(空)", np.where(oky, uy - st, np.nan))]
-    figs.save_plot("profile_fit", series, xlabel="画像の横位置 x [mm]", ylabel="背景の座標のずれ u − 直線 [mm]", colors=["emphasis", "reference", "right", "right"],
-                   styles=[None, None, "dashed", "dashed"], size=(760, 400), xlim=(-29.0, 29.0), ylim=(-420.0, 200.0),
+    figs.save_plot("profile_fit", series, xlabel="画像の横位置 x [mm]", ylabel="背景の座標のずれ u − 直線 [mm]", colors=["emphasis", "reference", "wrong", "right"],
+                   styles=[None, None, "dashed", "dotted"], size=(760, 400), xlim=(-29.0, 29.0), ylim=(-420.0, 200.0),
                    title="縞から戻した u の断面(水 50 %%)と、閉形式の当てはめ: 残差 %.4f mm" % r["residual_rms_mm"],
-                   caption="縞の位相を 8 bit・雑音つきで撮ってほどいた u から直線(瓶なし)を引いた量。破線が閉形式の当てはめで、観測に重なる。")
+                   caption="縞の位相を 8 bit・雑音つきで撮ってほどいた u から直線(瓶なし)を引いた量(シミュレーション)。破線(液)と点線(空)が閉形式の当てはめで、観測に重なる。縦軸が ±200 mm なので 0.4 µm の残差は見えない(数字は題)。")
     # 3 回収の表
     header = ["液体", "充填", "R [mm]", "壁 [mm]", "n_glass", "n_liquid", "液面 [mm]", "cond"]
     trs = []
@@ -542,15 +670,15 @@ def make_figures(maps, keep, trials, ident, lrows):
         for fill in FILLS:
             _, rr, _, _ = keep[(name, fill)]
             trs.append([name, "%.1f" % fill, "%.4f" % rr["radius_mm"], "%.4f" % rr["wall_mm"], "%.4f" % rr["n_glass"], "%.4f" % rr["n_liquid"], "%.2f" % rr["level_mm"], "%.0f" % rr["cond"]])
-    figs.save_table("recovery_table", header, trs, title="縞から戻した値(真値 R 30・壁 1.5・n_g 1.52)",
-                    caption="8 bit・雑音 %.1f 階調。真値は自分で作ったシミュレーションの入力で、実物の測定ではない。" % SIGMA_DN)
+    figs.save_table("recovery_table", header, trs, title="縞から戻した値(シミュレーション、真値 R 30・壁 1.5・n_g 1.52)",
+                    caption="8 bit・雑音 %.1f 階調。真値は自分で作ったシミュレーションの入力で、実物の測定ではない。観測と当てはめは同じ仮定(同心円・壁厚一様・針穴・平面背景)を共有する。" % SIGMA_DN)
     # 4 雑音試行の表
     header = ["液体 / 使う行", "試行", "R の p95 誤差", "壁の p95 誤差", "n_g の p95 誤差", "n_l の p95 誤差", "予測 σ / 経験 σ (R, 壁, n_g, n_l)"]
     trs = []
     for (name, label), (relerr, p95, emp, pred, conv, n) in trials.items():
         trs.append(["%s・%s" % (name, label), "%d" % n, "%.1e" % p95[0], "%.1e" % p95[1], "%.1e" % p95[2], "%.1e" % p95[3], " / ".join("%.2f" % v for v in (pred / np.maximum(emp, 1e-12)))])
     figs.save_table("noise_trials", header, trs, title="雑音 %d / %d 回の相対誤差(95 %% 点)と予測 σ の当たり具合" % (N_TRIALS, N_TRIALS_ALL),
-                    caption="雑音だけが誤差なら、1 行ずつの最悪の場合でも R・n_liquid は 1e-4 以下で、予測 σ は経験の σ に 0.67〜1.00 倍で合う。ただし較正の誤りは別(下の表)。")
+                    caption="雑音だけが誤差なら、1 行ずつの最悪の場合でも R・n_liquid は 1e-4 以下。予測 σ は経験の σ の 0.67〜1.00 倍で、常に同じか過小(最大 33 %)。較正の誤りとモデル誤差は別(以下の表と 5b)。")
     # 5 窓
     wrows = ident["windows"]
     fx = np.array([f for f, rr in wrows if rr is not None])
@@ -577,8 +705,12 @@ def make_figures(maps, keep, trials, ident, lrows):
     vr = (0.0, 6.0)
     z = np.clip(grid / floor, vr[0], vr[1])
     panel = figs._render_heatmap(z, ts_, 1000.0 * (gs_ - N_G), xlabel="横: 壁厚 [mm]", ylabel="縦: n_glass − 1.52 [×1e-3]", vrange=vr, boundary=z < 1.5, size=(640, 480), colorbar_unit="倍")
-    figs.save_grid("wall_glass_valley", [panel], ncols=1, captions=["横: 壁厚、縦: n_glass"], title="(壁厚, n_glass) の面の残差: 白線の内側が雑音床の 1.5 倍以内(使える窓 40 %・1 行)",
-                   caption="色は残差 / 雑音の床(倍)。他の 2 量(R・n_liquid)は各点で当て直した。壁を厚く・n_glass を下げる(または逆)の対角に細長い谷があり、谷の上の点は雑音の中では見分けがつかない(谷の点の相関 %.2f)。" % NUMBERS["valley_corr"])
+    vw, vg = NUMBERS["valley_w_range"], NUMBERS["valley_g_range"]
+    figs.save_grid("wall_glass_valley", [panel], ncols=1, captions=["横: 壁厚、縦: n_glass"],
+                   title="(壁厚, n_glass) の面の残差: 白線の内側 = 雑音床の 1.5 倍以内(使える窓 40 %・1 行、シミュレーション)",
+                   caption="色は残差 / 雑音の床(倍)。他の 2 量(R・n_liquid)は各点で当て直した。谷は壁 %.2f〜%.2f mm の**ほぼ縦の帯**(n_glass は %.3f〜%.3f の広い範囲)で、壁厚と n_glass の相関は %.2f。"
+                           "床の 1.5 倍は Δχ² ≈ %.0f で、共分散の σ に対して壁 %.0f 倍・n_glass %.0f 倍の幅なので、雑音の中で見分けがつかない範囲ではない。壁厚より n_glass の方が弱く決まる、という形を示す図。" % (
+                       vw[0], vw[1], vg[0], vg[1], NUMBERS["valley_corr"], NUMBERS["valley_dchi2"], NUMBERS["valley_w_over_sigma"], NUMBERS["valley_g_over_sigma"]))
     # 8 較正の偏り
     base, srows = ident["sys"]
     header = ["誤差", "ΔR [mm]", "Δ壁 [mm]", "Δn_glass", "Δn_liquid", "残差 [mm]"]
@@ -586,13 +718,20 @@ def make_figures(maps, keep, trials, ident, lrows):
     for lab, dR, dW, dG, dL, rms in srows:
         trs.append([lab, "%+.4f" % dR, "%+.4f" % dW, "%+.5f" % dG, "%+.5f" % dL, "%.4f" % rms])
     figs.save_table("calibration_bias", header, trs, title="精度と正確さ: 較正の誤りは雑音より桁違いに効く",
-                    caption="カメラ距離・背景距離・画素位置は「既知」として渡す前提。背景距離 1 mm の誤りは n_glass を %.3f(雑音の σ の %.0f 倍)動かし、残差は雑音の床より約 %.0f 倍に増えるだけなので、残差だけでは較正の誤りか屈折率の違いか区別しにくい。" % (
-                        abs(srows[0][3]), NUMBERS["sys_over_noise_ng"], srows[0][5] / base["residual_rms_mm"]))
+                    caption="カメラ距離・背景距離・画素位置は「既知」として渡す前提。背景距離 1 mm の誤りは n_glass を %.3f(雑音の σ の %.0f 倍)、カメラ距離 1 mm の誤りは %.4f 動かし、残差は雑音の床より約 %.0f 倍に増えるだけなので、残差だけでは較正の誤りか屈折率の違いか区別しにくい。" % (
+                        abs(srows[0][3]), NUMBERS["sys_over_noise_ng"], abs(srows[1][3]), srows[0][5] / base["residual_rms_mm"]))
     # 9 液面の 2 系統
     header = ["液体", "充填", "真値 [mm]", "縞の不連続 [mm]", "背面光の明暗 [mm]", "差 [mm]"]
     trs = [[n, "%.1f" % f, "%.2f" % t_, "%.2f" % a_, "%.2f" % b_, "%.3f" % d_] for n, f, t_, a_, b_, d_ in lrows]
-    figs.save_table("level_two_ways", header, trs, title="液面を別系統の 2 通りで(縞 / 背面光の明暗)",
-                    caption="2 系統は互いに 1 画素(0.05 mm)以内で一致し、どちらも真値(充填 × 80 mm)に 1 画素以内。空の瓶・満の瓶は液面「無し」と返す。")
+    figs.save_table("level_two_ways", header, trs, title="液面の 2 つの読み出し(縞 / 背面光の明暗)",
+                    caption="2 つは同じ行分割を共有するので、一致(0 画素差)は独立の測定ではなく構成上のもの(液面はちょうど行境界)。メニスカス 3 mm では明暗の 2 読みが %.2f mm 割れ、縞の側にメニスカスは無く未検証。" % NUMBERS["meniscus_split_mm"])
+    # 10 偏心(モデル誤差)
+    header = ["内円のずれ [mm]", "Δ壁 [mm]", "Δn_glass", "残差 [mm]", "converged", "separated"]
+    trs = [[e_, "%+.4f" % dW, "%+.4f" % dG, "%.4f" % rms, str(cv), str(sp)] for e_, dR, dW, dG, rms, cv, sp, sg, kd in merr]
+    figs.save_table("eccentric_model_error", header, trs, title="モデル誤差(偏心)は残差にも旗にも出ない(シミュレーション)",
+                    caption="内円をずらした瓶を別に書いたスカラー追跡で作り、同心円の当てはめに渡した(各区間 1 行)。液だけの満の瓶で視線の奥行き方向に 0.3 mm(壁厚の 20 %%)ずらすと n_glass が %+.3f 動くのに、残差は雑音の床の %.1f 倍で、converged も separated も True のまま ―― 検出できない。"
+                            "半分の瓶では残差が %.0f 倍に増えて気づけるが、separated は True のまま。画像の横にずらすと左右非対称で %.0f 倍になる。" % (
+                                NUMBERS["ecc_full03_dng"], NUMBERS["ecc_full03_ratio"], NUMBERS["ecc_half03_ratio"], NUMBERS["ecc_lateral03_ratio"]))
 
 
 def main():
@@ -610,8 +749,9 @@ def main():
     lrows = chapter_level(keep)
     ident = chapter_identifiability(keep)
     chapter_probes(keep)
+    merr = chapter_model_error()
     if figs.target_dir() is not None:
-        make_figures(maps, keep, trials, ident, lrows)
+        make_figures(maps, keep, trials, ident, lrows, merr)
     cpu = time.process_time() - c0
     print("\n所要 CPU %.1f s(壁時計 %.1f s)、門 %d 件中 NG %d 件" % (cpu, time.time() - t0, len(GATES), len(FAILS)))
     if FAILS:
