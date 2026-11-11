@@ -50,7 +50,7 @@
     {
       "module": "backend_safe.py",
       "function": "guard.w",
-      "line": 307,
+      "line": 330,
       "exception_types": [
         "MissingDependencyError"
       ],
@@ -61,7 +61,7 @@
     {
       "module": "backend_safe.py",
       "function": "guard.w",
-      "line": 309,
+      "line": 332,
       "exception_types": [
         "Exception"
       ],
@@ -72,7 +72,7 @@
     {
       "module": "backend_safe.py",
       "function": "_finite",
-      "line": 602,
+      "line": 625,
       "exception_types": [],
       "returned_or_assigned": "np.nan_to_num(real, nan=0.0, posinf=1.0, neginf=0.0)",
       "classification": "documented_fallback",

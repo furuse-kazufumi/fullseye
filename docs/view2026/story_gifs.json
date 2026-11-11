@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 217,
+  "target_count": 218,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -33679,6 +33679,148 @@
       "alt": {
         "ja": "ViEW の入口用: 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大。どの組でも見つかるものだけ)。見つからない照明は灰色の斜線の全長の棒、種の組で揺れる照明は破線の全長の棒。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げ、倍率は見本の下に書いた。PE 片は分光の 1210 nm の帯を両隣で割った吸収の深さ)。凹みの見本は 80 倍に広げて判定の大きさでならしたので、実際よりはっきり見える(雑音なしの陰影は最大 0.8 %)。",
         "en": "Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread"
+      }
+    },
+    "poc_ct_casting_sparse_views": {
+      "representative": "01_slices.png",
+      "status": "gif",
+      "selected": [
+        "01_slices.png",
+        "02_ranking.png",
+        "03_tv_weight.png",
+        "04_dual_energy.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_ct_casting_sparse_views/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_slices.png",
+              "content_box": [
+                0,
+                91,
+                720,
+                508
+              ]
+            },
+            {
+              "file": "02_ranking.png",
+              "content_box": [
+                0,
+                134,
+                720,
+                421
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.711957
+            },
+            {
+              "file": "03_tv_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_dual_energy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                234
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.077364
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 312458,
+          "color_mad": [
+            0.1023,
+            0.0258,
+            0.1502,
+            0.0718
+          ],
+          "max_color_mad": 0.1502,
+          "source_sha256": "3301925a7cba176cfae5f26c99e977b95506a23ff4e5bc962d0d21c3b9bdcab1"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_ct_casting_sparse_views/story.en.gif",
+          "frames": [
+            {
+              "file": "01_slices.png",
+              "content_box": [
+                0,
+                91,
+                720,
+                508
+              ]
+            },
+            {
+              "file": "02_ranking.png",
+              "content_box": [
+                0,
+                134,
+                720,
+                421
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.711957
+            },
+            {
+              "file": "03_tv_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_dual_energy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                234
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.077364
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 312458,
+          "color_mad": [
+            0.1023,
+            0.0258,
+            0.1502,
+            0.0718
+          ],
+          "max_color_mad": 0.1502,
+          "source_sha256": "2ee5fa37ea7048e81624ef2e7f03d31add71d804045c0121f79633d654bd3ac2"
+        }
+      },
+      "reason": null,
+      "cover": "01_slices.png",
+      "still": "articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png",
+      "alt": {
+        "ja": "360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。",
+        "en": "CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume"
       }
     }
   }
