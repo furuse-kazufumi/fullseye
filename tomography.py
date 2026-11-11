@@ -1355,7 +1355,11 @@ def filtered_backprojection(sinogram, angles_deg=None, size=None,
     :param sinogram: ``(n_angles, n_detectors)``, rows = angles.
     :param angles_deg: view angles in degrees; ``None`` -> uniform ``[0, 180)``
         with one view per row.
-    :param size: output side; ``None`` -> the inscribed square.
+    :param size: output side; ``None`` -> the inscribed square, the largest odd side
+        under ``n_detectors / sqrt(2)``. The sinogram does not carry the source image's
+        size, so this is **not** the size of the image given to :func:`radon_transform`:
+        a 32 x 32 image gives 47 detectors and a 33 x 33 default. Pass ``size=`` (the
+        source side) to get the source grid back; ``docs/KNOWN_ISSUES.md`` §53.
     :param filter_name: one of :data:`FILTERS`.
     :param cutoff: fraction of Nyquist to keep, ``(0, 1]``.
     :param span_deg: angular range for the ``d(theta)`` weight; ``None`` -> the

@@ -3538,7 +3538,7 @@ def op_signature_detail(row) -> str:
         # general-algorithm tier: a seq/scalar op, NOT an image-pipeline op. Show its
         # signature + provenance and how to run it (via the CLI), read-only.
         return ("%s   [%s → %s]\ngeneral-algorithm tier (%s) — a seq/scalar op, not an "
-                "image-pipeline op\nprovenance: %s\nrun via CLI:  py -3.11 imgevolve.py "
+                "image-pipeline op\nprovenance: %s\nrun via CLI:  fullseye "
                 "algo run %s --seq ..."
                 % (row["name"], row["in_sort"], row["out_sort"], row["category"],
                    row.get("provenance") or "(none)", row["name"]))
@@ -3556,7 +3556,7 @@ def op_tooltip(row) -> str:
     """Multi-line tooltip for an operator list item / stage."""
     if row.get("backend") == "general":
         return ("%s\ngeneral-algorithm tier (%s) — seq/scalar, not an image op\n"
-                "sort: %s → %s\nprovenance: %s\nrun via CLI: imgevolve.py algo run %s"
+                "sort: %s → %s\nprovenance: %s\nrun via CLI: fullseye algo run %s"
                 % (row["name"], row["category"], row["in_sort"], row["out_sort"],
                    row.get("provenance") or "(none)", row["name"]))
     a_role, b_role = op_arg_roles(row["name"])
@@ -5783,7 +5783,7 @@ def op_help_html(name, lang="en", meta=None, dim="2d"):
                 "<p style='font-family:monospace;font-size:11px'>%s</p>"
                 "<p style='color:#8b91a0;font-size:11px'>A <b>seq/scalar</b> op — not an image "
                 "operator: it has no a/b knobs and does not enter the pipeline. Run it from the CLI "
-                "(<code>py -3.11 imgevolve.py algo run %s --seq ...</code>) or via "
+                "(<code>fullseye algo run %s --seq ...</code>) or via "
                 "<code>fullseye.run_algo(\"%s\", [...])</code>.</p>"
                 % (_esc(name), desc, sig, _esc(name), _esc(name)))
     halcon = (" · HALCON: %s" % m["halcon"]) if m.get("halcon") else ""
@@ -9201,7 +9201,7 @@ def build_window(model=None):
         row = _op_row(name)
         if row and row.get("backend") == "general":     # double-click on a read-only general op
             flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
-                  "imgevolve.py algo run %s" % (name, name))
+                  "fullseye algo run %s" % (name, name))
             return
         a_val, b_val = op_a_spin.value(), op_b_spin.value()
         line = "%s (%r, %r)" % (name, float(a_val), float(b_val))   # repr: full precision
@@ -9293,7 +9293,7 @@ def build_window(model=None):
         row = _op_row(name)
         if row and row.get("backend") == "general":
             flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
-                  "imgevolve.py algo run %s" % (name, name))
+                  "fullseye algo run %s" % (name, name))
             return
         base = _search_current_value() if base is None else base
         if base is None:
@@ -11199,7 +11199,7 @@ def build_window(model=None):
         row = _op_row(n)
         if row and row.get("backend") == "general":     # palette: general ops are run-via-CLI only
             flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
-                  "imgevolve.py algo run %s" % (n, n))
+                  "fullseye algo run %s" % (n, n))
             return
         push_undo()
         model.add_stage(n)
@@ -11619,7 +11619,7 @@ def build_window(model=None):
             code_status.setText("✕ general-algorithm op(s) can't run in an image pipeline: "
                                 + ", ".join(general[:3]))
             flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
-                  "imgevolve.py algo run %s" % (general[0], general[0]))
+                  "fullseye algo run %s" % (general[0], general[0]))
             return
         push_undo()
         model.stages = list(stages)           # the model setter normalises tuples -> lists

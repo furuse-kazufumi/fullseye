@@ -7,6 +7,24 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 修正 — 外部監査(v1.0.0)の指摘を 1 件ずつ確かめた結果(2026-11-11)
+
+- `docs/HALCON_COVERAGE.md` の章別表(行の合計 1,082 / 2,411)と見出し(1,017 / 2,313): 旧基準の混在ではなく、**複数の章に載る operator 87 件の重複**。同じ版(2605)のスクレイプの章の延べ数が 2,411 で、実 operator は 2,313。生成器 `halcon_coverage.py` が表の前に理由と数を書くようにして作り直した(表の数字は変えていない)。
+- リリースノートの「695 of 696 matched pixel for pixel」(`gpu_auto_allow.json`): 696 は全画素の照合を終えた時点(2026-11-04)の件数で、許可リストの大きさではない。リポジトリには照合の記録(`out/gpu_auto_sweep/verify.json`、追跡外)が無く、696 は再計算できない。今の許可リストは `ops` 521 + `pipeline_ops` 39 + `resident_ops` 141 = 和集合 701(CPU 実時間 45 秒以上の op は全画素照合の対象外、その後に足した分もある)。**695/696 は「照合した母数」の数で、701 に対する割合ではない**。
+- リリースノートの「typed-ledger ratio (2846/2846)」: 敵対的検証(2026-11-05)の時点の数で、その後 `reprconv.voxel_to_hessian`(台帳 op 1 本)が加わり、v1.0.0 では 2847/2847(`docs/OP_COUNT_HISTORY.md` の 1.0.0 行・README の 1.0.0 行と一致)。1 件の差は版の取り違えで、数え方の誤りではない。
+- CLI `fullseye has <op>`: 索引にあるが optional 依存(extra)が足りず登録されていない op を「unknown op」と答えていた(`apply` は `MissingBackendError` で案内していた)。`apply` と同じ文(`api._explain_unregistered`)で「在るが、この環境では使えない。不足は X、`pip install ...`」と出し、終了コードは 1 のまま。
+- `fullseye.<op名>` の属性アクセス(例 `fullseye.access_channel`)が案内なしの AttributeError だった: 2-D op は `fullseye.apply(img, op)` / `fullseye.op.<op>(img)` で呼ぶこと、backend 不足なら不足の extra、台帳 op なら `op_run` を言う。例外は AttributeError のまま(`hasattr` は False)。
+- PyPI 版の案内に旧作業名 imgevolve が残っていた: `python -m fullseye --help` が「imgevolve — single CLI entry point」と名乗り、例示とエラー文(`unknown op 'x' (try: py -3.11 imgevolve.py has x)`)が PyPI の手元に無い `imgevolve.py` を勧めていた。`python -m fullseye` の入口を `_prog()` が見分け(`python -m fullseye has <op>`)、名乗りを fullseye に、checkout 開発者向けの綴りは epilog にだけ残した。Studio の一般アルゴリズムの案内と MCP カタログの「索引が無い」案内も同様。内部のモジュール名・歴史的記述・生成物の見出しは変えていない。
+- uint8 の画像(最も普通の入力)で「degraded to a fallback」と出ていた: 型変換(`dtype_converted`)は契約どおりの変換で劣化ではない。警告の文面を「input converted (uint8 -> float64 (/255) ...)」に変えた。**出し方の方針**(`backend_safe._is_dtype_conversion` の docstring): op 名ごとに最初の 1 回だけ警告し、以後は数えるだけ(`fallbacks()` / `fallback_counts()` は毎回記録)。`on_error="warn"` は明示の指定なので呼び出しごと。本当の劣化(op が例外・GPU 失敗・backend の import 失敗・sort 不一致)の文面と記録は変えていない。
+- `radon_transform`(32×32)→ `filtered_backprojection` の既定が 33×33 になる件: 再現したが**挙動は変えていない**(sinogram は元の大きさを持たず、既定は「検出器の本数から決まる内接正方形」の契約。変えると既定の大きさを前提にした既存の数値が動く)。docstring に `size=` を勧める注意を足し、`docs/KNOWN_ISSUES.md` §53 に記録した。
+
+### 直し — 使い勝手の指摘 4 件(2026-11-11、挙動の変更なし)
+
+- `fs.ledger.<op>` の署名: ラッパーが `(*args, **kw)` だったため、補完と `inspect.signature` から引数名・既定値が見えなかった。実体の署名を `__signature__` に載せた(表示専用。位置・キーワードの受け方は同じ。アクセス時にだけ作り、import 時間は増えない)。
+- `op_find` の説明文: docs/ops の無い環境(wheel)で、registry に doc の無い op の説明が `<op>.de.html`(ファイル名順で先頭)から取られ、既定でドイツ語(「Datenarten」「Aufruf」)になっていた(961/1037 件)。英語(`<op>.en.html`、無ければ原文)に固定。
+- `import fullseye` の時間: `physarum_search` の先頭の `import torch`(opsgraph 経由)が全体の過半を占めていた。他の族と同じ遅延プロキシ(`torch_lazy`)にした。公開 API は変えない。
+- 追加(opt-in、既定は変えない): `extra_checks='on'` のとき、image / region 用の op に最終軸が 1/3/4 でない 3 次元配列(立体)を渡すと拒否する。既定は従来どおり通す(docs/KNOWN_ISSUES.md §34)。
+
 ### 追加 — MCP の道具「真値付きの課題を作る」と「組んだ処理を採点する」(2026-11-09)
 
 - 独立レビューの直し(2026-11-10、SCORING_VERSION 2026-11-10.1):

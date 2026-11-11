@@ -207,6 +207,7 @@ def analyze(data, registry, versions_data=None):
 
     return {
         "n_real": len(real_ops),
+        "version": data["version"],
         "n_registry": len(registry),
         "covered": covered,
         "covered_by_source": by_source,
@@ -273,6 +274,18 @@ def gap_ranking(a):
     return items
 
 
+def _chapter_note(a):
+    """章別表の読み方。行の合計が見出しの数と合わない理由(複数の章に載る operator の重複)を数で書く。"""
+    rows = a["per_chapter"].values()
+    sum_cov = sum(c for c, _ in rows)
+    sum_tot = sum(t for _, t in rows)
+    multi = sum(1 for n in a["real"] if sum(1 for s in a["chapter_ops"].values() if n in s) > 1)
+    return ("Rows are counted per chapter and HALCON lists %d operators under more than one chapter, "
+            "so the rows sum to %d covered / %d total while the headline counts each operator once "
+            "(%d / %d). Same reference version (%s) for the table and the headline."
+            % (multi, sum_cov, sum_tot, len(a["covered"]), a["n_real"], a["version"]))
+
+
 def build_md(data, a):
     n_cov = len(a["covered"])
     pct = 100.0 * n_cov / a["n_real"] if a["n_real"] else 0.0
@@ -303,6 +316,8 @@ def build_md(data, a):
     ] + ["| %s | `%s` | %s | %s |" % ((n,) + PARTIAL[n]) for n in a["partial"]] + [
         "",
         "## Per-chapter coverage (ranked by gap)",
+        "",
+        _chapter_note(a),
         "",
         "| chapter | covered | total | gap |",
         "|---|---|---|---|",
