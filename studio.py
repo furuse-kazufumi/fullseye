@@ -1435,6 +1435,51 @@ class PipelineModel:
         lines += ["    ])"]
         return "\n".join(lines) + "\n"
 
+    def export_standalone(self, input_path=None, sample=None):
+        """Runnable script: ``pipeline(frame)`` + ``main()`` that reads the input, runs it,
+        saves the result and prints where (P-02, 2026-11-12).
+
+        Input: ``sample`` = a bundled sample-image name (read from the bundle, no path needed);
+        ``"__demo__"`` = Studio's synthetic demo (regenerated inline); otherwise the script
+        takes the input image as its first argument and prints a usage line (exit 2) without
+        one.  ``input_path`` is only used to name the file in a comment -- its directory is
+        never written into the script (no local paths in what people share)."""
+        head = self.export_python().replace("import fullseye, numpy as np",
+                                            "import os, sys\nimport fullseye, numpy as np", 1)
+        if sample == "__demo__":
+            load = ["    n = 256   # Studio's synthetic demo scene",
+                    "    y, x = np.mgrid[0:n, 0:n]",
+                    "    img = 0.5 + 0.3 * np.sin(x / 18.0) * np.cos(y / 22.0)",
+                    "    img[n // 5: n // 3, n // 5: n // 2] = 0.95",
+                    "    img[(y - 3 * n // 4) ** 2 + (x - n // 3) ** 2 < (n // 10) ** 2] = 0.1",
+                    "    img = np.clip(img, 0, 1)"]
+            out_arg, usage = "args[0] if args else", "[OUTPUT_IMAGE]"
+        elif sample:
+            load = ["    import sample_images   # ships with fullseye",
+                    "    img = sample_images.load(%r)" % str(sample)]
+            out_arg, usage = "args[0] if args else", "[OUTPUT_IMAGE]"
+        else:
+            note = ("   # Studio had: %s" % os.path.basename(str(input_path))) if input_path else ""
+            load = ["    if not args:",
+                    "        print('usage: %s INPUT_IMAGE [OUTPUT_IMAGE]' % os.path.basename(sys.argv[0]), file=sys.stderr)",
+                    "        return 2",
+                    "    img = fullseye.read_image(args[0])" + note]
+            out_arg, usage = "args[1] if len(args) > 1 else", "INPUT_IMAGE [OUTPUT_IMAGE]"
+        body = ["", "", "def main(args):", *load,
+                "    result = pipeline(img)",
+                "    out = %s 'pipeline_result.png'" % out_arg,
+                "    try:",
+                "        fullseye.write_image(out, result)",
+                "    except Exception:   # not image-shaped (e.g. a region list): keep the numbers instead",
+                "        out = os.path.splitext(out)[0] + '.npy'",
+                "        np.save(out, np.asarray(result))",
+                "    print(out)",
+                "    return 0",
+                "", "",
+                'if __name__ == "__main__":',
+                "    raise SystemExit(main(sys.argv[1:]))"]
+        return head + "\n".join(body) + "\n"
+
     def to_dict(self):
         # a stage is [op, a, b]; a bypassed one adds a 4th element true (key written only when on,
         # so a file without bypass is byte-identical to what older versions wrote)
@@ -6441,6 +6486,7 @@ def build_window(model=None):
             b.setFixedSize(w + 8, 28)                     # room for the ▾ arrow
         return b
 
+    _starts_on_demo = model is None            # a window we built ourselves starts on the synthetic demo scene
     model = model or PipelineModel(demo_image())
     KnobRow = _knob_row_class(QtWidgets, QtCore)     # spec-driven knob widgets (param_specs)
 
@@ -7506,12 +7552,16 @@ def build_window(model=None):
         def _record(visible, panel=_panel, dock=_dock):
             if win._applying_layout or win._layout_state.focus_image:
                 return
-            if win._closing or not win.isVisible():
-                return                  # 窓ごと隠れた/閉じた由来の変化は利用者の選択ではない(P-01)
+            try:
+                if win._closing or not win.isVisible():
+                    return              # 窓ごと隠れた/閉じた由来の変化は利用者の選択ではない(P-01)
+                _now_hidden = dock.isHidden()
+            except RuntimeError:        # 窓の破棄中(C++ 側が先に消えた)
+                return
             # visibilityChanged(False) は「タブの裏に回った」でも撃たれる(isHidden は False のまま)。
             # 利用者が閉じた/隠したのは dock が実際に hide された時だけ(P-01・P-15)。
             win._layout_state = studio_layout.set_override(
-                win._layout_state, panel, visible=not dock.isHidden(), collapsed=False)
+                win._layout_state, panel, visible=not _now_hidden, collapsed=False)
             _save_layout_state()
         _dock.visibilityChanged.connect(_record)
     win._set_work_mode = set_work_mode
@@ -7692,7 +7742,7 @@ def build_window(model=None):
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
              "dirty": False, "code_dirty": False, "errors": [], "perception_error": None,
              "program_error": None, "structured_errors": [], "stage_lines": None,
-             "renders": 0, "image_path": None, "pipe_path": None,
+             "renders": 0, "image_path": None, "input_sample": "__demo__" if _starts_on_demo else None, "pipe_path": None,
              "roi": None,                    # (x0, y0, x1, y1) region of interest of the main view (Shift + drag), or None
              # HDevelop dev_update_{window,var,pc,time}: whether the graphics window,
              # variable window, execution cursor and per-line timings auto-update during
@@ -9465,6 +9515,7 @@ def build_window(model=None):
             report_error("Could not open image", "%s\n\n%s" % (path, e)); return False
         model.set_image(arr)
         state["image_path"] = os.path.abspath(path)
+        state["input_sample"] = None
         model.input_path = state["image_path"]        # snapshots (A / B) compare the input by file
         state["input_notes"] = []                     # notes belong to the previously opened project's input
         state["fit_next"] = True                      # a new image should fit the view
@@ -9482,6 +9533,7 @@ def build_window(model=None):
     def use_demo():
         model.set_image(demo_image()); state["fit_next"] = True
         state["image_path"] = None; state["input_notes"] = []      # not a file: nothing to reference when saving
+        state["input_sample"] = "__demo__"
         model.input_path = None
         show_result()
 
@@ -9493,6 +9545,7 @@ def build_window(model=None):
         except Exception as e:
             report_error("Could not load sample image", "%s\n\n%s" % (name, e)); return
         state["image_path"] = None; state["input_notes"] = []
+        state["input_sample"] = name
         model.input_path = None
         state["fit_next"] = True
         flash("loaded sample image: " + name); show_result()
@@ -9616,7 +9669,10 @@ def build_window(model=None):
     def export():
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Export"); v = QtWidgets.QVBoxLayout(dlg)
         tag_dialog(dlg, "editor")
-        text = '--ops "' + model.ops_string() + '"\n\n' + model.export_python()
+        def _script():
+            return model.export_standalone(input_path=state.get("image_path"),
+                                           sample=state.get("input_sample"))
+        text = '--ops "' + model.ops_string() + '"\n\n' + _script()
         te = QtWidgets.QPlainTextEdit(); te.setPlainText(text); te.setReadOnly(True)
         te.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
         v.addWidget(te)
@@ -9637,7 +9693,7 @@ def build_window(model=None):
                 return
             try:
                 with open(path, "w", encoding="utf-8") as fh:
-                    fh.write(model.export_python())
+                    fh.write(_script())
             except Exception as e:
                 report_error("Could not save Python", "%s\n\n%s" % (path, e)); return
             flash("saved " + os.path.basename(path))
@@ -10644,7 +10700,9 @@ def build_window(model=None):
 
         def _use():
             img = (spec[::-1] - spec.min()) / max(float(np.ptp(spec)), 1e-9)
-            model.set_image(img); state["fit_next"] = True; show_result()
+            model.set_image(img); state["fit_next"] = True
+            state["image_path"] = None; state["input_sample"] = None     # not a file any more
+            show_result()
             flash("pipeline input ← spectrogram of %s (%d × %d, dB normalised)" % (os.path.basename(path), *img.shape))
         b_use.clicked.connect(lambda _=False: _use())
         dlg._data = d; dlg._use = _use
@@ -11154,11 +11212,8 @@ def build_window(model=None):
 
     def pipeline_script():
         """いまのパイプラインを、開いている画像に当てて走るスクリプトにする。"""
-        path = state.get("image_path")
-        first = (("img = fullseye.read_image(%r)" % path.replace(chr(92), "/")) if path
-                 else "img = fullseye.read_image('your_image.png')   # the image open in Studio")
-        tail = ["", first, "result = pipeline(img)"]
-        return model.export_python() + chr(10).join(tail) + chr(10)
+        return model.export_standalone(input_path=state.get("image_path"),
+                                       sample=state.get("input_sample"))
 
     act_code_to_editor.triggered.connect(
         lambda _=False: insert_code_into_editor(pipeline_script(), "pipeline.py"))
@@ -13957,6 +14012,7 @@ def build_window(model=None):
             flash("%s: values [%.4g, %.4g] mapped to [0, 1]" % (os.path.basename(path), lo, hi))
         model.set_image(np.nan_to_num(a))
         state["image_path"] = os.path.abspath(path); state["fit_next"] = True
+        state["input_sample"] = None
         _set_title(); show_result()
         return True
     win.drop_handler = _handle_drop
