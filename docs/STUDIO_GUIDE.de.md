@@ -158,11 +158,11 @@ Die wichtigsten (aus den `act_*`-Definitionen in `studio.py`):
 | Aktion | Tastenkürzel | Aktion | Tastenkürzel |
 |---|---|---|---|
 | Open image | `Ctrl+O` | Remove stage | `Del` |
-| Synthetic demo | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
+| Duplicate stage | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
 | Save result | `Ctrl+S` | Clear pipeline | `Ctrl+Shift+Backspace` |
 | Open pipeline | `Ctrl+Shift+O` | Zoom in / out | `Ctrl+=` / `Ctrl+-` |
-| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+1` |
-| Export | `Ctrl+E` | 3D surface | `Ctrl+3` |
+| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+Alt+1` |
+| Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |

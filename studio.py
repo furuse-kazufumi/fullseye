@@ -6734,9 +6734,9 @@ def build_window(model=None):
     act_fit = _act("Fit to window", "Ctrl+0", "Fit the image to the view")
     act_11 = _act("Actual size (1:1)", "Ctrl+Alt+1", "Reset zoom to 1:1")
     act_3d = _act("3D surface", "Ctrl+Alt+3", "Open a rotatable 3-D surface of the result")
-    act_reset = _act("Reset to start", "Home", "Show the raw image (before stage 1)")
-    act_step = _act("Step forward", "Ctrl+Right", "Advance one pipeline stage")
-    act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result")
+    act_reset = _act("Reset to start", "Home", "Show the raw image (before stage 1). Also Shift+F5 from any panel")
+    act_step = _act("Step forward", "Ctrl+Right", "Advance one pipeline stage. Also F6 from any panel")
+    act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result. Also F5 or Ctrl+R from any panel")
     act_roundtrip = _act("Verify exported Python…", "Ctrl+Shift+R",
                          "Run exported Python in an isolated interpreter and compare every stage with the GUI")
     act_batch = _act("Apply to folder…", None,
@@ -11777,12 +11777,13 @@ def build_window(model=None):
     act_dbg_run.setShortcuts([QtGui.QKeySequence("F5"), QtGui.QKeySequence("Ctrl+R")])
     act_dbg_step = _act("Step (F6)", "F6", "Advance one pipeline stage (debugger Step) — works from any panel")
     act_dbg_reset = _act("Reset to start (Shift+F5)", "Shift+F5", "Show the raw image — restart the step-through")
-    win._menus["run"].addSeparator()
     for _a, _fn in ((act_dbg_run, _do_run_all), (act_dbg_step, _do_step), (act_dbg_reset, reset_to_raw)):
         _a.setShortcutContext(QtCore.Qt.WindowShortcut)   # fires app-wide, not only on the pipeline list
         _a.triggered.connect(_fn)
         win.addAction(_a)                                 # keep the shortcut active even without a menu
-        win._menus["run"].addAction(_a)                   # discoverable in the Run menu
+        # P-11 (2026-11-12): these three did the same as Run all / Step forward / Reset to start above, so the
+        # Run menu listed every item twice.  They stay registered (F5 / Ctrl+R, F6, Shift+F5 keep working from
+        # any panel); the menu shows one entry per action and its hint names the second key.
     # (registered into win._actions below, once that dict exists)
     # -- program / code editor wiring (parse <-> pipeline, timed run, step) ---- #
     import time as _time

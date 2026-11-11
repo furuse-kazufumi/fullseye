@@ -84,15 +84,15 @@ fullseye-studio             # 若已 pip install -e .，可用主控台腳本
 
 ### IMAGE（結果檢視）
 - **Load image…（Ctrl+O）** — 載入影像檔案作為基準影格（png/jpg/bmp/tif）。
-- **Synthetic demo（Ctrl+D）** — 載入合成展示影像。
+- **Synthetic demo** — 載入合成展示影像。
 - **Save result…（Ctrl+S）** — 將目前顯示的結果儲存為 PNG。
-- **縮放**: 滑鼠滾輪在游標位置縮放，拖曳平移。**Zoom +（Ctrl+=）/ Zoom −（Ctrl+-）/ Fit（Ctrl+0）/ 1:1（Ctrl+1）**。
+- **縮放**: 滑鼠滾輪在游標位置縮放，拖曳平移。**Zoom +（Ctrl+=）/ Zoom −（Ctrl+-）/ Fit（Ctrl+0）/ 1:1（Ctrl+Alt+1）**。
 - 當結果為純量 feature、contour 結果或尚未載入影像時，檢視中央會顯示提示訊息（不留空白）。
 - 滑鼠停留時，狀態列會顯示 `x, y, value`（彩色影像則顯示 RGB）。
 
 ### DISPLAY & PERCEPTION (v14)
 - **Display（色彩映射）** — 為 2D 結果著色以便顯示: `gray` / `shaded relief` / `height (color)` / 各種色彩映射（jet, viridis, turbo, magma, plasma, inferno ……）。
-- **3D surface（Ctrl+3）** — 將目前結果以可旋轉的 3D 曲面顯示（僅在有 `QtDataVisualization` 時可用／best-effort）。方便檢視高度/深度圖。
+- **3D surface（Ctrl+Alt+3）** — 將目前結果以可旋轉的 3D 曲面顯示（僅在有 `QtDataVisualization` 時可用／best-effort）。方便檢視高度/深度圖。
 - **感知面板（2 個影格）** — 用 **Load frame B…** 載入第 2 個影格，選擇模式後 **Run**:
   - `optical flow` — 用色相將兩個影格之間的密集光流視覺化。
   - `motion overlay` — 把移動區域疊加到原圖上。
@@ -120,11 +120,11 @@ fullseye-studio             # 若已 pip install -e .，可用主控台腳本
 | 操作 | 快捷鍵 | 操作 | 快捷鍵 |
 |---|---|---|---|
 | Open image | `Ctrl+O` | Remove stage | `Del` |
-| Synthetic demo | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
+| Duplicate stage | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
 | Save result | `Ctrl+S` | Clear pipeline | `Ctrl+Shift+Backspace` |
 | Open pipeline | `Ctrl+Shift+O` | Zoom in / out | `Ctrl+=` / `Ctrl+-` |
-| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+1` |
-| Export | `Ctrl+E` | 3D surface | `Ctrl+3` |
+| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+Alt+1` |
+| Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |

@@ -344,6 +344,31 @@ def _tokens(text):
     return {t for t in re.findall(r"[a-z0-9]{3,}", text) if t not in _STOP}
 
 
+def test_run_menu_lists_each_command_once(win):
+    from PySide6 import QtWidgets
+    run = next(a for a in win.menuBar().actions() if a.text().replace("&", "") == "Run").menu()
+    names = [re.sub(r"\s*\([^)]*\)", "", a.text()).replace("…", "").strip().lower()
+             for a in run.actions() if not a.isSeparator()]
+    assert len(names) >= 3
+    assert len(names) == len(set(names)), "Run メニューに同じ項目が 2 つある: %s" % names
+    # 項目を減らしても、どこからでも効く F5 / F6 / Shift+F5 は生きている
+    for key, seq in (("dbg_run", "F5"), ("dbg_step", "F6"), ("dbg_reset", "Shift+F5")):
+        assert win._actions[key].shortcut().toString() == seq
+
+
+def test_docs_no_longer_claim_the_wrong_shortcuts():
+    import glob
+    paths = glob.glob(os.path.join(ROOT, "docs", "STUDIO_GUIDE*.md")) + [os.path.join(ROOT, "docs", "STUDIO_UX.md")]
+    assert len(paths) >= 8
+    for p in paths:
+        with open(p, encoding="utf-8") as f:
+            for n, line in enumerate(f, 1):
+                assert not re.search(r"Synthetic demo[^|]*Ctrl\+D", line), (p, n, line)   # Ctrl+D = Duplicate stage
+                assert not re.search(r"1:1[^|]{0,6}Ctrl\+1\b", line), (p, n, line)       # 実際は Ctrl+Alt+1
+                assert not re.search(r"3-?D surface[^|]{0,6}Ctrl\+3\b", line), (p, n, line)  # 実際は Ctrl+Alt+3
+                assert "`Ctrl+0` / `Ctrl+1`" not in line and "| `Ctrl+3` |" not in line, (p, n, line)
+
+
 def test_shortcuts_written_in_tooltips_match_the_real_key_bindings(win):
     from PySide6 import QtGui, QtWidgets
     win._apply_language("en"); _pump()

@@ -82,15 +82,15 @@ fullseye-studio             # pip install -e . 済みなら、コンソールス
 
 ### IMAGE（結果ビュー）
 - **Load image…（Ctrl+O）** — 画像ファイルを基準フレームとして読み込み（png/jpg/bmp/tif）。
-- **Synthetic demo（Ctrl+D）** — 合成デモ画像を読み込み。
+- **Synthetic demo** — 合成デモ画像を読み込み。
 - **Save result…（Ctrl+S）** — 表示中の結果を PNG 保存。
-- **ズーム**: マウスホイールでカーソル位置ズーム、ドラッグでパン。**Zoom +（Ctrl+=）/ Zoom −（Ctrl+-）/ Fit（Ctrl+0）/ 1:1（Ctrl+1）**。
+- **ズーム**: マウスホイールでカーソル位置ズーム、ドラッグでパン。**Zoom +（Ctrl+=）/ Zoom −（Ctrl+-）/ Fit（Ctrl+0）/ 1:1（Ctrl+Alt+1）**。
 - スカラ feature 結果・contour 結果・画像未読み込みのときは、ビュー中央にメッセージを表示（空表示にしない）。
 - ホバー時、ステータスバーに `x, y, value`（カラーなら RGB）を表示。
 
 ### DISPLAY & PERCEPTION (v14)
 - **Display（カラーマップ）** — 2D 結果を表示用に着色: `gray` / `shaded relief` / `height (color)` / 各カラーマップ（jet, viridis, turbo, magma, plasma, inferno …）。
-- **3D surface（Ctrl+3）** — 現在の結果を回転可能な 3D サーフェスで表示（`QtDataVisualization` があるときのみ／best-effort）。高さ/深度マップの確認に。
+- **3D surface（Ctrl+Alt+3）** — 現在の結果を回転可能な 3D サーフェスで表示（`QtDataVisualization` があるときのみ／best-effort）。高さ/深度マップの確認に。
 - **知覚パネル（2 フレーム）** — **Load frame B…** で 2 枚目のフレームを読み込み、モードを選んで **Run**:
   - `optical flow` — 2 フレーム間の密なオプティカルフローを色相で可視化。
   - `motion overlay` — 動いている領域を元画像に重畳。
@@ -118,11 +118,11 @@ fullseye-studio             # pip install -e . 済みなら、コンソールス
 | 操作 | ショートカット | 操作 | ショートカット |
 |---|---|---|---|
 | Open image | `Ctrl+O` | Remove stage | `Del` |
-| Synthetic demo | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
+| Duplicate stage | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
 | Save result | `Ctrl+S` | Clear pipeline | `Ctrl+Shift+Backspace` |
 | Open pipeline | `Ctrl+Shift+O` | Zoom in / out | `Ctrl+=` / `Ctrl+-` |
-| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+1` |
-| Export | `Ctrl+E` | 3D surface | `Ctrl+3` |
+| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+Alt+1` |
+| Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |

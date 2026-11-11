@@ -84,15 +84,15 @@ fullseye-studio             # pip install -e .가 되어 있다면 콘솔 스크
 
 ### IMAGE(결과 뷰)
 - **Load image…(Ctrl+O)** — 이미지 파일을 기준 프레임으로 불러오기(png/jpg/bmp/tif).
-- **Synthetic demo(Ctrl+D)** — 합성 데모 이미지를 불러오기.
+- **Synthetic demo** — 합성 데모 이미지를 불러오기.
 - **Save result…(Ctrl+S)** — 표시 중인 결과를 PNG로 저장.
-- **줌**: 마우스 휠로 커서 위치를 기준으로 확대/축소, 드래그로 패닝. **Zoom +(Ctrl+=) / Zoom −(Ctrl+-) / Fit(Ctrl+0) / 1:1(Ctrl+1)**.
+- **줌**: 마우스 휠로 커서 위치를 기준으로 확대/축소, 드래그로 패닝. **Zoom +(Ctrl+=) / Zoom −(Ctrl+-) / Fit(Ctrl+0) / 1:1(Ctrl+Alt+1)**.
 - 스칼라 feature 결과·contour 결과·이미지 미로드 상태일 때는 뷰 중앙에 메시지를 표시합니다(빈 화면으로 두지 않음).
 - 마우스를 올리면 상태 표시줄에 `x, y, value`(컬러라면 RGB)를 표시합니다.
 
 ### DISPLAY & PERCEPTION (v14)
 - **Display(컬러맵)** — 2D 결과를 표시용으로 채색: `gray` / `shaded relief` / `height (color)` / 각종 컬러맵(jet, viridis, turbo, magma, plasma, inferno …).
-- **3D surface(Ctrl+3)** — 현재 결과를 회전 가능한 3D 표면으로 표시(`QtDataVisualization`이 있을 때만／best-effort). 높이/깊이 맵 확인에 사용.
+- **3D surface(Ctrl+Alt+3)** — 현재 결과를 회전 가능한 3D 표면으로 표시(`QtDataVisualization`이 있을 때만／best-effort). 높이/깊이 맵 확인에 사용.
 - **지각 패널(2 프레임)** — **Load frame B…**로 두 번째 프레임을 불러오고, 모드를 선택한 뒤 **Run**:
   - `optical flow` — 두 프레임 사이의 밀집 광류를 색상으로 시각화.
   - `motion overlay` — 움직이는 영역을 원본 이미지에 겹쳐 표시.
@@ -120,11 +120,11 @@ fullseye-studio             # pip install -e .가 되어 있다면 콘솔 스크
 | 동작 | 단축키 | 동작 | 단축키 |
 |---|---|---|---|
 | Open image | `Ctrl+O` | Remove stage | `Del` |
-| Synthetic demo | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
+| Duplicate stage | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
 | Save result | `Ctrl+S` | Clear pipeline | `Ctrl+Shift+Backspace` |
 | Open pipeline | `Ctrl+Shift+O` | Zoom in / out | `Ctrl+=` / `Ctrl+-` |
-| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+1` |
-| Export | `Ctrl+E` | 3D surface | `Ctrl+3` |
+| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+Alt+1` |
+| Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
