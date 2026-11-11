@@ -2523,6 +2523,34 @@ def _check_input_range(v, op):
         "range is deliberate" % (op.name, op.in_sort, lo, hi))
 
 
+#: 2-D 画像として読める 3-D 配列の最終軸の長さ(グレー 1 / RGB 3 / RGBA 4)。これ以外は体積。
+_IMAGE_LAST_AXIS_OK = (1, 3, 4)
+
+
+def _check_image_volume_axis(v, op):
+    """``extra_checks='on'`` のとき、image/region 用の op に**立体**(最終軸が 1/3/4 でない 3-D 配列)が渡るのを断る。
+
+    既定の挙動は変えない(opt-in)。``_NDIM_OK["image"] = (2, 3)`` は (H, W, 3) のカラー画像を通すために
+    3-D をわざと受けるが、その結果 8x8x8 のような**立体**も例外なしで通り、同じ形が返る
+    (docs/KNOWN_ISSUES.md §34 の同じ根 —— 色軸と空間軸を入口で区別していない)。
+    ここでは「最終軸が 1/3/4 の 3-D = カラー」「それ以外 = 立体」と読み、立体は volume 型の op へ導く。
+    Opt-in sibling of the range check: an (8, 8, 8) array is a volume, not a colour image; the 2-D op
+    would silently run it as a stack. Default behaviour unchanged.
+    """
+    if op.in_sort not in ("image", "region"):
+        return None
+    if _fssys().get_system("extra_checks") != "on":
+        return None
+    arr = v if isinstance(v, np.ndarray) else None
+    if arr is None or arr.ndim != 3 or arr.shape[-1] in _IMAGE_LAST_AXIS_OK:
+        return None
+    return ValueError(
+        "op %r is a 2-D %s op but got a 3-D array of shape %s (last axis %d is not 1/3/4, so it is not a "
+        "colour image). A volume needs a volume op (see fullseye.op_find); to run the 2-D op per slice, "
+        "loop over the first axis. extra_checks='on' refuses it; drop that system setting if the stack "
+        "is deliberate" % (op.name, op.in_sort, arr.shape, arr.shape[-1]))
+
+
 def _fssys():
     import fssystem
     return fssystem
@@ -2572,7 +2600,7 @@ def _annotate_raw(e, name, v) -> None:
 
 def _guard_input(v, op, policy):
     err = (_check_input_empty(v, op) or _check_input_sort(v, op) or _check_channel_axis(v, op)
-           or _check_input_range(v, op))
+           or _check_input_range(v, op) or _check_image_volume_axis(v, op))
     if err is None:
         return
     if policy == "raise":
@@ -2820,9 +2848,15 @@ def _run_guarded(name, fn, policy, out_sort=None, v=None):
     if policy == "warn":
         evs = _bs.events_since(m)
         if evs:
-            warnings.warn("fullseye: %r degraded to a fallback (%s)"
-                          % (name, "; ".join(e["error"] for e in evs)),
-                          FullseyeFallbackWarning, stacklevel=4)
+            if all(_bs._is_dtype_conversion(e["error"]) for e in evs):
+                # on_error="warn" は呼び出しごとに出す方針(明示の指定)。通常の型変換は劣化ではないので中立の文面。
+                warnings.warn("fullseye: %r input converted (%s)"
+                              % (name, "; ".join(e["error"].split("dtype_converted:", 1)[1].strip() for e in evs)),
+                              FullseyeFallbackWarning, stacklevel=4)
+            else:
+                warnings.warn("fullseye: %r degraded to a fallback (%s)"
+                              % (name, "; ".join(e["error"] for e in evs)),
+                              FullseyeFallbackWarning, stacklevel=4)
     return out
 
 

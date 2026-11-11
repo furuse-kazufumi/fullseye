@@ -230,7 +230,8 @@ class Catalog:
                 return json.load(f), "docs:" + OP_INDEX
         raise CatalogError(
             "OP_INDEX.json が無い(パッケージ内 fullseye/data/%s にも、リポジトリの %s にも)。"
-            "checkout なら `py -3.11 imgevolve.py index` と `py -3.11 tools/gen_mcp_data.py` で作る。"
+            "インストール版ではパッケージの壊れ(`pip install --force-reinstall fullseye`)、ソースの checkout なら "
+            "`py -3.11 imgevolve.py index` と `py -3.11 tools/gen_mcp_data.py` で作る。"
             "無いまま空のカタログを返すと、検索が『該当なし』を正直に見せかける"
             % (PKG_INDEX, OP_INDEX))
 

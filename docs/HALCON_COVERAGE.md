@@ -35,6 +35,8 @@ entry or ledger mapping that names a real operator.
 
 ## Per-chapter coverage (ranked by gap)
 
+Rows are counted per chapter and HALCON lists 87 operators under more than one chapter, so the rows sum to 1082 covered / 2411 total while the headline counts each operator once (1017 / 2313). Same reference version (2605) for the table and the headline.
+
 | chapter | covered | total | gap |
 |---|---|---|---|
 | Graphics | 14 | 174 | 160 |

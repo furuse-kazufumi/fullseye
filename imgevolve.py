@@ -176,6 +176,14 @@ def cmd_has(a):
             print("  call: %s algo run %s --seq 3,1,2   (python: fullseye.list_ops(include_algo=True); not an image op)"
                   % (_prog(), aop.name))
             return 0
+        # ★2026-11-11(外部監査 v1.0.0): 索引に在る op が optional 依存(extra)の不足で登録されていないとき、
+        #   「unknown op」と言っていた(`apply` は MissingBackendError で正しく案内する)。在るが足りない、と言う。
+        import api as _api
+        import opnames as _opnames
+        hint = _api._explain_unregistered(_opnames.REGISTRY_ALIASES.get(a.op, a.op))
+        if hint is not None:
+            print("EXISTS but not available in this environment: %s" % hint)
+            return 1
         # Every one of the 2313 real ops still gets a truthful response.
         d = _disposition(a.op)
         if d:
@@ -363,7 +371,13 @@ def _prog() -> str:
     # ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり
     # 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
     base = _re.split(r"[\\/]", _s.argv[0] or "")[-1].lower()
-    return "fullseye" if base.startswith("fullseye") else "py -3.11 imgevolve.py"
+    if base.startswith("fullseye"):
+        return "fullseye"
+    # ★2026-11-11(外部ユーザー指摘): ``python -m fullseye``(argv[0] は fullseye/__main__.py)は PyPI から入れた人の入口で、
+    #   imgevolve.py は checkout にしか無い。-m 経由を checkout の綴りと取り違えて、無いファイルを勧めていた。
+    if base == "__main__.py" and _re.split(r"[\\/]", _s.argv[0])[-2:-1] == ["fullseye"]:
+        return "python -m fullseye"
+    return "py -3.11 imgevolve.py"
 
 
 def cmd_parity(a):
@@ -679,9 +693,13 @@ def cmd_samples(a):
 def main() -> int:
     # ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、
     # `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
-    ap = argparse.ArgumentParser(description=__doc__.replace("py -3.11 imgevolve.py", _prog()),
+    # ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。
+    ap = argparse.ArgumentParser(prog=_prog() if _prog().startswith("python -m") else None,
+                                 description=__doc__.replace("py -3.11 imgevolve.py", _prog())
+                                 .replace("imgevolve — single CLI", "fullseye — single CLI", 1),
                                  formatter_class=argparse.RawDescriptionHelpFormatter,
-                                 epilog="(installed: `fullseye <cmd>`; in a checkout: `py -3.11 imgevolve.py <cmd>`)")
+                                 epilog="(installed: `fullseye <cmd>` or `python -m fullseye <cmd>`; "
+                                        "for developers, in a checkout: `py -3.11 imgevolve.py <cmd>`)")
     import api as _api
     ap.add_argument("--version", action="version", version="fullseye %s" % _api.__version__)   # N19: 無かった
     sub = ap.add_subparsers(dest="cmd", required=True)

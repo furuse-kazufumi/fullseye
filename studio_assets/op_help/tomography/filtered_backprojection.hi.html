@@ -26,7 +26,12 @@
 <p>Filters, and what they trade: <code style="color:#22d3bf">&quot;ramp&quot;</code> is the exact inverse and therefore the sharpest and the noisiest; <code style="color:#22d3bf">&quot;shepp-logan&quot;</code>, <code style="color:#22d3bf">&quot;cosine&quot;</code>, <code style="color:#22d3bf">&quot;hann&quot;</code> and <code style="color:#22d3bf">&quot;hamming&quot;</code> roll the high frequencies off, in that order of aggressiveness. <code style="color:#22d3bf">&quot;none&quot;</code> skips the filter entirely and gives <code style="color:#22d3bf">backproject_sinogram</code>.</p>
 <p>:param sinogram: <code style="color:#22d3bf">(n_angles, n_detectors)</code>, rows = angles. :param angles_deg: view angles in degrees; <code style="color:#22d3bf">None</code> -&gt; uniform <code style="color:#22d3bf">[0, 180)</code></p>
 <p>with one view per row.</p>
-<p>:param size: output side; <code style="color:#22d3bf">None</code> -&gt; the inscribed square. :param filter_name: one of <code style="color:#22d3bf">FILTERS</code>. :param cutoff: fraction of Nyquist to keep, <code style="color:#22d3bf">(0, 1]</code>. :param span_deg: angular range for the <code style="color:#22d3bf">d(theta)</code> weight; <code style="color:#22d3bf">None</code> -&gt; the</p>
+<p>:param size: output side; <code style="color:#22d3bf">None</code> -&gt; the inscribed square, the largest odd side</p>
+<p>under <code style="color:#22d3bf">n_detectors / sqrt(2)</code>. The sinogram does not carry the source image&#x27;s</p>
+<p>size, so this is <b>not</b> the size of the image given to <code style="color:#22d3bf">radon_transform</code>:</p>
+<p>a 32 x 32 image gives 47 detectors and a 33 x 33 default. Pass <code style="color:#22d3bf">size=</code> (the</p>
+<p>source side) to get the source grid back; <code style="color:#22d3bf">docs/KNOWN_ISSUES.md</code> §53.</p>
+<p>:param filter_name: one of <code style="color:#22d3bf">FILTERS</code>. :param cutoff: fraction of Nyquist to keep, <code style="color:#22d3bf">(0, 1]</code>. :param span_deg: angular range for the <code style="color:#22d3bf">d(theta)</code> weight; <code style="color:#22d3bf">None</code> -&gt; the</p>
 <p>range the views actually cover, inferred from the angle list (exact for</p>
 <p>a uniform grid over any span and for any full-coverage irregular set</p>
 <p>such as golden angle; see <code style="color:#22d3bf">_span_weight</code>).</p>
