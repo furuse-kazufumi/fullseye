@@ -5,7 +5,7 @@ category: ct_scan
 in: projstack × ctgeometry
 out: voxel
 gpu: なし
-examples: [ct_scan_modes, poc_real_walnut_cbct]
+examples: [ct_scan_modes, poc_ct_casting_sparse_views, poc_real_walnut_cbct]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -53,6 +53,7 @@ behaves alike across grid sizes.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [ct_scan_modes](../../../../examples/ct_scan_modes.py) — `py -3.11 examples/ct_scan_modes.py`
+- [poc_ct_casting_sparse_views](../../../../examples/poc_ct_casting_sparse_views.py) — `py -3.11 examples/poc_ct_casting_sparse_views.py`
 - [poc_real_walnut_cbct](../../../../examples/poc_real_walnut_cbct.py) — `py -3.11 examples/poc_real_walnut_cbct.py`
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)

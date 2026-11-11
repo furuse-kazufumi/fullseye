@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (487 examples)
+### 2-D image / signal / geometry (488 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -77,7 +77,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_water_level` — ops: `gen_measure_rectangle2`, `mat_svd`, `measure_pos`, `projective_trans_image`, `threshold` `py -3.11 examples/poc_water_level.py`
 - `poc_weld_bead_profile` — ops: `gen_measure_rectangle2`, `laser_line_center_centroid`, `laser_line_coherent`, `measure_pos`, `median`, `rms`, `smooth_funct_1d_mean`, `triangulation_speckle_limit` `py -3.11 examples/poc_weld_bead_profile.py`
 - `poc_wound_area_tracking` — ops: `axes_frame`, `axes_transform`, `blob_features`, `blob_label`, `blob_select_largest`, `contour_to_world_plane_xld`, `data_to_pixel`, `gaussian`, `hom_vector_to_proj_hom_mat2d`, `image_to_world_plane`, `log`, `plot_series` (+2 more) `py -3.11 examples/poc_wound_area_tracking.py`
-- `poc_photoelasticity` — ops: `axes_frame`, `axes_transform`, `mueller_apply`, `mueller_element`, `plot_series`, `text_box`, `ticks` `py -3.11 examples/poc_photoelasticity.py`
+- `poc_photoelasticity` — ops: `axes_frame`, `axes_transform`, `brazilian_disc_stress`, `mueller_apply`, `mueller_element`, `photoelastic_phase_estimate`, `photoelastic_polarization_images`, `photoelastic_retardation`, `plot_series`, `polariscope_intensity`, `principal_stress`, `retardation_convert` (+2 more) `py -3.11 examples/poc_photoelasticity.py`
 - `profile_shape_inspection` — ops: `profile_camber`, `profile_chord_frame`, `profile_deviation`, `profile_leading_edge_radius`, `profile_perturb`, `profile_synth_naca4`, `profile_thickness`, `profile_trailing_edge_gap`, `rms` `py -3.11 examples/profile_shape_inspection.py`
 - `profile_frame_tour` — ops: `profile_align`, `profile_chord_frame`, `profile_normalise`, `profile_resample`, `profile_sides`, `profile_synth_naca4` `py -3.11 examples/profile_frame_tour.py`
 - `poc_industrial_oct` — ops: `glass`, `material_optical_constants`, `oct_ascan`, `oct_bscan`, `oct_bscan_boundaries`, `oct_bscan_flatten`, `oct_bscan_simulate`, `oct_design`, `oct_dispersion_broadening`, `oct_dispersion_compensate`, `oct_dispersion_estimate`, `oct_from_spectra` (+3 more) `py -3.11 examples/poc_industrial_oct.py`
@@ -555,6 +555,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `type_connectivity_tour` — ops: `attention_softmax`, `find_peaks`, `frame_axis`, `gradient_coherence`, `gradient_magnitude`, `graph_components`, `graph_from_synapses`, `hessian_determinant`, `hessian_vesselness`, `indices_to_positions`, `jones_apply`, `jones_element` (+18 more) `py -3.11 examples/type_connectivity_tour.py`
 - `poc_bga_ball_type_roundtrip` — ops: `angles_to_normals`, `correlation_score`, `curvature_to_shape_index`, `curvature_to_table`, `erf`, `flow_apply`, `flow_speed`, `gaussians_to_points`, `gaussians_to_voxel`, `graph_components`, `graph_laplacian_spectrum`, `indices_to_labels` (+20 more) `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 - `poc_ct_void_morphology` — ops: `color_bar`, `text_box` `py -3.11 examples/poc_ct_void_morphology.py`
+- `poc_ct_casting_sparse_views` — ops: `ct_adjoint_project`, `ct_dual_energy_reconstruct`, `ct_forward_project`, `ct_scan_geometry`, `ellipsoid_phantom`, `ellipsoid_projections`, `fdk_reconstruct`, `os_sart_reconstruct`, `shepp_logan_3d`, `sirt_reconstruct`, `tv_reconstruct` `py -3.11 examples/poc_ct_casting_sparse_views.py`
 - `poc_battery_ct_degradation` — ops: `beam_hardening_apply`, `fbp_volume`, `projection_angles`, `radon_volume`, `ring_artifact_apply` `py -3.11 examples/poc_battery_ct_degradation.py`
 - `poc_battery_electrode_tortuosity` — ops: `intersection` `py -3.11 examples/poc_battery_electrode_tortuosity.py`
 - `poc_die_tilt_tsv_overlay` — ops: `erf`, `procrustes_fit` `py -3.11 examples/poc_die_tilt_tsv_overlay.py`
@@ -2969,15 +2970,15 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 - `optimize_lens` `table → table` GPU: none — Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``). · examples: `lens_optimize_demo`, `poc_lens_file_roundtrip`
 
 #### optics / photoelastic (12)
-- `brazilian_disc_stress` `no input → table` GPU: none — Closed-form plane stress σx, σy, τxy of a diametrically compressed disc (Brazilian disc) → dict. · examples: `photoelastic_roundtrip`
+- `brazilian_disc_stress` `no input → table` GPU: none — Closed-form plane stress σx, σy, τxy of a diametrically compressed disc (Brazilian disc) → dict. · examples: `photoelastic_roundtrip`, `poc_photoelasticity`
 - `cubic_photoelastic_birefringence` `image2d × image2d × image2d → table` GPU: none — Stress birefringence Δn and slow axis of a cubic crystal on a {100} plane (e.g. a Si wafer) → dict. · examples: `photoelastic_roundtrip`
 - `kirsch_plate_stress` `no input → table` GPU: none — Closed-form σx, σy, τxy and polar components for an infinite plate with a hole under uniaxial tension (Kirsch solution) → dict. · examples: `photoelastic_roundtrip`
-- `photoelastic_phase_estimate` `polsweep → table` GPU: none — Closed-form inversion of polarisation images to retardation δ and principal axis θ → dict. · examples: `photoelastic_roundtrip`
-- `photoelastic_polarization_images` `image2d → polsweep` GPU: none — Images of a specimen under circularly polarised light taken by a polarisation camera (0/45/90/135 deg) or a six-intensity polarimeter → (K, H, W). · examples: `photoelastic_roundtrip`
-- `photoelastic_retardation` `image2d → table` GPU: none — Stress-optic law of an isotropic material δ = 2π t C (σ1−σ2)/λ → dict (rad, nm, fringe order and material fringe value). · examples: `photoelastic_roundtrip`
-- `polariscope_intensity` `image2d → image2d` GPU: yes (allow-list) — Closed-form intensity of plane and circular polariscopes in dark and bright field (isochromatics and isoclinics). · examples: `photoelastic_roundtrip`
-- `principal_stress` `image2d × image2d × image2d → table` GPU: none — Principal stresses σ1 ≥ σ2 of a plane stress state, their difference, and the direction of σ1 (isoclinic angle) → dict. · examples: `photoelastic_roundtrip`
-- `retardation_convert` `image2d → image2d` GPU: inside a chain only (allow-list) — Unit conversion of a retardation (rad / deg / nm / waves = fringe order). · examples: `photoelastic_roundtrip`
+- `photoelastic_phase_estimate` `polsweep → table` GPU: none — Closed-form inversion of polarisation images to retardation δ and principal axis θ → dict. · examples: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `photoelastic_polarization_images` `image2d → polsweep` GPU: none — Images of a specimen under circularly polarised light taken by a polarisation camera (0/45/90/135 deg) or a six-intensity polarimeter → (K, H, W). · examples: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `photoelastic_retardation` `image2d → table` GPU: none — Stress-optic law of an isotropic material δ = 2π t C (σ1−σ2)/λ → dict (rad, nm, fringe order and material fringe value). · examples: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `polariscope_intensity` `image2d → image2d` GPU: yes (allow-list) — Closed-form intensity of plane and circular polariscopes in dark and bright field (isochromatics and isoclinics). · examples: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `principal_stress` `image2d × image2d × image2d → table` GPU: none — Principal stresses σ1 ≥ σ2 of a plane stress state, their difference, and the direction of σ1 (isoclinic angle) → dict. · examples: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `retardation_convert` `image2d → image2d` GPU: inside a chain only (allow-list) — Unit conversion of a retardation (rad / deg / nm / waves = fringe order). · examples: `photoelastic_roundtrip`, `poc_photoelasticity`
 - `retardation_from_birefringence` `image2d → table` GPU: inside a chain only (allow-list) — Retardation from a birefringence Δn → dict (returns rad, nm and fringe order side by side). · examples: `photoelastic_roundtrip`
 - `retardation_unwrap_multiwavelength` `images → table` GPU: yes (allow-list) — Absolute retardation (nm) from wrapped retardations at several wavelengths (assuming no dispersion) → dict. · examples: `photoelastic_roundtrip`
 - `silicon_piezo_optic_coefficients` `no input → table` GPU: none — Piezo-optic coefficients π11−π12 and π44 [Pa⁻¹] of single-crystal silicon, returned with their source → dict. · examples: `photoelastic_roundtrip`
@@ -4495,17 +4496,17 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `ring_artifact_remove` `sinogram → sinogram` GPU: none — Remove per-detector-bin offsets by flattening the angle-averaged profile. · examples: `ct_reconstruction`
 
 #### tomography / ct_scan (11)
-- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: none — The exact transpose ``A^T`` of :func:`ct_forward_project`. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: none — Two scans of one geometry to two basis-material volumes. · examples: `poc_real_walnut_cbct`
-- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: none — Project a volume along every ray of *geometry*: the discrete operator ``A``. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ct_scan_geometry` `no input → ctgeometry` GPU: none — Describe one CT scan: per view, where the source and the detector are. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ellipsoid_phantom` `no input → voxel` GPU: none — Rasterise a sum of uniform ellipsoids onto a ``(Z, Y, X)`` grid. · examples: `ct_scan_modes`
-- `ellipsoid_projections` `ctgeometry → projstack` GPU: none — Exact line integrals of a sum of ellipsoids, for any scan in this family. · examples: `ct_scan_modes`
-- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Filtered back-projection for every scan with a formula: FDK and its relatives. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: none — OS-SART: the SIRT update applied to one ordered subset of views at a time. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `shepp_logan_3d` `no input → voxel` GPU: none — The modified 3-D Shepp-Logan head phantom on a ``size``-cube. · examples: `ct_scan_modes`
-- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: none — SIRT: every view at once, ``x <- x + lam C A^T R (p - A x)``. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Total-variation reconstruction by the Chambolle-Pock primal-dual method. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: none — The exact transpose ``A^T`` of :func:`ct_forward_project`. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: none — Two scans of one geometry to two basis-material volumes. · examples: `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: none — Project a volume along every ray of *geometry*: the discrete operator ``A``. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_scan_geometry` `no input → ctgeometry` GPU: none — Describe one CT scan: per view, where the source and the detector are. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ellipsoid_phantom` `no input → voxel` GPU: none — Rasterise a sum of uniform ellipsoids onto a ``(Z, Y, X)`` grid. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `ellipsoid_projections` `ctgeometry → projstack` GPU: none — Exact line integrals of a sum of ellipsoids, for any scan in this family. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Filtered back-projection for every scan with a formula: FDK and its relatives. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: none — OS-SART: the SIRT update applied to one ordered subset of views at a time. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `shepp_logan_3d` `no input → voxel` GPU: none — The modified 3-D Shepp-Logan head phantom on a ``size``-cube. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: none — SIRT: every view at once, ``x <- x + lam C A^T R (p - A x)``. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Total-variation reconstruction by the Chambolle-Pock primal-dual method. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
 
 #### tomography / forward (3)
 - `ellipse_phantom` `no input → image2d` GPU: none — Rasterise a sum of uniform ellipses onto a *size* x *size* slice. · examples: `ct_reconstruction`, `poc_ct_fidelity`, `tomography_reconstruct`

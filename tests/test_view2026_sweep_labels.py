@@ -19,8 +19,8 @@ CASES = [
      "Absolute error from 0.55 µm step"),
     (B.build_polarization_sweep, "入射角", "incidence angle", "真の拡散成分とのRMSE (0–1階調)",
      "RMSE from true diffuse component (0–1 intensity)"),
-    (B.build_photoelastic_sweep, "検光子角", "analyser angle", "平均輝度 (0–1)",
-     "Mean intensity (0–1)"),
+    (B.build_photoelastic_sweep, "検光子角", "analyser angle", "円板内の平均輝度 (0–1)",
+     "Mean intensity inside the disc (0–1)"),
     (B.build_compound_sweep, "視点ごとのSNR", "per-view SNR", "無雑音像とのRMSE (0–1階調)",
      "RMSE from noise-free image (0–1 intensity)"),
     (B.build_ct_threshold_sweep, "しきい値", "threshold", "ボイド体積率",
@@ -66,7 +66,7 @@ def _expected_endpoints(name):
             return P.rmse(np.asarray(sep[0] if isinstance(sep, tuple) else sep), d)
     elif name == "build_photoelastic_sweep":
         P = B._load("poc_photoelasticity"); _, theta, delta = P.build_fields(); xs = np.linspace(0, 135, 25)
-        metric = lambda v, _: float(np.mean(P.polariscope_image(delta, theta, float(v))))
+        metric = lambda v, _: float(np.mean(P.polariscope_image(delta, theta, float(v))[P.IN_DISC]))
     elif name == "build_compound_sweep":
         P = B._load("poc_compound_eye"); lf, _ = P.ommatidial_scene((1.0,), occlusion=False, seed=1)
         clean = np.asarray(lf[P.V_C, P.U_C]); xs = np.geomspace(0.5, 16, 24)

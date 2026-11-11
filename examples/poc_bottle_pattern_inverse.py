@@ -642,7 +642,7 @@ def make_figures(maps, keep, trials, ident, lrows, merr):
         m = maps.get(("水", fill)) or full_map(fill, 1.333)
         panels.append(checker_panel(m))
         caps.append("充填 %d %%(シミュレーション)" % round(100 * fill))
-    figs.save_grid("checker_through_bottle", panels, gray=True, ncols=3, vrange=(0.0, 1.0), captions=caps,
+    figs.save_grid("checker_through_bottle", panels, gray=True, ncols=3, vrange=(0.0, 1.0), captions=caps,  # gray-ok: 市松の輝度の像で、距離・高さ場ではない(題の「高さ」は瓶の寸法)
                    title="瓶越しに見た背景の市松のシミュレーション(瓶の幅 60 mm・高さ 80 mm、1 マス 8 mm): 液のある所は強く歪み、空の所は縁で全反射して欠ける",
                    caption="R 30 mm・壁 1.5 mm・n 1.52 の瓶、水 1.333。各画素の光線を追跡して背景のどこを見ているか(u)を求め、そこの市松を描いた。逆から見ると、この歪みが瓶を測る手がかり。")
     # 2 u(x) の断面と当てはめ

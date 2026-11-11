@@ -206,6 +206,29 @@ stylesheet, script or data file of the built site refers to → `tools/pages_sit
 deploy. The assets stay in the repository: Qiita articles read them through `raw.githubusercontent.com`
 URLs, so only the deployed copy is smaller.
 
+Assets for **new** articles go to a separate public media repository instead of `docs/articles/assets/`
+(the existing articles, their assets and generators stay where they are). The current one is
+`furuse-kazufumi/fullseye-media2026q4` (branch `main`); `tools/article_media.py` holds the table of media
+repositories and `CURRENT`, so a new quarter (`fullseye-media2027q1`, ...) is one row plus a change of
+`CURRENT`. Its README rules apply: **a file once placed is never moved, deleted or renamed** (to replace an
+image, add it under a new name and update the article's URL); the layout is `<article>/<file>` with lower-case
+letters, digits and `-` for the article name (file names: lower-case letters, digits, `-`, `_`, `.`; no trailing `.` or space, no Windows reserved names such as `con`); size limits are those of `tools/check_exhibit_assets.py`
+(GIF 3 MB, PNG 6 MB). The local clone is looked for next to this repository's root (`<parent>/fullseye-media2026q4`);
+set `FULLSEYE_MEDIA_ROOT` to the directory that holds the clones when it is elsewhere (worktrees usually are).
+
+```bash
+python3 tools/article_media.py put out/fig.png my-article [--name fig-v2.png]   # copies only, prints the raw URL
+python3 tools/article_media.py check docs/articles/my_article.md [--http] [--json]
+python3 tools/article_media.py url my-article fig.png
+```
+
+`put` copies into the clone and does nothing when the same file is already there; it refuses a different file
+under an existing name, bad names and oversized files. It does not run git: review, `git add`, commit and push in
+the clone yourself. `check` finds every media-repository raw URL in the manuscript and fails (exit 1) on an unknown
+repository, a wrong shape, a file missing from the clone, a clone that is not on the table's branch (`main`; detached HEAD included), a file that is not on `origin/main` (not committed, or committed but not pushed), a local copy that differs from it, a Git LFS pointer, or a URL aimed at the media repository in a non-canonical form (`http://`, upper case, `blob`, jsDelivr, ...). It compares with the **remote-tracking** branch and never fetches, so a stale `origin/main` can hide a push made elsewhere: run `git fetch` in the clone first; `--http` additionally sends HEAD requests. It prints how many URLs it found, also
+when that is 0, and counts raw URLs into this repository separately without checking them. Exit 2 means a usage
+or environment error (for example, no clone).
+
 `check` re-reads the pruned site a second, stricter way (`html.parser` attributes `href`/`src`/`srcset`/
 `poster`/`data-src` and CSS `url()`), and fails when
 
@@ -222,9 +245,12 @@ URLs, so only the deployed copy is smaller.
    repository name), or the site has no internal stylesheet at all. `docs/_config.yml` pins `url` and
    `baseurl` so this should not happen; the summary also prints the stylesheet, canonical, `og:url`,
    title and generator of `index.html` and `view2026/index.html` to compare with the legacy build.
+5. a reference points under `articles/assets/` to a file that exists nowhere, not even in `docs/` (the
+   summary lists the count and the first pages → references). Each reference is counted once: removed
+   by `prune` → gate 1; in `docs/` but never built → listed only; in neither → gate 5.
 
-Broken internal links (and asset references that resolve nowhere, not even in `docs/`) are counted in
-the summary but do not fail the job. Not covered: URLs that JavaScript assembles from strings or builds
+Other broken internal links (outside `articles/assets/`) are counted in the summary but do not fail the
+job. Not covered: URLs that JavaScript assembles from strings or builds
 from fetched JSON; `prune` keeps most of them because it reads JS and JSON loosely, but `check` does not
 verify them.
 

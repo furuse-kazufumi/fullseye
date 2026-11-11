@@ -24,7 +24,10 @@ repo からは消さない(Qiita が読む)。配備物からだけ外す。
           Jekyll が元から配信しないもの(パスの要素が ``_`` か ``.`` で始まる名前だけ)は門 1 でなく報告に分ける。
           いまのサイトが一覧の部分集合でなければ、一覧の取り違えとして終了コード 2。
           ``--source-docs`` の assets が ``--min-kept-assets`` 未満でも終了コード 2(違う docs を渡した)。
-          どこでも解決できない assets への参照は、報告だけの切れたリンクに数える。
+          どこでも解決できない assets への参照は、報告だけの切れたリンクに数える(assets の分は別に数える)。
+          ``<base href>`` はそのページの相対 URL の起点に使い(base 自身は参照に数えない)、
+          ``<meta http-equiv="refresh" content="…;url=…">`` の ``url=`` も参照に数える。
+          ``--source-docs`` と ``--site`` が同じか、片方がもう片方の中にあれば終了コード 2。
     門 2: サイトの総バイト数が ``--max-bytes`` 以下。
     門 3: 読んだ html のページ数が ``--min-pages`` 以上、残った assets が ``--min-kept-assets`` 以上
           (空のサイト・違うディレクトリを通さない床)。
@@ -36,6 +39,10 @@ repo からは消さない(Qiita が読む)。配備物からだけ外す。
 対象外(読まない): JS が文字列を組み立てて作る URL、fetch した JSON の中身から作る URL。prune は json・js の
 字句を緩く拾うので多くは残るが、check はそれを検めない(2026-11-11 の調査では view2026 に無かった)。
 
+URL の読み方はブラウザ(WHATWG URL、http(s))に合わせる: 先頭の ``../`` が根を越えるときは根で止める
+(サイトの根の外へは出ない)。バックスラッシュは ``/`` と読む。prune と check の両方が同じ規則で解く(2026-11-11 の
+独立レビュー R1。どちらか片方だけだと、prune が消して check が通す形が残る)。
+
 判定は ``os.walk`` で集めた相対パス(posix 形)の集合で行う。``os.path.exists`` は使わない
 (Windows は大文字小文字を区別しないので、Linux の配信と結果が変わる)。
 
@@ -44,6 +51,7 @@ repo からは消さない(Qiita が読む)。配備物からだけ外す。
 from __future__ import annotations
 
 import argparse
+import functools
 import html
 import json
 import os
@@ -78,8 +86,17 @@ SITE_HOSTS = (
 
 #: 緩い読み方の字句(refs.py と同じ切り方)。
 LOOSE_TOKEN = re.compile(r"""[^\s"'()<>\[\]{}`,;|*\\]+""")
-#: 引用符の中(空白入りのファイル名を拾う)。
-LOOSE_QUOTED = re.compile(r"""["']([^"'<>\r\n]{1,600})["']""")
+#: 引用符の中(空白入りのファイル名を拾う)。開いた引用符と同じ引用符で閉じる形を、二重・一重で別々に
+#: 走らせる(片方の引用符が値の中にあっても、もう片方の組を壊さない。2026-11-11 の R2:
+#: ``alt="Fullseye's demo" src="…/fig(1).png"`` で ``'`` と ``"`` が組になり src を拾えなかった)。
+LOOSE_QUOTED = (
+    re.compile(r'"([^"<>\r\n]{1,600})"'),
+    re.compile(r"'([^'<>\r\n]{1,600})'"),
+)
+#: ``<base href>`` を緩く拾う(prune が base の下でも解決を試すため)。
+LOOSE_BASE = re.compile(r"""<base\b[^>]*?\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))""", re.IGNORECASE)
+#: meta refresh の content の URL(``5; url=x``・``0;URL='x'``・``url=x`` を拾う)。
+META_REFRESH_URL = re.compile(r"""^\s*[\d.]*\s*[;,]?\s*(?:url\s*=\s*)?(.*)$""", re.IGNORECASE | re.DOTALL)
 
 _SCHEME = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.-]*:")
 
@@ -137,13 +154,22 @@ def read_text(root: str, rel: str) -> str:
 # ---------------------------------------------------------------------------
 
 def _norm(path: str) -> str | None:
-    """posix に正規化。根の外に出るものは None。"""
-    if not path:
+    """posix に正規化し、サイトの根からのパス(先頭の / なし)にする。空・根そのものは None。
+
+    先頭の ``../`` が根を越えるときは、ブラウザ(WHATWG URL)と同じく根で止める
+    (``../x`` → ``x``)。根の外へは出ない。``//`` で始まるもの(別のホスト)は None。
+    以前は根を越えるものを None にしていたが、ブラウザはそのページの assets を読むので、
+    prune が消して check が通す穴になっていた(2026-11-11 の R1 a)。
+    """
+    if not path or path.startswith("//"):
         return None
-    p = posixpath.normpath(path)
-    if p in (".", "") or p.startswith("../") or p == "..":
-        return None
-    return p.lstrip("/") if not p.startswith("//") else None
+    p = posixpath.normpath("/" + path).lstrip("/")
+    return p or None
+
+
+def _slashes(url: str) -> str:
+    """ブラウザは http(s) の URL の ``\\`` を ``/`` と読む(2026-11-11 の R1 b)。"""
+    return url.replace("\\", "/")
 
 
 def strip_site_host(url: str) -> tuple[str, bool] | None:
@@ -180,9 +206,13 @@ def loose_tokens(rel: str, text: str) -> set[str]:
     CSS として無効なので、別の拾い方は持たない(2026-11-11 の変異で等価と確かめた)。
     """
     toks: set[str] = set()
-    for body in {text, html.unescape(text)}:
+    bodies = {text, html.unescape(text)}
+    # \ を / と読んだ本文も拾う(ブラウザの読み方。LOOSE_TOKEN は \ で切るので、生の本文だけでは拾えない)
+    bodies |= {_slashes(b.replace("\\/", "/")) for b in bodies if "\\" in b}
+    for body in bodies:
         toks.update(LOOSE_TOKEN.findall(body))
-        toks.update(m.strip() for m in LOOSE_QUOTED.findall(body))
+        for rx in LOOSE_QUOTED:
+            toks.update(m.strip() for m in rx.findall(body))
     if rel.endswith((".json", ".webmanifest", ".map")):
         try:
             toks.update(_json_strings(json.loads(text)))
@@ -201,13 +231,40 @@ def loose_tokens(rel: str, text: str) -> set[str]:
 
 def loose_candidates(src: str, token: str) -> set[str]:
     """1 つの字句から、サイトの中のパスの候補を全部作る(迷ったら多めに)。"""
+    return _loose_join({posixpath.dirname(src)}, *_loose_forms(token))
+
+
+def _loose_join(src_dirs, absolute: frozenset, relative: tuple) -> set[str]:
+    """``_loose_forms`` の結果を、参照元のディレクトリ群の下で解いた候補にする。
+
+    字句ごとの候補作り(``_loose_forms``)を 1 回だけにし、ここでは相対のパスを参照元のディレクトリ
+    (重複を除いたもの)と join するだけにする。``<base>`` が複数あるページで、字句ごとに base の候補の
+    数だけ候補作りを繰り返して遅くなっていた(2.7 MB のページで 0.8 → 21.8 秒、2026-11-11 の P2)。
+    """
+    out = set(absolute)
+    for d in src_dirs:
+        for path in relative:
+            c = _norm(posixpath.join(d, path))
+            if c:
+                out.add(c)
+    # 配信と同じ解決(check の _resolve_file と同じ規則): ディレクトリ → index.html、拡張子なし → .html
+    out |= {c + "/index.html" for c in out} | {c + ".html" for c in out}
+    return out
+
+
+@functools.lru_cache(maxsize=1 << 16)
+def _loose_forms(token: str) -> tuple[frozenset, tuple]:
+    """1 つの字句の、参照元に依らない候補(絶対・根からの解決)と、参照元の下で解く相対のパス。"""
     forms = {token, html.unescape(token)}
+    forms |= {_slashes(f) for f in forms}
+    # ``url=x``(meta refresh の content)・``href=x`` などの ``=`` の後ろも候補にする(迷ったら多めに)
+    forms |= {f.split("=", 1)[1].strip().strip("'\"") for f in list(forms) if "=" in f}
     out: set[str] = set()
     for f in list(forms):
         for cut in (f, f.split("#")[0], f.split("?")[0].split("#")[0]):
             for dec in {cut, unquote(cut)}:
                 forms.add(dec)
-    src_dir = posixpath.dirname(src)
+    relative: set[str] = set()
     for f in forms:
         f = f.strip()
         r = strip_site_host(f)
@@ -218,12 +275,34 @@ def loose_candidates(src: str, token: str) -> set[str]:
             c = _norm(path)
             if c:
                 out.add(c)
+            if _absolute and path.startswith("//"):
+                # ``https://furuse.work//articles/…``(ホストの後ろが ``//``)。配信が // を 1 つにまとめる
+                # かもしれないので、まとめた形も候補にする(迷ったら残す。check 側は数えない、2026-11-11 の X18)
+                c = _norm("/" + path.lstrip("/"))
+                if c:
+                    out.add(c)
             continue
-        for c in (_norm(posixpath.join(src_dir, path)), _norm(path)):
-            if c:
-                out.add(c)
-    # 配信と同じ解決(check の _resolve_file と同じ規則): ディレクトリ → index.html、拡張子なし → .html
-    out |= {c + "/index.html" for c in out} | {c + ".html" for c in out}
+        relative.add(path)  # 参照元のディレクトリの下(_loose_join)
+        c = _norm(path)  # 根からの解決(参照元に依らない)
+        if c:
+            out.add(c)
+    return frozenset(out), tuple(sorted(relative))
+
+
+def _loose_base_srcs(rel: str, text: str) -> list[str]:
+    """ページに ``<base href>`` があれば、その下で相対の字句を解くための仮の参照元を返す(迷ったら多めに)。
+
+    base の行き先がディレクトリかファイルかは字句では決められないので、両方の形を返す
+    (``X/_`` = X の下、``X`` = X の隣)。根を指す base は ``_``(根の下)。外のサイトを指す base は
+    候補を作らない(ページの場所と根からの解決は、base があっても別に試すので、残す側に倒れる)。
+    """
+    if not rel.lower().endswith(HTML_EXT) or "<base" not in text.lower():
+        return []
+    out: list[str] = ["_"]
+    for m in LOOSE_BASE.finditer(text):
+        href = next((g for g in m.groups() if g is not None), "")
+        for c in sorted(loose_candidates(rel, href)):
+            out += [c + "/_", c]
     return out
 
 
@@ -243,8 +322,10 @@ def loose_references(site: str, files: dict[str, int]) -> tuple[set[str], int]:
         n_read += 1
         text = read_text(site, rel)
         hit: set[str] = set()
+        srcs = [rel] + _loose_base_srcs(rel, text)
+        src_dirs = sorted({posixpath.dirname(s) for s in srcs})  # 参照元のディレクトリ(重複を除く)
         for tok in loose_tokens(rel, text):
-            for c in loose_candidates(rel, tok):
+            for c in _loose_join(src_dirs, *_loose_forms(tok)):
                 if c in files and c != rel:
                     hit.add(c)
         refs_of[rel] = hit
@@ -333,9 +414,22 @@ class _StrictParser(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.urls: list[str] = []
+        self.base: str | None = None  # 最初の <base href>(HTML の規則: href を持つ最初の base だけが効く)
         self._in_style = False
 
     def handle_starttag(self, tag, attrs):
+        if tag == "base":
+            # base の href は読みに行く URL でなく、相対 URL の起点(参照に数えない)
+            href = next((v for k, v in attrs if k == "href" and v is not None), None)
+            if href is not None and self.base is None:
+                self.base = href.strip()
+            return
+        if tag == "meta":
+            a = {k: (v or "") for k, v in attrs}
+            if a.get("http-equiv", "").strip().lower() == "refresh" and a.get("content"):
+                u = meta_refresh_url(a["content"])
+                if u:
+                    self.urls.append(u)
         for name, value in attrs:
             if value is None:
                 continue
@@ -357,22 +451,67 @@ class _StrictParser(HTMLParser):
             self.urls.extend(css_urls(data))
 
 
-def strict_urls(rel: str, text: str) -> list[str]:
-    """1 つのファイルの厳密な参照(生の URL 文字列)。html と css だけを読む。"""
+def meta_refresh_url(content: str) -> str | None:
+    """``<meta http-equiv="refresh" content="0;url=x">`` の URL(無ければ None)。引用符は外す。"""
+    m = META_REFRESH_URL.match(content)
+    if not m:
+        return None
+    u = m.group(1).strip()
+    if u[:1] in ("'", '"'):
+        u = u[1:].split(u[0], 1)[0]
+    return u.strip() or None
+
+
+def strict_page(rel: str, text: str) -> tuple[list[str], str | None]:
+    """1 つのファイルの厳密な参照(生の URL 文字列)と ``<base href>``(無ければ None)。html と css だけを読む。"""
     low = rel.lower()
     if low.endswith(HTML_EXT):
         p = _StrictParser()
         p.feed(text)
         p.close()
-        return p.urls
+        return p.urls, p.base
     if low.endswith(".css"):
-        return css_urls(text)
-    return []
+        return css_urls(text), None
+    return [], None
+
+
+def strict_urls(rel: str, text: str) -> list[str]:
+    """1 つのファイルの厳密な参照(生の URL 文字列)。html と css だけを読む。"""
+    return strict_page(rel, text)[0]
+
+
+def base_src(src: str, base: str | None) -> str | None:
+    """``<base href>`` を、相対 URL を解くときの仮の参照元に直す。base が無ければ ``src``。
+
+    外のサイトを指す base なら None(そのページの相対 URL はサイトの外へ行く)。
+    """
+    if base is None or not base.strip():
+        return src
+    b = strict_resolve(src, base)
+    if b is None:
+        return None
+    raw = _slashes(base.strip()).split("#", 1)[0].split("?", 1)[0]
+    if b == "" or b.endswith("/") or raw.endswith("/"):
+        # ディレクトリの下(dirname が b になる仮の名前)。ルート相対の解決は末尾の / を落とすので、
+        # 生の href の末尾で見る
+        return (b.rstrip("/") + "/_") if b.rstrip("/") else "_"
+    return b
+
+
+def strict_resolve_in_page(src: str, url: str, base: str | None) -> str | None:
+    """``strict_resolve`` に ``<base href>`` を足したもの(相対 URL だけが base の影響を受ける)。"""
+    pseudo = base_src(src, base)
+    if pseudo is None:
+        r = strip_site_host(_slashes(url.strip()))
+        if r is None or r[0].startswith("/"):
+            return strict_resolve(src, url)
+        return None  # 外の base の下の相対 URL = 外のサイト
+    return strict_resolve(pseudo, url)
 
 
 def strict_resolve(src: str, url: str) -> str | None:
     """厳密な解決: 1 つの URL → サイトの根からのパス 1 つ(外のサイト・空・自分自身は None)。"""
-    r = strip_site_host(url.strip())
+    r = strip_site_host(_slashes(url.strip()))
     if r is None:
         return None
     path, _absolute = r
@@ -399,8 +538,9 @@ def strict_references(site: str, files: dict[str, int]) -> tuple[list[tuple[str,
             continue
         if low.endswith(HTML_EXT):
             n_html += 1
-        for url in strict_urls(rel, read_text(site, rel)):
-            tgt = strict_resolve(rel, url)
+        urls, base = strict_page(rel, read_text(site, rel))
+        for url in urls:
+            tgt = strict_resolve_in_page(rel, url, base)
             if tgt is not None:
                 refs.append((rel, url, tgt))
     return refs, n_html
@@ -459,11 +599,14 @@ class _WiringParser(HTMLParser):
         self.wiring: list[tuple[str, str]] = []  # (種類, 生の URL)
         self.fullseye_prefixed: list[str] = []
         self.sample = {"stylesheet": [], "canonical": None, "og:url": None, "title": None, "generator": None}
+        self.base: str | None = None
         self._in_title = False
         self._title: list[str] = []
 
     def handle_starttag(self, tag, attrs):
         a = {k: (v or "") for k, v in attrs}
+        if tag == "base" and self.base is None and "href" in a:
+            self.base = a["href"].strip()
         for name, value in attrs:
             if not value:
                 continue
@@ -517,7 +660,7 @@ def page_wiring(site: str, files: dict[str, int]) -> dict:
         p.feed(read_text(site, rel))
         p.close()
         for kind, url in p.wiring:
-            tgt = strict_resolve(rel, url)
+            tgt = strict_resolve_in_page(rel, url, p.base)
             if tgt is None:
                 continue
             internal[kind] += 1
@@ -550,6 +693,23 @@ def read_list(path: str) -> set[str]:
     return out
 
 
+def _refuse_nested(site: str, source_docs: str) -> None:
+    """``--site`` と ``--source-docs`` が同じか、片方がもう片方の中なら誤り(終了コード 2)。
+
+    組んだサイトそのものを真値に渡すと、prune の後に残ったものが真値になり門 1 が空を通す
+    (2026-11-11 の R3)。
+    """
+    a = os.path.normcase(os.path.realpath(site))
+    b = os.path.normcase(os.path.realpath(source_docs))
+    try:
+        common = os.path.commonpath([a, b])
+    except ValueError:  # 別のドライブ
+        return
+    if common in (a, b):
+        raise SiteError(f"--source-docs と --site が同じか、片方がもう片方の中にある: {site} / {source_docs}。"
+                        "--source-docs には repo の docs を渡す")
+
+
 def run_check(site: str, source_docs: str, max_bytes: int, min_pages: int, min_kept_assets: int,
               built: set[str] | None = None) -> dict:
     """``built`` = 組んだ直後(prune の前)のサイトのファイル一覧(``snapshot``)。
@@ -558,7 +718,14 @@ def run_check(site: str, source_docs: str, max_bytes: int, min_pages: int, min_k
     **元から配信しない**もの(``_`` で始まる名前など。prune の前のサイトにも無い)は、門 1 ではなく
     ``not_built_assets`` に数える(prune が起こした欠けではないので)。``built`` は os.walk の一覧で、
     prune の読み方の結果ではない。
+
+    門 5: **repo にも無い** assets への参照(``broken_asset_links``)が 1 件でもあれば落とす(2026-11-11、
+    PR #303 の Pages の run の実物で 0 件と確かめてから門に上げた)。切り分けは 1 本の参照につき 1 か所:
+    repo にある assets を prune が消したもの(組んだ直後には在った)は門 1、repo にあるが組んだ直後の
+    サイトにも無いもの(Jekyll が配信しない ``_`` 始まりの名前)は ``not_built_assets``(報告だけ)、
+    どこにも無いものだけが門 5。二重には数えない。assets 以外の解決できない内部リンクは報告だけ。
     """
+    _refuse_nested(site, source_docs)
     files = walk_files(site)
     src_files = walk_files(source_docs)
     n_src_assets = sum(1 for q in src_files if q.startswith(ASSETS_PREFIX))
@@ -610,6 +777,8 @@ def run_check(site: str, source_docs: str, max_bytes: int, min_pages: int, min_k
     }
     wiring = page_wiring(site, files)
     gates["gate4_page_wiring"] = wiring.pop("ok")
+    broken_assets = [b for b in broken if b["target"].startswith(ASSETS_PREFIX)]
+    gates["gate5_no_broken_asset_links"] = not broken_assets
     return {
         **wiring,
         "site": os.path.abspath(site),
@@ -630,7 +799,9 @@ def run_check(site: str, source_docs: str, max_bytes: int, min_pages: int, min_k
         "not_built_assets_count": len(not_built),
         "not_built_assets": not_built,
         "broken_internal_links_count": len(broken),
+        "broken_asset_links_count": sum(1 for b in broken if b["target"].startswith(ASSETS_PREFIX)),
         "broken_internal_links": broken,
+        "broken_asset_links": broken_assets[:200],
         "gates": gates,
         "ok": all(gates.values()),
     }
@@ -674,7 +845,11 @@ def check_summary(rep: dict) -> str:
         f"- 門 4 サイト内の stylesheet・script が全部在り、`/fullseye/` 前置のページが無い: {mark[g['gate4_page_wiring']]}"
         f"(stylesheet {rep['wiring_internal_stylesheets']:,} 本・script {rep['wiring_internal_scripts']:,} 本、"
         f"欠け {len(rep['wiring_missing'])} 件、`/fullseye/` 前置 {rep['baseurl_prefixed_pages_count']} ページ)",
-        f"- 報告だけ: 解決できない内部リンク(repo でも解決できない assets への参照を含む) {rep['broken_internal_links_count']:,} 件",
+        f"- 門 5 repo にも無い assets への参照が 0 件: {mark[g['gate5_no_broken_asset_links']]}"
+        f"({rep['broken_asset_links_count']:,} 件"
+        + "".join(f"、`{b['page']}` → `{b['url']}`" for b in rep["broken_asset_links"][:3]) + ")",
+        f"- 報告だけ: 解決できない内部リンク(assets 以外) "
+        f"{rep['broken_internal_links_count'] - rep['broken_asset_links_count']:,} 件",
         f"- 報告だけ: repo にあるが組んだ直後のサイトにも無い assets への参照(Jekyll が配信しない名前)"
         f" {rep['not_built_assets_count']:,} 件",
         f"- 所要 {rep['seconds']:.1f} 秒",
@@ -696,6 +871,11 @@ def check_summary(rep: dict) -> str:
             lines.append(f"- `{m['page']}` の {m['kind']} `{m['url']}` が無い(`{m['target']}`)")
         for m in rep["baseurl_prefixed_pages"][:100]:
             lines.append(f"- `{m['page']}` に `/fullseye/` 前置の参照 {m['count']} 本(例 `{m['first']}`)")
+        lines.append("")
+    if rep["broken_asset_links"]:
+        lines.append("### 門 5: repo にも無い assets への参照(参照元のページ → 参照)")
+        for b in rep["broken_asset_links"]:
+            lines.append(f"- `{b['page']}` → `{b['url']}`(`{b['target']}`)")
         lines.append("")
     if rep["missing_assets"]:
         lines.append("### 欠けた assets(参照元のページ → 参照)")
@@ -737,7 +917,7 @@ def main(argv=None) -> int:
     n.add_argument("--site", required=True)
     n.add_argument("--out", required=True)
 
-    c = sub.add_parser("check", help="外した後のサイトを検める(厳密な読み方、門 1〜3)")
+    c = sub.add_parser("check", help="外した後のサイトを検める(厳密な読み方、門 1〜5)")
     c.add_argument("--site", required=True)
     c.add_argument("--source-docs", required=True, help="repo の docs(門 1 の真値)")
     c.add_argument("--max-bytes", required=True, type=_positive_int)
@@ -778,6 +958,8 @@ def main(argv=None) -> int:
         if not rep["ok"]:
             for m in rep["missing_assets"]:
                 print(f"MISSING {m['page']} -> {m['url']} ({m['target']})", file=sys.stderr)
+            for b in rep["broken_asset_links"]:
+                print(f"BROKEN_ASSET {b['page']} -> {b['url']} ({b['target']})", file=sys.stderr)
             for m in rep["wiring_missing"]:
                 print(f"WIRING {m['page']} {m['kind']} -> {m['url']} ({m['target']})", file=sys.stderr)
             for m in rep["baseurl_prefixed_pages"]:

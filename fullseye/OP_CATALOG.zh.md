@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(487 例)
+### 2-D 图像/信号/几何(488 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -77,7 +77,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_water_level` — op: `gen_measure_rectangle2`, `mat_svd`, `measure_pos`, `projective_trans_image`, `threshold` `py -3.11 examples/poc_water_level.py`
 - `poc_weld_bead_profile` — op: `gen_measure_rectangle2`, `laser_line_center_centroid`, `laser_line_coherent`, `measure_pos`, `median`, `rms`, `smooth_funct_1d_mean`, `triangulation_speckle_limit` `py -3.11 examples/poc_weld_bead_profile.py`
 - `poc_wound_area_tracking` — op: `axes_frame`, `axes_transform`, `blob_features`, `blob_label`, `blob_select_largest`, `contour_to_world_plane_xld`, `data_to_pixel`, `gaussian`, `hom_vector_to_proj_hom_mat2d`, `image_to_world_plane`, `log`, `plot_series`(另有 2 个) `py -3.11 examples/poc_wound_area_tracking.py`
-- `poc_photoelasticity` — op: `axes_frame`, `axes_transform`, `mueller_apply`, `mueller_element`, `plot_series`, `text_box`, `ticks` `py -3.11 examples/poc_photoelasticity.py`
+- `poc_photoelasticity` — op: `axes_frame`, `axes_transform`, `brazilian_disc_stress`, `mueller_apply`, `mueller_element`, `photoelastic_phase_estimate`, `photoelastic_polarization_images`, `photoelastic_retardation`, `plot_series`, `polariscope_intensity`, `principal_stress`, `retardation_convert`(另有 2 个) `py -3.11 examples/poc_photoelasticity.py`
 - `profile_shape_inspection` — op: `profile_camber`, `profile_chord_frame`, `profile_deviation`, `profile_leading_edge_radius`, `profile_perturb`, `profile_synth_naca4`, `profile_thickness`, `profile_trailing_edge_gap`, `rms` `py -3.11 examples/profile_shape_inspection.py`
 - `profile_frame_tour` — op: `profile_align`, `profile_chord_frame`, `profile_normalise`, `profile_resample`, `profile_sides`, `profile_synth_naca4` `py -3.11 examples/profile_frame_tour.py`
 - `poc_industrial_oct` — op: `glass`, `material_optical_constants`, `oct_ascan`, `oct_bscan`, `oct_bscan_boundaries`, `oct_bscan_flatten`, `oct_bscan_simulate`, `oct_design`, `oct_dispersion_broadening`, `oct_dispersion_compensate`, `oct_dispersion_estimate`, `oct_from_spectra`(另有 3 个) `py -3.11 examples/poc_industrial_oct.py`
@@ -555,6 +555,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `type_connectivity_tour` — op: `attention_softmax`, `find_peaks`, `frame_axis`, `gradient_coherence`, `gradient_magnitude`, `graph_components`, `graph_from_synapses`, `hessian_determinant`, `hessian_vesselness`, `indices_to_positions`, `jones_apply`, `jones_element`(另有 18 个) `py -3.11 examples/type_connectivity_tour.py`
 - `poc_bga_ball_type_roundtrip` — op: `angles_to_normals`, `correlation_score`, `curvature_to_shape_index`, `curvature_to_table`, `erf`, `flow_apply`, `flow_speed`, `gaussians_to_points`, `gaussians_to_voxel`, `graph_components`, `graph_laplacian_spectrum`, `indices_to_labels`(另有 20 个) `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 - `poc_ct_void_morphology` — op: `color_bar`, `text_box` `py -3.11 examples/poc_ct_void_morphology.py`
+- `poc_ct_casting_sparse_views` — op: `ct_adjoint_project`, `ct_dual_energy_reconstruct`, `ct_forward_project`, `ct_scan_geometry`, `ellipsoid_phantom`, `ellipsoid_projections`, `fdk_reconstruct`, `os_sart_reconstruct`, `shepp_logan_3d`, `sirt_reconstruct`, `tv_reconstruct` `py -3.11 examples/poc_ct_casting_sparse_views.py`
 - `poc_battery_ct_degradation` — op: `beam_hardening_apply`, `fbp_volume`, `projection_angles`, `radon_volume`, `ring_artifact_apply` `py -3.11 examples/poc_battery_ct_degradation.py`
 - `poc_battery_electrode_tortuosity` — op: `intersection` `py -3.11 examples/poc_battery_electrode_tortuosity.py`
 - `poc_die_tilt_tsv_overlay` — op: `erf`, `procrustes_fit` `py -3.11 examples/poc_die_tilt_tsv_overlay.py`
@@ -2969,15 +2970,15 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `optimize_lens` `table → table` GPU: 无 — 对处方做阻尼最小二乘(Levenberg–Marquardt)优化(``table``)。 · 示例: `lens_optimize_demo`, `poc_lens_file_roundtrip`
 
 #### optics / photoelastic (12)
-- `brazilian_disc_stress` `无输入 → table` GPU: 无 — 径向受压圆盘(巴西圆盘)平面应力 σx、σy、τxy 的闭式解 → dict。 · 示例: `photoelastic_roundtrip`
+- `brazilian_disc_stress` `无输入 → table` GPU: 无 — 径向受压圆盘(巴西圆盘)平面应力 σx、σy、τxy 的闭式解 → dict。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
 - `cubic_photoelastic_birefringence` `image2d × image2d × image2d → table` GPU: 无 — 立方晶体 {100} 面(如 Si 晶圆)的应力双折射 Δn 与慢轴 → dict。 · 示例: `photoelastic_roundtrip`
 - `kirsch_plate_stress` `无输入 → table` GPU: 无 — 含孔无限大板单轴拉伸(Kirsch 解)的 σx、σy、τxy 及极坐标分量闭式解 → dict。 · 示例: `photoelastic_roundtrip`
-- `photoelastic_phase_estimate` `polsweep → table` GPU: 无 — 由偏振图像以闭式反求相位延迟 δ 与主轴 θ → dict。 · 示例: `photoelastic_roundtrip`
-- `photoelastic_polarization_images` `image2d → polsweep` GPU: 无 — 以偏振相机(0/45/90/135 度)或六强度偏振计拍摄圆偏振光照明下试样的图像 → (K, H, W)。 · 示例: `photoelastic_roundtrip`
-- `photoelastic_retardation` `image2d → table` GPU: 无 — 各向同性材料的应力光学定律 δ = 2π t C (σ1−σ2)/λ → dict(rad、nm、条纹级数与材料条纹值)。 · 示例: `photoelastic_roundtrip`
-- `polariscope_intensity` `image2d → image2d` GPU: 有(许可列表) — 平面与圆偏振仪暗场、明场强度(等色线、等倾线)的闭式解。 · 示例: `photoelastic_roundtrip`
-- `principal_stress` `image2d × image2d × image2d → table` GPU: 无 — 平面应力的主应力 σ1 ≥ σ2、主应力差与 σ1 的方向(等倾角)→ dict。 · 示例: `photoelastic_roundtrip`
-- `retardation_convert` `image2d → image2d` GPU: 仅在链中(许可列表) — 相位延迟的单位换算(rad / deg / nm / waves = 条纹级数)。 · 示例: `photoelastic_roundtrip`
+- `photoelastic_phase_estimate` `polsweep → table` GPU: 无 — 由偏振图像以闭式反求相位延迟 δ 与主轴 θ → dict。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `photoelastic_polarization_images` `image2d → polsweep` GPU: 无 — 以偏振相机(0/45/90/135 度)或六强度偏振计拍摄圆偏振光照明下试样的图像 → (K, H, W)。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `photoelastic_retardation` `image2d → table` GPU: 无 — 各向同性材料的应力光学定律 δ = 2π t C (σ1−σ2)/λ → dict(rad、nm、条纹级数与材料条纹值)。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `polariscope_intensity` `image2d → image2d` GPU: 有(许可列表) — 平面与圆偏振仪暗场、明场强度(等色线、等倾线)的闭式解。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `principal_stress` `image2d × image2d × image2d → table` GPU: 无 — 平面应力的主应力 σ1 ≥ σ2、主应力差与 σ1 的方向(等倾角)→ dict。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
+- `retardation_convert` `image2d → image2d` GPU: 仅在链中(许可列表) — 相位延迟的单位换算(rad / deg / nm / waves = 条纹级数)。 · 示例: `photoelastic_roundtrip`, `poc_photoelasticity`
 - `retardation_from_birefringence` `image2d → table` GPU: 仅在链中(许可列表) — 由双折射 Δn 求相位延迟 → dict(并列返回 rad、nm 与条纹级数)。 · 示例: `photoelastic_roundtrip`
 - `retardation_unwrap_multiwavelength` `images → table` GPU: 有(许可列表) — 由多个波长的折叠相位延迟确定绝对相位延迟(nm)(假定无色散)→ dict。 · 示例: `photoelastic_roundtrip`
 - `silicon_piezo_optic_coefficients` `无输入 → table` GPU: 无 — 返回单晶硅的压光系数 π11−π12、π44 [Pa⁻¹] 及其出处 → dict。 · 示例: `photoelastic_roundtrip`
@@ -4495,17 +4496,17 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `ring_artifact_remove` `sinogram → sinogram` GPU: 无 — 通过压平角度平均剖面来去掉逐探测器 bin 的偏移。 · 示例: `ct_reconstruction`
 
 #### tomography / ct_scan (11)
-- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: 无 — :func:`ct_forward_project` 的精确转置 ``A^T``。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: 无 — 由同一几何的两次扫描得到两个基材料体数据。 · 示例: `poc_real_walnut_cbct`
-- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: 无 — 沿 *geometry* 的每条射线投影体数据：离散算子 ``A``。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ct_scan_geometry` `无输入 → ctgeometry` GPU: 无 — 描述一次 CT 扫描：每个视角下射线源和探测器的位置。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ellipsoid_phantom` `无输入 → voxel` GPU: 无 — 将若干均匀椭球之和栅格化到 ``(Z, Y, X)`` 网格上。 · 示例: `ct_scan_modes`
-- `ellipsoid_projections` `ctgeometry → projstack` GPU: 无 — 椭球之和的精确线积分，适用于本族的任意扫描。 · 示例: `ct_scan_modes`
-- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 适用于所有具备重建公式的扫描的滤波反投影：FDK 及其同类方法。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — OS-SART：将 SIRT 更新逐个应用于有序视角子集。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `shepp_logan_3d` `无输入 → voxel` GPU: 无 — ``size`` 立方网格上的改进型三维 Shepp-Logan 头部体模。 · 示例: `ct_scan_modes`
-- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — SIRT：同时使用全部视角，``x <- x + lam C A^T R (p - A x)``。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 基于 Chambolle-Pock 原始对偶法的全变分重建。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: 无 — :func:`ct_forward_project` 的精确转置 ``A^T``。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: 无 — 由同一几何的两次扫描得到两个基材料体数据。 · 示例: `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: 无 — 沿 *geometry* 的每条射线投影体数据：离散算子 ``A``。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_scan_geometry` `无输入 → ctgeometry` GPU: 无 — 描述一次 CT 扫描：每个视角下射线源和探测器的位置。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ellipsoid_phantom` `无输入 → voxel` GPU: 无 — 将若干均匀椭球之和栅格化到 ``(Z, Y, X)`` 网格上。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `ellipsoid_projections` `ctgeometry → projstack` GPU: 无 — 椭球之和的精确线积分，适用于本族的任意扫描。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 适用于所有具备重建公式的扫描的滤波反投影：FDK 及其同类方法。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — OS-SART：将 SIRT 更新逐个应用于有序视角子集。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `shepp_logan_3d` `无输入 → voxel` GPU: 无 — ``size`` 立方网格上的改进型三维 Shepp-Logan 头部体模。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — SIRT：同时使用全部视角，``x <- x + lam C A^T R (p - A x)``。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 基于 Chambolle-Pock 原始对偶法的全变分重建。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
 
 #### tomography / forward (3)
 - `ellipse_phantom` `无输入 → image2d` GPU: 无 — 把若干均匀椭圆之和栅格化到 *size* x *size* 的切片上。 · 示例: `ct_reconstruction`, `poc_ct_fidelity`, `tomography_reconstruct`

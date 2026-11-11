@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 218,
+  "target_count": 219,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -2732,9 +2732,9 @@
             {
               "file": "02_unwrap.png",
               "content_box": [
-                71,
+                46,
                 0,
-                578,
+                628,
                 690
               ]
             }
@@ -2745,14 +2745,14 @@
             1600,
             1600
           ],
-          "bytes": 624942,
+          "bytes": 642416,
           "color_mad": [
             0.3037,
             1.0699,
-            1.1089
+            1.2689
           ],
-          "max_color_mad": 1.1089,
-          "source_sha256": "e9f065f40e5036654d0be2eec4a69569a5535a872eb580633ee792cc1af4974f"
+          "max_color_mad": 1.2689,
+          "source_sha256": "05c196cb5410c6bfa0ce2581aeb66fc7109504a1735dbd03e38e52ded6b428fd"
         },
         "en": {
           "path": "articles/assets/poc/poc_photoelasticity/story.en.gif",
@@ -2789,9 +2789,9 @@
             {
               "file": "02_unwrap.png",
               "content_box": [
-                71,
+                46,
                 0,
-                578,
+                628,
                 690
               ]
             }
@@ -2802,14 +2802,14 @@
             1600,
             1600
           ],
-          "bytes": 624942,
+          "bytes": 642416,
           "color_mad": [
             0.3037,
             1.0699,
-            1.1089
+            1.2689
           ],
-          "max_color_mad": 1.1089,
-          "source_sha256": "4403eb5da3b876847372b1c0cb19223fdd5d33a6bf86e2fef004aed3165cbc7c"
+          "max_color_mad": 1.2689,
+          "source_sha256": "2a5315e3a6f1d5a93cc63c33f75fb39ec9a4e69b0b969310c8189357c6b6cc82"
         }
       },
       "thumbnail": {
@@ -2827,8 +2827,8 @@
       "cover": "03_load_and_isoclinics.gif",
       "still": "articles/assets/poc/poc_photoelasticity/01_polariscope.png",
       "alt": {
-        "ja": "動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷重に比例して 2.38 まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 2 回)。後半は荷重 500 N のまま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点で、中央の真値 θ の図で白く塗った点と重なる。偏光系は fullseye の mueller_element / mueller_apply(暗視野)と sin²(2(θ-β))·sin²(δ/2)(平面)。",
-        "en": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops."
+        "ja": "動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷重に比例して 2.38 まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 2 回)。後半は荷重 500 N のまま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点で、中央の真値 θ の図で白く塗った点と重なる。応力場と偏光像は光弾性の族の op(brazilian_disc_stress / principal_stress / photoelastic_retardation / polariscope_intensity)。",
+        "en": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping."
       }
     },
     "walker2d_terrain_vision": {
@@ -33867,6 +33867,148 @@
       "alt": {
         "ja": "ViEW の入口用: 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大。どの組でも見つかるものだけ)。見つからない照明は灰色の斜線の全長の棒、種の組で揺れる照明は破線の全長の棒。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げ、倍率は見本の下に書いた。PE 片は分光の 1210 nm の帯を両隣で割った吸収の深さ)。凹みの見本は 80 倍に広げて判定の大きさでならしたので、実際よりはっきり見える(雑音なしの陰影は最大 0.8 %)。",
         "en": "Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread"
+      }
+    },
+    "poc_ct_casting_sparse_views": {
+      "representative": "01_slices.png",
+      "status": "gif",
+      "selected": [
+        "01_slices.png",
+        "02_ranking.png",
+        "03_tv_weight.png",
+        "04_dual_energy.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_ct_casting_sparse_views/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_slices.png",
+              "content_box": [
+                0,
+                91,
+                720,
+                508
+              ]
+            },
+            {
+              "file": "02_ranking.png",
+              "content_box": [
+                0,
+                134,
+                720,
+                421
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.711957
+            },
+            {
+              "file": "03_tv_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_dual_energy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                234
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.077364
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 312458,
+          "color_mad": [
+            0.1023,
+            0.0258,
+            0.1502,
+            0.0718
+          ],
+          "max_color_mad": 0.1502,
+          "source_sha256": "3301925a7cba176cfae5f26c99e977b95506a23ff4e5bc962d0d21c3b9bdcab1"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_ct_casting_sparse_views/story.en.gif",
+          "frames": [
+            {
+              "file": "01_slices.png",
+              "content_box": [
+                0,
+                91,
+                720,
+                508
+              ]
+            },
+            {
+              "file": "02_ranking.png",
+              "content_box": [
+                0,
+                134,
+                720,
+                421
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.711957
+            },
+            {
+              "file": "03_tv_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_dual_energy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                234
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.077364
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 312458,
+          "color_mad": [
+            0.1023,
+            0.0258,
+            0.1502,
+            0.0718
+          ],
+          "max_color_mad": 0.1502,
+          "source_sha256": "2ee5fa37ea7048e81624ef2e7f03d31add71d804045c0121f79633d654bd3ac2"
+        }
+      },
+      "reason": null,
+      "cover": "01_slices.png",
+      "still": "articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png",
+      "alt": {
+        "ja": "360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。",
+        "en": "CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume"
       }
     }
   }

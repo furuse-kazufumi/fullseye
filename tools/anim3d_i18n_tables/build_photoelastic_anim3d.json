@@ -362,24 +362,6 @@
    "hi": "RMS fringe-order error after multi-wavelength unwrap",
    "fr": "RMS fringe-order error after multi-wavelength unwrap"
   },
-  "low-modulation failures concentrated at isotropic points": {
-   "ja": "低変調による失敗の等方点への集中",
-   "zh": "low-modulation failures concentrated at isotropic points",
-   "tw": "low-modulation failures concentrated at isotropic points",
-   "ko": "low-modulation failures concentrated at isotropic points",
-   "de": "low-modulation failures concentrated at isotropic points",
-   "hi": "low-modulation failures concentrated at isotropic points",
-   "fr": "low-modulation failures concentrated at isotropic points"
-  },
-  "failure rate in isotropic region > elsewhere": {
-   "ja": "等方域の失敗率 > その他",
-   "zh": "failure rate in isotropic region > elsewhere",
-   "tw": "failure rate in isotropic region > elsewhere",
-   "ko": "failure rate in isotropic region > elsewhere",
-   "de": "failure rate in isotropic region > elsewhere",
-   "hi": "failure rate in isotropic region > elsewhere",
-   "fr": "failure rate in isotropic region > elsewhere"
-  },
   "isotropic 42.4% / elsewhere 19.0%": {
    "ja": "等方 42.4% / その他 19.0%",
    "zh": "isotropic 42.4% / elsewhere 19.0%",
@@ -389,15 +371,6 @@
    "hi": "isotropic 42.4% / elsewhere 19.0%",
    "fr": "isotropic 42.4% / elsewhere 19.0%"
   },
-  "Does unwrapping fail first at maximum stress?": {
-   "ja": "巻き戻しは最大応力から壊れる？",
-   "zh": "Does unwrapping fail first at maximum stress?",
-   "tw": "Does unwrapping fail first at maximum stress?",
-   "ko": "Does unwrapping fail first at maximum stress?",
-   "de": "Does unwrapping fail first at maximum stress?",
-   "hi": "Does unwrapping fail first at maximum stress?",
-   "fr": "Does unwrapping fail first at maximum stress?"
-  },
   "yes": {
    "ja": "保てる",
    "zh": "yes",
@@ -406,24 +379,6 @@
    "de": "yes",
    "hi": "yes",
    "fr": "yes"
-  },
-  "no, at low modulation": {
-   "ja": "いいえ、低変調域",
-   "zh": "no, at low modulation",
-   "tw": "no, at low modulation",
-   "ko": "no, at low modulation",
-   "de": "no, at low modulation",
-   "hi": "no, at low modulation",
-   "fr": "no, at low modulation"
-  },
-  "At isotropic points the phase axis is undefined, so failure can occur at low stress.": {
-   "ja": "等方点では位相軸が定まらず、応力が小さくても失敗する。",
-   "zh": "At isotropic points the phase axis is undefined, so failure can occur at low stress.",
-   "tw": "At isotropic points the phase axis is undefined, so failure can occur at low stress.",
-   "ko": "At isotropic points the phase axis is undefined, so failure can occur at low stress.",
-   "de": "At isotropic points the phase axis is undefined, so failure can occur at low stress.",
-   "hi": "At isotropic points the phase axis is undefined, so failure can occur at low stress.",
-   "fr": "At isotropic points the phase axis is undefined, so failure can occur at low stress."
   },
   "R=tC(σ1−σ2)": {
    "ja": "R=tC(σ₁−σ₂)",
@@ -596,14 +551,59 @@
    "hi": "10th order < 1st order",
    "fr": "10th order < 1st order"
   },
-  "yes, at maximum stress": {
-   "ja": "はい",
-   "zh": "yes, at maximum stress",
-   "tw": "yes, at maximum stress",
-   "ko": "yes, at maximum stress",
-   "de": "yes, at maximum stress",
-   "hi": "yes, at maximum stress",
-   "fr": "yes, at maximum stress"
+  "principal-axis rejections concentrated in the isotropic region": {
+   "ja": "主軸推定の棄却の等方域への集中",
+   "zh": "principal-axis rejections concentrated in the isotropic region",
+   "tw": "principal-axis rejections concentrated in the isotropic region",
+   "ko": "principal-axis rejections concentrated in the isotropic region",
+   "de": "principal-axis rejections concentrated in the isotropic region",
+   "hi": "principal-axis rejections concentrated in the isotropic region",
+   "fr": "principal-axis rejections concentrated in the isotropic region"
+  },
+  "rejection rate in the isotropic region (fringe order < 0.08) > elsewhere": {
+   "ja": "等方域(縞次数 < 0.08)の棄却率 > その他",
+   "zh": "rejection rate in the isotropic region (fringe order < 0.08) > elsewhere",
+   "tw": "rejection rate in the isotropic region (fringe order < 0.08) > elsewhere",
+   "ko": "rejection rate in the isotropic region (fringe order < 0.08) > elsewhere",
+   "de": "rejection rate in the isotropic region (fringe order < 0.08) > elsewhere",
+   "hi": "rejection rate in the isotropic region (fringe order < 0.08) > elsewhere",
+   "fr": "rejection rate in the isotropic region (fringe order < 0.08) > elsewhere"
+  },
+  "Where is the principal-axis estimate rejected first?": {
+   "ja": "主軸の推定が最初に棄却されるのはどこ？",
+   "zh": "Where is the principal-axis estimate rejected first?",
+   "tw": "Where is the principal-axis estimate rejected first?",
+   "ko": "Where is the principal-axis estimate rejected first?",
+   "de": "Where is the principal-axis estimate rejected first?",
+   "hi": "Where is the principal-axis estimate rejected first?",
+   "fr": "Where is the principal-axis estimate rejected first?"
+  },
+  "at maximum stress": {
+   "ja": "最大応力の所",
+   "zh": "at maximum stress",
+   "tw": "at maximum stress",
+   "ko": "at maximum stress",
+   "de": "at maximum stress",
+   "hi": "at maximum stress",
+   "fr": "at maximum stress"
+  },
+  "near isotropic points, at low modulation": {
+   "ja": "等方点に近い低変調域",
+   "zh": "near isotropic points, at low modulation",
+   "tw": "near isotropic points, at low modulation",
+   "ko": "near isotropic points, at low modulation",
+   "de": "near isotropic points, at low modulation",
+   "hi": "near isotropic points, at low modulation",
+   "fr": "near isotropic points, at low modulation"
+  },
+  "In this exhibit (a single-wavelength estimate with a modulation floor of 0.30), modulation is small where the fringe order is near zero, so the principal-axis estimate is rejected there. This is separate from unwrapping failure; in the single-wavelength disc PoC most unwrapping errors were the sign ambiguity.": {
+   "ja": "この展示(単色の推定、変調の下限 0.30)では、縞次数が 0 に近い等方域で変調が小さく、主軸の推定が棄却される。巻き戻しの失敗とは別の話で、単色の円板 PoC の巻き戻しの外れは符号の二義性が大半だった。",
+   "zh": "In this exhibit (a single-wavelength estimate with a modulation floor of 0.30), modulation is small where the fringe order is near zero, so the principal-axis estimate is rejected there. This is separate from unwrapping failure; in the single-wavelength disc PoC most unwrapping errors were the sign ambiguity.",
+   "tw": "In this exhibit (a single-wavelength estimate with a modulation floor of 0.30), modulation is small where the fringe order is near zero, so the principal-axis estimate is rejected there. This is separate from unwrapping failure; in the single-wavelength disc PoC most unwrapping errors were the sign ambiguity.",
+   "ko": "In this exhibit (a single-wavelength estimate with a modulation floor of 0.30), modulation is small where the fringe order is near zero, so the principal-axis estimate is rejected there. This is separate from unwrapping failure; in the single-wavelength disc PoC most unwrapping errors were the sign ambiguity.",
+   "de": "In this exhibit (a single-wavelength estimate with a modulation floor of 0.30), modulation is small where the fringe order is near zero, so the principal-axis estimate is rejected there. This is separate from unwrapping failure; in the single-wavelength disc PoC most unwrapping errors were the sign ambiguity.",
+   "hi": "In this exhibit (a single-wavelength estimate with a modulation floor of 0.30), modulation is small where the fringe order is near zero, so the principal-axis estimate is rejected there. This is separate from unwrapping failure; in the single-wavelength disc PoC most unwrapping errors were the sign ambiguity.",
+   "fr": "In this exhibit (a single-wavelength estimate with a modulation floor of 0.30), modulation is small where the fringe order is near zero, so the principal-axis estimate is rejected there. This is separate from unwrapping failure; in the single-wavelength disc PoC most unwrapping errors were the sign ambiguity."
   }
  }
 }

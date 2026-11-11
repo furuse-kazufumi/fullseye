@@ -2,7 +2,7 @@
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 50 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 51 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -1678,6 +1678,38 @@ py -3.11 examples/poc_equipment_selection_map.py
 
 使用 op(ノートへ): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`carbon_black_absorption`](https://furuse.work/ops/optics/matprop/carbon_black_absorption.html) · [`hyperspectral_band_weights`](https://furuse.work/ops/optics/spectral/hyperspectral_band_weights.html) · [`ingaas_photodiode_qe`](https://furuse.work/ops/optics/spectral/ingaas_photodiode_qe.html) · [`material_nir_absorption`](https://furuse.work/ops/optics/matprop/material_nir_absorption.html) · [`nir_model_info`](https://furuse.work/ops/optics/matprop/nir_model_info.html) · [`pod_ahat_fit`](https://furuse.work/ops/spc/pod/pod_ahat_fit.html) · [`pod_false_call`](https://furuse.work/ops/spc/pod/pod_false_call.html) · [`pod_from_ahat`](https://furuse.work/ops/spc/pod/pod_from_ahat.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 
+## No.2026.311 —— 鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない
+
+Al の鋳物(32³、0.25 mm)に楕円体の空隙 3 個(24〜84 ボクセル)を置き、コーンビーム CT を 3 条件で撮った。真値は解析的な楕円体そのもので、描いた空隙の体積は 4/3πabc と 0.2 % 以内、離散の投影は閉形式の投影と相対 L2 4.0 %(64³ で 2.6 %)、投影と逆投影の随伴性は 3.8e-16。データは閉形式の投影に雑音を足したもので、再構成と同じ離散の投影では作っていない。RMSE の順位は 360° に 36 投影で OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053、12 投影と 110° では TV が 1 位(代数の良いほうに対し 0.77 / 0.78 倍)。ところが 12 投影で RMSE が最下位の FDK は、欠損で測る空隙の体積が閉形式と 0.9 % で、1 位の TV(5.9 %)より正しい。110° の FDK は空隙を 1 個も拾わない。半値で 2 値化した体積は真値そのものでも 16.7 % 偏るので、それより良く見える数字は偏りの打ち消し合いと注記した。TV の重み 3e-3 は評価に使わない較正用の鋳物で選んだ。評価用で 5 点を後知恵に回すと、限られた角度では同じ 3e-3 が最良、少数投影では 1e-2 が 2.4 % 良く、TV の欠損で測る体積誤差は重みで 2.3〜59 % に動く(FDK に負けるのはこの重みの選び方では、という条件つき)。雑音の乱数を 4 通りに振り直しても順位は反転しない。デュアルエナジーでは鉄の入れ子の体積が −8.7 %、分けた代わりに Al の基底の雑音が 41.65 倍(閉形式 41.00 倍)。単色・ガウス雑音・凸の空隙・例示の減衰係数の合成である。
+
+[![鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/01_slices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png)
+
+*↑ **鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない** ―― Al の鋳物(32³、0.25 mm)に楕円体の空隙 3 個(24〜84 ボクセル)を置き、コーンビーム CT を 3 条件で撮った。真値は解析的な楕円体そのもので、描いた空隙の体積は 4/3πabc と 0.2 % 以内、離散の投影は閉形式の投影と相対 L2 4.0 %(64³ で 2.6 %)、投影と逆投影の随伴性は 3.8e-16。データは閉形式の投影に雑音を足したもので、再構成と同じ離散の投影では作っていない。RMSE の順位は 360° に 36 投影で OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053、12 投影と 110° では TV が 1 位(代数の良いほうに対し 0.77 / 0.78 倍)。ところが 12 投影で RMSE が最下位の FDK は、欠損で測る空隙の体積が閉形式と 0.9 % で、1 位の TV(5.9 %)より正しい。110° の FDK は空隙を 1 個も拾わない。半値で 2 値化した体積は真値そのものでも 16.7 % 偏るので、それより良く見える数字は偏りの打ち消し合いと注記した。TV の重み 3e-3 は評価に使わない較正用の鋳物で選んだ。評価用で 5 点を後知恵に回すと、限られた角度では同じ 3e-3 が最良、少数投影では 1e-2 が 2.4 % 良く、TV の欠損で測る体積誤差は重みで 2.3〜59 % に動く(FDK に負けるのはこの重みの選び方では、という条件つき)。雑音の乱数を 4 通りに振り直しても順位は反転しない。デュアルエナジーでは鉄の入れ子の体積が −8.7 %、分けた代わりに Al の基底の雑音が 41.65 倍(閉形式 41.00 倍)。単色・ガウス雑音・凸の空隙・例示の減衰係数の合成である。*
+
+用語: cone-beam CT — 点の線源から円錐状に広がる X 線を平面の検出器で受け、1 回の回転で立体をまとめて撮る CT の方式。
+
+[![12 通り(3 条件 × 4 手法)の RMSE・空隙の体積誤差(2 値と欠損)・重心誤差・見落とし・偽の空隙。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/02_ranking_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/02_ranking.png)
+
+*↑ 測定の図 ―― 12 通り(3 条件 × 4 手法)の RMSE・空隙の体積誤差(2 値と欠損)・重心誤差・見落とし・偽の空隙。limited の FDK は空隙を 3 個とも見落とすので重心誤差が nan になる。*
+
+[![TV の重みと RMSE を、少数投影と限られた角度の 2 条件で見た。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/03_tv_weight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/03_tv_weight.png)
+
+*↑ TV の重みと RMSE を、少数投影と限られた角度の 2 条件で見た。*
+
+[![鉄の入れ子を鋳込んだ鋳物を低・高エネルギーの 2 回撮って Al と Fe の基底に分けた断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy.png)
+
+*↑ 鉄の入れ子を鋳込んだ鋳物を低・高エネルギーの 2 回撮って Al と Fe の基底に分けた断面。*
+
+```
+py -3.11 examples/poc_ct_casting_sparse_views.py
+```
+
+ソース: [examples/poc_ct_casting_sparse_views.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_casting_sparse_views.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ct_casting_sparse_views)
+
+使用 op(ノートへ): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_scan/ct_adjoint_project.html) · [`ct_dual_energy_reconstruct`](https://furuse.work/ops/tomography/ct_scan/ct_dual_energy_reconstruct.html) · [`ct_forward_project`](https://furuse.work/ops/tomography/ct_scan/ct_forward_project.html) · [`ct_scan_geometry`](https://furuse.work/ops/tomography/ct_scan/ct_scan_geometry.html) · [`ellipsoid_phantom`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_phantom.html) · [`ellipsoid_projections`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_projections.html) · [`fdk_reconstruct`](https://furuse.work/ops/tomography/ct_scan/fdk_reconstruct.html) · [`os_sart_reconstruct`](https://furuse.work/ops/tomography/ct_scan/os_sart_reconstruct.html) · [`shepp_logan_3d`](https://furuse.work/ops/tomography/ct_scan/shepp_logan_3d.html) · [`sirt_reconstruct`](https://furuse.work/ops/tomography/ct_scan/sirt_reconstruct.html) · [`tv_reconstruct`](https://furuse.work/ops/tomography/ct_scan/tv_reconstruct.html) · [`vol_rle_centroid`](https://furuse.work/ops/3d/rle_region/vol_rle_centroid.html) · [`vol_rle_components`](https://furuse.work/ops/3d/rle_region/vol_rle_components.html) · [`vol_rle_volume`](https://furuse.work/ops/3d/rle_region/vol_rle_volume.html)
+
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
@@ -2126,23 +2158,23 @@ py -3.11 examples/poc_particle_sizing.py
 
 使用 op(ノートへ): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`blob_region`](https://furuse.work/ops/blob/extract/blob_region.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`circularity`](https://furuse.work/ops/2d/features/circularity.html) · [`distance_transform`](https://furuse.work/ops/2d/region/distance_transform.html)
 
-## No.2026.031 —— 光弾性で応力を測る ―― 巻き戻しが最初に失敗するのは等方点
+## No.2026.031 —— 光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性
 
-透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。戻しが最初に失敗するのは、応力の大きい所ではなく縞の変調が落ちる等方点だった。
+透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。巻き戻した後に外れた画素は、ほとんどが巻きではなく符号の二義性によるものだった。
 
-[![光弾性で応力を測る ―― 巻き戻しが最初に失敗するのは等方点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
+[![光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 
-*↑ **光弾性で応力を測る ―― 巻き戻しが最初に失敗するのは等方点** ―― 円板圧縮の閉形式応力場(中心 4.2441 MPa、縞次数 2.380)を Mueller 行列(偏光変化を表す4×4行列)の op で偏光像にし、縞から応力へ戻す図。op の偏光系は教科書式と 125 通りで最大差 2.2e-16。縞次数が 0.5 を超える 84.2 % の画素で位相が巻き、巻き戻しが最初に壊れるのは応力の大きい所ではなく、変調が落ちる等方点。*
+*↑ **光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性** ―― 円板圧縮の閉形式応力場(中心 4.2441 MPa、縞次数 2.380)を光弾性の族の op で偏光像にし、縞から応力へ戻す図。偏光系は Mueller 行列(偏光変化を表す4×4行列)の素子を並べた鎖で検算し、教科書式と 125 通りで最大差 2.2e-16。縞次数が 0.5 を超える 84.2 % の画素で位相が巻く。巻き戻した後に外れる 2.98 % の画素の 93.7 % は、巻きではなく (δ,θ)↔(-δ,θ+90°) の符号の二義性で外れていて、符号が正しければ外れは 0.13 %(測定の符号だけ直すと 0.22 %)で、荷重点のそばの縞が細かい所だけ。符号が反転した入力では、低変調の画素をマスクで外しても一致率は上がらず 97.0 % から 81.9 % に下がる(符号が正しい入力では下がらず、機構は未解明)。*
 
 用語: Mueller matrix — 偏光状態を表すストークスベクトルに作用し、光学素子や試料による偏光変化を記述する4×4実行列。
 
-[![左下 2 枚が「壊れる予報」。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap.png)
+[![右下が外れの場所。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap.png)
 
-*↑ 測定の図 ―― 左下 2 枚が「壊れる予報」。予報は当たるが、外せば直るとは限らない。*
+*↑ 測定の図 ―― 右下が外れの場所。ほとんどが 4 節の符号の二義性で、符号が正しければ外すのは荷重点のそばの縞が細かい所だけ。低変調の帯(右上の暗い帯)は外れの原因ではない。*
 
 [![動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)
 
-*↑ 動く図 ―― 動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷重に比例して 2.38 まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 2 回)。後半は荷重 500 N のまま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点で、中央の真値 θ の図で白く塗った点と重なる。偏光系は fullseye の mueller_element / mueller_apply(暗視野)と sin²(2(θ-β))·sin²(δ/2)(平面)。*
+*↑ 動く図 ―― 動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷重に比例して 2.38 まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 2 回)。後半は荷重 500 N のまま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点で、中央の真値 θ の図で白く塗った点と重なる。応力場と偏光像は光弾性の族の op(brazilian_disc_stress / principal_stress / photoelastic_retardation / polariscope_intensity)。*
 
 ```
 py -3.11 examples/poc_photoelasticity.py
@@ -2152,7 +2184,7 @@ py -3.11 examples/poc_photoelasticity.py
 
 この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_photoelasticity)
 
-使った Fullseye の op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`mueller_apply`](https://furuse.work/ops/optics/polarization/mueller_apply.html) · [`mueller_element`](https://furuse.work/ops/optics/polarization/mueller_element.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`unwrap_phase_2d`](https://furuse.work/ops/3d/structured_light/unwrap_phase_2d.html)
+使った Fullseye の op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`brazilian_disc_stress`](https://furuse.work/ops/optics/photoelastic/brazilian_disc_stress.html) · [`mueller_apply`](https://furuse.work/ops/optics/polarization/mueller_apply.html) · [`mueller_element`](https://furuse.work/ops/optics/polarization/mueller_element.html) · [`photoelastic_phase_estimate`](https://furuse.work/ops/optics/photoelastic/photoelastic_phase_estimate.html) · [`photoelastic_polarization_images`](https://furuse.work/ops/optics/photoelastic/photoelastic_polarization_images.html) · [`photoelastic_retardation`](https://furuse.work/ops/optics/photoelastic/photoelastic_retardation.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`polariscope_intensity`](https://furuse.work/ops/optics/photoelastic/polariscope_intensity.html) · [`principal_stress`](https://furuse.work/ops/optics/photoelastic/principal_stress.html) · [`retardation_convert`](https://furuse.work/ops/optics/photoelastic/retardation_convert.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`unwrap_phase_2d`](https://furuse.work/ops/3d/structured_light/unwrap_phase_2d.html)
 
 ## No.2026.103 —— 弦でレールを測る ―― 伝達関数が 0 になる波長は、何 mm あっても 0 mm と出る
 
