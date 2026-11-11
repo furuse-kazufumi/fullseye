@@ -67,8 +67,8 @@ PERIODS = (256.0, 32.0, 4.0)       # 背景の縞の周期 [mm]: 粗 → 細。�
 SIGMA_DN = 1.5                     # 縞の画像に足す雑音(8 bit の階調で)
 STEP_LIMIT_MM = 1.0                # 隣の列で u が 1 mm(細い縞の 1/4)以上動く画素は、画素の開口で縞が平均されるので使わない
 BAND_ROWS = 40                     # 雑音の試行は液面を挟む 40 行の帯で回す(行は互いに独立なので、全高と同じデータの行を減らしたもの)
-N_TRIALS = 40 if REDUCED else 300       # 各区間 1 行で使う雑音の試行数(水・油)
-N_TRIALS_ALL = 10 if REDUCED else 60    # 各区間の全行(約 18 行)で使う試行数
+N_TRIALS = 150 if REDUCED else 300      # 各区間 1 行で使う雑音の試行数(水・油)
+N_TRIALS_ALL = 40 if REDUCED else 60   # 各区間の全行(約 18 行)で使う試行数
 N_SWEEP = 8 if REDUCED else 20          # 壁厚の掃引の 1 点あたりの試行数
 
 
@@ -366,7 +366,7 @@ def chapter_trials():
         ratios.extend((v[3] / np.maximum(v[2], 1e-12)).tolist())
     r_min, r_max = min(ratios), max(ratios)
     print("   予測 σ / 経験 σ: %.2f 〜 %.2f(1 に近いほど共分散が信用できる)、%.1f 秒" % (r_min, r_max, time.time() - t0))
-    gate("共分散から予測した σ が経験の σ の 0.5〜2 倍(ただし 1 を超えない = 常に同じか過小。共分散を信用しすぎない)", 0.5 < r_min and r_max < 2.0, "%.2f〜%.2f(過小の最大 %.0f %%)" % (r_min, r_max, 100 * (1 - r_min)))
+    gate("共分散から予測した σ が経験の σ の 0.5〜2 倍(full の実測は 0.67〜1.00 で過小の側に寄る。共分散を信用しすぎない)", 0.5 < r_min and r_max < 2.0, "%.2f〜%.2f(過小の最大 %.0f %%)" % (r_min, r_max, 100 * (1 - r_min)))
     NUMBERS["pred_over_emp_min"], NUMBERS["pred_over_emp_max"] = r_min, r_max
     NUMBERS["trial_worst_R"], NUMBERS["trial_worst_nl"] = worstR, worstL
     return summary
@@ -678,7 +678,7 @@ def make_figures(maps, keep, trials, ident, lrows, merr):
     for (name, label), (relerr, p95, emp, pred, conv, n) in trials.items():
         trs.append(["%s・%s" % (name, label), "%d" % n, "%.1e" % p95[0], "%.1e" % p95[1], "%.1e" % p95[2], "%.1e" % p95[3], " / ".join("%.2f" % v for v in (pred / np.maximum(emp, 1e-12)))])
     figs.save_table("noise_trials", header, trs, title="雑音 %d / %d 回の相対誤差(95 %% 点)と予測 σ の当たり具合" % (N_TRIALS, N_TRIALS_ALL),
-                    caption="雑音だけが誤差なら、1 行ずつの最悪の場合でも R・n_liquid は 1e-4 以下。予測 σ は経験の σ の 0.67〜1.00 倍で、常に同じか過小(最大 33 %)。較正の誤りとモデル誤差は別(以下の表と 5b)。")
+                    caption="雑音だけが誤差なら、1 行ずつの最悪の場合でも R・n_liquid は 1e-4 以下。予測 σ は経験の σ の 0.67〜1.00 倍で、過小の側に寄る(最大 33 %。試行を減らした走りでは 1.04 まで出る)。較正の誤りとモデル誤差は別(以下の表と 5b)。")
     # 5 窓
     wrows = ident["windows"]
     fx = np.array([f for f, rr in wrows if rr is not None])

@@ -27763,7 +27763,7 @@
             0.0349
           ],
           "max_color_mad": 0.1201,
-          "source_sha256": "15694849db8befa32690f18ac44466d66d0e3e0af948781c7665f4bd5390cc5c"
+          "source_sha256": "2fc299d7a23b122be5aed1b8789420f9a15ee5277451d22b6cf77c7a467c08f3"
         },
         "en": {
           "path": "articles/assets/poc/poc_bottle_pattern_inverse/story.en.gif",
@@ -27846,7 +27846,7 @@
             0.0349
           ],
           "max_color_mad": 0.1201,
-          "source_sha256": "f78a4047b71d1270d3d413e2d5b21834c2dda4b632984f871fff0abb618c5af4"
+          "source_sha256": "374839f7a35d24f852348d0ac79bac3c905cfbecbcca8705fca40ea3e85f268e"
         }
       },
       "reason": null,
