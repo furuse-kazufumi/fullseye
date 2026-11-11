@@ -745,7 +745,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 実寸校正: 高さは `photometric_stereo` の法線を `integrate_normals` で積分した**相対値**で、絶対 mm には mm/px と勾配の単位が要る。横方向は `mm_per_px_from_reference`、縦方向は既知段差の的で係数を出す。
 
-動く例: `illumination_design_demo`, `photometric_stereo`, `poc_bump_coplanarity`
+動く例: `illumination_design_demo`, `photometric_stereo`, `poc_bump_coplanarity`, `poc_surface_defect_classifiers`
 
 ### [位置決め(テンプレート照合で測定線を追従させる)](capabilities/template-alignment.md)
 

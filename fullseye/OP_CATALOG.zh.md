@@ -15,7 +15,11 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
+<<<<<<< HEAD
 ### 2-D 图像/信号/几何(488 例)
+=======
+### 2-D 图像/信号/几何(487 例)
+>>>>>>> poc/classify-2026-11-12
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -352,6 +356,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_symmetry_self_reference_inspection` — op: `center_from_symmetric_edges`, `rotational_symmetry`, `symmetry_difference_map`, `symmetry_score` `py -3.11 examples/poc_symmetry_self_reference_inspection.py`
 - `poc_print_layer_inspection` — op: `contours_to_gcode`, `gcode_extrusion_volume`, `gcode_layer_image`, `gcode_read`, `gcode_time_estimate`, `gcode_write`, `mesh_slice_contours`, `mesh_slice_stack`, `print_layer_defect_map`, `prism_mesh`, `read_3mf`, `vol_render_transfer`(另有 1 个) `py -3.11 examples/poc_print_layer_inspection.py`
 - `poc_em_second_opinion` — op: `holdout_threshold`, `points_activity_video`, `seg_boundary_membrane_gap`, `seg_inject_merge`, `seg_inject_split`, `seg_label_changes`, `seg_membrane_chord_score`, `seg_membrane_response` `py -3.11 examples/poc_em_second_opinion.py`
+- `poc_surface_defect_classifiers` — op: `class_2dim_sup`, `class_2dim_unsup`, `class_ndim_norm`, `classify_class_gmm`, `classify_class_knn`, `classify_class_mlp`, `classify_class_svm`, `classify_image_class_lut`, `evaluate_class_gmm`, `learn_ndim_norm`, `train_class_gmm`, `train_class_knn`(另有 2 个) `py -3.11 examples/poc_surface_defect_classifiers.py`
 - `poc_equipment_selection_map` — op: `bandpass_spectrum`, `blackbody_spectrum`, `carbon_black_absorption`, `hyperspectral_band_weights`, `ingaas_photodiode_qe`, `material_nir_absorption`, `nir_model_info`, `pod_ahat_fit`, `pod_false_call`, `pod_from_ahat`, `silicon_photodiode_qe`, `spectral_integral` `py -3.11 examples/poc_equipment_selection_map.py`
 - `poc_illumination_cone_vs_na` — op: `blast_normals`, `metal_mirror_rgb`, `micro_normals`, `solid_angle_boundaries`, `solid_angle_brightness`, `solid_angle_light`, `solid_angle_render`, `solid_angle_sweep`, `text_box` `py -3.11 examples/poc_illumination_cone_vs_na.py`
 - `poc_hdr_glossy_metal_inspection` — op: `camera_response_debevec`, `camera_response_linear`, `camera_response_robertson`, `exposure_fusion_mertens`, `hdr_dynamic_range`, `hdr_exposure_series_simulate`, `hdr_merge`, `hdr_radiance_error` `py -3.11 examples/poc_hdr_glossy_metal_inspection.py`
@@ -5099,18 +5104,18 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 ### mv (47 ops / 10 categories)
 
 #### mv / classify (12)
-- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: 无 — 按高斯混合模型逐行返回后验最大的类。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: 无 — 以 k 近邻多数表决逐行返回类（平票取距离和较小者）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: 无 — 用 `train_class_mlp` 的多层感知机分类特征行。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: 无 — 用 `train_class_svm` 的线性 SVM 分类特征行（一对多取最大间隔）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: 无 — 按高斯混合模型逐行返回后验最大的类。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: 无 — 以 k 近邻多数表决逐行返回类（平票取距离和较小者）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: 无 — 用 `train_class_mlp` 的多层感知机分类特征行。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: 无 — 用 `train_class_svm` 的线性 SVM 分类特征行（一对多取最大间隔）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
 - `create_lexicon` (halcon: `create_lexicon`) `无输入 → table` GPU: 无 — 创建用于匹配的词表（去重并固定顺序）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: 无 — 逐行返回各类后验与模型整体的对数密度。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: 无 — 逐行返回各类后验与模型整体的对数密度。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
 - `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: 无 — 以完全匹配检查词是否在表中，在则返回 1.0，否则返回 0.0。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 - `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: 无 — 返回编辑距离最小的词及其距离。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: 无 — 用 EM 为每个类学习高斯混合模型。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: 无 — 构建 k-NN 分类器（特征标准化后保存）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: 无 — 训练 MLP 分类器。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: 无 — 训练线性 SVM（hinge 损失，一对多）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: 无 — 用 EM 为每个类学习高斯混合模型。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: 无 — 构建 k-NN 分类器（特征标准化后保存）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: 无 — 训练 MLP 分类器。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: 无 — 训练线性 SVM（hinge 损失，一对多）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
 
 #### mv / curve (1)
 - `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: 无 — 求经过全部点的非有理 B 样条控制点（全局插值）。 · 示例: `machine_vision_tour`
@@ -5870,13 +5875,13 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 ### segmentation (59 ops / 11 categories)
 
 #### segmentation / classify (7)
-- `class_2dim_sup` (halcon: `class_2dim_sup`) `image2d × image2d × mask → mask` GPU: 无 — 二通道特征空间的监督分类：落入 ref_region 分布内的像素(class_2dim_sup)。 · 示例: `halcon_segmentation_tour`
-- `class_2dim_unsup` (halcon: `class_2dim_unsup`) `image2d × image2d → labels2d` GPU: 有(许可列表) — 二通道特征空间的 k-means 无监督分类，返回标签图像(class_2dim_unsup)。 · 示例: `halcon_segmentation_tour`
-- `class_ndim_norm` (halcon: `class_ndim_norm`) `images × table → mask` GPU: 有(许可列表) — 用学习到的正态分布类对 N 维特征图像分类(马氏距离 < thresh)(class_ndim_norm)。 · 示例: `halcon_segmentation_tour`
-- `classify_image_class_lut` (halcon: `classify_image_class_lut`) `image2d × signal → labels2d` GPU: 有(许可列表) — 按灰度 LUT(阈值/标签表)对像素分类(classify_image_class_lut)。 · 示例: `halcon_segmentation_tour`
+- `class_2dim_sup` (halcon: `class_2dim_sup`) `image2d × image2d × mask → mask` GPU: 无 — 二通道特征空间的监督分类：落入 ref_region 分布内的像素(class_2dim_sup)。 · 示例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
+- `class_2dim_unsup` (halcon: `class_2dim_unsup`) `image2d × image2d → labels2d` GPU: 有(许可列表) — 二通道特征空间的 k-means 无监督分类，返回标签图像(class_2dim_unsup)。 · 示例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
+- `class_ndim_norm` (halcon: `class_ndim_norm`) `images × table → mask` GPU: 有(许可列表) — 用学习到的正态分布类对 N 维特征图像分类(马氏距离 < thresh)(class_ndim_norm)。 · 示例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
+- `classify_image_class_lut` (halcon: `classify_image_class_lut`) `image2d × signal → labels2d` GPU: 有(许可列表) — 按灰度 LUT(阈值/标签表)对像素分类(classify_image_class_lut)。 · 示例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
 - `fisher_lda_fit` `matrix × signal → table` GPU: 无 — 学习两类 Fisher 线性判别（闭式解，无迭代）。 · 示例: `poc_weed_rice_ratio`
 - `fisher_lda_score` `table × matrix → table` GPU: 无 — 用 ``fisher_lda_fit`` 学到的判别对特征打分（score > 0 为类 1）。 · 示例: `poc_weed_rice_ratio`
-- `learn_ndim_norm` (halcon: `learn_ndim_norm`) `matrix → table` GPU: 无 — 从特征向量集合学习正态分布类(均值与协方差)(learn_ndim_norm)。 · 示例: `halcon_segmentation_tour`
+- `learn_ndim_norm` (halcon: `learn_ndim_norm`) `matrix → table` GPU: 无 — 从特征向量集合学习正态分布类(均值与协方差)(learn_ndim_norm)。 · 示例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
 
 #### segmentation / compare (1)
 - `check_difference` (halcon: `check_difference`) `image2d × image2d → mask` GPU: 有(许可列表) — 与参考图像之差超过 tol 的像素，作为区域返回(check_difference)。 · 示例: `halcon_segmentation_tour`

@@ -108,7 +108,11 @@ The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebu
 | `validated-public-real-data` | an example on public measured data runs in a gate | 9 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
+<<<<<<< HEAD
 Of 496 examples, 492 are actually run by a gate.
+=======
+Of 495 examples, 491 are actually run by a gate.
+>>>>>>> poc/classify-2026-11-12
 
 ### Operator counts by version
 
