@@ -837,6 +837,8 @@ NOT_A_GENERATOR = {
     "tools/fops_article/fops_eval1.py": "別 repo(onocollo-complete)の記事の図の定量評価。この repo には書かない。",
     "tools/fops_article/build_manifest.py": "別 repo(onocollo-complete)の記事の挿入目録。この repo には書かない。",
     "spikes/unified_api_spike.py": "API スパイク。imwrite は呼び手がパスを渡すメソッドで、__main__ は書かない。",
+    # ---- 2026-11-11: 記事の素材を素材 repo(fullseye-media2026q4 など)に置く道具 ----
+    "tools/article_media.py": ("記事の素材の道具(put は素材を素材 repo の手元の clone の <記事>/<名前> に写すだけで、この repo のコミット物は書かない。上書きは拒む。check と url は読むだけ)。"),
 }
 
 #: 生成器を**ファイルの側から**列挙する。CHAIN と EXCLUDED は人が書く表なので、
