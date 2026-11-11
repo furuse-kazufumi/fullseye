@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(486 例)
+### 2-D 图像/信号/几何(487 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -324,6 +324,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_public_camera_heading_real` — op: `bloom`, `camera_orientation_from_sun_candidates`, `ellipse`, `sun_position` `py -3.11 examples/poc_public_camera_heading_real.py`
 - `poc_public_camera_heading` — op: `camera_orientation_from_skyline`, `camera_orientation_from_sun`, `dem_skyline`, `render_skyline_view`, `skyline_extract`, `sun_pixel_position`, `sun_position` `py -3.11 examples/poc_public_camera_heading.py`
 - `poc_thermal_drift_metrology` — op: `lockin_thermal_wave`, `polygon_area`, `thermo_optic_coefficient` `py -3.11 examples/poc_thermal_drift_metrology.py`
+- `poc_caltab_chain_truth` — op: `camera_calibration_lm`, `create_caltab`, `find_caltab`, `find_marks_and_pose`, `gaussian` `py -3.11 examples/poc_caltab_chain_truth.py`
 - `poc_calibration_truth_map` — op: `calibration_error_map`, `calibration_next_pose`, `calibration_uncertainty_map`, `camera_calibration`, `camera_calibration_lm`, `checkerboard_points`, `find_checkerboard_corners`, `sim_checkerboard` `py -3.11 examples/poc_calibration_truth_map.py`
 - `poc_real_chessboard_undistort` — op: `camera_calibration_lm`, `change_radial_distortion_image`, `ellipse`, `map_image`, `points_lepetit`, `rectify_to_world_plane` `py -3.11 examples/poc_real_chessboard_undistort.py`
 
@@ -1633,7 +1634,7 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `f2_gauss_pyramid` (halcon: `gen_gauss_pyramid`) `image → image` GPU: 有(许可列表) — 返回图像高斯金字塔的某一层:先按 2 的 ``level`` 次幂降采样(模糊+抽取),再上采样回原始 HxW,得到分辨率降低的带限(低通)版本。``a`` 选择层级(1..4);``b`` 被忽略。 · 示例: `gallery2d_smoothing_rank`
 - `gauss_filter` (halcon: `gauss_filter`) `image → image` GPU: 有(gauss_filter@twin) — 通过高斯模糊(``scipy.ndimage.gaussian_filter``,sigma 为 ``0.3+2.7*a``)实现的平滑处理。是 HALCON 的 ``gauss_filter``(Smooth using discrete Gauss functions.)的替代实现 —— HALCON 使用离散高斯核(整数运算),这里则是连续高斯核的 scipy 实现,虽是近似,但结果非常接近。 · 示例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_pv_thermal_survey`, `poc_sea_ice_concentration`, `poc_search_sweep_width`, `poc_solar_limb_darkening`, `poc_vanishing_detail_and_morphing_area`, `poc_vessel_network`, `poc_white_balance`
 - `gauss_image` (halcon: `gauss_image`) `image → image` GPU: 有(gauss_image) — 实现与 ``gauss_filter`` 完全相同(同一个 ``kind: "gauss"`` 分支,sigma 为 ``0.3+2.7*a`` 的高斯模糊)。在 HALCON 中,``gauss_filter``(离散近似)与 ``gauss_image``(频域/连续高斯)是不同的算子,但此替代实现不作区分,指向同一函数。是 HALCON 的 ``gauss_image``(Smooth an image using discrete Gaussian functions.)的替代实现。 · 示例: `gallery2d_smoothing_rank`, `poc_colocalization_crosstalk`, `poc_moire_screen`, `poc_prnu_camera_fingerprint`, `poc_weld_radiograph_porosity`
-- `gaussian` (halcon: `gauss_filter`) `image → image` GPU: 有(gauss_filter) — 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 · 示例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `mcp_task_score`, `mcp_usability`, `perf_pointcloud_descriptors`, `photon_timeresolved`, `poc_ai_built_inspection_scored`, `poc_bone_trabecular_thickness`, `poc_chromatic_confocal`, `poc_dtof_ranging`, `poc_flybrain_pointcloud`, `poc_interferometry_step`, `poc_itof_multifreq`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
+- `gaussian` (halcon: `gauss_filter`) `image → image` GPU: 有(gauss_filter) — 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 · 示例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `mcp_task_score`, `mcp_usability`, `perf_pointcloud_descriptors`, `photon_timeresolved`, `poc_ai_built_inspection_scored`, `poc_bone_trabecular_thickness`, `poc_caltab_chain_truth`, `poc_chromatic_confocal`, `poc_dtof_ranging`, `poc_flybrain_pointcloud`, `poc_interferometry_step`, `poc_itof_multifreq`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
 - `guided_filter` (halcon: `guided_filter`) `image → image` GPU: 无 — 实现与``bilateral_filter``完全相同(``kind: "bilateral"``)。真正的引导滤波(guided filter,基于局部线性模型的保边平滑)在数学上是不同的算法,但此替代实现以双边滤波代替(为满足相似用途=保边平滑的近似,结果数值并不一致)。是HALCON``guided_filter``(Guided filtering of an image.)的代用。 · 示例: `gallery2d_smoothing_rank`
 - `isotropic_diffusion` (halcon: `isotropic_diffusion`) `image → image` GPU: 有(许可列表) — 实现是简单的高斯模糊(``gaussian_filter``,sigma为``0.5+2.5*a``)。由于各向同性扩散方程的解在数学上等价于高斯核卷积,此近似在理论上也是成立的(不具备各向异性扩散那样的保边效果,而是无论方向如何都均匀平滑)。相当于HALCON的``isotropic_diffusion``(Perform an isotropic diffusion of an image.)。 · 示例: `gallery2d_smoothing_rank`
 - `kuwahara` `image → image` GPU: 有(许可列表) — Kuwahara 滤波（1976）。保边平滑：取四个相互重叠的窗口中方差最小者的均值作为输出。 · 示例: `gallery2d_smoothing_rank`
@@ -4989,8 +4990,8 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### calib / calibrate (5)
 - `camera_calibration` (halcon: `camera_calibration`) `keypoints → table` GPU: 无 — [部分对应] 用 Zhang 法从平面靶标的多个视角只估计内参矩阵 K(camera_calibration)。 · 示例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_calibration_truth_map`, `poc_camera_calibration`
-- `camera_calibration_lm` `keypoints → table` GPU: 无 — 从 Zhang 法的初值出发,用 LM 同时优化内参、畸变与全部位姿,并连同协方差一起返回(``table``)。 · 示例: `poc_calibration_truth_map`, `poc_real_chessboard_undistort`
-- `find_marks_and_pose` (halcon: `find_marks_and_pose`) `image2d → table` GPU: 无 — 标记检测 + 标定板位姿估计(平面单应 → 位姿)(find_marks_and_pose)。
+- `camera_calibration_lm` `keypoints → table` GPU: 无 — 从 Zhang 法的初值出发,用 LM 同时优化内参、畸变与全部位姿,并连同协方差一起返回(``table``)。 · 示例: `poc_calibration_truth_map`, `poc_caltab_chain_truth`, `poc_real_chessboard_undistort`
+- `find_marks_and_pose` (halcon: `find_marks_and_pose`) `image2d → table` GPU: 无 — 标记检测 + 标定板位姿估计(平面单应 → 位姿)(find_marks_and_pose)。 · 示例: `poc_caltab_chain_truth`
 - `hand_eye_calibration` (halcon: `hand_eye_calibration`) `无输入 → matrix` GPU: 无 — 由一系列运动对求解 AX=XB，估计 X(4x4)(hand_eye_calibration)。
 - `stereo_calibration_lm` `keypoints → table` GPU: 无 — 用 LM 同时优化左右相机的内参与畸变、板的位姿以及右相机的相对位姿 (R, T)(``table``)。
 
@@ -5019,9 +5020,9 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### calib / target (6)
 - `caltab_points` (halcon: `caltab_points`) `无输入 → keypoints` GPU: 无 — 以 (y, x) 返回标定板的理想标记坐标(世界坐标, mm; 原点=第一个标记)(caltab_points)。
-- `create_caltab` (halcon: `create_caltab`) `无输入 → table` GPU: 无 — 生成标定板的描述(理想点，原点在板中心)(create_caltab)。
+- `create_caltab` (halcon: `create_caltab`) `无输入 → table` GPU: 无 — 生成标定板的描述(理想点，原点在板中心)(create_caltab)。 · 示例: `poc_caltab_chain_truth`
 - `disp_caltab` (halcon: `disp_caltab`) `table → image2d` GPU: 无 — 返回标定板图像(用于显示)(disp_caltab)。
-- `find_caltab` (halcon: `find_caltab`) `image2d → keypoints` GPU: 无 — 从图像中检测标定板圆形标记的中心(连通域的重心)(find_caltab)。
+- `find_caltab` (halcon: `find_caltab`) `image2d → keypoints` GPU: 无 — 从图像中检测标定板圆形标记的中心(连通域的重心)(find_caltab)。 · 示例: `poc_caltab_chain_truth`
 - `gen_caltab` (halcon: `gen_caltab`) `无输入 → table` GPU: 无 — 生成圆形标记网格的标定板图像(gen_caltab)。
 - `sim_caltab` (halcon: `sim_caltab`) `table → table` GPU: 无 — 模拟按指定相机位姿投影的标定板图像(sim_caltab)。
 

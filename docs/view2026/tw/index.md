@@ -136,7 +136,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **量測**
 
-- 從平面標定板的多視角估計內參矩陣 K(張正友法): [說明](../../capabilities/camera-intrinsics-calibration.md) _(ja)_ · 範例 [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py)
+- 從平面標定板的多視角估計內參矩陣 K(張正友法): [說明](../../capabilities/camera-intrinsics-calibration.md) _(ja)_ · 範例 [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py) · [poc_caltab_chain_truth](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_caltab_chain_truth.py)
 - 把複數平面當作面來看(域著色、吸引域、逃逸時間、繞翼流動): [說明](../../capabilities/complex-plane-fields.md) _(ja)_ · 範例 [poc_complex_plane_fields](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_complex_plane_fields.py)
 - 以閉式求週期圖案在取樣晶格上混疊的距離，以及條紋所擾亂的碰撞時間（複眼與檢測相機）: [說明](../../capabilities/compound-eye-aliasing-and-ttc.md) _(ja)_ · 範例 [poc_zebra_stripes_fly_eye](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zebra_stripes_fly_eye.py)
 - 用 EMVA 1288 的步驟重新量測相機規格書上的數值,並看相機內部的前處理會使這些數值偏移多少(Linear 與 General): [說明](../../capabilities/emva1288-camera-datasheets.md) _(ja)_ · 範例 [poc_emva1288_sensor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py) · [poc_emva1288_in_camera_processing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py)
@@ -248,7 +248,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 310 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -424,7 +424,7 @@ PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>幾何與校正</b> (26)</summary>
+<details class="vall"><summary><b>幾何與校正</b> (27)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>以真實影像校正薄膜模型(可確定的係數與無法確定的組合)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><img src="../../articles/assets/poc/poc_camera_calibration/story.en.gif" alt="A small reprojection error does not guarantee a correct focal length. Re-rendering a real board nearly face-on kept the reprojection error about the same, but the focal-length error grew at least 28-fold over a tilted board. The warning is the spread of the focal-length estimate, not the reprojection error." loading="lazy" width="200" height="200"></picture><span>重投影誤差很小，焦距仍會偏</span></a>
@@ -447,6 +447,7 @@ PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_public_camera_heading_real.jpg" alt="攝影機朝向(實拍)" width="200" height="200"><b>&#9654;</b><span>攝影機朝向(實拍)</span></a>
 <a href="../../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><img src="../../articles/assets/poc/poc_real_tless_6dof/story.en.gif" alt="Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data" loading="lazy" width="200" height="200"></picture><span>從真實深度點雲估計已知零件的六自由度姿態</span></a>
 <a href="../../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><img src="../../articles/assets/poc/poc_calibration_truth_map/story.en.gif" alt="Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner" loading="lazy" width="200" height="200"></picture><span>帶真值的相機校正:重投影 0.044 px,角落仍錯 0.568 px</span></a>
+<a href="../../articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png"><img src="../../articles/assets/poc/poc_caltab_chain_truth/story.en.gif" alt="A Circle-Mark Calibration Plate End to End: fx Is 0.45 % Off Even Without Noise, and the Binary Centroid Sets That Floor" loading="lazy" width="200" height="200"></picture><span>圓點校正板全流程:無雜訊時 fx 仍偏 0.45 %,底限由二值質心決定</span></a>
 <a href="../../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><img src="../../articles/assets/poc/poc_part_locate_features/story.en.gif" alt="SIFT Locates a Part Rotated 37 Degrees to 0.367 px; the Existing Harris Matcher Misses by 158 px" loading="lazy" width="200" height="200"></picture><span>SIFT 以 0.367 px 定位旋轉 37 度的零件,原有 Harris 偏差 158 px</span></a>
 <a href="../../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_multimodal_mi_registration.jpg" alt="可見光與紅外電路板影像相關為 −0.74,互資訊仍以 0.170 px 對位" width="200" height="200"><span>可見光與紅外電路板影像相關為 −0.74,互資訊仍以 0.170 px 對位</span></a>
 <a href="../../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sheet_deformation_ffd.jpg" alt="FFD 以 0.025 px 追蹤薄片變形,但條碼與空白處無法確定位移場" width="200" height="200"><span>FFD 以 0.025 px 追蹤薄片變形,但條碼與空白處無法確定位移場</span></a>

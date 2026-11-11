@@ -104,7 +104,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 Operators: `camera_calibration`, `estimate_distortion`, `intrinsic_matrix`, `decompose_intrinsics`
 
-Runnable: `camera_intrinsics_calibration`
+Runnable: `camera_intrinsics_calibration`, `poc_caltab_chain_truth`
 
 ### [Seeing the complex plane as an area (domain colouring, basins, escape time, flow)](capabilities/complex-plane-fields.md)
 

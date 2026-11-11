@@ -136,7 +136,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **재기**
 
-- 평면 타깃의 다시점에서 내부 행렬 K 추정(Zhang 법): [설명](../../capabilities/camera-intrinsics-calibration.md) _(ja)_ · 예제 [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py)
+- 평면 타깃의 다시점에서 내부 행렬 K 추정(Zhang 법): [설명](../../capabilities/camera-intrinsics-calibration.md) _(ja)_ · 예제 [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py) · [poc_caltab_chain_truth](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_caltab_chain_truth.py)
 - 복소평면을 면으로 보기(정의역 색칠·끌개 영역·탈출 시간·날개 주위 흐름): [설명](../../capabilities/complex-plane-fields.md) _(ja)_ · 예제 [poc_complex_plane_fields](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_complex_plane_fields.py)
 - 주기 패턴이 표본화 격자에서 접히는 거리와 줄무늬가 어지럽히는 충돌 시간을 닫힌 형식으로 측정(겹눈·검사 카메라): [설명](../../capabilities/compound-eye-aliasing-and-ttc.md) _(ja)_ · 예제 [poc_zebra_stripes_fly_eye](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zebra_stripes_fly_eye.py)
 - 카메라 데이터시트의 수치를 EMVA 1288 절차로 다시 재고, 카메라 내부 전처리가 그 수치를 얼마나 움직이는지 본다(Linear와 General): [설명](../../capabilities/emva1288-camera-datasheets.md) _(ja)_ · 예제 [poc_emva1288_sensor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py) · [poc_emva1288_in_camera_processing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py)
@@ -248,7 +248,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 309개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 310개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -424,7 +424,7 @@ PoC 309개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>기하·보정</b> (26)</summary>
+<details class="vall"><summary><b>기하·보정</b> (27)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>실제 영상으로 박막 모델 보정(정해지는 계수와 정해지지 않는 조합)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><img src="../../articles/assets/poc/poc_camera_calibration/story.en.gif" alt="A small reprojection error does not guarantee a correct focal length. Re-rendering a real board nearly face-on kept the reprojection error about the same, but the focal-length error grew at least 28-fold over a tilted board. The warning is the spread of the focal-length estimate, not the reprojection error." loading="lazy" width="200" height="200"></picture><span>재투영 오차가 작아도 초점거리는 틀린다</span></a>
@@ -447,6 +447,7 @@ PoC 309개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_public_camera_heading_real.jpg" alt="카메라 방향(실사)" width="200" height="200"><b>&#9654;</b><span>카메라 방향(실사)</span></a>
 <a href="../../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><img src="../../articles/assets/poc/poc_real_tless_6dof/story.en.gif" alt="Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data" loading="lazy" width="200" height="200"></picture><span>실제 깊이 포인트 클라우드에서 알려진 부품의 6자유도 자세 추정</span></a>
 <a href="../../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><img src="../../articles/assets/poc/poc_calibration_truth_map/story.en.gif" alt="Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner" loading="lazy" width="200" height="200"></picture><span>정답이 있는 카메라 보정: 재투영 0.044 px여도 모서리에서 0.568 px 오차</span></a>
+<a href="../../articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png"><img src="../../articles/assets/poc/poc_caltab_chain_truth/story.en.gif" alt="A Circle-Mark Calibration Plate End to End: fx Is 0.45 % Off Even Without Noise, and the Binary Centroid Sets That Floor" loading="lazy" width="200" height="200"></picture><span>원형 마크 보정판 전 과정: 잡음이 없어도 fx는 0.45 % 벗어나며, 그 바닥은 이진 무게중심이 정한다</span></a>
 <a href="../../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><img src="../../articles/assets/poc/poc_part_locate_features/story.en.gif" alt="SIFT Locates a Part Rotated 37 Degrees to 0.367 px; the Existing Harris Matcher Misses by 158 px" loading="lazy" width="200" height="200"></picture><span>SIFT는 37도 회전한 부품을 0.367 px로 찾고, 기존 Harris는 158 px 빗나간다</span></a>
 <a href="../../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_multimodal_mi_registration.jpg" alt="상관 −0.74인 가시광·적외선 기판 영상을 상호정보량이 0.170 px로 정합" width="200" height="200"><span>상관 −0.74인 가시광·적외선 기판 영상을 상호정보량이 0.170 px로 정합</span></a>
 <a href="../../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sheet_deformation_ffd.jpg" alt="FFD는 시트 변형을 0.025 px로 추적하지만 바코드와 여백에서는 변위장이 정해지지 않는다" width="200" height="200"><span>FFD는 시트 변형을 0.025 px로 추적하지만 바코드와 여백에서는 변위장이 정해지지 않는다</span></a>
