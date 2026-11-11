@@ -4680,6 +4680,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             super().resizeEvent(e)
             if self._tools is not None:
                 self._tools.move(6, 6); self._tools.raise_()
+            self._place_notice()
 
         def save_image(self):
             """Save what this window shows: the data array when known (imgio.save,
@@ -4853,13 +4854,50 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             pm = QtGui.QPixmap(w, h)
             pm.fill(QtGui.QColor("#12141b"))
             p = QtGui.QPainter(pm)
-            p.setPen(QtGui.QColor("#8b91a0"))
+            p.setPen(QtGui.QColor("#aab0bf"))        # P-20: was #8b91a0 (about 5:1) -> a clearly readable grey
             f = p.font(); f.setPointSize(13); p.setFont(f)
-            p.drawText(pm.rect(), QtCore.Qt.AlignCenter, text)
+            # P-03: wrap long messages (a type-mismatch sentence used to be one line cut off on both sides)
+            p.drawText(pm.rect().adjusted(32, 24, -32, -24),
+                       int(QtCore.Qt.AlignCenter | QtCore.Qt.TextWordWrap), text)
             p.end()
             self.set_pixmap(pm)
             self._data = None
             self.reset_zoom()
+
+        # ---- a notice laid over the picture (P-04: "this is the previous result, not applied") ---- #
+        def set_notice(self, text):
+            """Show *text* in a wrapped banner at the top of the picture; ``None`` / "" removes it."""
+            lab = getattr(self, "_notice", None)
+            if not text:
+                if lab is not None:
+                    lab.hide()
+                return
+            if lab is None:
+                lab = QtWidgets.QLabel(self.viewport())
+                lab.setObjectName("view_notice")
+                lab.setWordWrap(True)
+                lab.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+                lab.setStyleSheet("#view_notice { background: #5a3a00; color: #fff1cf; border: 1px solid #c88a1c;"
+                                  " border-radius: 6px; padding: 6px 10px; }")
+                lab.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, False)
+                self._notice = lab
+            lab.setText(text)
+            self._place_notice()
+            lab.show(); lab.raise_()
+
+        def notice_text(self):
+            lab = getattr(self, "_notice", None)
+            return lab.text() if lab is not None and not lab.isHidden() else ""
+
+        def _place_notice(self):
+            lab = getattr(self, "_notice", None)
+            if lab is None:
+                return
+            w = max(120, self.viewport().width() - 24)
+            lab.setFixedWidth(w)
+            lab.setFixedHeight(lab.fontMetrics().boundingRect(
+                0, 0, w - 24, 10000, int(QtCore.Qt.TextWordWrap), lab.text()).height() + 20)
+            lab.move(12, 12 + (34 if self._tools is not None else 0))
 
         def _scaled(self, f):
             """Scale by *f* and tell the sync group once (the scroll bars moving meanwhile are not a pan)."""
@@ -6896,7 +6934,7 @@ def build_window(model=None):
     op_a_spin.setToolTip("Argument a (0..1) used by Insert and Run once — its meaning is shown above")
     op_b_spin.setToolTip("Argument b (0..1) used by Insert and Run once")
     b_insert = _tbtn("plus", "Insert operator into the pipeline with a, b (Enter / double-click)", accent=True)
-    b_insert.setEnabled(False)
+    b_insert.setEnabled(True)               # P-10: a disabled + gave no feedback; the click now says what to do
     b_run_once = _tbtn("playone", "Run once on the loaded image — pipeline NOT changed "
                        "(HDevelop single-step execution)")
     b_run_once.setEnabled(False)
@@ -7785,7 +7823,7 @@ def build_window(model=None):
     win._set_title = _set_title
 
     def report_error(title, text, *, op_name=None, stage_index=None, inputs=None,
-                     show_modal=True):
+                     show_modal=True, open_path=None):
         """Surface a recoverable failure: status bar + a modal via ERROR_HOOK.
 
         Also appended to ``state['errors']`` so a headless test can assert on it
@@ -7793,7 +7831,7 @@ def build_window(model=None):
         state["errors"].append((title, str(text)))
         exc = text if isinstance(text, BaseException) else RuntimeError(str(text))
         info = studio_errors.explain_failure(
-            exc, op_name=op_name, stage_index=stage_index, inputs=inputs)
+            exc, op_name=op_name, stage_index=stage_index, inputs=inputs, open_path=open_path)
         info["_traceback"] = ("".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
                               if isinstance(text, BaseException) else str(text))
         info["_source_title"] = title
@@ -8476,7 +8514,8 @@ def build_window(model=None):
             else:
                 val = model.result_upto(idx if idx >= 0 else len(model.stages) - 1)
         except Exception as e:                        # a bad/unknown op in the chain
-            view.set_message("Pipeline error\n\n%s\n\n(see the Problems list)" % str(e))
+            view.set_message(tr("Pipeline error") + "\n\n%s\n\n" % truncate(e, 700)
+                             + tr("(details: Problems list, Display · Analysis panel)"))
             inspector.setPlainText("pipeline error: %s" % e)
             win._img_info.setText("pipeline error")
             hist_view.clear(); state["result"] = None; state["raw"] = None
@@ -9046,7 +9085,8 @@ def build_window(model=None):
             _strip_schedule()
             _ab_schedule()
         except Exception as e:
-            view.set_message("Display error\n\n%s\n\n(see the Problems list)" % truncate(e, 200))
+            view.set_message(tr("Display error") + "\n\n%s\n\n" % truncate(e, 400)
+                             + tr("(details: Problems list, Display · Analysis panel)"))
             inspector.setPlainText("display error: %s" % e)
             hist_view.clear(); state["result"] = None; state["raw"] = None
             report_error("Display error", e)
@@ -9346,7 +9386,9 @@ def build_window(model=None):
         window. The pipeline is NOT modified (a scratch preview)."""
         cur = op_list.currentItem()
         if name is None:
-            if cur is None:
+            if cur is None or not cur.data(QtCore.Qt.UserRole):
+                _say = tr("Select an operator from the list first.")
+                op_param.setText(_say); flash(_say)       # P-10: not silent
                 return
             name = cur.data(QtCore.Qt.UserRole)
         row = _op_row(name)
@@ -9512,7 +9554,7 @@ def build_window(model=None):
         try:
             arr = imgio.load(path)                # missing / undecodable / permission
         except Exception as e:
-            report_error("Could not open image", "%s\n\n%s" % (path, e)); return False
+            report_error("Could not open image", e, open_path=path); return False
         model.set_image(arr)
         state["image_path"] = os.path.abspath(path)
         state["input_sample"] = None
@@ -11379,7 +11421,7 @@ def build_window(model=None):
             lbl_a.setText("a"); lbl_b.setText("b")
             op_row_a.set_spec(param_specs.GENERIC_FLOAT); op_row_b.set_spec(param_specs.GENERIC_FLOAT)
             op_a_spin.setEnabled(True); op_b_spin.setEnabled(True)
-            b_insert.setEnabled(False); b_help.setEnabled(False); b_run_once.setEnabled(False); return
+            b_insert.setEnabled(True); b_help.setEnabled(False); b_run_once.setEnabled(True); return
         name = cur.data(QtCore.Qt.UserRole)
         row = _op_row(name)
         op_param.setText(op_signature_detail(row) if row else cur.text())
@@ -11425,8 +11467,14 @@ def build_window(model=None):
         item.setText(("▸ " if collapsed else "▾ ") + item.text()[2:])
     op_list.itemClicked.connect(_toggle_search_group)
     win._op_arg_labels = (lbl_a, lbl_b)
-    b_insert.clicked.connect(
-        lambda: add_op(op_list.currentItem()) if op_list.currentItem() is not None else None)
+    def _insert_clicked():
+        cur = op_list.currentItem()
+        if cur is None or not cur.data(QtCore.Qt.UserRole):
+            _say = tr("Select an operator from the list first.")
+            op_param.setText(_say); flash(_say)           # P-10: not silent
+            return
+        add_op(cur)
+    b_insert.clicked.connect(lambda _=False: _insert_clicked())
     b_run_once.clicked.connect(lambda _=False: run_op_once())
     # itemActivated fires on BOTH Enter and double-click (one signal), so keyboard-only
     # pipeline building works and there is no double-insert from wiring two signals.
@@ -11646,6 +11694,7 @@ def build_window(model=None):
         body = program_text_from_model()
         code_edit.setPlainText("\n".join(dev_lines) + "\n" + body if dev_lines else body)
         code_edit.blockSignals(False)
+        view.set_notice(None)                 # the editor now mirrors the model again (P-04)
         # regenerated text: directives first, then exactly one op per line
         _set_stage_lines([len(dev_lines) + i + 1 for i in range(len(model.stages))])
         code_edit.clear_exec()
@@ -11668,12 +11717,23 @@ def build_window(model=None):
         # if/else/endif control flow (expanded into the flat pipeline).
         return parse_hdev_program(text, op_names)
 
+    def _mark_unapplied(reason):
+        """The Program text was NOT applied: say so on the picture, which still shows the last
+        applied pipeline (P-04). Cleared by the next successful apply or a model-driven rewrite."""
+        showing_error = state.get("result") is None
+        head = (tr("Not applied: the display shows the last applied pipeline") if showing_error
+                else tr("Showing the previous result (not applied)"))
+        view.set_notice(head + "\n" + reason)
+
+    win._mark_unapplied = _mark_unapplied
+
     def apply_program():
         text = code_edit.toPlainText()        # capture first: refresh_stage_list rewrites the editor
         stages, errs, src_lines = parse_hdev_program_lines(text, op_names)
         if errs:
             code_status.setText("✕ " + "  ·  ".join(errs[:3]))
             flash("code has %d error(s)" % len(errs))
+            _mark_unapplied("  ·  ".join(errs[:3]))
             return
         # defense-in-depth: even though op_names excludes the general tier (so the parser
         # already rejects such a token), never let a general-algorithm op reach the image
@@ -11684,8 +11744,10 @@ def build_window(model=None):
                                 + ", ".join(general[:3]))
             flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
                   "fullseye algo run %s" % (general[0], general[0]))
+            _mark_unapplied("general-algorithm op(s) can't run in an image pipeline: " + ", ".join(general[:3]))
             return
         push_undo()
+        view.set_notice(None)                 # this text is being applied
         model.stages = list(stages)           # the model setter normalises tuples -> lists
         mark_dirty()
         state["code_dirty"] = False           # the edits are now applied to the pipeline

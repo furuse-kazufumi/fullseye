@@ -2001,6 +2001,12 @@
    "ko": "값 5개",
    "de": "5 Werte",
    "hi": "5 मान"
-  }
+  },
+  "Pipeline error": {"ja": "パイプラインのエラー"},
+  "Display error": {"ja": "表示のエラー"},
+  "(details: Problems list, Display · Analysis panel)": {"ja": "(詳しくは「表示と分析」パネルの問題一覧)"},
+  "Not applied: the display shows the last applied pipeline": {"ja": "未適用: 表示は最後に適用したパイプラインのままです"},
+  "Showing the previous result (not applied)": {"ja": "前の結果を表示中(未適用)"},
+  "Select an operator from the list first.": {"ja": "先に一覧から 1 つ選んでください"}
  }
 }
