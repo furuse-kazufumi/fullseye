@@ -339,6 +339,11 @@ How the selection works (`py -3.11 tools/ci_select_tests.py --base origin/master
 * **Sharding is per file.** `tests/conftest.py` splits the (selected) tests into shards by
   whole test files (LPT on `.test_durations`), so module/session fixtures are built once per run
   instead of once per shard. pytest-split is used only to record durations.
+  **One exception** (`SPLIT_BY_TEST` in `tools/ci_select_tests.py`): `tests/test_poc_scripts_run.py`
+  alone (~3,700 s) exceeded the average shard, so whichever shard held it was always the longest
+  (py3.12 shard 1 = 71 min, run 42982984881). Its PoCs are dealt to shards one by one, each weighted
+  file total / test count (its per-test records only show where the batch run was charged), ties by
+  name; its session fixture runs only the PoCs left in the session, so each PoC still runs exactly once.
 
 A full run that has started is never cancelled by a newer run; only PR runs cancel their
 predecessor. Scheduled and manual runs each get their own concurrency group. Pushes to `master`

@@ -505,6 +505,7 @@ def registry():
 # どちらも環境変数があるときだけ働く(手元の `pytest` は何も変わらない)。
 #   FULLSEYE_CI_SELECTION=<一覧のファイル>  tools/ci_select_tests.py が書いた一覧に無いテストを外す
 #   FULLSEYE_CI_SHARD=k/N                  ファイル単位の LPT で N 片に分け、k 片目だけ残す
+#                                          (例外: SPLIT_BY_TEST のファイルはテスト単位。PoC の門)
 # 選ぶ規則と、選ばなかったテストを master・毎日の full suite で回す約束は CONTRIBUTING.md の「CI: which tests run where」。
 # 一覧が読めない・1 件も当たらないときは**止める**(黙って 0 件で緑にしない)。
 @pytest.hookimpl(tryfirst=True)
