@@ -1188,6 +1188,43 @@ def _stem_fraction(q_tokens: list[str], hay: str) -> float:
 _NOTE_LINES: dict | None = None
 
 
+def _help_html_lines(root: str) -> dict:
+    """wheel 用: help HTML(``<op>.html`` = 原文 ja、``<op>.<lang>.html`` = 訳)から op ごとの 1 行を取る。
+
+    言語は **英語 1 つに固定**する(``<op>.en.html``、無ければ訳のない原文 ``<op>.html``)。以前は
+    ``glob`` で最初に当たったファイルを採っていたので、ファイル名の並びで先頭になる ``<op>.de.html`` が
+    勝ち、``op_find`` の説明文が既定でドイツ語(「Datenarten」「Aufruf」)になった(961/1037 件)。
+    他言語の訳は、その言語を明示して引く入口(search_ops の ``lang`` / Studio ヘルプ)の仕事で、ここでは使わない。
+
+    Wheel fallback for ``op_find`` descriptions: always English (``<op>.en.html``), else the untranslated
+    ``<op>.html``; never whichever ``<op>.<lang>.html`` the file listing happens to return first.
+    """
+    import glob as _glob
+    import html as _html
+    import re as _re
+    en: dict = {}
+    base: dict = {}
+    for p in sorted(_glob.glob(os.path.join(root, "*.html"))):
+        parts = os.path.basename(p).split(".")
+        stem = parts[0]
+        if len(parts) == 2:
+            dest = base                       # <op>.html
+        elif len(parts) == 3 and parts[1] == "en":
+            dest = en                         # <op>.en.html
+        else:
+            continue                          # 他言語の訳は採らない
+        try:
+            txt = _re.sub(r"<[^>]+>", " ", io.open(p, encoding="utf-8").read())
+        except OSError:
+            continue
+        txt = _html.unescape(_re.sub(r"\s+", " ", txt)).strip()
+        if txt:
+            dest[stem] = txt[:200]
+    out = dict(base)
+    out.update(en)                            # 英語があれば英語が勝つ
+    return out
+
+
 def _note_first_line(name: str) -> str:
     """op ノート(docs/ops/**/<name>.md、無ければ wheel 同梱の studio_assets/op_help/<name>.html)の最初の散文 1 行。
 
@@ -1230,17 +1267,7 @@ def _note_first_line(name: str) -> str:
                 table[stem] = _re.sub(r"[`*]", "", t)[:200]          # _ は残す(gauss_filter を gaussfilter にしない)
                 break
         if not table:                                    # wheel: ノートの本文は無く、help HTML だけがある
-            for p in _glob.glob(os.path.join(_help_html_root(here), "*.html")):
-                stem = os.path.basename(p).split(".")[0]
-                if stem in table:
-                    continue
-                try:
-                    txt = _re.sub(r"<[^>]+>", " ", io.open(p, encoding="utf-8").read())
-                except OSError:
-                    continue
-                txt = _html.unescape(_re.sub(r"\s+", " ", txt)).strip()
-                if txt:
-                    table[stem] = txt[:200]
+            table = _help_html_lines(_help_html_root(here))
         _NOTE_LINES = table
     return _NOTE_LINES.get(name, "")
 
