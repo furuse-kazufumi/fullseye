@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3835,
- "n_notes": 3841,
+ "n_ops": 3836,
+ "n_notes": 3842,
  "notes": {
   "vol_dilate": [
    {
@@ -16495,6 +16495,16 @@
     "in": "signal × points × table",
     "out": "table",
     "path": "docs/ops/drive/ball/fit_spin.md"
+   }
+  ],
+  "fit_spin_aero": [
+   {
+    "op": "fit_spin_aero",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal × points × table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/fit_spin_aero.md"
    }
   ],
   "flight_fit": [

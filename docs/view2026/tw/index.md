@@ -248,7 +248,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 310 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -507,7 +507,7 @@ PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>把時間序列當作三維量測</b> (22)</summary>
+<details class="vall"><summary><b>把時間序列當作三維量測</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_beam_modal_video/14_beam_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_beam_modal_video.jpg" alt="影片模態識別" width="200" height="200"><b>&#9654;</b><span>影片模態識別</span></a>
 <a href="../../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><img src="../../articles/assets/poc/poc_cold_chain_excursion/story.en.gif" alt="The question is whether one temperature record represents every product in a cold load. Product loggers were moved through a field with wall heat and door openings; 82.4 % of placements missed failing goods. Wall heat creates false passes, whereas short door pulses warm air but not product and reverse the error." loading="lazy" width="200" height="200"></picture><span>冷鏈溫度</span></a>
@@ -527,6 +527,7 @@ PoC 309 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_ball_bounce/06_rally_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_ball_bounce.jpg" alt="桌球追蹤" width="200" height="200"><b>&#9654;</b><span>桌球追蹤</span></a>
 <a href="../../articles/assets/poc/poc_kendama/05_catch_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_kendama.jpg" alt="劍玉" width="200" height="200"><b>&#9654;</b><span>劍玉</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_spin/01_side_three_serves.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_spin.jpg" alt="桌球旋轉" width="200" height="200"><b>&#9654;</b><span>桌球旋轉</span></a>
+<a href="../../articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png"><img src="../../articles/assets/poc/poc_cd_spin_joint/story.en.gif" alt="Reading Drag and Spin from a Trajectory at Once — The Trajectory Fixes the Force, Not the Spin (Measuring What Can and Cannot Be Read in a Self-Made, Different-Model World)" loading="lazy" width="200" height="200"></picture><span>從一條軌跡同時讀出桌球的阻力與旋轉(以及讀不出的量)</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_bounce/01_drop_test.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_bounce.jpg" alt="桌球彈跳" width="200" height="200"><b>&#9654;</b><span>桌球彈跳</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_rally_loop.jpg" alt="來回與讀取誤差" width="200" height="200"><b>&#9654;</b><span>來回與讀取誤差</span></a>
 <a href="../../articles/assets/poc/poc_periodic_video_boundary/02_loop.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_periodic_video_boundary/05_contamination_map.png"><img src="../../articles/assets/poc/poc_periodic_video_boundary/story.en.gif" alt="Testing the Periodic Boundary of Temporal Operators with a Seamless Loop" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>週期影片</span></a>

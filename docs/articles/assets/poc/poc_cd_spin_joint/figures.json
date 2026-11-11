@@ -1,0 +1,68 @@
+[
+ {
+  "file": "01_estimates_by_mode.png",
+  "name": "estimates_by_mode",
+  "caption": "ω を模様から取り、軌跡から C_d・C_L を読むと世界の実効値との差は C_d 0.5 %・C_L 1.9 % 以内。軌跡だけで C_d と ω を同時に読むと C_d は 0.4 % 以内だが、ω は C_L の谷のぶん 51〜56 % 小さく出る。真値は全部この PoC が仕込んだ世界の値。",
+  "shape": [
+   352,
+   1854,
+   3
+  ],
+  "csv": "01_estimates_by_mode.csv",
+  "tsv": "01_estimates_by_mode.tsv"
+ },
+ {
+  "file": "02_cl_world_vs_model.png",
+  "name": "cl_world_vs_model",
+  "caption": "観測を作る世界(実線)は S = 0.5 付近に谷があり、当てはめの模型(破線)にはない。卓球の 150 rad/s・6 m/s は S ≈ 0.5 で、谷の真ん中に当たる。谷の位置・深さは仮の値。",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "03_omega_bias_vs_dip.png",
+  "name": "omega_bias_vs_dip",
+  "caption": "トップスピンを軌跡だけ(C_d と ω を同時、κ = 1、雑音なしの軌跡)で読んだ ω の誤差(実線)と、世界の C_L が当てはめの模型に足りない割合(破線)。深さ 0 では誤差が 0.0 % まで消える。",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "04_degeneracy_valley.png",
+  "name": "degeneracy_valley",
+  "caption": "κ も自由にすると、初期値によって ω は 44〜72 rad/s と違う答えになるのに、rms は 2.556〜2.556 mm で同じ、模型の C_L も同じ(0.1871〜0.1929)。軌跡が決めているのは積(力)だけで、ω の大きさは読めない。最下行は κ を 1 に固定した当てはめ(ω⊥ の欄は空)。",
+  "shape": [
+   400,
+   1193,
+   3
+  ],
+  "csv": "04_degeneracy_valley.csv",
+  "tsv": "04_degeneracy_valley.tsv"
+ },
+ {
+  "file": "05_sweep_by_length.png",
+  "name": "sweep_by_length",
+  "caption": "C_d と ω⊥ は直交して相関が 0 に近い(最大 0.010)一方、C_d は初速と 0.95〜0.96 で相関する。飛行を伸ばすと精度は上がるが、この相関は消えない。進行方向に平行な ω の成分は、どの長さでも垂直成分より 4〜18 倍読めない。",
+  "shape": [
+   400,
+   2113,
+   3
+  ],
+  "csv": "05_sweep_by_length.csv",
+  "tsv": "05_sweep_by_length.tsv"
+ },
+ {
+  "file": "06_cd_scatter_vs_length.png",
+  "name": "cd_scatter_vs_length",
+  "caption": "位置雑音 σ を 3 通りに振り、軌跡の先頭 n コマで C_d と ω を同時に当てたときの C_d のばらつき(モンテカルロ)。短い軌跡では速さの減衰が小さく、C_d は初速と分けられない。",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ }
+]

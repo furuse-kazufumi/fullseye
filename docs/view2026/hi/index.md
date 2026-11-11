@@ -248,7 +248,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-309 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+310 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -507,7 +507,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Time को 3-D की तरह</b> (22)</summary>
+<details class="vall"><summary><b>Time को 3-D की तरह</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_beam_modal_video/14_beam_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_beam_modal_video.jpg" alt="Video से modal ID" width="200" height="200"><b>&#9654;</b><span>Video से modal ID</span></a>
 <a href="../../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><img src="../../articles/assets/poc/poc_cold_chain_excursion/story.en.gif" alt="The question is whether one temperature record represents every product in a cold load. Product loggers were moved through a field with wall heat and door openings; 82.4 % of placements missed failing goods. Wall heat creates false passes, whereas short door pulses warm air but not product and reverse the error." loading="lazy" width="200" height="200"></picture><span>Cold-chain तापमान</span></a>
@@ -527,6 +527,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_ball_bounce/06_rally_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_ball_bounce.jpg" alt="Table tennis tracking" width="200" height="200"><b>&#9654;</b><span>Table tennis tracking</span></a>
 <a href="../../articles/assets/poc/poc_kendama/05_catch_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_kendama.jpg" alt="Kendama" width="200" height="200"><b>&#9654;</b><span>Kendama</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_spin/01_side_three_serves.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_spin.jpg" alt="Table tennis spin" width="200" height="200"><b>&#9654;</b><span>Table tennis spin</span></a>
+<a href="../../articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png"><img src="../../articles/assets/poc/poc_cd_spin_joint/story.en.gif" alt="Reading Drag and Spin from a Trajectory at Once — The Trajectory Fixes the Force, Not the Spin (Measuring What Can and Cannot Be Read in a Self-Made, Different-Model World)" loading="lazy" width="200" height="200"></picture><span>Table tennis: एक trajectory से drag और spin, और जो पढ़ा नहीं जा सकता</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_bounce/01_drop_test.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_bounce.jpg" alt="Table tennis bounce" width="200" height="200"><b>&#9654;</b><span>Table tennis bounce</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_rally_loop.jpg" alt="Rally misreads" width="200" height="200"><b>&#9654;</b><span>Rally misreads</span></a>
 <a href="../../articles/assets/poc/poc_periodic_video_boundary/02_loop.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_periodic_video_boundary/05_contamination_map.png"><img src="../../articles/assets/poc/poc_periodic_video_boundary/story.en.gif" alt="Testing the Periodic Boundary of Temporal Operators with a Seamless Loop" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>Periodic video</span></a>

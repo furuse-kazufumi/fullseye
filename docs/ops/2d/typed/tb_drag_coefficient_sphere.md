@@ -60,6 +60,7 @@ tb_drag_coefficient_sphere 0.50 0.50
 
 次の例は元の台帳 op `drag_coefficient_sphere` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [gallery_drive_ballistics](../../../../examples/gallery_drive_ballistics.py) — `py -3.11 examples/gallery_drive_ballistics.py`
+- [poc_cd_spin_joint](../../../../examples/poc_cd_spin_joint.py) — `py -3.11 examples/poc_cd_spin_joint.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

@@ -250,7 +250,7 @@ Some PoC descriptions are in English.
 
 ## See everything
 
-309 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+310 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -509,7 +509,7 @@ Some PoC descriptions are in English.
 </div>
 </details>
 
-<details class="vall"><summary><b>Time as 3-D</b> (22)</summary>
+<details class="vall"><summary><b>Time as 3-D</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_beam_modal_video/14_beam_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_beam_modal_video.jpg" alt="Modal ID from video" width="200" height="200"><b>&#9654;</b><span>Modal ID from video</span></a>
 <a href="../../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><img src="../../articles/assets/poc/poc_cold_chain_excursion/story.en.gif" alt="The question is whether one temperature record represents every product in a cold load. Product loggers were moved through a field with wall heat and door openings; 82.4 % of placements missed failing goods. Wall heat creates false passes, whereas short door pulses warm air but not product and reverse the error." loading="lazy" width="200" height="200"></picture><span>Cold-chain record</span></a>
@@ -529,6 +529,7 @@ Some PoC descriptions are in English.
 <a href="../../articles/assets/poc/poc_ball_bounce/06_rally_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_ball_bounce.jpg" alt="Ping-pong tracking" width="200" height="200"><b>&#9654;</b><span>Ping-pong tracking</span></a>
 <a href="../../articles/assets/poc/poc_kendama/05_catch_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_kendama.jpg" alt="Kendama" width="200" height="200"><b>&#9654;</b><span>Kendama</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_spin/01_side_three_serves.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_spin.jpg" alt="Ping-pong spin" width="200" height="200"><b>&#9654;</b><span>Ping-pong spin</span></a>
+<a href="../../articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png"><img src="../../articles/assets/poc/poc_cd_spin_joint/story.en.gif" alt="Reading Drag and Spin from a Trajectory at Once — The Trajectory Fixes the Force, Not the Spin (Measuring What Can and Cannot Be Read in a Self-Made, Different-Model World)" loading="lazy" width="200" height="200"></picture><span>Table-tennis drag and spin from one trajectory, and what cannot be read</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_bounce/01_drop_test.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_bounce.jpg" alt="Ping-pong bounce" width="200" height="200"><b>&#9654;</b><span>Ping-pong bounce</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_rally_loop.jpg" alt="Rally and misreads" width="200" height="200"><b>&#9654;</b><span>Rally and misreads</span></a>
 <a href="../../articles/assets/poc/poc_periodic_video_boundary/02_loop.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_periodic_video_boundary/05_contamination_map.png"><img src="../../articles/assets/poc/poc_periodic_video_boundary/story.en.gif" alt="Testing the Periodic Boundary of Temporal Operators with a Seamless Loop" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>Periodic video</span></a>

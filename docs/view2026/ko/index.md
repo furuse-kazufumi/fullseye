@@ -248,7 +248,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 309개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 310개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -507,7 +507,7 @@ PoC 309개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>시계열을 3-D로 측정</b> (22)</summary>
+<details class="vall"><summary><b>시계열을 3-D로 측정</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_beam_modal_video/14_beam_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_beam_modal_video.jpg" alt="영상 모드 식별" width="200" height="200"><b>&#9654;</b><span>영상 모드 식별</span></a>
 <a href="../../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png"><img src="../../articles/assets/poc/poc_cold_chain_excursion/story.en.gif" alt="The question is whether one temperature record represents every product in a cold load. Product loggers were moved through a field with wall heat and door openings; 82.4 % of placements missed failing goods. Wall heat creates false passes, whereas short door pulses warm air but not product and reverse the error." loading="lazy" width="200" height="200"></picture><span>콜드체인 온도</span></a>
@@ -527,6 +527,7 @@ PoC 309개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_ball_bounce/06_rally_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_ball_bounce.jpg" alt="탁구공 추적" width="200" height="200"><b>&#9654;</b><span>탁구공 추적</span></a>
 <a href="../../articles/assets/poc/poc_kendama/05_catch_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_kendama.jpg" alt="켄다마" width="200" height="200"><b>&#9654;</b><span>켄다마</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_spin/01_side_three_serves.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_spin.jpg" alt="탁구공 회전" width="200" height="200"><b>&#9654;</b><span>탁구공 회전</span></a>
+<a href="../../articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png"><img src="../../articles/assets/poc/poc_cd_spin_joint/story.en.gif" alt="Reading Drag and Spin from a Trajectory at Once — The Trajectory Fixes the Force, Not the Spin (Measuring What Can and Cannot Be Read in a Self-Made, Different-Model World)" loading="lazy" width="200" height="200"></picture><span>한 궤적에서 탁구공의 항력과 회전을 동시에 읽기(읽을 수 없는 것도 측정)</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_bounce/01_drop_test.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_bounce.jpg" alt="탁구공 바운드" width="200" height="200"><b>&#9654;</b><span>탁구공 바운드</span></a>
 <a href="../../articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_table_tennis_rally_loop.jpg" alt="랠리와 판독 오차" width="200" height="200"><b>&#9654;</b><span>랠리와 판독 오차</span></a>
 <a href="../../articles/assets/poc/poc_periodic_video_boundary/02_loop.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_periodic_video_boundary/05_contamination_map.png"><img src="../../articles/assets/poc/poc_periodic_video_boundary/story.en.gif" alt="Testing the Periodic Boundary of Temporal Operators with a Seamless Loop" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>주기 동영상</span></a>

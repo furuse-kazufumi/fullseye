@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 217,
+  "target_count": 218,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -19455,6 +19455,194 @@
       "alt": {
         "ja": "ヒートマップは場所を当てるが、「1 人が長く待った」と「何人も短く止まった」を分けない。",
         "en": "Where the Warehouse Dwell Came From — Count Waiting Without Its Kind and Everything Is Just Congestion"
+      }
+    },
+    "poc_cd_spin_joint": {
+      "representative": "01_estimates_by_mode.png",
+      "status": "gif",
+      "selected": [
+        "01_estimates_by_mode.png",
+        "02_cl_world_vs_model.png",
+        "03_omega_bias_vs_dip.png",
+        "04_degeneracy_valley.png",
+        "05_sweep_by_length.png",
+        "06_cd_scatter_vs_length.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_cd_spin_joint/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_estimates_by_mode.png",
+              "content_box": [
+                0,
+                276,
+                720,
+                137
+              ]
+            },
+            {
+              "file": "02_cl_world_vs_model.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_omega_bias_vs_dip.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_degeneracy_valley.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.9825
+            },
+            {
+              "file": "05_sweep_by_length.png",
+              "content_box": [
+                0,
+                277,
+                720,
+                136
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 5.2825
+            },
+            {
+              "file": "06_cd_scatter_vs_length.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 191102,
+          "color_mad": [
+            0.0376,
+            0.0742,
+            0.0513,
+            0.0346,
+            0.0301,
+            0.0975
+          ],
+          "max_color_mad": 0.0975,
+          "source_sha256": "3699e8ebffeb16440ebaab94cfb554d79acd9bed543a3b7f6aba7718acd72cbe"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_cd_spin_joint/story.en.gif",
+          "frames": [
+            {
+              "file": "01_estimates_by_mode.png",
+              "content_box": [
+                0,
+                276,
+                720,
+                137
+              ]
+            },
+            {
+              "file": "02_cl_world_vs_model.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_omega_bias_vs_dip.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_degeneracy_valley.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.9825
+            },
+            {
+              "file": "05_sweep_by_length.png",
+              "content_box": [
+                0,
+                277,
+                720,
+                136
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 5.2825
+            },
+            {
+              "file": "06_cd_scatter_vs_length.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 191102,
+          "color_mad": [
+            0.0376,
+            0.0742,
+            0.0513,
+            0.0346,
+            0.0301,
+            0.0975
+          ],
+          "max_color_mad": 0.0975,
+          "source_sha256": "59e9b6b42b9b8ee667bdbefef1d92d2c55fab013bb0725d7c39e2971e954d70c"
+        }
+      },
+      "reason": null,
+      "cover": "01_estimates_by_mode.png",
+      "still": "articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png",
+      "alt": {
+        "ja": "ω を模様から取り、軌跡から C_d・C_L を読むと世界の実効値との差は C_d 0.5 %・C_L 1.9 % 以内。軌跡だけで C_d と ω を同時に読むと C_d は 0.4 % 以内だが、ω は C_L の谷のぶん 51〜56 % 小さく出る。真値は全部この PoC が仕込んだ世界の値。",
+        "en": "Reading Drag and Spin from a Trajectory at Once — The Trajectory Fixes the Force, Not the Spin (Measuring What Can and Cannot Be Read in a Self-Made, Different-Model World)"
       }
     },
     "poc_periodic_video_boundary": {

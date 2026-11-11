@@ -5,7 +5,7 @@ category: ball
 in: table
 out: table
 gpu: なし
-examples: [gallery_drive_ballistics, gallery_drive_kendama_racket, poc_ball_bounce, poc_table_tennis_bounce, poc_table_tennis_spin, poc_video_physics_consistency]
+examples: [gallery_drive_ballistics, gallery_drive_kendama_racket, poc_ball_bounce, poc_cd_spin_joint, poc_table_tennis_bounce, poc_table_tennis_spin, poc_video_physics_consistency]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -33,6 +33,7 @@ version: 1.0.0  # fullseye lib version this note was generated for
 - [gallery_drive_ballistics](../../../../examples/gallery_drive_ballistics.py) — `py -3.11 examples/gallery_drive_ballistics.py`
 - [gallery_drive_kendama_racket](../../../../examples/gallery_drive_kendama_racket.py) — `py -3.11 examples/gallery_drive_kendama_racket.py`
 - [poc_ball_bounce](../../../../examples/poc_ball_bounce.py) — `py -3.11 examples/poc_ball_bounce.py`
+- [poc_cd_spin_joint](../../../../examples/poc_cd_spin_joint.py) — `py -3.11 examples/poc_cd_spin_joint.py`
 - [poc_table_tennis_bounce](../../../../examples/poc_table_tennis_bounce.py) — `py -3.11 examples/poc_table_tennis_bounce.py`
 - [poc_table_tennis_spin](../../../../examples/poc_table_tennis_spin.py) — `py -3.11 examples/poc_table_tennis_spin.py`
 - [poc_video_physics_consistency](../../../../examples/poc_video_physics_consistency.py) — `py -3.11 examples/poc_video_physics_consistency.py`

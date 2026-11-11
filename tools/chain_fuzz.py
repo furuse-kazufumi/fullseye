@@ -2131,6 +2131,15 @@ def _b_fit_spin(pool, rng):
     return (f["t"][idx], f["p"][idx], bp), {"iters": 2, "dt": 1e-3}
 
 
+def _b_fit_spin_aero(pool, rng):
+    import ballistics as BL
+    # 10 パラメータ(p0・v0・ω・C_d)は ≥ 12 標本が要る。回転ありの軌跡を渡す(bp["cl"] は None = スピン比の式でないと |ω| が読めない)
+    bp = _b_ball_bp(pool, rng)
+    f = BL.flight_ode((0.0, 0.0, 0.5), (8.0, 0.5, 2.0), (0.0, 200.0, 0.0), bp, 0.121, 1e-3)
+    idx = np.arange(0, 120, 8)
+    return (f["t"][idx], f["p"][idx], bp), {"iters": 2, "dt": 1e-3}
+
+
 def _b_fit_aero(pool, rng):
     import ballistics as BL
     # 8 パラメータの同定は ≥ 8 標本が要り、真空の軌跡だと C_d・C_L の列が消えて cond = inf → 抗力 + マグヌスの軌跡を渡す
@@ -8269,7 +8278,7 @@ OP_ARG_BUILDERS = {
     "magnus_lift_coefficient": _b_spin_ratio, "drag_coefficient_sphere": _b_reynolds, "bounce": _b_bounce,
     "contact_angular_momentum": _b_contact_L, "apex_sequence": _b_apex_seq, "bounce_total_time": _b_bounce_time,
     "restitution_from_apexes": _b_apexes, "restitution_from_intervals": _b_intervals, "fit_parabola": _b_t_p,
-    "flight_fit": _b_flight_fit, "fit_aero": _b_fit_aero, "fit_spin": _b_fit_spin, "fit_bounce": _b_fit_bounce,
+    "flight_fit": _b_flight_fit, "fit_aero": _b_fit_aero, "fit_spin": _b_fit_spin, "fit_spin_aero": _b_fit_spin_aero, "fit_bounce": _b_fit_bounce,
     "slide_stop_distance": _b_slide, "incline_slip_angle": _b_mu, "mu_from_stop_distance": _b_mu_from_stop,
     "roll_slide_state": _b_roll_slide, "tether_simulate": _b_tether, "pendulum_period": _b_pendulum,
     "cup_catch_check": _b_cup,

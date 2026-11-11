@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(486 例)
+### 2-D 图像/信号/几何(487 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -239,6 +239,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_table_tennis_rally_loop` — op: `aim_velocity`, `ball_params`, `flight_simulate`, `impact_params`, `racket_impact`, `racket_params`, `racket_plan`, `rally_simulate`, `table_params`, `text_box` `py -3.11 examples/poc_table_tennis_rally_loop.py`
 - `poc_table_tennis_bounce` — op: `add_ball`, `ball_detect`, `ball_mesh`, `ball_params`, `ball_set_pose`, `bounce`, `bounce_detect`, `crosshair`, `flight_fit`, `flight_ode`, `flight_simulate`, `flight_state_at`(另有 11 个) `py -3.11 examples/poc_table_tennis_bounce.py`
 - `poc_table_tennis_spin` — op: `add_ball`, `ball_detect`, `ball_mesh`, `ball_params`, `ball_set_pose`, `ball_track`, `bounce_detect`, `camera_rig`, `fit_spin`, `flight_ode`, `flight_simulate`, `impact_params`(另有 9 个) `py -3.11 examples/poc_table_tennis_spin.py`
+- `poc_cd_spin_joint` — op: `add_ball`, `ball_mesh`, `ball_params`, `drag_coefficient_sphere`, `fit_aero`, `fit_spin`, `fit_spin_aero`, `flight_ode`, `magnus_lift_coefficient`, `table_params`, `table_world` `py -3.11 examples/poc_cd_spin_joint.py`
 - `poc_kendama` — op: `ball_detect`, `camera_perceiver`, `catch_plan_staged`, `catch_success_rate`, `crosshair`, `elliptic_k_agm`, `gs_from_world`, `gs_render`, `gs_render_fn`, `gs_update`, `hole_detect`, `ken_mesh`(另有 22 个) `py -3.11 examples/poc_kendama.py`
 - `poc_physarum_transport` — op: `graph_physarum_transport`, `physarum_transport_image`, `wasserstein_1d` `py -3.11 examples/poc_physarum_transport.py`
 - `poc_worm_core_persists` — op: `graph_core_persistence`, `graph_kcore`, `graph_rich_club`, `graph_rich_club_curve` `py -3.11 examples/poc_worm_core_persists.py`
@@ -839,9 +840,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 
 ## Operators by family(族 → 类别，全部 op)
 
-_共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
+_共 3842 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
 
-族一览: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 741 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族一览: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 504 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 742 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -3627,7 +3628,7 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: 无 — 非极大值抑制(3.39 节)。像素 (x, y) 仅当在窗口内**对前面的邻居(上方各行以及同一行左侧)≥、对后面的邻居 >** 时才保留(REQ-0337)。平坦峰顶只保留 1 个像素正是由于这种不对称。*mask* 的非零像素不参与比较，原样保留 (也不用于其他像素的比较，REQ-0336)。被抑制的像素在 U8 时为 0，S16 时为 INT16_MIN(REQ-0335)。超出窗口的邻居不比较。 · 示例: `gallery_openvx_spec_values`
 
-### drive (741 ops / 55 categories)
+### drive (742 ops / 55 categories)
 
 名字是驾驶，内容却是**物理仿真与机器人 PoC 的台账**: 除驾驶(赛道、交通、决策、CARLA / CommonRoad)外，触觉(tac*)、peg-in-hole(peg*)、抛光(polish)、磨削(grind)、切削(cutting)、粉体(granular / scoop)、粉末 X 射线衍射(pxrd)、球类(ball / puck)等作为类别共存其中。请按类别名查找。
 
@@ -3646,29 +3647,30 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `vda5050_order` `table → table` GPU: 无 — 将 1 台车的计划(格子序列)转换为 VDA 5050 的 order(dict)。去除等待，以格子中心为节点。 · 示例: `poc_agv_fleet`
 - `warehouse_grid` `无输入 → any` GPU: 无 — 由货架行与通道构成的仓库网格(True = 可行驶)。 · 示例: `poc_agv_fleet`
 
-#### drive / ball (32)
+#### drive / ball (33)
 - `aic_from_rss` `无输入 → scalar` GPU: 无 — 由最小二乘残差平方和计算赤池信息量准则:AIC = n ln(RSS/n) + 2k(高斯噪声,方差按最大似然估计,常数项略去)。只有对同一数据拟合的模型之间的**差**才有意义(绝对值依赖尺度与 n)。n ≤ k、RSS ≤ 0、非有限值会引发 ValueError(RSS = 0 时 AIC = −∞,模型选择的问题不成立)。 · 示例: `poc_video_physics_consistency`
 - `apex_sequence` `无输入 → signal` GPU: 无 — 落下并弹跳序列的最高点高度 h_k = e^{2k} h₀(k = 0..n)。 · 示例: `poc_ball_bounce`
-- `ball_params` `无输入 → table` GPU: 无 — 球的参数表。默认为乒乓球(ITTF：直径 40 mm，2.7 g，薄壳)。 · 示例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_video_physics_consistency`
+- `ball_params` `无输入 → table` GPU: 无 — 球的参数表。默认为乒乓球(ITTF：直径 40 mm，2.7 g，薄壳)。 · 示例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_video_physics_consistency`
 - `ballistic_vs_thrust` `signal × points × table → table` GPU: 无 — 对同一条轨迹同时拟合"重力 + 阻力"(:func:`drag_fit`)与"重力 + 阻力 + 恒定比推力"(:func:`thrust_fit`),返回 AIC(:func:`aic_from_rss`)之差 ΔAIC = AIC_弹道 − AIC_推力。返回 ``{"ballistic", "thrust"}``(两个拟合)并附上 ``"aic_ballistic", "aic_thrust", "delta_aic", "thrust_norm"``。**不返回判定**(与 :mod:`imgforensics` 同一流派):按**简约原则**来读——推力模型多 3 个参数,即使只有噪声也会略微降低 RSS,除非赢过罚项 2Δk,否则取更简单的弹道模型。仅有噪声时 ΔAIC **以 −2Δk 为下界**、按 χ²(Δk) 近似的宽度散布(中位数约 −2Δk + 1;严格说是混合分布,因为有些拟合撞到 C_d = 0 的壁);推力侧从弹道侧的解出发,所以 ΔAIC ≥ −2Δk 成立。"决定性"的惯用值是 10(假阳性远低于 1 %),但不内置阈值,由调用方决定。当推力侧的 RSS 低于离散化下限 ``rss_floor`` 的 10 倍(无噪声、或比网格解得更细的轨迹)时引发 ValueError——AIC 比较的是噪声而不是舍入屑(无噪声真值在默认 dt 下曾得到 ΔAIC = +144,2026-10-23)。 · 示例: `poc_video_physics_consistency`
 - `bounce` `table × table → table` GPU: 无 — 刚体球撞击平面瞬间的速度与角速度更新(库仑摩擦，Cross 2002 / Garwin 1969 的 2 种状态)。 · 示例: `gallery_drive_ballistics`, `poc_ball_bounce`, `poc_table_tennis_bounce`
 - `bounce_total_time` `无输入 → scalar` GPU: 无 — 从高度 h₀ 落下至停止的总时间 = √(2h₀/g)·(1 + e)/(1 − e)(等比级数的闭式，e < 1)。 · 示例: `poc_ball_bounce`
 - `contact_angular_momentum` `table → signal` GPU: 无 — 绕接触点的角动量 L_c = I ω + m (p − p_c) × v = I ω + m r (n × v)。弹跳前后不变(定理)。 · 示例: `poc_ball_bounce`
 - `cup_catch_check` `无输入 → table` GPU: 无 — 球是否进入皿(中心、轴、半径)的几何判定：球心距皿轴在 (cup_radius − ball_radius) 以内，高度在距皿面球半径 1.5 倍以内(0 ≤ height ≤ 1.5 r)，速度 ≤ v_rel_max。``{"caught", "lateral", "height", "speed"}``。皿比球小时为 ValueError。 · 示例: `gallery_drive_ballistics`
-- `drag_coefficient_sphere` `signal → signal` GPU: 无 — 光滑球阻力系数的经验式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。乒乓球(Re ≈ 1–5 × 10⁴)约为 0.4–0.5。 · 示例: `gallery_drive_ballistics`
+- `drag_coefficient_sphere` `signal → signal` GPU: 无 — 光滑球阻力系数的经验式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。乒乓球(Re ≈ 1–5 × 10⁴)约为 0.4–0.5。 · 示例: `gallery_drive_ballistics`, `poc_cd_spin_joint`
 - `drag_fit` `signal × points × table → table` GPU: 无 — 以 **(p₀, v₀, C_d) 共 7 个参数**(平面输入则为 5 个)把"重力 + 阻力"模型拟合到轨迹 (t_i, p_i)——是 :func:`thrust_fit` 的无推力版本(:func:`flight_fit` 把 C_d 视为已知、6 个参数;这里连 C_d 一起辨识)。返回键与入口检查(``dt`` ≤ 采样间隔、``iters`` ≥ 1、拒绝真空)与 :func:`thrust_fit` 相同,``thrust`` 为零向量。真值轨迹可将 C_d 还原到 1e-4(门禁)。 · 示例: `poc_video_physics_consistency`
-- `fit_aero` `signal × points × table → table` GPU: 无 — 从轨迹**连同空气动力系数一起**辨识：用 Gauss–Newton 求 (p₀, v₀, C_d, C_L) 的 8 个参数(ω 已知，C_L 作为常数拟合)。阻力与速度的 2 次方成比例，马格努斯与 ω × v 成比例，因此除非轨迹为非直线(有旋转、足够长)，否则 C_L 难以确定(与 ``rms`` 一起返回 ``cond`` = 雅可比的条件数，可据此判断)。返回值 ``{"p0", "v0", "cd", "cl", "rms", "cond", "iters"}``。对真值轨迹(以常数 C_L 生成)可在 1e-6 内还原(门禁)。 · 示例: `gallery_drive_ballistics`
+- `fit_aero` `signal × points × table → table` GPU: 无 — 从轨迹**连同空气动力系数一起**辨识：用 Gauss–Newton 求 (p₀, v₀, C_d, C_L) 的 8 个参数(ω 已知，C_L 作为常数拟合)。阻力与速度的 2 次方成比例，马格努斯与 ω × v 成比例，因此除非轨迹为非直线(有旋转、足够长)，否则 C_L 难以确定(与 ``rms`` 一起返回 ``cond`` = 雅可比的条件数，可据此判断)。返回值 ``{"p0", "v0", "cd", "cl", "rms", "cond", "iters"}``。对真值轨迹(以常数 C_L 生成)可在 1e-6 内还原(门禁)。 · 示例: `gallery_drive_ballistics`, `poc_cd_spin_joint`
 - `fit_bounce` `table → table` GPU: 无 — 由弹跳前后的 (v, ω) 以闭式还原 (e, μ)(辨识)。e = −v_n'/v_n。切向冲量 J_t = m(v_t' − v_t) 的大小与 J_n = m(v_n' − v_n) 之比即 μ —— 在始终滑动的状态下为等号，在中途转为滚动(grip)的状态下为**下界**(μ ≥ |J_t|/J_n)。属于哪种，由弹跳后接触点的滑移速度是否为 0(grip)判断。返回值 ``{"e", "mu", "mu_is_lower_bound", "regime", "J_n", "J_t"}``。 · 示例: `gallery_drive_ballistics`
 - `fit_parabola` `signal × points → table` GPU: 无 — 用最小二乘将 p = p₀ + v₀ t − ½ g t² ẑ 拟合到观测 (t_i, p_i)(线性，闭式)。``{"p0", "v0", "g", "rms"}``。真空真值可在 1e-9 内还原(门禁)。 · 示例: `poc_ball_bounce`, `poc_video_physics_consistency`
-- `fit_spin` `signal × points × table → table` GPU: 无 — **从弯曲方式读出旋转**：以 (p₀, v₀, ω) 的 9 个参数，用 Gauss–Newton 将含阻力 + 马格努斯的运动方程拟合到轨迹 (t_i, p_i)(不含弹跳的区间)(空气动力系数取 ``bp`` 的值 = 视为已知)。 · 示例: `poc_table_tennis_spin`
+- `fit_spin` `signal × points × table → table` GPU: 无 — **从弯曲方式读出旋转**：以 (p₀, v₀, ω) 的 9 个参数，用 Gauss–Newton 将含阻力 + 马格努斯的运动方程拟合到轨迹 (t_i, p_i)(不含弹跳的区间)(空气动力系数取 ``bp`` 的值 = 视为已知)。 · 示例: `poc_cd_spin_joint`, `poc_table_tennis_spin`
+- `fit_spin_aero` `signal × points × table → table` GPU: 无 — **同时读出阻力与旋转**(:func:`fit_spin` 的 C_d 自由版)：以 (p₀, v₀, ω, C_d) 的 10 个参数，用 Levenberg–Marquardt 将含阻力 + 马格努斯的运动方程拟合到轨迹 (t_i, p_i)(不含弹跳的区间)(``fit_cl=True`` 时连升力系数的比例 κ 也设为自由量，共 11 个参数)。 · 示例: `poc_cd_spin_joint`
 - `flight_fit` `signal × points × table → table` GPU: 无 — 以 **初始状态 (p₀, v₀) 的 6 个参数**，用 Gauss–Newton(有限差分雅可比)将含阻力 + 马格努斯(ω 已知)的运动方程拟合到观测 (t_i, p_i)(不含弹跳的区间)。抛物线拟合会把阻力、马格努斯吸收进 g 与 v₀，使预测偏弯 —— 本函数相当于先行者的“带空气动力模型的追踪”。返回值 ``{"p0", "v0", "rms", "iters", "t0"}``(p₀、v₀ 为 t = t[0] 时的状态)。输入真值轨迹时可在 1e-9 内还原(门禁)。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`
-- `flight_ode` `table → table` GPU: 无 — 重力 + 阻力 + 马格努斯(+ 旋转衰减)的 RK4。返回值 ``{"t" (N,), "p" (N, 3), "v" (N, 3), "omega" (N, 3)}``(t = 0, dt, …, ≤ t_end)。真空(rho = 0)时与 :func:`flight_vacuum` 一致(门禁)。 · 示例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_video_physics_consistency`
+- `flight_ode` `table → table` GPU: 无 — 重力 + 阻力 + 马格努斯(+ 旋转衰减)的 RK4。返回值 ``{"t" (N,), "p" (N, 3), "v" (N, 3), "omega" (N, 3)}``(t = 0, dt, …, ≤ t_end)。真空(rho = 0)时与 :func:`flight_vacuum` 一致(门禁)。 · 示例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_video_physics_consistency`
 - `flight_simulate` `table × table → table` GPU: 无 — 将飞行与在球台上(平面 z = table_z，仅在 ``table_xy`` = (xmin, xmax, ymin, ymax) 范围内)的弹跳连接起来，接触时刻用二分法在区间内求出。返回值 ``{"t", "p", "v", "omega" (N, 3), "contacts": [{"t", "p", "v_in", "v_out", "omega_in", "omega_out", "regime"}], "rest_t"}``。球半径为 r，因此球心到达 table_z + r 处即为接触。弹跳会无限持续(Zeno)，所以当接触时 |v_n| < ``v_rest`` 时把球放在台面上(此后 z 固定，水平方向无摩擦继续运动；``rest_t`` = 该时刻，若无则为 None)。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
 - `flight_state_at` `table → table` GPU: 无 — 用运动方程将状态 (p₀, v₀, ω) 推进 T 秒(T < 0 时**回退**：使 RK4 步长为负)。``{"p", "v", "omega"}``。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`
 - `flight_vacuum` `signal → points` GPU: 无 — 真空中的抛物线(闭式)：p(t) = p₀ + v₀ t − ½ g t² ẑ。``t`` 为标量或 (N,)，返回值为 (3,) 或 (N, 3)。 · 示例: `gallery_drive_kendama_racket`, `poc_ball_bounce`
 - `impact_params` `无输入 → table` GPU: 无 — 碰撞参数表：法向恢复系数 e ∈ [0, 1] (数值，或 |v_n| → e 的函数：以符合随碰撞速度下降的实测)，库仑摩擦系数 μ ≥ 0。 · 示例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
 - `incline_slip_angle` `无输入 → scalar` GPU: 无 — 在静摩擦系数 μ 的斜面上开始滑动的角度 θ = atan μ [rad]。 · 示例: `gallery_drive_ballistics`
-- `magnus_lift_coefficient` `signal → signal` GPU: 无 — 由旋转比 S = rω/|v| 求升力系数 C_L = 1 / (2 + 1/S)(S → 0 时为 0，S → ∞ 时为 0.5；球类文献中广泛使用的经验式)。 · 示例: `gallery_drive_ballistics`
+- `magnus_lift_coefficient` `signal → signal` GPU: 无 — 由旋转比 S = rω/|v| 求升力系数 C_L = 1 / (2 + 1/S)(S → 0 时为 0，S → ∞ 时为 0.5；球类文献中广泛使用的经验式)。 · 示例: `gallery_drive_ballistics`, `poc_cd_spin_joint`
 - `mu_from_stop_distance` `无输入 → scalar` GPU: 无 — 由停止距离求 μ = v₀² / (2 g d)。 · 示例: `gallery_drive_ballistics`
 - `pendulum_period` `无输入 → scalar` GPU: 无 — 小振幅摆的周期 2π√(L/g)。 · 示例: `gallery_drive_ballistics`
 - `restitution_from_apexes` `signal → table` GPU: 无 — 由最高点高度序列(≥ 2 个，正值)估计 e：log h_k 对 k 线性、斜率为 2 log e → 最小二乘。``{"e", "h0", "residual"}``。 · 示例: `poc_ball_bounce`
@@ -3693,15 +3695,15 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `triangulate_dlt` `matrix × any × any → table` GPU: 无 — 1 个点的多视角三角测量(线性 DLT，SVD)：``uvs`` (C, 2)、``poses`` (C, 4, 4)、``Ks`` (C, 3, 3)。返回值 ``{"p" (3,), "reproj_rms" px, "n_views"}``。跳过含 NaN 的视角。少于 2 个视角时为 ValueError。 · 示例: `poc_ball_bounce`, `poc_kendama`
 
 #### drive / ballworld (9)
-- `add_ball` `table × table → scalar` GPU: 无 — 以位姿 (p, R) 将球加入世界。逐面标签(球 23 / 标记 24)保持不变。返回值 = objects 的索引。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
-- `ball_mesh` `无输入 → table` GPU: 无 — 球的网格(原点 = 中心)与标记。用 ``markers`` = [(dir, angle_deg), …] 设置多个标记(None 时为 marker_dir 1 个)。返回值 ``{"V", "F", "color" (M,3), "label" (M,) (23 or 24), "radius", "markers": [单位向量 …]}``。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `add_ball` `table × table → scalar` GPU: 无 — 以位姿 (p, R) 将球加入世界。逐面标签(球 23 / 标记 24)保持不变。返回值 = objects 的索引。 · 示例: `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `ball_mesh` `无输入 → table` GPU: 无 — 球的网格(原点 = 中心)与标记。用 ``markers`` = [(dir, angle_deg), …] 设置多个标记(None 时为 marker_dir 1 个)。返回值 ``{"V", "F", "color" (M,3), "label" (M,) (23 or 24), "radius", "markers": [单位向量 …]}``。 · 示例: `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
 - `ball_set_pose` `table × matrix → any` GPU: 无 — 将球 i 的位姿设为 (p, R)(只改写顶点)。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
 - `ball_truth` `table × table → table` GPU: 无 — 球 i 的真值投影：中心的 (col, row)、像半径 [px] (≈ f·r/深度)、标记中心的 (col, row)(位于背面时为 NaN)。 · 示例: `poc_ball_bounce`
 - `camera_rig` `table → table` GPU: 无 — 平台周围的摄像机（n = 2：两端对角线上方，n = 4：4 个角）。返回``[{"pose", "K", "eye", "width", "height"}, …]``，全部看着平台的中心。 · 示例: `poc_ball_bounce`, `poc_table_tennis_spin`
 - `icosphere` `无输入 → any` GPU: 无 — 将正 20 面体做 ``subdiv`` 次 4 分细分并投影到球面所得的网格 (V, F)(朝外)。 · 示例: `gallery_mesh_seg_sun_gains`
 - `rotation_from_omega` `无输入 → matrix` GPU: 无 — 以角速度 ω [rad/s] 旋转 dt 秒的旋转矩阵(Rodrigues)。R_{k+1} = R(ω dt) R_k。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
-- `table_params` `无输入 → table` GPU: 无 — 乒乓球台的参数表(默认 = ITTF 规格)。 · 示例: `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
-- `table_world` `table → table` GPU: 无 — 球台(台面 + 白线 + 球网)与地面的世界。原点 = 台面中心，x = 长边方向(±1.37)，y = 宽度方向(±0.7625)，z 向上。台面上表面 z = height。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `table_params` `无输入 → table` GPU: 无 — 乒乓球台的参数表(默认 = ITTF 规格)。 · 示例: `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
+- `table_world` `table → table` GPU: 无 — 球台(台面 + 白线 + 球网)与地面的世界。原点 = 台面中心，x = 长边方向(±1.37)，y = 宽度方向(±0.7625)，z 向上。台面上表面 z = height。 · 示例: `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
 
 #### drive / braidpath (12)
 - `braid_artin_images` `signal × scalar → table` GPU: 无 — 辫的 Artin 表示:自由群 F_n 的生成元 x₁..xₙ 的像(自由约化后的字)。

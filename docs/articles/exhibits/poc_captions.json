@@ -2930,6 +2930,22 @@
    "lead_en": ""
   },
   {
+   "id": "poc_cd_spin_joint",
+   "wing": "wing_xyt",
+   "added": "2026-11-11",
+   "numbers_source": "log",
+   "figure": "estimates_by_mode",
+   "figure_caption_ja": "C_d と ω を 2 通りの分担で読んだ表(世界は C_d が Re 依存・C_L に谷、当てはめは定数)。ω を模様から取り軌跡から C_d・C_L を読むと世界の実効値に 2 % 以内、軌跡だけで同時に読むと C_d は合うが ω は 5 割ほど小さく出る。真値は全部自作の世界の値。",
+   "figure_caption_en": "C_d and ω read in two divisions of labour (the world has a Re-dependent C_d and a C_L dip; the fit uses constants). ω from the pattern with C_d, C_L from the trajectory lands within 2 % of the world's effective values; reading everything from the trajectory gets C_d right but ω about half too small. Every true value is planted in the PoC's own world.",
+   "title_ja": "軌跡から抗力と回転を同時に読む ―― 軌跡が決めるのは力で、回転の大きさではない(自作の別模型の世界で、読める量と読めない量を測る)",
+   "title_en": "Reading Drag and Spin from a Trajectory at Once — The Trajectory Fixes the Force, Not the Spin (Measuring What Can and Cannot Be Read in a Self-Made, Different-Model World)",
+   "caption_ja": "卓球の球の空気抵抗 C_d と回転 ω を、軌跡から同時に読めるか。**観測を作る世界と当てはめの模型を変えた**(C_d は Reynolds 数の関数、C_L はスピン比 S = 0.5 付近に深さ 40 % の谷を掘った表。谷の位置・深さは**この PoC が決めた仮の値**で、当てはめは定数 C_d と S/(1 + 2S) の係数 κ)。4 本(トップ・無回転・バック・横、150 rad/s)を 240 fps・位置雑音 1.5 mm で作り、新 op fit_spin_aero(fit_spin の C_d 自由版)で当てた。(1) ω を球の模様から取り(近接 1000 fps、真値と 2.3〜5.1 %)、軌跡から C_d・C_L を読むと、世界の実効値(速さ² 重みの平均)との差は C_d 0.5 %・C_L 1.9 % 以内。(2) 軌跡だけで C_d と ω を同時に読むと、C_d は 0.4 % 以内で読めるが **ω は 51〜56 % 小さく出る**(谷の深さ 0 で 0 %、10 % で 17 %、40 % で 54 %)。軌跡が決めているのは力(読んだ ω での C_L は世界の実効値の 95〜103 %)で、ω ではない。(3) κ も自由にすると ω と κ の相関は −0.9999 以下で、初期値を変えると rms 2.556 mm が同じなのに ω は 44〜72 rad/s と違う答えになる(縮退)。(4) C_d と ω⊥ は直交して相関は 0.01 以下(モンテカルロ 72 本の相関 −0.18〜+0.09)だが、C_d は初速と 0.95〜0.96 で相関し、20 コマ(83 ms)では雑音 1.5 mm で C_d の標準偏差が実効値の 26 %、83 コマで 1.2 %。進行方向に平行な ω の成分の標準偏差は垂直成分の 4〜18 倍で、読めたと言えない。正直に: **真値は全部この PoC が仕込んだ世界の値**で実測ではない。観測は世界の位置に等方ガウス雑音を足したもので、映像の描画・三角測量は通していない(模様の近接撮影だけ描画)。Morrison の C_d は卓球の速さでほぼ平ら(飛行中の幅 0.08 %)なので、効くのは C_L の谷だけ。",
+   "caption_en": "Can the drag coefficient C_d and the spin ω of a table-tennis ball be read from a trajectory at the same time? **The world that makes the observations and the fitted model are different**: C_d depends on the Reynolds number and C_L is the S/(1 + 2S) curve with a 40 %-deep dip around spin ratio 0.5 (its position and depth are **values this PoC chose**, not a measured table); the fit uses a constant C_d and a scale κ on S/(1 + 2S). Four balls (topspin, none, backspin, sidespin, 150 rad/s) are made at 240 fps with 1.5 mm position noise and fitted by the new op fit_spin_aero (fit_spin with a free C_d). (1) Taking ω from the ball's pattern (close-up 1000 fps, 2.3-5.1 % from truth) and C_d, C_L from the trajectory lands within 0.5 % (C_d) and 1.9 % (C_L) of the world's effective values (v²-weighted means). (2) Reading C_d and ω from the trajectory alone gives C_d within 0.4 % but **ω 51-56 % too small** (0 % with no dip, 17 % at 10 % depth, 54 % at 40 %): the trajectory fixes the force (the model C_L at the fitted ω is 95-103 % of the world's), not ω. (3) Freeing κ too makes the ω-κ correlation −0.9999 or beyond, and different starts reach different ω (44-72 rad/s) at the same rms (2.556 mm): a degeneracy. (4) C_d and ω⊥ are orthogonal (correlation under 0.01; Monte Carlo over 72 fits −0.18 to +0.09), but C_d correlates 0.95-0.96 with the launch speed, and with 20 frames (83 ms) at 1.5 mm noise the standard deviation of C_d is 26 % of its value against 1.2 % with 83 frames. The component of ω along the flight direction is 4-18 times less precise than the perpendicular ones, so it is not read. Honestly: **every true value is one this PoC planted in its own world**, not a measurement. The observations are world positions plus isotropic Gaussian noise, with no rendering or triangulation of the flight (only the pattern close-up is rendered). Morrison's C_d is nearly flat at table-tennis speeds (0.08 % across the flight), so only the C_L dip matters.",
+   "run": "py -3.11 examples/poc_cd_spin_joint.py",
+   "lead_ja": "",
+   "lead_en": ""
+  },
+  {
    "id": "poc_table_tennis_bounce",
    "wing": "wing_xyt",
    "added": "2026-10-01",

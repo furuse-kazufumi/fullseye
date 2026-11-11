@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **109 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **110 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -852,7 +852,7 @@ py -3.11 tools/fetch_walnut_cbct.py && py -3.11 examples/poc_real_walnut_cbct.py
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 
-2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 22 点はその実演です。
+2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 23 点はその実演です。
 
 同時に、時間方向ならではの罠も出ました。フレーム格子への丸めは必ず遅らせ、画素の面積は合体を早める。誤リンクには向きの逆な 2 種類があり、誤り率 1 本では拡散係数がどちらへ外れるか決まらない。テンプレート追跡は見失うより先に静かにずれ、ずれた 152 フレーム全部が「見つけた」と報告する。
 
@@ -1569,6 +1569,44 @@ py -3.11 examples/poc_table_tennis_spin.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_table_tennis_spin)
 
 使用 op(ノートへ): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.html) · [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`ball_mesh`](https://furuse.work/ops/drive/ballworld/ball_mesh.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`ball_set_pose`](https://furuse.work/ops/drive/ballworld/ball_set_pose.html) · [`ball_track`](https://furuse.work/ops/drive/balltrack/ball_track.html) · [`bounce_detect`](https://furuse.work/ops/drive/balltrack/bounce_detect.html) · [`camera_rig`](https://furuse.work/ops/drive/ballworld/camera_rig.html) · [`fit_spin`](https://furuse.work/ops/drive/ball/fit_spin.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`flight_simulate`](https://furuse.work/ops/drive/ball/flight_simulate.html) · [`impact_params`](https://furuse.work/ops/drive/ball/impact_params.html) · [`marker_direction`](https://furuse.work/ops/drive/balltrack/marker_direction.html) · [`reproject`](https://furuse.work/ops/drive/balltrack/reproject.html) · [`rotation_from_omega`](https://furuse.work/ops/drive/ballworld/rotation_from_omega.html) · [`spin_from_marker_sequence`](https://furuse.work/ops/drive/balltrack/spin_from_marker_sequence.html) · [`table_params`](https://furuse.work/ops/drive/ballworld/table_params.html) · [`table_world`](https://furuse.work/ops/drive/ballworld/table_world.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`track_triangulate`](https://furuse.work/ops/drive/balltrack/track_triangulate.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
+## No.2026.313 —— 軌跡から抗力と回転を同時に読む ―― 軌跡が決めるのは力で、回転の大きさではない(自作の別模型の世界で、読める量と読めない量を測る)
+
+卓球の球の空気抵抗 C_d と回転 ω を、軌跡から同時に読めるか。**観測を作る世界と当てはめの模型を変えた**(C_d は Reynolds 数の関数、C_L はスピン比 S = 0.5 付近に深さ 40 % の谷を掘った表。谷の位置・深さは**この PoC が決めた仮の値**で、当てはめは定数 C_d と S/(1 + 2S) の係数 κ)。4 本(トップ・無回転・バック・横、150 rad/s)を 240 fps・位置雑音 1.5 mm で作り、新 op fit_spin_aero(fit_spin の C_d 自由版)で当てた。(1) ω を球の模様から取り(近接 1000 fps、真値と 2.3〜5.1 %)、軌跡から C_d・C_L を読むと、世界の実効値(速さ² 重みの平均)との差は C_d 0.5 %・C_L 1.9 % 以内。(2) 軌跡だけで C_d と ω を同時に読むと、C_d は 0.4 % 以内で読めるが **ω は 51〜56 % 小さく出る**(谷の深さ 0 で 0 %、10 % で 17 %、40 % で 54 %)。軌跡が決めているのは力(読んだ ω での C_L は世界の実効値の 95〜103 %)で、ω ではない。(3) κ も自由にすると ω と κ の相関は −0.9999 以下で、初期値を変えると rms 2.556 mm が同じなのに ω は 44〜72 rad/s と違う答えになる(縮退)。(4) C_d と ω⊥ は直交して相関は 0.01 以下(モンテカルロ 72 本の相関 −0.18〜+0.09)だが、C_d は初速と 0.95〜0.96 で相関し、20 コマ(83 ms)では雑音 1.5 mm で C_d の標準偏差が実効値の 26 %、83 コマで 1.2 %。進行方向に平行な ω の成分の標準偏差は垂直成分の 4〜18 倍で、読めたと言えない。正直に: **真値は全部この PoC が仕込んだ世界の値**で実測ではない。観測は世界の位置に等方ガウス雑音を足したもので、映像の描画・三角測量は通していない(模様の近接撮影だけ描画)。Morrison の C_d は卓球の速さでほぼ平ら(飛行中の幅 0.08 %)なので、効くのは C_L の谷だけ。
+
+[![軌跡から抗力と回転を同時に読む ―― 軌跡が決めるのは力で、回転の大きさではない(自作の別模型の世界で、読める量と読めない量を測る)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png)
+
+*↑ **軌跡から抗力と回転を同時に読む ―― 軌跡が決めるのは力で、回転の大きさではない(自作の別模型の世界で、読める量と読めない量を測る)** ―― C_d と ω を 2 通りの分担で読んだ表(世界は C_d が Re 依存・C_L に谷、当てはめは定数)。ω を模様から取り軌跡から C_d・C_L を読むと世界の実効値に 2 % 以内、軌跡だけで同時に読むと C_d は合うが ω は 5 割ほど小さく出る。真値は全部自作の世界の値。*
+
+[![観測を作る世界(実線)は S = 0.5 付近に谷があり、当てはめの模型(破線)にはない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/02_cl_world_vs_model_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/02_cl_world_vs_model.png)
+
+*↑ 測定の図 ―― 観測を作る世界(実線)は S = 0.5 付近に谷があり、当てはめの模型(破線)にはない。卓球の 150 rad/s・6 m/s は S ≈ 0.5 で、谷の真ん中に当たる。谷の位置・深さは仮の値。*
+
+[![トップスピンを軌跡だけ(C_d と ω を同時、κ = 1、雑音なしの軌跡)で読んだ ω の誤差(実線)と、世界の C_L が当てはめの模型に足りない割合(破線)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/03_omega_bias_vs_dip_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/03_omega_bias_vs_dip.png)
+
+*↑ トップスピンを軌跡だけ(C_d と ω を同時、κ = 1、雑音なしの軌跡)で読んだ ω の誤差(実線)と、世界の C_L が当てはめの模型に足りない割合(破線)。*
+
+[![κ も自由にすると、初期値によって ω は 44〜72 rad/s と違う答えになるのに、rms は 2.556〜2.556 mm で同じ、模型の C_L も同じ(0.1871〜0.1929)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/04_degeneracy_valley_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/04_degeneracy_valley.png)
+
+*↑ κ も自由にすると、初期値によって ω は 44〜72 rad/s と違う答えになるのに、rms は 2.556〜2.556 mm で同じ、模型の C_L も同じ(0.1871〜0.1929)。*
+
+[![C_d と ω⊥ は直交して相関が 0 に近い(最大 0.010)一方、C_d は初速と 0.95〜0.96 で相関する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/05_sweep_by_length_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/05_sweep_by_length.png)
+
+*↑ C_d と ω⊥ は直交して相関が 0 に近い(最大 0.010)一方、C_d は初速と 0.95〜0.96 で相関する。*
+
+[![位置雑音 σ を 3 通りに振り、軌跡の先頭 n コマで C_d と ω を同時に当てたときの C_d のばらつき(モンテカルロ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/06_cd_scatter_vs_length_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/06_cd_scatter_vs_length.png)
+
+*↑ 位置雑音 σ を 3 通りに振り、軌跡の先頭 n コマで C_d と ω を同時に当てたときの C_d のばらつき(モンテカルロ)。*
+
+```
+py -3.11 examples/poc_cd_spin_joint.py
+```
+
+ソース: [examples/poc_cd_spin_joint.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cd_spin_joint.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_cd_spin_joint)
+
+使用 op(ノートへ): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.html) · [`ball_mesh`](https://furuse.work/ops/drive/ballworld/ball_mesh.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`drag_coefficient_sphere`](https://furuse.work/ops/drive/ball/drag_coefficient_sphere.html) · [`fit_aero`](https://furuse.work/ops/drive/ball/fit_aero.html) · [`fit_spin`](https://furuse.work/ops/drive/ball/fit_spin.html) · [`fit_spin_aero`](https://furuse.work/ops/drive/ball/fit_spin_aero.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`magnus_lift_coefficient`](https://furuse.work/ops/drive/ball/magnus_lift_coefficient.html) · [`table_params`](https://furuse.work/ops/drive/ballworld/table_params.html) · [`table_world`](https://furuse.work/ops/drive/ballworld/table_world.html)
 
 ## No.2026.175 —— 跳ねる卓球の球を高速カメラで撮って、反発係数と摩擦係数を読む ―― 公表値と照合する
 

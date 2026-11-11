@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**109 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**110 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -852,7 +852,7 @@ Ops used (notes): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_s
 
 ### The Time-as-3-D Wing — A Video Is One Volume
 
-Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 22 exhibits here demonstrate exactly that.
+Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 23 exhibits here demonstrate exactly that.
 
 The time axis also brings its own traps. Rounding onto the frame grid always delays; pixel area makes merging look early. Mislinks come in two opposite kinds, so a single error rate cannot say which way the diffusion coefficient is wrong. Template tracking drifts quietly before it ever loses the target, and all 152 drifted frames report 'found'.
 
@@ -1569,6 +1569,44 @@ Source: [examples/poc_table_tennis_spin.py](https://github.com/furuse-kazufumi/f
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_table_tennis_spin)
 
 Ops used (notes): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.html) · [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`ball_mesh`](https://furuse.work/ops/drive/ballworld/ball_mesh.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`ball_set_pose`](https://furuse.work/ops/drive/ballworld/ball_set_pose.html) · [`ball_track`](https://furuse.work/ops/drive/balltrack/ball_track.html) · [`bounce_detect`](https://furuse.work/ops/drive/balltrack/bounce_detect.html) · [`camera_rig`](https://furuse.work/ops/drive/ballworld/camera_rig.html) · [`fit_spin`](https://furuse.work/ops/drive/ball/fit_spin.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`flight_simulate`](https://furuse.work/ops/drive/ball/flight_simulate.html) · [`impact_params`](https://furuse.work/ops/drive/ball/impact_params.html) · [`marker_direction`](https://furuse.work/ops/drive/balltrack/marker_direction.html) · [`reproject`](https://furuse.work/ops/drive/balltrack/reproject.html) · [`rotation_from_omega`](https://furuse.work/ops/drive/ballworld/rotation_from_omega.html) · [`spin_from_marker_sequence`](https://furuse.work/ops/drive/balltrack/spin_from_marker_sequence.html) · [`table_params`](https://furuse.work/ops/drive/ballworld/table_params.html) · [`table_world`](https://furuse.work/ops/drive/ballworld/table_world.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`track_triangulate`](https://furuse.work/ops/drive/balltrack/track_triangulate.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
+## No.2026.313 —— Reading Drag and Spin from a Trajectory at Once — The Trajectory Fixes the Force, Not the Spin (Measuring What Can and Cannot Be Read in a Self-Made, Different-Model World)
+
+Can the drag coefficient C_d and the spin ω of a table-tennis ball be read from a trajectory at the same time? **The world that makes the observations and the fitted model are different**: C_d depends on the Reynolds number and C_L is the S/(1 + 2S) curve with a 40 %-deep dip around spin ratio 0.5 (its position and depth are **values this PoC chose**, not a measured table); the fit uses a constant C_d and a scale κ on S/(1 + 2S). Four balls (topspin, none, backspin, sidespin, 150 rad/s) are made at 240 fps with 1.5 mm position noise and fitted by the new op fit_spin_aero (fit_spin with a free C_d). (1) Taking ω from the ball's pattern (close-up 1000 fps, 2.3-5.1 % from truth) and C_d, C_L from the trajectory lands within 0.5 % (C_d) and 1.9 % (C_L) of the world's effective values (v²-weighted means). (2) Reading C_d and ω from the trajectory alone gives C_d within 0.4 % but **ω 51-56 % too small** (0 % with no dip, 17 % at 10 % depth, 54 % at 40 %): the trajectory fixes the force (the model C_L at the fitted ω is 95-103 % of the world's), not ω. (3) Freeing κ too makes the ω-κ correlation −0.9999 or beyond, and different starts reach different ω (44-72 rad/s) at the same rms (2.556 mm): a degeneracy. (4) C_d and ω⊥ are orthogonal (correlation under 0.01; Monte Carlo over 72 fits −0.18 to +0.09), but C_d correlates 0.95-0.96 with the launch speed, and with 20 frames (83 ms) at 1.5 mm noise the standard deviation of C_d is 26 % of its value against 1.2 % with 83 frames. The component of ω along the flight direction is 4-18 times less precise than the perpendicular ones, so it is not read. Honestly: **every true value is one this PoC planted in its own world**, not a measurement. The observations are world positions plus isotropic Gaussian noise, with no rendering or triangulation of the flight (only the pattern close-up is rendered). Morrison's C_d is nearly flat at table-tennis speeds (0.08 % across the flight), so only the C_L dip matters.
+
+[![Reading Drag and Spin from a Trajectory at Once — The Trajectory Fixes the Force, Not the Spin (Measuring What Can and Cannot Be Read in a Self-Made, Different-Model World)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png)
+
+*↑ **Reading Drag and Spin from a Trajectory at Once — The Trajectory Fixes the Force, Not the Spin (Measuring What Can and Cannot Be Read in a Self-Made, Different-Model World)** ―― C_d and ω read in two divisions of labour (the world has a Re-dependent C_d and a C_L dip; the fit uses constants). ω from the pattern with C_d, C_L from the trajectory lands within 2 % of the world's effective values; reading everything from the trajectory gets C_d right but ω about half too small. Every true value is planted in the PoC's own world.*
+
+[![観測を作る世界(実線)は S = 0.5 付近に谷があり、当てはめの模型(破線)にはない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/02_cl_world_vs_model_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/02_cl_world_vs_model.png)
+
+*↑ The measurement ―― 観測を作る世界(実線)は S = 0.5 付近に谷があり、当てはめの模型(破線)にはない。卓球の 150 rad/s・6 m/s は S ≈ 0.5 で、谷の真ん中に当たる。谷の位置・深さは仮の値。 (figure labels are in Japanese; the numbers are the same)*
+
+[![トップスピンを軌跡だけ(C_d と ω を同時、κ = 1、雑音なしの軌跡)で読んだ ω の誤差(実線)と、世界の C_L が当てはめの模型に足りない割合(破線)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/03_omega_bias_vs_dip_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/03_omega_bias_vs_dip.png)
+
+*↑ トップスピンを軌跡だけ(C_d と ω を同時、κ = 1、雑音なしの軌跡)で読んだ ω の誤差(実線)と、世界の C_L が当てはめの模型に足りない割合(破線)。*
+
+[![κ も自由にすると、初期値によって ω は 44〜72 rad/s と違う答えになるのに、rms は 2.556〜2.556 mm で同じ、模型の C_L も同じ(0.1871〜0.1929)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/04_degeneracy_valley_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/04_degeneracy_valley.png)
+
+*↑ κ も自由にすると、初期値によって ω は 44〜72 rad/s と違う答えになるのに、rms は 2.556〜2.556 mm で同じ、模型の C_L も同じ(0.1871〜0.1929)。*
+
+[![C_d と ω⊥ は直交して相関が 0 に近い(最大 0.010)一方、C_d は初速と 0.95〜0.96 で相関する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/05_sweep_by_length_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/05_sweep_by_length.png)
+
+*↑ C_d と ω⊥ は直交して相関が 0 に近い(最大 0.010)一方、C_d は初速と 0.95〜0.96 で相関する。*
+
+[![位置雑音 σ を 3 通りに振り、軌跡の先頭 n コマで C_d と ω を同時に当てたときの C_d のばらつき(モンテカルロ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/06_cd_scatter_vs_length_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/06_cd_scatter_vs_length.png)
+
+*↑ 位置雑音 σ を 3 通りに振り、軌跡の先頭 n コマで C_d と ω を同時に当てたときの C_d のばらつき(モンテカルロ)。*
+
+```
+py -3.11 examples/poc_cd_spin_joint.py
+```
+
+Source: [examples/poc_cd_spin_joint.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cd_spin_joint.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_cd_spin_joint)
+
+Ops used (notes): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.html) · [`ball_mesh`](https://furuse.work/ops/drive/ballworld/ball_mesh.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`drag_coefficient_sphere`](https://furuse.work/ops/drive/ball/drag_coefficient_sphere.html) · [`fit_aero`](https://furuse.work/ops/drive/ball/fit_aero.html) · [`fit_spin`](https://furuse.work/ops/drive/ball/fit_spin.html) · [`fit_spin_aero`](https://furuse.work/ops/drive/ball/fit_spin_aero.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`magnus_lift_coefficient`](https://furuse.work/ops/drive/ball/magnus_lift_coefficient.html) · [`table_params`](https://furuse.work/ops/drive/ballworld/table_params.html) · [`table_world`](https://furuse.work/ops/drive/ballworld/table_world.html)
 
 ## No.2026.175 —— Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution and Friction — Checked Against Published Values
 

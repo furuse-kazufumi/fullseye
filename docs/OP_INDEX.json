@@ -1,8 +1,8 @@
 {
- "n_ops": 3835,
+ "n_ops": 3836,
  "tiers": {
   "color": 12,
-  "ledger": 2871,
+  "ledger": 2872,
   "nary": 17,
   "registry": 935
  },
@@ -11499,6 +11499,22 @@
   },
   {
    "name": "fit_spin",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "points",
+    "table"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "fit_spin_aero",
    "halcon": "",
    "in_sort": "signal",
    "out_sort": "table",

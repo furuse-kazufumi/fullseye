@@ -33885,6 +33885,15 @@
    "ko": "NCC 모델(정규화 템플릿)을 준비한다.",
    "de": "Bereitet ein NCC-Modell vor (normierte Vorlage).",
    "hi": "NCC मॉडल (सामान्यीकृत टेम्पलेट) तैयार करता है।"
+  },
+  "drive/fit_spin_aero": {
+   "fp": "dceb251f9724",
+   "en": "**Reads drag and spin together** (:func:`fit_spin` with a free C_d): fits the drag + Magnus equations of motion to a trajectory (t_i, p_i) (an interval without bounces) with the 10 parameters (p₀, v₀, ω, C_d) by Levenberg–Marquardt (``fit_cl=True`` frees the lift coefficient scale κ too, for 11 parameters).",
+   "zh": "**同时读出阻力与旋转**(:func:`fit_spin` 的 C_d 自由版)：以 (p₀, v₀, ω, C_d) 的 10 个参数，用 Levenberg–Marquardt 将含阻力 + 马格努斯的运动方程拟合到轨迹 (t_i, p_i)(不含弹跳的区间)(``fit_cl=True`` 时连升力系数的比例 κ 也设为自由量，共 11 个参数)。",
+   "tw": "**同時讀出阻力與旋轉**(:func:`fit_spin` 的 C_d 自由版)：以 (p₀, v₀, ω, C_d) 的 10 個參數，用 Levenberg–Marquardt 將含阻力 + 馬格努斯的運動方程擬合到軌跡 (t_i, p_i)(不含彈跳的區間)(``fit_cl=True`` 時連升力係數的比例 κ 也設為自由量，共 11 個參數)。",
+   "ko": "**항력과 회전을 동시에 읽습니다**(:func:`fit_spin`의 C_d 자유 버전): 궤적 (t_i, p_i)(바운드를 포함하지 않는 구간)에 항력 + 마그누스의 운동 방정식을 (p₀, v₀, ω, C_d)의 10개 매개변수로 Levenberg–Marquardt로 피팅합니다(``fit_cl=True``이면 양력 계수의 배율 κ도 자유롭게 하여 11개 매개변수).",
+   "de": "**Liest Luftwiderstand und Spin gemeinsam**(:func:`fit_spin` mit freiem C_d): passt die Bewegungsgleichungen mit Luftwiderstand + Magnus an eine Trajektorie (t_i, p_i) (ein Intervall ohne Abpraller) mit den 10 Parametern (p₀, v₀, ω, C_d) per Levenberg–Marquardt an (``fit_cl=True`` gibt auch den Auftriebs-Skalenfaktor κ frei, also 11 Parameter).",
+   "hi": "**drag और spin को एक साथ पढ़ता है** (:func:`fit_spin` का C_d-मुक्त रूप): trajectory (t_i, p_i) (बिना उछाल वाला अंतराल) पर drag + Magnus के गति समीकरणों को (p₀, v₀, ω, C_d) के 10 parameters से Levenberg–Marquardt द्वारा fit करता है (``fit_cl=True`` से lift coefficient का scale κ भी मुक्त हो जाता है, कुल 11 parameters)।"
   }
  }
 }

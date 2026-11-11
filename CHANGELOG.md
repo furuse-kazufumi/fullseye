@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 軌跡から抗力と回転を同時に読む op `fit_spin_aero` と PoC(収蔵 2026.313、2026-11-11)
+
+- `ballistics.fit_spin_aero`(新 op、`fit_spin` の C_d 自由版): (p₀, v₀, ω, C_d)の 10 パラメータ(`fit_cl=True` で C_L の係数 κ も自由にして 11)。条件数・相関行列・線形化した共分散・C_d と ω⊥ / 初速の相関・ω の平行 / 垂直成分の標準偏差を返す(読めないものを返り値に出す)。定数 C_L の `bp` は ValueError(|ω| が原理的に読めない)。`bp["cl_scale"]` を足した(無ければ従来と bit 一致)。
+- `examples/poc_cd_spin_joint.py`: 世界(C_d が Re 依存、C_L に谷。仮の値)と当てはめ(定数)を別模型にして inverse crime を避け、ω を模様から取り軌跡から (C_d, C_L) を読む分担と、軌跡だけで同時に読んだときの ω の偏り(谷の深さ 0 で 0 %、40 % で 54 %)・ω と κ の縮退・C_d と初速の相関・平行成分の読めなさ・飛行長と雑音の掃引を測る。真値は全部自作の世界の値。
+
 ### 追加 — MCP の道具「真値付きの課題を作る」と「組んだ処理を採点する」(2026-11-09)
 
 - 独立レビューの直し(2026-11-10、SCORING_VERSION 2026-11-10.1):

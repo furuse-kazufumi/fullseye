@@ -24,7 +24,7 @@ import numpy as np
 __all__ = [
     "ball_params", "impact_params", "flight_vacuum", "flight_ode", "flight_simulate", "flight_state_at", "magnus_lift_coefficient",
     "drag_coefficient_sphere", "bounce", "contact_angular_momentum", "apex_sequence", "bounce_total_time",
-    "restitution_from_apexes", "restitution_from_intervals", "fit_parabola", "flight_fit", "fit_aero", "fit_spin", "fit_bounce",
+    "restitution_from_apexes", "restitution_from_intervals", "fit_parabola", "flight_fit", "fit_aero", "fit_spin", "fit_spin_aero", "fit_bounce",
     "slide_stop_distance", "incline_slip_angle", "mu_from_stop_distance", "roll_slide_state", "tether_simulate",
     "pendulum_period", "cup_catch_check",
     "thrust_ode",
@@ -135,6 +135,8 @@ def _acc(vx, vy, vz, wx, wy, wz, bp):
     wn = math.sqrt(wx * wx + wy * wy + wz * wz)
     if wn > 0.0:
         cl = bp["cl"] if bp["cl"] is not None else 1.0 / (2.0 + 1.0 / (bp["radius"] * wn / sp))
+        if "cl_scale" in bp:                          # 当てはめ用の揚力の係数(fit_spin_aero)。無ければ従来と同じ値(bit 一致)
+            cl *= bp["cl_scale"]
         f = k * cl * sp / wn                          # k·cl·sp²·(ω̂ × v̂) = k·cl·(sp/wn)·(ω × v)
         ax += f * (wy * vz - wz * vy)
         ay += f * (wz * vx - wx * vz)
@@ -339,6 +341,125 @@ def fit_spin(t, p, bp: dict, *, omega0=None, omega_max: float = 1000.0, iters: i
     return {"p0": x[:3], "v0": x[3:6], "omega": w, "omega_perp": w - (w @ vhat) * vhat,
             "rms": float(np.sqrt(np.mean(np.sum(res.reshape(-1, 3) ** 2, axis=1)))), "cond": float(np.linalg.cond(J)),
             "omega_axial_sensitivity": float(np.sqrt(np.mean(np.sum(sens.reshape(-1, 3) ** 2, axis=1)))),
+            "iters": it, "t0": float(t[0]), "at_bound": bool(np.linalg.norm(w) > omega_max * (1 - 1e-9))}
+
+
+def fit_spin_aero(t, p, bp: dict, *, omega0=None, fit_cl: bool = False, omega_max: float = 1000.0, iters: int = 25,
+                  dt: float = 1e-3) -> dict:
+    """**抗力と回転を同時に読む**(:func:`fit_spin` の C_d 自由版): 軌跡 (t_i, p_i)(跳ねを含まない区間)に抗力 + マグヌスの運動方程式を (p₀, v₀, ω, C_d) の 10 パラメータで Levenberg–Marquardt で当てる(``fit_cl=True`` で C_L の係数 κ も自由にして 11 パラメータ)。
+
+    当てはめの模型の C_d は定数(Re 依存を当てない)、揚力はスピン比の経験式 C_L = κ·S/(1 + 2S)(S = rω/|v|)で、係数 κ は既定で 1。
+    ★C_L を数(定数)にした ``bp`` は受け付けない(ValueError): 定数 C_L のマグヌスの力は大きさが ω によらず、|ω| の列が 0 になって
+    回転の大きさが原理的に読めない(測って確かめた: ω が 0 のまま動かない)。
+
+    **読めないものを返り値に出す**: 抗力は −v、マグヌスは ω × v(v に垂直)なので力の向きは直交して分かれるが、(a) 飛行が短く速さがあまり落ちないと
+    C_d は v₀ と、(b) ω と C_L の係数 κ は縮退(S が小さい域で C_L ≈ κS なので力は κ·ω の積だけ)、(c) ω の v に平行な成分は力を生まない。
+    返り値の ``cond``(スケール後のヤコビアンの条件数)、``corr``(推定量の相関行列、``param_names`` の順)、``cov_unit``(位置雑音 1 m あたりの推定量の
+    共分散 = 線形化したクラメール・ラオ。雑音 σ [m] なら σ² 倍)、``corr_cd_omega``(C_d と ω⊥ の大きさの相関)、``corr_cd_v0``(C_d と初速の大きさの相関)、
+    ``omega_axial_std_unit``(ω の平行成分の標準偏差、雑音 1 m あたり)、``omega_perp_std_unit``(ω の垂直 2 成分の 1 成分あたりの標準偏差)で判る。
+    返り値 ``{"p0", "v0", "omega", "omega_perp", "cd", "cl_scale", "rms", "cond", "corr", "param_names", "cov_unit", "corr_cd_omega",
+    "corr_cd_v0", "omega_axial_std_unit", "omega_perp_std_unit", "iters", "t0", "at_bound"}``。
+    同じ模型で作った軌跡なら 1e-6 で戻る(門)。★世界が別の模型(C_d が Re 依存、C_L に谷)だと、定数で当てた C_d・ω・C_L はその区間の実効値になり偏る
+    (偏りは PoC で測って出す)。``omega_max`` は :func:`fit_spin` と同じ(回転の大きさの上限)。収束は ``omega0`` が真値から離れる・軌跡が短い・
+    ``fit_cl=True`` だと遅く、平らな谷で ``iters`` に届かない標本がある(返り値の ``iters`` が引数と同じなら打ち切り)。
+
+    Limits: with ``fit_cl=True`` the |ω| and κ columns are nearly parallel (``cond`` large, ``corr`` ≈ ±1) — read ω from the ball's pattern
+    (:func:`balltrack.spin_from_markers`) and take the lift scale from the trajectory instead (:func:`fit_aero` with ω known). A constant-C_L ``bp``
+    and fewer than 12 samples raise ValueError.
+    """
+    t = np.asarray(t, np.float64).reshape(-1)
+    P = np.asarray(p, np.float64).reshape(-1, 3)
+    if not (np.isfinite(omega_max) and omega_max > 0):
+        raise ValueError("omega_max must be a positive finite number")
+    if t.size != len(P) or t.size < 12 or not np.all(np.isfinite(P)) or not np.all(np.diff(t) > 0):
+        raise ValueError("need ≥ 12 finite samples with increasing t")
+    if bp.get("cl") is not None:
+        raise ValueError("fit_spin_aero: bp['cl'] must be None (a constant C_L makes |omega| unobservable)")
+    w0 = np.zeros(3) if omega0 is None else _v3(omega0, "omega0")
+    tau = t - t[0]
+    ff = flight_fit(t, P, w0, bp, dt=dt)
+    cd0 = 0.4 if isinstance(bp["cd"], str) else float(bp["cd"])
+    k0 = float(bp.get("cl_scale", 1.0))
+    npar = 11 if fit_cl else 10
+    x = np.r_[ff["p0"], ff["v0"], w0, cd0, ([k0] if fit_cl else [])]
+    names = ["px", "py", "pz", "vx", "vy", "vz", "wx", "wy", "wz", "cd"] + (["cl_scale"] if fit_cl else [])
+    scales = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 50.0, 50.0, 50.0, 0.1] + ([0.1] if fit_cl else []))
+
+    def model(x):
+        b = dict(bp)
+        b["cd"] = min(3.0, max(0.0, float(x[9])))
+        if fit_cl:
+            b["cl_scale"] = min(10.0, max(0.0, float(x[10])))
+        f = flight_ode(x[:3], x[3:6], x[6:9], b, tau[-1] + dt, dt)
+        return np.column_stack([np.interp(tau, f["t"], f["p"][:, k]) for k in range(3)])
+
+    def jac(x, res):
+        J = np.empty((res.size, npar))
+        for j in range(npar):
+            h = 1e-6 * scales[j]
+            xp = x.copy()
+            xp[j] += h
+            J[:, j] = ((model(xp) - P).ravel() - res) / h
+        return J
+
+    res = (model(x) - P).ravel()
+    cost = float(res @ res)
+    lam, it = 1e-3, 0
+    for it in range(1, iters + 1):
+        J = jac(x, res)
+        A = J.T @ J
+        g = J.T @ res
+        D = np.diag(np.maximum(np.diag(A), 1e-12))
+        improved = False
+        for _ in range(12):
+            dx = np.linalg.solve(A + lam * D, -g)
+            xn = x + dx
+            wn = float(np.linalg.norm(xn[6:9]))
+            if wn > omega_max:
+                xn[6:9] *= omega_max / wn
+            xn[9] = min(3.0, max(0.0, xn[9]))
+            if fit_cl:
+                xn[10] = min(10.0, max(0.0, xn[10]))
+            dx = xn - x
+            rn = (model(xn) - P).ravel()
+            cn = float(rn @ rn)
+            if cn < cost:
+                x, res, cost, lam, improved = xn, rn, cn, max(lam / 3.0, 1e-9), True
+                break
+            lam *= 4.0
+        if not improved or np.linalg.norm(dx / scales) < 1e-10:
+            break
+    J = jac(x, res)
+    Js = J * scales                                    # スケール後(相関はスケールによらない)
+    U, sv, Vt = np.linalg.svd(Js, full_matrices=False)
+    keep = sv > 1e-12 * max(float(sv[0]), 1e-300)
+    cov_s = (Vt[keep].T / sv[keep] ** 2) @ Vt[keep]    # (JsᵀJs)⁺
+    cov_unit = cov_s * np.outer(scales, scales)        # 元の単位へ
+    sd = np.sqrt(np.maximum(np.diag(cov_unit), 0.0))
+    corr = cov_unit / np.maximum(np.outer(sd, sd), 1e-300)
+    vhat = x[3:6] / max(1e-12, float(np.linalg.norm(x[3:6])))
+    w = x[6:9]
+    wperp = w - (w @ vhat) * vhat
+    nperp = float(np.linalg.norm(wperp))
+    ew = np.zeros(npar)
+    if nperp > 0:
+        ew[6:9] = wperp / nperp
+    ecd = np.zeros(npar)
+    ecd[9] = 1.0
+    c_cd_w = float((ew @ cov_unit @ ecd) / max(1e-300, math.sqrt(float(ew @ cov_unit @ ew)) * math.sqrt(float(ecd @ cov_unit @ ecd)))) if nperp > 0 else float("nan")
+    ea = np.zeros(npar)
+    ea[6:9] = vhat
+    ev = np.zeros(npar)
+    ev[3:6] = vhat
+    c_cd_v = float((ev @ cov_unit @ ecd) / max(1e-300, math.sqrt(float(ev @ cov_unit @ ev)) * math.sqrt(float(ecd @ cov_unit @ ecd))))
+    Pp = np.eye(3) - np.outer(vhat, vhat)                # v に垂直な 2 成分の分散(向きによらない)
+    var_perp = 0.5 * float(np.trace(Pp @ cov_unit[6:9, 6:9] @ Pp))
+    k_out = float(min(10.0, max(0.0, x[10]))) if fit_cl else k0
+    return {"p0": x[:3], "v0": x[3:6], "omega": w, "omega_perp": wperp, "cd": float(min(3.0, max(0.0, x[9]))), "cl_scale": k_out,
+            "rms": float(np.sqrt(np.mean(np.sum(res.reshape(-1, 3) ** 2, axis=1)))),
+            "cond": float(sv[0] / sv[-1]) if sv[-1] > 0 else float("inf"), "corr": corr, "param_names": names, "cov_unit": cov_unit,
+            "corr_cd_omega": c_cd_w, "corr_cd_v0": c_cd_v, "omega_axial_std_unit": float(math.sqrt(max(0.0, float(ea @ cov_unit @ ea)))),
+            "omega_perp_std_unit": float(math.sqrt(max(0.0, var_perp))),
             "iters": it, "t0": float(t[0]), "at_bound": bool(np.linalg.norm(w) > omega_max * (1 - 1e-9))}
 
 
