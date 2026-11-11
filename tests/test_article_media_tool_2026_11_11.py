@@ -351,6 +351,7 @@ def test_check_committed_but_unpushed_fails(media, tmp_path):
     assert "unpushed" in _kinds(probs)
     # ファイルの URL そのものに対しても、HEAD でなく origin/main の木で照合した問題が付く
     assert [p["kind"] for p in probs if p["url"] == url] == ["unpushed"]
+    assert probs, "問題が 1 件も出ない(all() が空で通る)"
     assert all("fetch" in p["message"] for p in probs)  # 追跡枝が古いかもしれない、と書く
 
 
