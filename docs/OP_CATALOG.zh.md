@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(486 例)
+### 2-D 图像/信号/几何(487 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -554,6 +554,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `type_connectivity_tour` — op: `attention_softmax`, `find_peaks`, `frame_axis`, `gradient_coherence`, `gradient_magnitude`, `graph_components`, `graph_from_synapses`, `hessian_determinant`, `hessian_vesselness`, `indices_to_positions`, `jones_apply`, `jones_element`(另有 18 个) `py -3.11 examples/type_connectivity_tour.py`
 - `poc_bga_ball_type_roundtrip` — op: `angles_to_normals`, `correlation_score`, `curvature_to_shape_index`, `curvature_to_table`, `erf`, `flow_apply`, `flow_speed`, `gaussians_to_points`, `gaussians_to_voxel`, `graph_components`, `graph_laplacian_spectrum`, `indices_to_labels`(另有 20 个) `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 - `poc_ct_void_morphology` — op: `color_bar`, `text_box` `py -3.11 examples/poc_ct_void_morphology.py`
+- `poc_ct_casting_sparse_views` — op: `ct_adjoint_project`, `ct_dual_energy_reconstruct`, `ct_forward_project`, `ct_scan_geometry`, `ellipsoid_phantom`, `ellipsoid_projections`, `fdk_reconstruct`, `os_sart_reconstruct`, `shepp_logan_3d`, `sirt_reconstruct`, `tv_reconstruct` `py -3.11 examples/poc_ct_casting_sparse_views.py`
 - `poc_battery_ct_degradation` — op: `beam_hardening_apply`, `fbp_volume`, `projection_angles`, `radon_volume`, `ring_artifact_apply` `py -3.11 examples/poc_battery_ct_degradation.py`
 - `poc_battery_electrode_tortuosity` — op: `intersection` `py -3.11 examples/poc_battery_electrode_tortuosity.py`
 - `poc_die_tilt_tsv_overlay` — op: `erf`, `procrustes_fit` `py -3.11 examples/poc_die_tilt_tsv_overlay.py`
@@ -4492,17 +4493,17 @@ _共 3841 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `ring_artifact_remove` `sinogram → sinogram` GPU: 无 — 通过压平角度平均剖面来去掉逐探测器 bin 的偏移。 · 示例: `ct_reconstruction`
 
 #### tomography / ct_scan (11)
-- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: 无 — :func:`ct_forward_project` 的精确转置 ``A^T``。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: 无 — 由同一几何的两次扫描得到两个基材料体数据。 · 示例: `poc_real_walnut_cbct`
-- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: 无 — 沿 *geometry* 的每条射线投影体数据：离散算子 ``A``。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ct_scan_geometry` `无输入 → ctgeometry` GPU: 无 — 描述一次 CT 扫描：每个视角下射线源和探测器的位置。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ellipsoid_phantom` `无输入 → voxel` GPU: 无 — 将若干均匀椭球之和栅格化到 ``(Z, Y, X)`` 网格上。 · 示例: `ct_scan_modes`
-- `ellipsoid_projections` `ctgeometry → projstack` GPU: 无 — 椭球之和的精确线积分，适用于本族的任意扫描。 · 示例: `ct_scan_modes`
-- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 适用于所有具备重建公式的扫描的滤波反投影：FDK 及其同类方法。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — OS-SART：将 SIRT 更新逐个应用于有序视角子集。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `shepp_logan_3d` `无输入 → voxel` GPU: 无 — ``size`` 立方网格上的改进型三维 Shepp-Logan 头部体模。 · 示例: `ct_scan_modes`
-- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — SIRT：同时使用全部视角，``x <- x + lam C A^T R (p - A x)``。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 基于 Chambolle-Pock 原始对偶法的全变分重建。 · 示例: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: 无 — :func:`ct_forward_project` 的精确转置 ``A^T``。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: 无 — 由同一几何的两次扫描得到两个基材料体数据。 · 示例: `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: 无 — 沿 *geometry* 的每条射线投影体数据：离散算子 ``A``。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_scan_geometry` `无输入 → ctgeometry` GPU: 无 — 描述一次 CT 扫描：每个视角下射线源和探测器的位置。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ellipsoid_phantom` `无输入 → voxel` GPU: 无 — 将若干均匀椭球之和栅格化到 ``(Z, Y, X)`` 网格上。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `ellipsoid_projections` `ctgeometry → projstack` GPU: 无 — 椭球之和的精确线积分，适用于本族的任意扫描。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 适用于所有具备重建公式的扫描的滤波反投影：FDK 及其同类方法。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — OS-SART：将 SIRT 更新逐个应用于有序视角子集。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `shepp_logan_3d` `无输入 → voxel` GPU: 无 — ``size`` 立方网格上的改进型三维 Shepp-Logan 头部体模。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — SIRT：同时使用全部视角，``x <- x + lam C A^T R (p - A x)``。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: 无 — 基于 Chambolle-Pock 原始对偶法的全变分重建。 · 示例: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
 
 #### tomography / forward (3)
 - `ellipse_phantom` `无输入 → image2d` GPU: 无 — 把若干均匀椭圆之和栅格化到 *size* x *size* 的切片上。 · 示例: `ct_reconstruction`, `poc_ct_fidelity`, `tomography_reconstruct`
