@@ -95,13 +95,13 @@
    "de": "Bilddatei laden (Strg+O)",
    "hi": "image फ़ाइल लोड करें (Ctrl+O)"
   },
-  "Load the synthetic demo scene (Ctrl+D)": {
-   "ja": "合成デモ画像を読み込む (Ctrl+D)",
-   "zh": "加载合成演示场景 (Ctrl+D)",
-   "tw": "載入合成示範場景 (Ctrl+D)",
-   "ko": "합성 데모 장면 불러오기 (Ctrl+D)",
-   "de": "Synthetische Demoszene laden (Strg+D)",
-   "hi": "synthetic demo scene लोड करें (Ctrl+D)"
+  "Load the synthetic demo scene": {
+   "ja": "合成デモ画像を読み込む",
+   "zh": "加载合成演示场景",
+   "tw": "載入合成示範場景",
+   "ko": "합성 데모 장면 불러오기",
+   "de": "Synthetische Demoszene laden",
+   "hi": "synthetic demo scene लोड करें"
   },
   "Save the displayed result (Ctrl+S)": {
    "ja": "表示中の結果を保存 (Ctrl+S)",
@@ -239,13 +239,13 @@
    "de": "Aktuelles 2-D-Ergebnis zur Anzeige einfärben",
    "hi": "display के लिए current 2-D परिणाम पर colour map लगाएँ"
   },
-  "Rotatable 3-D surface (Ctrl+3)": {
-   "ja": "回転可能な 3D サーフェス (Ctrl+3)",
-   "zh": "可旋转的 3-D 曲面 (Ctrl+3)",
-   "tw": "可旋轉的 3-D 曲面 (Ctrl+3)",
-   "ko": "회전 가능한 3-D 표면 (Ctrl+3)",
-   "de": "Drehbare 3-D-Oberfläche (Strg+3)",
-   "hi": "घुमाई जा सकने वाली 3-D surface (Ctrl+3)"
+  "Rotatable 3-D surface of the result (Ctrl+Alt+3)": {
+   "ja": "回転可能な 3D サーフェス (Ctrl+Alt+3)",
+   "zh": "可旋转的 3-D 曲面 (Ctrl+Alt+3)",
+   "tw": "可旋轉的 3-D 曲面 (Ctrl+Alt+3)",
+   "ko": "회전 가능한 3-D 표면 (Ctrl+Alt+3)",
+   "de": "Drehbare 3-D-Oberfläche (Strg+Alt+3)",
+   "hi": "घुमाई जा सकने वाली 3-D surface (Ctrl+Alt+3)"
   },
   "Two-frame perception mode": {
    "ja": "2 フレーム知覚モード",
@@ -271,21 +271,21 @@
    "de": "Pipeline als Code bearbeiten — ein `op a b` pro Zeile (# beginnt einen Kommentar).\nTippen vervollständigt automatisch; Klick auf den Rand setzt einen Haltepunkt.",
    "hi": "pipeline को code के रूप में edit करें — हर line में एक `op a b` (# से comment शुरू होता है)।\nautocomplete के लिए टाइप करें; breakpoint on/off करने के लिए gutter पर क्लिक करें।"
   },
-  "Run every line, timing each; stops at a breakpoint (Ctrl+Shift+Return)": {
-   "ja": "全行を実行し各行を計時・ブレークポイントで停止 (Ctrl+Shift+Return)",
-   "zh": "逐行运行并计时;遇断点停止 (Ctrl+Shift+Return)",
-   "tw": "逐行執行並計時;遇中斷點停止 (Ctrl+Shift+Return)",
-   "ko": "모든 줄을 실행하며 시간을 재고, 중단점에서 멈춥니다 (Ctrl+Shift+Return)",
-   "de": "Jede Zeile ausführen und messen; hält am Haltepunkt (Strg+Umschalt+Eingabe)",
-   "hi": "हर line रन करें और हर line का समय मापें; breakpoint पर रुकता है (Ctrl+Shift+Return)"
+  "Run every line, timing each; stops at a breakpoint": {
+   "ja": "全行を実行し各行を計時・ブレークポイントで停止",
+   "zh": "逐行运行并计时;遇断点停止",
+   "tw": "逐行執行並計時;遇中斷點停止",
+   "ko": "모든 줄을 실행하며 시간을 재고, 중단점에서 멈춥니다",
+   "de": "Jede Zeile ausführen und messen; hält am Haltepunkt",
+   "hi": "हर line रन करें और हर line का समय मापें; breakpoint पर रुकता है"
   },
-  "Execute one more line and show its result (F10)": {
-   "ja": "1 行実行して結果を表示 (F10)",
-   "zh": "再执行一行并显示结果 (F10)",
-   "tw": "再執行一行並顯示結果 (F10)",
-   "ko": "한 줄 더 실행하고 결과를 표시 (F10)",
-   "de": "Eine weitere Zeile ausführen und ihr Ergebnis zeigen (F10)",
-   "hi": "एक और line execute करें और उसका परिणाम दिखाएँ (F10)"
+  "Execute one more line and show its result": {
+   "ja": "1 行実行して結果を表示",
+   "zh": "再执行一行并显示结果",
+   "tw": "再執行一行並顯示結果",
+   "ko": "한 줄 더 실행하고 결과를 표시",
+   "de": "Eine weitere Zeile ausführen und ihr Ergebnis zeigen",
+   "hi": "एक और line execute करें और उसका परिणाम दिखाएँ"
   },
   "Clear the run highlight and per-line timings": {
    "ja": "実行ハイライトと行ごとの計時をクリア",
@@ -2180,6 +2180,39 @@
     "%d images: %d succeeded / %d failed / %d skipped, summary.csv": {"ja": "%d 枚: 成功 %d / 失敗 %d / スキップ %d、summary.csv"},
     "Stopped (%d/%d) · ": {"ja": "停止済み (%d/%d) · "},
     "Display only. The source data is not changed": {"ja": "表示処理のみ。元データは変更していません"},
-    "current: Graphics %d": {"ja": "現在: グラフィクス %d"}
+    "current: Graphics %d": {"ja": "現在: グラフィクス %d"},
+  "Value in this knob's real unit. The small box on the right holds the same knob as an exact 0..1 number": {"ja": "このつまみの実際の単位での値です。右の小さな欄には同じつまみを 0..1 の正確な数で持っています"},
+  "Whole-number value for this knob, for example a number of iterations": {"ja": "このつまみの整数値です(たとえば繰り返し回数)"},
+  "Pick one of the values this operator accepts for this knob": {"ja": "この op がこのつまみで受け付ける値から 1 つ選びます"},
+  "Switch this option on or off": {"ja": "このオプションの入/切を切り替えます"},
+  "Use this candidate as the knob's new value. This is one undo step": {"ja": "この候補をつまみの値にします。元に戻す操作 1 回で取り消せます"},
+  "Ask the running pipeline to stop. A stage that is already running cannot be interrupted, so it stops after that stage": {"ja": "実行中のパイプラインに停止を頼みます。いま走っている段は途中で止められないので、その段が終わってから止まります"},
+  "Show the result that finished with the settings from before your latest change": {"ja": "最後の変更より前の設定で終わった結果を表示します"},
+  "Run again with the settings as they are now": {"ja": "いまの設定でもう一度実行します"},
+  "Which knob to vary around its current value": {"ja": "現在値の前後で動かすつまみを選びます"},
+  "How many nearby values to try": {"ja": "試す近くの値の数です"},
+  "How A and B are shown: side by side, a swipe line, blinking between them, or their difference": {"ja": "A と B の見せ方です: 並べる、境界線で分ける、交互に点滅、差を出す"},
+  "How the difference is computed: absolute, signed or ratio. Used when A / B shows the difference": {"ja": "差の計算方法(絶対値・符号つき・比)です。A / B が差を表示するときに使います"},
+  "Blink interval in milliseconds, used by the blink view": {"ja": "点滅表示の切り替え間隔(ミリ秒)です"},
+  "Make the main image zoom and pan together with the A and B images": {"ja": "メインの画像も A・B の画像と一緒に拡大縮小・移動します"},
+  "Scale the display of each image to its own lowest and highest value": {"ja": "画像ごとに、その画像の最小値と最大値に合わせて表示します"},
+  "Use one common display range for the images being compared, so their brightness can be compared": {"ja": "比べている画像で共通の表示範囲を使います。明るさを見比べるときに使います"},
+  "Use the lo and hi values on the right as the display range": {"ja": "右の lo と hi を表示範囲として使います"},
+  "Lowest value of the display range (the dark end). Used with Manual": {"ja": "表示範囲の下限(暗い側の端)です。「手動」のときに使います"},
+  "Highest value of the display range (the bright end). Used with Manual": {"ja": "表示範囲の上限(明るい側の端)です。「手動」のときに使います"},
+  "Shows Operators, Pipeline · Parameters and Program next to the image, for adding and tuning stages": {"ja": "「処理を選ぶ」「処理手順と調整」「コード」を画像の横に出します。段を足して調整するときに使います"},
+  "Shows the A / B comparison large next to the image, with Pipeline · Parameters folded away": {"ja": "A/B 比較を画像の横に大きく出し、処理手順と調整は畳みます。変更前後を見比べるときに使います"},
+  "Shows Display · Analysis (large) and Variables & Objects next to the image, for reading values": {"ja": "「表示と分析」を大きく、「変数とオブジェクト」を画像の横に出します。値を読み取るときに使います"},
+  "Shows the Program (code) panel large next to the image, for editing the pipeline as text": {"ja": "「コード」欄を画像の横に大きく出します。パイプラインを文章として編集するときに使います"},
+  "Hide every panel and show only the image, keeping your work. Esc brings the panels back": {"ja": "パネルをすべて隠して画像だけを表示します(作業内容は保たれます)。Esc でパネルが戻ります"},
+  "Type a panel name to bring a hidden panel back": {"ja": "パネル名を入力して、隠れているパネルを呼び戻します"},
+  "Return to the previous panel layout": {"ja": "前のパネル配置に戻します"},
+  "Freeze the current pipeline and input settings, then apply them to every image in a folder, one by one": {"ja": "いまの処理と入力設定を固定して、フォルダ内の画像へ順番に適用します"},
+  "First steps": {"ja": "最初の 3 手"},
+  "1. Open a sample: File ▸ Sample images": {"ja": "1. サンプルを開く(ファイル ▸ サンプル画像)"},
+  "2. Select an operator in the Operators panel and press +": {"ja": "2. 「処理を選ぶ」パネルで op を選び、+ を押す"},
+  "3. Press ▶▶ to run": {"ja": "3. ▶▶ で実行"},
+  "Hide these steps. Help ▸ First steps shows them again": {"ja": "この案内を閉じます。ヘルプ ▸ 最初の 3 手 でもう一度出せます"},
+  "Show the three first steps over the image again": {"ja": "最初の 3 手の案内を画像の上にもう一度出します"}
  }
 }

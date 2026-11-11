@@ -3597,19 +3597,78 @@ def op_signature_detail(row) -> str:
     return "\n".join(lines)
 
 
-def op_tooltip(row) -> str:
-    """Multi-line tooltip for an operator list item / stage."""
+_HELP_SENTENCE_CACHE = {}
+_NON_ASCII_LETTERS = re.compile(r"[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]")
+
+
+def _help_lead_sentence(html_text):
+    """The first plain sentence of an op help page (the page's own description, not its metadata bullets)."""
+    import html as _html
+    for m in re.finditer(r"<p([^>]*)>(.*?)</p>", html_text, re.S | re.I):
+        attrs, inner = m.group(1), m.group(2)
+        if "margin:2px" in attrs or "#8b91a0" in attrs:          # metadata lines (data kinds, call, GPU ...)
+            continue
+        text = _html.unescape(re.sub(r"<[^>]+>", "", inner))
+        text = re.sub(r"\s+", " ", text).strip()
+        if not text or text.startswith(("•", "Call:")):
+            continue
+        cut = re.search(r"[。！？]|[.!?](?=\s|$)", text)
+        sentence = text[:cut.end()] if cut else text
+        return sentence[:200].strip()
+    return ""
+
+
+def help_first_sentence(name, lang="en"):
+    """The first sentence of ``studio_assets/op_help`` for *name* in *lang*, or "" if there is no page in that language.
+
+    ``<name>.<lang>.html`` is the page for that language; ``<name>.html`` is the Japanese page (and, for the
+    three hand-written pages, an English one) -- it is used only when its text really is in the wanted language,
+    so the tooltip never shows a sentence in the wrong language."""
+    key = (name, lang)
+    if key in _HELP_SENTENCE_CACHE:
+        return _HELP_SENTENCE_CACHE[key]
+    out = ""
+    try:
+        base = _help_root()
+        files = ["%s.html" % name] if lang == "ja" else ["%s.%s.html" % (name, lang)]
+        if lang == "en":
+            files.append("%s.html" % name)
+        for fn in files:
+            path = os.path.join(base, fn)
+            if not os.path.isfile(path):
+                continue
+            with open(path, encoding="utf-8") as fh:
+                sentence = _help_lead_sentence(fh.read())
+            cjk = bool(_NON_ASCII_LETTERS.search(sentence))
+            if sentence and (cjk if lang == "ja" else not cjk or lang in ("zh", "tw", "ko")):
+                out = sentence
+                break
+    except Exception:                                # noqa: BLE001 -- a tooltip never fails the list
+        out = ""
+    _HELP_SENTENCE_CACHE[key] = out
+    return out
+
+
+def op_tooltip(row, lang=None) -> str:
+    """Multi-line tooltip for an operator list item / stage.
+
+    With *lang*, the op's own one-sentence description (first sentence of its help page in that language)
+    replaces the generic "a, b are the two knobs" line; without a page in that language the text is as before."""
     if row.get("backend") == "general":
         return ("%s\ngeneral-algorithm tier (%s) — seq/scalar, not an image op\n"
                 "sort: %s → %s\nprovenance: %s\nrun via CLI: fullseye algo run %s"
                 % (row["name"], row["category"], row["in_sort"], row["out_sort"],
                    row.get("provenance") or "(none)", row["name"]))
     a_role, b_role = op_arg_roles(row["name"])
-    knobs = ("a: %s\nb: %s" % (a_role or "(op-dependent)", b_role or "(op-dependent)")
-             if (a_role or b_role) else "a, b are the two knobs (each 0..1); meaning depends on the op")
-    return ("%s\nHALCON alias: %s\ncategory: %s\nsort: %s → %s\n%s"
-            % (row["name"], row.get("halcon") or "(none)", row["category"],
-               row["in_sort"], row["out_sort"], knobs))
+    sentence = help_first_sentence(row["name"], lang) if lang else ""
+    if a_role or b_role:
+        knobs = "a: %s\nb: %s" % (a_role or "(op-dependent)", b_role or "(op-dependent)")
+    else:
+        knobs = "" if sentence else "a, b are the two knobs (each 0..1); meaning depends on the op"
+    head = "%s\n%s\n" % (row["name"], sentence) if sentence else "%s\n" % row["name"]
+    text = ("%sHALCON alias: %s\ncategory: %s\nsort: %s → %s"
+            % (head, row.get("halcon") or "(none)", row["category"], row["in_sort"], row["out_sort"]))
+    return text + ("\n" + knobs if knobs else "")
 
 
 # --- HDevelop-style program syntax (parser is module-level + headless-testable) --- #
@@ -4219,6 +4278,14 @@ def _knob_row_class(QtWidgets, QtCore):
             self.check = QtWidgets.QCheckBox("on")
             for w in (self.fspin, self.ispin, self.combo, self.check):
                 self.typed.addWidget(w)
+            # P-12 (2026-11-12): each typed widget says what it is until a spec supplies a more exact hint
+            self._default_tips = ((self.fspin, "Value in this knob's real unit. The small box on the right holds the same "
+                                                 "knob as an exact 0..1 number"),
+                                  (self.ispin, "Whole-number value for this knob, for example a number of iterations"),
+                                  (self.combo, "Pick one of the values this operator accepts for this knob"),
+                                  (self.check, "Switch this option on or off"))
+            for _w, _t in self._default_tips:
+                _w.setToolTip(tr(_t))
             self.typed.setVisible(False)
             self.typed.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
             self.fspin.valueChanged.connect(lambda v: self._from_typed(v))
@@ -4286,6 +4353,8 @@ def _knob_row_class(QtWidgets, QtCore):
                 tip = (tip + "\n" if tip else "") + "source: " + src
             for w in (self.typed, self.label):
                 w.setToolTip(tip)
+            for w, dflt in self._default_tips:
+                w.setToolTip(tip or tr(dflt))
             self.label.setText(PS.spec_label(sp, self.letter))
 
         def set_enabled(self, on):
@@ -6818,6 +6887,8 @@ def build_window(model=None):
     m.addAction(act_op_help); m.addAction(act_samples); m.addSeparator()
     act_guide = _act("Quick guide (en/ja/zh)", "Shift+F2", "A short guide in the selected language")
     m.addAction(act_guide)
+    act_first_steps = _act("First steps", None, "Show the three first steps over the image again")
+    m.addAction(act_first_steps)
     act_formats = _act("Files you can open (drag & drop)…", "",
                        "Every file type Studio opens by drag and drop: what opens it, ASCII / binary, needed packages")
     m.addAction(act_formats)
@@ -6893,6 +6964,10 @@ def build_window(model=None):
     run_banner = QtWidgets.QLabel("")
     run_show = QtWidgets.QPushButton(tr("Show that result"))
     run_current = QtWidgets.QPushButton(tr("Run with current settings"))
+    run_stop.setToolTip(tr("Ask the running pipeline to stop. A stage that is already running cannot be interrupted, "
+                           "so it stops after that stage"))
+    run_show.setToolTip(tr("Show the result that finished with the settings from before your latest change"))
+    run_current.setToolTip(tr("Run again with the settings as they are now"))
     for widget in (run_attr, run_status, run_progress, run_stop, run_banner, run_show, run_current):
         run_lay.addWidget(widget)
     run_progress.hide(); run_stop.hide(); run_banner.hide(); run_show.hide(); run_current.hide()
@@ -7214,8 +7289,10 @@ def build_window(model=None):
     _sbl = QtWidgets.QVBoxLayout(strip_body); _sbl.setContentsMargins(0, 2, 0, 2)
     strip_which = QtWidgets.QComboBox()
     strip_which.addItem(tr("knob a"), "a"); strip_which.addItem(tr("knob b"), "b")
+    strip_which.setToolTip(tr("Which knob to vary around its current value"))
     strip_count = QtWidgets.QComboBox()
     strip_count.addItem(tr("3 values"), 3); strip_count.addItem(tr("5 values"), 5)
+    strip_count.setToolTip(tr("How many nearby values to try"))
     _ctl = QtWidgets.QHBoxLayout(); _ctl.addWidget(strip_which); _ctl.addWidget(strip_count); _ctl.addStretch(1)
     _sbl.addLayout(_ctl)
     strip_cells_row = QtWidgets.QHBoxLayout()
@@ -7224,9 +7301,11 @@ def build_window(model=None):
         _slot = QtWidgets.QWidget()
         _sv = QtWidgets.QVBoxLayout(_slot); _sv.setContentsMargins(0, 0, 0, 0); _sv.setSpacing(2)
         _cell = QtWidgets.QToolButton()
+        _cell.setToolTip(tr("click to choose, then adopt"))
         _cell.setCheckable(True)
         _cell.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         _adopt = QtWidgets.QPushButton("Adopt this value")
+        _adopt.setToolTip(tr("Use this candidate as the knob's new value. This is one undo step"))
         _adopt.setEnabled(False)
         _sv.addWidget(_cell); _sv.addWidget(_adopt)
         _slot.setVisible(False)
@@ -7252,7 +7331,7 @@ def build_window(model=None):
     right = QtWidgets.QWidget(); rv = QtWidgets.QVBoxLayout(right); rv.setSpacing(6)
     rv.setContentsMargins(6, 6, 6, 6)
     b_load = _tbtn("open", "Open an image file (Ctrl+O)")
-    b_demo = _tbtn("demo", "Load the synthetic demo scene (Ctrl+D)")
+    b_demo = _tbtn("demo", "Load the synthetic demo scene")
     b_save = _tbtn("save", "Save the displayed result (Ctrl+S)")
     ImageView = _image_view_class(QtWidgets, QtGui, QtCore)
     Viewer3D = _viewer3d_class(QtWidgets, QtGui, QtCore)
@@ -7267,7 +7346,7 @@ def build_window(model=None):
     b_zin = _tbtn("zin", "Zoom in (Ctrl+=)")
     b_zout = _tbtn("zout", "Zoom out (Ctrl+-)")
     b_fit = _tbtn("fit", "Fit to window (Ctrl+0)")
-    b_11 = _tbtn("actual", "Actual size 1:1 (Ctrl+1)")
+    b_11 = _tbtn("actual", "Actual size 1:1 (Ctrl+Alt+1)")
     ilay = QtWidgets.QVBoxLayout()
     # One thin icon strip above the view: file I/O · | · zoom — so the image itself
     # owns almost all of the panel (roomy display, per user direction).
@@ -7286,12 +7365,48 @@ def build_window(model=None):
     image_panel.setObjectName("graphics_primary")
     image_panel.setMinimumSize(320, 260)
 
+    # ---- P-12 (2026-11-12): the first three steps, over the image until the user closes it ---------- #
+    first_steps = QtWidgets.QFrame(); first_steps.setObjectName("first_steps")
+    first_steps.setStyleSheet("#first_steps { background: %s; border: 1px solid %s; border-radius: 6px; }"
+                              % (NAVY_2, TEAL))
+    _fs_lay = QtWidgets.QHBoxLayout(first_steps); _fs_lay.setContentsMargins(10, 6, 6, 6); _fs_lay.setSpacing(14)
+    _fs_title = QtWidgets.QLabel("First steps"); _fs_title.setStyleSheet("font-weight:700;")
+    _fs_lay.addWidget(_fs_title)
+    for _txt in ("1. Open a sample: File ▸ Sample images",
+                 "2. Select an operator in the Operators panel and press +",
+                 "3. Press ▶▶ to run"):
+        _fs_step = QtWidgets.QLabel(_txt); _fs_step.setWordWrap(True)
+        _fs_lay.addWidget(_fs_step, 1)
+    _fs_close = QtWidgets.QToolButton(); _fs_close.setText("✕")
+    _fs_close.setToolTip("Hide these steps. Help ▸ First steps shows them again")
+    _fs_lay.addWidget(_fs_close, 0, QtCore.Qt.AlignTop)
+    ilay.insertWidget(0, first_steps)
+
+    def _first_steps_dismissed():
+        try:
+            return str(_settings().value("ui/first_steps_dismissed", "0")) == "1"
+        except Exception:                                   # noqa: BLE001 -- unreadable settings: show the steps
+            return False
+
+    def _close_first_steps(_=False):
+        first_steps.hide()
+        try:
+            _settings().setValue("ui/first_steps_dismissed", "1")
+        except Exception as exc:                            # noqa: BLE001
+            _log_soft_failure("could not remember that the first steps were closed", exc)
+
+    first_steps.setVisible(not _first_steps_dismissed())
+    _fs_close.clicked.connect(_close_first_steps)
+    act_first_steps.triggered.connect(lambda _=False: first_steps.show())
+    win._first_steps = first_steps
+    win._first_steps_close = _fs_close
+
     display = QtWidgets.QComboBox()
     display.addItems(["gray", "region overlay", "shaded relief", "height (color)"]
                      + [c for c in imgio.COLORMAPS if c != "gray"])
     display.setToolTip("How to render the 2-D result: gray, region overlay (a region drawn "
                        "on the source image), a false-colour palette, shaded relief, or height")
-    b_3d = _tbtn("cube", "Rotatable 3-D surface of the result (Ctrl+3)")
+    b_3d = _tbtn("cube", "Rotatable 3-D surface of the result (Ctrl+Alt+3)")
     b_loadb = _tbtn("open", "Load a second frame B for two-frame perception (flow / stereo)")
     percep_mode = QtWidgets.QComboBox(); percep_mode.addItems(list(PerceptionModel.MODES))
     percep_mode.setToolTip("Two-frame perception mode")
@@ -7305,7 +7420,12 @@ def build_window(model=None):
     range_shared = QtWidgets.QRadioButton("Shared by compared images")
     range_manual = QtWidgets.QRadioButton("Manual")
     range_shared.setChecked(True)
+    range_each.setToolTip(tr("Scale the display of each image to its own lowest and highest value"))
+    range_shared.setToolTip(tr("Use one common display range for the images being compared, so their brightness can be compared"))
+    range_manual.setToolTip(tr("Use the lo and hi values on the right as the display range"))
     range_lo = QtWidgets.QDoubleSpinBox(); range_hi = QtWidgets.QDoubleSpinBox()
+    range_lo.setToolTip(tr("Lowest value of the display range (the dark end). Used with Manual"))
+    range_hi.setToolTip(tr("Highest value of the display range (the bright end). Used with Manual"))
     for _spin, _value in ((range_lo, 0.0), (range_hi, 1.0)):
         _spin.setDecimals(6); _spin.setRange(-1e100, 1e100); _spin.setValue(_value)
         _spin.setEnabled(False)
@@ -7344,10 +7464,12 @@ def build_window(model=None):
     code_edit.setToolTip("Edit the pipeline as HDevelop-style code: `op (a, b)` (or `op a b`), "
                          "`*`/`#` comments, and control flow `for N … endfor` / `if … else … endif`.\n"
                          "Type for autocomplete; click the gutter to toggle a breakpoint; Step / Run (timed).")
-    c_run = _tbtn("play", "Run every line, timing each; stops at a breakpoint (Ctrl+Shift+Return)", accent=True)
+    # P-11 (2026-11-12): these hints named keys that are not bound here (Ctrl+Shift+Return, F10, and an F5 that
+    # runs the whole pipeline) -- the keys that exist are Run all F5 / Step F6 / Reset Shift+F5 in the Run menu.
+    c_run = _tbtn("play", "Run every line, timing each; stops at a breakpoint", accent=True)
     c_cont = _tbtn("playplay", "Continue: resume from the execution line to the next "
-                   "breakpoint / end (HDevelop F5 — pause via breakpoints, resume here)")
-    c_step = _tbtn("step", "Execute one more line and show its result (F10)")
+                   "breakpoint / end (pause via breakpoints, resume here)")
+    c_step = _tbtn("step", "Execute one more line and show its result")
     c_reset = _tbtn("reset", "Clear the run highlight and per-line timings")
     c_apply = _tbtn("apply", "Apply → parse the code and replace the pipeline")
     c_sync = _tbtn("sync", "Sync ← regenerate the code from the current pipeline")
@@ -7457,6 +7579,10 @@ def build_window(model=None):
     ab_blink = QtWidgets.QSpinBox()
     ab_blink.setRange(100, 5000); ab_blink.setSingleStep(50); ab_blink.setValue(500); ab_blink.setSuffix(" ms")
     ab_sync_main = QtWidgets.QCheckBox(tr("sync the main view too"))
+    ab_mode.setToolTip(tr("How A and B are shown: side by side, a swipe line, blinking between them, or their difference"))
+    ab_diff.setToolTip(tr("How the difference is computed: absolute, signed or ratio. Used when A / B shows the difference"))
+    ab_blink.setToolTip(tr("Blink interval in milliseconds, used by the blink view"))
+    ab_sync_main.setToolTip(tr("Make the main image zoom and pan together with the A and B images"))
     _abrow = QtWidgets.QHBoxLayout()
     for _w in (ab_ref, ab_mode, ab_diff, ab_swipe, ab_blink):
         _abrow.addWidget(_w)
@@ -9470,6 +9596,23 @@ def build_window(model=None):
     win._op_list = op_list
     win._op_buttons = {"insert": b_insert, "run_once": b_run_once, "help": b_help}
     win._op_list = op_list            # exposed for tests (verify the general tier is read-only)
+
+    class _OpTipFilter(QtCore.QObject):
+        """Hovering an op row shows that op's own one-sentence description (first sentence of its help page in the
+        UI language); the page is read on first hover, not for all ~1000 rows at start-up (P-12)."""
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.ToolTip:
+                item = op_list.itemAt(ev.pos())
+                name = item.data(QtCore.Qt.UserRole) if item is not None else None
+                row = (_row_by_name.get(name) or _op_row(name)) if isinstance(name, str) and name else None
+                if row:
+                    QtWidgets.QToolTip.showText(ev.globalPos(), op_tooltip(row, _UI_LANG["code"]), op_list)
+                    return True
+            return False
+    _op_tip_filter = _OpTipFilter(win)
+    op_list.viewport().installEventFilter(_op_tip_filter)
+    win._op_tip_filter = _op_tip_filter
+    win._op_row_tooltip = lambda name: op_tooltip(_row_by_name.get(name) or _op_row(name), _UI_LANG["code"])
     win._search = search              # exposed for tests (keyboard op insertion)
     win._op_names = op_names          # image-only names fed to the code parser / help picker
 
