@@ -1,11 +1,24 @@
 # GitHub Pages(Jekyll)の設定。docs/ をそのまま https://furuse.work/ として配信する。
 #
+# ★配備は .github/workflows/pages.yml(Actions 方式、2026-11-11 から)。この設定で組んだ _site から、
+# どのページからも参照されていない articles/assets/** を外してから配備する(配備物が 1 GB の上限を超えたため)。
+# repo からは消さない(Qiita が raw URL で読む)。外し方と門は tools/pages_site.py と CONTRIBUTING.md。
+#
 # ★`include` が要る理由(2026-09-07): Jekyll は `_` で始まるディレクトリを
 # **配信しない**(Jekyll の内部ディレクトリ規約)。op ごとの図を `docs/ops/_fig/`
 # に置いたところ、手元では全リンクが通り、門も緑で、公開サイトでは 724 枚が
 # 全部 404 だった。「門は事故の起きる場所に立てる」の再演 —— 配信側の規則は
 # 配信側でしか見えない。`tests/test_docs_index_reachable.py` が、リンクされて
 # いる `_` ディレクトリがここに列挙されていることを確かめる。
+# ★url と baseurl を明示する(2026-11-11)。legacy の配備でも同じ値(canonical = https://furuse.work/…、
+# CSS = /assets/css/style.css)なので挙動は変わらない。Actions 方式の jekyll-build-pages では、
+# jekyll-github-metadata(github-pages 232 = 2.16.1)が Pages の情報を読めないと url を
+# https://<owner>.github.io、baseurl を /fullseye に倒すおそれがある。同 gem の site_github_munger.rb は
+# `site.config["url"] ||= …`(書いてあれば上書きしない)、baseurl は nil か "/" のときだけ上書きする
+# (v2.16.1 のソースで確認)ので、"" を書けば倒れない。倒れたら tools/pages_site.py check の門 4 が落とす。
+url: "https://furuse.work"
+baseurl: ""
+
 include:
   - _fig
 

@@ -191,6 +191,58 @@ and the archived file is the whole repository snapshot (585 MB for v0.1.11, beca
 `related_identifiers` on the record are exactly the two from `.zenodo.json`; the GitHub
 tag is shown on the record page but is not among them.
 
+## Publishing the site (GitHub Pages)
+
+`https://furuse.work/` is to be deployed by `.github/workflows/pages.yml`. The deploy job takes effect only
+after the repository's Pages source is switched from the legacy "build `/docs` from `master`" to
+"GitHub Actions"; until then the legacy build keeps serving the site. The legacy build grew to 1.54 GB, over the 1 GB Pages
+limit, and its deploy step sometimes hit the 10-minute timeout, which `actions/deploy-pages` cannot raise.
+
+What the workflow does on every push to `master` that touches `docs/**`, `tools/pages_site.py` or
+`.github/workflows/pages.yml` (and, without deploying, on pull requests that touch them): build `docs/`
+with `actions/jekyll-build-pages` (the `github-pages` gem; whether its version matches the legacy build
+is not verified, so compare the build sample in the job summary) → `tools/pages_site.py prune --apply` removes the files under `articles/assets/` that no page,
+stylesheet, script or data file of the built site refers to → `tools/pages_site.py check` → upload and
+deploy. The assets stay in the repository: Qiita articles read them through `raw.githubusercontent.com`
+URLs, so only the deployed copy is smaller.
+
+`check` re-reads the pruned site a second, stricter way (`html.parser` attributes `href`/`src`/`srcset`/
+`poster`/`data-src` and CSS `url()`), and fails when
+
+1. a reference resolves to a file under `articles/assets/` that exists in `docs/` but is missing from the
+   site (the job summary lists the reference and the page that holds it). Files that are in `docs/`
+   but were never in the built site either (Jekyll does not serve names starting with `_`) are listed
+   separately and do not fail: `--built-list` is the file list taken right after the build;
+2. the site plus an estimate of the tar headers (1024 B per file) is larger than 1,000,000,000 bytes
+   (GitHub's limit; the summary prints what is left, in MiB and %);
+3. fewer HTML pages or fewer kept assets than the floor in the workflow (so an empty or wrong directory
+   cannot pass).
+4. a page's `<link rel="stylesheet">` or `<script src>` that points into the site does not exist, any page
+   has a root-relative reference starting with `/fullseye/` (the sign that `baseurl` fell back to the
+   repository name), or the site has no internal stylesheet at all. `docs/_config.yml` pins `url` and
+   `baseurl` so this should not happen; the summary also prints the stylesheet, canonical, `og:url`,
+   title and generator of `index.html` and `view2026/index.html` to compare with the legacy build.
+
+Broken internal links (and asset references that resolve nowhere, not even in `docs/`) are counted in
+the summary but do not fail the job. Not covered: URLs that JavaScript assembles from strings or builds
+from fetched JSON; `prune` keeps most of them because it reads JS and JSON loosely, but `check` does not
+verify them.
+
+To check a built site locally (any `_site`, for example the extracted `artifact.tar` of a run's `github-pages`
+artifact):
+
+```bash
+python3 tools/pages_site.py snapshot --site _site --out built.txt   # file list before pruning
+python3 tools/pages_site.py prune --site _site            # counts only; add --apply to remove
+python3 tools/pages_site.py check --site _site --source-docs docs --built-list built.txt \
+    --max-bytes 1000000000 --min-pages 1 --min-kept-assets 1
+```
+
+If gate 1 fails, the page refers to the asset in a form the loose reader of `prune` does not resolve: fix
+the reader in `tools/pages_site.py` (and add the form to `tests/test_pages_site_tool_2026_11_11.py`),
+not the page. If gate 2 fails, look at `kept_largest` in `pages-prune.json` (the
+`pages-reports` artifact of the run).
+
 ## Dev quickstart
 
 ```bash
