@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 51 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 52 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1709,6 +1709,44 @@ Source: [examples/poc_ct_casting_sparse_views.py](https://github.com/furuse-kazu
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ct_casting_sparse_views)
 
 Ops used (notes): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_scan/ct_adjoint_project.html) · [`ct_dual_energy_reconstruct`](https://furuse.work/ops/tomography/ct_scan/ct_dual_energy_reconstruct.html) · [`ct_forward_project`](https://furuse.work/ops/tomography/ct_scan/ct_forward_project.html) · [`ct_scan_geometry`](https://furuse.work/ops/tomography/ct_scan/ct_scan_geometry.html) · [`ellipsoid_phantom`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_phantom.html) · [`ellipsoid_projections`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_projections.html) · [`fdk_reconstruct`](https://furuse.work/ops/tomography/ct_scan/fdk_reconstruct.html) · [`os_sart_reconstruct`](https://furuse.work/ops/tomography/ct_scan/os_sart_reconstruct.html) · [`shepp_logan_3d`](https://furuse.work/ops/tomography/ct_scan/shepp_logan_3d.html) · [`sirt_reconstruct`](https://furuse.work/ops/tomography/ct_scan/sirt_reconstruct.html) · [`tv_reconstruct`](https://furuse.work/ops/tomography/ct_scan/tv_reconstruct.html) · [`vol_rle_centroid`](https://furuse.work/ops/3d/rle_region/vol_rle_centroid.html) · [`vol_rle_components`](https://furuse.work/ops/3d/rle_region/vol_rle_components.html) · [`vol_rle_volume`](https://furuse.work/ops/3d/rle_region/vol_rle_volume.html)
+
+## No.2026.316 —— Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected
+
+Ground-metal patches (96x96 px) are rendered with scratches (V-grooves), dents (smooth pits) and stains (a brown drop in reflectance). Height defects change only the shading and the stain changes only the colour, with a defect weight from 0 to 1. At pixel level, learn_ndim_norm learns a normal model from clean metal pixels and class_ndim_norm paints the anomalous ones. Stain pixels reach IoU 0.915 with classify_image_class_lut, 0.729 with class_2dim_sup and 0.535 with class_2dim_unsup on standardised channels. Seven region features train GMM, MLP, SVM and k-NN classifiers. Over five seeds their accuracy is 0.871-0.886 (±0.02). Each stays within 0.41 of the tolerance 3·sqrt(2p(1−p)/n) of a scikit-learn second implementation, and the one-component GMM agrees 100 % with closed-form QDA. Corrosion pits, never trained, are 94.8 % rejected by a log-density threshold set on the validation split; 6.0 % of known patches are rejected. Permuted labels drop the accuracy to 0.238. The stain's 100 % recall holds because it is the only defect that changes colour, not because a feature leaks the truth. Scratches within 15° of the grinding lay are recalled at 0.275, against 0.949 above 45°: the gradient chosen to suppress the lay suppresses scratches along it too.
+
+[![Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png)
+
+*↑ **Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected** ―― Ground-metal patches (96x96 px) are rendered with scratches (V-grooves), dents (smooth pits) and stains (a brown drop in reflectance). Height defects change only the shading and the stain changes only the colour, with a defect weight from 0 to 1. At pixel level, learn_ndim_norm learns a normal model from clean metal pixels and class_ndim_norm paints the anomalous ones. Stain pixels reach IoU 0.915 with classify_image_class_lut, 0.729 with class_2dim_sup and 0.535 with class_2dim_unsup on standardised channels. Seven region features train GMM, MLP, SVM and k-NN classifiers. Over five seeds their accuracy is 0.871-0.886 (±0.02). Each stays within 0.41 of the tolerance 3·sqrt(2p(1−p)/n) of a scikit-learn second implementation, and the one-component GMM agrees 100 % with closed-form QDA. Corrosion pits, never trained, are 94.8 % rejected by a log-density threshold set on the validation split; 6.0 % of known patches are rejected. Permuted labels drop the accuracy to 0.238. The stain's 100 % recall holds because it is the only defect that changes colour, not because a feature leaks the truth. Scratches within 15° of the grinding lay are recalled at 0.275, against 0.949 above 45°: the gradient chosen to suppress the lay suppresses scratches along it too.*
+
+[![painting the stain pixel by pixel](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/02_stain_pixels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/02_stain_pixels.png)
+
+*↑ The measurement ―― painting the stain pixel by pixel (figure labels are in Japanese; the numbers are the same)*
+
+[![cuts chosen on training pixels only](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/03_stain_pixel_iou_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/03_stain_pixel_iou.png)
+
+*↑ cuts chosen on training pixels only*
+
+[![tol = 3 sqrt(2p(1-p)/n) + 1/n; same features, same split](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/04_classifier_accuracy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/04_classifier_accuracy.png)
+
+*↑ tol = 3 sqrt(2p(1-p)/n) + 1/n; same features, same split*
+
+[![pits never seen in training: 95 % rejected; known patches rejected 6.0 %](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/05_gmm_confusion_reject_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/05_gmm_confusion_reject.png)
+
+*↑ pits never seen in training: 95 % rejected; known patches rejected 6.0 %*
+
+[![5 seeds, test split; best overall knn 0.886](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/06_accuracy_by_weight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/06_accuracy_by_weight.png)
+
+*↑ 5 seeds, test split; best overall knn 0.886*
+
+```
+py -3.11 examples/poc_surface_defect_classifiers.py
+```
+
+Source: [examples/poc_surface_defect_classifiers.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_surface_defect_classifiers.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_surface_defect_classifiers)
+
+Ops used (notes): [`class_2dim_sup`](https://furuse.work/ops/segmentation/classify/class_2dim_sup.html) · [`class_2dim_unsup`](https://furuse.work/ops/segmentation/classify/class_2dim_unsup.html) · [`class_ndim_norm`](https://furuse.work/ops/segmentation/classify/class_ndim_norm.html) · [`classify_class_gmm`](https://furuse.work/ops/mv/classify/classify_class_gmm.html) · [`classify_class_knn`](https://furuse.work/ops/mv/classify/classify_class_knn.html) · [`classify_class_mlp`](https://furuse.work/ops/mv/classify/classify_class_mlp.html) · [`classify_class_svm`](https://furuse.work/ops/mv/classify/classify_class_svm.html) · [`classify_image_class_lut`](https://furuse.work/ops/segmentation/classify/classify_image_class_lut.html) · [`evaluate_class_gmm`](https://furuse.work/ops/mv/classify/evaluate_class_gmm.html) · [`learn_ndim_norm`](https://furuse.work/ops/segmentation/classify/learn_ndim_norm.html) · [`train_class_gmm`](https://furuse.work/ops/mv/classify/train_class_gmm.html) · [`train_class_knn`](https://furuse.work/ops/mv/classify/train_class_knn.html) · [`train_class_mlp`](https://furuse.work/ops/mv/classify/train_class_mlp.html) · [`train_class_svm`](https://furuse.work/ops/mv/classify/train_class_svm.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 

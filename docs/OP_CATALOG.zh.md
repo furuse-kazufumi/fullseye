@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(488 例)
+### 2-D 图像/信号/几何(492 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -239,6 +239,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_table_tennis_rally_loop` — op: `aim_velocity`, `ball_params`, `flight_simulate`, `impact_params`, `racket_impact`, `racket_params`, `racket_plan`, `rally_simulate`, `table_params`, `text_box` `py -3.11 examples/poc_table_tennis_rally_loop.py`
 - `poc_table_tennis_bounce` — op: `add_ball`, `ball_detect`, `ball_mesh`, `ball_params`, `ball_set_pose`, `bounce`, `bounce_detect`, `crosshair`, `flight_fit`, `flight_ode`, `flight_simulate`, `flight_state_at`(另有 11 个) `py -3.11 examples/poc_table_tennis_bounce.py`
 - `poc_table_tennis_spin` — op: `add_ball`, `ball_detect`, `ball_mesh`, `ball_params`, `ball_set_pose`, `ball_track`, `bounce_detect`, `camera_rig`, `fit_spin`, `flight_ode`, `flight_simulate`, `impact_params`(另有 9 个) `py -3.11 examples/poc_table_tennis_spin.py`
+- `poc_cd_spin_joint` — op: `add_ball`, `ball_mesh`, `ball_params`, `drag_coefficient_sphere`, `fit_aero`, `fit_spin`, `fit_spin_aero`, `flight_ode`, `magnus_lift_coefficient`, `rms`, `table_params`, `table_world` `py -3.11 examples/poc_cd_spin_joint.py`
 - `poc_kendama` — op: `ball_detect`, `camera_perceiver`, `catch_plan_staged`, `catch_success_rate`, `crosshair`, `elliptic_k_agm`, `gs_from_world`, `gs_render`, `gs_render_fn`, `gs_update`, `hole_detect`, `ken_mesh`(另有 22 个) `py -3.11 examples/poc_kendama.py`
 - `poc_physarum_transport` — op: `graph_physarum_transport`, `physarum_transport_image`, `wasserstein_1d` `py -3.11 examples/poc_physarum_transport.py`
 - `poc_worm_core_persists` — op: `graph_core_persistence`, `graph_kcore`, `graph_rich_club`, `graph_rich_club_curve` `py -3.11 examples/poc_worm_core_persists.py`
@@ -324,6 +325,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_public_camera_heading_real` — op: `bloom`, `camera_orientation_from_sun_candidates`, `ellipse`, `sun_position` `py -3.11 examples/poc_public_camera_heading_real.py`
 - `poc_public_camera_heading` — op: `camera_orientation_from_skyline`, `camera_orientation_from_sun`, `dem_skyline`, `render_skyline_view`, `skyline_extract`, `sun_pixel_position`, `sun_position` `py -3.11 examples/poc_public_camera_heading.py`
 - `poc_thermal_drift_metrology` — op: `lockin_thermal_wave`, `polygon_area`, `thermo_optic_coefficient` `py -3.11 examples/poc_thermal_drift_metrology.py`
+- `poc_caltab_chain_truth` — op: `camera_calibration_lm`, `create_caltab`, `find_caltab`, `find_marks_and_pose`, `gaussian` `py -3.11 examples/poc_caltab_chain_truth.py`
 - `poc_calibration_truth_map` — op: `calibration_error_map`, `calibration_next_pose`, `calibration_uncertainty_map`, `camera_calibration`, `camera_calibration_lm`, `checkerboard_points`, `find_checkerboard_corners`, `sim_checkerboard` `py -3.11 examples/poc_calibration_truth_map.py`
 - `poc_real_chessboard_undistort` — op: `camera_calibration_lm`, `change_radial_distortion_image`, `ellipse`, `map_image`, `points_lepetit`, `rectify_to_world_plane` `py -3.11 examples/poc_real_chessboard_undistort.py`
 
@@ -352,6 +354,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_symmetry_self_reference_inspection` — op: `center_from_symmetric_edges`, `rotational_symmetry`, `symmetry_difference_map`, `symmetry_score` `py -3.11 examples/poc_symmetry_self_reference_inspection.py`
 - `poc_print_layer_inspection` — op: `contours_to_gcode`, `gcode_extrusion_volume`, `gcode_layer_image`, `gcode_read`, `gcode_time_estimate`, `gcode_write`, `mesh_slice_contours`, `mesh_slice_stack`, `print_layer_defect_map`, `prism_mesh`, `read_3mf`, `vol_render_transfer`(另有 1 个) `py -3.11 examples/poc_print_layer_inspection.py`
 - `poc_em_second_opinion` — op: `holdout_threshold`, `points_activity_video`, `seg_boundary_membrane_gap`, `seg_inject_merge`, `seg_inject_split`, `seg_label_changes`, `seg_membrane_chord_score`, `seg_membrane_response` `py -3.11 examples/poc_em_second_opinion.py`
+- `poc_surface_defect_classifiers` — op: `class_2dim_sup`, `class_2dim_unsup`, `class_ndim_norm`, `classify_class_gmm`, `classify_class_knn`, `classify_class_mlp`, `classify_class_svm`, `classify_image_class_lut`, `evaluate_class_gmm`, `learn_ndim_norm`, `train_class_gmm`, `train_class_knn`(另有 2 个) `py -3.11 examples/poc_surface_defect_classifiers.py`
 - `poc_equipment_selection_map` — op: `bandpass_spectrum`, `blackbody_spectrum`, `carbon_black_absorption`, `hyperspectral_band_weights`, `ingaas_photodiode_qe`, `material_nir_absorption`, `nir_model_info`, `pod_ahat_fit`, `pod_false_call`, `pod_from_ahat`, `silicon_photodiode_qe`, `spectral_integral` `py -3.11 examples/poc_equipment_selection_map.py`
 - `poc_illumination_cone_vs_na` — op: `blast_normals`, `metal_mirror_rgb`, `micro_normals`, `solid_angle_boundaries`, `solid_angle_brightness`, `solid_angle_light`, `solid_angle_render`, `solid_angle_sweep`, `text_box` `py -3.11 examples/poc_illumination_cone_vs_na.py`
 - `poc_hdr_glossy_metal_inspection` — op: `camera_response_debevec`, `camera_response_linear`, `camera_response_robertson`, `exposure_fusion_mertens`, `hdr_dynamic_range`, `hdr_exposure_series_simulate`, `hdr_merge`, `hdr_radiance_error` `py -3.11 examples/poc_hdr_glossy_metal_inspection.py`
@@ -363,6 +366,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_template_tracking` — op: `axes_frame`, `axes_transform`, `ncc_locate`, `plot_series`, `shape_locate`, `text_box`, `ticks` `py -3.11 examples/poc_template_tracking.py`
 - `poc_change_detection_misreg` — op: `affine_trans_image`, `erf`, `histogram_match`, `opening_circle`, `piv_cross_correlate`, `piv_outlier_mask`, `procrustes_fit`, `threshold` `py -3.11 examples/poc_change_detection_misreg.py`
 - `poc_real_tless_6dof` — op: `axes_frame`, `axes_transform`, `data_to_pixel`, `ellipse`, `grid_lines`, `legend_box`, `plot_series`, `rmse`, `text_box`, `ticks` `py -3.11 examples/poc_real_tless_6dof.py`
+- `poc_real_tum_rgbd_slam` — op:(没有 op 笔记链接到此例) `py -3.11 examples/poc_real_tum_rgbd_slam.py`
 - `poc_print_registration` — op: `fly_hex_lattice`, `fly_vogel_lattice`, `frame_align`, `halftone_moire_period`, `halftone_screen`, `lattice_moire_peak`, `peak_subbin`, `piv_cross_correlate`, `rms` `py -3.11 examples/poc_print_registration.py`
 - `poc_part_locate_features` — op: `features_accuracy_table`, `features_match`, `features_orb`, `features_sift`, `identity`, `ransac_homography` `py -3.11 examples/poc_part_locate_features.py`
 - `poc_multimodal_mi_registration` — op: `register_ecc`, `register_image`, `register_mi` `py -3.11 examples/poc_multimodal_mi_registration.py`
@@ -841,9 +845,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 
 ## Operators by family(族 → 类别，全部 op)
 
-_共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
+_共 3844 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
 
-族一览: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 741 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族一览: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 742 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -1635,7 +1639,7 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `f2_gauss_pyramid` (halcon: `gen_gauss_pyramid`) `image → image` GPU: 有(许可列表) — 返回图像高斯金字塔的某一层:先按 2 的 ``level`` 次幂降采样(模糊+抽取),再上采样回原始 HxW,得到分辨率降低的带限(低通)版本。``a`` 选择层级(1..4);``b`` 被忽略。 · 示例: `gallery2d_smoothing_rank`
 - `gauss_filter` (halcon: `gauss_filter`) `image → image` GPU: 有(gauss_filter@twin) — 通过高斯模糊(``scipy.ndimage.gaussian_filter``,sigma 为 ``0.3+2.7*a``)实现的平滑处理。是 HALCON 的 ``gauss_filter``(Smooth using discrete Gauss functions.)的替代实现 —— HALCON 使用离散高斯核(整数运算),这里则是连续高斯核的 scipy 实现,虽是近似,但结果非常接近。 · 示例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_pv_thermal_survey`, `poc_sea_ice_concentration`, `poc_search_sweep_width`, `poc_solar_limb_darkening`, `poc_vanishing_detail_and_morphing_area`, `poc_vessel_network`, `poc_white_balance`
 - `gauss_image` (halcon: `gauss_image`) `image → image` GPU: 有(gauss_image) — 实现与 ``gauss_filter`` 完全相同(同一个 ``kind: "gauss"`` 分支,sigma 为 ``0.3+2.7*a`` 的高斯模糊)。在 HALCON 中,``gauss_filter``(离散近似)与 ``gauss_image``(频域/连续高斯)是不同的算子,但此替代实现不作区分,指向同一函数。是 HALCON 的 ``gauss_image``(Smooth an image using discrete Gaussian functions.)的替代实现。 · 示例: `gallery2d_smoothing_rank`, `poc_colocalization_crosstalk`, `poc_moire_screen`, `poc_prnu_camera_fingerprint`, `poc_weld_radiograph_porosity`
-- `gaussian` (halcon: `gauss_filter`) `image → image` GPU: 有(gauss_filter) — 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 · 示例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `mcp_task_score`, `mcp_usability`, `perf_pointcloud_descriptors`, `photon_timeresolved`, `poc_ai_built_inspection_scored`, `poc_bone_trabecular_thickness`, `poc_chromatic_confocal`, `poc_dtof_ranging`, `poc_flybrain_pointcloud`, `poc_interferometry_step`, `poc_itof_multifreq`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
+- `gaussian` (halcon: `gauss_filter`) `image → image` GPU: 有(gauss_filter) — 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 · 示例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `mcp_task_score`, `mcp_usability`, `perf_pointcloud_descriptors`, `photon_timeresolved`, `poc_ai_built_inspection_scored`, `poc_bone_trabecular_thickness`, `poc_caltab_chain_truth`, `poc_chromatic_confocal`, `poc_dtof_ranging`, `poc_flybrain_pointcloud`, `poc_interferometry_step`, `poc_itof_multifreq`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
 - `guided_filter` (halcon: `guided_filter`) `image → image` GPU: 无 — 实现与``bilateral_filter``完全相同(``kind: "bilateral"``)。真正的引导滤波(guided filter,基于局部线性模型的保边平滑)在数学上是不同的算法,但此替代实现以双边滤波代替(为满足相似用途=保边平滑的近似,结果数值并不一致)。是HALCON``guided_filter``(Guided filtering of an image.)的代用。 · 示例: `gallery2d_smoothing_rank`
 - `isotropic_diffusion` (halcon: `isotropic_diffusion`) `image → image` GPU: 有(许可列表) — 实现是简单的高斯模糊(``gaussian_filter``,sigma为``0.5+2.5*a``)。由于各向同性扩散方程的解在数学上等价于高斯核卷积,此近似在理论上也是成立的(不具备各向异性扩散那样的保边效果,而是无论方向如何都均匀平滑)。相当于HALCON的``isotropic_diffusion``(Perform an isotropic diffusion of an image.)。 · 示例: `gallery2d_smoothing_rank`
 - `kuwahara` `image → image` GPU: 有(许可列表) — Kuwahara 滤波（1976）。保边平滑：取四个相互重叠的窗口中方差最小者的均值作为输出。 · 示例: `gallery2d_smoothing_rank`
@@ -1762,7 +1766,7 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `tb_deflicker` `video → video` GPU: 无 — 逐帧亮度去闪烁 → ``(T, H, W)``（``video``）。 · 示例: 无
 - `tb_dem_ecef_to_geodetic` `points → points` GPU: 无 — ECEF → 大地坐标。返回 ``(..., 3)`` 的 ``(纬度[度], 经度[度], 高度[m])``。 · 示例: 无
 - `tb_derivate_funct_1d` `signal → signal` GPU: 仅在链中(许可列表) — 通过中心差分计算一阶导数(HALCON ``derivate_funct_1d``)。 · 示例: 无
-- `tb_drag_coefficient_sphere` `signal → signal` GPU: 有(许可列表) — 光滑球体阻力系数的经验公式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。对乒乓球(Re ≈ 1〜5 × 10⁴)约为 ≈ 0.4〜0.5。 · 示例: 无
+- `tb_drag_coefficient_sphere` `signal → signal` GPU: 有(许可列表) — 光滑球体阻力系数的经验公式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。对乒乓球(Re ≈ 1〜5 × 10⁴)为 0.39〜0.41(Re 1.6 × 10⁴ = 6 m/s 时为 0.392，5 × 10⁴ 时为 0.406，1 × 10⁵ 时为 0.426；在 Re ≈ 3 × 10⁵ 的阻力危机处降至 0.17)。 · 示例: 无
 - `tb_dtof_depth` `counts → feature` GPU: 无 — 由光子到达时间直方图得到的距离：``d = c*t/2``。 · 示例: 无
 - `tb_dynsys_correlation_dimension` `points → feature` GPU: 无 — Grassberger–Procaccia 关联维数 —— ``log C(r)`` 的斜率。 · 示例: 无
 - `tb_elastic_deform` `points → points` GPU: 无 — 通过平滑随机位移场进行弹性变形（相关距离 ``sigma``，均方根振幅 ``alpha``）。 · 示例: 无
@@ -3631,7 +3635,7 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: 无 — 非极大值抑制(3.39 节)。像素 (x, y) 仅当在窗口内**对前面的邻居(上方各行以及同一行左侧)≥、对后面的邻居 >** 时才保留(REQ-0337)。平坦峰顶只保留 1 个像素正是由于这种不对称。*mask* 的非零像素不参与比较，原样保留 (也不用于其他像素的比较，REQ-0336)。被抑制的像素在 U8 时为 0，S16 时为 INT16_MIN(REQ-0335)。超出窗口的邻居不比较。 · 示例: `gallery_openvx_spec_values`
 
-### drive (741 ops / 55 categories)
+### drive (742 ops / 55 categories)
 
 名字是驾驶，内容却是**物理仿真与机器人 PoC 的台账**: 除驾驶(赛道、交通、决策、CARLA / CommonRoad)外，触觉(tac*)、peg-in-hole(peg*)、抛光(polish)、磨削(grind)、切削(cutting)、粉体(granular / scoop)、粉末 X 射线衍射(pxrd)、球类(ball / puck)等作为类别共存其中。请按类别名查找。
 
@@ -3650,29 +3654,30 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `vda5050_order` `table → table` GPU: 无 — 将 1 台车的计划(格子序列)转换为 VDA 5050 的 order(dict)。去除等待，以格子中心为节点。 · 示例: `poc_agv_fleet`
 - `warehouse_grid` `无输入 → any` GPU: 无 — 由货架行与通道构成的仓库网格(True = 可行驶)。 · 示例: `poc_agv_fleet`
 
-#### drive / ball (32)
+#### drive / ball (33)
 - `aic_from_rss` `无输入 → scalar` GPU: 无 — 由最小二乘残差平方和计算赤池信息量准则:AIC = n ln(RSS/n) + 2k(高斯噪声,方差按最大似然估计,常数项略去)。只有对同一数据拟合的模型之间的**差**才有意义(绝对值依赖尺度与 n)。n ≤ k、RSS ≤ 0、非有限值会引发 ValueError(RSS = 0 时 AIC = −∞,模型选择的问题不成立)。 · 示例: `poc_video_physics_consistency`
 - `apex_sequence` `无输入 → signal` GPU: 无 — 落下并弹跳序列的最高点高度 h_k = e^{2k} h₀(k = 0..n)。 · 示例: `poc_ball_bounce`
-- `ball_params` `无输入 → table` GPU: 无 — 球的参数表。默认为乒乓球(ITTF：直径 40 mm，2.7 g，薄壳)。 · 示例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_video_physics_consistency`
+- `ball_params` `无输入 → table` GPU: 无 — 球的参数表。默认为乒乓球(ITTF：直径 40 mm，2.7 g，薄壳)。 · 示例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_video_physics_consistency`
 - `ballistic_vs_thrust` `signal × points × table → table` GPU: 无 — 对同一条轨迹同时拟合"重力 + 阻力"(:func:`drag_fit`)与"重力 + 阻力 + 恒定比推力"(:func:`thrust_fit`),返回 AIC(:func:`aic_from_rss`)之差 ΔAIC = AIC_弹道 − AIC_推力。返回 ``{"ballistic", "thrust"}``(两个拟合)并附上 ``"aic_ballistic", "aic_thrust", "delta_aic", "thrust_norm"``。**不返回判定**(与 :mod:`imgforensics` 同一流派):按**简约原则**来读——推力模型多 3 个参数,即使只有噪声也会略微降低 RSS,除非赢过罚项 2Δk,否则取更简单的弹道模型。仅有噪声时 ΔAIC **以 −2Δk 为下界**、按 χ²(Δk) 近似的宽度散布(中位数约 −2Δk + 1;严格说是混合分布,因为有些拟合撞到 C_d = 0 的壁);推力侧从弹道侧的解出发,所以 ΔAIC ≥ −2Δk 成立。"决定性"的惯用值是 10(假阳性远低于 1 %),但不内置阈值,由调用方决定。当推力侧的 RSS 低于离散化下限 ``rss_floor`` 的 10 倍(无噪声、或比网格解得更细的轨迹)时引发 ValueError——AIC 比较的是噪声而不是舍入屑(无噪声真值在默认 dt 下曾得到 ΔAIC = +144,2026-10-23)。 · 示例: `poc_video_physics_consistency`
 - `bounce` `table × table → table` GPU: 无 — 刚体球撞击平面瞬间的速度与角速度更新(库仑摩擦，Cross 2002 / Garwin 1969 的 2 种状态)。 · 示例: `gallery_drive_ballistics`, `poc_ball_bounce`, `poc_table_tennis_bounce`
 - `bounce_total_time` `无输入 → scalar` GPU: 无 — 从高度 h₀ 落下至停止的总时间 = √(2h₀/g)·(1 + e)/(1 − e)(等比级数的闭式，e < 1)。 · 示例: `poc_ball_bounce`
 - `contact_angular_momentum` `table → signal` GPU: 无 — 绕接触点的角动量 L_c = I ω + m (p − p_c) × v = I ω + m r (n × v)。弹跳前后不变(定理)。 · 示例: `poc_ball_bounce`
 - `cup_catch_check` `无输入 → table` GPU: 无 — 球是否进入皿(中心、轴、半径)的几何判定：球心距皿轴在 (cup_radius − ball_radius) 以内，高度在距皿面球半径 1.5 倍以内(0 ≤ height ≤ 1.5 r)，速度 ≤ v_rel_max。``{"caught", "lateral", "height", "speed"}``。皿比球小时为 ValueError。 · 示例: `gallery_drive_ballistics`
-- `drag_coefficient_sphere` `signal → signal` GPU: 无 — 光滑球阻力系数的经验式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。乒乓球(Re ≈ 1–5 × 10⁴)约为 0.4–0.5。 · 示例: `gallery_drive_ballistics`
+- `drag_coefficient_sphere` `signal → signal` GPU: 无 — 光滑球阻力系数的经验式(Morrison 2013，Re ≲ 1e6)：24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。乒乓球(Re ≈ 1–5 × 10⁴)为 0.39–0.41(Re 1.6 × 10⁴ = 6 m/s 时为 0.392，5 × 10⁴ 时为 0.406，1 × 10⁵ 时为 0.426；在 Re ≈ 3 × 10⁵ 的阻力危机处降至 0.17)。 · 示例: `gallery_drive_ballistics`, `poc_cd_spin_joint`
 - `drag_fit` `signal × points × table → table` GPU: 无 — 以 **(p₀, v₀, C_d) 共 7 个参数**(平面输入则为 5 个)把"重力 + 阻力"模型拟合到轨迹 (t_i, p_i)——是 :func:`thrust_fit` 的无推力版本(:func:`flight_fit` 把 C_d 视为已知、6 个参数;这里连 C_d 一起辨识)。返回键与入口检查(``dt`` ≤ 采样间隔、``iters`` ≥ 1、拒绝真空)与 :func:`thrust_fit` 相同,``thrust`` 为零向量。真值轨迹可将 C_d 还原到 1e-4(门禁)。 · 示例: `poc_video_physics_consistency`
-- `fit_aero` `signal × points × table → table` GPU: 无 — 从轨迹**连同空气动力系数一起**辨识：用 Gauss–Newton 求 (p₀, v₀, C_d, C_L) 的 8 个参数(ω 已知，C_L 作为常数拟合)。阻力与速度的 2 次方成比例，马格努斯与 ω × v 成比例，因此除非轨迹为非直线(有旋转、足够长)，否则 C_L 难以确定(与 ``rms`` 一起返回 ``cond`` = 雅可比的条件数，可据此判断)。返回值 ``{"p0", "v0", "cd", "cl", "rms", "cond", "iters"}``。对真值轨迹(以常数 C_L 生成)可在 1e-6 内还原(门禁)。 · 示例: `gallery_drive_ballistics`
+- `fit_aero` `signal × points × table → table` GPU: 无 — 从轨迹**连同空气动力系数一起**辨识：用 Gauss–Newton 求 (p₀, v₀, C_d, C_L) 的 8 个参数(ω 已知，C_L 作为常数拟合)。阻力与速度的 2 次方成比例，马格努斯与 ω × v 成比例，因此除非轨迹为非直线(有旋转、足够长)，否则 C_L 难以确定(与 ``rms`` 一起返回 ``cond`` = 雅可比的条件数，可据此判断)。返回值 ``{"p0", "v0", "cd", "cl", "rms", "cond", "iters"}``。对真值轨迹(以常数 C_L 生成)可在 1e-6 内还原(门禁)。 · 示例: `gallery_drive_ballistics`, `poc_cd_spin_joint`
 - `fit_bounce` `table → table` GPU: 无 — 由弹跳前后的 (v, ω) 以闭式还原 (e, μ)(辨识)。e = −v_n'/v_n。切向冲量 J_t = m(v_t' − v_t) 的大小与 J_n = m(v_n' − v_n) 之比即 μ —— 在始终滑动的状态下为等号，在中途转为滚动(grip)的状态下为**下界**(μ ≥ |J_t|/J_n)。属于哪种，由弹跳后接触点的滑移速度是否为 0(grip)判断。返回值 ``{"e", "mu", "mu_is_lower_bound", "regime", "J_n", "J_t"}``。 · 示例: `gallery_drive_ballistics`
 - `fit_parabola` `signal × points → table` GPU: 无 — 用最小二乘将 p = p₀ + v₀ t − ½ g t² ẑ 拟合到观测 (t_i, p_i)(线性，闭式)。``{"p0", "v0", "g", "rms"}``。真空真值可在 1e-9 内还原(门禁)。 · 示例: `poc_ball_bounce`, `poc_video_physics_consistency`
-- `fit_spin` `signal × points × table → table` GPU: 无 — **从弯曲方式读出旋转**：以 (p₀, v₀, ω) 的 9 个参数，用 Gauss–Newton 将含阻力 + 马格努斯的运动方程拟合到轨迹 (t_i, p_i)(不含弹跳的区间)(空气动力系数取 ``bp`` 的值 = 视为已知)。 · 示例: `poc_table_tennis_spin`
+- `fit_spin` `signal × points × table → table` GPU: 无 — **从弯曲方式读出旋转**：以 (p₀, v₀, ω) 的 9 个参数，用 Gauss–Newton 将含阻力 + 马格努斯的运动方程拟合到轨迹 (t_i, p_i)(不含弹跳的区间)(空气动力系数取 ``bp`` 的值 = 视为已知)。 · 示例: `poc_cd_spin_joint`, `poc_table_tennis_spin`
+- `fit_spin_aero` `signal × points × table → table` GPU: 无 — **同时读出阻力与旋转**(:func:`fit_spin` 的 C_d 自由版)：以 (p₀, v₀, ω, C_d) 的 10 个参数，用 Levenberg–Marquardt 将含阻力 + 马格努斯的运动方程拟合到轨迹 (t_i, p_i)(不含弹跳的区间)(``fit_cl=True`` 时连升力系数的比例 κ 也设为自由量，共 11 个参数)。 · 示例: `poc_cd_spin_joint`
 - `flight_fit` `signal × points × table → table` GPU: 无 — 以 **初始状态 (p₀, v₀) 的 6 个参数**，用 Gauss–Newton(有限差分雅可比)将含阻力 + 马格努斯(ω 已知)的运动方程拟合到观测 (t_i, p_i)(不含弹跳的区间)。抛物线拟合会把阻力、马格努斯吸收进 g 与 v₀，使预测偏弯 —— 本函数相当于先行者的“带空气动力模型的追踪”。返回值 ``{"p0", "v0", "rms", "iters", "t0"}``(p₀、v₀ 为 t = t[0] 时的状态)。输入真值轨迹时可在 1e-9 内还原(门禁)。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`
-- `flight_ode` `table → table` GPU: 无 — 重力 + 阻力 + 马格努斯(+ 旋转衰减)的 RK4。返回值 ``{"t" (N,), "p" (N, 3), "v" (N, 3), "omega" (N, 3)}``(t = 0, dt, …, ≤ t_end)。真空(rho = 0)时与 :func:`flight_vacuum` 一致(门禁)。 · 示例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_video_physics_consistency`
+- `flight_ode` `table → table` GPU: 无 — 重力 + 阻力 + 马格努斯(+ 旋转衰减)的 RK4。返回值 ``{"t" (N,), "p" (N, 3), "v" (N, 3), "omega" (N, 3)}``(t = 0, dt, …, ≤ t_end)。真空(rho = 0)时与 :func:`flight_vacuum` 一致(门禁)。 · 示例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_video_physics_consistency`
 - `flight_simulate` `table × table → table` GPU: 无 — 将飞行与在球台上(平面 z = table_z，仅在 ``table_xy`` = (xmin, xmax, ymin, ymax) 范围内)的弹跳连接起来，接触时刻用二分法在区间内求出。返回值 ``{"t", "p", "v", "omega" (N, 3), "contacts": [{"t", "p", "v_in", "v_out", "omega_in", "omega_out", "regime"}], "rest_t"}``。球半径为 r，因此球心到达 table_z + r 处即为接触。弹跳会无限持续(Zeno)，所以当接触时 |v_n| < ``v_rest`` 时把球放在台面上(此后 z 固定，水平方向无摩擦继续运动；``rest_t`` = 该时刻，若无则为 None)。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
 - `flight_state_at` `table → table` GPU: 无 — 用运动方程将状态 (p₀, v₀, ω) 推进 T 秒(T < 0 时**回退**：使 RK4 步长为负)。``{"p", "v", "omega"}``。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`
 - `flight_vacuum` `signal → points` GPU: 无 — 真空中的抛物线(闭式)：p(t) = p₀ + v₀ t − ½ g t² ẑ。``t`` 为标量或 (N,)，返回值为 (3,) 或 (N, 3)。 · 示例: `gallery_drive_kendama_racket`, `poc_ball_bounce`
 - `impact_params` `无输入 → table` GPU: 无 — 碰撞参数表：法向恢复系数 e ∈ [0, 1] (数值，或 |v_n| → e 的函数：以符合随碰撞速度下降的实测)，库仑摩擦系数 μ ≥ 0。 · 示例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
 - `incline_slip_angle` `无输入 → scalar` GPU: 无 — 在静摩擦系数 μ 的斜面上开始滑动的角度 θ = atan μ [rad]。 · 示例: `gallery_drive_ballistics`
-- `magnus_lift_coefficient` `signal → signal` GPU: 无 — 由旋转比 S = rω/|v| 求升力系数 C_L = 1 / (2 + 1/S)(S → 0 时为 0，S → ∞ 时为 0.5；球类文献中广泛使用的经验式)。 · 示例: `gallery_drive_ballistics`
+- `magnus_lift_coefficient` `signal → signal` GPU: 无 — 由旋转比 S = rω/|v| 求升力系数 C_L = 1 / (2 + 1/S)(S → 0 时为 0，S → ∞ 时为 0.5；球类文献中广泛使用的经验式)。 · 示例: `gallery_drive_ballistics`, `poc_cd_spin_joint`
 - `mu_from_stop_distance` `无输入 → scalar` GPU: 无 — 由停止距离求 μ = v₀² / (2 g d)。 · 示例: `gallery_drive_ballistics`
 - `pendulum_period` `无输入 → scalar` GPU: 无 — 小振幅摆的周期 2π√(L/g)。 · 示例: `gallery_drive_ballistics`
 - `restitution_from_apexes` `signal → table` GPU: 无 — 由最高点高度序列(≥ 2 个，正值)估计 e：log h_k 对 k 线性、斜率为 2 log e → 最小二乘。``{"e", "h0", "residual"}``。 · 示例: `poc_ball_bounce`
@@ -3697,15 +3702,15 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `triangulate_dlt` `matrix × any × any → table` GPU: 无 — 1 个点的多视角三角测量(线性 DLT，SVD)：``uvs`` (C, 2)、``poses`` (C, 4, 4)、``Ks`` (C, 3, 3)。返回值 ``{"p" (3,), "reproj_rms" px, "n_views"}``。跳过含 NaN 的视角。少于 2 个视角时为 ValueError。 · 示例: `poc_ball_bounce`, `poc_kendama`
 
 #### drive / ballworld (9)
-- `add_ball` `table × table → scalar` GPU: 无 — 以位姿 (p, R) 将球加入世界。逐面标签(球 23 / 标记 24)保持不变。返回值 = objects 的索引。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
-- `ball_mesh` `无输入 → table` GPU: 无 — 球的网格(原点 = 中心)与标记。用 ``markers`` = [(dir, angle_deg), …] 设置多个标记(None 时为 marker_dir 1 个)。返回值 ``{"V", "F", "color" (M,3), "label" (M,) (23 or 24), "radius", "markers": [单位向量 …]}``。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `add_ball` `table × table → scalar` GPU: 无 — 以位姿 (p, R) 将球加入世界。逐面标签(球 23 / 标记 24)保持不变。返回值 = objects 的索引。 · 示例: `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `ball_mesh` `无输入 → table` GPU: 无 — 球的网格(原点 = 中心)与标记。用 ``markers`` = [(dir, angle_deg), …] 设置多个标记(None 时为 marker_dir 1 个)。返回值 ``{"V", "F", "color" (M,3), "label" (M,) (23 or 24), "radius", "markers": [单位向量 …]}``。 · 示例: `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
 - `ball_set_pose` `table × matrix → any` GPU: 无 — 将球 i 的位姿设为 (p, R)(只改写顶点)。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
 - `ball_truth` `table × table → table` GPU: 无 — 球 i 的真值投影：中心的 (col, row)、像半径 [px] (≈ f·r/深度)、标记中心的 (col, row)(位于背面时为 NaN)。 · 示例: `poc_ball_bounce`
 - `camera_rig` `table → table` GPU: 无 — 平台周围的摄像机（n = 2：两端对角线上方，n = 4：4 个角）。返回``[{"pose", "K", "eye", "width", "height"}, …]``，全部看着平台的中心。 · 示例: `poc_ball_bounce`, `poc_table_tennis_spin`
 - `icosphere` `无输入 → any` GPU: 无 — 将正 20 面体做 ``subdiv`` 次 4 分细分并投影到球面所得的网格 (V, F)(朝外)。 · 示例: `gallery_mesh_seg_sun_gains`
 - `rotation_from_omega` `无输入 → matrix` GPU: 无 — 以角速度 ω [rad/s] 旋转 dt 秒的旋转矩阵(Rodrigues)。R_{k+1} = R(ω dt) R_k。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
-- `table_params` `无输入 → table` GPU: 无 — 乒乓球台的参数表(默认 = ITTF 规格)。 · 示例: `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
-- `table_world` `table → table` GPU: 无 — 球台(台面 + 白线 + 球网)与地面的世界。原点 = 台面中心，x = 长边方向(±1.37)，y = 宽度方向(±0.7625)，z 向上。台面上表面 z = height。 · 示例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `table_params` `无输入 → table` GPU: 无 — 乒乓球台的参数表(默认 = ITTF 规格)。 · 示例: `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
+- `table_world` `table → table` GPU: 无 — 球台(台面 + 白线 + 球网)与地面的世界。原点 = 台面中心，x = 长边方向(±1.37)，y = 宽度方向(±0.7625)，z 向上。台面上表面 z = height。 · 示例: `poc_ball_bounce`, `poc_cd_spin_joint`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
 
 #### drive / braidpath (12)
 - `braid_artin_images` `signal × scalar → table` GPU: 无 — 辫的 Artin 表示:自由群 F_n 的生成元 x₁..xₙ 的像(自由约化后的字)。
@@ -4993,8 +4998,8 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### calib / calibrate (5)
 - `camera_calibration` (halcon: `camera_calibration`) `keypoints → table` GPU: 无 — [部分对应] 用 Zhang 法从平面靶标的多个视角只估计内参矩阵 K(camera_calibration)。 · 示例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_calibration_truth_map`, `poc_camera_calibration`
-- `camera_calibration_lm` `keypoints → table` GPU: 无 — 从 Zhang 法的初值出发,用 LM 同时优化内参、畸变与全部位姿,并连同协方差一起返回(``table``)。 · 示例: `poc_calibration_truth_map`, `poc_real_chessboard_undistort`
-- `find_marks_and_pose` (halcon: `find_marks_and_pose`) `image2d → table` GPU: 无 — 标记检测 + 标定板位姿估计(平面单应 → 位姿)(find_marks_and_pose)。
+- `camera_calibration_lm` `keypoints → table` GPU: 无 — 从 Zhang 法的初值出发,用 LM 同时优化内参、畸变与全部位姿,并连同协方差一起返回(``table``)。 · 示例: `poc_calibration_truth_map`, `poc_caltab_chain_truth`, `poc_real_chessboard_undistort`
+- `find_marks_and_pose` (halcon: `find_marks_and_pose`) `image2d → table` GPU: 无 — 标记检测 + 标定板位姿估计(平面单应 → 位姿)(find_marks_and_pose)。 · 示例: `poc_caltab_chain_truth`
 - `hand_eye_calibration` (halcon: `hand_eye_calibration`) `无输入 → matrix` GPU: 无 — 由一系列运动对求解 AX=XB，估计 X(4x4)(hand_eye_calibration)。
 - `stereo_calibration_lm` `keypoints → table` GPU: 无 — 用 LM 同时优化左右相机的内参与畸变、板的位姿以及右相机的相对位姿 (R, T)(``table``)。
 
@@ -5023,9 +5028,9 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### calib / target (6)
 - `caltab_points` (halcon: `caltab_points`) `无输入 → keypoints` GPU: 无 — 以 (y, x) 返回标定板的理想标记坐标(世界坐标, mm; 原点=第一个标记)(caltab_points)。
-- `create_caltab` (halcon: `create_caltab`) `无输入 → table` GPU: 无 — 生成标定板的描述(理想点，原点在板中心)(create_caltab)。
+- `create_caltab` (halcon: `create_caltab`) `无输入 → table` GPU: 无 — 生成标定板的描述(理想点，原点在板中心)(create_caltab)。 · 示例: `poc_caltab_chain_truth`
 - `disp_caltab` (halcon: `disp_caltab`) `table → image2d` GPU: 无 — 返回标定板图像(用于显示)(disp_caltab)。
-- `find_caltab` (halcon: `find_caltab`) `image2d → keypoints` GPU: 无 — 从图像中检测标定板圆形标记的中心(连通域的重心)(find_caltab)。
+- `find_caltab` (halcon: `find_caltab`) `image2d → keypoints` GPU: 无 — 从图像中检测标定板圆形标记的中心(连通域的重心)(find_caltab)。 · 示例: `poc_caltab_chain_truth`
 - `gen_caltab` (halcon: `gen_caltab`) `无输入 → table` GPU: 无 — 生成圆形标记网格的标定板图像(gen_caltab)。
 - `sim_caltab` (halcon: `sim_caltab`) `table → table` GPU: 无 — 模拟按指定相机位姿投影的标定板图像(sim_caltab)。
 
@@ -5099,18 +5104,18 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 ### mv (47 ops / 10 categories)
 
 #### mv / classify (12)
-- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: 无 — 按高斯混合模型逐行返回后验最大的类。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: 无 — 以 k 近邻多数表决逐行返回类（平票取距离和较小者）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: 无 — 用 `train_class_mlp` 的多层感知机分类特征行。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: 无 — 用 `train_class_svm` 的线性 SVM 分类特征行（一对多取最大间隔）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: 无 — 按高斯混合模型逐行返回后验最大的类。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: 无 — 以 k 近邻多数表决逐行返回类（平票取距离和较小者）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: 无 — 用 `train_class_mlp` 的多层感知机分类特征行。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: 无 — 用 `train_class_svm` 的线性 SVM 分类特征行（一对多取最大间隔）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
 - `create_lexicon` (halcon: `create_lexicon`) `无输入 → table` GPU: 无 — 创建用于匹配的词表（去重并固定顺序）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: 无 — 逐行返回各类后验与模型整体的对数密度。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: 无 — 逐行返回各类后验与模型整体的对数密度。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
 - `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: 无 — 以完全匹配检查词是否在表中，在则返回 1.0，否则返回 0.0。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 - `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: 无 — 返回编辑距离最小的词及其距离。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: 无 — 用 EM 为每个类学习高斯混合模型。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: 无 — 构建 k-NN 分类器（特征标准化后保存）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: 无 — 训练 MLP 分类器。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: 无 — 训练线性 SVM（hinge 损失，一对多）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: 无 — 用 EM 为每个类学习高斯混合模型。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: 无 — 构建 k-NN 分类器（特征标准化后保存）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: 无 — 训练 MLP 分类器。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: 无 — 训练线性 SVM（hinge 损失，一对多）。 · 示例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
 
 #### mv / curve (1)
 - `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: 无 — 求经过全部点的非有理 B 样条控制点（全局插值）。 · 示例: `machine_vision_tour`
@@ -5336,7 +5341,7 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `point_spectrum` `positions → table` GPU: 无 — **事件位置**的周期图——缺陷、冲击、计数、到达。 · 示例: `poc_web_roll_periodicity`, `type_connectivity_tour`
 - `quantize` `signal → signal` GPU: 无 — 给出误差模型的标量量化器(可选抖动)。 · 示例: `poc_cold_chain_excursion`
 - `resample` `signal → signal` GPU: 有(许可列表) — 把信号重采样到 *new_rate*(傅里叶法)。 · 示例: `poc_driving_school`
-- `rms` `signal → measurement` GPU: 无 — RMS 电平。对整个信号为标量；给定 *frame* 时为逐帧数组(随时间变化的振动/能量包络)。 · 示例: `lens_design_demo`, `lightfield_depth`, `poc_battery_electrode_breathing`, `poc_bilateral_asymmetry`, `poc_bump_coplanarity`, `poc_cad_scan_deviation`, `poc_calipers_under_illusion`, `poc_camera_calibration`, `poc_dimensional_inspection`, `poc_exoplanet_transit`, `poc_fabric_defect`, `poc_focus_stacking`, `poc_fourier_ptychography`, `poc_lens_solves_afocal`, `poc_panorama_drift`, `poc_print_registration`, `poc_river_surface_velocity`, `poc_screw_thread_metrology`, `poc_shape_from_polarization`, `poc_solar_limb_darkening`, `poc_strain_history`, `poc_surface_roughness`, `poc_symmetry_restoration`, `poc_table_tennis_bounce`, `poc_tacscalib_sphere_lut`, `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`, `poc_thermal_radiometry`, `poc_weld_bead_profile`, `profile_shape_inspection`
+- `rms` `signal → measurement` GPU: 无 — RMS 电平。对整个信号为标量；给定 *frame* 时为逐帧数组(随时间变化的振动/能量包络)。 · 示例: `lens_design_demo`, `lightfield_depth`, `poc_battery_electrode_breathing`, `poc_bilateral_asymmetry`, `poc_bump_coplanarity`, `poc_cad_scan_deviation`, `poc_calipers_under_illusion`, `poc_camera_calibration`, `poc_cd_spin_joint`, `poc_dimensional_inspection`, `poc_exoplanet_transit`, `poc_fabric_defect`, `poc_focus_stacking`, `poc_fourier_ptychography`, `poc_lens_solves_afocal`, `poc_panorama_drift`, `poc_print_registration`, `poc_river_surface_velocity`, `poc_screw_thread_metrology`, `poc_shape_from_polarization`, `poc_solar_limb_darkening`, `poc_strain_history`, `poc_surface_roughness`, `poc_symmetry_restoration`, `poc_table_tennis_bounce`, `poc_tacscalib_sphere_lut`, `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`, `poc_thermal_radiometry`, `poc_weld_bead_profile`, `profile_shape_inspection`
 - `signal_features` `signal → table` GPU: 无 — 用于异常检测的紧凑声学/振动特征向量：``rms``、``peak``、``crest_factor``、``zcr``、``spectral_centroid``(Hz)、``peak_freq``(Hz)、``bandwidth``(Hz)。全部有限——含 NaN / Inf 的样本会抛出 ``ValueError``，而不是产生 NaN 特征(自 2026-10-12 起空信号亦然；此前返回零)。 · 示例: `gallery_oned_audio_funct`
 - `spectrogram` `signal → image2d` GPU: 无 — STFT 幅度谱图 -> ``(freqs, times, S)``，``S`` 的形状为 ``(n_freqs, n_frames)``。加汉宁窗；*hop* 默认为 ``win//2``。 · 示例: `acoustic_condition_monitoring`, `poc_emva1288_sensor`, `poc_gw_detector_pseudo_simulation`
 - `spectrum` `signal → pairs` GPU: 有(许可列表) — 原始单边幅度谱 -> ``(freqs, magnitude)``(``np.fft.rfft``)。 · 示例: `acoustic_condition_monitoring`, `anim3d_lens_aberrations`, `poc_bearing_diagnosis`, `poc_gear_tooth_metrology`, `poc_machine_condition_fusion`, `poc_pipe_wall_loss`, `poc_recycling_sorting`, `poc_thin_film_reflectometry`, `poc_web_roll_periodicity`, `type_connectivity_tour`
@@ -5870,13 +5875,13 @@ _共 3843 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 ### segmentation (59 ops / 11 categories)
 
 #### segmentation / classify (7)
-- `class_2dim_sup` (halcon: `class_2dim_sup`) `image2d × image2d × mask → mask` GPU: 无 — 二通道特征空间的监督分类：落入 ref_region 分布内的像素(class_2dim_sup)。 · 示例: `halcon_segmentation_tour`
-- `class_2dim_unsup` (halcon: `class_2dim_unsup`) `image2d × image2d → labels2d` GPU: 有(许可列表) — 二通道特征空间的 k-means 无监督分类，返回标签图像(class_2dim_unsup)。 · 示例: `halcon_segmentation_tour`
-- `class_ndim_norm` (halcon: `class_ndim_norm`) `images × table → mask` GPU: 有(许可列表) — 用学习到的正态分布类对 N 维特征图像分类(马氏距离 < thresh)(class_ndim_norm)。 · 示例: `halcon_segmentation_tour`
-- `classify_image_class_lut` (halcon: `classify_image_class_lut`) `image2d × signal → labels2d` GPU: 有(许可列表) — 按灰度 LUT(阈值/标签表)对像素分类(classify_image_class_lut)。 · 示例: `halcon_segmentation_tour`
+- `class_2dim_sup` (halcon: `class_2dim_sup`) `image2d × image2d × mask → mask` GPU: 无 — 二通道特征空间的监督分类：落入 ref_region 分布内的像素(class_2dim_sup)。 · 示例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
+- `class_2dim_unsup` (halcon: `class_2dim_unsup`) `image2d × image2d → labels2d` GPU: 有(许可列表) — 二通道特征空间的 k-means 无监督分类，返回标签图像(class_2dim_unsup)。 · 示例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
+- `class_ndim_norm` (halcon: `class_ndim_norm`) `images × table → mask` GPU: 有(许可列表) — 用学习到的正态分布类对 N 维特征图像分类(马氏距离 < thresh)(class_ndim_norm)。 · 示例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
+- `classify_image_class_lut` (halcon: `classify_image_class_lut`) `image2d × signal → labels2d` GPU: 有(许可列表) — 按灰度 LUT(阈值/标签表)对像素分类(classify_image_class_lut)。 · 示例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
 - `fisher_lda_fit` `matrix × signal → table` GPU: 无 — 学习两类 Fisher 线性判别（闭式解，无迭代）。 · 示例: `poc_weed_rice_ratio`
 - `fisher_lda_score` `table × matrix → table` GPU: 无 — 用 ``fisher_lda_fit`` 学到的判别对特征打分（score > 0 为类 1）。 · 示例: `poc_weed_rice_ratio`
-- `learn_ndim_norm` (halcon: `learn_ndim_norm`) `matrix → table` GPU: 无 — 从特征向量集合学习正态分布类(均值与协方差)(learn_ndim_norm)。 · 示例: `halcon_segmentation_tour`
+- `learn_ndim_norm` (halcon: `learn_ndim_norm`) `matrix → table` GPU: 无 — 从特征向量集合学习正态分布类(均值与协方差)(learn_ndim_norm)。 · 示例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
 
 #### segmentation / compare (1)
 - `check_difference` (halcon: `check_difference`) `image2d × image2d → mask` GPU: 有(许可列表) — 与参考图像之差超过 tol 的像素，作为区域返回(check_difference)。 · 示例: `halcon_segmentation_tour`

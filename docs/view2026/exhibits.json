@@ -8238,6 +8238,23 @@
    }
   },
   {
+   "id": "poc_real_tum_rgbd_slam",
+   "group": "wing_threed",
+   "media": "02_trajectory.png",
+   "motion": false,
+   "thumb_src": "02_trajectory.png",
+   "label": {
+    "ja": "公開の実測 RGB-D で位置合わせを採点する ―― 誤差は 0.42 倍に減るが、等速の仮定とほぼ同じ水準",
+    "en": "Scoring Frame-to-Frame Alignment on Public RGB-D Data: The Error Falls to 0.42 Times, About Level With a Constant-Velocity Guess",
+    "zh": "用公开的实测 RGB-D 给帧间配准打分:误差降到 0.42 倍,但与匀速假设大致相同",
+    "tw": "用公開的實測 RGB-D 為幀間對位評分:誤差降到 0.42 倍,但與等速假設大致相同",
+    "ko": "공개 실측 RGB-D로 프레임 간 정합을 채점: 오차는 0.42배로 줄지만 등속 가정과 거의 같은 수준",
+    "de": "Bild-zu-Bild-Ausrichtung auf öffentlichen RGB-D-Messdaten bewertet: Der Fehler sinkt auf das 0,42-Fache, etwa gleichauf mit der Annahme konstanter Geschwindigkeit",
+    "hi": "सार्वजनिक RGB-D मापन डेटा पर फ्रेम-से-फ्रेम संरेखण का मूल्यांकन: त्रुटि 0.42 गुना रह जाती है, पर स्थिर-वेग की धारणा के लगभग बराबर",
+    "fr": "Alignement image à image noté sur des données RGB-D publiques : l'erreur tombe à 0,42 fois, à peu près au niveau de l'hypothèse de vitesse constante"
+   }
+  },
+  {
    "id": "poc_light_section_step_weld_floor",
    "group": "wing_metrology",
    "media": "01_height_map.png",

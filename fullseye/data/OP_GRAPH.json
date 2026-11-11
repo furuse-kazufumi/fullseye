@@ -61,9 +61,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3626,
+    "executable": 3627,
     "reasons": {
-      "python_signature": 2661,
+      "python_signature": 2662,
       "registry": 964
     },
     "not_executable_reasons": {
@@ -390,9 +390,9 @@
   },
   "counts": {
     "nodes": 103,
-    "edges": 3841,
+    "edges": 3842,
     "conversion_pairs": 424,
-    "conversion_edge_incidence": 2524
+    "conversion_edge_incidence": 2526
   },
   "nodes": [
     {
@@ -1027,7 +1027,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 85,
-      "consumed_by": 308,
+      "consumed_by": 309,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1335,7 +1335,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 164,
-      "consumed_by": 427,
+      "consumed_by": 428,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1422,8 +1422,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1275,
-      "consumed_by": 599,
+      "produced_by": 1276,
+      "consumed_by": 600,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -97477,6 +97477,89 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 20
+        },
+        {
+          "name": "dt",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.001
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "fit_spin_aero",
+      "inputs": [
+        "signal",
+        "points",
+        "table"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "ballistics",
+        "callable": "fit_spin_aero"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ballistics",
+        "callable": "fit_spin_aero"
+      },
+      "parameter_schema": [
+        {
+          "name": "omega0",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "fit_cl",
+          "type": "bool",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
+        },
+        {
+          "name": "omega_max",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1000.0
+        },
+        {
+          "name": "iters",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 25
         },
         {
           "name": "dt",

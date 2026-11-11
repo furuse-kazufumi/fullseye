@@ -32,7 +32,7 @@
 | [配列で方向を測り、距離と速度を分ける](capabilities/beamforming-and-range-doppler.md) | Beamform for direction, separate range from velocity | 波と信号 | `verified-synthetic` | 4/4 | `poc_multibeam_bathymetry` synthetic → tests/test_poc_scripts_run.py<br>`poc_bev_sensor_fusion` synthetic → tests/test_poc_scripts_run.py |
 | [うなりは一つ(膜のモード・干渉縞・回折次数・印刷のモアレ・墨に落とす)](capabilities/beats-fringes-and-screens.md) | One beat (membrane modes, fringes, diffraction orders, print moire, and turning tone into ink) | 波と信号 | `verified-synthetic` | 12/12 | `poc_beats_fringes_and_screens` synthetic → tests/test_poc_scripts_run.py |
 | [領域を切り出して、選んで、数える](capabilities/blob-and-region.md) | Segment regions, select them, and count | 見つける | `validated-public-real-data` | 5/5 | `poc_cell_counting` synthetic → tests/test_poc_scripts_run.py<br>`poc_particle_sizing` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_coin_metrology` real(門の実行で実データを読む) → tests/test_poc_scripts_run.py<br>`poc_dense_bubble_count` real(**門の実行では実データを読まない**) → tests/test_poc_scripts_run.py |
-| [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md) | Estimate the camera intrinsic matrix K from multiple planar views (Zhang) | 測る | `verified-synthetic` | 4/4 | `camera_intrinsics_calibration` synthetic → tests/test_example_scripts_run.py |
+| [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md) | Estimate the camera intrinsic matrix K from multiple planar views (Zhang) | 測る | `verified-synthetic` | 4/4 | `camera_intrinsics_calibration` synthetic → tests/test_example_scripts_run.py<br>`poc_caltab_chain_truth` synthetic → tests/test_poc_scripts_run.py |
 | [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness) | 光と色 | `verified-synthetic` | 6/6 | `poc_chromatic_confocal` synthetic → tests/test_poc_scripts_run.py |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | Measure colour (XYZ / Lab / colour difference) | 光と色 | `verified-synthetic` | 4/4 | `poc_white_balance` synthetic → tests/test_poc_scripts_run.py<br>`poc_pigment_unmixing` synthetic → tests/test_poc_scripts_run.py |
 | [複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ)](capabilities/complex-plane-fields.md) | Seeing the complex plane as an area (domain colouring, basins, escape time, flow) | 測る | `verified-synthetic` | 8/8 | `poc_complex_plane_fields` synthetic → tests/test_poc_scripts_run.py |
@@ -108,7 +108,7 @@
 | [既知の 3-D 部品を点群から 6 自由度で見つける](capabilities/six-dof-surface-pose.md) | Locate a known 3-D part in a point cloud with six degrees of freedom | 見つける | `verified-synthetic` | 7/7 | `poc_registration_basin` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_tless_6dof` real(**門の実行では実データを読まない**) → tests/test_poc_scripts_run.py |
 | [光源 × 対象 × センサの分光の鎖(Planck・CIE A・LED・フィルタ・Si の QE、曲線の積と積分)](capabilities/spectral-radiometry-chain.md) | The spectral chain source × object × sensor (Planck, CIE A, LEDs, filters, Si QE, curve products and integrals) | 光と色 | `verified-synthetic` | 9/9 | `poc_nir_silicon_transmission` synthetic → tests/test_poc_scripts_run.py |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | Measure dimensions from an image, below the pixel | 測る | `verified-synthetic` | 4/4 | `poc_dimensional_inspection` synthetic → tests/test_poc_scripts_run.py<br>`poc_screw_thread_metrology` synthetic → tests/test_poc_scripts_run.py<br>`poc_calipers_under_illusion` synthetic → tests/test_poc_scripts_run.py |
-| [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md) | Surface relief defects, from lighting design to detection | 見つける | `verified-synthetic` | 5/5 | `illumination_design_demo` synthetic → tests/test_example_scripts_run.py<br>`photometric_stereo` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_bump_coplanarity` synthetic → tests/test_poc_scripts_run.py |
+| [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md) | Surface relief defects, from lighting design to detection | 見つける | `verified-synthetic` | 5/5 | `illumination_design_demo` synthetic → tests/test_example_scripts_run.py<br>`photometric_stereo` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_bump_coplanarity` synthetic → tests/test_poc_scripts_run.py<br>`poc_surface_defect_classifiers` synthetic → tests/test_poc_scripts_run.py |
 | [TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF)](capabilities/tdi-linescan-and-lens.md) | TDI line-scan cameras and line-scan lenses (stages and SNR, synchronisation MTF, illumination and MTF across the image height) | 光と色 | `verified-synthetic` | 6/6 | `poc_tdi_linescan` synthetic → tests/test_poc_scripts_run.py |
 | [テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ)](capabilities/telecentric-metrology.md) | Telecentric lenses for dimensional metrology (chief-ray angle, magnification versus height, vignetting and blur) | 測る | `verified-synthetic` | 7/7 | `poc_telecentric_metrology` synthetic → tests/test_poc_scripts_run.py |
 | [仮想の透過電子顕微鏡(電子の波長 → CTF → 位相コントラストの像 → Thon リングから焦点外れを推定 → 補正)](capabilities/tem-phase-contrast-and-ctf.md) | A virtual transmission electron microscope (electron wavelength, CTF, phase-contrast images, defocus from Thon rings, correction) | 測る | `verified-synthetic` | 11/11 | `poc_tem_ctf_thon_rings` real(**門の実行では実データを読まない**) → tests/test_poc_scripts_run.py |
@@ -139,10 +139,10 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 488 |
-| `tests/test_poc_scripts_run.py` が走らせる | 311 |
+| 2-D 台帳の例 | 492 |
+| `tests/test_poc_scripts_run.py` が走らせる | 315 |
 | `tests/test_example_scripts_run.py` が走らせる | 177 |
-| ディスク上の例のスクリプト(`examples/*.py`) | 496 |
+| ディスク上の例のスクリプト(`examples/*.py`) | 500 |
 | うち 2-D 台帳の外(`examples2d.EXCLUDED`) | 8 |
 | 台帳の外だが、名指しの試験が走らせる | 4 |
 | **どの門も走らせていない** | **4** |

@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3843, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3844, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -997,6 +997,7 @@
 {"name":"fit_sphere3","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_sphere_3d","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_spin","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"fit_spin_aero","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_spline_curve","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_superquadric","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_surface_principal_axes","status":"not_in_registry","reason":"not executable by fullseye.apply"},

@@ -111,7 +111,7 @@
 | `pairs` | ok | 85 | 60 |  |  | none | (x, y) の対 (n,2)。産 85 / 受 58 の主要型。spectrum / surface_psd の対からピークの位置を読む op が無かったので pairs_peak_x(-> measurement)を足した。 | reprconv._n2(2-tuple と (n,2) の 2 形を束ねる)。 |
 | `phash` | ok | 2 | 3 |  |  | none | 知覚ハッシュ / 透かしのビット列。hash_distance など 3 受け手。 | opsimgforensics。 |
 | `pointmap` | b | 2 | 2 |  |  | pointmap_to_points(-> points)を足した。drop_nonpositive_z=True で depth_to_points と同じ点が同じ順に出る(実測 max/Δ/ = 1.4e-17)。 | depth_to_organized_points / dem_geocentric_grid が産む (H,W,3) を、単独で受ける op が無かった(bump_normals_fbm の第 2 入力だけ)。点群の族(消費 249)へ渡れなかった。 | range_image.depth_to_organized_points の docstring と返りを実測、match3d.depth_to_points と比較。 |
-| `points` | ok | 85 | 262 | 距離センサ・3-D スキャナ(XYZ ファイルの読み込みを含む)。 |  | none | 点群 (N,3)。産 79 / 受 249。 | tools/gen_op_facets.py ACQUIRABLE['points']、opsfileio points_read_xyz。 |
+| `points` | ok | 85 | 263 | 距離センサ・3-D スキャナ(XYZ ファイルの読み込みを含む)。 |  | none | 点群 (N,3)。産 79 / 受 249。 | tools/gen_op_facets.py ACQUIRABLE['points']、opsfileio points_read_xyz。 |
 | `polsweep` | ok | 4 | 6 | 偏光カメラ・検光子を回した掃引。 |  | none | 偏光の掃引 (N,H,W)。images と分けた理由は opsspecular のコメント(両方向とも黙って間違う)。 | tools/gen_op_facets.py ACQUIRABLE['polsweep']。 |
 | `poly_surface` | ok | 1 | 1 |  |  | none | 多項式曲面の係数記録。出口は eval_poly_surface(評価する)が唯一の正直な出口。 | opsreprconv の docstring『残した袋小路』。 |
 | `pose` | ok | 17 | 8 |  |  | none | 剛体姿勢 (R, t)。産 16 / 受 7(誤差・バンドル調整・姿勢グラフ)。この版で pose_to_matrix(-> matrix 4x4)を足し、4x4 を受ける rotation_translation_error などへ渡れるようにした。 | ops3d の pose_estimation / registration / pose_graph カテゴリ。 |
@@ -136,7 +136,7 @@
 | `shapemodel` | ok | 1 | 5 |  |  | none | 形の PCA モデル。shapeset から作り、5 op が受ける。shapeset が入口なので届く。 | shapestats.shape_pca。 |
 | `shapeset` | d | 2 | 3 | 対応の取れた点集合の群 (K,N,3)。いまの作り手は shape_synth_family()(合成)だけで、実データは外から来る。 |  | none | 統計的形状モデルの入力。点の対応(landmark)が前提なので、ばらばらの点群から勝手には作れない。 | shapestats.shape_synth_family / generalized_procrustes の docstring。 |
 | `shift` | ok | 2 | 1 |  |  | none | 整数の 3-D 平行移動。vector との往復。 | reprconv.shift_to_vector。 |
-| `signal` | ok | 164 | 308 | センサ・音声の時系列(ファイル・取り込み)。 |  | none | 1-D 配列(プロファイル・スペクトル・センサ系列)。産 161 / 受 306。 | ops.SIGNAL、ops1d の docstring(1-D データの源流 3 つ)。 |
+| `signal` | ok | 164 | 309 | センサ・音声の時系列(ファイル・取り込み)。 |  | none | 1-D 配列(プロファイル・スペクトル・センサ系列)。産 161 / 受 306。 | ops.SIGNAL、ops1d の docstring(1-D データの源流 3 つ)。 |
 | `simmodel` | d | 2 | 5 | simcal_model() が op の鎖とノブ(単位・範囲・雑音)の宣言から作る順モデル。 |  | none | シミュレーションの模型は設計から組むものなので入口が正しい。simcal_observe(simmodel, images)で実測と結びつく。 | simcal.simcal_model の docstring。 |
 | `sinogram` | ok | 8 | 10 | CT 装置の投影データ(角度 × 検出器)。 |  | none | CT のサイノグラム(角度 × 検出器)。産 8 / 受 10。 | opstomography(radon / fbp の族)。 |
 | `sinostack` | ok | 1 | 1 |  |  | none | 体積のサイノグラム束。radon_volume と fbp_volume の往復で閉じる。 | opstomography の radon_volume / fbp_volume。 |
@@ -144,7 +144,7 @@
 | `stokes` | ok | 3 | 2 |  |  | none | Stokes ベクトル。mueller_apply / stokes_analyze が受ける。 | opsoptics / opsspecular。 |
 | `sweep` | d | 2 | 3 | 掃引軸に沿って標本化した強度(白色干渉・クロマティック共焦点)。作り手は *_simulate の合成だけで、実機の分光器・z 走査の出力が入口。 |  | none | 掃引信号は計測器が出すもの。合成の作り手が入口として正しい。 | opsinterferometry のコメント『sweep — 掃引軸に沿って標本化した非負の 1-D 強度』。 |
 | `synapse_table` | b | 1 | 1 |  |  | synapse_table_from_table(table, pre, post, count) -> synapse_table を足した(id が 0 以上の整数であることを確かめる)。 | graph_from_synapses が受けるのに作る op が 0(入口なし)。コネクトームは CSV で来るので table から作れるのが自然。 | grep 'synapse' を op 名で引き、作り手 0。opsfileio.table_read_csv(text -> table)はある。 |
-| `table` | c | 1275 | 525 | CSV / 設定の表(table_read_csv、引数だけで作る表)。 | 報告書・測定結果の表(列名 -> 配列)。 | none | 産 1166 / 受 482。最も多い終端。dict を返す op の欄を次の op へ渡すつなぎが無かったので、この版で table_field_image2d / _signal / _matrix / _measurement を足した(vx_sobel3x3 -> vx_magnitude、swt_map -> text_candidates、flow_from_depth_motion -> ttc_from_flow、label_extent の width)。 | opsfileio table_read_csv / table_write_csv。 |
+| `table` | c | 1276 | 526 | CSV / 設定の表(table_read_csv、引数だけで作る表)。 | 報告書・測定結果の表(列名 -> 配列)。 | none | 産 1166 / 受 482。最も多い終端。dict を返す op の欄を次の op へ渡すつなぎが無かったので、この版で table_field_image2d / _signal / _matrix / _measurement を足した(vx_sobel3x3 -> vx_magnitude、swt_map -> text_candidates、flow_from_depth_motion -> ttc_from_flow、label_extent の width)。 | opsfileio table_read_csv / table_write_csv。 |
 | `text` | c | 13 | 29 | ファイルの中身(CSV・OBJ・XYZ の文字列)。 | 書き出す文字列(CSV・G-code・報告)。 | none | 文字列。読み込みの入口であり書き出しの終端。 | opsfileio(*_read_* は text を受け、table_write_csv は text を返す)。 |
 | `tokens` | b | 8 | 10 | LLM の活性(Q / K / V の (T, d) 行列)。外のモデルから来る。 |  | tokens_to_matrix(-> matrix)を足した。出る側は一般の行列でよい(mat_cond などが掛かる)。逆向き matrix -> tokens は軸の順を確かめられないので足さない。 | 注意機構の演算族の値。入口は外(d)で正しいが、出口が 1 つも無かった: tokens と attnmap を受ける op は全部 tokens か attnmap を返すので、表・測定値・絵のどれにも出られなかった(終端へ届かない)。 | opsllmcore の _CATALOG 10 op の出力を全部見た。tokens を matrix と分けた理由は opsllmcore の docstring(入る側で転置が黙って通る)。 |
 | `transport_plan` | ok | 2 | 2 |  |  | none | 最適輸送の計画。apply_transport / transport_cost が受ける。 | opscolortransport。 |

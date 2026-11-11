@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 219,
+  "target_count": 223,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -19457,6 +19457,194 @@
         "en": "Where the Warehouse Dwell Came From — Count Waiting Without Its Kind and Everything Is Just Congestion"
       }
     },
+    "poc_cd_spin_joint": {
+      "representative": "01_estimates_by_mode.png",
+      "status": "gif",
+      "selected": [
+        "01_estimates_by_mode.png",
+        "02_cl_world_vs_model.png",
+        "03_omega_bias_vs_dip.png",
+        "04_degeneracy_valley.png",
+        "06_cd_scatter_vs_length.png",
+        "09_cd_regimes.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_cd_spin_joint/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_estimates_by_mode.png",
+              "content_box": [
+                0,
+                282,
+                720,
+                125
+              ]
+            },
+            {
+              "file": "02_cl_world_vs_model.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_omega_bias_vs_dip.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_degeneracy_valley.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.9825
+            },
+            {
+              "file": "06_cd_scatter_vs_length.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "09_cd_regimes.png",
+              "content_box": [
+                0,
+                277,
+                720,
+                136
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 5.279605
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 189591,
+          "color_mad": [
+            0.0349,
+            0.0742,
+            0.056,
+            0.0348,
+            0.0975,
+            0.0313
+          ],
+          "max_color_mad": 0.0975,
+          "source_sha256": "ecb559681d3f38cfd1940e24712d2e4adc8a1863a2a3f517e37a8d74ccbac220"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_cd_spin_joint/story.en.gif",
+          "frames": [
+            {
+              "file": "01_estimates_by_mode.png",
+              "content_box": [
+                0,
+                282,
+                720,
+                125
+              ]
+            },
+            {
+              "file": "02_cl_world_vs_model.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_omega_bias_vs_dip.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_degeneracy_valley.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.9825
+            },
+            {
+              "file": "06_cd_scatter_vs_length.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "09_cd_regimes.png",
+              "content_box": [
+                0,
+                277,
+                720,
+                136
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 5.279605
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 189591,
+          "color_mad": [
+            0.0349,
+            0.0742,
+            0.056,
+            0.0348,
+            0.0975,
+            0.0313
+          ],
+          "max_color_mad": 0.0975,
+          "source_sha256": "52e9495f6f47f236ebcdaed25bf77df29dd3859f6ff61059d6e6e60fdd574ac9"
+        }
+      },
+      "reason": null,
+      "cover": "01_estimates_by_mode.png",
+      "still": "articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png",
+      "alt": {
+        "ja": "ω を模様から取り、軌跡から C_d・C_L を読むと世界の実効値との差は C_d 0.5 %・C_L 1.9 % 以内。軌跡だけで C_d と ω を同時に読むと C_d は 0.4 % 以内だが、ω は当てはめの C_L 模型が世界の係数を外したぶん 51〜56 % 小さく出る。真値は全部この PoC が仕込んだ世界の値で、観測は等方ガウス雑音の位置(楽観)・回転は一定(減衰なし)。",
+        "en": "Reading Drag and Spin from a Trajectory at Once — A Missed C_L Coefficient Drags the Spin Along, and a Narrow Spin-Ratio Range Cannot Separate Them (Measuring When It Can Be Read in a Self-Made, Different-Model World)"
+      }
+    },
     "poc_periodic_video_boundary": {
       "representative": "02_loop.gif",
       "status": "gif",
@@ -31445,6 +31633,286 @@
         "en": "Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner"
       }
     },
+    "poc_caltab_chain_truth": {
+      "representative": "01_caltab_chain.png",
+      "status": "gif",
+      "selected": [
+        "01_caltab_chain.png",
+        "02_caltab_chain_params.png",
+        "03_caltab_chain_noise.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_caltab_chain_truth/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_caltab_chain.png",
+              "content_box": [
+                0,
+                265,
+                720,
+                160
+              ]
+            },
+            {
+              "file": "02_caltab_chain_params.png",
+              "content_box": [
+                0,
+                152,
+                720,
+                385
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.869485
+            },
+            {
+              "file": "03_caltab_chain_noise.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 143918,
+          "color_mad": [
+            0.9083,
+            0.0296,
+            0.0609
+          ],
+          "max_color_mad": 0.9083,
+          "source_sha256": "b4627a41775dfd47a4de01a8615727d5226640bc5b5de1adf1ed7f12b2261608"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_caltab_chain_truth/story.en.gif",
+          "frames": [
+            {
+              "file": "01_caltab_chain.png",
+              "content_box": [
+                0,
+                265,
+                720,
+                160
+              ]
+            },
+            {
+              "file": "02_caltab_chain_params.png",
+              "content_box": [
+                0,
+                152,
+                720,
+                385
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.869485
+            },
+            {
+              "file": "03_caltab_chain_noise.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 143918,
+          "color_mad": [
+            0.9083,
+            0.0296,
+            0.0609
+          ],
+          "max_color_mad": 0.9083,
+          "source_sha256": "723807ead3a2fabe1fa0399f0b191ec39ad6af094a9da8857904f098ded3742b"
+        }
+      },
+      "reason": null,
+      "cover": "01_caltab_chain.png",
+      "still": "articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png",
+      "alt": {
+        "ja": "create_caltab -> rendered camera -> find_caltab -> camera_calibration_lm",
+        "en": "A Circle-Mark Calibration Plate End to End: fx Is 0.45 % Off Even Without Noise, and the Binary Centroid Sets That Floor"
+      }
+    },
+    "poc_real_tum_rgbd_slam": {
+      "representative": "02_trajectory.png",
+      "status": "gif",
+      "selected": [
+        "02_trajectory.png",
+        "01_depth_and_tiles.png",
+        "03_rpe_steps.png",
+        "04_sigma_vs_z.png",
+        "05_verdicts.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_tum_rgbd_slam/story.ja.gif",
+          "frames": [
+            {
+              "file": "02_trajectory.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "01_depth_and_tiles.png",
+              "content_box": [
+                0,
+                210,
+                720,
+                269
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.677138
+            },
+            {
+              "file": "03_rpe_steps.png",
+              "content_box": [
+                0,
+                180,
+                720,
+                329
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.190278
+            },
+            {
+              "file": "04_sigma_vs_z.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_verdicts.png",
+              "content_box": [
+                0,
+                53,
+                720,
+                584
+              ]
+            }
+          ],
+          "frame_count": 5,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 285230,
+          "color_mad": [
+            0.1169,
+            1.1696,
+            0.2455,
+            0.0926,
+            0.0221
+          ],
+          "max_color_mad": 1.1696,
+          "source_sha256": "d39841c49a4da745187d3c24ec918e5ae123ebbce9f99fccbbadcd70b9006f09"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_tum_rgbd_slam/story.en.gif",
+          "frames": [
+            {
+              "file": "02_trajectory.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "01_depth_and_tiles.png",
+              "content_box": [
+                0,
+                210,
+                720,
+                269
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.677138
+            },
+            {
+              "file": "03_rpe_steps.png",
+              "content_box": [
+                0,
+                180,
+                720,
+                329
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.190278
+            },
+            {
+              "file": "04_sigma_vs_z.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_verdicts.png",
+              "content_box": [
+                0,
+                53,
+                720,
+                584
+              ]
+            }
+          ],
+          "frame_count": 5,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 285230,
+          "color_mad": [
+            0.1169,
+            1.1696,
+            0.2455,
+            0.0926,
+            0.0221
+          ],
+          "max_color_mad": 1.1696,
+          "source_sha256": "da6ff7de8d1dc1d5cebed630fc6236420d57284ed402b8ed6a15a1e72064a5f0"
+        }
+      },
+      "reason": null,
+      "cover": "02_trajectory.png",
+      "still": "articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png",
+      "alt": {
+        "ja": "カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。",
+        "en": "On public depth images of a desk, frame-to-frame alignment was checked against motion-capture truth. Error fell to 0.42 of no alignment, yet it was no better than assuming steady speed. Small-window plane residuals grew with distance, but quantisation and window size blur whether the law is a square."
+      }
+    },
     "poc_light_section_step_weld_floor": {
       "representative": "01_height_map.png",
       "status": "gif",
@@ -34009,6 +34477,202 @@
       "alt": {
         "ja": "360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。",
         "en": "CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume"
+      }
+    },
+    "poc_surface_defect_classifiers": {
+      "representative": "01_defect_patches.png",
+      "status": "gif",
+      "selected": [
+        "01_defect_patches.png",
+        "02_stain_pixels.png",
+        "03_stain_pixel_iou.png",
+        "04_classifier_accuracy.png",
+        "05_gmm_confusion_reject.png",
+        "06_accuracy_by_weight.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_surface_defect_classifiers/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_defect_patches.png",
+              "content_box": [
+                0,
+                158,
+                720,
+                374
+              ]
+            },
+            {
+              "file": "02_stain_pixels.png",
+              "content_box": [
+                0,
+                268,
+                720,
+                154
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.681529
+            },
+            {
+              "file": "03_stain_pixel_iou.png",
+              "content_box": [
+                0,
+                236,
+                720,
+                217
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.323864
+            },
+            {
+              "file": "04_classifier_accuracy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                233
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.085
+            },
+            {
+              "file": "05_gmm_confusion_reject.png",
+              "content_box": [
+                0,
+                167,
+                720,
+                356
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.02
+            },
+            {
+              "file": "06_accuracy_by_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 348502,
+          "color_mad": [
+            0.4253,
+            0.255,
+            0.0331,
+            0.0375,
+            0.0242,
+            0.0795
+          ],
+          "max_color_mad": 0.4253,
+          "source_sha256": "1e7113fff3bf7c44251a2e98d0dc4ee13bd01c9d29a4169649684ceabbd2cb9d"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_surface_defect_classifiers/story.en.gif",
+          "frames": [
+            {
+              "file": "01_defect_patches.png",
+              "content_box": [
+                0,
+                158,
+                720,
+                374
+              ]
+            },
+            {
+              "file": "02_stain_pixels.png",
+              "content_box": [
+                0,
+                268,
+                720,
+                154
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.681529
+            },
+            {
+              "file": "03_stain_pixel_iou.png",
+              "content_box": [
+                0,
+                236,
+                720,
+                217
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.323864
+            },
+            {
+              "file": "04_classifier_accuracy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                233
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.085
+            },
+            {
+              "file": "05_gmm_confusion_reject.png",
+              "content_box": [
+                0,
+                167,
+                720,
+                356
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.02
+            },
+            {
+              "file": "06_accuracy_by_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 348502,
+          "color_mad": [
+            0.4253,
+            0.255,
+            0.0331,
+            0.0375,
+            0.0242,
+            0.0795
+          ],
+          "max_color_mad": 0.4253,
+          "source_sha256": "e189acd605d3e9e8524ae97304cdbec0840c24625f5063c5ea58d686e0d016b2"
+        }
+      },
+      "reason": null,
+      "cover": "01_defect_patches.png",
+      "still": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
+      "alt": {
+        "ja": "rendered ground-metal patches (height defects shade, the stain changes colour)",
+        "en": "Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected"
       }
     }
   }
