@@ -48,7 +48,7 @@
 | PNG | `.png` | `raster.read_depth`<br>`raster.read_raster` | `imgio.save`<br>`studio_display.save_outputs` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+93 | — |
 | PPM | `.ppm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+71 | — |
 | XYZ text | `.pts` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_mesh.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+2 | — |
-| RAW raster | `.raw` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_gfx2d.py`<br>`tests/test_gsplat_train.py`<br>+10 | — |
+| RAW raster | `.raw` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_gfx2d.py`<br>`tests/test_gsplat_train.py`<br>+11 | — |
 | 3D Gaussian splat | `.splat` | `gsplatnp.gs_read_file` | — | `gs_read_file` | stdlib / core | `tests/test_gsviewer.py`<br>`tests/test_opsdrive.py`<br>+1 | — |
 | STL | `.stl` | `fileio.mesh_read_stl`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_stl`<br>`mesh.write_mesh` | `mesh_read_stl`<br>`mesh_write_stl` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_fileio_mesh.py`<br>+6 | `stl`<br>`trimesh` |
 | TIFF | `.tif` | `raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `imgio.save`<br>`volio.write_volume` | — | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+73 | — |

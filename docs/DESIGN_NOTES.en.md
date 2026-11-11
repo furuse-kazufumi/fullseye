@@ -731,7 +731,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_emva1288_in_camera_processing.py`
 
-- **L430** _(ja)_ — ★壁時計でなく CPU 時間で掛ける: スイートが PoC を 6 本並べて走らせると、単独 31 秒が壁時計 115 秒になった(2026-10-13 の全量)。 この PoC が自分で使う計算量を見るのが目的なので、他のプロセスの混み具合で揺れない量にする。
+- **L477** _(ja)_ — ★壁時計でなく CPU 時間で掛ける: スイートが PoC を 6 本並べて走らせると、単独 31 秒が壁時計 115 秒になった(2026-10-13 の全量)。 この PoC が自分で使う計算量を見るのが目的なので、他のプロセスの混み具合で揺れない量にする。
 
 ## `examples/poc_endless_zoom_and_turning_solids.py`
 
