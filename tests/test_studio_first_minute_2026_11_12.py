@@ -395,3 +395,28 @@ def test_shortcuts_written_in_tooltips_match_the_real_key_bindings(win):
                 problems.append((key, tip[:70], [a.text() for a in owners]))
     assert checked >= 10, "照合した件数が少なすぎる(%d)。検査が空振りしている" % checked
     assert not problems, "ツールチップのショートカットが実際の割り当てと合わない: %s" % problems
+
+
+# --------------------------------------------------------------------------- #
+# P-07 / P-20                                                                  #
+# --------------------------------------------------------------------------- #
+def test_fallback_help_cards_do_not_talk_to_developers():
+    card2d = studio.op_help_html("no_such_op_xyz", "en", meta={"category": "demo", "in_sort": "image", "out_sort": "image"})
+    card3d = studio.op_help_html_3d("no_such_op_xyz", {"category": "demo", "in": "mesh", "out": "mesh"})
+    for card in (card2d, card3d):
+        assert "No help page has been written" in card
+        assert "studio_assets" not in card and "opdocs" not in card and "op_help" not in card
+
+
+def test_message_text_on_the_picture_has_strong_contrast(win):
+    from PySide6 import QtGui
+    win._main_view.set_message("Pipeline error\n\ncontrast check")
+    img = win._main_view._item.pixmap().toImage()
+
+    def lum(c):
+        f = lambda v: v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4
+        return 0.2126 * f(c.redF()) + 0.7152 * f(c.greenF()) + 0.0722 * f(c.blueF())
+    bg = QtGui.QColor("#12141b")
+    best = max(lum(QtGui.QColor(img.pixel(x, y))) for y in range(0, img.height(), 2) for x in range(0, img.width(), 2))
+    ratio = (best + 0.05) / (lum(bg) + 0.05)
+    assert ratio >= 7.0, "メッセージの文字のコントラストが足りない: %.2f:1(以前は 5.8:1)" % ratio

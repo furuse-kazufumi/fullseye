@@ -5912,6 +5912,11 @@ def _abs_fig_src(html, help_dir):
     return html.replace('src="fig/', 'src="%s' % root)
 
 
+#: Shown on the fallback help card (an op with no written page).  It used to tell the reader to add a file under
+#: studio_assets/ or run tools/opdocs.py -- a note for contributors, not for the person using Studio (P-07, 2026-11-12).
+_NO_HELP_PAGE_NOTE = "No help page has been written for this operator yet. The signature and category above come from its registration."
+
+
 def op_help_html(name, lang="en", meta=None, dim="2d"):
     """Rich HTML help for one operator. Lookup order (see studio_assets/op_help/):
       1. op_help/<name>.<lang>.html   language-specific
@@ -5966,10 +5971,8 @@ def op_help_html(name, lang="en", meta=None, dim="2d"):
             "<p style='color:#8b91a0'><b>%s</b></p>"
             "<p>Two knobs <b>a</b>, <b>b</b> in [0,1] tune this operator; hover the knob "
             "sliders for their live values.</p>"
-            "<p style='color:#8b91a0;font-size:11px'>No authored help yet — add "
-            "<code>studio_assets/op_help/%s.html</code> (args / usage / sample code / "
-            "related-op links). See op_help/README.md.</p>"
-            % (name, m.get("category", "operator"), halcon, sorts, name))
+            "<p style='color:#8b91a0;font-size:11px'>%s</p>"
+            % (name, m.get("category", "operator"), halcon, sorts, tr(_NO_HELP_PAGE_NOTE)))
 
 
 def opassist_html(name):
@@ -6057,11 +6060,9 @@ def op_help_html_3d(name, meta=None, lang="en", subdir="3d"):
             "<span style='color:#8b91a0;font-size:11px'>· %s · 3D</span></h2>"
             "<p style='color:#8b91a0'><b>%s → %s</b></p>"
             "<p>%s</p>"
-            "<p style='color:#8b91a0;font-size:11px'>No authored help yet — run "
-            "<code>py -3.11 tools/opdocs.py html</code> to generate 3-D help from "
-            "<code>docs/ops/3d/</code>.</p>"
+            "<p style='color:#8b91a0;font-size:11px'>%s</p>"
             % (_e(name), _e(m.get("category", "operator")), _e(ins),
-               _e(m.get("out", "?")), _e(m.get("doc") or ""))) + opassist_html(name)
+               _e(m.get("out", "?")), _e(m.get("doc") or ""), _e(tr(_NO_HELP_PAGE_NOTE)))) + opassist_html(name)
 
 
 def _python_highlighter_class(QtGui, QtCore):

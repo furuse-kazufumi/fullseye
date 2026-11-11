@@ -2213,6 +2213,7 @@
   "2. Select an operator in the Operators panel and press +": {"ja": "2. 「処理を選ぶ」パネルで op を選び、+ を押す"},
   "3. Press ▶▶ to run": {"ja": "3. ▶▶ で実行"},
   "Hide these steps. Help ▸ First steps shows them again": {"ja": "この案内を閉じます。ヘルプ ▸ 最初の 3 手 でもう一度出せます"},
-  "Show the three first steps over the image again": {"ja": "最初の 3 手の案内を画像の上にもう一度出します"}
+  "Show the three first steps over the image again": {"ja": "最初の 3 手の案内を画像の上にもう一度出します"},
+  "No help page has been written for this operator yet. The signature and category above come from its registration.": {"ja": "この op のヘルプページはまだ書かれていません。上の署名とカテゴリは登録情報から出しています。"}
  }
 }
