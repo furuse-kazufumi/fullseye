@@ -5719,6 +5719,12 @@ def _load_i18n():
     if "en" not in langs:                      # English is always available as the base
         langs = {"en": "English", **langs}
     strings = dict(data.get("strings", {}) or {})
+    # rows that have a Japanese text but are NOT yet translated into every language live in
+    # 'pending_translation' (so the all-languages test on 'strings' stays honest); the UI uses them like
+    # any row, and the other languages fall back to the English text.
+    for key, row in (data.get("pending_translation", {}) or {}).items():
+        if key != "_note" and isinstance(row, dict):
+            strings.setdefault(key, row)
     for key in RUN_WORKER_I18N_KEYS:
         if key in data:                         # slice-5 rows live beside the older top-level rows
             strings[key] = data[key]
@@ -5726,6 +5732,21 @@ def _load_i18n():
 
 
 LANGUAGES, TOOLTIPS_I18N, HELP_I18N, STRINGS_I18N = _load_i18n()
+
+#: Work-mode / panel names in English (the source text).  Japanese for the same ids is
+#: ``studio_layout.MODES[..].label`` / ``PANELS[..]["name"]`` -- a test keeps the i18n rows equal to them.
+WORK_MODE_EN = {"build": "Build pipeline", "compare": "Compare results",
+                "inspect": "Inspect values", "code": "Make code"}
+#: One or two sentences: which panels the mode brings up (the tooltip names them).
+WORK_MODE_TIP_EN = {
+    "build": "Shows Operators, Pipeline · Parameters and Program next to the image, for adding and tuning stages",
+    "compare": "Shows the A / B comparison large next to the image, with Pipeline · Parameters folded away",
+    "inspect": "Shows Display · Analysis (large) and Variables & Objects next to the image, for reading values",
+    "code": "Shows the Program (code) panel large next to the image, for editing the pipeline as text",
+}
+PANEL_NAME_EN = {"operators": "Operators", "pipeline": "Pipeline · Parameters", "display": "Display · Analysis",
+                 "program": "Program (code)", "variables": "Variables & Objects", "compare": "Stage in → out",
+                 "ab": "A / B", "result": "Result image"}
 
 #: current UI language (module-level so `tr` works in any nested scope; the value is
 #: switched by build_window's apply_language and mirrors win._lang).
@@ -6509,6 +6530,7 @@ def build_window(model=None):
         """A compact **icon-only** tool button (no text label — the tooltip and
         accessibleName carry the meaning). ``menu`` attaches a popup so rarely-used
         actions live behind one small button instead of a row of wide ones."""
+        tip = tr(tip)                                     # P-05: hints go through the i18n table like every label
         b = QtWidgets.QToolButton()
         b.setIcon(_icon(QtGui, QtCore, icon_name, INK if accent else TEXT))
         b.setIconSize(QtCore.QSize(18, 18))
@@ -6595,6 +6617,8 @@ def build_window(model=None):
 
     # ---- actions (keyboard-first; wired to the closures at the end) ---------- #
     def _act(text, shortcut=None, tip=None):
+        text = tr(text)
+        tip = tr(tip) if tip else tip                     # P-05: one i18n path for label and hint
         a = QtGui.QAction(text, win)
         if shortcut:
             a.setShortcut(QtGui.QKeySequence(shortcut))
@@ -6646,8 +6670,8 @@ def build_window(model=None):
     act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result")
     act_roundtrip = _act("Verify exported Python…", "Ctrl+Shift+R",
                          "Run exported Python in an isolated interpreter and compare every stage with the GUI")
-    act_batch = _act("この処理をフォルダに適用…", None,
-                     "現在の処理と入力設定を固定して、フォルダ内の画像へ順番に適用します")
+    act_batch = _act("Apply to folder…", None,
+                     "Freeze the current pipeline and input settings, then apply them to every image in a folder, one by one")
     act_holdout = _act("Validate on holdout…", "Ctrl+H",
                        "Run the current pipeline over a folder of validation images and report results")
     act_palette = _act("Command palette…", "Ctrl+P", "Run any operator or action by name")
@@ -6661,16 +6685,18 @@ def build_window(model=None):
     act_op_help = _act("Operator reference…", "Shift+F1", "Browse every operator with its sorts + HALCON alias")
     act_samples = _act("Samples & code…", None, "Load a sample pipeline and see its code")
     act_about = _act("About Fullseye Studio", None, "About this application")
+    # English is the source text; Japanese comes from studio_assets/i18n.json (the Japanese names of the
+    # modes/panels are studio_layout's own labels -- a test keeps the two in step).  P-05, 2026-11-12.
     work_mode_actions = {}
     for _number, (_mode_id, _mode) in enumerate(studio_layout.MODES.items(), 1):
-        _action = _act(_mode.label, "Ctrl+%d" % _number,
-                       "%s作業に合わせてパネルを切り替えます" % _mode.label)
+        _action = _act(WORK_MODE_EN[_mode_id], "Ctrl+%d" % _number, WORK_MODE_TIP_EN[_mode_id])
         _action.setCheckable(True)
         work_mode_actions[_mode_id] = _action
-    act_focus_image = _act("画像だけ大きく", "F11", "作業状態を保ったまま画像だけを大きく表示します")
+    act_focus_image = _act("Image focus", "F11",
+                           "Hide every panel and show only the image, keeping your work. Esc brings the panels back")
     act_focus_image.setCheckable(True)
-    act_find_panel = _act("パネルを探す…", "Ctrl+Shift+P", "名前から隠れたパネルを表示します")
-    act_leave_focus = _act("画像だけ大きくを終了", "Esc", "元のパネル配置に戻します")
+    act_find_panel = _act("Find panel…", "Ctrl+Shift+P", "Type a panel name to bring a hidden panel back")
+    act_leave_focus = _act("Leave image focus", "Esc", "Return to the previous panel layout")
 
     # Menu bar — standard IDE semantics, one home per concern (simple + multifunctional):
     # File = document I/O, Edit = pipeline-stage edits, View = display, Run = execution,
@@ -7275,15 +7301,15 @@ def build_window(model=None):
     drow.addWidget(QtWidgets.QLabel("Display:")); drow.addWidget(display, 1); drow.addWidget(b_3d)
     prow = QtWidgets.QHBoxLayout()
     prow.addWidget(b_loadb); prow.addWidget(percep_mode, 1); prow.addWidget(b_percep)
-    range_each = QtWidgets.QRadioButton("各画像で自動")
-    range_shared = QtWidgets.QRadioButton("比較画像で共通")
-    range_manual = QtWidgets.QRadioButton("手動")
+    range_each = QtWidgets.QRadioButton("Auto per image")
+    range_shared = QtWidgets.QRadioButton("Shared by compared images")
+    range_manual = QtWidgets.QRadioButton("Manual")
     range_shared.setChecked(True)
     range_lo = QtWidgets.QDoubleSpinBox(); range_hi = QtWidgets.QDoubleSpinBox()
     for _spin, _value in ((range_lo, 0.0), (range_hi, 1.0)):
         _spin.setDecimals(6); _spin.setRange(-1e100, 1e100); _spin.setValue(_value)
         _spin.setEnabled(False)
-    range_note = QtWidgets.QLabel("表示処理のみ。元データは変更していません")
+    range_note = QtWidgets.QLabel("Display only. The source data is not changed")
     range_note.setProperty("hint", True); range_note.setWordWrap(True)
     range_warning = QtWidgets.QLabel(""); range_warning.setStyleSheet("color:#ffb841;")
     range_warning.hide()
@@ -7509,7 +7535,7 @@ def build_window(model=None):
     win._layout_state = studio_layout.LayoutState()
     win._applying_layout = False
 
-    mode_bar = QtWidgets.QToolBar("作業モード", win)
+    mode_bar = QtWidgets.QToolBar("Work modes", win)
     mode_bar.setObjectName("work_modes")
     mode_bar.setMovable(False); mode_bar.setFloatable(False)
     win.addToolBar(QtCore.Qt.TopToolBarArea, mode_bar)
@@ -7559,14 +7585,14 @@ def build_window(model=None):
             _apply_layout_state(); _save_layout_state()
 
     def find_panel_dialog():
-        dialog = QtWidgets.QDialog(win); dialog.setWindowTitle("パネルを探す")
+        dialog = QtWidgets.QDialog(win); dialog.setWindowTitle(tr("Find panel"))
         layout = QtWidgets.QVBoxLayout(dialog)
-        query = QtWidgets.QLineEdit(); query.setPlaceholderText("パネル名を入力…")
+        query = QtWidgets.QLineEdit(); query.setPlaceholderText(tr("Type a panel name…"))
         found = QtWidgets.QListWidget(); layout.addWidget(query); layout.addWidget(found)
         def refill(text=""):
             found.clear()
             for panel in studio_layout.find_panels(text):
-                item = QtWidgets.QListWidgetItem(studio_layout.PANELS[panel]["name"])
+                item = QtWidgets.QListWidgetItem(tr(PANEL_NAME_EN[panel]))
                 item.setData(QtCore.Qt.UserRole, panel); found.addItem(item)
         def reveal(item):
             panel = item.data(QtCore.Qt.UserRole)
@@ -7723,7 +7749,7 @@ def build_window(model=None):
     def _update_current_indicator():
         lbl = getattr(win, "_current_label", None)
         if lbl is not None:
-            lbl.setText("current: Graphics %d" % _current_handle())
+            lbl.setText(tr("current: Graphics %d") % _current_handle())
 
     def _set_current_gfx(sub):
         """Follow the active MDI sub-window: clicking a graphics window makes it the
@@ -7733,7 +7759,7 @@ def build_window(model=None):
             _update_current_indicator()
 
     # a small permanent status-bar readout of the current window's handle
-    win._current_label = QtWidgets.QLabel("current: Graphics 1")
+    win._current_label = QtWidgets.QLabel("current: Graphics 1")   # English baseline; _update_current_indicator re-writes it per language
     win._current_label.setProperty("hint", True)
     win.statusBar().addPermanentWidget(win._current_label)
     # a permanent indicator when display updates are OFF, so a frozen display never
@@ -8408,7 +8434,7 @@ def build_window(model=None):
         def progress(self, gen, i, n, name, status_name):
             if gen != run_ctl.latest_generation:
                 return
-            text = "バッチ %d/%d: %s" % (i, n, name)
+            text = tr("Batch %d/%d: %s") % (i, n, name)
             run_status.setText(text); run_ctl.status_history.append(text)
             run_progress.setRange(0, n); run_progress.setValue(i)
 
@@ -8424,11 +8450,11 @@ def build_window(model=None):
             win._last_batch_result = result
             skipped = sum(status_name == "skipped" for status_name in result.statuses.values())
             successful = result.done
-            text = "%d 枚: 成功 %d / 失敗 %d / スキップ %d、summary.csv" % (
+            text = tr("%d images: %d succeeded / %d failed / %d skipped, summary.csv") % (
                 len(win._batch_plan.files), successful, len(result.failed), skipped)
             if result.stopped:
-                text = "停止済み (%d/%d) · " % (len(result.statuses),
-                                               len(win._batch_plan.files)) + text
+                text = tr("Stopped (%d/%d) · ") % (len(result.statuses),
+                                                   len(win._batch_plan.files)) + text
             run_status.setText(text); run_ctl.status_history.append(text)
             if getattr(win, "_batch_summary_label", None) is not None:
                 win._batch_summary_label.setText(text)
@@ -8459,7 +8485,7 @@ def build_window(model=None):
         run_ctl.threads[gen] = (thread, worker)
         win._batch_plan = plan
         win._batch_generation = gen
-        run_status.setText("バッチ 0/%d" % len(plan.files))
+        run_status.setText(tr("Batch 0/%d") % len(plan.files))
         run_progress.setRange(0, len(plan.files)); run_progress.setValue(0); run_progress.show()
         run_stop.setText(tr("Request stop")); run_stop.setEnabled(True); run_stop.show()
         thread.start()
@@ -9643,7 +9669,7 @@ def build_window(model=None):
         arr = _result_array()
         if arr is None:
             flash("nothing to save — run the pipeline first"); return
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "保存先", "result", "All files (*)")
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save to"), "result", "All files (*)")
         if not path:
             return
         try:
@@ -9651,14 +9677,14 @@ def build_window(model=None):
             written = studio_display.save_outputs(
                 arr, rng, os.path.splitext(path)[0], "both", display_rgb=state.get("result"))
         except Exception as e:
-            report_error("保存できませんでした", e); return
-        flash("保存しました: " + ", ".join(os.path.basename(str(p)) for p in written))
+            report_error(tr("Could not save"), e); return
+        flash(tr("Saved: %s") % ", ".join(os.path.basename(str(p)) for p in written))
 
     def save_raw_numeric():
         arr = _result_array()
         if arr is None:
             flash("nothing to save — run the pipeline first"); return
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "元の数値を保存", "result.npy",
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save the raw values"), "result.npy",
                                                         "NumPy (*.npy)")
         if not path:
             return
@@ -9666,13 +9692,13 @@ def build_window(model=None):
             rng = state.get("display_range") or _range_for(arr)
             written = studio_display.save_outputs(arr, rng, os.path.splitext(path)[0], "raw")
         except Exception as e:
-            report_error("保存できませんでした", e); return
-        flash("保存しました: " + os.path.basename(str(written[0])))
+            report_error(tr("Could not save"), e); return
+        flash(tr("Saved: %s") % os.path.basename(str(written[0])))
 
     save_menu = QtWidgets.QMenu(b_save)
-    save_raw_action = save_menu.addAction("○ 元の数値")
-    save_display_action = save_menu.addAction("○ 現在の表示画像")
-    save_both_action = save_menu.addAction("○ 両方")
+    save_raw_action = save_menu.addAction("○ Raw values")
+    save_display_action = save_menu.addAction("○ Displayed image")
+    save_both_action = save_menu.addAction("○ Both")
     save_raw_action.triggered.connect(save_raw_numeric)
     save_display_action.triggered.connect(save_view)
     save_both_action.triggered.connect(save_both)
@@ -9799,43 +9825,43 @@ def build_window(model=None):
         win._roundtrip_dlg = dlg
 
     def show_batch_dialog():
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("この処理をフォルダに適用")
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Apply this pipeline to a folder"))
         lay = QtWidgets.QVBoxLayout(dlg)
         form = QtWidgets.QFormLayout()
         folder_row = QtWidgets.QWidget(); folder_lay = QtWidgets.QHBoxLayout(folder_row)
         folder_lay.setContentsMargins(0, 0, 0, 0)
-        folder = QtWidgets.QLineEdit(); choose_folder = QtWidgets.QPushButton("選択…")
+        folder = QtWidgets.QLineEdit(); choose_folder = QtWidgets.QPushButton(tr("Choose…"))
         folder_lay.addWidget(folder, 1); folder_lay.addWidget(choose_folder)
         patterns = QtWidgets.QLineEdit("*.png;*.jpg;*.jpeg;*.tif;*.tiff;*.bmp")
-        recursive = QtWidgets.QCheckBox("サブフォルダも含める")
-        count = QtWidgets.QLabel("対象 0 画像")
-        form.addRow("入力フォルダ", folder_row); form.addRow("パターン", patterns)
+        recursive = QtWidgets.QCheckBox(tr("Include subfolders"))
+        count = QtWidgets.QLabel(tr("%d image(s) to process") % 0)
+        form.addRow(tr("Input folder"), folder_row); form.addRow(tr("Patterns"), patterns)
         form.addRow("", recursive); form.addRow("", count)
         output_row = QtWidgets.QWidget(); output_lay = QtWidgets.QHBoxLayout(output_row)
         output_lay.setContentsMargins(0, 0, 0, 0)
-        output = QtWidgets.QLineEdit(); choose_output = QtWidgets.QPushButton("選択…")
+        output = QtWidgets.QLineEdit(); choose_output = QtWidgets.QPushButton(tr("Choose…"))
         output_lay.addWidget(output, 1); output_lay.addWidget(choose_output)
         policy = QtWidgets.QComboBox()
-        policy.addItem("上書きしない", "skip"); policy.addItem("上書き", "overwrite")
-        policy.addItem("連番を付ける", "suffix")
-        save_image = QtWidgets.QCheckBox("最終画像"); save_image.setChecked(True)
-        save_csv = QtWidgets.QCheckBox("数値 CSV"); save_csv.setChecked(True)
+        policy.addItem(tr("Do not overwrite"), "skip"); policy.addItem(tr("Overwrite"), "overwrite")
+        policy.addItem(tr("Add a number"), "suffix")
+        save_image = QtWidgets.QCheckBox(tr("Final image")); save_image.setChecked(True)
+        save_csv = QtWidgets.QCheckBox(tr("Numeric CSV")); save_csv.setChecked(True)
         saves = QtWidgets.QWidget(); saves_lay = QtWidgets.QHBoxLayout(saves)
         saves_lay.setContentsMargins(0, 0, 0, 0); saves_lay.addWidget(save_image); saves_lay.addWidget(save_csv)
-        form.addRow("出力フォルダ", output_row); form.addRow("同名ファイル", policy)
-        form.addRow("保存するもの", saves); lay.addLayout(form)
+        form.addRow(tr("Output folder"), output_row); form.addRow(tr("If the file exists"), policy)
+        form.addRow(tr("What to save"), saves); lay.addLayout(form)
 
-        preview = QtWidgets.QGroupBox("先に確認する画像")
+        preview = QtWidgets.QGroupBox(tr("Check one image first"))
         preview_lay = QtWidgets.QHBoxLayout(preview)
         preview_buttons = {}
-        for key, label in (("first", "先頭"), ("middle", "中央"), ("last", "末尾"),
-                           ("select", "選択…")):
+        for key, label in (("first", tr("First")), ("middle", tr("Middle")), ("last", tr("Last")),
+                           ("select", tr("Choose…"))):
             button = QtWidgets.QPushButton(label); preview_lay.addWidget(button)
             preview_buttons[key] = button
         lay.addWidget(preview)
         summary = QtWidgets.QLabel(""); summary.setWordWrap(True); lay.addWidget(summary)
-        failures = QtWidgets.QPushButton("失敗一覧を開く"); failures.setEnabled(False)
-        execute = QtWidgets.QPushButton("実行"); execute.setProperty("accent", True)
+        failures = QtWidgets.QPushButton(tr("Show failures")); failures.setEnabled(False)
+        execute = QtWidgets.QPushButton(tr("Run batch")); execute.setProperty("accent", True)
         buttons = QtWidgets.QHBoxLayout(); buttons.addWidget(failures); buttons.addStretch(1)
         buttons.addWidget(execute); lay.addLayout(buttons)
         fields = {"folder": folder, "patterns": patterns, "recursive": recursive,
@@ -9856,10 +9882,10 @@ def build_window(model=None):
                 current_files = studio_batch.list_inputs(
                     folder.text(), pattern_values(), recursive.isChecked())
             except ValueError as exc:
-                current_files = []; count.setText("対象 0 画像 · %s" % exc)
+                current_files = []; count.setText(tr("%d image(s) to process") % 0 + " · %s" % exc)
                 execute.setEnabled(False)
             else:
-                count.setText("対象 %d 画像" % len(current_files)); execute.setEnabled(True)
+                count.setText(tr("%d image(s) to process") % len(current_files)); execute.setEnabled(True)
                 if set_default or not output.text().strip():
                     output.setText(str(os.path.join(folder.text(), "results")))
             return current_files
@@ -9872,12 +9898,12 @@ def build_window(model=None):
                 folder.text())
 
         def select_folder():
-            selected = QtWidgets.QFileDialog.getExistingDirectory(dlg, "入力フォルダ")
+            selected = QtWidgets.QFileDialog.getExistingDirectory(dlg, tr("Input folder"))
             if selected:
                 folder.setText(selected); refresh_files(True)
 
         def select_output():
-            selected = QtWidgets.QFileDialog.getExistingDirectory(dlg, "出力フォルダ")
+            selected = QtWidgets.QFileDialog.getExistingDirectory(dlg, tr("Output folder"))
             if selected:
                 output.setText(selected)
 
@@ -9888,12 +9914,12 @@ def build_window(model=None):
                 snapshot = _run_snapshot(model, run_ctl.generation + 1)
                 value = _run_batch_value(snapshot, selected)["final_image"]
             except Exception as exc:
-                report_error("バッチのプレビュー", exc); return
+                report_error(tr("Batch preview"), exc); return
             state["worker_result"] = value
-            show_result(); summary.setText("確認: %s" % os.path.basename(str(selected)))
+            show_result(); summary.setText(tr("Checked: %s") % os.path.basename(str(selected)))
 
         def select_preview():
-            selected, _ = QtWidgets.QFileDialog.getOpenFileName(dlg, "確認する画像", folder.text())
+            selected, _ = QtWidgets.QFileDialog.getOpenFileName(dlg, tr("Image to check"), folder.text())
             if selected:
                 run_preview(selected)
 
@@ -9901,7 +9927,7 @@ def build_window(model=None):
             try:
                 plan = build_plan()
             except Exception as exc:
-                report_error("バッチを開始できません", exc); return
+                report_error(tr("Cannot start the batch"), exc); return
             summary.setText(plan.summary()); execute.setEnabled(False)
             start_batch_async(plan)
 
@@ -9910,7 +9936,7 @@ def build_window(model=None):
             if result is None or not result.failed:
                 return
             message = "\n".join("%s — %s" % (path, reason) for path, reason in result.failed)
-            QtWidgets.QMessageBox.warning(dlg, "失敗一覧", message)
+            QtWidgets.QMessageBox.warning(dlg, tr("Failures"), message)
 
         choose_folder.clicked.connect(select_folder); choose_output.clicked.connect(select_output)
         folder.editingFinished.connect(refresh_files); patterns.editingFinished.connect(refresh_files)
@@ -14153,7 +14179,7 @@ def build_window(model=None):
     def _display_settings_changed(*_):
         manual = range_manual.isChecked()
         range_lo.setEnabled(manual); range_hi.setEnabled(manual)
-        range_note.setText("表示処理のみ。元データは変更していません")
+        range_note.setText(tr("Display only. The source data is not changed"))
         show_result(); update_ab()
 
     for _control in (range_each, range_shared, range_manual):
@@ -14484,6 +14510,10 @@ def build_window(model=None):
     # table (user spec 2026-08-30: 対訳はテーブルで一箇所に). Lazily-built dialogs
     # register their subtree via win._localize(root).
     win._tt_en = {w: w.toolTip() for w in win.findChildren(QtWidgets.QWidget) if w.toolTip()}
+    # actions carry their own hint (menu status line + the tool buttons built from them); until
+    # 2026-11-12 only widgets were snapshotted, so an action's hint stayed English
+    win._tt_en.update({a: a.toolTip() for a in win.findChildren(QtGui.QAction)
+                       if a.toolTip() and a.toolTip() != a.text()})
     win._label_en = {}
     win._lang = "en"
     _UI_LANG["code"] = "en"                    # a fresh window starts from the base language
@@ -14511,25 +14541,54 @@ def build_window(model=None):
             if w.text():
                 out[w] = ("text", w.text())
         for w in root.findChildren(QtWidgets.QLabel):
-            if w.text() and not w.property("hint") and not w.property("muted") \
-                    and "<" not in w.text():          # skip rich-text / dynamic labels
+            if not w.text() or "<" in w.text():       # skip rich-text labels
+                continue
+            if not w.property("hint") and not w.property("muted"):
                 out[w] = ("text", w.text())
+            elif w.text() in STRINGS_I18N:
+                # a status/hint label may be rewritten while the app runs: translate it only while it
+                # still shows the text it had (a live message is never clobbered by a language switch)
+                out[w] = ("text_guard", w.text())
+        # P-05 (2026-11-12): check boxes, radio buttons, search/placeholder text, dock + toolbar titles
+        # used to stay in the language they were written in.
+        for cls in (QtWidgets.QCheckBox, QtWidgets.QRadioButton):
+            for w in root.findChildren(cls):
+                if w.text():
+                    out[w] = ("text", w.text())
+        for w in root.findChildren(QtWidgets.QLineEdit):
+            if w.placeholderText():
+                out[w] = ("placeholder", w.placeholderText())
+        for cls in (QtWidgets.QDockWidget, QtWidgets.QToolBar):
+            for w in root.findChildren(cls):
+                if w.windowTitle():
+                    out[w] = ("wtitle", w.windowTitle())
         return out
     win._label_en.update(_collect_labels(win))
+    win._label_shown = {}
+    _LABEL_SETTER = {"title": "setTitle", "text": "setText", "text_guard": "setText",
+                     "placeholder": "setPlaceholderText", "wtitle": "setWindowTitle"}
 
     def _apply_labels(objs=None):
         for obj, (kind, en) in list((objs or win._label_en).items()):
             try:
                 txt = en if win._lang == "en" else STRINGS_I18N.get(en, {}).get(win._lang, en)
-                (obj.setTitle if kind == "title" else obj.setText)(txt)
+                if kind == "text_guard" and obj.text() != win._label_shown.get(obj, en):
+                    continue                           # the app wrote something else here: leave it
+                getattr(obj, _LABEL_SETTER[kind])(txt)
+                win._label_shown[obj] = txt
             except Exception:
                 pass                                   # a deleted widget is skipped
 
     def _apply_tooltips(items=None):
         for w, en in list((items or win._tt_en).items()):
             try:
-                w.setToolTip(en if win._lang == "en"
-                             else TOOLTIPS_I18N.get(en, {}).get(win._lang, en))
+                # tooltips table first; then the strings table (one-line hints share it with labels)
+                txt = (en if win._lang == "en"
+                       else TOOLTIPS_I18N.get(en, {}).get(win._lang)
+                       or STRINGS_I18N.get(en, {}).get(win._lang, en))
+                w.setToolTip(txt)
+                if isinstance(w, QtGui.QAction):
+                    w.setStatusTip(txt)
             except Exception:
                 pass
 
@@ -14538,6 +14597,8 @@ def build_window(model=None):
         the current language to it immediately (English snapshot = first sight)."""
         tips = {w: w.toolTip() for w in root.findChildren(QtWidgets.QWidget)
                 if w.toolTip() and w not in win._tt_en}
+        tips.update({a: a.toolTip() for a in root.findChildren(QtGui.QAction)
+                     if a.toolTip() and a.toolTip() != a.text() and a not in win._tt_en})
         labels = {o: v for o, v in _collect_labels(root).items() if o not in win._label_en}
         win._tt_en.update(tips)
         win._label_en.update(labels)
@@ -14560,6 +14621,7 @@ def build_window(model=None):
             pass
         _apply_tooltips()
         _apply_labels()
+        _update_current_indicator()
         for code, a in win._lang_actions.items():
             a.setChecked(code == win._lang)
         try:
