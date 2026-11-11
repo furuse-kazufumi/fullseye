@@ -328,7 +328,11 @@ def test_strict_resolve():
     assert r("a/b.html", "https://example.com/x.png") is None
     assert r("a/b.html", "mailto:x@example.com") is None
     assert r("a/b.html", "#top") is None
-    assert r("a/b.html", "../../../etc/passwd") is None
+    # 根を越える ../ はブラウザと同じく根で止める(サイトの根の外へは出ない。2026-11-11 の R1 a で
+    # 「None」から直した。None にすると、ブラウザが読む assets を prune が消して check が通した)
+    assert r("a/b.html", "../../../etc/passwd") == "etc/passwd"
+    assert r("index.html", "../articles/assets/x.png") == "articles/assets/x.png"
+    assert r("index.html", "../") == ""
     assert r("a/b.html", "c%20d.png") == "a/c d.png"
 
 
@@ -713,3 +717,181 @@ def test_workflow_concurrency_is_per_job():
     b = jobs["build"]["concurrency"]
     assert b["group"].startswith("pages-build-") and "github.ref" in b["group"]
     assert "pull_request" in b["cancel-in-progress"]
+
+
+# ---- 独立レビュー 2 回目の指摘(2026-11-11、R1〜R4)----
+
+def _prune_keeps_and_check_catches(tmp_path, page, body, target):
+    """``page`` の ``body`` が ``target`` を読む形: prune が残し、消したら check(--built-list)が exit 1。"""
+    site, docs = make_site(tmp_path)
+    for base in (site, docs):
+        _write(base, target, "<p>t</p>" if target.endswith(".html") else "T")
+        # 門 4 が要るテーマの CSS を付ける(index.html を書き換えても門 4 で落ちないように)
+        _write(base, page, '<html><head><link rel="stylesheet" href="/articles/css/site.css"></head><body>'
+               + body + "</body></html>")
+    plan = ps.plan_prune(str(site))
+    assert target not in plan["remove"], (page, body)
+    lst = tmp_path / "built.txt"
+    assert run_cli("snapshot", "--site", str(site), "--out", str(lst)).returncode == 0
+    assert run_cli(*check_args(site, docs, extra=("--built-list", str(lst)))).returncode == 0
+    os.remove(os.path.join(site, *target.split("/")))
+    r = run_cli(*check_args(site, docs, extra=("--built-list", str(lst))))
+    assert r.returncode == 1, (page, body, r.stdout[-400:])
+    assert "MISSING " + page in r.stderr
+
+
+def test_r1a_dotdot_over_the_root_is_clamped_like_a_browser(tmp_path):
+    _prune_keeps_and_check_catches(tmp_path, "index.html", '<img src="../articles/assets/over.png">',
+                                   A + "over.png")
+
+
+def test_r1a_dotdot_over_the_root_from_a_nested_page(tmp_path):
+    _prune_keeps_and_check_catches(tmp_path, "view2026/index.html",
+                                   '<img src="../../../articles/assets/over3.png">', A + "over3.png")
+
+
+def test_r1b_backslash_is_read_as_slash(tmp_path):
+    _prune_keeps_and_check_catches(tmp_path, "index.html", '<img src="/articles\\assets\\bs.png">',
+                                   A + "bs.png")
+    assert ps.strict_resolve("a/b.html", "..\\articles\\assets\\x.png") == "articles/assets/x.png"
+    assert ps.strict_resolve("a/b.html", "\\\\example.com\\x.png") is None  # \\host = //host(外)
+
+
+def test_r1b_backslash_relative_in_prune(tmp_path):
+    _prune_keeps_and_check_catches(tmp_path, "articles/index.html", '<img src="assets\\rel\\bs2.png">',
+                                   A + "rel/bs2.png")
+
+
+def test_r1b_backslash_in_an_unquoted_attribute(tmp_path):
+    """引用符の無い属性の \\(LOOSE_TOKEN は \\ で切るので、\\ を / と読んだ本文から拾う)。"""
+    _prune_keeps_and_check_catches(tmp_path, "index.html", '<img src=/articles\\assets\\bs3.png>',
+                                   A + "bs3.png")
+
+
+def test_r1b_backslash_from_a_json_escape(tmp_path):
+    """JSON の ``\\u005c``(本文には \\ が無く、json.loads の後の字句にだけ現れる)。"""
+    site, _docs = make_site(tmp_path)
+    _write(site, A + "j.png")
+    _write(site, "data.json", '{"img": "articles\\u005cassets\\u005cj.png"}')
+    assert A + "j.png" not in ps.plan_prune(str(site))["remove"]
+
+
+def test_r1c_meta_refresh_url_is_a_reference(tmp_path):
+    _prune_keeps_and_check_catches(tmp_path, "index.html",
+                                   '<meta http-equiv="refresh" content="0;url=/articles/assets/r.html">',
+                                   A + "r.html")
+    m = ps.meta_refresh_url
+    assert m("0;url=/a/b.html") == "/a/b.html"
+    assert m("5; URL='x y.html'") == "x y.html"
+    assert m(' 3 , url = "q.html" ') == "q.html"
+    assert m("0") is None
+
+
+def test_r1c_meta_refresh_upper_case_http_equiv(tmp_path):
+    _prune_keeps_and_check_catches(tmp_path, "index.html",
+                                   '<META HTTP-EQUIV="Refresh" CONTENT="1; URL=articles/assets/r2.html">',
+                                   A + "r2.html")
+
+
+def test_r1c_base_href_is_the_origin_of_relative_urls(tmp_path):
+    _prune_keeps_and_check_catches(tmp_path, "index.html",
+                                   '<base href="/articles/assets/demo2/"><img src="b.png">', A + "demo2/b.png")
+
+
+def test_r1c_base_href_relative_and_file_shaped(tmp_path):
+    # base が相対でファイルの形(dirname が起点)
+    _prune_keeps_and_check_catches(tmp_path, "view2026/index.html",
+                                   '<base href="../articles/assets/demo3/page.html"><img src="c.png">',
+                                   A + "demo3/c.png")
+
+
+def test_r1c_base_href_itself_is_not_a_reference_and_external_base_leaves_the_site(tmp_path):
+    site, docs = make_site(tmp_path)
+    _write(site, "b.html", '<base href="/articles/assets/nodir/"><img src="/articles/assets/img_src.png">')
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert not [b for b in rep["broken_internal_links"] if b["target"].startswith(A + "nodir")]
+    assert ps.strict_resolve_in_page("a/b.html", "x.png", "https://example.com/") is None
+    assert ps.strict_resolve_in_page("a/b.html", "/articles/assets/x.png", "https://example.com/") == \
+        "articles/assets/x.png"
+    assert ps.strict_resolve_in_page("a/b.html", "x.png", None) == "a/x.png"
+    assert ps.strict_resolve_in_page("a/b.html", "x.png", "/") == "x.png"
+
+
+def test_r1c_unresolvable_asset_links_are_counted_separately(tmp_path):
+    site, docs = make_site(tmp_path)
+    before = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    _write(site, "links.html", '<img src="/articles/assets/nowhere.png"><a href="/nope.html">n</a>')
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert rep["ok"] and rep["broken_asset_links_count"] == before["broken_asset_links_count"] + 1
+    assert rep["broken_internal_links_count"] == before["broken_internal_links_count"] + 2
+
+
+def test_r2_quotes_close_with_the_same_quote_apostrophe_in_alt_paren(tmp_path):
+    site, _docs = make_site(tmp_path)
+    _write(site, A + "fig(1).png")
+    _write(site, "p.html", '<img alt="Fullseye\'s demo" src="/articles/assets/fig(1).png">')
+    assert A + "fig(1).png" not in ps.plan_prune(str(site))["remove"]
+
+
+def test_r2_quotes_close_with_the_same_quote_apostrophe_in_alt_space(tmp_path):
+    site, _docs = make_site(tmp_path)
+    _write(site, A + "my shot.png")
+    _write(site, "p.html", '<img alt="it\'s" src="/articles/assets/my shot.png">')
+    assert A + "my shot.png" not in ps.plan_prune(str(site))["remove"]
+    # 逆向き(一重の中に ")
+    _write(site, A + "your shot.png")
+    _write(site, "q.html", "<img title='a \"b\" c' src='/articles/assets/your shot.png'>")
+    assert A + "your shot.png" not in ps.plan_prune(str(site))["remove"]
+
+
+@pytest.mark.parametrize("shape", ["same", "docs_inside_site", "site_inside_docs"])
+def test_r3_source_docs_must_not_be_the_site_or_nested(tmp_path, shape):
+    site, docs = make_site(tmp_path)
+    if shape == "same":
+        d, s = site, site
+    elif shape == "docs_inside_site":
+        d, s = site / "articles", site
+    else:
+        d, s = docs, docs / "view2026"
+    r = run_cli(*check_args(s, d))
+    assert r.returncode == 2 and "--source-docs" in r.stderr, (shape, r.stderr[-300:])
+
+
+def test_r3_siblings_are_fine(tmp_path):
+    site, docs = make_site(tmp_path)
+    assert run_cli(*check_args(site, docs)).returncode == 0
+
+
+def test_r4_m11_source_docs_floor_is_the_assets_floor_not_one(tmp_path):
+    """docs の assets が 1 本以上・床未満でも exit 2(床を 1 にする変異 M11 を殺す)。"""
+    site, _docs = make_site(tmp_path)
+    few = tmp_path / "few_docs"
+    for i in range(3):
+        _write(few, A + f"f{i}.png")
+    r = run_cli(*check_args(site, few, min_kept=4))
+    assert r.returncode == 2 and "--source-docs" in r.stderr
+    ps.run_check(str(site), str(few), 10**9, 1, 3)  # ちょうど床なら docs の床では止めない
+
+
+def test_r4_m14_relative_trailing_slash_stays_a_directory(tmp_path):
+    assert ps.strict_resolve("articles/index.html", "assets/demo/") == "articles/assets/demo/"
+    site, docs = make_site(tmp_path)
+    _write(docs, A + "demo/index.html", "<p>d</p>")
+    _write(site, A + "demo.html", "<p>other</p>")  # 末尾 / を落とすと、こちらに解けてしまう
+    _write(docs, A + "demo.html", "<p>other</p>")
+    _write(site, "articles/links.html", '<a href="assets/demo/">d</a>')
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert not rep["ok"] and A + "demo/" in {m["target"] for m in rep["missing_assets"]}
+
+
+def test_r4_m17_protocol_relative_www_host_is_this_site(tmp_path):
+    u = "//www.furuse.work/articles/assets/x.png"
+    assert ps.strict_resolve("a/b.html", u) == "articles/assets/x.png"
+    assert "articles/assets/x.png" in ps.loose_candidates("a/b.html", u)
+
+
+def test_r4_m18_read_list_refuses_an_empty_list_itself(tmp_path):
+    p = tmp_path / "empty.txt"
+    p.write_text("\n \n\n", encoding="utf-8")
+    with pytest.raises(ps.SiteError, match="一覧が空"):
+        ps.read_list(str(p))
