@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 657 of 1884. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 657 of 1888. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `_archive_tarxz.py`
@@ -635,6 +635,13 @@ This repository records *why* things are the way they are in **comments in the s
 - **L981** — ★The largest plane is not necessarily the ground (once the canopy closes, part of the crown becomes the largest). The version that took the first plane as the ground answered an elevation of 1.69 m (stepped on this 2026-09-07). It only stabilized once we added the rule to **take the lowest plane**.
 - **L1008** — ★Control group: apply the same formula to the **true normals** (which the buffer holds).
 - **L1137** — ★The axes of ``occupancy_grid`` are (x, y, z). ``render_volume_projection`` collapses **axis 0 as the line-of-sight direction**, so if you want a nadir view, swap to (z, y, x). Calling it without swapping produces a "nadir view that was meant to be a side view" (a silently-wrong pattern).
+
+## `examples/poc_ct_casting_sparse_views.py`
+
+- **L83** _(ja)_ — 再構成の格子(立方体の 1 辺のボクセル数)。★reduced でも格子は縮めない: 24³ にすると最小の空隙が 7 ボクセルになり、順位の結論そのものが変わる(2026-11-04 実測: 門 32 本中 8 本が別の答え)。 reduced は TV の重みの較正と後知恵の格子を省き、full が較正で選んだ値 TV_FULL_CHOICE を使う (省いた段の門は判定しない。閾値は変えない)。
+- **L416** _(ja)_ — ★順位の入れ替わり: TV の RMSE を、SIRT と OS-SART の良いほうで割る。投影が足りている条件では 勝たず(TV の仮定が要らない)、足りない条件でだけ勝つ —— が、重みを評価用で選んでいない状態で言えるか。
+- **L429** _(ja)_ — ★RMSE の順位は空隙の体積の順位ではない: 少数投影の FDK は RMSE が最下位でも、欠損で測る体積は 線形の再構成なので質量が保存され、TV より正しい(TV は縁を平らに塗るので欠損の積分を動かす)。
+- **L440** _(ja)_ — ★「異常に良い」の内訳: 2 値の体積は真値そのものでも部分体積で偏る。手法がそれより小さな誤差を 出したら、ぼけの偏りと 2 値化の偏りが打ち消し合っただけ(正しさではない)と印字する。
 
 ## `examples/poc_ct_fidelity.py`
 

@@ -8518,6 +8518,23 @@
     "hi": "उपकरण चयन मानचित्र: 60 light, camera और lens संयोजनों से वही दोष",
     "fr": "Carte de choix du matériel : les mêmes défauts vus par 60 combinaisons éclairage, caméra, objectif"
    }
+  },
+  {
+   "id": "poc_ct_casting_sparse_views",
+   "group": "wing_industrial",
+   "media": "01_slices.png",
+   "motion": false,
+   "thumb_src": "01_slices.png",
+   "label": {
+    "ja": "鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない",
+    "en": "CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume",
+    "zh": "铸件气孔 CT:RMSE 第一的重建,气孔体积未必第一",
+    "tw": "鑄件氣孔 CT:RMSE 第一的重建,氣孔體積未必第一",
+    "ko": "주물 기공 CT: RMSE 1위 재구성이 기공 부피에서도 1위인 것은 아니다",
+    "de": "CT von Gussporen: Die beste Rekonstruktion nach RMSE ist nicht immer die beste beim Porenvolumen",
+    "hi": "ढलाई के रिक्त स्थानों का CT: RMSE में सबसे अच्छा पुनर्निर्माण रिक्त आयतन में हमेशा सबसे अच्छा नहीं",
+    "fr": "CT des porosités de fonderie : la meilleure reconstruction en RMSE n'est pas toujours la meilleure en volume"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

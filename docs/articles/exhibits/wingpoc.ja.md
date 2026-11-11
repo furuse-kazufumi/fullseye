@@ -2,7 +2,7 @@
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 50 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 51 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -1677,6 +1677,38 @@ py -3.11 examples/poc_equipment_selection_map.py
 この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_equipment_selection_map)
 
 使用 op(ノートへ): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`carbon_black_absorption`](https://furuse.work/ops/optics/matprop/carbon_black_absorption.html) · [`hyperspectral_band_weights`](https://furuse.work/ops/optics/spectral/hyperspectral_band_weights.html) · [`ingaas_photodiode_qe`](https://furuse.work/ops/optics/spectral/ingaas_photodiode_qe.html) · [`material_nir_absorption`](https://furuse.work/ops/optics/matprop/material_nir_absorption.html) · [`nir_model_info`](https://furuse.work/ops/optics/matprop/nir_model_info.html) · [`pod_ahat_fit`](https://furuse.work/ops/spc/pod/pod_ahat_fit.html) · [`pod_false_call`](https://furuse.work/ops/spc/pod/pod_false_call.html) · [`pod_from_ahat`](https://furuse.work/ops/spc/pod/pod_from_ahat.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
+
+## No.2026.311 —— 鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない
+
+Al の鋳物(32³、0.25 mm)に楕円体の空隙 3 個(24〜84 ボクセル)を置き、コーンビーム CT を 3 条件で撮った。真値は解析的な楕円体そのもので、描いた空隙の体積は 4/3πabc と 0.2 % 以内、離散の投影は閉形式の投影と相対 L2 4.0 %(64³ で 2.6 %)、投影と逆投影の随伴性は 3.8e-16。データは閉形式の投影に雑音を足したもので、再構成と同じ離散の投影では作っていない。RMSE の順位は 360° に 36 投影で OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053、12 投影と 110° では TV が 1 位(代数の良いほうに対し 0.77 / 0.78 倍)。ところが 12 投影でRMSE 最下位の FDK は、欠損で測る空隙の体積が閉形式と 0.9 % で、1 位の TV(5.9 %)より正しい。110° の FDK は空隙を 1 個も拾わない。半値で 2 値化した体積は真値そのものでも 16.7 % 偏るので、それより良く見える数字は偏りの打ち消し合いと注記した。TV の重み 3e-3 は評価に使わない較正用の鋳物で選び、評価用で後知恵に回した最良と同じだった。デュアルエナジーでは鉄の入れ子の体積が −8.7 %、分けた代わりに Al の基底の雑音が 41.65 倍(閉形式 41.00 倍)。単色・ガウス雑音・凸の空隙・例示の減衰係数の合成である。
+
+[![鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/01_slices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png)
+
+*↑ **鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない** ―― Al の鋳物(32³、0.25 mm)に楕円体の空隙 3 個(24〜84 ボクセル)を置き、コーンビーム CT を 3 条件で撮った。真値は解析的な楕円体そのもので、描いた空隙の体積は 4/3πabc と 0.2 % 以内、離散の投影は閉形式の投影と相対 L2 4.0 %(64³ で 2.6 %)、投影と逆投影の随伴性は 3.8e-16。データは閉形式の投影に雑音を足したもので、再構成と同じ離散の投影では作っていない。RMSE の順位は 360° に 36 投影で OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053、12 投影と 110° では TV が 1 位(代数の良いほうに対し 0.77 / 0.78 倍)。ところが 12 投影でRMSE 最下位の FDK は、欠損で測る空隙の体積が閉形式と 0.9 % で、1 位の TV(5.9 %)より正しい。110° の FDK は空隙を 1 個も拾わない。半値で 2 値化した体積は真値そのものでも 16.7 % 偏るので、それより良く見える数字は偏りの打ち消し合いと注記した。TV の重み 3e-3 は評価に使わない較正用の鋳物で選び、評価用で後知恵に回した最良と同じだった。デュアルエナジーでは鉄の入れ子の体積が −8.7 %、分けた代わりに Al の基底の雑音が 41.65 倍(閉形式 41.00 倍)。単色・ガウス雑音・凸の空隙・例示の減衰係数の合成である。*
+
+用語: cone-beam CT — 点の線源から円錐状に広がる X 線を平面の検出器で受け、1 回の回転で立体をまとめて撮る CT の方式。
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/02_ranking_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/02_ranking.png)
+
+*↑ 測定の図*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/03_tv_weight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/03_tv_weight.png)
+
+*↑ この回の図*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy.png)
+
+*↑ この回の図*
+
+```
+py -3.11 examples/poc_ct_casting_sparse_views.py
+```
+
+ソース: [examples/poc_ct_casting_sparse_views.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_casting_sparse_views.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ct_casting_sparse_views)
+
+使用 op(ノートへ): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_scan/ct_adjoint_project.html) · [`ct_dual_energy_reconstruct`](https://furuse.work/ops/tomography/ct_scan/ct_dual_energy_reconstruct.html) · [`ct_forward_project`](https://furuse.work/ops/tomography/ct_scan/ct_forward_project.html) · [`ct_scan_geometry`](https://furuse.work/ops/tomography/ct_scan/ct_scan_geometry.html) · [`ellipsoid_phantom`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_phantom.html) · [`ellipsoid_projections`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_projections.html) · [`fdk_reconstruct`](https://furuse.work/ops/tomography/ct_scan/fdk_reconstruct.html) · [`os_sart_reconstruct`](https://furuse.work/ops/tomography/ct_scan/os_sart_reconstruct.html) · [`shepp_logan_3d`](https://furuse.work/ops/tomography/ct_scan/shepp_logan_3d.html) · [`sirt_reconstruct`](https://furuse.work/ops/tomography/ct_scan/sirt_reconstruct.html) · [`tv_reconstruct`](https://furuse.work/ops/tomography/ct_scan/tv_reconstruct.html) · [`vol_rle_centroid`](https://furuse.work/ops/3d/rle_region/vol_rle_centroid.html) · [`vol_rle_components`](https://furuse.work/ops/3d/rle_region/vol_rle_components.html) · [`vol_rle_volume`](https://furuse.work/ops/3d/rle_region/vol_rle_volume.html)
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 

@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (486 examples)
+### 2-D image / signal / geometry (487 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -554,6 +554,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `type_connectivity_tour` — ops: `attention_softmax`, `find_peaks`, `frame_axis`, `gradient_coherence`, `gradient_magnitude`, `graph_components`, `graph_from_synapses`, `hessian_determinant`, `hessian_vesselness`, `indices_to_positions`, `jones_apply`, `jones_element` (+18 more) `py -3.11 examples/type_connectivity_tour.py`
 - `poc_bga_ball_type_roundtrip` — ops: `angles_to_normals`, `correlation_score`, `curvature_to_shape_index`, `curvature_to_table`, `erf`, `flow_apply`, `flow_speed`, `gaussians_to_points`, `gaussians_to_voxel`, `graph_components`, `graph_laplacian_spectrum`, `indices_to_labels` (+20 more) `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 - `poc_ct_void_morphology` — ops: `color_bar`, `text_box` `py -3.11 examples/poc_ct_void_morphology.py`
+- `poc_ct_casting_sparse_views` — ops: `ct_adjoint_project`, `ct_dual_energy_reconstruct`, `ct_forward_project`, `ct_scan_geometry`, `ellipsoid_phantom`, `ellipsoid_projections`, `fdk_reconstruct`, `os_sart_reconstruct`, `shepp_logan_3d`, `sirt_reconstruct`, `tv_reconstruct` `py -3.11 examples/poc_ct_casting_sparse_views.py`
 - `poc_battery_ct_degradation` — ops: `beam_hardening_apply`, `fbp_volume`, `projection_angles`, `radon_volume`, `ring_artifact_apply` `py -3.11 examples/poc_battery_ct_degradation.py`
 - `poc_battery_electrode_tortuosity` — ops: `intersection` `py -3.11 examples/poc_battery_electrode_tortuosity.py`
 - `poc_die_tilt_tsv_overlay` — ops: `erf`, `procrustes_fit` `py -3.11 examples/poc_die_tilt_tsv_overlay.py`
@@ -4492,17 +4493,17 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `ring_artifact_remove` `sinogram → sinogram` GPU: none — Remove per-detector-bin offsets by flattening the angle-averaged profile. · examples: `ct_reconstruction`
 
 #### tomography / ct_scan (11)
-- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: none — The exact transpose ``A^T`` of :func:`ct_forward_project`. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: none — Two scans of one geometry to two basis-material volumes. · examples: `poc_real_walnut_cbct`
-- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: none — Project a volume along every ray of *geometry*: the discrete operator ``A``. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ct_scan_geometry` `no input → ctgeometry` GPU: none — Describe one CT scan: per view, where the source and the detector are. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `ellipsoid_phantom` `no input → voxel` GPU: none — Rasterise a sum of uniform ellipsoids onto a ``(Z, Y, X)`` grid. · examples: `ct_scan_modes`
-- `ellipsoid_projections` `ctgeometry → projstack` GPU: none — Exact line integrals of a sum of ellipsoids, for any scan in this family. · examples: `ct_scan_modes`
-- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Filtered back-projection for every scan with a formula: FDK and its relatives. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: none — OS-SART: the SIRT update applied to one ordered subset of views at a time. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `shepp_logan_3d` `no input → voxel` GPU: none — The modified 3-D Shepp-Logan head phantom on a ``size``-cube. · examples: `ct_scan_modes`
-- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: none — SIRT: every view at once, ``x <- x + lam C A^T R (p - A x)``. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
-- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Total-variation reconstruction by the Chambolle-Pock primal-dual method. · examples: `ct_scan_modes`, `poc_real_walnut_cbct`
+- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: none — The exact transpose ``A^T`` of :func:`ct_forward_project`. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: none — Two scans of one geometry to two basis-material volumes. · examples: `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: none — Project a volume along every ray of *geometry*: the discrete operator ``A``. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ct_scan_geometry` `no input → ctgeometry` GPU: none — Describe one CT scan: per view, where the source and the detector are. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `ellipsoid_phantom` `no input → voxel` GPU: none — Rasterise a sum of uniform ellipsoids onto a ``(Z, Y, X)`` grid. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `ellipsoid_projections` `ctgeometry → projstack` GPU: none — Exact line integrals of a sum of ellipsoids, for any scan in this family. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Filtered back-projection for every scan with a formula: FDK and its relatives. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: none — OS-SART: the SIRT update applied to one ordered subset of views at a time. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `shepp_logan_3d` `no input → voxel` GPU: none — The modified 3-D Shepp-Logan head phantom on a ``size``-cube. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`
+- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: none — SIRT: every view at once, ``x <- x + lam C A^T R (p - A x)``. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
+- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: none — Total-variation reconstruction by the Chambolle-Pock primal-dual method. · examples: `ct_scan_modes`, `poc_ct_casting_sparse_views`, `poc_real_walnut_cbct`
 
 #### tomography / forward (3)
 - `ellipse_phantom` `no input → image2d` GPU: none — Rasterise a sum of uniform ellipses onto a *size* x *size* slice. · examples: `ct_reconstruction`, `poc_ct_fidelity`, `tomography_reconstruct`

@@ -5,7 +5,7 @@ category: ct_scan
 in: projstack × projstack × ctgeometry
 out: table
 gpu: なし
-examples: [poc_real_walnut_cbct]
+examples: [poc_ct_casting_sparse_views, poc_real_walnut_cbct]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -52,6 +52,7 @@ is returned.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_ct_casting_sparse_views](../../../../examples/poc_ct_casting_sparse_views.py) — `py -3.11 examples/poc_ct_casting_sparse_views.py`
 - [poc_real_walnut_cbct](../../../../examples/poc_real_walnut_cbct.py) — `py -3.11 examples/poc_real_walnut_cbct.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
