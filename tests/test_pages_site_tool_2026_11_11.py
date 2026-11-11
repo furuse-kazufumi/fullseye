@@ -640,7 +640,9 @@ def test_f1_unresolvable_asset_reference_fails_gate5_and_is_reported(tmp_path):
     _write(site, "links.html", '<img src="/articles/assets/nowhere.png">')
     rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
     assert not rep["ok"] and not rep["gates"]["gate5_no_broken_asset_links"]
-    assert all(v for k, v in rep["gates"].items() if k != "gate5_no_broken_asset_links")  # 門 1 とは二重に数えない
+    others = [v for k, v in rep["gates"].items() if k != "gate5_no_broken_asset_links"]
+    assert len(others) >= 4, others  # 空なら all() が無条件に通る
+    assert all(others)  # 門 1 とは二重に数えない
     assert rep["broken_asset_links_count"] == 1
     assert [(b["page"], b["target"]) for b in rep["broken_asset_links"]] == [("links.html", A + "nowhere.png")]
     lst = tmp_path / "built.txt"  # 一覧を渡しても、どこにも無いものは門 5(門 1 ではない)
