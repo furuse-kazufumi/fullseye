@@ -222,9 +222,12 @@ URLs, so only the deployed copy is smaller.
    repository name), or the site has no internal stylesheet at all. `docs/_config.yml` pins `url` and
    `baseurl` so this should not happen; the summary also prints the stylesheet, canonical, `og:url`,
    title and generator of `index.html` and `view2026/index.html` to compare with the legacy build.
+5. a reference points under `articles/assets/` to a file that exists nowhere, not even in `docs/` (the
+   summary lists the count and the first pages → references). Each reference is counted once: removed
+   by `prune` → gate 1; in `docs/` but never built → listed only; in neither → gate 5.
 
-Broken internal links (and asset references that resolve nowhere, not even in `docs/`) are counted in
-the summary but do not fail the job. Not covered: URLs that JavaScript assembles from strings or builds
+Other broken internal links (outside `articles/assets/`) are counted in the summary but do not fail the
+job. Not covered: URLs that JavaScript assembles from strings or builds
 from fetched JSON; `prune` keeps most of them because it reads JS and JSON loosely, but `check` does not
 verify them.
 

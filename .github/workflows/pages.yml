@@ -74,13 +74,14 @@ jobs:
           python3 tools/pages_site.py prune --site _site --apply
           --report-json pages-prune.json --summary-md "$GITHUB_STEP_SUMMARY"
       # 門 4: サイト内を指す stylesheet・script が全部在り、/fullseye/ 前置のページが 0(baseurl が倒れた印)。
+      # 門 5: repo にも無い assets への参照が 0 件(PR #303 の run の実物で 0 件。assets 以外の切れた内部リンクは報告だけ)。
       # 要約に index.html と view2026/index.html の組み方の見本(CSS の href・canonical・og:url・title・generator)。
       # 門 1: repo にある assets への参照が全部サイトに在る(repo にあっても組んだ直後の一覧に無いもの =
       # Jekyll が配信しない _ 始まりの名前は報告だけ。実物で 7 件、articles/index.html の _*_snippet.md)。門 2: 総量が GitHub の上限 1 GB 以下
       # (この数は上限から決めた。結果を見て動かさない。tar の見出しの見積もり = ファイル数 × 1024 B を足して比べる)。門 3: 空を通さない床 = 2026-11-11 に実物
       # (8bc7ab22f7 を GitHub が組んだ _site)で測った値のおよそ半分(html 4,456 ページ →
       # 2200、残った assets 800 本 → 400)。実物での余裕は 1 GB まで 99.2 MiB(896,000,530 B)。
-      - name: Check the pruned site (gates 1-4)
+      - name: Check the pruned site (gates 1-5)
         run: >
           python3 tools/pages_site.py check --site _site --source-docs docs --built-list pages-built.txt
           --max-bytes 1000000000 --min-pages 2200 --min-kept-assets 400
