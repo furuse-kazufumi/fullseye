@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.drag_coefficient_sphere(reynolds) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import ballistics; ballistics.drag_coefficient_sphere(reynolds) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;drag_coefficient_sphere&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Empirical formula for the drag coefficient of a smooth sphere (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). ≈ 0.4–0.5 for a table tennis ball (Re ≈ 1–5 × 10⁴).</p>
+<p>Empirical formula for the drag coefficient of a smooth sphere (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). For a table tennis ball (Re ≈ 1–5 × 10⁴) it is 0.39–0.41 (0.392 at Re 1.6 × 10⁴ = 6 m/s, 0.406 at 5 × 10⁴, 0.426 at 1 × 10⁵; it drops to 0.17 in the drag crisis near Re ≈ 3 × 10⁵).</p>
 <p>Empty input (<code style="color:#22d3bf">reynolds</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

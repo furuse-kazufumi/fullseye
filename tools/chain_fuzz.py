@@ -2137,7 +2137,8 @@ def _b_fit_spin_aero(pool, rng):
     bp = _b_ball_bp(pool, rng)
     f = BL.flight_ode((0.0, 0.0, 0.5), (8.0, 0.5, 2.0), (0.0, 200.0, 0.0), bp, 0.121, 1e-3)
     idx = np.arange(0, 120, 8)
-    return (f["t"][idx], f["p"][idx], bp), {"iters": 2, "dt": 1e-3}
+    # omega_max は 2 反復の到達値(≈109 rad/s)より下に置く: 半分(30)・既定(60)・2 倍(120)で上限の効き方が変わる(さもないと dead knob に数えられる)
+    return (f["t"][idx], f["p"][idx], bp), {"iters": 2, "dt": 1e-3, "omega_max": 60.0}
 
 
 def _b_fit_aero(pool, rng):

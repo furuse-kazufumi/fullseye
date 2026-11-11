@@ -61,7 +61,7 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 ## Recently added (newest first)
 
-- 2026-11-11 — No.2026.313 Reading Drag and Spin from a Trajectory at Once — The Trajectory Fixes the Force, Not the Spin (Measuring What Can and Cannot Be Read in a Self-Made, Different-Model World)
+- 2026-11-11 — No.2026.313 Reading Drag and Spin from a Trajectory at Once — A Missed C_L Coefficient Drags the Spin Along, and a Narrow Spin-Ratio Range Cannot Separate Them (Measuring When It Can Be Read in a Self-Made, Different-Model World)
 - 2026-11-08 — No.2026.305 Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels
 - 2026-11-08 — No.2026.306 Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography — A Failure Report: Per-Image Grain Size Does Not Even Rank Correctly (rho -0.17), and Boundary Placement Loses to Watershed
 - 2026-11-08 — No.2026.302 Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks

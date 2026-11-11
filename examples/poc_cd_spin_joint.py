@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """PoC: 軌跡から抗力と回転を同時に読む —— 読める量・読めない量を、真値と別の模型の世界で測る
 
-卓球の球の映像から「空気抵抗の係数 C_d」と「回転 ω」を同時に出したい。力の向きは、抗力が −v、マグヌスが ω × v(v に垂直)なので、
+卓球の球の軌跡の位置データから「空気抵抗の係数 C_d」と「回転 ω」を同時に出したい(入力は位置と雑音だけで、映像の描画・検出は通さない)。力の向きは、抗力が −v、マグヌスが ω × v(v に垂直)なので、
 原理的には直交して分かれるはず —— 本当にそうか、どこで崩れるかを、**当てはめの模型と別の模型で作った世界**で測る
 (:func:`ballistics.fit_spin_aero`、新 op。:func:`ballistics.fit_spin` の C_d 自由版)。
 
@@ -14,24 +14,34 @@
 
 門(真値の出どころ: 世界の式、打ち出した ω、世界の C_d・C_L の速さ² 重みの平均 —— **全部この PoC が仕込んだ値**):
   1. **恒等式**: 当てはめと同じ模型で作った軌跡から ω・C_d が 1e-3 rad/s・1e-5 で戻る。C_L を定数にした模型は拒否される
-     (定数 C_L のマグヌスの力は大きさが ω によらず、|ω| が原理的に読めない)。
+     (定数 C_L のマグヌスの力は大きさが ω によらず、|ω| が読めない: 実測で 150 rad/s が 10 rad/s 台までしか動かない)。
   2. **世界は当てはめと別物**: C_d(Re) の幅と、C_L の谷が世界の実効 C_L を当てはめの模型の何割にするか(κ_eff)を測って出す。
   3. **模様から ω**: 近接カメラ(1000 fps)の模様から、回転のある 3 本は真値と 7 % 以内(PoC ㉔ と同じ読み取り。門は 5 % から 7 % へ緩めた —— 初期姿勢が違うだけで
      トップスピンが 5 % の境目をまたぐ: 4.8 % → 5.1 %)、無回転は 10 rad/s 未満。軌跡は見ない。
   4. **ω を模様から取り、軌跡から (C_d, C_L)**(筋の通る分担): C_d は世界の平均値の 10 % 以内、C_L は実効値の 10 % 以内。
-  5. **軌跡だけで同時に読むと ω は偏る**(読めたと書かない): C_d は 10 % 以内で読めるが、ω は C_L の谷のぶんだけ偏る。偏りは
-     谷の深さとともに増え(雑音なしの軌跡で測る)、深さ 0 では 3 % 未満に戻る(偏りの原因が谷だと切り分ける)。力(C_L)は軌跡が決めている。
-  6. **ω と C_L の係数 κ は縮退**: κ も自由にすると条件数が桁で増え、|ω| と κ の相関が ±0.99 を超え、初期値を変えると rms が同じで
-     ω が大きく違う答えになる。
+  5. **軌跡だけで同時に読むと ω は偏る**(読めたと書かない): C_d は 10 % 以内で読めるが、ω は偏る。偏りは谷に限らず**当てはめの C_L 模型が
+     世界の係数を外すと ω が引きずられる**一般の話で、C_L の不足の 1.3 倍以上に増幅される(谷の深さを振る・谷のない世界で係数だけ 0.6 / 0.8 / 1.2 倍にする、
+     の 2 通りで測る。谷の深さ 0 で偏りが 0 になるのは κ = 1 が真だからで、同語反復の確認にすぎない)。この体制では読んだ ω で模型が出す力は世界の実効値に合う。
+  6. **ω と C_L の係数 κ の縮退(この遅い球の体制で)**: κ も自由にすると条件数が桁で増え、|ω| と κ の相関が ±0.99 を超え、初期値を変えると rms が
+     同じで ω が大きく違う答えになる。κ·ω の積は一定でなく(緩い谷)、模型の C_L は世界の実効値からずれる(この雑音 1 本。引き直しで動く)。
   7. **ω の v に平行な成分は読めない**: 平行成分の標準偏差が垂直成分の 4 倍以上(線形化。モンテカルロも 2 倍以上)で、真値の 2 割を超える。
      飛行長を振っても全ての長さで 3 倍以上(最長でも 3.9 倍、短いと 15 倍)。
   8. **C_d と ω⊥・C_d と初速の相関、飛行長・雑音**: 飛行長(コマ数)と雑音を振る掃引で、線形化の相関・モンテカルロの相関(雑音で割って束ねる)・
      C_d と ω⊥ のばらつき・条件数を測る。予想(推定)は「C_d と ω⊥ は直交して相関が小さく、飛行が短いと C_d は初速と相関する」。
+  9. **読める条件(v₀ を振る)**: κ 自由の ω⊥ の標準偏差は S の振れ幅で決まる。遅い球(S = 0.49〜0.56)では ω の 3 倍超(読めない)、
+     速い球(25 m/s・300 rad/s、S = 0.24〜0.46)では 0.3 倍未満(読める)。「軌跡だけでは原理的に読めない」ではなく「S が狭い条件では読めない」。
+  10. **C_L の係数のずれ**: 谷のない世界で係数を 0.6 / 0.8 / 1.2 倍にすると、κ = 1 の当てはめは ω を約 58 / 34 / +53 % 外す。
+  11. **C_d の Re 依存を効かせる**: 卓球 30 m/s・サッカーボール(抗力危機)で C_d の「実効値との差」は小さいまま(定義が当てはめ向き)だが、
+     模型の外れは rms にだけ現れる(雑音の床の 2 倍超)。「C_d が当てはまる」ではなく「C_d の誤差は小さいが外れは rms で見る」。
 
 正直に書くこと: **真値は全部、自作の世界の値**(C_L の谷は仮の値)。観測は世界の位置に等方ガウス雑音(σ = 1.5 mm、PoC ㉔ で 2 台のカメラの
 三角測量が実際に出した誤差の水準)を足したもので、映像の描画・検出・三角測量はこの PoC では通していない(模様の近接撮影だけ描画する)。
 跳ねる直前までの軌跡だけを使い、切る位置は世界の接触時刻(跳ねの検出は PoC ㉔ で検証済み)。回転は飛行中一定(減衰なし)。球の変形・
-実写の照明・ぼけは無い。Morrison の C_d は卓球の速さ(2〜10 m/s)でほぼ平らなので、C_d の模型の食い違いは小さい —— 効くのは C_L の谷。
+実写の照明・ぼけは無い。雑音は等方ガウスで、実際の三角測量は奥行き方向が大きい非等方なので、ここの精度・相関は**楽観側**。
+Morrison の C_d は卓球の速さ(2〜10 m/s)でほぼ平ら(0.392〜0.40。docstring の「0.4〜0.5」は実装と合わず直した)で、飛行中の幅は 0.08 %。
+そのうえ C_d の真値を「v² 重みの実効値」と定義しており当てはめに有利なので、C_d の 0.4 % 以内は当然の結果で、検出力の無い門(第 11 節で Re 依存を効かせて再測)。
+谷の位置(S = 0.5)・深さ(40 %)は仮の値で、主役の打球(S = 0.49〜0.56)をその中心に置いている。偏りの大きさはその選び方に依存し、
+一般に言えるのは「C_L 模型の係数ずれが ω へ 1.5〜2.7 倍に増幅される」ことと「S の振れ幅が狭いと κ と ω が分かれない」ことだけ。
 
 Run: py -3.11 examples/poc_cd_spin_joint.py   (図は FULLSEYE_FIGURE_DIR を設定したときだけ書く。FULLSEYE_POC_BUDGET=reduced で
 モンテカルロ・掃引を粗くする(CI の既定))
@@ -76,12 +86,12 @@ def _rel(a, b):
 
 # ─────────────────────────────── 世界(当てはめと別の模型) ───────────────────────────────
 
-def cl_world(S: float, depth: float = DIP[0]) -> float:
-    """世界の揚力係数: 経験式 S/(1 + 2S) に S = 0.5 付近の谷(深さ ``depth``)を掘った表(仮の値)。"""
-    return S / (1.0 + 2.0 * S) * (1.0 - depth * math.exp(-(((S - DIP[1]) / DIP[2]) ** 2)))
+def cl_world(S: float, depth: float = DIP[0], scale: float = 1.0) -> float:
+    """世界の揚力係数: 経験式 S/(1 + 2S) に S = 0.5 付近の谷(深さ ``depth``)を掘り、全体に ``scale`` を掛けた表(仮の値)。"""
+    return scale * S / (1.0 + 2.0 * S) * (1.0 - depth * math.exp(-(((S - DIP[1]) / DIP[2]) ** 2)))
 
 
-def world_flight(p0, v0, w, bp: dict, z_stop: float, depth: float = DIP[0], t_max: float = 1.0, dt: float = 2.5e-4) -> dict:
+def world_flight(p0, v0, w, bp: dict, z_stop: float, depth: float = DIP[0], t_max: float = 1.0, dt: float = 2.5e-4, scale: float = 1.0) -> dict:
     """世界の飛翔(RK4、PoC の中の別実装): 抗力は Re 依存の C_d、マグヌスは ``cl_world``。台の高さ ``z_stop`` に達したところで止める。
     返り値 ``{"t", "p", "v", "cd", "cl", "omega"}``(``cd``・``cl`` は各時刻の世界の係数)。"""
     p = np.array(p0, float)
@@ -98,7 +108,7 @@ def world_flight(p0, v0, w, bp: dict, z_stop: float, depth: float = DIP[0], t_ma
         a = -k * cd * sp * v + np.array([0.0, 0.0, -g])
         cl = 0.0
         if wn > 0.0:
-            cl = cl_world(r * wn / sp, depth)
+            cl = cl_world(r * wn / sp, depth, scale)
             a = a + k * cl * sp / wn * np.cross(w, v)
         return a, cd, cl
 
@@ -194,7 +204,7 @@ def main() -> int:
         rejected = True
     # 定数 C_L の既存の fit_spin は ω を 0 から動かせない: 力の大きさが ω によらない
     w_stuck = np.linalg.norm(B.fit_spin(t_id, P_id, B.ball_params(cd=0.42, cl=0.2), iters=10)["omega"])
-    print("  定数 C_L(0.2)の模型で fit_spin に同じ軌跡(真の |ω| = %.0f rad/s)を当てると |ω| = %.1f rad/s(0 から動かない)" % (SPIN, w_stuck))
+    print("  定数 C_L(0.2)の模型で fit_spin に同じ軌跡(真の |ω| = %.0f rad/s)を当てると |ω| = %.1f rad/s(真値に届かず、ほとんど動かない)" % (SPIN, w_stuck))
     gate("定数 C_L の模型は fit_spin_aero が ValueError で拒否し、既存の fit_spin でも |ω| が読めない(真値の 10 % 未満)", rejected and w_stuck < 0.1 * SPIN,
          "(|ω| %.1f rad/s)" % w_stuck)
 
@@ -288,7 +298,7 @@ def main() -> int:
             print("  %s: C_d %.4f ± %.4f(実効 %.4f、差 %.1f %%)、|ω⊥| = %.1f rad/s(真値 0)" % (
                 label, cd_m, est[:, 0].std(), wd["cd_eff"], 100 * e_cd_j, np.linalg.norm(wperp)))
     gate("同時推定でも C_d は世界の実効値の 10 % 以内(4 本とも、C_d と ω⊥ は分かれる)", j_cd_ok)
-    gate("同時推定の ω は谷のぶん偏る(誤差 ≥ 20 %)が、読んだ ω で模型が出す力(C_L)は世界の実効値の 15 % 以内 —— 軌跡が決めているのは力",
+    gate("同時推定の ω は偏る(誤差 ≥ 20 %)が、読んだ ω で模型が出す力(C_L)は世界の実効値の 15 % 以内(この遅い球の体制では軌跡が合わせているのは力)",
          all(b >= 0.20 for b in w_bias.values()) and j_force_ok, "(ω⊥ の誤差 %s)" % {k: "%.0f %%" % (100 * v) for k, v in w_bias.items()})
 
     # 谷の深さを振る
@@ -300,13 +310,27 @@ def main() -> int:
         rj = B.fit_spin_aero(tt, P, bpJ)
         bias_d.append(abs(float(np.linalg.norm(rj["omega_perp"])) - SPIN) / SPIN)
         kap_d.append(effective(sp, cdw, clw, r * SPIN / sp)[2])
-    print("  谷の深さ → ω の誤差(トップ、雑音なしの軌跡、C_d は Re 依存の世界のまま): %s" % ", ".join(
-        "%.0f %% → %.1f %%(κ_eff %.2f)" % (100 * d, 100 * b, k) for d, b, k in zip(depths, bias_d, kap_d)))
-    gate("偏りの原因は谷(雑音なしで測る): 深さ 0 では ω の誤差が 3 % 未満、最深で 20 % 以上、深さとともに単調に増える",
-         bias_d[0] < 0.03 and bias_d[-1] >= 0.20 and all(np.diff(bias_d) > 0))
+    amp_d = [b_ / (1.0 - k) for b_, k in zip(bias_d[1:], kap_d[1:])]
+    print("  谷の深さ → ω の誤差(トップ、雑音なしの軌跡): %s" % ", ".join(
+        "%.0f %% → %.1f %%(κ_eff %.2f)" % (100 * d, 100 * b_, k) for d, b_, k in zip(depths, bias_d, kap_d)))
+    print("  増幅率(ω の誤差 / C_L の不足 1 − κ_eff): %s。深さ 0 で誤差 0 は κ = 1 が真なので当然(同語反復)で、偏りの原因が谷そのものだという証拠にはならない" % ", ".join("%.2f" % x for x in amp_d))
+    gate("ω の誤差は C_L の不足(1 − κ_eff)の 1.3 倍以上に増幅され、深さとともに単調に増える(深さ 0 は同語反復の確認で 3 % 未満)",
+         bias_d[0] < 0.03 and all(x >= 1.3 for x in amp_d) and all(np.diff(bias_d) > 0), "(増幅率 %.2f〜%.2f)" % (min(amp_d), max(amp_d)))
+
+    # 谷のない世界で係数だけずらす(偏りの原因は『谷』でなく『当てはめの C_L 模型が世界の係数を外すこと』)
+    shift = {}
+    for k_w in (0.6, 0.8, 1.2):
+        f = world_flight(p0, V0, (0.0, SPIN, 0.0), bpw, H + r, depth=0.0, scale=k_w)
+        tt, P, sp, cdw, clw = observe(f)
+        rj = B.fit_spin_aero(tt, P, bpJ)
+        shift[k_w] = float(np.linalg.norm(rj["omega_perp"])) / SPIN - 1.0
+    print("  谷のない世界で C_L の係数だけ変える(雑音なし、κ = 1 で当てはめ): %s" % ", ".join(
+        "世界の係数 %.1f 倍 → ω の誤差 %+.0f %%(増幅 %.2f)" % (k_w, 100 * e, abs(e) / abs(1 - k_w)) for k_w, e in shift.items()))
+    gate("係数のずれが ω へ増幅される: 係数 0.6 / 0.8 / 1.2 倍の谷のない世界で、κ = 1 の当てはめは ω を係数のずれの 1.3 倍以上外し、向きは係数と同じ",
+         all(abs(e) >= 1.3 * abs(1 - k_w) and (e > 0) == (k_w > 1) for k_w, e in shift.items()))
 
     # ─────────────────────────────── 6. 縮退 ───────────────────────────────
-    print("== 6. ω と C_L の係数 κ は縮退する(κ も自由にする: fit_spin_aero(fit_cl=True))")
+    print("== 6. この遅い球の体制では ω と C_L の係数 κ が分けられない(κ も自由にする: fit_spin_aero(fit_cl=True))")
     wd = world["top"]
     Pn = noisy(wd["P"], SIGMA, rng)
     r_fix = B.fit_spin_aero(wd["t"], Pn, bpJ)
@@ -317,15 +341,21 @@ def main() -> int:
         S_m = r * np.linalg.norm(rr["omega_perp"]) / wd["sp"]
         cl_m = rr["cl_scale"] * float(((B.magnus_lift_coefficient(S_m)) * wd["sp"] ** 2).sum() / (wd["sp"] ** 2).sum())
         degen.append((w_init, np.linalg.norm(rr["omega_perp"]), rr["cl_scale"], rr["rms"], cl_m, rr["cond"], rr["corr"][7, 10]))
-        print("  初期 ω = %3.0f → ω⊥ = %6.1f rad/s、κ = %.3f、rms %.3f mm、模型の C_L %.4f、cond %.1e、corr(ω_y, κ) = %+.4f" % (
-            w_init, degen[-1][1], degen[-1][2], 1e3 * degen[-1][3], degen[-1][4], degen[-1][5], degen[-1][6]))
+        print("  初期 ω = %3.0f → ω⊥ = %6.1f rad/s、κ = %.3f(κ·ω = %.1f)、rms %.3f mm、模型の C_L %.4f(世界の実効 %.4f の %.0f %%)、cond %.1e、corr(ω_y, κ) = %+.4f" % (
+            w_init, degen[-1][1], degen[-1][2], degen[-1][1] * degen[-1][2], 1e3 * degen[-1][3], degen[-1][4], wd["cl_eff"], 100 * degen[-1][4] / wd["cl_eff"],
+            degen[-1][5], degen[-1][6]))
     print("  κ 固定の当てはめ: rms %.3f mm、cond %.1e" % (1e3 * r_fix["rms"], r_fix["cond"]))
     w_all = np.array([d[1] for d in degen])
     rms_all = np.array([d[3] for d in degen])
     gate("縮退: κ も自由にすると cond が κ 固定の 10 倍以上、|corr(ω, κ)| > 0.99", min(d[5] for d in degen) > 10 * r_fix["cond"] and all(abs(d[6]) > 0.99 for d in degen))
-    gate("縮退: 初期値を変えると rms は 5 % 以内で同じなのに、ω は 30 % 以上ばらつく(軌跡は積 κ·ω だけを決める)",
+    gate("縮退: 初期値を変えると rms は 5 % 以内で同じなのに、ω は 30 % 以上ばらつく(κ と ω の組は軌跡から一意に決まらない。積 κ·ω は一定でなく緩い谷)",
          rms_all.max() / rms_all.min() < 1.05 and (w_all.max() - w_all.min()) / w_all.mean() > 0.30,
-         "(rms %.3f〜%.3f mm、ω %.0f〜%.0f rad/s)" % (1e3 * rms_all.min(), 1e3 * rms_all.max(), w_all.min(), w_all.max()))
+         "(rms %.3f〜%.3f mm、ω %.0f〜%.0f rad/s、κ·ω %.1f〜%.1f)" % (1e3 * rms_all.min(), 1e3 * rms_all.max(), w_all.min(), w_all.max(),
+                                                              min(d[1] * d[2] for d in degen), max(d[1] * d[2] for d in degen)))
+    cl_fix = float(((B.magnus_lift_coefficient(r * np.linalg.norm(r_fix["omega_perp"]) / wd["sp"])) * wd["sp"] ** 2).sum() / (wd["sp"] ** 2).sum())
+    print("  参考: 同じ雑音 1 本の κ = 1 の当てはめの模型 C_L は世界の実効値の %.0f %%(モンテカルロ平均は 103 %%)。雑音 1 本で力は ±15 %% 動く" % (100 * cl_fix / wd["cl_eff"]))
+    print("  κ 自由の解の模型 C_L は世界の実効値の %.0f〜%.0f %%(雑音 1 本の値で、雑音の引き直しで ±15 %% 動くので門にしない)" % (
+        100 * min(d[4] for d in degen) / wd["cl_eff"], 100 * max(d[4] for d in degen) / wd["cl_eff"]))
 
     # ─────────────────────────────── 7. ω の平行成分 ───────────────────────────────
     print("== 7. ω の v に平行な成分(進行方向を軸にした回転、150 rad/s)は読めない")
@@ -388,10 +418,66 @@ def main() -> int:
          all(an[n]["corr_v"] > 0.9 for n in lens), "(%s)" % ", ".join("%d コマ %+.3f" % (n, an[n]["corr_v"]) for n in lens))
     gate("読めない成分は全ての飛行長で悪い: 平行成分の標準偏差は垂直成分の 3 倍以上(短いほど開く)", all(an[n]["ax"] > 3 * an[n]["pp"] for n in lens),
          "(比 %s)" % ", ".join("%d コマ %.0f" % (n, an[n]["ax"] / an[n]["pp"]) for n in lens))
+    # ─────────────────────────────── 9. 読める条件(v₀ を振る) ───────────────────────────────
+    print("== 9. 読める条件: v₀・ω を振って、κ 自由の ω⊥ の標準偏差を測る(同じ模型の世界、σ = %.1f mm、線形化 + モンテカルロ)" % (1e3 * SIGMA))
+    bp_same = B.ball_params(cd=0.42, cl=None)
+    v0s = [("遅い球 6 m/s", (6.0, 0.0, 1.3), 150.0, 0.34), ("15 m/s", (15.0, 0.0, 1.0), 150.0, 0.34), ("速い球 25 m/s・ω 300", (25.0, 0.0, 1.0), 300.0, 0.34)]
+    vsens = []
+    for lab, v0v, w_v, T_v in v0s:
+        f = B.flight_ode([-1.3, 0, 1.01], v0v, [0, w_v, 0], bp_same, T_v + 0.01, 1e-4)
+        tt = np.arange(0, T_v, 1 / FPS)
+        P = np.column_stack([np.interp(tt, f["t"], f["p"][:, k]) for k in range(3)])
+        sp = np.interp(tt, f["t"], np.linalg.norm(f["v"], axis=1))
+        S = r * w_v / sp
+        r0 = B.fit_spin_aero(tt, P, bp_same)
+        r1 = B.fit_spin_aero(tt, P, bp_same, fit_cl=True, omega0=[0, w_v, 0], iters=10)
+        sd_fix = r0["omega_perp_std_unit"] * SIGMA / w_v
+        sd_free = r1["omega_perp_std_unit"] * SIGMA / w_v
+        vsens.append({"label": lab, "v": (sp[0], sp[-1]), "S": (S.min(), S.max()), "sd_fix": sd_fix, "sd_free": sd_free, "cond_fix": r0["cond"], "cond_free": r1["cond"],
+                      "corr": r1["corr"][7, 10], "tt": tt, "P": P, "w": w_v})
+        print("  %s: 速さ %.1f → %.1f m/s、S %.2f〜%.2f(幅 %.0f %%)、κ 固定: ω⊥ の標準偏差 %.1f %%・cond %.1e / κ 自由: %.0f %%・cond %.1e、corr(ω, κ) = %+.5f" % (
+            lab, sp[0], sp[-1], S.min(), S.max(), 100 * (S.max() - S.min()) / S.min(), 100 * sd_fix, r0["cond"], 100 * sd_free, r1["cond"], r1["corr"][7, 10]))
+    vf = vsens[-1]
+    n_v = max(4, N_MC // 2)
+    est = []
+    for _ in range(n_v):
+        rj = B.fit_spin_aero(vf["tt"], noisy(vf["P"], SIGMA, rng), bp_same, fit_cl=True, omega0=[0, vf["w"], 0], iters=40)
+        est.append(float(np.linalg.norm(rj["omega_perp"])))
+    est = np.array(est)
+    mad = 1.4826 * float(np.median(np.abs(est - np.median(est))))
+    print("  速い球の κ 自由のモンテカルロ(%d 本): ω⊥ の中央値 %.0f rad/s(真値 %.0f)、頑健な標準偏差 %.0f rad/s(線形化 %.0f)" % (
+        n_v, np.median(est), vf["w"], mad, vf["sd_free"] * vf["w"]))
+    gate("読める条件は S の振れ幅: κ 自由の ω⊥ の標準偏差は遅い球で ω の 3 倍超(読めない)、速い球で 0.3 倍未満(読める)、v₀ とともに単調に減る",
+         vsens[0]["sd_free"] > 3.0 and vsens[-1]["sd_free"] < 0.3 and vsens[0]["sd_free"] > vsens[1]["sd_free"] > vsens[2]["sd_free"],
+         "(%s)" % ", ".join("%.0f %%" % (100 * v_["sd_free"]) for v_ in vsens))
+    gate("速い球ではモンテカルロでも κ 自由の ω が読める: 中央値の誤差 15 % 以内、頑健な標準偏差が線形化の 0.3〜4 倍",
+         abs(np.median(est) - vf["w"]) < 0.15 * vf["w"] and 0.3 < mad / (vf["sd_free"] * vf["w"]) < 4.0,
+         "(誤差 %.1f %%、比 %.2f)" % (100 * abs(np.median(est) - vf["w"]) / vf["w"], mad / (vf["sd_free"] * vf["w"])))
+
+    # ─────────────────────────────── 10. C_d の Re 依存を効かせる ───────────────────────────────
+    print("== 10. C_d の Re 依存を効かせる(回転なし、世界は Morrison、当てはめは定数 C_d。雑音 σ = %.1f mm、雑音の床 = σ√3 = %.2f mm)" % (1e3 * SIGMA, 1e3 * SIGMA * math.sqrt(3)))
+    floor = SIGMA * math.sqrt(3)
+    regimes = []
+    for lab, rad, m_, v0v in (("卓球 6 m/s", 0.02, 0.0027, (6.0, 0.0, 1.3)), ("卓球 30 m/s", 0.02, 0.0027, (30.0, 0.0, 1.0)),
+                              ("サッカーボール 22 m/s(抗力危機)", 0.11, 0.43, (22.0, 0.0, 3.0))):
+        bpw_c = B.ball_params(radius=rad, mass=m_, cd="sphere", cl=None)
+        f = world_flight([0.0, 0.0, 2.0], v0v, (0.0, 0.0, 0.0), bpw_c, 0.0, t_max=0.6 if rad < 0.05 else 1.2)
+        tt, P, sp, cdw, clw = observe(f)
+        cd_e = float((cdw * sp ** 2).sum() / (sp ** 2).sum())
+        rj = B.fit_spin_aero(tt, noisy(P, SIGMA, rng), B.ball_params(radius=rad, mass=m_, cd=0.4, cl=None))
+        regimes.append({"label": lab, "span": float((cdw.max() - cdw.min()) / cd_e), "cd_eff": cd_e, "cd": rj["cd"], "err": abs(rj["cd"] - cd_e) / cd_e,
+                        "rms": rj["rms"], "ratio": rj["rms"] / floor})
+        g_ = regimes[-1]
+        print("  %s: C_d の幅 %.2f %%(実効 %.4f)、当てはめ C_d %.4f(誤差 %.1f %%)、rms %.2f mm(雑音の床の %.1f 倍)" % (
+            lab, 100 * g_["span"], cd_e, rj["cd"], 100 * g_["err"], 1e3 * g_["rms"], g_["ratio"]))
+    gate("C_d の誤差は Re 依存を効かせても 5 % 以内(実効値の定義が当てはめ向きだから。検出力の無い門)、模型の外れは rms にだけ現れる: 卓球 6 m/s は雑音の床の 1.3 倍未満、サッカーボールは 2 倍超",
+         all(g_["err"] < 0.05 for g_ in regimes) and regimes[0]["ratio"] < 1.3 and regimes[2]["ratio"] > 2.0,
+         "(rms 比 %s、幅 %s)" % (", ".join("%.1f" % g_["ratio"] for g_ in regimes), ", ".join("%.1f %%" % (100 * g_["span"]) for g_ in regimes)))
+
     if figs.enabled():
-        print("== 9. 図")
+        print("== 11. 図")
         t_f = time.time()
-        _figures(world, depths, bias_d, kap_d, degen, r_fix, lens, an, sweep, sigmas, w_bias)
+        _figures(world, depths, bias_d, kap_d, degen, r_fix, lens, an, sweep, sigmas, w_bias, vsens, shift, regimes, amp_d)
         print("  図(%.1f s)" % (time.time() - t_f))
         if figs.errors():
             print("図の書き出しで失敗:", "; ".join(figs.errors()))
@@ -402,8 +488,8 @@ def main() -> int:
     return 0 if all(OK) else 1
 
 
-def _figures(world, depths, bias_d, kap_d, degen, r_fix, lens, an, sweep, sigmas, w_bias):
-    """表 2 枚 + グラフ 4 枚(図は FULLSEYE_FIGURE_DIR を設定したときだけ)。数字は本体の実行の値。"""
+def _figures(world, depths, bias_d, kap_d, degen, r_fix, lens, an, sweep, sigmas, w_bias, vsens, shift, regimes, amp_d):
+    """表 6 枚 + グラフ 3 枚(図は FULLSEYE_FIGURE_DIR を設定したときだけ)。数字は本体の実行の値。"""
     rows = []
     for label, key, w0 in SERVES:
         wd = world[key]
@@ -418,10 +504,10 @@ def _figures(world, depths, bias_d, kap_d, degen, r_fix, lens, an, sweep, sigmas
     d_cd_m = max(abs(world[k]["M"][:, 0].mean() - world[k]["cd_eff"]) / world[k]["cd_eff"] for k in spinning)
     d_cl_m = max(abs(world[k]["M"][:, 1].mean() - world[k]["cl_eff"]) / world[k]["cl_eff"] for k in spinning)
     d_cd_j = max(abs(world[k]["J"][:, 0].mean() - world[k]["cd_eff"]) / world[k]["cd_eff"] for k in world)
-    figs.save_table("estimates_by_mode", ["打球", "真の |ω| [rad/s]", "世界の実効 C_d / C_L", "模様から ω [rad/s]",
-                                          "ω = 模様 → 軌跡から C_d / C_L", "軌跡だけ(同時): C_d", "軌跡だけ: |ω⊥|(誤差)"], rows,
-                    title="C_d と ω を 2 通りの分担で読む(世界は C_d が Re 依存・C_L に谷、当てはめは定数)",
-                    caption="ω を模様から取り、軌跡から C_d・C_L を読むと世界の実効値との差は C_d %.1f %%・C_L %.1f %% 以内。軌跡だけで C_d と ω を同時に読むと C_d は %.1f %% 以内だが、ω は C_L の谷のぶん %.0f〜%.0f %% 小さく出る。真値は全部この PoC が仕込んだ世界の値。" % (
+    figs.save_table("estimates_by_mode", ["打球", "真の |ω| [rad/s]", "世界の実効 C_d / C_L(v² 重み)", "模様から ω [rad/s]",
+                                          "ω = 模様 → 軌跡から C_d / C_L", "軌跡だけ(同時): C_d", "軌跡だけ: |ω⊥| [rad/s](誤差)"], rows,
+                    title="C_d と ω を 2 通りの分担で読む —— 世界は自作(C_d は Re 依存・C_L に谷)で、真値は全部その世界の値",
+                    caption="ω を模様から取り、軌跡から C_d・C_L を読むと世界の実効値との差は C_d %.1f %%・C_L %.1f %% 以内。軌跡だけで C_d と ω を同時に読むと C_d は %.1f %% 以内だが、ω は当てはめの C_L 模型が世界の係数を外したぶん %.0f〜%.0f %% 小さく出る。真値は全部この PoC が仕込んだ世界の値で、観測は等方ガウス雑音の位置(楽観)・回転は一定(減衰なし)。" % (
                         100 * d_cd_m, 100 * d_cl_m, 100 * d_cd_j, 100 * min(w_bias.values()), 100 * max(w_bias.values())))
     Sg = np.linspace(0.02, 1.2, 80)
     figs.save_plot("cl_world_vs_model", [("世界の C_L(S = 0.5 に谷、仮の値)", Sg, [cl_world(s) for s in Sg]),
@@ -430,25 +516,43 @@ def _figures(world, depths, bias_d, kap_d, degen, r_fix, lens, an, sweep, sigmas
                    caption="観測を作る世界(実線)は S = 0.5 付近に谷があり、当てはめの模型(破線)にはない。卓球の 150 rad/s・6 m/s は S ≈ 0.5 で、谷の真ん中に当たる。谷の位置・深さは仮の値。")
     figs.save_plot("omega_bias_vs_dip", [("ω の誤差 [%]", 100 * np.asarray(depths), 100 * np.asarray(bias_d)),
                                          ("C_L の不足 100(1 − κ_eff) [%]", 100 * np.asarray(depths), 100 * (1 - np.asarray(kap_d)))],
-                   xlabel="C_L の谷の深さ [%]", ylabel="[%]", title="軌跡だけで読む ω は、谷の深さとともに偏る",
-                   caption="トップスピンを軌跡だけ(C_d と ω を同時、κ = 1、雑音なしの軌跡)で読んだ ω の誤差(実線)と、世界の C_L が当てはめの模型に足りない割合(破線)。深さ 0 では誤差が %.1f %% まで消える。" % (100 * bias_d[0]))
+                   xlabel="C_L の谷の深さ [%]", ylabel="[%]", title="ω の誤差は、C_L の不足の %.1f〜%.1f 倍に増幅される" % (min(amp_d), max(amp_d)),
+                   caption="トップスピンを軌跡だけ(C_d と ω を同時、κ = 1、雑音なしの軌跡)で読んだ ω の誤差(実線)と、世界の C_L が当てはめの模型に足りない割合(破線)。傾きの比(増幅)が %.1f〜%.1f 倍。深さ 0 で誤差 %.1f %% なのは κ = 1 が真だから当然で、谷そのものが原因だという証拠ではない(谷のない世界で係数だけ 0.6 / 0.8 / 1.2 倍にしても ω は %s 外れる)。" % (
+                       min(amp_d), max(amp_d), 100 * bias_d[0], " / ".join("%+.0f %%" % (100 * e) for e in shift.values())))
     figs.save_table("degeneracy_valley", ["初期 ω [rad/s]", "読んだ ω⊥ [rad/s]", "κ", "rms [mm]", "模型の C_L", "条件数", "corr(ω, κ)"],
                     [["%.0f" % d[0], "%.1f" % d[1], "%.3f" % d[2], "%.3f" % (1e3 * d[3]), "%.4f" % d[4], "%.1e" % d[5], "%+.4f" % d[6]] for d in degen]
                     + [["κ = 1 固定", "-", "1.000", "%.3f" % (1e3 * r_fix["rms"]), "", "%.1e" % r_fix["cond"], ""]],
-                    title="ω と C_L の係数 κ は縮退する(トップ、同じ軌跡)",
-                    caption="κ も自由にすると、初期値によって ω は %.0f〜%.0f rad/s と違う答えになるのに、rms は %.3f〜%.3f mm で同じ、模型の C_L も同じ(%.4f〜%.4f)。軌跡が決めているのは積(力)だけで、ω の大きさは読めない。最下行は κ を 1 に固定した当てはめ(ω⊥ の欄は空)。" % (
+                    title="この遅い球では ω と C_L の係数 κ が分けられない(トップ、同じ軌跡)",
+                    caption="κ も自由にすると、初期値によって ω は %.0f〜%.0f rad/s と違う答えになるのに、rms は %.3f〜%.3f mm で同じ。κ·ω は %.1f〜%.1f で一定ではなく(緩い谷)、模型の C_L(%.4f〜%.4f)は世界の実効値 %.4f より %.0f〜%.0f %% 大きい(この雑音 1 本。モンテカルロ平均では κ = 1 の当てはめの力は世界の 103 %%)。この遅い球(S = 0.49〜0.56)では C_L(S) を 1 点でしか見ないので κ と ω を分けられない(速い球では分かれる: 図 7)。最下行は κ を 1 に固定した当てはめ(ω⊥ の欄は空)。" % (
                         min(d[1] for d in degen), max(d[1] for d in degen), 1e3 * min(d[3] for d in degen), 1e3 * max(d[3] for d in degen),
-                        min(d[4] for d in degen), max(d[4] for d in degen)))
+                        min(d[1] * d[2] for d in degen), max(d[1] * d[2] for d in degen), min(d[4] for d in degen), max(d[4] for d in degen), world["top"]["cl_eff"],
+                        100 * (min(d[4] for d in degen) / world["top"]["cl_eff"] - 1), 100 * (max(d[4] for d in degen) / world["top"]["cl_eff"] - 1)))
     figs.save_table("sweep_by_length", ["コマ数(時間)", "線形化 corr(C_d, ω⊥)", "線形化 corr(C_d, |v₀|)", "条件数", "C_d の ± / 雑音 1 mm", "ω⊥ の ± / 雑音 1 mm", "平行成分の ± / 雑音 1 mm", "モンテカルロ corr(C_d, ω⊥)"],
-                    [["%d(%.0f ms)" % (n, 1e3 * n / FPS), "%+.3f" % an[n]["corr_w"], "%+.3f" % an[n]["corr_v"], "%.1e" % an[n]["cond"], "%.4f" % (1e-3 * an[n]["cd_std"]),
+                    [["%d コマ(%.0f ms)" % (n, 1e3 * n / FPS), "%+.3f" % an[n]["corr_w"], "%+.3f" % an[n]["corr_v"], "%.1e" % an[n]["cond"], "%.4f" % (1e-3 * an[n]["cd_std"]),
                       "%.1f rad/s" % (1e-3 * an[n]["pp"]), "%.0f rad/s" % (1e-3 * an[n]["ax"]), "%+.2f(%d 本)" % (sweep[(n, "pooled")]["corr"], sweep[(n, "pooled")]["N"])] for n in lens],
                     title="飛行の長さを振る(トップ、C_d と ω を同時に当てる)",
-                    caption="C_d と ω⊥ は直交して相関が 0 に近い(最大 %.3f)一方、C_d は初速と %.2f〜%.2f で相関する。飛行を伸ばすと精度は上がるが、この相関は消えない。進行方向に平行な ω の成分は、どの長さでも垂直成分より %.0f〜%.0f 倍読めない。" % (
+                    caption="C_d と ω⊥ は直交して相関が 0 に近い(最大 %.3f)一方、C_d は初速と %.2f〜%.2f で相関する。飛行を伸ばすと精度は上がるが、この相関は消えない。進行方向に平行な ω の成分は、どの長さでも垂直成分より %.0f〜%.0f 倍読めない。雑音は等方ガウスで、実際の三角測量(奥行きが大きい)より楽観。" % (
                         max(abs(an[n]["corr_w"]) for n in lens), min(an[n]["corr_v"] for n in lens), max(an[n]["corr_v"] for n in lens),
                         min(an[n]["ax"] / an[n]["pp"] for n in lens), max(an[n]["ax"] / an[n]["pp"] for n in lens)))
     figs.save_plot("cd_scatter_vs_length", [("σ = %.1f mm" % (1e3 * sg), [1e3 * n / FPS for n in lens], [100 * sweep[(n, sg)]["cd_cv"] for n in lens]) for sg in sigmas],
                    xlabel="使った軌跡の長さ [ms]", ylabel="C_d の標準偏差 / 実効値 [%]", title="C_d は飛行が短いと決まらず、雑音に比例して悪くなる",
-                   caption="位置雑音 σ を 3 通りに振り、軌跡の先頭 n コマで C_d と ω を同時に当てたときの C_d のばらつき(モンテカルロ)。短い軌跡では速さの減衰が小さく、C_d は初速と分けられない。")
+                   caption="位置雑音 σ を 3 通りに振り、軌跡の先頭 n コマで C_d と ω を同時に当てたときの C_d のばらつき(モンテカルロ)。短い軌跡では速さの減衰が小さく、C_d は初速と分けられない。回転は一定(減衰なし)、雑音は等方ガウス(楽観)。")
+    figs.save_table("v0_sensitivity", ["条件", "速さ [m/s]", "S の範囲(幅)", "κ 固定: ω⊥ の標準偏差", "κ 自由: ω⊥ の標準偏差", "κ 自由の条件数", "corr(ω, κ)"],
+                    [[v_["label"], "%.1f → %.1f" % v_["v"], "%.2f〜%.2f(%.0f %%)" % (v_["S"][0], v_["S"][1], 100 * (v_["S"][1] - v_["S"][0]) / v_["S"][0]),
+                      "%.1f %%" % (100 * v_["sd_fix"]), "%.0f %%" % (100 * v_["sd_free"]), "%.1e" % v_["cond_free"], "%+.5f" % v_["corr"]] for v_ in vsens],
+                    title="読める条件: S の振れ幅が広いと κ 自由でも ω が読める(同じ模型の世界、雑音 1.5 mm、線形化。標準偏差は真の ω に対する %)",
+                    caption="κ 自由の ω⊥ の標準偏差(真の ω に対する割合)は、遅い球で %.0f %%(読めない)、速い球(25 m/s・300 rad/s)で %.0f %%(読める)。縮退は『軌跡だけでは原理的に読めない』ではなく、飛行中に S があまり動かない条件の結論。真値は自作の世界の値、雑音は等方ガウス(楽観)。" % (
+                        100 * vsens[0]["sd_free"], 100 * vsens[-1]["sd_free"]))
+    figs.save_table("coefficient_shift", ["世界の C_L の係数(谷なし)", "κ = 1 で当てはめた ω⊥ の誤差", "増幅(ω の誤差 / 係数のずれ)"],
+                    [["%.1f 倍" % k_, "%+.0f %%" % (100 * e), "%.2f" % (abs(e) / abs(1 - k_))] for k_, e in shift.items()],
+                    title="C_L の係数がずれると ω が引きずられる(谷のない世界、雑音なし)",
+                    caption="偏りの原因は谷そのものではなく、当てはめの C_L 模型が世界の係数を外すこと。係数のずれは ω のずれへ %.1f〜%.1f 倍に増幅される(符号は係数と同じ向き)。谷の位置・深さは仮の値で、主役の打球をその中心に置いている。" % (
+                        min(abs(e) / abs(1 - k_) for k_, e in shift.items()), max(abs(e) / abs(1 - k_) for k_, e in shift.items())))
+    figs.save_table("cd_regimes", ["条件", "C_d の幅(実効値に対し)", "当てはめ C_d(実効値に対する誤差)", "rms [mm]", "雑音の床 σ√3 に対する rms"],
+                    [[g_["label"], "%.1f %%" % (100 * g_["span"]), "%.4f(%.1f %%)" % (g_["cd"], 100 * g_["err"]), "%.2f" % (1e3 * g_["rms"]), "%.1f 倍" % g_["ratio"]] for g_ in regimes],
+                    title="C_d の Re 依存を効かせても、誤差は小さいまま —— 外れは rms にだけ現れる",
+                    caption="真の C_d の定義が速さ² 重みの実効値で当てはめに有利なため、C_d の誤差は Re 依存が強くても 5 %% 以内に収まる(検出力のない門)。サッカーボール(抗力危機、幅 %.0f %%)では rms が雑音の床の %.1f 倍で、当てはめが合っていないことは rms にだけ現れる。回転なし、雑音 1.5 mm。" % (
+                        100 * regimes[2]["span"], regimes[2]["ratio"]))
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ category: signal
 in: signal
 out: measurement
 gpu: なし
-examples: [lens_design_demo, lightfield_depth, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_calipers_under_illusion, poc_camera_calibration, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_fourier_ptychography, poc_lens_solves_afocal, poc_panorama_drift, poc_print_registration, poc_river_surface_velocity, poc_screw_thread_metrology, poc_shape_from_polarization, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_table_tennis_bounce, poc_tacscalib_sphere_lut, poc_tacsim_elastic_membrane, poc_tacsim_marker_shear, poc_thermal_radiometry, poc_weld_bead_profile, profile_shape_inspection]
+examples: [lens_design_demo, lightfield_depth, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_calipers_under_illusion, poc_camera_calibration, poc_cd_spin_joint, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_fourier_ptychography, poc_lens_solves_afocal, poc_panorama_drift, poc_print_registration, poc_river_surface_velocity, poc_screw_thread_metrology, poc_shape_from_polarization, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_table_tennis_bounce, poc_tacscalib_sphere_lut, poc_tacsim_elastic_membrane, poc_tacsim_marker_shear, poc_thermal_radiometry, poc_weld_bead_profile, profile_shape_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.0.0  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ Empty input (``x`` with 0 elements) raises ``ValueError``.
 - [poc_cad_scan_deviation](../../../../examples/poc_cad_scan_deviation.py) — `py -3.11 examples/poc_cad_scan_deviation.py`
 - [poc_calipers_under_illusion](../../../../examples/poc_calipers_under_illusion.py) — `py -3.11 examples/poc_calipers_under_illusion.py`
 - [poc_camera_calibration](../../../../examples/poc_camera_calibration.py) — `py -3.11 examples/poc_camera_calibration.py`
+- [poc_cd_spin_joint](../../../../examples/poc_cd_spin_joint.py) — `py -3.11 examples/poc_cd_spin_joint.py`
 - [poc_dimensional_inspection](../../../../examples/poc_dimensional_inspection.py) — `py -3.11 examples/poc_dimensional_inspection.py`
 - [poc_exoplanet_transit](../../../../examples/poc_exoplanet_transit.py) — `py -3.11 examples/poc_exoplanet_transit.py`
 - [poc_fabric_defect](../../../../examples/poc_fabric_defect.py) — `py -3.11 examples/poc_fabric_defect.py`

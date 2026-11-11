@@ -61,7 +61,7 @@ def magnus_lift_coefficient(spin_ratio) -> np.ndarray:
 
 def drag_coefficient_sphere(reynolds) -> np.ndarray:
     """滑らかな球の抗力係数の経験式(Morrison 2013、Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8)
-    + 0.25(Re/1e6)/(1 + Re/1e6)。卓球の球(Re ≈ 1〜5 × 10⁴)で ≈ 0.4〜0.5。
+    + 0.25(Re/1e6)/(1 + Re/1e6)。卓球の球(Re ≈ 1〜5 × 10⁴)で 0.39〜0.41(Re 1.6 × 10⁴ = 6 m/s で 0.392、5 × 10⁴ で 0.406、1 × 10⁵ で 0.426。Re ≈ 3 × 10⁵ の抗力危機で 0.17 へ落ちる)。
 
     空の入力(``reynolds`` が 0 要素)は ValueError。
     """
@@ -350,22 +350,27 @@ def fit_spin_aero(t, p, bp: dict, *, omega0=None, fit_cl: bool = False, omega_ma
 
     当てはめの模型の C_d は定数(Re 依存を当てない)、揚力はスピン比の経験式 C_L = κ·S/(1 + 2S)(S = rω/|v|)で、係数 κ は既定で 1。
     ★C_L を数(定数)にした ``bp`` は受け付けない(ValueError): 定数 C_L のマグヌスの力は大きさが ω によらず、|ω| の列が 0 になって
-    回転の大きさが原理的に読めない(測って確かめた: ω が 0 のまま動かない)。
+    回転の大きさが読めない(測って確かめた: 定数 C_L の ``fit_spin`` に真の 150 rad/s の軌跡を当てても |ω| は 10.3 rad/s までしか動かない)。
 
     **読めないものを返り値に出す**: 抗力は −v、マグヌスは ω × v(v に垂直)なので力の向きは直交して分かれるが、(a) 飛行が短く速さがあまり落ちないと
-    C_d は v₀ と、(b) ω と C_L の係数 κ は縮退(S が小さい域で C_L ≈ κS なので力は κ·ω の積だけ)、(c) ω の v に平行な成分は力を生まない。
+    C_d は v₀ と、(b) ω と C_L の係数 κ は**飛行中の S の振れ幅が狭いと**分けられない(S が小さい域で C_L ≈ κS なので力は κ·ω の積に近く、S が 14 % しか動かない遅い球 S = 0.49〜0.56 では C_L(S) を実質 1 点でしか見ない)、(c) ω の v に平行な成分は力を生まない。
     返り値の ``cond``(スケール後のヤコビアンの条件数)、``corr``(推定量の相関行列、``param_names`` の順)、``cov_unit``(位置雑音 1 m あたりの推定量の
     共分散 = 線形化したクラメール・ラオ。雑音 σ [m] なら σ² 倍)、``corr_cd_omega``(C_d と ω⊥ の大きさの相関)、``corr_cd_v0``(C_d と初速の大きさの相関)、
     ``omega_axial_std_unit``(ω の平行成分の標準偏差、雑音 1 m あたり)、``omega_perp_std_unit``(ω の垂直 2 成分の 1 成分あたりの標準偏差)で判る。
-    返り値 ``{"p0", "v0", "omega", "omega_perp", "cd", "cl_scale", "rms", "cond", "corr", "param_names", "cov_unit", "corr_cd_omega",
+    読める条件: 同じ模型の線形化で ``fit_cl=True`` の ω⊥ の標準偏差(雑音 1.5 mm)は v₀ = 6 m/s で 628 rad/s(419 %)、15 m/s で 76(50 %)、
+    25 m/s・ω = 300 rad/s で 35(12 %): 縮退は「軌跡だけでは原理的に読めない」ではなく S の振れ幅が狭い条件の結論で、速い球・大きく減速する飛行では読める。
+    ヤコビアンの階数が落ちたとき(例: 真空)``cond`` は inf でなく None、``rank_deficient`` が True。``corr_cd_omega`` は ω⊥ = 0 で向きが決まらず None(NaN は返さない)。
+    返り値 ``{"p0", "v0", "omega", "omega_perp", "cd", "cl_scale", "rms", "cond", "rank_deficient", "corr", "param_names", "cov_unit", "corr_cd_omega",
     "corr_cd_v0", "omega_axial_std_unit", "omega_perp_std_unit", "iters", "t0", "at_bound"}``。
     同じ模型で作った軌跡なら 1e-6 で戻る(門)。★世界が別の模型(C_d が Re 依存、C_L に谷)だと、定数で当てた C_d・ω・C_L はその区間の実効値になり偏る
-    (偏りは PoC で測って出す)。``omega_max`` は :func:`fit_spin` と同じ(回転の大きさの上限)。収束は ``omega0`` が真値から離れる・軌跡が短い・
+    (偏りは PoC で測って出す)。偏りは谷に限らず、当てはめの C_L 模型が世界の係数を外すと ω が引きずられる一般の話で、係数のずれの 1.5〜2.7 倍に増幅される
+    (谷のない世界で係数を 0.6 / 0.8 / 1.2 倍にすると、κ = 1 の当てはめは ω を 58 / 34 / +53 % 外す)。当てはめが外れているかは ``rms`` に出る。``omega_max`` は :func:`fit_spin` と同じ(回転の大きさの上限)。収束は ``omega0`` が真値から離れる・軌跡が短い・
     ``fit_cl=True`` だと遅く、平らな谷で ``iters`` に届かない標本がある(返り値の ``iters`` が引数と同じなら打ち切り)。
 
-    Limits: with ``fit_cl=True`` the |ω| and κ columns are nearly parallel (``cond`` large, ``corr`` ≈ ±1) — read ω from the ball's pattern
-    (:func:`balltrack.spin_from_markers`) and take the lift scale from the trajectory instead (:func:`fit_aero` with ω known). A constant-C_L ``bp``
-    and fewer than 12 samples raise ValueError.
+    Limits: with ``fit_cl=True`` the |ω| and κ columns are nearly parallel when the spin ratio S varies little over the flight (``cond`` large,
+    ``corr`` ≈ ±1; a slow ball with S = 0.49-0.56 gives an ω⊥ standard deviation of 419 % of ω, a fast one at v₀ = 25 m/s gives 12 %) — then read ω from
+    the ball's pattern (:func:`balltrack.spin_from_markers`) and take the lift scale from the trajectory instead (:func:`fit_aero` with ω known).
+    A constant-C_L ``bp`` and fewer than 12 samples raise ValueError; a rank-deficient Jacobian returns ``cond`` = None (never inf) and ``corr_cd_omega`` = None when ω⊥ = 0.
     """
     t = np.asarray(t, np.float64).reshape(-1)
     P = np.asarray(p, np.float64).reshape(-1, 3)
@@ -433,6 +438,7 @@ def fit_spin_aero(t, p, bp: dict, *, omega0=None, fit_cl: bool = False, omega_ma
     Js = J * scales                                    # スケール後(相関はスケールによらない)
     U, sv, Vt = np.linalg.svd(Js, full_matrices=False)
     keep = sv > 1e-12 * max(float(sv[0]), 1e-300)
+    rank_deficient = not bool(np.all(keep))           # ヤコビアンの階数が落ちた(例: 真空で抗力・マグヌスの列が 0)。cond は inf でなく None
     cov_s = (Vt[keep].T / sv[keep] ** 2) @ Vt[keep]    # (JsᵀJs)⁺
     cov_unit = cov_s * np.outer(scales, scales)        # 元の単位へ
     sd = np.sqrt(np.maximum(np.diag(cov_unit), 0.0))
@@ -446,7 +452,7 @@ def fit_spin_aero(t, p, bp: dict, *, omega0=None, fit_cl: bool = False, omega_ma
         ew[6:9] = wperp / nperp
     ecd = np.zeros(npar)
     ecd[9] = 1.0
-    c_cd_w = float((ew @ cov_unit @ ecd) / max(1e-300, math.sqrt(float(ew @ cov_unit @ ew)) * math.sqrt(float(ecd @ cov_unit @ ecd)))) if nperp > 0 else float("nan")
+    c_cd_w = float((ew @ cov_unit @ ecd) / max(1e-300, math.sqrt(float(ew @ cov_unit @ ew)) * math.sqrt(float(ecd @ cov_unit @ ecd)))) if nperp > 0 else None   # ω⊥ = 0 では向きが定義できない: NaN を置かず None
     ea = np.zeros(npar)
     ea[6:9] = vhat
     ev = np.zeros(npar)
@@ -457,7 +463,7 @@ def fit_spin_aero(t, p, bp: dict, *, omega0=None, fit_cl: bool = False, omega_ma
     k_out = float(min(10.0, max(0.0, x[10]))) if fit_cl else k0
     return {"p0": x[:3], "v0": x[3:6], "omega": w, "omega_perp": wperp, "cd": float(min(3.0, max(0.0, x[9]))), "cl_scale": k_out,
             "rms": float(np.sqrt(np.mean(np.sum(res.reshape(-1, 3) ** 2, axis=1)))),
-            "cond": float(sv[0] / sv[-1]) if sv[-1] > 0 else float("inf"), "corr": corr, "param_names": names, "cov_unit": cov_unit,
+            "cond": None if rank_deficient else float(sv[0] / sv[-1]), "rank_deficient": rank_deficient, "corr": corr, "param_names": names, "cov_unit": cov_unit,
             "corr_cd_omega": c_cd_w, "corr_cd_v0": c_cd_v, "omega_axial_std_unit": float(math.sqrt(max(0.0, float(ea @ cov_unit @ ea)))),
             "omega_perp_std_unit": float(math.sqrt(max(0.0, var_perp))),
             "iters": it, "t0": float(t[0]), "at_bound": bool(np.linalg.norm(w) > omega_max * (1 - 1e-9))}

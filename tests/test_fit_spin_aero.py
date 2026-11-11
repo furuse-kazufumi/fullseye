@@ -128,3 +128,31 @@ def test_bad_inputs_raise_value_error():
             B.fit_spin_aero(T, P, bp, omega_max=om)
     with pytest.raises(ValueError):
         B.fit_spin_aero(T, P, bp, omega0=[1.0, 2.0])
+
+
+def test_undefined_quantities_are_none_not_nan_or_inf():
+    """真空(rho = 0)では抗力・マグヌスの列が 0 で階数が落ちる: cond は inf でなく None、corr_cd_omega は ω⊥ = 0 で None、返り値に NaN / inf は無い。"""
+    bp = B.ball_params(cd=0.42, cl=None, rho=0.0)
+    f = B.flight_ode(P0, V0, W0, bp, float(T[-1]) + 1e-3, 1e-4)
+    P = np.column_stack([np.interp(T, f["t"], f["p"][:, k]) for k in range(3)])
+    r = B.fit_spin_aero(T, P, bp)
+    assert r["rank_deficient"] is True and r["cond"] is None
+    assert r["corr_cd_omega"] is None
+    for k, v in r.items():
+        if isinstance(v, (float, np.ndarray)):
+            assert np.all(np.isfinite(v)), k
+    ok = B.fit_spin_aero(T, traj(), B.ball_params(cd=0.42, cl=None))     # 通常は有限の cond と有限の相関
+    assert ok["rank_deficient"] is False and ok["cond"] > 1.0 and np.isfinite(ok["corr_cd_omega"])
+
+
+def test_kappa_free_omega_is_unreadable_only_when_the_spin_ratio_barely_moves():
+    """縮退は『S の振れ幅が狭い条件』の結論: 遅い球(S 0.49〜0.56)では κ 自由の ω⊥ の標準偏差が ω の 3 倍超、速い球(25 m/s・300 rad/s)では 0.3 倍未満。"""
+    bp = B.ball_params(cd=0.42, cl=None)
+    out = {}
+    for lab, v0, w in (("slow", (6.0, 0.0, 1.3), 150.0), ("fast", (25.0, 0.0, 1.0), 300.0)):
+        f = B.flight_ode([-1.3, 0, 1.01], v0, [0, w, 0], bp, 0.35, 1e-4)
+        tt = np.arange(0, 0.34, 1 / 240)
+        P = np.column_stack([np.interp(tt, f["t"], f["p"][:, k]) for k in range(3)])
+        r = B.fit_spin_aero(tt, P, bp, fit_cl=True, omega0=[0, w, 0], iters=5)
+        out[lab] = r["omega_perp_std_unit"] * 1.5e-3 / w
+    assert out["slow"] > 3.0 and out["fast"] < 0.3 and out["slow"] > 10 * out["fast"]
