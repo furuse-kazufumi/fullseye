@@ -44,6 +44,7 @@ repo 全体を見る門(``tools/ci_always_run.txt``: 台帳・生成物・負債
 
 片分け(``shard_plan``)と、pytest の側で一覧を読む入口(``plan_session``、``tests/conftest.py``
 が呼ぶ)もここに置く。片は**ファイル単位**(module / session fixture を片ごとに作り直さない)。
+例外は ``SPLIT_BY_TEST`` のファイルだけで、テスト単位で散らす(重さはファイルの記録の平均)。
 
 使い方
 ------
@@ -710,8 +711,40 @@ def _group_key(nodeid: str) -> str:
     パラメータごとの値は台本の重さではない(実測: 549 秒の 1 件と 0 秒の残り)。散らすと
     「0 秒」と記録された重い台本が 1 つの片に寄り、片 4 だけ 75 分になっていた(run 42594122086)。
     ファイルの合計(各片の一括実行の合計)なら重さとして意味がある。
+
+    ★例外(2026-11-11): ``SPLIT_BY_TEST`` のファイルは**テストごと**に 1 単位にする(返り値はノード id)。
+    重さはパラメータごとの記録値ではなく、ファイルの記録の合計 ÷ 記録の本数を各テストに均等に置く
+    (``_split_weights``)。
     """
-    return nodeid.split("::", 1)[0]
+    f = nodeid.split("::", 1)[0]
+    return nodeid if f in SPLIT_BY_TEST else f
+
+
+#: テスト単位で片に散らしてよいファイル(2026-11-11)。``tests/test_poc_scripts_run.py`` は 1 ファイルで
+#: 全数の約 3,738 秒(``.test_durations``)あり、6 片の平均(約 3,507 秒)を 1 ファイルで超えるので、
+#: ファイル単位では持った片が必ず最長になっていた(run 42982984881: py3.12 片 1 = 71 分、PoC 310 本だけ)。
+#: このファイルの session fixture ``poc_results`` は**このセッションに残ったパラメータの台本だけ**を
+#: 走らせる作りなので、散らせば各片はその片の分だけを走らせる。散らしてよいのは、そういう作りが
+#: 確かめてあるファイルだけ(ここに足す前に fixture を読むこと。module fixture の重い準備があるファイルを
+#: 足すと、その準備が片の数だけ作り直される)。
+SPLIT_BY_TEST: tuple[str, ...] = ("tests/test_poc_scripts_run.py",)
+
+
+def _split_weights(durations: dict) -> dict[str, float]:
+    """``SPLIT_BY_TEST`` のファイル -> 1 テストあたりの重さ(ファイルの記録の合計 ÷ 記録の本数)。
+
+    パラメータごとの記録値は使わない: session fixture の一括実行の時間が**片ごとの最初の 1 件**に
+    計上されるので、1 件ごとの値は台本の重さではない(実測: 309〜577 秒の 8 件と 0 秒の残り)。
+    記録が 1 件も無いファイルは入れない(呼び出し側の平均で仮置きになる)。
+    """
+    tot: dict[str, float] = defaultdict(float)
+    cnt: dict[str, int] = defaultdict(int)
+    for k, v in durations.items():
+        f = k.split("::", 1)[0]
+        if f in SPLIT_BY_TEST:
+            tot[f] += v
+            cnt[f] += 1
+    return {f: tot[f] / cnt[f] for f in cnt}
 
 
 def shard_plan(nodeids: list[str], n: int, durations: dict) -> list[list[str]]:
@@ -719,27 +752,43 @@ def shard_plan(nodeids: list[str], n: int, durations: dict) -> list[list[str]]:
 
     重さは ``.test_durations`` の実測の和。記録の無いテストは記録のあるテストの平均で仮置き
     (pytest-split と同じ)。返り値の各片は元の並び順を保つ。全部のノード id がちょうど 1 片に入る。
+    ``SPLIT_BY_TEST`` のファイルだけはテスト単位(``_group_key``)で、重さは ``_split_weights``、
+    同じ重さどうしは**ファイルの最初の位置 → ノード id の名前の順**で配る(並び替えた入力でも同じ答え)。
     """
+    return _shard_plan_with_loads(nodeids, n, durations)[0]
+
+
+def _shard_plan_with_loads(nodeids: list[str], n: int,
+                           durations: dict) -> tuple[list[list[str]], list[float]]:
+    """``shard_plan`` の本体。(片, 片ごとの見積もり秒) を返す(見積もりは配るのに使った重さの和)。"""
     if n < 1:
         raise ValueError("n must be >= 1")
     known = [durations[x] for x in nodeids if x in durations]
     mean = (sum(known) / len(known)) if known else 1.0
+    per_test = _split_weights(durations)
     weight: dict[str, float] = defaultdict(float)
     order: dict[str, int] = {}
+    first_of_file: dict[str, int] = {}
     for i, x in enumerate(nodeids):
         k = _group_key(x)
-        weight[k] += durations.get(x, mean)
-        order.setdefault(k, i)
+        f = x.split("::", 1)[0]
+        first_of_file.setdefault(f, i)
+        if f in SPLIT_BY_TEST:
+            weight[k] += per_test.get(f, mean)
+            order.setdefault(k, first_of_file[f])
+        else:
+            weight[k] += durations.get(x, mean)
+            order.setdefault(k, i)
     loads = [0.0] * n
     where: dict[str, int] = {}
-    for k in sorted(weight, key=lambda k: (-weight[k], order[k])):
+    for k in sorted(weight, key=lambda k: (-weight[k], order[k], k)):
         j = min(range(n), key=lambda j: (loads[j], j))
         where[k] = j
         loads[j] += weight[k]
     out: list[list[str]] = [[] for _ in range(n)]
     for x in nodeids:
         out[where[_group_key(x)]].append(x)
-    return out
+    return out, loads
 
 
 def parse_shard(spec: str) -> tuple[int, int]:
@@ -767,11 +816,12 @@ def plan_session(nodeids: list[str], *, selection: str | None, shard: str | None
             durations = json.loads((durations_path or ROOT / ".test_durations").read_text(encoding="utf-8"))
         except (OSError, ValueError):
             durations = {}
-        plan = shard_plan(keep, n, durations)
+        plan, loads = _shard_plan_with_loads(keep, n, durations)
         keep = plan[k - 1]
-        known = [durations[x] for x in plan[k - 1] if x in durations]
+        # ★見積もりは配るのに使った重さ(2026-11-11)。以前は記録値の和で、PoC の 1 件ごとの値
+        #   (0 秒か一括実行の全部)をそのまま足していた。
         info.update(shard="%d/%d" % (k, n), in_shard=len(keep),
-                    est_seconds=round(sum(known)), sizes=[len(p) for p in plan])
+                    est_seconds=round(loads[k - 1]), sizes=[len(p) for p in plan])
     info["keep"] = keep
     return info
 
@@ -801,9 +851,12 @@ def estimate_seconds(tests: list[str] | None, durations_path: Path | None = None
     for k, v in d.items():
         per[k.split("::", 1)[0]] += v
     mean = (sum(per.values()) / len(per)) if per else 0.0
+    per_test = _split_weights(d)
     total = 0.0
     for t in set(tests):
-        if "::" in t:
+        if "::" in t and t.split("::", 1)[0] in per_test:
+            total += per_test[t.split("::", 1)[0]]   # SPLIT_BY_TEST: 1 件ごとの記録値は重さではない
+        elif "::" in t:
             total += d.get(t, mean / 10.0)       # 1 パラメータ(未記録なら平均の 1/10 で仮置き)
         else:
             total += per.get(t, mean)
