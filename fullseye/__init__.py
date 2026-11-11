@@ -1355,6 +1355,33 @@ _NAME_HINTS = {
 }
 
 
+def _op_attr_hint(name):
+    """案内の 1 文。``fullseye.<op名>`` の属性アクセスが素の AttributeError で終わらないようにする。
+
+    ★2026-11-11(外部監査 v1.0.0): ``fullseye.access_channel`` が案内なしの AttributeError だった。op は
+    facade の属性ではなく ``fullseye.apply(img, <op>)`` / ``fullseye.op.<op>`` で呼ぶ。backend(extra)が
+    足りない op は、``apply`` と同じ文(``api._explain_unregistered``)で不足を言う。
+    例外は AttributeError のまま(``hasattr`` は False を保ち、契約を変えない)。調べて失敗しても元の文面に戻す。
+    """
+    if name.startswith("_"):
+        return None
+    try:
+        import api as _api
+        if find_op(name) is not None:
+            return ("%r is a 2-D operator, not a facade attribute: call fullseye.apply(img, %r) "
+                    "or fullseye.op.%s(img)" % (name, name, name))
+        hint = _api._explain_unregistered(name)
+        if hint is not None:
+            return hint
+        row = _api._shipped_index().get(name) or {}
+        if row.get("tier") == "ledger":
+            return ("%r is a typed-ledger operator: run it with fullseye.op_run(%r, <inputs>); "
+                    "fullseye.op_assist(%r) shows its inputs and parameters" % (name, name, name))
+    except Exception:                                  # noqa: BLE001 - 案内の失敗で本来のエラーを隠さない
+        return None
+    return None
+
+
 def __getattr__(name):
     """Module-level hook: only reached when ``name`` is NOT a real attribute."""
     hint = _NAME_HINTS.get(name)
@@ -1362,6 +1389,9 @@ def __getattr__(name):
         real, what = hint
         raise AttributeError(
             "module 'fullseye' has no attribute '%s'; did you mean '%s'? (%s)" % (name, real, what))
+    extra = _op_attr_hint(name)
+    if extra:
+        raise AttributeError("module 'fullseye' has no attribute '%s'; %s" % (name, extra))
     raise AttributeError("module 'fullseye' has no attribute '%s'" % name)
 
 

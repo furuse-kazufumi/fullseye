@@ -2820,9 +2820,15 @@ def _run_guarded(name, fn, policy, out_sort=None, v=None):
     if policy == "warn":
         evs = _bs.events_since(m)
         if evs:
-            warnings.warn("fullseye: %r degraded to a fallback (%s)"
-                          % (name, "; ".join(e["error"] for e in evs)),
-                          FullseyeFallbackWarning, stacklevel=4)
+            if all(_bs.is_dtype_conversion(e["error"]) for e in evs):
+                # on_error="warn" は呼び出しごとに出す方針(明示の指定)。通常の型変換は劣化ではないので中立の文面。
+                warnings.warn("fullseye: %r input converted (%s)"
+                              % (name, "; ".join(e["error"].split("dtype_converted:", 1)[1].strip() for e in evs)),
+                              FullseyeFallbackWarning, stacklevel=4)
+            else:
+                warnings.warn("fullseye: %r degraded to a fallback (%s)"
+                              % (name, "; ".join(e["error"] for e in evs)),
+                              FullseyeFallbackWarning, stacklevel=4)
     return out
 
 

@@ -220,11 +220,34 @@ def record(name, exc, out_sort=None, source: str = "op") -> dict:
         if first:
             _WARNED.add(key)
     if first and _WARN_ONCE and not getattr(_TL, "quiet", False):
-        warnings.warn("fullseye: %r degraded to a fallback (%s; %s). Further fallbacks "
-                      "of this op are counted silently - see fullseye.fallbacks() or "
-                      "pass on_error='raise'." % (key, source, ev["error"]),
-                      FullseyeFallbackWarning, stacklevel=3)
+        if is_dtype_conversion(ev["error"]):
+            # ★2026-11-11(外部ユーザー指摘): uint8 を渡す(最も普通の入力)だけで「degraded to a fallback」と
+            #   出て、通常の型変換が劣化に読めた。結果は契約どおりで、劣化ではない —— 中立な文面にする。
+            #   記録(fallbacks() / fallback_counts())は据え置き。本当の劣化の文面は下のまま。
+            warnings.warn("fullseye: %r input converted (%s). Further conversions of this op "
+                          "are counted silently - see fullseye.fallbacks(); pass float64 in [0,1] "
+                          "or on_error='raise' to refuse integer input."
+                          % (key, ev["error"].split("dtype_converted:", 1)[1].strip()),
+                          FullseyeFallbackWarning, stacklevel=3)
+        else:
+            warnings.warn("fullseye: %r degraded to a fallback (%s; %s). Further fallbacks "
+                          "of this op are counted silently - see fullseye.fallbacks() or "
+                          "pass on_error='raise'." % (key, source, ev["error"]),
+                          FullseyeFallbackWarning, stacklevel=3)
     return ev
+
+
+def is_dtype_conversion(error) -> bool:
+    """True for the ledger text of a lossless-by-contract input dtype conversion (``api._contract_dtype``).
+
+    Warning policy (one place, so it stays consistent): the **first** time an op name records any event in
+    the process, one :class:`FullseyeFallbackWarning` is emitted; later events of the same name are only
+    counted (``fallbacks()`` / ``fallback_counts()``). An integer/bool input conversion gets a neutral
+    "input converted" text; every other event (the op body raised, a GPU path failed, a backend failed to
+    import, a sort mismatch) keeps the "degraded to a fallback" text. ``FULLSEYE_QUIET_FALLBACK`` silences
+    both; ``on_error='raise'`` refuses integer input instead of converting it.
+    """
+    return "dtype_converted:" in str(error)
 
 
 def fallbacks() -> list:

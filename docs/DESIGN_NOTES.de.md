@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1888. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1892. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -71,17 +71,17 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L2599** _(ja)_ — ★2026-11-05(1.0 前の修正 typed-dtype): the typed bridge opened sorts whose values are the SAME [0,1] pixel values as ``image`` — ``video`` (T,H,W[,3]) frames, ``rgbimage`` (H,W,3) linear RGB, ``lightfield`` (V,U,H,W) views — but the set stayed at the three original sorts, so a uint8 video passed ``on_error="raise"`` and ``tb_temporal_bandpass`` / ``tb_temporal_band_power`` returned the x255 / x255**2 answer with no exception and no record (the other 14 video ops are scale-equivariant or thresholded and happened to agree). Every entry (``apply``, the n-ary tier, ``template=``, ``run_pipeline`` CPU/GPU, ``FullseyeEngine.run_cached`` and the MCP stages, which call ``fullseye.apply``) reads THIS set, so widening it here is what makes them agree. Deliberately NOT here — their values are not pixel values, an integer can be the meaning, and /255 would be a silent unit change (the opposite bug): counts (photon counts, int64 by contract), cimage / beatcube (complex fields), qimage (quaternion: signed Riesz pairs, QFT spectra far outside [0,1]), signal / matrix / points / keypoints (profiles, linear algebra, coordinates), region (int masks, see above), contour / feature / match / any.
 - **L2720** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
 - **L2761** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L3121** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
-- **L3238** _(ja)_ — ★2026-11-05(敵対的検証 C12): 単入力の apply / run_pipeline は fullseye.Image を剥がすのに、 n 項だけが剥がさず「got a scalar Image」の TypeError だった。入力ごとに同じ剥がし方 (非有限の検査より前 —— Image の中身も検査する)。
-- **L3271** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F2): 単入力の apply / run_pipeline と PrecisionUnion の n-ary 経路は dtype 契約(_contract_dtype)を通るのに、密な配列の n-ary だけが通らず、uint8 の 32 + 32 が on_error="raise" でも例外も台帳記録も無く 1.0(正しくは 64/255)になっていた。入力ごとに同じ規則で。 畳み込みの核(_NARY_KERNEL_SECOND の第 2 入力)は画像でなく重みの表なので、型だけ float64 にする。
-- **L3279** _(ja)_ — ★2026-11-05(敵対的検証 C11): 単入力の apply にある _guard_input(空・次元・色軸・extra_checks の 値域)が n 項に無く、空 (0, 0) / 1-D / 4-D / 0..50 の入力が on_error="raise" でも例外も台帳記録も 無く通っていた。入力ごとに同じ検査(その入力の sort で)。畳み込みの核は画像でないので外す。
-- **L3294** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L3298** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
-- **L3440** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の 省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。 省いた位置の分だけ、その位置の既定値で埋める。
-- **L3653** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L3657** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3779** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3789** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L3127** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
+- **L3244** _(ja)_ — ★2026-11-05(敵対的検証 C12): 単入力の apply / run_pipeline は fullseye.Image を剥がすのに、 n 項だけが剥がさず「got a scalar Image」の TypeError だった。入力ごとに同じ剥がし方 (非有限の検査より前 —— Image の中身も検査する)。
+- **L3277** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F2): 単入力の apply / run_pipeline と PrecisionUnion の n-ary 経路は dtype 契約(_contract_dtype)を通るのに、密な配列の n-ary だけが通らず、uint8 の 32 + 32 が on_error="raise" でも例外も台帳記録も無く 1.0(正しくは 64/255)になっていた。入力ごとに同じ規則で。 畳み込みの核(_NARY_KERNEL_SECOND の第 2 入力)は画像でなく重みの表なので、型だけ float64 にする。
+- **L3285** _(ja)_ — ★2026-11-05(敵対的検証 C11): 単入力の apply にある _guard_input(空・次元・色軸・extra_checks の 値域)が n 項に無く、空 (0, 0) / 1-D / 4-D / 0..50 の入力が on_error="raise" でも例外も台帳記録も 無く通っていた。入力ごとに同じ検査(その入力の sort で)。畳み込みの核は画像でないので外す。
+- **L3300** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L3304** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
+- **L3446** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の 省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。 省いた位置の分だけ、その位置の既定値で埋める。
+- **L3659** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L3663** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L3785** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3795** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -99,9 +99,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `backend_safe.py`
 
 - **L212** _(ja)_ — ★2026-09-20(GenSpark 第 44 報 N158): 環状バッファは黙って古い方を捨てる。捨てた数を数えないと、 `fallbacks()` が 256 件しか返さない理由が利用者から見えない(counts と件数が合わない)。
-- **L513** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
-- **L532** _(ja)_ — ★2026-10-18(0.7.0 の preflight の退化スイープ): 複素の sort を名乗る op でも、入力が実数の NaN / Inf だと実数の配列を返すことがある(3 op とも float64 の NaN を返した)。複素の時だけ埋めていたので、 その実数の非有限がそのまま外へ出ていた。実数でも複素数でも、非有限は記録したうえで 0 で埋める。
-- **L603** — ★Ein feature-Op gibt einen numpy-**Skalar** zurück, kein ndarray, daher sah der Zweig oben ihn nie: eine NaN/Inf-Messung (z. B. ein 0/0 in sk_blur_effect auf einem degenerierten Frame) floss früher direkt aus api.apply heraus. Nicht-endliche Skalare werden ebenfalls auf den sort-Fallback geschrubbt, damit die deklarierte Garantie „endlich, sort-gültig“ auch für feature/contour-Skalare tatsächlich gilt.
+- **L224** _(ja)_ — ★2026-11-11(外部ユーザー指摘): uint8 を渡す(最も普通の入力)だけで「degraded to a fallback」と 出て、通常の型変換が劣化に読めた。結果は契約どおりで、劣化ではない —— 中立な文面にする。 記録(fallbacks() / fallback_counts())は据え置き。本当の劣化の文面は下のまま。
+- **L536** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
+- **L555** _(ja)_ — ★2026-10-18(0.7.0 の preflight の退化スイープ): 複素の sort を名乗る op でも、入力が実数の NaN / Inf だと実数の配列を返すことがある(3 op とも float64 の NaN を返した)。複素の時だけ埋めていたので、 その実数の非有限がそのまま外へ出ていた。実数でも複素数でも、非有限は記録したうえで 0 で埋める。
+- **L626** — ★Ein feature-Op gibt einen numpy-**Skalar** zurück, kein ndarray, daher sah der Zweig oben ihn nie: eine NaN/Inf-Messung (z. B. ein 0/0 in sk_blur_effect auf einem degenerierten Frame) floss früher direkt aus api.apply heraus. Nicht-endliche Skalare werden ebenfalls auf den sort-Fallback geschrubbt, damit die deklarierte Garantie „endlich, sort-gültig“ auch für feature/contour-Skalare tatsächlich gilt.
 
 ## `backends.py`
 
@@ -1723,7 +1724,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L536** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
 - **L766** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
 - **L1279** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1368** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L1398** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/evaluation/metrics.py`
 
@@ -1739,8 +1740,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L96** _(ja)_ — ★2026-10-02: 区切り文字を "/" にそろえてから並べる。素の sorted() は Windows の "\\"(0x5C)と Linux の "/"(0x2F)で順序が変わり、``segmentation/watershed/`` と ``segmentation/watershed3d/`` の 前後が入れ替わって OP_NOTES.json の鍵の順が OS ごとに違った(手元の regen は緑、CI の --check が赤)。
 - **L103** _(ja)_ — ★frontmatter は閉じ線まで読む(2026-10-02): 先頭 1200 文字で切っていたら、examples: の行が 44 本に伸びた text_box の閉じ線が範囲の外に出て「op の無いノート」に見え、索引の op がノートから引けなくなった。
 - **L125** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
-- **L311** _(ja)_ — ★2026-09-20(GenSpark 第 41 報 N141): 「callable なら op」でクラス 41 個(Image / Pipeline / MissingBackendError / TcpChannel …)が facade 層に op として混ざり、`fullseye_search_ops` の検索面を汚していた。クラスとモジュールは型・器であって op ではない。関数(生 / builtin / functools.partial)だけを op として数える。同じ報の「facade 表に無い 474 件」は halcon_facade_map.json(HALCON 対応表、鍵は `camera.xxx` の名前空間つき)との比較で、 残る 460 件は `import fullseye` で呼べる実関数 —— 表の目的が違うので設計のまま。
-- **L361** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+- **L312** _(ja)_ — ★2026-09-20(GenSpark 第 41 報 N141): 「callable なら op」でクラス 41 個(Image / Pipeline / MissingBackendError / TcpChannel …)が facade 層に op として混ざり、`fullseye_search_ops` の検索面を汚していた。クラスとモジュールは型・器であって op ではない。関数(生 / builtin / functools.partial)だけを op として数える。同じ報の「facade 表に無い 474 件」は halcon_facade_map.json(HALCON 対応表、鍵は `camera.xxx` の名前空間つき)との比較で、 残る 460 件は `import fullseye` で呼べる実関数 —— 表の目的が違うので設計のまま。
+- **L362** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
 
 ## `fullseye/mcp/diagnose.py`
 
@@ -1873,16 +1874,19 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L57** — ★Nicht verschlucken (adversariales Review 2026-09-06). `imgops_nary` ist ein primaeres Modul, das nur numpy und scipy braucht, daher bedeutet ein fehlgeschlagener Import einen 'kaputten checkout', nicht 'eine in dieser Umgebung fehlende Funktion'. Zuvor war es `except Exception: pass`, und weil **diese Funktion zugleich Generator und Pruefer ist**, konnte CI einen Index mit komplett verschwundenen 17 ops gruen veroeffentlichen.
 - **L81** _(ja)_ — ★2026-10-24: IMREAD_COLOR / IMREAD_GRAYSCALE alone demote a 16-bit file to 8 bits (cv2 drops the low byte) and the result was then divided by 255. IMREAD_ANYDEPTH keeps the samples; scaling follows the decoded dtype.
 - **L158** _(ja)_ — ★2026-09-20(GenSpark 第 37 報 N131): 台帳 op(`color_lut`)と汎用アルゴリズム(`quicksort`)は索引に 載っているのに `has` が「unknown」と答えていた —— 発見面(索引)と判定面(registry + nary)が別だった。 索引(同梱複製)の台帳行と algo 層をここで引く。
-- **L256** _(ja)_ — ★2026-11-05(敵対的検証 C1 の兄弟): 以前は生の ops.RT を呼び、apply の入口の契約(ノブの有限性・ 0..1 の範囲、空・次元、extra_checks、fallback の guard と台帳)を飛ばしていた —— `--a 5` / `--a nan` が黙って通った。n 項の枝(_apply_nary)と同じく api.apply を on_error="raise" で通す(CLI は fail-closed)。
-- **L290** _(ja)_ — ★2026-11-05(敵対的検証 C1 の兄弟): 段ごとに生の ops.RT を呼んでいたので、型連鎖 (gaussian,vol_gaussian)もノブも検査されなかった。run_pipeline(何も走らせる前に型連鎖とノブを 検査する)を on_error="raise" で通す。
-- **L363** _(ja)_ — ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
-- **L370** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
-- **L408** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228 の再現で見つけた): color 層は OpenCV が要る(extra `opencv`)。 素の `pip install fullseye` では空が正しいのに、ここが無条件に assert していたので `fullseye index` が AssertionError で落ちていた。黙って空になるのを止めたいのは OpenCV が在るときだけ。
-- **L433** _(ja)_ — ★2026-11-04(統合 GPU): 規則は tools/ にあるので、imgevolve.py の隣に tools/ が無い置き方(変異探針の 小さな作業木: imgevolve.py だけを写し、本体は PYTHONPATH で引く)では見つからず索引が組めなかった。 imgevolve.py の隣を先に、無ければ sys.path の各所の tools/ を探す。
-- **L488** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228): checkout の判定が「HERE に docs/ が在るか」だけだった。wheel の HERE は site-packages そのものなので、別のパッケージが site-packages/docs/ を置いていると、そこへ OP_INDEX.json を書きに行く(読み取り専用の環境では落ちる)。checkout にしか無い正本の組で判定する。
-- **L571** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
-- **L680** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
-- **L690** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
+- **L179** _(ja)_ — ★2026-11-11(外部監査 v1.0.0): 索引に在る op が optional 依存(extra)の不足で登録されていないとき、 「unknown op」と言っていた(`apply` は MissingBackendError で正しく案内する)。在るが足りない、と言う。
+- **L264** _(ja)_ — ★2026-11-05(敵対的検証 C1 の兄弟): 以前は生の ops.RT を呼び、apply の入口の契約(ノブの有限性・ 0..1 の範囲、空・次元、extra_checks、fallback の guard と台帳)を飛ばしていた —— `--a 5` / `--a nan` が黙って通った。n 項の枝(_apply_nary)と同じく api.apply を on_error="raise" で通す(CLI は fail-closed)。
+- **L298** _(ja)_ — ★2026-11-05(敵対的検証 C1 の兄弟): 段ごとに生の ops.RT を呼んでいたので、型連鎖 (gaussian,vol_gaussian)もノブも検査されなかった。run_pipeline(何も走らせる前に型連鎖とノブを 検査する)を on_error="raise" で通す。
+- **L371** _(ja)_ — ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
+- **L376** _(ja)_ — ★2026-11-11(外部ユーザー指摘): ``python -m fullseye``(argv[0] は fullseye/__main__.py)は PyPI から入れた人の入口で、 imgevolve.py は checkout にしか無い。-m 経由を checkout の綴りと取り違えて、無いファイルを勧めていた。
+- **L384** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
+- **L422** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228 の再現で見つけた): color 層は OpenCV が要る(extra `opencv`)。 素の `pip install fullseye` では空が正しいのに、ここが無条件に assert していたので `fullseye index` が AssertionError で落ちていた。黙って空になるのを止めたいのは OpenCV が在るときだけ。
+- **L447** _(ja)_ — ★2026-11-04(統合 GPU): 規則は tools/ にあるので、imgevolve.py の隣に tools/ が無い置き方(変異探針の 小さな作業木: imgevolve.py だけを写し、本体は PYTHONPATH で引く)では見つからず索引が組めなかった。 imgevolve.py の隣を先に、無ければ sys.path の各所の tools/ を探す。
+- **L502** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228): checkout の判定が「HERE に docs/ が在るか」だけだった。wheel の HERE は site-packages そのものなので、別のパッケージが site-packages/docs/ を置いていると、そこへ OP_INDEX.json を書きに行く(読み取り専用の環境では落ちる)。checkout にしか無い正本の組で判定する。
+- **L585** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
+- **L694** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
+- **L696** _(ja)_ — ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。
+- **L708** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
 
 ## `imgforensics.py`
 
