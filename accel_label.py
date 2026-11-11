@@ -183,7 +183,7 @@ def _knob(x) -> float:
 
 
 # ---- 領域 → 領域 -------------------------------------------------------------------------------
-def _select_by_area(t, thr_of, conn=4):
+def _select_by_area(t, thr_of, conn=8):
     m = _bin_t(t)
     B, H, W = m.shape
     N = B * H * W
@@ -197,12 +197,12 @@ def _select_by_area(t, thr_of, conn=4):
 
 
 def _remove_small(t, a, b, dev):
-    """``ops.remove_small``: 4 連結、面積が ``(0.01+0.15a)*画素数`` 以上の成分を残す。"""
+    """``ops.remove_small``: 8 連結、面積が ``(0.01+0.15a)*画素数`` 以上の成分を残す。"""
     return _select_by_area(t, lambda H, W: (0.01 + 0.15 * a) * (H * W))
 
 
 def _select_shape(t, a, b, dev):
-    """``select_shape``(``remove_small`` 種): 4 連結、面積 ``int(16+200a)`` 以上を残す。"""
+    """``select_shape``(``remove_small`` 種): 8 連結、面積 ``int(16+200a)`` 以上を残す。"""
     thr = int(16 + a * 200)
     return _select_by_area(t, lambda H, W: thr)
 
@@ -225,11 +225,11 @@ def _largest_roots(L, fidx, N, HW, B):
 
 
 def _select_largest(t, a, b, dev):
-    """``select_largest`` / ``select_shape_std``: 4 連結、最大の成分だけ。"""
+    """``select_largest`` / ``select_shape_std``: 8 連結、最大の成分だけ。"""
     m = _bin_t(t)
     B, H, W = m.shape
     N = B * H * W
-    L, fidx = label(m, 4)
+    L, fidx = label(m, 8)
     if fidx.numel() == 0:
         return torch.zeros_like(t)
     big = _largest_roots(L, fidx, N, H * W, B)
@@ -264,7 +264,7 @@ def _clear_border(t, a, b, dev):
 
 
 def _sort_region(t, a, b, dev):
-    """``r2_sort_region``: 4 連結、面積の降順で ``round(a*(n-1))`` 番目。
+    """``r2_sort_region``: 8 連結、面積の降順で ``round(a*(n-1))`` 番目。
 
     順位は CPU と同じ ``np.argsort``(同点の扱いも同じ)を、成分ごとの面積の短い列に当てて決める。
     """
@@ -272,7 +272,7 @@ def _sort_region(t, a, b, dev):
     B, H, W = m.shape
     N = B * H * W
     HW = H * W
-    L, fidx = label(m, 4)
+    L, fidx = label(m, 8)
     if fidx.numel() == 0:
         return torch.zeros_like(t)
     area = _areas(L, fidx, N)
@@ -314,13 +314,13 @@ def _background_seg(t, a, b, dev):
 
 
 def _select_region_point(t, a, b, dev):
-    """``r3_select_region_point``: 4 連結、``(round(a*(H-1)), round(b*(W-1)))`` の画素を含む成分。"""
+    """``r3_select_region_point``: 8 連結、``(round(a*(H-1)), round(b*(W-1)))`` の画素を含む成分。"""
     m = _bin_t(t) & torch.isfinite(t[:, 0])
     B, H, W = m.shape
     N = B * H * W
     r = min(H - 1, max(0, int(round(_knob(a) * (H - 1)))))
     c = min(W - 1, max(0, int(round(_knob(b) * (W - 1)))))
-    L, fidx = label(m, 4)
+    L, fidx = label(m, 8)
     if fidx.numel() == 0:
         return torch.zeros_like(t)
     lv = L[:, r, c]
@@ -452,7 +452,7 @@ def _area_frac(t, a, b, dev):
 
 
 def _largest_crop_feature(core):
-    """最大の成分(4 連結)を GPU で求め、余白つきで切り出して op 自身の CPU の式へ渡す。
+    """最大の成分(8 連結)を GPU で求め、余白つきで切り出して op 自身の CPU の式へ渡す。
 
     切り出す窓は外接矩形を余白だけ広げ、**画像の内側に切る**(画像の縁で切れる所は CPU でも縁)。
     余白は 1 画素(収縮の縁の扱い ``border_value=0`` を保つ)。``rectangularity`` だけは同じモーメントの
@@ -465,7 +465,7 @@ def _largest_crop_feature(core):
         N = B * H * W
         HW = H * W
         cpu = _cpu_op(core)
-        L, fidx = label(m, 4)
+        L, fidx = label(m, 8)
         if fidx.numel() == 0:
             return [cpu(np.zeros((H, W)), a, b) for _ in range(B)]
         big = _largest_roots(L, fidx, N, HW, B)
@@ -525,11 +525,11 @@ def _erode4(x):
 
 
 def _largest_mask(t):
-    """``(big, has)``: 1 枚ごとの最大の 4 連結成分のマスク (B,H,W) と、成分があるか (B,) の np.bool_。"""
+    """``(big, has)``: 1 枚ごとの最大の 8 連結成分のマスク (B,H,W) と、成分があるか (B,) の np.bool_。"""
     m = _bin_t(t)
     B, H, W = m.shape
     N = B * H * W
-    L, fidx = label(m, 4)
+    L, fidx = label(m, 8)
     if fidx.numel() == 0:
         return torch.zeros_like(m), np.zeros(B, bool)
     big = _largest_roots(L, fidx, N, H * W, B)

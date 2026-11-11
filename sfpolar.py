@@ -474,6 +474,31 @@ def sfp_normals(sweep, refractive_index=1.5, model="specular", angles_deg=_DEFAU
       model, 0 where nothing fits or the pixel is dark.
     * ``valid`` ``(H, W)`` bool — lit, physically possible and invertible;
       ``violation`` / ``clamped`` ``(H, W)`` bool — why a pixel is suspect.
+    * ``dark`` ``(H, W)`` bool — the fitted mean ``a0 = S0/2`` is at most
+      :data:`specularity.POLAR_DARK_K` (3) × the noise of the modulation
+      amplitude ``σ_A = σ̂·√(v₁+v₂)`` (``v`` = the diagonal of the fit's
+      ``(MᵀM)⁻¹``; ``σ̂`` = one noise level for the image, from the median
+      per-pixel residual of the N > 3 frames, χ²-median corrected), i.e. the
+      DoLP's own noise would be 1/3 or more: no degree of polarisation is
+      defined there, so the pixel is not lit (``valid`` False, ``n_distinct``
+      0). ★Before 2026-11-09 only ``a0 > 0`` was required, and clipped sensor
+      noise in a dark region (σ 0.001 of a scene peaking at 1) gave DoLP ≈ 1
+      and Brewster-angle normals on 26–28 % of the dark pixels, all
+      ``valid``. (A first fix used a floor relative to the brightest 1 % of
+      the image, which ignored the noise: it killed a dark diffuse object next
+      to specular highlights and fell into the noise when the bright part was
+      under 1 % of the image.) A frame that does not belong to the sweep
+      raises the residual to the level of the signal, and then every pixel is
+      ``dark`` — the sweep defines no DoLP anywhere (fail-closed); the
+      ``violation`` flags are still computed independently of ``dark``. With three angles there is no residual and only
+      ``a0 <= 0`` is dark — noise-only dark pixels are not screened.
+    * ``dolp_noise`` ``(H, W)`` — the DoLP's noise level ``σ_A/a0`` (0 on
+      unlit pixels — they have no DoLP, see ``valid`` / ``dark``), and
+      ``noisy`` = lit pixels with ``dolp_noise > violation_tol`` — a flag only
+      (``valid`` is not changed by it): their DoLP, hence their zenith, is
+      mostly noise. With three angles ``dolp_noise`` is ``None`` and ``noisy``
+      all False. ★One σ̂ for the image assumes stationary noise; shot noise
+      grows with the signal, so treat the flag as a screen.
     * ``model``, ``refractive_index``, ``brewster_deg``.
 
     Nothing here chooses among the candidates; a single "best" normal map
@@ -500,11 +525,18 @@ def sfp_normals(sweep, refractive_index=1.5, model="specular", angles_deg=_DEFAU
         raise ValueError("%s: %d pixels, over the cap %d" % (op, stack.shape[1] * stack.shape[2], MAX_PIXELS))
     vt = _num(violation_tol, "violation_tol", op, lo=0.0, hi=1.0, lo_open=False)
     # 当てはめは specularity と同じもの。負の最小値の判定は画素ごとにここで行うので 1.0 で渡す。
-    a0, a1, a2, amp, _imin, (H, W) = _sp._polar_fit(stack, angles_deg, op, 1.0)
-    lit = a0 > 0.0
-    dolp = np.zeros_like(a0)
-    np.divide(amp, a0, out=dolp, where=lit)
-    violation = (lit & (dolp > 1.0 + vt)).reshape(H, W)
+    a0, a1, a2, amp, _imin, (H, W), resid = _sp._polar_fit(stack, angles_deg, op, 1.0, want_residual=True)
+    nfr = stack.shape[0]
+    Mx = _sp._polarizer_design(_sp._require_angles(angles_deg, nfr, op), op)
+    dark, _sig, amp_sd = _sp._noise_dark(a0, resid, Mx)
+    lit = (a0 > 0.0) & ~dark
+    # 違反(DoLP > 1)は暗さと独立に判定する: 掃引に合わないフレームは残差を膨らませて σ̂ を大きくし、
+    # 全画素を dark にしてしまう —— その画素の違反の印まで消さない(tests/test_sfpolar の 3 倍のフレーム)
+    pos = a0 > 0.0
+    raw_dolp = np.zeros_like(a0)
+    np.divide(amp, a0, out=raw_dolp, where=pos)
+    violation = (pos & (raw_dolp > 1.0 + vt)).reshape(H, W)
+    dolp = np.where(lit, raw_dolp, 0.0)
     dolp = np.clip(dolp, 0.0, 1.0).reshape(H, W)
     aolp = np.degrees(np.mod(0.5 * np.arctan2(a2, a1), math.pi)).reshape(H, W)
     zen = dolp_to_zenith(dolp, n, m, out_of_range="clamp")
@@ -519,9 +551,19 @@ def sfp_normals(sweep, refractive_index=1.5, model="specular", angles_deg=_DEFAU
         valid &= ~clamped
     cand = np.where(valid[None, ..., None], cand, 0.0)
     n_distinct = np.where(valid, 2 * np.maximum(zen["n_solutions"], 1), 0).astype(np.int64)
+    # DoLP の雑音の大きさ(画像に 1 つの σ̂、N > 3 のときだけ)。印だけで valid は変えない
+    if amp_sd is not None:
+        dn = np.zeros(a0.shape)                          # 暗い画素は DoLP が無い(0、valid/dark で見る)— 出力は有限
+        dn[lit] = amp_sd / a0[lit]
+        dolp_noise = dn.reshape(H, W)
+        noisy = lit2 & (dolp_noise > vt)
+    else:
+        dolp_noise = None
+        noisy = np.zeros((H, W), dtype=bool)
     return {"kind": CANDIDATES_KIND, "candidates": cand, "zenith_deg": zd, "azimuth_deg": ad,
             "dolp": dolp, "aolp_deg": aolp, "intensity": (2.0 * a0).reshape(H, W),
             "n_distinct": n_distinct, "valid": valid, "violation": violation, "clamped": clamped,
+            "dark": dark.reshape(H, W), "dolp_noise": dolp_noise, "noisy": noisy,
             "model": m, "refractive_index": n, "brewster_deg": zen["brewster_deg"]}
 
 

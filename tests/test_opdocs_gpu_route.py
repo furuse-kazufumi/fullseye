@@ -13,6 +13,7 @@ import re
 
 import gpu_route
 from tools import opdocs
+from conftest import requires_backend
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 RECS = opdocs._records()[0]
@@ -30,6 +31,8 @@ def _expected(name):
 
 
 def test_records_follow_gpu_route():
+    # torch が無いと accel の経路が無く、torch のある環境で作った出荷表と食い違う(2026-11-04 master py3.12/3.14)
+    requires_backend("torch")
     seen = set()
     kinds = collections.Counter()
     for rec in RECS:

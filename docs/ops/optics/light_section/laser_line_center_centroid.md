@@ -5,10 +5,10 @@ category: light_section
 in: image2d
 out: table
 gpu: なし
-examples: [poc_weld_bead_profile]
+examples: [poc_3d_sensor_modalities, poc_weld_bead_profile]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # laser_line_center_centroid — OPTICS `light_section` op
@@ -34,11 +34,29 @@ noise stays zero-mean: the estimator is then linear in the noise, which is what
 is the coordinate ``v = r`` exactly.
 
 Returns ``{"kind": "laser_line_centers", "method": "centroid", "col", "row", "valid",
-"peak", "n_valid"}``. Ground truth: a symmetric line profile has its centroid at the true
-centre; the centroid of a column-binned image equals that of the unbinned one
-(``tests/test_lightsection.py``). ★Limits: the centroid is biased toward the window's
-centre when the window cuts an off-centre profile, and a background left in the weights
-pulls it toward the column's middle.
+"peak", "n_valid", "saturated", "truncated"}``. Ground truth: a symmetric line profile has
+its centroid at the true centre; the centroid of a column-binned image equals that of the
+unbinned one (``tests/test_lightsection.py``). ★Limits: the centroid is biased toward the
+window's centre when the window cuts an off-centre profile, and a background left in the
+weights pulls it toward the column's middle.
+
+★Saturation: the "peak" is the plateau of rows within 1e-9 of the column maximum that is
+connected to the first maximum; the window is ``[lo − half_window, hi + half_window]``
+around that plateau (one row for an unclipped line: the same as before). A clipped,
+flat-topped line used to be windowed at the plateau's first row (−6.7 px at 20× over
+full scale, still ``valid``). ``saturated`` marks the columns whose plateau has ≥ 3 rows,
+or ≥ 2 rows at the image's maximum (the ceiling); only those columns get the plateau window,
+every other column is windowed at its first maximum exactly as before (bit for bit). Two
+equal rows below the ceiling are common in quantised, unclipped lines (uint8, σ 3 px: 6 % of
+the columns at a peak of 200, 15 % at 60) and are not a plateau. The result in a saturated
+column is a centroid of clipped data, so treat it as degraded. ★Not detected: a plateau
+broken by a dip (dark-frame or flat-field correction after clipping leaves 1 LSB dips) —
+the plateau ends at the dip and the window shifts toward it again (measured 3.5 px, gauss
+3.2 px, ``valid``; 5.6 px before the plateau window); pass uncorrected data or clip it back
+to the ceiling first. ``truncated`` marks the columns whose weight at
+either end of the window (or of the image) is still ≥ ``max(min_peak_rel, 1e-3)`` × the
+column's peak weight — the profile was cut, so the centroid is pulled toward the window's
+middle (measured: σ 2 px, true 0.4 → 1.48). ``valid`` is not changed by either flag.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -64,6 +82,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_3d_sensor_modalities](../../../../examples/poc_3d_sensor_modalities.py) — `py -3.11 examples/poc_3d_sensor_modalities.py`
 - [poc_weld_bead_profile](../../../../examples/poc_weld_bead_profile.py) — `py -3.11 examples/poc_weld_bead_profile.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

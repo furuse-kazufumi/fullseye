@@ -5,10 +5,10 @@ category: anomaly_patch
 in: image2d × table
 out: table
 gpu: なし
-examples: [poc_patch_anomaly]
+examples: [poc_ai_built_inspection_scored, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # patchbank_score — SPC `anomaly_patch` op
@@ -28,7 +28,9 @@ exactly by brute force, interpolated to the image size and smoothed by a Gaussia
 the smoothed map), ``k`` and ``smooth``.
 
 Raises ``ValueError`` for a model that is not a ``patchbank_fit`` result, a different image
-shape, ``k`` larger than the bank, or a negative / non-finite ``smooth``.
+shape, ``k`` larger than the bank, a negative / non-finite ``smooth``, or an image on another
+pixel scale than the good images (integer vs float dtype, or values outside the training range
+widened by one training span on each side).
 
 ## 参考(サンプルデータ・文献)
 
@@ -38,6 +40,7 @@ shape, ``k`` larger than the bank, or a negative / non-finite ``smooth``.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_ai_built_inspection_scored](../../../../examples/poc_ai_built_inspection_scored.py) — `py -3.11 examples/poc_ai_built_inspection_scored.py`
 - [poc_patch_anomaly](../../../../examples/poc_patch_anomaly.py) — `py -3.11 examples/poc_patch_anomaly.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

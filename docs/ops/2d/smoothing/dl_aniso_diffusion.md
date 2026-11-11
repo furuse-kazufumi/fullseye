@@ -9,7 +9,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [gallery2d_smoothing_rank]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # dl_aniso_diffusion — 2D `smoothing` op
@@ -48,7 +48,7 @@ Perona-Malik 型の異方性拡散フィルタ（torch 実装、GPU があれば
 振る（``iters = 5 + int(b*15)``）。ステップ幅 ``lam=0.2`` は固定。ガウシアンぼかしと
 異なりエッジをぼかさずにノイズだけ均せるのが利点。HALCON の
 ``anisotropic_diffusion``（画像の異方性拡散を行う）に相当するが、同じ結果になる
-とは限らない近似実装。
+とは限らない近似実装。画像の縁は複製(縁を越える流れは 0)。
 
 **端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
 

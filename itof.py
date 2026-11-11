@@ -343,6 +343,23 @@ def itof_phase_amplitude(samples, frequencies_hz=None, phase_offsets_rad=None, r
     (``A·e^{iφ}``、複素)、``frequencies_hz``(分かれば)、``wrapped_depth`` と ``ambiguity_range``(周波数が分かれば)、
     ``phase_sigma``、``depth_sigma``(周波数が分かれば)。
 
+    ★振幅が無い画素・飽和の印(2026-11-09):
+      * ``A ≤ 1e-9 · max_k |m_k|``(その画素のバケットの大きさに対して丸め屑)の画素は ``A = 0`` と同じに
+        扱い、``phase`` 0・``phase_sigma`` / ``depth_sigma`` は ``inf``。全バケットが等しい(完全に飽和した)
+        画素は A が丸め屑 6e-13 で ``A > 0`` を通り、位相 0.49 rad・距離 0.59 m というでたらめの値を
+        有限の ``depth_sigma``(1e14)つきで返していた。
+      * ``offset`` B ≤ 0 で読み出し雑音が 0 の画素(暗電流を引いたデータ)は分散を見積もれないので
+        ``phase_sigma`` ``inf``(以前は 0 =「雑音ゼロ」と主張していた)。
+      * ``saturated`` ``(F, ...)`` bool: その画素のどれかのバケットが**配列全体の最大値と等しく、かつその
+        最大値に 2 つ以上の標本が並ぶ**(= 天井がある)。full well を知らないので天井から推す印で、
+        valid は無い(値は変えない)。バケットの 40 % がクリップされた画素は距離が最大 12 cm ずれても
+        ``depth_sigma`` は 3.3 cm のまま(式は飽和を知らない)—— この印を見て捨てる。★雑音のない整数の
+        画像で、飽和していないのに最大値がたまたま 2 回出ると誤って印が付く(雑音ありの 240×320 で
+        10 枚中 1 枚・2 画素)。★**見逃しは黙る**(独立レビュー 2026-11-09): クリップの後に画素ごとの
+        暗電流を引いたデータは天井が 1 つの値でなくなり、5 画素中 1 画素にしか印が付かない。天井より
+        明るい画素が 1 つでもある(露光を合成した HDR など)と最大値が天井でなくなり、印は全部消える。
+        どちらも飽和の判定は補正前の生データ(または full well を知る呼び手)でする。
+
     **Raises** ``ValueError``: 配列が 2 次元未満・非有限 / 段の数が 3〜32 でない / 段の位相が退化 /
     周波数の数が F と合わない・範囲外 / dict が生信号でない。
     """
@@ -372,15 +389,24 @@ def itof_phase_amplitude(samples, frequencies_hz=None, phase_offsets_rad=None, r
     coef = np.tensordot(P, m, axes=([1], [1]))                                  # (3, F, ...)
     B, X, Y = coef[0], coef[1], coef[2]
     A = np.hypot(X, Y)
-    ph = np.mod(np.arctan2(Y, X), 2.0 * np.pi)
+    # 丸め屑の振幅(全バケットが等しい = 完全飽和など)は振幅 0 と同じ扱い(相対の判定)
+    scale = np.max(np.abs(m), axis=1)                                           # (F, ...)
+    A = np.where(A <= 1e-9 * scale, 0.0, A)
+    ph = np.where(A > 0, np.mod(np.arctan2(Y, X), 2.0 * np.pi), 0.0)
     C = np.linalg.inv(M.T @ M)[1:, 1:]                                          # 分散 1 あたりの (X, Y) の共分散
     var = np.maximum(B, 0.0) + rn ** 2
     s_, c_ = np.sin(ph), np.cos(ph)
     perp = s_ ** 2 * C[0, 0] + c_ ** 2 * C[1, 1] - 2.0 * s_ * c_ * C[0, 1]
+    known = (A > 0) & (var > 0)                                                 # B ≤ 0 かつ読み出し雑音 0 は見積もれない
     with np.errstate(divide="ignore", invalid="ignore"):
-        sig = np.where(A > 0, np.sqrt(var * perp) / np.where(A > 0, A, 1.0), np.inf)
+        sig = np.where(known, np.sqrt(var * perp) / np.where(known, A, 1.0), np.inf)
+    top = float(np.max(m))
+    if np.count_nonzero(m == top) >= 2:
+        saturated = np.any(m == top, axis=1)
+    else:
+        saturated = np.zeros(A.shape, dtype=bool)
     out = {"kind": PHASE_KIND, "phase": ph, "amplitude": A, "offset": B, "phasor": A * np.exp(1j * ph),
-           "phase_sigma": sig, "phase_offsets_rad": th}
+           "phase_sigma": sig, "phase_offsets_rad": th, "saturated": saturated}
     if frequencies_hz is not None:
         f = _freqs(frequencies_hz, fn)
         if f.size != F:

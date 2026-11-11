@@ -21,8 +21,8 @@
 
 ## 背景知識ガイド(op の手前にある物理・規約)
 
-- [colorimetry](guides/colorimetry.md) — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない
-- [handpose](guides/handpose.md) — 手の 21 キーポイントと指屈曲角 — 使い方ガイド
+- [colorimetry](guides/colorimetry.md) — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない · [English](guides/colorimetry.en.md) · [简体中文](guides/colorimetry.zh.md)
+- [handpose](guides/handpose.md) — 手の 21 キーポイントと指屈曲角 — 使い方ガイド · [English](guides/handpose.en.md) · [简体中文](guides/handpose.zh.md)
 
 ## カテゴリ
 

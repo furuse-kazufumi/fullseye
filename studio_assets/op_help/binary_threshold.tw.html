@@ -12,7 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/binary_threshold.inputs.jpg">binary_threshold: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>使用大津判別分析法(Otsu&#x27;s method)進行自動閾值二值化(<code style="color:#22d3bf">skimage.filters.threshold_otsu</code>,若不可用則以平均值代替)。從影像直方圖自動決定能使類間變異數最大化的閾值。相當於HALCON的<code style="color:#22d3bf">binary_threshold</code>(Segment an image using binary thresholding.)(HALCON可在Otsu之外選擇多種演算法,此處固定使用Otsu)。</p>
+<p>使用大津判別分析法(Otsu&#x27;s method)進行自動閾值二值化(與核心的 <code style="color:#22d3bf">otsu</code> 為同一函式：將資料的實際範圍分成 256 個 bin，在 argmax bin 的上端切分)。從影像直方圖自動決定能使類間變異數最大化的閾值。相當於HALCON的<code style="color:#22d3bf">binary_threshold</code>(Segment an image using binary thresholding.)(HALCON可在Otsu之外選擇多種演算法,此處固定使用Otsu)。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用 ―― 閾值由直方圖自動決定，因此沒有可調整之處。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

@@ -57,6 +57,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / "tools") not in sys.path:
     sys.path.insert(0, str(ROOT / "tools"))
 from exhibit_glossary import LEDGER as GLOSSARY_LEDGER, glossary_line, load_glossary
+import share_alike
 
 DOCS = ROOT / "docs"
 BASE = DOCS / "view2026"
@@ -166,6 +167,12 @@ def _representative_img(d: dict, e: dict, lang: str, up: str, docs: str,
         up, e["id"], alt, width, width)
 
 
+def _sa_small(e: dict, lang: str) -> str:
+    """継承条件つきのデータのコマを含む展示のタイルに添える短い表記(タイル自体がリンクなので文字だけ)。"""
+    s = share_alike.short_label(e["id"], lang)
+    return "<br><small>%s</small>" % s if s else ""
+
+
 def _source(d: dict, e: dict) -> str:
     """ソースへのリンク(``source_url`` が在ればそれ。空文字ならリンクを出さない)。"""
     if "source_url" in e:
@@ -244,6 +251,9 @@ def validate(d: dict) -> list[str]:
     ids = [e["id"] for e in d["exhibits"]]
     if len(ids) != len(set(ids)):
         bad.append("見どころの id が重複している")
+    # ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
+    if d.get("featured_ids") != ids:
+        bad.append("featured_ids(目玉の正本)と exhibits の id の並びが違う —— どちらかを直すこと")
     for e in d["exhibits"]:
         pid = e["id"]
         for f in ("label", "lead", "see"):
@@ -400,6 +410,8 @@ def build(d: dict, lang: str) -> str:
     up = "" if lang == "ja" else "../"            # ページから docs/view2026/ への相対
     docs = up + "../"                              # ページから docs/ への相対
     def media(e):                                  # 動く 3-D の HTML はそのページの言語で開く
+        if e.get("youtube_url"):                   # YouTube に本編があれば、タイルと行はそこへ飛ぶ(抜粋はタイルの絵だけ)
+            return e["youtube_url"]
         return docs + _media_rel(d, e) + ("?lang=" + lang if _is_viewer(d, e) else "")
 
     sw = []
@@ -408,7 +420,7 @@ def build(d: dict, lang: str) -> str:
         sw.append("**%s**" % name if l == lang else
                   "[%s](%s)" % (name, up + ("index.md" if l == "ja" else l + "/index.md")))
     out = ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
-           "# Fullseye — ViEW2026", "", ui["tagline"], "", ui["tap"], ""]
+           "# Fullseye — ViEW2026", "", ui["tagline"], "", ui["session"], "", ui["tap"], ""]
     if lang == "ja":
         out += ["[Fullseye とは(読み物)](about.md)", ""]
     elif lang == "en":
@@ -437,8 +449,8 @@ def build(d: dict, lang: str) -> str:
         lab = e["label"][lang]
         mark = "<b>&#9654;</b>" if e["motion"] else ""
         cap = "%s · %s" % (lab, _viewer_mb(d, e)) if _is_viewer(d, e) else lab
-        out.append('<a href="%s">%s%s<span>%s</span></a>'
-                   % (media(e), _representative_img(d, e, lang, up, docs, 320), mark, cap))
+        out.append('<a href="%s">%s%s<span>%s%s</span></a>'
+                   % (media(e), _representative_img(d, e, lang, up, docs, 320), mark, cap, _sa_small(e, lang)))
     out += ["</div>", ""]
 
     # 2. シリーズ記事
@@ -483,11 +495,24 @@ def build(d: dict, lang: str) -> str:
         for e in rows:
             lab = e["label"][lang]
             mark = "<b>&#9654;</b>" if e["motion"] else ""
-            cells.append('<a href="%s">%s%s<span>%s</span></a>'
-                         % (media(e), _representative_img(d, e, lang, up, docs, 200, True), mark, lab))
+            cells.append('<a href="%s">%s%s<span>%s%s</span></a>'
+                         % (media(e), _representative_img(d, e, lang, up, docs, 200, True), mark, lab, _sa_small(e, lang)))
         out += ['<details class="vall"><summary><b>%s</b> (%d)</summary>' % (g["name"][lang], len(rows)),
                 '<div class="vg vs">'] + cells + ["</div>", "</details>", ""]
     out += [LAZY, ""]
+
+    # 4b. 継承条件つき(CC BY-SA など)のデータのコマを含む展示の帰属表示(タイルはリンクの中なので、
+    #     出典とライセンスへのリンクはここに置く)。判定は tools/share_alike.py の台帳から。
+    shown = {e["id"]: e for e in list(d["exhibits"]) + list(d["all"])}
+    sa_rows = [(pid, shown[pid]) for ds in share_alike.DATASETS for pid in ds["pocs"] if pid in shown]
+    if sa_rows:
+        out += ["## " + share_alike.HEADING.get(lang, share_alike.HEADING["en"]), ""]
+        for pid, e in sa_rows:
+            ds = share_alike.dataset_for(pid)
+            out.append("- **%s**: %s [%s](%s) · [%s](%s)" % (
+                e["label"][lang], share_alike.attribution(pid, lang), ds["license"], ds["license_url"],
+                ds["name"], ds["source_url"]))
+        out.append("")
 
     # 5. 見どころの説明と数字
     out += ["## " + ui["h_list"], "", ui["list_intro"], "", '<div class="vl" markdown="1">', ""]

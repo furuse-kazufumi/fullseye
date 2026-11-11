@@ -91,9 +91,12 @@ def binocular_disparity_ms(left, right, max_disp=32, window=5, P1=5.0, P2=50.0, 
     delta = np.zeros((H, W))
     delta[ok] = np.clip((cm[ok] - cp[ok]) / (2.0 * denom[ok]), -0.5, 0.5)
     disparity = np.where(valid, di + delta, np.nan)
-    finite = np.where(np.isfinite(vol), vol, np.nan)
-    with np.errstate(invalid="ignore"):
-        mean_cost = np.nanmean(finite, axis=0) if finite.size else np.zeros((H, W))
+    # 有限の面だけの平均(nanmean と同じ和と個数。NaN の体積を作らずに済ませる —— 2026-11-09 の遅さの内訳)
+    fin = np.isfinite(vol)
+    cnt = fin.sum(axis=0)
+    tot = np.where(fin, vol, 0.0).sum(axis=0)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        mean_cost = np.where(cnt > 0, tot / np.maximum(cnt, 1), 0.0)
     mean_cost = np.where(np.isfinite(mean_cost), mean_cost, 0.0)
     score = np.where(mean_cost > 1e-12, np.clip(1.0 - np.nan_to_num(c0, posinf=1e9) / np.maximum(mean_cost, 1e-12), 0, 1), 0.0)
     return {"disparity": disparity, "valid": valid, "score": np.where(valid, score, 0.0)}

@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [gallery2d_texture_freq, poc_bone_trabecular_thickness]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # dc_retinex — 2D `decomposition` op

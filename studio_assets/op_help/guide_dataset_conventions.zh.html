@@ -1,95 +1,94 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南仅有日文版(它是人写的散文,这里不做机械替换)。</p>
 <h2 style="color:#f5a524;margin:0 0 4px 0">训练数据集规范知识 —— COCO / YOLO / VOC 及外观检测中的陷阱</h2>
-<p>fullseye は <code style="color:#22d3bf">inspection_dataset</code> / <code style="color:#22d3bf">optscene_instances</code> / <code style="color:#22d3bf">optscene_defect_mask</code> で <b>画素完全な真値</b>を吐ける。だが真値は、学習フレームワークが読める形に<b>変換して初めて使える</b>。この文書は op の説明ではなく、その受け皿側 —— 座標規約・面積の定義・評価指標の癖・分割の作り方 —— を書く教材である。<code style="color:#22d3bf">optics/guides/mv_*.md</code>（2-D 撮像系）、<code style="color:#22d3bf">3d/guides/depth_sensors.md</code>（3-D 撮像系）と同じ位置づけで、こちらは<b>出口</b>にあたる。</p>
+<p>fullseye 可以用 <code style="color:#22d3bf">inspection_dataset</code> / <code style="color:#22d3bf">optscene_instances</code> / <code style="color:#22d3bf">optscene_defect_mask</code> 输出<b>像素级完全准确的真值</b>。但真值只有<b>转换成</b>训练框架能读取的形式之后 <b>才能使用</b>。本文不是 op 的说明，而是讲述接收一侧 —— 坐标约定、面积的定义、评价指标的特点、数据划分的做法 —— 的教材。与 <code style="color:#22d3bf">optics/guides/mv_*.md</code>（2-D 成像系统）、<code style="color:#22d3bf">3d/guides/depth_sensors.md</code>（3-D 成像系统）处于同样的位置，本文相当于<b>出口</b>。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. bbox の表現は 3 つあり、fullseye はさらに別</h3>
-<p><b>ここが事故の 8 割</b>。同じ矩形が 4 通りの数字で書ける。</p>
-<p>| 形式 | 並び | 原点 | 単位 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. bbox 的表示有 3 种，而 fullseye 又是另一种</h3>
+<p><b>事故的 8 成出在这里。</b> 同一个矩形可以写成 4 种数字。</p>
+<p>| 格式 | 排列 | 原点 | 单位 |</p>
 <p>| --- | --- | --- | --- |</p>
-<p>| <b>COCO</b> | <code style="color:#22d3bf">[x, y, width, height]</code> | 左上、0 始まり | 絶対 px |</p>
-<p>| <b>YOLO</b>（Ultralytics） | <code style="color:#22d3bf">class x_center y_center width height</code> | 左上、0 始まり | <b>画像幅・高さで正規化（0–1）</b> |</p>
-<p>| <b>Pascal VOC</b>（XML） | <code style="color:#22d3bf">xmin ymin xmax ymax</code> | 左上 | 絶対 px、<b>1 始まりとして扱うのが通例</b>（MATLAB 由来）。変換コードによって −1 する / しないが割れているので、他人のスクリプトを信じない |</p>
-<p>| <b>fullseye</b> <code style="color:#22d3bf">optscene_instances</code> | <code style="color:#22d3bf">(x0, y0, x1, y1)</code> | 左上、0 始まり | 絶対 px、<b>右下を含む（inclusive）</b> |</p>
-<p><code style="color:#22d3bf">optscene_instances</code> の bbox は<b>右下を含む</b>ので、幅は <code style="color:#22d3bf">x1 − x0</code> ではなく <code style="color:#22d3bf">x1 − x0 + 1</code> である。変換式:</p>
+<p>| <b>COCO</b> | <code style="color:#22d3bf">[x, y, width, height]</code> | 左上，从 0 开始 | 绝对 px |</p>
+<p>| <b>YOLO</b>（Ultralytics） | <code style="color:#22d3bf">class x_center y_center width height</code> | 左上，从 0 开始 | <b>按图像宽、高归一化（0–1）</b> |</p>
+<p>| <b>Pascal VOC</b>（XML） | <code style="color:#22d3bf">xmin ymin xmax ymax</code> | 左上 | 绝对 px，<b>通常按从 1 开始处理</b>（源自 MATLAB）。转换代码在做不做 −1 上意见分裂，所以不要轻信别人的脚本 |</p>
+<p>| <b>fullseye</b> <code style="color:#22d3bf">optscene_instances</code> | <code style="color:#22d3bf">(x0, y0, x1, y1)</code> | 左上，从 0 开始 | 绝对 px，<b>包含右下角（inclusive）</b> |</p>
+<p><code style="color:#22d3bf">optscene_instances</code> 的 bbox <b>包含右下角</b>，因此宽度不是 <code style="color:#22d3bf">x1 − x0</code>，而是 <code style="color:#22d3bf">x1 − x0 + 1</code>。转换公式：</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">w = x1 - x0 + 1
 h = y1 - y0 + 1
-coco = [x0, y0, w, h]                                   # 絶対 px
-yolo = [(x0 + w / 2) / W, (y0 + h / 2) / H, w / W, h / H]   # 0-1 正規化</pre>
-<p><b>1 画素の取り違えは小さな欠陥ほど致命的</b>になる（§4）。</p>
+coco = [x0, y0, w, h]                                   # 绝对 px
+yolo = [(x0 + w / 2) / W, (y0 + h / 2) / H, w / W, h / H]   # 0-1 归一化</pre>
+<p><b>缺陷越小，1 个像素的弄错就越致命</b>（§4）。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. COCO の中身（一次情報で押さえるべき点）</h3>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bbox</code> は絶対座標の <code style="color:#22d3bf">(x, y, width, height)</code> —— detectron2 の <code style="color:#22d3bf">BoxMode.XYWH_ABS</code> がこれにあたる（対して <code style="color:#22d3bf">XYXY_ABS</code> は <code style="color:#22d3bf">(x1,y1,x2,y2)</code>）。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">segmentation</code> は 3 形態を取り、<code style="color:#22d3bf">pycocotools</code> はこれを見分けて処理する:</p>
-<p style="margin:2px 0 2px 12px">1. <b>ポリゴン</b>（<code style="color:#22d3bf">list</code>）—— 連結成分ごとに <code style="color:#22d3bf">[x1, y1, ..., xn, yn]</code></p>
-<p style="margin:2px 0 2px 12px">2. <b>非圧縮 RLE</b>（<code style="color:#22d3bf">counts</code> が <code style="color:#22d3bf">list</code> の dict）</p>
-<p style="margin:2px 0 2px 12px">3. <b>圧縮 RLE</b>（<code style="color:#22d3bf">{&quot;size&quot;: [h, w], &quot;counts&quot;: ...}</code>、LEB128 可変長）</p>
-<p style="margin:2px 0 2px 12px">• <b>RLE のマスクは列優先（column-major）</b>。<code style="color:#22d3bf">pycocotools.mask</code> の仕様がそう決めている。numpy の既定は行優先なので、<code style="color:#22d3bf">np.asarray(mask, order=&quot;F&quot;)</code> を忘れると <b>転置でも反転でもない、意味不明な形に崩れる</b>。これは静かに壊れるので気づきにくい。</p>
-<p style="margin:2px 0 2px 12px">• RLE は「区間長の並び」で、<b>奇数番目は必ず 0 の連長</b>（例 <code style="color:#22d3bf">M=[0 0 1 1 1 0 1]</code> → <code style="color:#22d3bf">counts=[2 3 1 1]</code>）。先頭が 1 で始まるマスクは <code style="color:#22d3bf">counts</code> が <code style="color:#22d3bf">0</code> から始まる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area</code> は <b>マスク（またはポリゴン）の面積</b>であって bbox の面積ではない。細長い傷では bbox 面積の数分の一になる。§3 の small/medium/large 判定はこの <code style="color:#22d3bf">area</code> を使うので、ここを bbox 面積で埋めると<b>評価が別物になる</b>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iscrowd=1</code> は「群れとして 1 つ」を意味し、評価時に<b>当たっても外れても罰しない</b> 特別扱いを受ける。意味が分からないなら付けない（detectron2 の助言もそうなっている）。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">category_id</code> は <code style="color:#22d3bf">[0, num_categories-1]</code>（detectron2 の規約）。COCO 公式データ自体は 1 始まりで欠番もあるので、<b>素の COCO をそのまま添字にすると 1 つずれる</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. COCO 的内容（应当用一手资料把握的要点）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bbox</code> 是绝对坐标的 <code style="color:#22d3bf">(x, y, width, height)</code> —— 对应 detectron2 的 <code style="color:#22d3bf">BoxMode.XYWH_ABS</code>（相对地，<code style="color:#22d3bf">XYXY_ABS</code> 是 <code style="color:#22d3bf">(x1,y1,x2,y2)</code>）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">segmentation</code> 有 3 种形态，<code style="color:#22d3bf">pycocotools</code> 会区分并处理它们：</p>
+<p style="margin:2px 0 2px 12px">1. <b>多边形</b>（<code style="color:#22d3bf">list</code>）—— 每个连通分量一组 <code style="color:#22d3bf">[x1, y1, ..., xn, yn]</code></p>
+<p style="margin:2px 0 2px 12px">2. <b>非压缩 RLE</b>（<code style="color:#22d3bf">counts</code> 为 <code style="color:#22d3bf">list</code> 的 dict）</p>
+<p style="margin:2px 0 2px 12px">3. <b>压缩 RLE</b>（<code style="color:#22d3bf">{&quot;size&quot;: [h, w], &quot;counts&quot;: ...}</code>，LEB128 变长）</p>
+<p style="margin:2px 0 2px 12px">• <b>RLE 的掩膜是列优先（column-major）。</b> <code style="color:#22d3bf">pycocotools.mask</code> 的规格就是这样规定的。numpy 默认是行优先，所以忘了 <code style="color:#22d3bf">np.asarray(mask, order=&quot;F&quot;)</code> 的话，掩膜会<b>崩坏成既不是转置也不是翻转的、莫名其妙的形状</b>。这种错误是悄无声息的，难以察觉。</p>
+<p style="margin:2px 0 2px 12px">• RLE 是“游程长度的序列”，<b>奇数位置必定是 0 的游程</b>（例 <code style="color:#22d3bf">M=[0 0 1 1 1 0 1]</code> → <code style="color:#22d3bf">counts=[2 3 1 1]</code>）。以 1 开头的掩膜，其 <code style="color:#22d3bf">counts</code> 从 <code style="color:#22d3bf">0</code> 开始。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area</code> 是<b>掩膜（或多边形）的面积</b>，不是 bbox 的面积。对于细长的划痕，它只有 bbox 面积的几分之一。§3 的 small/medium/large 判定使用的就是这个 <code style="color:#22d3bf">area</code>，如果这里填入 bbox 面积，<b>评价就变成了另一回事</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iscrowd=1</code> 表示“作为一群算 1 个”，在评价时受到<b>命中与否都不惩罚</b>的特殊对待。不明白其含义就不要设置（detectron2 的建议也是如此）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">category_id</code> 为 <code style="color:#22d3bf">[0, num_categories-1]</code>（detectron2 的约定）。COCO 官方数据本身是从 1 开始且有缺号，所以<b>直接把原始 COCO 当作下标会错位 1 个</b>。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 評価指標の中身（<code style="color:#22d3bf">mAP</code> を鵜呑みにしない）</h3>
-<p><code style="color:#22d3bf">pycocotools</code> の既定値（<code style="color:#22d3bf">cocoeval.Params</code>）:</p>
-<p>| パラメータ | 値 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 评价指标的内容（不要盲信 <code style="color:#22d3bf">mAP</code>）</h3>
+<p><code style="color:#22d3bf">pycocotools</code> 的默认值（<code style="color:#22d3bf">cocoeval.Params</code>）：</p>
+<p>| 参数 | 值 |</p>
 <p>| --- | --- |</p>
-<p>| IoU 閾値 | <code style="color:#22d3bf">0.50, 0.55, ..., 0.95</code>（10 段） |</p>
-<p>| Recall 閾値 | <code style="color:#22d3bf">0.00 … 1.00</code>（101 段） |</p>
-<p>| 面積区分 | <code style="color:#22d3bf">all</code> = [0, 1e10] ／ <b><code style="color:#22d3bf">small</code> = area &lt; 32² = 1024 px²</b> ／ <code style="color:#22d3bf">medium</code> = 32²–96² ／ <code style="color:#22d3bf">large</code> &gt; 96² |</p>
+<p>| IoU 阈值 | <code style="color:#22d3bf">0.50, 0.55, ..., 0.95</code>（10 级） |</p>
+<p>| Recall 阈值 | <code style="color:#22d3bf">0.00 … 1.00</code>（101 级） |</p>
+<p>| 面积区间 | <code style="color:#22d3bf">all</code> = [0, 1e10] ／ <b><code style="color:#22d3bf">small</code> = area &lt; 32² = 1024 px²</b> ／ <code style="color:#22d3bf">medium</code> = 32²–96² ／ <code style="color:#22d3bf">large</code> &gt; 96² |</p>
 <p>| maxDets | <code style="color:#22d3bf">1, 10, 100</code> |</p>
-<p><b>外観検査でここが効く:</b></p>
-<p style="margin:2px 0 2px 12px">• <b><code style="color:#22d3bf">small</code> の閾値 1024 px² は絶対値</b>である。32×32 px 未満はすべて <code style="color:#22d3bf">small</code> に落ちる。検査系の微小欠陥はほぼ全部ここに入るので、報告するなら <code style="color:#22d3bf">AP_small</code> を見ないと意味がない。</p>
-<p style="margin:2px 0 2px 12px">• <b><code style="color:#22d3bf">maxDets=100</code></b> —— 1 枚に 100 個を超える欠陥（粉状の異物、打痕の群れ）があると、それだけで recall の上限が切られる。粒を数える用途では既定のままでは測れない。</p>
-<p style="margin:2px 0 2px 12px">• <b>IoU 0.5 が小物体では厳しすぎる。</b> 同じ絶対誤差でも小さい箱ほど IoU が崩れる:</p>
-<p>| 箱の大きさ | 1 px ずれ | 2 px | 3 px | 4 px |</p>
+<p><b>在外观检测中起作用的地方：</b></p>
+<p style="margin:2px 0 2px 12px">• <b><code style="color:#22d3bf">small</code> 的阈值 1024 px² 是绝对值。</b> 小于 32×32 px 的全部落入 <code style="color:#22d3bf">small</code>。检测中的微小缺陷几乎全都在这里，所以报告时不看 <code style="color:#22d3bf">AP_small</code> 就没有意义。</p>
+<p style="margin:2px 0 2px 12px">• <b><code style="color:#22d3bf">maxDets=100</code></b> —— 如果 1 张图像中有超过 100 个缺陷（粉状异物、成群的压痕），仅此一点就会截断 recall 的上限。在计数颗粒的用途中，保持默认值是测不出来的。</p>
+<p style="margin:2px 0 2px 12px">• <b>IoU 0.5 对小物体太严格。</b> 同样的绝对误差，框越小 IoU 就崩得越厉害：</p>
+<p>| 框的大小 | 偏 1 px | 2 px | 3 px | 4 px |</p>
 <p>| --- | --- | --- | --- | --- |</p>
 <p>| 10 × 10 px | 0.82 | 0.67 | 0.54 | <b>0.43（不合格）</b> |</p>
 <p>| 100 × 100 px | 0.98 | 0.96 | 0.94 | 0.92 |</p>
-<p>10 px の欠陥は <b>4 px ずれただけで「検出漏れ」に数えられる</b>。位置精度の問題が</p>
-<p>検出率の問題に化けるので、微小欠陥では IoU 閾値を下げるか、中心距離や</p>
-<p>画素 IoU（segm）で測るほうが実態に合う。<b>指標を変えずに「検出率が低い」と結論づけない。</b></p>
+<p>10 px 的缺陷<b>只偏 4 px 就会被算作“漏检”</b>。位置精度的问题会</p>
+<p>变成检出率的问题，因此对于微小缺陷，降低 IoU 阈值，或者用中心距离、</p>
+<p>像素 IoU（segm）来衡量，更符合实际。<b>不改变指标就不要得出“检出率低”的结论。</b></p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 外観検査に固有の落とし穴</h3>
-<p style="margin:2px 0 2px 12px">1. <b>良品にはアノテーションが無い。</b> COCO は「アノテーションが 0 件の画像」を許すし、YOLO は「対象が無い画像には .txt を置かなくてよい」と明記している。ところが多くの学習スクリプトは<b>空アノテーションの画像を黙って捨てる</b>。捨てられると良品が 1 枚も学習に入らず、「何かしら欠陥を出す」モデルになる。<b>良品の枚数が学習ログの枚数と一致しているか、最初に数える。</b></p>
-<p style="margin:2px 0 2px 12px">2. <b>極端なクラス不均衡。</b> 欠陥画素は全画素の 10⁻⁴ 〜 10⁻⁶ のオーダー。画素単位の accuracy は 99.99% でも中身が空、という結果が普通に出る。<b>1 つの数字は「完璧」と「何も出していない」を区別しない</b>ので、欠陥画素に対する再現率と誤検出数を必ず別に出す。</p>
-<p style="margin:2px 0 2px 12px">3. <b>分割の漏れ（leakage）。</b> 合成データでは、同じ母材・同じ乱数系統から出た複数枚が train と val の両側に入りやすい。ドメインランダム化で見た目が違っても、<b>同じ欠陥配置なら実質同じサンプル</b>である。<code style="color:#22d3bf">inspection_dataset</code> の <code style="color:#22d3bf">seed</code> と欠陥ラベルでグループを作り、<b>グループ単位で分割する</b>（画像単位で分けない）。</p>
-<p style="margin:2px 0 2px 12px">4. <b>合成データはラベルが完璧すぎる。</b> 実データのアノテーションは人が引くので、境界が数 px 揺れ、微小欠陥は見落とされる。完璧な真値だけで学習したモデルは、実データで評価すると<b>アノテーション側の揺れを誤検出として数えられる</b>。sim2real の差は画像の見た目だけでなく、<b>ラベルの質にもある</b>。</p>
-<p style="margin:2px 0 2px 12px">5. <b><code style="color:#22d3bf">meta</code> を捨てない。</b> <code style="color:#22d3bf">inspection_dataset</code> は照明種別・露光・ゆらぎ量・欠陥ラベルを <code style="color:#22d3bf">meta</code> に返す。これは学習には要らないが、<b>失敗の切り分け</b>には要る（「暗視野のときだけ落ちる」は meta が無いと分からない）。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 外观检测特有的陷阱</h3>
+<p style="margin:2px 0 2px 12px">1. <b>良品没有标注。</b> COCO 允许“标注为 0 条的图像”，YOLO 也明确写着“没有目标的图像可以不放 .txt”。然而许多训练脚本会<b>悄悄丢弃空标注的图像</b>。一旦被丢弃，连 1 张良品也进不了训练，就会得到“总要报出点什么缺陷”的模型。<b>首先要数一数良品的张数是否与训练日志中的张数一致。</b></p>
+<p style="margin:2px 0 2px 12px">2. <b>极端的类别不平衡。</b> 缺陷像素占全部像素的 10⁻⁴ 至 10⁻⁶ 量级。像素级 accuracy 达到 99.99% 而内容却是空的，这种结果很常见。<b>1 个数字无法区分“完美”与“什么都没输出”</b>，所以一定要分别给出对缺陷像素的召回率和误检数。</p>
+<p style="margin:2px 0 2px 12px">3. <b>划分泄漏（leakage）。</b> 在合成数据中，来自同一母材、同一随机数系列的多张图像很容易同时进入 train 和 val 两侧。即使域随机化让外观不同，<b>只要缺陷布置相同，实质上就是同一个样本</b>。用 <code style="color:#22d3bf">inspection_dataset</code> 的 <code style="color:#22d3bf">seed</code> 和缺陷标签来建立分组，<b>按组划分</b>（不要按图像划分）。</p>
+<p style="margin:2px 0 2px 12px">4. <b>合成数据的标签过于完美。</b> 实际数据的标注是人画的，边界会有几 px 的抖动，微小缺陷也会被漏标。只用完美真值训练出来的模型，在实际数据上评价时，<b>标注一侧的抖动会被算作误检</b>。sim2real 的差距不仅在于图像的外观，<b>也在于标签的质量</b>。</p>
+<p style="margin:2px 0 2px 12px">5. <b>不要丢掉 <code style="color:#22d3bf">meta</code>。</b> <code style="color:#22d3bf">inspection_dataset</code> 会在 <code style="color:#22d3bf">meta</code> 中返回照明类型、曝光、扰动量、缺陷标签。这些对训练不是必需的，但对<b>失败原因的定位</b>是必需的（“只在暗场时失败”，没有 meta 就看不出来）。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. fullseye からの書き出し（対応表）</h3>
-<p>| 欲しいもの | fullseye の出どころ | 変換 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. 从 fullseye 导出（对应表）</h3>
+<p>| 想要的东西 | 在 fullseye 中的来源 | 转换 |</p>
 <p>| --- | --- | --- |</p>
-<p>| 画像 | <code style="color:#22d3bf">inspection_dataset(...)[&quot;image&quot;]</code> | そのまま（量子化済み） |</p>
-<p>| bbox | <code style="color:#22d3bf">optscene_instances(...)[&quot;bbox&quot;]</code>（inclusive） | §1 の式で COCO / YOLO へ |</p>
-<p>| クラス | 同 <code style="color:#22d3bf">[&quot;kind&quot;]</code> | <code style="color:#22d3bf">category_id</code> に写す。<b>0 始まりに揃える</b> |</p>
-<p>| インスタンスマスク | 同 <code style="color:#22d3bf">[&quot;mask&quot;]</code>（H×W bool） | RLE 化は<b>列優先</b>で（§2） |</p>
-<p>| 面積 | 同 <code style="color:#22d3bf">[&quot;area_px&quot;]</code> | COCO の <code style="color:#22d3bf">area</code> に入れる（bbox 面積ではない） |</p>
-<p>| 意味的マスク | <code style="color:#22d3bf">optscene_defect_mask</code> | セグメンテーション学習用 |</p>
-<p>| 深度真値 | <code style="color:#22d3bf">inspection_dataset(...)[&quot;depth_mm&quot;]</code> | 単位 mm。スケールを一緒に運ぶ |</p>
-<p>| 再現情報 | 同 <code style="color:#22d3bf">[&quot;meta&quot;]</code> | データセットの <code style="color:#22d3bf">info</code> / 独自フィールドに残す |</p>
+<p>| 图像 | <code style="color:#22d3bf">inspection_dataset(...)[&quot;image&quot;]</code> | 原样（已量化） |</p>
+<p>| bbox | <code style="color:#22d3bf">optscene_instances(...)[&quot;bbox&quot;]</code>（inclusive） | 用 §1 的公式转换为 COCO / YOLO |</p>
+<p>| 类别 | 同上 <code style="color:#22d3bf">[&quot;kind&quot;]</code> | 映射到 <code style="color:#22d3bf">category_id</code>。<b>统一为从 0 开始</b> |</p>
+<p>| 实例掩膜 | 同上 <code style="color:#22d3bf">[&quot;mask&quot;]</code>（H×W bool） | RLE 编码要<b>列优先</b>（§2） |</p>
+<p>| 面积 | 同上 <code style="color:#22d3bf">[&quot;area_px&quot;]</code> | 填入 COCO 的 <code style="color:#22d3bf">area</code>（不是 bbox 面积） |</p>
+<p>| 语义掩膜 | <code style="color:#22d3bf">optscene_defect_mask</code> | 用于分割训练 |</p>
+<p>| 深度真值 | <code style="color:#22d3bf">inspection_dataset(...)[&quot;depth_mm&quot;]</code> | 单位 mm。把尺度一起传递 |</p>
+<p>| 复现信息 | 同上 <code style="color:#22d3bf">[&quot;meta&quot;]</code> | 保留在数据集的 <code style="color:#22d3bf">info</code> / 自定义字段中 |</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. 現状の穴（正直に）</h3>
-<p style="margin:2px 0 2px 12px">• <b>書き出し op が無い。</b> 上の変換は今すべて手書きになる。COCO JSON / YOLO txt を吐く op（および逆方向の読み込み）は 1 つも無い。</p>
-<p style="margin:2px 0 2px 12px">• <b>グループ分割の op が無い。</b> §4-3 の漏れを機械で防ぐ手立てが無い。</p>
-<p style="margin:2px 0 2px 12px">• <b>ラベルの揺れを模す手立てが無い。</b> §4-4 のとおり、真値が完璧すぎるのはそれ自体がドメインギャップだが、境界を意図的にぼかす op が無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. 现有的缺口（如实说明）</h3>
+<p style="margin:2px 0 2px 12px">• <b>没有导出 op。</b> 上面的转换目前都要手写。输出 COCO JSON / YOLO txt 的 op（以及反方向的读取）连 1 个都没有。</p>
+<p style="margin:2px 0 2px 12px">• <b>没有分组划分的 op。</b> 没有用机器防止 §4-3 泄漏的手段。</p>
+<p style="margin:2px 0 2px 12px">• <b>没有模拟标签抖动的手段。</b> 如 §4-4 所述，真值过于完美本身就是一种域差距，但没有刻意模糊边界的 op。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. 診断表 —— 症状から原因へ</h3>
-<p>| 症状 | まず疑う | 確かめ方 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. 诊断表 —— 从症状到原因</h3>
+<p>| 症状 | 首先怀疑 | 确认方法 |</p>
 <p>| --- | --- | --- |</p>
-<p>| 良品を一枚も学習していない気配 | 空アノテーションの画像がローダで落ちている | <b>学習ログの枚数</b>と生成枚数を突き合わせる |</p>
-<p>| 画素 accuracy 99.99% なのに何も出ない | クラス不均衡 | 欠陥画素の再現率と誤検出数を<b>別々に</b>出す |</p>
-<p>| val の成績が良すぎる | 分割の漏れ（同じ seed・同じ欠陥配置が両側にいる） | seed と欠陥ラベルでグループを作り、<b>グループ単位</b>で分け直して再学習 |</p>
-<p>| 小さい欠陥だけ AP が低い | IoU 0.5 が小箱に厳しい（§3 の表） | 中心距離、または画素 IoU（segm）で測り直す |</p>
-<p>| 箱が全部 1 px ずれている／全滅する | inclusive と exclusive の取り違え、VOC の 1 始まり | 変換後の bbox を<b>画像に描いて目で確認する</b>（数字だけ見ない） |</p>
-<p>| マスクが意味不明な形に崩れる | RLE を行優先で作った | <code style="color:#22d3bf">order=&quot;F&quot;</code> で作り直す（§2） |</p>
-<p>| 1 枚に大量の欠陥があると再現率が頭打ち | <code style="color:#22d3bf">maxDets=100</code> | maxDets を上げて再評価 |</p>
-<p>| 合成では良いのに実データで誤検出だらけ | ラベルの質の差（真値が完璧すぎる） | 実データの GT を数枚引き直し、境界の揺れ幅を測って合成側に反映する |</p>
-<p>| クラス番号が 1 つずれる | COCO 素データの <code style="color:#22d3bf">category_id</code> は 1 始まり・欠番あり | カテゴリ一覧を出力し、連番に写す辞書を明示的に作る |</p>
+<p>| 似乎一张良品都没学到 | 空标注的图像在加载器中被丢掉了 | 把<b>训练日志中的张数</b>与生成张数对照 |</p>
+<p>| 像素 accuracy 99.99% 却什么都不输出 | 类别不平衡 | <b>分别</b>给出缺陷像素的召回率和误检数 |</p>
+<p>| val 的成绩好得过分 | 划分泄漏（同一 seed、同一缺陷布置出现在两侧） | 用 seed 和缺陷标签建立分组，<b>按组</b>重新划分并重新训练 |</p>
+<p>| 只有小缺陷的 AP 低 | IoU 0.5 对小框太严格（§3 的表） | 改用中心距离或像素 IoU（segm）重新衡量 |</p>
+<p>| 框全部偏移 1 px／全军覆没 | inclusive 与 exclusive 弄混、VOC 的从 1 开始 | <b>把转换后的 bbox 画到图像上用眼睛确认</b>（不要只看数字） |</p>
+<p>| 掩膜崩坏成莫名其妙的形状 | 按行优先生成了 RLE | 用 <code style="color:#22d3bf">order=&quot;F&quot;</code> 重新生成（§2） |</p>
+<p>| 1 张图像中缺陷很多时召回率到顶 | <code style="color:#22d3bf">maxDets=100</code> | 提高 maxDets 重新评价 |</p>
+<p>| 合成数据上很好，实际数据上却满是误检 | 标签质量的差异（真值过于完美） | 对几张实际数据重新标注 GT，测量边界抖动幅度并反映到合成一侧 |</p>
+<p>| 类别编号错位 1 个 | COCO 原始数据的 <code style="color:#22d3bf">category_id</code> 从 1 开始且有缺号 | 输出类别列表，显式建立映射到连续编号的字典 |</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">出典（一次情報）</h3>
-<p style="margin:2px 0 2px 12px">• Ultralytics — Object Detection Datasets Overview（YOLO ラベル形式・正規化 xywh・0 始まりクラス・対象が無い画像は .txt 不要） — &lt;https://docs.ultralytics.com/datasets/detect&gt;</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pycocotools/mask.py</code> module docstring（RLE の定義、列優先、encode/decode/merge/area/toBbox/iou/frPyObjects） — &lt;https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocotools/mask.py&gt;</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pycocotools/cocoeval.py</code> <code style="color:#22d3bf">Params</code>（iouThrs / recThrs / areaRng / areaRngLbl / maxDets、iscrowd の特別扱い） — &lt;https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocotools/cocoeval.py&gt;</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pycocotools/coco.py</code> <code style="color:#22d3bf">annToRLE</code>（segmentation の 3 形態の判定） — &lt;https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocotools/coco.py&gt;</p>
-<p style="margin:2px 0 2px 12px">• detectron2 — Use Custom Datasets（<code style="color:#22d3bf">BoxMode.XYWH_ABS</code> / <code style="color:#22d3bf">XYXY_ABS</code>、segmentation の polygon と圧縮 RLE、<code style="color:#22d3bf">category_id</code> は 0 始まり、<code style="color:#22d3bf">iscrowd</code> の助言） — &lt;https://detectron2.readthedocs.io/en/latest/tutorials/datasets.html&gt;</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">出处（一手资料）</h3>
+<p style="margin:2px 0 2px 12px">• Ultralytics — Object Detection Datasets Overview（YOLO 标签格式、归一化 xywh、从 0 开始的类别、没有目标的图像不需要 .txt） — &lt;https://docs.ultralytics.com/datasets/detect&gt;</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pycocotools/mask.py</code> module docstring（RLE 的定义、列优先、encode/decode/merge/area/toBbox/iou/frPyObjects） — &lt;https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocotools/mask.py&gt;</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pycocotools/cocoeval.py</code> <code style="color:#22d3bf">Params</code>（iouThrs / recThrs / areaRng / areaRngLbl / maxDets、iscrowd 的特殊对待） — &lt;https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocotools/cocoeval.py&gt;</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pycocotools/coco.py</code> <code style="color:#22d3bf">annToRLE</code>（segmentation 3 种形态的判定） — &lt;https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocotools/coco.py&gt;</p>
+<p style="margin:2px 0 2px 12px">• detectron2 — Use Custom Datasets（<code style="color:#22d3bf">BoxMode.XYWH_ABS</code> / <code style="color:#22d3bf">XYXY_ABS</code>、segmentation 的 polygon 与压缩 RLE、<code style="color:#22d3bf">category_id</code> 从 0 开始、关于 <code style="color:#22d3bf">iscrowd</code> 的建议） — &lt;https://detectron2.readthedocs.io/en/latest/tutorials/datasets.html&gt;</p>

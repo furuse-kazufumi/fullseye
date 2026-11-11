@@ -15,11 +15,11 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 close_edges 之上,再去掉长度(像素数)低于阈值的短边缘碎片。</p>
-<p>用 <code style="color:#22d3bf">v &gt; a</code> 二值化 → 以 3×3（8 邻域）结构元素做 1 次 <code style="color:#22d3bf">binary_closing</code> → 用 <code style="color:#22d3bf">ndimage.label</code>（默认 4 邻域连通）分为连通分量，去掉像素数少于 <code style="color:#22d3bf">min_len</code> 的分量，以 0/1 的 float 图像返回。</p>
+<p>用 <code style="color:#22d3bf">v &gt; a</code> 二值化 → 以 3×3（8 邻域）结构元素做 1 次闭运算 → 用 <code style="color:#22d3bf">ndimage.label</code>（<b>8 邻域连通</b>）分为连通分量，去掉像素数少于 <code style="color:#22d3bf">min_len</code> 的分量，以 0/1 的 float 图像返回。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二值化阈值。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 保留的最小像素数 <code style="color:#22d3bf">min_len = 2 + int(b*20)</code>（2〜22）。</p>
 <p style="margin:2px 0 2px 12px">• 连 1 个分量都没有时，原样返回闭运算结果。</p>
-<p>注意：闭运算的结构元素固定为 3×3，没有 <code style="color:#22d3bf">hx_close_edges</code> 那样的宽度调节。由于标记采用 4 邻域，斜向相连的 1 像素宽线会分成不同分量，“长度”被计得偏短而容易被删除。<code style="color:#22d3bf">binary_closing</code> 把图像外视为 0，因此边缘 1 像素的带总是 0。“长度”是分量的像素数，而不是几何线长（块状物也会被算作长）。</p>
+<p>注意：闭运算的结构元素固定为 3×3，没有 <code style="color:#22d3bf">hx_close_edges</code> 那样的宽度调节。“长度”是分量的像素数，而不是几何线长（块状物也会被算作长）。2026-11-05（对抗性验证 第 2 轮 P1/P3）之前，标记采用 4 邻域，把斜向相连的 1 像素宽线分成不同分量而删除，闭运算把图像外视为 0，使边缘 1 像素的带总是 0。现在按 8 邻域计数，闭运算在延伸到图像之外的平面上进行后裁剪回来（边缘处的边缘也会保留）。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

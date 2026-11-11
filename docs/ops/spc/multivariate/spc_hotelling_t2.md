@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_spc]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # spc_hotelling_t2 — SPC `multivariate` op
@@ -19,26 +19,50 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Multivariate SPC by Hotelling's T² with an F-distributed control limit.
+Multivariate SPC by Hotelling's T² with the control limit of the phase being charted.
 
 ``data`` is a 2-D array of shape ``(m, p)`` — ``m`` observations of ``p``
-correlated features. With the sample mean vector ``mu`` and covariance ``S``
-(unless passed in explicitly), each row's statistic is::
+correlated features. Each row's statistic is::
 
     T^2_i = (x_i - mu)' S^-1 (x_i - mu)
 
-charted against the phase-II control limit::
+The control limit depends on where ``mu`` and ``S`` come from, and the op
+picks it from what you pass:
 
-    UCL = p (m+1)(m-1) / (m (m-p)) * F_{alpha, p, m-p}
+* **Phase I (default, neither ``mean`` nor ``cov``)** — ``mu`` and ``S`` are
+  the sample mean and ``ddof=1`` covariance of the *same* rows. Then
+  ``m T^2_i / (m-1)^2`` follows ``Beta(p/2, (m-p-1)/2)`` exactly (Gnanadesikan
+  & Kettenring 1972; Tracy, Young & Mason 1992), so::
 
-at false-alarm rate ``alpha`` (default 0.0027, the 3-sigma-equivalent). Returns
-a dict with the per-row ``t2`` array, the ``ucl``, the integer indices
-``out_of_control``, and boolean ``in_control``. The mean row (``x == mu``) has
-``T^2 == 0`` (pinned in the tests).
+      UCL = (m-1)^2 / m * Beta_{1-alpha}(p/2, (m-p-1)/2)
 
-**Raises** ``ValueError``: a non-2-D / empty *data*, fewer observations than
-features plus one (covariance not invertible), ``alpha`` outside ``(0, 1)``, a
-singular covariance, or non-finite / mislabelled input.
+  In phase I ``T^2_i <= (m-1)^2/m`` holds for every row whatever the data, so
+  the phase-II F limit (which exceeds that bound for small ``m``) can never
+  alarm there. Needs ``m >= p + 2``.
+* **Known parameters (both ``mean`` and ``cov``)** — the in-control mean and
+  covariance are taken as known (a specification, or estimates from a very
+  large reference). Then ``T^2 ~ chi^2_p`` and ``UCL = chi^2_{p, 1-alpha}``,
+  independent of how many rows are charted (one row is enough).
+* **Phase II with estimated parameters** — if ``mean`` / ``cov`` were estimated
+  from a separate in-control reference of ``n`` rows and new rows are charted
+  against them, the exact limit is
+  ``p (n+1)(n-1) / (n (n-p)) * F_{1-alpha}(p, n-p)`` with ``n`` the size of the
+  *reference*, not of the charted data. This op treats passed parameters as
+  known (chi-square limit, the ``n -> inf`` limit of that F form); for a small
+  reference compute the F limit with your ``n`` and compare ``t2`` against it.
+
+Passing only one of ``mean`` / ``cov`` is refused: no standard control limit
+exists for a half-known parameter set.
+
+At false-alarm rate ``alpha`` (default 0.0027, the 3-sigma-equivalent). Returns
+a dict with the per-row ``t2`` array, the ``ucl``, the ``phase`` used
+(``"phase_I"`` / ``"known"``), the integer indices ``out_of_control``, and
+boolean ``in_control``. The mean row (``x == mu``) has ``T^2 == 0`` (pinned in
+the tests).
+
+**Raises** ``ValueError``: a non-2-D / empty *data*, fewer than ``p+2``
+observations in phase I, only one of ``mean`` / ``cov``, ``alpha`` outside
+``(0, 1)``, a singular covariance, or non-finite / mislabelled input.
 
 ## 参考(サンプルデータ・文献)
 

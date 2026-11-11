@@ -152,8 +152,12 @@ def test_facade_cli_and_mcp_share_one_search(capsys):
     from fullseye.mcp.server import ArgError, call_tool
     cat = Catalog.load()
     res = call_tool("fullseye_find_ops", {"query": "边缘检测", "limit": 10}, cat)
-    rows = res["structuredContent"]["ops"]
-    assert len(rows) == 10 and set(o["name"] for o in rows) & EDGE
+    sc = res["structuredContent"]
+    rows = sc["ops"]
+    # ★2026-11-05(敵対的検証 L3): limit は提案の総数(op + レシピ)。以前は既定値 7 のときだけ
+    # レシピの枠を差し引き、それ以外は op を limit 件返したので、limit を増やすと op が減ることがあった。
+    assert len(rows) + len(sc.get("recipes", [])) == 10 and len(rows) >= 1
+    assert set(o["name"] for o in rows) & EDGE
     with pytest.raises(ArgError):
         call_tool("fullseye_find_ops", {"query": " "}, cat)
 

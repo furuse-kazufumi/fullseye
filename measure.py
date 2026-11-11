@@ -6,7 +6,8 @@ import numpy as np
 
 __all__ = ["line_profile", "distance", "angle", "profile_stats",
            "fit_line", "fit_circle", "fit_circle_geometric",
-           "fit_curve_principal_axis", "fit_ellipse", "fit_rectangle2"]
+           "fit_curve_principal_axis", "fit_ellipse", "fit_rectangle2",
+           "fit_rectangle2_lsq"]
 
 
 def line_profile(image, p0, p1, num=None):
@@ -61,6 +62,24 @@ def _as_points(points, min_n: int, name: str = "points") -> np.ndarray:
     return p
 
 
+def _centre_and_scale(p: np.ndarray, what: str):
+    """Centroid ``(mx, my)`` and RMS radius ``scale`` of (row, col) points.
+
+    ★2026-11-05 敵対的検証 N6/N8: 当てはめは重心を引いて ``scale`` で割った座標で解く。
+    生の座標のまま ``x²`` を組むと、画像上の位置(オフセット 6000 px)で楕円の軸が 2 % ずれ、
+    小さい物体(半径 8e-7)を絶対の床 ``1e-12`` で「退化」と捨てていた。退化(一致点)の判定は
+    座標の大きさに対する相対量(丸めの屑 ~ eps·|p| の 450 倍)で行う。
+    """
+    y, x = p[:, 0], p[:, 1]
+    mx, my = float(x.mean()), float(y.mean())
+    xc, yc = x - mx, y - my
+    scale = float(np.sqrt(np.mean(xc * xc + yc * yc)))
+    mag = float(np.max(np.abs(p)))
+    if not np.isfinite(scale) or scale == 0.0 or scale <= 1e-13 * mag:
+        raise ValueError(f"points are coincident; no {what} is defined")
+    return mx, my, xc, yc, scale
+
+
 def fit_line(points) -> dict:
     """Total-least-squares line fit to (row, col) points — orthogonal regression via
     SVD, minimising the perpendicular distance (unlike y-on-x regression, it is
@@ -70,11 +89,11 @@ def fit_line(points) -> dict:
     points or a coincident cluster with no defined direction."""
     p = _as_points(points, 2, "points")
     y, x = p[:, 0], p[:, 1]
-    mx, my = float(x.mean()), float(y.mean())
+    # 一致点の判定は座標の大きさに対する相対量(以前は s[0] <= 1e-12 の絶対量で、
+    # 長さ 1e-13 の正しい線分を「一致点」と捨てていた。敵対的検証 2026-11-05 N6 の兄弟)。
+    mx, my, _xc, _yc, _scale = _centre_and_scale(p, "line direction")
     _, s, vt = np.linalg.svd(np.column_stack([x - mx, y - my]),
                              full_matrices=False)  # full_matrices=False: U は捨てるのに (N,N) を確保していた(2026-09-06 実測 20000 点で 3.73 s / 3.2 GB → 0.88 ms、Vt はビット一致)
-    if s[0] <= 1e-12:
-        raise ValueError("points are coincident; no line direction is defined")
     dx, dy = float(vt[0, 0]), float(vt[0, 1])          # unit direction (col, row)
     resid = (x - mx) * (-dy) + (y - my) * dx           # signed perpendicular distance
     ang = np.degrees(np.arctan2(dy, dx))
@@ -93,19 +112,25 @@ def fit_circle(points) -> dict:
     :func:`fit_circle_geometric` to minimise geometric radial distances."""
     p = _as_points(points, 3, "points")
     y, x = p[:, 0], p[:, 1]
+    # ★2026-11-05 敵対的検証 N6: 重心を引き RMS 半径で割った座標で解く。生の座標では
+    # x²+y² の桁落ちでオフセット 1e6 の r=2 が 2.00003 になり、r² <= 1e-12 の絶対の床で
+    # 半径 8e-7 の円を「退化」と捨てていた。退化の判定はいずれも相対量。
+    mx, my, xc, yc, scale = _centre_and_scale(p, "circle")
     # Collinear points admit only an infinite-radius (line) "circle": the algebraic
     # system is rank-deficient. Reject it explicitly (perpendicular spread ~ 0).
-    _, sv, _ = np.linalg.svd(np.column_stack([x - x.mean(), y - y.mean()]),
+    _, sv, _ = np.linalg.svd(np.column_stack([xc, yc]),
                              full_matrices=False)  # U は捨てる(2026-09-06)
-    if sv[0] <= 1e-12 or sv[1] <= 1e-9 * sv[0]:
+    if sv[1] <= 1e-9 * sv[0]:
         raise ValueError("points are collinear or coincident; no circle fit")
-    a_mat = np.column_stack([2.0 * x, 2.0 * y, np.ones(len(x))])
-    sol, *_ = np.linalg.lstsq(a_mat, x * x + y * y, rcond=None)
-    cx, cy, c = float(sol[0]), float(sol[1]), float(sol[2])
-    r2 = c + cx * cx + cy * cy
+    u, v = xc / scale, yc / scale                      # 無次元(RMS 半径 1)
+    a_mat = np.column_stack([2.0 * u, 2.0 * v, np.ones(len(u))])
+    sol, *_ = np.linalg.lstsq(a_mat, u * u + v * v, rcond=None)
+    cu, cv, c = float(sol[0]), float(sol[1]), float(sol[2])
+    r2 = c + cu * cu + cv * cv                          # 無次元の r²
     if not np.isfinite(r2) or r2 <= 1e-12:
         raise ValueError("points are collinear or degenerate; no circle fit")
-    r = float(np.sqrt(r2))
+    cx, cy = mx + scale * cu, my + scale * cv
+    r = float(scale * np.sqrt(r2))
     resid = np.hypot(x - cx, y - cy) - r
     return {"cy": cy, "cx": cx, "r": r, "rms": float(np.sqrt(np.mean(resid ** 2)))}
 
@@ -202,8 +227,14 @@ def fit_ellipse(points) -> dict:
     admits no ellipse (collinear / hyperbolic)."""
     p = _as_points(points, 5, "points")
     y, x = p[:, 0], p[:, 1]
-    d1 = np.column_stack([x * x, x * y, y * y])        # quadratic part
-    d2 = np.column_stack([x, y, np.ones(len(x))])      # linear part
+    # ★2026-11-05 敵対的検証 N8: Halir-Flusser の散布行列を生の座標で組むと、x⁴ と 1 が同じ
+    # 行列に並び、画像上の位置だけで答えが変わっていた(ra=5, rb=4, 20° が中心 (6000,8000) で
+    # 5.119 / 3.912 / 21.94°)。重心を引き RMS 半径で割った (u, v) で解いて戻す
+    # (Hartley 正規化と同じ考え)。rms は従来どおり元の座標での単位正規化した 2 次曲線の残差。
+    mx, my, xc, yc, sc = _centre_and_scale(p, "ellipse")
+    un, vn = xc / sc, yc / sc
+    d1 = np.column_stack([un * un, un * vn, vn * vn])  # quadratic part
+    d2 = np.column_stack([un, vn, np.ones(len(un))])   # linear part
     s1, s2, s3 = d1.T @ d1, d1.T @ d2, d2.T @ d2
     try:
         t = -np.linalg.solve(s3, s2.T)
@@ -223,10 +254,10 @@ def fit_ellipse(points) -> dict:
                         float(a2[0]), float(a2[1]), float(a2[2]))
     m0 = np.array([[a, b / 2.0], [b / 2.0, c]])        # 2×2 quadratic form
     try:
-        x0, y0 = np.linalg.solve(m0, [-d / 2.0, -e / 2.0])
+        u0, v0 = np.linalg.solve(m0, [-d / 2.0, -e / 2.0])
     except np.linalg.LinAlgError:
         raise ValueError("degenerate ellipse conic; no centre") from None
-    f_center = a * x0 * x0 + b * x0 * y0 + c * y0 * y0 + d * x0 + e * y0 + f
+    f_center = a * u0 * u0 + b * u0 * v0 + c * v0 * v0 + d * u0 + e * v0 + f
     lam, vec = np.linalg.eigh(m0)                      # ascending eigenvalues
     # The conic's overall sign is arbitrary (eigenvector direction), so test the
     # sign-invariant shape: same-signed eigenvalues => ellipse; the semi-axes are
@@ -236,13 +267,20 @@ def fit_ellipse(points) -> dict:
     ratios = -f_center / lam
     if not np.all(np.isfinite(ratios)) or np.any(ratios <= 0):
         raise ValueError("point set admits no ellipse (degenerate quadratic form)")
-    axes = np.sqrt(ratios)                             # a semi-axis per eigenvector
+    axes = sc * np.sqrt(ratios)                        # a semi-axis per eigenvector (元の単位)
     imaj = int(np.argmax(axes))
     ra, rb = float(axes[imaj]), float(axes[1 - imaj])
     vmaj = vec[:, imaj]                                # (x, y) direction of the major axis
     ang = np.degrees(np.arctan2(float(vmaj[1]), float(vmaj[0])))
     ang = ((ang + 90.0) % 180.0) - 90.0
-    coef = np.array([a, b, c, d, e, f], np.float64)
+    x0, y0 = mx + sc * float(u0), my + sc * float(v0)
+    # (u, v) = ((x-mx)/sc, (y-my)/sc) の 2 次曲線を sc² 倍して元の座標の係数へ戻す。
+    coef = np.array([
+        a, b, c,
+        -2.0 * a * mx - b * my + d * sc,
+        -b * mx - 2.0 * c * my + e * sc,
+        a * mx * mx + b * mx * my + c * my * my - d * sc * mx - e * sc * my + f * sc * sc,
+    ], np.float64)
     coef = coef / (np.linalg.norm(coef) or 1.0)
     resid = (coef[0] * x * x + coef[1] * x * y + coef[2] * y * y
              + coef[3] * x + coef[4] * y + coef[5])
@@ -250,14 +288,42 @@ def fit_ellipse(points) -> dict:
             "angle_deg": float(ang), "rms": float(np.sqrt(np.mean(resid ** 2)))}
 
 
+def _half_turn_angle(ang: float) -> float:
+    """Fold an axis angle (deg) into ``(-90, 90]``; within 1e-9 deg of +-90 snaps to 90.
+
+    An undirected axis is defined modulo 180 deg. ``((a + 90) % 180) - 90`` lands in
+    ``[-90, 90)``, and floating-point noise on a vertical axis flipped it between
+    ``-90`` and ``+90`` for the same rectangle (2026-11-09 probe)."""
+    a = float(-((90.0 - float(ang)) % 180.0) + 90.0)        # (-90, 90]
+    if abs(abs(a) - 90.0) < 1e-9:
+        a = 90.0
+    return a
+
+
 def fit_rectangle2(points) -> dict:
-    """Minimum-area oriented bounding rectangle of (row, col) points — the HALCON
-    ``fit_rectangle2_contour_xld`` primitive, via rotating calipers on the convex
-    hull (an optimal min-area rectangle has one side collinear with a hull edge;
-    Freeman & Shapira 1975). Returns centre ``(cy, cx)``, the two half-side lengths
-    ``l1 >= l2``, the long-side image-plane angle (deg, y downward, in (-90, 90]),
-    and the RMS distance of the points to the rectangle boundary (~0 for points on
-    a rectangle outline). Raises ``ValueError`` on < 3 points or a collinear set."""
+    """Minimum-area oriented bounding rectangle of (row, col) points, via rotating
+    calipers on the convex hull (an optimal min-area rectangle has one side
+    collinear with a hull edge; Freeman & Shapira 1975). This is HALCON's
+    ``smallest_rectangle2`` / OpenCV's ``cv2.minAreaRect`` (identical half sides
+    in the 2026-11-09 probe), **not** the least-squares fit of HALCON
+    ``fit_rectangle2_contour_xld`` — for that use :func:`fit_rectangle2_lsq`.
+
+    Returns centre ``(cy, cx)``, the two half-side lengths ``l1 >= l2``, the
+    long-side angle ``angle_deg`` and the RMS distance of the points to the
+    rectangle boundary (~0 for points on a rectangle outline).
+
+    Angle convention: ``atan2(d_row, d_col)`` of the long side in degrees with
+    rows growing downward — i.e. **clockwise on screen**, the opposite sign of
+    HALCON's ``phi`` (counter-clockwise). Range ``(-90, 90]``: a vertical long
+    side is always ``+90.0`` (before 2026-11-09 the same rectangle came out as
+    ``+90`` or ``-90`` depending on rounding). Other angles are not bit-identical to
+    the pre-2026-11-09 values: the half-turn folding moves them by rounding only
+    (434 of 2000 random rectangles, at most 2.8e-14 degrees).
+
+    Limits: because it encloses every point, noise and outliers bias the sides
+    outward — on a 40x20 half-side outline, sigma 0.5 px gives l1/l2 +4.3 %/+7.4 %,
+    sigma 1 px +8 %/+15 %, and one far outlier turns l1 = 40 into 170.
+    Raises ``ValueError`` on < 3 points, non-finite values or a collinear set."""
     from scipy.spatial import ConvexHull
     try:                                               # public since scipy 1.8
         from scipy.spatial import QhullError
@@ -274,7 +340,9 @@ def fit_rectangle2(points) -> dict:
     for i in range(len(h)):
         edge = h[(i + 1) % len(h)] - h[i]
         norm = float(np.hypot(edge[0], edge[1]))
-        if norm < 1e-12:
+        # ★1.0 前の修正 2026-11-05 abs-floor: 以前は ``norm < 1e-12``。辺 1e-13 の矩形では全辺を飛ばし TypeError で落ちた。
+        #   凸包の頂点は互いに異なるので、長さ 0 の辺だけを飛ばす。
+        if norm == 0.0:
             continue
         u = edge / norm                                # a candidate rectangle axis
         v = np.array([-u[1], u[0]])
@@ -287,8 +355,7 @@ def fit_rectangle2(points) -> dict:
     _, w, ht, u, centre = best
     long_axis = u if w >= ht else np.array([-u[1], u[0]])
     a_half, b_half = max(w, ht) / 2.0, min(w, ht) / 2.0
-    ang = np.degrees(np.arctan2(float(long_axis[1]), float(long_axis[0])))
-    ang = ((ang + 90.0) % 180.0) - 90.0
+    ang = _half_turn_angle(np.degrees(np.arctan2(float(long_axis[1]), float(long_axis[0]))))
     # RMS point-to-boundary distance in the rectangle frame (signed box SDF, Quilez).
     u2 = long_axis
     v2 = np.array([-u2[1], u2[0]])
@@ -298,3 +365,106 @@ def fit_rectangle2(points) -> dict:
     sdf = np.hypot(np.maximum(qu, 0.0), np.maximum(qv, 0.0)) + np.minimum(np.maximum(qu, qv), 0.0)
     return {"cy": float(centre[1]), "cx": float(centre[0]), "l1": a_half, "l2": b_half,
             "angle_deg": float(ang), "rms": float(np.sqrt(np.mean(sdf ** 2)))}
+
+
+def fit_rectangle2_lsq(points, max_iter: int = 50, tukey_c: float = 4.685) -> dict:
+    """Robust least-squares rectangle fitted to outline points (row, col).
+
+    Starts from :func:`fit_rectangle2` (min-area rectangle) of the points that
+    are not isolated (8th-nearest-neighbour distance <= 3x the median; an
+    outline is dense, a stray point is not), then alternates
+    (1) assigning each point to the nearest of the 4 side segments and (2) one
+    Gauss-Newton step on ``(cx, cy, theta, l1, l2)`` minimising the Tukey-
+    weighted signed point-to-side distances (scale = 1.4826 * MAD, floored at
+    1e-9 of the point span so an exact outline converges). This is the
+    counterpart of HALCON ``fit_rectangle2_contour_xld`` (least squares with
+    robust weights), which :func:`fit_rectangle2` is *not*.
+
+    Measured (2026-11-09, half sides 40x20 at 25 deg, 2000 outline points,
+    sigma 1 px): min-area l1/l2 = 43.18/23.05, this function within 0.1 px and
+    0.1 deg; one far outlier (min-area l1 = 170) gets weight 0.
+
+    Returns the keys of :func:`fit_rectangle2` (``cy, cx, l1 >= l2,
+    angle_deg`` in ``(-90, 90]`` clockwise on screen, ``rms`` = RMS distance of
+    the inlier points to their side) plus ``inlier_fraction`` (Tukey weight > 0)
+    and ``iterations``.
+
+    Limits: the min-area start must put most points on the right side — a
+    dense cluster of outliers (not isolated stray points) survives the start
+    filter and drags the start too far. The points must sample all four sides; a side with no
+    inlier keeps its min-area extent.
+
+    Raises:
+        ValueError: < 4 points, non-finite values, a collinear set, or
+            ``max_iter`` / ``tukey_c`` not positive.
+    """
+    p = _as_points(points, 4, "points")
+    if int(max_iter) < 1:
+        raise ValueError(f"max_iter must be >= 1; got {max_iter!r}")
+    tc = float(tukey_c)
+    if not np.isfinite(tc) or tc <= 0.0:
+        raise ValueError(f"tukey_c must be a finite positive number; got {tukey_c!r}")
+    # 外接矩形は孤立した点 1 個で辺が伸びる(40 -> 170)。初期値だけは孤立点を除いて作る:
+    # 8 番目の近傍までの距離が中央値の 3 倍を超える点(輪郭は密、孤立点は疎)。
+    from scipy.spatial import cKDTree
+    kk = int(min(8, len(p) - 1))
+    dk = cKDTree(p).query(p, k=kk + 1)[0][:, -1]
+    dense = dk <= 3.0 * float(np.median(dk))
+    try:
+        init = fit_rectangle2(p[dense]) if dense.sum() >= 3 else fit_rectangle2(p)
+    except ValueError:
+        init = fit_rectangle2(p)
+    pts = np.column_stack([p[:, 1], p[:, 0]])                # (x, y)
+    span = float(np.ptp(pts, axis=0).max()) or 1.0
+    c = np.array([init["cx"], init["cy"]], np.float64)
+    th = float(np.radians(init["angle_deg"]))
+    half = np.array([init["l1"], init["l2"]], np.float64)
+    it = 0
+    w = np.ones(len(pts))
+    r = np.zeros(len(pts))
+    for it in range(1, int(max_iter) + 1):
+        u = np.array([np.cos(th), np.sin(th)])
+        v = np.array([-np.sin(th), np.cos(th)])
+        rel = pts - c
+        qu, qv = rel @ u, rel @ v
+        # distance to each side *segment* (not the infinite line) decides the side
+        du = np.abs(np.abs(qu) - half[0]) + np.maximum(np.abs(qv) - half[1], 0.0)
+        dv = np.abs(np.abs(qv) - half[1]) + np.maximum(np.abs(qu) - half[0], 0.0)
+        on_u = du <= dv                                    # a side normal to u (length 2*l2)
+        s_k = np.where(on_u, np.sign(qu), np.sign(qv))
+        s_k[s_k == 0] = 1.0
+        n = np.where(on_u[:, None], s_k[:, None] * u, s_k[:, None] * v)
+        dn = np.where(on_u[:, None], s_k[:, None] * v, -s_k[:, None] * u)   # d n / d theta
+        r = np.einsum("ij,ij->i", n, rel) - np.where(on_u, half[0], half[1])
+        mad = float(np.median(np.abs(r - np.median(r))))
+        sc = max(1.4826 * mad, 1e-9 * span)
+        z = r / (tc * sc)
+        w = np.where(np.abs(z) < 1.0, (1.0 - z * z) ** 2, 0.0)
+        J = np.zeros((len(pts), 5))
+        J[:, 0:2] = -n
+        J[:, 2] = np.einsum("ij,ij->i", dn, rel)
+        J[:, 3] = np.where(on_u, -1.0, 0.0)
+        J[:, 4] = np.where(on_u, 0.0, -1.0)
+        sw = np.sqrt(w)
+        free = np.ones(5, bool)
+        free[3] = bool(np.any(w[on_u] > 0))
+        free[4] = bool(np.any(w[~on_u] > 0))
+        sol, *_ = np.linalg.lstsq(J[:, free] * sw[:, None], -r * sw, rcond=None)
+        delta = np.zeros(5)
+        delta[free] = sol
+        c = c + delta[0:2]
+        th = th + float(delta[2])
+        half = half + delta[3:5]
+        if np.all(np.abs(delta[[0, 1, 3, 4]]) <= 1e-12 * span) and abs(delta[2]) <= 1e-12:
+            break
+    half = np.abs(half)
+    long_u = np.array([np.cos(th), np.sin(th)])
+    if half[1] > half[0]:
+        half = half[::-1]
+        long_u = np.array([-long_u[1], long_u[0]])
+    ang = _half_turn_angle(np.degrees(np.arctan2(long_u[1], long_u[0])))
+    inl = w > 0
+    rms = float(np.sqrt(np.mean(r[inl] ** 2))) if inl.any() else float("nan")
+    return {"cy": float(c[1]), "cx": float(c[0]), "l1": float(half[0]), "l2": float(half[1]),
+            "angle_deg": float(ang), "rms": rms,
+            "inlier_fraction": float(inl.mean()), "iterations": int(it)}

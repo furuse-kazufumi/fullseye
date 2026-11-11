@@ -5,10 +5,10 @@ category: shape
 in: image2d
 out: image2d
 gpu: あり(許可リスト)
-examples: [annotate_gallery, poc_optics_drawings, poc_plenoptic_camera, poc_polish_wipe_measure, poc_weld_radiograph_porosity]
+examples: [annotate_gallery, poc_mixed_case_depalletizing, poc_optics_drawings, poc_plenoptic_camera, poc_polish_wipe_measure, poc_real_walnut_cbct, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # arc — ANNOTATE `shape` op
@@ -61,9 +61,11 @@ ValueError
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
+- [poc_mixed_case_depalletizing](../../../../examples/poc_mixed_case_depalletizing.py) — `py -3.11 examples/poc_mixed_case_depalletizing.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
 - [poc_plenoptic_camera](../../../../examples/poc_plenoptic_camera.py) — `py -3.11 examples/poc_plenoptic_camera.py`
 - [poc_polish_wipe_measure](../../../../examples/poc_polish_wipe_measure.py) — `py -3.11 examples/poc_polish_wipe_measure.py`
+- [poc_real_walnut_cbct](../../../../examples/poc_real_walnut_cbct.py) — `py -3.11 examples/poc_real_walnut_cbct.py`
 - [poc_weld_radiograph_porosity](../../../../examples/poc_weld_radiograph_porosity.py) — `py -3.11 examples/poc_weld_radiograph_porosity.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

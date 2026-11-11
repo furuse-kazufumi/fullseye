@@ -126,27 +126,27 @@ SYSTEM_PARAMS = {
             "skip を設定しても順位は変わらない。"
         ),
     },
-    "find_ops_k": {"values": (3, 5, 7, 10), "default": 7, "tightens_only": True,
+    "find_ops_k": {"values": (3, 5, 7), "default": 7, "tightens_only": True,
                    "affects_numbers": False, "applied_by": ("fullseye/opsearch.py", "fullseye/mcp/server.py"), "doc": "Default number of diverse operator proposals."},
-    "find_ops_recipe_max": {"values": (0, 1, 2, 3), "default": 2, "tightens_only": True,
+    "find_ops_recipe_max": {"values": (0, 1, 2), "default": 2, "tightens_only": True,
                             "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Maximum recipe-derived proposals within the find_ops total."},
-    "plan_k": {"values": (1, 3, 5, 7, 10), "default": 7, "tightens_only": True,
+    "plan_k": {"values": (1, 3, 5, 7), "default": 7, "tightens_only": True,
                "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Maximum returned plans."},
-    "plan_max_depth": {"values": (2, 4, 8, 16), "default": 4, "tightens_only": True,
+    "plan_max_depth": {"values": (2, 4), "default": 4, "tightens_only": True,
                        "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Maximum hypergraph depth."},
-    "plan_max_expansions": {"values": (1000, 10000, 50000, 100000), "default": 50000, "tightens_only": True,
+    "plan_max_expansions": {"values": (1000, 10000, 50000), "default": 50000, "tightens_only": True,
                             "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Planner expansion cap."},
-    "plan_timeout_ms": {"values": (100, 500, 900, 2000), "default": 900, "tightens_only": True,
+    "plan_timeout_ms": {"values": (100, 500, 900), "default": 900, "tightens_only": True,
                         "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Planner wall-time cap."},
     "mcp_response_budget": {"values": (16000, 128000, 256000, 512000), "default": 512000, "tightens_only": True,
                             "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Structured response byte cap."},
     "mcp_body_mode": {"values": ("compact", "duplicate"), "default": "compact", "tightens_only": False,
                       "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Avoid duplicating structured JSON in text."},
-    "mcp_handle_max_bytes": {"values": (67108864, 134217728, 268435456), "default": 134217728, "tightens_only": True,
+    "mcp_handle_max_bytes": {"values": (67108864, 134217728), "default": 134217728, "tightens_only": True,
                               "affects_numbers": False, "applied_by": ("fullseye/mcp/handles.py",), "doc": "LRU byte cap for live MCP handles."},
-    "mcp_pipeline_max_intermediate_bytes": {"values": (67108864, 134217728, 268435456), "default": 134217728, "tightens_only": True,
+    "mcp_pipeline_max_intermediate_bytes": {"values": (67108864, 134217728), "default": 134217728, "tightens_only": True,
                               "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Cumulative byte cap for outputs produced by one MCP pipeline request."},
-    "mcp_stack_max_pixels": {"values": (16777216, 33554432, 67108864), "default": 33554432, "tightens_only": True,
+    "mcp_stack_max_pixels": {"values": (16777216, 33554432), "default": 33554432, "tightens_only": True,
                               "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Pixel cap for MCP image loads, stacks, and operation outputs."},
     "pipeline_max_stages": {"values": (16, 32, 64), "default": 64, "tightens_only": True,
                             "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Pipeline stage cap."},
@@ -158,11 +158,22 @@ SYSTEM_PARAMS = {
                       "affects_numbers": True, "applied_by": None, "doc": "Reserved neighborhood border policy."},
     "numeric_floor": {"values": (1e-15, 1e-12, 1e-9), "default": 1e-12, "tightens_only": False,
                       "affects_numbers": True, "applied_by": None, "doc": "Reserved numerical denominator floor."},
-    "iteration_limit": {"values": (50, 100, 500), "default": 100, "tightens_only": True,
+    "iteration_limit": {"values": (50, 100), "default": 100, "tightens_only": True,
                         "affects_numbers": False, "applied_by": None, "doc": "Reserved iterative solver cap."},
     "gpu_idle_policy": {"values": ("strict", "disabled"), "default": "strict", "tightens_only": True,
                         "affects_numbers": False, "applied_by": ("tools/measure_device_crossover.py",), "doc": "GPU measurement admission policy."},
 }
+
+# ★2026-11-05(敵対的検証 第 2 巡 T5): tightens_only=True の数値の上限 10 項目が、既定より**大きい**値
+#   (find_ops_k=10、mcp_stack_max_pixels=64 Mpx、plan_max_depth=16 …)を受け付け、上の docstring の
+#   「緩められない」を破っていた。既定より緩い値を表から外し、ここで機械的に止める(足し直すと import で落ちる)。
+for _name, _spec in SYSTEM_PARAMS.items():
+    if _spec["tightens_only"] and all(isinstance(v, (int, float)) and not isinstance(v, bool)
+                                      for v in _spec["values"]):
+        if max(_spec["values"]) != _spec["default"]:
+            raise AssertionError("fssystem: %r is tightens_only but allows %r above its default %r"
+                                 % (_name, [v for v in _spec["values"] if v > _spec["default"]], _spec["default"]))
+del _name, _spec
 
 PROFILES = {
     "deflectometry_rig": {"width_mm":300.0,"height_mm":200.0,"period_mm":10.0,

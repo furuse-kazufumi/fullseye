@@ -1,13 +1,12 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">This guide is available in Japanese only (it is human-written prose, so nothing here is machine-substituted).</p>
 <h2 style="color:#f5a524;margin:0 0 4px 0">Why matrix decompositions are slow — BLAS threads, caches, memory layout</h2>
-<p>SVD や固有値分解を含む op が「なぜか遅い」とき、原因はアルゴリズムではなく <b>BLAS の使われ方</b>であることが多い。この文書は op の説明ではなく、そこを疑う順番と、測って確かめる方法を書く教材である。</p>
-<p>すべて 2026-09-06 に自分の機械で測った値で、出典は自分の実測に限る（24 論理 CPU / OpenBLAS 0.3.31 / numpy 2.4.6 / Windows、他の負荷を止めた状態、中央値）。他所の機械では数字が変わるが、<b>傾きの向き</b>は再現するはずである。</p>
+<p>When an op that includes an SVD or eigendecomposition is &quot;slow for some reason&quot;, the cause is often not the algorithm but <b>how BLAS is being used</b>. This document is not a description of ops; it is teaching material on the order in which to suspect things there, and how to measure and confirm.</p>
+<p>All values were measured on my own machine on 2026-09-06, and the only source is my own measurement (24 logical CPUs / OpenBLAS 0.3.31 / numpy 2.4.6 / Windows, other load stopped, median). On other machines the numbers will change, but <b>the direction of the trends</b> should reproduce.</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. いちばん効くのに、いちばん見落とされる — スレッドの過剰割り当て</h3>
-<p>OpenBLAS も MKL も、既定でスレッド数を<b>論理 CPU 数</b>から決める。行列積ではそれが正しい。分解では正しくない。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">np.linalg.svd(n x n, full_matrices=False)      単位 ms
-n        1t      2t      4t      8t     24t   最速
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. The most effective and the most overlooked — thread over-subscription</h3>
+<p>Both OpenBLAS and MKL set the thread count from the <b>number of logical CPUs</b> by default. For matrix multiplication that is right. For decompositions it is not.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">np.linalg.svd(n x n, full_matrices=False)      unit ms
+n        1t      2t      4t      8t     24t   fastest
 48    0.165   0.195   0.266   0.344   0.651   1t
 96    0.650   0.918   1.081   1.305   2.217   1t
 384  19.331  23.572  21.686  28.090  36.243   1t
@@ -15,133 +14,134 @@ n        1t      2t      4t      8t     24t   最速
 1024 351.7   320.0   259.4   262.4   868.8    4t
 2048 2675    1950    1600    1344    3263     8t
 
-参考: 行列積 a @ a は逆の傾き（768 で 1t 14.0ms / 8t 2.4ms = 5.8 倍速い）</pre>
-<p>svd / eigh / qr / pinv の 4 種 × 7 サイズで、<b>24 スレッドが勝った升目は 1 つも無い</b>。分解の中の GEMM が小さすぎて、同期の費用が計算量を上回るためである。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">判断</h3>
-<p style="margin:2px 0 2px 12px">• 分解が遅いと思ったら、<b>アルゴリズムを疑う前にスレッド数を疑う</b>。確認は 1 行: <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1 python your_script.py</code> で速くなるなら当たり。</p>
-<p style="margin:2px 0 2px 12px">• <b>プロセス全体を絞ってはいけない</b>。行列積は逆に遅くなる。絞るのは分解の周りだけ。</p>
-<p style="margin:2px 0 2px 12px">• fullseye では <code style="color:#22d3bf">fsthreads</code> がこれを自動でやる。止めたいときは <code style="color:#22d3bf">FULLSEYE_BLAS_THREADS=off</code>、固定したいときは <code style="color:#22d3bf">FULLSEYE_BLAS_THREADS=1</code>。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">罠 — これは速さだけの話ではない</h3>
-<p>スレッド数が変わると縮約の順序が変わるので、<b>分解の結果は下位ビットで変わる</b>。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">svd(64x64)   1t vs 24t   bitwise 一致 False   最大差 3.6e-16
-eigh(256)    1t vs 24t   bitwise 一致 False   最大差 1.7e-12</pre>
-<p>スレッド数は論理 CPU 数から決まるので、<b>何もしない状態が機械ごとに違う値を出す</b>。4 コアの CI と 24 コアの開発機で分解の下位ビットが一致しない。「手元では通るのに CI で許容差を外れる」の原因になりうる。再現性が要るなら、スレッド数を明示的に固定する。</p>
+For reference: matrix product a @ a has the opposite trend (at 768, 1t 14.0ms / 8t 2.4ms = 5.8 times faster)</pre>
+<p>Across 4 kinds (svd / eigh / qr / pinv) × 7 sizes, <b>there is not even 1 cell where 24 threads won</b>. The GEMMs inside the decompositions are too small, so the cost of synchronisation exceeds the amount of computation.</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Decision</h3>
+<p style="margin:2px 0 2px 12px">• If you think a decomposition is slow, <b>suspect the thread count before suspecting the algorithm</b>. The check is 1 line: if <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1 python your_script.py</code> makes it faster, that is it.</p>
+<p style="margin:2px 0 2px 12px">• <b>Do not throttle the whole process.</b> Matrix multiplication becomes slower instead. Throttle only around the decomposition.</p>
+<p style="margin:2px 0 2px 12px">• In fullseye, <code style="color:#22d3bf">fsthreads</code> does this automatically. To turn it off use <code style="color:#22d3bf">FULLSEYE_BLAS_THREADS=off</code>; to pin it use <code style="color:#22d3bf">FULLSEYE_BLAS_THREADS=1</code>.</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Trap — this is not only about speed</h3>
+<p>When the thread count changes, the order of reductions changes, so <b>the results of a decomposition change in the low-order bits</b>.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">svd(64x64)   1t vs 24t   bitwise match False   max diff 3.6e-16
+eigh(256)    1t vs 24t   bitwise match False   max diff 1.7e-12</pre>
+<p>The thread count is decided from the number of logical CPUs, so <b>doing nothing produces different values on different machines</b>. The low-order bits of a decomposition do not match between a 4-core CI and a 24-core development machine. This can be the cause of &quot;passes locally but falls outside tolerance on CI&quot;. If you need reproducibility, pin the thread count explicitly.</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 何を見て上限を決めるか — 短辺。長辺でも要素数でもない</h3>
-<p>(m, n) の格子 92 升（svd と lstsq）で、予測子ごとに「その規則だけでスレッド上限を決めたときに失う時間」を測った。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">規則                          失う時間   1.2 倍を超える升目   最悪
-何もしない（24t のまま）        3975ms       79/92 升        19.91x
-短辺 &lt;512:1 &lt;1024:4 else:8       303ms        5/92 升         1.41x
-要素数 &lt;512:1 &lt;1024:4 else:8     235ms       14/92 升         2.50x
-長辺 &lt;512:1 &lt;1024:4 else:8       241ms       ---              3.89x</pre>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">判断</h3>
-<p><b>合計では要素数と長辺が勝つ。それでも短辺を採る。</b> 合計の差 68ms より、最悪値の差（1.41 倍か 2.50 / 3.89 倍か）のほうが重いため。平均で 1 割速いより、最悪でも 4 割増しで済むほうが運用しやすい。</p>
-<p>理屈: LAPACK の仕事量は概ね <code style="color:#22d3bf">長辺 × 短辺²</code> で、スレッドが効くかどうかは短辺のブロック幅で決まる。<code style="color:#22d3bf">16384x3</code> の最小二乗を長辺で「大きい行列」と数えると 8 スレッドを許してしまうが、実際は幅 3 の QR である。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">換算の目安</h3>
-<p>| 短辺 | 許すスレッド数 | 根拠 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. What to look at to set the cap — the short side. Not the long side, not the element count</h3>
+<p>On a grid of 92 cells of (m, n) (svd and lstsq), for each predictor I measured &quot;the time lost when the thread cap is decided by that rule alone&quot;.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">Rule                            time lost   cells over 1.2x    worst
+Do nothing (left at 24t)        3975ms       79/92 cells       19.91x
+Short side &lt;512:1 &lt;1024:4 else:8 303ms        5/92 cells        1.41x
+Elements &lt;512:1 &lt;1024:4 else:8   235ms       14/92 cells        2.50x
+Long side &lt;512:1 &lt;1024:4 else:8  241ms       ---                3.89x</pre>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Decision</h3>
+<p><b>On the total, the element count and the long side win. The short side is adopted anyway.</b> The difference in the worst case (1.41 times versus 2.50 / 3.89 times) weighs more than the 68ms difference in the total. Being only 4 tenths slower even in the worst case is easier to operate with than being 1 tenth faster on average.</p>
+<p>Reasoning: LAPACK&#x27;s workload is roughly <code style="color:#22d3bf">長辺 × 短辺²</code> (long side × short side squared), and whether threads help is decided by the block width of the short side. Counting a <code style="color:#22d3bf">16384x3</code> least-squares as a &quot;large matrix&quot; by its long side would allow 8 threads, but in reality it is a QR of width 3.</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Rule-of-thumb conversion</h3>
+<p>| Short side | Threads allowed | Basis |</p>
 <p>| --- | --- | --- |</p>
-<p>| 32 未満 | 触らない | 絞る仕掛け自体が 2.4 µs。それより速い分解に被せると損 |</p>
-<p>| 32〜511 | 1 | この範囲で多スレッドが勝った升目が無い |</p>
-<p>| 512〜1023 | 4 | 1t と拮抗し、上側で 4t が勝ち始める |</p>
-<p>| 1024 以上 | 8 | 2048 で 8t が 1t の 2.0 倍速い。24t は全域で最悪 |</p>
+<p>| Under 32 | Do not touch | The throttling mechanism itself costs 2.4 µs. Wrapping it around decompositions faster than that is a loss |</p>
+<p>| 32–511 | 1 | No cell in this range where multiple threads won |</p>
+<p>| 512–1023 | 4 | Neck and neck with 1t; 4t begins to win at the upper end |</p>
+<p>| 1024 and above | 8 | At 2048, 8t is 2.0 times faster than 1t. 24t is the worst everywhere |</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 2 の冪の辺はキャッシュ競合で遅い（<code style="color:#22d3bf">#pragma pack</code> に相当する話）</h3>
-<p>leading dimension が 2 の冪だと、キャッシュのセットが衝突して遅くなる。密行列ライブラリが lda をわざとずらして確保するのはこのためである。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">svd の単スレッド実効 GFLOPS（* が 2 の冪）
-n     255    256*    257    264      -&gt; 冪だけ 13% 遅い
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. Sides that are powers of 2 are slow due to cache conflicts (a story equivalent to <code style="color:#22d3bf">#pragma pack</code>)</h3>
+<p>When the leading dimension is a power of 2, cache sets collide and things slow down. This is why dense-matrix libraries deliberately offset lda when allocating.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">Single-thread effective GFLOPS of svd (* = power of 2)
+n     255    256*    257    264      -&gt; only the power is 13% slower
     27.9    26.1    30.4   30.9
-n     511    512*    513    520      -&gt; 18% 遅い
+n     511    512*    513    520      -&gt; 18% slower
     41.4    34.6    41.2   44.1
-n    1023   1024*   1025   1032      -&gt; 19% 遅い
+n    1023   1024*   1025   1032      -&gt; 19% slower
     43.9    35.9    44.4   44.5
-n = 64 / 128 では差が出ない（キャッシュに収まるので競合が起きない）</pre>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">判断</h3>
-<p style="margin:2px 0 2px 12px">• <b>13〜19% は実在する</b>。ベンチマークを 2 の冪の寸法だけで取ると、そこだけ遅い値を「普通の性能」として記録してしまう。</p>
-<p style="margin:2px 0 2px 12px">• ただし<b>最速スレッド数は変わらない</b>（255/256/257/264 は全部 1t、1023/1024/1025/1032 は全部 4t）。スレッドの判断には影響しない。</p>
-<p style="margin:2px 0 2px 12px">• 性能を測るときは、寸法を 2 の冪から意図的に外して 1 点足す。外さないと「升目の分布」が偏る — 正方 1023 のような点が 1 つも無くなる。</p>
+At n = 64 / 128 there is no difference (it fits in cache, so no conflicts occur)</pre>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Decision</h3>
+<p style="margin:2px 0 2px 12px">• <b>13–19% is real.</b> If you benchmark only at power-of-2 sizes, you will record the values that are slow only there as &quot;normal performance&quot;.</p>
+<p style="margin:2px 0 2px 12px">• However, <b>the fastest thread count does not change</b> (255/256/257/264 are all 1t, 1023/1024/1025/1032 are all 4t). It does not affect the thread decision.</p>
+<p style="margin:2px 0 2px 12px">• When measuring performance, deliberately add 1 point off the power of 2. Otherwise &quot;the distribution of cells&quot; is biased — there will not be even 1 point like square 1023.</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 行優先・列優先 — 変換して使うと、たいてい元が取れない</h3>
-<p>numpy は行優先、LAPACK は列優先なので、分解のたびに並べ替えが起きる。「では列優先で渡せばよい」と考えたくなるが、<b>変換の費用を含めると負ける</b>。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">lstsq                そのまま   変換して渡す   最初から列優先   変換のみ
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. Row-major vs column-major — converting before use usually does not pay off</h3>
+<p>numpy is row-major and LAPACK is column-major, so a reordering happens at every decomposition. It is tempting to think &quot;then just pass it column-major&quot;, but <b>once the cost of conversion is included, it loses</b>.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">lstsq                as is      convert &amp; pass  column-major from start  conversion only
 (65536,   36)         27.4ms    26.0 (0.95x)   17.6 (0.64x)     6.4ms
 (16384,  128)         43.9      50.1 (1.14x)   39.0 (0.89x)     8.5
 ( 4096,  512)        414.5     676.5 (1.63x)  432.8 (1.04x)     8.8
 ( 1024, 1024)        172.3     178.6 (1.04x)  177.1 (1.03x)     3.6</pre>
-<p><code style="color:#22d3bf">np.asfortranarray</code> してから渡すと、5 形状中 4 つで<b>遅くなる</b>。コピーが 6〜9 ms かかるのに、節約はそれ以下だからである。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">転置ビューなら無料では？ — 無料なのはビューだけ</h3>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">a.T をとる                   0.10 µs     ストライドの入れ替えだけ = 本当に無料
-np.ascontiguousarray(a.T)    6.5-8.7 ms  戻すと本物のコピー
-svd(A.T) して U,V を入れ替える:
-  (16384,128) 1.90 倍遅い / (4096,512) 1.11 倍 / (1024,1024) 1.04 倍
-  （特異値は一致する。数学的には正しいのに実行時間で負ける）</pre>
-<p><code style="color:#22d3bf">A = (Aᵀ)ᵀ</code> なので <code style="color:#22d3bf">svd(A.T)</code> の U と V を入れ替えれば <code style="color:#22d3bf">svd(A)</code> が得られるが、LAPACK は (n, m) の横長行列として<b>別の経路</b>を通るため遅くなる。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">判断</h3>
-<p style="margin:2px 0 2px 12px">• 「列優先にすれば速い」は、<b>すでに列優先である</b>場合にのみ正しい。</p>
-<p style="margin:2px 0 2px 12px">• 効くのは「最初から列優先で組み立てられて、かつ縦長」の場合だけ。設計行列を <code style="color:#22d3bf">np.stack(..., axis=1)</code> で作っている場所なら、<code style="color:#22d3bf">order=&quot;F&quot;</code> で確保するだけで縦長時に 3 割前後取れる（<code style="color:#22d3bf">(65536,36)</code> で 0.64 倍）。</p>
-<p style="margin:2px 0 2px 12px">• それ以外では手を出さない。転置して戻す設計は、費用が利得を上回る。</p>
+<p>Passing after <code style="color:#22d3bf">np.asfortranarray</code> <b>is slower</b> for 4 of the 5 shapes. The copy takes 6–9 ms, and the saving is less than that.</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Isn&#x27;t a transposed view free? — only the view is free</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">taking a.T                   0.10 µs     only swaps strides = truly free
+np.ascontiguousarray(a.T)    6.5-8.7 ms  turning it back is a real copy
+svd(A.T) then swap U,V:
+  (16384,128) 1.90 times slower / (4096,512) 1.11 times / (1024,1024) 1.04 times
+  (the singular values match. Mathematically correct, yet it loses on run time)</pre>
+<p>Since <code style="color:#22d3bf">A = (Aᵀ)ᵀ</code>, swapping U and V of <code style="color:#22d3bf">svd(A.T)</code> gives <code style="color:#22d3bf">svd(A)</code>, but LAPACK goes down <b>a different path</b> for it as an (n, m) wide matrix, so it is slower.</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Decision</h3>
+<p style="margin:2px 0 2px 12px">• &quot;Column-major is faster&quot; is correct only when the data <b>is already column-major</b>.</p>
+<p style="margin:2px 0 2px 12px">• It helps only when &quot;it is assembled column-major from the start, and it is tall&quot;. Where a design matrix is built with <code style="color:#22d3bf">np.stack(..., axis=1)</code>, simply allocating with <code style="color:#22d3bf">order=&quot;F&quot;</code> gains around 3 tenths when tall (0.64 times at <code style="color:#22d3bf">(65536,36)</code>).</p>
+<p style="margin:2px 0 2px 12px">• Otherwise, leave it alone. A design that transposes and transposes back costs more than it gains.</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. 連続軸を意図的に使う — ソートと順位統計（分解とは別の軸の話）</h3>
-<p>ここまでは LAPACK の話だが、「速い向き」を積極的に使う設計もある。numpy は行優先なので、<b>最後の軸が連続</b>である。同じ演算でも軸を選べるなら、連続軸に寄せる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">np.sort（単位 ms）
-形状             dtype     axis=-1(連続)  axis=0(飛び飛び)   比
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. Using the contiguous axis deliberately — sorting and order statistics (a topic on a different axis from decompositions)</h3>
+<p>So far this has been about LAPACK, but there are also designs that actively use &quot;the fast direction&quot;. numpy is row-major, so <b>the last axis is contiguous</b>. If the same operation lets you choose the axis, lean towards the contiguous axis.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">np.sort (unit ms)
+shape            dtype     axis=-1(contig.)  axis=0(strided)   ratio
 (65536,   32)   float32        3.68           18.39        5.00
 ( 4096,  256)   float32        1.95            9.12        4.67
 ( 4096,  256)   float64        5.42           13.94        2.57
 ( 1024, 1024)   float64        5.91           12.27        2.08</pre>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">罠 — 「小さい型にすれば速い」は成り立たない</h3>
-<p>同じ配列を量子化しても、<b>比較ソートは速くならない。むしろ遅い</b>。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">(1024,1024) の np.sort(axis=-1)
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Trap — &quot;a smaller type is faster&quot; does not hold</h3>
+<p>Even if the same array is quantised, <b>comparison sorting does not get faster. It is actually slower.</b></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">np.sort(axis=-1) on (1024,1024)
   float64  5.91ms      float32  3.04ms
-  uint16  21.97ms      uint8   21.03ms      &lt;- float64 の 3.6 倍遅い</pre>
-<p>numpy の float 用ソートは SIMD 最適化された経路を通るが、小さい整数型はそこに乗っていない（この版では）。<b>dtype を小さくすること自体は速さを買わない。</b></p>
-<p>もう 1 つの罠: 上の表で <code style="color:#22d3bf">(256, 4096)</code> の uint8 だけ <code style="color:#22d3bf">axis=0</code> のほうが速く見える（19.45 対 22.57）。これは配置ではなく<b>1 回のソートの長さ</b>の効果で、<code style="color:#22d3bf">axis=0</code> は長さ 256 のソートを 4096 回、<code style="color:#22d3bf">axis=-1</code> は長さ 4096 を 256 回している。軸を比べるときは、<b>長さが変わっていないか</b>を先に確認する。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">量子化が本当に買うもの — 並べ替えを省けること</h3>
-<p>利得は型ではなく<b>値域が有限であること</b>から来る。uint8 は 256 通りしかないので、並べ替えずに数えれば済む。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">uint8 の全体ソート
-  n = 16,777,216   np.sort 355.8ms  -&gt;  計数ソート 66.7ms   5.33 倍
-  n =  2,097,152   np.sort  43.8ms  -&gt;  計数ソート  8.5ms   5.17 倍
+  uint16  21.97ms      uint8   21.03ms      &lt;- 3.6 times slower than float64</pre>
+<p>numpy&#x27;s sort for floats goes down a SIMD-optimised path, but small integer types are not on it (in this version). <b>Making the dtype smaller does not, by itself, buy speed.</b></p>
+<p>1 more trap: in the table above, only uint8 at <code style="color:#22d3bf">(256, 4096)</code> looks faster with <code style="color:#22d3bf">axis=0</code> (19.45 vs 22.57). This is not an effect of layout but of <b>the length of 1 sort</b>:</p>
+<p><code style="color:#22d3bf">axis=0</code> performs 4096 sorts of length 256, and <code style="color:#22d3bf">axis=-1</code> performs 256 sorts of length 4096. When comparing axes, first check <b>whether the length has changed</b>.</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">What quantisation really buys — being able to skip sorting</h3>
+<p>The gain comes not from the type but from <b>the value range being finite</b>. uint8 has only 256 possible values, so counting is enough without sorting.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">Full sort of uint8
+  n = 16,777,216   np.sort 355.8ms  -&gt;  counting sort 66.7ms   5.33 times
+  n =  2,097,152   np.sort  43.8ms  -&gt;  counting sort  8.5ms   5.17 times
 
-uint8 の中央値（順位統計はそもそも並べ替えなくてよい）
-  n = 8,388,608    np.median 35.6ms -&gt; ヒストグラム 27.6ms  1.3 倍
-  n = 1,048,576    np.median  6.4ms -&gt; ヒストグラム  3.7ms  1.7 倍</pre>
-<p>計数ソートは <code style="color:#22d3bf">np.bincount(a, minlength=256)</code> で数え、<code style="color:#22d3bf">np.repeat(np.arange(256, dtype=np.uint8), counts)</code> で展開するだけ。中央値は累積和に <code style="color:#22d3bf">searchsorted</code> を掛ければ、展開すら要らない。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">判断</h3>
-<p style="margin:2px 0 2px 12px">• 軸を選べる演算（ソート・累積・リダクション）は<b>最後の軸</b>に寄せる。2〜5 倍。</p>
-<p style="margin:2px 0 2px 12px">• <b>量子化を速さのために入れるなら、比較ソートではなく計数の道に乗せる</b>。uint8/uint16 のまま <code style="color:#22d3bf">np.sort</code> を呼ぶのは、float より遅くなる。</p>
-<p style="margin:2px 0 2px 12px">• 順位統計（中央値・パーセンタイル・rank filter）は、量子化されているならヒストグラムの累積和で置き換えられる。並べ替えが消える。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">効かなかったこと（記録しておく）</h3>
-<p>N 個の D 次元記述子に対する「距離 + argmin」で、記述子を行に置くか列に置くかを比べたが、<b>有意差が出なかった</b>（4096×64 で 1.00 倍、8192×128 で 1.06 倍、2048×256 で 0.97 倍）。<code style="color:#22d3bf">einsum</code> がストライドを吸収するため。配置の効果は「軸を選べる演算」に限られ、縮約を伴う演算には現れない。</p>
+Median of uint8 (order statistics do not need sorting in the first place)
+  n = 8,388,608    np.median 35.6ms -&gt; histogram 27.6ms  1.3 times
+  n = 1,048,576    np.median  6.4ms -&gt; histogram  3.7ms  1.7 times</pre>
+<p>A counting sort just counts with <code style="color:#22d3bf">np.bincount(a, minlength=256)</code> and expands with <code style="color:#22d3bf">np.repeat(np.arange(256, dtype=np.uint8), counts)</code>. For the median, applying <code style="color:#22d3bf">searchsorted</code> to the cumulative sum means not even the expansion is needed.</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Decision</h3>
+<p style="margin:2px 0 2px 12px">• Lean operations whose axis can be chosen (sort, cumulative, reduction) towards <b>the last axis</b>. 2–5 times.</p>
+<p style="margin:2px 0 2px 12px">• <b>If you introduce quantisation for speed, put it on the counting path, not comparison sorting.</b> Calling <code style="color:#22d3bf">np.sort</code> on uint8/uint16 as is ends up slower than float.</p>
+<p style="margin:2px 0 2px 12px">• Order statistics (median, percentile, rank filter), if quantised, can be replaced by the cumulative sum of a histogram. The sorting disappears.</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">What did not work (kept on record)</h3>
+<p>For &quot;distance + argmin&quot; over N D-dimensional descriptors, I compared placing the descriptors in rows versus columns, and <b>no significant difference appeared</b> (1.00 times at 4096×64, 1.06 times at 8192×128, 0.97 times at 2048×256), because <code style="color:#22d3bf">einsum</code> absorbs the strides. The effect of layout is limited to &quot;operations whose axis can be chosen&quot;, and does not appear in operations that involve contraction.</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. 疑う順番</h3>
-<p>分解を含む処理が遅いとき、この順で確かめる。上ほど効きやすく、確認が安い。</p>
-<p style="margin:2px 0 2px 12px">1. <b>スレッド数</b> — <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1</code> で速くなるか（1 行、数秒）</p>
-<p style="margin:2px 0 2px 12px">2. <b>行列の大きさと形</b> — 短辺はいくつか。縦長か正方か</p>
-<p style="margin:2px 0 2px 12px">3. <b>呼び出し回数</b> — 1 回が遅いのか、小さいのを何万回も呼んでいるのか（後者なら絞る仕掛けの費用のほうが高くつく。3×3 の eigh を 2 万回まわす経路では 1 回ごとに <code style="color:#22d3bf">threadpool_limits</code> を呼ぶと 1.9 倍遅くなった: 58.9ms → 112.9ms）</p>
-<p style="margin:2px 0 2px 12px">4. <b>寸法が 2 の冪か</b> — ベンチマークの寸法が偏っていないか</p>
-<p style="margin:2px 0 2px 12px">5. <b>メモリ配置</b> — ここまで来て初めて。しかも変換する価値は薄い</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">測り方の注意</h3>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threadpoolctl.threadpool_limits(...)</code> は毎回<b>読み込み済みの共有ライブラリを数え直す</b>ので 1 回 312 µs かかる。<code style="color:#22d3bf">ThreadpoolController</code> を 1 個持って使い回すと 2.4 µs。ループの中で使うなら後者、それも<b>ループの外に 1 回</b>置く。</p>
-<p style="margin:2px 0 2px 12px">• 最小値ではなく<b>中央値</b>を採る。最小値は「たまたま速かった 1 回」を拾い、常用の速さを表さない。</p>
-<p style="margin:2px 0 2px 12px">• 他のプロセスが CPU を握っていないことを確認してから測る。この文書の初版の数字は、自分が放置した 3 プロセスが 3 コアを占有した状態で取ったもので、比率を 2〜3 倍過大に出していた（48×48 で 83 倍 → 実際は 27 倍）。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. The order of suspicion</h3>
+<p>When processing that includes decompositions is slow, check in this order. The higher, the more likely to help and the cheaper to check.</p>
+<p style="margin:2px 0 2px 12px">1. <b>Thread count</b> — does <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1</code> make it faster (1 line, a few seconds)</p>
+<p style="margin:2px 0 2px 12px">2. <b>Size and shape of the matrix</b> — what is the short side? Tall or square?</p>
+<p style="margin:2px 0 2px 12px">3. <b>Number of calls</b> — is 1 call slow, or are you calling a small one tens of thousands of times? (In the latter case the cost of the throttling mechanism is the more expensive part. On a path that runs a 3×3 eigh 20,000 times, calling <code style="color:#22d3bf">threadpool_limits</code> every 1 call made it 1.9 times slower: 58.9ms → 112.9ms)</p>
+<p style="margin:2px 0 2px 12px">4. <b>Are the sizes powers of 2</b> — are the benchmark sizes biased?</p>
+<p style="margin:2px 0 2px 12px">5. <b>Memory layout</b> — only once you have got this far. And even then converting is of little value</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Cautions on measurement</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threadpoolctl.threadpool_limits(...)</code> <b>recounts the already-loaded shared libraries</b> every time, so 1 call takes 312 µs. Holding 1 <code style="color:#22d3bf">ThreadpoolController</code> and reusing it takes 2.4 µs. Inside a loop use the latter, and even that should be placed <b>1 time outside the loop</b>.</p>
+<p style="margin:2px 0 2px 12px">• Take the <b>median</b>, not the minimum. The minimum picks up &quot;the 1 run that happened to be fast&quot; and does not represent everyday speed.</p>
+<p style="margin:2px 0 2px 12px">• Confirm that no other process is holding the CPU before measuring. The numbers in the first edition of this document were taken while 3 processes I had left running occupied 3 cores, and they overstated the ratios by 2–3 times (83 times at 48×48 → actually 27 times).</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. 症状から原因へ</h3>
-<p>| 症状 | まず疑う | 確かめ方 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. From symptom to cause</h3>
+<p>| Symptom | Suspect first | How to check |</p>
 <p>| --- | --- | --- |</p>
-<p>| コア数の多い機械のほうが遅い | BLAS のスレッド過剰割り当て | <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1</code> を付けて再実行。速くなれば当たり |</p>
-<p>| 手元は速いのに CI が遅い（またはその逆） | 論理 CPU 数の違い | 両方で <code style="color:#22d3bf">threadpoolctl.threadpool_info()</code> を出して比べる |</p>
-<p>| 手元では通るのに CI で許容差を外れる | スレッド数で縮約順序が変わり下位ビットが動く | 両方で同じスレッド数に固定して再実行。差が消えれば当たり |</p>
-<p>| 小さい行列を大量に回す処理が、絞ったら遅くなった | 絞る仕掛け自体の費用（1 回 2.4 µs、<code style="color:#22d3bf">threadpool_limits</code> 直呼びなら 312 µs） | ループの外に 1 回だけ置く。短辺が 32 未満なら何もしない |</p>
-<p>| 縦長行列の最小二乗が思ったより遅い | 長辺で「大きい行列」と判断してスレッドを許している | 短辺（列数）で判断する。<code style="color:#22d3bf">16384x3</code> は幅 3 の QR |</p>
-<p>| ベンチマークだけ妙に遅い | 寸法が 2 の冪でキャッシュのセット競合 | n と n±1 を並べて測る。13〜19% 差が出れば当たり |</p>
-<p>| 列優先にしたのに速くならない | <code style="color:#22d3bf">np.asfortranarray</code> のコピー代が節約を上回っている | 変換のみの時間を単体で測って、節約と比べる |</p>
-<p>| 量子化したのに <code style="color:#22d3bf">np.sort</code> が速くならない | 小さい整数型は SIMD 経路に乗っていない | <code style="color:#22d3bf">np.bincount</code> による計数ソートに置き換えて比べる |</p>
-<p>| スタック中央値が遅い | <code style="color:#22d3bf">np.median(cube, axis=0)</code> が非連続軸 + 完全な中央値計算 | 奇数枚なら <code style="color:#22d3bf">np.partition</code>、枚数が多いなら軸を連続側へ移す |</p>
+<p>| The machine with more cores is slower | BLAS thread over-subscription | Re-run with <code style="color:#22d3bf">OPENBLAS_NUM_THREADS=1</code>. If it gets faster, that is it |</p>
+<p>| Fast locally but slow on CI (or the reverse) | Different number of logical CPUs | Print <code style="color:#22d3bf">threadpoolctl.threadpool_info()</code> on both and compare |</p>
+<p>| Passes locally but falls outside tolerance on CI | The thread count changes the reduction order and the low-order bits move | Pin the same thread count on both and re-run. If the difference disappears, that is it |</p>
+<p>| Processing that runs many small matrices got slower after throttling | The cost of the throttling mechanism itself (2.4 µs per 1 call; 312 µs if calling <code style="color:#22d3bf">threadpool_limits</code> directly) | Place it only 1 time outside the loop. If the short side is under 32, do nothing |</p>
+<p>| Least squares on a tall matrix is slower than expected | It is judged a &quot;large matrix&quot; by its long side and threads are allowed | Judge by the short side (number of columns). <code style="color:#22d3bf">16384x3</code> is a QR of width 3 |</p>
+<p>| Only the benchmark is oddly slow | Sizes are powers of 2, causing cache set conflicts | Measure n and n±1 side by side. If a 13–19% difference appears, that is it |</p>
+<p>| Made it column-major but it did not get faster | The copy cost of <code style="color:#22d3bf">np.asfortranarray</code> exceeds the saving | Measure the conversion time alone and compare it with the saving |</p>
+<p>| Quantised it but <code style="color:#22d3bf">np.sort</code> did not get faster | Small integer types are not on the SIMD path | Replace with a counting sort using <code style="color:#22d3bf">np.bincount</code> and compare |</p>
+<p>| Stack median is slow | <code style="color:#22d3bf">np.median(cube, axis=0)</code> is a non-contiguous axis + full median computation | For an odd number of frames use <code style="color:#22d3bf">np.partition</code>; for many frames move the axis to the contiguous side |</p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fsthreads</code> — fullseye でこの上限を実装している層。段数表と実測はその docstring に。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">math_metrology</code> / <code style="color:#22d3bf">measurement_uncertainty</code> — 測った値の扱い（この文書は「測る前に速さを疑う順番」で、対象が違う）。</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">外部の一次情報</h3>
-<p>この文書の<b>数値はすべて自分の実測</b>で、外部から引いた値は 1 つも無い。以下は仕様・実装そのものの出典（2026-09-06 に到達を確認）。</p>
-<p style="margin:2px 0 2px 12px">• threadpoolctl（スレッド上限の実装。BSD-3）— &lt;https://github.com/joblib/threadpoolctl&gt;</p>
-<p style="margin:2px 0 2px 12px">• LAPACK Users&#x27; Guide（分解の計算量とブロック化）— &lt;https://www.netlib.org/lapack/lug/&gt;</p>
-<p style="margin:2px 0 2px 12px">• numpy の線形代数 API — &lt;https://numpy.org/doc/stable/reference/routines.linalg.html&gt;</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Related</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fsthreads</code> — the layer in fullseye that implements this cap. The step table and measurements are in its docstring.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">math_metrology</code> / <code style="color:#22d3bf">measurement_uncertainty</code> — handling of measured values (this document is about &quot;the order in which to suspect speed before measuring&quot;, a different subject).</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">External primary sources</h3>
+<p><b>All numbers in this document are my own measurements</b>; not even 1 value is taken from outside. The following are sources for the specifications and implementations themselves (reachability confirmed on 2026-09-06).</p>
+<p style="margin:2px 0 2px 12px">• threadpoolctl (implementation of thread caps. BSD-3) — &lt;https://github.com/joblib/threadpoolctl&gt;</p>
+<p style="margin:2px 0 2px 12px">• LAPACK Users&#x27; Guide (computational cost and blocking of decompositions) — &lt;https://www.netlib.org/lapack/lug/&gt;</p>
+<p style="margin:2px 0 2px 12px">• numpy&#x27;s linear algebra API — &lt;https://numpy.org/doc/stable/reference/routines.linalg.html&gt;</p>

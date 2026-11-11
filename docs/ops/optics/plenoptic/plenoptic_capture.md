@@ -8,7 +8,7 @@ gpu: なし
 examples: [plenoptic_capture_pipeline, poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # plenoptic_capture — OPTICS `plenoptic` op
@@ -24,6 +24,18 @@ Trace a raw plenoptic frame and its white calibration image.
 The return includes ground-truth ``pupil_uv`` and ``lenslet_index`` for
 every sensor pixel.  ``pupil_samples`` is accepted for API symmetry; a
 sensor pixel already represents one angular sample and therefore must be 1.
+
+**Sign convention differs from a real camera.**  A pixel offset ``q`` from
+its lenslet centre is mapped to the pupil coordinate ``+q/(d/2)`` (``d`` the
+microimage diameter).  A physical lenslet with the sensor at its focal plane
+inverts the pupil: the pixel at ``+q`` sees the pupil at ``-q * D/b``.  So
+views decoded from this simulation run in the opposite pupil order to a real
+sensor's, and the refocus slope of the same object has the opposite sign
+(a near object has a positive slope here, a negative one on real data).
+Everything in this module, including :func:`plenoptic_refocus_depth`, is
+consistent with the simulated convention; flip the slope sign (or reverse
+the angular axes) before converting real-sensor data.  Not changed yet
+because no PoC compares against a real raw frame (2026-11-04).
 
 ## ファミリ共通の入力契約(fail-closed)
 

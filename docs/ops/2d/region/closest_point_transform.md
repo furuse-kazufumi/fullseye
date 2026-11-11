@@ -9,7 +9,7 @@ gpu: あり(許可リスト)
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # closest_point_transform — 2D `region` op
@@ -39,7 +39,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 領域の**補集合**に対するユークリッド距離変換を正規化して返す ―― 各
 画素から最も近い領域(前景)画素までの距離を表す、``distance_transform``
-とは前景/背景が逆の距離場。出力は ``image`` 型。HALCON の
+とは前景/背景が逆の距離場。出力は ``image`` 型。領域が空なら一様 1.0
+(最も近い領域の画素が無い = どこも最遠)。HALCON の
 ``closest_point_transform``（Compute the closest-point transformation of
 a region.）に相当。
 

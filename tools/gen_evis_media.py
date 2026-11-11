@@ -1,9 +1,11 @@
-"""Generate article media: Fullseye ops running on real evis experiment footage.
+"""Generate article media: Fullseye ops running on evis simulator footage.
 
 The evis musculoskeletal humanoid (evis_chopstick project) captured 241 frames of
 binocular vision (IPD 64 mm / fovy 60 deg, rendered from the robot's own eye
 cameras) while its 48-joint hand strikes chopsticks at a bean (ChopMimic scene).
-This script feeds those REAL captured frames through Fullseye's registered ops
+The frames are SIMULATOR RENDERS, not a physical camera: the on-screen panel
+label says so (2026-11-08 — it used to say "real capture", which visitors read
+as a real camera).  This script feeds those captured frames through Fullseye's registered ops
 and renders honest, verifiable videos for the Qiita overview article:
 
   stereo : eyeL/eyeR pair -> fs.disparity_sgm -> fs.speckle_filter ->
@@ -79,7 +81,7 @@ def _require_dir(env_name: str, what: str, hint: str) -> Path:
 def _evis_paths() -> tuple[Path, Path]:
     """(frames_dir, meta_json) from EVIS_CHOPSTICK_DIR, read-only."""
     root = _require_dir(
-        "EVIS_CHOPSTICK_DIR", "stereo/track subjects (real evis eye-camera frames)",
+        "EVIS_CHOPSTICK_DIR", "stereo/track subjects (evis eye-camera frames rendered by the simulator)",
         "the evis_chopstick project's ChopMimic vision capture writes "
         "out/chop_vision_frames/ + out/chop_vision_meta.json")
     frames = root / "out" / "chop_vision_frames"
@@ -233,14 +235,15 @@ def gen_stereo(meta: dict, frames_dir: Path, fps: int = 20, step: int = 1):
                 hud_extra = (f"bean {est:.0f}mm (centroid stereo, not the SGM map) | "
                              f"truth {true:.0f}mm | err {err:.1f}%")
         row = np.concatenate([
-            _label(L, "evis left eye (real capture)"),
+            _label(L, "evis left eye (simulator render)"),
             _label(disp_col, "fullseye disparity"),
             _label(depth_col, "fullseye depth"),
         ], axis=1)
         # HUD width follows the actual row width (no hardcoded resolution)
+        # 読み値(豆の距離・真値・誤差)を先に置く。帯の幅は 960 px で、2026-11-08 まで後ろに置いた読み値が切れていた。
         hud = _hud(row.shape[1],
-                   "dense map: fullseye disparity_sgm>speckle_filter>fill_disparity>"
-                   f"depth_from_disparity  t={fr['t']:.2f}s  {hud_extra}")
+                   f"t={fr['t']:.2f}s  {hud_extra}  | dense map: fullseye disparity_sgm>"
+                   "speckle_filter>fill_disparity>depth_from_disparity")
         frame = np.concatenate([row, hud], axis=0)
         wr.append_data(frame)
         if k == 60:

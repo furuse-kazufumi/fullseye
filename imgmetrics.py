@@ -27,7 +27,10 @@ PSNR も SSIM も「取りうる値の幅」で正規化するので、``[0, 1]`
 ``[0, 255]`` だと思って測ると **PSNR が 48.13 dB ずれる**(``20*log10(255)``)。
 しかも例外は出ず、**それらしい数値が出る**。よって:
 
-* 整数 dtype は dtype から一意に決まる(``uint8`` → 255)。
+* 整数 dtype は dtype から一意に決まる(``uint8`` → 255)。対応するのは
+  ``uint8`` / ``uint16`` / ``uint32`` / ``int8`` / ``int16`` だけで、``int32`` /
+  ``int64`` / ``uint64`` は「満の値」が一つに決まらない(0〜255 を入れた int32 は
+  ありふれている)ので推測しない。
 * float は **決めつけない**。``[0, 1]`` に収まっていれば 1.0 とみなすが、
   1.0 を超える値が 1 つでもあれば ``data_range`` の明示を要求して
   ``ValueError``。「たぶん 255 だろう」で進まない。
@@ -123,7 +126,8 @@ _INT_RANGES = {
 def data_range_of(*arrays, data_range=None):
     """画素値が取りうる幅を決める。**推測はしない**。
 
-    整数 dtype は dtype から一意に決まる。float は ``[0, 1]`` に収まっている
+    整数 dtype(``uint8`` / ``uint16`` / ``uint32`` / ``int8`` / ``int16``)は dtype から
+    一意に決まる(それ以外の整数 dtype は推測しないので ``data_range`` を明示)。float は ``[0, 1]`` に収まっている
     ときだけ 1.0 とみなし、それ以外は ``data_range`` の明示を要求する。
 
     ``[0, 1]`` の float を 255 だと思って PSNR を測ると **48.13 dB** ずれるが
@@ -219,15 +223,44 @@ _M_RGB2XYZ = np.array([
 _M_XYZ2RGB = np.linalg.inv(_M_RGB2XYZ)
 
 
+#: _to_unit_float が受ける整数 dtype の名前(文面に使う)。
+_UNIT_INT_NAMES = "uint8 / uint16 / uint32 / int8 / int16"
+
+
 def _to_unit_float(rgb):
-    """整数 dtype の画像を ``[0, 1]`` の float にする(float はそのまま検査)。"""
+    """整数 dtype の画像を ``[0, 1]`` の float にする(float はそのまま検査)。
+
+    整数は ``uint8`` / ``uint16`` / ``uint32`` / ``int8`` / ``int16`` だけを dtype の最大値で
+    割る(skimage の img_as_float と同じく符号付きも最大値)。割った結果が負(符号付きの
+    負の値)なら ``MetricContractError``。``int32`` / ``int64`` / ``uint64`` は満の値が
+    一つに決まらないので**最大値で割らない**(0〜255 を入れた int32 を 2**31-1 で割ると
+    黙って真っ黒): 値そのものが ``[0, 1]`` にあるとき(Python の整数リスト ``[1, 1, 1]``
+    = 白、など)だけ float として通し、それ以外は理由を名指しして拒否する。
+
+    ★2026-11-05(敵対的検証 第 2 巡 K7): 以前は int32 などを
+    「[0, 1] に収まるか整数 dtype であれ」という自己矛盾した文面で拒否していた。
+    """
     x = np.asarray(rgb)
     if x.dtype in _INT_RANGES:
-        return x.astype(np.float64) / _INT_RANGES[x.dtype]
+        u = x.astype(np.float64) / _INT_RANGES[x.dtype]
+        if u.size and np.min(u) < 0.0:
+            raise MetricContractError(
+                f"sRGB values must lie in [0, 1]; the {x.dtype} image holds negative values "
+                f"(min {int(np.min(x))})"
+            )
+        return u
+    if np.issubdtype(x.dtype, np.integer) and x.size and (np.min(x) < 0 or np.max(x) > 1):
+        raise MetricContractError(
+            f"integer dtype {x.dtype} has no agreed full-scale value for sRGB (only "
+            f"{_UNIT_INT_NAMES} are divided by their maximum), and its values "
+            f"[{int(np.min(x))}, {int(np.max(x))}] are not already in [0, 1]; cast to uint8/uint16 "
+            f"or convert to float yourself, e.g. x / 255.0 for 8-bit data stored in a wider type"
+        )
     x = x.astype(np.float64, copy=False)
     if x.size and (np.nanmin(x) < -1e-6 or np.nanmax(x) > 1.0 + 1e-6):
         raise MetricContractError(
-            f"sRGB values must lie in [0, 1] (or be an integer dtype), got "
+            f"sRGB values must lie in [0, 1] (or be one of the integer dtypes "
+            f"{_UNIT_INT_NAMES}), got "
             f"[{float(np.nanmin(x)):.6g}, {float(np.nanmax(x)):.6g}]"
         )
     return np.clip(x, 0.0, 1.0)
@@ -252,9 +285,29 @@ def linear_to_srgb(lin):
     """線形 RGB に sRGB の伝達関数を掛ける(``srgb_to_linear`` の逆)。
 
     実体は :func:`gfx2d.linear_to_srgb`(上と同じ理由で委譲)。
+
+    値域の約束は対の ``srgb_to_linear`` と委譲先 ``gfx2d.linear_to_srgb`` に揃える:
+    ``[0, 1]`` の外(許容 1e-6、その範囲の食み出しは切り詰め)・NaN/Inf は
+    ``MetricContractError``(``ValueError`` の部分型)。**HDR の線形値(1 超)や負値を
+    黙って切り詰めない** ―― 先に露光・トーンマップ(:mod:`render_tonemap`)で収めるか、
+    色域外を切り詰めると決めたなら呼び出し側で ``np.clip`` してから渡す
+    (:func:`lab_to_rgb` は色域外の切り詰めを約束しているので、内部でそうしている)。
+
+    ★2026-11-05(敵対的検証 第 2 巡 K6): 以前は範囲外を黙って ``[0, 1]`` に切り詰めて
+    いた(``[1.5, -0.2, 0.5]`` → ``[1, 0, 0.735]``)。委譲先も対の関数も拒否するのに
+    ここだけ通していた。repo 内でこの入口に HDR を渡す呼び出しは ``lab_to_rgb`` だけ
+    (HDR を扱う例は ``gfx2d`` 側を露光で収めてから呼んでいる)。
     """
-    return _elementwise_transfer("linear_to_srgb",
-                                 np.clip(np.asarray(lin, dtype=np.float64), 0.0, 1.0))
+    x = np.asarray(lin, dtype=np.float64)
+    if x.size and not np.all(np.isfinite(x)):
+        raise MetricContractError("linear RGB must be finite (NaN/Inf has no sRGB encoding)")
+    if x.size and (np.min(x) < -1e-6 or np.max(x) > 1.0 + 1e-6):
+        raise MetricContractError(
+            f"linear RGB values must lie in [0, 1], got [{float(np.min(x)):.6g}, {float(np.max(x)):.6g}]; "
+            "tone-map or expose HDR values first, or np.clip explicitly if out-of-gamut "
+            "clipping is what you want"
+        )
+    return _elementwise_transfer("linear_to_srgb", np.clip(x, 0.0, 1.0))
 
 
 def _elementwise_transfer(fname, x):
@@ -280,7 +333,8 @@ def rgb_to_xyz(rgb):
     白 ``(1, 1, 1)`` は ``(0.9505, 1.0, 1.0890)`` に写る(Y を 1 に正規化した尺度)。
 
     - 入力: 最後の軸が 3 なら形は任意(``(3,)`` の 1 色、``(N, 3)`` の色表、
-      ``(H, W, 3)`` の画像)。整数 dtype(uint8/uint16 など)は dtype の最大値で割る。
+      ``(H, W, 3)`` の画像)。整数 dtype(uint8 / uint16 / uint32 / int8 / int16)は dtype の
+      最大値で割る(int32 / int64 / uint64 は値が ``[0, 1]`` のときだけ float として通る)。
       float は ``[0, 1]`` に収まっていなければ ``MetricContractError``(``ValueError``
       の部分型)。ガンマを外した線形値を渡すと二重にガンマを外すので注意。
     - 返り値: 入力と同じ形の float64。
@@ -385,7 +439,9 @@ def lab_to_rgb(lab, white=D65_WHITE):
     delta = 6.0 / 29.0
     finv = lambda f: np.where(f > delta, f ** 3, 3.0 * delta ** 2 * (f - 4.0 / 29.0))
     xyz = np.stack([finv(fx), finv(fy), finv(fz)], axis=-1) * np.asarray(white, dtype=np.float64)
-    return linear_to_srgb(xyz @ _M_XYZ2RGB.T)
+    # 色域外の切り詰めはこの関数の約束(docstring)なので、ここで明示的に行う
+    # (linear_to_srgb は 2026-11-05 から範囲外を拒否する)。
+    return linear_to_srgb(np.clip(xyz @ _M_XYZ2RGB.T, 0.0, 1.0))
 
 
 # =========================================================================
@@ -663,6 +719,33 @@ def _ssim_channel(fa, fb, dr, win_size, sigma, K1, K2, crop_border):
     return smap
 
 
+#: SSIM で float の幅 1.0 を推定してよい、実際の値の幅(max − min)の下限。
+_SSIM_MIN_SPAN_FOR_UNIT_RANGE = 0.25
+
+
+def _ssim_span_guard(a, b, data_range):
+    """SSIM で float の幅を自動推定(1.0)するのは、値の幅が 1/4 以上のときだけ許す。
+
+    SSIM の安定化定数 ``C1 = (K1 dr)^2``・``C2 = (K2 dr)^2`` は ``dr`` に比例するので、値の幅
+    0.05 の画像(CT の減弱係数 0〜0.05 /mm など)を 1.0 とみなすと定数が実際の分散を覆い、
+    SSIM が水増しされる: cameraman を 0.05 倍して雑音を足すと、正しい dr=0.05 で 0.515 の
+    ところ自動 1.0 で 0.993(雑音 6 倍では 0.081 → 0.842)。2026-11-09 まで例外なしで返していた。
+    PSNR は ``dr`` の取り違えが dB のずれになるだけで順位は変わらないので、ここ(SSIM)だけで止める。
+    形・窓の検査のあとに呼ぶ(小さすぎる画像は従来どおり窓の文言で止める)。"""
+    if data_range is None:
+        aa, bb = np.asarray(a), np.asarray(b)
+        if np.issubdtype(aa.dtype, np.floating) and aa.size and bb.size:
+            span = max(float(np.max(aa)), float(np.max(bb))) - min(float(np.min(aa)), float(np.min(bb)))
+            if span < _SSIM_MIN_SPAN_FOR_UNIT_RANGE:
+                raise MetricContractError(
+                    f"float images span only {span:.4g} (< {_SSIM_MIN_SPAN_FOR_UNIT_RANGE}) of the "
+                    "assumed [0, 1] range; SSIM's constants scale with data_range, so guessing 1.0 "
+                    "inflates it (values 0..0.05: 0.52 -> 0.99). Pass data_range= explicitly "
+                    "(the range the quantity can take, e.g. 1.0 for a dark [0, 1] photo, or the "
+                    "attenuation range for CT)"
+                )
+
+
 def _prep_ssim(a, b, data_range, win_size, sigma, channel_axis):
     fa, fb = _as_float_pair(a, b)
     dr = data_range_of(a, b, data_range=data_range)
@@ -682,6 +765,7 @@ def _prep_ssim(a, b, data_range, win_size, sigma, channel_axis):
         raise MetricContractError(
             f"each spatial axis must be at least win_size={win_size}, got {spatial}"
         )
+    _ssim_span_guard(a, b, data_range)
     return planes, dr, spatial
 
 
@@ -697,8 +781,14 @@ def ssim_map(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03,
     ``C1 = (K1 dr)^2``、``C2 = (K2 dr)^2``、``dr`` は ``data_range``。分散は母分散
     (``n/(n-1)`` 補正なし)。この平均が ``ssim``。
 
-    - ``data_range``: 整数 dtype は自動、float は ``[0, 1]`` のときだけ 1.0 と推定し、
-      それ以外は明示必須(``data_range_of`` の契約、外れると ``MetricContractError``)。
+    - ``data_range``: 整数 dtype は自動、float は ``[0, 1]`` に収まり**かつ値の幅(max − min)が
+      0.25 以上**のときだけ 1.0 と推定し、それ以外は明示必須(外れると ``MetricContractError``)。
+      幅の条件は 2026-11-09 から: 値の幅 0.05 の float を 1.0 とみなすと SSIM が 0.52 → 0.99 に
+      水増しされていた(定数 C1, C2 が dr に比例するため)。暗い [0, 1] の写真なら
+      ``data_range=1.0``、CT の減弱係数なら取りうる幅を渡す。
+      ★この門は 2 枚を合わせた値の幅しか見ないので、**熱い画素 1 つで抜ける**: 値域 0〜0.05 の
+      画像に 0.3 の画素が 1 つあるだけで推定は 1.0 に戻り、SSIM 0.993 を返す(正しい dr=0.05 では
+      0.871)。物理量(減弱係数・反射率など)の画像では門に頼らず、必ず ``data_range`` を渡す。
     - ``win_size``: 3 以上の奇数。各空間軸はこれ以上の長さが必要。
     - ``crop_border=True``(既定)は窓半径 ``(win_size-1)//2`` ぶんの縁を落とすので、
       返り値は ``(H - 2p, W - 2p)``。落とした後に何も残らない小画像は例外。
@@ -780,6 +870,7 @@ def ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03,
             f"{need} px, got {fa.shape}; use fewer scales (weights=) or a bigger image "
             "(silently dropping a scale would produce a number that is not comparable)"
         )
+    _ssim_span_guard(a, b, data_range)
 
     C1 = (K1 * dr) ** 2
     C2 = (K2 * dr) ** 2

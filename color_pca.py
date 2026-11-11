@@ -68,13 +68,24 @@ def apply_color_trans_lut(image_rgb, lut):
     r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
     kind = lut["kind"]
     if kind == "rgb_to_hsv":
-        mx = rgb.max(-1); mn = rgb.min(-1); df = mx - mn + 1e-12
+        # ★2026-11-05(敵対的検証 第 2 巡 K5): 無彩色(mx == r == g == b)で 3 つの分岐が
+        # 全部真になり、最後の b の分岐 (r-g)/df + 4 = 4 が勝って H = 2/3 を返していた
+        # (skimage / colorsys は 0)。また df = mx-mn+1e-12 の絶対床が小さい値の H/S を
+        # 歪めていた(RGB 2e-13 の H 0.007 / S 0.125、真値 0.056 / 0.75)。
+        # 退化は d == 0 の厳密な判定にし、分岐は r → g → b の優先で互いに排他にする
+        # (driveworld._rgb_to_hsv と同じ。2 チャンネルが同率最大でも式は同じ値になる)。
+        mx = rgb.max(-1); mn = rgb.min(-1); d = mx - mn
+        nz = d > 0
+        safe = np.where(nz, d, 1.0)
         h = np.zeros_like(mx)
-        idx = mx == r; h[idx] = ((g - b) / df)[idx] % 6
-        idx = mx == g; h[idx] = ((b - r) / df)[idx] + 2
-        idx = mx == b; h[idx] = ((r - g) / df)[idx] + 4
+        ir = nz & (mx == r)
+        ig = nz & (mx == g) & ~ir
+        ib = nz & (mx == b) & ~ir & ~ig
+        h[ir] = ((g - b) / safe)[ir] % 6
+        h[ig] = ((b - r) / safe)[ig] + 2
+        h[ib] = ((r - g) / safe)[ib] + 4
         h = h / 6.0
-        s = np.where(mx > 0, (mx - mn) / (mx + 1e-12), 0)
+        s = np.where(mx > 0, d / np.where(mx > 0, mx, 1.0), 0.0)
         return np.stack([h, s, mx], axis=-1)
     if kind == "rgb_to_yuv":
         y = 0.299 * r + 0.587 * g + 0.114 * b

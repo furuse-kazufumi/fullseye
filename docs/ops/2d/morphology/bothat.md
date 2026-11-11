@@ -6,10 +6,10 @@ in: image
 out: image
 halcon: gray_bothat
 gpu: あり(gray_bothat)
-examples: [example_scratch_width, gallery2d_morphology, poc_metal_grain_size]
+examples: [example_scratch_width, gallery2d_morphology, poc_ai_built_inspection_scored, poc_metal_grain_size]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # bothat — 2D `morphology` op
@@ -69,6 +69,7 @@ bothat 0.35 0.50
 
 - [example_scratch_width](../../../../examples/example_scratch_width.py) — `py -3.11 examples/example_scratch_width.py`
 - [gallery2d_morphology](../../../../examples/gallery2d_morphology.py) — `py -3.11 examples/gallery2d_morphology.py`
+- [poc_ai_built_inspection_scored](../../../../examples/poc_ai_built_inspection_scored.py) — `py -3.11 examples/poc_ai_built_inspection_scored.py`
 - [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

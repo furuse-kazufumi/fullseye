@@ -1,34 +1,33 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南仅有日文版(它是人写的散文,这里不做机械替换)。</p>
-<p>&lt;!-- fullseye guide: 機械視覚の周辺知識。op ではなく、op に渡す値の出どころを示す教材。関連 op: interface_budget --&gt;</p>
-<h2 style="color:#f5a524;margin:0 0 4px 0">线缆(规格、速度、供电、机器人线缆)</h2>
-<p>インターフェースの違いは <code style="color:#22d3bf">frame_grabbers.md</code> にある。こちらは<b>ケーブルそのもの</b>で、現場で構成が決まる理由の多くがここにある（距離・給電・可動部）。量は少ない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. 規格ごとのケーブル</h3>
-<p>| 規格 | ケーブル / コネクタ | 実用長（標準グレード） | 給電 |</p>
+<p>&lt;!-- fullseye guide: 机器视觉的周边知识。不是 op，而是说明传给 op 的值从何而来的教材。相关 op: interface_budget --&gt;</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">线缆（规格、速度、供电、机器人线缆）</h2>
+<p>接口之间的差异见 <code style="color:#22d3bf">frame_grabbers.md</code>。本文讲的是<b>线缆本身</b>，现场之所以决定采用某种构成，很多原因都在这里（距离、供电、运动部件）。篇幅不长。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. 各规格的线缆</h3>
+<p>| 规格 | 线缆 / 连接器 | 实用长度（标准等级） | 供电 |</p>
 <p>| --- | --- | --- | --- |</p>
-<p>| <b>Camera Link</b> | MDR-26 / SDR-26（太い・重い） | Base で 10 m 前後。<b>クロックを上げるほど短くなる</b> | <b>PoCL</b> 約 4 W。専用ケーブルが要る |</p>
-<p>| <b>Camera Link HS</b> | CX4 / SFP+ / 光ファイバ | 銅で数十 m、光で数百 m〜 | 無し（別電源） |</p>
-<p>| <b>CoaXPress</b> | 75 Ω 同軸（BNC / DIN 1.0-2.3 / Micro-BNC）1 本〜4 本 | CXP-12 で 40 m 前後、速度を落とせば伸びる | <b>PoCXP</b> 24 V・約 13 W。<b>同軸 1 本に電源・制御・データが全部乗る</b> |</p>
-<p>| <b>GigE Vision</b> | Cat5e/6/6a（RJ45、産業用は M12 X-coded） | <b>100 m</b>（規格上限） | <b>PoE</b> 802.3af 15.4 W / 802.3at 30 W |</p>
-<p>| <b>10GigE</b> | Cat6a（100 m）または SFP+ DAC / 光 | 同上 | PoE++ 対応機は限られる |</p>
-<p>| <b>USB3 Vision</b> | micro-B / Type-C | <b>3〜5 m</b>（パッシブ）。延ばすならアクティブ光ケーブル | バス給電 4.5 W（5 V・900 mA） |</p>
-<p>| <b>Opt-C:Link</b>（アバールデータ） | 光ファイバ（コア 50 / 62.5 µm、クラッド 125 µm） | <b>数百 m</b> | 光なので<b>給電できない</b>（カメラ側に別電源が要る） |</p>
-<p><b>構成が距離で決まる例</b>: 装置が大きい・電気ノイズが多い（溶接、サーボドライブの近く）現場では、帯域より先に距離とノイズ耐性で規格が決まる。Camera Link は 10 m 級で頭打ち、GigE は 100 m、光（CLHS / Opt-C:Link）は数百 m。ただし光は給電できないので、カメラ側の電源配線が別途要る ―― 「ケーブル 1 本で済む」のは PoCXP か PoE のとき。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 給電の考え方</h3>
-<p style="margin:2px 0 2px 12px">• <b>PoCXP / PoE / PoCL / USB バス給電</b>はどれも「ケーブル 1 本で済ませる」ための仕組み。配線が減るぶん可動部の断線リスクも減る。</p>
-<p style="margin:2px 0 2px 12px">• ただし<b>電力に上限がある</b>（PoCL 4 W &lt; USB 4.5 W &lt; PoCXP 13 W &lt; PoE 15.4/30 W）。冷却機構つきカメラ（Vieworks VP のペルチェ冷却など）や高速機は上限を超えるので、<b>別電源が前提</b>になる。</p>
-<p style="margin:2px 0 2px 12px">• PoE はスイッチ側の電力バジェットも効く。カメラ 8 台を 1 台のスイッチに載せると、ポートごとの上限とスイッチ全体の上限の両方に当たる。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. ロボットケーブル（可動部）</h3>
-<p>固定配線と可動配線はまったく別物で、<b>普通のケーブルを可動部に使うと必ず断線する</b>。</p>
-<p>| 種別 | 用途 | 効く仕様 |</p>
+<p>| <b>Camera Link</b> | MDR-26 / SDR-26（粗、重） | Base 约 10 m。<b>时钟越高越短</b> | <b>PoCL</b> 约 4 W。需要专用线缆 |</p>
+<p>| <b>Camera Link HS</b> | CX4 / SFP+ / 光纤 | 铜缆几十 m，光纤几百 m 以上 | 无（另接电源） |</p>
+<p>| <b>CoaXPress</b> | 75 Ω 同轴（BNC / DIN 1.0-2.3 / Micro-BNC）1 根至 4 根 | CXP-12 约 40 m，降低速度可以延长 | <b>PoCXP</b> 24 V、约 13 W。<b>电源、控制、数据全部走 1 根同轴线</b> |</p>
+<p>| <b>GigE Vision</b> | Cat5e/6/6a（RJ45，工业用为 M12 X-coded） | <b>100 m</b>（规格上限） | <b>PoE</b> 802.3af 15.4 W / 802.3at 30 W |</p>
+<p>| <b>10GigE</b> | Cat6a（100 m）或 SFP+ DAC / 光纤 | 同上 | 支持 PoE++ 的设备有限 |</p>
+<p>| <b>USB3 Vision</b> | micro-B / Type-C | <b>3〜5 m</b>（无源）。要延长就用有源光缆 | 总线供电 4.5 W（5 V、900 mA） |</p>
+<p>| <b>Opt-C:Link</b>（AVAL DATA） | 光纤（纤芯 50 / 62.5 µm，包层 125 µm） | <b>几百 m</b> | 因为是光纤，<b>无法供电</b>（相机一侧需要另接电源） |</p>
+<p><b>由距离决定构成的例子</b>：在设备大、电气噪声多（焊接、伺服驱动器附近）的现场，先于带宽、由距离和抗噪声能力决定规格。Camera Link 到 10 m 级就到顶了，GigE 是 100 m，光纤（CLHS / Opt-C:Link）是几百 m。但光纤无法供电，所以还需要另外给相机一侧布电源线 —— “1 根线缆就能解决”的是 PoCXP 或 PoE 的情况。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 供电的思路</h3>
+<p style="margin:2px 0 2px 12px">• <b>PoCXP / PoE / PoCL / USB 总线供电</b>都是为了“用 1 根线缆解决”的机制。布线减少，运动部件断线的风险也随之降低。</p>
+<p style="margin:2px 0 2px 12px">• 但<b>电力有上限</b>（PoCL 4 W &lt; USB 4.5 W &lt; PoCXP 13 W &lt; PoE 15.4/30 W）。带冷却机构的相机（如 Vieworks VP 的帕尔贴冷却）或高速相机会超过上限，<b>以另接电源为前提</b>。</p>
+<p style="margin:2px 0 2px 12px">• PoE 还要考虑交换机一侧的电力预算。把 8 台相机接到 1 台交换机上，会同时碰到每个端口的上限和整台交换机的上限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 机器人线缆（运动部件）</h3>
+<p>固定布线与活动布线完全是两回事，<b>把普通线缆用在运动部件上必然会断线</b>。</p>
+<p>| 类别 | 用途 | 起作用的规格 |</p>
 <p>| --- | --- | --- |</p>
-<p>| <b>標準（固定）</b> | 盤内・据置 | 曲げ半径の指定は緩い |</p>
-<p>| <b>高屈曲（ケーブルベア用）</b> | 直線往復（ガントリ、XY ステージ） | <b>最小曲げ半径</b>（外径の 7.5〜10 倍が目安）、<b>屈曲寿命</b>（1000 万回級で規定される）、ジャケットは PUR が多い |</p>
-<p>| <b>ロボットケーブル（耐捻回）</b> | 多関節ロボットのアーム | 屈曲に加え<b>ねじり</b>に耐える構造。撚りピッチと編組シールドの設計が違う |</p>
-<p style="margin:2px 0 2px 12px">• <b>シールドが先に壊れる</b>ことが多い。箔シールドは屈曲で裂けやすく、可動部では編組（ブレード）が要る。シールドが劣化すると、断線ではなく<b>ノイズによる伝送エラー</b>として出るので、症状が「たまに画像が乱れる」になり原因が分かりにくい。</p>
-<p style="margin:2px 0 2px 12px">• 曲げ半径を守れないと寿命が桁で落ちる。ケーブルベアの半径はケーブル外径から決まるので、<b>太いケーブル（Camera Link）ほど可動部に不利</b>。同軸 1 本の CoaXPress や Cat6a の GigE のほうが取り回しやすい。</p>
-<p style="margin:2px 0 2px 12px">• 光（Opt-C:Link / CLHS）は細く軽くノイズに強いが、<b>曲げ半径が厳しい</b>（コアが折れる）。可動部に使うなら耐屈曲仕様のファイバが要る。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 仮想化への含意（少ないが確かにある）</h3>
-<p style="margin:2px 0 2px 12px">1. <b>フレームレート / ラインレートの実効値</b>はケーブル長で下がりうる（CXP は距離で速度をネゴシエートする）。<code style="color:#22d3bf">interface_budget</code> は規格上の帯域を返すので、長距離構成では 1 段落とした値で見積もる。</p>
-<p style="margin:2px 0 2px 12px">2. <b>ノイズ由来の伝送エラー</b>は、画像に<b>ランダムなライン欠け・ビット化け</b>として出る。合成データにこの故障モードを入れておくと、現場で「たまに壊れる画像」に強いモデルになる（現状 <code style="color:#22d3bf">optscene</code> には未実装）。</p>
-<p style="margin:2px 0 2px 12px">3. <b>給電の上限</b>が冷却の可否を決め、冷却の可否が暗電流を決める（<code style="color:#22d3bf">sensor_spec(dark_e_per_s=)</code>）。ケーブルの話が最終的にセンサの雑音まで繋がる。</p>
+<p>| <b>标准（固定）</b> | 柜内、固定安装 | 弯曲半径的规定较宽松 |</p>
+<p>| <b>高柔性（拖链用）</b> | 直线往复（龙门、XY 平台） | <b>最小弯曲半径</b>（以外径的 7.5〜10 倍为参考）、<b>弯曲寿命</b>（以 1000 万次级规定）、护套多为 PUR |</p>
+<p>| <b>机器人线缆（耐扭转）</b> | 多关节机器人的手臂 | 除弯曲外还能耐受<b>扭转</b>的结构。绞距与编织屏蔽的设计不同 |</p>
+<p style="margin:2px 0 2px 12px">• <b>往往是屏蔽层先坏。</b> 箔屏蔽在弯曲时容易撕裂，运动部件上需要编织屏蔽。屏蔽层劣化后，表现出来的不是断线，而是<b>噪声引起的传输错误</b>，症状变成“图像偶尔会乱”，原因难以查明。</p>
+<p style="margin:2px 0 2px 12px">• 不能遵守弯曲半径的话，寿命会按数量级下降。拖链的半径由线缆外径决定，所以 <b>线缆越粗（Camera Link），在运动部件上越不利</b>。1 根同轴线的 CoaXPress 或 Cat6a 的 GigE 更便于布线。</p>
+<p style="margin:2px 0 2px 12px">• 光纤（Opt-C:Link / CLHS）细、轻、抗噪声，但<b>弯曲半径要求严格</b>（纤芯会折断）。用于运动部件时需要耐弯曲规格的光纤。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 对虚拟化的启示（不多，但确实存在）</h3>
+<p style="margin:2px 0 2px 12px">1. <b>帧率 / 行率的有效值</b>可能随线缆长度下降（CXP 会根据距离协商速度）。<code style="color:#22d3bf">interface_budget</code> 返回的是规格上的带宽，所以在长距离构成中要按降 1 档的值来估算。</p>
+<p style="margin:2px 0 2px 12px">2. <b>噪声引起的传输错误</b>在图像中表现为<b>随机的行缺失、比特错误</b>。在合成数据中加入这种故障模式，就能得到对现场“偶尔会坏的图像”更鲁棒的模型（目前 <code style="color:#22d3bf">optscene</code> 尚未实现）。</p>
+<p style="margin:2px 0 2px 12px">3. <b>供电的上限</b>决定能否冷却，能否冷却决定暗电流（<code style="color:#22d3bf">sensor_spec(dark_e_per_s=)</code>）。线缆的话题最终一直联系到传感器的噪声。</p>

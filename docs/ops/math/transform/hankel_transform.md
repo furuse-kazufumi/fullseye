@@ -8,7 +8,7 @@ gpu: なし
 examples: [perf_hankel_plan_and_piv_stream, transforms_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # hankel_transform — MATH `transform` op

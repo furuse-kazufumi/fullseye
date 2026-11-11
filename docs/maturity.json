@@ -132,14 +132,20 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": true,
+     "real_datasets_read": [
+      "skimage.data:coins"
+     ]
     },
     {
      "id": "poc_dense_bubble_count",
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     }
    ]
   },
@@ -277,12 +283,54 @@
    ]
   },
   {
+   "id": "convert-between-representations",
+   "title": "画像を点・点群・体積・メッシュ・グラフへ渡して戻す",
+   "title_en": "Carry an image through points, point clouds, volumes, meshes and graphs — and back",
+   "category": "組み立てる",
+   "note": "docs/capabilities/convert-between-representations.md",
+   "status": "verified-synthetic",
+   "ops_total": 11,
+   "ops_named_in_tests": 11,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_bga_ball_type_roundtrip",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "representation_roundtrip",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "representation_conversion",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "type_connectivity_tour",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "crop-weed-cover-grade",
    "title": "圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)",
    "title_en": "Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)",
    "category": "見つける",
    "note": "docs/capabilities/crop-weed-cover-grade.md",
-   "status": "validated-public-real-data",
+   "status": "verified-synthetic",
    "ops_total": 5,
    "ops_named_in_tests": 5,
    "ops_not_named_in_tests": [],
@@ -293,7 +341,9 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     }
    ]
   },
@@ -521,7 +571,11 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": true,
+     "real_datasets_read": [
+      "ngs-geodetic-benchmarks"
+     ]
     },
     {
      "id": "dem_geodesy_tour",
@@ -559,7 +613,7 @@
    "title_en": "Flag what differs from aligned good samples (a per-pixel variation model with a declared false-alarm rate)",
    "category": "見つける",
    "note": "docs/capabilities/good-sample-variation-model.md",
-   "status": "validated-public-real-data",
+   "status": "verified-synthetic",
    "ops_total": 10,
    "ops_named_in_tests": 10,
    "ops_not_named_in_tests": [],
@@ -570,7 +624,9 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     },
     {
      "id": "anomaly_eval_metrics",
@@ -587,7 +643,7 @@
    "title_en": "Grating interferometry (Talbot / Talbot-Lau): transmission, differential phase and dark field from one phase-stepping scan",
    "category": "測る",
    "note": "docs/capabilities/grating-interferometry.md",
-   "status": "validated-public-real-data",
+   "status": "verified-synthetic",
    "ops_total": 8,
    "ops_named_in_tests": 8,
    "ops_not_named_in_tests": [],
@@ -598,7 +654,9 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     }
    ]
   },
@@ -629,7 +687,7 @@
    "title_en": "Cavity optics, the quantum-noise budget and a known waveform in coloured noise, in closed form (the gravitational-wave detector's equations for inspection interferometers, vibrometers and AE)",
    "category": "波と信号",
    "note": "docs/capabilities/gw-interferometer-quantum-noise-and-matched-filter.md",
-   "status": "validated-public-real-data",
+   "status": "verified-synthetic",
    "ops_total": 12,
    "ops_named_in_tests": 12,
    "ops_not_named_in_tests": [],
@@ -640,7 +698,9 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     }
    ]
   },
@@ -684,7 +744,11 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": true,
+     "real_datasets_read": [
+      "liverpool-oct-paint-sdoct"
+     ]
     }
    ]
   },
@@ -719,7 +783,11 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": true,
+     "real_datasets_read": [
+      "skimage.data:coins"
+     ]
     }
    ]
   },
@@ -1001,7 +1069,12 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": true,
+     "real_datasets_read": [
+      "refractiveindex-info-green2008-si",
+      "refractiveindex-info-metals-nk"
+     ]
     }
    ]
   },
@@ -1053,7 +1126,7 @@
    "title_en": "Sorting look-alike foreign matter with NIR hyperspectral imaging (material absorption bands, scattering-layer reflectance, InGaAs band electrons)",
    "category": "光と色",
    "note": "docs/capabilities/nir-hyperspectral-sorting.md",
-   "status": "validated-public-real-data",
+   "status": "verified-synthetic",
    "ops_total": 8,
    "ops_named_in_tests": 6,
    "ops_not_named_in_tests": [
@@ -1067,7 +1140,9 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     }
    ]
   },
@@ -1147,7 +1222,11 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": true,
+     "real_datasets_read": [
+      "hokusai-great-wave-met"
+     ]
     }
    ]
   },
@@ -1206,7 +1285,7 @@
    "title_en": "Flag patches that leave what good samples look like (classical features, a normal distribution per position or a memory bank, and a recall-guaranteeing operating point)",
    "category": "見つける",
    "note": "docs/capabilities/patch-feature-anomaly-detection.md",
-   "status": "validated-public-real-data",
+   "status": "verified-synthetic",
    "ops_total": 12,
    "ops_named_in_tests": 12,
    "ops_not_named_in_tests": [],
@@ -1217,7 +1296,9 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     },
     {
      "id": "anomaly_eval_metrics",
@@ -1376,7 +1457,7 @@
    "title_en": "Why a thin groove disappears in a PL image — the carrier-diffusion PSF and the kind of defect decide the visibility (PL/EL inspection of wafers and solar cells)",
    "category": "見つける",
    "note": "docs/capabilities/pl-carrier-diffusion-visibility.md",
-   "status": "validated-public-real-data",
+   "status": "verified-synthetic",
    "ops_total": 4,
    "ops_named_in_tests": 4,
    "ops_not_named_in_tests": [],
@@ -1387,7 +1468,9 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     }
    ]
   },
@@ -1453,7 +1536,7 @@
    "title_en": "Draw a point cloud as a colour picture",
    "category": "見せる",
    "note": "docs/capabilities/point-cloud-to-picture.md",
-   "status": "validated-public-real-data",
+   "status": "verified-synthetic",
    "ops_total": 3,
    "ops_named_in_tests": 3,
    "ops_not_named_in_tests": [],
@@ -1471,14 +1554,18 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     },
     {
      "id": "poc_real_tless_6dof",
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     }
    ]
   },
@@ -1687,7 +1774,16 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": true,
+     "real_datasets_read": [
+      "skimage.data:astronaut",
+      "skimage.data:camera",
+      "skimage.data:chelsea",
+      "skimage.data:clock",
+      "skimage.data:coffee",
+      "skimage.data:gravel"
+     ]
     }
    ]
   },
@@ -1741,6 +1837,38 @@
    ]
   },
   {
+   "id": "scientific-data-files",
+   "title": "科学データのファイルを読む(FITS・NIfTI・MRC・OME-TIFF・E57)",
+   "title_en": "Reading scientific data files (FITS, NIfTI, MRC, OME-TIFF, E57)",
+   "category": "組み立てる",
+   "note": "docs/capabilities/scientific-data-files.md",
+   "status": "validated-public-real-data",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_real_file_formats",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d",
+     "real_data_read_in_gate": true,
+     "real_datasets_read": [
+      "fileio-real:ds000117_sub-01_ses-mri_acq-func_magnitude1.json",
+      "fileio-real:ds000117_sub-01_ses-mri_acq-func_magnitude1.nii.gz",
+      "fileio-real:emd_3197.map.gz",
+      "fileio-real:emd_3197_published.json",
+      "fileio-real:sdss_dr16_ngc2420_photoprimary.csv",
+      "fileio-real:sdss_r_ngc2420_skyview_clip.fits",
+      "fileio-real:tubhiswt_C0.ome.tif",
+      "fileio-real:tubhiswt_C1.ome.tif"
+     ]
+    }
+   ]
+  },
+  {
    "id": "scratch-detection-and-width",
    "title": "微細スクラッチを見つけて、幅を測る",
    "title_en": "Detect fine scratches and measure their width",
@@ -1781,7 +1909,7 @@
    "title_en": "Measure how much the bright SEM edge inflates a dimension, with ground truth",
    "category": "測る",
    "note": "docs/capabilities/sem-edge-effect-metrology.md",
-   "status": "validated-public-real-data",
+   "status": "verified-synthetic",
    "ops_total": 6,
    "ops_named_in_tests": 6,
    "ops_not_named_in_tests": [],
@@ -1792,7 +1920,9 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     }
    ]
   },
@@ -1921,7 +2051,7 @@
    "title_en": "Locate a known 3-D part in a point cloud with six degrees of freedom",
    "category": "見つける",
    "note": "docs/capabilities/six-dof-surface-pose.md",
-   "status": "validated-public-real-data",
+   "status": "verified-synthetic",
    "ops_total": 7,
    "ops_named_in_tests": 7,
    "ops_not_named_in_tests": [],
@@ -1939,7 +2069,9 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     }
    ]
   },
@@ -2082,7 +2214,7 @@
    "title_en": "A virtual transmission electron microscope (electron wavelength, CTF, phase-contrast images, defocus from Thon rings, correction)",
    "category": "測る",
    "note": "docs/capabilities/tem-phase-contrast-and-ctf.md",
-   "status": "validated-public-real-data",
+   "status": "verified-synthetic",
    "ops_total": 11,
    "ops_named_in_tests": 11,
    "ops_not_named_in_tests": [],
@@ -2093,7 +2225,9 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": false,
+     "real_datasets_read": []
     }
    ]
   },
@@ -2219,7 +2353,13 @@
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
-     "registry": "examples2d"
+     "registry": "examples2d",
+     "real_data_read_in_gate": true,
+     "real_datasets_read": [
+      "sanchez-arriaga2023-sio2-standards",
+      "schwarz2024-sio2-micrograph",
+      "schwarz2024-sio2-reflectance"
+     ]
     }
    ]
   },
@@ -2507,10 +2647,33 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 471,
-  "run_by_the_poc_gate": 297,
-  "run_by_the_example_gate": 174,
-  "not_run_by_any_gate": 0,
+  "examples2d_total": 486,
+  "run_by_the_poc_gate": 309,
+  "run_by_the_example_gate": 177,
+  "scripts_on_disk": 494,
+  "excluded_from_the_registry": 8,
+  "excluded_but_run_by_a_named_test": {
+   "lensfile_tolerance_worst_mtf": [
+    "tests/test_lenstol_composability.py"
+   ],
+   "optimized_lens_tolerance_sensitivity": [
+    "tests/test_lenstol_composability.py"
+   ],
+   "tof_camera_physical": [
+    "tests/test_tof_camera_physical.py",
+    "tests/test_tof_realdata.py"
+   ],
+   "tof_realdata": [
+    "tests/test_tof_realdata.py"
+   ]
+  },
+  "not_run_by_any_gate": 4,
+  "not_run_by_any_gate_reasons": {
+   "g1_policy_staged": "needs a trained G1 walking checkpoint (REF) + MuJoCo; no checkpoint ships with the repo, so it cannot self-run",
+   "gsplat_trained_product": "needs a Python with CUDA torch (FULLSEYE_TORCH_PYTHON) to train the 3DGS on the GPU; without one it prints SKIP, so it cannot self-run as a gallery example",
+   "hand_tracking_demo": "needs a photo/webcam argument plus the optional mediapipe extra and a downloaded hand_landmarker.task model",
+   "perception_staged": "needs FULLSEYE_G1_QPOS / FULLSEYE_MENAGERIE_XML pointing at external MuJoCo Menagerie assets (not shipped)"
+  },
   "gates": [
    "tests/test_poc_scripts_run.py",
    "tests/test_example_scripts_run.py"

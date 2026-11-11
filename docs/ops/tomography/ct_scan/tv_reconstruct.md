@@ -5,10 +5,10 @@ category: ct_scan
 in: projstack × ctgeometry
 out: voxel
 gpu: なし
-examples: [ct_scan_modes]
+examples: [ct_scan_modes, poc_real_walnut_cbct]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # tv_reconstruct — TOMOGRAPHY `ct_scan` op
@@ -37,7 +37,9 @@ behaves alike across grid sizes.
 :param initial: starting volume; ``None`` gives zeros.
 :param nonnegative: enforce ``x >= 0``.
 :param device: ``"auto"``, ``"cpu"`` or ``"cuda"``.
-:param on_iter: optional ``on_iter(iteration, volume)``.
+:param on_iter: optional ``on_iter(iteration, volume)``; returning a boolean
+    ``True`` (``bool`` or ``numpy.bool_``) stops after that iteration, any other
+    return value is ignored (same rule as :func:`sirt_reconstruct`).
 :returns: ``(Z, Y, X)`` float volume.
 :raises ValueError: on a shape that disagrees with the geometry or a negative
     weight. Empty input (``projections`` with 0 elements) raises ``ValueError``.
@@ -51,6 +53,7 @@ behaves alike across grid sizes.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [ct_scan_modes](../../../../examples/ct_scan_modes.py) — `py -3.11 examples/ct_scan_modes.py`
+- [poc_real_walnut_cbct](../../../../examples/poc_real_walnut_cbct.py) — `py -3.11 examples/poc_real_walnut_cbct.py`
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)
 

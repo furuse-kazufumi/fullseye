@@ -9,7 +9,7 @@ gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # gen_radial_distortion_map — CALIB `plane` op
@@ -22,6 +22,15 @@ version: 0.9.0  # fullseye lib version this note was generated for
 ## 使い方
 
 半径歪みの逆マップ(row_map, col_map)を生成(gen_radial_distortion_map)。
+
+出力の画素 (row, col) → 入力の座標。模型は**一次の多項式**: 主点からの画素 ``(x, y)``、
+``r^2 = x^2 + y^2`` に対し ``入力 = 主点 + (x, y) * (1 + kappa r^2)``(``kappa`` の単位は
+1/画素²、``cam_par`` の fx/fy は使わない)。
+★除算模型(``mvimage.distort_division`` / ``undistort_division``、``u = d / (1 + kappa |d|^2)``)
+の厳密な逆ではなく、その一次近似にあたる。同じ ``kappa`` を両方に使うと黙って食い違う:
+640x480・主点 (320, 240) で ``kappa = -5e-7`` なら最大 4.28 px、``-2e-6`` なら最大 46.73 px
+(2026-11-09 実測)。除算模型の厳密な歪み除去には ``mvimage.change_radial_distortion_image``
+(``cam_out`` の ``kappa`` を 0)を使う。
 
 ## 詳しい使い方ガイド
 

@@ -8,7 +8,7 @@
 
 ```powershell
 py -3.11 tools/preflight.py            # 既定(約 5〜10 分)
-py -3.11 tools/preflight.py --full     # 全数テストも(+20 分)
+py -3.11 tools/preflight.py --full     # 全数テストも(12 並列で +1 時間前後)
 ```
 
 **FAIL が 1 つでもあれば出さない。SKIP は「通った」ではない。**

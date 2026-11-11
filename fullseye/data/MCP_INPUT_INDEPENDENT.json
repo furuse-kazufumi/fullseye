@@ -1,0 +1,105 @@
+{
+ "method": "1-input MCP-executable ops (default knobs) run on 7 inputs with different content and the same 128x128 shape (noise / gradient with discs / stripes with a dark square / a large disc / a coarse checkerboard / the blob_count and defect_inspect task images; other sorts via a converter op); listed when all 7 outputs are byte-identical. Ops that could not run here keep their committed entry. Used by fullseye_score_pipeline as a deny list.",
+ "ops": {
+  "banding_map": {
+   "in_sort": "image",
+   "out_sort": "image"
+  },
+  "count_channels": {
+   "in_sort": "color",
+   "out_sort": "feature"
+  },
+  "hx_full_domain": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_gen_bandfilter": {
+   "in_sort": "image",
+   "out_sort": "image"
+  },
+  "hx_gen_bandpass": {
+   "in_sort": "image",
+   "out_sort": "image"
+  },
+  "hx_gen_checker_region": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_gen_circle": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_gen_circle_sector": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_gen_derivative_filter": {
+   "in_sort": "image",
+   "out_sort": "image"
+  },
+  "hx_gen_disc_se": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_gen_ellipse": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_gen_ellipse_sector": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_gen_empty_region": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_gen_grid_region": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_gen_highpass": {
+   "in_sort": "image",
+   "out_sort": "image"
+  },
+  "hx_gen_image_proto": {
+   "in_sort": "image",
+   "out_sort": "image"
+  },
+  "hx_gen_lowpass": {
+   "in_sort": "image",
+   "out_sort": "image"
+  },
+  "hx_gen_rectangle2": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_get_domain": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_rectangle1_domain": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "hx_test_self_intersect": {
+   "in_sort": "contour",
+   "out_sort": "feature"
+  },
+  "sk_slic": {
+   "in_sort": "image",
+   "out_sort": "region"
+  },
+  "tb_num_points_funct_1d": {
+   "in_sort": "signal",
+   "out_sort": "feature"
+  },
+  "tb_zero_crossing_rate": {
+   "in_sort": "signal",
+   "out_sort": "feature"
+  },
+  "tb_zero_crossings_funct_1d": {
+   "in_sort": "signal",
+   "out_sort": "signal"
+  }
+ }
+}

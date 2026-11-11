@@ -5,10 +5,10 @@ category: colorspace
 in: rgb
 out: rgb
 gpu: あり(許可リスト)
-examples: [gfx2d_scene, poc_leaf_disease_area]
+examples: [gfx2d_scene, poc_leaf_disease_area, poc_mixed_case_depalletizing]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # srgb_to_linear — GFX2D `colorspace` op
@@ -42,6 +42,7 @@ Empty input (``img`` with 0 elements) raises ``ValueError``.
 
 - [gfx2d_scene](../../../../examples/gfx2d_scene.py) — `py -3.11 examples/gfx2d_scene.py`
 - [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
+- [poc_mixed_case_depalletizing](../../../../examples/poc_mixed_case_depalletizing.py) — `py -3.11 examples/poc_mixed_case_depalletizing.py`
 
 ## 型が繋がる次の op(`rgb` を入力に取れる)
 

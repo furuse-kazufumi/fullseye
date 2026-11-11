@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>카페 벽 착시. <b>줄눈은 엄밀한 수평선</b>인데 기울어 보인다.</p>
-<p><code style="color:#22d3bf">shift</code>는 1행마다의 체커보드 어긋남(<code style="color:#22d3bf">size</code> 비). 어긋남이 0 또는 0.5이면착시는 사라진다 -- <b>0.25 전후가 가장 강하다</b>는 것이 고전적인 관찰이며, 이 op는어긋남 양을 그대로 바꿀 수 있게 해 두었다(<code style="color:#22d3bf">shift=0.25</code>가 기본값이 아닌 것은, 생성기의 기본값으로 &quot;효과가 최대&quot;라고 주장하고 싶지 않기 때문).</p>
+<p><code style="color:#22d3bf">shift</code>는 1행마다의 체커보드 어긋남(<code style="color:#22d3bf">size</code> 비, 행 <code style="color:#22d3bf">r</code>의 어긋남은 <code style="color:#22d3bf">r * shift * size</code>). 체커보드의 주기는 <code style="color:#22d3bf">2 * size</code>이므로 어긋남이 0(각 행의 타일이 세로로 정렬)과 1.0 (윗행과 흑백이 뒤바뀐 보통의 체커보드)에서는 착시가 사라지고, 주기 2로 반복된다. <b>반 타일 어긋난 0.5 전후가 가장 강하다</b>는 것이 고전적인 관찰(Gregory &amp; Heard 1979)이며, 기본값은 이 고전 배치로 해 두었다. 어긋남 양을 0〜1로 바꿔 확인할 수 있다.</p>
 <p>불변량: 줄눈의 중심 y는 <code style="color:#22d3bf">k * size</code>(k = 1..rows-1)와 <b>정확히</b> 같다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 패밀리 가이드</a></p>

@@ -5,10 +5,10 @@ category: direction
 in: normals
 out: pairs
 gpu: なし
-examples: [poc_tacscalib_sphere_lut, representation_roundtrip, type_connectivity_tour]
+examples: [poc_bga_ball_type_roundtrip, poc_tacscalib_sphere_lut, representation_roundtrip, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # normals_to_angles — REPRCONV `direction` op
@@ -45,6 +45,7 @@ Raises:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_bga_ball_type_roundtrip](../../../../examples/poc_bga_ball_type_roundtrip.py) — `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 - [poc_tacscalib_sphere_lut](../../../../examples/poc_tacscalib_sphere_lut.py) — `py -3.11 examples/poc_tacscalib_sphere_lut.py`
 - [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
 - [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`

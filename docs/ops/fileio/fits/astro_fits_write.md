@@ -8,7 +8,7 @@ gpu: なし
 examples: [fileio_scientific_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # astro_fits_write — FILEIO `fits` op
@@ -23,7 +23,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ``header`` は FITS の基本 WCS キー(``CTYPE*``, ``CRPIX*``, ``CRVAL*``,
 ``CDELT*``, ``PC*_*``, ``CD*_*``, ``CUNIT*`` など)だけを持つ辞書。構造キーは
-配列から作り、uint16/uint32 は標準の BZERO 規約で保存する。呼び出し例:
+配列から作り、int8/uint16/uint32/uint64 は FITS 4.0 の標準の BZERO 規約で保存する。呼び出し例:
 ``payload = astro_fits_write(image, header={"CTYPE1": "RA---TAN"})``。
 
 ## 参考(サンプルデータ・文献)

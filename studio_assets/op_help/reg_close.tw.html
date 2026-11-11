@@ -15,7 +15,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/reg_close.inputs.jpg">reg_close: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>區域（region）的二值閉運算（先膨脹後侵蝕）。相當於 HALCON 的 <code style="color:#22d3bf">closing_circle</code>（Close a region with a circular structuring element.）。</p>
-<p><code style="color:#22d3bf">a</code> 將迭代次數在 <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">_it(a)</code>）之間調整。<code style="color:#22d3bf">b</code> 未使用。填補細小的切口和小孔。由於指定了 <code style="color:#22d3bf">border_value=1</code>，影像邊緣被當作前景處理。</p>
+<p><code style="color:#22d3bf">a</code> 將迭代次數在 <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">_it(a)</code>）之間調整。<code style="color:#22d3bf">b</code> 未使用。填補細小的切口和小孔。</p>
+<p><b>影像邊緣</b>：平面延續到影像之外，外部視為背景（加上值為 0 的留白後做閉運算，再裁切回原尺寸）。closing 是擴張性的（不會削去輸入的前景），也不會在邊緣附近產生新的前景。2026-11-05（對抗性驗證 第 2 輪 P3）之前以 <code style="color:#22d3bf">border_value=1</code> 把影像外部視為前景，邊緣附近的孤立像素會長出角落的楔形（20×20 中 (1,1) 的 1 個像素在 a=1 時變為 10 個像素）。</p>
 <p><b>旋鈕（實測）</b>：<code style="color:#22d3bf">a</code> 以<b>離散檔位</b>生效，切換點在 a ≈ 0.33、0.67、0.99（以步長 0.02 掃描實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

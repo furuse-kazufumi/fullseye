@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # echo_phase_polarity — ACOUSTICS `ultrasonic` op
@@ -33,11 +33,17 @@ A スキャンでは界面のエコーの**期待時刻** ``t_interfaces[interfa
 ★基準は**表面エコー**。表面そのものが Z の下がる界面(水より柔らかい最上層)なら表面
 エコーが反転しているので、Z の上がる深い界面が「反転」と読まれる —— 分類は「表面に対して
 同じ向きか逆向きか」であって、絶対の Z の上下ではない(``tests/test_ultrasound.py`` の門)。
-★``signed_peak``(ゲート内で |RF| が最大のサンプルの、参照エコーに対する相対符号)も返す —— 現場で言う
+★振幅と ``t_peak`` はゲートの**内部の局所極大**(隣の強いエコーの裾がゲートの端で最大に
+なるのを山と読まない)。内部に極大が無ければ ``amplitude`` / ``t_peak`` は NaN、
+``peak_found`` は False、``signed_peak`` は 0。``edge_dominated`` はゲートの端の包絡線が
+山の振幅を超える(隣のエコーの裾がゲートを支配している)か、山が無いとき True ——
+そのとき読んだ山は干渉の小さなさざ波のことがあり、振幅は信用しない
+(:func:`sam_frequency_tradeoff` の ``f_min_time`` より下で起きる)。
+★``signed_peak``(包絡線の山から半周期以内で |RF| が最大のサンプルの、参照エコーに対する相対符号)も返す —— 現場で言う
 「極性」はこれだが、直交のエコー(薄い層の微分形)では帯域と標本化でどちらにも
 転ぶ。``signed_peak_agrees`` が False の行はそれ。
 返り(A スキャン): ``phase`` [rad] ``phase_deg`` ``amplitude`` ``t_peak`` ``polarity``
-(+1/−1/0)``label`` ``signed_peak`` ``signed_peak_agrees``。
+(+1/−1/0)``label`` ``signed_peak`` ``signed_peak_agrees`` ``peak_found`` ``edge_dominated``。
 返り(C スキャン): ``polarity`` の地図と各分類の画素数。
 Raises ValueError: A/C スキャンの印の無い入力、界面の番号が範囲外、tol_deg が (0, 90) の外、
 ゲートの中の標本が 3 未満。

@@ -6,10 +6,10 @@ in: image
 out: region
 halcon: binary_threshold
 gpu: あり(otsu)
-examples: [ct_inspection, degenerate_inputs, example_inner_diameter_mm, find_ops_by_meaning, gallery2d_segmentation, genspark_external_review, line_handshake, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_real_sem_metal_layer, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_vegetation_cover, poc_water_inspection_images, quickstart, segment_and_classify, threshold_family_agreement, typed_results_json]
+examples: [ct_inspection, degenerate_inputs, example_inner_diameter_mm, find_ops_by_meaning, gallery2d_segmentation, genspark_external_review, line_handshake, mcp_task_score, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_real_file_formats, poc_real_sem_metal_layer, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_vegetation_cover, poc_water_inspection_images, quickstart, segment_and_classify, threshold_family_agreement, typed_results_json]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # otsu — 2D `segmentation` op
@@ -37,7 +37,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。
 
-``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。値が ``[0,1]`` に収まっていればその範囲を、はみ出していれば**入力の実際の範囲**を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するビンを全探索して選び、**そのビンの上端**をしきい値として、それ以上の画素を前景とする(ビンの中点で切ると argmax ビンに居る背景画素が前景側に混ざる —— 2026-09-26 に直した。``docs/hardening/otsu-threshold-at-the-bin-midpoint.md``)。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。
+``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。**入力の実際の範囲**(有限な画素の最小〜最大)を 256 ビンのヒストグラムに分け(``[0,1]`` の固定の幅ではない —— 値域の狭い像でも分解能が落ちず、アフィン変換に等変。``bin_threshold`` / ``binary_threshold`` / ``auto_threshold`` も同じ関数を通る)、クラス間分散 ``ω(1-ω)`` を最大化するビンを全探索して選び、**そのビンの上端**をしきい値として、それ以上の画素を前景とする(ビンの中点で切ると argmax ビンに居る背景画素が前景側に混ざる —— 2026-09-26 に直した。``docs/hardening/otsu-threshold-at-the-bin-midpoint.md``)。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。
 
 **判別できない入力の扱い**（2026-09-19 の外部レビュー #7 / #8 で明文化）: 有限の画素が 1 つも無い入力（全 NaN / inf）はしきい値が定義できないので ``ValueError`` を投げる（``fullseye.apply`` の既定の方針では台帳に記録して region の既定値へ落ち、``on_error="raise"`` でそのまま止まる。以前は numpy の RuntimeWarning を出しつつ黙って全 0 を返していた）。空白フレーム（定数画像）は山が 1 つも無いので、値が 0 なら全画素が背景、0 より大きければ**全画素が前景**になる（``docs/op_blank_frame.json`` に測定あり）。定数かどうかは呼ぶ側で ``np.ptp`` 等で先に弾くこと。
 
@@ -70,6 +70,7 @@ otsu 0.50 0.50
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
 - [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 - [line_handshake](../../../../examples/line_handshake.py) — `py -3.11 examples/line_handshake.py`
+- [mcp_task_score](../../../../examples/mcp_task_score.py) — `py -3.11 examples/mcp_task_score.py`
 - [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
 - [poc_colocalization_crosstalk](../../../../examples/poc_colocalization_crosstalk.py) — `py -3.11 examples/poc_colocalization_crosstalk.py`
 - [poc_dimensional_inspection](../../../../examples/poc_dimensional_inspection.py) — `py -3.11 examples/poc_dimensional_inspection.py`
@@ -78,6 +79,7 @@ otsu 0.50 0.50
 - [poc_matrix_code_reading](../../../../examples/poc_matrix_code_reading.py) — `py -3.11 examples/poc_matrix_code_reading.py`
 - [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
 - [poc_real_coin_metrology](../../../../examples/poc_real_coin_metrology.py) — `py -3.11 examples/poc_real_coin_metrology.py`
+- [poc_real_file_formats](../../../../examples/poc_real_file_formats.py) — `py -3.11 examples/poc_real_file_formats.py`
 - [poc_real_sem_metal_layer](../../../../examples/poc_real_sem_metal_layer.py) — `py -3.11 examples/poc_real_sem_metal_layer.py`
 - [poc_segmentation_gauntlet](../../../../examples/poc_segmentation_gauntlet.py) — `py -3.11 examples/poc_segmentation_gauntlet.py`
 - [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`

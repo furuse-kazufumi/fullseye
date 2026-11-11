@@ -6,10 +6,10 @@ in: region
 out: feature
 halcon: count_obj
 gpu: 鎖の中だけ(lbl_count_obj)
-examples: [gallery2d_features]
+examples: [gallery2d_features, mcp_task_score]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # count_obj — 2D `features` op
@@ -63,6 +63,7 @@ count_obj 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+- [mcp_task_score](../../../../examples/mcp_task_score.py) — `py -3.11 examples/mcp_task_score.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

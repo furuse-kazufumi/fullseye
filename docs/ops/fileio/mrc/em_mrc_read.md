@@ -5,10 +5,10 @@ category: mrc
 in: any
 out: any
 gpu: なし
-examples: [fileio_scientific_roundtrip]
+examples: [fileio_scientific_roundtrip, poc_real_file_formats]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # em_mrc_read — FILEIO `mrc` op
@@ -34,6 +34,7 @@ extended header、切れたデータ、shape と mode の不一致は名指し�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [fileio_scientific_roundtrip](../../../../examples/fileio_scientific_roundtrip.py) — `py -3.11 examples/fileio_scientific_roundtrip.py`
+- [poc_real_file_formats](../../../../examples/poc_real_file_formats.py) — `py -3.11 examples/poc_real_file_formats.py`
 
 ## 型が繋がる次の op(`any` を入力に取れる)
 

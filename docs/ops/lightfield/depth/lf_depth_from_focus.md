@@ -8,7 +8,7 @@ gpu: なし
 examples: [lightfield_depth, plenoptic_decode_pipeline, poc_compound_eye, poc_lightfield_depth, poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # lf_depth_from_focus — LIGHTFIELD `depth` op
@@ -38,6 +38,22 @@ landed **exactly** on the true slope in 18 of 18 combinations (true slopes
 5.0 px), and the sub-pixel refinement left every one of them unmoved. Its
 resolution, though, is whatever you put in *slopes* — it cannot see a plane
 you never refocused on.
+
+**That unbiased result holds only for integer and half-integer slopes, and
+only with** ``interp="cubic"`` **in general.** The default ``"linear"``
+shift blurs a view by an amount that depends on the fractional part of its
+shift, so the sharpness peak is pulled toward slopes whose per-view shifts
+are whole pixels — mostly toward 0. Measured 2026-11-04 on Fourier-exact
+fields (``64x64``, texture sigma 1.5 / 3.0 px, 61-point sweep -1.5..1.5,
+median of the map): with 7x7 views a true slope of +0.17 came back as
++0.019 (bias -0.151) and -0.16 as -0.018, with 15x15 views +0.05 came back
+as +0.011; ``interp="cubic"`` kept every bias within 0.0037 over 28 cases,
+at 3.75x the time (43.4 s vs 11.6 s in total). The default stays
+``"linear"`` because on noisy integer-slope fields cubic is not better
+(``examples/poc_compound_eye.py``: RMSE 0.010 linear vs 0.029 cubic px/view)
+and other shipped examples rely on it. **Pass** ``interp="cubic"`` **whenever
+the slopes you measure are fractional** — that is, for every real camera.
+``tests/test_lightfield.py`` pins both numbers so this note cannot go stale.
 
 Returns ``(slope_map, sharpness)``: the ``(H, W)`` map of estimated slopes
 (in px per angular step) and the ``(H, W)`` peak focus-measure value, which

@@ -1422,7 +1422,10 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
     n_used = 0
     for idx in subsets:
         Lt = L[list(idx)]                                   # (3, 3)
-        if abs(float(np.linalg.det(Lt))) <= 1e-12:
+        # Relative to the lights' own scale, as in the refit below (abs-floor2: the
+        # absolute 1e-12 skipped every triple of unnormalised lights of strength 1e-5).
+        if abs(float(np.linalg.det(Lt))) <= 1e-12 * max(
+                float(np.abs(Lt).max()) ** 3, np.finfo(np.float64).tiny):
             continue                                        # coplanar triple
         n_used += 1
         for start in range(0, P, chunk):
@@ -1486,7 +1489,9 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
 
     albedo = np.linalg.norm(best_g, axis=0)
     normals = np.zeros((3, P))
-    good = albedo > 1e-8
+    # ★2026-11-05(敵対的検証 第 2 巡 K4 の兄弟): 退化の床を入力の最大輝度に対する相対量に
+    # (photometric._albedo_floor と同じ。絶対 1e-8 では強度 ×1e-8 で全法線が (0, 0, 1))。
+    good = albedo > photometric._albedo_floor(Iv)
     normals[:, good] = best_g[:, good] / albedo[good]
     normals[2, ~good] = 1.0
     # Unsolvable pixels are NaN, not (0, 0, 1). Keeping the 3-light subset's
@@ -1614,6 +1619,43 @@ _DEFAULT_ANGLES = (0.0, 45.0, 90.0, 135.0)
 #: negative fitted minima.
 POLAR_NEGATIVE_FLOOR = 0.02
 
+#: 暗い画素の床(2026-11-09、雑音基準): 当てはめた平均 ``a0 = S0/2`` が、変調振幅の雑音
+#: ``σ_A = σ̂·√(v₁+v₂)``(``v`` = 当てはめの ``(MᵀM)⁻¹`` の対角、``σ̂`` = 画像に 1 つの雑音、
+#: N > 3 の掃引の画素ごとの残差の中央値を χ² の中央値で補正)の この倍以下なら「暗い」=
+#: 偏光度を定義しない(DoLP の雑音 σ_A/a0 が 1/3 以上)。DoLP は比なので、雑音だけの暗い画素
+#: (0 でクリップした雑音)では DoLP が雑音で 1 近くになり、Brewster 角の法線や「完全偏光」を
+#: 返していた(σ 0.001 の暗い半面で DoLP の中央値 1.000)。★最初の版は「上位 99 百分位の
+#: 1e-2」という雑音を見ない床で、独立レビューで両向きに黙って間違うことが分かった: ハイライト
+#: 5 % と暗い拡散物体(S0 0.008、SNR 80、真の DoLP 0.3)で物体全体を DoLP 0 にし、明るい所が
+#: 画像の 1 % 未満だと床が暗部に落ちて DoLP 1.0 に戻った。
+POLAR_DARK_K = 3.0
+
+
+def _noise_dark(a0, resid, M):
+    """雑音基準の暗い画素 → (dark (P,), σ̂ または None, σ_A または None)。
+
+    N = 3(残差の自由度 0)では雑音を見積もれないので ``a0 <= 0`` だけを暗いとする(雑音だけの
+    暗い画素は見分けられない —— 呼び手の docstring に書く)。
+    """
+    a0 = np.asarray(a0, dtype=np.float64).reshape(-1)
+    N = M.shape[0]
+    dof = N - 3
+    lit0 = a0 > 0.0
+    if dof < 1 or resid is None or not lit0.any():
+        return ~lit0, None, None
+    from scipy import stats as _st  # noqa: PLC0415
+    cov = np.linalg.inv(M.T @ M)
+    r = np.asarray(resid, dtype=np.float64).reshape(-1)
+    # σ̂ は a0 > 0 の全画素の残差の中央値。★a0 で画素を選ぶ(暗い側だけ)と、0 でクリップした雑音では
+    # 「a0 が小さい = 標本が 0 に貼りつく = 残差も小さい」の偏りで σ̂ が小さく出て、暗い雑音が 1〜11 %
+    # 通った(2026-11-09 実測)。掃引に合わないフレーム(残差が信号の桁)では σ̂ が信号の桁になり、
+    # 全画素が「偏光度を定義できない」になる —— それはその掃引の正しい答え(fail-closed)
+    var_pix = r[lit0] ** 2 * N / dof
+    sig2 = float(np.median(var_pix)) / (float(_st.chi2.ppf(0.5, dof)) / dof)
+    sig = float(np.sqrt(max(sig2, 0.0)))
+    amp_sd = sig * float(np.sqrt(cov[1, 1] + cov[2, 2]))
+    return (~lit0) | (a0 <= POLAR_DARK_K * amp_sd), sig, amp_sd
+
 
 def _polar_fit(images, angles_deg, op, max_violation_frac, want_residual=False):
     """Fit ``I(t) = a0 + a1 cos 2t + a2 sin 2t`` per pixel and return the parts.
@@ -1643,7 +1685,9 @@ def _polar_fit(images, angles_deg, op, max_violation_frac, want_residual=False):
     a0, a1, a2 = a[0], a[1], a[2]
     amp = np.hypot(a1, a2)
     i_min = a0 - amp
-    fit_bad = i_min < -1e-12 * np.maximum(np.abs(a0), 1.0)
+    # 負の最小強度の許容は画素自身の強度の大きさに相対(絶対の 1 を混ぜない: 強度が
+    # 1 未満の単位だと 1e-12 の絶対許容が信号そのものを超え、破綻した当てはめを見逃す)。
+    fit_bad = i_min < -1e-12 * np.maximum(np.abs(a0), np.abs(flat).max(axis=0))
     floor = -POLAR_NEGATIVE_FLOOR * float(np.abs(flat).max())
     neg = (flat < floor).any(axis=0)
     bad = fit_bad | neg
@@ -1843,14 +1887,30 @@ def polarization_dolp_map(images, angles_deg=_DEFAULT_ANGLES,
     convention, and it is stated here because a NaN spreading into a
     thresholding routine is exactly the silent failure this library refuses.
 
+    ★Dark pixels (2026-11-09): "zero" is measured against the noise — a pixel
+    whose fitted mean ``a0 = S0/2`` is at most :data:`POLAR_DARK_K` (3) × the
+    noise of the modulation amplitude (``σ̂·√(v₁+v₂)``, one ``σ̂`` for the
+    image from the residuals of an N > 3 sweep) is returned as 0.0 too, i.e.
+    where the DoLP's own noise would be 1/3 or more. DoLP is a ratio, and
+    clipped sensor noise in a dark region (σ 0.001 of a scene peaking at 1)
+    used to come back as DoLP 1.0 — "completely polarised", the opposite of
+    the truth — on 72 % of the dark pixels once *max_violation_frac* let the
+    image through. **A 0 here means "not defined", not "unpolarised"** — use
+    :func:`polarization_stokes_map`'s ``lit`` to tell them apart. With three
+    angles there is no residual and only ``S0 = 0`` is 0 (noise-only dark
+    pixels are not screened). One ``σ̂`` assumes stationary noise; shot noise
+    grows with the signal, so the floor is set by the typical pixel.
+
     **Raises** ``ValueError``: as :func:`polarization_separate`.
     """
     op = "polarization_dolp_map"
     max_violation_frac = _violation_frac(max_violation_frac)
-    a0, _a1, _a2, amp, _i_min, (H, W) = _polar_fit(images, angles_deg, op,
-                                                   max_violation_frac)
+    a0, _a1, _a2, amp, _i_min, (H, W), resid = _polar_fit(images, angles_deg, op,
+                                                          max_violation_frac, want_residual=True)
+    nfr = int(np.shape(images)[0])
+    dark, _sig, _asd = _noise_dark(a0, resid, _polarizer_design(_require_angles(angles_deg, nfr, op), op))
     dolp = np.zeros_like(a0)
-    lit = a0 > 0.0
+    lit = (a0 > 0.0) & ~dark
     np.divide(amp, a0, out=dolp, where=lit)
     return np.clip(dolp, 0.0, 1.0).reshape(H, W)
 
@@ -1920,7 +1980,10 @@ def polarization_stokes_map(images, angles_deg=_DEFAULT_ANGLES,
     * ``dolp`` — ``sqrt(S1^2 + S2^2) / S0`` in ``[0, 1]``.
     * ``aolp_deg`` — ``0.5 * atan2(S2, S1)`` in degrees, mapped into
       ``[0, 180)`` (an axis, so 0 and 180 are the same).
-    * ``lit`` — bool, ``S0 > 0``.
+    * ``lit`` — bool, ``S0 > 0`` and above the noise-based dark floor
+      (``a0 > POLAR_DARK_K · σ_A``, 2026-11-09 — see
+      :func:`polarization_dolp_map`); ``dolp`` is 0 and ``aolp_defined``
+      False where ``lit`` is False.
     * ``aolp_defined`` — bool, ``S0 > 0`` and ``hypot(S1, S2) > 1e-12 * S0``.
     * ``residual`` — RMS over the N frames of ``frame - fitted Malus curve``,
       in the frames' units (added 2026-10-24). A sweep of a real scene fits
@@ -1993,7 +2056,9 @@ def polarization_stokes_map(images, angles_deg=_DEFAULT_ANGLES,
         s1 = np.where(over, s1 * k, s1)
         s2 = np.where(over, s2 * k, s2)
         lin = np.hypot(s1, s2)
-    lit = s0 > 0.0
+    nfr = int(np.shape(images)[0])
+    dark, _sig, _asd = _noise_dark(a0, resid, _polarizer_design(_require_angles(angles_deg, nfr, op), op))
+    lit = (s0 > 0.0) & ~dark
     dolp = np.zeros_like(s0)
     np.divide(lin, s0, out=dolp, where=lit)
     dolp = np.clip(dolp, 0.0, 1.0)

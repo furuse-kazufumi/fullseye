@@ -1,6 +1,10 @@
 {
  "_note": "収蔵台帳。追記のみ。収蔵番号は受け入れた瞬間に 1 回だけ発行し、以後変えない・再利用しない。番号は「どこに展示しているか」とは独立なので、記事間の移動でも 棟の分割でも動かない。除籍は retired に理由つきで記録し、番号は欠番のまま残す。訂正は消さずに note 欄へ。発行は tools/gen_exhibit_numbers.py。",
  "issued": {
+  "poc_3d_sensor_modalities": {
+   "accessioned": "2026-11-08",
+   "no": "2026.309"
+  },
   "poc_active_contours": {
    "accessioned": "2026-10-02",
    "no": "2026.186"
@@ -8,6 +12,10 @@
   "poc_agv_fleet": {
    "accessioned": "2026-10-03",
    "no": "2026.189"
+  },
+  "poc_ai_built_inspection_scored": {
+   "accessioned": "2026-11-08",
+   "no": "2026.308"
   },
   "poc_air_hockey_intercept": {
    "accessioned": "2026-10-04",
@@ -72,6 +80,10 @@
   "poc_bev_sensor_fusion": {
    "accessioned": "2026-09-07",
    "no": "2026.056"
+  },
+  "poc_bga_ball_type_roundtrip": {
+   "accessioned": "2026-11-04",
+   "no": "2026.299"
   },
   "poc_bilateral_asymmetry": {
    "accessioned": "2026-09-06",
@@ -321,6 +333,10 @@
    "accessioned": "2026-09-24",
    "no": "2026.146"
   },
+  "poc_equipment_selection_map": {
+   "accessioned": "2026-11-08",
+   "no": "2026.307"
+  },
   "poc_exoplanet_transit": {
    "accessioned": "2026-09-07",
    "no": "2026.066"
@@ -557,6 +573,10 @@
    "accessioned": "2026-09-21",
    "no": "2026.131"
   },
+  "poc_mixed_case_depalletizing": {
+   "accessioned": "2026-11-08",
+   "no": "2026.310"
+  },
   "poc_moire_alignment": {
    "accessioned": "2026-10-15",
    "no": "2026.232"
@@ -757,6 +777,14 @@
    "accessioned": "2026-09-08",
    "no": "2026.103"
   },
+  "poc_real_bg_kalman_tracking": {
+   "accessioned": "2026-11-08",
+   "no": "2026.305"
+  },
+  "poc_real_chessboard_undistort": {
+   "accessioned": "2026-11-08",
+   "no": "2026.303"
+  },
   "poc_real_coin_metrology": {
    "accessioned": "2026-09-08",
    "no": "2026.104"
@@ -768,6 +796,14 @@
   "poc_real_defect_floor": {
    "accessioned": "2026-09-09",
    "no": "2026.116"
+  },
+  "poc_real_file_formats": {
+   "accessioned": "2026-11-04",
+   "no": "2026.300"
+  },
+  "poc_real_grain_skiz": {
+   "accessioned": "2026-11-08",
+   "no": "2026.306"
   },
   "poc_real_sem_metal_layer": {
    "accessioned": "2026-11-01",
@@ -785,6 +821,10 @@
    "accessioned": "2026-09-08",
    "no": "2026.108"
   },
+  "poc_real_stereo_multiscanline": {
+   "accessioned": "2026-11-08",
+   "no": "2026.302"
+  },
   "poc_real_texture_invariance": {
    "accessioned": "2026-09-08",
    "no": "2026.109"
@@ -792,6 +832,14 @@
   "poc_real_tless_6dof": {
    "accessioned": "2026-11-01",
    "no": "2026.287"
+  },
+  "poc_real_typewritten_ocr": {
+   "accessioned": "2026-11-08",
+   "no": "2026.301"
+  },
+  "poc_real_walnut_cbct": {
+   "accessioned": "2026-11-08",
+   "no": "2026.304"
   },
   "poc_recycling_sorting": {
    "accessioned": "2026-09-07",

@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_thin_film_reflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # film_color — OPTICS `film` op
@@ -34,7 +34,8 @@ illuminant: 照明の分光分布 ``pairs``(λ [nm], 相対値)。None は D65(`
 
 返り値 dict:
   thickness_nm (N,) / reflectance (N, K) と wavelength_nm (K,) / linear_srgb (N, 3)(白 = 1、負は色域外)/
-  srgb (N, 3)(ガンマ済み・0〜1 に切った表示用)/ lab (N, 3)(CIELAB、白 = D65)/ hue_deg (N,)(a*b* の色相角)/
+  srgb (N, 3)(ガンマ済み・0〜1 に切った表示用)/ lab (N, 3)(CIELAB、白 = D65)/ hue_deg (N,)(a*b* の色相角 [0, 360)、
+  彩度 C* <= 1e-6 の無彩色は定義されないので NaN)/
   chroma (N,)。
 
 ★色は膜厚について**周期的に繰り返す**(SiO₂ on Si では光学的厚さ n d が約 λ/2 ≈ 190 nm 進むごとに似た色に戻る)

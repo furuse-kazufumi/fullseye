@@ -7,7 +7,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以歐氏距離求連通成分影響區的邊界（SKIZ）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>背景の各画素を最も近い連結成分へ割り当て、右か下の隣と割り当てが違う背景の画素を境界にする。連結成分が 1 つなら境界は無く、全部 False を返す(理由: 影響圏が 1 つで境界が無い)。空の入力(<code style="color:#22d3bf">region</code> が 0 要素)は ValueError。</p>
+<p>背景の各画素について最も近い連結成分(8 連結)の集合を求め、(1) 同距離の成分が 2 つ以上ある画素と、(2) 4 近傍の隣と集合が重ならない対のうち、自分の成分から遠い側(等しければ両方)の画素を境界にする。規則は対の両側を同じに扱うので、境界は像の上下・左右の反転と転置に対して対称(偶数幅の隙間では中央の 2 列、奇数幅では中央の 1 列)。その代わり線は 1 画素幅とは限らず、同距離の画素から 1 画素のひげ(端点)が出やすい(実写の金属組織 168 枚で、片側の規則の 265 本に対し 1,116 本)。1 画素幅の線や端点の数が要るなら、後段で細線化すること。連結成分が 1 つなら境界は無く、全部 False を返す(理由: 影響圏が 1 つで境界が無い)。空の入力(<code style="color:#22d3bf">region</code> が 0 要素)は ValueError。</p>
 <p>Args:</p>
 <p>region: 2-D の領域。</p>
 <p>Returns:</p>
@@ -20,6 +20,7 @@
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_grain_skiz">poc_real_grain_skiz</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_grain_skiz.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">mask</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="opmv:hit_or_miss_golay">hit_or_miss_golay</a> · <a style="color:#22d3bf" href="opmv:hit_or_miss_seq">hit_or_miss_seq</a> · <a style="color:#22d3bf" href="opmv:thickening_hit_miss">thickening_hit_miss</a> · <a style="color:#22d3bf" href="opmv:thickening_golay">thickening_golay</a> · <a style="color:#22d3bf" href="opmv:thickening_seq">thickening_seq</a> · <a style="color:#22d3bf" href="opmv:morph_hat">morph_hat</a> · <a style="color:#22d3bf" href="opmv:opening_seg">opening_seg</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">morphology</code>)</h3>

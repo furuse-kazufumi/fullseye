@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_public_camera_heading_real]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # camera_orientation_from_sun_candidates — GEOCAM `sun` op

@@ -5,10 +5,10 @@ category: fidelity
 in: image2d × image2d
 out: scalar
 gpu: なし
-examples: [ct_scan_modes, grasp_pose, image_quality_metrics, poc_ct_fidelity, poc_datacenter_thermal_field, poc_polarization_specular, poc_real_tless_6dof, poc_structure_4d_deterioration]
+examples: [ct_scan_modes, grasp_pose, image_quality_metrics, poc_ct_fidelity, poc_datacenter_thermal_field, poc_polarization_specular, poc_real_tless_6dof, poc_real_walnut_cbct, poc_structure_4d_deterioration]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # rmse — IMGMETRICS `fidelity` op
@@ -49,6 +49,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - [poc_datacenter_thermal_field](../../../../examples/poc_datacenter_thermal_field.py) — `py -3.11 examples/poc_datacenter_thermal_field.py`
 - [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
 - [poc_real_tless_6dof](../../../../examples/poc_real_tless_6dof.py) — `py -3.11 examples/poc_real_tless_6dof.py`
+- [poc_real_walnut_cbct](../../../../examples/poc_real_walnut_cbct.py) — `py -3.11 examples/poc_real_walnut_cbct.py`
 - [poc_structure_4d_deterioration](../../../../examples/poc_structure_4d_deterioration.py) — `py -3.11 examples/poc_structure_4d_deterioration.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)

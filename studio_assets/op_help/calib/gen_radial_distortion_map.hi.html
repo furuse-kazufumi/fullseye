@@ -6,6 +6,8 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>radial distortion का inverse map (row_map, col_map) बनाता है (gen_radial_distortion_map)।</p>
+<p>Output pixel (row, col) → input coordinate। model एक <b>प्रथम-क्रम polynomial</b> है: principal point से pixel offset <code style="color:#22d3bf">(x, y)</code>, <code style="color:#22d3bf">r^2 = x^2 + y^2</code> के लिए <code style="color:#22d3bf">input = principal point + (x, y) * (1 + kappa r^2)</code> (<code style="color:#22d3bf">kappa</code> की इकाई 1/pixel²; <code style="color:#22d3bf">cam_par</code> के fx/fy उपयोग नहीं होते)। ★यह division model (<code style="color:#22d3bf">mvimage.distort_division</code> / <code style="color:#22d3bf">undistort_division</code>, <code style="color:#22d3bf">u = d / (1 + kappa |d|^2)</code>) का सटीक inverse नहीं, बल्कि उसका प्रथम-क्रम सन्निकटन है। दोनों में एक ही <code style="color:#22d3bf">kappa</code> देने पर चुपचाप अंतर आता है:</p>
+<p>640x480 और principal point (320, 240) पर <code style="color:#22d3bf">kappa = -5e-7</code> के लिए अधिकतम 4.28 px, <code style="color:#22d3bf">-2e-6</code> के लिए अधिकतम 46.73 px (2026-11-09 का माप)। division model के distortion को सटीक हटाने के लिए <code style="color:#22d3bf">mvimage.change_radial_distortion_image</code> (<code style="color:#22d3bf">cam_out</code> का <code style="color:#22d3bf">kappa</code> 0) उपयोग करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecalib:camera_calibration">camera_calibration family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

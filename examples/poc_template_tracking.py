@@ -50,12 +50,16 @@
 10. ★★ 見失ったことに気づけるか —— ピーク値 vs 突出度(どちらも万能ではない)
 11. 時間推移 —— 1 つの数字にまとめない
 12. 速度と、測らなかったこと
+13. 実写 —— 同じ形のキャンドル 4 個(VisA、CC BY 4.0): 隣との相関の差と、事前のしきい値。無ければ記録値
 
-【★ この PoC が出した道具の穴(op 本体は直していない)】
+【★ この PoC が出した道具の穴(2026-11-09 の op 点検で (a)(d)(f) の一部を op 側で直した)】
 (a) **``ncc_locate`` は相関マップを返さない**。返るのは ``[相関値, 行, 列]`` の
     3 要素だけ。**突出度(2 番目のピークとの差)が公開 API では計算できない**。
     第 10 章の主題そのものが公開 API の外にある。マップを作る ``_ncc_map`` は
     private で、``fs`` ファサードにも ``fs.op`` にも出てこない。
+    → 2026-11-09: ``fs.ncc_map_partial(template, image, min_overlap)`` が相関マップを
+    返す(はみ出しも扱う masked NCC。ファサードにもある)。この PoC は ``ops._ncc_map`` と
+    同じ「full-overlap のみ」の地図が要るので、本文では引き続き private を借りている。
 (b) **2 次元だけ副画素がない**。``accel_match.ncc_locate_3d`` には
     ``subvoxel=True``(相関ピーク近傍の重心)があり ``ncc_locate_3d_pyramid``
     まであるのに、2 次元の ``ncc_locate`` / ``ncc_locate_batch`` はどちらも
@@ -69,11 +73,20 @@
     自分で切って、返ってきた座標にオフセットを足し戻すしかない
     (この PoC の ``locate_local``)。切り出しが小さすぎると
     full-overlap 位置が消えて **黙って ``[0,0,0]``** が返る。
+    → 2026-11-09: 契約 op ``ncc_locate`` は full-overlap のみのまま(``cv2.matchTemplate``
+    の valid と同じ)だが、``fs.ncc_locate_ex`` は重なった画素だけで相関を計り、
+    重なり率と ``flags``(``border`` / ``missing`` / ``ambiguous`` / ``unsearched``)を返すので
+    「縁で調べなかった」「双子と区別できない」が区別できる(第 0 章の検算 5: 双子のいる
+    別フレームで、公開 op は双子へ 51 px 外れ、ncc_locate_ex は 1.31 px・flags に
+    ambiguous と border)。NaN 画素は ``ncc_locate`` では ``FsValueError``
+    (以前はマップ全体が黙って 0)。
 (e) **返り値の座標系が ``(行, 列)``**。この PoC の幾何は ``(x, y)`` なので
     毎回入れ替えている。取り違えても例外は出ない(第 0 章で検算した)。
 (f) **``shape_locate`` の角度刻みは 30 度固定**で、刻みを渡す引数が無い。
-    さらに回転テンプレートを ``reshape=False`` で作るので **四隅がゼロで
-    埋まり**、その分だけ相関値が構造的に下がる。第 6 章で実測する。
+    回転テンプレートを ``reshape=False`` で作るので四隅がゼロで埋まり、その分だけ
+    相関値が構造的に下がっていた —— **2026-11-09 に op 側で直した**(四隅をマスクで
+    除く。30 度の対象で 0.531 → 0.950)。刻みは契約 op では 30 度のままで、刻みを指定し
+    副刻みまで詰めるのは ``matching.shape_locate_fine``。第 6 章で実測する。
 (g) **追跡の状態を持つ入口が無い**。``track_points``(疎な点の Lucas-Kanade)は
     あるが、テンプレート追跡の系(更新方針・予測・見失い判定)は無い。
     第 3 章の 4 系はすべてこの PoC の自前である。
@@ -83,8 +96,8 @@
 """
 from __future__ import annotations
 
-import time
-
+import os, sys, time  # noqa: E401
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo 直下を先に(editable install の古い本体を読まない)
 import numpy as np
 from scipy.ndimage import gaussian_filter, map_coordinates
 
@@ -94,6 +107,7 @@ import examplefig as figs   # ★fullseye を先に import しないと解決し
 #    第 0 章で公開 op ``fs.op.ncc_locate`` と一致することを検算してから使う。
 import ops
 import annotate as AN       # 動画のコマに文字・グラフ
+import matching             # 2026-11-09: はみ出しを扱う ncc_locate_ex / 刻み指定の shape_locate_fine
 
 T_START = time.perf_counter()
 
@@ -304,6 +318,22 @@ def peak_and_prominence(corr):
             peak - float(m[j]), float(np.hypot(j[0] - idx[0], j[1] - idx[1])))
 
 
+def _nearest_tied_second(corr, xy, second, tol=1e-9):
+    """2 位(``second``)と差 ``tol`` 以内の峰のうち、ピークに最も近いものの距離と峰の数。
+
+    ピーク近傍(± ``TPL``)は ``peak_and_prominence`` と同じく除く。峰 = 3x3 の極大。
+    """
+    from scipy.ndimage import maximum_filter
+    r, c = int(round(xy[1])), int(round(xy[0]))
+    m = corr.copy()
+    m[max(0, r - TPL):r + TPL + 1, max(0, c - TPL):c + TPL + 1] = -2.0
+    peaks = (m >= second - tol) & (m == maximum_filter(m, size=3, mode="nearest"))
+    pos = np.argwhere(peaks)
+    if not len(pos):
+        return float("nan"), 0
+    return float(np.hypot(pos[:, 0] - r, pos[:, 1] - c).min()), int(len(pos))
+
+
 def locate_full(img, tpl):
     """全域探索。ゼロ点が使う探索そのもの。"""
     return peak_and_prominence(ops._ncc_map(img, tpl))
@@ -483,6 +513,372 @@ def fig_video_twin(c_flat, c_twin, f_occ, thr_pk, thr_pr):
 
 
 # ===========================================================================
+# 13. 実写 —— 同じ形のキャンドル 4 個が並ぶトレイ(VisA、CC BY 4.0)
+# ===========================================================================
+# データ: VisA(Zou et al., ECCV 2022)の candle/Data/Images/Normal。配布元
+#   https://github.com/amazon-science/spot-diff の "The data is released under the CC BY 4.0 license."。
+#   repo には入れない。環境変数 ``FULLSEYE_VISA_DATA`` に VisA を展開した dir(``candle/`` がある所)を渡す。
+#   読む前に SHA-256 を照合する。
+# ★測ること(2026-11-08 の敵対的レビューで作り直し。以前の版は「視野を出たら乗り移る」= 必ず起きることを
+#   見せ、しきい値も答えを見てから置いていた):
+#   (a) 区別できるか: 対象と右隣の同形キャンドルが**両方とも視野に入っている**フレームで、テンプレートの
+#       相関が対象の位置と隣の位置でどれだけ違うか(個体差の大きさ)。
+#   (b) 事前に決めたしきい値で: 別の写真 20 枚(0001〜0020、どれも同形のキャンドル 4 個)の 80 個が
+#       全部「見つかる」最小の値を、**この動画を見る前に**しきい値にする(部品の種類を見つける運用)。
+#       対象が視野を出て隣へ乗り移ったフレームを、このしきい値が「見つけた」と言うかを数える。
+#   (c) 参考: 追えている間の最小ピーク(答えを見たしきい値)なら弾けるか。
+# 動き: 写真 0000.JPG(1/6 に縮める)の上を、カメラが毎フレーム 0.3 px ずつ右へ**平行移動**する
+#   (回転・拡大・照明の変化・視差は無い。静止写真 1 枚の切り出しで、真値はこの動き)。
+REAL_ENV = "FULLSEYE_VISA_DATA"
+REAL_DIR = "candle/Data/Images/Normal"
+REAL_REL = REAL_DIR + "/0000.JPG"
+REAL_SHA256 = "223a16caac5a91232f7c52552dea5c7c7f096ef882e626c5908b4539a43dc131"
+REAL_CAL_IDS = tuple(range(1, 21))      # しきい値を決める別の写真(0001〜0020)
+#: 上の 20 枚の (名前, SHA-256) を並べた一覧の SHA-256(2026-11-08 に手元の取得物から計算)。
+REAL_CAL_SHA256 = "8303653f2b579b79ae02a06c07038dc9ecc9c046619196edeca8b521d7cbc3f5"
+REAL_SCALE = 6                          # 写真の縮小率(1284 px → 214 px、キャンドル 1 個 ≈ 60 px)
+REAL_FR = (100, 190)                    # フレーム (高さ, 幅)。最初は対象と右隣が両方とも入る幅
+REAL_TPL = 75                           # テンプレートの一辺(キャンドル 1 個がまるごと入る)
+REAL_N, REAL_STEP = 80, 0.3             # フレーム数 / 1 フレームあたりの移動 [px](視野が写真の外へ出ない範囲)
+REAL_SIGMAS = (0.01, 0.02, 0.04, 0.08)  # 足すセンサ雑音(8 bit の 2.5〜20 階調)
+REAL_SIGMA_SHOW = 0.01                  # 動画に使う条件
+REAL_RECORDED = {
+    "lines": [
+        '写真 candle/Data/Images/Normal/0000.JPG を 1/6、キャンドル 4 個、間隔 98.4 px、80 フレーム × 0.30 px の平行移動',
+        '事前のしきい値 0.9699(別の写真 20 枚の 80 個が全部見つかる最小)',
+        'σ 0.01: 両方見える 55 枚で対象−隣 平均 0.0097(最小 0.0032)、乗り移り 14 枚(平均ピーク 0.9871)、事前のしきい値 0.9699 で「見つけた」 14、答えを見たしきい値 0.9921 で 0',
+        'σ 0.02: 両方見える 55 枚で対象−隣 平均 0.0097(最小 0.0031)、乗り移り 14 枚(平均ピーク 0.9843)、事前のしきい値 0.9667 で「見つけた」 14、答えを見たしきい値 0.9892 で 0',
+        'σ 0.04: 両方見える 55 枚で対象−隣 平均 0.0092(最小 0.0030)、乗り移り 14 枚(平均ピーク 0.9746)、事前のしきい値 0.9579 で「見つけた」 14、答えを見たしきい値 0.9792 で 0',
+        'σ 0.08: 両方見える 55 枚で対象−隣 平均 0.0087(最小 0.0017)、乗り移り 14 枚(平均ピーク 0.9373)、事前のしきい値 0.9203 で「見つけた」 14、答えを見たしきい値 0.9405 で 0',
+    ],
+    'thr_type': 0.9699,
+    'margin_mean': 0.0097,
+    'lost': 14,
+    'found_type': 14,
+    'found_oracle': 0,
+}
+
+
+def _real_photo_path():
+    import os
+    from pathlib import Path
+    root = os.environ.get(REAL_ENV, "").strip()
+    if not root:
+        return None
+    p = Path(root) / REAL_REL
+    return p if p.is_file() else None
+
+
+def _shrink(im):
+    from PIL import Image
+    return np.asarray(im.resize((im.size[0] // REAL_SCALE, im.size[1] // REAL_SCALE), Image.LANCZOS),
+                      np.float64) / 255.0
+
+
+def _candles(small):
+    """1/6 の写真の明るい塊 = キャンドルの中心 (x, y)。行ごと・左から並べる。"""
+    from scipy import ndimage as ndi
+    lab, n = ndi.label(small > 0.5)
+    sizes = ndi.sum(np.ones_like(small), lab, range(1, n + 1))
+    keep = [i + 1 for i, s_ in enumerate(sizes) if s_ > 0.25 * sizes.max()]
+    cen = np.array([ndi.center_of_mass(small > 0.5, lab, i)[::-1] for i in keep])
+    return cen[np.lexsort((cen[:, 0], np.round(cen[:, 1] / 20.0)))]
+
+
+def _real_load(path):
+    """写真を読み、SHA-256 を照合し、灰色化して 1/REAL_SCALE に縮める。キャンドルの中心も返す。"""
+    import hashlib
+
+    from PIL import Image
+
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    if REAL_SHA256 is not None and digest != REAL_SHA256:
+        raise ValueError("VisA の写真の SHA-256 %s が台帳 %s と違う" % (digest, REAL_SHA256))
+    im = Image.open(path).convert("L")
+    full = np.asarray(im, np.float64) / 255.0
+    small = _shrink(im)
+    return full, small, _candles(small), digest
+
+
+def _real_cal_threshold(path, tpl, sigma, seed):
+    """別の写真 20 枚のキャンドル全部が「見つかる」最小の相関 = 種類を見つけるためのしきい値(事前に決まる)。
+
+    追跡の画像と同じ条件にするため、縮めた写真に同じ大きさの雑音 ``sigma`` を足し、8 bit に丸めてから測る。"""
+    import hashlib
+
+    from PIL import Image
+
+    rng = np.random.default_rng(seed)
+    rows, peaks = [], []
+    for i in REAL_CAL_IDS:
+        p = path.parent / ("%04d.JPG" % i)
+        rows.append("%s %s" % (p.name, hashlib.sha256(p.read_bytes()).hexdigest()))
+        small = _shrink(Image.open(p).convert("L"))
+        cen = _candles(small)
+        small = np.clip(np.round((small + rng.normal(0.0, sigma, small.shape)) * 255.0) / 255.0, 0.0, 1.0)
+        if len(cen) != 4:
+            raise ValueError("%s でキャンドルが 4 個に分かれない(%d 個)" % (p.name, len(cen)))
+        m = ops._ncc_map(small, tpl)
+        for cx, cy in cen:
+            r0, c0 = int(round(cy)), int(round(cx))
+            win = m[max(0, r0 - 4):r0 + 5, max(0, c0 - 4):c0 + 5]
+            peaks.append(float(win.max()))
+    digest = hashlib.sha256("\n".join(rows).encode("ascii")).hexdigest()
+    if REAL_CAL_SHA256 is not None and digest != REAL_CAL_SHA256:
+        raise ValueError("しきい値用の写真 20 枚の一覧の SHA-256 %s が台帳 %s と違う" % (digest, REAL_CAL_SHA256))
+    return float(min(peaks)), np.asarray(peaks), digest
+
+
+def _peak_near(m, xy, rad=2):
+    r0, c0 = int(round(xy[1])), int(round(xy[0]))
+    if not (0 <= r0 < m.shape[0] and 0 <= c0 < m.shape[1]):
+        return float("nan")
+    return float(m[max(0, r0 - rad):r0 + rad + 1, max(0, c0 - rad):c0 + rad + 1].max())
+
+
+def _real_run(world, target_xy, twin_xy, sigma, seed):
+    """既知の平行移動でフレームを切り出し、1 枚目のテンプレートを更新なし全域探索で追う(第 2 章のゼロ点)。
+
+    各フレームで、相関マップの最大(追跡の答え)に加えて、真の対象の位置と右隣の同形キャンドルの位置での
+    相関も記録する((a) の材料)。
+    """
+    FH, FW = REAL_FR
+    half = REAL_TPL // 2
+    gx, gy = np.meshgrid(np.arange(FW, dtype=float), np.arange(FH, dtype=float))
+    c0 = np.array([(FW - 1) / 2.0, (FH - 1) / 2.0])
+    start_xy = np.array([c0[0], max(float(target_xy[1]), c0[1])])          # 視野の左上が写真の左上
+    if start_xy[0] + REAL_STEP * (REAL_N - 1) + c0[0] > world.shape[1] - 1 or start_xy[1] + c0[1] > world.shape[0] - 1:
+        raise ValueError("視野が写真の外へ出る(REAL_STEP / REAL_N / REAL_FR を見直す)")
+    rng = np.random.default_rng(seed)
+    tpl = None
+    out = dict(truth=[], twin=[], est=[], peak=[], p_true=[], p_twin=[], cam=[])
+    for t in range(REAL_N):
+        cam = start_xy + np.array([REAL_STEP * t, 0.0])
+        f = map_coordinates(world, [(cam[1] - c0[1] + gy).ravel(), (cam[0] - c0[0] + gx).ravel()],
+                            order=1, mode="nearest").reshape(FH, FW)
+        f = np.clip(np.round((f + rng.normal(0.0, sigma, f.shape)) * 255.0) / 255.0, 0.0, 1.0)
+        tr = c0 + (np.asarray(target_xy, float) - cam)
+        tw = c0 + (np.asarray(twin_xy, float) - cam)
+        if tpl is None:
+            r, c = int(round(tr[1])), int(round(tr[0]))
+            tpl = f[r - half:r + half + 1, c - half:c + half + 1].copy()
+        m = ops._ncc_map(f, tpl)
+        idx = np.unravel_index(int(np.argmax(m)), m.shape)
+        out["truth"].append(tr)
+        out["twin"].append(tw)
+        out["est"].append(np.array([float(idx[1]), float(idx[0])]))
+        out["peak"].append(float(m[idx]))
+        out["p_true"].append(_peak_near(m, tr))
+        out["p_twin"].append(_peak_near(m, tw))
+        out["cam"].append(cam)
+    for k in list(out):
+        out[k] = np.asarray(out[k])
+    out["err"] = np.linalg.norm(out["est"] - out["truth"], axis=1)
+    inwin = lambda xy: (xy[:, 0] - half >= 0) & (xy[:, 0] + half <= FW - 1)
+    out["inview"] = inwin(out["truth"])
+    out["both"] = out["inview"] & inwin(out["twin"])
+    out["tpl"] = tpl
+    return out
+
+
+def real_twin_chapter(syn_ff, syn_nl):
+    """第 13 章。``syn_ff / syn_nl`` = 合成のそっくりな別物体で「見つけた」と誤報したフレーム数 / ずれたフレーム数。"""
+    rule("13. 実写 —— 同じ形のキャンドル 4 個のトレイ(VisA、CC BY 4.0)")
+    path = _real_photo_path()
+    if path is None:
+        print(f"  VisA が手元に無い(CI の既定)。{REAL_ENV} に VisA の展開先を渡すと走る。")
+        if REAL_RECORDED is None:
+            raise AssertionError("記録値 REAL_RECORDED が空 —— 手元でデータありの実行をして転記する")
+        for line in REAL_RECORDED["lines"]:
+            print("  [記録値] " + line)
+        # ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
+        r = REAL_RECORDED
+        assert r["margin_mean"] < 0.02 and r["found_type"] == r["lost"] > 0, "記録値: 結論の向きが記録と合わない"
+        return r
+    full, world, cen, digest = _real_load(path)
+    import realdata
+    realdata.mark_read("visa:" + REAL_DIR)
+    pitch = float(cen[1, 0] - cen[0, 0])
+    print(f"  写真 {REAL_REL}(SHA-256 {digest[:16]}…)を 1/{REAL_SCALE} に縮めて {world.shape[1]}x{world.shape[0]} px。"
+          f"キャンドル {len(cen)} 個、左右の間隔 {pitch:.1f} px")
+    print(f"  フレーム {REAL_FR[1]}x{REAL_FR[0]}、テンプレート {REAL_TPL} px 角(キャンドル 1 個)、"
+          f"{REAL_N} フレーム × {REAL_STEP} px/フレームの平行移動。追うのは左上のキャンドル(更新なし全域探索)。")
+    runs = {sg: _real_run(world, cen[0], cen[1], sg, seed=100 + sd) for sd, sg in enumerate(REAL_SIGMAS)}
+    r0 = runs[REAL_SIGMA_SHOW]
+    cal = {sg: _real_cal_threshold(path, runs[sg]["tpl"], sg, seed=200 + sd) for sd, sg in enumerate(REAL_SIGMAS)}
+    thr_type, cal_peaks, cal_digest = cal[REAL_SIGMA_SHOW]
+    print(f"  (b) のしきい値: 別の写真 {len(REAL_CAL_IDS)} 枚のキャンドル {len(cal_peaks)} 個が全部見つかる最小の相関"
+          f"(同じ雑音を足して、雑音ごとに決める)。σ {REAL_SIGMA_SHOW} で {thr_type:.4f}"
+          f"(80 個の中央値 {np.median(cal_peaks):.4f}、一覧の SHA-256 {cal_digest[:16]}…)")
+    print(f"  {'雑音 σ':>8}{'両方見える':>10}{'対象−隣 平均':>14}{'最小':>9}{'乗り移り':>9}{'その平均ピーク':>14}"
+          f"{'(b) しきい値':>12}{'「見つけた」':>12}{'(c) 参考':>10}")
+    rows = []
+    for sg in REAL_SIGMAS:
+        r = runs[sg]
+        both = r["both"] & (np.arange(REAL_N) >= 1)
+        margin = r["p_true"][both] - r["p_twin"][both]
+        lost = r["err"] > LOST_PX
+        on = r["inview"] & (np.arange(REAL_N) >= 1) & ~lost
+        thr_or = float(r["peak"][on].min())
+        found_type = int((lost & (r["peak"] >= cal[sg][0])).sum())
+        found_or = int((lost & (r["peak"] >= thr_or)).sum())
+        rows.append(dict(sg=sg, n_both=int(both.sum()), m_mean=float(margin.mean()), m_min=float(margin.min()),
+                         lost=int(lost.sum()), lost_peak=float(r["peak"][lost].mean()) if lost.any() else float("nan"),
+                         found_type=found_type, found_or=found_or, thr_or=thr_or, thr_type=cal[sg][0]))
+        print(f"  {sg:>8.2f}{both.sum():>10d}{margin.mean():>14.4f}{margin.min():>9.4f}{lost.sum():>9d}"
+              f"{rows[-1]['lost_peak']:>14.4f}{cal[sg][0]:>12.4f}{found_type:>8d} /{lost.sum():<4d}{found_or:>6d} /{lost.sum():<3d}")
+    a = rows[0]
+    first = int(np.argmax(r0["err"] > LOST_PX))
+    print(f"  (a) 両方見えている {a['n_both']} フレームで、対象の位置の相関は隣より平均 {a['m_mean']:.4f} 高い(最小 {a['m_min']:.4f})。")
+    print("      ★テンプレートは対象そのもの(1 枚目のフレーム)から切っているので、対象側の相関は高めに出る。別の写真の")
+    print("      キャンドルから切ったテンプレートなら、この差はさらに小さいか逆向きになりうる(測っていない)。")
+    print("      同じ形の別個体とは相関で 1 % ほどしか違わないが、両方見えている間は毎フレーム対象のほうが高い"
+          f"(最小の差 {a['m_min']:.4f} > 0)—— 区別はできている。差が小さいだけ。")
+    print(f"  (b) 対象のテンプレートの窓が視野からはみ出すと(フレーム {first} 以降、{a['lost']} 枚)、追跡は右隣へ乗り移る"
+          f"(ずれ ≈ 間隔 {pitch:.0f} px)。")
+    print("      全域探索(ops._ncc_map)は窓が画像からはみ出す位置を調べない(0 を返す)ので、対象の大半がまだ見えていても、")
+    print("      窓が少しでもはみ出した瞬間に候補から消える。乗り移りはこの探索範囲の仕様の帰結で、相関の値で負けたのではない。")
+    print(f"      事前に決めたしきい値 {thr_type:.4f} では {a['found_type']} / {a['lost']} フレームが「見つけた」(σ {a['sg']})。")
+    print("      ★これはしきい値の決め方からほぼ必ず起きる: 『同形のキャンドル 80 個が全部通る最小の値』は、同形の隣も")
+    print("      通すように作った値だから。言えるのは『種類を見つけるしきい値は、同じ形の別個体を弾く道具にならない』ことまで。")
+    print(f"  (c) 参考: 答えを見てから置くしきい値(追えている間の最小 {a['thr_or']:.4f})なら {a['found_or']} / {a['lost']} —— "
+          "この値は実運用では事前に分からない。")
+    print(f"  合成の「そっくりな別物体」では、遮蔽なしで校正したしきい値を {syn_ff} / {syn_nl} フレームが通った。")
+    print("  → 測れたのは「同形の隣との相関の差は 1 % ほど(区別はできるが差は小さい)」と「種類を見つけるしきい値は"
+          "別個体を弾かない」の 2 つ。")
+    print("    動き・照明・視差の変化は入っていない(静止写真 1 枚の平行移動)ので、実際の動画での乗り移りの頻度は測っていない。")
+    assert all(rw["n_both"] >= 10 for rw in rows), "両方見えるフレームが少なすぎる(視野の設定を見直す)"
+    assert all(rw["lost"] > 0 for rw in rows), "乗り移りが起きていない(視野の設定を見直す)"
+    assert r0["err"][r0["err"] > LOST_PX].min() > 0.5 * pitch, "ずれが間隔の半分未満 —— 隣へ乗り移ったのではない"
+    assert all(rw["m_mean"] > 0 for rw in rows), "対象の位置の相関が隣より高くない —— 結論を書き直せ"
+    assert a["m_mean"] < 0.02, "同形の隣との相関の差が 2 % 以上 —— 『1 % ほどしか違わない』を書き直せ"
+    assert all(rw["m_min"] > 0 for rw in rows), "両方見えている間に隣のほうが高いフレームがある —— 『毎フレーム対象のほうが高い』を書き直せ"
+    assert all(rw["found_type"] == rw["lost"] for rw in rows), "事前のしきい値が乗り移りを弾いた —— 結論を書き直せ"
+    for sg in REAL_SIGMAS:
+        assert np.all(cal[sg][1] >= cal[sg][0]) and len(cal[sg][1]) == 4 * len(REAL_CAL_IDS), "しきい値の決め方が壊れた"
+    lines = ["写真 %s を 1/%d、キャンドル %d 個、間隔 %.1f px、%d フレーム × %.2f px の平行移動"
+             % (REAL_REL, REAL_SCALE, len(cen), pitch, REAL_N, REAL_STEP),
+             "事前のしきい値 %.4f(別の写真 %d 枚の %d 個が全部見つかる最小)" % (thr_type, len(REAL_CAL_IDS), len(cal_peaks))]
+    lines += ["σ %.2f: 両方見える %d 枚で対象−隣 平均 %.4f(最小 %.4f)、乗り移り %d 枚(平均ピーク %.4f)、"
+              "事前のしきい値 %.4f で「見つけた」 %d、答えを見たしきい値 %.4f で %d"
+              % (rw["sg"], rw["n_both"], rw["m_mean"], rw["m_min"], rw["lost"], rw["lost_peak"], rw["thr_type"],
+                 rw["found_type"], rw["thr_or"], rw["found_or"]) for rw in rows]
+    rec = {"lines": lines, "thr_type": round(thr_type, 4), "margin_mean": round(a["m_mean"], 4),
+           "lost": a["lost"], "found_type": a["found_type"], "found_oracle": a["found_or"]}
+    print("  REAL_RECORDED = %r" % (rec,))
+    # ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
+    if REAL_RECORDED is not None:
+        assert rec == REAL_RECORDED, "REAL_RECORDED が実測と違う(記録を転記し直す)"
+    if figs.enabled():
+        try:
+            video_real_twin(full, r0, a, thr_type, pitch)
+        except Exception as exc:    # noqa: BLE001
+            figs._errors.append("real_candle_twin: %s: %s" % (type(exc).__name__, exc))
+    return rec
+
+
+def video_real_twin(full, r, a, thr_type, pitch):
+    """代表の動画: 章カード → 実写のトレイ(真の位置・隣・推定の枠と、対象と隣の相関)→ 測れたことのカード。"""
+    from PIL import Image, ImageDraw, ImageFont
+
+    font = lambda n, b=False: ImageFont.truetype(str(figs._japanese_font_path(bold=b)), n)
+    W, H = 960, 600
+    FH, FW = REAL_FR
+    Z = 3                                                     # 表示倍率(フレーム 190x100 → 570x300)
+    half = REAL_TPL // 2
+    S = REAL_SCALE
+
+    def view(cam):
+        """表示は同じ範囲を原寸の写真から切る(追跡が見た画像はその 1/6 + 雑音)。"""
+        c0 = np.array([(FW - 1) / 2.0, (FH - 1) / 2.0])
+        x0, y0 = (cam - c0) * S
+        box = (int(round(x0)), int(round(y0)), int(round(x0)) + FW * S, int(round(y0)) + FH * S)
+        img = Image.fromarray((np.clip(full, 0, 1) * 255).astype(np.uint8)).crop(box)
+        return img.resize((FW * Z, FH * Z), Image.Resampling.LANCZOS).convert("RGB")
+
+    def card(lines, pic=None):
+        im = Image.new("RGB", (W, H), (12, 16, 22))
+        d = ImageDraw.Draw(im)
+        y = 36
+        for i, s_ in enumerate(lines):
+            d.text((36, y), s_, font=font(28 if i == 0 else 21, i == 0), fill=(240, 240, 240) if i == 0 else (205, 210, 220))
+            y += 52 if i == 0 else 34
+        if pic is not None:
+            im.paste(pic, (W - pic.width - 30, H - pic.height - 24))
+        return np.asarray(im)
+
+    frames = []
+    whole = Image.fromarray((np.clip(full, 0, 1) * 255).astype(np.uint8)).convert("RGB").resize((280, 255), Image.Resampling.LANCZOS)
+    frames += [card(["入れるもの: 同じ形のキャンドル 4 個の実写",
+                     "VisA の candle(工業用の外観検査データ、CC BY 4.0)",
+                     "写真 1 枚の上でカメラを平行移動(コンベアの部品と同じ向き)。",
+                     "左上のキャンドルを 1 枚目で教え、相関の最大を追う。",
+                     "測るもの: 対象と隣の相関の差 / 乗り移った後の判定",
+                     "しきい値 %.4f = 別の写真 20 枚のキャンドルが全部見つかる値" % thr_type], whole)] * 28
+    for t in range(REAL_N):
+        im = Image.new("RGB", (W, H), (12, 16, 22))
+        d = ImageDraw.Draw(im)
+        im.paste(view(r["cam"][t]), (10, 50))
+        lost = r["err"][t] > LOST_PX
+        for xy, col, wd, pad in ((r["twin"][t], (150, 150, 150), 2, 0), (r["truth"][t], (90, 200, 255), 2, 0),
+                                 (r["est"][t], (255, 110, 90) if lost else (255, 190, 60), 4, 5)):
+            x, y = 10 + Z * xy[0], 50 + Z * xy[1]
+            hw = Z * half + pad
+            d.rectangle((x - hw, y - hw, x + hw, y + hw), outline=col, width=wd)
+        said = "見つけた" if r["peak"][t] >= thr_type else "見失った"
+        d.text((12, 12), "t = %d  ピーク %.4f → 判定「%s」  実際は %s" % (t, r["peak"][t], said,
+                                                                   "隣のキャンドル" if lost else "正しい対象"),
+               font=font(19, True), fill=(255, 140, 120) if lost else (235, 235, 235))
+        d.text((12, 50 + FH * Z + 8), "水色 = 真の対象 / 灰 = 隣の同形キャンドル / 橙 = 推定(赤 = 隣を掴んでいる)",
+               font=font(16), fill=(220, 220, 220))
+        if lost or not r["inview"][t]:
+            d.text((12, 50 + FH * Z + 64), "対象の窓が視野からはみ出した —— 全域探索は、はみ出す位置を調べない",
+                   font=font(18, True), fill=(255, 190, 120))
+        pt, pw = r["p_true"][t], r["p_twin"][t]
+        d.text((12, 50 + FH * Z + 36), "対象の位置の相関 %s / 隣の位置の相関 %s"
+               % ("—" if not np.isfinite(pt) or not r["inview"][t] else "%.4f" % pt,
+                  "—" if not np.isfinite(pw) else "%.4f" % pw), font=font(19), fill=(235, 235, 235))
+        # 右: ピークの推移(線 = 事前のしきい値)
+        gx0, gw, gy0, gh = 610, 330, 70, 200
+        lo, hi = 0.90, 1.0
+        d.text((gx0, gy0 - 28), "相関のピーク(線 = 事前のしきい値)", font=font(16), fill=(210, 210, 210))
+        d.rectangle((gx0, gy0, gx0 + gw, gy0 + gh), outline=(150, 150, 150))
+        yv = lambda v: gy0 + gh - (np.clip(v, lo, hi) - lo) / (hi - lo) * gh
+        xv = lambda i: gx0 + i / (REAL_N - 1) * gw
+        d.line((gx0, yv(thr_type), gx0 + gw, yv(thr_type)), fill=(160, 160, 160), width=1)
+        pts = [(xv(i), yv(r["peak"][i])) for i in range(t + 1)]
+        if len(pts) >= 2:
+            d.line(pts, fill=(255, 190, 60), width=2)
+        d.text((gx0 - 4, gy0 + gh + 4), "%.2f" % lo, font=font(13), fill=(170, 170, 170))
+        d.text((gx0 - 4, gy0 - 14), "", font=font(13), fill=(170, 170, 170))
+        nl = int((r["err"][:t + 1] > LOST_PX).sum())
+        nf = int(((r["err"][:t + 1] > LOST_PX) & (r["peak"][:t + 1] >= thr_type)).sum())
+        d.text((12, 520), "ここまでに隣を掴んでいたフレーム %d 枚 / そのうち判定「見つけた」 %d 枚" % (nl, nf),
+               font=font(21, True), fill=(235, 235, 235))
+        d.text((12, 556), "表示は同じ範囲を原寸の写真から切り出したもの(追跡が見たのは 1/%d に縮めて雑音 σ %.2f を足した画像)"
+               % (S, REAL_SIGMA_SHOW), font=font(14), fill=(170, 170, 170))
+        frames += [np.asarray(im)] * 2
+    frames += [frames[-1]] * 12
+    frames += [card(["測れたこと",
+                     "① 対象と隣が両方見えている %d フレームで、相関の差は平均 %.4f。" % (a["n_both"], a["m_mean"]),
+                     "   毎フレーム対象のほうが高いが、差は 1 % ほど(テンプレートは対象から切った)。",
+                     "② 対象の窓が視野からはみ出すと隣へ乗り移る(ずれ ≈ %.0f px)。" % pitch,
+                     "   事前に決めたしきい値では %d / %d フレームが「見つけた」。" % (a["found_type"], a["lost"]),
+                     "   (同形 80 個が全部通る値なので、同形の隣を通すのはほぼ必然)",
+                     "③ 参考: 答えを見てから置くしきい値 %.4f なら %d / %d。" % (a["thr_or"], a["found_or"], a["lost"]),
+                     "   全域探索は窓がはみ出す位置を調べない —— 乗り移りはその仕様の帰結。",
+                     "測っていないこと: 実際の動画での動き・照明・視差の変化。",
+                     "データ: VisA candle(Zou et al., ECCV 2022)、CC BY 4.0"])] * 44
+    cap = ("実写のトレイ(VisA の candle、同じ形のキャンドル 4 個、CC BY 4.0)の写真 1 枚の上でカメラを平行移動し、1 枚目で教えた"
+           "左上のキャンドルを相関の最大で追う。対象と右隣が両方見えている %d フレームでは、対象の位置の相関は毎フレーム隣より高いが、"
+           "差は平均 %.4f だけ。対象のテンプレートの窓が視野からはみ出すと(全域探索ははみ出す位置を調べない)右隣へ乗り移り(ずれ約 %.0f px)、別の写真 20 枚のキャンドルが全部見つかる値として事前に"
+           "決めたしきい値 %.4f では %d / %d フレームが「見つけた」と判定された(同形 80 個が全部通る値なので、同形の隣を通すのはほぼ必然)。テンプレートは対象そのものから切ったので、対象側の相関は高めに出る。答えを見てから置くしきい値(%.4f)なら %d / %d。"
+           % (a["n_both"], a["m_mean"], pitch, thr_type, a["found_type"], a["lost"], a["thr_or"], a["found_or"], a["lost"]))
+    return figs.save_video("real_candle_twin", [f.astype(np.float64) / 255.0 for f in frames], fps=8.0,
+                           gif_every=4, gif_width=720, caption=cap)
+
+
+# ===========================================================================
 def main():
     rng = np.random.default_rng(20260906)
     world = make_world(rng)
@@ -520,6 +916,31 @@ def main():
     assert _chk1 < 1e-9 and _chk2 < 1e-9 and _chk3 < 1e-9, "舞台の真値が閉じていない"
     print("→ 真値は閉じている。以降のずれはすべて **推定の誤差** である。")
 
+    # 検算 5: 対象が画像の縁で切れたとき(2026-11-09 に足した入口の確認)。
+    #   ★独立レビュー: 1 枚目の自己一致では弱いので、**別のフレーム**(6 枚目、雑音・8 bit 量子化
+    #   が独立)に **そっくりな別物体**(右上 44 px / 26 px、少しぼかした複製)がいる場面で切る。
+    _fr5, _tr5, _, _ = make_sequence(world, _tg, n=6, step=2.0, twin=True)
+    _t5 = crop_template(_fr5[0], _tr5[0])
+    _x5, _y5 = _tr5[-1]
+    _cut = 5                                        # 対象の窓を左端から 5 px 外へ出す
+    _c_left = int(round(_x5)) - HALF + _cut
+    _crop = _fr5[-1][:, _c_left:]
+    _true_xy = np.array([_x5 - _c_left, _y5])       # 切り出しの中の真値 (x, y)
+    fs.set_match_template(_t5)
+    _leg = fs.op.ncc_locate(_crop)
+    fs.set_match_template(None)
+    _ex = matching.ncc_locate_ex(_t5, _crop, min_overlap=0.75)
+    _e_leg = float(np.hypot(_leg[2] - _true_xy[0], _leg[1] - _true_xy[1]))
+    _e_ex = float(np.hypot(_ex["col"] - _true_xy[0], _ex["row"] - _true_xy[1]))
+    print(f"検算 5  6 枚目(双子つき)で対象を左端から {_cut} px 出した切り出し(見えている割合 "
+          f"{(TPL - _cut) / TPL:.2f}、真値 (x, y) = ({_true_xy[0]:.2f}, {_true_xy[1]:.2f})):")
+    print(f"        公開 op ncc_locate  得点 {_leg[0]:.4f} 位置誤差 {_e_leg:6.2f} px"
+          f"(full-overlap のみ = 縁の対象は調べない)")
+    print(f"        ncc_locate_ex       得点 {_ex['score']:.4f} 位置誤差 {_e_ex:6.2f} px"
+          f" 重なり {_ex['overlap']:.2f} flags={_ex['flags']}")
+    assert _e_ex < 2.0 and "border" in _ex["flags"], "縁で切れた対象を ncc_locate_ex が見つけない"
+    assert _e_leg > LOST_PX, "公開 op が縁の対象を見つけた(契約が変わった?)"
+
     # =======================================================================
     rule("1. 4 つの対象の素性 —— 追う前に、そのテンプレートが一意かどうか")
     # =======================================================================
@@ -538,18 +959,25 @@ def main():
         T0[name], F0[name] = t0, f0
         corr = ops._ncc_map(f0, t0)
         corr_maps[name] = corr
-        pk, xy, prom, d2 = peak_and_prominence(corr)
+        pk, xy, prom, _d2_any = peak_and_prominence(corr)
+        # ★2026-11-09 独立レビュー: 2 位が同点(繰返 では相関 1.000 の峰が複数)だと、
+        #   peak_and_prominence の距離は丸め 1e-13 でどの同点を拾うかで決まる任意の値になる
+        #   (FFT 化で 44 → 66 px に変わった)。表には **同点の峰のうち最も近いもの** の距離と
+        #   同点の数を出す(どちらも丸めに依らない)。
+        d2, n_tie = _nearest_tied_second(corr, xy, pk - prom)
         # 開口問題の指標: ピークから ±3 px の相関の落ち方が最も緩い方向
         r, c = int(round(xy[1])), int(round(xy[0]))
         drops = [1.0 - corr[r + dy * 3, c + dx * 3]
                  for dy, dx in ((0, 1), (1, 0), (1, 1), (1, -1))]
-        profile[name] = dict(second=pk - prom, prom=prom, d2=d2, flat=min(drops))
+        profile[name] = dict(second=pk - prom, prom=prom, d2=d2, n_tie=n_tie, flat=min(drops))
         print(f"{name:<8}{pk - prom:>12.4f}{prom:>10.4f}{d2:>16.1f}{min(drops):>16.4f}")
     print("-" * 64)
     print("「縁方向の平坦さ」= ピークから 3 px ずらしたときの相関の落ちが最小の方向の値。")
     print("小さいほど、その方向へずれても相関が下がらない = 位置が決まらない。")
-    print(f"→ 繰返 の 2 位は {profile['繰返']['second']:.3f} で、"
-          f"しかも {profile['繰返']['d2']:.0f} px 離れている(= 別の字形)。")
+    print("「2 位までの距離」= 2 位と同点(差 1e-9 以内)の峰のうち、最も近いものまでの距離。")
+    print(f"→ 繰返 の 2 位は {profile['繰返']['second']:.3f} で、同点の峰が "
+          f"{profile['繰返']['n_tie']} 個ある(最も近いものが {profile['繰返']['d2']:.0f} px 先 = 別の字形)。")
+    print("   どの同点を「2 位」と呼ぶかは任意なので、距離は最も近いものに決めて出している。")
     print(f"→ 直線縁 は縁方向の落ちが {profile['直線縁']['flat']:.4f} しかない = 開口問題。")
     print("→ **この表は動かす前に作れる**。追跡が失敗しそうな対象は事前に分かる。")
     # 相関は符号つき(-1..+1)なので発散 LUT。0 が中間色になり、山と谷が見える。
@@ -871,11 +1299,29 @@ def main():
         print(f"{true_ang:>10.1f}{e_n:>14.2f}{pk_n:>12.3f}{e_s:>16.2f}"
               f"{s[3]:>10.0f}{s[0]:>14.3f}")
     print("-" * 76)
-    print("★ 穴 (f): 角度は 30 度刻み固定(引数が無い)。真の角度 10 度・20 度はどちらも")
-    print("   0 度か 30 度に丸められる。さらに回転テンプレートを reshape=False で作るので")
-    print("   **四隅がゼロで埋まり**、0 度以外は相関値が構造的に下がる。実測では")
-    print(f"   0 度の shape ピーク {ch6h[0][5]:.3f} に対し 30 度で {ch6h[3][5]:.3f}。")
-    print("   0 度でも ncc と一致しないのは、この四隅のゼロが効いているため。")
+    print("★ 穴 (f): 角度は 30 度刻み固定(引数が無い)。真の角度 10 度・20 度・45 度は")
+    print("   0 / 30 / 60 度のどれかに丸められる。回転テンプレートの四隅(reshape=False で")
+    print("   外から来る画素)は 2026-11-09 から相関に入れない(以前は 0 埋めのまま入れて")
+    print("   30 度の対象で 0.531 しか出なかった)。実測では")
+    print(f"   0 度の shape ピーク {ch6h[0][5]:.3f}、30 度で {ch6h[3][5]:.3f}、"
+          f"60 度で {ch6h[5][5]:.3f}。0 度では ncc と一致する(同じ相関)。")
+    print("\n[刻みを指定する入口] matching.shape_locate_fine(刻み 5 度 + 放物線で副刻み)。")
+    print(f"{'真の角度':>10}{'位置誤差':>12}{'推定角':>10}{'ピーク':>10}")
+    print("-" * 42)
+    ch6f = []
+    for rd in (0.0, 10.0, 20.0, 30.0, 45.0, 60.0):
+        fr, tr, an, _ = make_sequence(world, TARGETS["一意"], n=6, step=2.0, rot_deg=rd)
+        t0 = crop_template(fr[0], tr[0])
+        img, true_xy, true_ang = fr[-1], tr[-1], an[-1]
+        f = matching.shape_locate_fine(t0, img, step_deg=5.0)
+        e_f = float(np.hypot(f["col"] - true_xy[0], f["row"] - true_xy[1]))
+        ch6f.append((true_ang, e_f, f["angle_deg"], f["score"]))
+        print(f"{true_ang:>10.1f}{e_f:>12.2f}{f['angle_deg']:>10.1f}{f['score']:>10.3f}")
+    print("-" * 42)
+    print("   推定角は shape_locate と同じ向き(scipy.ndimage.rotate の角度)。")
+    print(f"   20 度以上は角度も合う。0 度・10 度は {ch6f[0][2]:.1f} / {ch6f[1][2]:.1f} 度を返す ——")
+    print("   位置を整数画素で探すので、副画素のずれを回転が肩代わりして小さい角度の得点が")
+    print("   0 度より高くなる(位置は合っている)。数度以下の角度はこの入口でも決まらない。")
 
     # =======================================================================
     rule("7. ★ 崖 (d) 照明変化 —— NCC は本当に明るさ変化に強いのか")
@@ -1197,7 +1643,7 @@ def main():
     print("    「あれば床がどれだけ下がるか」は測っていない(提案は末尾)。")
 
     # =======================================================================
-    rule("道具の穴(op 本体は直していない)")
+    rule("道具の穴(2026-11-09 に (d)(f) の一部を op 側で直した)")
     # =======================================================================
     print("(a) ncc_locate が相関マップを返さない → 突出度が公開 API で計算できない。")
     print("    第 10 章の主題(繰り返し模様の誤ロック検出)は公開 API の外にある。")
@@ -1208,9 +1654,11 @@ def main():
     print("    差し替える処理なので、この設計と最も相性が悪い。")
     print("(d) 探索範囲を渡せない。局所探索は呼ぶ側が画像を切るしかなく、")
     print("    切り出しが小さいと full-overlap 位置が消えて黙って [0,0,0] が返る。")
+    print("    → fs.ncc_locate_ex が重なり率と flags(border / missing / ambiguous)を返す(検算 5)。")
     print("(e) 返りは (行, 列)。幾何側の (x, y) と取り違えても例外は出ない。")
-    print("(f) shape_locate の角度刻みは 30 度固定(引数なし)+ 回転テンプレートの")
-    print(f"    四隅がゼロ埋め。実測で 0 度 {ch6h[0][5]:.3f} → 30 度 {ch6h[3][5]:.3f}。")
+    print("(f) shape_locate の角度刻みは 30 度固定(引数なし)。回転テンプレートの四隅の")
+    print("    ゼロ埋めは 2026-11-09 に直した(30 度で 0.531 →"
+          f" {ch6h[3][5]:.3f})。刻みの指定は matching.shape_locate_fine。")
     print("(g) 追跡の系(更新方針・予測・見失い判定)が無い。第 3 章の 4 系は自前。")
     print("(h) 信頼度の語彙が無い。返る相関値は第 10 章のとおり条件で嘘をつく。")
     print("\n[足すとよい op(この PoC が実際に自前で書いたもの)]")
@@ -1227,7 +1675,7 @@ def main():
     print("      **roi_width を一緒に返すのが肝** —— 第 9 章のとおり、探索窓を変えると")
     print("      突出度の意味が変わる。窓を書き添えない突出度は比較できない。")
     print("  shape_locate(..., angle_step=30.0, angle_range=(0, 360), pad='reflect')")
-    print("      刻みを引数に出す + 回転テンプレートの四隅をゼロで埋めない(穴 f)。")
+    print("      刻みを引数に出す(穴 f。四隅は直した。刻みは matching.shape_locate_fine)。")
     print("  track_template(frames, template, update='none'|'every'|'k'|'confidence',")
     print("                 roi=None, predict='constant_velocity') -> table")
     print("      第 3 章の 4 系を 1 つの op に。返りは位置列・信頼度列・更新した")
@@ -1290,12 +1738,19 @@ def main():
     # (10) shape_locate の角度は 30 度刻みに丸められる
     assert set(a[4] for a in ch6h) <= set(float(x) for x in range(0, 360, 30)), \
         "shape_locate が 30 度刻み以外を返した"
+    # (10b) 四隅を除いたので、刻みにちょうど乗る角度(30 / 60 度)は 0 度並みに当たる
+    assert ch6h[3][5] > 0.9 and ch6h[5][5] > 0.9 and ch6h[3][3] < LOST_PX, \
+        "shape_locate の回転テンプレートの四隅が相関に入っている(2026-11-09 の修正が戻った?)"
+    # (10c) 刻み 5 度の入口は中間の角度でも見失わない
+    assert all(e < LOST_PX for _, e, _, _ in ch6f), "shape_locate_fine が中間の角度で見失った"
+    assert all(abs(((ag - ta) + 180.0) % 360.0 - 180.0) < 1.0 for ta, _, ag, _ in ch6f if ta >= 20.0),         "shape_locate_fine が 20 度以上の角度を外した"
 
     if figs.enabled():          # 動画は図を出すときだけ。失敗しても本文(数字)は落とさない
         try:
             fig_video_twin(ch5[0.7], ch5t[0.7], 0.7, THR_PK, THR_PR)
         except Exception as exc:    # noqa: BLE001
             figs._errors.append("twin_vs_flat_occluder: %s: %s" % (type(exc).__name__, exc))
+    real_twin_chapter(ff_tot, nl_tot)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
 

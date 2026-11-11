@@ -5,10 +5,10 @@ category: anomaly_patch
 in: video
 out: table
 gpu: なし
-examples: [poc_patch_anomaly]
+examples: [poc_ai_built_inspection_scored, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # patchbank_fit — SPC `anomaly_patch` op
@@ -33,7 +33,9 @@ distance from any good patch to the bank. ``coreset=1`` keeps everything (radius
 selection, so ``seed`` and ``proj_dim`` have no effect).
 
 Returns the model: ``bank`` (m, D'), ``mean`` / ``std`` (D), ``n_total`` patches, ``n_memory``,
-``fraction``, ``covering_radius``, the feature parameters and ``image_shape``.
+``fraction``, ``covering_radius``, the feature parameters, ``image_shape`` and the pixel scale
+of the good images: ``input_range`` (min, max) and ``input_integer`` (integer dtype or not).
+``patchbank_score`` refuses an image on another scale (see there).
 
 Raises ``ValueError`` for invalid parameters, a feature that is constant over all good patches,
 or a stack that would exceed the memory guard.
@@ -46,6 +48,7 @@ or a stack that would exceed the memory guard.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_ai_built_inspection_scored](../../../../examples/poc_ai_built_inspection_scored.py) — `py -3.11 examples/poc_ai_built_inspection_scored.py`
 - [poc_patch_anomaly](../../../../examples/poc_patch_anomaly.py) — `py -3.11 examples/poc_patch_anomaly.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

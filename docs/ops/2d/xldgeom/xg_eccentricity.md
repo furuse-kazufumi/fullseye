@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_geometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # xg_eccentricity — 2D `xldgeom` op
@@ -41,8 +41,8 @@ Eccentricity sqrt(1 - lambda_min/lambda_max) from the point covariance.
 数えない。``a``, ``b`` は未使用。
 
 返り値は ``numpy.float64`` で [0, 1]。真円・正方形など等方な点配置で 0、
-一直線上の点(``λ_min = 0``)で 1。点が 2 個未満、または ``λ_max <= 1e-12``
-(全点同一)なら 0.0。輪郭が複数あればそれらをまとめた分布の離心率になり、
+一直線上の点(``λ_min = 0``)で 1。点が 2 個未満、または全点が同一(``λ_max`` が
+座標の大きさ² の 1e-24 倍以下 = 丸め屑)なら 0.0。輪郭が複数あればそれらをまとめた分布の離心率になり、
 個々の輪郭の形ではなく配置の広がりも混ざる(輪郭ごとに評価したいなら先に
 ``select_contours_xld`` などで 1 本に絞る)。輪郭点の密度に依存する(点が
 密な部分が重く効く)点は面積ベースの指標と異なる。軸比そのものは

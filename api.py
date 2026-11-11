@@ -29,7 +29,7 @@ from __future__ import annotations
 import os
 import warnings
 import sys
-from typing import Iterable, Sequence
+from typing import Iterable, NamedTuple, Sequence
 
 import numpy as np
 
@@ -101,7 +101,10 @@ from stereo import (  # noqa: E402,F401
 )
 from measure import (line_profile, distance, angle,  # noqa: E402,F401
                      fit_line, fit_circle, fit_circle_geometric,
-                     fit_curve_principal_axis, fit_ellipse, fit_rectangle2)
+                     fit_curve_principal_axis, fit_ellipse, fit_rectangle2,
+                     fit_rectangle2_lsq)
+# 2026-11-09 op 点検: はみ出しを扱う NCC / 刻み指定の回転照合(ncc_locate / shape_locate の契約は不変)
+from matching import ncc_map_partial, ncc_locate_ex, shape_locate_fine  # noqa: E402,F401
 # Exact geometric predicates (robust orientation / in-circle / in-sphere): the
 # correct SIGN even when float64 rounds a near-degenerate determinant to the wrong
 # side. Used by the convex hull; exposed for robust user-side geometry.
@@ -185,6 +188,7 @@ except Exception as _e:   # noqa: BLE001 - installed but BROKEN is not the same 
         globals()[_n] = _pipeline3d_missing(_n, _e)
 from registration import (  # noqa: E402,F401
     kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register, feature_register,
+    icp_gated, point_to_plane_icp_gated,
 )
 from ppf import ppf_model, surface_match, find_surface_pose  # noqa: E402,F401
 from pointcloud import (  # noqa: E402,F401
@@ -232,6 +236,7 @@ from render3d import (  # noqa: E402,F401
 from camera import (  # noqa: E402,F401
     intrinsic_matrix, decompose_intrinsics, projection_matrix,
     project_points, backproject, depth_to_points, normals_from_depth,
+    normals_from_depth_edgeaware,
     triangulate, reprojection_error, solve_pnp, rodrigues, rotation_log,
     fundamental_matrix, essential_matrix, essential_from_fundamental,
     decompose_essential, recover_pose, epipolar_lines,
@@ -310,7 +315,10 @@ from realdata import (  # noqa: E402,F401
     SAMPLE_PHOTOS, sample_photo, sample_photo_rgb, sample_photo_raw,
     sample_stereo_pair, sample_photo_credit,
     sem_metal_layer_cache, sem_metal_layer_root, sem_metal_layer_pairs,
-    sem_metal_layer_credit,
+    sem_metal_layer_credit, e57_bunny_cache, e57_bunny_files,
+    walnut_cbct_projection_indices, walnut_cbct_cache, walnut_cbct_write_manifest,
+    walnut_cbct_root, walnut_cbct_credit,
+    dtu_pv_irt_cache, dtu_pv_irt_root, dtu_pv_irt_frame, dtu_pv_irt_load, dtu_pv_irt_credit,
 )
 from deformreg import (  # noqa: E402,F401
     warp_by_field, demons_register, field_magnitude, residual_ssd,
@@ -1182,6 +1190,8 @@ __all__ = [
     "NORMS", "QUALITATIVE", "PERCEPTUAL_SAFE", "CVD_SAFE", "CYCLIC",
     "detect", "segment_objects", "object_descriptor", "nearest_prototype", "draw_objects",
     "registration", "kabsch", "icp", "point_to_plane_icp", "apply_transform",
+    "icp_gated", "point_to_plane_icp_gated",
+    "ncc_map_partial", "ncc_locate_ex", "shape_locate_fine",
     "pca_align", "register", "feature_register",
     "ppf", "ppf_model", "surface_match", "find_surface_pose",
     "pointcloud", "estimate_normals", "voxel_downsample",
@@ -1213,6 +1223,7 @@ __all__ = [
     "mesh_to_sdf", "voxelize_solid", "marching_cubes",
     "camera", "intrinsic_matrix", "decompose_intrinsics", "projection_matrix",
     "project_points", "backproject", "depth_to_points", "normals_from_depth",
+    "normals_from_depth_edgeaware",
     "triangulate", "reprojection_error", "solve_pnp", "rodrigues", "rotation_log",
     "fundamental_matrix", "essential_matrix", "essential_from_fundamental",
     "decompose_essential", "recover_pose", "epipolar_lines",
@@ -1247,7 +1258,8 @@ __all__ = [
     "SAMPLE_PHOTOS", "sample_photo", "sample_photo_rgb", "sample_photo_raw",
     "sample_stereo_pair", "sample_photo_credit",
     "sem_metal_layer_cache", "sem_metal_layer_root", "sem_metal_layer_pairs",
-    "sem_metal_layer_credit",
+    "sem_metal_layer_credit", "e57_bunny_cache", "e57_bunny_files",
+    "dtu_pv_irt_cache", "dtu_pv_irt_root", "dtu_pv_irt_frame", "dtu_pv_irt_load", "dtu_pv_irt_credit",
     "STAIN_VECTORS",
     "BandMeta", "read_envi", "write_envi", "spec_band", "spec_rgb_composite",
     "spec_nearest_band", "spec_band_ratio", "spec_index", "spec_angle_mapper", "spec_pca",
@@ -1271,7 +1283,7 @@ __all__ = [
     "match_descriptors", "match_keypoints",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
-    "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2",
+    "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2", "fit_rectangle2_lsq",
     "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3", "fit_surface_principal_axes",
     "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
     "measure3d", "regionprops3d", "ops3d", "pipeline3d",
@@ -2583,7 +2595,26 @@ def _guard_input(v, op, policy):
 #
 # ``region`` inputs are deliberately NOT touched: an int {0,1} mask is a legitimate
 # region and ``_coerce_input`` already re-types it without rescaling.
-_DTYPE_CONTRACT_SORTS = frozenset({"image", "color", "volume"})
+#
+# ★2026-11-05(1.0 前の修正 typed-dtype): the typed bridge opened sorts whose values
+# are the SAME [0,1] pixel values as ``image`` — ``video`` (T,H,W[,3]) frames,
+# ``rgbimage`` (H,W,3) linear RGB, ``lightfield`` (V,U,H,W) views — but the set
+# stayed at the three original sorts, so a uint8 video passed ``on_error="raise"``
+# and ``tb_temporal_bandpass`` / ``tb_temporal_band_power`` returned the x255 /
+# x255**2 answer with no exception and no record (the other 14 video ops are
+# scale-equivariant or thresholded and happened to agree). Every entry
+# (``apply``, the n-ary tier, ``template=``, ``run_pipeline`` CPU/GPU,
+# ``FullseyeEngine.run_cached`` and the MCP stages, which call ``fullseye.apply``)
+# reads THIS set, so widening it here is what makes them agree.
+#
+# Deliberately NOT here — their values are not pixel values, an integer can be the
+# meaning, and /255 would be a silent unit change (the opposite bug):
+#   counts (photon counts, int64 by contract), cimage / beatcube (complex fields),
+#   qimage (quaternion: signed Riesz pairs, QFT spectra far outside [0,1]),
+#   signal / matrix / points / keypoints (profiles, linear algebra, coordinates),
+#   region (int masks, see above), contour / feature / match / any.
+_DTYPE_CONTRACT_SORTS = frozenset({"image", "color", "volume",
+                                   "video", "rgbimage", "lightfield"})
 _DTYPE_FULL_SCALE = {"uint8": 255.0, "uint16": 65535.0}
 
 
@@ -2711,14 +2742,19 @@ def _reject_untyped(v, op_or_sort) -> None:
             % (name, sort, a.dtype))
 
 
-def _contract_dtype(v, op, policy):
+def _contract_dtype(v, op, policy, *, in_sort=None, name=None):
     """Bring an integer/bool image onto the float64 [0,1] contract, or refuse it.
 
     Returns the value to run the op on. Independent of ``coerce`` (which is about
     the *sort*, not the dtype): a dtype outside the contract is wrong for every
     caller, and staying silent is what produced the wrong answers above.
+
+    ``in_sort`` / ``name`` override ``op.in_sort`` / ``op.name`` for one input of an
+    n-ary op (``NaryOp`` has ``in_sorts[i]``), exactly as in :func:`_pu_contract`.
     """
-    if op.in_sort not in _DTYPE_CONTRACT_SORTS:
+    in_sort = op.in_sort if in_sort is None else in_sort
+    name = op.name if name is None else name
+    if in_sort not in _DTYPE_CONTRACT_SORTS:
         return v
     a = v if isinstance(v, np.ndarray) else None
     if a is not None and a.dtype.kind == "f" and a.dtype.itemsize < 8:
@@ -2734,7 +2770,7 @@ def _contract_dtype(v, op, policy):
             "Convert explicitly, e.g. img.astype(np.float64) / 255.0 for uint8 — the core "
             "operators run scipy.ndimage with no dtype argument, so an integer image is "
             "filtered as an integer and the result is a different image, not a slower one."
-            % (op.name, op.in_sort, a.dtype))
+            % (name, in_sort, a.dtype))
     if a.dtype.kind == "b":
         out = a.astype(np.float64)
         how = "bool -> float64 {0,1}"
@@ -2742,7 +2778,7 @@ def _contract_dtype(v, op, policy):
         s = _dtype_scale(a)
         out = a.astype(np.float64) if s == 1.0 else a.astype(np.float64) / s
         how = "%s -> float64 (/%g)" % (a.dtype, s)
-    _bs.record(op.name,
+    _bs.record(name,
                ValueError("dtype_converted: %s; the contract is float64 in [0,1]" % how),
                op.out_sort, source="input")
     return out
@@ -2857,6 +2893,10 @@ def _try_accel(op, v, a, b, device):
         return _NOACCEL
     if accel_name is None or (op.name in _GPU_OPEN and not _bs.is_strict()):
         return _NOACCEL                  # breaker open; strict mode retries so "raise" can raise
+    _falls_back = getattr(accel, "_b_falls_back", None)
+    if _falls_back is not None and _falls_back(accel_name, a, b):
+        # 敵対的検証 2026-11-05 第 2 巡 T6: kernel は b の選ぶ端の扱い・構造要素を実装していない → core
+        return _NOACCEL
     try:
         if str(device) == "cuda" and getattr(accel, "_HAS_TORCH", False) and not cuda_available():
             # torch が「CUDA なし」と答える機械では torch の kernel を起こさない(N117 の説明で記録して CPU へ)。
@@ -3015,12 +3055,36 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     shadow = decision.get("path") == "allow_single" and decision["device"] == "cuda"
     if template is None:
         return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite, shadow=shadow)
+    template = _check_template(template, name, policy, allow_nonfinite)
     prev = _ops._MATCH_CTX.get("template")
     _ops.set_match_template(template)
     try:
         return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite, shadow=shadow)
     finally:
         _ops.set_match_template(prev)
+
+
+def _check_template(template, name, policy, allow_nonfinite=False):
+    """``apply(template=...)`` のテンプレートに、入力画像と同じ入口の契約を当てる(返り値 = 走らせる値)。
+
+    ★2026-11-05(敵対的検証 C7): テンプレートは ``ncc_locate`` / ``shape_locate`` の 2 本目の入力なのに
+    検査が 1 つも無く、NaN 1 画素のテンプレートで ``on_error="raise"`` でも ``[0, 0, 0]``(no-match)が
+    例外も台帳記録も無く返っていた(同じ NaN を画像側に入れると拒否される)。画像と同じ順で:
+    ``fullseye.Image`` を剥がす → 非有限は方針に依らず拒否(``allow_nonfinite=True`` が唯一の抜け道)→
+    数値でない dtype は TypeError → 整数・bool は ``/255`` などで契約へ(記録、``raise`` では拒否)→
+    空・次元・extra_checks の値域(:func:`_guard_input`)。未知の op 名はここでは触らない(本体が断る)。
+    """
+    op = find_op(name) if isinstance(name, str) else None
+    if op is None:
+        return template
+    t = _unwrap_image(template)
+    if not allow_nonfinite:
+        _refuse_nonfinite(t, "%s (template)" % name)
+    t = np.asarray(t)
+    _reject_untyped(t, op)
+    t = _contract_dtype(t, op, policy)
+    _guard_input(t, op, policy)
+    return t
 
 
 def _coerce_sort(v, sort: str):
@@ -3085,14 +3149,35 @@ def _check_call_args(image, name, a, b, policy):
         out.append(x)
     return out[0], out[1]
 
+#: :func:`_nonfinite_leaf` が降りる入れ子の深さの上限(再帰の歯止め。実際の入力は数段)。
+_NONFINITE_MAX_DEPTH = 32
+
+
 def _nonfinite_leaf(x, depth=0):
     """*x* の最初の非有限な浮動小数の葉を短い文で返す(無ければ None)。
 
     ndarray は float / complex の種だけ見る(整数・bool は NaN を持てない)。float は
     ``min`` / ``max`` が NaN を伝播し ±inf をそのまま出すので、bool 配列を作らずに済む。
-    list / tuple / dict は 3 段まで降りる(n 項 op の入力リスト、XLD の ``cs``、表の列)。
+    object 配列は要素ごとに降りる。list / tuple / dict は :data:`_NONFINITE_MAX_DEPTH` 段まで降りる
+    (n 項 op の入力リスト、XLD の ``cs``、表の列、入れ子の表)。
+
+    ★2026-11-04(外部監査 v0.9.0 F4): 以前は**スカラーの葉**(``{"x": nan}`` の ``nan``、
+    ``[array, inf]`` の ``inf``、複素のスカラー)と object 配列を見ず、深さも 3 段で打ち切っていた ——
+    ``apply({"x": nan}, "identity", on_error="raise")`` が NaN をそのまま返した(入口の契約違反)。
     """
+    if isinstance(x, (bool, np.bool_)):
+        return None
+    if isinstance(x, (float, complex, np.floating, np.complexfloating)):
+        return None if np.isfinite(x) else "non-finite value %r" % (x,)
     if isinstance(x, np.ndarray):
+        if x.dtype == object:
+            if depth >= _NONFINITE_MAX_DEPTH:
+                return None
+            for i, v in enumerate(x.flat):
+                hit = _nonfinite_leaf(v, depth + 1)
+                if hit is not None:
+                    return "element %d: %s" % (i, hit)
+            return None
         if x.size == 0 or x.dtype.kind not in "fc":
             return None
         if x.dtype.kind == "f":
@@ -3103,7 +3188,7 @@ def _nonfinite_leaf(x, depth=0):
                 return None
         n = int(np.count_nonzero(~np.isfinite(x)))
         return "%d of %d values non-finite (shape %s)" % (n, x.size, x.shape)
-    if depth >= 3:
+    if depth >= _NONFINITE_MAX_DEPTH:
         return None
     if isinstance(x, dict):
         for k, v in x.items():
@@ -3139,9 +3224,21 @@ def _refuse_nonfinite(image, name):
         % (name, hit))
 
 
+class _NaryInput(NamedTuple):
+    """n 項 op の入力 1 本を :func:`_guard_input` に渡すための op 相当(名前・その入力の sort・出力 sort)。"""
+    name: str
+    in_sort: str
+    out_sort: str
+
+
 def _apply_impl(image, name, a, b, coerce, device, policy, fast=None, allow_nonfinite=False, shadow=False):
     a, b = _check_call_args(image, name, a, b, policy)
     nop = _nary_by_name().get(name) if find_op(name) is None else None
+    if nop is not None and isinstance(image, (list, tuple)):
+        # ★2026-11-05(敵対的検証 C12): 単入力の apply / run_pipeline は fullseye.Image を剥がすのに、
+        #   n 項だけが剥がさず「got a scalar Image」の TypeError だった。入力ごとに同じ剥がし方
+        #   (非有限の検査より前 —— Image の中身も検査する)。
+        image = [_unwrap_image(x) for x in image]
     if not allow_nonfinite and (nop is not None or find_op(name) is not None):
         _refuse_nonfinite(image, name)          # a known op only: an unknown name keeps its own error below
     if nop is not None:                                  # n-ary tier: needs a LIST of inputs
@@ -3171,6 +3268,21 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None, allow_nonf
             _reject_untyped(x, srt)
         inputs = [(_coerce_sort(x, srt) if coerce else np.asarray(x))
                   for x, srt in zip(image, nop.in_sorts)]
+        # ★2026-11-04(外部監査 v0.9.0 F2): 単入力の apply / run_pipeline と PrecisionUnion の n-ary 経路は
+        #   dtype 契約(_contract_dtype)を通るのに、密な配列の n-ary だけが通らず、uint8 の 32 + 32 が
+        #   on_error="raise" でも例外も台帳記録も無く 1.0(正しくは 64/255)になっていた。入力ごとに同じ規則で。
+        #   畳み込みの核(_NARY_KERNEL_SECOND の第 2 入力)は画像でなく重みの表なので、型だけ float64 にする。
+        inputs = [(np.asarray(x, np.float64) if (i == 1 and name in _NARY_KERNEL_SECOND
+                                                 and np.asarray(x).dtype.kind in "bui")
+                   else _contract_dtype(x, nop, policy, in_sort=srt, name=name))
+                  for i, (x, srt) in enumerate(zip(inputs, nop.in_sorts))]
+        # ★2026-11-05(敵対的検証 C11): 単入力の apply にある _guard_input(空・次元・色軸・extra_checks の
+        #   値域)が n 項に無く、空 (0, 0) / 1-D / 4-D / 0..50 の入力が on_error="raise" でも例外も台帳記録も
+        #   無く通っていた。入力ごとに同じ検査(その入力の sort で)。畳み込みの核は画像でないので外す。
+        for i, (x, srt) in enumerate(zip(inputs, nop.in_sorts)):
+            if i == 1 and name in _NARY_KERNEL_SECOND:
+                continue
+            _guard_input(x, _NaryInput(name, srt, nop.out_sort), policy)
         # the n-ary functions carry no guard of their own: give them the same recorded,
         # sanitised fail-soft as every backend op (strict mode re-raises inside guard)
         def body(v0, aa, bb):
@@ -3278,45 +3390,65 @@ def _normalise_stages(image, stages, a, b) -> list:
             % (type(image).__name__, type(stages).__name__))
     if isinstance(stages, str):
         stages = [s.strip() for s in stages.split(",") if s.strip()]
-    norm = []
-    for i, st in enumerate(stages):
-        if isinstance(st, str):
-            name, sa, sb = st, a, b
-        elif isinstance(st, dict):
-            name = st.get("op", st.get("name"))
-            if not isinstance(name, str):
-                raise TypeError("stage %d: a dict stage needs 'op' (or 'name'), got keys %s"
-                                % (i, sorted(st)))
-            bad = set(st) - {"op", "name", "a", "b"}
+    return [_normalise_stage(i, st, a, b) for i, st in enumerate(stages)]
+
+
+def _stage_knob(i, name, label, x) -> float:
+    """段のノブ 1 つを :func:`_check_call_args` と同じ型の規則で float にする(値域・有限性は後段)。
+
+    ★2026-11-05(敵対的検証 C4): 以前は dict 形(``{"op": .., "a": "0.9"}`` / ``(name, {"a": "0.9"})``)
+    だけが ``float("0.9")`` で文字列を通し、tuple 形と ``apply`` は拒否していた。bool は逆で、tuple 形が
+    拒否し dict 形と ``apply`` は 1.0 として通していた。**段の書き方によらず** ``apply`` の規則に揃える:
+    数値(int / float / numpy の整数・浮動小数)と bool(``float(True) == 1.0``)だけを受け、他は TypeError。
+    """
+    if isinstance(x, bool):
+        return float(x)
+    if not isinstance(x, _KNOB_NUMERIC):
+        raise TypeError("stage %d (%r): knobs a and b must be numbers in 0..1 (the rule of "
+                        "fullseye.apply), got %s=%r (%s)" % (i, name, label, x, type(x).__name__))
+    return float(x)
+
+
+def _normalise_stage(i, st, a=0.5, b=0.5) -> tuple:
+    """段 1 つ(5 形のどれか)を ``(name, a, b)`` にする。:func:`_normalise_stages` /
+    ``engine.FullseyeEngine`` / ``engine.pipeline_states`` が共有する唯一の読み方
+    (C3 / C13、2026-11-05): 未知のキー・3 個を超える位置ノブ・数値でないノブは TypeError。"""
+    if isinstance(st, str):
+        name, sa, sb = st, a, b
+    elif isinstance(st, dict):
+        name = st.get("op", st.get("name"))
+        if not isinstance(name, str):
+            raise TypeError("stage %d: a dict stage needs 'op' (or 'name'), got keys %s"
+                            % (i, sorted(st)))
+        bad = set(st) - {"op", "name", "a", "b"}
+        if bad:
+            raise TypeError("stage %d (%r): unknown key(s) %s — ops take only the knobs a and b"
+                            % (i, name, sorted(bad)))
+        sa, sb = st.get("a", a), st.get("b", b)
+    elif isinstance(st, (tuple, list)):
+        if not st or not isinstance(st[0], str):
+            raise TypeError("stage %d: a tuple stage starts with the op name, got %r" % (i, st))
+        name, rest = st[0], list(st[1:])
+        if len(rest) == 1 and isinstance(rest[0], dict):
+            bad = set(rest[0]) - {"a", "b"}
             if bad:
-                raise TypeError("stage %d (%r): unknown key(s) %s — ops take only the knobs a and b"
+                raise TypeError("stage %d (%r): unknown knob(s) %s — ops take only a and b"
                                 % (i, name, sorted(bad)))
-            sa, sb = st.get("a", a), st.get("b", b)
-        elif isinstance(st, (tuple, list)):
-            if not st or not isinstance(st[0], str):
-                raise TypeError("stage %d: a tuple stage starts with the op name, got %r" % (i, st))
-            name, rest = st[0], list(st[1:])
-            if len(rest) == 1 and isinstance(rest[0], dict):
-                bad = set(rest[0]) - {"a", "b"}
-                if bad:
-                    raise TypeError("stage %d (%r): unknown knob(s) %s — ops take only a and b"
-                                    % (i, name, sorted(bad)))
-                sa, sb = rest[0].get("a", a), rest[0].get("b", b)
-            elif len(rest) <= 2 and all(isinstance(x, _NUMBER) and not isinstance(x, bool) for x in rest):
-                sa, sb = (rest + [a, b])[:2]
-            else:
-                raise TypeError(
-                    "stage %d (%r): expected (name), (name, a), (name, a, b) or (name, {'a': .., 'b': ..}), got %r"
-                    % (i, name, st))
+            sa, sb = rest[0].get("a", a), rest[0].get("b", b)
+        elif len(rest) <= 2 and all(isinstance(x, _NUMBER) for x in rest):
+            # bool は int の部分型: apply と同じく 1.0 / 0.0 として受ける(C4、dict 形と揃える)
+            # ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の
+            #   省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。
+            #   省いた位置の分だけ、その位置の既定値で埋める。
+            sa, sb = rest + [a, b][len(rest):]
         else:
-            raise TypeError("stage %d: expected an op name, a (name, a, b) tuple or a dict, got %s"
-                            % (i, type(st).__name__))
-        try:
-            norm.append((name, float(sa), float(sb)))
-        except (TypeError, ValueError):
-            raise TypeError("stage %d (%r): knobs a and b must be numbers, got a=%r b=%r"
-                            % (i, name, sa, sb)) from None
-    return norm
+            raise TypeError(
+                "stage %d (%r): expected (name), (name, a), (name, a, b) or (name, {'a': .., 'b': ..}), got %r"
+                % (i, name, st))
+    else:
+        raise TypeError("stage %d: expected an op name, a (name, a, b) tuple or a dict, got %s"
+                        % (i, type(st).__name__))
+    return (name, _stage_knob(i, name, "a", sa), _stage_knob(i, name, "b", sb))
 
 
 def _check_chain_sorts(ops_, where: str = "run_pipeline") -> None:
@@ -3372,6 +3504,19 @@ def _prepare_pipeline(image, stages, a, b, policy):
     return image, checked, ops_
 
 
+def _pipeline_entry(v, op, coerce, policy):
+    """鎖の入口の値に、第 1 段の op の入口の契約を当てる(数値でない dtype の拒否 → sort の coerce →
+    dtype 契約 → :func:`_guard_input`)。返り値 = 第 1 段に渡す値。
+
+    :func:`_pipeline_steps` の ``entry=True`` と ``FullseyeEngine.run_cached`` が共有する 1 本 ——
+    run_cached はキャッシュに当たっても毎回ここを通す(2026-11-05 敵対的検証 C6)。"""
+    _reject_untyped(v, op)
+    v = _coerce_input(v, op) if coerce else v
+    v = _contract_dtype(v, op, policy)
+    _guard_input(v, op, policy)
+    return v
+
+
 def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast, entry=True):
     """CPU の段実行の唯一の本体: 各段の後の値を順に yield する。
 
@@ -3393,10 +3538,7 @@ def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast, entry=True):
                 continue
             v = v.to_dense()
         if first:
-            _reject_untyped(v, op)
-            v = _coerce_input(v, op) if coerce else v
-            v = _contract_dtype(v, op, policy)
-            _guard_input(v, op, policy)
+            v = _pipeline_entry(v, op, coerce, policy)
             first = False
 
         def _stage(_op=op, _v=v, _a=sa, _b=sb):

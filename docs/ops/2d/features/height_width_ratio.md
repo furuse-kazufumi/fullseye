@@ -9,7 +9,7 @@ gpu: 鎖の中だけ(lbl_height_width_ratio)
 examples: [gallery2d_features]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # height_width_ratio — 2D `features` op

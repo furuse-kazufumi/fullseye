@@ -5,10 +5,10 @@ category: direction
 in: pairs
 out: normals
 gpu: なし
-examples: [representation_roundtrip]
+examples: [poc_bga_ball_type_roundtrip, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # angles_to_normals — REPRCONV `direction` op
@@ -40,6 +40,7 @@ Raises:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_bga_ball_type_roundtrip](../../../../examples/poc_bga_ball_type_roundtrip.py) — `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 - [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
 
 ## 型が繋がる次の op(`normals` を入力に取れる)

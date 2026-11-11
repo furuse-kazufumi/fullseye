@@ -5,10 +5,10 @@ category: ct_scan
 in: 
 out: ctgeometry
 gpu: なし
-examples: [ct_scan_modes]
+examples: [ct_scan_modes, poc_real_walnut_cbct]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # ct_scan_geometry — TOMOGRAPHY `ct_scan` op
@@ -71,6 +71,7 @@ offset detector ``offset_u`` bins. Those are parameters of the orbit, not new sc
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [ct_scan_modes](../../../../examples/ct_scan_modes.py) — `py -3.11 examples/ct_scan_modes.py`
+- [poc_real_walnut_cbct](../../../../examples/poc_real_walnut_cbct.py) — `py -3.11 examples/poc_real_walnut_cbct.py`
 
 ## 型が繋がる次の op(`ctgeometry` を入力に取れる)
 

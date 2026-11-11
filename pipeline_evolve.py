@@ -202,8 +202,13 @@ def _self_loop_ops(t):
     return [n for n, m in VOCAB.items() if m["in"] == t and m["out"] == t]
 
 
-def mutate(chain, rng, task):
-    """型保存の変異(置換/挿入/削除)。goal 型を保つ。→ tuple。"""
+def mutate(chain, rng, task, max_len=5):
+    """型保存の変異(置換/挿入/削除)。goal 型を保つ。→ tuple。
+
+    挿入は ``len(chain) < max_len`` のときだけ行うので、返る chain は ``max_len`` を超えない。
+    (★2026-11-04 外部検証 E1: 上限が 5 に固定されていて、``evolve(max_len=1)`` が長さ 2、
+    ``max_len=0`` が長さ 1 の処理列を返していた。交叉だけが ``max_len`` で切り詰めていた。)
+    """
     chain = list(chain)
     kind = rng.integers(3)
     loops = _self_loop_ops(task.goal_type)       # points→points op(このタスクでは全 preprocess+augment)
@@ -212,7 +217,7 @@ def mutate(chain, rng, task):
         cands = [o for o in _self_loop_ops(VOCAB[chain[i]]["in"]) if VOCAB[o]["out"] == VOCAB[chain[i]]["out"]]
         if cands:
             chain[i] = cands[int(rng.integers(len(cands)))]
-    elif kind == 1 and loops and len(chain) < 5:  # 挿入(self-loop op を任意位置)
+    elif kind == 1 and loops and len(chain) < max_len:  # 挿入(self-loop op を任意位置)
         i = int(rng.integers(len(chain) + 1))
         chain.insert(i, loops[int(rng.integers(len(loops)))])
     elif kind == 2 and chain:                     # 削除
@@ -250,7 +255,7 @@ def evolve(task, pop=24, gens=12, elite=3, seed=0, max_len=4):
                 return max(cand, key=lambda c: evaluate(c, task, cache))
             child = crossover(pick(), pick(), rng, max_len)
             if rng.random() < 0.6:
-                child = mutate(child, rng, task)
+                child = mutate(child, rng, task, max_len)
             # 型不正(goal に終わらない)は破棄して親を採用
             if _chain_out_type(child, task.input_type) != task.goal_type:
                 child = pick()

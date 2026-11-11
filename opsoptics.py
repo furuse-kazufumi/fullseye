@@ -5,9 +5,9 @@
 fullseye は産業ビジョン(検査ライン)と Physical AI(ロボット知覚)の両方に
 足場があり、その**手前**にあるのがレンズ・回折・偏光の計算 — 「どの焦点距離
 か」「被写界深度はどれだけか」「回折で潰れる最小欠陥は何 µm か」「偏光板で
-テカりは消えるか」。本レジストリはその台帳(optics.py 21 op + raytrace.py 15 op
-+ lensimage.py 5 op + lensopt.py 3 op + illumdesign.py 6 op = 50 op / 8 カテゴリ、
-optics の wave に 2026-09-15 の瞳形状 PSF 3 op を含む)。
+テカりは消えるか」。本レジストリはその台帳(始まりは optics.py・raytrace.py・lensimage.py・lensopt.py・
+illumdesign.py の 50 op / 8 カテゴリ。いまは光学系の 50 を超えるモジュールを束ねていて、
+件数の正本は ``list_ops()`` —— 本文に数を書くと増えるたびに古くなる)。
 
 spectrometer(gratingspec.py、2026-10-15 追加)— **回折格子と分光器**。クロマティック共焦点
 (``chromconf`` の ``spectrometer_fwhm_nm``)とハイパースペクトル(``spectralrad.hyperspectral_band_weights`` の

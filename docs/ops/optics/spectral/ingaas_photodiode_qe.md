@@ -5,10 +5,10 @@ category: spectral
 in: 
 out: pairs
 gpu: なし
-examples: [poc_hyperspectral_foreign_matter]
+examples: [poc_equipment_selection_map, poc_hyperspectral_foreign_matter]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # ingaas_photodiode_qe — OPTICS `spectral` op
@@ -62,6 +62,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_equipment_selection_map](../../../../examples/poc_equipment_selection_map.py) — `py -3.11 examples/poc_equipment_selection_map.py`
 - [poc_hyperspectral_foreign_matter](../../../../examples/poc_hyperspectral_foreign_matter.py) — `py -3.11 examples/poc_hyperspectral_foreign_matter.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)

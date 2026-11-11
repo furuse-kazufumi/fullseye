@@ -243,40 +243,44 @@ def _close_edges(v, a, b):
     - ``b`` → 構造要素の反復回数 ``it = 1 + int(b*3)``(1〜4、正方形の辺は 3〜9 画素)。閉じられる隙間はおおむね
     ``2*it`` 画素以下。
 
-    注意: ``binary_closing`` は画像外を 0 として収縮するため、画像端から ``it`` 画素の帯は必ず 0 になる
-    (全面 1 の 20×20 に it=1 を掛けると残るのは 18×18)。端に接するエッジを扱うときは前に余白を付けるか、結果を
-    膨張し直す。入力は image(エッジ振幅)で出力も image sort だが中身は二値。``hx_nonmax_dir`` や ``sobel_amp`` の
+    画像の縁: 平面は画像の外へ続き、外は背景とみなす(余白を付けて閉じてから切り戻す)。closing は拡大的なので
+    縁に接するエッジも削らない(全面 1 の 20×20 は 20×20 のまま)。2026-11-05(敵対的検証 第 2 巡 P3)までは画像の
+    外を 0 として収縮し、画像端から ``it`` 画素の帯が必ず 0 になっていた。入力は image(エッジ振幅)で出力も
+    image sort だが中身は二値。``hx_nonmax_dir`` や ``sobel_amp`` の
     後に置き、つながったエッジは ``hx_region_to_label`` や ``hx_detect_edge_segments`` へ渡す。
     """
-    from scipy.ndimage import binary_closing, generate_binary_structure, iterate_structure
+    from scipy.ndimage import generate_binary_structure, iterate_structure
     edges = v > a
     it = 1 + int(b * 3)
     st = iterate_structure(generate_binary_structure(2, 2), it)
-    return binary_closing(edges, structure=st).astype(np.float64)
+    return _binary_closing_unbounded(edges, st).astype(np.float64)
 
 
 def _close_edges_length(v, a, b):
     """close_edges に加え、長さ(画素数)が閾値未満の短いエッジ断片を除去する。
 
-    ``v > a`` で二値化 → 3×3(8 近傍)構造要素で 1 回 ``binary_closing`` → ``ndimage.label``(既定の 4 近傍連結)で
+    ``v > a`` で二値化 → 3×3(8 近傍)構造要素で 1 回 closing → ``ndimage.label``(**8 近傍連結**)で
     連結成分にし、画素数が ``min_len`` 未満の成分を落として 0/1 の float 画像で返す。
 
     - ``a`` → 二値化しきい値。
     - ``b`` → 残す最小画素数 ``min_len = 2 + int(b*20)``(2〜22)。
     - 成分が 1 つも無ければクロージング結果をそのまま返す。
 
-    注意: クロージングの構造要素は固定 3×3 で、``hx_close_edges`` のような幅の調整は無い。ラベリングが 4 近傍のため
-    斜めにつながる 1 画素幅の線は別成分に分かれ、「長さ」が短く数えられて消えやすい。``binary_closing`` は画像外を
-    0 と扱うので端 1 画素の帯は常に 0 になる。「長さ」は成分の画素数であり幾何学的な線長ではない(塊も長いと数える)。
+    注意: クロージングの構造要素は固定 3×3 で、``hx_close_edges`` のような幅の調整は無い。「長さ」は成分の画素数で
+    あり幾何学的な線長ではない(塊も長いと数える)。2026-11-05(敵対的検証 第 2 巡 P1/P3)までは、ラベリングが
+    4 近傍で斜めにつながる 1 画素幅の線を別成分に割って消し、closing が画像外を 0 と扱って端 1 画素の帯を常に 0 に
+    していた。いまは 8 近傍で数え、closing は画像の外へ続く平面の上で行って切り戻す(縁のエッジも残る)。
     """
-    from scipy.ndimage import binary_closing, generate_binary_structure, label
-    edges = binary_closing(v > a, structure=generate_binary_structure(2, 2))
-    lab, n = label(edges)
+    from scipy.ndimage import generate_binary_structure, label
+    edges = _binary_closing_unbounded(v > a, generate_binary_structure(2, 2))
+    lab, n = label(edges, structure=np.ones((3, 3), bool))
     if n == 0:
         return edges.astype(np.float64)
     sizes = np.bincount(lab.ravel())
     min_len = 2 + int(b * 20)
-    keep = np.isin(lab, np.nonzero(sizes >= min_len)[0][1:])   # 0=背景を除く
+    # 背景(ラベル 0)を除いて数える。2026-11-05 までは ``np.nonzero(sizes >= min_len)[0][1:]`` で、背景が
+    # min_len 未満(全面が前景のとき 0 画素)だと先頭の**前景の成分**を捨てていた(全面 1 → 全面 0)。
+    keep = np.isin(lab, np.nonzero(sizes[1:] >= min_len)[0] + 1)
     return keep.astype(np.float64)
 
 
@@ -480,6 +484,20 @@ def _gen_bandpass(v, a, b):
 
 
 # ── 第 4 バッチ: Morphology(任意 SE の region 形態)+ Regions 生成 + 周波数フィルタ ── #
+def _binary_closing_unbounded(m, structure):
+    """画像の外へ続く平面の上の二値 closing を画像に切り戻す(画像の外は背景)。
+
+    ``scipy.ndimage.binary_closing`` は画像の外を 0 として**収縮**するので、縁に接する前景を構造要素の半径
+    ぶん削る(closing の拡大性 X ⊆ φ(X) が破れる)。``border_value=1`` は逆に画像の外を前景とみなし、縁の近くの
+    孤立画素から楔を生やす。余白 0 を付けて閉じ、切り戻せばどちらも起きない(敵対的検証 2026-11-05 第 2 巡 P3)。
+    """
+    from scipy.ndimage import binary_closing
+    st = np.asarray(structure, bool)
+    pad = max(st.shape) // 2 + 1
+    mp = np.pad(np.asarray(m, bool), pad, mode="constant", constant_values=False)
+    return binary_closing(mp, structure=st)[pad:-pad, pad:-pad]
+
+
 def _disc_bool(r):
     yy, xx = np.mgrid[-r:r + 1, -r:r + 1]
     return xx * xx + yy * yy <= r * r
@@ -529,9 +547,11 @@ def _closing(v, a, b):
 
     半径 ``r = 1 + int(a*4)`` の円板で ``scipy.ndimage.binary_closing`` を呼ぶ。
     ``b`` は未使用。小さな穴や切れ目を埋めつつ全体形状を保つ。
+
+    画像の縁: 平面は画像の外へ続き、外は背景とみなす(余白を付けて閉じてから切り戻す)。closing は拡大的で、
+    縁に接する前景も削らない。2026-11-05(敵対的検証 第 2 巡 P3): 画像の外へ続く平面の上で閉じてから画像に切り戻す(余白 0 を付けて ``binary_closing`` → 切り出し)。 それまでは画像の外を 0 として収縮し、縁の前景を半径ぶん削っていた。
     """
-    from scipy.ndimage import binary_closing
-    return binary_closing(v > 0.5, structure=_disc_bool(_se_radius(a))).astype(np.float64)
+    return _binary_closing_unbounded(v > 0.5, _disc_bool(_se_radius(a))).astype(np.float64)
 
 
 def _dilation2(v, a, b):
@@ -1331,7 +1351,7 @@ def _smallest_rectangle2_xld(v, a, b):
 def _crop_contours_xld(v, a, b):
     """contour を中央の a×b 割合の矩形に crop(範囲内の点のみ残す)。
 
-    各 contour の点のうち、画像中心 ``(H/2, W/2)`` からの距離が行方向 ``hh`` 以内かつ列方向 ``ww`` 以内のものだけを
+    各 contour の点のうち、画像中心 ``((H-1)/2, (W-1)/2)``(画素中心の規約。2026-11-05 まで ``(H/2, W/2)``)からの距離が行方向 ``hh`` 以内かつ列方向 ``ww`` 以内のものだけを
     残し、1 点も残らない contour は捨てて返す。
 
     - ``a`` → 残す高さの半分 ``hh = (0.3 + 0.6*a) * H/2``(全体の 30%〜90%)。
@@ -1343,7 +1363,7 @@ def _crop_contours_xld(v, a, b):
     """
     h, w = _c_shape(v)
     hh, ww = (0.3 + 0.6 * a) * h / 2, (0.3 + 0.6 * b) * w / 2
-    cy, cx = h / 2, w / 2
+    cy, cx = (h - 1) / 2, (w - 1) / 2      # 画素中心の規約(敵対的検証 2026-11-05 第 2 巡 P8 の兄弟)
     out = []
     for c in _c_cs(v):
         m = (np.abs(c[:, 0] - cy) <= hh) & (np.abs(c[:, 1] - cx) <= ww)
@@ -1459,7 +1479,7 @@ def _polar_trans_contour_xld_inv(v, a, b):
     """contour 点を (radius, angle) とみなし直交座標へ逆変換(polar_trans の逆)。
 
     各 contour の点を ``(row, col) = (半径 rad, 角度)`` とみなし、``ang = col / W * 2*pi`` として
-    ``(cy + rad*sin(ang), cx + rad*cos(ang))``(``cy, cx = H/2, W/2``)の直交座標に戻した contour を返す。
+    ``(cy + rad*sin(ang), cx + rad*cos(ang))``(``cy, cx = (H-1)/2, (W-1)/2`` = 画素中心の規約の画像中心。2026-11-05 まで ``H/2, W/2``)の直交座標に戻した contour を返す。
 
     - ``a``, ``b`` は未使用。
     - 半径は行の値をそのまま画素距離として使い、角度は列を画像幅で 0〜2π に写す。
@@ -1470,7 +1490,7 @@ def _polar_trans_contour_xld_inv(v, a, b):
     この差を織り込むか、この op を「列=角度・行=半径の一般的な極座標表現から直交へ」の変換として単独で使う。
     """
     h, w = _c_shape(v)
-    cy, cx = h / 2, w / 2
+    cy, cx = (h - 1) / 2, (w - 1) / 2      # 画素中心の規約(敵対的検証 2026-11-05 第 2 巡 P8 の兄弟)
     out = []
     for c in _c_cs(v):
         rad = c[:, 0]
@@ -1637,7 +1657,7 @@ def _add_noise_white_contour_xld(v, a, b):
 def _change_radial_distortion_contours_xld(v, a, b):
     """contour に放射歪み r' = r(1 + k r^2) を適用(k は (a-0.5) で樽/糸巻き)。
 
-    各 contour の点を画像中心 ``(H/2, W/2)`` からの相対座標 ``d`` にし、正規化半径 ``r = |d| / (max(H, W)/2)`` に
+    各 contour の点を画像中心 ``((H-1)/2, (W-1)/2)``(画素中心の規約。2026-11-05 まで ``(H/2, W/2)``)からの相対座標 ``d`` にし、正規化半径 ``r = |d| / (max(H, W)/2)`` に
     対して ``d' = d * (1 + k*r^2)`` と伸縮させた contour を返す(放射歪みモデルの 1 次項)。
 
     - ``a`` → 歪み係数 ``k = (a - 0.5) * 1.5``(-0.75〜+0.75)。``k < 0`` で点が中心に寄る(樽型)、``k > 0`` で
@@ -1649,7 +1669,7 @@ def _change_radial_distortion_contours_xld(v, a, b):
     計測(``hx_fit_circle_contour`` 等)で試す、あるいは合成的にデータを増やす用途。
     """
     h, w = _c_shape(v)
-    cy, cx = h / 2, w / 2
+    cy, cx = (h - 1) / 2, (w - 1) / 2      # 画素中心の規約(敵対的検証 2026-11-05 第 2 巡 P8 の兄弟)
     k = (a - 0.5) * 1.5
     scale = max(h, w) / 2
     out = []

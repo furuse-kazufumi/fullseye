@@ -224,6 +224,30 @@ def _peak_rows(img, min_peak_rel):
     return peak_row, peak, valid
 
 
+def _peak_plateau(img, peak_row, peak):
+    """列ごとの「最大値の台」= 頂の (1 − 1e-9) 倍以上が argmax から連続する行 [lo, hi]。
+
+    飽和(クリップ)した光条は頂が平らな台になり、argmax はその最初の行(上端)を返す。窓を
+    argmax に置くと重心が台の上側へ数画素ずれる(2026-11-09 実測: 20 倍で飽和・hw=2 で
+    −6.7 px、valid=True のまま)ので、窓は台の両端から測る。台が 1 行(飽和していない列)なら
+    lo = hi = argmax で、結果は直す前と bit 一致。
+    """
+    ny = img.shape[0]
+    thr = np.where(peak > 0, peak * (1.0 - 1e-9), np.inf)
+    brk = img < thr[None, :]
+    y = np.arange(ny)[:, None]
+    lo = np.where(brk & (y < peak_row[None, :]), y, -1).max(axis=0) + 1
+    hi = np.where(brk & (y > peak_row[None, :]), y, ny).min(axis=0) - 1
+    # 飽和と見なす台: 3 行以上、または 2 行以上で頂が画像全体の最大値(天井)。★2 行だけの同値は
+    # 量子化した飽和していない光条で日常的に起きる(uint8・σ3 px・頂 200 で 6.2 %、頂 60 で 15.2 % の列、
+    # 2026-11-09 の独立レビュー)ので、天井に届かない 2 行の同値は台と見なさない。台でない列は
+    # lo = hi = argmax で、直す前と bit 一致
+    sat = ((hi - lo) >= 2) | (((hi - lo) >= 1) & (peak >= float(img.max())))
+    lo = np.where(sat, lo, peak_row)
+    hi = np.where(sat, hi, peak_row)
+    return lo, hi, sat
+
+
 def _pack(op, col, row, valid, peak, extra=None):
     row = np.where(valid, row, np.nan)
     col = np.where(valid, col, np.nan) if col.dtype.kind == "f" else col.astype(np.float64)
@@ -252,11 +276,29 @@ def laser_line_center_centroid(image, min_peak_rel=0.1, half_window=None, backgr
     is the coordinate ``v = r`` exactly.
 
     Returns ``{"kind": "laser_line_centers", "method": "centroid", "col", "row", "valid",
-    "peak", "n_valid"}``. Ground truth: a symmetric line profile has its centroid at the true
-    centre; the centroid of a column-binned image equals that of the unbinned one
-    (``tests/test_lightsection.py``). ★Limits: the centroid is biased toward the window's
-    centre when the window cuts an off-centre profile, and a background left in the weights
-    pulls it toward the column's middle.
+    "peak", "n_valid", "saturated", "truncated"}``. Ground truth: a symmetric line profile has
+    its centroid at the true centre; the centroid of a column-binned image equals that of the
+    unbinned one (``tests/test_lightsection.py``). ★Limits: the centroid is biased toward the
+    window's centre when the window cuts an off-centre profile, and a background left in the
+    weights pulls it toward the column's middle.
+
+    ★Saturation: the "peak" is the plateau of rows within 1e-9 of the column maximum that is
+    connected to the first maximum; the window is ``[lo − half_window, hi + half_window]``
+    around that plateau (one row for an unclipped line: the same as before). A clipped,
+    flat-topped line used to be windowed at the plateau's first row (−6.7 px at 20× over
+    full scale, still ``valid``). ``saturated`` marks the columns whose plateau has ≥ 3 rows,
+    or ≥ 2 rows at the image's maximum (the ceiling); only those columns get the plateau window,
+    every other column is windowed at its first maximum exactly as before (bit for bit). Two
+    equal rows below the ceiling are common in quantised, unclipped lines (uint8, σ 3 px: 6 % of
+    the columns at a peak of 200, 15 % at 60) and are not a plateau. The result in a saturated
+    column is a centroid of clipped data, so treat it as degraded. ★Not detected: a plateau
+    broken by a dip (dark-frame or flat-field correction after clipping leaves 1 LSB dips) —
+    the plateau ends at the dip and the window shifts toward it again (measured 3.5 px, gauss
+    3.2 px, ``valid``; 5.6 px before the plateau window); pass uncorrected data or clip it back
+    to the ceiling first. ``truncated`` marks the columns whose weight at
+    either end of the window (or of the image) is still ≥ ``max(min_peak_rel, 1e-3)`` × the
+    column's peak weight — the profile was cut, so the centroid is pulled toward the window's
+    middle (measured: σ 2 px, true 0.4 → 1.48). ``valid`` is not changed by either flag.
     """
     op = "laser_line_center_centroid"
     img = _image(image, op)
@@ -264,18 +306,32 @@ def laser_line_center_centroid(image, min_peak_rel=0.1, half_window=None, backgr
     bg = _num(background, "background", op)
     ny, nx = img.shape
     peak_row, peak, valid = _peak_rows(img, mp)
+    lo, hi, sat = _peak_plateau(img, peak_row, peak)
     w = img - bg
     if clip_negative:
         w = np.clip(w, 0.0, None)
     y = np.arange(ny, dtype=np.float64)[:, None]
+    yi = np.arange(ny)[:, None]
+    cols = np.arange(nx)
     if half_window is not None:
         h = _int(half_window, "half_window", op, 1, ny)
-        m = np.abs(y - peak_row[None, :]) <= h
+        a = lo - h
+        b = hi + h
+        m = (yi >= a[None, :]) & (yi <= b[None, :])
         w = w * m
+    else:
+        a = np.zeros(nx, dtype=int)
+        b = np.full(nx, ny - 1)
     s = w.sum(axis=0)
     ok = valid & (s > 0) & (s > 1e-12 * np.abs(w).sum(axis=0))
     row = (w * y).sum(axis=0) / np.where(s > 0, s, 1.0)
-    return _pack(op, np.arange(nx, dtype=np.float64), row, ok, peak)
+    # 裾が切れた列: 窓(または画像)の端の行の重みがまだ頂の重みの max(min_peak_rel, 1e-3) 倍以上
+    a_in, b_in = np.clip(a, 0, ny - 1), np.clip(b, 0, ny - 1)
+    wpk = np.max(w, axis=0)
+    edge = np.maximum(w[a_in, cols], w[b_in, cols])
+    truncated = valid & (wpk > 0) & (edge >= max(mp, 1e-3) * wpk)
+    return _pack(op, np.arange(nx, dtype=np.float64), row, ok, peak,
+                 {"saturated": sat, "truncated": truncated})
 
 
 def laser_line_center_gauss(image, min_peak_rel=0.1, half_window=2):
@@ -291,6 +347,18 @@ def laser_line_center_gauss(image, min_peak_rel=0.1, half_window=2):
     three-point log-parabola. Non-positive samples are dropped; columns with fewer than three
     samples, ``c ≥ 0`` or a centre outside the window are ``valid=False``.
 
+    ★Saturation: as in :func:`laser_line_center_centroid` the peak is the plateau of rows
+    within 1e-9 of the column maximum; the window runs ``half_window`` rows beyond each end of
+    it and the plateau's samples are **left out of the fit** (clipped values are not the
+    Gaussian — censored). The flanks of a clipped Gaussian still give its centre exactly; a
+    window that holds fewer than three unclipped samples is ``valid=False`` (it used to fit the
+    flat top at its first row: −6.2 px, ``valid=True``). ``saturated`` (and the plateau
+    handling) uses the rule of :func:`laser_line_center_centroid`: ≥ 3 rows, or ≥ 2 rows at
+    the image's maximum; other columns are unchanged bit for bit. A two-row plateau at the
+    ceiling cannot be told from an unclipped line centred exactly between two rows, so with
+    fewer than three flank samples (``half_window=1``) its two samples stay in the fit. A plateau
+    broken by a 1 LSB dip is not detected (see :func:`laser_line_center_centroid`).
+
     Ground truth (theorem): the log of a Gaussian is a quadratic, so a point-sampled Gaussian
     line comes back at its sub-pixel centre to 1e-9 px. ★Pixel-integrated (box-filtered)
     profiles are not exactly Gaussian; the bias is then measured, not zero. Also returns
@@ -302,9 +370,27 @@ def laser_line_center_gauss(image, min_peak_rel=0.1, half_window=2):
     ny, nx = img.shape
     h = _int(half_window, "half_window", op, 1, max(1, (ny - 1) // 2))
     peak_row, peak, valid = _peak_rows(img, mp)
-    offs = np.arange(-h, h + 1)
-    rows = peak_row[None, :] + offs[:, None]                     # (2h+1, nx)
-    inside = (rows >= 0) & (rows < ny)
+    lo, hi, sat = _peak_plateau(img, peak_row, peak)
+    if np.any(sat):
+        # 台のある列: 窓は台の両端から h 行。基準の行は台の中点(切り下げ)、台の標本は当てはめから外す
+        ref = (lo + hi) // 2
+        offs = np.arange(-h - int(np.max(ref - lo)), h + int(np.max(hi - ref)) + 1)
+        rows = ref[None, :] + offs[:, None]
+        inside = (rows >= 0) & (rows < ny) & (rows >= (lo - h)[None, :]) & (rows <= (hi + h)[None, :])
+        on_plateau = sat[None, :] & (rows >= lo[None, :]) & (rows <= hi[None, :])
+        vals0 = img[np.clip(rows, 0, ny - 1), np.arange(nx)[None, :]]
+        n_flank = np.sum(inside & ~on_plateau & (vals0 > 0), axis=0)
+        # 2 行の台は「中心がちょうど画素の境にある、飽和していない線」と区別できない。裾が 3 点
+        # 未満(half_window=1)のときだけ台の 2 標本も当てはめに残す(飽和していなければ厳密)
+        keep = (hi - lo == 1) & (n_flank < 3)
+        inside &= ~(on_plateau & ~keep[None, :])
+        peak_row = ref
+        span = h + np.maximum(ref - lo, hi - ref)
+    else:
+        offs = np.arange(-h, h + 1)
+        rows = peak_row[None, :] + offs[:, None]                 # (2h+1, nx)
+        inside = (rows >= 0) & (rows < ny)
+        span = np.full(nx, h)
     vals = img[np.clip(rows, 0, ny - 1), np.arange(nx)[None, :]]
     pos = inside & (vals > 0)
     lv = np.log(np.where(pos, vals, 1.0))
@@ -325,10 +411,10 @@ def laser_line_center_gauss(image, min_peak_rel=0.1, half_window=2):
     b, c = coef[:, 1], coef[:, 2]
     good &= c < 0
     off = np.where(good, -b / np.where(good, 2.0 * c, 1.0), 0.0)
-    good &= np.abs(off) <= h
+    good &= np.abs(off) <= span
     sig = np.where(good, np.sqrt(-1.0 / np.where(good, 2.0 * c, -1.0)), np.nan)
     return _pack(op, np.arange(nx, dtype=np.float64), peak_row + off, good, peak,
-                 {"sigma_px": sig})
+                 {"sigma_px": sig, "saturated": sat})
 
 
 def laser_line_center_steger(image, sigma=1.5, min_peak_rel=0.1, max_iter=3):
@@ -353,6 +439,15 @@ def laser_line_center_steger(image, sigma=1.5, min_peak_rel=0.1, max_iter=3):
     total variance ``σ² = σ_line² + sigma²`` and a start pixel at offset ``δ`` from the centre,
     the error is ``−δ³ / (σ² − δ²)`` (≤ 0.125/σ² px for |δ| ≤ 0.5). Steger's condition
     ``sigma ≥ w/√3`` (w = the line's half-width) keeps the profile's second derivative single-signed.
+
+    ★Near the border (2026-11-09): the derivative filters extend the image by ``mode="nearest"``,
+    which bends the profile across the line — and the estimated normal with it, so the test does
+    not use the normal: every centre within ``3·sigma`` of any image border, and every centre
+    outside the image, is returned with ``valid=False`` and ``near_border=True``. Before, such
+    points were valid with errors of up to 1.43 px (σ_line 2, sigma 3, true row 2.2 → 0.774), and a
+    first fix that looked at the estimated normal still let a 45° line through with 0.88 px (the
+    border had turned its normal from 0.71 to 0.43). A horizontal line therefore loses its first and
+    last ``3·sigma`` columns too; render or crop a margin when every column is needed.
     """
     op = "laser_line_center_steger"
     img = _image(image, op)
@@ -414,8 +509,18 @@ def laser_line_center_steger(image, sigma=1.5, min_peak_rel=0.1, max_iter=3):
         r = np.where(move, np.clip(r + step_y, 0, ny - 1), r)
         c = np.where(move, np.clip(c + step_x, 0, nx - 1), c)
     ok = valid & (best <= 1.0)
+    # 縁の 3σ 以内は微分フィルタの外挿が断面を曲げる → 無効(fail-closed)。★推定した法線では判定しない:
+    # 外挿は法線そのものも曲げる(45° の線の上端で n_y 0.71 → 0.43、誤差 0.88 px が valid で残った、
+    # 2026-11-09 の独立レビュー)。点の位置だけで決め、画像の外の点は無条件に無効
+    m3 = 3.0 * s
+    with np.errstate(invalid="ignore"):
+        near_all = (py < m3) | (py > ny - 1 - m3) | (px < m3) | (px > nx - 1 - m3)
+        outside = (py < -0.5) | (py > ny - 0.5) | (px < -0.5) | (px > nx - 0.5)
+    near = ok & (near_all | outside)
+    ok = ok & ~near
     return _pack(op, px, py, ok, peak,
-                 {"strength": np.where(ok, -lam_out, np.nan), "nx": nxo, "ny": nyo, "sigma": s})
+                 {"strength": np.where(ok, -lam_out, np.nan), "nx": nxo, "ny": nyo, "sigma": s,
+                  "near_border": near})
 
 
 # --------------------------------------------------------------------------- #
@@ -798,21 +903,33 @@ def light_section_speckle_floor(wavelength_um=0.65, sin_u_obs=0.1, sin_theta=0.5
     (高さは乱数、部品ごとに別の位相スクリーン)描き、``method`` の中心抽出で列ごとの中心を取り、
     長さ ``length_um``(既定 = 光条の幅)ごとに平均して高さに直す(``z = Δrow · pixel / sin θ``、
     coherent の三角測量の約束)。真の高さとの差の標準偏差が ``sim_delta_z_um``(95 % の χ² 区間つき)。
-    閉形式: ``δz = C λ / (2π sin u_obs sin θ) · √(w/L)``、C = 1/√(n_patterns · polarizations)
-    (:func:`coherent.speckle_reduction`)。読み出し雑音 ``noise_rel``(光条の頂の平均に対する比)は
+    閉形式の側: ``δz = C λ / (2π sin u_obs sin θ) · √(w/L)``、C = 1/√(n_patterns · polarizations)
+    (:func:`coherent.speckle_reduction`)。★前半 ``C λ / (2π sin u sin θ)`` が Dorsch らの式
+    (``dorsch_delta_z_um``)で、後ろの ``√(w/L)``(``averaging_factor``)は長さ L の平均の
+    **実測の規則**であって Dorsch の式の一部ではない。``closed_form_delta_z_um`` はその積
+    (L < w では Dorsch の式より大きい: w 173.2 µm・L 50 µm で 1.86 倍)。読み出し雑音 ``noise_rel``(光条の頂の平均に対する比)は
     シミュに入り、閉形式の側は :func:`light_section_uncertainty_budget` の雑音の項と合わせて
     ``closed_form_total_um`` に入る。
 
     Simulates ``n_trials`` speckled lines with :func:`coherent.laser_line_coherent`, extracts the
     centre per column with ``method``, averages over ``length_um`` (default = the line width) and
     converts to height (``z = Δrow · pixel / sin θ``). Returns the simulated standard deviation
-    (with its χ² 95 % interval), the Dorsch closed form, their ratio, and the additive-noise
-    term. ``smooth_surface=True`` renders a mirror-smooth part (phase 0: no speckle, contrast 0)
+    (with its χ² 95 % interval), the closed form ``closed_form_delta_z_um`` = Dorsch × √(w/L)
+    (the √(w/L) averaging over ``length_um`` is a measured rule, not part of Dorsch's formula),
+    the pure Dorsch value ``dorsch_delta_z_um`` with ``averaging_factor`` = √(w/L) and
+    ``ratio_sim_to_dorsch``, the ratios, and the additive-noise term. ``smooth_surface=True`` renders a mirror-smooth part (phase 0: no speckle, contrast 0)
     so that only ``noise_rel`` is left — the gate for the budget's read-noise term. ``center_kw`` overrides the estimator's settings (defaults: centroid over the whole
     column without clipping; gauss with ``half_window`` = the line's 1/e² half-width in pixels;
     steger with ``sigma = w/(pixel·√3)``). ★Columns within one block share speckle; blocks are treated as independent samples
     (the χ² interval assumes that). ★The 2π constant is from the open-access Ettl et al. 2014,
     which cites Dorsch et al. 1994; the primary text was not read.
+
+    ★The fine step ``pixel_um / pixel_oversample`` must be at most the intensity's Nyquist
+    ``λ/(4 sin_u_obs)`` (``|E|²`` has bandwidth ``2 sin_u/λ``), else ValueError naming the
+    smallest ``pixel_oversample``; up to ``λ/(5 sin_u_obs)`` a RuntimeWarning (the floor
+    converges from there). Checking only the field's band let steps of up to ``λ/(2 sin u)``
+    through and the simulated floor came out 0.5–0.8 of its converged value (2026-11-09).
+    Both numbers are returned as ``fine_step_um`` / ``intensity_nyquist_um``.
     """
     op = "light_section_speckle_floor"
     lam = _num(wavelength_um, "wavelength_um", op, lo=0.0, hi=100.0)
@@ -834,6 +951,7 @@ def light_section_speckle_floor(wavelength_um=0.65, sin_u_obs=0.1, sin_theta=0.5
     if not isinstance(smooth_surface, (bool, np.bool_)):
         raise ValueError("%s: smooth_surface must be True or False" % op)
     smooth = bool(smooth_surface)
+    dx_fine, nyq_int = _coherent._check_intensity_nyquist(op, lam, su, pix, s)
     block = max(1, int(round(L / pix)))
     nb = nc // block
     if nb < 1:
@@ -851,14 +969,21 @@ def light_section_speckle_floor(wavelength_um=0.65, sin_u_obs=0.1, sin_theta=0.5
         ckw = dict(ckw_all, sigma=max(0.5, (w / pix) / math.sqrt(3.0)))
     ckw.update(center_kw or {})
     errs = []
+    # Steger は縁の 3σ 以内の列を無効にするので、左右に余白の列を描いて内側の nc 列だけを使う。
+    # Steger は反復ごとに最大 1 列ずれる(max_iter)ので、その分も余白に足す(1 列では足りず
+    # poc_light_section_step_weld_floor の 1024 列中 4 列が縁に入った)
+    pad = (int(math.ceil(3.0 * float(ckw["sigma"]))) + 2 + int(ckw.get("max_iter", 3))
+           if method == "steger" else 0)
     for k in range(nt):
         h = float(rng.uniform(-span, span))
-        img = _coherent.laser_line_coherent(shape=(nr, nc), wavelength_um=lam, sin_u_obs=su,
+        img = _coherent.laser_line_coherent(shape=(nr, nc + 2 * pad), wavelength_um=lam, sin_u_obs=su,
                                             pixel_um=pix, line_width_um=w, height_um=h, sin_theta=st,
                                             polarizations=pol, n_patterns=npat, pixel_oversample=s,
                                             noise=nz, seed=sd0 * 7919 + k, noise_seed=sd0 * 104729 + k,
                                             roughness_rad=0.0 if smooth else None)
         c = _METHODS[method](img, **ckw)
+        if pad:
+            c = {"row": c["row"][pad:pad + nc], "valid": c["valid"][pad:pad + nc]}
         row = c["row"]
         if not np.all(c["valid"]):
             # 取れない列がある設定(雑音が大きすぎる)は数えずに拒む —— 黙って詰めると床が下がって見える
@@ -889,6 +1014,9 @@ def light_section_speckle_floor(wavelength_um=0.65, sin_u_obs=0.1, sin_theta=0.5
         "speckle_fwhm_um": lim["speckle_fwhm_um"], "contrast": C_sp, "smooth_surface": smooth,
         "method": method, "wavelength_um": lam, "sin_u_obs": su, "sin_theta": st,
         "line_width_um": w, "length_um": L, "pixel_um": pix, "noise_rel": nz,
+        "fine_step_um": dx_fine, "intensity_nyquist_um": nyq_int,
+        "dorsch_delta_z_um": lim["delta_z_um"], "averaging_factor": math.sqrt(w / L),
+        "ratio_sim_to_dorsch": sd / lim["delta_z_um"] if lim["delta_z_um"] > 0 else float("nan"),
         "formula": "delta_z = C*lambda/(2*pi*sin_u*sin_theta) * sqrt(w/L)",
         "source": lim["source"] + "; open-access form: Ettl et al., arXiv:1401.1946 (2014)",
     }

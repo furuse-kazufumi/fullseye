@@ -40,6 +40,7 @@
 包丁を指先の視触覚だけで持って切る(cuttouch: cutting × pegtactile の連鎖。2 枚のパッドの膜の読みから押し V・引き H・モーメント M_x を復元し、刃の当たり位置 Ly = (M_x + Lz·H)/V・slice/push 比 H/V・靱性 R を手首の力センサなしに。パッドのねじりは縁から必ず滑るので、無滑りの関係で読むと過大(比 0.5 で +33 %)—— Hertz 接触の部分滑りのねじりをCerruti 核の影響行列で数値的に解いて直す(両端 = Reissner–Sagoci と全滑りのトルク (3π/16)μPa)。持てる柄の長さの限界と全滑りの余裕も返す。外の真値は閉形式と MuJoCo(cutting_mujoco_wrist)。numpy + scipy)。
 惑星ローバーの車輪の滑りを測って避ける(roverslip: Bekker の圧力–沈下 → Wong–Reece の剛な車輪の応力の数値積分で沈下・牽引・トルク → 斜面の角ごとの定常の滑り率と登れる最大の角 → 地面を見るカメラの並進(相互相関 + 並進のLucas–Kanade)と車輪の回転から実際の滑り率 → 滑りの不確かさ(ガウス過程、分位点回帰 + 共形の補正)→ CVaR で割り引いた辺の所要時間のコスト地図と 8 近傍の Dijkstra・経路の評価。外の真値は閉形式(Bekker の締め固め抵抗・n = 1 の垂直力・放物線の沈下)、文献の土の定数(arXiv:2606.06790 表 2)、MuJoCo の剛体の車輪、HiRISE の DTM(repo の外・環境変数)。全部 numpy)。
 小惑星の表面の重力(polygrav: 一様密度の閉じた多面体の重力ポテンシャル・加速度・発散を Werner & Scheeres 1997 の面と辺の和で厳密に —— 外・中・表面の上のどこでも同じ式、ガウスの法則 ∇·g = −4πGρ / 0 は面の立体角の和。自転の遠心力を足した実効ポテンシャル・実効重力と、法線に対する斜面の角。閉じたメッシュを平面で切って閉じた立体にする op で、区分ごとに一様な密度を重ね合わせで。外の真値は点質量・Gauss–Legendre の求積・差分の発散。全部 numpy)。
+歩行と足場(terrain / locomotion、2026-11-06 に台帳へ): 点群 → 2.5-D の高さ図・通れる所・足場の点数と候補・段差・障害物・地面の平面、接地点 → 支持多角形・静的安定余裕・2 足支持の線分までの余裕・歩行の相、LIPM の捕捉点と踏み出さずに止まれる余裕、足の軌跡から一歩を取り出す(ヒステリシス・同時着地は拒否)・立脚中の滑りと足で測る前進(胴だけが進む見せかけを落とす)・足場の mask と歩幅・歩隔からの左右交互の着地点の列(状態の Dijkstra、小さな格子は総当たりと一致)・摩擦の多角錐と線形計画の静的な接触力(平地では「解がある ⇔ COM が支持多角形の中」)。numpy + scipy)。
 複数ロボットの計画を回り方で分ける(braidpath: 軌道群と障害物の点を時空の組紐にして交差の符号列を作り、Dehornoy の取っ手簡約・Artin 表現(自由群)・Dynnikov 座標(穴あき円板の曲線の整数座標、区分線形の作用)の 3 つの独立な判定で同じ組紐かを決める。始点と終点の同じ 2 つの計画が同じホモトピー類か、対ごとの巻き数、格子の上で類ごとの最短経路を短い順に(類で持ち上げた Dijkstra)、既存の計画器(agvfleet)の候補を類に分けて代表を選ぶ。真値 = 組紐の関係式の恒等性、巻き数の閉形式、参照実装(MIT)の出力 240 件。numpy + scipy)。
 
 型語彙は既存のものだけを使う(新語なし):
@@ -108,11 +109,15 @@ import cuttouch
 import roverslip
 import polygrav
 import braidpath
+import terrain
+import locomotion
 import racket
 import roadjp
 import rsssafety
 import inspect as _inspect
 import sys as _sys
+
+import numpy as _np
 from functools import wraps as _wraps
 
 
@@ -165,7 +170,7 @@ _MOD = {"opsdrive": _sys.modules[__name__], "drivecourse": drivecourse, "drivewo
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "gsviewer": gsviewer, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip, "polygrav": polygrav, "braidpath": braidpath}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "gsviewer": gsviewer, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip, "polygrav": polygrav, "braidpath": braidpath, "terrain": terrain, "locomotion": locomotion}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -1189,6 +1194,46 @@ _CATALOG = {
         ("grid_hole_points", "braidpath", ["image2d"], "matrix"),
         ("grid_paths_to_xy", "braidpath", ["any"], "any"),
     ],
+    # 歩行の足場(terrain、2026-11-06 に台帳へ): 高さ図は depth(メートルの高さの 2-D 格子。opsdem が DEM を depth と
+    # 宣言したのと同じ理由 —— dem_slope / dem_aspect / dem_tpi へ型で繋がる)。空のセルは nan(観測していない)。
+    # 通れる所・段差・障害物は bool の mask、足場の点数・粗さは image2d、法線は normalmap、候補の列は table。
+    # 融合は同じ格子の高さ図の list = images。★terrain.slope_map は載せない: dem_slope(method="central") と内側が
+    # ビット一致で、縁と穴の扱いだけが違う(slope_map の docstring)。surface_normals は ops3d の測光の op と名前が
+    # 重なり、terrain_surface_normals は facade の正式名なので elevation_normals の名で載せる。traversability(1 語)は
+    # elevation_traversability、step_edges は cell の効かない台帳の入口 elevation_step_edges(どれも terrain.py の入口)。
+    "walkterrain": [
+        ("elevation_map", "terrain", ["points"], "depth"),
+        ("fill_gaps", "terrain", ["depth"], "depth"),
+        ("elevation_traversability", "terrain", ["depth"], "mask"),
+        ("foothold_score", "terrain", ["depth"], "image2d"),
+        ("ground_surface", "terrain", ["depth"], "depth"),
+        ("ground_plane", "terrain", ["depth"], "depth"),
+        ("detect_obstacles", "terrain", ["depth"], "mask"),
+        ("fuse_elevation", "terrain", ["images"], "depth"),
+        ("roughness_map", "terrain", ["depth"], "image2d"),
+        ("elevation_normals", "terrain", ["depth"], "normalmap"),
+        ("elevation_step_edges", "terrain", ["depth"], "mask"),
+        ("foothold_candidates", "terrain", ["depth"], "table"),
+    ],
+    # 釣り合いと歩行(locomotion、2026-11-06 に台帳へ + 第 1 便の 8 op): 接地点・重心の軌跡は points (N, 3)、
+    # 1 時刻の重心と速度は vector (3,)(x, y を地面、z を上として使う)、足の高さの (T, F) は matrix、立脚の (T, F) bool は
+    # mask、足の軌跡 (T, F, 3) は any(3 次元の配列の型が無い。braidpath の軌道と同じ扱い)。平面 [a, b, c, d] も any
+    # (primitive は 3 つの op が 3 つの違う形 —— dict・(点, 法線, 残差)・(z, y, x) の順 —— で返すので、宣言すると
+    # 型で通るのに走らない鎖ができる)。シルエットの重心 (行, 列) は keypoints (1, 2)(RESULT_ADAPTERS)。
+    "locomotion": [
+        ("contact_points", "locomotion", ["points", "any"], "points"),
+        ("com_from_silhouette", "locomotion", ["mask"], "keypoints"),
+        ("support_polygon", "locomotion", ["points"], "table"),
+        ("com_support_margin", "locomotion", ["vector", "points"], "measurement"),
+        ("gait_phase", "locomotion", ["matrix"], "table"),
+        ("support_line_margin", "locomotion", ["vector", "points"], "measurement"),
+        ("lipm_capture_point", "locomotion", ["points", "points", "scalar"], "points"),
+        ("capture_margin", "locomotion", ["vector", "vector", "scalar", "points"], "measurement"),
+        ("gait_step_events", "locomotion", ["any", "scalar", "scalar", "scalar"], "table"),
+        ("foot_slip_metrics", "locomotion", ["any", "mask", "points"], "table"),
+        ("footstep_plan", "locomotion", ["mask"], "table"),
+        ("static_contact_force_lp", "locomotion", ["points", "normals", "vector", "scalar", "scalar"], "table"),
+    ],
 }
 
 
@@ -1217,7 +1262,12 @@ def categories():
 
 
 #: 宣言 out 型と素の返りの橋渡し(typed_catalog が集める)。course_occupancy は (occ, extent) を返すので格子だけを渡す。
-RESULT_ADAPTERS = {"course_occupancy": lambda r: r[0]}
+RESULT_ADAPTERS = {"course_occupancy": lambda r: r[0],
+                   # 歩行(2026-11-06): (grid, extent) / (mask, 障害物の list) / (edge_mask, signed_rise) /
+                   # (contacts, mask) の先頭、シルエットの重心 (行, 列) は (1, 2) の keypoints に。
+                   "elevation_map": lambda r: r[0], "detect_obstacles": lambda r: r[0],
+                   "elevation_step_edges": lambda r: r[0], "contact_points": lambda r: r[0],
+                   "com_from_silhouette": lambda r: _np.asarray([r], dtype=float)}
 ADAPTERS = RESULT_ADAPTERS
 
 

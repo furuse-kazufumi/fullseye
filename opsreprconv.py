@@ -180,6 +180,9 @@ _CATALOG = {
     "derivative": [   # 微分の型を一級の入力として受ける(出どころを問わない)
         ("gradient_magnitude", "reprconv", ["gradient"], "voxel"),
         ("gradient_coherence", "reprconv", ["gradient"], "voxel"),
+        # hessian 型の numpy の産み手(2026-11-05)。それまで産み手は torch の hessian3d だけで、
+        # torch の無い環境では受け手 2 本に入力が届かなかった
+        ("voxel_to_hessian", "reprconv", ["voxel"], "hessian"),
         ("hessian_determinant", "reprconv", ["hessian"], "voxel"),
         ("hessian_vesselness", "reprconv", ["hessian"], "voxel"),
     ],

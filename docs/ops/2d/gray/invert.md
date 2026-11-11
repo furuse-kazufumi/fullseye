@@ -6,10 +6,10 @@ in: image
 out: image
 halcon: invert_image
 gpu: あり(invert_image)
-examples: [gallery2d_gray_arith, genspark_external_review, poc_tacscalib_sphere_lut]
+examples: [gallery2d_gray_arith, genspark_external_review, poc_ai_built_inspection_scored, poc_tacscalib_sphere_lut]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # invert — 2D `gray` op
@@ -66,6 +66,7 @@ invert 0.50 0.50
 
 - [gallery2d_gray_arith](../../../../examples/gallery2d_gray_arith.py) — `py -3.11 examples/gallery2d_gray_arith.py`
 - [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
+- [poc_ai_built_inspection_scored](../../../../examples/poc_ai_built_inspection_scored.py) — `py -3.11 examples/poc_ai_built_inspection_scored.py`
 - [poc_tacscalib_sphere_lut](../../../../examples/poc_tacscalib_sphere_lut.py) — `py -3.11 examples/poc_tacscalib_sphere_lut.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

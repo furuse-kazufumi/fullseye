@@ -27,6 +27,7 @@ import math
 import os
 import pathlib
 import sys
+import time
 from typing import Any
 
 import numpy as np
@@ -39,7 +40,16 @@ from .handles import HandleError, HandleStore
 PROTOCOL_VERSION = "2025-06-18"
 SERVER_NAME = "fullseye"
 #: llmesh/mcp/validator.py の ``_MAX_RAW_BYTES`` と同じ。超えたら typed tree を落とす。
-MAX_STRUCTURED_BYTES = int(get_system("mcp_response_budget"))
+MAX_STRUCTURED_BYTES = int(get_system("mcp_response_budget"))   # import 時の既定(schema の説明用)
+
+
+def _response_budget(value=None) -> int:
+    """structuredContent の上限(byte)。*value* が None なら**呼ぶたびに** fssystem の
+    ``mcp_response_budget`` を読む。
+
+    ★2026-11-05(敵対的検証 第 2 巡 T4): 以前は import 時に 1 回だけ定数にして既定引数へ焼いていたので、
+    ``with fssystem.system(mcp_response_budget=16000)`` が MCP の応答に効かなかった(40 kB を返した)。"""
+    return int(get_system("mcp_response_budget")) if value is None else int(value)
 
 def _execution_policy() -> dict:
     return {"status":"declared_not_applied"}
@@ -109,6 +119,10 @@ TOOLS: dict[str, dict] = {
                 "limit": {"type":"integer","minimum":1,"maximum":MAX_SEARCH_LIMIT,"default":7},
                 "detail": {"type":"boolean","default":False,
                            "description":"true なら候補の要約・出典を本文にも展開する"},
+                # ★2026-11-05(敵対的検証 第 2 巡 D10): ハンドラは a.get("lang") を読むのに schema に無く、
+                #   additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
+                "lang": {"type": "string", "enum": ["ja", "en", "zh", "tw", "ko", "de", "hi"],
+                         "description": "要約の言語(省略時は問い合わせの文字から判定)"},
             },
             "required": ["query"],
             "additionalProperties": False,
@@ -204,13 +218,13 @@ TOOLS: dict[str, dict] = {
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     "fullseye_list_samples": {
-        "description": "同梱のサンプル画像(来歴・ライセンスつき)。load_image に渡せるパスを返す。",
+        "description": "読める画像名(files=作業場所、samples=同梱)。load_image の path に渡す。",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     "fullseye_load_image": {
         "description": (
-            "画像を読み込んでハンドルを返す。読めるのはサンドボックス根の下だけ"
-            "(既定は同梱サンプル、FULLSEYE_MCP_ROOT で追加)。画素は返さず、数値統計と判定を返す。"),
+            "画像を読みハンドルを返す。path は課題のファイル名か list_samples の名前。"
+            "無ければ近い名前を添えて断る。返すのは数値統計。"),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -444,6 +458,53 @@ TOOLS: dict[str, dict] = {
 }
 
 
+# ★2026-11-09: 真値付きの課題を作る道具と、組んだ処理を真値で採点する道具(full プロファイルだけ)。
+#   「LLM が組む → 型の門 → 実行」の後ろに「真値で採点 → 合否 → 直させる」を足して輪を閉じる。
+#   真値はサーバ側(fullseye/mcp/tasks.py の TaskStore)に task_id で持ち、返り値には載せない。
+from .tasks import FAMILIES as _TASK_FAMILIES, MAX_SEED as _TASK_MAX_SEED  # noqa: E402
+
+TOOLS["fullseye_make_task"] = {
+    "description": (
+        "真値付きの課題を作る(真値はサーバが持ち、返さない)。kind=族、seed=乱数の種(同じ kind・seed・"
+        "params からは同じ課題)、params=族ごとの難度つまみ(省略は既定値)。入力画像のハンドル・課題文・"
+        "出力の型と単位・指標と許容範囲・task_id を返す。採点の回数は (kind, seed) ごとに数える。"
+        "族: %s。次に fullseye_score_pipeline を呼ぶ。"
+        % ", ".join("%s(%s)" % (k, f.field) for k, f in sorted(_TASK_FAMILIES.items()))),
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "kind": {"type": "string", "enum": sorted(_TASK_FAMILIES)},
+            "seed": {"type": "integer", "minimum": 0, "maximum": _TASK_MAX_SEED},
+            "params": {"type": "object",
+                       "description": "族ごとの難度つまみ(真値を決めない量だけ)。知らない名前・範囲外は -32602"},
+        },
+        "required": ["kind", "seed"],
+        "additionalProperties": False,
+    },
+}
+TOOLS["fullseye_score_pipeline"] = {
+    "description": (
+        "fullseye_make_task の課題を、組んだ処理(fullseye_pipeline と同じ形の stages)で解かせて真値で採点する。"
+        "入力は課題の画像に固定(handle は渡さない)。実行の前に型の門を通し、最終段の出力を族ごとの指標で"
+        "真値と比べ、指標ごとの誤差の大きさ・許容範囲・合否と外れ方の説明を返す(真値と誤差の符号は返さない)。"
+        "段が読めるのは have:<課題の入力の型> と stage:N だけ(他のハンドルは foreign_input で断る)。"
+        "例外・型の不一致・NaN/空/定数の出力・知らない/期限切れの task_id は合格を返さず reason を書く。"
+        "feedback=detailed/coarse/pass_fail で返す細かさを選ぶ(サーバの上限まで)。"),
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "task_id": {"type": "string", "maxLength": 64,
+                        "description": "fullseye://task/<16 hex>。fullseye_make_task が返す"},
+            "stages": TOOLS["fullseye_pipeline"]["inputSchema"]["properties"]["stages"],
+            "feedback": {"type": "string", "enum": ["detailed", "coarse", "pass_fail"],
+                         "description": "detailed=誤差の大きさ / coarse=許容の何倍かの段階 / pass_fail=合否だけ"},
+        },
+        "required": ["task_id", "stages"],
+        "additionalProperties": False,
+    },
+}
+
+
 class ArgError(ValueError):
     """入力スキーマ違反。JSON-RPC の -32602 に写す。"""
 
@@ -559,7 +620,18 @@ def read_message(stdin) -> dict | None:
 
 
 def write_message(stdout, msg: dict) -> None:
-    body = json.dumps(msg, ensure_ascii=False).encode("utf-8")
+    """1 通を Content-Length 枠で書く。**JSON に無い NaN / ±inf のトークンは決して書かない**(fail-closed)。
+
+    ★2026-11-05(敵対的検証): ``json.dumps`` の既定 ``allow_nan=True`` は ``NaN`` / ``Infinity`` を
+    そのまま出し、厳密な JSON の相手には壊れた本文になる。非有限の値が混ざった応答は、同じ id の
+    -32603(内部エラー)に置き換えて書く(値を黙って null にもしない)。"""
+    try:
+        body = json.dumps(msg, ensure_ascii=False, allow_nan=False).encode("utf-8")
+    except ValueError as exc:
+        _log("write_message", "non-finite value in response refused: %s" % exc)
+        body = json.dumps(_err(msg.get("id") if isinstance(msg, dict) else None, -32603,
+                               "内部エラー: 応答に JSON で表せない非有限の値(NaN / inf)が含まれていた"),
+                          ensure_ascii=False).encode("utf-8")
     stdout.write(b"Content-Length: " + str(len(body)).encode() + b"\r\n\r\n")
     stdout.write(body)
     stdout.flush()
@@ -614,8 +686,9 @@ def _structured_summary(value: dict) -> str:
 
 
 def tool_result(text: str, structured: dict | None, *, links: list | None = None,
-                max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+                max_structured_bytes: int | None = None) -> dict:
     """本文(text)は必ず付け、typed tree は上限内なら付ける。超えたら**落としたと書く**。"""
+    max_structured_bytes = _response_budget(max_structured_bytes)
     if structured is not None and get_system("mcp_body_mode") == "compact" and text.lstrip().startswith(("{","[")):
         text = _structured_summary(structured)
     content: list[dict] = [{"type": "text", "text": text}]
@@ -1070,8 +1143,12 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             schema_names = set(schema) | set(physical)
             unknown_params=sorted(set(spec.get("params",{}))-schema_names)
             if unknown_params:
-                errors.append({"layer":"stage","stage":i,"reason":"unknown_parameter","value":unknown_params,
-                               "candidates":sorted(schema_names)})
+                err = {"layer":"stage","stage":i,"reason":"unknown_parameter","value":unknown_params,
+                       "candidates":sorted(schema_names)}
+                if {"a", "b"} & set(unknown_params):
+                    # ★2026-11-08: a/b を params の中に入れた形は、知らない引数として断るだけでは直し方が分からない
+                    err["detail"] = "a と b は params の中ではなく段の直下に書く: {\"op\": ..., \"a\": 0.5}"
+                errors.append(err)
             missing=[n for n,p in schema.items() if p.get("required") and n not in spec.get("params",{})]
             if missing:
                 errors.append({"layer":"stage","stage":i,"reason":"missing_parameter","value":missing,"candidates":[]})
@@ -1099,7 +1176,20 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                     except (TypeError,ValueError) as exc:
                         errors.append({"layer":"stage","stage":i,"reason":"unknown_profile",
                                        "value":pvalue.get("profile"),"detail":str(exc),"candidates":[]})
-            ka, kb = float(spec.get("a", 0.5)), float(spec.get("b", 0.5))
+            # ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、
+            #   pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
+            knob_bad = {}
+            for knob in ("a", "b"):
+                if knob in spec:
+                    v = spec[knob]
+                    if isinstance(v, bool) or not isinstance(v, (int, float)) or not (0.0 <= float(v) <= 1.0):
+                        knob_bad[knob] = v
+            if knob_bad:
+                errors.append({"layer":"stage","stage":i,"reason":"knob_out_of_range","value":knob_bad,
+                               "detail":"a と b は 0〜1 の数(つまみの位置)。物理量で渡すなら op カードの名前つき params",
+                               "candidates":[]})
+            ka = 0.5 if "a" in knob_bad else float(spec.get("a", 0.5))
+            kb = 0.5 if "b" in knob_bad else float(spec.get("b", 0.5))
             named_used = {}
             if physical:
                 conflicts = sorted(name0 for name0, ps in physical.items()
@@ -1131,17 +1221,45 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             "stages": normalized, "execution_order":[x[0] for x in ordered], "errors": errors}
 
 
+def _python_stage_inputs(args, in_sorts, name):
+    """``python`` 実行器の段(型つきの関数を直に呼ぶ段)へ渡す入力に、``fullseye.apply`` の入口の契約を当てる。
+
+    ★2026-11-05(外部監査 F2 の兄弟、nary-guard): ``registry`` の段は ``fullseye.apply(on_error="raise")``
+    を通る(敵対的検証 C2)のに、``python`` の段(``phase_correlation_shift`` / ``polarization_render`` /
+    ``deflectometry_phase_to_slope`` の 2 入力と ``fringe_ftp_phase`` など)は値をそのまま関数に渡していた ——
+    ``.npy`` から読んだ uint8 のハンドルが、同じパイプラインの ``gauss_filter`` では拒否されるのに、
+    こちらでは 0..255 の値のまま黙って計算された。入力ごとに、宣言 sort が dtype 契約の対象
+    (``image`` / ``color`` / ``volume``)なら :func:`api._contract_dtype` を strict で当て(整数・bool は拒否、
+    float16/32 は float64 へ無損失に昇格)、非有限値は ``fullseye.apply`` と同じ文で拒否する。
+    それ以外の sort(``points`` / ``seq<image>`` / ``polsweep`` ...)は型つきの値の表現が別なので触らない。
+    """
+    import api
+    sorts = list(in_sorts or ())
+    out = []
+    for k, x in enumerate(args):
+        srt = sorts[k] if k < len(sorts) else None
+        if srt in api._DTYPE_CONTRACT_SORTS and isinstance(x, np.ndarray):
+            x = api._contract_dtype(x, api._NaryInput(name, srt, srt), "raise")
+            api._refuse_nonfinite(x, name)
+        out.append(x)
+    return out
+
+
 def _run_op(arr, op, ka: float, kb: float, allow: bool, device: str = "cpu"):
     """1 op を走らせる。strict で失敗したら (None, degraded, err)。"""
     import backend_safe
     import fullseye
-    backend_safe.clear_fallbacks()
+    # ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で
+    #   **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の
+    #   台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。
+    #   印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
+    mark = backend_safe.mark()
     try:
         out = fullseye.apply(arr, op.name, ka, kb, device=device,
                             on_error=("fallback" if allow else "raise"))
     except Exception as exc:                                    # noqa: BLE001
-        return None, backend_safe.fallbacks(), {"type": type(exc).__name__, "message": str(exc)[:400]}
-    return out, backend_safe.fallbacks(), None
+        return None, backend_safe.events_since(mark), {"type": type(exc).__name__, "message": str(exc)[:400]}
+    return out, backend_safe.events_since(mark), None
 
 
 def _stage(store: HandleStore, meta: dict, arr, op, ka: float, kb: float, allow: bool, *,
@@ -1242,7 +1360,11 @@ def _pipeline_json_value(value, store: HandleStore, *, sort: str, provenance: li
         if item is None or isinstance(item, (str, bool, int)):
             return item
         if isinstance(item, float):
-            return item if math.isfinite(item) else None
+            # ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、
+            #   値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
+            if not math.isfinite(item):
+                raise ValueError("value holds a non-finite number")
+            return item
         if isinstance(item, np.generic):
             return convert(item.item())
         if isinstance(item, np.ndarray):
@@ -1285,7 +1407,8 @@ def _pipeline_json_value(value, store: HandleStore, *, sort: str, provenance: li
 
 
 def _apply(a: dict, cat: Catalog, store: HandleStore, *,
-           max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+           max_structured_bytes: int | None = None) -> dict:
+    max_structured_bytes = _response_budget(max_structured_bytes)
     op = _resolve_op(a["op"], cat)
     meta, arr = store.get(a["handle"])
     _check_sort(op, meta["sort"], prev="ハンドル %s" % meta["handle"])
@@ -1349,7 +1472,8 @@ def _acceleration_record(requested, op_name: str, shape, degraded=None) -> dict:
 
 
 def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
-              max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+              max_structured_bytes: int | None = None) -> dict:
+    max_structured_bytes = _response_budget(max_structured_bytes)
     return _pipeline_dag(a,cat,store,max_structured_bytes=max_structured_bytes)
 
 
@@ -1482,42 +1606,40 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 if actual != expected:
                     raise RuntimeError("registry target mismatch: %r != %r"%(actual,expected))
                 with backend_safe.strict_mode(True), backend_safe.current_op(edge["op"]):
-                    if edge["op"] in {"ncc_locate", "shape_locate"}:
-                        runtime_ops.set_match_template(template_value)
-                    try:
-                        # 段ごとに転送するので、規則も段ごとに通す(auto のときだけ CPU に残ることがある)
-                        if device == "cuda" and len(args) == 1:
-                            stage_decision=fullseye.explain_device(a.get("device", "cpu"), stages=(edge["op"],),
-                                                                   shape=np.shape(incoming))
-                            stage_device=stage_decision["resolved"]
-                        else:
-                            stage_decision={"device":"cpu","path":"cpu",
-                                            "reason":(pipeline_decision.get("reason") if device != "cuda"
-                                                      else "multi_input")}
-                            stage_device=device if len(args) == 1 else "cpu"
-                        stage_devices.append({"stage":i,"op":edge["op"],
-                                              "device":stage_decision["device"] if stage_device == "cuda" else "cpu",
-                                              "path":stage_decision.get("path") if stage_device == "cuda" else "cpu",
-                                              "reason":stage_decision.get("reason")})
-                        if stage_device == "cuda" and len(args) == 1:
-                            out=fullseye.apply(incoming, edge["op"], float(normalized_spec["a"]),
-                                               float(normalized_spec["b"]), device=stage_device,
-                                               on_error="raise")
-                        else:
-                            out=registered.fn(incoming,float(normalized_spec["a"]),
-                                              float(normalized_spec["b"]))
-                        if gpu_effective and stage_device == "cuda" and parity_check and len(args) == 1 \
-                                and isinstance(out, np.ndarray):
-                            cpu=fullseye.apply(incoming,edge["op"],float(normalized_spec["a"]),
-                                               float(normalized_spec["b"]),device="cpu",on_error="raise")
-                            if isinstance(cpu,np.ndarray) and cpu.shape == out.shape:
-                                parity_meta={"approximate":True,"max_abs_diff_vs_cpu":float(
-                                    np.max(np.abs(np.asarray(out,np.float64)-np.asarray(cpu,np.float64))))}
-                    finally:
-                        if edge["op"] in {"ncc_locate", "shape_locate"}:
-                            runtime_ops.set_match_template(None)
+                    # ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply
+                    #   (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、
+                    #   extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。
+                    #   全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
+                    stage_template = template_value if edge["op"] in {"ncc_locate", "shape_locate"} else None
+                    # 段ごとに転送するので、規則も段ごとに通す(auto のときだけ CPU に残ることがある)
+                    if device == "cuda" and len(args) == 1:
+                        stage_decision=fullseye.explain_device(a.get("device", "cpu"), stages=(edge["op"],),
+                                                               shape=np.shape(incoming))
+                        stage_device=stage_decision["resolved"]
+                    else:
+                        stage_decision={"device":"cpu","path":"cpu",
+                                        "reason":(pipeline_decision.get("reason") if device != "cuda"
+                                                  else "multi_input")}
+                        stage_device=device if len(args) == 1 else "cpu"
+                    stage_devices.append({"stage":i,"op":edge["op"],
+                                          "device":stage_decision["device"] if stage_device == "cuda" else "cpu",
+                                          "path":stage_decision.get("path") if stage_device == "cuda" else "cpu",
+                                          "reason":stage_decision.get("reason")})
+                    out=fullseye.apply(incoming, executor["alias"], float(normalized_spec["a"]),
+                                       float(normalized_spec["b"]),
+                                       device=(stage_device if len(args) == 1 else "cpu"),
+                                       on_error="raise", template=stage_template)
+                    if gpu_effective and stage_device == "cuda" and parity_check and len(args) == 1 \
+                            and isinstance(out, np.ndarray):
+                        cpu=fullseye.apply(incoming,executor["alias"],float(normalized_spec["a"]),
+                                           float(normalized_spec["b"]),device="cpu",on_error="raise",
+                                           template=stage_template)
+                        if isinstance(cpu,np.ndarray) and cpu.shape == out.shape:
+                            parity_meta={"approximate":True,"max_abs_diff_vs_cpu":float(
+                                np.max(np.abs(np.asarray(out,np.float64)-np.asarray(cpu,np.float64))))}
             else:
                 fn=getattr(importlib.import_module(executor["module"]),executor["callable"])
+                args=_python_stage_inputs(args, normalized_spec.get("in_sorts") or edge["inputs"], edge["op"])
                 out=fn(*args,**params)
         except Exception as exc:  # noqa: BLE001
             failed.add("stage:%d"%i)
@@ -1713,7 +1835,8 @@ def _fix_text(a: dict, store: HandleStore) -> dict:
 
 
 def _inspect(a: dict, store: HandleStore, *,
-             max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+             max_structured_bytes: int | None = None) -> dict:
+    max_structured_bytes = _response_budget(max_structured_bytes)
     meta, arr = store.get(a["handle"])
     if not isinstance(arr, np.ndarray):
         structured={**meta,"value":arr}
@@ -1776,7 +1899,10 @@ def _profile_tool_names(profile: str) -> set[str]:
 # minimal プロファイルの広告スキーマから隠す上級引数(受け付けは常に可。full では見せる)。
 # 2026-11-02: device / parity_check を足した分で minimal が 1,500 トークンの予算を超えたため。
 # 2026-11-04(統合 GPU): 第 5 便の dry_run / assume_cuda で再び 1,500 を超えた(1,588)ので同じ扱いにする。
-MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check", "dry_run", "assume_cuda")}
+# 2026-11-05(敵対的検証 D10): find_ops の lang を schema に足した分で 1,531 になったので lang も隠す。
+#   plan の want の空・空白はハンドラが ArgError(-32602)で断る(minLength は空白だけを止められず、予算も食う)。
+MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check", "dry_run", "assume_cuda"),
+                                                   "fullseye_find_ops": ("lang",)}
 
 
 def _advertised_schema(name: str, profile: str) -> dict:
@@ -1809,9 +1935,15 @@ def _import_json(a: dict, store: HandleStore) -> dict:
     has_env = a.get("envelope") is not None
     if has_json == has_env:
         raise ArgError("json(文字列)か envelope(オブジェクト)のどちらか一方を渡すこと")
+    # T4 の兄弟: schema の maxLength は import 時の既定。いまの mcp_response_budget で呼ぶたびに測る。
+    if has_json and isinstance(a["json"], str) and len(a["json"]) > _response_budget():
+        raise ArgError("json は %d 文字で、上限 mcp_response_budget=%d を超える" % (len(a["json"]), _response_budget()))
+    # ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する
+    #   (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
+    limits = {"max_bytes": int(store.max_bytes), "max_pixels": int(get_system("mcp_stack_max_pixels"))}
     try:
-        value, sort = (fullseye.from_json(a["json"]) if has_json
-                       else fullseye.from_jsonable(a["envelope"]))
+        value, sort = (fullseye.from_json(a["json"], **limits) if has_json
+                       else fullseye.from_jsonable(a["envelope"], **limits))
     except ValueError as exc:                                    # 信頼境界: 封筒を再検証
         raise ArgError("JSON 封筒が読めない: %s" % exc) from None
     if isinstance(value, np.ndarray):
@@ -1888,6 +2020,311 @@ def _estimate_distortion(a: dict) -> dict:
                               "n_lines": len(lines)})
 
 
+_TASK_STORE_LOCK = __import__("threading").Lock()
+
+
+def _task_store(store: HandleStore):
+    """``store`` に付いた課題の保管庫(1 つの MCP セッション = 1 つの store = 1 つの保管庫)。"""
+    tasks = getattr(store, "_fullseye_tasks", None)
+    if tasks is None:
+        with _TASK_STORE_LOCK:                                  # 遅延生成の取り合いで 2 つ作らない
+            tasks = getattr(store, "_fullseye_tasks", None)
+            if tasks is None:
+                from .tasks import TaskStore
+                try:
+                    tasks = TaskStore()
+                except ValueError as exc:                       # 実験モードの設定の不備は fail-closed
+                    raise ArgError("課題の保管庫を作れない(設定の不備): %s" % exc) from None
+                if tasks.audit_path and any(
+                        os.path.realpath(tasks.audit_path) == r or
+                        os.path.realpath(tasks.audit_path).startswith(r + os.sep) for r in store.roots):
+                    raise ArgError("FULLSEYE_TASK_AUDIT_PATH が MCP の根の中にある(load_image で読めてしまう)")
+                store._fullseye_tasks = tasks
+    return tasks
+
+
+_INPUT_INDEPENDENT: frozenset | None = None
+
+
+def _input_independent_ops() -> frozenset:
+    """出力が入力の中身に依存しない op の一覧(tools/gen_mcp_input_independent.py が機械的に作る)。"""
+    global _INPUT_INDEPENDENT
+    if _INPUT_INDEPENDENT is None:
+        path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                            "data", "MCP_INPUT_INDEPENDENT.json")
+        try:
+            with open(path, encoding="utf-8") as fh:
+                _INPUT_INDEPENDENT = frozenset(json.load(fh)["ops"])
+        except (OSError, ValueError, KeyError) as exc:          # 一覧が無ければ採点しない(fail-closed)
+            raise ArgError("入力に依存しない op の一覧が読めない: %s" % exc) from None
+    return _INPUT_INDEPENDENT
+
+
+def _bad_params(stages: list) -> list[dict]:
+    """採点で許す params の値は 数・文字列・真偽・null と ``{"ref": …}`` だけ。配列・入れ子の辞書は断る。
+
+    ★2026-11-10(独立レビュー第 2 巡 N3): ``decode_fringe`` の ``ref_phase`` に 64x96 の配列をそのまま
+    書くと受け付けられ、出力 = 復号 − 書いた配列 になって、答えを注入して合格できた。
+    """
+    bad = []
+    for i, stage in enumerate(stages, 1):
+        for name, value in (stage.get("params") or {}).items():
+            if value is None or isinstance(value, (bool, int, float, str)):
+                continue
+            if isinstance(value, dict) and set(value) == {"ref"}:
+                continue
+            bad.append({"stage": i, "op": stage.get("op"), "param": name, "type": type(value).__name__})
+    return bad
+
+
+def _same_output(a, b) -> bool:
+    """2 つの出力がバイト単位で同じか(配列・辞書・点列・スカラー)。"""
+    if isinstance(a, np.ndarray) or isinstance(b, np.ndarray) or isinstance(a, np.generic) or isinstance(b, np.generic):
+        a, b = np.asarray(a), np.asarray(b)
+        return a.shape == b.shape and a.dtype == b.dtype and np.array_equal(a, b)
+    if isinstance(a, dict) and isinstance(b, dict):
+        return a.keys() == b.keys() and all(_same_output(a[k], b[k]) for k in a)
+    if isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
+        return len(a) == len(b) and all(_same_output(x, y) for x, y in zip(a, b))
+    return type(a) is type(b) and a == b
+
+
+def _make_task(a: dict, store: HandleStore) -> dict:
+    """真値付きの課題を作る。真値は保管庫に残し、返り値には入力のハンドルと課題文だけを載せる。"""
+    from .tasks import FAMILIES, TaskError, public_task
+    tasks = _task_store(store)
+    try:
+        rec = tasks.make(a["kind"], a["seed"], a.get("params"))
+    except TaskError as exc:                                 # 知らない族・つまみ・範囲外は引数違反
+        raise ArgError("%s: %s" % (exc.reason, exc)) from None
+    fam = FAMILIES[rec.kind]
+    meta = store.put(rec.input, sort=fam.input_sort, provenance=[{"task": rec.task_id}])
+    body = public_task(rec, tasks.ttl_s, tasks.max_attempts)
+    body["input"]["handle"] = meta["handle"]
+    body["attempts_used"] = rec.attempts
+    body["mode"] = tasks.mode
+    body["feedback_cap"] = tasks.feedback_cap
+    body["scoring_version"] = tasks.scoring_version
+    body["next_call"] = {"tool": "fullseye_score_pipeline",
+                         "arguments": {"task_id": rec.task_id, "stages": [{"op": "<op>"}]}}
+    metrics = ", ".join("%s<=%g %s" % (m["name"], m["tolerance"], m["unit"]) for m in body["metrics"])
+    text = ("課題 %s(%s, seed=%d): %s\n入力: %s %s handle=%s(段の inputs は have:%s か stage:N だけ)\n"
+            "出力: %s(%s)\n許容: %s\n次: fullseye_score_pipeline(task_id=%s, stages=[...])"
+            % (rec.kind, fam.field, rec.seed, fam.statement, fam.input_sort, list(fam.shape),
+               meta["handle"], fam.input_sort, fam.output_form, "/".join(fam.output_sorts), metrics, rec.task_id))
+    _log("task", rec.task_id, rec.kind, "seed=%d" % rec.seed, "mode=%s" % tasks.mode)
+    return tool_result(text, body)
+
+
+def _foreign_refs(stages: list, input_sort: str) -> list[dict]:
+    """課題の入力(``have:<input_sort>``)と前段(``stage:N``)以外を読む参照を全部挙げる。
+
+    ★2026-11-10(独立レビュー F1): 以前は段の ``inputs`` に任意の ``fullseye://`` ハンドルを
+    書けた。``fullseye_import_json`` で取り込んだ答えや他の課題の入力を ``identity`` /
+    ``count_obj`` に通すだけで、画像処理をせずに合格できた(2 回の問い合わせで偽造)。
+    """
+    import re
+    have = "have:%s" % input_sort
+    bad = []
+    for i, stage in enumerate(stages, 1):
+        refs = [("inputs", r) for r in stage.get("inputs", []) or []]
+        refs += [("params.%s" % k, v["ref"]) for k, v in (stage.get("params") or {}).items()
+                 if isinstance(v, dict) and "ref" in v]
+        for where, ref in refs:
+            if not (isinstance(ref, str) and (ref == have or re.fullmatch(r"stage:[1-9][0-9]*", ref))):
+                bad.append({"stage": i, "op": stage.get("op"), "where": where, "ref": ref})
+    return bad
+
+
+def _depends_on_input(checked: dict, stages: list, input_sort: str) -> tuple[bool, list[int]]:
+    """最終段が課題の入力に(依存の経路をたどって)依存しているか。入力の無い段(生成源)も返す。"""
+    have = "have:%s" % input_sort
+    rows = {s["stage"]: s for s in checked["stages"]}
+    sources = [n for n, s in rows.items() if not s.get("inputs")]
+    memo: dict[int, bool] = {}
+
+    def dep(n: int) -> bool:
+        if n in memo:
+            return memo[n]
+        memo[n] = False                                         # 循環は validate が先に断る。保険
+        refs = list(rows[n].get("inputs") or [])
+        refs += [v["ref"] for v in (stages[n - 1].get("params") or {}).values()
+                 if isinstance(v, dict) and "ref" in v]
+        ok = False
+        for ref in refs:
+            if ref == have:
+                ok = True
+            elif isinstance(ref, str) and ref.startswith("stage:") and int(ref[6:]) in rows:
+                ok = ok or dep(int(ref[6:]))
+        memo[n] = ok
+        return ok
+    return dep(len(stages)), sources
+
+
+def _score_pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
+    """組んだ処理を課題の入力で走らせ、最終段の出力を真値で採点する(fail-closed)。
+
+    合格は「段が課題の入力と前段だけを読み、型の門を通り、例外なく走り、出力が有限・非空・非定数で、
+    全指標が許容内」のときだけ。それ以外は ``passed: false`` と ``reason``(機械が読む符号)を返す。
+    採点が成り立った不合格(``out_of_tolerance``)は ``isError: false``、採点が成り立たなかった不合格は
+    ``isError: true``。返り値に載せるのは段ごとの op・状態・型だけで、段の出力の値や統計は載せない
+    (正しい処理の出力は真値そのものに近いので、載せると採点の返り値から真値が読める)。
+    指標の詳しい値は ``feedback`` の段階に関わらず監査ログ(stderr)に残す。
+    """
+    from .tasks import (FAMILIES, TaskError, effective_feedback, render_feedback, score_output)
+    tasks = _task_store(store)
+    task_id = a["task_id"]
+    try:
+        level, capped = effective_feedback(a.get("feedback"), tasks.feedback_cap)
+    except TaskError as exc:
+        raise ArgError("%s: %s" % (exc.reason, exc)) from None
+
+    def refuse(reason: str, message: str, **extra) -> dict:
+        body = {"task_id": task_id, "passed": False, "reason": reason, "message": message,
+                "feedback_level": level, **extra}
+        _log("score", task_id, "refused", reason)
+        try:
+            tasks.audit({"task_id": task_id, "passed": False, "reason": reason, "attempt": extra.get("attempts_used"),
+                         "mode": tasks.mode, "stages": a.get("stages"), "time": time.time()})
+        except OSError:
+            pass
+        return _tool_error("不合格(%s): %s" % (reason, message), body)
+
+    try:
+        rec = tasks.claim(task_id)
+    except TaskError as exc:
+        return refuse(exc.reason, str(exc))
+    fam = FAMILIES[rec.kind]
+    base = {"kind": rec.kind, "attempts_used": rec.attempts, "max_attempts": tasks.max_attempts,
+            "mode": tasks.mode, "scoring_version": tasks.scoring_version}
+    if capped:
+        base["feedback_capped"] = True
+    stages = a["stages"]
+    # 0. 課題の入力に縛る(F1): 段が読めるのは have:<入力の型> と stage:N だけ
+    foreign = _foreign_refs(stages, fam.input_sort)
+    if foreign:
+        return refuse("foreign_input", "段が課題の入力と前段以外を読もうとした(読めるのは have:%s と stage:N だけ)"
+                      % fam.input_sort, refs=foreign, **base)
+    literal = _bad_params(stages)
+    if literal:
+        return refuse("param_not_allowed", "params に書けるのは 数・文字列・真偽・{\"ref\": …} だけ"
+                      "(配列や入れ子の辞書でデータを持ち込めない)", params=literal, **base)
+    # 0b. 入力の中身に依存しない op(生成の op など)を断る(N1、機械的に作った一覧)
+    independent = [{"stage": i, "op": st.get("op")} for i, st in enumerate(stages, 1)
+                   if st.get("op") in _input_independent_ops()]
+    if independent:
+        return refuse("input_independent", "入力の中身を読まない op がある(生成の op など): %s"
+                      % ", ".join("段 %d %s" % (r["stage"], r["op"]) for r in independent),
+                      ops=independent, **base)
+    handle = store.put(rec.input, sort=fam.input_sort, provenance=[{"task": rec.task_id}])["handle"]
+    # 1. 型の門(1 段も走らせない)。fullseye_pipeline と同じ検査器・同じ束縛名を使う。
+    checked = validate_pipeline(stages, fam.input_sort, cat,
+                                bindings={"have:%s" % fam.input_sort: handle}, store=store)
+    if not checked["valid"]:
+        return refuse("type_gate", "型の門で不合格(1 段も走らせていない)", errors=checked["errors"], **base)
+    if checked.get("out_sort") not in fam.output_sorts:
+        return refuse("output_sort_mismatch", "最終段の型 %s は採点できない(要るのは %s)"
+                      % (checked.get("out_sort"), "/".join(fam.output_sorts)), **base)
+    depends, sources = _depends_on_input(checked, stages, fam.input_sort)
+    if sources:
+        return refuse("foreign_input", "入力を読まない段(生成源)がある: 段 %s" % sources, **base)
+    if not depends:
+        return refuse("foreign_input", "最終段が課題の入力に依存していない", **base)
+    # 2. 実行(fullseye_pipeline と同じ実行器。返り値は内部でだけ使うので上限で落とさない)
+    try:
+        res = _pipeline_dag({"handle": handle, "stages": stages, "vision": "none"}, cat, store,
+                            max_structured_bytes=1 << 30)
+    except ArgError as exc:
+        return refuse("pipeline_refused", str(exc)[:400], **base)
+    except Exception as exc:                                    # noqa: BLE001 - 例外は不合格の理由
+        return refuse("exception", "%s: %s" % (type(exc).__name__, str(exc)[:300]), **base)
+    sc = res.get("structuredContent") or {}
+    summary = [{k: r[k] for k in ("stage", "op", "status", "out_sort", "reason") if r.get(k) is not None}
+               for r in sc.get("stages", [])]
+    if res.get("isError"):
+        bad = next((r for r in sc.get("stages", []) if r.get("status") == "failed"), {})
+        err = bad.get("error") or {}
+        reason = "invalid_output" if bad.get("reason") == "invalid_output" else "execution_failed"
+        return refuse(reason, "段 %s %s が失敗(%s%s)" % (
+            bad.get("stage"), bad.get("op"), bad.get("reason"),
+            (": %s: %s" % (err.get("type"), str(err.get("message"))[:200])) if err else ""),
+            stages=summary, **base)
+    rows = sc.get("outputs") or []
+    if not rows:
+        return refuse("empty_output", "最終段の出力が無い", stages=summary, **base)
+    try:
+        value = store.get(rows[-1]["handle"])[1]
+    except HandleError as exc:
+        return refuse("empty_output", str(exc), stages=summary, **base)
+    # 3. 真値と比べる
+    try:
+        metrics = score_output(rec, value)
+    except TaskError as exc:
+        return refuse(exc.reason, str(exc), stages=summary, **base)
+    except Exception as exc:                                    # noqa: BLE001 - 採点できない形は不合格
+        return refuse("unscorable_output", "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+                      stages=summary, **base)
+    # 3b. (採点できる形の出力だけ)隠れた双子の課題で同じ処理を走らせる(N1・R2、実行時の検査)
+    #   - 出力がバイト単位で同じ → 入力を読んでいない(input_independent)
+    #   - 本体が合格したなら、双子でもその真値に合格しなければならない(hidden_check_failed)。
+    #     固定の答えは真値の違う 2 つの課題の両方には合格できない。双子の誤差は返さない。
+    try:
+        alt_rec = tasks.alternate(rec)
+        alt = alt_rec.input
+        alt_handle = store.put(alt, sort=fam.input_sort, provenance=[{"task_alt": rec.task_id}])["handle"]
+        alt_res = _pipeline_dag({"handle": alt_handle, "stages": stages, "vision": "none"}, cat, store,
+                                max_structured_bytes=1 << 30)
+        alt_rows = (alt_res.get("structuredContent") or {}).get("outputs") or []
+        alt_value = store.get(alt_rows[-1]["handle"])[1] if (alt_rows and not alt_res.get("isError")) else None
+    except Exception as exc:                                    # noqa: BLE001 - 検査できなければ採点しない
+        return refuse("input_check_failed", "入力を変えた写しで走らせられなかった(%s)" % type(exc).__name__,
+                      stages=summary, **base)
+    if alt_value is None:
+        return refuse("input_check_failed", "入力を変えた写しでは処理が走り切らなかった", stages=summary, **base)
+    if _same_output(value, alt_value):
+        return refuse("input_independent", "入力を変えても最終段の出力が同じ(入力の中身を読んでいない)",
+                      stages=summary, **base)
+    hidden_passed = None
+    twin_metrics = None
+    if all(m["passed"] for m in metrics):
+        try:
+            twin_metrics = score_output(alt_rec, alt_value)
+            hidden_passed = all(m["passed"] for m in twin_metrics)
+        except Exception:                                       # noqa: BLE001 - 双子で採点できない形も不合格
+            hidden_passed = False
+        tasks.audit({"task_id": task_id, "hidden_seed_check": "passed" if hidden_passed else "failed",
+                     "attempt": rec.attempts, "time": time.time()})
+        if not hidden_passed and level == "detailed":
+            return refuse("hidden_check_failed", "隠れた双子の課題(真値の違う同じ族)では合格しなかった"
+                          "(固定の答え・課題の 1 枚にだけ合う処理は合格にしない)", stages=summary, **base)
+    passed = all(m["passed"] for m in metrics) and hidden_passed is not False
+    # ★2026-11-10(独立レビュー第 4 巡): pass_fail / coarse では、双子で落ちたことを返り値で区別しない
+    #   (reason は out_of_tolerance、形も許容外の不合格と同じ)。区別すると「本体には合っていた」ことが分かり、
+    #   本体と双子の探索を 2 回に分けられた(計数の 13/20 が 20 回以内に合格)。区別は監査記録にだけ残す。
+    #   coarse で見せる段階は、落ちた側(双子)の指標から作る。
+    shown_source = metrics if hidden_passed is not False else (twin_metrics or [
+        dict(m, passed=False, ratio=None) for m in metrics])
+    # 監査: 詳しい値は FULLSEYE_TASK_AUDIT_PATH の記録にだけ書く。stderr には合否と回数だけ
+    # ★2026-11-10(独立レビュー第 2 巡 N2): 以前は stderr の score-audit 行に誤差を書いていた。MCP の
+    #   クライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が pass_fail の
+    #   上限を迂回して誤差を読めた。
+    tasks.audit({"task_id": task_id, "kind": rec.kind, "seed": rec.seed, "mode": tasks.mode,
+                 "attempt": rec.attempts, "passed": passed, "feedback_level": level,
+                 "metrics": [{k: m[k] for k in ("name", "error", "tolerance", "passed")} for m in metrics],
+                 "stages": stages, "time": time.time()})
+    _log("score", task_id, "attempt=%d" % rec.attempts, "passed" if passed else "failed")
+    shown, explanation = render_feedback(shown_source, level)
+    body = {"task_id": task_id, "passed": passed, "feedback_level": level, "metrics": shown,
+            "explanation": explanation, "stages": summary, **base}
+    if not passed:
+        body["reason"] = "out_of_tolerance"
+    text = ("合格" if passed else "不合格(許容外)") + "(%s、試行 %d/%d、feedback=%s)" % (
+        rec.kind, rec.attempts, tasks.max_attempts, level)
+    if explanation:
+        text += "\n" + "\n".join(explanation)
+    return tool_result(text, body)
+
+
 def _write_viewer(a: dict, store: HandleStore) -> dict:
     """spec(JSON)→ 自己完結 HTML。書く先はサンドボックスの作業ディレクトリだけ(名前は検査する)。"""
     import re
@@ -1919,8 +2356,9 @@ def _write_viewer(a: dict, store: HandleStore) -> dict:
 
 
 def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = None, *,
-              max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
+              max_structured_bytes: int | None = None) -> dict:
     """tool 本体。引数違反は ArgError(= -32602)、実行の失敗は isError の結果。"""
+    max_structured_bytes = _response_budget(max_structured_bytes)
     if name not in TOOLS:
         raise ArgError("知らない tool: %r(あるのは %s)" % (name, sorted(TOOLS)))
     profile = os.environ.get("FULLSEYE_MCP_PROFILE", "full")
@@ -1931,6 +2369,11 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name in ("fullseye_plan", "fullseye_describe", "fullseye_choose"):
         from fullseye.opsearch import plan, describe, choose
         if name == "fullseye_plan":
+            # ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal="   " が search_ops の
+            #   ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
+            for key in ("want", "goal"):
+                if isinstance(a.get(key), str) and not a[key].strip():
+                    raise ArgError("%s が空(空白だけ)の文字列" % key)
             r = plan(a["have"], a["want"], a.get("direction", "forward"), a.get("pattern"), goal=a.get("goal"))
         elif name == "fullseye_describe":
             r = describe(a["kind"], a["name"])
@@ -1967,12 +2410,15 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         from fullseye.opsearch import _format, search_ops, tuning_cards
         try:
             from fssystem import get_system
-            total_limit = a.get("limit", get_system("find_ops_k"))
-            # The default seven is one comparison set (ops + examples).  An
-            # explicit non-default limit keeps the legacy meaning: that many
-            # operator rows, with recipes as supplementary metadata.
-            recipe_limit = min(get_system("find_ops_recipe_max"), total_limit)
-            op_limit = total_limit - recipe_limit if total_limit == get_system("find_ops_k") else total_limit
+            total_limit = int(a.get("limit", get_system("find_ops_k")))
+            # limit = the total number of proposals (ops + recipes) for every value,
+            # not only the default.  Recipes take at most find_ops_recipe_max slots
+            # and always leave one for an operator; the rest are operator rows.  The
+            # split depends on limit alone, so a larger limit never returns fewer
+            # ops (red-team 2026-11-05: limit 5/6/7/8 gave 5/6/5/8 ops, because only
+            # a limit equal to the default reserved the recipe slots).
+            recipe_limit = max(0, min(get_system("find_ops_recipe_max"), total_limit - 1))
+            op_limit = total_limit - recipe_limit
             r = search_ops(a["query"], op_limit, lang=a.get("lang"),
                            in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
         except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)
@@ -2013,6 +2459,8 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name == "fullseye_suggest_pipeline":
         from fullseye.opsearch import normalize_sort, search_ops, op_cards
         start, goal = normalize_sort(a["start_sort"]), normalize_sort(a["goal_sort"])
+        if not a["query"].strip():                       # D10: blank query = -32602, not an internal error
+            raise ArgError("query が空白だけの文字列")
         found = search_ops(a["query"], 5, in_sort=start, out_sort=goal)
         candidates = found["ops"] or found.get("retry_ops", [])
         qkey = a["query"].strip().lower().replace(" ", "_")
@@ -2076,7 +2524,10 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             raise ArgError(str(exc)) from exc
         return tool_result(json.dumps(r, ensure_ascii=False, indent=2), r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_validate_pipeline":
-        r = validate_pipeline(a["stages"], a.get("start_sort"), cat, max_stages=a.get("max_stages", 64),
+        # ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、
+        #   pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。
+        #   None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
+        r = validate_pipeline(a["stages"], a.get("start_sort"), cat, max_stages=None,
                               bindings=a.get("bindings"),store=store)
         text = json.dumps(r, ensure_ascii=False, indent=2)
         return (tool_result(text, r, max_structured_bytes=max_structured_bytes) if r["valid"]
@@ -2095,8 +2546,9 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name == "fullseye_list_samples":
         rows = store.samples()
         names=[r["name"] for r in rows]
-        text="samples: "+", ".join(names)
-        return tool_result(text, {"samples": names},
+        files = store.root_files()
+        text = ("files: " + (", ".join(files) if files else "(なし)") + "\nsamples: " + ", ".join(names))
+        return tool_result(text, {"files": files, "samples": names},
                            max_structured_bytes=max_structured_bytes)
     try:
         if name == "fullseye_load_image":
@@ -2121,6 +2573,10 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             return _estimate_distortion(a)
         if name == "fullseye_write_viewer":
             return _write_viewer(a, store)
+        if name == "fullseye_make_task":
+            return _make_task(a, store)
+        if name == "fullseye_score_pipeline":
+            return _score_pipeline(a, cat, store)
     except HandleError as exc:
         raise ArgError(str(exc)) from exc
     raise ArgError("未実装の tool: %r" % name)                 # TOOLS に足して本体を忘れた

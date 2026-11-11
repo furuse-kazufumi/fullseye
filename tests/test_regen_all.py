@@ -108,7 +108,9 @@ _OLD_ORDER = [
     "tools/gen_mcp_data.py", "tools/gen_recipe_index.py", "tools/gen_recipe_retrieval_report.py", "tools/gen_rag_benchmark_report.py", "tools/conversion_matrix.py",
     "tools/type_connectivity.py",   # 2026-11-03 に鎖へ加わった段(索引を読むだけ。探針の逆順は増やさない)
     "tools/gen_design_notes.py",
-    "tools/gen_op_facets.py", "tools/measure_mcp_context.py",
+    "tools/gen_op_facets.py",
+    "tools/gen_mcp_input_independent.py",   # 2026-11-10 に足した段(OP_GRAPH を読むだけ。探針の逆順は増やさない)
+    "tools/measure_mcp_context.py",
     "tools/gen_doc_counts.py",
     # 2026-11-03 に足した段。旧順序の探針としては「docs 索引より後ろ」に置く(題を先に読まれる逆順)。
     "tools/gen_recipe_coverage.py",
@@ -140,6 +142,8 @@ def test_the_order_gate_catches_the_old_order():
     expect = {
         ("tools/gen_capabilities_index.py", "imgevolve.py"),
         ("tools/gen_trust_block.py", "imgevolve.py"),
+        # 2026-11-05(敵対的検証 第 2 巡 D5b): docs 索引の「型つき台帳 N/M」の分母を索引の ledger 層から取る。
+        ("tools/gen_docs_index_ops.py", "imgevolve.py"),
         # 2026-10-22: 互換プロファイルは HALCON_PARITY.md を書き、旧順序では docs 索引がそれを先に読む。
         ("tools/gen_docs_index_ops.py", "tools/halcon_compat_profile.py"),
         # 2026-11-02: HALCON の棚卸しの文書も docs 索引の文書地図に載る。

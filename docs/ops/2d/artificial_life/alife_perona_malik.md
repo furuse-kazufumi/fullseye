@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [gallery2d_physics_alife_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # alife_perona_malik — 2D `artificial-life` op
@@ -47,6 +47,9 @@ conductance is recomputed from the *evolving* field at every iteration, which
 is what makes the edges sharpen rather than merely survive. ``a`` sets the
 edge scale kappa = 0.02 + 0.2a, ``b`` the iteration count 1 + int(15b);
 lambda is fixed at 0.2 (<= 0.25, the explicit-scheme stability bound).
+The image border is replicated (Neumann, no flux across it); until
+2026-11-05 (adversarial review round 2, P7) the lattice was periodic and the
+right column diffused with the left one.
 
 **端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
 

@@ -8,7 +8,7 @@ gpu: なし
 examples: [fileio_scientific_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # nrrd_read — FILEIO `nrrd` op
@@ -21,8 +21,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 raw/gzip NRRD を ``(array, meta)`` として読み、空間単位を明示して返す。
 
-``meta`` は ``space_directions``、方向ベクトルの長さから得た ``voxel_spacing``、
-``space_unit``、``space_origin``、``kinds`` を持つ。detached data、未知の encoding、
+``meta`` は ``space``(teem の座標系名、無ければ ``None``)、``space_directions``、
+方向ベクトルの長さから得た ``voxel_spacing``、``space_unit``、``space_origin``、``kinds`` を持つ。detached data、未知の encoding、
 shape/dtype/byte 数の不一致は拒否する。呼び出し例: ``array, meta = nrrd_read(payload)``。
 
 ## 参考(サンプルデータ・文献)

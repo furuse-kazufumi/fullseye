@@ -276,6 +276,21 @@ def ppf_model(points, normals=None, dist_step: float = None, angle_bins: int = 3
             "diameter": diam}
 
 
+def _default_scene_normals(S, k_normals):
+    """Scene normals when the caller passes none: the same oriented estimator
+    as :func:`ppf_model` uses for the model (``estimate_oriented_normals``).
+
+    ★2026-11-09 敵対的点検: 以前は場面側だけ素の ``pointcloud.estimate_normals``
+    (符号が任意)だった。PPF の鍵は法線どうしの角度なので、場面とモデルで符号の
+    決め方が違うと鍵が半分ずれる。実測(当て金 250/325 点・回転 30-180 度・48 試行):
+    場面法線とモデル法線(真値で写したもの)の符号一致率 0.50 → 1.00、
+    ``find_surface_pose`` の成功率(回転 < 5 度かつ重心 < 3 % 直径)54 % → 79〜83 %
+    (探針と回帰テストで間引き関数が違う)。
+    非有限の点は ``ValueError``(fail-closed、``estimate_oriented_normals`` と同じ)。"""
+    from normals_orient import estimate_oriented_normals
+    return estimate_oriented_normals(S, k=k_normals)
+
+
 def _pose_from(sr_p, sr_n, model, mi, alpha):
     """Rigid transform (R, t) mapping the model into the scene for a matched
     reference pair (scene ref sr, model point mi) and aligning angle ``alpha``."""
@@ -296,7 +311,29 @@ def surface_match(model: dict, scene_points, scene_normals=None,
     descriptor (Drost 2010), takes the top-``topk`` pose hypotheses by vote count,
     refines each with :func:`registration.icp`, and returns the best.
     Returns ``{R, t, rmse, votes, inlier_fraction}`` where ``(R, t)`` maps the model
-    into the scene. ``ref_fraction`` sets how many scene points seed a vote."""
+    into the scene. ``ref_fraction`` sets how many scene points seed a vote.
+    If *scene_normals* is None they are estimated with the same oriented
+    estimator as the model side (``normals_orient.estimate_oriented_normals``,
+    ``k_normals`` neighbours) so that model and scene normals agree in sign;
+    if you pass your own, orient them consistently with ``model["normals"]``
+    (an arbitrary-sign PCA normal halves the key agreement).
+
+    前提と限界(★2026-11-09 独立レビュー): 既定の場面法線は **場面の重心から外向き** に
+    伝播して符号を決める。場面に床や他の物体が入ると、物体の法線が **物体ごと裏返る** ことが
+    ある(片側視 + 床の場面で試行の 20 % が全体逆符号)。そのため既定の法線のときは
+    **両方の符号で投票** し(各符号の上位 ``topk`` 仮説を ICP で詰める)、当てはまり
+    (``inlier_fraction``、同点は ``rmse``)の良い方を返す。法線を自分で渡すと渡した
+    符号だけを使う。
+
+    両符号の代償(2026-11-09 実測): 時間は 1.84〜2.05 倍(投票と ICP がそれぞれ 2 回ぶん)。
+    向きが正しい場面(当て金 325 点・全周)では、片符号で渡したときより成功率がわずかに
+    下がる —— 種 7 本 × 48 試行の平均 0.842 → 0.827(種 7 では 0.83 → 0.79)。裏返った
+    場面では片符号 0.33 → 両符号 0.7 以上。
+
+    限界: **片側だけ見えた物体 + 床** の場面では、既定でも、カメラ位置で向けた法線
+    (``estimate_normals(S, viewpoint=cam)``)を渡しても、成功はほぼ 0(30 試行で 1 回)。
+    法線の向きではなく、片側視で点対特徴の表が合わないことが効いている。床は事前に
+    ``remove_ground`` 等で除くこと。"""
     from registration import icp, apply_transform
     from scipy.spatial import cKDTree
 
@@ -304,10 +341,15 @@ def surface_match(model: dict, scene_points, scene_normals=None,
     if S.ndim != 2 or S.shape[1] != 3:
         raise ValueError("scene_points must be (N, 3)")
     if scene_normals is None:
-        from pointcloud import estimate_normals
-        SN = estimate_normals(S, k=k_normals)
+        SN = _default_scene_normals(S, k_normals)
+        # ★2026-11-09 独立レビュー: 向き付き法線の符号は「場面の重心から外向き」に決まる。
+        #   床や他の物体を含む場面では物体ごと裏返ることがある(片側視+床で試行の 20 % が
+        #   物体全体の符号がモデルと逆)。既定の法線のときは両方の符号で投票し、ICP 後の
+        #   当てはまりで選ぶ(符号を渡されたときは渡された向きを信じる)。
+        sign_choices = (1.0, -1.0)
     else:
         SN = _unit(np.asarray(scene_normals, np.float64))
+        sign_choices = (1.0,)
     ns = S.shape[0]
     M = model["points"].shape[0]
     dist_step = model["dist_step"]
@@ -319,6 +361,40 @@ def surface_match(model: dict, scene_points, scene_normals=None,
 
     tree = cKDTree(S)
     diameter = float(model.get("diameter", _invariant_diameter(model["points"])))
+    hypotheses = []
+    for sgn in sign_choices:
+        hypotheses.extend(_vote_hypotheses(S, sgn * SN, refs, tree, diameter, model,
+                                           dist_step, ab, M, two_pi, sgn))
+
+    if not hypotheses:
+        return {"R": np.eye(3), "t": np.zeros(3), "rmse": float("inf"),
+                "votes": 0.0, "inlier_fraction": 0.0}
+
+    hypotheses.sort(key=lambda h: -h[0])
+    tol = 2.0 * dist_step
+    best = None
+    # 符号ごとに上位 topk を詰める(片方の符号の仮説だけで枠が埋まらないように)
+    chosen = []
+    for sgn in sign_choices:
+        chosen.extend([h for h in hypotheses if h[3] == sgn][:max(1, int(topk))])
+    for votes, R0, t0, _sgn in chosen:
+        if refine:
+            R, t, _aln, rmse = icp(model["points"], S, init=(R0, t0), trim=0.2)
+        else:
+            R, t, rmse = R0, t0, float("nan")
+        moved = apply_transform(model["points"], R, t)
+        dist, _ = tree.query(moved, k=1)
+        inlier = float((dist <= tol).mean())
+        score = (inlier, -(rmse if np.isfinite(rmse) else 1e9))
+        if best is None or score > best[0]:
+            best = (score, R, t, rmse, votes, inlier)
+    _, R, t, rmse, votes, inlier = best
+    return {"R": R, "t": t, "rmse": float(rmse), "votes": float(votes),
+            "inlier_fraction": float(inlier)}
+
+
+def _vote_hypotheses(S, SN, refs, tree, diameter, model, dist_step, ab, M, two_pi, sgn):
+    """PPF voting for every reference point; returns ``[(votes, R, t, sgn)]``."""
     hypotheses = []
     for r in refs:
         Ts = _align_to_x(S[r], SN[r])
@@ -348,29 +424,8 @@ def surface_match(model: dict, scene_points, scene_normals=None,
         mi_star, b_star = np.unravel_index(int(acc.argmax()), acc.shape)
         alpha = b_star * (two_pi / ab)
         R, t = _pose_from(S[r], SN[r], model, int(mi_star), alpha)
-        hypotheses.append((float(acc.max()), R, t))
-
-    if not hypotheses:
-        return {"R": np.eye(3), "t": np.zeros(3), "rmse": float("inf"),
-                "votes": 0.0, "inlier_fraction": 0.0}
-
-    hypotheses.sort(key=lambda h: -h[0])
-    tol = 2.0 * dist_step
-    best = None
-    for votes, R0, t0 in hypotheses[:max(1, int(topk))]:
-        if refine:
-            R, t, _aln, rmse = icp(model["points"], S, init=(R0, t0), trim=0.2)
-        else:
-            R, t, rmse = R0, t0, float("nan")
-        moved = apply_transform(model["points"], R, t)
-        dist, _ = tree.query(moved, k=1)
-        inlier = float((dist <= tol).mean())
-        score = (inlier, -(rmse if np.isfinite(rmse) else 1e9))
-        if best is None or score > best[0]:
-            best = (score, R, t, rmse, votes, inlier)
-    _, R, t, rmse, votes, inlier = best
-    return {"R": R, "t": t, "rmse": float(rmse), "votes": float(votes),
-            "inlier_fraction": float(inlier)}
+        hypotheses.append((float(acc.max()), R, t, sgn))
+    return hypotheses
 
 
 def find_surface_pose(model_points, scene_points, model_normals=None,

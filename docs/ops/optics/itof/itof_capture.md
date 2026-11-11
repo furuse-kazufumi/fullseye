@@ -5,10 +5,10 @@ category: itof
 in: depth
 out: table
 gpu: なし
-examples: [poc_itof_multifreq]
+examples: [poc_3d_sensor_modalities, poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # itof_capture — OPTICS `itof` op
@@ -68,6 +68,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_3d_sensor_modalities](../../../../examples/poc_3d_sensor_modalities.py) — `py -3.11 examples/poc_3d_sensor_modalities.py`
 - [poc_itof_multifreq](../../../../examples/poc_itof_multifreq.py) — `py -3.11 examples/poc_itof_multifreq.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

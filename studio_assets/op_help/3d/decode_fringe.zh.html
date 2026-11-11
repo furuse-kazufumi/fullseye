@@ -11,12 +11,18 @@
 <p>mask:               可省略。True=有效像素。无效像素为 NaN。</p>
 <p>min_modulation:     可省略。指定时把 modulation &lt; 该值的像素作为低可信度而置为无效。</p>
 <p>返回值:高度图(2D float)。ref_phase=None 时返回乘以 k 的连续相位。无效像素为 NaN。</p>
-<p>步骤(按实现):<code style="color:#22d3bf">wrapped_phase</code> → 组装可信掩模(若有 <code style="color:#22d3bf">min_modulation</code>, 则为 <code style="color:#22d3bf">modulation(stack) &gt;= min_modulation</code>,若有 <code style="color:#22d3bf">mask</code> 则与之取 AND)→ <code style="color:#22d3bf">unwrap_phase_2d(wrapped, mask=可信掩模)</code> → 若 <code style="color:#22d3bf">ref_phase</code> 为 <code style="color:#22d3bf">None</code> 则 <code style="color:#22d3bf">k * unwrapped</code>,否则 <code style="color:#22d3bf">phase_to_height</code>(<code style="color:#22d3bf">k * (unwrapped - ref_phase)</code>)。</p>
+<p>处理步骤(按实现):<code style="color:#22d3bf">wrapped_phase</code> → 构建可信掩膜(若给出 <code style="color:#22d3bf">min_modulation</code> 则 <code style="color:#22d3bf">modulation(stack) &gt;= min_modulation</code>,若给出 <code style="color:#22d3bf">mask</code> 则与其取 AND)→ <code style="color:#22d3bf">ref_phase</code> 为 <code style="color:#22d3bf">None</code> 时 <code style="color:#22d3bf">k * unwrap_phase_2d(wrapped, mask=可信掩膜)</code>, 否则 <code style="color:#22d3bf">k * unwrap_phase_2d(wrap(wrapped − ref_phase), mask=可信掩膜)</code> (全局的 <code style="color:#22d3bf">2πm</code> 取使中位数落入 <code style="color:#22d3bf">[−π, π]</code> 的分支)。</p>
 <p>参数:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phase_shift_images</code>:<code style="color:#22d3bf">(N, H, W)</code>,<code style="color:#22d3bf">N &gt;= 3</code>,等间隔相移。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref_phase</code>:标量或 <code style="color:#22d3bf">(H, W)</code>。传入把参考面<b>用相同步骤展开</b>的相位(为使 <code style="color:#22d3bf">unwrap_phase_2d</code> 的全局偏移在两者中得到相同处理,参考也用本 op 以 <code style="color:#22d3bf">ref_phase=None</code> 解码的结果最为稳妥)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref_phase</code>:标量或 <code style="color:#22d3bf">(H, W)</code>。参考面(高度 0)的相位 —— 可以是用本 op 以 <code style="color:#22d3bf">ref_phase=None, k=1</code> 解码的结果,也可以是解析相位。</p>
+<p>★先取差再展开:对 <code style="color:#22d3bf">Δ = wrap(wrapped − ref_phase)</code> 只做 1 次</p>
+<p><code style="color:#22d3bf">unwrap_phase_2d</code>,<code style="color:#22d3bf">ref_phase</code> 的 <code style="color:#22d3bf">2πm</code> 偏移在 wrap 中消失。</p>
+<p>展开剩下的全局 <code style="color:#22d3bf">2πm</code> 统一到“有效像素的中位数落入 <code style="color:#22d3bf">[−π, π]</code>”的分支</p>
+<p>(前提:视场的大部分相对参考面的高度在相位上小于 π)。</p>
+<p>2026-11-05 之前是把测量面和参考面分别展开后相减,两者展开起点的分支</p>
+<p>不同时高度会偏 <code style="color:#22d3bf">k·2πm</code>(60 个条件中 24 个)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>:相位→高度的标定常数(单位/rad)。对应 <code style="color:#22d3bf">synthesize_fringes</code> 的 <code style="color:#22d3bf">phase_gain</code> 的倒数。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code>:<code style="color:#22d3bf">(H, W)</code> 的 bool,True = 有效。<code style="color:#22d3bf">min_modulation</code>:调制度的下限(<code style="color:#22d3bf">[0, 1]</code> 左右。剔除阴影、饱和的像素)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code>:<code style="color:#22d3bf">(H, W)</code> 的 bool,True = 有效。<code style="color:#22d3bf">min_modulation</code>:调制度下限(约 <code style="color:#22d3bf">[0, 1]</code>。剔除阴影、饱和像素)。</p>
 <p>校验(<code style="color:#22d3bf">ValueError</code>):图像序列不是 3-D、<code style="color:#22d3bf">N &lt; 3</code>、非有限 / <code style="color:#22d3bf">mask</code> 形状不同 / <code style="color:#22d3bf">ref_phase</code> 形状不同 / 有效像素为零。没有 scikit-image 时抛出 <code style="color:#22d3bf">RuntimeError</code>。</p>
 <p>返回值:<code style="color:#22d3bf">(H, W)</code> float64。无效像素为 NaN。单位为 <code style="color:#22d3bf">k</code> 的单位。</p>
 <p>注意:依赖空间解包裹,因此在因阶跃、遮挡而分成孤岛的场景中, 各孤岛可能残留 <code style="color:#22d3bf">2πm k</code> 的高度偏移。需要绝对高度时,走 <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code> → <code style="color:#22d3bf">triangulate_column</code> 的路径。</p>

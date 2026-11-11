@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_material_optical_library, poc_nir_silicon_transmission, poc_pocket_interreflection, studio_raytrace_scene, virtual_machine_vision, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # scene_material — OPTICS `scene` op

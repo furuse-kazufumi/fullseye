@@ -8,7 +8,7 @@ gpu: なし
 examples: [fileio_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # e57_write — FILEIO `e57` op
@@ -22,6 +22,12 @@ version: 0.9.0  # fullseye lib version this note was generated for
 座標・強度・色・pose を持つ点群 ``table`` を ASTM E57 の ``bytes`` に書く。
 
 ``pye57`` は optional。未導入なら導入コマンドを含む ``ImportError`` で閉じる。
+
+精度: 座標(cartesianX/Y/Z)と強度は E57 の **single(float32)** で書かれる(pye57 の
+``write_scan_raw`` が single 固定)。float64 の点は float32 の精度で往復する —— 原点から
+35 万 m の UTM 座標なら誤差は数 cm。大きい座標は原点の近くへ平行移動し、その量を
+``pose['translation']``(double で書かれ正確に往復する)に入れること。色は 8 bit に丸め、
+``pose['rotation']`` は単位四元数に正規化して書く。
 呼び出し例: ``payload = e57_write({'points': points, 'pose': pose})``。
 
 ## 参考(サンプルデータ・文献)

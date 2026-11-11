@@ -9,7 +9,7 @@ gpu: あり(mean_image@twin)
 examples: [gallery2d_smoothing_rank, poc_document_scan, poc_focus_stacking, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # mean_image — 2D `smoothing` op

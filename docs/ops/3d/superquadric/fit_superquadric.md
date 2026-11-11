@@ -8,7 +8,7 @@ gpu: なし
 examples: [superquadric_fit]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # fit_superquadric — 3D `superquadric` op
@@ -23,6 +23,13 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 初期姿勢 = 慣性テンソル固有ベクトル、初期 a = 主軸 bbox 半分、初期 eps=(1,1)。
 ``a`` は正、``eps`` は [0.1, 2.0] にクリップして最適化する。
+
+尺度: 点群を重心へ寄せ、外接箱の対角長 ``L`` で割った無次元の座標で解き、``a = L·a'``、
+``t = 重心 + L·t'``、``residual = L³·residual'`` で戻す(★2026-11-05 敵対的検証 N5)。
+以前は生の座標のまま解いており、残差が長さの 1.5 乗で縮むため scipy 既定の ``gtol`` が
+初回評価で満たされ、``s <= 1e-4`` の点群では PCA の初期値をそのまま返していた
+(楕円体 a=(2,1.5,1) が 1.979/1.495/1.001、中心が 0.17·s ずれる)。いまは ``s`` に依らず同じ解。
+全点が一致する点群(``L == 0``)は ``ValueError``。
 
 Returns
 -------

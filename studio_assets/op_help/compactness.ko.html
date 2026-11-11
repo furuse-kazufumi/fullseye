@@ -11,9 +11,10 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness.chain.jpg">compactness: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>콤팩트니스 <code style="color:#22d3bf">둘레² / (4π・면적)</code>. 원이면 1이고 가늘고 길수록, 울퉁불퉁할수록, 구멍이 많을수록 커지며 <b>상한이 없다</b>. HALCON의 <code style="color:#22d3bf">compactness</code>(Shape factor for the compactness of a region.)와 같은 양이다.</p>
+<p>콤팩트니스 <code style="color:#22d3bf">max(1, 둘레² / (4π・면적))</code>. 원이면 1이고 가늘고 길수록, 울퉁불퉁할수록, 구멍이 많을수록 커지며 <b>상한이 없다</b>. HALCON의 <code style="color:#22d3bf">compactness</code>(Shape factor for the compactness of a region.)와 같은 양이다.</p>
 <p>★2026-09-26까지 <code style="color:#22d3bf">/10</code>을 한 뒤 <code style="color:#22d3bf">min(1.0, ...)</code>로 잘라 냈다 —— 값을 [0,1]에담기 위한 편의였지만, <code style="color:#22d3bf">둘레²/(4π·면적)</code>가 10을 넘는 형상(폭 2 px이면길이 80 이상의 흠집)을 <b>전부 1.0으로 뭉개고 있었다</b>. 흠집이나 균열처럼 가장 보고 싶은영역에서 「형상이 다른데 같은 수」가 반환되고 있었던 셈이다. 값 범위 [0,1]은 애초에 feature의 계약이 아니므로(<code style="color:#22d3bf">elliptic_axis</code>는 6.35, <code style="color:#22d3bf">r3_region_features</code>는 18.1을 반환한다) 뭉갤 이유가 없었다 —— <code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>.</p>
-<p>HALCON은 <code style="color:#22d3bf">max(1, C)</code>로 <b>아래에서</b> 자르지만(화소 근사로 1을 밑돌 수 있기 때문), 여기서는 자르지 않는다. 1을 밑도는 값은 「영역이 너무 작아 근사가 통하지 않는다」라는정보 그 자체이며, 필요하면 호출하는 쪽에서 자를 수 있다.</p>
+<p>HALCON과 마찬가지로 <code style="color:#22d3bf">max(1, C)</code>로 <b>아래에서</b> 자른다(화소 근사로 1을 밑돌 수 있기 때문. HALCON 23.11의 <code style="color:#22d3bf">compactness</code> 설명: 「C = max(1, C′)」「The value of C is clipped to 1.0」, 반환값의 표명 <code style="color:#22d3bf">Compactness &gt;= 1.0 || Compactness == 0</code>). 반지름 3~6의 원판은 1.0이 된다. 영역이 비어 있으면 0.</p>
+<p>★2026-11-05(적대적 검증 제2차 P2)까지 이 설명은 「여기서는 자르지 않는다」라고쓰여 있었다 —— 구현은 2026-09-26부터 HALCON의 <code style="color:#22d3bf">max(1, C)</code>였고, 설명문만이그 이전의 방침 그대로 남아 있었다.</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

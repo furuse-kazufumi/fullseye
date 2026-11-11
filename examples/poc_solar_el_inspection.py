@@ -20,9 +20,9 @@ EXTEND: 実写に差し替えるなら :func:`make_scene` が返す辞書の ``i
 
 この PoC が示すこと(数字はいずれも実行時に印字される実測値):
 
-1. ★★**ゼロ点(大域しきい値 Otsu の暗画素率)は 21.7 % で、真値 4.77 % の
-   4.6 倍**。内訳を真値マスクで割ると、暗画素の 42 % はフィンガー/バスバー、
-   33 % はビネッティングと結晶粒 —— **本当の不活性領域は暗画素の 20 % しか
+1. ★★**ゼロ点(大域しきい値 Otsu の暗画素率)は 20.8 % で、真値 4.77 % の
+   4.4 倍**。内訳を真値マスクで割ると、暗画素の 43 % はフィンガー/バスバー、
+   31 % はビネッティングと結晶粒 —— **本当の不活性領域は暗画素の 21 % しか
    無い**。等級は D(真値は C)。面積率を 1 つに畳むと結晶粒が損失に化ける。
 2. **フィンガー/バスバーを行・列の中央値プロファイルで割り、孤立領域 /
    断線帯 / クラックを別々の門で取る**と、不活性面積率は 4.77 % → 推定
@@ -57,6 +57,16 @@ EXTEND: 実写に差し替えるなら :func:`make_scene` が返す辞書の ``i
    —— 帯は割れる前に画素ごとの誤分類で形の門から外れる。雑音の崖では
    偽クラックが先に増え(K=20 で 634 px)、見逃しは後から来る(K=8 で
    再現率 0.23)。
+8. ★★**実セル(公開の SIPV-EL、I-V の実測が真値)では、遮光マスク(S1〜S6)なら暗部の面積が
+   出力の低下を追うが、S7(9 枚、正体は推定)では追わない**。
+   データの暗部は配布元の論文のとおり**セル表面に置いた遮光マスク**(アルミ箔つきの厚紙)で、
+   電気的な不活性領域ではない —— ここで測ったのは「暗部の面積が I-V の出力低下を追うか」。
+   マスクつき 195 枚(32 セル、S7 を含む)で暗部の増えと出力低下の順位相関は、ゼロ点 ρ 0.44、格子の
+   細い成分だけを割る経路 ρ 0.64、合成どおりの中央値プロファイルで割る経路 ρ 0.04(縁の帯状の
+   マスクを丸ごと消す。細い成分の窓 15 px と門の閾値は実データを見て決めた)。S7(論文の分類の
+   「その他の欠陥」と推定)は EL がセル全体で 0.75〜0.90 倍に暗くなるのに、出力低下は中央値
+   8.9 % —— ゼロ点は暗部を +50 pt と数え、細い成分だけ割る経路も +1 pt で 7.6 pt 過小に言う。
+   **全体が暗くなる欠陥は、面積ではどちら向きにも測れない**。
 
 【グラウンドトゥルース】
 セルは**閉形式**で合成する(2 倍のスーパーサンプリングで描いて平均し、
@@ -85,11 +95,12 @@ import time
 from pathlib import Path
 
 import numpy as np
-from scipy.ndimage import binary_dilation
+from scipy.ndimage import binary_dilation, median_filter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
+import realdata                                                  # noqa: E402
 
 # --- 場面の諸元 -------------------------------------------------------------- #
 N = 400                     # セル 1 枚の視野 [px]
@@ -534,8 +545,9 @@ def section_zero_point(sc: dict) -> dict:
                    ["EL 画像(ゼロ点の入力)", "Otsu の暗画素 %.1f %%" % rate,
                     "真値の孤立領域 %.2f %%" % truth],
                    ncols=3, title="ゼロ点: 暗画素率は不活性面積率ではない",
-                   caption="単位は % of セル面積。暗画素の 4 割はフィンガーとバスバー、"
-                           "3 割は結晶粒とビネッティング。")
+                   caption="単位は %% of セル面積。暗画素の %.0f %% はフィンガーとバスバー、"
+                           "%.0f %% は結晶粒とビネッティング。"
+                           % (100.0 * out["フィンガー/バスバー"] / dark.sum(), 100.0 * n / dark.sum()))
     return {"rate": rate, "parts": out, "dark_n": int(dark.sum())}
 
 
@@ -937,6 +949,541 @@ def section_tool_gaps() -> None:
 
 
 # --------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
+# 9. 実データ —— SIPV-EL(実セルの EL 像 + I-V で測った出力)                    #
+# --------------------------------------------------------------------------- #
+#: 実データの置き場の環境変数(``<root>/sipv_el/`` を見る)。
+REAL_DATA_ENV = "FULLSEYE_POC_REAL_DATA"
+#: SIPV-EL(Mateo-Romero, Hernández-Callejo, Alonso-Gómez, Morales、Zenodo 14439369、CC BY 4.0)。
+#: 書庫と CSV の SHA-256(2026-11-08 に取得、``tools/fetch_realinsp_data.py`` の台帳と同じ値)。
+#: 書庫が置き場に在れば読む前に照合する(取得器を通さずに置かれた書庫も黙って使わない)。
+SIPV_ZIP_SHA256 = "3fca8d9a3eb748f55f742b5e3651e9caa4da004c0c86e756d5afb24ad1a3a216"
+SIPV_ZIP_BYTES = 484_606_354
+SIPV_CSV_SHA256 = "31497f080963b4a972858be5e53ef6d9e3a721ddef40442245d949b596891e9b"
+SIPV_CREDIT = ("SIPV-EL: H. F. Mateo Romero, L. Hernández Callejo, V. Alonso Gómez, J. I. Morales, "
+               "Zenodo doi:10.5281/zenodo.14439369, CC BY 4.0")
+#: 撮影条件の一次情報(配布元の著者の論文、Zenodo 11285233 に全文): 「The shadowing in the cells was
+#: performed using cardboard masks with a layer of aluminum. The zones covered by the mask do not contribute
+#: to the production of current since the aluminum foil is capable of blocking photons. [...] These masks have
+#: been placed on the surface of the cell.」、Fig. 2 の分類は 0 = Original Image、1 = Long Horizontal Line、
+#: 2 = Long Vertical Line、3 = Big Central Circle、4 = Small Central Circle、5 = Two small circles in the
+#: corners、6 = Big circle in one corner、7 = Other defects(Mateo Romero et al., Solar Energy 265 (2023)
+#: 112089, doi:10.1016/j.solener.2023.112089)。★したがって S1〜S6 の暗部は**セルの表面に置いた
+#: 遮光マスク**で、電気的な不活性領域ではない。★ファイル名の S 番号と論文の番号の対応は配布元に
+#: 書かれていない。画像で確かめると S3〜S6 の形は論文と一致するが、S1 / S2 は「上の帯」と「左の帯」が
+#: セルによって入れ替わる(電流 6 の 69 枚で S1 = 上 18・左 17、S2 = 左 18・上 16、2026-11-08 に実測)。
+#: S7 を「その他の欠陥」と読むのは番号の対応からの推定で、種類の内訳も配布元に無い。
+SIPV_PAPER = ("Mateo Romero et al., Solar Energy 265 (2023) 112089, "
+              "doi:10.1016/j.solener.2023.112089(Zenodo 11285233)")
+SIPV_MASKS = {0: "マスクなし", 1: "縁の帯", 2: "縁の帯", 3: "中央の大円", 4: "中央の小円",
+              5: "隅の小円 2 つ", 6: "隅の大円", 7: "その他の欠陥(推定)"}
+#: 1 セルにつき使う注入電流(ファイル名の C の値)。無いセルは中央の電流で代える(決定的)。
+REAL_CURRENT = "6"
+#: 狭い成分だけ割るときの、行・列プロファイルのメディアン窓 [px]。バスバー(幅 ≈ 5 px)より
+#: 十分広く、影(直径 100 px 級)より十分狭い。★この値は実データを見てから決めた(事後の選択)。
+NARROW_WIN = 15
+#: 代表の図の上段に使う 1 枚(セル番号, 電流, マスクの番号)。下段は S7 の出力低下の中央値に
+#: いちばん近いセルを実行時に選ぶ(都合の良いセルを手で選ばない)。
+REP_SHADOW = (20, "6", 3)
+
+#: 実データで出た数値(2026-11-08、上の SHA-256 の書庫から。実行の stdout から転記)。
+#: データが無い環境(CI)ではこれを印字し、鍵と中身と docstring の見出しの数値を照合する。
+#: データがある環境では実測をこれと同じ丸め(小数 3 桁)で照合する(ずれたら鳴る)。
+RECORDED_REAL = {
+    # ★2026-11-09: otsu が実データの範囲で 256 ビンを張るようになり、ゼロ点の列が 3 桁目で動いた
+    #   (ρ 0.44 → 0.438、平均差 0.073 → 0.074、S3/S4/S7 の Δ +0.001〜0.002)。文中の 2 桁の値は変わらない。
+    "cells": 32, "shadow_images": 195,
+    "rho": {"zero": 0.438, "median": 0.041, "narrow": 0.638},
+    "mean_abs_gap_vs_loss": {"zero": 0.074, "median": 0.154, "narrow": 0.051},
+    "s0_area_median": {"zero": 0.089, "median": 0.014, "narrow": 0.022},
+    # マスクごとの中央値: (出力低下, ゼロ点 Δ, 中央値で割る Δ, 細い成分だけ Δ)
+    "by_shadow": {"S1": (0.211, 0.184, -0.008, 0.218), "S2": (0.227, 0.188, -0.006, 0.216),
+                  "S3": (0.287, 0.246, 0.103, 0.279), "S4": (0.122, 0.094, 0.112, 0.113),
+                  "S5": (0.221, 0.181, 0.205, 0.206), "S6": (0.275, 0.219, 0.099, 0.254),
+                  "S7": (0.089, 0.499, 0.002, 0.013)},
+    "s7_brightness": (0.752, 0.895), "s7_col_ratio": (0.134, 1.776),
+    "s7_rep": {"cell": 2, "loss": 0.089, "d_zero": 0.499, "d_narrow": 0.011},
+}
+#: RECORDED_REAL に必ず要る鍵(CI 経路の門が見る)。
+REAL_KEYS = ("cells", "shadow_images", "rho", "mean_abs_gap_vs_loss", "s0_area_median",
+             "by_shadow", "s7_brightness", "s7_col_ratio", "s7_rep")
+
+
+def real_data_root() -> Path:
+    """SIPV-EL の置き場(``<root>/sipv_el``)。手元の絶対パスはソースに書かない。"""
+    import os
+
+    configured = os.environ.get(REAL_DATA_ENV, "").strip()
+    if configured:
+        return Path(configured).expanduser() / "sipv_el"
+    here = Path(__file__).resolve().parents[1]
+    if here.parent.name.lower() == "projects":
+        return here.parent.parent / "data" / "fullseye_poc_real" / "sipv_el"
+    return Path.home() / ".cache" / "fullseye" / "poc_real" / "sipv_el"
+
+
+def _sha256(path: Path) -> str:
+    import hashlib
+
+    h = hashlib.sha256()
+    with path.open("rb") as fh:
+        for block in iter(lambda: fh.read(8 << 20), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
+def degrid_narrow(flat: np.ndarray, win: int = NARROW_WIN) -> np.ndarray:
+    """格子(バスバー・フィンガー)の**細い**成分だけを行・列プロファイルで割る。
+
+    :func:`degrid` は中央値プロファイルそのもので割る。合成の場面では十分だったが、
+    実セルの**帯状の暗部**(片側の縁を全高で覆うマスク)は列の中央値ごと暗いので、列で割った
+    瞬間に暗部が消える(合成でも「右端を帯にしたら列プロファイルが帯ごと割って消した」と
+    書いた形)。そこでプロファイルを ``win`` px のメディアンで平らにした基準で割り、
+    窓より細い凹み(= バスバー)だけを落とす。比は [0.05, 1.5] に切る(真っ暗な列で
+    0/0 にしない)。
+    """
+    def ratio(v):
+        ref = median_filter(v, size=win, mode="nearest")
+        return np.clip(v / np.maximum(ref, 1e-3), 0.05, 1.5)
+
+    p = np.median(flat, axis=1)
+    s1 = flat / ratio(p)[:, None]
+    q = np.median(s1, axis=0)
+    s = s1 / ratio(q)[None, :]
+    return s / max(float(np.quantile(s, 0.75)), 1e-6)
+
+
+def _cell_rect(img0: np.ndarray) -> tuple[int, int, int, int]:
+    """マスクの無い像(S0)からセルの外枠(行・列の範囲)を出す。枠外の黒は数えない。"""
+    bright = img0 > 0.3 * float(np.quantile(img0, 0.95))
+    rr = np.nonzero(bright.mean(axis=1) > 0.3)[0]
+    cc = np.nonzero(bright.mean(axis=0) > 0.3)[0]
+    if rr.size < 50 or cc.size < 50:
+        raise ValueError("セルの外枠が取れない(明るい行 %d / 列 %d)" % (rr.size, cc.size))
+    return int(rr[0]) + 2, int(rr[-1]) - 1, int(cc[0]) + 2, int(cc[-1]) - 1
+
+
+def _real_masks(img: np.ndarray, rect) -> dict:
+    """1 枚から 3 通りの「暗部」マスク(セル外枠の中)を返す。
+
+    合成の章の :func:`classify` は孤立領域(``iso``)を「不活性」と呼ぶが、実データの暗部は
+    遮光マスクなので、ここでは**暗部の面積**として数えるだけにする。
+    """
+    r0, r1, c0, c1 = rect
+    dark = ~(np.asarray(fs.apply(img, "otsu")) > 0.5)
+    crop = img[r0:r1, c0:c1]
+    return {"zero": dark[r0:r1, c0:c1],
+            "median": classify(degrid(crop))["iso"],
+            "narrow": classify(degrid_narrow(crop))["iso"]}
+
+
+def _load_real(root: Path):
+    """CSV(; 区切り・小数はカンマ)と画像の対応表を作る。1 セル 1 電流・マスク S0〜S7。
+
+    書庫(``raw/all_cells.zip``)が在ればバイト数と SHA-256 を、CSV は SHA-256 を照合してから読む。
+    """
+    import csv
+    import re
+
+    from PIL import Image
+
+    zp = root / "raw" / "all_cells.zip"
+    if zp.is_file():
+        if zp.stat().st_size != SIPV_ZIP_BYTES or _sha256(zp) != SIPV_ZIP_SHA256:
+            raise ValueError("SIPV-EL の書庫が台帳と違う(バイト数か SHA-256): %s" % zp)
+    else:
+        print("  (書庫 raw/all_cells.zip が無いので展開物だけを読む。照合は CSV の SHA-256 と画像の型)")
+    cp = root / "raw" / "features_labels_poli_y_mono_IV.csv"
+    if _sha256(cp) != SIPV_CSV_SHA256:
+        raise ValueError("SIPV-EL の CSV の SHA-256 が台帳と違う: %s" % cp)
+    rows = list(csv.DictReader(open(cp, encoding="utf-8"), delimiter=";"))
+    if len(rows) < 1000:
+        raise ValueError("SIPV-EL の CSV が %d 行しか無い" % len(rows))
+    by = {}
+    for r in rows:
+        m = re.fullmatch(r"P(\d+)C([\d.]+)S(\d+)\.tiff", r["filename"])
+        if m is None:
+            raise ValueError("想定外のファイル名: %r" % r["filename"])
+        by[(int(m.group(1)), m.group(2), int(m.group(3)))] = r
+
+    def img(key):
+        p, c, s = key
+        a = np.asarray(Image.open(root / "extracted" / ("P%dC%sS%d.tiff" % (p, c, s))))
+        if a.dtype != np.uint16 or a.shape != (400, 400):
+            raise ValueError("想定外の画像 %s: %s %s" % (key, a.dtype, a.shape))
+        return a.astype(np.float64) / 65535.0
+
+    return by, img
+
+
+def _r3(v):
+    """記録と照合の丸め(小数 3 桁)。入れ子の辞書・組も同じ形で丸める。"""
+    if isinstance(v, dict):
+        return {k: _r3(x) for k, x in v.items()}
+    if isinstance(v, (tuple, list)):
+        return tuple(_r3(x) for x in v)
+    if isinstance(v, (int, np.integer)) and not isinstance(v, bool):
+        return int(v)
+    return round(float(v), 3)
+
+
+def _flat_numbers(v):
+    if isinstance(v, dict):
+        for x in v.values():
+            yield from _flat_numbers(x)
+    elif isinstance(v, (tuple, list)):
+        for x in v:
+            yield from _flat_numbers(x)
+    elif isinstance(v, (int, float)) and not isinstance(v, bool):
+        yield float(v)
+
+
+def _squash(text: str) -> str:
+    """空白・改行・強調の ``*`` を落とす(docstring の折り返しに左右されずに照合するため)。"""
+    return "".join(text.split()).replace("*", "")
+
+
+def check_doc_synthetic(zp: dict, sc: dict, pipe: dict, fr: dict, gr: dict, wd: dict, sn: dict) -> None:
+    """合成部の門: docstring(展示の見出しの正本)の数値が、**文脈つきの文字列**で実行の印字と一致すること。
+
+    2026-11-08 の再レビューで、docstring 1 番とキャプションが 21.7 % / 42 % / 33 % / 20 % のまま、
+    実行は 22.7 % / 41 % / 35 % / 19 % だった(master からの持ち越し。合成部に照合の門が無かった)。
+    ★2026-11-09: otsu が [0,1] に収まる像も実データの範囲で 256 ビンを張るようになり、20.8 % / 43 % / 31 % / 21 %
+    (4.4 倍)に動いた。この門が実行との食い違いを見つけ、docstring とキャプションを転記し直した。
+    短い数字の部分一致では別の文脈の数でも通るので、前後の語ごと照合する。
+    """
+    dark = zp["dark_n"]
+    o0 = next(iter(fr["out"].values()))           # 欠陥ゼロの場面
+    want = [
+        "ゼロ点(大域しきい値Otsuの暗画素率)は%.1f%%で、真値%.2f%%の%.1f倍"
+        % (zp["rate"], sc["iso_rate"], zp["rate"] / sc["iso_rate"]),
+        "暗画素の%.0f%%はフィンガー/バスバー" % (100.0 * zp["parts"]["フィンガー/バスバー"] / dark),
+        "%.0f%%はビネッティングと結晶粒" % (100.0 * zp["parts"]["結晶粒/ビネッティング"] / dark),
+        "本当の不活性領域は暗画素の%.0f%%しか" % (100.0 * zp["parts"]["孤立領域(本物)"] / dark),
+        "推定%.2f%%(誤差%+.2fポイント)" % (pipe["iso_rate"], pipe["iso_err"]),
+        "クラック5本の再現率%.2f〜%.2f" % (min(pipe["recall"]), max(pipe["recall"])),
+        "偽クラック%.0fpx(校正ありは%.0fpx)" % (o0["false_raw"], o0["false_cal"]),
+        "偽クラックはc=%sから" % gr["onset"],
+        "再現率0.5を超えるのは%.2fpxから" % wd["cliff"],
+        "K=%sで7/8" % sn["k_fail"],
+    ]
+    doc = _squash(__doc__ or "")
+    absent = [w for w in want if _squash(w) not in doc]
+    assert not absent, "docstring の合成部の数値が実行と違う(印字から転記し直す): %s" % absent
+
+
+def check_recorded_real(rec: dict) -> None:
+    """CI 経路の門: 記録値の鍵がそろい、中身が有限の数で、見出しの数値が docstring と同じであること。
+
+    以前の ``assert RECORDED_REAL`` は定数の辞書が空でないかを見るだけで常に真だった
+    (2026-11-08 の敵対的レビュー)。ここでは docstring(展示の見出しの正本)に書いた順位相関・
+    S7 の数値が、記録値を同じ書式に丸めた文字列として載っていることまで見る。
+    """
+    missing = [k for k in REAL_KEYS if k not in rec]
+    assert not missing, "RECORDED_REAL に鍵が無い: %s" % missing
+    nums = list(_flat_numbers(rec))
+    assert nums and all(np.isfinite(nums)), "RECORDED_REAL に有限でない数がある"
+    assert rec["cells"] >= 30 and rec["shadow_images"] >= 150, rec
+    doc = __doc__ or ""
+    heads = ["ρ %.2f" % rec["rho"]["zero"], "ρ %.2f" % rec["rho"]["narrow"],
+             "ρ %.2f" % rec["rho"]["median"],
+             "%.1f %%" % (100 * rec["by_shadow"]["S7"][0]),
+             "%+.0f pt" % (100 * rec["by_shadow"]["S7"][1]),
+             "%.2f〜%.2f 倍" % tuple(rec["s7_brightness"])]
+    absent = [h for h in heads if h not in doc]
+    assert not absent, "docstring の見出しに記録値が載っていない: %s" % absent
+
+
+def section_real_el() -> dict | None:
+    """実セルで「暗い面積」と格子除去の経路を、**I-V の出力**で採点する。"""
+    import os
+
+    print("\n" + "=" * 78)
+    print("9) 実データ —— SIPV-EL の実セル EL 像の暗部を、I-V で測った出力の低下で採点する")
+    print("=" * 78)
+    root = real_data_root()
+    have = (root / "extracted").is_dir() and (root / "raw" / "features_labels_poli_y_mono_IV.csv").is_file()
+    if (os.environ.get("CI") and not os.environ.get(REAL_DATA_ENV)) or not have:
+        print("  実データが無いので実データの章を飛ばす。取得は py -3.11 tools/fetch_realinsp_data.py sipv_el")
+        print("  記録値(RECORDED_REAL): %s" % RECORDED_REAL)
+        check_recorded_real(RECORDED_REAL)
+        print("  記録値の門: 鍵 %d 個・有限・docstring の見出しと一致" % len(REAL_KEYS))
+        return None
+    from scipy.stats import spearmanr
+
+    by, load = _load_real(root)
+    realdata.mark_read("zenodo:14439369/SIPV-EL")
+    print("  " + SIPV_CREDIT)
+    print("  撮影条件(配布元の論文 %s):" % SIPV_PAPER)
+    print("    暗部 S1〜S6 は**セルの表面に置いたアルミ箔つきの厚紙のマスク**(遮光)。マスクの下は電流を作らない。")
+    print("    S7 は論文の分類の 7「その他の欠陥」と読む(番号の対応は推定: S1 / S2 は上の帯と左の帯が")
+    print("    セルによって入れ替わるので、ファイル名の番号が論文の番号と一致する保証は無い。内訳も無い)。")
+    print("  ★したがってここで測るのは**暗部の面積が I-V の出力低下を追うか**で、合成の章の「不活性面積」")
+    print("    (電気的に孤立した領域)の検証ではない。")
+    print("  真値は画像の外にある: 同じセル・同じ注入電流で、マスクの無い S0 に対する I-V 出力の低下 1 - P/P0。")
+
+    def num(s):
+        return float(s.replace(",", "."))
+
+    recs = []
+    cache = {}
+    for p in sorted({k[0] for k in by}):
+        cur = REAL_CURRENT
+        if (p, cur, 0) not in by:
+            cands = sorted({k[1] for k in by if k[0] == p and k[2] == 0}, key=float)
+            if not cands:
+                continue
+            cur = cands[len(cands) // 2]
+        img0 = load((p, cur, 0))
+        rect = _cell_rect(img0)
+        r0, r1, c0, c1 = rect
+        m0 = _real_masks(img0, rect)
+        p0 = num(by[(p, cur, 0)]["power"])
+        for s in range(8):
+            key = (p, cur, s)
+            if key not in by:
+                continue
+            im = img0 if s == 0 else load(key)
+            m = m0 if s == 0 else _real_masks(im, rect)
+            col = (np.median(im[r0:r1, c0:c1], axis=0)
+                   / np.maximum(np.median(img0[r0:r1, c0:c1], axis=0), 1e-6))
+            rec = {"key": key, "kind": by[key]["pv_kind"], "loss": 1.0 - num(by[key]["power"]) / p0,
+                   "bright": float(im[r0:r1, c0:c1].mean() / max(img0[r0:r1, c0:c1].mean(), 1e-9)),
+                   "col": (float(np.percentile(col, 5)), float(np.percentile(col, 95)))}
+            for name in ("zero", "median", "narrow"):
+                rec[name] = float(m[name].mean())
+                rec["d_" + name] = rec[name] - float(m0[name].mean())
+            recs.append(rec)
+            cache[key] = (im, rect, m, m0, rec)
+    n_cells = len({r["key"][0] for r in recs})
+    sh = [r for r in recs if r["key"][2] > 0]
+    print("\n  セル %d 枚(多結晶 %d / 単結晶 %d)・マスクつき %d 枚 + マスクなし %d 枚。"
+          % (n_cells, len({r["key"][0] for r in recs if r["kind"] == "Poli"}),
+             len({r["key"][0] for r in recs if r["kind"] == "Mono"}), len(sh), len(recs) - len(sh)))
+
+    names = {"zero": "ゼロ点(Otsu の暗画素)", "median": "格子除去(中央値プロファイル)",
+             "narrow": "格子除去(細い成分だけ)"}
+    loss = np.array([r["loss"] for r in sh])
+    out = {"n_cells": n_cells, "n_shadow": len(sh)}
+    print("\n   方法                         順位相関 ρ   |Δ暗部 − 出力低下| の平均   マスクなしの暗部率(中央値)")
+    for k, label in names.items():
+        d = np.array([r["d_" + k] for r in sh])
+        rho = float(spearmanr(d, loss).correlation)
+        mae = float(np.mean(np.abs(d - loss)))
+        lvl = float(np.median([r[k] for r in recs if r["key"][2] == 0]))
+        out[k] = {"rho": rho, "mae": mae, "s0": lvl}
+        print("   %-28s %+.3f        %.3f                    %5.1f %%" % (label, rho, mae, 100 * lvl))
+
+    print("\n   マスク        枚数   出力低下   ゼロ点 Δ   中央値プロファイル Δ   細い成分だけ Δ   (いずれも中央値)")
+    table = []
+    by_shadow = {}
+    for s in range(1, 8):
+        g = [r for r in sh if r["key"][2] == s]
+        if not g:
+            continue
+        row = {k: float(np.median([r[k] for r in g])) for k in ("loss", "d_zero", "d_median", "d_narrow")}
+        by_shadow[s] = row
+        print("   S%d %-10s %3d    %5.1f %%    %+6.1f %%      %+6.1f %%             %+6.1f %%"
+              % (s, SIPV_MASKS[s], len(g), 100 * row["loss"], 100 * row["d_zero"], 100 * row["d_median"],
+                 100 * row["d_narrow"]))
+        table.append(["S%d %s" % (s, SIPV_MASKS[s]), "%d" % len(g), "%.1f" % (100 * row["loss"]),
+                      "%+.1f" % (100 * row["d_zero"]), "%+.1f" % (100 * row["d_median"]),
+                      "%+.1f" % (100 * row["d_narrow"])])
+    out["by_shadow"] = by_shadow
+    plate = [s for s in by_shadow if s <= 6]
+    out["narrow_plate_err"] = float(np.max([abs(by_shadow[s]["d_narrow"] - by_shadow[s]["loss"])
+                                            for s in plate]))
+    out["median_strip"] = float(np.max([abs(by_shadow[s]["d_median"]) for s in (1, 2) if s in by_shadow]))
+
+    odd = _odd_rows(sh)
+    if odd:
+        print("  ★CSV の出力をそのまま使った外れ(|出力低下| > 50 %%、除かない): %s" % _odd_text(odd))
+    s7 = [r for r in sh if r["key"][2] == 7]
+    s7_med = float(np.median([r["loss"] for r in s7]))
+    rep7 = min(s7, key=lambda r: (abs(r["loss"] - s7_med), r["key"]))
+    br = np.array([r["bright"] for r in s7])
+    out["s7_brightness"] = (float(br.min()), float(br.max()))
+    out["s7_col_ratio"] = (float(min(r["col"][0] for r in s7)), float(max(r["col"][1] for r in s7)))
+    out["s7_rep"] = {"cell": rep7["key"][0], "loss": rep7["loss"], "d_zero": rep7["d_zero"],
+                     "d_narrow": rep7["d_narrow"]}
+
+    z, md, nw = out["zero"], out["median"], out["narrow"]
+    print("\n  ★外の真値(I-V)で見ると、出力の低下をいちばん素直に追うのは「格子の細い成分だけを割る」経路"
+          "(ρ %+.2f、平均のずれ %.1f ポイント)。" % (nw["rho"], 100 * nw["mae"]))
+    gap = [100 * (by_shadow[s]["d_zero"] - by_shadow[s]["loss"]) for s in plate]
+    print("  ★マスク(S1〜S6)では、ゼロ点も出力低下との差 %+.1f〜%+.1f ポイントで追う —— マスクは真っ黒で、"
+          "暗いものを数えれば当たる。" % (min(gap), max(gap)))
+    print("  ★★分かれるのは S7(「その他の欠陥」と推定、%d 枚)。セル全体の EL が S0 の %.2f〜%.2f 倍に"
+          % (len(s7), round(float(br.min()), 3), round(float(br.max()), 3)))   # 記録値と同じ丸めを経て書く
+    print("     暗くなる(列ごとの明るさの比は 5〜95 %% 分位で %.2f〜%.2f と列でまちまち —— 一様な減光ではない)。"
+          % out["s7_col_ratio"])
+    print("     I-V の出力低下は中央値 %.1f %%。ゼロ点はこの暗さを暗部 %+.0f ポイントに数える —— "
+          "**S1〜S6 の遮光マスクでは暗部の面積が出力低下を追うが、S7 では追わない**(S7 は %d 枚、正体は推定)。"
+          % (100 * by_shadow[7]["loss"], 100 * by_shadow[7]["d_zero"], len(s7)))
+    print("     ★ただし細い成分だけ割る経路も S7 では %+.1f ポイントで、出力低下を %.1f ポイント過小に言う"
+          "(全体が暗くなる欠陥は面積では測れない)。"
+          % (100 * by_shadow[7]["d_narrow"], 100 * (by_shadow[7]["loss"] - by_shadow[7]["d_narrow"])))
+    print("  ★★合成で使った格子除去(中央値プロファイルで割る)は、実セルでは**縁の帯状のマスクを丸ごと消す**"
+          "(S1・S2 で Δ %+.1f / %+.1f ポイント、出力は %.0f / %.0f %% 落ちている)。合成の 4.61 %%(誤差 -0.15)"
+          "は、暗部が行・列を丸ごと覆わない形に限った結果だった。"
+          % (100 * by_shadow[1]["d_median"], 100 * by_shadow[2]["d_median"],
+             100 * by_shadow[1]["loss"], 100 * by_shadow[2]["loss"]))
+    print("     プロファイルを %d px のメディアンで平らにしてから割る(バスバーだけ落とす)と、"
+          "マスク 6 種の中央値で出力低下とのずれは最大 %.1f ポイント(窓 %d px は実データを見て決めた)。"
+          % (NARROW_WIN, 100 * out["narrow_plate_err"], NARROW_WIN))
+    print("  代表の図の下段は S7 の出力低下の中央値に最も近いセル P%d(出力低下 %.1f %%、ゼロ点 %+.0f pt、"
+          "細い成分だけ %+.0f pt)。" % (rep7["key"][0], 100 * rep7["loss"], 100 * rep7["d_zero"],
+                                      100 * rep7["d_narrow"]))
+    print("  マスクなし(S0)の暗部率の中央値: ゼロ点 %.1f %% / 細い成分だけ %.1f %%(セルの面取りの隅・元からの割れを含む)。"
+          % (100 * z["s0"], 100 * nw["s0"]))
+
+    rec = _r3({"cells": n_cells, "shadow_images": len(sh),
+               "rho": {k: out[k]["rho"] for k in names}, "mean_abs_gap_vs_loss": {k: out[k]["mae"] for k in names},
+               "s0_area_median": {k: out[k]["s0"] for k in names},
+               "by_shadow": {"S%d" % s: (v["loss"], v["d_zero"], v["d_median"], v["d_narrow"])
+                             for s, v in by_shadow.items()},
+               "s7_brightness": out["s7_brightness"], "s7_col_ratio": out["s7_col_ratio"],
+               "s7_rep": out["s7_rep"]})
+    print("\n  RECORDED_REAL = %r" % (rec,))
+    out["record"] = rec
+
+    # --- 所見を固定する(実データがあるときだけ鳴る) ---
+    # ★下の閾値(+0.1 / +0.3 / 0.03 / 0.04 / +0.2)はすべて**実データを見てから置いた**(事後の門)。
+    #   緩めずに、実測の記録値そのものとの一致(丸め 3 桁)を別に見る。
+    assert nw["rho"] > z["rho"] + 0.1 and nw["rho"] > md["rho"] + 0.3, (z, md, nw)
+    assert nw["mae"] < z["mae"] and nw["mae"] < md["mae"], (z, md, nw)
+    assert out["median_strip"] < 0.03, out["median_strip"]
+    assert out["narrow_plate_err"] < 0.04, out["narrow_plate_err"]
+    assert by_shadow[7]["d_zero"] > by_shadow[7]["loss"] + 0.2, by_shadow[7]
+    assert by_shadow[7]["d_narrow"] < by_shadow[7]["loss"], by_shadow[7]     # 過小に言うことも固定する
+    if RECORDED_REAL:
+        assert rec == RECORDED_REAL, "実測が記録値と違う(丸め 3 桁): %r" % (rec,)
+        check_recorded_real(RECORDED_REAL)
+    _real_figures(out, by_shadow, table, sh, s7, cache, rep7)
+    return out
+
+
+def _gray3(im: np.ndarray, rect) -> np.ndarray:
+    r0, r1, c0, c1 = rect
+    crop = im[r0:r1, c0:c1]
+    g = np.clip(crop / max(float(np.quantile(crop, 0.995)), 1e-6), 0, 1)
+    return np.repeat(g[..., None], 3, axis=2)
+
+
+def _tint(g: np.ndarray, mask: np.ndarray, rgb) -> np.ndarray:
+    o = g.copy()
+    o[mask] = 0.45 * o[mask] + 0.55 * np.asarray(rgb)
+    return o
+
+
+def _odd_rows(sh) -> list:
+    """CSV の出力をそのまま使った外れ(|出力低下| > 50 %)。除かずに印字と図の説明に出す。"""
+    return [r for r in sh if abs(r["loss"]) > 0.5]
+
+
+def _odd_text(odd) -> str:
+    """外れの一覧の文字列(印字と散布図の説明で同じものを使う)。"""
+    return "、".join("P%d S%d 出力低下 %+.0f %%" % (r["key"][0], r["key"][2], 100 * r["loss"]) for r in odd)
+
+
+def _real_figures(out, by_shadow, table, sh, s7, cache, rep7) -> None:
+    """実データの図: 表・代表(重ね)・入力・処理・結果・限界。"""
+    if not figs.enabled():
+        return
+    figs.save_table("real_by_shadow", ["マスク", "枚数", "出力低下 %", "ゼロ点 Δ%", "中央値で割る Δ%",
+                                       "細い成分だけ Δ%"], table,
+                    title="実セル: マスクごとの出力低下と、暗部率の増え(中央値)",
+                    caption="SIPV-EL(CC BY 4.0)。出力低下は I-V の実測、Δ はマスクなし S0 からの暗部率の増え。"
+                            "マスクの分類は配布元の論文 Fig. 2。")
+    # 代表: 上 = 中央の大円のマスク、下 = S7 の出力低下の中央値に最も近いセル
+    panels, caps = [], []
+    for key in (REP_SHADOW, rep7["key"]):
+        if key not in cache:
+            continue
+        im, rect, m, m0, rec = cache[key]
+        g = _gray3(im, rect)
+        kind = "単結晶" if rec["kind"] == "Mono" else "多結晶"
+        panels += [g, _tint(g, m["zero"], (1.0, 0.45, 0.1)), _tint(g, m["narrow"], (0.15, 0.55, 1.0))]
+        caps += ["%s P%d S%d %s(I-V 出力低下 %.0f %%)" % (kind, key[0], key[2], SIPV_MASKS[key[2]],
+                                                       100 * rec["loss"]),
+                 "ゼロ点 暗部 %.0f %%(S0 比 %+.0f pt)" % (100 * rec["zero"], 100 * rec["d_zero"]),
+                 "格子の細い成分を割る 暗部 %.0f %%(S0 比 %+.0f pt)" % (100 * rec["narrow"], 100 * rec["d_narrow"])]
+    figs.save_grid("real_el_overlay", panels, caps, ncols=3,
+                   title="実セルの EL 像: 遮光マスク(上)では暗部の面積が出力低下を追い、S7(下)では追わない"
+                         "(橙 = ゼロ点の暗画素、青 = 格子を割った暗部)",
+                   caption="SIPV-EL(Zenodo 14439369、CC BY 4.0)の実セル。上: セル表面に置いた遮光マスク(中央の大円)。"
+                           "下: S7(論文の分類 7「その他の欠陥」と推定)のうち、出力低下が S7 の中央値 %.1f %% に最も近いセル。"
+                           "灰色は実測の EL 強度、色は判定の重ね。出力低下は同じセル・同じ電流の I-V から。"
+                           % (100 * by_shadow[7]["loss"]))
+    # 入力: 同じセルのマスク 0〜6 と、S7 の代表セルの S0 / S7
+    p, cur, _ = REP_SHADOW
+    ins, icap = [], []
+    for s in range(7):
+        k = (p, cur, s)
+        if k in cache:
+            im, rect, _, _, rec = cache[k]
+            ins.append(_gray3(im, rect)[..., 0])
+            icap.append("S%d %s 出力低下 %.0f %%" % (s, SIPV_MASKS[s], 100 * rec["loss"]))
+    for s in (0, 7):
+        k = (rep7["key"][0], rep7["key"][1], s)
+        if k in cache:
+            im, rect, _, _, rec = cache[k]
+            ins.append(_gray3(im, rect)[..., 0])
+            icap.append("P%d S%d %s 出力低下 %.0f %%" % (k[0], s, SIPV_MASKS[s], 100 * rec["loss"]))
+    figs.save_grid("real_input_masks", ins, icap, ncols=3, gray=[True] * len(ins),
+                   title="実データの入力: 同じセルにマスクを置いて EL と I-V を撮る(SIPV-EL)",
+                   caption="上 7 枚は単結晶セル P%d(電流 %s)の S0〜S6。マスクはアルミ箔つきの厚紙で、セルの表面に置いた"
+                           "(配布元の論文)。S1 / S2 の帯の位置はセルによって入れ替わる。下 2 枚は S7 の代表セルとその S0。灰色は各像の 99.5 %% 分位で正規化。"
+                           % (p, cur))
+    # 処理: 縁の帯(S1)で、中央値プロファイルで割ると帯が消え、細い成分だけ割ると残る
+    k1 = (p, cur, 1)
+    if k1 in cache:
+        im, rect, m, _, rec = cache[k1]
+        r0, r1, c0, c1 = rect
+        crop = im[r0:r1, c0:c1]
+        flat_med = np.clip(degrid(crop) / 1.25, 0, 1)
+        flat_nar = np.clip(degrid_narrow(crop) / 1.25, 0, 1)
+        g = _gray3(im, rect)
+        figs.save_grid("real_process_degrid",
+                       [g, _tint(np.repeat(flat_med[..., None], 3, 2), m["median"], (0.15, 0.55, 1.0)),
+                        _tint(np.repeat(flat_nar[..., None], 3, 2), m["narrow"], (0.15, 0.55, 1.0))],
+                       ["実写 S1 縁の帯(出力低下 %.0f %%)" % (100 * rec["loss"]),
+                        "中央値プロファイルで割る: 暗部 %+.0f pt" % (100 * rec["d_median"]),
+                        "細い成分だけ割る(窓 %d px): 暗部 %+.0f pt" % (NARROW_WIN, 100 * rec["d_narrow"])],
+                       ncols=3, title="格子を割る処理: 合成のレシピは縁の帯状のマスクを丸ごと消す",
+                       caption="灰色は格子を割った後の像(1.25 で割って [0,1])、青は暗部判定。帯は行の中央値ごと暗いので、"
+                               "行で割った瞬間に消える。窓 %d px は実データを見て決めた値。" % NARROW_WIN)
+    # 結果: 出力低下 vs 暗部の増え(マスクつき全枚)
+    lo = np.array([r["loss"] for r in sh]) * 100
+    dz = np.array([r["d_zero"] for r in sh]) * 100
+    dn = np.array([r["d_narrow"] for r in sh]) * 100
+    ref = np.array([0.0, 60.0])
+    figs.save_plot("real_result_scatter",
+                   [("ゼロ点 ρ %.2f" % out["zero"]["rho"], lo, dz),
+                    ("細い成分だけ割る ρ %.2f" % out["narrow"]["rho"], lo, dn),
+                    ("暗部の増え = 出力低下", ref, ref)],
+                   kinds=["scatter", "scatter", "line"], styles=[None, None, "dashed"],
+                   colors=["wrong", "right", "reference"],
+                   xlabel="I-V の出力低下 [%]", ylabel="暗部率の増え [pt]",
+                   title="結果: 暗部の増えは I-V の出力低下を追うか(マスクつき %d 枚)" % len(sh),
+                   caption="左上に離れた橙の点の群れは S7(「その他の欠陥」と推定)。全体が暗くなるのでゼロ点は面積を大きく数える。"
+                           + ("外れ %d 点(%s)は CSV の出力をそのまま使った値で、除いていない。"
+                              % (len(_odd_rows(sh)), _odd_text(_odd_rows(sh))) if _odd_rows(sh) else ""))
+    # 限界: S7 は全体が暗くなるが出力は少ししか落ちない
+    lo7 = np.array([r["loss"] for r in s7]) * 100
+    br7 = np.array([r["bright"] for r in s7])
+    figs.save_plot("real_limit_s7_dimming",
+                   [("S7 の各セル", lo7, br7), ("出力低下と同じ割合で暗くなる線", ref, 1.0 - ref / 100.0)],
+                   kinds=["scatter", "line"], styles=[None, "dashed"], colors=["wrong", "reference"],
+                   xlabel="I-V の出力低下 [%]", ylabel="EL の平均の明るさ(S7 / S0)",
+                   xlim=(min(-5.0, float(lo7.min()) - 2.0), max(60.0, float(lo7.max()) + 2.0)),
+                   ylim=(0.0, max(1.1, float(br7.max()) + 0.05)),
+                   title="限界: S7 は EL が %.2f〜%.2f 倍に暗いのに出力低下は中央値 %.1f %%"
+                         % (round(float(br7.min()), 3), round(float(br7.max()), 3), 100 * by_shadow[7]["loss"]),
+                   caption="明るさはセルの外枠の中の平均。暗さの原因は配布元に書かれていない。面積で数える方法は"
+                           "どれもこの欠陥の出力低下を測れない(ゼロ点は過大、細い成分だけ割る経路は過小)。")
+
+
 def main() -> int:
     t0 = time.perf_counter()
     print("=" * 78)
@@ -959,6 +1506,9 @@ def main() -> int:
     sn = section_snr_sweep()
     section_controls(pipe)
     section_tool_gaps()
+    check_doc_synthetic(zp, sc, pipe, fr, gr, wd, sn)
+    print("  docstring の合成部の数値: 実行の印字と文脈つきで一致")
+    real = section_real_el()
 
     print("\n" + "=" * 78)
     print("まとめ")
@@ -993,6 +1543,12 @@ def main() -> int:
     assert gr["fi_drop"] is not None and 0.18 <= gr["fi_drop"] <= 0.32, gr["fi_drop"]
     assert wd["cliff"] is not None and abs(wd["cliff"] - wd["w_pred"]) <= 0.3, (wd["cliff"], wd["w_pred"])
     assert sn["k_fail"] is not None and sn["k_fail"] <= 200, sn["k_fail"]
+    if real is not None:
+        print("  * 実セル(SIPV-EL、I-V が真値): 暗部の増えと出力低下の順位相関 ゼロ点 %+.2f / 中央値で割る %+.2f /"
+              " 細い成分だけ割る %+.2f。中央値で割る経路は縁の帯状のマスクを消す。S7(その他の欠陥)は"
+              "出力低下 %.1f %% にゼロ点 %+.0f pt。"
+              % (real["zero"]["rho"], real["median"]["rho"], real["narrow"]["rho"],
+                 100 * real["by_shadow"][7]["loss"], 100 * real["by_shadow"][7]["d_zero"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():

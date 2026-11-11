@@ -9,7 +9,7 @@ gpu: あり(ncc_locate)
 examples: [gallery2d_contour_measure, mcp_usability, poc_code_matching_breakdown, poc_search_sweep_width, poc_template_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # ncc_locate — 2D `matching` op
@@ -32,6 +32,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 正規化相互相関（NCC）によるテンプレートマッチングで最良位置を探す。HALCON の ``find_ncc_model``（Find the best matches of an NCC model in an image.）に相当。
 
 ``a``, ``b`` は未使用——テンプレートは引数ではなく ``set_match_template`` でスレッドローカルな ``_MATCH_CTX`` に事前登録しておく（マッチング系 op 共通の作法、``_MatchCtx`` の docstring 参照）。``_ncc_map``（NCC 相関マップ、Lewis 1995 の定義で ``[-1,1]``）を計算し、その最大値の位置を ``[相関値, y, x]`` で返す。テンプレート未設定、または入力が 2 次元画像でない場合は ``[0,0,0]``（no-match）を返す——fail-closed。回転・スケール変化には非対応（``_shape_locate`` は回転を扱う）。
+
+**縁の規則**: 調べるのはテンプレートの窓が画像に全部入る位置だけ（``cv2.matchTemplate`` の valid と同じ）。画像の縁で切れた対象は真の位置で調べられず、別の位置（同形の別物体など）を答えることがある。はみ出しを扱うのは ``fullseye.ncc_map_partial`` / ``fullseye.ncc_locate_ex``（重なった画素だけで相関を計り、重なり率と状態を返す）。**NaN / inf を含む画像**は例外 ``FsValueError``（``fs.op.ncc_locate`` / ``fs.apply`` は入口で拒否）。パイプライン経路（``ops.RT`` / ``run_stages``）では例外を guard が握って no-match の ``[0,0,0]`` を返し、``fs.fallbacks()`` に記録する（★2026-11-09 op 点検: 以前は NaN 1 画素でマップ全体が黙って 0 になり、記録なしに ``[0,0,0]`` を返していた）。
 
 ## 詳しい使い方ガイド
 

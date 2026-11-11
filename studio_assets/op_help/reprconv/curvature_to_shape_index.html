@@ -10,6 +10,7 @@
 <p>C = sqrt((k1^2 + k2^2) / 2)               (曲がりの大きさ)</p>
 <p><b>除算でなく atan2 で書いてある</b>のが要点で、球状臍点 (k1 == k2) でも平面 (k1 == k2 == 0) でもゼロ除算にならず、<code style="color:#22d3bf">shape_index_to_curvature</code> との往復が<b>全域で厳密</b>になる(実測 max|Δ| = 4.6e-16)。教科書の <code style="color:#22d3bf">atan((k1+k2)/(k1-k2))</code> をそのまま実装すると臍点で NaN が出て、その NaN が下流で「暗い画素」に化ける。</p>
 <p>S = -1 は杯、0 は鞍、+1 は帽子。C は形と独立な「どれだけ曲がっているか」。</p>
+<p><b>平面では S は定義されない</b>(Koenderink &amp; van Doorn も平面点を除く): k1 = k2 = 0 では <code style="color:#22d3bf">atan2(0, 0) = 0</code> で S = 0(鞍と同じ値)が返り、C = 0 がそれを見分ける唯一の印。平面に近い点(曲率が推定の雑音と同じ桁)の S は雑音の向きで [-1, 1] のどこにでも出る。<b>S だけで形を分類しない</b> —— 先に C に閾値を掛けて平面を除く(閾値は曲率の単位 = 1/長さ を持つので、データの尺度に合わせて決める)。2026-11-05 敵対的検証で確かめた仕様(値は変えない: 往復の厳密さと NaN を出さない約束を保つため)。</p>
 <p><b>入力順の情報だけは戻らない</b>: (k2, k1) の順で渡しても内部で k1 &gt;= k2 へ並べ替えるので、往復すると必ず降順で返る(向きの規約であり、値の損失ではない)。</p>
 <p>Args:</p>
 <p>curvature: (N, 2) の <code style="color:#22d3bf">[k1, k2]</code>、または 2 本の等長 1-D のタプル</p>
@@ -23,6 +24,7 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_bga_ball_type_roundtrip">poc_bga_ball_type_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/poc_bga_ball_type_roundtrip.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opreprconv:angles_to_normals">angles_to_normals</a> · <a style="color:#22d3bf" href="opreprconv:shape_index_to_curvature">shape_index_to_curvature</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_signal">pairs_to_signal</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_image2d">pairs_to_image2d</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_table">pairs_to_table</a> · <a style="color:#22d3bf" href="opreprconv:polar_to_cscalar">polar_to_cscalar</a> · <a style="color:#22d3bf" href="opreprconv:pairs_peak_x">pairs_peak_x</a></p>

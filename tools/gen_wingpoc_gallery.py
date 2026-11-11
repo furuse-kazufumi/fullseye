@@ -40,6 +40,7 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _ROOT)
 sys.path.insert(0, os.path.join(_ROOT, "tools"))
 from exhibit_glossary import glossary_line, load_glossary
+import share_alike
 
 EXHIBITS = os.path.join(_ROOT, "docs", "articles", "exhibits")
 ASSETS = os.path.join(_ROOT, "docs", "articles", "assets", "poc")
@@ -174,14 +175,78 @@ def _more_statics(figs, pick, second):
     return [rest[min(int(i * step), len(rest) - 1)] for i in range(MORE_STATICS)]
 
 
+_OPEN, _CLOSE = "(（[「『", ")）]」』"
+
+
+#: 「. 」で終わっても文末ではない略語(この後では切らない)。
+_ABBREV = ("e.g", "i.e", "et al", "Fig", "fig", "Figs", "vs", "U.S", "cf", "Eq", "eq", "No", "approx", "etc")
+
+
+#: 括弧の手前がこれより短いと、括弧の手前で切った説明は中身が無い(「停止線:…」、7 回目の確認)。
+_MIN_HEAD = 20
+
+
+def _scan_sentence(t: str, n: int):
+    """``t[:n]`` を 1 回なめて、括弧の外の文末(「。」と「. 」の位置の並び)と、括弧の外で開いた括弧の
+    [開いた位置, 閉じた直後の位置 or None] の並びを返す。「. 」は頭文字と略語の後では文末にしない。"""
+    ends = {"。": [], ". ": []}
+    groups = []
+    depth = 0
+    for i, ch in enumerate(t[:n]):
+        if ch in _OPEN:
+            if depth == 0:
+                groups.append([i, None])
+            depth += 1
+        elif ch in _CLOSE and depth > 0:
+            depth -= 1
+            if depth == 0:
+                groups[-1][1] = i + 1
+        elif depth == 0 and i > 0:
+            if ch == "。":
+                ends["。"].append(i + 1)
+            elif ch == "." and t[i + 1:i + 2] == " ":
+                head = t[:i]
+                word = head.split(" ")[-1]
+                initial = len(word) == 1 and word.isupper()
+                abbrev = any(head.endswith(a) and (len(head) == len(a) or not head[-len(a) - 1].isalnum())
+                             for a in _ABBREV)
+                if not initial and not abbrev:
+                    ends[". "].append(i + 1)
+    return ends, groups
+
+
 def _first_sentence(text: str, limit: int = 150) -> str:
-    """説明の**最初の 1 文**だけを返す(記事の肥大を抑える)。"""
+    """説明の**最初の 1 文**だけを返す(記事の肥大を抑える)。
+
+    ★文の終わりは**括弧の外の**「。」(無ければ括弧の外の「. 」)(2026-11-09、5・6 回目の確認)。以前は括弧の中の「。」で
+    切っていて、「見本(上から … PE の破片。」のように括弧が閉じないまま、括弧の後ろの説明(表示倍率など)が記事から
+    消えていた。「. 」は頭文字("E. ")と略語(e.g. / et al. / Fig. / vs. / U.S. など)の後では文末にしない。
+    括弧の外の文末が 2 倍の長さまでに無ければ、長さで切るが**括弧の中では切らない**(開いた括弧の手前で切って「…」)。
+    ★ただし括弧の手前が ``_MIN_HEAD`` 字より短いときは、手前で切ると中身が無くなる(「停止線: [(3.3, …)]」が
+    「停止線:…」になった、7 回目の確認)。そのときは括弧を閉じるまで含め、その後ろの括弧の外の次の文末まで
+    (3 倍の長さまで)を返す。3 倍までに括弧が閉じなければ、手前で切るしかない(中身の無い説明はテストが拾う)。
+    """
     t = (text or "").strip()
+    far = 3 * limit
+    ends, groups = _scan_sentence(t, far)
     for mark in ("。", ". "):
-        i = t.find(mark)
-        if 0 < i <= limit:
-            return t[:i + len(mark)].strip()
-    return t[:limit].rstrip() + ("…" if len(t) > limit else "")
+        first = [e for e in ends[mark] if e <= 2 * limit]
+        if first:
+            return t[:first[0]].strip()
+    if len(t) <= limit:
+        return t
+    inside = [g for g in groups if g[0] < limit and (g[1] is None or g[1] > limit)]
+    if not inside:
+        return t[:limit].rstrip() + "…"
+    o, close = inside[0]
+    if len(t[:o].strip()) >= _MIN_HEAD or close is None:
+        return t[:o].rstrip() + "…"                            # 括弧の中では切らない
+    later = sorted(e for m in ends.values() for e in m if e >= close)
+    if later:
+        return t[:later[0]].strip()
+    if len(t) <= far:
+        return t
+    return t[:close].rstrip() + "…"
 
 
 def _thumb(poc_id: str, file: str) -> str:
@@ -414,6 +479,13 @@ def _ops_line(poc_id: str, lang: str, declared: list[str] | None = None) -> str:
     return label + links + more
 
 
+def _sa_lines(poc_id: str, file: str, lang: str) -> list:
+    """継承条件つきのデータのコマを含む図なら、図の説明の直後に置く帰属表示の行。"""
+    if not share_alike.is_share_alike_file(poc_id, file):
+        return []
+    return ["*%s*" % share_alike.attribution(poc_id, lang), ""]
+
+
 def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
                 second: dict | None = None, thumb2: str | None = None,
                 extras: list | None = None, more: list | None = None) -> str:
@@ -439,7 +511,7 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         "",
         "*↑ **%s** ―― %s*" % (title, cap),
         "",
-    ]
+    ] + _sa_lines(ex["id"], pick["file"], lang)
     if term_line:
         lines += [term_line, ""]
     if second is not None and thumb2 is not None:
@@ -448,13 +520,15 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         # 図に説明が付いていなければ機械名(`auc_by_type` など)は出さない
         sub = (second.get("caption") or "").strip()
         translated_sub = (ex.get("second_figure_caption_" + lang) or sub).strip()
-        alt = (sub[:120] if sub else ("測定の図" if lang == "ja" else "measurement")).replace("]", ")")
+        # ★alt も本文の説明と同じ切り方(括弧の中で切らない)。長さだけで切ると 6400 本中 200 本が括弧の途中で
+        #   終わっていた(2026-11-09、機材選びの 8 回目の確認)
+        alt = (_first_sentence(sub, 120) if sub else ("測定の図" if lang == "ja" else "measurement")).replace("]", ")")
         if lang == "ja":
             cap_line = ("*↑ 測定の図 ―― %s*" % translated_sub) if translated_sub else "*↑ 測定の図*"
         else:
             tail = "" if ex.get("second_figure_caption_en") else " (figure labels are in Japanese; the numbers are the same)"
             cap_line = ("*↑ The measurement ―― %s%s*" % (translated_sub, tail)) if translated_sub else ("*↑ The measurement%s*" % tail)
-        lines += ["[![%s](%s)](%s)" % (alt, th2, full2), "", cap_line, ""]
+        lines += ["[![%s](%s)](%s)" % (alt, th2, full2), "", cap_line, ""] + _sa_lines(ex["id"], second["file"], lang)
     # 看板にも 2 枚目にも入らなかった**動く図**は全部出す —— GIF を落とすと「クリックしないと
     # 動かない絵」になり、動きが主題の展示ではそれで意味が消える(2026-09-21、GIF 2 本の展示で気づいた)。
     # ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい
@@ -463,18 +537,18 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         full4 = RAW + ex["id"] + "/" + fig["file"]
         th4 = RAW + ex["id"] + "/" + _thumb(ex["id"], fig["file"])
         sub_ = _first_sentence(fig.get("caption") or "")
-        alt = (sub_[:100] if sub_ else "図").replace("]", ")")
+        alt = (sub_ if sub_ else "図").replace("]", ")")             # 説明の行と同じ 1 文(括弧は閉じている)
         cap_line = ("*↑ %s*" % sub_) if sub_ else "*↑ この回の図*"
-        lines += ["[![%s](%s)](%s)" % (alt, th4, full4), "", cap_line, ""]
+        lines += ["[![%s](%s)](%s)" % (alt, th4, full4), "", cap_line, ""] + _sa_lines(ex["id"], fig["file"], lang)
     for fig in (extras or []):
         full3 = RAW + ex["id"] + "/" + fig["file"]
         sub = (fig.get("caption") or "").strip()
-        alt = (sub[:120] if sub else ("動く図" if lang == "ja" else "animation")).replace("]", ")")
+        alt = (_first_sentence(sub, 120) if sub else ("動く図" if lang == "ja" else "animation")).replace("]", ")")
         if lang == "ja":
             cap_line = ("*↑ 動く図 ―― %s*" % sub) if sub else "*↑ 動く図*"
         else:
             cap_line = ("*↑ The animation ―― %s*" % sub) if sub else "*↑ The animation*"
-        lines += ["[![%s](%s)](%s)" % (alt, full3, full3), "", cap_line, ""]
+        lines += ["[![%s](%s)](%s)" % (alt, full3, full3), "", cap_line, ""] + _sa_lines(ex["id"], fig["file"], lang)
     # 生成の内幕(サムネ URL・FULLSEYE_FIGURE_DIR・数字の出所)は記事に出さない
     # (ユーザー指示 2026-09-07「読者の ROI と関係ない独自ルールは書かない」)。
     lines += [

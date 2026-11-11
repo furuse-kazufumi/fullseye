@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_light_section_step_weld_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # laser_line_center_steger — OPTICS `light_section` op
@@ -40,6 +40,15 @@ Ground truth (closed form of one Newton step on a Gaussian): for a Gaussian prof
 total variance ``σ² = σ_line² + sigma²`` and a start pixel at offset ``δ`` from the centre,
 the error is ``−δ³ / (σ² − δ²)`` (≤ 0.125/σ² px for |δ| ≤ 0.5). Steger's condition
 ``sigma ≥ w/√3`` (w = the line's half-width) keeps the profile's second derivative single-signed.
+
+★Near the border (2026-11-09): the derivative filters extend the image by ``mode="nearest"``,
+which bends the profile across the line — and the estimated normal with it, so the test does
+not use the normal: every centre within ``3·sigma`` of any image border, and every centre
+outside the image, is returned with ``valid=False`` and ``near_border=True``. Before, such
+points were valid with errors of up to 1.43 px (σ_line 2, sigma 3, true row 2.2 → 0.774), and a
+first fix that looked at the estimated normal still let a 45° line through with 0.88 px (the
+border had turned its normal from 0.71 to 0.43). A horizontal line therefore loses its first and
+last ``3·sigma`` columns too; render or crop a margin when every column is needed.
 
 ## ファミリ共通の入力契約(fail-closed)
 

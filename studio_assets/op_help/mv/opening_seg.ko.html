@@ -7,7 +7,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>잘록하게 이어진 물체를 침식으로 떼어 내고 영역 안에서 다시 넓혀 라벨로 만든다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>構造要素で収縮 → 連結成分 → 各成分を最寄りの画素へ広げる(<code style="color:#22d3bf">region</code> の中だけ)。収縮で全部消えると全 0 のラベルを返す(理由: 切り離す種が残らない)。空の入力(<code style="color:#22d3bf">region</code> が 0 要素)は ValueError。</p>
+<p>構造要素で収縮 → 連結成分 → 各種を <code style="color:#22d3bf">region</code> の中だけを通って(測地的に)広げる。各画素は最寄りの種の番号を受けるが、その番号の区画が <code style="color:#22d3bf">region</code> の中で種とつながらない画素(背景を跨いだ割り当て)は、つながった区画から 8 近傍で 1 画素ずつ広げ直す。<b>種を 1 つも持たない連結成分(収縮で消えた小さな塊)は 0</b>(隣の物体の番号をもらわない)。収縮で全部消えると全 0 のラベルを返す(理由: 切り離す種が残らない)。空の入力(<code style="color:#22d3bf">region</code> が 0 要素)は ValueError。</p>
 <p>Args:</p>
 <p>region: 2-D の領域。</p>
 <p>se: 構造要素(奇数辺の bool 配列)。</p>
@@ -21,6 +21,8 @@
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_bg_kalman_tracking">poc_real_bg_kalman_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_bg_kalman_tracking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_grain_skiz">poc_real_grain_skiz</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_grain_skiz.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">labels2d</code> 를 입력으로 받는 것)</h3>
 <p><a style="color:#22d3bf" href="opmv:select_characters">select_characters</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">morphology</code>)</h3>

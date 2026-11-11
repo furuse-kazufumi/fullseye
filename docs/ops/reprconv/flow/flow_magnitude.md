@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [perception_on_video, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # flow_magnitude — REPRCONV `flow` op
@@ -45,7 +45,7 @@ Raises:
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)
 
-[correlation_score](../score/correlation_score.md)
+[correlation_score](../score/correlation_score.md) · [voxel_to_hessian](../derivative/voxel_to_hessian.md)
 
 ## 同カテゴリ(`flow`)
 

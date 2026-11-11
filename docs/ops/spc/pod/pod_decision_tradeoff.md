@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_pod_lighting]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # pod_decision_tradeoff — SPC `pod` op
@@ -31,7 +31,9 @@ MIL-HDBK-1823A G.3.6.2.4.1(図 G-28)の数表版。閾値を上げれば誤検�
 各行は ``pod_from_ahat`` と ``pod_false_call`` を同じ閾値で呼んだものと一致する。
 
 返り: 列 ``a_dec`` ``a50`` ``a90`` ``a90_95`` ``pfp_normal`` ``pfp_empirical``
-``pfp50`` ``pfp95``(すべて長さ ``n_grid`` か ``len(a_dec_grid)``)。
+``pfp50`` ``pfp95`` ``a_dec_below_floor``(すべて長さ ``n_grid`` か ``len(a_dec_grid)``)。
+``a_dec_below_floor`` が True の行は、閾値が ``fit`` の ``censor_low`` より下で POD が外挿
+(``pod_from_ahat`` の同名の旗と同じ)。
 
 空の入力(``fit`` が空の dict)は ValueError。
 拒否(``ValueError``): ``pod_ahat_fit`` の表でない・``β1`` が 0 と区別できない、雑音が空・定数・

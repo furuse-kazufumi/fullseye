@@ -149,10 +149,14 @@ def chapter_cafe_wall():
 
     # (b) ★探針 1 枚では足りない ---- ずらし量 × 探索半幅の格子で全数を見る
     #     最初は shift=0.25 だけで試して「測定器は決して動かない」と書いた。
-    #     格子で見ると **0.125 と 0.375 でだけ** 0.14 度傾く。既定に見える
+    #     格子で見ると **0.125 の奇数倍でだけ** 0.14 度傾く。既定に見える
     #     0.25 は、たまたま外れない側だった。
+    #     ★2026-11-05(敵対的検証 第 2 巡 D1): 格子は 0〜0.5 しか振っていなかった。
+    #     市松の周期は 2 タイル = shift 0〜1 なので、周期 1 つぶんの 9 通りを振る
+    #     (0 と 1.0 が錯視の消える両端、0.5 が最強)。外れたずらし量は本文に
+    #     手で書かず、格子から出す。
     band_w = len(bands[0])
-    shifts = (0.0, 0.125, 0.25, 0.375, 0.5)
+    shifts = tuple(0.125 * k for k in range(9))          # 0, 0.125, ..., 1.0
     mls = (3.0, 6.0, 10.0, 16.0)
     grid_ang = np.zeros((len(shifts), len(mls)))
     grid_rms = np.zeros_like(grid_ang)
@@ -191,6 +195,7 @@ def chapter_cafe_wall():
           "外れた側の rms は %.2f(0.14 度は目で見れば「ほぼ 0」に見える)"
           % float(grid_rms[grid_rms > 0].max()))
     shift_ang = grid_ang[:, list(mls).index(10.0)]
+    bad_shifts = [shifts[i] for i in sorted({int(i) for i, _ in bad})]
 
     if figs.enabled():
         over = _as_rgb(img).copy()
@@ -231,20 +236,23 @@ def chapter_cafe_wall():
         for j, ml in enumerate(mls):
             series.append(("探索半幅 %.0f px" % ml, xs, grid_ang[:, j]))
         figs.save_plot("cafe_wall_grid",
-                       series[:2] + [("真値 0", np.array([-0.02, 0.52]),
+                       series[:2] + [("真値 0", np.array([-0.02, 1.02]),
                                       np.zeros(2))] + series[2:],
                        kinds=["scatter", "scatter", "line", "scatter", "scatter"],
                        xlabel="1 行ごとのずらし量(タイル幅に対する割合)",
-                       ylabel="測った目地の傾き[度]", ylim=(-0.05, 0.25),
+                       ylabel="測った目地の傾き[度]", ylim=(-0.05, 0.5),
                        title="探針 1 枚では足りない ---- 外れるのは一部のずらし量だけ",
-                       caption="ずらし量 5 通り × 探索半幅 4 通りの **%d 通り全部**を"
-                               "測ったもの。★はじめは ずらし量 0.25 だけで試して"
+                       caption="ずらし量 %d 通り(市松の周期 1 つぶん、0〜1)× 探索半幅 %d 通りの"
+                               " **%d 通り全部**を測ったもの。★はじめは ずらし量 0.25 だけで試して"
                                "「測定器は決して動かない」と書きました。格子で見ると、"
-                               "**半幅が目地の帯幅 %d px に届く 10/16 px のとき、"
-                               "ずらし量 0.125 と 0.375 でだけ 0.14 度傾きます**。"
+                               "**半幅が目地の帯幅 %d px に届く %s px のとき、"
+                               "ずらし量 %s でだけ %.2f 度傾きます**。"
                                "0.25 はたまたま外れない側だった ---- **既定に見える"
                                "1 点だけで試すと、この欠陥は構造的に見つかりません**。"
-                               % (grid_ang.size, band_w))
+                               % (len(shifts), len(mls), grid_ang.size, band_w,
+                                  "/".join("%.0f" % mls[j] for j in wide),
+                                  "・".join("%.3f" % s for s in bad_shifts),
+                                  float(np.abs(grid_ang).max())))
         figs.save_plot("cafe_wall_residual",
                        [("当て直した角度[度]", np.arange(grid_ang.size, dtype=float),
                          grid_ang.ravel()),

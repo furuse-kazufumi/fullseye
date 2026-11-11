@@ -5,10 +5,10 @@ category: shape
 in: image2d
 out: image2d
 gpu: なし
-examples: [annotate_gallery, poc_dimensional_inspection, poc_driving_crossing, poc_driving_lateral, poc_driving_pass, poc_dual_energy_xray, poc_interferometry_step, poc_machine_condition_fusion, poc_peg_insertion_tactile, poc_polarization_specular, poc_public_camera_heading_real, poc_real_sem_metal_layer, poc_real_tless_6dof]
+examples: [annotate_gallery, poc_camera_calibration, poc_dimensional_inspection, poc_driving_crossing, poc_driving_lateral, poc_driving_pass, poc_dual_energy_xray, poc_interferometry_step, poc_machine_condition_fusion, poc_mixed_case_depalletizing, poc_peg_insertion_tactile, poc_polarization_specular, poc_public_camera_heading_real, poc_real_bg_kalman_tracking, poc_real_chessboard_undistort, poc_real_file_formats, poc_real_sem_metal_layer, poc_real_stereo_multiscanline, poc_real_tless_6dof]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # ellipse — ANNOTATE `shape` op
@@ -61,6 +61,7 @@ ValueError
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
+- [poc_camera_calibration](../../../../examples/poc_camera_calibration.py) — `py -3.11 examples/poc_camera_calibration.py`
 - [poc_dimensional_inspection](../../../../examples/poc_dimensional_inspection.py) — `py -3.11 examples/poc_dimensional_inspection.py`
 - [poc_driving_crossing](../../../../examples/poc_driving_crossing.py) — `py -3.11 examples/poc_driving_crossing.py`
 - [poc_driving_lateral](../../../../examples/poc_driving_lateral.py) — `py -3.11 examples/poc_driving_lateral.py`
@@ -68,10 +69,15 @@ ValueError
 - [poc_dual_energy_xray](../../../../examples/poc_dual_energy_xray.py) — `py -3.11 examples/poc_dual_energy_xray.py`
 - [poc_interferometry_step](../../../../examples/poc_interferometry_step.py) — `py -3.11 examples/poc_interferometry_step.py`
 - [poc_machine_condition_fusion](../../../../examples/poc_machine_condition_fusion.py) — `py -3.11 examples/poc_machine_condition_fusion.py`
+- [poc_mixed_case_depalletizing](../../../../examples/poc_mixed_case_depalletizing.py) — `py -3.11 examples/poc_mixed_case_depalletizing.py`
 - [poc_peg_insertion_tactile](../../../../examples/poc_peg_insertion_tactile.py) — `py -3.11 examples/poc_peg_insertion_tactile.py`
 - [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
 - [poc_public_camera_heading_real](../../../../examples/poc_public_camera_heading_real.py) — `py -3.11 examples/poc_public_camera_heading_real.py`
+- [poc_real_bg_kalman_tracking](../../../../examples/poc_real_bg_kalman_tracking.py) — `py -3.11 examples/poc_real_bg_kalman_tracking.py`
+- [poc_real_chessboard_undistort](../../../../examples/poc_real_chessboard_undistort.py) — `py -3.11 examples/poc_real_chessboard_undistort.py`
+- [poc_real_file_formats](../../../../examples/poc_real_file_formats.py) — `py -3.11 examples/poc_real_file_formats.py`
 - [poc_real_sem_metal_layer](../../../../examples/poc_real_sem_metal_layer.py) — `py -3.11 examples/poc_real_sem_metal_layer.py`
+- [poc_real_stereo_multiscanline](../../../../examples/poc_real_stereo_multiscanline.py) — `py -3.11 examples/poc_real_stereo_multiscanline.py`
 - [poc_real_tless_6dof](../../../../examples/poc_real_tless_6dof.py) — `py -3.11 examples/poc_real_tless_6dof.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

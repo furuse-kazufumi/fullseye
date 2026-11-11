@@ -178,7 +178,33 @@ VOL_ACCEL = {
 }
 
 
+#: ``b > 0.5`` で端の扱い(``ops._border``)を選ぶ core volume op。kernel は reflect しか実装していない。
+_B_BORDER_CORES = frozenset(("vol_gaussian",))
+
+
+def _b_falls_back(name, a, b) -> bool:
+    """volume accel op *name* が ``b`` の選んだ端の扱いを写せず、core に回すべきか(accel._b_falls_back の 3-D 版)。
+
+    ★敵対的検証 2026-11-05 第 2 巡 T6 の兄弟: ``vol_gaussian_g`` は ``b`` を無視して reflect で畳み込み、
+    ``b > 0.5`` で core との差が 0.42 あった。
+    """
+    row = VOL_ACCEL.get(name)
+    if row is None or row[1] not in _B_BORDER_CORES:
+        return False
+    import ops
+    return ops._border(b) != "reflect"
+
+
+def _core_vol_batch(name, vols, a, b):
+    import ops
+    core = ops.RT[VOL_ACCEL[name][1]]
+    return [np.clip(np.asarray(core(np.asarray(v, np.float64).copy(), a, b), np.float64), 0.0, 1.0)
+            for v in vols]
+
+
 def run_batch_vol(name, vols, a=0.5, b=0.4, device="cpu"):
+    if _b_falls_back(name, a, b):
+        return _core_vol_batch(name, vols, a, b)
     t = _to_vol_batch(vols, device)
     return _from_vol_batch(VOL_ACCEL[name][0](t, a, b, device).clamp(0, 1))
 
@@ -187,6 +213,9 @@ def run_pipeline_vol(steps, vols, device="cpu"):
     """volume 版の常駐パイプライン。steps=[(vol_accel名,a,b),...]。転送1回で 3D op 連鎖。"""
     t = _to_vol_batch(vols, device)
     for name, a, b in steps:
+        if _b_falls_back(name, a, b):
+            t = _to_vol_batch(_core_vol_batch(name, _from_vol_batch(t), a, b), device)
+            continue
         t = VOL_ACCEL[name][0](t, a, b, device).clamp(0, 1)
     return _from_vol_batch(t)
 

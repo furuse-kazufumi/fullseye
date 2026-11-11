@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery2d_geometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # xg_clip_contours — 2D `xldgeom` op
@@ -45,7 +45,7 @@ Drop contours whose polyline length is below a * max-length (a in [0,1]).
 複数)だけ残す。``b`` は未使用。
 
 返り値は入力と同じ ``{"shape", "cs"}`` 形式の輪郭辞書(点配列はコピー)。
-輪郭が無ければ ``cs`` は空。``L_max <= 1e-12``(全輪郭が 1 点)なら全輪郭を
+輪郭が無ければ ``cs`` は空。``L_max = 0``(全輪郭が 1 点)なら全輪郭を
 そのまま返す。しきい値が画像サイズでなく「最長輪郭に対する相対値」なので、
 最長の輪郭が変わると選別基準も動く(点数の絶対値で選ぶなら
 ``select_contours_xld``)。名前から想像される矩形での切り取りではなく、

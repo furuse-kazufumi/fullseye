@@ -96,9 +96,10 @@ def test_c_backend_emits_clamp_after_every_image_stage(tmp_path):
     body = [ln.strip() for ln in (tmp_path / "gen_t.c").read_text(encoding="utf-8").splitlines()
             if ln.startswith("    ") and "identity" not in ln]
     # every emitted op statement is immediately followed by the runtime's clip
-    assert body == ["sharpen(buf, w, h, 1.500000f, 0.500000f);", "clamp01(buf, w, h);",
-                    "gaussian(buf, w, h, 1.000000f);", "clamp01(buf, w, h);",
-                    "threshold(buf, w, h, 0.500000f);", "clamp01(buf, w, h);"]
+    # (literals are the float32 of each knob, 2026-11-05 redteam I21 -- no longer "%.6f")
+    assert body == ["sharpen(buf, w, h, 1.5f, 0.5f);", "clamp01(buf, w, h);",
+                    "gaussian(buf, w, h, 1.0f);", "clamp01(buf, w, h);",
+                    "threshold(buf, w, h, 0.5f);", "clamp01(buf, w, h);"]
 
 
 def test_c_backend_identity_stages_get_no_clamp(tmp_path):

@@ -6,10 +6,10 @@ in: image
 out: contour
 halcon: measure_pos
 gpu: なし
-examples: [gallery2d_contour_measure, poc_dimensional_inspection]
+examples: [gallery2d_contour_measure, mcp_task_score, poc_dimensional_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # m1_measure_pos — 2D `measure1d` op
@@ -70,6 +70,7 @@ m1_measure_pos 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_contour_measure](../../../../examples/gallery2d_contour_measure.py) — `py -3.11 examples/gallery2d_contour_measure.py`
+- [mcp_task_score](../../../../examples/mcp_task_score.py) — `py -3.11 examples/mcp_task_score.py`
 - [poc_dimensional_inspection](../../../../examples/poc_dimensional_inspection.py) — `py -3.11 examples/poc_dimensional_inspection.py`
 
 ## 型が繋がる次の op(`contour` を入力に取れる)

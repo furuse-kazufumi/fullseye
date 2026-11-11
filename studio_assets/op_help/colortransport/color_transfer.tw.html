@@ -13,6 +13,10 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reinhard&quot;</code> —— 只對齊各通道的平均值與標準差(Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001)。其前提是<b>各通道為單峰常態分布</b>這一假定。在前景與背景明顯分開的雙峰影像上，平均值與變異數雖然一致，得到的卻是<b>哪個峰都對不上的顏色</b>(不會拋出例外)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gaussian&quot;</code> —— 連同共變異數一起搬運的 Monge 映射。<b>相關性得以保持</b>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;histogram&quot;</code> —— 逐通道的精確直方圖匹配。邊際分布完全一致，但<b>通道間的相關性會被破壞</b>。</p>
+<p><b>恆定的通道</b>(標準差不超過 <code style="color:#22d3bf">1e-6 × max(1, max|x|)</code>,x 為該通道的值 —— 無彩色</p>
+<p>src 的 Lab a*/b* 就屬於這種情況，其中只有捨入殘渣)在 <code style="color:#22d3bf">&quot;reinhard&quot;</code> 下引發</p>
+<p><code style="color:#22d3bf">MetricContractError</code>,在 <code style="color:#22d3bf">&quot;histogram&quot;</code> 下與嚴格恆定的輸入一樣映射到參考的</p>
+<p>平均值。不會把殘渣放大成虛假的顏色。</p>
 <p>space : {&quot;lab&quot;, &quot;rgb&quot;}</p>
 <p>計算統計量的空間。預設的 <code style="color:#22d3bf">lab</code> 使用 <code style="color:#22d3bf">imgmetrics</code> 中的實作。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>

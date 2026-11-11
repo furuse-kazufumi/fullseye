@@ -9,7 +9,7 @@ gpu: 鎖の中だけ(lbl_select_shape_std)
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # select_shape_std — 2D `region` op
@@ -38,7 +38,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 ## 使い方
 
 連結成分のうち最大の面積を持つものだけを残す(``_largest_label`` で
-選択)。HALCON の ``select_shape_std``（Select regions of a given shape.）
+選択、前景は 8 連結)。HALCON の ``select_shape_std``（Select regions of a given shape.）
 は ``max_area`` を含む複数の標準基準を選べる演算子だが、ここでは
 「面積最大」1 種類に固定している(近似)。
 

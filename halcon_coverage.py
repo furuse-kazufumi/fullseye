@@ -194,6 +194,7 @@ def analyze(data, registry, versions_data=None):
     partial = set(PARTIAL)
     covered = (ours & real_ops) - partial
     dangling = sorted(ours - real_ops)
+    by_source = _covered_by_source(analog, covered)
 
     per_chapter = {}
     uncovered = {}
@@ -208,6 +209,7 @@ def analyze(data, registry, versions_data=None):
         "n_real": len(real_ops),
         "n_registry": len(registry),
         "covered": covered,
+        "covered_by_source": by_source,
         "partial": sorted(partial),
         "dangling": dangling,
         "per_chapter": per_chapter,
@@ -217,6 +219,52 @@ def analyze(data, registry, versions_data=None):
         "real": real,
         "versions": versions,
     }
+
+
+#: 対応の出どころ。**この順で 1 回だけ**数える(同じ HALCON 名を registry と facade の両方が名乗るなら
+#: registry 側)。見出しの数はこの 3 つの和で、内訳が和として成り立つ。
+SOURCES = ("registry", "facade", "ledger")
+
+#: 出どころの説明(生成物の文言はここから作る —— 文言を手で書くと数と食い違う)。
+SOURCE_LABEL = {
+    "registry": "`Op.halcon` on the evolvable registry ops",
+    "facade": "perception facades (`fullseye/data/halcon_facade_map.json`, not registry ops)",
+    "ledger": "typed-ledger ops (`opassist.ledger_halcon_map()`, not registry ops)",
+}
+
+
+def _source_of(ref: str) -> str:
+    """``analog`` の値 1 つの出どころ(``facade:`` / ``ledger:`` の接頭辞、無ければ registry)。"""
+    if ref.startswith("facade:"):
+        return "facade"
+    if ref.startswith("ledger:"):
+        return "ledger"
+    return "registry"
+
+
+def _covered_by_source(analog, covered):
+    """``covered`` を出どころ別の**互いに素な**集合に分ける(:data:`SOURCES` の順に先取り)。
+
+    ★2026-11-05(敵対的検証 第 2 巡 D2): 見出しは「1017 ... via `Op.halcon`, from 947 registry ops」
+    と書いていたが、registry の ``Op.halcon`` が名乗るのは 388 名で、残り 629 名は facade と
+    台帳の対応だった。数は合っていても説明が嘘をつく形なので、内訳を生成器が数えて出す。
+    """
+    seen, out = set(), {}
+    for src in SOURCES:
+        names = {h for h in covered if any(_source_of(r) == src for r in analog.get(h, ()))} - seen
+        out[src] = names
+        seen |= names
+    assert seen == set(covered), "出どころの分からない対応がある: %s" % sorted(set(covered) - seen)[:5]
+    return out
+
+
+def source_breakdown_text(by_source, names=None):
+    """``N via A, M via B, K via C`` の文(``names`` を渡すとその部分集合で数える)。"""
+    parts = []
+    for src in SOURCES:
+        s = by_source[src] if names is None else (by_source[src] & set(names))
+        parts.append("%d through %s" % (len(s), SOURCE_LABEL[src]))
+    return ", ".join(parts[:-1]) + " and " + parts[-1]
 
 
 def gap_ranking(a):
@@ -236,13 +284,14 @@ def build_md(data, a):
         "(%d TOC pages), mined by `halcon_scrape.py`."
         % (a["n_real"], len(a["per_chapter"]), data["n_chapters"]),
         "",
-        "**imgevolve maps to %d / %d HALCON operators (%.1f%%)** via `Op.halcon`, "
-        "from %d registry ops." % (n_cov, a["n_real"], pct, a["n_registry"]),
+        "**imgevolve maps to %d / %d HALCON operators (%.1f%%)**: %s "
+        "(each name counted once, in that order; the registry has %d ops)."
+        % (n_cov, a["n_real"], pct, source_breakdown_text(a["covered_by_source"]), a["n_registry"]),
         "",
         "One imgevolve op claims one nearest HALCON operator, so coverage counts",
         "distinct real operators with an analogue. This number is grounded in the",
-        "scraped reference, not memory; grow it by adding operator families to the",
-        "registry (each new `Op.halcon` that names a real operator lifts coverage).",
+        "scraped reference, not memory; it grows with each new `Op.halcon`, facade",
+        "entry or ledger mapping that names a real operator.",
         "",
         "**%d more HALCON names are partial analogues and are not counted** (the function "
         "carries the name but does only part of the operator's job; listed below)." % len(a["partial"]),

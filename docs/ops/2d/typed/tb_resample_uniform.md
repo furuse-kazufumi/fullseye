@@ -8,7 +8,7 @@ gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # tb_resample_uniform — 2D `typed` op
@@ -43,7 +43,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - ``n``: 出力点数。1 なら始点 1 点、0 なら空の (0,3)。入力より多くしても情報は増えず
   折れ線を細かく刻むだけ。
-- 全長が 1e-12 未満(全点一致)のときは先頭点を n 回複製して返す。
+- 全長が 0(全点一致)のときは先頭点を n 回複製して返す。
 - 出力列数は 3 に固定されており、入力が (N,3) 以外だと列数不足で失敗するか余剰列が
   捨てられる。形状検証は無い。
 - 閉曲線は閉じない(終点→始点の区間は補間対象外)。重複点があっても ``np.interp`` は

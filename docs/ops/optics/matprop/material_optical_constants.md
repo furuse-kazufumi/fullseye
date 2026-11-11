@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_chromatic_confocal, poc_industrial_oct, poc_material_optical_library, poc_nir_silicon_transmission]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # material_optical_constants — OPTICS `matprop` op

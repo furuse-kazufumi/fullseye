@@ -59,6 +59,16 @@ def _as_stack(images) -> np.ndarray:
     return stack
 
 
+def _principal(phi):
+    """``arctan2`` の主値 ``[-π, π]`` を ``(-π, π]`` に写す(``-π`` は ``+π`` へ)。
+
+    ``arctan2(-0.0, c<0)`` は ``-π`` を返す。tensordot の和が ``-0.0`` になる画素
+    (例: 位相 0 の縞の 3 段)で起き、文書の値域 ``(-π, π]`` を外れていた(2026-11-05)。
+    """
+    phi = np.asarray(phi, dtype=np.float64)
+    return np.where(phi <= -np.pi, np.pi, phi)
+
+
 def _phase_sums(stack: np.ndarray):
     """Σ_n I_n sin δ_n(=s)と Σ_n I_n cos δ_n(=c)を返す(δ_n = 2πn/N)。"""
     n = stack.shape[0]
@@ -74,7 +84,11 @@ def _modulation_from_sums(stack: np.ndarray, s: np.ndarray, c: np.ndarray):
     amp = (2.0 / stack.shape[0]) * np.hypot(s, c)
     mean = stack.mean(axis=0)
     gamma = np.zeros_like(amp)
-    valid = np.abs(mean) > 1e-12
+    # ★床は画素ごとの相対量(その画素の |I_n| の最大の 64 eps 倍)。2026-11-05 まで絶対の
+    # 1e-12 で、全体を 1e-13 倍した同じデータの変調度が 0 になり、decode_fringe と
+    # grating_three_image_retrieve(P = N の経路だけ)が「有効画素なし」で拒否していた。
+    scale = np.abs(stack).max(axis=0)
+    valid = np.abs(mean) > 64.0 * np.finfo(np.float64).eps * scale
     gamma[valid] = amp[valid] / mean[valid]
     return gamma
 
@@ -119,7 +133,7 @@ def wrapped_phase(images, method="general") -> np.ndarray:
         c = stack[0] - stack[2]
     else:
         raise ValueError("method must be 'general' or 'four_step'")
-    return np.arctan2(s, c)
+    return _principal(np.arctan2(s, c))
 
 
 # --------------------------------------------------------------------------- #
@@ -130,7 +144,9 @@ def modulation(images) -> np.ndarray:
 
     振幅 b = (2/N)·sqrt(s² + c²)、平均 a = mean_n I_n(s,c は Σ I sin/cos)。変調度 γ = b/a。
     影・飽和・低反射で γ は小さくなる。低変調画素をマスクして位相を NaN 化するのに使う。
-    平均が 0 の画素は γ=0(位相が定義できない)とする。
+    平均が 0 の画素は γ=0(位相が定義できない)とする。「0」はその画素の画像値の
+    最大に対する相対量で判定する(``|mean| <= 64 eps · max_n |I_n|``)ので、画像全体の
+    尺度(1 でも 1e-13 でも)で答えは変わらない。
     """
     stack = _as_stack(images)
     s, c = _phase_sums(stack)
@@ -167,8 +183,11 @@ def unwrap_phase_2d(wrapped, mask=None, crop_valid=False) -> np.ndarray:
     画素独立な次数確定を使う。
 
     使いどころ: ``wrapped_phase`` → 本 op → ``phase_to_height``(同モジュールの
-    関数、``height = k (phase - ref_phase)``)。参照面を同じ手順で展開して引けば
-    大域オフセットは相殺される。``decode_fringe`` はこの連鎖を 1 回で行う。
+    関数、``height = k (phase - ref_phase)``)。★展開の大域オフセット ``2πm`` は
+    展開ごとに決まる(起点の分岐は入力の位相の場に依る)ので、参照面と計測面を
+    **別々に展開して引いても相殺しない**(2026-11-05 まで「相殺する」と書いていたが、
+    60 条件中 24 で高さが ``k·2π`` ずれた)。参照を引くときは ``decode_fringe`` の
+    ``ref_phase`` を使う —— 巻き込み位相の差を先に取ってから 1 回だけ展開する。
 
     空の入力(``wrapped`` が 0 要素)は ValueError。
     """
@@ -318,14 +337,20 @@ def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
 
     手順(実装どおり): ``wrapped_phase`` → 信頼マスクを組む(``min_modulation`` が
     あれば ``modulation(stack) >= min_modulation``、``mask`` があればそれと AND)→
-    ``unwrap_phase_2d(wrapped, mask=信頼マスク)`` → ``ref_phase`` が ``None`` なら
-    ``k * unwrapped``、あれば ``phase_to_height``(``k * (unwrapped - ref_phase)``)。
+    ``ref_phase`` が ``None`` なら ``k * unwrap_phase_2d(wrapped, mask=信頼マスク)``、
+    あれば ``k * unwrap_phase_2d(wrap(wrapped − ref_phase), mask=信頼マスク)``
+    (大域の ``2πm`` は中央値を ``[−π, π]`` に入れる分岐)。
 
     引数:
     - ``phase_shift_images``: ``(N, H, W)``、``N >= 3``、等間隔位相シフト。
-    - ``ref_phase``: スカラまたは ``(H, W)``。参照面を**同じ手順で展開した**位相を
-      渡す(``unwrap_phase_2d`` の大域オフセットが両者で同じ扱いになるよう、参照も
-      本 op で ``ref_phase=None`` として復号した結果を使うのが安全)。
+    - ``ref_phase``: スカラまたは ``(H, W)``。参照面(高さ 0)の位相 —— 本 op で
+      ``ref_phase=None, k=1`` として復号した結果でも、解析的な位相でもよい。
+      ★差を先に取ってから展開する: ``Δ = wrap(wrapped − ref_phase)`` を 1 回だけ
+      ``unwrap_phase_2d`` し、``ref_phase`` の ``2πm`` のずれは wrap で消える。
+      残る展開の大域の ``2πm`` は「有効画素の中央値が ``[−π, π]`` に入る」分岐に
+      揃える(視野の過半が参照面から位相で π 未満の高さにある、という前提)。
+      2026-11-05 まで計測面と参照面を別々に展開して引いていて、展開の起点の分岐が
+      両者で違うと高さが ``k·2πm`` ずれた(60 条件中 24)。
     - ``k``: 位相→高さの較正定数(単位/rad)。``synthesize_fringes`` の
       ``phase_gain`` の逆数に対応。
     - ``mask``: ``(H, W)`` の bool、True = 有効。``min_modulation``: 変調度の下限
@@ -350,7 +375,7 @@ def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
         s, c = stack[1] - stack[3], stack[0] - stack[2]
     else:
         raise ValueError("method must be 'general' or 'four_step'")
-    wrapped = np.arctan2(s, c)
+    wrapped = _principal(np.arctan2(s, c))
 
     reliab = None
     if min_modulation is not None:
@@ -359,10 +384,20 @@ def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
         m = np.asarray(mask, dtype=bool)
         reliab = m if reliab is None else (reliab & m)
 
-    unwrapped = unwrap_phase_2d(wrapped, mask=reliab)
     if ref_phase is None:
-        return float(k) * unwrapped
-    return phase_to_height(unwrapped, ref_phase, k)
+        return float(k) * unwrap_phase_2d(wrapped, mask=reliab)
+    ref = np.asarray(ref_phase, dtype=np.float64)
+    if ref.ndim != 0 and ref.shape != wrapped.shape:
+        raise ValueError(
+            f"ref_phase shape {ref.shape} does not match phase shape {wrapped.shape}"
+        )
+    # 差を先に取ってから 1 回だけ展開する(別々に展開すると起点の分岐が揃わない)
+    diff = wrapped - ref
+    diff = np.mod(diff + np.pi, 2.0 * np.pi) - np.pi
+    un = unwrap_phase_2d(diff, mask=reliab)
+    med = float(np.nanmedian(un))
+    un = un - 2.0 * np.pi * np.round(med / (2.0 * np.pi))
+    return float(k) * un
 
 
 def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
@@ -373,7 +408,12 @@ def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
     2-D FFT の直流から離れた片側一次スペクトルを窓で抜き、複素解析信号へ戻して
     位相を展開し、搬送波の線形ランプを除く。``carrier_axis`` は位相が増える方向
     (``"x"``=列、``"y"``=行)。``carrier_period`` は画素単位で、省略時は指定軸の
-    正周波数側にある最大ピークから推定する。``bandwidth`` は搬送周波数に対する
+    正周波数側にある最大ピークから推定する。★画像が視野の中で周期的(DFT に漏れが無い)
+    ときだけ整数ビンを搬送波とし、そうでなければピークの両隣 1 ビンで DTFT のパワーを
+    細かく評価してサブビンに直す(2026-11-05 まで常に整数ビンに丸め、7.3 px の縞が
+    7.11 px と読まれて位相 RMS 0.63 rad の傾きが残った)。推定した搬送波は、対象の位相の
+    搬送軸方向の一様な傾きと区別できない(どちらも同じ画像を作る)—— 傾きを残したい、
+    あるいは搬送波が既知なら ``carrier_period`` を渡す。``bandwidth`` は搬送周波数に対する
     Gaussian 窓の標準偏差の比(0 < bandwidth < 1)。``k`` は rad から高さへの係数。
 
     返り値は通常 ``height``。``return_info=True`` なら ``(height, info)`` となり、
@@ -405,8 +445,10 @@ def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
     if not 0.0 < bw < 1.0:
         raise ValueError("bandwidth must satisfy 0 < bandwidth < 1")
     dynamic = float(np.ptp(im))
-    scale = max(float(np.max(np.abs(im))), 1.0)
-    if dynamic <= 64.0 * np.finfo(float).eps * scale:
+    # ★床は画像自身の尺度の相対量(2026-11-05 まで max(|im|, 1.0) で、1e-15 倍した
+    # 同じ縞を「一定」と拒否していた —— modulation の絶対床 O6 の兄弟)
+    scale = float(np.max(np.abs(im)))
+    if dynamic <= 64.0 * np.finfo(float).eps * scale or scale == 0.0:
         raise ValueError("fringe_ftp_phase: image is constant (no fringe modulation)")
 
     centered = im - float(np.mean(im))
@@ -438,6 +480,33 @@ def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
                 f"(spectral prominence {prominence:.3g} < 5)"
             )
         carrier_f = float(freq[peak_i])
+        # ★DFT のビン(1/画素数)に丸めたままにしない: 7.3 px の縞が 7.11 px と読まれ、
+        # 残った 1 次の傾きが位相 RMS 0.63 rad になっていた(2026-11-05)。
+        # 画像が視野の中で周期的(搬送波が整数周期 + 周期的な対象、合成データの理想)なら
+        # DFT は厳密で、整数ビンが搬送波そのもの —— その印は搬送波と直流から 8 ビン以上
+        # 離れた帯域に漏れが無いこと(パワーの中央値がピークの 1e-12 未満)。漏れがある
+        # (端で切れた縞、雑音のある実データ)ときは、ピークの両隣 1 ビンの範囲で搬送軸に
+        # 沿った DTFT のパワー(横方向に和、単一正弦波の最尤推定)を細かい格子で評価し、
+        # 放物線で細分してサブビンに直す。
+        n_al = w if axis == 1 else h
+        k_pk = int(round(carrier_f * n_al))
+        kk = np.round(freq * n_al).astype(np.int64)
+        far = (kk > 8) & (np.abs(kk - k_pk) > 8)
+        periodic = bool(far.any()) and float(np.median(profile[far])) < 1e-12 * float(profile[peak_i])
+        if not periodic:
+            rows = centered if axis == 1 else centered.T          # (横, 搬送軸)
+            grid = carrier_f + np.linspace(-1.0, 1.0, 201) / n_al
+            basis = np.exp(-2j * np.pi * np.outer(np.arange(n_al), grid))
+            pw = (np.abs(rows @ basis) ** 2).sum(axis=0)
+            j = int(np.argmax(pw))
+            cf = float(grid[j])
+            if 0 < j < grid.size - 1:
+                y0, y1, y2 = np.log(pw[j - 1:j + 2] + np.finfo(float).tiny)
+                den = y0 - 2.0 * y1 + y2
+                if den < 0.0:
+                    cf += 0.5 * (y0 - y2) / den * float(grid[1] - grid[0])
+            if 0.0 < cf < 0.5:
+                carrier_f = cf
     else:
         period = float(carrier_period)
         if not np.isfinite(period) or period <= 2.0:
@@ -528,6 +597,8 @@ def synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0,
 
     total_phase = carrier + float(phase_gain) * h
 
+    if noise and seed is None:   # 敵対的検証 2026-11-05 第 2 巡 T7(lockin / photoncount と同じ規約)
+        raise ValueError("synthesize_fringes: noise needs an explicit integer seed (seed=None would draw fresh noise on every call)")
     rng = np.random.default_rng(seed)
     images = np.empty((n, rows, cols), dtype=np.float64)
     for idx in range(n):
@@ -565,6 +636,14 @@ def absolute_phase(wrapped, coarse) -> np.ndarray:
     その画素だけ 2π ぶん(= 縞 1 本ぶんの奥行き)静かにずれる。Gray code の粗さ(±0.5 コラム)
     を位相に直した量が半周期を超えないよう、縞本数 freq を選ぶこと
     (例: 投影機幅 512 px・freq 24 → 1 周期 21.3 px、Gray の ±0.5 px は余裕で内側)。
+
+    ★次数の誤りは戻り値から見分けられない(2026-11-09 実測): 多周波の時間的アンラップ
+    (16/4/1 mm、比 4、20 万画素)で位相雑音 σφ = 0.10/0.20/0.30/0.40/0.60 rad のとき、
+    0/0.097/2.57/11.6/36.8 % の画素が 2π 次数を誤り、どれも有限の値で返る。**残差を見る**:
+    ``Phi = absolute_phase(w, c); resid = c - Phi`` とし、``|resid| > 0.8π`` 程度の画素を疑わしいと
+    して捨てる(上の条件で誤りの 33〜74 % を拾う。要件 |coarse − Φ| < π の破れの兆し)。
+    coarse の単位(ラジアン)も検査しない —— 度を渡すと 1106 rad(真 19.35)のような値が黙って返る。
+    次数を確かめる別の op はまだ無い(残差と印を返す op は op を足す便で入れる)。
 
     Raises: 形状不一致・2D でない・wrapped が (-π,π] を大きく外れる場合に ValueError。
 

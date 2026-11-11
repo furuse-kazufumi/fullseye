@@ -8,7 +8,7 @@ gpu: なし
 examples: [type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # gradient_magnitude — REPRCONV `derivative` op
@@ -52,11 +52,11 @@ Raises:
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)
 
-[correlation_score](../score/correlation_score.md)
+[correlation_score](../score/correlation_score.md) · [voxel_to_hessian](voxel_to_hessian.md)
 
 ## 同カテゴリ(`derivative`)
 
-[gradient_coherence](gradient_coherence.md) · [hessian_determinant](hessian_determinant.md) · [hessian_vesselness](hessian_vesselness.md)
+[gradient_coherence](gradient_coherence.md) · [voxel_to_hessian](voxel_to_hessian.md) · [hessian_determinant](hessian_determinant.md) · [hessian_vesselness](hessian_vesselness.md)
 
 ---
 *Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -91,8 +91,11 @@ def main() -> int:
         # 見出しの 979 は正しいのに、内訳の行だけが「足し算」に見え、読者が足すと
         # 996 になる。数字が合っていても**説明が嘘をつく**形なので直した。
         # 内訳が和として成り立つかは ``tests/test_honest_summary_arithmetic.py`` が毎回見る。
-        "  = %d evolvable registry ops (of which %d are also reachable through the"
-        % (len(reg_counted), len(reg_counted & nary_names)),
+        # ★2026-11-05(敵対的検証 第 2 巡 D2): ここは「= %d evolvable registry ops」だったが、registry の
+        #   Op.halcon が名乗るのは 388 名だけで、残りは facade と台帳の対応。出どころ別に数えて書く。
+        "  = %d names: %s (of which %d are also reachable through the"
+        % (len(reg_counted), HC.source_breakdown_text(a["covered_by_source"], reg_counted),
+           len(reg_counted & nary_names)),
         "  n-ary capability tier — a subset, not an addition; %d n-ary-only)."
         % (len(nary_names - reg_counted)),
         "- dangling registry `Op.halcon` (fake names): **%d** (fail-closed)." % len(a["dangling"]),
@@ -101,8 +104,9 @@ def main() -> int:
         % (len(a["partial"]), ", ".join(a["partial"])),
         "",
         "## Evolvable registry (single-image pipeline, coverage-counted)",
-        "- registry ops: %d ; distinct real HALCON ops covered: **%d**"
-        % (a["n_registry"], len(reg_covered)),
+        "- registry ops: %d ; distinct real HALCON ops covered: **%d** (all sources; through "
+        "registry `Op.halcon` alone: %d)"
+        % (a["n_registry"], len(reg_covered), len(a["covered_by_source"]["registry"])),
         "- auto-generated ops passing the functional gate: %d / %d"
         % (gate["n_pass"], gate["n_specs"]),
         "- auto ops counted in coverage but FAILING the gate: %d %s"

@@ -85,9 +85,26 @@ _NRRD_TYPE_ALIASES = {
     "unsigned short int": "uint16", "uint16_t": "uint16", "int": "int32",
     "signed int": "int32", "int32_t": "int32", "uint": "uint32",
     "unsigned int": "uint32", "uint32_t": "uint32", "longlong": "int64",
-    "long long": "int64", "long long int": "int64", "int64_t": "int64",
+    "long long": "int64", "long long int": "int64", "signed long long": "int64",
+    "signed long long int": "int64", "int64_t": "int64",
     "ulonglong": "uint64", "unsigned long long": "uint64",
     "unsigned long long int": "uint64", "uint64_t": "uint64",
+}
+# ★2026-11-05 redteam I8: the table above is now every spelling of the teem NRRD format spec
+# ("type" field): "signed long long" / "signed long long int" were missing and refused.
+
+#: teem NRRD "space" field: canonical name -> implied space dimension (aliases below)
+_NRRD_SPACES = {
+    "right-anterior-superior": 3, "left-anterior-superior": 3, "left-posterior-superior": 3,
+    "right-anterior-superior-time": 4, "left-anterior-superior-time": 4,
+    "left-posterior-superior-time": 4, "scanner-xyz": 3, "scanner-xyz-time": 4,
+    "3D-right-handed": 3, "3D-left-handed": 3, "3D-right-handed-time": 4, "3D-left-handed-time": 4,
+}
+_NRRD_SPACE_ALIASES = {
+    "ras": "right-anterior-superior", "las": "left-anterior-superior",
+    "lps": "left-posterior-superior", "rast": "right-anterior-superior-time",
+    "last": "left-anterior-superior-time", "lpst": "left-posterior-superior-time",
+    **{name.lower(): name for name in _NRRD_SPACES},
 }
 _NIFTI_DTYPES = {
     2: np.dtype("u1"), 4: np.dtype("i2"), 8: np.dtype("i4"),
@@ -100,6 +117,8 @@ _NIFTI_TIME_UNITS = {8: "s", 16: "ms", 24: "us"}
 _NIFTI_EXTENSIONS = (".nii", ".nii.gz")
 _OME_AXIS_ORDER = "TCZYX"
 _OME_EXTENSIONS = (".ome.tif", ".ome.tiff")
+#: OME MapAnnotation namespace under which ome_tiff_write records the axes it was given
+_OME_AXES_NS = "fullseye/ome-tiff/axes"
 
 
 def _csv_columns(table, op: str) -> dict[str, np.ndarray]:
@@ -207,7 +226,43 @@ def table_write_csv(table, *, units, meta):
     return buf.getvalue()
 
 
+_CSV_INT_RE = re.compile(r"[+-]?[0-9]+\Z")
+
+
+def _csv_exact_int_column(values: list[str]):
+    """An all-integer column that float64 cannot hold exactly -> int64 / uint64, else None.
+
+    ★2026-11-04 (sibling of external audit I1): every numeric column went through ``float()``, so
+    an int64 column written by :func:`table_write_csv` (``str(value)``, e.g. a nanosecond time
+    stamp ~1.7e18) came back silently rounded to the nearest float64. A column is kept as integers
+    only when every cell is an integer literal and at least one is beyond float64's exact range;
+    small-integer columns stay float64 as documented."""
+    # ★2026-11-05 redteam I24: one empty cell (a missing value, written by table_write_csv for
+    # None) sent the whole column through float64, so a large int column with a gap came back
+    # rounded -- against "丸めて返さない". Blank cells are now allowed here: such a column is
+    # returned as an integer masked array (mask = the blanks), exact and still numeric.
+    present = [v for v in values if v != ""]
+    if not present or not all(_CSV_INT_RE.match(v) for v in present):
+        return None
+    ints = [int(v) for v in present]
+    if all(abs(x) <= 2 ** 53 for x in ints):
+        return None
+    for dt in (np.int64, np.uint64):
+        info = np.iinfo(dt)
+        if all(info.min <= x <= info.max for x in ints):
+            if len(present) == len(values):
+                return np.array(ints, dtype=dt)
+            it = iter(ints)
+            mask = np.array([v == "" for v in values])
+            data = np.array([0 if blank else next(it) for blank in mask], dtype=dt)
+            return np.ma.masked_array(data, mask=mask)
+    raise ValueError("table_read_csv: integer column does not fit int64 or uint64")
+
+
 def _csv_number_column(values: list[str]):
+    exact = _csv_exact_int_column(values)
+    if exact is not None:
+        return exact
     out = []
     for value in values:
         if value == "":
@@ -225,18 +280,25 @@ def table_read_csv(text):
 
     返り値は ``{"columns": {列名: 1-D 配列}, "units": {...}, "meta": {...}}``。列名と単位の
     個数、全データ行の列数、必須メタデータを検査し、途中までの表は返さない。数値列は float64
-    (空欄は NaN)、数値以外を含む列は文字列配列になる。入力は UTF-8 の ``str`` または ``bytes``。
+    (空欄は NaN)、数値以外を含む列は文字列配列になる。ただし全セルが整数で、float64 では
+    正確に持てない値(絶対値が 2**53 超)を含む列は int64 / uint64 で返す(丸めて返さない)。
+    その列に空欄(欠測)があれば、空欄を mask した int64 / uint64 の ``numpy.ma.MaskedArray`` で返す。
+    入力は UTF-8 の ``str`` または ``bytes``(先頭の BOM は読み飛ばす)。
 
     呼び出し例: ``roundtrip = table_read_csv(table_write_csv(table, units=units, meta=meta))``。
     """
     op = "table_read_csv"
     if isinstance(text, bytes):
         try:
-            text = text.decode("utf-8")
+            text = text.decode("utf-8-sig")
         except UnicodeDecodeError as exc:
             raise ValueError(f"{op}: input is not UTF-8") from exc
     if not isinstance(text, str):
         raise ValueError(f"{op}: expected CSV text, got {type(text).__name__}")
+    # ★2026-11-05 redteam I25: a UTF-8 BOM (Excel's "CSV UTF-8" writes one) became part of the
+    # first column name ('\ufeffx'). It is a byte-order mark, not data: drop it once.
+    if text.startswith("\ufeff"):
+        text = text[1:]
     if len(text) > _MAX_CSV_CHARS:
         raise ValueError(f"{op}: input has {len(text)} characters; limit is {_MAX_CSV_CHARS}")
     lines = text.splitlines()
@@ -320,17 +382,42 @@ def _face_normals(vertices, faces):
     return normals, tri
 
 
-def _vertex_normals(vertices, faces):
-    """Return area-weighted normals sharing the vertex indices used by OBJ."""
+def _obj_normals(vertices, faces):
+    """``(vn, corner_index)`` for OBJ: unit normals and, per face corner, its 0-based vn index.
+
+    A corner uses its vertex's area-weighted normal (smooth shading, so a closed mesh stays one
+    shared-vertex surface for readers that split vertices by normal, e.g. trimesh). A vertex no
+    face references gets no ``vn``; a vertex whose face normals cancel (both sides of one
+    triangle, a pinched fan) has no vertex normal, so each of its corners uses that face's own
+    unit normal instead.
+
+    ★2026-11-05 redteam I15: both cases used to raise "vertex normal is undefined", although
+    OFF / PLY write the same mesh; the docstring also promised per-face normals. The docstring
+    now says what is written, and every mesh OFF / PLY accept is accepted."""
     tri = vertices[faces]
     cross = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
-    normals = np.zeros_like(vertices)
+    face_unit = cross / np.linalg.norm(cross, axis=1)[:, None]      # _mesh_arrays: no zero-area face
+    summed = np.zeros_like(vertices)
     for corner in range(3):
-        np.add.at(normals, faces[:, corner], cross)
-    length = np.linalg.norm(normals, axis=1)
-    if np.any(length == 0):
-        raise ValueError("mesh_write_obj: vertex normal is undefined")
-    return normals / length[:, None]
+        np.add.at(summed, faces[:, corner], cross)
+    length = np.linalg.norm(summed, axis=1)
+    scale = np.max(np.linalg.norm(cross, axis=1))
+    defined = length > 1e-12 * scale
+    used = np.zeros(len(vertices), bool)
+    used[faces.ravel()] = True
+    smooth = np.flatnonzero(used & defined)
+    vn = [summed[smooth] / length[smooth][:, None]]
+    slot = np.full(len(vertices), -1, np.int64)
+    slot[smooth] = np.arange(len(smooth))
+    corner_index = slot[faces]
+    need = np.flatnonzero((corner_index < 0).any(axis=1))           # faces with an undefined corner
+    if need.size:
+        vn.append(face_unit[need])
+        face_slot = len(smooth) + np.arange(need.size)
+        rows = corner_index[need]
+        rows[rows < 0] = np.broadcast_to(face_slot[:, None], rows.shape)[rows < 0]
+        corner_index[need] = rows
+    return np.concatenate(vn), corner_index
 
 
 def _ply_table(value, op: str):
@@ -380,8 +467,37 @@ def _ply_table(value, op: str):
         arr = np.asarray(values)
         if arr.ndim != 1 or len(arr) != len(vertices) or arr.dtype.kind not in "iuf" or not np.isfinite(arr).all():
             raise ValueError(f"{op}: attribute {name!r} must be a finite numeric (N,) array")
-        fields.append((name, arr.astype(np.float64), "double"))
+        if arr.dtype.kind == "f":
+            fields.append((name, arr.astype(np.float64), "double"))
+        else:
+            fields.append((name, *_ply_int_column(arr, name, op)))
     return vertices, faces, fields
+
+
+#: PLY's integer scalar types (the 1990s Turk spec has no 64-bit integer)
+_PLY_INT_KINDS = (("char", np.int8), ("uchar", np.uint8), ("short", np.int16), ("ushort", np.uint16),
+                  ("int", np.int32), ("uint", np.uint32))
+
+
+def _ply_int_column(arr, name: str, op: str):
+    """An integer attribute as ``(values, ply_type)`` with an exact integer PLY type.
+
+    ★2026-11-05 redteam I16: integer attributes were written as ``double``, so a label or a
+    count above 2**53 came back rounded (9007199254740993 -> ...992). The PLY type now follows
+    the dtype (int8 -> char ... uint32 -> uint); an int64 / uint64 column is written as ``int`` /
+    ``uint`` when every value fits, and refused otherwise (PLY has no 64-bit integer type, and
+    rounding it through double is exactly what must not happen)."""
+    for ply, dt in _PLY_INT_KINDS:
+        if arr.dtype == np.dtype(dt):
+            return arr, ply
+    lo, hi = (int(arr.min()), int(arr.max())) if arr.size else (0, 0)
+    for ply, dt in (("int", np.int32), ("uint", np.uint32)):
+        info = np.iinfo(dt)
+        if info.min <= lo and hi <= info.max:
+            return arr.astype(dt), ply
+    raise ValueError(f"{op}: integer attribute {name!r} holds values in [{lo}, {hi}], outside every "
+                     "PLY integer type (int32 / uint32); PLY has no 64-bit integer — store it as two "
+                     "uint attributes or as a separate table")
 
 
 def mesh_write_ply(table, *, binary):
@@ -403,11 +519,12 @@ def mesh_write_ply(table, *, binary):
     if not binary:
         body = []
         for i in range(len(vertices)):
-            body.append(" ".join(str(int(values[i])) if kind == "uchar" else format(float(values[i]), ".17g")
+            body.append(" ".join(format(float(values[i]), ".17g") if kind == "double" else str(int(values[i]))
                                  for _name, values, kind in props))
         body += ["3 %d %d %d" % tuple(face) for face in faces]
         return header + "\n".join(body) + ("\n" if body else "")
-    dtype = np.dtype([(name, "u1" if kind == "uchar" else "<f8") for name, _v, kind in props])
+    numpy_type = {"double": "<f8", **{ply: np.dtype(dt).newbyteorder("<").str for ply, dt in _PLY_INT_KINDS}}
+    dtype = np.dtype([(name, numpy_type[kind]) for name, _v, kind in props])
     records = np.empty(len(vertices), dtype=dtype)
     for name, values, _kind in props:
         records[name] = values
@@ -453,7 +570,24 @@ def mesh_read_ply(data):
         result["colors"] = colors
     standard = {"x", "y", "z", "nx", "ny", "nz", "red", "green", "blue",
                 "r", "g", "b", "diffuse_red", "diffuse_green", "diffuse_blue"}
-    result["attributes"] = {name: np.asarray(values) for name, values in scalars.items() if name not in standard}
+    # mesh._ply_data hands every scalar back as float64 (exact for PLY's <= 32-bit integers);
+    # an integer property is returned in its own integer dtype (I16), and a non-integral token
+    # in one (ASCII "1.5" under "property int") is refused rather than truncated.
+    attributes = {}
+    for name, values in scalars.items():
+        if name in standard:
+            continue
+        kind = _mesh._PLY_TYPES.get(vertex["types"].get(name, ""), "f8")
+        values = np.asarray(values)
+        if kind[0] in "iu":
+            target = np.dtype(kind)
+            info = np.iinfo(target)
+            if values.size and (not np.all(values == np.floor(values))
+                                or values.min() < info.min or values.max() > info.max):
+                raise ValueError(f"{op}: integer property {name!r} holds a value outside {target}")
+            values = values.astype(target)
+        attributes[name] = values
+    result["attributes"] = attributes
     face = parsed.get("face")
     if face is not None and face["count"]:
         lists = face["lists"]
@@ -498,17 +632,19 @@ def mesh_read_stl(data):
 def mesh_write_obj(mesh):
     """三角形 mesh を ``v`` / ``vn`` / ``f`` を持つ Wavefront OBJ 文字列に書く(``text``)。
 
-    面ごとの法線を ``vn`` として書く。material/texture は書かない。呼び出し例:
+    頂点の面積重み法線(滑らかな陰影)を ``vn`` として書き、``f v//vn`` で参照する。どの面からも
+    参照されない頂点には ``vn`` を書かず、面の法線が打ち消し合って頂点法線が定まらない頂点
+    (表裏 2 枚の三角形など)は、その角だけ面の単位法線を使う —— OFF / PLY が書ける mesh は
+    全部書ける。material/texture は書かない。呼び出し例:
     ``text = mesh_write_obj((vertices, faces))``。
     """
     vertices, faces = _mesh_arrays(mesh, "mesh_write_obj")
-    normals = _vertex_normals(vertices, faces)
+    normals, corner = _obj_normals(vertices, faces)
     lines = ["# Wavefront OBJ written by fullseye.fileio", "o mesh"]
     lines += ["v %.17g %.17g %.17g" % tuple(v) for v in vertices]
     lines += ["vn %.17g %.17g %.17g" % tuple(n) for n in normals]
-    lines += ["f %d//%d %d//%d %d//%d" %
-              (a + 1, a + 1, b + 1, b + 1, c + 1, c + 1)
-              for a, b, c in faces]
+    lines += ["f %d//%d %d//%d %d//%d" % (a + 1, na + 1, b + 1, nb + 1, c + 1, nc + 1)
+              for (a, b, c), (na, nb, nc) in zip(faces, corner)]
     return "\n".join(lines) + "\n"
 
 
@@ -628,6 +764,12 @@ def e57_write(table):
     """座標・強度・色・pose を持つ点群 ``table`` を ASTM E57 の ``bytes`` に書く。
 
     ``pye57`` は optional。未導入なら導入コマンドを含む ``ImportError`` で閉じる。
+
+    精度: 座標(cartesianX/Y/Z)と強度は E57 の **single(float32)** で書かれる(pye57 の
+    ``write_scan_raw`` が single 固定)。float64 の点は float32 の精度で往復する —— 原点から
+    35 万 m の UTM 座標なら誤差は数 cm。大きい座標は原点の近くへ平行移動し、その量を
+    ``pose['translation']``(double で書かれ正確に往復する)に入れること。色は 8 bit に丸め、
+    ``pose['rotation']`` は単位四元数に正規化して書く。
     呼び出し例: ``payload = e57_write({'points': points, 'pose': pose})``。
     """
     pye57 = _require_pye57()
@@ -739,8 +881,12 @@ def e57_read(data):
 # 書庫。安全モデルと決定的 tar は helpstore.py、実読込量の門は sample_data.py を基にする。
 # ---------------------------------------------------------------------------
 _ARCHIVE_FORMATS = {"zip", "tar", "tar.gz", "tar.bz2", "tar.xz", "7z", "rar"}
-_WINDOWS_DEVICES = {"CON", "PRN", "AUX", "NUL",
-                    *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))}
+# ★2026-11-05 redteam (io, archive probe): Windows reserved device names (Microsoft "Naming
+# Files, Paths, and Namespaces") include COM0 / LPT0, the superscript digits ¹ ² ³ and the
+# console names CONIN$ / CONOUT$. Only CON/PRN/AUX/NUL and COM1-9 / LPT1-9 were listed, so
+# "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
+_WINDOWS_DEVICES = {"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$",
+                    *(f"{port}{d}" for port in ("COM", "LPT") for d in "0123456789\u00b9\u00b2\u00b3")}
 
 
 def _archive_source(data_or_path, op):
@@ -1213,6 +1359,14 @@ def _zip_datetime(entry, deterministic):
     return (year, dt.month, dt.day, dt.hour, dt.minute, dt.second - dt.second % 2)
 
 
+def _zipinfo_set_level(info, level):
+    """Set a member's deflate level (``compress_level`` from Python 3.13, ``_compresslevel`` before)."""
+    if "compress_level" in zipfile.ZipInfo.__slots__:
+        info.compress_level = level
+    else:                                        # Python 3.11 / 3.12: the slot is private-named
+        info._compresslevel = level
+
+
 def _create_zip(entries, level, deterministic):
     out = io.BytesIO()
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED,
@@ -1221,6 +1375,10 @@ def _create_zip(entries, level, deterministic):
             name = entry["name"] + ("/" if entry["is_dir"] and not entry["name"].endswith("/") else "")
             info = zipfile.ZipInfo(name, _zip_datetime(entry, deterministic))
             info.compress_type = zipfile.ZIP_DEFLATED
+            # ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")``
+            # takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set,
+            # zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
+            _zipinfo_set_level(info, level)
             info.create_system = 3
             info.external_attr = ((0o40755 if entry["is_dir"] else 0o100644) << 16) | (0x10 if entry["is_dir"] else 0)
             if entry["is_dir"]:
@@ -1336,7 +1494,10 @@ def archive_create(paths_or_items, fmt, *, root=None, level=None, deterministic=
 # stays dependency-light; optional reference readers are used only by tests.
 # ---------------------------------------------------------------------------
 def _fits_value(text: str, keyword: str):
-    value = text.rstrip()
+    # ★2026-11-05 redteam I6: FITS 4.0 §4.2.1.2 -- in free format the opening quote of a string
+    # may stand in any column after the value indicator, not only column 11. Leading blanks
+    # before the quote are not part of the value (blanks *inside* the quotes still are).
+    value = text.strip()
     if value.startswith("'"):
         chars, index = [], 1
         while index < len(value):
@@ -1360,6 +1521,24 @@ def _fits_value(text: str, keyword: str):
         raise ValueError(f"astro_fits_read: unsupported value {token!r} for header key {keyword}") from exc
 
 
+def _fits_float_text(value: float) -> str:
+    """The shortest decimal that reads back as the same float64, in FITS syntax.
+
+    ★2026-11-05 redteam I5: ``"%.15G"`` wrote 0.30000000000000004 as ``0.3`` (another float) and
+    5.0 as ``5`` (an integer card, read back as ``int``). ``repr`` is the shortest round-tripping
+    decimal and always carries a ``.`` or an exponent, so a float stays a float. The exponent sign
+    and leading zeros are optional in FITS 4.0 §4.2.4 and are dropped only when that is what keeps
+    the value inside the 20-column fixed-format field; a value that still needs more than 20
+    characters (17 significant digits with a 3-digit exponent) is written in free format, which
+    FITS allows for every non-mandatory keyword (it still fits one card)."""
+    text = repr(float(value)).upper()
+    if len(text) > 20 and "E" in text:
+        mantissa, exponent = text.split("E")
+        sign = "-" if exponent.startswith("-") else ""
+        text = f"{mantissa}E{sign}{exponent.lstrip('+-').lstrip('0') or '0'}"
+    return text
+
+
 def _fits_card(keyword: str, value) -> bytes:
     if not isinstance(keyword, str) or not keyword or len(keyword) > 8 or not keyword.isascii():
         raise ValueError(f"astro_fits_write: FITS keyword must be 1..8 ASCII characters, got {keyword!r}")
@@ -1371,7 +1550,7 @@ def _fits_card(keyword: str, value) -> bytes:
     elif isinstance(value, (float, np.floating)):
         if not math.isfinite(float(value)):
             raise ValueError(f"astro_fits_write: header key {key} must be finite")
-        field = ("%.15G" % float(value)).rjust(20)
+        field = _fits_float_text(value).rjust(20)
     elif isinstance(value, str):
         if not value.isascii() or any(c in value for c in "\r\n"):
             raise ValueError(f"astro_fits_write: header key {key} must contain one-line ASCII text")
@@ -1394,6 +1573,10 @@ def _fits_storage(image):
     bzero, bscale = 0, 1
     if dtype == np.dtype("uint8"):
         bitpix, stored = 8, array.astype(">u1", copy=False)
+    elif dtype == np.dtype("int8"):
+        # FITS 4.0 Table 11: signed bytes are BITPIX=8 with BZERO=-128 (stored = value + 128)
+        bitpix, bzero = 8, -128
+        stored = (array.view(np.uint8) ^ np.uint8(0x80)).astype(">u1")
     elif dtype == np.dtype("int16"):
         bitpix, stored = 16, array.astype(">i2", copy=False)
     elif dtype == np.dtype("uint16"):
@@ -1406,12 +1589,17 @@ def _fits_storage(image):
         stored = (array.astype(np.int64) - bzero).astype(">i4")
     elif dtype == np.dtype("int64"):
         bitpix, stored = 64, array.astype(">i8", copy=False)
+    elif dtype == np.dtype("uint64"):
+        # FITS 4.0 Table 11: BITPIX=64 with BZERO=2**63; value - 2**63 is a sign-bit flip
+        bitpix, bzero = 64, 1 << 63
+        stored = (array.astype(np.uint64) ^ np.uint64(1 << 63)).view(np.int64).astype(">i8")
     elif dtype == np.dtype("float32"):
         bitpix, stored = -32, array.astype(">f4", copy=False)
     elif dtype == np.dtype("float64"):
         bitpix, stored = -64, array.astype(">f8", copy=False)
     else:
-        raise ValueError(f"astro_fits_write: unsupported dtype {dtype}; use uint8/uint16/uint32, int16/int32/int64, float32/float64")
+        raise ValueError(f"astro_fits_write: unsupported dtype {dtype}; use int8/uint8, int16/uint16, "
+                         "int32/uint32, int64/uint64, float32/float64")
     return array, stored, bitpix, bzero, bscale
 
 
@@ -1420,7 +1608,7 @@ def astro_fits_write(image, *, header):
 
     ``header`` は FITS の基本 WCS キー(``CTYPE*``, ``CRPIX*``, ``CRVAL*``,
     ``CDELT*``, ``PC*_*``, ``CD*_*``, ``CUNIT*`` など)だけを持つ辞書。構造キーは
-    配列から作り、uint16/uint32 は標準の BZERO 規約で保存する。呼び出し例:
+    配列から作り、int8/uint16/uint32/uint64 は FITS 4.0 の標準の BZERO 規約で保存する。呼び出し例:
     ``payload = astro_fits_write(image, header={"CTYPE1": "RA---TAN"})``。
     """
     array, stored, bitpix, bzero, bscale = _fits_storage(image)
@@ -1456,6 +1644,8 @@ def astro_fits_read(data):
     """primary HDU の 2-D/3-D FITS を ``(image_or_volume, meta)`` として読む。
 
     ``meta`` は ``bitpix``、``bzero``、``bscale`` と基本 WCS の ``wcs`` 辞書を持つ。
+    FITS 4.0 の整数の規約(BSCALE=1 で BZERO=-128 / 2**15 / 2**31 / 2**63)は int8 / uint16 /
+    uint32 / uint64 の整数のまま正確に返す(それ以外の BZERO/BSCALE は float64 に換算)。
     切れたブロック、random groups、BLANK、次元・BITPIX・データ長の不一致は名指しで拒否する。
     呼び出し例: ``image, meta = astro_fits_read(payload)``。
     """
@@ -1522,10 +1712,18 @@ def astro_fits_read(data):
         raise ValueError(f"{op}: BZERO/BSCALE must be finite numeric values and BSCALE must be nonzero")
     if not math.isfinite(float(bzero)) or not math.isfinite(float(bscale)):
         raise ValueError(f"{op}: BZERO/BSCALE must be finite")
-    if bitpix == 16 and bzero == 1 << 15 and bscale == 1:
+    # ★2026-11-05 redteam I4: FITS 4.0 §5.3 / Table 11 -- the four integer offset conventions
+    # (BSCALE=1 with BZERO = -128 / 2**15 / 2**31 / 2**63) denote *integer* data of the other
+    # signedness. uint64 used to go through float64 (2**63 + 1 -> 2**63, 2**64 - 1 -> 2**64) and
+    # int8 came back as float64. They are now decoded with exact integer arithmetic.
+    if bitpix == 8 and bzero == -128 and bscale == 1:
+        array = (array ^ np.uint8(0x80)).view(np.int8)
+    elif bitpix == 16 and bzero == 1 << 15 and bscale == 1:
         array = (array.astype(np.int32) + (1 << 15)).astype(np.uint16)
     elif bitpix == 32 and bzero == 1 << 31 and bscale == 1:
         array = (array.astype(np.int64) + (1 << 31)).astype(np.uint32)
+    elif bitpix == 64 and bzero == 1 << 63 and bscale == 1:
+        array = array.view(np.uint64) ^ np.uint64(1 << 63)
     elif bzero != 0 or bscale != 1:
         array = array.astype(np.float64) * float(bscale) + float(bzero)
     wcs = {key: values[key] for key in _FITS_WCS_KEYS if key in values}
@@ -1588,6 +1786,9 @@ def em_mrc_write(volume, *, meta):
         dmin = dmax = dmean = rms = float("nan")
     struct.pack_into("<3f", header, 76, dmin, dmax, dmean)
     struct.pack_into("<2i", header, 88, 0, 0)
+    # ★2026-11-05 redteam I7: MRC2014 word 28 (byte 108) is NVERSION = 20140 (year*10 + version).
+    # It was left 0, so the file did not declare itself MRC2014 (mrcfile.validate rejected it).
+    struct.pack_into("<i", header, 108, 20140)
     struct.pack_into("<3f", header, 196, *origin)
     header[208:212] = b"MAP "
     header[212:216] = bytes((0x44, 0x41, 0, 0))
@@ -1665,10 +1866,19 @@ def _nrrd_unit(value, op: str):
     return unit
 
 
+def _nrrd_space(value, op: str):
+    """Canonical teem name of an NRRD ``space`` (``"LPS"`` -> ``"left-posterior-superior"``)."""
+    name = _NRRD_SPACE_ALIASES.get(str(value).strip().lower())
+    if name is None:
+        raise ValueError(f"{op}: unknown NRRD space {value!r}; expected one of "
+                         f"{', '.join(_NRRD_SPACES)} (or RAS/LAS/LPS/RAST/LAST/LPST)")
+    return name
+
+
 def _nrrd_geometry(meta, ndim: int, op: str):
     if not isinstance(meta, Mapping):
         raise ValueError(f"{op}: meta must be a mapping")
-    allowed = {"space_directions", "space_unit", "space_origin", "kinds"}
+    allowed = {"space_directions", "space_unit", "space_origin", "kinds", "space"}
     unknown = set(meta) - allowed
     if unknown:
         raise ValueError(f"{op}: unsupported metadata key(s): {', '.join(sorted(map(str, unknown)))}")
@@ -1701,7 +1911,13 @@ def _nrrd_geometry(meta, ndim: int, op: str):
     kinds = list(meta.get("kinds", ["domain" if value is not None else "list" for value in vectors]))
     if len(kinds) != ndim or any(not isinstance(v, str) or not v or any(c.isspace() for c in v) for v in kinds):
         raise ValueError(f"{op}: kinds must contain one whitespace-free name per array axis")
-    return vectors, unit, origin, kinds
+    space = meta.get("space")
+    if space is not None:
+        space = _nrrd_space(space, op)
+        if _NRRD_SPACES[space] != space_dim:
+            raise ValueError(f"{op}: space {space!r} is {_NRRD_SPACES[space]}-D but the direction "
+                             f"vectors have {space_dim} components")
+    return vectors, unit, origin, kinds, space
 
 
 def _nrrd_vector_text(vector) -> str:
@@ -1714,7 +1930,9 @@ def nrrd_write(array, *, meta, encoding):
     """多次元配列と ``space directions`` を raw/gzip NRRD の ``bytes`` にする。
 
     ``meta`` は各配列軸の方向ベクトル(非空間軸は ``None``)、``space_origin``、
-    ``space_unit``(``mm`` / ``um`` / ``angstrom``)を持つ。``encoding`` は ``raw`` または
+    ``space_unit``(``mm`` / ``um`` / ``angstrom``)を持つ。任意の ``space`` は teem の座標系名
+    (``left-posterior-superior`` / ``LPS`` / ``RAS`` / ``scanner-xyz`` …)で、与えると
+    ``space dimension`` の代わりに ``space:`` 行を書く(仕様では両者は排他)。``encoding`` は ``raw`` または
     ``gzip`` を明示する。呼び出し例: ``nrrd_write(vol, meta=geometry, encoding="gzip")``。
     """
     op = "nrrd_write"
@@ -1728,11 +1946,11 @@ def nrrd_write(array, *, meta, encoding):
     encoding = str(encoding).lower()
     if encoding not in ("raw", "gzip"):
         raise ValueError(f"{op}: encoding must be 'raw' or 'gzip', got {encoding!r}")
-    vectors, unit, origin, kinds = _nrrd_geometry(meta, values.ndim, op)
+    vectors, unit, origin, kinds, space = _nrrd_geometry(meta, values.ndim, op)
     space_dim = len(origin)
     header = ["NRRD0005", "# Created by Fullseye", f"type: {type_by_dtype[native_dtype]}",
               f"dimension: {values.ndim}", "sizes: " + " ".join(map(str, values.shape)),
-              f"space dimension: {space_dim}",
+              f"space: {space}" if space is not None else f"space dimension: {space_dim}",
               "space directions: " + " ".join(_nrrd_vector_text(v) for v in vectors),
               "kinds: " + " ".join(kinds),
               "space units: " + " ".join(f'"{unit}"' for _ in range(space_dim)),
@@ -1746,14 +1964,30 @@ def nrrd_write(array, *, meta, encoding):
     return ("\n".join(header) + "\n\n").encode("ascii") + stored
 
 
+def _nrrd_header_end(raw: bytes):
+    """``(header_end, data_start)`` of the first blank line, walking the header line by line.
+
+    ★2026-11-04 external audit I2: the terminator used to be searched over the whole file --
+    ``\n\n`` first, ``\r\n\r\n`` only if that was absent. A valid CRLF file whose raw body
+    happens to contain two LF bytes (two uint8 pixels of value 10) matched inside the *data*,
+    the header swallowed a pixel and the read failed. A header line ends at LF (an optional CR
+    before it is part of the line ending); the first empty line ends the header. ``None`` if no
+    line is empty."""
+    pos = 0
+    while True:
+        nl = raw.find(b"\n", pos)
+        if nl < 0:
+            return None
+        if raw[pos:nl] in (b"", b"\r"):
+            return pos, nl + 1
+        pos = nl + 1
+
+
 def _nrrd_fields(raw: bytes, op: str):
-    marker = raw.find(b"\n\n")
-    marker_size = 2
-    if marker < 0:
-        marker = raw.find(b"\r\n\r\n")
-        marker_size = 4
-    if marker < 0:
+    found = _nrrd_header_end(raw)
+    if found is None:
         raise ValueError(f"{op}: NRRD header has no blank-line terminator")
+    marker, data_start = found
     try:
         text = raw[:marker].decode("ascii").replace("\r\n", "\n")
     except UnicodeDecodeError as exc:
@@ -1774,7 +2008,7 @@ def _nrrd_fields(raw: bytes, op: str):
         if key in fields:
             raise ValueError(f"{op}: duplicate header field {key!r}")
         fields[key] = value
-    return fields, raw[marker + marker_size:]
+    return fields, raw[data_start:]
 
 
 def _nrrd_directions(text: str, dimension: int, op: str):
@@ -1820,8 +2054,8 @@ def _nrrd_directions(text: str, dimension: int, op: str):
 def nrrd_read(data):
     """raw/gzip NRRD を ``(array, meta)`` として読み、空間単位を明示して返す。
 
-    ``meta`` は ``space_directions``、方向ベクトルの長さから得た ``voxel_spacing``、
-    ``space_unit``、``space_origin``、``kinds`` を持つ。detached data、未知の encoding、
+    ``meta`` は ``space``(teem の座標系名、無ければ ``None``)、``space_directions``、
+    方向ベクトルの長さから得た ``voxel_spacing``、``space_unit``、``space_origin``、``kinds`` を持つ。detached data、未知の encoding、
     shape/dtype/byte 数の不一致は拒否する。呼び出し例: ``array, meta = nrrd_read(payload)``。
     """
     op = "nrrd_read"
@@ -1833,7 +2067,7 @@ def nrrd_read(data):
         raise ValueError(f"{op}: missing required header field(s): {', '.join(missing)}")
     if any(key in fields for key in ("data file", "datafile", "line skip", "byte skip")):
         raise ValueError(f"{op}: detached data and line/byte skip headers are unsupported")
-    type_name = fields["type"].lower()
+    type_name = " ".join(fields["type"].lower().split())      # "unsigned  char" == "unsigned char"
     type_name = _NRRD_TYPE_ALIASES.get(type_name, type_name)
     if type_name not in _NRRD_DTYPES:
         raise ValueError(f"{op}: unsupported NRRD type {fields['type']!r}")
@@ -1864,12 +2098,22 @@ def nrrd_read(data):
     array = np.frombuffer(payload, dtype=dtype).reshape(sizes, order="F").copy()
     if array.dtype.itemsize > 1:
         array = array.astype(array.dtype.newbyteorder("="), copy=False)
+    # ★2026-11-05 redteam I9: the "space" field (LPS / RAS / scanner-xyz ...) was dropped, so an
+    # LPS and an RAS file -- the same numbers in mirrored patient frames -- read back identical.
+    # It is returned as meta["space"] (canonical teem name, None when absent) and written back.
+    space = None
+    if "space" in fields:
+        if "space dimension" in fields:
+            raise ValueError(f"{op}: 'space' and 'space dimension' are mutually exclusive in NRRD")
+        space = _nrrd_space(fields["space"], op)
     vectors, space_dim = (None, None)
     if "space directions" in fields:
         vectors, space_dim = _nrrd_directions(fields["space directions"], dimension, op)
         declared = fields.get("space dimension")
         if declared is not None and int(declared) != space_dim:
             raise ValueError(f"{op}: space dimension {declared} disagrees with direction vectors of length {space_dim}")
+        if space is not None and _NRRD_SPACES[space] != space_dim:
+            raise ValueError(f"{op}: space {space!r} is {_NRRD_SPACES[space]}-D but direction vectors have length {space_dim}")
     unit = None
     if "space units" in fields:
         units = re.findall(r'"([^"\\]*(?:\\.[^"\\]*)*)"', fields["space units"])
@@ -1896,8 +2140,8 @@ def nrrd_read(data):
     if kinds is not None and len(kinds) != dimension:
         raise ValueError(f"{op}: kinds count must match dimension")
     spacing = None if vectors is None else [None if v is None else float(np.linalg.norm(v)) for v in vectors]
-    return array, {"format": "NRRD", "encoding": encoding, "space_directions": vectors,
-                   "voxel_spacing": spacing, "space_unit": unit,
+    return array, {"format": "NRRD", "encoding": encoding, "space": space,
+                   "space_directions": vectors, "voxel_spacing": spacing, "space_unit": unit,
                    "space_origin": origin, "kinds": kinds}
 
 
@@ -2025,10 +2269,15 @@ def nifti_write(volume, *, meta, compressed):
 def _nifti_qform(raw: bytes, endian: str, pixdim):
     b, c, d = struct.unpack_from(endian + "3f", raw, 256)
     norm = b * b + c * c + d * d
-    a = math.sqrt(max(0.0, 1.0 - norm)) if norm <= 1.00001 else 0.0
-    if norm > 1.00001:
-        scale = math.sqrt(norm)
-        b, c, d = b / scale, c / scale, d / scale
+    # ★参照実装 nifti1_io.c(nifti_quatern_to_mat44)と同じ規則: 1 - |bcd|^2 < 1e-7 なら 180 度回転と
+    #   みなして a = 0 とし、(b, c, d) を単位長に正規化する。2026-11-04 まで閾値が無く、float32 の
+    #   丸め屑 1.2e-8 から a = 1.1e-4 を作って向きを 0.0125 度回していた(OpenNeuro ds000117 の
+    #   磁場地図で nibabel と 8e-4 の差。examples/poc_real_file_formats.py が見つけた)。
+    if 1.0 - norm < 1e-7:
+        scale = math.sqrt(norm) if norm > 0 else 1.0
+        a, b, c, d = 0.0, b / scale, c / scale, d / scale
+    else:
+        a = math.sqrt(1.0 - norm)
     rotation = np.asarray([
         [a*a+b*b-c*c-d*d, 2*b*c-2*a*d, 2*b*d+2*a*c],
         [2*b*c+2*a*d, a*a+c*c-b*b-d*d, 2*c*d-2*a*b],
@@ -2188,7 +2437,8 @@ def ome_tiff_write(stack, *, meta):
     """TCZYX 多次元配列と物理サイズ・チャネル名を OME-TIFF の ``bytes`` にする。
 
     ``meta['axes']`` は TCZYX の部分列で YX 終端。X/Y(および Z 軸があれば Z)の
-    ``physical_size_*`` と ``*_unit``、C 軸があれば ``channel_names`` を必須とする。
+    ``physical_size_*`` と ``*_unit``、C 軸があれば ``channel_names`` を必須とする。書いた
+    ``axes`` は名前空間つきの MapAnnotation に残し、長さ 1 の軸も :func:`ome_tiff_read` で戻る。
     呼び出し例: ``ome_tiff_write(stack, meta={"axes": "CZYX", ...})``。
     """
     op = "ome_tiff_write"
@@ -2204,6 +2454,10 @@ def ome_tiff_write(stack, *, meta):
         metadata[f"PhysicalSize{axis}Unit"] = unit
     if channel_names:
         metadata["Channel"] = {"Name": channel_names}
+    # ★2026-11-05 redteam I10: tifffile squeezes length-1 axes on read, and OME's 5-D Size*
+    # cannot tell "ZYX with Z=1" from "YX". The axes as written are recorded in a namespaced
+    # MapAnnotation so ome_tiff_read can restore the written shape (other readers ignore it).
+    metadata["MapAnnotation"] = {"Namespace": _OME_AXES_NS, "Value": {"axes": axes}}
     digest = hashlib.sha256()
     digest.update(array.dtype.str.encode("ascii"))
     digest.update(repr(array.shape).encode("ascii"))
@@ -2234,6 +2488,15 @@ def _ome_xml_meta(xml: str, shape, axes: str, dtype, op: str):
     if len(pixels_nodes) != 1:
         raise ValueError(f"{op}: OME Image must contain exactly one Pixels element")
     pixels = pixels_nodes[0]
+    # ★2026-11-05 redteam I11: the docstring promised to reject a Pixels Type that disagrees with
+    # the TIFF samples, but ``dtype`` was never read -- Type="int16" over uint16 data passed.
+    ome_type = {"int8": "int8", "int16": "int16", "int32": "int32", "uint8": "uint8",
+                "uint16": "uint16", "uint32": "uint32", "float32": "float", "float64": "double",
+                "complex64": "complex", "complex128": "double-complex", "bool": "bit"}.get(np.dtype(dtype).name)
+    declared_type = pixels.attrib.get("Type")
+    if ome_type is None or declared_type != ome_type:
+        raise ValueError(f"{op}: OME-XML Pixels Type={declared_type!r} disagrees with the TIFF samples "
+                         f"({np.dtype(dtype)}; OME Type {ome_type!r})")
     dimension_order = pixels.attrib.get("DimensionOrder")
     if dimension_order not in ("XYZCT", "XYZTC", "XYCZT", "XYCTZ", "XYTCZ", "XYTZC"):
         raise ValueError(f"{op}: unsupported OME DimensionOrder {dimension_order!r}")
@@ -2272,10 +2535,34 @@ def _ome_xml_meta(xml: str, shape, axes: str, dtype, op: str):
             "channel_names": names if "C" in axes else []}
 
 
+def _ome_written_axes(xml: str, op: str):
+    """The axes ome_tiff_write recorded (``None`` for files written by anything else)."""
+    try:
+        root = _ET.fromstring(xml)
+    except _ET.ParseError as exc:
+        raise ValueError(f"{op}: malformed OME-XML: {exc}") from exc
+    found = []
+    for node in root.iter():
+        if node.tag.rsplit("}", 1)[-1] != "MapAnnotation" or node.attrib.get("Namespace") != _OME_AXES_NS:
+            continue
+        found += [m.text or "" for m in node.iter()
+                  if m.tag.rsplit("}", 1)[-1] == "M" and m.attrib.get("K") == "axes"]
+    if not found:
+        return None
+    if len(found) != 1:
+        raise ValueError(f"{op}: OME-XML records {len(found)} Fullseye axes annotations; expected one")
+    axes = found[0].strip().upper()
+    if (not axes.endswith("YX") or len(set(axes)) != len(axes)
+            or "".join(a for a in _OME_AXIS_ORDER if a in axes) != axes):
+        raise ValueError(f"{op}: recorded axes {found[0]!r} are not a canonical TCZYX subset ending in YX")
+    return axes
+
+
 def ome_tiff_read(data):
     """OME-TIFF を ``(stack, meta)`` として読み、OME-XML と配列を相互検証する。
 
-    ``meta`` は TCZYX 部分列の ``axes``、物理サイズと単位、チャネル名を持つ。
+    ``meta`` は TCZYX 部分列の ``axes``、物理サイズと単位、チャネル名を持つ。:func:`ome_tiff_write`
+    の書いた長さ 1 の軸は記録から戻す(他の書き手のファイルでは tifffile と同じく長さ 1 の軸を畳む)。
     通常 TIFF、複数 Image、XML の Size/dtype と TIFF の不一致、無名チャネルは拒否する。
     呼び出し例: ``stack, meta = ome_tiff_read(payload)``。
     """
@@ -2299,6 +2586,13 @@ def ome_tiff_read(data):
         raise ValueError(f"{op}: corrupt or truncated TIFF: {exc}") from exc
     if len(axes) != array.ndim or "".join(axis for axis in _OME_AXIS_ORDER if axis in axes) != axes or not axes.endswith("YX"):
         raise ValueError(f"{op}: TIFF axes {axes!r} are not a canonical TCZYX subset ending in YX")
+    written = _ome_written_axes(xml, op)
+    if written is not None and written != axes:
+        # tifffile dropped length-1 axes; put them back (the Size* check below verifies them = 1)
+        if any(axis not in written for axis in axes):
+            raise ValueError(f"{op}: TIFF axes {axes!r} are not a subset of the recorded axes {written!r}")
+        array = array.reshape(tuple(array.shape[axes.index(a)] if a in axes else 1 for a in written))
+        axes = written
     expected_pages = math.prod(array.shape[:-2])
     if page_count != expected_pages:
         raise ValueError(f"{op}: OME-XML SizeT/SizeC/SizeZ declare {expected_pages} TIFF pages, "

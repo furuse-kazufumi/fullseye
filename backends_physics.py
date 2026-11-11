@@ -274,8 +274,28 @@ def ph_total_variation_flow(v, a, b):
        I_t = div(grad I / |grad I|) - lam (I - I0).
     The TV term (curvature of the level sets) flattens noise while preserving sharp
     edges; the fidelity term keeps the result anchored to the noisy input I0 so it
-    denoises rather than collapsing to a constant. ``a`` sets the step count,
-    ``b`` the fidelity weight lam.
+    denoises rather than collapsing to a constant. ``a`` sets the step count
+    (1..80 explicit steps of dt=0.008), ``b`` the fidelity weight lam in [10, 30]
+    (``b=0`` smooths most, ``b=1`` stays closest to the input).
+
+    The steps march towards the ROF minimiser, a fixed point: once the fidelity
+    has had time to act (lam * steps * dt of a few units, reached by a ~ 0.5 at
+    b=0) more steps no longer change the answer, so raising ``a`` never turns
+    a denoiser into a blur. A flat region of perimeter P and area A loses about
+    (P/A)/lam of its contrast at the fixed point, so small features fade more
+    than large ones (the usual ROF bias); raise ``b`` for light noise.
+
+    Until 2026-11-05 lam was 0.02..0.22: its time constant 1/lam (4.5..50) was far
+    longer than the whole run (80 * 0.008 = 0.64), so the fidelity did nothing,
+    the op was a pure TV flow drifting to a constant, and the error against the
+    clean image grew with ``a`` (noisy square, sigma 0.05: 0.019 at a=0.1, 0.067
+    at a=1, worse than the noisy input's 0.050; even a clean input lost 0.067).
+
+    The curvature term is the mean of the four forward/backward staggerings (forward
+    gradient + backward divergence and its mirror, per axis), so the flow commutes
+    with flipping the image. Until 2026-11-05 (adversarial review round 2) only the
+    forward-gradient / backward-divergence pair was used, and flipping the input
+    changed the result by up to 0.15.
     """
     im = _img(v)
     i0 = im.copy()
@@ -284,19 +304,26 @@ def ph_total_variation_flow(v, a, b):
     # diffusivity ratio (edge/beta): larger ratio => sharper edge preservation.
     beta = 0.04
     dt = 0.008
-    lam = 0.02 + 0.20 * float(np.clip(b, 0.0, 1.0))      # ROF fidelity weight
+    # ROF fidelity weight. dt*lam <= 0.24 keeps the fidelity step stable, and
+    # lam*dt*80 >= 6.4 lets the run reach the fixed point (see the docstring).
+    lam = 10.0 + 20.0 * float(np.clip(b, 0.0, 1.0))
     n = _steps(a, 1, 80)
     for _ in range(n):
-        # forward differences for the inner gradient ...
-        ixf = _shift(im, 0, 1) - im
-        iyf = _shift(im, 1, 0) - im
-        mag = np.sqrt(ixf * ixf + iyf * iyf + beta * beta)
-        px = ixf / mag
-        py = iyf / mag
-        # ... paired with backward differences for the outer divergence.
-        # This forward/backward staggering couples adjacent pixels and avoids the
-        # checkerboard null-space that a pure central-difference div would excite.
-        curv = (px - _shift(px, 0, -1)) + (py - _shift(py, -1, 0))
+        # Inner gradient by one-sided differences, paired with the opposite-sided
+        # difference for the outer divergence (the adjoint). This staggering couples
+        # adjacent pixels and avoids the checkerboard null-space that a pure
+        # central-difference div would excite. One staggering alone is biased toward
+        # its direction, so the four (column side x row side) choices are averaged.
+        curv = np.zeros_like(im)
+        for sc in (1, -1):
+            for sr in (1, -1):
+                ix = sc * (_shift(im, 0, sc) - im)
+                iy = sr * (_shift(im, sr, 0) - im)
+                mag = np.sqrt(ix * ix + iy * iy + beta * beta)
+                px = ix / mag
+                py = iy / mag
+                curv += sc * (px - _shift(px, 0, -sc)) + sr * (py - _shift(py, -sr, 0))
+        curv *= 0.25
         im = im + dt * (curv - lam * (im - i0))
         im = np.clip(im, 0.0, 1.0)
     return np.clip(im, 0.0, 1.0)

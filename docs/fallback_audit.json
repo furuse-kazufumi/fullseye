@@ -13,17 +13,71 @@
       "opsblob.py",
       "blob2d.py",
       "imagemorph.py",
-      "morph_minkowski.py"
+      "morph_minkowski.py",
+      "backend_safe.py"
     ]
   },
   "counts": {
-    "fail_closed": 3,
-    "documented_fallback": 6,
-    "silent_fallback": 0,
-    "legitimate_empty": 18,
+    "fail_closed": 4,
+    "documented_fallback": 10,
+    "silent_fallback": 1,
+    "legitimate_empty": 19,
     "undecided": 1
   },
   "sites": [
+    {
+      "module": "backend_safe.py",
+      "function": "missing_dependency",
+      "line": 102,
+      "exception_types": [
+        "Exception"
+      ],
+      "returned_or_assigned": "pass",
+      "classification": "documented_fallback",
+      "reason": "docstringに代替経路が明記されている"
+    },
+    {
+      "module": "backend_safe.py",
+      "function": "_fmt_exc",
+      "line": 180,
+      "exception_types": [
+        "Exception"
+      ],
+      "returned_or_assigned": "'%s: <unprintable>' % type(exc).__name__",
+      "classification": "documented_fallback",
+      "reason": "例外の str() 自体が失敗したときに型名だけの表示へ落とす(記録の文字列化の補助)"
+    },
+    {
+      "module": "backend_safe.py",
+      "function": "guard.w",
+      "line": 307,
+      "exception_types": [
+        "MissingDependencyError"
+      ],
+      "returned_or_assigned": "-",
+      "classification": "fail_closed",
+      "reason": "捕捉した例外をそのまま(または別の例外として)送出する経路"
+    },
+    {
+      "module": "backend_safe.py",
+      "function": "guard.w",
+      "line": 309,
+      "exception_types": [
+        "Exception"
+      ],
+      "returned_or_assigned": "out = None",
+      "classification": "documented_fallback",
+      "reason": "op の例外を record() で fs.fallbacks() に記録し(初回は警告)、sort の既定値(match は [0,0,0])か op ごとの on_fail(ops._ON_FAIL_BY_OP: shape_locate は 4 要素 [0,0,0,0])を返す。strict mode と MissingDependencyError は送出する"
+    },
+    {
+      "module": "backend_safe.py",
+      "function": "_finite",
+      "line": 602,
+      "exception_types": [],
+      "returned_or_assigned": "np.nan_to_num(real, nan=0.0, posinf=1.0, neginf=0.0)",
+      "classification": "documented_fallback",
+      "reason": "早期 return で np.nan_to_num の結果を返す経路(どの関数にも効く一般規則): 非有限値を代替値へ置き換えるのであって空入力ではない(置換値は呼び出しの引数どおり)"
+    },
     {
       "module": "blob2d.py",
       "function": "_convex_area",
@@ -36,7 +90,7 @@
     {
       "module": "blob2d.py",
       "function": "blob_select",
-      "line": 534,
+      "line": 541,
       "exception_types": [],
       "returned_or_assigned": "np.zeros_like(lab)",
       "classification": "legitimate_empty",
@@ -45,7 +99,7 @@
     {
       "module": "blob2d.py",
       "function": "blob_select_largest",
-      "line": 559,
+      "line": 566,
       "exception_types": [],
       "returned_or_assigned": "np.zeros_like(lab)",
       "classification": "legitimate_empty",
@@ -69,7 +123,7 @@
       ],
       "returned_or_assigned": "-",
       "classification": "fail_closed",
-      "reason": "捕捉した例外をリポジトリ側の例外として送出する経路"
+      "reason": "捕捉した例外をそのまま(または別の例外として)送出する経路"
     },
     {
       "module": "fslib.py",
@@ -84,8 +138,19 @@
     },
     {
       "module": "geometry2d.py",
+      "function": "intersection_lines",
+      "line": 95,
+      "exception_types": [
+        "ValueError"
+      ],
+      "returned_or_assigned": "None",
+      "classification": "silent_fallback",
+      "reason": "例外を値またはpassへ変換して呼出側から失敗を隠す"
+    },
+    {
+      "module": "geometry2d.py",
       "function": "_cs_pts",
-      "line": 128,
+      "line": 147,
       "exception_types": [],
       "returned_or_assigned": "np.concatenate([np.asarray(c, float) for c in cs], 0) if cs else np.zeros((0, 2))",
       "classification": "legitimate_empty",
@@ -94,7 +159,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_cc_min",
-      "line": 137,
+      "line": 156,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -103,7 +168,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_cc",
-      "line": 146,
+      "line": 165,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -112,7 +177,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_contours_xld",
-      "line": 155,
+      "line": 174,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -121,7 +186,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_lc",
-      "line": 357,
+      "line": 376,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -130,7 +195,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_lr",
-      "line": 366,
+      "line": 385,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -139,7 +204,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_sr",
-      "line": 375,
+      "line": 394,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -148,7 +213,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_cc_min_points",
-      "line": 384,
+      "line": 403,
       "exception_types": [],
       "returned_or_assigned": "{'distance': 0.0}",
       "classification": "legitimate_empty",
@@ -163,7 +228,7 @@
       ],
       "returned_or_assigned": "-",
       "classification": "fail_closed",
-      "reason": "捕捉した例外をリポジトリ側の例外として送出する経路"
+      "reason": "捕捉した例外をそのまま(または別の例外として)送出する経路"
     },
     {
       "module": "image_gen.py",
@@ -174,7 +239,7 @@
       ],
       "returned_or_assigned": "-",
       "classification": "fail_closed",
-      "reason": "捕捉した例外をリポジトリ側の例外として送出する経路"
+      "reason": "捕捉した例外をそのまま(または別の例外として)送出する経路"
     },
     {
       "module": "ops.py",
@@ -199,7 +264,7 @@
     {
       "module": "ops.py",
       "function": "_ncc_locate",
-      "line": 1849,
+      "line": 1934,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -208,7 +273,16 @@
     {
       "module": "ops.py",
       "function": "_shape_locate",
-      "line": 2175,
+      "line": 2263,
+      "exception_types": [],
+      "returned_or_assigned": "np.array([0.0, 0.0, 0.0, 0.0])",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "ops.py",
+      "function": "_shape_locate",
+      "line": 2270,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -217,7 +291,7 @@
     {
       "module": "ops.py",
       "function": "module_requirements",
-      "line": 2566,
+      "line": 2678,
       "exception_types": [
         "Exception"
       ],
@@ -228,7 +302,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2635,
+      "line": 2747,
       "exception_types": [
         "Exception"
       ],
@@ -239,7 +313,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2643,
+      "line": 2755,
       "exception_types": [
         "Exception"
       ],
@@ -250,7 +324,7 @@
     {
       "module": "ops.py",
       "function": "_label_guarded_functions_with_their_op_name",
-      "line": 2912,
+      "line": 3034,
       "exception_types": [
         "AttributeError, TypeError"
       ],
@@ -261,7 +335,7 @@
     {
       "module": "ops.py",
       "function": "apply_genome",
-      "line": 3026,
+      "line": 3148,
       "exception_types": [
         "Exception"
       ],

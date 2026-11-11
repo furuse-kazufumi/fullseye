@@ -6,6 +6,8 @@ value domain) plus correctness anchors and evolution-honesty invariants.
 """
 from __future__ import annotations
 
+import contextlib
+import json
 import os
 import sys
 import warnings
@@ -120,6 +122,35 @@ def _isolate_studio_settings(tmp_path_factory):
             os.environ.pop(_STUDIO_SETTINGS_ENV, None)
         else:
             os.environ[_STUDIO_SETTINGS_ENV] = prev
+
+
+#: api の遮断器(プロセスで 1 つの集合)。開けたまま残すと、同じワーカーで後に走るテストの
+#: GPU / 速い双子の経路が黙って閉じる(1.0 前の修正 2026-11-05 t8-flake: T6 が median_image で落ちた)。
+_API_BREAKERS = ("_GPU_OPEN", "_FAST_OPEN")
+
+
+@contextlib.contextmanager
+def _api_breakers_restored():
+    """抜けるときに api の遮断器を入ったときの中身へ戻す(api を読んでいなければ何もしない)。"""
+    api = sys.modules.get("api")
+    saved = {k: set(getattr(api, k)) for k in _API_BREAKERS if hasattr(api, k)} if api is not None else {}
+    try:
+        yield
+    finally:
+        api = sys.modules.get("api")
+        if api is not None:
+            for k in _API_BREAKERS:
+                cur = getattr(api, k, None)
+                if isinstance(cur, set):
+                    cur.clear()
+                    cur.update(saved.get(k, ()))
+
+
+@pytest.fixture(autouse=True)
+def _isolate_api_breakers():
+    """テストが開けた遮断器を次のテストへ持ち越さない(中で開けて中で確かめるのは従来どおり)。"""
+    with _api_breakers_restored():
+        yield
 
 
 # --------------------------------------------------------------------------- #
@@ -466,3 +497,40 @@ def inputs_for(in_sort: str, op_name: str | None = None):
 def registry():
     import ops
     return ops
+
+
+# --------------------------------------------------------------------------- #
+# ★CI: PR では変更に関係するテストだけ / 片はファイル単位で分ける(2026-11-10)     #
+# --------------------------------------------------------------------------- #
+# どちらも環境変数があるときだけ働く(手元の `pytest` は何も変わらない)。
+#   FULLSEYE_CI_SELECTION=<一覧のファイル>  tools/ci_select_tests.py が書いた一覧に無いテストを外す
+#   FULLSEYE_CI_SHARD=k/N                  ファイル単位の LPT で N 片に分け、k 片目だけ残す
+# 選ぶ規則と、選ばなかったテストを master・毎日の full suite で回す約束は CONTRIBUTING.md の「CI: which tests run where」。
+# 一覧が読めない・1 件も当たらないときは**止める**(黙って 0 件で緑にしない)。
+@pytest.hookimpl(tryfirst=True)
+def pytest_collection_modifyitems(config, items):
+    selection = os.environ.get("FULLSEYE_CI_SELECTION", "")
+    shard = os.environ.get("FULLSEYE_CI_SHARD", "")
+    if not selection and not shard:
+        return
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "_fullseye_ci_select_tests", os.path.join(ROOT, "tools", "ci_select_tests.py"))
+    cst = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cst)
+    try:
+        info = cst.plan_session([it.nodeid for it in items], selection=selection or None,
+                                shard=shard or None)
+    except (OSError, ValueError) as e:
+        raise pytest.UsageError("fullseye CI selection/shard failed (fail-closed): %s" % e)
+    keep = set(info.pop("keep"))
+    kept = [it for it in items if it.nodeid in keep]
+    dropped = [it for it in items if it.nodeid not in keep]
+    items[:] = kept
+    if dropped:
+        config.hook.pytest_deselected(items=dropped)
+    unmatched = info.pop("unmatched", [])
+    print("\n[fullseye-ci] %s" % json.dumps(info, ensure_ascii=False))
+    if unmatched:
+        print("[fullseye-ci] %d selection entries matched no collected test (e.g. a script that "
+              "is not a parameter of its runner): %s" % (len(unmatched), unmatched[:20]))

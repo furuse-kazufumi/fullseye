@@ -5,10 +5,10 @@ category: coherent
 in: 
 out: table
 gpu: なし
-examples: [poc_laser_line_speckle_floor]
+examples: [poc_laser_line_speckle_floor, poc_weld_bead_profile]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # triangulation_speckle_limit — OPTICS `coherent` op
@@ -63,6 +63,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_laser_line_speckle_floor](../../../../examples/poc_laser_line_speckle_floor.py) — `py -3.11 examples/poc_laser_line_speckle_floor.py`
+- [poc_weld_bead_profile](../../../../examples/poc_weld_bead_profile.py) — `py -3.11 examples/poc_weld_bead_profile.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 99 capabilities**
+**Currently 101 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -31,6 +31,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
+| [Carry an image through points, point clouds, volumes, meshes and graphs — and back](capabilities/convert-between-representations.md) | `keypoints_from_image2d` → `keypoints_uv_to_points` → `knn_graph` → `knn_graph_to_conn_graph` → `graph_components` | `poc_bga_ball_type_roundtrip` |
 | [Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
 | [Reconstruct cone-beam, helical and laminography scans on one geometry (industrial CT)](capabilities/ct-scan-modes.md) | `ct_scan_geometry` → `ellipsoid_projections` → `fdk_reconstruct` → `vol_rle_components` → `vol_rle_volume` | `ct_scan_modes` |
 | [Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
@@ -69,6 +70,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Reuse validation, neighbourhoods and transform kernels](capabilities/reuse-computation-results.md) | `polarization_separate` | `perf_pointcloud_descriptors` |
 | [Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
+| [Reading scientific data files (FITS, NIfTI, MRC, OME-TIFF, E57)](capabilities/scientific-data-files.md) | `astro_fits_read` | `poc_real_file_formats` |
 | [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
 | [Measure the same particles in scanning and transmission images and compare both size biases](capabilities/sem-tem-same-particle.md) | `sem_render` → `tem_power_spectrum` | `poc_sem_tem_same_particle` |
 | [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
@@ -960,7 +962,7 @@ Alternatives: [`signal_features`](ops/oned/signal/signal_features.md), [`octave_
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## Compose (9)
+## Compose (11)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 
@@ -973,6 +975,18 @@ Pipeline: [`align_frames`](ops/astrostack/align/align_frames.md) → [`drizzle_r
 Alternatives: [`frame_align`](ops/astrostack/align/frame_align.md), [`icp_point2point_3d`](ops/3d/refine/icp_point2point_3d.md), [`register_cross`](ops/3d/fusion/register_cross.md), [`interp_scattered`](ops/math/interp_poly/interp_scattered.md)
 
 Runnable: `poc_astro_photometry`, `poc_registration_basin`
+
+### [Carry an image through points, point clouds, volumes, meshes and graphs — and back](capabilities/convert-between-representations.md)
+
+Turns the bright blobs of one image into keypoints, lifts them to a 3-D point cloud with a height, spreads each point into a Gaussian and samples a voxel volume, and hands that to an iso-surface mesh or a nearest-neighbour graph. The reverse direction exists as well: point cloud → keypoints → count image, and volume correlation → position → image. Every conversion spells its axis convention in its name (`keypoints_uv_to_points` is (u, v) → (z, y, x)); the reversible ones round-trip bit for bit, and `opsreprconv.roundtrips()` declares what the others lose.
+
+Operators: `keypoints_from_image2d`, `keypoints_to_image2d`, `keypoints_uv_to_points`, `points_zyx_to_keypoints_uv`, `pointmap_to_points`, `points_to_gaussians`, `correlation_score`, `score_to_position`, `knn_graph_to_conn_graph`, `labels_to_indices`, `select_points`
+
+Pipeline: [`keypoints_from_image2d`](ops/reprconv/keypoint/keypoints_from_image2d.md) → [`keypoints_uv_to_points`](ops/reprconv/keypoint/keypoints_uv_to_points.md) → [`knn_graph`](ops/3d/geodesic/knn_graph.md) → [`knn_graph_to_conn_graph`](ops/reprconv/structure/knn_graph_to_conn_graph.md) → [`graph_components`](ops/conngraph/stats/graph_components.md)
+
+Alternatives: [`keypoints_rowcol_to_uv`](ops/reprconv/keypoint/keypoints_rowcol_to_uv.md), [`depth_to_organized_points`](ops/3d/range_image/depth_to_organized_points.md), [`voxel_to_mesh`](ops/3d/transform/voxel_to_mesh.md), [`graph_laplacian_spectrum`](ops/conngraph/stats/graph_laplacian_spectrum.md), [`points_to_position`](ops/reprconv/keypoint/points_to_position.md)
+
+Runnable: `poc_bga_ball_type_roundtrip`, `representation_roundtrip`, `representation_conversion`, `type_connectivity_tour`
 
 ### [Compare against a golden image — align, diff, count defects, judge the lot](capabilities/golden-compare.md)
 
@@ -1021,6 +1035,18 @@ Pipeline: [`polarization_separate`](ops/specular/polarization/polarization_separ
 Alternatives: `curvature_descriptors`, `HankelPlan`, `piv_outlier_mask_stream`, `monogenic_metrics`, `grid_axes`, `polarization_analyze`, `prepare_vol_probe`, `unpack_lsb`
 
 Runnable: `perf_pointcloud_descriptors`, `perf_monogenic_metrics`, `perf_prepared_volume_probe`, `perf_polarization_analyze`, `perf_hankel_plan_and_piv_stream`
+
+### [Reading scientific data files (FITS, NIfTI, MRC, OME-TIFF, E57)](capabilities/scientific-data-files.md)
+
+Turns the bytes of astronomy FITS, neuroimaging NIfTI-1, electron-microscopy MRC2014, microscopy OME-TIFF and 3-D scanner E57 files into `(array, meta)` (a point table for E57), with dimensioned quantities carried with their units: the basic FITS WCS, NIfTI qform / sform and voxel spacing in mm, MRC voxel size in angstrom, OME-TIFF physical sizes, E57 pose. The arrays feed straight into Fullseye's 2-D / 3-D operators. Corrupt files, header/content disagreements and unsupported extensions are refused by name rather than read silently. The PoC reads real public files byte-for-byte and checks them against astropy, nibabel, mrcfile and tifffile pixel for pixel and against the providers' published values.
+
+Operators: `astro_fits_read`, `nifti_read`, `em_mrc_read`, `ome_tiff_read`, `e57_read`, `nrrd_read`
+
+Pipeline: [`astro_fits_read`](ops/fileio/fits/astro_fits_read.md)
+
+Alternatives: [`nifti_read`](ops/fileio/nifti/nifti_read.md), [`em_mrc_read`](ops/fileio/mrc/em_mrc_read.md), [`ome_tiff_read`](ops/fileio/ome_tiff/ome_tiff_read.md), [`e57_read`](ops/fileio/e57/e57_read.md), [`nrrd_read`](ops/fileio/nrrd/nrrd_read.md), [`star_detect`](ops/astrostack/photometry/star_detect.md), [`aperture_photometry`](ops/astrostack/photometry/aperture_photometry.md), [`vol_label`](ops/3d/regionprops/vol_label.md), [`vol_region_props`](ops/3d/regionprops/vol_region_props.md)
+
+Runnable: `poc_real_file_formats`
 
 ### [Write typed op results as JSON and read them back bit-for-bit](capabilities/typed-results-as-json.md)
 

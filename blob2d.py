@@ -338,9 +338,11 @@ def blob_features(labels: Any, spacing: float = 1.0) -> dict:
     Returns
     -------
     dict
-        ``n``(物体数)、``spacing``、``units``(項目 → 単位の対応)と、
+        ``n``(物体数 = 実際に在るラベルの数)、``spacing``、``units``(項目 → 単位の対応)と、
         長さ ``n`` の配列 19 本(:data:`FEATURE_KEYS`)。物体が 0 個でも
-        鍵は全部揃えて空配列で返す(呼び手が分岐しなくて済む)。
+        鍵は全部揃えて空配列で返す(呼び手が分岐しなくて済む)。ラベルに歯抜けがあると
+        ``n`` は ``labels.max()`` より小さい —— 物体は ``f["label"]`` の列で引くこと
+        (``f["area"][label - 1]`` は歯抜けの後ろでずれる)。
 
     Notes
     -----
@@ -348,7 +350,9 @@ def blob_features(labels: Any, spacing: float = 1.0) -> dict:
     * ``major`` / ``minor`` は**同じ 2 次モーメントを持つ楕円**の軸長
       (``4 sqrt(lambda)``)。画素の並びの外接ではないので、正方形に対しては
       辺長より少し長く出る —— これは定義どおりで、誤差ではない。
-    * ``circularity`` は ``4 pi A / P^2``。**HALCON の ``circularity`` は
+    * ``circularity`` は ``4 pi A / P^2`` を **1 で頭打ち**にした値(数画素の物体では周長の
+      推定が面積に比べて短く出て 1 を超える —— 1 画素の塊で 1.75 —— が、円より丸い形は無い)。
+      **HALCON の ``circularity`` は
       「面積 / 最遠点を半径とする円の面積」で別物**なので、値を突き合わせる
       ときは定義を確かめること。
     * ``touches_border`` が True の物体は、面積も周長も**切れた分だけ小さい**。
@@ -437,7 +441,7 @@ def blob_features(labels: Any, spacing: float = 1.0) -> dict:
         cols["angle"].append(angle)
         cols["eccentricity"].append(ecc)
         cols["circularity"].append(
-            4.0 * math.pi * area_px / (perim_px * perim_px) if perim_px > 0 else 0.0)
+            min(1.0, 4.0 * math.pi * area_px / (perim_px * perim_px)) if perim_px > 0 else 0.0)
         cols["extent"].append(area_px / float((r1 - r0) * (c1 - c0)))
         cols["solidity"].append(area_px / conv_px if conv_px > 0 else 0.0)
         cols["holes"].append(int(nbg) - 1)
@@ -451,6 +455,9 @@ def blob_features(labels: Any, spacing: float = 1.0) -> dict:
             out[k] = np.asarray(cols[k], np.int32)
         else:
             out[k] = np.asarray(cols[k], np.float64)
+    # ★2026-11-09 点検: 以前は n = labels.max() を返し、ラベル 2 を消した像で n = 5・配列の長さ 4 と
+    #   食い違った(docstring は「長さ n の配列」)。n は実際に返す物体の数にする。
+    out["n"] = int(len(cols["label"]))
     return out
 
 
@@ -488,8 +495,8 @@ def _selection_feature(lab: np.ndarray, feature: str, spacing: float):
             box = boxes[int(label) - 1]
             perimeter = _perimeter(lab[box] == label)
             area = float(counts[label])
-            values.append(4.0 * math.pi * area / (perimeter * perimeter)
-                          if perimeter > 0 else 0.0)
+            values.append(min(1.0, 4.0 * math.pi * area / (perimeter * perimeter))
+                          if perimeter > 0 else 0.0)                 # blob_features と同じく 1 で頭打ち
         return labels, np.asarray(values, np.float64)
     features = blob_features(lab, spacing)
     return features["label"], np.asarray(features[feature])

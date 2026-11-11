@@ -269,8 +269,11 @@ def look_at(eye, target=(0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0)) -> Tuple[np.ndarray
     target = np.asarray(target, np.float64).ravel()
     up = np.asarray(up, np.float64).ravel()
     f = target - eye
-    nf = np.linalg.norm(f)
-    if nf < 1e-12:
+    nf = float(np.linalg.norm(f))
+    # 一致の判定は座標の丸めの桁(abs-floor2。shapematch.create_cam_pose_look_at_point と同じ規則):
+    # 以前の絶対の 1e-12 は、座標 1e-13 の正しいカメラを「一致」として拒否した。
+    ref = max(float(np.linalg.norm(eye)), float(np.linalg.norm(target)))
+    if not np.isfinite(nf) or nf == 0.0 or nf <= 4.0 * np.finfo(float).eps * ref:
         raise ValueError("eye and target coincide")
     f = f / nf                                             # camera +Z (forward)
     if abs(float(f @ (up / np.linalg.norm(up)))) > 0.999:  # up ∥ 視線 -> 退化回避

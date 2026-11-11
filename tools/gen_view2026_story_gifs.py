@@ -2,7 +2,8 @@
 """Build the short story GIFs used by the ViEW2026 2-D exhibits.
 
 Frame selection is deliberately mechanical and reviewable.  The current exhibit media is
-always frame 1 (the cover).  From the remaining raster figures, in ``figures.json`` order,
+always frame 1 (the cover).  If the caption ledger lists ``story_figures`` (figure names),
+those follow the cover in that order.  Otherwise, from the remaining raster figures, in ``figures.json`` order,
 we keep the earliest scene/raw/input, process/intermediate, result/truth/error, and
 limit/failure figure suggested by its file/name; unfilled slots are spread through the
 remaining ordered figures.  Thus the cover still works when animation is stopped, while
@@ -134,6 +135,35 @@ def choose_frames(figures: list[dict], representative: str, folder: Path) -> lis
             wanted += [left[i] for i in dict.fromkeys(idx)]
     order = {id(f): i for i, f in enumerate(figures)}
     return [cover] + sorted(wanted, key=lambda f: order[id(f)])[: MAX_FRAMES - 1]
+
+
+def chosen_frames(figures: list[dict], representative: str, folder: Path,
+                  story_figures=None) -> list[dict]:
+    """台帳(poc_captions.json)が ``story_figures`` で図の名前を順に指定していれば、表紙の後ろを
+    その順で並べる(★2026-11-08: 実写に作り直した PoC で、名前の役割語で選ぶと合成の図が先に
+    拾われ、表紙だけ実写で 2 コマ目以降が合成に戻った)。指定が無ければ :func:`choose_frames`。
+    指定した名前が無い・使えない図・表紙と同じ図・重複・表紙の後ろに入りきらない個数
+    (``MAX_FRAMES - 1`` を超える)は、黙って飛ばしたり切り捨てたりせず止める。
+    """
+    if not story_figures:
+        return choose_frames(figures, representative, folder)
+    cover = next((f for f in figures if f.get("file") == representative and
+                  (folder / f.get("file", "")).is_file()), None)
+    if cover is None:
+        return []
+    names = list(story_figures)
+    if len(names) > MAX_FRAMES - 1:
+        raise SystemExit("story_figures が %d 個(表紙の後ろは %d 個まで、黙って切り捨てない): %s"
+                         % (len(names), MAX_FRAMES - 1, folder))
+    if len(set(names)) != len(names):
+        raise SystemExit("story_figures に同じ名前が重なっている: %s (%s)" % (names, folder))
+    out = [cover]
+    for name in names:
+        hit = next((f for f in figures if f.get("name") == name), None)
+        if hit is None or not _usable(hit, folder) or hit is cover:
+            raise SystemExit("story_figures の %r が figures.json に無いか使えない(%s)" % (name, folder))
+        out.append(hit)
+    return out
 
 
 def _cover_file(exhibit: dict, caption: dict, figures: list[dict], folder: Path) -> str | None:
@@ -472,7 +502,7 @@ def main() -> int:
             entries[pid] = {**base, "reason": "figures_json_missing"}; continue
         figures = figure_rows[pid]
         cover = _cover_file(exhibit, cap_rows.get(pid, {}), figures, folder)
-        selected = choose_frames(figures, cover or "", folder)
+        selected = chosen_frames(figures, cover or "", folder, cap_rows.get(pid, {}).get("story_figures"))
         if len(selected) <= 2:
             entries[pid] = {**base, "reason": "two_or_fewer_raster_figures", "usable_figures": len(selected)}; continue
         if not selected:

@@ -9,7 +9,7 @@ gpu: あり(gray_bothat@twin)
 examples: [gallery2d_morphology, poc_metal_grain_size]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # gray_bothat — 2D `morphology` op
@@ -43,6 +43,10 @@ version: 0.9.0  # fullseye lib version this note was generated for
 image.）に相当。
 
 ``a`` が矩形構造要素のサイズを ``{3,5,7,9}`` で振る。``b`` は未使用。
+**出力は像の中の最大応答で割った値**(最大が 1.0。応答が全部 0 なら 0 のまま)。
+後段のしきい値は像ごとの最大の 1 点で決まり、離れた所に暗い画素を 1 つ足す
+だけで動く(128 × 128 の像でしきい値 0.5 の前景が 3,726 画素変わった例)。
+絶対値が要るなら ``scipy.ndimage.black_tophat`` を直接使う。
 
 **つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。
 

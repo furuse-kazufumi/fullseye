@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ground_plane — DRIVE <code style="color:#22d3bf">walkterrain</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ground_plane(grid, trim: &#x27;float&#x27; = 0.3, iters: &#x27;int&#x27; = 3)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import terrain; terrain.ground_plane(grid, trim: &#x27;float&#x27; = 0.3, iters: &#x27;int&#x27; = 3)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;ground_plane&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>セルごとの頑健な最小二乗の地面の平面 <code style="color:#22d3bf">z = a·x + b·y + c</code>。</p>
+<p>Fits a plane to the (filled) elevation, then re-fits a few times after trimming the highest-residual cells — the ones that rise above the ground and are therefore obstacles, not ground. Recovers a flat *or* tilted (ramp) ground exactly, with no boundary artefact, which is what obstacle detection wants when the walkable surface is planar. *trim* is the top residual fraction discarded each iteration.</p>
+<p>空の入力(<code style="color:#22d3bf">grid</code> が 0 要素)は形を保った空の配列を返す(理由: 当てはめる高さが無く、形だけを保つ。観測が 3 セル未満の地図は nan の平面)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:walking_ops_tour">walking_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/walking_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">depth</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">walkterrain</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:elevation_map">elevation_map</a> · <a style="color:#22d3bf" href="opdrive:fill_gaps">fill_gaps</a> · <a style="color:#22d3bf" href="opdrive:elevation_traversability">elevation_traversability</a> · <a style="color:#22d3bf" href="opdrive:foothold_score">foothold_score</a> · <a style="color:#22d3bf" href="opdrive:ground_surface">ground_surface</a> · <a style="color:#22d3bf" href="opdrive:detect_obstacles">detect_obstacles</a> · <a style="color:#22d3bf" href="opdrive:fuse_elevation">fuse_elevation</a> · <a style="color:#22d3bf" href="opdrive:roughness_map">roughness_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: terrain.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

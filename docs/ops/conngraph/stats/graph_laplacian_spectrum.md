@@ -5,10 +5,10 @@ category: stats
 in: conn_graph
 out: signal
 gpu: なし
-examples: [gallery_conngraph_closed_forms]
+examples: [gallery_conngraph_closed_forms, poc_bga_ball_type_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # graph_laplacian_spectrum — CONNGRAPH `stats` op
@@ -36,6 +36,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery_conngraph_closed_forms](../../../../examples/gallery_conngraph_closed_forms.py) — `py -3.11 examples/gallery_conngraph_closed_forms.py`
+- [poc_bga_ball_type_roundtrip](../../../../examples/poc_bga_ball_type_roundtrip.py) — `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

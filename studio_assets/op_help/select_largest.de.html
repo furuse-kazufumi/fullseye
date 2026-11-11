@@ -14,9 +14,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_largest.inputs.jpg">select_largest: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Behält nur die zusammenhängende Region mit der größten Fläche. Entspricht HALCONs <code style="color:#22d3bf">select_shape_std</code> (Select regions of a given shape.).</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet (es wählt immer das &quot;größte&quot;). Nach der Beschriftung der Zusammenhangskomponenten wird nur die 1 Komponente mit der größten Pixelzahl auf 1 gesetzt, alles andere auf 0. Hat die Eingabe keinen Vordergrund, wird überall 0 zurückgegeben. HALCONs <code style="color:#22d3bf">select_shape_std</code> unterstützt auch andere Formkriterien als die Fläche (Kreisförmigkeit usw.) und Mehrfachauswahl, diese Implementierung jedoch nur die Einzelauswahl der größten Fläche.</p>
-<p>L?st aus:</p>
-<p>FsValueError: Das Bild enth?lt NaN / inf.</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet (es wählt immer das &quot;größte&quot;). Nach der Beschriftung der Zusammenhangskomponenten (<b>der Vordergrund ist 8-zusammenhängend</b> = Standard von HALCONs <code style="color:#22d3bf">connection</code>; bis zur adversarialen Prüfung Runde 2 P1 am 2026-11-05 war er 4-zusammenhängend, und von 2 diagonal aneinanderstoßenden Blobs blieb nur einer erhalten) wird nur die 1 Komponente mit der größten Pixelzahl auf 1 gesetzt, alles andere auf 0. Hat die Eingabe keinen Vordergrund, wird überall 0 zurückgegeben. HALCONs <code style="color:#22d3bf">select_shape_std</code> unterstützt auch andere Formkriterien als die Fläche (Kreisförmigkeit usw.) und Mehrfachauswahl, diese Implementierung jedoch nur die Einzelauswahl der größten Fläche.</p>
+<p>Raises:</p>
+<p>FsValueError: Das Bild enthält NaN / inf.</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
@@ -30,6 +30,7 @@
 select_largest 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aselect_largest%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aselect_largest%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:mcp_task_score">mcp_task_score</a> — <code style="color:#22d3bf">py -3.11 examples/mcp_task_score.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_document_scan">poc_document_scan</a> — <code style="color:#22d3bf">py -3.11 examples/poc_document_scan.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_leaf_disease_area">poc_leaf_disease_area</a> — <code style="color:#22d3bf">py -3.11 examples/poc_leaf_disease_area.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">region</code> als Eingabe)</h3>

@@ -19,7 +19,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二值化閾值（假定為邊緣振幅影像。a=0 時大於 0 的像素全部為前景）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 結構元素的迭代次數 <code style="color:#22d3bf">it = 1 + int(b*3)</code>（1〜4，正方形邊長 3〜9 像素）。能閉合的縫隙大致在</p>
 <p><code style="color:#22d3bf">2*it</code> 像素以下。</p>
-<p>注意：<code style="color:#22d3bf">binary_closing</code> 把影像外視為 0 進行侵蝕，因此距影像邊緣 <code style="color:#22d3bf">it</code> 像素的帶一定變成 0 （對全為 1 的 20×20 套用 it=1，剩下的是 18×18）。處理接觸邊界的邊緣時，要事先加邊距，或對結果重新膨脹。輸入是 image（邊緣振幅），輸出也是 image sort，但內容是二值。放在 <code style="color:#22d3bf">hx_nonmax_dir</code> 或 <code style="color:#22d3bf">sobel_amp</code> 的後面，連通後的邊緣交給 <code style="color:#22d3bf">hx_region_to_label</code> 或 <code style="color:#22d3bf">hx_detect_edge_segments</code>。</p>
+<p>影像邊界：平面延伸到影像之外，影像外視為背景（加邊距閉合後再裁切回來）。閉運算是擴張性的，因此也不會削去接觸邊界的邊緣（全為 1 的 20×20 仍是 20×20）。2026-11-05（對抗性驗證 第 2 輪 P3）之前把影像外視為 0 進行侵蝕，距影像邊緣 <code style="color:#22d3bf">it</code> 像素的帶一定變成 0。輸入是 image（邊緣振幅），輸出也是 image sort，但內容是二值。放在 <code style="color:#22d3bf">hx_nonmax_dir</code> 或 <code style="color:#22d3bf">sobel_amp</code> 的後面，連通後的邊緣交給 <code style="color:#22d3bf">hx_region_to_label</code> 或 <code style="color:#22d3bf">hx_detect_edge_segments</code>。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

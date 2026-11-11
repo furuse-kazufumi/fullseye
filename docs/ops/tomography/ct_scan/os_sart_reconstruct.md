@@ -5,10 +5,10 @@ category: ct_scan
 in: projstack × ctgeometry
 out: voxel
 gpu: なし
-examples: [ct_scan_modes]
+examples: [ct_scan_modes, poc_real_walnut_cbct]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # os_sart_reconstruct — TOMOGRAPHY `ct_scan` op
@@ -33,11 +33,20 @@ into a limit cycle rather than a point.
 :param initial: starting volume; ``None`` gives zeros.
 :param nonnegative: clip to ``>= 0`` after each subset.
 :param device: ``"auto"``, ``"cpu"`` or ``"cuda"``.
-:param on_iter: optional ``on_iter(iteration, volume)``.
+:param on_iter: optional ``on_iter(iteration, volume)``, called after each full
+    pass; returning a boolean ``True`` (``bool`` or ``numpy.bool_``) stops
+    there, any other return value is ignored.
 :returns: ``(Z, Y, X)`` float volume.
 :raises ValueError: on a shape that disagrees with the geometry, a relaxation
     outside ``(0, 2)``, or more subsets than views. Empty input (``projections``
     with 0 elements) raises ``ValueError``.
+
+**The default 10 passes is not converged.** On consistent data (24^3
+Shepp-Logan, cone, 20 views, 16 subsets) the relative residual is 0.0135 at
+10 passes and 0.0044 at 40, nRMS to the truth 0.0278 -> 0.0176 (37 %); on the
+measured walnut (fan, 50 views, 10 subsets) the RMSE to the reference is
+0.0048 /mm at 10 passes and 0.0036 at 40 (2026-11-09 audit). Pick the count
+from a curve (``on_iter``, see :func:`sirt_reconstruct`).
 
 ## 参考(サンプルデータ・文献)
 
@@ -48,6 +57,7 @@ into a limit cycle rather than a point.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [ct_scan_modes](../../../../examples/ct_scan_modes.py) — `py -3.11 examples/ct_scan_modes.py`
+- [poc_real_walnut_cbct](../../../../examples/poc_real_walnut_cbct.py) — `py -3.11 examples/poc_real_walnut_cbct.py`
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)
 

@@ -60,6 +60,7 @@ import numpy as np
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 import fullseye as fs  # noqa: E402
 import examplefig as figs  # noqa: E402
+import realdata  # noqa: E402
 
 L = fs.ledger
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -75,6 +76,7 @@ def load():
               "geoid_height_m", "x_m", "y_m", "z_m"):
         cols[k] = cols[k].astype(np.float64)
     cols["source_code"] = cols["source_code"].astype(int)
+    realdata.mark_read("ngs-geodetic-benchmarks")
     return d, cols
 
 

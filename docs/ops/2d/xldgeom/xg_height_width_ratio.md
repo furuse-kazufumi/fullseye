@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_geometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # xg_height_width_ratio — 2D `xldgeom` op
@@ -39,8 +39,9 @@ Axis-aligned bounding-box height/width ratio of the point set.
 ``h = max(row) - min(row)`` と列方向の広がり ``w = max(col) - min(col)`` の比
 ``h / w`` を返す。``a``, ``b`` は未使用。
 
-返り値は ``numpy.float64``。点が無ければ 0.0。``w < 1e-12``(全点が同じ列=
-縦一直線)では ``h > 1e-12`` なら 1e6、そうでなければ 0.0。上限は 1e6。
+返り値は ``numpy.float64``。点が無ければ 0.0。``w`` が座標の大きさの 1e-12 倍以下
+(全点が同じ列=縦一直線)では ``h`` がそれより大きければ 1e6、そうでなければ 0.0。
+上限は 1e6。
 軸並行の bbox なので回転に不変ではない(45° 傾いた細長い輪郭は 1 に近づく)。
 回転不変な細長さは ``xg_elliptic_axis`` / ``xg_eccentricity`` を使う。
 ``h``, ``w`` は点座標の範囲(画素中心間の距離)で、画素数ベースの幅より 1 小さい。

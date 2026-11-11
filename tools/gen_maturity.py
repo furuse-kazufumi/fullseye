@@ -41,6 +41,13 @@ v0.1.10 のリリースノートに「実データで検証済み」という成
 外部報告の導入前と**同じ**になる(空の台帳で表が動いたら、台帳が黙って何かを
 主張している)。``tests/test_maturity.py`` が確かめる。
 
+★「実データで検証済み」は、**門と同じ条件で例が実データを読んだ**ときだけ(2026-11-05、
+敵対的検証 第 2 巡 D6)。それまでは「例が ``data: real`` で門が走らせる」だけで段を出しており、
+実データが CI に無い例(実データの章を飛ばし、手元の記録を印字して PASS する)まで
+``validated-public-real-data`` になっていた。例は読んだ所で ``realdata.mark_read`` を呼び、
+``tools/record_real_data_runs.py`` が門と同じ条件(手元のキャッシュ無し)で走らせて
+``docs/real_data_runs.json`` に残す。ここはその記録を読む。
+
 ★「走る」の判定は**門の実体**に基づく。``examples/poc_*.py`` は
 ``tests/test_poc_scripts_run.py`` が全数を副プロセスで走らせる。3-D 例は
 ``examples3d.py`` の全数実行があり、スイートはその代表部分集合だけを走らせる。
@@ -65,6 +72,9 @@ import examples3d as EX3  # noqa: E402
 SRC_DIR = os.path.join(_ROOT, "docs", "capabilities")
 OUT_MD = os.path.join(_ROOT, "docs", "MATURITY.md")
 OUT_JSON = os.path.join(_ROOT, "docs", "maturity.json")
+#: 実データの例を門と同じ条件で走らせ、実データを読んだかを記録した台帳(tools/record_real_data_runs.py)。
+REAL_RUNS = os.path.join(_ROOT, "docs", "real_data_runs.json")
+REAL_RUNS_REL = "docs/real_data_runs.json"
 
 #: はしごの 4 段。順に強くなる。定義は生成物にも書き出す(読み手が判定を再現できるように)。
 LADDER = [
@@ -178,10 +188,28 @@ def _test_sources() -> str:
     return "\n".join(parts)
 
 
-def _example_facts(eid: str) -> dict:
+def load_real_runs(path: str = REAL_RUNS) -> dict:
+    """``docs/real_data_runs.json`` の ``{例: {exit, printed_pass, datasets_read}}``(fail-closed)。"""
+    if not os.path.exists(path):
+        raise MaturityError("%s が無い —— `py -3.11 tools/record_real_data_runs.py` で測る" % REAL_RUNS_REL)
+    with io.open(path, encoding="utf-8") as fh:
+        doc = json.load(fh)
+    runs = doc.get("examples")
+    if not isinstance(runs, dict):
+        raise MaturityError("%s: examples がオブジェクトでない" % REAL_RUNS_REL)
+    for eid, rec in runs.items():
+        if not (isinstance(rec, dict) and isinstance(rec.get("datasets_read"), list)
+                and isinstance(rec.get("exit"), int)):
+            raise MaturityError("%s: %s の形が違う" % (REAL_RUNS_REL, eid))
+    return runs
+
+
+def _example_facts(eid: str, real_runs: dict | None = None) -> dict:
     """例 1 件について ``data`` と「どの門が走らせるか」を返す。
 
     ★ここが嘘をつくと表全体が嘘になるので、**門の実体に対応する文字列**しか返さない。
+    ``data: real`` の例は、門と同じ条件で実データを読んだか(``real_data_read_in_gate``)も返す。
+    記録が無ければ止める(読んだかどうか分からない例で段を決めない)。
     """
     e2 = EX2._BY_ID.get(eid)
     e3 = EX3._BY_ID.get(eid)
@@ -197,9 +225,19 @@ def _example_facts(eid: str) -> dict:
         gate = "examples3d.py (suite runs a smoke subset)"
     else:
         gate = None
-    return {"id": eid, "data": data, "gate": gate,
-            "executed": gate is not None,
-            "registry": "examples2d" if e2 is not None else "examples3d"}
+    facts = {"id": eid, "data": data, "gate": gate,
+             "executed": gate is not None,
+             "registry": "examples2d" if e2 is not None else "examples3d"}
+    if data == "real":
+        runs = load_real_runs() if real_runs is None else real_runs
+        rec = runs.get(eid)
+        if rec is None:
+            raise MaturityError("例 %s は data: real だが %s に記録が無い —— "
+                                "`py -3.11 tools/record_real_data_runs.py %s` で測る"
+                                % (eid, REAL_RUNS_REL, eid))
+        facts["real_data_read_in_gate"] = bool(rec["exit"] == 0 and rec["datasets_read"])
+        facts["real_datasets_read"] = list(rec["datasets_read"])
+    return facts
 
 
 def load_registry(path: str = REGISTRY, capability_ids=None) -> list:
@@ -294,27 +332,82 @@ def external_status(reports: list):
 
 def _status(ops_total: int, ops_tested: int, examples: list) -> str:
     ran = [e for e in examples if e["executed"]]
-    if any(e["data"] == "real" for e in ran):
+    if any(e["data"] == "real" and e.get("real_data_read_in_gate") for e in ran):
         return "validated-public-real-data"
     if ran or (ops_total and ops_tested == ops_total):
         return "verified-synthetic"
     return "research-prototype"
 
 
+#: 試験が例を走らせる形(import かパス)。``{n}`` に例の名前(re.escape 済み)。
+_RUNS_EXAMPLE = (r"from\s+examples\s+import\s+[^\n]*\b{n}\b|from\s+examples\.{n}\s+import"
+                 r"|import\s+examples\.{n}\b|examples[/\\]{n}\.py\b")
+
+
+def _excluded_scripts():
+    """台帳の外のスクリプト(``examples2d.EXCLUDED``)を「名指しの試験が走らせる」と「どの門も
+    走らせない」に分ける。``poc_*`` は PoC の門がディスクから全数を拾うので常に走る。
+
+    返り値: ``({名前: 走らせる試験の一覧}, {名前: 走らない理由(EXCLUDED の文)})``。
+    ★「走らせる」は、試験がその例を **import する**(``from examples import X`` /
+    ``from examples.X import`` / ``import examples.X``)か **パスで起動する**(``examples/X.py``)こと。
+    名前が文字列で現れるだけ(この台帳を検査する試験が名前を挙げる等)は数えない。
+    """
+    run, not_run = {}, {}
+    for name in sorted(EX2.EXCLUDED):
+        if name.startswith("poc_"):
+            run[name] = ["tests/test_poc_scripts_run.py"]
+            continue
+        hits = sorted(os.path.relpath(p, _ROOT).replace(os.sep, "/")
+                      for p in glob.glob(os.path.join(_ROOT, "tests", "*.py"))
+                      if re.search(_RUNS_EXAMPLE.format(n=re.escape(name)),
+                                io.open(p, encoding="utf-8", errors="ignore").read()))
+        if hits:
+            run[name] = hits
+        else:
+            not_run[name] = EX2.EXCLUDED[name]
+    return run, not_run
+
+
+def _named_in(ops, tests: str, tokens: set) -> list:
+    """*ops* のうち ``tests`` に ``\\b<op>\\b`` で現れるもの(順序は *ops* のまま)。
+
+    ★2026-11-10(CI の高速化): 以前は op ごとに 10 MB の試験ソースへ正規表現を掛けていて、
+    ``collect()`` 1 回が約 53 秒(その 98 % がこの検索、8,116 回)。``tests/test_validation_reports.py``
+    は ``collect()`` を 18 回呼ぶので、そのファイルだけで約 975 秒だった。
+    op 名が単語文字だけ(``\\w+``)なら、``\\b<op>\\b`` に当たるのは「``\\w+`` で切り出した語の
+    どれかが op 名と一致する」ときと**同じ**(前後が単語文字でない = その語そのもの)なので、
+    語の集合を 1 回作って引く。単語文字以外を含む名前だけ従来どおり正規表現で探す。
+    同じ答えになることは ``tests/test_maturity.py`` の門(コミット済みの台帳と生成結果の一致)と
+    ``tests/test_ci_speedup_equivalence_2026_11_10.py``(旧来の検索との突き合わせ)が見る。
+    """
+    out = []
+    for o in ops:
+        if re.fullmatch(r"\w+", o):
+            hit = o in tokens
+        else:
+            hit = re.search(r"\b%s\b" % re.escape(o), tests) is not None
+        if hit:
+            out.append(o)
+    return out
+
+
 def collect(registry_path: str = REGISTRY) -> dict:
     tests = _test_sources()
+    tokens = set(re.findall(r"\w+", tests))
     rows = []
     paths = sorted(glob.glob(os.path.join(SRC_DIR, "*.md")))
     cap_ids = {_front_matter(io.open(p, encoding="utf-8").read(), p)["id"] for p in paths}
     reports = load_registry(registry_path, cap_ids)
+    real_runs = load_real_runs()
     for path in paths:
         meta = _front_matter(io.open(path, encoding="utf-8").read(), path)
         ops = list(meta["ops"])
         # ★これは**下界**。``tests/`` に op 名が literal で現れるかしか見ていないので、
         # 台帳を舐めて全 op を回す掃引型の試験(``for name in ledger: ...``)は数えない。
         # 「試験が無い」ではなく「**名指しの試験が無い**」と読むこと。
-        tested = [o for o in ops if re.search(r"\b%s\b" % re.escape(o), tests)]
-        examples = [_example_facts(e) for e in meta["examples"]]
+        tested = _named_in(ops, tests, tokens)
+        examples = [_example_facts(e, real_runs) for e in meta["examples"]]
         rows.append({
             "id": meta["id"],
             "title": meta["title"],
@@ -350,6 +443,7 @@ def collect(registry_path: str = REGISTRY) -> dict:
     all_2d = [e["id"] for e in EX2.EXAMPLES]
     poc = [i for i in all_2d if i.startswith("poc_")]
     other = [i for i in all_2d if not i.startswith("poc_")]
+    run_by_gate, not_run = _excluded_scripts()
     out = {
         "generated_by": "tools/gen_maturity.py",
         "how_to_read": "ladder の判定は capabilities[].examples と ops_named_in_tests から "
@@ -360,7 +454,13 @@ def collect(registry_path: str = REGISTRY) -> dict:
             "examples2d_total": len(all_2d),
             "run_by_the_poc_gate": len(poc),
             "run_by_the_example_gate": len(other),
-            "not_run_by_any_gate": 0,
+            # ★2026-11-05(敵対的検証 第 2 巡 D7): ここは定数 0 だった。台帳の外のスクリプト
+            #   (examples2d.EXCLUDED)を数えておらず、どの門も走らせない 4 本が見えていなかった。
+            "scripts_on_disk": len(EX2.discover()),
+            "excluded_from_the_registry": len(EX2.EXCLUDED),
+            "excluded_but_run_by_a_named_test": run_by_gate,
+            "not_run_by_any_gate": len(not_run),
+            "not_run_by_any_gate_reasons": not_run,
             "gates": ["tests/test_poc_scripts_run.py",
                       "tests/test_example_scripts_run.py"],
             "note": "2026-09-09 まで poc_* 以外の 83 件を実行する門が無く、"
@@ -411,8 +511,11 @@ def render(d: dict) -> str:
             "|---|---|---|---|---|---|"]
     for r in d["capabilities"]:
         ex = "<br>".join(
-            "`%s` %s %s" % (e["id"], e["data"],
-                            ("→ %s" % e["gate"]) if e["executed"] else "→ **走る門が無い**")
+            "`%s` %s%s %s" % (e["id"], e["data"],
+                              "" if e["data"] != "real" else (
+                                  "(門の実行で実データを読む)" if e.get("real_data_read_in_gate")
+                                  else "(**門の実行では実データを読まない**)"),
+                              ("→ %s" % e["gate"]) if e["executed"] else "→ **走る門が無い**")
             for e in r["examples"])
         out.append("| [%s](capabilities/%s) | %s | %s | `%s` | %d/%d | %s |" % (
             r["title"], os.path.basename(r["note"]), r["title_en"], r["category"],
@@ -446,7 +549,15 @@ def render(d: dict) -> str:
             "| `tests/test_poc_scripts_run.py` が走らせる | %d |" % e["run_by_the_poc_gate"],
             "| `tests/test_example_scripts_run.py` が走らせる | %d |"
             % e["run_by_the_example_gate"],
+            "| ディスク上の例のスクリプト(`examples/*.py`) | %d |" % e["scripts_on_disk"],
+            "| うち 2-D 台帳の外(`examples2d.EXCLUDED`) | %d |" % e["excluded_from_the_registry"],
+            "| 台帳の外だが、名指しの試験が走らせる | %d |" % len(e["excluded_but_run_by_a_named_test"]),
             "| **どの門も走らせていない** | **%d** |" % e["not_run_by_any_gate"],
+            ""] + ["- `%s` —— %s" % kv for kv in sorted(e["not_run_by_any_gate_reasons"].items())] + [
+            "",
+            "「実データで検証済み」の段は、門と同じ条件(手元のキャッシュ無し)で例を走らせて",
+            "実データを読んだと記録された例だけで決まります(`%s`、"
+            "`tools/record_real_data_runs.py` が測る)。" % REAL_RUNS_REL,
             "",
             "走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり",
             "(31 本のうち 4 本が exit 1 のまま放置)、**2026-09-09 に同じ穴が 1 つ内側で",

@@ -312,7 +312,8 @@ def k_photometric(dev):
         Lp = torch.as_tensor(np.asarray(Lpinv, np.float32), device=dev)
         g = Lp @ I
         albedo = torch.linalg.vector_norm(g, dim=0)
-        good = albedo > 1e-8
+        # photometric.albedo_floor と同じ相対床(2026-11-05 敵対的検証 第 2 巡 K4)
+        good = albedo > 1e-8 * float(I.abs().max())
         n = torch.where(good, g / albedo.clamp_min(1e-30), torch.zeros_like(g))
         n[2] = torch.where(good, n[2], torch.ones_like(n[2]))
         return (n.T.reshape(H, W, 3).cpu().numpy().astype(np.float64),

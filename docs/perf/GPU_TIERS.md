@@ -18,18 +18,18 @@
 | tier | 件数 |
 |---|---:|
 | `required` | 49 |
-| `suitable` | 2184 |
-| `partial` | 643 |
-| `none` | 934 |
-| **合計** | **3810** |
+| `suitable` | 2200 |
+| `partial` | 650 |
+| `none` | 936 |
+| **合計** | **3835** |
 
 ## GPU 対応率
 
 指標 = `gpu_status=あり` の件数 ÷ (`required` + `suitable`) の件数(件数÷全体ではない)。現状値をそのまま書く(低くてよい)。
 
 - gpu 経路あり: **173**
-- `required` + `suitable`: **2233**
-- **GPU 対応率 = 7.7%** (173 / 2233)
+- `required` + `suitable`: **2249**
+- **GPU 対応率 = 7.7%** (173 / 2249)
 
 正直な内訳: gpu 経路を持つ op のうち 50 件は `partial`(領域モルフォロジ等)、0 件は `none` で、分母には入らない(分子にのみ計上)。
 
@@ -126,6 +126,7 @@
 | inf | 0 | 0 | 0 | 12 | 12 |
 | isp | 0 | 12 | 0 | 0 | 12 |
 | kendamaworld | 0 | 0 | 0 | 12 | 12 |
+| locomotion | 0 | 3 | 7 | 2 | 12 |
 | perpetual | 0 | 11 | 0 | 1 | 12 |
 | photoelastic | 0 | 9 | 0 | 3 | 12 |
 | sdf_csg | 0 | 12 | 0 | 0 | 12 |
@@ -134,6 +135,7 @@
 | symmetry | 0 | 8 | 4 | 0 | 12 |
 | synth | 0 | 8 | 4 | 0 | 12 |
 | tacdome | 0 | 7 | 0 | 5 | 12 |
+| walkterrain | 0 | 12 | 0 | 0 | 12 |
 | world | 0 | 0 | 1 | 11 | 12 |
 | construct | 0 | 1 | 8 | 2 | 11 |
 | ct_scan | 0 | 10 | 0 | 1 | 11 |
@@ -244,6 +246,7 @@
 | calibrate | 0 | 2 | 3 | 0 | 5 |
 | cavity | 0 | 0 | 2 | 3 | 5 |
 | depth | 0 | 4 | 0 | 1 | 5 |
+| derivative | 0 | 5 | 0 | 0 | 5 |
 | direction | 0 | 3 | 2 | 0 | 5 |
 | evaluate | 0 | 1 | 3 | 1 | 5 |
 | film | 0 | 1 | 3 | 1 | 5 |
@@ -286,7 +289,6 @@
 | check | 0 | 0 | 0 | 4 | 4 |
 | decode | 0 | 3 | 0 | 1 | 4 |
 | deform | 1 | 2 | 1 | 0 | 4 |
-| derivative | 0 | 4 | 0 | 0 | 4 |
 | dichromatic | 0 | 4 | 0 | 0 | 4 |
 | dimension | 0 | 3 | 1 | 0 | 4 |
 | estimate | 3 | 1 | 0 | 0 | 4 |

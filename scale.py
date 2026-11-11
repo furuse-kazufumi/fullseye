@@ -46,7 +46,9 @@ _CV2_LIMITED_HINTS = ("polar", "warp", "logpolar")                   # cv2 SHRT_
 # become genuinely tileable (stale). A category-only classifier said 141 of these
 # were safe; they are not.
 _NOT_TILE_SAFE = frozenset({
-    'anisotropic_diffusion', 'bothat', 'clahe', 'closest_point_transform', 'coherence_enhancing_diff', 'corner_response',
+    # 2026-11-05(敵対的検証 第 2 巡 P7): anisotropic_diffusion / coherence_enhancing_diff / monotony は
+    #   np.roll の周期境界をやめてタイル可能になったので外した(test_not_tile_safe_list_is_not_stale で実測 0.0)。
+    'bothat', 'clahe', 'closest_point_transform', 'corner_response',
     'cv_blackhat', 'cv_clahe', 'cv_corner_harris', 'cv_dist', 'cv_gradient', 'cv_laplacian',
     'cv_min_eigen', 'cv_precorner', 'cv_scharr', 'cv_tophat', 'derivate_gauss', 'deviation_image',
     'diff_of_gauss', 'dist_transform', 'dist_transform_abs', 'distance_transform', 'dl_aniso_diffusion', 'dog', 'dots_image',
@@ -67,7 +69,7 @@ _NOT_TILE_SAFE = frozenset({
     'f2_gauss_pyramid', 'f2_gray_inside', 'f2_gray_skeleton', 'f2_symmetry', 'f2_topographic', 'fill_up_shape',
     'structure_tensor_orientation', 'structure_tensor_coherence',
     'frei_amp', 'get_region_convex', 'gray_bothat', 'gray_range_rect', 'gray_tophat', 'illuminate',
-    'junctions_skeleton', 'kirsch_amp', 'laplace', 'laplace_of_gauss', 'log', 'monotony',
+    'junctions_skeleton', 'kirsch_amp', 'laplace', 'laplace_of_gauss', 'log',
     'morph_grad', 'morph_skeleton', 'points_foerstner', 'points_harris_binomial', 'prewitt_amp', 'prewitt_mag',
     'pruning', 'r2_inner_circle', 'r2_inner_rectangle1', 'r2_partition_rectangle', 'r2_smallest_circle', 'r2_smallest_rectangle1',
     'r2_smallest_rectangle2', 'r2_sort_region', 'r2_split_skeleton_lines', 'r3_clip_region', 'r3_label_to_region', 'r3_partition_dynamic',

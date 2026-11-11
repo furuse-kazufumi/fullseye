@@ -9,6 +9,31 @@
   "hi"
  ],
  "summaries": {
+  "drive/elevation_map": {"fp":"35ab23881c1b","ja":"点群を 2.5-D の高さ格子に集める。","en":"Bin a point cloud into a 2.5-D elevation grid.","zh":"将点云分箱为 2.5-D 高程栅格。","tw":"將點雲分箱為 2.5-D 高程網格。","ko":"점군을 2.5-D 고도 격자로 비닝한다.","de":"Bündelt eine Punktwolke in ein 2,5-D-Höhenraster.","hi":"Point cloud को 2.5-D elevation grid में bin करता है।"},
+  "drive/fill_gaps": {"fp":"ea9680e20a69","ja":"``nan`` のセルを最も近い有限の高さで埋める(最近傍)。","en":"Fill ``nan`` cells with the nearest finite height (nearest-neighbour).","zh":"用最近的有限高度填充 ``nan`` 单元(最近邻)。","tw":"以最近的有限高度填補 ``nan`` 格(最近鄰)。","ko":"``nan`` 셀을 가장 가까운 유한 높이로 채운다(최근접 이웃).","de":"Füllt ``nan``-Zellen mit der nächstgelegenen endlichen Höhe (nächster Nachbar).","hi":"``nan`` cells को निकटतम finite ऊँचाई से भरता है (nearest-neighbour)।"},
+  "drive/elevation_traversability": {"fp":"5822d31e9b15","ja":"高さ図の通れるセル(True = 段差と傾きの上限の内側)—— :func:`traversability` の台帳の入口。","en":"Traversable cells of an elevation map (True = within the step and slope limits) — ledger door of :func:`traversability`.","zh":"高程图中可通行的单元(True = 在台阶与坡度上限之内)—— :func:`traversability` 的台账入口。","tw":"高程圖中可通行的格(True = 在台階與坡度上限之內)—— :func:`traversability` 的台帳入口。","ko":"고도 지도에서 통행 가능한 셀(True = 단차와 경사 한계 이내) —— :func:`traversability` 의 대장 입구.","de":"Befahrbare Zellen einer Höhenkarte (True = innerhalb der Stufen- und Neigungsgrenzen) — Ledger-Eingang von :func:`traversability`.","hi":"Elevation map की पार करने योग्य cells (True = step और slope सीमाओं के भीतर) — :func:`traversability` का ledger door।"},
+  "drive/foothold_score": {"fp":"90fe79123dfb","ja":"セルごとの平らさの点数 [0, 1] (1 = 平らで水平 = 良い足場)。","en":"Per-cell flatness score in [0, 1] (1 = flat & level = good foothold).","zh":"每个单元的平坦度得分 [0, 1] (1 = 平坦且水平 = 好的落脚点)。","tw":"每格的平坦度分數 [0, 1] (1 = 平坦且水平 = 好的落腳點)。","ko":"셀별 평탄도 점수 [0, 1] (1 = 평평하고 수평 = 좋은 발 디딤 자리).","de":"Ebenheitswert je Zelle in [0, 1] (1 = eben und waagerecht = guter Trittpunkt).","hi":"प्रति-cell समतलता score [0, 1] में (1 = समतल व क्षैतिज = अच्छा foothold)।"},
+  "drive/ground_surface": {"fp":"12087435c2f5","ja":"濃淡のオープニング(最小値フィルタのあと最大値フィルタ)による、歩ける地面のなめらかな包絡。","en":"Smooth walkable-ground envelope by grey-opening (min-filter then max-filter).","zh":"通过灰度开运算(先最小滤波再最大滤波)得到平滑的可行走地面包络。","tw":"以灰階開運算(先最小濾波再最大濾波)得到平滑的可行走地面包絡。","ko":"그레이 열림(최소 필터 후 최대 필터)으로 얻은 매끄러운 보행 가능 지면 포락선.","de":"Glatte Hüllfläche des begehbaren Bodens durch Grauwert-Öffnung (erst Minimum-, dann Maximumfilter).","hi":"Grey-opening (पहले min-filter फिर max-filter) से चलने योग्य ज़मीन का चिकना envelope।"},
+  "drive/ground_plane": {"fp":"66e5cf833b0f","ja":"セルごとの頑健な最小二乗の地面の平面 ``z = a·x + b·y + c``。","en":"Robust least-squares ground plane ``z = a·x + b·y + c`` per cell.","zh":"每个单元的稳健最小二乘地面平面 ``z = a·x + b·y + c``。","tw":"每格的穩健最小平方地面平面 ``z = a·x + b·y + c``。","ko":"셀별 강건 최소제곱 지면 평면 ``z = a·x + b·y + c``.","de":"Robuste Kleinste-Quadrate-Bodenebene ``z = a·x + b·y + c`` je Zelle.","hi":"प्रति cell robust least-squares ground plane ``z = a·x + b·y + c``।"},
+  "drive/detect_obstacles": {"fp":"8ebea5dcafe6","ja":"歩ける地面から *clearance* より高く立ち上がるセルを切り出す。","en":"Segment cells rising more than *clearance* above the walkable ground.","zh":"分割出高出可行走地面超过 *clearance* 的单元。","tw":"分割出高出可行走地面超過 *clearance* 的格。","ko":"보행 가능 지면보다 *clearance* 이상 솟은 셀을 분할한다.","de":"Segmentiert Zellen, die mehr als *clearance* über den begehbaren Boden ragen.","hi":"चलने योग्य ज़मीन से *clearance* से अधिक ऊपर उठी cells को segment करता है।"},
+  "drive/fuse_elevation": {"fp":"2a9a5593462c","ja":"位置の揃った複数の高さ格子を、ロボット中心の 1 枚の地図に融合する。","en":"Fuse several aligned elevation grids into one robot-centric map.","zh":"将多个对齐的高程栅格融合为一张以机器人为中心的地图。","tw":"將多個對齊的高程網格融合為一張以機器人為中心的地圖。","ko":"정렬된 여러 고도 격자를 하나의 로봇 중심 지도로 융합한다.","de":"Verschmilzt mehrere ausgerichtete Höhenraster zu einer roboterzentrierten Karte.","hi":"कई aligned elevation grids को एक robot-centric map में fuse करता है।"},
+  "drive/roughness_map": {"fp":"b3ae276ea9ac","ja":"セルごとの表面の粗さ = ``window`` の近傍の高さの標準偏差。瓦礫・草地で大きく、なめらかな地面で ~0。","en":"Per-cell surface roughness = local height standard deviation over a ``window`` neighbourhood. High on rubble / vegetation, ~0 on smooth ground.","zh":"每个单元的表面粗糙度 = ``window`` 邻域内高度的局部标准差。碎石 / 植被上高,平滑地面上约为 0。","tw":"每格的表面粗糙度 = ``window`` 鄰域內高度的局部標準差。碎石 / 植被上高,平滑地面上約為 0。","ko":"셀별 표면 거칠기 = ``window`` 근방에서의 국소 높이 표준편차. 잔해 / 초목 위에서 높고, 매끄러운 지면에서는 ~0.","de":"Oberflächenrauheit je Zelle = lokale Standardabweichung der Höhe in einer ``window``-Nachbarschaft. Hoch auf Schutt / Bewuchs, ~0 auf glattem Boden.","hi":"प्रति-cell सतह खुरदरापन = ``window`` पड़ोस में स्थानीय ऊँचाई का standard deviation। मलबे / वनस्पति पर अधिक, चिकनी ज़मीन पर ~0।"},
+  "drive/elevation_normals": {"fp":"0a05cab545c2","ja":"高さ図の上向きの単位法線 (H, W, 3) —— :func:`surface_normals` の台帳の入口。","en":"Unit up-pointing normals (H, W, 3) of an elevation map — ledger door of :func:`surface_normals`.","zh":"高程图的朝上单位法线 (H, W, 3) —— :func:`surface_normals` 的台账入口。","tw":"高程圖的朝上單位法線 (H, W, 3) —— :func:`surface_normals` 的台帳入口。","ko":"고도 지도의 위를 향하는 단위 법선 (H, W, 3) —— :func:`surface_normals` 의 대장 입구.","de":"Nach oben zeigende Einheitsnormalen (H, W, 3) einer Höhenkarte — Ledger-Eingang von :func:`surface_normals`.","hi":"Elevation map की ऊपर की ओर इकाई normals (H, W, 3) — :func:`surface_normals` का ledger door।"},
+  "drive/elevation_step_edges": {"fp":"68c2b884da89","ja":"高さ図の段差の縁(縁石・階段の段鼻)-> ``(edge_mask, signed_rise)``(台帳の入口)。","en":"Step edges (curbs / stair nosings) of an elevation map -> ``(edge_mask, signed_rise)`` (ledger door).","zh":"高程图的台阶边缘(路缘 / 台阶前缘)-> ``(edge_mask, signed_rise)``(台账入口)。","tw":"高程圖的台階邊緣(路緣 / 階梯前緣)-> ``(edge_mask, signed_rise)``(台帳入口)。","ko":"고도 지도의 단차 가장자리(연석 / 계단 코) -> ``(edge_mask, signed_rise)``(대장 입구).","de":"Stufenkanten (Bordsteine / Treppenkanten) einer Höhenkarte -> ``(edge_mask, signed_rise)`` (Ledger-Eingang).","hi":"Elevation map के step edges (curb / सीढ़ी के किनारे) -> ``(edge_mask, signed_rise)`` (ledger door)।"},
+  "drive/foothold_candidates": {"fp":"c272f1060615","ja":"地形から、離散的な安全な足の置き場所を選ぶ。","en":"Pick discrete safe stepping targets from the terrain.","zh":"从地形中挑选离散的安全落脚目标。","tw":"從地形中挑選離散的安全落腳目標。","ko":"지형에서 이산적인 안전한 발 디딤 목표를 고른다.","de":"Wählt diskrete sichere Trittziele aus dem Gelände.","hi":"Terrain से अलग-अलग सुरक्षित कदम रखने के लक्ष्य चुनता है।"},
+  "drive/contact_points": {"fp":"b8cd5d3a0d35","ja":"地面の平面 ``[a,b,c,d]`` から *tol* 以内の点 = 接地点。","en":"Points lying within *tol* of a ground plane ``[a,b,c,d]`` = ground contacts.","zh":"位于地面平面 ``[a,b,c,d]`` 的 *tol* 以内的点 = 地面接触点。","tw":"位於地面平面 ``[a,b,c,d]`` 的 *tol* 以內的點 = 地面接觸點。","ko":"지면 평면 ``[a,b,c,d]`` 에서 *tol* 이내에 있는 점 = 지면 접촉점.","de":"Punkte innerhalb von *tol* einer Bodenebene ``[a,b,c,d]`` = Bodenkontakte.","hi":"Ground plane ``[a,b,c,d]`` के *tol* के भीतर स्थित बिंदु = ground contacts।"},
+  "drive/com_from_silhouette": {"fp":"224bc8f92494","ja":"二値のシルエットの重心(図心)を画像座標の ``(row, col)`` で。質量の模型が無いときの、体の重心の射影の安い代わり(evis/hillco の姿勢)。空の mask では ``(nan, nan)`` を返す。","en":"Centre of mass (centroid) of a binary silhouette, as ``(row, col)`` in image coordinates. A cheap proxy for the body COM projection when a full mass model is unavailable (evis/hillco posture). Returns ``(nan, nan)`` for an empty mask.","zh":"二值轮廓的质心(形心),以图像坐标 ``(row, col)`` 表示。在没有完整质量模型时作为身体 COM 投影的廉价代理(evis/hillco 姿态)。空掩码返回 ``(nan, nan)``。","tw":"二值輪廓的質心(形心),以影像座標 ``(row, col)`` 表示。在沒有完整質量模型時作為身體 COM 投影的廉價代理(evis/hillco 姿態)。空遮罩回傳 ``(nan, nan)``。","ko":"이진 실루엣의 질량 중심(도심)을 영상 좌표 ``(row, col)`` 로. 완전한 질량 모델이 없을 때 몸 COM 투영의 값싼 대용(evis/hillco 자세). 빈 마스크에는 ``(nan, nan)`` 을 반환한다.","de":"Schwerpunkt (Flächenschwerpunkt) einer binären Silhouette als ``(row, col)`` in Bildkoordinaten. Billiger Ersatz für die Projektion des Körperschwerpunkts, wenn kein vollständiges Massenmodell vorliegt (evis/hillco-Haltung). Gibt ``(nan, nan)`` für eine leere Maske zurück.","hi":"Binary silhouette का द्रव्यमान केंद्र (centroid), image coordinates में ``(row, col)`` के रूप में। पूरा mass model न होने पर शरीर के COM projection का सस्ता proxy (evis/hillco posture)। खाली mask के लिए ``(nan, nan)`` लौटाता है।"},
+  "drive/support_polygon": {"fp":"537580f5dde6","ja":"接地点の凸な支持多角形(地面の x, y 平面)。","en":"Convex support polygon of the ground-contact points (ground x, y plane).","zh":"地面接触点的凸支撑多边形(地面 x, y 平面)。","tw":"地面接觸點的凸支撐多邊形(地面 x, y 平面)。","ko":"지면 접촉점의 볼록 지지 다각형(지면 x, y 평면).","de":"Konvexes Stützpolygon der Bodenkontaktpunkte (Boden-x-y-Ebene).","hi":"Ground-contact बिंदुओं का convex support polygon (ज़मीन का x, y तल)।"},
+  "drive/com_support_margin": {"fp":"85bf149eb21e","ja":"静的安定余裕: 重心の地面への射影から支持多角形の境界までの符号つき距離(McGhee & Frank 1968)。","en":"Static stability margin: signed distance from the COM ground-projection to the support-polygon boundary (McGhee & Frank 1968).","zh":"静态稳定裕度:COM 的地面投影到支撑多边形边界的有符号距离(McGhee & Frank 1968)。","tw":"靜態穩定裕度:COM 的地面投影到支撐多邊形邊界的有號距離(McGhee & Frank 1968)。","ko":"정적 안정 여유: COM 의 지면 투영에서 지지 다각형 경계까지의 부호 있는 거리(McGhee & Frank 1968).","de":"Statischer Stabilitätsrand: vorzeichenbehafteter Abstand der Bodenprojektion des Schwerpunkts zum Rand des Stützpolygons (McGhee & Frank 1968).","hi":"Static stability margin: COM के ground-projection से support-polygon की सीमा तक signed दूरी (McGhee & Frank 1968)।"},
+  "drive/gait_phase": {"fp":"29698370f5a5","ja":"足の高さから、各コマで各足を立脚(着地)か遊脚かに分ける。","en":"Classify each foot as stance (planted) or swing per frame from its height.","zh":"根据高度逐帧把每只脚分类为支撑相(着地)或摆动相。","tw":"依高度逐格把每隻腳分類為支撐相(著地)或擺動相。","ko":"높이로부터 프레임마다 각 발을 입각(착지) 또는 유각으로 분류한다.","de":"Klassifiziert jeden Fuß je Bild anhand seiner Höhe als Stand (aufgesetzt) oder Schwung.","hi":"ऊँचाई से हर frame में हर पैर को stance (ज़मीन पर) या swing में वर्गीकृत करता है।"},
+  "drive/support_line_margin": {"fp":"3f51cf467d04","ja":"どの支持の形でも定義される支持の余裕(2 足支持の線分も含む)。","en":"Support margin that is defined for EVERY support set, including two-foot (segment) support.","zh":"对任何支撑集合都有定义的支撑裕度,包括双足(线段)支撑。","tw":"對任何支撐集合都有定義的支撐裕度,包括雙足(線段)支撐。","ko":"두 발(선분) 지지를 포함해 모든 지지 집합에서 정의되는 지지 여유.","de":"Stützrand, der für JEDE Stützmenge definiert ist, auch für Zweifuß-(Strecken-)Stütze.","hi":"हर support set के लिए परिभाषित support margin, दो-पैर (segment) support सहित।"},
+  "drive/lipm_capture_point": {"fp":"a70e189d436f","ja":"線形倒立振子の瞬時の捕捉点 ``xi = c + c_dot / omega``。","en":"Instantaneous capture point of the linear inverted pendulum, ``xi = c + c_dot / omega``.","zh":"线性倒立摆的瞬时捕获点,``xi = c + c_dot / omega``。","tw":"線性倒立擺的瞬時捕獲點,``xi = c + c_dot / omega``。","ko":"선형 역진자의 순간 포착점, ``xi = c + c_dot / omega``.","de":"Momentaner Capture Point des linearen inversen Pendels, ``xi = c + c_dot / omega``.","hi":"Linear inverted pendulum का तात्कालिक capture point, ``xi = c + c_dot / omega``।"},
+  "drive/capture_margin": {"fp":"a02a6f112000","ja":"LIPM の捕捉点から支持の形までの符号つき距離(踏み出さずに止まれるか)。","en":"Signed distance of the LIPM capture point to the support set (0-step capturability).","zh":"LIPM 捕获点到支撑集合的有符号距离(0 步可捕获性)。","tw":"LIPM 捕獲點到支撐集合的有號距離(0 步可捕獲性)。","ko":"LIPM 포착점에서 지지 집합까지의 부호 있는 거리(0 걸음 포착 가능성).","de":"Vorzeichenbehafteter Abstand des LIPM-Capture-Points zur Stützmenge (0-Schritt-Fangbarkeit).","hi":"LIPM capture point से support set तक signed दूरी (0-step capturability)।"},
+  "drive/gait_step_events": {"fp":"1bd0aed94448","ja":"足の軌跡から、ヒステリシスで歩行の一歩(離地 -> 遊脚 -> 着地)を取り出す。","en":"Extract walking steps (liftoff -> swing -> touchdown) from foot trajectories, with hysteresis.","zh":"用滞回从足部轨迹中提取行走的步(离地 -> 摆动 -> 着地)。","tw":"以遲滯從足部軌跡中擷取行走的步(離地 -> 擺動 -> 著地)。","ko":"히스테리시스로 발 궤적에서 걸음(이지 -> 유각 -> 착지)을 추출한다.","de":"Extrahiert Gehschritte (Abheben -> Schwung -> Aufsetzen) mit Hysterese aus Fußtrajektorien.","hi":"Hysteresis के साथ पैर की trajectories से चलने के कदम (liftoff -> swing -> touchdown) निकालता है।"},
+  "drive/foot_slip_metrics": {"fp":"7f8e4c411cbc","ja":"立脚中の足の水平の滑り、足で測った前進、「胴だけが進む」を落とす門。","en":"Horizontal foot slip during stance, foot-measured progression, and a 'body-only' gate.","zh":"支撑相中足部的水平滑移、由足测得的前进量,以及“只有躯干前进”的闸门。","tw":"支撐相中足部的水平滑移、由足測得的前進量,以及「只有軀幹前進」的閘門。","ko":"입각 중 발의 수평 미끄러짐, 발로 잰 전진, 그리고 '몸통만 전진' 관문.","de":"Horizontaler Fußschlupf während des Stands, mit den Füßen gemessener Vortrieb und ein „nur Rumpf“-Tor.","hi":"Stance के दौरान पैर का क्षैतिज slip, पैरों से मापी गई प्रगति, और 'केवल धड़' gate।"},
+  "drive/footstep_plan": {"fp":"50332730b249","ja":"足場の mask の上の、左右交互の着地点の列(厳密な最短経路)。","en":"Alternating left/right footstep sequence over a foothold mask (exact shortest path).","zh":"在落脚点掩码上的左右交替脚步序列(精确最短路径)。","tw":"在落腳點遮罩上的左右交替腳步序列(精確最短路徑)。","ko":"발 디딤 마스크 위의 좌우 교대 발걸음 순서(정확한 최단 경로).","de":"Abwechselnde Links/Rechts-Schrittfolge über einer Trittmaske (exakter kürzester Pfad).","hi":"Foothold mask पर बाएँ/दाएँ बारी-बारी कदमों का क्रम (सटीक shortest path)।"},
+  "drive/static_contact_force_lp": {"fp":"475f082ee67b","ja":"線形化した摩擦錐のもとでの静的な接触力の配分(``scipy.optimize.linprog``)。","en":"Static contact-force distribution under linearised friction cones (``scipy.optimize.linprog``).","zh":"线性化摩擦锥下的静态接触力分配(``scipy.optimize.linprog``)。","tw":"線性化摩擦錐下的靜態接觸力分配(``scipy.optimize.linprog``)。","ko":"선형화한 마찰 원뿔 아래의 정적 접촉력 분배(``scipy.optimize.linprog``).","de":"Statische Kontaktkraftverteilung unter linearisierten Reibkegeln (``scipy.optimize.linprog``).","hi":"Linearised friction cones के अंतर्गत static contact-force वितरण (``scipy.optimize.linprog``)।"},
+  "reprconv/voxel_to_hessian": {"fp":"d168771d1b83","en":"Volume ``voxel`` → the six components (zz, yy, xx, zy, zx, yx) of the 3-D Hessian ``hessian``. The entry into ``hessian`` built with numpy and scipy only.","zh":"体 ``voxel`` → 3-D Hessian ``hessian`` 的 6 个分量 (zz, yy, xx, zy, zx, yx)。仅用 numpy 与 scipy 构建的 ``hessian`` 类型的入口。","tw":"體 ``voxel`` → 3-D Hessian ``hessian`` 的 6 個分量 (zz, yy, xx, zy, zx, yx)。僅用 numpy 與 scipy 建構的 ``hessian`` 型別的入口。","ko":"볼륨 ``voxel`` → 3-D Hessian ``hessian`` 의 6 성분 (zz, yy, xx, zy, zx, yx). numpy 와 scipy 만으로 만드는 ``hessian`` 형의 입구.","de":"Volumen ``voxel`` → die sechs Komponenten (zz, yy, xx, zy, zx, yx) der 3-D-Hesse-Matrix ``hessian``. Der Eingang zu ``hessian``, nur mit numpy und scipy gebaut.","hi":"volume ``voxel`` → 3-D Hessian ``hessian`` के 6 components (zz, yy, xx, zy, zx, yx)। केवल numpy और scipy से बना ``hessian`` प्रकार का प्रवेश।"},
   "2d/tb_keypoints_rowcol_to_uv": {"fp":"b61a1b5b9113","en":"Image points ``(row, col)`` → ``(u, v) = (col, row)``. The bridge between the two conventions of the ``keypoints`` sort.","zh":"像面点 ``(row, col)`` → ``(u, v) = (col, row)``。``keypoints`` 类型两种约定之间的连接。","tw":"像面點 ``(row, col)`` → ``(u, v) = (col, row)``。``keypoints`` 型別兩種慣例之間的連接。","ko":"상면의 점 ``(row, col)`` → ``(u, v) = (col, row)``. ``keypoints`` 형의 두 관례 사이의 연결.","de":"Bildpunkte ``(row, col)`` → ``(u, v) = (col, row)``. Die Brücke zwischen den zwei Konventionen der Sorte ``keypoints``.","hi":"image points ``(row, col)`` → ``(u, v) = (col, row)``। ``keypoints`` sort की दो conventions के बीच का पुल।"},
   "2d/tb_keypoints_uv_to_rowcol": {"fp":"ed7eb218bbe6","en":"Image points ``(u, v) = (col, row)`` → ``(row, col)``. The reverse of :func:`keypoints_rowcol_to_uv`.","zh":"像面点 ``(u, v) = (col, row)`` → ``(row, col)``。:func:`keypoints_rowcol_to_uv` 的反向。","tw":"像面點 ``(u, v) = (col, row)`` → ``(row, col)``。:func:`keypoints_rowcol_to_uv` 的反向。","ko":"상면의 점 ``(u, v) = (col, row)`` → ``(row, col)``. :func:`keypoints_rowcol_to_uv` 의 역방향.","de":"Bildpunkte ``(u, v) = (col, row)`` → ``(row, col)``. Die Umkehrung von :func:`keypoints_rowcol_to_uv`.","hi":"image points ``(u, v) = (col, row)`` → ``(row, col)``। :func:`keypoints_rowcol_to_uv` का उल्टा।"},
   "reprconv/table_field_image2d": {"fp":"240d184f546f","en":"One field of a table ``table`` → a 2-D image ``image2d``. The bridge from ops that return a ``table`` to ops that take images.","zh":"表 ``table`` 的一栏 → 2-D 图像 ``image2d``。从返回 ``table`` 的 op 到接收图像的 op 的连接。","tw":"表 ``table`` 的一欄 → 2-D 影像 ``image2d``。從回傳 ``table`` 的 op 到接收影像的 op 的連接。","ko":"표 ``table`` 의 한 칸 → 2-D 이미지 ``image2d``. ``table`` 을 반환하는 op 에서 이미지를 받는 op 로의 연결.","de":"Ein Feld einer Tabelle ``table`` → ein 2-D-Bild ``image2d``. Die Brücke von Ops, die eine ``table`` liefern, zu Ops, die Bilder nehmen.","hi":"table ``table`` का एक field → 2-D image ``image2d``। ``table`` लौटाने वाले ops से image लेने वाले ops तक का पुल।"},
@@ -1170,22 +1195,22 @@
    "hi": "OpenCV का bilateral filter (``cv2.bilateralFilter``)। पड़ोसी pixels को spatial दूरी और brightness अंतर दोनों से weight देकर औसत लेने वाली, edges बचाते हुए smoothing करने की मानक विधि। HALCON के ``bilateral_filter`` (bilateral filtering of an image.) के समकक्ष है।"
   },
   "2d/bin_threshold": {
-   "fp": "a04dfb64430d",
-   "en": "Automatic threshold binarization using Otsu's method. Shares the ``otsu`` branch of ``_sh_threshold`` with ``binary_threshold``/``auto_threshold``; a and b are unused. Pixels brighter than the threshold become the foreground (1). Without scikit-image the same 256-bin Otsu is computed by the numpy twin (``numpy_twins.threshold_otsu``), bit-identical (until 2026-10-25 it silently fell back to a different answer: the image mean as the threshold).",
-   "zh": "使用大津判别分析法（Otsu's method）的自动阈值二值化。与 ``binary_threshold``/``auto_threshold`` 共享 ``_sh_threshold`` 中的 ``otsu`` 分支，a、b 未使用。比阈值更亮的像素作为前景(1)。没有 scikit-image 时由 numpy 的孪生实现（``numpy_twins.threshold_otsu``）计算同样的 256 bin Otsu，逐位一致（2026-10-25 之前会悄悄退化为以图像均值作阈值的另一种答案）。",
-   "tw": "使用大津判別分析法（Otsu's method）的自動閾值二值化。與 ``binary_threshold``/``auto_threshold`` 共用 ``_sh_threshold`` 中的 ``otsu`` 分支，a、b 未使用。比閾值更亮的像素作為前景(1)。沒有 scikit-image 時由 numpy 的孿生實作（``numpy_twins.threshold_otsu``）計算同樣的 256 bin Otsu，逐位元一致（2026-10-25 之前會悄悄退回以影像均值作閾值的另一種答案）。",
-   "ko": "오츠 판별분석법(Otsu's method)에 의한 자동 임계값 이진화. ``binary_threshold``/``auto_threshold``와 동일한 ``_sh_threshold``의 ``otsu`` 분기를 공유하며, a, b는 사용되지 않는다. 임계값보다 밝은 화소를 전경(1)으로 한다. scikit-image가 없는 환경에서는 같은 256 빈 Otsu를 numpy 쌍둥이(``numpy_twins.threshold_otsu``)로 계산한다(비트 단위 일치. 2026-10-25까지는 이미지 평균값을 임계값으로 하는 다른 답에 조용히 떨어졌다).",
-   "de": "Automatische Schwellenwert-Binarisierung mit Otsus Methode (Otsu's method). Teilt sich den ``otsu``-Zweig von ``_sh_threshold`` mit ``binary_threshold``/``auto_threshold``; a und b werden nicht verwendet. Pixel, die heller als der Schwellenwert sind, werden zum Vordergrund (1). Ohne scikit-image berechnet der numpy-Zwilling (``numpy_twins.threshold_otsu``) dasselbe 256-Bin-Otsu bitidentisch (bis zum 2026-10-25 fiel der Operator stillschweigend auf eine andere Antwort zurück: den Bildmittelwert als Schwellenwert).",
-   "hi": "Otsu की discriminant analysis method (Otsu's method) से automatic threshold binarisation। ``binary_threshold``/``auto_threshold`` वाली ही ``_sh_threshold`` की ``otsu`` branch साझा करता है, a, b इस्तेमाल नहीं होते। Threshold से ज़्यादा चमकीले pixels को foreground (1) मानता है। scikit-image न हो तो वही 256-bin Otsu numpy twin (``numpy_twins.threshold_otsu``) से bit-identical निकलता है (2026-10-25 तक यह चुपचाप image mean को threshold बनाने वाले अलग जवाब पर गिर जाता था)।"
+   "fp": "c6ff551692e9",
+   "en": "Automatic threshold binarization using Otsu's method. Shares the ``otsu`` branch of ``_sh_threshold`` with ``binary_threshold``/``auto_threshold``; a and b are unused. Pixels brighter than the threshold become the foreground (1). It goes through the same function as the core ``otsu`` op (the actual range of the data is split into 256 bins and the cut is at the upper edge of the argmax bin), so the answer equals ``otsu`` and values outside [0,1] are not clipped (until 2026-11-09 it clipped to [0,1] and then ran scikit-image's Otsu, giving 0 % foreground on 0..255 floats and the opposite answer to ``otsu`` on a constant image).",
+   "zh": "使用大津判别分析法（Otsu's method）的自动阈值二值化。与 ``binary_threshold``/``auto_threshold`` 共享 ``_sh_threshold`` 中的 ``otsu`` 分支，a、b 未使用。比阈值更亮的像素作为前景(1)。经过与核心 ``otsu`` op 相同的函数(将数据的实际范围分成 256 个 bin，在 argmax bin 的上端切分)，因此答案与 ``otsu`` 一致，也不会裁剪 [0,1] 之外的值(2026-11-09 之前先裁剪到 [0,1] 再执行 scikit-image 的大津法，对 0..255 的 float 得到 0 % 前景，对常数图像得到与 ``otsu`` 相反的答案)。",
+   "tw": "使用大津判別分析法（Otsu's method）的自動閾值二值化。與 ``binary_threshold``/``auto_threshold`` 共用 ``_sh_threshold`` 中的 ``otsu`` 分支，a、b 未使用。比閾值更亮的像素作為前景(1)。經過與核心 ``otsu`` op 相同的函式(將資料的實際範圍分成 256 個 bin，在 argmax bin 的上端切分)，因此答案與 ``otsu`` 一致，也不會裁切 [0,1] 之外的值(2026-11-09 之前先裁切到 [0,1] 再執行 scikit-image 的大津法，對 0..255 的 float 得到 0 % 前景，對常數影像得到與 ``otsu`` 相反的答案)。",
+   "ko": "오츠 판별분석법(Otsu's method)에 의한 자동 임계값 이진화. ``binary_threshold``/``auto_threshold``와 동일한 ``_sh_threshold``의 ``otsu`` 분기를 공유하며, a, b는 사용되지 않는다. 임계값보다 밝은 화소를 전경(1)으로 한다. 핵심 ``otsu`` op와 같은 함수(데이터의 실제 범위를 256 빈으로 나누고 argmax 빈의 상단에서 자른다)를 지나므로 답은 ``otsu``와 같고, [0,1] 밖의 값도 자르지 않는다(2026-11-09까지는 [0,1]로 자른 뒤 scikit-image의 오츠를 적용해, 0..255의 float에서는 전경 0 %, 상수 영상에서는 ``otsu``와 반대의 답을 냈다).",
+   "de": "Automatische Schwellenwert-Binarisierung mit Otsus Methode (Otsu's method). Teilt sich den ``otsu``-Zweig von ``_sh_threshold`` mit ``binary_threshold``/``auto_threshold``; a und b werden nicht verwendet. Pixel, die heller als der Schwellenwert sind, werden Vordergrund (1). Läuft durch dieselbe Funktion wie das Kern-``otsu``-op (der tatsächliche Wertebereich der Daten wird in 256 Bins geteilt und an der Oberkante des argmax-Bins geschnitten), daher stimmt die Antwort mit ``otsu`` überein und Werte außerhalb [0,1] werden nicht abgeschnitten (bis 2026-11-09 wurde auf [0,1] abgeschnitten und dann Otsu aus scikit-image angewandt: 0 % Vordergrund bei 0..255-Floats und bei einem konstanten Bild die umgekehrte Antwort von ``otsu``).",
+   "hi": "Otsu की discriminant analysis method (Otsu's method) से स्वचालित threshold binarization। ``binary_threshold``/``auto_threshold`` के साथ ``_sh_threshold`` की ``otsu`` शाखा साझा करता है; a, b उपयोग नहीं होते। threshold से अधिक चमकीले pixels foreground (1) बनते हैं। यह core ``otsu`` op वाले ही function से गुज़रता है (डेटा की वास्तविक सीमा को 256 bins में बाँटकर argmax bin के ऊपरी किनारे पर काटता है), इसलिए उत्तर ``otsu`` के बराबर है और [0,1] से बाहर के मान clip नहीं होते (2026-11-09 तक यह [0,1] में clip करके scikit-image का Otsu चलाता था: 0..255 float पर 0 % foreground, और constant image पर ``otsu`` से उल्टा उत्तर)।"
   },
   "2d/binary_threshold": {
-   "fp": "fd738eeeafbd",
-   "en": "Automatic threshold binarization using Otsu's method (``skimage.filters.threshold_otsu``, falling back to the mean value if unavailable). Automatically determines the threshold that maximizes between-class variance from the image histogram. Corresponds to HALCON's ``binary_threshold`` (Segment an image using binary thresholding) -- HALCON allows selecting among several algorithms besides Otsu, but here Otsu is fixed.",
-   "zh": "使用大津判别分析法(Otsu's method)进行自动阈值二值化(``skimage.filters.threshold_otsu``,若不可用则以平均值代替)。从图像直方图自动确定能使类间方差最大化的阈值。相当于HALCON的``binary_threshold``(Segment an image using binary thresholding.)(HALCON可在Otsu之外选择多种算法,此处固定使用Otsu)。",
-   "tw": "使用大津判別分析法(Otsu's method)進行自動閾值二值化(``skimage.filters.threshold_otsu``,若不可用則以平均值代替)。從影像直方圖自動決定能使類間變異數最大化的閾值。相當於HALCON的``binary_threshold``(Segment an image using binary thresholding.)(HALCON可在Otsu之外選擇多種演算法,此處固定使用Otsu)。",
-   "ko": "오츠의 판별분석법(Otsu's method)에 의한 자동 임계값 이진화(``skimage.filters.threshold_otsu``, 없으면 평균값으로 대신한다). 클래스 간 분산을 최대화하는 임계값을 이미지 히스토그램으로부터 자동으로 결정한다. HALCON의 ``binary_threshold``(Segment an image using binary thresholding.)에 해당한다(HALCON은 Otsu 외에 여러 알고리즘을 선택할 수 있지만, 여기서는 Otsu로 고정한다).",
-   "de": "Automatische Schwellenwert-Binarisierung mittels Otsu-Methode (``skimage.filters.threshold_otsu``, ersatzweise der Mittelwert, falls nicht verfügbar). Bestimmt automatisch den Schwellenwert, der die Varianz zwischen den Klassen aus dem Bildhistogramm maximiert. Entspricht HALCONs ``binary_threshold`` (Segment an image using binary thresholding.) -- HALCON erlaubt die Auswahl mehrerer Algorithmen neben Otsu, hier ist jedoch Otsu fest vorgegeben.",
-   "hi": "Otsu की discriminant analysis method (Otsu's method) से automatic threshold binarisation (``skimage.filters.threshold_otsu``, उपलब्ध न हो तो mean से काम चलाता है)। Class के बीच variance को अधिकतम करने वाला threshold image के histogram से अपने आप तय करता है। HALCON के ``binary_threshold`` (Segment an image using binary thresholding.) के समकक्ष है (HALCON Otsu के अलावा कई algorithms चुन सकता है, लेकिन यहाँ Otsu तय है)।"
+   "fp": "668509624b43",
+   "en": "Automatic threshold binarization using Otsu's method (the same function as the core ``otsu``: the actual range of the data is split into 256 bins and the cut is at the upper edge of the argmax bin). Automatically determines the threshold that maximizes between-class variance from the image histogram. Corresponds to HALCON's ``binary_threshold`` (Segment an image using binary thresholding) -- HALCON allows selecting among several algorithms besides Otsu, but here Otsu is fixed.",
+   "zh": "使用大津判别分析法(Otsu's method)进行自动阈值二值化(与核心的 ``otsu`` 为同一函数：将数据的实际范围分成 256 个 bin，在 argmax bin 的上端切分)。从图像直方图自动确定能使类间方差最大化的阈值。相当于HALCON的``binary_threshold``(Segment an image using binary thresholding.)(HALCON可在Otsu之外选择多种算法,此处固定使用Otsu)。",
+   "tw": "使用大津判別分析法(Otsu's method)進行自動閾值二值化(與核心的 ``otsu`` 為同一函式：將資料的實際範圍分成 256 個 bin，在 argmax bin 的上端切分)。從影像直方圖自動決定能使類間變異數最大化的閾值。相當於HALCON的``binary_threshold``(Segment an image using binary thresholding.)(HALCON可在Otsu之外選擇多種演算法,此處固定使用Otsu)。",
+   "ko": "오츠의 판별분석법(Otsu's method)에 의한 자동 임계값 이진화(핵심 ``otsu``와 같은 함수: 데이터의 실제 범위를 256 빈으로 나누고 argmax 빈의 상단에서 자른다). 클래스 간 분산을 최대화하는 임계값을 이미지 히스토그램으로부터 자동으로 결정한다. HALCON의 ``binary_threshold``(Segment an image using binary thresholding.)에 해당한다(HALCON은 Otsu 외에 여러 알고리즘을 선택할 수 있지만, 여기서는 Otsu로 고정한다).",
+   "de": "Automatische Schwellenwert-Binarisierung mittels Otsu-Methode (dieselbe Funktion wie das Kern-``otsu``: der tatsächliche Wertebereich der Daten wird in 256 Bins geteilt und an der Oberkante des argmax-Bins geschnitten). Bestimmt automatisch den Schwellenwert, der die Varianz zwischen den Klassen aus dem Bildhistogramm maximiert. Entspricht HALCONs ``binary_threshold`` (Segment an image using binary thresholding.) -- HALCON erlaubt neben Otsu mehrere Algorithmen, hier ist Otsu fest.",
+   "hi": "Otsu की विधि (Otsu's method) से स्वचालित threshold binarization (core ``otsu`` वाला ही function: डेटा की वास्तविक सीमा को 256 bins में बाँटकर argmax bin के ऊपरी किनारे पर काटता है)। image histogram से वह threshold स्वतः तय करता है जो वर्गों के बीच का variance अधिकतम करे। HALCON के ``binary_threshold`` (Segment an image using binary thresholding.) के समकक्ष है -- HALCON में Otsu के अलावा कई algorithms चुने जा सकते हैं, यहाँ Otsu स्थिर है।"
   },
   "2d/binomial_filter": {
    "fp": "32daa952e436",
@@ -1253,7 +1278,7 @@
   "2d/circularity": {
    "fp": "b8df4cc6d207",
    "en": "Circularity ``min(1, area / (pi * max^2))``, where ``max`` is the **largest distance from the centre of gravity to a contour pixel**. It is 1 for a circle and smaller for elongated shapes or ones with large bulges or holes. If several connected components are present, only the largest one is evaluated. **The same formula as** HALCON's ``circularity`` (Shape factor for the circularity (similarity to a circle) of a region.).",
-   "zh": "圆形度 ``min(1, 面积 /(π・max²))``,``max`` 是**从重心到轮廓像素的最大距离**。圆为 1,越细长或有大的凸起/孔洞则越小。存在多个连通分量时只评估面积最大的一个。与 HALCON 的 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)**是同一个公式**。",
+   "zh": "圆形度 ``min(1, 面积 /(π·max²))``,``max`` 是**从重心到轮廓像素的最大距离**。圆为 1,越细长或有大的凸起/孔洞则越小。存在多个连通分量时只评估面积最大的一个。与 HALCON 的 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)**是同一个公式**。",
    "tw": "圓形度 ``min(1, 面積 /(π・max²))``,``max`` 是**從重心到輪廓像素的最大距離**。圓為 1,越細長或有大的凸起/孔洞就越小。存在多個連通分量時只評估面積最大的一個。與 HALCON 的 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)**是同一個公式**。",
    "ko": "원형도 ``min(1, 면적 /(π・max²))``. ``max``는 **무게중심에서 윤곽 화소까지의 최대 거리**이며, 원이면 1이고 가늘고 길거나 큰 돌출·구멍이 있을수록 작아진다. 연결 성분이 여러 개면 면적이 가장 큰 것만 평가한다. HALCON의 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)와 **같은 식**이다.",
    "de": "Rundheitsmaß ``min(1, Fläche / (π · max²))``, wobei ``max`` der **größte Abstand vom Schwerpunkt zu einem Konturpixel** ist. Für einen Kreis ist es 1 und kleiner für längliche Formen oder solche mit großen Ausbuchtungen oder Löchern. Bei mehreren Zusammenhangskomponenten wird nur die größte bewertet. **Dieselbe Formel wie** HALCONs ``circularity`` (Shape factor for the circularity (similarity to a circle) of a region.).",
@@ -1262,7 +1287,7 @@
   "2d/circularity_xld": {
    "fp": "4606eb608325",
    "en": "For the largest contour, computes ``min(1, F/(pi * max^2))`` from the shoelace area ``F`` and the largest distance ``max`` from the **centre of gravity of the enclosed area** to a contour point (the contour counterpart of ``circularity``). **The same formula as** HALCON's ``circularity_xld`` (Shape factor for the circularity (similarity to a circle) of contours or polygons.).",
-   "zh": "对最大的轮廓,用鞋带公式的面积 ``F`` 和从**所围面积的重心**到轮廓点的最大距离 ``max`` 计算 ``min(1, F/(π・max²))``(区域版 ``circularity`` 的轮廓版)。与 HALCON 的 ``circularity_xld``(Shape factor for the circularity (similarity to a circle) of contours or polygons.)**是同一个公式**。",
+   "zh": "对最大的轮廓,用鞋带公式的面积 ``F`` 和从**所围面积的重心**到轮廓点的最大距离 ``max`` 计算 ``min(1, F/(π·max²))``(区域版 ``circularity`` 的轮廓版)。与 HALCON 的 ``circularity_xld``(Shape factor for the circularity (similarity to a circle) of contours or polygons.)**是同一个公式**。",
    "tw": "對最大的輪廓,用鞋帶公式的面積 ``F`` 與從**所圍面積的重心**到輪廓點的最大距離 ``max`` 計算 ``min(1, F/(π・max²))``(區域版 ``circularity`` 的輪廓版)。與 HALCON 的 ``circularity_xld``(Shape factor for the circularity (similarity to a circle) of contours or polygons.)**是同一個公式**。",
    "ko": "가장 큰 윤곽에 대해, 신발끈 공식의 면적 ``F``와 **둘러싸인 면적의 무게중심**에서 윤곽점까지의 최대 거리 ``max``로 ``min(1, F/(π・max²))``를 계산한다(영역판 ``circularity``의 윤곽판). HALCON의 ``circularity_xld``(Shape factor for the circularity (similarity to a circle) of contours or polygons.)와 **같은 식**이다.",
    "de": "Berechnet für die größte Kontur ``min(1, F/(π · max²))`` aus der Fläche ``F`` (Gaußsche Trapezformel) und dem größten Abstand ``max`` vom **Schwerpunkt der eingeschlossenen Fläche** zu einem Konturpunkt (das Kontur-Gegenstück zu ``circularity``). **Dieselbe Formel wie** HALCONs ``circularity_xld`` (Shape factor for the circularity (similarity to a circle) of contours or polygons.).",
@@ -1296,13 +1321,13 @@
    "hi": "हर contour के शुरुआती point की copy अंत में जोड़कर खुली polyline को बंद loop बनाता है (केवल 2 या ज़्यादा points वाले contours)। HALCON के ``close_contours_xld`` (Close an XLD contour.) के समकक्ष है।"
   },
   "2d/closest_point_transform": {
-   "fp": "0f6a44ced5a9",
-   "en": "Returns the normalized Euclidean distance transform of the region's complement — a distance field representing, for each pixel, the distance to the nearest region (foreground) pixel, with foreground/background reversed relative to ``distance_transform``. The output type is ``image``. Corresponds to HALCON's ``closest_point_transform`` (Compute the closest-point transformation of a region.).",
-   "zh": "返回区域**补集**的欧氏距离变换归一化结果——表示每个像素到最近的区域（前景）像素的距离，与 ``distance_transform`` 相比前景/背景是相反的距离场。输出类型为 ``image``。相当于 HALCON 的 ``closest_point_transform``（Compute the closest-point transformation of a region.）。",
-   "tw": "回傳區域**補集**的歐氏距離變換歸一化結果——表示每個像素到最近的區域（前景）像素的距離，與 ``distance_transform`` 相比前景/背景是相反的距離場。輸出型別為 ``image``。相當於 HALCON 的 ``closest_point_transform``（Compute the closest-point transformation of a region.）。",
-   "ko": "영역의 **여집합**에 대한 유클리드 거리 변환을 정규화하여 반환한다 — 각 화소에서 가장 가까운 영역(전경) 화소까지의 거리를 나타내며, ``distance_transform``과는 전경/배경이 반대인 거리장이다. 출력은 ``image`` 타입. HALCON의 ``closest_point_transform``(Compute the closest-point transformation of a region.)에 해당.",
-   "de": "Gibt die normierte euklidische Distanztransformation des Komplements der Region zurück — ein Distanzfeld, das für jedes Pixel die Distanz zum nächstgelegenen Regions-(Vordergrund-)Pixel angibt, wobei Vordergrund/Hintergrund im Vergleich zu ``distance_transform`` vertauscht sind. Der Ausgabetyp ist ``image``. Entspricht HALCONs ``closest_point_transform`` (Compute the closest-point transformation of a region.).",
-   "hi": "Region के **complement** पर Euclidean distance transform को normalise करके लौटाता है ―― हर pixel से सबसे नज़दीकी region (foreground) pixel तक की दूरी दर्शाने वाला, ``distance_transform`` से foreground/background उलटा distance field। आउटपुट ``image`` type का है। HALCON के ``closest_point_transform`` (Compute the closest-point transformation of a region.) के समकक्ष है।"
+   "fp": "d3302136a389",
+   "en": "Returns the normalized Euclidean distance transform of the region's **complement** — a distance field representing, for each pixel, the distance to the nearest region (foreground) pixel, with foreground/background reversed relative to ``distance_transform``. The output type is ``image``. If the region is empty, the result is uniformly 1.0 (there is no nearest region pixel = everywhere is farthest). Corresponds to HALCON's ``closest_point_transform`` (Compute the closest-point transformation of a region.).",
+   "zh": "返回区域**补集**的欧氏距离变换归一化结果——表示每个像素到最近的区域（前景）像素的距离，与 ``distance_transform`` 相比前景/背景是相反的距离场。输出类型为 ``image``。区域为空时一律为 1.0（没有最近的区域像素 = 到处都是最远）。相当于 HALCON 的 ``closest_point_transform``（Compute the closest-point transformation of a region.）。",
+   "tw": "回傳區域**補集**的歐氏距離變換歸一化結果——表示每個像素到最近的區域（前景）像素的距離，與 ``distance_transform`` 相比前景/背景是相反的距離場。輸出型別為 ``image``。區域為空時一律為 1.0（沒有最近的區域像素 = 處處都是最遠）。相當於 HALCON 的 ``closest_point_transform``（Compute the closest-point transformation of a region.）。",
+   "ko": "영역의 **여집합**에 대한 유클리드 거리 변환을 정규화하여 반환한다 — 각 화소에서 가장 가까운 영역(전경) 화소까지의 거리를 나타내며, ``distance_transform``과는 전경/배경이 반대인 거리장이다. 출력은 ``image`` 타입. 영역이 비어 있으면 일률적으로 1.0(가장 가까운 영역 화소가 없음 = 어디나 가장 멂). HALCON의 ``closest_point_transform``(Compute the closest-point transformation of a region.)에 해당.",
+   "de": "Gibt die normierte euklidische Distanztransformation des **Komplements** der Region zurück — ein Distanzfeld, das für jedes Pixel die Distanz zum nächstgelegenen Regions-(Vordergrund-)Pixel angibt, wobei Vordergrund/Hintergrund im Vergleich zu ``distance_transform`` vertauscht sind. Der Ausgabetyp ist ``image``. Ist die Region leer, ist das Ergebnis überall 1.0 (es gibt kein nächstgelegenes Regionspixel = überall am weitesten entfernt). Entspricht HALCONs ``closest_point_transform`` (Compute the closest-point transformation of a region.).",
+   "hi": "Region के **complement** पर Euclidean distance transform को normalise करके लौटाता है ―― हर pixel से सबसे नज़दीकी region (foreground) pixel तक की दूरी दर्शाने वाला, ``distance_transform`` से foreground/background उलटा distance field। आउटपुट ``image`` type का है। Region खाली हो तो हर जगह एकसमान 1.0 (सबसे नज़दीकी region pixel नहीं है = हर जगह सबसे दूर)। HALCON के ``closest_point_transform`` (Compute the closest-point transformation of a region.) के समकक्ष है।"
   },
   "2d/closing_circle": {
    "fp": "1bc8eaee77af",
@@ -1341,18 +1366,18 @@
    "hi": "Implementation ``anisotropic_diffusion`` जैसा ही है (``kind: \"anisotropic\"``)। मूल coherence-enhancing diffusion structure tensor के eigenvectors के साथ diffusion की दिशा नियंत्रित करने वाली (रेखीय संरचनाओं को जोड़ने वाली) विधि है, लेकिन यह विकल्प structure tensor की गणना नहीं करता और साधारण Perona-Malik anisotropic diffusion से काम चलाता है (सन्निकटन की सीमा ―― रेखीय संरचनाओं को जोड़ने का असर नहीं आता)। HALCON के ``coherence_enhancing_diff`` (Perform a coherence enhancing diffusion of an image.) का विकल्प।"
   },
   "2d/compactness": {
-   "fp": "67873f3efdb1",
-   "en": "Compactness ``perimeter^2 / (4pi * area)``. It is 1 for a circle and grows with elongation, roughness and holes, with **no upper bound**. The same quantity as HALCON's ``compactness`` (Shape factor for the compactness of a region.).",
-   "zh": "紧凑度 ``周长² / (4π・面积)``。圆为 1,越细长/越粗糙/孔洞越多则越大,**没有上限**。与 HALCON 的 ``compactness``(Shape factor for the compactness of a region.)是同一个量。",
-   "tw": "緊湊度 ``周長² / (4π・面積)``。圓為 1,越細長/越粗糙/孔洞越多就越大,**沒有上限**。與 HALCON 的 ``compactness``(Shape factor for the compactness of a region.)是同一個量。",
-   "ko": "콤팩트니스 ``둘레² / (4π・면적)``. 원이면 1이고 가늘고 길수록, 울퉁불퉁할수록, 구멍이 많을수록 커지며 **상한이 없다**. HALCON의 ``compactness``(Shape factor for the compactness of a region.)와 같은 양이다.",
-   "de": "Kompaktheit ``Umfang² / (4π · Fläche)``. Für einen Kreis ist sie 1 und wächst mit Länglichkeit, Rauheit und Löchern — **ohne obere Schranke**. Dieselbe Größe wie HALCONs ``compactness`` (Shape factor for the compactness of a region.).",
-   "hi": "Compactness ``perimeter^2 / (4pi * area)``। वृत्त के लिए 1, और लंबा-पतला/दाँतेदार/ज़्यादा छेदों वाला होने पर बढ़ता है, और इसकी **ऊपरी सीमा नहीं** है। HALCON के ``compactness`` (Shape factor for the compactness of a region.) वाली ही मात्रा।"
+   "fp": "287f7958d9e5",
+   "en": "Compactness ``max(1, perimeter^2 / (4pi * area))``. It is 1 for a circle and grows with elongation, roughness and holes, with **no upper bound**. The same quantity as HALCON's ``compactness`` (Shape factor for the compactness of a region.).",
+   "zh": "紧凑度 ``max(1, 周长² / (4π·面积))``。圆为 1，越细长/越粗糙/孔洞越多则越大，**没有上限**。与 HALCON 的 ``compactness``（Shape factor for the compactness of a region.）是同一个量。",
+   "tw": "緊湊度 ``max(1, 周長² / (4π・面積))``。圓為 1，越細長/越粗糙/孔洞越多就越大，**沒有上限**。與 HALCON 的 ``compactness``（Shape factor for the compactness of a region.）是同一個量。",
+   "ko": "콤팩트니스 ``max(1, 둘레² / (4π・면적))``. 원이면 1이고 가늘고 길수록, 울퉁불퉁할수록, 구멍이 많을수록 커지며 **상한이 없다**. HALCON의 ``compactness``(Shape factor for the compactness of a region.)와 같은 양이다.",
+   "de": "Kompaktheit ``max(1, Umfang² / (4π · Fläche))``. Für einen Kreis ist sie 1 und wächst mit Länglichkeit, Rauheit und Löchern — **ohne obere Schranke**. Dieselbe Größe wie HALCONs ``compactness`` (Shape factor for the compactness of a region.).",
+   "hi": "Compactness ``max(1, perimeter^2 / (4pi * area))``। वृत्त के लिए 1, और लंबा-पतला/दाँतेदार/ज़्यादा छेदों वाला होने पर बढ़ता है, और इसकी **ऊपरी सीमा नहीं** है। HALCON के ``compactness`` (Shape factor for the compactness of a region.) वाली ही मात्रा।"
   },
   "2d/compactness_xld": {
    "fp": "e2eb40bc54da",
    "en": "For the largest contour, computes the compactness ``max(1, perimeter^2/(4pi * area))`` (the contour counterpart of ``compactness``). It is 1 for a circle and grows with elongation and roughness, with **no upper bound**. **The same formula as** HALCON's ``compactness_xld`` (Shape factor for the compactness of contours or polygons.).",
-   "zh": "对最大的轮廓计算紧凑度 ``max(1, 周长²/(4π・面积))``(区域版 ``compactness`` 的轮廓版)。圆为 1,越细长/越粗糙则越大,**没有上限**。与 HALCON 的 ``compactness_xld``(Shape factor for the compactness of contours or polygons.)**是同一个公式**。",
+   "zh": "对最大的轮廓计算紧凑度 ``max(1, 周长²/(4π·面积))``(区域版 ``compactness`` 的轮廓版)。圆为 1,越细长/越粗糙则越大,**没有上限**。与 HALCON 的 ``compactness_xld``(Shape factor for the compactness of contours or polygons.)**是同一个公式**。",
    "tw": "對最大的輪廓計算緊湊度 ``max(1, 周長²/(4π・面積))``(區域版 ``compactness`` 的輪廓版)。圓為 1,越細長/越粗糙就越大,**沒有上限**。與 HALCON 的 ``compactness_xld``(Shape factor for the compactness of contours or polygons.)**是同一個公式**。",
    "ko": "가장 큰 윤곽에 대해 콤팩트니스 ``max(1, 둘레²/(4π・면적))``를 계산한다(영역판 ``compactness``의 윤곽판). 원이면 1이고 가늘고 길수록, 울퉁불퉁할수록 커지며 **상한이 없다**. HALCON의 ``compactness_xld``(Shape factor for the compactness of contours or polygons.)와 **같은 식**이다.",
    "de": "Berechnet für die größte Kontur die Kompaktheit ``max(1, Umfang²/(4π · Fläche))`` (das Kontur-Gegenstück zu ``compactness``). Für einen Kreis ist sie 1 und wächst mit Länglichkeit und Rauheit — **ohne obere Schranke**. **Dieselbe Formel wie** HALCONs ``compactness_xld`` (Shape factor for the compactness of contours or polygons.).",
@@ -1926,13 +1951,13 @@
    "hi": "Euclidean distance transform। HALCON के ``distance_transform`` (Compute the distance transformation of a region.) के समकक्ष है।"
   },
   "2d/distance_transform": {
-   "fp": "cd74606f51d4",
-   "en": "An image obtained by normalizing the Euclidean distance transform (``ndimage.distance_transform_edt``) by its maximum value. It represents, for each foreground pixel, the distance to the nearest background pixel -- the larger the value, the \"deeper\" the pixel is inside the region. Note that the output type is ``image``, not ``region``. Equivalent to HALCON's ``distance_transform`` (Compute the distance transformation of a region.).",
-   "zh": "以最大值归一化后的欧几里得距离变换(``ndimage.distance_transform_edt``)图像。表示每个前景像素到最近背景像素的距离——数值越大,说明该像素越处于区域的\"深处\"。请注意输出类型是 ``image`` 而不是 ``region``。相当于 HALCON 的 ``distance_transform``(Compute the distance transformation of a region.)。",
-   "tw": "以最大值正規化後的歐幾里得距離變換(``ndimage.distance_transform_edt``)影像。表示每個前景像素到最近背景像素的距離——數值越大,代表該像素越處於區域的「深處」。請注意輸出型別是 ``image`` 而非 ``region``。相當於 HALCON 的 ``distance_transform``(Compute the distance transformation of a region.)。",
-   "ko": "최댓값으로 정규화한 유클리드 거리 변환(``ndimage.distance_transform_edt``) 이미지. 각 전경 픽셀에 대해 가장 가까운 배경 픽셀까지의 거리를 나타낸다 -- 값이 클수록 영역의 '안쪽 깊이'에 있는 픽셀이다. 출력이 ``region``이 아니라 ``image`` 타입이 되는 점에 주의. HALCON의 ``distance_transform``(Compute the distance transformation of a region.)에 해당.",
-   "de": "Ein Bild, das durch Normierung der euklidischen Distanztransformation (``ndimage.distance_transform_edt``) auf ihren Maximalwert entsteht. Es gibt für jedes Vordergrundpixel den Abstand zum nächstgelegenen Hintergrundpixel an -- je größer der Wert, desto 'tiefer' liegt das Pixel im Inneren der Region. Zu beachten: Der Ausgabetyp ist ``image``, nicht ``region``. Entspricht HALCONs ``distance_transform`` (Compute the distance transformation of a region.).",
-   "hi": "Euclidean distance transform (``ndimage.distance_transform_edt``) को अधिकतम मान से normalise की गई image। हर foreground pixel के लिए सबसे नज़दीकी background pixel तक की दूरी दर्शाता है ―― मान जितना बड़ा, pixel region में उतना \"गहरा\"। ध्यान दें कि आउटपुट ``region`` नहीं बल्कि ``image`` type का होता है। HALCON के ``distance_transform`` (Compute the distance transformation of a region.) के समकक्ष है।"
+   "fp": "5cc8d890ead7",
+   "en": "An image obtained by normalizing the Euclidean distance transform (``ndimage.distance_transform_edt``) by its maximum value. It represents, for each foreground pixel, the distance to the nearest background pixel -- (if there is no background, it is uniformly 1.0 = everywhere is farthest) the larger the value, the \"deeper\" the pixel is inside the region. Note that the output type is ``image``, not ``region``. Equivalent to HALCON's ``distance_transform`` (Compute the distance transformation of a region.).",
+   "zh": "以最大值归一化后的欧几里得距离变换（``ndimage.distance_transform_edt``）图像。表示每个前景像素到最近背景像素的距离——（没有背景时一律为 1.0 = 到处都是最远）数值越大，说明该像素越处于区域的“深处”。请注意输出类型是 ``image`` 而不是 ``region``。相当于 HALCON 的 ``distance_transform``（Compute the distance transformation of a region.）。",
+   "tw": "以最大值正規化後的歐幾里得距離變換（``ndimage.distance_transform_edt``）影像。表示每個前景像素到最近背景像素的距離——（沒有背景時一律為 1.0 = 處處都是最遠）數值越大，代表該像素越處於區域的「深處」。請注意輸出型別是 ``image`` 而非 ``region``。相當於 HALCON 的 ``distance_transform``（Compute the distance transformation of a region.）。",
+   "ko": "최댓값으로 정규화한 유클리드 거리 변환(``ndimage.distance_transform_edt``) 이미지. 각 전경 픽셀에 대해 가장 가까운 배경 픽셀까지의 거리를 나타낸다 -- (배경이 없으면 일률적으로 1.0 = 어디나 가장 멂) 값이 클수록 영역의 '안쪽 깊이'에 있는 픽셀이다. 출력이 ``region``이 아니라 ``image`` 타입이 되는 점에 주의. HALCON의 ``distance_transform``(Compute the distance transformation of a region.)에 해당.",
+   "de": "Ein Bild, das durch Normierung der euklidischen Distanztransformation (``ndimage.distance_transform_edt``) auf ihren Maximalwert entsteht. Es gibt für jedes Vordergrundpixel den Abstand zum nächstgelegenen Hintergrundpixel an -- (gibt es keinen Hintergrund, ist es überall 1.0 = überall am weitesten entfernt) je größer der Wert, desto 'tiefer' liegt das Pixel im Inneren der Region. Zu beachten: Der Ausgabetyp ist ``image``, nicht ``region``. Entspricht HALCONs ``distance_transform`` (Compute the distance transformation of a region.).",
+   "hi": "Euclidean distance transform (``ndimage.distance_transform_edt``) को अधिकतम मान से normalise की गई image। हर foreground pixel के लिए सबसे नज़दीकी background pixel तक की दूरी दर्शाता है ―― (background न हो तो हर जगह एकसमान 1.0 = हर जगह सबसे दूर) मान जितना बड़ा, pixel region में उतना \"गहरा\"। ध्यान दें कि आउटपुट ``region`` नहीं बल्कि ``image`` type का होता है। HALCON के ``distance_transform`` (Compute the distance transformation of a region.) के समकक्ष है।"
   },
   "2d/dl_aniso_diffusion": {
    "fp": "b61d2bc5d8c5",
@@ -2522,13 +2547,13 @@
    "hi": "Region के convex hull को भरे हुए region के रूप में लौटाता है (``skimage.morphology.convex_hull_image``)। a, b इस्तेमाल नहीं होते। ``shape_trans`` (convex hull में shape बदलने वाला seed op) जैसा ही implementation।"
   },
   "2d/get_region_thickness": {
-   "fp": "a83d99dfa81a",
-   "en": "An approximation of a region's thickness in pixels, ``2 × largest inscribed radius`` (twice the maximum of ``distance_transform_edt``).",
-   "zh": "区域粗细 [px] 的近似值 ``2 × 最大内切圆半径``(``distance_transform_edt`` 最大值的 2 倍)。",
-   "tw": "區域粗細 [px] 的近似值 ``2 × 最大內切圓半徑``(``distance_transform_edt`` 最大值的 2 倍)。",
-   "ko": "영역 두께 [px] 의 근삿값 ``2 × 최대 내접원 반지름``(``distance_transform_edt`` 최댓값의 2 배).",
-   "de": "Eine Näherung der Dicke einer Region in Pixeln, ``2 × größter Inkreisradius`` (das Doppelte des Maximums von ``distance_transform_edt``).",
-   "hi": "Region की मोटाई का pixels में अनुमान, ``2 × सबसे बड़ी inscribed radius`` (``distance_transform_edt`` के अधिकतम का दोगुना)।"
+   "fp": "8d5a24aa3ff8",
+   "en": "An approximation of a region's thickness in pixels, ``2 × largest inscribed radius`` (twice the maximum of ``distance_transform_edt``). Outside the image is treated as background (a region touching the border also gets the same thickness as when the image is enlarged; a full 60x80 gives 60).",
+   "zh": "区域粗细 [px] 的近似值 ``2 × 最大内切圆半径``（``distance_transform_edt`` 最大值的 2 倍）。图像外视为背景（接触边缘的区域也与扩大图像时的粗细相同。全满的 60x80 为 60）。",
+   "tw": "區域粗細 [px] 的近似值 ``2 × 最大內切圓半徑``（``distance_transform_edt`` 最大值的 2 倍）。影像外視為背景（接觸邊緣的區域也與擴大影像時的粗細相同。全滿的 60x80 為 60）。",
+   "ko": "영역 두께 [px] 의 근삿값 ``2 × 최대 내접원 반지름``(``distance_transform_edt`` 최댓값의 2 배). 영상 밖은 배경으로 간주한다(가장자리에 닿는 영역도 영상을 넓혔을 때와 같은 두께. 전면인 60x80은 60).",
+   "de": "Eine Näherung der Dicke einer Region in Pixeln, ``2 × größter Inkreisradius`` (das Doppelte des Maximums von ``distance_transform_edt``). Das Bildäußere gilt als Hintergrund (auch eine Region, die den Rand berührt, hat dieselbe Dicke wie bei vergrößertem Bild; ein volles 60x80 ergibt 60).",
+   "hi": "Region की मोटाई का pixels में अनुमान, ``2 × सबसे बड़ी inscribed radius`` (``distance_transform_edt`` के अधिकतम का दोगुना)। Image के बाहर को background माना जाता है (किनारे को छूने वाले region की मोटाई भी वही होती है जो image को बड़ा करने पर होती; पूरा भरा 60x80 का मान 60 है)।"
   },
   "2d/gopen": {
    "fp": "e3016c160604",
@@ -3082,7 +3107,7 @@
   "2d/hx_gen_bandfilter": {
    "fp": "dd51952f5955",
    "en": "An ideal band-filter image (an annulus in frequency, centre radius a and width b). A different operator from gen_bandpass.",
-   "zh": "理想带通滤波图像(频域圆环,中心半径 a・宽度 b)。与 gen_bandpass 是不同的算子。",
+   "zh": "理想带通滤波图像(频域圆环,中心半径 a、宽度 b)。与 gen_bandpass 是不同的算子。",
    "tw": "理想帶通濾波影像(頻域圓環,中心半徑 a・寬度 b)。與 gen_bandpass 是不同的運算子。",
    "ko": "이상 대역 필터 이미지(주파수 원환, 중심 반지름 a·폭 b). gen_bandpass 와는 다른 연산자.",
    "de": "Ein ideales Bandfilterbild (ein Frequenzring, Mittenradius a und Breite b). Ein anderer Operator als gen_bandpass.",
@@ -3091,7 +3116,7 @@
   "2d/hx_gen_bandpass": {
    "fp": "cb217336012f",
    "en": "An ideal band-pass (an annular mask in the frequency domain, inner radius a and bandwidth b).",
-   "zh": "理想带通(频域圆环掩码,内半径 a・带宽 b)。",
+   "zh": "理想带通(频域圆环掩码,内半径 a、带宽 b)。",
    "tw": "理想帶通(頻域圓環遮罩,內半徑 a・頻寬 b)。",
    "ko": "이상 대역통과(주파수 영역의 원환 마스크, 내반지름 a·대역폭 b).",
    "de": "Ein idealer Bandpass (eine Ringmaske im Frequenzbereich, Innenradius a und Bandbreite b).",
@@ -3379,7 +3404,7 @@
   "2d/hx_shade_height_field": {
    "fp": "210551357ef4",
    "en": "Render the height field v with Lambertian shading (normal × light). The light is at azimuth a and elevation b.",
-   "zh": "用 Lambert 着色渲染高度场 v(法线×光源)。光源方位 a・仰角 b。",
+   "zh": "用 Lambert 着色渲染高度场 v(法线×光源)。光源方位 a、仰角 b。",
    "tw": "用 Lambert 著色算繪高度場 v(法線×光源)。光源方位 a・仰角 b。",
    "ko": "높이장 v 를 Lambert 음영으로 그립니다(법선×광원). 광원은 방위 a·앙각 b.",
    "de": "Rendert das Höhenfeld v mit Lambert-Schattierung (Normale × Licht). Das Licht steht bei Azimut a und Elevation b.",
@@ -5078,22 +5103,22 @@
    "hi": "केवल सबसे बड़े क्षेत्रफल वाला connected region रखता है। HALCON के ``select_shape_std`` (Select regions of a given shape.) के समकक्ष है।"
   },
   "2d/select_shape": {
-   "fp": "ab979b89486a",
-   "en": "Removes connected components whose area is below a threshold (``16+a*200`` pixels) -- i.e., removes small noise-like regions. HALCON's ``select_shape`` (Choose regions with the aid of shape features.) is a general-purpose operator that can filter by any shape feature such as area, circularity, or convexity, but here it is fixed to a single area-based cutoff (an approximation).",
-   "zh": "去除面积低于阈值(``16+a*200`` 像素)的连通成分(去除类似噪声的小区域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可以用面积、圆形度、凸性等任意形状特征进行筛选的通用算子,但这里固定为按面积截断这一种(近似)。",
-   "tw": "去除面積低於閾值(``16+a*200`` 像素)的連通成分(去除類似雜訊的小區域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可用面積、圓形度、凸性等任意形狀特徵篩選的通用運算子,但這裡固定為以面積截斷這一種(近似)。",
-   "ko": "면적이 임계값(``16+a*200`` 픽셀) 미만인 연결 성분을 제거한다(작은 노이즈성 영역 제거). HALCON의 ``select_shape``(Choose regions with the aid of shape features.)는 면적, 원형도, 볼록성 등 임의의 형상 특징으로 선별할 수 있는 범용 연산자지만, 여기서는 면적 기준의 컷오프 한 종류로 고정되어 있다(근사).",
-   "de": "Entfernt zusammenhängende Komponenten, deren Fläche unter einem Schwellenwert (``16+a*200`` Pixel) liegt (Entfernung kleiner, rauschartiger Regionen). HALCONs ``select_shape`` (Choose regions with the aid of shape features.) ist ein universeller Operator, der nach beliebigen Formmerkmalen wie Fläche, Rundheit oder Konvexität filtern kann, hier jedoch fest auf einen einzigen flächenbasierten Grenzwert festgelegt ist (eine Approximation).",
-   "hi": "Threshold (``16+a*200`` pixels) से कम क्षेत्रफल वाले connected components हटाता है (छोटे noise जैसे regions हटाना)। HALCON का ``select_shape`` (Choose regions with the aid of shape features.) क्षेत्रफल, circularity, convexity जैसे किसी भी shape feature से छाँट सकने वाला सामान्य operator है, लेकिन यहाँ केवल 1 प्रकार, क्षेत्रफल से कटौती, तय है (सन्निकटन)।"
+   "fp": "b70ceffa1d50",
+   "en": "Removes connected components (foreground is 8-connected) whose area is below a threshold (``16+a*200`` pixels) -- i.e., removes small noise-like regions. HALCON's ``select_shape`` (Choose regions with the aid of shape features.) is a general-purpose operator that can filter by any shape feature such as area, circularity, or convexity, but here it is fixed to a single area-based cutoff (an approximation).",
+   "zh": "去除面积低于阈值（``16+a*200`` 像素）的连通成分（前景为 8 连通）（去除类似噪声的小区域）。HALCON 的 ``select_shape``（Choose regions with the aid of shape features.）是可以用面积、圆形度、凸性等任意形状特征进行筛选的通用算子，但这里固定为按面积截断这一种（近似）。",
+   "tw": "去除面積低於閾值（``16+a*200`` 像素）的連通成分（前景為 8 連通）（去除類似雜訊的小區域）。HALCON 的 ``select_shape``（Choose regions with the aid of shape features.）是可用面積、圓形度、凸性等任意形狀特徵篩選的通用運算子，但這裡固定為以面積截斷這一種（近似）。",
+   "ko": "면적이 임계값(``16+a*200`` 픽셀) 미만인 연결 성분(전경은 8 연결)을 제거한다(작은 노이즈성 영역 제거). HALCON의 ``select_shape``(Choose regions with the aid of shape features.)는 면적, 원형도, 볼록성 등 임의의 형상 특징으로 선별할 수 있는 범용 연산자지만, 여기서는 면적 기준의 컷오프 한 종류로 고정되어 있다(근사).",
+   "de": "Entfernt zusammenhängende Komponenten (Vordergrund 8-zusammenhängend), deren Fläche unter einem Schwellenwert (``16+a*200`` Pixel) liegt (Entfernung kleiner, rauschartiger Regionen). HALCONs ``select_shape`` (Choose regions with the aid of shape features.) ist ein universeller Operator, der nach beliebigen Formmerkmalen wie Fläche, Rundheit oder Konvexität filtern kann, hier jedoch fest auf einen einzigen flächenbasierten Grenzwert festgelegt ist (eine Approximation).",
+   "hi": "Threshold (``16+a*200`` pixels) से कम क्षेत्रफल वाले connected components (foreground 8-connected है) हटाता है (छोटे noise जैसे regions हटाना)। HALCON का ``select_shape`` (Choose regions with the aid of shape features.) क्षेत्रफल, circularity, convexity जैसे किसी भी shape feature से छाँट सकने वाला सामान्य operator है, लेकिन यहाँ केवल 1 प्रकार, क्षेत्रफल से कटौती, तय है (सन्निकटन)।"
   },
   "2d/select_shape_std": {
-   "fp": "81a3d0e9435c",
-   "en": "Keeps only the connected component with the largest area (selected via ``_largest_label``). HALCON's ``select_shape_std`` (Select regions of a given shape.) is an operator that lets you choose among several standard criteria including ``max_area``, but here it is fixed to the single criterion \"largest area\" (an approximation).",
-   "zh": "只保留连通成分中面积最大的那一个(通过 ``_largest_label`` 选取)。HALCON 的 ``select_shape_std``(Select regions of a given shape.)是可以选择包括 ``max_area`` 在内的多种标准基准的算子,但这里固定为\"面积最大\"这一种(近似)。",
-   "tw": "只保留連通成分中面積最大的那一個(透過 ``_largest_label`` 選取)。HALCON 的 ``select_shape_std``(Select regions of a given shape.)是可選擇包含 ``max_area`` 在內的多種標準基準的運算子,但這裡固定為「面積最大」這一種(近似)。",
-   "ko": "연결 성분 중 가장 큰 면적을 가진 것만 남긴다(``_largest_label``로 선택). HALCON의 ``select_shape_std``(Select regions of a given shape.)는 ``max_area``를 포함한 여러 표준 기준을 선택할 수 있는 연산자지만, 여기서는 '면적 최대' 한 종류로 고정되어 있다(근사).",
-   "de": "Behält nur die zusammenhängende Komponente mit der größten Fläche (ausgewählt über ``_largest_label``). HALCONs ``select_shape_std`` (Select regions of a given shape.) ist ein Operator, bei dem unter mehreren Standardkriterien einschließlich ``max_area`` gewählt werden kann, hier jedoch fest auf das eine Kriterium 'größte Fläche' festgelegt ist (eine Approximation).",
-   "hi": "Connected components में से केवल सबसे बड़े क्षेत्रफल वाले को रखता है (``_largest_label`` से चुनाव)। HALCON का ``select_shape_std`` (Select regions of a given shape.) ``max_area`` सहित कई मानक मानदंड चुन सकने वाला operator है, लेकिन यहाँ केवल 1 प्रकार \"सबसे बड़ा क्षेत्रफल\" तय है (सन्निकटन)।"
+   "fp": "4d03241b3b8f",
+   "en": "Keeps only the connected component with the largest area (selected via ``_largest_label``; foreground is 8-connected). HALCON's ``select_shape_std`` (Select regions of a given shape.) is an operator that lets you choose among several standard criteria including ``max_area``, but here it is fixed to the single criterion \"largest area\" (an approximation).",
+   "zh": "只保留连通成分中面积最大的那一个（通过 ``_largest_label`` 选取，前景为 8 连通）。HALCON 的 ``select_shape_std``（Select regions of a given shape.）是可以选择包括 ``max_area`` 在内的多种标准基准的算子，但这里固定为“面积最大”这一种（近似）。",
+   "tw": "只保留連通成分中面積最大的那一個（透過 ``_largest_label`` 選取，前景為 8 連通）。HALCON 的 ``select_shape_std``（Select regions of a given shape.）是可選擇包含 ``max_area`` 在內的多種標準基準的運算子，但這裡固定為「面積最大」這一種（近似）。",
+   "ko": "연결 성분 중 가장 큰 면적을 가진 것만 남긴다(``_largest_label``로 선택, 전경은 8 연결). HALCON의 ``select_shape_std``(Select regions of a given shape.)는 ``max_area``를 포함한 여러 표준 기준을 선택할 수 있는 연산자지만, 여기서는 '면적 최대' 한 종류로 고정되어 있다(근사).",
+   "de": "Behält nur die zusammenhängende Komponente mit der größten Fläche (ausgewählt über ``_largest_label``, Vordergrund 8-zusammenhängend). HALCONs ``select_shape_std`` (Select regions of a given shape.) ist ein Operator, bei dem unter mehreren Standardkriterien einschließlich ``max_area`` gewählt werden kann, hier jedoch fest auf das eine Kriterium 'größte Fläche' festgelegt ist (eine Approximation).",
+   "hi": "Connected components में से केवल सबसे बड़े क्षेत्रफल वाले को रखता है (``_largest_label`` से चुनाव, foreground 8-connected है)। HALCON का ``select_shape_std`` (Select regions of a given shape.) ``max_area`` सहित कई मानक मानदंड चुन सकने वाला operator है, लेकिन यहाँ केवल 1 प्रकार \"सबसे बड़ा क्षेत्रफल\" तय है (सन्निकटन)।"
   },
   "2d/select_shape_xld": {
    "fp": "3e2c01094482",
@@ -8743,7 +8768,7 @@
   "2d/xwt_directional_detail": {
    "fp": "45bb9b99b349",
    "en": "Directional edge detection. Selects one of the horizontal (cH), vertical (cV), or diagonal (cD) detail subbands from a single-level ``db2`` decomposition, normalizes its absolute value, then block-upsamples it back to the original resolution (2x2 replication via ``kron``) and returns it.",
-   "zh": "方向性边缘检测。从单层``db2``分解中选取水平(cH)・垂直(cV)・对角(cD)三个细节子带之一，对其绝对值做归一化，再以块状放大（用``kron``做2x2复制）恢复到原始分辨率后返回。",
+   "zh": "方向性边缘检测。从单层``db2``分解中选取水平(cH)、垂直(cV)、对角(cD)三个细节子带之一，对其绝对值做归一化，再以块状放大（用``kron``做2x2复制）恢复到原始分辨率后返回。",
    "tw": "方向性邊緣偵測。從單層``db2``分解中選取水平(cH)・垂直(cV)・對角(cD)三個細節子頻帶之一，對其絕對值做正規化，再以區塊放大（用``kron``做2x2複製）還原到原始解析度後回傳。",
    "ko": "방향별 엣지 검출. 1단계 ``db2`` 분해에서 수평(cH)・수직(cV)・대각(cD) 상세 서브밴드 중 하나를 선택하여 절댓값을 정규화한 뒤, 원본 해상도까지 블록 확대(``kron``으로 2x2 복제)하여 반환한다.",
    "de": "Richtungsabhängige Kantendetektion. Wählt eines der Detail-Subbänder horizontal (cH), vertikal (cV) oder diagonal (cD) aus einer einstufigen ``db2``-Zerlegung aus, normalisiert dessen Absolutwert und skaliert es dann per Blockvergrößerung (2x2-Replikation mit ``kron``) zurück auf die ursprüngliche Auflösung.",
@@ -8797,7 +8822,7 @@
   "2d/xwt_subband_tile": {
    "fp": "c0531bde273c",
    "en": "The 4 subbands of a single-level wavelet decomposition (``pywt.dwt2``, Haar) -- approximation cA, horizontal cH, vertical cV, diagonal cD -- tiled 2x2 into one image and min-max normalized. Literally a wavelet pyramid display.",
-   "zh": "将单层小波分解（``pywt.dwt2``，Haar）的4个子带（近似cA・水平cH・垂直cV・对角cD）以2x2排列拼成一幅图像，并做min-max归一化。就是小波金字塔的可视化。",
+   "zh": "将单层小波分解（``pywt.dwt2``，Haar）的4个子带（近似cA、水平cH、垂直cV、对角cD）以2x2排列拼成一幅图像，并做min-max归一化。就是小波金字塔的可视化。",
    "tw": "將單層小波分解（``pywt.dwt2``，Haar）的4個子頻帶（近似cA・水平cH・垂直cV・對角cD）以2x2排列拼成一張影像，並做min-max正規化。就是小波金字塔的視覺化呈現。",
    "ko": "1단계 웨이블릿 분해(``pywt.dwt2``, Haar)의 4개 서브밴드(근사 cA・수평 cH・수직 cV・대각 cD)를 2x2로 배치하여 하나의 이미지로 만들고 min-max 정규화한 것. 웨이블릿 피라미드 표시 그 자체다.",
    "de": "Die 4 Subbänder einer einstufigen Wavelet-Zerlegung (``pywt.dwt2``, Haar) -- Approximation cA, horizontal cH, vertikal cV, diagonal cD -- in einem 2x2-Raster zu einem Bild zusammengefügt und Min-Max-normalisiert. Im Grunde die Darstellung einer Wavelet-Pyramide.",
@@ -10336,7 +10361,7 @@
   "3d/mesh_reduction_report": {
    "fp": "7253014df884",
    "ja": "削減(間引き・リメッシュ・ボクセル化)が何を失ったかを数字で(``table``)。",
-   "zh": "一次削减(简化・重网格化・体素化)失去了什么,以数字给出(``table``)。",
+   "zh": "一次削减(简化、重网格化、体素化)失去了什么,以数字给出(``table``)。",
    "tw": "一次削減(簡化・重網格化・體素化)失去了什麼,以數字給出(``table``)。",
    "ko": "삭감(간략화·리메시·복셀화)이 무엇을 잃었는지를 숫자로(``table``).",
    "de": "Was eine Reduktion (Dezimierung, Remeshing, Voxelisierung) verloren hat, in Zahlen (``table``).",
@@ -10471,7 +10496,7 @@
   "3d/morph_close3d": {
    "fp": "2f9c3c43266c",
    "en": "3-D closing = dilation → erosion. Fills the **dark structures (gaps and cavities)** smaller than the structuring element.",
-   "zh": "3D closing = dilation → erosion。填补小于 SE 的**暗结构(缝隙・空腔)**。",
+   "zh": "3D closing = dilation → erosion。填补小于 SE 的**暗结构(缝隙、空腔)**。",
    "tw": "3D closing = dilation → erosion。填補小於 SE 的**暗結構(縫隙・空腔)**。",
    "ko": "3D closing = dilation → erosion. SE 보다 작은 **어두운 구조(틈·공동)**를 메웁니다.",
    "de": "3-D-Closing = Dilatation → Erosion. Füllt die **dunklen Strukturen (Lücken und Hohlräume)**, die kleiner als das Strukturelement sind.",
@@ -10507,7 +10532,7 @@
   "3d/morph_open3d": {
    "fp": "5f89dd7790ed",
    "en": "3-D opening = erosion → dilation. Removes the **bright structures (spikes and grains)** smaller than the structuring element.",
-   "zh": "3D opening = erosion → dilation。去除小于 SE 的**亮结构(尖刺・颗粒)**。",
+   "zh": "3D opening = erosion → dilation。去除小于 SE 的**亮结构(尖刺、颗粒)**。",
    "tw": "3D opening = erosion → dilation。去除小於 SE 的**亮結構(尖刺・顆粒)**。",
    "ko": "3D opening = erosion → dilation. SE 보다 작은 **밝은 구조(가시·알갱이)**를 제거.",
    "de": "3-D-Opening = Erosion → Dilatation. Entfernt die **hellen Strukturen (Spitzen und Körner)**, die kleiner als das Strukturelement sind.",
@@ -11290,7 +11315,7 @@
   "3d/shape_index": {
    "fp": "20275007cc99",
    "en": "Koenderink's shape index s∈[-1,1] (convex sphere +1, cylinder +0.5, saddle 0, concave sphere −1). → (N,).",
-   "zh": "Koenderink 的 shape index s∈[-1,1] (凸球+1・圆柱+0.5・鞍点0・凹球-1)。→ (N,)。",
+   "zh": "Koenderink 的 shape index s∈[-1,1] (凸球+1、圆柱+0.5、鞍点0、凹球-1)。→ (N,)。",
    "tw": "Koenderink 的 shape index s∈[-1,1] (凸球+1・圓柱+0.5・鞍點0・凹球-1)。→ (N,)。",
    "ko": "Koenderink 의 shape index s∈[-1,1] (볼록구+1·원기둥+0.5·안장0·오목구-1). → (N,).",
    "de": "Koenderinks Formindex s∈[-1,1] (konvexe Kugel +1, Zylinder +0,5, Sattel 0, konkave Kugel −1). → (N,).",
@@ -11308,7 +11333,7 @@
   "3d/signed_distance_field": {
    "fp": "7d7871a7fe83",
    "en": "Occupancy/density voxels → a signed distance field SDF (inside < 0, outside > 0). edt_jfa applied to both sides.",
-   "zh": "occupancy/密度 voxel → 符号距离场 SDF(内侧<0・外侧>0)。对两侧各做 edt_jfa。",
+   "zh": "occupancy/密度 voxel → 符号距离场 SDF(内侧<0、外侧>0)。对两侧各做 edt_jfa。",
    "tw": "occupancy/密度 voxel → 符號距離場 SDF(內側<0・外側>0)。對兩側各做 edt_jfa。",
    "ko": "occupancy/밀도 voxel → 부호 거리장 SDF(안쪽<0·바깥쪽>0). edt_jfa 를 양쪽에.",
    "de": "Belegungs-/Dichtevoxel → ein vorzeichenbehaftetes Distanzfeld SDF (innen < 0, außen > 0). edt_jfa auf beide Seiten angewandt.",
@@ -11713,7 +11738,7 @@
   "3d/vol_euler_number": {
    "fp": "03169c634f53",
    "ja": "二値ボリュームのオイラー標数を、3 つのベッチ数(物体・貫通孔・閉気孔)に分けて返す。",
-   "zh": "二值体的欧拉示性数,并拆分为三个贝蒂数(物体・贯通孔・闭孔)。",
+   "zh": "二值体的欧拉示性数,并拆分为三个贝蒂数(物体、贯通孔、闭孔)。",
    "tw": "二值體的尤拉示性數,並拆成三個貝蒂數(物體・貫通孔・閉孔)。",
    "ko": "이진 볼륨의 오일러 표수를 세 베티 수(물체・관통 구멍・닫힌 공동)로 나누어 반환.",
    "de": "Euler-Charakteristik eines Binärvolumens, aufgeschlüsselt in ihre drei Betti-Zahlen.",
@@ -11785,7 +11810,7 @@
   "3d/vol_granulometry": {
    "fp": "3acf04024ef5",
    "ja": "二値ボリュームの気孔径・粒径の**分布**(開処理の系列から)。",
-   "zh": "二值体的孔径・粒径**分布**(来自开运算序列)。",
+   "zh": "二值体的孔径、粒径**分布**(来自开运算序列)。",
    "tw": "二值體的孔徑・粒徑**分布**(來自開運算序列)。",
    "ko": "이진 볼륨의 기공・입자 **크기 분포**(열림 연산 계열에서).",
    "de": "**Größenverteilung** von Poren bzw. Partikeln eines Binärvolumens (Öffnungsreihe).",
@@ -12316,7 +12341,7 @@
   "annotate/annotate_dimension_layout": {
    "fp": "c960444bc8f3",
    "en": "Returns a table (dict): the geometry of a dimension line (line, extension lines, text position) in closed form.",
-   "zh": "返回表(dict):以闭式确定尺寸线的几何(尺寸线・界线・文字位置)。",
+   "zh": "返回表(dict):以闭式确定尺寸线的几何(尺寸线、界线、文字位置)。",
    "tw": "回傳表(dict):以閉合式確定尺寸線的幾何(尺寸線・界線・文字位置)。",
    "ko": "표(dict)를 돌려줍니다: 치수선의 기하(치수선·보조선·글자 위치)를 닫힌 식으로.",
    "de": "Liefert eine Tabelle (dict): die Geometrie einer Maßlinie (Maßlinie, Hilfslinien, Textposition) in geschlossener Form.",
@@ -12334,7 +12359,7 @@
   "annotate/annotate_figure_grid_layout": {
    "fp": "9f93724c428a",
    "en": "Returns a table (dict): the typesetting of a multi-panel figure (cell, panel and caption-band rectangles) in closed form.",
-   "zh": "返回表(dict):以闭式给出多面板图的排版(单元格・面板・标题带的矩形)。",
+   "zh": "返回表(dict):以闭式给出多面板图的排版(单元格、面板、标题带的矩形)。",
    "tw": "回傳表(dict):以閉合式給出多面板圖的排版(儲存格・面板・標題帶的矩形)。",
    "ko": "표(dict)를 돌려줍니다: 다패널 그림의 조판(셀·패널·표제 띠의 사각형)을 닫힌 식으로.",
    "de": "Liefert eine Tabelle (dict): den Satz einer mehrteiligen Abbildung (Zellen-, Panel- und Beschriftungsrechtecke) in geschlossener Form.",
@@ -12370,7 +12395,7 @@
   "annotate/annotate_leader_layout": {
    "fp": "2774ff8c9af1",
    "en": "Returns a table (dict): the placement of leader lines (elbow, text position, plate rectangle) in closed form.",
-   "zh": "返回表(dict):以闭式确定引出线的布置(折点・文字位置・衬板矩形)。",
+   "zh": "返回表(dict):以闭式确定引出线的布置(折点、文字位置、衬板矩形)。",
    "tw": "回傳表(dict):以閉合式確定引出線的佈置(折點・文字位置・襯板矩形)。",
    "ko": "표(dict)를 돌려줍니다: 지시선의 배치(팔꿈치·글자 위치·판의 사각형)를 닫힌 식으로.",
    "de": "Liefert eine Tabelle (dict): die Anordnung der Hinweislinien (Knick, Textposition, Plattenrechteck) in geschlossener Form.",
@@ -12505,7 +12530,7 @@
   "annotate/color_bar": {
    "fp": "2f624c3bd29c",
    "en": "The legend of a LUT (a colour bar), labelled with its minimum, maximum and unit.",
-   "zh": "LUT 的图例(色条),带最小值・最大值・单位标注。",
+   "zh": "LUT 的图例(色条),带最小值、最大值、单位标注。",
    "tw": "LUT 的圖例(色條),帶最小值・最大值・單位標註。",
    "ko": "LUT 의 범례(컬러바). 최소·최대·단위 라벨 포함.",
    "de": "Die Legende einer LUT (eine Farbskala), beschriftet mit Minimum, Maximum und Einheit.",
@@ -12640,7 +12665,7 @@
   "annotate/plot_series": {
    "fp": "c89c1e3cfca5",
    "en": "Draw lines, scatter or bars. Takes **data coordinates** (the axes decide the pixels).",
-   "zh": "画折线・散点・柱状。以**数据坐标**接收(像素由 axes 决定)。",
+   "zh": "画折线、散点、柱状。以**数据坐标**接收(像素由 axes 决定)。",
    "tw": "畫折線・散點・長條。以**資料座標**接收(像素由 axes 決定)。",
    "ko": "꺾은선·산점·막대를 그립니다. **데이터 좌표**로 받습니다(화소는 axes 가 정함).",
    "de": "Zeichnet Linien, Streudiagramme oder Balken. Nimmt **Datenkoordinaten** entgegen (die Pixel bestimmen die Achsen).",
@@ -12838,7 +12863,7 @@
   "cadmap/cad_surface_to_pixel": {
    "fp": "7bccb6afe37e",
    "en": "3-D points (N,3) → pixels plus **visibility** (occluded, back-facing and out-of-frame are told apart).",
-   "zh": "3-D 点 (N,3) → 像素 + **可见性**(遮挡・背面・出画分别返回)。",
+   "zh": "3-D 点 (N,3) → 像素 + **可见性**(遮挡、背面、出画分别返回)。",
    "tw": "3-D 點 (N,3) → 像素 + **可見性**(遮蔽・背面・出畫分別回傳)。",
    "ko": "3-D 점 (N,3) → 화소 + **가시성**(가려짐·뒷면·화면 밖을 구분해 돌려줍니다).",
    "de": "3-D-Punkte (N,3) → Pixel plus **Sichtbarkeit** (verdeckt, rückseitig und außerhalb des Bildes werden unterschieden).",
@@ -16357,7 +16382,7 @@
   "optics/optical_camera": {
    "fp": "e15da91f113c",
    "en": "Build an ideal pinhole from real specifications (focal length, pixel pitch, resolution, working distance).",
-   "zh": "由实际诸元(焦距・像元间距・分辨率・工作距离)组成理想针孔相机。",
+   "zh": "由实际诸元(焦距、像元间距、分辨率、工作距离)组成理想针孔相机。",
    "tw": "由實際諸元(焦距・像素間距・解析度・工作距離)組成理想針孔相機。",
    "ko": "실제 제원(초점거리·화소 피치·해상도·작동거리)으로 이상적 핀홀을 만듭니다.",
    "de": "Baut aus realen Spezifikationen (Brennweite, Pixelpitch, Auflösung, Arbeitsabstand) eine ideale Lochkamera.",
@@ -16393,7 +16418,7 @@
   "optics/optscene_instances": {
    "fp": "83c5bab7366b",
    "en": "Defects returned **one instance at a time** (class, pixel mask, bounding box, area).",
-   "zh": "把缺陷按**个体**返回(类别・像素掩码・bounding box・面积)。",
+   "zh": "把缺陷按**个体**返回(类别、像素掩码、bounding box、面积)。",
    "tw": "把缺陷按**個體**回傳(類別・像素遮罩・bounding box・面積)。",
    "ko": "결함을 **개체별로** 돌려줍니다(클래스·화소 마스크·bounding box·면적).",
    "de": "Defekte **instanzweise** zurückgegeben (Klasse, Pixelmaske, Bounding Box, Fläche).",
@@ -16492,7 +16517,7 @@
   "optics/random_defects": {
    "fp": "b2336d984c17",
    "en": "Create **random defects** on a part (scratches, cracks, pits, stains, dents, foreign matter).",
-   "zh": "在零件上制造**随机缺陷**(划痕・裂纹・凹坑・污渍・压痕・异物)。",
+   "zh": "在零件上制造**随机缺陷**(划痕、裂纹、凹坑、污渍、压痕、异物)。",
    "tw": "在零件上製造**隨機缺陷**(刮痕・裂紋・凹坑・汙漬・壓痕・異物)。",
    "ko": "부품에 **무작위 결함**을 만듭니다(흠집·균열·핏·얼룩·눌림·이물).",
    "de": "Erzeugt **zufällige Defekte** auf einem Teil (Kratzer, Risse, Pits, Flecken, Diedel, Fremdkörper).",
@@ -16555,7 +16580,7 @@
   "optics/render_studio": {
    "fp": "6bd470ff5920",
    "en": "Draw a **picture to show**: environment light, interreflection, refraction and dispersion (no photometric ground truth).",
-   "zh": "画**用来展示的图**:含环境光・多次反射・折射与色散(没有测光真值)。",
+   "zh": "画**用来展示的图**:含环境光、多次反射、折射与色散(没有测光真值)。",
    "tw": "畫**用來展示的圖**:含環境光・多次反射・折射與色散(沒有測光真值)。",
    "ko": "**보여 줄 그림**을 그립니다: 환경광·다중 반사·굴절과 분산 포함(측광 정답은 없음).",
    "de": "Zeichnet ein **Schaubild**: Umgebungslicht, Mehrfachreflexion, Brechung und Dispersion (keine photometrische Ground Truth).",
@@ -16654,7 +16679,7 @@
   "optics/sensor_capture": {
    "fp": "9d9967f73b70",
    "en": "Radiance → the output of a real sensor (shot noise, read noise, saturation, quantisation).",
-   "zh": "辐亮度 → 真实传感器的输出(散粒噪声・读出噪声・饱和・量化)。",
+   "zh": "辐亮度 → 真实传感器的输出(散粒噪声、读出噪声、饱和、量化)。",
    "tw": "輻亮度 → 真實感測器的輸出(散粒雜訊・讀出雜訊・飽和・量化)。",
    "ko": "복사휘도 → 실제 센서의 출력(샷 노이즈·읽기 잡음·포화·양자화).",
    "de": "Radianz → die Ausgabe eines realen Sensors (Schrotrauschen, Ausleserauschen, Sättigung, Quantisierung).",
@@ -16690,7 +16715,7 @@
   "optics/sheen_shade": {
    "fp": "8eb73d7247ab",
    "en": "The **rim sheen** of cloth (velvet, satin). The more grazing to the view, the brighter.",
-   "zh": "布料的**边缘光泽**(天鹅绒・缎)。相对视线越掠射越亮。",
+   "zh": "布料的**边缘光泽**(天鹅绒、缎)。相对视线越掠射越亮。",
    "tw": "布料的**邊緣光澤**(天鵝絨・緞)。相對視線越掠射越亮。",
    "ko": "천의 **가장자리 광택**(벨벳·새틴). 시선에 대해 누울수록 밝습니다.",
    "de": "Der **Randglanz** von Stoff (Samt, Satin). Je streifender zum Blick, desto heller.",
@@ -16753,7 +16778,7 @@
   "optics/subsurface_approx": {
    "fp": "cfa54ac55c02",
    "en": "An approximation of translucent wrap-around light (leaves, skin, marble, milky plastic).",
-   "zh": "半透明绕射光的近似(树叶・皮肤・大理石・乳白塑料)。",
+   "zh": "半透明绕射光的近似(树叶、皮肤、大理石、乳白塑料)。",
    "tw": "半透明繞射光的近似(樹葉・皮膚・大理石・乳白塑膠)。",
    "ko": "반투명한 감돌아 들어오는 빛의 근사(잎·피부·대리석·유백 플라스틱).",
    "de": "Eine Näherung für durchscheinendes Umgriffslicht (Blätter, Haut, Marmor, Milchkunststoff).",
@@ -16771,7 +16796,7 @@
   "optics/surface_finish": {
    "fp": "5040df6db7d9",
    "en": "Cut a **machining lay** into a part's surface (turning marks, hairline, knurl, matte blast, grinding marks).",
-   "zh": "在零件表面刻出**加工纹路**(车纹・拉丝・滚花・喷砂・磨削纹)。",
+   "zh": "在零件表面刻出**加工纹路**(车纹、拉丝、滚花、喷砂、磨削纹)。",
    "tw": "在零件表面刻出**加工紋路**(車紋・拉絲・滾花・噴砂・磨削紋)。",
    "ko": "부품 면에 **가공 결**을 새깁니다(선반 자국·헤어라인·널링·무광 블라스트·연삭 자국).",
    "de": "Prägt eine **Bearbeitungsriefung** in die Oberfläche eines Teils (Drehriefen, Haarschliff, Rändel, Mattstrahl, Schleifspuren).",
@@ -16843,7 +16868,7 @@
   "optics/vision_layout": {
    "fp": "998e54ba73ce",
    "en": "Bundle sensor, lens, light and scene, and return the **derived quantities in closed form**.",
-   "zh": "把传感器・镜头・照明・场景绑成一体,并以**闭式返回导出量**。",
+   "zh": "把传感器、镜头、照明、场景绑成一体,并以**闭式返回导出量**。",
    "tw": "把感測器・鏡頭・照明・場景綁成一體,並以**閉合式回傳導出量**。",
    "ko": "센서·렌즈·조명·장면을 묶어 **도출량을 닫힌 식으로** 돌려줍니다.",
    "de": "Bündelt Sensor, Objektiv, Beleuchtung und Szene und liefert die **abgeleiteten Größen in geschlossener Form**.",
@@ -16879,7 +16904,7 @@
   "optics/weave_normals": {
    "fp": "599bd72242a1",
    "en": "The normal field of a weave (cloth, carbon fibre, wire mesh). Two orthogonal periodic ridges.",
-   "zh": "织纹的法线场(布・碳纤维・金属网)。两组正交周期的隆起。",
+   "zh": "织纹的法线场(布、碳纤维、金属网)。两组正交周期的隆起。",
    "tw": "織紋的法線場(布・碳纖維・金屬網)。兩組正交週期的隆起。",
    "ko": "직조 결의 법선장(천·탄소섬유·철망). 직교하는 두 주기의 이랑.",
    "de": "Das Normalenfeld einer Webung (Stoff, Kohlefaser, Drahtgitter). Zwei orthogonale periodische Rippen.",
@@ -17365,7 +17390,7 @@
   "reprconv/angles_to_normals": {
    "fp": "c074b9b66c04",
    "en": "Azimuth/elevation pairs ``(N,2)`` **[deg]** → unit normals ``(N,3)``. The exit from ``pairs``.",
-   "zh": "方位・仰角对 ``(N,2)`` **[度]** → 单位法线 ``(N,3)``。``pairs`` 的出口。",
+   "zh": "方位、仰角对 ``(N,2)`` **[度]** → 单位法线 ``(N,3)``。``pairs`` 的出口。",
    "tw": "方位・仰角對 ``(N,2)`` **[度]** → 單位法線 ``(N,3)``。``pairs`` 的出口。",
    "ko": "방위·고도 쌍 ``(N,2)`` **[도]** → 단위 법선 ``(N,3)``. ``pairs`` 의 출구.",
    "de": "Azimut-/Elevationspaare ``(N,2)`` **[Grad]** → Einheitsnormalen ``(N,3)``. Der Ausgang aus ``pairs``.",
@@ -17581,7 +17606,7 @@
   "reprconv/normals_to_angles": {
    "fp": "5a766cfa96f8",
    "en": "Normals ``(N,3)`` → azimuth/elevation pairs ``(N,2)`` **[deg]**. The exit from ``normals``.",
-   "zh": "法线 ``(N,3)`` → 方位・仰角对 ``(N,2)`` **[度]**。``normals`` 的出口。",
+   "zh": "法线 ``(N,3)`` → 方位、仰角对 ``(N,2)`` **[度]**。``normals`` 的出口。",
    "tw": "法線 ``(N,3)`` → 方位・仰角對 ``(N,2)`` **[度]**。``normals`` 的出口。",
    "ko": "법선 ``(N,3)`` → 방위·고도 쌍 ``(N,2)`` **[도]**. ``normals`` 의 출구.",
    "de": "Normalen ``(N,3)`` → Azimut-/Elevationspaare ``(N,2)`` **[Grad]**. Der Ausgang aus ``normals``.",
@@ -17840,13 +17865,13 @@
    "hi": "individual measurements के लिए EWMA control chart (Roberts 1959)।"
   },
   "spc/spc_hotelling_t2": {
-   "fp": "9c8badfbf811",
-   "ja": "Hotelling の T² による多変量 SPC(F 分布由来の管理限界で相関する計測を同時に判定)。",
-   "zh": "基于 Hotelling T² 的多变量 SPC，控制限服从 F 分布。",
-   "tw": "基於 Hotelling T² 的多變量 SPC，管制界限服從 F 分配。",
-   "ko": "F 분포를 따르는 관리 한계를 쓰는 Hotelling T² 다변량 SPC.",
-   "de": "Multivariate SPC mit Hotellings T² und F-verteilter Regelgrenze.",
-   "hi": "F-distributed control limit के साथ Hotelling के T² द्वारा multivariate SPC।"
+   "fp": "fa14c152603e",
+   "ja": "Hotelling の T² による多変量 SPC(管理限界は推定の段階で選ぶ: phase I は Beta 分布、母数既知は χ² 分布)。",
+   "zh": "基于 Hotelling T² 的多变量 SPC，控制限按所处阶段选取(第 I 阶段用 Beta 分布，参数已知时用 χ² 分布)。",
+   "tw": "基於 Hotelling T² 的多變量 SPC，管制界限依所處階段選取(第 I 階段用 Beta 分配，參數已知時用 χ² 分配)。",
+   "ko": "Hotelling T² 다변량 SPC. 관리 한계는 단계에 따라 고른다(phase I 은 Beta 분포, 모수가 알려진 경우는 χ² 분포).",
+   "de": "Multivariate SPC mit Hotellings T² und der Regelgrenze der jeweiligen Phase (Phase I: Beta-Verteilung, bekannte Parameter: χ²-Verteilung).",
+   "hi": "Hotelling के T² द्वारा multivariate SPC, जिसकी control limit चरण के अनुसार चुनी जाती है (phase I में Beta distribution, ज्ञात parameters में χ² distribution)।"
   },
   "spc/spc_mt_distance": {
    "fp": "27ade6a39799",
@@ -18519,7 +18544,7 @@
   "volcolor/vol_label_shape_stats": {
    "fp": "252683fd59af",
    "en": "Per-component quantities that can be had in **linear time** (volume, centroid, box, PCA shape indices).",
-   "zh": "每个成分**线性时间可得**的定量值(体积・重心・包围盒・主成分形状指标)。",
+   "zh": "每个成分**线性时间可得**的定量值(体积、重心、包围盒、主成分形状指标)。",
    "tw": "每個成分**線性時間可得**的定量值(體積・重心・包圍盒・主成分形狀指標)。",
    "ko": "성분별로 **선형 시간에 낼 수 있는** 정량값(부피·무게중심·박스·주성분 형상 지표).",
    "de": "Größen pro Komponente, die sich in **linearer Zeit** bestimmen lassen (Volumen, Schwerpunkt, Box, PCA-Formindizes).",
@@ -24728,7 +24753,7 @@
   },
   "drive/spiral_search_points": {
    "fp": "e3f9c42b0731",
-   "en": "Search points for strike-slip: Archimedes' helix r = p φ/(2π) at every arc length ``step`` [m] (from the center) to radius ``r_max``. Spacing between adjacent turns = ``pitch``. If the radius to be captured by the chamfer is c, it can be covered if the worst distance between adjacent turns ``sqrt((pitch/2)^2 + (step/2)^2)`` is less than or equal to c. Return this value as ``worst_gap``. Returns ``points``(N, 2), ``worst_gap``, ``n``. **Raises** ValueError: pitch・step・r_max ≤ 0, points exceed 200,000.",
+   "en": "Search points for strike-slip: Archimedes' helix r = p φ/(2π) at every arc length ``step`` [m] (from the center) to radius ``r_max``. Spacing between adjacent turns = ``pitch``. If the radius to be captured by the chamfer is c, it can be covered if the worst distance between adjacent turns ``sqrt((pitch/2)^2 + (step/2)^2)`` is less than or equal to c. Return this value as ``worst_gap``. Returns ``points``(N, 2), ``worst_gap``, ``n``. **Raises** ValueError: pitch, step, r_max ≤ 0, points exceed 200,000.",
    "zh": "走滑搜索点：阿基米德螺旋线 r = p φ/(2π) 在每个弧长``step`` [m]（从中心）到半径``r_max`` 处。相邻匝之间的间距=“节距”。如果倒角要捕获的半径为c，则相邻匝之间的最差距离``sqrt((pitch/2)^2 + (step/2)^2)``小于或等于c，则可以覆盖倒角。将此值作为“worst_gap”返回。返回“points”(N, 2)、“worst_gap”、“n”。 **引发** ValueError：pitch·step·r_max ≤ 0，点数超过200,000。",
    "tw": "走滑搜尋點：阿基米德螺旋線 r = p φ/(2π) 在每個弧長``step`` [m]（從中心）到半徑``r_max`` 處。相鄰匝之間的間距=“節距”。如果倒角要捕獲的半徑為c，則相鄰匝之間的最差距離``sqrt((pitch/2)^2 + (step/2)^2)``小於或等於c，則可以覆蓋倒角。將此值作為“worst_gap”傳回。返回“points”(N, 2)、“worst_gap”、“n”。 **引發** ValueError：pitch·step·r_max ≤ 0，點數超過200,000。",
    "ko": "편차의 탐색점: Archimedes의 나선 r = p φ/(2π) 를 호 길이 step [m] 마다 (중심으로부터), 반경 r_max까지. 다음 권선과의 간격 = pitch''. 모따기가 잡히는 반경을 c 로 하면, 다음의 감기 사이의 점의 최악 거리 sqrt((pitch/2)^2 + (step/2)^2)가 c 이하이면 덮는다. 이 값을 worst_gap로 돌려줍니다. 반환 points''(N, 2), worst_gap, n''. Raises ValueError: pitch, step, r_max ≤ 0, 점이 200,000을 초과합니다.",

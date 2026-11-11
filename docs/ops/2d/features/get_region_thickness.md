@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_features, poc_bone_trabecular_thickness]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # get_region_thickness — 2D `features` op
@@ -34,6 +34,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 ## 使い方
 
 領域の太さ [px] の近似値 ``2 × 最大内接円半径``(``distance_transform_edt`` の最大値の 2 倍)。
+画像の外は背景とみなす(縁に接する領域も、画像を広げたときと同じ太さ。全面の 60x80 は 60)。
 
 HALCON の ``get_region_thickness``（Access the thickness of a region along the main axis.）が定義する
 「主軸に沿った太さのプロファイル」とは異なり、方向を問わないグローバルな最大内接半径

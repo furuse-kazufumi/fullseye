@@ -13,7 +13,8 @@
 <p>dst_normals (M,3): dst 的单位法线(即使未归一化也会在内部归一化)。</p>
 <p>未知时用 pointcloud.estimate_normals(dst) 等事先估计。</p>
 <p>iters: 最大迭代次数。</p>
-<p>tol: RMSE 变化小于此值时判定收敛并终止。</p>
+<p>tol: RMSE 变化小于 <code style="color:#22d3bf">tol × L</code>(L = dst 外接框的对角线长)时判定收敛并终止。</p>
+<p>是相对于点云尺度的相对量(2026-11-05 之前是坐标单位的绝对量)。</p>
 <p>init ((R0,t0)): 初始位姿(传入粗匹配的 R,t)。None 时为单位。</p>
 <p>trim (float|None): [0,1) 的比例。每次迭代丢弃点-面残差最大的前若干部分的</p>
 <p>Trimmed ICP(对部分重叠、离群值稳健)。</p>

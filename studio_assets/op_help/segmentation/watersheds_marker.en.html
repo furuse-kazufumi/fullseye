@@ -6,7 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Marker-controlled watershed segmentation; markers is an int label image (0 = unassigned) (watersheds_marker).</p>
-<p>Empty input (<code style="color:#22d3bf">image</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">image</code> with 0 elements) raises ValueError. <code style="color:#22d3bf">markers</code> of a different shape from <code style="color:#22d3bf">image</code> and non-integer, negative or non-finite <code style="color:#22d3bf">markers</code> also raise ValueError (integer-valued floats and booleans are accepted). It calls <code style="color:#22d3bf">skimage.segmentation.watershed</code> directly; without scikit-image it raises MissingDependencyError (it does not fall back to an image-blind nearest-marker map).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:halcon_segmentation_tour">halcon_segmentation_tour</a> — <code style="color:#22d3bf">py -3.11 examples/halcon_segmentation_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_mixed_case_depalletizing">poc_mixed_case_depalletizing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_mixed_case_depalletizing.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sem_tem_same_particle">poc_sem_tem_same_particle</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sem_tem_same_particle.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">labels2d</code> as input)</h3>
 <p><a style="color:#22d3bf" href="opsegmentation:seg_confusion_table">seg_confusion_table</a> · <a style="color:#22d3bf" href="opsegmentation:seg_dice_jaccard">seg_dice_jaccard</a> · <a style="color:#22d3bf" href="opsegmentation:seg_boundary_f">seg_boundary_f</a> · <a style="color:#22d3bf" href="opsegmentation:seg_hausdorff">seg_hausdorff</a> · <a style="color:#22d3bf" href="opsegmentation:seg_mean_surface_distance">seg_mean_surface_distance</a> · <a style="color:#22d3bf" href="opsegmentation:seg_under_over_segmentation">seg_under_over_segmentation</a> · <a style="color:#22d3bf" href="opsegmentation:seg_object_counts_match">seg_object_counts_match</a> · <a style="color:#22d3bf" href="opsegmentation:seg_score_card">seg_score_card</a></p>

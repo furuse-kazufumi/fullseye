@@ -9,7 +9,7 @@ gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # image_points_to_world_plane — CALIB `plane` op
@@ -22,6 +22,13 @@ version: 0.9.0  # fullseye lib version this note was generated for
 ## 使い方
 
 カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。
+
+返り値は (N,2) の world 座標 × ``scale``。視線が z=0 平面とカメラの**前**で交わらない画素
+(地平線より上など、交点がカメラの後ろ)は平面上の点を見ていないので、その行は ``nan``。
+視線が平面と平行な画素は ``ValueError``。
+
+★2026-11-05(敵対的検証 geometry、未再現の疑いを確認): 以前は交点の係数 lam < 0(カメラの
+後ろ)でも有限の world 点を返していた(深度 −6.7 の点が「見えている点」として返った)。
 
 ## 詳しい使い方ガイド
 

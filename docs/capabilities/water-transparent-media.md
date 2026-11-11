@@ -62,7 +62,7 @@ import watermedia as WM
 
 # 風速 8 m/s の海の有義波高(閉形式 0.21 U²/g に近い)と、水の吸収の最小(Pope & Fry の表)
 sp = WM.ocean_spectrum(8.0)
-print(round(sp["hs_m"], 3), round(0.21 * 8.0 ** 2 / 9.80665, 3))      # 1.366 1.371
+print(round(sp["hs_m"], 3), round(0.21 * 8.0 ** 2 / 9.80665, 3))      # 1.366 1.37
 w = WM.water_attenuation(0.4175, "pure")
 print(round(float(w["a"][0]), 5))                                       # 0.00442 (1/m、417.5 nm)
 

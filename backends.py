@@ -18,7 +18,7 @@ import os
 
 import numpy as np
 
-from backend_safe import signed01
+from backend_safe import _reflect_padded, signed01
 
 # ★The _safe fallback is a LAST RESORT and it can MASK A DEAD OP. For
 # out_sort=="image" `backend_safe.fallback` returns the clipped INPUT, so a
@@ -369,15 +369,19 @@ DOCS: dict[str, str] = {
         "``feature.shape_index(v, sigma=0.5+2.0*a)`` の NaN(平坦領域で未定義になる)"
         "を 0 に置き換えてから ``signed01``(符号付き応答の 0 を 0.5 に写像し、"
         "±最大値を 0/1 に写像する)で ``[0,1]`` へ写した値 —— a は Hessian を計算する"
-        "際のガウス微分の σ を 0.5〜2.5 に振る。b は未使用。"
+        "際のガウス微分の σ を 0.5〜2.5 に振る。b は未使用。画像の外は鏡映で埋める"
+        "(2026-11-05 まで skimage の既定 = 0 埋めで、枠に偽の応答が出ていた)。"
     ),
     "sk_hessian_det": (
         "Hessian 行列式によるブロブ検出応答。2 階微分の行列(Hessian)の行列式は、"
         "ブロブ状の構造で正、鞍点状の構造で負になる符号付き応答。\n\n"
         "HALCON に直接対応するものは無い。実装は "
-        "``feature.hessian_matrix_det(v, sigma=0.5+2.5*a)`` を ``signed01`` で "
+        "``feature.hessian_matrix_det(v, sigma=0.5+2.5*a, approximate=False)`` を ``signed01`` で "
         "``[0,1]`` へ写した値(符号を保つため 0.5 が「応答ゼロ」に対応)—— a は"
-        "スケール σ を 0.5〜3.0 に振る。b は未使用。"
+        "スケール σ を 0.5〜3.0 に振る。b は未使用。画像の外は鏡映で埋める。\n\n"
+        "2026-11-05(敵対的検証 第 2 巡 P6)までは skimage の既定の箱フィルタ近似"
+        "(``approximate=True``)で、核の和が 0 でないため一様な画像でも明るさの 2 乗に比例する"
+        "応答を返し、明るさを 0.1 足すだけで値が変わっていた(厳密解との相関 0.08)。"
     ),
     "sk_corner_harris": (
         "Harris コーナー応答(skimage 実装)。勾配の構造テンソルから、平坦部/エッジ/"
@@ -388,6 +392,8 @@ DOCS: dict[str, str] = {
         "へ写した値 —— a は微分に使うガウス σ を 0.5〜2.5 に振る。b は未使用。"
         "Harris の自由パラメータ k は skimage の既定値(0.05)のまま固定。OpenCV 版の"
         "cv_corner_harris とはパラメータの振り方が異なるので同一結果にはならない。"
+        "画像の外は鏡映で埋める(2026-11-05 まで skimage の構造テンソルの既定 = 0 埋めで、"
+        "一様な画像でも枠が最大の応答になり正規化を支配していた)。"
     ),
     "sk_adjust_log": (
         "対数階調変換(log transform)。``out = gain * log(1 + in)`` 型の対数カーブで"
@@ -670,10 +676,12 @@ DOCS: dict[str, str] = {
         "考え方だが、勾配計算・平滑化のブロックサイズなどを固定パラメータで計算する"
         "OpenCV 版。\n\n"
         "HALCON の `points_harris` に相当(近似)。実装は "
-        "``cv2.cornerHarris(v, blockSize=2, ksize=3, k=0.04)`` を ``signed01`` で "
+        "``cv2.cornerHarris(v, blockSize=3, ksize=3, k=0.04)`` を ``signed01`` で "
         "``[0,1]`` へ写した値 —— blockSize(近傍サイズ)・ksize(Sobel 開口)・k"
         "(Harris の自由パラメータ)はすべて固定。a, b は未使用 —— skimage 版と違い"
         "スケールを振る仕組みが無い、素の Harris 応答。"
+        "2026-11-05(敵対的検証 第 2 巡 P11)までは blockSize=2 で、偶数の窓の中心が"
+        "半画素ずれ、応答が右下へ 0.5 px 片寄っていた。"
     ),
     "cv_min_eigen": (
         "最小固有値によるコーナー強度(Shi-Tomasi 系、OpenCV 実装)。勾配の構造"
@@ -909,11 +917,18 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             ("sk_autolevel", "gray", "scale_image_max", IMAGE, IMAGE,
              lambda v, a, b: filters.rank.autolevel(_u8s(v), _disk(a)).astype(np.float64) / 255),
             ("sk_shape_index", "texture", "", IMAGE, IMAGE,
-             lambda v, a, b: signed01(np.nan_to_num(feature.shape_index(v, sigma=0.5 + 2.0 * a)))),
+             # ★3 本とも鏡映の余白で包む(skimage の既定は画像の外 = 0、枠に偽の応答。2026-11-05 P6)
+             lambda v, a, b: signed01(np.nan_to_num(_reflect_padded(
+                 lambda u: feature.shape_index(u, sigma=0.5 + 2.0 * a), v, 0.5 + 2.0 * a)))),
             ("sk_hessian_det", "edges", "", IMAGE, IMAGE,
-             lambda v, a, b: signed01(feature.hessian_matrix_det(v, sigma=0.5 + 2.5 * a))),
+             # ★厳密な行列式(approximate=False)。既定の箱フィルタ近似は核の和が 0 でなく、一様な画像でも
+             #   明るさの 2 乗に比例する応答を返す(0.3 で 5.8e-4、0.4 で 1.0e-3)—— 実画像で厳密解との
+             #   相関が 0.08 しかなかった。厳密版は 1024² で近似より速い(0.14 s 対 0.20 s)。2026-11-05 P6
+             lambda v, a, b: signed01(_reflect_padded(
+                 lambda u: feature.hessian_matrix_det(u, sigma=0.5 + 2.5 * a, approximate=False), v, 0.5 + 2.5 * a))),
             ("sk_corner_harris", "edges", "points_harris", IMAGE, IMAGE,
-             lambda v, a, b: signed01(feature.corner_harris(v, sigma=0.5 + 2.0 * a))),
+             lambda v, a, b: signed01(_reflect_padded(
+                 lambda u: feature.corner_harris(u, sigma=0.5 + 2.0 * a), v, 0.5 + 2.0 * a))),
             # gain > 1 は出力を 1 より上へ押し上げる(実測 max=1.1380, a=0.5)。
             # `image` は [0,1] 契約なので出口で clip(2026-09-02)。`ops._apply` が
             # 段間で掛けている clip と同じなので **パイプライン結果はビット不変**、
@@ -1004,7 +1019,9 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
              lambda v, a, b: (cv2.Canny(_u8(v), int(50 + 100 * a), int(100 + 150 * b)) > 0).astype(np.float64)),
             # more image->image
             ("cv_corner_harris", "edges", "points_harris", IMAGE, IMAGE,
-             lambda v, a, b: signed01(cv2.cornerHarris(v.astype(np.float32), 2, 3, 0.04))),
+             # ★blockSize は奇数の 3(中心のある窓)。2026-11-05(敵対的検証 第 2 巡 P11)までは 2 で、偶数の
+             #   箱は中心が半画素ずれ、正方形の 4 隅の応答の極大が中心対称でなかった(中心 20.0、真値 19.5)。
+             lambda v, a, b: signed01(cv2.cornerHarris(v.astype(np.float32), 3, 3, 0.04))),
             ("cv_min_eigen", "edges", "points_harris", IMAGE, IMAGE,
              lambda v, a, b: norm(cv2.cornerMinEigenVal(v.astype(np.float32), 3 + 2 * int(a * 2)))),
             ("cv_precorner", "edges", "corner_response", IMAGE, IMAGE,

@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # convex_fill — 2D `region` op
@@ -41,7 +41,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 凸包に近い形へ穴・くびれを埋める（クロージングによる近似）。HALCON の ``shape_trans``（Transform the shape of a region.）の凸包変換に相当することを意図しているが、実装は反復回数の多いクロージングであり、厳密な凸包計算ではない（近似）。
 
-``a`` が反復回数を ``3〜6``（``_it(a)+2``）に振る。``b`` は未使用。``border_value=1`` の二値クロージングを掛けるだけなので、反復回数を超える大きさのくびれ・穴は埋まらない（真の凸包なら必ず埋まる）。
+``a`` が反復回数を ``3〜6``（``_it(a)+2``）に振る。``b`` は未使用。二値クロージングを掛けるだけなので、反復回数を超える大きさのくびれ・穴は埋まらない（真の凸包なら必ず埋まる）。クロージングは画像の外へ続く平面の上で行って切り戻す（2026-11-05 敵対的検証 第 2 巡 P3 までは ``border_value=1`` で、画像の外を前景とみなして縁の近くに楔を生やしていた）。
 
 **つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.33、0.67、0.99(実測。刻み 0.02 の掃きで測った位置)。
 

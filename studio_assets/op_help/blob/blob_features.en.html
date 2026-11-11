@@ -13,13 +13,15 @@
 <p><b>Default 1.0 = stays in pixels</b>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">n</code> (number of objects), <code style="color:#22d3bf">spacing</code>, <code style="color:#22d3bf">units</code> (mapping item → unit), and</p>
+<p><code style="color:#22d3bf">n</code> (number of objects = number of labels actually present), <code style="color:#22d3bf">spacing</code>, <code style="color:#22d3bf">units</code> (mapping item → unit), and</p>
 <p>19 arrays of length <code style="color:#22d3bf">n</code> (<code style="color:#22d3bf">FEATURE_KEYS</code>). Even with 0 objects,</p>
-<p>all keys are present with empty arrays (so the caller need not branch).</p>
+<p>all keys are present with empty arrays (so the caller need not branch). If the labels have gaps,</p>
+<p><code style="color:#22d3bf">n</code> is smaller than <code style="color:#22d3bf">labels.max()</code> -- look objects up by the <code style="color:#22d3bf">f[&quot;label&quot;]</code> column</p>
+<p>(<code style="color:#22d3bf">f[&quot;area&quot;][label - 1]</code> shifts after a gap).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle</code> is the tilt in the <b>matrix coordinate system</b> (+column → +row is positive = clockwise on screen).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> are the axis lengths of <b>the ellipse with the same 2nd-order moments</b> (<code style="color:#22d3bf">4 sqrt(lambda)</code>). It is not the bounding extent of the pixel arrangement, so for a square it comes out slightly longer than the side -- this is as defined, not an error.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> is <code style="color:#22d3bf">4 pi A / P^2</code>. <b>HALCON&#x27;s <code style="color:#22d3bf">circularity</code> is &quot;area / area of the circle whose radius is the farthest point&quot;, a different thing</b>, so when comparing values, check the definition.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> is <code style="color:#22d3bf">4 pi A / P^2</code> <b>capped at 1</b> (for objects of a few pixels the perimeter estimate is short relative to the area and the ratio exceeds 1 -- 1.75 for a 1-pixel blob -- but no shape is rounder than a circle). <b>HALCON&#x27;s <code style="color:#22d3bf">circularity</code> is &quot;area / area of the circle whose radius is the farthest point&quot;, a different thing</b>, so when comparing values, check the definition.</p>
 <p style="margin:2px 0 2px 12px">• Objects with <code style="color:#22d3bf">touches_border</code> True have both area and perimeter <b>smaller by the cut-off part</b>. Discard them before counting, or count the ground-truth side by the same convention.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>

@@ -1,0 +1,91 @@
+[
+ {
+  "file": "01_map.png",
+  "name": "map",
+  "caption": "同じ部品(段差・止まり穴・斜面・V 溝・リブ・浅い打痕)を 4 つの材質で、ステレオ・縞投影・間接 ToF・光切断・照度差ステレオの 5 方式で測った形。灰 = 欠測、橙 = 全方式共通の 0.1 mm を超える外れ。三角測量の角はステレオ・縞投影・光切断とも 30°。撮像は物理で描き、高さへの戻しは Fullseye の op。照度差ステレオの高さの定数は真値に合わせた(形の外れは偏りを引いて数えるので、合わせ方に依らない)。",
+  "shape": [
+   1570,
+   1435,
+   3
+  ]
+ },
+ {
+  "file": "02_raw.png",
+  "name": "raw",
+  "caption": "装置が撮る生の画像(上 = つや消し、下 = 金属光沢)。ステレオの左、縞投影の 1 枚(周期 1 mm)、ToF の振幅(画素 0.4 mm)、光切断の 1 コマ(部屋の明かりつき)、照度差ステレオの 1 灯目。カメラの像はレンズのぼけと周辺減光を通してある。",
+  "shape": [
+   478,
+   1466,
+   3
+  ]
+ },
+ {
+  "file": "03_numbers.png",
+  "name": "numbers",
+  "caption": "雑音 = 平らな所の真値との差の頑健な標準偏差。偏り = 平らな所の差の中央値。外れ = 偏りを引いた差が全方式共通の 0.1 mm / 1 mm を超えた有効画素の割合。照度差ステレオの偏りは真値に合わせた後の値。",
+  "shape": [
+   1120,
+   2140,
+   3
+  ],
+  "csv": "03_numbers.csv",
+  "tsv": "03_numbers.tsv"
+ },
+ {
+  "file": "04_conditions.png",
+  "name": "conditions",
+  "caption": "ステレオの輻輳角・カメラの画素・ToF の画素を振った雑音。光切断は模様の無い平らな板で、Dorsch の式とその op の独立なコヒーレント結像のシミュと並べた。",
+  "shape": [
+   688,
+   1673,
+   3
+  ],
+  "csv": "04_conditions.csv",
+  "tsv": "04_conditions.tsv"
+ },
+ {
+  "file": "05_acceptance.png",
+  "name": "acceptance",
+  "caption": "VDI/VDE 2634 Part 2 の考え方の評価量(準拠ではない)。評価 op は poc_virtual_acceptance_3d と同じ sphere_probing_error / sphere_spacing_error / plane_flatness_error。直径 8 mm の球 2 つ(間隔 20 mm)と平らな板を、同じ撮像と復号で測った点群に当てた。",
+  "shape": [
+   640,
+   1530,
+   3
+  ],
+  "csv": "05_acceptance.csv",
+  "tsv": "05_acceptance.tsv"
+ },
+ {
+  "file": "06_real.png",
+  "name": "real",
+  "caption": "実データ: 同じ場面を構造化光と ToF の深度センサで撮った深度(T-LESS)。縁の外 1〜3 画素で、構造化光は物体の深度のまま太り(橙)、ToF は物体と背景の間に浮く(青)。実データが支えるのはこの縁の外側の向きだけで、材質の主張はシミュだけ。",
+  "shape": [
+   604,
+   1196,
+   3
+  ],
+  "source": "Hodaň et al., T-LESS: An RGB-D Dataset for 6D Pose Estimation of Texture-less Objects, WACV 2017, https://doi.org/10.1109/WACV.2017.8, CC BY 4.0(切り出して表示)"
+ },
+ {
+  "file": "07_explained.gif",
+  "name": "explained",
+  "caption": "何を入れ(同じ部品・4 材質)→ 何を比べ(5 方式の生の画像と測った形)→ 何が分かったか(どこで壊れるか)を約 51 秒で。",
+  "shape": [
+   270,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 102,
+  "frames_written": 30,
+  "fps": 2.0,
+  "video": "07_explained.mp4",
+  "video_frames": 510,
+  "video_fps": 10.0,
+  "video_shape": [
+   540,
+   960,
+   3
+  ]
+ }
+]

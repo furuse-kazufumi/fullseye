@@ -267,6 +267,52 @@ def families_without_a_guide(recs):
 #: しか出ず、**op から辿る経路が一本も無かった**(2026-09-05 に発見)。
 _KNOWLEDGE_GUIDES = None
 
+#: 訳のファイル ``<name>.<lang>.md`` の接尾辞(:data:`LANGS` と同じ言語コード)。
+#: ★2026-11-06(1.0.0 の文書の門): 知識ガイドの訳を原文の横に置くと、``*/guides/*.md`` の
+#: glob が訳を**別のガイドとして**数えていた(17 本 → 51 本。訳は front matter に原文の
+#: ``guide:`` / ``applies_to`` を写すので、op の頁に同じガイドが 3 回並ぶ)。訳は原文に紐付けて扱う。
+_TRANSLATION_STEM = re.compile(r"\.(ja|en|zh|tw|ko|de|hi)$")
+
+
+def translation_lang(path):
+    """``<name>.<lang>.md`` なら ``lang``、原文(``<name>.md``)なら ``None``。"""
+    stem = os.path.splitext(os.path.basename(path))[0]
+    m = _TRANSLATION_STEM.search(stem)
+    return m.group(1) if m else None
+
+
+def guide_translations(path):
+    """原文ガイド ``path`` の横に**実在する**訳 ``{lang: path}``(:data:`LANGS` の順、``ja`` は除く)。"""
+    base = os.path.splitext(path)[0]
+    return {c: base + ".%s.md" % c for c in LANGS
+            if c != "ja" and os.path.exists(base + ".%s.md" % c)}
+
+
+def _lf_sha256(path):
+    """改行を LF に正規化した UTF-8 のバイト列の SHA-256(訳の ``source_sha256`` と同じ作り方)。"""
+    with open(path, "rb") as f:
+        data = f.read().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return hashlib.sha256(data).hexdigest()
+
+
+def fresh_guide_translation(path, lang):
+    """原文ガイド ``path`` の ``lang`` 訳の本文。無い・``lang`` が違う・``source_sha256`` が原文の
+    今の中身と合わない(= 原文が直されて訳が古い)ときは ``None``(古い訳は出さない ——
+    :func:`op_summary` の指紋と同じ規約)。構造の照合は ``tools/i18n_guide_check.py`` が門で見る。"""
+    tp = guide_translations(path).get(lang)
+    if not tp:
+        return None
+    front = _guide_front(tp)
+    if front.get("lang") != lang or front.get("source_sha256") != _lf_sha256(path):
+        return None
+    with open(tp, encoding="utf-8") as f:
+        return f.read()
+
+
+def _guide_files(pattern):
+    """``glob(pattern)`` から訳のファイルを除いた原文のガイドだけ。"""
+    return [g for g in glob.glob(pattern) if not translation_lang(g)]
+
 
 def _guide_front(path):
     """ガイド md の frontmatter を最小限だけ読む(YAML 依存を持たない)。"""
@@ -290,7 +336,7 @@ def _family_guide_stems():
     """族ガイドのファイル名(拡張子なし)の集合。"""
     stems = {m["family"] for m in LEDGER_DIMS.values()}
     stems |= {os.path.splitext(os.path.basename(p))[0]
-              for p in glob.glob(os.path.join(DOCS, "2d", "guides", "gallery2d_*.md"))}
+              for p in _guide_files(os.path.join(DOCS, "2d", "guides", "gallery2d_*.md"))}
     return stems
 
 
@@ -300,7 +346,7 @@ def knowledge_guides():
     if _KNOWLEDGE_GUIDES is None:
         fams = _family_guide_stems()
         out = []
-        for g in sorted(glob.glob(os.path.join(DOCS, "*", "guides", "*.md")),
+        for g in sorted(_guide_files(os.path.join(DOCS, "*", "guides", "*.md")),
                        key=lambda q: q.replace(os.sep, "/")):  # OS で順が変わらない(scan_notes と同じ)
             stem = os.path.splitext(os.path.basename(g))[0]
             if stem in fams:
@@ -1884,7 +1930,7 @@ def cmd_toc():
         dim_cats[dim] = {c: len(v) for c, v in cats.items()}
         out = [f"# {dim.upper()} operator help — {total} ops in {len(cats)} categories", "",
                "自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/" + dim + "/<category>/<op>.md` を走査。", ""]
-        guides = sorted(glob.glob(os.path.join(DOCS, dim, "guides", "*.md")))
+        guides = sorted(_guide_files(os.path.join(DOCS, dim, "guides", "*.md")))
         kstems = {g["stem"] for g in knowledge_guides()}
         for _head, _sel in (("## ファミリ使い方ガイド(用途→op の教材)", False),
                             ("## 背景知識ガイド(op の手前にある物理・規約)", True)):
@@ -1896,7 +1942,10 @@ def cmd_toc():
             out.append("")
             for g in group:
                 stem = os.path.splitext(os.path.basename(g))[0]
-                out.append(f"- [{stem}](guides/{stem}.md) — {_md_title(g)}")
+                # 実在する訳だけを言語リンクで添える(docs/I18N.md「その頁に実在する言語だけ」)
+                langs = "".join(" · [%s](guides/%s.%s.md)" % (LANG_NAMES.get(c, c), stem, c)
+                                for c in guide_translations(g))
+                out.append(f"- [{stem}](guides/{stem}.md) — {_md_title(g)}{langs}")
             out.append("")
         out.append("## カテゴリ")
         out.append("")
@@ -2036,7 +2085,7 @@ def corpus_families():
                 if os.path.isdir(os.path.join(DOCS, d))]:
         cats = _walk_ops(dim)
         fams.append((dim, sum(len(v) for v in cats.values()), len(cats),
-                     len(glob.glob(os.path.join(DOCS, dim, "guides", "*.md")))))
+                     len(_guide_files(os.path.join(DOCS, dim, "guides", "*.md")))))
     return fams
 
 
@@ -2755,14 +2804,20 @@ def cmd_html():
         if not os.path.isdir(gdir):
             continue
         for f in sorted(os.listdir(gdir)):
-            if not f.endswith(".md"):
-                continue
+            if not f.endswith(".md") or translation_lang(f):
+                continue                     # 訳は原文の頁の言語版として下で使う(別のガイドにしない)
             with open(os.path.join(gdir, f), encoding="utf-8") as fh:
                 md = fh.read()
             body = md_to_html(md)
             _write_generated(os.path.join(HELP_ROOT, "guide_" + f[:-3] + ".html"), body)
             g += 1
             for lang in langs:
+                # 人が訳した版(原文の指紋が合うものだけ)があれば、断り書きなしでそれを出す。
+                tr_md = fresh_guide_translation(os.path.join(gdir, f), lang)
+                if tr_md is not None:
+                    _write_generated(os.path.join(HELP_ROOT, "guide_%s.%s.html" % (f[:-3], lang)),
+                                     md_to_html(tr_md, lang=lang))
+                    continue
                 banner = ('<p style="color:%s;font-size:11px;margin:0 0 8px 0">%s</p>\n'
                           % (_AMBER, _html.escape(
                               T("このガイドは日本語のみです(人が書いた散文なので機械的な差し替えをしていません)。", lang))))

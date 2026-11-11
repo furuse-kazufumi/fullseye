@@ -6,10 +6,10 @@ in: region
 out: region
 halcon: select_shape
 gpu: あり(lbl_select_shape)
-examples: [gallery2d_region]
+examples: [gallery2d_region, poc_ai_built_inspection_scored]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # select_shape — 2D `region` op
@@ -37,7 +37,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-面積が閾値(``16+a*200`` 画素)未満の連結成分を除去する(小さなノイズ状
+面積が閾値(``16+a*200`` 画素)未満の連結成分(前景は 8 連結)を除去する(小さなノイズ状
 領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of
 shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる
 汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。
@@ -66,6 +66,7 @@ select_shape 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
+- [poc_ai_built_inspection_scored](../../../../examples/poc_ai_built_inspection_scored.py) — `py -3.11 examples/poc_ai_built_inspection_scored.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

@@ -18,7 +18,9 @@ from scipy import ndimage
 __all__ = ["elevation_map", "fill_gaps", "traversability", "foothold_score",
            "ground_surface", "ground_plane", "detect_obstacles",
            "fuse_elevation", "slope_map", "roughness_map", "surface_normals",
-           "step_edges", "foothold_candidates"]
+           "step_edges", "foothold_candidates",
+           # 台帳の入口(2026-11-06): op 名は全体で 1 つ・1 語の名前は避ける、の規則に合わせた名前
+           "elevation_traversability", "elevation_normals", "elevation_step_edges"]
 
 
 def _grad2(a, cell):
@@ -45,6 +47,10 @@ def elevation_map(points, cell: float = 0.05, agg: str = "max",
     Returns ``(grid, extent)`` where ``grid[i, j]`` is the aggregated height of
     cell (row i = y, col j = x) and empty cells are ``nan``. ``extent`` is
     ``(xmin, xmax, ymin, ymax)``.
+
+    空の入力(``points`` が 0 要素)は ``bounds`` があれば全セル nan の格子を返す(理由: 観測の無い範囲は nan = 観測していない。``bounds`` が無ければ範囲が決まらないので ValueError)。
+    An empty cloud with ``bounds`` gives an all-``nan`` grid; without ``bounds`` it raises
+    ``ValueError`` (no extent).
     """
     P = np.asarray(points, np.float64)
     if P.ndim != 2 or P.shape[1] != 3:
@@ -73,7 +79,10 @@ def elevation_map(points, cell: float = 0.05, agg: str = "max",
 
 
 def fill_gaps(grid):
-    """Fill ``nan`` cells with the nearest finite height (nearest-neighbour)."""
+    """Fill ``nan`` cells with the nearest finite height (nearest-neighbour).
+
+    空の入力(``grid`` が 0 要素)は形を保った空の配列を返す(理由: 埋める穴が無く、形だけを保つ)。
+    An empty grid comes back as an empty grid of the same shape."""
     g = np.asarray(grid, np.float64)
     nan = ~np.isfinite(g)
     if not nan.any():
@@ -94,12 +103,14 @@ def traversability(grid, cell: float = 0.05, max_step: float = 0.1,
     (unobserved) are filled first and marked non-traversable.
     """
     g = np.asarray(grid, np.float64)
+    if g.size == 0:                       # 以前は np.gradient の ValueError だった空の格子を、同じ型で名指しして断る
+        raise ValueError("grid is empty: no cell to judge")
     unknown = ~np.isfinite(g)
     filled = fill_gaps(g)
     lo = ndimage.minimum_filter(filled, window, mode="nearest")
     hi = ndimage.maximum_filter(filled, window, mode="nearest")
     step = hi - lo
-    gy, gx = np.gradient(filled, cell)
+    gy, gx = _grad2(filled, cell)          # 幅 1 の軸でも落ちない(2026-11-08、値は 2 以上の軸で同じ)
     slope = np.hypot(gx, gy)
     ok = (step <= max_step) & (slope <= max_slope) & (~unknown)
     return ok
@@ -115,7 +126,9 @@ def ground_surface(grid, cell: float = 0.05, radius: float = 0.4):
     border, so on a strong planar slope the envelope lags by ``~radius*slope``
     there and :func:`detect_obstacles` with ``ground='opening'`` can report a
     phantom obstacle in the last ``radius/cell`` cells — use the default
-    ``ground='plane'`` for planar/ramp ground. ``nan`` cells are filled first."""
+    ``ground='plane'`` for planar/ramp ground. ``nan`` cells are filled first.
+
+    空の入力(``grid`` が 0 要素)は形を保った空の配列を返す(理由: 観測の無い地図には地面の包絡も無く、形だけを保つ)。"""
     filled = fill_gaps(np.asarray(grid, np.float64))
     w = max(3, int(round(2.0 * radius / max(cell, 1e-6))) | 1)   # odd cell window
     return ndimage.maximum_filter(
@@ -130,7 +143,9 @@ def ground_plane(grid, trim: float = 0.3, iters: int = 3):
     are therefore obstacles, not ground. Recovers a flat *or* tilted (ramp) ground
     exactly, with no boundary artefact, which is what obstacle detection wants
     when the walkable surface is planar. *trim* is the top residual fraction
-    discarded each iteration."""
+    discarded each iteration.
+
+    空の入力(``grid`` が 0 要素)は形を保った空の配列を返す(理由: 当てはめる高さが無く、形だけを保つ。観測が 3 セル未満の地図は nan の平面)。"""
     filled = fill_gaps(np.asarray(grid, np.float64))
     ny, nx = filled.shape
     yy, xx = np.mgrid[0:ny, 0:nx].astype(np.float64)
@@ -166,7 +181,10 @@ def detect_obstacles(grid, cell: float = 0.05, clearance: float = 0.12,
     ``area`` (m²) / ``height`` (peak rise above ground) / ``centroid_cell``
     (row, col) / ``bbox_cells`` (i0, j0, i1, j1), plus ``centroid_xy`` in world
     units when *extent* (from :func:`elevation_map`) is given. Blobs smaller than
-    *min_area* (m²) are dropped as noise."""
+    *min_area* (m²) are dropped as noise.
+
+    ★``ground_radius`` は ``ground='opening'`` のときだけ読まれ、``trim`` は ``'plane'`` のときだけ。
+    空の入力(``grid`` が 0 要素)は空の mask と空の listを返す(理由: 観測の無い地図には障害物も無く、形だけを保つ)。"""
     filled = fill_gaps(np.asarray(grid, np.float64))
     if isinstance(ground, np.ndarray):
         gsurf = np.asarray(ground, np.float64)
@@ -207,11 +225,14 @@ def foothold_score(grid, cell: float = 0.05, window: int = 3):
 
     Combines local roughness (height std) and slope into a single score; useful
     to rank candidate step locations for a legged robot."""
-    filled = fill_gaps(np.asarray(grid, np.float64))
+    g0 = np.asarray(grid, np.float64)
+    if g0.size == 0:                      # 以前は np.gradient の ValueError だった空の格子を、同じ型で名指しして断る
+        raise ValueError("grid is empty: no cell to score")
+    filled = fill_gaps(g0)
     m = ndimage.uniform_filter(filled, window, mode="nearest")
     m2 = ndimage.uniform_filter(filled * filled, window, mode="nearest")
     rough = np.sqrt(np.maximum(m2 - m * m, 0.0))
-    gy, gx = np.gradient(filled, cell)
+    gy, gx = _grad2(filled, cell)          # 幅 1 の軸でも落ちない(2026-11-08、値は 2 以上の軸で同じ)
     slope = np.hypot(gx, gy)
     score = np.exp(-(rough / max(cell, 1e-6))) * np.exp(-slope)
     return np.clip(score, 0.0, 1.0)
@@ -246,7 +267,15 @@ def slope_map(grid, cell: float = 0.05, degrees: bool = True):
 
     ``atan(|grad z|)`` from the (filled) heightmap gradient, in degrees (default)
     or radians. The steepness a leg has to cope with — a walkability primitive
-    complementing :func:`traversability`."""
+    complementing :func:`traversability`.
+
+    ★台帳(op)には載せず、``dem_slope(grid, cell, method="central")`` に寄せた(2026-11-06)。
+    内側のセルは中央差分どうしでビット一致(実測の差 0.0)。違うのは外周 1 セル(こちらは
+    ``np.gradient`` の片側差分、``dem_slope`` は端の複製で緩めに出る)と穴(こちらは
+    最寄りの値で埋めてから測り、``dem_slope`` は ``nan`` を 3x3 に伝播 = 観測していない所を
+    平らと言わない)。同じ量に op 名を 2 つ持たせないため。
+    Not a ledger op: the walking chain uses ``dem_slope(method="central")``, which is
+    bit-identical in the interior; only the border cells and the hole handling differ."""
     filled = fill_gaps(np.asarray(grid, np.float64))
     gy, gx = _grad2(filled, cell)
     ang = np.arctan(np.hypot(gx, gy))
@@ -255,7 +284,14 @@ def slope_map(grid, cell: float = 0.05, degrees: bool = True):
 
 def roughness_map(grid, window: int = 3):
     """Per-cell surface roughness = local height standard deviation over a
-    ``window`` neighbourhood. High on rubble / vegetation, ~0 on smooth ground."""
+    ``window`` neighbourhood. High on rubble / vegetation, ~0 on smooth ground.
+
+    ★``dem_roughness``(Riley 1999 の TRI = 8 近傍との差の二乗平均平方根、近傍 1 セル固定)
+    とは**別の量**なので別の op として残す: こちらは窓の中の標準偏差(中心を含む、窓の幅が
+    つまみ)。傾き a の平面では ``a·cell·√(2/3)`` と TRI の ``a·cell·√(3/4)`` で、乱れた地形
+    では TRI の約 0.7 倍(実測の中央値)。:func:`foothold_score` の粗さの項はこの量。
+    空の入力(``grid`` が 0 要素)は形を保った空の配列を返す(理由: 観測の無い地図は形を保った空の地図で、どの格子も測っていない)。
+    A different quantity from ``dem_roughness`` (TRI): a windowed standard deviation."""
     filled = fill_gaps(np.asarray(grid, np.float64))
     m = ndimage.uniform_filter(filled, window, mode="nearest")
     m2 = ndimage.uniform_filter(filled * filled, window, mode="nearest")
@@ -272,6 +308,41 @@ def surface_normals(grid, cell: float = 0.05):
     gy, gx = _grad2(filled, cell)
     n = np.stack([-gx, -gy, np.ones_like(gx)], axis=-1)
     return n / np.linalg.norm(n, axis=-1, keepdims=True)
+
+
+def elevation_traversability(grid, cell: float = 0.05, max_step: float = 0.1,
+                             max_slope: float = 0.6, window: int = 3):
+    """Traversable cells of an elevation map (True = within the step and slope limits) — ledger door of :func:`traversability`.
+
+    中身は :func:`traversability` と同じ。台帳の名前を変えたのは、1 語の op 名は意味が足りない
+    (``<族>_<対象>_<動作>``)という名前の規則のため(素の関数の名前は変えない)。
+    step = 窓 ``window`` の中の高さの幅、slope = 勾配の大きさ。どちらかが上限を超えるセルと
+    観測していない(``nan``)セルは False。幅 1 の軸の格子も受ける。
+    """
+    return traversability(grid, cell=cell, max_step=max_step, max_slope=max_slope, window=window)
+
+
+def elevation_normals(grid, cell: float = 0.05):
+    """Unit up-pointing normals (H, W, 3) of an elevation map — ledger door of :func:`surface_normals`.
+
+    地形の高さ図の単位法線(+z 向き)。中身は :func:`surface_normals` と同じ。台帳の名前を
+    変えたのは、``surface_normals`` が 3-D の測光(ops3d)の op 名で、``terrain_surface_normals`` は
+    facade の正式名(別名の表 opnames)として既に使われているため(op 名は全体で 1 つ)。
+    空の入力(``grid`` が 0 要素)は (0, W, 3) の空の配列を返す(理由: 観測の無い地図は法線も無く、形だけを保つ)。
+    """
+    return surface_normals(grid, cell=cell)
+
+
+def elevation_step_edges(grid, min_rise: float = 0.05, window: int = 3):
+    """Step edges (curbs / stair nosings) of an elevation map -> ``(edge_mask, signed_rise)`` (ledger door).
+
+    中身は :func:`step_edges` と同じで、``cell`` を持たない。``step_edges`` の ``cell`` は勾配の
+    **符号**を選ぶのにしか使われず(段差の高さ = 窓の max − min、向き = 勾配の大きいほうの成分の
+    符号。どちらも cell で割っても変わらない)効かないノブになるので、台帳の入口から外した
+    (素の関数の引数は公開の約束なので外さない)。台帳の宣言 out は mask(``edge_mask``)。
+    空の入力(``grid`` が 0 要素)は空の 2 枚の配列を返す(理由: 観測の無い地図には段差も無く、形だけを保つ)。
+    """
+    return step_edges(grid, min_rise=min_rise, window=window)
 
 
 def step_edges(grid, cell: float = 0.05, min_rise: float = 0.05, window: int = 3):

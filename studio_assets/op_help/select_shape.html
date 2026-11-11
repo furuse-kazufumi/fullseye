@@ -13,7 +13,7 @@
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_shape.inputs.jpg">select_shape: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>面積が閾値(<code style="color:#22d3bf">16+a*200</code> 画素)未満の連結成分を除去する(小さなノイズ状領域の除去)。HALCON の <code style="color:#22d3bf">select_shape</code>（Choose regions with the aid of shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。</p>
+<p>面積が閾値(<code style="color:#22d3bf">16+a*200</code> 画素)未満の連結成分(前景は 8 連結)を除去する(小さなノイズ状領域の除去)。HALCON の <code style="color:#22d3bf">select_shape</code>（Choose regions with the aid of shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。</p>
 <p><code style="color:#22d3bf">a</code> が面積の下限しきい値を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>
@@ -27,6 +27,7 @@
 select_shape 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aselect_shape%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aselect_shape%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ai_built_inspection_scored">poc_ai_built_inspection_scored</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ai_built_inspection_scored.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">region</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:reg_erode">reg_erode</a> · <a style="color:#22d3bf" href="op:reg_dilate">reg_dilate</a> · <a style="color:#22d3bf" href="op:reg_open">reg_open</a> · <a style="color:#22d3bf" href="op:reg_close">reg_close</a> · <a style="color:#22d3bf" href="op:fill_holes">fill_holes</a> · <a style="color:#22d3bf" href="op:select_largest">select_largest</a> · <a style="color:#22d3bf" href="op:remove_small">remove_small</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">region</code>)</h3>

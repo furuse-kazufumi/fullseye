@@ -8,13 +8,13 @@
 
 ## 背景知識ガイド(op の手前にある物理・規約)
 
-- [mv_cables](guides/mv_cables.md) — ケーブル（規格・速度・給電・ロボットケーブル）
-- [mv_cameras](guides/mv_cameras.md) — 産業用カメラメーカー（センサとの紐付け・ラインスキャン / TDI）
-- [mv_frame_grabbers](guides/mv_frame_grabbers.md) — フレームグラバーボード（光学系ではないが、撮れるかを決める）
-- [mv_illumination_practice](guides/mv_illumination_practice.md) — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全
-- [mv_image_sensors](guides/mv_image_sensors.md) — 産業用イメージセンサ（現行品中心）
-- [mv_standards](guides/mv_standards.md) — カメラインターフェースの規格と団体
-- [virtual_machine_vision](guides/virtual_machine_vision.md) — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型
+- [mv_cables](guides/mv_cables.md) — ケーブル（規格・速度・給電・ロボットケーブル） · [English](guides/mv_cables.en.md) · [简体中文](guides/mv_cables.zh.md)
+- [mv_cameras](guides/mv_cameras.md) — 産業用カメラメーカー（センサとの紐付け・ラインスキャン / TDI） · [English](guides/mv_cameras.en.md) · [简体中文](guides/mv_cameras.zh.md)
+- [mv_frame_grabbers](guides/mv_frame_grabbers.md) — フレームグラバーボード（光学系ではないが、撮れるかを決める） · [English](guides/mv_frame_grabbers.en.md) · [简体中文](guides/mv_frame_grabbers.zh.md)
+- [mv_illumination_practice](guides/mv_illumination_practice.md) — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全 · [English](guides/mv_illumination_practice.en.md) · [简体中文](guides/mv_illumination_practice.zh.md)
+- [mv_image_sensors](guides/mv_image_sensors.md) — 産業用イメージセンサ（現行品中心） · [English](guides/mv_image_sensors.en.md) · [简体中文](guides/mv_image_sensors.zh.md)
+- [mv_standards](guides/mv_standards.md) — カメラインターフェースの規格と団体 · [English](guides/mv_standards.en.md) · [简体中文](guides/mv_standards.zh.md)
+- [virtual_machine_vision](guides/virtual_machine_vision.md) — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型 · [English](guides/virtual_machine_vision.en.md) · [简体中文](guides/virtual_machine_vision.zh.md)
 
 ## カテゴリ
 

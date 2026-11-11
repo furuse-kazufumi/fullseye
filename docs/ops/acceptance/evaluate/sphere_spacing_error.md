@@ -5,10 +5,10 @@ category: evaluate
 in: points × points
 out: table
 gpu: なし
-examples: []
+examples: [poc_3d_sensor_modalities]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # sphere_spacing_error — ACCEPTANCE `evaluate` op
@@ -48,7 +48,7 @@ Each sphere is fitted as in :func:`sphere_probing_error`; ``fixed_diameter`` fix
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_3d_sensor_modalities](../../../../examples/poc_3d_sensor_modalities.py) — `py -3.11 examples/poc_3d_sensor_modalities.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

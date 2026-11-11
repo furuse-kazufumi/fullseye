@@ -385,8 +385,12 @@ def test_a_frame_that_does_not_belong_to_the_sweep_is_flagged_not_clipped():
     assert (c["candidates"][:, c["violation"]] == 0.0).all()      # 作り話の単位法線は置かない
     with pytest.raises(ValueError):
         sf.sfp_disambiguate(c, "convex", mask=m)                  # mask の中の無効画素は拒む
-    d = sf.sfp_disambiguate(c, "convex", mask=m, invalid="exclude")
-    assert np.allclose(d[c["violation"]], (0.0, 0.0, 1.0))
+    # ★2026-11-09: 合わないフレームは残差を信号の桁に上げ、暗さの床(雑音基準)で残りの画素も
+    #   「偏光度を定義できない」になる。以前は 73 % の画素が 3 倍のフレームから作った法線を valid で
+    #   返していた。exclude でも残る画素が無いので拒む(fail-closed)
+    assert c["dark"][m].all() and not c["valid"][m].any()
+    with pytest.raises(ValueError, match="no pixel left"):
+        sf.sfp_disambiguate(c, "convex", mask=m, invalid="exclude")
 
 
 # --------------------------------------------------------------------------- #
@@ -473,8 +477,13 @@ def test_the_mirror_extension_removes_the_periodic_wrap():
     n /= np.linalg.norm(n, axis=-1, keepdims=True)
     h = sf.sfp_height(n)
     mirror = np.abs((h - h.mean()) - (zt - zt.mean())).max()
-    periodic = np.abs(ph.integrate_normals(n) - (zt - zt.mean())).max()
+    # 素の周期解(integrate_gradients)は傾き(直流)を落とす。★2026-11-09 まではここで
+    # integrate_normals を比べていた —— その op が傾きを捨てる欠陥を「約束」として固定していた
+    periodic = np.abs(ph.integrate_gradients(*ph.normals_to_gradients(n)) - (zt - zt.mean())).max()
     assert mirror < 0.1 and periodic > 5.0                   # 実測 0.06 / 18.2
+    # integrate_normals は平均の勾配の一次の項を足し戻すので、傾いた平面はそのまま戻る
+    ramp = np.abs(ph.integrate_normals(n) - (zt - zt.mean())).max()
+    assert ramp < 0.1, ramp
 
 
 # --------------------------------------------------------------------------- #

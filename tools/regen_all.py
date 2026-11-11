@@ -143,6 +143,8 @@ CHAIN = [
     (["tools/gen_doc_counts.py"], "README の registry 件数 + AI_RAG_GUIDE の op ノート件数"),
     # 索引と op ノートの後(複製するので)。
     (["tools/gen_mcp_data.py"], "fullseye/data operator search, cards, and probe metadata"),
+    # 採点が断る「入力の中身に依存しない op」の一覧。実行できる op の台帳(OP_GRAPH)を読む(2026-11-10)
+    (["tools/gen_mcp_input_independent.py"], "fullseye/data/MCP_INPUT_INDEPENDENT.json(入力の中身に依存しない op)"),
     (["tools/gen_recipe_index.py"], "existing-example recipe retrieval index and source inventory"),
     (["tools/gen_recipe_retrieval_report.py"], "business-language recipe recall report"),
     (["tools/measure_mcp_context.py"], "six-task minimal MCP context benchmark"),
@@ -185,7 +187,9 @@ OUTPUTS = {
     "tools/gen_halcon_gap.py": ["docs/HALCON_GAP_2026-11-02.md", "docs/halcon_gap_2026-11-02.json"],
     "tools/opdocs.py": ["docs/ops/*", "studio_assets/op_help/*", "docs/i18n/help_coverage.json",
                         "fullseye/skill_template/SKILL.md", "skills/fullseye-ops/SKILL.md"],
-    "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"],
+    # 2026-11-06: 英語版・中国語版(OP_CATALOG.en.md / .zh.md)も同じ段が書く(1.0.0 の文書の門)
+    "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md",
+                                "docs/OP_CATALOG.*.md", "fullseye/OP_CATALOG.*.md"],
     "tools/gen_capabilities_index.py": ["docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md"],
     "tools/gen_hardening_index.py": ["docs/HARDENING.md", "docs/HARDENING.*.md"],
     "tools/audit_fallbacks.py": ["docs/fallback_audit.json"],
@@ -222,9 +226,10 @@ OUTPUTS = {
     "tools/gen_op_facets.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_FAMILIES.json",
                                   "fullseye/data/OP_SHAPES.json", "fullseye/data/SYSTEM_PARAMS.json"],
     "tools/gen_recipe_index.py": ["fullseye/data/RECIPE_INDEX.json"],
+    "tools/gen_mcp_input_independent.py": ["fullseye/data/MCP_INPUT_INDEPENDENT.json"],
     "tools/gen_recipe_coverage.py": ["docs/RECIPE_COVERAGE.md", "docs/recipe_coverage.json"],
     "tools/gen_recipe_retrieval_report.py": ["docs/recipe_retrieval_report.json"],
-    "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json"],
+    "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json", "docs/MCP.md"],
     "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
     "tools/gen_device_rules.py": ["fullseye/data/DEVICE_RULES.json"],
     "tools/gen_gpu_routes.py": ["docs/perf/pipeline_routes.json", "docs/perf/pipeline_routes.md"],
@@ -292,8 +297,8 @@ READS = {
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
-    "tools/gen_docs_index_ops.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json", "docs/HALCON_GAP_2026-11-02.md", 
-        "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
+    "tools/gen_docs_index_ops.py": ["docs/OP_INDEX.json", "fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json", "docs/HALCON_GAP_2026-11-02.md", 
+        "docs/ops/*", "docs/OP_CATALOG.md", "docs/OP_CATALOG.*.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
         "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md", "docs/FILE_FORMATS.md",
         "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
         "docs/literature/*.md",                       # 文献ノート全部(2026-10-23: 列挙だと増えた分が READS から漏れる)
@@ -306,13 +311,15 @@ READS = {
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md", "docs/RECIPE_COVERAGE.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md",
-        "docs/perf/pipeline_routes.md"],                # 題だけ(ORDER_EXEMPT)
+        "docs/perf/pipeline_routes.md",                 # 題だけ(ORDER_EXEMPT)
+        "docs/MCP.md"],                                 # 題だけ(ORDER_EXEMPT、2026-11-05)
     # op ノートの GPU 欄・索引の gpu 欄は gpu_route(規則表の許可リストの道と場面の台帳)から書く
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*", "fullseye/data/DEVICE_RULES.json",
                               "fullseye/data/GPU_ACCEL_USE.json"],
     "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "docs/ops/families.json",
                                   "docs/ops/families_timing.json"],
     "tools/gen_recipe_index.py": ["fullseye/data/OP_SEARCH.json", "fullseye/data/OP_GRAPH.json"],
+    "tools/gen_mcp_input_independent.py": ["fullseye/data/OP_GRAPH.json"],
     "tools/gen_recipe_coverage.py": ["fullseye/data/OP_GRAPH.json"],
     "tools/gen_recipe_retrieval_report.py": ["fullseye/data/RECIPE_INDEX.json"],
     "tools/measure_mcp_context.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_SEARCH.json",
@@ -362,6 +369,9 @@ ORDER_EXEMPT = {
     ("tools/gen_device_rules.py", "fullseye/data/op_knob.json"): (
         "gen_device_rules は registry を組むときに op のつまみ表を読むが、規則表に入るのは実測ログ・許可リスト・"
         "op 名だけ(つまみの値は入らない)。op ノートが GPU 欄のために規則表を読むので、鎖の先頭近くに置く。"),
+    ("tools/gen_docs_index_ops.py", "docs/MCP.md"): (
+        "gen_docs_index_ops は文書地図に載せるため MCP.md の題(先頭の # 見出し)だけを読む。後ろの "
+        "measure_mcp_context が書き直すのは本文中の実測トークン数の 1 文だけなので、地図の生成結果には影響しない。"),
     ("tools/gen_docs_index_ops.py", "docs/perf/pipeline_routes.md"): (
         "gen_docs_index_ops は文書地図に載せるため pipeline_routes.md の題だけを読む。題は gen_gpu_routes の"
         "固定の文で、後で書き直されるのは表の中身だけなので、地図の生成結果には影響しない。"),
@@ -402,6 +412,24 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    # ---- 2026-11-10: CI の先頭のジョブ(gates)が読む、失敗の実績の表 ----
+    "tools/ci_failure_history.py": ("GitHub の直近の失敗した run のログ(gh run list / gh run view --log-failed、読むだけ)から"
+                                    "テストのファイルごとの落ちた run の数を数え、tools/ci_failure_history.json に書く手元専用の道具。"
+                                    "gh の認証とネットワークが要り、答えは run が増えるたびに変わるので drift 検査には入れない"
+                                    "(回し直す目安は月に 1 回。古くても先に回す順番が古いだけで、片の側は何も減らない)。"),
+    # ---- 2026-11-09: 看板 PoC 3 本(2026.307〜309)の統合で分類 ----
+    "tools/gen_ai_inspection_recipes.py": ("ローカル LLM に MCP(minimal)だけで検査レシピを組ませ、"
+                                           "examples/data/ai_inspection_recipes_2026_11_08.json に固定する手元専用の道具。"
+                                           "LLM サーバ(OLLAMA_HOST)が要り、出力は揺れるので CI では回さない。"
+                                           "PoC poc_ai_built_inspection_scored は保存した JSON を決定的に採点するだけ(収蔵 2026.308)。"),
+    "tools/mcp_replay_session.py": ("クラウドの LLM エージェントに同じ MCP で 1 回ずつ道具を呼ばせる CLI と、"
+                                    "その記録をレシピの JSON へ取り込む道具。LLM エージェントが操作するので手で回す。"
+                                    "CI では回さない(収蔵 2026.308)。"),
+    "tools/record_real_data_runs.py": ("能力ノートが名指す data: real の例を門と同じ条件(手元のキャッシュ無し)で走らせ、"
+                                       "実データを読んだ印(realdata.mark_read)を docs/real_data_runs.json に残す実測器。"
+                                       "例 1 本に分単位かかるので手で回して commit する。gen_maturity(鎖の段)は記録を読むだけ。"
+                                       "記録と実走の食い違いは tests/test_poc_scripts_run.py が全 PoC を走らせるたびに照合する"
+                                       "(敵対的検証 2026-11-05 第 2 巡 D6)。"),
     "tools/bench_device_ops.py": ("device 引数を持つ op(torch の GPU 経路)の実測器。結果は out/device_ops(追跡外)。GPU が要り数字は機械で変わる。(GPU 便、2026-11-04 の統合で分類)"),
     "tools/bench_gpu_optics.py": ("GPU 第 4 便の実測器(raytrace の CPU 基準と lens_gpu の一括経路の時間、--out の JSON)。"
                                   "数字は機械と負荷で変わり、--batch cuda は GPU と gpu_in_use.lock の手順が要るので手で回す。"
@@ -657,6 +685,10 @@ EXCLUDED = {
     "tools/gen_synth_samples.py": _IMAGE_REASON + (" studio_assets/sample_images の合成テクスチャ。手元では 2 回で"
                                                    "バイト一致だが、コミット済みの 4 ファイルと一致しない"
                                                    "(作った環境との差か古いかは未判定)。"),
+    "tools/gen_gpu_article_figures.py": _IMAGE_REASON + (" Qiita の GPU 記事の図(docs/articles/assets/gpu_auto/)。"
+                                                        "数字は docs/perf/logs/crossover/ と pipeline_routes.json と "
+                                                        "gpu_route.routes から読み、記事の数字と食い違えば落ちる。"
+                                                        "accel の経路を数えるので torch が要る(2026-11-04)。"),
     "tools/gen_blas_article_figs.py": _IMAGE_REASON + (" BLAS スレッド数の**実測**を図にする。★2026-10-07 まで"
                                                        "出力先が手元の絶対パスで、どの checkout から回しても"
                                                        "本線の図を書き換えていた(今は Path(__file__) から求める)。"),
@@ -685,12 +717,24 @@ EXCLUDED = {
 #: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
+    # ---- 2026-11-10: CI の道具(PR のテストの選択・依存の版の比較・全数の失敗の記録)。CI の作業場にだけ書く ----
+    "tools/pages_site.py": ("Pages の配備の道具(GitHub Actions が組んだ _site から参照されない articles/assets を外し、リンクの実在と大きさを検める)。書くのは --out・--report-json・--summary-md の指す CI の作業場と、--site の指す _site(配備物)だけ。コミット物は書かない。"),
+    "tools/ci_select_tests.py": "CI の道具。PR の変更から回すテストを選び、一覧(--tests-file・--early-list)と GITHUB_OUTPUT を CI の作業場に書く。コミット物は書かない。",
+    "tools/ci_deps_drift.py": "CI の道具。pip freeze / dry-run の解決結果を CI の作業場に書き、最後の全数の run と版を比べる。コミット物は書かない。",
+    "tools/ci_failure_record.py": "CI の道具。全数の run の JUnit から落ちたテストと commit の範囲を ci_result.json(artifact)に書く。コミット物は書かない。",
+    "tools/ci_local.py": ("検査の道具(CI 相当の検査を手元の Linux / WSL2 で回す)。書くのは --out の指す先の要約・ログ・JUnit と、"
+                          "Linux 側の状態ディレクトリ(clone と venv)だけで、どちらも repo の外。コミット物を書かない。"),
+    "realdata.py": ("実写データの取り口(ライブラリ)。書くのは mark_read が環境変数 FULLSEYE_REAL_DATA_LOG の指す "
+                    "repo の外の印のファイルだけ(tools/record_real_data_runs.py と PoC の門が一時ディレクトリに立てる)。"
+                    "__main__ は取り口の自己診断で、コミット物を書かない(敵対的検証 2026-11-05 第 2 巡 D6)。"),
+    "tools/fetch_realinsp_data.py": "取得器(検査 PoC 4 本の公開実データを repo の外へ落とし SHA-256 を照合して展開する)。生成物は無く、CI では回さない。",
     "tools/fetch_tless.py": "取得器(T-LESS を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
+    "tools/fetch_tless_v2_sensors.py": "取得器(T-LESS v2 の試験場面 1 つと CAD を repo の外へ落とし、大きさと SHA-256 を照合する。収蔵 2026.309)。生成物は無く、CI では回さない。",
     # ---- 2026-11-01: ViEW2026 の目玉 14 本の受け取り検査(生成物を書かない) ----
     "tools/check_view2026_figure_scale.py": "検査。図が最近傍拡大でなく描画倍率どおりかを数えて表にする(repo の生成物は書かない)。",
     "tools/make_view2026_before_after.py": "検査用の比較画像を repo の外(--output)へ書く。受け取りで目視するためだけに手で回す。",
     # ---- 2026-10-30: ViEW2026 の正本 docs/view2026/exhibits.json を編集する道具(生成物ではなく入力を書く) ----
-    "tools/build_view2026_featured_batch.py": "入力の編集。台帳 poc_captions.json から注目 80 本を exhibits.json(正本)へ書き込む。台帳が変わったら手で回して commit する(逐語一致の門が回し忘れを止める)。",
+    "tools/build_view2026_featured_batch.py": "入力の編集。exhibits.json の featured_ids(目玉の正本)に挙げた展示だけを、台帳 poc_captions.json に合わせて書き直す(それ以外は目玉に足さない)。台帳が変わったら手で回して commit する(逐語一致の門が回し忘れを止める)。",
     "tools/register_view2026_sweep_viewers.py": "入力の編集。引数掃引ビューアの案内文を exhibits.json(正本)の viewers に登録する。登録を変えたときだけ手で回す。",
     "tools/register_view2026_youtube.py": "入力の編集。YouTube の URL を exhibits.json(正本)に書く。動画を上げたときだけ手で回す。",
     # ---- 2026-10-25: Studio をブラウザで動かす可否の探針(tools/probe_studio_web/、製品ではない) ----
@@ -702,6 +746,15 @@ NOT_A_GENERATOR = {
                                                "dist は repo に入れない。"),
     "tools/mcp_agent_eval.py": "測定器(ローカル LLM に MCP ツールだけで課題を解かせ、真値で採点する)。LLM の応答で結果が変わり、出力は --output/--report の指定先(repo の外)。--validate-only は LLM なしの門で tests/test_mcp_agent_eval_tasks.py が回す。",
     "tools/fetch_sem_metal_layer.py": "取得器(実データ Metal-layer SEM 6.4 GB を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
+    "tools/fetch_walnut_cbct.py": "取得器(実測のコーンビーム CT、クルミ 1 の 6 GB の zip から 1309 要素だけを Range で repo の外へ取り出し、CRC-32 と SHA-256 の一覧で照合する)。生成物は無く、CI では回さない。",
+    # ---- 2026-11-08: 混載デパレタイズ(examples/poc_mixed_case_depalletizing.py)の描画と取得(生成物は repo の外) ----
+    "tools/fetch_hope_bop.py": "取得器(BOP の HOPE val と模型を repo の外へ落とし SHA-256 を照合して展開する)。生成物は無く、CI では回さない。",
+    "tools/depal_blender_run.py": "手元の描画器の駆動(Blender Cycles の天井カメラのコマを、PoC が要るだけ repo の外 FULLSEYE_DEPAL_RENDERS へ描く)。repo の生成物は書かない。",
+    "tools/depal_blender_render.py": "Blender の中で走る描画の本体(bpy)。書くのは引数の出力先(repo の外)だけ。",
+    "tools/depal_blender_video.py": "Blender の中で走る動画のコマの描画(bpy)。書くのは引数の出力先(repo の外)だけ。",
+    "tools/depal_video_run.py": "手元の動画のコマの駆動(UR10e の動きを計画し Blender で描く)。出力は repo の外(FULLSEYE_DEPAL_RENDERS/video)。",
+    "tools/depal_robot_motion.py": "ライブラリ + 自己診断(MuJoCo Menagerie の UR10e の逆運動学と時刻ごとの部品の姿勢)。__main__ の検分用出力は repo の外。",
+    "tools/fetch_die_photo.py": "取得器(poc_nir_silicon_transmission 第 7 章のダイ写真 CC BY 3.0 を repo の外へ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
     "tools/check_fallback_parity.py": "門の実測(min 構成 = cv2/skimage/PIL なしで op が別の答えを返さないか、full と ULP 照合)。出力は一時 dir か --out の指定先で、repo の生成物は無い。",
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
     "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",

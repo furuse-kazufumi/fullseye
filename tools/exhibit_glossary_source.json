@@ -901,5 +901,157 @@
   "review": false,
   "_short_ja": "ナイキスト周波数",
   "_short_en": "Nyquist frequency"
+ },
+ "ocr": {
+  "match": [
+   "OCR",
+   "optical character recognition",
+   "光学文字認識"
+  ],
+  "ja": "画像に写った文字を切り出して字種に分類し、文字列として読み取る処理。",
+  "en": "Reading the characters in an image as text, by segmenting them and classifying each glyph.",
+  "source": "Mori, Suen and Yamamoto, Proceedings of the IEEE 80(7), 1992",
+  "review": false,
+  "_short_ja": "光学文字認識",
+  "_short_en": "optical character recognition"
+ },
+ "gmm": {
+  "match": [
+   "GMM",
+   "Gaussian mixture model",
+   "混合正規分布"
+  ],
+  "ja": "データの分布を複数の正規分布の重み付き和で表すモデル。クラスごとに当てはめると事後確率で分類できる。",
+  "en": "A model of a distribution as a weighted sum of Gaussians; fitted per class, it classifies by posterior probability.",
+  "source": "Dempster, Laird and Rubin, Journal of the Royal Statistical Society B 39(1), 1977",
+  "review": false,
+  "_short_ja": "混合正規分布",
+  "_short_en": "Gaussian mixture model"
+ },
+ "knn": {
+  "match": [
+   "k-NN",
+   "k-nearest neighbours",
+   "k-nearest neighbors",
+   "k 近傍法"
+  ],
+  "ja": "学習データの中で特徴が最も近い k 個のラベルの多数決で分類する手法。",
+  "en": "A classifier that labels a sample by majority vote among the k training samples with the closest features.",
+  "source": "Cover and Hart, IEEE Transactions on Information Theory 13(1), 1967",
+  "review": false,
+  "_short_ja": "k 近傍法",
+  "_short_en": "k-nearest neighbours"
+ },
+ "mlp": {
+  "match": [
+   "MLP",
+   "multilayer perceptron",
+   "多層パーセプトロン"
+  ],
+  "ja": "入力と出力の間に非線形の中間層を持つ全結合のニューラルネットワーク。",
+  "en": "A fully connected neural network with one or more nonlinear hidden layers between input and output.",
+  "source": "Rumelhart, Hinton and Williams, Nature 323, 1986",
+  "review": false,
+  "_short_ja": "多層パーセプトロン",
+  "_short_en": "multilayer perceptron"
+ },
+ "svm": {
+  "match": [
+   "SVM",
+   "support vector machine",
+   "サポートベクターマシン"
+  ],
+  "ja": "クラスの間の余白(マージン)が最大になる境界で分類する手法。",
+  "en": "A classifier that separates classes by the boundary with the largest margin between them.",
+  "source": "Cortes and Vapnik, Machine Learning 20(3), 1995",
+  "review": false,
+  "_short_ja": "サポートベクターマシン",
+  "_short_en": "support vector machine"
+ },
+ "cone_beam_ct": {
+  "match": [
+   "cone-beam CT",
+   "コーンビーム CT"
+  ],
+  "ja": "点の線源から円錐状に広がる X 線を平面の検出器で受け、1 回の回転で立体をまとめて撮る CT の方式。",
+  "en": "A CT geometry in which a point source illuminates a flat-panel detector with a cone of X-rays, so one rotation records a whole volume.",
+  "source": "Feldkamp, Davis and Kress, Journal of the Optical Society of America A 1(6), 612-619, 1984",
+  "review": false,
+  "_short_ja": "円錐状の X 線で立体を撮る CT",
+  "_short_en": "CT with a cone of X-rays"
+ },
+ "fdk": {
+  "match": [
+   "FDK",
+   "Feldkamp-Davis-Kress",
+   "Feldkamp"
+  ],
+  "ja": "コーンビーム CT の投影を重み付けし、行ごとにランプフィルタをかけて逆投影する近似の再構成式で、回転の中央面でだけ厳密になる。",
+  "en": "An approximate cone-beam reconstruction that weights the projections, ramp-filters them row by row and back-projects them; it is exact only in the mid-plane of the orbit.",
+  "source": "Feldkamp, Davis and Kress, Journal of the Optical Society of America A 1(6), 612-619, 1984",
+  "review": false,
+  "_short_ja": "コーンビームの逆投影再構成",
+  "_short_en": "cone-beam filtered back-projection"
+ },
+ "sirt": {
+  "match": [
+   "SIRT",
+   "simultaneous iterative reconstruction technique"
+  ],
+  "ja": "全ての投影の残差を一度に逆投影して画像を少しずつ直す反復の再構成で、公式の無い撮り方にも使える。",
+  "en": "An iterative reconstruction that back-projects the residual of all projections at once and corrects the image step by step, usable where no inversion formula exists.",
+  "source": "Gilbert, Journal of Theoretical Biology 36(1), 105-117, 1972",
+  "review": false,
+  "_short_ja": "同時反復再構成",
+  "_short_en": "simultaneous iterative reconstruction"
+ },
+ "os_sart": {
+  "match": [
+   "OS-SART",
+   "ordered-subset SART"
+  ],
+  "ja": "投影を順序付きの部分集合に分け、部分集合ごとに SIRT の更新をかける反復法で、初めのうち速く進む。",
+  "en": "An iterative method that splits the projections into ordered subsets and applies the SIRT update one subset at a time, which converges faster early on.",
+  "source": "Wang and Jiang, Journal of X-Ray Science and Technology 12(3), 169-177, 2004",
+  "review": false,
+  "_short_ja": "部分集合ごとの反復再構成",
+  "_short_en": "ordered-subset iterative reconstruction"
+ },
+ "total_variation": {
+  "match": [
+   "total variation",
+   "全変動"
+  ],
+  "ja": "画像の勾配の大きさの総和で、これを小さくする正則化は区分的に一定な像を好み、欠けたデータを平らな面で埋める。",
+  "en": "The sum of gradient magnitudes of an image; regularising with it favours piecewise-constant images and fills missing data with flat patches.",
+  "source": "Rudin, Osher and Fatemi, Physica D 60, 259-268, 1992",
+  "review": false,
+  "_short_ja": "勾配の大きさの総和",
+  "_short_en": "sum of gradient magnitudes"
+ },
+ "mcp": {
+  "match": [
+   "MCP",
+   "Model Context Protocol"
+  ],
+  "ja": "AI のアプリが外部の道具やデータを呼び出すための公開の取り決め。道具の名前・引数の形・返り値を AI に渡し、AI はそれを呼んで結果を読む。",
+  "en": "An open protocol through which an AI application calls external tools and data: it hands the AI each tool's name, argument schema and results.",
+  "source": "Model Context Protocol specification, modelcontextprotocol.io, revision 2025-06-18",
+  "review": false,
+  "_short_ja": "AI が道具を呼ぶ取り決め",
+  "_short_en": "Model Context Protocol"
+ },
+ "llm": {
+  "match": [
+   "LLM",
+   "大規模言語モデル",
+   "large language model"
+  ],
+  "ja": "大量の文章で学習し、指示に応じて文やプログラムを書く大きなニューラルネット。手元の計算機で動かす小さめのものをローカル LLM と呼ぶ。",
+  "en": "A large neural network trained on text that writes prose or code on request; a smaller one run on one's own computer is called a local LLM.",
+  "source": "Brown et al., Language Models are Few-Shot Learners, NeurIPS 2020",
+  "review": false,
+  "_short_ja": "大規模言語モデル",
+  "_short_en": "large language model"
  }
 }

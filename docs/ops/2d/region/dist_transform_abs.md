@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # dist_transform_abs — 2D `region` op
@@ -48,8 +48,18 @@ version: 0.9.0  # fullseye lib version this note was generated for
 ``a`` で距離の種類を選ぶ: ``a < 1/3`` はユークリッド、``1/3 <= a < 2/3`` は市街地（L1）、
 それ以上はチェス盤（L∞）。``b < 0.5`` は各前景画素から最も近い背景画素までの距離、
 ``b >= 0.5`` は各背景画素から最も近い前景画素までの距離を返す。出力は float64 の画像で、
-``dist_transform`` と違い画像内の最大値で正規化しない（3×3 と 9×9 の正方形の中心は
-それぞれ 2 と 5）。例: ``_dist_transform_abs(np.ones((3, 3)), 0, 0)``。
+``dist_transform`` と違い画像内の最大値で正規化しない（背景に囲まれた 3×3 と 9×9 の正方形の
+中心はそれぞれ 2 と 5）。例: ``_dist_transform_abs(np.pad(np.ones((3, 3)), 1), 0, 0)[2, 2]`` は 2.0。
+
+★2026-11-05（敵対的検証 第 2 巡 P4b）まで、この例は ``np.ones((3, 3))``（背景が無い）と書いており、
+実際の値は 2.0 でなく 2.236 だった（下の縮退入力）。
+
+**距離を測る相手が画像に無い**（``b < 0.5`` で背景が 1 画素も無い、``b >= 0.5`` で前景が無い）とき、
+距離は定義されない（無限）。そのときは**一様 0**（「距離場が無い」）を返す —— 空の領域は正当な入力で
+（``b >= 0.5`` の全面背景も、``b < 0.5`` の全面前景も）、例外にはしない。0 は距離として読まないこと:
+相手の有無は入力側で ``region.any()`` / ``(~region).any()`` を確かめる。どちらの向きでも一様なので
+像の反転・回転と可換。2026-11-05（敵対的検証 第 2 巡 P4）までは ``distance_transform_edt`` が画像の外の
+(-1, 0) に相手があるかのような斜面（3×3 で 1〜3.6）を、``cdt`` は一様 -1 を返していた。
 
 HALCON の参照 op は ``int4`` の近似を返す。この op は厳密な float64 距離を返し、
 互換 API ではない。

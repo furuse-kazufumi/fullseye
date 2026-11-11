@@ -21,12 +21,31 @@ def _as_stack(images):
     return a
 
 
+#: 「アルベドが 0」とみなす相対床(入力の最大 |輝度| に対する比)。
+_ALBEDO_RTOL = 1e-8
+
+
+def _albedo_floor(intensities):
+    """アルベドの退化判定の床 ``_ALBEDO_RTOL × max|I|``(2026-11-05 敵対的検証 第 2 巡 K4)。
+
+    以前は絶対値 1e-8 で、強度を 1e-8 倍(物理単位の放射輝度では普通の桁)にすると
+    全画素が「アルベド 0」扱いになり法線が (0, 0, 1) で返った(球で誤差 74.5°)。
+    全画素が 0 なら床も 0(``albedo > 0`` の画素は無い)。
+    """
+    a = np.asarray(intensities, dtype=np.float64)
+    if a.size == 0:
+        return 0.0
+    return _ALBEDO_RTOL * float(np.max(np.abs(a)))
+
+
 def photometric_stereo(images, lights, mask=None, normalize=True, *,
                        lit_only=False, lit_thresh=1e-3):
     """Lambertian フォトメトリックステレオ: 既知光源方向の N 枚から法線とアルベドを復元。→ (normals HxWx3, albedo HxW)。
 
     I_n = albedo * max(N·L_n, 0)。各画素で g = albedo*N を最小二乗 g = pinv(L) @ I で解き、
     albedo=|g|, normal=g/|g|。N>=3 必要。albedo~0 や mask 外の画素は normal=(0,0,1)。
+    「albedo~0」は入力の最大輝度に対する相対量(``1e-8 × max|I|``)。
+    輝度の単位・桁(W/m² でも 8 bit でも)に依らず同じ画素が退化と判定される。
     normalize=True で光源ベクトルを単位方向に正規化(render_lambertian と同一規約 = アルベド絶対値が正しく出る)。
     強度重み付き光源を使うなら normalize=False にし、合成側も生ベクトルで揃えること。
 
@@ -65,7 +84,8 @@ def photometric_stereo(images, lights, mask=None, normalize=True, *,
     g = Lpinv @ Iv                              # (3,P)  = albedo*normal
     albedo = np.linalg.norm(g, axis=0)          # (P,)
     normals = np.zeros((3, H * W))
-    good = albedo > 1e-8
+    floor = _albedo_floor(Iv)
+    good = albedo > floor
     normals[:, good] = g[:, good] / albedo[good]
     normals[2, ~good] = 1.0
     if lit_only:
@@ -88,7 +108,7 @@ def photometric_stereo(images, lights, mask=None, normalize=True, *,
             g[:, sel] = np.linalg.pinv(Lsub) @ Iv[np.ix_(use, sel)]
         albedo = np.linalg.norm(g, axis=0)
         normals = np.zeros((3, H * W))
-        good = albedo > 1e-8
+        good = albedo > floor
         normals[:, good] = g[:, good] / albedo[good]
         normals[2, ~good] = 1.0
 
@@ -118,6 +138,10 @@ def integrate_gradients(p, q):
     """勾配場 (p,q) → 高さ場 z を Frankot-Chellappa(FFT)で最小二乗積分。→ z HxW(平均0基準)。
 
     Z_hat(wx,wy) = (-j wx P_hat - j wy Q_hat) / (wx^2 + wy^2)、原点=0。周期境界前提ゆえ端に歪み。
+    ★周期境界の解は勾配の平均(直流 = 全体の傾き)を表せず、黙って 0 にする: 傾き 0.2 の平面は
+    水平に戻る。これは素の Frankot-Chellappa の性質としてそのまま残す(周期的な面で厳密に戻ること、
+    鏡像拡張した ``sfpolar.sfp_height`` の土台であることを保つため)。傾きを残したい法線は
+    :func:`integrate_normals`(平均の勾配の一次の項を足し戻す)へ。
     """
     p = np.asarray(p, float)
     q = np.asarray(q, float)
@@ -143,23 +167,66 @@ def integrate_normals(normals, mask=None):
     平均を 0 に引く。``mask`` (bool HxW) を与えると mask 外の勾配を 0 にしてから積分する
     (その領域は平坦として扱われる)。返り値は float64 の ``(H,W)``。
     注意点:
-    - 周期境界を仮定するため、画像の上下・左右がつながるように端が歪む。
+    - 周期境界を仮定するため、画像の上下・左右がつながるように端が歪む(全体の傾きは下の★で戻す)。
     - 絶対高さは決まらない(平均 0)。格子間隔 1 画素で積分するので ``z`` も画素単位の
       高さになり、実寸には画素ピッチを掛ける。
     - ``nz ≈ 0``(輪郭付近・視線に平行な面)は勾配が発散し、波打ちを周囲へ広げる。
       ``mask`` で除くか法線を事前に平滑する。
-    入力検証は無い(``(H,W,3)`` 以外は内部の添字で失敗)。``surface_normals`` が逆変換で、
-    ``photometric_stereo`` の法線をここへ渡すと形状(高さ場)が得られる。
+    ``surface_normals`` が逆変換で、``photometric_stereo`` の法線をここへ渡すと形状(高さ場)が得られる。
     空の入力(``normals`` が 0 要素)は ValueError。
+
+    ★全体の傾き(2026-11-09): 周期境界の Frankot-Chellappa は勾配の平均(直流)を 0 に落とし、
+    傾いた平面を水平に戻していた(傾き 0.2 px/px → 復元 0.0000、rms 5.5 px)。積分の後に平均の
+    勾配の一次の項 ``mean(p)·(x − x̄) + mean(q)·(y − ȳ)`` を足し戻す(平均は ``mask`` 外の 0 も含む
+    格子全体)。傾いた平面は厳密に戻り、平均の勾配が 0 の面(マスクした球など)は丸め屑しか動かない。
+    素の周期解が要るときは :func:`integrate_gradients`。
+    ★足し戻す傾きは**平均**なので外れ値に弱い(独立レビュー 2026-11-09): 平らな面に、同じ向きに大きく
+    傾いた法線(nz 0.002、1e-3 の切りは通る)が 20 画素あるだけで rms 誤差 10.7 → 27.9 px(2.6 倍悪化)。
+    輪郭の片側に並ぶ斜めの法線は実データで普通に出るので、``mask`` で外してから渡す。中央値などの
+    頑健な推定に替えないのは、段差の壁のように「少数の大きな勾配」が正しい傾きを担う面で傾きを失うため。
+    もう 1 つの限界: 傾きは**測れた法線**の平均で、照度差ステレオが撮れない段差の壁などは入らない ——
+    段差のある部品では足し戻した傾きが真値の平均勾配と違う(3-D 方式比べの PoC で −0.066〜−0.084
+    vs 真値 +0.0125 px/px)。
+    ★入力の門: ``(H,W,3)`` 以外・非有限の法線(NaN 1 画素で FFT が全画素を NaN にしていた)は
+    ValueError。``|nz| < 1e-3``(勾配が 1000 を超える、輪郭・視線に平行な面)の画素は勾配を 0 に
+    して積分から外し、件数を RuntimeWarning で知らせる(nz=0 の 1 画素が高さを 2.3e5 px 振っていた)。
     """
     if np.asarray(normals).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
         raise ValueError("integrate_normals: normals is empty — pass at least one element")
-    p, q = normals_to_gradients(normals)
+    n = np.asarray(normals, dtype=np.float64)
+    if n.ndim != 3 or n.shape[-1] != 3:
+        raise ValueError("integrate_normals: normals must be (H, W, 3), got shape %s" % (n.shape,))
+    if not np.isfinite(n).all():
+        raise ValueError("integrate_normals: normals has %d non-finite values (nan/inf) — fill or mask "
+                         "them before integrating (one NaN turns every height NaN through the FFT)"
+                         % int(np.count_nonzero(~np.isfinite(n))))
+    p, q = normals_to_gradients(n)
+    steep = np.abs(n[..., 2]) < 1e-3
     if mask is not None:
         m = np.asarray(mask, bool)
-        p = np.where(m, p, 0.0)
-        q = np.where(m, q, 0.0)
-    return integrate_gradients(p, q)
+        if m.shape != n.shape[:2]:
+            raise ValueError("integrate_normals: mask shape %s does not match normals %s"
+                             % (m.shape, n.shape[:2]))
+        steep &= m
+        keep = m & ~steep
+    else:
+        keep = ~steep
+    n_steep = int(np.count_nonzero(steep))
+    if n_steep:
+        import warnings  # noqa: PLC0415
+        warnings.warn("integrate_normals: %d pixel(s) have |nz| < 1e-3 (slope > 1000); their gradient "
+                      "is set to 0 and they are left out of the integration" % n_steep,
+                      RuntimeWarning, stacklevel=2)
+    if mask is not None or n_steep:
+        p = np.where(keep, p, 0.0)
+        q = np.where(keep, q, 0.0)
+    z = integrate_gradients(p, q)
+    H, W = z.shape
+    pm, qm = float(np.mean(p)), float(np.mean(q))
+    x = np.arange(W, dtype=np.float64) - (W - 1) / 2.0
+    y = np.arange(H, dtype=np.float64) - (H - 1) / 2.0
+    z = z + pm * x[None, :] + qm * y[:, None]
+    return (z - z.mean()).astype(np.float64)
 
 
 def surface_normals(z):

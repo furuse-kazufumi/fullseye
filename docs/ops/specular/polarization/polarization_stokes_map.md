@@ -8,7 +8,7 @@ gpu: なし
 examples: [polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # polarization_stokes_map — SPECULAR `polarization` op
@@ -37,7 +37,10 @@ Returns a dict:
 * ``dolp`` — ``sqrt(S1^2 + S2^2) / S0`` in ``[0, 1]``.
 * ``aolp_deg`` — ``0.5 * atan2(S2, S1)`` in degrees, mapped into
   ``[0, 180)`` (an axis, so 0 and 180 are the same).
-* ``lit`` — bool, ``S0 > 0``.
+* ``lit`` — bool, ``S0 > 0`` and above the noise-based dark floor
+  (``a0 > POLAR_DARK_K · σ_A``, 2026-11-09 — see
+  :func:`polarization_dolp_map`); ``dolp`` is 0 and ``aolp_defined``
+  False where ``lit`` is False.
 * ``aolp_defined`` — bool, ``S0 > 0`` and ``hypot(S1, S2) > 1e-12 * S0``.
 * ``residual`` — RMS over the N frames of ``frame - fitted Malus curve``,
   in the frames' units (added 2026-10-24). A sweep of a real scene fits

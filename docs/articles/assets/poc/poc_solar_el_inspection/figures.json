@@ -2,7 +2,7 @@
  {
   "file": "01_zero_point_map.png",
   "name": "zero_point_map",
-  "caption": "単位は % of セル面積。暗画素の 4 割はフィンガーとバスバー、3 割は結晶粒とビネッティング。",
+  "caption": "単位は % of セル面積。暗画素の 43 % はフィンガーとバスバー、31 % は結晶粒とビネッティング。",
   "shape": [
    493,
    1240,
@@ -78,6 +78,68 @@
   "shape": [
    360,
    560,
+   3
+  ]
+ },
+ {
+  "file": "09_real_by_shadow.png",
+  "name": "real_by_shadow",
+  "caption": "SIPV-EL(CC BY 4.0)。出力低下は I-V の実測、Δ はマスクなし S0 からの暗部率の増え。マスクの分類は配布元の論文 Fig. 2。",
+  "shape": [
+   496,
+   1194,
+   3
+  ],
+  "csv": "09_real_by_shadow.csv",
+  "tsv": "09_real_by_shadow.tsv"
+ },
+ {
+  "file": "10_real_el_overlay.png",
+  "name": "real_el_overlay",
+  "caption": "SIPV-EL(Zenodo 14439369、CC BY 4.0)の実セル。上: セル表面に置いた遮光マスク(中央の大円)。下: S7(論文の分類 7「その他の欠陥」と推定)のうち、出力低下が S7 の中央値 8.9 % に最も近いセル。灰色は実測の EL 強度、色は判定の重ね。出力低下は同じセル・同じ電流の I-V から。",
+  "shape": [
+   919,
+   1219,
+   3
+  ]
+ },
+ {
+  "file": "11_real_input_masks.png",
+  "name": "real_input_masks",
+  "caption": "上 7 枚は単結晶セル P20(電流 6)の S0〜S6。マスクはアルミ箔つきの厚紙で、セルの表面に置いた(配布元の論文)。S1 / S2 の帯の位置はセルによって入れ替わる。下 2 枚は S7 の代表セルとその S0。灰色は各像の 99.5 % 分位で正規化。",
+  "shape": [
+   1353,
+   1219,
+   3
+  ]
+ },
+ {
+  "file": "12_real_process_degrid.png",
+  "name": "real_process_degrid",
+  "caption": "灰色は格子を割った後の像(1.25 で割って [0,1])、青は暗部判定。帯は行の中央値ごと暗いので、行で割った瞬間に消える。窓 15 px は実データを見て決めた値。",
+  "shape": [
+   485,
+   1219,
+   3
+  ]
+ },
+ {
+  "file": "13_real_result_scatter.png",
+  "name": "real_result_scatter",
+  "caption": "左上に離れた橙の点の群れは S7(「その他の欠陥」と推定)。全体が暗くなるのでゼロ点は面積を大きく数える。外れ 2 点(P4 S7 出力低下 +63 %、P16 S1 出力低下 -92 %)は CSV の出力をそのまま使った値で、除いていない。",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "14_real_limit_s7_dimming.png",
+  "name": "real_limit_s7_dimming",
+  "caption": "明るさはセルの外枠の中の平均。暗さの原因は配布元に書かれていない。面積で数える方法はどれもこの欠陥の出力低下を測れない(ゼロ点は過大、細い成分だけ割る経路は過小)。",
+  "shape": [
+   720,
+   1120,
    3
   ]
  }

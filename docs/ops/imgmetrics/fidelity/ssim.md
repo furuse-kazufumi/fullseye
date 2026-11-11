@@ -5,10 +5,10 @@ category: fidelity
 in: image2d × image2d
 out: scalar
 gpu: なし
-examples: [image_quality_metrics, poc_camera_shake_deblur, poc_ct_fidelity, poc_dehazing, poc_iqa_tid2013, poc_superresolution_limits]
+examples: [image_quality_metrics, poc_camera_shake_deblur, poc_ct_fidelity, poc_dehazing, poc_iqa_tid2013, poc_real_walnut_cbct, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # ssim — IMGMETRICS `fidelity` op
@@ -50,6 +50,7 @@ float
 - [poc_ct_fidelity](../../../../examples/poc_ct_fidelity.py) — `py -3.11 examples/poc_ct_fidelity.py`
 - [poc_dehazing](../../../../examples/poc_dehazing.py) — `py -3.11 examples/poc_dehazing.py`
 - [poc_iqa_tid2013](../../../../examples/poc_iqa_tid2013.py) — `py -3.11 examples/poc_iqa_tid2013.py`
+- [poc_real_walnut_cbct](../../../../examples/poc_real_walnut_cbct.py) — `py -3.11 examples/poc_real_walnut_cbct.py`
 - [poc_superresolution_limits](../../../../examples/poc_superresolution_limits.py) — `py -3.11 examples/poc_superresolution_limits.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)

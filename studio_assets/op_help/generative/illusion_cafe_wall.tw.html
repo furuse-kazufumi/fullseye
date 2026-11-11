@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>咖啡牆錯覺。<b>磚縫明明是嚴格的水平線</b>，看起來卻是傾斜的。</p>
-<p><code style="color:#22d3bf">shift</code> 是每 1 列棋盤格的錯位(以 <code style="color:#22d3bf">size</code> 為單位的比例)。錯位為 0 或 0.5 時錯覺消失 —— <b>0.25 前後最強</b>是經典的觀察,本 op 允許直接調整錯位量(<code style="color:#22d3bf">shift=0.25</code> 不作為預設值,是因為不想用產生器的預設值宣稱「效果最大」)。</p>
+<p><code style="color:#22d3bf">shift</code> 是每 1 列棋盤格的錯位(以 <code style="color:#22d3bf">size</code> 為單位的比例,第 <code style="color:#22d3bf">r</code> 列錯位 <code style="color:#22d3bf">r * shift * size</code>)。棋盤格的週期是 <code style="color:#22d3bf">2 * size</code>,所以錯位為 0(各列的磚塊上下對齊)和 1.0 (與上一列黑白互換的普通棋盤格)時錯覺消失,並以週期 2 重複。<b>半塊磚錯位的 0.5 前後最強</b>是經典的觀察(Gregory &amp; Heard 1979), 預設值就是這個經典配置。可以在 0〜1 之間調整錯位量來確認。</p>
 <p>不變量:灰縫的中心 y <b>恰好</b>為 <code style="color:#22d3bf">k * size</code>(k = 1..rows-1)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>

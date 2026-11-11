@@ -15,7 +15,7 @@
 <p>호 길이 기준으로 등간격으로 n개 점으로 재샘플링(선형 보간). → (n,3).</p>
 <p><code style="color:#22d3bf">arc_length</code>의 누적 호장을 파라미터로 하여 <code style="color:#22d3bf">np.linspace(0, total, n)</code>의 위치를취하고, x·y·z를 독립적으로 <code style="color:#22d3bf">np.interp</code>로 선형 보간한다. 출력은 float64의 (n,3). 시작점과 끝점은 입력의 처음·끝과 일치하고, 중간점은 꺾은선 위에 놓인다(원래 점을 지난다고는 할 수 없다).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 출력 점 수. 1이면 시작점 1점, 0이면 빈 (0,3). 입력보다 많게 해도 정보는 늘지 않고꺾은선을 잘게 나눌 뿐.</p>
-<p style="margin:2px 0 2px 12px">• 전체 길이가 1e-12 미만(모든 점 일치)일 때는 첫 점을 n번 복제해 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• 전체 길이가 0(모든 점 일치)일 때는 첫 점을 n번 복제해 반환한다.</p>
 <p style="margin:2px 0 2px 12px">• 출력 열 수는 3으로 고정되어 있어, 입력이 (N,3) 이외이면 열 수 부족으로 실패하거나 남는 열이버려진다. 형상 검증은 없다.</p>
 <p style="margin:2px 0 2px 12px">• 닫힌 곡선은 닫히지 않는다(끝점→시작점 구간은 보간 대상 밖). 중복점이 있어도 <code style="color:#22d3bf">np.interp</code>는통과하지만, 그 구간은 길이 0으로 취급된다.</p>
 <p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code>은 index 파라미터의 차분이므로, 간격이 불균일한점열은 이 op로 등간격화한 뒤 넘기면 수치 미분이 안정된다. 매끄럽게 보간하고 싶으면 <code style="color:#22d3bf">fit_spline_curve</code>.</p>

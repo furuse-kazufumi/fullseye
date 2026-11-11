@@ -2,7 +2,7 @@
 <p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">This guide is available in Japanese only (it is human-written prose, so nothing here is machine-substituted).</p>
 <h2 style="color:#f5a524;margin:0 0 4px 0">表面粗さ(測る前に帯域を決める) — 使い方ガイド</h2>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
-<p>高さ場から<b>粗さのパラメータを出す</b>層です。6 op / 3 カテゴリ(numpy と <code style="color:#22d3bf">scipy.ndimage</code> のみ。台帳は <code style="color:#22d3bf">opsroughness.py</code>、実体は <code style="color:#22d3bf">roughness.py</code>):</p>
+<p>高さ場から<b>粗さのパラメータを出す</b>層です。9 op / 3 カテゴリ(numpy と <code style="color:#22d3bf">scipy.ndimage</code> のみ。台帳は <code style="color:#22d3bf">opsroughness.py</code>、実体は <code style="color:#22d3bf">roughness.py</code>):</p>
 <p style="margin:2px 0 2px 12px">• <b>synth(1)</b> — <code style="color:#22d3bf">surface_synth_psd</code>: 指定した PSD から高さ場を作り、<b>解析 Sq を一緒に返す</b>。この族のテストの真値の供給源。</p>
 <p style="margin:2px 0 2px 12px">• <b>prepare(2)</b> — <code style="color:#22d3bf">surface_form_remove</code> / <code style="color:#22d3bf">surface_filter</code>: 形状(傾き・曲がり)を除き、帯域を粗さとうねりに分ける。</p>
 <p style="margin:2px 0 2px 12px">• <b>measure(3)</b> — <code style="color:#22d3bf">surface_params</code> / <code style="color:#22d3bf">profile_params</code> / <code style="color:#22d3bf">surface_psd</code>: 面の Sa/Sq/Sp/Sv/Sz/Ssk/Sku/Sdq/Sdr、断面の Ra/Rq/Rz/Rt/Rp/Rv/Rsk/Rku、パワースペクトル密度。</p>

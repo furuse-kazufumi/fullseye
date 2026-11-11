@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_multimodal_mi_registration]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # register_ecc — MATCHREG `intensityreg` op
@@ -52,8 +52,9 @@ Args:
 Returns:
     dict(``kind="registration"``, ``method="ecc"``)。``warp`` (3,3) / ``flow2d`` (2,H,W) の
     ``(dy, dx)`` / ``warped``(fixed の格子へ戻した moving、外側は 0)/ ``valid`` / ``valid_fraction`` /
-    ``metric_name="ecc_rho"`` / ``metric``(最後の相関係数)/ ``iterations`` / ``converged`` /
-    ``history`` / ``model`` / ``image_shape``。
+    ``metric_name="ecc_rho"`` / ``metric``(**返す warp での**相関係数)/ ``iterations`` / ``converged`` /
+    ``history``(反復ごとの、その反復の**更新前の** warp の相関。反復の上限で止まったときは
+    ``history[-1]`` は返す warp の値ではなく ``metric`` と違いうる)/ ``model`` / ``image_shape``。
 
 Raises:
     ValueError: 画像が不正 / ``motion`` が違う / 引数が値域外 / 初期の変換が特異 / 反復が発散 /

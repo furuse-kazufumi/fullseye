@@ -6,10 +6,10 @@ in: region
 out: region
 halcon: thinning
 gpu: なし
-examples: [gallery2d_region, poc_crack_width, poc_vessel_network]
+examples: [gallery2d_region, poc_crack_width, poc_fabric_defect, poc_metal_grain_size, poc_real_grain_skiz, poc_vessel_network]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # thinning — 2D `region` op
@@ -69,6 +69,9 @@ thinning 0.50 0.50
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
 - [poc_crack_width](../../../../examples/poc_crack_width.py) — `py -3.11 examples/poc_crack_width.py`
+- [poc_fabric_defect](../../../../examples/poc_fabric_defect.py) — `py -3.11 examples/poc_fabric_defect.py`
+- [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
+- [poc_real_grain_skiz](../../../../examples/poc_real_grain_skiz.py) — `py -3.11 examples/poc_real_grain_skiz.py`
 - [poc_vessel_network](../../../../examples/poc_vessel_network.py) — `py -3.11 examples/poc_vessel_network.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)

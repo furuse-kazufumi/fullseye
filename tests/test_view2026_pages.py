@@ -91,14 +91,35 @@ def test_a_missing_translation_stops_the_generator():
 
 def test_youtube_is_hidden_when_empty_and_invalid_urls_stop_generation():
     d = G.load()
-    assert len(d["exhibits"]) >= 100
+    assert len(d["exhibits"]) >= 35   # 2026-11-08 ユーザーの決定で目玉を約 40 件に絞った(残りは all に移した)
     assert all("youtube_url" in e for e in d["exhibits"])
-    assert "[YouTube](" not in G.build(d, "en")
+    # 空なら出さない・空でなければその URL を 1 回だけ出す(2026-11-06 にいろは坂で最初の 1 本が入った)。
+    published = [e["youtube_url"] for e in d["exhibits"] if e["youtube_url"]]
+    assert published, "youtube_url の入った展示が 1 件も無い(2026-11-06 時点でいろは坂が入っている)"
+    page = G.build(d, "en")
+    assert page.count("[YouTube](") == len(published)
+    for url in published:
+        assert page.count("[YouTube](%s)" % url) == 1
+    hidden = copy.deepcopy(d)
+    for e in hidden["exhibits"]:
+        e["youtube_url"] = ""
+    assert "[YouTube](" not in G.build(hidden, "en")
     broken = copy.deepcopy(d)
     broken["exhibits"][0]["youtube_url"] = "https://example.invalid/static.mp4"
     bad = G.validate(broken)
     assert len(bad) >= 1
     assert any("YouTube" in x for x in bad)
+
+
+def test_no_exhibit_disappears_from_the_full_list():
+    """目玉を絞っても、展示は「ぜんぶ見る」(all)から 1 本も消えない(2026-11-08、目玉を約 40 件に絞った)。"""
+    d = G.load()
+    ids = [e["id"] for e in d["all"]]
+    assert len(ids) == len(set(ids))
+    assert len(ids) >= 285, "all の件数が %d —— 目玉から外した展示を all から消していないか" % len(ids)
+    featured_only = sorted({e["id"] for e in d["exhibits"]} - set(ids))
+    # YouTube の本編へ飛ぶ 2 本だけは all に無い(2026-11-10 に運転の進化動画を足した)
+    assert featured_only == ["carla_iroha_haze", "driving_evolution"], featured_only
 
 
 def test_a_stale_translation_stops_the_generator():
@@ -135,3 +156,15 @@ def test_japanese_only_docs_are_marked_on_other_languages():
     lines = [ln for ln in page.splitlines() if "/capabilities/" in ln]
     assert lines
     assert all(G.JA_MARK in ln for ln in lines)
+
+
+def test_exhibit_with_youtube_opens_the_full_video_from_its_tile():
+    """YouTube に本編がある展示は、タイルと行のリンクが YouTube の本編へ飛ぶ(2026-11-08、短い抜粋より本編)。"""
+    d = G.load()
+    published = [e for e in d["exhibits"] if e["youtube_url"]]
+    assert published, "youtube_url の入った展示が 1 件も無い"
+    for lang in ("ja", "en"):
+        page = G.build(d, lang)
+        for e in published:
+            assert page.count('href="%s"' % e["youtube_url"]) >= 1, (lang, e["id"])
+            assert "](%s)" % e["youtube_url"] in page, (lang, e["id"])

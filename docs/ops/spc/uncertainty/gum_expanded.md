@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_light_section_step_weld_floor, poc_measurement_system_analysis]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # gum_expanded — SPC `uncertainty` op
@@ -33,6 +33,22 @@ Welch-Satterthwaite の有効自由度と包含係数 k、拡張不確かさ U(`
     (95 % で 1.959964)。
 
 無限自由度(既知の定数など)は ``numpy.inf`` を入れる。
+
+★★**相関があるときの自由度**。Welch-Satterthwaite(GUM G.4.1)は入力が**独立**で
+あることを前提にした式で、相関項を含む ``u_c`` にそのまま当てると自由度を水増し
+する(等しい 2 成分・各 nu=4・r=+1 で nu_eff=32 —— 予算の自由度の総和 8 を超える)。
+負の相関では逆に 1 未満へ潰れる。そこで *correlation* に非零の非対角があるときは、
+非零の相関でつながった成分を 1 つの群にまとめ、群の分散 ``w_g' R_g w_g``
+(``w = c u``)と群の自由度 ``min_{i in g} nu_i`` で Welch-Satterthwaite を組む::
+
+    nu_eff = u_c^4 / sum_g (w_g' R_g w_g)^2 / min_{i in g} nu_i
+
+根拠: 同じ測定から推定した相関する成分(共分散行列が Wishart、自由度 nu 共通)では、
+合成分散の推定量は厳密に ``sigma^2 chi^2_nu / nu`` で、有効自由度は ``r`` に依らず
+``nu`` そのもの(Willink, *Metrologia* 44:340, 2007 の一般化 Welch-Satterthwaite で
+r=+1 の等しい 2 成分が nu になるのと一致)。自由度の違う成分が相関する場合は最小値を
+取る —— 安全側(k を大きく)に倒す本実装の規則であって、規格の式ではない。
+相関がすべて 0(または単位行列)なら群は全部 1 成分で、従来の式と同じ値になる。
 
 ## 参考(サンプルデータ・文献)
 

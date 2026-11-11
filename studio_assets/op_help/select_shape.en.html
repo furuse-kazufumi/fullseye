@@ -13,7 +13,7 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_shape.inputs.jpg">select_shape: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Removes connected components whose area is below a threshold (<code style="color:#22d3bf">16+a*200</code> pixels) -- i.e., removes small noise-like regions. HALCON&#x27;s <code style="color:#22d3bf">select_shape</code> (Choose regions with the aid of shape features.) is a general-purpose operator that can filter by any shape feature such as area, circularity, or convexity, but here it is fixed to a single area-based cutoff (an approximation).</p>
+<p>Removes connected components (foreground is 8-connected) whose area is below a threshold (<code style="color:#22d3bf">16+a*200</code> pixels) -- i.e., removes small noise-like regions. HALCON&#x27;s <code style="color:#22d3bf">select_shape</code> (Choose regions with the aid of shape features.) is a general-purpose operator that can filter by any shape feature such as area, circularity, or convexity, but here it is fixed to a single area-based cutoff (an approximation).</p>
 <p><code style="color:#22d3bf">a</code> sweeps the lower threshold on the area. <code style="color:#22d3bf">b</code> is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
@@ -27,6 +27,7 @@
 select_shape 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aselect_shape%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aselect_shape%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ai_built_inspection_scored">poc_ai_built_inspection_scored</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ai_built_inspection_scored.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">region</code> as input)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:reg_erode">reg_erode</a> · <a style="color:#22d3bf" href="op:reg_dilate">reg_dilate</a> · <a style="color:#22d3bf" href="op:reg_open">reg_open</a> · <a style="color:#22d3bf" href="op:reg_close">reg_close</a> · <a style="color:#22d3bf" href="op:fill_holes">fill_holes</a> · <a style="color:#22d3bf" href="op:select_largest">select_largest</a> · <a style="color:#22d3bf" href="op:remove_small">remove_small</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">region</code>)</h3>

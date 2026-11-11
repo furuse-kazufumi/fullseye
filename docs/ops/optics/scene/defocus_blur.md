@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_focus_stacking, virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # defocus_blur — OPTICS `scene` op
@@ -28,6 +28,18 @@ version: 0.9.0  # fullseye lib version this note was generated for
 錯乱円の直径は幾何光学の閉じた式
 ``c = (f² / (N (z_f − f))) · |z − z_f| / z``(f = 焦点距離, N = F 値, z_f = 合焦距離)。
 画素数に直して、深度でまとめた層ごとにガウスぼかしを掛け、手前の層から合成する。
+
+合成は**手前から over 合成**(前乗算の色とぼかした被覆率 α を使い、手前の層が
+覆った分だけ奥の層を隠す)。合焦した不透明な手前の面は奥のぼけに汚されない
+(★2026-11-05 まで全層を足してぼかした重みで割っていて、合焦面の縁が 1.0 -> 0.67
+に落ちた)。最後に累積 α で割るのは、ピンホール像に写っていない「手前の陰」の
+分を周囲の色で埋めるため。
+
+深度 ``+inf``(無限遠)は ``z -> ∞`` の極限 ``c = f² / (N (z_f − f))`` でぼかす
+(★2026-11-05 まで合焦距離に置き換えていて、無限遠がくっきり写った)。
+NaN と ``-inf`` は深度が無い画素として従来どおり合焦扱い。
+層は深度の半開区間 ``[e_i, e_{i+1})`` で分ける(最後の層だけ両端を含む)ので、
+境界上の深度が 2 層に重複しない。
 
 これが無いと「視野には入っているのに実機では合焦しない」構成を見逃す ――
 仮想化の目的は絵を作ることではなく、**その光学構成で検査が成立するか**を

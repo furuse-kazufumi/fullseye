@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_hdr_glossy_metal_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # hdr_merge — OPTICS `hdr` op
@@ -32,6 +32,10 @@ Merge an exposure series into a relative radiance map (``image2d``).
 どの露出でも有効でない画素(全部で飽和 / 全部で真っ暗)は、最短(飽和)/ 最長(真っ暗)の露出
 1 枚の値で埋める(下限 / 上限の推定 —— NaN を返さない約束。``hdr_dynamic_range`` は
 ここで測れる上限を数える)。``response=None`` は「段 = 露光量」の線形(オフセット 0)。
+そのときの段数 ``L`` は float と ``uint8`` で 256、それ以外の整数 dtype(``uint16`` に
+入った 12 bit のセンサ値など、満の値が dtype から決まらないもの)は**系列の最大値 + 1**
+―― つまり系列で最も明るい段を飽和とみなす。満の値が分かっているなら
+``camera_response_*`` の応答表(``levels``)を渡すこと。
 三角の重みは ``[dark_level, L−1]`` に張る(既定 = 逆応答が初めて正になる段。暗いときの
 オフセットを持つセンサで、オフセットのすぐ上の雑音だらけの段に重みを与えないため)。
 

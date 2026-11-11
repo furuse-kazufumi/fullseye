@@ -6,7 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>physical sizes और channel names वाले TCZYX multidimensional array को OME-TIFF <code style="color:#22d3bf">bytes</code> में लिखता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">meta[&#x27;axes&#x27;]</code> は TCZYX の部分列で YX 終端。X/Y(および Z 軸があれば Z)の <code style="color:#22d3bf">physical_size_*</code> と <code style="color:#22d3bf">*_unit</code>、C 軸があれば <code style="color:#22d3bf">channel_names</code> を必須とする。</p>
+<p><code style="color:#22d3bf">meta[&#x27;axes&#x27;]</code> は TCZYX の部分列で YX 終端。X/Y(および Z 軸があれば Z)の <code style="color:#22d3bf">physical_size_*</code> と <code style="color:#22d3bf">*_unit</code>、C 軸があれば <code style="color:#22d3bf">channel_names</code> を必須とする。書いた <code style="color:#22d3bf">axes</code> は名前空間つきの MapAnnotation に残し、長さ 1 の軸も <code style="color:#22d3bf">ome_tiff_read</code> で戻る。</p>
 <p>呼び出し例: <code style="color:#22d3bf">ome_tiff_write(stack, meta={&quot;axes&quot;: &quot;CZYX&quot;, ...})</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

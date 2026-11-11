@@ -193,7 +193,9 @@ def _rgb_to_hsv(C: np.ndarray) -> np.ndarray:
     mx, mn = C.max(axis=1), C.min(axis=1)
     d = mx - mn
     h = np.zeros(len(C))
-    nz = d > 1e-12
+    # ★2026-11-05(敵対的検証 第 2 巡 K5 の兄弟): 退化の判定を絶対 1e-12 から厳密な 0 に
+    # (RGB が 1e-12 の桁の色で H/S が 0 になっていた。skimage.color.rgb2hsv と同じ判定)。
+    nz = d > 0
     r, g, b = C[:, 0], C[:, 1], C[:, 2]
     i = nz & (mx == r)
     h[i] = ((g - b)[i] / d[i]) % 6.0
@@ -201,7 +203,7 @@ def _rgb_to_hsv(C: np.ndarray) -> np.ndarray:
     h[i] = (b - r)[i] / d[i] + 2.0
     i = nz & (mx == b) & (mx != r) & (mx != g)
     h[i] = (r - g)[i] / d[i] + 4.0
-    s = np.where(mx > 1e-12, d / np.maximum(mx, 1e-12), 0.0)
+    s = np.where(mx > 0, d / np.where(mx > 0, mx, 1.0), 0.0)
     return np.column_stack([h / 6.0, s, mx])
 
 

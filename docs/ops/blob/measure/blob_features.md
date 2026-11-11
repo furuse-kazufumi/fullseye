@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_am_thermal_to_ct, poc_bone_trabecular_thickness, poc_bump_coplanarity, poc_dense_bubble_count, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_peg_insertion_tactile, poc_print_warpage_risk, poc_pv_thermal_survey, poc_real_coin_metrology, poc_real_sem_metal_layer, poc_rotation_invariance_audit, poc_sea_ice_concentration, poc_sem_wafer_defect_edge_bias, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # blob_features — BLOB `measure` op
@@ -32,9 +32,11 @@ spacing : float
 Returns
 -------
 dict
-    ``n``(物体数)、``spacing``、``units``(項目 → 単位の対応)と、
+    ``n``(物体数 = 実際に在るラベルの数)、``spacing``、``units``(項目 → 単位の対応)と、
     長さ ``n`` の配列 19 本(:data:`FEATURE_KEYS`)。物体が 0 個でも
-    鍵は全部揃えて空配列で返す(呼び手が分岐しなくて済む)。
+    鍵は全部揃えて空配列で返す(呼び手が分岐しなくて済む)。ラベルに歯抜けがあると
+    ``n`` は ``labels.max()`` より小さい —— 物体は ``f["label"]`` の列で引くこと
+    (``f["area"][label - 1]`` は歯抜けの後ろでずれる)。
 
 Notes
 -----
@@ -42,7 +44,9 @@ Notes
 * ``major`` / ``minor`` は**同じ 2 次モーメントを持つ楕円**の軸長
   (``4 sqrt(lambda)``)。画素の並びの外接ではないので、正方形に対しては
   辺長より少し長く出る —— これは定義どおりで、誤差ではない。
-* ``circularity`` は ``4 pi A / P^2``。**HALCON の ``circularity`` は
+* ``circularity`` は ``4 pi A / P^2`` を **1 で頭打ち**にした値(数画素の物体では周長の
+  推定が面積に比べて短く出て 1 を超える —— 1 画素の塊で 1.75 —— が、円より丸い形は無い)。
+  **HALCON の ``circularity`` は
   「面積 / 最遠点を半径とする円の面積」で別物**なので、値を突き合わせる
   ときは定義を確かめること。
 * ``touches_border`` が True の物体は、面積も周長も**切れた分だけ小さい**。

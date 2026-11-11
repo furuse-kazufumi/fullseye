@@ -5,10 +5,10 @@ category: extra
 in: image
 out: region
 gpu: なし
-examples: [gallery2d_color_artistic, threshold_family_agreement]
+examples: [gallery2d_color_artistic, mcp_task_score, threshold_family_agreement]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # xsitk_maxentropy_thresh — 2D `extra` op
@@ -62,6 +62,7 @@ xsitk_maxentropy_thresh 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_color_artistic](../../../../examples/gallery2d_color_artistic.py) — `py -3.11 examples/gallery2d_color_artistic.py`
+- [mcp_task_score](../../../../examples/mcp_task_score.py) — `py -3.11 examples/mcp_task_score.py`
 - [threshold_family_agreement](../../../../examples/threshold_family_agreement.py) — `py -3.11 examples/threshold_family_agreement.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)

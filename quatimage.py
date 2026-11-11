@@ -1391,6 +1391,16 @@ def monogenic_phase(qimage, display: bool = False) -> np.ndarray:
     return ph / np.pi if display else ph
 
 
+def _fold_orientation(theta):
+    """角 ``(-pi, pi]`` を向き ``[0, pi)`` へ畳む(2026-11-05 敵対的検証 第 2 巡)。
+
+    ``np.mod(-1e-17, pi)`` は丸めで **ちょうど pi** を返す(R2 = -1e-17, R1 = 1 の
+    画素で実測)。docstring の約束 ``[0, pi)`` を守るため pi は 0 に戻す(同じ向き)。
+    """
+    th = np.mod(theta, np.pi)
+    return np.where(th >= np.pi, 0.0, th)
+
+
 def monogenic_orientation(qimage, display: bool = False) -> np.ndarray:
     """Local orientation ``atan2(R2, R1)`` of a monogenic signal. → (H, W).
 
@@ -1427,7 +1437,7 @@ def monogenic_orientation(qimage, display: bool = False) -> np.ndarray:
     if not isinstance(display, (bool, np.bool_)):
         raise ValueError("%s: display must be a bool, got %r"
                          % (op, type(display).__name__))
-    th = np.mod(np.arctan2(q[..., 2], q[..., 1]), np.pi)
+    th = _fold_orientation(np.arctan2(q[..., 2], q[..., 1]))
     return th / np.pi if display else th
 
 
@@ -1441,7 +1451,7 @@ def monogenic_metrics(qimage):
     rmag = np.sqrt(q[..., 1] ** 2 + q[..., 2] ** 2)
     amplitude = np.sqrt(q[..., 0] ** 2 + rmag ** 2)
     phase = np.arctan2(rmag, q[..., 0])
-    orientation = np.mod(np.arctan2(q[..., 2], q[..., 1]), np.pi)
+    orientation = _fold_orientation(np.arctan2(q[..., 2], q[..., 1]))
     return amplitude, phase, orientation
 
 

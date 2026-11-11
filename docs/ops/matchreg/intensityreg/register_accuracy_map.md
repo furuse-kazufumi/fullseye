@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_sheet_deformation_ffd]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # register_accuracy_map — MATCHREG `intensityreg` op
@@ -31,6 +31,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 地図の内訳(どこで壊れるか)として、fixed の勾配の強さの 4 分位ごと・真の変位の大きさの 4 分位ごとの
 EPE の中央値を ``by_texture`` / ``by_magnitude`` に返す(模様の無い所で場が決まらないことが数で出る)。
+4 群は排他的(``[lo, hi)``、最後の群だけ ``[lo, hi]``)で、``n`` の和は集計した画素の数。同値が境界に
+並ぶと群の大きさは 1/4 ずつにならない(全部同じ値なら最後の群に全部)。
 
 Args:
     fixed: 基準の 2-D 画像。

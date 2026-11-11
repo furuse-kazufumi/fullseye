@@ -13,7 +13,7 @@
 <p><b>दूसरी images पर भी</b> (synthetic scene / photo / coins। ऊपर की row में inputs, नीचे की row में उनके outputs। Knobs default पर):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_shape.inputs.jpg">select_shape: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>Threshold (<code style="color:#22d3bf">16+a*200</code> pixels) से कम क्षेत्रफल वाले connected components हटाता है (छोटे noise जैसे regions हटाना)। HALCON का <code style="color:#22d3bf">select_shape</code> (Choose regions with the aid of shape features.) क्षेत्रफल, circularity, convexity जैसे किसी भी shape feature से छाँट सकने वाला सामान्य operator है, लेकिन यहाँ केवल 1 प्रकार, क्षेत्रफल से कटौती, तय है (सन्निकटन)।</p>
+<p>Threshold (<code style="color:#22d3bf">16+a*200</code> pixels) से कम क्षेत्रफल वाले connected components (foreground 8-connected है) हटाता है (छोटे noise जैसे regions हटाना)। HALCON का <code style="color:#22d3bf">select_shape</code> (Choose regions with the aid of shape features.) क्षेत्रफल, circularity, convexity जैसे किसी भी shape feature से छाँट सकने वाला सामान्य operator है, लेकिन यहाँ केवल 1 प्रकार, क्षेत्रफल से कटौती, तय है (सन्निकटन)।</p>
 <p><code style="color:#22d3bf">a</code> क्षेत्रफल की निचली threshold को बदलता है। <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
@@ -27,6 +27,7 @@
 select_shape 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aselect_shape%200.50%200.50">▸ यह pipeline load करें</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aselect_shape%200.50%200.50">Load करके चलाएँ</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ai_built_inspection_scored">poc_ai_built_inspection_scored</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ai_built_inspection_scored.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">region</code> को input के रूप में लेते हैं)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:reg_erode">reg_erode</a> · <a style="color:#22d3bf" href="op:reg_dilate">reg_dilate</a> · <a style="color:#22d3bf" href="op:reg_open">reg_open</a> · <a style="color:#22d3bf" href="op:reg_close">reg_close</a> · <a style="color:#22d3bf" href="op:fill_holes">fill_holes</a> · <a style="color:#22d3bf" href="op:select_largest">select_largest</a> · <a style="color:#22d3bf" href="op:remove_small">remove_small</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">region</code>)</h3>

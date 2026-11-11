@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_shape_stats(labels, spacing=None, shape: &#x27;bool&#x27; = True)</code>(要直接调用实现,<code style="color:#22d3bf">import volcolor; volcolor.vol_label_shape_stats(labels, spacing=None, shape: &#x27;bool&#x27; = True)</code>;从台账取用则 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_shape_stats&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>每个成分<b>线性时间可得</b>的定量值(体积・重心・包围盒・主成分形状指标)。</p>
+<p>每个成分<b>线性时间可得</b>的定量值(体积、重心、包围盒、主成分形状指标)。</p>
 <p>volops.vol_region_props 的姐妹，但有 不同的目的：</p>
 <p style="margin:2px 0 2px 12px">• 它给出了“表面积”和 Wadell“球度”。为了这个目的由于行进立方体针对每个组件运行，因此 Python 循环与组件数量成正比。转动（随着 1 体素 1 标签的病理输入很快变得沉重）。</p>
 <p style="margin:2px 0 2px 12px">• 这仅限于仅需要“np.bincount”加权和的金额。 1 个标签数组 10bincount（件数 1，坐标和 3，协方差 6）= O(N + n)。实测（连通性=26，1 体素 1 标签 = 病理输入的棋盘图案）： 163 = 4096 体素/512 个分量 = 0.0037 s，323 = 32768 / 4096 = 0.0350 秒，643 = 262144 / 32768 = 0.2556 秒，1283 = 2097152 / 262144 = 2.3122秒。 每 8 个体素 9.5 / 7.3 / 9.0 次（二次方 64 次），整个区域大约为 1.1 微秒/体素。同样的1283着色是0.0357 s。</p>

@@ -6,10 +6,10 @@ in: labels2d
 out: labels2d
 halcon: select_characters
 gpu: なし
-examples: [machine_vision_tour]
+examples: [machine_vision_tour, poc_real_typewritten_ocr]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # select_characters — MV `text` op
@@ -48,6 +48,7 @@ Returns:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [machine_vision_tour](../../../../examples/machine_vision_tour.py) — `py -3.11 examples/machine_vision_tour.py`
+- [poc_real_typewritten_ocr](../../../../examples/poc_real_typewritten_ocr.py) — `py -3.11 examples/poc_real_typewritten_ocr.py`
 
 ## 型が繋がる次の op(`labels2d` を入力に取れる)
 

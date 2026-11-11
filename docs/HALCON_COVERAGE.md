@@ -3,12 +3,12 @@
 Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605).
 Ground truth: **2313 operators across 30 top-level chapters** (218 TOC pages), mined by `halcon_scrape.py`.
 
-**imgevolve maps to 1017 / 2313 HALCON operators (44.0%)** via `Op.halcon`, from 947 registry ops.
+**imgevolve maps to 1017 / 2313 HALCON operators (44.0%)**: 388 through `Op.halcon` on the evolvable registry ops, 595 through perception facades (`fullseye/data/halcon_facade_map.json`, not registry ops) and 34 through typed-ledger ops (`opassist.ledger_halcon_map()`, not registry ops) (each name counted once, in that order; the registry has 947 ops).
 
 One imgevolve op claims one nearest HALCON operator, so coverage counts
 distinct real operators with an analogue. This number is grounded in the
-scraped reference, not memory; grow it by adding operator families to the
-registry (each new `Op.halcon` that names a real operator lifts coverage).
+scraped reference, not memory; it grows with each new `Op.halcon`, facade
+entry or ledger mapping that names a real operator.
 
 **16 more HALCON names are partial analogues and are not counted** (the function carries the name but does only part of the operator's job; listed below).
 

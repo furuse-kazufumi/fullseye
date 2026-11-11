@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_segmentation, poc_metal_grain_size]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # bin_threshold — 2D `segmentation` op
@@ -35,7 +35,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-大津の判別分析法（Otsu's method）による自動しきい値二値化。``binary_threshold``/``auto_threshold`` と同じ ``_sh_threshold`` の ``otsu`` 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。scikit-image が無い環境では同じ 256 ビンの Otsu を numpy の双子(``numpy_twins.threshold_otsu``)で計算する(bit 一致。2026-10-25 までは画像平均値をしきい値とする別の答えに落ちていた)。
+大津の判別分析法（Otsu's method）による自動しきい値二値化。``binary_threshold``/``auto_threshold`` と同じ ``_sh_threshold`` の ``otsu`` 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。中核の ``otsu`` op と同じ関数(実データの範囲を 256 ビンに分け、argmax ビンの上端で切る)を通るので、答えは ``otsu`` と一致し、[0,1] の外の値も clip しない(2026-11-09 までは [0,1] へ clip してから skimage の大津をかけ、0..255 の float では前景 0 %、定数の像では ``otsu`` と逆の答えを返した)。
 
 HALCON の ``bin_threshold``（複数の自動しきい値決定アルゴリズムから選んで二値化する演算、既定は最大分離度=大津法相当）に相当する近似で、大津法のみをサポートし他のアルゴリズム選択肢は無い。
 

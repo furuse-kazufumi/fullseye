@@ -5,10 +5,10 @@ category: curvature
 in: curvature
 out: pairs
 gpu: なし
-examples: [representation_roundtrip]
+examples: [poc_bga_ball_type_roundtrip, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # curvature_to_shape_index — REPRCONV `curvature` op
@@ -35,6 +35,13 @@ Vision Computing 10(8) 1992 の (S, C):
 
 S = -1 は杯、0 は鞍、+1 は帽子。C は形と独立な「どれだけ曲がっているか」。
 
+**平面では S は定義されない**(Koenderink & van Doorn も平面点を除く): k1 = k2 = 0 では
+``atan2(0, 0) = 0`` で S = 0(鞍と同じ値)が返り、C = 0 がそれを見分ける唯一の印。平面に近い点
+(曲率が推定の雑音と同じ桁)の S は雑音の向きで [-1, 1] のどこにでも出る。**S だけで形を分類
+しない** —— 先に C に閾値を掛けて平面を除く(閾値は曲率の単位 = 1/長さ を持つので、データの尺度に
+合わせて決める)。2026-11-05 敵対的検証で確かめた仕様(値は変えない: 往復の厳密さと NaN を
+出さない約束を保つため)。
+
 **入力順の情報だけは戻らない**: (k2, k1) の順で渡しても内部で k1 >= k2 へ
 並べ替えるので、往復すると必ず降順で返る(向きの規約であり、値の損失ではない)。
 
@@ -54,6 +61,7 @@ Raises:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_bga_ball_type_roundtrip](../../../../examples/poc_bga_ball_type_roundtrip.py) — `py -3.11 examples/poc_bga_ball_type_roundtrip.py`
 - [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)

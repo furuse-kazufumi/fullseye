@@ -9,7 +9,7 @@ gpu: あり(lbl_remove_small)
 examples: [gallery2d_region, quickstart]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # remove_small — 2D `region` op
@@ -41,7 +41,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 小さい連結領域を面積で除去する。HALCON の ``select_shape``（Choose regions with the aid of shape features.）に相当。
 
-``a`` が除去のしきい値（画素数）を、画像全体の画素数に対する割合 ``0.01〜0.16``（``(0.01+0.15a) * 画素数``）として振る。``b`` は未使用。しきい値以上の面積を持つ連結成分だけを残す。連結性は scipy ``label`` の既定（4連結）。
+``a`` が除去のしきい値（画素数）を、画像全体の画素数に対する割合 ``0.01〜0.16``（``(0.01+0.15a) * 画素数``）として振る。``b`` は未使用。しきい値以上の面積を持つ連結成分だけを残す。**連結性は 8 連結**（HALCON の ``connection`` の既定。2026-11-05 敵対的検証 第 2 巡 P1 までは scipy ``label`` の既定の 4 連結で、斜めに接する塊を別々に数えて小さいとみなし消していた）。
 
 ## 詳しい使い方ガイド
 

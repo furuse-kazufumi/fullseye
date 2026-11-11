@@ -6,7 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Markergesteuerte Wasserscheiden-Segmentierung; markers ist ein Integer-Labelbild (0 = nicht zugewiesen) (watersheds_marker).</p>
-<p>Leere Eingabe (<code style="color:#22d3bf">image</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">image</code> mit 0 Elementen) löst ValueError aus. <code style="color:#22d3bf">markers</code> mit anderer Form als <code style="color:#22d3bf">image</code> sowie nicht ganzzahlige, negative oder nicht endliche <code style="color:#22d3bf">markers</code> lösen ebenfalls ValueError aus (ganzzahlige Float-Werte und Booleans werden akzeptiert). Ruft <code style="color:#22d3bf">skimage.segmentation.watershed</code> direkt auf; ohne scikit-image wird MissingDependencyError ausgelöst (kein Rückfall auf eine bildblinde Nächster-Marker-Zuordnung).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:halcon_segmentation_tour">halcon_segmentation_tour</a> — <code style="color:#22d3bf">py -3.11 examples/halcon_segmentation_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_mixed_case_depalletizing">poc_mixed_case_depalletizing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_mixed_case_depalletizing.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sem_tem_same_particle">poc_sem_tem_same_particle</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sem_tem_same_particle.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">labels2d</code> als Eingabe)</h3>
 <p><a style="color:#22d3bf" href="opsegmentation:seg_confusion_table">seg_confusion_table</a> · <a style="color:#22d3bf" href="opsegmentation:seg_dice_jaccard">seg_dice_jaccard</a> · <a style="color:#22d3bf" href="opsegmentation:seg_boundary_f">seg_boundary_f</a> · <a style="color:#22d3bf" href="opsegmentation:seg_hausdorff">seg_hausdorff</a> · <a style="color:#22d3bf" href="opsegmentation:seg_mean_surface_distance">seg_mean_surface_distance</a> · <a style="color:#22d3bf" href="opsegmentation:seg_under_over_segmentation">seg_under_over_segmentation</a> · <a style="color:#22d3bf" href="opsegmentation:seg_object_counts_match">seg_object_counts_match</a> · <a style="color:#22d3bf" href="opsegmentation:seg_score_card">seg_score_card</a></p>

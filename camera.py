@@ -49,6 +49,7 @@ import numpy as np
 __all__ = [
     "intrinsic_matrix", "decompose_intrinsics", "projection_matrix",
     "project_points", "backproject", "depth_to_points", "normals_from_depth",
+    "normals_from_depth_edgeaware",
     "triangulate", "reprojection_error", "solve_pnp",
     "rodrigues", "rotation_log",
     "fundamental_matrix", "essential_matrix", "essential_from_fundamental",
@@ -101,20 +102,25 @@ def rotation_log(R) -> np.ndarray:
     R = np.asarray(R, np.float64)
     if R.shape != (3, 3):
         raise ValueError("R must be 3x3")
-    cos = np.clip((np.trace(R) - 1.0) / 2.0, -1.0, 1.0)
-    theta = float(np.arccos(cos))
+    # ★2026-11-04(外部監査 v0.9.0 F5): 角は arccos でなく atan2(sinθ, cosθ)(arccos は π の近くで桁落ちし、π−1e-9 で
+    #   角を 1e-8 外した)。π の近くの軸は対称部 (R+Rᵀ)/2 − cosθ I = (1−cosθ) a aᵀ の最大対角の列から取り、
+    #   向きは歪対称部 sinθ·a から取る(以前は向きを見ず、θ < π では逆向きの軸 = 別の回転を返しえた)。
+    #   ちょうど π では a と −a は同じ回転で、どちらを返しても rodrigues(·) は R に戻る。
+    sv = 0.5 * np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])   # = sinθ · a
+    s = float(np.linalg.norm(sv))
+    c = float((np.trace(R) - 1.0) / 2.0)
+    theta = float(np.arctan2(s, c))
     if theta < 1e-12:
         return np.zeros(3)
-    if np.pi - theta < 1e-6:
-        # near 180 deg: axis from the largest diagonal of R + I (numerically stable)
-        A = (R + np.eye(3)) / 2.0
-        k = np.sqrt(np.clip(np.diag(A), 0.0, None))
-        i = int(np.argmax(k))
-        k = A[:, i] / (k[i] if k[i] > 1e-12 else 1.0)
-        k = k / max(np.linalg.norm(k), 1e-12)
-        return theta * k
-    axis = np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])
-    return theta * axis / (2.0 * np.sin(theta))
+    if np.pi - theta >= 1e-3:
+        return theta * sv / s
+    aa = (0.5 * (R + R.T) - c * np.eye(3)) / (1.0 - c)                              # = a aᵀ
+    i = int(np.argmax(np.diag(aa)))
+    a = aa[:, i] / np.sqrt(max(float(aa[i, i]), 1e-300))
+    a = a / np.linalg.norm(a)
+    if float(a @ sv) < 0.0:
+        a = -a
+    return theta * a
 
 
 def _project_camframe(Xc: np.ndarray, K: np.ndarray):
@@ -230,7 +236,12 @@ def normals_from_depth(depth, K, smooth: int = 0) -> np.ndarray:
     orients every normal toward the camera (``-Z``). This is the organized-cloud
     shortcut to :func:`pointcloud.estimate_normals` — no neighbour search needed
     because the depth grid already encodes adjacency. Normals are ``NaN`` where the
-    depth (or a neighbour it needs) is invalid. ``smooth`` optionally box-blurs the
+    depth itself is invalid (non-finite or ``<= 0``), where a neighbour it needs is
+    invalid, and on the one-pixel image border. Every finite normal satisfies
+    ``n · X <= 0`` (faces the camera). Central differences straddle depth steps, so
+    the one-pixel band along a step (box edge over a floor) gets a wrong normal —
+    about 80 deg off in the box-on-floor probe; use
+    :func:`normals_from_depth_edgeaware` when steps matter. ``smooth`` optionally box-blurs the
     depth first to tame stereo noise. Feeds grasp approach directions and terrain
     foothold scoring."""
     Z = np.asarray(depth, np.float64)
@@ -251,7 +262,11 @@ def normals_from_depth(depth, K, smooth: int = 0) -> np.ndarray:
     dv[1:-1, :] = grid[2:, :] - grid[:-2, :]                   # d/dy (central)
     n = np.cross(du, dv)
     norm = np.linalg.norm(n, axis=-1, keepdims=True)
-    n = n / np.where(norm < 1e-12, np.nan, norm)
+    # ★1.0 前の修正 2026-11-05 abs-floor: 以前は ``norm < 1e-12`` を無効にしていた。外積の長さは長さ² なので、深度 1e-3 m・
+    #   fx 5000 px の顕微系では全画素が NaN になった。無効の判定は接線の長さの積に対する
+    #   相対量(= 2 本の接線のなす角の正弦が 1e-12 以下)。
+    tang = (np.linalg.norm(du, axis=-1) * np.linalg.norm(dv, axis=-1))[..., None]
+    n = n / np.where(norm > 1e-12 * tang, norm, np.nan)
     # orient toward the camera centre (origin): a visible surface normal must point
     # back toward the viewpoint, i.e. n . X <= 0 (the ray to the point). Testing
     # only the Z sign is wrong once the surface is viewed obliquely enough that the
@@ -259,6 +274,97 @@ def normals_from_depth(depth, K, smooth: int = 0) -> np.ndarray:
     dotp = np.einsum("...i,...i->...", n, grid)
     flip = dotp > 0
     n[flip] *= -1.0
+    # ★2026-11-09 敵対的点検: 中心差分は左右・上下の隣しか使わないので、無効画素
+    #   (NaN / 0)そのものにも有限の法線が出ていた。しかも向き合わせの n·X > 0 は
+    #   X = NaN で False になり反転されず、穴の画素は全部カメラと逆向きだった
+    #   (傾き平面・1 % の穴で 735 画素中 696 画素)。docstring の約束どおり NaN にする。
+    n[~np.isfinite(grid).all(axis=-1)] = np.nan
+    return n
+
+
+def normals_from_depth_edgeaware(depth, K, max_jump_rel: float = 0.02) -> np.ndarray:
+    """Per-pixel surface normal (H, W, 3) that does not straddle depth steps.
+
+    Same geometry and conventions as :func:`normals_from_depth` (points from
+    :func:`depth_to_points`, tangents along image columns/rows, normal = their
+    cross product, oriented so that ``n · X <= 0``), but each tangent is chosen
+    per pixel:
+
+    * central difference ``X[c+1] - X[c-1]`` when neither neighbour jumps;
+    * a one-sided difference (``X[c+1] - X[c]`` or ``X[c] - X[c-1]``) when only
+      one side jumps or is invalid / off the image;
+    * ``NaN`` when both sides jump (an isolated pixel, a one-pixel-wide sliver).
+
+    A neighbour "jumps" when ``|Z_nb - Z| > max_jump_rel · Z`` (relative depth
+    step, so the same value works at any range and unit). Invalid depth
+    (non-finite or ``<= 0``) gives ``NaN``.
+
+    Measured (2026-11-09, box top z=0.8 m on a floor z=1.0 m, 320x240,
+    fx=300): :func:`normals_from_depth` is ~80 deg off on the 716-pixel band
+    along the edge; this function puts every band pixel within 2 deg (or NaN).
+    On a step-free surface it equals :func:`normals_from_depth` to ``1e-12``
+    in the interior and additionally fills the one-pixel image border.
+
+    Limits: a surface seen so obliquely that consecutive pixels differ by more
+    than ``max_jump_rel`` in depth is treated as a step (raise the threshold for
+    grazing views); a real fold without a depth jump is not detected; no
+    smoothing is applied (pre-filter the depth, e.g. bilateral, for noisy
+    stereo).
+
+    Raises:
+        ValueError: ``depth`` is not 2-D, or ``max_jump_rel`` is not a finite
+            positive number.
+    """
+    Z = np.asarray(depth, np.float64)
+    if Z.ndim != 2:
+        raise ValueError("depth must be a 2-D (H, W) map")
+    try:
+        thr = float(max_jump_rel)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("max_jump_rel must be a positive number") from exc
+    if not np.isfinite(thr) or thr <= 0.0:
+        raise ValueError("max_jump_rel must be a finite positive number, got %r" % (max_jump_rel,))
+    grid = depth_to_points(Z, K, organized=True)              # (H,W,3), NaN invalid
+    valid = np.isfinite(grid).all(axis=-1)
+    Zv = np.where(valid, Z, np.nan)
+
+    def _tangent(axis):
+        # neighbours along ``axis`` (+1 / -1); off-image neighbours are NaN
+        P = grid
+        nxt = np.full_like(P, np.nan)
+        prv = np.full_like(P, np.nan)
+        zn = np.full_like(Zv, np.nan)
+        zp = np.full_like(Zv, np.nan)
+        sl_a = [slice(None)] * 2
+        sl_b = [slice(None)] * 2
+        sl_a[axis] = slice(0, -1)
+        sl_b[axis] = slice(1, None)
+        nxt[tuple(sl_a)] = P[tuple(sl_b)]
+        prv[tuple(sl_b)] = P[tuple(sl_a)]
+        zn[tuple(sl_a)] = Zv[tuple(sl_b)]
+        zp[tuple(sl_b)] = Zv[tuple(sl_a)]
+        with np.errstate(invalid="ignore"):
+            ok_n = np.isfinite(zn) & (np.abs(zn - Zv) <= thr * Zv)
+            ok_p = np.isfinite(zp) & (np.abs(zp - Zv) <= thr * Zv)
+        t = np.full_like(P, np.nan)
+        both = ok_n & ok_p
+        t[both] = nxt[both] - prv[both]
+        only_n = ok_n & ~ok_p
+        t[only_n] = nxt[only_n] - P[only_n]
+        only_p = ok_p & ~ok_n
+        t[only_p] = P[only_p] - prv[only_p]
+        return t
+
+    du = _tangent(1)                                           # d/dx (columns)
+    dv = _tangent(0)                                           # d/dy (rows)
+    n = np.cross(du, dv)
+    norm = np.linalg.norm(n, axis=-1, keepdims=True)
+    tang = (np.linalg.norm(du, axis=-1) * np.linalg.norm(dv, axis=-1))[..., None]
+    with np.errstate(invalid="ignore"):
+        n = n / np.where(norm > 1e-12 * tang, norm, np.nan)
+    dotp = np.einsum("...i,...i->...", n, grid)
+    n[dotp > 0] *= -1.0
+    n[~valid] = np.nan
     return n
 
 
@@ -371,16 +477,21 @@ def _pnp_planar(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
     Kinv = np.linalg.inv(K)
     m = np.hstack([uv, np.ones((uv.shape[0], 1))]) @ Kinv.T
     m = m[:, :2] / m[:, 2:3]
-    # homography DLT: p2 (homogeneous) -> m
+    # homography DLT: p2 (homogeneous) -> m, on Hartley-normalised coordinates
+    # (H&Z Alg. 4.2). Without the normalisation the 3 outliers of a 20-point
+    # board pulled the start to t_z = 0 (true 2.5) and LM never recovered
+    # (median translation error 90 %, cv2.solvePnP 5.5 %; 2026-11-09 audit).
     N = X.shape[0]
+    p2h, T1 = _normalize_2d(p2)
+    mh, T2 = _normalize_2d(m)
     A = np.zeros((2 * N, 9))
     for i in range(N):
-        x, y = p2[i]
-        u, v = m[i]
+        x, y = p2h[i, :2]
+        u, v = mh[i, :2]
         A[2 * i] = [-x, -y, -1, 0, 0, 0, u * x, u * y, u]
         A[2 * i + 1] = [0, 0, 0, -x, -y, -1, v * x, v * y, v]
     _, _, Vt2 = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
-    H = Vt2[-1].reshape(3, 3)
+    H = np.linalg.inv(T2) @ Vt2[-1].reshape(3, 3) @ T1
     best = None
     for s in (1.0, -1.0):
         lam = s / max(0.5 * (np.linalg.norm(H[:, 0]) + np.linalg.norm(H[:, 1])), 1e-12)
@@ -400,38 +511,53 @@ def _pnp_planar(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
     return best[1], best[2]
 
 
+# General DLT resection is rank-deficient long before the exact-coplanarity gate
+# (1e-6) fires: on a 0.6 m board with sub-millimetre relief (thickness ratio
+# 4e-6 .. 4e-2) it returned translations 90-100 % wrong (2026-11-09 audit,
+# 20 points / 0.5 px noise / 30 poses: 30/30, 27/30, 12/30 failures at ratios
+# 4e-6, 4e-4, 4e-3; cv2.solvePnP 0/30). The first fix tried the planar start only
+# below a thickness ratio of 0.1, which left a step at the switch (independent
+# review 2026-11-09: 8 points, ratios 0.11-0.36, 1 of 30 poses lost per cell; with
+# 3 outliers the median translation error jumped from 0.044 to 0.48). The planar
+# start is now always a candidate; the cost is one extra LM run.
+
+
+def _thickness_ratio(X: np.ndarray) -> float:
+    """Smallest / largest singular value of the centred 3-D points (0 = planar)."""
+    c = X - X.mean(0)
+    s = np.linalg.svd(c, compute_uv=False)
+    return float(s[-1] / s[0]) if s[0] > 0 else 0.0
+
+
 def _pnp_init(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
-    """Initial pose for PnP: homography-based for coplanar targets, DLT otherwise."""
+    """Initial pose for PnP: homography-based for coplanar targets, DLT otherwise.
+
+    Single-candidate start kept for callers that want one guess; :func:`solve_pnp`
+    itself refines every pose from :func:`_pnp_candidates`."""
     if _coplanar(X):
         return _pnp_planar(X, uv, K)
     return _pnp_dlt(X, uv, K)
 
 
-def solve_pnp(points3d, uv, K, iters: int = 30, refine: bool = True):
-    """Recover object/camera 6-DoF pose ``(R, t)`` from >=6 3-D<->2-D matches.
+def _pnp_candidates(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
+    """Initial poses to refine. Exactly coplanar -> planar only; otherwise both the
+    DLT start and the planar (best-fit plane homography) start, whatever the
+    thickness — the caller keeps the refined pose with the lower cost, so there is
+    no switch point at which the accuracy steps."""
+    if _coplanar(X):
+        return [_pnp_planar(X, uv, K)]
+    cands = []
+    try:
+        cands.append(_pnp_dlt(X, uv, K))
+    except np.linalg.LinAlgError:
+        pass
+    cands.append(_pnp_planar(X, uv, K))
+    return cands
 
-    Given a known 3-D model (``points3d``, N>=6) and where its points land in the
-    image (``uv``) under a calibrated camera (``K``), returns the rotation ``R``
-    (3, 3) and translation ``t`` (3,) that map the model into the camera frame
-    (``X_cam = R @ X_model + t``). This is the "perspective-n-point" problem — the
-    2-D-to-6-DoF step a robot uses to know where a recognised object sits before
-    grasping it. DLT initialisation (H&Z §7.1) followed by Gauss-Newton /
-    Levenberg-Marquardt refinement of the reprojection error.
 
-    Returns ``(R, t, rms)`` where ``rms`` is the final RMS reprojection error in
-    pixels (a small value certifies the fit)."""
-    X = _pts3(points3d)
-    uv = _pts2(uv)
-    K = _K3(K)
-    if X.shape[0] != uv.shape[0]:
-        raise ValueError("points3d and uv must have the same length")
-    if X.shape[0] < 6:
-        raise ValueError("PnP needs at least 6 correspondences, got %d" % X.shape[0])
-    R0, t0 = _pnp_init(X, uv, K)
-    if not refine:
-        rms = float(np.sqrt(np.mean(reprojection_error(X, uv, K, R0, t0) ** 2)))
-        return R0, t0, rms
-
+def _pnp_refine(X, uv, K, R0, t0, iters):
+    """Levenberg-Marquardt refinement of the reprojection error from (R0, t0).
+    Returns (R, t, cost) with cost = sum of squared pixel residuals."""
     xi = np.concatenate([rotation_log(R0), t0])                # (6,)
     lam = 1e-3
 
@@ -464,8 +590,63 @@ def solve_pnp(points3d, uv, K, iters: int = 30, refine: bool = True):
                 break
         else:
             lam = min(lam * 4.0, 1e6)
-    R = rodrigues(xi[:3])
-    t = xi[3:]
+    return rodrigues(xi[:3]), xi[3:], cost
+
+
+def solve_pnp(points3d, uv, K, iters: int = 30, refine: bool = True):
+    """Recover object/camera 6-DoF pose ``(R, t)`` from >=6 3-D<->2-D matches.
+
+    Given a known 3-D model (``points3d``, N>=6) and where its points land in the
+    image (``uv``) under a calibrated camera (``K``), returns the rotation ``R``
+    (3, 3) and translation ``t`` (3,) that map the model into the camera frame
+    (``X_cam = R @ X_model + t``). This is the "perspective-n-point" problem — the
+    2-D-to-6-DoF step a robot uses to know where a recognised object sits before
+    grasping it. DLT initialisation (H&Z §7.1) followed by Gauss-Newton /
+    Levenberg-Marquardt refinement of the reprojection error.
+
+    Returns ``(R, t, rms)`` where ``rms`` is the final RMS reprojection error in
+    pixels (a small value certifies the fit).
+
+    Initialisation: exactly coplanar models use the plane->image homography;
+    every other model gets *both* the homography of its best-fit plane and the
+    DLT start, each refined, and the pose with the lower reprojection cost
+    (points in front of the camera first) is returned. (Thin models — a machined
+    plate with sub-millimetre relief, a planar marker with height error — are
+    where DLT alone fails; trying both everywhere avoids a step at any
+    thickness threshold.)
+    Before 2026-11-09 thin models went to DLT alone, which is rank-deficient
+    there and returned translations 90-100 % wrong with rms 500-2000 px
+    (cv2.solvePnP was correct on the same input).
+
+    Limits (read ``rms``):
+
+    - Not robust to outliers: this is plain least squares. With mismatched
+      correspondences use :func:`pnp3d.pnp_ransac` (``fs.pnp_ransac``). A
+      ``rms`` far above the measurement noise (several px for sub-pixel
+      corners) means the pose is not trustworthy.
+    - Raises ``ValueError`` for non-finite ``points3d`` / ``uv`` / ``K``,
+      mismatched lengths or fewer than 6 points."""
+    X = _pts3(points3d)
+    uv = _pts2(uv)
+    K = _K3(K)
+    if X.shape[0] != uv.shape[0]:
+        raise ValueError("points3d and uv must have the same length")
+    if X.shape[0] < 6:
+        raise ValueError("PnP needs at least 6 correspondences, got %d" % X.shape[0])
+    if not (np.isfinite(X).all() and np.isfinite(uv).all() and np.isfinite(K).all()):
+        raise ValueError("solve_pnp: points3d, uv and K must be finite (NaN/inf found)")
+    best = None
+    for R0, t0 in _pnp_candidates(X, uv, K):
+        if refine:
+            R, t, cost = _pnp_refine(X, uv, K, R0, t0, iters)
+        else:
+            R, t = R0, t0
+            cost = float(np.sum(reprojection_error(X, uv, K, R, t) ** 2))
+        front = float(((X @ R.T + t)[:, 2] > 0).mean())
+        score = (front, -cost)
+        if best is None or score > best[0]:
+            best = (score, R, t)
+    R, t = best[1], best[2]
     rms = float(np.sqrt(np.mean(reprojection_error(X, uv, K, R, t) ** 2)))
     return R, t, rms
 

@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # sam_cscan — ACOUSTICS `ultrasonic` op
@@ -28,12 +28,14 @@ Focused-transducer C-scan of a 2-D bond map: per-frequency Gaussian lateral PSF,
 水の経路と減衰を掛けて、ゲートの時刻での解析信号に和を取る。
 ゲートは ``t_interfaces[gate_interface] ± half_width``(既定 2σ_t)。
 出力の像:
-  * ``amplitude`` — ゲート内の包絡線の山(振幅の C スキャン)
+  * ``amplitude`` — ゲートの内部の包絡線の山(振幅の C スキャン)
   * ``phase`` — 界面のエコーの**期待時刻**(表面エコーの時刻 + 積層の往復)での解析信号の
     偏角 − 表面エコーの期待時刻での偏角 [rad]
   * ``inphase`` — 期待時刻の解析信号の同相成分 ``|a| cos(phase)``(符号つき。反転したエコーは負)
-  * ``signed_peak`` — ゲート内で |RF| が最大のサンプルの値(従来の極性の読み方)
-  * ``tof`` — 包絡線の山の時刻 [s]
+  * ``signed_peak`` — 包絡線の山から半周期以内で |RF| が最大のサンプルの値(従来の極性の読み方)
+  * ``tof`` — 包絡線の山の時刻 [s]。★山はゲートの**内部の局所極大**に限る(表面エコーの
+    裾がゲートの端で最大になるのを山と読まない)。内部に極大の無い画素は ``amplitude`` /
+    ``tof`` / ``signed_peak`` が NaN、その画素数が ``n_no_peak``
 ``plane_phasor`` は ``{ラベル: 複素数}`` —— そのラベルが一面に広がっていたときの期待時刻の
 値(雑音なし、基準の偏角を引いた後)。地図の設計(どこがパッドか)が分かっていれば、
 良品の基準として ``inphase`` / ``amplitude`` から引ける。

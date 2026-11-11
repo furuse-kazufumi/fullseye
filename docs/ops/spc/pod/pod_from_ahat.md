@@ -5,10 +5,10 @@ category: pod
 in: table
 out: table
 gpu: なし
-examples: [poc_pod_lighting, poc_sam_hybrid_bonding_voids]
+examples: [poc_equipment_selection_map, poc_pod_lighting, poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # pod_from_ahat — SPC `pod` op
@@ -35,6 +35,22 @@ a90/95 はデルタ法: ``(β0, β1, σ)`` の共分散をヤコビアン
 ``bound_monotone`` が False のとき(``σ_pod`` が自分の標準誤差の z 倍に届かない =
 データが少なすぎる)下限曲線は 1 価にならず、読まないこと。
 
+★Wald の a90/95 は点数が少ないと信頼水準に届かない。真の a90 が既知の合成(log-log、σ = 0.4、
+2000 反復)で「a90/95 ≥ 真の a90」の割合は名目 95 % に対し n = 10 で 0.79、n = 40 で 0.89、
+n = 100 で 0.92(2026-11-09 実測)。そこで ``a90_95_lr`` も返す: a90 を固定して (β1, σ) について
+最大化した**プロファイル対数尤度**が ``ℓmax − χ²₁(2·level − 1)/2`` まで落ちる大きさ
+(``pod_hitmiss_fit`` と同じ作り、打ち切りも尤度に入る)。同じ合成で被覆率は n = 10 で 0.86、
+n = 40 で 0.92、n = 100 で 0.93(打ち切りありでも同じ) —— Wald より水準に近いが、少数点では足りないことに変わりはない。
+尤度が十分に落ちないときは ``None`` と ``lr_status = "unbounded"``、上限が元の単位で表せないほど
+大きい(対数座標の exp が溢れる)ときは ``None`` と ``"overflow"``、プロファイルの最大化が途中で
+失敗したときは ``None`` と ``"profile_failed"``(失敗を棄却と数えると上限が楽観側に出るため)、``fit`` に当てに使った
+``x`` ``y`` ``status`` が無いときは ``None`` と ``"no_data"``。``n`` < 40(1823A の推奨最小)
+なら ``small_sample`` が True。
+
+★``a_dec_below_floor`` が True のとき、``a_dec`` は ``fit`` の ``censor_low``(記録の下限)より
+下 —— 床より下の応答は観測されていないので、その閾値の POD は回帰の外挿だけで決まる
+(1823A は ``a_dec`` ≥ 記録の閾値を前提にする)。``a_dec_above_ceiling`` は ``censor_high`` の上で同じ。
+
 ★``a90_95_beyond_data`` が True のとき、a90/95 は**試した最大の大きさより先**にある
 —— 回帰の直線を試験の外へ延ばした外挿で、1823A が「データの外で POD を語るな」と
 いう領域。数は返すが、その数で合否を決めてはいけないことを旗で同伴させる
@@ -57,6 +73,7 @@ a90/95 はデルタ法: ``(β0, β1, σ)`` の共分散をヤコビアン
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_equipment_selection_map](../../../../examples/poc_equipment_selection_map.py) — `py -3.11 examples/poc_equipment_selection_map.py`
 - [poc_pod_lighting](../../../../examples/poc_pod_lighting.py) — `py -3.11 examples/poc_pod_lighting.py`
 - [poc_sam_hybrid_bonding_voids](../../../../examples/poc_sam_hybrid_bonding_voids.py) — `py -3.11 examples/poc_sam_hybrid_bonding_voids.py`
 

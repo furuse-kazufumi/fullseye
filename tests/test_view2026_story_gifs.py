@@ -122,7 +122,15 @@ def test_the_thirty_text_only_crops_stay_excluded():
     excluded = [frame for item in LEDGER["entries"].values()
                 for frame in item.get("excluded_frames", [])
                 if frame["reason"] == "crop_text_only"]
-    assert len(excluded) == 30
+    # 2026-11-08 +1: poc_pv_thermal_survey の代表を実データの図(11_real_dtu_conditions)に替えたので、元の代表
+    #   01_norm_table.png(縦横比 4.6 の表)が表紙でなく途中のコマの候補になり、文字だけの切り出しとして外れた。
+    # 2026-11-09 +1: 収蔵 2026.309 の 03_numbers.png(数字だけの表)が外れる。
+    #   (統合で両方が入って 30 → 32。どちらも下で名指しで確かめる)
+    assert len(excluded) == 32
+    names = {(pid, frame["file"]) for pid, item in LEDGER["entries"].items()
+             for frame in item.get("excluded_frames", []) if frame["reason"] == "crop_text_only"}
+    assert ("poc_3d_sensor_modalities", "03_numbers.png") in names
+    assert ("poc_pv_thermal_survey", "01_norm_table.png") in names
 
 
 def test_the_three_reported_graph_and_table_frames_are_contained_whole():
@@ -171,3 +179,26 @@ def test_pages_use_english_outside_japanese_and_stop_for_reduced_motion():
     for page in (ja, en, zh):
         assert 'media="(prefers-reduced-motion: reduce)"' in page
         assert "<picture>" in page
+
+
+def test_story_figures_in_the_caption_ledger_order_the_frames(tmp_path):
+    """台帳の story_figures は表紙の後ろの順を決め、無い名前は黙って飛ばさず止める。"""
+    import pytest
+    for n in ("a.png", "b.png", "c.png", "d.png"):
+        Image.new("RGB", (40, 30), "white").save(tmp_path / n)
+    figs = [{"file": "a.png", "name": "scene"}, {"file": "b.png", "name": "real_cover"},
+            {"file": "c.png", "name": "real_x"}, {"file": "d.png", "name": "real_y"}]
+    got = G.chosen_frames(figs, "b.png", tmp_path, ["real_y", "real_x"])
+    assert [f["file"] for f in got] == ["b.png", "d.png", "c.png"]
+    assert [f["file"] for f in G.chosen_frames(figs, "b.png", tmp_path, None)][0] == "b.png"
+    with pytest.raises(SystemExit):
+        G.chosen_frames(figs, "b.png", tmp_path, ["nope"])
+    with pytest.raises(SystemExit):                       # 重複
+        G.chosen_frames(figs, "b.png", tmp_path, ["real_x", "real_x"])
+    many = [{"file": "m%d.png" % i, "name": "m%d" % i} for i in range(G.MAX_FRAMES)]
+    for f in many:
+        Image.new("RGB", (40, 30), "white").save(tmp_path / f["file"])
+    with pytest.raises(SystemExit):                       # 表紙の後ろに入りきらない個数
+        G.chosen_frames(figs + many, "b.png", tmp_path, [f["name"] for f in many])
+    ok = G.chosen_frames(figs + many, "b.png", tmp_path, [f["name"] for f in many[:G.MAX_FRAMES - 1]])
+    assert len(ok) == G.MAX_FRAMES

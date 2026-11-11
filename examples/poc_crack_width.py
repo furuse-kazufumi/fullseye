@@ -55,6 +55,27 @@ PoC の結論は全部 mm/px を通して出ているので、そこが 10 % ず
    (0.5 px)でも列ごとの尾根追跡は 1 列も外れない(経路誤差 0.16 px)。
    崩れるのは幅ではなく**ざらつき**で、σ=0.10 で 34/91 列が飛び、
    幅が +0.16 mm 過大になる。「細いから検出できない」ではなかった。
+8. ★★**実写(公開のひび割れ写真 159 枚)で示せたのは「画素を粗くしたとき幅を保つのはどちらか」まで**。
+   1 画素より細いひびの幅は、実写では確かめていない(幅の真値が付いた公開データが無い)。
+   ★まず元の画素の値の妥当性: 見た目の幅(断面の半値幅、中央値 11.75 px)に対し、積分を芯の欠損で
+   割った値は半値幅の 0.75 倍で「幅 x 深さ」と矛盾しない。★0.75 は 1 枚の中の断面の積分を平均で
+   まとめた値(芯の欠損と半値幅は中央値)で、積分も中央値でまとめると 0.82。平均は積分の小さい断面に
+   引き下げられ、経路が外れた断面を除くと平均も 0.82 になる。★1 を下回る原因は確かめきれていない(矩形・
+   三角・ガウスの断面なら 1.00〜1.06 で、裾が細っても 1 を下回らない)。要因を 1 つずつ振ると、
+   ベースラインを 1 次にして 0.84、経路が外れた断面(1 枚あたり 18 %)を除いて 0.82 で、どちらも 1 に
+   届かない。中央値・1 次・経路上を組み合わせても 0.88。「経路が外れた」(断面の最大が 3 px より外)は
+   幅の広いひびで多めに数える —— 経路が半値幅の区間の外に出る断面で数え直すと 9 % だが、除いた値は 0.82 で
+   変わらない。明るい縁は、負の欠損を 0 で切った上がり幅が同じ大きさの雑音の合成と区別できなかった。
+   芯が黒い合成は雑音なしで 1.05、実写と同じくらいの雑音で 0.96〜1.12。2 値化は半値幅の 0.24 倍で、芯が灰色の
+   実写では芯の一部しか拾わない —— 元の画素の 2 値化の幅は見た目の幅として使えない。
+   幅の真値の代わりに**同じひびを画素 k x k の平均で撮り直しても幅は変わらない**ことを使う(各手法の
+   自己整合)。4 倍粗くすると幅の比の中央値は 積分法 1.13 倍 / 2 値化 1.44 倍。★言えるのは k=4 の
+   中央値までで、四分位は 積分法 0.97〜1.44 / 2 値化 1.22〜1.78 と重なり、k=3 では差が 0.03。
+   ★★合成ではざらつき無しなら 1 % 以内だった積分法の保存が、実写では崩れる(地の穴や汚れが
+   断面のベースラインに入る)。実写のひびは芯が灰色(欠損 0.54)なので、2 値化は粗くなると「消える」
+   より 1 画素の床で「膨らむ」。積分法の値を mm に直すには芯の深さの較正が要る。2 万枚は 458 枚の
+   元写真からの切り出しで、100 おきに選んだ写真どうしは遠い番号の写真と同じくらい違う(独立の目安)。
+   データは repo に入れない(``tools/fetch_realinsp_data.py``)。無い環境では記録値を印字する。
 
 【グラウンドトゥルース】
 ひび割れは「暗い帯」として**解析的に描く**。画素 (i,j) の被覆率は、帯と画素
@@ -69,6 +90,7 @@ Gumbel, *Statistics of Extremes* (1958) —— 標本最大値の期待値。
 """
 from __future__ import annotations
 
+import os
 import sys
 import time
 from pathlib import Path
@@ -702,6 +724,540 @@ def section_tool_gaps() -> None:
 
 
 # --------------------------------------------------------------------------- #
+# 8. 実写 —— 公開のひび割れ写真を、粗い画素で撮り直す                           #
+# --------------------------------------------------------------------------- #
+#: 実写データ: Özgenel, "Concrete Crack Images for Classification", Mendeley Data v2,
+#: DOI 10.17632/5y9wdsg2zt.2、ライセンス "CC BY 4.0"(配布元の表記)。227x227 px の RGB、
+#: ひび割れ有り 20,000 枚。取得は ``tools/fetch_realinsp_data.py concrete_crack``(repo には入れない)。
+REAL_DATASET = "concrete_crack_ozgenel"
+REAL_CREDIT = ("Özgenel, Concrete Crack Images for Classification, Mendeley Data v2, "
+               "DOI 10.17632/5y9wdsg2zt.2, CC BY 4.0")
+REAL_STRIDE = 100          # Positive の名前順で 100 枚おきに 200 枚を見る(決定的)
+REAL_BINS = (1, 2, 3, 4)   # 画素を k x k でまとめる = 同じひびを k 倍粗い画素で撮り直す
+#: 代表の図に出す 1 枚。芯が暗く(欠損 > 0.65)、元の画素で 2 つの手法が 10 % 以内で一致する
+#: 写真から選んだ(芯が灰色の写真では積分法の値が「幅 x 深さ」になり、見た目の幅と合わない)。
+REAL_SHOW = "12701_1.jpg"
+
+#: 実データで出た数値(2026-11-08、Python 3.11。下の section_real の stdout から転記)。
+#: データが無い環境(CI)ではこれを印字する。
+RECORDED_REAL = {'n_seen': 200, 'n_path': 199, 'n_used': 159, 'int_ratio_kmax': 1.134,
+                 'bin_ratio_kmax': 1.442, 'bin_empty_kmax': 0.069, 'native_int_px': 4.98,
+                 'native_bin_px': 2.62, 'core_deficit': 0.539, 'int_q_kmax': [0.97, 1.44],
+                 'bin_q_kmax': [1.22, 1.78], 'int_ratio_k3': 1.091, 'bin_ratio_k3': 1.119,
+                 'lag_ratio_1': 0.45, 'lag_ratio_100': 0.9, 'fwhm_px': 11.75, 'int_depth_over_fwhm': 0.75,
+                 'int_depth_over_fwhm_q': [0.6, 0.85], 'bin_over_fwhm': 0.24, 'bin_under_half_fwhm': 0.84,
+                 'ratio_base1': 0.84, 'ratio_onpath': 0.82, 'offpath_frac': 0.18, 'rim_bright_side': 0.017,
+                 'clip_rise_real': 0.21, 'clip_rise_syn': [0.35, 0.57], 'syn_ratio_noise': [1.05, 1.12, 0.96],
+                 'ratio_median': 0.82, 'ratio_combo': 0.88, 'offpath_frac_run': 0.09, 'ratio_onpath_run': 0.82,
+                 'ratio_combo_run': 0.87}
+
+
+def real_data_root() -> Path:
+    """公開実データの置き場の根。
+
+    ``FULLSEYE_POC_REAL_DATA`` があればそれ、無ければ開発の作業木(``<root>/projects/<checkout>``)
+    の隣の ``<root>/data/fullseye_poc_real``、それ以外はユーザーキャッシュ。手元の絶対パスを
+    ソースに書かないための分岐。
+    """
+    configured = os.environ.get("FULLSEYE_POC_REAL_DATA", "").strip()
+    if configured:
+        return Path(configured).expanduser()
+    root = Path(__file__).resolve().parents[1]
+    if root.parent.name.lower() == "projects":
+        return root.parent.parent / "data" / "fullseye_poc_real"
+    return Path.home() / ".cache" / "fullseye" / "poc_real"
+
+
+def _real_files():
+    """採る写真の一覧。CI(置き場の指定なし)やデータが無いときは ``None``。"""
+    if os.environ.get("CI") and not os.environ.get("FULLSEYE_POC_REAL_DATA"):
+        return None
+    pos = real_data_root() / REAL_DATASET / "extracted" / "Positive"
+    if not pos.is_dir():
+        return None
+    files = sorted(pos.glob("*.jpg"))
+    if len(files) != 20000:
+        raise RuntimeError("ひび割れ有りの写真が %d 枚(配布物は 20,000 枚): %s" % (len(files), pos))
+    return files[::REAL_STRIDE]
+
+
+def _bin(a: np.ndarray, k: int) -> np.ndarray:
+    """k x k の画素をまとめる(開口率 100 % の k 倍粗いセンサで撮ったのと同じ)。"""
+    h, w = (a.shape[0] // k) * k, (a.shape[1] // k) * k
+    return a[:h, :w].reshape(h // k, k, w // k, k).mean(axis=(1, 3))
+
+
+def _deficit_real(a: np.ndarray, rows: int) -> np.ndarray:
+    """:func:`deficit_map` と同じ式。窓の行数だけ画素の粗さに合わせて渡す。"""
+    bg = median_filter(a, size=(rows, 1), mode="nearest")
+    return 1.0 - a / np.maximum(bg, 1e-6)
+
+
+def _real_path(a: np.ndarray, rows: int):
+    """列ごとの欠損の尾根(最暗)→ 中央値で外れを抑え、ガウスで滑らかにした経路と傾き。
+
+    ひびの中心線ではない: 幅のあるひびでは片側の縁に寄り、地や別のひびへ飛ぶ列もある
+    (:func:`_ratio_factors` で断面の最大が経路から外れた割合を数える)。
+    """
+    d = gaussian_filter(_deficit_real(a, rows), (0.0, 1.0))
+    arg = np.argmax(d, axis=0)
+    peak = d[arg, np.arange(a.shape[1])]
+    y = gaussian_filter(median_filter(arg.astype(np.float64), size=9, mode="nearest"), 1.5)
+    return np.arange(a.shape[1], dtype=np.float64), y, np.gradient(y), peak
+
+
+def _real_integral(a, xs, ys, dys, R):
+    """直交断面の欠損の積分(2 次のベースライン)[px]。:func:`measure_integral` と同じ式で、
+    断面の半長だけ画素の粗さに合わせて渡す。"""
+    t = np.arange(-R, R + 0.125, 0.25)
+    outer = np.abs(t) >= 0.6 * R
+    w = np.empty(len(xs))
+    pk = np.empty(len(xs))
+    fw = np.empty(len(xs))
+    for k, (x0, y0, d) in enumerate(zip(xs, ys, dys)):
+        n = np.sqrt(1.0 + d * d)
+        ny, nx = 1.0 / n, -d / n
+        p = np.asarray(fs.line_profile(a, (y0 - R * ny, x0 - R * nx),
+                                       (y0 + R * ny, x0 + R * nx), num=t.size), np.float64)
+        base = np.polyval(np.polyfit(t[outer], p[outer], 2), t)
+        df = 1.0 - p / np.maximum(base, 1e-6)
+        w[k] = np.trapezoid(df, dx=0.25)
+        pk[k] = float(df.max())
+        fw[k] = float(np.count_nonzero(df >= 0.5 * pk[k])) * 0.25   # 断面の半値幅(その断面の芯の半分)
+    _real_integral.last = (pk, fw)
+    return w
+
+
+#: 断面の最大がこれより経路から離れていたら「経路が外れた断面」と数える [px]。
+OFFPATH_PX = 3.0
+
+
+def _ratio_factors(a: np.ndarray, R: float = 24.0) -> np.ndarray:
+    """「積分 ÷ 芯の欠損 ÷ 半値幅」が 1 を下回る原因を、要因を 1 つずつ振って測る(元の画素、k=1)。
+
+    経路・測点・断面は :func:`_measure_real` の k=1 と同じ。返す列:
+    0 そのまま(2 次のベースライン。:func:`_real_integral` と同じ式なので比の検算になる)/
+    1 ベースラインを 1 次に / 2 断面の最大が経路から :data:`OFFPATH_PX` 以内の断面だけ /
+    3 芯の帯(|t| < 0.6R)の負の欠損を 0 で切る / 4 外側の残差の標準偏差(雑音の大きさ)/
+    5 経路が外れた断面の割合 / 6 経路の両側の帯の生の輝度(当てはめ無し)の、明るい側の地に対する比 − 1 /
+    7 1 枚の中の積分を平均でなく中央値でまとめる / 8 組み合わせ(中央値 + 1 次 + 経路から 3 px 以内)/
+    9 「経路が外れた」を「経路が断面の半値幅の連続区間の外」で数えた割合(幅の広いひびで 3 px が厳しすぎないかの確かめ)/
+    10 その判定で経路上の断面だけの平均 / 11 その判定での組み合わせ(中央値 + 1 次 + 経路上)。
+    """
+    x, y, dy, _ = _real_path(a, 41)
+    h, w = a.shape
+    sel = (x > R + 1) & (x < w - R - 1) & (y > R) & (y < h - R)
+    t = np.arange(-R, R + 0.125, 0.25)
+    outer = np.abs(t) >= 0.6 * R
+    rows = []
+    for x0, y0, d in zip(x[sel][::4], y[sel][::4], dy[sel][::4]):
+        n = np.sqrt(1.0 + d * d)
+        ny, nx = 1.0 / n, -d / n
+        p = np.asarray(fs.line_profile(a, (y0 - R * ny, x0 - R * nx),
+                                       (y0 + R * ny, x0 + R * nx), num=t.size), np.float64)
+        out = []
+        for order in (2, 1):
+            df = 1.0 - p / np.maximum(np.polyval(np.polyfit(t[outer], p[outer], order), t), 1e-6)
+            i = int(np.argmax(df))
+            out += [np.trapezoid(df, dx=0.25), float(df[i]), float(np.count_nonzero(df >= 0.5 * df[i])) * 0.25]
+        df2 = 1.0 - p / np.maximum(np.polyval(np.polyfit(t[outer], p[outer], 2), t), 1e-6)
+        i2 = int(np.argmax(df2))
+        clip = np.trapezoid(np.where(outer, df2, np.maximum(df2, 0.0)), dx=0.25)
+        g = float(np.median(p[outer]))
+        hw = 0.5 * out[2] + 0.25
+        dist = t - t[i2]
+        sides = [float(np.median(p[m])) / g - 1.0 for m in
+                 ((dist < -hw) & (dist >= -3 * hw) & ~outer, (dist > hw) & (dist <= 3 * hw) & ~outer) if m.sum() >= 2]
+        lo, hi = i2, i2
+        while lo > 0 and df2[lo - 1] >= 0.5 * df2[i2]:
+            lo -= 1
+        while hi < df2.size - 1 and df2[hi + 1] >= 0.5 * df2[i2]:
+            hi += 1
+        in_run = float(t[lo] <= 0.0 <= t[hi])
+        rows.append(out + [clip, float(df2[outer].std()), abs(float(t[i2])), max(sides) if sides else np.nan, in_run])
+    r = np.asarray(rows)
+    on = r[:, 8] <= OFFPATH_PX
+    on_run = r[:, 10] > 0.5
+
+    def ratio(i_int, i_pk, i_fw, m=None, agg=np.mean):
+        m = np.ones(len(r), bool) if m is None else m
+        if m.sum() < 3:
+            return np.nan
+        return float(agg(r[m, i_int]) / np.median(r[m, i_pk]) / np.median(r[m, i_fw]))
+    return np.array([ratio(0, 1, 2), ratio(3, 4, 5), ratio(0, 1, 2, on), ratio(6, 1, 2),
+                     float(np.median(r[:, 7])), float(1.0 - on.mean()), float(np.nanmedian(r[:, 9])),
+                     ratio(0, 1, 2, agg=np.median), ratio(3, 4, 5, on, np.median),
+                     float(1.0 - on_run.mean()), ratio(0, 1, 2, on_run), ratio(3, 4, 5, on_run, np.median)])
+
+
+def _real_binary(a, rows, xs, ys):
+    """ゼロ点(:func:`measure_binary` と同じ: 欠損 > 0.5 → 細線化 → 2·EDT)。
+
+    測点の列で、中心線から ±6 px にある骨格画素の 2·EDT を読む(骨格のひげで値を薄めない)。
+    """
+    mask = _deficit_real(a, rows) > BIN_LEVEL
+    if not mask.any():
+        return np.zeros(len(xs)), mask
+    thin = np.asarray(fs.apply(mask.astype(np.float64), "thinning")) > 0.5
+    edt = np.asarray(fs.ledger.vol_distance_transform(mask[None, ...]))[0]
+    out = np.zeros(len(xs))
+    for i, (x0, y0) in enumerate(zip(xs, ys)):
+        c, r0 = int(round(x0)), int(round(y0))
+        lo, hi = max(0, r0 - 6), min(a.shape[0], r0 + 7)
+        v = edt[lo:hi, c] * thin[lo:hi, c]
+        out[i] = 2.0 * float(v.max()) if v.size else 0.0
+    return out, mask
+
+
+def _measure_real(a: np.ndarray, k: int) -> dict:
+    """1 枚を k 倍粗くして、積分法と 2 値化の平均幅を**元の画素**の単位で返す。"""
+    b = _bin(a, k)
+    rows = max(9, int(41 / k) | 1)
+    R = max(5.0, 24.0 / k)
+    x, y, dy, peak = _real_path(b, rows)
+    h, w = b.shape
+    sel = (x > R + 1) & (x < w - R - 1) & (y > R) & (y < h - R)
+    step = max(1, 4 // k)
+    xs, ys, dys = x[sel][::step], y[sel][::step], dy[sel][::step]
+    if xs.size < 3:
+        return {"ok": False}
+    wi = _real_integral(b, xs, ys, dys, R)
+    pk, fw = _real_integral.last
+    wb, mask = _real_binary(b, rows, xs, ys)
+    return {"ok": True, "int": float(np.mean(wi)) * k, "bin": float(np.mean(wb)) * k,
+            "peak": float(np.median(peak[sel])), "mask": mask, "b": b,
+            "prof_peak": float(np.median(pk)), "fwhm": float(np.median(fw)) * k,
+            "path": (x, y)}
+
+
+#: docstring の 8 番の項に**文脈ごと**載っていなければならない記録値(鍵 → 書式)。短い数字の
+#: 部分一致では別の文脈の同じ数でも通るので、前後の語まで含めて照合する。
+RECORDED_IN_DOC = {"int_ratio_kmax": "積分法 %.2f 倍", "bin_ratio_kmax": "2 値化 %.2f 倍",
+                   "core_deficit": "欠損 %.2f", "int_depth_over_fwhm": "半値幅の %.2f 倍",
+                   "bin_over_fwhm": "2 値化は半値幅の %.2f 倍",
+                   "ratio_base1": "ベースラインを 1 次にして %.2f", "ratio_onpath": "を除いて %.2f",
+                   "ratio_median": "積分も中央値でまとめると %.2f", "ratio_combo": "組み合わせても %.2f"}
+
+
+def _recorded_gate(measured) -> None:
+    """記録値の門。「記録値の辞書が空でない」は定数なので常に真 —— 代わりに中身を見る。
+
+    データが無いとき: 必要な鍵が全部あり有限の数で、見出しの値が docstring に同じ書式で載っている。
+    データがあるとき: 実測を同じ丸めで出して記録値と一致する(記録は実行ログからの転記)。
+    """
+    need = {"n_seen", "n_path", "n_used", "int_ratio_kmax", "bin_ratio_kmax", "bin_empty_kmax",
+            "native_int_px", "native_bin_px", "core_deficit", "int_q_kmax", "bin_q_kmax",
+            "int_ratio_k3", "bin_ratio_k3", "lag_ratio_100", "lag_ratio_1",
+            "fwhm_px", "int_depth_over_fwhm", "int_depth_over_fwhm_q", "bin_over_fwhm", "bin_under_half_fwhm",
+            "ratio_base1", "ratio_onpath", "offpath_frac", "rim_bright_side", "clip_rise_real", "clip_rise_syn",
+            "syn_ratio_noise", "ratio_median", "ratio_combo", "offpath_frac_run", "ratio_onpath_run",
+            "ratio_combo_run"}
+    missing = need - set(RECORDED_REAL)
+    assert not missing, "記録値の鍵が足りない: %s" % sorted(missing)
+    for k, v in RECORDED_REAL.items():
+        for x in (v if isinstance(v, (list, tuple)) else [v]):
+            assert np.isfinite(float(x)), (k, v)
+    for k, fmt in RECORDED_IN_DOC.items():
+        txt = fmt % RECORDED_REAL[k]
+        assert txt in (__doc__ or ""), "docstring に記録値 %s の文「%s」が無い" % (k, txt)
+    if measured is not None:
+        diff = {k: (measured[k], RECORDED_REAL[k]) for k in need if measured[k] != RECORDED_REAL[k]}
+        assert not diff, "実測と記録値が違う(記録を実行ログから転記し直す): %s" % diff
+
+
+def _lag_similarity(files) -> dict:
+    """番号の近い写真ほど似ているか(同じ元写真からの切り出しか)の目安。
+
+    配布元の記述では 2 万枚は 458 枚の元写真からの切り出しで、どの切り出しがどの元写真かは
+    配布物に無い。そこで色と明るさの平均・標準偏差(6 次元)の差を、番号の差 1 / 100 / 1000 で比べる。
+    """
+    from PIL import Image
+    pos = files[0].parent
+    allf = sorted(pos.glob("*.jpg"))
+    where = {p.name: i for i, p in enumerate(allf)}
+
+    def feat(i):
+        a = np.asarray(Image.open(allf[i]).convert("RGB"), np.float64)
+        return np.r_[a.mean((0, 1)), a.std((0, 1))]
+    d = {1: [], 100: [], 1000: []}
+    for p in files:
+        i = where[p.name]
+        f0 = feat(i)
+        for lag in d:
+            if i + lag < len(allf):
+                d[lag].append(float(np.abs(f0 - feat(i + lag)).mean()))
+    med = {k: float(np.median(v)) for k, v in d.items()}
+    return {"lag1": med[1] / med[1000], "lag100": med[100] / med[1000]}
+
+
+def section_real():
+    print("\n" + "=" * 78)
+    print("8) 実写 —— 公開のひび割れ写真を、k 倍粗い画素で撮り直す")
+    print("=" * 78)
+    files = _real_files()
+    if files is None:
+        print("  実データが無いので実データの章を飛ばす。取得は "
+              "py -3.11 tools/fetch_realinsp_data.py concrete_crack")
+        print("  記録値(RECORDED_REAL): %s" % RECORDED_REAL)
+        _recorded_gate(None)
+        return None
+    from PIL import Image
+    import realdata
+    print("  データ: %s" % REAL_CREDIT)
+    print("  真値の幅は付いていない。代わりに**同じひびは、粗い画素で撮っても幅が変わらない**")
+    print("  ことを外の真値に使う(k x k の画素平均 = 開口率 100 % の粗いセンサ)。")
+    print("  基準は k=1(元の画素)の各手法自身の値 —— 手法どうしの比較ではなく自己整合を見る。")
+    # 道具の検算: 同じ測り方を合成のひび(芯が黒、幅 0.3〜1.0 mm)に掛ける。ざらつき無しなら
+    # 粗くしても積分法は保存される(道具は正しい)。ざらつき 5 % を足すと細いひびから崩れる。
+    syn = {}
+    for tex in (0.0, 0.05):
+        dev = []
+        for wmm in (0.3, 0.6, 1.0):
+            sc = render(lambda x, w=wmm: np.full_like(np.asarray(x, np.float64), w), texture=tex)
+            per = [_measure_real(sc["img"][:224, :224], k) for k in REAL_BINS]
+            dev.append(max(abs(m["int"] / per[0]["int"] - 1.0) for m in per))
+        syn[tex] = dev
+    print("  道具の検算(合成、芯が黒、幅 0.3/0.6/1.0 mm): 粗くしたときの積分法のずれの最大")
+    print("    ざらつき無し %s %% / ざらつき 5 %% %s %%"
+          % ("/".join("%.1f" % (100 * v) for v in syn[0.0]),
+             "/".join("%.1f" % (100 * v) for v in syn[0.05])))
+    assert max(syn[0.0]) < 0.02, syn
+    res = []
+    for p in files:
+        a = np.asarray(Image.open(p).convert("L"), np.float64) / 255.0
+        ys_, xs_ = np.nonzero(_deficit_real(a, 41) > 0.25)
+        if xs_.size < 20:
+            continue
+        if np.ptp(ys_) > np.ptp(xs_):           # 縦向きは転置して横向きにそろえる
+            a = a.T
+        per = [_measure_real(a, k) for k in REAL_BINS]
+        if not all(m["ok"] for m in per):
+            continue
+        res.append((p.name, per))
+    realdata.mark_read("mendeley:5y9wdsg2zt/Concrete-Crack-Images")
+    # 採否は k=1 だけで決める(粗くした後の結果で選ばない)
+    good = [(n, per) for n, per in res
+            if 1.0 <= per[0]["int"] <= 14.0 and per[0]["bin"] > 0.0]
+    print("\n  見た写真 %d 枚 / 経路が引けた %d 枚 / 採った %d 枚(k=1 で両手法が値を返し、"
+          "積分 1〜14 px)" % (len(files), len(res), len(good)))
+    lag = _lag_similarity(files)
+    print("  独立性の目安: 2 万枚は 458 枚の元写真からの切り出し(配布元の記述)で、対応は配布物に無い。")
+    print("    色と明るさの差を番号の差 1000 を 1 として測ると、番号の差 1 は %.2f、差 100 は %.2f。"
+          % (lag["lag1"], lag["lag100"]))
+    print("    100 おきに選んだ写真どうしは、遠く離れた写真と同じくらい違う —— 同じ元写真からの切り出しが")
+    print("    重なっている可能性は低いが、確かめきれてはいない(%d 枚を独立な %d 本とは言い切らない)。"
+          % (len(good), len(good)))
+    print("\n   k    積分法 k/1 の中央値(四分位)     2 値化 k/1 の中央値(四分位)     2値が空")
+    rows_out = []
+    for i, k in enumerate(REAL_BINS):
+        ri = np.array([per[i]["int"] / per[0]["int"] for _, per in good])
+        rb = np.array([per[i]["bin"] / per[0]["bin"] for _, per in good])
+        z = float(np.mean([per[i]["bin"] == 0.0 for _, per in good]))
+        q_i, q_b = np.percentile(ri, [25, 75]), np.percentile(rb, [25, 75])
+        rows_out.append({"k": k, "int_med": float(np.median(ri)), "int_q": q_i.tolist(),
+                         "bin_med": float(np.median(rb)), "bin_q": q_b.tolist(), "bin_empty": z})
+        print("   %d    %.3f(%.3f〜%.3f)            %.3f(%.3f〜%.3f)            %.2f"
+              % (k, np.median(ri), q_i[0], q_i[1], np.median(rb), q_b[0], q_b[1], z))
+    nat_i = np.array([per[0]["int"] for _, per in good])
+    nat_b = np.array([per[0]["bin"] for _, per in good])
+    peak = np.array([per[0]["peak"] for _, per in good])
+    print("\n  元の画素での値: 積分法の中央値 %.2f px、2 値化 %.2f px、ひびの芯の欠損の中央値 %.2f"
+          % (np.median(nat_i), np.median(nat_b), np.median(peak)))
+    # --- 元の画素の値は見た目の幅と合っているか(比の自己整合だけでは経路の取り違えを見つけられない) ---
+    fwhm = np.array([per[0]["fwhm"] for _, per in good])
+    ppk = np.array([per[0]["prof_peak"] for _, per in good])
+    r_int = nat_i / ppk / fwhm
+    r_bin = nat_b / fwhm
+    q_r = np.percentile(r_int, [25, 75])
+    print("\n  元の画素の値の妥当性: 見た目の幅 = 断面の半値幅(その断面の芯の欠損の半分を超える幅)は"
+          " 中央値 %.2f px。" % np.median(fwhm))
+    print("    積分 ÷ 断面の芯の欠損 は半値幅の %.2f 倍(四分位 %.2f〜%.2f)—— 積分は「幅 x 深さ」で、深さで割ると"
+          % (np.median(r_int), q_r[0], q_r[1]))
+    print("    見た目の幅に近づく。")
+    # --- 1 を下回る原因の切り分け: 要因を 1 つずつ振る(同じ写真・同じ経路と測点、元の画素) ---
+    # 矩形・三角・ガウスの断面ではこの比は 1.00〜1.06 で、裾が細っても 1 を下回らない。
+    fac = np.array([_ratio_factors(per[0]["b"]) for _, per in good])
+    assert np.allclose(fac[:, 0], r_int, rtol=1e-9, atol=0.0), "要因の切り分けが本文の比を再現しない"
+    fm = np.nanmedian(fac, axis=0)
+    syn_f = {}
+    for tex in (0.0, 0.10, 0.15):
+        v = [_ratio_factors(render(lambda x: np.full_like(np.asarray(x, np.float64), 0.6), texture=tex,
+                                   seed=SEED + s)["img"][:224, :224]) for s in (1, 2, 3)]
+        syn_f[tex] = np.median(np.array(v), axis=0)
+    clip_rise = float(np.nanmedian(fac[:, 3] - fac[:, 0]))
+    print("    ★この %.2f は、1 枚の中の断面の積分を**平均**でまとめた値(芯の欠損と半値幅は中央値)。積分も中央値で"
+          % np.median(r_int))
+    print("    まとめると %.2f になる。平均は積分の小さい断面に引き下げられ、経路が外れた断面を除くと平均も %.2f"
+          % (fm[7], fm[2]))
+    print("    になる。見出しは平均の %.2f を使う(どちらのまとめ方でも 1 を下回る)。" % np.median(r_int))
+    print("    ★1 を下回る原因は確かめきれていない。要因を 1 つずつ振った(同じ %d 枚・同じ経路と測点、中央値):"
+          % len(good))
+    print("      そのまま %.2f / ベースラインを 1 次に %.2f / 経路が外れた断面(断面の最大が経路から %.0f px より外、"
+          % (fm[0], fm[1], OFFPATH_PX))
+    print("      1 枚あたり中央値 %.0f %%)を除く %.2f —— どれも単独では 1 に届かない。"
+          % (100 * fm[5], fm[2]))
+    print("      明るい縁: 経路の両側の帯の生の輝度(当てはめ無し)は、明るい側でも地の %+.1f %%。芯の帯の負の欠損を"
+          % (100 * fm[6]))
+    print("      0 で切ると %+.2f 上がるが、同じ大きさの雑音を足した合成(地の残差の標準偏差 実写 %.3f / 合成 %.3f〜%.3f)"
+          % (clip_rise, fm[4], syn_f[0.10][4], syn_f[0.15][4]))
+    print("      でも %+.2f〜%+.2f 上がる —— 雑音の負の側と区別できず、明るい縁が効いているとは言えない。"
+          % (syn_f[0.10][3] - syn_f[0.10][0], syn_f[0.15][3] - syn_f[0.15][0]))
+    print("      合成(芯が黒、幅 0.6 mm)は 雑音なし %.2f / 雑音 0.10 で %.2f / 0.15 で %.2f(種 3 本の中央値)。"
+          % (syn_f[0.0][0], syn_f[0.10][0], syn_f[0.15][0]))
+    print("      組み合わせ(中央値 + ベースライン 1 次 + 経路から %.0f px 以内)でも %.2f —— 組み合わせても 1 に届かない。"
+          % (OFFPATH_PX, fm[8]))
+    print("      「経路が外れた」の判定の確かめ: %.0f px でなく「経路が断面の半値幅の連続区間の外」で数えると、外れは"
+          % OFFPATH_PX)
+    print("      %.0f %%(%.0f px の判定では %.0f %%)、除いた平均 %.2f、組み合わせ %.2f。"
+          % (100 * fm[9], OFFPATH_PX, 100 * fm[5], fm[10], fm[11]))
+    print("    ★2 値化(欠損 > 0.5 の絶対しきい値)は半値幅の %.2f 倍しか返さず、%.0f %% の写真で半分に届かない。"
+          % (np.median(r_bin), 100 * np.mean(r_bin < 0.5)))
+    print("    芯の欠損が 0.5 前後の実写では芯の一部しか拾わない —— 元の画素の 2 値化の幅は見た目の幅として")
+    print("    使えない。下の比(k / 元の画素)は各手法の**自己整合**で、幅の正しさは言わない。")
+    kh = rows_out[-1]
+    k3 = rows_out[REAL_BINS.index(3)]
+    print("  ★言えるのは k=%d の**中央値**までで、分布は重なる: 四分位は積分法 %.2f〜%.2f、2 値化 %.2f〜%.2f。"
+          % (REAL_BINS[-1], kh["int_q"][0], kh["int_q"][1], kh["bin_q"][0], kh["bin_q"][1]))
+    print("    k=3 では中央値の差も %.2f しかない(積分 %.3f / 2 値化 %.3f)。2 値化の比は k=2・3・4 で"
+          % (k3["bin_med"] - k3["int_med"], k3["int_med"], k3["bin_med"]))
+    print("    %.2f → %.2f → %.2f と単調でない(1 画素の階段に丸まる位置がひびごとに違う)。"
+          % tuple(r["bin_med"] for r in rows_out[1:]))
+    print("  ★画素を %d 倍粗くすると、積分法は中央値 %.2f 倍(四分位 %.2f〜%.2f)、2 値化は %.2f 倍"
+          % (REAL_BINS[-1], kh["int_med"], kh["int_q"][0], kh["int_q"][1], kh["bin_med"]))
+    print("     (四分位 %.2f〜%.2f)。順位は合成と同じ(積分法のほうが保存される)が、★★実写では"
+          % (kh["bin_q"][0], kh["bin_q"][1]))
+    print("     積分法の保存も崩れる —— ざらつき無しの合成では 1 %% 以内(上の検算)、実写では +%.0f %%。"
+          % (100 * (kh["int_med"] - 1.0)))
+    print("     ひびの外の地(骨材の穴・汚れ)が断面の外側に入り、粗い画素ほど 2 次のベースラインが")
+    print("     それを拾う。合成でもざらつき 5 %% を足すと最も細いひびで %.0f %% ずれるので、向きは同じ。"
+          % (100 * syn[0.05][0]))
+    print("  ★合成と違った点: 合成のひびは芯が黒く、細くなると 2 値化は**何も返さなかった**。")
+    print("     実写のひびは芯が灰色(欠損の中央値 %.2f)で、粗くすると 2 値化は空になるより"
+          % np.median(peak))
+    print("     **過大**に出る(空になったのは k=%d で %.0f %%)。壊れ方は「消える」より「膨らむ」。"
+          % (REAL_BINS[-1], 100 * kh["bin_empty"]))
+    print("  ★積分法が返すのは「幅 x 深さ」(欠損の面積)で、芯が灰色の実写では幅そのものではない。")
+    print("     mm に直すには芯の欠損(深さ)の較正が要る —— 合成で 0.05 mm まで読めたのは芯が黒だったから。")
+    rec = {"n_seen": len(files), "n_path": len(res), "n_used": len(good),
+           "int_ratio_kmax": round(kh["int_med"], 3), "bin_ratio_kmax": round(kh["bin_med"], 3),
+           "bin_empty_kmax": round(kh["bin_empty"], 3),
+           "native_int_px": round(float(np.median(nat_i)), 2),
+           "native_bin_px": round(float(np.median(nat_b)), 2),
+           "core_deficit": round(float(np.median(peak)), 3),
+           "int_q_kmax": [round(x, 2) for x in kh["int_q"]], "bin_q_kmax": [round(x, 2) for x in kh["bin_q"]],
+           "int_ratio_k3": round(k3["int_med"], 3), "bin_ratio_k3": round(k3["bin_med"], 3),
+           "lag_ratio_1": round(lag["lag1"], 2), "lag_ratio_100": round(lag["lag100"], 2),
+           "fwhm_px": round(float(np.median(fwhm)), 2),
+           "int_depth_over_fwhm": round(float(np.median(r_int)), 2),
+           "int_depth_over_fwhm_q": [round(float(x), 2) for x in q_r],
+           "bin_over_fwhm": round(float(np.median(r_bin)), 2),
+           "bin_under_half_fwhm": round(float(np.mean(r_bin < 0.5)), 2),
+           "ratio_base1": round(float(fm[1]), 2), "ratio_onpath": round(float(fm[2]), 2),
+           "offpath_frac": round(float(fm[5]), 2), "rim_bright_side": round(float(fm[6]), 3),
+           "clip_rise_real": round(clip_rise, 2),
+           "clip_rise_syn": [round(float(syn_f[t_][3] - syn_f[t_][0]), 2) for t_ in (0.10, 0.15)],
+           "syn_ratio_noise": [round(float(syn_f[t_][0]), 2) for t_ in (0.0, 0.10, 0.15)],
+           "ratio_median": round(float(fm[7]), 2), "ratio_combo": round(float(fm[8]), 2),
+           "offpath_frac_run": round(float(fm[9]), 2), "ratio_onpath_run": round(float(fm[10]), 2),
+           "ratio_combo_run": round(float(fm[11]), 2)}
+    print("\n  RECORDED_REAL = %s" % rec)
+    _recorded_gate(rec)
+    # --- 所見を固定する(実データがあるときだけ。下の 4 本の閾値はどれも実データを見て置いた値) ---
+    assert len(good) >= 30, len(good)
+    assert 1.0 <= kh["int_med"] < 1.25, kh["int_med"]            # 実写では保存が崩れる(合成は 1 % 以内)
+    assert kh["bin_med"] > kh["int_med"] + 0.2, (kh["bin_med"], kh["int_med"])
+    assert 0.40 < float(np.median(peak)) < 0.75, float(np.median(peak))   # 芯は黒くない
+    assert lag["lag100"] > 0.85 and lag["lag1"] < 0.6, lag      # 100 おきは遠い写真と同程度に違う
+    # 積分 ÷ 深さ が見た目の幅(半値幅)の半分を超える(主張「積分 = 幅 x 深さ」の妥当性。実データを見て置いた)。
+    # ★前の版は上限 < 1.0 も置いていた —— 実写の偏り(1 を下回る、原因は未確認)を門で固定する逆向きの門で、
+    #   合成(1.00〜1.12)なら落ちるので外した。1 を下回ることは記録値と文で示す。
+    assert float(np.median(r_int)) > 0.5, float(np.median(r_int))
+    _real_figure(good, rows_out, (float(fm[5]), float(fm[9])))
+    return {"rows": rows_out, "rec": rec}
+
+
+def _real_figure(good, rows_out, offpath) -> None:
+    """代表の図(実写 2 枚: 元の画素 / k 倍粗い画素)と、比の折れ線。"""
+    if not figs.enabled():
+        return
+    from scipy.ndimage import binary_erosion
+    name, pick = next(((n, per) for n, per in good if n == REAL_SHOW), good[0])
+    k_hi = REAL_BINS[-1]
+
+    def _panel(m, k):
+        g = np.clip(m["b"], 0.0, 1.0)
+        msk = m["mask"]
+        if k > 1:
+            g = np.kron(g, np.ones((k, k)))
+            msk = np.kron(msk, np.ones((k, k), bool))
+        rgb = np.dstack([g, g, g])
+        edge = msk & ~binary_erosion(msk)      # 実写は塗らず、2 値化の輪郭だけ橙で重ねる
+        rgb[edge] = (1.0, 0.55, 0.0)
+        return rgb
+
+    m1, mk = pick[0], pick[-1]
+    kr = rows_out[-1]
+    figs.save_grid(
+        "real_crack_rebin",
+        [_panel(m1, 1), _panel(mk, k_hi)],
+        ["元の画素: 積分 %.1f px / 2値化 %.1f px" % (m1["int"], m1["bin"]),
+         "%d 倍粗い画素: 積分 %.1f px / 2値化 %.1f px" % (k_hi, mk["int"], mk["bin"])],
+        ncols=2,
+        title="実写のひびを %d 倍粗い画素で: 幅の比の中央値 積分 x%.2f / 2 値化 x%.2f(%d 枚、四分位は重なる)"
+              % (k_hi, kr["int_med"], kr["bin_med"], len(good)),
+        caption="%s。橙の輪郭は 2 値化(欠損 > 0.5)のマスク。幅は元の画素の単位。四分位は積分 %.2f〜%.2f / "
+                "2 値化 %.2f〜%.2f。%s"
+                % (name, kr["int_q"][0], kr["int_q"][1], kr["bin_q"][0], kr["bin_q"][1], REAL_CREDIT))
+    ks = np.array([r["k"] for r in rows_out], np.float64)
+    figs.save_table("real_crack_ratio",
+                    ["画素の倍率 k", "積分法 中央値", "積分法 四分位", "2 値化 中央値", "2 値化 四分位", "2 値化が空"],
+                    [["%d" % r["k"], "%.3f" % r["int_med"], "%.2f〜%.2f" % tuple(r["int_q"]),
+                      "%.3f" % r["bin_med"], "%.2f〜%.2f" % tuple(r["bin_q"]), "%.0f %%" % (100 * r["bin_empty"])]
+                     for r in rows_out],
+                    title="同じひびを粗い画素で測った幅の比(k / 元の画素、実写 %d 枚)" % len(good),
+                    caption="中央値は k=4 で積分法のほうが 1 に近いが、四分位は重なり、k=3 では差 0.03。"
+                            "合成なら積分法は 1 のまま(1 % 以内)。")
+    from PIL import Image
+    tiles, caps = [], []
+    for n, per in good[:: max(1, len(good) // 8)][:8]:
+        m = per[0]
+        g = np.clip(m["b"], 0.0, 1.0)
+        rgb = np.dstack([g, g, g])
+        px, py = m["path"]
+        ok = (py >= 0) & (py < g.shape[0])
+        rgb[np.round(py[ok]).astype(int), px[ok].astype(int)] = (0.1, 0.85, 0.3)   # 測った経路(緑、列ごとの最暗の尾根)
+        tiles.append(np.kron(rgb, np.ones((2, 2, 1))))
+        caps.append("半値幅 %.0f / 積分÷芯 %.1f / 2値化 %.1f px" % (m["fwhm"], m["int"] / m["prof_peak"], m["bin"]))
+    figs.save_grid("real_crack_samples", tiles, caps, ncols=4,
+                   title="使った実写のひび(等間隔に 8 枚)。緑 = 列ごとの最暗の尾根(測った経路。中心線ではない)",
+                   caption="緑はひびの中心ではなく片側の縁に寄りやすく、地や別のひびへ飛ぶ列もある(断面の最大が経路から "
+                           "%.0f px より外の断面は 1 枚あたり中央値 %.0f %%、経路が断面の半値幅の区間の外に出る断面は "
+                           "%.0f %%)。見た目の幅は断面の半値幅。積分は「幅 x 深さ」なので芯の欠損で割って並べた。"
+                           "2 値化(欠損 > 0.5)は芯が灰色のひびで芯の一部しか拾わない。%s"
+                           % (OFFPATH_PX, 100 * offpath[0], 100 * offpath[1], REAL_CREDIT))
+    kk, yi, yb = [], [], []
+    for i, k in enumerate(REAL_BINS[1:], start=1):
+        for j, (_, per) in enumerate(good):
+            jit = 0.25 * ((j % 9) / 8.0 - 0.5)
+            kk.append(k + jit)
+            yi.append(per[i]["int"] / per[0]["int"])
+            yb.append(per[i]["bin"] / per[0]["bin"])
+    kk, yi, yb = np.asarray(kk), np.asarray(yi), np.asarray(yb)
+    lo, hi = 0.0, 3.0                       # この外の点は描かず、数を題と説明に出す(枠に貼り付けない)
+    oi = ~((yi >= lo) & (yi <= hi))
+    ob = ~((yb >= lo) & (yb <= hi))
+    k_med = np.array([r["k"] for r in rows_out[1:]], np.float64)
+    figs.save_plot("real_crack_ratio_spread",
+                   [("積分法(1 枚 1 点)", kk[~oi] - 0.17, yi[~oi]), ("2 値化(1 枚 1 点)", kk[~ob] + 0.17, yb[~ob]),
+                    ("積分法の中央値", k_med - 0.17, np.array([r["int_med"] for r in rows_out[1:]])),
+                    ("2 値化の中央値", k_med + 0.17, np.array([r["bin_med"] for r in rows_out[1:]]))],
+                   kinds=["scatter", "scatter", "line", "line"], colors=["right", "wrong", "right", "wrong"],
+                   xlabel="画素をまとめる倍率 k", ylabel="幅の比(k / 元の画素)",
+                   title="幅の比の散らばり(実写 %d 枚): 中央値は積分法が 1 に近いが、点の雲は重なる" % len(good),
+                   caption="比は各手法の自己整合で、幅の正しさは言わない。0〜3 の外の点(積分法 %d 点・2 値化 %d 点、"
+                           "粗い画素でベースラインの当てはめが壊れた断面を含む)は描いていない。" % (int(oi.sum()), int(ob.sum())))
+
+# --------------------------------------------------------------------------- #
 def main() -> None:
     t0 = time.perf_counter()
     print("=" * 78)
@@ -717,6 +1273,7 @@ def main() -> None:
     mx = section_max_vs_mean()
     det = section_detection()
     section_tool_gaps()
+    real = section_real()
 
     print("\n" + "=" * 78)
     print("まとめ")
@@ -740,6 +1297,11 @@ def main() -> None:
     lost = [r for r in det["rows"] if r[3] > 0]
     print("  * 経路の検出は測定より易しい。外れたのは %d/%d 条件で、"
           "いずれも幅ではなくざらつきが原因。" % (len(lost), len(det["rows"])))
+    rec = real["rec"] if real else RECORDED_REAL
+    print("  * 実写(公開データ %d 枚): 画素を %d 倍粗くしても積分法は %.2f 倍、2 値化は %.2f 倍。"
+          "芯が灰色の実写では 2 値化は消えるより膨らむ%s。"
+          % (rec["n_used"], REAL_BINS[-1], rec["int_ratio_kmax"], rec["bin_ratio_kmax"],
+             "" if real else "(記録値)"))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():

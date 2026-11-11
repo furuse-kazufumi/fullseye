@@ -5,10 +5,10 @@ category: pod
 in: table
 out: table
 gpu: なし
-examples: [poc_pod_lighting, poc_sam_hybrid_bonding_voids]
+examples: [poc_equipment_selection_map, poc_pod_lighting, poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # pod_ahat_fit — SPC `pod` op
@@ -43,6 +43,11 @@ version: 0.9.0  # fullseye lib version this note was generated for
 ``log_size`` ``log_response``、打ち切り閾値、大きさの範囲 ``size_min`` / ``size_max``、
 当てに使った ``x`` ``y`` ``status``(-1 左 / 0 観測 / +1 右)。
 
+★``suspected_floor`` / ``suspected_ceiling``: ``censor_low`` (``censor_high``)を渡さず、応答の
+最小値(最大値)に同じ値が 3 個以上並ぶと ``(値, 個数)``、ほかは None。雑音床や飽和に張り付いた
+点を普通の最小二乗に入れると傾きが寝て a90 が楽観側に出る(床に 60 点中 11 点の合成で傾き
+0.951 対 打ち切りあり 1.053・真値 1.1)。立ったら、その値を ``censor_low`` に渡して当て直すこと。
+
 空の入力(``table`` が 0 行、または空の dict)は ValueError。
 拒否(``ValueError``): 空の表・列の欠け・長さ違い・非有限・文字列、観測(打ち切り
 でない)が 3 点未満か大きさが 1 種類しかない、応答が定数で散らばりが 0
@@ -56,6 +61,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_equipment_selection_map](../../../../examples/poc_equipment_selection_map.py) — `py -3.11 examples/poc_equipment_selection_map.py`
 - [poc_pod_lighting](../../../../examples/poc_pod_lighting.py) — `py -3.11 examples/poc_pod_lighting.py`
 - [poc_sam_hybrid_bonding_voids](../../../../examples/poc_sam_hybrid_bonding_voids.py) — `py -3.11 examples/poc_sam_hybrid_bonding_voids.py`
 

@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_shape_from_polarization]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # sfp_normals — OPTICS `shape_from_polarization` op
@@ -58,6 +58,31 @@ Returns a dict (a ``table``, marked ``kind == "sfp_candidates"``):
   model, 0 where nothing fits or the pixel is dark.
 * ``valid`` ``(H, W)`` bool — lit, physically possible and invertible;
   ``violation`` / ``clamped`` ``(H, W)`` bool — why a pixel is suspect.
+* ``dark`` ``(H, W)`` bool — the fitted mean ``a0 = S0/2`` is at most
+  :data:`specularity.POLAR_DARK_K` (3) × the noise of the modulation
+  amplitude ``σ_A = σ̂·√(v₁+v₂)`` (``v`` = the diagonal of the fit's
+  ``(MᵀM)⁻¹``; ``σ̂`` = one noise level for the image, from the median
+  per-pixel residual of the N > 3 frames, χ²-median corrected), i.e. the
+  DoLP's own noise would be 1/3 or more: no degree of polarisation is
+  defined there, so the pixel is not lit (``valid`` False, ``n_distinct``
+  0). ★Before 2026-11-09 only ``a0 > 0`` was required, and clipped sensor
+  noise in a dark region (σ 0.001 of a scene peaking at 1) gave DoLP ≈ 1
+  and Brewster-angle normals on 26–28 % of the dark pixels, all
+  ``valid``. (A first fix used a floor relative to the brightest 1 % of
+  the image, which ignored the noise: it killed a dark diffuse object next
+  to specular highlights and fell into the noise when the bright part was
+  under 1 % of the image.) A frame that does not belong to the sweep
+  raises the residual to the level of the signal, and then every pixel is
+  ``dark`` — the sweep defines no DoLP anywhere (fail-closed); the
+  ``violation`` flags are still computed independently of ``dark``. With three angles there is no residual and only
+  ``a0 <= 0`` is dark — noise-only dark pixels are not screened.
+* ``dolp_noise`` ``(H, W)`` — the DoLP's noise level ``σ_A/a0`` (0 on
+  unlit pixels — they have no DoLP, see ``valid`` / ``dark``), and
+  ``noisy`` = lit pixels with ``dolp_noise > violation_tol`` — a flag only
+  (``valid`` is not changed by it): their DoLP, hence their zenith, is
+  mostly noise. With three angles ``dolp_noise`` is ``None`` and ``noisy``
+  all False. ★One σ̂ for the image assumes stationary noise; shot noise
+  grows with the signal, so treat the flag as a screen.
 * ``model``, ``refractive_index``, ``brewster_deg``.
 
 Nothing here chooses among the candidates; a single "best" normal map

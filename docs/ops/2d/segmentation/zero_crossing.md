@@ -9,7 +9,7 @@ gpu: あり(許可リスト)
 examples: [gallery2d_segmentation]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # zero_crossing — 2D `segmentation` op
@@ -43,7 +43,9 @@ version: 0.9.0  # fullseye lib version this note was generated for
 crossings from an image.）に相当。
 
 ``a`` がガウス平滑化のシグマを振る。``b`` は未使用。上下・左右いずれかの
-方向で符号が変わればゼロ交差とみなす(斜め方向は直接見ていない)。
+方向で符号が変わればゼロ交差とみなす(斜め方向は直接見ていない)。印は符号が変わる
+2 画素のうちラプラシアンが 0 に近い方に付く(同じなら両方)ので、像の反転と可換
+(2026-11-05 まで対の上 / 左の画素に固定で、反転すると線が 1 画素ずれた)。
 
 **端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
 

@@ -9,7 +9,7 @@ gpu: あり(許可リスト)
 examples: [gallery2d_halcon_ext]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # hx_closing — 2D `halcon_ext` op
@@ -44,6 +44,9 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 半径 ``r = 1 + int(a*4)`` の円板で ``scipy.ndimage.binary_closing`` を呼ぶ。
 ``b`` は未使用。小さな穴や切れ目を埋めつつ全体形状を保つ。
+
+画像の縁: 平面は画像の外へ続き、外は背景とみなす(余白を付けて閉じてから切り戻す)。closing は拡大的で、
+縁に接する前景も削らない。2026-11-05(敵対的検証 第 2 巡 P3): 画像の外へ続く平面の上で閉じてから画像に切り戻す(余白 0 を付けて ``binary_closing`` → 切り出し)。 それまでは画像の外を 0 として収縮し、縁の前景を半径ぶん削っていた。
 
 ## 詳しい使い方ガイド
 

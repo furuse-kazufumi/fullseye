@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">voxel_to_hessian — REPRCONV <code style="color:#22d3bf">derivative</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">hessian</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_to_hessian(vol, sigma=1.0, scale_normalize=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.voxel_to_hessian(vol, sigma=1.0, scale_normalize=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;voxel_to_hessian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>体積 <code style="color:#22d3bf">voxel</code> → 3-D Hessian <code style="color:#22d3bf">hessian</code> の 6 成分 (zz, yy, xx, zy, zx, yx)。numpy と scipy だけで作る <code style="color:#22d3bf">hessian</code> 型の入口。</p>
+<p><code style="color:#22d3bf">hessian3d</code>(torch の conv3d)と<b>同じ形</b>を返す: 長さ 6 の list、各 <code style="color:#22d3bf">(D,H,W)</code> float32、順は (zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x)、単位は 1/voxel²、端は replicate (<code style="color:#22d3bf">scipy.ndimage</code> の <code style="color:#22d3bf">mode=&quot;nearest&quot;</code>)。だから <code style="color:#22d3bf">hessian_determinant</code> / <code style="color:#22d3bf">hessian_vesselness</code> がそのまま読み、torch の無い素の <code style="color:#22d3bf">pip install fullseye</code> でも <code style="color:#22d3bf">voxel → hessian → voxel</code> の鎖が通る。</p>
+<p><code style="color:#22d3bf">sigma</code> はガウス平滑の尺度(voxel)。対角成分は「その軸の 2 階 × 他 2 軸の平滑」、交差成分は「2 軸の 1 階 × 残り軸の平滑」の分離畳み込み。核はガウス微分の形で、和と 1・2 次モーメントを厳密に合わせてある(標本化したガウス微分核は和が 0 にならず、明るさが 2 階微分に漏れる)ので、2 次多項式 ½xᵀAx + bᵀx では内部で <code style="color:#22d3bf">H = A</code> が丸めの範囲で出る。<code style="color:#22d3bf">sigma=0</code> は平滑なしでなく <code style="color:#22d3bf">hessian3d</code> と同じ 3 タップ核([1,−2,1] / [−0.5,0,0.5] / [1,2,1]/4)—— torch 版と float32 の丸めの範囲で一致する。<code style="color:#22d3bf">scale_normalize=True</code> で σ² を掛ける(Lindeberg の γ=1 正規化。尺度をまたいで値を比べるとき。<code style="color:#22d3bf">vol_frangi</code> の内部 Hessian と同じ規約)。</p>
+<p>2-D 画像は受けない: <code style="color:#22d3bf">hessian</code> 型は 3-D の 6 成分で、受け手も <code style="color:#22d3bf">(D,H,W)</code> を要る。2-D のヘッセ応答は <code style="color:#22d3bf">sk_hessian</code> / <code style="color:#22d3bf">sk_hessian_det</code> / <code style="color:#22d3bf">xsk_hessian_eig</code>(image → image)。</p>
+<p>Args:</p>
+<p>vol: 3-D の体積 <code style="color:#22d3bf">(D,H,W)</code>、実数、有限。</p>
+<p>sigma: ガウス平滑の尺度(voxel)。有限で &gt;= 0。0 で <code style="color:#22d3bf">hessian3d</code> と同じ核。既定 1.0。</p>
+<p>scale_normalize: True で各成分に σ² を掛ける(<code style="color:#22d3bf">sigma=0</code> とは併用できない)。</p>
+<p>Returns:</p>
+<p>list of 6 <code style="color:#22d3bf">np.ndarray</code>、各 <code style="color:#22d3bf">(D,H,W)</code> float32、順は (zz, yy, xx, zy, zx, yx)。</p>
+<p>Raises:</p>
+<p>ValueError: 空 / 3-D でない / 非有限 / sigma が有限の非負でない /</p>
+<p><code style="color:#22d3bf">scale_normalize</code> と <code style="color:#22d3bf">sigma=0</code> の併用。</p>
+<p>空の入力(<code style="color:#22d3bf">vol</code> が 0 要素)は ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:hessian_numpy_chain">hessian_numpy_chain</a> — <code style="color:#22d3bf">py -3.11 examples/hessian_numpy_chain.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">hessian</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">derivative</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gradient_magnitude">gradient_magnitude</a> · <a style="color:#22d3bf" href="opreprconv:gradient_coherence">gradient_coherence</a> · <a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

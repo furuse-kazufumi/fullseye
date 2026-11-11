@@ -59,6 +59,16 @@ def _as_contour(points, name="points"):
     return p
 
 
+def _closing_point_repeated(p):
+    """末尾の点が先頭の点の繰り返しか(輪郭の広がりに対する相対の判定、abs-floor2)。
+
+    以前の ``np.allclose(p[0], p[-1])`` は絶対の許容 1e-8 を含み、広がり 1e-8 以下の
+    輪郭(m 単位の微小形状)では**どの 2 点も「同じ」**になった。
+    """
+    ext = float(np.max(np.ptp(p, axis=0)))
+    return bool(np.all(np.abs(p[0] - p[-1]) <= 1e-9 * ext))
+
+
 def from_xld(contour, i=0):
     """XLD 輪郭 dict(``{"shape", "cs":[Nx2,...]}``)から i 番目の輪郭を取り出す。
 
@@ -154,15 +164,19 @@ def elliptic_fourier(points, n_harmonics=10):
     if n_harmonics < 1:
         raise ValueError(f"n_harmonics must be at least 1 (received: {n_harmonics})")
     # 閉輪郭にする(末尾==先頭)
-    if not np.allclose(p[0], p[-1]):
+    if not _closing_point_repeated(p):
         p = np.vstack([p, p[0]])
     d = np.diff(p, axis=0)                    # (K,2) 各セグメントの変位
     dt = np.hypot(d[:, 0], d[:, 1])           # (K,) セグメント長
-    dt = np.where(dt < 1e-12, 1e-12, dt)      # 退化セグメントの 0 除算回避
     t = np.concatenate([[0.0], np.cumsum(dt)])  # (K+1,) 累積弧長
     T = t[-1]
-    if T < 1e-9:
+    # abs-floor2: 以前は長さ 0 の線分を 1e-12 に持ち上げ、周長 < 1e-9 を拒否していた。
+    # どちらも長さの絶対の床で、座標 1e-13 の輪郭を拒否し、座標 1e-6 の輪郭では重複点が
+    # 係数を動かし、一点に重なる 1000 点以上の輪郭は周長 1e-9 として通っていた。
+    # 長さ 0 の線分は d = 0・位相差 0 なので、どの項にも寄与しない —— 割る側だけ 1 に置く。
+    if not T > 0.0:
         raise ValueError("contour perimeter is 0 (all points coincide)")
+    dt = np.where(dt > 0.0, dt, 1.0)          # 長さ 0 の線分(d = 0)は分子が 0
     phi = 2.0 * np.pi * t / T                  # (K+1,)
 
     K = d.shape[0]
@@ -256,7 +270,8 @@ def invariants(model, scale_invariant=True):
     amp = _amplitudes(model["coeffs"])
     if scale_invariant:
         L1 = amp[0, 0]
-        if L1 > 1e-12:
+        # 第 1 高調波が他に比べて潰れていなければ割る(相対の判定。abs-floor2)
+        if L1 > 1e-12 * float(amp.max()):
             amp = amp / L1
     return amp
 
@@ -298,7 +313,7 @@ def normalize(model, size_invariant=True):
     # (3) スケール(第1高調波の長軸長 E で割る)
     if size_invariant:
         E = np.hypot(coeffs[0, 0], coeffs[0, 2])
-        if E > 1e-12:
+        if E > 1e-12 * float(np.abs(coeffs).max()):   # 相対の判定(abs-floor2)
             coeffs = coeffs / E
     return coeffs
 
@@ -426,7 +441,7 @@ def contour_fourier_complex(points, n_harmonics=None, parametrisation="index"):
                          f"(received: {parametrisation!r})")
     p = _as_closed_contour(points)
     # 末尾が先頭と同じなら閉じ点を落とす(標本を二重に数えない)
-    if np.allclose(p[0], p[-1]):
+    if _closing_point_repeated(p):
         p = p[:-1]
         if p.shape[0] < 3:
             raise ValueError(f"{op}: after dropping the repeated closing point the contour "

@@ -9,7 +9,7 @@ gpu: あり(許可リスト)
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # r2_inner_circle — 2D `region` op
@@ -43,7 +43,7 @@ Largest inscribed circle drawn as a mask (a scales drawn radius; a=0.5=exact).
 
 領域の最大内接円をマスクとして描く。入力を ``> 0.5`` で前景マスクに直し、
 ``scipy.ndimage.distance_transform_edt`` で各前景画素から最近傍の背景画素
-までの距離を取り、その最大値 ``r0`` を与える画素を中心 ``(cy, cx)`` とする
+(画像の外も背景とみなす)までの距離を取り、その最大値 ``r0`` を与える画素を中心 ``(cy, cx)`` とする
 (最大値が複数あれば行優先で最初の画素)。描く半径は
 ``r = r0 * (0.6 + 0.8*a)`` で、``a=0`` で 0.6 倍、``a=0.5`` で ``r0`` そのまま、
 ``a=1`` で 1.4 倍(``a`` は [0,1] に clip、非有限なら 0.5)。``b`` は未使用。

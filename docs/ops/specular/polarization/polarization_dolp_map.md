@@ -8,7 +8,7 @@ gpu: なし
 examples: [example_polarization_metal, perf_polarization_analyze, poc_polarization_specular, polarization_camera_pipeline, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # polarization_dolp_map — SPECULAR `polarization` op
@@ -38,6 +38,20 @@ Pixels with zero total radiance have no degree of polarisation (every ratio
 would be 0/0) and are returned as 0.0 rather than as NaN; that is a
 convention, and it is stated here because a NaN spreading into a
 thresholding routine is exactly the silent failure this library refuses.
+
+★Dark pixels (2026-11-09): "zero" is measured against the noise — a pixel
+whose fitted mean ``a0 = S0/2`` is at most :data:`POLAR_DARK_K` (3) × the
+noise of the modulation amplitude (``σ̂·√(v₁+v₂)``, one ``σ̂`` for the
+image from the residuals of an N > 3 sweep) is returned as 0.0 too, i.e.
+where the DoLP's own noise would be 1/3 or more. DoLP is a ratio, and
+clipped sensor noise in a dark region (σ 0.001 of a scene peaking at 1)
+used to come back as DoLP 1.0 — "completely polarised", the opposite of
+the truth — on 72 % of the dark pixels once *max_violation_frac* let the
+image through. **A 0 here means "not defined", not "unpolarised"** — use
+:func:`polarization_stokes_map`'s ``lit`` to tell them apart. With three
+angles there is no residual and only ``S0 = 0`` is 0 (noise-only dark
+pixels are not screened). One ``σ̂`` assumes stationary noise; shot noise
+grows with the signal, so the floor is set by the typical pixel.
 
 **Raises** ``ValueError``: as :func:`polarization_separate`.
 

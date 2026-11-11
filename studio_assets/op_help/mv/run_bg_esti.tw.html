@@ -7,7 +7,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以一幅影像更新背景並回傳前景區域。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>背景との差の絶対値が <code style="color:#22d3bf">threshold</code> を超える画素を前景にする。入力の <code style="color:#22d3bf">model</code> は書き換えず、更新後のモデルを <code style="color:#22d3bf">model</code> の鍵で返す。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>背景との差の絶対値が <code style="color:#22d3bf">threshold</code> を超える画素を前景にする。入力の <code style="color:#22d3bf">model</code> は書き換えず、更新後のモデルを <code style="color:#22d3bf">model</code> の鍵で返す。画素値は <code style="color:#22d3bf">create_bg_esti</code> と同じ [0, 1] の float (整数 dtype と範囲外は ValueError)。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
 <p>Args:</p>
 <p>model: <code style="color:#22d3bf">create_bg_esti</code> の返り。</p>
 <p>image: 現在の画像(モデルと同じ形)。</p>
@@ -21,6 +21,7 @@
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_bg_kalman_tracking">poc_real_bg_kalman_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_bg_kalman_tracking.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a> · <a style="color:#22d3bf" href="opmv:find_ncc_models">find_ncc_models</a> · <a style="color:#22d3bf" href="opmv:give_bg_esti">give_bg_esti</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a> · <a style="color:#22d3bf" href="opmv:classify_class_gmm">classify_class_gmm</a> · <a style="color:#22d3bf" href="opmv:evaluate_class_gmm">evaluate_class_gmm</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">tracking</code>)</h3>

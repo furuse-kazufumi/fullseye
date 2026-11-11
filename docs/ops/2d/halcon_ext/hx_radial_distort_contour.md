@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_halcon_ext]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # hx_radial_distort_contour — 2D `halcon_ext` op
@@ -41,7 +41,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 contour に放射歪み r' = r(1 + k r^2) を適用(k は (a-0.5) で樽/糸巻き)。
 
-各 contour の点を画像中心 ``(H/2, W/2)`` からの相対座標 ``d`` にし、正規化半径 ``r = |d| / (max(H, W)/2)`` に
+各 contour の点を画像中心 ``((H-1)/2, (W-1)/2)``(画素中心の規約。2026-11-05 まで ``(H/2, W/2)``)からの相対座標 ``d`` にし、正規化半径 ``r = |d| / (max(H, W)/2)`` に
 対して ``d' = d * (1 + k*r^2)`` と伸縮させた contour を返す(放射歪みモデルの 1 次項)。
 
 - ``a`` → 歪み係数 ``k = (a - 0.5) * 1.5``(-0.75〜+0.75)。``k < 0`` で点が中心に寄る(樽型)、``k > 0`` で

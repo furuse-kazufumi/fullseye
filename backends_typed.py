@@ -384,6 +384,9 @@ _OP_BRIDGE_SKIP = {
     "nurbs_curve", "nurbs_revolve",
     "hilbert_analytic",
     "mat_lu", "mat_qr", "mat_cholesky", "mat_eig",  # 分解は dict を返す(行列 1 枚ではない)                             # 1-D の時系列(画像の行ではない)                 # 制御点の並び(画像でも信号でもない)
+    # 2026-11-06: terrain.elevation_map は points → depth で自動的に橋が架かるが、返りはメートルの高さで、点の落ちない
+    #   セルは nan(観測していない)。0..1 の画像に詰め直すと単位と「観測していない」が消え、穴が平らな地面に化ける。台帳から使う。
+    "elevation_map",
 }
 
 

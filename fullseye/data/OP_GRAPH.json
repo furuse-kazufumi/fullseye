@@ -61,15 +61,15 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3602,
+    "executable": 3624,
     "reasons": {
-      "python_signature": 2637,
+      "python_signature": 2659,
       "registry": 964
     },
     "not_executable_reasons": {
       "generic_algorithm_layer_run_by_api.run_algo": 3,
       "python_signature_has_fewer_inputs_than_graph": 1,
-      "unknown_input_or_output_sort": 208
+      "unknown_input_or_output_sort": 211
     }
   },
   "sources": {
@@ -390,9 +390,9 @@
   },
   "counts": {
     "nodes": 103,
-    "edges": 3814,
-    "conversion_pairs": 416,
-    "conversion_edge_incidence": 2488
+    "edges": 3839,
+    "conversion_pairs": 424,
+    "conversion_edge_incidence": 2524
   },
   "nodes": [
     {
@@ -608,8 +608,8 @@
       "sort": "depth",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 17,
-      "consumed_by": 37,
+      "produced_by": 22,
+      "consumed_by": 47,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -773,7 +773,7 @@
       "sort": "hessian",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 1,
+      "produced_by": 2,
       "consumed_by": 2,
       "generator": false,
       "type_check": true,
@@ -795,7 +795,7 @@
       "sort": "image",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 735,
+      "produced_by": 737,
       "consumed_by": 1113,
       "generator": true,
       "type_check": true,
@@ -828,7 +828,7 @@
       "sort": "keypoints",
       "container": "sparse_set",
       "size_hint": "input-dependent",
-      "produced_by": 25,
+      "produced_by": 26,
       "consumed_by": 28,
       "generator": true,
       "type_check": true,
@@ -906,7 +906,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 94,
-      "consumed_by": 262,
+      "consumed_by": 263,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -927,7 +927,7 @@
       "sort": "measurement",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 96,
+      "produced_by": 99,
       "consumed_by": 6,
       "generator": true,
       "type_check": true,
@@ -971,7 +971,7 @@
       "sort": "normalmap",
       "container": "mapping",
       "size_hint": "input-dependent",
-      "produced_by": 15,
+      "produced_by": 16,
       "consumed_by": 34,
       "generator": true,
       "type_check": true,
@@ -983,7 +983,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 10,
-      "consumed_by": 10,
+      "consumed_by": 11,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1026,8 +1026,8 @@
       "sort": "points",
       "container": "sparse_set",
       "size_hint": "input-dependent",
-      "produced_by": 83,
-      "consumed_by": 298,
+      "produced_by": 85,
+      "consumed_by": 308,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1136,8 +1136,8 @@
       "sort": "region",
       "container": "sparse_set",
       "size_hint": "input-dependent",
-      "produced_by": 194,
-      "consumed_by": 172,
+      "produced_by": 197,
+      "consumed_by": 175,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1247,7 +1247,7 @@
       "container": "scalar",
       "size_hint": "input-dependent",
       "produced_by": 93,
-      "consumed_by": 397,
+      "consumed_by": 404,
       "generator": false,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1280,7 +1280,7 @@
       "container": "dense_array",
       "size_hint": "input-dependent",
       "produced_by": 60,
-      "consumed_by": 109,
+      "consumed_by": 110,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1422,7 +1422,7 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1266,
+      "produced_by": 1273,
       "consumed_by": 599,
       "generator": true,
       "type_check": true,
@@ -1467,7 +1467,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 106,
-      "consumed_by": 175,
+      "consumed_by": 178,
       "generator": false,
       "type_check": false,
       "choose_when": "undocumented",
@@ -1478,7 +1478,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 7,
-      "consumed_by": 11,
+      "consumed_by": 16,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1511,7 +1511,7 @@
       "container": "dense_array",
       "size_hint": "input-dependent",
       "produced_by": 74,
-      "consumed_by": 124,
+      "consumed_by": 125,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -18234,7 +18234,7 @@
           "required": false,
           "range": "undocumented",
           "unit": "undocumented",
-          "default": 0.01
+          "default": 3.0
         }
       ],
       "verified_executable": false,
@@ -139355,6 +139355,1479 @@
       "source_ref": "S00021"
     },
     {
+      "op": "elevation_map",
+      "inputs": [
+        "points"
+      ],
+      "output": "depth",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "elevation_map"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "elevation_map"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "agg",
+          "type": "str",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "max"
+        },
+        {
+          "name": "bounds",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "fill_gaps",
+      "inputs": [
+        "depth"
+      ],
+      "output": "depth",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "fill_gaps"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "fill_gaps"
+      },
+      "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "elevation_traversability",
+      "inputs": [
+        "depth"
+      ],
+      "output": "region",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "elevation_traversability"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "elevation_traversability"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "max_step",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "max_slope",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.6
+        },
+        {
+          "name": "window",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "foothold_score",
+      "inputs": [
+        "depth"
+      ],
+      "output": "image",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "foothold_score"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "foothold_score"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "window",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "ground_surface",
+      "inputs": [
+        "depth"
+      ],
+      "output": "depth",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "ground_surface"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "ground_surface"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "radius",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.4
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "ground_plane",
+      "inputs": [
+        "depth"
+      ],
+      "output": "depth",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "ground_plane"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "ground_plane"
+      },
+      "parameter_schema": [
+        {
+          "name": "trim",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.3
+        },
+        {
+          "name": "iters",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "detect_obstacles",
+      "inputs": [
+        "depth"
+      ],
+      "output": "region",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "detect_obstacles"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "detect_obstacles"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "clearance",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.12
+        },
+        {
+          "name": "ground",
+          "type": "str",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "plane"
+        },
+        {
+          "name": "ground_radius",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.4
+        },
+        {
+          "name": "trim",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.3
+        },
+        {
+          "name": "min_area",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.01
+        },
+        {
+          "name": "extent",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "fuse_elevation",
+      "inputs": [
+        "seq<image>"
+      ],
+      "output": "depth",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "fuse_elevation"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "fuse_elevation"
+      },
+      "parameter_schema": [
+        {
+          "name": "agg",
+          "type": "str",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "max"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "stack_global",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "roughness_map",
+      "inputs": [
+        "depth"
+      ],
+      "output": "image",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "roughness_map"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "roughness_map"
+      },
+      "parameter_schema": [
+        {
+          "name": "window",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "elevation_normals",
+      "inputs": [
+        "depth"
+      ],
+      "output": "normalmap",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "elevation_normals"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "elevation_normals"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "elevation_step_edges",
+      "inputs": [
+        "depth"
+      ],
+      "output": "region",
+      "category": "drive",
+      "family": null,
+      "family_candidate": "edge_detection",
+      "family_candidate_source": "heuristic_regex",
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "elevation_step_edges"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "elevation_step_edges"
+      },
+      "parameter_schema": [
+        {
+          "name": "min_rise",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "window",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "foothold_candidates",
+      "inputs": [
+        "depth"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "foothold_candidates"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "foothold_candidates"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "window",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3
+        },
+        {
+          "name": "min_score",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.6
+        },
+        {
+          "name": "min_dist",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.15
+        },
+        {
+          "name": "max_n",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 50
+        },
+        {
+          "name": "extent",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "contact_points",
+      "inputs": [
+        "points",
+        "unknown"
+      ],
+      "output": "points",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "contact_points"
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "com_from_silhouette",
+      "inputs": [
+        "region"
+      ],
+      "output": "keypoints",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "com_from_silhouette"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "locomotion",
+        "callable": "com_from_silhouette"
+      },
+      "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "support_polygon",
+      "inputs": [
+        "points"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "support_polygon"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "locomotion",
+        "callable": "support_polygon"
+      },
+      "parameter_schema": [
+        {
+          "name": "ground",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "contact_tol",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.02
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "com_support_margin",
+      "inputs": [
+        "vector",
+        "points"
+      ],
+      "output": "measurement",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "com_support_margin"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "locomotion",
+        "callable": "com_support_margin"
+      },
+      "parameter_schema": [
+        {
+          "name": "ground",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "contact_tol",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.02
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "gait_phase",
+      "inputs": [
+        "matrix"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "gait_phase"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "locomotion",
+        "callable": "gait_phase"
+      },
+      "parameter_schema": [
+        {
+          "name": "stance_frac",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.25
+        },
+        {
+          "name": "ground",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "contact_tol",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "support_line_margin",
+      "inputs": [
+        "vector",
+        "points"
+      ],
+      "output": "measurement",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "support_line_margin"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "locomotion",
+        "callable": "support_line_margin"
+      },
+      "parameter_schema": [
+        {
+          "name": "ground",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "contact_tol",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.02
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "lipm_capture_point",
+      "inputs": [
+        "points",
+        "points",
+        "scalar"
+      ],
+      "output": "points",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "input_roles": [
+        "com",
+        "com_vel",
+        "com_height"
+      ],
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "lipm_capture_point"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "locomotion",
+        "callable": "lipm_capture_point"
+      },
+      "parameter_schema": [
+        {
+          "name": "gravity",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 9.81
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "capture_margin",
+      "inputs": [
+        "vector",
+        "vector",
+        "scalar",
+        "points"
+      ],
+      "output": "measurement",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "input_roles": [
+        "com",
+        "com_vel",
+        "com_height",
+        "contacts"
+      ],
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "capture_margin"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "locomotion",
+        "callable": "capture_margin"
+      },
+      "parameter_schema": [
+        {
+          "name": "gravity",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 9.81
+        },
+        {
+          "name": "ground",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "contact_tol",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.02
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "gait_step_events",
+      "inputs": [
+        "unknown",
+        "scalar",
+        "scalar",
+        "scalar"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "input_roles": [
+        "foot_xyz",
+        "dt",
+        "plant_z",
+        "swing_z"
+      ],
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "gait_step_events"
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "foot_slip_metrics",
+      "inputs": [
+        "unknown",
+        "region",
+        "points"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "foot_slip_metrics"
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "footstep_plan",
+      "inputs": [
+        "region"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "footstep_plan"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "locomotion",
+        "callable": "footstep_plan"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "start",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "goal_col",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "step_max",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "width_min",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "width_max",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "deviation_weight",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "extent",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "static_contact_force_lp",
+      "inputs": [
+        "points",
+        "normals",
+        "vector",
+        "scalar",
+        "scalar"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "input_roles": [
+        "contacts",
+        "normals",
+        "com",
+        "mass",
+        "mu"
+      ],
+      "runtime_target": {
+        "module": "locomotion",
+        "callable": "static_contact_force_lp"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "locomotion",
+        "callable": "static_contact_force_lp"
+      },
+      "parameter_schema": [
+        {
+          "name": "gravity",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 9.81
+        },
+        {
+          "name": "n_facets",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 8
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
       "op": "doe_lhs",
       "inputs": [],
       "output": "design",
@@ -160904,6 +162377,63 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 1e-12
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00036"
+    },
+    {
+      "op": "voxel_to_hessian",
+      "inputs": [
+        "voxel"
+      ],
+      "output": "hessian",
+      "category": "reprconv",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00036"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00036"
+        }
+      ],
+      "runtime_target": {
+        "module": "reprconv",
+        "callable": "voxel_to_hessian"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "reprconv",
+        "callable": "voxel_to_hessian"
+      },
+      "parameter_schema": [
+        {
+          "name": "sigma",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "scale_normalize",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
         }
       ],
       "verified_executable": false,

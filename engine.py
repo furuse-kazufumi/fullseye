@@ -35,16 +35,75 @@ __all__ = ["FullseyeEngine", "diagnose_stages", "stage_name", "StageCache", "pip
 def _input_hash(image):
     """A content signature for the input array, used as the first part of a stage cache key.
 
-    Different pixels -> different key -> the cache does not serve a stale result. Hashes the raw
-    bytes (the caller passes the same image across knob edits, so this is paid once per run, not
-    per stage)."""
+    Different pixels -> different key -> the cache does not serve a stale result. Hashes shape,
+    dtype and **every byte** with SHA-256 (paid once per ``run_cached`` call, not per stage; about
+    2 ms for a 1024x1024 float64 frame, the same as the partial hash it replaced).
+
+    ★2026-11-04 external audit E2: only the first and the last MiB were hashed, so two
+    1024x1024 float64 frames that differed in the centre pixel got the same key and the cache
+    served the first frame's result for the second. An object array has no byte content to key
+    on and is refused."""
     import hashlib
-    arr = np.ascontiguousarray(image)
-    h = hashlib.sha1()
-    h.update(str((arr.shape, arr.dtype.str)).encode())
-    h.update(arr.view(np.uint8).reshape(-1)[: 1 << 20].tobytes())   # up to 1 MiB is plenty to separate inputs
-    h.update(arr.view(np.uint8).reshape(-1)[-(1 << 20):].tobytes())
+    h = hashlib.sha256()
+    _hash_into(h, image, 0)
     return h.hexdigest()
+
+
+#: :func:`_hash_into` が降りる入れ子の深さの上限(XLD は 2 段: dict → list → 配列)。
+_HASH_MAX_DEPTH = 32
+
+
+def _hash_into(h, v, depth):
+    """*v* の内容を正準な形で *h* に流し込む(型の名・形・dtype・全 byte、dict は鍵の順に依らない)。
+
+    ★2026-11-05(敵対的検証 第 2 巡 T8): 以前は ``np.ascontiguousarray(image)`` だけで鍵を作り、XLD 輪郭
+    (``{"shape": (H, W), "cs": [(N, 2) ...]}``)は object 配列になって **contour 始まりの鎖が全部 TypeError**
+    だった(contour を取る registry op は 66 本、``run`` は通る)。dict / list / tuple / 数値・文字列の
+    スカラーを降りて正準化する。object 配列・未知の型は従来どおり TypeError(鍵にできる内容が無い)。"""
+    if depth > _HASH_MAX_DEPTH:
+        raise TypeError("run_cached: input nests deeper than %d levels" % _HASH_MAX_DEPTH)
+    if isinstance(v, np.ndarray):
+        arr = np.ascontiguousarray(v)
+        if arr.dtype.hasobject:
+            raise TypeError("run_cached: cannot key the stage cache on an object array (dtype %s)" % arr.dtype)
+        h.update(b"A" + str((arr.shape, arr.dtype.str)).encode())
+        h.update(memoryview(arr).cast("B") if arr.size else b"")
+        return
+    if isinstance(v, dict):
+        try:
+            keys = sorted(v, key=lambda k: (type(k).__name__, repr(k)))
+        except TypeError:
+            raise TypeError("run_cached: cannot key the stage cache on this dict") from None
+        h.update(b"D%d:" % len(keys))
+        for k in keys:
+            _hash_into(h, k, depth + 1)
+            _hash_into(h, v[k], depth + 1)
+        return
+    if isinstance(v, (list, tuple)):
+        h.update((b"L" if isinstance(v, list) else b"T") + b"%d:" % len(v))
+        for x in v:
+            _hash_into(h, x, depth + 1)
+        return
+    if v is None or isinstance(v, (bool, int, float, complex, str, bytes, np.generic)):
+        h.update(b"S" + ("%s|%r" % (type(v).__name__, v)).encode("utf-8", "backslashreplace"))
+        return
+    if hasattr(v, "__array__") and not isinstance(v, (dict, list, tuple)):
+        _hash_into(h, np.asarray(v), depth + 1)
+        return
+    raise TypeError("run_cached: cannot key the stage cache on a %s" % type(v).__name__)
+
+
+def _detached(v):
+    """呼び手に返す値をキャッシュから切り離す(配列は copy、dict / list は deepcopy)。
+
+    ★2026-11-05(敵対的検証 第 2 巡 T1): run_cached は**キャッシュの中の配列そのもの**を返しており、
+    利用者が結果を書き換える(``out[:] = 0``)と次の呼び出しがその書き換えた値を返した(同じ object)。"""
+    import copy
+    if isinstance(v, np.ndarray):
+        return v.copy()
+    if isinstance(v, (dict, list, tuple)):
+        return copy.deepcopy(v)
+    return v
 
 
 def pipeline_states(stages, image, coerce=True):
@@ -56,8 +115,10 @@ def pipeline_states(stages, image, coerce=True):
     valid just because it ran, and non-finite counts appear in ``reasons`` rather than being blanked.
     A stage that raises (and every stage after it) gets ``ran=False`` and an ``error`` message. No
     automatic "fix and rerun" is offered — the state only reports."""
-    norm = [(stage_name(st), *(float(x) for x in (tuple(st)[1:3] + (0.5, 0.5))[:2]))
-            if not isinstance(st, str) else (st, 0.5, 0.5) for st in stages]
+    # ★2026-11-05(敵対的検証 C13): 以前は ``tuple(st)[1:3]`` で段を読み、dict 段は鍵の名前
+    #   ("op" / "a")を float にしようとして ValueError、``(name, {"a": ..})`` は float(dict) の TypeError
+    #   だった(run_pipeline は同じ段を受ける)。名前は stage_name、ノブは api._normalise_stage の 1 本。
+    norm = [(stage_name(st), *api._normalise_stage(i, st, 0.5, 0.5)[1:]) for i, st in enumerate(stages)]
     out = []
     if not norm or image is None:
         return [{"index": i, "op": n, "a": a, "b": b, "ran": False, "valid": None, "reasons": []}
@@ -247,16 +308,12 @@ class FullseyeEngine:
                 op = stage_name(st)
             except TypeError as e:
                 raise ValueError("stage %d: %s" % (i, e)) from None
-            if isinstance(st, dict):                 # Studio / run_pipeline と同じ {"op"|"name", "a", "b"}
-                a, b = st.get("a", 0.5), st.get("b", 0.5)
-            elif isinstance(st, (tuple, list)) and len(st) == 2 and isinstance(st[1], dict):
-                a, b = st[1].get("a", 0.5), st[1].get("b", 0.5)   # (name, {"a": .., "b": ..}) —— run_pipeline と同じ形
-            elif isinstance(st, (tuple, list)):
-                a = st[1] if len(st) > 1 else 0.5
-                b = st[2] if len(st) > 2 else 0.5
-            else:
-                a, b = 0.5, 0.5
-            self.stages.append([op, float(a), float(b)])
+            # ★2026-11-05(敵対的検証 C3): ノブの読み方は run_pipeline と同じ api._normalise_stage 1 本。
+            #   以前はここだけ別の読み方で、dict 段の未知キー({"op": "threshold", "A": 0.9} の打ち間違い)と
+            #   4 要素目(("threshold", 0.9, 0.5, 0.1))を黙って捨て、文字列ノブ "0.9" を float() で通していた
+            #   —— run_pipeline は同じ段を TypeError で断る。同じ段は入口によらず同じ意味・同じ拒否。
+            _, a, b = api._normalise_stage(i, st, 0.5, 0.5)
+            self.stages.append([op, a, b])
 
     # ------------------------------------------------------------------ load --
     def _adopt(self, other: "FullseyeEngine") -> "FullseyeEngine":
@@ -359,10 +416,11 @@ class FullseyeEngine:
 
     def set_knobs(self, i: int, a: float | None = None, b: float | None = None) -> "FullseyeEngine":
         """Tune stage *i*'s knobs in place; returns self for chaining."""
+        # 兄弟(C3): 段の作成と同じ型の規則(数値と bool のみ、"0.9" は TypeError)
         if a is not None:
-            self.stages[i][1] = float(a)
+            self.stages[i][1] = api._stage_knob(i, self.stages[i][0], "a", a)
         if b is not None:
-            self.stages[i][2] = float(b)
+            self.stages[i][2] = api._stage_knob(i, self.stages[i][0], "b", b)
         return self
 
     # -------------------------------------------------------------- execution --
@@ -421,16 +479,43 @@ class FullseyeEngine:
         stages = self._stage_tuples()
         if not stages or image is None:
             return image
-        prefix = (_input_hash(image),)
-        prev = image
-        for i, st in enumerate(stages):
+        # ★2026-11-04 external audit E4: each stage used to go through ``run_pipeline(prev, [st])`` on
+        # its own, so the chain-wide checks of :meth:`run` (sort chain, knobs, non-finite entry) never
+        # saw the whole pipeline -- ``otsu,invert`` ran here while ``run`` refuses it. Prepare the
+        # whole chain first (runs nothing), then resume stage by stage on the same runner Studio's
+        # stage cache uses (``entry`` only for the first stage).
+        policy = api._policy(None)
+        fast = api._fast_on(None)
+        img, norm, ops_ = api._prepare_pipeline(image, stages, 0.5, 0.5, policy)
+        # ★2026-11-05(敵対的検証 C6): (1) 入口の契約(uint8 の /255 と台帳記録、extra_checks の値域、
+        #   strict での拒否)は**キャッシュに当たっても毎回**通す —— 以前は第 1 段が当たると飛び、
+        #   strict + extra_checks="on" で run() が断る画像を暖まった run_cached() は返していた。
+        #   (2) 結果を変える状態を鍵に入れる: 照合用テンプレート(ops._MATCH_CTX、スレッドローカル)と
+        #   fssystem の全パラメータ —— 以前はテンプレート A の答えをテンプレート B で返した。
+        #   (3) 計算中に劣化台帳へ記録が残った段はキャッシュしない(当たると記録が消え、fallback の値が
+        #   「成功」に見えた)。次の呼び出しでもう一度計算され、同じ記録が残る。
+        import backend_safe
+        import fssystem
+        import ops as _rt_ops
+        v0 = api._pipeline_entry(img, ops_[0], True, policy)
+        template = _rt_ops._MATCH_CTX.get("template")
+        prefix = (_input_hash(img), policy, fast,
+                  None if template is None else _input_hash(template),
+                  repr(sorted(fssystem.system_snapshot().items())))
+        prev = v0
+        for i, st in enumerate(norm):
             prefix = prefix + (tuple(st),)
             hit = cache.get(prefix)
             if hit is not None:
                 prev = hit
                 continue
-            prev = cache.put(prefix, api.run_pipeline(prev, [st], coerce=(i == 0)), protect=[prefix])
-        return prev
+            mark = backend_safe.mark()
+            val = next(iter(api._pipeline_steps(prev, [st], [ops_[i]], True, policy, fast, entry=False)))
+            if backend_safe.events_since(mark):
+                prev = val                            # degraded: recompute (and re-record) next time
+            else:
+                prev = cache.put(prefix, val, protect=[prefix])
+        return _detached(prev)        # T1: never hand out the cached object itself
 
     def stepwise_states(self, image, coerce: bool = True) -> list:
         """Per-stage ``ran`` / ``valid`` / ``reasons`` for this pipeline on *image*.
@@ -461,11 +546,29 @@ class FullseyeEngine:
     def to_ops(self) -> str:
         return ",".join(s[0] for s in self.stages)
 
+    def _check_exportable(self, where: str) -> None:
+        """書き出す前に、全段の op 名が registry に在ることを確かめる(無ければ ValueError、何も書かない)。
+
+        ★2026-11-05(敵対的検証 C5): ``to_python`` は op 名を ``# --ops "..."`` の注釈行へ素のまま
+        書いていたので、信頼できない pipeline JSON の段名に改行を入れると(``"gaussian\nimport os; ..."``)
+        **書き出したスクリプトを import しただけで任意のコードが走った**。registry の名前は識別子なので、
+        在る名前だけを書き出せば注入は起きない —— 在らない名前の書き出しはどのみち動かないスクリプトになる。"""
+        bad = [(i, name) for i, (name, _, _) in enumerate(self.stages) if api.find_op(name) is None]
+        if bad:
+            raise ValueError("%s: stage(s) %s name operator(s) that are not in the registry -- refusing to "
+                             "write them into generated code (check validate() first)"
+                             % (where, ", ".join("%d %r" % (i, n) for i, n in bad)))
+
     def to_python(self) -> str:
-        """The pipeline as a standalone Python function (same as Studio export)."""
+        """The pipeline as a standalone Python function (same as Studio export).
+
+        Every stage must name a registered operator (``ValueError`` otherwise, nothing is
+        generated); the ``# --ops`` comment line is written JSON-escaped so it can never
+        span more than one line."""
+        self._check_exportable("to_python")
         lines = ["# -*- coding: utf-8 -*-",
-                 '# --ops "%s"   (the same pipeline as a CLI string: fullseye run "<ops>" in.png --out out.png)'
-                 % ",".join(str(s[0]) for s in self.stages),
+                 '# --ops %s   (the same pipeline as a CLI string: fullseye run "<ops>" in.png --out out.png)'
+                 % json.dumps(",".join(str(s[0]) for s in self.stages), ensure_ascii=True),
                  "import fullseye, numpy as np", "",
                  "# pipeline %r - %d stage(s); rows run top to bottom, each op reads the "
                  "previous op's output (a/b = that op's two knobs)" % (
@@ -474,7 +577,7 @@ class FullseyeEngine:
                  "    return fullseye.run_pipeline(frame, ["]
         for name, a, b in self.stages:
             lines.append("        # %s" % _stage_comment(name))
-            lines.append("        (%r, %.3f, %.3f)," % (name, a, b))
+            lines.append("        (%r, %s, %s)," % (name, _knob_literal(a), _knob_literal(b)))
         lines += ["    ])"]
         return "\n".join(lines) + "\n"
 
@@ -484,7 +587,9 @@ class FullseyeEngine:
         One call per stage with its generated comment above it and the running signal
         in ``x``, so a single stage can be copied out on its own, or your own if/for
         can branch BETWEEN stages (the two-tier interface rule: every sample exists
-        both as a one-liner and as a staged form)."""
+        both as a one-liner and as a staged form). Same name check as :meth:`to_python`
+        (op names are written with ``%r``, which cannot break a line either)."""
+        self._check_exportable("to_python_staged")
         fn = _py_ident(self.name)
         lines = ["# -*- coding: utf-8 -*-", "import fullseye, numpy as np", "",
                  "# pipeline %r - STAGED form: x is the running signal; copy any single" % self.name,
@@ -493,7 +598,8 @@ class FullseyeEngine:
                  "    x = frame"]
         for name, a, b in self.stages:
             lines.append("    # %s" % _stage_comment(name))
-            lines.append("    x = fullseye.run_pipeline(x, [(%r, %.3f, %.3f)])" % (name, a, b))
+            lines.append("    x = fullseye.run_pipeline(x, [(%r, %s, %s)])"
+                         % (name, _knob_literal(a), _knob_literal(b)))
         lines += ["    return x"]
         return chr(10).join(lines) + chr(10)
 
@@ -505,6 +611,19 @@ class FullseyeEngine:
     def __repr__(self):
         return "FullseyeEngine(%r, %d stages: %s)" % (
             self.name, len(self.stages), self.to_ops() or "<empty>")
+
+
+def _knob_literal(v) -> str:
+    """A knob as Python source that evaluates to the SAME float (``repr`` = shortest round trip).
+
+    ★2026-11-04 external audit E3: the exporters wrote ``%.3f``, so a 0.123456 knob ran as 0.123
+    in the generated code (Studio's own export already used ``repr``). Non-finite values are
+    written as ``float('nan')`` / ``float('inf')`` so the script still parses (and is refused by
+    ``run_pipeline`` exactly as :meth:`FullseyeEngine.run` refuses it)."""
+    f = float(v)
+    if f != f or f in (float("inf"), float("-inf")):
+        return "float(%r)" % repr(f)
+    return repr(f)
 
 
 def _stage_comment(name: str) -> str:

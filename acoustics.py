@@ -799,6 +799,9 @@ def synthesize_bearing_signal(rate=25600.0, duration=1.0, carrier_hz=3000.0,
     zeta = _finite_scalar(damping, "damping")
     sigma = _nonneg(noise_sigma, "noise_sigma")
     s = _seed(seed)
+    if sigma > 0.0 and s is None:
+        # 敵対的検証 2026-11-05 第 2 巡 T7: 以前は default_rng(None) で呼ぶたびに雑音が変わった
+        raise ValueError("%s: noise needs an explicit integer seed (seed=None would draw fresh noise on every call)" % op)
     kind = _check_choice(mode, ("am", "impulse"), "mode", op)
     nyq = 0.5 * fs
     n = int(round(dur * fs))
@@ -902,6 +905,9 @@ def synthesize_speed_ramp(rate=5000.0, duration=4.0, rpm_start=600.0,
     r1 = _positive(rpm_end, "rpm_end")
     sigma = _nonneg(noise_sigma, "noise_sigma")
     s = _seed(seed)
+    if sigma > 0.0 and s is None:
+        # 敵対的検証 2026-11-05 第 2 巡 T7: 以前は default_rng(None) で呼ぶたびに雑音が変わった
+        raise ValueError("%s: noise needs an explicit integer seed (seed=None would draw fresh noise on every call)" % op)
     ords = np.atleast_1d(np.asarray(
         [_positive(o, "orders[%d]" % i) for i, o in enumerate(np.atleast_1d(orders))],
         np.float64))

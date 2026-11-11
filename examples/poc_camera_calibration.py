@@ -30,7 +30,7 @@
  4. ★ 再投影誤差はほぼ同じなのに焦点距離の誤差が桁で違う配置
  5. なぜ相殺するのか —— fx と Z の比は保存される
  6. 壊れる条件 —— 退化配置 / 中央のみ / 雑音
- 7. 速度
+ 7. 速度  /  8. 実写の校正板 —— OpenCV の 13 枚と、その質感で描いた板(写真が無ければ記録値)
 
 【★ この PoC が出した道具の穴】
 (a) **【解消済み 2026-09-19】内部パラメータ推定がファサードから呼べなかった**。
@@ -62,12 +62,18 @@
     2026-09-06 の対応は (1) しきい値は据え置き (2) 比を
     ``orientation_rank_ratio`` として返す (3) 後段の門の文言に「板を傾けよ」を
     入れる —— 直せないものを直したことにせず、判断材料を渡す形にした。
-(c2) **``camera_calibration`` は不確かさも条件数も返さない**。返るのは
-    ``reproj_rms`` だけ —— まさに本 PoC が「保証しない」と示している数字である。
+    2026-11-09 に、比とは別の**雑音込みの門**が足された(op 監査 g2_calib_ct): 閉形式を
+    解いたあと、ホモグラフィの残差で画像点を揺らして 32 回解き直し、K の相対標準偏差が
+    5 % を超えたら拒否する。第 6 章の表では傾き 5 度を拒否するようになった(広がり 10.6 %、
+    通していた頃の fx 誤差 −31.8 %)。ただし歪みによる**偏り**は測らない(8 度は広がり 2.5 % で
+    通過し、fx を 18.5 % 誤る)。
+(c2) **``camera_calibration`` は偏りを含む不確かさを返さない**。返るのは ``reproj_rms``
+    —— まさに本 PoC が「保証しない」と示している数字 —— と、2026-11-09 からは雑音だけから
+    見積もった広がり ``intrinsics_rel_std``(偏りは含まない、上の (c) を見よ)。
     第 3・4 章で見るとおり、配置の良し悪しを映すのは ``sigma_fx`` / ``sigma_cx``
     (ヤコビアンの逆行列の対角)であって再投影誤差ではない。
-(c3) **閉形式は歪みを無視するので答えとしては使えない**。傾き 5 度で fx を
-    41 %、傾き 32 度でも 2.7 % 誤る(k1 = -0.18 のレンズ)。初期値としては
+(c3) **閉形式は歪みを無視するので答えとしては使えない**。傾き 8 度で fx を
+    18.5 %、傾き 32 度でも 3.1 % 誤る(k1 = -0.18 のレンズ)。初期値としては
     使えるが、``camera_calibration`` の戻り値をそのまま K として使う利用者は
     その旨を docstring から読み取れない。
 (d) **座標規約が兄弟 API と食い違う**。``camera.project_points`` は (x, y) を
@@ -81,8 +87,8 @@
 """
 from __future__ import annotations
 
-import time
-
+import os, sys, time  # noqa: E401
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo 直下を先に(editable install の古い本体を読まない)
 import numpy as np
 from scipy.optimize import least_squares
 
@@ -638,7 +644,9 @@ def main():
             print(f"  {tilt:>9.1f}{ratio:>15.2e}{z['fx']:>13.1f}"
                   f"{100 * abs(z['fx'] - TRUE_FX) / TRUE_FX:>10.1f}  通過")
         except ValueError as exc:
-            gate = ("零空間の次元" if "degenerate calibration views" in exc.args[0]
+            msg = exc.args[0]
+            gate = ("零空間の次元" if "degenerate calibration views" in msg
+                    else "雑音込み(K が決まらない)" if "do not determine K" in msg
                     else "K が非有限/非正")
             print(f"  {tilt:>9.1f}{ratio:>15.2e}{'—':>13}{'—':>10}  {gate}")
     print("      → ★ **退化検出の門は歪みのあるカメラでは発火しない**。歪みなしなら")
@@ -648,8 +656,10 @@ def main():
     print("         現場で止めているのは後段の「fx が nan」の門のほう。")
     print("         しきい値を上げても直らない —— 歪みありでは完全退化 1.92e-06 と")
     print("         傾き 2 度 4.42e-06 の差が 2.3 倍しかなく、線が引けない。")
-    print("      → 閉形式は 5 度で生き返るが fx を 41 % 誤る(歪みを無視するため)。")
-    print("         非線形最適化の初期値としては使えるが、答えとしては使えない。")
+    print("      → 2026-11-09 から閉形式の後に雑音込みの門がある(残差で点を揺らして解き直し、")
+    print("         K の相対標準偏差が 5 % を超えたら拒否)。上の表の 5 度はこれで止まる。")
+    print("      → 閉形式は 8 度で通るが fx を 18.5 % 誤る(歪みを無視した偏り。雑音込みの")
+    print("         門は偏りを測らない)。非線形最適化の初期値としては使えるが、答えとしては使えない。")
     flat = make_poses(N_VIEWS, tilt_deg=0.0, offset_m=0.14, z_lo=0.55, z_hi=0.85)
     ob = observe(obj, flat, sigma_px=0.05, seed=4)
     rflat = calibrate(obj, ob)
@@ -683,6 +693,10 @@ def main():
     print("      → 再投影 RMS はどの行でも 0.067 px(= 0.05 x sqrt2)。歪み係数と主点は視野を")
     print("         占めなくなると決まらなくなる(歪みは半径の 2 乗以上でしか効かず、")
     print("         中央にはその信号が無い)。")
+    print("      注: 1 % の行は条件が悪く、本体ライブラリの版で値が動く(同じこのコードで、2026-11-05 より前の本体では")
+    print("         fx 誤差 0.069 % / |dcx| 13.26 / |dk1| 0.063、それ以降は 0.122 % / 2.90 / 0.436 —— Zhang 法の初期値の変更で")
+    print("         LM の行き先が変わる。2026-11-09 に solve_pnp の平面の初期値を正規化してからは 0.069 % / 13.28 / 0.064)。")
+    print("         この行の数は『決まらない』ことの例として読み、値そのものは読まない。")
 
     print("  (c) 雑音 —— 良い配置と悪い配置で感度がどれだけ違うか")
     print(f"  {'雑音 px':>9}{'良: RMS':>10}{'良: fx%':>10}{'悪: RMS':>10}{'悪: fx%':>10}{'比':>8}")
@@ -793,9 +807,541 @@ def main():
     assert fs.find_op("camera_calibration") is None, "op ではなく facade 関数(レジストリには載せない)"
 
     fig_convergence_video(obj)
+    real_chessboard_chapter(dfx)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
+
+
+# ── 8. 実写の校正板(OpenCV が配布する 13 枚)と、その実写の質感で描いた板 ─────────── #
+# データ: OpenCV samples/data の left01..14.jpg(left10 は配布元に無い、640x480、内角 9x6)。
+#   OpenCV のリポジトリの Apache License 2.0。取得 ``py -3.11 tools/fetch_stereoreal_data.py chessboard``
+#   (固定コミットから取り、バイト数と SHA-256 を照合。データは repo に入れない)。
+# CI(写真が無い)では取得せず、手元で測った記録値 ``REAL_RECORDED`` を印字して章を閉じる。
+REAL_PATTERN = (9, 6)                    # 内角の数 (列, 行)
+REAL_TILTS = (32.0, 8.0, 2.0)            # 第 4 章と同じ 3 配置
+REAL_SEEDS = (0, 1, 2, 3, 4)             # 描いた板の雑音の種(1 回の当たり外れで語らない)
+REAL_SUBSET = 4                          # 実写の部分集合の枚数(13 枚から 4 枚 = 715 通り)
+REAL_TEX_PPS = 32                        # 板面の質感の解像度 [px / 升目]
+REAL_SUBPIX_WIN = (5, 5)                 # cornerSubPix の窓(半幅)。理由は real_render_views の注記
+#: 板そのもの(灰色の枠まで)の範囲 [升目](x0, x1, y0, y1)。left04.jpg の質感を目で見て決めた。
+#: この外は板ではなく部屋なので、板の平面に貼らず、カメラに固定した実写の背景から読む。
+REAL_RIM = (-1.25, 9.3, -1.3, 6.3)
+#: 描き直す視点の置き方(距離の範囲 [升目]・視野内の振り幅 [升目]・面内の回り [度])。
+REAL_POSE = dict(zlo=10.0, zhi=12.0, off=0.6, spin=5.0)
+#: 写真ありで手元で測った記録値(2026-11-08)。CI では写真が無いのでこれを印字し、記録どうしの門を通す。
+REAL_RECORDED = {
+    "lines": [
+        '写真 13 枚の校正(自前の calibrate、4 係数): fx 536.46 px、再投影 RMS 0.409 px、傾き 15.1〜40.7 度',
+        '自前の calibrate と OpenCV の fx の差 0.000 %',
+        '外れの 1 枚 left02.jpg(RMS 1.22 px)、13 枚の fx 536.46 → 12 枚 534.44',
+        '相関(RMS と |fx の差|): 13 枚基準・全組 +0.030 / 12 枚基準・全組 +0.536 / 12 枚基準・外れを含まない 495 組 -0.045',
+        '外れを含まない組: RMS 0.148〜0.318 px、fx の差 -1.46〜+2.53 %',
+        '外れを順に除いた相関: 1 枚除き 495 組 -0.045 / 2 枚除き 330 組 -0.055 / 3 枚除き 210 組 +0.244',
+        '描いた板 傾き 32 度: 角点の誤差 0.152 px、再投影 RMS 0.146 px、|fx 誤差| 種 5 個で 0.02〜0.08 %、sigma_fx 0.3 px',
+        '描いた板 傾き 8 度: 角点の誤差 0.158 px、再投影 RMS 0.154 px、|fx 誤差| 種 5 個で 0.22〜0.43 %、sigma_fx 2.2 px',
+        '描いた板 傾き 2 度: 角点の誤差 0.157 px、再投影 RMS 0.153 px、|fx 誤差| 種 5 個で 2.14〜7.38 %、sigma_fx 35.3 px',
+    ],
+    'sub_corr': -0.0448,
+    'render_fx': {'32': 0.0475, '8': 0.3483, '2': 5.4052},
+    'render_rms': {'32': 0.1463, '8': 0.1541, '2': 0.1525},
+}
+
+
+def _real_corners(gray, cv2, win=(11, 11)):
+    """OpenCV の市松角点 + 副画素化。見つからなければ None。返りは (54, 2) の (x, y)。"""
+    ok, c = cv2.findChessboardCorners(gray, REAL_PATTERN)
+    if not ok:
+        return None
+    crit = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 50, 1e-4)
+    return cv2.cornerSubPix(gray, c, win, (-1, -1), crit).reshape(-1, 2).astype(np.float64)
+
+
+def _real_obj():
+    """板の座標 [升目]。原点は角点 (0, 0)、z = 0。OpenCV と同じ並び(列が速い)。"""
+    o = np.zeros((REAL_PATTERN[0] * REAL_PATTERN[1], 3))
+    o[:, :2] = np.mgrid[0:REAL_PATTERN[0], 0:REAL_PATTERN[1]].T.reshape(-1, 2)
+    return o
+
+
+def _cv_calib(cv2, obj, pts, size):
+    """OpenCV の calibrateCamera(k3 は 0 に固定 = この PoC の 4 係数モデルと同じ)。"""
+    O = [obj.astype(np.float32)] * len(pts)
+    I = [p.reshape(-1, 1, 2).astype(np.float32) for p in pts]
+    rms, K, d, rv, tv = cv2.calibrateCamera(O, I, size, None, None, flags=cv2.CALIB_FIX_K3)
+    return float(rms), K, d.ravel()[:4].astype(np.float64), rv, tv
+
+
+def real_board_texture(cv2, img, K, dist, rvec, tvec):
+    """実写 1 枚から「板面の質感」を取り出す(板の座標系での正面像)。
+
+    板面上の各点を推定した K・歪み・姿勢で写真へ投影して読む。写真の外と、歪みの式が折り返す
+    遠い半径は使わず、そこは周囲から埋める(cv2.inpaint、ぼかして継ぎ目を消す)。
+    推定の誤差で質感の角が升目の格子から 0.2 px ほどずれるので、質感の中で角点を拾い直し、
+    3 次の多項式の変位で格子に揃える —— これをしないと、描いた板に「印刷の歪んだ板」の系統誤差が入る。
+    返り: (質感 [0,1], 板座標の x 軸, y 軸, 揃える前 / 後の角のずれ RMS [質感 px])。
+    """
+    from scipy.ndimage import gaussian_filter, map_coordinates
+
+    H, W = img.shape
+    xs = np.arange(-7.0, 16.0, 1.0 / REAL_TEX_PPS)
+    ys = np.arange(-6.0, 12.0, 1.0 / REAL_TEX_PPS)
+    gx, gy = np.meshgrid(xs, ys)
+    P = np.stack([gx.ravel(), gy.ravel(), np.zeros(gx.size)], axis=1)
+    uv, _ = cv2.projectPoints(P, rvec, tvec, K, dist)
+    uv = uv.reshape(-1, 2)
+    R0 = cv2.Rodrigues(rvec)[0]
+    Pc = P @ R0.T + tvec.ravel()
+    rn = np.hypot(Pc[:, 0] / Pc[:, 2], Pc[:, 1] / Pc[:, 2])
+    cn = cv2.undistortPoints(np.array([[[0.0, 0.0]], [[W - 1.0, 0.0]], [[0.0, H - 1.0]], [[W - 1.0, H - 1.0]]]),
+                             K, dist).reshape(-1, 2)
+    inside = ((uv[:, 0] >= 0) & (uv[:, 0] <= W - 1) & (uv[:, 1] >= 0) & (uv[:, 1] <= H - 1)
+              & (rn <= np.hypot(cn[:, 0], cn[:, 1]).max()))
+    tex = map_coordinates(img, [uv[:, 1], uv[:, 0]], order=1, mode="nearest").reshape(gx.shape)
+    mask = cv2.erode(inside.reshape(gx.shape).astype(np.uint8), np.ones((15, 15), np.uint8)).astype(bool)
+    t8 = (np.clip(tex, 0, 1) * 255).astype(np.uint8)
+    small = cv2.resize(t8, None, fx=0.25, fy=0.25, interpolation=cv2.INTER_AREA)
+    hole = cv2.resize((~mask).astype(np.uint8), (small.shape[1], small.shape[0]), interpolation=cv2.INTER_NEAREST)
+    small = cv2.inpaint(small, hole, 15, cv2.INPAINT_TELEA)
+    filled = gaussian_filter(cv2.resize(small, (tex.shape[1], tex.shape[0]),
+                                        interpolation=cv2.INTER_CUBIC).astype(np.float64) / 255.0, 6.0)
+    wgt = np.clip(gaussian_filter(mask.astype(float), 4.0) * 2.0 - 1.0, 0.0, 1.0) * mask
+    tex = wgt * tex + (1.0 - wgt) * filled
+
+    obj = _real_obj()
+    ideal = np.column_stack([(obj[:, 0] - xs[0]) * REAL_TEX_PPS, (obj[:, 1] - ys[0]) * REAL_TEX_PPS])
+
+    def corners_in(t):
+        c = _real_corners((np.clip(t, 0, 1) * 255).astype(np.uint8), cv2)
+        if c is None:
+            raise RuntimeError("質感の中で角点が見つからない")
+        if np.linalg.norm(c[0] - ideal[0]) > np.linalg.norm(c[-1] - ideal[0]):
+            c = c[::-1].copy()                       # 9x6 は 180 度回しても同じ形 —— 並びを揃える
+        return c
+
+    c = corners_in(tex)
+    before = float(np.sqrt(((c - ideal) ** 2).sum(1).mean()))
+
+    def basis(x, y):
+        return np.column_stack([np.ones_like(x), x, y, x * x, x * y, y * y, x ** 3, x * x * y, x * y * y, y ** 3])
+
+    B0 = basis(ideal[:, 0] / 100.0, ideal[:, 1] / 100.0)
+    ax_, *_ = np.linalg.lstsq(B0, c[:, 0] - ideal[:, 0], rcond=None)
+    ay_, *_ = np.linalg.lstsq(B0, c[:, 1] - ideal[:, 1], rcond=None)
+    yy, xx = np.mgrid[0:tex.shape[0], 0:tex.shape[1]].astype(np.float64)
+    B = basis(xx.ravel() / 100.0, yy.ravel() / 100.0)
+    tex = map_coordinates(tex, [yy.ravel() + B @ ay_, xx.ravel() + B @ ax_], order=3,
+                          mode="nearest").reshape(tex.shape)
+    after = float(np.sqrt(((corners_in(tex) - ideal) ** 2).sum(1).mean()))
+    return np.clip(tex, 0.0, 1.0), xs, ys, before, after
+
+
+def _rim_outline(n_per_edge=60):
+    """板の枠の外周を板の座標で(歪みのある投影で縁が曲がるので、辺ごとに細かく刻む)。"""
+    x0, x1, y0, y1 = REAL_RIM
+    t = np.linspace(0.0, 1.0, n_per_edge, endpoint=False)
+    edges = [np.column_stack([x0 + (x1 - x0) * t, np.full_like(t, y0)]),
+             np.column_stack([np.full_like(t, x1), y0 + (y1 - y0) * t]),
+             np.column_stack([x1 - (x1 - x0) * t, np.full_like(t, y1)]),
+             np.column_stack([np.full_like(t, x0), y1 - (y1 - y0) * t])]
+    e = np.concatenate(edges)
+    return np.column_stack([e, np.zeros(len(e))])
+
+
+def real_backdrop(cv2, img8, K, dist, R, t):
+    """背景 = 写真そのもの(カメラに固定)。写っている板の範囲だけ周囲から埋める。
+
+    カメラは動かず板だけが動く、という実際の校正の撮り方に合わせる(部屋は板と一緒に傾かない)。
+    返り: (背景 [0,1], 埋めた範囲の印 bool)。埋めた範囲は新しい板がほぼ覆うが、覆い残しは数えて印字する。
+    """
+    uv, _ = fs.project_points(_rim_outline(), K, R, t)
+    poly = fs.distort_points(uv, K, dist)
+    hole = np.zeros(img8.shape, np.uint8)
+    cv2.fillPoly(hole, [np.round(poly).astype(np.int32)], 1)
+    hole = cv2.dilate(hole, np.ones((7, 7), np.uint8))
+    filled = cv2.inpaint(img8, hole, 9, cv2.INPAINT_TELEA)
+    return filled.astype(np.float64) / 255.0, hole.astype(bool)
+
+
+def real_board_poses(n, tilt_deg, base=None, zlo=12.0, zhi=16.0, off=1.8, spin=12.0):
+    """第 4 章の ``make_poses`` と同じ傾き・回り方の規則を、升目の単位で。
+
+    ``base = (R0, t0)`` を渡すと、板の中心をその写真の板の中心と同じ視線の上に、面内の向きもその写真に
+    合わせて置く(背景の写真に写っていた板を新しい板が覆うように)。傾きの量は ``tilt_deg`` だけで決まる。
+    """
+    out = []
+    centre = np.array([(REAL_PATTERN[0] - 1) / 2.0, (REAL_PATTERN[1] - 1) / 2.0, 0.0])
+    ray, roll = np.array([0.0, 0.0, 1.0]), 0.0
+    if base is not None:
+        R0, t0 = base
+        c0 = R0 @ centre + t0
+        ray = c0 / c0[2]
+        roll = float(np.arctan2(R0[1, 0], R0[0, 0]))
+    for i in range(n):
+        phi = 2.0 * np.pi * i / n + 0.30
+        axis = np.array([np.cos(phi), np.sin(phi), 0.0])
+        rvec = axis * np.deg2rad(tilt_deg)
+        R = fs.rodrigues(rvec) @ fs.rodrigues(np.array([0.0, 0.0, roll + np.deg2rad(spin * np.sin(3.0 * phi))]))
+        z = zlo + (zhi - zlo) * i / (n - 1)
+        t = ray * z + np.array([off * np.cos(2.0 * phi), off * 0.72 * np.sin(2.0 * phi), 0.0]) - R @ centre
+        out.append((R, t))
+    return out
+
+
+def real_render_views(cv2, tex, xs, ys, K, dist, size, poses, seed, backdrop=None, hole=None):
+    """質感の板を、真の K・歪みのカメラで撮ったように描き、OpenCV で角点を拾う。
+
+    各画素の光線(歪みを外して正規化)と板の平面 z = 0 の交点が板の枠の内側なら質感を、外側なら
+    ``backdrop``(カメラに固定した実写の背景)を読む。そのうえでレンズのぼけ
+    (σ 0.6 px)・光子雑音(満杯 4000 電子)・読み出し雑音(σ 0.4 %)・8 bit 量子化を足す。
+    ★cornerSubPix の窓は (5, 5)。OpenCV の手引きの (11, 11) だと、32 度に傾いて縮んだ升目で
+    隣の角へ跳び、1 枚あたり最大 8 px の外れが出た(再投影 RMS 0.68 px、fx 誤差 1.8 %)。
+    返り: 角点の列・描いた画像・角点の真値との差 RMS [px]・背景の埋めた範囲が見えている画素の割合。
+    """
+    from scipy.ndimage import gaussian_filter, map_coordinates
+
+    W, H = size
+    pix = np.stack(np.meshgrid(np.arange(W, dtype=np.float64), np.arange(H, dtype=np.float64)), -1).reshape(-1, 2)
+    und = fs.undistort_points(pix, K, dist, iters=40)
+    ray = np.column_stack([(und[:, 0] - K[0, 2]) / K[0, 0], (und[:, 1] - K[1, 2]) / K[1, 1], np.ones(len(und))])
+    rng = np.random.default_rng(seed)
+    obj = _real_obj()
+    pts, ims, errs, seen = [], [], [], []
+    x0, x1, y0, y1 = REAL_RIM
+    for R, t in poses:
+        a = R.T @ ray.T
+        b = R.T @ t
+        X = a * (b[2] / a[2]) - b[:, None]          # 光線と板の平面の交点(板の座標)
+        img = map_coordinates(tex, [(X[1] - ys[0]) * REAL_TEX_PPS, (X[0] - xs[0]) * REAL_TEX_PPS],
+                              order=1, mode="nearest").reshape(H, W)
+        if backdrop is not None:
+            on = ((X[0] >= x0) & (X[0] <= x1) & (X[1] >= y0) & (X[1] <= y1) & (b[2] / a[2] > 0)).reshape(H, W)
+            w = np.clip(gaussian_filter(on.astype(np.float64), 0.5), 0.0, 1.0)   # 縁の 1 px をなめらかに
+            img = w * img + (1.0 - w) * backdrop
+            seen.append(float(np.mean(hole & ~on)))
+        e = np.clip(gaussian_filter(img, 0.6), 0.0, 1.0) * 4000.0
+        e = rng.poisson(e) / 4000.0 + rng.normal(0.0, 0.004, e.shape)
+        im8 = np.clip(np.round(e * 255.0), 0, 255).astype(np.uint8)
+        c = _real_corners(im8, cv2, REAL_SUBPIX_WIN)
+        if c is None:
+            raise RuntimeError("描いた板で角点が見つからない(傾き・距離の設定を見直す)")
+        uv, _ = fs.project_points(obj, K, R, t)
+        tr = fs.distort_points(uv, K, dist)
+        if np.linalg.norm(c[0] - tr[0]) > np.linalg.norm(c[-1] - tr[0]):
+            c = c[::-1].copy()
+        pts.append(c)
+        ims.append(im8)
+        errs.append(np.linalg.norm(c - tr, axis=1))
+    return pts, ims, float(np.sqrt(np.mean(np.concatenate(errs) ** 2))), (float(np.mean(seen)) if seen else 0.0)
+
+
+def real_chessboard_chapter(syn_fx):
+    """第 8 章: 実写の校正板。(a) 13 枚の部分集合 715 通り (b) 実写の質感で描いた 3 配置。
+
+    ``syn_fx`` は第 4 章(合成の点)の fx 誤差 [%] を傾き 32 / 8 / 2 度の順に。比べて印字するだけ。
+    """
+    print("\n=== 8. 実写の校正板 —— OpenCV が配布する 13 枚と、その質感で描いた板 ===")
+    import itertools
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+    import fetch_stereoreal_data as boarddata
+
+    paths = boarddata.files("chessboard", required=False)
+    if paths is None:
+        print("  校正板の写真が手元に無い(CI の既定)。取得: py -3.11 tools/fetch_stereoreal_data.py chessboard")
+        if REAL_RECORDED is None:
+            raise AssertionError("記録値 REAL_RECORDED が空 —— 手元で写真ありの実行をして転記する")
+        for line in REAL_RECORDED["lines"]:
+            print("  [記録値] " + line)
+        # ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
+        r = REAL_RECORDED
+        assert r["sub_corr"] < 0.3, "記録値: 部分集合で再投影 RMS が fx 誤差を言い当てている"
+        assert r["render_fx"]["2"] > 10.0 * max(r["render_fx"]["32"], 1e-3), "記録値: 描いた板で配置の差が出ていない"
+        assert 0.5 < r["render_rms"]["2"] / r["render_rms"]["32"] < 2.0, "記録値: 描いた板の RMS が同程度でない"
+        return r
+    import cv2
+    from PIL import Image
+
+    cv2.setNumThreads(1)       # calibrateCamera はスレッドの足し順で末尾の桁が揺れる(基準は下の自前の解で決める)
+    names = sorted(paths)
+    obj = _real_obj()
+    imgs, pts = [], []
+    for nm in names:
+        g = np.asarray(Image.open(paths[nm]).convert("L"))
+        c = _real_corners(g, cv2)
+        assert c is not None, "%s で角点が見つからない" % nm
+        imgs.append(g)
+        pts.append(c)
+    import realdata
+    realdata.mark_read("opencv_samples:left*.jpg")
+    H, W = imgs[0].shape
+    rms_cv, K_cv, dist_cv, _rv, _tv = _cv_calib(cv2, obj, pts, (W, H))
+    # 基準(描いた板の真値)はこの PoC の自前の解(scipy の LM、決定的)。OpenCV は別実装の検算に回す。
+    mine = calibrate(obj, pts)
+    K = fs.intrinsic_matrix(mine["fx"], mine["fy"], mine["cx"], mine["cy"])
+    dist = np.asarray(mine["dist"], np.float64)
+    rms = mine["rms"]
+    rv = [np.asarray(r[:3], np.float64) for r in mine["rt"]]
+    tv = [np.asarray(r[3:], np.float64) for r in mine["rt"]]
+    tilt = [float(np.degrees(np.arccos(abs(fs.rodrigues(r)[2, 2])))) for r in rv]
+    print(f"  写真 {len(names)} 枚(640x480、内角 9x6)。この PoC の calibrate(4 係数): 再投影 RMS {rms:.3f} px")
+    print(f"  fx {K[0, 0]:.2f} fy {K[1, 1]:.2f} cx {K[0, 2]:.2f} cy {K[1, 2]:.2f}  k1 {dist[0]:+.4f} k2 {dist[1]:+.4f}"
+          f"  sigma_fx {mine['sigma_fx']:.2f} px")
+    print(f"  板の傾き(推定): {min(tilt):.1f}〜{max(tilt):.1f} 度 —— **正面に近い写真は 1 枚も無い**")
+    # 別実装で検算: OpenCV の calibrateCamera(k3=0 = 同じ 4 係数モデル)で同じ 13 枚を解く
+    d_fx = 100.0 * abs(K_cv[0, 0] - K[0, 0]) / K[0, 0]
+    print(f"  OpenCV の calibrateCamera(k3=0)で同じ 13 枚: fx {K_cv[0, 0]:.2f}(自前との差 {d_fx:.3f} %)"
+          f"、再投影 RMS {rms_cv:.3f} px")
+    assert d_fx < 0.1, "自前の校正と OpenCV が 0.1 % 以上食い違う"
+
+    # (a) 4 枚の部分集合 715 通り。★2026-11-08 の再レビュー: 13 枚の推定を基準にした「相関 +0.03」は基準の
+    #     取り方の産物だった —— 再投影の外れた 1 枚(left02)が 13 枚の推定を引っ張り、その 1 枚を含む組は全部
+    #     RMS が大きい。基準と組を変えると相関が +0.03 にも +0.54 にもなる。ここでは外れの 1 枚をデータから
+    #     決めて明示し、その 1 枚を除いた 12 枚の推定を基準に、除いた組(495 通り)で見る。
+    per_view = []
+    Kk = fs.intrinsic_matrix(mine["fx"], mine["fy"], mine["cx"], mine["cy"])
+    for k_, o_ in enumerate(pts):
+        uv_, _ = fs.project_points(obj, Kk, fs.rodrigues(mine["rt"][k_, :3]), mine["rt"][k_, 3:])
+        per_view.append(float(np.sqrt(np.mean(np.sum((fs.distort_points(uv_, Kk, dist) - o_) ** 2, axis=1)))))
+    k_out = int(np.argmax(per_view))
+    rest = [i for i in range(len(names)) if i != k_out]
+    fx12 = calibrate(obj, [pts[i] for i in rest])["fx"]
+    sub = []
+    for idx in itertools.combinations(range(len(names)), REAL_SUBSET):
+        r2, K2, _d, _r, _t = _cv_calib(cv2, obj, [pts[i] for i in idx], (W, H))
+        sub.append((r2, K2[0, 0], float(k_out in idx)))
+    sub = np.array(sub)
+    has = sub[:, 2] > 0.5
+    d13 = 100.0 * (sub[:, 1] / K[0, 0] - 1.0)
+    d12 = 100.0 * (sub[:, 1] / fx12 - 1.0)
+    corr13 = float(np.corrcoef(sub[:, 0], np.abs(d13))[0, 1])
+    corr12_all = float(np.corrcoef(sub[:, 0], np.abs(d12))[0, 1])
+    clean = sub[~has]
+    dc = d12[~has]
+    corr = float(np.corrcoef(clean[:, 0], np.abs(dc))[0, 1])
+    print(f"  (a) 再投影の外れの 1 枚: {names[k_out]}(1 枚ごとの RMS {per_view[k_out]:.2f} px、他は "
+          f"{min(per_view[i] for i in rest):.2f}〜{max(per_view[i] for i in rest):.2f} px)。")
+    print(f"      13 枚の推定 fx {K[0, 0]:.2f} → {names[k_out]} を除いた 12 枚では {fx12:.2f}(外れの 1 枚が基準を引っ張る)。")
+    print(f"      4 枚組 {len(sub)} 通りのうち {names[k_out]} を含む {int(has.sum())} 組は RMS {sub[has, 0].min():.3f} px 以上、"
+          f"含まない組は {clean[:, 0].max():.3f} px 以下 —— RMS は外れの写真を見分けている。")
+    print(f"      RMS と |fx の差| の相関は基準の取り方で変わる: 13 枚基準・全組 {corr13:+.3f} / 12 枚基準・全組 {corr12_all:+.3f}"
+          f" / 12 枚基準・{names[k_out]} を含まない {len(clean)} 組 {corr:+.3f}。")
+    print(f"      → 言えるのは最後の一つ: 外れの写真が無い組どうしでは、RMS {clean[:, 0].min():.3f}〜{clean[:, 0].max():.3f} px の"
+          f"範囲で fx が {dc.min():+.2f}〜{dc.max():+.2f} % 散り、RMS の小さい組ほど 12 枚の推定に近いという関係は無い")
+    print("        (組は写真を共有するので独立な標本ではない)。実写の 13 枚は全部 15 度以上傾いているので、第 4 章の")
+    print("        『傾き 2 度』は実写では作れない —— 同じ RMS で fx が狂う話は (b) の描いた板で見る。")
+    assert all(sub[has, 0] > clean[:, 0].max()), "外れの 1 枚を含む組と含まない組の RMS が分かれない —— 記述を書き直せ"
+    # ★再々レビュー: 外れを含まない組の RMS は 0.2 と 0.3 の 2 つの塊に分かれる。0.3 の塊は 2 番目に外れた写真を
+    #   含む組。外れの数を 1 → 2 → 3 枚と増やして除き、そのたびに基準も残りの写真で推定し直した相関も出す。
+    order_out = list(np.argsort(per_view)[::-1])
+    second = order_out[1]
+    n_sec = int(np.sum([(second in idx) for idx in itertools.combinations(range(len(names)), REAL_SUBSET)
+                        if k_out not in idx]))
+    seq = []
+    for n_drop in (1, 2, 3):
+        drop = set(order_out[:n_drop])
+        keep_i = [i for i in range(len(names)) if i not in drop]
+        ref = calibrate(obj, [pts[i] for i in keep_i])["fx"] if n_drop > 1 else fx12
+        mask = np.array([not (set(idx) & drop) for idx in itertools.combinations(range(len(names)), REAL_SUBSET)])
+        dd_ = np.abs(100.0 * (sub[mask, 1] / ref - 1.0))
+        seq.append((n_drop, [names[i] for i in order_out[:n_drop]], int(mask.sum()),
+                    float(np.corrcoef(sub[mask, 0], dd_)[0, 1]), float(sub[mask, 0].max())))
+    print(f"      外れを含まない組の RMS は 2 つの塊に分かれる: 0.3 px 付近の {n_sec} 組は全部 {names[second]}"
+          f"(1 枚ごとの RMS {per_view[second]:.2f} px、2 番目に外れた写真)を含む。")
+    print("      外れの写真を RMS の大きい順に除き、基準もそのつど残りで推定し直すと:")
+    for n_drop, dn, cnt, cc, rmax in seq:
+        print(f"        {n_drop} 枚除く({'・'.join(dn)}): {cnt} 組、RMS ≤ {rmax:.3f} px、相関 {cc:+.3f}")
+    print(f"      → 3 枚除くと相関 {seq[2][3]:+.3f} で、門の 0.3 に近い。『RMS の小さい組ほど fx が推定に近い関係は無い』は")
+    print("        1〜2 枚除いた範囲の話で、組が減ると弱い正の相関が出始める(門は 1 枚除いた組に掛け、動かさない)。")
+
+    # (b) 実写の質感で描いた板: 真の K・歪み = 13 枚の自前の推定値(★外から来た真値ではない —— 描いた板の
+    #     真値として置いただけ。外から来ているのは板の質感・部屋の背景と OpenCV の角点検出)。
+    k_src = int(np.argmin(tilt))
+    tex, xs, ys, before, after = real_board_texture(cv2, imgs[k_src].astype(np.float64) / 255.0, K,
+                                                    np.r_[dist, 0.0], rv[k_src], tv[k_src])
+    backdrop, hole = real_backdrop(cv2, imgs[k_src], K, dist, fs.rodrigues(rv[k_src]), tv[k_src])
+    print(f"  (b) いちばん正面に近い {names[k_src]}(傾き {tilt[k_src]:.1f} 度)から板面の質感を取り出し、")
+    print(f"      角の格子へのずれを {before:.3f} → {after:.3f} 質感 px(1 升 = {REAL_TEX_PPS} px)に揃えてから、")
+    print("      13 枚の推定値を真値に置いたカメラで 10 視点ずつ描き、OpenCV で角点を拾ってこの PoC の calibrate で解く。")
+    print("      板の外(部屋)はカメラに固定した同じ写真から読む(板と一緒に傾かない)。写っていた板の範囲は周囲から埋めた。")
+    print(f"      {'配置':<16}{'角点の誤差':>10}{'再投影RMS':>11}{'fx 誤差 %':>11}{'sigma_fx':>10}  (種 {len(REAL_SEEDS)} 個の平均)")
+    rend = {}
+    shown = {}
+    seen_all = []
+    for tilt_deg in REAL_TILTS:
+        ce, rr, fe, sg = [], [], [], []
+        for sd in REAL_SEEDS:
+            ps = real_board_poses(N_VIEWS, tilt_deg, base=(fs.rodrigues(rv[k_src]), tv[k_src]), **REAL_POSE)
+            p2, ims, cerr, seen = real_render_views(cv2, tex, xs, ys, K, dist, (W, H), ps,
+                                                    seed=1000 * int(tilt_deg) + sd, backdrop=backdrop, hole=hole)
+            r = calibrate(obj, p2)
+            ce.append(cerr)
+            rr.append(r["rms"])
+            fe.append(100.0 * (r["fx"] - K[0, 0]) / K[0, 0])
+            sg.append(r["sigma_fx"])
+            seen_all.append(seen)
+            if sd == REAL_SEEDS[0]:
+                shown[tilt_deg] = (ims[0], p2[0], r)
+        rend[tilt_deg] = dict(cerr=float(np.mean(ce)), rms=float(np.mean(rr)), fx=float(np.mean(np.abs(fe))),
+                              fx_lo=float(np.min(np.abs(fe))), fx_hi=float(np.max(np.abs(fe))),
+                              fx_signed=fe, sigma=float(np.mean(sg)))
+        print(f"      傾き {tilt_deg:>4.0f} 度       {np.mean(ce):>9.3f}{np.mean(rr):>11.3f}{np.mean(np.abs(fe)):>11.3f}"
+              f"{np.mean(sg):>10.2f}   (符号つき {', '.join('%+.2f' % v for v in fe)})")
+    seen_frac = float(np.mean(seen_all))
+    print(f"      埋めた背景が板に覆われずに見えている画素: 平均 {100 * seen_frac:.2f} %(最大 {100 * max(seen_all):.2f} %)"
+          " —— 門は平均で見る(最大は 5 % を超える視点がある)")
+    g, b = rend[REAL_TILTS[0]], rend[REAL_TILTS[-1]]
+    print(f"  → 再投影 RMS は {g['rms']:.3f} / {b['rms']:.3f} px(比 {b['rms'] / g['rms']:.2f})でほぼ同じなのに、"
+          f"|fx 誤差| は種 {len(REAL_SEEDS)} 個で 32 度 {g['fx_lo']:.2f}〜{g['fx_hi']:.2f} %、"
+          f"2 度 {b['fx_lo']:.1f}〜{b['fx_hi']:.1f} %(2 度のいちばん小さい値でも 32 度のいちばん大きい値の "
+          f"{b['fx_lo'] / g['fx_hi']:.0f} 倍)。")
+    print("    ★値は範囲で読む: 描き直しの経路は敏感で、真値(13 枚の推定)が 1e-5 px 動くだけで描いた画像と角点が")
+    print("      動き(角点で中央値 0.03 px、2026-11-09 実測)、雑音の実現が別物になって種ごとの値が入れ替わる")
+    print("      (傾き 2 度の平均は本体の版で 3.99 % にも 5.41 % にもなった)。1 つの種・1 つの平均の有効数字に意味は無い。")
+    print(f"    合成の点(第 4 章、雑音 0.05 px)では {syn_fx[0]:.3f} % と {syn_fx[-1]:.3f} %。角点の誤差は {b['cerr']:.2f} px"
+          f"(合成の 0.05 px の約 {b['cerr'] / 0.05:.1f} 倍)。正面寄りの誤差は種で 2 倍ほど揺れるが、どれも同じ向き。")
+    print(f"    警報になるのは sigma_fx(傾き 2 度で {b['sigma']:.1f} px、32 度で {g['sigma']:.2f} px)—— 再投影 RMS ではない。")
+    assert after < before and after < 0.2, "質感の角を格子に揃えられていない"
+    assert corr < 0.3, "外れを除いた部分集合で再投影 RMS が fx のずれを言い当てた —— 結論を書き直せ"
+    assert 0.5 < b["rms"] / g["rms"] < 2.0, "描いた板で再投影 RMS が同程度でない"
+    assert b["fx"] > 10.0 * g["fx"], "描いた板で fx 誤差が桁で違わない"
+    # ★展示台帳の lead の「28 倍以上」は 1 回の実現の値(門は 10 倍)。データありの実行で REAL_RECORDED が変わったら、lead も見直すこと。
+    assert b["fx_lo"] > 10.0 * g["fx_hi"], "描いた板で fx 誤差の範囲が桁で離れていない(主張は範囲で書いている)"
+    assert b["sigma"] > 10.0 * g["sigma"], "描いた板で sigma_fx が配置の差を映さない"
+    assert seen_frac < 0.05, "埋めた背景が 5 %% 以上見えている(%.3f)—— 背景の作り方を見直す" % seen_frac
+
+    lines = [
+        "写真 %d 枚の校正(自前の calibrate、4 係数): fx %.2f px、再投影 RMS %.3f px、傾き %.1f〜%.1f 度"
+        % (len(names), K[0, 0], rms, min(tilt), max(tilt)),
+        "自前の calibrate と OpenCV の fx の差 %.3f %%" % d_fx,
+        "外れの 1 枚 %s(RMS %.2f px)、13 枚の fx %.2f → 12 枚 %.2f" % (names[k_out], per_view[k_out], K[0, 0], fx12),
+        "相関(RMS と |fx の差|): 13 枚基準・全組 %+.3f / 12 枚基準・全組 %+.3f / 12 枚基準・外れを含まない %d 組 %+.3f"
+        % (corr13, corr12_all, len(clean), corr),
+        "外れを含まない組: RMS %.3f〜%.3f px、fx の差 %+.2f〜%+.2f %%" % (clean[:, 0].min(), clean[:, 0].max(), dc.min(), dc.max()),
+        "外れを順に除いた相関: " + " / ".join("%d 枚除き %d 組 %+.3f" % (a_, c_, r_) for a_, _d, c_, r_, _m in seq),
+    ] + ["描いた板 傾き %.0f 度: 角点の誤差 %.3f px、再投影 RMS %.3f px、|fx 誤差| 種 %d 個で %.2f〜%.2f %%、sigma_fx %.1f px"
+         % (t, rend[t]["cerr"], rend[t]["rms"], len(REAL_SEEDS), rend[t]["fx_lo"], rend[t]["fx_hi"], rend[t]["sigma"])
+         for t in REAL_TILTS]
+    rec = {"lines": lines, "sub_corr": round(corr, 4),
+           "render_fx": {"%.0f" % t: round(rend[t]["fx"], 4) for t in REAL_TILTS},
+           "render_rms": {"%.0f" % t: round(rend[t]["rms"], 4) for t in REAL_TILTS}}
+    print("  REAL_RECORDED = %r" % (rec,))
+    # ★データがあるときは、測った値と埋め込みの記録値を突き合わせる。CI(データ無し)の門は記録値どうしの
+    #   比較なので、記録が古くなっても気づけない —— その穴はここで塞ぐ(決定的な計算なので許容幅は丸めの分だけ)。
+    if REAL_RECORDED is not None:
+        stale = []
+        if abs(rec["sub_corr"] - REAL_RECORDED["sub_corr"]) > 2e-4:
+            stale.append("sub_corr %r != %r" % (rec["sub_corr"], REAL_RECORDED["sub_corr"]))
+        for key in ("render_fx", "render_rms"):
+            for t_, v in rec[key].items():
+                if abs(v - REAL_RECORDED[key][t_]) > 2e-4:
+                    stale.append("%s[%s] %r != %r" % (key, t_, v, REAL_RECORDED[key][t_]))
+        if rec["lines"] != list(REAL_RECORDED["lines"]):
+            stale.append("lines が違う")
+        assert not stale, "REAL_RECORDED が実測と違う(記録を転記し直す): " + "; ".join(stale)
+    fig_real_board(imgs[k_src], pts[k_src], names[k_src], K, rms, len(names), shown, rend, syn_fx,
+                   np.column_stack([sub[:, 0], d12, sub[:, 2]]), corr, names[k_out], fx12, names[second], n_sec, seq, seen_frac,
+                   max(seen_all))
+    return rec
+
+
+def fig_real_board(photo, photo_pts, photo_name, K, rms, n_photos, shown, rend, syn_fx, sub, corr, out_name, fx12,
+                   sec_name, n_sec, seq, seen_mean, seen_max):
+    """代表の図: 上段 = 実写そのもの(写真 1 枚 + 4 枚組 715 通りの散布)、下段 = 実写の質感で描いた板 2 配置。"""
+    if not figs.enabled():
+        return None
+    from PIL import Image, ImageDraw, ImageFont
+
+    font = ImageFont.truetype(str(figs._japanese_font_path()), 22)
+    font_s = ImageFont.truetype(str(figs._japanese_font_path()), 17)
+    font_m = ImageFont.truetype(str(figs._japanese_font_path()), 20)
+    font_b = ImageFont.truetype(str(figs._japanese_font_path(bold=True)), 23)
+    PW, PH, HEAD, GAP, TOP = 640, 480, 74, 12, 84
+    W = 2 * PW + 3 * GAP
+    Hh = TOP + 2 * (HEAD + PH) + 3 * GAP + 34
+    sheet = Image.new("RGB", (W, Hh), (14, 18, 24))
+    d = ImageDraw.Draw(sheet)
+    g, b = rend[REAL_TILTS[0]], rend[REAL_TILTS[-1]]
+    has = sub[:, 2] > 0.5
+    d.text((GAP, 10), "上: 実写 %d 枚の 4 枚組。外れの 1 枚(%s)を除く %d 組でも fx は %+.1f〜%+.1f %% 散る"
+           % (n_photos, out_name, int((~has).sum()), sub[~has, 1].min(), sub[~has, 1].max()),
+           font=font_b, fill=(240, 240, 240))
+    d.text((GAP, 44), "下: 実写の質感で描き直した板。RMS %.3f〜%.3f px のまま |fx 誤差| %.2f %% → %.1f %%(種ごと %.1f〜%.1f %%)"
+           % (min(rend[t]["rms"] for t in REAL_TILTS), max(rend[t]["rms"] for t in REAL_TILTS), g["fx"], b["fx"],
+              b["fx_lo"], b["fx_hi"]), font=font_b, fill=(240, 240, 240))
+
+    def head(i, title, subt, col):
+        x0 = GAP + (i % 2) * (PW + GAP)
+        y0 = TOP + (i // 2) * (HEAD + PH + GAP)
+        d.rectangle((x0, y0, x0 + PW - 1, y0 + HEAD - 1), fill=(26, 34, 46))
+        d.text((x0 + 10, y0 + 6), title, font=font, fill=(235, 235, 235))
+        d.text((x0 + 10, y0 + 40), subt, font=font_m, fill=col)
+        return x0, y0 + HEAD
+
+    def photo_panel(i, im, p, title, subt, col):
+        x0, y0 = head(i, title, subt, col)
+        rgb = Image.fromarray(np.asarray(im, np.uint8)).convert("RGB")
+        dd = ImageDraw.Draw(rgb)
+        for (x, y) in p:
+            dd.line((x - 6, y, x + 6, y), fill=col, width=2)
+            dd.line((x, y - 6, x, y + 6), fill=col, width=2)
+        sheet.paste(rgb, (x0, y0))
+
+    photo_panel(0, photo, photo_pts, "実写 %s(OpenCV 配布の校正板)" % photo_name,
+                "13 枚の推定: fx = %.1f px、再投影 RMS %.2f px" % (K[0, 0], rms), (120, 200, 255))
+    # 上右: 実写の 4 枚組 715 通り —— 横 = 再投影 RMS、縦 = fx の 13 枚の推定との差
+    x0, y0 = head(1, "4 枚組 %d 通り(縦 = 12 枚の推定 fx %.1f との差 [%%])" % (len(sub), fx12),
+                  "青 = %s を含まない(相関 %+.3f)/ 橙 = 含む" % (out_name, corr), (120, 200, 255))
+    pl = Image.new("RGB", (PW, PH), (18, 25, 34))
+    dp = ImageDraw.Draw(pl)
+    ax0, ax1, ay0, ay1 = 70, PW - 20, 20, PH - 60
+    xlo, xhi = 0.1, float(np.ceil(sub[:, 0].max() * 10) / 10)
+    ylo, yhi = float(np.floor(sub[:, 1].min())), float(np.ceil(sub[:, 1].max()))
+    xp = lambda v: ax0 + (v - xlo) / (xhi - xlo) * (ax1 - ax0)
+    yp = lambda v: ay1 - (v - ylo) / (yhi - ylo) * (ay1 - ay0)
+    dp.rectangle((ax0, ay0, ax1, ay1), outline=(150, 160, 170))
+    dp.line((ax0, yp(0.0), ax1, yp(0.0)), fill=(110, 110, 110), width=1)
+    for v in np.arange(xlo, xhi + 1e-9, 0.1):
+        dp.text((xp(v) - 14, ay1 + 6), "%.1f" % v, font=font_s, fill=(190, 190, 190))
+    for v in np.arange(ylo, yhi + 1e-9, 1.0):
+        dp.text((ax0 - 44, yp(v) - 10), "%+.0f" % v, font=font_s, fill=(190, 190, 190))
+    for r_, f_, h_ in sub:
+        cx, cy = xp(r_), yp(f_)
+        dp.ellipse((cx - 2, cy - 2, cx + 2, cy + 2), fill=(255, 170, 60) if h_ > 0.5 else (120, 200, 255))
+    dp.text((ax0 + 10, ay0 + 6), "灰線 = 12 枚の推定と同じ fx", font=font_s, fill=(200, 200, 200))
+    dp.text((xp(0.27), yp(-1.6)), "0.3 付近 = %s を含む %d 組" % (sec_name, n_sec), font=font_s, fill=(200, 220, 240))
+    dp.text((ax0 + 10, ay1 + 30), "外れを順に除いた相関 " + " / ".join("%d 枚 %+.3f" % (a_, r_) for a_, _d, _c, r_, _m in seq),
+            font=font_s, fill=(220, 220, 220))
+    sheet.paste(pl, (x0, y0))
+    for i, t in ((2, REAL_TILTS[0]), (3, REAL_TILTS[-1])):
+        im, p, _r = shown[t]
+        bad = t == REAL_TILTS[-1]
+        rt = rend[t]
+        subt = ("RMS %.3f px → |fx 誤差| %.1f〜%.1f %%(種 %d 個)・sigma_fx %.1f"
+                % (rt["rms"], rt["fx_lo"], rt["fx_hi"], len(REAL_SEEDS), rt["sigma"]) if bad else
+                "RMS %.3f px → |fx 誤差| %.2f〜%.2f %%(種 %d 個)、sigma_fx %.2f px"
+                % (rt["rms"], rt["fx_lo"], rt["fx_hi"], len(REAL_SEEDS), rt["sigma"]))
+        photo_panel(i, im, p, "描き直した板 傾き %.0f 度 × 10 視点(真値 = 13 枚の推定)" % t, subt,
+                    (255, 120, 90) if bad else (120, 230, 140))
+    d.text((GAP, Hh - 30), "十字 = OpenCV が拾った角点。傾き 8 度は |fx 誤差| %.2f〜%.2f %%。描いた板の背景はカメラに固定した同じ写真。"
+           "写真: OpenCV samples/data(Apache-2.0)" % (rend[8.0]["fx_lo"], rend[8.0]["fx_hi"]), font=font_s, fill=(190, 190, 190))
+    cap = ("上: 実写の校正板(OpenCV が配布する 13 枚、Apache-2.0)から 4 枚を選ぶ %d 通りを校正し直した。再投影の外れの 1 枚(%s)を"
+           "含む組は RMS が大きく、含まない %d 組では 12 枚の推定 fx との差が %+.2f〜%+.2f %% 散り、RMS と |差| の相関は %+.3f"
+           "(基準を 13 枚の推定にすると値が変わる)。含まない組の RMS が 0.3 px 付近に固まる %d 組は 2 番目に外れた %s を含む。"
+           "外れを RMS の大きい順に 1 / 2 / 3 枚除くと相関は %+.3f / %+.3f / %+.3f で、3 枚除くと門の 0.3 に近づく。"
+           "下: 最も正面に近い 1 枚の板面の質感を、13 枚の推定値を真値に置いた"
+           "カメラで傾き 32 / 8 / 2 度に 10 視点ずつ描き直し、OpenCV で角点を拾って校正した結果。再投影 RMS は "
+           "%.3f / %.3f / %.3f px でほぼ同じなのに、|fx 誤差| は雑音の種 %d 個で %.2f〜%.2f / %.2f〜%.2f / %.1f〜%.1f %%。"
+           "警報になるのは sigma_fx(%.2f → %.1f px)。合成の点(第 4 章)では %.3f / %.3f / %.3f %% だった。"
+           "値は範囲で読む: 描き直しの経路は敏感で、真値が 1e-5 px 動くだけで角点が中央値 0.03 px 動いて雑音の実現が変わる。"
+           "描いた板の背景で、写っていた板を埋めた部分が見えている画素は平均 %.1f %%(最大 %.1f %%)。"
+           % (len(sub), out_name, int((~has).sum()), sub[~has, 1].min(), sub[~has, 1].max(), corr, n_sec, sec_name, seq[0][3], seq[1][3], seq[2][3], g["rms"], rend[8.0]["rms"], b["rms"], len(REAL_SEEDS), g["fx_lo"],
+              g["fx_hi"], rend[8.0]["fx_lo"], rend[8.0]["fx_hi"], b["fx_lo"], b["fx_hi"], g["sigma"], b["sigma"],
+              syn_fx[0], syn_fx[1], syn_fx[2],
+              100 * seen_mean, 100 * seen_max))
+    return figs.save("real_board", np.asarray(sheet, np.float64) / 255.0, caption=cap)
 
 
 if __name__ == "__main__":

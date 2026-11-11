@@ -16,7 +16,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>欧几里得距离变换。相当于 HALCON 的 <code style="color:#22d3bf">distance_transform</code>（Compute the distance transformation of a region.）。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。对每个前景像素求出到最近背景像素的欧氏距离（<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>），并用 <code style="color:#22d3bf">_norm</code> 把该图像内的最大值归一化为 1（无法在图像之间比较绝对距离）。用于骨架化、颗粒中心检测等的预处理。</p>
-<p>??? FsValueError????? NaN / inf?</p>
+<p><b>连 1 个背景像素都没有</b>（整幅都是前景）时，最近的背景不在图像中 —— 每个像素都“无限远”，因此归一化后的答案<b>一律为 1.0</b>（与 <code style="color:#22d3bf">xsp_chamfer_dist</code> / <code style="color:#22d3bf">cv_dist</code> 相同）。2026-11-05（对抗性验证 第 2 轮 P4）之前，<code style="color:#22d3bf">distance_transform_edt</code> 返回的是仿佛图像外的 (-1, 0) 处有背景的斜坡，左右翻转后数值会改变。没有前景时为 0。</p>
+<p>异常:</p>
+<p>FsValueError: 图像含有 NaN / inf。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

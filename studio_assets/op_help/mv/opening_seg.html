@@ -6,7 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>くびれで繋がった物体を収縮で切り離し、元の領域の中で広げ直してラベルにする。</p>
-<p>構造要素で収縮 → 連結成分 → 各成分を最寄りの画素へ広げる(<code style="color:#22d3bf">region</code> の中だけ)。収縮で全部消えると全 0 のラベルを返す(理由: 切り離す種が残らない)。空の入力(<code style="color:#22d3bf">region</code> が 0 要素)は ValueError。</p>
+<p>構造要素で収縮 → 連結成分 → 各種を <code style="color:#22d3bf">region</code> の中だけを通って(測地的に)広げる。各画素は最寄りの種の番号を受けるが、その番号の区画が <code style="color:#22d3bf">region</code> の中で種とつながらない画素(背景を跨いだ割り当て)は、つながった区画から 8 近傍で 1 画素ずつ広げ直す。<b>種を 1 つも持たない連結成分(収縮で消えた小さな塊)は 0</b>(隣の物体の番号をもらわない)。収縮で全部消えると全 0 のラベルを返す(理由: 切り離す種が残らない)。空の入力(<code style="color:#22d3bf">region</code> が 0 要素)は ValueError。</p>
 <p>Args:</p>
 <p>region: 2-D の領域。</p>
 <p>se: 構造要素(奇数辺の bool 配列)。</p>
@@ -20,6 +20,8 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_bg_kalman_tracking">poc_real_bg_kalman_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_bg_kalman_tracking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_grain_skiz">poc_real_grain_skiz</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_grain_skiz.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">labels2d</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opmv:select_characters">select_characters</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">morphology</code>)</h3>

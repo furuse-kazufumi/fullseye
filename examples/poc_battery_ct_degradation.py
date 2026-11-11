@@ -30,10 +30,12 @@ EXTEND: 実機 CT に差し替えるなら :func:`build_cell` が返す ``mu``(�
    (幾何からの予測 4.0 倍、真値は +0.249 / +0.062 mm)。「厚みが 0.24 mm
    増えた」は、体積では 0.07 mm ぶんしか増えていない。
 4. ★★**対照群: 外形が同じで中身が違う 3 つ**。一様膨れ / 局所膨れ /
-   層間ガス空隙を、缶のふくらみが揃うように作った(面平均のはみ出し
-   0.0622 mm)。外形は 3 つとも中央 6.313 mm・面平均 6.144 mm で
-   **ばらつき 0.000 mm** —— 外形指標では原理的に分けられない。内部指標は
-   分ける: 層厚 0.190 / 0.187 / 0.173 mm、空隙率 0.00 / 0.00 / **5.20 %**、
+   層間ガス空隙を、外形が揃うように膨れの倍率を合わせた(局所 0.2736 /
+   ガス 0.3021。面平均のはみ出し 0.0622 mm)。だから外形は 3 つとも中央
+   6.313 mm・面平均 6.144 mm で揃う —— **これは作り方の結果で、発見ではない**。
+   外形が揃ったセルは外形指標では分けられない、というのがこの章の前提。内部指標は
+   分ける: 層厚 0.190 / 0.187 / 0.173 mm、空隙率 0.00 / 0.00 / **5.20 %**(ガスの
+   真値 5.81 %、部分体積で 10.5 % 痩せる。8 を参照)、
    平面度(残差 RMS)0.0156 / 0.0428 / 0.0784 mm。一様膨れと局所膨れは
    **層厚では分かれず、平面度が分ける**。
 5. ★**同じ外形を作るのに要る内部の膨張体積は等しくない**(一様 0.6715 /
@@ -131,6 +133,14 @@ ELEC_X = (0.80, 3.04)             # 電極の面内の広がり(x)
 ELEC_Z = (0.52, 1.40)             # 電極の面内の広がり(z)
 
 MU_CAN, MU_ELEC, MU_LIQ, MU_GAS = 2.2, 1.0, 0.35, 0.02   # 線減弱(コントラスト単位)
+# 代表の図(9 節)だけの材質ごとの減弱。数値の章(1〜8 節)は上の単一材質の模型のまま。
+# 正極の合材(Ni/Mn/Co の酸化物、重い元素で明るい)・負極の合材(黒鉛、正極より暗いがセパレータ + 電解液
+# MU_LIQ 0.35 よりは明るい —— 黒鉛 2.2 g/cm³ 対 電解液・高分子 約 1.2 g/cm³)・集電箔(Al 15 µm は正極の合材より
+# 軽く暗い細線、Cu 10 µm は重く明るい細線)。値は相対の明暗の並びだけを実物の電池 CT に合わせた目安で、測定値ではない。
+# ★2026-11-08(再レビュー): 負極 0.55 では電解液・隙間とほぼ同じ暗さで「層が抜けた」ように見えた → 0.85。
+MU_CATHODE, MU_ANODE, MU_FOIL_AL, MU_FOIL_CU = 1.85, 0.85, 0.9, 7.0
+FOIL_AL, FOIL_CU = 0.015, 0.010     # 箔の厚み [mm](voxel 0.04 mm より薄いので部分体積で塗る)
+TAB_OVERHANG = 0.25                 # 箔が合材の外へ出る長さ [mm](タブ側。正極は +x、負極は -x)
 
 # --- 撮像の諸元 -------------------------------------------------------------- #
 N_ANGLE = 120                     # 投影数
@@ -305,8 +315,13 @@ def _box(g, xr, yr, zr):
     return np.asarray(L.box_sdf(g, c, hx))
 
 
-def build_cell(kind: str, scale: float = 1.0) -> dict:
-    """線減弱ボリューム ``mu`` (D, H, W) と真値の辞書を作る。"""
+def build_cell(kind: str, scale: float = 1.0, materials: bool = False) -> dict:
+    """線減弱ボリューム ``mu`` (D, H, W) と真値の辞書を作る。
+
+    ``materials=True`` は代表の図(9 節)のためだけの描画: 同じ形の積層に、層ごとに正極 / 負極の合材と
+    集電箔(部分体積、タブ側へのはみ出しつき)の減弱を割り当て、缶の壁に ±3 % のむらを入れる。
+    数値の章(1〜8 節)は ``False``(単一材質の模型)で測る —— 層厚・空隙率・平面度は変わらない。
+    """
     g = grid()
     fields = degradation_fields(kind, scale)
     bl = bulge(fields)
@@ -349,13 +364,22 @@ def build_cell(kind: str, scale: float = 1.0) -> dict:
     gap_i = _xz_field(GAP * squeeze)
     elec = np.zeros(X.shape, bool)
     voids = np.zeros(X.shape, bool)
+    elec_id = np.full(X.shape, -1, np.int16)    # 層の番号(材質の描画用)
+    foils = []                                  # (箔の中心 y, 箔の面内の広がり) の列(材質の描画用)
     cursor = y_bot + 0.5 * gap_i
     layer_lo, layer_hi, layer_dx = [], [], []
     for i in range(N_LAYER):
         dx = fields["shift"] * (i - 0.5 * (N_LAYER - 1))
         foot = _xz_field(((xx - dx >= ELEC_X[0]) & (xx - dx <= ELEC_X[1])
                           & (zz >= ELEC_Z[0]) & (zz <= ELEC_Z[1])))
-        elec |= (Y >= cursor) & (Y < cursor + t_i) & foot
+        lay = (Y >= cursor) & (Y < cursor + t_i) & foot
+        elec |= lay
+        elec_id[lay] = i
+        if materials:
+            ox = (ELEC_X[0], ELEC_X[1] + TAB_OVERHANG) if i % 2 == 0 else (ELEC_X[0] - TAB_OVERHANG, ELEC_X[1])
+            ffoot = _xz_field(((xx - dx >= ox[0]) & (xx - dx <= ox[1])
+                               & (zz >= ELEC_Z[0]) & (zz <= ELEC_Z[1])))
+            foils.append((cursor + 0.5 * t_i, ffoot))
         layer_lo.append(cursor.copy())
         layer_hi.append((cursor + t_i).copy())
         layer_dx.append(dx)
@@ -370,12 +394,28 @@ def build_cell(kind: str, scale: float = 1.0) -> dict:
 
     mu = np.zeros(X.shape)
     mu[cav] = MU_LIQ
-    mu[elec] = MU_ELEC
+    mu_can = MU_CAN
+    if materials:
+        # 層ごとに交互: 偶数 = 正極(明るい合材 + Al 箔)、奇数 = 負極(暗い合材 + Cu 箔)
+        mu[elec & (elec_id % 2 == 0)] = MU_CATHODE
+        mu[elec & (elec_id % 2 == 1)] = MU_ANODE
+        for i, (yc, ffoot) in enumerate(foils):
+            t_f, m_f = (FOIL_AL, MU_FOIL_AL) if i % 2 == 0 else (FOIL_CU, MU_FOIL_CU)
+            ov = np.clip(np.minimum(Y + 0.5 * SY, yc + 0.5 * t_f) - np.maximum(Y - 0.5 * SY, yc - 0.5 * t_f),
+                         0.0, None) / SY
+            ff = np.where(ffoot & cav, ov, 0.0)
+            mu = mu * (1.0 - ff) + m_f * ff
+        from scipy import ndimage
+        rng = np.random.default_rng(SEED + 11)
+        f = ndimage.gaussian_filter(rng.standard_normal(X.shape), 4.0)
+        mu_can = MU_CAN * (1.0 + 0.03 * f / max(float(f.std()), 1e-12))
+    else:
+        mu[elec] = MU_ELEC
     mu[voids] = MU_GAS
     # 缶は最後に、**部分体積で**塗る(食い込みは缶を優先)。二値で塗ると端板の
     # たわみが voxel に量子化されて階段になり、外形の測定がそのぶん粗くなる。
     frac = np.clip(0.5 - np.asarray(can_sdf) / SY, 0.0, 1.0)
-    mu = mu * (1.0 - frac) + MU_CAN * frac
+    mu = mu * (1.0 - frac) + mu_can * frac
 
     area_cell = SX * SZ
     t_field = T_ELEC * (1.0 + fields["alpha"]) * squeeze
@@ -835,17 +875,19 @@ def section_control(cells, recs) -> dict:
                  m["pitch_sd"], m["void_fraction"], t["dv_int"]))
 
     base = res["healthy"]
-    print("\n  ★外形は 3 つとも同じ(中央 %.3f / %.3f / %.3f mm、ばらつき %.3f mm)。"
+    for key in res:
+        res[key]["void_fraction_true"] = 100.0 * res[key]["truth"]["void_volume"] / res[key]["inner"]["roi_volume"]
+    print("\n  外形は 3 つとも中央 %.3f / %.3f / %.3f mm —— 外形が揃うように膨れの倍率を合わせたので、"
+          "これは作り方の結果(発見ではない)。"
           % (res["uniform"]["outer"]["caliper"], res["local"]["outer"]["caliper"],
-             res["gas"]["outer"]["caliper"],
-             float(np.std([res[k]["outer"]["caliper"]
-                           for k in ("uniform", "local", "gas")]))))
+             res["gas"]["outer"]["caliper"]))
     print("     内部は違う: 層厚 %.3f / %.3f / %.3f mm、空隙率 %.2f / %.2f / %.2f %%"
+          "(ガスの真値 %.2f %%、部分体積で痩せる)"
           % (res["uniform"]["inner"]["t_mean"], res["local"]["inner"]["t_mean"],
              res["gas"]["inner"]["t_mean"],
              res["uniform"]["inner"]["void_fraction"],
              res["local"]["inner"]["void_fraction"],
-             res["gas"]["inner"]["void_fraction"]))
+             res["gas"]["inner"]["void_fraction"], res["gas"]["void_fraction_true"]))
     print("     ★同じ外形を作るのに必要な**内部の膨張体積**は "
           "一様 %.4f / 局所 %.4f / ガス %.4f mm3 —— 集中した膨れは"
           "少ない体積で同じ外形変化を作る。"
@@ -1220,6 +1262,164 @@ def section_limits() -> None:
 
 
 # --------------------------------------------------------------------------- #
+# 節 9 —— 代表の図: 外形が同じでも中身は違う(灰色の CT 断面に劣化部を矢印で)
+# --------------------------------------------------------------------------- #
+CT_ZOOM = 3                        # 表示の拡大(CT ビューアと同じ双一次の補間。最近傍の階段にしない)
+CT_WINDOW = (-0.15, 2.45)          # 表示の窓(CT 値 = 線減弱のコントラスト単位)。ガス 0.02 が黒、缶 2.2 が白に近い
+
+
+def fbp_crosscheck(cell) -> dict | None:
+    """この PoC の FBP(``fs.fbp_volume``)を、別実装 ``skimage.transform.iradon`` と同じ投影で比べる。
+
+    雑音・ビームハードニングを入れない健全セルの中央の断面のサイノグラムを両方で再構成する。
+    **向きの約束は両方の定義から先に決める**(総当たりで選ばない):
+
+    * Fullseye(``tomography`` の冒頭): 行 = 角度・列 = 検出器、角度 θ の検出器の座標は
+      s = x cos θ + y sin θ(y は行で下向き)。
+    * skimage(``radon`` の実装): 列 = 角度・行 = 検出器(だから ``.T``)。像を ``warp`` で回してから
+      行方向に足すので、検出器の座標は u = x cos θ − y sin θ = x cos(−θ) + y sin(−θ)。
+      → Fullseye の θ は skimage の **−θ** に当たる(``theta=-angles``)。
+    * 検出器の中心: Fullseye は (n−1)/2、skimage は n//2。ここは n = 201(奇数)で一致する。
+
+    2026-11-08 版は 4 通りの向き × 6 通りの転置を総当たりして ``theta + 180`` を選んでいた(敵対的
+    レビューの指摘)。定義から出した ``−θ`` はそれと同じ値になる(180 度の回転と検出器の反転が打ち消し合う)。
+    完全一致はしない: 補間とフィルタの窓の約束が違い、相関 0.97 前後に留まる。★門 corr > 0.95・
+    |振幅比 − 1| < 0.05 は、この値(0.974 / 0.991)を**見たあとに**置いた(閉形式の許容ではない)。
+
+    scikit-image が無ければ ``None``(呼び手が [SKIP] を印字し、飛ばした数を数える)。
+    """
+    try:
+        from skimage.transform import iradon
+    except ImportError:
+        return None
+
+    mid = ND // 2
+    sino = forward(cell["mu"])
+    ours = np.asarray(fs.fbp_volume(sino, angles(), size=NH))[mid]
+    assert sino.shape[2] % 2 == 1, "検出器の数が偶数だと中心の約束 (n-1)/2 と n//2 が半画素ずれる"
+    ref = iradon(np.asarray(sino[mid]).T, theta=-angles(), filter_name="ramp",
+                 output_size=NH, circle=False)
+    corr = float(np.corrcoef(ours.ravel(), ref.ravel())[0, 1])
+    gain = float(np.std(ours) / np.std(ref))
+    return {"corr": corr, "gain": gain}
+
+
+def _ct_panel(sl):
+    """CT の断面 1 枚を窓に通して灰色 8 bit にし、双一次で拡大する(実機の CT ビューアの見え方)。"""
+    from scipy import ndimage
+
+    lo, hi = CT_WINDOW
+    g = np.clip((np.asarray(sl, float) - lo) / (hi - lo), 0.0, 1.0)
+    g = ndimage.zoom(g, CT_ZOOM, order=1)
+    return (np.clip(g, 0.0, 1.0) * 255.0 + 0.5).astype(np.uint8)
+
+
+def _arrow(draw, tail, head, color, width=3):
+    """矢印(線と三角の矢じり)。座標は (x, y) 画素。"""
+    import math
+
+    draw.line([tail, head], fill=color, width=width)
+    ang = math.atan2(head[1] - tail[1], head[0] - tail[0])
+    size = 11
+    left = (head[0] - size * math.cos(ang - 0.45), head[1] - size * math.sin(ang - 0.45))
+    right = (head[0] - size * math.cos(ang + 0.45), head[1] - size * math.sin(ang + 0.45))
+    draw.polygon([head, left, right], fill=color)
+
+
+def same_outline_figure(cells, recs, ctrl, scales=(float("nan"), float("nan")), mat=None) -> np.ndarray:
+    """健全 + 外形を揃えた 3 つのセルの z 中央の CT 断面を並べ、劣化の場所を矢印で示す RGB 画像。
+
+    ``recs`` は表示用の再構成(9 節の材質つきの描画)。パネルの下の数値は ``ctrl``(1〜8 節の
+    単一材質の模型で測った値)から取る —— 表示と数値の出どころが違うことは図の下に書く。
+    """
+    from PIL import Image, ImageDraw, ImageFont
+
+    font_path = figs._japanese_font_path()
+    bold_path = figs._japanese_font_path(bold=True, fail_closed=False) or font_path
+    f_title = ImageFont.truetype(str(bold_path), 26)
+    f_head = ImageFont.truetype(str(bold_path), 21)
+    f_txt = ImageFont.truetype(str(font_path), 17)
+    f_small = ImageFont.truetype(str(font_path), 15)
+
+    mid = ND // 2
+    z_mm = (mid + 0.5) * SZ
+    keys = (("healthy", "健全"), ("uniform", "一様膨れ(全層 +10 %)"),
+            ("local", "局所膨れ"), ("gas", "層間ガス空隙"))
+    pw, ph = NW * CT_ZOOM, NH * CT_ZOOM
+    pad, top, bottom = 28, 150, 236
+    W_img = 4 * pw + 5 * pad
+    H_img = top + ph + bottom
+    img = Image.new("RGB", (W_img, H_img), (16, 16, 16))
+    draw = ImageDraw.Draw(img)
+    draw.text((pad, 14), "外形が同じでも中身は違う —— 角形セルの CT 断面(FBP 再構成)", font=f_title,
+              fill=(240, 240, 240))
+    draw.text((pad, 50), "膨れ方の違う 3 つのセル(合成)。外形が揃うように膨れの倍率を合わせて作り(局所 %.4f / "
+                         "ガス %.4f)、X 線を %d 方向から撮って再構成した。" % (scales[0], scales[1], N_ANGLE),
+              font=f_small, fill=(200, 200, 200))
+    draw.text((pad, 72), "明るい層 = 正極の合材、暗めの層 = 負極の合材(黒鉛)、細い明線 = Cu 箔、いちばん暗い隙間 = "
+                         "セパレータと電解液。外形は揃えたので同じ、断面は違う。", font=f_small, fill=(200, 200, 200))
+    draw.text((pad, 94), "※ 黄の数値は単一材質の模型(1〜8 節)で測った値。層の材質の明暗はこの図の描画だけ"
+                         "(括弧内 = この材質つきの像で測り直した値)。", font=f_small, fill=(255, 200, 40))
+    yel = (255, 200, 40)
+    px = lambda x_mm: x_mm / SX * CT_ZOOM                       # noqa: E731
+    py = lambda y_mm: y_mm / SY * CT_ZOOM                       # noqa: E731
+    res = ctrl["res"]
+    for i, (key, name) in enumerate(keys):
+        x0 = pad + i * (pw + pad)
+        img.paste(Image.fromarray(_ct_panel(recs[key][mid])).convert("RGB"), (x0, top))
+        draw.text((x0, top - 34), name, font=f_head, fill=(240, 240, 240))
+        o, m = res[key]["outer"], res[key]["inner"]
+        draw.text((x0, top + ph + 10), "外形(中央)%.3f mm" % o["caliper"], font=f_txt, fill=(240, 240, 240))
+        draw.text((x0, top + ph + 34), "外形(面平均)%.3f mm" % o["mean"], font=f_txt, fill=(240, 240, 240))
+        flat = ctrl["flat"][key]["resid"]
+        vtxt = "空隙率 %.2f %%" % m["void_fraction"]
+        if key == "gas":
+            vtxt += "(真値 %.2f %%)" % res[key]["void_fraction_true"]
+        draw.text((x0, top + ph + 62), "層厚 %.3f mm / %s" % (m["t_mean"], vtxt), font=f_small, fill=yel)
+        draw.text((x0, top + ph + 84), "平面度 RMS %.4f mm" % flat, font=f_small, fill=yel)
+        if mat is not None:
+            mm_ = mat[key]
+            draw.text((x0, top + ph + 106), "(材質つき: 層厚 %.3f mm / 空隙率 %.2f %%)"
+                      % (mm_["t_mean"], mm_["void_fraction"]), font=f_small, fill=(200, 200, 200))
+            draw.text((x0, top + ph + 126), "(材質つき: 平面度 RMS %.4f mm)" % mm_["flat"],
+                      font=f_small, fill=(200, 200, 200))
+        # 劣化の場所の矢印(位置は仕込んだ真値から。測った値ではない)
+        t = cells[key]["truth"]
+        if key == "healthy":
+            y_top = t["layer_center_mm"][-1] + 0.5 * T_ELEC
+            yy = 0.5 * (y_top + CAV_Y[1])
+            _arrow(draw, (x0 + px(3.0), top + py(yy) + 46), (x0 + px(2.2), top + py(yy) + 2), yel)
+            draw.text((x0 + px(1.9), top + py(yy) + 50), "缶との隙間", font=f_small, fill=yel)
+        elif key == "uniform":
+            yy = CAV_Y[1] - 0.05
+            _arrow(draw, (x0 + px(3.0), top + py(yy) + 46), (x0 + px(2.2), top + py(yy) + 2), yel)
+            draw.text((x0 + px(1.4), top + py(yy) + 50), "隙間が消える", font=f_small, fill=yel)
+        elif key == "local":
+            for yy in (CAV_Y[0] + 0.45, CAV_Y[1] - 0.45):
+                _arrow(draw, (x0 + px(3.45), top + py(yy) + (40 if yy > 3 else -40)),
+                       (x0 + px(2.45), top + py(yy)), yel)
+            draw.text((x0 + 110, top - 30), "矢印: 層が波打つ", font=f_small, fill=yel)
+        else:
+            from scipy import ndimage
+
+            lab, n = ndimage.label(cells["gas"]["void"][mid])
+            for k, (cy, cx) in enumerate(ndimage.center_of_mass(lab > 0, lab, range(1, n + 1))):
+                hx, hy = x0 + (cx + 0.5) * CT_ZOOM, top + (cy + 0.5) * CT_ZOOM
+                tx = hx + (38 if cx * SX < 1.92 else -38)
+                _arrow(draw, (tx, hy - 30), (hx, hy - 4), yel)
+            draw.text((x0 + 150, top - 30), "黒い穴 = ガス", font=f_small, fill=yel)
+    # 縮尺の棒(1 mm)
+    xb, yb = pad, top + ph + 166
+    draw.line([(xb, yb), (xb + px(1.0), yb)], fill=(240, 240, 240), width=4)
+    draw.text((xb + px(1.0) + 10, yb - 10), "1 mm(画素 %.2f mm、z = %.2f mm の断面、窓 %.2f〜%.2f)。"
+              "実セルを縮めた模型(全幅 %.1f mm・%d 層)"
+              % (SY, z_mm, CT_WINDOW[0], CT_WINDOW[1], CAN_X[1] - CAN_X[0], N_LAYER),
+              font=f_small, fill=(200, 200, 200))
+    draw.text((xb, yb + 22), "層の材質の明暗は代表の図の描画のため。下の数値(外形・層厚・空隙率・平面度)は単一材質の"
+                             "模型で測った値。矢印の位置は仕込んだ真値。", font=f_small, fill=(200, 200, 200))
+    return np.asarray(img)
+
+# --------------------------------------------------------------------------- #
 def main() -> int:
     t0 = time.perf_counter()
     print("=" * 78)
@@ -1250,6 +1450,59 @@ def main() -> int:
     resn = section_resolution(cells, sinos)
     noise = section_noise_streak(cells, sinos)
     section_limits()
+
+    # --- 代表の図: 外形が同じでも中身は違う(灰色の CT 断面)と、FBP の別実装との照合 ---
+    print("\n" + "=" * 78)
+    print("9) 再構成の検算と代表の図 —— 外形が同じでも中身は違う")
+    print("=" * 78)
+    xchk = fbp_crosscheck(cells["healthy"])
+    n_skip = 0
+    if xchk is None:
+        n_skip += 1
+        print("  [SKIP] skimage が無い: 別実装(iradon)との照合を飛ばした(照合 0 / 1 件、飛ばした 1 件)")
+    else:
+        print("  FBP を別実装 skimage.transform.iradon と同じ投影で比べる(健全セル z 中央、雑音なし。"
+              "向きは定義から θ → −θ):相関 %.4f、振幅比 %.4f(照合 1 / 1 件)" % (xchk["corr"], xchk["gain"]))
+        # 門の 0.95 / 0.05 は相関 0.974・振幅比 0.991 を見たあとに置いた値(fbp_crosscheck の docstring)
+        assert xchk["corr"] > 0.95 and abs(xchk["gain"] - 1.0) < 0.05, xchk
+    if figs.enabled():
+        r = ctrl["res"]
+        # 表示用: 同じ形のセルに材質ごとの減弱(正極 / 負極 / 箔)を割り当てて撮り直す。数値は ctrl のまま
+        disp = {"healthy": build_cell("healthy", materials=True), "uniform": build_cell("uniform", materials=True),
+                "local": build_cell("local", s_local, materials=True), "gas": build_cell("gas", s_gas, materials=True)}
+        recs_mat = {k: acquire(forward(c["mu"])) for k, c in disp.items()}
+        # 材質つきの像そのもので内部指標を測り直し、単一材質の値と並べる(図の明暗が数値を変えないかの確認)
+        mat = {}
+        print("  内部指標: 単一材質の模型(数値の章) / 材質つきの像(代表の図)")
+        for key in ("healthy", "uniform", "local", "gas"):
+            mi = internal_metrics(recs_mat[key])
+            y_t = float(cells[key]["truth"]["layer_center_mm"][N_LAYER - 2])
+            mat[key] = {"t_mean": mi["t_mean"], "void_fraction": mi["void_fraction"],
+                        "flat": flatness(recs_mat[key], y_t)["resid"]}
+            r0 = ctrl["res"][key]["inner"]
+            print("    %-8s 層厚 %.3f / %.3f mm  空隙率 %.2f / %.2f %%  平面度 %.4f / %.4f mm"
+                  % (key, r0["t_mean"], mat[key]["t_mean"], r0["void_fraction"], mat[key]["void_fraction"],
+                     ctrl["flat"][key]["resid"], mat[key]["flat"]))
+        figs.save("same_outline_ct", same_outline_figure(cells, recs_mat, ctrl, (s_local, s_gas), mat),
+                  caption="外形が同じでも中身は違う(合成の角形セル)。健全と、外形が揃うように膨れの倍率を合わせた"
+                          "(局所 %.4f / ガス %.4f)一様膨れ・局所膨れ・層間ガス空隙の 3 つのセルを、X 線 %d 方向の投影"
+                          "(ビームハードニング・検出器のリング・光子雑音つき)から FBP で再構成した z 中央の断面"
+                          "(灰色、同じ窓)。外形の中央は 3 つとも %.3f / %.3f / %.3f mm —— 揃えたのは作り方で、"
+                          "発見ではない。断面では隙間の消え方・層の波打ち・ガスの穴(矢印、位置は仕込んだ真値)が違い、"
+                          "内部指標(層厚 %.3f / %.3f / %.3f mm、空隙率 %.2f / %.2f / %.2f %%(ガスの真値 %.2f %%)、"
+                          "平面度 RMS %.4f / %.4f / %.4f mm)が分ける。明るい層 = 正極の合材、暗めの層 = 負極の合材、"
+                          "細い明線 = Cu 箔。★数値は単一材質の模型(1〜8 節)で測った値で、層の材質の明暗はこの図の描画だけ"
+                          "(材質つきの像で測り直した値はパネルの括弧内)。実セルを縮めた模型(全幅 %.1f mm・%d 層)。"
+                          "中央の同心円はリングの痕。"
+                          % (s_local, s_gas, N_ANGLE, r["uniform"]["outer"]["caliper"], r["local"]["outer"]["caliper"],
+                             r["gas"]["outer"]["caliper"], r["uniform"]["inner"]["t_mean"],
+                             r["local"]["inner"]["t_mean"], r["gas"]["inner"]["t_mean"],
+                             r["uniform"]["inner"]["void_fraction"], r["local"]["inner"]["void_fraction"],
+                             r["gas"]["inner"]["void_fraction"], r["gas"]["void_fraction_true"],
+                             ctrl["flat"]["uniform"]["resid"], ctrl["flat"]["local"]["resid"],
+                             ctrl["flat"]["gas"]["resid"], CAN_X[1] - CAN_X[0], N_LAYER)
+                          + (" 再構成の別実装との照合は飛ばした(skimage が無い)。" if xchk is None else
+                             " 再構成は別実装 skimage の iradon と相関 %.3f(向きは定義から決めた)。" % xchk["corr"]))
 
     # --- 所見を固定する(壊れたら鳴る)---
     assert 25.0 < outer["frac"] < 35.0, outer["frac"]

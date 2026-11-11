@@ -53,15 +53,27 @@ def estimate_normals(points, k: int = 16, viewpoint=None) -> np.ndarray:
 def voxel_downsample(points, voxel: float = 0.05) -> np.ndarray:
     """Thin a cloud to one point (the cell centroid) per occupied voxel of side
     *voxel*. Order is not preserved. Returns (M, 3) with M <= N — the standard way
-    to bound ICP cost and even out non-uniform depth sampling density."""
+    to bound ICP cost and even out non-uniform depth sampling density.
+
+    Fail-closed on non-finite input: a NaN/inf coordinate raises ``ValueError``
+    (drop invalid rows first, e.g. ``P[np.isfinite(P).all(1)]`` — an organized
+    depth cloud keeps NaN for holes). Before 2026-11-09 a single NaN made the
+    grid origin ``P.min(0)`` NaN, every key the same garbage value, and the whole
+    cloud collapsed silently to one NaN point (20000-point bracket -> shape (1, 3)).
+    ``voxel`` must be finite and > 0."""
     P = np.asarray(points, np.float64)
     if P.ndim != 2 or P.shape[1] != 3:
         raise ValueError("points must be (N, 3)")
-    if float(voxel) <= 0.0:
-        raise ValueError("voxel must be > 0, got %r" % (voxel,))
+    vox = float(voxel)
+    if not np.isfinite(vox) or vox <= 0.0:
+        raise ValueError("voxel must be finite and > 0, got %r" % (voxel,))
+    if not np.isfinite(P).all():
+        bad = int((~np.isfinite(P).all(axis=1)).sum())
+        raise ValueError("points contains non-finite values (%d of %d rows); "
+                         "drop them first, e.g. P[np.isfinite(P).all(1)]" % (bad, P.shape[0]))
     if P.shape[0] == 0:
         return P.copy()
-    keys = np.floor((P - P.min(0)) / float(voxel)).astype(np.int64)
+    keys = np.floor((P - P.min(0)) / vox).astype(np.int64)
     _, inv = np.unique(keys, axis=0, return_inverse=True)
     inv = inv.ravel()
     m = int(inv.max()) + 1

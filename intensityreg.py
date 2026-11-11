@@ -125,14 +125,59 @@ def warp_parametric(image, W, out_shape=None, order=3):
     """``out(p) = image(W⁻¹ p)``(W は image の (x, y) → out の (x, y) の 3×3)。→ (H, W) float64。
 
     合成の道具。``order=3`` の 3 次スプライン(位置合わせ側の双線形と違う補間にして、補間の型の
-    一致による甘さを避ける)。外側は 0。
+    一致による甘さを避ける)。外側は 0。向きは ``cv2.warpPerspective``(``WARP_INVERSE_MAP`` なし)と
+    同じで、有効域の値は ``order=1`` で cv2 の線形と 1.1e-2(cv2 の 1/32 画素の量子化)、``order=3``
+    で cv2 の 3 次と 3.4e-2(補間核の違い)以内。
+
+    - 入口: ``image`` は空でない 2-D の有限な配列、``out_shape`` は正の整数 2 つ、``order`` は 0〜5 の
+      整数。外れると ``ValueError``。2026-11-09 より前は検査が無く、NaN が 1 画素あると 3 次スプラインの
+      前処理が NaN を全画素へ広げ、そのあと非有限を 0 に置き換えるので**全画素 0**(512² で
+      262144/262144)を例外なしで返していた。RGB は scipy の RuntimeError、空は空配列だった。
+    - 3 次スプラインは段差で行き過ぎる(0/1 の段差で −0.10〜1.10、自然画で −0.036〜1.06)。
+      線積分・濃度・個数のように**負にならない量**を引き直すなら ``order=1``(行き過ぎない)。
+    - 速さ: 射影の行が (0, 0, 1) のアフィンは ``scipy.ndimage.affine_transform``(2048² の 3 次で
+      0.86 s → 0.33 s)。``map_coordinates`` との**ビット一致は W[2,2] = 1 で渡したときだけ**:
+      同じ変換を定数倍した同次表現(例えば W を 2.5 倍)では正規化の順が違い、最大 1e-13 の差が
+      出る。射影変換は
+      ``map_coordinates``。それでも cv2.warpPerspective の 3 次(2048² で 0.03 s)より 1 桁遅い。
     """
-    a = np.asarray(image, np.float64)
-    Wm = _as_warp(W, "warp_parametric")
-    shp = a.shape if out_shape is None else (int(out_shape[0]), int(out_shape[1]))
+    op = "warp_parametric"
+    a = np.asarray(image)
+    if a.dtype == object or not (np.issubdtype(a.dtype, np.number) or a.dtype == bool):
+        raise ValueError("%s: image must be a numeric 2-D array" % op)
+    a = a.astype(np.float64)
+    if a.ndim != 2:
+        raise ValueError("%s: image must be a 2-D gray image, got shape %r (warp each channel "
+                         "separately)" % (op, a.shape))
+    if a.size == 0:
+        raise ValueError("%s: image is empty, got shape %r" % (op, a.shape))
+    if not np.isfinite(a).all():
+        raise ValueError("%s: image has %d non-finite pixels (NaN/Inf); the cubic spline would "
+                         "spread them over the whole output" % (op, int((~np.isfinite(a)).sum())))
+    if isinstance(order, bool) or not isinstance(order, (int, np.integer)) or not 0 <= int(order) <= 5:
+        raise ValueError("%s: order must be an integer in 0..5, got %r" % (op, order))
+    Wm = _as_warp(W, op)
+    if out_shape is None:
+        shp = a.shape
+    else:
+        try:
+            shp = tuple(int(v) for v in out_shape)
+        except (TypeError, ValueError):
+            raise ValueError("%s: out_shape must be two positive integers, got %r" % (op, out_shape)) from None
+        if len(shp) != 2 or min(shp) <= 0 or any(float(v) != int(v) for v in out_shape):
+            raise ValueError("%s: out_shape must be two positive integers, got %r" % (op, out_shape))
+    Wi = np.linalg.inv(Wm)
+    if Wi[2, 0] == 0 and Wi[2, 1] == 0 and Wi[2, 2] != 0:
+        Wi = Wi / Wi[2, 2]
+        # (row, col) 座標の行列: row_in = Wi[1,0] x + Wi[1,1] y + Wi[1,2]、col_in = Wi[0,0] x + ...
+        M = np.array([[Wi[1, 1], Wi[1, 0]], [Wi[0, 1], Wi[0, 0]]])
+        off = np.array([Wi[1, 2], Wi[0, 2]])
+        out = ndimage.affine_transform(a, M, offset=off, output_shape=shp, order=int(order),
+                                       mode="constant", cval=0.0)
+        return out
     yy, xx = _grid(shp)
-    X, Y = _map(np.linalg.inv(Wm), xx, yy)
-    return _sample(a, X, Y, order=order)
+    X, Y = _map(Wi, xx, yy)
+    return _sample(a, X, Y, order=int(order))
 
 
 def _as_warp(W, op):
@@ -244,6 +289,17 @@ def _ecc_update(motion, W, dp):
     return W
 
 
+def _ecc_mask(W, xx, yy, bt, I, border, motion, op):
+    """今の W で照合に使う画素(縁の帯を除き、写った先が moving の内側)。少なすぎれば ValueError。"""
+    X, Y = _map(W, xx, yy)
+    m = bt & (X >= border) & (X <= I.shape[1] - 1 - border) & (Y >= border) & (Y <= I.shape[0] - 1 - border)
+    P = {"translation": 2, "euclidean": 3, "affine": 6, "homography": 8}[motion]
+    if m.sum() < 4 * P + 8:
+        raise ValueError("%s: the warp moved the template outside the input image "
+                         "(%d valid pixels) — the initial guess is too far off" % (op, int(m.sum())))
+    return X, Y, m
+
+
 def _ecc_level(T, I, W, motion, n_iter, eps, op, border=1, nonpositive="raise"):
     gIy, gIx = np.gradient(I)
     yy, xx = _grid(T.shape)
@@ -255,12 +311,7 @@ def _ecc_level(T, I, W, motion, n_iter, eps, op, border=1, nonpositive="raise"):
     converged = False
     it = 0
     for it in range(1, n_iter + 1):
-        X, Y = _map(W, xx, yy)
-        m = bt & (X >= border) & (X <= I.shape[1] - 1 - border) & (Y >= border) & (Y <= I.shape[0] - 1 - border)
-        P = {"translation": 2, "euclidean": 3, "affine": 6, "homography": 8}[motion]
-        if m.sum() < 4 * P + 8:
-            raise ValueError("%s: the warp moved the template outside the input image "
-                             "(%d valid pixels) — the initial guess is too far off" % (op, int(m.sum())))
+        X, Y, m = _ecc_mask(W, xx, yy, bt, I, border, motion, op)
         Iw = _sample(I, X, Y)[m]
         gx = _sample(gIx, X, Y)[m]
         gy = _sample(gIy, X, Y)[m]
@@ -311,6 +362,21 @@ def _ecc_level(T, I, W, motion, n_iter, eps, op, border=1, nonpositive="raise"):
     return W, hist, it, converged
 
 
+def _ecc_rho(T, I, W, motion, op, border=1):
+    """W での相関係数(:func:`_ecc_level` の反復と同じ画素・同じ定義)。"""
+    yy, xx = _grid(T.shape)
+    bt = np.zeros(T.shape, bool)
+    bt[border:T.shape[0] - border, border:T.shape[1] - border] = True
+    X, Y, m = _ecc_mask(W, xx, yy, bt, I, border, motion, op)
+    tb = T[m] - T[m].mean()
+    ib = _sample(I, X, Y)[m]
+    ib = ib - ib.mean()
+    nt, ni = np.linalg.norm(tb), np.linalg.norm(ib)
+    if nt == 0 or ni == 0:
+        raise ValueError("%s: the overlap is constant — ECC is undefined" % op)
+    return float(tb @ ib) / (nt * ni)
+
+
 def register_ecc(fixed, moving, motion="affine", n_iter=200, eps=1e-6, warp_init=None, levels=1,
                  smooth_sigma=1.1, nonpositive="raise", min_rho=0.0):
     """強度相関係数(ECC)を最大にするパラメトリックな変換で moving を fixed に合わせる。→ table(``kind="registration"``)。
@@ -346,8 +412,9 @@ def register_ecc(fixed, moving, motion="affine", n_iter=200, eps=1e-6, warp_init
     Returns:
         dict(``kind="registration"``, ``method="ecc"``)。``warp`` (3,3) / ``flow2d`` (2,H,W) の
         ``(dy, dx)`` / ``warped``(fixed の格子へ戻した moving、外側は 0)/ ``valid`` / ``valid_fraction`` /
-        ``metric_name="ecc_rho"`` / ``metric``(最後の相関係数)/ ``iterations`` / ``converged`` /
-        ``history`` / ``model`` / ``image_shape``。
+        ``metric_name="ecc_rho"`` / ``metric``(**返す warp での**相関係数)/ ``iterations`` / ``converged`` /
+        ``history``(反復ごとの、その反復の**更新前の** warp の相関。反復の上限で止まったときは
+        ``history[-1]`` は返す warp の値ではなく ``metric`` と違いうる)/ ``model`` / ``image_shape``。
 
     Raises:
         ValueError: 画像が不正 / ``motion`` が違う / 引数が値域外 / 初期の変換が特異 / 反復が発散 /
@@ -386,10 +453,16 @@ def register_ecc(fixed, moving, motion="affine", n_iter=200, eps=1e-6, warp_init
         W = np.linalg.inv(np.diag([1 / s, 1 / s, 1.0])) @ Wl @ np.diag([1 / s, 1 / s, 1.0])
         hist_all += hist
         it_all += it
+    # ★2026-11-04(外部監査 v0.9.0 F7): history の各値は**更新前の** W の相関なので、反復の上限で抜けると
+    #   history[-1] は返す W の相関ではない(報告 0.8242、返した変換の相関 0.9945 —— min_rho=0.9 で正しい
+    #   答えを拒否し、逆向きなら悪い答えを通しうる)。metric と min_rho の判定は返す W(最も細かい段の Wl)で
+    #   測り直した相関で行う。収束で抜けたときは W が更新されていないので history[-1] と同じ値。
+    #   history は従来どおり反復ごとの値(長さ = iterations)のまま。
+    rho = (hist_all[-1] if conv else _ecc_rho(pyr[0][0], pyr[0][1], Wl, motion, op, border=bd)) if hist_all else 0.0
     W = W / W[2, 2]
-    if hist_all and hist_all[-1] < min_rho:
-        raise ValueError("%s: final correlation %.4f is below min_rho %.4f — not aligned" % (op, hist_all[-1], min_rho))
-    return _result("ecc", motion, T, I, W=W, metric_name="ecc_rho", metric=hist_all[-1] if hist_all else 0.0,
+    if hist_all and rho < min_rho:
+        raise ValueError("%s: final correlation %.4f is below min_rho %.4f — not aligned" % (op, rho, min_rho))
+    return _result("ecc", motion, T, I, W=W, metric_name="ecc_rho", metric=rho,
                    iterations=it_all, converged=conv, history=hist_all)
 
 
@@ -933,6 +1006,8 @@ def register_accuracy_map(fixed, true_flow2d, method="ffd", modality="same", noi
 
     地図の内訳(どこで壊れるか)として、fixed の勾配の強さの 4 分位ごと・真の変位の大きさの 4 分位ごとの
     EPE の中央値を ``by_texture`` / ``by_magnitude`` に返す(模様の無い所で場が決まらないことが数で出る)。
+    4 群は排他的(``[lo, hi)``、最後の群だけ ``[lo, hi]``)で、``n`` の和は集計した画素の数。同値が境界に
+    並ぶと群の大きさは 1/4 ずつにならない(全部同じ値なら最後の群に全部)。
 
     Args:
         fixed: 基準の 2-D 画像。
@@ -985,10 +1060,14 @@ def register_accuracy_map(fixed, true_flow2d, method="ffd", modality="same", noi
     tm = np.hypot(g[0], g[1])[mask]
 
     def by(q, name):
+        # ★2026-11-04(外部監査 v0.9.0 F9): 以前は 4 群とも両端を含む [lo, hi] で、境界の値(同値の多い
+        #   場では全部)が隣の群にも数えられた(有効 576 画素で各群 576、合計 2304)。群は排他的に:
+        #   [lo, hi) で、最後の群だけ最大値を含む [lo, hi]。全部同じ値なら最後の群に全部が入る。
         edges = np.quantile(q, [0, 0.25, 0.5, 0.75, 1.0])
+        grp = np.clip(np.searchsorted(edges, q, side="right") - 1, 0, len(edges) - 2)
         rows = []
-        for a, b in zip(edges[:-1], edges[1:]):
-            sel = (q >= a) & (q <= b)
+        for k, (a, b) in enumerate(zip(edges[:-1], edges[1:])):
+            sel = grp == k
             rows.append({name + "_lo": float(a), name + "_hi": float(b), "n": int(sel.sum()),
                          "epe_median": float(np.median(e[sel])) if sel.any() else 0.0})
         return rows

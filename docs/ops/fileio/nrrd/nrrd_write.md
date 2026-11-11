@@ -8,7 +8,7 @@ gpu: なし
 examples: [fileio_scientific_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # nrrd_write — FILEIO `nrrd` op
@@ -22,7 +22,9 @@ version: 0.9.0  # fullseye lib version this note was generated for
 多次元配列と ``space directions`` を raw/gzip NRRD の ``bytes`` にする。
 
 ``meta`` は各配列軸の方向ベクトル(非空間軸は ``None``)、``space_origin``、
-``space_unit``(``mm`` / ``um`` / ``angstrom``)を持つ。``encoding`` は ``raw`` または
+``space_unit``(``mm`` / ``um`` / ``angstrom``)を持つ。任意の ``space`` は teem の座標系名
+(``left-posterior-superior`` / ``LPS`` / ``RAS`` / ``scanner-xyz`` …)で、与えると
+``space dimension`` の代わりに ``space:`` 行を書く(仕様では両者は排他)。``encoding`` は ``raw`` または
 ``gzip`` を明示する。呼び出し例: ``nrrd_write(vol, meta=geometry, encoding="gzip")``。
 
 ## 参考(サンプルデータ・文献)

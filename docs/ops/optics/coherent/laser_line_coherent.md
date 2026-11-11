@@ -5,10 +5,10 @@ category: coherent
 in: 
 out: image2d
 gpu: なし
-examples: [poc_laser_line_speckle_floor, poc_light_section_step_weld_floor]
+examples: [poc_laser_line_speckle_floor, poc_light_section_step_weld_floor, poc_weld_bead_profile]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # laser_line_coherent — OPTICS `coherent` op
@@ -40,6 +40,15 @@ The true centre row is returned implicitly by the formula above; see
 in focus, no foreshortening of the line width with θ, no Scheimpflug, phase screen
 uncorrelated between fine samples.
 
+★The fine step ``dx = pixel_um / pixel_oversample`` must resolve the **intensity**, not
+only the field: the field passes ``sin_u/λ`` but ``|E|²`` carries ``2 sin_u/λ``, so the
+intensity's Nyquist is ``dx ≤ λ/(4 sin_u)``. A coarser step is refused (ValueError naming
+the smallest ``pixel_oversample``): the pixel integral of an aliased intensity lowered the
+centroid floor of :func:`lightsection.light_section_speckle_floor` to 0.5–0.8 of its
+converged value without any sign (measured 2026-11-09: λ 0.65, sin u 0.02, pixel 80 µm,
+dx 16/13.3/10 µm → ratio 0.51/0.67/0.79, converged 0.88 from dx ≲ λ/(5 sin u)).
+``λ/(5 sin_u) < dx ≤ λ/(4 sin_u)`` passes with a RuntimeWarning (still ≈ 7 % low).
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):
@@ -66,6 +75,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [poc_laser_line_speckle_floor](../../../../examples/poc_laser_line_speckle_floor.py) — `py -3.11 examples/poc_laser_line_speckle_floor.py`
 - [poc_light_section_step_weld_floor](../../../../examples/poc_light_section_step_weld_floor.py) — `py -3.11 examples/poc_light_section_step_weld_floor.py`
+- [poc_weld_bead_profile](../../../../examples/poc_weld_bead_profile.py) — `py -3.11 examples/poc_weld_bead_profile.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

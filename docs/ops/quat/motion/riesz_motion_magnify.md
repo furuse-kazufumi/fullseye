@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.9.0  # fullseye lib version this note was generated for
+version: 1.0.0  # fullseye lib version this note was generated for
 ---
 
 # riesz_motion_magnify — QUAT `motion` op
