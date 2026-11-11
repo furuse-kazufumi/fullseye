@@ -8578,7 +8578,6 @@
    }
   },
   {
-<<<<<<< HEAD
    "id": "poc_ct_casting_sparse_views",
    "group": "wing_industrial",
    "media": "01_slices.png",
@@ -8593,7 +8592,9 @@
     "de": "CT von Gussporen: Die beste Rekonstruktion nach RMSE ist nicht immer die beste beim Porenvolumen",
     "hi": "ढलाई के रिक्त स्थानों का CT: RMSE में सबसे अच्छा पुनर्निर्माण रिक्त आयतन में हमेशा सबसे अच्छा नहीं",
     "fr": "CT des porosités de fonderie : la meilleure reconstruction en RMSE n'est pas toujours la meilleure en volume"
-=======
+   }
+  },
+  {
    "id": "poc_surface_defect_classifiers",
    "group": "wing_industrial",
    "media": "01_defect_patches.png",
@@ -8608,7 +8609,6 @@
     "de": "Metalloberflächenfehler mit trainierten Klassifikatoren sortiert: Kratzer entlang der Schleifriefen werden zu drei Vierteln übersehen, unbekannte Poren zu 95 % abgelehnt",
     "hi": "प्रशिक्षित वर्गीकारकों से धातु सतह दोषों की छँटाई: घिसाई की धारियों के साथ की खरोंचें 4 में 3 छूटती हैं, अनदेखे गड्ढे 95 % अस्वीकृत",
     "fr": "Trier les défauts de surface métallique par classifieurs appris : les rayures le long des stries de meulage sont manquées trois fois sur quatre, les piqûres inconnues rejetées à 95 %"
->>>>>>> poc/classify-2026-11-12
    }
   }
  ],

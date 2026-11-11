@@ -13,11 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-<<<<<<< HEAD
 ### 2-D 画像/信号/幾何(488 例)
-=======
-### 2-D 画像/信号/幾何(487 例)
->>>>>>> poc/classify-2026-11-12
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -354,7 +350,6 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **2-D対称性の自己参照検査(正解画像なしで欠陥だけを残す)** — 対称模様と線形照明むらを持つ合成部品へ非対称欠陥を入れ、鏡映差分で欠陥領域の平均残差 0.193、模様・照明領域 1.5e-15(比 1.2e14)を得る。片側を欠いた円板の中心誤差はエッジ対 0.231 px に対し面積重心 3.171 px。ただし欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。回転次数 n=2,3,4,6 は雑音・ぼけ3条件で12/12正答し、対称性スコアは欠陥振幅5段階で単調増加する。 `py -3.11 examples/poc_symmetry_self_reference_inspection.py`
 - **3D プリンタの層検査(形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる)** — 新族 printpath(11 op、numpy + 標準ライブラリ): G-code の読み書き・体積・時間・層ラスタ、メッシュのスライス(輪郭と層マスク)、3MF の読み書き、層画像の符号つき欠陥図。層の面積は閉形式と一致、押し出し量は周長 × 線幅 × 層厚 / 断面積と厳密一致、注入した欠陥 12 か所を許容 3 px で再現率 0.96・偽陽性 0、カメラ 0.2 mm ずれで再現率 0.90(正直に曲線で)。 `py -3.11 examples/poc_print_layer_inspection.py`
 - **EM 連結体校正のセカンドオピニオン(膜はラベルの境界にしか無いはず)** — EM 断面の自動分割が残す融合と分断を学習なしで数える: 内部を横切る膜の弦 = 融合の疑い(閉じた輪は穴で除く)、膜の無い境界 = 分断の疑い。CREMI sample A の正解ラベルに人工誤りを仕込み、閾値を前半の断面で選んで後半で測る(holdout_threshold): 分断 AUC 1.00、融合 0.83(面積で揃えた負例、乱数 0.53・面積だけ 0.70)。揃えないと面積だけで 0.87 が出る = 評価の罠を op で封じる。疑わしい箇所を立方体の上で回す GIF。新族 emproof 7 op。生データは commit しない。 `py -3.11 examples/poc_em_second_opinion.py`
-- **金属の表面の欠陥(傷・打痕・汚れ)を学習した分類器で仕分け、知らない欠陥は「分からない」と言わせる** — 研削の筋の上に傷・打痕・汚れ・腐食の孔を物理的に描き、`learn_ndim_norm` / `class_ndim_norm` で異常な画素、`classify_image_class_lut` / `class_2dim_sup` / `class_2dim_unsup` で汚れの画素を塗り(IoU 0.915 / 0.729 / 0.535)、領域の特徴 7 個で `train_class_gmm` / `train_class_mlp` / `train_class_svm` / `train_class_knn` を学習する。種 5 本の正解率 0.871〜0.886(±0.02)、scikit-learn との差は許容差の 0.41 倍以内、GMM(成分 1)は閉形式の 2 次判別と 100 % 一致。学習に無い孔は `evaluate_class_gmm` の対数密度で 94.8 % 拒否(既知の誤拒否 6.0 %)。ラベルを入れ替えると 0.238。★研削の筋から 15° 以内の傷は再現率 0.275(45° 超は 0.949)。新 op なし。 `py -3.11 examples/poc_surface_defect_classifiers.py`
 - **機材選びの事前試験: 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする(MIL-HDBK-1823A)** — 線傷・塗装の凹み・樹脂の中の焼けと PE 片を、照明 6(縞照明 = 偏向法を含む)× カメラ 5 × レンズ 2 で撮った合成の試験。どのマスも誤検出 1 %・露光の上限 10 ms、同軸は視野の 2 倍、種の組 3 つで中央値と最小〜最大。線傷は同軸+テレセン 39 µm・暗視野モノクロ 76 µm、テレセンが要るかは同軸の大きさ次第。凹みは縞 21 µm・斜光 28 µm(どちらも 10 マス全部)、床はゆず肌(1/5 で 22→4.8 µm)。分光の答えは露光の上限で変わる(10 ms 214 µm → 1 s 9.6 µm、帯を足すだけでも同じ)。PE 片は分光だけ、可視で見えないのは入力どおり。実データ(CC BY 4.0 の分光画像 2 つ)が支えるのは帯の軸だけ: SWIR 1 帯 AUC 0.493 → 全帯 0.994。 `py -3.11 examples/poc_equipment_selection_map.py`
 - **照明の円錐と観察の NA ―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする** — 鏡面に近い金属部品の浅い打痕・ヘアラインの上の傷・梨地のムラは、光源の種類より先に、各点に届く光の円錐の半角 α と向きを、カメラが受け取る円錐(物体側 NA、半角 β)に対してどう置くかで見え方が決まる(顕微鏡のケーラー照明の照明 NA と対物 NA、シュリーレン法のナイフエッジと同じ幾何)。鏡面の反射は方向の球の上の等長写像なので、明るさは 2 つの球冠の交わりという閉形式になり、傾き θ が |α − β|/2 より小さければ見えず、(α + β)/2 を越えると暗い。新 op 5 本(`illumdesign` の `solid_angle_light` / `solid_angle_boundaries` / `solid_angle_brightness` / `solid_angle_sweep` / `solid_angle_render`)。閉形式とレンズの瞳の数値積分(射影立体角の重み)の差は 0.002。NA 0.033 のテレセンで、深さ 2 µm の打痕(最大傾き 0.25°)は α = β でだけ輪になり(画像のコントラスト −0.091、閉形式と 1e-4)、α = 0.5° と 7° では閉形式の予言どおり 0 になる。ヘアラインの筋(傾きの 99 % 点 0.82°)を消して斜面 4° の傷だけを黒くする α は閉形式で 3.5〜6.1° と決まり、α = 4° で筋の揺れが α = β の 0.014 倍、傷のコントラスト −1.00。円錐を β 傾けると平らな地が 0.39 の明るさになり、打痕の左右の斜面が 0.53 と 0.25(閉形式 0.54 / 0.25)に分かれて傾きの符号が読める。梨地の斑(微小面の広がり 1.3° 対 0.8°)は α = β で −0.20、α = 7° で −0.02。★壊れる条件: 面のうねり ±0.25° があると α = β では地の揺れが打痕の沈みの 1.6 倍になり、しきい値で打痕だけを拾えない。微小面の広がり σ が 0.25° でもコントラストは 1/3、4° では α をどう選んでも 0.001。照明の立体角だけを変えて同じワークを撮った比較写真は、再利用できるライセンスでは見つからなかった(実画像との突合は未了)。学習 0、較正 0、門 15 件。 `py -3.11 examples/poc_illumination_cone_vs_na.py`
 - **光沢のある金属部品の検査画像を HDR で作る(照り返しの中の傷と暗い所の傷を 1 枚に)** — 既知の放射輝度(地 300・照明の映り込みの帯 3e5 光子/ms)を EMVA 1288 のセンサ(η 0.6・K 0.1・暗雑音 8 e⁻・8 ビット・γ 2.2)で 6 段の露出に撮る。★露出 1 回では 2 本の傷(−20 %)の両方を CNR ≥ 3 で見られない。★Debevec / Robertson の応答は真の γ の逆応答と ln で rms 0.115 / 0.072、放射輝度は倍率 1 つを当てて中央値 12 / 10 %。★★応答を特性化した HDR(露出時間つきの重み = 対数の推定の逆分散)で CNR 4.96 / 3.86、1 枚の最良(2.93)を超える。Debevec の三角の重みは 3.54、自己校正した応答では暗部が 2.11 に落ちる —— 検査なら応答は EMVA で測っておく。Mertens の融合も 3.31 / 3.92。★ダイナミックレンジを EMVA の定義でシミュから実測: 1 枚 48.6 dB(閉形式 48.4)、6 枚 103.6 dB(103.6)。場面に要る 62.5 dB は 1 枚では足りない。合成の場面(BRDF から描いていない)・位置合わせなしは docstring に明記。 `py -3.11 examples/poc_hdr_glossy_metal_inspection.py`
@@ -5102,18 +5097,18 @@ _計 3843 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 ### mv(47 ops / 10 categories)
 
 #### mv / classify(12)
-- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: なし — 混合正規分布のモデルで事後確率が最大のクラスを行ごとに返す。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
-- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: なし — k 近傍の多数決でクラスを行ごとに返す(同票は距離の和が小さいクラス)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
-- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: なし — ``train_class_mlp`` の多層パーセプトロンで特徴の行を分類する。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
-- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: なし — ``train_class_svm`` の線形 SVM で特徴の行を分類する(one-vs-rest の最大マージン)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: なし — 混合正規分布のモデルで事後確率が最大のクラスを行ごとに返す。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: なし — k 近傍の多数決でクラスを行ごとに返す(同票は距離の和が小さいクラス)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: なし — ``train_class_mlp`` の多層パーセプトロンで特徴の行を分類する。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: なし — ``train_class_svm`` の線形 SVM で特徴の行を分類する(one-vs-rest の最大マージン)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 - `create_lexicon` (halcon: `create_lexicon`) `入力なし → table` GPU: なし — 照合に使う語の一覧を作る(重複を除き、順を固定する)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: なし — 各クラスの事後確率と、モデル全体の対数密度を行ごとに返す。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: なし — 各クラスの事後確率と、モデル全体の対数密度を行ごとに返す。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 - `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: なし — 語が一覧にあるかを完全一致で調べ、あれば 1.0、無ければ 0.0 を返す。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 - `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: なし — 編集距離が最小の語と、その距離を返す(同距離は一覧の順で最初の語)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
-- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: なし — クラスごとに混合正規分布を EM で学習する。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
-- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: なし — k-NN の分類器を作る(特徴を標準化して保持する)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
-- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: なし — MLP 分類器を学習(train_class_mlp)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
-- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: なし — 線形 SVM(hinge 損失, one-vs-rest)を学習(train_class_svm)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`, `poc_surface_defect_classifiers`
+- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: なし — クラスごとに混合正規分布を EM で学習する。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: なし — k-NN の分類器を作る(特徴を標準化して保持する)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: なし — MLP 分類器を学習(train_class_mlp)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
+- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: なし — 線形 SVM(hinge 損失, one-vs-rest)を学習(train_class_svm)。 · 例: `machine_vision_tour`, `poc_real_typewritten_ocr`
 
 #### mv / curve(1)
 - `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: なし — 点列を全部通る非有理 B スプラインの制御点を求める(大域補間)。 · 例: `machine_vision_tour`
@@ -5873,13 +5868,13 @@ _計 3843 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 ### segmentation(59 ops / 11 categories)
 
 #### segmentation / classify(7)
-- `class_2dim_sup` (halcon: `class_2dim_sup`) `image2d × image2d × mask → mask` GPU: なし — 2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。 · 例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
-- `class_2dim_unsup` (halcon: `class_2dim_unsup`) `image2d × image2d → labels2d` GPU: あり(許可リスト) — 2 チャネル特徴空間を k-means で教師なし分類(class_2dim_unsup)。ラベル画像を返す。 · 例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
-- `class_ndim_norm` (halcon: `class_ndim_norm`) `images × table → mask` GPU: あり(許可リスト) — ND 特徴画像を学習済み正規分布クラスで分類(Mahalanobis 距離 < thresh)(class_ndim_norm)。 feature_images: (H,W,D) or D 枚の 2D。 · 例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
-- `classify_image_class_lut` (halcon: `classify_image_class_lut`) `image2d × signal → labels2d` GPU: あり(許可リスト) — グレー LUT による画素分類(閾値/ラベル LUT)(classify_image_class_lut)。 · 例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
+- `class_2dim_sup` (halcon: `class_2dim_sup`) `image2d × image2d × mask → mask` GPU: なし — 2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。 · 例: `halcon_segmentation_tour`
+- `class_2dim_unsup` (halcon: `class_2dim_unsup`) `image2d × image2d → labels2d` GPU: あり(許可リスト) — 2 チャネル特徴空間を k-means で教師なし分類(class_2dim_unsup)。ラベル画像を返す。 · 例: `halcon_segmentation_tour`
+- `class_ndim_norm` (halcon: `class_ndim_norm`) `images × table → mask` GPU: あり(許可リスト) — ND 特徴画像を学習済み正規分布クラスで分類(Mahalanobis 距離 < thresh)(class_ndim_norm)。 feature_images: (H,W,D) or D 枚の 2D。 · 例: `halcon_segmentation_tour`
+- `classify_image_class_lut` (halcon: `classify_image_class_lut`) `image2d × signal → labels2d` GPU: あり(許可リスト) — グレー LUT による画素分類(閾値/ラベル LUT)(classify_image_class_lut)。 · 例: `halcon_segmentation_tour`
 - `fisher_lda_fit` `matrix × signal → table` GPU: なし — 2 クラスの Fisher 線形判別を学習する(閉形式。反復なし)。 · 例: `poc_weed_rice_ratio`
 - `fisher_lda_score` `table × matrix → table` GPU: なし — ``fisher_lda_fit`` の学習済みの判別で特徴を採点する(score > 0 をクラス 1 とする)。 · 例: `poc_weed_rice_ratio`
-- `learn_ndim_norm` (halcon: `learn_ndim_norm`) `matrix → table` GPU: なし — 特徴ベクトル群から正規分布クラス(平均・共分散)を学習(learn_ndim_norm)。 · 例: `halcon_segmentation_tour`, `poc_surface_defect_classifiers`
+- `learn_ndim_norm` (halcon: `learn_ndim_norm`) `matrix → table` GPU: なし — 特徴ベクトル群から正規分布クラス(平均・共分散)を学習(learn_ndim_norm)。 · 例: `halcon_segmentation_tour`
 
 #### segmentation / compare(1)
 - `check_difference` (halcon: `check_difference`) `image2d × image2d → mask` GPU: あり(許可リスト) — 基準画像との差が tol を超える画素を領域として返す(check_difference)。 · 例: `halcon_segmentation_tour`

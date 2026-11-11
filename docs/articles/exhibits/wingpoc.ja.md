@@ -1678,7 +1678,6 @@ py -3.11 examples/poc_equipment_selection_map.py
 
 使用 op(ノートへ): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`carbon_black_absorption`](https://furuse.work/ops/optics/matprop/carbon_black_absorption.html) · [`hyperspectral_band_weights`](https://furuse.work/ops/optics/spectral/hyperspectral_band_weights.html) · [`ingaas_photodiode_qe`](https://furuse.work/ops/optics/spectral/ingaas_photodiode_qe.html) · [`material_nir_absorption`](https://furuse.work/ops/optics/matprop/material_nir_absorption.html) · [`nir_model_info`](https://furuse.work/ops/optics/matprop/nir_model_info.html) · [`pod_ahat_fit`](https://furuse.work/ops/spc/pod/pod_ahat_fit.html) · [`pod_false_call`](https://furuse.work/ops/spc/pod/pod_false_call.html) · [`pod_from_ahat`](https://furuse.work/ops/spc/pod/pod_from_ahat.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 
-<<<<<<< HEAD
 ## No.2026.311 —— 鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない
 
 Al の鋳物(32³、0.25 mm)に楕円体の空隙 3 個(24〜84 ボクセル)を置き、コーンビーム CT を 3 条件で撮った。真値は解析的な楕円体そのもので、描いた空隙の体積は 4/3πabc と 0.2 % 以内、離散の投影は閉形式の投影と相対 L2 4.0 %(64³ で 2.6 %)、投影と逆投影の随伴性は 3.8e-16。データは閉形式の投影に雑音を足したもので、再構成と同じ離散の投影では作っていない。RMSE の順位は 360° に 36 投影で OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053、12 投影と 110° では TV が 1 位(代数の良いほうに対し 0.77 / 0.78 倍)。ところが 12 投影で RMSE が最下位の FDK は、欠損で測る空隙の体積が閉形式と 0.9 % で、1 位の TV(5.9 %)より正しい。110° の FDK は空隙を 1 個も拾わない。半値で 2 値化した体積は真値そのものでも 16.7 % 偏るので、それより良く見える数字は偏りの打ち消し合いと注記した。TV の重み 3e-3 は評価に使わない較正用の鋳物で選んだ。評価用で 5 点を後知恵に回すと、限られた角度では同じ 3e-3 が最良、少数投影では 1e-2 が 2.4 % 良く、TV の欠損で測る体積誤差は重みで 2.3〜59 % に動く(FDK に負けるのはこの重みの選び方では、という条件つき)。雑音の乱数を 4 通りに振り直しても順位は反転しない。デュアルエナジーでは鉄の入れ子の体積が −8.7 %、分けた代わりに Al の基底の雑音が 41.65 倍(閉形式 41.00 倍)。単色・ガウス雑音・凸の空隙・例示の減衰係数の合成である。
@@ -1710,45 +1709,6 @@ py -3.11 examples/poc_ct_casting_sparse_views.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ct_casting_sparse_views)
 
 使用 op(ノートへ): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_scan/ct_adjoint_project.html) · [`ct_dual_energy_reconstruct`](https://furuse.work/ops/tomography/ct_scan/ct_dual_energy_reconstruct.html) · [`ct_forward_project`](https://furuse.work/ops/tomography/ct_scan/ct_forward_project.html) · [`ct_scan_geometry`](https://furuse.work/ops/tomography/ct_scan/ct_scan_geometry.html) · [`ellipsoid_phantom`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_phantom.html) · [`ellipsoid_projections`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_projections.html) · [`fdk_reconstruct`](https://furuse.work/ops/tomography/ct_scan/fdk_reconstruct.html) · [`os_sart_reconstruct`](https://furuse.work/ops/tomography/ct_scan/os_sart_reconstruct.html) · [`shepp_logan_3d`](https://furuse.work/ops/tomography/ct_scan/shepp_logan_3d.html) · [`sirt_reconstruct`](https://furuse.work/ops/tomography/ct_scan/sirt_reconstruct.html) · [`tv_reconstruct`](https://furuse.work/ops/tomography/ct_scan/tv_reconstruct.html) · [`vol_rle_centroid`](https://furuse.work/ops/3d/rle_region/vol_rle_centroid.html) · [`vol_rle_components`](https://furuse.work/ops/3d/rle_region/vol_rle_components.html) · [`vol_rle_volume`](https://furuse.work/ops/3d/rle_region/vol_rle_volume.html)
-=======
-## No.2026.316 —— 金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する
-
-研削した金属の小片(96x96 px)に、傷(V 溝)・打痕(窪み)・汚れ(茶色の反射率)を物理的に描いた。高さの欠陥は陰影だけを、汚れは色だけを変え、欠陥の重さは 0〜1 で振る。画素の段では、正常な金属の画素から learn_ndim_norm で正規分布を学び、class_ndim_norm で異常な画素を塗る。汚れの画素は classify_image_class_lut で IoU 0.915、class_2dim_sup で 0.729、class_2dim_unsup で 0.535(標準化したとき)。領域の特徴 7 個で GMM・MLP・SVM・k-NN を学習した。種 5 本の正解率は 0.871〜0.886(±0.02)。scikit-learn の第 2 実装との差は、許容差 3·sqrt(2p(1−p)/n) の 0.41 倍以内に収まった。GMM(成分 1)は閉形式の 2 次判別と 100 % 一致する。学習に無い腐食の孔は、検証側で決めた対数密度の閾値で 94.8 % を拒否した。既知の小片の誤拒否は 6.0 % だった。ラベルを入れ替えると正解率は 0.238 に落ちる。汚れの再現率 100 % は、色を変える欠陥が汚れだけだからで、特徴の漏れではない。研削の筋から 15° 以内の傷は再現率 0.275 で、45° より立った傷の 0.949 より大きく落ちる。筋を消すために選んだ勾配の向きが、筋に沿う傷も一緒に消している。
-
-[![金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png)
-
-*↑ **金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する** ―― 研削した金属の小片(96x96 px)に、傷(V 溝)・打痕(窪み)・汚れ(茶色の反射率)を物理的に描いた。高さの欠陥は陰影だけを、汚れは色だけを変え、欠陥の重さは 0〜1 で振る。画素の段では、正常な金属の画素から learn_ndim_norm で正規分布を学び、class_ndim_norm で異常な画素を塗る。汚れの画素は classify_image_class_lut で IoU 0.915、class_2dim_sup で 0.729、class_2dim_unsup で 0.535(標準化したとき)。領域の特徴 7 個で GMM・MLP・SVM・k-NN を学習した。種 5 本の正解率は 0.871〜0.886(±0.02)。scikit-learn の第 2 実装との差は、許容差 3·sqrt(2p(1−p)/n) の 0.41 倍以内に収まった。GMM(成分 1)は閉形式の 2 次判別と 100 % 一致する。学習に無い腐食の孔は、検証側で決めた対数密度の閾値で 94.8 % を拒否した。既知の小片の誤拒否は 6.0 % だった。ラベルを入れ替えると正解率は 0.238 に落ちる。汚れの再現率 100 % は、色を変える欠陥が汚れだけだからで、特徴の漏れではない。研削の筋から 15° 以内の傷は再現率 0.275 で、45° より立った傷の 0.949 より大きく落ちる。筋を消すために選んだ勾配の向きが、筋に沿う傷も一緒に消している。*
-
-[![painting the stain pixel by pixel](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/02_stain_pixels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/02_stain_pixels.png)
-
-*↑ 測定の図 ―― painting the stain pixel by pixel*
-
-[![cuts chosen on training pixels only](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/03_stain_pixel_iou_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/03_stain_pixel_iou.png)
-
-*↑ cuts chosen on training pixels only*
-
-[![tol = 3 sqrt(2p(1-p)/n) + 1/n; same features, same split](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/04_classifier_accuracy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/04_classifier_accuracy.png)
-
-*↑ tol = 3 sqrt(2p(1-p)/n) + 1/n; same features, same split*
-
-[![pits never seen in training: 95 % rejected; known patches rejected 6.0 %](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/05_gmm_confusion_reject_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/05_gmm_confusion_reject.png)
-
-*↑ pits never seen in training: 95 % rejected; known patches rejected 6.0 %*
-
-[![5 seeds, test split; best overall knn 0.886](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/06_accuracy_by_weight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/06_accuracy_by_weight.png)
-
-*↑ 5 seeds, test split; best overall knn 0.886*
-
-```
-py -3.11 examples/poc_surface_defect_classifiers.py
-```
-
-ソース: [examples/poc_surface_defect_classifiers.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_surface_defect_classifiers.py)
-
-この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_surface_defect_classifiers)
-
-使用 op(ノートへ): [`class_2dim_sup`](https://furuse.work/ops/segmentation/classify/class_2dim_sup.html) · [`class_2dim_unsup`](https://furuse.work/ops/segmentation/classify/class_2dim_unsup.html) · [`class_ndim_norm`](https://furuse.work/ops/segmentation/classify/class_ndim_norm.html) · [`classify_class_gmm`](https://furuse.work/ops/mv/classify/classify_class_gmm.html) · [`classify_class_knn`](https://furuse.work/ops/mv/classify/classify_class_knn.html) · [`classify_class_mlp`](https://furuse.work/ops/mv/classify/classify_class_mlp.html) · [`classify_class_svm`](https://furuse.work/ops/mv/classify/classify_class_svm.html) · [`classify_image_class_lut`](https://furuse.work/ops/segmentation/classify/classify_image_class_lut.html) · [`evaluate_class_gmm`](https://furuse.work/ops/mv/classify/evaluate_class_gmm.html) · [`learn_ndim_norm`](https://furuse.work/ops/segmentation/classify/learn_ndim_norm.html) · [`train_class_gmm`](https://furuse.work/ops/mv/classify/train_class_gmm.html) · [`train_class_knn`](https://furuse.work/ops/mv/classify/train_class_knn.html) · [`train_class_mlp`](https://furuse.work/ops/mv/classify/train_class_mlp.html) · [`train_class_svm`](https://furuse.work/ops/mv/classify/train_class_svm.html)
->>>>>>> poc/classify-2026-11-12
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 

@@ -131,7 +131,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 耐光照不均、高光与遮挡的模板匹配(把亮度变化的方向作为符号比较,无法定位的模板则拒绝): [说明](../../capabilities/robust-code-matching.md) _(ja)_ · 示例 [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
 - 用超声回波的相位而不是亮度找出混合键合中的空洞(扫描声学显微镜的 C 扫描、频率权衡、检出概率): [说明](../../capabilities/sam-bond-voids.md) _(ja)_ · 示例 [poc_sam_hybrid_bonding_voids](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py)
 - 从点云中以六自由度定位已知三维零件: [说明](../../capabilities/six-dof-surface-pose.md) _(ja)_ · 示例 [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py) · [poc_real_tless_6dof](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
-- 表面凹凸缺陷:从照明设计到检测: [说明](../../capabilities/surface-defects-with-lighting.md) _(ja)_ · 示例 [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py) · [poc_surface_defect_classifiers](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_surface_defect_classifiers.py)
+- 表面凹凸缺陷:从照明设计到检测: [说明](../../capabilities/surface-defects-with-lighting.md) _(ja)_ · 示例 [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py)
 - 定位(用模板匹配让测量线跟随): [说明](../../capabilities/template-alignment.md) _(ja)_ · 示例 [poc_template_tracking](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) · [gallery2d_contour_measure](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_contour_measure.py) · [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py)
 
 **测量**
@@ -248,11 +248,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-<<<<<<< HEAD
 PoC 311 个,另有机器人示例 5 个。展开分组即可加载缩略图。
-=======
-PoC 310 个,另有机器人示例 5 个。展开分组即可加载缩略图。
->>>>>>> poc/classify-2026-11-12
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -333,11 +329,7 @@ PoC 310 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.mp4"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png"><img src="../../articles/assets/poc/poc_mixed_case_depalletizing/story.en.gif" alt="Packed cartons with identical prints are told apart from overhead depth and colour, then unloaded. A depth step splits none, and whether depth dips or dark colour lines win flips across 28 flap-seam builds. With identical prints, deep grooves favour colour; only wide, untaped cuts over shallow grooves favour depth." loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>用深度台阶、V 形缝或彩色分开混载托盘上的纸箱</span></a>
 <a href="../../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png"><img src="../../articles/assets/poc/poc_ai_built_inspection_scored/story.en.gif" alt="Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)" loading="lazy" width="200" height="200"></picture><span>用真实数据的真值为 AI 组建的检测打分</span></a>
 <a href="../../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png"><img src="../../articles/assets/poc/poc_equipment_selection_map/story.en.gif" alt="Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread" loading="lazy" width="200" height="200"></picture><span>器材选型地图:用 60 种照明×相机×镜头组合拍同一缺陷</span></a>
-<<<<<<< HEAD
 <a href="../../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png"><img src="../../articles/assets/poc/poc_ct_casting_sparse_views/story.en.gif" alt="CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume" loading="lazy" width="200" height="200"></picture><span>铸件气孔 CT:RMSE 第一的重建,气孔体积未必第一</span></a>
-=======
-<a href="../../articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png"><img src="../../articles/assets/poc/poc_surface_defect_classifiers/story.en.gif" alt="Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected" loading="lazy" width="200" height="200"></picture><span>用训练的分类器分拣金属表面缺陷:沿磨削纹的划痕四条漏三条,未见过的蚀坑拒识 95 %</span></a>
->>>>>>> poc/classify-2026-11-12
 </div>
 </details>
 

@@ -108,7 +108,7 @@
 | [既知の 3-D 部品を点群から 6 自由度で見つける](capabilities/six-dof-surface-pose.md) | Locate a known 3-D part in a point cloud with six degrees of freedom | 見つける | `verified-synthetic` | 7/7 | `poc_registration_basin` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_tless_6dof` real(**門の実行では実データを読まない**) → tests/test_poc_scripts_run.py |
 | [光源 × 対象 × センサの分光の鎖(Planck・CIE A・LED・フィルタ・Si の QE、曲線の積と積分)](capabilities/spectral-radiometry-chain.md) | The spectral chain source × object × sensor (Planck, CIE A, LEDs, filters, Si QE, curve products and integrals) | 光と色 | `verified-synthetic` | 9/9 | `poc_nir_silicon_transmission` synthetic → tests/test_poc_scripts_run.py |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | Measure dimensions from an image, below the pixel | 測る | `verified-synthetic` | 4/4 | `poc_dimensional_inspection` synthetic → tests/test_poc_scripts_run.py<br>`poc_screw_thread_metrology` synthetic → tests/test_poc_scripts_run.py<br>`poc_calipers_under_illusion` synthetic → tests/test_poc_scripts_run.py |
-| [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md) | Surface relief defects, from lighting design to detection | 見つける | `verified-synthetic` | 5/5 | `illumination_design_demo` synthetic → tests/test_example_scripts_run.py<br>`photometric_stereo` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_bump_coplanarity` synthetic → tests/test_poc_scripts_run.py<br>`poc_surface_defect_classifiers` synthetic → tests/test_poc_scripts_run.py |
+| [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md) | Surface relief defects, from lighting design to detection | 見つける | `verified-synthetic` | 5/5 | `illumination_design_demo` synthetic → tests/test_example_scripts_run.py<br>`photometric_stereo` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_bump_coplanarity` synthetic → tests/test_poc_scripts_run.py |
 | [TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF)](capabilities/tdi-linescan-and-lens.md) | TDI line-scan cameras and line-scan lenses (stages and SNR, synchronisation MTF, illumination and MTF across the image height) | 光と色 | `verified-synthetic` | 6/6 | `poc_tdi_linescan` synthetic → tests/test_poc_scripts_run.py |
 | [テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ)](capabilities/telecentric-metrology.md) | Telecentric lenses for dimensional metrology (chief-ray angle, magnification versus height, vignetting and blur) | 測る | `verified-synthetic` | 7/7 | `poc_telecentric_metrology` synthetic → tests/test_poc_scripts_run.py |
 | [仮想の透過電子顕微鏡(電子の波長 → CTF → 位相コントラストの像 → Thon リングから焦点外れを推定 → 補正)](capabilities/tem-phase-contrast-and-ctf.md) | A virtual transmission electron microscope (electron wavelength, CTF, phase-contrast images, defocus from Thon rings, correction) | 測る | `verified-synthetic` | 11/11 | `poc_tem_ctf_thon_rings` real(**門の実行では実データを読まない**) → tests/test_poc_scripts_run.py |
@@ -139,17 +139,10 @@
 
 | | 件数 |
 |---|---|
-<<<<<<< HEAD
 | 2-D 台帳の例 | 488 |
 | `tests/test_poc_scripts_run.py` が走らせる | 311 |
 | `tests/test_example_scripts_run.py` が走らせる | 177 |
 | ディスク上の例のスクリプト(`examples/*.py`) | 496 |
-=======
-| 2-D 台帳の例 | 487 |
-| `tests/test_poc_scripts_run.py` が走らせる | 310 |
-| `tests/test_example_scripts_run.py` が走らせる | 177 |
-| ディスク上の例のスクリプト(`examples/*.py`) | 495 |
->>>>>>> poc/classify-2026-11-12
 | うち 2-D 台帳の外(`examples2d.EXCLUDED`) | 8 |
 | 台帳の外だが、名指しの試験が走らせる | 4 |
 | **どの門も走らせていない** | **4** |

@@ -8,11 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-<<<<<<< HEAD
   "target_count": 219,
-=======
-  "target_count": 218,
->>>>>>> poc/classify-2026-11-12
   "crop_aspect_range": [
     0.42,
     2.4
@@ -33873,7 +33869,6 @@
         "en": "Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread"
       }
     },
-<<<<<<< HEAD
     "poc_ct_casting_sparse_views": {
       "representative": "01_slices.png",
       "status": "gif",
@@ -33882,23 +33877,10 @@
         "02_ranking.png",
         "03_tv_weight.png",
         "04_dual_energy.png"
-=======
-    "poc_surface_defect_classifiers": {
-      "representative": "01_defect_patches.png",
-      "status": "gif",
-      "selected": [
-        "01_defect_patches.png",
-        "02_stain_pixels.png",
-        "03_stain_pixel_iou.png",
-        "04_classifier_accuracy.png",
-        "05_gmm_confusion_reject.png",
-        "06_accuracy_by_weight.png"
->>>>>>> poc/classify-2026-11-12
       ],
       "excluded_frames": [],
       "variants": {
         "ja": {
-<<<<<<< HEAD
           "path": "articles/assets/poc/poc_ct_casting_sparse_views/story.ja.gif",
           "frames": [
             {
@@ -33923,72 +33905,12 @@
             },
             {
               "file": "03_tv_weight.png",
-=======
-          "path": "articles/assets/poc/poc_surface_defect_classifiers/story.ja.gif",
-          "frames": [
-            {
-              "file": "01_defect_patches.png",
-              "content_box": [
-                0,
-                158,
-                720,
-                374
-              ]
-            },
-            {
-              "file": "02_stain_pixels.png",
-              "content_box": [
-                0,
-                268,
-                720,
-                154
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 4.681529
-            },
-            {
-              "file": "03_stain_pixel_iou.png",
-              "content_box": [
-                0,
-                236,
-                720,
-                217
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 3.323864
-            },
-            {
-              "file": "04_classifier_accuracy.png",
-              "content_box": [
-                0,
-                228,
-                720,
-                233
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 3.085
-            },
-            {
-              "file": "05_gmm_confusion_reject.png",
-              "content_box": [
-                0,
-                167,
-                720,
-                356
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.02
-            },
-            {
-              "file": "06_accuracy_by_weight.png",
->>>>>>> poc/classify-2026-11-12
               "content_box": [
                 0,
                 113,
                 720,
                 463
               ]
-<<<<<<< HEAD
             },
             {
               "file": "04_dual_energy.png",
@@ -34003,16 +33925,10 @@
             }
           ],
           "frame_count": 4,
-=======
-            }
-          ],
-          "frame_count": 6,
->>>>>>> poc/classify-2026-11-12
           "durations_ms": [
             2500,
             1600,
             1600,
-<<<<<<< HEAD
             1600
           ],
           "bytes": 312458,
@@ -34050,89 +33966,12 @@
             },
             {
               "file": "03_tv_weight.png",
-=======
-            1600,
-            1600,
-            1600
-          ],
-          "bytes": 348502,
-          "color_mad": [
-            0.4253,
-            0.255,
-            0.0331,
-            0.0375,
-            0.0242,
-            0.0795
-          ],
-          "max_color_mad": 0.4253,
-          "source_sha256": "1e7113fff3bf7c44251a2e98d0dc4ee13bd01c9d29a4169649684ceabbd2cb9d"
-        },
-        "en": {
-          "path": "articles/assets/poc/poc_surface_defect_classifiers/story.en.gif",
-          "frames": [
-            {
-              "file": "01_defect_patches.png",
-              "content_box": [
-                0,
-                158,
-                720,
-                374
-              ]
-            },
-            {
-              "file": "02_stain_pixels.png",
-              "content_box": [
-                0,
-                268,
-                720,
-                154
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 4.681529
-            },
-            {
-              "file": "03_stain_pixel_iou.png",
-              "content_box": [
-                0,
-                236,
-                720,
-                217
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 3.323864
-            },
-            {
-              "file": "04_classifier_accuracy.png",
-              "content_box": [
-                0,
-                228,
-                720,
-                233
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 3.085
-            },
-            {
-              "file": "05_gmm_confusion_reject.png",
-              "content_box": [
-                0,
-                167,
-                720,
-                356
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.02
-            },
-            {
-              "file": "06_accuracy_by_weight.png",
->>>>>>> poc/classify-2026-11-12
               "content_box": [
                 0,
                 113,
                 720,
                 463
               ]
-<<<<<<< HEAD
             },
             {
               "file": "04_dual_energy.png",
@@ -34147,16 +33986,10 @@
             }
           ],
           "frame_count": 4,
-=======
-            }
-          ],
-          "frame_count": 6,
->>>>>>> poc/classify-2026-11-12
           "durations_ms": [
             2500,
             1600,
             1600,
-<<<<<<< HEAD
             1600
           ],
           "bytes": 312458,
@@ -34176,31 +34009,6 @@
       "alt": {
         "ja": "360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。",
         "en": "CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume"
-=======
-            1600,
-            1600,
-            1600
-          ],
-          "bytes": 348502,
-          "color_mad": [
-            0.4253,
-            0.255,
-            0.0331,
-            0.0375,
-            0.0242,
-            0.0795
-          ],
-          "max_color_mad": 0.4253,
-          "source_sha256": "e189acd605d3e9e8524ae97304cdbec0840c24625f5063c5ea58d686e0d016b2"
-        }
-      },
-      "reason": null,
-      "cover": "01_defect_patches.png",
-      "still": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
-      "alt": {
-        "ja": "rendered ground-metal patches (height defects shade, the stain changes colour)",
-        "en": "Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected"
->>>>>>> poc/classify-2026-11-12
       }
     }
   }
