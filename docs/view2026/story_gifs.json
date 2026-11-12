@@ -18,7 +18,7 @@
   "crop_title_band_fraction": 0.12,
   "min_laplacian_density": 0.0005,
   "min_content_fraction": 0.36,
-  "manual_thumbnail_spec_count": 34,
+  "manual_thumbnail_spec_count": 33,
   "entries": {
     "poc_phase_measuring_deflectometry": {
       "representative": "03_photo_vs_pmd.png",
@@ -28063,7 +28063,7 @@
       "still": "articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png",
       "alt": {
         "ja": "R 30 mm・壁 1.5 mm・n 1.52 の瓶、水 1.333。各画素の光線を追跡して背景のどこを見ているか(u)を求め、そこの市松を描いた。逆から見ると、この歪みが瓶を測る手がかり。",
-        "en": "A transparent bottle distorts the stripes behind it. From that distortion we fit the outer radius, wall thickness, refractive indices and liquid level backwards, and score them against the true values of a simulation. It also reports which quantities cannot be separated and which errors cannot be detected. The truth is a self-made simulation, not a measurement of a real bottle."
+        "en": "A transparent bottle distorts the stripes behind it. For each pixel we find where the background is seen, fit the bottle geometry and indices backwards, and score 5 fill states against the true values of the simulation. Quantities that are inseparable and errors that stay undetectable are reported too."
       }
     },
     "poc_lens_global_search": {
@@ -31787,7 +31787,7 @@
       "still": "articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png",
       "alt": {
         "ja": "create_caltab -> rendered camera -> find_caltab -> camera_calibration_lm",
-        "en": "A calibration plate with circular marks is imaged and taken end to end, from point detection to camera calibration, and scored against the true camera. Even with zero noise the focal length is off by 0.45 %, and that floor is set by the centroid of the binarised marks."
+        "en": "A calibration plate with circular marks is imaged and taken from point detection to camera calibration, then scored against the true camera. Even without noise the focal length is off by 0.45 %. That floor is set by the centroid of the binarised marks."
       }
     },
     "poc_real_tum_rgbd_slam": {
@@ -33147,7 +33147,7 @@
       "still": "articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png",
       "alt": {
         "ja": "遮蔽は左右一致で無効に落ち、誤りは段差の近くと見え方が変わる面(光沢)に残る。無地では SGBM に負け、両方が有効な画素の平均誤差も SGBM がわずかに小さい(0.918 対 0.912 px)。処理時間は SGBM の数十倍(機械と負荷で変わる)。 遮蔽 bad2 71.5 % 無効 57.0 % / 段差の近く bad2 14.1 % 無効 9.7 % / 無地 bad2 4.1 % 無効 14.5 % / 見え方が変わる面 bad2 11.5 % 無効 20.7 % / それ以外 bad2 0.8 % 無効 5.7 %",
-        "en": "From a real stereo pair (Middlebury 2014) we compute disparity, distance, surface and even the pose of a circle, score them against the ground-truth disparity, and map where the result breaks."
+        "en": "Using a real pair of stereo images, we compute disparity, distance, surfaces and even the pose of a circle. The result is scored with the true disparity that Middlebury 2014 supplies and compared with OpenCV. Where it breaks is shown on a map."
       }
     },
     "poc_real_chessboard_undistort": {
@@ -33471,7 +33471,7 @@
       "still": "articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png",
       "alt": {
         "ja": "中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差。★ = 残差が正しい幾何以下)、左から 正しい / 面内回転 0.5° を無視 / 縦ずれ 7.2 画素を無視 / 横に 0.3 mm ずらす / 回転の向きを逆に。下段 = 差 ±0.03 /mm。縦ずれを無視したデータも、それ自体は矛盾の無いデータなので、再構成した像を投影し直すとデータによく合う —— 残差では幾何の誤りが見えない。参照(外の真値)と比べて初めて分かる。横ずれと回転の向きの取り違えは残差にも出る。隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。",
-        "en": "A public real cone-beam CT scan (one walnut) was reconstructed with FDK and three iterative methods and scored against the reference supplied by its authors. Ignoring the vertical shift puts the result 2.6 times farther from the reference, yet the reprojection residual cannot tell the difference."
+        "en": "A walnut was really scanned in a cone beam, and the data were reconstructed with FDK and iterative methods. Using 300 projections and scoring against the reference from its authors, the result that ignores the vertical shift ends up much more distant. But the residual after reprojection cannot reveal the gap."
       }
     },
     "poc_real_typewritten_ocr": {
@@ -33690,7 +33690,7 @@
                 "source": "articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.gif",
                 "frame": 0.5,
                 "crop": null,
-                "mode": "square",
+                "mode": "contain",
                 "rendered": "view2026/thumbs/poc_mixed_case_depalletizing.jpg"
               }
             },
@@ -33757,9 +33757,9 @@
             1600,
             1600
           ],
-          "bytes": 500090,
+          "bytes": 449690,
           "color_mad": [
-            0.8924,
+            0.6638,
             1.8501,
             0.0206,
             0.0199,
@@ -33767,7 +33767,7 @@
             0.6475
           ],
           "max_color_mad": 1.8501,
-          "source_sha256": "d422690d79881bebbe6167e109b54badf4859d0f363cf36b3041e26e40bfd61f"
+          "source_sha256": "b464e7ca4b1f3c2b3ac62ded04c758ac2f16d47fbd27140d21c7b587036babe9"
         },
         "en": {
           "path": "articles/assets/poc/poc_mixed_case_depalletizing/story.en.gif",
@@ -33784,7 +33784,7 @@
                 "source": "articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.gif",
                 "frame": 0.5,
                 "crop": null,
-                "mode": "square",
+                "mode": "contain",
                 "rendered": "view2026/thumbs/poc_mixed_case_depalletizing.jpg"
               }
             },
@@ -33851,9 +33851,9 @@
             1600,
             1600
           ],
-          "bytes": 500090,
+          "bytes": 449690,
           "color_mad": [
-            0.8924,
+            0.6638,
             1.8501,
             0.0206,
             0.0199,
@@ -33861,14 +33861,14 @@
             0.6475
           ],
           "max_color_mad": 1.8501,
-          "source_sha256": "fe3337b2c0ed586fc8301835cd21c9687ef938ca3a9d88e4d3ee24b8bf39f247"
+          "source_sha256": "491f102b910a94163f42cb3693f309c74a9cb6835f7414b7dbed8bf7281ce772"
         }
       },
       "thumbnail": {
         "source": "articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.gif",
         "frame": 0.5,
         "crop": null,
-        "mode": "square",
+        "mode": "contain",
         "rendered": "view2026/thumbs/poc_mixed_case_depalletizing.jpg"
       },
       "reason": null,
@@ -34076,7 +34076,7 @@
       "still": "articles/assets/poc/poc_3d_sensor_modalities/01_map.png",
       "alt": {
         "ja": "同じ部品(段差・止まり穴・斜面・V 溝・リブ・浅い打痕)を 4 つの材質で、ステレオ・縞投影・間接 ToF・光切断・照度差ステレオの 5 方式で測った形。灰 = 欠測、橙 = 全方式共通の 0.1 mm を超える外れ。三角測量の角はステレオ・縞投影・光切断とも 30°。撮像は物理で描き、高さへの戻しは Fullseye の op。照度差ステレオの高さの定数は真値に合わせた(形の外れは偏りを引いて数えるので、合わせ方に依らない)。",
-        "en": "The same part was measured by five 3-D sensing methods (stereo, fringe projection, indirect ToF, light section, photometric stereo) in four materials (matte, metallic gloss, translucent resin, black) and compared with the dimension table. Which material breaks which method, and where, differs from method to method."
+        "en": "The same part was measured by several depth-sensing methods in matte, glossy metal, translucent and black materials. Shape errors were counted with a common 0.1 mm yardstick and compared with the dimension table. Which material breaks which method, and where, differs from method to method."
       }
     },
     "poc_ai_built_inspection_scored": {
@@ -34293,7 +34293,7 @@
       "still": "articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png",
       "alt": {
         "ja": "コンクリートのひび割れ(試験画像、塗り = 検出)。欠陥の画像は NG なら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも寄せていない)。検出は表示のため 2 画素太らせた。出典表示: Özgenel, Ç. F. (2019). Concrete Crack Images for Classification. Mendeley Data, v2. doi:10.17632/5y9wdsg2zt.2. CC BY 4.0; converted to gray",
-        "en": "We gave an AI a task in plain words, let it assemble the inspection recipe, and scored the result against the ground truth of public real data (cracks in concrete walls, candle appearance). Each failure is sorted into tool, MCP or model, with before and after side by side. The recipes built by cloud LLMs sorted the images better than chance, but did not reach the existing recipes."
+        "en": "We gave an AI a task in natural language and let it assemble the inspection recipe. It was scored on 400 public crack images against the labels from their source, and each failure was sorted into tool, MCP or model. Cloud LLMs beat chance but did not reach the existing recipes."
       }
     },
     "poc_equipment_selection_map": {
@@ -34502,7 +34502,7 @@
       "still": "articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png",
       "alt": {
         "ja": "ViEW の入口用: 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大。どの組でも見つかるものだけ)。見つからない照明は灰色の斜線の全長の棒、種の組で揺れる照明は破線の全長の棒。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げ、倍率は見本の下に書いた。PE 片は分光の 1210 nm の帯を両隣で割った吸収の深さ)。凹みの見本は 80 倍に広げて判定の大きさでならしたので、実際よりはっきり見える(雑音なしの陰影は最大 0.8 %)。",
-        "en": "For visual inspection equipment, the same flaw was imaged with 60 combinations of 6 lightings, 5 cameras and 2 lenses, and mapped by how small a flaw is found, with the spread across repeats. This is a synthetic test, not the performance of real equipment."
+        "en": "We pre-tested visual inspection equipment on the same flaw. With 60 combinations of lighting, camera and lens we mapped how small a flaw is found, with the spread across repeats. It is a synthetic test, not the performance of real equipment."
       }
     },
     "poc_ct_casting_sparse_views": {

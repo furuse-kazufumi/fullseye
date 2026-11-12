@@ -79,8 +79,6 @@ SPEC = [
     ("evis_bean_track", "articles/assets/evis_bean_track_fullseye_still.png", None, (0.5, 0.0, 1.0)),
     # 5 枚を縦に積んだ全体ではなく、最初の OCT 断面を案内用の代表図にする。
     ("poc_industrial_oct", _P + "poc_industrial_oct/01_real_paint_bscans.png", None, (0.04, 0.05, 0.25)),
-    # 混載デパレタイズ: 元の図は mp4 なので、同じ動画から作った GIF の真ん中のコマを中央の正方形で切る
-    ("poc_mixed_case_depalletizing", _P + "poc_mixed_case_depalletizing/08_depal_robot_video.gif", 0.5, None),
     # 動く 3-D: 元はビューアをスマホ幅(375 px、WebGL)で開いた画面から 3-D の部分だけを切った静止画
 ]
 
@@ -156,6 +154,8 @@ def thumbnail_specs() -> tuple[list[tuple[str, str, float | None, tuple | None]]
     for e in data["exhibits"]:
         if e["id"] not in known:
             rel = e.get("media_path") or (_P + e["id"] + "/" + e["media"])
+            if rel.endswith(".mp4"):          # mp4 は PIL で開けない。同じ動画から作った同名の GIF を使う
+                rel = rel[:-4] + ".gif"
             specs.append((e["id"], rel, 0.5, None))
     return specs, generated - known
 

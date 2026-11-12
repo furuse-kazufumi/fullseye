@@ -772,7 +772,7 @@ py -3.11 examples/poc_water_inspection_images.py
 
 ## No.2026.312 —— 背景の縞の歪みからガラス瓶を逆に測る(同じ仮定の下のシミュレーション)―― 外半径・壁厚・屈折率・液面を真値で採点し、分けられない量と検出できない誤差を出す
 
-透明な瓶は後ろの縞を歪めて見せる。その歪みから、外半径・壁厚・屈折率・液面を逆に当てはめ、シミュレーションの真値で採点した。分けられない量と、検出できない誤差も一緒に出す。真値は自作のシミュレーションで、実物の測定ではない。
+透明な瓶は後ろの縞を歪めて見せる。画素ごとに背景の位置を求め、外半径・壁厚・屈折率・液面を逆に当てはめて、充填 5 通りの真値で採点した。分けられない量と検出できない誤差も出すが、真値は自作のシミュレーションである。
 
 [![背景の縞の歪みからガラス瓶を逆に測る(同じ仮定の下のシミュレーション)―― 外半径・壁厚・屈折率・液面を真値で採点し、分けられない量と検出できない誤差を出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png)
 
@@ -850,7 +850,7 @@ py -3.11 examples/poc_photograph_through_prescription.py
 
 ## No.2026.304 —— 実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する ―― 縦ずれを無視すると参照から 2.6 倍遠いのに、再投影の残差では見分けられない(差 2.3 %)
 
-公開されている実測のコーンビーム CT(クルミ 1 個)を FDK と 3 つの反復法で再構成し、配布元の参照で採点した。縦ずれを無視すると参照から 2.6 倍遠くなるのに、再投影の残差では見分けられない。
+公開されている実測のコーンビーム CT(クルミ)を、FDK と反復法で再構成した。投影 300 枚を使い、配布元の参照で採点すると、縦ずれを無視した再構成は参照からかなり遠くなる。それなのに再投影の残差では、その差が見分けられない。
 
 [![実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する ―― 縦ずれを無視すると参照から 2.6 倍遠いのに、再投影の残差では見分けられない(差 2.3 %)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png)
 
@@ -2562,7 +2562,7 @@ py -3.11 examples/poc_simcal_thin_film.py
 
 ## No.2026.315 —— 円マークの校正板を端から端まで ―― 雑音 0 でも fx は 0.45 % 外れ、その床は 2 値の重心が決める
 
-円マークの校正板を撮り、点の検出からカメラ校正まで端から端まで通して、真のカメラの値で採点した。雑音が 0 でも焦点距離は 0.45 % 外れ、その床は 2 値の重心が決める。
+真のカメラで撮像した円マークの校正板から、点の検出・姿勢の推定・カメラ校正まで通して採点した。雑音が無くても焦点距離は 0.45 % 外れる。その床は、二値にした円マークの重心が決める。
 
 [![円マークの校正板を端から端まで ―― 雑音 0 でも fx は 0.45 % 外れ、その床は 2 値の重心が決める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png)
 
@@ -2684,7 +2684,7 @@ py -3.11 examples/poc_sheet_deformation_ffd.py
 
 ## No.2026.302 —— 実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする
 
-実写のステレオ対(Middlebury 2014)から視差・距離・面・円の姿勢まで求め、真値の視差で採点して、壊れる場所を地図にした。
+実写のステレオ対から、視差・距離・面・円の姿勢まで求めた。Middlebury 2014 の真値の視差で平均誤差を採点し、OpenCV と比べた。壊れる場所は地図にして示した。
 
 [![実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png)
 
@@ -4176,7 +4176,7 @@ py -3.11 examples/poc_bga_ball_type_roundtrip.py
 
 ## No.2026.309 —— 同じ部品を 3-D センサの 5 方式で測る ―― 縞投影・間接 ToF・光切断・照度差ステレオ・ステレオは、どの材質のどこで壊れるか
 
-同じ部品を、ステレオ・縞投影・間接 ToF・光切断・照度差ステレオの 5 方式で、つや消し・金属光沢・半透明・黒の 4 材質について測り、寸法表の真値と比べた。どの材質のどこで壊れるかは、方式ごとに違う。
+同じ部品を、方式の違う立体センサで、つや消し・金属光沢・半透明・黒の材質ごとに測った。形の外れを共通の物差し 0.1 mm で数え、寸法表の真値と比べた。どの材質のどこで壊れるかは方式ごとに違う。
 
 [![同じ部品を 3-D センサの 5 方式で測る ―― 縞投影・間接 ToF・光切断・照度差ステレオ・ステレオは、どの材質のどこで壊れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map.png)
 

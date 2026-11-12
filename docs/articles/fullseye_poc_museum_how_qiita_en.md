@@ -772,7 +772,7 @@ Ops used (notes): [`bottle_image`](https://furuse.work/ops/optics/watervision/bo
 
 ## No.2026.312 —— Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and What Cannot Be Detected
 
-A transparent bottle distorts the stripes behind it. From that distortion we fit the outer radius, wall thickness, refractive indices and liquid level backwards, and score them against the true values of a simulation. It also reports which quantities cannot be separated and which errors cannot be detected. The truth is a self-made simulation, not a measurement of a real bottle.
+A transparent bottle distorts the stripes behind it. For each pixel we find where the background is seen, fit the bottle geometry and indices backwards, and score 5 fill states against the true values of the simulation. Quantities that are inseparable and errors that stay undetectable are reported too.
 
 [![Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and What Cannot Be Detected](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png)
 
@@ -850,7 +850,7 @@ Ops used (notes): [`bokeh_shape`](https://furuse.work/ops/optics/lensrender/boke
 
 ## No.2026.304 —— Reconstructing a Measured Cone-Beam CT Scan of a Walnut and Scoring It Against the Providers' Reference — Ignoring the Vertical Offset Puts It 2.6 Times Farther from the Reference, yet the Reprojection Residual Cannot Tell (2.3 % Apart)
 
-A public real cone-beam CT scan (one walnut) was reconstructed with FDK and three iterative methods and scored against the reference supplied by its authors. Ignoring the vertical shift puts the result 2.6 times farther from the reference, yet the reprojection residual cannot tell the difference.
+A walnut was really scanned in a cone beam, and the data were reconstructed with FDK and iterative methods. Using 300 projections and scoring against the reference from its authors, the result that ignores the vertical shift ends up much more distant. But the residual after reprojection cannot reveal the gap.
 
 [![Reconstructing a Measured Cone-Beam CT Scan of a Walnut and Scoring It Against the Providers' Reference — Ignoring the Vertical Offset Puts It 2.6 Times Farther from the Reference, yet the Reprojection Residual Cannot Tell (2.3 % Apart)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png)
 
@@ -2562,7 +2562,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.315 —— A Circle-Mark Calibration Plate End to End: fx Is 0.45 % Off Even Without Noise, and the Binary Centroid Sets That Floor
 
-A calibration plate with circular marks is imaged and taken end to end, from point detection to camera calibration, and scored against the true camera. Even with zero noise the focal length is off by 0.45 %, and that floor is set by the centroid of the binarised marks.
+A calibration plate with circular marks is imaged and taken from point detection to camera calibration, then scored against the true camera. Even without noise the focal length is off by 0.45 %. That floor is set by the centroid of the binarised marks.
 
 [![A Circle-Mark Calibration Plate End to End: fx Is 0.45 % Off Even Without Noise, and the Binary Centroid Sets That Floor](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png)
 
@@ -2684,7 +2684,7 @@ Ops used (notes): [`median`](https://furuse.work/ops/2d/rank/median.html) · [`p
 
 ## No.2026.302 —— Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks
 
-From a real stereo pair (Middlebury 2014) we compute disparity, distance, surface and even the pose of a circle, score them against the ground-truth disparity, and map where the result breaks.
+Using a real pair of stereo images, we compute disparity, distance, surfaces and even the pose of a circle. The result is scored with the true disparity that Middlebury 2014 supplies and compared with OpenCV. Where it breaks is shown on a map.
 
 [![Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png)
 
@@ -4176,7 +4176,7 @@ Ops used (notes): [`angles_to_normals`](https://furuse.work/ops/reprconv/directi
 
 ## No.2026.309 —— One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material
 
-The same part was measured by five 3-D sensing methods (stereo, fringe projection, indirect ToF, light section, photometric stereo) in four materials (matte, metallic gloss, translucent resin, black) and compared with the dimension table. Which material breaks which method, and where, differs from method to method.
+The same part was measured by several depth-sensing methods in matte, glossy metal, translucent and black materials. Shape errors were counted with a common 0.1 mm yardstick and compared with the dimension table. Which material breaks which method, and where, differs from method to method.
 
 [![One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map.png)
 

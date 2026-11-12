@@ -1604,7 +1604,7 @@ Ops used (notes): [`bilateral_filter_depth`](https://furuse.work/ops/3d/depth_de
 
 ## No.2026.308 —— Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)
 
-We gave an AI a task in plain words, let it assemble the inspection recipe, and scored the result against the ground truth of public real data (cracks in concrete walls, candle appearance). Each failure is sorted into tool, MCP or model, with before and after side by side. The recipes built by cloud LLMs sorted the images better than chance, but did not reach the existing recipes.
+We gave an AI a task in natural language and let it assemble the inspection recipe. It was scored on 400 public crack images against the labels from their source, and each failure was sorted into tool, MCP or model. Cloud LLMs beat chance but did not reach the existing recipes.
 
 [![Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png)
 
@@ -1644,7 +1644,7 @@ Ops used (notes): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_ev
 
 ## No.2026.307 —— Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread
 
-For visual inspection equipment, the same flaw was imaged with 60 combinations of 6 lightings, 5 cameras and 2 lenses, and mapped by how small a flaw is found, with the spread across repeats. This is a synthetic test, not the performance of real equipment.
+We pre-tested visual inspection equipment on the same flaw. With 60 combinations of lighting, camera and lens we mapped how small a flaw is found, with the spread across repeats. It is a synthetic test, not the performance of real equipment.
 
 [![Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png)
 
