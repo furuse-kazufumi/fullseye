@@ -68,7 +68,11 @@ _INTERNAL = {
     "fscript": 29, "fsruntime": 8,
     "gi_render": 2, "graph": 3, "graph_seed": 2, "halcon_coverage": 10,
     "halcon_scrape": 9, "honest_summary": 1, "imgevolve": 14, "lib_coverage": 3,
-    "param_specs": 10, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
+    # 2026-11-12 safe_xml(1.1.1): XML を DOCTYPE・実体の増幅なしで読む内部の層 4 本(UnsafeXMLError /
+    # safe_xml_parse / safe_xml_parse_zip_member / safe_xml_iterparse)。利用者は各形式の読み込み(CommonRoad・OSM・
+    # OME-TIFF・SVG・3MF・CityGML …)から使う。公開の op にするかは 1.2.0 の定義ファイルの層で決める。
+    "safe_xml": 4,
+    "param_specs": 11, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
     # GPU 第 4 便: 一括経路。op でなく、raytrace / optics と同じ定義を (M, W, R) で計算する下回りの部品。
     "polar_gpu": 13,   # 2026-11-04 統合 GPU: 第 4 便の後半の commit で 12 → 13(実測)
@@ -77,7 +81,7 @@ _INTERNAL = {
     # studio_search / studio_errors 2026-10-20: Studio の論理層(Qt 非依存)。UI への配線は次の片。
     #   search 6 本(current_sort_of / search_grouped / search_zero_results_help / canonical_sort / clear_caches / nearest_op_names)
     #   errors 3 本(explain_failure / format_failure / localize)。studio と同じ「GUI の内側の部品」で、テストが直接呼ぶ。
-    "studio": 90, "studio_errors": 3, "studio_search": 6, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    "studio": 90, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
@@ -313,7 +317,11 @@ def test_pending_exposure_shrinks_when_fixed():
 #   halcon_coverage.source_breakdown_text(成熟度の文面を出所別に組む補助。呼ぶのは honest_summary だけ)と
 #   realdata.mark_read(PoC が「実データを読んだ」印を記録に足す補助。呼ぶのは data: real の例だけで、op ではない)。
 #   同じ便の source_of / covered_by_source はモジュールの中でしか使わないので _ を付けて内部にした(数えない)。
-_HIDDEN_FUNCTIONS_TODAY = 1073
+# 2026-11-12 1.1.1(fix/studio-p-items-2026-11-12): 1073 + 11 = 1084。safe_xml 4(上の注記)・
+#   param_specs.half_then_thirds_index 1(端の扱い・構造要素の形のつまみの対応。Studio と MCP の内側の部品)・
+#   studio_search.staples_for 1(検索の「定番」の群。Studio の内側)・studio 3(lang_from_locale ほか、GUI の内側)・
+#   backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。
+_HIDDEN_FUNCTIONS_TODAY = 1084
 
 
 def _hidden_total():
