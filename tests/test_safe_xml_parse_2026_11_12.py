@@ -162,6 +162,9 @@ _READERS = {
 assert set(_READERS) == set(_ROOTS)
 #: 大きさの上限を持たない読み手(ストリーム読み。メモリは elem.clear() で抑える設計)。
 _NO_SIZE_LIMIT = {"plateau_parse", "plateau_lod2_mesh"}
+#: 1.1.0 で上限が無く、実在の大きなファイル(100 万三角形の 3MF = 72 MB、街全体の OSM)がある読み手。既定を大きめにしてある
+#: (512 MiB・1,000 万要素)。上限を超える入力の試験は下の専用の試験で、``xml_limits`` で小さくして見る。
+_BIG_DEFAULT = {"osm_parse", "read_3mf"}
 
 
 # --------------------------------------------------------------------------- 1. 読み手ごとに DTD 系を断る
@@ -211,7 +214,7 @@ def test_gate_refuses_dtd_in_other_encodings_by_the_gate_itself(kind):
 
 # --------------------------------------------------------------------------- 3. 巨大な入力(読み手ごと)
 # read_3mf は zip の展開後の大きさとして下の test_3mf_zip_bomb_is_refused_before_inflating で試す。
-@pytest.mark.parametrize("reader", sorted(set(_READERS) - _NO_SIZE_LIMIT - {"read_3mf"}))
+@pytest.mark.parametrize("reader", sorted(set(_READERS) - _NO_SIZE_LIMIT - _BIG_DEFAULT))
 def test_every_reader_refuses_oversize_input(reader, tmp_path, monkeypatch):
     if reader == "anatomical_hand":
         path = tmp_path / "big.xml"
@@ -248,8 +251,10 @@ def test_3mf_zip_bomb_is_refused_before_inflating(tmp_path):
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("3D/3dmodel.model", b"<model>" + b"\0" * (SX.DEFAULT_MAX_BYTES + 4096) + b"</model>")
     assert path.stat().st_size < 1_000_000  # 圧縮後は小さい(爆弾)
-    with pytest.raises(UnsafeXMLError, match="exceeds"):
-        P.read_3mf(str(path))
+    # read_3mf の既定は大きめ(512 MiB)なので、展開後 50 MiB の上限をかけて爆弾(圧縮後 1 MB 未満 → 展開後 52 MB)を見る
+    with SX.xml_limits(max_bytes=SX.DEFAULT_MAX_BYTES):
+        with pytest.raises(UnsafeXMLError, match="exceeds"):
+            P.read_3mf(str(path))
 
 
 class _FakeInfo:
@@ -397,7 +402,7 @@ def test_iterparse_matches_elementtree_and_refuses_dtd():
 _ET_MODULES = ("xml.etree.ElementTree", "xml.etree.cElementTree")
 _PARSE_ATTRS = ("fromstring", "fromstringlist", "parse", "iterparse", "XML", "XMLID", "XMLParser", "XMLPullParser")
 _BANNED_PARSE = {m + "." + a for m in _ET_MODULES for a in _PARSE_ATTRS}
-_BANNED_FAMILIES = ("xml.dom", "xml.sax", "xml.parsers", "pyexpat", "lxml", "plistlib", "xmlrpc", "xmltodict", "defusedxml")
+_BANNED_FAMILIES = ("xml.etree.ElementInclude", "xml.dom", "xml.sax", "xml.parsers", "pyexpat", "lxml", "plistlib", "xmlrpc", "xmltodict", "defusedxml")
 
 
 def _in_family(name: str) -> bool:
@@ -421,7 +426,8 @@ def _scan_source(src: str) -> list:
             for a in node.names:
                 full = mod + "." + a.name
                 alias[a.asname or a.name] = full
-                if _in_family(mod) or _in_family(full) or full in _BANNED_PARSE:
+                if _in_family(mod) or _in_family(full) or full in _BANNED_PARSE or (
+                        a.name == "*" and mod in _ET_MODULES):
                     hits.append((node.lineno, "from %s import %s" % (mod, a.name)))
 
     def resolve(n):
@@ -444,9 +450,13 @@ def _scan_source(src: str) -> list:
             if isinstance(node.func, ast.Attribute) and node.func.attr == "parse" and isinstance(node.func.value, ast.Call) \
                     and (resolve(node.func.value.func) or "") in {m + ".ElementTree" for m in _ET_MODULES}:
                 hits.append((node.lineno, "ElementTree().parse"))
-            if r in ("__import__", "importlib.import_module") and node.args and isinstance(node.args[0], ast.Constant) \
-                    and isinstance(node.args[0].value, str) and (_in_family(node.args[0].value) or node.args[0].value in _ET_MODULES):
-                hits.append((node.lineno, "dynamic import " + node.args[0].value))
+            if r == "getattr" and node.args and (resolve(node.args[0]) or "") in _ET_MODULES:
+                hits.append((node.lineno, "getattr(ElementTree, ...)"))
+            if r in ("__import__", "importlib.import_module") and node.args:
+                # 文字列を組み立てても、XML 系の語の断片(定数)が見えれば拾う("xml." + "dom" など)
+                frag = "".join(c.value for c in ast.walk(node.args[0]) if isinstance(c, ast.Constant) and isinstance(c.value, str))
+                if any(w in frag for w in ("xml", "expat", "lxml", "plistlib", "sax", "minidom")):
+                    hits.append((node.lineno, "dynamic import " + frag))
     return sorted(set(hits))
 
 
@@ -497,6 +507,12 @@ _SCAN_BAD = [
     "import lxml.etree",
     "import xmlrpc.client",
     "importlib.import_module('xml.dom.minidom')",
+    "import xml.etree.ElementTree as ET\nf = getattr(ET, 'fromstring')",
+    "from xml.etree.ElementTree import *",
+    "import xml.etree.ElementInclude",
+    "import importlib\nimportlib.import_module('xml.' + 'dom')",
+    "from xml.dom import *",
+    "__import__('x' + 'ml.sax')",
 ]
 _SCAN_OK = [
     "import xml.etree.ElementTree as ET\nET.Element('a'); ET.SubElement(r, 'b'); ET.tostring(r); ET.ParseError",
@@ -536,7 +552,7 @@ def test_every_reader_refuses_deep_nesting(reader, tmp_path, monkeypatch):
         _READERS[reader](payload, tmp_path, monkeypatch)
 
 
-@pytest.mark.parametrize("reader", sorted(set(_READERS) - _NO_SIZE_LIMIT))
+@pytest.mark.parametrize("reader", sorted(set(_READERS) - _NO_SIZE_LIMIT - _BIG_DEFAULT))
 def test_every_reader_refuses_a_flat_element_flood(reader, tmp_path, monkeypatch):
     """要素の数の上限(既定 100 万、osm_parse は 200 万): 200 万 + 1 個の平らな ``<z/>``(8 MB)は入力の大きさの上限(50 MiB)では止まらない。"""
     payload = _inject(_ROOTS[reader], "<z/>" * 2_000_001).encode("utf-8")
@@ -647,3 +663,93 @@ def test_hand_include_expansion_still_works_through_the_gate(tmp_path):
     root = _hand_module()._expand_includes(tmp_path / "main.xml")
     assert [c.tag for c in root] == ["asset", "worldbody"]
     assert root.find("asset/mesh").get("name") == "m"
+
+
+# --------------------------------------------------------------------------- 9. 上限を外す手段と、1.1.0 で読めた大きさ
+def _model_3mf(path, n_tri: int, pad_bytes: int = 0):
+    """三角形が 1 要素ずつの 3MF(頂点 4 つ + n_tri 個の三角形)。pad_bytes のコメントで入力を大きくできる。"""
+    tris = '<triangle v1="0" v2="1" v3="2"/>' * n_tri
+    pad = "<!--" + "p" * pad_bytes + "-->" if pad_bytes else ""
+    xml = ('<?xml version="1.0"?><model unit="millimeter" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02">'
+           '<resources><object id="1" type="model"><mesh><vertices>'
+           '<vertex x="0" y="0" z="0"/><vertex x="1" y="0" z="0"/><vertex x="0" y="1" z="0"/><vertex x="0" y="0" z="1"/>'
+           '</vertices><triangles>%s</triangles></mesh></object></resources>%s<build><item objectid="1"/></build></model>'
+           % (tris, pad))
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr("3D/3dmodel.model", xml)
+    return len(xml)
+
+
+def test_a_3mf_that_1_1_0_could_read_is_read_by_default_and_the_limit_can_be_lifted(tmp_path):
+    """1.1.0 の read_3mf に上限は無かった。130 万三角形(既定の 100 万要素を超える)+ 15 MB の余白(合計 55 MB = 50 MiB 超)を既定で読む。"""
+    import printpath as P
+    path = tmp_path / "big.3mf"
+    size = _model_3mf(path, 1_300_000, pad_bytes=15_000_000)
+    assert size > SX.DEFAULT_MAX_BYTES
+    V, F = P.read_3mf(str(path))
+    assert F.shape == (1_300_000, 3) and V.shape == (4, 3)
+    # 門の既定(50 MiB・100 万要素)では断られる = 読み手ごとの既定が効いている
+    with zipfile.ZipFile(path) as zf:
+        with pytest.raises(UnsafeXMLError, match="xml_limits"):
+            SX.safe_xml_parse_zip_member(zf, "3D/3dmodel.model", op="read_3mf")
+    # 利用者が上限を下げる/外す: 小さくすると断られ(「上げるには」の文つき)、外す(None)と読める
+    with SX.xml_limits(max_elements=1000):
+        with pytest.raises(UnsafeXMLError, match="to raise the limit"):
+            P.read_3mf(str(path))
+    with SX.xml_limits(max_bytes=1000):
+        with pytest.raises(UnsafeXMLError, match="max_bytes"):
+            P.read_3mf(str(path))
+    with SX.xml_limits(max_bytes=None, max_elements=None, max_depth=None):
+        assert P.read_3mf(str(path))[1].shape[0] == 1_300_000
+
+
+def test_a_large_osm_is_read_by_default_and_the_limit_can_be_lifted():
+    """1.1.0 の osm_parse に上限は無かった。110 万要素(既定の門の 100 万を超える)の OSM を既定で読む。"""
+    import drivejapan as DJ
+    nodes = "".join('<node id="%d" lat="35.0" lon="139.0"/>' % i for i in range(1, 1_100_001))
+    text = '<osm version="0.6">%s</osm>' % nodes
+    out = DJ.osm_parse(text)
+    assert out is not None
+    with SX.xml_limits(max_elements=1000):
+        with pytest.raises(ValueError, match="elements"):
+            DJ.osm_parse(text)
+
+
+def test_xml_limits_is_scoped_validated_and_cannot_lift_the_dtd_ban():
+    with pytest.raises(ValueError, match="unknown limit"):
+        with SX.xml_limits(forbid_dtd=False):
+            pass
+    with pytest.raises(ValueError, match="max_depth"):
+        with SX.xml_limits(max_depth=0):
+            pass
+    with SX.xml_limits(max_elements=2):
+        with pytest.raises(UnsafeXMLError, match="to raise the limit"):
+            SX.safe_xml_parse("<r><a/><a/></r>")
+        with SX.xml_limits(max_elements=None):            # 入れ子の上書きは内側が勝つ
+            assert SX.safe_xml_parse("<r><a/><a/></r>").tag == "r"
+        with pytest.raises(UnsafeXMLError):
+            SX.safe_xml_parse("<r><a/><a/></r>")          # 抜けると戻る
+    assert SX.safe_xml_parse("<r><a/><a/></r>").tag == "r"
+    with SX.xml_limits(max_bytes=None, max_elements=None, max_depth=None, max_prolog_bytes=None):
+        with pytest.raises(UnsafeXMLError, match="DOCTYPE"):
+            SX.safe_xml_parse(b"<!DOCTYPE a><a/>")
+
+
+def test_svg_size_limit_can_be_lifted():
+    import optdraw as OD
+    svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><!--' + "x" * (51 * 1024 * 1024) + "--></svg>"
+    with pytest.raises(ValueError, match="exceeds"):
+        OD.svg_entities(svg)
+    with SX.xml_limits(max_bytes=None):
+        assert OD.svg_entities(svg)["view_box"] is not None
+
+
+def test_iterparse_prolog_before_the_root_is_bounded():
+    """ルート要素の前(DOCTYPE を探すために先読みして溜める所)に上限。100 MB のコメントで 373 MB を溜めさせない。"""
+    big = b"<!--" + b"y" * (5 * 1024 * 1024) + b"--><r/>"
+    with pytest.raises(UnsafeXMLError, match="before the root element"):
+        list(SX.safe_xml_iterparse(io.BytesIO(big)))
+    assert [e.tag for _, e in SX.safe_xml_iterparse(io.BytesIO(big), max_prolog_bytes=None)] == ["r"]
+    with SX.xml_limits(max_prolog_bytes=None):
+        assert [e.tag for _, e in SX.safe_xml_iterparse(io.BytesIO(big))] == ["r"]
+    assert [e.tag for _, e in SX.safe_xml_iterparse(io.BytesIO(b"<!--" + b"y" * 100_000 + b"--><r/>"))] == ["r"]

@@ -28,6 +28,8 @@
 """
 from __future__ import annotations
 
+import contextlib
+import contextvars
 import os
 import xml.etree.ElementTree as ET
 import xml.parsers.expat as _expat
@@ -35,8 +37,9 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
-__all__ = ["UnsafeXMLError", "DEFAULT_MAX_BYTES", "DEFAULT_MAX_ELEMENTS", "DEFAULT_MAX_DEPTH", "safe_xml_parse",
-           "safe_xml_parse_zip_member", "safe_xml_iterparse"]
+__all__ = ["xml_limits", "UnsafeXMLError", "DEFAULT_MAX_BYTES", "DEFAULT_MAX_ELEMENTS", "DEFAULT_MAX_DEPTH", "safe_xml_parse",
+           "safe_xml_parse_zip_member", "safe_xml_iterparse", "DEFAULT_MAX_PROLOG_BYTES",
+           "effective_limit"]
 
 #: 既定の入力の上限(``optdraw._MAX_TEXT_BYTES`` の SVG と同じ 50 MiB)。
 DEFAULT_MAX_BYTES = 50 * 1024 * 1024
@@ -44,7 +47,44 @@ DEFAULT_MAX_BYTES = 50 * 1024 * 1024
 DEFAULT_MAX_ELEMENTS = 1_000_000
 #: 既定の入れ子の深さの上限(実ファイルの最大 14、Python の再帰上限 1000 の手前)。
 DEFAULT_MAX_DEPTH = 256
+#: ルート要素より前(DOCTYPE があり得る所)を先読みして溜める大きさの上限(iterparse)。実ファイルの前置きは数 KB。
+DEFAULT_MAX_PROLOG_BYTES = 4 * 1024 * 1024
 _CHUNK = 64 * 1024
+
+#: 利用者が上限を上げる(外す)ための上書き。``with xml_limits(max_bytes=None): ...`` の中の、門を通る全部の読みに効く。
+_OVERRIDES: "contextvars.ContextVar[dict]" = contextvars.ContextVar("safe_xml_limits", default={})
+_LIMIT_NAMES = ("max_bytes", "max_elements", "max_depth", "max_prolog_bytes")
+
+
+@contextlib.contextmanager
+def xml_limits(**limits: "int | None"):
+    """この ``with`` の中で、XML を読む門の上限を上書きする(``None`` で無制限)。読み手の引数に既定値を足せない契約 op
+    (``read_3mf``・``osm_parse``・``cr_read``・``ome_tiff_read``・``svg_entities`` など)の上限を、利用者が外す入口。
+
+    ``max_bytes`` / ``max_elements`` / ``max_depth`` / ``max_prolog_bytes``。例: ``with xml_limits(max_bytes=None, max_elements=None): read_3mf(p)``。
+    DOCTYPE の拒否は上書きできない(上げられるのは大きさの上限だけ)。スレッド・非同期の文脈ごと(``contextvars``)。
+    """
+    bad = sorted(set(limits) - set(_LIMIT_NAMES))
+    if bad:
+        raise ValueError("xml_limits: unknown limit %s (allowed: %s)" % (bad, ", ".join(_LIMIT_NAMES)))
+    for k, v in limits.items():
+        _check_limit(v, k, "xml_limits")
+    token = _OVERRIDES.set({**_OVERRIDES.get(), **limits})
+    try:
+        yield
+    finally:
+        _OVERRIDES.reset(token)
+
+
+def _eff(name: str, value: "int | None") -> "int | None":
+    """呼び出しの値(読み手が決めた既定)を、``xml_limits`` の上書きがあればそれで置き換える。"""
+    ov = _OVERRIDES.get()
+    return ov[name] if name in ov else value
+
+
+effective_limit = _eff  # 読み手が自前で大きさを先に検査する場合(svg_entities)に、``xml_limits`` の上書きを反映させる
+
+_RAISE_HINT = " (to raise the limit: pass the reader's limit argument, or wrap the call in `with safe_xml.xml_limits(%s=None):`)"
 
 
 class UnsafeXMLError(ValueError):
@@ -72,9 +112,11 @@ class _GuardBuilder(ET.TreeBuilder):
         self._n += 1
         self._d += 1
         if self._max_depth is not None and self._d > self._max_depth:
-            raise UnsafeXMLError("%s: XML nesting deeper than %d levels is refused" % (self._op, self._max_depth))
+            raise UnsafeXMLError("%s: XML nesting deeper than %d levels is refused" % (self._op, self._max_depth)
+                                 + _RAISE_HINT % "max_depth")
         if self._max_elements is not None and self._n > self._max_elements:
-            raise UnsafeXMLError("%s: XML with more than %d elements is refused" % (self._op, self._max_elements))
+            raise UnsafeXMLError("%s: XML with more than %d elements is refused" % (self._op, self._max_elements)
+                                 + _RAISE_HINT % "max_elements")
         return super().start(tag, attrs)
 
     def end(self, tag):
@@ -96,7 +138,8 @@ def _check_limit(value: Any, what: str, op: str) -> int | None:
 
 
 def _too_big(op: str, size: int, limit: int, unit: str = "bytes") -> UnsafeXMLError:
-    return UnsafeXMLError("%s: XML input of %d %s exceeds the limit %d" % (op, size, unit, limit))
+    return UnsafeXMLError("%s: XML input of %d %s exceeds the limit %d" % (op, size, unit, limit)
+                          + _RAISE_HINT % "max_bytes")
 
 
 def _read_path(path: Path, limit: int | None, op: str) -> bytes:
@@ -135,9 +178,9 @@ def safe_xml_parse(data_or_path: "str | bytes | bytearray | os.PathLike[str]", *
     ``forbid_dtd=True``(既定)なら DOCTYPE / ENTITY を含む入力を :class:`UnsafeXMLError` で断る。
     **Raises** :class:`UnsafeXMLError`(DTD・上限超え)/ ``ValueError``(型・パスが違う・上限の値が不正)/ ``ET.ParseError``。
     """
-    limit = _check_limit(max_bytes, "max_bytes", op)
-    max_elements = _check_limit(max_elements, "max_elements", op)
-    max_depth = _check_limit(max_depth, "max_depth", op)
+    limit = _check_limit(_eff("max_bytes", max_bytes), "max_bytes", op)
+    max_elements = _check_limit(_eff("max_elements", max_elements), "max_elements", op)
+    max_depth = _check_limit(_eff("max_depth", max_depth), "max_depth", op)
     if kind not in ("auto", "data", "path"):
         raise ValueError("%s: kind must be 'auto', 'data' or 'path', got %r" % (op, kind))
     if kind == "path" or (kind == "auto" and isinstance(data_or_path, os.PathLike)):
@@ -161,7 +204,7 @@ def safe_xml_parse_zip_member(zf: Any, name: "str | Any", *, max_bytes: int | No
     守りは 2 段: (1) 宣言された展開後の大きさ(``file_size``)が上限を超えるなら **展開せずに** 断る、(2) 宣言が嘘で小さくても
     ``max_bytes + 1`` バイトまでしか読まない。
     """
-    limit = _check_limit(max_bytes, "max_bytes", op)
+    limit = _check_limit(_eff("max_bytes", max_bytes), "max_bytes", op)
     info = zf.getinfo(name) if isinstance(name, str) else name
     if limit is not None and info.file_size > limit:
         raise _too_big(op, info.file_size, limit)
@@ -194,7 +237,7 @@ class _RootSeen(Exception):
     pass
 
 
-def _refuse_dtd_in_prolog(stream: Any, op: str) -> Any:
+def _refuse_dtd_in_prolog(stream: Any, op: str, max_prolog: int | None = None) -> Any:
     """ルート要素の開始まで(= DOCTYPE があり得る所だけ)を expat の通知で調べ、DOCTYPE があれば断る。読んだ分は :class:`_Replay` で返す。"""
     parser = _expat.ParserCreate()
 
@@ -207,6 +250,7 @@ def _refuse_dtd_in_prolog(stream: Any, op: str) -> Any:
     parser.StartDoctypeDeclHandler = _dt
     parser.StartElementHandler = _root
     seen: list[bytes] = []
+    held = 0
     while True:
         chunk = stream.read(_CHUNK)
         if not chunk:
@@ -218,6 +262,10 @@ def _refuse_dtd_in_prolog(stream: Any, op: str) -> Any:
         if not isinstance(chunk, (bytes, bytearray)):
             raise ValueError("%s: safe_xml_iterparse needs a binary stream (got %s chunks)" % (op, type(chunk).__name__))
         seen.append(bytes(chunk))
+        held += len(chunk)
+        if max_prolog is not None and held > max_prolog:
+            raise UnsafeXMLError("%s: more than %d bytes before the root element are refused" % (op, max_prolog)
+                                 + _RAISE_HINT % "max_prolog_bytes")
         try:
             parser.Parse(chunk, False)
         except _RootSeen:
@@ -228,7 +276,8 @@ def _refuse_dtd_in_prolog(stream: Any, op: str) -> Any:
 
 
 def safe_xml_iterparse(stream: Any, *, forbid_dtd: bool = True, max_elements: int | None = None,
-                       max_depth: int | None = DEFAULT_MAX_DEPTH, op: str = "xml") -> Iterator[tuple[str, ET.Element]]:
+                       max_depth: int | None = DEFAULT_MAX_DEPTH, max_prolog_bytes: int | None = DEFAULT_MAX_PROLOG_BYTES,
+                       op: str = "xml") -> Iterator[tuple[str, ET.Element]]:
     """``ET.iterparse(stream, events=("end",))`` の DOCTYPE なし・深さ上限つき版。``("end", 要素)`` を順に返す(読みながら ``elem.clear()`` してよい)。
 
     巨大なストリーム(CityGML など)を読むので、大きさと要素の総数の既定は **上限なし**(``max_elements=None``。理由は
@@ -236,10 +285,10 @@ def safe_xml_iterparse(stream: Any, *, forbid_dtd: bool = True, max_elements: in
     expat で調べて断る(以降の本体は標準の C の ``iterparse`` のまま走るので、遅さは深さの印の分だけ)。
     壊れた XML は ``ET.ParseError``。``stream`` は bytes を返す file-like。
     """
-    max_elements = _check_limit(max_elements, "max_elements", op)
-    max_depth = _check_limit(max_depth, "max_depth", op)
+    max_elements = _check_limit(_eff("max_elements", max_elements), "max_elements", op)
+    max_depth = _check_limit(_eff("max_depth", max_depth), "max_depth", op)
     if forbid_dtd:
-        stream = _refuse_dtd_in_prolog(stream, op)
+        stream = _refuse_dtd_in_prolog(stream, op, _check_limit(_eff("max_prolog_bytes", max_prolog_bytes), "max_prolog_bytes", op))
     depth = 0
     count = 0
     for event, elem in ET.iterparse(stream, events=("start", "end")):
@@ -247,9 +296,11 @@ def safe_xml_iterparse(stream: Any, *, forbid_dtd: bool = True, max_elements: in
             depth += 1
             count += 1
             if max_depth is not None and depth > max_depth:
-                raise UnsafeXMLError("%s: XML nesting deeper than %d levels is refused" % (op, max_depth))
+                raise UnsafeXMLError("%s: XML nesting deeper than %d levels is refused" % (op, max_depth)
+                                     + _RAISE_HINT % "max_depth")
             if max_elements is not None and count > max_elements:
-                raise UnsafeXMLError("%s: XML with more than %d elements is refused" % (op, max_elements))
+                raise UnsafeXMLError("%s: XML with more than %d elements is refused" % (op, max_elements)
+                                     + _RAISE_HINT % "max_elements")
             continue
         depth -= 1
         yield "end", elem

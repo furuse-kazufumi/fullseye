@@ -167,8 +167,9 @@ def osm_parse(source, *, origin=None) -> Dict[str, object]:
             raise ValueError("osm_parse: %s is not a file nor XML text" % (source,))
         text = p.read_text(encoding="utf-8")
     try:
-        # 街全体の OSM があり得るので要素数の上限は既定(100 万)の 2 倍。最大の実ファイル(b4.osm 3.2 MB)は 77,854 要素。
-        root = safe_xml_parse(text, kind="data", op="osm_parse", max_elements=2_000_000)
+        # 街全体の OSM があり得る(1.1.0 は上限なし)。最大の実ファイル(b4.osm 3.2 MB)は 77,854 要素・約 24 要素/KB なので、
+        # 512 MiB・1,000 万要素(約 0.9 GB、~400 MB の OSM 相当)まで。それ以上は ``safe_xml.xml_limits(...)`` で外す。
+        root = safe_xml_parse(text, kind="data", op="osm_parse", max_bytes=512 * 1024 * 1024, max_elements=10_000_000)
     except ET.ParseError as e:
         raise ValueError("osm_parse: not well-formed XML (%s)" % e) from None
     if root.tag != "osm":
