@@ -17,6 +17,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 実測: tests/test_safe_xml_parse_2026_11_12.py(145 本)。読み手 11 本 × DTD 6 種(10 段の入れ子実体・5 kB の実体・外部実体・内部実体・DOCTYPE のみ・SYSTEM つき DOCTYPE)× 別エンコード 5 種を読み手の入口から渡して全部断られる。52 MB の入力・展開後 52 MB の 3MF(圧縮後 1 MB 未満)も断られる。配布するモジュールを走査して、門を通さない解析の呼び出しが 0(対象は tests/・tools/・build/・examples/ を除く 500 本超。件数に下限つき)。
 
+### パイプラインのファイルの版の印(`fullseye_pipeline`)を読むときに検査する
+
+何が起き得たか: パイプラインのファイルの読み手(`FullseyeEngine.from_dict` / `load`(CLI の `imgevolve.py run` も通る)、Studio の `validate_pipeline_dict`(「Open pipeline」の `PipelineModel.load_dict` と studio_lite の `load_recipe` も通る))が、版の印を見ていなかった。`{"fullseye_pipeline": 99}`・`"banana"`・別の種類 `{"fullseye_graph": 1}` のファイルでも、`stages` があれば段 `gaussian` を持つエンジンとして受理された(再現: 7 つの入口 × 5 つの悪い印 = 全部 ACCEPT)。MCP にはパイプラインのファイルを読む入口は無い(`stages` を引数で受ける)。
+
+何を変えたか: 検査を小さな関数 `engine.check_pipeline_header(d, *, where=...)`(定数 `engine.PIPELINE_FORMAT_VERSION = 1`)にして、`FullseyeEngine.from_dict` と `studio.validate_pipeline_dict` の 2 か所から呼ぶ(ほかの読み手はこの 2 つを通る)。`fullseye_pipeline` があるとき値が整数の 1 でなければ(99・`"banana"`・`1.0`・`true`・`null`)`ValueError`、`fullseye_graph` だけのファイルも `ValueError`(「何を期待し、何が来たか」を言う)。印の無い古いファイル(`stages` だけ)は今までどおり読む(警告は付けない)。形式は変えていない(書く側は `fullseye_pipeline: 1` のまま)。別の担当が進めている封筒 `fullseye_kind` は見ない。
+
+挙動が変わる点: 印が整数の 1 でないファイル(99・文字列など)と、グラフのファイルが断られる。リポジトリ内の全ファイル(`examples/data/` など)の印は 1 で、正常なファイルの読み結果は変わらない。実測: tests/test_pipeline_header_mark_2026_11_12.py(62 本)を含む、Engine・Studio・studio_lite・CLI・XML の試験 555 本が通る。
+
 ## 1.1.0 — 2026-11-12
 
 1.1.0。1.0.0 の後に、既存の op の出力や失敗の仕方が変わる修正が入ったので、patch(1.0.x)でなく minor で出す。`CONTRIBUTING.md` の「Versioning」は「minor の桁が破壊的変更の合図」で、「既定の数値が変わる」「黙って通していた入力を明示的に拒否する(fail-soft から fail-closed へ)」を minor の条件に挙げている。下の「挙動の変更」の項目がそれに当たる(新しい op・PoC・文書・速度の改善だけなら patch だった)。op の削除・改名はない。既定の `device` は `"cpu"` のまま。

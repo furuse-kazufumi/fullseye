@@ -336,13 +336,13 @@
 
 - **L118** _(ja)_ — ★2026-11-05(敵対的検証 C13): 以前は ``tuple(st)[1:3]`` で段を読み、dict 段は鍵の名前 ("op" / "a")を float にしようとして ValueError、``(name, {"a": ..})`` は float(dict) の TypeError だった(run_pipeline は同じ段を受ける)。名前は stage_name、ノブは api._normalise_stage の 1 本。
 - **L251** _(ja)_ — ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
-- **L304** _(ja)_ — ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、 {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
-- **L311** _(ja)_ — ★2026-11-05(敵対的検証 C3): ノブの読み方は run_pipeline と同じ api._normalise_stage 1 本。 以前はここだけ別の読み方で、dict 段の未知キー({"op": "threshold", "A": 0.9} の打ち間違い)と 4 要素目(("threshold", 0.9, 0.5, 0.1))を黙って捨て、文字列ノブ "0.9" を float() で通していた —— run_pipeline は同じ段を TypeError で断る。同じ段は入口によらず同じ意味・同じ拒否。
-- **L331** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107): {"stages": None} が 0 段のエンジンになり、run が入力をそのまま 返していた(壊れた設定が「成功」)。[] は文書どおり恒等、None / 数値は設定の壊れ。
-- **L337** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
-- **L430** _(ja)_ — ★範囲外は断る(2026-09-20、GenSpark N40): --upto 9 / -1 が黙って全段 / 0 段になっていた
-- **L482** _(ja)_ — ★2026-11-04 external audit E4: each stage used to go through ``run_pipeline(prev, [st])`` on its own, so the chain-wide checks of :meth:`run` (sort chain, knobs, non-finite entry) never saw the whole pipeline -- ``otsu,invert`` ran here while ``run`` refuses it. Prepare the whole chain first (runs nothing), then resume stage by stage on the same runner Studio's stage cache uses (``entry`` only for the first stage).
-- **L490** _(ja)_ — ★2026-11-05(敵対的検証 C6): (1) 入口の契約(uint8 の /255 と台帳記録、extra_checks の値域、 strict での拒否)は**キャッシュに当たっても毎回**通す —— 以前は第 1 段が当たると飛び、 strict + extra_checks="on" で run() が断る画像を暖まった run_cached() は返していた。 (2) 結果を変える状態を鍵に入れる: 照合用テンプレート(ops._MATCH_CTX、スレッドローカル)と fssystem の全パラメータ —— 以前はテンプレート A の答えをテンプレート B で返した。 (3) 計算中に劣化台帳へ記録が残った段はキャッシュしない(当たると記録が消え、fallback の値が 「成功」に見えた)。次の呼び出しでもう一度計算され、同じ記録が残る。
+- **L330** _(ja)_ — ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、 {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
+- **L337** _(ja)_ — ★2026-11-05(敵対的検証 C3): ノブの読み方は run_pipeline と同じ api._normalise_stage 1 本。 以前はここだけ別の読み方で、dict 段の未知キー({"op": "threshold", "A": 0.9} の打ち間違い)と 4 要素目(("threshold", 0.9, 0.5, 0.1))を黙って捨て、文字列ノブ "0.9" を float() で通していた —— run_pipeline は同じ段を TypeError で断る。同じ段は入口によらず同じ意味・同じ拒否。
+- **L358** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107): {"stages": None} が 0 段のエンジンになり、run が入力をそのまま 返していた(壊れた設定が「成功」)。[] は文書どおり恒等、None / 数値は設定の壊れ。
+- **L364** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
+- **L457** _(ja)_ — ★範囲外は断る(2026-09-20、GenSpark N40): --upto 9 / -1 が黙って全段 / 0 段になっていた
+- **L509** _(ja)_ — ★2026-11-04 external audit E4: each stage used to go through ``run_pipeline(prev, [st])`` on its own, so the chain-wide checks of :meth:`run` (sort chain, knobs, non-finite entry) never saw the whole pipeline -- ``otsu,invert`` ran here while ``run`` refuses it. Prepare the whole chain first (runs nothing), then resume stage by stage on the same runner Studio's stage cache uses (``entry`` only for the first stage).
+- **L517** _(ja)_ — ★2026-11-05(敵対的検証 C6): (1) 入口の契約(uint8 の /255 と台帳記録、extra_checks の値域、 strict での拒否)は**キャッシュに当たっても毎回**通す —— 以前は第 1 段が当たると飛び、 strict + extra_checks="on" で run() が断る画像を暖まった run_cached() は返していた。 (2) 結果を変える状態を鍵に入れる: 照合用テンプレート(ops._MATCH_CTX、スレッドローカル)と fssystem の全パラメータ —— 以前はテンプレート A の答えをテンプレート B で返した。 (3) 計算中に劣化台帳へ記録が残った段はキャッシュしない(当たると記録が消え、fallback の値が 「成功」に見えた)。次の呼び出しでもう一度計算され、同じ記録が残る。
 
 ## `evis_fullseye_bridge.py`
 
@@ -2575,27 +2575,27 @@
 
 ## `studio.py`
 
-- **L349** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
-- **L358** — ★ 直接右键点击图本身（用户 2026-09-06：“若能右键把作为图显示的东西复制到剪贴板就好了”）。这是本 repo 的 Studio UI 规约——**显示系也须能从右键完成一整套**。可与下方按钮列做同样的事（不要二者取其一）。
-- **L989** _(ja)_ — ★2026-11-05(敵対的検証 C6 の兄弟): engine.run_cached と同じく、結果を変える状態 —— 照合用 テンプレート(ops._MATCH_CTX)と fssystem の全パラメータ —— も文脈に入れる(変われば全段を捨てる)。
-- **L1624** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
-- **L1634** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
-- **L1657** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
-- **L1668** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
-- **L2261** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
-- **L6636** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
-- **L6644** _(ja)_ — ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。 それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。 以後の visibilityChanged は利用者の操作ではないので記録しない。
-- **L7207** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L9563** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L10659** — ★ 图的承接盘。示例经 `examplefig` 往此处写 PNG。不传环境变量的运行（CLI）中一张都不写，故只有从画廊运行时才出图（示例的数值与速度不变）。
-- **L10815** — ★ 图的承接盘。示例经 `examplefig` 往此处写 PNG。不传环境变量的运行（CLI）中一张都不写，故只有从画廊运行时才出图（示例的数值与速度不变）。
-- **L11697** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L12612** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
-- **L12685** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
-- **L12688** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
-- **L14177** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
-- **L14196** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
-- **L15275** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L350** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
+- **L359** — ★ 直接右键点击图本身（用户 2026-09-06：“若能右键把作为图显示的东西复制到剪贴板就好了”）。这是本 repo 的 Studio UI 规约——**显示系也须能从右键完成一整套**。可与下方按钮列做同样的事（不要二者取其一）。
+- **L990** _(ja)_ — ★2026-11-05(敵対的検証 C6 の兄弟): engine.run_cached と同じく、結果を変える状態 —— 照合用 テンプレート(ops._MATCH_CTX)と fssystem の全パラメータ —— も文脈に入れる(変われば全段を捨てる)。
+- **L1625** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
+- **L1635** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
+- **L1658** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
+- **L1669** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
+- **L2262** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
+- **L6637** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+- **L6645** _(ja)_ — ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。 それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。 以後の visibilityChanged は利用者の操作ではないので記録しない。
+- **L7208** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L9564** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L10660** — ★ 图的承接盘。示例经 `examplefig` 往此处写 PNG。不传环境变量的运行（CLI）中一张都不写，故只有从画廊运行时才出图（示例的数值与速度不变）。
+- **L10816** — ★ 图的承接盘。示例经 `examplefig` 往此处写 PNG。不传环境变量的运行（CLI）中一张都不写，故只有从画廊运行时才出图（示例的数值与速度不变）。
+- **L11698** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L12613** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+- **L12686** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+- **L12689** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+- **L14178** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
+- **L14197** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+- **L15276** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `studio_result.py`
 
