@@ -31,6 +31,31 @@
 details.vall { margin: 6px 0; }
 details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 .vl li { margin-bottom: 8px; }
+.vintro { display: flex; gap: 20px; align-items: flex-start; margin: 14px 0; }
+.vintro img { flex: 0 0 300px; width: 300px; max-width: 100%; height: auto; border-radius: 6px; }
+.vintro .vt p { margin: 0 0 8px; }
+.vc { display: flex; gap: 16px; align-items: flex-start; margin: 18px 0; }
+.vc > a:first-child { flex: 0 0 260px; position: relative; display: block; text-decoration: none; color: inherit; }
+.vc > a img { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 6px; background: #222; }
+.vc > a picture { display: block; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 6px; background: #fff; }
+.vc > a picture img { height: 100%; aspect-ratio: auto; object-fit: contain; border-radius: 0; background: #fff; }
+.vc > a b { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.6); color: #fff; font-size: 12px; padding: 1px 6px; border-radius: 9px; }
+.vt { flex: 1 1 auto; min-width: 0; }
+.vt .vh { font-size: 17px; font-weight: 600; line-height: 1.4; margin: 0 0 6px; }
+.vt p { margin: 0 0 6px; }
+.vt .vm { font-size: 14px; color: #57606a; }
+.vt details { font-size: 14px; margin: 4px 0; }
+.vt summary { cursor: pointer; }
+.vc.vv { margin: 10px 0; }
+.vc.vv > a:first-child { flex-basis: 96px; }
+@media (max-width: 600px) {
+  .vintro { flex-direction: column-reverse; gap: 8px; }
+  .vintro img { flex: 0 0 auto; width: 100%; max-width: 240px; }
+  .vc { flex-direction: column; gap: 8px; }
+  .vc > a:first-child { flex: 0 0 auto; width: 150px; }
+  .vc.vv { flex-direction: row; gap: 12px; }
+  .vc.vv > a:first-child { width: 80px; flex: 0 0 80px; }
+}
 </style>
 
 ## 触って見る(そのほか)

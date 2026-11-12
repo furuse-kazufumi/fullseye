@@ -50,6 +50,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import html
 import json
 import re
 import sys
@@ -98,6 +99,31 @@ STYLE = """<style>
 details.vall { margin: 6px 0; }
 details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 .vl li { margin-bottom: 8px; }
+.vintro { display: flex; gap: 20px; align-items: flex-start; margin: 14px 0; }
+.vintro img { flex: 0 0 300px; width: 300px; max-width: 100%; height: auto; border-radius: 6px; }
+.vintro .vt p { margin: 0 0 8px; }
+.vc { display: flex; gap: 16px; align-items: flex-start; margin: 18px 0; }
+.vc > a:first-child { flex: 0 0 260px; position: relative; display: block; text-decoration: none; color: inherit; }
+.vc > a img { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 6px; background: #222; }
+.vc > a picture { display: block; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 6px; background: #fff; }
+.vc > a picture img { height: 100%; aspect-ratio: auto; object-fit: contain; border-radius: 0; background: #fff; }
+.vc > a b { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.6); color: #fff; font-size: 12px; padding: 1px 6px; border-radius: 9px; }
+.vt { flex: 1 1 auto; min-width: 0; }
+.vt .vh { font-size: 17px; font-weight: 600; line-height: 1.4; margin: 0 0 6px; }
+.vt p { margin: 0 0 6px; }
+.vt .vm { font-size: 14px; color: #57606a; }
+.vt details { font-size: 14px; margin: 4px 0; }
+.vt summary { cursor: pointer; }
+.vc.vv { margin: 10px 0; }
+.vc.vv > a:first-child { flex-basis: 96px; }
+@media (max-width: 600px) {
+  .vintro { flex-direction: column-reverse; gap: 8px; }
+  .vintro img { flex: 0 0 auto; width: 100%; max-width: 240px; }
+  .vc { flex-direction: column; gap: 8px; }
+  .vc > a:first-child { flex: 0 0 auto; width: 150px; }
+  .vc.vv { flex-direction: row; gap: 12px; }
+  .vc.vv > a:first-child { width: 80px; flex: 0 0 80px; }
+}
 </style>"""
 
 #: 「ぜんぶ見る」の群を開いたときに data-src を src へ移す(全ページ)。無くても読める。
@@ -181,18 +207,18 @@ def _media_rel(d: dict, e: dict) -> str:
 
 
 def _representative_img(d: dict, e: dict, lang: str, up: str, docs: str,
-                        width: int, lazy_all: bool = False) -> str:
+                        width: int, lazy_all: bool = False, alt: str | None = None) -> str:
     """台帳に GIF があればそれを使い、動きを減らす環境では元の代表図に戻す。"""
     story = STORIES.get(e["id"], {})
     if story.get("status") == "gif":
         label_lang = "ja" if lang == "ja" else "en"
         gif = docs + story["variants"][label_lang]["path"]
         still = docs + story["still"]
-        alt = story["alt"][label_lang].replace('"', "&quot;")
+        alt = (alt if alt is not None else story["alt"][label_lang]).replace('"', "&quot;")
         return ('<picture><source media="(prefers-reduced-motion: reduce)" srcset="%s">'
                 '<img src="%s" alt="%s" loading="lazy" width="%d" height="%d"></picture>'
                 % (still, gif, alt, width, width))
-    alt = e["label"][lang].replace('"', "&quot;")
+    alt = (alt if alt is not None else e["label"][lang]).replace('"', "&quot;")
     if lazy_all:
         return '<img src="%s" data-src="%sthumbs/all/%s.jpg" alt="%s" width="%d" height="%d">' % (
             PIXEL, up, e["id"], alt, width, width)
@@ -566,6 +592,100 @@ def _brief_lines(d: dict, rows: list[dict], lang: str, media) -> list[str]:
     return out + [""]
 
 
+def _esc(text: str) -> str:
+    return html.escape(text, quote=False)
+
+
+INTRO_IMG = ("thumbs/fullseye_intro.jpg", 640, 468)   # tools/gen_view2026_thumbs.py の build_intro が作る(元は docs/articles/assets/hero_channels.png)
+
+
+def _intro(d: dict, lang: str, up: str, ui: dict) -> list[str]:
+    """題と発表の日時のすぐ下: Fullseye とは(段落 + 画像 + 読み物へのリンク)。標語はこの段落に含める(同じ事を 2 回言わない)。"""
+    src, w, h = INTRO_IMG
+    link = ""
+    if lang in ("ja", "en"):
+        link = '<p><a href="about.md">%s</a></p>' % ("Fullseye とは(読み物)" if lang == "ja" else "About Fullseye (reading)")
+    alt = html.escape(ui["intro_alt"], quote=True)
+    return ['<div class="vintro"><img src="%s%s" alt="%s" width="%d" height="%d">'
+            '<div class="vt"><p>%s</p>%s</div></div>' % (up, src, alt, w, h, _esc(ui["about"]), link), ""]
+
+
+def _card(d: dict, e: dict, lang: str, up: str, docs: str, media, body: str) -> str:
+    """展示 1 本 = 画像 + 題 + 本文 の 1 かたまり(PC は画像が左、スマホは画像が上)。題は 1 回だけ出す(画像の alt は題と同じ文)。"""
+    lab = e["label"][lang]
+    url = media(e)
+    mark = "<b>&#9654;</b>" if e["motion"] else ""
+    img = _representative_img(d, e, lang, up, docs, 260, alt=lab)
+    head = '<div class="vh"><a href="%s">%s</a>%s</div>' % (url, _esc(lab), _sa_small(e, lang))
+    return '<div class="vc"><a href="%s">%s%s</a><div class="vt">%s%s</div></div>' % (url, img, mark, head, body)
+
+
+def _main_cards(d: dict, rows: list[dict], lang: str, up: str, docs: str, media) -> list[str]:
+    """ja/en の本ページ: 展示 1 本 = 画像 + 題 + lead + 真値 + くわしく。"""
+    text = MAIN_TEXT[lang]
+    out = []
+    for e in rows:
+        body = '<p>%s</p><p class="vm">%s: %s · <a href="more.md#%s">%s</a></p>' % (
+            _esc(e["lead"][lang]), text["truth"], _esc(e["truth"][lang]), _anchor(e["id"]), text["detail"])
+        out += [_card(d, e, lang, up, docs, media, body), ""]
+    return out
+
+
+def _plain_cards(d: dict, rows: list[dict], lang: str, up: str, docs: str, ui: dict, media) -> list[str]:
+    """ja/en 以外のページ: 分類ごとに、展示 1 本 = 画像 + 題 + lead + 折りたたみ(見る所と数字・用語)。"""
+    glossary_ledger, glossary = _glossary_inputs()
+    out = []
+    for cat in d["categories"]:
+        part = [e for e in rows if e["category"] == cat["id"]]
+        if not part:
+            continue
+        out += ["**%s**" % cat[lang], ""]
+        for e in part:
+            num = " <b>%s</b>" % _esc(e["num"][lang]) if e["num"][lang].strip() else ""
+            src = _source(d, e)
+            link = ' <a href="%s">%s</a>' % (src, _esc(ui["source"])) if src else ""
+            youtube = ' <a href="%s">YouTube</a>' % e["youtube_url"] if e.get("youtube_url") else ""
+            mb = ' (%s)' % _viewer_mb(d, e) if _is_viewer(d, e) else ""
+            detail = "<p>%s%s%s%s%s</p>" % (_esc(e["see"][lang]), mb, num, link, youtube)
+            source_exhibit = glossary_ledger.get(e["id"])
+            term_line = glossary_line(source_exhibit, lang, glossary) if source_exhibit else ""
+            if term_line:
+                detail += '<p class="vm">%s</p>' % _esc(term_line)
+            body = '<p>%s</p><details><summary>%s</summary>%s</details>' % (
+                _esc(e["lead"][lang]), _esc(ui["detail"]), detail)
+            out += [_card(d, e, lang, up, docs, media, body), ""]
+    return out
+
+
+def _viewer_thumb(d: dict, it: dict, up: str, docs: str) -> str:
+    """「触って見る」の 1 本に添える小さな画像(その展示のサムネイル。新しい画像は作らない)。"""
+    base = it["id"][:-len("_field")] if it["id"].endswith("_field") else it["id"]
+    for cand in (base, "poc_" + base):
+        for sub in ("", "all/"):
+            if (BASE / "thumbs" / (sub + cand + ".jpg")).is_file():
+                return "%sthumbs/%s%s.jpg" % (up, sub, cand)
+    folder = DOCS / d["media_root"] / base
+    for pattern in ("*_720.jpg", "*.jpg", "*.png"):
+        found = sorted(folder.glob(pattern)) if folder.is_dir() else []
+        if found:
+            return "%s%s/%s/%s" % (docs, d["media_root"], base, found[0].name)
+    raise FileNotFoundError("触って見る(%s)に添える画像が無い" % it["id"])
+
+
+def _viewer_cards(d: dict, items: list, lang: str, up: str, docs: str) -> list[str]:
+    """触って見る: 1 本 = 小さな画像 + 題 + 1 行の説明。items = (リンク先, 項目, 容量の注記)。"""
+    out = []
+    for link, it, mb in items:
+        title = it["title"].get(lang, it["title"]["en"])
+        line = it["line"].get(lang, it["line"]["en"])
+        alt = html.escape(title, quote=True)
+        out.append('<div class="vc vv"><a class="vvi" href="%s"><img src="%s" alt="%s" loading="lazy" width="96" height="96"></a>'
+                   '<div class="vt"><div class="vh"><a href="%s">%s</a></div><p>%s%s</p></div></div>'
+                   % (link, _viewer_thumb(d, it, up, docs), alt, link, _esc(title), _esc(line), mb))
+        out.append("")
+    return out
+
+
 def _viewer_lines(items: list[dict], lang: str, up: str) -> list[str]:
     out = []
     for it in items:
@@ -728,11 +848,9 @@ def build(d: dict, lang: str) -> str:
         sw.append("**%s**" % name if l == lang else
                   "[%s](%s)" % (name, up + ("index.md" if l == "ja" else l + "/index.md")))
     out = ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
-           "# Fullseye — ViEW2026", "", ui["tagline"], "", ui["session"], "", ui["tap"], ""]
-    if lang == "ja":
-        out += ["[Fullseye とは(読み物)](about.md)", ""]
-    elif lang == "en":
-        out += ["[About Fullseye (reading)](about.md)", ""]
+           "# Fullseye — ViEW2026", "", ui["session"], ""]
+    out += _intro(d, lang, up, ui)
+    out += [ui["tap"], ""]
     if split:
         n_more = len(d["all"]) - len({e["id"] for e in main_rows})
         out += [MAIN_TEXT[lang]["more_top"].format(n=len(main_rows), m=n_more), ""]
@@ -745,14 +863,14 @@ def build(d: dict, lang: str) -> str:
     # 0. 触って見る(各ページは自分の言語で開く)。ja/en は場を掃引する動く 3-D(field_viewers)を先頭に置く。
     vw = d["viewers"]
     out += ["## " + vw["h"][lang], "", vw["intro"][lang], ""]
+    cards = []
     if split:
         for it in d["field_viewers"]["items"]:
-            out.append("- **[%s](%s%s?lang=%s)**: %s (%s)" % (
-                it["title"][lang], up, it["path"], lang, it["line"][lang], _field_mb(it)))
+            cards.append(("%s%s?lang=%s" % (up, it["path"], lang), it, " (%s)" % _field_mb(it)))
     by_id = {it["id"]: it for it in vw["items"]}
     shown = [by_id[i] for i in vw["main_ids"]] if split else vw["items"]    # ja/en は先頭の数本だけ(残りはおまけページ)
-    out += _viewer_lines(shown, lang, up)
-    out.append("")
+    cards += [("%sviewers/%s.html?lang=%s" % (up, it["id"], lang), it, "") for it in shown]
+    out += _viewer_cards(d, cards, lang, up, docs)
 
     if split:
         # 1. 目玉・準目玉(タイルの格子と、その説明)
@@ -763,23 +881,20 @@ def build(d: dict, lang: str) -> str:
             out += ["## " + MAIN_TEXT[lang][tier], ""]
             if lang != "ja" and any("numbers_source" in e for e in rows):
                 out += [ui["poc_caption_lang_note"], ""]
-            out += _tiles(d, rows, lang, up, docs, media)
-            out += _brief_lines(d, rows, lang, media)
+            out += _main_cards(d, rows, lang, up, docs, media)
         out += _series_block(d, lang, up, ui)
         out += _share_alike_block(d, lang, main_rows)
-        out += ["## " + ui["h_about"], "", ui["about"], "", MAIN_TEXT[lang]["more"], ""]
+        out += [MAIN_TEXT[lang]["more"], ""]
     else:
         # 1. 見どころ(従来どおり全部)
         out += ["## " + ui["h_highlights"], ""]
         if any("numbers_source" in e for e in d["exhibits"]):
             out += [ui["poc_caption_lang_note"], ""]
-        out += _tiles(d, d["exhibits"], lang, up, docs, media)
+        out += _plain_cards(d, d["exhibits"], lang, up, docs, ui, media)
         out += _series_block(d, lang, up, ui)
         out += _caps_block(d, lang, docs, ui)
         out += _all_block(d, lang, up, docs, ui, media, d["all"])
         out += _share_alike_block(d, lang, list(d["exhibits"]) + list(d["all"]))
-        out += _list_by_category(d, d["exhibits"], lang, ui, media)
-        out += ["## " + ui["h_about"], "", ui["about"], ""]
     out += _footer(d, lang, docs, ui)
     return "\n".join(out)
 

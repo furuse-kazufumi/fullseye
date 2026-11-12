@@ -576,6 +576,26 @@
    "de": "bewegtes 3-D, drehbar",
    "hi": "चलता 3-D, drag से घुमाएँ",
    "fr": "3-D animée, à faire pivoter"
+  },
+  "detail": {
+   "ja": "くわしく",
+   "en": "Details",
+   "zh": "详情",
+   "tw": "詳情",
+   "ko": "자세히",
+   "de": "Details",
+   "hi": "विवरण",
+   "fr": "Détails"
+  },
+  "intro_alt": {
+   "ja": "1 つの 3-D の場面から、絵・深度・法線・影・縁を取り出して処理した図",
+   "en": "One 3-D scene turned into picture, depth, normals, shadow mask and edges, each processed further",
+   "zh": "从同一个三维场景取出图像、深度、法线、阴影和边缘并分别处理的示意图",
+   "tw": "從同一個三維場景取出影像、深度、法線、陰影與邊緣並分別處理的示意圖",
+   "ko": "하나의 3차원 장면에서 그림·깊이·법선·그림자·가장자리를 꺼내 처리한 그림",
+   "de": "Eine 3-D-Szene, zerlegt in Bild, Tiefe, Normalen, Schattenmaske und Kanten, jeweils weiterverarbeitet",
+   "hi": "एक 3-D दृश्य से चित्र, depth, normals, shadow और edges निकालकर उन्हें आगे प्रोसेस करने का चित्र",
+   "fr": "Une scène 3-D décomposée en image, profondeur, normales, masque d'ombre et contours, chacun traité ensuite"
   }
  },
  "paper": {

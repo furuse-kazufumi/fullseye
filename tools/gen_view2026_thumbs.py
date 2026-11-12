@@ -79,6 +79,8 @@ SPEC = [
     ("evis_bean_track", "articles/assets/evis_bean_track_fullseye_still.png", None, (0.5, 0.0, 1.0)),
     # 5 枚を縦に積んだ全体ではなく、最初の OCT 断面を案内用の代表図にする。
     ("poc_industrial_oct", _P + "poc_industrial_oct/01_real_paint_bscans.png", None, (0.04, 0.05, 0.25)),
+    # 「触って見る」に添える画像(展示のカードが無いビューア): 小惑星イトカワの曲率の既存の図
+    ("poc_asteroid_curvature", "articles/assets/_sources/src_itokawa_curvature.png", None, None),
     # 動く 3-D: 元はビューアをスマホ幅(375 px、WebGL)で開いた画面から 3-D の部分だけを切った静止画
 ]
 
@@ -158,6 +160,24 @@ def thumbnail_specs() -> tuple[list[tuple[str, str, float | None, tuple | None]]
                 rel = rel[:-4] + ".gif"
             specs.append((e["id"], rel, 0.5, None))
     return specs, generated - known
+
+
+#: 入口ページの冒頭(Fullseye とは)に置く画像: 1 つの 3-D の場面から色・深度・法線・影・縁を取り出して処理する既存の図。
+INTRO_SRC = "articles/assets/hero_channels.png"
+INTRO_NAME = "fullseye_intro.jpg"
+INTRO_WIDTH = 640
+#: 展示のカードを持たないが、入口ページが使うサムネイル(古い物の掃除から外す)。
+EXTRA_NAMES = {INTRO_NAME, "poc_asteroid_curvature.jpg"}
+
+
+def build_intro() -> list[tuple[str, int]]:
+    """入口ページ冒頭の画像を、縦横比を保って幅 640 px の JPEG にする。"""
+    src = DOCS / INTRO_SRC
+    if not src.is_file():
+        raise FileNotFoundError("入口の画像の元が無い: %s" % src)
+    im = Image.open(src).convert("RGB")
+    im = im.resize((INTRO_WIDTH, round(im.height * INTRO_WIDTH / im.width)), Image.LANCZOS)
+    return [(INTRO_NAME, _save_jpg(im, OUT / INTRO_NAME, QUALITY))]
 
 
 def build() -> list[tuple[str, int]]:
@@ -255,10 +275,10 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--sheet", help="確認用の一覧画像の書き出し先")
     a = ap.parse_args(argv)
-    res = build() + build_series()
+    res = build() + build_series() + build_intro()
     res_all = build_all()
     data = json.loads(DATA.read_text(encoding="utf-8"))
-    keep = {e["id"] + ".jpg" for e in data["exhibits"]}
+    keep = {e["id"] + ".jpg" for e in data["exhibits"]} | EXTRA_NAMES
     stale = sorted(p.name for p in OUT.glob("*.jpg") if p.name not in keep)
     if stale:
         print("SPEC に無いサムネイルが残っている(消すこと): %s" % stale, file=sys.stderr)
