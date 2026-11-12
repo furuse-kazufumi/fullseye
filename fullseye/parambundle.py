@@ -1515,7 +1515,7 @@ def save_params(bundle: ParamBundle, path: str | os.PathLike) -> str:
     folder = os.path.dirname(os.path.abspath(p))
     if not os.path.isdir(folder):
         raise ParamError("folder does not exist: %s" % folder)
-    fd, tmp = tempfile.mkstemp(prefix=".params-", suffix=".tmp", dir=folder)
+    fd, tmp = tempfile.mkstemp(prefix=".params-", dir=folder)
     try:
         with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
             f.write(text)
