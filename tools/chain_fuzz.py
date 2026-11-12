@@ -3714,6 +3714,14 @@ def _b_cr_scene_run(pool, rng):
     return (t["scene"], t["run"]), {}
 
 
+def _b_cr_solution_xml(pool, rng):
+    """``date`` を固定して渡す。省略すると op は「今」を XML に書くので、
+    2 回の呼び出しが秒の境目をまたぐと出力が変わり、決定性の探針が時々落ちる。"""
+    from datetime import datetime
+    t = _fuzz_cr()
+    return (t["scene"], t["run"]), {"date": datetime(2026, 1, 1, 0, 0, 0)}
+
+
 def _b_cr_checker_result(pool, rng):
     import json
     import os
@@ -8429,7 +8437,7 @@ OP_ARG_BUILDERS = {
     "citygml_synthetic": _b_citygml_synthetic, "plateau_parse": _b_plateau_parse, "buildings_in_box": _b_buildings_in_box,
     "building_prisms": _b_building_prisms, "prism_mesh": _b_prism_mesh, "triangulate_polygon": _b_polygon_arg, "polygon_area": _b_polygon_arg, "plateau_lod2_mesh": _b_plateau_lod2_mesh,
     "cr_synthetic": _b_cr_synthetic, "cr_read": _b_cr_read, "cr_route": _b_cr_route, "ks_step": _b_ks_step, "cr_drive": _b_cr_drive,
-    "cr_drive_sweep": _b_cr_scene_arg, "cr_feasible": _b_cr_feasible, "cr_collision": _b_cr_scene_run, "cr_solution_xml": _b_cr_scene_run,
+    "cr_drive_sweep": _b_cr_scene_arg, "cr_feasible": _b_cr_feasible, "cr_collision": _b_cr_scene_run, "cr_solution_xml": _b_cr_solution_xml,
     "cr_checker_result": _b_cr_checker_result,
     "peg_params": _b_course_none, "whitney_clearance": _b_peg_kp, "two_point_depth": _b_peg_theta, "wedging_check": _b_peg_wedge,
     "jamming_diagram": _b_peg_jam, "chamfer_capture": _b_peg_eps, "contact_state_predict": _b_peg_predict,
