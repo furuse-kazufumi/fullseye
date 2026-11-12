@@ -55,6 +55,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #: 数字は不可視な関数の本数で、増減しても意図的なら書き換えてよい。
 _INTERNAL = {
     "accel_bridge": 9, "accel_vol": 3,
+    # 2026-11-12 safe_xml(fix/safe-xml-parse-2026-11-12): XML を DOCTYPE・実体の増幅なしで読む内部の層 4 本。
+    # 利用者は各形式の読み込み(CommonRoad・OSM・OME-TIFF・SVG・3MF …)から使う。公開するかは担当の判断。
+    "safe_xml": 4,
     # 2026-11-03 device="auto" の判断(損益分岐の表・空き VRAM・段ごとの経路)。利用者の入口は
     # fullseye.explain_device / resolve_device で、この部品は api の内側からだけ呼ぶ。
     "device_policy": 6,
@@ -321,7 +324,17 @@ def test_pending_exposure_shrinks_when_fixed():
 #   param_specs.half_then_thirds_index 1(端の扱い・構造要素の形のつまみの対応。Studio と MCP の内側の部品)・
 #   studio_search.staples_for 1(検索の「定番」の群。Studio の内側)・studio 3(lang_from_locale ほか、GUI の内側)・
 #   backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。
-_HIDDEN_FUNCTIONS_TODAY = 1084
+#   (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1084
+# 2026-11-12 Studio の Python のモード(feat/studio-program-vars-2026-11-12): 分岐元 f54982b9f9 の実測が既に
+#   1077(この行の 1073 より 4 多い。前の便で数え直されていなかった)。そこへ + 46 = 1123。
+#   studio_program(Program 欄の実行系・記録・メモ化・助言・記法の変換。Studio と前置き
+#   fullseye.studio_prelude が使う「GUI の内側の部品」で、studio_search と同じ扱い。書いている最中の指摘・補完・ホバー・ファイルの実行・対話の評価・止められなかった実行の一覧の入口を含む)の 37 本と、
+#   defs_io(定義ファイルの種類に依らない層: 印・版の移行・原子的な書き込み・配列の別ファイル参照の検査)
+#   の 9 本。defs_io の利用者の入口は fullseye.read_def / write_def / load_pipeline で、種類を足す側の
+#   部品(register_kind など)は公開経路に載せない。実測 1077 → 1123。
+# 2026-11-12 1.1.1 の枝(653de27616)を merge: + 6 = 1129(safe_xml 4・param_specs 1・studio_search 1。
+#   その枝そのものでもこの機械の実測は 1083 で、行の数字 1073 は数え直されていなかった)。
+_HIDDEN_FUNCTIONS_TODAY = 1129
 
 
 def _hidden_total():
