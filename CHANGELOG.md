@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 修正 — 外部コマンドを作業フォルダから拾わない(2026-11-12)
+
+- `archive_*`(7z / rar の書庫)が 7-Zip を探すとき、と `algo_difftest.find_c_compiler` が C コンパイラを探すときに、`shutil.which` を使っていた。Python 3.11 の `shutil.which` は Windows で作業フォルダを PATH の先頭に足すので、書庫を開くフォルダに `7z.bat`、作業フォルダに `gcc.bat` が置いてあると、Fullseye がそれを実行した(7-Zip が `%ProgramFiles%-Zip` に無いとき。手元の 3.11.9 で `shutil.which('7z')` が `.z.BAT` を返すのを確かめた)。インストーラのレビューで `powershell` について見つかった形の兄弟。
+- `backend_safe.which_outside_cwd(name)` を足し、2 か所ともそれを通す。Windows の裸の名前は PATH の絶対パスの項目だけを見る(空・`.`・相対の項目は飛ばす。作業フォルダを PATH に絶対パスで入れた利用者の指定は尊重する)。配布するモジュールに裸の `shutil.which(` が残っていないことを試験にした(`tools/` の開発用スクリプトは対象外)。
+
 ## 1.1.0 — 2026-11-12
 
 1.1.0。1.0.0 の後に、既存の op の出力や失敗の仕方が変わる修正が入ったので、patch(1.0.x)でなく minor で出す。`CONTRIBUTING.md` の「Versioning」は「minor の桁が破壊的変更の合図」で、「既定の数値が変わる」「黙って通していた入力を明示的に拒否する(fail-soft から fail-closed へ)」を minor の条件に挙げている。下の「挙動の変更」の項目がそれに当たる(新しい op・PoC・文書・速度の改善だけなら patch だった)。op の削除・改名はない。既定の `device` は `"cpu"` のまま。

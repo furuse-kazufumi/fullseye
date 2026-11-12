@@ -941,16 +941,22 @@ def archive_probe(data_or_path):
     return _archive_format(_archive_source(data_or_path, "archive_probe"), "archive_probe")
 
 
+def _which_outside_cwd(name):
+    """``backend_safe.which_outside_cwd``: 作業フォルダに置かれた ``7z.bat`` を拾わない PATH の探索。"""
+    from backend_safe import which_outside_cwd
+    return which_outside_cwd(name)
+
+
 def _sevenzip_executable():
     override = os.environ.get("FULLSEYE_7Z")
     if override is not None:
         if override.strip().lower() in {"", "0", "none", "off", "disabled"}:
             return None
         candidate = os.path.abspath(os.path.expandvars(os.path.expanduser(override)))
-        return candidate if os.path.isfile(candidate) else shutil.which(override)
+        return candidate if os.path.isfile(candidate) else _which_outside_cwd(override)
     program_files = os.environ.get("ProgramFiles")
     fixed = os.path.join(program_files, "7-Zip", "7z.exe") if program_files else None
-    return fixed if fixed and os.path.isfile(fixed) else shutil.which("7z")
+    return fixed if fixed and os.path.isfile(fixed) else _which_outside_cwd("7z")
 
 
 def _require_sevenzip(op):
