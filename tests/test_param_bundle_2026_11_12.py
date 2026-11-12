@@ -214,7 +214,7 @@ def test_access_styles_and_sections(rig):
     with pytest.raises(KeyError):
         rig["nope"]
     with pytest.raises(AttributeError):
-        getattr(rig, "nope")
+        _ = rig.nope
     assert rig.origin("camera.fx").source == "rig.toml"
 
 
