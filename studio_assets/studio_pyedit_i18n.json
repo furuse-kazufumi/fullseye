@@ -1463,6 +1463,41 @@
    "tw": "%s 與 Studio 的 PySide6 在同一行程中可能當機 — 請使用 PySide6(API 幾乎相同)",
    "ko": "%s을(를) Studio의 PySide6와 같은 프로세스에서 쓰면 멈출 수 있습니다 — PySide6를 쓰세요(API는 거의 같습니다)",
    "de": "%s im selben Prozess wie Studios PySide6 kann abstürzen — PySide6 verwenden (die APIs sind fast gleich)"
+  },
+  "not run: this program imports Qt directly, and Qt widgets can only be made on the GUI thread — this version of Studio cannot run Qt programs from the Program (use the Python Editor window, or run it outside Studio)": {
+   "ja": "実行していません: このプログラムは Qt を直接 import しています。Qt の窓は GUI のスレッドでしか作れません — この版の Studio は、Program 欄から Qt を使うプログラムを実行できません(「Python Editor」の窓を使うか、Studio の外で実行してください)",
+   "zh": "未运行:此程序直接导入了 Qt,而 Qt 窗口只能在 GUI 线程中创建 — 此版本的 Studio 无法从 Program 运行使用 Qt 的程序(请使用“Python Editor”窗口,或在 Studio 之外运行)",
+   "tw": "未執行:此程式直接匯入了 Qt,而 Qt 視窗只能在 GUI 執行緒中建立 — 此版本的 Studio 無法從 Program 執行使用 Qt 的程式(請使用「Python Editor」視窗,或在 Studio 之外執行)",
+   "ko": "실행하지 않았습니다: 이 프로그램은 Qt를 직접 import합니다. Qt 창은 GUI 스레드에서만 만들 수 있습니다 — 이 버전의 Studio는 Program에서 Qt를 쓰는 프로그램을 실행할 수 없습니다('Python Editor' 창을 쓰거나 Studio 밖에서 실행하세요)",
+   "de": "nicht ausgeführt: dieses Programm importiert Qt direkt, und Qt-Fenster lassen sich nur im GUI-Thread erzeugen — diese Version von Studio kann Qt-Programme nicht aus dem Program ausführen (das Fenster 'Python Editor' verwenden oder außerhalb von Studio ausführen)"
+  },
+  "cannot convert the directive %r — its arguments must be numbers, quoted text or plain words": {
+   "ja": "表示の指示 %r を変換できません — 引数は数・引用符つきの文字・素の語だけにしてください",
+   "zh": "无法转换显示指令 %r — 其参数只能是数字、带引号的文本或单词",
+   "tw": "無法轉換顯示指令 %r — 其引數只能是數字、帶引號的文字或單字",
+   "ko": "표시 지시 %r을(를) 변환할 수 없습니다 — 인수는 수, 따옴표로 묶은 글, 단어만 쓸 수 있습니다",
+   "de": "die Anweisung %r lässt sich nicht umwandeln — ihre Argumente müssen Zahlen, Text in Anführungszeichen oder einfache Wörter sein"
+  },
+  "not run: an earlier run could not be stopped and is still running in the background (%d) — it can still change files, the environment and the working folder; wait until it ends or restart Studio": {
+   "ja": "実行していません: 前の実行を止められず、まだ背景で動いています(%d 件)— ファイル・環境変数・作業フォルダを書き換え続ける可能性があります。終わるまで待つか、Studio を起動し直してください",
+   "zh": "未运行:之前的运行无法停止,仍在后台运行(%d 个)— 它仍可能修改文件、环境变量和工作文件夹;请等它结束,或重新启动 Studio",
+   "tw": "未執行:先前的執行無法停止,仍在背景執行(%d 個)— 它仍可能修改檔案、環境變數和工作資料夾;請等它結束,或重新啟動 Studio",
+   "ko": "실행하지 않았습니다: 이전 실행을 멈추지 못해 아직 백그라운드에서 돌고 있습니다(%d개) — 파일, 환경 변수, 작업 폴더를 계속 바꿀 수 있습니다. 끝날 때까지 기다리거나 Studio를 다시 시작하세요",
+   "de": "nicht ausgeführt: ein früherer Lauf ließ sich nicht anhalten und läuft noch im Hintergrund (%d) — er kann weiterhin Dateien, die Umgebung und den Arbeitsordner ändern; warten, bis er endet, oder Studio neu starten"
+  },
+  "until the abandoned run ends, new runs are refused; the process state is restored again when it ends": {
+   "ja": "残した実行が終わるまで、新しい実行は断ります。終わった時に、プロセスの状態をもう一度元へ戻します",
+   "zh": "在遗留的运行结束之前,拒绝新的运行;它结束时会再次恢复进程状态",
+   "tw": "在遺留的執行結束之前,拒絕新的執行;它結束時會再次還原行程狀態",
+   "ko": "남긴 실행이 끝날 때까지 새 실행은 거절합니다. 끝나면 프로세스 상태를 다시 되돌립니다",
+   "de": "bis der zurückgelassene Lauf endet, werden neue Läufe abgelehnt; danach wird der Prozesszustand erneut wiederhergestellt"
+  },
+  "… (%d earlier characters of output dropped)": {
+   "ja": "…(これより前の出力 %d 文字は捨てました)",
+   "zh": "…(之前的 %d 个字符的输出已丢弃)",
+   "tw": "…(之前的 %d 個字元的輸出已捨棄)",
+   "ko": "…(앞쪽 출력 %d자는 버렸습니다)",
+   "de": "… (%d frühere Zeichen der Ausgabe verworfen)"
   }
  }
 }

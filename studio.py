@@ -12218,7 +12218,10 @@ def build_window(model=None, start_mode="pipeline"):
                     text = f.read()
             except Exception as e:
                 report_error("open", e); return
-            open_tab(text, os.path.basename(path), path=path)
+            ed = open_tab(text, os.path.basename(path), path=path)
+            # ★2026-11-13(レビュー M5): ファイルから開いた Python は、初回の実行の前に確認する(run_code)。
+            #   Python のモードの「ファイルから開いた Python」と同じ約束を、ドラッグ&ドロップと「開く」にも効かせる
+            ed._from_file = True
 
         def do_open():
             p, _f = QtWidgets.QFileDialog.getOpenFileName(
@@ -12251,6 +12254,13 @@ def build_window(model=None, start_mode="pipeline"):
             text = ed.toPlainText()
             if not text.strip():
                 flash("nothing to run — the editor is empty"); return
+            if getattr(ed, "_from_file", False):
+                # ファイルから開いた Python: 確認が済むまで走らせない(同じ中身なら次からは聞かない。中身が変われば聞き直す)。
+                # 確認した後にこのタブで直した文面は、利用者が打った物として扱う(Python のモードと同じ)
+                _pm = getattr(win, "_pymode", None)
+                if _pm is None or not _pm.confirm_file_program(text, ed._path):
+                    status.setText(tr("Not run: the program was not confirmed")); return
+                ed._from_file = False
             script = ed._path
             scratch = None                    # set when running from a temp copy
             if script is None or ed._dirty:
@@ -15283,7 +15293,7 @@ def build_window(model=None, start_mode="pipeline"):
         flash("loaded " + os.path.basename(path))
         _pm = getattr(win, "_pymode", None)
         if _pm is not None:                                  # パイプラインのファイルはパイプラインのモードで見せる
-            _pm.on_pipeline_opened()
+            _pm.on_pipeline_opened(path)
     win._open_pipe_path = _open_pipe_path
     win._refresh_stage_list = refresh_stage_list
 

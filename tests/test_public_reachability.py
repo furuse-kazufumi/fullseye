@@ -118,8 +118,13 @@ _INTERNAL = {
     #   studio_pyedit_syntax 22(色分けの字句・括弧の対応)・studio_pyedit_complete 35(補完・シグネチャ・ホバーの
     #   供給元)・studio_pyedit_values 29→30(値の要約・ウォッチの評価。統合後の実測は 30)・studio_pyedit_i18n 5(部品の対訳)・
     #   studio_pyedit_qt 9(PyEditAssist ほか Qt の部品)・studio_pyedit_vars_qt 14(変数・ウォッチ・浮いた窓)。
-    "studio_project": 23, "studio_pymode": 19, "studio_pyedit_syntax": 22, "studio_pyedit_complete": 35,
+    #   2026-11-13 2 便目(続行は止まった所から・文の言語・独立レビューの直し): studio_pymode 19 → 20(PauseGate の
+    #   受け渡しに使う部品)。studio_program_i18n 4(実行系・検査の英語の文を UI の言語へ: placeholders / line_label /
+    #   localize / line_number_of。画面に出す所だけが使う)。studio_pyedit_safe 9(実行後の値を利用者のコードを
+    #   走らせずに調べる: 型だけの判定・ライブラリの型か・静的な名前。補完と変数の欄の内側)。
+    "studio_project": 23, "studio_pymode": 20, "studio_pyedit_syntax": 22, "studio_pyedit_complete": 35,
     "studio_pyedit_values": 30, "studio_pyedit_i18n": 5, "studio_pyedit_qt": 9, "studio_pyedit_vars_qt": 14,
+    "studio_program_i18n": 4, "studio_pyedit_safe": 9,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -349,7 +354,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   統合の merge で既に 1 本増えていた分 1(1129 → 1153 の報告のうち studio_project を除いた残り。studio は 90 → 89)。
 #   (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1288
 # 2026-11-13 master(1.1.1 の最終 d62109bb65)を merge: + 2 = 1290(safe_xml 4 → 6: xml_limits と上限の部品)。
-_HIDDEN_FUNCTIONS_TODAY = 1290
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1290
+# 2026-11-13 同じ枝の 2 便目: 1290 → 1305(+15、この機械の実測)。内訳: 上の _INTERNAL の studio_program_i18n 4・
+#   studio_pyedit_safe 9・studio_pymode + 1、studio_program.starter_program 1(例の文面を UI の言語で返す。GUI の内側)。
+_HIDDEN_FUNCTIONS_TODAY = 1305
 
 
 def _hidden_total():

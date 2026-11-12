@@ -390,12 +390,21 @@ def test_7_infinite_loop_is_stopped(tmp_path, monkeypatch):
         pm.set_config("release")
         res = _run_f5(win)
         assert res.stopped in ("time_limit", "stop_requested") and res.config == "release"
-        _set_text(win, "# python\nimport time\ntime.sleep(20)\n")
+        _set_text(win, "# python\nimport time\ntime.sleep(4)\n")
         t0 = time.perf_counter()
         res = _run_f5(win, timeout=10)
         assert res.stopped == "unstoppable" and time.perf_counter() - t0 < 6
         assert "could not stop" in pm.output.toPlainText()
-        _set_text(win, "# python\nshow(gaussian(img, 0.2))\n")              # 画面は使い続けられる
+        # 画面は使い続けられる。残った実行が終わるまでは次の実行を断ってそう言い、終われば走る
+        _set_text(win, "# python\nshow(gaussian(img, 0.2))\n")
+        runs0 = pm.state.get("pymode_runs", 0)
+        _key(win, QtCore.Qt.Key_F5)
+        _pump(0.2)
+        assert pm.state.get("pymode_runs", 0) == runs0 and "still running in the background" in pm.output.toPlainText()
+        end = time.monotonic() + 15
+        while sp.abandoned_runs() and time.monotonic() < end:
+            time.sleep(0.05)
+        assert not sp.abandoned_runs()                                    # 残したまま次の試験へ行かない
         assert _run_f5(win).ok
     finally:
         _close(win)

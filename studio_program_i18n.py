@@ -38,6 +38,10 @@ LINE_BODY_TEMPLATES = (
     "breakpoint condition %r could not be evaluated (%s: %s) — stopped there",
     "HDevelop-style %s and line %d: Python-style %s are mixed — one program uses one syntax "
     "(put '# python' or '# hdevelop' on line 1)",
+    "not run: this program imports Qt directly, and Qt widgets can only be made on the GUI thread — "
+    "this version of Studio cannot run Qt programs from the Program (use the Python Editor window, or "
+    "run it outside Studio)",
+    "cannot convert the directive %r — its arguments must be numbers, quoted text or plain words",
 )
 
 #: 文全体の型(実行の結果の errors / notes、選んだ行の実行)。
@@ -59,6 +63,12 @@ RUN_TEMPLATES = (
     "are ignored",
     "no namespace: run the program first (keep_namespace=True)",
     "not run: untrusted input",
+    "not run: an earlier run could not be stopped and is still running in the background (%d) — it "
+    "can still change files, the environment and the working folder; wait until it ends or restart "
+    "Studio",
+    "until the abandoned run ends, new runs are refused; the process state is restored again when it "
+    "ends",
+    "… (%d earlier characters of output dropped)",
 )
 
 #: 値として埋まる短い句(「止められなかった」の理由)。

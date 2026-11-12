@@ -39,6 +39,24 @@ from typing import Callable, Iterable, Mapping, Protocol, Sequence, runtime_chec
 
 import numpy as np
 
+import studio_pyedit_safe as safe
+
+#: 派生した型がメソッドを差し替えられる「値」の型。利用者が派生した物はその種類として扱わない。
+_VALUE_CLASSES = (str, bytes, bytearray, np.ndarray, np.generic)
+
+
+def _isinst(obj, cls) -> bool:
+    """``isinstance`` の代わり。``type(obj)`` だけで決め(``obj.__class__`` のプロパティ = 利用者のコードを
+    読まない)、利用者が派生した str / bytes / ndarray / numpy のスカラは、その種類として扱わない(``len`` や
+    添字が利用者のメソッドになり得る。型の名前だけの「オブジェクト」として見せる)。入れ物(list / dict …)の
+    派生は、基底のメソッド(``list.__iter__`` など)で読むので通す。"""
+    t = type(obj)
+    if not issubclass(t, cls):
+        return False
+    if issubclass(t, _VALUE_CLASSES) and not safe.is_library_type(t):
+        return False
+    return True
+
 
 def _ident(text: str) -> str:
     return text
@@ -122,7 +140,11 @@ def _clip(s: str, n: int) -> str:
 
 def type_name_of(v) -> str:
     t = type(v)
-    return t.__name__ if t.__module__ in ("builtins", "__main__") else "%s.%s" % (t.__module__.split(".")[0], t.__name__)
+    name = safe.type_name(v)
+    mod = safe.module_of(t)                                            # メタクラスの属性の読み出しを通さない
+    if type(mod) is not str or mod in ("builtins", "__main__"):
+        return name
+    return "%s.%s" % (mod.split(".")[0], name)
 
 
 def _sample(a: np.ndarray, limit: int) -> tuple:
@@ -148,7 +170,7 @@ def _num(x: float) -> str:
 
 def is_image_like(a) -> bool:
     """画像らしい配列: 数値の 2 次元(短い辺が 8 以上)か、3 次元で最後が 1・3・4。"""
-    if not isinstance(a, np.ndarray) or a.dtype.kind not in "biuf" or a.dtype.names:
+    if not _isinst(a, np.ndarray) or a.dtype.kind not in "biuf" or a.dtype.names:
         return False
     if a.ndim == 2:
         return min(a.shape) >= 8
@@ -224,9 +246,9 @@ def _brief(v, lim: Limits) -> str:
         return _num(v)
     if t is str:
         return repr(v[:20]) if len(v) <= 20 else repr(v[:19]) + "…"
-    if isinstance(v, np.ndarray):
+    if _isinst(v, np.ndarray):
         return "ndarray[%s]" % "×".join(str(s) for s in v.shape)
-    if isinstance(v, np.generic):
+    if _isinst(v, np.generic):
         try:
             return _num(float(v)) if v.dtype.kind in "iuf" else str(v.dtype)
         except Exception:                                    # noqa: BLE001
@@ -237,27 +259,27 @@ def _brief(v, lim: Limits) -> str:
 
 
 def _base_len(v) -> int:
-    if isinstance(v, dict):
+    if _isinst(v, dict):
         return dict.__len__(v)
-    if isinstance(v, list):
+    if _isinst(v, list):
         return list.__len__(v)
-    if isinstance(v, tuple):
+    if _isinst(v, tuple):
         return tuple.__len__(v)
-    if isinstance(v, (set, frozenset)):
-        return (set if isinstance(v, set) else frozenset).__len__(v)
+    if _isinst(v, (set, frozenset)):
+        return (set if _isinst(v, set) else frozenset).__len__(v)
     return 0
 
 
 def _items_of(v, n: int) -> list:
     """コンテナの先頭 ``n`` 個(基底クラスの反復だけを使い、利用者の ``__iter__`` を呼ばない)。"""
-    if isinstance(v, dict):
+    if _isinst(v, dict):
         return list(itertools.islice(dict.items(v), n))
-    if isinstance(v, list):
+    if _isinst(v, list):
         return list(itertools.islice(list.__iter__(v), n))
-    if isinstance(v, tuple):
+    if _isinst(v, tuple):
         return list(itertools.islice(tuple.__iter__(v), n))
-    if isinstance(v, (set, frozenset)):
-        return list(itertools.islice((set if isinstance(v, set) else frozenset).__iter__(v), n))
+    if _isinst(v, (set, frozenset)):
+        return list(itertools.islice((set if _isinst(v, set) else frozenset).__iter__(v), n))
     return []
 
 
@@ -285,40 +307,40 @@ def _summarize(v, lim: Limits, tr) -> Summary:
         return Summary("float", "float", _num(v), editable=True)
     if t is complex:
         return Summary("complex", "complex", "%s%+sj" % (_num(v.real), _num(v.imag)))
-    if isinstance(v, str):
+    if _isinst(v, str):
         r = repr(v[:lim.max_text + 1])
         return Summary("str", tn, _clip(r, lim.max_text), length=len(v), editable=(t is str),
                        detail="%s: %d" % (tr("length"), len(v)))
-    if isinstance(v, (bytes, bytearray)):
+    if _isinst(v, (bytes, bytearray)):
         return Summary("bytes", tn, "%s[%d] %s" % (t.__name__, len(v), v[:12].hex(" ")), length=len(v))
-    if isinstance(v, np.ndarray):
+    if _isinst(v, np.ndarray):
         return _summarize_array(v, lim, tr)
-    if isinstance(v, np.generic):
+    if _isinst(v, np.generic):
         try:
             txt = _num(float(v)) if v.dtype.kind in "f" else str(v.item())
         except Exception:                                    # noqa: BLE001
             txt = tn
         return Summary("scalar", tn, "%s (%s)" % (txt, v.dtype), dtype=str(v.dtype),
                        editable=bool(v.dtype.kind in "biuf"))
-    if isinstance(v, (list, tuple, set, frozenset, dict)):
+    if _isinst(v, (list, tuple, set, frozenset, dict)):
         n = _base_len(v)
         items = _items_of(v, lim.preview_items)
-        if isinstance(v, dict):
+        if _isinst(v, dict):
             body = ", ".join("%s: %s" % (_brief(k, lim), _brief(x, lim)) for k, x in items)
         else:
             body = ", ".join(_brief(x, lim) for x in items)
         more = ", …" if n > len(items) else ""
         br = {"list": "[%s]", "tuple": "(%s)", "set": "{%s}", "frozenset": "{%s}", "dict": "{%s}"}[
-            "dict" if isinstance(v, dict) else "list" if isinstance(v, list) else "tuple" if isinstance(v, tuple)
-            else "set" if isinstance(v, set) else "frozenset"]
-        kind = "dict" if isinstance(v, dict) else "list" if isinstance(v, list) else "tuple" if isinstance(v, tuple) else "set"
+            "dict" if _isinst(v, dict) else "list" if _isinst(v, list) else "tuple" if _isinst(v, tuple)
+            else "set" if _isinst(v, set) else "frozenset"]
+        kind = "dict" if _isinst(v, dict) else "list" if _isinst(v, list) else "tuple" if _isinst(v, tuple) else "set"
         return Summary(kind, tn, _clip("%s[%d] " % (t.__name__, n) + br % (body + more), lim.max_text),
                        length=n, expandable=n > 0)
-    if isinstance(v, types.ModuleType):
+    if _isinst(v, types.ModuleType):
         return Summary("module", "module", "module " + str(getattr(v, "__name__", "?")))
-    if isinstance(v, type):
+    if _isinst(v, type):
         return Summary("class", "type", "class " + getattr(v, "__name__", "?"), expandable=False)
-    if isinstance(v, (types.FunctionType, types.BuiltinFunctionType, types.MethodType)):
+    if _isinst(v, (types.FunctionType, types.BuiltinFunctionType, types.MethodType)):
         try:
             sig = str(inspect.signature(v))
         except Exception:                                    # noqa: BLE001
@@ -328,16 +350,17 @@ def _summarize(v, lim: Limits, tr) -> Summary:
 
 
 def _object_dict(v):
-    try:
-        d = object.__getattribute__(v, "__dict__")
-        return d if isinstance(d, dict) else None
-    except Exception:                                        # noqa: BLE001
-        return None
+    """インスタンスの ``__dict__``(利用者の ``__getattribute__`` / 作り替えた ``__dict__`` を通さない)。"""
+    return safe.instance_dict(v)
 
 
 def _has_default_repr(t: type) -> bool:
+    """``__repr__`` を誰も定義していないか(MRO の ``__dict__`` を静的に見る)。"""
     try:
-        return t.__repr__ is object.__repr__
+        for k in type.__getattribute__(t, "__mro__"):
+            if "__repr__" in type.__getattribute__(k, "__dict__"):
+                return k is object
+        return True
     except Exception:                                        # noqa: BLE001
         return False
 
@@ -360,7 +383,7 @@ def _summarize_object(v, lim: Limits, tr, tn: str) -> Summary:
     if st == "error":
         return Summary("object", tn, tr("(repr failed: %s)") % _clip("%s: %s" % (type(val).__name__, val), 50),
                        problem="repr_failed", expandable=has_children)
-    if not isinstance(val, str):
+    if not _isinst(val, str):
         return Summary("object", tn, tr("(repr failed: %s)") % "returned non-string", problem="repr_failed")
     return Summary("object", tn, _clip(val, lim.max_text), length=None, expandable=has_children,
                    detail=_clip(val, 2000))
@@ -392,7 +415,7 @@ def _slot_names(t: type) -> list:
         sl = k.__dict__.get("__slots__")
         if sl is None:
             continue
-        for n in ([sl] if isinstance(sl, str) else list(sl)):
+        for n in ([sl] if _isinst(sl, str) else list(sl)):
             if n not in ("__dict__", "__weakref__") and n not in out:
                 out.append(n)
     return out
@@ -408,42 +431,42 @@ def children(value, *, ancestors: Iterable = (), explicit_attrs: Iterable = (), 
     def add(label, step, v):
         out.append(Child(label, step, v, cycle=(id(v) in anc and not _is_atom(v))))
 
-    if isinstance(value, dict):
+    if _isinst(value, dict):
         for k, v in itertools.islice(dict.items(value), n):
-            add(_brief(k, limits) if isinstance(k, (str, int, float, bool, tuple, type(None))) else type(k).__name__,
+            add(_brief(k, limits) if _isinst(k, (str, int, float, bool, tuple, type(None))) else type(k).__name__,
                 ("item", k), v)
         rest = dict.__len__(value) - n
         if rest > 0:
             out.append(Child(tr("… %d more") % rest, None, more=rest))
-    elif isinstance(value, (list, tuple)):
-        fields = getattr(type(value), "_fields", None) if isinstance(value, tuple) else None
-        base_iter = list.__iter__ if isinstance(value, list) else tuple.__iter__
+    elif _isinst(value, (list, tuple)):
+        fields = getattr(type(value), "_fields", None) if _isinst(value, tuple) else None
+        base_iter = list.__iter__ if _isinst(value, list) else tuple.__iter__
         for i, v in enumerate(itertools.islice(base_iter(value), n)):
             label = "[%d]" % i if not fields or i >= len(fields) else str(fields[i])
             add(label, ("item", i), v)
         rest = _base_len(value) - n
         if rest > 0:
             out.append(Child(tr("… %d more") % rest, None, more=rest))
-    elif isinstance(value, (set, frozenset)):
+    elif _isinst(value, (set, frozenset)):
         for i, v in enumerate(_items_of(value, n)):
             add("{%d}" % i, ("elem", i), v)
         rest = _base_len(value) - n
         if rest > 0:
             out.append(Child(tr("… %d more") % rest, None, more=rest))
-    elif isinstance(value, np.ndarray):
+    elif _isinst(value, np.ndarray):
         if value.dtype.names:
             for name in value.dtype.names:
                 try:
                     out.append(Child(name, ("field", name), value[name]))
                 except Exception:                            # noqa: BLE001
                     continue
-    elif isinstance(value, (types.ModuleType, type, types.FunctionType)) or value is None:
+    elif _isinst(value, (types.ModuleType, type, types.FunctionType)) or value is None:
         pass
     else:
         d = _object_dict(value)
         if d:
             for k, v in itertools.islice(dict.items(d), n):
-                if isinstance(k, str) and (include_private or not k.startswith("_")):
+                if _isinst(k, str) and (include_private or not k.startswith("_")):
                     add(k, ("attr", k), v)
         t = type(value)
         for name in _slot_names(t):
@@ -477,11 +500,9 @@ def _is_atom(v) -> bool:
 
 
 def candidate_attributes(value) -> list:
-    """「この属性を展開」で選べる名前(``dir`` の公開名。プロパティの名前を含む)。値は読まない。"""
-    try:
-        return [n for n in dir(value) if not n.startswith("_")]
-    except Exception:                                        # noqa: BLE001
-        return []
+    """「この属性を展開」で選べる名前(公開名。プロパティの名前を含む)。値は読まない。利用者のクラスの物は
+    ``dir`` を呼ばず(``__dir__`` が走る)、型の MRO とインスタンスの ``__dict__`` の名前だけ。"""
+    return [n for n in safe.static_names(value) if not n.startswith("_")]
 
 
 # --------------------------------------------------------------------------- #
@@ -591,9 +612,9 @@ class DictSource:
 
 def namespace_items(snap) -> list:
     """``snapshot()`` の結果(dict か ``(名前, 値)`` の列)を ``[(名前, 値)]`` に。"""
-    if isinstance(snap, Mapping):
-        return [(k, v) for k, v in snap.items() if isinstance(k, str)]
-    return [(k, v) for k, v in snap if isinstance(k, str)]
+    if _isinst(snap, Mapping):
+        return [(k, v) for k, v in snap.items() if _isinst(k, str)]
+    return [(k, v) for k, v in snap if _isinst(k, str)]
 
 
 # --------------------------------------------------------------------------- #
@@ -603,7 +624,7 @@ def is_editable(value) -> bool:
     t = type(value)
     if t in (bool, int, float, str):
         return True
-    return isinstance(value, (np.bool_, np.integer, np.floating))
+    return _isinst(value, (np.bool_, np.integer, np.floating))
 
 
 def parse_edit(text: str, current, tr: Callable = _ident):
@@ -612,7 +633,7 @@ def parse_edit(text: str, current, tr: Callable = _ident):
         raise EditError(tr("only numbers, strings and booleans can be edited"))
     s = text.strip()
     t = type(current)
-    if t is bool or isinstance(current, np.bool_):
+    if t is bool or _isinst(current, np.bool_):
         low = s.lower()
         if low in ("true", "1", "yes"):
             val = True
@@ -625,7 +646,7 @@ def parse_edit(text: str, current, tr: Callable = _ident):
         if len(s) >= 2 and s[0] == s[-1] and s[0] in "'\"":
             return s[1:-1]
         return text
-    if t is int or isinstance(current, np.integer):
+    if t is int or _isinst(current, np.integer):
         try:
             iv = int(s, 0)
         except ValueError:
@@ -653,25 +674,25 @@ def fingerprint(v) -> tuple:
     t = type(v)
     if v is None or t in (bool, int, float, complex):
         return (t.__name__, v if t is not float or v == v else "nan")
-    if isinstance(v, str):
+    if _isinst(v, str):
         return ("str", len(v), zlib.adler32(v[:20000].encode("utf-8", "replace")), hash(v[-64:]))
-    if isinstance(v, (bytes, bytearray)):
+    if _isinst(v, (bytes, bytearray)):
         return ("bytes", len(v), zlib.adler32(bytes(v[:65536])))
-    if isinstance(v, np.ndarray):
+    if _isinst(v, np.ndarray):
         if v.dtype.kind in "biufc" and v.size:
             samp, _s = _sample(v, 65536)
             return ("nd", v.shape, v.dtype.str, zlib.adler32(np.ascontiguousarray(samp).tobytes()))
         return ("nd", v.shape, v.dtype.str)
-    if isinstance(v, np.generic):
+    if _isinst(v, np.generic):
         return ("np", v.dtype.str, str(v))
-    if isinstance(v, (list, tuple, dict, set, frozenset)):
+    if _isinst(v, (list, tuple, dict, set, frozenset)):
         items = _items_of(v, 32)
-        if isinstance(v, dict):
+        if _isinst(v, dict):
             sub = tuple((repr(k)[:40] if type(k) in (str, int) else type(k).__name__, _fp_brief(x)) for k, x in items)
         else:
             sub = tuple(_fp_brief(x) for x in items)
         return (t.__name__, _base_len(v), sub)
-    if isinstance(v, (types.ModuleType, types.FunctionType, type)):
+    if _isinst(v, (types.ModuleType, types.FunctionType, type)):
         return (t.__name__, id(v))
     d = _object_dict(v)
     if d is not None:
@@ -683,12 +704,12 @@ def _fp_brief(v) -> tuple:
     t = type(v)
     if v is None or t in (bool, int, float):
         return (t.__name__, v if t is not float or v == v else "nan")
-    if isinstance(v, str):
+    if _isinst(v, str):
         return ("str", len(v), hash(v[:200]))
-    if isinstance(v, np.ndarray):
+    if _isinst(v, np.ndarray):
         return ("nd", v.shape, v.dtype.str, zlib.adler32(np.ascontiguousarray(_sample(v, 256)[0]).tobytes())
                 if v.dtype.kind in "biufc" and v.size else 0)
-    if isinstance(v, (list, tuple, dict, set, frozenset)):
+    if _isinst(v, (list, tuple, dict, set, frozenset)):
         return (t.__name__, _base_len(v))
     return (type_name_of(v),)
 
@@ -753,7 +774,7 @@ class Entry:
 
 def is_hidden_by_default(name: str, value) -> bool:
     """既定で一覧に出さない物: ``_`` で始まる名前、モジュール・関数・クラス。"""
-    return name.startswith("_") or isinstance(value, (types.ModuleType, types.FunctionType, types.BuiltinFunctionType, type))
+    return name.startswith("_") or _isinst(value, (types.ModuleType, types.FunctionType, types.BuiltinFunctionType, type))
 
 
 def filter_entries(entries: Iterable, query: str, show_callables: bool = False) -> list:
@@ -786,7 +807,7 @@ def thumbnail_u8(a: np.ndarray, size: int = 48) -> np.ndarray:
 
     浮動小数は標本の最小〜最大を 0..255 に、``uint8`` はそのまま、それ以外の整数は最小〜最大、真偽は 0/255。
     NaN・inf は 0 として扱う。"""
-    if not isinstance(a, np.ndarray) or a.ndim not in (2, 3) or a.size == 0:
+    if not _isinst(a, np.ndarray) or a.ndim not in (2, 3) or a.size == 0:
         raise ValueError("thumbnail_u8: 2-D か 3-D の配列が要ります")
     h, w = a.shape[:2]
     sy, sx = max(1, h // size), max(1, w // size)
@@ -878,7 +899,7 @@ class WatchEvaluator:
     def _error_text(self, st: str, val) -> str:
         if st == "timeout":
             return self.tr("timed out (over %d ms)") % int(self.timeout_s * 1000)
-        if isinstance(val, SyntaxError):
+        if _isinst(val, SyntaxError):
             return self.tr("syntax error: %s") % _clip(str(val.msg or val), 80)
         return "%s: %s" % (type(val).__name__, _clip(str(val), 100))
 
@@ -1039,11 +1060,11 @@ class WatchList:
             data = json.loads(text)
         except ValueError as exc:
             raise ValueError("watch file is not valid JSON: %s" % exc) from exc
-        if not isinstance(data, dict) or data.get("fullseye_kind") != cls.SCHEMA:
+        if not _isinst(data, dict) or data.get("fullseye_kind") != cls.SCHEMA:
             raise ValueError("not a watch file (fullseye_kind != %s)" % cls.SCHEMA)
         if data.get("version") != cls.VERSION:
             raise ValueError("unsupported watch file version: %r" % (data.get("version"),))
         ex = data.get("expressions")
-        if not isinstance(ex, list) or not all(isinstance(x, str) for x in ex):
+        if not _isinst(ex, list) or not all(_isinst(x, str) for x in ex):
             raise ValueError("'expressions' must be a list of strings")
         return cls(ex)

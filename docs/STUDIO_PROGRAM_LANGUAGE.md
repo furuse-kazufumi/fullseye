@@ -135,9 +135,14 @@ Python からも `fs.load_pipeline("inspect.json")` で読める(§9)。
   - 1 行実行(`max_lines`)→ その数の行を実行したら止める。
   - 止めるのは `ProgramStopped`(`BaseException`)を投げて行う。`except Exception` では捕まらず、
     `except BaseException` で捕まえても次の行でまた投げる(一度止めたら止まり続ける)。
-- **続行**は「上から走り直し、ブレークポイントを `skip_hits` 回通過」で行う。本物の Python の実行を途中で
-  凍らせて再開するにはスレッドで待たせる必要があり、この段では入れない。走り直しはメモ化(§6)で
-  上流の op を計算し直さないので安い(実測 §6)。
+- **続行**は 2 通り。`pause_hook=` を渡すと(Studio の Python のモードはこれ)、ブレークポイント・1 行実行で
+  実行を**終えずに作業スレッドの中で待ち**、フックが返す指示("continue" / "step" / "stop")で**止まった所から
+  続ける**(上から走り直さない = print・乱数・ファイルへの書き込みが 2 度走らない)。待っている時間は時間の上限に
+  数えない。待っている間に `stop_event` が立てば見張りが止める。`pause_hook` を渡さない呼び方(API・試験)は
+  今までどおり、止まった所で実行を終え、続きは「上から走り直し、ブレークポイントを `skip_hits` 回通過」
+  (メモ化 §6 で上流の op は計算し直さない)。
+- **止まった所の変数**: モジュールの階層は名前空間そのもの。関数の中で止まったら、その枠の局所変数を
+  `ProgramResult.locals`、呼び出しの積み重ねを `stack`(`[(関数名, 行)]`、内側が先)に入れる。
 - **例外**: トレースバックの中で `<studio-program>` の最も深い枠の行番号を取り、
   `line 2: ZeroDivisionError: division by zero` の形で返す。構文の誤りは `SyntaxError` の行。
   `exit()` も行番号つきの誤りにする(Studio は落ちない)。
@@ -180,11 +185,23 @@ Python からも `fs.load_pipeline("inspect.json")` で読める(§9)。
 | 作業フォルダ(`os.chdir`) | **戻す** | Studio の相対パスが狂う |
 | `builtins` の名前 | **戻す**(足した名前を消し、差し替えを戻す) | 他の実行・Studio 本体に漏れる |
 | `warnings` の絞り | **戻す** | Studio の警告が消える |
+| `sys.stdout` / `sys.stderr` / `sys.stdin` | **戻す** | 差し替えられると Studio 本体の出力が飲み込まれる |
+| `sys.excepthook` / `sys.displayhook` / `sys.unraisablehook` / `threading.excepthook` | **戻す** | クラッシュの記録(studio_crash.log)が書かれなくなる |
+| 再帰の上限(`sys.setrecursionlimit`) | **戻す** | 次の実行と Studio 本体に効く |
 | `sys.modules` | 利用者のフォルダ(実行したファイルの場所・`programs/`)から読んだ物だけ外す。他は残す | numpy などを毎回読み直すと遅い。外すと直した中身が読まれる |
 | numpy の乱数の状態・`np.seterr`・logging の設定・signal・開いたファイル・作ったスレッド | 戻さない | 戻す一般の方法が無い。必要なら別プロセスの実行(§14) |
 
-戻した物は `notes` に「restored after the run: sys.path, os.environ, cwd, builtins」と出す(試験あり)。
+戻した物は `notes` に「restored after the run: sys.path, os.environ, cwd, builtins」と出す。戻す物の一覧は
+`studio_program.RESTORED_STATE`(試験は一覧の全部を 1 つずつ壊して、戻る事と名前が出る事を見る)。
 2 本の実行を同時に回すと互いの変更を戻し合うので、同時実行は UI 側で 1 本に絞る前提。
+**止められずに残した実行(§4.0)が生きている間は、次の実行を始めない**(`run_program` / `evaluate` が
+「not run: an earlier run could not be stopped and is still running in the background …」を返し、画面にも出す)。
+残った実行は諦めて戻した後にも環境変数や作業フォルダを書き換えるので、終わった所で**もう一度戻す**。
+**取り込む標準出力は末尾 100 万文字まで**(`MAX_STDOUT_CHARS`。越えた分は古い方から捨て、捨てた文字数を先頭に書く。
+`ProgramResult.stdout_total` が書かれた総数)。
+**実行の後の変数の表(`describe_value`)は利用者のコードを呼ばない**(`__repr__` / `__len__` / `__class__` の
+プロパティ)。数・文字列・numpy・完全一致の list / tuple / dict / set だけ中身を書き、利用者のクラスの物は型の名前。
+見張りの外で動く所なので、戻らない `__repr__` があると実行が終わらなくなるため。
 `trusted=False` のときは実行せず、errors に「not run: … confirm it first」を入れる(黙って何もしない、にしない)。
 
 ### 4.1 Debug と Release(実行の構成。画面では 1 か所に常に表示)
@@ -224,7 +241,16 @@ Python からも `fs.load_pipeline("inspect.json")` で読める(§9)。
   は実行せずに理由を返す(`not_run_reason`)。確認の状態は文面の SHA-256(改行を揃えて)で覚える
   (`TrustStore`、1 文字でも変われば確認し直し)。由来 `typed` だけが既定で信頼、`file` / `project` /
   `mcp` / 自動操作は確認が要る。
-- 従来のモード(HDevelop 風)は任意のコードを含まないので確認は要らない。
+- 従来のモード(HDevelop 風)は任意のコードを含まないので確認は要らない。**パイプラインのファイルはデータ**として
+  確認なしに開くので、そこから Python へ渡る道を塞ぐ:
+  - `hdev_to_python` は、表示の指示(`dev_*` / `disp_*` / `set_system`)の引数を**定数(数・引用符つきの文字列)と
+    素の語だけ**に限り、それ以外(呼び出し・属性・添字・演算・キーワード引数 …)は変換の誤りにする
+    (fail-closed)。出す行は構文木から作り直し、元の文字列は写さない。
+  - 開いたパイプラインのファイルから「Python に変換」した文面は、**そのファイルの信頼を引き継ぐ**
+    (由来 `file`・未確認。最初の実行の前に確認)。
+  - Python の実行の入口(`studio_pymode` の実行・1 行・選んだ行)は、パイプラインのモードでは走らない
+    (指示の行は Python としても読めるため)。
+- 従来の Python エディタ(別の窓)にファイルから開いた `.py`(ドラッグ&ドロップ・開く)も、同じ台帳と同じ確認の窓を通る。
 - 確認の UI は次の段(§13)。
 
 ## 6. 最適化
@@ -533,9 +559,23 @@ studio.py の差し込みは `win._pymode` を見て振り分けるだけ(F5 / F
    i18n.json へ移さず、Studio の表に無ければ部品の表を引く(部品の表に hi は無いので、hi では部品の文は英語)。
 
 まだ入れていない物(次の便): つまみ ↔ コードの値の往復(記録の行のつまみを動かして文面の数字を書き換える)、
-助言(`advise_program`)の「適用」、GUI スレッドの橋(`GUI_BRIDGE`、§15 の案 A)、関数の中の局所変数の表示
-(止まった所の変数は実行の名前空間 = モジュールの階層だけ)、中へ / 外へ・呼び出しの積み重ね、Python の
-文の検査の文の訳(`check_program` の文は英語)。
+助言(`advise_program`)と検査の直し(`apply_fix`)の「適用」、GUI スレッドの橋(`GUI_BRIDGE`、§15 の案 A。
+**橋が無い間、Qt を直接 import するプログラムは Program 欄からは走らせず、分かる文で断る**)、中へ / 外へ・
+呼び出しの積み重ねの表示(`ProgramResult.stack` は返す)、定義へ飛ぶ、引数(sys.argv)と時間の上限の画面からの設定、
+Python → パイプライン(`python_to_hdev`)の入口。
+
+2026-11-13 の 2 便目(同じ枝)で変えた物:
+
+- 上の 2.(続行・1 行実行)は**止まった所から続ける**に変えた(§4 の `pause_hook`、`studio_pymode.PauseGate`)。
+  止まっている間に文面を直したら、止まっている実行を終えて上から走り直す(出力の欄にそう書く)。
+  関数の中で止まったら、その枠の局所変数も変数の欄に出す(書き換えはできない: 断る)。
+- 実行時・検査・助言の文は UI の言語で出す(`studio_program_i18n`: 源の書式文字列を型にして値を取り出し、
+  訳に埋め直す。訳は `studio_pyedit_i18n.json` の 5 言語、hi は英語)。例のプログラムと「新規」のコメント、
+  起動時の案内(最初の 3 手)も UI の言語とモードに従う。
+- 変数の欄での編集は実行の名前空間に届く。出力の欄は 5000 行まで(古い行から捨てる)。未保存の文面は 5 秒ごとに
+  設定へ書き出す(落ちても次の起動で戻る)。
+- 補完・ホバー・変数の一覧は、実行後の値のうち利用者のクラスの物については静的な情報だけを使う
+  (`studio_pyedit_safe`)。jedi には数・文字列・numpy の配列・ライブラリのモジュールだけを渡す。
 
 ## 14. 既存の「Python Editor」との関係
 
@@ -670,9 +710,10 @@ repo on PYTHONPATH`、インタプリタは設定の Execution ページ `interp
 **選んだ行だけ実行**は `evaluate(source, namespace)` を使える形(UI は別の枝)。**引数(sys.argv)は未着手**。
 
 ### B2 Debug — 一部
-ブレークポイント(`breakpoints`、続行は `skip_hits`)と 1 行実行(`max_lines`)、止まった所の変数
-(`variables`)。**条件つきブレークポイント・中へ / 外へ・呼び出しの積み重ね・import した別ファイルの中の
-ブレークポイントは未着手**(tracer は実行したファイルだけを見る)。
+ブレークポイント(条件つき `conditions`)・1 行実行・続行(`pause_hook`: 止まった所から続く)、止まった所の変数
+(`variables` と、関数の中なら `locals`)、呼び出しの積み重ね(`stack`。画面には関数の名前だけ)。
+**中へ / 外へ・積み重ねの一覧の表示・import した別ファイルの中のブレークポイントは未着手**(tracer は実行した
+ファイルだけを見る。1 行実行は関数の中へ入る)。
 
 ### B3 Release — 今回入れた(行フックなしまで)
 `config="release"`(§4.1)。**関数単位のコンパイル(numba)は未着手・方式は実測済み**。Debug と結果が一致する
@@ -690,9 +731,12 @@ op の呼び出し → 記録(段・行・入出力の型と形・時間・cache
 `hdev_to_python` / `python_to_hdev`、`pipeline()` / `current_pipeline()` / `load_pipeline()`、
 `fs.load_pipeline` / `fs.read_def` / `fs.write_def`(§8〜§10)。**「Python にする」ボタンは未着手**。
 
-### D4 Qt を使う Python — 差し込み口だけ
-`ui()` / `show_window()` / `close_program_windows()` / `needs_gui_thread()` と橋の差し込み口 `GUI_BRIDGE`、
-`run_program` はどのスレッドからでも動く(§15)。**Studio 側の橋・exec() の差し替えは未着手**(実測の試作のみ)。
+### D4 Qt を使う Python — 差し込み口だけ(Studio の中では未配線)
+`ui()` / `show_window()` / `close_program_windows()` / `needs_gui_thread()` と橋の差し込み口 `GUI_BRIDGE`。
+**Studio 側の橋・exec() の差し替えは未着手**(実測の試作のみ)。橋が無い間、Qt を直接 import するプログラムを
+作業スレッドから走らせようとすると(Studio の Program 欄は常にこれ)、`run_program` は実行せずに
+「line N: not run: this program imports Qt directly …」を返す(作業スレッドで QWidget を作るのは未定義の動作)。
+main スレッドから直接呼ぶ使い方(Studio の外)は今までどおり動く。
 
 ## 18. やらないこと
 
@@ -708,6 +752,8 @@ op の呼び出し → 記録(段・行・入出力の型と形・時間・cache
 
 - HDevelop の公式文書の制御構文の頁を読み比べていない(§1)。
 - メモ化してよいと判定した op が、呼んだ先の補助関数で乱数を使っていないことの全数(標本で確認)。
-- 見張りが諦めて残したスレッドが、後で戻した大域の状態(sys.path など)に触れる場合の影響。
+- 見張りが諦めて残したスレッドが、後で戻した大域の状態(sys.path など)に触れる場合: 残っている間は次の
+  実行を断り、終わった所でもう一度戻す(2026-11-13)。残っている間に Studio 本体が変えた環境変数・作業フォルダも
+  その時に実行前の値へ戻る(区別できない)。終わらない実行(C の中の無限ループ)は、Studio を起動し直すまで残る。
 - 実際の Studio の窓での見え方(UI は入れていない)。
 - 案 A の橋を Studio の本物の窓で動かすこと(実測は offscreen の小さな試作。exec() の差し替えは未実装)。

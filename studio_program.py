@@ -33,6 +33,7 @@ import re
 import sys
 import threading
 import time
+import types
 import weakref
 from dataclasses import dataclass, field
 from typing import Any, Callable, Iterable, Sequence
@@ -385,24 +386,41 @@ class ProgramStopped(BaseException):
         self.line = line
 
 
+def _is(v, cls) -> bool:
+    """``isinstance`` の代わり: ``type(v)`` だけで決める。``isinstance`` は ``v.__class__`` を読むので、利用者の
+    クラスがそれをプロパティにしていると利用者のコードが走る(実行の後・見張りの外で固まる)。"""
+    return issubclass(type(v), cls)
+
+
+def _numpy_type(t) -> bool:
+    """numpy 自身が定義した型か(利用者が派生した配列・スカラはメソッドを差し替えられるので別扱い)。"""
+    try:
+        mod = type.__dict__["__module__"].__get__(t)                       # メタクラスの属性の読み出しを通さない
+    except Exception:                                                     # noqa: BLE001
+        return False
+    return type(mod) is str and mod.split(".")[0] == "numpy"
+
+
 def _kind_of(v, rec: "Recorder | None" = None) -> str:
-    if isinstance(v, np.ndarray):
+    if _is(v, np.ndarray):
         if rec is not None:
             s = rec.sort_of(v)
             if s:
                 return s
         return "ndarray"
-    if isinstance(v, bool):
+    if _is(v, bool):
         return "bool"
-    if isinstance(v, (int, np.integer)):
+    if _is(v, (int, np.integer)):
         return "int"
-    if isinstance(v, (float, np.floating)):
+    if _is(v, (float, np.floating)):
         return "float"
     return type(v).__name__
 
 
 def _shape_of(v):
-    return tuple(int(s) for s in v.shape) if isinstance(v, np.ndarray) else None
+    if not _is(v, np.ndarray):
+        return None
+    return tuple(int(s) for s in np.ndarray.shape.__get__(v))     # 派生した型の shape の差し替えを通さない
 
 
 def _is_knob(v) -> bool:
@@ -1043,29 +1061,88 @@ class VarInfo:
     summary: str
 
 
+#: 変数の表で中身を書く入れ物(完全一致の型だけ。派生した型は長さだけ)。
+_PLAIN_CONTAINERS = (list, tuple, dict, set, frozenset)
+_SUMMARY_ITEMS = 8
+_SUMMARY_CHARS = 60
+
+
+def _safe_text(v, depth: int = 0) -> str | None:
+    """``repr(v)`` と同じ見た目の短い文字列を、**利用者のコードを呼ばずに**作る。作れない(長い・深い)なら None。
+
+    数・文字列・numpy のスカラ・完全一致の list / tuple / dict / set だけ中身を書く。それ以外(利用者のクラスの物、
+    派生した str や list)は ``<型の名前>``。入れ物は先頭 :data:`_SUMMARY_ITEMS` 個まで見て、それより多ければ None
+    (10⁷ 要素の list でも全文を作らない)。"""
+    t = type(v)
+    if v is None or t is bool or t is float or t is complex:
+        return repr(v)
+    if t is int:
+        return repr(v) if v.bit_length() < 256 else "<int %d bits>" % v.bit_length()
+    if t is str or t is bytes:
+        return repr(v) if len(v) <= _SUMMARY_CHARS else None
+    if _is(v, np.generic) and _numpy_type(t):
+        return repr(v.item()) if v.dtype.kind in "biuf" else "<%s>" % t.__name__
+    if t is np.ndarray:
+        return "<ndarray %s>" % "×".join(str(s) for s in v.shape)
+    if t in _PLAIN_CONTAINERS:
+        if depth >= 2 or len(v) > _SUMMARY_ITEMS:
+            return None
+        if t is dict:
+            parts = []
+            for k, x in v.items():
+                a, b = _safe_text(k, depth + 1), _safe_text(x, depth + 1)
+                if a is None or b is None:
+                    return None
+                parts.append("%s: %s" % (a, b))
+            return "{%s}" % ", ".join(parts)
+        parts = [_safe_text(x, depth + 1) for x in v]
+        if any(p is None for p in parts):
+            return None
+        body = ", ".join(parts)
+        if t is list:
+            return "[%s]" % body
+        if t is tuple:
+            return "(%s%s)" % (body, "," if len(parts) == 1 else "")
+        if not parts:
+            return "set()" if t is set else "frozenset()"
+        return "{%s}" % body if t is set else "frozenset({%s})" % body
+    return "<%s>" % t.__name__
+
+
 def describe_value(v, rec: Recorder | None = None) -> tuple:
-    """``(kind, shape, summary)``。画像は型と形(``image 512×512 float64``)、小さい値は中身。"""
+    """``(kind, shape, summary)``。画像は型と形(``image 512×512 float64``)、小さい値は中身。
+
+    **利用者のコードを呼ばない**(``__repr__`` / ``__str__`` / ``__len__`` / ``__class__`` のプロパティ)。実行の
+    後・見張りの外で呼ばれるので、戻らない ``__repr__`` があると実行が終わらなくなる(2026-11-13 レビュー H2)。
+    利用者のクラスの物は型の名前だけ、入れ物の中のそれは ``<型の名前>``。"""
     kind = _kind_of(v, rec)
     shape = _shape_of(v)
-    if isinstance(v, np.ndarray):
-        dims = "×".join(str(s) for s in v.shape)
-        if v.size <= 16:
-            return kind, shape, "%s %s %s" % (kind, dims, np.array2string(v, precision=4, threshold=16))
-        return kind, shape, "%s %s %s" % (kind, dims, v.dtype)
-    if isinstance(v, (bool, int, float, np.generic, type(None))):
-        return kind, None, repr(v.item() if isinstance(v, np.generic) else v)
-    if isinstance(v, str):
-        r = repr(v)
-        return kind, None, r if len(r) <= 60 else r[:57] + "…'"
-    if isinstance(v, (list, tuple, dict, set)):
-        r = repr(v)
-        head = "%s[%d]" % (type(v).__name__, len(v))
-        return kind, None, head + (" " + r if len(r) <= 60 else "")
-    if isinstance(v, Pipeline):
+    t = type(v)
+    if _is(v, np.ndarray):
+        a = v if t is np.ndarray else np.ndarray.view(v, np.ndarray)      # 派生した型の表示の差し替えを通さない
+        dims = "×".join(str(s) for s in a.shape)
+        if a.size <= 16 and a.dtype.kind in "biufc":                      # object の配列は要素の repr を呼ぶので書かない
+            return kind, shape, "%s %s %s" % (kind, dims, np.array2string(a, precision=4, threshold=16))
+        return kind, shape, "%s %s %s" % (kind, dims, a.dtype)
+    if v is None or t in (bool, int, float) or (_is(v, np.generic) and _numpy_type(t)):
+        return kind, None, _safe_text(v) or t.__name__
+    if t is str:
+        r = repr(v[:_SUMMARY_CHARS + 1])                                   # 長い文字列の全文の repr は作らない
+        return kind, None, r if len(v) <= _SUMMARY_CHARS and len(r) <= _SUMMARY_CHARS else r[:57] + "…'"
+    if _is(v, _PLAIN_CONTAINERS):
+        base = next(b for b in _PLAIN_CONTAINERS if _is(v, b))
+        head = "%s[%d]" % (t.__name__, base.__len__(v))                    # 派生した型の __len__ は呼ばない
+        r = _safe_text(v) if t in _PLAIN_CONTAINERS else None
+        return kind, None, head + (" " + r if r is not None and len(r) <= _SUMMARY_CHARS else "")
+    if t is Pipeline:
         return "pipeline", None, "%s: %s" % (v.name, " → ".join(s[0] for s in v.stages))
+    if t in (types.FunctionType, types.BuiltinFunctionType, types.MethodType):
+        return "function", None, v.__name__
+    if _is(v, type):
+        return "function", None, type.__getattribute__(v, "__name__")
     if callable(v):
-        return "function", None, getattr(v, "__name__", "function")
-    return kind, None, type(v).__name__
+        return "function", None, t.__name__
+    return kind, None, t.__name__
 
 
 @dataclass
@@ -1097,6 +1174,8 @@ class ProgramResult:
     error_file: str | None = None                    # 例外の場所のファイル(error_line と組で (ファイル, 行))
     namespace: dict | None = None                    # 実行後の名前空間(対話の窓が evaluate で使う)
     #: 止まった所が関数の中のとき、その枠の局所変数(モジュールの階層で止まったら空)。
+    #: 今までに print された文字数(``stdout`` は末尾 :data:`MAX_STDOUT_CHARS` 文字だけ。越えた分は捨てている)。
+    stdout_total: int = 0
     locals: dict = field(default_factory=dict)
     #: 止まった所の呼び出しの積み重ね ``[(関数名, 行)]``(内側が先。Program のファイルの枠だけ)。
     stack: list = field(default_factory=list)
@@ -1353,6 +1432,40 @@ def abandoned_runs() -> list:
     return [dict(a, alive=a["thread"].is_alive()) for a in _ABANDONED]
 
 
+#: 止められずに残した実行が生きている間に、次の実行を断る時の文(``%d`` = 残っている実行の数)。
+ABANDONED_BLOCKS_RUN = ("not run: an earlier run could not be stopped and is still running in the background (%d) — "
+                        "it can still change files, the environment and the working folder; wait until it ends "
+                        "or restart Studio")
+
+
+def _restore_when_done(thread, snapshot) -> None:
+    """止められずに残した実行が終わった所で、プロセスの状態をもう一度戻す(残った実行は、諦めて戻した**後**にも
+    環境変数や作業フォルダを書き換える。2026-11-13 レビュー H3)。その間、次の実行は始めない
+    (:data:`ABANDONED_BLOCKS_RUN`)ので、戻す相手は必ずこの実行の前の状態。"""
+    def body():
+        thread.join()
+        try:
+            snapshot.restore()
+        except Exception:                            # noqa: BLE001 -- 見張りのスレッドを落とさない
+            pass
+    threading.Thread(target=body, name="studio-program-late-restore", daemon=True).start()
+
+
+def _first_qt_import_line(text: str) -> int:
+    """Qt を直接 import する最初の行(無ければ 0)。"""
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return 0
+    lines = []
+    for x in ast.walk(tree):
+        if isinstance(x, ast.Import) and any(al.name.split(".")[0] in QT_MODULES for al in x.names):
+            lines.append(x.lineno)
+        elif isinstance(x, ast.ImportFrom) and x.module and x.module.split(".")[0] in QT_MODULES:
+            lines.append(x.lineno)
+    return min(lines) if lines else 0
+
+
 def _run_with_watchdog(fn, outcome: dict, deadline, stop_event, in_caller: bool, clock=None) -> bool:
     """*fn* を回し、時間の上限(*deadline*)か *stop_event* で止めの例外を撃つ。戻らなければ撃ち直し、
     撃ち始めて :data:`_STOP_GRACE_S` 秒で諦めて True(= 残した)を返す。
@@ -1430,11 +1543,19 @@ def _due(deadline, stop_event, clock=None):
 
 class _GlobalState:
     """実行の前後で戻すプロセス全体の状態: ``sys.path``・``os.environ``・作業フォルダ・``builtins`` の名前・
-    ``warnings`` の絞り。戻さない物(設計書 §4.2): 読み込んだ他人のパッケージ(``sys.modules``。利用者の
-    フォルダの物は外す)・numpy の乱数や ``seterr``・logging の設定・signal・開いたファイルやスレッド。"""
+    ``warnings`` の絞り・``sys.stdout`` / ``stderr`` / ``stdin``・``sys.excepthook`` / ``displayhook`` /
+    ``unraisablehook``・``threading.excepthook``・再帰の上限(:data:`RESTORED_STATE` が戻す物の一覧)。
+    戻さない物(設計書 §4.2): 読み込んだ他人のパッケージ(``sys.modules``。利用者のフォルダの物は外す)・numpy の
+    乱数や ``seterr``・logging の設定・signal・開いたファイルやスレッド。"""
+
+    #: ``sys`` の属性のうち、差し替えられたら元の物へ戻す物(差し替えると Studio 本体の出力・クラッシュ記録が消える)。
+    SYS_ATTRS = ("stdout", "stderr", "stdin", "excepthook", "displayhook", "unraisablehook")
 
     def __init__(self):
         import warnings
+        self.sys_attrs = {k: getattr(sys, k, None) for k in self.SYS_ATTRS}
+        self.thread_hook = threading.excepthook
+        self.recursion = sys.getrecursionlimit()
         self.path = list(sys.path)
         self.environ = dict(os.environ)
         try:
@@ -1481,7 +1602,26 @@ class _GlobalState:
         if warnings.filters != self.warnings:
             warnings.filters[:] = self.warnings
             done.append("warnings")
+        for k, v in self.sys_attrs.items():
+            if getattr(sys, k, None) is not v:
+                setattr(sys, k, v)
+                done.append("sys." + k)
+        if threading.excepthook is not self.thread_hook:
+            threading.excepthook = self.thread_hook
+            done.append("threading.excepthook")
+        if sys.getrecursionlimit() != self.recursion:
+            try:
+                sys.setrecursionlimit(self.recursion)
+                done.append("recursion limit")
+            except (RecursionError, ValueError):     # 今の深さより小さくは戻せない(呼び出し側が深い所にいる)
+                pass
         return done
+
+
+#: 実行の後に戻すプロセス全体の状態の名前(``notes`` の「restored after the run: …」に出る語と同じ。試験が全部を見る)。
+RESTORED_STATE = ("sys.path", "os.environ", "cwd", "builtins", "warnings", "sys.stdout", "sys.stderr", "sys.stdin",
+                  "sys.excepthook", "sys.displayhook", "sys.unraisablehook", "threading.excepthook",
+                  "recursion limit")
 
 
 #: プロジェクトのフォルダの中でプログラム(.py)を置く場所。``import`` の探し場所に一時的に足す。
@@ -1538,7 +1678,7 @@ def evaluate(source: str, namespace, *, trusted: bool = True, time_limit_s: floa
     if not trusted:
         return {"value": None, "stdout": "", "error": "not run: untrusted input", "calls": []}
     rec = ns.get("__studio_recorder__") or Recorder()
-    out = io.StringIO()
+    out = _BoundedOutput()
     ns["print"] = _capture_print(out)
     n0 = len(rec.calls)
     box: dict = {}
@@ -1577,6 +1717,9 @@ def evaluate(source: str, namespace, *, trusted: bool = True, time_limit_s: floa
             except BaseException:                    # noqa: BLE001 -- body の外で届いた止めの例外
                 box.setdefault("err", "stopped")
         deadline = None if time_limit_s is None else time.perf_counter() + time_limit_s
+        left = abandoned_runs()
+        if left:
+            return {"value": None, "stdout": "", "calls": [], "error": ABANDONED_BLOCKS_RUN % len(left)}
         if _run_with_watchdog(guarded, {}, deadline, stop_event, in_caller=False):
             return {"value": None, "stdout": out.getvalue(), "calls": [],
                     "error": "could not stop the selected lines within %.1f s — they go on running in the background "
@@ -1584,7 +1727,45 @@ def evaluate(source: str, namespace, *, trusted: bool = True, time_limit_s: floa
     return {"value": box.get("value"), "stdout": out.getvalue(), "error": box.get("err"), "calls": rec.calls[n0:]}
 
 
-def _capture_print(buf: io.StringIO) -> Callable:
+#: 取り込む標準出力の上限(文字数)。越えたら**古い方から**捨て、捨てた事を先頭に書く(50 MB の print で
+#: メモリと画面を埋めない)。
+MAX_STDOUT_CHARS = 1_000_000
+
+
+class _BoundedOutput:
+    """``print`` の取り込み先。末尾 :data:`MAX_STDOUT_CHARS` 文字だけを持つ(``io.StringIO`` と同じ write / getvalue)。"""
+
+    def __init__(self, limit: int | None = None):
+        self.limit = int(MAX_STDOUT_CHARS if limit is None else limit)
+        self._parts: list = []
+        self._size = 0
+        #: 今までに書かれた文字数(捨てた分も含む)。止まるたびに「前に出した分」を数えるのに使う。
+        self.total = 0
+
+    def write(self, s) -> int:
+        s = str(s)
+        self._parts.append(s)
+        self._size += len(s)
+        self.total += len(s)
+        if self._size > 2 * self.limit:              # たまにまとめて詰める(1 回の write ごとに繋ぎ直さない)
+            tail = "".join(self._parts)[-self.limit:]
+            self._parts, self._size = [tail], len(tail)
+        return len(s)
+
+    @property
+    def dropped(self) -> int:
+        return self.total - min(self._size, self.limit)
+
+    def getvalue(self) -> str:
+        text = "".join(self._parts)
+        if len(text) > self.limit:
+            text = text[-self.limit:]
+        if self.total > len(text):
+            return "… (%d earlier characters of output dropped)\n" % (self.total - len(text)) + text
+        return text
+
+
+def _capture_print(buf) -> Callable:
     """プログラムの ``print`` を *buf* へ(``file=`` を渡した呼び出しはそのまま本物の print へ)。"""
     def print_(*args, sep=" ", end="\n", file=None, flush=False):
         if file is not None:
@@ -1680,8 +1861,8 @@ def needs_gui_thread(text: str) -> bool:
 
 def _variables(ns: dict, base: dict, rec: Recorder) -> tuple:
     rows, values = [], {}
-    for k, v in ns.items():
-        if k.startswith("_") or k in ("__builtins__",):
+    for k, v in list(ns.items()):
+        if type(k) is not str or k.startswith("_") or k in ("__builtins__",):
             continue
         if k in base and base[k] is v:
             continue                                 # 前置きの名前(書き換えていない物)
@@ -1751,6 +1932,21 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
         result.errors = ["line 1: a Python program needs an input image"]
         result.error_line = 1
         return result
+    left = abandoned_runs()
+    if left:                                         # 残った実行が状態を書き換え続ける間は、次を始めない(H3)
+        result.not_run_reason = ABANDONED_BLOCKS_RUN % len(left)
+        result.errors = [result.not_run_reason]
+        return result
+    if GUI_BRIDGE is None and threading.current_thread() is not threading.main_thread() and needs_gui_thread(text):
+        # Qt の窓は GUI(main)スレッドでしか作れない。橋(GUI_BRIDGE)が無いまま作業スレッドで走らせると
+        # 未定義の動作になる(「ran」と報告しない。2026-11-13 レビュー M1)。
+        ln = _first_qt_import_line(text) or 1
+        result.not_run_reason = ("line %d: not run: this program imports Qt directly, and Qt widgets can only be "
+                                 "made on the GUI thread — this version of Studio cannot run Qt programs from the "
+                                 "Program (use the Python Editor window, or run it outside Studio)" % ln)
+        result.errors = [result.not_run_reason]
+        result.error_line = ln
+        return result
     code_name = os.path.abspath(filename) if filename else PROGRAM_FILENAME
     result.filename = code_name
     if filename and program_dir is None:
@@ -1792,7 +1988,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
                                 % ", ".join(str(b) for b in bps))
         if max_lines is not None:
             result.notes.append("Release cannot step line by line — switch to Debug")
-    out = io.StringIO()
+    out = _BoundedOutput()
     # print はプログラムの名前空間の中だけで取り込む(sys.stdout を差し替えると、作業スレッドで回している間に
     # Studio 本体や他のスレッドの出力まで取り込んでしまう)。file= を渡した print はそのまま。
     ns["print"] = _capture_print(out)
@@ -1840,6 +2036,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
         res.lines_run = tracer.lines
         res.notes.extend(tracer.notes)
         res.stdout = out.getvalue()
+        res.stdout_total = out.total
         res.calls = list(rec.calls) if live else rec.calls
         res.clamped = rec.clamped
         res.directives = rec.directives
@@ -1887,6 +2084,9 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
                          "(C code, time.sleep, a big numpy operation) or keeps catching the stop; it goes on "
                          "running in the background and its results are ignored" % (reason, _STOP_GRACE_S)]
         result.notes.append("abandoned run: see studio_program.abandoned_runs()")
+        result.notes.append("until the abandoned run ends, new runs are refused; the process state is restored "
+                            "again when it ends")
+        _restore_when_done(_ABANDONED[-1]["thread"], snapshot)
     elif kind == "stopped":
         reason, ln = outcome.get("reason", "stop_requested"), outcome.get("line", 0)
         result.stopped, result.stopped_line = reason, ln
@@ -1988,6 +2188,36 @@ def _py_cond(cond: str) -> str:
     return "%s:  # was: if %s" % (want, cond.strip())
 
 
+def _directive_to_python(code: str) -> str | None:
+    """表示の指示の行(``dev_set_lut (gray)``)を Python の呼び出しの文字列にする。変換できなければ None。
+
+    **引数は定数(数・引用符つきの文字列)と素の語だけ**を通す(素の語は文字列にする)。それ以外 — 呼び出し・
+    属性・添字・演算・キーワード引数・内包表記 … — は断る(fail-closed)。パイプラインのファイルはデータとして
+    確認なしに開かれるので、指示の引数に式を書けると「Python に変換 → 実行」で任意のコードが走る
+    (2026-11-13 レビュー H1)。出す文字列は構文木から作り直し、元の文字列は写さない。"""
+    c = (code if "(" in code else code + " ()").strip()
+    if "\n" in c or "\r" in c:
+        return None
+    try:
+        call = ast.parse(c, mode="eval").body
+    except (SyntaxError, ValueError, RecursionError, MemoryError):
+        return None
+    if not isinstance(call, ast.Call) or not isinstance(call.func, ast.Name) or call.keywords:
+        return None
+    args = []
+    for x in call.args:
+        if isinstance(x, ast.Name):
+            args.append(ast.Constant(x.id))          # HDevelop の素の語(`dev_set_lut (gray)`)は文字列にする
+            continue
+        node = x.operand if isinstance(x, ast.UnaryOp) and isinstance(x.op, (ast.USub, ast.UAdd)) else x
+        if not isinstance(node, ast.Constant) or type(node.value) not in (int, float, str, bool):
+            return None
+        if node is not x and type(node.value) not in (int, float):
+            return None                              # 符号は数にだけ
+        args.append(x)
+    return ast.unparse(ast.Call(func=ast.Name(call.func.id, ast.Load()), args=args, keywords=[]))
+
+
 def _py_call(name: str) -> str:
     return name if name not in prelude_collisions([name]) else 'op, "%s"' % name
 
@@ -2055,15 +2285,10 @@ def hdev_to_python(text: str, names: Sequence[str] | None = None) -> tuple:
                 stack[-1][2] = True
             op_head = studio._dev_op_head(code)
             if op_head.startswith(("dev_", "disp_")) or op_head in studio._CONFIG_DIRECTIVES:
-                c = code if "(" in code else code + " ()"
-                try:
-                    call = ast.parse(c.strip(), mode="eval").body
-                    if isinstance(call, ast.Call) and any(isinstance(x, ast.Name) for x in call.args):
-                        # HDevelop の素の語の引数(`dev_set_lut (gray)`)は Python では文字列にする
-                        call.args = [ast.Constant(x.id) if isinstance(x, ast.Name) else x for x in call.args]
-                        c = ast.unparse(call)
-                except SyntaxError:
-                    return "", ["line %d: cannot convert the directive %r" % (i + 1, code)]
+                c = _directive_to_python(code)
+                if c is None:
+                    return "", ["line %d: cannot convert the directive %r — its arguments must be numbers, quoted "
+                                "text or plain words" % (i + 1, code)]
                 out[i] = ind + c + tail
                 continue
             if "(" in code and code.endswith(")"):

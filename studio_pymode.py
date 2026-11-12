@@ -22,9 +22,14 @@ studio.py の Program 欄・段の欄・変数の欄・Problems に繋ぐ。stud
 * **実行時・検査の文は UI の言語で出す**(``studio_program_i18n.localize``。実行系の文は英語が正で、画面に出す
   所だけ直す)。例・新規の文面のコメントも UI の言語(手を付けていなければ言語の切り替えに従う)。
 * **安全**: ファイル・プロジェクトから開いた Python は、初回の実行の前に確認(``TrustStore``、中身の SHA-256 で
-  覚える。中身が変われば確認し直し)。確認した後にエディタで直した文面は利用者の物として扱う。開いただけ・
-  補完・検査・ホバーではコードを走らせない(jedi は ``allow_unsafe_interpreter_executions=False``、
-  ``auto_import_modules=[]``)。
+  覚える。中身が変われば確認し直し)。確認した後にエディタで直した文面は利用者の物として扱う。パイプラインの
+  ファイルから「Python に変換」した文面は、そのファイルの信頼を引き継ぐ(初回の実行の前に確認)。開いただけ・
+  検査ではコードを走らせない(``compile`` と ``ast`` だけ)。補完・ホバー・変数の一覧は、**実行後の値のうち
+  利用者のクラスの物については静的な情報だけ**を使う(``studio_pyedit_safe``: 型の MRO の ``__dict__``。
+  ``__dir__`` / ``__getattr__`` / ``__class__`` のプロパティは呼ばない)。jedi には数・文字列・numpy の配列・
+  ライブラリのモジュールだけを渡し、``allow_unsafe_interpreter_executions=False``・``auto_import_modules=[]``。
+  ライブラリ(numpy・標準ライブラリ・site-packages)の型のメソッドは呼ぶ。変数の欄の利用者の ``__repr__`` は
+  作業スレッドで時間の上限つき(``studio_pyedit_values``)。
 * **行の基準は 1 か所**(:func:`to_block` / :func:`to_line`): 画面・Problems・実行系・ブレークポイントは
   1 始まりの行、Qt の文書のブロックと補完の供給元は 0 始まり。
 """
@@ -50,6 +55,11 @@ MODES = (MODE_PIPELINE, MODE_PYTHON)
 START_CHOICES = ("last", MODE_PYTHON, MODE_PIPELINE)
 SETTINGS_PREFIX = "pymode/"
 POLL_MS = 30
+#: 出力の欄の上限: 行数(越えたら古い行から捨てる)と、1 回に書く文字数(越えたら末尾だけ)。
+MAX_OUTPUT_LINES = 5000
+MAX_OUTPUT_CHARS = 200_000
+#: 未保存の文面を設定へ書き出す間隔(落ちても次の起動で戻る)。
+AUTOSAVE_MS = 5000
 DEFAULT_TIME_LIMIT_S = sp.DEFAULT_TIME_LIMIT_S
 NEW_PROGRAM_COMMENT = "New program. F5 runs it; img is the image open in Studio."
 NEW_PROGRAM_TEXT = ("# python\n"
@@ -341,6 +351,12 @@ class PyModeController(QtCore.QObject):
         self.pipe_dirty = False
         self.file: str | None = None
         self.origin = "typed"
+        #: 開いたパイプラインのファイル(その文面から「Python に変換」した物は、このファイルの信頼を引き継ぐ)。
+        self.pipe_source: str | None = None
+        #: 確認の窓に出す「どこから来たか」(ファイルに結び付いていない文面のとき)。
+        self.origin_path: str | None = None
+        self._frame_local_names: set = set()
+        self._autosaved_digest: str | None = None
         self.session_trusted = True
         self.saved_digest: str | None = None
         self.breakpoints_py: set = set()
@@ -359,6 +375,9 @@ class PyModeController(QtCore.QObject):
         self._poll = QtCore.QTimer(self)
         self._poll.setInterval(POLL_MS)
         self._poll.timeout.connect(self._poll_job)
+        self._autosave = QtCore.QTimer(self)
+        self._autosave.setInterval(AUTOSAVE_MS)
+        self._autosave.timeout.connect(self.autosave_now)
         self.assist = None
         with self._quiet_text():
             self._build_assist()
@@ -557,6 +576,7 @@ class PyModeController(QtCore.QObject):
         self.bar = bar
         # 出力の欄(Python のモードだけ)
         self.output = _OutputView(self.goto_line)
+        self.output.setMaximumBlockCount(MAX_OUTPUT_LINES)   # 古い行から捨てる(出力に上限)
         self.output.setMaximumHeight(96)                     # コードの欄を狭めない(実際の窓で 5 行しか見えなかった)
         self.output.setMinimumHeight(40)
         self.output_title = QtWidgets.QLabel()
@@ -603,7 +623,7 @@ class PyModeController(QtCore.QObject):
             return
         watch = self.vars.watch.dumps() if self.vars is not None else None
         if self.var_source is None:
-            self.var_source = pv.DictSource({})
+            self.var_source = _namespace_source(pv, self)
         new = vq.VarsWatchWidget(self.var_source, self._ptr, on_run=self.run, on_open_example=self.open_example)
         new.variables.imageRequested.connect(lambda _n, v: self._show_value(v))
         new.watch.changed.connect(lambda _l: self._set("watch", self.vars.watch.dumps()))
@@ -799,20 +819,29 @@ class PyModeController(QtCore.QObject):
         src = self.edit.toPlainText() if not self.active else self.ctx["pipeline_text"]()
         py, errs = sp.hdev_to_python(src)
         if errs:
-            self.flash(self.tr("Could not convert to Python: %s") % "; ".join(errs[:2]))
+            self.flash(self.tr("Could not convert to Python: %s") % "; ".join(self._loc(e) for e in errs[:2]))
             return False
         self.set_mode(MODE_PYTHON, announce=False)
         cur = QtGui.QTextCursor(self.edit.document())
         cur.select(QtGui.QTextCursor.Document)
         cur.insertText(py)                                    # 1 回の Undo で前の Python の文面に戻る
-        self.file, self.origin, self.session_trusted, self.saved_digest = None, "typed", True, None
+        if self.pipe_source:
+            # 開いたパイプラインのファイルから作った文面: 「手で打った」扱いにしない。初回の実行の前に確認する
+            # (ファイルはデータとして確認なしに開かれる。2026-11-13 レビュー H1)
+            self.file, self.origin, self.session_trusted, self.saved_digest = None, "file", False, None
+            self.origin_path = self.pipe_source
+        else:
+            self.file, self.origin, self.session_trusted, self.saved_digest = None, "typed", True, None
+            self.origin_path = None
         self.last = None
         self._update_labels()
         self.flash(self.tr("Converted the pipeline to Python (Ctrl+Z restores the previous Python text)"))
         return True
 
-    def on_pipeline_opened(self):
-        """パイプラインのファイルを開いた: パイプラインのモードで見せる(開いた物に合わせる)。"""
+    def on_pipeline_opened(self, path: str | None = None):
+        """パイプラインのファイルを開いた: パイプラインのモードで見せる(開いた物に合わせる)。開いたファイルを
+        覚える(そこから「Python に変換」した文面は、初回の実行の前に確認する)。"""
+        self.pipe_source = os.path.abspath(path) if path else "a pipeline file"
         if self.active:
             self.set_mode(MODE_PIPELINE, announce=False)
 
@@ -921,18 +950,29 @@ class PyModeController(QtCore.QObject):
         if self.trust.is_trusted(text, self.origin):
             self.session_trusted = True
             return True
-        where = self.file or self.tr("a file")
+        where = self.file or (self.origin_path if self.origin_path and os.path.isabs(self.origin_path)
+                              else None)
+        if not self.confirm_file_program(text, where):
+            self._out(self.tr("Not run: this program came from a file and was not confirmed."))
+            return False
+        self.session_trusted = True
+        return True
+
+    def confirm_file_program(self, text: str, where: str | None = None) -> bool:
+        """ファイルから来た Python の文面 *text* を走らせてよいか。確認済み(中身の SHA-256 が台帳にある)なら True、
+        そうでなければ確認の窓を出し、「実行する」なら台帳に足して True。Python のモードと、従来の Python
+        エディタ(ドラッグ&ドロップ・開くで開いた .py)が同じ台帳と同じ窓を使う。"""
+        if self.trust.is_trusted(text, "file"):
+            return True
         ok = TRUST_HOOK(self.win, self.tr("Run this Python program?"),
                         self.tr("This program came from %s.\n\nPython runs on this PC with your permissions: "
                                 "it can read and change files. Run it only if you trust it.\n\n"
                                 "Studio remembers your answer for this exact text; if the file changes, "
-                                "it asks again.") % where)
+                                "it asks again.") % (where or self.tr("a file")))
         if not ok:
             self.flash(self.tr("Not run: the program was not confirmed"))
-            self._out(self.tr("Not run: this program came from a file and was not confirmed."))
             return False
         self.trust.trust(text)
-        self.session_trusted = True
         return True
 
     def run(self):
@@ -950,6 +990,13 @@ class PyModeController(QtCore.QObject):
     def _start(self, action: str):
         if self.running:
             self.flash(self.tr("A program is already running: press Stop (Ctrl+F2) first"))
+            return False
+        if not self.active:
+            # パイプラインのモードの文面(段の列の表示 + ファイルから来た指示の行)を Python として走らせない。
+            # 指示の行は Python としても読めるので、ここを通すと確認なしに走る(2026-11-13 レビュー H1 の別の入口)
+            self.flash(self.tr("Not run: the Program is in Pipeline mode (switch to Python mode to run Python)"))
+            return False
+        if self._blocked_by_abandoned_run():
             return False
         text = self.edit.toPlainText()
         syn, errs = sp.detect_syntax(text)
@@ -981,6 +1028,18 @@ class PyModeController(QtCore.QObject):
         self._status(self.tr("running…"))
         self._update_labels()
         self._poll.start()
+        return True
+
+    def _blocked_by_abandoned_run(self) -> bool:
+        """止められずに残した実行がまだ動いていれば、次の実行を始めずにそう言う(残った実行は環境変数や作業
+        フォルダを書き換え続けるので、重ねて走らせない。2026-11-13 レビュー H3)。"""
+        left = sp.abandoned_runs()
+        if not left:
+            return False
+        msg = self._loc(sp.ABANDONED_BLOCKS_RUN % len(left))
+        self._out("✕ " + msg)
+        self._status("✕ " + msg)
+        self.flash(msg)
         return True
 
     def _resume(self, plan: dict) -> bool:
@@ -1031,6 +1090,9 @@ class PyModeController(QtCore.QObject):
         if self.running:
             self.flash(self.tr("A program is already running: press Stop (Ctrl+F2) first"))
             return False
+        if not self.active:
+            self.flash(self.tr("Not run: the Program is in Pipeline mode (switch to Python mode to run Python)"))
+            return False
         cur = self.edit.textCursor()
         doc = self.edit.document()
         b1 = doc.findBlock(cur.selectionStart())
@@ -1046,6 +1108,8 @@ class PyModeController(QtCore.QObject):
         src = textwrap.dedent("\n".join(lines)).strip("\n")
         if not src.strip():
             self.flash(self.tr("No code in the selected lines"))
+            return False
+        if self._blocked_by_abandoned_run():
             return False
         if not self._check_trust(self.edit.toPlainText()):
             return False
@@ -1152,10 +1216,13 @@ class PyModeController(QtCore.QObject):
         self.last, self.last_text = res, text
         if res.namespace is not None:
             self.namespace = res.namespace
-        new_out = res.stdout[job.meta.get("stdout_n", 0):]    # 止まるたびに、前に出した分は出し直さない
-        job.meta["stdout_n"] = len(res.stdout)
+        total = int(getattr(res, "stdout_total", 0) or len(res.stdout))
+        fresh = total - job.meta.get("stdout_n", 0)           # 止まるたびに、前に出した分は出し直さない
+        new_out = "" if fresh <= 0 else res.stdout if fresh >= len(res.stdout) else res.stdout[-fresh:]
+        job.meta["stdout_n"] = total
         if new_out:
-            self._out(new_out.rstrip("\n"))
+            head, sep, rest = new_out.partition("\n")         # 先頭の「前の出力は捨てた」の 1 行は UI の言語で
+            self._out((self._loc(head) + sep + rest).rstrip("\n"))
         for n in res.notes[job.meta.get("notes_n", 0):]:
             self._out("ℹ " + self._loc(n))
         job.meta["notes_n"] = len(res.notes)
@@ -1245,8 +1312,9 @@ class PyModeController(QtCore.QObject):
         if self.vars is None or self.var_source is None:
             return
         vals = self._user_values(ns) if isinstance(ns, dict) else {}
-        if frame_locals:
-            vals.update({k: v for k, v in frame_locals.items() if not k.startswith("__")})
+        shown_locals = {k: v for k, v in (frame_locals or {}).items() if not k.startswith("__")}
+        vals.update(shown_locals)
+        self._frame_local_names = set(shown_locals)
         self.var_source.ns = vals
         try:
             self.vars.refresh()
@@ -1275,6 +1343,9 @@ class PyModeController(QtCore.QObject):
         lab.setToolTip(str(msg))
 
     def _out(self, text: str):
+        if len(text) > MAX_OUTPUT_CHARS:                      # 1 回の書き込みが大きすぎる: 末尾だけ(画面を固めない)
+            cut = len(text) - MAX_OUTPUT_CHARS
+            text = self.tr("… (%d earlier characters not shown)") % cut + "\n" + text[-MAX_OUTPUT_CHARS:]
         self.output.appendPlainText(text)
         sb = self.output.verticalScrollBar()
         sb.setValue(sb.maximum())
@@ -1361,6 +1432,7 @@ class PyModeController(QtCore.QObject):
             self._suspend_text = False
         self.py_text = text
         self.file = path
+        self.origin_path = None
         self.origin = origin
         self.session_trusted = origin == "typed"
         self.saved_digest = sp.program_digest(text) if path else None
@@ -1625,6 +1697,17 @@ class PyModeController(QtCore.QObject):
         except Exception:                                     # noqa: BLE001
             pass
 
+    def autosave_now(self) -> bool:
+        """文面が前に書き出した時から変わっていれば、状態(未保存の文面・カーソル・ブレークポイント)を設定へ
+        書き出す。Studio が落ちても、次の起動で文面が戻る(プログラムが ``os._exit`` を呼んだ時など)。"""
+        text = self.edit.toPlainText() if self.active else self.py_text
+        d = sp.program_digest(text)
+        if d == self._autosaved_digest:
+            return False
+        self._autosaved_digest = d
+        self.save_state()
+        return True
+
     def confirm_close(self) -> bool:
         """終了の前: 未保存の Python のプログラムを聞く(無題の文面は設定に残すので聞かない)。"""
         if self.file and self.unsaved():
@@ -1641,6 +1724,7 @@ class PyModeController(QtCore.QObject):
         if self.session is not None:                          # ブレークポイントで待っている実行を残さない
             self._end_session()
         self._poll.stop()
+        self._autosave.stop()
         self.detach_highlighter()
         if self.vars is not None:
             try:
@@ -1676,18 +1760,41 @@ class PyModeController(QtCore.QObject):
 # --------------------------------------------------------------------------- #
 def _is_image(v) -> bool:
     import numpy as np
-    return isinstance(v, np.ndarray) and v.ndim in (2, 3) and v.shape[0] > 1 and v.shape[1] > 1 \
-        and (v.ndim == 2 or v.shape[2] in (1, 3, 4))
+    if type(v) is not np.ndarray:                             # 型だけで決める(v.__class__ を読まない。派生した型は画像として扱わない)
+        return False
+    return v.ndim in (2, 3) and v.shape[0] > 1 and v.shape[1] > 1 and (v.ndim == 2 or v.shape[2] in (1, 3, 4))
+
+
+def _namespace_source(pv, pm):
+    """変数の欄の供給元。欄に見せるのは名前空間の**写し**(前置きの名前などを除いた物)なので、欄での編集を
+    実行の名前空間(``pm.namespace``)にも書く(書かないと、欄の値だけ変わって次の実行・選んだ行の実行には
+    効かない = 見かけだけの編集。2026-11-13 レビュー M4)。関数の局所変数は外から書き換えられないので断る。"""
+
+    class NamespaceSource(pv.DictSource):
+        def set_value(self, path, value):
+            if path and path[0][0] == "name" and len(path) == 1:
+                name = path[0][1]
+                if name in pm._frame_local_names:
+                    raise pv.EditError(pm.tr("A local variable of a function cannot be changed here"))
+                real = pm.namespace
+                if type(real) is not dict or name not in real:
+                    raise pv.EditError(pm.tr("This name is not a variable of the program any more: run it again"))
+                real[name] = value
+            super().set_value(path, value)
+
+    return NamespaceSource({})
 
 
 def _configure_jedi():
-    """補完・ホバーでコードを実行しない設定(jedi が入っていれば)。"""
+    """jedi が補完のために値を評価しない設定(入っていれば)。これだけでは実行後の値の ``__dir__`` /
+    ``__getattr__`` は呼ばれる(jedi 0.20 で確かめた)ので、jedi に渡す値は ``studio_pyedit_complete`` が
+    数・文字列・numpy の配列・ライブラリのモジュールに絞る。"""
     try:
         import jedi
     except Exception:                                         # noqa: BLE001
         return False
     try:
-        jedi.settings.allow_unsafe_interpreter_executions = False   # 実行後の値の属性を読むとき property 等を呼ばない
+        jedi.settings.allow_unsafe_interpreter_executions = False   # 実行後の値の property は評価しない
         jedi.settings.auto_import_modules = []                       # 解析のために import するモジュールを無くす
     except Exception:                                         # noqa: BLE001
         return False
@@ -1760,4 +1867,6 @@ def install(win, ctx: dict, start_mode: str = MODE_PIPELINE) -> PyModeController
     atexit.register(lambda: ref() is not None and ref().detach_highlighter())
     pm.install_actions()
     pm.restore(start_mode)
+    pm._autosaved_digest = sp.program_digest(pm.edit.toPlainText() if pm.active else pm.py_text)
+    pm._autosave.start()
     return pm

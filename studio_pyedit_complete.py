@@ -13,13 +13,21 @@
     * ``FallbackProvider``: jedi が無くても動く。prelude の名前・op の一覧(``OpCatalog``)・組み込み・予約語・
       スニペット・本文の中の名前・import の補完・属性(``np.`` ``fs.`` ``fs.ledger.`` と、実行後の名前空間の値)・
       キーワード引数・文字列の中のファイル名。
-    * ``JediProvider``: jedi(MIT、任意の依存)が入っていれば使う。``namespace`` があれば ``jedi.Interpreter`` で
-      実行後の値を見て補完する。
+    * ``JediProvider``: jedi(MIT、任意の依存)が入っていれば使う。``namespace`` があれば、その中の数・文字列・
+      numpy の配列・ライブラリのモジュール / クラス / 関数だけを ``jedi.Interpreter`` に渡す(それ以外は文面から
+      静的に推す)。
     * ``default_provider()``: 上の 2 つを重ねる(op・prelude・スニペット・引数名は自前、一般の Python は jedi)。
 
 安全
-    * 補完のために利用者のコードは実行しない。import は ``sys.modules`` に既にある物だけを見る(未 import の
-      モジュールを勝手に import しない)。属性は ``inspect.getattr_static`` と ``dir`` で見て、プロパティを呼ばない。
+    * 補完のために文面は実行しない。import は ``sys.modules`` に既にある物だけを見る(未 import のモジュールを
+      勝手に import しない)。
+    * 実行後の名前空間の値: **利用者のクラスの物・利用者のモジュールは静的な情報だけ**を使う
+      (``studio_pyedit_safe``: 型の MRO の ``__dict__`` とインスタンスの ``__dict__`` の名前、
+      ``inspect.getattr_static``)。``dir`` / ``getattr`` / ``isinstance``(``__class__`` を読む)/
+      ``inspect.signature`` / ``__doc__`` は呼ばない = ``__dir__``・``__getattr__``・``__class__`` のプロパティ・
+      プロパティは走らない。ライブラリ(標準ライブラリ・site-packages・Studio 自身)の型の物には ``dir`` と
+      ``inspect`` を使う(そのライブラリのコードは走る)。
+    * 限界: jedi は C 拡張のモジュールを調べるとき別プロセスで import することがある。
 """
 from __future__ import annotations
 
@@ -30,10 +38,15 @@ import keyword
 import os
 import re
 import sys
+import types
 from dataclasses import dataclass, field, replace
 from typing import Callable, Iterable, Mapping, Protocol, Sequence, runtime_checkable
 
+import studio_pyedit_safe as safe
 import studio_pyedit_syntax as syn
+
+#: ``isinstance`` の代わり(``type(x)`` だけで決める。``x.__class__`` のプロパティ = 利用者のコードを読まない)。
+_isinst = safe.isinst
 
 #: 補完の種類(仕様の 7 種 + class / attribute / file)。
 KINDS = ("op", "variable", "function", "class", "module", "keyword", "param", "snippet", "attribute", "file")
@@ -261,7 +274,7 @@ def _knob_text(spec: dict) -> str:
         rng = "on/off"
     elif kind in ("float", "int"):
         def f(x):
-            return ("%g" % x) if isinstance(x, (int, float)) else str(x)
+            return ("%g" % x) if _isinst(x, (int, float)) else str(x)
         rng = "%s..%s" % (f(spec.get("min", 0)), f(spec.get("max", 1)))
         if unit:
             rng += " " + unit
@@ -399,7 +412,7 @@ class UsageStats:
 
     @classmethod
     def from_dict(cls, d) -> "UsageStats":
-        return cls({str(k): int(v) for k, v in (d or {}).items() if isinstance(v, (int, float))})
+        return cls({str(k): int(v) for k, v in (d or {}).items() if _isinst(v, (int, float))})
 
 
 def match_tier(name: str, prefix: str) -> int | None:
@@ -753,10 +766,18 @@ def module_names() -> list:
     return _MODULE_NAMES
 
 
+def _is_module(obj) -> bool:
+    return _isinst(obj, types.ModuleType)
+
+
+def _is_class(obj) -> bool:
+    return _isinst(obj, type)
+
+
 def _kind_of_obj(obj) -> str:
-    if inspect.ismodule(obj):
+    if _is_module(obj):
         return "module"
-    if inspect.isclass(obj):
+    if _is_class(obj):
         return "class"
     if callable(obj):
         return "function"
@@ -764,6 +785,8 @@ def _kind_of_obj(obj) -> str:
 
 
 def _sig_text(obj) -> str:
+    if not safe.is_inert(obj):
+        return ""                                           # 利用者のクラスの物は調べない(__signature__ / __getattr__ を呼ばない)
     try:
         return str(inspect.signature(obj))
     except (TypeError, ValueError):
@@ -773,6 +796,8 @@ def _sig_text(obj) -> str:
 
 
 def _doc_of(obj) -> str:
+    if not safe.is_inert(obj):
+        return ""                                           # 利用者のクラスの物の __doc__ は読まない(__getattribute__ を通る)
     try:
         return inspect.getdoc(obj) or ""
     except Exception:                                       # noqa: BLE001
@@ -781,7 +806,7 @@ def _doc_of(obj) -> str:
 
 def _describe_obj(name: str, obj) -> tuple:
     """``(1 行の説明, 詳しい説明)``。プロパティは呼ばない(``obj`` は既に解決済みの物だけ)。"""
-    if inspect.ismodule(obj) or inspect.isclass(obj) or callable(obj):
+    if _is_module(obj) or _is_class(obj) or callable(obj):
         sig = _sig_text(obj)
         doc = _doc_of(obj)
         first = _first_sentence(doc, 90)
@@ -836,7 +861,7 @@ class FallbackProvider:
     def vocabulary(self) -> tuple:
         """色分けに渡す ``(op の名前, prelude の名前)``。"""
         return self.op_names(), frozenset(self.prelude) | frozenset(
-            k for k in self.namespace() if isinstance(k, str) and not k.startswith("_") and k in self.prelude)
+            k for k in self.namespace() if _isinst(k, str) and not k.startswith("_") and k in self.prelude)
 
     # ---- 補完 ----
     def complete(self, text: str, line: int, col: int) -> list:
@@ -924,7 +949,12 @@ class FallbackProvider:
         obj = sys.modules.get(mod)
         if obj is None:
             return []                                        # 未 import のモジュールは勝手に import しない
-        names = getattr(obj, "__all__", None) or [n for n in dir(obj) if not n.startswith("_")]
+        # モジュールの __getattr__ / __dir__(PEP 562)は呼ばない: 名前は静的に集める
+        declared = _static_attr(obj, "__all__")
+        if type(declared) in (list, tuple) and all(type(n) is str for n in declared):
+            names = list(declared)
+        else:
+            names = [n for n in safe.static_names(obj) if not n.startswith("_")]
         cands = []
         for n in names:
             v = _static_attr(obj, n)
@@ -963,7 +993,7 @@ class FallbackProvider:
             if obj is _MISSING:
                 return _MISSING
             obj = _static_attr(obj, p)
-            if isinstance(obj, property):
+            if _isinst(obj, property):
                 return _MISSING                              # プロパティは呼ばない
         return obj
 
@@ -973,20 +1003,18 @@ class FallbackProvider:
         ops = self.op_names()
         is_fs = root in ("fs", "fs.ledger") or root.endswith("ledger") and root.split(".")[0] == "fs"
         if obj is not _MISSING and obj is not None:
-            try:
-                names = [n for n in dir(obj) if cur.startswith("_") or not n.startswith("_")]
-            except Exception:                                # noqa: BLE001
-                names = []
+            # 利用者のクラスの物は dir() を呼ばない(__dir__ が走る): 型の MRO とインスタンスの __dict__ の名前だけ
+            names = [n for n in safe.static_names(obj) if cur.startswith("_") or not n.startswith("_")]
             for n in names:
                 if match_tier(n, cur) is None:
                     continue
                 v = _static_attr(obj, n)
-                if v is _MISSING or isinstance(v, (property, staticmethod, classmethod)) and not callable(v):
+                if v is _MISSING or _isinst(v, (property, staticmethod, classmethod)) and not callable(v):
                     kind = "attribute"
                     v2 = None
                 else:
                     v2 = v
-                    kind = _kind_of_obj(v) if not isinstance(v, (property,)) else "attribute"
+                    kind = _kind_of_obj(v) if not _isinst(v, (property,)) else "attribute"
                     if kind == "variable":
                         kind = "attribute"
                 if is_fs and n in ops:
@@ -1003,7 +1031,7 @@ class FallbackProvider:
         if op is not None:
             return self._op_completion(op, score + 3)
         detail = type(obj).__name__ if obj is not None else ""
-        if obj is not None and (callable(obj) or inspect.ismodule(obj)):
+        if obj is not None and (callable(obj) or _is_module(obj)):
             detail = {"module": self.tr("module"), "class": self.tr("class")}.get(kind, "") or ""
         return Completion(name, kind, detail, score=score,
                           doc_loader=(lambda o=obj, n=name: _describe_obj(n, o)[1] or _doc_of(o)) if obj is not None else None)
@@ -1053,7 +1081,7 @@ class FallbackProvider:
             cands.append(Completion(name, kind, self.tr("line %d") % (ln + 1), score=sc))
         # 実行後の名前空間
         for name, val in list(ns.items())[:5000]:
-            if not isinstance(name, str) or name.startswith("_") or name in self.prelude or name in self.op_names():
+            if not _isinst(name, str) or name.startswith("_") or name in self.prelude or name in self.op_names():
                 continue                                     # op は台帳の候補(型と説明つき)を使う
             kind = _kind_of_obj(val)
             cands.append(Completion(name, "variable" if kind == "variable" else kind, type(val).__name__, score=23.0))
@@ -1165,7 +1193,10 @@ class FallbackProvider:
 
 
 def signature_of_object(name: str, obj) -> Signature | None:
-    """``inspect.signature``、取れなければ docstring の 1 行目(``zeros(shape, dtype=float, ...)``)から。"""
+    """``inspect.signature``、取れなければ docstring の 1 行目(``zeros(shape, dtype=float, ...)``)から。
+    利用者のクラスとその物は調べない(None)。"""
+    if not safe.is_inert(obj):
+        return None
     try:
         sig = inspect.signature(obj)
     except (TypeError, ValueError):
@@ -1250,7 +1281,12 @@ class JediProvider:
         if callable(ns):
             ns = ns()
         if ns:
-            return jedi.Interpreter(text, [dict(ns)])
+            # jedi は生きた値の __dir__ / __getattr__ を呼ぶ(0.20 で確かめた)。渡すのは数・文字列・numpy の配列・
+            # ライブラリのモジュール / クラス / 関数だけ。利用者のクラスの物と入れ物(中に入り得る)は渡さず、
+            # jedi には文面から静的に推させる。
+            plain = {k: v for k, v in dict(ns).items() if type(k) is str and safe.is_plain_value(v)}
+            if plain:
+                return jedi.Interpreter(text, [plain])
         return jedi.Script(text)
 
     def complete(self, text: str, line: int, col: int) -> list:

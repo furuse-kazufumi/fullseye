@@ -294,6 +294,8 @@ py-modules = [
   # 値の要約・対訳・Qt の部品・変数とウォッチの欄)。どれも studio.py が import する GUI の内側の部品で、
   # py-modules に無いと wheel の Studio が起動しない。
   "studio_pymode", "studio_pyedit_syntax", "studio_pyedit_complete", "studio_pyedit_values", "studio_pyedit_i18n",
+  # studio_program_i18n: 実行系・検査の文を UI の言語へ / studio_pyedit_safe: 実行後の値を利用者のコードを走らせずに調べる
+  "studio_program_i18n", "studio_pyedit_safe",
   "studio_pyedit_qt", "studio_pyedit_vars_qt", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
