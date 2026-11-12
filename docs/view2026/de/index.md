@@ -248,7 +248,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 
 ## Alles ansehen
 
-315 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+316 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -427,7 +427,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 </div>
 </details>
 
-<details class="vall"><summary><b>Geometrie und Kalibrierung</b> (27)</summary>
+<details class="vall"><summary><b>Geometrie und Kalibrierung</b> (28)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>Kalibrierung eines Dünnschichtmodells an echten Bildern (bestimmte Koeffizienten und Kombinationen)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><img src="../../articles/assets/poc/poc_camera_calibration/story.en.gif" alt="A small reprojection error does not guarantee a correct focal length. Re-rendering a real board nearly face-on kept the reprojection error about the same, but the focal-length error grew at least 28-fold over a tilted board. The warning is the spread of the focal-length estimate, not the reprojection error." loading="lazy" width="200" height="200"></picture><span>Kleiner Reprojektionsfehler, falsche Brennweite</span></a>
@@ -456,6 +456,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 <a href="../../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sheet_deformation_ffd.jpg" alt="FFD verfolgt Folienverformung auf 0,025 px, aber Strichcodes und leere Ränder lassen das Feld offen" width="200" height="200"><span>FFD verfolgt Folienverformung auf 0,025 px, aber Strichcodes und leere Ränder lassen das Feld offen</span></a>
 <a href="../../articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png"><img src="../../articles/assets/poc/poc_real_stereo_multiscanline/story.en.gif" alt="Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks" loading="lazy" width="200" height="200"></picture><span>Disparität, Fläche und Kreislage aus echtem Stereo</span></a>
 <a href="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><img src="../../articles/assets/poc/poc_real_chessboard_undistort/story.en.gif" alt="Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing" loading="lazy" width="200" height="200"></picture><span>Echte Kalibrierplatten entzerren und frontal abbilden</span></a>
+<a href="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><img src="../../articles/assets/poc/poc_cloth_towel_corners_synth/story.en.gif" alt="Finding the Corners, Sides and Creases of a Towel on a Table with Classical Image Processing (Synthetic Rendering): Corners to 1-2 mm, Broken Below dE 39 and by Wrinkles of 3 mm" loading="lazy" width="200" height="200"></picture><span>Ecken, Seiten und Falzlinien eines Handtuchs auf dem Tisch mit klassischer Bildverarbeitung (synthetisches Rendering): Ecken auf 1-2 mm genau, bricht unter dE 39 und bei 3 mm Falten zusammen</span></a>
 </div>
 </details>
 

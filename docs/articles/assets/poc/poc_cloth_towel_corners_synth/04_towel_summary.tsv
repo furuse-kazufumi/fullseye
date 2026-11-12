@@ -1,0 +1,7 @@
+method	corner recall [95% CI]	median err mm (px)	p90 err mm (px)	grasp hit@1
+proposed (RGB)	0.994 [0.984, 1.000]	1.50 (1.51)	2.89 (2.92)	0.92
+proposed (chroma)	0.988 [0.975, 0.997]	1.10 (1.10)	2.00 (2.01)	0.97
+Harris only	0.919 [0.884, 0.950]	3.62 (3.64)	4.78 (4.82)	0.48
+hull vertices only	0.647 [0.600, 0.694]	4.16 (4.19)	7.43 (7.49)	0.40
+min-area rectangle	1.000 [1.000, 1.000]	1.14 (1.15)	2.01 (2.03)	0.32
+min-area rectangle (chroma)	1.000 [1.000, 1.000]	1.66 (1.68)	2.53 (2.54)	-

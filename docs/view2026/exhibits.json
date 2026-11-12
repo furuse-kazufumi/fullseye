@@ -8627,6 +8627,23 @@
     "hi": "प्रशिक्षित वर्गीकारकों से धातु सतह दोषों की छँटाई: घिसाई की धारियों के साथ की खरोंचें 4 में 3 छूटती हैं, अनदेखे गड्ढे 95 % अस्वीकृत",
     "fr": "Trier les défauts de surface métallique par classifieurs appris : les rayures le long des stries de meulage sont manquées trois fois sur quatre, les piqûres inconnues rejetées à 95 %"
    }
+  },
+  {
+   "id": "poc_cloth_towel_corners_synth",
+   "group": "wing_geometry",
+   "media": "01_towel_overlays.png",
+   "motion": false,
+   "thumb_src": "01_towel_overlays.png",
+   "label": {
+    "ja": "置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成の描画)―― 角は 1〜2 mm で出るが、コントラスト ΔE 39 未満としわ 3 mm 以上で壊れる",
+    "en": "Finding the Corners, Sides and Creases of a Towel on a Table with Classical Image Processing (Synthetic Rendering): Corners to 1-2 mm, Broken Below dE 39 and by Wrinkles of 3 mm",
+    "zh": "用经典图像处理找出桌上毛巾的角、边与折线(合成渲染):角误差 1-2 mm,但 ΔE 低于 39 或皱纹达 3 mm 时失效",
+    "tw": "用經典影像處理找出桌上毛巾的角、邊與摺線(合成渲染):角誤差 1-2 mm,但 ΔE 低於 39 或皺紋達 3 mm 時失效",
+    "ko": "고전적 영상 처리로 탁자 위 수건의 모서리·변·접힘선 찾기(합성 렌더링): 모서리 오차 1-2 mm, ΔE 39 미만이거나 주름 3 mm 이상이면 무너진다",
+    "de": "Ecken, Seiten und Falzlinien eines Handtuchs auf dem Tisch mit klassischer Bildverarbeitung (synthetisches Rendering): Ecken auf 1-2 mm genau, bricht unter dE 39 und bei 3 mm Falten zusammen",
+    "hi": "मेज़ पर रखे तौलिये के कोने, किनारे और तह-रेखाएँ क्लासिक इमेज प्रोसेसिंग से (सिंथेटिक रेंडरिंग): कोने 1-2 mm तक सटीक, dE 39 से कम और 3 mm झुर्रियों पर विफल",
+    "fr": "Coins, côtés et plis d'une serviette posée sur une table par traitement d'image classique (rendu synthétique) : coins à 1-2 mm, échec sous dE 39 et avec des plis de 3 mm"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

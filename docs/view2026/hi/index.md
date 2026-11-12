@@ -248,7 +248,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-315 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+316 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -427,7 +427,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Geometry और calibration</b> (27)</summary>
+<details class="vall"><summary><b>Geometry और calibration</b> (28)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>असली images से thin film model का calibration (तय होने वाले coefficients और combinations)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><img src="../../articles/assets/poc/poc_camera_calibration/story.en.gif" alt="A small reprojection error does not guarantee a correct focal length. Re-rendering a real board nearly face-on kept the reprojection error about the same, but the focal-length error grew at least 28-fold over a tilted board. The warning is the spread of the focal-length estimate, not the reprojection error." loading="lazy" width="200" height="200"></picture><span>Reprojection error कम, फिर भी focal length गलत</span></a>
@@ -456,6 +456,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sheet_deformation_ffd.jpg" alt="FFD शीट विरूपण को 0.025 px तक ट्रैक करता है, पर बारकोड और खाली हाशिये में क्षेत्र तय नहीं होता" width="200" height="200"><span>FFD शीट विरूपण को 0.025 px तक ट्रैक करता है, पर बारकोड और खाली हाशिये में क्षेत्र तय नहीं होता</span></a>
 <a href="../../articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png"><img src="../../articles/assets/poc/poc_real_stereo_multiscanline/story.en.gif" alt="Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks" loading="lazy" width="200" height="200"></picture><span>वास्तविक stereo से disparity, सतह और वृत्त की pose</span></a>
 <a href="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><img src="../../articles/assets/poc/poc_real_chessboard_undistort/story.en.gif" alt="Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing" loading="lazy" width="200" height="200"></picture><span>वास्तविक calibration board का विरूपण सुधार और सामने का दृश्य</span></a>
+<a href="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><img src="../../articles/assets/poc/poc_cloth_towel_corners_synth/story.en.gif" alt="Finding the Corners, Sides and Creases of a Towel on a Table with Classical Image Processing (Synthetic Rendering): Corners to 1-2 mm, Broken Below dE 39 and by Wrinkles of 3 mm" loading="lazy" width="200" height="200"></picture><span>मेज़ पर रखे तौलिये के कोने, किनारे और तह-रेखाएँ क्लासिक इमेज प्रोसेसिंग से (सिंथेटिक रेंडरिंग): कोने 1-2 mm तक सटीक, dE 39 से कम और 3 mm झुर्रियों पर विफल</span></a>
 </div>
 </details>
 

@@ -5,7 +5,7 @@ category: contour
 in: image
 out: contour
 gpu: なし
-examples: [gallery2d_bridge, gallery2d_contour_measure]
+examples: [gallery2d_bridge, gallery2d_contour_measure, poc_cloth_towel_corners_synth]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.0  # fullseye lib version this note was generated for
@@ -61,6 +61,7 @@ sk_find_contours 0.50 0.50
 
 - [gallery2d_bridge](../../../../examples/gallery2d_bridge.py) — `py -3.11 examples/gallery2d_bridge.py`
 - [gallery2d_contour_measure](../../../../examples/gallery2d_contour_measure.py) — `py -3.11 examples/gallery2d_contour_measure.py`
+- [poc_cloth_towel_corners_synth](../../../../examples/poc_cloth_towel_corners_synth.py) — `py -3.11 examples/poc_cloth_towel_corners_synth.py`
 
 ## 型が繋がる次の op(`contour` を入力に取れる)
 

@@ -250,7 +250,7 @@ Some PoC descriptions are in English.
 
 ## See everything
 
-315 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+316 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -429,7 +429,7 @@ Some PoC descriptions are in English.
 </div>
 </details>
 
-<details class="vall"><summary><b>Geometry and calibration</b> (27)</summary>
+<details class="vall"><summary><b>Geometry and calibration</b> (28)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>Calibrating a thin-film model to real images (determined coefficients vs combinations)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><img src="../../articles/assets/poc/poc_camera_calibration/story.en.gif" alt="A small reprojection error does not guarantee a correct focal length. Re-rendering a real board nearly face-on kept the reprojection error about the same, but the focal-length error grew at least 28-fold over a tilted board. The warning is the spread of the focal-length estimate, not the reprojection error." loading="lazy" width="200" height="200"></picture><span>Small reprojection error, wrong focal length</span></a>
@@ -458,6 +458,7 @@ Some PoC descriptions are in English.
 <a href="../../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sheet_deformation_ffd.jpg" alt="FFD Tracks Sheet Deformation to 0.025 px, but Barcodes and Blank Margins Leave the Field Undetermined" width="200" height="200"><span>FFD Tracks Sheet Deformation to 0.025 px, but Barcodes and Blank Margins Leave the Field Undetermined</span></a>
 <a href="../../articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png"><img src="../../articles/assets/poc/poc_real_stereo_multiscanline/story.en.gif" alt="Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks" loading="lazy" width="200" height="200"></picture><span>Disparity, surface and circle pose from real stereo</span></a>
 <a href="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><img src="../../articles/assets/poc/poc_real_chessboard_undistort/story.en.gif" alt="Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing" loading="lazy" width="200" height="200"></picture><span>Undistorting real calibration boards to a front view</span></a>
+<a href="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><img src="../../articles/assets/poc/poc_cloth_towel_corners_synth/story.en.gif" alt="Finding the Corners, Sides and Creases of a Towel on a Table with Classical Image Processing (Synthetic Rendering): Corners to 1-2 mm, Broken Below dE 39 and by Wrinkles of 3 mm" loading="lazy" width="200" height="200"></picture><span>Finding the Corners, Sides and Creases of a Towel on a Table with Classical Image Processing (Synthetic Rendering): Corners to 1-2 mm, Broken Below dE 39 and by Wrinkles of 3 mm</span></a>
 </div>
 </details>
 

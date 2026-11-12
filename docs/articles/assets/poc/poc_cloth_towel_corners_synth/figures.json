@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_towel_overlays.png",
+  "name": "towel_overlays",
+  "caption": "synthetic towel, 1 mm per pixel. red = detected corners (chroma variant), blue = true corners, yellow = true creases, green = detected sides. bottom row: low contrast and strong wrinkle",
+  "shape": [
+   1614,
+   2320,
+   3
+  ]
+ },
+ {
+  "file": "02_towel_contrast.png",
+  "name": "towel_contrast",
+  "caption": "half fold, wrinkle 1 mm, 20 seeds per point",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "03_towel_wrinkle.png",
+  "name": "towel_wrinkle",
+  "caption": "half fold, dE 69, 20 seeds per point",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "04_towel_summary.png",
+  "name": "towel_summary",
+  "caption": "min-rect keeps a rectangle prior; the generic polygon pipeline never beats it where both work",
+  "shape": [
+   448,
+   1354,
+   3
+  ],
+  "csv": "04_towel_summary.csv",
+  "tsv": "04_towel_summary.tsv"
+ }
+]

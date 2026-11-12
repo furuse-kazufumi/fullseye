@@ -4854,6 +4854,20 @@
    "run": "py -3.11 examples/poc_surface_defect_classifiers.py",
    "lead_ja": "研削した金属の小片を描画で合成し、傷・打痕・汚れを学習した分類器で仕分けた。筋に沿う傷は 0.324 の割合でしか見つからず、原因は特定できていない。知らない孔を拒否する率は、特徴ひとつの外れ値判定のほうが高かった。",
    "lead_en": "Synthetic ground-metal patches carry scratches, dents and stains, and learned models sort them. Only 0.324 of the scratches lying along the lay were found, and the cause is not identified. A single-feature outlier check rejected unseen pits more often than the learned density model did."
+  },
+  {
+   "id": "poc_cloth_towel_corners_synth",
+   "wing": "wing_geometry",
+   "added": "2026-11-12",
+   "numbers_source": "log",
+   "figure": "towel_overlays",
+   "title_ja": "置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成の描画)―― 角は 1〜2 mm で出るが、コントラスト ΔE 39 未満としわ 3 mm 以上で壊れる",
+   "title_en": "Finding the Corners, Sides and Creases of a Towel on a Table with Classical Image Processing (Synthetic Rendering): Corners to 1-2 mm, Broken Below dE 39 and by Wrinkles of 3 mm",
+   "caption_ja": "矩形のタオルを 0〜2 回折って台に置いた絵を、自前の幾何で描いた(MuJoCo の布は台を貫通して使えなかった)。厚み・しわ・縞と裾の縫い目・台の木目・影を描き、真の隅は隅の高さで投影した点で、描画側が持つ。検出は gaussian・otsu・fill_up・sk_find_contours・xg_gen_polygons で領域と辺を出し、辺の直線の交点を隅にする。種 20 本 x 折り方 4 通り(80 枚)で、隅の 5 mm 以内の再現率は提案(RGB)0.994、凸包の頂点のみ 0.647、Harris のみ 0.919、最小外接長方形 1.000。誤差の中央値は提案 1.50 mm、最小外接長方形 1.14 mm で、長方形の前提が使える範囲ではこの基準線が提案に勝つ。辺の向きの誤差の中央値は 0.16 度。コントラストが低いと領域に頼る方法は全滅し、領域を使わない Harris が最良になる(ΔE 0 で 0.61)。提案(色度)が再現率 0.9 に届く最低の ΔE は 39。しわは 2 mm まで 1.00、4 mm で 0.69 に落ちる。色度に替える利点は、しわで明るさが乱れるときに現れた(3 mm で +0.325)。つかむ隅の順位は、辺の内側 8 mm の裾の縫い目を手がかりにして 0.917(偶然 0.417)。縫い目を描かない対照では 0.267 に落ちる。縫い目は私が描画に入れた手がかりで、実物が同じとは限らない。",
+   "caption_en": "Rectangular towels folded 0-2 times and laid on a table are rendered with our own geometry (MuJoCo's cloth penetrated the table and could not be used). Thickness, wrinkles, stripes and hem stitching, table grain and shadows are drawn; the true corners are the renderer's own points, projected at the corner height. Detection uses gaussian, otsu, fill_up, sk_find_contours and xg_gen_polygons for the region and sides, and takes the intersections of the fitted side lines as corners. Over 20 seeds x 4 folds (80 images), corner recall within 5 mm is 0.994 for the proposed RGB pipeline, 0.647 for hull vertices alone, 0.919 for Harris alone and 1.000 for the minimum-area rectangle. The median error is 1.50 mm for the proposal and 1.14 mm for the rectangle, so where a rectangle prior applies that baseline beats the proposal. Side directions are off by 0.16 degrees (median). At low colour contrast every region-based method fails and Harris, which uses no region, is best (0.61 at dE 0). The chroma variant first reaches recall 0.9 at dE 39. Recall stays at 1.00 up to 2 mm wrinkles and falls to 0.69 at 4 mm. Chroma helps when wrinkles disturb brightness (+0.325 at 3 mm). Ranking the grasp corner by the hem stitching 8 mm inside each side gives 0.917 against a chance level of 0.417, and falls to 0.267 when the stitching is not drawn. The stitching is a cue we put in the renderer; real towels may differ.",
+   "run": "py -3.11 examples/poc_cloth_towel_corners_synth.py",
+   "lead_ja": "",
+   "lead_en": ""
   }
  ]
 }

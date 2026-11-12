@@ -6976,7 +6976,7 @@ Ops used (notes): [`atan2_image`](https://furuse.work/ops/mv/gray/atan2_image.ht
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 27 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 28 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -7919,6 +7919,36 @@ Source: [examples/poc_real_chessboard_undistort.py](https://github.com/furuse-ka
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_chessboard_undistort)
 
 Ops used (notes): [`camera_calibration_lm`](https://furuse.work/ops/calib/calibrate/camera_calibration_lm.html) · [`change_radial_distortion_image`](https://furuse.work/ops/mv/resample/change_radial_distortion_image.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`map_image`](https://furuse.work/ops/mv/resample/map_image.html) · [`points_lepetit`](https://furuse.work/ops/mv/detect/points_lepetit.html) · [`rectify_to_world_plane`](https://furuse.work/ops/mv/resample/rectify_to_world_plane.html)
+
+## No.2026.317 —— Finding the Corners, Sides and Creases of a Towel on a Table with Classical Image Processing (Synthetic Rendering): Corners to 1-2 mm, Broken Below dE 39 and by Wrinkles of 3 mm
+
+Rectangular towels folded 0-2 times and laid on a table are rendered with our own geometry (MuJoCo's cloth penetrated the table and could not be used). Thickness, wrinkles, stripes and hem stitching, table grain and shadows are drawn; the true corners are the renderer's own points, projected at the corner height. Detection uses gaussian, otsu, fill_up, sk_find_contours and xg_gen_polygons for the region and sides, and takes the intersections of the fitted side lines as corners. Over 20 seeds x 4 folds (80 images), corner recall within 5 mm is 0.994 for the proposed RGB pipeline, 0.647 for hull vertices alone, 0.919 for Harris alone and 1.000 for the minimum-area rectangle. The median error is 1.50 mm for the proposal and 1.14 mm for the rectangle, so where a rectangle prior applies that baseline beats the proposal. Side directions are off by 0.16 degrees (median). At low colour contrast every region-based method fails and Harris, which uses no region, is best (0.61 at dE 0). The chroma variant first reaches recall 0.9 at dE 39. Recall stays at 1.00 up to 2 mm wrinkles and falls to 0.69 at 4 mm. Chroma helps when wrinkles disturb brightness (+0.325 at 3 mm). Ranking the grasp corner by the hem stitching 8 mm inside each side gives 0.917 against a chance level of 0.417, and falls to 0.267 when the stitching is not drawn. The stitching is a cue we put in the renderer; real towels may differ.
+
+[![Finding the Corners, Sides and Creases of a Towel on a Table with Classical Image Processing (Synthetic Rendering): Corners to 1-2 mm, Broken Below dE 39 and by Wrinkles of 3 mm](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png)
+
+*↑ **Finding the Corners, Sides and Creases of a Towel on a Table with Classical Image Processing (Synthetic Rendering): Corners to 1-2 mm, Broken Below dE 39 and by Wrinkles of 3 mm** ―― Rectangular towels folded 0-2 times and laid on a table are rendered with our own geometry (MuJoCo's cloth penetrated the table and could not be used). Thickness, wrinkles, stripes and hem stitching, table grain and shadows are drawn; the true corners are the renderer's own points, projected at the corner height. Detection uses gaussian, otsu, fill_up, sk_find_contours and xg_gen_polygons for the region and sides, and takes the intersections of the fitted side lines as corners. Over 20 seeds x 4 folds (80 images), corner recall within 5 mm is 0.994 for the proposed RGB pipeline, 0.647 for hull vertices alone, 0.919 for Harris alone and 1.000 for the minimum-area rectangle. The median error is 1.50 mm for the proposal and 1.14 mm for the rectangle, so where a rectangle prior applies that baseline beats the proposal. Side directions are off by 0.16 degrees (median). At low colour contrast every region-based method fails and Harris, which uses no region, is best (0.61 at dE 0). The chroma variant first reaches recall 0.9 at dE 39. Recall stays at 1.00 up to 2 mm wrinkles and falls to 0.69 at 4 mm. Chroma helps when wrinkles disturb brightness (+0.325 at 3 mm). Ranking the grasp corner by the hem stitching 8 mm inside each side gives 0.917 against a chance level of 0.417, and falls to 0.267 when the stitching is not drawn. The stitching is a cue we put in the renderer; real towels may differ.*
+
+[![half fold, wrinkle 1 mm, 20 seeds per point](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast.png)
+
+*↑ The measurement ―― half fold, wrinkle 1 mm, 20 seeds per point (figure labels are in Japanese; the numbers are the same)*
+
+[![half fold, dE 69, 20 seeds per point](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle.png)
+
+*↑ half fold, dE 69, 20 seeds per point*
+
+[![min-rect keeps a rectangle prior; the generic polygon pipeline never beats it where both work](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary.png)
+
+*↑ min-rect keeps a rectangle prior; the generic polygon pipeline never beats it where both work*
+
+```
+py -3.11 examples/poc_cloth_towel_corners_synth.py
+```
+
+Source: [examples/poc_cloth_towel_corners_synth.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cloth_towel_corners_synth.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth)
+
+Ops used (notes): [`fill_up`](https://furuse.work/ops/2d/region/fill_up.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_corner_harris`](https://furuse.work/ops/2d/edges/sk_corner_harris.html) · [`sk_find_contours`](https://furuse.work/ops/2d/contour/sk_find_contours.html) · [`xg_gen_polygons`](https://furuse.work/ops/2d/xldgeom/xg_gen_polygons.html)
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 

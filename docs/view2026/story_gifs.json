@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 223,
+  "target_count": 224,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -18489,17 +18489,17 @@
             1600,
             1600
           ],
-          "bytes": 728672,
+          "bytes": 742525,
           "color_mad": [
-            0.52,
+            0.6116,
             0.0,
             0.0362,
             0.1151,
             0.091,
             0.0304
           ],
-          "max_color_mad": 0.52,
-          "source_sha256": "3838e4bfb622e18a826062861acb5f3d69d3f05de181ac5e2c7e6c33e3480bd1"
+          "max_color_mad": 0.6116,
+          "source_sha256": "b804d778674601cf88fa94ceab5a6dee1228079b4118249c14e496c236c989f6"
         },
         "en": {
           "path": "articles/assets/poc/poc_polarization_specular/story.en.gif",
@@ -18581,17 +18581,17 @@
             1600,
             1600
           ],
-          "bytes": 728672,
+          "bytes": 742525,
           "color_mad": [
-            0.52,
+            0.6116,
             0.0,
             0.0362,
             0.1151,
             0.091,
             0.0304
           ],
-          "max_color_mad": 0.52,
-          "source_sha256": "c80343526f685751031440a668e89ae77d652607886091ddc47d9ae723d80269"
+          "max_color_mad": 0.6116,
+          "source_sha256": "ba18c660ed41f224d278d2fca48ffdcfac779b87a5907369d710a959cde9978d"
         }
       },
       "thumbnail": {
@@ -34673,6 +34673,144 @@
       "alt": {
         "ja": "rendered (synthetic) ground-metal patches (height defects shade, the stain changes colour)",
         "en": "Synthetic ground-metal patches carry scratches, dents and stains, and learned models sort them. Only 0.324 of the scratches lying along the lay were found, and the cause is not identified. A single-feature outlier check rejected unseen pits more often than the learned density model did."
+      }
+    },
+    "poc_cloth_towel_corners_synth": {
+      "representative": "01_towel_overlays.png",
+      "status": "gif",
+      "selected": [
+        "01_towel_overlays.png",
+        "02_towel_contrast.png",
+        "03_towel_wrinkle.png",
+        "04_towel_summary.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_cloth_towel_corners_synth/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_towel_overlays.png",
+              "content_box": [
+                0,
+                94,
+                720,
+                501
+              ]
+            },
+            {
+              "file": "02_towel_contrast.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_towel_wrinkle.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_towel_summary.png",
+              "content_box": [
+                0,
+                226,
+                720,
+                238
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.022321
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 470537,
+          "color_mad": [
+            1.8073,
+            0.1657,
+            0.1439,
+            0.0359
+          ],
+          "max_color_mad": 1.8073,
+          "source_sha256": "c56216fdd719bbc630ad40195896159d4f94adfc09701bf921c4aee41659177c"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_cloth_towel_corners_synth/story.en.gif",
+          "frames": [
+            {
+              "file": "01_towel_overlays.png",
+              "content_box": [
+                0,
+                94,
+                720,
+                501
+              ]
+            },
+            {
+              "file": "02_towel_contrast.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_towel_wrinkle.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_towel_summary.png",
+              "content_box": [
+                0,
+                226,
+                720,
+                238
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.022321
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 470537,
+          "color_mad": [
+            1.8073,
+            0.1657,
+            0.1439,
+            0.0359
+          ],
+          "max_color_mad": 1.8073,
+          "source_sha256": "bfca87d27e68d974f50b0975661c79817d9934f8db4911cd131fb14072cab30e"
+        }
+      },
+      "reason": null,
+      "cover": "01_towel_overlays.png",
+      "still": "articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png",
+      "alt": {
+        "ja": "synthetic towel, 1 mm per pixel. red = detected corners (chroma variant), blue = true corners, yellow = true creases, green = detected sides. bottom row: low contrast and strong wrinkle",
+        "en": "Finding the Corners, Sides and Creases of a Towel on a Table with Classical Image Processing (Synthetic Rendering): Corners to 1-2 mm, Broken Below dE 39 and by Wrinkles of 3 mm"
       }
     }
   }

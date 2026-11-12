@@ -35,7 +35,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 | Article | Wings | Exhibits |
 |---|---|---:|
 | [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 149 |
-| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 113 |
+| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 114 |
 | [A Metrology Museum on Paper — The Instrument Wing (sensors and instruments reproduced from physics)](https://qiita.com/furuse-kazufumi/items/43e090b439d9d9183f60) | The Instrument | 33 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 | [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 13 |
@@ -63,12 +63,12 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 - 2026-11-12 — No.2026.315 A Circle-Mark Calibration Plate End to End (Synthetic Imaging): Binary-Centroid Quantisation Sets an fx Floor of About 0.2 % rms (−0.45 to +0.33 % Without Noise, Depending on the Layout)
 - 2026-11-12 — No.2026.316 Sorting Defects on Rendered (Synthetic) Metal Patches with Trained Classifiers: Scratches Along the Grinding Lay Are Missed About 2 Times in 3 (Cause Unidentified), and Unseen-Pit Rejection Is No Better Than a One-Feature Outlier Test
+- 2026-11-12 — No.2026.317 Finding the Corners, Sides and Creases of a Towel on a Table with Classical Image Processing (Synthetic Rendering): Corners to 1-2 mm, Broken Below dE 39 and by Wrinkles of 3 mm
 - 2026-11-11 — No.2026.313 Reading Drag and Spin from a Trajectory at Once — A Missed C_L Coefficient Drags the Spin Along, and a Narrow Spin-Ratio Range Cannot Separate Them (Measuring When It Can Be Read in a Self-Made, Different-Model World)
 - 2026-11-11 — No.2026.312 Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and What Cannot Be Detected
 - 2026-11-11 — No.2026.311 CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume
 - 2026-11-11 — No.2026.314 Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Better Than Not Aligning but About Level With a Constant-Velocity Guess, the Tuning Depends on the Split, and Window Residuals Cannot Settle the Square Law (TUM RGB-D)
 - 2026-11-08 — No.2026.305 Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels
-- 2026-11-08 — No.2026.306 Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography — A Failure Report: Per-Image Grain Size Does Not Even Rank Correctly (rho -0.17), and Boundary Placement Loses to Watershed
 
 ## Applying it to your own problem
 

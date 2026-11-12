@@ -1067,6 +1067,9 @@ EXAMPLES = [
     {"id": "poc_surface_defect_classifiers", "task": "inspection", "data": "synthetic",
      "name": "描画した金属片の表面の欠陥(傷・打痕・汚れ)を学習した分類器で仕分け、知らない欠陥は「分からない」と言わせる",
      "summary": "研削の筋の上に傷・打痕・汚れ・腐食の孔を物理的に描き(合成)、`learn_ndim_norm` / `class_ndim_norm` で異常な画素、`classify_image_class_lut` / `class_2dim_sup` / `class_2dim_unsup` で汚れの画素を塗り(IoU 0.915 / 0.729 / 0.535)、領域の特徴 7 個で `train_class_gmm` / `train_class_mlp` / `train_class_svm` / `train_class_knn` を学習する。★学習なしの基準線(1 枚ごとの大津、色度)が IoU 0.939 で LUT を上回る(LUT の利点は汚れの無い小片で何も塗らないこと)。種 5 本の正解率 0.871〜0.886(±0.02)、scikit-learn との差は許容差の 0.41 倍以内、GMM(成分 1)は閉形式の 2 次判別と 100 % 一致。学習に無い孔は `evaluate_class_gmm` の対数密度で 94.8 % 拒否(既知の誤拒否 6.0 %)するが、★特徴 1 個(異常画素の連結成分の数)の外れ値判定のほうが 97.6 % / 2.1 %(20 種の合算で 98.2 % 対 93.9 %)。照明の方位を回すと GMM の拒否率は 79〜96 % に動く。ラベルを入れ替えると 0.238。★研削の筋から 15° 以内の傷は 20 種の合算で再現率 0.324(145 本中 47、Wilson 95 % 区間 0.253〜0.404、45° 超は 0.944)。原因は未特定: y 方向の勾配を足しても 0.300、照明の方位を回しても 0.05〜0.43 で直らなかった。新 op なし。"},
+    {"id": "poc_cloth_towel_corners_synth", "task": "geometry", "data": "synthetic",
+     "name": "置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成の描画): 基準線に負ける条件と壊れる条件を数える",
+     "summary": "自前の幾何で折った(0〜2 回)タオルを描き、`gaussian` / `otsu` / `fill_up` / `sk_find_contours` / `xg_gen_polygons` と辺の直線の交点で隅を出す。種 20 本 x 4 折り方で、隅の 5 mm 以内の再現率は提案 0.994、Harris のみ 0.919、凸包の頂点のみ 0.647、最小外接長方形 1.000(誤差の中央値 1.14 mm で提案の 1.50 mm に勝つ)。ΔE 39 未満としわ 3 mm 以上で壊れ、低コントラストでは Harris が最良。★つかむ隅の順位は描いた裾の縫い目だけが手がかり(0.917、縫い目なしで 0.267)。新 op なし。"},
     {"id": "poc_symbol_lot_ocr", "task": "decoding", "data": "synthetic",
      "name": "ロット番号の CIJ 印字を古典 OCR で読む: 可読性の POD と誤読の数え方",
      "summary": "5x7 ドットと線の内蔵書体、k 最近傍 + 棄却。字種外の字は棄却。デフォーカスと字高の可読性 POD。"

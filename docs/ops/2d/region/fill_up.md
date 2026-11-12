@@ -6,7 +6,7 @@ in: region
 out: region
 halcon: fill_up
 gpu: あり(fill_up)
-examples: [gallery2d_region, poc_bev_sensor_fusion]
+examples: [gallery2d_region, poc_bev_sensor_fusion, poc_cloth_towel_corners_synth]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.0  # fullseye lib version this note was generated for
@@ -67,6 +67,7 @@ fill_up 0.50 0.50
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
 - [poc_bev_sensor_fusion](../../../../examples/poc_bev_sensor_fusion.py) — `py -3.11 examples/poc_bev_sensor_fusion.py`
+- [poc_cloth_towel_corners_synth](../../../../examples/poc_cloth_towel_corners_synth.py) — `py -3.11 examples/poc_cloth_towel_corners_synth.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 
