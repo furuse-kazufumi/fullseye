@@ -35,15 +35,8 @@ WING_CATEGORY = {
 #: 英語のキャプションの中で、日本語のまま引くのが正しい語(路面標示の文字など)。ここに無いかなは訳し忘れとして止める。
 QUOTED_JA = {"止まれ"}
 _KANA = re.compile(r"[぀-ヿ]+")
-VIEW2026_A_OP_IDS = {
-    "poc_phase_measuring_deflectometry", "poc_industrial_oct",
-    "poc_hyperspectral_foreign_matter", "poc_thin_film_reflectometry",
-    "poc_cad_scan_deviation", "poc_telecentric_metrology",
-    "poc_tem_ctf_thon_rings", "poc_virtual_sem_kv_cd_bse",
-    "poc_dual_energy_xray", "poc_weld_radiograph_porosity",
-    "poc_good_sample_variation_model", "poc_code_matching_breakdown",
-    "poc_fourier_ptychography", "poc_photoelasticity",
-}
+#: 本ページ(ja/en)に載せる tier。この tier の展示には、台帳の ``ops``(使った Fullseye の op)を写す。
+MAIN_TIERS = ("showcase", "featured")
 
 
 class BuildError(SystemExit):
@@ -93,6 +86,7 @@ def _new_card(src: dict, all_row: dict, langs: list[str]) -> dict:
         "motion": media.lower().endswith((".gif", ".mp4")), "label": copy.deepcopy(all_row["label"]),
         "lead": {}, "see": {l: caption_for(src, l) for l in langs}, "num": {l: "" for l in langs},
         "numbers_source": src["numbers_source"], "youtube_url": "",
+        "tier": "more",          # 本ページへ上げるかは、人が選んで tier を直す(この道具は決めない)
     }
 
 
@@ -126,7 +120,7 @@ def rebuild(d: dict, ledger: list[dict]) -> dict:
                     # 手で切った see / num はキャプションが変わっていなければそのまま。変わっていれば全文を see へ。
                     if item["see"][l] + item["num"][l] != cap:
                         item["see"][l], item["num"][l] = cap, ""
-            if pid in VIEW2026_A_OP_IDS:
+            if item.get("tier") in MAIN_TIERS and src.get("ops"):
                 item["ops"] = src["ops"]
         out.append(item)
     d["exhibits"] = out

@@ -79,6 +79,8 @@ SPEC = [
     ("evis_bean_track", "articles/assets/evis_bean_track_fullseye_still.png", None, (0.5, 0.0, 1.0)),
     # 5 枚を縦に積んだ全体ではなく、最初の OCT 断面を案内用の代表図にする。
     ("poc_industrial_oct", _P + "poc_industrial_oct/01_real_paint_bscans.png", None, (0.04, 0.05, 0.25)),
+    # 混載デパレタイズ: 元の図は mp4 なので、同じ動画から作った GIF の真ん中のコマを中央の正方形で切る
+    ("poc_mixed_case_depalletizing", _P + "poc_mixed_case_depalletizing/08_depal_robot_video.gif", 0.5, None),
     # 動く 3-D: 元はビューアをスマホ幅(375 px、WebGL)で開いた画面から 3-D の部分だけを切った静止画
 ]
 

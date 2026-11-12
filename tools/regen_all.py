@@ -94,7 +94,9 @@ CHAIN = [
     (["tools/gen_examples_readme.py"], "examples/README.md"),
     (["tools/gen_oss_landscape.py"], "既存 OSS の地図(docs/literature/oss_landscape.json → OSS_LANDSCAPE.md)"),
     (["tools/gen_view2026_story_gifs.py"], "ViEW2026 の 2-D 展示を流れで見せる story GIF と台帳"),
-    (["tools/gen_view2026_pages.py"], "docs/view2026/**/index.md(論文の QR の行き先、正本は exhibits.json)"),
+    # 索引と op ノートの後(複製するので)。ViEW の Fullseye 使用門は配布用 OP_INDEX を読むので、gen_mcp_data より前では古い索引を見る。
+    (["tools/gen_mcp_data.py"], "fullseye/data operator search, cards, and probe metadata"),
+    (["tools/gen_view2026_pages.py"], "docs/view2026/**/{index,more}.md(論文の QR の行き先、正本は exhibits.json)"),
     # gen_maturity の後(maturity.json を読む)、索引の後(docs/OP_INDEX.json と照合する)。
     # README*.md は gen_docs_index_ops も書くが、マーカーが別なので互いの中身には触れない
     # (ORDER_EXEMPT)。
@@ -141,8 +143,6 @@ CHAIN = [
     # 手書き部分にある実装由来の数だけを最後に更新する。RAG ガイドの訳は、正本・訳の
     # 差分が数値だけだと確認できた場合に限り source-sha も更新する。
     (["tools/gen_doc_counts.py"], "README の registry 件数 + AI_RAG_GUIDE の op ノート件数"),
-    # 索引と op ノートの後(複製するので)。
-    (["tools/gen_mcp_data.py"], "fullseye/data operator search, cards, and probe metadata"),
     # 採点が断る「入力の中身に依存しない op」の一覧。実行できる op の台帳(OP_GRAPH)を読む(2026-11-10)
     (["tools/gen_mcp_input_independent.py"], "fullseye/data/MCP_INPUT_INDEPENDENT.json(入力の中身に依存しない op)"),
     (["tools/gen_recipe_index.py"], "existing-example recipe retrieval index and source inventory"),
@@ -204,7 +204,8 @@ OUTPUTS = {
     "tools/gen_examples_readme.py": ["examples/README.md"],
     "tools/gen_oss_landscape.py": ["docs/literature/OSS_LANDSCAPE.md"],
     "tools/gen_view2026_story_gifs.py": ["docs/view2026/story_gifs.json"],
-    "tools/gen_view2026_pages.py": ["docs/view2026/index.md", "docs/view2026/*/index.md"],
+    "tools/gen_view2026_pages.py": ["docs/view2026/index.md", "docs/view2026/*/index.md",
+                                     "docs/view2026/more.md", "docs/view2026/*/more.md"],
     "tools/gen_trust_block.py": ["README.md", "docs/README.md", "docs/README.*.md",
                                  "docs/OP_COUNT_HISTORY.md"],
     "tools/gen_examples3d_doc.py": ["docs/EXAMPLES_3D.md"],
@@ -293,7 +294,8 @@ READS = {
                                       "docs/articles/exhibits/glossary.json"],
     "tools/gen_view2026_story_gifs.py": ["docs/articles/assets/poc/*_720.jpg"],
     "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json",
-                                      "docs/view2026/story_gifs.json"],
+                                      "docs/view2026/story_gifs.json",
+                                      "fullseye/data/OP_INDEX.json"],
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
@@ -311,6 +313,7 @@ READS = {
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md", "docs/RECIPE_COVERAGE.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md",
+        "docs/view2026/more.md", "docs/view2026/*/more.md",
         "docs/perf/pipeline_routes.md",                 # 題だけ(ORDER_EXEMPT)
         "docs/MCP.md"],                                 # 題だけ(ORDER_EXEMPT、2026-11-05)
     # op ノートの GPU 欄・索引の gpu 欄は gpu_route(規則表の許可リストの道と場面の台帳)から書く
@@ -354,12 +357,7 @@ _SHIPPED_DIAG = ("同梱の複製は `imgevolve.py index` の**標準出力の�
                  "索引を読むので後ろでなければならず、ここは構造的に循環する。")
 _DOCMAP_COUNT = ("gen_docs_index_ops は文書地図に載せるため AI_RAG_GUIDE の題だけを読む。"
                  "gen_doc_counts が後で変更するのは本文中の件数だけなので、地図の生成結果には影響しない。")
-_ATTR_HINT = ("`fullseye.<名前>` の属性が無いとき、失敗の文面に案内(2-D op / backend 不足 / 台帳 op)を足すために"
-              "同梱の索引を引く(fullseye/__init__._op_attr_hint)。生成器は hasattr 風に名前を探るので読むが、"
-              "**案内の文面にしか使わず、生成物の中身には入らない**。索引を作る gen_mcp_data は鎖の後ろ・"
-              "レシピ網羅(gen_recipe_coverage)はその前にあり、ここで順序を強いると循環する(gen_recipe_index は後ろなので例外なし)。")
 ORDER_EXEMPT = {
-    ("tools/gen_recipe_coverage.py", "fullseye/data/OP_INDEX.json"): _ATTR_HINT,
     ("tools/gen_trust_block.py", "docs/README.md"): _SHARED_README,
     ("tools/gen_trust_block.py", "docs/README.*.md"): _SHARED_README,
     ("imgevolve.py", "fullseye/data/OP_INDEX.json"): _SHIPPED_DIAG,
