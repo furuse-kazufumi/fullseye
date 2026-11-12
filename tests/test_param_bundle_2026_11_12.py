@@ -803,3 +803,22 @@ def test_pyproject_declares_yaml_as_optional_extra_only():
     # 本体は PyYAML を top-level で import しない(無くても import fullseye が通る)
     src = io.open(os.path.join(ROOT, "fullseye", "parambundle.py"), encoding="utf-8").read()
     assert not re.search(r"^import yaml|^from yaml", src, re.M)
+
+
+# ---------------------------------------------------------------------------------------------
+# 文書の例が本当に動く
+# ---------------------------------------------------------------------------------------------
+def test_doc_first_example_runs(tmp_path):
+    """docs/PARAM_BUNDLE.md の最初の例(rig.toml)をそのまま読んで undistort に渡せる。"""
+    doc = io.open(os.path.join(ROOT, "docs", "PARAM_BUNDLE.md"), encoding="utf-8").read()
+    blocks = re.findall(r"```toml\n(.*?)```", doc, re.S)
+    assert len(blocks) == 1
+    p = fs.load_params(_write(tmp_path / "rig.toml", blocks[0]))
+    assert list(p) == RIG_KEYS and len(p) == 9
+    kw = p.for_op("undistort_image")
+    assert sorted(kw) == ["K", "dist"]
+    assert fs.undistort_image(np.zeros((8, 8)), **kw).shape == (8, 8)
+    # 文書が名前を挙げている公開名はすべて実在する
+    for n in re.findall(r"fs\.(\w+)\(", doc):
+        assert hasattr(fs, n) or hasattr(fs.ledger, n) or hasattr(fs.parambundle, n), n
+    assert "SYNONYM_GROUPS" in doc and hasattr(fs.parambundle, "SYNONYM_GROUPS")

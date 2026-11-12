@@ -7,6 +7,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### パラメータの束(`fullseye/parambundle.py`、2026-11-12)
+
+パラメータを束で持ち、ファイルから読んで op にまとめて渡す層(画面に依らない部分)。使い方は `docs/PARAM_BUNDLE.md`。`fs.apply` の契約も既存 op の引数も変えない(追加のみ)。
+
+- 新しい公開名 10 個: `load_params`(JSON / TOML / YAML → `ParamBundle`、読み取り専用の対応表。`p.fx`・`p["camera.fx"]`・`p.camera.fx`・`p.origin(key)`)、`save_params`(JSON のみ・`allow_nan=False`・原子的)、`params_compare`(複数の束を並べた比較表。`"0.55 um"` と `"550 nm"` は同じと判定)、`param_grid` / `param_zip`(件数の上限と見積もりを先に出して断る)、`sweep`、`run_params`(`fs.run_params("undistort_image", img, params=p)`)、`ParamBundle`、`ParamError`、`MissingParam`。名前を `run` にしなかったのは、`tests/test_public_reachability.py` が名前で届き方を数えるため、他の 7 モジュールの `run` 関数が「公開経路から届く」扱いに変わって台帳が崩れるから。
+- `p.for_op(op_name)` は op が受ける引数だけの dict。完全一致 → 同義の綴りの表(7 群 21 綴り)→ `K` を fx, fy, cx, cy から作る固定の導出。単位は引数名の接尾辞が決め、10 の冪の単位は `Decimal` で 1 回だけ変換(`v*1e-3` は 10 万個中 2 万 3 千個が 1 ULP ずれる)。`report=True` で写した・変換した・導出した事実を記録として返す。
+- 黙って捨てない: 未使用キーの一覧と `strict=True`、不足する必須引数(必要な名前・束にある名前・導出の手がかり)、単位違い、型違い、曖昧な綴り(`MissingParam` / `UnitMismatch` / `ParamTypeError` / `UnusedParams` / `AmbiguousParam`)。
+- 読んだあとの門: 数の欄の文字列・真偽、キー重複、非有限の数、YAML は `safe_load` のみ(`1e-3` が文字列になる罠・アンカーの展開上限・日付は文字列へ)。参照 `{"$param": ...}`(TOML は `{ ref = ... }`)の循環検出、`include` は同じ階層以下のみ(`..`・絶対パス・リンクは断る)。JSONC / JSON5 は受けない。式や任意のコードは許さない。
+- optional extra `yaml`(`pip install "fullseye[yaml]"`、PyYAML)を `pyproject.toml` に追加。必須の依存は増えない。
+- 入れなかった物: TOML / YAML への書き出しとコメントを保つ差分書き込み(JSON にコメントは無く、`tomllib` は読むだけ)、パイプライン全体を走査する `sweep`、束を閲覧・編集する窓、MCP の `$bundle`。
+
 ## 1.1.0 — 2026-11-12
 
 1.1.0。1.0.0 の後に、既存の op の出力や失敗の仕方が変わる修正が入ったので、patch(1.0.x)でなく minor で出す。`CONTRIBUTING.md` の「Versioning」は「minor の桁が破壊的変更の合図」で、「既定の数値が変わる」「黙って通していた入力を明示的に拒否する(fail-soft から fail-closed へ)」を minor の条件に挙げている。下の「挙動の変更」の項目がそれに当たる(新しい op・PoC・文書・速度の改善だけなら patch だった)。op の削除・改名はない。既定の `device` は `"cpu"` のまま。

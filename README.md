@@ -199,6 +199,14 @@ fullseye.fallbacks()                                     #   recorded + one warn
 `apply(image, name, a=0.5, b=0.5)` and `run_pipeline` take an operator name and two
 knobs in `[0, 1]`. Feature operators return a Python float; contour operators a dict.
 
+Parameter bundles (a file of named values, handed to an operator as keyword arguments — guide: `docs/PARAM_BUNDLE.md`):
+
+```python
+p   = fullseye.load_params("rig.toml")                              # JSON / TOML / YAML -> a bundle / ファイルから束を読む
+out = fullseye.undistort_image(img, **p.for_op("undistort_image"))   # only that op's arguments, units converted once / その op の引数だけ渡す
+cmp = fullseye.params_compare([p, p.with_(**{"camera.fx": 820})])   # bundles side by side / 束を並べて比べる
+```
+
 ## Operator library
 
 **3,838 typed operators** (964 2-D in the registry, 17 of them n-ary, + 2,874 in the typed ledgers,
