@@ -68,6 +68,9 @@ Documentation = "https://furuse.work/"
 opencv = ["opencv-python>=4.8.1.78"]
 skimage = ["scikit-image>=0.20"]
 pil = ["Pillow>=13.0"]
+# ★2026-11-12: パラメータの束(fs.load_params)を YAML で書きたい人向け。**必須にしない**(JSON と TOML は標準だけで読む)。
+#   safe_load だけを使い、読んだあとに型・重複・アンカーの展開量の門を通す(fullseye/parambundle.py)。
+yaml = ["PyYAML>=6.0"]
 wavelets = ["PyWavelets>=1.4"]
 # ★2026-11-03(完成度監査 段 0-5): CuPy を足した(numpy/scipy の実装を GPU で走らせる経路が使う)。
 #   cupy-cuda12x の wheel は Linux と Windows だけ —— macOS で `[gpu]` ごと入らなくならないよう印で外す。
