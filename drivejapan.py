@@ -167,7 +167,8 @@ def osm_parse(source, *, origin=None) -> Dict[str, object]:
             raise ValueError("osm_parse: %s is not a file nor XML text" % (source,))
         text = p.read_text(encoding="utf-8")
     try:
-        root = safe_xml_parse(text, kind="data", op="osm_parse")
+        # 街全体の OSM があり得るので要素数の上限は既定(100 万)の 2 倍。最大の実ファイル(b4.osm 3.2 MB)は 77,854 要素。
+        root = safe_xml_parse(text, kind="data", op="osm_parse", max_elements=2_000_000)
     except ET.ParseError as e:
         raise ValueError("osm_parse: not well-formed XML (%s)" % e) from None
     if root.tag != "osm":

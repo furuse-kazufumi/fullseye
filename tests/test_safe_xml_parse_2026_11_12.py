@@ -252,17 +252,62 @@ def test_3mf_zip_bomb_is_refused_before_inflating(tmp_path):
         P.read_3mf(str(path))
 
 
-def test_zip_member_with_a_lying_header_is_still_bounded():
-    """宣言(file_size)が小さくても、読むのは max_bytes + 1 まで。"""
+class _FakeInfo:
+    def __init__(self, file_size):
+        self.file_size = file_size
+
+
+class _FakeZip:
+    """zipfile.ZipFile の代わり。open が呼ばれたか・何バイト要求されたかを記録する。"""
+
+    def __init__(self, declared, payload):
+        self.info = _FakeInfo(declared)
+        self.payload = payload
+        self.opened = 0
+        self.requested = []
+
+    def getinfo(self, name):
+        return self.info
+
+    def open(self, info):
+        self.opened += 1
+        outer = self
+
+        class _S(io.BytesIO):
+            def read(self, n=-1):
+                outer.requested.append(n)
+                return super().read(n)
+
+        return _S(self.payload)
+
+
+def test_zip_member_declared_size_over_the_limit_is_refused_without_opening():
+    """守り 1: 宣言された展開後の大きさが上限を超えるなら、展開(open)せずに断る。"""
+    zf = _FakeZip(declared=10_000, payload=b"<a/>")
+    with pytest.raises(UnsafeXMLError, match="exceeds"):
+        SX.safe_xml_parse_zip_member(zf, "m.xml", max_bytes=100)
+    assert zf.opened == 0
+
+
+def test_zip_member_with_a_lying_small_header_is_cut_at_limit_plus_one():
+    """守り 2: 宣言が嘘で小さくても、読むのは max_bytes + 1 バイトまで(それを超えたら断る)。宣言の検査とは独立に効く。"""
+    zf = _FakeZip(declared=10, payload=b"<a>" + b"y" * 5000 + b"</a>")
+    with pytest.raises(UnsafeXMLError, match="exceeds"):
+        SX.safe_xml_parse_zip_member(zf, "m.xml", max_bytes=100)
+    assert zf.opened == 1 and zf.requested == [101]
+
+
+def test_zip_member_within_limits_parses():
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
-        zf.writestr("m.xml", b"<a>" + b"y" * 5000 + b"</a>")
+        zf.writestr("m.xml", b"<a><b/></a>")
     zf = zipfile.ZipFile(io.BytesIO(buf.getvalue()))
-    info = zf.getinfo("m.xml")
-    info.file_size = 10  # 嘘の宣言
-    # zipfile 自身が宣言の長さで読みを打ち切り(CRC 不一致 = BadZipFile)、門の上限でも断る。どちらでも無制限には読まない。
-    with pytest.raises((UnsafeXMLError, zipfile.BadZipFile)):
-        SX.safe_xml_parse_zip_member(zf, info, max_bytes=100)
+    assert SX.safe_xml_parse_zip_member(zf, "m.xml", max_bytes=100).tag == "a"
+    with pytest.raises(UnsafeXMLError, match="DOCTYPE"):
+        buf2 = io.BytesIO()
+        with zipfile.ZipFile(buf2, "w") as z2:
+            z2.writestr("m.xml", b"<!DOCTYPE a><a/>")
+        SX.safe_xml_parse_zip_member(zipfile.ZipFile(io.BytesIO(buf2.getvalue())), "m.xml")
 
 
 # --------------------------------------------------------------------------- 5. 正常な入力の読み結果が変わらない
@@ -283,20 +328,44 @@ def test_cdata_and_comment_with_doctype_text_still_parse():
     assert SX.safe_xml_parse(b"<!-- <!DOCTYPE x> --><a/>", kind="data").tag == "a"
 
 
-def test_path_input_and_auto_kind(tmp_path):
+def test_path_input_and_kinds(tmp_path):
     p = tmp_path / "a.xml"
     p.write_bytes(b"<a/>")
-    assert SX.safe_xml_parse(p).tag == "a"
-    assert SX.safe_xml_parse(str(p)).tag == "a"
+    assert SX.safe_xml_parse(p).tag == "a"                       # PathLike は常にパス
+    assert SX.safe_xml_parse(str(p), kind="path").tag == "a"     # str をパスとして開くのは kind="path" を明示したときだけ
     assert SX.safe_xml_parse("  <a/>").tag == "a"
-    assert SX.safe_xml_parse("﻿<a/>").tag == "a"
+    assert SX.safe_xml_parse("\ufeff<a/>").tag == "a"
     with pytest.raises(ValueError, match="file not found"):
         SX.safe_xml_parse(tmp_path / "none.xml")
+    p.write_bytes(b"<!DOCTYPE a><a/>")
     with pytest.raises(UnsafeXMLError, match="DOCTYPE"):
-        p.write_bytes(b"<!DOCTYPE a><a/>")
         SX.safe_xml_parse(p)
     with pytest.raises(UnsafeXMLError, match="exceeds"):
         SX.safe_xml_parse(p, max_bytes=5)
+
+
+_PATH_LIKE_TEXTS = ["\\\\evil-host\\share\\a.xml", "//evil-host/share/a.xml", "\\\\?\\C:\\a.xml", "\\\\.\\pipe\\x", "http://evil-host/a.xml",
+                    "file:///C:/a.xml", "C:\\a.xml", "NUL", "CON", "a.xml", "../a.xml"]
+
+
+@pytest.mark.parametrize("text", _PATH_LIKE_TEXTS)
+def test_a_str_is_never_opened_as_a_path_by_default(text, monkeypatch):
+    """既定(auto)で str / bytes は本文。UNC(``\\\\host\\share``)などをパスとして開く(= SMB で認証情報が外へ出る)ことは無く、
+    ファイルの有無も例外の違いで分からない(どれも同じ ParseError)。open / stat が 1 回も呼ばれないことを見る。"""
+    import builtins
+    import pathlib
+
+    def boom(*a, **k):
+        raise AssertionError("a str was opened as a path")
+
+    monkeypatch.setattr(builtins, "open", boom)
+    monkeypatch.setattr(pathlib.Path, "is_file", boom)
+    monkeypatch.setattr(pathlib.Path, "stat", boom)
+    monkeypatch.setattr(pathlib.Path, "open", boom)
+    with pytest.raises(ET.ParseError):
+        SX.safe_xml_parse(text)
+    with pytest.raises(ET.ParseError):
+        SX.safe_xml_parse(text.encode("utf-8"))
 
 
 def test_malformed_xml_stays_a_parse_error_and_bad_arguments_are_refused():
@@ -322,66 +391,253 @@ def test_iterparse_matches_elementtree_and_refuses_dtd():
         list(SX.safe_xml_iterparse(io.BytesIO(b"<r><b></r>")))
 
 
-# --------------------------------------------------------------------------- 6. 配布するモジュールに、門を通さない解析の呼び出しが残っていないこと
-#: tests/ と tools/(CI の JUnit など内部の生成物を読む開発用の道具)・build/・examples/(PoC の台本。自前で生成した MJCF を
-#: 読むだけ)は対象外。それ以外の .py(ルートのモジュール・fullseye/・examples_3d/・studio_*)は全部走査する。
-_EXCLUDED_DIRS = {"tests", "tools", "build", "examples", "spikes", "bench", "impl2", ".git", "docs", "install", "rust"}
-_UNGATED = re.compile(
-    r"\b(?:_?ET|ElementTree|etree)\.(?:fromstring|parse|iterparse|XML|XMLParser|XMLPullParser)\s*\("
-    r"|\bminidom\b|\bxml\.sax\b|\bpulldom\b|\blxml\b|\bxml\.parsers\.expat\b|\bxml\.dom\b|\bparseString\s*\(")
+# --------------------------------------------------------------------------- 6. 配布するモジュールに、門を通さない解析が残っていないこと(ast)
+# 対象 = pyproject の py-modules と packages(= wheel に入る全部。examples/・examples_3d/ を含む)。tests/・tools/ は wheel に入らない
+# 開発用なので対象外。除外は門のモジュール自身(safe_xml.py)だけ。正規表現でなく ast で import の別名を追う。
+_ET_MODULES = ("xml.etree.ElementTree", "xml.etree.cElementTree")
+_PARSE_ATTRS = ("fromstring", "fromstringlist", "parse", "iterparse", "XML", "XMLID", "XMLParser", "XMLPullParser")
+_BANNED_PARSE = {m + "." + a for m in _ET_MODULES for a in _PARSE_ATTRS}
+_BANNED_FAMILIES = ("xml.dom", "xml.sax", "xml.parsers", "pyexpat", "lxml", "plistlib", "xmlrpc", "xmltodict", "defusedxml")
+
+
+def _in_family(name: str) -> bool:
+    return any(name == f or name.startswith(f + ".") for f in _BANNED_FAMILIES)
+
+
+def _scan_source(src: str) -> list:
+    """門を通らない XML 解析の形を全部返す: 別名つき import・``X.fromstring``・``fromstring as fs``・dom/sax/expat/lxml/plistlib 系の import。"""
+    import ast
+    tree = ast.parse(src)
+    alias: dict = {}
+    hits: list = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for a in node.names:
+                alias[a.asname or a.name.split(".")[0]] = a.name if a.asname else a.name.split(".")[0]
+                if _in_family(a.name):
+                    hits.append((node.lineno, "import " + a.name))
+        elif isinstance(node, ast.ImportFrom) and not node.level:
+            mod = node.module or ""
+            for a in node.names:
+                full = mod + "." + a.name
+                alias[a.asname or a.name] = full
+                if _in_family(mod) or _in_family(full) or full in _BANNED_PARSE:
+                    hits.append((node.lineno, "from %s import %s" % (mod, a.name)))
+
+    def resolve(n):
+        if isinstance(n, ast.Name):
+            return alias.get(n.id, n.id)
+        if isinstance(n, ast.Attribute):
+            base = resolve(n.value)
+            return base + "." + n.attr if base else None
+        return None
+
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Name, ast.Attribute)) and isinstance(getattr(node, "ctx", None), ast.Load):
+            r = resolve(node)
+            if r in _BANNED_PARSE:
+                hits.append((node.lineno, r))
+        if isinstance(node, ast.Call):
+            r = resolve(node.func)
+            if r in {m + ".ElementTree" for m in _ET_MODULES} and (len(node.args) >= 2 or any(k.arg == "file" for k in node.keywords)):
+                hits.append((node.lineno, "ElementTree(file=...)"))
+            if isinstance(node.func, ast.Attribute) and node.func.attr == "parse" and isinstance(node.func.value, ast.Call) \
+                    and (resolve(node.func.value.func) or "") in {m + ".ElementTree" for m in _ET_MODULES}:
+                hits.append((node.lineno, "ElementTree().parse"))
+            if r in ("__import__", "importlib.import_module") and node.args and isinstance(node.args[0], ast.Constant) \
+                    and isinstance(node.args[0].value, str) and (_in_family(node.args[0].value) or node.args[0].value in _ET_MODULES):
+                hits.append((node.lineno, "dynamic import " + node.args[0].value))
+    return sorted(set(hits))
 
 
 def _shipped_py():
-    out = []
-    for p in ROOT.rglob("*.py"):
-        rel = p.relative_to(ROOT)
-        if rel.parts[0] in _EXCLUDED_DIRS or any(part.startswith(".") or part == "__pycache__" for part in rel.parts):
-            continue
-        out.append(p)
-    return out
+    import tomllib
+    cfg = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["tool"]["setuptools"]
+    files = [ROOT / (m + ".py") for m in cfg["py-modules"]]
+    for pkg in cfg["packages"]:
+        files += sorted((ROOT / pkg.replace(".", "/")).glob("*.py"))
+    return [f for f in dict.fromkeys(files) if f.is_file()]
 
 
-def _strip_comments_and_docstrings(src: str) -> str:
-    """コメントと docstring(説明文に ET.fromstring と書いてあるだけの行)を落として、実コードだけを見る。"""
-    import ast
-    tree = ast.parse(src)
-    lines = src.splitlines()
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-            body = node.body
-            if body and isinstance(body[0], ast.Expr) and isinstance(getattr(body[0], "value", None), ast.Constant) \
-                    and isinstance(body[0].value.value, str):
-                for i in range(body[0].lineno - 1, body[0].end_lineno):
-                    lines[i] = ""
-    return "\n".join(re.sub(r"#.*$", "", ln) for ln in lines)
-
-
-def test_no_ungated_xml_parse_call_remains_in_shipped_modules():
+def test_no_ungated_xml_parse_remains_in_shipped_modules():
     files = _shipped_py()
-    assert len(files) >= 500, "走査の対象が縮んでいる(%d 本)" % len(files)  # 空を通す門にしない
-    gate_users = []
-    offenders = []
-    for p in files:
-        src = p.read_text(encoding="utf-8", errors="replace")
-        if "ElementTree" not in src and "minidom" not in src and "lxml" not in src and "xml." not in src:
+    assert len(files) >= 900, "走査の対象が縮んでいる(%d 本)" % len(files)  # 空を通す門にしない(examples/ を含めて 1,000 本超)
+    assert any(f.parent.name == "examples" for f in files) and any(f.parent.name == "examples_3d" for f in files)
+    offenders, gate_users = [], 0
+    for f in files:
+        src = f.read_text(encoding="utf-8")
+        if f.name == "safe_xml.py" and f.parent == ROOT:
             continue
-        code = _strip_comments_and_docstrings(src)
-        if p.name != "safe_xml.py":
-            for m in _UNGATED.finditer(code):
-                offenders.append("%s: %s" % (p.relative_to(ROOT), m.group(0)))
-        if "safe_xml" in code and p.name != "safe_xml.py":
-            gate_users.append(p.name)
+        for lineno, what in _scan_source(src):
+            offenders.append("%s:%d %s" % (f.relative_to(ROOT), lineno, what))
+        if "safe_xml" in src:
+            gate_users += 1
     assert not offenders, "門(safe_xml)を通さない XML 解析が残っている:\n" + "\n".join(offenders)
-    # 下限: 門を通している読み手が 9 本のファイルにある(drivecommonroad・drivejapan・driveplateau・fileio・optdraw・pegfail・pegtactile・printpath・anatomical_hand)。
-    assert len(gate_users) >= 9, gate_users
+    assert gate_users >= 16, gate_users  # 本体 9 本 + examples 7 本
 
 
-def test_scan_actually_detects_an_ungated_call():
-    """走査が空を通していないことの確認: 門を通さない呼び出しを含む行は検出される。"""
-    for bad in ("root = ET.fromstring(x)", "ET.parse(p)", "_ET.fromstring(x)", "for e in ET.iterparse(s):",
-                "from xml.dom import minidom", "ElementTree.XMLParser()"):
-        assert _UNGATED.search(bad), bad
-    assert not _UNGATED.search("root = safe_xml_parse(x)")
+_SCAN_BAD = [
+    "import xml.etree.ElementTree as ET\nET.fromstring(x)",
+    "import xml.etree.ElementTree as X\nX.fromstring(x)",
+    "from xml.etree.ElementTree import fromstring as fs\nfs(x)",
+    "from xml.etree import ElementTree as E\nE.fromstringlist(x)",
+    "import xml.etree.ElementTree as ET\nET.XMLID(x)",
+    "import xml.etree.ElementTree as ET\nET.XMLParser()",
+    "import xml.etree.ElementTree\nxml.etree.ElementTree.parse(p)",
+    "from xml import etree\netree.ElementTree.iterparse(f)",
+    "import xml.etree.ElementTree as ET\nET.ElementTree(file=p)",
+    "import xml.etree.ElementTree as ET\nET.ElementTree().parse(p)",
+    "import xml.etree.cElementTree as C\nC.fromstring(x)",
+    "import pyexpat",
+    "from xml.parsers import expat",
+    "import xml.dom.minidom",
+    "from xml.dom import pulldom",
+    "import xml.sax",
+    "import plistlib",
+    "import lxml.etree",
+    "import xmlrpc.client",
+    "importlib.import_module('xml.dom.minidom')",
+]
+_SCAN_OK = [
+    "import xml.etree.ElementTree as ET\nET.Element('a'); ET.SubElement(r, 'b'); ET.tostring(r); ET.ParseError",
+    "import xml.etree.ElementTree as ET\nET.ElementTree(root).write(p)",
+    "from safe_xml import safe_xml_parse\nsafe_xml_parse(x)",
+    "def fromstring(x): pass\nfromstring(1)",
+]
+
+
+@pytest.mark.parametrize("src", _SCAN_BAD)
+def test_scanner_detects_each_bypass_form(src):
+    assert _scan_source(src), src
+
+
+@pytest.mark.parametrize("src", _SCAN_OK)
+def test_scanner_does_not_flag_legitimate_uses(src):
+    assert not _scan_source(src), src
+
+
+# --------------------------------------------------------------------------- 7. 要素数と入れ子の深さの上限
+def _inject(root: str, inner: str) -> str:
+    if root.endswith("/>"):
+        tag = re.match(r"<(\w+)", root).group(1)
+        return root[:-2] + ">" + inner + "</%s>" % tag
+    i = root.rindex("</")
+    return root[:i] + inner + root[i:]
+
+
+def _deep(n: int) -> str:
+    return "<z>" * n + "</z>" * n
+
+
+@pytest.mark.parametrize("reader", sorted(_READERS))
+def test_every_reader_refuses_deep_nesting(reader, tmp_path, monkeypatch):
+    payload = _inject(_ROOTS[reader], _deep(300)).encode("utf-8")
+    with pytest.raises(UnsafeXMLError, match="nesting"):
+        _READERS[reader](payload, tmp_path, monkeypatch)
+
+
+@pytest.mark.parametrize("reader", sorted(set(_READERS) - _NO_SIZE_LIMIT))
+def test_every_reader_refuses_a_flat_element_flood(reader, tmp_path, monkeypatch):
+    """要素の数の上限(既定 100 万、osm_parse は 200 万): 200 万 + 1 個の平らな ``<z/>``(8 MB)は入力の大きさの上限(50 MiB)では止まらない。"""
+    payload = _inject(_ROOTS[reader], "<z/>" * 2_000_001).encode("utf-8")
+    assert len(payload) < SX.DEFAULT_MAX_BYTES
+    with pytest.raises(UnsafeXMLError, match="elements"):
+        _READERS[reader](payload, tmp_path, monkeypatch)
+
+
+def test_pegtactile_cutaway_does_not_leak_a_recursion_error_on_200k_levels():
+    import pegtactile as PT
+    with pytest.raises(UnsafeXMLError, match="nesting"):
+        PT.pegtactile_cutaway_xml("<mujoco>" + _deep(200_000) + "</mujoco>")
+
+
+def test_limits_are_inclusive_and_configurable_and_disableable():
+    d256 = "<r>" + _deep(255) + "</r>"          # r + 255 = 256 段
+    assert SX.safe_xml_parse(d256).tag == "r"
+    import copy
+    copy.deepcopy(SX.safe_xml_parse(d256))     # 上限の深さでも後段の deepcopy は再帰上限に当たらない
+    with pytest.raises(UnsafeXMLError, match="nesting"):
+        SX.safe_xml_parse("<r>" + _deep(256) + "</r>")
+    with pytest.raises(UnsafeXMLError, match="nesting"):
+        SX.safe_xml_parse("<r><a><b/></a></r>", max_depth=2)
+    assert SX.safe_xml_parse("<r><a><b/></a></r>", max_depth=3).tag == "r"
+    with pytest.raises(UnsafeXMLError, match="elements"):
+        SX.safe_xml_parse("<r><a/><a/><a/></r>", max_elements=3)
+    assert SX.safe_xml_parse("<r><a/><a/></r>", max_elements=3).tag == "r"
+    assert SX.safe_xml_parse("<r>" + _deep(2000) + "</r>", max_depth=None).tag == "r"
+    with pytest.raises(ValueError, match="max_depth"):
+        SX.safe_xml_parse("<r/>", max_depth=0)
+    with pytest.raises(ValueError, match="max_elements"):
+        SX.safe_xml_parse("<r/>", max_elements=-1)
+
+
+def test_element_cap_bounds_memory_for_a_flat_flood():
+    """8.4 MB の平らな ``<a/>`` は上限なしだと約 185 MB(22 倍)になる。要素数の上限でその前に止まる。"""
+    import tracemalloc
+    data = b"<r>" + b"<a/>" * 2_100_000 + b"</r>"
+    tracemalloc.start()
+    try:
+        with pytest.raises(UnsafeXMLError, match="elements"):
+            SX.safe_xml_parse(data)
+        peak = tracemalloc.get_traced_memory()[1]
+    finally:
+        tracemalloc.stop()
+    assert peak < 130 * 1024 * 1024, peak
+
+
+def test_zip_member_applies_element_and_depth_limits():
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        z.writestr("m.xml", "<r>" + _deep(300) + "</r>")
+    zf = zipfile.ZipFile(io.BytesIO(buf.getvalue()))
+    with pytest.raises(UnsafeXMLError, match="nesting"):
+        SX.safe_xml_parse_zip_member(zf, "m.xml")
+    assert SX.safe_xml_parse_zip_member(zf, "m.xml", max_depth=None).tag == "r"
+
+
+# --------------------------------------------------------------------------- 8. iterparse の門
+def test_iterparse_depth_and_element_limits():
+    with pytest.raises(UnsafeXMLError, match="nesting"):
+        list(SX.safe_xml_iterparse(io.BytesIO(("<r>" + _deep(300) + "</r>").encode())))
+    assert len(list(SX.safe_xml_iterparse(io.BytesIO(("<r>" + _deep(300) + "</r>").encode()), max_depth=None))) == 301
+    with pytest.raises(UnsafeXMLError, match="elements"):
+        list(SX.safe_xml_iterparse(io.BytesIO(b"<r><a/><a/><a/></r>"), max_elements=3))
+    # 既定は総数の上限なし(巨大な街区ファイルを elem.clear() しながら読む設計。実ファイルは 226 万要素)
+    n = sum(1 for _ in SX.safe_xml_iterparse(io.BytesIO(b"<r>" + b"<a/>" * 1_200_000 + b"</r>")))
+    assert n == 1_200_001
+
+
+def test_iterparse_refuses_a_dtd_hidden_behind_a_long_prolog():
+    """DOCTYPE の前に 64 KiB を超えるコメントがあっても(先頭の chunk だけを見る実装を許さない)断る。"""
+    doc = b"<!--" + b"x" * 200_000 + b'--><!DOCTYPE r [<!ENTITY a "b">]><r/>'
+    with pytest.raises(UnsafeXMLError, match="DOCTYPE"):
+        list(SX.safe_xml_iterparse(io.BytesIO(doc)))
+    # コメントの中の DOCTYPE という文字列は断らない
+    assert [e.tag for _, e in SX.safe_xml_iterparse(io.BytesIO(b"<!--" + b"x" * 200_000 + b"<!DOCTYPE a>--><r/>"))] == ["r"]
+
+
+@pytest.mark.parametrize("kind", _ENCODINGS)
+def test_iterparse_refuses_dtd_in_other_encodings(kind):
+    with pytest.raises(UnsafeXMLError, match="DOCTYPE"):
+        list(SX.safe_xml_iterparse(io.BytesIO(_encoded(kind, "svg_entities"))))
+
+
+def test_iterparse_keeps_the_stream_intact_after_the_prolog_peek():
+    """前置きの先読みが入力を欠かさない: 小さな chunk で返すストリームでも標準の iterparse と同じ要素列。"""
+    doc = b"<?xml version='1.0'?><!-- c --><r>" + b"".join(b"<b i='%d'>t%d</b>" % (i, i) for i in range(3000)) + b"</r>"
+
+    class Dribble(io.BytesIO):
+        def read(self, n=-1):
+            return super().read(7 if n is None or n < 0 or n > 7 else n)
+
+    mine = [(e.tag, e.get("i"), e.text) for _, e in SX.safe_xml_iterparse(Dribble(doc))]
+    ref = [(e.tag, e.get("i"), e.text) for _, e in ET.iterparse(io.BytesIO(doc), events=("end",))]
+    assert mine == ref
+
+
+def test_iterparse_needs_a_binary_stream():
+    with pytest.raises(ValueError, match="binary"):
+        list(SX.safe_xml_iterparse(io.StringIO("<r/>")))
 
 
 def test_hand_include_expansion_still_works_through_the_gate(tmp_path):

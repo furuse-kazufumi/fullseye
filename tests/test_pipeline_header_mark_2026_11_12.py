@@ -32,6 +32,8 @@ BAD = {
     "none_value": {"fullseye_pipeline": None, "stages": _ST},
     "graph_file": {"fullseye_graph": 1, "name": "g", "nodes": []},
     "graph_with_stages": {"fullseye_graph": 1, "stages": _ST},
+    # 両方の印を持つ dict は、どちらのファイルか決められないので断る(以前は pipeline として受理された)
+    "both_marks": {"fullseye_pipeline": 1, "fullseye_graph": 1, "stages": _ST},
 }
 GOOD = {
     "current": {"fullseye_pipeline": 1, "name": "p", "stages": _ST},
@@ -90,13 +92,17 @@ def test_each_reader_refuses_a_bad_mark(reader, case, tmp_path):
     with pytest.raises(ValueError) as ei:
         READERS[reader](BAD[case], tmp_path)
     msg = str(ei.value)
-    assert "expected" in msg and ("fullseye_pipeline" in msg), msg  # 何を期待したか
+    assert "fullseye_pipeline" in msg, msg
+    if case != "both_marks":
+        assert "expected" in msg, msg                                 # 何を期待したか
     if case == "graph_file" or case == "graph_with_stages":
         assert "fullseye_graph" in msg and "graph file" in msg, msg   # 何が来たか
     elif case == "banana":
         assert "'banana'" in msg and "str" in msg, msg
     elif case == "v99":
         assert "99" in msg, msg
+    elif case == "both_marks":
+        assert "ambiguous" in msg and "fullseye_graph" in msg, msg
 
 
 @pytest.mark.parametrize("reader", sorted(READERS))
@@ -157,3 +163,13 @@ def test_check_pipeline_header_unit():
         f({"fullseye_pipeline": 2}, where="x")
     with pytest.raises(ValueError, match="^x: expected"):
         f({"fullseye_graph": 1}, where="x")
+
+
+def test_numpy_integer_is_refused_with_a_hint_to_use_int():
+    """Python から dict を組む利用者向け: ``np.int64(1)`` は int ではないので断り、``int()`` に通すよう文で言う。JSON から読んだ値は int。"""
+    np = pytest.importorskip("numpy")
+    with pytest.raises(ValueError, match=r"int\(value\)") as ei:
+        engine.FullseyeEngine.from_dict({"fullseye_pipeline": np.int64(1), "stages": _ST})
+    assert "Python/JSON integer" in str(ei.value)
+    assert engine.FullseyeEngine.from_dict({"fullseye_pipeline": int(np.int64(1)), "stages": _ST}).stages
+    assert engine.FullseyeEngine.from_dict(json.loads('{"fullseye_pipeline": 1, "stages": [["gaussian", 0.5, 0.5]]}')).stages
