@@ -2037,6 +2037,14 @@
    "ko": "값 5개",
    "de": "5 Werte",
    "hi": "5 मान"
+  },
+  "knobs on this line: %s": {
+   "ja": "この行のつまみ: %s",
+   "zh": "本行的旋钮: %s",
+   "tw": "本行的旋鈕: %s",
+   "ko": "이 줄의 노브: %s",
+   "de": "Regler in dieser Zeile: %s",
+   "hi": "इस पंक्ति के नॉब: %s"
   }
  },
   "pending_translation": {

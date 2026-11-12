@@ -6530,6 +6530,11 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
 
     class ProgramEditor(QtWidgets.QPlainTextEdit):
         BREAK = "#e5484d"
+        #: ★2026-11-12 IDE 第 1 便: 窓(build_window)が入れる受け手。None なら何もしない(部品単体でも動く)。
+        on_open_help = None        # (op 名) -> None   : Shift+F1 で op のヘルプを開く
+        on_message = None          # (文) -> None      : 状態行へ 1 行
+        on_font_change = None      # (pt) -> None      : 文字サイズの保存と全欄への反映
+        on_run_selection = None    # () -> None        : 選んだ行だけを実行
 
         def __init__(self, words=(), parent=None, tip=None):
             super().__init__(parent)
@@ -6561,6 +6566,9 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             self._completer.setMaxVisibleItems(12)
             self._completer.activated.connect(self._insert_completion)
             self._query = ""
+            self._words = set(words)
+            self._errors = {}                 # 1-based 行 -> 構文エラーの文(波線とガターの赤印)
+            self._ide_init()
 
         # -- gutter geometry / painting --
         def gutter_width(self):
@@ -6604,6 +6612,8 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     p.setPen(QtGui.QColor("#e5484d" if ln == self._exec_line else "#6b7280"))
                     p.drawText(0, int(top), numw, fm.height(),
                                QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter, str(ln))
+                    if ln in self._errors:          # 構文エラーの行: ガターの右端に赤い印
+                        p.fillRect(w - 5, int(top), 4, fm.height(), QtGui.QColor(self.BREAK))
                     ms = self.timings.get(ln)
                     if ms is not None:              # per-line execution time
                         p.setPen(QtGui.QColor("#17b8a6"))
@@ -6662,6 +6672,17 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     c = self.textCursor(); c.setPosition(blk.position()); c.clearSelection()
                     ex.cursor = c
                     sels.append(ex)
+            for ln in sorted(getattr(self, "_errors", {})):          # 構文エラーの行は波線
+                blk = self.document().findBlockByNumber(ln - 1)
+                if not blk.isValid():
+                    continue
+                sq = QtWidgets.QTextEdit.ExtraSelection()
+                sq.format.setUnderlineStyle(QtGui.QTextCharFormat.WaveUnderline)
+                sq.format.setUnderlineColor(QtGui.QColor(self.BREAK))
+                c = QtGui.QTextCursor(blk)
+                c.select(QtGui.QTextCursor.LineUnderCursor)
+                sq.cursor = c
+                sels.append(sq)
             self.setExtraSelections(sels)
 
         # -- autocomplete --
@@ -6677,8 +6698,18 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             self.setTextCursor(c)
 
         def completion_candidates(self, prefix, limit=50):
-            """打った語に対する候補(順位 → 名前順)。Qt を使わずに試験できる入口。"""
-            return self._index.search(prefix, limit=limit)
+            """打った語に対する候補(順位 → 名前順)。Qt を使わずに試験できる入口。
+
+            ★2026-11-12(B-9): 完全一致 → 前方一致(**短い名前が先**: ``gaus`` で gaussian が gauss_filter より前)→
+            それ以外(opsearch の順位のまま)。前方一致の中が索引順だったので、完全に近い名前が 3 番目に沈んでいた。"""
+            names = self._index.search(prefix, limit=None)
+            q = prefix.strip().lower()
+            if q:
+                def _cls(n):
+                    low = n.lower()
+                    return 0 if low == q else (1 if low.startswith(q) else 2)
+                names = sorted(names, key=lambda n: (_cls(n), len(n) if _cls(n) == 1 else 0))   # 安定: 同順位は元の順
+            return names if limit is None else names[:limit]
 
         def _fill_model(self, prefix):
             self._model.clear()
@@ -6692,12 +6723,118 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                 self._model.appendRow(it)
             self._query = prefix
 
+        # ------------------------------------------------------------------ #
+        # ★2026-11-12 IDE 第 1 便: ホバーヘルプ / 構文エラーの印 / キー経路        #
+        # ------------------------------------------------------------------ #
+        def _ide_init(self):
+            """IDE 部品の初期化(__init__ の最後から)。"""
+
+        def _say(self, text):
+            if self.on_message is not None:
+                self.on_message(text)
+
+        def set_errors(self, errors):
+            """構文エラーを 1-based 行 -> 文 で受け、波線とガターの赤印を付け直す(空なら全部消える)。"""
+            self._errors = dict(errors or {})
+            self._highlight()
+            self._gutter.update()
+
+        def errors(self):
+            return dict(self._errors)
+
+        def goto_line(self, ln, focus=True):
+            """1-based の行へカーソルを移す(Problems の行を押したとき)。"""
+            blk = self.document().findBlockByNumber(max(1, int(ln)) - 1)
+            if not blk.isValid():
+                blk = self.document().lastBlock()
+            c = self.textCursor(); c.setPosition(blk.position()); self.setTextCursor(c)
+            self.ensureCursorVisible()
+            if focus:
+                self.setFocus()
+
+        def _word_at(self, vp_pos):
+            """ビューポート座標の下にある識別子 -> (語, 1-based 行)。行の右端の外・空白なら ("", 行)。"""
+            import re
+            cur = self.cursorForPosition(vp_pos)
+            text, i = cur.block().text(), cur.positionInBlock()
+            ln = cur.blockNumber() + 1
+            r = self.cursorRect(cur)
+            if vp_pos.x() > r.x() + self.fontMetrics().horizontalAdvance("9") * 1.5 and i >= len(text):
+                return "", ln
+            for m in re.finditer(r"[A-Za-z_][A-Za-z0-9_]*", text):
+                if m.start() <= i <= m.end():
+                    return m.group(0), ln
+            return "", ln
+
+        def hover_text(self, word, ln):
+            """カーソル下の語に出すヘルプ文(op 名: 補完と同じシグネチャ文 + その行のつまみの実単位)。
+            op 名でなく、その行にエラーも無ければ None。"""
+            import re
+            parts = []
+            if ln in self._errors:
+                parts.append("\u2715 " + self._errors[ln])
+            if word and word in self._words and self._tip is not None:
+                try:
+                    parts.append(self._tip(word))
+                except Exception:                      # noqa: BLE001 - ヘルプが作れなくても窓は壊さない
+                    pass
+                line = self.document().findBlockByNumber(ln - 1).text()
+                rest = line[line.find(word) + len(word):] if word in line else ""
+                nums = re.findall(r"[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?", rest)
+                try:
+                    a = float(nums[0]) if len(nums) > 0 else 0.5
+                    b = float(nums[1]) if len(nums) > 1 else 0.5
+                    parts.append(tr("knobs on this line: %s") % stage_knob_text(
+                        word, max(0.0, min(1.0, a)), max(0.0, min(1.0, b))))
+                except Exception:                      # noqa: BLE001
+                    pass
+            return "\n\n".join(parts) if parts else None
+
+        def _tooltip_event(self, ev, vp_pos):
+            word, ln = self._word_at(vp_pos)
+            if not word and ln not in self._errors:
+                return False                           # 余白: 欄全体の汎用ヒントに任せる
+            text = self.hover_text(word, ln)
+            if text:
+                QtWidgets.QToolTip.showText(ev.globalPos(), text, self.viewport())
+            else:
+                QtWidgets.QToolTip.hideText()          # op 名でない語: 何も出さない
+            ev.accept()
+            return True
+
+        def viewportEvent(self, ev):
+            if ev.type() == QtCore.QEvent.ToolTip and self._tooltip_event(ev, ev.pos()):
+                return True
+            return super().viewportEvent(ev)
+
+        def _ide_action(self, ev):
+            """このキーが IDE 動作なら名前を返す。<<IDE-KEYS>>"""
+            return None
+
+        def event(self, ev):
+            if ev.type() == QtCore.QEvent.ToolTip:     # 欄そのものに送られた ToolTip(座標は欄の座標)
+                if self._tooltip_event(ev, self.viewport().mapFrom(self, ev.pos())):
+                    return True
+            if ev.type() == QtCore.QEvent.ShortcutOverride and self._ide_action(ev):
+                ev.accept()                            # ウィンドウ側の同じキー(Ctrl+F / Ctrl+H …)より先に受ける
+                return True
+            return super().event(ev)
+
+        def _ide_do(self, action):
+            """IDE 動作を実行する。<<IDE-DO>>"""
+
         def keyPressEvent(self, ev):
             comp = self._completer
             if comp.popup().isVisible() and ev.key() in (
                     QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return, QtCore.Qt.Key_Escape,
                     QtCore.Qt.Key_Tab, QtCore.Qt.Key_Backtab):
                 ev.ignore(); return
+            act = self._ide_action(ev)
+            if act:
+                comp.popup().hide()
+                self._ide_do(act)
+                ev.accept()
+                return
             super().keyPressEvent(ev)
             prefix = self._text_under_cursor()
             if len(prefix) >= 2 and (prefix[0].isalpha() or prefix[0] == "_"):

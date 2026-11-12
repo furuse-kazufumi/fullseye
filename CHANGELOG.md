@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Studio の IDE としての使いやすさ(第 1 便)
+
+- Program 欄のホバーヘルプ: op 名の上にカーソルを置くと、補完 popup と同じシグネチャ文とその行のつまみの実単位(blur σ=… px)を出す。op 名でない語では出さない(候補 1)。
+- 補完の順位: 完全一致 → 前方一致(短い名前が先)→ その他。`gaus` で gaussian が先頭になる。Tab で確定する挙動は変えない(B-9)。
+
 ### 直し — インストール体験(setup / ショートカット / アンインストール): 独立レビュー(2026-11-12)の 16 件
 
 - 台帳の中身を**許可制**で検証してから消す(`shortcuts.check_ledger_item`): file は setup が作る名前(`Fullseye Studio.lnk` / `fullseye.ico` / `fullseye-uninstall.cmd` / `fullseye-studio.desktop` / png)と置き場(スタートメニューの `Fullseye`・デスクトップ・setup フォルダ・Linux の applications / icons)、dir_if_empty は setup が作ったフォルダ、regkey は `Uninstall\Fullseye` の完全一致、claude_skill は `default_target()` の直下か `fullseye-rag` が置く目印(`.fullseye-installed`)がある物だけ。許可外は消さず「台帳にあるが消さなかったもの」として理由つきで出す(終了コード 1)。書き換えた台帳(`thesis.docx`)や `FULLSEYE_LEDGER` の差し替えで任意のファイルが消えた事故を止めた。試験用キー `Software\fullseyetest\` は本番コードから外し、テストが引数 `allow_keys` で渡す。
