@@ -513,3 +513,41 @@ def test_sobel_help_states_the_real_normalisation():
     assert out.min() > 0.0 and out.max() == pytest.approx(1.0)        # 最小は 0 に引き伸ばされない
     assert "divided by its own maximum" in _help("sobel_mag") and "最大値で割る" in _help("sobel_mag", "ja")
     assert "minimum and maximum" not in _help("sobel_mag")
+
+
+def test_op_list_rows_are_compact_and_search_rows_keep_their_height(monkeypatch, tmp_path):
+    """op の一覧の行は「文字の高さ + 数 px」。様式が足す余白で 2 倍近くに膨らまない(Windows 11 の様式で 30 px だった)。
+    検索結果の行(名前・説明・ボタン)は自分の高さを保つ。"""
+    pytest.importorskip("PySide6")
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    from PySide6 import QtWidgets
+    import studio
+    QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / "s.ini"))
+    win, _model = studio.build_window()
+    win.show(); _pump(0.4)
+    try:
+        ol = win._op_list
+        fm = ol.fontMetrics().height()
+        assert ol.count() > 100
+        rows = [ol.sizeHintForRow(i) for i in range(10)]
+        assert all(fm <= h <= fm + studio._OP_ROW_PAD + 2 for h in rows), (fm, rows)
+        win._search_ui["search_now"]("threshold"); _pump(0.5)
+        tall = [ol.sizeHintForRow(i) for i in range(ol.count())]
+        assert max(tall) >= 2 * fm, tall[:8]            # 説明とボタンのある行は潰れていない
+    finally:
+        win.close_guard = lambda: True
+        win.quiesce(); win.close(); _pump(0.1)
+
+
+def test_first_run_language_follows_the_os_locale():
+    """初回起動の言語は OS の言語から決める(日本語の Windows で英語の画面から始まっていた)。表に無い言語は英語。"""
+    import studio
+    f = studio.lang_from_locale
+    assert f("ja_JP") == "ja" and f("ja") == "ja" and f("ja-JP") == "ja"
+    assert f("zh_CN") == "zh" and f("zh_Hans_CN") == "zh" and f("zh_SG") == "zh"
+    assert f("zh_TW") == "tw" and f("zh_HK") == "tw" and f("zh_Hant_TW") == "tw" and f("zh-Hant") == "tw"
+    assert f("ko_KR") == "ko" and f("de_AT") == "de" and f("hi_IN") == "hi"
+    assert f("en_US") == "en" and f("fr_FR") == "en" and f("C") == "en" and f("") == "en" and f(None) == "en"
+    assert f("ja_JP", languages={"en": "English"}) == "en"          # 表に無ければ英語
+    assert all(f(code) == code for code in studio.LANGUAGES)        # 表の言語は全部自分に決まる

@@ -21,14 +21,23 @@
     "fail_closed": 4,
     "documented_fallback": 10,
     "silent_fallback": 1,
-    "legitimate_empty": 19,
+    "legitimate_empty": 20,
     "undecided": 1
   },
   "sites": [
     {
       "module": "backend_safe.py",
+      "function": "which_outside_cwd",
+      "line": 105,
+      "exception_types": [],
+      "returned_or_assigned": "None",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "backend_safe.py",
       "function": "missing_dependency",
-      "line": 102,
+      "line": 134,
       "exception_types": [
         "Exception"
       ],
@@ -39,7 +48,7 @@
     {
       "module": "backend_safe.py",
       "function": "_fmt_exc",
-      "line": 180,
+      "line": 212,
       "exception_types": [
         "Exception"
       ],
@@ -50,7 +59,7 @@
     {
       "module": "backend_safe.py",
       "function": "guard.w",
-      "line": 330,
+      "line": 362,
       "exception_types": [
         "MissingDependencyError"
       ],
@@ -61,7 +70,7 @@
     {
       "module": "backend_safe.py",
       "function": "guard.w",
-      "line": 332,
+      "line": 364,
       "exception_types": [
         "Exception"
       ],
@@ -72,7 +81,7 @@
     {
       "module": "backend_safe.py",
       "function": "_finite",
-      "line": 625,
+      "line": 657,
       "exception_types": [],
       "returned_or_assigned": "np.nan_to_num(real, nan=0.0, posinf=1.0, neginf=0.0)",
       "classification": "documented_fallback",

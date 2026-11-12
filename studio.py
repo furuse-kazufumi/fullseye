@@ -3440,6 +3440,7 @@ def mesh_edges(F, cap=60000):
     e = np.unique(np.sort(e, axis=1), axis=0)
     return None if e.shape[0] > int(cap) else e
 
+_OP_ROW_PAD = 4          # op の一覧の行の高さ = 文字の高さ + これ(px)
 THEME = f"""
 QWidget {{ background:{NAVY_0}; color:{TEXT}; font-size:12px;
     font-family:"Segoe UI","Yu Gothic UI","Meiryo","Nirmala UI","Noto Sans Devanagari",system-ui,sans-serif; }}
@@ -5952,6 +5953,24 @@ def _is_empty_program_text(body):
     return bool(first) and first in langs
 
 
+def lang_from_locale(name, languages=None):
+    """OS のロケール名(``ja_JP``・``zh-TW``・``de_AT`` など)から UI の言語コードを決める。対応が無ければ ``"en"``。
+
+    中国語は地域と文字で分ける(台湾・香港・マカオと ``Hant`` は繁体字 ``tw``、ほかは簡体字 ``zh``)。
+    ``languages`` は i18n.json の言語の表(既定は読み込んだ表)。表に無い言語へは決めない。
+    """
+    langs = LANGUAGES if languages is None else languages
+    parts = [x for x in str(name or "").replace("-", "_").split("_") if x]
+    if not parts:
+        return "en"
+    base, rest = parts[0].lower(), {x.lower() for x in parts[1:]}
+    if base == "zh":
+        code = "tw" if rest & {"tw", "hk", "mo", "hant"} else "zh"
+    else:
+        code = base
+    return code if code in langs else "en"
+
+
 def tr(text):
     """UI 文字列を i18n テーブル(studio_assets/i18n.json の 'strings')で現在言語へ。
 
@@ -7161,7 +7180,11 @@ def build_window(model=None):
     ops_fit_state = {}                  # last (switch, upstream sort) the list was filled for
     op_list = QtWidgets.QListWidget()
     op_list.setToolTip("Double-click an operator to insert it into the pipeline")
-    op_list.setStyleSheet("QListWidget::item { padding: 0px 6px; }")       # 一覧の行を詰める(全体の既定は上下 2px)
+    # 一覧の行を詰める。Windows 11 の Qt の様式(QWindows11Style)は一覧の行に上下 14 px を足すので、
+    # padding を 0 にしても行は 30 px のまま(文字は 16 px)。高さを「文字の高さ + 4 px」で指定する
+    # (実測: 同じ窓で見える行が 14 → 21)。検索結果の行は setSizeHint で自分の高さを持つので変わらない。
+    op_list.setStyleSheet("QListWidget::item { padding: 0px 6px; height: %dpx; }"
+                          % (op_list.fontMetrics().height() + _OP_ROW_PAD))
     op_list.setMinimumHeight(60)
     op_hint = QtWidgets.QLabel("set a, b · Insert into pipeline or Run once · double-click = insert")
     op_hint.setWordWrap(True)                             # wrap: a long hint must not force a wide panel
@@ -15561,7 +15584,9 @@ def build_window(model=None):
     try:                                     # restore the remembered language
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
             _lang = _settings().value("lang")
-            if _lang in LANGUAGES:
+            if _lang not in LANGUAGES:       # 初回(保存なし): OS の言語に合わせる。選び直せば次からはその言語
+                _lang = lang_from_locale(QtCore.QLocale.system().name())
+            if _lang in LANGUAGES and _lang != "en":
                 apply_language(_lang)
     except Exception:
         pass
