@@ -229,8 +229,9 @@ def test_3_powershell_is_an_absolute_system_path_and_a_decoy_in_cwd_does_not_run
     (work / "powershell.cmd").write_text('@echo off\r\necho x> "%s"\r\n' % marker, encoding="ascii")
     monkeypatch.chdir(work)
     lnk = tmp_path / "t.lnk"
-    shortcuts.write_lnk(lnk, Path(sys.executable), "-P -m studio", ROOT / "assets" / "fullseye.ico", tmp_path)
-    assert lnk.is_file() and shortcuts.read_lnk(lnk)["Arguments"] == "-P -m studio"
+    shortcuts._write_lnk_via_powershell(lnk, Path(sys.executable), "-P -m studio", ROOT / "assets" / "fullseye.ico", tmp_path,
+                                        "d")                                      # 退避の経路(PowerShell)だけが PowerShell を呼ぶ
+    assert lnk.is_file() and shortcuts._read_lnk_via_powershell(lnk)["Arguments"] == "-P -m studio"
     assert not marker.exists(), "a powershell.bat in the working directory was executed"
 
 
@@ -264,6 +265,7 @@ def test_4_requires_python_allows_minus_P():
 def test_4_lnk_reads_back_with_minus_P_and_setup_folder_as_workdir(tmp_path):
     dirs = _dirs(tmp_path)
     made = shortcuts.install(desktop=True, dirs=dirs, ledger=tmp_path / "l.json", reg_key=KEY + "4")
+    assert len(made) == 2                                              # Start メニューとデスクトップ(空なら for は何も検査しない)
     try:
         for m in made:
             back = shortcuts.read_lnk(m)
@@ -551,8 +553,8 @@ def test_12_python_side_does_not_delete_the_running_script(tmp_path, monkeypatch
     ledger = tmp_path / "ledger.json"
     dirs = _register(tmp_path, ledger, KEY + "12p")
     script = dirs["icon_dir"] / shortcuts.CMD_NAME
-    if not WIN:                                    # Linux には .cmd は無い。台帳に載せて同じ経路を通す
-        script.write_text("x", encoding="utf-8")
+    if not WIN:                                    # Linux には .cmd は無い。台帳に載せて同じ経路を通す(中身は後始末スクリプトの印つき)
+        script.write_text("rem Fullseye uninstall helper\n", encoding="utf-8")
         shortcuts.ledger_record("file", script, ledger)
     assert script.is_file()
     monkeypatch.setenv(shortcuts.UNINSTALL_FROM_CMD_ENV, "1")
@@ -583,7 +585,7 @@ def _e2e_setup(tmp_path, root_name, key):
 
 
 @winonly
-@pytest.mark.parametrize("root_name", ["plain", "ユーザー 名's $env.X `y & ^ ! (1)"])
+@pytest.mark.parametrize("root_name", ["plain", "ユーザー 名's $env.X `y & ^ ! (1)", "ไทย עברית 한글 `$x & ^ ! (1)"])
 def test_12_13_uninstall_script_works_with_python_then_without_it(tmp_path, root_name):
     import winreg
     key = KEY + "12"
@@ -689,6 +691,7 @@ def test_15_a_failed_install_still_records_the_icon_it_copied(tmp_path, monkeypa
         shortcuts.install(python=str(tmp_path / "py" / "python.exe"), dirs=_dirs(tmp_path), ledger=ledger,
                           reg_key=KEY + "15b")
     ents = shortcuts.ledger_load(ledger)
+    assert len(ents) >= 1, ents
     assert any(e["kind"] == "file" and e["path"].endswith("fullseye.ico") for e in ents)
     assert not shortcuts.regkey_exists(KEY + "15b")
     monkeypatch.setattr(shortcuts, "env_owner", lambda: shortcuts.owner_of_python(str(tmp_path / "py" / "python.exe")))
@@ -739,6 +742,7 @@ def test_16_settings_registry_tree_is_deleted_through_the_real_reg_delete_tree(t
     assert shortcuts.regkey_exists(tree)
     plan = uninstall.collect(ledger=tmp_path / "none.json", dirs=_dirs(tmp_path), env={"FULLSEYE_CACHE_DIR": str(tmp_path / "cache")},
                              registry=True, regtree=tree)
+    assert len(plan["data"]) >= 1                            # 計画が空でない(設定のキーが見えている)ことの確認
     for it in plan["made"]:                                  # 安全弁: 本物の Uninstall キーは計画に入っていない(conftest が差し替える)
         assert it["kind"] != "regkey" or it["path"].startswith("Software\\FullseyeTest\\"), it
     rc, out, _ = _un(tmp_path, tmp_path / "none.json", _dirs(tmp_path), [], answers=["y", "n"], tty=True,
@@ -917,8 +921,12 @@ def test_R4_non_empty_folder_is_reported_as_kept_not_removed(tmp_path):
     ledger = tmp_path / "ledger.json"
     _write_ledger(ledger, [{"kind": "dir_if_empty", "path": str(folder)}])
     rc, out, _ = _un(tmp_path, ledger, dirs, ["--yes"])
+    assert folder.is_dir() and (folder / "mine.txt").is_file()
+    if not WIN:        # Linux は畳むフォルダを作らないので、台帳のそういう行は許可外 = 消さずに理由つきで出す(終了コード 1)
+        assert rc == 1 and "NOT removed" in out and "not a folder fullseye setup created" in out
+        return
     removed_part = out.split("[Removed]")[1].split("[")[0]
-    assert rc == 0 and folder.is_dir() and "empty folder" not in removed_part and "[Kept]" in out and str(folder) in out.split("[Kept]")[1]
+    assert rc == 0 and "empty folder" not in removed_part and "[Kept]" in out and str(folder) in out.split("[Kept]")[1]
 
 
 def test_R4_the_running_script_is_listed_apart_as_removed_after_this_window(tmp_path, monkeypatch):
@@ -926,7 +934,7 @@ def test_R4_the_running_script_is_listed_apart_as_removed_after_this_window(tmp_
     dirs = _register(tmp_path, ledger, KEY + "R4")
     script = dirs["icon_dir"] / shortcuts.CMD_NAME
     if not WIN:
-        script.write_text("x", encoding="utf-8")
+        script.write_text("rem Fullseye uninstall helper\n", encoding="utf-8")
         shortcuts.ledger_record("file", script, ledger)
     monkeypatch.setenv(shortcuts.UNINSTALL_FROM_CMD_ENV, "1")
     rc, out, _ = _un(tmp_path, ledger, dirs, ["--yes"], allow=(KEY + "R4",))
@@ -934,7 +942,8 @@ def test_R4_the_running_script_is_listed_apart_as_removed_after_this_window(tmp_
     removed_part = out.split("[Removed]")[1].split("[Removed by the cleanup script")[0]
     assert shortcuts.CMD_NAME not in removed_part
     later = out.split("[Removed by the cleanup script right after this window closes]")[1]
-    assert shortcuts.CMD_NAME in later and str(dirs["icon_dir"]) in later          # スクリプトと、スクリプトが入っている setup フォルダ
+    assert shortcuts.CMD_NAME in later
+    assert str(dirs["icon_dir"]) in later or not WIN          # スクリプトが入っている setup フォルダ(畳むフォルダの記録は Windows だけ)
     assert "[Kept]" not in out or str(dirs["icon_dir"]) not in out.split("[Kept]")[1]
     monkeypatch.delenv(shortcuts.UNINSTALL_FROM_CMD_ENV)
     if WIN:
@@ -1098,6 +1107,7 @@ def test_S1_legacy_and_ledger_items_are_deleted_only_when_the_content_says_they_
         refused = {Path(str(r["path"])).name: r["reason"] for r in plan["refused"]}
         assert made == {"Fullseye Studio.lnk"} and str(ps1) in [i["path"] for i in plan["made"]]       # 起動が Fullseye の物だけ
         assert "fullseye.ico" in refused and shortcuts.CMD_NAME in refused and key.rsplit("\\", 1)[-1] in refused
+        assert len(plan["refused"]) >= 3, plan["refused"]                                            # ico・cmd・キー・他人の lnk
         assert all(r["foreign"] for r in plan["refused"])                                             # 利用者の物の可能性 = 異常ではない
         assert not any(i["kind"] == "regkey" for i in plan["made"])
         rc, out, _ = _un(tmp_path, tmp_path / "none.json", dirs, ["--yes"], allow=(key,))
@@ -1212,3 +1222,112 @@ def test_S4_pip_start_failure_exits_3_and_ci_job_has_a_timeout(tmp_path):
 def test_S5_exit_code_table_lists_every_code():
     doc = uninstall.__doc__
     assert "終了コード" in doc and "0 =" in doc and "1 =" in doc and "3 =" in doc and "起動できず" in doc
+
+
+# =========================================================================== 4 回目: コードページに無い文字のパス
+UNICODE_NAMES = ["ユーザー 名's $env.X `y & ^ ! (1)", "ไทยภาษา", "עברית", "한글 Ж ü", "emoji \U0001F600"]
+
+
+@winonly
+@pytest.mark.parametrize("name", UNICODE_NAMES)
+def test_E1_lnk_roundtrips_paths_outside_the_system_code_page(tmp_path, name):
+    """英語の Windows の日本語のユーザー名(その逆も)でショートカットが作れなかった(WScript.Shell が ANSI で持つため ``????`` に化けた)。
+    IShellLinkW(Unicode)で読み書きする。引用符・$・バッククォート・&・^・! を含むパスも式として解釈されない。"""
+    d = tmp_path / name
+    lnk = d / "Fullseye Studio.lnk"
+    icon = d / "setup" / "fullseye.ico"
+    shortcuts.write_lnk(lnk, Path(sys.executable), '-P -m studio "%s"' % name, icon, d)
+    back = shortcuts.read_lnk(lnk)
+    assert Path(back["Target"]) == Path(sys.executable)
+    assert back["Arguments"] == '-P -m studio "%s"' % name
+    assert back["WorkingDir"] == str(d) and back["Icon"].split(",")[0] == str(icon) and "?" not in back["WorkingDir"]
+    assert d.is_dir() and lnk.is_file()
+
+
+@winonly
+def test_E1_the_powershell_fallback_still_works_for_ascii_paths(tmp_path):
+    lnk = tmp_path / "f.lnk"
+    shortcuts._write_lnk_via_powershell(lnk, Path(sys.executable), "-P -m studio", ROOT / "assets" / "fullseye.ico", tmp_path, "d")
+    assert shortcuts._read_lnk_via_powershell(lnk)["Arguments"] == "-P -m studio"
+    assert shortcuts.read_lnk(lnk)["Arguments"] == "-P -m studio"                  # COM の経路で、PowerShell が書いた物も読める
+
+
+@winonly
+def test_E1_the_old_wscript_path_really_was_broken_for_such_paths(tmp_path):
+    """前提の確認(この試験が空を通していない): 従来の経路は、システムのコードページに無い文字のパスで壊れる。"""
+    import locale
+    name = "ไทยภาษา"
+    try:
+        name.encode(locale.getencoding())          # PYTHONUTF8 に左右されない、システムの ANSI コードページ
+        pytest.skip("this machine's ANSI code page can represent the test characters")
+    except UnicodeEncodeError:
+        pass
+    with pytest.raises(shortcuts.ShortcutError):
+        shortcuts._write_lnk_via_powershell(tmp_path / name / "x.lnk", Path(sys.executable), "a", ROOT / "assets" / "fullseye.ico",
+                                            tmp_path, "d")
+
+
+@winonly
+@pytest.mark.parametrize("name", UNICODE_NAMES[:3])
+def test_E1_install_and_remove_work_with_such_a_setup_folder(tmp_path, name):
+    root = tmp_path / name
+    dirs = {"start_menu": root / "Programs" / "Fullseye", "desktop": root / "Desktop", "icon_dir": root / "local" / "setup"}
+    ledger = root / "ledger.json"
+    key = KEY + "E1"
+    made = shortcuts.install(desktop=True, dirs=dirs, ledger=ledger, reg_key=key)
+    assert len(made) == 2
+    try:
+        assert all(shortcuts.read_lnk(m)["WorkingDir"] == str(dirs["icon_dir"]) for m in made)
+        gone = shortcuts.remove(dirs=dirs, ledger=ledger, allow_keys=(key,))
+        assert len(gone) == 4 and not shortcuts.regkey_exists(key)
+    finally:
+        if shortcuts.regkey_exists(key):
+            shortcuts.unregister_uninstall_entry(key, (key,))
+
+
+# =========================================================================== どの OS でも通る部分(Windows だけの試験の Linux 側の受け皿)
+def test_X1_content_verification_works_for_every_non_lnk_kind_on_any_os(tmp_path):
+    """``.lnk`` / レジストリ以外(.ico / .png / .cmd / .desktop)の中身の確かめは OS に依らない。"""
+    good = {"fullseye.ico": b"\x00\x00\x01\x00rest", "fullseye-studio.png": b"\x89PNG\r\n\x1a\nrest",
+            shortcuts.CMD_NAME: b"@echo off\r\nrem Fullseye uninstall helper\r\n",
+            "fullseye-studio.desktop": b"[Desktop Entry]\nName=Fullseye Studio\nExec=py -P -m studio\n"}
+    assert len(good) == 4
+    for name, data in good.items():
+        (tmp_path / name).write_bytes(data)
+        assert shortcuts.verify_fullseye_item("file", str(tmp_path / name)) is None, name
+    for name in good:
+        (tmp_path / name).write_bytes(b"something else entirely")
+        why = shortcuts.verify_fullseye_item("file", str(tmp_path / name))
+        assert why and "left alone" in why, (name, why)
+    assert shortcuts.verify_fullseye_item("file", str(tmp_path / "absent.ico")) is None          # 無い物は消す物が無い
+    notes = tmp_path / "notes.txt"
+    notes.write_text("x", encoding="utf-8")
+    assert "not a kind of file" in shortcuts.verify_fullseye_item("file", str(notes))
+
+
+def test_X2_a_registry_row_in_a_ledger_does_not_crash_on_a_system_without_a_registry(tmp_path):
+    """Linux で台帳に regkey の行があっても、uninstall も台帳の掃除も落ちない(winreg を import しない)。"""
+    ledger = tmp_path / "ledger.json"
+    _write_ledger(ledger, [{"kind": "regkey", "path": r"Software\Microsoft\Windows\CurrentVersion\Run"}])
+    rc, out, _ = _un(tmp_path, ledger, _dirs(tmp_path), ["--yes"])
+    assert rc == 1 and "NOT removed" in out
+    assert shortcuts.regkey_exists(r"Software\Nope\x") is False
+    shortcuts.ledger_gc(ledger)
+    if not WIN:
+        assert shortcuts.verify_fullseye_item("regkey", r"Software\Anything") is None
+        with pytest.raises(shortcuts.ShortcutError):
+            shortcuts.unregister_uninstall_entry(shortcuts.UNINSTALL_KEY)
+
+
+def test_X3_unicode_paths_roundtrip_through_the_desktop_entry_on_any_os(tmp_path):
+    """Linux 側: ``.desktop`` は UTF-8。コードページに依らない(Windows の .lnk の対になる確認)。"""
+    for i, name in enumerate(("ユーザー 名 x", "ไทยภาษา", "עברית")):
+        dirs = {"apps": tmp_path / name / "apps", "icon_dir": tmp_path / name / "icons", "desktop": tmp_path / name / "Desktop"}
+        led = tmp_path / ("l%d.json" % i)
+        made = shortcuts.install(platform="linux", python=sys.executable, dirs=dirs, ledger=led)
+        assert len(made) == 1
+        text = made[0].read_text(encoding="utf-8")
+        icon_line = [l for l in text.splitlines() if l.startswith("Icon=")][0]
+        assert name in icon_line and "?" not in icon_line
+        assert shortcuts.verify_fullseye_item("file", str(made[0]), plat="linux") is None
+        assert len(shortcuts.remove(platform="linux", dirs=dirs, ledger=led)) == 2

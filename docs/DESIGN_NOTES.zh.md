@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：611 / 1931 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：611 / 1932 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `_archive_tarxz.py`
@@ -1798,7 +1798,8 @@
 
 ## `fullseye/shortcuts.py`
 
-- **L571** _(ja)_ — ★`if errorlevel 1` は「1 以上」の判定で、DLL が無いときの負の終了コード(0xC0000135 = -1073741515)を見逃す。 終了コードが 0 かどうかで分岐する `||` / `&&` を使う。
+- **L154** _(ja)_ — ★.lnk は IShellLinkW(Unicode の COM)を ctypes で直接呼んで読み書きする。 以前は PowerShell の WScript.Shell(``$lnk.TargetPath = ...``)だったが、WSH の ShortcutLink は文字列を**システムの ANSI コードページ**で持つので、そのコードページに無い文字(英語の Windows の日本語のユーザー名、日本語の Windows のタイ語・ヘブライ語 など)が ``?`` に化けて ``Unable to save shortcut`` になった(2026-11-13、CI の windows-latest で判明。環境変数で渡した文字は PowerShell まで無傷で届いていて、壊すのは WSH の COM 層)。IShellLinkW + IPersistFile は全部 Unicode で、PowerShell も Add-Type も要らない(Constrained Language Mode でも動く)。COM が使えない環境のためだけに、従来の PowerShell 経路を残す。
+- **L681** _(ja)_ — ★`if errorlevel 1` は「1 以上」の判定で、DLL が無いときの負の終了コード(0xC0000135 = -1073741515)を見逃す。 終了コードが 0 かどうかで分岐する `||` / `&&` を使う。
 
 ## `fullseye/validation_kit.py`
 
@@ -2948,7 +2949,7 @@
 
 ## `tests/test_installer_review_2026_11_12.py`
 
-- **L844** _(ja)_ — ★3 回目のレビューで判明: 包みが dirs / env / registry を渡さないと、環境変数を一時フォルダへ向けても デスクトップだけは SHGetKnownFolderPath で**本物**を引き、registry=True 既定で本物の Uninstall\Fullseye も計画に入り、 台帳が壊れた状態(= 既知の場所へ切り替わる)で --yes が本物のショートカットと登録を消しうる。 だから場所・環境・レジストリを全部、この試験の一時フォルダに固定して渡す。
+- **L848** _(ja)_ — ★3 回目のレビューで判明: 包みが dirs / env / registry を渡さないと、環境変数を一時フォルダへ向けても デスクトップだけは SHGetKnownFolderPath で**本物**を引き、registry=True 既定で本物の Uninstall\Fullseye も計画に入り、 台帳が壊れた状態(= 既知の場所へ切り替わる)で --yes が本物のショートカットと登録を消しうる。 だから場所・環境・レジストリを全部、この試験の一時フォルダに固定して渡す。
 
 ## `tests/test_kendama_combo.py`
 

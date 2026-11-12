@@ -17,6 +17,7 @@
 """
 from __future__ import annotations
 
+import ctypes
 import importlib.util
 import json
 import os
@@ -71,7 +72,6 @@ def _known_desktop() -> Optional[Path]:
     if sys.platform != "win32":
         return None
     try:
-        import ctypes
         from ctypes import wintypes
 
         class _GUID(ctypes.Structure):
@@ -151,6 +151,94 @@ def gui_available() -> bool:
 
 
 # --------------------------------------------------------------------------- Windows(.lnk)
+# ★.lnk は IShellLinkW(Unicode の COM)を ctypes で直接呼んで読み書きする。
+#   以前は PowerShell の WScript.Shell(``$lnk.TargetPath = ...``)だったが、WSH の ShortcutLink は文字列を**システムの ANSI
+#   コードページ**で持つので、そのコードページに無い文字(英語の Windows の日本語のユーザー名、日本語の Windows のタイ語・ヘブライ語
+#   など)が ``?`` に化けて ``Unable to save shortcut`` になった(2026-11-13、CI の windows-latest で判明。環境変数で渡した文字は
+#   PowerShell まで無傷で届いていて、壊すのは WSH の COM 層)。IShellLinkW + IPersistFile は全部 Unicode で、PowerShell も
+#   Add-Type も要らない(Constrained Language Mode でも動く)。COM が使えない環境のためだけに、従来の PowerShell 経路を残す。
+class _GUID(ctypes.Structure):
+    _fields_ = [("Data1", ctypes.c_ulong), ("Data2", ctypes.c_ushort), ("Data3", ctypes.c_ushort),
+                ("Data4", ctypes.c_ubyte * 8)]
+
+
+_CLSID_SHELLLINK = "{00021401-0000-0000-C000-000000000046}"
+_IID_ISHELLLINKW = "{000214F9-0000-0000-C000-000000000046}"
+_IID_IPERSISTFILE = "{0000010B-0000-0000-C000-000000000046}"
+
+
+def _guid(text: str) -> "_GUID":
+    g = _GUID()
+    ctypes.OleDLL("ole32").CLSIDFromString(text, ctypes.byref(g))
+    return g
+
+
+def _vt(obj: "ctypes.c_void_p", index: int, *argtypes, restype=None):
+    """COM オブジェクトの仮想関数表の ``index`` 番目を呼び出し可能にする(restype 省略は HRESULT。失敗は OSError)。"""
+    vtbl = ctypes.cast(obj, ctypes.POINTER(ctypes.POINTER(ctypes.c_void_p)))[0]
+    proto = ctypes.WINFUNCTYPE(restype or ctypes.HRESULT, ctypes.c_void_p, *argtypes)
+    return proto(vtbl[index])
+
+
+class _ComLink:
+    """IShellLinkW + IPersistFile の最小の包み(with で使う)。"""
+
+    def __enter__(self) -> "_ComLink":
+        if sys.platform != "win32":
+            raise OSError("IShellLink is Windows-only")
+        ole32 = ctypes.OleDLL("ole32")
+        try:
+            ole32.CoInitializeEx(None, 2)               # COINIT_APARTMENTTHREADED。既に初期化済み(S_FALSE / 別の方式)は無視する
+        except OSError:
+            pass
+        self.link = ctypes.c_void_p()
+        iid = _guid(_IID_ISHELLLINKW)
+        clsid = _guid(_CLSID_SHELLLINK)
+        ole32.CoCreateInstance(ctypes.byref(clsid), None, 1, ctypes.byref(iid), ctypes.byref(self.link))   # CLSCTX_INPROC_SERVER
+        self.persist = ctypes.c_void_p()
+        piid = _guid(_IID_IPERSISTFILE)
+        _vt(self.link, 0, ctypes.POINTER(_GUID), ctypes.POINTER(ctypes.c_void_p))(self.link, ctypes.byref(piid),
+                                                                                  ctypes.byref(self.persist))
+        return self
+
+    def __exit__(self, *exc) -> None:
+        for p in (getattr(self, "persist", None), getattr(self, "link", None)):
+            if p is not None and p.value:
+                _vt(p, 2, restype=ctypes.c_ulong)(p)    # Release
+
+    # IShellLinkW(仮想関数表の番号): 3 GetPath 8 GetWorkingDirectory 10 GetArguments 16 GetIconLocation
+    #                              7 SetDescription 9 SetWorkingDirectory 11 SetArguments 15 SetShowCmd 17 SetIconLocation 20 SetPath
+    def set(self, target: str, arguments: str, workdir: str, icon: str, description: str) -> None:
+        w = ctypes.c_wchar_p
+        _vt(self.link, 20, w)(self.link, target)
+        _vt(self.link, 11, w)(self.link, arguments)
+        _vt(self.link, 9, w)(self.link, workdir)
+        _vt(self.link, 17, w, ctypes.c_int)(self.link, icon, 0)
+        _vt(self.link, 7, w)(self.link, description)
+        _vt(self.link, 15, ctypes.c_int)(self.link, 1)              # SW_SHOWNORMAL
+
+    def save(self, path: str) -> None:
+        _vt(self.persist, 6, ctypes.c_wchar_p, ctypes.c_int)(self.persist, path, 1)     # IPersistFile::Save(path, fRemember)
+
+    def load(self, path: str) -> None:
+        _vt(self.persist, 5, ctypes.c_wchar_p, ctypes.c_ulong)(self.persist, path, 0)   # IPersistFile::Load(path, STGM_READ)
+
+    def get(self) -> Dict[str, str]:
+        buf = ctypes.create_unicode_buffer(32768)
+        out: Dict[str, str] = {}
+        _vt(self.link, 3, ctypes.c_wchar_p, ctypes.c_int, ctypes.c_void_p, ctypes.c_ulong)(self.link, buf, 32768, None, 0)
+        out["Target"] = buf.value
+        _vt(self.link, 10, ctypes.c_wchar_p, ctypes.c_int)(self.link, buf, 32768)
+        out["Arguments"] = buf.value
+        idx = ctypes.c_int(0)
+        _vt(self.link, 16, ctypes.c_wchar_p, ctypes.c_int, ctypes.POINTER(ctypes.c_int))(self.link, buf, 32768, ctypes.byref(idx))
+        out["Icon"] = "%s,%d" % (buf.value, idx.value)
+        _vt(self.link, 8, ctypes.c_wchar_p, ctypes.c_int)(self.link, buf, 32768)
+        out["WorkingDir"] = buf.value
+        return out
+
+
+# 従来の PowerShell(WScript.Shell)経路。COM が使えない環境のための退避(ANSI コードページに無い文字のパスでは壊れる)。
 _PS_WRITE = """
 $ErrorActionPreference = 'Stop'
 $sh = New-Object -ComObject WScript.Shell
@@ -177,7 +265,7 @@ $l = $sh.CreateShortcut($env:FS_LNK)
 
 
 def powershell_path(env: Optional[Dict[str, str]] = None) -> Path:
-    """Windows PowerShell 5.1 を **絶対パス**で返す。
+    """Windows PowerShell 5.1 を **絶対パス**で返す(退避の経路だけが使う)。
 
     ``shutil.which`` は Python 3.11 の Windows で作業フォルダを PATH より先に引く(置かれた powershell.bat が走る)。
     %SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe だけを使い、無ければ明示的なエラーにする。"""
@@ -197,7 +285,7 @@ def _powershell(script: str, extra_env: Dict[str, str]) -> str:
     env.update(extra_env)
     try:
         r = subprocess.run([exe, "-NoProfile", "-NonInteractive", "-Command", script], env=env,
-                           capture_output=True, text=True, encoding="utf-8", timeout=60)
+                           capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=60)
     except (OSError, subprocess.SubprocessError) as e:
         raise ShortcutError("could not run PowerShell to write the shortcut: %s" % e) from e
     if r.returncode != 0:
@@ -206,17 +294,12 @@ def _powershell(script: str, extra_env: Dict[str, str]) -> str:
     return r.stdout
 
 
-def write_lnk(lnk: Path, target: Path, arguments: str, icon: Path, workdir: Path,
-              description: str = "Fullseye Studio - visual pipeline workbench") -> None:
-    lnk.parent.mkdir(parents=True, exist_ok=True)
+def _write_lnk_via_powershell(lnk: Path, target: Path, arguments: str, icon: Path, workdir: Path, description: str) -> None:
     _powershell(_PS_WRITE, {"FS_LNK": str(lnk), "FS_TARGET": str(target), "FS_ARGS": arguments,
                             "FS_WORKDIR": str(workdir), "FS_ICON": str(icon), "FS_DESC": description})
-    if not lnk.is_file():
-        raise ShortcutError("PowerShell reported success but %s was not created" % lnk)
 
 
-def read_lnk(lnk: Path) -> Dict[str, str]:
-    """.lnk を読み戻して Target / Arguments / Icon / WorkingDir を返す(検証用)。"""
+def _read_lnk_via_powershell(lnk: Path) -> Dict[str, str]:
     out = _powershell(_PS_READ, {"FS_LNK": str(lnk)})
     res: Dict[str, str] = {}
     for line in out.splitlines():
@@ -224,6 +307,29 @@ def read_lnk(lnk: Path) -> Dict[str, str]:
             k, v = line.split("=", 1)
             res[k.strip()] = v.strip()
     return res
+
+
+def write_lnk(lnk: Path, target: Path, arguments: str, icon: Path, workdir: Path,
+              description: str = "Fullseye Studio - visual pipeline workbench") -> None:
+    lnk.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with _ComLink() as c:
+            c.set(str(target), arguments, str(workdir), str(icon), description)
+            c.save(str(lnk))
+    except Exception:       # noqa: BLE001 — COM が使えない環境だけ、従来の経路へ
+        _write_lnk_via_powershell(lnk, target, arguments, icon, workdir, description)
+    if not lnk.is_file():
+        raise ShortcutError("the shortcut was reported as written but %s was not created" % lnk)
+
+
+def read_lnk(lnk: Path) -> Dict[str, str]:
+    """.lnk を読み戻して Target / Arguments / Icon / WorkingDir を返す(検証用)。"""
+    try:
+        with _ComLink() as c:
+            c.load(str(lnk))
+            return c.get()
+    except Exception:       # noqa: BLE001
+        return _read_lnk_via_powershell(lnk)
 
 
 # --------------------------------------------------------------------------- 台帳(何を作ったかの記録)
@@ -503,10 +609,12 @@ def register_uninstall_entry(icon: Path, key: Optional[str] = None, script: Opti
 
 def unregister_uninstall_entry(key: str, allow_keys: Iterable[str] = ()) -> bool:
     """キーを消す(無ければ False)。許すのは Uninstall\\Fullseye(完全一致)と、引数で明示された物だけ。"""
-    import winreg
     why = check_ledger_item("regkey", key, allow_keys=allow_keys)
     if why:
         raise ShortcutError("refusing to delete registry key: %s" % why)
+    if sys.platform != "win32":
+        raise ShortcutError("the registry exists only on Windows; cannot delete registry key %s" % key)
+    import winreg
     try:
         winreg.DeleteKey(winreg.HKEY_CURRENT_USER, key)
         return True
@@ -517,6 +625,8 @@ def unregister_uninstall_entry(key: str, allow_keys: Iterable[str] = ()) -> bool
 
 
 def regkey_exists(key: str) -> bool:
+    if sys.platform != "win32":         # Linux / macOS にレジストリは無い(台帳に regkey の行があっても落ちない = 「無い」)
+        return False
     import winreg
     try:
         winreg.CloseKey(winreg.OpenKey(winreg.HKEY_CURRENT_USER, key))
