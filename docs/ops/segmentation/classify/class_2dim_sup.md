@@ -6,10 +6,10 @@ in: image2d × image2d × mask
 out: mask
 halcon: class_2dim_sup
 gpu: なし
-examples: [halcon_segmentation_tour]
+examples: [halcon_segmentation_tour, poc_surface_defect_classifiers]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # class_2dim_sup — SEGMENTATION `classify` op
@@ -38,6 +38,7 @@ version: 1.0.0  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [halcon_segmentation_tour](../../../../examples/halcon_segmentation_tour.py) — `py -3.11 examples/halcon_segmentation_tour.py`
+- [poc_surface_defect_classifiers](../../../../examples/poc_surface_defect_classifiers.py) — `py -3.11 examples/poc_surface_defect_classifiers.py`
 
 ## 型が繋がる次の op(`mask` を入力に取れる)
 

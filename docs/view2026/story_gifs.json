@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 218,
+  "target_count": 223,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -19457,6 +19457,194 @@
         "en": "Where the Warehouse Dwell Came From — Count Waiting Without Its Kind and Everything Is Just Congestion"
       }
     },
+    "poc_cd_spin_joint": {
+      "representative": "01_estimates_by_mode.png",
+      "status": "gif",
+      "selected": [
+        "01_estimates_by_mode.png",
+        "02_cl_world_vs_model.png",
+        "03_omega_bias_vs_dip.png",
+        "04_degeneracy_valley.png",
+        "06_cd_scatter_vs_length.png",
+        "09_cd_regimes.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_cd_spin_joint/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_estimates_by_mode.png",
+              "content_box": [
+                0,
+                282,
+                720,
+                125
+              ]
+            },
+            {
+              "file": "02_cl_world_vs_model.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_omega_bias_vs_dip.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_degeneracy_valley.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.9825
+            },
+            {
+              "file": "06_cd_scatter_vs_length.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "09_cd_regimes.png",
+              "content_box": [
+                0,
+                277,
+                720,
+                136
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 5.279605
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 189591,
+          "color_mad": [
+            0.0349,
+            0.0742,
+            0.056,
+            0.0348,
+            0.0975,
+            0.0313
+          ],
+          "max_color_mad": 0.0975,
+          "source_sha256": "ecb559681d3f38cfd1940e24712d2e4adc8a1863a2a3f517e37a8d74ccbac220"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_cd_spin_joint/story.en.gif",
+          "frames": [
+            {
+              "file": "01_estimates_by_mode.png",
+              "content_box": [
+                0,
+                282,
+                720,
+                125
+              ]
+            },
+            {
+              "file": "02_cl_world_vs_model.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "03_omega_bias_vs_dip.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_degeneracy_valley.png",
+              "content_box": [
+                0,
+                224,
+                720,
+                241
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.9825
+            },
+            {
+              "file": "06_cd_scatter_vs_length.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "09_cd_regimes.png",
+              "content_box": [
+                0,
+                277,
+                720,
+                136
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 5.279605
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 189591,
+          "color_mad": [
+            0.0349,
+            0.0742,
+            0.056,
+            0.0348,
+            0.0975,
+            0.0313
+          ],
+          "max_color_mad": 0.0975,
+          "source_sha256": "52e9495f6f47f236ebcdaed25bf77df29dd3859f6ff61059d6e6e60fdd574ac9"
+        }
+      },
+      "reason": null,
+      "cover": "01_estimates_by_mode.png",
+      "still": "articles/assets/poc/poc_cd_spin_joint/01_estimates_by_mode.png",
+      "alt": {
+        "ja": "ω を模様から取り、軌跡から C_d・C_L を読むと世界の実効値との差は C_d 0.5 %・C_L 1.9 % 以内。軌跡だけで C_d と ω を同時に読むと C_d は 0.4 % 以内だが、ω は当てはめの C_L 模型が世界の係数を外したぶん 51〜56 % 小さく出る。真値は全部この PoC が仕込んだ世界の値で、観測は等方ガウス雑音の位置(楽観)・回転は一定(減衰なし)。",
+        "en": "Reading Drag and Spin from a Trajectory at Once — A Missed C_L Coefficient Drags the Spin Along, and a Narrow Spin-Ratio Range Cannot Separate Them (Measuring When It Can Be Read in a Self-Made, Different-Model World)"
+      }
+    },
     "poc_periodic_video_boundary": {
       "representative": "02_loop.gif",
       "status": "gif",
@@ -27669,6 +27857,194 @@
         "en": "How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods"
       }
     },
+    "poc_bottle_pattern_inverse": {
+      "representative": "01_checker_through_bottle.png",
+      "status": "gif",
+      "selected": [
+        "01_checker_through_bottle.png",
+        "02_profile_fit.png",
+        "03_recovery_table.png",
+        "04_noise_trials.png",
+        "09_level_two_ways.png",
+        "10_eccentric_model_error.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_bottle_pattern_inverse/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_checker_through_bottle.png",
+              "content_box": [
+                0,
+                21,
+                720,
+                647
+              ]
+            },
+            {
+              "file": "02_profile_fit.png",
+              "content_box": [
+                0,
+                155,
+                720,
+                379
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.9
+            },
+            {
+              "file": "03_recovery_table.png",
+              "content_box": [
+                0,
+                129,
+                720,
+                431
+              ]
+            },
+            {
+              "file": "04_noise_trials.png",
+              "content_box": [
+                0,
+                263,
+                720,
+                163
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.417614
+            },
+            {
+              "file": "09_level_two_ways.png",
+              "content_box": [
+                0,
+                121,
+                720,
+                447
+              ]
+            },
+            {
+              "file": "10_eccentric_model_error.png",
+              "content_box": [
+                0,
+                77,
+                720,
+                535
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 425634,
+          "color_mad": [
+            0.1201,
+            0.0988,
+            0.0347,
+            0.0417,
+            0.0287,
+            0.0349
+          ],
+          "max_color_mad": 0.1201,
+          "source_sha256": "2fc299d7a23b122be5aed1b8789420f9a15ee5277451d22b6cf77c7a467c08f3"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_bottle_pattern_inverse/story.en.gif",
+          "frames": [
+            {
+              "file": "01_checker_through_bottle.png",
+              "content_box": [
+                0,
+                21,
+                720,
+                647
+              ]
+            },
+            {
+              "file": "02_profile_fit.png",
+              "content_box": [
+                0,
+                155,
+                720,
+                379
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.9
+            },
+            {
+              "file": "03_recovery_table.png",
+              "content_box": [
+                0,
+                129,
+                720,
+                431
+              ]
+            },
+            {
+              "file": "04_noise_trials.png",
+              "content_box": [
+                0,
+                263,
+                720,
+                163
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.417614
+            },
+            {
+              "file": "09_level_two_ways.png",
+              "content_box": [
+                0,
+                121,
+                720,
+                447
+              ]
+            },
+            {
+              "file": "10_eccentric_model_error.png",
+              "content_box": [
+                0,
+                77,
+                720,
+                535
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 425634,
+          "color_mad": [
+            0.1201,
+            0.0988,
+            0.0347,
+            0.0417,
+            0.0287,
+            0.0349
+          ],
+          "max_color_mad": 0.1201,
+          "source_sha256": "374839f7a35d24f852348d0ac79bac3c905cfbecbcca8705fca40ea3e85f268e"
+        }
+      },
+      "reason": null,
+      "cover": "01_checker_through_bottle.png",
+      "still": "articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png",
+      "alt": {
+        "ja": "R 30 mm・壁 1.5 mm・n 1.52 の瓶、水 1.333。各画素の光線を追跡して背景のどこを見ているか(u)を求め、そこの市松を描いた。逆から見ると、この歪みが瓶を測る手がかり。",
+        "en": "Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and What Cannot Be Detected"
+      }
+    },
     "poc_lens_global_search": {
       "representative": "01_lens_global_search.png",
       "status": "static",
@@ -31257,6 +31633,286 @@
         "en": "Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner"
       }
     },
+    "poc_caltab_chain_truth": {
+      "representative": "01_caltab_chain.png",
+      "status": "gif",
+      "selected": [
+        "01_caltab_chain.png",
+        "02_caltab_chain_params.png",
+        "03_caltab_chain_noise.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_caltab_chain_truth/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_caltab_chain.png",
+              "content_box": [
+                0,
+                265,
+                720,
+                160
+              ]
+            },
+            {
+              "file": "02_caltab_chain_params.png",
+              "content_box": [
+                0,
+                152,
+                720,
+                385
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.869485
+            },
+            {
+              "file": "03_caltab_chain_noise.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 148348,
+          "color_mad": [
+            0.9083,
+            0.031,
+            0.0607
+          ],
+          "max_color_mad": 0.9083,
+          "source_sha256": "a5052eb07600311f928e6e446582acf480890a5ce31ea083bb91c3e71ede7d32"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_caltab_chain_truth/story.en.gif",
+          "frames": [
+            {
+              "file": "01_caltab_chain.png",
+              "content_box": [
+                0,
+                265,
+                720,
+                160
+              ]
+            },
+            {
+              "file": "02_caltab_chain_params.png",
+              "content_box": [
+                0,
+                152,
+                720,
+                385
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.869485
+            },
+            {
+              "file": "03_caltab_chain_noise.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 148348,
+          "color_mad": [
+            0.9083,
+            0.031,
+            0.0607
+          ],
+          "max_color_mad": 0.9083,
+          "source_sha256": "d9f1d018f0db494fe81927ba78b63052284c6753b9fdb0ded05f1eb78806b505"
+        }
+      },
+      "reason": null,
+      "cover": "01_caltab_chain.png",
+      "still": "articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png",
+      "alt": {
+        "ja": "create_caltab -> rendered camera -> find_caltab -> camera_calibration_lm",
+        "en": "A Circle-Mark Calibration Plate End to End (Synthetic Imaging): Binary-Centroid Quantisation Sets an fx Floor of About 0.2 % rms (−0.45 to +0.33 % Without Noise, Depending on the Layout)"
+      }
+    },
+    "poc_real_tum_rgbd_slam": {
+      "representative": "02_trajectory.png",
+      "status": "gif",
+      "selected": [
+        "02_trajectory.png",
+        "01_depth_and_tiles.png",
+        "03_rpe_steps.png",
+        "04_sigma_vs_z.png",
+        "05_verdicts.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_tum_rgbd_slam/story.ja.gif",
+          "frames": [
+            {
+              "file": "02_trajectory.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "01_depth_and_tiles.png",
+              "content_box": [
+                0,
+                210,
+                720,
+                269
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.677138
+            },
+            {
+              "file": "03_rpe_steps.png",
+              "content_box": [
+                0,
+                180,
+                720,
+                329
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.190278
+            },
+            {
+              "file": "04_sigma_vs_z.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_verdicts.png",
+              "content_box": [
+                0,
+                53,
+                720,
+                584
+              ]
+            }
+          ],
+          "frame_count": 5,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 285230,
+          "color_mad": [
+            0.1169,
+            1.1696,
+            0.2455,
+            0.0926,
+            0.0221
+          ],
+          "max_color_mad": 1.1696,
+          "source_sha256": "e94fb114bd7d855c0299bf52cd13fb2eab223d1e7678d64ce4e8d714d3ca195a"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_tum_rgbd_slam/story.en.gif",
+          "frames": [
+            {
+              "file": "02_trajectory.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "01_depth_and_tiles.png",
+              "content_box": [
+                0,
+                210,
+                720,
+                269
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.677138
+            },
+            {
+              "file": "03_rpe_steps.png",
+              "content_box": [
+                0,
+                180,
+                720,
+                329
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.190278
+            },
+            {
+              "file": "04_sigma_vs_z.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_verdicts.png",
+              "content_box": [
+                0,
+                53,
+                720,
+                584
+              ]
+            }
+          ],
+          "frame_count": 5,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 285230,
+          "color_mad": [
+            0.1169,
+            1.1696,
+            0.2455,
+            0.0926,
+            0.0221
+          ],
+          "max_color_mad": 1.1696,
+          "source_sha256": "ab88089c80fe326fc9f2f97be34c0354754fd942c139eea47dbc95f387062cf4"
+        }
+      },
+      "reason": null,
+      "cover": "02_trajectory.png",
+      "still": "articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png",
+      "alt": {
+        "ja": "カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。",
+        "en": "On public depth images of a desk, frame-to-frame alignment was checked against motion-capture truth. Error fell to 0.42 of no alignment, yet it was no better than assuming steady speed. Small-window plane residuals grew with distance, but quantisation and window size blur whether the law is a square."
+      }
+    },
     "poc_light_section_step_weld_floor": {
       "representative": "01_height_map.png",
       "status": "gif",
@@ -33821,6 +34477,202 @@
       "alt": {
         "ja": "360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。",
         "en": "CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume"
+      }
+    },
+    "poc_surface_defect_classifiers": {
+      "representative": "01_defect_patches.png",
+      "status": "gif",
+      "selected": [
+        "01_defect_patches.png",
+        "02_stain_pixels.png",
+        "03_stain_pixel_iou.png",
+        "04_classifier_accuracy.png",
+        "05_gmm_confusion_reject.png",
+        "06_accuracy_by_weight.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_surface_defect_classifiers/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_defect_patches.png",
+              "content_box": [
+                0,
+                160,
+                720,
+                369
+              ]
+            },
+            {
+              "file": "02_stain_pixels.png",
+              "content_box": [
+                0,
+                268,
+                720,
+                154
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.681529
+            },
+            {
+              "file": "03_stain_pixel_iou.png",
+              "content_box": [
+                0,
+                222,
+                720,
+                245
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.9375
+            },
+            {
+              "file": "04_classifier_accuracy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                233
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.085
+            },
+            {
+              "file": "05_gmm_confusion_reject.png",
+              "content_box": [
+                0,
+                167,
+                720,
+                356
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.02
+            },
+            {
+              "file": "06_accuracy_by_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 350630,
+          "color_mad": [
+            0.4347,
+            0.255,
+            0.0356,
+            0.0375,
+            0.0242,
+            0.0998
+          ],
+          "max_color_mad": 0.4347,
+          "source_sha256": "c1823ff11a09656f842873f09415759ee4d67717cbb3246b19eaad2f6d67d354"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_surface_defect_classifiers/story.en.gif",
+          "frames": [
+            {
+              "file": "01_defect_patches.png",
+              "content_box": [
+                0,
+                160,
+                720,
+                369
+              ]
+            },
+            {
+              "file": "02_stain_pixels.png",
+              "content_box": [
+                0,
+                268,
+                720,
+                154
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.681529
+            },
+            {
+              "file": "03_stain_pixel_iou.png",
+              "content_box": [
+                0,
+                222,
+                720,
+                245
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.9375
+            },
+            {
+              "file": "04_classifier_accuracy.png",
+              "content_box": [
+                0,
+                228,
+                720,
+                233
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.085
+            },
+            {
+              "file": "05_gmm_confusion_reject.png",
+              "content_box": [
+                0,
+                167,
+                720,
+                356
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.02
+            },
+            {
+              "file": "06_accuracy_by_weight.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 350630,
+          "color_mad": [
+            0.4347,
+            0.255,
+            0.0356,
+            0.0375,
+            0.0242,
+            0.0998
+          ],
+          "max_color_mad": 0.4347,
+          "source_sha256": "5ef45275bee67d64f11b28162af2082887281805eb47b9726379167ca5f6fd11"
+        }
+      },
+      "reason": null,
+      "cover": "01_defect_patches.png",
+      "still": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
+      "alt": {
+        "ja": "rendered (synthetic) ground-metal patches (height defects shade, the stain changes colour)",
+        "en": "Synthetic ground-metal patches carry scratches, dents and stains, and learned models sort them. Only 0.324 of the scratches lying along the lay were found, and the cause is not identified. A single-feature outlier check rejected unseen pits more often than the learned density model did."
       }
     }
   }

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3835,
- "n_notes": 3841,
+ "n_ops": 3838,
+ "n_notes": 3844,
  "notes": {
   "vol_dilate": [
    {
@@ -16495,6 +16495,16 @@
     "in": "signal × points × table",
     "out": "table",
     "path": "docs/ops/drive/ball/fit_spin.md"
+   }
+  ],
+  "fit_spin_aero": [
+   {
+    "op": "fit_spin_aero",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal × points × table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/fit_spin_aero.md"
    }
   ],
   "flight_fit": [
@@ -33740,6 +33750,24 @@
     "category": "watermedia",
     "out": "table",
     "path": "docs/ops/optics/watermedia/water_attenuation.md"
+   }
+  ],
+  "bottle_background_map": [
+   {
+    "op": "bottle_background_map",
+    "dim": "optics",
+    "category": "watervision",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/bottle_background_map.md"
+   }
+  ],
+  "bottle_fit_from_pattern": [
+   {
+    "op": "bottle_fit_from_pattern",
+    "dim": "optics",
+    "category": "watervision",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/bottle_fit_from_pattern.md"
    }
   ],
   "bottle_image": [

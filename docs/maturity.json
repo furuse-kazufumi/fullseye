@@ -167,6 +167,13 @@
      "gate": "tests/test_example_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
+    },
+    {
+     "id": "poc_caltab_chain_truth",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
     }
    ]
   },
@@ -2163,6 +2170,13 @@
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
+    },
+    {
+     "id": "poc_surface_defect_classifiers",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
     }
    ]
   },
@@ -2568,13 +2582,20 @@
    "category": "光と色",
    "note": "docs/capabilities/water-inspection-images.md",
    "status": "verified-synthetic",
-   "ops_total": 7,
-   "ops_named_in_tests": 7,
+   "ops_total": 9,
+   "ops_named_in_tests": 9,
    "ops_not_named_in_tests": [],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_water_inspection_images",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_bottle_pattern_inverse",
      "data": "synthetic",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
@@ -2647,10 +2668,10 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 487,
-  "run_by_the_poc_gate": 310,
+  "examples2d_total": 492,
+  "run_by_the_poc_gate": 315,
   "run_by_the_example_gate": 177,
-  "scripts_on_disk": 495,
+  "scripts_on_disk": 500,
   "excluded_from_the_registry": 8,
   "excluded_but_run_by_a_named_test": {
    "lensfile_tolerance_worst_mtf": [

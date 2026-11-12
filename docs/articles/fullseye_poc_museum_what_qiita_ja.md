@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **148 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **149 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 51 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 52 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -1717,6 +1717,44 @@ py -3.11 examples/poc_ct_casting_sparse_views.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ct_casting_sparse_views)
 
 使用 op(ノートへ): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_scan/ct_adjoint_project.html) · [`ct_dual_energy_reconstruct`](https://furuse.work/ops/tomography/ct_scan/ct_dual_energy_reconstruct.html) · [`ct_forward_project`](https://furuse.work/ops/tomography/ct_scan/ct_forward_project.html) · [`ct_scan_geometry`](https://furuse.work/ops/tomography/ct_scan/ct_scan_geometry.html) · [`ellipsoid_phantom`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_phantom.html) · [`ellipsoid_projections`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_projections.html) · [`fdk_reconstruct`](https://furuse.work/ops/tomography/ct_scan/fdk_reconstruct.html) · [`os_sart_reconstruct`](https://furuse.work/ops/tomography/ct_scan/os_sart_reconstruct.html) · [`shepp_logan_3d`](https://furuse.work/ops/tomography/ct_scan/shepp_logan_3d.html) · [`sirt_reconstruct`](https://furuse.work/ops/tomography/ct_scan/sirt_reconstruct.html) · [`tv_reconstruct`](https://furuse.work/ops/tomography/ct_scan/tv_reconstruct.html) · [`vol_rle_centroid`](https://furuse.work/ops/3d/rle_region/vol_rle_centroid.html) · [`vol_rle_components`](https://furuse.work/ops/3d/rle_region/vol_rle_components.html) · [`vol_rle_volume`](https://furuse.work/ops/3d/rle_region/vol_rle_volume.html)
+
+## No.2026.316 —— 描画した金属片の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は約 3 本に 2 本を見落とし(原因は未特定)、知らない孔の拒否は特徴 1 個の外れ値判定に及ばない
+
+研削した金属の小片を描画で合成し、傷・打痕・汚れを学習した分類器で仕分けた。筋に沿う傷は 0.324 の割合でしか見つからず、原因は特定できていない。知らない孔を拒否する率は、特徴ひとつの外れ値判定のほうが高かった。
+
+[![描画した金属片の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は約 3 本に 2 本を見落とし(原因は未特定)、知らない孔の拒否は特徴 1 個の外れ値判定に及ばない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png)
+
+*↑ **描画した金属片の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は約 3 本に 2 本を見落とし(原因は未特定)、知らない孔の拒否は特徴 1 個の外れ値判定に及ばない** ―― 研削した金属の小片(96x96 px)に、傷(V 溝)・打痕(窪み)・汚れ(茶色の反射率)・腐食の孔を物理的に描いた合成画像。高さの欠陥は陰影だけを、汚れは色だけを変え、欠陥の重さは 0〜1 で振る。画素の段では、正常な金属の画素から learn_ndim_norm で正規分布を学び、class_ndim_norm で異常な画素を塗る。汚れの画素は classify_image_class_lut で IoU 0.915、class_2dim_sup で 0.729、class_2dim_unsup で 0.535(標準化したとき)。LUT の切れ目は、学習側の汚れの小片と真のマスクを使った教師ありの最小誤り点である。ところが学習なしの基準線(1 枚ごとの大津の 2 値化を色度にかけるだけ)は 0.939 で LUT を上回った。LUT が勝つのは、汚れの無い小片で何も塗らないこと(誤検出 0.0000、大津は画素の 0.51)だけである。領域の特徴 7 個で GMM・MLP・SVM・k-NN を学習した。種 5 本の正解率は 0.871〜0.886(±0.02)。scikit-learn の第 2 実装との差は、許容差 3·sqrt(2p(1−p)/n) の 0.41 倍以内に収まった。GMM(成分 1)は閉形式の 2 次判別と 100 % 一致する。学習に無い腐食の孔は、検証側で決めた対数密度の閾値で 94.8 % を拒否し、既知の小片の誤拒否は 6.0 % だった。しかし特徴 1 個(異常画素の連結成分の数、検証側の両側 2.5 % 点)の外れ値判定のほうが孔を 97.6 % 拒否し、誤拒否は 2.1 % だった(種 20 本の合算で 98.2 % 対 93.9 %)。照明の方位を 90・180・270° 回すと GMM の拒否率は 80.0・96.4・79.2 % と動くので、94.8 % は基準の照明 1 条件の値である。ラベルを入れ替えると正解率は 0.238 に落ちる。汚れの再現率 100 % は、色を変える欠陥が汚れだけだからで、特徴の漏れではない。研削の筋から 15° 以内の傷は、種 20 本の合算で再現率 0.324(145 本中 47、Wilson 95 % 区間 0.253〜0.404)と、45° より立った傷の 0.944 より大きく落ちる。原因は未特定で、y 方向の勾配を足しても 0.300、|dY/dx| の代わりにしても 0.225、照明の方位を回しても 0.050〜0.425 にとどまった(各 n = 40、基準 0.275)。*
+
+[![painting the stain pixel by pixel](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/02_stain_pixels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/02_stain_pixels.png)
+
+*↑ 測定の図 ―― painting the stain pixel by pixel*
+
+[![LUT cut: supervised on training stain patches and true masks; Otsu baseline trains nothing](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/03_stain_pixel_iou_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/03_stain_pixel_iou.png)
+
+*↑ LUT cut: supervised on training stain patches and true masks; Otsu baseline trains nothing*
+
+[![tol = 3 sqrt(2p(1-p)/n) + 1/n; same features, same split](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/04_classifier_accuracy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/04_classifier_accuracy.png)
+
+*↑ tol = 3 sqrt(2p(1-p)/n) + 1/n; same features, same split*
+
+[![pits never seen in training: 95 % rejected; known patches rejected 6.0 %](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/05_gmm_confusion_reject_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/05_gmm_confusion_reject.png)
+
+*↑ pits never seen in training: 95 % rejected; known patches rejected 6.0 %*
+
+[![5 seeds, test split; best overall knn 0.886; axis from 0](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/06_accuracy_by_weight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/06_accuracy_by_weight.png)
+
+*↑ 5 seeds, test split; best overall knn 0.886; axis from 0*
+
+```
+py -3.11 examples/poc_surface_defect_classifiers.py
+```
+
+ソース: [examples/poc_surface_defect_classifiers.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_surface_defect_classifiers.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_surface_defect_classifiers)
+
+使用 op(ノートへ): [`class_2dim_sup`](https://furuse.work/ops/segmentation/classify/class_2dim_sup.html) · [`class_2dim_unsup`](https://furuse.work/ops/segmentation/classify/class_2dim_unsup.html) · [`class_ndim_norm`](https://furuse.work/ops/segmentation/classify/class_ndim_norm.html) · [`classify_class_gmm`](https://furuse.work/ops/mv/classify/classify_class_gmm.html) · [`classify_class_knn`](https://furuse.work/ops/mv/classify/classify_class_knn.html) · [`classify_class_mlp`](https://furuse.work/ops/mv/classify/classify_class_mlp.html) · [`classify_class_svm`](https://furuse.work/ops/mv/classify/classify_class_svm.html) · [`classify_image_class_lut`](https://furuse.work/ops/segmentation/classify/classify_image_class_lut.html) · [`evaluate_class_gmm`](https://furuse.work/ops/mv/classify/evaluate_class_gmm.html) · [`learn_ndim_norm`](https://furuse.work/ops/segmentation/classify/learn_ndim_norm.html) · [`train_class_gmm`](https://furuse.work/ops/mv/classify/train_class_gmm.html) · [`train_class_knn`](https://furuse.work/ops/mv/classify/train_class_knn.html) · [`train_class_mlp`](https://furuse.work/ops/mv/classify/train_class_mlp.html) · [`train_class_svm`](https://furuse.work/ops/mv/classify/train_class_svm.html)
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 

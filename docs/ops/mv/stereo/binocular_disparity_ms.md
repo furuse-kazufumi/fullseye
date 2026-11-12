@@ -9,7 +9,7 @@ gpu: なし
 examples: [machine_vision_tour, poc_3d_sensor_modalities, poc_real_stereo_multiscanline]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # binocular_disparity_ms — MV `stereo` op

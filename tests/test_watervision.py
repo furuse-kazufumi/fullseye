@@ -552,6 +552,6 @@ def test_segmentation_marks_inf_folds_and_refuses_bad_input():
 def test_watervision_is_registered_in_the_optics_ledger():
     import opsoptics
     names = opsoptics.list_ops("watervision")
-    assert len(names) == 7
+    assert len(names) == 9
     assert set(names) == set(V.__all__)
     assert all(opsoptics.OPSOPTICS[n]["module"] == "watervision" for n in names)

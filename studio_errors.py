@@ -38,7 +38,7 @@ ACTION_KINDS = frozenset({
 #: 認識する失敗の種類(``title["key"]`` は ``err.<種類>``)。
 FAILURE_CLASSES = (
     "dependency", "unknown_op", "shape_mismatch", "non_finite", "empty", "out_of_range",
-    "dimension", "wrong_sort", "generic",
+    "dimension", "wrong_sort", "unreadable_file", "generic",
 )
 
 _TITLES = {
@@ -50,6 +50,7 @@ _TITLES = {
     "out_of_range": ("つまみの値が範囲の外です", "A knob value is out of range"),
     "dimension": ("入力の次元が合いません", "The input has the wrong number of dimensions"),
     "wrong_sort": ("入力の型が合いません", "The input type does not fit"),
+    "unreadable_file": ("画像を開けませんでした", "The image could not be opened"),
     "generic": ("処理を実行できませんでした", "The step could not run"),
 }
 
@@ -334,7 +335,7 @@ def _name(f: dict) -> str:
 
 
 def explain_failure(exc: Any, *, op_name: Optional[str] = None, stage_index: Optional[int] = None,
-                    inputs: Any = None) -> dict:
+                    inputs: Any = None, open_path: Optional[str] = None) -> dict:
     """例外を「原因・場所・次の行動」に分けて説明する(**提案だけ。何も実行・変更しない**)。
 
     Parameters
@@ -344,6 +345,8 @@ def explain_failure(exc: Any, *, op_name: Optional[str] = None, stage_index: Opt
     stage_index : 失敗した段の番号(0 始まり。表示は +1)。
     inputs : その op に渡した入力。リスト、または ``{ラベル: 値}``。値は配列か、
         ``{"value": 配列, "file": "left.png"}``(ファイル名つき)。
+    open_path : 画像ファイルを開けなかった失敗のとき、その path。指定すると原因を平易な 1 文
+        (無い・空・フォルダ・権限・読めない形式)で言う(分類 ``unreadable_file``)。
 
     Returns
     -------
@@ -356,6 +359,8 @@ def explain_failure(exc: Any, *, op_name: Optional[str] = None, stage_index: Opt
     * 例外の文面が壊れていても、分類が失敗しても、``generic`` で場所と ``raw`` を埋めて返す(落とさない)。
     """
     try:
+        if open_path is not None:
+            return _explain_open_failure(exc, open_path)
         return _explain(exc, op_name, stage_index, inputs)
     except Exception as inner:                               # noqa: BLE001 - 説明の失敗で本来のエラーを隠さない
         return _fallback(exc, op_name, stage_index, "internal: %s" % type(inner).__name__)
@@ -371,6 +376,40 @@ def _fallback(exc: Any, op_name: Optional[str], stage_index: Optional[int], note
         "place": {"stage": stage_index, "op": op_name, "arg": None},
         "evidence": [{"kind": "note", "text": note}] if note else [],
         "actions": [_act("open_log", "詳細ログを開く", "Open the detailed log")],
+        "raw": msg, "exc_type": type(exc).__name__,
+    }
+
+
+def _open_failure_cause(exc: Any, path: str) -> dict:
+    """画像を開けなかった理由を平易な 1 文に(ja / en)。存在・大きさ・種類は実際のファイルを見て決める。"""
+    name = os.path.basename(str(path)) or str(path)
+    try:
+        if isinstance(exc, FileNotFoundError) or not os.path.exists(path):
+            return _pair("ファイルが見つかりません: %s" % name, "The file does not exist: %s" % name)
+        if os.path.isdir(path) or isinstance(exc, IsADirectoryError):
+            return _pair("フォルダが選ばれています。画像ファイルを選んでください: %s" % name,
+                         "A folder was chosen. Pick an image file instead: %s" % name)
+        if isinstance(exc, PermissionError):
+            return _pair("このファイルを読む権限がありません: %s" % name, "No permission to read this file: %s" % name)
+        if os.path.getsize(path) == 0:
+            return _pair("空のファイル(0 バイト)です: %s" % name, "The file is empty (0 bytes): %s" % name)
+    except OSError:
+        pass
+    return _pair("読めない形式です(壊れているか、画像ではないファイル): %s" % name,
+                 "The format cannot be read (a damaged file, or not an image): %s" % name)
+
+
+def _explain_open_failure(exc: Any, path: str) -> dict:
+    msg = _safe_text(exc)
+    ti = _TITLES["unreadable_file"]
+    cause = _open_failure_cause(exc, path)
+    return {
+        # 見出しの位置に原因そのものを置く(最初の 1 行で「なぜ開けないか」が分かる。P-06)
+        "class": "unreadable_file", "title": {"key": "err.unreadable_file", "ja": cause["ja"], "en": cause["en"]},
+        "kind_title": {"ja": ti[0], "en": ti[1]},
+        "cause": cause,
+        "place": {"stage": None, "op": None, "arg": None},
+        "evidence": [], "actions": [_act("open_log", "詳細ログを開く", "Open the detailed log")],
         "raw": msg, "exc_type": type(exc).__name__,
     }
 
@@ -522,6 +561,11 @@ def format_failure(info: dict, lang: str = "ja") -> str:
     """
     lg = "en" if lang == "en" else "ja"
     h = _HEADERS[lg]
+    if info.get("class") == "unreadable_file":          # 1 行目が原因。場所・入力の事実は無い
+        out = [localize(info["title"], lg), ""]
+        if info.get("raw"):
+            out += [h["raw"], "  " + str(info["raw"]).replace("\n", "\n  ")]
+        return "\n".join(out)
     lines = [localize(info["title"], lg), "", h["cause"], "  " + localize(info["cause"], lg), "", h["place"]]
     pl = info.get("place") or {}
     parts = []

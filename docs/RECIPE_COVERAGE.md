@@ -44,7 +44,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | conngraph | 28 | 2 | 4 |
 | converge | 6 | 2 | 2 |
 | dem | 25 | 2 | 3 |
-| drive | 741 | 7 | 11 |
+| drive | 742 | 7 | 11 |
 | emproof | 14 | 1 | 2 |
 | fileio | 28 | 2 | 4 |
 | fit | 3 | 2 | 2 |
@@ -66,7 +66,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | multivar | 18 | 3 | 5 |
 | mv | 47 | 1 | 1 |
 | oned | 49 | 3 | 8 |
-| optics | 504 | 14 | 37 |
+| optics | 506 | 14 | 37 |
 | photon | 17 | 3 | 7 |
 | piv | 29 | 4 | 8 |
 | printpath | 23 | 1 | 3 |

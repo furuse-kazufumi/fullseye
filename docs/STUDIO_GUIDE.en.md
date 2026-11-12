@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 4d87be350a9b -->
+<!-- i18n-source-sha: 9b7064a1ea20 -->
 # The complete guide to Fullseye Studio
 
 A purpose search groups candidates by whether they fit the current input, need preprocessing, or belong elsewhere. You can try a candidate once without adding a stage. Failures in the Problems pane show the cause, location, and concrete next actions for reselecting input, comparing values, opening the log, editing a knob, or finding a suggested stage.
@@ -114,10 +114,10 @@ are adjusting can be confirmed in the stage's detail label and the tooltip.
 
 ### IMAGE (the result view)
 - **Load image… (Ctrl+O)** — load an image file as the reference frame (png/jpg/bmp/tif).
-- **Synthetic demo (Ctrl+D)** — load the synthetic demo image.
+- **Synthetic demo** — load the synthetic demo image.
 - **Save result… (Ctrl+S)** — save the displayed result as PNG.
 - **Zoom**: cursor-position zoom with the mouse wheel, pan by dragging. **Zoom + (Ctrl+=) / Zoom −
-  (Ctrl+-) / Fit (Ctrl+0) / 1:1 (Ctrl+1)**.
+  (Ctrl+-) / Fit (Ctrl+0) / 1:1 (Ctrl+Alt+1)**.
 - For a scalar feature result, a contour result, or when no image is loaded, a message is shown in
   the centre of the view (never a blank display).
 - On hover, the status bar shows `x, y, value` (RGB for colour).
@@ -125,7 +125,7 @@ are adjusting can be confirmed in the stage's detail label and the tooltip.
 ### DISPLAY & PERCEPTION (v14)
 - **Display (colour map)** — colour a 2D result for display: `gray` / `shaded relief` / `height
   (color)` / each colour map (jet, viridis, turbo, magma, plasma, inferno …).
-- **3D surface (Ctrl+3)** — show the current result as a rotatable 3D surface (only when
+- **3D surface (Ctrl+Alt+3)** — show the current result as a rotatable 3D surface (only when
   `QtDataVisualization` is present / best-effort). For inspecting a height/depth map.
 - **The perception panel (2 frames)** — with **Load frame B…** load a second frame, pick a mode
   and press **Run**:
@@ -164,11 +164,11 @@ Inside the app, **Help ▸ Keyboard shortcuts (F1)** shows the full list in a ta
 | Action | Shortcut | Action | Shortcut |
 |---|---|---|---|
 | Open image | `Ctrl+O` | Remove stage | `Del` |
-| Synthetic demo | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
+| Duplicate stage | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
 | Save result | `Ctrl+S` | Clear pipeline | `Ctrl+Shift+Backspace` |
 | Open pipeline | `Ctrl+Shift+O` | Zoom in / out | `Ctrl+=` / `Ctrl+-` |
-| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+1` |
-| Export | `Ctrl+E` | 3D surface | `Ctrl+3` |
+| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+Alt+1` |
+| Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |

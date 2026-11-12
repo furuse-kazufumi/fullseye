@@ -104,7 +104,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 Operators: `camera_calibration`, `estimate_distortion`, `intrinsic_matrix`, `decompose_intrinsics`
 
-Runnable: `camera_intrinsics_calibration`
+Runnable: `camera_intrinsics_calibration`, `poc_caltab_chain_truth`
 
 ### [Seeing the complex plane as an area (domain colouring, basins, escape time, flow)](capabilities/complex-plane-fields.md)
 
@@ -614,7 +614,7 @@ Pipeline: [`illumination_design`](ops/optics/illumination/illumination_design.md
 
 Alternatives: [`photometric_stereo_robust`](ops/specular/photometric/photometric_stereo_robust.md), [`normals_from_depth`](ops/3d/range_image/normals_from_depth.md), [`background_flatten`](ops/3d/surface_fit/background_flatten.md), [`tophat`](ops/2d/morphology/tophat.md), [`laplace_of_gauss`](ops/2d/edges/laplace_of_gauss.md), [`dem_slope`](ops/dem/surface/dem_slope.md)
 
-Runnable: `illumination_design_demo`, `photometric_stereo`, `poc_bump_coplanarity`
+Runnable: `illumination_design_demo`, `photometric_stereo`, `poc_bump_coplanarity`, `poc_surface_defect_classifiers`
 
 ### [Locate a part by template matching and move the measurement model with it](capabilities/template-alignment.md)
 
@@ -886,15 +886,15 @@ Runnable: `poc_thin_film_reflectometry`
 
 ### [How water looks in inspection images (caustics on a pool floor, a bottle seen from the side with its fill line, a wet surface, a hull seen through water)](capabilities/water-inspection-images.md)
 
-Seven ops in `watervision` (category `watervision` of `opsoptics`) turn the water physics of `watermedia` into the pictures an inspection camera records. `caustic_irradiance` gives the irradiance a collimated light leaves on a floor below a wavy surface by a photon count (vector Snell refraction, bilinear splatting, energy conserved) or by the Jacobian of the surface-to-floor map (inf and a flag at the folds); `caustic_floor_segmentation` cuts the bright web out of it so that a crack detector is not fooled. `bottle_image` ray-casts the horizontal section of every image row of a bottle (glass wall, liquid with a meniscus, bubbles; Snell, Fresnel, total internal reflection) backlit or frontlit, and `fill_level_from_image` reads the fill line back. `wet_surface_appearance` is the Lekner and Dorf (1988) model of why a wet surface is darker (trapped light: a (1 - R_s)(1 - r) / (1 - a r)) and glossier; `wet_dry_inspection_pair` renders one textured plate dry and wet and returns the defect contrast; `underwater_inspection_image` is a lamp-at-the-camera hull view with the backscatter veil and the per-pixel SNR.
+Nine ops in `watervision` (category `watervision` of `opsoptics`) turn the water physics of `watermedia` into the pictures an inspection camera records. `caustic_irradiance` gives the irradiance a collimated light leaves on a floor below a wavy surface by a photon count (vector Snell refraction, bilinear splatting, energy conserved) or by the Jacobian of the surface-to-floor map (inf and a flag at the folds); `caustic_floor_segmentation` cuts the bright web out of it so that a crack detector is not fooled. `bottle_image` ray-casts the horizontal section of every image row of a bottle (glass wall, liquid with a meniscus, bubbles; Snell, Fresnel, total internal reflection) backlit or frontlit, and `fill_level_from_image` reads the fill line back. `wet_surface_appearance` is the Lekner and Dorf (1988) model of why a wet surface is darker (trapped light: a (1 - R_s)(1 - r) / (1 - a r)) and glossier; `wet_dry_inspection_pair` renders one textured plate dry and wet and returns the defect contrast; `underwater_inspection_image` is a lamp-at-the-camera hull view with the backscatter veil and the per-pixel SNR.
 
-Operators: `caustic_irradiance`, `bottle_image`, `fill_level_from_image`, `wet_surface_appearance`, `wet_dry_inspection_pair`, `underwater_inspection_image`, `caustic_floor_segmentation`
+Operators: `caustic_irradiance`, `bottle_image`, `fill_level_from_image`, `bottle_background_map`, `bottle_fit_from_pattern`, `wet_surface_appearance`, `wet_dry_inspection_pair`, `underwater_inspection_image`, `caustic_floor_segmentation`
 
 Pipeline: [`caustic_irradiance`](ops/optics/watervision/caustic_irradiance.md) → [`caustic_floor_segmentation`](ops/optics/watervision/caustic_floor_segmentation.md)
 
 Alternatives: [`bottle_image`](ops/optics/watervision/bottle_image.md), [`fill_level_from_image`](ops/optics/watervision/fill_level_from_image.md), [`wet_surface_appearance`](ops/optics/watervision/wet_surface_appearance.md), [`wet_dry_inspection_pair`](ops/optics/watervision/wet_dry_inspection_pair.md), [`underwater_inspection_image`](ops/optics/watervision/underwater_inspection_image.md)
 
-Runnable: `poc_water_inspection_images`
+Runnable: `poc_water_inspection_images`, `poc_bottle_pattern_inverse`
 
 ### [Water and transparent media (ocean waves, Fresnel and refraction at the surface, colour and scattering under water, a bottle as a lens)](capabilities/water-transparent-media.md)
 

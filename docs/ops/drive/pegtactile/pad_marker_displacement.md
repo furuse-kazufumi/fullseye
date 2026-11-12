@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery_drive_soil_tactile, poc_knife_tactile_toughness]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # pad_marker_displacement — DRIVE `pegtactile` op

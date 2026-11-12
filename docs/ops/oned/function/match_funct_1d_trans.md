@@ -9,7 +9,7 @@ gpu: なし
 examples: [signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # match_funct_1d_trans — ONED `function` op

@@ -6112,6 +6112,23 @@
    }
   },
   {
+   "id": "poc_cd_spin_joint",
+   "group": "wing_xyt",
+   "media": "01_estimates_by_mode.png",
+   "motion": false,
+   "thumb_src": "01_estimates_by_mode.png",
+   "label": {
+    "ja": "卓球の球の抗力と回転を軌跡から同時に読む(読めない量も測る)",
+    "en": "Table-tennis drag and spin from one trajectory, and what cannot be read",
+    "zh": "从一条轨迹同时读出乒乓球的阻力与旋转(以及读不出的量)",
+    "tw": "從一條軌跡同時讀出桌球的阻力與旋轉(以及讀不出的量)",
+    "ko": "한 궤적에서 탁구공의 항력과 회전을 동시에 읽기(읽을 수 없는 것도 측정)",
+    "de": "Tischtennis: Luftwiderstand und Spin aus einer Flugbahn, und was nicht lesbar ist",
+    "hi": "Table tennis: एक trajectory से drag और spin, और जो पढ़ा नहीं जा सकता",
+    "fr": "Tennis de table : traînée et rotation depuis une seule trajectoire, et ce qui reste illisible"
+   }
+  },
+  {
    "id": "poc_table_tennis_bounce",
    "group": "wing_xyt",
    "media": "01_drop_test.mp4",
@@ -7642,6 +7659,23 @@
    }
   },
   {
+   "id": "poc_bottle_pattern_inverse",
+   "group": "wing_imaging",
+   "media": "01_checker_through_bottle.png",
+   "motion": false,
+   "thumb_src": "01_checker_through_bottle.png",
+   "label": {
+    "ja": "背景の縞の歪みからガラス瓶を逆に測る(シミュレーション): 同じ仮定の下の復元と、分けられない量・検出できない誤差",
+    "en": "Reading a glass bottle back from background stripes (simulation): recovery under shared assumptions, what cannot be separated or detected",
+    "zh": "从背景条纹的畸变反推玻璃瓶(仿真):共同假设下的复原,以及无法分开或检测的量",
+    "tw": "從背景條紋的畸變反推玻璃瓶(模擬):共同假設下的復原,以及無法分開或檢測的量",
+    "ko": "배경 줄무늬의 왜곡에서 유리병을 역으로 측정(시뮬레이션): 같은 가정 아래의 복원과, 분리·검출되지 않는 양",
+    "de": "Eine Glasflasche aus Streifenhintergrund zurücklesen (Simulation): Rekonstruktion unter gemeinsamen Annahmen, was sich nicht trennen oder erkennen lässt",
+    "hi": "पृष्ठभूमि की धारियों से काँच की बोतल को वापस पढ़ना (सिमुलेशन): साझा मान्यताओं के तहत पुनर्प्राप्ति, और जो अलग या पहचाना नहीं जा सकता",
+    "fr": "Relire une bouteille en verre à partir de rayures d'arrière-plan (simulation) : reconstruction sous hypothèses partagées, ce qui ne se sépare ni ne se détecte"
+   }
+  },
+  {
    "id": "poc_lens_global_search",
    "group": "wing_color",
    "media": "01_lens_global_search.png",
@@ -8187,6 +8221,40 @@
    }
   },
   {
+   "id": "poc_caltab_chain_truth",
+   "group": "wing_geometry",
+   "media": "01_caltab_chain.png",
+   "motion": false,
+   "thumb_src": "01_caltab_chain.png",
+   "label": {
+    "ja": "円マークの校正板を端から端まで ―― 雑音 0 でも fx は 0.45 % 外れ、その床は 2 値の重心が決める",
+    "en": "A Circle-Mark Calibration Plate End to End: fx Is 0.45 % Off Even Without Noise, and the Binary Centroid Sets That Floor",
+    "zh": "圆点标定板全流程:无噪声时 fx 仍偏 0.45 %,底限由二值质心决定",
+    "tw": "圓點校正板全流程:無雜訊時 fx 仍偏 0.45 %,底限由二值質心決定",
+    "ko": "원형 마크 보정판 전 과정: 잡음이 없어도 fx는 0.45 % 벗어나며, 그 바닥은 이진 무게중심이 정한다",
+    "de": "Kreismarken-Kalibrierplatte durchgängig: fx liegt ohne Rauschen 0,45 % daneben, der Binärschwerpunkt setzt den Boden",
+    "hi": "वृत्त-चिह्न कैलिब्रेशन प्लेट शुरू से अंत तक: शोर के बिना भी fx 0.45 % हटता है, सीमा बाइनरी सेंट्रॉइड तय करता है",
+    "fr": "Mire à pastilles de bout en bout : fx dévie de 0,45 % même sans bruit, et le barycentre binaire fixe ce plancher"
+   }
+  },
+  {
+   "id": "poc_real_tum_rgbd_slam",
+   "group": "wing_threed",
+   "media": "02_trajectory.png",
+   "motion": false,
+   "thumb_src": "02_trajectory.png",
+   "label": {
+    "ja": "公開の実測 RGB-D で位置合わせを採点する ―― 誤差は 0.42 倍に減るが、等速の仮定とほぼ同じ水準",
+    "en": "Scoring Frame-to-Frame Alignment on Public RGB-D Data: The Error Falls to 0.42 Times, About Level With a Constant-Velocity Guess",
+    "zh": "用公开的实测 RGB-D 给帧间配准打分:误差降到 0.42 倍,但与匀速假设大致相同",
+    "tw": "用公開的實測 RGB-D 為幀間對位評分:誤差降到 0.42 倍,但與等速假設大致相同",
+    "ko": "공개 실측 RGB-D로 프레임 간 정합을 채점: 오차는 0.42배로 줄지만 등속 가정과 거의 같은 수준",
+    "de": "Bild-zu-Bild-Ausrichtung auf öffentlichen RGB-D-Messdaten bewertet: Der Fehler sinkt auf das 0,42-Fache, etwa gleichauf mit der Annahme konstanter Geschwindigkeit",
+    "hi": "सार्वजनिक RGB-D मापन डेटा पर फ्रेम-से-फ्रेम संरेखण का मूल्यांकन: त्रुटि 0.42 गुना रह जाती है, पर स्थिर-वेग की धारणा के लगभग बराबर",
+    "fr": "Alignement image à image noté sur des données RGB-D publiques : l'erreur tombe à 0,42 fois, à peu près au niveau de l'hypothèse de vitesse constante"
+   }
+  },
+  {
    "id": "poc_light_section_step_weld_floor",
    "group": "wing_metrology",
    "media": "01_height_map.png",
@@ -8541,6 +8609,23 @@
     "de": "CT von Gussporen: Die beste Rekonstruktion nach RMSE ist nicht immer die beste beim Porenvolumen",
     "hi": "ढलाई के रिक्त स्थानों का CT: RMSE में सबसे अच्छा पुनर्निर्माण रिक्त आयतन में हमेशा सबसे अच्छा नहीं",
     "fr": "CT des porosités de fonderie : la meilleure reconstruction en RMSE n'est pas toujours la meilleure en volume"
+   }
+  },
+  {
+   "id": "poc_surface_defect_classifiers",
+   "group": "wing_industrial",
+   "media": "01_defect_patches.png",
+   "motion": false,
+   "thumb_src": "01_defect_patches.png",
+   "label": {
+    "ja": "金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する",
+    "en": "Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected",
+    "zh": "用训练的分类器分拣金属表面缺陷:沿磨削纹的划痕四条漏三条,未见过的蚀坑拒识 95 %",
+    "tw": "用訓練的分類器分揀金屬表面缺陷:沿研磨紋的刮痕四條漏三條,未見過的蝕坑拒識 95 %",
+    "ko": "학습한 분류기로 금속 표면 결함을 가른다: 연삭 결을 따르는 긁힘은 4개 중 3개를 놓치고, 처음 보는 부식 구멍은 95 % 거부한다",
+    "de": "Metalloberflächenfehler mit trainierten Klassifikatoren sortiert: Kratzer entlang der Schleifriefen werden zu drei Vierteln übersehen, unbekannte Poren zu 95 % abgelehnt",
+    "hi": "प्रशिक्षित वर्गीकारकों से धातु सतह दोषों की छँटाई: घिसाई की धारियों के साथ की खरोंचें 4 में 3 छूटती हैं, अनदेखे गड्ढे 95 % अस्वीकृत",
+    "fr": "Trier les défauts de surface métallique par classifieurs appris : les rayures le long des stries de meulage sont manquées trois fois sur quatre, les piqûres inconnues rejetées à 95 %"
    }
   }
  ],

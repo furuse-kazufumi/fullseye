@@ -924,7 +924,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-23: photoelastic(光弾性: 応力場の閉形式・応力光学則・立方晶・偏光器・偏光像の逆算・多波長)12 op(465 → 477)。
     # 2026-10-23: fpm(フーリエ・タイコグラフィ、fourierptycho)6 op を新しい族として追加(477 → 483)。
     # 2026-11-03: light_section(光切断、lightsection)13 op と hdr(HDR・露出融合、hdrfusion)8 op を新しい族として追加(483 → 504)。
-    assert len(opsoptics.OPSOPTICS) == 504
+    # 2026-11-11: watervision に bottle_background_map・bottle_fit_from_pattern を追加(504 → 506)。
+    assert len(opsoptics.OPSOPTICS) == 506
     assert len(opsoptics.list_ops("light_section")) == 13
     assert len(opsoptics.list_ops("hdr")) == 8
     assert len(opsoptics.list_ops("photoelastic")) == 12

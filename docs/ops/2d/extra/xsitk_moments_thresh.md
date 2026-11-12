@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery2d_color_artistic, threshold_family_agreement]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # xsitk_moments_thresh — 2D `extra` op

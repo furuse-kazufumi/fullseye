@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_braid_homotopy_classes]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # braid_class_representatives — DRIVE `braidpath` op

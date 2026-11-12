@@ -9,7 +9,7 @@ gpu: なし
 examples: [fit_circle_xld_bore, gallery2d_contour_measure, mcp_task_score, poc_peg_insertion_tactile, poc_screw_thread_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # threshold_sub_pix — 2D `contour` op

@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [image_forensics_audit, poc_forensics_roc]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # noise_inconsistency_map — IMGFORENSICS `noise` op

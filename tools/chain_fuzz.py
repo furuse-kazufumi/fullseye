@@ -2131,6 +2131,16 @@ def _b_fit_spin(pool, rng):
     return (f["t"][idx], f["p"][idx], bp), {"iters": 2, "dt": 1e-3}
 
 
+def _b_fit_spin_aero(pool, rng):
+    import ballistics as BL
+    # 10 パラメータ(p0・v0・ω・C_d)は ≥ 12 標本が要る。回転ありの軌跡を渡す(bp["cl"] は None = スピン比の式でないと |ω| が読めない)
+    bp = _b_ball_bp(pool, rng)
+    f = BL.flight_ode((0.0, 0.0, 0.5), (8.0, 0.5, 2.0), (0.0, 200.0, 0.0), bp, 0.121, 1e-3)
+    idx = np.arange(0, 120, 8)
+    # omega_max は 2 反復の到達値(≈109 rad/s)より下に置く: 半分(30)・既定(60)・2 倍(120)で上限の効き方が変わる(さもないと dead knob に数えられる)
+    return (f["t"][idx], f["p"][idx], bp), {"iters": 2, "dt": 1e-3, "omega_max": 60.0}
+
+
 def _b_fit_aero(pool, rng):
     import ballistics as BL
     # 8 パラメータの同定は ≥ 8 標本が要り、真空の軌跡だと C_d・C_L の列が消えて cond = inf → 抗力 + マグヌスの軌跡を渡す
@@ -3702,6 +3712,14 @@ def _b_cr_feasible(pool, rng):
 def _b_cr_scene_run(pool, rng):
     t = _fuzz_cr()
     return (t["scene"], t["run"]), {}
+
+
+def _b_cr_solution_xml(pool, rng):
+    """``date`` を固定して渡す。省略すると op は「今」を XML に書くので、
+    2 回の呼び出しが秒の境目をまたぐと出力が変わり、決定性の探針が時々落ちる。"""
+    from datetime import datetime
+    t = _fuzz_cr()
+    return (t["scene"], t["run"]), {"date": datetime(2026, 1, 1, 0, 0, 0)}
 
 
 def _b_cr_checker_result(pool, rng):
@@ -8269,7 +8287,7 @@ OP_ARG_BUILDERS = {
     "magnus_lift_coefficient": _b_spin_ratio, "drag_coefficient_sphere": _b_reynolds, "bounce": _b_bounce,
     "contact_angular_momentum": _b_contact_L, "apex_sequence": _b_apex_seq, "bounce_total_time": _b_bounce_time,
     "restitution_from_apexes": _b_apexes, "restitution_from_intervals": _b_intervals, "fit_parabola": _b_t_p,
-    "flight_fit": _b_flight_fit, "fit_aero": _b_fit_aero, "fit_spin": _b_fit_spin, "fit_bounce": _b_fit_bounce,
+    "flight_fit": _b_flight_fit, "fit_aero": _b_fit_aero, "fit_spin": _b_fit_spin, "fit_spin_aero": _b_fit_spin_aero, "fit_bounce": _b_fit_bounce,
     "slide_stop_distance": _b_slide, "incline_slip_angle": _b_mu, "mu_from_stop_distance": _b_mu_from_stop,
     "roll_slide_state": _b_roll_slide, "tether_simulate": _b_tether, "pendulum_period": _b_pendulum,
     "cup_catch_check": _b_cup,
@@ -8419,7 +8437,7 @@ OP_ARG_BUILDERS = {
     "citygml_synthetic": _b_citygml_synthetic, "plateau_parse": _b_plateau_parse, "buildings_in_box": _b_buildings_in_box,
     "building_prisms": _b_building_prisms, "prism_mesh": _b_prism_mesh, "triangulate_polygon": _b_polygon_arg, "polygon_area": _b_polygon_arg, "plateau_lod2_mesh": _b_plateau_lod2_mesh,
     "cr_synthetic": _b_cr_synthetic, "cr_read": _b_cr_read, "cr_route": _b_cr_route, "ks_step": _b_ks_step, "cr_drive": _b_cr_drive,
-    "cr_drive_sweep": _b_cr_scene_arg, "cr_feasible": _b_cr_feasible, "cr_collision": _b_cr_scene_run, "cr_solution_xml": _b_cr_scene_run,
+    "cr_drive_sweep": _b_cr_scene_arg, "cr_feasible": _b_cr_feasible, "cr_collision": _b_cr_scene_run, "cr_solution_xml": _b_cr_solution_xml,
     "cr_checker_result": _b_cr_checker_result,
     "peg_params": _b_course_none, "whitney_clearance": _b_peg_kp, "two_point_depth": _b_peg_theta, "wedging_check": _b_peg_wedge,
     "jamming_diagram": _b_peg_jam, "chamfer_capture": _b_peg_eps, "contact_state_predict": _b_peg_predict,

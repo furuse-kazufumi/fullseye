@@ -305,7 +305,7 @@ def test_op_help_html_3d_reads_generated_and_falls_back():
     # unknown op -> escaped registry-metadata fallback card, no generated marker
     f = studio.op_help_html_3d("__no_such_3d_op__", {"category": "x", "in": "points",
                                                      "out": "voxel", "doc": "a & <b>"})
-    assert "· 3D" in f and "tools/opdocs.py html" in f
+    assert "· 3D" in f and "No help page has been written" in f      # P-07: 利用者向けの 1 文(開発者向けの手順は出さない)
     assert "&amp;" in f and "&lt;b&gt;" in f
     assert "opdocs:generated" not in f
 
@@ -1554,10 +1554,14 @@ def test_default_layout_is_image_dominant():
     assert win.dockWidgetArea(win._docks["program"]) == QtCore.Qt.BottomDockWidgetArea
     assert win.dockWidgetArea(win._docks["operators"]) == QtCore.Qt.RightDockWidgetArea
     assert not win._docks["program"].isHidden() and not win._docks["operators"].isHidden()
-    # the inspection panels start HIDDEN (on-demand) so the image owns the workspace
+    # the inspection panels start HIDDEN (on-demand) so the image owns the workspace.
+    # 2026-11-12 (P-15): Pipeline · Parameters is the exception -- its tab sits next to Operators
+    # from the first launch (a first-time user could not find the knobs behind a hidden dock).
     for key in ("variables", "pipeline", "display"):
         assert win.dockWidgetArea(win._docks[key]) == QtCore.Qt.RightDockWidgetArea, key
+    for key in ("variables", "display"):
         assert win._docks[key].isHidden(), "%s should start hidden (on-demand)" % key
+    assert not win._docks["pipeline"].isHidden()
     # each on-demand panel has a toggle action (toolbar + Window ▸ Panels) to bring it back
     for key in ("variables", "pipeline", "display"):
         assert win._docks[key].toggleViewAction() is not None

@@ -5,10 +5,10 @@ category: ball
 in: signal × points × table
 out: table
 gpu: なし
-examples: [poc_table_tennis_spin]
+examples: [poc_cd_spin_joint, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # fit_spin — DRIVE `ball` op
@@ -43,6 +43,7 @@ version: 1.0.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_cd_spin_joint](../../../../examples/poc_cd_spin_joint.py) — `py -3.11 examples/poc_cd_spin_joint.py`
 - [poc_table_tennis_spin](../../../../examples/poc_table_tennis_spin.py) — `py -3.11 examples/poc_table_tennis_spin.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

@@ -1,0 +1,68 @@
+[
+ {
+  "file": "01_defect_patches.png",
+  "name": "defect_patches",
+  "caption": "rendered (synthetic) ground-metal patches (height defects shade, the stain changes colour)",
+  "shape": [
+   1492,
+   2910,
+   3
+  ]
+ },
+ {
+  "file": "02_stain_pixels.png",
+  "name": "stain_pixels",
+  "caption": "painting the stain pixel by pixel",
+  "shape": [
+   628,
+   2940,
+   3
+  ]
+ },
+ {
+  "file": "03_stain_pixel_iou.png",
+  "name": "stain_pixel_iou",
+  "caption": "LUT cut: supervised on training stain patches and true masks; Otsu baseline trains nothing",
+  "shape": [
+   400,
+   1175,
+   3
+  ],
+  "csv": "03_stain_pixel_iou.csv",
+  "tsv": "03_stain_pixel_iou.tsv"
+ },
+ {
+  "file": "04_classifier_accuracy.png",
+  "name": "classifier_accuracy",
+  "caption": "tol = 3 sqrt(2p(1-p)/n) + 1/n; same features, same split",
+  "shape": [
+   400,
+   1234,
+   3
+  ],
+  "csv": "04_classifier_accuracy.csv",
+  "tsv": "04_classifier_accuracy.tsv"
+ },
+ {
+  "file": "05_gmm_confusion_reject.png",
+  "name": "gmm_confusion_reject",
+  "caption": "pits never seen in training: 95 % rejected; known patches rejected 6.0 %",
+  "shape": [
+   400,
+   808,
+   3
+  ],
+  "csv": "05_gmm_confusion_reject.csv",
+  "tsv": "05_gmm_confusion_reject.tsv"
+ },
+ {
+  "file": "06_accuracy_by_weight.png",
+  "name": "accuracy_by_weight",
+  "caption": "5 seeds, test split; best overall knn 0.886; axis from 0",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ }
+]

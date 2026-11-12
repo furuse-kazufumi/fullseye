@@ -357,6 +357,15 @@ def _oct_it(k_linear=False):
     return octscan.oct_interferogram(n_pixels=256, oversample=4, grid="k" if k_linear else "lambda")
 
 
+def _bottle_fit_args(rng):
+    """瓶の背景の地図(液面を帯の中ほどに)と、それを当てはめる引数。"""
+    import watervision
+    R = 20.0 + 10.0 * rng.random()
+    m = watervision.bottle_background_map(R, 1.5, 3.0, 0.5, 1.45 + 0.15 * rng.random(), 1.333, 120.0, 400.0, 100.0,
+                                          size=(30, int(np.ceil(2.3 * R / 0.1))))
+    return [m["u_mm"], m["x_mm"], 100.0, 400.0, 120.0], {}
+
+
 def _oct_bs():
     import octscan
     return octscan.oct_bscan_simulate(n_columns=12, n_pixels=256, width_um=200.0)
@@ -1003,6 +1012,9 @@ def _batch2_builders():
         "caustic_irradiance": lambda pool, rng: ([0.01 * rng.standard_normal((16, 16)), 2.0 + 2.0 * rng.random(), 1.0 + rng.random(), [60.0 * rng.random(), 360.0 * rng.random()]], {"ray_density": 1}),
         "bottle_image": lambda pool, rng: ([20.0 + 20.0 * rng.random(), 2.0, 80.0, rng.random(), 1.45 + 0.15 * rng.random(), 1.333], {"pixel_pitch_um": 1000.0}),
         "fill_level_from_image": lambda pool, rng: ([np.where(np.arange(40)[:, None] < 10 + int(rng.integers(0, 20)), 0.9, 0.5) + 0.01 * rng.random((40, 12)), 100.0], {}),
+        # 2026-11-11: 瓶の背景の地図は粗い画素・低い帯で。逆当てはめはその地図を入力に(画素 100 um、カメラ 400 mm、背景 120 mm)
+        "bottle_background_map": lambda pool, rng: ([20.0 + 10.0 * rng.random(), 1.5, 3.0, rng.random(), 1.45 + 0.15 * rng.random(), 1.333], {"pixel_pitch_um": 100.0, "size": (30, 400)}),
+        "bottle_fit_from_pattern": lambda pool, rng: _bottle_fit_args(rng),
         "wet_surface_appearance": lambda pool, rng: ([0.05 + 0.9 * rng.random(), rng.random(), 30.0 * rng.random(), 80.0 * rng.random(), 80.0 * rng.random()], {}),
         "wet_dry_inspection_pair": lambda pool, rng: ([0.2 + 0.7 * rng.random((16, 16)), np.arange(16)[:, None] < 4 + np.zeros((1, 16), dtype=bool), 0.2, 10.0 * rng.random(), 60.0 * rng.random(), 60.0 * rng.random()], {}),
         "underwater_inspection_image": lambda pool, rng: ([0.2 + 0.8 * rng.random((6, 6, 3)), 1.0 + 5.0 * rng.random((6, 6)), "jerlov_II"], {"light": "both"}),

@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery_nary_image_algebra, poc_battery_electrode_tortuosity, poc_connectome_across_decades, poc_connectome_across_worms, poc_driving_crossing, poc_driving_japan_town, poc_driving_pass, poc_driving_school, poc_driving_town, poc_real_sem_metal_layer, poc_worm_neurites_grow]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # intersection — 2D `nary` op

@@ -8,7 +8,7 @@ gpu: なし
 examples: [dem_terrain_analysis_tour, poc_dem_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # dem_flow_accumulation — DEM `hydrology` op

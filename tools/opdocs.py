@@ -1587,7 +1587,7 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
                      "もっともらしい 66.667 mm を返していた)。bool も `True == 1` の"
                      "暗黙昇格として拒否。", lang))
         lines.append(T("- **complex / masked array は `ValueError`**(実数枠のみ。虚部の"
-                     "無言切り捨て・マスク剥がしを拒否)。**NaN/Inf は全入力で `ValueError`**。", lang))
+                     "無言切り捨て・マスク剥がしを拒否)。**NaN/Inf は全入力で `ValueError`**。ただし宣言された欠測を除く: `bottle_fit_from_pattern` の `u_map` は測れなかった画素を NaN で受け取る(∞ は拒否)。", lang))
         lines.append(T("- **0 除算とその親戚を名指しで拒否**: 焦点距離 0・曲率半径 0・"
                      "屈折率 <= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 <= 0 の PSF・"
                      "S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。", lang))
@@ -1597,7 +1597,7 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
                      "(平面波面の曲率半径)。どちらも有限の相棒(`far_is_infinite` / "
                      "`curvature_per_mm`)を併せて返す。**それ以外の無言 NaN/Inf は内部で"
                      "検出して `ValueError`** —「float64 が溢れた」と「答えが無限大」は"
-                     "別の主張なので、後者の顔で前者を返さない。", lang))
+                     "別の主張なので、後者の顔で前者を返さない。ただし宣言された欠測を除く: `bottle_background_map` は光線が使えない画素(全反射など)の `u_mm` を NaN で返し、`valid` マスクと本数を併せて返す。", lang))
         lines.append(T("- **サイズ上限**: 生成格子は `optics.MAX_GRID`(4096)、供給された"
                      "場/PSF/開口は `optics.MAX_FIELD_ELEMENTS`(2^24)、ABCD 素子列は "
                      "`optics.MAX_SYSTEM_ELEMENTS`(1024)、Zernike は "

@@ -93,6 +93,10 @@
    "accessioned": "2026-09-07",
    "no": "2026.057"
   },
+  "poc_bottle_pattern_inverse": {
+   "accessioned": "2026-11-11",
+   "no": "2026.312"
+  },
   "poc_braid_homotopy_classes": {
    "accessioned": "2026-10-28",
    "no": "2026.281"
@@ -113,6 +117,10 @@
    "accessioned": "2026-09-24",
    "no": "2026.144"
   },
+  "poc_caltab_chain_truth": {
+   "accessioned": "2026-11-12",
+   "no": "2026.315"
+  },
   "poc_camera_calibration": {
    "accessioned": "2026-09-06",
    "no": "2026.006"
@@ -128,6 +136,10 @@
   "poc_carla_bridge": {
    "accessioned": "2026-10-04",
    "no": "2026.190"
+  },
+  "poc_cd_spin_joint": {
+   "accessioned": "2026-11-11",
+   "no": "2026.313"
   },
   "poc_cell_counting": {
    "accessioned": "2026-09-06",
@@ -837,6 +849,10 @@
    "accessioned": "2026-11-01",
    "no": "2026.287"
   },
+  "poc_real_tum_rgbd_slam": {
+   "accessioned": "2026-11-11",
+   "no": "2026.314"
+  },
   "poc_real_typewritten_ocr": {
    "accessioned": "2026-11-08",
    "no": "2026.301"
@@ -992,6 +1008,10 @@
   "poc_superresolution_limits": {
    "accessioned": "2026-09-06",
    "no": "2026.039"
+  },
+  "poc_surface_defect_classifiers": {
+   "accessioned": "2026-11-12",
+   "no": "2026.316"
   },
   "poc_surface_roughness": {
    "accessioned": "2026-09-06",

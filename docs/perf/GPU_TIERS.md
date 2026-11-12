@@ -18,18 +18,18 @@
 | tier | 件数 |
 |---|---:|
 | `required` | 49 |
-| `suitable` | 2200 |
+| `suitable` | 2201 |
 | `partial` | 650 |
-| `none` | 936 |
-| **合計** | **3835** |
+| `none` | 938 |
+| **合計** | **3838** |
 
 ## GPU 対応率
 
 指標 = `gpu_status=あり` の件数 ÷ (`required` + `suitable`) の件数(件数÷全体ではない)。現状値をそのまま書く(低くてよい)。
 
 - gpu 経路あり: **173**
-- `required` + `suitable`: **2249**
-- **GPU 対応率 = 7.7%** (173 / 2249)
+- `required` + `suitable`: **2250**
+- **GPU 対応率 = 7.7%** (173 / 2250)
 
 正直な内訳: gpu 経路を持つ op のうち 50 件は `partial`(領域モルフォロジ等)、0 件は `none` で、分母には入らない(分子にのみ計上)。
 
@@ -50,7 +50,7 @@
 | scene | 1 | 10 | 5 | 28 | 44 |
 | transform | 1 | 31 | 2 | 2 | 36 |
 | contour | 0 | 18 | 17 | 0 | 35 |
-| ball | 0 | 14 | 0 | 18 | 32 |
+| ball | 0 | 15 | 0 | 18 | 33 |
 | terrain | 0 | 11 | 6 | 11 | 28 |
 | texture | 0 | 28 | 0 | 0 | 28 |
 | puck | 0 | 13 | 0 | 13 | 26 |
@@ -168,6 +168,7 @@
 | sem | 0 | 5 | 1 | 3 | 9 |
 | structured_light | 0 | 9 | 0 | 0 | 9 |
 | ttc | 0 | 6 | 1 | 2 | 9 |
+| watervision | 0 | 5 | 0 | 4 | 9 |
 | curvature | 0 | 6 | 2 | 0 | 8 |
 | fit | 0 | 4 | 2 | 2 | 8 |
 | grating_interf | 0 | 3 | 0 | 5 | 8 |
@@ -204,7 +205,6 @@
 | stroke | 0 | 4 | 3 | 0 | 7 |
 | telecentric | 0 | 0 | 3 | 4 | 7 |
 | ultrasonic | 0 | 0 | 1 | 6 | 7 |
-| watervision | 0 | 5 | 0 | 2 | 7 |
 | augment | 0 | 0 | 6 | 0 | 6 |
 | caliper | 0 | 3 | 0 | 3 | 6 |
 | coherent | 0 | 4 | 0 | 2 | 6 |

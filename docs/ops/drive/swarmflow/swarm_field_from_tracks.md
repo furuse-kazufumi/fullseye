@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_swarm_obstacle_from_flow]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # swarm_field_from_tracks — DRIVE `swarmflow` op

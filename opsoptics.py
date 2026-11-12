@@ -765,6 +765,10 @@ _CATALOG = {
         ("caustic_irradiance", "watervision", ["image2d"], "table"),
         ("bottle_image", "watervision", [], "table"),
         ("fill_level_from_image", "watervision", ["image2d"], "table"),
+        # 2026-11-11: 背景の縞が瓶越しにどう歪むか(u の地図)と、その歪みから瓶を逆に測る当てはめ。
+        #   ★fail-closed: 背景が瓶の前・壁が半径以上・屈折率 1 以下・カメラが近すぎる・瓶の写っていない地図・未知の known 名は拒否。
+        ("bottle_background_map", "watervision", [], "table"),
+        ("bottle_fit_from_pattern", "watervision", [], "table"),
         ("wet_surface_appearance", "watervision", [], "table"),
         ("wet_dry_inspection_pair", "watervision", ["image2d", "image2d"], "table"),
         ("underwater_inspection_image", "watervision", ["rgbimage", "image2d"], "table"),
