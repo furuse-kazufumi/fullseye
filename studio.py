@@ -209,12 +209,29 @@ def _copy_stage(s):
     return _normalise_stage(s)
 
 
+def _crash_log_path():
+    """studio_crash.log の置き場。checkout では studio.py の隣(従来どおり)。pip で入れた版(site-packages の中)では
+    利用者のキャッシュ(%LOCALAPPDATA%/Fullseye、無ければ ~/.cache/fullseye)へ ―― パッケージの中に書くと
+    `pip uninstall` の後にログだけが site-packages に残る(2026-11-12 実機で確認)。"""
+    here = os.path.dirname(os.path.abspath(__file__))
+    parts = here.replace("\\", "/").split("/")
+    if "site-packages" in parts or "dist-packages" in parts:
+        local = os.environ.get("LOCALAPPDATA")
+        base = os.path.join(local, "Fullseye") if local else os.path.join(os.path.expanduser("~"), ".cache", "fullseye")
+        try:
+            os.makedirs(base, exist_ok=True)
+            return os.path.join(base, "studio_crash.log")
+        except OSError:
+            pass
+    return os.path.join(here, "studio_crash.log")
+
+
 def _log_soft_failure(context, exc):
     """Record a non-fatal failure (settings that could not be saved, …) in the same
     ``studio_crash.log`` the crash hooks write, and on stderr. Never raises."""
     msg = "%s: %s: %s" % (context, type(exc).__name__, exc)
     try:
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_crash.log")
+        path = _crash_log_path()
         with open(path, "a", encoding="utf-8") as fh:
             fh.write(msg + "\n")
     except Exception:
@@ -3516,7 +3533,9 @@ QStatusBar::item {{ border:none; }}
 QToolTip {{ background:{INK}; color:{TEXT}; border:1px solid {TEAL}; border-radius:6px; padding:6px 8px; }}
 """
 
-_ICON_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "fullseye.ico")
+_ICON_PATH = next((q for q in (os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_assets", "fullseye.ico"),
+                               os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "fullseye.ico"))
+                   if os.path.exists(q)), os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "fullseye.ico"))
 
 
 def op_detail(row) -> str:
@@ -15263,11 +15282,16 @@ def build_window(model=None):
     return win, model
 
 
-_USAGE = """usage: fullseye-studio [-h] [--version]
+_USAGE = """usage: fullseye-studio [-h] [--version] [--install-shortcuts [--desktop] | --remove-shortcuts]
 
 Fullseye Studio - an HDevelop-style IDE for the operator library (PySide6).
-Runs the GUI; there are no other options. On a machine without a display set
-QT_QPA_PLATFORM=offscreen (headless smoke) or use the CLI: fullseye --help.
+Runs the GUI. On a machine without a display set QT_QPA_PLATFORM=offscreen
+(headless smoke) or use the CLI: fullseye --help.
+
+  --install-shortcuts   add 'Fullseye Studio' to the Start menu (Windows) / application
+                        menu (Linux); runs without a console window. Safe to repeat.
+  --desktop             with --install-shortcuts: also put a shortcut on the desktop
+  --remove-shortcuts    remove what --install-shortcuts created
 """
 
 
@@ -15281,6 +15305,16 @@ def main(argv=None) -> int:
     if "--version" in argv:
         print("fullseye-studio %s" % api.__version__)
         return 0
+    _sc_flags = {"--install-shortcuts", "--remove-shortcuts", "--desktop"}
+    if argv and set(argv) <= _sc_flags:
+        if "--install-shortcuts" in argv and "--remove-shortcuts" in argv:
+            print("fullseye-studio: --install-shortcuts and --remove-shortcuts cannot be used together", file=sys.stderr)
+            return 2
+        if "--desktop" in argv and "--install-shortcuts" not in argv:
+            print("fullseye-studio: --desktop only goes with --install-shortcuts", file=sys.stderr)
+            return 2
+        from fullseye import shortcuts as _shortcuts
+        return _shortcuts.run_cli("--install-shortcuts" in argv, desktop="--desktop" in argv)
     if argv:
         print(_USAGE + "fullseye-studio: unknown argument(s): %s" % " ".join(argv), file=sys.stderr)
         return 2
@@ -15291,10 +15325,30 @@ def main(argv=None) -> int:
         return 2
     import faulthandler
     import traceback
-    from PySide6 import QtWidgets
+    try:
+        from PySide6 import QtWidgets
+    except ImportError as e:
+        _msg = ('Fullseye Studio needs PySide6, which is not installed in this Python (%s).\n'
+                'Install it with:  %s -m pip install "PySide6>=6.5"' % (e, sys.executable))
+        print(_msg, file=sys.stderr)
+        if sys.platform == "win32" and sys.stderr is None:      # pythonw(ショートカット起動): コンソールが無い
+            try:
+                import ctypes
+                ctypes.windll.user32.MessageBoxW(None, _msg, "Fullseye Studio", 0x10)
+            except Exception:
+                pass
+        return 1
+    if sys.platform == "win32":
+        # タスクバーで python のアイコンにまとめられず、Fullseye のアイコンで出るようにする
+        # (fullseye.shortcuts.APP_ID と同じ綴り)。失敗しても起動は続ける。
+        try:
+            import ctypes
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Fullseye.Studio")
+        except Exception:
+            pass
     # Crash log: pythonw has no console, so capture both C++/Qt segfaults (faulthandler)
     # and Python exceptions (excepthook) to studio_crash.log next to this file.
-    _log = os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_crash.log")
+    _log = _crash_log_path()
     try:
         faulthandler.enable(open(_log, "w", encoding="utf-8"))
     except Exception:

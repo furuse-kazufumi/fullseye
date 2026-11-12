@@ -282,6 +282,50 @@
 
 ## クイックコマンド
 
+### インストール直後の最初の 1 分
+
+`pip install` はファイルを置くだけです。使える状態にするには、次の **1 コマンド** を実行します。
+
+```powershell
+fullseye setup          # 環境を調べ、1 問ずつ聞きます(Enter = 既定)
+```
+
+Python / fullseye / Qt / 任意依存 / Claude Code 連携の状態を表示し、用途(Studio・Python・AI)を聞いて、
+**Fullseye Studio をスタートメニューに登録**(Linux ではアプリケーションメニュー)、足りない任意パッケージの導入
+(実行する `pip` コマンドを見せてから実行)、最後に「やったこと」と「次の一手」を出します。`--yes` は全部既定で無人実行、
+`--dry-run` は予定だけ表示、`--lang ja|en` で言語指定。標準入力が端末でない(CI・パイプ)ときは質問せず案内だけ出します。
+引数なしの `fullseye` も同じ案内を出します。1 つずつやる場合:
+
+| やりたいこと | 実行 |
+|---|---|
+| 画面で触る | `fullseye-studio`(`pip install "fullseye[gui]"` が必要) |
+| スタートメニュー / デスクトップに置く | `fullseye-studio --install-shortcuts`(`--desktop` を足すとデスクトップにも)、戻す = `--remove-shortcuts` |
+| Python から 3 行で | `import fullseye, numpy as np` / `img = np.random.rand(64, 64)` / `fullseye.apply(img, "sobel_amp")` |
+| AI(Claude Code)から | `fullseye-rag`(skill)と `claude mcp add fullseye -- python -m fullseye.mcp` |
+
+### アンインストール
+
+```powershell
+fullseye setup --uninstall      # setup が作った物を並べて見せ、聞いてから消し、最後に pip uninstall(--yes / --dry-run 可)
+```
+
+消すのは**台帳**(`%LOCALAPPDATA%\Fullseye\setup\install_ledger.json`、Linux は `~/.local/share/fullseye/`)に載った物だけです。
+Studio の設定とキャッシュは既定で残し、聞いたときだけ消します。`pip uninstall` は、実行中の `fullseye.exe` を Windows が
+消せないため、このコマンドが終わった後に別プロセスで走ります。Windows ではショートカットを登録すると
+**設定 > アプリ > インストールされているアプリ > Fullseye** にも出て、同じコマンドが呼ばれます。
+
+**先に `pip uninstall fullseye` を手でやってしまった場合:** pip はショートカットなど setup が作った物を**消しません**。
+次を手で消してください(在る物だけ)。
+
+* スタートメニュー: `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Fullseye\`(`install\install.ps1` を使った場合は `Programs\` 直下の `Fullseye Studio.lnk` も)
+* デスクトップ: `Fullseye Studio.lnk`
+* `%LOCALAPPDATA%\Fullseye\setup\`(アイコンと台帳)、キャッシュ `%LOCALAPPDATA%\Fullseye\`(op_help-*、backend_probe.json*)
+* レジストリ(Windows): `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\Fullseye`(アプリ一覧の項目)、Studio の設定 `HKCU\Software\Fullseye\Studio`
+* Claude Code: `~/.claude/skills/fullseye-ops/`、MCP は登録していれば `claude mcp remove fullseye`
+* Linux: `~/.local/share/applications/fullseye-studio.desktop`、`~/.local/share/icons/hicolor/256x256/apps/fullseye-studio.png`、
+  `~/.config/Fullseye/Studio.conf`、`~/.cache/fullseye/`
+
+
 ```powershell
 py -3.11 -m pip install -e ".[opencv,gui]"     # 導入（画像 I/O + Studio）
 py -3.11 studio.py                              # Fullseye Studio を起動（= fullseye-studio）

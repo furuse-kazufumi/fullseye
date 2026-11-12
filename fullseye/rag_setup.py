@@ -149,12 +149,23 @@ def main(argv=None) -> int:
     target = args.target if args.target is not None else default_target()
     if args.uninstall:
         removed = uninstall(target)
+        try:
+            from fullseye import shortcuts as _sc
+            _sc.ledger_forget("claude_skill", target / SKILL_NAME)
+            _sc.ledger_gc()
+        except Exception:       # noqa: BLE001
+            pass
         print("removed: %s" % (target / SKILL_NAME) if removed
               else "not installed: %s" % (target / SKILL_NAME))
         return 0
     repo = find_repo()
     dest = install(target, repo=repo, _auto_repo=False)
     print("installed Claude Code RAG skill: %s" % dest)
+    try:        # 後で `fullseye setup --uninstall` が「作った物だけ」を消せるよう台帳に書く
+        from fullseye import shortcuts as _sc
+        _sc.ledger_record("claude_skill", dest)
+    except Exception:       # noqa: BLE001 — 台帳が書けなくても登録自体は成功させる
+        pass
     if repo is not None:
         print("corpus pinned to: %s (full per-op notes)" % (repo / "docs" / "ops"))
     else:

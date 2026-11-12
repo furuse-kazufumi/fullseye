@@ -694,6 +694,15 @@ def main() -> int:
     # ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、
     # `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
     # ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。
+    # ★2026-11-12: 引数なしは「必須引数が無い」エラー(rc=2)でなく、次に何をするかの案内を出す(rc=0)。
+    #   `fullseye setup` は対話的な初期設定(fullseye/setup_cmd.py)。自前の argparse に丸ごと渡す。
+    if len(sys.argv) == 1:
+        from fullseye import setup_cmd as _sc
+        print(_sc.guidance(_sc.detect_lang()))
+        return 0
+    if sys.argv[1] == "setup":
+        from fullseye import setup_cmd as _sc
+        return _sc.main(sys.argv[2:])
     ap = argparse.ArgumentParser(prog=_prog() if _prog().startswith("python -m") else None,
                                  description=__doc__.replace("py -3.11 imgevolve.py", _prog())
                                  .replace("imgevolve — single CLI", "fullseye — single CLI", 1),
@@ -788,6 +797,12 @@ def main() -> int:
     p.add_argument("--yes", action="store_true",
                    help="opt in to actually download (otherwise only prints what would be fetched)")
     p.set_defaults(fn=cmd_samples)
+
+    p = sub.add_parser("setup", help="interactive first-time setup: check the environment, register Studio in the "
+                                     "Start menu, install optional deps, set up AI integration "
+                                     "(--yes / --dry-run / --lang ja|en)")
+    p.add_argument("rest", nargs="*", help=argparse.SUPPRESS)
+    p.set_defaults(fn=lambda a: __import__("fullseye.setup_cmd", fromlist=["main"]).main(a.rest))
 
     a = ap.parse_args()
     return a.fn(a)
