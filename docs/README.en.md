@@ -280,6 +280,75 @@ Search by name with `py -3.11 imgevolve.py ops --search edge`; the full cross-li
 
 ## Quick commands
 
+### Your first minute after `pip install`
+
+`pip install` only puts files on disk. To get to something you can use, run **one command**:
+
+```bash
+fullseye setup          # checks your environment, then asks one question at a time (Enter = default)
+```
+
+It reports your Python / fullseye / Qt / optional dependencies / Claude Code integration, then asks what you want
+(Studio, Python, an AI), registers **Fullseye Studio in the Start menu** (Windows; the application menu on Linux),
+installs missing optional packages (it shows the `pip` command before running it), and prints "what was done" and
+"next steps". `--yes` accepts every default unattended, `--dry-run` only shows the plan, `--lang ja|en` picks the
+language; with no terminal (CI, a pipe) it asks nothing and prints the guidance. Running `fullseye` with no
+arguments prints the same guidance. The pieces, if you prefer them one by one:
+
+| I want to... | Run |
+|---|---|
+| open the GUI | `fullseye-studio` (needs `pip install "fullseye[gui]"`) |
+| put Studio in the Start menu / on the desktop | `fullseye-studio --install-shortcuts` (add `--desktop`); undo: `--remove-shortcuts` |
+| use it from Python (3 lines) | `import fullseye, numpy as np` / `img = np.random.rand(64, 64)` / `fullseye.apply(img, "sobel_amp")` |
+| use it from an AI (Claude Code) | `fullseye-rag` (skill) and `claude mcp add fullseye -- python -m fullseye.mcp` |
+
+### Uninstalling
+
+```bash
+fullseye setup --uninstall      # lists what setup created, asks, then runs pip uninstall last (--yes / --dry-run work)
+```
+
+It removes only what the install ledger (`%LOCALAPPDATA%\Fullseye\setup\install_ledger.json`, Linux
+`~/.local/share/fullseye/`) recorded, keeps your Studio settings and cache unless you say otherwise, and runs
+`pip uninstall` in a separate process after it exits (Windows cannot delete a running `fullseye.exe`). On Windows the
+same cleanup is behind **Settings > Apps > Installed apps > Fullseye** once you have registered the shortcuts; that entry
+runs `fullseye-uninstall.cmd` (in the setup folder), which keeps working after the venv or Python was deleted (also when `python.exe` is still there but cannot start because the
+Python the venv was made from is gone). The Claude Code skill is asked about separately and, if you edited its `SKILL.md`, is kept by default.
+
+The ledger is **checked before anything is deleted**: only the file names and folders that setup itself creates
+(`Fullseye Studio.lnk`, `fullseye.ico`, `fullseye-uninstall.cmd`, the `fullseye-studio.desktop` / png of Linux, the Start menu
+`Fullseye` folder, the setup folder) and the exact `Uninstall\Fullseye` key are removed. Anything else listed in a (hand-edited)
+ledger, and anything created by a different Python environment (venv A vs venv B), is shown under "In the ledger but NOT
+removed" and left alone, even with `--yes`. A broken ledger is reported and treated as absent. The `pip uninstall` step is
+offered only if this Python has pip and the `fullseye` it has installed is the one that is running (otherwise it prints the
+`uv pip uninstall` command and exits with code 3).
+
+**Exit codes** of `fullseye setup --uninstall`: `0` = everything chosen was removed (and the pip step was started when it applies), or
+`--dry-run` / no terminal so nothing was done, or no pip step is needed (fullseye is not pip-installed in this Python, or the pip-installed
+one is a different copy from the one running); `1` = an item could not be removed, or the ledger held an item that is not allowed (a
+hand-edited ledger); `3` = the registrations were removed but the pip step could not be offered (this Python has no pip, e.g. a uv venv),
+so fullseye itself is still installed - run the `uv pip uninstall` command it prints. `fullseye setup` itself exits `1` when any chosen
+step failed (dependency install, shortcuts, RAG skill, opening Studio), otherwise `0`.
+
+**Known limitations** (not fixed, unverified): (1) with a Microsoft Store Python (MSIX) writes under `%APPDATA%` /
+`%LOCALAPPDATA%` may be redirected to a private area, so the Start menu entry or the Apps list may not appear;
+(2) with conda, starting `pythonw.exe` without the environment activated may fail to find DLLs;
+(3) the `.lnk` carries no AppUserModelID, so how it ties to a taskbar pin is not verified.
+
+
+**If you already ran `pip uninstall fullseye` by hand:** pip does **not** remove shortcuts or anything else setup
+created. Delete these yourself (whatever exists):
+
+* Start menu: `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Fullseye\` (and `Fullseye Studio.lnk` directly under `Programs\`, made by `install\install.ps1`)
+* Desktop: `Fullseye Studio.lnk`
+* `%LOCALAPPDATA%\Fullseye\setup\` (icon + ledger); cache `%LOCALAPPDATA%\Fullseye\` (op_help-*, backend_probe.json*)
+* Registry (Windows): `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\Fullseye` (the Apps list entry);
+  Studio settings `HKCU\Software\Fullseye\Studio`
+* Claude Code: `~/.claude/skills/fullseye-ops/`; MCP: `claude mcp remove fullseye` if you added it
+* Linux: `~/.local/share/applications/fullseye-studio.desktop`, `~/.local/share/icons/hicolor/256x256/apps/fullseye-studio.png`,
+  `~/.config/Fullseye/Studio.conf`, `~/.cache/fullseye/`
+
+
 ```powershell
 py -3.11 -m pip install -e ".[opencv,gui]"     # install (image I/O + Studio)
 py -3.11 studio.py                              # launch Fullseye Studio (= fullseye-studio)

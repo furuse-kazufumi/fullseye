@@ -27,7 +27,6 @@ import math
 import os
 import sys
 import time
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import numpy as np
@@ -35,6 +34,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import cutting as C  # noqa: E402
 import examplefig as figs  # noqa: E402
+from safe_xml import safe_xml_parse as _parse_xml  # noqa: E402  (XML は門を通して読む: DOCTYPE・大きさ・深さ)
 
 FULL = "--full" in sys.argv
 _GATES: list[tuple[str, bool]] = []
@@ -340,7 +340,7 @@ def numpy_part() -> dict:
     names = [n for n in C.__all__]
     missing = [n for n in names if not callable(getattr(C, n, None))]
     bad_doc = [n for n in names if "](" in (getattr(C, n).__doc__ or "")]
-    root = ET.fromstring(C.cutting_wrist_mjcf(SF_FULL))
+    root = _parse_xml(C.cutting_wrist_mjcf(SF_FULL))
     cam = root.find(".//camera")
     ok14 = (not missing and not bad_doc and len(names) == 17 and root.find(".//joint").get("type") == "slide"
             and cam is not None and cam.get("projection") == "orthographic" and "](" not in (C.__doc__ or ""))

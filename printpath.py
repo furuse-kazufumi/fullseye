@@ -26,6 +26,7 @@ import re
 import zipfile
 from typing import Any
 from xml.etree import ElementTree as ET
+from safe_xml import safe_xml_parse_zip_member
 
 import numpy as np
 from scipy import ndimage as ndi
@@ -592,6 +593,8 @@ def contours_to_gcode(contours: Any, z: float, layer: int = 0, layer_mm: float =
 # 3MF                                                                          #
 # --------------------------------------------------------------------------- #
 _NS = "http://schemas.microsoft.com/3dmanufacturing/core/2015/02"
+_MAX_3MF_BYTES = 512 * 1024 * 1024
+_MAX_3MF_ELEMENTS = 10_000_000
 
 
 def read_3mf(path: str) -> tuple[np.ndarray, np.ndarray]:
@@ -608,7 +611,10 @@ def read_3mf(path: str) -> tuple[np.ndarray, np.ndarray]:
             model = next((n for n in names if n.lower().endswith(".model")), None)
             if model is None:
                 raise ValueError(f"{op}: no .model part in {p}")
-            root = ET.fromstring(zf.read(model))
+            # 1.1.0 の read_3mf には上限が無かった。3MF は頂点と三角形が 1 要素ずつで、100 万三角形(72 MB・約 150 万要素)が実在する
+            # (既定の 50 MiB / 100 万要素では断られる)ので、展開後 512 MiB・1,000 万要素(約 0.9 GB)まで読む。
+            # それ以上は ``with safe_xml.xml_limits(max_bytes=None, max_elements=None):`` で外す。
+            root = safe_xml_parse_zip_member(zf, model, op=op, max_bytes=_MAX_3MF_BYTES, max_elements=_MAX_3MF_ELEMENTS)
     except zipfile.BadZipFile:
         raise ValueError(f"{op}: not a zip container: {p}") from None
     except ET.ParseError as e:

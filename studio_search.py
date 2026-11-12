@@ -31,7 +31,7 @@ import numpy as np
 
 __all__ = [
     "current_sort_of", "search_grouped", "search_zero_results_help",
-    "SORT_ALIASES", "canonical_sort", "clear_caches",
+    "SORT_ALIASES", "canonical_sort", "clear_caches", "STAPLES", "STAPLE_EXCLUDE_JA", "staples_for",
 ]
 
 #: 台帳の型名 → 2-D レジストリの型名(同じものを指す対)。比べる前にこれで寄せる。
@@ -41,6 +41,71 @@ SORT_ALIASES = {
 
 #: 群の名前(この順に並べる)
 GROUPS = ("applicable", "needs_preprocessing", "other")
+
+#: 入門の語 → 定番の op(★2026-11-12、使い勝手の点検 P-09)。
+#: 「二値化」で `hx_close_edges`、「回転」で `rope_rotate`、「ラベリング」で `polar_unwrap` が先頭に出ていた
+#: (検索は説明文の語の重みで並べるので、3,800 本の中で基本の op が埋もれる)。
+#: 検索の順位(``search_ops``)は変えず、**別の欄 ``staples``** として返す —— 画面はそれを先頭の「定番」に出す。
+#: 当て方(★2026-11-12 の独立レビューで部分一致の誤爆が出たので締めた。`顕微鏡` → mirror、`account` → ラベリング、
+#: `nothing` → skeleton、`knowledge` → エッジ など):
+#:
+#: * 英語は**単語として**当てる(問い合わせを英数字の語に切り、表の語と完全一致。2 語の句は連続する語として)。
+#: * 日本語は部分文字列で当てるが、先に :data:`STAPLE_EXCLUDE_JA` の語(別の意味の複合語)を問い合わせから除く。
+#: * 問い合わせに ``_`` がある(op 名を打っている途中)、または語のどれかが op 名そのもの(``canny edge`` の
+#:   ``canny``)なら、定番は出さない —— 名前で探している人の先頭に別の op を置かない。
+#:
+#: op は索引に在るものだけ返す(表の全 op が索引に在ることは試験で数える)。
+STAPLES = (
+    (("二値化", "2値化", "2 値化", "しきい値", "閾値", "binarize", "binarise", "binarization", "thresholding"),
+     ("otsu", "threshold", "auto_threshold", "binary_threshold")),
+    (("エッジ保存", "エッジを保", "edge preserving"), ("bilateral", "median")),
+    (("ノイズ", "雑音", "denoise", "denoising", "noise"), ("median", "bilateral", "gaussian")),
+    (("ぼかし", "ぼかす", "ぼけ", "平滑", "スムージング", "blur", "blurring", "smooth", "smoothing"),
+     ("gaussian", "mean_image", "median")),
+    (("エッジ", "輪郭", "境界", "edge", "edges"), ("sobel_amp", "canny", "edges_image", "laplace")),
+    (("明るく", "明るさ", "暗く", "輝度", "brightness", "brighten", "brighter"),
+     ("scale_image", "gamma", "scale_image_max")),
+    (("コントラスト", "contrast", "ヒストグラム平坦", "equalize", "equalise", "equalization"),
+     ("equ_histo_image", "clahe", "scale_image_max")),
+    (("鮮鋭", "シャープ", "くっきり", "sharpen", "sharpening"), ("unsharp", "laplace")),
+    (("回転", "rotate", "rotation"), ("rotate_image",)),
+    (("拡大", "縮小", "リサイズ", "resize", "zoom"), ("zoom_image_factor", "zoom_image_size")),
+    (("反転", "ネガ", "invert", "negative"), ("invert_image",)),
+    (("鏡像", "ミラー", "左右反転", "上下反転", "左右を", "上下を", "mirror", "flip"), ("mirror_image",)),
+    (("膨張", "太らせ", "dilate", "dilation"), ("dilation_circle", "dilation_rectangle1")),
+    (("収縮", "細らせ", "erosion", "erode"), ("erosion_circle", "erosion_rectangle1")),
+    (("オープニング", "opening"), ("opening_circle",)),
+    (("クロージング", "closing"), ("closing_circle",)),
+    (("穴埋め", "穴を埋め", "fill holes", "fill hole"), ("fill_up",)),
+    (("ラベリング", "ラベル付け", "連結成分", "個数", "数える", "labeling", "labelling", "connected components"),
+     ("connect_and_holes", "area_center", "select_shape")),
+    (("面積", "重心", "centroid"), ("area_center", "select_shape")),
+    (("細線化", "骨格", "skeleton", "skeletonize", "thinning"), ("skeleton",)),
+    (("距離変換", "distance transform"), ("distance_transform",)),
+    (("円検出", "円を検出", "円を見つけ", "circle detection", "find circles", "detect circles"),
+     ("cv_hough_circles", "hough_circle_trans")),
+    (("直線検出", "直線を検出", "直線を見つけ", "line detection", "hough lines", "detect lines"), ("hough_line_trans",)),
+    (("テンプレート", "マッチング", "template matching", "template"), ("ncc_locate", "shape_locate")),
+    (("差分", "引き算", "difference", "subtract"), ("abs_diff_image", "sub_image")),
+    (("フーリエ", "周波数", "fft", "fourier"), ("fft_image",)),
+    (("領域分割", "ウォーターシェッド", "watershed"), ("watersheds",)),
+)
+
+#: 英語の句で、別の意味になるもの(「edge preserving」の edge でエッジ検出を出さない)。問い合わせから除いてから当てる。
+#: その句自身が表の語でもあるとき(「edge preserving」は bilateral の語)は、その表の語だけは除く前の問い合わせで当てる。
+STAPLE_EXCLUDE_EN = ("edge preserving",)
+
+#: 日本語の部分一致で、別の意味になる複合語。問い合わせから除いてから当てる。
+#: ここに在る語が表の語そのものでもあるとき(「左右反転」は mirror の語で、かつ「反転」= invert から除きたい)は、
+#: その表の語だけは除く前の問い合わせで当てる。
+#: ★表の語は、2026-11-12 の 2 回目の独立レビューで、部分一致の誤爆を避けるため**意図して**狭めた(f54982b9f9):
+#: 単独の「鏡」(顕微鏡・望遠鏡)・「左右」「上下」(上下限・左右対称)・「ラベル」(ラベル文字列)では定番を出さず、
+#: 「鏡像」「左右反転」「上下反転」「左右を」「上下を」「ラベル付け」「ラベリング」で出す(試験 test_bare_ambiguous_words_*)。
+STAPLE_EXCLUDE_JA = ("エッジ保存", "エッジを保", "顕微鏡", "望遠鏡", "内視鏡", "鏡面", "楕円", "半円", "同心円",
+                     "ノイズ付加", "ノイズを加", "ノイズを足", "境界条件", "輪郭線の長さ", "左右反転", "上下反転")
+
+#: 定番の欄に出す件数の上限
+STAPLES_MAX = 6
 
 #: ``accepted_sorts`` の実測結果を op ごとに覚える(高価なので。テストは :func:`clear_caches` で空にする)
 _ACCEPTED: dict = {}
@@ -388,7 +453,9 @@ def search_grouped(query: str, current_value: Any = None, current_sort: Optional
 
     Returns
     -------
-    ``{"query", "lang", "current_sort", "total", "applicable", "needs_preprocessing", "other", "help"}``。
+    ``{"query", "lang", "current_sort", "total", "applicable", "needs_preprocessing", "other", "help", "staples"}``。
+    ``staples`` は入門の語に当たる定番の op(:func:`staples_for`)。行の形は 3 群と同じで、``group`` に
+    その op が入るはずの群の名を持つ。**3 群の中身と並びは ``staples`` の有無で変わらない**。
     各行は ``{"name", "label", "in_sort", "out_sort", "score", "why", "tier", "fit", "bridge", "extra_inputs"}``。
     ``fit`` は ``declared`` / ``measured`` / ``bridge`` / ``none`` / ``unknown``(今の型が分からない)/ ``no_input``。
     該当が 0 件のときだけ ``help``(:func:`search_zero_results_help`)が入る。
@@ -403,7 +470,7 @@ def search_grouped(query: str, current_value: Any = None, current_sort: Optional
     cur_raw = current_sort if current_sort is not None else current_sort_of(current_value)
     cur = canonical_sort(cur_raw)
     groups: dict = {g: [] for g in GROUPS}
-    for rank, hit in enumerate(res["ops"]):
+    def _classify(hit: dict, rank: int) -> tuple:
         row_idx = _row_of(hit["name"])
         first, rest = _first_sort(hit["in_sort"])
         entry = {
@@ -427,15 +494,88 @@ def search_grouped(query: str, current_value: Any = None, current_sort: Optional
             entry["bridge"] = br
             entry["fit"] = "bridge" if br else "none"
             group = "needs_preprocessing" if br else "other"
+        return group, entry
+
+    for rank, hit in enumerate(res["ops"]):
+        group, entry = _classify(hit, rank)
         groups[group].append(entry)
+    staples = []
+    for rank, name in enumerate(staples_for(query)):
+        group, entry = _classify(_staple_hit(name, res["lang"]), rank)
+        entry.pop("_rank", None)
+        entry["group"] = group
+        staples.append(entry)
     for g in GROUPS:
         groups[g].sort(key=lambda e: (-e["score"], e["_rank"]))
         for e in groups[g]:
             e.pop("_rank", None)
-    out = {"query": query, "lang": res["lang"], "current_sort": cur_raw, "total": res["total"], **groups, "help": None}
+    out = {"query": query, "lang": res["lang"], "current_sort": cur_raw, "total": res["total"], **groups,
+           "help": None, "staples": staples}
     if not res["ops"]:
         out["help"] = search_zero_results_help(query, res["lang"])
     return out
+
+
+def staples_for(query: str) -> list:
+    """問い合わせに当たる定番の op 名(:data:`STAPLES` の表の順、重複なし、索引に在るものだけ、最大 :data:`STAPLES_MAX`)。
+
+    当たる語が無ければ空のリスト。文字は NFKC で寄せて小文字にしてから、表の語を**部分文字列**として探す
+    (「画像を二値化したい」でも「二値化」に当たる)。
+    """
+    if not isinstance(query, str) or not query.strip():
+        return []
+    import re
+    import unicodedata
+    q = unicodedata.normalize("NFKC", query).lower()
+    if "_" in q:                                       # op 名を打っている途中(circle_fit、area_open …)
+        return []
+    words = re.findall(r"[a-z0-9]+", q)
+    if any(_row_of(w) is not None for w in words) or _row_of(q.strip()) is not None:
+        return []                                      # 名前で探している(canny edge、median blur、threshold)
+    padded = " " + " ".join(words) + " "
+    for phrase in STAPLE_EXCLUDE_EN:                   # 「edge preserving」の edge でエッジ検出を出さない
+        if (" " + phrase + " ") in padded:
+            padded_rest = padded.replace(" " + phrase + " ", "  ")
+            break
+    else:
+        padded_rest = padded
+    q_ja = q
+    for phrase in STAPLE_EXCLUDE_JA:
+        q_ja = q_ja.replace(phrase, " ")
+    out: list = []
+    for terms, ops in STAPLES:
+        hit = False
+        for t in terms:
+            t = unicodedata.normalize("NFKC", t).lower()
+            if re.fullmatch(r"[a-z0-9 ]+", t):
+                t = " ".join(t.split())
+                hit = (" " + t + " ") in (padded if t in STAPLE_EXCLUDE_EN else padded_rest)   # 単語(句)として
+            else:
+                hit = t in (q if t in STAPLE_EXCLUDE_JA else q_ja)        # 日本語は部分文字列
+            if hit:
+                break
+        if hit:
+            for name in ops:
+                if name not in out and _row_of(name) is not None:
+                    out.append(name)
+    return out[:STAPLES_MAX]
+
+
+def _staple_hit(name: str, lang: Optional[str]) -> dict:
+    """定番の op を ``search_ops`` の 1 行と同じ形にする。
+
+    ★索引の行から直接組む(``search_ops`` を op ごとに呼ぶと、新しい定番が出た最初の検索が UI スレッドで
+    約 1 秒かかった —— 2026-11-12 のレビュー)。型の名前の正規化と要約の切り方は ``search_ops`` と同じ。
+    """
+    from fullseye import opsearch
+    row = _row_of(name) or {}
+    summ = row.get("s") or {}
+    summary = (summ.get(lang or "en") or summ.get("en") or summ.get("ja") or "").replace("\n", " ")
+    if len(summary) > 160:
+        summary = summary[:157] + "..."
+    norm = getattr(opsearch, "normalize_sort", lambda x: x)
+    return {"name": name, "in_sort": norm(row.get("i")), "out_sort": norm(row.get("o")), "score": 0.0,
+            "summary": summary}
 
 
 def _op_names() -> list:

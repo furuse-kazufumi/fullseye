@@ -50,6 +50,7 @@ from __future__ import annotations
 import math
 import re
 import xml.etree.ElementTree as ET
+from safe_xml import effective_limit, safe_xml_parse
 
 import numpy as np
 
@@ -2001,7 +2002,7 @@ def drawing_dxf(drawing):
 # --------------------------------------------------------------------------- #
 # 5. 読み戻し
 # --------------------------------------------------------------------------- #
-def _check_text(text, op):
+def _check_text(text, op, limit=None):
     if isinstance(text, bytes):
         try:
             text = text.decode("utf-8")
@@ -2009,8 +2010,9 @@ def _check_text(text, op):
             raise ValueError("%s: the input is not UTF-8 text" % op) from exc
     if not isinstance(text, str):
         raise ValueError("%s: expected the text of a file, got %r" % (op, type(text).__name__))
-    if len(text) > _MAX_TEXT_BYTES:
-        raise ValueError("%s: input of %d characters exceeds the limit %d" % (op, len(text), _MAX_TEXT_BYTES))
+    limit = _MAX_TEXT_BYTES if limit is None else limit
+    if len(text) > limit:
+        raise ValueError("%s: input of %d characters exceeds the limit %d" % (op, len(text), limit))
     return text
 
 
@@ -2187,11 +2189,11 @@ def svg_entities(text):
     文字の ``rotate`` だけを解釈し、ほかの変換を持つ要素は ValueError(座標を黙って取り違えない)。
     """
     op = "svg_entities"
-    text = _check_text(text, op)
-    if re.search(r"<!DOCTYPE|<!ENTITY", text, re.I):
-        raise ValueError("%s: DOCTYPE / ENTITY declarations are refused" % op)
+    # 上限は ``safe_xml.xml_limits(max_bytes=...)`` で上げられる(None で無制限)
+    _lim = effective_limit("max_bytes", _MAX_TEXT_BYTES)
+    text = _check_text(text, op, _lim if _lim is not None else float("inf"))
     try:
-        root = ET.fromstring(text)
+        root = safe_xml_parse(text, max_bytes=_MAX_TEXT_BYTES, kind="data", op=op)
     except ET.ParseError as exc:
         raise ValueError("%s: not well-formed XML (%s)" % (op, exc)) from exc
     ns = "{http://www.w3.org/2000/svg}"

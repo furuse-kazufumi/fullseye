@@ -324,6 +324,28 @@ jobs:
           FULLSEYE_WHEEL_PYTHON: .wheelenv/bin/python
         run: pytest tests/test_mcp_wheel.py tests/test_abi_wheel.py -q -ra
 
+  # Windows だけの試験(.lnk の読み戻し・HKCU のレジストリ・後始末 .cmd の実走)は ubuntu では走らない(skip される)。
+  # 2026-11-12(インストーラの独立レビュー 2 回目): それらを windows-latest で実際に走らせる。core だけを入れ、この 2 ファイルだけを回す。
+  windows-installer:
+    name: windows installer (.lnk / registry / cleanup .cmd, real runs)
+    needs: changes
+    if: needs.changes.outputs.docs-only != 'true'
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: pip と証明書を更新(eMudhra / emSign の中間 CA 失効 = pip>=26.2.2・certifi>=2026.10.19)
+        run: python -m pip install --upgrade "pip>=26.2.2" "certifi>=2026.10.19"
+      - name: Install core + pytest
+        run: pip install -e . pytest pytest-timeout
+      - name: Installer tests (Windows-only parts run for real)
+        run: pytest -q -ra tests/test_installer_review_2026_11_12.py tests/test_studio_shortcuts_2026_11_12.py
+
   # 次の Python(3.15)の試験的なジョブ。scikit-image / torch / mahotas / mitsuba / lazrs には
   # まだ cp315 の wheel が無いので extras は入れず、core だけの smoke と op の契約テストだけを回す。
   # 落ちても本流は止めない(continue-on-error)。何が先に壊れるかを早く知るためのもの。PR では回さない。

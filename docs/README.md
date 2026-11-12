@@ -282,6 +282,70 @@
 
 ## クイックコマンド
 
+### インストール直後の最初の 1 分
+
+`pip install` はファイルを置くだけです。使える状態にするには、次の **1 コマンド** を実行します。
+
+```powershell
+fullseye setup          # 環境を調べ、1 問ずつ聞きます(Enter = 既定)
+```
+
+Python / fullseye / Qt / 任意依存 / Claude Code 連携の状態を表示し、用途(Studio・Python・AI)を聞いて、
+**Fullseye Studio をスタートメニューに登録**(Linux ではアプリケーションメニュー)、足りない任意パッケージの導入
+(実行する `pip` コマンドを見せてから実行)、最後に「やったこと」と「次の一手」を出します。`--yes` は全部既定で無人実行、
+`--dry-run` は予定だけ表示、`--lang ja|en` で言語指定。標準入力が端末でない(CI・パイプ)ときは質問せず案内だけ出します。
+引数なしの `fullseye` も同じ案内を出します。1 つずつやる場合:
+
+| やりたいこと | 実行 |
+|---|---|
+| 画面で触る | `fullseye-studio`(`pip install "fullseye[gui]"` が必要) |
+| スタートメニュー / デスクトップに置く | `fullseye-studio --install-shortcuts`(`--desktop` を足すとデスクトップにも)、戻す = `--remove-shortcuts` |
+| Python から 3 行で | `import fullseye, numpy as np` / `img = np.random.rand(64, 64)` / `fullseye.apply(img, "sobel_amp")` |
+| AI(Claude Code)から | `fullseye-rag`(skill)と `claude mcp add fullseye -- python -m fullseye.mcp` |
+
+### アンインストール
+
+```powershell
+fullseye setup --uninstall      # setup が作った物を並べて見せ、聞いてから消し、最後に pip uninstall(--yes / --dry-run 可)
+```
+
+消すのは**台帳**(`%LOCALAPPDATA%\Fullseye\setup\install_ledger.json`、Linux は `~/.local/share/fullseye/`)に載った物だけです。
+Studio の設定とキャッシュは既定で残し、聞いたときだけ消します。`pip uninstall` は、実行中の `fullseye.exe` を Windows が
+消せないため、このコマンドが終わった後に別プロセスで走ります。Windows ではショートカットを登録すると
+**設定 > アプリ > インストールされているアプリ > Fullseye** にも出ます。その項目は setup フォルダの `fullseye-uninstall.cmd` を呼び、
+venv や Python を消した後(`python.exe` が在っても、venv の元の Python が無くて起動できない場合も)でも動きます。Claude Code の skill は別の問いで、
+`SKILL.md` を手で編集していれば既定では残します。
+
+台帳は**消す前に中身を検証**します。消すのは setup 自身が作る名前と置き場(`Fullseye Studio.lnk`・`fullseye.ico`・
+`fullseye-uninstall.cmd`・Linux の `fullseye-studio.desktop` と png、スタートメニューの `Fullseye` フォルダ、setup フォルダ)と、
+完全一致の `Uninstall\Fullseye` キーだけです。手で書き換えた台帳にあるそれ以外の物や、別の Python 環境(venv A と venv B)が作った物は、
+`--yes` でも消さずに「台帳にあるが消さなかったもの」として表示します。壊れた台帳は警告して「台帳なし」として扱います。
+`pip uninstall` の段は、この Python に pip があり、入っている `fullseye` が動いている物と同じ場所のときだけ出します
+(そうでなければ `uv pip uninstall` のコマンドを案内し、終了コード 3 で終わります)。
+
+`fullseye setup --uninstall` の**終了コード**: `0` = 選んだ物を全部消した(pip の段が要る場合は起動した)/ `--dry-run`・端末なしで何もしていない /
+pip の段が要らない(この Python に fullseye が pip で入っていない、または入っているのが動いている物と別のコピー)。`1` = 消せなかった項目がある、
+または台帳に許可外の項目があった(書き換えた台帳)。`3` = 登録は消したが pip の段を出せず(この Python に pip が無い = uv の venv など)、
+fullseye 本体が残っている — 案内された `uv pip uninstall` を実行してください。`fullseye setup` 本体は、選んだ段(依存の導入・ショートカット・
+RAG skill・Studio を開く)のどれかが失敗すれば `1`、全部できれば `0` です。
+
+**既知の制約**(直していません・未確認): (1) Microsoft Store 版 Python(MSIX)では `%APPDATA%` / `%LOCALAPPDATA%` への書き込みが
+私的な領域に振り替えられ、スタートメニューやアプリの一覧に出ない可能性があります。(2) conda の `pythonw.exe` を環境を有効にせず
+起動すると DLL が見つからないことがあります。(3) `.lnk` に AppUserModelID を書いていないので、タスクバーのピン留めとの結びつきは未確認です。
+
+
+**先に `pip uninstall fullseye` を手でやってしまった場合:** pip はショートカットなど setup が作った物を**消しません**。
+次を手で消してください(在る物だけ)。
+
+* スタートメニュー: `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Fullseye\`(`install\install.ps1` を使った場合は `Programs\` 直下の `Fullseye Studio.lnk` も)
+* デスクトップ: `Fullseye Studio.lnk`
+* `%LOCALAPPDATA%\Fullseye\setup\`(アイコンと台帳)、キャッシュ `%LOCALAPPDATA%\Fullseye\`(op_help-*、backend_probe.json*)
+* レジストリ(Windows): `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\Fullseye`(アプリ一覧の項目)、Studio の設定 `HKCU\Software\Fullseye\Studio`
+* Claude Code: `~/.claude/skills/fullseye-ops/`、MCP は登録していれば `claude mcp remove fullseye`
+* Linux: `~/.local/share/applications/fullseye-studio.desktop`、`~/.local/share/icons/hicolor/256x256/apps/fullseye-studio.png`、
+  `~/.config/Fullseye/Studio.conf`、`~/.cache/fullseye/`
+
+
 ```powershell
 py -3.11 -m pip install -e ".[opencv,gui]"     # 導入（画像 I/O + Studio）
 py -3.11 studio.py                              # Fullseye Studio を起動（= fullseye-studio）

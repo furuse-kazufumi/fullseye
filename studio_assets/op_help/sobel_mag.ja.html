@@ -1,0 +1,32 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">sobel_mag <span style="color:#8b91a0;font-size:11px">· エッジ · HALCON: sobel_amp</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image → image</b></p>
+<p style="color:#8b91a0;margin:2px 0">呼び出し: <code style="color:#e2e5ec">fs.apply(img, "sobel_mag", a=0.5, b=0.5)</code> &nbsp;·&nbsp; <code style="color:#e2e5ec">fs.op.sobel_mag(img, a=0.5, b=0.5)</code> &nbsp;·&nbsp; Studio: <code style="color:#e2e5ec">sobel_mag a b</code></p>
+<p>Sobel フィルタで<b>勾配の大きさ</b>を求める。横と縦の 3×3 の微分核を畳み込み、
+√(Gx² + Gy²) を返す。明るい画素は明るさが急に変わる所、つまり<b>エッジ</b>。Sobel の核は
+微分に軽い平滑化を組み合わせているので、単純な差分よりノイズに強い。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">引数</h3>
+<table cellpadding="3" style="color:#e2e5ec">
+  <tr><td><b>a</b></td><td>未使用(核の大きさと向きは固定。大きさはその画像の最大値で割る。0 は 0 のまま、いちばん強いエッジが 1 になる)。</td></tr>
+  <tr><td><b>b</b></td><td>未使用。</td></tr>
+</table>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">使い方</h3>
+<p>ノイズを強調しないよう、先に <a style="color:#22d3bf" href="op:gaussian">gaussian</a> でぼかす。
+続けて二値化すると、エッジの画像が領域になる。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">サンプル</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">gaussian 0.3 0.5
+sobel_mag 0.6 0.5
+otsu 0.5 0.5</pre>
+<p>▸ <a style="color:#22d3bf" href="sample:gaussian%200.3%200.5%0Asobel_mag%200.6%200.5%0Aotsu%200.5%200.5">このパイプラインを読み込む</a>
+&nbsp;·&nbsp; <a style="color:#f5a524" href="run:gaussian%200.3%200.5%0Asobel_mag%200.6%200.5%0Aotsu%200.5%200.5">読み込んで実行</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">関連する op</h3>
+<p><a style="color:#22d3bf" href="op:laplace">laplace</a> ·
+<a style="color:#22d3bf" href="op:prewitt_mag">prewitt_mag</a> ·
+<a style="color:#22d3bf" href="op:dog">dog</a> ·
+<a style="color:#22d3bf" href="op:canny">canny</a> ·
+<a style="color:#22d3bf" href="op:otsu">otsu</a></p>
+
+<p style="color:#8b91a0;font-size:11px">来歴: Sobel の 3×3 微分核(numpy/scipy)。 docs/PROVENANCE.md を参照。</p>

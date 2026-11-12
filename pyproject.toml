@@ -151,7 +151,7 @@ py-modules = [
   # `torch_lazy` is the lazy torch/torch.nn.functional shim imported by
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
-  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "fileio", "opsfileio", "_archive_tarxz",
+  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "safe_xml", "fileio", "opsfileio", "_archive_tarxz",
   # device_policy: device="auto" の規則(表は fullseye/data/DEVICE_RULES.json)。api が import する。
   "device_policy",
   # gpu_route: op の GPU 経路(accel / native / shadow)を決める唯一の関数。台帳を読むのもここだけ。
@@ -396,6 +396,9 @@ py-modules = [
 # (`halcon_names_data` / `auto_specs_data` / `macro_champions_data`) instead, which
 # always ship as .py modules.
 "studio_assets" = ["*.json", "op_help/*.md",
+                   # アイコン(2026-11-12): スタートメニュー登録(fullseye.shortcuts)と Studio の窓が読む。
+                   # assets/ はパッケージでないので wheel に入らず、pip 版にはアイコンが無かった。
+                   "fullseye.ico", "fullseye_256.png",
                    # ★op_help の HTML(直下と 1 段下)は**ここに挙げない**(2026-10-01)。setup.py の build_py が
                    # 固め書きの書庫 op_help_html.tar.xz を build_lib に作り、helpstore が読む(zip のままだと 39 MB → 書庫で約 2.5 MB)。
                    # op ごとの「入力 → 出力」の図(2026-09-06)。ヘルプ HTML が
