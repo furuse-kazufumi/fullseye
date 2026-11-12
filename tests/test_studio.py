@@ -305,7 +305,7 @@ def test_op_help_html_3d_reads_generated_and_falls_back():
     # unknown op -> escaped registry-metadata fallback card, no generated marker
     f = studio.op_help_html_3d("__no_such_3d_op__", {"category": "x", "in": "points",
                                                      "out": "voxel", "doc": "a & <b>"})
-    assert "· 3D" in f and "tools/opdocs.py html" in f
+    assert "· 3D" in f and "No help page has been written" in f      # P-07: 利用者向けの 1 文(開発者向けの手順は出さない)
     assert "&amp;" in f and "&lt;b&gt;" in f
     assert "opdocs:generated" not in f
 

@@ -3618,7 +3618,7 @@ def _help_lead_sentence(html_text):
     return ""
 
 
-def help_first_sentence(name, lang="en"):
+def _help_first_sentence(name, lang="en"):
     """The first sentence of ``studio_assets/op_help`` for *name* in *lang*, or "" if there is no page in that language.
 
     ``<name>.<lang>.html`` is the page for that language; ``<name>.html`` is the Japanese page (and, for the
@@ -3660,7 +3660,7 @@ def op_tooltip(row, lang=None) -> str:
                 % (row["name"], row["category"], row["in_sort"], row["out_sort"],
                    row.get("provenance") or "(none)", row["name"]))
     a_role, b_role = op_arg_roles(row["name"])
-    sentence = help_first_sentence(row["name"], lang) if lang else ""
+    sentence = _help_first_sentence(row["name"], lang) if lang else ""
     if a_role or b_role:
         knobs = "a: %s\nb: %s" % (a_role or "(op-dependent)", b_role or "(op-dependent)")
     else:

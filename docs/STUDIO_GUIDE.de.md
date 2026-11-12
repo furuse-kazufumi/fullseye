@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 4d87be350a9b -->
+<!-- i18n-source-sha: 9b7064a1ea20 -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 Aufwendige Verarbeitung blockiert das Fenster nicht. Unten werden die aktive Stufe und der Fortschritt angezeigt; eine Stoppanforderung wird an der nächsten Stufengrenze bestätigt. Ändern sich Einstellungen während eines Laufs, bleibt die Generation des angezeigten Ergebnisses sichtbar und man kann das ältere Ergebnis ansehen oder mit den aktuellen Einstellungen neu starten.

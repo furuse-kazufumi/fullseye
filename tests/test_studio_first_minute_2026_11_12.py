@@ -159,7 +159,7 @@ def test_rows_without_a_full_translation_are_counted_not_hidden():
     assert all(n == len(rows) for n in pending.values()), pending     # いまは全て日本語だけ
 
 
-PENDING_ROWS_CEILING = 400
+PENDING_ROWS_CEILING = 210
 
 
 # --------------------------------------------------------------------------- #
@@ -207,6 +207,7 @@ def test_hints_follow_the_language_and_mode_buttons_name_their_panels(win):
     assert len(set(tips_en.values())) == 4, "作業モードのヒントが同じ文の使い回し"
     for mode_id, mode in studio_layout.MODES.items():
         shown = [p for p in mode.visible if p != "result"]
+        assert shown                                   # 件数を先に見る
         for panel in shown:
             en = studio.PANEL_NAME_EN[panel].split(" (")[0]
             first = en.split(" · ")[0].split(" & ")[0]
@@ -221,7 +222,9 @@ def test_hints_follow_the_language_and_mode_buttons_name_their_panels(win):
 
 
 def test_new_hints_are_not_just_the_part_name_repeated(win):
-    for x in _controls(win):
+    controls = _controls(win)
+    assert len(controls) >= 100
+    for x in controls:
         tip, text = x.toolTip().strip().lower(), (x.text() if hasattr(x, "text") else "").strip().lower()
         if tip and text:
             assert tip != text, "ヒントが部品名の繰り返し: %r" % text
@@ -251,8 +254,8 @@ def test_japanese_mode_english_only_tips_are_counted(win):
 
 # ---- op 一覧の行のヒント = その op のヘルプの先頭 1 文 ---------------------------------------- #
 def test_op_row_tooltip_shows_the_help_sentence_in_the_ui_language(win):
-    en = studio.help_first_sentence("abs_diff_image", "en")
-    ja = studio.help_first_sentence("abs_diff_image", "ja")
+    en = studio._help_first_sentence("abs_diff_image", "en")
+    ja = studio._help_first_sentence("abs_diff_image", "ja")
     assert en and not _CJK.search(en), en
     assert ja and _CJK.search(ja), ja
     win._apply_language("en"); _pump()
@@ -266,7 +269,7 @@ def test_op_row_tooltip_shows_the_help_sentence_in_the_ui_language(win):
     assert ja in tip_ja
     # ページの無い言語・op は今の文のまま
     row = studio._op_row("gaussian") if hasattr(studio, "_op_row") else None
-    assert studio.help_first_sentence("no_such_op_xyz", "en") == ""
+    assert studio._help_first_sentence("no_such_op_xyz", "en") == ""
 
 
 def test_hovering_an_op_row_shows_that_tooltip(win):
@@ -282,7 +285,7 @@ def test_hovering_an_op_row_shows_that_tooltip(win):
     QtWidgets.QToolTip.hideText()
     ev = QtGui.QHelpEvent(QtCore.QEvent.ToolTip, pos, lst.viewport().mapToGlobal(pos))
     QtWidgets.QApplication.sendEvent(lst.viewport(), ev); _pump(0.2)
-    assert studio.help_first_sentence("abs_diff_image", "en") in QtWidgets.QToolTip.text()
+    assert studio._help_first_sentence("abs_diff_image", "en") in QtWidgets.QToolTip.text()
     QtWidgets.QToolTip.hideText()
 
 

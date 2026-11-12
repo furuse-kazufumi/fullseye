@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 4d87be350a9b -->
+<!-- i18n-source-sha: 9b7064a1ea20 -->
 # The complete guide to Fullseye Studio
 
 A purpose search groups candidates by whether they fit the current input, need preprocessing, or belong elsewhere. You can try a candidate once without adding a stage. Failures in the Problems pane show the cause, location, and concrete next actions for reselecting input, comparing values, opening the log, editing a knob, or finding a suggested stage.
