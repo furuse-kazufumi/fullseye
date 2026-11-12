@@ -160,7 +160,7 @@ def test_rows_without_a_full_translation_are_counted_not_hidden():
 
 
 #: 2026-11-12 の画像欄の直し(日本語モードに残る英語)で、日本語だけの行を 83 本足した(210 → 293)。他言語は未訳のまま
-PENDING_ROWS_CEILING = 293
+PENDING_ROWS_CEILING = 294   # +1: 「impl: %s」(2 回目の直し)
 
 
 # --------------------------------------------------------------------------- #

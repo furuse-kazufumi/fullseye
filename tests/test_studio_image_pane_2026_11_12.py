@@ -245,7 +245,8 @@ def test_status_bar_does_not_name_an_old_generation_for_a_live_picture(win):
     ka = win._knob_rows[0]
     ka.slider.setValue(int(ka.slider.maximum() * 0.8)); _pump(0.3)
     assert attr.text() == "", "画像はもう世代 %d の結果ではないのに状態バーが言い続ける: %r" % (gen, attr.text())
-    assert win._run_ui["banner"].isHidden() and win._run_ui["show_result"].isHidden()
+    # 前の結果へ行く導線(帯と「その結果を見る」)は残る: 詳しくは test_the_previous_completed_result_stays_reachable...
+    assert not win._run_ui["banner"].isHidden() and not win._run_ui["show_result"].isHidden()
     # op を足しても同じ
     _pick(win, "sobel_mag")
     win._op_buttons["insert"].click(); _pump(0.3)
@@ -410,3 +411,124 @@ def test_new_translation_rows_are_japanese_only_pending_rows():
     for key, row in pending.items():
         if key != "_note" and "ja" in row:
             assert key.count("%s") == row["ja"].count("%s") and key.count("%d") == row["ja"].count("%d"), key
+
+
+# --------------------------------------------------------------------------- #
+# 追加(2026-11-12 の 2 回目): op の一覧の行数・説明欄の折り返し・直前の結果への導線・最初の 3 手の帯              #
+# --------------------------------------------------------------------------- #
+def _visible_rows(lst):
+    vp = lst.viewport().rect()
+    n = 0
+    for i in range(lst.count()):
+        r = lst.visualItemRect(lst.item(i))
+        if r.height() > 0 and vp.contains(r.topLeft()) and r.bottom() <= vp.bottom() + 1:
+            n += 1
+    return n
+
+
+def test_operator_list_shows_six_or_more_rows_at_1280x673(win):
+    lst = win._op_list
+    assert _visible_rows(lst) >= 6, "op の一覧が %d 行しか見えない(高さ %d)" % (_visible_rows(lst), lst.height())
+    # op を選んだ状態でも(署名欄が伸びても一覧は 6 行を保つ)
+    _pick(win, "gaussian"); _pump(0.3)
+    assert _visible_rows(lst) >= 6, (_visible_rows(lst), lst.height())
+    # 一覧の下に使われない空きが無い: 一覧の下端と署名欄の上端が接している
+    sig = [w for w in win._docks["operators"].findChildren(__import__("PySide6.QtWidgets", fromlist=["QLabel"]).QLabel)
+           if "gaussian" in w.text() and "→" in w.text()][0]
+    gap = sig.mapTo(win._docks["operators"], __import__("PySide6.QtCore", fromlist=["QPoint"]).QPoint(0, 0)).y() - \
+        (lst.mapTo(win._docks["operators"], __import__("PySide6.QtCore", fromlist=["QPoint"]).QPoint(0, 0)).y() + lst.height())
+    assert 0 <= gap <= 12, "一覧と署名欄のあいだに空きがある: %d px" % gap
+
+
+def test_operator_list_uses_all_the_free_height_in_a_tall_window(tmp_path, monkeypatch):
+    small, _m = _launch(tmp_path, monkeypatch, (1280, 673), name="a.ini")
+    h_small = small._op_list.height()
+    _close(small)
+    big, _m2 = _launch(tmp_path, monkeypatch, (1920, 1080), name="b.ini")
+    try:
+        assert big._op_list.height() >= h_small + 300, (h_small, big._op_list.height())
+        assert _visible_rows(big._op_list) >= 12, _visible_rows(big._op_list)
+    finally:
+        _close(big)
+
+
+def test_operator_list_still_has_rows_after_a_search(win):
+    se = win._search_ui["edit"]
+    se.setText("blur"); win._search_ui["search_now"]("blur"); _pump(0.4)
+    lst = win._op_list
+    assert lst.count() >= 1
+    assert lst.height() >= 150, lst.height()                     # 検索結果は 1 件が高い行(ボタン付き)。一覧の高さは保たれる
+    assert _visible_rows(lst) >= 1
+
+
+def test_stage_description_is_not_cut_off_and_impl_is_translated(win):
+    win._load_sample_image("coins"); _pump(0.3)
+    _pick(win, "gaussian")
+    win._op_buttons["insert"].click(); _pump(0.3)
+    win._docks["pipeline"].show(); win._docks["pipeline"].raise_(); _pump(0.4)
+    d = win._stage_detail
+    assert d.wordWrap() and "impl:" in d.text()
+    assert d.height() >= d.heightForWidth(d.width()), "説明欄が文の高さに足りず、下の行が切れる: %d < %d" % (d.height(), d.heightForWidth(d.width()))
+    # 幅を変えても追従する
+    win.resize(1500, 800); _pump(0.4)
+    assert d.height() >= d.heightForWidth(d.width())
+    win._apply_language("ja"); _pump(0.4)
+    try:
+        assert "実装: " in d.text() and "impl:" not in d.text(), d.text()
+        assert d.height() >= d.heightForWidth(d.width())
+    finally:
+        win._apply_language("en"); _pump(0.2)
+
+
+def test_operator_signature_panel_keeps_the_implementation_in_its_tooltip(win):
+    _pick(win, "gaussian"); _pump(0.3)
+    from PySide6 import QtWidgets
+    sig = [w for w in win._docks["operators"].findChildren(QtWidgets.QLabel) if "gaussian" in w.text() and "→" in w.text()][0]
+    assert "impl:" not in sig.text() and "impl:" in sig.toolTip()
+    assert "knob a" in sig.text()
+
+
+def test_the_previous_completed_result_stays_reachable_after_a_setting_changes(win):
+    import numpy as np
+    win._load_sample_image("coins"); _pump(0.3)
+    _pick(win, "gaussian")
+    win._op_buttons["insert"].click(); _pump(0.3)
+    gen = win._start_run_async()
+    end = time.monotonic() + 10
+    while win._run_controller.running and time.monotonic() < end:
+        _pump(0.05)
+    _pump(0.3)
+    ui = win._run_ui
+    assert ui["banner"].isHidden(), "設定を変える前は帯を出さない"
+    done_result = np.array(win._test_model.displayed_result, copy=True)
+    ka = win._knob_rows[0]
+    ka.slider.setValue(int(ka.slider.maximum() * 0.9)); _pump(0.4)
+    # 画像は今の設定の結果。状態バーは世代を言わず、前の結果へ行く導線が出る
+    assert ui["attribution"].text() == ""
+    assert not ui["banner"].isHidden() and not ui["show_result"].isHidden() and not ui["run_current"].isHidden()
+    live = np.array(win._current_view()._data, copy=True)
+    assert not np.array_equal(live, done_result), "つまみを動かしたのに画像が変わっていない"
+    # 「その結果を見る」で完了した結果へ戻れる(画像も状態バーも世代 N)
+    ui["show_result"].click(); _pump(0.4)
+    assert np.array_equal(np.array(win._current_view()._data), done_result)
+    assert str(gen) in ui["attribution"].text()
+
+
+def test_first_steps_band_is_one_line_about_40px(tmp_path, monkeypatch):
+    from PySide6 import QtWidgets
+    for lang in ("en", "ja"):
+        win, _m = _launch(tmp_path, monkeypatch, (1280, 673), name="band_%s.ini" % lang)
+        try:
+            win._apply_language(lang); _pump(0.4)
+            band = win._first_steps
+            assert band.isVisible()
+            assert band.height() <= 44, "%s: 帯の高さ %d" % (lang, band.height())
+            for lab in band.findChildren(QtWidgets.QLabel):
+                assert not lab.wordWrap(), lab.text()
+            ys = {lab.geometry().y() for lab in band.findChildren(QtWidgets.QLabel)}
+            assert max(ys) - min(ys) <= 6, "3 つの手が 1 行に並んでいない: %s" % sorted(ys)
+            # 閉じるボタンと既読の保存は今のまま
+            win._first_steps_close.click(); _pump(0.2)
+            assert band.isHidden()
+        finally:
+            _close(win)

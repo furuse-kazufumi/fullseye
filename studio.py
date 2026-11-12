@@ -3560,6 +3560,14 @@ def _spec_head(spec, letter):
     return "%s · %s" % (letter, tr(lab)) if lab else letter
 
 
+def op_panel_signature(row) -> str:
+    """op 一覧の下の署名欄に出す文: :func:`op_signature_detail` から実装の式(``impl:`` の行)を除いたもの。
+    一覧に行を残すため。実装の式は選んだ段のつまみ欄と、この欄のツールチップに全文がある。"""
+    full = op_signature_detail(row)
+    keep = [ln for ln in full.split("\n") if not ln.startswith(("impl:", "実装:"))]
+    return "\n".join(keep)
+
+
 def op_arg_roles(name):
     """Best-effort (a_role, b_role) description for an op's two knobs. Curated for
     common ops; ('', '') stays generic. Returns (None, None) if the op is unknown."""
@@ -3601,7 +3609,7 @@ def op_signature_detail(row) -> str:
     lines.append(tr("knob b — %s") % (tr(b_role) if b_role else tr("(unused)") if b_role == "" else tr("see impl")))
     src = op_impl_source(row["name"])
     if src:
-        lines.append("impl: %s" % src)
+        lines.append(tr("impl: %s") % src)
     return "\n".join(lines)
 
 
@@ -7064,6 +7072,7 @@ def build_window(model=None):
     b_browse_samples = _tbtn("grid", "Browse the sample gallery — preview each sample's code before loading it")
     s_hint = QtWidgets.QLabel("pick one → loads into the pipeline + Program panel")
     s_hint.setProperty("muted", True); s_hint.setWordWrap(True)
+    s_hint.setVisible(False)       # ★2026-11-12: 1 行ぶん op の一覧に譲る(同じ文は選択欄のツールチップと「最初の 3 手」にある)
     slay = QtWidgets.QVBoxLayout()
     srow = QtWidgets.QHBoxLayout(); srow.addWidget(samples, 1); srow.addWidget(b_browse_samples)
     slay.addLayout(srow); slay.addWidget(s_hint)
@@ -7087,16 +7096,45 @@ def build_window(model=None):
                             "running). Nothing is converted. Off: list every operator.")
     ops_fit_note = QtWidgets.QLabel("")
     ops_fit_note.setProperty("muted", True); ops_fit_note.setWordWrap(True)
+    ops_fit_note.setVisible(False)          # ★2026-11-12: 一覧に譲る(文はチェックボックスのツールチップに出す)
     ops_fit_state = {}                  # last (switch, upstream sort) the list was filled for
     op_list = QtWidgets.QListWidget()
     op_list.setToolTip("Double-click an operator to insert it into the pipeline")
+    op_list.setStyleSheet("QListWidget::item { padding: 0px 6px; }")       # 一覧の行を詰める(全体の既定は上下 2px)
+    op_list.setMinimumHeight(60)
     op_hint = QtWidgets.QLabel("set a, b · Insert into pipeline or Run once · double-click = insert")
     op_hint.setWordWrap(True)                             # wrap: a long hint must not force a wide panel
     op_hint.setProperty("muted", True)
+    class _AutoHeight(QtCore.QObject):
+        """折り返すラベルの最小の高さを、いまの幅で必要な高さに合わせる(幅や文が変わると行数が変わり、
+        欄が最初の高さのままだと下の行が切れていた: 「impl: …」の 2 行目)。"""
+        def __init__(self, label, floor=0):
+            super().__init__(label)
+            self._label, self._floor, self._busy = label, int(floor), False
+            label.installEventFilter(self)
+
+        def refresh(self):
+            lab = self._label
+            if self._busy or lab.width() <= 1:
+                return
+            self._busy = True
+            try:
+                need = max(self._floor, lab.heightForWidth(lab.width()))
+                if lab.minimumHeight() != need:
+                    lab.setMinimumHeight(need)
+            finally:
+                self._busy = False
+
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.Resize:
+                self.refresh()
+            return False
+
     op_param = QtWidgets.QLabel("select an operator to see its signature")
     op_param.setProperty("hint", True); op_param.setWordWrap(True)
     op_param.setToolTip("The selected operator's input→output sorts, HALCON alias and what each knob does")
-    op_param.setMinimumHeight(92)
+    op_param.setMinimumHeight(56)      # ★2026-11-12: 92 → 56(実装の式は欄から外し、op の一覧に行を譲る。長い署名は高さが伸びる)
+    op_param_fit = _AutoHeight(op_param, 56)
     # HDevelop-style operator entry: pick an op, set its two args, then Insert into
     # the pipeline OR Run once (single-shot) and see the result in a graphics window.
     op_a_spin = QtWidgets.QDoubleSpinBox(); op_a_spin.setRange(0.0, 1.0)
@@ -7113,7 +7151,10 @@ def build_window(model=None):
     b_help = _tbtn("help", "Operator help (image-processing details)")
     b_help.setEnabled(False)
     olay = QtWidgets.QVBoxLayout()
-    olay.addWidget(cat); olay.addWidget(search)
+    olay.setSpacing(3)                       # ★2026-11-12: 1280x673 で op の一覧が 2 行しか見えなかった。間隔・並びを詰めて一覧に譲る
+    _csrow = QtWidgets.QHBoxLayout(); _csrow.setSpacing(4)
+    _csrow.addWidget(cat, 0); _csrow.addWidget(search, 1)      # カテゴリと検索は 1 行に
+    olay.addLayout(_csrow)
     olay.addWidget(ops_fit_only); olay.addWidget(ops_fit_note)
     olay.addWidget(op_list, 1)
     olay.addWidget(op_param)
@@ -7135,6 +7176,7 @@ def build_window(model=None):
     oprow = QtWidgets.QHBoxLayout()
     oprow.addWidget(b_insert); oprow.addWidget(b_run_once); oprow.addWidget(b_help); oprow.addStretch(1)
     olay.addLayout(oprow); olay.addWidget(op_hint)
+    op_hint.setVisible(False)               # 同じ案内は 3 つのボタンのツールチップと「最初の 3 手」にある(1 行を一覧に譲る)
     lv.addWidget(_group(QtWidgets, "OPERATORS", olay), 1)
 
     search_state = {"rows": {g: [] for g in ("applicable", "needs_preprocessing", "other")},
@@ -7292,7 +7334,13 @@ def build_window(model=None):
             op_list.addItem(it)
             if keep is not None and r["name"] == keep:
                 op_list.setCurrentItem(it)
-        ops_fit_note.setText(_ops_fit_note_text(fit_sort, fit_prev, len(ranked), in_category))
+        _note = _ops_fit_note_text(fit_sort, fit_prev, len(ranked), in_category)
+        ops_fit_note.setText(_note)
+        # ★2026-11-12: 注記の行は一覧に譲り、全文はチェックボックスのツールチップに出す(件数・理由はそこで読める)
+        _base = ops_fit_only.property("base_tip")
+        if _base is None:
+            _base = ops_fit_only.toolTip(); ops_fit_only.setProperty("base_tip", _base)
+        ops_fit_only.setToolTip((_base + "\n\n" if _base else "") + _note)
 
     def _ops_follow_upstream():
         """Refill the browser when the insertion point's upstream sort (or the switch) changed.
@@ -7336,6 +7384,8 @@ def build_window(model=None):
     stage_detail = QtWidgets.QLabel("select a stage to tune its knobs")
     stage_detail.setWordWrap(True); stage_detail.setProperty("hint", True)
     stage_detail.setMinimumWidth(1)
+    stage_detail_fit = _AutoHeight(stage_detail)
+    win._stage_detail = stage_detail
     # One KnobRow per knob: slider spanning the DISPLAYED range + typed widget
     # (unit spin / int spin / choice combo / checkbox, per param_specs) + the raw
     # 0..1 spin for exact entry. A generic op shows exactly the old slider + spin.
@@ -7447,17 +7497,21 @@ def build_window(model=None):
     first_steps = QtWidgets.QFrame(); first_steps.setObjectName("first_steps")
     first_steps.setStyleSheet("#first_steps { background: %s; border: 1px solid %s; border-radius: 6px; }"
                               % (NAVY_2, TEAL))
-    _fs_lay = QtWidgets.QHBoxLayout(first_steps); _fs_lay.setContentsMargins(10, 6, 6, 6); _fs_lay.setSpacing(14)
+    _fs_lay = QtWidgets.QHBoxLayout(first_steps); _fs_lay.setContentsMargins(10, 2, 4, 2); _fs_lay.setSpacing(14)
     _fs_title = QtWidgets.QLabel("First steps"); _fs_title.setStyleSheet("font-weight:700;")
     _fs_lay.addWidget(_fs_title)
     for _txt in ("1. Open a sample: File ▸ Sample images",
                  "2. Select an operator in the Operators panel and press +",
                  "3. Press ▶▶ to run"):
-        _fs_step = QtWidgets.QLabel(_txt); _fs_step.setWordWrap(True)
-        _fs_lay.addWidget(_fs_step, 1)
+        _fs_step = QtWidgets.QLabel(_txt)
+        _fs_step.setMinimumWidth(1)        # ★2026-11-12: 折り返さず 1 行(狭い欄では右が切れる。全文はツールチップ)
+        _fs_step.setToolTip(_txt)
+        _fs_lay.addWidget(_fs_step, 0)
+    _fs_lay.addStretch(1)
     _fs_close = QtWidgets.QToolButton(); _fs_close.setText("✕")
     _fs_close.setToolTip("Hide these steps. Help ▸ First steps shows them again")
-    _fs_lay.addWidget(_fs_close, 0, QtCore.Qt.AlignTop)
+    _fs_lay.addWidget(_fs_close, 0, QtCore.Qt.AlignVCenter)
+    first_steps.setMaximumHeight(40)
     ilay.insertWidget(0, first_steps)
 
     def _first_steps_dismissed():
@@ -8419,11 +8473,17 @@ def build_window(model=None):
             run_attr.setText("")
             return
         if state.get("shown_live") and not run_ctl.running:
-            # 画面の画像は、いまの設定を同期で計算した結果(世代の結果ではない)。
-            # 古い世代の名前を出さず、「変更前の設定による結果」の帯も引っ込める(画像と食い違う)。
+            # 画面の画像は、いまの設定を同期で計算した結果(世代の結果ではない): 古い世代の名前は出さない。
+            # ただし、直前に完了した結果が今の設定と違うなら、それを見に行く導線(帯と「その結果を見る」)は残す。
             run_attr.setText("")
+            _last = run_ctl.latest_generation
+            _snap = run_snapshots.get(_last)
+            _stale = (_snap is not None and _last in run_completed and model.displayed_generation == _last
+                      and _snap["token"] != _current_run_token())
+            if _stale:
+                run_banner.setText(tr("The completed result used settings from before the change"))
             for widget in (run_banner, run_show, run_current):
-                widget.hide()
+                widget.setVisible(bool(_stale))
             return
         snap = run_snapshots.get(gen)
         changed = snap is not None and snap["token"] != _current_run_token()
@@ -9410,6 +9470,7 @@ def build_window(model=None):
             if b_role and param_specs.is_generic(specs["b"]) and specs["b"].get("kind") != "unused":
                 lb.setText("%s  ·  %s" % (lb.text(), b_role))
             stage_detail.setText(op_signature_detail(row) if row else name)
+            stage_detail_fit.refresh()
         else:
             stage_detail.setText(tr("select a stage to tune its knobs"))
         krow_a.set_enabled(valid); krow_b.set_enabled(valid)
@@ -11716,7 +11777,9 @@ def build_window(model=None):
             b_insert.setEnabled(True); b_help.setEnabled(False); b_run_once.setEnabled(True); return
         name = cur.data(QtCore.Qt.UserRole)
         row = _op_row(name)
-        op_param.setText(op_signature_detail(row) if row else cur.text())
+        op_param.setText(op_panel_signature(row) if row else cur.text())
+        op_param.setToolTip(op_signature_detail(row) if row else cur.text())      # 実装の式も含む全文
+        op_param_fit.refresh()
         if row and row.get("backend") == "general":
             # general-algorithm tier: read-only in the image UI (different seq/scalar
             # model). No a/b knobs, and Insert / Run once / Help are image-pipeline
