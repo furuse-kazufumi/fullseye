@@ -60,7 +60,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 何を変えたか: 新しいモジュール `safe_xml.py`(`safe_xml_parse` / `safe_xml_parse_zip_member` / `safe_xml_iterparse`、例外は `UnsafeXMLError`(`ValueError` の子))。DOCTYPE は **解析器の DOCTYPE 通知**(`TreeBuilder.doctype`)で断る。バイト列の正規表現ではなく expat が読んだ後なので、UTF-8 / UTF-16 の BOM つき・なし・宣言つきの iso-8859-1 でも見落とさない。大きさの上限は既定 50 MiB(SVG の既存の上限に揃える)、zip の中は展開後の大きさにも上限(宣言が嘘でも `max_bytes + 1` までしか読まない)。壊れた XML は従来どおり `ET.ParseError`。`defusedxml` は依存に足さず使わない(この門だけで同じ入力を断れる)。本体の 11 か所の解析呼び出し(drivecommonroad 1・drivejapan 1・driveplateau 2・fileio 2・optdraw 1・pegfail 1・pegtactile 1・printpath 1・examples_3d/anatomical_hand 1)を全部この門に通した。tools/ の JUnit 読み(ci_junit_floor・ci_failure_record・ci_local×3・mutation_probe の計 6 呼び出し)は CI の生成物を読む内部の道具なので対象外。
 
-挙動が変わる点: DOCTYPE / ENTITY を含む入力は、(SVG 以外でも)`UnsafeXMLError` で断る(以前は内部実体が展開されて受理された)。50 MiB を超える XML は断る(plateau の CityGML はストリーム読みで上限なし)。3MF の `.model` は展開後 50 MiB まで。コメント・CDATA の中に `<!DOCTYPE` と書いてあるだけの文書は、正規表現のときと違って断らない。正常な文書の読み結果は変わらない(標準の `ET.fromstring` と `ET.tostring` のバイト一致を試験)。
+挙動が変わる点: DOCTYPE / ENTITY を含む入力は、(SVG 以外でも)`UnsafeXMLError` で断る(以前は内部実体が展開されて受理された)。50 MiB を超える XML は断る(plateau の CityGML はストリーム読みで上限なし。`read_3mf` と `osm_parse` は 1.1.0 で上限が無かったので、下の「独立レビュー 3・4 回目」のとおり既定を大きめにした)。コメント・CDATA の中に `<!DOCTYPE` と書いてあるだけの文書は、正規表現のときと違って断らない。正常な文書の読み結果は変わらない(標準の `ET.fromstring` と `ET.tostring` のバイト一致を試験)。
 
 実測: tests/test_safe_xml_parse_2026_11_12.py(145 本)。読み手 11 本 × DTD 6 種(10 段の入れ子実体・5 kB の実体・外部実体・内部実体・DOCTYPE のみ・SYSTEM つき DOCTYPE)× 別エンコード 5 種を読み手の入口から渡して全部断られる。52 MB の入力・展開後 52 MB の 3MF(圧縮後 1 MB 未満)も断られる。配布するモジュールを走査して、門を通さない解析の呼び出しが 0(対象は tests/・tools/・build/・examples/ を除く 500 本超。件数に下限つき)。
 
@@ -78,15 +78,28 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 何を変えたか:
 - 要素の数の上限(既定 100 万。`osm_parse` だけ 200 万)と入れ子の深さの上限(既定 256)を足した(`max_elements` / `max_depth`、読み手ごとに変えられる、`None` で無効)。超えたら `UnsafeXMLError`。決め方 = 手元の実ファイルの最大が OSM 3.2 MB の 77,854 要素・CommonRoad 9,498・ginza.osm 13,789、入れ子は PLATEAU の 14 なので、要素数は最大の約 13 倍、深さは Python の再帰上限(1000)の手前。8.4 MB の平らな入力は 100 万要素で止まり、ピークは 185 MB から 97 MB。`safe_xml_iterparse`(CityGML)は深さのみ既定 256 で、要素の総数は上限なし(`elem.clear()` で木を抱えない設計で、実ファイルは 1 本で 226 万要素(219 MB)あり、総数で切ると通らない)。`clear()` しない呼び出し側は `max_elements` を付ける。
-- `kind="auto"` の意味を変えた: `str` / `bytes` は常に本文、パスとして開くのは `os.PathLike` か `kind="path"` を明示したときだけ。リポジトリ内の呼び出しは全部 `kind` を明示していて変わらない。**公開モジュールの既定の挙動が変わる**(`<` で始まらない文字列を渡していた利用者は `kind="path"` が要る)。
+- `kind="auto"` の意味を変えた: `str` / `bytes` は常に本文、パスとして開くのは `os.PathLike` か `kind="path"` を明示したときだけ。リポジトリ内の呼び出しは全部 `kind` を明示していて変わらない。`safe_xml` は 1.1.1 で新しく入ったモジュールで、既存の利用者はいない(1.1.0 以前の版には無い)ので、これは互換性を壊す変更ではなく、入る前の既定の決め直し。
 - `safe_xml_iterparse` を、標準の C の `iterparse` + ルート要素の前の部分の expat 検査に作り替えた(前の実装は Python の TreeBuilder で全要素を通していた)。この作り替えの途中で、入力の終わりで expat が末尾の token を保留するため、DOCTYPE がストリームの最後の chunk にあると見逃す穴を試験が見つけ、直した。
 - 配布物の走査の試験を ast に替えた(import の別名・`from ... import fromstring as fs`・`X.fromstring`・`fromstringlist`・`XMLID`・`XMLParser`・`ElementTree(file=)`・dom / sax / expat / pyexpat / lxml / plistlib / xmlrpc の import を検出。検出器自身も 20 形で試験)。`examples/` も対象に含め、そこの 8 か所の XML 解析を門に通した(`poc_real_sem_metal_layer.py` の自前の DOCTYPE 検査は門に寄せた)。
 - zip の 2 段の守りを別々の試験にした(宣言が大きい → `open` を呼ばずに断る / 宣言が嘘で小さい → `max_bytes + 1` バイトだけ読んで断る)。どちらかを消すと落ちることを確かめた。
 - 版の印: 両方の印を持つ dict を `ValueError`。`np.int64(1)` は断ったまま、メッセージで「Python / JSON の整数。numpy の整数は `int()` で」と言う。
 
-挙動が変わる点: 上のとおり(要素数 100 万超・深さ 256 超の XML を断る。`kind="auto"` の文字列はパスにならない。両方の印の dict を断る)。正常な実ファイルの読み結果は変わらない(OSM・PLATEAU(丸ごと 2 本)・CommonRoad・OME を、標準の `ElementTree` に差し替えた同じ読み手と突き合わせて、要約が一致)。
+挙動が変わる点: 上のとおり(要素数 100 万超・深さ 256 超の XML を断る。`kind="auto"` の文字列はパスにならない。両方の印の dict を断る)。実ファイルの読み結果は、手元の OSM・PLATEAU(丸ごと 2 本)・CommonRoad・OME を標準の `ElementTree` に差し替えた同じ読み手と突き合わせて一致した。ただし **大きな正常ファイルは、この節の時点の既定では断られた**(下の 4 回目の指摘で直した: 3MF と OSM)。
 
 速度(正直に): 平らな合成データでは `safe_xml_parse` が標準の `fromstring` の 1.4 倍(0.72 s → 1.01 s、200 万要素級)、`iterparse` が 1.4 倍(0.39 s → 0.55 s。前の実装は 1.8 倍)。要素数と深さを Python の `start` / `end` で数えるぶんで、これ以上は縮められなかった。PLATEAU の実ファイルでは `plateau_parse` +11 % / −11 %(ばらつき)、`plateau_lod2_mesh` +18 % / +6 %(142〜219 MB の 2 ファイル、1 回ずつ)。
+
+### 直し — 大きな正常ファイルを断らない・上限を外す手段(独立レビュー 4 回目、2026-11-13)
+
+何が起き得たか: 3MF は頂点と三角形が 1 要素ずつなので、100 万三角形(72 MB・約 150 万要素)が既定の 50 MiB / 100 万要素の門で断られた(実測で約 65 万三角形まで)。1.1.0 の `read_3mf` には上限が無かった。街全体の OSM(50 MiB 超)も同じ。利用者が上限を外す手段も無かった。`safe_xml_iterparse` はルート要素より前の部分を全部メモリに溜め、100 MB のコメントでピーク 373 MB になった。
+
+何を変えたか:
+- 上限を外す入口 `safe_xml.xml_limits(max_bytes=..., max_elements=..., max_depth=..., max_prolog_bytes=...)`(`with` の中だけ効く。`None` で無制限。DOCTYPE の拒否は外せない)。読み手の引数に既定値を足せない契約 op(`read_3mf`・`osm_parse`・`cr_read`・`ome_tiff_read`・`svg_entities`)があるので、引数でなくモジュールの設定(`contextvars`)にした。`safe_xml_parse` 系の関数は引数でも渡せる。断るときの文に「上限を上げるには …」を入れた。
+- 読み手ごとの既定: `read_3mf` = 展開後 512 MiB・1,000 万要素(約 0.9 GB)、`osm_parse` = 512 MiB・1,000 万要素。実測: 100 万三角形・50 万頂点(71.7 MB)の 3MF が既定で 4.1 秒・読める。ほかの読み手の既定は前の節のまま(50 MiB・100 万要素・深さ 256。実ファイルの最大は OSM 3.2 MB の 77,854 要素)。SVG の 50 MiB は `xml_limits(max_bytes=...)` で上げられる。
+- `safe_xml_iterparse` の前置きの先読みに上限(`max_prolog_bytes`、既定 4 MiB。実ファイルの前置きは数 KB)。
+- ast の走査の見逃し 4 形(`getattr(ET, "fromstring")`・`from ... import *`・`xml.etree.ElementInclude`・組み立てた文字列の `import_module`)を足した。
+- `tests/test_mcp_usability_189_190.py::test_goal_semantics_change_plan_rank_and_explain_the_exact_boost` の揺れ(計画の探索が実時間 900 ms で打ち切られ、負荷が高いと 0 件になって落ちる)を、試験の `constraints` に `timeout_ms: 10000` を足して直した(上限は決定的な `max_expansions` だけ。製品の既定は変えない)。
+
+挙動が変わる点: `read_3mf` / `osm_parse` は 1.1.0 の無制限から 512 MiB・1,000 万要素の上限つきになった(それを超えるファイルは `xml_limits` で読める)。1.1.0 で読めた現実的な大きさ(100 万三角形の 3MF など)は既定で読める。
 
 ## 1.1.0 — 2026-11-12
 
