@@ -7108,6 +7108,8 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     return "replace"
                 if k == K.Key_Slash:
                     return "comment"
+                if k in (K.Key_Return, K.Key_Enter) and self.on_run_selection is not None and self.textCursor().hasSelection():
+                    return "run_selection"                           # 選びがある時の Ctrl+Return は「選んだ行だけ」
                 # <<IDE-KEYS-2>>
             if not ctrl:
                 if k == K.Key_F3:
@@ -7149,7 +7151,9 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                 self.zoom(1)
             elif action == "zoom_out":
                 self.zoom(-1)
-            # <<IDE-DO-3>>
+            elif action == "run_selection":
+                self.on_run_selection()
+            # <<IDE-DO-4>>
 
         def keyPressEvent(self, ev):
             comp = self._completer
@@ -7341,6 +7345,9 @@ def build_window(model=None):
     act_reset = _act("Reset to start", "Home", "Show the raw image (before stage 1). Also Shift+F5 from any panel")
     act_step = _act("Step forward", "Ctrl+Right", "Advance one pipeline stage. Also F6 from any panel")
     act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result. Also F5 or Ctrl+R from any panel")
+    act_run_sel = _act("Run selected lines", "Ctrl+Alt+Return",
+                       "Run only the stages of the Program lines you selected (the stages before them come from the cache; "
+                       "Ctrl+Return in the Program with a selection does the same)")
     act_roundtrip = _act("Verify exported Python…", "Ctrl+Shift+R",
                          "Run exported Python in an isolated interpreter and compare every stage with the GUI")
     act_batch = _act("Apply to folder…", None,
@@ -7446,7 +7453,7 @@ def build_window(model=None):
     menu_view.addSeparator()          # Display mode submenu + 3D surface appended once the display combo exists
     m = _menu(mb, "&Run", "run")
     m.addAction(act_reset); m.addAction(act_step)
-    m.addSeparator(); m.addAction(act_runall)
+    m.addSeparator(); m.addAction(act_runall); m.addAction(act_run_sel)
     m.addAction(act_batch)
     m.addAction(act_roundtrip)
     m.addSeparator(); m.addAction(act_holdout)
@@ -12884,6 +12891,58 @@ def build_window(model=None):
         code_edit.set_exec_line(max(0, int(line) - 1))
         continue_program()
 
+    def run_selection():
+        """★2026-11-12 IDE 第 1 便(候補 10): Program で選んだ行(選びが無ければカーソルの行)の段だけを実行する。
+
+        その前の段の出力は段のキャッシュから取る(古ければそこだけ計算する)。選んだ行より後ろの段は計算しない。
+        未適用の編集があれば、先に適用する(行と段の対応が変わるので)。"""
+        if state.get("code_dirty"):
+            apply_program()
+            if state.get("code_dirty"):
+                return
+        cur = code_edit.textCursor()
+        doc = code_edit.document()
+        l1 = doc.findBlock(cur.selectionStart()).blockNumber() + 1
+        end_blk = doc.findBlock(cur.selectionEnd())
+        l2 = end_blk.blockNumber() + 1
+        if cur.hasSelection() and l2 > l1 and cur.selectionEnd() == end_blk.position():
+            l2 -= 1                                   # 選びが次の行の行頭で終わっていれば、その行は含めない
+        idx = [i for i in range(len(model.stages)) if l1 <= _stage_line(i) <= l2]
+        if not idx:
+            code_status.setText(tr("no stage in the selected lines"))
+            flash(tr("no stage in the selected lines"))
+            return
+        first, last = idx[0], idx[-1]
+        state["program_error"] = None
+        try:
+            v = model.result_upto(first - 1)          # 上流はキャッシュ(first == 0 なら入力画像)
+        except Exception as e:
+            code_status.setText("cannot run: %s" % e); return
+        timings = dict(code_edit.timings)
+        t_sum = 0.0
+        for i in range(first, last + 1):
+            name, a, b = model.stages[i]
+            t0 = _time.perf_counter()
+            try:
+                v = _run_stage(v, i, name, a, b)
+            except Exception as e:
+                _fail_stage(i, name, e, timings, "run", [v]); return
+            dt = (_time.perf_counter() - t0) * 1000.0
+            t_sum += dt
+            timings[_stage_line(i)] = dt
+        if state["dev_update"]["time"]:
+            code_edit.set_timings(timings)
+        if state["dev_update"]["pc"]:
+            code_edit.set_exec_line(_stage_line(last))
+        stage_list.setCurrentRow(last)
+        refresh_stage_list(select=last, sync_code=False)
+        ln_a, ln_b = _stage_line(first), _stage_line(last)
+        code_status.setText((tr("ran line %d") % ln_a if ln_a == ln_b else tr("ran lines %d\u2013%d") % (ln_a, ln_b))
+                            + "  \u00b7  %.1f ms" % t_sum)
+
+    act_run_sel.triggered.connect(lambda _=False: run_selection())
+    code_edit.on_run_selection = run_selection
+
     c_apply.clicked.connect(apply_program)
     c_sync.clicked.connect(sync_program)
     c_run.clicked.connect(lambda: run_program(True))
@@ -12898,7 +12957,8 @@ def build_window(model=None):
     win._program = {"edit": code_edit, "apply": apply_program, "run": run_program,
                     "step": step_program, "continue": continue_program, "run_from": run_from,
                     "parse": parse_program, "text": program_text_from_model,
-                    "status": lambda: code_status, "stage_line": _stage_line}
+                    "status": lambda: code_status, "stage_line": _stage_line,
+                    "run_selection": run_selection}
 
     # -- ★2026-11-12 IDE 第 1 便: Program の構文エラーを Problems・波線・ガターへ(B-1)-------------- #
     def check_program_syntax(*_):
@@ -15294,7 +15354,7 @@ def build_window(model=None):
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
         "dbg_run": act_dbg_run, "dbg_step": act_dbg_step, "dbg_reset": act_dbg_reset,
         "duplicate_stage": act_dup, "bypass": act_bypass, "move_top": act_top, "move_bottom": act_bottom,
-        "focus_search": act_focus_search, "pin_a": act_pin,
+        "focus_search": act_focus_search, "pin_a": act_pin, "run_selection": act_run_sel,
     }
     win._actions.update(_palette_extra)                 # Tools ▸ Run a ledger op もパレットから
     win.addAction(act_focus_search)          # app-wide Ctrl+F -> operator search

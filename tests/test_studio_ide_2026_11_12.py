@@ -634,3 +634,84 @@ def test_new_texts_all_have_six_languages_and_pending_rows_did_not_grow():
         row = d["strings"][key]
         assert all(row.get(c) for c in ("ja", "zh", "tw", "ko", "de", "hi")), key
     assert len([k for k in d["pending_translation"] if k != "_note"]) <= 294      # 上限(test_studio_first_minute の門)
+
+
+# --------------------------------------------------------------------------- 8. 選んだ行だけの実行(候補 10)
+_OPS3 = ["gaussian", "sobel_mag", "otsu"]
+
+
+def _counting(monkeypatch, names):
+    """``ops.RT`` の各 op を呼び出し回数つきの包みに差し替える(本物の計算はそのまま)。"""
+    import api
+    counts = {n: 0 for n in names}
+    for n in names:
+        real = api._ops.RT[n]
+
+        def wrap(v, a, b, _real=real, _n=n):
+            counts[_n] += 1
+            return _real(v, a, b)
+        monkeypatch.setitem(api._ops.RT, n, wrap)
+    return counts
+
+
+def _three_stage_program(win):
+    win._load_sample_image("coins")
+    _pump(0.3)
+    ed = _editor(win, "gaussian (0.4, 0.5)\nsobel_mag (0.5, 0.5)\notsu (0.5, 0.5)\n")
+    win._program["apply"]()
+    win._do_run_all()
+    _pump(1.5)
+    return ed
+
+
+def _select_line(ed, n):
+    from PySide6 import QtGui
+    blk = ed.document().findBlockByNumber(n - 1)
+    c = QtGui.QTextCursor(blk)
+    c.select(QtGui.QTextCursor.LineUnderCursor)
+    ed.setTextCursor(c)
+
+
+def test_running_only_the_selected_line_does_not_recompute_the_other_stages(win, monkeypatch):
+    ed = _three_stage_program(win)
+    counts = _counting(monkeypatch, _OPS3)
+    _select_line(ed, 2)
+    win._program["run_selection"]()
+    _pump(0.3)
+    assert "ran line 2" in win._program["status"]().text(), win._program["status"]().text()
+    assert counts["gaussian"] == 0, counts                         # 1 行目(上流)はキャッシュから
+    assert counts["otsu"] == 0, counts                             # 3 行目は計算しない
+    assert counts["sobel_mag"] >= 1, counts                        # 選んだ行だけ走った
+
+
+def test_ctrl_return_with_a_selection_runs_only_the_selection(win, monkeypatch):
+    from PySide6 import QtCore
+    ed = _three_stage_program(win)
+    counts = _counting(monkeypatch, _OPS3)
+    _select_line(ed, 3)
+    _key(ed, QtCore.Qt.Key_Return, QtCore.Qt.ControlModifier)
+    _pump(0.3)
+    assert "ran line 3" in win._program["status"]().text(), win._program["status"]().text()
+    assert counts["gaussian"] == 0 and counts["sobel_mag"] == 0 and counts["otsu"] >= 1, counts
+
+
+def test_ctrl_return_without_a_selection_is_still_run_all(win):
+    from PySide6 import QtCore
+    ed = _three_stage_program(win)
+    c = ed.textCursor(); c.clearSelection(); ed.setTextCursor(c)
+    assert win._actions["run_all"].shortcut().toString() == "Ctrl+Return"       # 割り当ては変えない
+    assert win._actions["run_selection"].shortcut().toString() == "Ctrl+Alt+Return"
+
+
+def test_run_selected_lines_is_in_the_run_menu(win):
+    names = [a.text() for a in win._menus["run"].actions()]
+    assert any("Run selected lines" in n for n in names), names
+
+
+def test_selecting_only_a_comment_line_runs_nothing_and_says_so(win):
+    ed = _editor(win, "* a comment\ngaussian (0.4, 0.5)\n")
+    win._load_sample_image("coins")
+    win._program["apply"]()
+    _select_line(ed, 1)
+    win._program["run_selection"]()
+    assert "no stage in the selected lines" in win._program["status"]().text()

@@ -2189,6 +2189,46 @@
    "ko": "모든 일치 항목을 바꿉니다(실행 취소 한 번으로 모두 되돌립니다)",
    "de": "Ersetzt alle Treffer (ein Rückgängig stellt alles wieder her)",
    "hi": "सभी मिलान बदलें (एक Undo से सब वापस आ जाता है)"
+  },
+  "Run selected lines": {
+   "ja": "選んだ行だけ実行",
+   "zh": "仅运行选中的行",
+   "tw": "僅執行選取的行",
+   "ko": "선택한 줄만 실행",
+   "de": "Nur markierte Zeilen ausführen",
+   "hi": "चुनी हुई पंक्तियाँ ही चलाएँ"
+  },
+  "Run only the stages of the Program lines you selected (the stages before them come from the cache; Ctrl+Return in the Program with a selection does the same)": {
+   "ja": "Program で選んだ行の段だけを実行します(その前の段はキャッシュから取ります。Program で行を選んだ状態の Ctrl+Return も同じです)",
+   "zh": "仅运行 Program 中所选行对应的阶段(之前的阶段取自缓存;在 Program 中选中行后按 Ctrl+Return 效果相同)",
+   "tw": "僅執行 Program 中所選行對應的階段(之前的階段取自快取;在 Program 中選取行後按 Ctrl+Return 效果相同)",
+   "ko": "Program에서 선택한 줄의 단계만 실행합니다(앞 단계는 캐시에서 가져옵니다. Program에서 줄을 선택하고 Ctrl+Return을 눌러도 같습니다)",
+   "de": "Führt nur die Stufen der markierten Program-Zeilen aus (die Stufen davor kommen aus dem Cache; Strg+Eingabe im Program mit Auswahl tut dasselbe)",
+   "hi": "Program में चुनी पंक्तियों के चरण ही चलाएँ (पहले के चरण कैश से आते हैं; Program में चयन के साथ Ctrl+Return भी यही करता है)"
+  },
+  "no stage in the selected lines": {
+   "ja": "選んだ行に段がありません",
+   "zh": "所选行中没有阶段",
+   "tw": "所選行中沒有階段",
+   "ko": "선택한 줄에 단계가 없습니다",
+   "de": "Keine Stufe in den markierten Zeilen",
+   "hi": "चुनी पंक्तियों में कोई चरण नहीं"
+  },
+  "ran line %d": {
+   "ja": "%d 行目を実行しました",
+   "zh": "已运行第 %d 行",
+   "tw": "已執行第 %d 行",
+   "ko": "%d번째 줄 실행",
+   "de": "Zeile %d ausgeführt",
+   "hi": "पंक्ति %d चलाई गई"
+  },
+  "ran lines %d–%d": {
+   "ja": "%d〜%d 行目を実行しました",
+   "zh": "已运行第 %d〜%d 行",
+   "tw": "已執行第 %d〜%d 行",
+   "ko": "%d〜%d번째 줄 실행",
+   "de": "Zeilen %d–%d ausgeführt",
+   "hi": "पंक्तियाँ %d–%d चलाई गईं"
   }
  },
   "pending_translation": {
