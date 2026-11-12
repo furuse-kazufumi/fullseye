@@ -146,7 +146,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 **3,844 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **73 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 947/947, typed ledger 2874/2874, one-line facade `fullseye.<name>` 770/1584 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 947/947, typed ledger 2874/2874, one-line facade `fullseye.<name>` 770/1594 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
 **Measured substance**: of 3844 notes, **3805** link at least one runnable example (39 have none) and **3645** have a usage section of 120+ characters (199 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3844.
 
@@ -378,11 +378,11 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 330
+## Document map — all 331
 
 The complete map, so that **no document is unreachable from this index** (the 3,844 per-op notes and 73 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
-**Getting started**(12)
+**Getting started**(13)
 
 | document | what it covers |
 |---|---|
@@ -398,6 +398,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`3DGS_USAGE.md`](3DGS_USAGE.md) | Fullseye 3DGS — how to use it (one command) → [`3DGS_USAGE.en.md`](3DGS_USAGE.en.md) · original _(ja)_ |
 | [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | Walking a Character Over Terrain (sim-native, no GPU required) → [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) · original _(ja)_ |
 | [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure → [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) · original _(ja)_ |
+| [`PARAM_BUNDLE.md`](PARAM_BUNDLE.md) | パラメータを束で持ち、ファイルから読んで op に渡す _(ja)_ |
 
 **Operator reference**(11)
 

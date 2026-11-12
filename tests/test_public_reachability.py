@@ -111,6 +111,15 @@ _INTERNAL = {
     # ★2026-11-04(統合 GPU): 第 5 便の accel_label(連結成分のラベル付けと領域ごとの集計の torch 経路、label / table)。
     #   accel が import する核で、利用者は領域解析の op の device 引数から使う。
     "accel_label": 2,
+    # ★2026-11-13(integrate/studio-1-2-0、Python のモードを Studio に繋いだ便): Studio の GUI の内側の部品。どれも
+    #   studio.py が import する画面の部品で、利用者の入口は Studio の窓(fullseye-studio)。op にも facade にも出さない。
+    #   実測(この枝): studio_project 23(Project のパネル。種類の表・木・開く先)・studio_pymode 19(Program 欄の
+    #   Python のモード: モードの状態・実行の橋・出力の欄・信頼の確認・ファイルの開閉・行の基準の変換)・
+    #   studio_pyedit_syntax 22(色分けの字句・括弧の対応)・studio_pyedit_complete 35(補完・シグネチャ・ホバーの
+    #   供給元)・studio_pyedit_values 29→30(値の要約・ウォッチの評価。統合後の実測は 30)・studio_pyedit_i18n 5(部品の対訳)・
+    #   studio_pyedit_qt 9(PyEditAssist ほか Qt の部品)・studio_pyedit_vars_qt 14(変数・ウォッチ・浮いた窓)。
+    "studio_project": 23, "studio_pymode": 19, "studio_pyedit_syntax": 22, "studio_pyedit_complete": 35,
+    "studio_pyedit_values": 30, "studio_pyedit_i18n": 5, "studio_pyedit_qt": 9, "studio_pyedit_vars_qt": 14,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -333,7 +342,12 @@ def test_pending_exposure_shrinks_when_fixed():
 #   部品(register_kind など)は公開経路に載せない。実測 1077 → 1123。
 # 2026-11-12 1.1.1 の枝(653de27616)を merge: + 6 = 1129(safe_xml 4・param_specs 1・studio_search 1。
 #   その枝そのものでもこの機械の実測は 1083 で、行の数字 1073 は数え直されていなかった)。
-_HIDDEN_FUNCTIONS_TODAY = 1129
+#   (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1129
+# 2026-11-13 統合の枝 integrate/studio-1-2-0-2026-11-13: 1129 → 1288(+159、この機械の実測)。内訳: 上の _INTERNAL に
+#   足した GUI の内側の 8 モジュール 157 本(studio_project 23・studio_pymode 19・pyedit の 6 本 115)、
+#   studio_program.params_search_dirs 1(load_params の相対パスを探す順。GUI の内側)、
+#   統合の merge で既に 1 本増えていた分 1(1129 → 1153 の報告のうち studio_project を除いた残り。studio は 90 → 89)。
+_HIDDEN_FUNCTIONS_TODAY = 1288
 
 
 def _hidden_total():
