@@ -57,7 +57,6 @@ _INTERNAL = {
     "accel_bridge": 9, "accel_vol": 3,
     # 2026-11-12 safe_xml(fix/safe-xml-parse-2026-11-12): XML を DOCTYPE・実体の増幅なしで読む内部の層 4 本。
     # 利用者は各形式の読み込み(CommonRoad・OSM・OME-TIFF・SVG・3MF …)から使う。公開するかは担当の判断。
-    "safe_xml": 4,
     # 2026-11-03 device="auto" の判断(損益分岐の表・空き VRAM・段ごとの経路)。利用者の入口は
     # fullseye.explain_device / resolve_device で、この部品は api の内側からだけ呼ぶ。
     "device_policy": 6,
@@ -74,6 +73,7 @@ _INTERNAL = {
     # 2026-11-12 safe_xml(1.1.1): XML を DOCTYPE・実体の増幅なしで読む内部の層 4 本(UnsafeXMLError /
     # safe_xml_parse / safe_xml_parse_zip_member / safe_xml_iterparse)。利用者は各形式の読み込み(CommonRoad・OSM・
     # OME-TIFF・SVG・3MF・CityGML …)から使う。公開の op にするかは 1.2.0 の定義ファイルの層で決める。
+    "safe_xml": 6,
     "param_specs": 11, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
     # GPU 第 4 便: 一括経路。op でなく、raytrace / optics と同じ定義を (M, W, R) で計算する下回りの部品。
@@ -347,7 +347,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   足した GUI の内側の 8 モジュール 157 本(studio_project 23・studio_pymode 19・pyedit の 6 本 115)、
 #   studio_program.params_search_dirs 1(load_params の相対パスを探す順。GUI の内側)、
 #   統合の merge で既に 1 本増えていた分 1(1129 → 1153 の報告のうち studio_project を除いた残り。studio は 90 → 89)。
-_HIDDEN_FUNCTIONS_TODAY = 1288
+#   (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1288
+# 2026-11-13 master(1.1.1 の最終 d62109bb65)を merge: + 2 = 1290(safe_xml 4 → 6: xml_limits と上限の部品)。
+_HIDDEN_FUNCTIONS_TODAY = 1290
 
 
 def _hidden_total():

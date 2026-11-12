@@ -278,18 +278,24 @@ def check_pipeline_header(d, *, where: str = "pipeline file") -> None:
     """パイプラインのファイルの **版の印** を読むときに検査する(各読み手がここを呼ぶ。形式は変えない)。
 
     - ``fullseye_pipeline`` があるとき、値は整数の :data:`PIPELINE_FORMAT_VERSION`(= 1)でなければ ``ValueError``
-      (``99``・``"banana"``・``1.0``・``True`` は断る。何を期待し何が来たかを言う)。
-    - 別の種類の印(``fullseye_graph``)だけを持つファイルは断る(グラフは ``FullseyeGraph.from_dict``)。
+      (``99``・``"banana"``・``1.0``・``True`` は断る。何を期待し何が来たかを言う)。**整数は Python の ``int``**:
+      JSON から読んだ値はそのまま通るが、Python で dict を組む利用者は ``np.int64(1)`` を ``int()`` に通す。
+    - 別の種類の印(``fullseye_graph``)を持つファイルは断る(グラフは ``FullseyeGraph.from_dict``)。``fullseye_pipeline: 1``
+      と ``fullseye_graph`` の **両方** を持つ dict も断る(どちらのファイルか決められない)。
     - 印が無い古いファイル(``stages`` だけ)は今までどおり読む(警告は付けない。既存の読み手に警告の流儀が無い)。
     - dict でない入力はここでは見ない(各読み手が自分の言葉で断る)。印以外のキー(``fullseye_kind`` など)も見ない。
     """
     if not isinstance(d, dict):
         return
+    if "fullseye_pipeline" in d and "fullseye_graph" in d:
+        raise ValueError("%s: ambiguous file: it has both 'fullseye_pipeline' and 'fullseye_graph' (a pipeline file or a graph file, not both)"
+                         % where)
     if "fullseye_pipeline" in d:
         v = d["fullseye_pipeline"]
         if type(v) is not int or v != PIPELINE_FORMAT_VERSION:
-            raise ValueError("%s: expected 'fullseye_pipeline': %d (integer), got %r (%s)"
-                             % (where, PIPELINE_FORMAT_VERSION, v, type(v).__name__))
+            hint = " (a numpy integer: pass int(value))" if type(v).__module__ == "numpy" else ""
+            raise ValueError("%s: expected 'fullseye_pipeline': %d (a Python/JSON integer), got %r (%s)%s"
+                             % (where, PIPELINE_FORMAT_VERSION, v, type(v).__name__, hint))
     elif "fullseye_graph" in d:
         raise ValueError("%s: expected a pipeline file ('fullseye_pipeline': %d), got a graph file ('fullseye_graph': %r)"
                          " -- load graphs with FullseyeGraph.from_dict"

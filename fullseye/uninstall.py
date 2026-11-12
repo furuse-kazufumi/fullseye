@@ -18,7 +18,8 @@
 * **終了コード**: 0 = やると決めた物を全部消した(pip の段も、出す必要がある場合は起動した)/ ``--dry-run``・非端末で何もしていない /
   pip の段が要らない(この Python に fullseye が pip で入っていない、または別の場所のもの)。
   1 = 消せなかった項目がある、または台帳に許可外の項目があった(書き換えられた台帳)。
-  3 = 登録は消したが、pip の段を出せず fullseye 本体がこの Python に残っている(pip の無い uv の venv など。案内したコマンドを手で実行)。
+  3 = 登録は消したが、pip の段を出せず(pip の無い uv の venv など)、または pip の段を起動できず、fullseye 本体がこの Python に残っている
+  (案内したコマンドを手で実行)。
 * ``python -I fullseye/uninstall.py`` でパッケージ本体(__init__ = numpy / scipy を読む)を通さずに単独実行できる
   (setup フォルダの fullseye-uninstall.cmd がこれを呼ぶ)。
 """
@@ -180,15 +181,22 @@ def collect(*, ledger: Optional[Path] = None, dirs: Optional[Dict[str, Path]] = 
     ents, warning = sc.ledger_load_safe(lp)
     legacy = ents is None
     refused: List[Dict[str, object]] = []
+    made = []
     if legacy:
-        made = list(_legacy_places(plat, dirs, registry, tuple(allow_keys)))
+        for e in _legacy_places(plat, dirs, registry, tuple(allow_keys)):
+            why = sc.verify_fullseye_item(e["kind"], e["path"], plat=plat)       # 名前だけで消さない: Fullseye の物と中身で確かめる
+            if why:
+                refused.append({"kind": e["kind"], "path": e["path"], "reason": why, "foreign": True})   # 利用者の物の可能性 = 異常ではない
+            else:
+                made.append(e)
     else:
-        made = []
         for e in ents:
             why = sc.check_ledger_item(e["kind"], e["path"], plat=plat, dirs=dirs, allow_keys=allow_keys)
             foreign = sc.entry_foreign(e) if why is None else None
             if foreign:
                 why = "created by another Python environment (%s); left alone" % foreign
+            if why is None:
+                why = sc.verify_fullseye_item(e["kind"], e["path"], plat=plat)
             if why:
                 refused.append({"kind": e["kind"], "path": e["path"], "reason": why, "foreign": bool(foreign)})
             else:
@@ -258,7 +266,7 @@ def remove_item(it: Dict[str, str], *, dirs: Optional[Dict[str, Path]] = None,
     台帳由来の種類(file / dir_if_empty / regkey / claude_skill)は、ここでもう一度許可制で検証する(多重防御)。"""
     kind, path = it["kind"], it["path"]
     if kind in ("file", "dir_if_empty", "regkey", "claude_skill"):
-        why = sc.check_ledger_item(kind, path, dirs=dirs, allow_keys=allow_keys)
+        why = sc.check_ledger_item(kind, path, dirs=dirs, allow_keys=allow_keys) or sc.verify_fullseye_item(kind, path)
         if why:
             raise sc.ShortcutError(why)
     if kind == "file":
@@ -614,12 +622,14 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
             say("  - %-26s %s" % (m[_LABEL[r["kind"]]], r["path"]))
             say("      %s" % r["reason"])
     say()
+    pip_start_failed = False
     if do["pip"]:
         try:
             log = pip_fn()
             say(m["pip_later"] % log)
         except Exception as e:      # noqa: BLE001
             say(m["pip_fail"] % (e, cmd_txt))
+            pip_start_failed = True         # pip の段を起こせなかった = fullseye 本体が残る(表の 3)
     elif pstate == "ok":
         say(m["pip_no"] % cmd_txt)
     elif pstate == "no_pip":
@@ -633,7 +643,7 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
             pass
     if failed or any(not r["foreign"] for r in refused):       # 許可外の項目(書き換えられた台帳)は失敗扱い。別環境の物は正常
         return 1
-    return 3 if pstate == "no_pip" else 0
+    return 3 if (pstate == "no_pip" or pip_start_failed) else 0
 
 
 if __name__ == "__main__":

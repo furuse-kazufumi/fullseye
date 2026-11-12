@@ -41,6 +41,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs  # noqa: E402
+from safe_xml import safe_xml_parse as _parse_xml  # noqa: E402  (XML は門を通して読む: DOCTYPE・大きさ・深さ)
 import pegsym as S  # noqa: E402
 
 FULL = "--full" in sys.argv
@@ -357,8 +358,7 @@ def numpy_part() -> dict:
     ]
     assert len(bad_calls) >= 20
     n_bad = sum(_raises(f) for f in bad_calls)
-    import xml.etree.ElementTree as ET
-    root = ET.fromstring(S.pegsym_scene_mjcf(_peg(6, 0)["vertices"], _hole(6, 0), chamfer=W))
+    root = _parse_xml(S.pegsym_scene_mjcf(_peg(6, 0)["vertices"], _hole(6, 0), chamfer=W))
     names = {g.get("name") for g in root.iter("geom")}
     cams = {c_.get("name") for c_ in root.iter("camera")}
     mesh_v = len(root.find("asset/mesh").get("vertex").split()) // 3

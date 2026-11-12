@@ -46,7 +46,6 @@ import os
 import re
 import sys
 import time
-import xml.etree.ElementTree as ET
 from collections import defaultdict
 from pathlib import Path
 
@@ -59,6 +58,7 @@ from scipy.spatial import cKDTree
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import examplefig as figs  # noqa: E402
+from safe_xml import safe_xml_parse as _parse_xml  # noqa: E402  (XML は門を通して読む: DOCTYPE・大きさ・深さ)
 import fullseye as fs  # noqa: E402
 import realdata  # noqa: E402
 import semsim as SM  # noqa: E402
@@ -172,9 +172,7 @@ def read_label(svg_path: Path, shape: tuple[int, int]):
     if parsed.get("view_box") != [0.0, 0.0, float(shape[1]), float(shape[0])]:
         raise ValueError("%s: SVG viewBox %r does not match image %r"
                          % (svg_path.name, parsed.get("view_box"), shape[::-1]))
-    if b"<!DOCTYPE" in raw.upper() or b"<!ENTITY" in raw.upper():
-        raise ValueError("%s: DTD/entity is refused" % svg_path.name)
-    root = ET.fromstring(raw)
+    root = _parse_xml(raw)
     ns = "{http://www.w3.org/2000/svg}"
     direct_tracks = [_path_points(el.attrib.get("d", "")) for el in root.iter(ns + "path")]
     direct_vias = [(float(el.attrib["cx"]), float(el.attrib["cy"]), float(el.attrib["r"]))

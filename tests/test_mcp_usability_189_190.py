@@ -75,7 +75,11 @@ def test_goal_semantics_change_plan_rank_and_explain_the_exact_boost():
     goals = ("暗い欠陥を抽出", "照明むらを除去", "細い傷を強調")
     tops = []
     for goal in goals:
-        result = plan("image", "image", goal=goal, constraints={"k": 7, "max_depth": 2})
+        result = plan("image", "image", goal=goal, constraints={"k": 7, "max_depth": 2,
+                                                                    # 計画の探索は既定で実時間 900 ms の予算で打ち切られ、並列で負荷が高いと
+                                                                    # 「細い傷を強調」だけ 0 件になって落ちた(2026-11-13 の独立レビュー)。実時間は十分に長くし、上限は
+                                                                    # 決定的な max_expansions(既定)だけにする。製品の既定は変えない。
+                                                                    "timeout_ms": 10_000})
         assert result["ok"], goal
         top = result["plans"][0]
         tops.append(top["ops"][0])
