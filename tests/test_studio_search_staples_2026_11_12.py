@@ -177,3 +177,48 @@ def test_out_of_range_knobs_are_reported_after_apply(tmp_path, monkeypatch):
         studio._UI_LANG["code"] = "en"
         win.close_guard = lambda: True
         win.quiesce(); win.close(); _pump(0.1)
+
+
+# --------------------------------------------------------------------------- 手書きのヘルプ 3 本(P-08)
+_HAND = ("gaussian", "otsu", "sobel_mag")
+
+
+def _help(name, lang=None):
+    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    fn = "%s.%s.html" % (name, lang) if lang else "%s.html" % name
+    with open(os.path.join(here, "studio_assets", "op_help", fn), encoding="utf-8") as f:
+        return f.read()
+
+
+def test_hand_authored_help_has_a_japanese_page_in_step_with_the_english_one():
+    import re
+    for name in _HAND:
+        en, ja = _help(name), _help(name, "ja")
+        links = lambda s: sorted(re.findall(r'href="((?:op|sample|run):[^"]+)"', s))
+        assert links(en) == links(ja) and len(links(en)) >= 5, name          # 同じリンク(実行できるサンプルを含む)
+        assert en.count("<h3") == ja.count("<h3") == 4, name                  # 同じ節
+        text = re.sub(r"<pre.*?</pre>|<code.*?</code>|<[^>]+>", "", ja, flags=re.S)
+        kana = sum(1 for ch in text if "\u3040" <= ch <= "\u30ff")
+        assert kana >= 60, (name, kana)                                        # 中身が日本語
+        for word in ("Arguments", "Usage", "Sample code", "Related operators", "reserved", "unused"):
+            assert word not in ja, (name, word)
+
+
+def test_hand_authored_help_says_what_the_knobs_really_do():
+    """直す前の英語版は otsu の a を「しきい値の偏り」、sobel_mag の a を「出力の利得」、gaussian の b を
+    「未使用」と書いていた。実装は otsu / sobel_mag が a・b とも未使用、gaussian の b は端の扱い。"""
+    import fullseye as fs
+    rng = np.random.default_rng(3)
+    img = np.clip(rng.normal(0.3, 0.05, (48, 64)), 0, 1); img[14:30, 20:44] += 0.4
+    for name in ("otsu", "sobel_mag"):
+        ref = fs.apply(img, name, 0.5, 0.5)
+        for a, b in ((0.05, 0.5), (0.95, 0.5), (0.5, 0.05), (0.5, 0.95)):
+            assert np.array_equal(fs.apply(img, name, a, b), ref), (name, a, b)
+        page = _help(name)
+        assert page.count("unused") >= 2 and "bias applied" not in page and "output gain" not in page, name
+    lo, hi = fs.apply(img, "gaussian", 0.5, 0.2), fs.apply(img, "gaussian", 0.5, 0.9)
+    diff = np.abs(lo - hi)
+    assert diff.max() > 1e-6                                   # b は効く
+    assert diff[12:-12, 12:-12].max() < 1e-12                  # ただし端の近くだけ(σ = 1.65、窓の半径 7)
+    assert "border" in _help("gaussian") and "reserved / unused" not in _help("gaussian")
+    assert "端の扱い" in _help("gaussian", "ja")

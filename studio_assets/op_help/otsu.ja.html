@@ -1,0 +1,34 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">otsu <span style="color:#8b91a0;font-size:11px">· 領域分割 · HALCON: binary_threshold</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image → region</b></p>
+<p style="color:#8b91a0;margin:2px 0">呼び出し: <code style="color:#e2e5ec">fs.apply(img, "otsu", a=0.5, b=0.5)</code> &nbsp;·&nbsp; <code style="color:#e2e5ec">fs.op.otsu(img, a=0.5, b=0.5)</code> &nbsp;·&nbsp; Studio: <code style="color:#e2e5ec">otsu a b</code></p>
+<p>大津の方法による<b>自動の二値化</b>(画像全体で 1 つのしきい値)。明るさのヒストグラムの
+しきい値の候補をすべて試し、前景と背景の<b>クラス間分散が最大</b>になる値を選ぶ。しきい値を手で
+決めなくてよいので、背景と対象の明るさがはっきり分かれた画像の最初の一手に向く。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">引数</h3>
+<table cellpadding="3" style="color:#e2e5ec">
+  <tr><td><b>a</b></td><td>未使用(しきい値は画像から自動で決まる)。しきい値を手で決めたいときは <a style="color:#22d3bf" href="op:threshold">threshold</a> を使う。</td></tr>
+  <tr><td><b>b</b></td><td>未使用。</td></tr>
+</table>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">使い方</h3>
+<p>出力は 2 値の<b>領域</b>({0,1})= 前景のマスク。領域用の op(<a style="color:#22d3bf" href="op:fill_holes">fill_holes</a>,
+<a style="color:#22d3bf" href="op:select_largest">select_largest</a>)へ渡すか、
+<a style="color:#22d3bf" href="op:blob_count">blob_count</a> で個数を数える。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">サンプル</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">gaussian 0.3 0.5
+otsu 0.5 0.5
+fill_holes 0.5 0.5
+blob_count 0.5 0.5</pre>
+<p>▸ <a style="color:#22d3bf" href="sample:gaussian%200.3%200.5%0Aotsu%200.5%200.5%0Afill_holes%200.5%200.5%0Ablob_count%200.5%200.5">このパイプラインを読み込む</a>
+&nbsp;·&nbsp; <a style="color:#f5a524" href="run:gaussian%200.3%200.5%0Aotsu%200.5%200.5%0Afill_holes%200.5%200.5%0Ablob_count%200.5%200.5">読み込んで実行</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">関連する op</h3>
+<p><a style="color:#22d3bf" href="op:threshold">threshold</a> ·
+<a style="color:#22d3bf" href="op:dyn_threshold">dyn_threshold</a> ·
+<a style="color:#22d3bf" href="op:adaptive_gauss_thresh">adaptive_gauss_thresh</a> ·
+<a style="color:#22d3bf" href="op:canny">canny</a></p>
+
+<p style="color:#8b91a0;font-size:11px">来歴: Otsu 1979, "A Threshold Selection Method from Gray-Level Histograms"。
+docs/PROVENANCE.md を参照。</p>

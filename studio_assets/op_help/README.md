@@ -10,8 +10,12 @@ local) images. HTML files here are loaded at runtime — no code change needed.
 2. `op_help/<name>.html`         — the base page. **For generated pages this is Japanese**
    (converted from the `docs/ops/**/<op>.md` note, which copies the docstring verbatim).
    Only the three hand-authored pages (`gaussian`, `otsu`, `sobel_mag`) are English, and
-   they deliberately have no `<lang>` siblings (a generated translation would replace a
-   richer page that carries runnable `sample:` pipelines).
+   they deliberately have no **generated** `<lang>` siblings (a generated translation would
+   replace a richer page that carries runnable `sample:` pipelines). They do have a
+   hand-written Japanese sibling (`<name>.ja.html`, 2026-11-12) with the same sections and
+   the same `sample:` / `run:` / `op:` links; `tests/test_studio_search_staples_2026_11_12.py`
+   checks that the two stay in step and that what the pages say about `a` / `b` is what the
+   operators do.
 3. a **generated** fallback built from the operator's registry metadata
    (name, category, input→output sorts, HALCON alias) when no file exists.
 
