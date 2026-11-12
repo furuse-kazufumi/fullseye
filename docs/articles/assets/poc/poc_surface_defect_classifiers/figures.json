@@ -2,10 +2,10 @@
  {
   "file": "01_defect_patches.png",
   "name": "defect_patches",
-  "caption": "rendered ground-metal patches (height defects shade, the stain changes colour)",
+  "caption": "rendered (synthetic) ground-metal patches (height defects shade, the stain changes colour)",
   "shape": [
-   1012,
-   1950,
+   1492,
+   2910,
    3
   ]
  },
@@ -22,10 +22,10 @@
  {
   "file": "03_stain_pixel_iou.png",
   "name": "stain_pixel_iou",
-  "caption": "cuts chosen on training pixels only",
+  "caption": "LUT cut: supervised on training stain patches and true masks; Otsu baseline trains nothing",
   "shape": [
-   352,
-   1170,
+   400,
+   1175,
    3
   ],
   "csv": "03_stain_pixel_iou.csv",
@@ -58,7 +58,7 @@
  {
   "file": "06_accuracy_by_weight.png",
   "name": "accuracy_by_weight",
-  "caption": "5 seeds, test split; best overall knn 0.886",
+  "caption": "5 seeds, test split; best overall knn 0.886; axis from 0",
   "shape": [
    720,
    1120,

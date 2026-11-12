@@ -31682,14 +31682,14 @@
             1600,
             1600
           ],
-          "bytes": 143918,
+          "bytes": 148348,
           "color_mad": [
             0.9083,
-            0.0296,
-            0.0609
+            0.031,
+            0.0607
           ],
           "max_color_mad": 0.9083,
-          "source_sha256": "b4627a41775dfd47a4de01a8615727d5226640bc5b5de1adf1ed7f12b2261608"
+          "source_sha256": "a5052eb07600311f928e6e446582acf480890a5ce31ea083bb91c3e71ede7d32"
         },
         "en": {
           "path": "articles/assets/poc/poc_caltab_chain_truth/story.en.gif",
@@ -31730,14 +31730,14 @@
             1600,
             1600
           ],
-          "bytes": 143918,
+          "bytes": 148348,
           "color_mad": [
             0.9083,
-            0.0296,
-            0.0609
+            0.031,
+            0.0607
           ],
           "max_color_mad": 0.9083,
-          "source_sha256": "723807ead3a2fabe1fa0399f0b191ec39ad6af094a9da8857904f098ded3742b"
+          "source_sha256": "d9f1d018f0db494fe81927ba78b63052284c6753b9fdb0ded05f1eb78806b505"
         }
       },
       "reason": null,
@@ -31745,7 +31745,7 @@
       "still": "articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png",
       "alt": {
         "ja": "create_caltab -> rendered camera -> find_caltab -> camera_calibration_lm",
-        "en": "A Circle-Mark Calibration Plate End to End: fx Is 0.45 % Off Even Without Noise, and the Binary Centroid Sets That Floor"
+        "en": "A Circle-Mark Calibration Plate End to End (Synthetic Imaging): Binary-Centroid Quantisation Sets an fx Floor of About 0.2 % rms (−0.45 to +0.33 % Without Noise, Depending on the Layout)"
       }
     },
     "poc_real_tum_rgbd_slam": {
@@ -34499,9 +34499,9 @@
               "file": "01_defect_patches.png",
               "content_box": [
                 0,
-                158,
+                160,
                 720,
-                374
+                369
               ]
             },
             {
@@ -34519,12 +34519,12 @@
               "file": "03_stain_pixel_iou.png",
               "content_box": [
                 0,
-                236,
+                222,
                 720,
-                217
+                245
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 3.323864
+              "source_aspect": 2.9375
             },
             {
               "file": "04_classifier_accuracy.png",
@@ -34567,17 +34567,17 @@
             1600,
             1600
           ],
-          "bytes": 348502,
+          "bytes": 350630,
           "color_mad": [
-            0.4253,
+            0.4347,
             0.255,
-            0.0331,
+            0.0356,
             0.0375,
             0.0242,
-            0.0795
+            0.0998
           ],
-          "max_color_mad": 0.4253,
-          "source_sha256": "1e7113fff3bf7c44251a2e98d0dc4ee13bd01c9d29a4169649684ceabbd2cb9d"
+          "max_color_mad": 0.4347,
+          "source_sha256": "c1823ff11a09656f842873f09415759ee4d67717cbb3246b19eaad2f6d67d354"
         },
         "en": {
           "path": "articles/assets/poc/poc_surface_defect_classifiers/story.en.gif",
@@ -34586,9 +34586,9 @@
               "file": "01_defect_patches.png",
               "content_box": [
                 0,
-                158,
+                160,
                 720,
-                374
+                369
               ]
             },
             {
@@ -34606,12 +34606,12 @@
               "file": "03_stain_pixel_iou.png",
               "content_box": [
                 0,
-                236,
+                222,
                 720,
-                217
+                245
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 3.323864
+              "source_aspect": 2.9375
             },
             {
               "file": "04_classifier_accuracy.png",
@@ -34654,25 +34654,25 @@
             1600,
             1600
           ],
-          "bytes": 348502,
+          "bytes": 350630,
           "color_mad": [
-            0.4253,
+            0.4347,
             0.255,
-            0.0331,
+            0.0356,
             0.0375,
             0.0242,
-            0.0795
+            0.0998
           ],
-          "max_color_mad": 0.4253,
-          "source_sha256": "e189acd605d3e9e8524ae97304cdbec0840c24625f5063c5ea58d686e0d016b2"
+          "max_color_mad": 0.4347,
+          "source_sha256": "5ef45275bee67d64f11b28162af2082887281805eb47b9726379167ca5f6fd11"
         }
       },
       "reason": null,
       "cover": "01_defect_patches.png",
       "still": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
       "alt": {
-        "ja": "rendered ground-metal patches (height defects shade, the stain changes colour)",
-        "en": "Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected"
+        "ja": "rendered (synthetic) ground-metal patches (height defects shade, the stain changes colour)",
+        "en": "Ground-metal patches were rendered synthetically with scratches, dents and stains, and sorted by trained classifiers. Scratches along the grinding lay were missed more than half the time, and the cause is not identified. A one-feature outlier test rejected unseen pits more often than the trained density model did."
       }
     }
   }

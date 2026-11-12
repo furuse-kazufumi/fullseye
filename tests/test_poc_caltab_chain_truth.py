@@ -41,7 +41,7 @@ def test_detection_matches_projected_centres_at_the_quantisation_floor(one_view)
     rho = P.MARK_RADIUS * np.sqrt(P.K_TRUE[0, 0] * P.K_TRUE[1, 1]) / pose[2, 3]
     pred = 1.0 / np.sqrt(6 * np.pi * rho)
     rms = float(np.sqrt(np.mean(err ** 2)))
-    assert 0.5 < rms / pred < 2.0, (rms, pred)
+    assert 0.7 < rms / pred < 1.4, (rms, pred)
     assert err.max() < 4 * pred
 
 
@@ -72,3 +72,36 @@ def test_detect_rejects_a_blank_image():
     plate, _ = P.board()
     with pytest.raises((AssertionError, ValueError)):
         P.detect(np.zeros(P.SHAPE), plate)
+
+
+def test_eccentricity_is_far_below_the_quantisation_floor():
+    plate, xy = P.board()
+    pose = P.poses()[2]
+    truth = P.true_pixels(xy, pose)
+    ecc = P.mark_eccentricity(xy, [pose], [truth])
+    rho = P.MARK_RADIUS * np.sqrt(P.K_TRUE[0, 0] * P.K_TRUE[1, 1]) / pose[2, 3]
+    assert ecc.max() < 0.03 and np.sqrt(np.mean(ecc ** 2)) < 0.25 / np.sqrt(6 * np.pi * rho)
+
+
+def test_grey_centroid_is_much_closer_than_the_binary_centroid(one_view):
+    plate, _, _, img, truth = one_view
+    g = P.grey_centroids(img, truth)
+    b = P.detect(img, plate)
+    assert np.sqrt(np.mean((g - truth) ** 2)) < 0.5 * np.sqrt(np.mean((b - truth) ** 2))
+
+
+def test_cached_rays_give_the_same_image_as_a_fresh_computation(one_view):
+    _, xy, pose, img, _ = one_view
+    P._RAYS.clear()
+    assert np.array_equal(P.render_view(xy, pose, supersample=3), img)
+
+
+def test_judge_flags_a_wrong_calibration():
+    plate, xy = P.board()
+    Ps = P.poses()
+    truths = [P.true_pixels(xy, p) for p in Ps]
+    good = P.calibrate(xy, truths)                          # 完全な点は真値に戻る
+    j = P.judge(good, Ps)
+    assert max(abs(v) for v in j["dp"].values()) < 1e-6 and j["rot"].max() < 1e-5
+    shifted = P.calibrate(xy, [t * 1.002 + 0.0 for t in truths])   # 全点を 0.2 % 拡大(原点まわり): fx が動く
+    assert abs(shifted["fx"] - P.K_TRUE[0, 0]) > 0.5

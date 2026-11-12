@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 658 of 1903. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 658 of 1904. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `_archive_tarxz.py`
@@ -553,6 +553,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L274** _(ja)_ — 外れた組み合わせを絵の上に描き戻す。★全体図では 8 px の飛びが潰れて 見えないので、目地の帯の周りだけを**等倍で切り出す**。
 - **L373** _(ja)_ — ★測定線は軸そのものの上にある。そのまま塗ると被写体が消えるので、 指示線だけ 12 px 上へ逃がして描く(測っている行は軸の行のまま)。
 - **L484** _(ja)_ — ★中心の座標は推測せず illusion.py から読む(最初 (h/2, w/4) と当てずっぽうに 置いて、周りの円のエッジを掴み rms が 3.4 になった)。真の中心は (170, 168) と (170, 452)、半径 30。
+
+## `examples/poc_caltab_chain_truth.py`
+
+- **L404** _(ja)_ — ★この門は真値を使わない(雑音 0 の自分の結果と、共分散だけ): 真値と突き合わせるのは門 1〜3。
 
 ## `examples/poc_camera_calibration.py`
 

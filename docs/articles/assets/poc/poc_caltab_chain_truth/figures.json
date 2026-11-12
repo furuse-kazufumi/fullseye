@@ -12,7 +12,7 @@
  {
   "file": "02_caltab_chain_params.png",
   "name": "caltab_chain_params",
-  "caption": "every intrinsic and distortion error inside 4 sigma of the LM covariance",
+  "caption": "all 40 seeds inside 4 sigma of the LM covariance (largest 3.44 sigma)",
   "shape": [
    544,
    1017,
@@ -24,7 +24,7 @@
  {
   "file": "03_caltab_chain_noise.png",
   "name": "caltab_chain_noise",
-  "caption": "image noise sigma_I 0.02-0.2, deviations from the noise-free run; fitted slope 0.99",
+  "caption": "image noise sigma_I 0.02-0.2, deviations from the noise-free run; fitted slope 1.15",
   "shape": [
    720,
    1120,
