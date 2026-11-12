@@ -2037,6 +2037,950 @@
    "ko": "값 5개",
    "de": "5 Werte",
    "hi": "5 मान"
+  },
+  "knobs on this line: %s": {
+   "ja": "この行のつまみ: %s",
+   "zh": "本行的旋钮: %s",
+   "tw": "本行的旋鈕: %s",
+   "ko": "이 줄의 노브: %s",
+   "de": "Regler in dieser Zeile: %s",
+   "hi": "इस पंक्ति के नॉब: %s"
+  },
+  "did you mean %s?": {
+   "ja": "もしかして: %s?",
+   "zh": "您是不是想输入: %s?",
+   "tw": "您是不是想輸入: %s?",
+   "ko": "혹시 이것인가요: %s?",
+   "de": "Meinten Sie: %s?",
+   "hi": "क्या आपका मतलब था: %s?"
+  },
+  "Find": {
+   "ja": "検索",
+   "zh": "查找",
+   "tw": "尋找",
+   "ko": "찾기",
+   "de": "Suchen",
+   "hi": "खोजें"
+  },
+  "Replace with": {
+   "ja": "置換後の文字列",
+   "zh": "替换为",
+   "tw": "取代為",
+   "ko": "바꿀 내용",
+   "de": "Ersetzen durch",
+   "hi": "इससे बदलें"
+  },
+  "Replace": {
+   "ja": "置換",
+   "zh": "替换",
+   "tw": "取代",
+   "ko": "바꾸기",
+   "de": "Ersetzen",
+   "hi": "बदलें"
+  },
+  "Replace all": {
+   "ja": "すべて置換",
+   "zh": "全部替换",
+   "tw": "全部取代",
+   "ko": "모두 바꾸기",
+   "de": "Alle ersetzen",
+   "hi": "सभी बदलें"
+  },
+  "Match case": {
+   "ja": "大文字小文字を区別",
+   "zh": "区分大小写",
+   "tw": "區分大小寫",
+   "ko": "대소문자 구분",
+   "de": "Groß-/Kleinschreibung beachten",
+   "hi": "अक्षर-भेद मानें"
+  },
+  "Find previous": {
+   "ja": "前を検索",
+   "zh": "查找上一个",
+   "tw": "尋找上一個",
+   "ko": "이전 찾기",
+   "de": "Vorheriges suchen",
+   "hi": "पिछला खोजें"
+  },
+  "Find next": {
+   "ja": "次を検索",
+   "zh": "查找下一个",
+   "tw": "尋找下一個",
+   "ko": "다음 찾기",
+   "de": "Nächstes suchen",
+   "hi": "अगला खोजें"
+  },
+  "Close": {
+   "ja": "閉じる",
+   "zh": "关闭",
+   "tw": "關閉",
+   "ko": "닫기",
+   "de": "Schließen",
+   "hi": "बंद करें"
+  },
+  "%d matches": {
+   "ja": "%d 件",
+   "zh": "%d 处匹配",
+   "tw": "%d 處符合",
+   "ko": "%d건 일치",
+   "de": "%d Treffer",
+   "hi": "%d मिलान"
+  },
+  "no match": {
+   "ja": "一致なし",
+   "zh": "无匹配",
+   "tw": "無符合",
+   "ko": "일치 없음",
+   "de": "kein Treffer",
+   "hi": "कोई मिलान नहीं"
+  },
+  "%d replaced": {
+   "ja": "%d 件を置換しました",
+   "zh": "已替换 %d 处",
+   "tw": "已取代 %d 處",
+   "ko": "%d건 바꿈",
+   "de": "%d ersetzt",
+   "hi": "%d बदले गए"
+  },
+  "not an operator: %s": {
+   "ja": "op ではありません: %s",
+   "zh": "不是算子: %s",
+   "tw": "不是運算子: %s",
+   "ko": "연산자가 아닙니다: %s",
+   "de": "kein Operator: %s",
+   "hi": "ऑपरेटर नहीं है: %s"
+  },
+  "no operator under the cursor": {
+   "ja": "カーソルの下に op がありません",
+   "zh": "光标下没有算子",
+   "tw": "游標下沒有運算子",
+   "ko": "커서 아래에 연산자가 없습니다",
+   "de": "Kein Operator unter dem Cursor",
+   "hi": "कर्सर के नीचे कोई ऑपरेटर नहीं"
+  },
+  "not computed": {
+   "ja": "未計算",
+   "zh": "未计算",
+   "tw": "未計算",
+   "ko": "미계산",
+   "de": "nicht berechnet",
+   "hi": "गणना नहीं हुई"
+  },
+  "Value %s (%s) / Shown %s / Range %s to %s": {
+   "ja": "値 %s (%s) / 表示 %s / レンジ %s〜%s",
+   "zh": "值 %s (%s) / 显示 %s / 范围 %s〜%s",
+   "tw": "值 %s (%s) / 顯示 %s / 範圍 %s〜%s",
+   "ko": "값 %s (%s) / 표시 %s / 범위 %s〜%s",
+   "de": "Wert %s (%s) / Anzeige %s / Bereich %s bis %s",
+   "hi": "मान %s (%s) / प्रदर्शित %s / सीमा %s से %s"
+  },
+  "Replace the selected match and go to the next one": {
+   "ja": "選んでいる一致を置き換えて、次の一致へ移ります",
+   "zh": "替换当前选中的匹配并跳到下一个",
+   "tw": "取代目前選取的符合項並跳到下一個",
+   "ko": "선택한 일치 항목을 바꾸고 다음으로 이동합니다",
+   "de": "Ersetzt den markierten Treffer und springt zum nächsten",
+   "hi": "चुने हुए मिलान को बदलें और अगले पर जाएँ"
+  },
+  "Replace every match (one Undo brings them all back)": {
+   "ja": "すべての一致を置き換えます(元に戻す 1 回で全部戻ります)",
+   "zh": "替换所有匹配(一次撤销即可全部还原)",
+   "tw": "取代所有符合項(一次復原即可全部還原)",
+   "ko": "모든 일치 항목을 바꿉니다(실행 취소 한 번으로 모두 되돌립니다)",
+   "de": "Ersetzt alle Treffer (ein Rückgängig stellt alles wieder her)",
+   "hi": "सभी मिलान बदलें (एक Undo से सब वापस आ जाता है)"
+  },
+  "Run selected lines": {
+   "ja": "選んだ行だけ実行",
+   "zh": "仅运行选中的行",
+   "tw": "僅執行選取的行",
+   "ko": "선택한 줄만 실행",
+   "de": "Nur markierte Zeilen ausführen",
+   "hi": "चुनी हुई पंक्तियाँ ही चलाएँ"
+  },
+  "Run only the stages of the Program lines you selected (the stages before them come from the cache; Ctrl+Return in the Program with a selection does the same)": {
+   "ja": "Program で選んだ行の段だけを実行します(その前の段はキャッシュから取ります。Program で行を選んだ状態の Ctrl+Return も同じです)",
+   "zh": "仅运行 Program 中所选行对应的阶段(之前的阶段取自缓存;在 Program 中选中行后按 Ctrl+Return 效果相同)",
+   "tw": "僅執行 Program 中所選行對應的階段(之前的階段取自快取;在 Program 中選取行後按 Ctrl+Return 效果相同)",
+   "ko": "Program에서 선택한 줄의 단계만 실행합니다(앞 단계는 캐시에서 가져옵니다. Program에서 줄을 선택하고 Ctrl+Return을 눌러도 같습니다)",
+   "de": "Führt nur die Stufen der markierten Program-Zeilen aus (die Stufen davor kommen aus dem Cache; Strg+Eingabe im Program mit Auswahl tut dasselbe)",
+   "hi": "Program में चुनी पंक्तियों के चरण ही चलाएँ (पहले के चरण कैश से आते हैं; Program में चयन के साथ Ctrl+Return भी यही करता है)"
+  },
+  "no stage in the selected lines": {
+   "ja": "選んだ行に段がありません",
+   "zh": "所选行中没有阶段",
+   "tw": "所選行中沒有階段",
+   "ko": "선택한 줄에 단계가 없습니다",
+   "de": "Keine Stufe in den markierten Zeilen",
+   "hi": "चुनी पंक्तियों में कोई चरण नहीं"
+  },
+  "ran line %d": {
+   "ja": "%d 行目を実行しました",
+   "zh": "已运行第 %d 行",
+   "tw": "已執行第 %d 行",
+   "ko": "%d번째 줄 실행",
+   "de": "Zeile %d ausgeführt",
+   "hi": "पंक्ति %d चलाई गई"
+  },
+  "ran lines %d–%d": {
+   "ja": "%d〜%d 行目を実行しました",
+   "zh": "已运行第 %d〜%d 行",
+   "tw": "已執行第 %d〜%d 行",
+   "ko": "%d〜%d번째 줄 실행",
+   "de": "Zeilen %d–%d ausgeführt",
+   "hi": "पंक्तियाँ %d–%d चलाई गईं"
+  },
+  "Find in Program": {
+   "ja": "Program 内を検索",
+   "zh": "在 Program 中查找",
+   "tw": "在 Program 中尋找",
+   "ko": "Program에서 찾기",
+   "de": "Im Program suchen",
+   "hi": "Program में खोजें"
+  },
+  "Replace in Program": {
+   "ja": "Program 内を置換",
+   "zh": "在 Program 中替换",
+   "tw": "在 Program 中取代",
+   "ko": "Program에서 바꾸기",
+   "de": "Im Program ersetzen",
+   "hi": "Program में बदलें"
+  },
+  "Find next in Program": {
+   "ja": "Program 内で次を検索",
+   "zh": "在 Program 中查找下一个",
+   "tw": "在 Program 中尋找下一個",
+   "ko": "Program에서 다음 찾기",
+   "de": "Im Program nächsten suchen",
+   "hi": "Program में अगला खोजें"
+  },
+  "Find previous in Program": {
+   "ja": "Program 内で前を検索",
+   "zh": "在 Program 中查找上一个",
+   "tw": "在 Program 中尋找上一個",
+   "ko": "Program에서 이전 찾기",
+   "de": "Im Program vorherigen suchen",
+   "hi": "Program में पिछला खोजें"
+  },
+  "Comment / uncomment lines": {
+   "ja": "行コメントの付け外し",
+   "zh": "切换行注释",
+   "tw": "切換行註解",
+   "ko": "줄 주석 켜기/끄기",
+   "de": "Zeilenkommentar umschalten",
+   "hi": "पंक्ति टिप्पणी चालू/बंद"
+  },
+  "Bigger editor text": {
+   "ja": "エディタの文字を大きく",
+   "zh": "放大编辑器文字",
+   "tw": "放大編輯器文字",
+   "ko": "편집기 글자 크게",
+   "de": "Editor-Text vergrößern",
+   "hi": "संपादक का पाठ बड़ा करें"
+  },
+  "Smaller editor text": {
+   "ja": "エディタの文字を小さく",
+   "zh": "缩小编辑器文字",
+   "tw": "縮小編輯器文字",
+   "ko": "편집기 글자 작게",
+   "de": "Editor-Text verkleinern",
+   "hi": "संपादक का पाठ छोटा करें"
+  },
+  "Help for the operator under the cursor": {
+   "ja": "カーソル下の op のヘルプ",
+   "zh": "光标下算子的帮助",
+   "tw": "游標下運算子的說明",
+   "ko": "커서 아래 연산자 도움말",
+   "de": "Hilfe zum Operator unter dem Cursor",
+   "hi": "कर्सर के नीचे के ऑपरेटर की सहायता"
+  },
+  "Search inside the Program text (the operator search box keeps Ctrl+F elsewhere)": {
+   "ja": "Program の文字列の中を検索します(Program 以外にいる時の Ctrl+F は op の検索欄のままです)",
+   "zh": "在 Program 文本中查找(不在 Program 时 Ctrl+F 仍是算子搜索框)",
+   "tw": "在 Program 文字中尋找(不在 Program 時 Ctrl+F 仍是運算子搜尋框)",
+   "ko": "Program 텍스트 안에서 찾습니다(Program 밖에서는 Ctrl+F가 연산자 검색창 그대로입니다)",
+   "de": "Sucht im Program-Text (außerhalb des Program bleibt Strg+F die Operatorsuche)",
+   "hi": "Program पाठ के भीतर खोजें (Program के बाहर Ctrl+F ऑपरेटर खोज ही रहता है)"
+  },
+  "Search and replace inside the Program text; Replace all is one undo step": {
+   "ja": "Program の文字列を検索して置換します。すべて置換は 1 回の元に戻すで戻ります",
+   "zh": "在 Program 文本中查找并替换;全部替换只需一次撤销",
+   "tw": "在 Program 文字中尋找並取代;全部取代只需一次復原",
+   "ko": "Program 텍스트에서 찾아 바꿉니다. 모두 바꾸기는 실행 취소 한 번으로 되돌립니다",
+   "de": "Sucht und ersetzt im Program-Text; Alle ersetzen ist ein einziger Rückgängig-Schritt",
+   "hi": "Program पाठ में खोजें और बदलें; सभी बदलना एक Undo में वापस होता है"
+  },
+  "Go to the next match of the Program search": {
+   "ja": "Program 内の検索で、次の一致へ移ります",
+   "zh": "跳到 Program 搜索的下一个匹配",
+   "tw": "跳到 Program 搜尋的下一個符合項",
+   "ko": "Program 검색의 다음 일치로 이동합니다",
+   "de": "Springt zum nächsten Treffer der Program-Suche",
+   "hi": "Program खोज के अगले मिलान पर जाएँ"
+  },
+  "Go to the previous match of the Program search": {
+   "ja": "Program 内の検索で、前の一致へ移ります",
+   "zh": "跳到 Program 搜索的上一个匹配",
+   "tw": "跳到 Program 搜尋的上一個符合項",
+   "ko": "Program 검색의 이전 일치로 이동합니다",
+   "de": "Springt zum vorherigen Treffer der Program-Suche",
+   "hi": "Program खोज के पिछले मिलान पर जाएँ"
+  },
+  "Toggle the line comment (* ) on the selected Program lines; one undo step": {
+   "ja": "選んだ Program の行の行コメント(* )を付け外します。元に戻すは 1 回です",
+   "zh": "切换所选 Program 行的行注释(* );一次撤销即可还原",
+   "tw": "切換所選 Program 行的行註解(* );一次復原即可還原",
+   "ko": "선택한 Program 줄의 줄 주석(* )을 켜거나 끕니다. 실행 취소 한 번으로 되돌립니다",
+   "de": "Schaltet den Zeilenkommentar (* ) der markierten Program-Zeilen um; ein Rückgängig-Schritt",
+   "hi": "चुनी Program पंक्तियों की टिप्पणी (* ) चालू/बंद करें; एक Undo"
+  },
+  "Make the Program text one point bigger (6 to 32; also Ctrl + mouse wheel)": {
+   "ja": "Program の文字を 1 ポイント大きくします(6〜32。Ctrl+マウスホイールでも変えられます)",
+   "zh": "将 Program 文字放大 1 磅(6 到 32;也可用 Ctrl+鼠标滚轮)",
+   "tw": "將 Program 文字放大 1 點(6 到 32;也可用 Ctrl+滑鼠滾輪)",
+   "ko": "Program 글자를 1pt 키웁니다(6~32. Ctrl+마우스 휠로도 바꿀 수 있습니다)",
+   "de": "Vergrößert den Program-Text um einen Punkt (6 bis 32; auch Strg + Mausrad)",
+   "hi": "Program पाठ को 1 पॉइंट बड़ा करें (6 से 32; Ctrl + माउस व्हील से भी)"
+  },
+  "Make the Program text one point smaller (6 to 32; also Ctrl + mouse wheel)": {
+   "ja": "Program の文字を 1 ポイント小さくします(6〜32。Ctrl+マウスホイールでも変えられます)",
+   "zh": "将 Program 文字缩小 1 磅(6 到 32;也可用 Ctrl+鼠标滚轮)",
+   "tw": "將 Program 文字縮小 1 點(6 到 32;也可用 Ctrl+滑鼠滾輪)",
+   "ko": "Program 글자를 1pt 줄입니다(6~32. Ctrl+마우스 휠로도 바꿀 수 있습니다)",
+   "de": "Verkleinert den Program-Text um einen Punkt (6 bis 32; auch Strg + Mausrad)",
+   "hi": "Program पाठ को 1 पॉइंट छोटा करें (6 से 32; Ctrl + माउस व्हील से भी)"
+  },
+  "Open the help of the operator the Program cursor is on; the keyboard shortcuts list stays on F1": {
+   "ja": "Program のカーソルがある op のヘルプを開きます(F1 はこれまでどおりキー一覧です)",
+   "zh": "打开 Program 光标所在算子的帮助(F1 仍是快捷键列表)",
+   "tw": "開啟 Program 游標所在運算子的說明(F1 仍是快捷鍵列表)",
+   "ko": "Program 커서가 있는 연산자의 도움말을 엽니다(F1은 그대로 단축키 목록입니다)",
+   "de": "Öffnet die Hilfe des Operators unter dem Program-Cursor (F1 zeigt weiterhin die Tastenkürzel)",
+   "hi": "Program कर्सर वाले ऑपरेटर की सहायता खोलें (F1 अब भी कीबोर्ड शॉर्टकट सूची है)"
+  },
+  "%s already has files. Only the missing sub-folders will be created; nothing is overwritten.\nContinue?": {
+   "ja": "%s には既にファイルがあります。足りないサブフォルダだけを作り、何も上書きしません。\n続けますか?",
+   "zh": "%s 中已有文件。只会创建缺少的子文件夹,不会覆盖任何内容。\n是否继续?",
+   "tw": "%s 中已有檔案。只會建立缺少的子資料夾,不會覆蓋任何內容。\n是否繼續?",
+   "ko": "%s에는 이미 파일이 있습니다. 없는 하위 폴더만 만들고 아무것도 덮어쓰지 않습니다.\n계속할까요?",
+   "de": "%s enthält bereits Dateien. Es werden nur die fehlenden Unterordner angelegt; nichts wird überschrieben.\nFortfahren?",
+   "hi": "%s में पहले से फ़ाइलें हैं। केवल कमी वाले उप-फ़ोल्डर बनेंगे; कुछ भी ओवरराइट नहीं होगा।\nजारी रखें?"
+  },
+  "%s is not opened here (other file). Right-click: Show in file manager": {
+   "ja": "%s はここでは開きません(その他のファイル)。右クリック: エクスプローラーで表示",
+   "zh": "%s 不在此处打开(其他文件)。右键:在文件管理器中显示",
+   "tw": "%s 不在此處開啟(其他檔案)。右鍵:在檔案管理員中顯示",
+   "ko": "%s은(는) 여기서 열지 않습니다(기타 파일). 오른쪽 클릭: 파일 관리자에서 보기",
+   "de": "%s wird hier nicht geöffnet (andere Datei). Rechtsklick: Im Dateimanager zeigen",
+   "hi": "%s यहाँ नहीं खुलती (अन्य फ़ाइल)। राइट-क्लिक: फ़ाइल मैनेजर में दिखाएँ"
+  },
+  "(cut: the file is larger than 1 MB)": {
+   "ja": "(省略: ファイルが 1 MB より大きい)",
+   "zh": "(已截断:文件大于 1 MB)",
+   "tw": "(已截斷:檔案大於 1 MB)",
+   "ko": "(생략: 파일이 1 MB보다 큼)",
+   "de": "(gekürzt: Datei ist größer als 1 MB)",
+   "hi": "(काटा गया: फ़ाइल 1 MB से बड़ी है)"
+  },
+  "(no recent folders)": {
+   "ja": "(最近のフォルダはありません)",
+   "zh": "(没有最近的文件夹)",
+   "tw": "(沒有最近的資料夾)",
+   "ko": "(최근 폴더 없음)",
+   "de": "(keine zuletzt verwendeten Ordner)",
+   "hi": "(कोई हाल का फ़ोल्डर नहीं)"
+  },
+  "A link: shown, but not followed (the tree stays inside the project folder)": {
+   "ja": "リンク: 表示しますが辿りません(木はプロジェクトのフォルダの外へ出ません)",
+   "zh": "链接:显示但不跟随(树不会超出项目文件夹)",
+   "tw": "連結:顯示但不跟隨(樹不會超出專案資料夾)",
+   "ko": "링크: 표시하지만 따라가지 않습니다(트리는 프로젝트 폴더 밖으로 나가지 않습니다)",
+   "de": "Verknüpfung: wird gezeigt, aber nicht verfolgt (der Baum bleibt im Projektordner)",
+   "hi": "लिंक: दिखता है पर अनुसरण नहीं होता (ट्री प्रोजेक्ट फ़ोल्डर के भीतर ही रहता है)"
+  },
+  "All": {
+   "ja": "すべて",
+   "zh": "全部",
+   "tw": "全部",
+   "ko": "전체",
+   "de": "Alle",
+   "hi": "सभी"
+  },
+  "Choose a folder: it becomes the project and its files are listed in the Project panel": {
+   "ja": "フォルダを選ぶと、それがプロジェクトになり、中のファイルがプロジェクトのパネルに並びます",
+   "zh": "选择一个文件夹:它成为项目,其中的文件会列在“项目”面板中",
+   "tw": "選擇一個資料夾:它成為專案,其中的檔案會列在「專案」面板中",
+   "ko": "폴더를 고르면 그것이 프로젝트가 되고 안의 파일이 프로젝트 패널에 나열됩니다",
+   "de": "Ordner wählen: er wird das Projekt, seine Dateien erscheinen im Projekt-Panel",
+   "hi": "एक फ़ोल्डर चुनें: वही प्रोजेक्ट बनता है और उसकी फ़ाइलें प्रोजेक्ट पैनल में दिखती हैं"
+  },
+  "Choose a folder: it becomes the project. Nothing is written into it": {
+   "ja": "フォルダを選ぶと、それがプロジェクトになります。フォルダの中には何も書き込みません",
+   "zh": "选择一个文件夹:它成为项目。不会向其中写入任何内容",
+   "tw": "選擇一個資料夾:它成為專案。不會向其中寫入任何內容",
+   "ko": "폴더를 고르면 그것이 프로젝트가 됩니다. 폴더 안에는 아무것도 쓰지 않습니다",
+   "de": "Ordner wählen: er wird das Projekt. Es wird nichts hineingeschrieben",
+   "hi": "एक फ़ोल्डर चुनें: वही प्रोजेक्ट बनता है। उसमें कुछ नहीं लिखा जाता"
+  },
+  "Close the project folder": {
+   "ja": "プロジェクトのフォルダを閉じる",
+   "zh": "关闭项目文件夹",
+   "tw": "關閉專案資料夾",
+   "ko": "프로젝트 폴더 닫기",
+   "de": "Projektordner schließen",
+   "hi": "प्रोजेक्ट फ़ोल्डर बंद करें"
+  },
+  "Compare side by side": {
+   "ja": "並べて比べる",
+   "zh": "并排比较",
+   "tw": "並排比較",
+   "ko": "나란히 비교",
+   "de": "Nebeneinander vergleichen",
+   "hi": "साथ-साथ तुलना करें"
+  },
+  "Copy path": {
+   "ja": "パスをコピー",
+   "zh": "复制路径",
+   "tw": "複製路徑",
+   "ko": "경로 복사",
+   "de": "Pfad kopieren",
+   "hi": "पथ कॉपी करें"
+  },
+  "Copy relative path": {
+   "ja": "相対パスをコピー",
+   "zh": "复制相对路径",
+   "tw": "複製相對路徑",
+   "ko": "상대 경로 복사",
+   "de": "Relativen Pfad kopieren",
+   "hi": "सापेक्ष पथ कॉपी करें"
+  },
+  "Copy the full path": {
+   "ja": "フルパスをコピーします",
+   "zh": "复制完整路径",
+   "tw": "複製完整路徑",
+   "ko": "전체 경로를 복사합니다",
+   "de": "Kopiert den vollständigen Pfad",
+   "hi": "पूरा पथ कॉपी करें"
+  },
+  "Copy the path relative to the project folder": {
+   "ja": "プロジェクトのフォルダからの相対パスをコピーします",
+   "zh": "复制相对于项目文件夹的路径",
+   "tw": "複製相對於專案資料夾的路徑",
+   "ko": "프로젝트 폴더 기준의 상대 경로를 복사합니다",
+   "de": "Kopiert den Pfad relativ zum Projektordner",
+   "hi": "प्रोजेक्ट फ़ोल्डर के सापेक्ष पथ कॉपी करें"
+  },
+  "Could not create the folder": {
+   "ja": "フォルダを作れませんでした",
+   "zh": "无法创建文件夹",
+   "tw": "無法建立資料夾",
+   "ko": "폴더를 만들 수 없습니다",
+   "de": "Ordner konnte nicht angelegt werden",
+   "hi": "फ़ोल्डर नहीं बन सका"
+  },
+  "Could not create the pipeline": {
+   "ja": "パイプラインを作れませんでした",
+   "zh": "无法创建管线",
+   "tw": "無法建立管線",
+   "ko": "파이프라인을 만들 수 없습니다",
+   "de": "Pipeline konnte nicht angelegt werden",
+   "hi": "पाइपलाइन नहीं बन सकी"
+  },
+  "Could not create the project": {
+   "ja": "プロジェクトを作れませんでした",
+   "zh": "无法创建项目",
+   "tw": "無法建立專案",
+   "ko": "프로젝트를 만들 수 없습니다",
+   "de": "Projekt konnte nicht angelegt werden",
+   "hi": "प्रोजेक्ट नहीं बन सका"
+  },
+  "Could not move": {
+   "ja": "移動できませんでした",
+   "zh": "无法移动",
+   "tw": "無法移動",
+   "ko": "이동할 수 없습니다",
+   "de": "Verschieben nicht möglich",
+   "hi": "स्थानांतरित नहीं हो सका"
+  },
+  "Could not open the folder": {
+   "ja": "フォルダを開けませんでした",
+   "zh": "无法打开文件夹",
+   "tw": "無法開啟資料夾",
+   "ko": "폴더를 열 수 없습니다",
+   "de": "Ordner konnte nicht geöffnet werden",
+   "hi": "फ़ोल्डर नहीं खुल सका"
+  },
+  "Could not rename": {
+   "ja": "名前を変更できませんでした",
+   "zh": "无法重命名",
+   "tw": "無法重新命名",
+   "ko": "이름을 바꿀 수 없습니다",
+   "de": "Umbenennen nicht möglich",
+   "hi": "नाम नहीं बदला जा सका"
+  },
+  "Create a folder inside the project": {
+   "ja": "プロジェクトの中にフォルダを作ります",
+   "zh": "在项目内创建文件夹",
+   "tw": "在專案內建立資料夾",
+   "ko": "프로젝트 안에 폴더를 만듭니다",
+   "de": "Legt einen Ordner im Projekt an",
+   "hi": "प्रोजेक्ट के भीतर फ़ोल्डर बनाएँ"
+  },
+  "Create a project folder with the standard sub-folders: images, pipelines, programs, params, results": {
+   "ja": "標準のサブフォルダ(images / pipelines / programs / params / results)を持つプロジェクトのフォルダを作ります",
+   "zh": "创建带有标准子文件夹(images / pipelines / programs / params / results)的项目文件夹",
+   "tw": "建立帶有標準子資料夾(images / pipelines / programs / params / results)的專案資料夾",
+   "ko": "표준 하위 폴더(images / pipelines / programs / params / results)를 가진 프로젝트 폴더를 만듭니다",
+   "de": "Legt einen Projektordner mit den Standard-Unterordnern an: images, pipelines, programs, params, results",
+   "hi": "मानक उप-फ़ोल्डरों (images / pipelines / programs / params / results) के साथ प्रोजेक्ट फ़ोल्डर बनाएँ"
+  },
+  "Create an empty pipeline file (in pipelines/ unless you chose a folder)": {
+   "ja": "空のパイプラインのファイルを作ります(フォルダを選んでいなければ pipelines/ の中)",
+   "zh": "创建空管线文件(未选择文件夹时放在 pipelines/ 中)",
+   "tw": "建立空管線檔案(未選擇資料夾時放在 pipelines/ 中)",
+   "ko": "빈 파이프라인 파일을 만듭니다(폴더를 고르지 않으면 pipelines/ 안)",
+   "de": "Legt eine leere Pipeline-Datei an (in pipelines/, sofern kein Ordner gewählt ist)",
+   "hi": "खाली पाइपलाइन फ़ाइल बनाएँ (फ़ोल्डर न चुना हो तो pipelines/ में)"
+  },
+  "Create folder": {
+   "ja": "フォルダを作る",
+   "zh": "创建文件夹",
+   "tw": "建立資料夾",
+   "ko": "폴더 만들기",
+   "de": "Ordner anlegen",
+   "hi": "फ़ोल्डर बनाएँ"
+  },
+  "File name": {
+   "ja": "ファイル名",
+   "zh": "文件名",
+   "tw": "檔案名稱",
+   "ko": "파일 이름",
+   "de": "Dateiname",
+   "hi": "फ़ाइल का नाम"
+  },
+  "Filter by name": {
+   "ja": "名前で絞り込む",
+   "zh": "按名称筛选",
+   "tw": "依名稱篩選",
+   "ko": "이름으로 거르기",
+   "de": "Nach Namen filtern",
+   "hi": "नाम से छाँटें"
+  },
+  "Folder name": {
+   "ja": "フォルダ名",
+   "zh": "文件夹名",
+   "tw": "資料夾名稱",
+   "ko": "폴더 이름",
+   "de": "Ordnername",
+   "hi": "फ़ोल्डर का नाम"
+  },
+  "Image: double-click opens it as the input image": {
+   "ja": "画像: ダブルクリックで入力画像として開きます",
+   "zh": "图像:双击作为输入图像打开",
+   "tw": "影像:按兩下作為輸入影像開啟",
+   "ko": "이미지: 더블클릭하면 입력 이미지로 엽니다",
+   "de": "Bild: Doppelklick öffnet es als Eingabebild",
+   "hi": "छवि: डबल-क्लिक से इनपुट छवि के रूप में खुलती है"
+  },
+  "Images": {
+   "ja": "画像",
+   "zh": "图像",
+   "tw": "影像",
+   "ko": "이미지",
+   "de": "Bilder",
+   "hi": "छवियाँ"
+  },
+  "It is not a folder, or it no longer exists.": {
+   "ja": "フォルダではないか、もう存在しません。",
+   "zh": "它不是文件夹,或已不存在。",
+   "tw": "它不是資料夾,或已不存在。",
+   "ko": "폴더가 아니거나 더 이상 존재하지 않습니다.",
+   "de": "Es ist kein Ordner oder existiert nicht mehr.",
+   "hi": "यह फ़ोल्डर नहीं है या अब मौजूद नहीं है।"
+  },
+  "Move to %s/": {
+   "ja": "%s/ へ移す",
+   "zh": "移到 %s/",
+   "tw": "移到 %s/",
+   "ko": "%s/(으)로 이동",
+   "de": "Nach %s/ verschieben",
+   "hi": "%s/ में ले जाएँ"
+  },
+  "New folder": {
+   "ja": "新しいフォルダ",
+   "zh": "新建文件夹",
+   "tw": "新增資料夾",
+   "ko": "새 폴더",
+   "de": "Neuer Ordner",
+   "hi": "नया फ़ोल्डर"
+  },
+  "New name": {
+   "ja": "新しい名前",
+   "zh": "新名称",
+   "tw": "新名稱",
+   "ko": "새 이름",
+   "de": "Neuer Name",
+   "hi": "नया नाम"
+  },
+  "New pipeline": {
+   "ja": "新しいパイプライン",
+   "zh": "新建管线",
+   "tw": "新增管線",
+   "ko": "새 파이프라인",
+   "de": "Neue Pipeline",
+   "hi": "नई पाइपलाइन"
+  },
+  "New project": {
+   "ja": "新しいプロジェクト",
+   "zh": "新建项目",
+   "tw": "新增專案",
+   "ko": "새 프로젝트",
+   "de": "Neues Projekt",
+   "hi": "नया प्रोजेक्ट"
+  },
+  "New project…": {
+   "ja": "新しいプロジェクト…",
+   "zh": "新建项目…",
+   "tw": "新增專案…",
+   "ko": "새 프로젝트…",
+   "de": "Neues Projekt…",
+   "hi": "नया प्रोजेक्ट…"
+  },
+  "Open": {
+   "ja": "開く",
+   "zh": "打开",
+   "tw": "開啟",
+   "ko": "열기",
+   "de": "Öffnen",
+   "hi": "खोलें"
+  },
+  "Open a folder and its images, pipelines and definition files are listed here.": {
+   "ja": "フォルダを開くと、画像・パイプライン・定義のファイルがここに並びます。",
+   "zh": "打开文件夹后,图像、管线和定义文件会列在这里。",
+   "tw": "開啟資料夾後,影像、管線和定義檔案會列在這裡。",
+   "ko": "폴더를 열면 이미지·파이프라인·정의 파일이 여기에 나열됩니다.",
+   "de": "Öffnen Sie einen Ordner: Bilder, Pipelines und Definitionsdateien erscheinen hier.",
+   "hi": "फ़ोल्डर खोलने पर छवियाँ, पाइपलाइन और परिभाषा फ़ाइलें यहाँ सूचीबद्ध होती हैं।"
+  },
+  "Open folder": {
+   "ja": "フォルダを開く",
+   "zh": "打开文件夹",
+   "tw": "開啟資料夾",
+   "ko": "폴더 열기",
+   "de": "Ordner öffnen",
+   "hi": "फ़ोल्डर खोलें"
+  },
+  "Open folder…": {
+   "ja": "フォルダを開く…",
+   "zh": "打开文件夹…",
+   "tw": "開啟資料夾…",
+   "ko": "폴더 열기…",
+   "de": "Ordner öffnen…",
+   "hi": "फ़ोल्डर खोलें…"
+  },
+  "Open the file in the place its kind belongs to": {
+   "ja": "ファイルを、その種類の行き先で開きます",
+   "zh": "在其种类对应的位置打开文件",
+   "tw": "在其種類對應的位置開啟檔案",
+   "ko": "파일을 그 종류에 맞는 곳에서 엽니다",
+   "de": "Öffnet die Datei dort, wo ihre Art hingehört",
+   "hi": "फ़ाइल को उसके प्रकार की जगह पर खोलें"
+  },
+  "Open the folder of bundled sample images to see how the tree works": {
+   "ja": "同梱のサンプル画像のフォルダを開いて、木の使い方を見ます",
+   "zh": "打开自带示例图像文件夹,查看树的用法",
+   "tw": "開啟隨附範例影像資料夾,查看樹的用法",
+   "ko": "동봉된 샘플 이미지 폴더를 열어 트리 사용법을 봅니다",
+   "de": "Öffnet den Ordner mit den mitgelieferten Beispielbildern, um den Baum auszuprobieren",
+   "hi": "साथ आए नमूना छवियों का फ़ोल्डर खोलकर ट्री का उपयोग देखें"
+  },
+  "Open the sample folder": {
+   "ja": "サンプルのフォルダを開く",
+   "zh": "打开示例文件夹",
+   "tw": "開啟範例資料夾",
+   "ko": "샘플 폴더 열기",
+   "de": "Beispielordner öffnen",
+   "hi": "नमूना फ़ोल्डर खोलें"
+  },
+  "Other file: not opened here; use Show in file manager": {
+   "ja": "その他のファイル: ここでは開きません。「エクスプローラーで表示」を使います",
+   "zh": "其他文件:不在此处打开;请用“在文件管理器中显示”",
+   "tw": "其他檔案:不在此處開啟;請用「在檔案管理員中顯示」",
+   "ko": "기타 파일: 여기서 열지 않습니다. '파일 관리자에서 보기'를 사용하세요",
+   "de": "Andere Datei: wird hier nicht geöffnet; „Im Dateimanager zeigen“ verwenden",
+   "hi": "अन्य फ़ाइल: यहाँ नहीं खुलती; “फ़ाइल मैनेजर में दिखाएँ” का उपयोग करें"
+  },
+  "Other files": {
+   "ja": "その他のファイル",
+   "zh": "其他文件",
+   "tw": "其他檔案",
+   "ko": "기타 파일",
+   "de": "Andere Dateien",
+   "hi": "अन्य फ़ाइलें"
+  },
+  "Parameters": {
+   "ja": "パラメータ",
+   "zh": "参数",
+   "tw": "參數",
+   "ko": "파라미터",
+   "de": "Parameter",
+   "hi": "पैरामीटर"
+  },
+  "Parameters / definitions: double-click shows the text, read-only": {
+   "ja": "パラメータ・定義: ダブルクリックで中身を読み取り専用で表示します",
+   "zh": "参数/定义:双击以只读方式显示文本",
+   "tw": "參數/定義:按兩下以唯讀方式顯示文字",
+   "ko": "파라미터/정의: 더블클릭하면 읽기 전용으로 내용을 보여 줍니다",
+   "de": "Parameter/Definitionen: Doppelklick zeigt den Text schreibgeschützt",
+   "hi": "पैरामीटर/परिभाषाएँ: डबल-क्लिक से पाठ केवल-पढ़ने के रूप में दिखता है"
+  },
+  "Pipeline: double-click opens it as the current pipeline": {
+   "ja": "パイプライン: ダブルクリックでいまのパイプラインとして開きます",
+   "zh": "管线:双击作为当前管线打开",
+   "tw": "管線:按兩下作為目前管線開啟",
+   "ko": "파이프라인: 더블클릭하면 현재 파이프라인으로 엽니다",
+   "de": "Pipeline: Doppelklick öffnet sie als aktuelle Pipeline",
+   "hi": "पाइपलाइन: डबल-क्लिक से वर्तमान पाइपलाइन के रूप में खुलती है"
+  },
+  "Pipelines": {
+   "ja": "パイプライン",
+   "zh": "管线",
+   "tw": "管線",
+   "ko": "파이프라인",
+   "de": "Pipelines",
+   "hi": "पाइपलाइनें"
+  },
+  "Project": {
+   "ja": "プロジェクト",
+   "zh": "项目",
+   "tw": "專案",
+   "ko": "프로젝트",
+   "de": "Projekt",
+   "hi": "प्रोजेक्ट"
+  },
+  "Project folder name": {
+   "ja": "プロジェクトのフォルダ名",
+   "zh": "项目文件夹名称",
+   "tw": "專案資料夾名稱",
+   "ko": "프로젝트 폴더 이름",
+   "de": "Name des Projektordners",
+   "hi": "प्रोजेक्ट फ़ोल्डर का नाम"
+  },
+  "Python": {
+   "ja": "Python",
+   "zh": "Python",
+   "tw": "Python",
+   "ko": "Python",
+   "de": "Python",
+   "hi": "Python"
+  },
+  "Python mode comes in the next version: %s was not run": {
+   "ja": "Python のモードは次の版で対応します: %s は実行していません",
+   "zh": "Python 模式将在下一版提供:%s 未被运行",
+   "tw": "Python 模式將在下一版提供:%s 未被執行",
+   "ko": "Python 모드는 다음 버전에서 제공됩니다: %s은(는) 실행하지 않았습니다",
+   "de": "Der Python-Modus kommt in der nächsten Version: %s wurde nicht ausgeführt",
+   "hi": "Python मोड अगले संस्करण में आएगा: %s चलाई नहीं गई"
+  },
+  "Python: not run when opened; the Python mode comes in the next version": {
+   "ja": "Python: 開いても実行しません。Python のモードは次の版で対応します",
+   "zh": "Python:打开时不运行;Python 模式将在下一版提供",
+   "tw": "Python:開啟時不執行;Python 模式將在下一版提供",
+   "ko": "Python: 열어도 실행하지 않습니다. Python 모드는 다음 버전에서 제공됩니다",
+   "de": "Python: wird beim Öffnen nicht ausgeführt; der Python-Modus kommt in der nächsten Version",
+   "hi": "Python: खोलने पर चलती नहीं; Python मोड अगले संस्करण में आएगा"
+  },
+  "Recent folders": {
+   "ja": "最近のフォルダ",
+   "zh": "最近的文件夹",
+   "tw": "最近的資料夾",
+   "ko": "최근 폴더",
+   "de": "Zuletzt verwendete Ordner",
+   "hi": "हाल के फ़ोल्डर"
+  },
+  "Rename": {
+   "ja": "名前の変更",
+   "zh": "重命名",
+   "tw": "重新命名",
+   "ko": "이름 바꾸기",
+   "de": "Umbenennen",
+   "hi": "नाम बदलें"
+  },
+  "Rename this file or folder (it stays inside the project)": {
+   "ja": "このファイルまたはフォルダの名前を変えます(プロジェクトの中に留まります)",
+   "zh": "重命名此文件或文件夹(仍在项目内)",
+   "tw": "重新命名此檔案或資料夾(仍在專案內)",
+   "ko": "이 파일이나 폴더의 이름을 바꿉니다(프로젝트 안에 머뭅니다)",
+   "de": "Benennt diese Datei oder diesen Ordner um (bleibt im Projekt)",
+   "hi": "इस फ़ाइल या फ़ोल्डर का नाम बदलें (प्रोजेक्ट के भीतर ही रहता है)"
+  },
+  "Results": {
+   "ja": "出力",
+   "zh": "输出",
+   "tw": "輸出",
+   "ko": "출력",
+   "de": "Ergebnisse",
+   "hi": "परिणाम"
+  },
+  "Select two or more images to see them side by side": {
+   "ja": "画像を 2 つ以上選ぶと、並べて見られます",
+   "zh": "选择两张或更多图像即可并排查看",
+   "tw": "選擇兩張或更多影像即可並排檢視",
+   "ko": "이미지를 두 개 이상 고르면 나란히 볼 수 있습니다",
+   "de": "Zwei oder mehr Bilder wählen, um sie nebeneinander zu sehen",
+   "hi": "दो या अधिक छवियाँ चुनें, साथ-साथ देखने के लिए"
+  },
+  "Show in file manager": {
+   "ja": "エクスプローラーで表示",
+   "zh": "在文件管理器中显示",
+   "tw": "在檔案管理員中顯示",
+   "ko": "파일 관리자에서 보기",
+   "de": "Im Dateimanager zeigen",
+   "hi": "फ़ाइल मैनेजर में दिखाएँ"
+  },
+  "Show only one kind of file": {
+   "ja": "1 つの種類のファイルだけを表示します",
+   "zh": "只显示一种文件",
+   "tw": "只顯示一種檔案",
+   "ko": "한 종류의 파일만 표시합니다",
+   "de": "Zeigt nur eine Dateiart",
+   "hi": "केवल एक प्रकार की फ़ाइलें दिखाएँ"
+  },
+  "Show only the files whose name contains this text": {
+   "ja": "名前にこの文字を含むファイルだけを表示します",
+   "zh": "只显示名称包含此文字的文件",
+   "tw": "只顯示名稱包含此文字的檔案",
+   "ko": "이름에 이 글자가 들어 있는 파일만 표시합니다",
+   "de": "Zeigt nur Dateien, deren Name diesen Text enthält",
+   "hi": "केवल वे फ़ाइलें दिखाएँ जिनके नाम में यह पाठ है"
+  },
+  "Show the Project panel: the project folder as a tree of files": {
+   "ja": "プロジェクトのパネルを表示します(プロジェクトのフォルダをファイルの木で見せます)",
+   "zh": "显示“项目”面板:以文件树显示项目文件夹",
+   "tw": "顯示「專案」面板:以檔案樹顯示專案資料夾",
+   "ko": "프로젝트 패널을 표시합니다(프로젝트 폴더를 파일 트리로 보여 줍니다)",
+   "de": "Zeigt das Projekt-Panel: den Projektordner als Dateibaum",
+   "hi": "प्रोजेक्ट पैनल दिखाएँ: प्रोजेक्ट फ़ोल्डर को फ़ाइल-ट्री के रूप में"
+  },
+  "Show the file in the file manager (it is not opened)": {
+   "ja": "ファイルをエクスプローラーで表示します(開きはしません)",
+   "zh": "在文件管理器中显示该文件(不打开)",
+   "tw": "在檔案管理員中顯示該檔案(不開啟)",
+   "ko": "파일 관리자에서 파일을 보여 줍니다(열지는 않습니다)",
+   "de": "Zeigt die Datei im Dateimanager (sie wird nicht geöffnet)",
+   "hi": "फ़ाइल को फ़ाइल मैनेजर में दिखाएँ (खोली नहीं जाती)"
+  },
+  "Show the selected images side by side": {
+   "ja": "選んだ画像を並べて見せます",
+   "zh": "并排显示所选图像",
+   "tw": "並排顯示所選影像",
+   "ko": "선택한 이미지를 나란히 보여 줍니다",
+   "de": "Zeigt die gewählten Bilder nebeneinander",
+   "hi": "चुनी हुई छवियाँ साथ-साथ दिखाएँ"
+  },
+  "Standard folder (images / pipelines / programs / params / results)": {
+   "ja": "標準のフォルダ(images / pipelines / programs / params / results)",
+   "zh": "标准文件夹(images / pipelines / programs / params / results)",
+   "tw": "標準資料夾(images / pipelines / programs / params / results)",
+   "ko": "표준 폴더(images / pipelines / programs / params / results)",
+   "de": "Standardordner (images / pipelines / programs / params / results)",
+   "hi": "मानक फ़ोल्डर (images / pipelines / programs / params / results)"
+  },
+  "The content does not match the folder it is in. Move it to the standard folder": {
+   "ja": "中身がいまのフォルダと合っていません。標準のフォルダへ移します",
+   "zh": "内容与所在文件夹不符。移到标准文件夹",
+   "tw": "內容與所在資料夾不符。移到標準資料夾",
+   "ko": "내용이 현재 폴더와 맞지 않습니다. 표준 폴더로 옮깁니다",
+   "de": "Der Inhalt passt nicht zum Ordner. In den Standardordner verschieben",
+   "hi": "सामग्री वर्तमान फ़ोल्डर से मेल नहीं खाती। मानक फ़ोल्डर में ले जाएँ"
+  },
+  "The content is a %s but it sits in %s/. Move it to %s/?": {
+   "ja": "中身は「%s」ですが %s/ にあります。%s/ へ移しますか?",
+   "zh": "内容是“%s”,但位于 %s/。是否移到 %s/?",
+   "tw": "內容是「%s」,但位於 %s/。是否移到 %s/?",
+   "ko": "내용은 '%s'인데 %s/에 있습니다. %s/(으)로 옮길까요?",
+   "de": "Der Inhalt ist „%s“, liegt aber in %s/. Nach %s/ verschieben?",
+   "hi": "सामग्री “%s” है पर %s/ में रखी है। %s/ में ले जाएँ?"
+  },
+  "The last project folder is gone: %s": {
+   "ja": "前回のプロジェクトのフォルダが見つかりません: %s",
+   "zh": "上次的项目文件夹已不存在:%s",
+   "tw": "上次的專案資料夾已不存在:%s",
+   "ko": "지난번 프로젝트 폴더를 찾을 수 없습니다: %s",
+   "de": "Der zuletzt verwendete Projektordner existiert nicht mehr: %s",
+   "hi": "पिछला प्रोजेक्ट फ़ोल्डर नहीं मिला: %s"
+  },
+  "The project folder. Double-click a file to open it; right-click for more": {
+   "ja": "プロジェクトのフォルダです。ファイルをダブルクリックで開き、右クリックで他の操作ができます",
+   "zh": "项目文件夹。双击文件打开;右键可进行更多操作",
+   "tw": "專案資料夾。按兩下檔案開啟;按右鍵可進行更多操作",
+   "ko": "프로젝트 폴더입니다. 파일을 더블클릭해 열고, 오른쪽 클릭으로 다른 작업을 합니다",
+   "de": "Der Projektordner. Doppelklick öffnet eine Datei; Rechtsklick für mehr",
+   "hi": "प्रोजेक्ट फ़ोल्डर। फ़ाइल खोलने के लिए डबल-क्लिक करें; और विकल्पों के लिए राइट-क्लिक करें"
+  },
+  "The project has no %s/ folder yet. Create it?": {
+   "ja": "このプロジェクトには %s/ のフォルダがまだありません。作りますか?",
+   "zh": "此项目还没有 %s/ 文件夹。是否创建?",
+   "tw": "此專案還沒有 %s/ 資料夾。是否建立?",
+   "ko": "이 프로젝트에는 아직 %s/ 폴더가 없습니다. 만들까요?",
+   "de": "Das Projekt hat noch keinen Ordner %s/. Anlegen?",
+   "hi": "प्रोजेक्ट में अभी %s/ फ़ोल्डर नहीं है। बनाएँ?"
+  },
+  "Where should the new project go?": {
+   "ja": "新しいプロジェクトをどこに作りますか?",
+   "zh": "新项目要放在哪里?",
+   "tw": "新專案要放在哪裡?",
+   "ko": "새 프로젝트를 어디에 만들까요?",
+   "de": "Wo soll das neue Projekt angelegt werden?",
+   "hi": "नया प्रोजेक्ट कहाँ बनाएँ?"
+  },
+  "copied: %s": {
+   "ja": "コピーしました: %s",
+   "zh": "已复制:%s",
+   "tw": "已複製:%s",
+   "ko": "복사함: %s",
+   "de": "kopiert: %s",
+   "hi": "कॉपी किया: %s"
+  },
+  "created %s": {
+   "ja": "%s を作りました",
+   "zh": "已创建 %s",
+   "tw": "已建立 %s",
+   "ko": "%s을(를) 만들었습니다",
+   "de": "%s angelegt",
+   "hi": "%s बनाई गई"
+  },
+  "moved to %s/": {
+   "ja": "%s/ へ移しました",
+   "zh": "已移到 %s/",
+   "tw": "已移到 %s/",
+   "ko": "%s/(으)로 옮겼습니다",
+   "de": "nach %s/ verschoben",
+   "hi": "%s/ में ले जाया गया"
+  },
+  "project folder: %s": {
+   "ja": "プロジェクトのフォルダ: %s",
+   "zh": "项目文件夹:%s",
+   "tw": "專案資料夾:%s",
+   "ko": "프로젝트 폴더: %s",
+   "de": "Projektordner: %s",
+   "hi": "प्रोजेक्ट फ़ोल्डर: %s"
+  },
+  "read-only": {
+   "ja": "読み取り専用",
+   "zh": "只读",
+   "tw": "唯讀",
+   "ko": "읽기 전용",
+   "de": "schreibgeschützt",
+   "hi": "केवल-पढ़ने"
+  },
+  "Float: Project": {
+   "ja": "切り離す: プロジェクト",
+   "zh": "浮动:项目",
+   "tw": "浮動:專案",
+   "ko": "분리: 프로젝트",
+   "de": "Abdocken: Projekt",
+   "hi": "अलग करें: प्रोजेक्ट"
   }
  },
   "pending_translation": {

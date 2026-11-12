@@ -41,6 +41,7 @@ import studio_roundtrip
 import studio_batch
 import studio_display
 import studio_layout
+import studio_project
 
 
 # --------------------------------------------------------------------------- #
@@ -3729,6 +3730,21 @@ def _hdev_strip_comment(line):
     return s
 
 
+def _did_you_mean(name, names, limit=3):
+    """未知の op 名に綴りの近い op 名を最大 *limit* 件(`` — did you mean a, b?``)。無ければ空文字。
+
+    近さは difflib の一致率(綴りの打ち違い)を先に、次に「入力を含む名前」(``canny`` → ``canny_edge``)。"""
+    import difflib
+    low = str(name).lower()
+    pool = sorted(names)
+    close = difflib.get_close_matches(low, pool, n=limit, cutoff=0.6)
+    out = list(close)
+    if len(low) >= 3:
+        out += [n for n in pool if low in n.lower() and n not in out]
+    out = out[:limit]
+    return (" \u2014 " + tr("did you mean %s?") % ", ".join(out)) if out else ""
+
+
 def _hdev_parse_op(line, lineno, errs, names):
     """Parse one operator statement — HDevelop `op (a, b)` or the terse `op a b`.
     Returns (name, a, b) clamped to [0,1], or None (appending an error)."""
@@ -3741,7 +3757,7 @@ def _hdev_parse_op(line, lineno, errs, names):
         parts = line.split()
         name, args = parts[0], parts[1:]
     if name not in names:
-        errs.append("line %d: unknown op '%s'" % (lineno, name)); return None
+        errs.append("line %d: unknown op '%s'%s" % (lineno, name, _did_you_mean(name, names))); return None
     try:
         a = float(args[0]) if len(args) > 0 and args[0] != "" else 0.5
         b = float(args[1]) if len(args) > 1 and args[1] != "" else 0.5
@@ -4095,6 +4111,24 @@ def shortcut_table(items):
         seen.add(key)
         rows.append((str(label).replace("…", "").strip(), sc))
     return rows
+
+
+#: コマンドパレットの別名(日本語・英語・やりたいことの言い方)。action の鍵 -> 空白区切りの語。
+#: 表示する名前(label)はそのまま、検索のときだけ label + この語に当てる(STUDIO_UX_RULES §6)。
+PALETTE_WORDS = {
+    "project_open": "project folder open folder files explorer tree プロジェクト フォルダ フォルダを開く ファイル ツリー エクスプローラ ctrl+shift+j",
+    "project_new": "project new project create folder プロジェクト 新しいプロジェクト 新規 フォルダ作成 ファイル ツリー",
+    "project_panel": "project folder files explorer tree panel プロジェクト フォルダ ファイル ツリー エクスプローラ パネル",
+    "program_find": "find search 検索 探す 見つける 文字列 テキスト検索 ctrl+f",
+    "program_replace": "replace substitute find and replace 置換 置き換え 置き換える 一括置換 ctrl+h",
+    "program_find_next": "find next next match 次を検索 次へ 次の一致 f3",
+    "program_find_prev": "find previous previous match 前を検索 前へ 前の一致 shift+f3",
+    "program_comment": "comment uncomment toggle comment out コメント コメントアウト コメント解除 行コメント 無効化 ctrl+/",
+    "program_help_here": "help operator reference docs documentation ヘルプ 説明 リファレンス op オペレータ 使い方 f1 shift+f1",
+    "program_font_bigger": "font size zoom in bigger larger text 文字サイズ 文字 拡大 大きく フォント ズーム",
+    "program_font_smaller": "font size zoom out smaller text 文字サイズ 文字 縮小 小さく フォント ズーム",
+    "run_selection": "run selection selected lines partial run 選んだ行 選択 部分実行 一部だけ 実行",
+}
 
 
 def palette_filter(labels, query):
@@ -5911,7 +5945,7 @@ WORK_MODE_TIP_EN = {
     "inspect": "Shows Display · Analysis (large) and Variables & Objects next to the image, for reading values",
     "code": "Shows the Program (code) panel large next to the image, for editing the pipeline as text",
 }
-PANEL_NAME_EN = {"operators": "Operators", "pipeline": "Pipeline · Parameters", "display": "Display · Analysis",
+PANEL_NAME_EN = {"project": "Project", "operators": "Operators", "pipeline": "Pipeline · Parameters", "display": "Display · Analysis",
                  "program": "Program (code)", "variables": "Variables & Objects", "compare": "Stage in → out",
                  "ab": "A / B", "result": "Result image"}
 
@@ -6548,8 +6582,189 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
         def mousePressEvent(self, ev):
             self._editor.gutter_click(ev)
 
+    class _FindEdit(QtWidgets.QLineEdit):
+        """検索欄・置換欄。Esc / F3 / Shift+F3 / Ctrl+F / Ctrl+H をウィンドウの同じキー(op の検索・ホールドアウト)
+        より先に受ける。"""
+
+        def __init__(self, bar):
+            super().__init__()
+            self._bar = bar
+
+        def event(self, ev):
+            if ev.type() == QtCore.QEvent.ShortcutOverride:
+                k, m = ev.key(), ev.modifiers()
+                ctrl = bool(m & QtCore.Qt.ControlModifier)
+                if k in (QtCore.Qt.Key_Escape, QtCore.Qt.Key_F3) or (ctrl and k in (QtCore.Qt.Key_F, QtCore.Qt.Key_H)):
+                    ev.accept()
+                    return True
+            return super().event(ev)
+
+        def keyPressEvent(self, ev):
+            k, m = ev.key(), ev.modifiers()
+            shift = bool(m & QtCore.Qt.ShiftModifier)
+            ctrl = bool(m & QtCore.Qt.ControlModifier)
+            if k == QtCore.Qt.Key_Escape:
+                self._bar.close_bar(); return
+            if k == QtCore.Qt.Key_F3:
+                self._bar.step(backward=shift); return
+            if ctrl and k in (QtCore.Qt.Key_F, QtCore.Qt.Key_H):
+                self._bar.open(replace=(k == QtCore.Qt.Key_H)); return
+            if k in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
+                if self is self._bar.replace_edit:
+                    self._bar.replace_one()
+                else:
+                    self._bar.step(backward=shift)
+                return
+            super().keyPressEvent(ev)
+
+    class _FindBar(QtWidgets.QWidget):
+        """Program 欄の下に出す検索・置換の帯(★2026-11-12 IDE 第 1 便, B-4)。
+        Ctrl+F = 検索、Ctrl+H = 置換つき、F3 / Shift+F3 = 次 / 前、Esc = 閉じる。全置換は 1 回の Undo で戻る。"""
+
+        def __init__(self, editor):
+            super().__init__()
+            self._ed = editor
+            self.setObjectName("ProgramFindBar")
+            lay = QtWidgets.QVBoxLayout(self)
+            lay.setContentsMargins(2, 2, 2, 2); lay.setSpacing(2)
+            row1 = QtWidgets.QHBoxLayout(); row1.setSpacing(3)
+            self.find_edit = _FindEdit(self)
+            self.find_edit.setPlaceholderText(tr("Find"))
+            self.find_edit.setClearButtonEnabled(True)
+            self.case = QtWidgets.QCheckBox("Aa")
+            self.case.setToolTip(tr("Match case"))
+            self.btn_prev = QtWidgets.QToolButton(); self.btn_prev.setText("\u2191")
+            self.btn_prev.setToolTip(tr("Find previous"))
+            self.btn_next = QtWidgets.QToolButton(); self.btn_next.setText("\u2193")
+            self.btn_next.setToolTip(tr("Find next"))
+            self.btn_close = QtWidgets.QToolButton(); self.btn_close.setText("\u2715")
+            self.btn_close.setToolTip(tr("Close"))
+            self.count = QtWidgets.QLabel(""); self.count.setProperty("hint", True)
+            for w_ in (self.find_edit,):
+                row1.addWidget(w_, 1)
+            for w_ in (self.case, self.btn_prev, self.btn_next, self.count, self.btn_close):
+                row1.addWidget(w_)
+            lay.addLayout(row1)
+            self.replace_row = QtWidgets.QWidget()
+            row2 = QtWidgets.QHBoxLayout(self.replace_row); row2.setContentsMargins(0, 0, 0, 0); row2.setSpacing(3)
+            self.replace_edit = _FindEdit(self)
+            self.replace_edit.setPlaceholderText(tr("Replace with"))
+            self.btn_replace = QtWidgets.QPushButton(tr("Replace"))
+            self.btn_replace_all = QtWidgets.QPushButton(tr("Replace all"))
+            self.btn_replace.setToolTip(tr("Replace the selected match and go to the next one"))
+            self.btn_replace_all.setToolTip(tr("Replace every match (one Undo brings them all back)"))
+            row2.addWidget(self.replace_edit, 1); row2.addWidget(self.btn_replace); row2.addWidget(self.btn_replace_all)
+            lay.addWidget(self.replace_row)
+            self.btn_next.clicked.connect(lambda _=False: self.step(False))
+            self.btn_prev.clicked.connect(lambda _=False: self.step(True))
+            self.btn_close.clicked.connect(lambda _=False: self.close_bar())
+            self.btn_replace.clicked.connect(lambda _=False: self.replace_one())
+            self.btn_replace_all.clicked.connect(lambda _=False: self.replace_all())
+            self.find_edit.textChanged.connect(lambda _t: self._update_count())
+            self.case.toggled.connect(lambda _c: self._update_count())
+            self.hide()
+
+        # -- 開く・閉じる --
+        def open(self, replace=False, seed=None):
+            self.show()
+            self.replace_row.setVisible(bool(replace))
+            if seed:
+                self.find_edit.setText(seed)
+            self.find_edit.setFocus()
+            self.find_edit.selectAll()
+            self._update_count()
+
+        def close_bar(self):
+            self.hide()
+            self._ed.setFocus()
+
+        # -- 検索 --
+        def _flags(self, backward=False):
+            fl = QtGui.QTextDocument.FindFlag(0)
+            if self.case.isChecked():
+                fl |= QtGui.QTextDocument.FindCaseSensitively
+            if backward:
+                fl |= QtGui.QTextDocument.FindBackward
+            return fl
+
+        def matches(self):
+            """本文の中の一致の数。"""
+            q = self.find_edit.text()
+            if not q:
+                return 0
+            doc, n = self._ed.document(), 0
+            c = doc.find(q, 0, self._flags())
+            while not c.isNull():
+                n += 1
+                c = doc.find(q, c, self._flags())
+            return n
+
+        def _update_count(self):
+            q = self.find_edit.text()
+            n = self.matches() if q else 0
+            self.count.setText("" if not q else (tr("%d matches") % n if n else tr("no match")))
+            return n
+
+        def step(self, backward=False):
+            """次(``backward`` なら前)の一致へ移る。末尾まで行ったら先頭から(戻って来る)。見つけたら True。"""
+            q = self.find_edit.text()
+            if not q:
+                return False
+            ed = self._ed
+            if ed.find(q, self._flags(backward)):
+                return True
+            cur = ed.textCursor()
+            cur.movePosition(QtGui.QTextCursor.End if backward else QtGui.QTextCursor.Start)
+            ed.setTextCursor(cur)
+            found = ed.find(q, self._flags(backward))
+            if not found:
+                self.count.setText(tr("no match"))
+            return found
+
+        # -- 置換 --
+        def replace_one(self):
+            """いま選んでいる一致を置き換えて次へ。選んでいなければ次の一致を選ぶだけ。"""
+            q = self.find_edit.text()
+            if not q:
+                return False
+            ed = self._ed
+            sel = ed.textCursor().selectedText()
+            same = (sel == q) if self.case.isChecked() else (sel.lower() == q.lower())
+            if same:
+                ed.textCursor().insertText(self.replace_edit.text())
+            ok = self.step(False)
+            self._update_count()
+            return ok
+
+        def replace_all(self):
+            """全件を置き換える。**1 回の Undo で全部戻る**(編集ブロックで包む)。置き換えた件数を返す。"""
+            q, r = self.find_edit.text(), self.replace_edit.text()
+            if not q:
+                return 0
+            doc = self._ed.document()
+            guard = QtGui.QTextCursor(doc)
+            guard.beginEditBlock()
+            n = 0
+            try:
+                c = doc.find(q, 0, self._flags())
+                while not c.isNull():
+                    c.insertText(r)
+                    n += 1
+                    c = doc.find(q, c, self._flags())      # 置換した文の後ろから(置換語に q を含んでも無限にならない)
+            finally:
+                guard.endEditBlock()
+            self.count.setText(tr("%d replaced") % n)
+            if self._ed.on_message is not None:
+                self._ed.on_message(tr("%d replaced") % n)
+            return n
+
     class ProgramEditor(QtWidgets.QPlainTextEdit):
         BREAK = "#e5484d"
+        #: ★2026-11-12 IDE 第 1 便: 窓(build_window)が入れる受け手。None なら何もしない(部品単体でも動く)。
+        on_open_help = None        # (op 名) -> None   : Shift+F1 で op のヘルプを開く
+        on_message = None          # (文) -> None      : 状態行へ 1 行
+        on_font_change = None      # (pt) -> None      : 文字サイズの保存と全欄への反映
+        on_run_selection = None    # () -> None        : 選んだ行だけを実行
 
         def __init__(self, words=(), parent=None, tip=None):
             super().__init__(parent)
@@ -6581,6 +6796,9 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             self._completer.setMaxVisibleItems(12)
             self._completer.activated.connect(self._insert_completion)
             self._query = ""
+            self._words = set(words)
+            self._errors = {}                 # 1-based 行 -> 構文エラーの文(波線とガターの赤印)
+            self._ide_init()
 
         # -- gutter geometry / painting --
         def gutter_width(self):
@@ -6624,6 +6842,8 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     p.setPen(QtGui.QColor("#e5484d" if ln == self._exec_line else "#6b7280"))
                     p.drawText(0, int(top), numw, fm.height(),
                                QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter, str(ln))
+                    if ln in self._errors:          # 構文エラーの行: ガターの右端に赤い印
+                        p.fillRect(w - 5, int(top), 4, fm.height(), QtGui.QColor(self.BREAK))
                     ms = self.timings.get(ln)
                     if ms is not None:              # per-line execution time
                         p.setPen(QtGui.QColor("#17b8a6"))
@@ -6682,6 +6902,17 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     c = self.textCursor(); c.setPosition(blk.position()); c.clearSelection()
                     ex.cursor = c
                     sels.append(ex)
+            for ln in sorted(getattr(self, "_errors", {})):          # 構文エラーの行は波線
+                blk = self.document().findBlockByNumber(ln - 1)
+                if not blk.isValid():
+                    continue
+                sq = QtWidgets.QTextEdit.ExtraSelection()
+                sq.format.setUnderlineStyle(QtGui.QTextCharFormat.WaveUnderline)
+                sq.format.setUnderlineColor(QtGui.QColor(self.BREAK))
+                c = QtGui.QTextCursor(blk)
+                c.select(QtGui.QTextCursor.LineUnderCursor)
+                sq.cursor = c
+                sels.append(sq)
             self.setExtraSelections(sels)
 
         # -- autocomplete --
@@ -6697,8 +6928,18 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             self.setTextCursor(c)
 
         def completion_candidates(self, prefix, limit=50):
-            """打った語に対する候補(順位 → 名前順)。Qt を使わずに試験できる入口。"""
-            return self._index.search(prefix, limit=limit)
+            """打った語に対する候補(順位 → 名前順)。Qt を使わずに試験できる入口。
+
+            ★2026-11-12(B-9): 完全一致 → 前方一致(**短い名前が先**: ``gaus`` で gaussian が gauss_filter より前)→
+            それ以外(opsearch の順位のまま)。前方一致の中が索引順だったので、完全に近い名前が 3 番目に沈んでいた。"""
+            names = self._index.search(prefix, limit=None)
+            q = prefix.strip().lower()
+            if q:
+                def _cls(n):
+                    low = n.lower()
+                    return 0 if low == q else (1 if low.startswith(q) else 2)
+                names = sorted(names, key=lambda n: (_cls(n), len(n) if _cls(n) == 1 else 0))   # 安定: 同順位は元の順
+            return names if limit is None else names[:limit]
 
         def _fill_model(self, prefix):
             self._model.clear()
@@ -6712,12 +6953,259 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                 self._model.appendRow(it)
             self._query = prefix
 
+        # ------------------------------------------------------------------ #
+        # ★2026-11-12 IDE 第 1 便: ホバーヘルプ / 構文エラーの印 / キー経路        #
+        # ------------------------------------------------------------------ #
+        def _ide_init(self):
+            """IDE 部品の初期化(__init__ の最後から)。"""
+            self.find_bar = _FindBar(self)             # 置き場は窓の側(欄の下)。この欄は持ち主として動かす
+
+        def open_find(self, replace=False):
+            """検索帯を開く(Ctrl+F / Ctrl+H)。1 行だけ選んでいれば、それを検索語にする。"""
+            sel = self.textCursor().selectedText()
+            seed = sel if (sel and "\u2029" not in sel and len(sel) <= 200) else None
+            self.find_bar.open(replace, seed)
+
+        def word_under_cursor(self):
+            """カーソル下(または直前)の識別子。無ければ空文字。"""
+            import re
+            cur = self.textCursor()
+            text, i = cur.block().text(), cur.positionInBlock()
+            for m in re.finditer(r"[A-Za-z_][A-Za-z0-9_]*", text):
+                if m.start() <= i <= m.end():
+                    return m.group(0)
+            return ""
+
+        def help_for_word(self):
+            """カーソル下の op のヘルプを開く(Shift+F1)。op 名でなければ開かず、状態行に 1 行。
+            F1 の割り当て(キー一覧)は変えない。"""
+            w = self.word_under_cursor()
+            if w and w in self._words:
+                if self.on_open_help is not None:
+                    self.on_open_help(w)
+                return True
+            self._say(tr("not an operator: %s") % w if w else tr("no operator under the cursor"))
+            return False
+
+        def _relayout_gutter(self):
+            self._update_gutter_width()
+            cr = self.contentsRect()
+            self._gutter.setGeometry(QtCore.QRect(cr.left(), cr.top(), self.gutter_width(), cr.height()))
+
+        def zoom(self, delta):
+            """文字サイズを *delta* pt 変える(6〜32 の範囲)。窓があれば設定へ保存し全部のコード欄へ反映する。"""
+            cur = self.font().pointSize()
+            pt = max(6, min(32, cur + int(delta)))
+            if pt == cur:
+                return pt
+            if self.on_font_change is not None:
+                self.on_font_change(pt)
+            else:
+                f = self.font(); f.setPointSize(pt); self.setFont(f)
+            self._relayout_gutter()
+            return pt
+
+        def wheelEvent(self, ev):
+            if ev.modifiers() & QtCore.Qt.ControlModifier:        # Ctrl+ホイール: 文字サイズ(上 = 大きく)
+                dy = ev.angleDelta().y()
+                if dy:
+                    self.zoom(1 if dy > 0 else -1)
+                ev.accept()
+                return
+            super().wheelEvent(ev)
+
+        def toggle_comment(self):
+            """選んだ行(選びが無ければカーソルの行)の行コメント ``* `` を付け外す(Ctrl+/)。
+
+            対象の行が**全部**コメントなら外し、1 行でもコメントでなければ全部に付ける。空行は触らない。
+            選びが次の行の行頭で終わっていれば、その行は含めない。全体で 1 回の Undo。"""
+            cur = self.textCursor()
+            doc = self.document()
+            first = doc.findBlock(cur.selectionStart())
+            last = doc.findBlock(cur.selectionEnd())
+            if cur.hasSelection() and last.blockNumber() > first.blockNumber() and cur.selectionEnd() == last.position():
+                last = last.previous()
+            blocks, b = [], first
+            while b.isValid() and b.blockNumber() <= last.blockNumber():
+                if b.text().strip():
+                    blocks.append(b)
+                b = b.next()
+            if not blocks:
+                return 0
+            uncomment = all(x.text().lstrip().startswith("*") for x in blocks)
+            guard = QtGui.QTextCursor(doc)
+            guard.beginEditBlock()
+            try:
+                for blk in blocks:
+                    t = blk.text()
+                    c = QtGui.QTextCursor(blk)
+                    if uncomment:
+                        ind = len(t) - len(t.lstrip())
+                        c.setPosition(blk.position() + ind)
+                        c.movePosition(QtGui.QTextCursor.Right, QtGui.QTextCursor.KeepAnchor,
+                                       2 if t[ind:ind + 2] == "* " else 1)
+                        c.removeSelectedText()
+                    else:
+                        c.setPosition(blk.position())
+                        c.insertText("* ")
+            finally:
+                guard.endEditBlock()
+            return len(blocks)
+
+        def _say(self, text):
+            if self.on_message is not None:
+                self.on_message(text)
+
+        def set_errors(self, errors):
+            """構文エラーを 1-based 行 -> 文 で受け、波線とガターの赤印を付け直す(空なら全部消える)。"""
+            self._errors = dict(errors or {})
+            self._highlight()
+            self._gutter.update()
+
+        def errors(self):
+            return dict(self._errors)
+
+        def goto_line(self, ln, focus=True):
+            """1-based の行へカーソルを移す(Problems の行を押したとき)。"""
+            blk = self.document().findBlockByNumber(max(1, int(ln)) - 1)
+            if not blk.isValid():
+                blk = self.document().lastBlock()
+            c = self.textCursor(); c.setPosition(blk.position()); self.setTextCursor(c)
+            self.ensureCursorVisible()
+            if focus:
+                self.setFocus()
+
+        def _word_at(self, vp_pos):
+            """ビューポート座標の下にある識別子 -> (語, 1-based 行)。行の右端の外・空白なら ("", 行)。"""
+            import re
+            cur = self.cursorForPosition(vp_pos)
+            text, i = cur.block().text(), cur.positionInBlock()
+            ln = cur.blockNumber() + 1
+            r = self.cursorRect(cur)
+            if vp_pos.x() > r.x() + self.fontMetrics().horizontalAdvance("9") * 1.5 and i >= len(text):
+                return "", ln
+            for m in re.finditer(r"[A-Za-z_][A-Za-z0-9_]*", text):
+                if m.start() <= i <= m.end():
+                    return m.group(0), ln
+            return "", ln
+
+        def hover_text(self, word, ln):
+            """カーソル下の語に出すヘルプ文(op 名: 補完と同じシグネチャ文 + その行のつまみの実単位)。
+            op 名でなく、その行にエラーも無ければ None。"""
+            import re
+            parts = []
+            if ln in self._errors:
+                parts.append("\u2715 " + self._errors[ln])
+            if word and word in self._words and self._tip is not None:
+                try:
+                    parts.append(self._tip(word))
+                except Exception:                      # noqa: BLE001 - ヘルプが作れなくても窓は壊さない
+                    pass
+                line = self.document().findBlockByNumber(ln - 1).text()
+                rest = line[line.find(word) + len(word):] if word in line else ""
+                nums = re.findall(r"[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?", rest)
+                try:
+                    a = float(nums[0]) if len(nums) > 0 else 0.5
+                    b = float(nums[1]) if len(nums) > 1 else 0.5
+                    parts.append(tr("knobs on this line: %s") % stage_knob_text(
+                        word, max(0.0, min(1.0, a)), max(0.0, min(1.0, b))))
+                except Exception:                      # noqa: BLE001
+                    pass
+            return "\n\n".join(parts) if parts else None
+
+        def _tooltip_event(self, ev, vp_pos):
+            word, ln = self._word_at(vp_pos)
+            if not word and ln not in self._errors:
+                return False                           # 余白: 欄全体の汎用ヒントに任せる
+            text = self.hover_text(word, ln)
+            if text:
+                QtWidgets.QToolTip.showText(ev.globalPos(), text, self.viewport())
+            else:
+                QtWidgets.QToolTip.hideText()          # op 名でない語: 何も出さない
+            ev.accept()
+            return True
+
+        def viewportEvent(self, ev):
+            if ev.type() == QtCore.QEvent.ToolTip and self._tooltip_event(ev, ev.pos()):
+                return True
+            return super().viewportEvent(ev)
+
+        def _ide_action(self, ev):
+            """このキーが IDE 動作なら名前を返す(ウィンドウの同じキーより先に、ShortcutOverride でも使う)。"""
+            k, m, K = ev.key(), ev.modifiers(), QtCore.Qt
+            ctrl, shift = bool(m & K.ControlModifier), bool(m & K.ShiftModifier)
+            if m & K.AltModifier or m & K.MetaModifier:
+                return None
+            if ctrl and k in (K.Key_Plus, K.Key_Equal):            # Ctrl++ / Ctrl+=(Shift の有無は問わない)
+                return "zoom_in"
+            if ctrl and not shift and k == K.Key_Minus:
+                return "zoom_out"
+            if ctrl and not shift:
+                if k == K.Key_F:
+                    return "find"
+                if k == K.Key_H:
+                    return "replace"
+                if k == K.Key_Slash:
+                    return "comment"
+                if k in (K.Key_Return, K.Key_Enter) and self.on_run_selection is not None and self.textCursor().hasSelection():
+                    return "run_selection"                           # 選びがある時の Ctrl+Return は「選んだ行だけ」
+                # <<IDE-KEYS-2>>
+            if not ctrl:
+                if k == K.Key_F3:
+                    return "prev" if shift else "next"
+                if k == K.Key_Escape and not shift and self.find_bar.isVisible():
+                    return "close_find"
+                if k == K.Key_F1 and shift:
+                    return "help"                                   # Shift+F1: カーソル下の op のヘルプ(F1 は変えない)
+                # <<IDE-KEYS-3>>
+            return None
+
+        def event(self, ev):
+            if ev.type() == QtCore.QEvent.ToolTip:     # 欄そのものに送られた ToolTip(座標は欄の座標)
+                if self._tooltip_event(ev, self.viewport().mapFrom(self, ev.pos())):
+                    return True
+            if ev.type() == QtCore.QEvent.ShortcutOverride and self._ide_action(ev):
+                ev.accept()                            # ウィンドウ側の同じキー(Ctrl+F / Ctrl+H …)より先に受ける
+                return True
+            return super().event(ev)
+
+        def _ide_do(self, action):
+            """IDE 動作を実行する。"""
+            if action == "find":
+                self.open_find(False)
+            elif action == "replace":
+                self.open_find(True)
+            elif action in ("next", "prev"):
+                if not self.find_bar.find_edit.text():
+                    self.open_find(False)               # 検索語がまだ無い: 帯を開いて入力へ
+                else:
+                    self.find_bar.step(backward=(action == "prev"))
+            elif action == "close_find":
+                self.find_bar.close_bar()
+            elif action == "comment":
+                self.toggle_comment()
+            elif action == "help":
+                self.help_for_word()
+            elif action == "zoom_in":
+                self.zoom(1)
+            elif action == "zoom_out":
+                self.zoom(-1)
+            elif action == "run_selection":
+                self.on_run_selection()
+            # <<IDE-DO-4>>
+
         def keyPressEvent(self, ev):
             comp = self._completer
             if comp.popup().isVisible() and ev.key() in (
                     QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return, QtCore.Qt.Key_Escape,
                     QtCore.Qt.Key_Tab, QtCore.Qt.Key_Backtab):
                 ev.ignore(); return
+            act = self._ide_action(ev)
+            if act:
+                comp.popup().hide()
+                self._ide_do(act)
+                ev.accept()
+                return
             super().keyPressEvent(ev)
             prefix = self._text_under_cursor()
             if len(prefix) >= 2 and (prefix[0].isalpha() or prefix[0] == "_"):
@@ -6896,6 +7384,9 @@ def build_window(model=None):
     act_reset = _act("Reset to start", "Home", "Show the raw image (before stage 1). Also Shift+F5 from any panel")
     act_step = _act("Step forward", "Ctrl+Right", "Advance one pipeline stage. Also F6 from any panel")
     act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result. Also F5 or Ctrl+R from any panel")
+    act_run_sel = _act("Run selected lines", "Ctrl+Alt+Return",
+                       "Run only the stages of the Program lines you selected (the stages before them come from the cache; "
+                       "Ctrl+Return in the Program with a selection does the same)")
     act_roundtrip = _act("Verify exported Python…", "Ctrl+Shift+R",
                          "Run exported Python in an isolated interpreter and compare every stage with the GUI")
     act_batch = _act("Apply to folder…", None,
@@ -6946,6 +7437,10 @@ def build_window(model=None):
         win._menus[key] = mm
         return mm
 
+    # 第 2 便: プロジェクト = フォルダ。入口は File メニュー・パレット・パネル一覧・「パネルを探す」・キー・パネルへのフォルダのドロップ
+    act_project_open = _act("Open folder…", None, "Choose a folder: it becomes the project and its files are listed in the Project panel")
+    act_project_new = _act("New project…", None, "Create a project folder with the standard sub-folders: images, pipelines, programs, params, results")
+    act_project_panel = _act("Project", "Ctrl+Shift+J", "Show the Project panel: the project folder as a tree of files")
     m = _menu(mb, "&File", "file")
     act_viewer = _act("Image Viewer…", "Ctrl+Shift+I",    # ★O は Open pipeline と重なり、どちらも発火しなかった
                       "Open images (or drop images / a folder) to look at them: zoom, pixel values, histogram")
@@ -6953,6 +7448,9 @@ def build_window(model=None):
     m.addSeparator()
     m.addAction(act_open_pipe); m.addAction(act_save_pipe); m.addAction(act_export)  # pipeline docs
     win._recent_menu = _menu(m, "Open Recent", "recent")     # populated by _rebuild_recent_menu()
+    m.addAction(act_project_open); m.addAction(act_project_new)
+    win._recent_folders_menu = _menu(m, "Recent folders", "recent_folders")
+    m.addSeparator()
     m.addAction(act_samples)                                  # sample pipelines + code gallery
     sample_img_menu = _menu(m, "Sample images", "sample_images")   # collected license-clean images
     try:
@@ -7001,7 +7499,7 @@ def build_window(model=None):
     menu_view.addSeparator()          # Display mode submenu + 3D surface appended once the display combo exists
     m = _menu(mb, "&Run", "run")
     m.addAction(act_reset); m.addAction(act_step)
-    m.addSeparator(); m.addAction(act_runall)
+    m.addSeparator(); m.addAction(act_runall); m.addAction(act_run_sel)
     m.addAction(act_batch)
     m.addAction(act_roundtrip)
     m.addSeparator(); m.addAction(act_holdout)
@@ -7762,7 +8260,7 @@ def build_window(model=None):
     for _cb in (c_run, c_cont, c_step, c_reset, c_apply, c_sync):
         crow.addWidget(_cb)
     crow.addStretch(1)
-    cvl.addLayout(crow); cvl.addWidget(code_edit, 1); cvl.addWidget(code_status)
+    cvl.addLayout(crow); cvl.addWidget(code_edit, 1); cvl.addWidget(code_edit.find_bar); cvl.addWidget(code_status)
 
     # -- variables & objects window (HDevelop variable window) --------------- #
     var_list = QtWidgets.QListWidget()
@@ -7822,6 +8320,8 @@ def build_window(model=None):
     dock_disp = _mk_dock("Display · Analysis", right, "dock_display")
     dock_code = _mk_dock("Program (code)", code_w, "dock_program")
     dock_vars = _mk_dock("Variables & Objects", var_w, "dock_variables")
+    proj_w = QtWidgets.QWidget()                      # 第 2 便: プロジェクト(フォルダ)のツリー。中身は build_panel が作る
+    dock_project = _mk_dock("Project", proj_w, "dock_project")
 
     SyncView = _sync_view_class(QtWidgets, QtGui, QtCore)
     sync_group = ViewSyncGroup()                          # Stage in -> out panes + A / B panes (+ the main view, optionally)
@@ -7926,6 +8426,8 @@ def build_window(model=None):
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_ab)
     win.tabifyDockWidget(dock_ops, dock_ab)                         # A / B tabbed in
     dock_ops.raise_()
+    win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_project)   # 第 2 便: 左側。既定は隠す(右の列と画像の比率を崩さない)
+    dock_project.hide()
     # The inspection panels (Variables & Objects, Pipeline·Params, Display·Analysis) are
     # on-demand — the user keeps them undocked / shown only when needed — so they start
     # hidden and the image owns the workspace. Toolbar + Window ▸ Panels toggles bring
@@ -7948,7 +8450,8 @@ def build_window(model=None):
             pass
     win.apply_first_layout = _apply_first_run_ratio
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
-                  "program": dock_code, "variables": dock_vars, "compare": dock_cmp, "ab": dock_ab}
+                  "program": dock_code, "variables": dock_vars, "compare": dock_cmp, "ab": dock_ab,
+                  "project": dock_project}
     # Work modes are view state only.  The central result is registered alongside
     # the real docks so the Qt-free preset model can describe focus and sizing.
     win._layout_panels = dict(win._docks)
@@ -8061,7 +8564,7 @@ def build_window(model=None):
     _more_menu = QtWidgets.QMenu("More", win)
     win._more_menu = _more_menu                          # retain (shiboken ownership)
     _panels_sub = QtWidgets.QMenu("Panels", _more_menu); win._more_menu_panels = _panels_sub
-    for _d in (dock_vars, dock_disp, dock_pipe, dock_cmp, dock_ab, dock_ops, dock_code):
+    for _d in (dock_vars, dock_disp, dock_pipe, dock_cmp, dock_ab, dock_ops, dock_code, dock_project):
         _panels_sub.addAction(_d.toggleViewAction())
     _more_menu.addMenu(_panels_sub)
     _more_menu.addSeparator()
@@ -8202,7 +8705,7 @@ def build_window(model=None):
     act_cascade = _act("Cascade graphics windows", None, "Cascade the open graphics windows")
     act_reset_layout = _act("Reset panel layout", None, "Restore the default tool-panel layout")
     menu_panels = _menu(menu_windows, "Panels", "panels")
-    for _d in (dock_ops, dock_pipe, dock_disp, dock_code, dock_vars):
+    for _d in (dock_ops, dock_pipe, dock_disp, dock_code, dock_vars, dock_project):
         menu_panels.addAction(_d.toggleViewAction())
     menu_panels.addSeparator()             # Float all/Dock all + per-panel Float appended below
     menu_graphics = _menu(menu_windows, "Graphics windows", "graphics")
@@ -8266,6 +8769,10 @@ def build_window(model=None):
         seg = (os.path.basename(pp) if pp else "untitled") + star
         if ip:
             seg += " — " + os.path.basename(ip)
+        _pj = getattr(win, "_project", None)
+        _pr = _pj["root"]() if _pj else None
+        if _pr:                                                  # 第 2 便: どのプロジェクトを見ているかが題に出る
+            seg += " — " + tr("Project") + ": " + (os.path.basename(_pr.rstrip("\\/")) or _pr)
         win.setWindowTitle(seg + " — Fullseye Studio")
     win._set_title = _set_title
 
@@ -8386,7 +8893,7 @@ def build_window(model=None):
                                "値は予算で解放: 絵は最新のまま。配列は必要になったとき計算し直す") + "\n\n" + base)
             else:
                 it.setIcon(_glyph_icon("\u2026", MUTED))
-                it.setToolTip(_pair("未計算", "not computed") + "\n\n" + base)
+                it.setToolTip(tr("not computed") + "\n\n" + base)
             it.setData(QtCore.Qt.UserRole + 2, pv["status"])
     win._update_stage_icons = update_stage_icons
 
@@ -8431,7 +8938,7 @@ def build_window(model=None):
                 summ = _pair("値は予算で解放", "evicted (budget): recomputed on demand") \
                     if _UI_LANG["code"] != "ja" else "値は予算で解放: 必要になったとき計算し直す"
             else:
-                summ = _pair("未計算", "not computed")
+                summ = tr("not computed")
             ms = times[i] if (i < len(times) and st) else None
             tstr = ("  ·  %.1f ms" % ms) if isinstance(ms, (int, float)) else ""
             mem = mems[i] if (i < len(mems) and st) else None
@@ -8487,6 +8994,13 @@ def build_window(model=None):
         via engine.diagnose_stages) + runtime errors (a stage that raised) + the last
         perception failure (which used to be a status-bar flash you could easily miss)."""
         problems_list.clear()
+        syntax_rows = state.get("program_syntax_errors") or []      # Program の構文エラー(行つき)。先頭に並べる
+        for ln_, msg_ in syntax_rows:
+            it = QtWidgets.QListWidgetItem("\u2715 " + truncate(msg_, 200))
+            it.setData(QtCore.Qt.UserRole, -1)
+            it.setData(QtCore.Qt.UserRole + 20, ln_)                # 押すとその行へカーソルが移る
+            it.setForeground(QtGui.QColor(AMBER))
+            problems_list.addItem(it)
         _act_idx = [k for k, st in enumerate(model.stages) if not _is_bypassed(st)]
         if len(_act_idx) == len(model.stages):
             probs = list(engine.diagnose_stages(model.stages))     # static checks
@@ -8494,8 +9008,11 @@ def build_window(model=None):
             probs = [dict(p, index=_act_idx[p["index"]]) if 0 <= p.get("index", -1) < len(_act_idx) else p
                      for p in engine.diagnose_stages([model.stages[k] for k in _act_idx])]
         if states:
+            # ★2026-11-12(B-2): 段の型違いは静的な検査と実行時の例外の両方が同じ内容を言い、Problems に 2 行並んでいた。
+            #   静的な誤りのある段は、その行(より具体的)だけを残す。
+            _static_bad = {p["index"] for p in probs if p["severity"] == "error"}
             for s in states:                                    # runtime errors
-                if (s.get("state") or {}).get("kind") == "error":
+                if (s.get("state") or {}).get("kind") == "error" and s["index"] not in _static_bad:
                     probs.append({"index": s["index"], "op": s["op"], "severity": "error",
                                   "message": "runtime: " + truncate(s["state"].get("message", ""))})
         if states is not None:
@@ -8571,7 +9088,7 @@ def build_window(model=None):
             box.adjustSize()
             it.setSizeHint(box.sizeHint())
             problems_list.setItemWidget(it, box)
-        if not probs and not perr and not rerr and not notes and not pin_bad \
+        if not probs and not perr and not rerr and not notes and not pin_bad and not syntax_rows \
                 and not (roundtrip is not None and not roundtrip.ok) \
                 and not state.get("structured_errors"):
             hint = QtWidgets.QListWidgetItem(tr("no problems"))
@@ -8990,6 +9507,7 @@ def build_window(model=None):
             view.set_message(tr("Pipeline error") + "\n\n%s\n\n" % truncate(e, 700)
                              + tr("(details: Problems list, Display · Analysis panel)"))
             inspector.setPlainText("pipeline error: %s" % e)
+            state["insp_base"] = None
             win._img_info.setText("pipeline error")
             hist_view.clear(); state["result"] = None; state["raw"] = None
             return
@@ -9020,7 +9538,8 @@ def build_window(model=None):
         _v, _why = assess_validity(val)
         if _v is False:
             insp += "\n\n⚠ result needs review: %s" % "; ".join(_why)
-        inspector.setPlainText(insp)
+        state["insp_base"], state["insp_val"] = insp, val          # ROI を後から動かした時、本文はここから作り直す
+        inspector.setPlainText(insp + _roi_inspection(val))
         if prev is not None and prev.get("image") is not None:
             qi = _to_qimage(prev["image"], QtGui)
             if qi is not None:
@@ -9276,6 +9795,27 @@ def build_window(model=None):
             strip_timer.start(KNOB_DEBOUNCE_MS * 2)
 
     # ---- region of interest of the main view (Shift + drag; Shift + click clears) ------------- #
+    def _roi_inspection(val):
+        """★2026-11-12(B-6): ROI があれば、その範囲だけの大きさと min / max / mean / std を Inspector へ足す。
+        ROI が無い・画像でない・画像に掛からない時は空文字。"""
+        roi = state.get("roi")
+        if roi is None or not isinstance(val, np.ndarray) or val.dtype.kind not in "biuf" or val.ndim not in (2, 3):
+            return ""
+        part = crop_roi(val, roi)
+        if part is val:
+            return ""
+        a = np.asarray(part, np.float64)
+        fin = a[np.isfinite(a)]
+        head = "\n\nroi: %dx%d  (x %d..%d, y %d..%d)" % (part.shape[1], part.shape[0], roi[0], roi[2], roi[1], roi[3])
+        if fin.size == 0:
+            return head + "\nroi: no finite values"
+        return head + "\nroi min: %.4g  max: %.4g  mean: %.4g  std: %.4g" % (
+            fin.min(), fin.max(), fin.mean(), fin.std())
+
+    def _refresh_roi_inspector():
+        if state.get("insp_base") is not None:
+            inspector.setPlainText(state["insp_base"] + _roi_inspection(state.get("insp_val")))
+
     def set_roi(rect):
         r = None
         if rect is not None:
@@ -9284,6 +9824,7 @@ def build_window(model=None):
                 r = (x0, y0, x1, y1)
         state["roi"] = r
         view.set_roi_rect(r)
+        _refresh_roi_inspector()
         _strip_schedule()
     win._set_roi = set_roi
     view.roi_cb = set_roi
@@ -10103,7 +10644,7 @@ def build_window(model=None):
 
     def load_image():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(
-            win, "Open image", "", "Images (%s)" % " ".join("*" + e for e in IMAGE_FILE_EXTS))
+            win, "Open image", _proj_path("image"), "Images (%s)" % " ".join("*" + e for e in IMAGE_FILE_EXTS))
         if path:
             _load_image_path(path)
 
@@ -10148,7 +10689,7 @@ def build_window(model=None):
         return raw if isinstance(raw, np.ndarray) else None
 
     def _save_array(arr, title, default, what):
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, title, default,
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, title, _proj_path("result", default),
                                                         "PNG (*.png);;All files (*)")
         if not path:
             return
@@ -10178,7 +10719,7 @@ def build_window(model=None):
         arr = _result_array()
         if arr is None:
             flash("nothing to save — run the pipeline first"); return
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save to"), "result", "All files (*)")
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save to"), _proj_path("result", "result"), "All files (*)")
         if not path:
             return
         try:
@@ -10193,7 +10734,7 @@ def build_window(model=None):
         arr = _result_array()
         if arr is None:
             flash("nothing to save — run the pipeline first"); return
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save the raw values"), "result.npy",
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save the raw values"), _proj_path("result", "result.npy"),
                                                         "NumPy (*.npy)")
         if not path:
             return
@@ -11854,6 +12395,7 @@ def build_window(model=None):
         # never offers a command that would silently no-op.
         items = [("▸ " + a.text().replace("…", "").strip(), a.trigger)
                  for a in win._actions.values() if a is not act_palette and a.isEnabled()]
+        action_keys = [k for k, a in win._actions.items() if a is not act_palette and a.isEnabled()]
         items += [("sample: " + nm, (lambda idx=i + 1: load_sample(idx)))
                   for i, nm in enumerate(recipes.names())]
         items += [("recent: " + os.path.basename(p), (lambda p=p: _open_recent(p)))
@@ -11862,6 +12404,9 @@ def build_window(model=None):
         # 台帳の op は「実行窓をその op で開く」(Ctrl+P → 名前 → Enter の 3 手で試せる。2026-10-03)
         items += [("ledger: " + n, (lambda n=n: win._open_ledger_runner(n))) for n in ledger_op_names()]
         labels = [lbl for lbl, _ in items]
+        # 検索に当てる文字列 = 表示名 + 別名の語(日本語・英語)。先頭の action だけが別名を持つ
+        hay = [(lbl + " " + PALETTE_WORDS.get(action_keys[i], "")) if i < len(action_keys) else lbl
+               for i, lbl in enumerate(labels)]
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Command palette")
         tag_dialog(dlg, "editor")
         v = QtWidgets.QVBoxLayout(dlg)
@@ -11871,7 +12416,7 @@ def build_window(model=None):
 
         def refill(_=None):
             lst.clear()
-            for i in palette_filter(labels, ed.text())[:200]:
+            for i in palette_filter(hay, ed.text())[:200]:
                 it = QtWidgets.QListWidgetItem(labels[i])
                 it.setData(QtCore.Qt.UserRole, i)
                 lst.addItem(it)
@@ -11897,7 +12442,7 @@ def build_window(model=None):
         ed.returnPressed.connect(run_sel)
         lst.itemActivated.connect(lambda _=None: run_sel())   # covers Enter AND double-click
         refill(); dlg.resize(560, 440); ed.setFocus()
-        win._palette = {"filter": palette_filter, "labels": labels, "run": run_sel,
+        win._palette = {"filter": palette_filter, "labels": labels, "hay": hay, "run": run_sel,
                         "edit": ed, "list": lst, "state": pal}
         dlg.exec()
 
@@ -12041,6 +12586,10 @@ def build_window(model=None):
     }
 
     def jump_to_problem(item):
+        ln_ = item.data(QtCore.Qt.UserRole + 20)
+        if isinstance(ln_, int) and ln_ > 0:                # Program の構文エラー: その行へカーソルを移す
+            code_edit.goto_line(ln_)
+            return
         idx = item.data(QtCore.Qt.UserRole)
         if idx is not None and 0 <= idx < len(model.stages):
             stage_list.setCurrentRow(idx)
@@ -12098,12 +12647,16 @@ def build_window(model=None):
             return                                    # a stage raised: the Problems list says which
         v, why = assess_validity(val)
         cache_line = "  \u00b7  " + cache_summary_text(model.cache_summary())   # idea 113/114: cache range
+
+        def _say_run(msg):
+            state["run_flash_text"] = msg          # 言語を切り替えた時、この文が出ていれば作り直す(B-5)
+            flash(msg)
         if v is False:
-            flash(tr("Run: done / Result: needs review (%s)") % "; ".join(why) + cache_line)
+            _say_run(tr("Run: done / Result: needs review (%s)") % "; ".join(why) + cache_line)
         elif v is None:
-            flash(tr("Run: done / Result: validity not judged") + cache_line)
+            _say_run(tr("Run: done / Result: validity not judged") + cache_line)
         else:
-            flash(tr("Run: done / Result: valid (as reported by the op)") + cache_line)
+            _say_run(tr("Run: done / Result: valid (as reported by the op)") + cache_line)
     win._do_step = _do_step; win._do_run_all = _do_run_all; win._do_reset = reset_to_raw
     b_reset.clicked.connect(reset_to_raw)
     b_step.clicked.connect(_do_step)
@@ -12425,6 +12978,58 @@ def build_window(model=None):
         code_edit.set_exec_line(max(0, int(line) - 1))
         continue_program()
 
+    def run_selection():
+        """★2026-11-12 IDE 第 1 便(候補 10): Program で選んだ行(選びが無ければカーソルの行)の段だけを実行する。
+
+        その前の段の出力は段のキャッシュから取る(古ければそこだけ計算する)。選んだ行より後ろの段は計算しない。
+        未適用の編集があれば、先に適用する(行と段の対応が変わるので)。"""
+        if state.get("code_dirty"):
+            apply_program()
+            if state.get("code_dirty"):
+                return
+        cur = code_edit.textCursor()
+        doc = code_edit.document()
+        l1 = doc.findBlock(cur.selectionStart()).blockNumber() + 1
+        end_blk = doc.findBlock(cur.selectionEnd())
+        l2 = end_blk.blockNumber() + 1
+        if cur.hasSelection() and l2 > l1 and cur.selectionEnd() == end_blk.position():
+            l2 -= 1                                   # 選びが次の行の行頭で終わっていれば、その行は含めない
+        idx = [i for i in range(len(model.stages)) if l1 <= _stage_line(i) <= l2]
+        if not idx:
+            code_status.setText(tr("no stage in the selected lines"))
+            flash(tr("no stage in the selected lines"))
+            return
+        first, last = idx[0], idx[-1]
+        state["program_error"] = None
+        try:
+            v = model.result_upto(first - 1)          # 上流はキャッシュ(first == 0 なら入力画像)
+        except Exception as e:
+            code_status.setText("cannot run: %s" % e); return
+        timings = dict(code_edit.timings)
+        t_sum = 0.0
+        for i in range(first, last + 1):
+            name, a, b = model.stages[i]
+            t0 = _time.perf_counter()
+            try:
+                v = _run_stage(v, i, name, a, b)
+            except Exception as e:
+                _fail_stage(i, name, e, timings, "run", [v]); return
+            dt = (_time.perf_counter() - t0) * 1000.0
+            t_sum += dt
+            timings[_stage_line(i)] = dt
+        if state["dev_update"]["time"]:
+            code_edit.set_timings(timings)
+        if state["dev_update"]["pc"]:
+            code_edit.set_exec_line(_stage_line(last))
+        stage_list.setCurrentRow(last)
+        refresh_stage_list(select=last, sync_code=False)
+        ln_a, ln_b = _stage_line(first), _stage_line(last)
+        code_status.setText((tr("ran line %d") % ln_a if ln_a == ln_b else tr("ran lines %d\u2013%d") % (ln_a, ln_b))
+                            + "  \u00b7  %.1f ms" % t_sum)
+
+    act_run_sel.triggered.connect(lambda _=False: run_selection())
+    code_edit.on_run_selection = run_selection
+
     c_apply.clicked.connect(apply_program)
     c_sync.clicked.connect(sync_program)
     c_run.clicked.connect(lambda: run_program(True))
@@ -12439,7 +13044,61 @@ def build_window(model=None):
     win._program = {"edit": code_edit, "apply": apply_program, "run": run_program,
                     "step": step_program, "continue": continue_program, "run_from": run_from,
                     "parse": parse_program, "text": program_text_from_model,
-                    "status": lambda: code_status, "stage_line": _stage_line}
+                    "status": lambda: code_status, "stage_line": _stage_line,
+                    "run_selection": run_selection}
+
+    # -- ★2026-11-12 IDE 第 1 便: Program の構文エラーを Problems・波線・ガターへ(B-1)-------------- #
+    def check_program_syntax(*_):
+        """Program 欄の本文を解析し、エラー(行つき)を Problems と欄の波線・ガターの赤印へ出す。
+        直すと印も消える。実行系には触らない(parse_program の結果を読むだけ)。"""
+        text = code_edit.toPlainText()
+        errs_ = []
+        saved = dict(_HDEV_CLAMPED)                       # 解析は「丸めたつまみ」の控えを作り直す。apply の結果を壊さない
+        try:
+            if not re.search(r"(?im)^\s*for\s+\d{6,}", text):      # 巨大な for の展開で欄が固まらない
+                errs_ = list(parse_program(text)[1])
+        except Exception:                                  # noqa: BLE001 - 検査が欄の入力を邪魔しない
+            errs_ = []
+        finally:
+            _HDEV_CLAMPED.clear(); _HDEV_CLAMPED.update(saved)
+        rows = []
+        for e in errs_:
+            m_ = re.search(r"line (\d+)", e)
+            ln_ = min(max(int(m_.group(1)), 1), code_edit.blockCount()) if m_ else 1
+            rows.append((ln_, e))
+        if rows == state.get("program_syntax_errors", []) and bool(rows) == bool(code_edit.errors()):
+            return
+        state["program_syntax_errors"] = rows
+        per_line = {}
+        for ln_, e in rows:
+            per_line[ln_] = (per_line[ln_] + "; " + e) if ln_ in per_line else e
+        code_edit.set_errors(per_line)
+        try:
+            _refresh_problems_only()
+        except Exception as exc:                           # noqa: BLE001
+            _log_soft_failure("could not refresh the problems list after a syntax check", exc)
+
+    _syntax_timer = QtCore.QTimer(win)
+    _syntax_timer.setSingleShot(True)
+    _syntax_timer.setInterval(250)
+    _syntax_timer.timeout.connect(check_program_syntax)
+    code_edit.document().contentsChanged.connect(_syntax_timer.start)   # 打つたび・sync_program の書き換えでも
+    c_apply.clicked.connect(check_program_syntax)
+    _apply_raw = win._program["apply"]
+
+    def _apply_and_check():
+        _apply_raw()
+        check_program_syntax()
+    win._program["apply"] = _apply_and_check
+    win._program["check"] = check_program_syntax
+    _fb = code_edit.find_bar
+    win._program["find"] = {"bar": _fb, "find_edit": _fb.find_edit, "replace_edit": _fb.replace_edit,
+                            "case": _fb.case, "next": _fb.btn_next, "prev": _fb.btn_prev,
+                            "replace": _fb.btn_replace, "replace_all": _fb.btn_replace_all,
+                            "close": _fb.btn_close, "count": _fb.count}
+    code_edit.on_message = lambda m_: flash(m_)
+    code_edit.on_open_help = lambda n_: show_op_help(n_)
+    code_edit.on_font_change = lambda pt_: _apply_mono_font(pt_)
 
     # -- variables & objects window wiring (inspect / display any stage output) - #
     def _var_entries():
@@ -12460,7 +13119,7 @@ def build_window(model=None):
         try:
             val = model.cached_result(it.data(QtCore.Qt.UserRole))
             if val is None:
-                var_inspect.setPlainText((_pair("未計算", "not computed") + (" (run or step to this stage)" if _UI_LANG["code"] != "ja"
+                var_inspect.setPlainText((tr("not computed") + (" (run or step to this stage)" if _UI_LANG["code"] != "ja"
                                           else "(実行するか、この段まで進めると計算されます)")))
             else:
                 var_inspect.setPlainText(format_inspection(inspect_result(val)))
@@ -12655,6 +13314,16 @@ def build_window(model=None):
     v_disp.clicked.connect(lambda: display_variable("new"))
     v_here.clicked.connect(lambda: display_variable("current"))
     win._variables = {"list": var_list, "refresh": refresh_variables, "display": display_variable}
+    # ★2026-11-12(B-3): パネルを閉じたまま実行すると、一覧は実行前の『? · control』のまま古かった。
+    #   開いた(タブの裏から前へ出た)時に、キャッシュから作り直す(計算はしない)。
+    #   dock の visibilityChanged(True) は窓の配置次第で届かないので、中身の部品の Show で受ける。
+    class _ShowWatcher(QtCore.QObject):
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.Show:
+                QtCore.QTimer.singleShot(0, refresh_variables)
+            return False
+    win._var_show_watcher = _ShowWatcher(win)
+    var_w.installEventFilter(win._var_show_watcher)
     win._contour_icon = _contour_icon                # exposed for the headless thumbnail test
 
     # -- dedicated Operator Help dialog (HTML: args / usage / sample code / links) - #
@@ -14483,7 +15152,7 @@ def build_window(model=None):
 
     def save_pipe():
         import json
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save pipeline", "pipeline.json",
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save pipeline", _proj_path("pipeline", "pipeline.json"),
                                                         "JSON (*.json)")
         if not path:
             return
@@ -14547,8 +15216,85 @@ def build_window(model=None):
     win._open_pipe_path = _open_pipe_path
     win._refresh_stage_list = refresh_stage_list
 
+    # ---- 第 2 便: プロジェクト(フォルダ)のパネル。行き先は種類ごとに 1 つの関数 -------------------------------------- #
+    def open_python_file(path):
+        """プロジェクトの .py を開く行き先(1 か所)。Python のモードは次の版: いまは案内だけで、**import も exec もしない**。"""
+        flash(tr("Python mode comes in the next version: %s was not run") % os.path.basename(path))
+        state["python_note"] = path
+    win._open_python_file = open_python_file
+
+    def open_params_file(path):
+        """プロジェクトのパラメータ・定義(.json / .toml / .yaml / .yml / .xml)を開く行き先(1 か所)。いまは読み取り専用の表示。"""
+        try:
+            text, cut = studio_project.read_text_limited(path)
+        except OSError as e:
+            report_error("Could not open file", "%s\n\n%s" % (path, e)); return None
+        title = os.path.basename(path) + " (" + tr("read-only") + ")"
+        sub_ = open_code_window(title, text + ("\n\n... " + tr("(cut: the file is larger than 1 MB)") if cut else ""))
+        return sub_
+    win._open_params_file = open_params_file
+
+    def _proj_path(kind, default=""):
+        """プロジェクトが開いている間の、保存・開くダイアログの初期位置(種類の置き場所。無ければ聞く)。閉じていれば *default*。"""
+        pj = getattr(win, "_project", None)
+        if not pj or not pj["root"]():
+            return default
+        d = pj["ensure_kind_dir"](kind)
+        return (os.path.join(d, default) if default else d) if d else default
+    win._proj_path = _proj_path
+
+    def _pick_dir(title, start):
+        return QtWidgets.QFileDialog.getExistingDirectory(win, title, start or "")
+
+    def _ask_text(title, label, default):
+        text, ok = QtWidgets.QInputDialog.getText(win, title, label, QtWidgets.QLineEdit.Normal, default)
+        return text if ok else None
+
+    def _rebuild_recent_folders():
+        menu = win._recent_folders_menu
+        menu.clear()
+        paths = win._project["recent"]()
+        if not paths:
+            menu.addAction(tr("(no recent folders)")).setEnabled(False); return
+        for p_ in paths:
+            a_ = menu.addAction(os.path.basename(p_.rstrip("\\/")) or p_); a_.setToolTip(p_)
+            a_.triggered.connect(lambda _=False, x=p_: win._project["open_dir"](x))
+
+    def _project_changed():
+        _set_title(); _rebuild_recent_folders()
+        pj = win._project
+        if pj["root"]():
+            win._layout_state = studio_layout.set_override(win._layout_state, "project", visible=True, collapsed=False)
+            _apply_layout_state(); dock_project.raise_(); _save_layout_state()
+
+    _sample_dir = None
+    try:
+        import sample_images as _si_
+        if os.path.isdir(getattr(_si_, "_DIR", "")) and any(
+                f_.lower().endswith(IMAGE_FILE_EXTS) for f_ in os.listdir(_si_._DIR)):
+            _sample_dir = _si_._DIR
+    except Exception:                                      # noqa: BLE001 - サンプルが無くてもパネルは動く(ボタンを付けない)
+        _sample_dir = None
+    win._project = studio_project.build_panel(proj_w, {
+        "tr": tr, "flash": lambda m_: flash(m_), "settings": _settings, "image_exts": IMAGE_FILE_EXTS,
+        "open_image": lambda p_: _load_image_path(p_), "open_pipeline": lambda p_: _open_pipe_path(p_),
+        "open_python": lambda p_: open_python_file(p_), "open_params": lambda p_: open_params_file(p_),
+        "compare_images": lambda ps_: show_image_viewer(list(ps_)),
+        "confirm": lambda t_, x_: bool(CONFIRM_HOOK(win, t_, x_)), "warn": lambda t_, x_: ERROR_HOOK(win, t_, x_),
+        "pick_dir": _pick_dir, "ask_text": _ask_text, "sample_dir": _sample_dir, "on_change": _project_changed})
+    act_project_open.triggered.connect(lambda _=False: win._project["choose_dir"]())
+    act_project_new.triggered.connect(lambda _=False: win._project["new_project"]())
+
+    def _show_project_panel():
+        win._layout_state = studio_layout.set_override(win._layout_state, "project", visible=True, collapsed=False)
+        _apply_layout_state(); dock_project.show(); dock_project.raise_(); _save_layout_state()
+        win._project["tree"].setFocus()
+    act_project_panel.triggered.connect(lambda _=False: _show_project_panel())
+    win._show_project_panel = _show_project_panel
+    _rebuild_recent_folders()
+
     def open_pipe():
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", "", "JSON (*.json)")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", _proj_path("pipeline"), "JSON (*.json)")
         if path:
             _open_pipe_path(path)
 
@@ -14673,6 +15419,14 @@ def build_window(model=None):
     b_savep.clicked.connect(save_pipe); b_openp.clicked.connect(open_pipe)
     act_save_pipe.triggered.connect(save_pipe); act_open_pipe.triggered.connect(open_pipe)
 
+    def _readout_text(info):
+        """画素値の読み出しの文(値 / 表示 / レンジ)。言語は UI に従う(★B-5: 英語モードにも日本語が固定で出ていた)。"""
+        value = info["value"]
+        value_text = value if isinstance(value, str) else format(value, ".4g")
+        shown = "—" if info["display_value"] is None else str(info["display_value"])
+        return tr("Value %s (%s) / Shown %s / Range %s to %s") % (
+            value_text, info["dtype"], shown, format(info["lo"], ".4g"), format(info["hi"], ".4g"))
+
     def on_hover(x, y, v):
         raw = state.get("raw")
         rng = state.get("display_range")
@@ -14680,26 +15434,16 @@ def build_window(model=None):
             info = studio_display.pixel_readout(raw, rng, y, x)
             if info is None:
                 return
-            value = info["value"]
-            value_text = value if isinstance(value, str) else format(value, ".4g")
-            shown = "—" if info["display_value"] is None else str(info["display_value"])
-            readout.setText("値 %s (%s) / 表示 %s / レンジ %s〜%s" % (
-                value_text, info["dtype"], shown, format(info["lo"], ".4g"),
-                format(info["hi"], ".4g")))
+            readout.setText(_readout_text(info))
         elif np.ndim(v) == 0:
             readout.setText(f"x={x}  y={y}   value={float(v):.4f}")
         else:
             readout.setText(f"x={x}  y={y}   RGB=({float(v[0]):.3f},{float(v[1]):.3f},{float(v[2]):.3f})")
     view.hover_cb = on_hover
+    win._readout = readout
     win._format_display_readout = lambda image, rng, y, x: (
         None if studio_display.pixel_readout(image, rng, y, x) is None else
-        "値 %s (%s) / 表示 %s / レンジ %s〜%s" % (
-            (lambda z: z if isinstance(z, str) else format(z, ".4g"))(
-                studio_display.pixel_readout(image, rng, y, x)["value"]),
-            studio_display.pixel_readout(image, rng, y, x)["dtype"],
-            studio_display.pixel_readout(image, rng, y, x)["display_value"],
-            format(studio_display.pixel_readout(image, rng, y, x)["lo"], ".4g"),
-            format(studio_display.pixel_readout(image, rng, y, x)["hi"], ".4g")))
+        _readout_text(studio_display.pixel_readout(image, rng, y, x)))
 
     def _display_settings_changed(*_):
         manual = range_manual.isChecked()
@@ -14774,10 +15518,53 @@ def build_window(model=None):
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
         "dbg_run": act_dbg_run, "dbg_step": act_dbg_step, "dbg_reset": act_dbg_reset,
         "duplicate_stage": act_dup, "bypass": act_bypass, "move_top": act_top, "move_bottom": act_bottom,
-        "focus_search": act_focus_search, "pin_a": act_pin,
+        "focus_search": act_focus_search, "pin_a": act_pin, "run_selection": act_run_sel,
+        "project_open": act_project_open, "project_new": act_project_new, "project_panel": act_project_panel,
     }
     win._actions.update(_palette_extra)                 # Tools ▸ Run a ledger op もパレットから
+
+    # ★2026-11-12 IDE 第 1 便 / STUDIO_UX_RULES §1: Program 欄の機能にも「メニュー・パレット・キー」の入口を付ける。
+    #   キーは欄にフォーカスがある時だけ(欄の部品が先に受ける)。ウィンドウ全体の Ctrl+F / Ctrl+H / F1 は奪わない。
+    def _program_action(key, text, shortcuts, tip, do, menu_key):
+        a = _act(text, None, tip)
+        a.setShortcuts([QtGui.QKeySequence(s_) for s_ in shortcuts])
+        a.setShortcutContext(QtCore.Qt.WidgetShortcut)      # Program 欄にフォーカスがある時だけ(窓全体のキーと別の文脈)
+        code_edit.addAction(a)
+
+        def _go(_=False):
+            win._docks["program"].show(); win._docks["program"].raise_()
+            code_edit.setFocus()
+            do()
+        a.triggered.connect(_go)
+        win._actions[key] = a
+        win._menus[menu_key].addAction(a)
+        return a
+    _edit_sep = win._menus["edit"].addSeparator()
+    _program_action("program_find", "Find in Program", ["Ctrl+F"],
+                    "Search inside the Program text (the operator search box keeps Ctrl+F elsewhere)",
+                    lambda: code_edit.open_find(False), "edit")
+    _program_action("program_replace", "Replace in Program", ["Ctrl+H"],
+                    "Search and replace inside the Program text; Replace all is one undo step",
+                    lambda: code_edit.open_find(True), "edit")
+    _program_action("program_find_next", "Find next in Program", ["F3"],
+                    "Go to the next match of the Program search", lambda: code_edit._ide_do("next"), "edit")
+    _program_action("program_find_prev", "Find previous in Program", ["Shift+F3"],
+                    "Go to the previous match of the Program search", lambda: code_edit._ide_do("prev"), "edit")
+    _program_action("program_comment", "Comment / uncomment lines", ["Ctrl+/"],
+                    "Toggle the line comment (* ) on the selected Program lines; one undo step",
+                    lambda: code_edit.toggle_comment(), "edit")
+    _program_action("program_font_bigger", "Bigger editor text", ["Ctrl++", "Ctrl+="],
+                    "Make the Program text one point bigger (6 to 32; also Ctrl + mouse wheel)",
+                    lambda: code_edit.zoom(1), "view")
+    _program_action("program_font_smaller", "Smaller editor text", ["Ctrl+-"],
+                    "Make the Program text one point smaller (6 to 32; also Ctrl + mouse wheel)",
+                    lambda: code_edit.zoom(-1), "view")
+    _program_action("program_help_here", "Help for the operator under the cursor", ["Shift+F1"],
+                    "Open the help of the operator the Program cursor is on; the keyboard shortcuts list stays on F1",
+                    lambda: code_edit.help_for_word(), "help")
     win.addAction(act_focus_search)          # app-wide Ctrl+F -> operator search
+    win.addAction(act_project_panel)         # 第 2 便: Ctrl+Shift+J = プロジェクトのパネル(ほかの割り当てと重ならない)
+    QtCore.QTimer.singleShot(0, lambda: win._project["restore"]())   # 最後に開いていたフォルダと木の開閉を戻す
     # -- multi-monitor: pop every tool panel out as its own top-level window --- #
     def float_all_panels(floating=True):
         for d in win._docks.values():
@@ -14998,7 +15785,7 @@ def build_window(model=None):
     menu_panels.addSeparator()
     for _k, _lbl in (("operators", "Operators"), ("pipeline", "Pipeline · Parameters"),
                      ("display", "Display · Analysis"), ("program", "Program (code)"),
-                     ("variables", "Variables & Objects")):
+                     ("variables", "Variables & Objects"), ("project", "Project")):
         menu_panels.addAction("Float: %s" % _lbl).triggered.connect(
             lambda _=False, k=_k: float_panel(k, True))
     menu_panels.addSeparator()
@@ -15138,11 +15925,17 @@ def build_window(model=None):
         try:
             samples.setItemText(0, tr("— load a sample —"))
             cat.setItemText(0, tr("all categories"))
+            _pj = getattr(win, "_project", None)
+            if _pj:                                          # 第 2 便: プロジェクトのパネル(絞り込みの選択肢・標準フォルダの表示名)
+                _pj["retranslate"](); _pj["reload"]()
             on_op_selected(op_list.currentItem())
             win._knob_spec_op = None                         # つまみの名前を言語で作り直す(spec は同じ)
             i = selected_index()
             refresh_stage_list(select=i if 0 <= i < len(model.stages) else None,
                                sync_code=not model.stages)
+            _cur_msg = status.currentMessage()
+            if _cur_msg and _cur_msg == state.get("run_flash_text"):     # 状態行の『Run: done / Result: …』を新しい言語で
+                _flash_run_validity()
         except Exception as exc:                             # noqa: BLE001 -- 表示の再構築が窓を壊さない
             _log_soft_failure("could not rebuild translated texts after a language switch", exc)
 
