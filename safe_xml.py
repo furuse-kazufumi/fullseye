@@ -30,6 +30,8 @@ from __future__ import annotations
 
 import contextlib
 import contextvars
+from types import MappingProxyType
+from typing import Mapping
 import os
 import xml.etree.ElementTree as ET
 import xml.parsers.expat as _expat
@@ -52,7 +54,8 @@ DEFAULT_MAX_PROLOG_BYTES = 4 * 1024 * 1024
 _CHUNK = 64 * 1024
 
 #: 利用者が上限を上げる(外す)ための上書き。``with xml_limits(max_bytes=None): ...`` の中の、門を通る全部の読みに効く。
-_OVERRIDES: "contextvars.ContextVar[dict]" = contextvars.ContextVar("safe_xml_limits", default={})
+_OVERRIDES: "contextvars.ContextVar[Mapping[str, object]]" = contextvars.ContextVar(
+    "safe_xml_limits", default=MappingProxyType({}))
 _LIMIT_NAMES = ("max_bytes", "max_elements", "max_depth", "max_prolog_bytes")
 
 
