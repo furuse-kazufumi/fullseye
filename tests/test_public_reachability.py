@@ -313,7 +313,14 @@ def test_pending_exposure_shrinks_when_fixed():
 #   halcon_coverage.source_breakdown_text(成熟度の文面を出所別に組む補助。呼ぶのは honest_summary だけ)と
 #   realdata.mark_read(PoC が「実データを読んだ」印を記録に足す補助。呼ぶのは data: real の例だけで、op ではない)。
 #   同じ便の source_of / covered_by_source はモジュールの中でしか使わないので _ を付けて内部にした(数えない)。
-_HIDDEN_FUNCTIONS_TODAY = 1073
+# 2026-11-12 Studio の Python のモード(feat/studio-program-vars-2026-11-12): 分岐元 f54982b9f9 の実測が既に
+#   1077(この行の 1073 より 4 多い。前の便で数え直されていなかった)。そこへ + 45 = 1122。
+#   studio_program(Program 欄の実行系・記録・メモ化・助言・記法の変換。Studio と前置き
+#   fullseye.studio_prelude が使う「GUI の内側の部品」で、studio_search と同じ扱い。書いている最中の指摘・補完・ホバー・ファイルの実行・対話の評価の入口を含む)の 36 本と、
+#   defs_io(定義ファイルの種類に依らない層: 印・版の移行・原子的な書き込み・配列の別ファイル参照の検査)
+#   の 9 本。defs_io の利用者の入口は fullseye.read_def / write_def / load_pipeline で、種類を足す側の
+#   部品(register_kind など)は公開経路に載せない。実測 1077 → 1122。
+_HIDDEN_FUNCTIONS_TODAY = 1122
 
 
 def _hidden_total():
