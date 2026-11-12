@@ -384,7 +384,7 @@ def test_stage_row_says_not_computed_in_japanese_only_for_a_stage_that_was_never
     finally:
         win._apply_language("en"); _pump(0.2)
     rows = _rows(win)
-    assert any("未計算 / not computed" in r or "再計算が必要 / recompute needed" in r for r in rows), rows
+    assert any("not computed" in r or "再計算が必要 / recompute needed" in r for r in rows), rows      # 2026-11-12 B-7: 未計算は英語だけ
 
 
 def test_english_mode_texts_are_unchanged(win):

@@ -6595,11 +6595,11 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             self.case = QtWidgets.QCheckBox("Aa")
             self.case.setToolTip(tr("Match case"))
             self.btn_prev = QtWidgets.QToolButton(); self.btn_prev.setText("\u2191")
-            self.btn_prev.setToolTip(tr("Find previous (Shift+F3)"))
+            self.btn_prev.setToolTip(tr("Find previous"))
             self.btn_next = QtWidgets.QToolButton(); self.btn_next.setText("\u2193")
-            self.btn_next.setToolTip(tr("Find next (F3)"))
+            self.btn_next.setToolTip(tr("Find next"))
             self.btn_close = QtWidgets.QToolButton(); self.btn_close.setText("\u2715")
-            self.btn_close.setToolTip(tr("Close (Esc)"))
+            self.btn_close.setToolTip(tr("Close"))
             self.count = QtWidgets.QLabel(""); self.count.setProperty("hint", True)
             for w_ in (self.find_edit,):
                 row1.addWidget(w_, 1)
@@ -6612,6 +6612,8 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             self.replace_edit.setPlaceholderText(tr("Replace with"))
             self.btn_replace = QtWidgets.QPushButton(tr("Replace"))
             self.btn_replace_all = QtWidgets.QPushButton(tr("Replace all"))
+            self.btn_replace.setToolTip(tr("Replace the selected match and go to the next one"))
+            self.btn_replace_all.setToolTip(tr("Replace every match (one Undo brings them all back)"))
             row2.addWidget(self.replace_edit, 1); row2.addWidget(self.btn_replace); row2.addWidget(self.btn_replace_all)
             lay.addWidget(self.replace_row)
             self.btn_next.clicked.connect(lambda _=False: self.step(False))
@@ -8825,7 +8827,7 @@ def build_window(model=None):
                                "値は予算で解放: 絵は最新のまま。配列は必要になったとき計算し直す") + "\n\n" + base)
             else:
                 it.setIcon(_glyph_icon("\u2026", MUTED))
-                it.setToolTip(_pair("未計算", "not computed") + "\n\n" + base)
+                it.setToolTip(tr("not computed") + "\n\n" + base)
             it.setData(QtCore.Qt.UserRole + 2, pv["status"])
     win._update_stage_icons = update_stage_icons
 
@@ -8870,7 +8872,7 @@ def build_window(model=None):
                 summ = _pair("値は予算で解放", "evicted (budget): recomputed on demand") \
                     if _UI_LANG["code"] != "ja" else "値は予算で解放: 必要になったとき計算し直す"
             else:
-                summ = _pair("未計算", "not computed")
+                summ = tr("not computed")
             ms = times[i] if (i < len(times) and st) else None
             tstr = ("  ·  %.1f ms" % ms) if isinstance(ms, (int, float)) else ""
             mem = mems[i] if (i < len(mems) and st) else None
@@ -12551,12 +12553,16 @@ def build_window(model=None):
             return                                    # a stage raised: the Problems list says which
         v, why = assess_validity(val)
         cache_line = "  \u00b7  " + cache_summary_text(model.cache_summary())   # idea 113/114: cache range
+
+        def _say_run(msg):
+            state["run_flash_text"] = msg          # 言語を切り替えた時、この文が出ていれば作り直す(B-5)
+            flash(msg)
         if v is False:
-            flash(tr("Run: done / Result: needs review (%s)") % "; ".join(why) + cache_line)
+            _say_run(tr("Run: done / Result: needs review (%s)") % "; ".join(why) + cache_line)
         elif v is None:
-            flash(tr("Run: done / Result: validity not judged") + cache_line)
+            _say_run(tr("Run: done / Result: validity not judged") + cache_line)
         else:
-            flash(tr("Run: done / Result: valid (as reported by the op)") + cache_line)
+            _say_run(tr("Run: done / Result: valid (as reported by the op)") + cache_line)
     win._do_step = _do_step; win._do_run_all = _do_run_all; win._do_reset = reset_to_raw
     b_reset.clicked.connect(reset_to_raw)
     b_step.clicked.connect(_do_step)
@@ -12966,7 +12972,7 @@ def build_window(model=None):
         try:
             val = model.cached_result(it.data(QtCore.Qt.UserRole))
             if val is None:
-                var_inspect.setPlainText((_pair("未計算", "not computed") + (" (run or step to this stage)" if _UI_LANG["code"] != "ja"
+                var_inspect.setPlainText((tr("not computed") + (" (run or step to this stage)" if _UI_LANG["code"] != "ja"
                                           else "(実行するか、この段まで進めると計算されます)")))
             else:
                 var_inspect.setPlainText(format_inspection(inspect_result(val)))
@@ -15189,6 +15195,14 @@ def build_window(model=None):
     b_savep.clicked.connect(save_pipe); b_openp.clicked.connect(open_pipe)
     act_save_pipe.triggered.connect(save_pipe); act_open_pipe.triggered.connect(open_pipe)
 
+    def _readout_text(info):
+        """画素値の読み出しの文(値 / 表示 / レンジ)。言語は UI に従う(★B-5: 英語モードにも日本語が固定で出ていた)。"""
+        value = info["value"]
+        value_text = value if isinstance(value, str) else format(value, ".4g")
+        shown = "—" if info["display_value"] is None else str(info["display_value"])
+        return tr("Value %s (%s) / Shown %s / Range %s to %s") % (
+            value_text, info["dtype"], shown, format(info["lo"], ".4g"), format(info["hi"], ".4g"))
+
     def on_hover(x, y, v):
         raw = state.get("raw")
         rng = state.get("display_range")
@@ -15196,26 +15210,16 @@ def build_window(model=None):
             info = studio_display.pixel_readout(raw, rng, y, x)
             if info is None:
                 return
-            value = info["value"]
-            value_text = value if isinstance(value, str) else format(value, ".4g")
-            shown = "—" if info["display_value"] is None else str(info["display_value"])
-            readout.setText("値 %s (%s) / 表示 %s / レンジ %s〜%s" % (
-                value_text, info["dtype"], shown, format(info["lo"], ".4g"),
-                format(info["hi"], ".4g")))
+            readout.setText(_readout_text(info))
         elif np.ndim(v) == 0:
             readout.setText(f"x={x}  y={y}   value={float(v):.4f}")
         else:
             readout.setText(f"x={x}  y={y}   RGB=({float(v[0]):.3f},{float(v[1]):.3f},{float(v[2]):.3f})")
     view.hover_cb = on_hover
+    win._readout = readout
     win._format_display_readout = lambda image, rng, y, x: (
         None if studio_display.pixel_readout(image, rng, y, x) is None else
-        "値 %s (%s) / 表示 %s / レンジ %s〜%s" % (
-            (lambda z: z if isinstance(z, str) else format(z, ".4g"))(
-                studio_display.pixel_readout(image, rng, y, x)["value"]),
-            studio_display.pixel_readout(image, rng, y, x)["dtype"],
-            studio_display.pixel_readout(image, rng, y, x)["display_value"],
-            format(studio_display.pixel_readout(image, rng, y, x)["lo"], ".4g"),
-            format(studio_display.pixel_readout(image, rng, y, x)["hi"], ".4g")))
+        _readout_text(studio_display.pixel_readout(image, rng, y, x)))
 
     def _display_settings_changed(*_):
         manual = range_manual.isChecked()
@@ -15659,6 +15663,9 @@ def build_window(model=None):
             i = selected_index()
             refresh_stage_list(select=i if 0 <= i < len(model.stages) else None,
                                sync_code=not model.stages)
+            _cur_msg = status.currentMessage()
+            if _cur_msg and _cur_msg == state.get("run_flash_text"):     # 状態行の『Run: done / Result: …』を新しい言語で
+                _flash_run_validity()
         except Exception as exc:                             # noqa: BLE001 -- 表示の再構築が窓を壊さない
             _log_soft_failure("could not rebuild translated texts after a language switch", exc)
 

@@ -19,6 +19,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - Program 欄でカーソル下の op のヘルプを Shift+F1 で開く(op 名でない語では開かず、状態行に 1 行)。F1 は従来どおりキー一覧のまま(候補 5・B-10)。
 - Program 欄で Ctrl+ホイール / Ctrl++ / Ctrl+- により文字サイズを 1pt ずつ変える(6〜32、設定 `ui/mono_font_pt` に保存して再起動後も保つ。行番号の欄も追従)(候補 12)。
 - Variables パネルを閉じたまま実行しても、開いた時にキャッシュから最新の型・サムネに作り直す(『? · control』が残らない)(候補 6・B-3)。
+- 日本語固定だった画素値の読み出し(値 / 表示 / レンジ)、段の行の『未計算 / not computed』の併記、状態行の `Run: done / Result: …` を言語の切り替えに追従させた(英語は英語だけ、6 言語を i18n.json の strings へ。pending_translation は増やしていない)。状態行は言語を切り替えると新しい言語で出し直す(B-5・B-7)。
 
 ### 直し — インストール体験(setup / ショートカット / アンインストール): 独立レビュー(2026-11-12)の 16 件
 

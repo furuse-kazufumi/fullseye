@@ -192,7 +192,7 @@ def test_a5_stage_list_rows_have_icons_and_placeholders_offscreen(monkeypatch):
     sl.addItem("x")                                       # a row for the new stage, built by hand
     win._update_stage_icons()
     assert sl.item(4).data(QtCore.Qt.UserRole + 2) == "uncomputed"
-    assert "未計算 / not computed" in sl.item(4).toolTip()
+    assert "not computed" in sl.item(4).toolTip() and "未計算" not in sl.item(4).toolTip()      # 2026-11-12 B-7: 英語に日本語を混ぜない
     assert counts == {n: 0 for n in _OPS4}
     win.close()
 
@@ -468,7 +468,7 @@ def test_e1_refresh_stage_list_runs_no_op_and_says_what_is_missing(monkeypatch):
     assert counts == {n: 0 for n in _OPS4}                     # nothing has run: the rebuild ran nothing
     rows = [win._stage_list.item(i).text() for i in range(3)]
     assert len(rows) == 3
-    assert all("未計算 / not computed" in r and " ms" not in r for r in rows)
+    assert all("not computed" in r and "未計算" not in r and " ms" not in r for r in rows)      # 2026-11-12 B-7
     win._do_run_all()                                          # the user runs
     ran = dict(counts)
     assert all(ran[n] == 1 for n in _OPS4[:3])

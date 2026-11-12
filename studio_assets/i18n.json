@@ -2094,29 +2094,29 @@
    "de": "Groß-/Kleinschreibung beachten",
    "hi": "अक्षर-भेद मानें"
   },
-  "Find previous (Shift+F3)": {
-   "ja": "前を検索 (Shift+F3)",
-   "zh": "查找上一个 (Shift+F3)",
-   "tw": "尋找上一個 (Shift+F3)",
-   "ko": "이전 찾기 (Shift+F3)",
-   "de": "Vorheriges suchen (Umschalt+F3)",
-   "hi": "पिछला खोजें (Shift+F3)"
+  "Find previous": {
+   "ja": "前を検索",
+   "zh": "查找上一个",
+   "tw": "尋找上一個",
+   "ko": "이전 찾기",
+   "de": "Vorheriges suchen",
+   "hi": "पिछला खोजें"
   },
-  "Find next (F3)": {
-   "ja": "次を検索 (F3)",
-   "zh": "查找下一个 (F3)",
-   "tw": "尋找下一個 (F3)",
-   "ko": "다음 찾기 (F3)",
-   "de": "Nächstes suchen (F3)",
-   "hi": "अगला खोजें (F3)"
+  "Find next": {
+   "ja": "次を検索",
+   "zh": "查找下一个",
+   "tw": "尋找下一個",
+   "ko": "다음 찾기",
+   "de": "Nächstes suchen",
+   "hi": "अगला खोजें"
   },
-  "Close (Esc)": {
-   "ja": "閉じる (Esc)",
-   "zh": "关闭 (Esc)",
-   "tw": "關閉 (Esc)",
-   "ko": "닫기 (Esc)",
-   "de": "Schließen (Esc)",
-   "hi": "बंद करें (Esc)"
+  "Close": {
+   "ja": "閉じる",
+   "zh": "关闭",
+   "tw": "關閉",
+   "ko": "닫기",
+   "de": "Schließen",
+   "hi": "बंद करें"
   },
   "%d matches": {
    "ja": "%d 件",
@@ -2157,6 +2157,38 @@
    "ko": "커서 아래에 연산자가 없습니다",
    "de": "Kein Operator unter dem Cursor",
    "hi": "कर्सर के नीचे कोई ऑपरेटर नहीं"
+  },
+  "not computed": {
+   "ja": "未計算",
+   "zh": "未计算",
+   "tw": "未計算",
+   "ko": "미계산",
+   "de": "nicht berechnet",
+   "hi": "गणना नहीं हुई"
+  },
+  "Value %s (%s) / Shown %s / Range %s to %s": {
+   "ja": "値 %s (%s) / 表示 %s / レンジ %s〜%s",
+   "zh": "值 %s (%s) / 显示 %s / 范围 %s〜%s",
+   "tw": "值 %s (%s) / 顯示 %s / 範圍 %s〜%s",
+   "ko": "값 %s (%s) / 표시 %s / 범위 %s〜%s",
+   "de": "Wert %s (%s) / Anzeige %s / Bereich %s bis %s",
+   "hi": "मान %s (%s) / प्रदर्शित %s / सीमा %s से %s"
+  },
+  "Replace the selected match and go to the next one": {
+   "ja": "選んでいる一致を置き換えて、次の一致へ移ります",
+   "zh": "替换当前选中的匹配并跳到下一个",
+   "tw": "取代目前選取的符合項並跳到下一個",
+   "ko": "선택한 일치 항목을 바꾸고 다음으로 이동합니다",
+   "de": "Ersetzt den markierten Treffer und springt zum nächsten",
+   "hi": "चुने हुए मिलान को बदलें और अगले पर जाएँ"
+  },
+  "Replace every match (one Undo brings them all back)": {
+   "ja": "すべての一致を置き換えます(元に戻す 1 回で全部戻ります)",
+   "zh": "替换所有匹配(一次撤销即可全部还原)",
+   "tw": "取代所有符合項(一次復原即可全部還原)",
+   "ko": "모든 일치 항목을 바꿉니다(실행 취소 한 번으로 모두 되돌립니다)",
+   "de": "Ersetzt alle Treffer (ein Rückgängig stellt alles wieder her)",
+   "hi": "सभी मिलान बदलें (एक Undo से सब वापस आ जाता है)"
   }
  },
   "pending_translation": {

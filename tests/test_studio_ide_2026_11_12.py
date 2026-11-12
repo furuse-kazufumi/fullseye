@@ -533,3 +533,104 @@ def test_variables_panel_is_current_when_opened_after_a_run_while_hidden(win):
     assert len(rows) == 4, rows
     assert not any("? ·" in r for r in rows), rows                   # 『? · control』が残らない
     assert any("image · iconic" in r for r in rows) and any("region · iconic" in r for r in rows), rows
+
+
+# --------------------------------------------------------------------------- 7. 言語の切り替えに追従する文言(B-5, B-7)
+def _rows_text(win):
+    return [win._stage_list.item(i).text() for i in range(win._stage_list.count())]
+
+
+def _uncomputed_stage(win):
+    win._load_sample_image("coins")
+    _pump(0.3)
+    win._test_model.add_stage("otsu")                       # モデルにだけ足す: まだ計算されていない段
+    win._refresh_stage_list(select=0)
+    _pump(0.2)
+
+
+def test_stage_row_not_computed_is_english_only_in_english(win):
+    _uncomputed_stage(win)
+    row = _rows_text(win)[0]
+    assert "not computed" in row and not _CJK.search(row), row           # 英語 UI に日本語が混ざらない
+    assert "not computed" in win._stage_list.item(0).toolTip() and not _CJK.search(win._stage_list.item(0).toolTip())
+
+
+@pytest.mark.parametrize("lang, word", [("ja", "未計算"), ("zh", "未计算"), ("tw", "未計算"),
+                                          ("ko", "미계산"), ("de", "nicht berechnet"), ("hi", "गणना नहीं हुई")])
+def test_stage_row_not_computed_follows_the_language(win, lang, word):
+    _uncomputed_stage(win)
+    win._apply_language(lang)
+    _pump(0.3)
+    try:
+        row = _rows_text(win)[0]
+        assert word in row, row
+        assert "not computed" not in row, row
+    finally:
+        win._apply_language("en")
+
+
+def _hover_readout(win):
+    win._load_sample_image("coins")
+    _pump(0.3)
+    win._program["edit"].setPlainText("gaussian (0.4, 0.5)\n")
+    win._program["apply"]()
+    win._do_run_all()
+    _pump(1.0)
+    win._current_view().hover_cb(10, 10, 0.3)
+    return win._readout.text()
+
+
+def test_pixel_readout_has_no_cjk_in_english(win):
+    text = _hover_readout(win)
+    assert text.startswith("Value ") and "Shown" in text and "Range" in text, text
+    assert not _CJK.search(text), text
+
+
+def test_pixel_readout_follows_the_language(win):
+    _hover_readout(win)
+    win._apply_language("ja")
+    try:
+        win._current_view().hover_cb(10, 10, 0.3)
+        text = win._readout.text()
+        assert text.startswith("値 ") and "表示" in text and "レンジ" in text, text
+        assert not re.search("[A-Za-z]{4,}", text.replace("float64", "")), text        # 英単語(型名を除く)が残らない
+    finally:
+        win._apply_language("en")
+    win._apply_language("de")
+    try:
+        win._current_view().hover_cb(10, 10, 0.3)
+        assert win._readout.text().startswith("Wert "), win._readout.text()
+    finally:
+        win._apply_language("en")
+
+
+def test_run_status_line_follows_a_language_switch(win):
+    win._load_sample_image("coins")
+    _pump(0.3)
+    win._program["edit"].setPlainText("gaussian (0.4, 0.5)\n")
+    win._program["apply"]()
+    win._do_run_all()
+    _pump(0.8)
+    msg = win.statusBar().currentMessage()
+    assert msg.startswith("Run: done / Result:"), msg
+    win._apply_language("ja")
+    _pump(0.3)
+    try:
+        msg = win.statusBar().currentMessage()
+        assert msg.startswith("実行: 完了 / 結果:"), msg                   # 英語のまま残らない
+        assert "Run: done" not in msg
+    finally:
+        win._apply_language("en")
+    msg = win.statusBar().currentMessage()
+    assert msg.startswith("Run: done / Result:"), msg                    # 戻せば英語へ
+
+
+def test_new_texts_all_have_six_languages_and_pending_rows_did_not_grow():
+    with open(os.path.join(ROOT, "studio_assets", "i18n.json"), encoding="utf-8") as f:
+        d = json.load(f)
+    for key in ("not computed", "Value %s (%s) / Shown %s / Range %s to %s", "did you mean %s?", "Find", "Replace all",
+                "not an operator: %s", "no operator under the cursor", "knobs on this line: %s",
+                "%d replaced", "Match case"):
+        row = d["strings"][key]
+        assert all(row.get(c) for c in ("ja", "zh", "tw", "ko", "de", "hi")), key
+    assert len([k for k in d["pending_translation"] if k != "_note"]) <= 294      # 上限(test_studio_first_minute の門)
