@@ -861,7 +861,9 @@ def test_doc_first_example_runs(tmp_path):
     assert sorted(kw) == ["K", "dist"]
     assert fs.undistort_image(np.zeros((8, 8)), **kw).shape == (8, 8)
     # 文書が名前を挙げている公開名はすべて実在する
-    for n in re.findall(r"fs\.(\w+)\(", doc):
+    named = re.findall(r"fs\.(\w+)\(", doc)
+    assert len(named) >= 3, named                       # 0 件なら「すべて実在」は何も確かめていない
+    for n in named:
         assert hasattr(fs, n) or hasattr(fs.ledger, n) or hasattr(fs.parambundle, n), n
     assert "SYNONYM_GROUPS" in doc and hasattr(fs.parambundle, "SYNONYM_GROUPS")
 

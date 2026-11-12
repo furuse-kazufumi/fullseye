@@ -334,7 +334,9 @@ def test_6_runtime_exception_marks_the_line(tmp_path, monkeypatch):
         assert "line 3: ZeroDivisionError" in pm.output.toPlainText()
         _pump(0.35)
         assert 3 in ed.errors()
-        assert any("ZeroDivisionError" in r.text() for r in _problems(win))
+        rows = _problems(win)
+        assert rows, "the Problems list is empty"
+        assert any("ZeroDivisionError" in r.text() for r in rows), [r.text() for r in rows]
         ed.goto_line(1)
         pm.goto_line(pm_mod.error_line_of(res.errors[0]))
         assert ed.textCursor().blockNumber() + 1 == 3
@@ -391,7 +393,8 @@ def test_8_debug_and_release_give_the_same_result(tmp_path, monkeypatch):
         assert any("Release does not stop" in f for f in flashes)
         res = _run_f5(win)
         assert res.stopped is None and np.array_equal(res.output, d)
-        assert any("Release does not stop" in n for n in res.notes)
+        assert len(res.notes) >= 1, "no notes at all"
+        assert any("Release does not stop" in n for n in res.notes), res.notes
         assert not pm.btn_step.isEnabled()
     finally:
         _close(win)

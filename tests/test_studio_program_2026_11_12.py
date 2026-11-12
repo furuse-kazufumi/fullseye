@@ -406,6 +406,7 @@ def test_memo_hits_equal_recomputation():
     r2 = sp.run_program(prog, img, memo=memo)
     assert [c.cached for c in r1.calls] == [False] * 4 and [c.cached for c in r2.calls] == [True] * 4
     r0 = sp.run_program(prog, img)                                    # メモ無し
+    assert len(r0.calls) == len(r2.calls) == 4                         # zip は短い側で黙って止まる
     for c0, c2 in zip(r0.calls, r2.calls):
         assert np.array_equal(np.asarray(c0.value), np.asarray(c2.value))
     # 1 行直すと、その上流は命中・下流は計算し直し
@@ -470,6 +471,7 @@ def test_pipeline_object_equals_run_pipeline_and_is_recorded():
     assert np.array_equal(r.values["out"], api.run_pipeline(img, stages))
     assert np.array_equal(r.values["x1"], api.run_pipeline(img, stages[:2]))
     eng_steps = engine.FullseyeEngine(stages).run_stepwise(img)
+    assert len(eng_steps) == len(r.values["steps"]) == len(stages)     # 空・長さ違いの zip は通ってしまう
     assert all(np.array_equal(a, b) for a, b in zip(r.values["steps"], eng_steps))
     assert [(c.pipeline, c.pipeline_step) for c in r.calls[:3]] == [("edge", 1), ("edge", 2), ("edge", 3)]
 

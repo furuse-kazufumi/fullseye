@@ -250,7 +250,9 @@ def test_debug_and_release_give_the_same_record_and_output(text):
     assert np.array_equal(np.asarray(d.output), np.asarray(r.output))
     assert d.config == "debug" and r.config == "release"
     r2 = sp.run_program(text, img, config="release", memo=mr)
-    assert all(c.cached for c in r2.calls if sp.memo_eligible(c.op))   # メモ化も同じ
+    eligible = [c for c in r2.calls if sp.memo_eligible(c.op)]
+    assert eligible, [c.op for c in r2.calls]                          # 対象が 0 件なら何も確かめていない
+    assert all(c.cached for c in eligible)                             # メモ化も同じ
 
 
 def test_release_stops_at_op_boundaries_and_time_limit():
@@ -267,6 +269,7 @@ def test_release_says_breakpoints_do_not_stop():
     r = sp.run_program("img = gaussian(img, 0.2)\nimg = median(img, 0.3)\n", _gray(), config="release",
                        breakpoints=[2], max_lines=1)
     assert r.ok and len(r.calls) == 2 and r.stopped is None
+    assert len(r.notes) >= 2, r.notes
     assert any("Release does not stop at breakpoints (lines 2)" in n for n in r.notes)
     assert any("line by line" in n for n in r.notes)
     with pytest.raises(ValueError, match="config"):
@@ -310,6 +313,7 @@ def test_errors_are_reported_as_file_and_line(tmp_path):
     r = sp.run_file(str(main), _gray(), project_dir=str(proj))
     assert r.errors[0].startswith("line 3: ZeroDivisionError") and r.error_line == 3
     assert r.error_file.endswith("helper.py")
+    assert len(r.notes) >= 1, r.notes
     assert any("helper.py line 7" in n for n in r.notes)
     r = sp.run_program("x = 1\ny = x / 0\n", _gray())
     assert r.error_file == sp.PROGRAM_FILENAME and r.error_line == 2

@@ -593,6 +593,7 @@ def test_japanese_ui_has_no_english_left_in_the_project_panel(win, tmp_path):
         assert _top(pj) == ["images \u2014 画像", "params \u2014 パラメータ", "pipelines \u2014 パイプライン",
                             "programs \u2014 Python", "results \u2014 出力"]
         spec = pj["menu_spec"]([root + "/images/a.png", root + "/images/b.png"])
+        assert len(spec) >= 2, spec                               # 空のメニューは「全部日本語」を素通りする
         assert all(_CJK.search(s[0]) for s in spec), [s[0] for s in spec]
         assert all(_CJK.search(s[2]) for s in spec)
         for a in (win._actions["project_open"], win._actions["project_new"], win._actions["project_panel"]):

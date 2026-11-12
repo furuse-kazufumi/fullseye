@@ -101,6 +101,7 @@ def test_tricky_f_string_nested_and_format_spec():
     assert ("{", "interp") in f and ("}", "interp") in f
     assert ("!r", "interp") in f and (":", "interp") in f
     assert ("1", "number") in f                       # 式の中の数は数として塗る
+    assert f
     assert any(c == "string" and "{{lit}}" in w for w, c in f)  # {{ }} は文字列のまま
 
 
@@ -133,6 +134,7 @@ def test_triple_state_distinguishes_quote_kinds_and_f():
 def test_hash_inside_string_is_not_a_comment():
     f = flat("x = 'a # b'  # real")
     assert ("'a # b'", "string") in f and ("# real", "comment") in f
+    assert f
     assert all(c != "comment" or w == "# real" for w, c in f)
 
 
@@ -158,6 +160,7 @@ def test_walrus_and_annotations():
 
 def test_attribute_after_dot_is_not_builtin_or_keyword():
     f = flat("obj.print(1).id.type")
+    assert f, "nothing was coloured at all"            # 色の付いた字句が 0 件なら何も確かめていない
     assert all(c != "builtin" for _w, c in f)
 
 
@@ -880,6 +883,7 @@ def test_translation_table_is_complete_for_all_six_languages():
     tab = i18n.load_table()
     assert i18n.missing(tab) == []
     assert i18n.LANGS == ("en", "ja", "zh", "tw", "ko", "de")
+    assert len(tab) >= 20, len(tab)                    # 空の表は「欠けなし」を素通りする
     for key, row in tab.items():
         assert set(row) == {"ja", "zh", "tw", "ko", "de"}, key
         # %s / %d の数が訳でも同じ
@@ -997,6 +1001,7 @@ def test_marks_errors_breakpoints_and_brackets_become_selections(qapp):
     ed.setTextCursor(cur)
     ed.assist.refresh_decorations()
     sels = ed.extraSelections()
+    assert sels, "no extra selections at all"
     assert any(s.format.background().color().name() == th.bracket_match_bg for s in sels)
 
 
@@ -1220,7 +1225,9 @@ def test_variables_marks_new_changed_and_removed(qapp):
     assert items["● a"].font(0).bold() and "changed" in items["● a"].toolTip(3)
     assert p.removed.isVisible() and "b" in p.removed.text()
     p.refresh()                                                   # 変化なし → 印は消える
-    assert all(not t.startswith(("+", "●")) for t in [p.tree.topLevelItem(i).text(0) for i in range(p.tree.topLevelItemCount())])
+    titles = [p.tree.topLevelItem(i).text(0) for i in range(p.tree.topLevelItemCount())]
+    assert titles, "the tree is empty"                            # 行が無ければ「印が消えた」は言えない
+    assert all(not t.startswith(("+", "●")) for t in titles), titles
 
 
 def test_variables_filter_by_name_and_type(qapp):

@@ -91,6 +91,7 @@ def test_process_state_is_restored_after_the_run(tmp_path):
     assert r.ok, r.errors
     assert sys.path == before[0] and dict(os.environ) == before[1] and os.getcwd() == before[2]
     assert not hasattr(builtins, "ZZ_STUDIO_LEAK") and dict(vars(builtins)).keys() == before[3].keys()
+    assert len(r.notes) >= 1, "no notes at all"
     assert any(n.startswith("restored after the run: sys.path, os.environ, cwd, builtins") for n in r.notes), r.notes
 
 

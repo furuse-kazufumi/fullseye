@@ -187,6 +187,7 @@ def test_unknown_op_goes_to_problems_with_a_squiggle_and_a_gutter_mark(win):
     rows = _problems(win)
     syn = [r for r in rows if "line 2: unknown op" in r]
     assert len(syn) == 1, rows                                  # 1 行だけ出る
+    assert rows                                                 # 空の一覧では「消えた」を確かめられない
     assert not any("no problems" in r for r in rows), rows      # 『no problems』は消える
     assert _wave_lines(ed) == [2]                               # 該当行だけが波線
     assert set(ed.errors()) == {2}                              # ガターの赤印の元
@@ -204,7 +205,10 @@ def test_fixing_the_text_removes_the_marks(win):
     win._program["apply"]()
     _pump(0.3)
     assert _wave_lines(ed) == [] and ed.errors() == {}
-    assert not any("unknown op" in r for r in _problems(win)), _problems(win)
+    after = _problems(win)
+    assert after, "the Problems list is empty"                    # 空でなく『no problems』の 1 行に戻る
+    assert len(after) == 1 and "no problems" in after[0], after
+    assert not any("unknown op" in r for r in after), after
 
 
 def test_syntax_errors_appear_while_typing_without_apply(win):
@@ -212,7 +216,9 @@ def test_syntax_errors_appear_while_typing_without_apply(win):
     ed.setPlainText("gaussian (0.4, 0.5)\ngaussian (zzz, 0.5)\n")      # 数でない引数
     _pump(0.6)
     assert _wave_lines(ed) == [2], ed.errors()
-    assert any("args must be numbers" in r for r in _problems(win))
+    rows = _problems(win)
+    assert rows, "the Problems list is empty"
+    assert any("args must be numbers" in r for r in rows), rows
     ed.setPlainText("for 3\ngaussian (0.4, 0.5)\n")                      # 閉じていない for
     _pump(0.6)
     assert ed.errors() and any("missing 'endfor'" in r for r in _problems(win)), _problems(win)
@@ -405,7 +411,10 @@ def test_comment_toggle_is_one_undo_and_comment_lines_do_not_become_stages(win):
     ed = _editor(win, text)
     ed.selectAll()
     _key(ed, QtCore.Qt.Key_Slash, QtCore.Qt.ControlModifier)
-    assert all(l.startswith("* ") for l in ed.toPlainText().split("\n") if l)
+    commented = [l for l in ed.toPlainText().split("\n") if l]
+    assert commented, "the editor is empty"
+    assert len(commented) == 3, commented                         # 行が消えていない
+    assert all(l.startswith("* ") for l in commented), commented
     win._program["apply"]()
     assert len(win._test_model.stages) == 0                       # コメント行は段にならない
     ed.setFocus()
