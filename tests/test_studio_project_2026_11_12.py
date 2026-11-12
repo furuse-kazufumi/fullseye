@@ -320,7 +320,10 @@ def test_double_click_routes_by_kind_and_python_is_never_run(win, tmp_path):
     assert pj["activate"](root + "/programs/run.py") == "python"
     _pump(0.1)
     assert not os.path.exists(str(tmp_path / "marker.txt"))                         # 開いただけでコードを走らせない
-    assert "Python mode comes in the next version" in win.statusBar().currentMessage()
+    # 2026-11-13(1.2.0): Program 欄に Python のモードで開く。開いただけでは実行しない(初回の実行の前に確認)
+    assert "not run" in win.statusBar().currentMessage()
+    assert win._pymode.active and win._pymode.file == os.path.abspath(root + "/programs/run.py")
+    assert win._pymode.origin == "project" and not win._pymode.session_trusted
     n = len(getattr(win, "_code_windows", []))
     assert pj["activate"](root + "/params/cam.yaml") == "params"
     assert len(win._code_windows) == n + 1                                          # 読み取り専用のテキスト窓

@@ -6765,6 +6765,10 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
         on_message = None          # (文) -> None      : 状態行へ 1 行
         on_font_change = None      # (pt) -> None      : 文字サイズの保存と全欄への反映
         on_run_selection = None    # () -> None        : 選んだ行だけを実行
+        #: ★2026-11-13 Python のモード(studio_pymode): True を返す受け手が居る間、行の装飾は PyEditAssist が描く。
+        assist_hook = None         # () -> bool
+        comment_prefix = "*"       # Ctrl+/ の行コメント(パイプラインの記法 "*"、Python のモード "#")
+        legacy_completion = True   # op 名の QCompleter(Python のモードでは PyEditAssist の補完に任せる)
 
         def __init__(self, words=(), parent=None, tip=None):
             super().__init__(parent)
@@ -6866,6 +6870,7 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     ln = n + 1
                     self.breakpoints.symmetric_difference_update({ln})
                     self._gutter.update()
+                    self._highlight()                       # Python のモード: 行の色(PyEditAssist)も付け直す
                     return
                 block = block.next(); n += 1
                 top = bottom; bottom = top + self.blockBoundingRect(block).height()
@@ -6886,6 +6891,9 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             self._gutter.update()
 
         def _highlight(self):
+            hook = self.assist_hook
+            if hook is not None and hook():                 # Python のモード: 印は PyEditAssist が 1 回で描く
+                return
             sels = []
             cur = QtWidgets.QTextEdit.ExtraSelection()
             cur.format.setBackground(QtGui.QColor("#1f2430"))
@@ -7032,7 +7040,8 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                 b = b.next()
             if not blocks:
                 return 0
-            uncomment = all(x.text().lstrip().startswith("*") for x in blocks)
+            cp = self.comment_prefix or "*"
+            uncomment = all(x.text().lstrip().startswith(cp) for x in blocks)
             guard = QtGui.QTextCursor(doc)
             guard.beginEditBlock()
             try:
@@ -7043,11 +7052,11 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                         ind = len(t) - len(t.lstrip())
                         c.setPosition(blk.position() + ind)
                         c.movePosition(QtGui.QTextCursor.Right, QtGui.QTextCursor.KeepAnchor,
-                                       2 if t[ind:ind + 2] == "* " else 1)
+                                       len(cp) + 1 if t[ind:ind + len(cp) + 1] == cp + " " else len(cp))
                         c.removeSelectedText()
                     else:
                         c.setPosition(blk.position())
-                        c.insertText("* ")
+                        c.insertText(cp + " ")
             finally:
                 guard.endEditBlock()
             return len(blocks)
@@ -7207,6 +7216,9 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                 ev.accept()
                 return
             super().keyPressEvent(ev)
+            if not self.legacy_completion:                   # Python のモード: 補完は PyEditAssist(二重に出さない)
+                comp.popup().hide()
+                return
             prefix = self._text_under_cursor()
             if len(prefix) >= 2 and (prefix[0].isalpha() or prefix[0] == "_"):
                 if prefix != self._query:
@@ -7224,8 +7236,12 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
     return ProgramEditor
 
 
-def build_window(model=None):
+def build_window(model=None, start_mode="pipeline"):
     """Construct (but do not exec) the main window. Returns (window, model).
+
+    *start_mode* (2026-11-13, Python のモード): ``"pipeline"`` = 今までどおり(試験・ライブラリの既定)、
+    ``"python"`` = Python のモードで開く、``"auto"`` = 設定に従う(既定は「前回のまま」、初回は Python。
+    ``fullseye-studio`` の起動 = :func:`main` はこれ)。
 
     The window is a QMainWindow with a menu bar (all actions + keyboard
     shortcuts), a branded toolbar, a status bar (hover read-out + transient
@@ -8767,6 +8783,10 @@ def build_window(model=None):
         pp = state.get("pipe_path"); ip = state.get("image_path")
         star = "*" if (state.get("dirty") and model.stages) else ""
         seg = (os.path.basename(pp) if pp else "untitled") + star
+        _pm = getattr(win, "_pymode", None)
+        _pseg = _pm.title_segment() if _pm is not None else None
+        if _pseg:                                                # Python のモード: 開いているプログラムと未保存の印
+            seg = _pseg
         if ip:
             seg += " — " + os.path.basename(ip)
         _pj = getattr(win, "_project", None)
@@ -9002,6 +9022,9 @@ def build_window(model=None):
             it.setForeground(QtGui.QColor(AMBER))
             problems_list.addItem(it)
         _act_idx = [k for k, st in enumerate(model.stages) if not _is_bypassed(st)]
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:
+            return                                         # ★2026-11-13 Python のモード: 段の列の検査は出さない(正本でない)
         if len(_act_idx) == len(model.stages):
             probs = list(engine.diagnose_stages(model.stages))     # static checks
         else:                                                      # a bypassed stage is not part of the chain
@@ -10513,6 +10536,9 @@ def build_window(model=None):
 
     def reset_to_raw():
         """Show the pre-pipeline (raw) image — the start of the step-through."""
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # Python のモード: 止まっている Debug を終え、入力を見せる
+            _pm.reset(); return
         state["view_raw"] = True
         if stage_list.currentRow() == -1:
             on_stage_selected()                             # no row change -> refresh explicitly
@@ -12612,6 +12638,9 @@ def build_window(model=None):
     # ONE handler each for Reset / Step / Run all — the pipeline-strip buttons, the Run
     # menu actions and the debugger F-keys below all share them (no duplicated lambdas)
     def _do_step():
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # ★2026-11-13 Python のモード: F6 = 1 行実行
+            _pm.step(); return
         step_to(min(selected_index() + 1, len(model.stages) - 1))
 
     def _do_run_all():
@@ -12619,6 +12648,9 @@ def build_window(model=None):
         # N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は
         # 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。
         # 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # ★2026-11-13 Python のモード: F5 = 実行 / 続行
+            _pm.run(); return
         prog = getattr(win, "_program", None)
         if state.get("code_dirty") and prog:
             prog["apply"]()
@@ -12628,6 +12660,9 @@ def build_window(model=None):
         _flash_run_validity()
 
     def _do_run_all_async():
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:
+            _pm.run(); return
         prog = getattr(win, "_program", None)
         if state.get("code_dirty") and prog:
             prog["apply"]()
@@ -12772,11 +12807,14 @@ def build_window(model=None):
             return v                                  # switched off: the value passes through
         return api.run_pipeline(v, [(name, a, b)], coerce=(i == 0))
 
-    def sync_program():
+    def sync_program(force=False):
         # Never clobber what the user is typing OR unapplied edits (Codex #9): the
         # editor keeps the user's code until they Apply it or Reset — a pipeline
         # change no longer silently overwrites hand-written, not-yet-applied code.
-        if code_edit.hasFocus() or state.get("code_dirty"):
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # ★2026-11-13 Python のモード: 文面が正本。段の列から作り直さない
+            return
+        if not force and (code_edit.hasFocus() or state.get("code_dirty")):
             return
         code_edit.blockSignals(True)
         # 適用済みの dev_* / set_system 行は残す(モデル再生成で消さない)。HDevelop の
@@ -12802,6 +12840,9 @@ def build_window(model=None):
     def _on_code_changed():
         # A real user edit (sync_program blocks signals around its own setPlainText,
         # so this only fires for typing) → mark the Program as having unapplied edits.
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and (_pm.active or _pm._suspend_text):   # Python のモード: 「未適用」は無い / 色分けの付け外し
+            _pm.on_text_changed(); return
         state["code_dirty"] = True
         code_status.setText("● unapplied edits — Apply to run, or Reset to discard")
     code_edit.textChanged.connect(_on_code_changed)
@@ -12822,6 +12863,9 @@ def build_window(model=None):
     win._mark_unapplied = _mark_unapplied
 
     def apply_program():
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # Python のモード: 文面が正本。適用は無い
+            flash(tr("Python mode: the text is the source — press Run (F5)")); return
         text = code_edit.toPlainText()        # capture first: refresh_stage_list rewrites the editor
         stages, errs, src_lines = parse_hdev_program_lines(text, op_names)
         if errs:
@@ -12983,6 +13027,9 @@ def build_window(model=None):
 
         その前の段の出力は段のキャッシュから取る(古ければそこだけ計算する)。選んだ行より後ろの段は計算しない。
         未適用の編集があれば、先に適用する(行と段の対応が変わるので)。"""
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # Python のモード: 選んだ行を直前の実行の名前空間で
+            _pm.run_selection(); return
         if state.get("code_dirty"):
             apply_program()
             if state.get("code_dirty"):
@@ -13051,6 +13098,9 @@ def build_window(model=None):
     def check_program_syntax(*_):
         """Program 欄の本文を解析し、エラー(行つき)を Problems と欄の波線・ガターの赤印へ出す。
         直すと印も消える。実行系には触らない(parse_program の結果を読むだけ)。"""
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # Python のモード: studio_program.check_program(実行しない)
+            _pm.check_now(); return
         text = code_edit.toPlainText()
         errs_ = []
         saved = dict(_HDEV_CLAMPED)                       # 解析は「丸めたつまみ」の控えを作り直す。apply の結果を壊さない
@@ -15213,14 +15263,22 @@ def build_window(model=None):
             apply_text_directives("\n".join(model.directives))
         _push_recent(path); _set_title()
         flash("loaded " + os.path.basename(path))
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None:                                  # パイプラインのファイルはパイプラインのモードで見せる
+            _pm.on_pipeline_opened()
     win._open_pipe_path = _open_pipe_path
     win._refresh_stage_list = refresh_stage_list
 
     # ---- 第 2 便: プロジェクト(フォルダ)のパネル。行き先は種類ごとに 1 つの関数 -------------------------------------- #
     def open_python_file(path):
-        """プロジェクトの .py を開く行き先(1 か所)。Python のモードは次の版: いまは案内だけで、**import も exec もしない**。"""
-        flash(tr("Python mode comes in the next version: %s was not run") % os.path.basename(path))
+        """プロジェクトの .py を開く行き先(1 か所)。Program 欄に Python のモードで開く。**開いただけでは import も
+        exec もしない**(初回の実行の前に確認する。studio_pymode)。"""
         state["python_note"] = path
+        _pm = getattr(win, "_pymode", None)
+        if _pm is None:
+            flash(tr("Python mode comes in the next version: %s was not run") % os.path.basename(path))
+            return False
+        return _pm.open_program(path)
     win._open_python_file = open_python_file
 
     def open_params_file(path):
@@ -15490,7 +15548,8 @@ def build_window(model=None):
         if not _w.toolTip():
             _w.setToolTip(_n)
 
-    win.close_guard = lambda: confirm_discard("Quit Fullseye Studio")
+    win.close_guard = lambda: ((getattr(win, "_pymode", None) is None or win._pymode.confirm_close())
+                               and confirm_discard("Quit Fullseye Studio"))
     win._perception = {"model": pmodel, "mode": percep_mode, "run": run_perception}
     win._flash = flash
     win._state = state                                   # for tests / headless driving
@@ -15936,6 +15995,9 @@ def build_window(model=None):
             _cur_msg = status.currentMessage()
             if _cur_msg and _cur_msg == state.get("run_flash_text"):     # 状態行の『Run: done / Result: …』を新しい言語で
                 _flash_run_validity()
+            _pm = getattr(win, "_pymode", None)
+            if _pm is not None:                              # ★2026-11-13 Python のモードの欄・入口も今の言語へ
+                _pm.retranslate()
         except Exception as exc:                             # noqa: BLE001 -- 表示の再構築が窓を壊さない
             _log_soft_failure("could not rebuild translated texts after a language switch", exc)
 
@@ -16450,6 +16512,40 @@ def build_window(model=None):
                     pass
                 break
 
+    # ★2026-11-13 Program 欄の Python のモード(studio_pymode)。差し込み口は win._pymode だけ。
+    import studio_pymode
+
+    def _pm_show_value(v):
+        state["worker_result"] = v
+        show_result(refresh_rows=False)
+
+    def _pm_show_panel(name):
+        try:
+            win._layout_state = studio_layout.set_override(win._layout_state, name, visible=True, collapsed=False)
+            _apply_layout_state(); win._docks[name].show(); win._docks[name].raise_(); _save_layout_state()
+        except Exception as exc:                          # noqa: BLE001
+            _log_soft_failure("could not show the %s panel" % name, exc)
+    studio_pymode.install(win, {
+        "tr": tr, "lang": lambda: _UI_LANG.get("code", "en"), "flash": flash, "settings": _settings,
+        "edit": code_edit, "status": code_status, "code_layout": cvl,
+        "pipeline_buttons": (c_run, c_cont, c_step, c_reset, c_apply, c_sync),
+        "model": model, "state": state, "show_value": _pm_show_value, "stage_list": stage_list,
+        "dock_vars": dock_vars, "refresh_problems": _refresh_problems_only, "check": check_program_syntax,
+        "sync_program": lambda: sync_program(force=True), "pipeline_text": program_text_from_model,
+        "project_root": lambda: (win._project["root"]() if getattr(win, "_project", None) else None),
+        "proj_path": _proj_path, "set_title": _set_title, "show_panel": _pm_show_panel,
+        "report_error": lambda t_, x_: report_error(t_, x_), "demo_image": demo_image,
+        "act": _act, "menus": win._menus, "actions": win._actions, "palette_words": PALETTE_WORDS,
+    }, start_mode=start_mode)
+    _quiesce_runs = win.quiesce
+
+    def _quiesce_all(timeout_ms=5000):
+        try:
+            win._pymode.shutdown()
+        except Exception as exc:                          # noqa: BLE001
+            _log_soft_failure("could not stop the Python program before close", exc)
+        _quiesce_runs(timeout_ms)
+    win.quiesce = _quiesce_all
     refresh_stage_list(); show_result()      # refresh_stage_list syncs the knob panel
     state["dirty"] = False                   # a freshly-built window has nothing to lose
     state["renders"] = 0
@@ -16538,7 +16634,7 @@ def main(argv=None) -> int:
     sys.excepthook = _hook
 
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
-    win, _ = build_window()
+    win, _ = build_window(start_mode="auto")       # ★2026-11-13: 起動の既定は設定(初回は Python のモード)
     win.show()
     return app.exec()
 

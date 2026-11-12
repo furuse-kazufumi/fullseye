@@ -444,7 +444,7 @@ def build_panel(parent, hooks):
     def kind_tip(kind):
         return {"image": tr("Image: double-click opens it as the input image"),
                 "pipeline": tr("Pipeline: double-click opens it as the current pipeline"),
-                "python": tr("Python: not run when opened; the Python mode comes in the next version"),
+                "python": tr("Python: opens in the Program (Python mode); it runs only after you confirm it once"),
                 "params": tr("Parameters / definitions: double-click shows the text, read-only"),
                 "other": tr("Other file: not opened here; use Show in file manager")}.get(kind, "")
 
