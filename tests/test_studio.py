@@ -723,7 +723,8 @@ def _app():
 
 
 def _slider_handle_amber_px(enabled):
-    """Render a themed QSlider and count AMBER (enabled-handle) pixels."""
+    """Render a themed QSlider and count enabled-handle pixels (the scheme's accent colour;
+    2026-11-12: the handle moved from amber — a state colour — to the accent)."""
     from PySide6 import QtWidgets, QtGui, QtCore
     app = _app()
     w = QtWidgets.QWidget()
@@ -736,9 +737,12 @@ def _slider_handle_amber_px(enabled):
     img = w.grab().toImage().convertToFormat(QtGui.QImage.Format_RGB32)
     arr = np.frombuffer(img.constBits(), np.uint8).reshape(
         img.height(), img.bytesPerLine() // 4, 4)
-    amber = ((np.abs(arr[:, :, 2].astype(int) - 0xF5) < 12)
-             & (np.abs(arr[:, :, 1].astype(int) - 0xA5) < 12)
-             & (np.abs(arr[:, :, 0].astype(int) - 0x24) < 12))
+    import studio_theme
+    h = studio_theme.PALETTES[studio_theme.DEFAULT_THEME]["accent"].lstrip("#")
+    r_, g_, b_ = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    amber = ((np.abs(arr[:, :, 2].astype(int) - r_) < 12)
+             & (np.abs(arr[:, :, 1].astype(int) - g_) < 12)
+             & (np.abs(arr[:, :, 0].astype(int) - b_) < 12))
     w.hide()
     return int(amber.sum())
 

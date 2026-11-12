@@ -41,7 +41,7 @@ def test_long_message_is_wrapped_not_cut_off(win_model):
     # 描いた文字が左右の端に触れない(以前は 1 行のまま左右が切れた)。余白 32px を空けて折り返している
     img = pm.toImage()
     w, h = img.width(), img.height()
-    bg = QtGui.QColor("#12141b").rgb()
+    bg = QtGui.QColor(studio._C("chrome")).rgb()     # 2026-11-12: the ground is the scheme's chrome role
     for x in list(range(0, 24)) + list(range(w - 24, w)):
         for y in range(0, h, 3):
             assert img.pixel(x, y) == bg, "文字が端まで届いている(折り返されていない): x=%d y=%d" % (x, y)

@@ -419,6 +419,142 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "Build pipeline": {
+   "ja": "処理を組む",
+   "zh": "构建流程",
+   "tw": "建立流程",
+   "ko": "파이프라인 만들기",
+   "de": "Pipeline bauen",
+   "hi": "पाइपलाइन बनाएँ"
+  },
+  "Compare results": {
+   "ja": "結果を比べる",
+   "zh": "比较结果",
+   "tw": "比較結果",
+   "ko": "결과 비교",
+   "de": "Vergleichen",
+   "hi": "परिणामों की तुलना"
+  },
+  "Inspect values": {
+   "ja": "数値を調べる",
+   "zh": "查看数值",
+   "tw": "檢視數值",
+   "ko": "값 확인",
+   "de": "Werte prüfen",
+   "hi": "मान जाँचें"
+  },
+  "Make code": {
+   "ja": "コードにする",
+   "zh": "生成代码",
+   "tw": "產生程式碼",
+   "ko": "코드로 만들기",
+   "de": "Code erzeugen",
+   "hi": "कोड बनाएँ"
+  },
+  "Image focus": {
+   "ja": "画像だけ大きく",
+   "zh": "仅放大图像",
+   "tw": "僅放大影像",
+   "ko": "이미지만 크게",
+   "de": "Bildfokus",
+   "hi": "केवल छवि बड़ी"
+  },
+  "Find panel": {
+   "ja": "パネルを探す",
+   "zh": "查找面板",
+   "tw": "尋找面板",
+   "ko": "패널 찾기",
+   "de": "Bereich suchen",
+   "hi": "पैनल खोजें"
+  },
+  "Find panel…": {
+   "ja": "パネルを探す…",
+   "zh": "查找面板…",
+   "tw": "尋找面板…",
+   "ko": "패널 찾기…",
+   "de": "Bereich suchen…",
+   "hi": "पैनल खोजें…"
+  },
+  "Leave image focus": {
+   "ja": "画像だけ大きくを終了",
+   "zh": "退出图像放大",
+   "tw": "結束影像放大",
+   "ko": "이미지만 크게 끝내기",
+   "de": "Bildfokus beenden",
+   "hi": "छवि फ़ोकस छोड़ें"
+  },
+  "Work modes": {
+   "ja": "作業モード",
+   "zh": "工作模式",
+   "tw": "工作模式",
+   "ko": "작업 모드",
+   "de": "Arbeitsmodi",
+   "hi": "कार्य मोड"
+  },
+  "Auto-update": {
+   "ja": "自動更新",
+   "zh": "自动更新",
+   "tw": "自動更新",
+   "ko": "자동 업데이트",
+   "de": "Auto-Update",
+   "hi": "स्वतः अद्यतन"
+  },
+  "Colour scheme": {
+   "ja": "配色",
+   "zh": "配色方案",
+   "tw": "配色方案",
+   "ko": "색 구성",
+   "de": "Farbschema",
+   "hi": "रंग योजना"
+  },
+  "Density": {
+   "ja": "表示の密度",
+   "zh": "显示密度",
+   "tw": "顯示密度",
+   "ko": "표시 밀도",
+   "de": "Dichte",
+   "hi": "घनत्व"
+  },
+  "Instrument (dark)": {
+   "ja": "計器盤(暗い)",
+   "zh": "仪表盘(深色)",
+   "tw": "儀表板(深色)",
+   "ko": "계기판(어두움)",
+   "de": "Instrument (dunkel)",
+   "hi": "उपकरण पटल (गहरा)"
+  },
+  "Machine panel (light)": {
+   "ja": "操作盤(明るい)",
+   "zh": "操作面板(浅色)",
+   "tw": "操作面板(淺色)",
+   "ko": "조작반(밝음)",
+   "de": "Bedienfeld (hell)",
+   "hi": "मशीन पैनल (हल्का)"
+  },
+  "Compact": {
+   "ja": "詰める",
+   "zh": "紧凑",
+   "tw": "緊湊",
+   "ko": "촘촘하게",
+   "de": "Kompakt",
+   "hi": "सघन"
+  },
+  "Standard": {
+   "ja": "標準",
+   "zh": "标准",
+   "tw": "標準",
+   "ko": "표준",
+   "de": "Standard",
+   "hi": "मानक"
+  },
+  "value %s (%s) / shown %s / range %s – %s": {
+   "ja": "値 %s (%s) / 表示 %s / レンジ %s〜%s",
+   "zh": "值 %s (%s) / 显示 %s / 范围 %s – %s",
+   "tw": "值 %s (%s) / 顯示 %s / 範圍 %s – %s",
+   "ko": "값 %s (%s) / 표시 %s / 범위 %s – %s",
+   "de": "Wert %s (%s) / angezeigt %s / Bereich %s – %s",
+   "hi": "मान %s (%s) / दिखाया %s / सीमा %s – %s"
+  },
     "border handling": {"ja": "端の扱い", "zh": "边界处理", "tw": "邊界處理", "ko": "가장자리 처리", "de": "Randbehandlung", "hi": "किनारे का व्यवहार"},
     "element shape": {"ja": "構造要素の形", "zh": "结构元素形状", "tw": "結構元素形狀", "ko": "구조 요소 모양", "de": "Form des Strukturelements", "hi": "संरचना तत्व का आकार"},
     "border handling — b ≤ 0.5 reflect, then nearest / constant (0) / wrap": {"ja": "端の扱い — b ≤ 0.5 は reflect(折り返し)、その先は nearest / constant(0)/ wrap", "zh": "边界处理 — b ≤ 0.5 为 reflect,之后为 nearest / constant(0)/ wrap", "tw": "邊界處理 — b ≤ 0.5 為 reflect,之後為 nearest / constant(0)/ wrap", "ko": "가장자리 처리 — b ≤ 0.5는 reflect, 그다음 nearest / constant(0) / wrap", "de": "Randbehandlung — b ≤ 0,5 reflect, danach nearest / constant (0) / wrap", "hi": "किनारे का व्यवहार — b ≤ 0.5 पर reflect, फिर nearest / constant (0) / wrap"},
@@ -2124,7 +2260,6 @@
     "Operator timings": {"ja": "op ごとの時間"},
     "All off  (dev_update_off)": {"ja": "すべて切る  (dev_update_off)"},
     "All on  (dev_update_on)": {"ja": "すべて入れる  (dev_update_on)"},
-    "Auto-update": {"ja": "自動更新"},
     "Fill": {"ja": "塗りつぶし"},
     "Margin (outline)": {"ja": "縁取り(輪郭)"},
     "Orange": {"ja": "オレンジ"},
@@ -2150,21 +2285,12 @@
     "Open image": {"ja": "画像を開く"},
     "Apply to folder": {"ja": "フォルダに適用"},
     "Export": {"ja": "書き出し"},
-    "Find panel": {"ja": "パネルを探す"},
     "Display:": {"ja": "表示:"},
     "Auto per image": {"ja": "各画像で自動"},
     "Shared by compared images": {"ja": "比較画像で共通"},
     "Manual": {"ja": "手動"},
     "add watch…  (v = selected variable, np = numpy)": {"ja": "監視式を追加…  (v = 選んだ変数、np = numpy)"},
     "search / autocomplete operators…": {"ja": "op を検索 / 補完…"},
-    "Build pipeline": {"ja": "処理を組む"},
-    "Compare results": {"ja": "結果を比べる"},
-    "Inspect values": {"ja": "数値を調べる"},
-    "Make code": {"ja": "コードにする"},
-    "Image focus": {"ja": "画像だけ大きく"},
-    "Find panel…": {"ja": "パネルを探す…"},
-    "Leave image focus": {"ja": "画像だけ大きくを終了"},
-    "Work modes": {"ja": "作業モード"},
     "Operators": {"ja": "処理を選ぶ"},
     "Pipeline · Parameters": {"ja": "処理手順と調整"},
     "Display · Analysis": {"ja": "表示と分析"},

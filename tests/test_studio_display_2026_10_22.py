@@ -97,7 +97,15 @@ def test_gui_controls_are_view_only(monkeypatch):
     assert win._run_controller.generation == before_generation
     text = win._format_display_readout(
         np.array([[0.4213]], dtype=np.float64), display.DisplayRange("manual", 0, 1), 0, 0)
-    assert text == "値 0.4213 (float64) / 表示 108 / レンジ 0〜1"
+    # 2026-11-12: the English UI used to show this line in Japanese; it now goes through tr().
+    assert text == "value 0.4213 (float64) / shown 108 / range 0 – 1"
+    studio._UI_LANG["code"] = "ja"
+    try:
+        text_ja = win._format_display_readout(
+            np.array([[0.4213]], dtype=np.float64), display.DisplayRange("manual", 0, 1), 0, 0)
+    finally:
+        studio._UI_LANG["code"] = "en"
+    assert text_ja == "値 0.4213 (float64) / 表示 108 / レンジ 0〜1"
     win.quiesce(); win.close_guard = lambda: True; win.close(); app.processEvents()
 
 
