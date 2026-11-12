@@ -15,7 +15,12 @@ studio.py の Program 欄・段の欄・変数の欄・Problems に繋ぐ。stud
   見張りが止める)。GUI のスレッドは 30 ms ごとに終わったかを見るだけ(Qt の信号をスレッドを跨いで撃たない =
   2026-11-04 の QThread の解体の行き詰まりの型を作らない)。同時に走るのは 1 本だけ: 実行中に実行を押すと
   「先に止める」と言って何もしない。
-* **Debug の続行と 1 行実行は「上から走り直し」**(§4)。メモ化(``OpMemo``)で上流の op は計算し直さない。
+* **Debug の続行と 1 行実行は「止まった所から続ける」**(§4)。ブレークポイント・1 行実行で止まった実行は、
+  作業スレッドの中で待っている(``PauseGate``)。続行・1 行実行はそれを起こすだけで、上から走り直さない
+  (print も乱数も 2 度走らない)。止まっている間に文面を直したら、止まっている実行を終えて上から走り直す
+  (出力の欄にそう書く)。止まった所が関数の中なら、その枠の局所変数も変数の欄に出す。
+* **実行時・検査の文は UI の言語で出す**(``studio_program_i18n.localize``。実行系の文は英語が正で、画面に出す
+  所だけ直す)。例・新規の文面のコメントも UI の言語(手を付けていなければ言語の切り替えに従う)。
 * **安全**: ファイル・プロジェクトから開いた Python は、初回の実行の前に確認(``TrustStore``、中身の SHA-256 で
   覚える。中身が変われば確認し直し)。確認した後にエディタで直した文面は利用者の物として扱う。開いただけ・
   補完・検査・ホバーではコードを走らせない(jedi は ``allow_unsafe_interpreter_executions=False``、
@@ -37,6 +42,7 @@ from dataclasses import dataclass, field
 from PySide6 import QtCore, QtGui, QtWidgets
 
 import studio_program as sp
+import studio_program_i18n as spi
 
 MODE_PYTHON = "python"
 MODE_PIPELINE = "pipeline"
@@ -45,8 +51,9 @@ START_CHOICES = ("last", MODE_PYTHON, MODE_PIPELINE)
 SETTINGS_PREFIX = "pymode/"
 POLL_MS = 30
 DEFAULT_TIME_LIMIT_S = sp.DEFAULT_TIME_LIMIT_S
+NEW_PROGRAM_COMMENT = "New program. F5 runs it; img is the image open in Studio."
 NEW_PROGRAM_TEXT = ("# python\n"
-                    "# New program. F5 runs it; img is the image open in Studio.\n"
+                    "# " + NEW_PROGRAM_COMMENT + "\n"
                     "img = gaussian(img, 0.3)\n"
                     "show(img)\n")
 
@@ -95,23 +102,26 @@ def call_row_text(c, tr) -> str:
                                                          float(c.ms or 0.0), mark, where)
 
 
-def problem_rows(problems) -> list:
-    """``check_program`` の結果 → Problems の行 ``[(行, 文)]`` と、波線の ``{行: 文}``。"""
+def problem_rows(problems, tr=None) -> list:
+    """``check_program`` の結果 → Problems の行 ``[(行, 文)]`` と、波線の ``{行: 文}``。*tr* を渡すと、文と
+    直し方と「行 N」を UI の言語で出す(検査の文は英語が正。表に無い文・言語は英語のまま)。"""
     glyph = {"error": "✕", "warning": "⚠", "hint": "ℹ"}
+    ident = tr if tr is not None else (lambda s: s)
     rows, per_line = [], {}
     for p in problems:
-        msg = "%s line %d: %s [%s]" % (glyph.get(p.severity, "!"), p.line, p.message, p.code)
+        message = spi.localize(p.message, ident)
+        msg = "%s %s: %s [%s]" % (glyph.get(p.severity, "!"), spi.line_label(p.line, ident), message, p.code)
         if p.hint:
-            msg += " — " + p.hint
+            msg += " — " + spi.localize(p.hint, ident)
         rows.append((int(p.line), msg))
-        per_line[int(p.line)] = (per_line[int(p.line)] + "; " + p.message) if int(p.line) in per_line else p.message
+        per_line[int(p.line)] = (per_line[int(p.line)] + "; " + message) if int(p.line) in per_line else message
     return rows, per_line
 
 
 def error_line_of(text: str) -> int | None:
-    """出力の 1 行から ``line N`` の N(押すとその行へ飛ぶ)。無ければ None。"""
-    m = re.search(r"\bline (\d+)\b", text or "")
-    return int(m.group(1)) if m else None
+    """出力の 1 行から「行 N」の N(押すとその行へ飛ぶ。``line 3`` / ``3 行目`` / ``Zeile 3`` … どの言語の
+    言い方でも)。無ければ None。"""
+    return spi.line_number_of(text)
 
 
 def trust_store_path(settings_file: str | None) -> str:
@@ -125,33 +135,75 @@ def trust_store_path(settings_file: str | None) -> str:
 
 @dataclass
 class DebugSession:
-    """Debug で止まっている実行(続行・1 行実行の起点)。"""
+    """Debug で止まっている実行(続行・1 行実行の起点)。*job* = 止まって待っている実行(作業スレッド)。"""
     text: str
     lines_run: int
     line: int
     reason: str
+    job: "RunJob | None" = None
+
+    @property
+    def live(self) -> bool:
+        """止まった実行がまだ待っているか(続行・1 行実行で、その場から続けられる)。"""
+        return self.job is not None and not self.job.done
+
+
+class PauseGate:
+    """ブレークポイント・1 行実行で止まった実行(作業スレッド)と GUI の受け渡し。
+
+    作業スレッドは :meth:`hook`(``run_program(pause_hook=)``)の中で待つ。GUI は :attr:`snapshot`(止まった時点の
+    ``ProgramResult``)を取って画面に出し、:meth:`resume` で起こす。止める要求(*stop_event*)が立てば待ちを
+    やめて "stop" を返す。Qt の物には触らない(スレッドを跨いで信号を撃たない)。"""
+
+    def __init__(self, stop_event: threading.Event):
+        self.stop_event = stop_event
+        self.snapshot = None
+        self._wake = threading.Event()
+        self._command: object = "stop"
+
+    def hook(self, snapshot):
+        self._wake.clear()
+        self.snapshot = snapshot
+        while not self._wake.wait(0.02):
+            if self.stop_event.is_set():
+                return "stop"
+        return self._command
+
+    def resume(self, command, breakpoints=None, conditions=None) -> None:
+        self._command = {"command": command, "breakpoints": breakpoints, "conditions": conditions}
+        self._wake.set()
 
 
 def run_plan(action: str, session: DebugSession | None, text: str, breakpoints, conditions) -> dict:
     """run / continue / step の、run_program に渡す引数(Qt なし。試験あり)。
 
     * run      : 上から。ブレークポイントと条件を渡す。
-    * continue : 止まっている所から。走り直しで、すでに通った行数 + 1 まではブレークポイントで止めない。
+    * continue : 止まっている所から続ける。止まった実行が待っていれば(``session.live``)それを起こす
+                 (``resume="continue"``。今のブレークポイントと条件を渡し直す)。待っている実行が無ければ
+                 走り直しで、すでに通った行数 + 1 まではブレークポイントで止めない。
                  文面が止まった時から変わっていれば、上から(``restart=True``)。
-    * step     : 1 行。止まっていなければ最初の行で止まる(``max_lines=0``)。"""
+    * step     : 1 行。待っている実行があれば起こして 1 行(``resume="step"``)。止まっていなければ最初の行で
+                 止まる(``max_lines=0``)。
+
+    ``resume`` が None でなければ新しい実行は起こさない(他の鍵は起こす実行へ渡す物)。"""
     bps = sorted(set(int(b) for b in breakpoints))
     conds = {int(k): v for k, v in (conditions or {}).items() if int(k) in bps}
     same = session is not None and session.text == text
+    live = same and bool(getattr(session, "live", False))
+    if action not in ("run", "continue", "step"):
+        raise ValueError("action must be run / continue / step, got %r" % (action,))
+    if live and action in ("continue", "step"):
+        return {"breakpoints": bps, "conditions": conds, "resume_after_lines": 0, "max_lines": None,
+                "restart": False, "resume": action}
     if action == "run" or (action == "continue" and not same):
         return {"breakpoints": bps, "conditions": conds, "resume_after_lines": 0, "max_lines": None,
-                "restart": action == "continue"}
+                "restart": action == "continue", "resume": None}
     if action == "continue":
         return {"breakpoints": bps, "conditions": conds, "resume_after_lines": session.lines_run + 1,
-                "max_lines": None, "restart": False}
-    if action == "step":
-        n = session.lines_run + 1 if same else 0
-        return {"breakpoints": [], "conditions": {}, "resume_after_lines": 0, "max_lines": n, "restart": False}
-    raise ValueError("action must be run / continue / step, got %r" % (action,))
+                "max_lines": None, "restart": False, "resume": None}
+    n = session.lines_run + 1 if same else 0
+    return {"breakpoints": [], "conditions": {}, "resume_after_lines": 0, "max_lines": n, "restart": False,
+            "resume": None}
 
 
 def atomic_write_text(path: str, text: str) -> None:
@@ -216,10 +268,12 @@ _TR = {"fn": lambda s: s}
 class RunJob:
     """``fn()`` を作業スレッドで 1 回呼ぶ。終わったかは GUI のスレッドが :attr:`done` で見る。"""
 
-    def __init__(self, kind: str, fn, stop_event: threading.Event, meta: dict):
+    def __init__(self, kind: str, fn, stop_event: threading.Event, meta: dict, gate: "PauseGate | None" = None):
         self.kind = kind
         self.meta = meta
         self.stop_event = stop_event
+        #: ブレークポイント・1 行実行で止まって待つための受け渡し(Debug の実行だけ)。
+        self.gate = gate
         self.result = None
         self.exc: BaseException | None = None
         self.started = time.perf_counter()
@@ -279,7 +333,10 @@ class PyModeController(QtCore.QObject):
         self.settings = ctx["settings"]
         self.mode = MODE_PIPELINE
         self.config = "debug"
-        self.py_text = sp.STARTER_PROGRAM
+        #: 「新規」の文面(コメントは UI の言語)の SHA-256。手を付けていない無題の文面かどうかの判定に使う。
+        self._new_digests: set = {sp.program_digest(NEW_PROGRAM_TEXT)}
+        self._new_text()                                      # 今の言語の「新規」の文面も覚える
+        self.py_text = self._starter()
         self.pipe_text: str | None = None
         self.pipe_dirty = False
         self.file: str | None = None
@@ -358,12 +415,53 @@ class PyModeController(QtCore.QObject):
         return self.job is not None
 
     def unsaved(self) -> bool:
-        """Python の文面に保存していない変更があるか(ファイルなら中身と比べる。無題なら例の文面と比べる)。"""
+        """Python の文面に保存していない変更があるか(ファイルなら中身と比べる。無題なら例・新規の文面と比べる)。"""
         text = self.edit.toPlainText() if self.active else self.py_text
         if self.file:
             return self.saved_digest != sp.program_digest(text)
-        return sp.program_digest(text) not in (sp.program_digest(sp.STARTER_PROGRAM),
-                                               sp.program_digest(NEW_PROGRAM_TEXT), self.saved_digest)
+        return self._pristine_kind(text) is None and sp.program_digest(text) != self.saved_digest
+
+    def _lang(self) -> str:
+        return self.ctx.get("lang", lambda: "en")()
+
+    def _starter(self) -> str:
+        """例の文面(コメントは UI の言語。表に無い言語は英語)。"""
+        return sp.starter_program(self._lang())
+
+    def _new_text(self) -> str:
+        """「新規」の文面(コメントは UI の言語)。"""
+        text = NEW_PROGRAM_TEXT.replace(NEW_PROGRAM_COMMENT,
+                                        self.tr("New program. F5 runs it; img is the image open in Studio."))
+        self._new_digests.add(sp.program_digest(text))
+        return text
+
+    def _pristine_kind(self, text: str) -> str | None:
+        """*text* が手を付けていない例("example")・新規("new")の文面か(どの言語の物でも)。違えば None。"""
+        if text in sp.STARTER_PROGRAMS.values():
+            return "example"
+        if sp.program_digest(text) in self._new_digests:
+            return "new"
+        return None
+
+    def _relocalize_untouched_text(self):
+        """手を付けていない無題の例・新規の文面は、今の言語の物に入れ替える(コメントが UI の言語に従う)。
+        行は全言語で同じなので、ブレークポイントと条件はそのまま。走っている・止まっている間は触らない。"""
+        new_text = self._new_text()                           # 今の言語の「新規」の文面を覚える
+        if self.file or self.running or self.session is not None:
+            return
+        text = self.edit.toPlainText() if self.active else self.py_text
+        kind = self._pristine_kind(text)
+        want = self._starter() if kind == "example" else new_text if kind == "new" else None
+        if want is None or want == text:
+            return
+        if not self.active:
+            self.py_text = want
+            return
+        bps, conds = set(self.edit.breakpoints), dict(self.conditions)
+        self._load_text(want, None, "typed")
+        self.edit.breakpoints, self.conditions = bps, conds
+        self.edit._gutter.update()
+        self.edit._highlight()
 
     def display_name(self) -> str:
         return os.path.basename(self.file) if self.file else self.tr("untitled.py")
@@ -572,6 +670,8 @@ class PyModeController(QtCore.QObject):
         self.btn_stop.setToolTip(tr("Stop the running program (Ctrl+F2)"))
         self.output_title.setText(tr("Output (print, notes and errors; click a line with 'line N' to go there)"))
         self.output.setPlaceholderText(tr("Run the program (F5): print output, notes and errors appear here."))
+        if getattr(self, "stage_stack", None) is not None:   # 部品を作っている途中(_build_ui)では入れ替えない
+            self._relocalize_untouched_text()
         self._update_labels()
 
     # ---- 見た目の同期 ----
@@ -589,6 +689,10 @@ class PyModeController(QtCore.QObject):
             self.var_stack.setCurrentIndex(1 if py else 0)
         self.edit.comment_prefix = "#" if py else "*"
         self.edit.legacy_completion = not py
+        try:                                                  # 起動時の案内(最初の 3 手)をモードに合わせる
+            self.ctx.get("first_steps", lambda _py: None)(py)
+        except Exception as e:                                # noqa: BLE001 -- 案内の失敗でモードの切り替えを止めない
+            self.state.setdefault("errors", []).append(("could not update the first steps", str(e)))
         if self.assist is not None:
             with self._quiet_text():                         # 色分けの付け外しは文書の「変更」を撃つ: 未適用・未保存にしない
                 self.assist.set_active(py)
@@ -606,7 +710,7 @@ class PyModeController(QtCore.QObject):
             self.file_label.setToolTip(self.file or tr("not saved to a file yet"))
         else:
             self.mode_note.setText(tr("Pipeline: the stage list is the source"))
-        self.btn_stop.setEnabled(self.running)
+        self.btn_stop.setEnabled(self.running or self.session is not None)
         self.btn_step.setEnabled(self.config == "debug")
         st = self.session is not None and not self.running
         self.btn_run.setText(tr("Continue") if st else tr("Run"))
@@ -730,11 +834,12 @@ class PyModeController(QtCore.QObject):
         except Exception as e:                                # noqa: BLE001 -- 検査が入力を止めない
             probs = []
             self.state.setdefault("errors", []).append(("program check failed", str(e)))
-        rows, per_line = problem_rows(probs)
+        rows, per_line = problem_rows(probs, self._ptr)
         if self.last is not None and self.last_text == text and self.last.error_line and self.last.errors:
             ln = int(self.last.error_line)
-            rows.append((ln, "✕ " + self.tr("run") + ": " + self.last.errors[0]))
-            per_line[ln] = (per_line.get(ln, "") + "; " if ln in per_line else "") + self.last.errors[0]
+            err = self._loc(self.last.errors[0])
+            rows.append((ln, "✕ " + self.tr("run") + ": " + err))
+            per_line[ln] = (per_line.get(ln, "") + "; " if ln in per_line else "") + err
         if rows == self.state.get("program_syntax_errors", []) and per_line == self.edit.errors():
             return
         self.state["program_syntax_errors"] = rows
@@ -851,21 +956,42 @@ class PyModeController(QtCore.QObject):
         if not self._check_trust(text):
             return False
         plan = run_plan(action, self.session, text, self.edit.breakpoints, self.conditions)
+        if plan["resume"]:
+            return self._resume(plan)
         if plan["restart"]:
             self._out(self.tr("The program changed since it stopped: running again from the top"))
+        if self.session is not None:
+            self._end_session()                               # 止まって待っている実行を終えてから、上から走る
         stop = threading.Event()
+        gate = PauseGate(stop) if self.config == "debug" else None
         root = self.ctx.get("project_root", lambda: None)()
         stages = [tuple(s[:3]) for s in getattr(self.model, "stages", []) if not (len(s) > 3 and s[3])]
         kw = dict(trusted=True, syntax=sp.SYNTAX_PYTHON, memo=self.memo, time_limit_s=self.time_limit_s(),
                   breakpoints=plan["breakpoints"], conditions=plan["conditions"],
                   resume_after_lines=plan["resume_after_lines"], max_lines=plan["max_lines"], stop_event=stop,
                   current_stages=stages, config=self.config, project_dir=root,
-                  program_dir=os.path.dirname(self.file) if self.file else None, filename=self.file)
+                  program_dir=os.path.dirname(self.file) if self.file else None, filename=self.file,
+                  pause_hook=gate.hook if gate is not None else None)
         image = self._input_image()
         self.job = RunJob("program", lambda: sp.run_program(text, image, **kw), stop,
-                          {"text": text, "action": action, "config": self.config}).start()
+                          {"text": text, "action": action, "config": self.config, "stdout_n": 0, "notes_n": 0},
+                          gate=gate).start()
         self.state["pymode_runs"] = self.state.get("pymode_runs", 0) + 1
         self._out_header(action)
+        self._status(self.tr("running…"))
+        self._update_labels()
+        self._poll.start()
+        return True
+
+    def _resume(self, plan: dict) -> bool:
+        """止まって待っている実行を起こす(続行・1 行実行)。**止まった所から続く**: 上から走り直さない。"""
+        sess, self.session = self.session, None
+        job = sess.job
+        job.meta["action"] = plan["resume"]
+        self.job = job
+        self.edit.set_exec_line(0)
+        job.gate.resume(plan["resume"], plan["breakpoints"], plan["conditions"])
+        self._out_header(plan["resume"])
         self._status(self.tr("running…"))
         self._update_labels()
         self._poll.start()
@@ -890,7 +1016,13 @@ class PyModeController(QtCore.QObject):
         self._show_value(self._input_image())
 
     def _end_session(self):
-        self.session = None
+        """Debug の区切りを終える。止まって待っている実行があれば止めて、終わるのを待つ(待っているだけなので
+        すぐ終わる。実行の前後で戻す物 = sys.path・作業フォルダが、次の実行と重ならないように待つ)。"""
+        sess, self.session = self.session, None
+        job = getattr(sess, "job", None)
+        if job is not None and not job.done:
+            job.stop_event.set()
+            job.thread.join(2.0)
         self.edit.clear_exec()
         self._update_labels()
 
@@ -959,6 +1091,16 @@ class PyModeController(QtCore.QObject):
             self._poll.stop()
             return
         if not job.done:
+            gate = job.gate
+            snap = gate.snapshot if gate is not None else None
+            if snap is not None:                              # ブレークポイント・1 行実行で止まって待っている
+                gate.snapshot = None
+                self.job = None
+                self._poll.stop()
+                try:
+                    self._program_done(job, snap)
+                finally:
+                    self._update_labels()
             return
         self.job = None
         self._poll.stop()
@@ -983,6 +1125,7 @@ class PyModeController(QtCore.QObject):
             m = re.match(r"line (\d+):", err)
             if m:
                 err = "line %d:%s" % (l1 + int(m.group(1)) - 1, err[m.end():])
+            err = self._loc(err)
             self._out("✕ " + err)
             self._status("✕ " + err)
         else:
@@ -996,33 +1139,46 @@ class PyModeController(QtCore.QObject):
         self._refresh_variables(self.namespace)
         self.flash(self.tr("ran lines %d–%d") % job.meta["lines"])
 
-    def _program_done(self, job):
-        res: sp.ProgramResult = job.result
+    def _loc(self, text: str) -> str:
+        """実行系・検査の英語の文を UI の言語へ(型に当たらない文 = Python 自身の例外の文などはそのまま)。"""
+        return spi.localize(text, self._ptr)
+
+    def _program_done(self, job, res=None):
+        """実行が終わった(*res* なし)か、ブレークポイント・1 行実行で止まって待っている(*res* = その時点の結果)。"""
+        waiting = res is not None
+        res = res if waiting else job.result
         tr = self.tr
         text = job.meta["text"]
         self.last, self.last_text = res, text
         if res.namespace is not None:
             self.namespace = res.namespace
-        if res.stdout:
-            self._out(res.stdout.rstrip("\n"))
-        for n in res.notes:
-            self._out("ℹ " + n)
+        new_out = res.stdout[job.meta.get("stdout_n", 0):]    # 止まるたびに、前に出した分は出し直さない
+        job.meta["stdout_n"] = len(res.stdout)
+        if new_out:
+            self._out(new_out.rstrip("\n"))
+        for n in res.notes[job.meta.get("notes_n", 0):]:
+            self._out("ℹ " + self._loc(n))
+        job.meta["notes_n"] = len(res.notes)
         for e in res.errors:
-            self._out("✕ " + e)
+            self._out("✕ " + self._loc(e))
         # 記録・絵・変数
         self._fill_record(res)
         if res.ran and res.output is not None and not res.not_run_reason:
             self._show_value(res.output)
-        self._refresh_variables(res.namespace)
-        self.edit.set_timings(per_line_ms(res.calls))
         paused = res.stopped in ("breakpoint", "step")
+        self._refresh_variables(res.namespace, res.locals if paused else None)
+        self.edit.set_timings(per_line_ms(res.calls))
         if paused:
-            self.session = DebugSession(text, res.lines_run, int(res.stopped_line or 0), res.stopped)
+            self.session = DebugSession(text, res.lines_run, int(res.stopped_line or 0), res.stopped,
+                                        job=job if waiting else None)
             self.edit.set_exec_line(int(res.stopped_line or 0))
             self.edit.goto_line(int(res.stopped_line or 1), focus=False)
             cond = self.conditions.get(int(res.stopped_line or 0))
             msg = (tr("stopped at line %d (breakpoint)") % res.stopped_line if res.stopped == "breakpoint"
                    else tr("stopped at line %d (step)") % res.stopped_line)
+            func = res.stack[0][0] if res.stack else ""
+            if func and not func.startswith("<"):
+                msg += "  ·  " + tr("in %s(): its local variables are listed too") % func
             if cond and res.stopped == "breakpoint":
                 msg += "  ·  " + tr("condition: %s") % cond
             msg += "  ·  " + tr("F5 continue, F6 step, Ctrl+F2 stop")
@@ -1031,11 +1187,12 @@ class PyModeController(QtCore.QObject):
             self.edit.clear_exec()
             self.edit.set_timings(per_line_ms(res.calls))
             if res.errors:
-                msg = "✕ " + res.errors[0]
+                msg = "✕ " + self._loc(res.errors[0])
             else:
                 hits = sum(1 for c in res.calls if c.cached)
                 msg = tr("ran in %.0f ms (%s)  ·  %d op call(s), %d from cache") % (
-                    res.elapsed_s * 1000.0, "Debug" if res.config == "debug" else "Release", len(res.calls), hits)
+                    res.elapsed_s * 1000.0, tr("Debug") if res.config == "debug" else tr("Release"),
+                    len(res.calls), hits)
         if not (res.errors and not paused):                   # 誤りの文は上で出力の欄へ書いた(2 度書かない)
             self._out(msg)
         self._status(msg)
@@ -1082,10 +1239,14 @@ class PyModeController(QtCore.QObject):
             self._show_value(c.value)
         self.goto_line(c.line)
 
-    def _refresh_variables(self, ns):
+    def _refresh_variables(self, ns, frame_locals=None):
+        """変数の欄を作り直す。*frame_locals* = 止まった所が関数の中のときの、その枠の局所変数(同じ名前の
+        モジュールの変数より優先 = その行から見える値)。"""
         if self.vars is None or self.var_source is None:
             return
         vals = self._user_values(ns) if isinstance(ns, dict) else {}
+        if frame_locals:
+            vals.update({k: v for k, v in frame_locals.items() if not k.startswith("__")})
         self.var_source.ns = vals
         try:
             self.vars.refresh()
@@ -1120,8 +1281,8 @@ class PyModeController(QtCore.QObject):
 
     def _out_header(self, action):
         name = {"run": self.tr("Run"), "continue": self.tr("Continue"), "step": self.tr("Step")}[action]
-        self._out("── %s  %s  (%s)  %s" % (name, self.display_name(), "Debug" if self.config == "debug"
-                                                      else "Release", time.strftime("%H:%M:%S")))
+        self._out("── %s  %s  (%s)  %s" % (name, self.display_name(), self.tr("Debug") if self.config == "debug"
+                                                      else self.tr("Release"), time.strftime("%H:%M:%S")))
 
     def clear_output(self):
         self.output.clear()
@@ -1153,13 +1314,13 @@ class PyModeController(QtCore.QObject):
     def new_program(self):
         if not self._confirm_unsaved(self.tr("New program")):
             return False
-        self._load_text(NEW_PROGRAM_TEXT, None, "typed")
+        self._load_text(self._new_text(), None, "typed")
         return True
 
     def open_example(self):
         if not self._confirm_unsaved(self.tr("Open the example")):
             return False
-        self._load_text(sp.STARTER_PROGRAM, None, "typed")
+        self._load_text(self._starter(), None, "typed")
         return True
 
     def open_program(self, path: str | None = None, origin: str | None = None):
@@ -1416,8 +1577,8 @@ class PyModeController(QtCore.QObject):
                 if sp.program_digest(disk) != str(self._get("file_digest", "")):
                     trusted = False                           # ファイルが外で変わった: 確認し直す
                 origin = origin if origin in ("file", "project") else "file"
-        elif isinstance(buf, str) and buf:
-            text = buf
+        elif isinstance(buf, str) and buf and buf not in sp.STARTER_PROGRAMS.values():
+            text = buf                                        # 手を付けていない例は残さず、今の言語の例を出す
         if text is not None:
             self.py_text = text
             self.origin = origin
@@ -1477,6 +1638,8 @@ class PyModeController(QtCore.QObject):
             job.stop_event.set()
             job.thread.join(timeout_s)
             self.job = None
+        if self.session is not None:                          # ブレークポイントで待っている実行を残さない
+            self._end_session()
         self._poll.stop()
         self.detach_highlighter()
         if self.vars is not None:

@@ -47,7 +47,7 @@ __all__ = [
     "prelude_exports", "prelude_collisions", "prelude_namespace", "op_table", "memo_eligible",
     "fingerprint", "describe_value", "pipeline_search_dirs", "close_program_windows", "needs_gui_thread",
     "Problem", "check_program", "checker_backends", "complete", "hover", "apply_fix", "CONFIGS",
-    "run_file", "evaluate", "STARTER_PROGRAM", "abandoned_runs",
+    "run_file", "evaluate", "STARTER_PROGRAM", "STARTER_PROGRAMS", "starter_program", "abandoned_runs",
 ]
 
 SYNTAX_PYTHON = "python"
@@ -60,21 +60,65 @@ PROGRAM_FILENAME = "<studio-program>"
 DEFAULT_TIME_LIMIT_S = 30.0
 
 #: 起動時に Program 欄へ入れる Python の例(既定のモードは Python、設計書 §1)。同梱の画像を読み、op 4 つ・
-#: 変数・if を 1 つずつ使う。実行すると絵(show)と段の列(記録)が出る。画面の文と同じく英語で書く。
-STARTER_PROGRAM = """# python
-# Fullseye Studio - press F5 (Run): the picture and the stage list appear.
-import sample_images                       # images that ship with Fullseye
-img = sample_images.load("coins")          # delete this line to use the image open in Studio
-img = gaussian(img, 0.3)                   # 1. smooth
-mask = otsu(img)                           # 2. bright parts -> region
-n = blob_count(mask)                       # 3. count the blobs (a number)
-print("blobs:", n)
-if n > 10:
-    mask = opening_circle(mask, 0.3)       # 4a. many specks: remove the small ones
-else:
-    mask = fill_holes(mask)                # 4b. few blobs: fill their holes
-show(mask)
-"""
+#: 変数・if を 1 つずつ使う。実行すると絵(show)と段の列(記録)が出る。コメントと print の見出しは UI の言語で
+#: 出す(:func:`starter_program`)。コードの行は全言語で同じ = 行番号も同じ。表に無い言語は英語。
+_STARTER_TEXTS = {
+    "en": ("Fullseye Studio - press F5 (Run): the picture and the stage list appear.",
+           "images that ship with Fullseye", "delete this line to use the image open in Studio",
+           "1. smooth", "2. bright parts -> region", "3. count the blobs (a number)", "blobs:",
+           "4a. many specks: remove the small ones", "4b. few blobs: fill their holes"),
+    "ja": ("Fullseye Studio - F5(実行)を押すと、絵と段の列が出ます。",
+           "Fullseye に同梱の画像", "この行を消すと、Studio で開いている画像を使います",
+           "1. 平滑化", "2. 明るい所 -> 領域", "3. 粒を数える(数)", "粒の数:",
+           "4a. 細かい粒が多い: 小さい物を除く", "4b. 粒が少ない: 穴を埋める"),
+    "zh": ("Fullseye Studio - 按 F5(运行):显示图像和步骤列表。",
+           "Fullseye 自带的图像", "删除此行则使用 Studio 中打开的图像",
+           "1. 平滑", "2. 亮的部分 -> 区域", "3. 数颗粒(一个数)", "颗粒数:",
+           "4a. 细小颗粒多:去掉小的", "4b. 颗粒少:填充孔洞"),
+    "tw": ("Fullseye Studio - 按 F5(執行):顯示影像和步驟列表。",
+           "Fullseye 內附的影像", "刪除此行則使用 Studio 中開啟的影像",
+           "1. 平滑", "2. 亮的部分 -> 區域", "3. 數顆粒(一個數)", "顆粒數:",
+           "4a. 細小顆粒多:去掉小的", "4b. 顆粒少:填補孔洞"),
+    "ko": ("Fullseye Studio - F5(실행)를 누르면 그림과 단계 목록이 나옵니다.",
+           "Fullseye에 들어 있는 이미지", "이 줄을 지우면 Studio에서 연 이미지를 씁니다",
+           "1. 평활화", "2. 밝은 부분 -> 영역", "3. 알갱이 세기(수)", "알갱이 수:",
+           "4a. 잔 알갱이가 많음: 작은 것을 제거", "4b. 알갱이가 적음: 구멍을 메움"),
+    "de": ("Fullseye Studio - F5 (Ausführen) drücken: Bild und Stufenliste erscheinen.",
+           "Bilder, die Fullseye mitbringt", "diese Zeile löschen, um das in Studio geöffnete Bild zu nutzen",
+           "1. glätten", "2. helle Teile -> Region", "3. Flecken zählen (eine Zahl)", "Flecken:",
+           "4a. viele Sprenkel: die kleinen entfernen", "4b. wenige Flecken: Löcher füllen"),
+}
+_STARTER_COMMENT_COL = 43
+
+
+def starter_program(lang: str = "en") -> str:
+    """Program 欄の例(Python)を *lang* のコメントで返す。表に無い言語(hi など)は英語。"""
+    t = _STARTER_TEXTS.get(lang) or _STARTER_TEXTS["en"]
+
+    def row(code, comment):
+        return code.ljust(_STARTER_COMMENT_COL) + "# " + comment
+    return "\n".join([
+        "# python",
+        "# " + t[0],
+        row("import sample_images", t[1]),
+        row('img = sample_images.load("coins")', t[2]),
+        row("img = gaussian(img, 0.3)", t[3]),
+        row("mask = otsu(img)", t[4]),
+        row("n = blob_count(mask)", t[5]),
+        "print(%s, n)" % json.dumps(t[6], ensure_ascii=False),
+        "if n > 10:",
+        row("    mask = opening_circle(mask, 0.3)", t[7]),
+        "else:",
+        row("    mask = fill_holes(mask)", t[8]),
+        "show(mask)",
+        "",
+    ])
+
+
+#: 英語の例(今までの名前。試験と API の利用者が読む)。
+STARTER_PROGRAM = starter_program("en")
+#: 言語ごとの例 ``{言語: 文面}``(「手を付けていない例か」の判定にも使う)。
+STARTER_PROGRAMS = {k: starter_program(k) for k in _STARTER_TEXTS}
 
 #: 実行の構成。Debug = 行フックあり(既定)、Release = 速さ優先(行フックなし)。
 CONFIGS = ("debug", "release")
@@ -1052,6 +1096,10 @@ class ProgramResult:
     filename: str = PROGRAM_FILENAME                 # 実行したファイル(Program 欄なら <studio-program>)
     error_file: str | None = None                    # 例外の場所のファイル(error_line と組で (ファイル, 行))
     namespace: dict | None = None                    # 実行後の名前空間(対話の窓が evaluate で使う)
+    #: 止まった所が関数の中のとき、その枠の局所変数(モジュールの階層で止まったら空)。
+    locals: dict = field(default_factory=dict)
+    #: 止まった所の呼び出しの積み重ね ``[(関数名, 行)]``(内側が先。Program のファイルの枠だけ)。
+    stack: list = field(default_factory=list)
 
     @property
     def ok(self) -> bool:
@@ -1096,8 +1144,16 @@ class _Tracer:
     """``sys.settrace`` の本体: Program の枠の 'line' だけを見る。"""
 
     def __init__(self, time_limit_s, breakpoints, skip_hits, max_lines, stop_event,
-                 filename: str = PROGRAM_FILENAME, conditions=None, resume_after_lines: int = 0):
+                 filename: str = PROGRAM_FILENAME, conditions=None, resume_after_lines: int = 0, clock=None):
         self.filename = filename
+        #: 止まっていた時間を除いて時間の上限を数える時計(見張りと共有)。
+        self.clock = clock if clock is not None else _Clock()
+        #: ``on_pause(理由, 行, 枠) -> 指示``。あれば、ブレークポイント・1 行実行で例外を投げずに**その場で待つ**
+        #: (戻り値 "continue" / "step" / "stop" か、``{"command", "breakpoints", "conditions"}``)。
+        self.on_pause = None
+        #: 最後に止まった所の局所変数と呼び出しの積み重ね(:class:`ProgramResult` の locals / stack)。
+        self.locals: dict = {}
+        self.stack: list = []
         #: 条件つきブレークポイント {行: 式}。式はその行の枠(globals / locals)で評価し、偽なら止めない。
         #: 評価できなければ止めて理由を ``notes`` へ(止めずに素通りさせない側 = fail-closed)。
         self.conditions = {int(k): str(v) for k, v in (conditions or {}).items() if str(v).strip()}
@@ -1127,16 +1183,40 @@ class _Tracer:
             raise ProgramStopped(self.sticky.reason, ln)
         if self.stop_event is not None and self.stop_event.is_set():
             self._stop("stop_requested", ln)
-        if self.time_limit_s is not None and time.perf_counter() - self.t0 > self.time_limit_s:
+        if self.time_limit_s is not None \
+                and time.perf_counter() - self.t0 - self.clock.paused_s > self.time_limit_s:
             self._stop("time_limit", ln)
+        reason = None
         if ln in self.breakpoints and self.lines >= self.resume_after_lines and self._condition_holds(frame, ln):
             self.hits += 1
             if self.hits > self.skip_hits:
-                self._stop("breakpoint", ln)
-        if self.max_lines is not None and self.lines >= self.max_lines:
-            self._stop("step", ln)
+                reason = "breakpoint"
+        if reason is None and self.max_lines is not None and self.lines >= self.max_lines:
+            reason = "step"
+        if reason is not None:
+            self._pause(reason, frame, ln)
         self.lines += 1
         return self.local_trace
+
+    def _pause(self, reason, frame, ln):
+        """ブレークポイント・1 行実行で止まる。``on_pause`` があればその場で待ち、指示で続ける(この行はまだ
+        実行していない: 戻ればこの行から続く)。無ければ今までどおり例外で実行を終える。"""
+        self.locals, self.stack = _frame_locals(frame), _frame_stack(frame, self.filename)
+        if self.on_pause is None:
+            self._stop(reason, ln)
+        cmd = self.on_pause(reason, ln, frame)
+        if isinstance(cmd, dict):
+            if cmd.get("breakpoints") is not None:
+                self.breakpoints = set(int(b) for b in cmd["breakpoints"])
+            if cmd.get("conditions") is not None:
+                self.conditions = {int(k): str(v) for k, v in cmd["conditions"].items() if str(v).strip()}
+            cmd = cmd.get("command")
+        if cmd == "continue":
+            self.max_lines = None
+        elif cmd == "step":
+            self.max_lines = self.lines + 1          # この行を実行して、次の行で止まる
+        else:                                        # "stop"・知らない指示は止める側(走り続けさせない)
+            self._stop("stop_requested", ln)
 
     def _condition_holds(self, frame, ln) -> bool:
         expr = self.conditions.get(ln)
@@ -1152,6 +1232,32 @@ class _Tracer:
     def _stop(self, reason, ln):
         self.sticky = ProgramStopped(reason, ln)
         raise self.sticky
+
+
+class _Clock:
+    """実行の時計: ブレークポイントで待っていた時間(``paused_s``)は時間の上限に数えない。``paused`` の間、
+    見張りは時間切れを撃たない(止める要求は撃つ)。"""
+
+    def __init__(self):
+        self.paused_s = 0.0
+        self.paused = False
+
+
+def _frame_locals(frame) -> dict:
+    """止まった枠の局所変数の写し(モジュールの階層なら空 = 名前空間そのものなので重ねない)。"""
+    if frame is None or frame.f_locals is frame.f_globals:
+        return {}
+    return {k: v for k, v in dict(frame.f_locals).items() if isinstance(k, str)}
+
+
+def _frame_stack(frame, filename: str) -> list:
+    """止まった所の呼び出しの積み重ね ``[(関数名, 行)]``(内側が先。Program のファイルの枠だけ)。"""
+    out = []
+    while frame is not None:
+        if frame.f_code.co_filename == filename:
+            out.append((frame.f_code.co_name, frame.f_lineno))
+        frame = frame.f_back
+    return out
 
 
 def _hdev_run(text: str, image, names, result: ProgramResult, current_stages) -> ProgramResult:
@@ -1247,7 +1353,7 @@ def abandoned_runs() -> list:
     return [dict(a, alive=a["thread"].is_alive()) for a in _ABANDONED]
 
 
-def _run_with_watchdog(fn, outcome: dict, deadline, stop_event, in_caller: bool) -> bool:
+def _run_with_watchdog(fn, outcome: dict, deadline, stop_event, in_caller: bool, clock=None) -> bool:
     """*fn* を回し、時間の上限(*deadline*)か *stop_event* で止めの例外を撃つ。戻らなければ撃ち直し、
     撃ち始めて :data:`_STOP_GRACE_S` 秒で諦めて True(= 残した)を返す。
 
@@ -1261,7 +1367,7 @@ def _run_with_watchdog(fn, outcome: dict, deadline, stop_event, in_caller: bool)
         def watch():
             shot_at, shots, last = None, 0, 0.0
             while not done.wait(0.02):
-                exc = _due(deadline, stop_event)
+                exc = _due(deadline, stop_event, clock)
                 if exc is None:
                     continue
                 now = time.perf_counter()
@@ -1295,7 +1401,7 @@ def _run_with_watchdog(fn, outcome: dict, deadline, stop_event, in_caller: bool)
         th.join(0.02)
         if not th.is_alive():
             break
-        exc = _due(deadline, stop_event)
+        exc = _due(deadline, stop_event, clock)
         if exc is None:
             continue
         now = time.perf_counter()
@@ -1310,10 +1416,14 @@ def _run_with_watchdog(fn, outcome: dict, deadline, stop_event, in_caller: bool)
     return False
 
 
-def _due(deadline, stop_event):
+def _due(deadline, stop_event, clock=None):
+    """今撃つべき止めの例外(無ければ None)。ブレークポイントで待っている間(*clock*.paused)は時間切れを
+    撃たず、待っていた時間は上限に数えない。止める要求は待っている間も撃つ(待ちから起きた所で届く)。"""
     if stop_event is not None and stop_event.is_set():
         return _AsyncStopRequested
-    if deadline is not None and time.perf_counter() > deadline:
+    if clock is not None and clock.paused:
+        return None
+    if deadline is not None and time.perf_counter() - (clock.paused_s if clock is not None else 0.0) > deadline:
         return _AsyncTimeLimit
     return None
 
@@ -1590,7 +1700,8 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
                 current_stages: Sequence | None = None, device: str = "cpu",
                 program_dir: str | None = None, project_dir: str | None = None,
                 config: str = "debug", filename: str | None = None,
-                keep_namespace: bool = True, conditions=None, resume_after_lines: int = 0) -> ProgramResult:
+                keep_namespace: bool = True, conditions=None, resume_after_lines: int = 0,
+                pause_hook: Callable | None = None) -> ProgramResult:
     """Program 欄の文面を走らせる。
 
     * HDevelop 風: 今の ``studio.parse_hdev_program_lines`` の段の列を、Studio と同じ呼び方で走らせる
@@ -1611,7 +1722,15 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
     * ``conditions``: 条件つきブレークポイント ``{行: 式}``(Debug だけ。偽なら止めない、評価できなければ止める)。
     * ``resume_after_lines``: 続行の走り直しで、最初の N 行(すでに通った所)ではブレークポイントで止めない
       (2026-11-13 UI の繋ぎ: 止まった所から続行 = ``resume_after_lines=前の lines_run + 1``、1 行実行 =
-      ``max_lines=前の lines_run + 1``。止まった行はまだ実行していないので、走り直しではそこを素通りさせる)。"""
+      ``max_lines=前の lines_run + 1``。止まった行はまだ実行していないので、走り直しではそこを素通りさせる)。
+    * ``pause_hook``(Debug だけ): 渡すと、ブレークポイント・1 行実行で実行を**終えずにその場で待つ**。
+      ``pause_hook(その時点の ProgramResult) -> "continue" / "step" / "stop"``(または
+      ``{"command": …, "breakpoints": […], "conditions": {…}}`` = 続ける前にブレークポイントを差し替える)を
+      プログラムの作業スレッドから呼び、戻るまで待つ。"continue" は止まった所から続け、"step" は 1 行実行して
+      また呼び、"stop" は ``stopped="stop_requested"`` で終える。待っている時間は時間の上限に数えない。
+      待っている間に ``stop_event`` が立てば見張りが止める(フックが見ていなくても戻る)。Qt を直接使う
+      プログラムを main スレッドで回す形(§15)では待てないので、今までどおり止まった所で実行を終える。
+      止まった所が関数の中なら、その枠の局所変数を ``ProgramResult.locals``、呼び出しの積み重ねを ``stack`` に入れる。"""
     if config not in CONFIGS:
         raise ValueError("config must be one of %s, got %r" % (", ".join(CONFIGS), config))
     syn, errs = (syntax, []) if syntax else detect_syntax(text)
@@ -1657,8 +1776,9 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
     if filename:
         ns["__file__"] = code_name
     ns["__studio_recorder__"] = rec
+    clock = _Clock()
     tracer = _Tracer(time_limit_s, breakpoints, skip_hits, max_lines, stop_event, filename=code_name,
-                     conditions=conditions, resume_after_lines=resume_after_lines)
+                     conditions=conditions, resume_after_lines=resume_after_lines, clock=clock)
     user_dirs = [d for d in (program_dir, os.path.join(project_dir, PROJECT_PROGRAMS_SUBDIR) if project_dir else None)
                  if d]
     release = config == "release"
@@ -1713,19 +1833,55 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
         except BaseException:                        # noqa: BLE001 -- body の外で届いた止めの例外は捨てる
             outcome.setdefault("kind", "stopped")
 
+    def fill(res: ProgramResult, live: bool = False) -> None:
+        """実行の状態を *res* へ写す(終わった時の結果と、止まって待つ時の途中の結果で同じ)。*live* = 途中:
+        記録は写しを渡す(続きの実行が足しても、渡した結果は変わらない)。"""
+        res.elapsed_s = time.perf_counter() - t0 - clock.paused_s
+        res.lines_run = tracer.lines
+        res.notes.extend(tracer.notes)
+        res.stdout = out.getvalue()
+        res.calls = list(rec.calls) if live else rec.calls
+        res.clamped = rec.clamped
+        res.directives = rec.directives
+        res.windows = rec.windows
+        res.output, res.output_source = rec.output()
+        res.output_sort = rec.sort_of(res.output) if isinstance(res.output, np.ndarray) else _kind_of(res.output)
+        res.variables, res.values = _variables(ns, base, rec)
+        if keep_namespace:
+            res.namespace = ns
+        res.memo_hits = (memo.hits - hits0) if memo is not None else 0
+
+    def on_pause(reason, ln, frame):
+        """作業スレッド: 止まった時点の結果を作って ``pause_hook`` に渡し、戻るまで待つ(時計は止める)。"""
+        snap = ProgramResult(syntax=syn, config=config)
+        snap.ran, snap.filename = True, code_name
+        snap.stopped, snap.stopped_line = reason, ln
+        snap.notes = list(result.notes)
+        snap.locals, snap.stack = dict(tracer.locals), list(tracer.stack)
+        fill(snap, live=True)
+        t_wait = time.perf_counter()
+        clock.paused = True
+        try:
+            return pause_hook(snap)
+        finally:
+            clock.paused_s += time.perf_counter() - t_wait   # 先に足してから「待ち」を解く(見張りが誤って撃たない)
+            clock.paused = False
+
     deadline = None if time_limit_s is None else t0 + time_limit_s
     if not release and deadline is not None:
         deadline += _WATCHDOG_DEBUG_SLACK_S          # Debug は行フックが先に止める(行番号つきの文)。見張りは保険
     if needs_gui_thread(text) and threading.current_thread() is threading.main_thread():
         # Qt を直接使うプログラムは GUI(main)スレッドで回す(設計書 §15 の案 C)。見張りは別スレッドから撃つ
-        abandoned = _run_with_watchdog(guarded, outcome, deadline, stop_event, in_caller=True)
+        abandoned = _run_with_watchdog(guarded, outcome, deadline, stop_event, in_caller=True, clock=clock)
     else:
-        abandoned = _run_with_watchdog(guarded, outcome, deadline, stop_event, in_caller=False)
+        if pause_hook is not None and not release:
+            tracer.on_pause = on_pause
+        abandoned = _run_with_watchdog(guarded, outcome, deadline, stop_event, in_caller=False, clock=clock)
     result.ran = True
     kind = outcome.get("kind")
     if abandoned:
-        reason = "time limit %.3g s" % time_limit_s if (deadline is not None and time.perf_counter() > deadline) \
-            else "a stop request"
+        reason = "time limit %.3g s" % time_limit_s \
+            if (deadline is not None and time.perf_counter() - clock.paused_s > deadline) else "a stop request"
         result.stopped = "unstoppable"
         result.errors = ["could not stop the program after %s within %.1f s — it is inside a long call "
                          "(C code, time.sleep, a big numpy operation) or keeps catching the stop; it goes on "
@@ -1734,6 +1890,8 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
     elif kind == "stopped":
         reason, ln = outcome.get("reason", "stop_requested"), outcome.get("line", 0)
         result.stopped, result.stopped_line = reason, ln
+        if reason in ("breakpoint", "step"):
+            result.locals, result.stack = dict(tracer.locals), list(tracer.stack)
         if reason == "time_limit":
             result.errors = ["line %d: stopped: time limit %.3g s exceeded" % (ln, time_limit_s)]
             result.error_line = ln
@@ -1764,20 +1922,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
     restored = snapshot.restore()
     if restored:
         result.notes.append("restored after the run: " + ", ".join(restored))
-    result.elapsed_s = time.perf_counter() - t0
-    result.lines_run = tracer.lines
-    result.notes.extend(tracer.notes)
-    result.stdout = out.getvalue()
-    result.calls = rec.calls
-    result.clamped = rec.clamped
-    result.directives = rec.directives
-    result.windows = rec.windows
-    result.output, result.output_source = rec.output()
-    result.output_sort = rec.sort_of(result.output) if isinstance(result.output, np.ndarray) else _kind_of(result.output)
-    result.variables, result.values = _variables(ns, base, rec)
-    if keep_namespace:
-        result.namespace = ns
-    result.memo_hits = (memo.hits - hits0) if memo is not None else 0
+    fill(result)
     return result
 
 

@@ -117,11 +117,32 @@ def test_line_base_is_converted_in_one_place():
 def test_run_plan_continue_and_step():
     s = pm_mod.DebugSession("t", lines_run=6, line=4, reason="breakpoint")
     assert pm_mod.run_plan("run", None, "t", {4}, {}) == {"breakpoints": [4], "conditions": {}, "resume_after_lines": 0,
-                                                          "max_lines": None, "restart": False}
+                                                          "max_lines": None, "restart": False, "resume": None}
+    # 待っている実行が無い止まり方(pause_hook を使えない形): 今までどおり走り直しで続ける
+    assert not s.live
     assert pm_mod.run_plan("continue", s, "t", {4}, {4: "i > 1"})["resume_after_lines"] == 7
     assert pm_mod.run_plan("continue", s, "changed", {4}, {})["restart"] is True
     assert pm_mod.run_plan("step", s, "t", {4}, {})["max_lines"] == 7
     assert pm_mod.run_plan("step", None, "t", {4}, {})["max_lines"] == 0
+    # 待っている実行がある: 起こすだけ(新しい実行を作らない)。文面が変わっていれば上から
+    ev = threading.Event()
+    job = pm_mod.RunJob("program", ev.wait, ev, {}).start()
+    try:
+        live = pm_mod.DebugSession("t", lines_run=6, line=4, reason="breakpoint", job=job)
+        assert live.live
+        assert pm_mod.run_plan("continue", live, "t", {4, 9}, {9: "i > 1"}) == {
+            "breakpoints": [4, 9], "conditions": {9: "i > 1"}, "resume_after_lines": 0, "max_lines": None,
+            "restart": False, "resume": "continue"}
+        assert pm_mod.run_plan("step", live, "t", {4}, {})["resume"] == "step"
+        assert pm_mod.run_plan("run", live, "t", {4}, {})["resume"] is None
+        changed = pm_mod.run_plan("continue", live, "changed", {4}, {})
+        assert changed["resume"] is None and changed["restart"] is True
+    finally:
+        ev.set()
+        job.thread.join(2.0)
+    assert not live.live
+    with pytest.raises(ValueError):
+        pm_mod.run_plan("jump", None, "t", (), {})
     assert pm_mod.first_changed_line("a\nb\nc", "a\nB\nc") == 2
     assert pm_mod.first_changed_line("a\nb", "a\nb") is None
     assert pm_mod.error_line_of("line 12: ZeroDivisionError: division by zero") == 12
@@ -350,16 +371,20 @@ def test_6_runtime_exception_marks_the_line(tmp_path, monkeypatch):
 # --------------------------------------------------------------------------- #
 def test_7_infinite_loop_is_stopped(tmp_path, monkeypatch):
     from PySide6 import QtCore
-    win, model = _launch(tmp_path, monkeypatch, time_limit=0.8)
+    win, model = _launch(tmp_path, monkeypatch, time_limit=30)
     try:
         pm = win._pymode
         _set_text(win, "# python\nwhile True:\n    pass\n")
+        # 止めるボタン: 時間の上限は遠くに置く(上限 0.8 s のまま押すと、遅い機械では上限が先に来て time_limit に
+        # なる = 2 つの原因を競わせる試験だった。e2e の 7 段目が 10 回中 5 回落ちた原因)
         _key(win, QtCore.Qt.Key_F5)
         _pump(0.2)
         assert pm.running
+        t0 = time.perf_counter()
         pm.btn_stop.click()
         assert pm.wait_idle(5)
-        assert pm.last.stopped == "stop_requested"
+        assert pm.last.stopped == "stop_requested" and time.perf_counter() - t0 < 3.0
+        pm._set("time_limit_s", 0.8)
         res = _run_f5(win)                                               # 時間の上限
         assert res.stopped == "time_limit"
         pm.set_config("release")

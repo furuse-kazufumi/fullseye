@@ -6013,6 +6013,15 @@ def lang_from_locale(name, languages=None):
     return code if code in langs else "en"
 
 
+#: 起動時の案内(最初の 3 手)。Program 欄のモードごとに 3 行(画面の文は英語が正、訳は i18n.json の strings)。
+FIRST_STEPS_PIPELINE = ("1. Open a sample: File ▸ Sample images",
+                        "2. Select an operator in the Operators panel and press +",
+                        "3. Press ▶▶ to run")
+FIRST_STEPS_PYTHON = ("1. Press F5: the example in the Program runs",
+                      "2. The picture, the record and the variables appear",
+                      "3. Change a number in the code and press F5 again")
+
+
 def tr(text):
     """UI 文字列を i18n テーブル(studio_assets/i18n.json の 'strings')で現在言語へ。
 
@@ -8172,13 +8181,14 @@ def build_window(model=None, start_mode="pipeline"):
     _fs_lay = QtWidgets.QHBoxLayout(first_steps); _fs_lay.setContentsMargins(10, 2, 4, 2); _fs_lay.setSpacing(14)
     _fs_title = QtWidgets.QLabel("First steps"); _fs_title.setStyleSheet("font-weight:700;")
     _fs_lay.addWidget(_fs_title)
-    for _txt in ("1. Open a sample: File ▸ Sample images",
-                 "2. Select an operator in the Operators panel and press +",
-                 "3. Press ▶▶ to run"):
+    _fs_labels = []
+    for _txt in FIRST_STEPS_PIPELINE:
         _fs_step = QtWidgets.QLabel(_txt)
         _fs_step.setMinimumWidth(1)        # ★2026-11-12: 折り返さず 1 行(狭い欄では右が切れる。全文はツールチップ)
         _fs_step.setToolTip(_txt)
         _fs_lay.addWidget(_fs_step, 0)
+        _fs_labels.append(_fs_step)
+    win._first_steps_labels = _fs_labels   # ★2026-11-13: 文は Program 欄のモードに合わせて入れ替える(_pm_first_steps)
     _fs_lay.addStretch(1)
     _fs_close = QtWidgets.QToolButton(); _fs_close.setText("✕")
     _fs_close.setToolTip("Hide these steps. Help ▸ First steps shows them again")
@@ -16532,7 +16542,19 @@ def build_window(model=None, start_mode="pipeline"):
             _apply_layout_state(); win._docks[name].show(); win._docks[name].raise_(); _save_layout_state()
         except Exception as exc:                          # noqa: BLE001
             _log_soft_failure("could not show the %s panel" % name, exc)
+    def _pm_first_steps(py):
+        """起動時の案内(最初の 3 手)を Program 欄のモードに合わせる: Python のモードでは「F5 で例を実行」、
+        パイプラインのモードでは今までの「サンプルを開く → op を足す → 実行」。英語の原文を言語の表に登録し直す
+        (言語を切り替えても、今のモードの文が訳される)。"""
+        texts = FIRST_STEPS_PYTHON if py else FIRST_STEPS_PIPELINE
+        labels, tips = {}, {}
+        for lab, en in zip(win._first_steps_labels, texts):
+            labels[lab] = win._label_en[lab] = ("text", en)
+            tips[lab] = win._tt_en[lab] = en
+        _apply_labels(labels)
+        _apply_tooltips(tips)
     studio_pymode.install(win, {
+        "first_steps": _pm_first_steps,
         "tr": tr, "lang": lambda: _UI_LANG.get("code", "en"), "flash": flash, "settings": _settings,
         "edit": code_edit, "status": code_status, "code_layout": cvl,
         "pipeline_buttons": (c_run, c_cont, c_step, c_reset, c_apply, c_sync),
