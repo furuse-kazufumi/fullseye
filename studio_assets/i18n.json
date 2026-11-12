@@ -2045,6 +2045,14 @@
    "ko": "이 줄의 노브: %s",
    "de": "Regler in dieser Zeile: %s",
    "hi": "इस पंक्ति के नॉब: %s"
+  },
+  "did you mean %s?": {
+   "ja": "もしかして: %s?",
+   "zh": "您是不是想输入: %s?",
+   "tw": "您是不是想輸入: %s?",
+   "ko": "혹시 이것인가요: %s?",
+   "de": "Meinten Sie: %s?",
+   "hi": "क्या आपका मतलब था: %s?"
   }
  },
   "pending_translation": {

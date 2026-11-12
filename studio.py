@@ -3727,6 +3727,21 @@ def _hdev_strip_comment(line):
     return s
 
 
+def _did_you_mean(name, names, limit=3):
+    """未知の op 名に綴りの近い op 名を最大 *limit* 件(`` — did you mean a, b?``)。無ければ空文字。
+
+    近さは difflib の一致率(綴りの打ち違い)を先に、次に「入力を含む名前」(``canny`` → ``canny_edge``)。"""
+    import difflib
+    low = str(name).lower()
+    pool = sorted(names)
+    close = difflib.get_close_matches(low, pool, n=limit, cutoff=0.6)
+    out = list(close)
+    if len(low) >= 3:
+        out += [n for n in pool if low in n.lower() and n not in out]
+    out = out[:limit]
+    return (" \u2014 " + tr("did you mean %s?") % ", ".join(out)) if out else ""
+
+
 def _hdev_parse_op(line, lineno, errs, names):
     """Parse one operator statement — HDevelop `op (a, b)` or the terse `op a b`.
     Returns (name, a, b) clamped to [0,1], or None (appending an error)."""
@@ -3739,7 +3754,7 @@ def _hdev_parse_op(line, lineno, errs, names):
         parts = line.split()
         name, args = parts[0], parts[1:]
     if name not in names:
-        errs.append("line %d: unknown op '%s'" % (lineno, name)); return None
+        errs.append("line %d: unknown op '%s'%s" % (lineno, name, _did_you_mean(name, names))); return None
     try:
         a = float(args[0]) if len(args) > 0 and args[0] != "" else 0.5
         b = float(args[1]) if len(args) > 1 and args[1] != "" else 0.5
@@ -8600,6 +8615,13 @@ def build_window(model=None):
         via engine.diagnose_stages) + runtime errors (a stage that raised) + the last
         perception failure (which used to be a status-bar flash you could easily miss)."""
         problems_list.clear()
+        syntax_rows = state.get("program_syntax_errors") or []      # Program の構文エラー(行つき)。先頭に並べる
+        for ln_, msg_ in syntax_rows:
+            it = QtWidgets.QListWidgetItem("\u2715 " + truncate(msg_, 200))
+            it.setData(QtCore.Qt.UserRole, -1)
+            it.setData(QtCore.Qt.UserRole + 20, ln_)                # 押すとその行へカーソルが移る
+            it.setForeground(QtGui.QColor(AMBER))
+            problems_list.addItem(it)
         _act_idx = [k for k, st in enumerate(model.stages) if not _is_bypassed(st)]
         if len(_act_idx) == len(model.stages):
             probs = list(engine.diagnose_stages(model.stages))     # static checks
@@ -8607,8 +8629,11 @@ def build_window(model=None):
             probs = [dict(p, index=_act_idx[p["index"]]) if 0 <= p.get("index", -1) < len(_act_idx) else p
                      for p in engine.diagnose_stages([model.stages[k] for k in _act_idx])]
         if states:
+            # ★2026-11-12(B-2): 段の型違いは静的な検査と実行時の例外の両方が同じ内容を言い、Problems に 2 行並んでいた。
+            #   静的な誤りのある段は、その行(より具体的)だけを残す。
+            _static_bad = {p["index"] for p in probs if p["severity"] == "error"}
             for s in states:                                    # runtime errors
-                if (s.get("state") or {}).get("kind") == "error":
+                if (s.get("state") or {}).get("kind") == "error" and s["index"] not in _static_bad:
                     probs.append({"index": s["index"], "op": s["op"], "severity": "error",
                                   "message": "runtime: " + truncate(s["state"].get("message", ""))})
         if states is not None:
@@ -8684,7 +8709,7 @@ def build_window(model=None):
             box.adjustSize()
             it.setSizeHint(box.sizeHint())
             problems_list.setItemWidget(it, box)
-        if not probs and not perr and not rerr and not notes and not pin_bad \
+        if not probs and not perr and not rerr and not notes and not pin_bad and not syntax_rows \
                 and not (roundtrip is not None and not roundtrip.ok) \
                 and not state.get("structured_errors"):
             hint = QtWidgets.QListWidgetItem(tr("no problems"))
@@ -12154,6 +12179,10 @@ def build_window(model=None):
     }
 
     def jump_to_problem(item):
+        ln_ = item.data(QtCore.Qt.UserRole + 20)
+        if isinstance(ln_, int) and ln_ > 0:                # Program の構文エラー: その行へカーソルを移す
+            code_edit.goto_line(ln_)
+            return
         idx = item.data(QtCore.Qt.UserRole)
         if idx is not None and 0 <= idx < len(model.stages):
             stage_list.setCurrentRow(idx)
@@ -12553,6 +12582,54 @@ def build_window(model=None):
                     "step": step_program, "continue": continue_program, "run_from": run_from,
                     "parse": parse_program, "text": program_text_from_model,
                     "status": lambda: code_status, "stage_line": _stage_line}
+
+    # -- ★2026-11-12 IDE 第 1 便: Program の構文エラーを Problems・波線・ガターへ(B-1)-------------- #
+    def check_program_syntax(*_):
+        """Program 欄の本文を解析し、エラー(行つき)を Problems と欄の波線・ガターの赤印へ出す。
+        直すと印も消える。実行系には触らない(parse_program の結果を読むだけ)。"""
+        text = code_edit.toPlainText()
+        errs_ = []
+        saved = dict(_HDEV_CLAMPED)                       # 解析は「丸めたつまみ」の控えを作り直す。apply の結果を壊さない
+        try:
+            if not re.search(r"(?im)^\s*for\s+\d{6,}", text):      # 巨大な for の展開で欄が固まらない
+                errs_ = list(parse_program(text)[1])
+        except Exception:                                  # noqa: BLE001 - 検査が欄の入力を邪魔しない
+            errs_ = []
+        finally:
+            _HDEV_CLAMPED.clear(); _HDEV_CLAMPED.update(saved)
+        rows = []
+        for e in errs_:
+            m_ = re.search(r"line (\d+)", e)
+            ln_ = min(max(int(m_.group(1)), 1), code_edit.blockCount()) if m_ else 1
+            rows.append((ln_, e))
+        if rows == state.get("program_syntax_errors", []) and bool(rows) == bool(code_edit.errors()):
+            return
+        state["program_syntax_errors"] = rows
+        per_line = {}
+        for ln_, e in rows:
+            per_line[ln_] = (per_line[ln_] + "; " + e) if ln_ in per_line else e
+        code_edit.set_errors(per_line)
+        try:
+            _refresh_problems_only()
+        except Exception as exc:                           # noqa: BLE001
+            _log_soft_failure("could not refresh the problems list after a syntax check", exc)
+
+    _syntax_timer = QtCore.QTimer(win)
+    _syntax_timer.setSingleShot(True)
+    _syntax_timer.setInterval(250)
+    _syntax_timer.timeout.connect(check_program_syntax)
+    code_edit.document().contentsChanged.connect(_syntax_timer.start)   # 打つたび・sync_program の書き換えでも
+    c_apply.clicked.connect(check_program_syntax)
+    _apply_raw = win._program["apply"]
+
+    def _apply_and_check():
+        _apply_raw()
+        check_program_syntax()
+    win._program["apply"] = _apply_and_check
+    win._program["check"] = check_program_syntax
+    code_edit.on_message = lambda m_: flash(m_)
+    code_edit.on_open_help = lambda n_: show_op_help(n_)
+    code_edit.on_font_change = lambda pt_: _apply_mono_font(pt_)
 
     # -- variables & objects window wiring (inspect / display any stage output) - #
     def _var_entries():

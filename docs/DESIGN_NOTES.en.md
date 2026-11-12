@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 658 of 1929. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 658 of 1931. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `_archive_tarxz.py`
@@ -2589,37 +2589,39 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1685** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
 - **L2278** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
 - **L3557** _(ja)_ — ★2026-11-12: この 3 本の b は「未使用」("")と書いていたが、2026-09-17 から端の扱いを選ぶ(ops._border)。
-- **L3749** _(ja)_ — ★2026-11-12: `gaussian (nan, 0.5)` が a=1.0 として黙って走っていた(max/min が NaN を素通しする)
-- **L3751** _(ja)_ — ★P-13(2026-11-12): 0..1 の外の値はここで黙って丸めていた。丸めた事実を行ごとに残す(apply_program が画面に出す)。
-- **L4353** _(ja)_ — ★2026-11-12: op を選ぶたびに右パネルが約 190px 広がった。typed 欄が spec の種類で 0〜110px と 変わり、隠れると幅ゼロになっていたため。常に同じ幅を取る(隠れても保つ)。
-- **L4406** _(ja)_ — ★2026-11-12: 前の spec の範囲が残っていた(percentile の後に開くと 5..95 のままで 1.0 に届かず、int の後だと右端が knob 0.04 になって窓が黙って 3 に変わる)。
-- **L4748** _(ja)_ — ★2026-11-12: 380x380 の下限は主画像欄(MDI の中)より大きく、欄の下が切れた(窓に合わせても収まらない)。 欄に収まる下限にする。別窓(tools=True)は従来どおり。
-- **L5887** _(ja)_ — ★2026-11-12: i18n.json の最上位に置かれた行は、上の一覧に載っているものしか読んでいなかった。 検索結果の見出し(Applicable to the current input / Needs preprocessing / Other)やボタン (Try on current data / Help)は訳が表にあるのに、日本語 UI でも英語のままだった。 最上位の「言語コード → 文」の行は全部読む(節の名前は除く)。
-- **L6533** _(ja)_ — ★2026-11-12 IDE 第 1 便: 窓(build_window)が入れる受け手。None なら何もしない(部品単体でも動く)。
-- **L6727** _(ja)_ — ★2026-11-12 IDE 第 1 便: ホバーヘルプ / 構文エラーの印 / キー経路 # ------------------------------------------------------------------ #
-- **L6911** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
-- **L6919** _(ja)_ — ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。 それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。 以後の visibilityChanged は利用者の操作ではないので記録しない。
-- **L7396** _(ja)_ — ★2026-11-12: 行は op 名を先頭に(説明が長いと名前が右へ切れていた、P-09)。前処理は「先に: a → この op」と 別の行に書く(従来は「出力: region → otsu」と出力の後ろに繋がり、順序が逆に読めた)。
-- **L7412** _(ja)_ — ★P-19(2026-11-12): 説明は行の幅いっぱいに折り返し、ボタンはその下の右寄せに置く。従来は横並びで、 折り返さない説明文の幅で行が伸び、「今のデータで試す」「ヘルプ」が横スクロールの先に隠れていた。
-- **L7484** _(ja)_ — ★P-09(2026-11-12): 入門の語(「二値化」「回転」…)に当たる定番の op を、検索の順位とは別に先頭へ出す。 3 群の中身と並びは変えない(studio_search の約束)。前処理が要る定番は行の中に手順(→ op)が出る。
-- **L7584** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L7602** _(ja)_ — ★2026-11-12: 注記の行は一覧に譲り、全文はチェックボックスのツールチップに出す(件数・理由はそこで読める)
-- **L9099** _(ja)_ — ★2026-11-12: これは「いまの設定を同期で計算した結果」で、どの worker 世代でもない。 状態バーが古い「表示中の結果: 世代 N」を言い続けないよう印を付ける(_update_attribution が読む)
-- **L9673** _(ja)_ — (★2026-11-12: + の直後に「未計算」のまま・つまみの途中で古い文字のままだった)
-- **L10007** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L10169** _(ja)_ — ★2026-11-12: 全画素を float64 のカラーで復号し直していた(8000×6000 の JPEG で 0.96 秒・2.46 GB)。 Pillow があれば、ヘッダのモードを見てから 256 px 以内に縮めた絵で比べる。無ければ小さいファイルだけ従来の道。
-- **L10206** _(ja)_ — ★P-17(2026-11-12): カラーのファイルは輝度にして読む(処理列は 2-D)。黙って灰色にせず、そう言う。
-- **L11137** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L11293** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L12142** _(ja)_ — ★2026-11-12: 選んでいないときに入れるのは**検索の 1 位**。先頭に出している「定番」の欄は対象にしない (「canny edge」で Enter を押すと sobel_amp が入っていた —— レビューの指摘)。定番は自分で選んだ時だけ。
-- **L12182** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L12426** _(ja)_ — ★P-13(2026-11-12): `gaussian (9.0, -3.0)` は通り、ライブラリが 0..1 に丸めて走らせる (FullseyeFallbackWarning が出るだけで、画面は何も言わなかった)。どの値を何として走らせたかを言う。
-- **L13105** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
-- **L13178** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
-- **L13181** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
-- **L14670** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
-- **L14689** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
-- **L15791** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L3764** _(ja)_ — ★2026-11-12: `gaussian (nan, 0.5)` が a=1.0 として黙って走っていた(max/min が NaN を素通しする)
+- **L3766** _(ja)_ — ★P-13(2026-11-12): 0..1 の外の値はここで黙って丸めていた。丸めた事実を行ごとに残す(apply_program が画面に出す)。
+- **L4368** _(ja)_ — ★2026-11-12: op を選ぶたびに右パネルが約 190px 広がった。typed 欄が spec の種類で 0〜110px と 変わり、隠れると幅ゼロになっていたため。常に同じ幅を取る(隠れても保つ)。
+- **L4421** _(ja)_ — ★2026-11-12: 前の spec の範囲が残っていた(percentile の後に開くと 5..95 のままで 1.0 に届かず、int の後だと右端が knob 0.04 になって窓が黙って 3 に変わる)。
+- **L4763** _(ja)_ — ★2026-11-12: 380x380 の下限は主画像欄(MDI の中)より大きく、欄の下が切れた(窓に合わせても収まらない)。 欄に収まる下限にする。別窓(tools=True)は従来どおり。
+- **L5902** _(ja)_ — ★2026-11-12: i18n.json の最上位に置かれた行は、上の一覧に載っているものしか読んでいなかった。 検索結果の見出し(Applicable to the current input / Needs preprocessing / Other)やボタン (Try on current data / Help)は訳が表にあるのに、日本語 UI でも英語のままだった。 最上位の「言語コード → 文」の行は全部読む(節の名前は除く)。
+- **L6548** _(ja)_ — ★2026-11-12 IDE 第 1 便: 窓(build_window)が入れる受け手。None なら何もしない(部品単体でも動く)。
+- **L6742** _(ja)_ — ★2026-11-12 IDE 第 1 便: ホバーヘルプ / 構文エラーの印 / キー経路 # ------------------------------------------------------------------ #
+- **L6926** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+- **L6934** _(ja)_ — ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。 それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。 以後の visibilityChanged は利用者の操作ではないので記録しない。
+- **L7411** _(ja)_ — ★2026-11-12: 行は op 名を先頭に(説明が長いと名前が右へ切れていた、P-09)。前処理は「先に: a → この op」と 別の行に書く(従来は「出力: region → otsu」と出力の後ろに繋がり、順序が逆に読めた)。
+- **L7427** _(ja)_ — ★P-19(2026-11-12): 説明は行の幅いっぱいに折り返し、ボタンはその下の右寄せに置く。従来は横並びで、 折り返さない説明文の幅で行が伸び、「今のデータで試す」「ヘルプ」が横スクロールの先に隠れていた。
+- **L7499** _(ja)_ — ★P-09(2026-11-12): 入門の語(「二値化」「回転」…)に当たる定番の op を、検索の順位とは別に先頭へ出す。 3 群の中身と並びは変えない(studio_search の約束)。前処理が要る定番は行の中に手順(→ op)が出る。
+- **L7599** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L7617** _(ja)_ — ★2026-11-12: 注記の行は一覧に譲り、全文はチェックボックスのツールチップに出す(件数・理由はそこで読める)
+- **L8632** _(ja)_ — ★2026-11-12(B-2): 段の型違いは静的な検査と実行時の例外の両方が同じ内容を言い、Problems に 2 行並んでいた。 静的な誤りのある段は、その行(より具体的)だけを残す。
+- **L9124** _(ja)_ — ★2026-11-12: これは「いまの設定を同期で計算した結果」で、どの worker 世代でもない。 状態バーが古い「表示中の結果: 世代 N」を言い続けないよう印を付ける(_update_attribution が読む)
+- **L9698** _(ja)_ — (★2026-11-12: + の直後に「未計算」のまま・つまみの途中で古い文字のままだった)
+- **L10032** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L10194** _(ja)_ — ★2026-11-12: 全画素を float64 のカラーで復号し直していた(8000×6000 の JPEG で 0.96 秒・2.46 GB)。 Pillow があれば、ヘッダのモードを見てから 256 px 以内に縮めた絵で比べる。無ければ小さいファイルだけ従来の道。
+- **L10231** _(ja)_ — ★P-17(2026-11-12): カラーのファイルは輝度にして読む(処理列は 2-D)。黙って灰色にせず、そう言う。
+- **L11162** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L11318** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L12167** _(ja)_ — ★2026-11-12: 選んでいないときに入れるのは**検索の 1 位**。先頭に出している「定番」の欄は対象にしない (「canny edge」で Enter を押すと sobel_amp が入っていた —— レビューの指摘)。定番は自分で選んだ時だけ。
+- **L12211** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L12455** _(ja)_ — ★P-13(2026-11-12): `gaussian (9.0, -3.0)` は通り、ライブラリが 0..1 に丸めて走らせる (FullseyeFallbackWarning が出るだけで、画面は何も言わなかった)。どの値を何として走らせたかを言う。
+- **L12586** _(ja)_ — -- ★2026-11-12 IDE 第 1 便: Program の構文エラーを Problems・波線・ガターへ(B-1)-------------- #
+- **L13182** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+- **L13255** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+- **L13258** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+- **L14747** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
+- **L14766** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+- **L15868** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `studio_result.py`
 
