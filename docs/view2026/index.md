@@ -100,7 +100,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
   真値: 自作合成 · [くわしく](more.md#d-poc-cad-scan-deviation)
 - **[良品のばらつきで欠陥を探す: 実画像では誤検出率が守られない](../articles/assets/poc/poc_good_sample_variation_model/04_visa_explanation.png)**: 良品を何枚も撮り、画素ごとのいつものばらつきから外れた所を欠陥とするのは、外観検査の古典的な方法である。誤検出率を先に宣言して帯の幅を決めるようにし、公開の実画像 200 枚で採点した。位置合わせの有無が良品の枚数より効く一方、宣言した誤検出率は実画像では守られなかった。
   真値: 実データ · [くわしく](more.md#d-poc-good-sample-variation-model)
-- **[金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する](../articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png)**: 研削した金属の小片に、傷・打痕・汚れを物理で描き、学習した分類器で仕分けた。汚れの画素は、正常な画素から学んだ分類で IoU 0.915 まで塗り分けられた。一方、研削の筋に沿う傷は見落としやすく、知らない孔は拒否される。
+- **[金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する](../articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png)**: 研削した金属の小片に、傷・打痕・汚れを物理で描き、学習した分類器で仕分けた。汚れの画素は、正常な画素から学んだ分類で 重なり 0.915 まで塗り分けられた。一方、研削の筋に沿う傷は見落としやすく、知らない孔は拒否される。
   真値: 自作合成 · [くわしく](more.md#d-poc-surface-defect-classifiers)
 - **[AI が組んだ検査を実データの真値で採点](../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png)**: 課題を自然言語で渡して AI に検査のレシピを組ませた。公開のひび割れ画像 400 枚を配布元のラベルで採点し、失敗の原因を道具・MCP・模型に分けた。クラウドの LLM は偶然を超えて選り分けたが、既存のレシピには届かなかった。
   真値: 実データ · [くわしく](more.md#d-poc-ai-built-inspection-scored)

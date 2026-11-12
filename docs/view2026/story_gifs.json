@@ -34667,10 +34667,17 @@
               "file": "01_defect_patches.png",
               "content_box": [
                 0,
-                158,
+                0,
                 720,
-                374
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_surface_defect_classifiers.jpg"
+              }
             },
             {
               "file": "02_stain_pixels.png",
@@ -34735,17 +34742,17 @@
             1600,
             1600
           ],
-          "bytes": 348502,
+          "bytes": 321030,
           "color_mad": [
-            0.4253,
+            0.2666,
             0.255,
             0.0331,
             0.0375,
             0.0242,
             0.0795
           ],
-          "max_color_mad": 0.4253,
-          "source_sha256": "1e7113fff3bf7c44251a2e98d0dc4ee13bd01c9d29a4169649684ceabbd2cb9d"
+          "max_color_mad": 0.2666,
+          "source_sha256": "ae21372b488ea845036b865db49b3053f1a6d8b549518994b8b282fb1ad7ae38"
         },
         "en": {
           "path": "articles/assets/poc/poc_surface_defect_classifiers/story.en.gif",
@@ -34754,10 +34761,17 @@
               "file": "01_defect_patches.png",
               "content_box": [
                 0,
-                158,
+                0,
                 720,
-                374
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_surface_defect_classifiers.jpg"
+              }
             },
             {
               "file": "02_stain_pixels.png",
@@ -34822,25 +34836,32 @@
             1600,
             1600
           ],
-          "bytes": 348502,
+          "bytes": 321030,
           "color_mad": [
-            0.4253,
+            0.2666,
             0.255,
             0.0331,
             0.0375,
             0.0242,
             0.0795
           ],
-          "max_color_mad": 0.4253,
-          "source_sha256": "e189acd605d3e9e8524ae97304cdbec0840c24625f5063c5ea58d686e0d016b2"
+          "max_color_mad": 0.2666,
+          "source_sha256": "d672a50271a1397d78bcf883069b63db492b45894fccd1b7cff93446a5e18e65"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_surface_defect_classifiers.jpg"
       },
       "reason": null,
       "cover": "01_defect_patches.png",
       "still": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
       "alt": {
         "ja": "rendered ground-metal patches (height defects shade, the stain changes colour)",
-        "en": "Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected"
+        "en": "Small pieces of ground metal were drawn with scratches, dents and stains by physics, and sorted with trained classifiers. Stained pixels were painted with an overlap of 0.915 by a classifier learned from normal pixels. Flaws that run with the grinding marks are easily missed, and unknown holes are rejected."
       }
     }
   }

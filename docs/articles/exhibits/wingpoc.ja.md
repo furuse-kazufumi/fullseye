@@ -1712,7 +1712,7 @@ py -3.11 examples/poc_ct_casting_sparse_views.py
 
 ## No.2026.316 —— 金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する
 
-研削した金属の小片(96x96 px)に、傷(V 溝)・打痕(窪み)・汚れ(茶色の反射率)を物理的に描いた。高さの欠陥は陰影だけを、汚れは色だけを変え、欠陥の重さは 0〜1 で振る。画素の段では、正常な金属の画素から learn_ndim_norm で正規分布を学び、class_ndim_norm で異常な画素を塗る。汚れの画素は classify_image_class_lut で IoU 0.915、class_2dim_sup で 0.729、class_2dim_unsup で 0.535(標準化したとき)。領域の特徴 7 個で GMM・MLP・SVM・k-NN を学習した。種 5 本の正解率は 0.871〜0.886(±0.02)。scikit-learn の第 2 実装との差は、許容差 3·sqrt(2p(1−p)/n) の 0.41 倍以内に収まった。GMM(成分 1)は閉形式の 2 次判別と 100 % 一致する。学習に無い腐食の孔は、検証側で決めた対数密度の閾値で 94.8 % を拒否した。既知の小片の誤拒否は 6.0 % だった。ラベルを入れ替えると正解率は 0.238 に落ちる。汚れの再現率 100 % は、色を変える欠陥が汚れだけだからで、特徴の漏れではない。研削の筋から 15° 以内の傷は再現率 0.275 で、45° より立った傷の 0.949 より大きく落ちる。筋を消すために選んだ勾配の向きが、筋に沿う傷も一緒に消している。
+研削した金属の小片に、傷・打痕・汚れを物理で描き、学習した分類器で仕分けた。汚れの画素は、正常な画素から学んだ分類で 重なり 0.915 まで塗り分けられた。一方、研削の筋に沿う傷は見落としやすく、知らない孔は拒否される。
 
 [![金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png)
 
