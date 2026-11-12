@@ -84,7 +84,7 @@ MEASURE_SORTS = frozenset({"feature", "match"})
 
 #: 前置きが予約する名前(op の関数としては出さない)。
 PRELUDE_RESERVED = ("img", "image", "show", "op", "pipeline", "current_pipeline", "load_pipeline", "ui", "show_window",
-                    "np", "fs", "studio_input", "studio_output", "print")
+                    "np", "fs", "studio_input", "studio_output", "print", "load_params")
 
 #: 1 行目の印。``# python`` / ``# fullseye: python`` / ``# hdevelop`` / ``# fullseye: hdevelop``。
 _MARKER_RE = re.compile(r"^\s*#\s*(?:fullseye\s*:\s*)?(python|hdevelop)\s*$", re.IGNORECASE)
@@ -391,6 +391,8 @@ class Recorder:
         self.time_limit_s: float | None = None
         #: load_pipeline の相対パスを探す場所(None = engine.load_pipeline の既定)
         self.search_dirs: list | None = None
+        #: load_params の相対パスを探す場所(None = 作業フォルダだけ)。2026-11-13 UI の繋ぎ
+        self.param_dirs: list | None = None
         self._sorts: dict = {}
         self._pipe_ctx = None
 
@@ -733,6 +735,45 @@ def pipeline_search_dirs(project_dir: str | None = None, program_dir: str | None
     return uniq
 
 
+#: プロジェクトのフォルダの中でパラメータの束を置く場所(標準の並びの params/)。
+PROJECT_PARAMS_SUBDIR = "params"
+
+
+def params_search_dirs(project_dir: str | None = None, program_dir: str | None = None) -> list:
+    """``load_params("rig.toml")`` の相対パスを探す場所の順(2026-11-13): プロジェクトの ``params/`` →
+    実行中のプログラムのファイルの場所 → 作業フォルダ(:func:`pipeline_search_dirs` と同じ形)。"""
+    out = []
+    if project_dir:
+        sub = PROJECT_SUBDIR_RESOLVER("params") if PROJECT_SUBDIR_RESOLVER else PROJECT_PARAMS_SUBDIR
+        out.append(os.path.join(project_dir, sub))
+    if program_dir:
+        out.append(program_dir)
+    out.append(os.getcwd())
+    seen, uniq = set(), []
+    for d in out:
+        key = os.path.normcase(os.path.abspath(d))
+        if key not in seen:
+            seen.add(key)
+            uniq.append(d)
+    return uniq
+
+
+def _load_params(name):
+    """``fullseye.load_params`` と同じ物を読む。相対パスは :func:`params_search_dirs` の順に探し、
+    見つからなければ探した場所を全部書いた ``FileNotFoundError``(黙って空の束にしない)。"""
+    from fullseye import parambundle
+    p = os.fspath(name)
+    if os.path.isabs(p):
+        return parambundle.load_params(p)
+    rec = active_recorder()
+    dirs = rec.param_dirs or [os.getcwd()]
+    for d in dirs:
+        cand = os.path.join(d, p)
+        if os.path.isfile(cand):
+            return parambundle.load_params(cand)
+    raise FileNotFoundError("load_params(%r): not found in %s" % (p, "; ".join(dirs)))
+
+
 def _load_pipeline(name: str) -> Pipeline:
     """``fullseye.load_pipeline`` と同じ物を読み、記録つきの :class:`Pipeline` にして返す。
 
@@ -841,7 +882,7 @@ def prelude_namespace(include_heavy: bool = True) -> dict:
     ns.update(op=_op, show=_show, pipeline=_pipeline, current_pipeline=_current_pipeline,
               load_pipeline=_load_pipeline, studio_input=_studio_input, studio_output=_studio_output,
               studio_set_current_pipeline=_studio_set_current_pipeline, np=np,
-              ui=_ui, show_window=_show_window)
+              ui=_ui, show_window=_show_window, load_params=_load_params)
     if include_heavy:
         import fullseye
         ns["fs"] = fullseye
@@ -1055,8 +1096,14 @@ class _Tracer:
     """``sys.settrace`` の本体: Program の枠の 'line' だけを見る。"""
 
     def __init__(self, time_limit_s, breakpoints, skip_hits, max_lines, stop_event,
-                 filename: str = PROGRAM_FILENAME):
+                 filename: str = PROGRAM_FILENAME, conditions=None, resume_after_lines: int = 0):
         self.filename = filename
+        #: 条件つきブレークポイント {行: 式}。式はその行の枠(globals / locals)で評価し、偽なら止めない。
+        #: 評価できなければ止めて理由を ``notes`` へ(止めずに素通りさせない側 = fail-closed)。
+        self.conditions = {int(k): str(v) for k, v in (conditions or {}).items() if str(v).strip()}
+        #: 続行・1 行実行は「上から走り直す」(§4)。走り直しで、すでに通った行数までのブレークポイントは止めない。
+        self.resume_after_lines = max(0, int(resume_after_lines or 0))
+        self.notes: list = []
         self.t0 = time.perf_counter()
         self.time_limit_s = time_limit_s
         self.breakpoints = set(int(b) for b in (breakpoints or ()))
@@ -1082,7 +1129,7 @@ class _Tracer:
             self._stop("stop_requested", ln)
         if self.time_limit_s is not None and time.perf_counter() - self.t0 > self.time_limit_s:
             self._stop("time_limit", ln)
-        if ln in self.breakpoints:
+        if ln in self.breakpoints and self.lines >= self.resume_after_lines and self._condition_holds(frame, ln):
             self.hits += 1
             if self.hits > self.skip_hits:
                 self._stop("breakpoint", ln)
@@ -1090,6 +1137,17 @@ class _Tracer:
             self._stop("step", ln)
         self.lines += 1
         return self.local_trace
+
+    def _condition_holds(self, frame, ln) -> bool:
+        expr = self.conditions.get(ln)
+        if not expr:
+            return True
+        try:
+            return bool(eval(expr, frame.f_globals, frame.f_locals))   # noqa: S307 -- 利用者が書いた条件(本物の Python)
+        except Exception as e:                       # noqa: BLE001 -- 評価できない条件では止めて理由を言う
+            self.notes.append("line %d: breakpoint condition %r could not be evaluated (%s: %s) — stopped there"
+                              % (ln, expr, type(e).__name__, e))
+            return True
 
     def _stop(self, reason, ln):
         self.sticky = ProgramStopped(reason, ln)
@@ -1355,10 +1413,14 @@ def run_file(path: str, image, **kw) -> ProgramResult:
     return run_program(text, image, filename=path, **kw)
 
 
-def evaluate(source: str, namespace, *, trusted: bool = True) -> dict:
+def evaluate(source: str, namespace, *, trusted: bool = True, time_limit_s: float | None = None,
+             stop_event: threading.Event | None = None) -> dict:
     """実行後の名前空間 *namespace*(``ProgramResult`` か ``ProgramResult.namespace``)で式か文を評価する
     (対話の窓の入口)。``{"value", "stdout", "error", "calls"}`` を返す。op の呼び出しはその実行の記録に足る。
-    式なら値を返し、文(代入など)なら実行して ``value`` は None。誤りは ``"line N: Type: msg"``。"""
+    式なら値を返し、文(代入など)なら実行して ``value`` は None。誤りは ``"line N: Type: msg"``。
+
+    ``time_limit_s`` / ``stop_event`` を渡すと :func:`run_program` と同じ見張りで止める(2026-11-13、選んだ行の実行)。
+    止めたら ``error`` は ``"stopped: …"``、止められなければ ``"could not stop …"``(結果は捨てる)。"""
     ns = getattr(namespace, "namespace", namespace)
     if ns is None:
         return {"value": None, "stdout": "", "error": "no namespace: run the program first (keep_namespace=True)",
@@ -1369,24 +1431,47 @@ def evaluate(source: str, namespace, *, trusted: bool = True) -> dict:
     out = io.StringIO()
     ns["print"] = _capture_print(out)
     n0 = len(rec.calls)
-    token = _ACTIVE.set(rec)
-    try:
+    box: dict = {}
+
+    def body():
+        token = _ACTIVE.set(rec)
         try:
-            code = compile(source, "<studio-console>", "eval")
-            is_expr = True
-        except SyntaxError:
-            code = compile(source, "<studio-console>", "exec")
-            is_expr = False
-        value = eval(code, ns) if is_expr else (exec(code, ns), None)[1]   # noqa: S307,S102 -- 利用者が打った物
-        err = None
-    except SyntaxError as e:
-        value, err = None, "line %d: SyntaxError: %s" % (e.lineno or 1, e.msg)
-    except Exception as e:                           # noqa: BLE001
-        value = None
-        err = "line %d: %s: %s" % (_err_line_from_tb(e.__traceback__, "<studio-console>") or 1, type(e).__name__, e)
-    finally:
-        _ACTIVE.reset(token)
-    return {"value": value, "stdout": out.getvalue(), "error": err, "calls": rec.calls[n0:]}
+            try:
+                code = compile(source, "<studio-console>", "eval")
+                is_expr = True
+            except SyntaxError:
+                code = compile(source, "<studio-console>", "exec")
+                is_expr = False
+            box["value"] = eval(code, ns) if is_expr else (exec(code, ns), None)[1]   # noqa: S307,S102 -- 利用者が打った物
+            box["err"] = None
+        except SyntaxError as e:
+            box["value"], box["err"] = None, "line %d: SyntaxError: %s" % (e.lineno or 1, e.msg)
+        except ProgramStopped as e:
+            box["value"], box["err"] = None, "stopped: %s" % ("time limit" if e.reason == "time_limit" else "on request")
+        except BaseException as e:                   # noqa: BLE001 -- 行番号つきで返す
+            box["value"] = None
+            box["err"] = "line %d: %s: %s" % (_err_line_from_tb(e.__traceback__, "<studio-console>") or 1,
+                                               type(e).__name__, e)
+        finally:
+            try:
+                _ACTIVE.reset(token)
+            except BaseException:                    # noqa: BLE001 -- 遅れて届いた止めの例外
+                pass
+
+    if time_limit_s is None and stop_event is None:
+        body()
+    else:
+        def guarded():
+            try:
+                body()
+            except BaseException:                    # noqa: BLE001 -- body の外で届いた止めの例外
+                box.setdefault("err", "stopped")
+        deadline = None if time_limit_s is None else time.perf_counter() + time_limit_s
+        if _run_with_watchdog(guarded, {}, deadline, stop_event, in_caller=False):
+            return {"value": None, "stdout": out.getvalue(), "calls": [],
+                    "error": "could not stop the selected lines within %.1f s — they go on running in the background "
+                             "and their results are ignored" % _STOP_GRACE_S}
+    return {"value": box.get("value"), "stdout": out.getvalue(), "error": box.get("err"), "calls": rec.calls[n0:]}
 
 
 def _capture_print(buf: io.StringIO) -> Callable:
@@ -1505,7 +1590,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
                 current_stages: Sequence | None = None, device: str = "cpu",
                 program_dir: str | None = None, project_dir: str | None = None,
                 config: str = "debug", filename: str | None = None,
-                keep_namespace: bool = True) -> ProgramResult:
+                keep_namespace: bool = True, conditions=None, resume_after_lines: int = 0) -> ProgramResult:
     """Program 欄の文面を走らせる。
 
     * HDevelop 風: 今の ``studio.parse_hdev_program_lines`` の段の列を、Studio と同じ呼び方で走らせる
@@ -1522,7 +1607,11 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
       プロジェクトの ``programs/`` を ``sys.path`` の先頭に足し、終わったら戻す(複数ファイルの
       プロジェクトで ``import`` が効く)。その間に読み込んだ利用者のモジュールは実行の後に
       ``sys.modules`` から外す(直して走り直すと新しい中身が読まれる)。
-    * ``keep_namespace``: 実行後の名前空間を ``ProgramResult.namespace`` に残す(:func:`evaluate` が使う)。"""
+    * ``keep_namespace``: 実行後の名前空間を ``ProgramResult.namespace`` に残す(:func:`evaluate` が使う)。
+    * ``conditions``: 条件つきブレークポイント ``{行: 式}``(Debug だけ。偽なら止めない、評価できなければ止める)。
+    * ``resume_after_lines``: 続行の走り直しで、最初の N 行(すでに通った所)ではブレークポイントで止めない
+      (2026-11-13 UI の繋ぎ: 止まった所から続行 = ``resume_after_lines=前の lines_run + 1``、1 行実行 =
+      ``max_lines=前の lines_run + 1``。止まった行はまだ実行していないので、走り直しではそこを素通りさせる)。"""
     if config not in CONFIGS:
         raise ValueError("config must be one of %s, got %r" % (", ".join(CONFIGS), config))
     syn, errs = (syntax, []) if syntax else detect_syntax(text)
@@ -1560,6 +1649,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
     rec = Recorder(memo=memo, device=device, program_filename=code_name)
     rec.current_stages = list(current_stages or [])
     rec.search_dirs = pipeline_search_dirs(project_dir=project_dir, program_dir=program_dir)
+    rec.param_dirs = params_search_dirs(project_dir=project_dir, program_dir=program_dir)
     inp = rec.set_input(image)
     base = prelude_namespace()
     ns = dict(base)
@@ -1567,7 +1657,8 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
     if filename:
         ns["__file__"] = code_name
     ns["__studio_recorder__"] = rec
-    tracer = _Tracer(time_limit_s, breakpoints, skip_hits, max_lines, stop_event, filename=code_name)
+    tracer = _Tracer(time_limit_s, breakpoints, skip_hits, max_lines, stop_event, filename=code_name,
+                     conditions=conditions, resume_after_lines=resume_after_lines)
     user_dirs = [d for d in (program_dir, os.path.join(project_dir, PROJECT_PROGRAMS_SUBDIR) if project_dir else None)
                  if d]
     release = config == "release"
@@ -1675,6 +1766,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
         result.notes.append("restored after the run: " + ", ".join(restored))
     result.elapsed_s = time.perf_counter() - t0
     result.lines_run = tracer.lines
+    result.notes.extend(tracer.notes)
     result.stdout = out.getvalue()
     result.calls = rec.calls
     result.clamped = rec.clamped
