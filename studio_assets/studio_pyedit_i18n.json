@@ -1,0 +1,817 @@
+{
+ "_note": "Python editor parts (color, completion, variables, watch): English is the source text; 5 languages. Merge into studio_assets/i18n.json 'strings' with studio_pyedit_i18n.merge_into().",
+ "strings": {
+  "op": {
+   "ja": "処理(op)",
+   "zh": "算子",
+   "tw": "運算子",
+   "ko": "연산(op)",
+   "de": "Operator"
+  },
+  "variable": {
+   "ja": "変数",
+   "zh": "变量",
+   "tw": "變數",
+   "ko": "변수",
+   "de": "Variable"
+  },
+  "function": {
+   "ja": "関数",
+   "zh": "函数",
+   "tw": "函式",
+   "ko": "함수",
+   "de": "Funktion"
+  },
+  "class": {
+   "ja": "クラス",
+   "zh": "类",
+   "tw": "類別",
+   "ko": "클래스",
+   "de": "Klasse"
+  },
+  "module": {
+   "ja": "モジュール",
+   "zh": "模块",
+   "tw": "模組",
+   "ko": "모듈",
+   "de": "Modul"
+  },
+  "keyword": {
+   "ja": "予約語",
+   "zh": "关键字",
+   "tw": "關鍵字",
+   "ko": "예약어",
+   "de": "Schlüsselwort"
+  },
+  "param": {
+   "ja": "引数名",
+   "zh": "参数名",
+   "tw": "參數名",
+   "ko": "인수 이름",
+   "de": "Parametername"
+  },
+  "snippet": {
+   "ja": "スニペット",
+   "zh": "代码片段",
+   "tw": "程式碼片段",
+   "ko": "스니펫",
+   "de": "Snippet"
+  },
+  "attribute": {
+   "ja": "属性",
+   "zh": "属性",
+   "tw": "屬性",
+   "ko": "속성",
+   "de": "Attribut"
+  },
+  "file": {
+   "ja": "ファイル",
+   "zh": "文件",
+   "tw": "檔案",
+   "ko": "파일",
+   "de": "Datei"
+  },
+  "image": {
+   "ja": "画像",
+   "zh": "图像",
+   "tw": "影像",
+   "ko": "이미지",
+   "de": "Bild"
+  },
+  "pipeline": {
+   "ja": "パイプライン",
+   "zh": "流水线",
+   "tw": "管線",
+   "ko": "파이프라인",
+   "de": "Pipeline"
+  },
+  "python": {
+   "ja": "Python",
+   "zh": "Python",
+   "tw": "Python",
+   "ko": "Python",
+   "de": "Python"
+  },
+  "params": {
+   "ja": "パラメータ",
+   "zh": "参数",
+   "tw": "參數",
+   "ko": "파라미터",
+   "de": "Parameter"
+  },
+  "defined in this file": {
+   "ja": "このファイルで定義",
+   "zh": "在此文件中定义",
+   "tw": "在此檔案中定義",
+   "ko": "이 파일에서 정의됨",
+   "de": "in dieser Datei definiert"
+  },
+  "%s file in the project": {
+   "ja": "プロジェクトの%sファイル",
+   "zh": "项目中的%s文件",
+   "tw": "專案中的%s檔案",
+   "ko": "프로젝트의 %s 파일",
+   "de": "%s-Datei im Projekt"
+  },
+  "seen in this file": {
+   "ja": "このファイルに出てきた名前",
+   "zh": "此文件中出现过的名称",
+   "tw": "此檔案中出現過的名稱",
+   "ko": "이 파일에 나온 이름",
+   "de": "in dieser Datei gesehen"
+  },
+  "input -> output": {
+   "ja": "入力 → 出力",
+   "zh": "输入 → 输出",
+   "tw": "輸入 → 輸出",
+   "ko": "입력 → 출력",
+   "de": "Eingabe → Ausgabe"
+  },
+  "line %d": {
+   "ja": "%d 行目",
+   "zh": "第 %d 行",
+   "tw": "第 %d 行",
+   "ko": "%d행",
+   "de": "Zeile %d"
+  },
+  "all non-finite": {
+   "ja": "すべて非有限",
+   "zh": "全部为非有限值",
+   "tw": "全部為非有限值",
+   "ko": "모두 비유한 값",
+   "de": "alles nicht endlich"
+  },
+  "(repr timed out)": {
+   "ja": "(repr が時間切れ)",
+   "zh": "(repr 超时)",
+   "tw": "(repr 逾時)",
+   "ko": "(repr 시간 초과)",
+   "de": "(repr Zeitüberschreitung)"
+  },
+  "only numbers, strings and booleans can be edited": {
+   "ja": "編集できるのは数・文字列・真偽値だけです",
+   "zh": "只能编辑数字、字符串和布尔值",
+   "tw": "只能編輯數字、字串和布林值",
+   "ko": "숫자, 문자열, 불리언만 편집할 수 있습니다",
+   "de": "Nur Zahlen, Zeichenketten und Wahrheitswerte lassen sich bearbeiten"
+  },
+  "size": {
+   "ja": "大きさ",
+   "zh": "大小",
+   "tw": "大小",
+   "ko": "크기",
+   "de": "Größe"
+  },
+  "statistics are from a sample of the elements": {
+   "ja": "統計は要素の標本から求めています",
+   "zh": "统计量来自元素样本",
+   "tw": "統計量來自元素樣本",
+   "ko": "통계는 요소 표본에서 계산했습니다",
+   "de": "Statistik aus einer Stichprobe der Elemente"
+  },
+  "(repr failed: %s)": {
+   "ja": "(repr が失敗: %s)",
+   "zh": "(repr 失败: %s)",
+   "tw": "(repr 失敗: %s)",
+   "ko": "(repr 실패: %s)",
+   "de": "(repr fehlgeschlagen: %s)"
+  },
+  "timed out (over %d ms)": {
+   "ja": "時間切れ(%d ms 超)",
+   "zh": "超时(超过 %d ms)",
+   "tw": "逾時(超過 %d ms)",
+   "ko": "시간 초과(%d ms 초과)",
+   "de": "Zeitüberschreitung (über %d ms)"
+  },
+  "syntax error: %s": {
+   "ja": "構文エラー: %s",
+   "zh": "语法错误: %s",
+   "tw": "語法錯誤: %s",
+   "ko": "구문 오류: %s",
+   "de": "Syntaxfehler: %s"
+  },
+  "empty": {
+   "ja": "空",
+   "zh": "空",
+   "tw": "空",
+   "ko": "비어 있음",
+   "de": "leer"
+  },
+  "non-finite": {
+   "ja": "非有限",
+   "zh": "非有限",
+   "tw": "非有限",
+   "ko": "비유한",
+   "de": "nicht endlich"
+  },
+  "summary failed: %s": {
+   "ja": "要約に失敗: %s",
+   "zh": "摘要失败: %s",
+   "tw": "摘要失敗: %s",
+   "ko": "요약 실패: %s",
+   "de": "Zusammenfassung fehlgeschlagen: %s"
+  },
+  "not a boolean: write True or False": {
+   "ja": "真偽値ではありません。True か False と書いてください",
+   "zh": "不是布尔值,请写 True 或 False",
+   "tw": "不是布林值,請寫 True 或 False",
+   "ko": "불리언이 아닙니다. True 또는 False로 쓰세요",
+   "de": "Kein Wahrheitswert: True oder False schreiben"
+  },
+  "out of range for %s: %d..%d": {
+   "ja": "%s の範囲外です(%d〜%d)",
+   "zh": "超出 %s 的范围(%d~%d)",
+   "tw": "超出 %s 的範圍(%d~%d)",
+   "ko": "%s 범위를 벗어났습니다(%d~%d)",
+   "de": "Außerhalb des Bereichs von %s (%d..%d)"
+  },
+  "not a number: %s": {
+   "ja": "数ではありません: %s",
+   "zh": "不是数字: %s",
+   "tw": "不是數字: %s",
+   "ko": "숫자가 아닙니다: %s",
+   "de": "Keine Zahl: %s"
+  },
+  "empty expression": {
+   "ja": "式が空です",
+   "zh": "表达式为空",
+   "tw": "運算式為空",
+   "ko": "식이 비어 있습니다",
+   "de": "Leerer Ausdruck"
+  },
+  "fields": {
+   "ja": "フィールド",
+   "zh": "字段",
+   "tw": "欄位",
+   "ko": "필드",
+   "de": "Felder"
+  },
+  "mean": {
+   "ja": "平均",
+   "zh": "平均值",
+   "tw": "平均值",
+   "ko": "평균",
+   "de": "Mittel"
+  },
+  "length": {
+   "ja": "長さ",
+   "zh": "长度",
+   "tw": "長度",
+   "ko": "길이",
+   "de": "Länge"
+  },
+  "… %d more": {
+   "ja": "…あと %d 個",
+   "zh": "…还有 %d 个",
+   "tw": "…還有 %d 個",
+   "ko": "…%d개 더",
+   "de": "… %d weitere"
+  },
+  "not an integer: %s": {
+   "ja": "整数ではありません: %s",
+   "zh": "不是整数: %s",
+   "tw": "不是整數: %s",
+   "ko": "정수가 아닙니다: %s",
+   "de": "Keine ganze Zahl: %s"
+  },
+  "could not read: %s": {
+   "ja": "読めませんでした: %s",
+   "zh": "无法读取: %s",
+   "tw": "無法讀取: %s",
+   "ko": "읽을 수 없습니다: %s",
+   "de": "Lesen nicht möglich: %s"
+  },
+  "timed out": {
+   "ja": "時間切れ",
+   "zh": "超时",
+   "tw": "逾時",
+   "ko": "시간 초과",
+   "de": "Zeitüberschreitung"
+  },
+  "new since the last stop": {
+   "ja": "前の停止から新しく現れた値",
+   "zh": "自上次停止以来新出现的值",
+   "tw": "自上次停止以來新出現的值",
+   "ko": "지난 정지 이후 새로 생긴 값",
+   "de": "neu seit dem letzten Halt"
+  },
+  "changed since the last stop": {
+   "ja": "前の停止から変わった値",
+   "zh": "自上次停止以来已改变的值",
+   "tw": "自上次停止以來已改變的值",
+   "ko": "지난 정지 이후 바뀐 값",
+   "de": "geändert seit dem letzten Halt"
+  },
+  "Copy value": {
+   "ja": "値をコピー",
+   "zh": "复制值",
+   "tw": "複製值",
+   "ko": "값 복사",
+   "de": "Wert kopieren"
+  },
+  "Copy as expression": {
+   "ja": "式としてコピー",
+   "zh": "复制为表达式",
+   "tw": "複製為運算式",
+   "ko": "식으로 복사",
+   "de": "Als Ausdruck kopieren"
+  },
+  "Inspect in a window": {
+   "ja": "窓で中身を見る",
+   "zh": "在窗口中查看内容",
+   "tw": "在視窗中檢視內容",
+   "ko": "창에서 내용 보기",
+   "de": "In einem Fenster ansehen"
+  },
+  "Filter by name or type": {
+   "ja": "名前か型で絞り込み",
+   "zh": "按名称或类型筛选",
+   "tw": "依名稱或類型篩選",
+   "ko": "이름이나 형식으로 필터",
+   "de": "Nach Name oder Typ filtern"
+  },
+  "Words match the name or the type. Prefix with type: or name: to look at one.": {
+   "ja": "語は名前か型に当たります。型だけ・名前だけを見るには type: / name: を付けます。",
+   "zh": "词语匹配名称或类型。加 type: 或 name: 只看其中一项。",
+   "tw": "詞語比對名稱或類型。加 type: 或 name: 只看其中一項。",
+   "ko": "단어는 이름이나 형식과 일치합니다. type: 또는 name: 을 붙이면 한쪽만 봅니다.",
+   "de": "Wörter passen auf Name oder Typ. Mit type: oder name: nur eines davon."
+  },
+  "Filter variables": {
+   "ja": "変数の絞り込み",
+   "zh": "筛选变量",
+   "tw": "篩選變數",
+   "ko": "변수 필터",
+   "de": "Variablen filtern"
+  },
+  "Functions and modules": {
+   "ja": "関数とモジュール",
+   "zh": "函数和模块",
+   "tw": "函式和模組",
+   "ko": "함수와 모듈",
+   "de": "Funktionen und Module"
+  },
+  "Also list functions, classes, modules and names starting with _": {
+   "ja": "関数・クラス・モジュールと、_ で始まる名前も一覧に出します",
+   "zh": "同时列出函数、类、模块和以 _ 开头的名称",
+   "tw": "同時列出函式、類別、模組和以 _ 開頭的名稱",
+   "ko": "함수, 클래스, 모듈과 _로 시작하는 이름도 표시합니다",
+   "de": "Auch Funktionen, Klassen, Module und Namen mit _ anzeigen"
+  },
+  "Variables appear here after the program runs: each name with its type, shape and value. Arrays that look like images get a thumbnail.": {
+   "ja": "プログラムを実行すると、ここに変数が出ます。名前・型・形・値を並べ、画像らしい配列にはサムネイルを付けます。",
+   "zh": "运行程序后,变量会显示在这里:名称、类型、形状和值。看起来像图像的数组会带缩略图。",
+   "tw": "執行程式後,變數會顯示在這裡:名稱、類型、形狀和值。看起來像影像的陣列會附縮圖。",
+   "ko": "프로그램을 실행하면 변수가 여기에 표시됩니다: 이름, 형식, 모양, 값. 이미지처럼 보이는 배열에는 썸네일이 붙습니다.",
+   "de": "Nach dem Ausführen des Programms erscheinen hier die Variablen mit Typ, Form und Wert. Bildähnliche Arrays erhalten eine Vorschau."
+  },
+  "Preview of the selected image. Double-click to open it larger.": {
+   "ja": "選んだ画像のプレビューです。ダブルクリックで大きく開きます。",
+   "zh": "所选图像的预览。双击可放大打开。",
+   "tw": "所選影像的預覽。按兩下可放大開啟。",
+   "ko": "선택한 이미지의 미리보기입니다. 더블클릭하면 크게 엽니다.",
+   "de": "Vorschau des gewählten Bildes. Doppelklick öffnet es größer."
+  },
+  "Type an expression and press Enter, e.g. img.mean()": {
+   "ja": "式を入力して Enter(例: img.mean())",
+   "zh": "输入表达式后按 Enter,例如 img.mean()",
+   "tw": "輸入運算式後按 Enter,例如 img.mean()",
+   "ko": "식을 입력하고 Enter를 누르세요(예: img.mean())",
+   "de": "Ausdruck eingeben und Enter drücken, z. B. img.mean()"
+  },
+  "Watch expression": {
+   "ja": "ウォッチの式",
+   "zh": "监视表达式",
+   "tw": "監看運算式",
+   "ko": "조사식",
+   "de": "Überwachungsausdruck"
+  },
+  "Add the expression to the watch list (Enter)": {
+   "ja": "式をウォッチに足す(Enter)",
+   "zh": "将表达式加入监视列表(Enter)",
+   "tw": "將運算式加入監看清單(Enter)",
+   "ko": "식을 조사식 목록에 추가(Enter)",
+   "de": "Ausdruck zur Überwachungsliste hinzufügen (Enter)"
+  },
+  "Add": {
+   "ja": "追加",
+   "zh": "添加",
+   "tw": "新增",
+   "ko": "추가",
+   "de": "Hinzufügen"
+  },
+  "Remove the selected expression": {
+   "ja": "選んだ式を消す",
+   "zh": "删除所选表达式",
+   "tw": "刪除所選運算式",
+   "ko": "선택한 식 삭제",
+   "de": "Gewählten Ausdruck entfernen"
+  },
+  "Remove": {
+   "ja": "削除",
+   "zh": "删除",
+   "tw": "刪除",
+   "ko": "삭제",
+   "de": "Entfernen"
+  },
+  "Move the selected expression up": {
+   "ja": "選んだ式を上へ",
+   "zh": "将所选表达式上移",
+   "tw": "將所選運算式上移",
+   "ko": "선택한 식을 위로",
+   "de": "Gewählten Ausdruck nach oben"
+  },
+  "Move up": {
+   "ja": "上へ",
+   "zh": "上移",
+   "tw": "上移",
+   "ko": "위로",
+   "de": "Nach oben"
+  },
+  "Move the selected expression down": {
+   "ja": "選んだ式を下へ",
+   "zh": "将所选表达式下移",
+   "tw": "將所選運算式下移",
+   "ko": "선택한 식을 아래로",
+   "de": "Gewählten Ausdruck nach unten"
+  },
+  "Move down": {
+   "ja": "下へ",
+   "zh": "下移",
+   "tw": "下移",
+   "ko": "아래로",
+   "de": "Nach unten"
+  },
+  "Watch expressions are re-evaluated every time the program stops or finishes. Type an expression above, or use \"Add to watch\" in the variable list.": {
+   "ja": "ウォッチの式は、プログラムが止まるか終わるたびに評価し直します。上に式を入力するか、変数の一覧の「ウォッチに足す」を使ってください。",
+   "zh": "监视表达式会在程序每次停止或结束时重新计算。在上方输入表达式,或在变量列表中使用“加入监视”。",
+   "tw": "監看運算式會在程式每次停止或結束時重新計算。在上方輸入運算式,或在變數清單中使用「加入監看」。",
+   "ko": "조사식은 프로그램이 멈추거나 끝날 때마다 다시 계산됩니다. 위에 식을 입력하거나 변수 목록의 \"조사식에 추가\"를 사용하세요.",
+   "de": "Überwachungsausdrücke werden bei jedem Halt oder Ende des Programms neu berechnet. Oben einen Ausdruck eingeben oder in der Variablenliste \"Zur Überwachung\" wählen."
+  },
+  "Name": {
+   "ja": "名前",
+   "zh": "名称",
+   "tw": "名稱",
+   "ko": "이름",
+   "de": "Name"
+  },
+  "Type": {
+   "ja": "型",
+   "zh": "类型",
+   "tw": "類型",
+   "ko": "형식",
+   "de": "Typ"
+  },
+  "Shape": {
+   "ja": "形",
+   "zh": "形状",
+   "tw": "形狀",
+   "ko": "모양",
+   "de": "Form"
+  },
+  "Value": {
+   "ja": "値",
+   "zh": "值",
+   "tw": "值",
+   "ko": "값",
+   "de": "Wert"
+  },
+  "(circular reference)": {
+   "ja": "(循環参照)",
+   "zh": "(循环引用)",
+   "tw": "(循環參照)",
+   "ko": "(순환 참조)",
+   "de": "(Zirkelbezug)"
+  },
+  "scalar": {
+   "ja": "スカラー",
+   "zh": "标量",
+   "tw": "純量",
+   "ko": "스칼라",
+   "de": "Skalar"
+  },
+  "Add to watch": {
+   "ja": "ウォッチに足す",
+   "zh": "加入监视",
+   "tw": "加入監看",
+   "ko": "조사식에 추가",
+   "de": "Zur Überwachung"
+  },
+  "Open as image": {
+   "ja": "画像として開く",
+   "zh": "作为图像打开",
+   "tw": "作為影像開啟",
+   "ko": "이미지로 열기",
+   "de": "Als Bild öffnen"
+  },
+  "View as table": {
+   "ja": "表で見る",
+   "zh": "以表格查看",
+   "tw": "以表格檢視",
+   "ko": "표로 보기",
+   "de": "Als Tabelle ansehen"
+  },
+  "View histogram": {
+   "ja": "ヒストグラムを見る",
+   "zh": "查看直方图",
+   "tw": "檢視直方圖",
+   "ko": "히스토그램 보기",
+   "de": "Histogramm ansehen"
+  },
+  "Expand attribute (may run code)": {
+   "ja": "属性を展開(コードが動くことがあります)",
+   "zh": "展开属性(可能会运行代码)",
+   "tw": "展開屬性(可能會執行程式碼)",
+   "ko": "속성 펼치기(코드가 실행될 수 있음)",
+   "de": "Attribut aufklappen (kann Code ausführen)"
+  },
+  "Table: %s": {
+   "ja": "表: %s",
+   "zh": "表格: %s",
+   "tw": "表格: %s",
+   "ko": "표: %s",
+   "de": "Tabelle: %s"
+  },
+  "Histogram: %s": {
+   "ja": "ヒストグラム: %s",
+   "zh": "直方图: %s",
+   "tw": "直方圖: %s",
+   "ko": "히스토그램: %s",
+   "de": "Histogramm: %s"
+  },
+  "computed from a sample of the elements": {
+   "ja": "要素の標本から求めました",
+   "zh": "由元素样本计算",
+   "tw": "由元素樣本計算",
+   "ko": "요소 표본에서 계산했습니다",
+   "de": "aus einer Stichprobe der Elemente berechnet"
+  },
+  "Expression": {
+   "ja": "式",
+   "zh": "表达式",
+   "tw": "運算式",
+   "ko": "식",
+   "de": "Ausdruck"
+  },
+  "Pin": {
+   "ja": "固定",
+   "zh": "固定",
+   "tw": "固定",
+   "ko": "고정",
+   "de": "Anheften"
+  },
+  "Pin: keep showing this value instead of following the current one": {
+   "ja": "固定: 今の物に追従せず、この値を見続けます",
+   "zh": "固定: 不再跟随当前对象,继续显示此值",
+   "tw": "固定: 不再跟隨目前物件,持續顯示此值",
+   "ko": "고정: 현재 항목을 따라가지 않고 이 값을 계속 표시합니다",
+   "de": "Anheften: diesen Wert weiter anzeigen, statt dem aktuellen zu folgen"
+  },
+  "len %d": {
+   "ja": "長さ %d",
+   "zh": "长度 %d",
+   "tw": "長度 %d",
+   "ko": "길이 %d",
+   "de": "Länge %d"
+  },
+  "this view is read-only": {
+   "ja": "この表示は読み取り専用です",
+   "zh": "此视图为只读",
+   "tw": "此檢視為唯讀",
+   "ko": "이 보기는 읽기 전용입니다",
+   "de": "Diese Ansicht ist schreibgeschützt"
+  },
+  "%d elements": {
+   "ja": "要素 %d 個",
+   "zh": "%d 个元素",
+   "tw": "%d 個元素",
+   "ko": "요소 %d개",
+   "de": "%d Elemente"
+  },
+  "Run the program": {
+   "ja": "プログラムを実行",
+   "zh": "运行程序",
+   "tw": "執行程式",
+   "ko": "프로그램 실행",
+   "de": "Programm ausführen"
+  },
+  "Run the program (names appear here after it runs)": {
+   "ja": "プログラムを実行します(実行後にここへ変数が出ます)",
+   "zh": "运行程序(运行后变量会显示在这里)",
+   "tw": "執行程式(執行後變數會顯示在這裡)",
+   "ko": "프로그램을 실행합니다(실행 후 여기에 변수가 표시됩니다)",
+   "de": "Programm ausführen (danach erscheinen hier die Variablen)"
+  },
+  "Open an example": {
+   "ja": "例を開く",
+   "zh": "打开示例",
+   "tw": "開啟範例",
+   "ko": "예제 열기",
+   "de": "Beispiel öffnen"
+  },
+  "Open a short example program that makes some variables": {
+   "ja": "変数をいくつか作る短い例のプログラムを開きます",
+   "zh": "打开一个会创建一些变量的简短示例程序",
+   "tw": "開啟一個會建立一些變數的簡短範例程式",
+   "ko": "변수를 몇 개 만드는 짧은 예제 프로그램을 엽니다",
+   "de": "Ein kurzes Beispielprogramm öffnen, das einige Variablen erzeugt"
+  },
+  "Removed since the last stop: %s": {
+   "ja": "前の停止から消えた名前: %s",
+   "zh": "自上次停止以来已消失: %s",
+   "tw": "自上次停止以來已消失: %s",
+   "ko": "지난 정지 이후 사라진 이름: %s",
+   "de": "Seit dem letzten Halt entfernt: %s"
+  },
+  "[pinned]": {
+   "ja": "[固定中]",
+   "zh": "[已固定]",
+   "tw": "[已固定]",
+   "ko": "[고정됨]",
+   "de": "[angeheftet]"
+  },
+  "Add an example": {
+   "ja": "例を足す",
+   "zh": "添加示例",
+   "tw": "新增範例",
+   "ko": "예제 추가",
+   "de": "Beispiel hinzufügen"
+  },
+  "Add the expression img.mean() to the list": {
+   "ja": "img.mean() という式を一覧に足します",
+   "zh": "将表达式 img.mean() 加入列表",
+   "tw": "將運算式 img.mean() 加入清單",
+   "ko": "img.mean() 식을 목록에 추가합니다",
+   "de": "Den Ausdruck img.mean() zur Liste hinzufügen"
+  },
+  "Pinned": {
+   "ja": "固定中",
+   "zh": "已固定",
+   "tw": "已固定",
+   "ko": "고정됨",
+   "de": "Angeheftet"
+  },
+  "this variable no longer exists: %s": {
+   "ja": "この変数はもうありません: %s",
+   "zh": "此变量已不存在: %s",
+   "tw": "此變數已不存在: %s",
+   "ko": "이 변수는 더 이상 없습니다: %s",
+   "de": "Diese Variable existiert nicht mehr: %s"
+  },
+  "changed since the last evaluation": {
+   "ja": "前の評価から変わりました",
+   "zh": "自上次计算以来已改变",
+   "tw": "自上次計算以來已改變",
+   "ko": "지난 계산 이후 바뀌었습니다",
+   "de": "seit der letzten Auswertung geändert"
+  },
+  "for loop over a range": {
+   "ja": "範囲を回す for ループ",
+   "zh": "遍历范围的 for 循环",
+   "tw": "遍歷範圍的 for 迴圈",
+   "ko": "범위를 도는 for 반복",
+   "de": "for-Schleife über einen Bereich"
+  },
+  "if / else": {
+   "ja": "if / else",
+   "zh": "if / else",
+   "tw": "if / else",
+   "ko": "if / else",
+   "de": "if / else"
+  },
+  "function definition": {
+   "ja": "関数の定義",
+   "zh": "函数定义",
+   "tw": "函式定義",
+   "ko": "함수 정의",
+   "de": "Funktionsdefinition"
+  },
+  "with open(...) as f": {
+   "ja": "with open(...) as f(ファイルを開く)",
+   "zh": "with open(...) as f(打开文件)",
+   "tw": "with open(...) as f(開啟檔案)",
+   "ko": "with open(...) as f(파일 열기)",
+   "de": "with open(...) as f (Datei öffnen)"
+  },
+  "try / except": {
+   "ja": "try / except(例外の処理)",
+   "zh": "try / except(异常处理)",
+   "tw": "try / except(例外處理)",
+   "ko": "try / except(예외 처리)",
+   "de": "try / except (Fehlerbehandlung)"
+  },
+  "pipeline of ops applied to the input image": {
+   "ja": "入力画像に処理の列(パイプライン)をかける",
+   "zh": "对输入图像应用一串算子(流水线)",
+   "tw": "對輸入影像套用一串運算子(管線)",
+   "ko": "입력 이미지에 연산 열(파이프라인)을 적용",
+   "de": "Pipeline aus Operatoren auf das Eingabebild anwenden"
+  },
+  "chain ops on the input image and show the result": {
+   "ja": "入力画像に処理をつなげて結果を見せる",
+   "zh": "对输入图像串联算子并显示结果",
+   "tw": "對輸入影像串接運算子並顯示結果",
+   "ko": "입력 이미지에 연산을 이어서 결과를 표시",
+   "de": "Operatoren verketten und das Ergebnis anzeigen"
+  },
+  "load a saved pipeline from the project and run it": {
+   "ja": "プロジェクトの保存済みパイプラインを読んで実行する",
+   "zh": "加载项目中已保存的流水线并运行",
+   "tw": "載入專案中已儲存的管線並執行",
+   "ko": "프로젝트의 저장된 파이프라인을 불러와 실행",
+   "de": "Gespeicherte Pipeline aus dem Projekt laden und ausführen"
+  },
+  "the input image": {
+   "ja": "入力画像",
+   "zh": "输入图像",
+   "tw": "輸入影像",
+   "ko": "입력 이미지",
+   "de": "das Eingabebild"
+  },
+  "show a value as an image in the result window": {
+   "ja": "値を結果の窓に画像として出す",
+   "zh": "在结果窗口中将值显示为图像",
+   "tw": "在結果視窗中將值顯示為影像",
+   "ko": "값을 결과 창에 이미지로 표시",
+   "de": "Wert als Bild im Ergebnisfenster zeigen"
+  },
+  "call an operator by name: op(\"gaussian\", img, a=0.4)": {
+   "ja": "名前で op を呼ぶ: op(\"gaussian\", img, a=0.4)",
+   "zh": "按名称调用算子: op(\"gaussian\", img, a=0.4)",
+   "tw": "依名稱呼叫運算子: op(\"gaussian\", img, a=0.4)",
+   "ko": "이름으로 op 호출: op(\"gaussian\", img, a=0.4)",
+   "de": "Operator per Name aufrufen: op(\"gaussian\", img, a=0.4)"
+  },
+  "make a pipeline from [(op, a, b), ...]": {
+   "ja": "[(op, a, b), ...] からパイプラインを作る",
+   "zh": "由 [(op, a, b), ...] 创建流水线",
+   "tw": "由 [(op, a, b), ...] 建立管線",
+   "ko": "[(op, a, b), ...]로 파이프라인 만들기",
+   "de": "Pipeline aus [(op, a, b), ...] erstellen"
+  },
+  "the pipeline built from the stage list": {
+   "ja": "段の列から作ったパイプライン",
+   "zh": "由阶段列表构成的流水线",
+   "tw": "由階段清單組成的管線",
+   "ko": "단계 목록으로 만든 파이프라인",
+   "de": "die aus der Stufenliste gebaute Pipeline"
+  },
+  "load a saved pipeline file from the project": {
+   "ja": "プロジェクトの保存済みパイプラインを読む",
+   "zh": "加载项目中已保存的流水线文件",
+   "tw": "載入專案中已儲存的管線檔案",
+   "ko": "프로젝트의 저장된 파이프라인 파일 불러오기",
+   "de": "gespeicherte Pipeline-Datei aus dem Projekt laden"
+  },
+  "load a parameter bundle file from the project": {
+   "ja": "プロジェクトのパラメータの束を読む",
+   "zh": "加载项目中的参数包文件",
+   "tw": "載入專案中的參數包檔案",
+   "ko": "프로젝트의 파라미터 묶음 파일 불러오기",
+   "de": "Parameterbündel-Datei aus dem Projekt laden"
+  },
+  "numpy": {
+   "ja": "numpy(数値計算)",
+   "zh": "numpy(数值计算)",
+   "tw": "numpy(數值計算)",
+   "ko": "numpy(수치 계산)",
+   "de": "numpy (numerische Berechnung)"
+  },
+  "the fullseye package": {
+   "ja": "fullseye パッケージ",
+   "zh": "fullseye 包",
+   "tw": "fullseye 套件",
+   "ko": "fullseye 패키지",
+   "de": "das fullseye-Paket"
+  },
+  "run a function on the GUI thread": {
+   "ja": "GUI スレッドで関数を動かす",
+   "zh": "在 GUI 线程中运行函数",
+   "tw": "在 GUI 執行緒中執行函式",
+   "ko": "GUI 스레드에서 함수 실행",
+   "de": "Funktion im GUI-Thread ausführen"
+  },
+  "open a window from the program": {
+   "ja": "プログラムから窓を開く",
+   "zh": "从程序中打开窗口",
+   "tw": "從程式中開啟視窗",
+   "ko": "프로그램에서 창 열기",
+   "de": "Fenster aus dem Programm öffnen"
+  },
+  "the image Studio has open": {
+   "ja": "Studio で開いている画像",
+   "zh": "Studio 中打开的图像",
+   "tw": "Studio 中開啟的影像",
+   "ko": "Studio에서 열린 이미지",
+   "de": "das in Studio geöffnete Bild"
+  },
+  "path of the result file": {
+   "ja": "結果ファイルのパス",
+   "zh": "结果文件的路径",
+   "tw": "結果檔案的路徑",
+   "ko": "결과 파일의 경로",
+   "de": "Pfad der Ergebnisdatei"
+  }
+ }
+}
