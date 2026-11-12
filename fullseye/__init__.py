@@ -876,6 +876,12 @@ from fullseye.fixture import (  # noqa: E402,F401
 )
 # 意味で op を引く(6 言語の要約・BM25、索引は fullseye/data/OP_SEARCH.json —— RAG の入口、2026-10-07)。
 from fullseye.opsearch import search_ops  # noqa: E402,F401
+# パラメータの束(2026-11-12): ファイル(JSON / TOML / YAML)から読み、op の引数だけを取り出して渡す層。
+# 台帳 op ではなく facade の入出力ユーティリティ(fullseye/parambundle.py)。fs.apply の契約も既存 op の引数も変えない。
+from fullseye.parambundle import (  # noqa: E402,F401
+    ParamBundle, load_params, save_params, params_compare, param_grid, param_zip, sweep, run_params,
+    ParamError, MissingParam,
+)
 from fslib import connection_opts  # noqa: E402,F401
 
 __all__ = [
@@ -1296,6 +1302,8 @@ __all__ = [
     "glyph_correct_spec", "glyph_find_plate", "glyph_rewrite_line",
     "glyph_find_text_lines", "glyph_make_spec",
     "search_ops",
+    "ParamBundle", "load_params", "save_params", "params_compare", "param_grid", "param_zip", "sweep", "run_params",
+    "ParamError", "MissingParam",
     "JSON_SORTS", "to_jsonable", "to_json", "from_jsonable", "from_json",
     "save_json", "load_json", "to_json_lines", "from_json_lines",
     "is_envelope", "as_value", "apply_json",
