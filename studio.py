@@ -7214,7 +7214,8 @@ def build_window(model=None):
         return model.image
 
     def _add_search_row(group, row):
-        bridge = "" if group != "needs_preprocessing" else "".join(" → " + n for n in row.get("bridge", []))
+        needs_pre = group == "needs_preprocessing" or row.get("group") == "needs_preprocessing"
+        bridge = "".join(" → " + n for n in row.get("bridge", [])) if needs_pre else ""
         text_ = "%s  (%s)\n入力: %s → 出力: %s%s" % (
             row.get("label") or row["name"], row["name"], row.get("in_sort") or "?",
             row.get("out_sort") or "?", bridge)
@@ -7239,12 +7240,20 @@ def build_window(model=None):
         if query is not None and search.text() != q:
             search.blockSignals(True); search.setText(q); search.blockSignals(False)
         op_list.clear(); search_state["chips"] = []; search_state["groups"] = {}
-        search_state["rows"] = {g: [] for g in ("applicable", "needs_preprocessing", "other")}
+        search_state["rows"] = {g: [] for g in ("staples", "applicable", "needs_preprocessing", "other")}
         result = search_grouped(q, current_value=_search_current_value(), k=40,
                                 lang=_UI_LANG.get("code", "en"))
         headers = {"applicable": tr("Applicable to the current input"),
                    "needs_preprocessing": tr("Needs preprocessing"), "other": tr("Other")}
         count = sum(len(result[g]) for g in headers)
+        # ★P-09(2026-11-12): 入門の語(「二値化」「回転」…)に当たる定番の op を、検索の順位とは別に先頭へ出す。
+        # 3 群の中身と並びは変えない(studio_search の約束)。前処理が要る定番は行の中に手順(→ op)が出る。
+        if result.get("staples"):
+            head = QtWidgets.QListWidgetItem("▾ " + tr("Common choices"))
+            head.setData(QtCore.Qt.UserRole + 4, "staples"); head.setFlags(QtCore.Qt.ItemIsEnabled)
+            op_list.addItem(head); search_state["groups"]["staples"] = head
+            for row in result["staples"]:
+                _add_search_row("staples", row)
         if count:
             for group, title_ in headers.items():
                 head = QtWidgets.QListWidgetItem("▾ " + title_)
@@ -7252,7 +7261,7 @@ def build_window(model=None):
                 op_list.addItem(head); search_state["groups"][group] = head
                 for row in result[group]:
                     _add_search_row(group, row)
-        else:
+        elif not result.get("staples"):
             help_data = search_zero_results_help(q, lang=_UI_LANG.get("code", "en"))
             terms = list(help_data.get("nearest_ops") or help_data.get("nearest_terms") or [])
             terms += list(help_data.get("categories") or []) + list(help_data.get("sorts") or [])
@@ -9920,6 +9929,18 @@ def build_window(model=None):
             model.move_stage(i, j); mark_dirty()
             refresh_stage_list(select=j); show_result()
 
+    def _file_has_colour(path):
+        """ファイルが色を持つか(3 チャネルで、チャネルどうしが違う)。判定に失敗したら False(案内は飾り)。"""
+        try:
+            if os.path.getsize(path) > 64 * 1024 * 1024:           # 大きいファイルを 2 回復号しない
+                return False
+            c = np.asarray(imgio.load(path, color=True))
+            return bool(c.ndim == 3 and c.shape[2] >= 3
+                        and (np.any(c[..., 0] != c[..., 1]) or np.any(c[..., 1] != c[..., 2])))
+        except Exception:                                                              # noqa: BLE001
+            return False
+    win._file_has_colour = _file_has_colour
+
     def _load_image_path(path):
         try:
             arr = imgio.load(path)                # missing / undecodable / permission
@@ -9932,9 +9953,16 @@ def build_window(model=None):
         state["input_notes"] = []                     # notes belong to the previously opened project's input
         state["fit_next"] = True                      # a new image should fit the view
         _push_recent(path); _set_title()
-        flash("loaded " + os.path.basename(path))
+        # ★P-17(2026-11-12): カラーのファイルは輝度にして読む(処理列は 2-D)。黙って灰色にせず、そう言う。
+        if _file_has_colour(path):
+            flash(tr("loaded %s — a colour file, read as greyscale (the pipeline works on one channel)")
+                  % os.path.basename(path))
+        else:
+            flash("loaded " + os.path.basename(path))
         show_result()
         return True
+
+    win._load_image_path = _load_image_path          # exposed for tests
 
     def load_image():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(

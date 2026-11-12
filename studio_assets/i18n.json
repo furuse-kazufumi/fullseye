@@ -54,6 +54,17 @@
     "ja": "前処理が必要", "zh": "需要预处理", "tw": "需要前處理",
     "ko": "전처리 필요", "de": "Vorverarbeitung erforderlich", "hi": "पूर्व-प्रसंस्करण आवश्यक"
   },
+  "loaded %s — a colour file, read as greyscale (the pipeline works on one channel)": {
+    "ja": "%s を読み込みました — カラーのファイルなので、グレー(輝度)にして読んでいます(処理は 1 チャネルで行います)",
+    "zh": "已载入 %s — 彩色文件,已按灰度(亮度)读取(处理在单通道上进行)",
+    "tw": "已載入 %s — 彩色檔案,已按灰階(亮度)讀取(處理在單通道上進行)",
+    "ko": "%s 불러옴 — 컬러 파일이므로 그레이(휘도)로 읽었습니다(처리는 1채널에서 수행)",
+    "de": "%s geladen — Farbdatei, als Graustufen (Luminanz) gelesen (die Verarbeitung läuft auf einem Kanal)",
+    "hi": "%s लोड हुआ — रंगीन फ़ाइल, ग्रेस्केल (ल्यूमिनेंस) में पढ़ी गई (प्रोसेसिंग एक चैनल पर होती है)"
+  },
+  "Common choices": {
+    "ja": "定番", "zh": "常用", "tw": "常用", "ko": "기본 선택", "de": "Übliche Wahl", "hi": "आम विकल्प"
+  },
   "Other": {
     "ja": "その他", "zh": "其他", "tw": "其他", "ko": "기타", "de": "Weitere", "hi": "अन्य"
   },
