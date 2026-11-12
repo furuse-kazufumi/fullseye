@@ -332,12 +332,20 @@ def test_japanese_mode_translates_the_texts_found_in_the_trial(win):
         _pick(win, "gaussian"); _pump(0.2)
         a_lbl, b_lbl = win._op_arg_labels
         assert a_lbl.text() == "a · ぼかしの量", a_lbl.text()
-        assert b_lbl.text() == "b (–)"
+        assert b_lbl.text() == "b · 端の扱い"                     # ★2026-11-12: gaussian の b は端の扱い(未使用ではない)
         detail = studio.op_signature_detail(studio._op_row("gaussian"))
-        assert "knob a" not in detail and "knob b" not in detail and "つまみ a" in detail and "(未使用)" in detail, detail
+        assert "knob a" not in detail and "knob b" not in detail and "つまみ a" in detail and "端の扱い" in detail, detail
+        unused = studio.op_signature_detail(studio._op_row("sobel_mag"))
+        assert "(未使用)" in unused and "unused" not in unused, unused        # 本当に未使用の op の表記
         win._op_buttons["insert"].click(); _pump(0.3)
         ka, kb = win._knob_rows
         assert "つまみ" in ka.label.text() and "ぼかし" in ka.label.text(), ka.label.text()
+        assert "端の扱い" in kb.label.text() and "reflect" in kb.label.text(), kb.label.text()
+        # 本当に未使用のつまみの表記(日本語)
+        _pick(win, "sobel_mag"); _pump(0.2)
+        win._op_buttons["insert"].click(); _pump(0.3)
+        win._refresh_stage_list(select=len(win._model_stages()) - 1) if hasattr(win, "_model_stages") else None
+        ka, kb = win._knob_rows
         assert "unused by this op" not in kb.label.text() and "この op では使いません" in kb.label.text(), kb.label.text()
         # 段の欄の併記(英語のまま残る「not computed」)
         assert _rows(win), "段が無い"
@@ -386,7 +394,8 @@ def test_english_mode_texts_are_unchanged(win):
     assert [win._problems_list.item(i).text() for i in range(win._problems_list.count())] == ["no problems"]
     assert win._program["edit"].toPlainText().startswith("* empty pipeline — type ops here (HDevelop syntax), e.g.:")
     detail = studio.op_signature_detail(studio._op_row("gaussian"))
-    assert "knob a — blur amount — Gaussian σ = 0.3 + 2.7·a" in detail and "knob b — (unused)" in detail
+    assert "knob a — blur amount — Gaussian σ = 0.3 + 2.7·a" in detail and "knob b — border handling" in detail
+    assert "knob b — (unused)" in studio.op_signature_detail(studio._op_row("sobel_mag"))
     _pick(win, "gaussian")
     assert win._op_arg_labels[0].text() == "a · blur amount"
 

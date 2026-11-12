@@ -35,6 +35,9 @@ def test_every_staple_op_is_in_the_index():
     ("膨張", "dilation_circle"), ("収縮", "erosion_circle"), ("穴埋め", "fill_up"),
     ("ラベリング", "connect_and_holes"), ("円検出", "cv_hough_circles"),
     ("テンプレートマッチング", "ncc_locate"), ("thresholding", "otsu"), ("blur", "gaussian"),
+    ("edge detection", "sobel_amp"), ("fill holes", "fill_up"), ("template matching", "ncc_locate"),
+    ("左右反転", "mirror_image"), ("エッジ保存平滑", "bilateral"), ("edge preserving smoothing", "bilateral"),
+    ("顕微鏡の画像を二値化", "otsu"),
     ("ｒｏｔａｔｅ", "rotate_image"),                             # 全角は NFKC で寄せる
 ])
 def test_beginner_words_put_the_staple_first(query, first):
@@ -163,7 +166,7 @@ def test_out_of_range_knobs_are_reported_after_apply(tmp_path, monkeypatch):
     win.show(); _pump(0.3)
     try:
         assert studio.parse_hdev_program_lines("gaussian (9.0, -3.0)", {"gaussian"})[0] == [("gaussian", 1.0, 0.0)]
-        assert studio.hdev_last_clamped() == ["gaussian a=9 → 1", "gaussian b=-3 → 0"]
+        assert studio.hdev_last_clamped() == ["line 1: gaussian a=9 → 1", "line 1: gaussian b=-3 → 0"]
         studio.parse_hdev_program_lines("gaussian (0.2, 0.3)", {"gaussian"})
         assert studio.hdev_last_clamped() == []                          # 解析のたびに空になる
         prog = win._program
@@ -337,3 +340,172 @@ def test_border_and_shape_choices_follow_the_op_source():
         want = PS.knob_to_display(shape, x)
         got = 0 if se is None else (1 if se.sum() == 13 else (3 if se.sum() == 7 else 2))
         assert got == want, x
+
+
+
+# --------------------------------------------------------------------------- 2 回目の独立レビュー(2026-11-12)
+@pytest.mark.parametrize("query", [
+    "顕微鏡", "楕円", "account", "discount", "knowledge", "hedge", "nothing", "smoothness",
+    "canny edge", "median blur", "circle_fit", "area_open", "line", "count", "area",
+])
+def test_staples_do_not_fire_on_unrelated_or_name_queries(query):
+    """部分一致の誤爆(顕微鏡 → mirror、account → ラベリング、nothing → skeleton …)と、op 名を含む問い合わせ。"""
+    assert ss.staples_for(query) == [], query
+
+
+def test_mirror_and_invert_are_told_apart():
+    assert ss.staples_for("左右反転") == ["mirror_image"]
+    assert ss.staples_for("反転") == ["invert_image"]
+    assert "sobel_amp" not in ss.staples_for("edge preserving smoothing")
+    assert "sobel_amp" not in ss.staples_for("エッジ保存平滑")
+
+
+def test_first_search_with_staples_is_not_slow():
+    """定番の行は索引から直接組む(op ごとに検索を呼ぶと最初の検索が約 1 秒かかった)。"""
+    import time
+    ss.search_grouped("ぼかし", _image(), k=10, lang="ja")              # 索引を温める
+    ss.clear_caches()
+    t0 = time.perf_counter()
+    res = ss.search_grouped("二値化", _image(), k=10, lang="ja")
+    dt = time.perf_counter() - t0
+    assert res["staples"] and res["staples"][0]["label"] != "otsu"       # 日本語の要約は付いている
+    assert dt < 0.6, dt
+
+
+def _studio_window(tmp_path, monkeypatch):
+    pytest.importorskip("PySide6")
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    from PySide6 import QtWidgets
+    import studio
+    QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / "s.ini"))
+    win, model = studio.build_window()
+    win.show(); _pump(0.3)
+    return studio, win, model
+
+
+def _close_window(studio, win):
+    studio._UI_LANG["code"] = "en"
+    win.close_guard = lambda: True
+    win.quiesce(); win.close(); _pump(0.1)
+
+
+def test_enter_inserts_the_top_search_hit_not_a_staple(tmp_path, monkeypatch):
+    """定番の欄を先頭に出しても、Enter が入れるのは検索の 1 位(「blur」で Enter → 定番の gaussian ではなく 1 位)。"""
+    studio, win, model = _studio_window(tmp_path, monkeypatch)
+    try:
+        ui = win._search_ui
+        win._ops_fit["check"].setChecked(False)
+        ui["edit"].setText("blur"); ui["search_now"]("blur"); _pump(0.3)
+        rows = ui["rows"]()
+        assert rows["staples"], "この試験は定番が出る語で行う"
+        ranked = [r["name"] for g in ("applicable", "needs_preprocessing", "other") for r in rows[g]]
+        n0 = len(model.stages)
+        ui["list"].setCurrentItem(None)
+        ui["edit"].returnPressed.emit(); _pump(0.3)
+        assert len(model.stages) == n0 + 1
+        assert model.stages[-1][0] == ranked[0], (model.stages[-1][0], ranked[:3], rows["staples"][0]["name"])
+    finally:
+        _close_window(studio, win)
+
+
+def test_search_rows_refit_when_the_list_gets_narrower(tmp_path, monkeypatch):
+    """検索の後でパネルを狭めても、行とボタンが一覧の見える幅に収まる(P-19 の症状が戻らない)。"""
+    studio, win, _model = _studio_window(tmp_path, monkeypatch)
+    try:
+        ui = win._search_ui
+        lst = ui["list"]
+        ui["search_now"]("二値化"); _pump(0.3)
+        lst.setFixedWidth(max(300, lst.width() // 2)); _pump(0.3)
+        vw = lst.viewport().width()
+        rows = [r for g in ui["rows"]().values() for r in g]
+        assert len(rows) >= 5
+        for r in rows:
+            assert lst.visualItemRect(r["item"]).width() <= vw, (r["name"], vw)
+            b = r["help_button"]
+            assert b.mapTo(lst.viewport(), b.rect().topRight()).x() <= vw, (r["name"], vw)
+    finally:
+        _close_window(studio, win)
+
+
+def test_choice_knob_slider_range_is_reset_when_the_spec_changes(tmp_path, monkeypatch):
+    """choice のスライダに前の spec の範囲が残っていた(int の後に開くと右端が knob 0.04 になった)。"""
+    studio, win, model = _studio_window(tmp_path, monkeypatch)
+    try:
+        for name in ("reg_erode", "gaussian", "median"):
+            model.add_stage(name, 0.5, 0.5)
+        model.step_states()
+        ra, rb = win._knob_rows
+        for first, second in ((0, 2), (0, 1), (2, 1)):
+            win._refresh_stage_list(select=first); _pump(0.05)
+            win._refresh_stage_list(select=second); _pump(0.05)
+            for row in (ra, rb):
+                if row.spec.get("kind") == "choice" and row.slider:
+                    assert (row.slider.minimum(), row.slider.maximum()) == (0, 100), (first, second, row.spec["label"])
+        win._refresh_stage_list(select=2); _pump(0.05)                 # median: a は窓の大きさ(choice)
+        ra.slider.setValue(ra.slider.maximum()); _pump(0.05)
+        assert model.stages[2][1] > 0.75                                # 右端 = いちばん大きい窓(3 に戻らない)
+    finally:
+        win._knob_timer.stop()
+        _close_window(studio, win)
+
+
+def test_non_finite_knobs_are_a_parse_error_and_clamp_notes_follow_live_lines():
+    pytest.importorskip("PySide6")
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    import studio
+    names = {"gaussian", "median"}
+    stages, errs, _lines = studio.parse_hdev_program_lines("gaussian (nan, 0.5)", names)
+    assert stages == [] and errs and "finite" in errs[0]
+    stages, errs, _lines = studio.parse_hdev_program_lines("median (inf, 0.5)", names)
+    assert stages == [] and errs
+    # if 0 の中の行は走らないので知らせない。走る行は行番号つき。丸め誤差(1.0000000001)は知らせない
+    text = "if 0\ngaussian (9, 0.5)\nendif\nmedian (0.5, 2)\ngaussian (1.0000000001, 0.5)"
+    stages, errs, lines = studio.parse_hdev_program_lines(text, names)
+    assert not errs and [s[0] for s in stages] == ["median", "gaussian"] and lines == [4, 5]
+    assert studio.hdev_last_clamped() == ["line 4: median b=2 → 1"]
+
+
+def test_colour_check_does_not_decode_the_full_image(tmp_path):
+    """カラーの判定は縮めた絵で行う(全画素を float64 で復号し直していた: 8000×6000 で 2.46 GB)。"""
+    Image = pytest.importorskip("PIL.Image")
+    pytest.importorskip("PySide6")
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    import tracemalloc
+    from PySide6 import QtWidgets
+    import studio
+    big = np.zeros((3000, 4000, 3), np.uint8); big[..., 0] = 200; big[1000:2000, :, 2] = 90
+    colour, grey = str(tmp_path / "big.jpg"), str(tmp_path / "grey.png")
+    Image.fromarray(big).save(colour, quality=80)
+    Image.fromarray(big[..., 0]).save(grey)
+    rgba_grey = np.dstack([big[..., 0]] * 3 + [np.full(big.shape[:2], 255, np.uint8)])
+    grey_rgba = str(tmp_path / "grey_rgba.png"); Image.fromarray(rgba_grey[:300, :400]).save(grey_rgba)
+    QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    os.environ["FULLSEYE_STUDIO_SETTINGS"] = str(tmp_path / "s.ini")
+    win, _model = studio.build_window()
+    try:
+        tracemalloc.start()
+        assert win._file_has_colour(colour) is True
+        peak = tracemalloc.get_traced_memory()[1]
+        tracemalloc.stop()
+        assert peak < 80 * 1024 * 1024, peak          # 全画素の float64 カラーなら 288 MB
+        assert win._file_has_colour(grey) is False and win._file_has_colour(grey_rgba) is False
+    finally:
+        os.environ.pop("FULLSEYE_STUDIO_SETTINGS", None)
+        studio._UI_LANG["code"] = "en"
+        win.close_guard = lambda: True
+        win.quiesce(); win.close(); _pump(0.1)
+
+
+def test_sobel_help_states_the_real_normalisation():
+    """ヘルプは「自分の最大値で割る」。実装もそうである(最小〜最大での引き伸ばしではない)。"""
+    import fullseye as fs
+    from scipy import ndimage
+    rng = np.random.default_rng(3)
+    img = np.clip(rng.normal(0.3, 0.05, (48, 64)), 0, 1); img[14:30, 20:44] += 0.4
+    out = np.asarray(fs.apply(img, "sobel_mag", 0.5, 0.5), float)
+    mag = np.hypot(ndimage.sobel(img, 1), ndimage.sobel(img, 0))
+    assert np.allclose(out, mag / mag.max(), atol=1e-12)
+    assert out.min() > 0.0 and out.max() == pytest.approx(1.0)        # 最小は 0 に引き伸ばされない
+    assert "divided by its own maximum" in _help("sobel_mag") and "最大値で割る" in _help("sobel_mag", "ja")
+    assert "minimum and maximum" not in _help("sobel_mag")

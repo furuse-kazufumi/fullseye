@@ -9,7 +9,7 @@ noise-tolerant than a bare finite difference.</p>
 
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">Arguments</h3>
 <table cellpadding="3" style="color:#e2e5ec">
-  <tr><td><b>a</b></td><td>unused — the kernel size and direction are fixed, and the magnitude is rescaled to 0..1 by its own minimum and maximum.</td></tr>
+  <tr><td><b>a</b></td><td>unused — the kernel size and direction are fixed, and the magnitude is divided by its own maximum (0 stays 0, the strongest edge becomes 1).</td></tr>
   <tr><td><b>b</b></td><td>unused.</td></tr>
 </table>
 

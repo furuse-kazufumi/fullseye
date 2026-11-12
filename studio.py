@@ -3745,20 +3745,26 @@ def _hdev_parse_op(line, lineno, errs, names):
         b = float(args[1]) if len(args) > 1 and args[1] != "" else 0.5
     except ValueError:
         errs.append("line %d: args must be numbers" % lineno); return None
-    # ★P-13(2026-11-12): 0..1 の外の値はここで黙って丸めていた。丸めた事実を残す(apply_program が画面に出す)。
+    if not (math.isfinite(a) and math.isfinite(b)):
+        # ★2026-11-12: `gaussian (nan, 0.5)` が a=1.0 として黙って走っていた(max/min が NaN を素通しする)
+        errs.append("line %d: args must be finite numbers" % lineno); return None
+    # ★P-13(2026-11-12): 0..1 の外の値はここで黙って丸めていた。丸めた事実を行ごとに残す(apply_program が画面に出す)。
     for key, val in (("a", a), ("b", b)):
-        if val == val and not (0.0 <= val <= 1.0):
-            _HDEV_CLAMPED.append("%s %s=%g → %g" % (name, key, val, max(0.0, min(1.0, val))))
+        if not (0.0 <= val <= 1.0):
+            shown, used = "%.6g" % val, "%.6g" % max(0.0, min(1.0, val))
+            if shown != used:                          # 1.0000000001 のような丸め誤差は知らせない
+                _HDEV_CLAMPED.setdefault(lineno, []).append("%s %s=%s → %s" % (name, key, shown, used))
     return (name, max(0.0, min(1.0, a)), max(0.0, min(1.0, b)))
 
 
-#: 直近の :func:`parse_hdev_program_lines` が 0..1 に丸めたつまみ(``"gaussian a=9 → 1"``)。解析のたびに空にする。
-_HDEV_CLAMPED: list = []
+#: 直近の :func:`parse_hdev_program_lines` が 0..1 に丸めたつまみ(行番号 → ``["gaussian a=9 → 1", …]``)。
+#: 解析のたびに空にし、解析の最後に「段になった行」だけを残す(``if 0 … endif`` の中や無効の行は知らせない)。
+_HDEV_CLAMPED: dict = {}
 
 
 def hdev_last_clamped():
-    """直近の Program の解析で 0..1 に丸めたつまみの一覧(重複なし、出た順)。"""
-    return list(dict.fromkeys(_HDEV_CLAMPED))
+    """直近の Program の解析で 0..1 に丸めたつまみの一覧(行の順。``"line 3: gaussian a=9 → 1"``)。"""
+    return ["line %d: %s" % (ln, msg) for ln in sorted(_HDEV_CLAMPED) for msg in dict.fromkeys(_HDEV_CLAMPED[ln])]
 
 
 def _hdev_eval_cond(expr):
@@ -3803,7 +3809,7 @@ def parse_hdev_program_lines(text, names):
     execution cursor, per-line timings) must go through this map rather than assume
     stage index == editor line (F2 review finding)."""
     names = set(names)
-    del _HDEV_CLAMPED[:]
+    _HDEV_CLAMPED.clear()
     errs = []
     toks = []
     byp_lines = set()
@@ -3876,6 +3882,9 @@ def parse_hdev_program_lines(text, names):
         return out
 
     pairs = parse_block(())
+    live = {n for st, n in pairs if not getattr(st, "bypass", False)}   # 実際に走る段の行だけ
+    for ln in [ln for ln in _HDEV_CLAMPED if ln not in live]:
+        del _HDEV_CLAMPED[ln]
     return [st for st, _n in pairs], errs, [n for _st, n in pairs]
 
 
@@ -4393,6 +4402,10 @@ def _knob_row_class(QtWidgets, QtCore):
                     self.combo.addItems([("%s %s" % (c, unit)) if unit else str(c)
                                          for c in (sp.get("choices") or [])])
                     page = self.combo
+                    if self.slider:
+                        # ★2026-11-12: 前の spec の範囲が残っていた(percentile の後に開くと 5..95 のままで
+                        # 1.0 に届かず、int の後だと右端が knob 0.04 になって窓が黙って 3 に変わる)。
+                        self.slider.setRange(0, 100)            # choice のスライダは生のつまみ 0..100
                 elif kind == "bool":
                     self.check.setText(sp.get("label") or "on")
                     page = self.check
@@ -7269,17 +7282,56 @@ def build_window(model=None):
         run.clicked.connect(lambda _=False, n=row["name"]: run_op_once(n, _search_current_value()))
         help_.clicked.connect(lambda _=False, n=row["name"]: show_op_help(n))
         h.addWidget(run); h.addWidget(help_)
+        entry = dict(row, text=text_, item=it, try_button=run, help_button=help_, label_widget=label, box=box)
+        _fit_search_row(entry)
+        op_list.setItemWidget(it, box)
+        search_state["rows"][group].append(entry)
+
+    def _fit_search_head(head):
+        """群の見出しの行も一覧の幅に収める(長い見出しが一覧の中身の幅を広げ、全部の行が横へ伸びていた)。"""
+        vw = op_list.width() - 2 * op_list.frameWidth() - op_list.verticalScrollBar().sizeHint().width()
+        if vw > 160:
+            head.setSizeHint(QtCore.QSize(vw - 2, op_list.fontMetrics().height() + 12))
+            head.setToolTip(head.text()[2:])                 # 切れた見出しはホバーで全文
+
+    def _fit_search_row(entry):
+        """検索結果の 1 行を、一覧の今の幅に合わせる(説明は折り返し、ボタンはその下)。"""
+        it, label, run, box = entry["item"], entry["label_widget"], entry["try_button"], entry["box"]
         # 縦のスクロールバーが後から出ても収まる幅(行を足している途中は viewport がまだ広い)
         vw = op_list.width() - 2 * op_list.frameWidth() - op_list.verticalScrollBar().sizeHint().width()
         if vw > 160:
             lw = vw - 12
             label.setFixedWidth(lw)
+            # 狭い一覧ではボタン 2 つが並ばない: 文字を詰める(幅の下限を外す)
+            for b in (run, entry["help_button"]):
+                b.setMinimumWidth(0)
+                b.setSizePolicy(QtWidgets.QSizePolicy.Maximum if b.sizeHint().width() * 2 < lw
+                                else QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Fixed)
             hh = label.heightForWidth(lw) + run.sizeHint().height() + 2 + 8
+            box.setFixedWidth(vw - 2)
             it.setSizeHint(QtCore.QSize(vw - 2, hh))
         else:                              # まだ表示されていない(幅が決まっていない)ときは従来どおり
             it.setSizeHint(box.sizeHint())
-        op_list.setItemWidget(it, box)
-        search_state["rows"][group].append(dict(row, text=text_, item=it, try_button=run, help_button=help_))
+
+    class _SearchRowRefit(QtCore.QObject):
+        """一覧の幅が変わったら、出ている検索結果の行を全部合わせ直す(★2026-11-12 のレビュー: 検索の後で
+        パネルを狭めると行の幅が前のまま残り、ボタンが画面の外へ出ていた = P-19 の症状が戻る)。"""
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.Resize:
+                for head in search_state["groups"].values():
+                    try:
+                        _fit_search_head(head)
+                    except RuntimeError:
+                        pass
+                for rows in search_state["rows"].values():
+                    for entry in rows:
+                        try:
+                            _fit_search_row(entry)
+                        except RuntimeError:               # 行の部品が破棄済み(次の検索で作り直される)
+                            pass
+            return False
+    _search_row_refit = _SearchRowRefit(op_list)
+    op_list.installEventFilter(_search_row_refit)
 
     def grouped_search(query=None):
         q = search.text().strip() if query is None else str(query)
@@ -7297,14 +7349,14 @@ def build_window(model=None):
         if result.get("staples"):
             head = QtWidgets.QListWidgetItem("▾ " + tr("Common choices"))
             head.setData(QtCore.Qt.UserRole + 4, "staples"); head.setFlags(QtCore.Qt.ItemIsEnabled)
-            op_list.addItem(head); search_state["groups"]["staples"] = head
+            op_list.addItem(head); search_state["groups"]["staples"] = head; _fit_search_head(head)
             for row in result["staples"]:
                 _add_search_row("staples", row)
         if count:
             for group, title_ in headers.items():
                 head = QtWidgets.QListWidgetItem("▾ " + title_)
                 head.setData(QtCore.Qt.UserRole + 4, group); head.setFlags(QtCore.Qt.ItemIsEnabled)
-                op_list.addItem(head); search_state["groups"][group] = head
+                op_list.addItem(head); search_state["groups"][group] = head; _fit_search_head(head)
                 for row in result[group]:
                     _add_search_row(group, row)
         elif not result.get("staples"):
@@ -9977,10 +10029,25 @@ def build_window(model=None):
 
     def _file_has_colour(path):
         """ファイルが色を持つか(3 チャネルで、チャネルどうしが違う)。判定に失敗したら False(案内は飾り)。"""
+        # ★2026-11-12: 全画素を float64 のカラーで復号し直していた(8000×6000 の JPEG で 0.96 秒・2.46 GB)。
+        # Pillow があれば、ヘッダのモードを見てから 256 px 以内に縮めた絵で比べる。無ければ小さいファイルだけ従来の道。
         try:
-            if os.path.getsize(path) > 64 * 1024 * 1024:           # 大きいファイルを 2 回復号しない
-                return False
-            c = np.asarray(imgio.load(path, color=True))
+            try:
+                from PIL import Image
+            except ImportError:
+                Image = None
+            if Image is not None:
+                with Image.open(path) as im:
+                    if im.mode in ("1", "L", "LA", "I", "F") or im.mode.startswith("I;16"):
+                        return False
+                    im.draft("RGB", (256, 256))                         # JPEG は復号の段階で縮める
+                    small = im.convert("RGB")
+                    small.thumbnail((256, 256))
+                    c = np.asarray(small)
+            else:
+                if os.path.getsize(path) > 8 * 1024 * 1024:
+                    return False
+                c = np.asarray(imgio.load(path, color=True))
             return bool(c.ndim == 3 and c.shape[2] >= 3
                         and (np.any(c[..., 0] != c[..., 1]) or np.any(c[..., 1] != c[..., 2])))
         except Exception:                                                              # noqa: BLE001
@@ -11935,8 +12002,11 @@ def build_window(model=None):
             grouped_search(search.text().strip())
         it = op_list.currentItem()
         if it is None or not it.data(QtCore.Qt.UserRole):
+            # ★2026-11-12: 選んでいないときに入れるのは**検索の 1 位**。先頭に出している「定番」の欄は対象にしない
+            # (「canny edge」で Enter を押すと sobel_amp が入っていた —— レビューの指摘)。定番は自分で選んだ時だけ。
             it = next((op_list.item(i) for i in range(op_list.count())
-                       if op_list.item(i).data(QtCore.Qt.UserRole)), None)
+                       if op_list.item(i).data(QtCore.Qt.UserRole)
+                       and op_list.item(i).data(QtCore.Qt.UserRole + 3) != "staples"), None)
         if it is not None:
             add_op(it)
     search.returnPressed.connect(_insert_searched_op)
