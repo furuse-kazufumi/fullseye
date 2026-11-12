@@ -9448,6 +9448,7 @@ def build_window(model=None):
             view.set_message(tr("Pipeline error") + "\n\n%s\n\n" % truncate(e, 700)
                              + tr("(details: Problems list, Display · Analysis panel)"))
             inspector.setPlainText("pipeline error: %s" % e)
+            state["insp_base"] = None
             win._img_info.setText("pipeline error")
             hist_view.clear(); state["result"] = None; state["raw"] = None
             return
@@ -9478,7 +9479,8 @@ def build_window(model=None):
         _v, _why = assess_validity(val)
         if _v is False:
             insp += "\n\n⚠ result needs review: %s" % "; ".join(_why)
-        inspector.setPlainText(insp)
+        state["insp_base"], state["insp_val"] = insp, val          # ROI を後から動かした時、本文はここから作り直す
+        inspector.setPlainText(insp + _roi_inspection(val))
         if prev is not None and prev.get("image") is not None:
             qi = _to_qimage(prev["image"], QtGui)
             if qi is not None:
@@ -9734,6 +9736,27 @@ def build_window(model=None):
             strip_timer.start(KNOB_DEBOUNCE_MS * 2)
 
     # ---- region of interest of the main view (Shift + drag; Shift + click clears) ------------- #
+    def _roi_inspection(val):
+        """★2026-11-12(B-6): ROI があれば、その範囲だけの大きさと min / max / mean / std を Inspector へ足す。
+        ROI が無い・画像でない・画像に掛からない時は空文字。"""
+        roi = state.get("roi")
+        if roi is None or not isinstance(val, np.ndarray) or val.dtype.kind not in "biuf" or val.ndim not in (2, 3):
+            return ""
+        part = crop_roi(val, roi)
+        if part is val:
+            return ""
+        a = np.asarray(part, np.float64)
+        fin = a[np.isfinite(a)]
+        head = "\n\nroi: %dx%d  (x %d..%d, y %d..%d)" % (part.shape[1], part.shape[0], roi[0], roi[2], roi[1], roi[3])
+        if fin.size == 0:
+            return head + "\nroi: no finite values"
+        return head + "\nroi min: %.4g  max: %.4g  mean: %.4g  std: %.4g" % (
+            fin.min(), fin.max(), fin.mean(), fin.std())
+
+    def _refresh_roi_inspector():
+        if state.get("insp_base") is not None:
+            inspector.setPlainText(state["insp_base"] + _roi_inspection(state.get("insp_val")))
+
     def set_roi(rect):
         r = None
         if rect is not None:
@@ -9742,6 +9765,7 @@ def build_window(model=None):
                 r = (x0, y0, x1, y1)
         state["roi"] = r
         view.set_roi_rect(r)
+        _refresh_roi_inspector()
         _strip_schedule()
     win._set_roi = set_roi
     view.roi_cb = set_roi

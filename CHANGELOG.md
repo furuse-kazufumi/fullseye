@@ -21,6 +21,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - Variables パネルを閉じたまま実行しても、開いた時にキャッシュから最新の型・サムネに作り直す(『? · control』が残らない)(候補 6・B-3)。
 - 日本語固定だった画素値の読み出し(値 / 表示 / レンジ)、段の行の『未計算 / not computed』の併記、状態行の `Run: done / Result: …` を言語の切り替えに追従させた(英語は英語だけ、6 言語を i18n.json の strings へ。pending_translation は増やしていない)。状態行は言語を切り替えると新しい言語で出し直す(B-5・B-7)。
 - Program で選んだ行だけを実行(Run メニューの『選んだ行だけ実行』= Ctrl+Alt+Return、Program で行を選んだ状態の Ctrl+Return も同じ。選びが無い Ctrl+Return は従来どおり Run all)。前の段はキャッシュから取り、選んだ行より後ろの段は計算しない。状態行に『ran line N』(候補 10)。
+- ROI を決めると、Inspector に `roi: 100x100` とその範囲だけの min / max / mean / std を足す(解除で消える)。これまで Inspector は ROI を無視して全画像の値のままだった(候補 7・B-6)。
 
 ### 直し — インストール体験(setup / ショートカット / アンインストール): 独立レビュー(2026-11-12)の 16 件
 

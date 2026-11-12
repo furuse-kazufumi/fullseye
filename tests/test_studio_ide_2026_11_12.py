@@ -715,3 +715,24 @@ def test_selecting_only_a_comment_line_runs_nothing_and_says_so(win):
     _select_line(ed, 1)
     win._program["run_selection"]()
     assert "no stage in the selected lines" in win._program["status"]().text()
+
+
+# --------------------------------------------------------------------------- 9. ROI の統計を Inspector に(候補 7・B-6)
+def test_roi_statistics_appear_in_the_inspector(win):
+    win._load_sample_image("coins")
+    _pump(0.3)
+    win._program["edit"].setPlainText("gaussian (0.4, 0.5)\n")
+    win._program["apply"]()
+    win._do_run_all()
+    _pump(1.0)
+    before = win._inspector.toPlainText()
+    assert "roi" not in before
+    whole = float(re.search(r"mean: ([-0-9.eE+]+)", before).group(1))
+    win._set_roi((50, 50, 150, 150))
+    text = win._inspector.toPlainText()
+    assert "roi: 100x100" in text, text
+    roi_mean = float(re.search(r"roi min: .*mean: ([-0-9.eE+]+)", text).group(1))
+    assert abs(roi_mean - whole) > 1e-3, (roi_mean, whole)               # 全画像の mean とは違う値
+    assert text.startswith(before.split("\n\nroi:")[0])                  # 本文はそのまま、ROI が後ろに付く
+    win._set_roi(None)                                                   # 解除(Shift+クリックと同じ入口)
+    assert "roi" not in win._inspector.toPlainText()
