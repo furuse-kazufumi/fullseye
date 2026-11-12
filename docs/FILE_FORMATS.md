@@ -58,7 +58,7 @@
 | WAV | `.wav` | `dsp.read_wav` | `dsp.write_wav` | `read_wav`<br>`write_wav` | stdlib / core | `tests/test_chain_type_contracts.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+19 | — |
 | WebM video | `.webm` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | Excel workbook | `.xlsx` | — | `fullseye.xlsxio.save_xlsx_report` | — | optional: openpyxl | `tests/test_inspect_batch.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+2 | — |
-| XML | `.xml` | `safe_xml.safe_xml_parse`<br>`safe_xml.safe_xml_parse_zip_member` | — | — | stdlib / core | `tests/test_anatomical_hand.py`<br>`tests/test_ci_folded_run_no_comment_2026_11_03.py`<br>+13 | — |
+| XML | `.xml` | `safe_xml.safe_xml_parse`<br>`safe_xml.safe_xml_parse_zip_member` | — | — | stdlib / core | `tests/test_anatomical_hand.py`<br>`tests/test_ci_folded_run_no_comment_2026_11_03.py`<br>+14 | — |
 | XYZ point cloud | `.xyz` | `fileio.points_read_xyz`<br>`mesh.read_points` | `fileio.points_write_xyz`<br>`mesh.write_points` | `points_read_xyz`<br>`points_write_xyz` | stdlib / core | `tests/test_anim3d_raster_gate_2026_10_26.py`<br>`tests/test_audit_file_formats.py`<br>+9 | — |
 
 ## 集計
