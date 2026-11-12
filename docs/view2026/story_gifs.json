@@ -31830,7 +31830,7 @@
             0.0221
           ],
           "max_color_mad": 1.1696,
-          "source_sha256": "d39841c49a4da745187d3c24ec918e5ae123ebbce9f99fccbbadcd70b9006f09"
+          "source_sha256": "e94fb114bd7d855c0299bf52cd13fb2eab223d1e7678d64ce4e8d714d3ca195a"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_tum_rgbd_slam/story.en.gif",
@@ -31902,7 +31902,7 @@
             0.0221
           ],
           "max_color_mad": 1.1696,
-          "source_sha256": "da6ff7de8d1dc1d5cebed630fc6236420d57284ed402b8ed6a15a1e72064a5f0"
+          "source_sha256": "ab88089c80fe326fc9f2f97be34c0354754fd942c139eea47dbc95f387062cf4"
         }
       },
       "reason": null,
