@@ -382,3 +382,45 @@ def test_replace_text_containing_the_query_does_not_loop(win):
     QTest.keyClicks(f["replace_edit"], "otsu_x")
     assert f["bar"].replace_all() == 2
     assert ed.toPlainText() == "otsu_x\notsu_x\n"
+
+
+# --------------------------------------------------------------------------- 4. Ctrl+/ の行コメント
+def test_ctrl_slash_comments_and_uncomments_the_selected_lines(win):
+    from PySide6 import QtCore, QtGui
+    text = "gaussian (0.4, 0.5)\nsobel_mag (0.5, 0.5)\notsu (0.5, 0.5)\n"
+    ed = _editor(win, text)
+    c = ed.textCursor()
+    c.setPosition(0); c.setPosition(len("gaussian (0.4, 0.5)\nsobel_mag"), QtGui.QTextCursor.KeepAnchor)
+    ed.setTextCursor(c)                                         # 1〜2 行目を選ぶ
+    _key(ed, QtCore.Qt.Key_Slash, QtCore.Qt.ControlModifier)
+    lines = ed.toPlainText().split("\n")
+    assert lines[0] == "* gaussian (0.4, 0.5)" and lines[1] == "* sobel_mag (0.5, 0.5)" and lines[2] == "otsu (0.5, 0.5)"
+    _key(ed, QtCore.Qt.Key_Slash, QtCore.Qt.ControlModifier)     # もう一度で外れる
+    assert ed.toPlainText() == text
+
+
+def test_comment_toggle_is_one_undo_and_comment_lines_do_not_become_stages(win):
+    from PySide6 import QtCore, QtGui
+    text = "gaussian (0.4, 0.5)\nsobel_mag (0.5, 0.5)\notsu (0.5, 0.5)\n"
+    ed = _editor(win, text)
+    ed.selectAll()
+    _key(ed, QtCore.Qt.Key_Slash, QtCore.Qt.ControlModifier)
+    assert all(l.startswith("* ") for l in ed.toPlainText().split("\n") if l)
+    win._program["apply"]()
+    assert len(win._test_model.stages) == 0                       # コメント行は段にならない
+    ed.setFocus()
+    _key(ed, QtCore.Qt.Key_Z, QtCore.Qt.ControlModifier)          # 1 回の Undo で戻る
+    assert ed.toPlainText() == text
+
+
+def test_comment_toggle_without_a_selection_uses_the_cursor_line_and_skips_blank_lines(win):
+    from PySide6 import QtCore, QtGui
+    ed = _editor(win, "gaussian (0.4, 0.5)\n\notsu (0.5, 0.5)\n")
+    c = ed.textCursor(); c.setPosition(0); ed.setTextCursor(c)
+    _key(ed, QtCore.Qt.Key_Slash, QtCore.Qt.ControlModifier)
+    assert ed.toPlainText() == "* gaussian (0.4, 0.5)\n\notsu (0.5, 0.5)\n"
+    ed.selectAll()                                                 # 空行は触らない / 1 行でも非コメントなら全部に付ける
+    _key(ed, QtCore.Qt.Key_Slash, QtCore.Qt.ControlModifier)
+    assert ed.toPlainText() == "* * gaussian (0.4, 0.5)\n\n* otsu (0.5, 0.5)\n"
+    _key(ed, QtCore.Qt.Key_Slash, QtCore.Qt.ControlModifier)
+    assert ed.toPlainText() == "* gaussian (0.4, 0.5)\n\notsu (0.5, 0.5)\n"

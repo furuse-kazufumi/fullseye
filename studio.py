@@ -6925,6 +6925,44 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             seed = sel if (sel and "\u2029" not in sel and len(sel) <= 200) else None
             self.find_bar.open(replace, seed)
 
+        def toggle_comment(self):
+            """選んだ行(選びが無ければカーソルの行)の行コメント ``* `` を付け外す(Ctrl+/)。
+
+            対象の行が**全部**コメントなら外し、1 行でもコメントでなければ全部に付ける。空行は触らない。
+            選びが次の行の行頭で終わっていれば、その行は含めない。全体で 1 回の Undo。"""
+            cur = self.textCursor()
+            doc = self.document()
+            first = doc.findBlock(cur.selectionStart())
+            last = doc.findBlock(cur.selectionEnd())
+            if cur.hasSelection() and last.blockNumber() > first.blockNumber() and cur.selectionEnd() == last.position():
+                last = last.previous()
+            blocks, b = [], first
+            while b.isValid() and b.blockNumber() <= last.blockNumber():
+                if b.text().strip():
+                    blocks.append(b)
+                b = b.next()
+            if not blocks:
+                return 0
+            uncomment = all(x.text().lstrip().startswith("*") for x in blocks)
+            guard = QtGui.QTextCursor(doc)
+            guard.beginEditBlock()
+            try:
+                for blk in blocks:
+                    t = blk.text()
+                    c = QtGui.QTextCursor(blk)
+                    if uncomment:
+                        ind = len(t) - len(t.lstrip())
+                        c.setPosition(blk.position() + ind)
+                        c.movePosition(QtGui.QTextCursor.Right, QtGui.QTextCursor.KeepAnchor,
+                                       2 if t[ind:ind + 2] == "* " else 1)
+                        c.removeSelectedText()
+                    else:
+                        c.setPosition(blk.position())
+                        c.insertText("* ")
+            finally:
+                guard.endEditBlock()
+            return len(blocks)
+
         def _say(self, text):
             if self.on_message is not None:
                 self.on_message(text)
@@ -7014,6 +7052,8 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     return "find"
                 if k == K.Key_H:
                     return "replace"
+                if k == K.Key_Slash:
+                    return "comment"
                 # <<IDE-KEYS-2>>
             if not ctrl:
                 if k == K.Key_F3:
@@ -7045,6 +7085,8 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     self.find_bar.step(backward=(action == "prev"))
             elif action == "close_find":
                 self.find_bar.close_bar()
+            elif action == "comment":
+                self.toggle_comment()
             # <<IDE-DO-2>>
 
         def keyPressEvent(self, ev):
