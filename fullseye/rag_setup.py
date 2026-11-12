@@ -24,6 +24,7 @@ fail-closed: どちらのモードでもコーパス実体が見つからなけ�
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import shutil
 import sys
@@ -131,10 +132,50 @@ def install(target_dir: Path, repo: Path | None = None, _auto_repo: bool = True,
     return dest
 
 
+def is_link(p: Path) -> bool:
+    """シンボリックリンクか、Windows のジャンクション(再解析ポイント)か。
+
+    Python 3.11 の ``Path.is_symlink()`` はジャンクションで False を返す(3.12 の ``is_junction`` が追加された理由)。
+    ``st_file_attributes`` の FILE_ATTRIBUTE_REPARSE_POINT(0x400)で見る。"""
+    if p.is_symlink():
+        return True
+    try:
+        return bool(os.lstat(p).st_file_attributes & 0x400)        # Windows だけにある属性
+    except (OSError, AttributeError):
+        return False
+
+
+def remove_link(p: Path) -> None:
+    """リンク / ジャンクションそのものだけを外す(指す先の中身は消さない)。"""
+    try:
+        os.rmdir(p)                     # Windows のジャンクション・ディレクトリのシンボリックリンク
+    except OSError:
+        os.unlink(p)                    # POSIX のシンボリックリンク
+
+
+def skill_edited(dest: Path) -> bool:
+    """インストールしたスキルの SKILL.md が、同梱の原本から手で変えられているか(FULLSEYE_REPO の行は見ない)。
+
+    手編集を黙って消さないため、アンインストールは編集済みの skill を既定で残す。"""
+    if is_link(dest):                   # リンクは外すだけ(指す先の開発用の原本は消さない)ので、編集の判定は要らない
+        return False
+    cur = dest / "SKILL.md"
+    if not cur.is_file():
+        return False
+    try:
+        text = cur.read_text(encoding="utf-8")
+        src = _skill_source(find_repo()) / "SKILL.md"
+        orig = src.read_text(encoding="utf-8")
+    except (OSError, SystemExit):
+        return False
+    norm = lambda s: _REPO_LINE.sub("FULLSEYE_REPO = <pinned>", s.replace("\r\n", "\n"), count=1)    # noqa: E731
+    return norm(text) != norm(orig)
+
+
 def uninstall(target_dir: Path) -> bool:
     dest = target_dir / SKILL_NAME
-    if dest.is_symlink():               # リンク(ジャンクション)なら中身ではなくリンクだけを外す
-        dest.unlink()
+    if is_link(dest):                   # リンク(ジャンクション)なら中身ではなくリンクだけを外す
+        remove_link(dest)
         return True
     if dest.is_dir():
         shutil.rmtree(dest)

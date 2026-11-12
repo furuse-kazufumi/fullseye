@@ -37,6 +37,7 @@ import numpy as np
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO_ROOT))
 import mesh as fsmesh  # noqa: E402
+from safe_xml import safe_xml_parse  # noqa: E402
 import render3d  # noqa: E402
 import render_beauty as rb  # noqa: E402
 
@@ -95,7 +96,7 @@ def _local_pose(el):
 
 def _expand_includes(path: Path) -> ET.Element:
     """<include file=.../> をその場で展開した root を返す(相対パスは親ファイル基準)。"""
-    root = ET.parse(path).getroot()
+    root = safe_xml_parse(path, kind="path", op="anatomical_hand")
 
     def walk(parent: ET.Element, base: Path):
         for i, child in enumerate(list(parent)):

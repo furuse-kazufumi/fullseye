@@ -209,7 +209,8 @@ It removes only what the install ledger (`%LOCALAPPDATA%\Fullseye\setup\install_
 `~/.local/share/fullseye/`) recorded, keeps your Studio settings and cache unless you say otherwise, and runs
 `pip uninstall` in a separate process after it exits (Windows cannot delete a running `fullseye.exe`). On Windows the
 same cleanup is behind **Settings > Apps > Installed apps > Fullseye** once you have registered the shortcuts; that entry
-runs `fullseye-uninstall.cmd` (in the setup folder), which keeps working after the venv or Python was deleted.
+runs `fullseye-uninstall.cmd` (in the setup folder), which keeps working after the venv or Python was deleted (also when `python.exe` is still there but cannot start because the
+Python the venv was made from is gone). The Claude Code skill is asked about separately and, if you edited its `SKILL.md`, is kept by default.
 
 The ledger is **checked before anything is deleted**: only the file names and folders that setup itself creates
 (`Fullseye Studio.lnk`, `fullseye.ico`, `fullseye-uninstall.cmd`, the `fullseye-studio.desktop` / png of Linux, the Start menu
@@ -218,6 +219,13 @@ ledger, and anything created by a different Python environment (venv A vs venv B
 removed" and left alone, even with `--yes`. A broken ledger is reported and treated as absent. The `pip uninstall` step is
 offered only if this Python has pip and the `fullseye` it has installed is the one that is running (otherwise it prints the
 `uv pip uninstall` command and exits with code 3).
+
+**Exit codes** of `fullseye setup --uninstall`: `0` = everything chosen was removed (and the pip step was started when it applies), or
+`--dry-run` / no terminal so nothing was done, or no pip step is needed (fullseye is not pip-installed in this Python, or the pip-installed
+one is a different copy from the one running); `1` = an item could not be removed, or the ledger held an item that is not allowed (a
+hand-edited ledger); `3` = the registrations were removed but the pip step could not be offered (this Python has no pip, e.g. a uv venv),
+so fullseye itself is still installed - run the `uv pip uninstall` command it prints. `fullseye setup` itself exits `1` when any chosen
+step failed (dependency install, shortcuts, RAG skill, opening Studio), otherwise `0`.
 
 **Known limitations** (not fixed, unverified): (1) with a Microsoft Store Python (MSIX) writes under `%APPDATA%` /
 `%LOCALAPPDATA%` may be redirected to a private area, so the Start menu entry or the Apps list may not appear;

@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import math
 import xml.etree.ElementTree as ET
+from safe_xml import safe_xml_parse
 
 import numpy as np
 
@@ -522,7 +523,7 @@ def pegfail_scene_mjcf(kp=None, lg: float | None = None, blocked_depth: float | 
     (iii) ``decoy_xy`` なら囮の穴(壁・面取り・襟を複製して平行移動、名前に ``decoy_`` を付ける。四角い枠は囮と重なるので外す)。
     **Raises** ``ValueError``: 栓の深さが穴の外、囮が目標穴と重なる(中心距離 < 2(R + W) + 1 mm)。"""
     kp = P._kp(kp)
-    root = ET.fromstring(P.peg_scene_mjcf(kp, lg=lg, offsamples=offsamples))
+    root = safe_xml_parse(P.peg_scene_mjcf(kp, lg=lg, offsamples=offsamples), kind="data", op="pegfail_scene_xml")
     plate = next(b for b in root.iter("body") if b.get("name") == "plate")
     R, W, Hd = kp["R"], kp["chamfer"], kp["hole_depth"]
     if blocked_depth is not None:

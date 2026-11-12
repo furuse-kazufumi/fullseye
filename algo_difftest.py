@@ -61,8 +61,9 @@ def find_c_compiler() -> list[str] | None:
     Prefers a system compiler; falls back to ``python -m ziglang cc`` (a
     self-contained clang installable with ``pip install ziglang``).
     """
+    from backend_safe import which_outside_cwd     # 作業フォルダに置かれた gcc.bat を拾わない
     for cc in ("gcc", "cc", "clang"):
-        p = shutil.which(cc)
+        p = which_outside_cwd(cc)
         if p:
             return [p]
     try:

@@ -86,6 +86,38 @@ class MissingDependencyError(ImportError):
         super().__init__(msg)
 
 
+def which_outside_cwd(name):
+    """PATH から外部コマンド *name* を探す。**作業フォルダは暗黙には探さない**。見つからなければ ``None``。
+
+    ``shutil.which`` は Windows で作業フォルダを PATH の先頭に足す(Python 3.11 は常に。3.12 以降は
+    ``NeedCurrentDirectoryForExePath`` に従う)。書庫を開くフォルダや信頼できないフォルダに
+    ``7z.bat`` / ``gcc.cmd`` が置いてあると、Fullseye がそれを実行してしまう(2026-11-12、インストーラの
+    レビューで ``powershell`` について見つかり、同じ形を一掃した)。
+
+    * 名前にフォルダが付いている(``tools\\7z.exe`` など)ときは、呼び出し側が場所を指定しているので
+      ``shutil.which`` に任せる。
+    * Windows の裸の名前は、PATH の**絶対パスの項目だけ**を順に見る(空・``.``・相対の項目は飛ばす)。
+      作業フォルダを PATH に絶対パスで入れている利用者の指定は尊重する。
+    * Windows 以外の ``shutil.which`` は作業フォルダを足さないので、そのまま使う。
+    """
+    import shutil
+    if not isinstance(name, str) or not name.strip():
+        return None
+    if os.name != "nt" or os.path.dirname(name):
+        return shutil.which(name)
+    exts = [e for e in os.environ.get("PATHEXT", ".COM;.EXE;.BAT;.CMD").split(os.pathsep) if e]
+    names = [name] if os.path.splitext(name)[1].lower() in {e.lower() for e in exts} else [name + e for e in exts]
+    for folder in os.environ.get("PATH", "").split(os.pathsep):
+        folder = folder.strip().strip('"')
+        if not folder or not os.path.isabs(folder):
+            continue
+        for candidate in names:
+            full = os.path.join(folder, candidate)
+            if os.path.isfile(full):
+                return full
+    return None
+
+
 def missing_dependency(module, why="", op=None):
     """Build a :class:`MissingDependencyError` for the op the facade is currently running.
 

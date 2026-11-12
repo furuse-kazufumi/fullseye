@@ -313,7 +313,8 @@ fullseye setup --uninstall      # setup が作った物を並べて見せ、聞�
 Studio の設定とキャッシュは既定で残し、聞いたときだけ消します。`pip uninstall` は、実行中の `fullseye.exe` を Windows が
 消せないため、このコマンドが終わった後に別プロセスで走ります。Windows ではショートカットを登録すると
 **設定 > アプリ > インストールされているアプリ > Fullseye** にも出ます。その項目は setup フォルダの `fullseye-uninstall.cmd` を呼び、
-venv や Python を消した後でも動きます。
+venv や Python を消した後(`python.exe` が在っても、venv の元の Python が無くて起動できない場合も)でも動きます。Claude Code の skill は別の問いで、
+`SKILL.md` を手で編集していれば既定では残します。
 
 台帳は**消す前に中身を検証**します。消すのは setup 自身が作る名前と置き場(`Fullseye Studio.lnk`・`fullseye.ico`・
 `fullseye-uninstall.cmd`・Linux の `fullseye-studio.desktop` と png、スタートメニューの `Fullseye` フォルダ、setup フォルダ)と、
@@ -321,6 +322,12 @@ venv や Python を消した後でも動きます。
 `--yes` でも消さずに「台帳にあるが消さなかったもの」として表示します。壊れた台帳は警告して「台帳なし」として扱います。
 `pip uninstall` の段は、この Python に pip があり、入っている `fullseye` が動いている物と同じ場所のときだけ出します
 (そうでなければ `uv pip uninstall` のコマンドを案内し、終了コード 3 で終わります)。
+
+`fullseye setup --uninstall` の**終了コード**: `0` = 選んだ物を全部消した(pip の段が要る場合は起動した)/ `--dry-run`・端末なしで何もしていない /
+pip の段が要らない(この Python に fullseye が pip で入っていない、または入っているのが動いている物と別のコピー)。`1` = 消せなかった項目がある、
+または台帳に許可外の項目があった(書き換えた台帳)。`3` = 登録は消したが pip の段を出せず(この Python に pip が無い = uv の venv など)、
+fullseye 本体が残っている — 案内された `uv pip uninstall` を実行してください。`fullseye setup` 本体は、選んだ段(依存の導入・ショートカット・
+RAG skill・Studio を開く)のどれかが失敗すれば `1`、全部できれば `0` です。
 
 **既知の制約**(直していません・未確認): (1) Microsoft Store 版 Python(MSIX)では `%APPDATA%` / `%LOCALAPPDATA%` への書き込みが
 私的な領域に振り替えられ、スタートメニューやアプリの一覧に出ない可能性があります。(2) conda の `pythonw.exe` を環境を有効にせず

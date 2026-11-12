@@ -20,6 +20,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -370,8 +371,6 @@ def check_ledger_item(kind: str, path: str, *, plat: Optional[str] = None, dirs:
         p = Path(path)
         if p.name != rag_setup.SKILL_NAME:
             return "%s is not a %s directory; left alone" % (p, rag_setup.SKILL_NAME)
-        if p.is_symlink():
-            return "%s is a symlink/junction; left alone" % p
         try:
             if _norm(p.parent) == _norm(rag_setup.default_target()):
                 return None
@@ -467,6 +466,21 @@ def regkey_exists(key: str) -> bool:
 
 
 # --------------------------------------------------------------------------- Python に頼らない後始末スクリプト(.cmd)
+_DYNAMIC_CMD_VARS = frozenset({"CD", "DATE", "TIME", "RANDOM", "ERRORLEVEL", "CMDEXTVERSION", "CMDCMDLINE", "HIGHESTNUMANODENUMBER"})
+
+
+def reject_expandable_percent(path: object) -> None:
+    """パスに、cmd が展開してしまう ``%NAME%``(定義済みの環境変数、または %CD% など)があれば拒否する。
+
+    「アプリと機能」は UninstallString を cmd.exe に渡す。そのとき ``%NAME%`` は展開され、別のパスになって起動に失敗する
+    (.cmd の中の ``%`` は ``%%`` で逃がしているが、起動の行は逃がせない)。登録の時点で理由を言って止める。"""
+    for m in re.finditer(r"%([^%\r\n=]+)%", str(path)):
+        name = m.group(1)
+        if name.upper() in _DYNAMIC_CMD_VARS or os.environ.get(name) is not None:
+            raise ShortcutError("the setup folder path %s contains %%%s%%, which cmd.exe would expand when 'Apps & features' "
+                                "runs the uninstaller; choose a LOCALAPPDATA without a %%NAME%% pattern" % (path, name))
+
+
 def _cmd_val(p: object) -> str:
     """.cmd の ``set "X=..."`` / ``del "..."`` に安全に書ける形にする(% は %% に。引用符・改行は拒否)。"""
     s = str(p)
@@ -492,6 +506,10 @@ def uninstall_cmd_text(*, python: object, uninstaller: object, lnks: Iterable[ob
          'set "FS_UNINST=%s"' % _cmd_val(uninstaller),
          'if not exist "%FS_PY%" goto fallback',
          'if not exist "%FS_UNINST%" goto fallback',
+         # python.exe が在っても起動できない(venv の元の Python を消した = pyvenv.cfg の home が無い、rc 103)ことがある。
+         # 起動を確かめて、だめなら Python に頼らない後始末へ進む(進まないと「アプリと機能」から永久に消せない)。
+         '"%FS_PY%" -I -c "0" >nul 2>&1',
+         "if errorlevel 1 goto fallback",
          # Python 側はこの .cmd を消さない(実行中のバッチが消えると cmd が「見つかりません」を出して終了コードも壊れる)。
          # 消すのは、Python が終わった後でこのバッチ自身。
          'set "%s=1"' % UNINSTALL_FROM_CMD_ENV,
@@ -551,6 +569,7 @@ def install(desktop: bool = False, *, python: Optional[str] = None, platform: Op
         d = dict(windows_dirs())
         d.update(dirs or {})
         icon_dst = d["icon_dir"] / "fullseye.ico"
+        reject_expandable_percent(d["icon_dir"])
         d["icon_dir"].mkdir(parents=True, exist_ok=True)
         ledger_record("dir_if_empty", d["icon_dir"], ledger, owner)
         shutil.copyfile(icon_source("ico"), icon_dst)

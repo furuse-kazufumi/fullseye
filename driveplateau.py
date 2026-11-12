@@ -28,6 +28,7 @@ import io
 import math
 import os
 import xml.etree.ElementTree as ET
+from safe_xml import safe_xml_iterparse
 from pathlib import Path
 from typing import Any, Callable, Iterable, Iterator, Sequence
 
@@ -337,7 +338,7 @@ def plateau_parse(
     n_skipped = 0
     try:
         try:
-            for _event, elem in ET.iterparse(stream, events=("end",)):
+            for _event, elem in safe_xml_iterparse(stream, op="plateau"):
                 name = _local_name(elem.tag)
                 if name == "Building":
                     try:
@@ -1265,7 +1266,7 @@ def plateau_lod2_mesh(
     srs_seen: str | None = None
     try:
         try:
-            for _event, elem in ET.iterparse(stream, events=("end",)):
+            for _event, elem in safe_xml_iterparse(stream, op="plateau"):
                 name = _local_name(elem.tag)
                 if name == "Envelope" and srs_seen is None:
                     srs = elem.get("srsName")

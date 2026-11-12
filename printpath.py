@@ -26,6 +26,7 @@ import re
 import zipfile
 from typing import Any
 from xml.etree import ElementTree as ET
+from safe_xml import safe_xml_parse_zip_member
 
 import numpy as np
 from scipy import ndimage as ndi
@@ -608,7 +609,7 @@ def read_3mf(path: str) -> tuple[np.ndarray, np.ndarray]:
             model = next((n for n in names if n.lower().endswith(".model")), None)
             if model is None:
                 raise ValueError(f"{op}: no .model part in {p}")
-            root = ET.fromstring(zf.read(model))
+            root = safe_xml_parse_zip_member(zf, model, op=op)
     except zipfile.BadZipFile:
         raise ValueError(f"{op}: not a zip container: {p}") from None
     except ET.ParseError as e:

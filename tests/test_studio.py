@@ -1582,9 +1582,9 @@ def test_operator_arg_labels_reflect_selected_op():
         idx = next(i for i in range(ol.count()) if ol.item(i).data(QtCore.Qt.UserRole) == op)
         ol.setCurrentRow(idx)
 
-    select("gaussian")                     # a = blur amount (named), b unused
+    select("gaussian")                     # a = blur amount (named), b = border handling (it does change the edges)
     assert "a ·" in lbl_a.text() and lbl_a.text() != "a"
-    assert lbl_b.text() == "b (–)" and not sb.isEnabled() and sa.isEnabled()
+    assert lbl_b.text().startswith("b · border handling") and sb.isEnabled() and sa.isEnabled()
     select("bilateral")                    # both used + named + enabled
     assert "a ·" in lbl_a.text() and "b ·" in lbl_b.text()
     assert sa.isEnabled() and sb.isEnabled()

@@ -15,6 +15,10 @@
 * 台帳は書き換えられる JSON なので、中身を**許可制**で検証する(消してよい名前と置き場だけ。``shortcuts.check_ledger_item``)。
   許可外・別の Python 環境が作った物は消さずに「消さなかったもの」として表示する。壊れた台帳は警告して「台帳なし」に倒す。
 * pip の段は、この Python に pip があり、入っている fullseye が動いている物と同じ場所のときだけ出す。
+* **終了コード**: 0 = やると決めた物を全部消した(pip の段も、出す必要がある場合は起動した)/ ``--dry-run``・非端末で何もしていない /
+  pip の段が要らない(この Python に fullseye が pip で入っていない、または別の場所のもの)。
+  1 = 消せなかった項目がある、または台帳に許可外の項目があった(書き換えられた台帳)。
+  3 = 登録は消したが、pip の段を出せず fullseye 本体がこの Python に残っている(pip の無い uv の venv など。案内したコマンドを手で実行)。
 * ``python -I fullseye/uninstall.py`` でパッケージ本体(__init__ = numpy / scipy を読む)を通さずに単独実行できる
   (setup フォルダの fullseye-uninstall.cmd がこれを呼ぶ)。
 """
@@ -74,6 +78,10 @@ M = {
                      "手で実行してください: %s",
         "pip_other": "pip uninstall の段は出しません: この Python に入っている fullseye は、いま動いている物と別の場所です(%s)。",
         "err": "エラー: %s",
+        "pip_none": "pip uninstall の段は出しません: この Python に fullseye は pip で入っていません(%s)。",
+        "later": "[この画面が閉じた直後に、後始末スクリプトが消すもの]",
+        "q_skill": "Claude Code の skill(%s)も消しますか?",
+        "skill_edited": "注意: %s の SKILL.md は同梱の原本から手で編集されています。既定では残します(消すと編集は戻せません)。",
         "r_file": "ファイル", "r_dir": "空フォルダ", "r_reg": "レジストリ(アプリと機能)", "r_skill": "Claude Code の skill",
         "r_ini": "設定ファイル", "r_regtree": "設定(レジストリ)", "r_cache": "キャッシュ",
     },
@@ -107,6 +115,10 @@ M = {
         "pip_other": "Not offering pip uninstall: the fullseye installed in this Python is in a different place from the one "
                      "running now (%s).",
         "err": "error: %s",
+        "pip_none": "Not offering pip uninstall: fullseye is not pip-installed in this Python (%s).",
+        "later": "[Removed by the cleanup script right after this window closes]",
+        "q_skill": "Also remove the Claude Code skill (%s)?",
+        "skill_edited": "note: the SKILL.md in %s has been edited by hand relative to the shipped original. Kept by default (removing it cannot be undone).",
         "r_file": "file", "r_dir": "empty folder", "r_reg": "registry ('Apps & features')", "r_skill": "Claude Code skill",
         "r_ini": "settings file", "r_regtree": "settings (registry)", "r_cache": "cache",
     },
@@ -130,14 +142,19 @@ def cache_base(env: Optional[Dict[str, str]] = None) -> Path:
     return Path.home() / ".cache" / "fullseye"
 
 
-def _legacy_places(plat: str, dirs: Optional[Dict[str, Path]]) -> List[Dict[str, str]]:
+def _legacy_places(plat: str, dirs: Optional[Dict[str, Path]], registry: bool = True,
+                   allow_keys: Iterable[str] = ()) -> List[Dict[str, str]]:
+    """台帳が無い / 壊れているときの既知の場所(**固定の名前だけ**): ショートカット、setup フォルダのアイコンと後始末スクリプト、
+    Uninstall\\Fullseye キー(完全一致。``allow_keys`` に挙がった試験用キーも在れば)。"""
     out: List[Dict[str, str]] = []
+    keys: List[str] = []
     if plat == "win":
         d = dict(sc.windows_dirs())
         d.update(dirs or {})
         prog = d["start_menu"].parent                      # .../Programs
         cands = [d["start_menu"] / (sc.APP_NAME + ".lnk"), prog / (sc.APP_NAME + ".lnk"),
-                 d["desktop"] / (sc.APP_NAME + ".lnk")]
+                 d["desktop"] / (sc.APP_NAME + ".lnk"), d["icon_dir"] / "fullseye.ico", d["icon_dir"] / sc.CMD_NAME]
+        keys = [k for k in (([sc.UNINSTALL_KEY] if registry else []) + list(allow_keys)) if sc.regkey_exists(k)]
     elif plat == "linux":
         d = sc._linux_dirs(dirs)
         cands = [d["apps"] / "fullseye-studio.desktop", d["desktop"] / "fullseye-studio.desktop",
@@ -147,6 +164,8 @@ def _legacy_places(plat: str, dirs: Optional[Dict[str, Path]]) -> List[Dict[str,
     for p in cands:
         if p.is_file():
             out.append({"kind": "file", "path": str(p)})
+    for k in dict.fromkeys(keys):
+        out.append({"kind": "regkey", "path": k})
     return out
 
 
@@ -162,7 +181,7 @@ def collect(*, ledger: Optional[Path] = None, dirs: Optional[Dict[str, Path]] = 
     legacy = ents is None
     refused: List[Dict[str, object]] = []
     if legacy:
-        made = list(_legacy_places(plat, dirs))
+        made = list(_legacy_places(plat, dirs, registry, tuple(allow_keys)))
     else:
         made = []
         for e in ents:
@@ -192,8 +211,10 @@ def collect(*, ledger: Optional[Path] = None, dirs: Optional[Dict[str, Path]] = 
     if legacy and plat == "win":
         sm = dict(sc.windows_dirs())
         sm.update(dirs or {})
-        if made and sm["start_menu"].is_dir():
-            made.append({"kind": "dir_if_empty", "path": str(sm["start_menu"])})
+        if made:
+            for folder in (sm["start_menu"], sm["icon_dir"]):
+                if folder.is_dir():
+                    made.append({"kind": "dir_if_empty", "path": str(folder)})
     made.sort(key=lambda x: _ORDER.index(x["kind"]))
     return {"made": made, "data": data, "refused": refused, "legacy": legacy, "ledger": lp, "warning": warning}
 
@@ -232,7 +253,7 @@ def _reg_delete_tree(key: str, allow_keys: Iterable[str] = ()) -> bool:
 
 def remove_item(it: Dict[str, str], *, dirs: Optional[Dict[str, Path]] = None,
                 allow_keys: Iterable[str] = ()) -> bool:
-    """1 項目を消す。消した(または既に無い)なら True。失敗(許可外を含む)は例外。
+    """1 項目を消す。消した(または既に無い)なら True。残った(空でない dir_if_empty)なら False。失敗(許可外を含む)は例外。
 
     台帳由来の種類(file / dir_if_empty / regkey / claude_skill)は、ここでもう一度許可制で検証する(多重防御)。"""
     kind, path = it["kind"], it["path"]
@@ -257,7 +278,7 @@ def remove_item(it: Dict[str, str], *, dirs: Optional[Dict[str, Path]] = None,
             Path(path).rmdir()
         except OSError:
             pass
-        return True
+        return not Path(path).exists()          # 空でなくて畳めなかったときは False(「消した」と言わない)
     if kind == "regkey":
         sc.unregister_uninstall_entry(path, allow_keys)
         return True
@@ -324,17 +345,31 @@ def pip_uninstall_command() -> List[str]:
     return [sys.executable, "-m", "pip", "uninstall", "-y", "fullseye"]
 
 
-def dist_location_matches(pkg_dir: Optional[Path] = None) -> Tuple[bool, str]:
+def _find_dist():
+    """fullseye の配布物を探す。``-I`` の単独実行は利用者の site-packages(``pip install --user``)を外すので、そこも探す。"""
+    try:
+        return importlib.metadata.distribution("fullseye")
+    except importlib.metadata.PackageNotFoundError:
+        pass
+    try:
+        import site
+        for d in importlib.metadata.distributions(name="fullseye", path=[site.getusersitepackages()]):
+            return d
+    except Exception:       # noqa: BLE001 — 探せなければ「無い」として扱う
+        pass
+    return None
+
+
+def dist_location_matches(pkg_dir: Optional[Path] = None) -> Tuple[Optional[bool], str]:
     """この Python に入っている fullseye(配布物)が、いま動いているパッケージと同じ場所か。
 
     違えば pip uninstall は**別の** fullseye を消してしまう(checkout から ``imgevolve.py setup --uninstall`` を
     走らせたとき、その Python に別の fullseye が入っている場合)。editable は direct_url.json の場所で見る。
-    戻り値は (一致, 説明)。"""
+    戻り値は (True 一致 / False 別の場所 / None 配布物が見つからない, 説明)。"""
     pkg = Path(pkg_dir or Path(__file__).resolve().parent).resolve()
-    try:
-        dist = importlib.metadata.distribution("fullseye")
-    except importlib.metadata.PackageNotFoundError:
-        return False, "no fullseye distribution is installed in this Python"
+    dist = _find_dist()
+    if dist is None:
+        return None, "no fullseye distribution is installed in this Python"
     try:
         loc = Path(dist.locate_file("fullseye")).resolve()
     except (OSError, ValueError):
@@ -355,7 +390,7 @@ def dist_location_matches(pkg_dir: Optional[Path] = None) -> Tuple[bool, str]:
 
 
 def pip_status(python: Optional[str] = None, pkg_dir: Optional[Path] = None) -> Tuple[str, str]:
-    """pip の段を出してよいか: ("ok", "") / ("no_pip", "") / ("other", 説明)。
+    """pip の段を出してよいか: ("ok", "") / ("no_pip", "") / ("none", 説明: pip で入っていない) / ("other", 説明: 別の場所)。
 
     pip の無い環境(uv の venv)では、登録を消した後に別プロセスの pip uninstall が黙って失敗し、ログが %TEMP% に
     残るだけになる。先に ``-m pip --version`` で確かめて、無ければ段ごと飛ばす。"""
@@ -369,6 +404,8 @@ def pip_status(python: Optional[str] = None, pkg_dir: Optional[Path] = None) -> 
     if not has_pip:
         return "no_pip", ""
     ok, where = dist_location_matches(pkg_dir)
+    if ok is None:
+        return "none", where
     return ("ok", "") if ok else ("other", where)
 
 
@@ -472,7 +509,7 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
     elif pstate == "no_pip":
         say(m["pip_nopip"] % uv_uninstall_hint())
     else:
-        say(m["pip_other"] % pdetail)
+        say((m["pip_none"] if pstate == "none" else m["pip_other"]) % pdetail)
     say()
 
     auto = args.yes or args.dry_run
@@ -502,42 +539,65 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
             say(m["bad"])
         return default
 
-    do = {"made": bool(made) and yn(m["q_made"], True)}
+    skills = [x for x in made if x["kind"] == "claude_skill"]
+    others = [x for x in made if x["kind"] != "claude_skill"]
+    do = {"made": bool(others) and yn(m["q_made"], True)}
+    do["skill"] = False
+    for s in skills:                        # skill は手編集を含みうるので別の問い(編集済みなら既定は残す)
+        edited = False
+        try:
+            from fullseye import rag_setup
+            edited = rag_setup.skill_edited(Path(s["path"]))
+        except Exception:       # noqa: BLE001 — 判定できなければ「編集済みでない」とせず、確認に倒す
+            edited = True
+        if edited:
+            say(m["skill_edited"] % s["path"])
+        s["_ok"] = yn(m["q_skill"] % s["path"], not edited)
+        do["skill"] = do["skill"] or bool(s["_ok"])
     do["settings"] = any(x["kind"] != "cache" for x in data) and yn(m["q_settings"], False)
     do["cache"] = any(x["kind"] == "cache" for x in data) and yn(m["q_cache"], False)
     do["pip"] = pstate == "ok" and yn(m["q_pip"], True)
 
     removed: List[Dict[str, str]] = []
     failed: List[str] = []
-    todo = (made if do["made"] else []) + [x for x in data if (x["kind"] == "cache" and do["cache"])
+    todo = (others if do["made"] else []) + [x for x in skills if x.get("_ok")] + [x for x in data if (x["kind"] == "cache" and do["cache"])
                                           or (x["kind"] != "cache" and do["settings"])]
     todo.sort(key=lambda x: _ORDER.index(x["kind"]))
     deferred: List[Dict[str, str]] = []
+    later: List[Dict[str, str]] = []
     if os.environ.get(sc.UNINSTALL_FROM_CMD_ENV) == "1":
         # 後始末スクリプト(.cmd)から呼ばれた: 走行中の .cmd はここで消さない(消えると cmd がエラーを出す)。
         # 台帳から外すだけにして、消すのは Python が終わった後の .cmd 自身。
         deferred = [x for x in todo if x["kind"] == "file"
                     and os.path.normcase(Path(x["path"]).name) == os.path.normcase(sc.CMD_NAME)]
         todo = [x for x in todo if x not in deferred]
+    deferred_dirs = {os.path.normcase(os.path.normpath(str(Path(x["path"]).parent))) for x in deferred}
     for it in todo:
         try:
-            remove_item(it, dirs=dirs, allow_keys=allow_keys + (regtree,))
+            if remove_item(it, dirs=dirs, allow_keys=allow_keys + (regtree,)) is False:
+                if it["kind"] == "dir_if_empty" and os.path.normcase(os.path.normpath(it["path"])) in deferred_dirs:
+                    later.append(it)        # 走行中の後始末スクリプトが入っている: スクリプトが終わってから消える
+                continue                    # 消えなかった = 「残したもの」(下の kept に出る)
             removed.append(it)
         except Exception as e:      # noqa: BLE001 — 1 項目の失敗で全体を止めない
             failed.append("%s: %s" % (it["path"], e))
     for it in deferred:
         sc.ledger_forget("file", it["path"], plan["ledger"])
-        removed.append(it)
-    if do["made"]:                  # 台帳に載っていた物を消し終えたら台帳も畳む(残っている物があれば台帳は残る)
+        later.insert(0, it)
+    if do["made"] or do["skill"]:   # 台帳に載っていた物を消し終えたら台帳も畳む(残っている物があれば台帳は残る)
         sc.ledger_gc(plan["ledger"])
     if do["cache"]:
         try:
             cache_base(env).rmdir()         # setup/ を畳んだ後なので、空になっていれば消える
         except OSError:
             pass
-    kept = [x for x in made + data if x not in removed]
+    kept = [x for x in made + data if x not in removed and x not in later]
     say(m["done"])
     show(removed) if removed else say(m["none"])
+    if later:
+        say()
+        say(m["later"])
+        show(later)
     if failed:
         say()
         say(m["fail"])
@@ -565,7 +625,7 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
     elif pstate == "no_pip":
         say(m["pip_nopip"] % uv_uninstall_hint())
     else:
-        say(m["pip_other"] % pdetail)
+        say((m["pip_none"] if pstate == "none" else m["pip_other"]) % pdetail)
     if args.pause and is_tty:
         try:
             input_fn(m["pause"])

@@ -205,7 +205,8 @@ def test_interactive_refusals_do_nothing_and_enter_takes_defaults():
 def test_pip_failure_is_reported_and_setup_continues():
     f = Fakes(pip_rc=1)
     rc, out = _run(["--yes", "--lang", "en"], f, tty=False)
-    assert rc == 0 and "dependency install failed (exit code 1)" in out and f.sc == [False]
+    # 失敗した段があれば終了コードは 1(続行はする)。0 は選んだ段が全部できたときだけ
+    assert rc == 1 and "dependency install failed (exit code 1)" in out and f.sc == [False]
 
 
 def test_bad_answer_is_asked_again():

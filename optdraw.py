@@ -50,6 +50,7 @@ from __future__ import annotations
 import math
 import re
 import xml.etree.ElementTree as ET
+from safe_xml import safe_xml_parse
 
 import numpy as np
 
@@ -2188,10 +2189,8 @@ def svg_entities(text):
     """
     op = "svg_entities"
     text = _check_text(text, op)
-    if re.search(r"<!DOCTYPE|<!ENTITY", text, re.I):
-        raise ValueError("%s: DOCTYPE / ENTITY declarations are refused" % op)
     try:
-        root = ET.fromstring(text)
+        root = safe_xml_parse(text, max_bytes=_MAX_TEXT_BYTES, kind="data", op=op)
     except ET.ParseError as exc:
         raise ValueError("%s: not well-formed XML (%s)" % (op, exc)) from exc
     ns = "{http://www.w3.org/2000/svg}"

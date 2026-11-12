@@ -64,6 +64,7 @@ def validate_pipeline_dict(d):
     if not isinstance(d, dict):
         raise ValueError("not a pipeline file (expected a JSON object, got %s)"
                          % type(d).__name__)
+    engine.check_pipeline_header(d, where="pipeline file")     # version mark: 99 / "banana" / a graph file are refused
     raw = d.get("stages")
     if raw is None:
         raise ValueError("not a pipeline file (no 'stages' key)")

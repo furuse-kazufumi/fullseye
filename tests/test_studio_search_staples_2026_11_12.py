@@ -481,6 +481,7 @@ def test_colour_check_does_not_decode_the_full_image(tmp_path):
     rgba_grey = np.dstack([big[..., 0]] * 3 + [np.full(big.shape[:2], 255, np.uint8)])
     grey_rgba = str(tmp_path / "grey_rgba.png"); Image.fromarray(rgba_grey[:300, :400]).save(grey_rgba)
     QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    prev_ini = os.environ.get("FULLSEYE_STUDIO_SETTINGS")     # セッションの隔離の値。終わりに必ず戻す
     os.environ["FULLSEYE_STUDIO_SETTINGS"] = str(tmp_path / "s.ini")
     win, _model = studio.build_window()
     try:
@@ -491,7 +492,10 @@ def test_colour_check_does_not_decode_the_full_image(tmp_path):
         assert peak < 80 * 1024 * 1024, peak          # 全画素の float64 カラーなら 288 MB
         assert win._file_has_colour(grey) is False and win._file_has_colour(grey_rgba) is False
     finally:
-        os.environ.pop("FULLSEYE_STUDIO_SETTINGS", None)
+        if prev_ini is None:
+            os.environ.pop("FULLSEYE_STUDIO_SETTINGS", None)
+        else:
+            os.environ["FULLSEYE_STUDIO_SETTINGS"] = prev_ini
         studio._UI_LANG["code"] = "en"
         win.close_guard = lambda: True
         win.quiesce(); win.close(); _pump(0.1)
