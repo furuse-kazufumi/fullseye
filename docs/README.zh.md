@@ -146,7 +146,7 @@
 
 共有 **3,844 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **73 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 947/947、类型化台账 2874/2874、单行门面 `fullseye.<名称>` 770/1578 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 947/947、类型化台账 2874/2874、单行门面 `fullseye.<名称>` 770/1588 —— **门面侧仅覆盖一半**。
 
 **内容实测**: 3844 篇中，附有可运行示例的 **3805** 篇(39 篇没有)，用法说明 120 字以上的 **3645** 篇(199 篇仅一行)。结构(调用形式、类型、可衔接算子)3844 篇全有。
 
@@ -309,11 +309,11 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 329 篇
+## 文档地图 — 共 330 篇
 
 完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,844 篇算子说明与 73 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
-**Getting started**(12)
+**Getting started**(13)
 
 | 文档 | 内容 |
 |---|---|
@@ -329,6 +329,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`3DGS_USAGE.md`](3DGS_USAGE.md) | Fullseye 3DGS —— 使用方法（单条命令） → [`3DGS_USAGE.zh.md`](3DGS_USAGE.zh.md) · 原文 _(ja)_ |
 | [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | Walking a Character Over Terrain (sim-native, no GPU required) → [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) · 原文 _(ja)_ |
 | [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure → [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) · 原文 _(ja)_ |
+| [`PARAM_BUNDLE.md`](PARAM_BUNDLE.md) | パラメータを束で持ち、ファイルから読んで op に渡す _(ja)_ |
 
 **Operator reference**(11)
 

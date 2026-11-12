@@ -146,7 +146,7 @@
 
 **3,844개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **73개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 947/947, 타입 台帳 2874/2874, 한 줄 파사드 `fullseye.<이름>` 770/1578 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 947/947, 타입 台帳 2874/2874, 한 줄 파사드 `fullseye.<이름>` 770/1588 — **파사드는 아직 절반**.
 
 **내용 실측**: 3844건 중 실행 가능한 예제가 붙은 것은 **3805**건(39건은 없음), 사용법이 120자 이상인 것은 **3645**건(199건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3844건 모두.
 
@@ -309,11 +309,11 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 329건
+## 문서 지도 — 전 330건
 
 **색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,844건과 패밀리 가이드 73건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
-**Getting started**(12)
+**Getting started**(13)
 
 | 문서 | 내용 |
 |---|---|
@@ -329,6 +329,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`3DGS_USAGE.md`](3DGS_USAGE.md) | Fullseye 3DGS — 사용법(명령어 한 줄) → [`3DGS_USAGE.ko.md`](3DGS_USAGE.ko.md) · 원문 _(ja)_ |
 | [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | Walking a Character Over Terrain (sim-native, no GPU required) → [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) · 원문 _(ja)_ |
 | [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure → [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) · 원문 _(ja)_ |
+| [`PARAM_BUNDLE.md`](PARAM_BUNDLE.md) | パラメータを束で持ち、ファイルから読んで op に渡す _(ja)_ |
 
 **Operator reference**(11)
 
