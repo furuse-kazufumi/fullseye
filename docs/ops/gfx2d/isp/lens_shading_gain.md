@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [poc_tdi_linescan, raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # lens_shading_gain — GFX2D `isp` op

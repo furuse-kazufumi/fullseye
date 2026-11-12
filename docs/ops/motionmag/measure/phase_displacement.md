@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [motion_magnification, poc_beam_modal_video, poc_motion_magnification, quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # phase_displacement — MOTIONMAG `measure` op

@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_lens_solves_afocal]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # lens_solve_set — OPTICS `lenssolve` op

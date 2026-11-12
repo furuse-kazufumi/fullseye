@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery_drive_city_terrain, poc_driving_japan_town]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # citygml_synthetic — DRIVE `japan` op

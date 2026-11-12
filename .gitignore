@@ -68,3 +68,5 @@ dist_check/
 # cProfile のダンプ(手元の絶対パスが入る。2026-11-08 に誤って commit した)
 prof.out
 *.prof
+# Generated cache of scene_registry.py (rewritten on demand by _cache_xml; one file embeds a local venv path).
+.scene_cache/

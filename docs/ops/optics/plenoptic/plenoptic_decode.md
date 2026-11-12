@@ -8,7 +8,7 @@ gpu: なし
 examples: [plenoptic_decode_pipeline, poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # plenoptic_decode — OPTICS `plenoptic` op

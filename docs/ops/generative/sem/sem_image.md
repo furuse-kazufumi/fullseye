@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_sem_tem_same_particle, poc_sem_wafer_defect_edge_bias, poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # sem_image — GENERATIVE `sem` op

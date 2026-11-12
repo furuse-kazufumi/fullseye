@@ -8,7 +8,7 @@ gpu: なし
 examples: [image_forensics_audit, poc_prnu_camera_fingerprint, poc_video_physics_consistency]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # null_distribution — IMGFORENSICS `calibration` op

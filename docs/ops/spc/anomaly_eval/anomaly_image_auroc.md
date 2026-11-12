@@ -8,7 +8,7 @@ gpu: なし
 examples: [anomaly_eval_metrics, poc_ai_built_inspection_scored, poc_good_sample_variation_model, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # anomaly_image_auroc — SPC `anomaly_eval` op

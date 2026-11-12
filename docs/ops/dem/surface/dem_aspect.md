@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [poc_dem_terrain, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # dem_aspect — DEM `surface` op

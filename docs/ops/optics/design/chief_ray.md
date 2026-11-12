@@ -8,7 +8,7 @@ gpu: なし
 examples: [lens_optimize_demo, poc_lens_solves_afocal, poc_lens_tolerancing, poc_optics_drawings, poc_photograph_through_prescription, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # chief_ray — OPTICS `design` op

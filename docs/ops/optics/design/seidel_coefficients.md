@@ -8,7 +8,7 @@ gpu: なし
 examples: [anim3d_lens_aberrations, lens_design_demo, poc_lens_file_roundtrip, poc_lens_solves_afocal]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # seidel_coefficients — OPTICS `design` op

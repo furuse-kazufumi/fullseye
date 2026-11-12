@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # alpha_composite_premul — GFX2D `composite` op

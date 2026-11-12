@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [sdf_csg]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # sdf_subtract — 3D `sdf_csg` op

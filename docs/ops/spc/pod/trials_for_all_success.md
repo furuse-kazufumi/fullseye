@@ -8,7 +8,7 @@ gpu: なし
 examples: [proportion_interval_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # trials_for_all_success — SPC `pod` op

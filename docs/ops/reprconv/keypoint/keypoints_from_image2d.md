@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [poc_bga_ball_type_roundtrip, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # keypoints_from_image2d — REPRCONV `keypoint` op

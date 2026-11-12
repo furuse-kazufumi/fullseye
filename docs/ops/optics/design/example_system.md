@@ -8,7 +8,7 @@ gpu: なし
 examples: [anim3d_lens_aberrations, lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, optimized_lens_tolerance_sensitivity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # example_system — OPTICS `design` op

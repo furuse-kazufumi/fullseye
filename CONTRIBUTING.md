@@ -72,6 +72,11 @@ bug fixes — including fixes that make a previously broken path work.
 documentation gate in `docs/I18N.md` is met (English and Chinese for `OP_CATALOG` and
 the knowledge guides).
 
+Bug fixes are not held back to ride along with the next minor: **ship a fix as a patch release
+at a short interval** instead of letting fixes accumulate. A pile of fixes is exactly what turns a patch
+into a minor (the behaviour changes among them are what 1.1.0 had to carry), and a user who hit one bug
+should not wait for the rest.
+
 Worked example of the rule: `FULLSEYE_FAST` stays **off** by default even though it is
 1.3–10× faster on ten table operators, because the cv2 twin differs internally by 5e-3
 and that silently breaks the SHA-256 reproducibility pins (`docs/NEXT_SESSION.md`).

@@ -8,7 +8,7 @@ gpu: なし
 examples: [multivar_inspection_tour, poc_simcal_thin_film]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # mv_pca — MULTIVAR `analysis` op

@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [poc_shape_from_polarization]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # aolp_to_azimuth — OPTICS `shape_from_polarization` op

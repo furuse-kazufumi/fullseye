@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [poc_malecns_activity_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # graph_activation_latency — CONNGRAPH `activity` op

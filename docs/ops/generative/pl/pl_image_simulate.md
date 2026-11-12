@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_si_wafer_pl_defect_visibility]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # pl_image_simulate — GENERATIVE `pl` op

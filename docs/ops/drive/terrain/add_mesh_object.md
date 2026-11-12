@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery_drive_world_objects, poc_driving_crossing, poc_driving_decisions, poc_driving_humanoids, poc_driving_lateral, poc_driving_traffic, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # add_mesh_object — DRIVE `terrain` op

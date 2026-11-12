@@ -8,7 +8,7 @@ gpu: なし
 examples: [perception_pipeline, physical_ai_perception, walking_ops_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # elevation_map — DRIVE `walkterrain` op

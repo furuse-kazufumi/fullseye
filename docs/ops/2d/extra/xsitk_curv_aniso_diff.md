@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery2d_color_artistic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # xsitk_curv_aniso_diff — 2D `extra` op

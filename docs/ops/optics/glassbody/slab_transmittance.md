@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [glass_and_mirror_optics, machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # slab_transmittance — OPTICS `glassbody` op

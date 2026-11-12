@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_interreflection_fringe_error, poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # tof_transport_depth — OPTICS `light_transport` op

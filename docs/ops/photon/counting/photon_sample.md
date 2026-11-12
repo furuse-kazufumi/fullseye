@@ -8,7 +8,7 @@ gpu: なし
 examples: [photon_timeresolved, poc_colocalization_crosstalk, poc_search_sweep_width]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.0.0  # fullseye lib version this note was generated for
+version: 1.1.0  # fullseye lib version this note was generated for
 ---
 
 # photon_sample — PHOTON `counting` op
