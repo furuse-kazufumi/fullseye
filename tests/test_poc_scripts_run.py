@@ -65,7 +65,10 @@ WORKERS = max(2, min(8, (os.cpu_count() or 4)))
 
 #: 1 本あたりの上限[秒]。いちばん重い `poc_motion_magnification` が 62 秒
 #: (単独)、6 並列だと 2 倍近くになるので余裕を持たせる。
-PER_SCRIPT_TIMEOUT = 600
+#: ★2026-11-12: 600 → 1200。`poc_ct_casting_sparse_views`(単独 129 秒、reduced)が
+#: 共有ランナー(4 vCPU に 4 本並列)で 600 秒を超えて落ちた(#308 の 3 周目)。
+#: 門を削って軽くするのではなく、並列で遅くなる分の余裕を取る。
+PER_SCRIPT_TIMEOUT = 1200
 
 
 def _poc_paths() -> list[Path]:
