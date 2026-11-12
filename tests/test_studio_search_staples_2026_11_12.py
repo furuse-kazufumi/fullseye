@@ -149,3 +149,31 @@ def test_colour_file_is_announced_as_read_in_greyscale(tmp_path, monkeypatch):
         studio._UI_LANG["code"] = "en"
         win.close_guard = lambda: True
         win.quiesce(); win.close(); _pump(0.1)
+
+
+def test_out_of_range_knobs_are_reported_after_apply(tmp_path, monkeypatch):
+    """P-13: `gaussian (9.0, -3.0)` は通って 0..1 に丸めて走る。何を何として走らせたかを Program の状態欄で言う。"""
+    pytest.importorskip("PySide6")
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    from PySide6 import QtWidgets
+    import studio
+    QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / "s.ini"))
+    win, model = studio.build_window()
+    win.show(); _pump(0.3)
+    try:
+        assert studio.parse_hdev_program_lines("gaussian (9.0, -3.0)", {"gaussian"})[0] == [("gaussian", 1.0, 0.0)]
+        assert studio.hdev_last_clamped() == ["gaussian a=9 → 1", "gaussian b=-3 → 0"]
+        studio.parse_hdev_program_lines("gaussian (0.2, 0.3)", {"gaussian"})
+        assert studio.hdev_last_clamped() == []                          # 解析のたびに空になる
+        prog = win._program
+        prog["edit"].setPlainText("gaussian (9.0, -3.0)"); prog["apply"](); _pump(0.3)
+        text = prog["status"]().text()
+        assert "gaussian a=9 → 1" in text and "gaussian b=-3 → 0" in text, text
+        assert len(model.stages) == 1                                    # 実行そのものは止めていない
+        prog["edit"].setPlainText("gaussian (0.4, 0.5)"); prog["apply"](); _pump(0.3)
+        assert "→" not in prog["status"]().text()
+    finally:
+        studio._UI_LANG["code"] = "en"
+        win.close_guard = lambda: True
+        win.quiesce(); win.close(); _pump(0.1)

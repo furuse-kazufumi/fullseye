@@ -69,6 +69,13 @@
   "first: %s": {
     "ja": "先に: %s", "zh": "先做: %s", "tw": "先做: %s", "ko": "먼저: %s", "de": "Zuerst: %s", "hi": "पहले: %s"
   },
+  "⚠ knob outside 0..1, ran with the nearest limit: %s": {
+    "ja": "⚠ つまみが 0〜1 の外です。近い端の値で実行しました: %s",
+    "zh": "⚠ 旋钮超出 0..1,已用最近的端值运行: %s", "tw": "⚠ 旋鈕超出 0..1,已用最近的端值執行: %s",
+    "ko": "⚠ 노브가 0..1 범위 밖입니다. 가장 가까운 끝값으로 실행했습니다: %s",
+    "de": "⚠ Regler außerhalb 0..1, mit dem nächsten Grenzwert ausgeführt: %s",
+    "hi": "⚠ नॉब 0..1 के बाहर है, निकटतम सीमा के साथ चलाया गया: %s"
+  },
   "Common choices": {
     "ja": "定番", "zh": "常用", "tw": "常用", "ko": "기본 선택", "de": "Übliche Wahl", "hi": "आम विकल्प"
   },

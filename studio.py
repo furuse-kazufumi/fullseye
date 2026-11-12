@@ -3744,7 +3744,20 @@ def _hdev_parse_op(line, lineno, errs, names):
         b = float(args[1]) if len(args) > 1 and args[1] != "" else 0.5
     except ValueError:
         errs.append("line %d: args must be numbers" % lineno); return None
+    # ★P-13(2026-11-12): 0..1 の外の値はここで黙って丸めていた。丸めた事実を残す(apply_program が画面に出す)。
+    for key, val in (("a", a), ("b", b)):
+        if val == val and not (0.0 <= val <= 1.0):
+            _HDEV_CLAMPED.append("%s %s=%g → %g" % (name, key, val, max(0.0, min(1.0, val))))
     return (name, max(0.0, min(1.0, a)), max(0.0, min(1.0, b)))
+
+
+#: 直近の :func:`parse_hdev_program_lines` が 0..1 に丸めたつまみ(``"gaussian a=9 → 1"``)。解析のたびに空にする。
+_HDEV_CLAMPED: list = []
+
+
+def hdev_last_clamped():
+    """直近の Program の解析で 0..1 に丸めたつまみの一覧(重複なし、出た順)。"""
+    return list(dict.fromkeys(_HDEV_CLAMPED))
 
 
 def _hdev_eval_cond(expr):
@@ -3789,6 +3802,7 @@ def parse_hdev_program_lines(text, names):
     execution cursor, per-line timings) must go through this map rather than assume
     stage index == editor line (F2 review finding)."""
     names = set(names)
+    del _HDEV_CLAMPED[:]
     errs = []
     toks = []
     byp_lines = set()
@@ -12187,6 +12201,14 @@ def build_window(model=None):
         if len(state["errors"]) > n_err:      # a directive was rejected (bad set_system …)
             code_status.setText("applied %d stage(s)  ·  ✕ %s"
                                 % (len(stages), truncate(state["errors"][-1][1], 100)))
+        else:
+            # ★P-13(2026-11-12): `gaussian (9.0, -3.0)` は通り、ライブラリが 0..1 に丸めて走らせる
+            # (FullseyeFallbackWarning が出るだけで、画面は何も言わなかった)。どの値を何として走らせたかを言う。
+            clamped = hdev_last_clamped()
+            if clamped:
+                msg = tr("⚠ knob outside 0..1, ran with the nearest limit: %s") % "  ·  ".join(clamped[:3])
+                code_status.setText("applied %d stage(s)  ·  %s" % (len(stages), msg))
+                flash(msg)
 
     def run_program(stop_at_breakpoints=True):
         try:
