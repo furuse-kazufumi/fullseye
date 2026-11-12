@@ -836,6 +836,7 @@ class WatchResult:
     timed_out: bool = False
     elapsed_ms: float = 0.0
     changed: bool = False
+    stuck: bool = False             # 時間切れで、止める例外を送っても止まらなかった(C の長い呼び出しの中など)
 
 
 @dataclass
@@ -905,6 +906,98 @@ class WatchEvaluator:
 
     def reset_changes(self) -> None:
         self._last.clear()
+
+    def start(self, expr: str) -> "WatchJob":
+        """評価を作業スレッドで始める(UI を待たせない)。結果は ``job.poll()`` で受ける。"""
+        return WatchJob(self, expr)
+
+
+#: 止められずに裏で走り続けているスレッドの数(診断用)。
+STUCK_THREADS: list = []
+#: 止める例外を送ってから「止められなかった」と判断するまでの猶予(秒)。
+STOP_GRACE_S = 0.3
+
+
+class WatchJob:
+    """ウォッチの式 1 つの非同期の評価。UI スレッドでは ``poll()`` を呼ぶだけ(待たない)。
+
+    状態: ``running`` → 結果が出る(``poll()`` が ``WatchResult`` を返す)か、時間の上限を超えると止める例外を送り、
+    それでも止まらなければ ``stuck``(「時間切れ(止められなかった)」)。止まれば「時間切れ」。
+
+    限界: 作業スレッドは Python のスレッドなので、GIL を握ったままの C の長い呼び出し(``sum(range(10**10))`` など)の間は
+    UI スレッドも進めない。``time.sleep`` や、GIL を手放す numpy の長い演算なら UI は止まらない。
+    """
+
+    def __init__(self, evaluator: "WatchEvaluator", expr: str):
+        self.ev = evaluator
+        self.expr = expr
+        self.t0 = time.perf_counter()
+        self.result: WatchResult | None = None
+        self._box: dict = {}
+        self._killed_at: float | None = None
+        self._thread: threading.Thread | None = None
+        src = (expr or "").strip()
+        if not src:
+            self.result = WatchResult(expr, False, error=evaluator.tr("empty expression"))
+            return
+        try:
+            code = compile(src, "<watch>", "eval")
+        except SyntaxError as exc:
+            self.result = WatchResult(expr, False, error=evaluator._error_text("syntax", exc))
+            return
+        g = evaluator.namespace()                      # 名前空間の写しは UI スレッドで取る(辞書の反復中の変更を避ける)
+        g.setdefault("__builtins__", builtins)
+        box = self._box
+
+        def target():
+            try:
+                box["v"] = eval(code, g)               # noqa: S307 — 利用者自身の式
+            except _Timeout:
+                box["timeout"] = True
+            except BaseException as exc:               # noqa: BLE001
+                box["e"] = exc
+
+        self._thread = threading.Thread(target=target, name="pyedit-watch", daemon=True)
+        self._thread.start()
+
+    @property
+    def running(self) -> bool:
+        return self.result is None
+
+    def poll(self) -> "WatchResult | None":
+        """結果が出ていれば返す(出ていなければ ``None``)。待たない。"""
+        if self.result is not None:
+            return self.result
+        th = self._thread
+        now = time.perf_counter()
+        ms = (now - self.t0) * 1000.0
+        ev = self.ev
+        if th is not None and not th.is_alive():
+            if "e" in self._box:
+                self.result = WatchResult(self.expr, False, error=ev._error_text("error", self._box["e"]), elapsed_ms=ms)
+            elif self._box.get("timeout") or self._killed_at is not None and "v" not in self._box:
+                self.result = WatchResult(self.expr, False, error=ev._error_text("timeout", None), timed_out=True, elapsed_ms=ms)
+            else:
+                val = self._box.get("v")
+                fp = fingerprint(val)
+                prev = ev._last.get(self.expr, _NEVER)
+                ev._last[self.expr] = fp
+                self.result = WatchResult(self.expr, True, val, summarize(val, ev.limits, ev.tr), None, False, ms,
+                                          changed=(prev is not _NEVER and prev != fp))
+            return self.result
+        if ms > ev.timeout_s * 1000.0:
+            if self._killed_at is None:
+                self._killed_at = now
+                try:                                    # Python のコードなら次の命令で止まる
+                    ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_ulong(th.ident), ctypes.py_object(_Timeout))
+                except Exception:                       # noqa: BLE001
+                    pass
+            elif now - self._killed_at > STOP_GRACE_S:
+                STUCK_THREADS.append(th)
+                ev._last.pop(self.expr, None)
+                self.result = WatchResult(self.expr, False, error=ev.tr("timed out (could not be stopped)"),
+                                          timed_out=True, elapsed_ms=ms, stuck=True)
+        return self.result
 
 
 class WatchList:

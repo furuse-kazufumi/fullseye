@@ -659,6 +659,48 @@
    "ko": "이 변수는 더 이상 없습니다: %s",
    "de": "Diese Variable existiert nicht mehr: %s"
   },
+  "Watch": {
+   "ja": "ウォッチ",
+   "zh": "监视",
+   "tw": "監看",
+   "ko": "조사식",
+   "de": "Überwachung"
+  },
+  "evaluating…": {
+   "ja": "評価中…",
+   "zh": "计算中…",
+   "tw": "計算中…",
+   "ko": "계산 중…",
+   "de": "wird ausgewertet…"
+  },
+  "timed out (could not be stopped)": {
+   "ja": "時間切れ(止められなかった)",
+   "zh": "超时(无法停止)",
+   "tw": "逾時(無法停止)",
+   "ko": "시간 초과(중지하지 못함)",
+   "de": "Zeitüberschreitung (konnte nicht gestoppt werden)"
+  },
+  "not re-evaluated automatically; select the row and press ↻ to try again": {
+   "ja": "自動では評価し直しません。行を選んで ↻ を押すと、もう一度評価します",
+   "zh": "不会自动重新计算。选中该行并按 ↻ 可重试",
+   "tw": "不會自動重新計算。選取該列並按 ↻ 可重試",
+   "ko": "자동으로 다시 계산하지 않습니다. 행을 선택하고 ↻ 를 누르면 다시 시도합니다",
+   "de": "Wird nicht automatisch neu ausgewertet; Zeile wählen und ↻ drücken, um es erneut zu versuchen"
+  },
+  "Evaluate the selected expression again (also when automatic evaluation was stopped)": {
+   "ja": "選んだ式を評価し直す(自動の評価を止めた式も)",
+   "zh": "重新计算所选表达式(包括已停止自动计算的)",
+   "tw": "重新計算所選運算式(包括已停止自動計算的)",
+   "ko": "선택한 식을 다시 계산(자동 계산이 중지된 식 포함)",
+   "de": "Gewählten Ausdruck erneut auswerten (auch wenn die automatische Auswertung gestoppt wurde)"
+  },
+  "Evaluate again": {
+   "ja": "評価し直す",
+   "zh": "重新计算",
+   "tw": "重新計算",
+   "ko": "다시 계산",
+   "de": "Erneut auswerten"
+  },
   "changed since the last evaluation": {
    "ja": "前の評価から変わりました",
    "zh": "自上次计算以来已改变",

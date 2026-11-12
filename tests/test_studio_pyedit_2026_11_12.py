@@ -1165,6 +1165,7 @@ def test_row_height_is_font_height_plus_4_everywhere(qapp):
     assert tree.row_h == want
     w = VQ.WatchPanel(ns)
     w.add_expression("a"); w.show()
+    assert w.wait_idle()
     pump(qapp, 10)
     assert w.table.rowHeight(0) == w.table.fontMetrics().height() + 4
     ed = make_editor(qapp, "gaus")
@@ -1337,6 +1338,7 @@ def test_japanese_ui_has_no_english_left_in_the_panels(qapp):
     w.resize(600, 500); w.show()
     w.refresh()
     w.watch.add_expression("nope")
+    assert w.watch.wait_idle()
     pump(qapp, 20)
     from PySide6 import QtWidgets
     texts = []
@@ -1374,6 +1376,7 @@ def test_watch_panel_add_remove_reorder_and_errors(qapp):
         w.input.setText(e)
         w.input.returnPressed.emit()
     assert w.watch.exprs == ["x.mean()", "nope + 1", "img * 2", "v"] and changed[-1] == w.watch.exprs
+    assert w.wait_idle()
     assert w.table.item(0, 1).text() == "2 (float64)"
     err = w.table.item(1, 1)
     assert err.text().startswith("⚠") and "NameError" in err.text() and err.foreground().color().red() > 200
@@ -1389,9 +1392,11 @@ def test_watch_panel_add_remove_reorder_and_errors(qapp):
     # 変わった印
     ns["v"] = 7
     w.refresh()
+    assert w.wait_idle()
     row = w.watch.exprs.index("v")
     assert w.table.item(row, 1).text().startswith("● ") and w.table.item(row, 1).font().bold()
     w.refresh()
+    assert w.wait_idle()
     assert not w.table.item(row, 1).text().startswith("●")
     # 保存と読み込み(プロジェクトごと)
     text = w.dumps()
@@ -1404,14 +1409,83 @@ def test_watch_panel_add_remove_reorder_and_errors(qapp):
     assert w.condition_evaluator().condition("v > 5").hit
 
 
-def test_watch_panel_timeout_is_reported_in_red(qapp):
+def test_watch_python_loop_is_stopped_and_reported_in_red(qapp):
     import studio_pyedit_vars_qt as VQ
     w = VQ.WatchPanel({}, timeout_s=0.1)
     w.show()
     t = time.perf_counter()
     w.add_expression("[i for i in iter(int, 1)]")
-    assert time.perf_counter() - t < 2.0
-    assert "timed out" in w.table.item(0, 1).text()
+    assert time.perf_counter() - t < 0.5                          # 評価を待たずに戻る(UI スレッドで評価しない)
+    assert w.wait_idle(5)
+    cell = w.table.item(0, 1)
+    assert cell.text().startswith("⚠") and "timed out" in cell.text() and "could not be stopped" not in cell.text()
+    assert "[i for i in iter(int, 1)]" not in w._auto_off          # 止まった式は次の更新でまた評価する
+
+
+def test_watch_shows_evaluating_then_stuck_and_stops_auto_reevaluation(qapp):
+    """止められない長い呼び出し(GIL を手放す time.sleep で代用)でも UI は待たされず、行に理由が出て、自動では評価し直さない。"""
+    import studio_pyedit_vars_qt as VQ
+    ns = {"time": time, "v": 1}
+    w = VQ.WatchPanel(ns, tr=lambda s: s, timeout_s=0.1)
+    w.show()
+    ticks = []
+    t = QtCoreTimer(ticks)
+    t0 = time.perf_counter()
+    w.add_expression("time.sleep(1.2) or 1")
+    w.add_expression("v + 1")
+    assert time.perf_counter() - t0 < 0.5
+    assert w.table.item(0, 1).text() == "evaluating…"                # 結果が来るまで「評価中…」
+    pump(qapp, 600)                                                   # 約 0.4 秒で止められなかったと判断される
+    assert len(ticks) > 5                                              # この間も UI のイベントは回っている
+    assert w.table.item(1, 1).text() == "2"                           # 他の式の結果は待たずに出る
+    cell = w.table.item(0, 1)
+    assert cell.text() == "⚠ timed out (could not be stopped)" and cell.foreground().color().red() > 200
+    assert "time.sleep(1.2) or 1" in w._auto_off and not w._jobs
+    started = []
+    orig = w.evaluator.start
+    w.evaluator.start = lambda e: (started.append(e), orig(e))[1]
+    w.refresh()                                                       # 停止のたびの更新: この式は評価し直さない
+    assert w.wait_idle(3)
+    assert started == ["v + 1"] and w.table.item(0, 1).text().startswith("⚠ timed out (could not be stopped)")
+    assert "press" in w.table.item(0, 1).toolTip() or "↻" in w.table.item(0, 1).toolTip()
+    # ↻ で選んだ行だけ評価し直せる(今度は 0.1 秒の上限でまた止められないが、始まる)
+    w.table.setCurrentCell(0, 0)
+    w.evaluate_again()
+    assert started[-1] == "time.sleep(1.2) or 1" and w.table.item(0, 1).text() == "evaluating…"
+    t.stop()
+    w.wait_idle(5)
+
+
+class QtCoreTimer:
+    """UI のイベントが回っていることを数える(100 ms ごとではなく 10 ms ごと)。"""
+
+    def __init__(self, ticks):
+        from PySide6 import QtCore
+        self._t = QtCore.QTimer()
+        self._t.setInterval(10)
+        self._t.timeout.connect(lambda: ticks.append(1))
+        self._t.start()
+
+    def stop(self):
+        self._t.stop()
+
+
+def test_watch_job_logic_without_qt():
+    ns = {"x": 3}
+    ev = V.WatchEvaluator(ns, timeout_s=0.1)
+    j = ev.start("x * 2")
+    end = time.time() + 2
+    while j.poll() is None and time.time() < end:
+        time.sleep(0.005)
+    assert j.result.ok and j.result.value == 6 and not j.result.stuck
+    j = ev.start("y +")
+    assert j.result is not None and "syntax" in j.result.error             # 構文エラーは始める前に分かる
+    j = ev.start("__import__('time').sleep(1) or 1")
+    end = time.time() + 3
+    while j.poll() is None and time.time() < end:
+        time.sleep(0.01)
+    assert j.result.stuck and j.result.timed_out and "could not be stopped" in j.result.error
+    assert V.STUCK_THREADS
 
 
 def test_add_to_watch_from_variables_goes_to_the_watch_panel(qapp):
@@ -1423,6 +1497,7 @@ def test_add_to_watch_from_variables_goes_to_the_watch_panel(qapp):
     it.setExpanded(True)
     w.variables.tree._do("watch", w.variables.tree.node_of(it.child(0)))
     assert w.watch.watch.exprs == ["cfg['k']"]
+    assert w.watch.wait_idle()
     assert w.watch.table.item(0, 1).text() == "1"
 
 

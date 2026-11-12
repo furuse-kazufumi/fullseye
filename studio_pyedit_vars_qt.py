@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import html
 import json
+import time
 from dataclasses import dataclass
 from typing import Callable, MutableMapping
 
@@ -693,9 +694,11 @@ class WatchPanel(QtWidgets.QWidget):
 
     imageRequested = QtCore.Signal(str, object)
     changed = QtCore.Signal(list)                 # 式の並びが変わった(保存の合図)
+    refreshed = QtCore.Signal()                   # 評価が全部終わった
 
     def __init__(self, namespace=None, tr: Callable = identity_tr, watch: V.WatchList | None = None,
-                 timeout_s: float = 0.25, on_add_example: Callable | None = None, parent=None):
+                 timeout_s: float = 0.25, on_add_example: Callable | None = None, parent=None,
+                 async_eval: bool = True):
         super().__init__(parent)
         self._tr = tr
         self.watch = watch if watch is not None else V.WatchList()
@@ -713,7 +716,9 @@ class WatchPanel(QtWidgets.QWidget):
         self.btn_del = self._button("−", tr("Remove the selected expression"), tr("Remove"))
         self.btn_up = self._button("↑", tr("Move the selected expression up"), tr("Move up"))
         self.btn_down = self._button("↓", tr("Move the selected expression down"), tr("Move down"))
-        for b in (self.btn_add, self.btn_del, self.btn_up, self.btn_down):
+        self.btn_again = self._button("↻", tr("Evaluate the selected expression again (also when automatic evaluation was stopped)"),
+                                      tr("Evaluate again"))
+        for b in (self.btn_add, self.btn_del, self.btn_up, self.btn_down, self.btn_again):
             bar.addWidget(b)
         lay.addLayout(bar)
         self.stack = QtWidgets.QStackedWidget(self)
@@ -743,9 +748,16 @@ class WatchPanel(QtWidgets.QWidget):
         self.btn_del.clicked.connect(lambda _=False: self.remove_selected())
         self.btn_up.clicked.connect(lambda _=False: self.move_selected(-1))
         self.btn_down.clicked.connect(lambda _=False: self.move_selected(1))
+        self.btn_again.clicked.connect(lambda _=False: self.evaluate_again())
         self.table.itemChanged.connect(self._on_edit)
         self.table.currentCellChanged.connect(lambda *_: self._update_preview())
         self._results: dict = {}
+        self._jobs: dict = {}
+        self._auto_off: dict = {}
+        self.async_eval = bool(async_eval)
+        self._timer = QtCore.QTimer(self)
+        self._timer.setInterval(30)
+        self._timer.timeout.connect(self._poll_jobs)
         self._building = False
         self._rebuild()
 
@@ -835,43 +847,146 @@ class WatchPanel(QtWidgets.QWidget):
         self._building = False
         self.stack.setCurrentWidget(self.table if self.watch.exprs else self.empty)
 
+    # ---- 評価(作業スレッド。UI を待たせない) ----
     def refresh(self) -> None:
-        """式を評価し直す(停止・実行後に呼ぶ)。値が変わった行に印、例外・時間切れは赤で理由。"""
+        """式を評価し直す(停止・実行後に呼ぶ)。評価は作業スレッドで行い、結果が来るまで行に「評価中…」を出す。
+        時間の上限を超えても止まらなかった式は「時間切れ(止められなかった)」と出し、以後は自動では評価し直さない
+        (↻ で選んだ行だけ評価し直せる)。"""
         tr = self._tr
+        if not self.async_eval:
+            self._refresh_sync()
+            return
         self._building = True
-        self._results = {}
         for r, e in enumerate(self.watch.exprs):
-            res = self.evaluator.evaluate(e)
-            self._results[r] = res
             it = self.table.item(r, 1)
             if it is None:
                 continue
-            f = it.font()
-            f.setBold(False)
-            it.setFont(f)
-            it.setIcon(QtGui.QIcon())
-            it.setForeground(QtGui.QBrush())
-            if not res.ok:
-                it.setText("⚠ " + res.error)
-                it.setForeground(QtGui.QBrush(QtGui.QColor("#ff6b6b")))
-                it.setToolTip("⚠ " + res.error)
-            else:
-                s = res.summary
-                it.setText(("● " if res.changed else "") + s.text)
-                it.setToolTip("%s\n%s" % (s.detail or s.text, (tr("changed since the last evaluation") if res.changed else "")))
-                if res.changed:
-                    f.setBold(True)
-                    it.setFont(f)
-                if s.is_image:
-                    pm = pixmap_for(res.value, _THUMB * 2)
-                    if pm is not None:
-                        it.setIcon(QtGui.QIcon(pm.scaled(_THUMB, _THUMB, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)))
+            if e in self._auto_off:
+                self._set_error_cell(it, self._auto_off[e], stuck=True)
+                continue
+            job = self._jobs.get(e)
+            if job is not None and job.running:
+                self._set_pending_cell(it)
+                continue                                   # 前の評価がまだ走っている(重ねて始めない)
+            self._set_pending_cell(it)
+            self._jobs[e] = self.evaluator.start(e)
+        self._building = False
+        self._poll_jobs()
+        if self._jobs:
+            self._timer.start()
+
+    def _refresh_sync(self) -> None:
+        self._building = True
+        for r, e in enumerate(self.watch.exprs):
+            res = self.evaluator.evaluate(e)
+            self._results[e] = res
+            it = self.table.item(r, 1)
+            if it is not None:
+                self._apply_result(it, res)
         self._building = False
         self._update_preview()
 
+    def _poll_jobs(self) -> None:
+        if not self._jobs:
+            self._timer.stop()
+            return
+        self._building = True
+        for e, job in list(self._jobs.items()):
+            res = job.poll()
+            if res is None:
+                continue
+            del self._jobs[e]
+            self._results[e] = res
+            if res.stuck:
+                self._auto_off[e] = res.error
+            if e in self.watch.exprs:
+                it = self.table.item(self.watch.exprs.index(e), 1)
+                if it is not None:
+                    self._apply_result(it, res)
+        self._building = False
+        if not self._jobs:
+            self._timer.stop()
+            self._update_preview()
+            self.refreshed.emit()
+
+    def wait_idle(self, timeout_s: float = 5.0) -> bool:
+        """評価が全部終わるまでイベントを回して待つ(試験・スクリーンショット用)。終われば True。"""
+        end = time.monotonic() + timeout_s
+        app = QtWidgets.QApplication.instance()
+        while self._jobs and time.monotonic() < end:
+            if app is not None:
+                app.processEvents()
+            self._poll_jobs()
+            time.sleep(0.01)
+        return not self._jobs
+
+    def evaluate_again(self) -> None:
+        """選んだ行を評価し直す(自動の評価を止めた式も)。"""
+        r = self.table.currentRow()
+        if not (0 <= r < len(self.watch.exprs)):
+            return
+        e = self.watch.exprs[r]
+        self._auto_off.pop(e, None)
+        self._jobs.pop(e, None)
+        it = self.table.item(r, 1)
+        if it is not None:
+            self._building = True
+            self._set_pending_cell(it)
+            self._building = False
+        if self.async_eval:
+            self._jobs[e] = self.evaluator.start(e)
+            self._timer.start()
+        else:
+            self._refresh_sync()
+
+    def _reset_cell(self, it) -> None:
+        f = it.font()
+        f.setBold(False)
+        f.setItalic(False)
+        it.setFont(f)
+        it.setIcon(QtGui.QIcon())
+        it.setForeground(QtGui.QBrush())
+
+    def _set_pending_cell(self, it) -> None:
+        self._reset_cell(it)
+        f = it.font()
+        f.setItalic(True)
+        it.setFont(f)
+        it.setText(self._tr("evaluating…"))
+        it.setToolTip(self._tr("evaluating…"))
+        it.setForeground(QtGui.QBrush(QtGui.QColor("#8b91a0")))
+
+    def _set_error_cell(self, it, error: str, stuck: bool = False) -> None:
+        self._reset_cell(it)
+        it.setText("⚠ " + error)
+        it.setForeground(QtGui.QBrush(QtGui.QColor("#ff6b6b")))
+        tip = "⚠ " + error
+        if stuck:
+            tip += "\n" + self._tr("not re-evaluated automatically; select the row and press ↻ to try again")
+        it.setToolTip(tip)
+
+    def _apply_result(self, it, res) -> None:
+        tr = self._tr
+        if not res.ok:
+            self._set_error_cell(it, res.error, stuck=res.stuck)
+            return
+        self._reset_cell(it)
+        s = res.summary
+        it.setText(("● " if res.changed else "") + s.text)
+        it.setToolTip("%s\n%s" % (s.detail or s.text, (tr("changed since the last evaluation") if res.changed else "")))
+        if res.changed:
+            f = it.font()
+            f.setBold(True)
+            it.setFont(f)
+        if s.is_image:
+            pm = pixmap_for(res.value, _THUMB * 2)
+            if pm is not None:
+                it.setIcon(QtGui.QIcon(pm.scaled(_THUMB, _THUMB, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)))
+
     def _update_preview(self) -> None:
         r = self.table.currentRow()
-        res = self._results.get(r)
+        e = self.watch.exprs[r] if 0 <= r < len(self.watch.exprs) else None
+        res = self._results.get(e)
         if res is not None and res.ok and res.summary is not None and res.summary.is_image:
             pm = pixmap_for(res.value, _PREVIEW)
             if pm is not None:
