@@ -651,3 +651,175 @@ def _py_ident(name: str) -> str:
     if not s.isidentifier() or keyword.iskeyword(s):    # e.g. a leading digit remained
         s = "pipeline"
     return s
+
+
+# --------------------------------------------------------------------------- #
+# パイプラインのファイル(Studio の「Save pipeline」の JSON)を読み書きする公開の入口 #
+# 種類に依らない部分(印・版・原子的な書き込み・JSON の値)は defs_io にある。       #
+# --------------------------------------------------------------------------- #
+PIPELINE_KIND = "pipeline"
+
+
+class PipelineFile(FullseyeEngine):
+    """Studio が保存したパイプライン(``PipelineModel.to_dict`` の JSON)を、読んだ形のまま持つ
+    :class:`FullseyeEngine`。
+
+    * ``stages`` は**走る段**(切った段 = 4 番目が ``true`` の段を除く)。Studio の画面の結果と同じ。
+    * ``save(path)`` は読んだ辞書の他の鍵(``directives`` / ``input`` / ``pinned`` …)と切った段を
+      そのまま残し、印(``fullseye_kind`` / ``version`` / ``created_by``)を付けて原子的に書く。
+      段は正本の形 ``[op, a, b(, true)]`` で書く。
+    * ``p(img)`` は ``p.run(img)`` と同じ(``api.run_pipeline``)。
+    * 読み込みは**データだけ**: JSON を ``json.load`` で読み、op 名は台帳に在る物だけを受け付ける。
+      pickle も eval も使わない。"""
+
+    def __init__(self, stages=None, name: str = "pipeline", source: dict | None = None,
+                 path: str | None = None):
+        all_stages = [list(s) for s in (stages or [])]
+        live = [s[:3] for s in all_stages if not (len(s) > 3 and s[3] is True)]
+        super().__init__(live, name=name)
+        # super() は段を作り直すので、走る段と全体の列の対応を取り直す(set_knobs が両方に効くように)
+        it = iter(self.stages)
+        self._all = []
+        for s in all_stages:
+            if len(s) > 3 and s[3] is True:
+                self._all.append([s[0], float(s[1]), float(s[2]), True])
+            else:
+                self._all.append(next(it))
+        self.source = dict(source or {})
+        self.path = path
+
+    def __call__(self, image):
+        return self.run(image)
+
+    def to_dict(self) -> dict:
+        d = dict(self.source) if self.source else {"fullseye_pipeline": 1, "name": self.name}
+        d["stages"] = [list(s) for s in self._all]
+        return d
+
+    def save(self, path: str) -> None:
+        import defs_io
+        defs_io.write_json_atomic(path, defs_io.stamp(self.to_dict(), PIPELINE_KIND))
+
+
+def _pipeline_legacy_version(d):
+    """印(``fullseye_kind``)の無い辞書がパイプラインなら版 0 を返す(違えば None)。
+
+    ``fullseye_pipeline`` の鍵があるのに整数 1 でなければ断る(99・"banana" を受理していた穴、
+    DEFS_IO_SURVEY §4 D)。鍵が無く ``stages`` の列だけがある古い書き出しも版 0。"""
+    import defs_io
+    if not isinstance(d, dict):
+        return None
+    if "fullseye_pipeline" in d:
+        old = d["fullseye_pipeline"]
+        if isinstance(old, bool) or old != 1 or not isinstance(old, int):
+            raise defs_io.DefinitionError("'fullseye_pipeline': %r is not a version this Fullseye reads (1)" % (old,))
+        return 0
+    return 0 if isinstance(d.get("stages"), list) else None
+
+
+def _pipeline_v0_to_v1(d: dict) -> dict:
+    """版 0(印の無い今までの Studio のファイル)→ 版 1。中身は同じ(印は書くときに付く)。"""
+    return dict(d)
+
+
+#: 段の形の正本は ``[op, a, b]``(切った段は ``[op, a, b, true]``)。読むときに寄せる形の表。
+#: ``api._normalise_stage`` が読む形(Engine の 5 形)を受け、つまみの範囲は Studio と同じ 0..1 を強制する。
+STAGE_FORMS = (
+    ("[op, a, b] / [op, a, b, bypass]", "the canonical form (Studio's save file)"),
+    ('{"op": op, "a": a, "b": b} / {"name": op, ...}', "dict form (Engine, MCP a/b) -> canonical"),
+    ('"op"', "a bare name: a = b = 0.5 -> canonical"),
+    ('[op, {"a": a, "b": b}]', "name + knob dict (Engine) -> canonical"),
+    ('{"op": op, "params": {...}}', "REFUSED in version 1 (named physical parameters need version 2)"),
+)
+
+
+def _canonical_stage(i: int, s, where: str) -> list:
+    """段 1 つを正本の ``[op, a, b(, true)]`` へ寄せる。読めない形・範囲外のつまみは DefinitionError。"""
+    import math
+    import defs_io
+    bypass = False
+    if isinstance(s, list) and len(s) == 4 and isinstance(s[0], str):
+        if not isinstance(s[3], bool):
+            raise defs_io.DefinitionError("%s: stage %d: the bypass flag must be true or false" % (where, i))
+        bypass, s = s[3], s[:3]
+    if isinstance(s, dict) and "params" in s:
+        raise defs_io.DefinitionError("%s: stage %d: named 'params' are not part of pipeline version 1 "
+                                      "(use a / b, or a newer file version)" % (where, i))
+    if isinstance(s, dict) and "bypass" in s:
+        b = s["bypass"]
+        if not isinstance(b, bool):
+            raise defs_io.DefinitionError("%s: stage %d: the bypass flag must be true or false" % (where, i))
+        bypass = b
+        s = {k: v for k, v in s.items() if k != "bypass"}
+    try:
+        name, a, b = api._normalise_stage(i - 1, s, 0.5, 0.5)
+    except (TypeError, ValueError) as e:
+        raise defs_io.DefinitionError("%s: stage %d: %s" % (where, i, e)) from None
+    if not isinstance(name, str):
+        raise defs_io.DefinitionError("%s: stage %d: operator name must be text" % (where, i))
+    op = api.find_op(name)
+    if op is None:
+        raise defs_io.DefinitionError("%s: stage %d: unknown operator %r" % (where, i, name))
+    for label, v in (("a", a), ("b", b)):
+        if not math.isfinite(v) or not 0.0 <= v <= 1.0:
+            raise defs_io.DefinitionError("%s: stage %d (%s): knob %s must be in [0, 1], got %r"
+                                          % (where, i, op.name, label, v))
+    return [op.name, float(a), float(b)] + ([True] if bypass else [])
+
+
+def pipeline_from_dict(d, where: str = "pipeline") -> PipelineFile:
+    """パイプラインの辞書を検査して :class:`PipelineFile` にする。誤りは ``where`` つきの ValueError
+    (``defs_io.DefinitionError``)。
+
+    印(版)の検査と移行は ``defs_io.check_marker``(版の検査の正本)。段は :data:`STAGE_FORMS` の形を
+    正本 ``[op, a, b(, true)]`` へ寄せ、op は台帳に在る物(別名は正規の名前へ)、つまみは有限で 0..1。"""
+    import defs_io
+    _kind, d = defs_io.check_marker(d, where, PIPELINE_KIND)
+    raw = d.get("stages")
+    if not isinstance(raw, list):
+        raise defs_io.DefinitionError("%s: 'stages' must be a list, got %s" % (where, type(raw).__name__))
+    out = [_canonical_stage(i, s, where) for i, s in enumerate(raw, 1)]
+    src = {k: v for k, v in d.items() if k not in defs_io.MARKER_KEYS}
+    return PipelineFile(out, name=str(d.get("name") or "pipeline"), source=src)
+
+
+def _pipeline_reader(d: dict, where: str) -> PipelineFile:
+    p = pipeline_from_dict(d, where=where)
+    if not d.get("name"):
+        p.name = os.path.splitext(os.path.basename(where))[0]
+    p.path = where
+    return p
+
+
+def _pipeline_writer(obj) -> dict:
+    return obj.to_dict()
+
+
+def load_pipeline(path, search_dirs=None) -> PipelineFile:
+    """パイプラインを名前で読む(``fullseye.read_def(path, kind="pipeline")`` の薄い別名 + レシピ名)。
+
+    *path* が ``.json`` なら Studio が保存したファイル、そうでなければ ``fullseye.recipes`` のレシピ名。
+    相対パスは *search_dirs* の順に探す(既定: 走っているスクリプトの場所 → 今の作業場所)。Studio の
+    Python のモードは「そのプログラムのファイルの場所 → 今のプロジェクトの場所」を渡す。見つからなければ
+    探した場所を全部書いた ``FileNotFoundError``。壊れた JSON・未知の op・版の違い・範囲外のつまみは
+    ファイル名つきの ``ValueError``(``fullseye.DefinitionError``)。読み込みは JSON のデータだけ。
+
+        import fullseye as fs
+        p = fs.load_pipeline("inspect.json")
+        out = p(img)                 # = fs.run_pipeline(img, p.stages)
+        x2 = p.run(img, upto=1)      # 0..1 段目まで
+        steps = p.run_stepwise(img)  # 段ごとの結果"""
+    import defs_io
+    import recipes
+    name = os.fspath(path)
+    if not name.lower().endswith(".json"):
+        st = recipes.stages(name)
+        if st is not None:
+            return PipelineFile([list(s) for s in st], name=name)
+        raise FileNotFoundError("no pipeline file or recipe named %r (pipeline files end in .json; "
+                                "recipes: fullseye.recipes.names())" % name)
+    if search_dirs is None:
+        import sys
+        main = getattr(sys.modules.get("__main__"), "__file__", None)
+        search_dirs = ([os.path.dirname(os.path.abspath(main))] if main else []) + [os.getcwd()]
+    return defs_io.read_def(name, kind=PIPELINE_KIND, search_dirs=search_dirs)

@@ -509,6 +509,10 @@ with warnings.catch_warnings():
     from api import (  # noqa: E402,F401
         register_pointclouds, align_cad_to_scan, measure_plane, inspect_roundness, match_sdf, register_auto)
     from engine import FullseyeEngine, diagnose_stages, pipeline_states  # noqa: E402,F401  (pipeline runtime)
+    # Studio のパイプラインファイル(.json)を読む入口(Python のモードの load_pipeline と同じ物、2026-11-12)
+    from engine import PipelineFile, load_pipeline, pipeline_from_dict  # noqa: E402,F401
+    # 定義ファイル(JSON)の種類に依らない層: 印(kind / version)を見て振り分ける読み書き
+    from defs_io import read_def, write_def, DefinitionError  # noqa: E402,F401
     # engine-layer result state + memory-bounded stage cache (Qt-free; the browser Studio consumes these)
     from studio_result import (  # noqa: E402,F401
         StageCache, assess_validity, input_reference, resolve_input_ref, file_sha256, cache_summary_text,
@@ -1023,6 +1027,7 @@ __all__ = [
     "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
     "measure3d", "regionprops3d", "ops3d", "pipeline3d",
     "FullseyeEngine", "diagnose_stages", "graphengine", "FullseyeGraph",
+    "PipelineFile", "load_pipeline", "pipeline_from_dict", "read_def", "write_def", "DefinitionError",
     "pipeline_states", "StageCache", "assess_validity", "input_reference", "resolve_input_ref", "file_sha256",
     "cache_summary_text",
     "Camera", "list_cameras", "open_framegrabber", "grab_image", "close_framegrabber",
