@@ -13161,6 +13161,16 @@ def build_window(model=None):
     v_disp.clicked.connect(lambda: display_variable("new"))
     v_here.clicked.connect(lambda: display_variable("current"))
     win._variables = {"list": var_list, "refresh": refresh_variables, "display": display_variable}
+    # ★2026-11-12(B-3): パネルを閉じたまま実行すると、一覧は実行前の『? · control』のまま古かった。
+    #   開いた(タブの裏から前へ出た)時に、キャッシュから作り直す(計算はしない)。
+    #   dock の visibilityChanged(True) は窓の配置次第で届かないので、中身の部品の Show で受ける。
+    class _ShowWatcher(QtCore.QObject):
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.Show:
+                QtCore.QTimer.singleShot(0, refresh_variables)
+            return False
+    win._var_show_watcher = _ShowWatcher(win)
+    var_w.installEventFilter(win._var_show_watcher)
     win._contour_icon = _contour_icon                # exposed for the headless thumbnail test
 
     # -- dedicated Operator Help dialog (HTML: args / usage / sample code / links) - #

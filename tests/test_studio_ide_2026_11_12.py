@@ -512,3 +512,24 @@ def test_font_size_is_saved_and_restored_and_the_gutter_follows(tmp_path, monkey
         assert win2._program["edit"].font().pointSize() == want
     finally:
         _close(win2)
+
+
+# --------------------------------------------------------------------------- 6. Variables が古いまま(B-3)
+def test_variables_panel_is_current_when_opened_after_a_run_while_hidden(win):
+    win._load_sample_image("coins")
+    _pump(0.3)
+    win._docks["variables"].hide()
+    _pump(0.2)
+    ed = win._program["edit"]
+    ed.setPlainText("gaussian (0.4, 0.5)\nsobel_mag (0.5, 0.5)\notsu (0.5, 0.5)\n")
+    win._program["apply"]()
+    win._do_run_all()
+    _pump(1.5)
+    assert not win._docks["variables"].isVisible()
+    win._docks["variables"].show()                                   # 手動の refresh はしない
+    _pump(0.4)
+    vl = win._variables["list"]
+    rows = [vl.item(i).text() for i in range(vl.count())]
+    assert len(rows) == 4, rows
+    assert not any("? ·" in r for r in rows), rows                   # 『? · control』が残らない
+    assert any("image · iconic" in r for r in rows) and any("region · iconic" in r for r in rows), rows
