@@ -400,6 +400,66 @@ def check_ledger_item(kind: str, path: str, *, plat: Optional[str] = None, dirs:
     return None
 
 
+FULLSEYE_DISPLAY_NAME = "Fullseye (Python package)"       # register_uninstall_entry が書く DisplayName
+_ICO_MAGIC = b"\x00\x00\x01\x00"
+_PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
+
+
+def verify_fullseye_item(kind: str, path: str, *, plat: Optional[str] = None) -> Optional[str]:
+    """消す前に、それが**Fullseye の物だと中身で**確かめる(名前と置き場だけで消さない)。確かめられなければ理由の文。
+
+    * ``.lnk``: 指す先の引数が Fullseye Studio の起動(``-m studio``、または install.ps1 の ``studio.py``)。
+    * ``.cmd``: 先頭に後始末スクリプトの印がある。``.ico`` / ``.png``: 画像の先頭の印。``.desktop``: Name と ``-m studio``。
+    * ``regkey``: DisplayName が Fullseye の物で、UninstallString が後始末(``fullseye-uninstall.cmd`` / ``setup --uninstall``)。
+    実在しない物は「消す物が無い」ので None(問題なし)。"""
+    plat = _platform(plat)
+    if kind == "regkey":
+        if plat != "win":
+            return None
+        import winreg
+        try:
+            k = winreg.OpenKey(winreg.HKEY_CURRENT_USER, path)
+        except OSError:
+            return None
+        with k:
+            try:
+                name = str(winreg.QueryValueEx(k, "DisplayName")[0])
+                us = str(winreg.QueryValueEx(k, "UninstallString")[0])
+            except OSError:
+                return "registry key %s has no DisplayName / UninstallString that identify it as Fullseye's; left alone" % path
+        if name != FULLSEYE_DISPLAY_NAME or not (CMD_NAME.lower() in us.lower() or "setup --uninstall" in us.lower()):
+            return ("registry key %s is not Fullseye's (DisplayName %r, UninstallString %r); left alone" % (path, name, us))
+        return None
+    if kind != "file":
+        return None
+    p = Path(path)
+    if not p.is_file():
+        return None
+    low = p.name.lower()
+    try:
+        if low.endswith(".lnk"):
+            if plat != "win":
+                return "%s is a .lnk on a non-Windows system; left alone" % p
+            args = read_lnk(p).get("Arguments", "").lower()
+            if "-m studio" in args or "studio.py" in args:
+                return None
+            return "%s does not start Fullseye Studio (its arguments are %r); left alone" % (p, args)
+        head = p.read_bytes()[:4096]
+        if low.endswith(".ico"):
+            ok = head[:4] == _ICO_MAGIC
+        elif low.endswith(".png"):
+            ok = head[:8] == _PNG_MAGIC
+        elif low == CMD_NAME.lower():
+            ok = b"Fullseye uninstall helper" in head
+        elif low.endswith(".desktop"):
+            ok = b"Name=" + APP_NAME.encode() in head and b"-m studio" in head
+        else:
+            return "%s is not a kind of file fullseye setup creates; left alone" % p
+    except (OSError, ShortcutError) as e:
+        return "cannot verify that %s belongs to Fullseye (%s); left alone" % (p, e)
+    return None if ok else "%s does not look like the file fullseye setup created; left alone" % p
+
+
 def _key_norm(k: str) -> str:
     return k.replace("/", "\\").strip("\\").lower()
 
@@ -508,16 +568,16 @@ def uninstall_cmd_text(*, python: object, uninstaller: object, lnks: Iterable[ob
          'if not exist "%FS_UNINST%" goto fallback',
          # python.exe が在っても起動できない(venv の元の Python を消した = pyvenv.cfg の home が無い、rc 103)ことがある。
          # 起動を確かめて、だめなら Python に頼らない後始末へ進む(進まないと「アプリと機能」から永久に消せない)。
-         '"%FS_PY%" -I -c "0" >nul 2>&1',
-         "if errorlevel 1 goto fallback",
+         # ★`if errorlevel 1` は「1 以上」の判定で、DLL が無いときの負の終了コード(0xC0000135 = -1073741515)を見逃す。
+         #   終了コードが 0 かどうかで分岐する `||` / `&&` を使う。
+         '"%FS_PY%" -I -c "0" >nul 2>&1 || goto fallback',
          # Python 側はこの .cmd を消さない(実行中のバッチが消えると cmd が「見つかりません」を出して終了コードも壊れる)。
          # 消すのは、Python が終わった後でこのバッチ自身。
          'set "%s=1"' % UNINSTALL_FROM_CMD_ENV,
          '"%FS_PY%" -I "%FS_UNINST%" --uninstall --pause %*',
          'set "FS_RC=%errorlevel%"',
          # Uninstall キーがまだ在る = 後始末が完了していない(--dry-run・「いいえ」・失敗)ので、この .cmd は残す
-         'reg query "HKCU\\%s" >nul 2>&1' % _cmd_val(regkey),
-         'if not errorlevel 1 exit /b %FS_RC%',
+         'reg query "HKCU\\%s" >nul 2>&1 && exit /b %%FS_RC%%' % _cmd_val(regkey),
          'pushd "%TEMP%"',
          '(goto) 2>nul & del "%~f0" & rmdir "%~dp0" 2>nul & exit /b %FS_RC%',
          ":fallback",
@@ -710,6 +770,8 @@ def remove(*, platform: Optional[str] = None, dirs: Optional[Dict[str, Path]] = 
         why = check_ledger_item(kind, e["path"], plat=plat, dirs=dirs, allow_keys=allow_keys)
         if why is None and entry_foreign(e):
             why = "%s was created by another Python environment (%s); left alone" % (e["path"], entry_foreign(e))
+        if why is None:
+            why = verify_fullseye_item(kind, e["path"], plat=plat)
         if why:
             skipped.append((e["path"], why))
             continue

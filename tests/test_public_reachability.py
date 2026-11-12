@@ -55,6 +55,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #: 数字は不可視な関数の本数で、増減しても意図的なら書き換えてよい。
 _INTERNAL = {
     "accel_bridge": 9, "accel_vol": 3,
+    # 2026-11-12 1.1.1 の統合: safe_xml(XML を安全に読む内部部品。呼ぶのは読み込み側の op で、利用者の入口は各 read_*)。
+    "safe_xml": 4,
     # 2026-11-03 device="auto" の判断(損益分岐の表・空き VRAM・段ごとの経路)。利用者の入口は
     # fullseye.explain_device / resolve_device で、この部品は api の内側からだけ呼ぶ。
     "device_policy": 6,
@@ -68,7 +70,7 @@ _INTERNAL = {
     "fscript": 29, "fsruntime": 8,
     "gi_render": 2, "graph": 3, "graph_seed": 2, "halcon_coverage": 10,
     "halcon_scrape": 9, "honest_summary": 1, "imgevolve": 14, "lib_coverage": 3,
-    "param_specs": 10, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
+    "param_specs": 11, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
     # GPU 第 4 便: 一括経路。op でなく、raytrace / optics と同じ定義を (M, W, R) で計算する下回りの部品。
     "polar_gpu": 13,   # 2026-11-04 統合 GPU: 第 4 便の後半の commit で 12 → 13(実測)
@@ -77,7 +79,7 @@ _INTERNAL = {
     # studio_search / studio_errors 2026-10-20: Studio の論理層(Qt 非依存)。UI への配線は次の片。
     #   search 6 本(current_sort_of / search_grouped / search_zero_results_help / canonical_sort / clear_caches / nearest_op_names)
     #   errors 3 本(explain_failure / format_failure / localize)。studio と同じ「GUI の内側の部品」で、テストが直接呼ぶ。
-    "studio": 90, "studio_errors": 3, "studio_search": 6, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    "studio": 90, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
@@ -313,7 +315,8 @@ def test_pending_exposure_shrinks_when_fixed():
 #   halcon_coverage.source_breakdown_text(成熟度の文面を出所別に組む補助。呼ぶのは honest_summary だけ)と
 #   realdata.mark_read(PoC が「実データを読んだ」印を記録に足す補助。呼ぶのは data: real の例だけで、op ではない)。
 #   同じ便の source_of / covered_by_source はモジュールの中でしか使わないので _ を付けて内部にした(数えない)。
-_HIDDEN_FUNCTIONS_TODAY = 1073
+# 2026-11-12 1.1.1 の統合(safe_xml 4・param_specs 1・studio_search 1・backend_safe ほか): 1073 + 11 = 1084。実測も 1084。
+_HIDDEN_FUNCTIONS_TODAY = 1084
 
 
 def _hidden_total():

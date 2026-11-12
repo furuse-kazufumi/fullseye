@@ -403,7 +403,8 @@ def test_uninstall_without_ledger_detects_known_shortcut_places_only(tmp_path):
     dirs = _win_dirs(tmp_path) if WIN else _linux_dirs(tmp_path)
     known = (dirs["start_menu"] / "Fullseye Studio.lnk") if WIN else (dirs["apps"] / "fullseye-studio.desktop")
     known.parent.mkdir(parents=True)
-    known.write_bytes(b"old")
+    from test_installer_review_2026_11_12 import _real_shortcut
+    _real_shortcut(known)                     # 名前だけでは消さない: Fullseye を起動する本物のショートカットにする
     stray = known.parent / "other.lnk"
     stray.write_bytes(b"not ours")
     rc, out, pip = _un(tmp_path, tmp_path / "no_such_ledger.json", dirs, ["--yes"])

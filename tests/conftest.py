@@ -171,6 +171,130 @@ def _isolate_install_ledger(tmp_path_factory):
         drop_fullseye_test_regkey()
 
 
+# --------------------------------------------------------------------------- #
+# ★本物の Fullseye の登録(デスクトップ・スタートメニュー・HKCU の Uninstall・setup フォルダ)を試験が触らないことの見張り #
+# --------------------------------------------------------------------------- #
+# 2026-11-12(3 回目の独立レビュー): インストーラの試験(.cmd 経由で uninstall を呼ぶ物)が、環境変数を一時フォルダへ向けても
+# デスクトップだけは SHGetKnownFolderPath で**本物**を引き、本物の ``Fullseye Studio.lnk`` と ``Uninstall\\Fullseye`` を消す
+# 対象に入れていた(実際に、利用者のデスクトップの ``Fullseye Studio.lnk`` が消えた)。個々の試験の注意では防げないので、
+# 試験群を回す前後で本物の一覧を取り、**差があれば失敗**させる(Windows だけ。fullseye は import しない)。
+_FS_FILE_NAMES = {"fullseye studio.lnk", "fullseye-uninstall.cmd", "fullseye.ico", "fullseye-studio.desktop"}
+
+
+def real_install_snapshot() -> dict:
+    """本物の Fullseye 登録の一覧(読むだけ)。Windows 以外は空。"""
+    snap: dict = {}
+    if sys.platform != "win32":
+        return snap
+    import winreg
+
+    def entry(p):
+        try:
+            st = os.stat(p)
+            return (p, st.st_size, st.st_mtime_ns)
+        except OSError:
+            return (p, None, None)
+
+    desk = set()
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                            r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders") as k:
+            desk.add(winreg.QueryValueEx(k, "Desktop")[0])
+    except OSError:
+        pass
+    for env, sub in (("USERPROFILE", "Desktop"), ("PUBLIC", "Desktop")):
+        if os.environ.get(env):
+            desk.add(os.path.join(os.environ[env], sub))
+    out = []
+    for d in sorted(desk):
+        try:
+            with os.scandir(d) as it:
+                out += [entry(e.path) for e in it if e.name.lower() in _FS_FILE_NAMES]
+        except OSError:
+            pass
+    snap["desktop"] = sorted(out)
+    menus = []
+    for base in (os.environ.get("APPDATA"), os.environ.get("ProgramData")):
+        if not base:
+            continue
+        root = os.path.join(base, "Microsoft", "Windows", "Start Menu", "Programs")
+        for dp, dn, fn in os.walk(root):
+            menus += [entry(os.path.join(dp, n)) for n in fn + dn if n.lower() in _FS_FILE_NAMES or n.lower() == "fullseye"]
+    snap["start_menu"] = sorted(menus)
+    keys = []
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Uninstall") as u:
+            i = 0
+            while True:
+                try:
+                    name = winreg.EnumKey(u, i)
+                except OSError:
+                    break
+                i += 1
+                vals = {}
+                try:
+                    with winreg.OpenKey(u, name) as k:
+                        for v in ("DisplayName", "UninstallString"):
+                            try:
+                                vals[v] = str(winreg.QueryValueEx(k, v)[0])
+                            except OSError:
+                                pass
+                except OSError:
+                    pass
+                if "fullseye" in name.lower() or "fullseye" in vals.get("DisplayName", "").lower():
+                    keys.append((name, vals.get("DisplayName"), vals.get("UninstallString")))
+    except OSError:
+        pass
+    snap["uninstall_keys"] = sorted(keys, key=str)
+    local = os.environ.get("LOCALAPPDATA")
+    setup = []
+    if local:
+        d = os.path.join(local, "Fullseye", "setup")
+        try:
+            with os.scandir(d) as it:
+                setup = [entry(e.path) for e in it]
+        except OSError:
+            pass
+    snap["setup_folder"] = sorted(setup)
+    return snap
+
+
+def snapshot_diff(before: dict, after: dict) -> list:
+    """2 つの一覧の違いを文の一覧にする(同じなら空)。"""
+    out = []
+    for k in sorted(set(before) | set(after)):
+        b, a = before.get(k), after.get(k)
+        if b != a:
+            sb, sa = set(map(str, b or [])), set(map(str, a or []))
+            out.append("%s: removed=%s added=%s" % (k, sorted(sb - sa), sorted(sa - sb)))
+    return out
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _real_fullseye_registration_is_untouched():
+    before = real_install_snapshot()
+    yield
+    diff = snapshot_diff(before, real_install_snapshot())
+    if diff:
+        pytest.fail("the test run changed the REAL Fullseye registration (Desktop / Start menu / HKCU Uninstall / setup folder): "
+                    + " | ".join(diff), pytrace=False)
+
+
+_INSTALLER_TEST_MODULES = {"test_installer_review_2026_11_12", "test_studio_shortcuts_2026_11_12", "test_rag_setup"}
+
+
+@pytest.fixture(autouse=True)
+def _installer_tests_never_name_the_real_uninstall_key(request, monkeypatch):
+    """インストーラの試験の間は、``fullseye.shortcuts.UNINSTALL_KEY`` を試験用の名前に差し替える
+    (「本物の Uninstall\\Fullseye」を、同じプロセスの試験が計画にも削除にも使えないようにする)。別プロセスで走らせる物は対象外。"""
+    if request.module.__name__ not in _INSTALLER_TEST_MODULES:
+        yield
+        return
+    from fullseye import shortcuts
+    monkeypatch.setattr(shortcuts, "UNINSTALL_KEY", r"Software\FullseyeTest\_stub_for_the_real_uninstall_key")
+    yield
+
+
 #: api の遮断器(プロセスで 1 つの集合)。開けたまま残すと、同じワーカーで後に走るテストの
 #: GPU / 速い双子の経路が黙って閉じる(1.0 前の修正 2026-11-05 t8-flake: T6 が median_image で落ちた)。
 _API_BREAKERS = ("_GPU_OPEN", "_FAST_OPEN")

@@ -67,6 +67,49 @@ def _un(tmp_path, ledger, dirs, argv, allow=(), answers=(), tty=False, pip_state
     return rc, buf.getvalue(), calls
 
 
+def _assert_inside(root, key, path, what):
+    root_r = os.path.normcase(os.path.realpath(str(root)))
+    p = os.path.normcase(os.path.realpath(str(path)))
+    if not (p == root_r or p.startswith(root_r + os.sep)):
+        pytest.fail("SAFETY: %s %s is outside the test's tmp folder %s; refusing to run a test that could delete a real file"
+                    % (what, path, root))
+
+
+def guard_plan(root, key, *, ledger, dirs, env):
+    """消す予定の一覧(``uninstall.collect``)を先に取り、一時フォルダの外のパス・自分の試験用キー以外のキーが 1 つでも
+    入っていたら試験を失敗させる(何も消さない)。collect は何も変更しない。"""
+    plan = uninstall.collect(ledger=ledger, dirs=dirs, env=env, registry=False, allow_keys=(key,))
+    for it in list(plan["made"]) + list(plan["data"]):
+        if it["kind"] in ("regkey", "settings_regtree"):
+            if it["path"] != key:
+                pytest.fail("SAFETY: registry key %s is not this test's key %s" % (it["path"], key))
+        else:
+            _assert_inside(root, key, it["path"], it["kind"])
+
+
+def guard_script(script, root, key):
+    """後始末 .cmd が消す対象(``del`` / ``rmdir`` / ``reg delete``)が、一時フォルダの中と自分の試験用キーだけであること。"""
+    import re
+    text = Path(script).read_text(encoding="utf-8")
+    for line in text.splitlines():
+        m = re.match(r'(?:del|rmdir)\s+"([^"]+)"', line)
+        if m and not m.group(1).startswith("%"):
+            _assert_inside(root, key, m.group(1).replace("%%", "%"), "script target")
+        r = re.match(r'reg delete "HKCU\\([^"]+)"', line)
+        if r and r.group(1) != key:
+            pytest.fail("SAFETY: the script would delete registry key %s, not this test's key %s" % (r.group(1), key))
+    assert 'del "%~f0"' in text
+
+
+def _real_shortcut(path):
+    """Fullseye Studio を起動する本物のショートカット(Windows は .lnk、Linux は .desktop)を作る。"""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if WIN:
+        shortcuts.write_lnk(path, Path(sys.executable), "-P -m studio", ROOT / "assets" / "fullseye.ico", path.parent)
+    else:
+        path.write_text(shortcuts.linux_desktop_text(sys.executable, Path("/i/x.png")), encoding="utf-8")
+
+
 def _write_ledger(path, entries):
     path.write_text(json.dumps({"version": 1, "entries": entries}), encoding="utf-8")
 
@@ -133,14 +176,21 @@ def test_2_foreign_fullseye_ops_dir_is_left_alone_unless_marked_or_default(tmp_p
     dirs = {"start_menu": tmp_path / "s", "desktop": tmp_path / "d", "icon_dir": tmp_path / "i", "apps": tmp_path / "a"}
     rc, out, _ = _un(tmp_path, ledger, dirs, ["--yes"])
     assert (mine / "sub" / "notes.md").is_file() and rc == 1 and "left alone" in out and "marker" in out
-    # fullseye-rag が置く目印があれば消える
-    (mine / rag_setup.MARKER_NAME).write_text("x", encoding="utf-8")
+    # fullseye-rag が置く目印があり、原本どおりなら消える
+    pristine = rag_setup.install(tmp_path / "Projects2", repo=None, _auto_repo=False)
+    _write_ledger(ledger, [{"kind": "claude_skill", "path": str(pristine)}])
     rc, out, _ = _un(tmp_path, ledger, dirs, ["--yes"])
-    assert not mine.exists() and rc == 0
+    assert not pristine.exists() and rc == 0
+    # 利用者が自分のファイルを足していたら、目印があっても --yes では残す(3 回目の指摘)
+    mine2 = rag_setup.install(tmp_path / "Projects3", repo=None, _auto_repo=False)
+    (mine2 / "my_notes.md").write_text("mine", encoding="utf-8")
+    _write_ledger(ledger, [{"kind": "claude_skill", "path": str(mine2)}])
+    rc, out, _ = _un(tmp_path, ledger, dirs, ["--yes"])
+    assert (mine2 / "my_notes.md").is_file() and "edited by hand" in out and rc == 0
     # 既定の置き場(default_target)の直下なら、目印が無くても消える
     skills = tmp_path / "home" / ".claude" / "skills"
-    other = skills / "fullseye-ops"
-    other.mkdir(parents=True)
+    other = rag_setup.install(skills, repo=None, _auto_repo=False)
+    (other / rag_setup.MARKER_NAME).unlink()
     monkeypatch.setattr(rag_setup, "default_target", lambda: skills)
     _write_ledger(ledger, [{"kind": "claude_skill", "path": str(other)}])
     rc, out, _ = _un(tmp_path, ledger, dirs, ["--yes"])
@@ -319,7 +369,7 @@ def test_6_corrupt_ledger_yes_still_removes_known_places_only(tmp_path):
     dirs = _dirs(tmp_path)
     known = (dirs["start_menu"] / "Fullseye Studio.lnk") if WIN else (dirs["apps"] / "fullseye-studio.desktop")
     known.parent.mkdir(parents=True)
-    known.write_bytes(b"old")
+    _real_shortcut(known)
     stray = known.parent / "other.lnk"
     stray.write_bytes(b"x")
     ledger = tmp_path / "ledger.json"
@@ -481,6 +531,7 @@ def test_12_script_runs_python_then_deletes_itself_only_when_the_uninstall_compl
     stub = _stub_uninstaller(tmp_path, key, delete_key=delete_key)
     script.write_text(shortcuts.uninstall_cmd_text(python=Path(sys.executable), uninstaller=stub, lnks=[], regkey=key),
                       encoding="utf-8", newline="")
+    guard_script(script, tmp_path, key)
     try:
         r = subprocess.run('"%s" --dry-run --lang en' % script, shell=True, capture_output=True, cwd=tmp_path)
         assert r.returncode == 3, r.stdout + r.stderr                       # Python の終了コードがそのまま返る
@@ -527,6 +578,7 @@ def _e2e_setup(tmp_path, root_name, key):
     env = dict(os.environ, PYTHONUTF8="1", FS_NOPAUSE="1", APPDATA=str(appdata), LOCALAPPDATA=str(local),
                USERPROFILE=str(root), FULLSEYE_LEDGER=str(ledger), FULLSEYE_CACHE_DIR=str(root / "cache"),
                FULLSEYE_STUDIO_SETTINGS=str(root / "studio.ini"))
+    guard_script(dirs["icon_dir"] / shortcuts.CMD_NAME, tmp_path, key)           # 本物の場所・本物のキーに触れないことを先に確かめる
     return venv, dirs, ledger, env, dirs["icon_dir"] / shortcuts.CMD_NAME
 
 
@@ -685,6 +737,10 @@ def test_16_settings_registry_tree_is_deleted_through_the_real_reg_delete_tree(t
     with pytest.raises(shortcuts.ShortcutError, match="refusing"):                     # 許可なしでは消さない
         uninstall._reg_delete_tree(tree)
     assert shortcuts.regkey_exists(tree)
+    plan = uninstall.collect(ledger=tmp_path / "none.json", dirs=_dirs(tmp_path), env={"FULLSEYE_CACHE_DIR": str(tmp_path / "cache")},
+                             registry=True, regtree=tree)
+    for it in plan["made"]:                                  # 安全弁: 本物の Uninstall キーは計画に入っていない(conftest が差し替える)
+        assert it["kind"] != "regkey" or it["path"].startswith("Software\\FullseyeTest\\"), it
     rc, out, _ = _un(tmp_path, tmp_path / "none.json", _dirs(tmp_path), [], answers=["y", "n"], tty=True,
                      regtree=tree, registry=True)
     assert rc == 0 and "settings (registry)" in out and "Software\\FullseyeTest\\tree\\Studio" in out
@@ -764,6 +820,7 @@ def test_R1_script_falls_back_when_the_venv_python_exists_but_cannot_start(tmp_p
     cfg.write_text(cfg.read_text(encoding="utf-8").replace("home = ", "home = C:\\nope_"), encoding="utf-8")
     assert subprocess.run([str(vpy), "-c", "print(1)"], capture_output=True).returncode != 0   # 前提: 起動しない
     script = dirs["icon_dir"] / shortcuts.CMD_NAME
+    guard_script(script, tmp_path, key)
     try:
         r = _run_script(script, "", tmp_path, root)
         assert r.returncode == 0, r.stdout + r.stderr
@@ -784,13 +841,23 @@ def test_R2_corrupt_ledger_legacy_removes_the_key_icon_and_script_and_the_cmd_fi
     ledger = dirs["icon_dir"] / "install_ledger.json"
     made = shortcuts.install(desktop=False, python=str(vpy), dirs=dirs, ledger=ledger, reg_key=key)
     ledger.write_text("{not json", encoding="utf-8")                       # 台帳が壊れた → 「台帳なし」の既知の場所
+    # ★3 回目のレビューで判明: 包みが dirs / env / registry を渡さないと、環境変数を一時フォルダへ向けても
+    #   デスクトップだけは SHGetKnownFolderPath で**本物**を引き、registry=True 既定で本物の Uninstall\Fullseye も計画に入り、
+    #   台帳が壊れた状態(= 既知の場所へ切り替わる)で --yes が本物のショートカットと登録を消しうる。
+    #   だから場所・環境・レジストリを全部、この試験の一時フォルダに固定して渡す。
+    env_for_plan = {"FULLSEYE_CACHE_DIR": str(root / "cache"), "LOCALAPPDATA": str(root / "Local"),
+                    "FULLSEYE_STUDIO_SETTINGS": str(root / "studio.ini")}
+    guard_plan(root, key, ledger=ledger, dirs=dirs, env=env_for_plan)
     wrapper = tmp_path / "wrap.py"                                        # 試験用キーを allow_keys で渡す(本番の入口は渡さない)
-    wrapper.write_text("import sys, types\nst = types.ModuleType('fullseye'); st.__path__ = [%r]; "
+    wrapper.write_text("import sys, types\nfrom pathlib import Path\nst = types.ModuleType('fullseye'); st.__path__ = [%r]; "
                        "sys.modules['fullseye'] = st\nfrom fullseye import uninstall as u\n"
-                       "sys.exit(u.main(allow_keys=[%r]))\n" % (str(ROOT / "fullseye"), key), encoding="utf-8")
+                       "dirs = {k: Path(v) for k, v in %r.items()}\n"
+                       "sys.exit(u.main(dirs=dirs, env=%r, registry=False, allow_keys=[%r]))\n"
+                       % (str(ROOT / "fullseye"), {k: str(v) for k, v in dirs.items()}, env_for_plan, key), encoding="utf-8")
     script = dirs["icon_dir"] / shortcuts.CMD_NAME
     script.write_text(shortcuts.uninstall_cmd_text(python=vpy, uninstaller=wrapper, lnks=made, regkey=key),
                       encoding="utf-8", newline="")
+    guard_script(script, tmp_path, key)
     try:
         r = _run_script(script, "--yes --lang en", tmp_path, root)
         out = r.stdout.decode("utf-8", "replace")
@@ -975,3 +1042,173 @@ def test_R11_mcp_choice_goes_through_display_to_knob_and_values_do_not_change():
         assert knob_to_display(spec, got) == i
     src = (ROOT / "fullseye" / "mcp" / "server.py").read_text(encoding="utf-8")
     assert "(allowed.index(shown) + 0.5) / len(allowed)" not in src
+
+
+# =========================================================================== 3 回目の独立レビュー(2026-11-12)
+def test_S0_the_watcher_detects_a_changed_real_registration_and_is_otherwise_stable(monkeypatch, tmp_path):
+    from conftest import real_install_snapshot, snapshot_diff
+    a, b = real_install_snapshot(), real_install_snapshot()
+    assert snapshot_diff(a, b) == []                                                  # 何も触らなければ前後で同じ
+    assert snapshot_diff({"desktop": [("x", 1, 2)]}, {"desktop": []}) and snapshot_diff({}, {}) == []
+    if WIN:                                                                           # 偽のデスクトップに置くと一覧に出る
+        fake = tmp_path / "Desktop"
+        fake.mkdir()
+        monkeypatch.setenv("USERPROFILE", str(tmp_path))
+        before = real_install_snapshot()
+        (fake / "Fullseye Studio.lnk").write_bytes(b"x")
+        diff = snapshot_diff(before, real_install_snapshot())
+        assert diff and "Fullseye Studio.lnk" in diff[0]
+
+
+def test_S0_the_installer_tests_cannot_name_the_real_uninstall_key():
+    assert shortcuts.UNINSTALL_KEY.startswith("Software\\FullseyeTest\\")           # conftest が差し替えている(別プロセスは対象外)
+
+
+def test_S0_guards_refuse_paths_outside_tmp(tmp_path):
+    with pytest.raises(pytest.fail.Exception):
+        _assert_inside(tmp_path / "a", KEY, tmp_path / "b" / "x", "file")
+    _assert_inside(tmp_path, KEY, tmp_path / "a" / "b", "file")
+    ledger = tmp_path / "l.json"
+    _write_ledger(ledger, [{"kind": "file", "path": str(tmp_path.parent / "Fullseye Studio.lnk")}])
+
+
+@winonly
+def test_S1_legacy_and_ledger_items_are_deleted_only_when_the_content_says_they_are_fullseyes(tmp_path):
+    import winreg
+    dirs = _dirs(tmp_path)
+    # 台帳なし(legacy): 名前は同じでも、起動するのが Fullseye でない .lnk は消さない。install.ps1 形式(studio.py)は Fullseye の物
+    other = dirs["desktop"] / "Fullseye Studio.lnk"
+    other.parent.mkdir(parents=True)
+    shortcuts.write_lnk(other, Path(sys.executable), "-c print(1)", ROOT / "assets" / "fullseye.ico", tmp_path)
+    ps1 = dirs["start_menu"] / "Fullseye Studio.lnk"
+    shortcuts.write_lnk(ps1, Path(sys.executable), '"C:\\repo\\studio.py"', ROOT / "assets" / "fullseye.ico", tmp_path)
+    assert shortcuts.verify_fullseye_item("file", str(other)) is not None
+    assert shortcuts.verify_fullseye_item("file", str(ps1)) is None
+    (dirs["icon_dir"]).mkdir(parents=True)
+    (dirs["icon_dir"] / "fullseye.ico").write_bytes(b"not an icon")
+    (dirs["icon_dir"] / shortcuts.CMD_NAME).write_text("@echo hello\r\n", encoding="utf-8")
+    key = KEY + "S1"
+    with winreg.CreateKeyEx(winreg.HKEY_CURRENT_USER, key, 0, winreg.KEY_SET_VALUE) as k:
+        winreg.SetValueEx(k, "DisplayName", 0, winreg.REG_SZ, "Somebody Else's App")
+        winreg.SetValueEx(k, "UninstallString", 0, winreg.REG_SZ, "C:\\other\\unins000.exe")
+    try:
+        plan = uninstall.collect(ledger=tmp_path / "none.json", dirs=dirs, env={"FULLSEYE_CACHE_DIR": str(tmp_path / "c")},
+                                 registry=False, allow_keys=(key,))
+        made = {Path(i["path"]).name for i in plan["made"] if i["kind"] == "file"}
+        refused = {Path(str(r["path"])).name: r["reason"] for r in plan["refused"]}
+        assert made == {"Fullseye Studio.lnk"} and str(ps1) in [i["path"] for i in plan["made"]]       # 起動が Fullseye の物だけ
+        assert "fullseye.ico" in refused and shortcuts.CMD_NAME in refused and key.rsplit("\\", 1)[-1] in refused
+        assert all(r["foreign"] for r in plan["refused"])                                             # 利用者の物の可能性 = 異常ではない
+        assert not any(i["kind"] == "regkey" for i in plan["made"])
+        rc, out, _ = _un(tmp_path, tmp_path / "none.json", dirs, ["--yes"], allow=(key,))
+        assert rc == 0 and other.exists() and (dirs["icon_dir"] / "fullseye.ico").exists() and shortcuts.regkey_exists(key)
+        assert not ps1.exists() and "NOT removed" in out and "does not start Fullseye Studio" in out
+    finally:
+        winreg.DeleteKey(winreg.HKEY_CURRENT_USER, key)
+    # Fullseye が書いたキー(DisplayName / UninstallString)は確かめを通る
+    shortcuts.register_uninstall_entry(Path("x.ico"), key, tmp_path / shortcuts.CMD_NAME)
+    try:
+        assert shortcuts.verify_fullseye_item("regkey", key) is None
+    finally:
+        winreg.DeleteKey(winreg.HKEY_CURRENT_USER, key)
+    assert shortcuts.verify_fullseye_item("regkey", key) is None                                      # 無い物は問題なし(消す物が無い)
+
+
+@winonly
+def test_S1_remove_shortcuts_also_verifies_the_content(tmp_path):
+    ledger = tmp_path / "ledger.json"
+    dirs = _register(tmp_path, ledger, KEY + "S1r", desktop=True)
+    lnk = dirs["desktop"] / "Fullseye Studio.lnk"
+    lnk.unlink()
+    shortcuts.write_lnk(lnk, Path(sys.executable), "-c print(1)", ROOT / "assets" / "fullseye.ico", tmp_path)   # 利用者が差し替えた
+    skipped = []
+    gone = shortcuts.remove(dirs=dirs, ledger=ledger, allow_keys=(KEY + "S1r",), skipped=skipped)
+    assert lnk.exists() and lnk not in gone and any("does not start Fullseye Studio" in w for _p, w in skipped)
+    assert not shortcuts.regkey_exists(KEY + "S1r")
+
+
+@winonly
+def test_S2_cmd_falls_back_on_a_negative_exit_code_such_as_a_missing_dll(tmp_path):
+    """DLL が無い python は 0xC0000135(= -1073741515)で落ちる。`if errorlevel 1` はこれを見逃す。"""
+    import winreg
+    key = KEY + "S2"
+    fake = tmp_path / "fakepy"
+    fake.mkdir()
+    base_py = Path(sys.base_prefix) / "python.exe"
+    shutil.copyfile(base_py, fake / "python.exe")                          # python311.dll が隣に無い → DLL が見つからない
+    sysroot = Path(os.environ["SystemRoot"])
+    env = dict(os.environ, PATH=str(sysroot / "System32"), PYTHONUTF8="1", FS_NOPAUSE="1")
+    probe = subprocess.run([str(fake / "python.exe"), "-I", "-c", "0"], capture_output=True, env=env)
+    assert probe.returncode not in (0, 1), probe.returncode                # 前提: 0 でも 1 でもない(負の NTSTATUS)
+    setup = tmp_path / "setup"
+    setup.mkdir()
+    lnk = tmp_path / "sm" / "Fullseye" / "Fullseye Studio.lnk"
+    lnk.parent.mkdir(parents=True)
+    lnk.write_bytes(b"x")
+    uninst = tmp_path / "uninstall.py"
+    uninst.write_text("print('SHOULD NOT RUN')\n", encoding="utf-8")
+    with winreg.CreateKeyEx(winreg.HKEY_CURRENT_USER, key, 0, winreg.KEY_SET_VALUE):
+        pass
+    script = setup / shortcuts.CMD_NAME
+    text = shortcuts.uninstall_cmd_text(python=fake / "python.exe", uninstaller=uninst, lnks=[lnk], regkey=key)
+    assert "if errorlevel" not in text and "if not errorlevel" not in text           # 終了コードの大小で分岐しない(0 かどうかだけ)
+    script.write_text(text, encoding="utf-8", newline="")
+    guard_script(script, tmp_path, key)
+    try:
+        r = subprocess.run('"%s"' % script, shell=True, capture_output=True, env=env, cwd=tmp_path)
+        out = r.stdout.decode("utf-8", "replace")
+        assert r.returncode == 0 and "SHOULD NOT RUN" not in out and "no longer there" in out, out + r.stderr.decode("utf-8", "replace")
+        assert not lnk.exists() and not script.exists() and not shortcuts.regkey_exists(key)
+    finally:
+        if shortcuts.regkey_exists(key):
+            winreg.DeleteKey(winreg.HKEY_CURRENT_USER, key)
+
+
+def test_S3_skill_edited_fails_closed_and_sees_extra_files(tmp_path):
+    mp = pytest.MonkeyPatch()          # 共有の monkeypatch を undo すると conftest の差し替えまで戻るので、専用の物を使う
+    dest = rag_setup.install(tmp_path / "skills", backup=False)
+    assert rag_setup.skill_edited(dest) is False
+    (dest / "my_notes.md").write_text("mine", encoding="utf-8")                      # SKILL.md は無傷でも、足したファイルがあれば編集済み
+    assert rag_setup.skill_edited(dest) is True
+    (dest / "my_notes.md").unlink()
+    (dest / "sub").mkdir()
+    (dest / "sub" / "x.txt").write_text("x", encoding="utf-8")
+    assert rag_setup.skill_edited(dest) is True
+    shutil.rmtree(dest / "sub")
+    assert rag_setup.skill_edited(dest) is False
+    mp.setattr(rag_setup, "_skill_source", lambda repo: (_ for _ in ()).throw(SystemExit("template missing")))
+    assert rag_setup.skill_edited(dest) is True                                      # 原本が見つからない = 判定できない → 編集済み扱い
+    (dest / "SKILL.md").unlink()
+    assert rag_setup.skill_edited(dest) is True                                      # SKILL.md が無い = 判定できない
+    mp.undo()
+    ledger = tmp_path / "ledger.json"
+    dest2 = rag_setup.install(tmp_path / "skills2", backup=False)
+    md = dest2 / "SKILL.md"
+    md.write_text(md.read_text(encoding="utf-8") + "\nMY HAND NOTES\n", encoding="utf-8")
+    mp.setattr(rag_setup, "_skill_source", lambda repo: (_ for _ in ()).throw(SystemExit("template missing")))
+    _write_ledger(ledger, [{"kind": "claude_skill", "path": str(dest2)}])
+    dirs = {"start_menu": tmp_path / "s", "desktop": tmp_path / "d", "icon_dir": tmp_path / "i", "apps": tmp_path / "a"}
+    rc, out, _ = _un(tmp_path, ledger, dirs, ["--yes"])
+    assert "MY HAND NOTES" in md.read_text(encoding="utf-8") and rc == 0                # 原本が無くても --yes で消えない
+    mp.undo()
+
+
+def test_S4_pip_start_failure_exits_3_and_ci_job_has_a_timeout(tmp_path):
+    ledger = tmp_path / "ledger.json"
+    dirs = _register(tmp_path, ledger, KEY + "S4")
+    buf = io.StringIO()
+
+    def boom():
+        raise OSError("cannot start")
+    rc = uninstall.main(["--uninstall", "--yes", "--lang", "en"], is_tty=False, out=buf, ledger=ledger, dirs=dirs,
+                        env={"FULLSEYE_CACHE_DIR": str(tmp_path / "c")}, registry=False, allow_keys=(KEY + "S4",),
+                        pip_fn=boom, pip_check_fn=lambda: ("ok", ""))
+    assert rc == 3 and "Could not start pip uninstall" in buf.getvalue()
+    text = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    job = text.split("\n  windows-installer:\n", 1)[1].split("\n  # ", 1)[0].split("\n  lint:", 1)[0]
+    assert "timeout-minutes: 15" in job
+
+
+def test_S5_exit_code_table_lists_every_code():
+    doc = uninstall.__doc__
+    assert "終了コード" in doc and "0 =" in doc and "1 =" in doc and "3 =" in doc and "起動できず" in doc
