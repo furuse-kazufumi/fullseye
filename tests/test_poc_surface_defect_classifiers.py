@@ -71,11 +71,61 @@ def test_gmm_rejects_the_defect_it_never_saw(one_seed):
     assert r["reject_known"] <= P.REJECT_Q + 3 * np.sqrt(P.REJECT_Q * (1 - P.REJECT_Q) / len(r["yte"]))
 
 
-def test_stain_pixels_lut_beats_the_min_max_box(one_seed):
+def test_stain_pixels_lut_beats_the_min_max_box_but_not_the_training_free_baseline(one_seed):
     r = one_seed
-    assert r["lut_iou"] > 0.6 and r["lut_fp"] < 0.01
+    assert r["lut_iou"] > 0.85 and r["lut_fp"] < 0.01
     assert r["lut_iou"] > r["sup_iou"] > 0.5
     assert r["uns_z"] > r["uns_raw"]
+    # 学習なしの基準線(1 枚ごとの大津)が LUT を上回り、違いは汚れの無い小片を塗るかどうか
+    assert r["otsu_iou"] > r["lut_iou"] and r["otsu_iou"] - r["lut_iou"] < 0.06
+    assert r["otsu_fp"] > 0.3
+
+
+def test_one_feature_outlier_baseline_rejects_pits_at_least_as_well_as_the_gmm(one_seed):
+    r = one_seed
+    assert r["cnt_unknown"] >= r["reject_unknown"] - 0.05
+    assert r["cnt_known"] <= P.REJECT_Q + 3 * np.sqrt(P.REJECT_Q * (1 - P.REJECT_Q) / len(r["yte"]))
+
+
+def test_otsu_threshold_matches_scikit_image_on_a_two_level_sample():
+    rng = np.random.default_rng(0)
+    v = np.concatenate([rng.normal(0.3, 0.03, 4000), rng.normal(0.7, 0.05, 1500)])
+    t = P.otsu_threshold(v)
+    assert 0.35 < t < 0.6
+    try:
+        from skimage.filters import threshold_otsu
+    except ImportError:
+        return
+    assert abs(t - threshold_otsu(v)) < 0.01
+
+
+def test_wilson_interval_matches_the_published_formula():
+    lo, hi = P.wilson(47, 145)
+    assert abs(lo - 0.253) < 0.002 and abs(hi - 0.404) < 0.002
+    assert P.wilson(0, 0) == (0.0, 1.0)
+    assert P.wilson(10, 10)[1] == pytest.approx(1.0) and P.wilson(10, 10)[0] < 1.0
+
+
+def test_pixel_features_gradient_variants_and_the_light_argument():
+    rng = np.random.default_rng(1)
+    img, _, _ = P.render_patch("scratch", 0.8, rng)
+    assert P.pixel_features(img).shape[-1] == 3
+    assert P.pixel_features(img, gy="add").shape[-1] == 4
+    assert P.pixel_features(img, gy="replace").shape[-1] == 3
+    assert np.array_equal(P.pixel_features(img, "add")[..., :3], P.pixel_features(img))
+    with pytest.raises(ValueError):
+        P.pixel_features(img, gy="diag")
+    a = P.render_patch("scratch", 0.8, np.random.default_rng(2))[0]
+    b = P.render_patch("scratch", 0.8, np.random.default_rng(2), light=(-0.30, 0.55, 0.78))[0]
+    assert np.abs(a - b).mean() > 0.01
+
+
+def test_light_run_is_the_lightweight_version_of_the_same_pipeline():
+    r = P.run_seed(11, full=False)
+    assert "sk" not in r and "perm_acc" not in r and "otsu_iou" not in r
+    assert set(r["pred"]) == {"gmm1"} and 0.0 <= r["cnt_unknown"] <= 1.0
+    (a, n), (c, m), (k, tot), called_normal = P.scratch_recall([r])
+    assert 0 < n < m < tot and 0 <= a <= n and 0 <= c <= m and called_normal <= tot - k
 
 
 def test_binom_tol_is_finite_at_perfect_accuracy():

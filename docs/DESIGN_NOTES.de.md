@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1903. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1904. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -553,6 +553,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L274** _(ja)_ — 外れた組み合わせを絵の上に描き戻す。★全体図では 8 px の飛びが潰れて 見えないので、目地の帯の周りだけを**等倍で切り出す**。
 - **L373** _(ja)_ — ★測定線は軸そのものの上にある。そのまま塗ると被写体が消えるので、 指示線だけ 12 px 上へ逃がして描く(測っている行は軸の行のまま)。
 - **L484** _(ja)_ — ★中心の座標は推測せず illusion.py から読む(最初 (h/2, w/4) と当てずっぽうに 置いて、周りの円のエッジを掴み rms が 3.4 になった)。真の中心は (170, 168) と (170, 452)、半径 30。
+
+## `examples/poc_caltab_chain_truth.py`
+
+- **L404** _(ja)_ — ★この門は真値を使わない(雑音 0 の自分の結果と、共分散だけ): 真値と突き合わせるのは門 1〜3。
 
 ## `examples/poc_camera_calibration.py`
 
@@ -1896,8 +1900,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L585** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
 - **L694** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
 - **L696** _(ja)_ — ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。
-- **L697** _(ja)_ — ★2026-11-12: 引数なしは「必須引数が無い」エラー(rc=2)でなく、次に何をするかの案内を出す(rc=0)。 `fullseye setup` は対話的な初期設定(fullseye/setup_cmd.py)。自前の argparse に丸ごと渡す。
-- **L717** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
+- **L708** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
 
 ## `imgforensics.py`
 
@@ -2572,27 +2575,27 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `studio.py`
 
-- **L366** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
-- **L375** — ★ Rechtsklick auf die Abbildung selbst (Benutzer 2026-09-06: "es wäre schön, das als Abbildung Angezeigte per Rechtsklick in die Zwischenablage kopieren zu können"). Eine Studio-UI-Konvention dieses Repos —— **die Anzeigeseite muss auch per Rechtsklick alles ermöglichen**. Es kann dasselbe wie die Buttonreihe unten (mach es nicht zu einem Entweder-oder).
-- **L1006** _(ja)_ — ★2026-11-05(敵対的検証 C6 の兄弟): engine.run_cached と同じく、結果を変える状態 —— 照合用 テンプレート(ops._MATCH_CTX)と fssystem の全パラメータ —— も文脈に入れる(変われば全段を捨てる)。
-- **L1641** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
-- **L1651** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
-- **L1674** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
-- **L1685** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
-- **L2278** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
-- **L6655** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
-- **L6663** _(ja)_ — ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。 それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。 以後の visibilityChanged は利用者の操作ではないので記録しない。
-- **L7226** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L9582** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L10678** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
-- **L10834** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
-- **L11716** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L12631** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
-- **L12704** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
-- **L12707** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
-- **L14196** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
-- **L14215** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
-- **L15299** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L349** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
+- **L358** — ★ Rechtsklick auf die Abbildung selbst (Benutzer 2026-09-06: "es wäre schön, das als Abbildung Angezeigte per Rechtsklick in die Zwischenablage kopieren zu können"). Eine Studio-UI-Konvention dieses Repos —— **die Anzeigeseite muss auch per Rechtsklick alles ermöglichen**. Es kann dasselbe wie die Buttonreihe unten (mach es nicht zu einem Entweder-oder).
+- **L989** _(ja)_ — ★2026-11-05(敵対的検証 C6 の兄弟): engine.run_cached と同じく、結果を変える状態 —— 照合用 テンプレート(ops._MATCH_CTX)と fssystem の全パラメータ —— も文脈に入れる(変われば全段を捨てる)。
+- **L1624** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
+- **L1634** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
+- **L1657** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
+- **L1668** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
+- **L2261** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
+- **L6636** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+- **L6644** _(ja)_ — ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。 それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。 以後の visibilityChanged は利用者の操作ではないので記録しない。
+- **L7207** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L9563** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L10659** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L10815** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L11697** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L12612** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+- **L12685** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+- **L12688** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+- **L14177** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
+- **L14196** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+- **L15275** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `studio_result.py`
 
@@ -3050,15 +3053,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_poc_scripts_run.py`
 
 - **L60** — ★2026-09-08: die feste 6 aufgeben und **an die CPU-Zahl anpassen**. Auf gemeinsam genutzten Runnern (2–4 vCPU) verlangsamt 6-fache Parallelität nur jeden Einzelnen, ohne die Gesamtzeit zu verkürzen, und als die PoCs auf 84 wuchsen, **traf jeder Job pytests 900-Sekunden-timeout** (py3.10 / 3.12). Lokal (12 Kerne) läuft es wie bisher mit 6 oder mehr.
-- **L76** — ★``PYTHONPATH`` **nicht übergeben** (2026-09-09). Lange wurde ``PYTHONPATH=<repo>`` übergeben, doch das ist eine Einstellung, die Nutzer nicht vornehmen, und es bedeutete, dass das Gate einen Schritt neben dem Ort stand, an dem der Unfall geschieht —— durch denselben blinden Fleck blieben `examples/piv_flow_from_particles.py` und andere als "ModuleNotFoundError beim direkten Ausführen aus einem Checkout" (jene Seite hatte nicht einmal ein Gate, das sie ausführt, daher blieb es unbemerkt. `test_example_scripts_run.py`). Auf der PoC-Seite fügen 108 von 116 den repo-Wurzelpfad selbst zu ``sys.path`` hinzu, und die übrigen 8 importieren nur ``fullseye``, sodass alle auch nach dem Entfernen bestehen (gemessen).
-- **L89** _(ja)_ — ★実データを読んだ印(realdata.mark_read)を集める(2026-11-05、敵対的検証 第 2 巡 D6)。 成熟度台帳が「門の実行で実データを読む」とする例が、本当に読んだかを下の門で照合する。
-- **L94** _(ja)_ — ★stdin は /dev/null(2026-10-23)。渡さないと子は親(xdist の worker)の stdin = execnet の パイプを継ぐ。worker が死んだあとも子がそのパイプを握り、controller が「node down」の後に 固まる形になりうる(手元で torch+libiomp5md の子が消えないゾンビになった日に疑った経路。 再現はしなかったが、子に親の制御パイプを継がせる理由は無い)。
-- **L110** — ★Bei Fehlschlag auch das Ende von stdout zurückgeben. Ein PoC druckt seine Befunde und "welche Prüfung fehlschlug" nach stdout vor SystemExit(1), sodass man mit stderr allein **nur "exit 1" und sonst nichts erfährt** (2026-09-07 CI, py3.10 poc_ct_fidelity).
-- **L113** _(ja)_ — ★stdout は 4000 文字残す。1200 だと**章の後ろだけ**が見えて、前半で 落ちた検査の実測値が CI から読めない(2026-09-24、poc_endless_zoom の 10 番目が落ちたとき「NG が残っている(10 番目)」しか分からなかった)。
-- **L123** — ★2026-09-07: dies **gab lange 0 zurück** und ging so glatt durch das `assert code == 0` weiter unten —— ein Gate, das sein Urteil gleich nach dem Berechnen verwirft (gemessen: 3 PoCs drucken nie PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). -2 zurückgeben, damit es fehlschlägt.
-- **L168** _(ja)_ — ★2026-10-07: 以前は**全本を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全本を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全本を WORKERS 並列で回し、最大 48 本が同時に走って単独 286 秒の PoC が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
-- **L184** — ★Dieses Gate führt die 84 PoCs **in einem Durchgang** aus (session fixture). Diese Zeit wird dem ersten Test angerechnet, sodass pyprojects Standard-timeout (900 Sekunden) auf gemeinsam genutzten Runnern fehlschlägt. Nur hier erweitern —— den Standard zu lockern würde auch die Hänger-Erkennung anderer Tests abstumpfen.
-- **L199** _(ja)_ — ★成熟度台帳が「門の実行で実データを読む」とした例は、この実行でも同じデータを読んでいること (2026-11-05、敵対的検証 第 2 巡 D6)。逆向き(台帳は読まないが手元のキャッシュで読めた)は 許す —— 台帳は CI と同じくキャッシュ無しで測った控えめな側。
+- **L68** _(ja)_ — ★2026-11-12: 600 → 1200。`poc_ct_casting_sparse_views`(単独 129 秒、reduced)が 共有ランナー(4 vCPU に 4 本並列)で 600 秒を超えて落ちた(#308 の 3 周目)。 門を削って軽くするのではなく、並列で遅くなる分の余裕を取る。
+- **L79** — ★``PYTHONPATH`` **nicht übergeben** (2026-09-09). Lange wurde ``PYTHONPATH=<repo>`` übergeben, doch das ist eine Einstellung, die Nutzer nicht vornehmen, und es bedeutete, dass das Gate einen Schritt neben dem Ort stand, an dem der Unfall geschieht —— durch denselben blinden Fleck blieben `examples/piv_flow_from_particles.py` und andere als "ModuleNotFoundError beim direkten Ausführen aus einem Checkout" (jene Seite hatte nicht einmal ein Gate, das sie ausführt, daher blieb es unbemerkt. `test_example_scripts_run.py`). Auf der PoC-Seite fügen 108 von 116 den repo-Wurzelpfad selbst zu ``sys.path`` hinzu, und die übrigen 8 importieren nur ``fullseye``, sodass alle auch nach dem Entfernen bestehen (gemessen).
+- **L92** _(ja)_ — ★実データを読んだ印(realdata.mark_read)を集める(2026-11-05、敵対的検証 第 2 巡 D6)。 成熟度台帳が「門の実行で実データを読む」とする例が、本当に読んだかを下の門で照合する。
+- **L97** _(ja)_ — ★stdin は /dev/null(2026-10-23)。渡さないと子は親(xdist の worker)の stdin = execnet の パイプを継ぐ。worker が死んだあとも子がそのパイプを握り、controller が「node down」の後に 固まる形になりうる(手元で torch+libiomp5md の子が消えないゾンビになった日に疑った経路。 再現はしなかったが、子に親の制御パイプを継がせる理由は無い)。
+- **L113** — ★Bei Fehlschlag auch das Ende von stdout zurückgeben. Ein PoC druckt seine Befunde und "welche Prüfung fehlschlug" nach stdout vor SystemExit(1), sodass man mit stderr allein **nur "exit 1" und sonst nichts erfährt** (2026-09-07 CI, py3.10 poc_ct_fidelity).
+- **L116** _(ja)_ — ★stdout は 4000 文字残す。1200 だと**章の後ろだけ**が見えて、前半で 落ちた検査の実測値が CI から読めない(2026-09-24、poc_endless_zoom の 10 番目が落ちたとき「NG が残っている(10 番目)」しか分からなかった)。
+- **L126** — ★2026-09-07: dies **gab lange 0 zurück** und ging so glatt durch das `assert code == 0` weiter unten —— ein Gate, das sein Urteil gleich nach dem Berechnen verwirft (gemessen: 3 PoCs drucken nie PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). -2 zurückgeben, damit es fehlschlägt.
+- **L171** _(ja)_ — ★2026-10-07: 以前は**全本を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全本を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全本を WORKERS 並列で回し、最大 48 本が同時に走って単独 286 秒の PoC が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
+- **L187** — ★Dieses Gate führt die 84 PoCs **in einem Durchgang** aus (session fixture). Diese Zeit wird dem ersten Test angerechnet, sodass pyprojects Standard-timeout (900 Sekunden) auf gemeinsam genutzten Runnern fehlschlägt. Nur hier erweitern —— den Standard zu lockern würde auch die Hänger-Erkennung anderer Tests abstumpfen.
+- **L202** _(ja)_ — ★成熟度台帳が「門の実行で実データを読む」とした例は、この実行でも同じデータを読んでいること (2026-11-05、敵対的検証 第 2 巡 D6)。逆向き(台帳は読まないが手元のキャッシュで読めた)は 許す —— 台帳は CI と同じくキャッシュ無しで測った控えめな側。
 
 ## `tests/test_printpath.py`
 
