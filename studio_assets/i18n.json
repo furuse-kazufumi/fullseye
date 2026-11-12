@@ -2141,6 +2141,22 @@
    "ko": "%d건 바꿈",
    "de": "%d ersetzt",
    "hi": "%d बदले गए"
+  },
+  "not an operator: %s": {
+   "ja": "op ではありません: %s",
+   "zh": "不是算子: %s",
+   "tw": "不是運算子: %s",
+   "ko": "연산자가 아닙니다: %s",
+   "de": "kein Operator: %s",
+   "hi": "ऑपरेटर नहीं है: %s"
+  },
+  "no operator under the cursor": {
+   "ja": "カーソルの下に op がありません",
+   "zh": "光标下没有算子",
+   "tw": "游標下沒有運算子",
+   "ko": "커서 아래에 연산자가 없습니다",
+   "de": "Kein Operator unter dem Cursor",
+   "hi": "कर्सर के नीचे कोई ऑपरेटर नहीं"
   }
  },
   "pending_translation": {

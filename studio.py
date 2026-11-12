@@ -6925,6 +6925,54 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             seed = sel if (sel and "\u2029" not in sel and len(sel) <= 200) else None
             self.find_bar.open(replace, seed)
 
+        def word_under_cursor(self):
+            """カーソル下(または直前)の識別子。無ければ空文字。"""
+            import re
+            cur = self.textCursor()
+            text, i = cur.block().text(), cur.positionInBlock()
+            for m in re.finditer(r"[A-Za-z_][A-Za-z0-9_]*", text):
+                if m.start() <= i <= m.end():
+                    return m.group(0)
+            return ""
+
+        def help_for_word(self):
+            """カーソル下の op のヘルプを開く(Shift+F1)。op 名でなければ開かず、状態行に 1 行。
+            F1 の割り当て(キー一覧)は変えない。"""
+            w = self.word_under_cursor()
+            if w and w in self._words:
+                if self.on_open_help is not None:
+                    self.on_open_help(w)
+                return True
+            self._say(tr("not an operator: %s") % w if w else tr("no operator under the cursor"))
+            return False
+
+        def _relayout_gutter(self):
+            self._update_gutter_width()
+            cr = self.contentsRect()
+            self._gutter.setGeometry(QtCore.QRect(cr.left(), cr.top(), self.gutter_width(), cr.height()))
+
+        def zoom(self, delta):
+            """文字サイズを *delta* pt 変える(6〜32 の範囲)。窓があれば設定へ保存し全部のコード欄へ反映する。"""
+            cur = self.font().pointSize()
+            pt = max(6, min(32, cur + int(delta)))
+            if pt == cur:
+                return pt
+            if self.on_font_change is not None:
+                self.on_font_change(pt)
+            else:
+                f = self.font(); f.setPointSize(pt); self.setFont(f)
+            self._relayout_gutter()
+            return pt
+
+        def wheelEvent(self, ev):
+            if ev.modifiers() & QtCore.Qt.ControlModifier:        # Ctrl+ホイール: 文字サイズ(上 = 大きく)
+                dy = ev.angleDelta().y()
+                if dy:
+                    self.zoom(1 if dy > 0 else -1)
+                ev.accept()
+                return
+            super().wheelEvent(ev)
+
         def toggle_comment(self):
             """選んだ行(選びが無ければカーソルの行)の行コメント ``* `` を付け外す(Ctrl+/)。
 
@@ -7047,6 +7095,10 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             ctrl, shift = bool(m & K.ControlModifier), bool(m & K.ShiftModifier)
             if m & K.AltModifier or m & K.MetaModifier:
                 return None
+            if ctrl and k in (K.Key_Plus, K.Key_Equal):            # Ctrl++ / Ctrl+=(Shift の有無は問わない)
+                return "zoom_in"
+            if ctrl and not shift and k == K.Key_Minus:
+                return "zoom_out"
             if ctrl and not shift:
                 if k == K.Key_F:
                     return "find"
@@ -7060,6 +7112,8 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     return "prev" if shift else "next"
                 if k == K.Key_Escape and not shift and self.find_bar.isVisible():
                     return "close_find"
+                if k == K.Key_F1 and shift:
+                    return "help"                                   # Shift+F1: カーソル下の op のヘルプ(F1 は変えない)
                 # <<IDE-KEYS-3>>
             return None
 
@@ -7087,7 +7141,13 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                 self.find_bar.close_bar()
             elif action == "comment":
                 self.toggle_comment()
-            # <<IDE-DO-2>>
+            elif action == "help":
+                self.help_for_word()
+            elif action == "zoom_in":
+                self.zoom(1)
+            elif action == "zoom_out":
+                self.zoom(-1)
+            # <<IDE-DO-3>>
 
         def keyPressEvent(self, ev):
             comp = self._completer

@@ -424,3 +424,91 @@ def test_comment_toggle_without_a_selection_uses_the_cursor_line_and_skips_blank
     assert ed.toPlainText() == "* * gaussian (0.4, 0.5)\n\n* otsu (0.5, 0.5)\n"
     _key(ed, QtCore.Qt.Key_Slash, QtCore.Qt.ControlModifier)
     assert ed.toPlainText() == "* gaussian (0.4, 0.5)\n\notsu (0.5, 0.5)\n"
+
+
+# --------------------------------------------------------------------------- 5. Shift+F1 の op ヘルプ(B-10)
+def _put_cursor_in(ed, needle):
+    from PySide6 import QtGui
+    i = ed.toPlainText().index(needle)
+    c = QtGui.QTextCursor(ed.document())
+    c.setPosition(i + 1)
+    ed.setTextCursor(c)
+
+
+def test_shift_f1_on_an_op_name_opens_its_help(win):
+    from PySide6 import QtCore
+    ed = _editor(win, "gaussian (0.4, 0.5)\notsu (0.5, 0.5)\n")
+    _put_cursor_in(ed, "otsu")
+    assert not win._help["dialog"].isVisible()
+    _key(ed, QtCore.Qt.Key_F1, QtCore.Qt.ShiftModifier)
+    assert win._help["dialog"].isVisible()
+    assert win._help["pick"].currentText() == "otsu"                 # 見出し = カーソルの下の op
+    win._help["dialog"].hide()
+
+
+def test_shift_f1_on_a_non_op_word_opens_nothing_and_says_so(win):
+    from PySide6 import QtCore
+    ed = _editor(win, "* just a comment\n")
+    _put_cursor_in(ed, "comment")
+    _key(ed, QtCore.Qt.Key_F1, QtCore.Qt.ShiftModifier)
+    assert not win._help["dialog"].isVisible()
+    assert "not an operator" in win.statusBar().currentMessage()
+    ed.setPlainText("")
+    _key(ed, QtCore.Qt.Key_F1, QtCore.Qt.ShiftModifier)
+    assert "no operator under the cursor" in win.statusBar().currentMessage()
+
+
+def test_f1_still_opens_the_keyboard_shortcuts_not_the_op_help(win):
+    """F1 の割り当ては変えない(既存のキー割り当てを壊さない)。"""
+    assert win._actions["shortcuts"].shortcut().toString() == "F1"
+    assert win._actions["op_reference"].shortcut().toString() == "Shift+F1"      # 欄の外では従来どおり
+
+
+# --------------------------------------------------------------------------- 12. 文字サイズ(候補 12)
+def _wheel(ed, dy):
+    from PySide6 import QtCore, QtGui, QtWidgets
+    ev = QtGui.QWheelEvent(QtCore.QPointF(50, 50), QtCore.QPointF(50, 50), QtCore.QPoint(0, 0), QtCore.QPoint(0, dy),
+                           QtCore.Qt.NoButton, QtCore.Qt.ControlModifier, QtCore.Qt.NoScrollPhase, False)
+    QtWidgets.QApplication.sendEvent(ed.viewport(), ev)
+    _pump(0.05)
+
+
+def test_ctrl_wheel_changes_the_editor_font_one_point_per_notch(win):
+    ed = _editor(win, "gaussian (0.4, 0.5)\n")
+    p0 = ed.font().pointSize()
+    _wheel(ed, 120)
+    assert ed.font().pointSize() == p0 + 1
+    _wheel(ed, -120)
+    _wheel(ed, -120)
+    assert ed.font().pointSize() == p0 - 1
+
+
+def test_ctrl_plus_and_ctrl_minus_change_the_font_within_6_to_32(win):
+    from PySide6 import QtCore
+    ed = _editor(win, "gaussian (0.4, 0.5)\n")
+    for _ in range(40):
+        _key(ed, QtCore.Qt.Key_Minus, QtCore.Qt.ControlModifier)
+    assert ed.font().pointSize() == 6                                 # 下限
+    for _ in range(40):
+        _key(ed, QtCore.Qt.Key_Plus, QtCore.Qt.ControlModifier | QtCore.Qt.ShiftModifier)
+    assert ed.font().pointSize() == 32                                # 上限
+    _key(ed, QtCore.Qt.Key_Equal, QtCore.Qt.ControlModifier)          # Ctrl+= もすでに上限
+    assert ed.font().pointSize() == 32
+
+
+def test_font_size_is_saved_and_restored_and_the_gutter_follows(tmp_path, monkeypatch):
+    win, _m = _launch(tmp_path, monkeypatch, name="font.ini")
+    try:
+        ed = _editor(win, "gaussian (0.4, 0.5)\n")
+        w0 = ed.gutter_width()
+        _wheel(ed, 120); _wheel(ed, 120); _wheel(ed, 120)
+        want = ed.font().pointSize()
+        assert ed.gutter_width() >= w0                                # 字が大きくなれば行番号の欄も追従
+        assert int(studio._settings().value("ui/mono_font_pt")) == want
+    finally:
+        _close(win)
+    win2, _m2 = _launch(tmp_path, monkeypatch, name="font.ini")        # 再起動
+    try:
+        assert win2._program["edit"].font().pointSize() == want
+    finally:
+        _close(win2)
