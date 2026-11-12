@@ -72,6 +72,22 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 挙動が変わる点: 印が整数の 1 でないファイル(99・文字列など)と、グラフのファイルが断られる。リポジトリ内の全ファイル(`examples/data/` など)の印は 1 で、正常なファイルの読み結果は変わらない。実測: tests/test_pipeline_header_mark_2026_11_12.py(62 本)を含む、Engine・Studio・studio_lite・CLI・XML の試験 555 本が通る。
 
+### 直し — `safe_xml` と版の印の検査: 独立レビュー(2026-11-12)3 回目の指摘
+
+何が起き得たか(直す前の実測): (1) 大きさの上限(50 MiB)だけではメモリを抑えられない。平らな `<a/>` を並べた 8.4 MB がピーク 185 MB(入力の 22 倍、1 要素あたり約 88 バイト)で、上限いっぱいなら約 1.1 GB。入れ子は 20 万段が受理され、`pegtactile_cutaway_xml` では `RecursionError` が外へ出た。(2) `safe_xml_parse` の既定 `kind="auto"` が、`<` で始まらない文字列をパスとして開いた。`\\host\share\x.xml` を渡すと SMB で読みに行き、別のホストなら Windows の認証情報が外へ出る経路になり、ファイルの有無も例外の違いで分かった。(3) 配布物の走査の試験が正規表現で、別名の import などを見逃した。(4) zip の 2 段の守りは、どちらか一方を消しても試験が通った。(5) `fullseye_graph` と `fullseye_pipeline: 1` の両方を持つ dict を受理した。
+
+何を変えたか:
+- 要素の数の上限(既定 100 万。`osm_parse` だけ 200 万)と入れ子の深さの上限(既定 256)を足した(`max_elements` / `max_depth`、読み手ごとに変えられる、`None` で無効)。超えたら `UnsafeXMLError`。決め方 = 手元の実ファイルの最大が OSM 3.2 MB の 77,854 要素・CommonRoad 9,498・ginza.osm 13,789、入れ子は PLATEAU の 14 なので、要素数は最大の約 13 倍、深さは Python の再帰上限(1000)の手前。8.4 MB の平らな入力は 100 万要素で止まり、ピークは 185 MB から 97 MB。`safe_xml_iterparse`(CityGML)は深さのみ既定 256 で、要素の総数は上限なし(`elem.clear()` で木を抱えない設計で、実ファイルは 1 本で 226 万要素(219 MB)あり、総数で切ると通らない)。`clear()` しない呼び出し側は `max_elements` を付ける。
+- `kind="auto"` の意味を変えた: `str` / `bytes` は常に本文、パスとして開くのは `os.PathLike` か `kind="path"` を明示したときだけ。リポジトリ内の呼び出しは全部 `kind` を明示していて変わらない。**公開モジュールの既定の挙動が変わる**(`<` で始まらない文字列を渡していた利用者は `kind="path"` が要る)。
+- `safe_xml_iterparse` を、標準の C の `iterparse` + ルート要素の前の部分の expat 検査に作り替えた(前の実装は Python の TreeBuilder で全要素を通していた)。この作り替えの途中で、入力の終わりで expat が末尾の token を保留するため、DOCTYPE がストリームの最後の chunk にあると見逃す穴を試験が見つけ、直した。
+- 配布物の走査の試験を ast に替えた(import の別名・`from ... import fromstring as fs`・`X.fromstring`・`fromstringlist`・`XMLID`・`XMLParser`・`ElementTree(file=)`・dom / sax / expat / pyexpat / lxml / plistlib / xmlrpc の import を検出。検出器自身も 20 形で試験)。`examples/` も対象に含め、そこの 8 か所の XML 解析を門に通した(`poc_real_sem_metal_layer.py` の自前の DOCTYPE 検査は門に寄せた)。
+- zip の 2 段の守りを別々の試験にした(宣言が大きい → `open` を呼ばずに断る / 宣言が嘘で小さい → `max_bytes + 1` バイトだけ読んで断る)。どちらかを消すと落ちることを確かめた。
+- 版の印: 両方の印を持つ dict を `ValueError`。`np.int64(1)` は断ったまま、メッセージで「Python / JSON の整数。numpy の整数は `int()` で」と言う。
+
+挙動が変わる点: 上のとおり(要素数 100 万超・深さ 256 超の XML を断る。`kind="auto"` の文字列はパスにならない。両方の印の dict を断る)。正常な実ファイルの読み結果は変わらない(OSM・PLATEAU(丸ごと 2 本)・CommonRoad・OME を、標準の `ElementTree` に差し替えた同じ読み手と突き合わせて、要約が一致)。
+
+速度(正直に): 平らな合成データでは `safe_xml_parse` が標準の `fromstring` の 1.4 倍(0.72 s → 1.01 s、200 万要素級)、`iterparse` が 1.4 倍(0.39 s → 0.55 s。前の実装は 1.8 倍)。要素数と深さを Python の `start` / `end` で数えるぶんで、これ以上は縮められなかった。PLATEAU の実ファイルでは `plateau_parse` +11 % / −11 %(ばらつき)、`plateau_lod2_mesh` +18 % / +6 %(142〜219 MB の 2 ファイル、1 回ずつ)。
+
 ## 1.1.0 — 2026-11-12
 
 1.1.0。1.0.0 の後に、既存の op の出力や失敗の仕方が変わる修正が入ったので、patch(1.0.x)でなく minor で出す。`CONTRIBUTING.md` の「Versioning」は「minor の桁が破壊的変更の合図」で、「既定の数値が変わる」「黙って通していた入力を明示的に拒否する(fail-soft から fail-closed へ)」を minor の条件に挙げている。下の「挙動の変更」の項目がそれに当たる(新しい op・PoC・文書・速度の改善だけなら patch だった)。op の削除・改名はない。既定の `device` は `"cpu"` のまま。

@@ -34,7 +34,6 @@ from __future__ import annotations
 import math
 import sys
 import time
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import numpy as np
@@ -42,6 +41,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import camera  # noqa: E402
 import examplefig as figs  # noqa: E402
+from safe_xml import safe_xml_parse as _parse_xml  # noqa: E402  (XML は門を通して読む: DOCTYPE・大きさ・深さ)
 import measure as FM  # noqa: E402
 import pegsim as P  # noqa: E402
 import render3d  # noqa: E402
@@ -167,13 +167,13 @@ def numpy_part():
     gate("画像面の楕円の中心は円の中心の投影でない(透視の偏り > 0.3 px)—— 3-D で当てる理由",
          math.hypot(ell["cx"] - uv_true[1][0], ell["cy"] - uv_true[1][1]) > 0.3,
          "%.2f px" % math.hypot(ell["cx"] - uv_true[1][0], ell["cy"] - uv_true[1][1]))
-    root = ET.fromstring(P.peg_scene_mjcf(KP))
+    root = _parse_xml(P.peg_scene_mjcf(KP))
     names = [g.get("name") or "" for g in root.findall(".//geom")]
     q = root.find("visual/quality")
     gate("MJCF(mujoco 不要)が罠 2 つを持つ: numslices=128(既定 28 では円柱の半径が 0.04 mm 内側)、offsamples は RGB 用 4 / depth 用 0、"
          "壁の箱 %d 個" % KP["n_seg"],
          sum(n.startswith("wall") for n in names) == KP["n_seg"] and q.get("numslices") == "128" and q.get("offsamples") == "4"
-         and ET.fromstring(P.peg_scene_mjcf(KP, offsamples=0)).find("visual/quality").get("offsamples") == "0")
+         and _parse_xml(P.peg_scene_mjcf(KP, offsamples=0)).find("visual/quality").get("offsamples") == "0")
     return {"rgb": rgb, "res": res, "uv_true": uv_true}
 
 
