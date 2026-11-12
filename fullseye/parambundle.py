@@ -403,6 +403,7 @@ def _yaml_walk(node: Any, path: str, lines: dict[str, int], budget: list[int], d
     if nid in active:
         raise ParamFileError("YAML recursive alias (an anchor that contains itself)")
     if isinstance(node, yaml.ScalarNode):
+        _yaml_check_plain(node, path)
         return
     active.add(nid)
     try:
@@ -410,6 +411,7 @@ def _yaml_walk(node: Any, path: str, lines: dict[str, int], budget: list[int], d
             seen: set[tuple[str, Any]] = set()
             for knode, vnode in node.value:
                 sub = path
+                _yaml_check_plain(knode, path + "." + str(getattr(knode, "value", "")) if path else str(getattr(knode, "value", "")))
                 if isinstance(knode, yaml.ScalarNode) and knode.tag != "tag:yaml.org,2002:merge":
                     ident = (knode.tag, knode.value)
                     if ident in seen:
@@ -426,21 +428,84 @@ def _yaml_walk(node: Any, path: str, lines: dict[str, int], budget: list[int], d
         active.discard(nid)
 
 
+_BOOL12 = re.compile(r"^(?:true|True|TRUE|false|False|FALSE)$")
+_INT12 = re.compile(r"^(?:[-+]?[0-9]+|0o[0-7]+|0x[0-9a-fA-F]+)$")
+_FLOAT12 = re.compile(r"^(?:[-+]?(?:\.[0-9]+|[0-9]+(?:\.[0-9]*)?)(?:[eE][-+]?[0-9]+)?|[-+]?\.(?:inf|Inf|INF)|\.(?:nan|NaN|NAN))$")
+_LEADING_ZERO_INT = re.compile(r"^[-+]?0[0-9_]+$")
+_YAML_TAG = "tag:yaml.org,2002:"
+
+
+def _yaml_check_plain(node: Any, path: str) -> None:
+    """引用符なしのスカラーが YAML 1.1 では別の値になるなら断る(黙ってどちらかに解釈しない)。
+
+    このローダーは YAML 1.2 の core schema で解釈する(真偽は true / false だけ、8 進は 0o だけ、60 進は無し)。
+    1.1 の解釈器(PyYAML の既定、他のツール)では ``NO`` が False、``010`` が 8、``12:30:00`` が 45000 になるので、
+    同じファイルが読み手によって値を変える。そういう素のスカラーは、引用符で囲むか 1.2 の書き方にしてもらう。
+    """
+    import yaml
+    if not isinstance(node, yaml.ScalarNode) or node.style is not None:
+        return
+    v = node.value
+    line = node.start_mark.line + 1
+    where = "%s (line %d)" % (path or "<root>", line)
+    hint = "quote it (\"%s\") to keep a string, or write true/false, 0o10 for octal, seconds as a plain number" % v
+    if v in ("y", "n", "Y", "N"):
+        raise ParamFileError("%s: plain %s is a boolean in YAML 1.1 (y/n); %s" % (where, v, hint))
+    t11 = yaml.resolver.Resolver().resolve(yaml.ScalarNode, v, (True, False))
+    if t11 in (_YAML_TAG + "bool", _YAML_TAG + "int", _YAML_TAG + "float"):
+        if node.tag != t11:
+            raise ParamFileError("%s: plain %s is %s in YAML 1.1 but %s in YAML 1.2; %s" % (
+                where, v, t11.rsplit(":", 1)[-1], node.tag.rsplit(":", 1)[-1], hint))
+        if t11 == _YAML_TAG + "int" and _LEADING_ZERO_INT.match(v):
+            raise ParamFileError("%s: plain %s is octal in YAML 1.1 but decimal in YAML 1.2; %s" % (where, v, hint))
+
+
+def _yaml_loader_class() -> Any:
+    """SafeLoader の派生: 素のスカラーの解釈を YAML 1.2 の core schema にし、日付は文字列で返す。
+
+    ``safe_load`` の安全性は保つ(python タグは SafeLoader の構成子表に無いので ConstructorError)。
+    差し替えるのは implicit resolver(素のスカラー → tag)だけ。
+    """
+    import yaml
+
+    class _Loader(yaml.SafeLoader):
+        """YAML 1.2 core schema の素のスカラー + 日付は文字列。"""
+
+    drop = {_YAML_TAG + "bool", _YAML_TAG + "int", _YAML_TAG + "float"}
+    _Loader.yaml_implicit_resolvers = {
+        ch: [(tag, rx) for tag, rx in lst if tag not in drop]
+        for ch, lst in yaml.SafeLoader.yaml_implicit_resolvers.items()}
+    _Loader.add_implicit_resolver(_YAML_TAG + "bool", _BOOL12, list("tTfF"))
+    _Loader.add_implicit_resolver(_YAML_TAG + "int", _INT12, list("-+0123456789"))
+    _Loader.add_implicit_resolver(_YAML_TAG + "float", _FLOAT12, list("-+0123456789."))
+
+    def _ts(loader: Any, node: Any) -> str:
+        return loader.construct_scalar(node)
+
+    def _int(loader: Any, node: Any) -> int:
+        s = loader.construct_scalar(node)
+        sign = -1 if s.startswith("-") else 1
+        b = s.lstrip("+-")
+        if b.startswith("0o"):
+            return sign * int(b[2:], 8)
+        if b.startswith("0x"):
+            return sign * int(b[2:], 16)
+        return sign * int(b, 10)
+
+    _Loader.add_constructor(_YAML_TAG + "timestamp", _ts)
+    _Loader.add_constructor(_YAML_TAG + "int", _int)
+    return _Loader
+
+
 def _parse_yaml(text: str) -> tuple[Mapping, dict[str, int]]:
-    """``safe_load`` だけ(任意のコードは走らない)。重複キー・展開量・循環を断り、日付は文字列へ。"""
+    """``safe_load`` 相当だけ(任意のコードは走らない)。YAML 1.2 の core schema で読み、1.1 なら別の値になる
+    素のスカラー・重複キー・展開量・循環を断り、日付は文字列へ。"""
     try:
         import yaml
     except ImportError as e:                                  # pragma: no cover - 環境による
         raise ParamFileError(_YAML_HINT) from e
 
-    class _Loader(yaml.SafeLoader):
-        """SafeLoader の薄い派生: 日付・日時を文字列で返す(型を増やさない)。"""
-
-    def _ts(loader: Any, node: Any) -> str:
-        return loader.construct_scalar(node)
-
-    _Loader.add_constructor("tag:yaml.org,2002:timestamp", _ts)
-    loader = _Loader(text)
+    loader = _yaml_loader_class()(text)
     try:
         try:
             node = loader.get_single_node()
@@ -461,7 +526,7 @@ def _parse_yaml(text: str) -> tuple[Mapping, dict[str, int]]:
 
 
 def _gate_yaml(obj: Any, path: str) -> None:
-    """YAML 1.1 の罠の門: 文字列になった数(``1e-3``)・数や真偽になったキーを断る。"""
+    """キーが文字列であること(数や真偽のキーを断る)。"""
     if isinstance(obj, Mapping):
         for k, v in obj.items():
             _check_key(k, path)
@@ -469,10 +534,6 @@ def _gate_yaml(obj: Any, path: str) -> None:
     elif isinstance(obj, (list, tuple)):
         for i, v in enumerate(obj):
             _gate_yaml(v, "%s[%d]" % (path, i))
-    elif isinstance(obj, str) and _NUM_FULL.fullmatch(obj.strip()):
-        raise ParamTypeError(
-            "%s: %r was read as a string, not a number (YAML 1.1 needs a decimal point: write 1.0e-3 instead of 1e-3; "
-            "or use TOML/JSON)" % (path or "<root>", obj))
 
 
 _PARSERS: dict[str, tuple[str, Callable[[str], tuple[Mapping, Any]]]] = {
@@ -678,6 +739,7 @@ class ParamReport:
     bundle: str
     entries: list[ReportEntry] = field(default_factory=list)
     unused: list[str] = field(default_factory=list)
+    candidates: list[str] = field(default_factory=list)    #: 束から探した引数名(データ・可変長を除く)
 
     def _by(self, pred: Callable[[ReportEntry], bool]) -> list[ReportEntry]:
         return [e for e in self.entries if pred(e)]
@@ -907,9 +969,27 @@ class ParamBundle(Mapping):
         return ParamBundle._make(leaves, origins, "%s+%s" % (self._name, other._name))
 
     def with_(self, **updates: Any) -> "ParamBundle":
-        """値の差し替え(``p.with_(**{"camera.fx": 820})``)。元は不変、出どころは ``<code>``。"""
+        """**既にあるキー**の値の差し替え(``p.with_(**{"camera.fx": 820})``)。元は不変、出どころは ``<code>``。
+
+        無いキーは :class:`ParamError`(打ち間違いを黙って新しいキーにしない。もしかして: ...)。
+        新しく足したいときは :meth:`added`、束同士の重ね合わせは :meth:`merged`。
+        """
+        return self._with(updates, new=False)
+
+    def added(self, **updates: Any) -> "ParamBundle":
+        """``with_`` と同じだが、**無いキーも足してよい**(明示の道)。元は不変。"""
+        return self._with(updates, new=True)
+
+    def _with(self, updates: Mapping[str, Any], new: bool) -> "ParamBundle":
         add: dict[str, Any] = {}
         _flatten_loose(updates, add)
+        if not new:
+            unknown = [k for k in add if k not in self._leaves]
+            if unknown:
+                near = {k: difflib.get_close_matches(k, list(self._leaves), n=2) for k in unknown}
+                raise ParamError("with_: key(s) not in bundle %s: %s (use .added(...) to add a new key)" % (
+                    self._name, "; ".join("%s%s" % (k, " (did you mean %s?)" % ", ".join(v) if v else "")
+                                          for k, v in near.items())))
         leaves = dict(self._leaves)
         origins = dict(self._origins)
         for k, v in add.items():
@@ -939,7 +1019,7 @@ class ParamBundle(Mapping):
         return found[0]
 
     # -- op へ ---------------------------------------------------------------------------------
-    def for_op(self, op_name: str, *, report: bool = False, strict: bool = False,
+    def for_op(self, op_name: str, *, report: bool = False, strict: bool = False, require_any: bool = False,
                data: Iterable[str] | None = None, fn: Callable[..., Any] | None = None
                ) -> dict[str, Any] | tuple[dict[str, Any], ParamReport]:
         """``op_name`` が受ける引数だけの dict(``op(img, **p.for_op("op"))``)。
@@ -952,9 +1032,12 @@ class ParamBundle(Mapping):
         必須引数が作れなければ :class:`MissingParam`(必要な名前・束にある名前・導出の手がかり)、単位違いは
         :class:`UnitMismatch`、型違いは :class:`ParamTypeError`。``strict=True`` で、どの引数にも当たらなかった
         キーがあれば :class:`UnusedParams`。``report=True`` なら ``(kwargs, ParamReport)``。
+
+        束のキーが 1 つも当たらなければ空の dict が返る(引数が全部既定値つきの op)。``require_any=True``
+        (``strict=True`` も同じ)なら、そのとき :class:`MissingParam` で断る(op が探した引数名と束のキーを添える)。
         """
         func = fn or _find_callable(op_name)
-        kwargs, rep = _for_op(self, op_name, func, None if data is None else set(data), strict)
+        kwargs, rep = _for_op(self, op_name, func, None if data is None else set(data), strict, False, require_any)
         return (kwargs, rep) if report else kwargs
 
     def unused(self, ops: Iterable[str]) -> list[str]:
@@ -1174,7 +1257,7 @@ def _candidates(bundle: ParamBundle, op_name: str, argname: str) -> tuple[str, l
 
 
 def _for_op(bundle: ParamBundle, op_name: str, func: Callable[..., Any], data: set[str] | None, strict: bool,
-            tolerate_missing: bool = False) -> tuple[dict[str, Any], ParamReport]:
+            tolerate_missing: bool = False, require_any: bool = False) -> tuple[dict[str, Any], ParamReport]:
     try:
         sig = inspect.signature(func)
     except (TypeError, ValueError) as e:
@@ -1191,6 +1274,7 @@ def _for_op(bundle: ParamBundle, op_name: str, func: Callable[..., Any], data: s
         name = param.name
         if name in data_names:
             continue
+        rep.candidates.append(name)
         required = param.default is param.empty
         if required:
             needed.append(name)
@@ -1228,6 +1312,9 @@ def _for_op(bundle: ParamBundle, op_name: str, func: Callable[..., Any], data: s
     rep.unused = [k for k in bundle._leaves if k not in consumed]
     if missing and not tolerate_missing:
         raise MissingParam(_missing_message(bundle, op_name, needed, missing))
+    if (strict or require_any) and not rep.entries and rep.candidates and not tolerate_missing:
+        raise MissingParam("%s: no key of bundle %s applies to this op (it looks for %s; the bundle has [%s])"
+                           % (op_name, bundle._name, ", ".join(rep.candidates), ", ".join(bundle._leaves)))
     if strict and rep.unused:
         raise UnusedParams("%s: %d key(s) in bundle %s are not used by this op: %s"
                            % (op_name, len(rep.unused), bundle._name, ", ".join(rep.unused)))
@@ -1378,7 +1465,7 @@ class ParamGrid(Sequence):
     def __getitem__(self, i: Any) -> Any:
         if isinstance(i, slice):
             return [self[j] for j in range(*i.indices(self._size))]
-        return self.base.with_(**self.point(i))
+        return self.base._with(self.point(i), new=True)     # 軸のキーは構築時に検査済み
 
     def points(self) -> list[dict[str, Any]]:
         return [self.point(i) for i in range(self._size)]
@@ -1387,7 +1474,7 @@ class ParamGrid(Sequence):
         return "ParamGrid(%s, %d points over %s)" % (self.mode, self._size, ", ".join(self.axes))
 
 
-def _check_axes(base: ParamBundle, axes: Mapping[str, Any]) -> dict[str, tuple[Any, ...]]:
+def _check_axes(base: ParamBundle, axes: Mapping[str, Any], allow_new: bool = False) -> dict[str, tuple[Any, ...]]:
     if not axes:
         raise ParamError("give at least one axis, e.g. param_grid(p, **{\"gaussian.sigma\": [0.5, 1, 2]})")
     out: dict[str, tuple[Any, ...]] = {}
@@ -1400,15 +1487,24 @@ def _check_axes(base: ParamBundle, axes: Mapping[str, Any]) -> dict[str, tuple[A
         for x in vals:
             _norm_scalar(x, k)          # 値の検査(非有限・型)を走査の前にする
         out[k] = vals
+    if not allow_new:
+        unknown = [k for k in out if k not in base._leaves]
+        if unknown:
+            near = {k: difflib.get_close_matches(k, list(base._leaves), n=2) for k in unknown}
+            raise ParamError("axis key(s) not in bundle %s: %s (pass allow_new=True to add a new key)" % (
+                base.name, "; ".join("%s%s" % (k, " (did you mean %s?)" % ", ".join(v) if v else "")
+                                     for k, v in near.items())))
     return out
 
 
-def param_grid(base: ParamBundle, *, max_points: int = DEFAULT_MAX_GRID_POINTS, **axes: Sequence[Any]) -> ParamGrid:
+def param_grid(base: ParamBundle, *, max_points: int = DEFAULT_MAX_GRID_POINTS, allow_new: bool = False,
+               **axes: Sequence[Any]) -> ParamGrid:
     """直積の走査: ``param_grid(p, **{"gaussian.sigma": [0.5, 1, 2], "otsu.thr": [0.3, 0.5]})`` → 6 束。
 
     件数が ``max_points`` を超えるなら、件数と見積もりを先に出して :class:`GridTooLarge` で断る。
+    軸のキーは束に**既にあるもの**だけ(打ち間違いを新しいキーにしない)。足すなら ``allow_new=True``。
     """
-    ax = _check_axes(base, axes)
+    ax = _check_axes(base, axes, allow_new)
     n = 1
     for v in ax.values():
         n *= len(v)
@@ -1422,9 +1518,10 @@ def param_grid(base: ParamBundle, *, max_points: int = DEFAULT_MAX_GRID_POINTS, 
     return ParamGrid(base, ax, "product", n)
 
 
-def param_zip(base: ParamBundle, *, max_points: int = DEFAULT_MAX_GRID_POINTS, **axes: Sequence[Any]) -> ParamGrid:
+def param_zip(base: ParamBundle, *, max_points: int = DEFAULT_MAX_GRID_POINTS, allow_new: bool = False,
+              **axes: Sequence[Any]) -> ParamGrid:
     """同じ長さの軸を並べて 1 つずつ組にする(直積でなく zip)。長さが違えば断る。"""
-    ax = _check_axes(base, axes)
+    ax = _check_axes(base, axes, allow_new)
     lens = {k: len(v) for k, v in ax.items()}
     if len(set(lens.values())) != 1:
         raise ParamError("param_zip needs axes of equal length, got %s" % lens)
@@ -1493,6 +1590,9 @@ def run_params(op_name: str, *args: Any, params: ParamBundle | Mapping[str, Any]
     data = set(pos[:len(args)]) | set(overrides)
     kwargs, rep = _for_op(bundle, op_name, func, data, strict)
     kwargs.update(overrides)
+    if not rep.entries and rep.candidates and len(bundle) and warn_unused and not strict:
+        warnings.warn("run_params(%s): no key of bundle %s applies to this op (it looks for %s); it runs on its defaults"
+                      % (op_name, bundle.name, ", ".join(rep.candidates)), ParamWarning, stacklevel=2)
     if rep.unused and warn_unused and not strict:
         warnings.warn("run_params(%s): %d key(s) of bundle %s were not used by this op: %s (strict=True refuses them)"
                       % (op_name, len(rep.unused), bundle.name, ", ".join(rep.unused)), ParamWarning, stacklevel=2)

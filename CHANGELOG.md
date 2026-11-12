@@ -15,6 +15,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `p.for_op(op_name)` は op が受ける引数だけの dict。完全一致 → 同義の綴りの表(7 群 21 綴り)→ `K` を fx, fy, cx, cy から作る固定の導出。単位は引数名の接尾辞が決め、10 の冪の単位は `Decimal` で 1 回だけ変換(`v*1e-3` は 10 万個中 2 万 3 千個が 1 ULP ずれる)。`report=True` で写した・変換した・導出した事実を記録として返す。
 - 黙って捨てない: 未使用キーの一覧と `strict=True`、不足する必須引数(必要な名前・束にある名前・導出の手がかり)、単位違い、型違い、曖昧な綴り(`MissingParam` / `UnitMismatch` / `ParamTypeError` / `UnusedParams` / `AmbiguousParam`)。
 - 読んだあとの門: 数の欄の文字列・真偽、キー重複、非有限の数、YAML は `safe_load` のみ(`1e-3` が文字列になる罠・アンカーの展開上限・日付は文字列へ)。参照 `{"$param": ...}`(TOML は `{ ref = ... }`)の循環検出、`include` は同じ階層以下のみ(`..`・絶対パス・リンクは断る)。JSONC / JSON5 は受けない。式や任意のコードは許さない。
+- 検分後の直し: YAML の素のスカラーは YAML 1.2 の core schema で読み、1.1 なら別の値になる素のスカラー(`NO` `yes` `010` `12:30:00` など)は行番号つきで断る。`with_` は既にあるキーだけ(打ち間違いは `ParamError`、足すのは `added`、グリッドの軸は `allow_new=True`)。`for_op(require_any=True)` と `strict=True` は「1 つも渡らない」を `MissingParam` にし、`run_params` は警告を出す。
 - optional extra `yaml`(`pip install "fullseye[yaml]"`、PyYAML)を `pyproject.toml` に追加。必須の依存は増えない。
 - 入れなかった物: TOML / YAML への書き出しとコメントを保つ差分書き込み(JSON にコメントは無く、`tomllib` は読むだけ)、パイプライン全体を走査する `sweep`、束を閲覧・編集する窓、MCP の `$bundle`。
 

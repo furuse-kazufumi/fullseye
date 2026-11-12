@@ -302,35 +302,77 @@ def test_toml_gates(tmp_path):
 # ---------------------------------------------------------------------------------------------
 # YAML の罠
 # ---------------------------------------------------------------------------------------------
+def _yaml(tmp_path, text, name="t.yaml"):
+    return fs.load_params(_write(tmp_path / name, text))
+
+
+def test_yaml_12_core_schema_values(tmp_path):
+    """素のスカラーは YAML 1.2 の core schema: true/false・0o10・1e3・-0.5・.5 が値になる。"""
+    pytest.importorskip("yaml")
+    p = _yaml(tmp_path, "a: true\nb: false\nc: 0o10\nd: 1e3\ne: -0.5\nf: .5\ng: 1.10\nh: 0x1F\ni: 12\nj: 1.0e-3\nk: 1e-3\n"
+                        "s: hello\nq: 'no'\nq2: \"NO\"\nq3: '010'\nq4: '12:30:00'\nq5: 'yes'\nq6: '1e-3'\n")
+    assert p["a"] is True and p["b"] is False
+    assert p["c"] == 8 and isinstance(p["c"], int)
+    assert p["d"] == 1000.0 and isinstance(p["d"], float)
+    assert p["e"] == -0.5 and p["f"] == 0.5
+    assert p["g"] == 1.1 and p["h"] == 31 and p["i"] == 12
+    assert p["j"] == 0.001 and p["k"] == 0.001                              # 1e-3 は 1.2 で float
+    assert p["s"] == "hello"
+    # 引用符つきは文字列のまま通る
+    assert [p[k] for k in ("q", "q2", "q3", "q4", "q5", "q6")] == ["no", "NO", "010", "12:30:00", "yes", "1e-3"]
+    assert len(p) == 18
+
+
+@pytest.mark.parametrize("text,word", [
+    ("country: NO\n", "NO"), ("flag: no\n", "no"), ("a: yes\n", "yes"), ("a: Yes\n", "Yes"), ("a: YES\n", "YES"),
+    ("a: on\n", "on"), ("a: Off\n", "Off"), ("a: OFF\n", "OFF"), ("a: y\n", "y"), ("a: N\n", "N"),
+    ("oct: 010\n", "010"), ("a: 0777\n", "0777"), ("a: -012\n", "-012"),
+    ("time: 12:30:00\n", "12:30:00"), ("a: 1:30\n", "1:30"), ("a: 0b101\n", "0b101"), ("a: 1_000\n", "1_000"),
+    ("lst: [1, no]\n", "no"), ("s:\n  deep: off\n", "off"),
+])
+def test_yaml_11_ambiguous_plain_scalars_are_refused_with_line(tmp_path, text, word):
+    pytest.importorskip("yaml")
+    with pytest.raises(PB.ParamFileError) as ei:
+        _yaml(tmp_path, "# c\n" + text)
+    msg = str(ei.value)
+    assert "line 2" in msg or "line 3" in msg                                # 行番号つき
+    assert "quote it" in msg and ("plain %s" % word) in msg and "0o10" in msg
+
+
+def test_yaml_ambiguous_key_is_refused_and_numeric_keys(tmp_path):
+    pytest.importorskip("yaml")
+    with pytest.raises(PB.ParamFileError, match="plain NO"):
+        _yaml(tmp_path, "NO: x\n")
+    with pytest.raises(PB.ParamFileError, match="not a string"):
+        _yaml(tmp_path, "1: x\n")                                           # 数のキーは文字列でない
+    assert _yaml(tmp_path, "'NO': x\n")["NO"] == "x"                         # 引用符ならキーにできる
+
+
 def test_yaml_pitfalls(tmp_path):
     pytest.importorskip("yaml")
-    # `1e-3`(小数点なし)は YAML 1.1 で文字列 → 数の欄の文字列として断る
-    with pytest.raises(PB.ParamTypeError, match="1.0e-3"):
-        fs.load_params(_write(tmp_path / "e.yaml", "exposure_s: 1e-3\n"))
-    # 小数点つきは float
-    assert fs.load_params(_write(tmp_path / "e2.yaml", "exposure_s: 1.0e-3\n"))["exposure_s"] == 0.001
-    # `no` は bool(Norway 問題)→ 数の欄なら断る。普通の bool の欄は通す
+    # 数の欄に引用符つきの文字列は断る(どの形式でも)
+    with pytest.raises(PB.ParamTypeError, match="numeric field"):
+        _yaml(tmp_path, "exposure_s: '1e-3'\n")
     with pytest.raises(PB.ParamTypeError, match="boolean"):
-        fs.load_params(_write(tmp_path / "n.yaml", "pixel_pitch_um: no\n"))
-    assert fs.load_params(_write(tmp_path / "n2.yaml", "flag: no\nother: yes\n"))["flag"] is False
-    # キー `NO` は bool キーになる → 断る
-    with pytest.raises(PB.ParamFileError, match="not a string"):
-        fs.load_params(_write(tmp_path / "k.yaml", "NO: x\n"))
+        _yaml(tmp_path, "pixel_pitch_um: true\n")
+    # null は値ではない
+    for text in ("a: null\n", "a: ~\n", "a:\n"):
+        with pytest.raises(PB.ParamFileError, match="null"):
+            _yaml(tmp_path, text)
     # 重複キー(PyYAML は後勝ちで黙る)
     with pytest.raises(PB.ParamFileError, match="duplicate key 'a'"):
-        fs.load_params(_write(tmp_path / "d.yaml", "a: 1\na: 2\n"))
+        _yaml(tmp_path, "a: 1\na: 2\n")
     with pytest.raises(PB.ParamFileError, match="duplicate key"):
-        fs.load_params(_write(tmp_path / "d2.yaml", "s:\n  x: 1\n  x: 2\n"))
+        _yaml(tmp_path, "s:\n  x: 1\n  x: 2\n")
     # 日付は文字列へ
-    assert fs.load_params(_write(tmp_path / "t.yaml", "d: 2026-11-12\nt: 2026-11-12 10:00:00\n"))["d"] == "2026-11-12"
-    # タブ字下げなどの構文エラーは ParamFileError
+    assert _yaml(tmp_path, "d: 2026-11-12\nt: 2026-11-12 10:00:00\n")["d"] == "2026-11-12"
     with pytest.raises(PB.ParamFileError, match="invalid YAML"):
-        fs.load_params(_write(tmp_path / "tab.yaml", "a:\n\tb: 1\n"))
-    # .inf は非有限
+        _yaml(tmp_path, "a:\n\tb: 1\n")
     with pytest.raises(PB.ParamFileError, match="non-finite"):
-        fs.load_params(_write(tmp_path / "inf.yaml", "a: .inf\n"))
-    # 空ファイルは空の束
-    assert len(fs.load_params(_write(tmp_path / "empty.yaml", ""))) == 0
+        _yaml(tmp_path, "a: .inf\n")
+    with pytest.raises(PB.ParamFileError, match="non-finite"):
+        _yaml(tmp_path, "a: .nan\n")
+    assert len(_yaml(tmp_path, "")) == 0
 
 
 def test_yaml_never_runs_code(tmp_path):
@@ -631,7 +673,7 @@ def test_param_grid_product_zip_and_limits(rig):
     z = fs.param_zip(rig, **{"lens.f_number": [2, 4, 8], "camera.cx": [1.0, 2.0, 3.0]})
     assert len(z) == 3 and z.points()[2] == {"lens.f_number": 8, "camera.cx": 3.0}
     with pytest.raises(PB.ParamError, match="equal length"):
-        fs.param_zip(rig, a=[1, 2], b=[1])
+        fs.param_zip(rig, allow_new=True, a=[1, 2], b=[1])
     with pytest.raises(PB.ParamError, match="empty"):
         fs.param_grid(rig, a=[])
     with pytest.raises(PB.ParamError, match="list of values"):
@@ -645,13 +687,13 @@ def test_param_grid_product_zip_and_limits(rig):
 def test_param_grid_refuses_huge_product_before_building(rig):
     axes = {"axis%d" % i: list(range(10)) for i in range(7)}                  # 10^7 点
     with pytest.raises(PB.GridTooLarge) as ei:
-        fs.param_grid(rig, **axes)
+        fs.param_grid(rig, allow_new=True, **axes)
     msg = str(ei.value)
     assert "10,000,000 points" in msg and "limit is 10,000" in msg and "MB" in msg and "10 x 10 x 10 x 10 x 10 x 10 x 10" in msg
-    big = fs.param_grid(rig, max_points=10 ** 7, **axes)                      # 引き上げれば遅延で作れる
+    big = fs.param_grid(rig, max_points=10 ** 7, allow_new=True, **axes)                      # 引き上げれば遅延で作れる
     assert len(big) == 10 ** 7 and big[10 ** 7 - 1]["axis6"] == 9
     with pytest.raises(PB.GridTooLarge):
-        fs.param_zip(rig, max_points=2, a=[1, 2, 3])
+        fs.param_zip(rig, max_points=2, allow_new=True, a=[1, 2, 3])
 
 
 def test_sweep_runs_real_op_and_records_rows(rig):
@@ -822,3 +864,82 @@ def test_doc_first_example_runs(tmp_path):
     for n in re.findall(r"fs\.(\w+)\(", doc):
         assert hasattr(fs, n) or hasattr(fs.ledger, n) or hasattr(fs.parambundle, n), n
     assert "SYNONYM_GROUPS" in doc and hasattr(fs.parambundle, "SYNONYM_GROUPS")
+
+
+# ---------------------------------------------------------------------------------------------
+# 検分の直し(2026-11-12): with_ の打ち間違い・空の for_op・次元違い
+# ---------------------------------------------------------------------------------------------
+def test_with_refuses_unknown_keys_and_added_is_the_explicit_way(rig):
+    with pytest.raises(PB.ParamError, match=r"camera\.fxx.*did you mean camera\.fx"):
+        rig.with_(**{"camera.fxx": 1})
+    with pytest.raises(PB.ParamError, match="not in bundle"):
+        rig.with_(brand_new=1)
+    with pytest.raises(PB.ParamError):
+        rig.with_(camera={"fx": 1, "zz": 2})                                  # 入れ子でも 1 つでも未知があれば断る
+    r = rig.with_(**{"camera.fx": 820})                                       # 既にあるキーは従来どおり
+    assert r["camera.fx"] == 820 and len(r) == len(rig)
+    a = rig.added(**{"camera.k4": 0.5, "camera.fx": 700})                     # 明示なら足せる(上書きも可)
+    assert a["camera.k4"] == 0.5 and a["camera.fx"] == 700 and len(a) == len(rig) + 1 and "camera.k4" not in rig
+    assert a.origin("camera.k4").source == "<code>"
+
+
+def test_param_grid_axis_typo_refused_unless_allow_new(rig):
+    with pytest.raises(PB.ParamError, match=r"lens\.f_numbr.*did you mean lens\.f_number"):
+        fs.param_grid(rig, **{"lens.f_numbr": [1, 2]})
+    with pytest.raises(PB.ParamError, match="axis key"):
+        fs.param_zip(rig, **{"lens.nope": [1, 2]})
+    assert len(fs.param_grid(rig, allow_new=True, **{"lens.nope": [1, 2]})) == 2
+    assert len(fs.param_grid(rig, **{"lens.f_number": [1, 2]})) == 2
+
+
+def test_merged_new_keys_are_visible_in_compare(rig):
+    extra = fs.ParamBundle({"camera.k4": 0.5}, name="extra")
+    m = rig.merged(extra)
+    row = fs.params_compare([rig, m])["camera.k4"]
+    assert row.status == "partial" and row.values == (None, 0.5)             # 上に重ねた側にしか無いキーが見える
+
+
+def test_for_op_empty_result_is_explained_and_can_be_refused():
+    other = fs.ParamBundle({"unrelated.thing": 1, "camera.fx": 1200.0})
+    assert other.for_op("depth_of_field") == {}                               # 既定はこれまでどおり返る
+    kw, rep = other.for_op("depth_of_field", report=True)
+    assert kw == {} and rep.entries == [] and rep.candidates == ["focal_mm", "f_number", "subject_mm", "coc_mm"]
+    with pytest.raises(PB.MissingParam, match=r"no key of bundle <code> applies.*focal_mm.*unrelated\.thing") as ei:
+        other.for_op("depth_of_field", require_any=True)
+    assert "camera.fx" in str(ei.value)
+    with pytest.raises(PB.MissingParam, match="applies to this op"):
+        other.for_op("depth_of_field", strict=True)                           # strict は未使用キーより先にこれを言う
+    # 何か 1 つでも当たれば require_any は通る
+    assert fs.ParamBundle({"f_number": 8.0}).for_op("depth_of_field", require_any=True) == {"f_number": 8.0}
+    # 探す引数が無い(全部データ扱い)ときは空でも断らない
+    assert other.for_op("airy_pattern", data=["size", "wavelength_um", "f_number", "pixel_pitch_um"], require_any=True) == {}
+
+
+def test_run_params_warns_when_nothing_was_passed():
+    other = fs.ParamBundle({"unrelated.thing": 1})
+    with pytest.warns(PB.ParamWarning, match="no key of bundle <code> applies to this op.*focal_mm"):
+        out = fs.run_params("depth_of_field", params=other)
+    assert out == fs.ledger.depth_of_field()                                  # 既定値で走る(警告つき)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        fs.run_params("depth_of_field", params=other, warn_unused=False)      # 黙らせられる
+        fs.run_params("depth_of_field", params=None)                          # 束なし(空)は警告しない
+        fs.run_params("depth_of_field", params=other, warn_unused=False, focal_mm=50.0, f_number=8.0)
+    with pytest.raises(PB.MissingParam):
+        fs.run_params("depth_of_field", params=other, strict=True)
+
+
+def test_quantity_of_wrong_dimension_is_refused_for_real_ops():
+    """``wavelength: 550 ms``(時間)を波長の引数へ。実在の op(mtf_diffraction: wavelength_um, airy_radius_um: wavelength_nm)。"""
+    bad = fs.ParamBundle({"wavelength": "550 ms", "f_number": 4.0})
+    with pytest.raises(PB.UnitMismatch, match=r"wavelength = 550 ms is a time but wavelength_um needs a length \(um\)"):
+        bad.for_op("mtf_diffraction")
+    with pytest.raises(PB.UnitMismatch, match=r"is a time but wavelength_nm needs a length \(nm\)"):
+        bad.for_op("airy_radius_um")
+    with pytest.raises(PB.UnitMismatch, match="time"):
+        fs.run_params("mtf_diffraction", params=bad)
+    for unit in ("hz", "px", "deg"):
+        with pytest.raises(PB.UnitMismatch):
+            fs.ParamBundle({"wavelength": "5 %s" % unit}).for_op("mtf_diffraction", data=["f_number"])
+    # 正しい次元は通る(対照)
+    assert fs.ParamBundle({"wavelength": "550 nm"}).for_op("mtf_diffraction", data=["f_number"]) == {"wavelength_um": 0.55}
