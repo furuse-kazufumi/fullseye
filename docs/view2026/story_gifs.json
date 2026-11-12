@@ -34672,7 +34672,7 @@
       "still": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
       "alt": {
         "ja": "rendered (synthetic) ground-metal patches (height defects shade, the stain changes colour)",
-        "en": "Ground-metal patches were rendered synthetically with scratches, dents and stains, and sorted by trained classifiers. Scratches along the grinding lay were missed more than half the time, and the cause is not identified. A one-feature outlier test rejected unseen pits more often than the trained density model did."
+        "en": "Synthetic ground-metal patches carry scratches, dents and stains, and learned models sort them. Only 0.324 of the scratches lying along the lay were found, and the cause is not identified. A single-feature outlier check rejected unseen pits more often than the learned density model did."
       }
     }
   }

@@ -1720,7 +1720,7 @@ py -3.11 examples/poc_ct_casting_sparse_views.py
 
 ## No.2026.316 —— 描画した金属片の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は約 3 本に 2 本を見落とし(原因は未特定)、知らない孔の拒否は特徴 1 個の外れ値判定に及ばない
 
-研削した金属の小片を描画で合成し、傷・打痕・汚れを学習した分類器で仕分けた。筋に沿う傷は半分以上を見落とし、原因は特定できていない。知らない孔を拒否する率は、特徴 1 個の外れ値判定のほうが高かった。
+研削した金属の小片を描画で合成し、傷・打痕・汚れを学習した分類器で仕分けた。筋に沿う傷は 0.324 の割合でしか見つからず、原因は特定できていない。知らない孔を拒否する率は、特徴ひとつの外れ値判定のほうが高かった。
 
 [![描画した金属片の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は約 3 本に 2 本を見落とし(原因は未特定)、知らない孔の拒否は特徴 1 個の外れ値判定に及ばない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png)
 

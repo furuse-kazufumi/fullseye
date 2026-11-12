@@ -1720,7 +1720,7 @@ Ops used (notes): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_s
 
 ## No.2026.316 —— Sorting Defects on Rendered (Synthetic) Metal Patches with Trained Classifiers: Scratches Along the Grinding Lay Are Missed About 2 Times in 3 (Cause Unidentified), and Unseen-Pit Rejection Is No Better Than a One-Feature Outlier Test
 
-Ground-metal patches were rendered synthetically with scratches, dents and stains, and sorted by trained classifiers. Scratches along the grinding lay were missed more than half the time, and the cause is not identified. A one-feature outlier test rejected unseen pits more often than the trained density model did.
+Synthetic ground-metal patches carry scratches, dents and stains, and learned models sort them. Only 0.324 of the scratches lying along the lay were found, and the cause is not identified. A single-feature outlier check rejected unseen pits more often than the learned density model did.
 
 [![Sorting Defects on Rendered (Synthetic) Metal Patches with Trained Classifiers: Scratches Along the Grinding Lay Are Missed About 2 Times in 3 (Cause Unidentified), and Unseen-Pit Rejection Is No Better Than a One-Feature Outlier Test](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png)
 
