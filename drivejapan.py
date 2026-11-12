@@ -28,6 +28,7 @@ import heapq
 import io
 import math
 import xml.etree.ElementTree as ET
+from safe_xml import safe_xml_parse
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
@@ -166,7 +167,7 @@ def osm_parse(source, *, origin=None) -> Dict[str, object]:
             raise ValueError("osm_parse: %s is not a file nor XML text" % (source,))
         text = p.read_text(encoding="utf-8")
     try:
-        root = ET.fromstring(text)
+        root = safe_xml_parse(text, kind="data", op="osm_parse")
     except ET.ParseError as e:
         raise ValueError("osm_parse: not well-formed XML (%s)" % e) from None
     if root.tag != "osm":
