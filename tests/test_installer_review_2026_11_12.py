@@ -283,7 +283,7 @@ def test_14_pip_step_only_when_the_installed_fullseye_is_the_running_one(tmp_pat
     ok, why = uninstall.dist_location_matches(pkg)
     assert ok is False and "elsewhere" in why                                      # 別の fullseye が入っている
     _fake_dist(monkeypatch, missing=True)
-    assert uninstall.dist_location_matches(pkg)[0] is False                        # 入っていない(checkout 直読み)
+    assert uninstall.dist_location_matches(pkg)[0] is None                         # 入っていない(checkout 直読み)
     editable = json.dumps({"url": (tmp_path / "site").as_uri(), "dir_info": {"editable": True}})
     _fake_dist(monkeypatch, location=tmp_path / "other", direct_url=editable)
     assert uninstall.dist_location_matches(pkg)[0] is True                         # editable は checkout の場所で比べる
@@ -686,7 +686,7 @@ def test_16_settings_registry_tree_is_deleted_through_the_real_reg_delete_tree(t
         uninstall._reg_delete_tree(tree)
     assert shortcuts.regkey_exists(tree)
     rc, out, _ = _un(tmp_path, tmp_path / "none.json", _dirs(tmp_path), [], answers=["y", "n"], tty=True,
-                     regtree=tree, allow=(tree,), registry=True)
+                     regtree=tree, registry=True)
     assert rc == 0 and "settings (registry)" in out and "Software\\FullseyeTest\\tree\\Studio" in out
     assert not shortcuts.regkey_exists(tree) and not shortcuts.regkey_exists(r"Software\FullseyeTest\tree")
 
@@ -727,3 +727,251 @@ def test_16_wheel_check_dump_reports_icons_it_could_not_find(tmp_path):
     assert r.returncode == 0, r.stdout + r.stderr
     miss = json.loads(out.read_text(encoding="utf-8"))["icons_missing"]
     assert isinstance(miss, list) and set(miss) <= {"studio_assets/fullseye.ico", "studio_assets/fullseye_256.png"}
+
+
+# =========================================================================== 2 回目の独立レビュー(2026-11-12)
+# 番号は 2 回目の指摘の番号(R1〜R11)。
+def _make_venv(tmp_path):
+    venv = tmp_path / "v"
+    subprocess.run([sys.executable, "-m", "venv", "--without-pip", str(venv)], check=True, capture_output=True)
+    return venv, venv / "Scripts" / "python.exe"
+
+
+def _e2e_dirs(root):
+    appdata, local = root / "Roaming", root / "Local"
+    return {"start_menu": appdata / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Fullseye",
+            "icon_dir": local / "Fullseye" / "setup", "desktop": root / "Desktop"}
+
+
+def _run_script(script, args, tmp_path, root):
+    env = dict(os.environ, PYTHONUTF8="1", FS_NOPAUSE="1", FULLSEYE_LEDGER=str(root / "Local" / "Fullseye" / "setup" /
+               "install_ledger.json"), FULLSEYE_CACHE_DIR=str(root / "cache"), FULLSEYE_STUDIO_SETTINGS=str(root / "s.ini"),
+               APPDATA=str(root / "Roaming"), LOCALAPPDATA=str(root / "Local"), USERPROFILE=str(root))
+    return subprocess.run('"%s" %s' % (script, args), shell=True, capture_output=True, env=env, cwd=tmp_path,
+                          stdin=subprocess.DEVNULL)
+
+
+@winonly
+def test_R1_script_falls_back_when_the_venv_python_exists_but_cannot_start(tmp_path):
+    """venv の元の Python を消した(pyvenv.cfg の home が無い)と、python.exe は在るが rc=103 で起動しない。"""
+    key = KEY + "R1"
+    venv, vpy = _make_venv(tmp_path)
+    root = tmp_path / "root"
+    dirs = _e2e_dirs(root)
+    ledger = dirs["icon_dir"] / "install_ledger.json"
+    made = shortcuts.install(desktop=True, python=str(vpy), dirs=dirs, ledger=ledger, reg_key=key)
+    cfg = venv / "pyvenv.cfg"
+    cfg.write_text(cfg.read_text(encoding="utf-8").replace("home = ", "home = C:\\nope_"), encoding="utf-8")
+    assert subprocess.run([str(vpy), "-c", "print(1)"], capture_output=True).returncode != 0   # 前提: 起動しない
+    script = dirs["icon_dir"] / shortcuts.CMD_NAME
+    try:
+        r = _run_script(script, "", tmp_path, root)
+        assert r.returncode == 0, r.stdout + r.stderr
+        assert not any(p.exists() for p in made) and not ledger.exists() and not script.exists()
+        assert not shortcuts.regkey_exists(key), "the Apps & features entry survived a broken venv"
+        assert not dirs["icon_dir"].exists() and r.stderr == b""
+    finally:
+        if shortcuts.regkey_exists(key):
+            shortcuts.unregister_uninstall_entry(key, (key,))
+
+
+@winonly
+def test_R2_corrupt_ledger_legacy_removes_the_key_icon_and_script_and_the_cmd_finishes(tmp_path):
+    key = KEY + "R2"
+    venv, vpy = _make_venv(tmp_path)
+    root = tmp_path / "root"
+    dirs = _e2e_dirs(root)
+    ledger = dirs["icon_dir"] / "install_ledger.json"
+    made = shortcuts.install(desktop=False, python=str(vpy), dirs=dirs, ledger=ledger, reg_key=key)
+    ledger.write_text("{not json", encoding="utf-8")                       # 台帳が壊れた → 「台帳なし」の既知の場所
+    wrapper = tmp_path / "wrap.py"                                        # 試験用キーを allow_keys で渡す(本番の入口は渡さない)
+    wrapper.write_text("import sys, types\nst = types.ModuleType('fullseye'); st.__path__ = [%r]; "
+                       "sys.modules['fullseye'] = st\nfrom fullseye import uninstall as u\n"
+                       "sys.exit(u.main(allow_keys=[%r]))\n" % (str(ROOT / "fullseye"), key), encoding="utf-8")
+    script = dirs["icon_dir"] / shortcuts.CMD_NAME
+    script.write_text(shortcuts.uninstall_cmd_text(python=vpy, uninstaller=wrapper, lnks=made, regkey=key),
+                      encoding="utf-8", newline="")
+    try:
+        r = _run_script(script, "--yes --lang en", tmp_path, root)
+        out = r.stdout.decode("utf-8", "replace")
+        assert r.returncode in (0, 3), out + r.stderr.decode("utf-8", "replace")       # 3 = pip の無い venv(本体が残る)
+        assert "could not be read" in out
+        assert not any(p.exists() for p in made) and not (dirs["icon_dir"] / "fullseye.ico").exists()
+        assert not shortcuts.regkey_exists(key), "legacy detection did not include the Apps & features key"
+        assert not script.exists(), "the .cmd was left behind"
+        assert [p.name for p in dirs["icon_dir"].iterdir()] == ["install_ledger.json"]    # 壊れた台帳だけが残る(触らない方針。手で消す)
+        assert ledger.read_text(encoding="utf-8") == "{not json"
+    finally:
+        if shortcuts.regkey_exists(key):
+            shortcuts.unregister_uninstall_entry(key, (key,))
+
+
+def test_R2_legacy_places_lists_only_fixed_names(tmp_path):
+    dirs = _dirs(tmp_path)
+    if WIN:
+        for p in (dirs["icon_dir"] / "fullseye.ico", dirs["icon_dir"] / shortcuts.CMD_NAME,
+                  dirs["icon_dir"] / "other.txt", dirs["start_menu"] / "Fullseye Studio.lnk"):
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("x", encoding="utf-8")
+        got = {Path(i["path"]).name for i in uninstall._legacy_places("win", dirs, registry=False)}
+        assert got == {"fullseye.ico", shortcuts.CMD_NAME, "Fullseye Studio.lnk"}
+
+
+def _junction(tmp_path, name="fullseye-ops"):
+    real = tmp_path / "repo" / "skills" / "fullseye-ops"
+    real.mkdir(parents=True)
+    (real / "SKILL.md").write_text("dev source", encoding="utf-8")
+    (real / rag_setup.MARKER_NAME).write_text("x", encoding="utf-8")
+    home = tmp_path / "linkhome"
+    home.mkdir()
+    j = home / name
+    subprocess.run(["cmd", "/c", "mklink", "/J", str(j), str(real)], check=True, capture_output=True)
+    return real, home, j
+
+
+@winonly
+def test_R3_junction_skill_is_unlinked_not_rmtreed_and_rag_uninstall_does_not_crash(tmp_path):
+    real, home, j = _junction(tmp_path)
+    assert not j.is_symlink() and rag_setup.is_link(j)                       # 3.11 の is_symlink は False(これが指摘の原因)
+    ledger = tmp_path / "ledger.json"
+    _write_ledger(ledger, [{"kind": "claude_skill", "path": str(j)}])
+    rc, out, _ = _un(tmp_path, ledger, _dirs(tmp_path), ["--yes"])
+    assert rc == 0 and not os.path.lexists(j) and (real / "SKILL.md").read_text(encoding="utf-8") == "dev source"
+    real2, home2, j2 = _junction(tmp_path / "second")
+    assert rag_setup.main(["--target", str(home2), "--uninstall"]) == 0         # 例外で落ちない
+    assert not os.path.lexists(j2) and (real2 / "SKILL.md").exists()
+
+
+def test_R4_non_empty_folder_is_reported_as_kept_not_removed(tmp_path):
+    dirs = _dirs(tmp_path)
+    folder = dirs["start_menu"] if WIN else dirs["icon_dir"]
+    folder.mkdir(parents=True)
+    (folder / "mine.txt").write_text("user file", encoding="utf-8")
+    ledger = tmp_path / "ledger.json"
+    _write_ledger(ledger, [{"kind": "dir_if_empty", "path": str(folder)}])
+    rc, out, _ = _un(tmp_path, ledger, dirs, ["--yes"])
+    removed_part = out.split("[Removed]")[1].split("[")[0]
+    assert rc == 0 and folder.is_dir() and "empty folder" not in removed_part and "[Kept]" in out and str(folder) in out.split("[Kept]")[1]
+
+
+def test_R4_the_running_script_is_listed_apart_as_removed_after_this_window(tmp_path, monkeypatch):
+    ledger = tmp_path / "ledger.json"
+    dirs = _register(tmp_path, ledger, KEY + "R4")
+    script = dirs["icon_dir"] / shortcuts.CMD_NAME
+    if not WIN:
+        script.write_text("x", encoding="utf-8")
+        shortcuts.ledger_record("file", script, ledger)
+    monkeypatch.setenv(shortcuts.UNINSTALL_FROM_CMD_ENV, "1")
+    rc, out, _ = _un(tmp_path, ledger, dirs, ["--yes"], allow=(KEY + "R4",))
+    assert rc == 0 and script.is_file()
+    removed_part = out.split("[Removed]")[1].split("[Removed by the cleanup script")[0]
+    assert shortcuts.CMD_NAME not in removed_part
+    later = out.split("[Removed by the cleanup script right after this window closes]")[1]
+    assert shortcuts.CMD_NAME in later and str(dirs["icon_dir"]) in later          # スクリプトと、スクリプトが入っている setup フォルダ
+    assert "[Kept]" not in out or str(dirs["icon_dir"]) not in out.split("[Kept]")[1]
+    monkeypatch.delenv(shortcuts.UNINSTALL_FROM_CMD_ENV)
+    if WIN:
+        script.unlink()
+
+
+def test_R5_hand_edited_skill_is_kept_by_default_and_asked_separately(tmp_path):
+    dest = rag_setup.install(tmp_path / "skills", repo=None, _auto_repo=False)
+    assert rag_setup.skill_edited(dest) is False                                    # 原本どおり(FULLSEYE_REPO の行は見ない)
+    md = dest / "SKILL.md"
+    md.write_text(md.read_text(encoding="utf-8") + "\nMY NOTES\n", encoding="utf-8")
+    assert rag_setup.skill_edited(dest) is True
+    ledger = tmp_path / "ledger.json"
+    _write_ledger(ledger, [{"kind": "claude_skill", "path": str(dest)}])
+    dirs = {"start_menu": tmp_path / "s", "desktop": tmp_path / "d", "icon_dir": tmp_path / "i", "apps": tmp_path / "a"}
+    rc, out, _ = _un(tmp_path, ledger, dirs, ["--yes"])
+    assert "edited by hand" in out and "MY NOTES" in md.read_text(encoding="utf-8") and "[Kept]" in out and rc == 0
+    # 対話で y と答えれば消せる(別の問い)
+    rc, out, _ = _un(tmp_path, ledger, dirs, [], answers=["y", "n"], tty=True)
+    assert not dest.exists()
+
+
+def test_R6_user_site_install_is_found_and_not_installed_is_a_separate_message(tmp_path, monkeypatch):
+    pkg = tmp_path / "usersite" / "fullseye"
+    pkg.mkdir(parents=True)
+    info = tmp_path / "usersite" / "fullseye-1.0.dist-info"
+    info.mkdir()
+    (info / "METADATA").write_text("Metadata-Version: 2.1\nName: fullseye\nVersion: 1.0\n", encoding="utf-8")
+    _fake_dist(monkeypatch, missing=True)                                           # -I はユーザー site を外すので、通常の検索では見えない
+    import site
+    monkeypatch.setattr(site, "getusersitepackages", lambda: str(tmp_path / "usersite"))
+    assert uninstall.dist_location_matches(pkg)[0] is True                          # ユーザー site も探す
+    monkeypatch.setattr(site, "getusersitepackages", lambda: str(tmp_path / "empty"))
+    ok, why = uninstall.dist_location_matches(pkg)
+    assert ok is None and "no fullseye distribution" in why
+    state, detail = uninstall.pip_status(pkg_dir=pkg)
+    if state != "no_pip":
+        assert state == "none"
+    rc, out, _ = _un(tmp_path, tmp_path / "x.json", _dirs(tmp_path), ["--yes"], pip_state=("none", "no fullseye distribution"))
+    assert "not pip-installed" in out and "different place" not in out
+
+
+def test_R7_percent_var_in_the_setup_folder_is_refused_at_registration(tmp_path, monkeypatch):
+    monkeypatch.setenv("FSTESTVAR_ZZ", "x")
+    with pytest.raises(shortcuts.ShortcutError, match="FSTESTVAR_ZZ"):
+        shortcuts.reject_expandable_percent(tmp_path / "a%FSTESTVAR_ZZ%b")
+    with pytest.raises(shortcuts.ShortcutError, match="(?i)cd"):
+        shortcuts.reject_expandable_percent(tmp_path / "%cd%")
+    shortcuts.reject_expandable_percent(tmp_path / "100%" / "a%UNDEFINED_VAR_ZZ9%b")     # 未定義の形・単独の % は展開されない
+    if WIN:
+        d = _dirs(tmp_path)
+        d["icon_dir"] = tmp_path / "x%FSTESTVAR_ZZ%y" / "setup"
+        with pytest.raises(shortcuts.ShortcutError, match="expand"):
+            shortcuts.install(dirs=d, ledger=tmp_path / "l.json", reg_key=KEY + "R7")
+        assert not d["icon_dir"].exists() and not shortcuts.regkey_exists(KEY + "R7")      # 何も作らずに止まる
+
+
+def test_R8_exit_codes_follow_the_table(tmp_path):
+    for state, want in ((("ok", ""), 0), (("none", "x"), 0), (("other", "x"), 0), (("no_pip", ""), 3)):
+        ledger = tmp_path / ("l_%s.json" % state[0])
+        dirs = _register(tmp_path / state[0], ledger, KEY + "R8")
+        rc, out, _ = _un(tmp_path, ledger, dirs, ["--yes"], allow=(KEY + "R8",), pip_state=state)
+        assert rc == want, (state, rc, out)
+    assert "終了コード" in (ROOT / "fullseye" / "uninstall.py").read_text(encoding="utf-8")
+
+
+def test_R8_setup_exits_nonzero_when_a_step_failed():
+    from test_studio_shortcuts_2026_11_12 import Fakes, _run
+    f = Fakes(pip_rc=1)
+    rc, out = _run(["--yes", "--lang", "en"], f, tty=False)
+    assert rc == 1 and "dependency install failed" in out
+    f2 = Fakes()
+    k = f2.kw(tty=False)
+
+    def boom(desktop):
+        raise OSError("no start menu")
+    k["shortcuts_fn"] = boom
+    assert setup_cmd.main(["--yes", "--lang", "en"], **k) == 1
+    f3 = Fakes()
+    assert _run(["--yes", "--lang", "en"], f3, tty=False)[0] == 0
+
+
+def test_R9_ci_has_a_windows_job_that_runs_the_windows_only_installer_tests():
+    text = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    job = text.split("\n  windows-installer:\n", 1)[1].split("\n  # ", 1)[0].split("\n  lint:", 1)[0]
+    assert "runs-on: windows-latest" in job and "needs: changes" in job
+    assert "tests/test_installer_review_2026_11_12.py" in job and "tests/test_studio_shortcuts_2026_11_12.py" in job
+    assert "actions/checkout@" in job and "actions/setup-python@" in job and "pip>=26.2.2" in job
+    try:
+        import yaml
+    except ImportError:
+        return
+    doc = yaml.safe_load(text)
+    j = doc["jobs"]["windows-installer"]
+    assert j["runs-on"] == "windows-latest" and all("uses" in s or "run" in s for s in j["steps"])
+
+
+def test_R11_mcp_choice_goes_through_display_to_knob_and_values_do_not_change():
+    from fullseye.mcp import server
+    from param_specs import display_to_knob, knob_to_display
+    spec = {"kind": "choice", "choices": [1, 2, 4, 8], "unit": ""}
+    for i, v in enumerate(spec["choices"]):
+        got = server._physical_value_to_knob("op", "p", v, spec)
+        assert got == (i + 0.5) / 4 == display_to_knob(spec, i)                  # 等幅の choice では従来と同じ値
+        assert knob_to_display(spec, got) == i
+    src = (ROOT / "fullseye" / "mcp" / "server.py").read_text(encoding="utf-8")
+    assert "(allowed.index(shown) + 0.5) / len(allowed)" not in src

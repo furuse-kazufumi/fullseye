@@ -489,23 +489,27 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
         return 0
 
     done: List[str] = []
+    failures = 0                        # 失敗した段の数(1 つでもあれば終了コードは 1)
     if do_pip:
         rc = run_fn(pip_command(reqs))
         if rc == 0:
             done.append(m["did_dep"] % ", ".join(reqs))
         else:
             done.append(m["fail_dep"] % rc)
+            failures += 1
     if do_sc:
         try:
             made = shortcuts_fn(do_desktop)
             done.append(m["did_sc"] % ", ".join(made))
         except Exception as e:      # noqa: BLE001 — 理由を文にして続行
             done.append(m["fail_sc"] % e)
+            failures += 1
     if do_rag:
         try:
             done.append(m["did_rag"] % rag_fn())
         except Exception as e:      # noqa: BLE001
             done.append(m["fail_rag"] % e)
+            failures += 1
 
     if "ai" in uses:
         say()
@@ -527,6 +531,7 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
                 done.append(m["did_open"])
             except Exception as e:      # noqa: BLE001
                 done.append(m["fail_open"] % e)
+                failures += 1
 
     say()
     say(m["done_hdr"])
@@ -541,7 +546,7 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
     if "ai" in uses:
         say("  - " + m["next_ai"])
     say("  - " + m["next_help"])
-    return 0
+    return 1 if failures else 0         # 0 = 選んだ段が全部できた(または何も選ばなかった)/ 1 = 失敗した段がある
 
 
 if __name__ == "__main__":
