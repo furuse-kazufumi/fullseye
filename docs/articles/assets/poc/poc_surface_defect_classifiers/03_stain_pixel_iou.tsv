@@ -1,4 +1,5 @@
 pixel classifier	IoU on test stains	false positive on normal
+BASELINE per-image Otsu on chroma (no training)	0.939 +- 0.015	0.5144
 classify_image_class_lut (cut from training pixels)	0.915 +- 0.009	0.0000
 class_2dim_sup (training stain cores as reference)	0.729 +- 0.066	0.0245
 class_2dim_unsup k=2, raw channels	0.333 +- 0.035	-

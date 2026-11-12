@@ -45,6 +45,6 @@ print(res["orientation_rank_ratio"])                     # 小さいなら板を
 
 - 実装: `calib.py`(`camera_calibration`。平面ホモグラフィ DLT → Zhang の内部拘束を SVD で解く。退化検出つき)
 - 例: [`camera_intrinsics_calibration`](../../examples/camera_intrinsics_calibration.py)(傾けた多視点で K を厳密回収 / 正面平行は退化して fail-closed / 視点 3 未満も拒否)
-- PoC: [`poc_caltab_chain_truth`](../../examples/poc_caltab_chain_truth.py)(円マーク板 `create_caltab` を逆に引く描画で撮り、`find_caltab` → `camera_calibration_lm` の誤差を真値と比べる。2 値の重心の量子化が 0.094 px の床になり、校正の誤差は検出点のずれに比例する)
+- PoC: [`poc_caltab_chain_truth`](../../examples/poc_caltab_chain_truth.py)(円マーク板 `create_caltab` を合成の逆に引く描画で撮り、`find_caltab` → `camera_calibration_lm` の誤差を真値と比べる。2 値の重心の量子化が検出点に 0.094 px、fx に rms 約 0.2 % の床を作り、校正の誤差は検出点のずれに比例する)
 - 試験: `tests/test_camera.py`(facade 経由で K 回収 / 退化・視点不足の fail-closed)、`tests/test_calib.py`(退化検出の切り分け)
 - 来歴: Zhang, Z. (2000), *A flexible new technique for camera calibration*, IEEE TPAMI 22(11)—— `docs/REFERENCES.md`

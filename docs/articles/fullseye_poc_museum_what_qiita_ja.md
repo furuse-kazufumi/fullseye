@@ -1688,7 +1688,7 @@ py -3.11 examples/poc_equipment_selection_map.py
 
 ## No.2026.311 —— 鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない
 
-Al の鋳物(32³、0.25 mm)に楕円体の空隙 3 個(24〜84 ボクセル)を置き、コーンビーム CT を 3 条件で撮った。真値は解析的な楕円体そのもので、描いた空隙の体積は 4/3πabc と 0.2 % 以内、離散の投影は閉形式の投影と相対 L2 4.0 %(64³ で 2.6 %)、投影と逆投影の随伴性は 3.8e-16。データは閉形式の投影に雑音を足したもので、再構成と同じ離散の投影では作っていない。RMSE の順位は 360° に 36 投影で OS-SART ≈ SIRT 0.031 < TV 0.032 < FDK 0.053、12 投影と 110° では TV が 1 位(代数の良いほうに対し 0.77 / 0.78 倍)。ところが 12 投影で RMSE が最下位の FDK は、欠損で測る空隙の体積が閉形式と 0.9 % で、1 位の TV(5.9 %)より正しい。110° の FDK は空隙を 1 個も拾わない。半値で 2 値化した体積は真値そのものでも 16.7 % 偏るので、それより良く見える数字は偏りの打ち消し合いと注記した。TV の重み 3e-3 は評価に使わない較正用の鋳物で選んだ。評価用で 5 点を後知恵に回すと、限られた角度では同じ 3e-3 が最良、少数投影では 1e-2 が 2.4 % 良く、TV の欠損で測る体積誤差は重みで 2.3〜59 % に動く(FDK に負けるのはこの重みの選び方では、という条件つき)。雑音の乱数を 4 通りに振り直しても順位は反転しない。デュアルエナジーでは鉄の入れ子の体積が −8.7 %、分けた代わりに Al の基底の雑音が 41.65 倍(閉形式 41.00 倍)。単色・ガウス雑音・凸の空隙・例示の減衰係数の合成である。
+アルミの鋳物の空隙を合成し、コーンビーム CT で撮って、再構成の方法を並べ、真値の楕円体で採点した。12 投影では、画像の誤差が最下位の古典的な方法が、空隙の体積では最良の反復法より正しく測れた。見た目の良い再構成が、欲しい量を正しく測るとは限らない。
 
 [![鋳物の空隙の CT: RMSE で 1 位の再構成が、空隙の体積でも 1 位とは限らない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/01_slices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png)
 
@@ -1718,21 +1718,21 @@ py -3.11 examples/poc_ct_casting_sparse_views.py
 
 使用 op(ノートへ): [`ct_adjoint_project`](https://furuse.work/ops/tomography/ct_scan/ct_adjoint_project.html) · [`ct_dual_energy_reconstruct`](https://furuse.work/ops/tomography/ct_scan/ct_dual_energy_reconstruct.html) · [`ct_forward_project`](https://furuse.work/ops/tomography/ct_scan/ct_forward_project.html) · [`ct_scan_geometry`](https://furuse.work/ops/tomography/ct_scan/ct_scan_geometry.html) · [`ellipsoid_phantom`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_phantom.html) · [`ellipsoid_projections`](https://furuse.work/ops/tomography/ct_scan/ellipsoid_projections.html) · [`fdk_reconstruct`](https://furuse.work/ops/tomography/ct_scan/fdk_reconstruct.html) · [`os_sart_reconstruct`](https://furuse.work/ops/tomography/ct_scan/os_sart_reconstruct.html) · [`shepp_logan_3d`](https://furuse.work/ops/tomography/ct_scan/shepp_logan_3d.html) · [`sirt_reconstruct`](https://furuse.work/ops/tomography/ct_scan/sirt_reconstruct.html) · [`tv_reconstruct`](https://furuse.work/ops/tomography/ct_scan/tv_reconstruct.html) · [`vol_rle_centroid`](https://furuse.work/ops/3d/rle_region/vol_rle_centroid.html) · [`vol_rle_components`](https://furuse.work/ops/3d/rle_region/vol_rle_components.html) · [`vol_rle_volume`](https://furuse.work/ops/3d/rle_region/vol_rle_volume.html)
 
-## No.2026.316 —— 金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する
+## No.2026.316 —— 描画した金属片の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は約 3 本に 2 本を見落とし(原因は未特定)、知らない孔の拒否は特徴 1 個の外れ値判定に及ばない
 
-研削した金属の小片に、傷・打痕・汚れを物理で描き、学習した分類器で仕分けた。汚れの画素は、正常な画素から学んだ分類で 重なり 0.915 まで塗り分けられた。一方、研削の筋に沿う傷は見落としやすく、知らない孔は拒否される。
+研削した金属の小片を描画で合成し、傷・打痕・汚れを学習した分類器で仕分けた。筋に沿う傷は 0.324 の割合でしか見つからず、原因は特定できていない。知らない孔を拒否する率は、特徴ひとつの外れ値判定のほうが高かった。
 
-[![金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png)
+[![描画した金属片の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は約 3 本に 2 本を見落とし(原因は未特定)、知らない孔の拒否は特徴 1 個の外れ値判定に及ばない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png)
 
-*↑ **金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する** ―― 研削した金属の小片(96x96 px)に、傷(V 溝)・打痕(窪み)・汚れ(茶色の反射率)を物理的に描いた。高さの欠陥は陰影だけを、汚れは色だけを変え、欠陥の重さは 0〜1 で振る。画素の段では、正常な金属の画素から learn_ndim_norm で正規分布を学び、class_ndim_norm で異常な画素を塗る。汚れの画素は classify_image_class_lut で IoU 0.915、class_2dim_sup で 0.729、class_2dim_unsup で 0.535(標準化したとき)。領域の特徴 7 個で GMM・MLP・SVM・k-NN を学習した。種 5 本の正解率は 0.871〜0.886(±0.02)。scikit-learn の第 2 実装との差は、許容差 3·sqrt(2p(1−p)/n) の 0.41 倍以内に収まった。GMM(成分 1)は閉形式の 2 次判別と 100 % 一致する。学習に無い腐食の孔は、検証側で決めた対数密度の閾値で 94.8 % を拒否した。既知の小片の誤拒否は 6.0 % だった。ラベルを入れ替えると正解率は 0.238 に落ちる。汚れの再現率 100 % は、色を変える欠陥が汚れだけだからで、特徴の漏れではない。研削の筋から 15° 以内の傷は再現率 0.275 で、45° より立った傷の 0.949 より大きく落ちる。筋を消すために選んだ勾配の向きが、筋に沿う傷も一緒に消している。*
+*↑ **描画した金属片の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は約 3 本に 2 本を見落とし(原因は未特定)、知らない孔の拒否は特徴 1 個の外れ値判定に及ばない** ―― 研削した金属の小片(96x96 px)に、傷(V 溝)・打痕(窪み)・汚れ(茶色の反射率)・腐食の孔を物理的に描いた合成画像。高さの欠陥は陰影だけを、汚れは色だけを変え、欠陥の重さは 0〜1 で振る。画素の段では、正常な金属の画素から learn_ndim_norm で正規分布を学び、class_ndim_norm で異常な画素を塗る。汚れの画素は classify_image_class_lut で IoU 0.915、class_2dim_sup で 0.729、class_2dim_unsup で 0.535(標準化したとき)。LUT の切れ目は、学習側の汚れの小片と真のマスクを使った教師ありの最小誤り点である。ところが学習なしの基準線(1 枚ごとの大津の 2 値化を色度にかけるだけ)は 0.939 で LUT を上回った。LUT が勝つのは、汚れの無い小片で何も塗らないこと(誤検出 0.0000、大津は画素の 0.51)だけである。領域の特徴 7 個で GMM・MLP・SVM・k-NN を学習した。種 5 本の正解率は 0.871〜0.886(±0.02)。scikit-learn の第 2 実装との差は、許容差 3·sqrt(2p(1−p)/n) の 0.41 倍以内に収まった。GMM(成分 1)は閉形式の 2 次判別と 100 % 一致する。学習に無い腐食の孔は、検証側で決めた対数密度の閾値で 94.8 % を拒否し、既知の小片の誤拒否は 6.0 % だった。しかし特徴 1 個(異常画素の連結成分の数、検証側の両側 2.5 % 点)の外れ値判定のほうが孔を 97.6 % 拒否し、誤拒否は 2.1 % だった(種 20 本の合算で 98.2 % 対 93.9 %)。照明の方位を 90・180・270° 回すと GMM の拒否率は 80.0・96.4・79.2 % と動くので、94.8 % は基準の照明 1 条件の値である。ラベルを入れ替えると正解率は 0.238 に落ちる。汚れの再現率 100 % は、色を変える欠陥が汚れだけだからで、特徴の漏れではない。研削の筋から 15° 以内の傷は、種 20 本の合算で再現率 0.324(145 本中 47、Wilson 95 % 区間 0.253〜0.404)と、45° より立った傷の 0.944 より大きく落ちる。原因は未特定で、y 方向の勾配を足しても 0.300、|dY/dx| の代わりにしても 0.225、照明の方位を回しても 0.050〜0.425 にとどまった(各 n = 40、基準 0.275)。*
 
 [![painting the stain pixel by pixel](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/02_stain_pixels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/02_stain_pixels.png)
 
 *↑ 測定の図 ―― painting the stain pixel by pixel*
 
-[![cuts chosen on training pixels only](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/03_stain_pixel_iou_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/03_stain_pixel_iou.png)
+[![LUT cut: supervised on training stain patches and true masks; Otsu baseline trains nothing](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/03_stain_pixel_iou_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/03_stain_pixel_iou.png)
 
-*↑ cuts chosen on training pixels only*
+*↑ LUT cut: supervised on training stain patches and true masks; Otsu baseline trains nothing*
 
 [![tol = 3 sqrt(2p(1-p)/n) + 1/n; same features, same split](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/04_classifier_accuracy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/04_classifier_accuracy.png)
 
@@ -1742,9 +1742,9 @@ py -3.11 examples/poc_ct_casting_sparse_views.py
 
 *↑ pits never seen in training: 95 % rejected; known patches rejected 6.0 %*
 
-[![5 seeds, test split; best overall knn 0.886](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/06_accuracy_by_weight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/06_accuracy_by_weight.png)
+[![5 seeds, test split; best overall knn 0.886; axis from 0](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/06_accuracy_by_weight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_defect_classifiers/06_accuracy_by_weight.png)
 
-*↑ 5 seeds, test split; best overall knn 0.886*
+*↑ 5 seeds, test split; best overall knn 0.886; axis from 0*
 
 ```
 py -3.11 examples/poc_surface_defect_classifiers.py

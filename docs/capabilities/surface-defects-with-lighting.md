@@ -65,4 +65,4 @@ print("峰の仰角 [deg]", float(sweep[sweep[:, 1].argmax(), 0]))   # 90 - 2*10
 
 - op: `illumination_design` / `lighting_sweep` / `defect_contrast`(設計)、`photometric_stereo` / `integrate_normals`(形)、`bothat` / `auto_threshold`(検出)
 - 例: [`illumination_design_demo`](../../examples/illumination_design_demo.py)、[`photometric_stereo`](../../examples_3d/photometric_stereo.py)、[`poc_bump_coplanarity`](../../examples/poc_bump_coplanarity.py)
-- PoC: [`poc_surface_defect_classifiers`](../../examples/poc_surface_defect_classifiers.py)(凹凸の欠陥と汚れを 1 灯の陰影で描き、画素の分類 `class_ndim_norm` → 領域の特徴 → `train_class_gmm` などの学習した分類器で仕分ける。1 灯・1 向きの勾配の特徴では、研削の筋に沿う傷の再現率が 0.275 に落ちる —— 灯や勾配の向きを足す理由)
+- PoC: [`poc_surface_defect_classifiers`](../../examples/poc_surface_defect_classifiers.py)(凹凸の欠陥と汚れを 1 灯の陰影で描いた合成の金属片を、画素の分類 `class_ndim_norm` → 領域の特徴 → `train_class_gmm` などの学習した分類器で仕分ける。研削の筋に沿う傷は見落とす(20 種の合算で再現率 0.324)が、原因は未特定で、y 方向の勾配を足しても照明の方位を回しても直らなかった。汚れの画素は学習なしの大津(IoU 0.939)が LUT(0.915)を上回り、知らない孔の拒否は特徴 1 個の外れ値判定が GMM に勝った)

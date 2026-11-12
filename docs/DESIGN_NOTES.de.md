@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1903. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1905. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -553,6 +553,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L274** _(ja)_ — 外れた組み合わせを絵の上に描き戻す。★全体図では 8 px の飛びが潰れて 見えないので、目地の帯の周りだけを**等倍で切り出す**。
 - **L373** _(ja)_ — ★測定線は軸そのものの上にある。そのまま塗ると被写体が消えるので、 指示線だけ 12 px 上へ逃がして描く(測っている行は軸の行のまま)。
 - **L484** _(ja)_ — ★中心の座標は推測せず illusion.py から読む(最初 (h/2, w/4) と当てずっぽうに 置いて、周りの円のエッジを掴み rms が 3.4 になった)。真の中心は (170, 168) と (170, 452)、半径 30。
+
+## `examples/poc_caltab_chain_truth.py`
+
+- **L404** _(ja)_ — ★この門は真値を使わない(雑音 0 の自分の結果と、共分散だけ): 真値と突き合わせるのは門 1〜3。
 
 ## `examples/poc_camera_calibration.py`
 
@@ -3049,15 +3053,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_poc_scripts_run.py`
 
 - **L60** — ★2026-09-08: die feste 6 aufgeben und **an die CPU-Zahl anpassen**. Auf gemeinsam genutzten Runnern (2–4 vCPU) verlangsamt 6-fache Parallelität nur jeden Einzelnen, ohne die Gesamtzeit zu verkürzen, und als die PoCs auf 84 wuchsen, **traf jeder Job pytests 900-Sekunden-timeout** (py3.10 / 3.12). Lokal (12 Kerne) läuft es wie bisher mit 6 oder mehr.
-- **L76** — ★``PYTHONPATH`` **nicht übergeben** (2026-09-09). Lange wurde ``PYTHONPATH=<repo>`` übergeben, doch das ist eine Einstellung, die Nutzer nicht vornehmen, und es bedeutete, dass das Gate einen Schritt neben dem Ort stand, an dem der Unfall geschieht —— durch denselben blinden Fleck blieben `examples/piv_flow_from_particles.py` und andere als "ModuleNotFoundError beim direkten Ausführen aus einem Checkout" (jene Seite hatte nicht einmal ein Gate, das sie ausführt, daher blieb es unbemerkt. `test_example_scripts_run.py`). Auf der PoC-Seite fügen 108 von 116 den repo-Wurzelpfad selbst zu ``sys.path`` hinzu, und die übrigen 8 importieren nur ``fullseye``, sodass alle auch nach dem Entfernen bestehen (gemessen).
-- **L89** _(ja)_ — ★実データを読んだ印(realdata.mark_read)を集める(2026-11-05、敵対的検証 第 2 巡 D6)。 成熟度台帳が「門の実行で実データを読む」とする例が、本当に読んだかを下の門で照合する。
-- **L94** _(ja)_ — ★stdin は /dev/null(2026-10-23)。渡さないと子は親(xdist の worker)の stdin = execnet の パイプを継ぐ。worker が死んだあとも子がそのパイプを握り、controller が「node down」の後に 固まる形になりうる(手元で torch+libiomp5md の子が消えないゾンビになった日に疑った経路。 再現はしなかったが、子に親の制御パイプを継がせる理由は無い)。
-- **L110** — ★Bei Fehlschlag auch das Ende von stdout zurückgeben. Ein PoC druckt seine Befunde und "welche Prüfung fehlschlug" nach stdout vor SystemExit(1), sodass man mit stderr allein **nur "exit 1" und sonst nichts erfährt** (2026-09-07 CI, py3.10 poc_ct_fidelity).
-- **L113** _(ja)_ — ★stdout は 4000 文字残す。1200 だと**章の後ろだけ**が見えて、前半で 落ちた検査の実測値が CI から読めない(2026-09-24、poc_endless_zoom の 10 番目が落ちたとき「NG が残っている(10 番目)」しか分からなかった)。
-- **L123** — ★2026-09-07: dies **gab lange 0 zurück** und ging so glatt durch das `assert code == 0` weiter unten —— ein Gate, das sein Urteil gleich nach dem Berechnen verwirft (gemessen: 3 PoCs drucken nie PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). -2 zurückgeben, damit es fehlschlägt.
-- **L168** _(ja)_ — ★2026-10-07: 以前は**全本を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全本を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全本を WORKERS 並列で回し、最大 48 本が同時に走って単独 286 秒の PoC が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
-- **L184** — ★Dieses Gate führt die 84 PoCs **in einem Durchgang** aus (session fixture). Diese Zeit wird dem ersten Test angerechnet, sodass pyprojects Standard-timeout (900 Sekunden) auf gemeinsam genutzten Runnern fehlschlägt. Nur hier erweitern —— den Standard zu lockern würde auch die Hänger-Erkennung anderer Tests abstumpfen.
-- **L199** _(ja)_ — ★成熟度台帳が「門の実行で実データを読む」とした例は、この実行でも同じデータを読んでいること (2026-11-05、敵対的検証 第 2 巡 D6)。逆向き(台帳は読まないが手元のキャッシュで読めた)は 許す —— 台帳は CI と同じくキャッシュ無しで測った控えめな側。
+- **L68** _(ja)_ — ★2026-11-12: 600 → 1200。`poc_ct_casting_sparse_views`(単独 129 秒、reduced)が 共有ランナー(4 vCPU に 4 本並列)で 600 秒を超えて落ちた(#308 の 3 周目)。 門を削って軽くするのではなく、並列で遅くなる分の余裕を取る。
+- **L79** — ★``PYTHONPATH`` **nicht übergeben** (2026-09-09). Lange wurde ``PYTHONPATH=<repo>`` übergeben, doch das ist eine Einstellung, die Nutzer nicht vornehmen, und es bedeutete, dass das Gate einen Schritt neben dem Ort stand, an dem der Unfall geschieht —— durch denselben blinden Fleck blieben `examples/piv_flow_from_particles.py` und andere als "ModuleNotFoundError beim direkten Ausführen aus einem Checkout" (jene Seite hatte nicht einmal ein Gate, das sie ausführt, daher blieb es unbemerkt. `test_example_scripts_run.py`). Auf der PoC-Seite fügen 108 von 116 den repo-Wurzelpfad selbst zu ``sys.path`` hinzu, und die übrigen 8 importieren nur ``fullseye``, sodass alle auch nach dem Entfernen bestehen (gemessen).
+- **L92** _(ja)_ — ★実データを読んだ印(realdata.mark_read)を集める(2026-11-05、敵対的検証 第 2 巡 D6)。 成熟度台帳が「門の実行で実データを読む」とする例が、本当に読んだかを下の門で照合する。
+- **L97** _(ja)_ — ★stdin は /dev/null(2026-10-23)。渡さないと子は親(xdist の worker)の stdin = execnet の パイプを継ぐ。worker が死んだあとも子がそのパイプを握り、controller が「node down」の後に 固まる形になりうる(手元で torch+libiomp5md の子が消えないゾンビになった日に疑った経路。 再現はしなかったが、子に親の制御パイプを継がせる理由は無い)。
+- **L113** — ★Bei Fehlschlag auch das Ende von stdout zurückgeben. Ein PoC druckt seine Befunde und "welche Prüfung fehlschlug" nach stdout vor SystemExit(1), sodass man mit stderr allein **nur "exit 1" und sonst nichts erfährt** (2026-09-07 CI, py3.10 poc_ct_fidelity).
+- **L116** _(ja)_ — ★stdout は 4000 文字残す。1200 だと**章の後ろだけ**が見えて、前半で 落ちた検査の実測値が CI から読めない(2026-09-24、poc_endless_zoom の 10 番目が落ちたとき「NG が残っている(10 番目)」しか分からなかった)。
+- **L126** — ★2026-09-07: dies **gab lange 0 zurück** und ging so glatt durch das `assert code == 0` weiter unten —— ein Gate, das sein Urteil gleich nach dem Berechnen verwirft (gemessen: 3 PoCs drucken nie PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). -2 zurückgeben, damit es fehlschlägt.
+- **L171** _(ja)_ — ★2026-10-07: 以前は**全本を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全本を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全本を WORKERS 並列で回し、最大 48 本が同時に走って単独 286 秒の PoC が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
+- **L187** — ★Dieses Gate führt die 84 PoCs **in einem Durchgang** aus (session fixture). Diese Zeit wird dem ersten Test angerechnet, sodass pyprojects Standard-timeout (900 Sekunden) auf gemeinsam genutzten Runnern fehlschlägt. Nur hier erweitern —— den Standard zu lockern würde auch die Hänger-Erkennung anderer Tests abstumpfen.
+- **L202** _(ja)_ — ★成熟度台帳が「門の実行で実データを読む」とした例は、この実行でも同じデータを読んでいること (2026-11-05、敵対的検証 第 2 巡 D6)。逆向き(台帳は読まないが手元のキャッシュで読めた)は 許す —— 台帳は CI と同じくキャッシュ無しで測った控えめな側。
 
 ## `tests/test_printpath.py`
 

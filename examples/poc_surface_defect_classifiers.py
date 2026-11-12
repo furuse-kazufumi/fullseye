@@ -1,11 +1,16 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """金属の表面の欠陥(傷・打痕・汚れ・正常)を、画素の分類 → 領域の特徴 → 学習した分類器で仕分ける。
 
-Metal surface defects (scratch, dent, stain, none) sorted by Fullseye's trained classifiers —
-pixel classifiers paint the anomaly and the stain, region features feed GMM / MLP / SVM / k-NN,
-and the GMM says "I don't know" to a defect it never saw (corrosion pits).
+Rendered (synthetic) metal-surface patches with defects (scratch, dent, stain, none) sorted by Fullseye's trained
+classifiers — pixel classifiers paint the anomaly and the stain, region features feed GMM / MLP / SVM / k-NN,
+and the GMM says "I don't know" to a defect it never saw (corrosion pits). Each headline number is set next
+to a training-free baseline and to the same run with the lighting changed.
 
     py -3.11 examples/poc_surface_defect_classifiers.py
+
+``CI`` では分岐しない(縮小モードは無い。常に同じ全量を走らせる)。種 5 本の全量 + 軽い版 15 種 + 確認実験で約 1.5 分
+(以前の 17 秒から増えたのは、種を 20 本に増やした再現率の数え直しと、y 勾配・照明を変えた確認実験のため)。
+``FULLSEYE_FIGURES=off`` で図の書き出しだけ止められる。
 
 【この PoC が答える問題】
 分類の op 14 本(``train_class_gmm`` / ``classify_class_gmm`` / ``evaluate_class_gmm`` /
@@ -29,14 +34,18 @@ and the GMM says "I don't know" to a defect it never saw (corrosion pits).
 1. 画素: 学習側の正常な小片の画素で ``learn_ndim_norm`` が (輝度の高域・色度・筋を横切る勾配 |dY/dx|)
    の正規分布を学び、``class_ndim_norm`` が Mahalanobis 距離で「正常らしくない」画素を塗る。
    閾値は学習側の正常画素の 99.9 % 点(評価側を見ない)。
-2. 汚れの画素: 色度を [0, 1] に写した画像に ``classify_image_class_lut``(256 段、切れ目は学習側の画素で
-   誤りが最小になる段)/ ``class_2dim_sup``(学習側の汚れを 2 px 削った芯を参照領域にした 2 チャネルの箱。
+2. 汚れの画素: 色度を [0, 1] に写した画像に ``classify_image_class_lut``(256 段、切れ目は**学習側の汚れの小片と
+   その真のマスク**を使った教師ありの、誤りが最小になる段。正常な画素から学ぶのではない)/ ``class_2dim_sup``(学習側の汚れを 2 px 削った芯を参照領域にした 2 チャネルの箱。
    この op は参照領域と同じ画像を塗るので、学習側の小片を横に並べた右に評価の小片をつなぐ)/
-   ``class_2dim_unsup``(k-means、k = 2、教師なし)で塗り、真の汚れの画素と IoU で比べる。
+   ``class_2dim_unsup``(k-means、k = 2、教師なし)で塗り、真の汚れの画素と IoU で比べる。**基準線**は学習なしの
+   大津の 2 値化を 1 枚ごとに色度 (R−B)/ΣRGB にかけるだけのもの(汚れの有無は言えず、正常な小片も割る)。
 3. 領域の特徴(7 個、画像と画素モデルだけから): 異常画素の面積・連結成分の数、異常度の上位 40 画素の
    広がりと伸び、色度の差、輝度の差と散らばり。
 4. 分類器: GMM(成分 1・2)、MLP、線形 SVM、k-NN(k = 5)。学習 50 % / 検証 20 % / 評価 30 %(層化)。
-   GMM の「分からない」の閾値は**検証側**の対数密度の 5 % 点。
+   GMM の「分からない」の閾値は**検証側**の対数密度の 5 % 点。**基準線**は特徴 1 個(異常画素の連結成分の数)の
+   外れ値判定(検証側の両側 2.5 % 点の外を拒否)。
+5. 確認実験(GMM(1) と画素の特徴だけ): |dY/dy| を足す / |dY/dx| の代わりにする / 照明の方位を 90・180・270° 回す。
+   傷の再現率と孔の拒否率を数え直す。傷の再現率は種を 20 本(11〜30)に増やして合算し、Wilson の 95 % 区間で言う。
 
 【門(数値)】
 1. 閉形式: ``learn_ndim_norm`` の平均・共分散が np.mean / np.cov + 1e-6 I と一致。``train_class_gmm``
@@ -52,32 +61,50 @@ and the GMM says "I don't know" to a defect it never saw (corrosion pits).
 3. 分割を守る: しきい値(画素モデル・LUT・拒否)はどれも学習・検証側だけで決める。種 5 本の正解率の
    平均 ± 標準偏差は GMM(1) 0.884 ± 0.017・GMM(2) 0.881 ± 0.017・MLP 0.884 ± 0.015・SVM 0.871 ± 0.022・
    k-NN 0.886 ± 0.015(評価 180 枚/種)。標準偏差が 0 でないこと(同じ結果の写しではない)を門にする。
-4. 「分からない」: 腐食の孔(学習に無い)を GMM の対数密度で拒否した率 0.948(門 0.8 以上)、既知の
+4. 「分からない」: 腐食の孔(学習に無い)を GMM の対数密度で拒否した率 0.948(門 0.9 以上)、既知の
    小片を誤って拒否した率 0.060(門 q + 3·sqrt(q(1−q)/n) = 0.072、q = 0.05 は検証側で決めた率)。
-   scikit-learn の GaussianMixture(1) に同じ規則をかけても 0.948 / 0.060。
+   scikit-learn の GaussianMixture(1) に同じ規則をかけても 0.948 / 0.060。**基準線(特徴 1 個の外れ値判定)は
+   孔 0.976・既知の誤拒否 0.021 で GMM と同じかそれ以上**(門: 孔の拒否が GMM 以上、誤拒否が同じ上限の内)。
+   種 20 本の合算(孔 1000 枚)は GMM 0.939 [0.922–0.952]、基準線 0.982 [0.972–0.989]。
 5. 出来すぎていないか: ラベルを入れ替えて学習すると正解率 0.238(門 1/4 + 3σ = 0.293)。特徴 1 個だけの
    正解率は最大 0.726(面積)で全体の 0.884 に届かない。誤りは薄い欠陥に集まる —— 5 つの分類器すべてで
    重さの下 1/3 の正解率が上 1/3 より低い(GMM(1) 0.807 / 0.937)。再現率 100 % は汚れだけで、内訳は
    色度の差: 汚れの最小 0.055 > 他の最大 0.009。汚れは反射率の色を変える唯一の欠陥で、特徴は画像から
    測っているので、真値の漏れではない(門: 100 % は汚れだけ、かつ色度の差に隙間がある)。
-6. 汚れの画素: LUT の IoU 0.915 ± 0.009(門 0.6)、正常な小片の誤検出 0.0000(門 1 %)。
-   class_2dim_sup 0.729 ± 0.066(門 0.5)、誤検出 2.5 %。class_2dim_unsup は生のチャネルで 0.333、
-   チャネルを標準化すると 0.535(門: 標準化で 0.1 以上良くなる)。
+6. 汚れの画素: **基準線(学習なしの大津)の IoU 0.939 ± 0.015 が LUT の 0.915 ± 0.009 より上**(門: 5 種すべてで基準線が
+   上、平均の差は 0〜0.06 —— LUT は学習なしの基準線を超えない)。違いは「汚れ無し」を言えるか: 正常な小片での誤検出は
+   LUT 0.0000(門 1 %)、大津は画素の 0.51(常に割る)。class_2dim_sup 0.729 ± 0.066(LUT より 0.1 以上下)、誤検出 2.5 %。
+   class_2dim_unsup は生のチャネルで 0.333、チャネルを標準化すると 0.535(門: 標準化で 0.1 以上良くなる)。
+7. 筋に沿う傷: 種 20 本の合算で、筋から 15° 以内の再現率 0.324(145 本中 47、Wilson 95 % 0.253–0.404)、45° より立った傷は
+   0.944(461 本中 435、0.919–0.961)。門は区間で: 前者の上端 < 0.5、後者の下端 > 0.85。見落とし 0.676(0.596–0.747)。
+8. 原因の確認実験: |dY/dy| を足しても 0.300、|dY/dx| の代わりにすると 0.225、照明の方位を 90・180・270° 回すと
+   0.050・0.425・0.150(各 n = 40、基準 0.275)。どれも 0.5 未満(門)—— 筋沿いの傷が見えるようになる条件は見つかっていない。
+9. 照明を変えた孔の拒否: GMM 0.948(基準の照明)・0.800・0.964・0.792、基準線 0.976・0.876・0.980・0.876。GMM の拒否率は
+   照明で 0.1 以上動く(門)—— 見出しの 0.948 は 1 条件に固有の値。
 
 【★ この PoC が出した所見】
-(a) **研削の筋に沿う傷は見えない**: 筋から 15° 以内の傷の再現率 0.275(40 本)、45° より立った傷は
-    0.949(118 本)。画素の特徴が筋を横切る勾配 |dY/dx| だから —— 筋の凹凸を消すために選んだ特徴が、
-    筋と同じ向きの傷も一緒に消す。見落とした傷の大半(56 本中 41 本)は「正常」と呼ばれる。
-    向きを変えた照明(または y の勾配の特徴)をもう 1 枚足すのが筋。
+(a) **研削の筋に沿う傷は見落とす(原因は未特定)**: 種 20 本の合算で、筋から 15° 以内の傷の再現率は 0.324(145 本中 47、
+    Wilson 95 % 0.253–0.404)、つまり約 3 本に 2 本を見落とす(0.676、0.596–0.747)。45° より立った傷は 0.944(461 本中 435)。
+    見落とした傷の大半は「正常」と呼ばれる(種 5 本で 56 本中 41 本)。**原因は特定できていない**: 画素の特徴の
+    |dY/dx| が筋に沿う傷を消すのではないかと疑って |dY/dy| を足しても 0.275 → 0.300、|dY/dx| の代わりにすると 0.225
+    (立った傷は 0.949 → 0.542)、照明の方位を回しても 0.050・0.425・0.150 で、どれでも直らなかった。
+    原因の候補(筋に沿う傷の陰影の小ささ、領域の特徴 7 個、画素の 99.9 % 閾値)は切り分けていない。
 (b) ``class_2dim_sup`` は参照領域の**最小・最大**の箱なので、参照の中のいちばん薄い画素が箱の端を決める。
     学習側で誤りが最小の 1 本の切れ目を選ぶ LUT(0.915)に IoU で負け、誤検出も 2.5 % 出る。
+    **ただし LUT も学習なしの基準線(1 枚ごとの大津、色度、IoU 0.939)には届かない**: この汚れは色が変わるだけの易しい
+    課題で、1 つの閾値で足りる。LUT が勝つのは「汚れが無い小片で何も塗らない」(誤検出 0.0000 対 大津 0.51)ことだけ。
 (c) ``class_2dim_unsup`` は特徴を標準化しない k-means なので、分散の大きい輝度(研削の筋)で 2 つに割れる。
     標準化すると良くなるが、それでも筋の明暗で割れる小片が残る(0.535)。教師なしの 2 分割は
-    「汚れが無い」とも言えない(正常な小片もかならず 2 つに割る)。
+    「汚れが無い」とも言えない(正常な小片もかならず 2 つに割る。大津も同じ)。
 (d) GMM の対数密度で拒否できなかった孔(250 枚中 13 枚)は傷(6)か打痕(7)と呼ばれる。既知の小片の
     誤った拒否は傷 21・汚れ 16・正常 11・打痕 6 枚(5 種の合計、各 225 枚)。
+    **特徴 1 個(異常画素の連結成分の数)の外れ値判定のほうが孔を多く拒否し(0.976 対 0.948、20 種の合算で 0.982 対 0.939)、
+    既知の誤拒否も少ない(0.021 対 0.060)**。孔は連結成分が多いという 1 つの違いで足りるので、GMM の対数密度という
+    道具立てが効いている証拠にはならない。
+    拒否率は照明にも依る: 照明の方位を 90・180・270° 回すと GMM は 0.800・0.964・0.792(基準線 0.876・0.980・0.876)。
+    見出しの 0.948 は基準の照明 1 条件の値で、方位を変えると 0.79 まで下がった。
 (e) 分類器どうしの差は小さい(正解率 0.871〜0.886、種のばらつき ±0.02 と同じ大きさ)。この特徴では
-    分類器を選ぶより特徴(a)を直すほうが効く。
+    分類器を選んでも差はほとんど出ない。(a) の見落としは、確認実験で試した変更(y 勾配・照明の向き)では直らなかった。
 
     EXTEND: 実画像に差し替えるには ``render_patch`` の返りを撮った小片(RGB、[0, 1])にし、
     真値の代わりに人が付けたラベルを ``labels`` に入れる。門 1・2 はそのまま回り、門 5 の重さ別の内訳は
@@ -103,6 +130,9 @@ UNKNOWN = "pits"
 N_PER_CLASS = 150
 N_UNKNOWN = 50
 SEEDS = (11, 12, 13, 14, 15)
+EXTRA_SEEDS = tuple(range(16, 31))          # 軽い版(GMM(1)・拒否・傷の向きだけ)で足す種。合算して 20 種
+LIGHT_VARIANTS = (("azimuth +90 deg", (-0.30, 0.55, 0.78)), ("azimuth +180 deg", (-0.55, -0.30, 0.78)),
+                  ("azimuth +270 deg", (0.30, -0.55, 0.78)))     # 基準の LIGHT を方位だけ回した 3 通り
 SPLIT = (0.5, 0.2, 0.3)                     # 学習 / 検証 / 評価
 METAL = np.array([0.78, 0.79, 0.81])
 STAIN_TINT = np.array([0.80, 0.58, 0.36])   # 汚れの反射率の色(茶色)
@@ -119,7 +149,7 @@ def _grid():
     return y, x
 
 
-def render_patch(kind, weight, rng):
+def render_patch(kind, weight, rng, light=None):
     """1 枚の小片を描く。返り: RGB 画像 (H, W, 3) in [0, 1]、真の汚れの画素 (H, W) bool、
     傷の向きと研削の筋(x 軸)のなす角 [deg](傷でなければ nan)。
 
@@ -159,7 +189,8 @@ def render_patch(kind, weight, rng):
     gy, gx = np.gradient(h)
     n = np.stack([-gx, -gy, np.ones_like(h)], axis=-1)
     n /= np.linalg.norm(n, axis=-1, keepdims=True)
-    lv = LIGHT / np.linalg.norm(LIGHT)
+    lv = (LIGHT if light is None else np.asarray(light, float))
+    lv = lv / np.linalg.norm(lv)
     half = (lv + np.array([0.0, 0.0, 1.0]))
     half /= np.linalg.norm(half)
     diff = np.clip(n @ lv, 0.0, None)
@@ -173,14 +204,14 @@ def render_patch(kind, weight, rng):
     return img, stain > 0.5, lay
 
 
-def make_dataset(seed):
+def make_dataset(seed, light=None):
     rng = np.random.default_rng(seed)
     imgs, masks, labels, weights, lays = [], [], [], [], []
     for kind in CLASSES + (UNKNOWN,):
         n = N_UNKNOWN if kind == UNKNOWN else N_PER_CLASS
         for _ in range(n):
             w = float(rng.uniform())
-            im, m, lay = render_patch(kind, w, rng)
+            im, m, lay = render_patch(kind, w, rng, light)
             lays.append(lay)
             imgs.append(im)
             masks.append(m)
@@ -217,11 +248,22 @@ def chroma01(img):
     return np.clip((chroma(img) + 0.15) / 0.5, 0.0, 1.0)
 
 
-def pixel_features(img):
+def pixel_features(img, gy=None):
+    """画素の特徴 (輝度の高域・色度・|dY/dx|)。``gy="add"`` で |dY/dy| を 4 個目に足し、``gy="replace"`` で
+    |dY/dx| を |dY/dy| に置き換える(所見 (a) の確認実験用。既定は足さない)。"""
     Y = luminance(img)
     hp = Y - ndi.gaussian_filter(Y, 4.0)
-    gx = np.gradient(ndi.gaussian_filter(Y, 1.0), axis=1)        # 研削の筋(x に沿う)を横切らない向きの勾配
-    return np.stack([hp, chroma(img), np.abs(gx)], axis=-1)
+    sm = ndi.gaussian_filter(Y, 1.0)
+    gx = np.abs(np.gradient(sm, axis=1))                         # 筋(x に沿う)を横切る向きの勾配
+    if gy is None:
+        cols = [hp, chroma(img), gx]
+    elif gy == "add":
+        cols = [hp, chroma(img), gx, np.abs(np.gradient(sm, axis=0))]
+    elif gy == "replace":
+        cols = [hp, chroma(img), np.abs(np.gradient(sm, axis=0))]
+    else:
+        raise ValueError("gy must be None, 'add' or 'replace'")
+    return np.stack(cols, axis=-1)
 
 
 def mahalanobis(F, model):
@@ -234,9 +276,9 @@ FEATURE_NAMES = ("log area", "log components", "top-N spread", "top-N elongation
                  "chroma excess", "luminance excess", "luminance spread")
 
 
-def region_features(img, pix_model, thresh):
+def region_features(img, pix_model, thresh, gy=None):
     """画像と画素モデルだけから 7 個の特徴を出す(真値は見ない)。"""
-    F = pixel_features(img)
+    F = pixel_features(img, gy)
     inside = L.class_ndim_norm(F, pix_model, thresh=thresh)
     anom = ~inside
     lab, n = ndi.label(anom)
@@ -358,18 +400,57 @@ def stain_lut(imgs, masks):
     return (np.arange(256) > cut).astype(np.int64), cut / 255.0
 
 
+# --- 学習なしの基準線 / training-free baselines ---------------------------------------------------------
+def otsu_threshold(v, bins=256):
+    """大津の閾値(クラス間分散が最大になる段の中心)。学習なし・1 枚ごと。"""
+    hist, edges = np.histogram(v, bins=bins)
+    mid = 0.5 * (edges[1:] + edges[:-1])
+    p = hist / hist.sum()
+    w0 = np.cumsum(p)
+    mu = np.cumsum(p * mid)
+    sb = (mu[-1] * w0 - mu) ** 2 / (w0 * (1.0 - w0) + 1e-12)
+    return float(mid[int(np.argmax(sb))])
+
+
+def otsu_stain(img):
+    """基準線: 色度 (R-B)/ΣRGB の画像を 1 枚ごとに大津で 2 値化(学習なし)。汚れの有無は言えない(常に割る)。"""
+    u = chroma(img)
+    return u > otsu_threshold(u)
+
+
+def wilson(k, n, z=1.96):
+    """二項の割合 k/n の Wilson 95 % 区間 (下端, 上端)。"""
+    if n == 0:
+        return (0.0, 1.0)
+    p = k / n
+    d = 1.0 + z * z / n
+    c = (p + z * z / (2 * n)) / d
+    h = z * np.sqrt(p * (1.0 - p) / n + z * z / (4 * n * n)) / d
+    return float(c - h), float(c + h)
+
+
+def count_outlier_reject(Xva, X, col=1):
+    """基準線: 特徴 1 個(異常画素の連結成分の数 = ``col``)の外れ値判定。検証側の両側 2.5 % 点の外を拒否。"""
+    lo, hi = np.quantile(Xva[:, col], [REJECT_Q / 2, 1.0 - REJECT_Q / 2])
+    return (X[:, col] < lo) | (X[:, col] > hi)
+
+
 # --- 1 回 / one seed ----------------------------------------------------------------------------
-def run_seed(seed):
-    imgs, masks, labels, weights, lays = make_dataset(seed)
+def run_seed(seed, light=None, gy=None, full=True):
+    """1 つの種で描き直して全部を走らせる。``full=False`` は GMM(1) と拒否・傷の向きだけの軽い版
+    (照明を変える実験・y 勾配の確認実験・種を増やした再現率の数え直し用)。``light`` は照明の向き、
+    ``gy`` は :func:`pixel_features` の確認実験の指定。"""
+    imgs, masks, labels, weights, lays = make_dataset(seed, light)
     tr, va, te, unk = split(labels, seed)
     res = {"seed": seed}
 
     # 1. 画素のモデル(学習側の正常な小片だけ)
     ntr = tr[labels[tr] == "normal"]
-    Fn = np.concatenate([pixel_features(imgs[i]).reshape(-1, 3) for i in ntr])
+    Fn = np.concatenate([pixel_features(imgs[i], gy).reshape(-1, 3 + (gy == "add")) for i in ntr])
+    D = Fn.shape[1]
     pix = L.learn_ndim_norm(Fn)
     assert np.allclose(pix["mean"], Fn.mean(0), atol=1e-12)
-    assert np.allclose(pix["cov"], np.cov(Fn.T) + 1e-6 * np.eye(3), rtol=1e-9, atol=1e-15)
+    assert np.allclose(pix["cov"], np.cov(Fn.T) + 1e-6 * np.eye(D), rtol=1e-9, atol=1e-15)
     md_n = np.sqrt(np.einsum("ij,jk,ik->i", Fn - pix["mean"], pix["inv"], Fn - pix["mean"]))
     thresh = float(np.quantile(md_n, 0.999))
     res["pix_thresh"] = thresh
@@ -378,39 +459,44 @@ def run_seed(seed):
     s_tr = tr[labels[tr] == "stain"]
     s_te = te[labels[te] == "stain"]
     n_te = te[labels[te] == "normal"]
-    lut, cut = stain_lut(imgs[s_tr], masks[s_tr])
-    res["lut_cut"] = cut
-    lut_iou = [iou(L.classify_image_class_lut(chroma01(imgs[i]), lut) > 0, masks[i]) for i in s_te]
-    lut_fp = float(np.mean([L.classify_image_class_lut(chroma01(imgs[i]), lut).mean() for i in n_te]))
-    # class_2dim_sup は参照領域と同じ画像を塗る op なので、学習側の汚れの小片を横に並べた画像の右に
-    # 評価の小片を 1 枚つなぎ、参照領域は学習側の芯だけに置いて、右端の 96 列を切り出す。
-    U_tr = np.concatenate([chroma01(imgs[i]) for i in s_tr], 1)
-    Y_tr = np.concatenate([luminance(imgs[i]) for i in s_tr], 1)
-    R_tr = np.concatenate([ndi.binary_erosion(masks[i], iterations=CORE_ERODE) for i in s_tr], 1)
+    if full:
+        lut, cut = stain_lut(imgs[s_tr], masks[s_tr])
+        res["lut_cut"] = cut
+        lut_iou = [iou(L.classify_image_class_lut(chroma01(imgs[i]), lut) > 0, masks[i]) for i in s_te]
+        lut_fp = float(np.mean([L.classify_image_class_lut(chroma01(imgs[i]), lut).mean() for i in n_te]))
+        # 学習なしの基準線: 1 枚ごとの大津(色度)。正常な小片でも割るので、汚れの無い小片の誤検出も数える。
+        otsu_iou = [iou(otsu_stain(imgs[i]), masks[i]) for i in s_te]
+        otsu_fp = float(np.mean([otsu_stain(imgs[i]).mean() for i in n_te]))
+        # class_2dim_sup は参照領域と同じ画像を塗る op なので、学習側の汚れの小片を横に並べた画像の右に
+        # 評価の小片を 1 枚つなぎ、参照領域は学習側の芯だけに置いて、右端の 96 列を切り出す。
+        U_tr = np.concatenate([chroma01(imgs[i]) for i in s_tr], 1)
+        Y_tr = np.concatenate([luminance(imgs[i]) for i in s_tr], 1)
+        R_tr = np.concatenate([ndi.binary_erosion(masks[i], iterations=CORE_ERODE) for i in s_tr], 1)
 
-    def sup(i):
-        a = np.concatenate([U_tr, chroma01(imgs[i])], 1)
-        b = np.concatenate([Y_tr, luminance(imgs[i])], 1)
-        ref = np.concatenate([R_tr, np.zeros((SIZE, SIZE), bool)], 1)
-        return L.class_2dim_sup(a, b, ref)[:, -SIZE:]
+        def sup(i):
+            a = np.concatenate([U_tr, chroma01(imgs[i])], 1)
+            b = np.concatenate([Y_tr, luminance(imgs[i])], 1)
+            ref = np.concatenate([R_tr, np.zeros((SIZE, SIZE), bool)], 1)
+            return L.class_2dim_sup(a, b, ref)[:, -SIZE:]
 
-    sup_iou = [iou(sup(i), masks[i]) for i in s_te]
-    sup_fp = float(np.mean([sup(i).mean() for i in n_te]))
-    uns_raw, uns_z = [], []
-    for i in s_te:
-        u, Y = chroma01(imgs[i]), luminance(imgs[i])
-        for out, (a, b) in ((uns_raw, (u, Y)), (uns_z, ((u - u.mean()) / u.std(), (Y - Y.mean()) / Y.std()))):
-            lab = L.class_2dim_unsup(a, b, n_clusters=2)
-            hi = int(np.argmax([u[lab == k].mean() if (lab == k).any() else -1 for k in range(2)]))
-            out.append(iou(lab == hi, masks[i]))
-    res.update(lut_iou=float(np.mean(lut_iou)), lut_fp=lut_fp, sup_iou=float(np.mean(sup_iou)), sup_fp=sup_fp,
-               uns_raw=float(np.mean(uns_raw)), uns_z=float(np.mean(uns_z)), lut_iou_all=np.array(lut_iou),
-               uns_z_all=np.array(uns_z), stain_w=weights[s_te], s_te=s_te)
-    res["sup_fn"] = sup
-    res["lut"] = lut
+        sup_iou = [iou(sup(i), masks[i]) for i in s_te]
+        sup_fp = float(np.mean([sup(i).mean() for i in n_te]))
+        uns_raw, uns_z = [], []
+        for i in s_te:
+            u, Y = chroma01(imgs[i]), luminance(imgs[i])
+            for out, (a, b) in ((uns_raw, (u, Y)), (uns_z, ((u - u.mean()) / u.std(), (Y - Y.mean()) / Y.std()))):
+                lab = L.class_2dim_unsup(a, b, n_clusters=2)
+                hi = int(np.argmax([u[lab == k].mean() if (lab == k).any() else -1 for k in range(2)]))
+                out.append(iou(lab == hi, masks[i]))
+        res.update(lut_iou=float(np.mean(lut_iou)), lut_fp=lut_fp, sup_iou=float(np.mean(sup_iou)), sup_fp=sup_fp,
+                   uns_raw=float(np.mean(uns_raw)), uns_z=float(np.mean(uns_z)), lut_iou_all=np.array(lut_iou),
+                   uns_z_all=np.array(uns_z), stain_w=weights[s_te], s_te=s_te,
+                   otsu_iou=float(np.mean(otsu_iou)), otsu_fp=otsu_fp, otsu_iou_all=np.array(otsu_iou))
+        res["sup_fn"] = sup
+        res["lut"] = lut
 
     # 3. 領域の特徴
-    X = np.array([region_features(im, pix, thresh) for im in imgs])
+    X = np.array([region_features(im, pix, thresh, gy) for im in imgs])
     assert np.isfinite(X).all() and np.all(X.std(0) > 0)
     Xtr, ytr, Xva, Xte, yte, Xunk = X[tr], labels[tr], X[va], X[te], labels[te], X[unk]
     res.update(X=X, labels=labels, weights=weights, lays=lays, te=te, tr=tr, unk=unk, imgs=imgs, masks=masks,
@@ -424,11 +510,6 @@ def run_seed(seed):
         assert np.allclose(comp["means"][0], R.mean(0), rtol=1e-10, atol=1e-12)
         assert np.allclose(comp["covs"][0], np.cov(R.T, bias=True) + 1e-6 * np.eye(R.shape[1]), rtol=1e-8, atol=1e-12)
     pred["gmm1"] = L.classify_class_gmm(g1, Xte)["labels"]
-    g2 = L.train_class_gmm(Xtr, ytr, n_centers=2, seed=seed)
-    pred["gmm2"] = L.classify_class_gmm(g2, Xte)["labels"]
-    pred["mlp"] = L.classify_class_mlp(L.train_class_mlp(Xtr, ytr), Xte)["labels"]
-    pred["svm"] = L.classify_class_svm(L.train_class_svm(Xtr, ytr), Xte)["labels"]
-    pred["knn"] = L.classify_class_knn(L.train_class_knn(Xtr, ytr), Xte, k=5)["labels"]
     res["pred"] = pred
     res["yte"] = yte
 
@@ -438,6 +519,17 @@ def run_seed(seed):
     ld_unk = L.evaluate_class_gmm(g1, Xunk)["log_density"]
     res.update(reject_known=float(np.mean(ld_te < thr)), reject_unknown=float(np.mean(ld_unk < thr)),
                ld_te=ld_te, ld_unk=ld_unk, ld_thr=thr)
+    # 基準線: 特徴 1 個(連結成分の数)の外れ値判定、検証側の両側 2.5 % 点
+    res.update(cnt_known=float(np.mean(count_outlier_reject(Xva, Xte))),
+               cnt_unknown=float(np.mean(count_outlier_reject(Xva, Xunk))))
+    if not full:
+        return res
+
+    g2 = L.train_class_gmm(Xtr, ytr, n_centers=2, seed=seed)
+    pred["gmm2"] = L.classify_class_gmm(g2, Xte)["labels"]
+    pred["mlp"] = L.classify_class_mlp(L.train_class_mlp(Xtr, ytr), Xte)["labels"]
+    pred["svm"] = L.classify_class_svm(L.train_class_svm(Xtr, ytr), Xte)["labels"]
+    pred["knn"] = L.classify_class_knn(L.train_class_knn(Xtr, ytr), Xte, k=5)["labels"]
 
     # 5. 独立な参照
     res["qda"] = qda_reference(Xtr, ytr, Xte)
@@ -449,6 +541,19 @@ def run_seed(seed):
     perm = np.random.default_rng(seed + 7).permutation(ytr)
     res["perm_acc"] = float(np.mean(L.classify_class_gmm(L.train_class_gmm(Xtr, perm), Xte)["labels"] == yte))
     return res
+
+
+def scratch_recall(runs):
+    """傷の再現率(GMM(1))を、研削の筋との角で分けて数える。返り: (along 命中, n), (across 命中, n), (全体の命中, n), 正常と呼んだ数。"""
+    yy = np.concatenate([r["yte"] for r in runs])
+    pp = np.concatenate([r["pred"]["gmm1"] for r in runs])
+    aa = np.concatenate([r["lays"][r["te"]] for r in runs])
+    sc = yy == "scratch"
+    along, across = sc & (aa < 15), sc & (aa > 45)
+    return ((int(np.sum(pp[along] == "scratch")), int(along.sum())),
+            (int(np.sum(pp[across] == "scratch")), int(across.sum())),
+            (int(np.sum(pp[sc] == "scratch")), int(sc.sum())),
+            int(np.sum(pp[sc] == "normal")))
 
 
 def binom_tol(p, n):
@@ -489,6 +594,7 @@ def mosaic(rows):
 
 def main():
     runs = [run_seed(s) for s in SEEDS]
+    extra = [run_seed(s, full=False) for s in EXTRA_SEEDS]       # 種を増やして割合を安定させる(20 種)
     names = ("gmm1", "gmm2", "mlp", "svm", "knn")
     n_te = len(runs[0]["yte"])
 
@@ -500,7 +606,8 @@ def main():
     # --- 2. 汚れの画素 -----------------------------------------------------------------------------
     print("\n2. stain pixels on the test stain patches (mean IoU over seeds +- std; false positives on test normal patches)")
     rows = []
-    for key, fp, nm in (("lut_iou", "lut_fp", "classify_image_class_lut (cut from training pixels)"),
+    for key, fp, nm in (("otsu_iou", "otsu_fp", "BASELINE per-image Otsu on chroma (no training)"),
+                        ("lut_iou", "lut_fp", "classify_image_class_lut (cut from training pixels)"),
                         ("sup_iou", "sup_fp", "class_2dim_sup (training stain cores as reference)"),
                         ("uns_raw", None, "class_2dim_unsup k=2, raw channels"),
                         ("uns_z", None, "class_2dim_unsup k=2, z-scored channels")):
@@ -510,8 +617,17 @@ def main():
                                                 "" if f is None else "  false positive %.4f" % f.max()))
         rows.append([nm, "%.3f +- %.3f" % (v.mean(), v.std()), "-" if f is None else "%.4f" % f.max()])
     lut_iou = np.array([r["lut_iou"] for r in runs])
-    assert np.all(lut_iou > 0.6) and max(r["lut_fp"] for r in runs) < 0.01
-    assert np.all(np.array([r["sup_iou"] for r in runs]) > 0.5)
+    otsu_iou = np.array([r["otsu_iou"] for r in runs])
+    otsu_fp = np.array([r["otsu_fp"] for r in runs])
+    print("   baseline - LUT = %+.3f IoU (per seed %s). The LUT's cut was trained on the stain pixels and the true mask;"
+          " the baseline trains nothing, yet is at least as good: on this easy task the LUT does not beat a training-free"
+          " baseline.\n   Otsu cannot say 'no stain' (it splits a clean patch too): it paints %.2f of the pixels of a"
+          " stain-free test patch, the LUT %.4f."
+          % ((otsu_iou - lut_iou).mean(), ", ".join("%+.3f" % v for v in otsu_iou - lut_iou), otsu_fp.mean(),
+             max(r["lut_fp"] for r in runs)))
+    assert np.all(otsu_iou > lut_iou) and 0.0 < (otsu_iou - lut_iou).mean() < 0.06   # 基準線が上、差は小さい(実測に従う)
+    assert otsu_fp.min() > 0.3 and max(r["lut_fp"] for r in runs) < 0.01             # 違いは「汚れ無し」を言えるか
+    assert np.mean([r["sup_iou"] for r in runs]) < lut_iou.mean() - 0.1             # class_2dim_sup は LUT に負ける
     assert np.mean([r["uns_z"] for r in runs]) > np.mean([r["uns_raw"] for r in runs]) + 0.1
     w_all = np.concatenate([r["stain_w"] for r in runs])
     i_all = np.concatenate([r["lut_iou_all"] for r in runs])
@@ -526,7 +642,7 @@ def main():
     for n in names:
         print("   %-5s %.3f +- %.3f  (min %.3f, max %.3f)" % (n, acc[n].mean(), acc[n].std(), acc[n].min(), acc[n].max()))
         assert acc[n].std() > 0.0, n                       # 分割で揺れている(同じ結果の写しではない)
-        assert acc[n].min() > 0.6, n
+        assert acc[n].min() > 0.8, n
     best = max(names, key=lambda n: acc[n].mean())
 
     # --- 4. 閉形式の参照 ---------------------------------------------------------------------------
@@ -572,7 +688,7 @@ def main():
     print("\n6. GMM rejection (cut = %d %% point of the validation log density):" % round(100 * REJECT_Q))
     print("   corrosion pits (never trained) rejected %.3f (per seed %s)" % (ru.mean(), ", ".join("%.2f" % v for v in ru)))
     print("   known test patches rejected %.3f (limit %.3f = q + 3 sqrt(q(1-q)/n))" % (rk.mean(), tol_frr))
-    assert ru.mean() >= 0.8 and rk.mean() <= tol_frr
+    assert ru.mean() >= 0.9 and rk.mean() <= tol_frr
     if have_sk:
         sk_u = np.array([r["sk"]["reject_unknown"] for r in runs])
         sk_k = np.array([r["sk"]["reject_known"] for r in runs])
@@ -587,6 +703,20 @@ def main():
         for lab in L.classify_class_gmm(g1, r["X"][r["unk"]][ok])["labels"]:
             accepted_as[lab] = accepted_as.get(lab, 0) + 1
     print("   pits that slipped through were called: %s" % (accepted_as or "none"))
+    # 基準線: 特徴 1 個(異常画素の連結成分の数)の外れ値判定。検証側の両側 2.5 % 点の外を拒否する。
+    cu = np.array([r["cnt_unknown"] for r in runs])
+    ck = np.array([r["cnt_known"] for r in runs])
+    print("   BASELINE one feature (number of anomalous components), two-sided 2.5 %% cuts of the validation side:"
+          " pits %.3f (per seed %s), known rejected %.3f" % (cu.mean(), ", ".join("%.2f" % v for v in cu), ck.mean()))
+    print("   -> the GMM's 'I do not know' (pits %.3f, known %.3f) is no better than the one-feature outlier test"
+          " (pits %.3f, known %.3f)" % (ru.mean(), rk.mean(), cu.mean(), ck.mean()))
+    assert cu.mean() >= ru.mean() and ck.mean() <= tol_frr
+    pool = runs + extra
+    pg = np.mean([r["reject_unknown"] for r in pool])
+    pc = np.mean([r["cnt_unknown"] for r in pool])
+    n_pit = N_UNKNOWN * len(pool)
+    print("   %d seeds pooled (%d pits): GMM %.3f [Wilson 95 %% %.3f-%.3f], one-feature baseline %.3f [%.3f-%.3f]"
+          % (len(pool), n_pit, pg, *wilson(round(pg * n_pit), n_pit), pc, *wilson(round(pc * n_pit), n_pit)))
 
     # --- 7. 出来すぎていないか / leakage --------------------------------------------------------------
     perm = np.array([r["perm_acc"] for r in runs])
@@ -621,17 +751,54 @@ def main():
     print("   defect accuracy by weight (lower / upper third): %s"
           % ", ".join("%s %.3f / %.3f" % t for t in lo_hi))
     assert all(lo < hi for _, lo, hi in lo_hi)               # 誤りは薄い欠陥に集まる
-    # 傷を見落とす向き: 画素の特徴は研削の筋(x)を横切る勾配 |dY/dx| なので、筋に沿う傷は見えにくい
-    yy = np.concatenate([r["yte"] for r in runs])
-    pp = np.concatenate([r["pred"]["gmm1"] for r in runs])
-    aa = np.concatenate([r["lays"][r["te"]] for r in runs])
-    sc = yy == "scratch"
-    along, across = sc & (aa < 15), sc & (aa > 45)
-    r_al, r_ac = float(np.mean(pp[along] == "scratch")), float(np.mean(pp[across] == "scratch"))
-    print("   gmm1 scratch recall: within 15 deg of the grinding lay %.3f (n %d), more than 45 deg %.3f (n %d);"
-          " missed scratches called normal %d of %d" % (r_al, along.sum(), r_ac, across.sum(),
-                                                        int(np.sum(pp[sc] == "normal")), int(np.sum(pp[sc] != "scratch"))))
-    assert r_al < r_ac
+    # 傷を見落とす向き: 種 5 本(主)と、種を 20 本に増やした合算(割合と Wilson 95 % 区間)
+    (a5, n5), (c5, m5), _, _ = scratch_recall(runs)
+    (aa_k, aa_n), (ac_k, ac_n), (st_k, st_n), called_normal = scratch_recall(runs + extra)
+    lo_a, hi_a = wilson(aa_k, aa_n)
+    lo_c, hi_c = wilson(ac_k, ac_n)
+    print("   gmm1 scratch recall, 5 seeds: within 15 deg of the grinding lay %.3f (%d of %d), more than 45 deg %.3f (%d of %d)"
+          % (a5 / n5, a5, n5, c5 / m5, c5, m5))
+    print("   gmm1 scratch recall, %d seeds pooled: within 15 deg %.3f (%d of %d, Wilson 95 %% %.3f-%.3f) -> missed %.3f"
+          " (%.3f-%.3f); more than 45 deg %.3f (%d of %d, %.3f-%.3f); all scratches %.3f (%d of %d), %d called normal"
+          % (len(runs) + len(extra), aa_k / aa_n, aa_k, aa_n, lo_a, hi_a, 1 - aa_k / aa_n, 1 - hi_a, 1 - lo_a,
+             ac_k / ac_n, ac_k, ac_n, lo_c, hi_c, st_k / st_n, st_k, st_n, called_normal))
+    assert hi_a < 0.5 and lo_c > 0.85                      # 筋に沿う傷は半分以上を見落とし、立った傷はほぼ見える(区間で)
+    assert aa_n >= 100 and ac_n >= 400
+
+    # --- 8. 見落としの原因を確かめる実験 / what does not fix the missed scratches ----------------------------
+    # 「筋を横切る勾配 |dY/dx| を選んだから筋沿いの傷も消える」という説明は支持されない: y 方向の勾配を足しても
+    # 置き換えても、照明の向きを回しても、筋に沿う傷は見えるようにならない。原因はこの実験では特定していない。
+    print("\n8. what does not fix the scratches along the lay (5 seeds, GMM(1); recall within 15 deg / more than 45 deg)")
+    print("   %-34s %-18s %-18s" % ("pixel features / light", "within 15 deg", "more than 45 deg"))
+    print("   %-34s %-18s %-18s" % ("|dY/dx| (as is)", "%.3f (%d of %d)" % (a5 / n5, a5, n5),
+                                    "%.3f (%d of %d)" % (c5 / m5, c5, m5)))
+    fix_along = {}
+    for tag, kw in (("|dY/dx| + |dY/dy| added", {"gy": "add"}), ("|dY/dy| instead of |dY/dx|", {"gy": "replace"})):
+        rr = [run_seed(sd, full=False, **kw) for sd in SEEDS]
+        (k1, n1), (k2, n2), _, _ = scratch_recall(rr)
+        fix_along[tag] = k1 / n1
+        print("   %-34s %-18s %-18s" % (tag, "%.3f (%d of %d)" % (k1 / n1, k1, n1), "%.3f (%d of %d)" % (k2 / n2, k2, n2)))
+    light_rows = [("base light (0.55, 0.30, 0.78)", runs)]
+    for nm, lt in LIGHT_VARIANTS:
+        light_rows.append((nm, [run_seed(sd, light=lt, full=False) for sd in SEEDS]))
+    for nm, rr in light_rows[1:]:
+        (k1, n1), (k2, n2), _, _ = scratch_recall(rr)
+        fix_along[nm] = k1 / n1
+        print("   %-34s %-18s %-18s" % ("light " + nm, "%.3f (%d of %d)" % (k1 / n1, k1, n1), "%.3f (%d of %d)" % (k2 / n2, k2, n2)))
+    assert all(v < 0.5 for v in fix_along.values()), fix_along      # どれも直らない(各 n = 40 の点推定)
+
+    # --- 9. 照明の向きを変えると「分からない」の率は動く / the rejection rate belongs to one lighting ----------
+    print("\n9. pit rejection under other lighting (5 seeds each; GMM log density vs one-feature baseline; known = false rejection)")
+    print("   %-34s %-22s %-22s" % ("light", "GMM pits / known", "baseline pits / known"))
+    rej_g = []
+    for nm, rr in light_rows:
+        g_u, g_k = np.mean([r["reject_unknown"] for r in rr]), np.mean([r["reject_known"] for r in rr])
+        c_u, c_k = np.mean([r["cnt_unknown"] for r in rr]), np.mean([r["cnt_known"] for r in rr])
+        rej_g.append(g_u)
+        print("   %-34s %.3f / %.3f          %.3f / %.3f" % (nm, g_u, g_k, c_u, c_k))
+    print("   -> the GMM's pit rejection ranges %.3f-%.3f over four lightings: the headline rate is one condition's value"
+          % (min(rej_g), max(rej_g)))
+    assert max(rej_g) - min(rej_g) >= 0.1
 
     # --- 図 / figures ------------------------------------------------------------------------------
     r0 = runs[0]
@@ -644,10 +811,11 @@ def main():
     for a in (mosaic(pics), mosaic(anoms)):
         assert np.isfinite(a).all() and float(np.ptp(a)) > 0.3
     figs.save_grid("defect_patches", [mosaic(pics), mosaic(anoms)],
-                   captions=["rows: %s; columns: weight %s" % (" / ".join(kinds), " ".join("%.2f" % w for w in ws)),
+                   captions=["rows: %s; columns: weight %s (the normal row has no defect: its weight is unused)"
+                             % (" / ".join(kinds), " ".join("%.2f" % w for w in ws)),
                              "class_ndim_norm: pixels unlike training normal metal (Mahalanobis > %.2f)"
                              % r0["pix_thresh"]],
-                   ncols=2, caption="rendered ground-metal patches (height defects shade, the stain changes colour)")
+                   ncols=2, caption="rendered (synthetic) ground-metal patches (height defects shade, the stain changes colour)")
     s_te = r0["s_te"]
     k_mid = int(s_te[int(np.argmin(np.abs(r0["stain_w"] - 0.25)))])
     im = r0["imgs"][k_mid]
@@ -665,7 +833,7 @@ def main():
                    ncols=5, gray=[False, True, True, True, True], caption="painting the stain pixel by pixel")
     figs.save_table("stain_pixel_iou", ["pixel classifier", "IoU on test stains", "false positive on normal"],
                     pixel_table, title="stain pixels, %d seeds" % len(SEEDS),
-                    caption="cuts chosen on training pixels only")
+                    caption="LUT cut: supervised on training stain patches and true masks; Otsu baseline trains nothing")
     figs.save_table("classifier_accuracy", ["Fullseye", "accuracy", "second implementation", "accuracy",
                                             "|d acc| / tol", "agreement"],
                     ref_rows, title="%d seeds x %d test patches" % (len(SEEDS), n_te),
@@ -692,18 +860,19 @@ def main():
     edges = np.linspace(0, 1, 6)
     mid = 0.5 * (edges[1:] + edges[:-1])
     series = []
-    for n, style in (("gmm1", None), ("mlp", "dashed"), ("knn", "dotted")):
+    for n, style in (("gmm1 (solid)", None), ("mlp (dashed)", "dashed"), ("knn (dotted)", "dotted")):
         a = []
         for lo, hi in zip(edges[:-1], edges[1:]):
-            hit = [np.mean(r["pred"][n][m] == r["yte"][m]) for r in runs
+            hit = [np.mean(r["pred"][n.split()[0]][m] == r["yte"][m]) for r in runs
                    for m in [(r["yte"] != "normal") & (r["weights"][r["te"]] >= lo) & (r["weights"][r["te"]] < hi)]
                    if m.any()]
             a.append(float(np.mean(hit)))
         series.append((n, mid, np.array(a)))
     figs.save_plot("accuracy_by_weight", series, xlabel="defect weight (depth / stain density, 0-1)",
                    ylabel="accuracy on defect patches", title="errors gather on faint defects",
+                   ylim=(0.0, 1.0),
                    kinds=["line"] * 3, styles=[None, "dashed", "dotted"], colors=["emphasis", "neutral", "reference"],
-                   caption="%d seeds, test split; best overall %s %.3f" % (len(SEEDS), best, acc[best].mean()))
+                   caption="%d seeds, test split; best overall %s %.3f; axis from 0" % (len(SEEDS), best, acc[best].mean()))
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("PASS")

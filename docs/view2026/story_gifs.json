@@ -18489,17 +18489,17 @@
             1600,
             1600
           ],
-          "bytes": 728672,
+          "bytes": 742525,
           "color_mad": [
-            0.52,
+            0.6116,
             0.0,
             0.0362,
             0.1151,
             0.091,
             0.0304
           ],
-          "max_color_mad": 0.52,
-          "source_sha256": "3838e4bfb622e18a826062861acb5f3d69d3f05de181ac5e2c7e6c33e3480bd1"
+          "max_color_mad": 0.6116,
+          "source_sha256": "b804d778674601cf88fa94ceab5a6dee1228079b4118249c14e496c236c989f6"
         },
         "en": {
           "path": "articles/assets/poc/poc_polarization_specular/story.en.gif",
@@ -18581,17 +18581,17 @@
             1600,
             1600
           ],
-          "bytes": 728672,
+          "bytes": 742525,
           "color_mad": [
-            0.52,
+            0.6116,
             0.0,
             0.0362,
             0.1151,
             0.091,
             0.0304
           ],
-          "max_color_mad": 0.52,
-          "source_sha256": "c80343526f685751031440a668e89ae77d652607886091ddc47d9ae723d80269"
+          "max_color_mad": 0.6116,
+          "source_sha256": "ba18c660ed41f224d278d2fca48ffdcfac779b87a5907369d710a959cde9978d"
         }
       },
       "thumbnail": {
@@ -31710,14 +31710,14 @@
             1600,
             1600
           ],
-          "bytes": 160725,
+          "bytes": 165155,
           "color_mad": [
             0.323,
-            0.0296,
-            0.0609
+            0.031,
+            0.0607
           ],
           "max_color_mad": 0.323,
-          "source_sha256": "5b44ad876756ca8338dd49c534ca48e7952526db0959afcc5ac07dcd759f12ce"
+          "source_sha256": "bafbfc7e2258fdf21f3abd0bfe394f97cbfb14f9eb074f4fd16604ea6275a5ab"
         },
         "en": {
           "path": "articles/assets/poc/poc_caltab_chain_truth/story.en.gif",
@@ -31765,14 +31765,14 @@
             1600,
             1600
           ],
-          "bytes": 160725,
+          "bytes": 165155,
           "color_mad": [
             0.323,
-            0.0296,
-            0.0609
+            0.031,
+            0.0607
           ],
           "max_color_mad": 0.323,
-          "source_sha256": "045e21d71506711e21024ba2b5300bb7a530a5d0ad89789a170d596bb56d032a"
+          "source_sha256": "7d143a7a4d4f60dd90be679e9ac368a3b34f87cdda2cec075cd95604b109eb9d"
         }
       },
       "thumbnail": {
@@ -34523,10 +34523,17 @@
               "file": "01_slices.png",
               "content_box": [
                 0,
-                91,
+                0,
                 720,
-                508
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_ct_casting_sparse_views.jpg"
+              }
             },
             {
               "file": "02_ranking.png",
@@ -34567,15 +34574,15 @@
             1600,
             1600
           ],
-          "bytes": 312458,
+          "bytes": 228641,
           "color_mad": [
-            0.1023,
+            0.1014,
             0.0258,
             0.1502,
             0.0718
           ],
           "max_color_mad": 0.1502,
-          "source_sha256": "3301925a7cba176cfae5f26c99e977b95506a23ff4e5bc962d0d21c3b9bdcab1"
+          "source_sha256": "ab38eafe51e81a402c06f2911e4262a5c5103d388ed411267eaff291f7e0650f"
         },
         "en": {
           "path": "articles/assets/poc/poc_ct_casting_sparse_views/story.en.gif",
@@ -34584,10 +34591,17 @@
               "file": "01_slices.png",
               "content_box": [
                 0,
-                91,
+                0,
                 720,
-                508
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_ct_casting_sparse_views.jpg"
+              }
             },
             {
               "file": "02_ranking.png",
@@ -34628,23 +34642,30 @@
             1600,
             1600
           ],
-          "bytes": 312458,
+          "bytes": 228641,
           "color_mad": [
-            0.1023,
+            0.1014,
             0.0258,
             0.1502,
             0.0718
           ],
           "max_color_mad": 0.1502,
-          "source_sha256": "2ee5fa37ea7048e81624ef2e7f03d31add71d804045c0121f79633d654bd3ac2"
+          "source_sha256": "66bc08a071d7dd11962ca7f75bd5b284e1a2f4bffb8fde51775bf24a3b26dac0"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy.png",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_ct_casting_sparse_views.jpg"
       },
       "reason": null,
       "cover": "01_slices.png",
       "still": "articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png",
       "alt": {
         "ja": "360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。",
-        "en": "CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume"
+        "en": "Voids in a synthetic aluminium casting were scanned with cone-beam CT, rebuilt with FDK and iterative methods and scored on exact ellipsoids. FDK, last by image error, can still size voids better than the iterative method that ranks first. The best-looking reconstruction is not always the best measurement."
       }
     },
     "poc_surface_defect_classifiers": {
@@ -34694,12 +34715,12 @@
               "file": "03_stain_pixel_iou.png",
               "content_box": [
                 0,
-                236,
+                222,
                 720,
-                217
+                245
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 3.323864
+              "source_aspect": 2.9375
             },
             {
               "file": "04_classifier_accuracy.png",
@@ -34742,17 +34763,17 @@
             1600,
             1600
           ],
-          "bytes": 321030,
+          "bytes": 320057,
           "color_mad": [
-            0.2666,
+            0.2608,
             0.255,
-            0.0331,
+            0.0356,
             0.0375,
             0.0242,
-            0.0795
+            0.0998
           ],
-          "max_color_mad": 0.2666,
-          "source_sha256": "ae21372b488ea845036b865db49b3053f1a6d8b549518994b8b282fb1ad7ae38"
+          "max_color_mad": 0.2608,
+          "source_sha256": "02bc511a33d37a5a26cc1ed0a4657850b6c3bff5a298b30db3987b4f2ed022e1"
         },
         "en": {
           "path": "articles/assets/poc/poc_surface_defect_classifiers/story.en.gif",
@@ -34788,12 +34809,12 @@
               "file": "03_stain_pixel_iou.png",
               "content_box": [
                 0,
-                236,
+                222,
                 720,
-                217
+                245
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 3.323864
+              "source_aspect": 2.9375
             },
             {
               "file": "04_classifier_accuracy.png",
@@ -34836,17 +34857,17 @@
             1600,
             1600
           ],
-          "bytes": 321030,
+          "bytes": 320057,
           "color_mad": [
-            0.2666,
+            0.2608,
             0.255,
-            0.0331,
+            0.0356,
             0.0375,
             0.0242,
-            0.0795
+            0.0998
           ],
-          "max_color_mad": 0.2666,
-          "source_sha256": "d672a50271a1397d78bcf883069b63db492b45894fccd1b7cff93446a5e18e65"
+          "max_color_mad": 0.2608,
+          "source_sha256": "d997d5b2a040c8a61af71658806f09bcc1af5de4cfa082a339b91d8b67f0b42f"
         }
       },
       "thumbnail": {
@@ -34860,8 +34881,8 @@
       "cover": "01_defect_patches.png",
       "still": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
       "alt": {
-        "ja": "rendered ground-metal patches (height defects shade, the stain changes colour)",
-        "en": "Small pieces of ground metal were drawn with scratches, dents and stains by physics, and sorted with trained classifiers. Stained pixels were painted with an overlap of 0.915 by a classifier learned from normal pixels. Flaws that run with the grinding marks are easily missed, and unknown holes are rejected."
+        "ja": "rendered (synthetic) ground-metal patches (height defects shade, the stain changes colour)",
+        "en": "Synthetic ground-metal patches carry scratches, dents and stains, and learned models sort them. Only 0.324 of the scratches lying along the lay were found, and the cause is not identified. A single-feature outlier check rejected unseen pits more often than the learned density model did."
       }
     }
   }
