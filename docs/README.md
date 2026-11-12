@@ -312,7 +312,20 @@ fullseye setup --uninstall      # setup が作った物を並べて見せ、聞�
 消すのは**台帳**(`%LOCALAPPDATA%\Fullseye\setup\install_ledger.json`、Linux は `~/.local/share/fullseye/`)に載った物だけです。
 Studio の設定とキャッシュは既定で残し、聞いたときだけ消します。`pip uninstall` は、実行中の `fullseye.exe` を Windows が
 消せないため、このコマンドが終わった後に別プロセスで走ります。Windows ではショートカットを登録すると
-**設定 > アプリ > インストールされているアプリ > Fullseye** にも出て、同じコマンドが呼ばれます。
+**設定 > アプリ > インストールされているアプリ > Fullseye** にも出ます。その項目は setup フォルダの `fullseye-uninstall.cmd` を呼び、
+venv や Python を消した後でも動きます。
+
+台帳は**消す前に中身を検証**します。消すのは setup 自身が作る名前と置き場(`Fullseye Studio.lnk`・`fullseye.ico`・
+`fullseye-uninstall.cmd`・Linux の `fullseye-studio.desktop` と png、スタートメニューの `Fullseye` フォルダ、setup フォルダ)と、
+完全一致の `Uninstall\Fullseye` キーだけです。手で書き換えた台帳にあるそれ以外の物や、別の Python 環境(venv A と venv B)が作った物は、
+`--yes` でも消さずに「台帳にあるが消さなかったもの」として表示します。壊れた台帳は警告して「台帳なし」として扱います。
+`pip uninstall` の段は、この Python に pip があり、入っている `fullseye` が動いている物と同じ場所のときだけ出します
+(そうでなければ `uv pip uninstall` のコマンドを案内し、終了コード 3 で終わります)。
+
+**既知の制約**(直していません・未確認): (1) Microsoft Store 版 Python(MSIX)では `%APPDATA%` / `%LOCALAPPDATA%` への書き込みが
+私的な領域に振り替えられ、スタートメニューやアプリの一覧に出ない可能性があります。(2) conda の `pythonw.exe` を環境を有効にせず
+起動すると DLL が見つからないことがあります。(3) `.lnk` に AppUserModelID を書いていないので、タスクバーのピン留めとの結びつきは未確認です。
+
 
 **先に `pip uninstall fullseye` を手でやってしまった場合:** pip はショートカットなど setup が作った物を**消しません**。
 次を手で消してください(在る物だけ)。

@@ -311,7 +311,22 @@ fullseye setup --uninstall      # lists what setup created, asks, then runs pip 
 It removes only what the install ledger (`%LOCALAPPDATA%\Fullseye\setup\install_ledger.json`, Linux
 `~/.local/share/fullseye/`) recorded, keeps your Studio settings and cache unless you say otherwise, and runs
 `pip uninstall` in a separate process after it exits (Windows cannot delete a running `fullseye.exe`). On Windows the
-same command is behind **Settings > Apps > Installed apps > Fullseye** once you have registered the shortcuts.
+same cleanup is behind **Settings > Apps > Installed apps > Fullseye** once you have registered the shortcuts; that entry
+runs `fullseye-uninstall.cmd` (in the setup folder), which keeps working after the venv or Python was deleted.
+
+The ledger is **checked before anything is deleted**: only the file names and folders that setup itself creates
+(`Fullseye Studio.lnk`, `fullseye.ico`, `fullseye-uninstall.cmd`, the `fullseye-studio.desktop` / png of Linux, the Start menu
+`Fullseye` folder, the setup folder) and the exact `Uninstall\Fullseye` key are removed. Anything else listed in a (hand-edited)
+ledger, and anything created by a different Python environment (venv A vs venv B), is shown under "In the ledger but NOT
+removed" and left alone, even with `--yes`. A broken ledger is reported and treated as absent. The `pip uninstall` step is
+offered only if this Python has pip and the `fullseye` it has installed is the one that is running (otherwise it prints the
+`uv pip uninstall` command and exits with code 3).
+
+**Known limitations** (not fixed, unverified): (1) with a Microsoft Store Python (MSIX) writes under `%APPDATA%` /
+`%LOCALAPPDATA%` may be redirected to a private area, so the Start menu entry or the Apps list may not appear;
+(2) with conda, starting `pythonw.exe` without the environment activated may fail to find DLLs;
+(3) the `.lnk` carries no AppUserModelID, so how it ties to a taskbar pin is not verified.
+
 
 **If you already ran `pip uninstall fullseye` by hand:** pip does **not** remove shortcuts or anything else setup
 created. Delete these yourself (whatever exists):

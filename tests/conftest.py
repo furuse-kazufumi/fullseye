@@ -124,6 +124,53 @@ def _isolate_studio_settings(tmp_path_factory):
             os.environ[_STUDIO_SETTINGS_ENV] = prev
 
 
+def drop_fullseye_test_regkey():
+    """試験用レジストリキー HKCU\\Software\\FullseyeTest を、子キーごと消す(Windows 以外では何もしない)。
+
+    テストの後始末が親キーを残すと、空の Software\\FullseyeTest が利用者の実レジストリに居座る(2026-11-12 のレビューで実測)。
+    この名前空間はテスト専用(本番コードは許さない)なので、残っていれば全部消してよい。"""
+    if sys.platform != "win32":
+        return
+    import winreg
+
+    def rec(parent, name):
+        try:
+            k = winreg.OpenKey(parent, name, 0, winreg.KEY_ALL_ACCESS)
+        except OSError:
+            return
+        with k:
+            while True:
+                try:
+                    sub = winreg.EnumKey(k, 0)
+                except OSError:
+                    break
+                rec(k, sub)
+        try:
+            winreg.DeleteKey(parent, name)
+        except OSError:
+            pass
+    rec(winreg.HKEY_CURRENT_USER, r"Software\FullseyeTest")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _isolate_install_ledger(tmp_path_factory):
+    """``fullseye-rag`` / ``fullseye setup`` / ``fullseye.shortcuts`` が書く台帳を**セッション全体で**一時ファイルへ逃がす。
+
+    台帳の既定の置き場は利用者のデータ領域(%LOCALAPPDATA%/Fullseye/setup/install_ledger.json)。隔離を個々のテストに
+    置いていたので、置き忘れたテスト(test_rag_setup.py など)から本物の台帳に一時フォルダを指す行が残りうる。
+    セッション autouse でここに 1 つだけ置く(個別に FULLSEYE_LEDGER を向けるテストはそちらが優先)。"""
+    prev = os.environ.get("FULLSEYE_LEDGER")
+    os.environ["FULLSEYE_LEDGER"] = str(tmp_path_factory.mktemp("install_ledger") / "install_ledger.json")
+    try:
+        yield
+    finally:
+        if prev is None:
+            os.environ.pop("FULLSEYE_LEDGER", None)
+        else:
+            os.environ["FULLSEYE_LEDGER"] = prev
+        drop_fullseye_test_regkey()
+
+
 #: api の遮断器(プロセスで 1 つの集合)。開けたまま残すと、同じワーカーで後に走るテストの
 #: GPU / 速い双子の経路が黙って閉じる(1.0 前の修正 2026-11-05 t8-flake: T6 が median_image で落ちた)。
 _API_BREAKERS = ("_GPU_OPEN", "_FAST_OPEN")
