@@ -271,8 +271,14 @@ def test_a7_strip_says_why_it_is_empty_for_a_bypassed_stage_or_an_unused_knob():
     win, model = _window3()
     strip = win._strip
     strip["toggle"].setChecked(True)
-    strip["which"].setCurrentIndex(strip["which"].findData("b"))      # gaussian's b is unused
+    # ★2026-11-12: gaussian の b は端の扱いを選ぶ(未使用ではなかった)。本当に未使用のつまみで確かめる。
+    model.add_stage("sobel_mag", 0.4, 0.5)
+    model.step_states()
+    win._refresh_stage_list(select=len(model.stages) - 1)
+    strip["which"].setCurrentIndex(strip["which"].findData("b"))      # sobel_mag's b is unused
+    strip["refresh"]()
     assert strip["thumbs"] == [] and strip["message"].text()
+    win._refresh_stage_list(select=1)
     strip["which"].setCurrentIndex(strip["which"].findData("a"))
     model.set_bypass(1, True)
     strip["refresh"]()

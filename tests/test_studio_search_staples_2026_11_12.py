@@ -222,3 +222,118 @@ def test_hand_authored_help_says_what_the_knobs_really_do():
     assert diff[12:-12, 12:-12].max() < 1e-12                  # ただし端の近くだけ(σ = 1.65、窓の半径 7)
     assert "border" in _help("gaussian") and "reserved / unused" not in _help("gaussian")
     assert "端の扱い" in _help("gaussian", "ja")
+
+
+# --------------------------------------------------------------------------- 対訳の表が画面に届いているか
+def test_every_translated_row_in_the_table_reaches_tr():
+    """i18n.json の最上位に置いた行は、一覧に載った一部しか読まれていなかった(検索結果の見出し・「試す」
+    「ヘルプ」のボタンが日本語 UI でも英語のままだった)。最上位の行は全部 tr() に届く。"""
+    import json
+    pytest.importorskip("PySide6")
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    import studio
+    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(here, "studio_assets", "i18n.json"), encoding="utf-8") as f:
+        data = json.load(f)
+    top = [k for k, v in data.items() if k not in studio._I18N_SECTIONS and isinstance(v, dict)]
+    assert len(top) >= 20
+    prev = studio._UI_LANG["code"]
+    studio._UI_LANG["code"] = "ja"
+    try:
+        dead = [k for k in top if "ja" in data[k] and studio.tr(k) != data[k]["ja"]]
+        assert not dead, dead
+        assert studio.tr("Applicable to the current input") == "現在の入力に適用できる"
+        assert studio.tr("Common choices") == "定番"
+    finally:
+        studio._UI_LANG["code"] = prev
+
+
+def test_every_tr_literal_in_studio_has_a_japanese_row():
+    """studio.py の tr("…") に渡している文は、全部が表に日本語の行を持つ(持たないと日本語 UI に英語が残る)。"""
+    import ast
+    pytest.importorskip("PySide6")
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    import studio
+    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(here, "studio.py"), encoding="utf-8") as f:
+        tree = ast.parse(f.read())
+    keys = set()
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "tr"
+                and len(node.args) == 1 and isinstance(node.args[0], ast.Constant)
+                and isinstance(node.args[0].value, str)):
+            keys.add(node.args[0].value)
+    assert len(keys) >= 200                                      # 走査が空を通していない
+    same_in_japanese = {"A | B"}                                 # 記号だけで訳すものが無い
+    missing = sorted(k for k in keys - same_in_japanese if "ja" not in studio.STRINGS_I18N.get(k, {}))
+    assert not missing, missing
+
+
+# --------------------------------------------------------------------------- 「未使用」と出すつまみ
+def test_knobs_shown_as_unused_really_do_nothing():
+    """Studio が「b (–) · この op では使いません」と出して無効にするつまみは、動かしても出力が変わらない。
+
+    直す前: gaussian / mean_box / median の b(端の扱い)と gerode / gdilate / gopen / gclose の b(構造要素の形)が
+    「未使用」と出て、つまみが無効になっていた(vol_gaussian の b を合わせて 8 本。値域の両端まで振ると出力が最大 0.23〜0.54 動く)。
+    """
+    import warnings
+    pytest.importorskip("PySide6")
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    import fullseye as fs
+    import param_specs
+    import studio
+    rng = np.random.default_rng(5)
+    img = np.clip(rng.normal(0.35, 0.08, (72, 96)), 0, 1); img[20:50, 30:70] += 0.35
+    img = np.clip(img, 0, 1)
+    inputs = (img, (img > 0.5).astype(np.float64), np.clip(rng.random((12, 24, 24)), 0, 1))
+    claims = {}
+    for name, roles in studio._ARG_ROLES.items():
+        for letter, role in zip("ab", roles):
+            if role == "":
+                claims.setdefault(name, set()).add(letter)
+    for name in param_specs.PARAM_SPECS:
+        sp = param_specs.spec_for(name)
+        for letter in "ab":
+            if sp[letter].get("kind") == "unused":
+                claims.setdefault(name, set()).add(letter)
+    assert len(claims) >= 50
+    checked, moved = 0, []
+    for name, letters in sorted(claims.items()):
+        for letter in sorted(letters):
+            for x in inputs:
+                try:
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        outs = [np.asarray(fs.apply(x, name, v if letter == "a" else 0.5,
+                                                    v if letter == "b" else 0.5, on_error="raise"), float)
+                                for v in (0.07, 0.31, 0.5, 0.69, 0.93)]
+                except Exception:                                   # noqa: BLE001 — この入力の型では走らない
+                    continue
+                checked += 1
+                if any(o.shape != outs[2].shape or not np.array_equal(o, outs[2], equal_nan=True) for o in outs):
+                    moved.append((name, letter))
+                break
+    assert checked >= 45, checked                                   # 走った件数に下限(空を通さない)
+    assert not moved, moved
+
+
+def test_border_and_shape_choices_follow_the_op_source():
+    import ops
+    import param_specs as PS
+    for name in ("gaussian", "mean_box", "median"):
+        sp = PS.spec_for(name)["b"]
+        assert sp["choices"] == ["reflect", "nearest", "constant", "wrap"]
+        for x in np.linspace(0.0, 1.0, 1201):
+            assert sp["choices"][PS.knob_to_display(sp, x)] == ops._border(x), (name, x)
+        for i in range(4):
+            assert PS.knob_to_display(sp, PS.display_to_knob(sp, i)) == i
+        assert PS.display_to_knob(sp, 0) == 0.5                     # 既定(reflect)は保存済みの値 0.5 のまま
+    shape = PS.spec_for("gdilate")["b"]
+    assert shape["choices"] == ["square", "cross", "disc", "line"]
+    for name in ("gerode", "gdilate", "gopen", "gclose"):
+        assert PS.spec_for(name)["b"] is shape or PS.spec_for(name)["b"]["choices"] == shape["choices"]
+    for x in np.linspace(0.0, 1.0, 601):
+        se = ops._se(x, 7)
+        want = PS.knob_to_display(shape, x)
+        got = 0 if se is None else (1 if se.sum() == 13 else (3 if se.sum() == 7 else 2))
+        assert got == want, x

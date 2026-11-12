@@ -3554,9 +3554,10 @@ def op_detail(row) -> str:
 # listed fall back to the implementation source (op_impl_source), which is honest
 # and universal (it shows exactly how a and b are used). "" means the knob is unused.
 _ARG_ROLES = {
-    "gaussian": ("blur amount — Gaussian σ = 0.3 + 2.7·a", ""),
-    "mean_box": ("box size (odd kernel from a)", ""),
-    "median": ("kernel size (odd, from a)", ""),
+    # ★2026-11-12: この 3 本の b は「未使用」("")と書いていたが、2026-09-17 から端の扱いを選ぶ(ops._border)。
+    "gaussian": ("blur amount — Gaussian σ = 0.3 + 2.7·a", "border handling — b ≤ 0.5 reflect, then nearest / constant (0) / wrap"),
+    "mean_box": ("box size (odd kernel from a)", "border handling — b ≤ 0.5 reflect, then nearest / constant (0) / wrap"),
+    "median": ("kernel size (odd, from a)", "border handling — b ≤ 0.5 reflect, then nearest / constant (0) / wrap"),
     "min_filter": ("kernel size (from a)", ""),
     "max_filter": ("kernel size (from a)", ""),
     "gamma": ("gamma = 0.5 + 1.5·a (a<0.5 brightens)", ""),
@@ -5847,6 +5848,10 @@ def _icon(QtGui, QtCore, name, color=TEXT, px=40):
 _ASSETS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_assets")
 
 
+#: i18n.json の最上位にある「節」の名前(これ以外の最上位の dict は 1 つの文の対訳の行)。
+_I18N_SECTIONS = ("languages", "tooltips", "guide", "strings", "pending_translation")
+
+
 def _load_i18n():
     try:
         with open(os.path.join(_ASSETS, "i18n.json"), encoding="utf-8") as f:
@@ -5866,6 +5871,15 @@ def _load_i18n():
     for key in RUN_WORKER_I18N_KEYS:
         if key in data:                         # slice-5 rows live beside the older top-level rows
             strings[key] = data[key]
+    # ★2026-11-12: i18n.json の最上位に置かれた行は、上の一覧に載っているものしか読んでいなかった。
+    # 検索結果の見出し(Applicable to the current input / Needs preprocessing / Other)やボタン
+    # (Try on current data / Help)は訳が表にあるのに、日本語 UI でも英語のままだった。
+    # 最上位の「言語コード → 文」の行は全部読む(節の名前は除く)。
+    for key, row in data.items():
+        if key in _I18N_SECTIONS or not isinstance(row, dict) or not row:
+            continue
+        if all(isinstance(k, str) and len(k) <= 3 and isinstance(v, str) for k, v in row.items()):
+            strings.setdefault(key, row)
     return (langs, data.get("tooltips", {}) or {}, data.get("guide", {}) or {"en": ""}, strings)
 
 

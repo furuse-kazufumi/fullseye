@@ -419,6 +419,17 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+    "border handling": {"ja": "端の扱い", "zh": "边界处理", "tw": "邊界處理", "ko": "가장자리 처리", "de": "Randbehandlung", "hi": "किनारे का व्यवहार"},
+    "element shape": {"ja": "構造要素の形", "zh": "结构元素形状", "tw": "結構元素形狀", "ko": "구조 요소 모양", "de": "Form des Strukturelements", "hi": "संरचना तत्व का आकार"},
+    "border handling — b ≤ 0.5 reflect, then nearest / constant (0) / wrap": {"ja": "端の扱い — b ≤ 0.5 は reflect(折り返し)、その先は nearest / constant(0)/ wrap", "zh": "边界处理 — b ≤ 0.5 为 reflect,之后为 nearest / constant(0)/ wrap", "tw": "邊界處理 — b ≤ 0.5 為 reflect,之後為 nearest / constant(0)/ wrap", "ko": "가장자리 처리 — b ≤ 0.5는 reflect, 그다음 nearest / constant(0) / wrap", "de": "Randbehandlung — b ≤ 0,5 reflect, danach nearest / constant (0) / wrap", "hi": "किनारे का व्यवहार — b ≤ 0.5 पर reflect, फिर nearest / constant (0) / wrap"},
+    "Open exported code": {"ja": "書き出したコードを開く", "zh": "打开导出的代码", "tw": "開啟匯出的程式碼", "ko": "내보낸 코드 열기", "de": "Exportierten Code öffnen", "hi": "निर्यात किया गया कोड खोलें"},
+    "Go to first mismatch": {"ja": "最初の不一致へ移動", "zh": "转到第一处不一致", "tw": "前往第一處不一致", "ko": "첫 번째 불일치로 이동", "de": "Zur ersten Abweichung", "hi": "पहले अंतर पर जाएँ"},
+    "Compare": {"ja": "比べる", "zh": "比较", "tw": "比較", "ko": "비교", "de": "Vergleichen", "hi": "तुलना करें"},
+    "Load an input and add at least one stage first.": {"ja": "先に入力を読み込み、処理を 1 つ以上足してください。", "zh": "请先载入输入并至少添加一个处理步骤。", "tw": "請先載入輸入並至少加入一個處理步驟。", "ko": "먼저 입력을 불러오고 단계를 하나 이상 추가하세요.", "de": "Bitte zuerst eine Eingabe laden und mindestens eine Stufe hinzufügen.", "hi": "पहले इनपुट लोड करें और कम से कम एक चरण जोड़ें।"},
+    "Running exported Python in isolation…": {"ja": "書き出した Python を単独で実行しています…", "zh": "正在单独运行导出的 Python…", "tw": "正在單獨執行匯出的 Python…", "ko": "내보낸 Python을 단독으로 실행하는 중…", "de": "Exportiertes Python wird isoliert ausgeführt…", "hi": "निर्यात किया गया Python अलग से चल रहा है…"},
+    "Verification could not run: %s": {"ja": "検証を実行できませんでした: %s", "zh": "无法运行验证: %s", "tw": "無法執行驗證: %s", "ko": "검증을 실행할 수 없습니다: %s", "de": "Prüfung konnte nicht ausgeführt werden: %s", "hi": "सत्यापन नहीं चल सका: %s"},
+    "Export verification: PASS": {"ja": "書き出しの検証: 合格", "zh": "导出验证: 通过", "tw": "匯出驗證: 通過", "ko": "내보내기 검증: 통과", "de": "Exportprüfung: bestanden", "hi": "निर्यात सत्यापन: पास"},
+    "Export verification: mismatch": {"ja": "書き出しの検証: 不一致", "zh": "导出验证: 不一致", "tw": "匯出驗證: 不一致", "ko": "내보내기 검증: 불일치", "de": "Exportprüfung: Abweichung", "hi": "निर्यात सत्यापन: अंतर"},
   "Only operators that take the previous stage's output": {
    "ja": "前段の出力を受けられる op だけ表示",
    "zh": "只显示能接收前一段输出的算子",
