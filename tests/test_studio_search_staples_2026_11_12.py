@@ -532,12 +532,51 @@ def test_op_list_rows_are_compact_and_search_rows_keep_their_height(monkeypatch,
         assert ol.count() > 100
         rows = [ol.sizeHintForRow(i) for i in range(10)]
         assert all(fm <= h <= fm + studio._OP_ROW_PAD + 2 for h in rows), (fm, rows)
+        # 行の高さの指定そのもの(既定の様式では差が出ないので、QSS の height を直接確かめる)
+        assert "height: %dpx" % (fm + studio._OP_ROW_PAD) in ol.styleSheet(), ol.styleSheet()
         win._search_ui["search_now"]("threshold"); _pump(0.5)
         tall = [ol.sizeHintForRow(i) for i in range(ol.count())]
         assert max(tall) >= 2 * fm, tall[:8]            # 説明とボタンのある行は潰れていない
     finally:
         win.close_guard = lambda: True
         win.quiesce(); win.close(); _pump(0.1)
+
+
+def test_op_list_rows_stay_compact_under_the_windows11_style_when_available(monkeypatch, tmp_path):
+    """Windows 11 相当の様式(行に上下 14 px を足す)を使える Qt では、その様式での実測。使えない環境は skip。"""
+    pytest.importorskip("PySide6")
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    from PySide6 import QtWidgets
+    import studio
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    if "windows11" not in [k.lower() for k in QtWidgets.QStyleFactory.keys()]:
+        pytest.skip("this Qt has no windows11 style")
+    prev = app.style().objectName()
+    app.setStyle("windows11")
+    try:
+        monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / "s.ini"))
+        win, _model = studio.build_window()
+        win.show(); _pump(0.4)
+        try:
+            ol = win._op_list
+            fm = ol.fontMetrics().height()
+            rows = [ol.sizeHintForRow(i) for i in range(10)]
+            assert len(rows) == 10 and all(h <= fm + studio._OP_ROW_PAD + 2 for h in rows), (fm, rows)
+        finally:
+            win.close_guard = lambda: True
+            win.quiesce(); win.close(); _pump(0.1)
+    finally:
+        app.setStyle(prev)
+
+
+def test_startup_language_decision():
+    """起動時の分岐(offscreen では build_window の中で走らない)を関数に切り出して試験する。"""
+    import studio
+    f = studio._startup_language
+    assert f("de", "ja_JP") == "de" and f("en", "ja_JP") == "en"          # 保存があればそれ(OS が変わっても追従しない)
+    assert f(None, "ja_JP") == "ja" and f(None, "zh_TW") == "tw" and f(None, "fr_FR") == "en"   # 初回は OS から
+    assert f("xx", "ko_KR") == "ko" and f("", "ja_JP") == "ja"            # 表に無い保存値は初回と同じ扱い
+    assert f(None, "ja_JP", languages={"en": "English"}) == "en"
 
 
 def test_first_run_language_follows_the_os_locale():

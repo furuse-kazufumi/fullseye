@@ -187,24 +187,39 @@ class _ComLink:
         if sys.platform != "win32":
             raise OSError("IShellLink is Windows-only")
         ole32 = ctypes.OleDLL("ole32")
+        self.link = ctypes.c_void_p()
+        self.persist = ctypes.c_void_p()
+        self._co_initialized = False
         try:
-            ole32.CoInitializeEx(None, 2)               # COINIT_APARTMENTTHREADED。既に初期化済み(S_FALSE / 別の方式)は無視する
+            # COINIT_APARTMENTTHREADED。S_OK / S_FALSE(既に同じ方式で初期化済み)は成功で、どちらも CoUninitialize と対にする。
+            # RPC_E_CHANGED_MODE(呼び出し元が別の方式で初期化済み)は OSError: そのまま使い、CoUninitialize はしない。
+            ole32.CoInitializeEx(None, 2)
+            self._co_initialized = True
         except OSError:
             pass
-        self.link = ctypes.c_void_p()
-        iid = _guid(_IID_ISHELLLINKW)
-        clsid = _guid(_CLSID_SHELLLINK)
-        ole32.CoCreateInstance(ctypes.byref(clsid), None, 1, ctypes.byref(iid), ctypes.byref(self.link))   # CLSCTX_INPROC_SERVER
-        self.persist = ctypes.c_void_p()
-        piid = _guid(_IID_IPERSISTFILE)
-        _vt(self.link, 0, ctypes.POINTER(_GUID), ctypes.POINTER(ctypes.c_void_p))(self.link, ctypes.byref(piid),
-                                                                                  ctypes.byref(self.persist))
+        try:
+            iid = _guid(_IID_ISHELLLINKW)
+            clsid = _guid(_CLSID_SHELLLINK)
+            ole32.CoCreateInstance(ctypes.byref(clsid), None, 1, ctypes.byref(iid), ctypes.byref(self.link))   # INPROC_SERVER
+            piid = _guid(_IID_IPERSISTFILE)
+            _vt(self.link, 0, ctypes.POINTER(_GUID), ctypes.POINTER(ctypes.c_void_p))(self.link, ctypes.byref(piid),
+                                                                                      ctypes.byref(self.persist))
+        except BaseException:
+            self._release()                 # 途中で失敗しても、作った ShellLink の参照と COM の初期化を戻す
+            raise
         return self
 
-    def __exit__(self, *exc) -> None:
-        for p in (getattr(self, "persist", None), getattr(self, "link", None)):
+    def _release(self) -> None:
+        for p in (self.persist, self.link):
             if p is not None and p.value:
                 _vt(p, 2, restype=ctypes.c_ulong)(p)    # Release
+                p.value = None
+        if getattr(self, "_co_initialized", False):
+            ctypes.WinDLL("ole32").CoUninitialize()
+            self._co_initialized = False
+
+    def __exit__(self, *exc) -> None:
+        self._release()
 
     # IShellLinkW(仮想関数表の番号): 3 GetPath 8 GetWorkingDirectory 10 GetArguments 16 GetIconLocation
     #                              7 SetDescription 9 SetWorkingDirectory 11 SetArguments 15 SetShowCmd 17 SetIconLocation 20 SetPath

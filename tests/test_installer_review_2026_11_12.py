@@ -836,6 +836,67 @@ def test_R1_script_falls_back_when_the_venv_python_exists_but_cannot_start(tmp_p
             shortcuts.unregister_uninstall_entry(key, (key,))
 
 
+def _wrapper_source(root, key, dirs, env_for_plan, plan_path):
+    """別プロセスで uninstall を呼ぶ包み。**自分で collect を取って JSON に書き**、一時フォルダの外・自分以外のキーが 1 件でも
+    あれば何も消さず 99 で終わる。``--wrap-plan-only`` では書くだけで消さない(試験が先に中身を確かめる段)。"""
+    return ("import sys, types, json, os\nfrom pathlib import Path\n"
+            "st = types.ModuleType('fullseye'); st.__path__ = [%r]; sys.modules['fullseye'] = st\n"
+            "from fullseye import uninstall as u\n"
+            "ROOT = %r; KEY = %r; PLAN = Path(%r)\n"
+            "dirs = {k: Path(v) for k, v in %r.items()}\nenv = %r\n"
+            "plan_only = '--wrap-plan-only' in sys.argv\n"
+            "sys.argv = [a for a in sys.argv if a != '--wrap-plan-only']\n"
+            "plan = u.collect(dirs=dirs, env=env, registry=False, allow_keys=[KEY])\n"
+            "items = [{'kind': i['kind'], 'path': i['path']} for i in plan['made'] + plan['data']]\n"
+            "root = os.path.normcase(os.path.realpath(ROOT)) + os.sep\n"
+            "def inside(p): return (os.path.normcase(os.path.realpath(p)) + os.sep).startswith(root)\n"
+            "outside = [i for i in items if (i['path'] != KEY if i['kind'] in ('regkey', 'settings_regtree') else not inside(i['path']))]\n"
+            "PLAN.write_text(json.dumps({'items': items, 'outside': outside}), encoding='utf-8')\n"
+            "if outside: sys.exit(99)\n"
+            "if plan_only: sys.exit(0)\n"
+            "sys.exit(u.main(dirs=dirs, env=env, registry=False, allow_keys=[KEY]))\n"
+            % (str(ROOT / "fullseye"), str(root), key, str(plan_path), {k: str(v) for k, v in dirs.items()}, env_for_plan))
+
+
+def verify_plan_file(plan_path, root, key, expect_names=()):
+    """包み(別プロセス)が実際に取った「消す予定の一覧」を読んで確かめる。無い・外のパスがある・他のキーがある・期待する物が無い、は失敗。"""
+    p = Path(plan_path)
+    if not p.is_file():
+        pytest.fail("SAFETY: the wrapper wrote no plan file %s (does it still call collect with isolated arguments?)" % p)
+    data = json.loads(p.read_text(encoding="utf-8"))
+    if data.get("outside"):
+        pytest.fail("SAFETY: the wrapper's own plan lists items outside the test folder: %s" % data["outside"])
+    for it in data["items"]:
+        if it["kind"] in ("regkey", "settings_regtree"):
+            if it["path"] != key:
+                pytest.fail("SAFETY: the wrapper's plan names registry key %s, not this test's key" % it["path"])
+        else:
+            _assert_inside(root, key, it["path"], it["kind"])
+    missing = set(expect_names) - {Path(i["path"]).name for i in data["items"]}
+    if missing:
+        pytest.fail("SAFETY: the wrapper's plan does not contain the test's own items %s (isolation arguments dropped?)" % sorted(missing))
+
+
+def test_R2_plan_verifier_rejects_a_missing_an_outside_and_a_foreign_plan(tmp_path):
+    root = tmp_path / "root"
+    root.mkdir()
+    good = {"items": [{"kind": "file", "path": str(root / "a.lnk")}, {"kind": "regkey", "path": KEY + "v"}], "outside": []}
+    p = tmp_path / "plan.json"
+    with pytest.raises(pytest.fail.Exception):                         # 包みが一覧を書かなかった(昔の u.main だけの包みへ戻した変異)
+        verify_plan_file(p, root, KEY + "v")
+    p.write_text(json.dumps(good), encoding="utf-8")
+    verify_plan_file(p, root, KEY + "v", expect_names={"a.lnk"})
+    for bad in (dict(good, outside=[{"kind": "file", "path": "x"}]),
+                dict(good, items=good["items"] + [{"kind": "file", "path": str(tmp_path / "real" / "Fullseye Studio.lnk")}]),
+                dict(good, items=good["items"] + [{"kind": "regkey", "path": r"Software\Microsoft\Windows\CurrentVersion\Uninstall\Fullseye"}])):
+        p.write_text(json.dumps(bad), encoding="utf-8")
+        with pytest.raises(pytest.fail.Exception):
+            verify_plan_file(p, root, KEY + "v")
+    p.write_text(json.dumps(good), encoding="utf-8")
+    with pytest.raises(pytest.fail.Exception):                         # 期待する自分の物が無い(隔離の引数が落ちた)
+        verify_plan_file(p, root, KEY + "v", expect_names={"fullseye.ico"})
+
+
 @winonly
 def test_R2_corrupt_ledger_legacy_removes_the_key_icon_and_script_and_the_cmd_finishes(tmp_path):
     key = KEY + "R2"
@@ -845,25 +906,23 @@ def test_R2_corrupt_ledger_legacy_removes_the_key_icon_and_script_and_the_cmd_fi
     ledger = dirs["icon_dir"] / "install_ledger.json"
     made = shortcuts.install(desktop=False, python=str(vpy), dirs=dirs, ledger=ledger, reg_key=key)
     ledger.write_text("{not json", encoding="utf-8")                       # 台帳が壊れた → 「台帳なし」の既知の場所
-    # ★3 回目のレビューで判明: 包みが dirs / env / registry を渡さないと、環境変数を一時フォルダへ向けても
-    #   デスクトップだけは SHGetKnownFolderPath で**本物**を引き、registry=True 既定で本物の Uninstall\Fullseye も計画に入り、
-    #   台帳が壊れた状態(= 既知の場所へ切り替わる)で --yes が本物のショートカットと登録を消しうる。
-    #   だから場所・環境・レジストリを全部、この試験の一時フォルダに固定して渡す。
+    # ★3 回目・4 回目のレビュー: 包みが dirs / env / registry を渡さないと、本物のデスクトップ・Uninstall\Fullseye が計画に入る。
+    #   試験と同じプロセスで作った一覧を見るだけでは、別プロセスの包みの呼び出しを見ていない。包みが**自分で**取った一覧を JSON で
+    #   受け取り、試験が確かめてから消す段(2 段目)へ進む。
     env_for_plan = {"FULLSEYE_CACHE_DIR": str(root / "cache"), "LOCALAPPDATA": str(root / "Local"),
                     "FULLSEYE_STUDIO_SETTINGS": str(root / "studio.ini")}
-    guard_plan(root, key, ledger=ledger, dirs=dirs, env=env_for_plan)
-    wrapper = tmp_path / "wrap.py"                                        # 試験用キーを allow_keys で渡す(本番の入口は渡さない)
-    wrapper.write_text("import sys, types\nfrom pathlib import Path\nst = types.ModuleType('fullseye'); st.__path__ = [%r]; "
-                       "sys.modules['fullseye'] = st\nfrom fullseye import uninstall as u\n"
-                       "dirs = {k: Path(v) for k, v in %r.items()}\n"
-                       "sys.exit(u.main(dirs=dirs, env=%r, registry=False, allow_keys=[%r]))\n"
-                       % (str(ROOT / "fullseye"), {k: str(v) for k, v in dirs.items()}, env_for_plan, key), encoding="utf-8")
+    plan_path = tmp_path / "wrapper_plan.json"
+    wrapper = tmp_path / "wrap.py"
+    wrapper.write_text(_wrapper_source(root, key, dirs, env_for_plan, plan_path), encoding="utf-8")
     script = dirs["icon_dir"] / shortcuts.CMD_NAME
     script.write_text(shortcuts.uninstall_cmd_text(python=vpy, uninstaller=wrapper, lnks=made, regkey=key),
                       encoding="utf-8", newline="")
     guard_script(script, tmp_path, key)
     try:
-        r = _run_script(script, "--yes --lang en", tmp_path, root)
+        r1 = _run_script(script, "--wrap-plan-only --yes --lang en", tmp_path, root)           # 1 段目: 一覧だけ(何も消さない)
+        assert r1.returncode == 0 and all(p.exists() for p in made) and shortcuts.regkey_exists(key), r1.stdout + r1.stderr
+        verify_plan_file(plan_path, root, key, expect_names={"Fullseye Studio.lnk", "fullseye.ico", shortcuts.CMD_NAME})
+        r = _run_script(script, "--yes --lang en", tmp_path, root)                             # 2 段目: 本当に消す
         out = r.stdout.decode("utf-8", "replace")
         assert r.returncode in (0, 3), out + r.stderr.decode("utf-8", "replace")       # 3 = pip の無い venv(本体が残る)
         assert "could not be read" in out
@@ -1331,3 +1390,80 @@ def test_X3_unicode_paths_roundtrip_through_the_desktop_entry_on_any_os(tmp_path
         assert name in icon_line and "?" not in icon_line
         assert shortcuts.verify_fullseye_item("file", str(made[0]), plat="linux") is None
         assert len(shortcuts.remove(platform="linux", dirs=dirs, ledger=led)) == 2
+
+
+# =========================================================================== 5 回目のレビュー(2026-11-13)
+def test_V1_remove_item_verifies_the_content_itself(tmp_path):
+    """collect を通らずに remove_item が直接呼ばれても、名前と置き場が許可内でも中身が Fullseye の物でなければ消さない(二重の確かめ)。"""
+    dirs = _dirs(tmp_path)
+    folder = dirs["icon_dir"]
+    folder.mkdir(parents=True)
+    ico = folder / ("fullseye.ico" if WIN else "fullseye-studio.png")
+    ico.write_bytes(b"not an image at all")
+    with pytest.raises(shortcuts.ShortcutError, match="does not look like"):
+        uninstall.remove_item({"kind": "file", "path": str(ico)}, dirs=dirs)
+    assert ico.is_file()
+    ico.write_bytes(b"\x00\x00\x01\x00ok" if WIN else b"\x89PNG\r\n\x1a\nok")
+    assert uninstall.remove_item({"kind": "file", "path": str(ico)}, dirs=dirs) is True and not ico.exists()
+
+
+@winonly
+def test_V1_remove_item_refuses_a_registry_key_that_is_not_fullseyes(tmp_path):
+    import winreg
+    key = KEY + "V1"
+    with winreg.CreateKeyEx(winreg.HKEY_CURRENT_USER, key, 0, winreg.KEY_SET_VALUE) as k:
+        winreg.SetValueEx(k, "DisplayName", 0, winreg.REG_SZ, "Somebody Else")
+        winreg.SetValueEx(k, "UninstallString", 0, winreg.REG_SZ, "C:\\o\\u.exe")
+    try:
+        with pytest.raises(shortcuts.ShortcutError, match="not Fullseye"):
+            uninstall.remove_item({"kind": "regkey", "path": key}, allow_keys=(key,))
+        assert shortcuts.regkey_exists(key)
+    finally:
+        winreg.DeleteKey(winreg.HKEY_CURRENT_USER, key)
+
+
+@winonly
+def test_V2_snapshot_tells_an_absent_setup_folder_from_an_empty_one(tmp_path, monkeypatch):
+    from conftest import real_install_snapshot, snapshot_diff
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
+    before = real_install_snapshot()
+    assert before["setup_folder"] is None
+    (tmp_path / "Fullseye" / "setup").mkdir(parents=True)                 # 空で新しく作られた
+    after = real_install_snapshot()
+    assert after["setup_folder"] == [] and snapshot_diff(before, after) and "absent -> present" in snapshot_diff(before, after)[0]
+    assert snapshot_diff(after, real_install_snapshot()) == []
+
+
+@winonly
+def test_V3_com_init_is_balanced_and_a_failed_enter_releases_the_shell_link(tmp_path, monkeypatch):
+    import threading
+    ole32 = __import__("ctypes").OleDLL("ole32")
+    res = {}
+
+    def work():
+        ole32.CoInitializeEx(None, 2)                    # 呼び出し元が先に初期化している(count 1)
+        shortcuts.write_lnk(tmp_path / "a.lnk", Path(sys.executable), "x", ROOT / "assets" / "fullseye.ico", tmp_path)
+        __import__("ctypes").WinDLL("ole32").CoUninitialize()          # 呼び出し元の分だけ戻す
+        try:                                             # 対が取れていれば、このスレッドは未初期化に戻っているので別の方式で初期化できる
+            ole32.CoInitializeEx(None, 0)                # COINIT_MULTITHREADED
+            res["balanced"] = True
+            __import__("ctypes").WinDLL("ole32").CoUninitialize()
+        except OSError:
+            res["balanced"] = False
+    th = threading.Thread(target=work)
+    th.start()
+    th.join()
+    assert res["balanced"] is True
+    releases = []
+    orig = shortcuts._vt
+
+    def counting(obj, index, *a, **kw):
+        if index == 2:
+            releases.append(1)
+        return orig(obj, index, *a, **kw)
+    monkeypatch.setattr(shortcuts, "_vt", counting)
+    monkeypatch.setattr(shortcuts, "_IID_IPERSISTFILE", "{00000000-0000-0000-C000-000000000099}")      # QueryInterface が失敗する IID
+    with pytest.raises(OSError):
+        with shortcuts._ComLink():
+            pass
+    assert releases == [1]                               # ShellLink を 1 回 Release した(漏らさない)

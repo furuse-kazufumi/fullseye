@@ -5953,6 +5953,14 @@ def _is_empty_program_text(body):
     return bool(first) and first in langs
 
 
+def _startup_language(saved, locale_name, languages=None):
+    """起動時の言語: 保存された言語が表に在ればそれ、無ければ(初回)OS のロケール名から決める。
+
+    build_window はこれを呼ぶだけ(offscreen では起動時の分岐が走らないので、判断はここに切り出して単独で試験する)。"""
+    langs = LANGUAGES if languages is None else languages
+    return saved if saved in langs else lang_from_locale(locale_name, languages)
+
+
 def lang_from_locale(name, languages=None):
     """OS のロケール名(``ja_JP``・``zh-TW``・``de_AT`` など)から UI の言語コードを決める。対応が無ければ ``"en"``。
 
@@ -15583,9 +15591,8 @@ def build_window(model=None):
 
     try:                                     # restore the remembered language
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-            _lang = _settings().value("lang")
-            if _lang not in LANGUAGES:       # 初回(保存なし): OS の言語に合わせる。選び直せば次からはその言語
-                _lang = lang_from_locale(QtCore.QLocale.system().name())
+            # 保存が無ければ(初回)OS の言語。英語以外に決まると apply_language がそれを設定に書き込む(以後は OS が変わっても追従しない)
+            _lang = _startup_language(_settings().value("lang"), QtCore.QLocale.system().name())
             if _lang in LANGUAGES and _lang != "en":
                 apply_language(_lang)
     except Exception:

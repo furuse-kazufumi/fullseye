@@ -247,15 +247,15 @@ def real_install_snapshot() -> dict:
         pass
     snap["uninstall_keys"] = sorted(keys, key=str)
     local = os.environ.get("LOCALAPPDATA")
-    setup = []
+    setup = None                            # None = フォルダが無い / [] = 在るが空(「空で新しく作られた」を検出するため区別する)
     if local:
         d = os.path.join(local, "Fullseye", "setup")
         try:
             with os.scandir(d) as it:
-                setup = [entry(e.path) for e in it]
+                setup = sorted(entry(e.path) for e in it)
         except OSError:
-            pass
-    snap["setup_folder"] = sorted(setup)
+            setup = None
+    snap["setup_folder"] = setup
     return snap
 
 
@@ -265,6 +265,9 @@ def snapshot_diff(before: dict, after: dict) -> list:
     for k in sorted(set(before) | set(after)):
         b, a = before.get(k), after.get(k)
         if b != a:
+            if (b is None) != (a is None):
+                out.append("%s: %s -> %s" % (k, "absent" if b is None else "present", "absent" if a is None else "present"))
+                continue
             sb, sa = set(map(str, b or [])), set(map(str, a or []))
             out.append("%s: removed=%s added=%s" % (k, sorted(sb - sa), sorted(sa - sb)))
     return out
