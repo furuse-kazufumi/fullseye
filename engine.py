@@ -737,9 +737,11 @@ def _pipeline_legacy_version(d):
     if not isinstance(d, dict):
         return None
     if "fullseye_pipeline" in d:
-        old = d["fullseye_pipeline"]
-        if isinstance(old, bool) or old != 1 or not isinstance(old, int):
-            raise defs_io.DefinitionError("'fullseye_pipeline': %r is not a version this Fullseye reads (1)" % (old,))
+        # 版の印の検査は check_pipeline_header の 1 本(FullseyeEngine.from_dict と同じ文と同じ規則)
+        try:
+            check_pipeline_header(d, where="pipeline file")
+        except ValueError as e:
+            raise defs_io.DefinitionError("%s — 'fullseye_pipeline' is not a version this Fullseye reads" % e) from None
         return 0
     return 0 if isinstance(d.get("stages"), list) else None
 
