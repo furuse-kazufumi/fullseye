@@ -477,7 +477,9 @@ def test_b7_pin_action_exists_and_the_dock_starts_hidden_and_empty():
     win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert win._docks["ab"].isHidden()
     assert "pin_a" in win._actions
-    shortcuts = [a.shortcut().toString() for a in win._actions.values() if not a.shortcut().isEmpty()]
+    from PySide6 import QtCore
+    shortcuts = [a.shortcut().toString() for a in win._actions.values()
+                 if not a.shortcut().isEmpty() and a.shortcutContext() != QtCore.Qt.WidgetShortcut]   # 欄の中だけのキーは別の文脈
     assert len(shortcuts) == len(set(shortcuts)), "a shortcut is used twice"
     win._docks["ab"].show()
     win._ab["refresh"]()

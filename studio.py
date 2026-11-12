@@ -15504,7 +15504,7 @@ def build_window(model=None):
     def _program_action(key, text, shortcuts, tip, do, menu_key):
         a = _act(text, None, tip)
         a.setShortcuts([QtGui.QKeySequence(s_) for s_ in shortcuts])
-        a.setShortcutContext(QtCore.Qt.WidgetWithChildrenShortcut)      # Program 欄の中だけ
+        a.setShortcutContext(QtCore.Qt.WidgetShortcut)      # Program 欄にフォーカスがある時だけ(窓全体のキーと別の文脈)
         code_edit.addAction(a)
 
         def _go(_=False):

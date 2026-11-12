@@ -2241,7 +2241,9 @@ def test_no_ambiguous_shortcuts_and_ctrl_d_duplicate():
     acts = win._actions
     assert acts["demo"].shortcut().toString() == ""
     assert acts["duplicate_stage"].shortcut().toString() == "Ctrl+D"
-    scs = [a.shortcut().toString() for a in acts.values() if a.shortcut().toString()]
+    from PySide6 import QtCore
+    scs = [a.shortcut().toString() for a in acts.values()
+           if a.shortcut().toString() and a.shortcutContext() != QtCore.Qt.WidgetShortcut]     # 欄の中だけのキーは別の文脈
     dups = [s for s, c in Counter(scs).items() if c > 1]
     assert not dups, "ambiguous shortcuts across actions: %s" % dups
 
