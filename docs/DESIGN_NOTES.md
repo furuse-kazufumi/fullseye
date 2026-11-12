@@ -96,11 +96,11 @@
 
 ## `backend_safe.py`
 
-- **L212** — ★2026-09-20(GenSpark 第 44 報 N158): 環状バッファは黙って古い方を捨てる。捨てた数を数えないと、 `fallbacks()` が 256 件しか返さない理由が利用者から見えない(counts と件数が合わない)。
-- **L224** — ★2026-11-11(外部ユーザー指摘): uint8 を渡す(最も普通の入力)だけで「degraded to a fallback」と 出て、通常の型変換が劣化に読めた。結果は契約どおりで、劣化ではない —— 中立な文面にする。 記録(fallbacks() / fallback_counts())は据え置き。本当の劣化の文面は下のまま。
-- **L536** — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
-- **L555** — ★2026-10-18(0.7.0 の preflight の退化スイープ): 複素の sort を名乗る op でも、入力が実数の NaN / Inf だと実数の配列を返すことがある(3 op とも float64 の NaN を返した)。複素の時だけ埋めていたので、 その実数の非有限がそのまま外へ出ていた。実数でも複素数でも、非有限は記録したうえで 0 で埋める。
-- **L626** — ★feature op は ndarray でなく numpy の **スカラ**を返すので、上の分岐は一度もそれを見ていなかった: NaN/Inf の測定値(例えば退化フレームに対する sk_blur_effect 内の 0/0)が api.apply からそのまま流れ出ていた。非有限のスカラも sort フォールバックへ洗い流し、宣言している「有限·sort として妥当」の保証が feature/contour のスカラにも実際に効くようにする。
+- **L244** — ★2026-09-20(GenSpark 第 44 報 N158): 環状バッファは黙って古い方を捨てる。捨てた数を数えないと、 `fallbacks()` が 256 件しか返さない理由が利用者から見えない(counts と件数が合わない)。
+- **L256** — ★2026-11-11(外部ユーザー指摘): uint8 を渡す(最も普通の入力)だけで「degraded to a fallback」と 出て、通常の型変換が劣化に読めた。結果は契約どおりで、劣化ではない —— 中立な文面にする。 記録(fallbacks() / fallback_counts())は据え置き。本当の劣化の文面は下のまま。
+- **L568** — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
+- **L587** — ★2026-10-18(0.7.0 の preflight の退化スイープ): 複素の sort を名乗る op でも、入力が実数の NaN / Inf だと実数の配列を返すことがある(3 op とも float64 の NaN を返した)。複素の時だけ埋めていたので、 その実数の非有限がそのまま外へ出ていた。実数でも複素数でも、非有限は記録したうえで 0 で埋める。
+- **L658** — ★feature op は ndarray でなく numpy の **スカラ**を返すので、上の分岐は一度もそれを見ていなかった: NaN/Inf の測定値(例えば退化フレームに対する sk_blur_effect 内の 0/0)が api.apply からそのまま流れ出ていた。非有限のスカラも sort フォールバックへ洗い流し、宣言している「有限·sort として妥当」の保証が feature/contour のスカラにも実際に効くようにする。
 
 ## `backends.py`
 
@@ -1678,14 +1678,14 @@
 - **L240** — ★2026-11-05 redteam I24: one empty cell (a missing value, written by table_write_csv for None) sent the whole column through float64, so a large int column with a gap came back rounded -- against "丸めて返さない". Blank cells are now allowed here: such a column is returned as an integer masked array (mask = the blanks), exact and still numeric.
 - **L298** — ★2026-11-05 redteam I25: a UTF-8 BOM (Excel's "CSV UTF-8" writes one) became part of the first column name ('\ufeffx'). It is a byte-order mark, not data: drop it once.
 - **L884** — ★2026-11-05 redteam (io, archive probe): Windows reserved device names (Microsoft "Naming Files, Paths, and Namespaces") include COM0 / LPT0, the superscript digits ¹ ² ³ and the console names CONIN$ / CONOUT$. Only CON/PRN/AUX/NUL and COM1-9 / LPT1-9 were listed, so "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
-- **L1378** — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
-- **L1497** — ★2026-11-05 redteam I6: FITS 4.0 §4.2.1.2 -- in free format the opening quote of a string may stand in any column after the value indicator, not only column 11. Leading blanks before the quote are not part of the value (blanks *inside* the quotes still are).
-- **L1715** — ★2026-11-05 redteam I4: FITS 4.0 §5.3 / Table 11 -- the four integer offset conventions (BSCALE=1 with BZERO = -128 / 2**15 / 2**31 / 2**63) denote *integer* data of the other signedness. uint64 used to go through float64 (2**63 + 1 -> 2**63, 2**64 - 1 -> 2**64) and int8 came back as float64. They are now decoded with exact integer arithmetic.
-- **L1789** — ★2026-11-05 redteam I7: MRC2014 word 28 (byte 108) is NVERSION = 20140 (year*10 + version). It was left 0, so the file did not declare itself MRC2014 (mrcfile.validate rejected it).
-- **L2101** — ★2026-11-05 redteam I9: the "space" field (LPS / RAS / scanner-xyz ...) was dropped, so an LPS and an RAS file -- the same numbers in mirrored patient frames -- read back identical. It is returned as meta["space"] (canonical teem name, None when absent) and written back.
-- **L2272** — ★参照実装 nifti1_io.c(nifti_quatern_to_mat44)と同じ規則: 1 - |bcd|^2 < 1e-7 なら 180 度回転と みなして a = 0 とし、(b, c, d) を単位長に正規化する。2026-11-04 まで閾値が無く、float32 の 丸め屑 1.2e-8 から a = 1.1e-4 を作って向きを 0.0125 度回していた(OpenNeuro ds000117 の 磁場地図で nibabel と 8e-4 の差。examples/poc_real_file_formats.py が見つけた)。
-- **L2457** — ★2026-11-05 redteam I10: tifffile squeezes length-1 axes on read, and OME's 5-D Size* cannot tell "ZYX with Z=1" from "YX". The axes as written are recorded in a namespaced MapAnnotation so ome_tiff_read can restore the written shape (other readers ignore it).
-- **L2491** — ★2026-11-05 redteam I11: the docstring promised to reject a Pixels Type that disagrees with the TIFF samples, but ``dtype`` was never read -- Type="int16" over uint16 data passed.
+- **L1384** — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
+- **L1503** — ★2026-11-05 redteam I6: FITS 4.0 §4.2.1.2 -- in free format the opening quote of a string may stand in any column after the value indicator, not only column 11. Leading blanks before the quote are not part of the value (blanks *inside* the quotes still are).
+- **L1721** — ★2026-11-05 redteam I4: FITS 4.0 §5.3 / Table 11 -- the four integer offset conventions (BSCALE=1 with BZERO = -128 / 2**15 / 2**31 / 2**63) denote *integer* data of the other signedness. uint64 used to go through float64 (2**63 + 1 -> 2**63, 2**64 - 1 -> 2**64) and int8 came back as float64. They are now decoded with exact integer arithmetic.
+- **L1795** — ★2026-11-05 redteam I7: MRC2014 word 28 (byte 108) is NVERSION = 20140 (year*10 + version). It was left 0, so the file did not declare itself MRC2014 (mrcfile.validate rejected it).
+- **L2107** — ★2026-11-05 redteam I9: the "space" field (LPS / RAS / scanner-xyz ...) was dropped, so an LPS and an RAS file -- the same numbers in mirrored patient frames -- read back identical. It is returned as meta["space"] (canonical teem name, None when absent) and written back.
+- **L2278** — ★参照実装 nifti1_io.c(nifti_quatern_to_mat44)と同じ規則: 1 - |bcd|^2 < 1e-7 なら 180 度回転と みなして a = 0 とし、(b, c, d) を単位長に正規化する。2026-11-04 まで閾値が無く、float32 の 丸め屑 1.2e-8 から a = 1.1e-4 を作って向きを 0.0125 度回していた(OpenNeuro ds000117 の 磁場地図で nibabel と 8e-4 の差。examples/poc_real_file_formats.py が見つけた)。
+- **L2463** — ★2026-11-05 redteam I10: tifffile squeezes length-1 axes on read, and OME's 5-D Size* cannot tell "ZYX with Z=1" from "YX". The axes as written are recorded in a namespaced MapAnnotation so ome_tiff_read can restore the written shape (other readers ignore it).
+- **L2497** — ★2026-11-05 redteam I11: the docstring promised to reject a Pixels Type that disagrees with the TIFF samples, but ``dtype`` was never read -- Type="int16" over uint16 data passed.
 
 ## `fit_transform.py`
 
