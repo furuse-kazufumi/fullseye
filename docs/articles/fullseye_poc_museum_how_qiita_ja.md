@@ -2746,25 +2746,25 @@ py -3.11 examples/poc_real_chessboard_undistort.py
 
 使用 op(ノートへ): [`camera_calibration_lm`](https://furuse.work/ops/calib/calibrate/camera_calibration_lm.html) · [`change_radial_distortion_image`](https://furuse.work/ops/mv/resample/change_radial_distortion_image.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`map_image`](https://furuse.work/ops/mv/resample/map_image.html) · [`points_lepetit`](https://furuse.work/ops/mv/detect/points_lepetit.html) · [`rectify_to_world_plane`](https://furuse.work/ops/mv/resample/rectify_to_world_plane.html)
 
-## No.2026.317 —— 置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成の描画)―― 角は 1〜2 mm で出るが、コントラスト ΔE 39 未満としわ 3 mm 以上で壊れる
+## No.2026.317 —— 置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成)―― 単純な長方形の当てはめが最良で、一般の多角形が並ぶのは色度版だけ、台の色が近い所としわ 3 mm 以上で崩れる
 
-矩形のタオルを 0〜2 回折って台に置いた絵を、自前の幾何で描いた(MuJoCo の布は台を貫通して使えなかった)。厚み・しわ・縞と裾の縫い目・台の木目・影を描き、真の隅は隅の高さで投影した点で、描画側が持つ。検出は gaussian・otsu・fill_up・sk_find_contours・xg_gen_polygons で領域と辺を出し、辺の直線の交点を隅にする。種 20 本 x 折り方 4 通り(80 枚)で、隅の 5 mm 以内の再現率は提案(RGB)0.994、凸包の頂点のみ 0.647、Harris のみ 0.919、最小外接長方形 1.000。誤差の中央値は提案 1.50 mm、最小外接長方形 1.14 mm で、長方形の前提が使える範囲ではこの基準線が提案に勝つ。辺の向きの誤差の中央値は 0.16 度。コントラストが低いと領域に頼る方法は全滅し、領域を使わない Harris が最良になる(ΔE 0 で 0.61)。提案(色度)が再現率 0.9 に届く最低の ΔE は 39。しわは 2 mm まで 1.00、4 mm で 0.69 に落ちる。色度に替える利点は、しわで明るさが乱れるときに現れた(3 mm で +0.325)。つかむ隅の順位は、辺の内側 8 mm の裾の縫い目を手がかりにして 0.917(偶然 0.417)。縫い目を描かない対照では 0.267 に落ちる。縫い目は私が描画に入れた手がかりで、実物が同じとは限らない。
+畳む前のタオルは、角と辺の位置が分かれば、つかむ場所が決まる。合成の画像で角は 1 mm 前後の誤差で見つかったが、差は真値の定義に左右される。単純な長方形の当てはめが最良で、台の色が近いときと強いしわでは、どの方法も崩れる。
 
-[![置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成の描画)―― 角は 1〜2 mm で出るが、コントラスト ΔE 39 未満としわ 3 mm 以上で壊れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png)
+[![置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成)―― 単純な長方形の当てはめが最良で、一般の多角形が並ぶのは色度版だけ、台の色が近い所としわ 3 mm 以上で崩れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png)
 
-*↑ **置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成の描画)―― 角は 1〜2 mm で出るが、コントラスト ΔE 39 未満としわ 3 mm 以上で壊れる** ―― 矩形のタオルを 0〜2 回折って台に置いた絵を、自前の幾何で描いた(MuJoCo の布は台を貫通して使えなかった)。厚み・しわ・縞と裾の縫い目・台の木目・影を描き、真の隅は隅の高さで投影した点で、描画側が持つ。検出は gaussian・otsu・fill_up・sk_find_contours・xg_gen_polygons で領域と辺を出し、辺の直線の交点を隅にする。種 20 本 x 折り方 4 通り(80 枚)で、隅の 5 mm 以内の再現率は提案(RGB)0.994、凸包の頂点のみ 0.647、Harris のみ 0.919、最小外接長方形 1.000。誤差の中央値は提案 1.50 mm、最小外接長方形 1.14 mm で、長方形の前提が使える範囲ではこの基準線が提案に勝つ。辺の向きの誤差の中央値は 0.16 度。コントラストが低いと領域に頼る方法は全滅し、領域を使わない Harris が最良になる(ΔE 0 で 0.61)。提案(色度)が再現率 0.9 に届く最低の ΔE は 39。しわは 2 mm まで 1.00、4 mm で 0.69 に落ちる。色度に替える利点は、しわで明るさが乱れるときに現れた(3 mm で +0.325)。つかむ隅の順位は、辺の内側 8 mm の裾の縫い目を手がかりにして 0.917(偶然 0.417)。縫い目を描かない対照では 0.267 に落ちる。縫い目は私が描画に入れた手がかりで、実物が同じとは限らない。*
+*↑ **置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成)―― 単純な長方形の当てはめが最良で、一般の多角形が並ぶのは色度版だけ、台の色が近い所としわ 3 mm 以上で崩れる** ―― 矩形のタオルを 0〜2 回折って台に置いた絵を、自前の幾何で描いた(MuJoCo の布は台を貫通し、追加の 3 設定でも直らず使えなかった)。厚み・しわ・縞と裾の縫い目・台の木目・影を描き、真の隅は描画側が持ち、隅の高さで投影した点とする(台の面で投影すると提案(RGB)と最小外接長方形の順位が入れ替わるので、1 mm 前後の差は真値の定義に左右される)。検出は gaussian・otsu・fill_up・sk_find_contours・xg_gen_polygons で領域と辺を出し、辺の直線の交点を隅にする(提案)。基準線は sk_corner_harris だけ、凸包の頂点だけ、重心から最遠の 4 点、最小外接長方形。種 20 本 x 折り方 4 通り(80 枚)の隅の誤差の中央値は、提案(色度)1.08 mm、最小外接長方形 1.14 mm、提案(RGB)1.55 mm、Harris のみ 3.62 mm、凸包 4.16 mm。90 % 点は提案(RGB)3.00 mm に対し最小外接長方形 2.01 mm で、長方形の前提が使える範囲では単純な基準線が提案(RGB)に勝つ。再現率(5 mm 以内)は 0.65〜1.00 で方法の差を測れず、補助の数に留める。再現率が 0.9 に届く最低のコントラスト ΔE は、提案(RGB)46・最小外接長方形(RGB)46・色度の 2 方法 32・Harris 57。ΔE 0 では領域の方法がどれも 0.15 以下で Harris が 0.61 と最良。しわ 3 mm / 4 mm の再現率は、提案(RGB)0.50 / 0.30、最小外接長方形(RGB)0.82 / 0.55、提案(色度)0.80 / 0.68、Harris 0.51 / 0.33。交点を取らず多角形の頂点をそのまま隅にすると、しわ 4 mm で 0.84 に上がり(0 mm では誤差が 2.4 mm に悪化)、しわで落ちる原因の一部は直線の当てはめにあるという手がかりになる(未確認)。つかむ隅の順位は辺の内側 8 mm の裾の縫い目で 0.917(偶然 0.417)で、縫い目を描かない対照は 0.349。縫い目は私が描画に入れた手がかりで、実物が同じとは限らない。数値は種 0〜19 の 1 組で、種の組を 10 組にしても、並びは変わらなかった。*
 
-[![half fold, wrinkle 1 mm, 20 seeds per point](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast.png)
+[![half fold, wrinkle 1 mm, 20 seeds per point.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast.png)
 
-*↑ 測定の図 ―― half fold, wrinkle 1 mm, 20 seeds per point*
+*↑ 測定の図 ―― half fold, wrinkle 1 mm, 20 seeds per point. hull vertices and 4-farthest are in the table, not drawn*
 
-[![half fold, dE 69, 20 seeds per point](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle.png)
+[![half fold, dE 69, 20 seeds per point.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle.png)
 
-*↑ half fold, dE 69, 20 seeds per point*
+*↑ half fold, dE 69, 20 seeds per point.*
 
-[![min-rect keeps a rectangle prior; the generic polygon pipeline never beats it where both work](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary.png)
+[![median error: min-area rectangle (RGB) 1.14 mm, proposed (chroma) 1.08 mm, proposed (RGB) 1.55 mm.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary.png)
 
-*↑ min-rect keeps a rectangle prior; the generic polygon pipeline never beats it where both work*
+*↑ median error: min-area rectangle (RGB) 1.14 mm, proposed (chroma) 1.08 mm, proposed (RGB) 1.55 mm.*
 
 ```
 py -3.11 examples/poc_cloth_towel_corners_synth.py

@@ -6,14 +6,16 @@ synthetic scene; the truth lives on the renderer's side).
 
     py -3.11 examples/poc_cloth_towel_corners_synth.py
 
-``CI`` では分岐しない(縮小モードは無い。常に同じ全量を走らせる、約 2 分)。``FULLSEYE_FIGURES=off`` で図の書き出しだけ止められる。
+``CI`` では分岐しない(縮小モードは無い。常に同じ全量を走らせる、約 2.5 分)。``FULLSEYE_FIGURES=off`` で図の書き出しだけ止められる。
+(実行時間: 描画が 1 枚約 0.16 秒で 1 条件 20 枚 x 20 条件を描くのが大半。種の本数は減らさない。)
 
 【この PoC が答える問題】
 洗濯物を畳むロボットの前段は「置かれた布のどこをつかむか」で、2024 年の公開ベンチでは古典の手作り手法が上位に入った
 (先行調査: C:/dev/data/cloth_poc_2026_11_12/RESEARCH.md)。この PoC は、**ほぼ平らに置かれた 1 枚の長方形のタオル**
-(広げたまま、半分・3 分の 1・4 分の 1 に折ったもの)に範囲を絞り、角の位置・辺の向き・折り線・つかむ隅の順位が、
-学習なしでどこまで出て、どの条件(台とのコントラスト・しわ・折り方・照明の方位)で壊れるかを、真値つきで数える。
-重なり・しわくちゃ・服の形は扱わない(届かない)。
+(広げたまま / 半分に折る / 3 分の 1 を折り返す / 四つ折り)に範囲を絞り、角の位置・辺の向き・折り線・つかむ隅の順位が、
+学習なしでどこまで出て、どの条件(台とのコントラスト・しわ・折り方・照明の方位)で、どの方法が壊れるかを、真値つきで数える。
+重なり・しわくちゃ・服の形は扱わない(届かない)。**主張は隅の誤差(中央値と 90 % 点 [mm])を主にする**。再現率(5 mm 以内)は
+補助の数: 重心から最も遠い 4 点という粗い基準線でも再現率は 0.94 に届き、方法の差は誤差のほうによく出る。
 
 【描画の選択と理由】
 MuJoCo の布(flex)は使わず、**自前の幾何**で描いた。理由: 試作(MuJoCo 3.10.0)では布が台を 1.5〜6 cm 貫通した。
@@ -23,8 +25,11 @@ MuJoCo の布(flex)は使わず、**自前の幾何**で描いた。理由: 試�
 上から見たカメラ(1 画素 = 台の面で 1.00 mm、高さによる視差あり)で、厚み(1 層 2.5 mm)・しわ(解析的な平面波の和で高さと面内のずれ)・
 布地の模様(縞・織り・裾の縫い目)・台の模様(木目と継ぎ目、または石目)・影・光学のぼけ・雑音を描く。折り目の縁は丸く(立ち上がり 4 mm)、切り口の縁は鋭い(1 mm)。
 **真値は描画側**: 真の隅は、折りたたんだ座標の隅を、しわの面内のずれを戻した実位置にして、**隅の高さで**画素へ投影した点。
-検出器は画像だけを受け取り、真値は採点でしか使わない(別の種の真値で採点すると再現率 0、門)。データは全部自作で、外部データは使っていない
-(ICRA 2024 のデータなどは権利が未確認なので使わない)。
+検出器は画像だけを受け取り、真値は採点でしか使わない(真値を 20 mm 平行移動した偽の真値で採点すると再現率 0、門)。
+データは全部自作で、外部データは使っていない(ICRA 2024 のデータなどは権利が未確認なので使わない)。
+**真値の高さの定義が 1 mm 前後の比較を左右する**: 隅の高さ(1〜4 層で 2.5〜10 mm)で投影した真値が本線。台の面で投影した真値で測ると
+誤差の中央値は 提案(RGB)1.20・提案(色度)1.33・最小外接長方形 1.26・同(色度)2.24 mm になり、提案(RGB)と最小外接長方形の順位が入れ替わる
+(差 −0.06 mm、10 組で −0.20〜−0.01)。つかむのは布の上面の隅なので隅の高さを本線にしたが、1 mm 前後の差は真値の定義の関数。
 
 【描画に入れた仮定(結果の読み方に効く)】
 * 照明は灰色の拡散光で、陰影は**反射率に定数を掛けるだけ**(色度は変わらない)。鏡面反射・色つきの影・レンズ歪みは無い。
@@ -33,46 +38,71 @@ MuJoCo の布(flex)は使わず、**自前の幾何**で描いた。理由: 試�
 * 台の平均色をタオルの平均色(コントラスト 0)から濃い茶(1)へ寄せてコントラストを振る(ΔE = 両者の平均色の CIE Lab 距離)。
 
 【方法(Fullseye の op が主役、新 op なし)】
-* 領域: 画像の外周 10 px の中央値(=台の色)からの距離を ``gaussian`` で平滑化 → ``otsu`` → ``fill_up`` → 最大の連結成分。
+* 領域: 画像の外周 10 px の中央値(=台の色)からの距離を ``gaussian``(σ = 0.3 + 2.7 a、a = 0.5 で 1.65 px)で平滑化 → ``otsu`` → ``fill_up`` → 最大の連結成分。
   距離は RGB(明るさを含む)と色度(明るさを捨てる)の 2 通り。
-* 輪郭と辺: ``sk_find_contours`` で副画素の等値線 → ``xg_gen_polygons``(Douglas-Peucker)→ 各辺を全最小二乗の直線にし、
-  隣り合う直線の交点を隅とする(角の丸まりを避ける)。辺の長さと角度で棄却する。
-* 提案 = 上の全体(長方形を仮定しない一般の多角形)。**基準線**は 4 つ: ``sk_corner_harris`` の極大を真の隅の数だけ(領域を使わない)、
-  同じ領域の凸包の頂点を 4 個まで減らしたもの、同じ領域に外接する面積最小の長方形(長方形という前提を使う。RGB と色度の 2 通り)。
-  基準線は検出数を真の隅の数(4)に固定でき、提案より有利な設定。
+* 輪郭と辺: ``sk_find_contours`` で副画素の等値線(つまみ a は等値線の値でなく level = 0.2 + 0.5 a。届く範囲 0.2〜0.7 の外の値は画像の倍率で合わせる)
+  → ``xg_gen_polygons``(Douglas-Peucker)→ 各辺を全最小二乗の直線にし、隣り合う直線の交点を隅とする(角の丸まりを避ける)。辺の長さと角度で棄却する。
+* 提案 = 上の全体(長方形を仮定しない一般の多角形)。**基準線**は、``sk_corner_harris`` の極大を真の隅の数だけ(領域を使わない)、
+  同じ領域の凸包の頂点を 4 個まで減らしたもの、領域の重心から最も遠い 4 点、同じ領域に外接する面積最小の長方形(長方形という前提を使う。RGB と色度の 2 通り)。
+  比較実験として「交点を取らず多角形の頂点をそのまま隅にした版」(色度)も置いた。基準線は検出数を真の隅の数(4)に固定でき、提案より有利な設定。
 * つかむ隅の順位: 隅の両側の辺の「裾の線の深さ」(辺から 8 mm 内側の暗い線)の小さい方を得点にする。両側とも切り口なら高い。
   もう一つの手がかり(折り目の丸みの陰影の帯の幅)も測った。
-* 採点: 検出と真の隅を割り当て問題で 1 対 1 に組み、5 mm 以内を「見つかった」とする(門の外は 15 mm)。種 20 本 x 条件ごとに、
+* 採点: 検出と真の隅を割り当て問題で 1 対 1 に組み、15 mm 以内で組めたものの誤差を数え、5 mm 以内を「見つかった」とする。種 20 本 x 条件ごとに、
   種ごとの再現率の平均と 95 % 区間(種の復元抽出)を出す。**1 つの種の値を主張にしない**。
 
-【結果(種 20 本、4 折り方 = 80 枚、コントラスト ΔE 69、しわ 1 mm、照明の方位 90 度)】
-* 隅の再現率(5 mm 以内): 提案(RGB)0.994 [0.984, 1.000]、提案(色度)0.988、最小外接長方形 1.000、Harris のみ 0.919、凸包の頂点のみ 0.647。
-* 隅の誤差の中央値 mm(px): 提案(RGB)1.50(1.51)、提案(色度)1.10、最小外接長方形 1.14、Harris 3.62、凸包 4.16。提案(RGB)の 90 % 点は 2.89 mm。
-* 辺の向きの誤差: 中央値 0.16 度(90 % 点 0.81 度)。折り線(80 本)は全部当たる。**ただし折り線は外周の辺なので、辺が出れば当たる**。
-  検出した辺のうち折り線は 0.333 で、折り線と切り口の区別は辺の位置だけではつかない(区別は下の裾の線で)。
-* **基準線に負ける所**: (1) 長方形の前提が使える範囲では、最小外接長方形が提案(RGB)より誤差が小さい(1.14 対 1.50 mm、
-  再現率は同等以上)。提案が勝つ点は長方形を仮定しないことだけで、この PoC の折り方はすべて長方形なので、その利点は使われない。
-  (2) コントラストが低いと領域に頼る方法は全滅し、領域を使わない Harris が最良(ΔE 0 で 0.61、提案は 0.15 以下)。
-  (3) しわ 3 mm 以上では、提案(RGB)は Harris より少し良い程度に落ちる(3 mm: 0.50 対 0.51)。
-* 壊れる条件: コントラスト — 提案(色度)の再現率が 0.9 に届く最低の ΔE は 39(ΔE 19 で 0.09、32 で 0.80、46 以上で 0.99〜1.00)。
-  しわ — 提案(色度)は 2 mm まで 1.00、3 mm で 0.82、4 mm で 0.69(RGB は 3 mm で 0.50、4 mm で 0.20)。誤差の中央値は 0 mm で 0.56 mm、4 mm で 3.3 mm。
-  照明の方位(4 通り、ΔE 46): 提案(色度)は 0.99〜1.00、提案(RGB)は 0.89〜0.94 で、**20 本では方位の効果は見えなかった**(区間が重なる)。
-* つかむ隅の順位(折った 3 種 x 20 種、偶然 0.417): 得点が最上位の検出が開いた隅に当たる割合は提案(RGB)0.917、(色度)0.967、
-  Harris 0.483、最小外接長方形 0.317(順位を持たない)。裾の縫い目を描かない対照では提案(RGB)0.267、(色度)0.600。
-  辺が切り口かの AUC は裾の線の深さで 0.918、折り目の丸みの陰影の帯で 0.608(期待した手がかりはほとんど効かなかった)。
+【結果】主な数値は種 0〜19 の 1 組(実行ログの値)。[ ] は種の組を 10 組(種 0〜19 に 1000 の倍数を足した組)にしたときの最小〜最大。
+条件の既定: 4 折り方 x 20 種 = 80 枚、ΔE 69、しわ 1 mm、照明の方位 90 度。
+* 隅の誤差の中央値 mm [10 組の範囲] / 90 % 点 / 再現率:
+    提案(色度)          1.08 [0.96, 1.08] / 1.98 / 0.997 [0.981, 1.000]
+    最小外接長方形(RGB) 1.14 [1.02, 1.15] / 2.01 / 1.000
+    提案(RGB)           1.55 [1.45, 1.67] / 3.00 [2.82, 3.04] / 0.991 [0.956, 0.994]
+    最小外接長方形(色度) 1.66 [1.49, 1.66] / 2.53 / 1.000
+    多角形の頂点のまま(色度) 1.94 [1.91, 2.04] / 3.11 / 0.994
+    重心から最遠の 4 点   3.20 [3.2, 3.4] / 4.78 / 0.944 [0.912, 0.963]
+    Harris のみ          3.62 [3.57, 3.69] / 4.78 / 0.919 [0.878, 0.934]
+    凸包の頂点のみ       4.16 [4.04, 4.37] / 7.43 / 0.647 [0.634, 0.681]
+  辺の向きの誤差は中央値 0.16 度(90 % 点 0.81 度)。折り線(80 本)は全部当たるが、**折り線は外周の辺なので辺が出れば当たる**
+  (検出した辺のうち折り線は 0.333)。折り線と切り口の区別は辺の位置ではつかず、下の裾の線で行う。
+* **基準線との勝ち負け**(きれいな条件、誤差の中央値): 最小外接長方形(RGB)は提案(RGB)に勝つ(差 +0.41 mm、10 組で +0.41〜+0.53)。
+  提案(色度)は最小外接長方形(RGB)と同等〜わずかに良い(差 −0.06 mm、10 組で −0.15〜+0.00 = 負けない)。提案が長方形を仮定しない利点は、
+  この PoC の折り方がすべて長方形なので使われていない。
+* **壊れる値の表**(再現率が 0.9 に届く最低の ΔE / 0.9 を下回る最初のしわの振幅。種 0〜19 の値、[ ] は 10 組の範囲):
+    方法                  ΔE            しわ
+    提案(RGB)            46 [45, 59]    2 mm [2, 3]
+    提案(色度)           32 [30, 34]    3 mm [3, 4]
+    最小外接長方形(RGB)   46 [44, 48]    3 mm [3, 4]
+    最小外接長方形(色度)  32 [30, 34]    3 mm [3, 3]
+    Harris のみ          57 [56, 72]    2 mm [2, 2]
+  「ΔE 39 未満で壊れる」のように 1 つの値で言えるのは方法ごとで、方法で違う(色度の距離は 32、RGB の距離は 46)。
+* コントラスト(再現率、ΔE 0 / 19 / 32): 提案(RGB)0.15 / 0.21 / 0.57、提案(色度)0.00 / 0.59 / 1.00、最小外接長方形(RGB)0.12 / 0.19 / 0.39、
+  同(色度)0.00 / 0.59 / 1.00、Harris 0.61 / 0.55 / 0.62。**全滅するのは ΔE 0**(領域の方法はどれも 0.15 以下で、領域を使わない Harris が最良)。
+  ΔE 19 は色度の領域の方法と Harris が同程度で、種の組で大きくぶれる(色度の提案は 10 組で 0.35〜0.88)。
+* しわ(再現率、しわ 3 mm / 4 mm。種 0〜19 の値、[ ] は 10 組の平均): 提案(RGB)0.50 / 0.30 [0.55 / 0.29]、提案(色度)0.80 / 0.68 [0.87 / 0.66]、
+  最小外接長方形(RGB)0.82 / 0.55 [0.85 / 0.58]、同(色度)0.70 / 0.46 [0.73 / 0.46]、Harris 0.51 / 0.33 [0.51 / 0.30]、
+  多角形の頂点のまま(色度)0.90 / 0.84 [0.90 / 0.78]。**しわが強いと提案(RGB)は Harris と同程度かそれ以下**(4 mm で 0.30 対 0.33)で、
+  最小外接長方形(RGB)のほうがはるかに良い(0.55)。誤差の中央値は提案(色度)が 0 mm で 0.51 mm、4 mm で 3.22 mm。
+  照明の方位(4 通り、ΔE 46): 提案(色度)は 0.97〜1.00、提案(RGB)は 0.90〜0.96 で、**20 本では方位の効果は見えなかった**(1 条件 4 点だけ)。
+* つかむ隅の順位(折った 3 種 x 20 種、偶然 0.417): 得点が最上位の検出が開いた隅に当たる割合は 提案(RGB)0.917 [10 組で 0.83〜0.93]、提案(色度)0.950 [0.95〜1.00]、
+  Harris 0.483、重心から最遠の 4 点 0.367、凸包 0.400、最小外接長方形 0.317(順位を持たない)。
+  裾の縫い目を描かない対照(10 組を合わせた値): 提案(RGB)0.349、提案(色度)0.547(偶然 0.417)。
+  辺が切り口かの AUC は裾の線の深さで 0.917 [0.917, 0.977]、折り目の丸みの陰影の帯で 0.590 [0.505, 0.608](期待した手がかりはほとんど効かなかった)。
 
 【確認実験で支持されたこと / されなかったこと】
-* 支持: 色度に替えると再現率が上がるのは**陰影(明るさ)がしわで乱れるとき**。増分はしわ 0 mm で +0.000 [−0.037, +0.037]、
-  3 mm で +0.325 [+0.163, +0.487]、4 mm で +0.487(用量反応)。ただし描画の陰影が反射率の定数倍なので、色度が陰影に不変なのは構成上のこと。
-  色つきの影や鏡面のある実画像で同じとは言えない。
-* 支持: 順位の手がかりは裾の縫い目(裾を描かないと提案(RGB)は 0.917 → 0.267)。
-* **支持されなかった / 未特定**: 裾なしで提案(色度)が 0.600 と偶然(0.417)より高い理由。低コントラストで領域が壊れる理由を「陰影」と言い切る実験はしていない
-  (IoU の低下は数えた)。しわで提案(RGB)が Harris 並みに落ちる原因も未特定。
+* 支持: 色度に替えると再現率が上がるのは**陰影(明るさ)がしわで乱れるとき**。増分は しわ 0 mm で +0.013 [+0.000, +0.037](10 組の平均 −0.005)、
+  3 mm で +0.300 [+0.125, +0.463](同 +0.316)、4 mm で +0.375(同 +0.365)(用量反応)。ただし描画の陰影が反射率の定数倍なので、
+  色度が陰影に不変なのは構成上のこと。色つきの影や鏡面のある実画像で同じとは言えない。
+* 支持: 順位の手がかりは裾の縫い目(裾を描かないと提案(RGB)は 0.917 → 0.349)。
+* 手がかり(原因の確認ではない): 交点を取らず多角形の頂点をそのまま隅にした版は、しわ 0 mm では悪く(誤差の中央値 2.4 mm、交点は 0.5 mm。10 組の平均)、
+  しわ 4 mm では交点より良い(2.6 mm 対 3.3 mm。10 組の平均。再現率は +0.163 [+0.050, +0.300]、10 組の平均 +0.119)。しわで落ちる原因の一部が「直線の当てはめ」にあることを
+  示唆するが、当てはめを替えて原因を切り分ける実験はしていない。
+* **支持されなかった / 未特定**: 裾なしで提案(色度)が偶然より高い(+0.13、10 組の平均)理由。「漏れは見つからなかった(独立レビューで確認)」が、
+  小さな偏りが残る。低コントラストで領域が壊れる理由を「陰影」と言い切る実験もしていない(IoU の低下は数えた)。
 
-【門(49 本、実測の近くに帯)】
-折りの幾何(層・折り目・開いた隅の数、領域の面積 / 真の隅の四角形の面積 0.995〜0.999)、各方法の再現率と誤差の帯、
-提案(RGB)が最小外接長方形に負けること、コントラスト・しわ・方位の帯、辺の向き、折り線、順位と対照、確認実験の区間、別の種の真値で 0。
-門の変異(わざと壊す)の記録は C:/dev/data/cloth_poc_2026_11_12/mut/ にある。
+【門(179 本、実測の近くに帯)】
+折りの幾何(層・折り目・開いた隅の数、領域の面積 / 真の隅の四角形の面積 0.995〜0.999)、方法ごとの誤差と再現率、基準線との差、
+壊れる値の表、コントラスト・しわ・方位の条件ごとの再現率、辺の向き、折り線、順位と対照、確認実験、20 mm ずらした真値で 0。
+帯の決め方は ``BANDS`` の上のコメント(種の組 8 つの最小・最大に幅 1 倍を足し、決定に使わない 2 組で全部通ることを確認)。
+門の変異(わざと壊す)の記録は C:/dev/data/cloth_poc_2026_11_12/mut/ にある(独立レビューの 7 変異もすべて落ちた)。
 
     EXTEND: 実画像に替えるには ``evaluate`` の ``render_scene`` を撮った画像に替え、真値(隅)を人手の注釈にする。mm への換算は台の面での画素の大きさ。
 """
@@ -448,7 +478,7 @@ def segment(img, chroma_only=False, sigma_a=0.5):
         d = np.linalg.norm(img / s - med / med.sum(), axis=2)
     else:
         d = np.linalg.norm(img - med, axis=2)
-    ds = np.asarray(fs.apply(d, "gaussian", a=sigma_a))      # σ ≈ 3a
+    ds = np.asarray(fs.apply(d, "gaussian", a=sigma_a))      # σ = 0.3 + 2.7 a(a = 0.5 で 1.65 px)
     ds = ds / max(float(ds.max()), 1e-9)                     # 最大で割る(等値線の op は値の幅に敏感)
     m = np.asarray(fs.apply(ds, "otsu")) > 0.5
     m = np.asarray(fs.apply(m.astype(float), "fill_up")) > 0.5
@@ -516,10 +546,15 @@ def hem_depth(lum, c, d, inward, length_px):
 def detect_proposed(img, chroma_only=False, eps=0.02, min_side=25.0):
     """提案: 領域 → 等値線(副画素)→ Douglas-Peucker → 各辺を全最小二乗の直線 → 隣り合う直線の交点を隅とする。"""
     ds, m, lvl = segment(img, chroma_only=chroma_only)
-    out = {"mask": m, "corners": np.zeros((0, 2)), "score": np.zeros(0), "sides": [], "ok": False, "ds": ds}
+    out = {"mask": m, "corners": np.zeros((0, 2)), "score": np.zeros(0), "vcorners": np.zeros((0, 2)), "sides": [],
+           "ok": False, "ds": ds}
     if m.sum() < 400:
         return out
-    c = fs.apply(ds, "sk_find_contours", a=float(lvl))
+    # sk_find_contours のつまみ a は等値線の値そのものではない(level = 0.2 + 0.5 a、backends.py)。つまみが届く範囲は
+    # 0.2〜0.7 で、低コントラストの等値線(0.19 など)は届かないので、画像を level 0.45(a = 0.5)に対応する倍率で
+    # 掛けてから等値線を取る(元の画像の lvl の等値線と同じ)。
+    a_lvl = 0.5
+    c = fs.apply(np.clip(ds * (0.45 / max(lvl, 1e-6)), 0.0, 1.0), "sk_find_contours", a=a_lvl)
     if not c["cs"]:
         return out
     cont = np.asarray(max(c["cs"], key=len))
@@ -556,7 +591,7 @@ def detect_proposed(img, chroma_only=False, eps=0.02, min_side=25.0):
         sides.append({"c": cc, "d": dd, "len": length,
                       "band": edge_band_energy(lum, cc, dd, centre - cc, length),
                       "hem": hem_depth(lum, cc, dd, centre - cc, length)})
-    corners, scores, kept_sides = [], [], []
+    corners, scores, verts = [], [], []
     for i in range(nP):
         s0, s1 = sides[i - 1], sides[i]
         if s0 is None or s1 is None:
@@ -572,8 +607,10 @@ def detect_proposed(img, chroma_only=False, eps=0.02, min_side=25.0):
         if np.linalg.norm(p - poly[i]) > 12.0:               # 交点が頂点から遠すぎる = 隣の直線がずれている
             continue
         corners.append(p)
+        verts.append(poly[i])
         scores.append(min(s0["hem"], s1["hem"]))           # 両側の辺に裾の線がある隅ほど上位(切り口どうしの隅)
     out.update({"corners": np.array(corners).reshape(-1, 2), "score": np.array(scores),
+                "vcorners": np.array(verts).reshape(-1, 2),
                 "sides": [s for s in sides if s is not None and s["len"] >= 40.0], "ok": len(corners) > 0})
     return out
 
@@ -597,6 +634,25 @@ def detect_harris(img, k=4):
     resp = np.asarray(fs.apply(g, "sk_corner_harris"))
     pts, vals = _nms_peaks(resp, k, 20)
     return {"corners": pts, "score": vals, "sides": []}
+
+
+def detect_far(mask, k=4, radius=40):
+    """基準線: 領域の輪郭のうち、領域の重心から最も遠い点を k 個(互いに radius px 以上離す)。凸包も多角形も使わない粗い方法。"""
+    r, c = np.nonzero(mask & ~ndi.binary_erosion(mask))
+    P = np.stack([r, c], 1).astype(float)
+    if len(P) < 10:
+        return {"corners": np.zeros((0, 2)), "score": np.zeros(0), "sides": []}
+    rr, cc = np.nonzero(mask)
+    d = np.linalg.norm(P - np.array([rr.mean(), cc.mean()]), axis=1)
+    pts, vals = [], []
+    for _ in range(k):
+        i = int(np.argmax(d))
+        if d[i] <= 0:
+            break
+        pts.append(P[i])
+        vals.append(d[i])
+        d[np.linalg.norm(P - P[i], axis=1) < radius] = 0
+    return {"corners": np.array(pts).reshape(-1, 2), "score": np.array(vals), "sides": []}
 
 
 def _visvalingam(H, k):
@@ -708,15 +764,18 @@ def evaluate(seed, fold="half", contrast=1.0, wrinkle=1.0, light_az=90.0, hem=Tr
     mm = tr["mm_per_px"]
     P = detect_proposed(img)
     Pc = detect_proposed(img, chroma_only=True)
-    dets = {"prop": P, "propc": Pc, "harris": detect_harris(img), "hull": detect_hull(P["mask"]),
+    dets = {"prop": P, "propc": Pc, "propv": {"corners": Pc["vcorners"], "score": Pc["score"], "sides": []},
+            "harris": detect_harris(img), "hull": detect_hull(P["mask"]), "far": detect_far(P["mask"]),
             "rect": detect_minrect(P["mask"]), "rectc": detect_minrect(Pc["mask"])}
     rec = {"seed": seed, "fold": fold, "dE": tr["contrast_dE"], "open": tr["open"], "mm_per_px": mm,
            "mask_iou": _iou(P["mask"], tr["cover"]), "mask_iou_c": _iou(Pc["mask"], tr["cover"]),
-           "found": {}, "err": {}, "ndet": {}, "hit1": {}, "side": {}, "crease": {}, "crease_side": {}}
+           "err_table": {}, "found": {}, "err": {}, "ndet": {}, "hit1": {}, "side": {}, "crease": {}, "crease_side": {}}
     sh_dir = np.array([-np.sin(np.radians(light_az)), -np.cos(np.radians(light_az))])    # 影が伸びる向き (row, col)
     for m, d in dets.items():
         err, owner = match_corners(d["corners"], tr["corners_px"], mm, GATE_MM)
         rec["err"][m] = err
+        tbl = np.array([[CY + F_PX * y / HC, CX + F_PX * x / HC] for x, y, _ in tr["corners_mm"]])
+        rec["err_table"][m] = match_corners(d["corners"], tbl, mm, GATE_MM)[0]
         rec["found"][m] = np.where(np.isfinite(err), err <= FOUND_MM, False)
         rec["ndet"][m] = len(d["corners"])
         # つかむ点: 得点が最上位の検出が、開いた(折り目に触れていない)真の隅の近くか
@@ -784,8 +843,9 @@ WRINKLES = (0.0, 1.0, 2.0, 3.0, 4.0)              # しわの振幅 [mm]
 AZIMUTHS = (0.0, 90.0, 180.0, 270.0)              # 照明の方位 [度]
 BASE = dict(fold="half", contrast=1.0, wrinkle=1.0, light_az=90.0)
 LIGHT_CONTRAST = 0.7                              # 照明の方位を振る回の台の色(影と濃淡が効き始める所)
-SHOWN = ("prop", "propc", "harris", "hull", "rect", "rectc")
-NAMES = {"prop": "提案(RGB)", "propc": "提案(色度)", "harris": "Harris のみ", "hull": "凸包の頂点のみ",
+SHOWN = ("prop", "propc", "propv", "harris", "hull", "far", "rect", "rectc")
+NAMES = {"prop": "提案(RGB)", "propc": "提案(色度)", "propv": "多角形の頂点のまま(色度)", "harris": "Harris のみ",
+         "hull": "凸包の頂点のみ", "far": "重心から最遠の 4 点",
          "rect": "最小外接長方形", "rectc": "最小外接長方形(色度)"}
 
 _CELLS = {}
@@ -846,14 +906,15 @@ def auc(pos, neg):
 
 
 def overlay(img, tr, det, crop=190):
-    """検出の重ね描き。赤 = 提案の隅(長い腕)、青 = 真の隅(短い腕)、緑 = 提案の辺、黄 = 真の折り目。"""
+    """検出の重ね描き。赤の十字 = 提案の隅、青の円 = 真の隅(最後に描く)、緑 = 提案の辺、黄 = 真の折り目。線は 2 px 幅
+    (縮小しても残る)。"""
     out = img.copy()
     H, W = SHAPE
 
-    def put(r, c, col):
+    def put(r, c, col, t=2):
         r, c = int(round(r)), int(round(c))
-        if 0 <= r < H and 0 <= c < W:
-            out[r, c] = col
+        if 0 <= r < H - t and 0 <= c < W - t:
+            out[r:r + t, c:c + t] = col
 
     def seg(a, b, col, step=0.5):
         n = int(np.linalg.norm(b - a) / step) + 1
@@ -865,11 +926,13 @@ def overlay(img, tr, det, crop=190):
         seg(ca, cb, (1.0, 1.0, 0.0))
     for s in det["sides"]:
         seg(s["c"] - s["d"] * s["len"] / 2, s["c"] + s["d"] * s["len"] / 2, (0.0, 1.0, 0.0))
-    for pts, col, arm in ((tr["corners_px"], (0.0, 0.2, 1.0), 3), (det["corners"], (1.0, 0.0, 0.0), 7)):
-        for p in pts:
-            for d in range(-arm, arm + 1):
-                put(p[0] + d, p[1], col)
-                put(p[0], p[1] + d, col)
+    for p in det["corners"]:                                  # 検出の十字(長い腕)
+        for d in range(-10, 11):
+            put(p[0] + d, p[1], (1.0, 0.0, 0.0), 3)
+            put(p[0], p[1] + d, (1.0, 0.0, 0.0), 3)
+    for p in tr["corners_px"]:                                # 真の隅は円で、赤の上に最後に描く
+        for ang in np.linspace(0, 2 * np.pi, 120):
+            put(p[0] + 9 * np.sin(ang), p[1] + 9 * np.cos(ang), (0.0, 0.2, 1.0), 3)
     cen = tr["corners_px"].mean(0)
     r0 = int(np.clip(cen[0] - crop, 0, H - 2 * crop))
     c0 = int(np.clip(cen[1] - crop, 0, W - 2 * crop))
@@ -882,13 +945,202 @@ def shoelace(P):
 
 
 # ---------------------------------------------------------------------------------------------- 門
-NAMES_EN = {"prop": "proposed (RGB)", "propc": "proposed (chroma)", "harris": "Harris only", "hull": "hull vertices only",
+NAMES_EN = {"prop": "proposed (RGB)", "propc": "proposed (chroma)", "propv": "polygon vertices (chroma)",
+            "harris": "Harris only", "hull": "hull vertices only", "far": "4 farthest from centroid",
             "rect": "min-area rectangle", "rectc": "min-area rectangle (chroma)"}
 _GATES = []
 
 
-def gate(name, value, lo=None, hi=None, fmt="%.3f"):
-    """帯 [lo, hi] の内に値があること。実測の近くに置く(ゆるい帯は通ってはいけない所を通す)。"""
+# 帯の決め方(2026-11-12): 種の組を 8 つ(種 0〜19 に 1000・2000・…・7000 を足した組)で PoC を走らせ、各門の値の最小・最大を取り、
+# 幅(最大 - 最小)を両側に足した(幅が小さい門は 0.05 x max(1, |平均|) を足す)。1 組(種 0〜19)だけに合わせると別の組で 3〜4 本が落ち
+# (独立レビュー)、5 組・幅の半分でも帯の決定に使っていない組で 10 本前後が落ちた。この 8 組・幅 1 倍の帯は、決定に使っていない
+# 2 組(8000、9000)で 0 本落ちた。走査はこの repo の外で行った(PoC 本体の実行時間は増えない)。
+BANDS = {
+    'area ratio flat': (0.945, 1.045),
+    'area ratio half': (0.9479, 1.049),
+    'area ratio third': (0.948, 1.049),
+    'area ratio quarter': (0.9484, 1.049),
+    'median corner error prop [mm]': (1.281, 1.868),
+    'p90 corner error prop [mm]': (2.691, 3.217),
+    'recall prop (80 images)': (0.9062, 1.044),
+    'median corner error propc [mm]': (0.8261, 1.212),
+    'p90 corner error propc [mm]': (1.704, 2.147),
+    'recall propc (80 images)': (0.9312, 1.05),
+    'median corner error propv [mm]': (1.783, 2.173),
+    'p90 corner error propv [mm]': (2.872, 3.574),
+    'recall propv (80 images)': (0.9187, 1.044),
+    'median corner error harris [mm]': (3.391, 3.867),
+    'p90 corner error harris [mm]': (4.436, 5.125),
+    'recall harris (80 images)': (0.8281, 0.9781),
+    'median corner error hull [mm]': (3.78, 4.568),
+    'p90 corner error hull [mm]': (5.576, 8.628),
+    'recall hull (80 images)': (0.5875, 0.7313),
+    'median corner error far [mm]': (3.042, 3.448),
+    'p90 corner error far [mm]': (4.295, 5.071),
+    'recall far (80 images)': (0.8687, 1.003),
+    'median corner error rect [mm]': (0.9471, 1.253),
+    'p90 corner error rect [mm]': (1.709, 2.283),
+    'recall rect (80 images)': (0.95, 1.05),
+    'median corner error rectc [mm]': (1.31, 1.842),
+    'p90 corner error rectc [mm]': (2.162, 2.717),
+    'recall rectc (80 images)': (0.95, 1.05),
+    'median error prop(RGB) minus minrect(RGB) [mm]': (0.2942, 0.6353),
+    'median error prop(chroma) minus minrect(RGB) [mm]': (-0.2446, 0.05253),
+    'median error minrect(chroma) minus minrect(RGB) [mm]': (0.2669, 0.6816),
+    'median corner error vs table-plane truth prop [mm]': (0.8469, 1.375),
+    'median corner error vs table-plane truth propc [mm]': (1.033, 1.48),
+    'median corner error vs table-plane truth rect [mm]': (0.996, 1.397),
+    'median corner error vs table-plane truth rectc [mm]': (1.961, 2.374),
+    'table-plane truth: prop(RGB) minus minrect(RGB) [mm]': (-0.3314, 0.1495),
+    'contrast #0: recall prop': (-0.05, 0.25),
+    'contrast #0: recall propc': (-0.05, 0.05),
+    'contrast #0: recall rect': (0.0125, 0.35),
+    'contrast #0: recall rectc': (-0.05, 0.05),
+    'contrast #0: recall harris': (0.525, 0.75),
+    'contrast #1: recall prop': (-0.0125, 0.4375),
+    'contrast #1: recall propc': (0.0375, 0.975),
+    'contrast #1: recall rect': (0.075, 0.4125),
+    'contrast #1: recall rectc': (0.025, 1),
+    'contrast #1: recall harris': (0.275, 0.725),
+    'contrast #2: recall prop': (0.425, 0.875),
+    'contrast #2: recall propc': (0.85, 1.075),
+    'contrast #2: recall rect': (0.15, 0.8625),
+    'contrast #2: recall rectc': (0.9, 1.05),
+    'contrast #2: recall harris': (0.475, 0.775),
+    'contrast #3: recall prop': (0.6, 0.9375),
+    'contrast #3: recall propc': (0.925, 1.05),
+    'contrast #3: recall rect': (0.55, 1.038),
+    'contrast #3: recall rectc': (0.9375, 1.05),
+    'contrast #3: recall harris': (0.475, 0.925),
+    'contrast #4: recall prop': (0.75, 1.05),
+    'contrast #4: recall propc': (0.9125, 1.05),
+    'contrast #4: recall rect': (0.85, 1.038),
+    'contrast #4: recall rectc': (0.95, 1.05),
+    'contrast #4: recall harris': (0.5375, 1.062),
+    'contrast #5: recall prop': (0.8875, 1.038),
+    'contrast #5: recall propc': (0.925, 1.05),
+    'contrast #5: recall rect': (0.925, 1.05),
+    'contrast #5: recall rectc': (0.95, 1.05),
+    'contrast #5: recall harris': (0.775, 1.037),
+    'contrast #6: recall prop': (0.875, 1.062),
+    'contrast #6: recall propc': (0.925, 1.05),
+    'contrast #6: recall rect': (0.95, 1.05),
+    'contrast #6: recall rectc': (0.95, 1.05),
+    'contrast #6: recall harris': (0.875, 1.025),
+    'wrinkle 0 mm: recall prop': (0.9125, 1.05),
+    'wrinkle 0 mm: recall propc': (0.9, 1.05),
+    'wrinkle 0 mm: recall rect': (0.95, 1.05),
+    'wrinkle 0 mm: recall rectc': (0.95, 1.05),
+    'wrinkle 0 mm: recall harris': (0.925, 1.05),
+    'wrinkle 0 mm: recall propv': (0.9, 1.05),
+    'wrinkle 0 mm: median error propc [mm]': (0.3684, 0.5826),
+    'wrinkle 0 mm: median error propv [mm]': (1.992, 2.799),
+    'wrinkle 0 mm: median error rect [mm]': (1.267, 1.525),
+    'wrinkle 0 mm: median error rectc [mm]': (0.3105, 0.8211),
+    'wrinkle 1 mm: recall prop': (0.875, 1.062),
+    'wrinkle 1 mm: recall propc': (0.925, 1.05),
+    'wrinkle 1 mm: recall rect': (0.95, 1.05),
+    'wrinkle 1 mm: recall rectc': (0.95, 1.05),
+    'wrinkle 1 mm: recall harris': (0.875, 1.025),
+    'wrinkle 1 mm: recall propv': (0.9125, 1.05),
+    'wrinkle 1 mm: median error propc [mm]': (0.7636, 1.291),
+    'wrinkle 1 mm: median error propv [mm]': (2.215, 2.722),
+    'wrinkle 1 mm: median error rect [mm]': (0.666, 1.481),
+    'wrinkle 1 mm: median error rectc [mm]': (1.178, 1.659),
+    'wrinkle 2 mm: recall prop': (0.5625, 1.087),
+    'wrinkle 2 mm: recall propc': (0.9125, 1.038),
+    'wrinkle 2 mm: recall rect': (0.85, 1.075),
+    'wrinkle 2 mm: recall rectc': (0.875, 1.062),
+    'wrinkle 2 mm: recall harris': (0.45, 0.975),
+    'wrinkle 2 mm: recall propv': (0.8875, 1.025),
+    'wrinkle 2 mm: median error propc [mm]': (1.167, 2.405),
+    'wrinkle 2 mm: median error propv [mm]': (2.068, 2.911),
+    'wrinkle 2 mm: median error rect [mm]': (1.478, 2.283),
+    'wrinkle 2 mm: median error rectc [mm]': (1.984, 3.28),
+    'wrinkle 3 mm: recall prop': (0.3875, 0.725),
+    'wrinkle 3 mm: recall propc': (0.7, 1),
+    'wrinkle 3 mm: recall rect': (0.5375, 1.1),
+    'wrinkle 3 mm: recall rectc': (0.525, 0.9375),
+    'wrinkle 3 mm: recall harris': (0.1, 0.925),
+    'wrinkle 3 mm: recall propv': (0.8125, 0.9625),
+    'wrinkle 3 mm: median error propc [mm]': (1.314, 3.706),
+    'wrinkle 3 mm: median error propv [mm]': (1.979, 3.084),
+    'wrinkle 3 mm: median error rect [mm]': (2.646, 3.57),
+    'wrinkle 3 mm: median error rectc [mm]': (3.256, 4.542),
+    'wrinkle 4 mm: recall prop': (0, 0.4875),
+    'wrinkle 4 mm: recall propc': (0.425, 0.875),
+    'wrinkle 4 mm: recall rect': (0.4, 0.7375),
+    'wrinkle 4 mm: recall rectc': (0.325, 0.625),
+    'wrinkle 4 mm: recall harris': (0.05, 0.5375),
+    'wrinkle 4 mm: recall propv': (0.5625, 0.975),
+    'wrinkle 4 mm: median error propc [mm]': (2.039, 4.703),
+    'wrinkle 4 mm: median error propv [mm]': (2.137, 3.172),
+    'wrinkle 4 mm: median error rect [mm]': (3.197, 5.494),
+    'wrinkle 4 mm: median error rectc [mm]': (4.28, 6.016),
+    'lowest dE with recall >= 0.9: prop': (30.76, 73.24),
+    'first wrinkle with recall < 0.9: prop [mm]': (1, 4),
+    'lowest dE with recall >= 0.9: propc': (27.38, 36.59),
+    'first wrinkle with recall < 0.9: propc [mm]': (2, 5),
+    'lowest dE with recall >= 0.9: rect': (39.16, 52.55),
+    'first wrinkle with recall < 0.9: rect [mm]': (2, 5),
+    'lowest dE with recall >= 0.9: rectc': (27.38, 36.59),
+    'first wrinkle with recall < 0.9: rectc [mm]': (2.85, 3.15),
+    'lowest dE with recall >= 0.9: harris': (39.29, 88.16),
+    'first wrinkle with recall < 0.9: harris [mm]': (1.9, 2.1),
+    'azimuth 0: recall prop': (0.7625, 0.9875),
+    'azimuth 0: recall propc': (0.9125, 1.05),
+    'azimuth 0: recall rect': (0.8375, 1.062),
+    'azimuth 0: recall rectc': (0.95, 1.05),
+    'azimuth 0: recall harris': (0.55, 1.038),
+    'azimuth 90: recall prop': (0.75, 1.05),
+    'azimuth 90: recall propc': (0.9125, 1.05),
+    'azimuth 90: recall rect': (0.85, 1.038),
+    'azimuth 90: recall rectc': (0.95, 1.05),
+    'azimuth 90: recall harris': (0.5375, 1.062),
+    'azimuth 180: recall prop': (0.7875, 1.05),
+    'azimuth 180: recall propc': (0.925, 1.05),
+    'azimuth 180: recall rect': (0.85, 1.075),
+    'azimuth 180: recall rectc': (0.95, 1.05),
+    'azimuth 180: recall harris': (0.575, 1.025),
+    'azimuth 270: recall prop': (0.6875, 1.1),
+    'azimuth 270: recall propc': (0.925, 1.05),
+    'azimuth 270: recall rect': (0.775, 1.113),
+    'azimuth 270: recall rectc': (0.95, 1.05),
+    'azimuth 270: recall harris': (0.5875, 0.9625),
+    'side direction error median prop [deg]': (0.08466, 0.2304),
+    'side direction error p90 prop [deg]': (0.6091, 1.056),
+    'side direction error median propc [deg]': (0.07221, 0.2092),
+    'side direction error p90 propc [deg]': (0.2798, 1.079),
+    'side direction error median rect [deg]': (0.04914, 0.1934),
+    'side direction error p90 rect [deg]': (0.2405, 0.5181),
+    'side direction error median rectc [deg]': (0.05519, 0.1958),
+    'side direction error p90 rectc [deg]': (0.2228, 0.5475),
+    'crease recall prop(RGB), 80 creases': (0.95, 1.05),
+    'share of detected sides that are creases (no discrimination)': (0.2833, 0.3847),
+    'grasp hit@1 minus chance: prop': (0.3167, 0.6167),
+    'grasp hit@1 minus chance: propc': (0.4833, 0.6333),
+    'grasp hit@1 minus chance: harris': (-0.1167, 0.1833),
+    'grasp hit@1 minus chance: hull': (-0.2833, 0.3167),
+    'grasp hit@1 minus chance: far': (-0.2, 0.25),
+    'grasp hit@1 minus chance: rect': (-0.4, 0.35),
+    'grasp hit@1 chance level': (0.3667, 0.4667),
+    'grasp hit@1 minus chance without hem line: prop(RGB)': (-0.3333, 0.2167),
+    'grasp hit@1 minus chance without hem line: prop(chroma)': (-0.2, 0.5),
+    'AUC raw vs crease, hem depth': (0.8594, 1.033),
+    'AUC raw vs crease, shading band (weak)': (0.403, 0.7098),
+    'chroma - RGB recall gain, wrinkle 0 mm (mean)': (-0.1, 0.0875),
+    'chroma - RGB recall gain, wrinkle 3 mm (mean)': (0.2, 0.4625),
+    'chroma - RGB recall gain, wrinkle 4 mm (mean)': (0.0375, 0.7125),
+    'vertex - intersection recall gain, wrinkle 0 mm (mean)': (-0.075, 0.05),
+    'vertex - intersection recall gain, wrinkle 3 mm (mean)': (-0.125, 0.2125),
+    'vertex - intersection recall gain, wrinkle 4 mm (mean)': (-0.125, 0.3625),
+    'recall against truth shifted by 20 mm': (-0.05, 0.05),
+}
+
+
+def gate(name, value, fmt="%.3f"):
+    """値が BANDS[名前] の帯の内にあること。帯は実測の近くに置く(ゆるい帯は通ってはいけない所を通す)。"""
+    lo, hi = BANDS[name]
     ok = (lo is None or value >= lo) and (hi is None or value <= hi)
     band = "[%s, %s]" % ("-" if lo is None else fmt % lo, "-" if hi is None else fmt % hi)
     _GATES.append((name, ok))
@@ -911,14 +1163,15 @@ def geometry_checks():
     return ratios
 
 
-def wrong_truth_recall(n=6):
-    """対照: 別の種の真値と突き合わせる。検出が真値に当たるのは、本当にその画像の隅を見つけたときだけのはず。"""
+def shifted_truth_recall(n=6, shift_mm=20.0):
+    """対照: 真の隅を 20 mm 平行移動した偽の真値と突き合わせる。検出が当たるのは、本当にその画像の隅を見つけたときだけのはず
+    (別の種の真値は隅どうしが 6 px しか離れない種があり、対照にならなかった)。"""
     found = []
-    for s in range(n):
-        img, tr = render_scene(s, fold="half", contrast=1.0, wrinkle=1.0, light_az=90.0)
-        _, tr2 = render_scene(s + 100, fold="half", contrast=1.0, wrinkle=1.0, light_az=90.0)
+    for s_ in range(n):
+        img, tr = render_scene(s_, fold="half", contrast=1.0, wrinkle=1.0, light_az=90.0)
+        fake = tr["corners_px"] + np.array([0.0, shift_mm / tr["mm_per_px"]])
         P = detect_proposed(img)
-        err, _ = match_corners(P["corners"], tr2["corners_px"], tr["mm_per_px"], GATE_MM)
+        err, _ = match_corners(P["corners"], fake, tr["mm_per_px"], GATE_MM)
         found.append(float(np.mean(np.isfinite(err) & (err <= FOUND_MM))))
     return float(np.mean(found))
 
@@ -926,6 +1179,21 @@ def wrong_truth_recall(n=6):
 def paired_diff(recs_a, recs_b, m_a, m_b):
     """種ごとの再現率の差(a - b)の平均と 95 % 区間。"""
     return boot_ci(recall(recs_a, m_a) - recall(recs_b, m_b))
+
+
+METH5 = ("prop", "propc", "rect", "rectc", "harris")     # 条件を振る門で数える方法(基準線は最小外接長方形と Harris)
+
+
+def lowest_de_ok(con, m, level=0.9):
+    """再現率が level 以上になる最低の ΔE(届かなければ 99)。"""
+    ok = [dE for _, dE, recs in con if recall(recs, m).mean() >= level]
+    return min(ok) if ok else 99.0
+
+
+def first_wrinkle_below(wri, m, level=0.9):
+    """再現率が level を下回る最初のしわの振幅 [mm](下回らなければ 99)。"""
+    bad = [w for w, recs in wri if recall(recs, m).mean() < level]
+    return min(bad) if bad else 99.0
 
 
 def main():
@@ -939,9 +1207,9 @@ def main():
     print("   層・折り目・開いた隅の数は 4 つの折り方すべてで一致。領域の面積 / 真の隅の四角形の面積: %s" %
           " ".join("%.3f" % r for r in ratios))
     for f, r in zip(FOLDS, ratios):
-        gate("area ratio %s" % f, r, 0.99, 1.005)
+        gate("area ratio %s" % f, r)
 
-    print("\n1. 折り方(コントラスト・しわ 1 mm・方位 90 度): 隅の再現率(5 mm 以内)と誤差")
+    print("\n1. 折り方(コントラスト・しわ 1 mm・方位 90 度): 隅の誤差(主)と再現率(補助。5 mm 以内)")
     base = {}
     for f in FOLDS:
         recs = cell(f, 1.0, 1.0, 90.0)
@@ -954,21 +1222,26 @@ def main():
         e_mm, e_px = errs(allb, m), errs(allb, m, "px")
         rc = boot_ci(recall(allb, m))
         summary[m] = (rc, quant(e_mm, 50), quant(e_mm, 90), quant(e_px, 50), quant(e_px, 90))
-        print("   %-18s 再現率 %.3f [%.3f, %.3f]  誤差 中央値 %.2f mm (%.2f px)  90%% 点 %.2f mm (%.2f px)" %
-              (NAMES[m], rc[0], rc[1], rc[2], summary[m][1], summary[m][3], summary[m][2], summary[m][4]) +
-              "  検出数 %.2f" % np.mean([r["ndet"][m] for r in allb]))
+        print("   %-22s 誤差 中央値 %.2f mm (%.2f px)  90%% 点 %.2f mm (%.2f px)  再現率 %.3f [%.3f, %.3f]  検出数 %.2f" %
+              (NAMES[m], summary[m][1], summary[m][3], summary[m][2], summary[m][4], rc[0], rc[1], rc[2],
+               np.mean([r["ndet"][m] for r in allb])))
+    for m in SHOWN:
+        gate("median corner error %s [mm]" % m, summary[m][1])
+        gate("p90 corner error %s [mm]" % m, summary[m][2])
+        gate("recall %s (80 images)" % m, summary[m][0][0])
+    gate("median error prop(RGB) minus minrect(RGB) [mm]", summary["prop"][1] - summary["rect"][1])
+    gate("median error prop(chroma) minus minrect(RGB) [mm]", summary["propc"][1] - summary["rect"][1])
+    gate("median error minrect(chroma) minus minrect(RGB) [mm]", summary["rectc"][1] - summary["rect"][1])
 
-    gate("recall prop (RGB), 80 images, CI lower", summary["prop"][0][1], 0.975, 1.0)
-    gate("recall minrect, CI lower", summary["rect"][0][1], 0.99, 1.0)
-    gate("recall Harris only", summary["harris"][0][0], 0.86, 0.96)
-    gate("recall hull vertices only", summary["hull"][0][0], 0.55, 0.75)
-    gate("median corner error prop(RGB) [mm]", summary["prop"][1], 1.2, 1.8)
-    gate("median corner error prop(chroma) [mm]", summary["propc"][1], 0.85, 1.4)
-    gate("median corner error minrect [mm]", summary["rect"][1], 0.9, 1.4)
-    gate("median corner error Harris [mm]", summary["harris"][1], 3.0, 4.2)
-    gate("median corner error hull [mm]", summary["hull"][1], 3.5, 4.8)
-    gate("prop(RGB) loses to minrect: median error difference [mm]", summary["prop"][1] - summary["rect"][1], 0.15, 0.65)
-    gate("p90 corner error prop(RGB) [mm]", summary["prop"][2], 2.3, 3.5)
+    # 真値の高さの定義: 隅の高さで投影した真値(本線)と、台の面で投影した真値で、1 mm 前後の比較が変わるか
+    tb = {m: float(np.median(np.concatenate([r["err_table"][m][np.isfinite(r["err_table"][m])] for r in allb])))
+          for m in ("prop", "propc", "rect", "rectc")}
+    print("   真値を台の面で投影した場合の誤差の中央値 [mm](本線は隅の高さで投影): " +
+          "  ".join("%s %.2f(本線 %.2f)" % (m, tb[m], summary[m][1]) for m in tb))
+    for m in tb:
+        gate("median corner error vs table-plane truth %s [mm]" % m, tb[m])
+    gate("table-plane truth: prop(RGB) minus minrect(RGB) [mm]", tb["prop"] - tb["rect"])
+
     print("\n2. コントラスト(ΔE: タオルと台の平均色の CIE Lab の距離)")
     con = []
     for c in CONTRASTS:
@@ -978,17 +1251,10 @@ def main():
         print("   ΔE %5.1f  領域 IoU %.2f(色度 %.2f)  " % (dE, np.mean([r["mask_iou"] for r in recs]),
                                                           np.mean([r["mask_iou_c"] for r in recs])) +
               "  ".join("%s %.2f" % (m, recall(recs, m).mean()) for m in SHOWN))
+    for i, (_, dE, recs) in enumerate(con):
+        for m in METH5:
+            gate("contrast #%d: recall %s" % (i, m), recall(recs, m).mean())
 
-    thr = min(dE for _, dE, recs in con if recall(recs, "propc").mean() >= 0.9)
-    gate("lowest dE where prop(chroma) recall >= 0.9", thr, 35.0, 43.0, "%.1f")
-    r0 = con[0][2]
-    gate("dE 0: prop(chroma) recall", recall(r0, "propc").mean(), 0.0, 0.05)
-    gate("dE 0: Harris recall", recall(r0, "harris").mean(), 0.5, 0.7)
-    gate("dE 0: best segmentation-based recall", max(recall(r0, m).mean() for m in ("prop", "propc", "rect", "rectc")),
-         0.08, 0.25)
-    gate("dE 32: prop(chroma) recall", recall(con[2][2], "propc").mean(), 0.68, 0.92)
-    gate("dE 32: prop(RGB) recall", recall(con[2][2], "prop").mean(), 0.45, 0.75)
-    gate("dE 69: prop(chroma) recall", recall(con[-1][2], "propc").mean(), 0.97, 1.0)
     print("\n3. しわの振幅 [mm]")
     wri = []
     for w in WRINKLES:
@@ -996,52 +1262,56 @@ def main():
         wri.append((w, recs))
         print("   %.0f mm  領域 IoU %.2f  " % (w, np.mean([r["mask_iou"] for r in recs])) +
               "  ".join("%s %.2f" % (m, recall(recs, m).mean()) for m in SHOWN) +
-              "  誤差の中央値 propc %.2f mm rectc %.2f mm" % (quant(errs(recs, "propc"), 50), quant(errs(recs, "rectc"), 50)))
+              "  誤差の中央値 " + " ".join("%s %.2f" % (m, quant(errs(recs, m), 50)) for m in ("propc", "propv", "rect", "rectc")))
+    for i, (w, recs) in enumerate(wri):
+        for m in METH5 + ("propv",):
+            gate("wrinkle %.0f mm: recall %s" % (w, m), recall(recs, m).mean())
+        for m in ("propc", "propv", "rect", "rectc"):
+            gate("wrinkle %.0f mm: median error %s [mm]" % (w, m), quant(errs(recs, m), 50))
 
-    gate("wrinkle 4 mm: prop(chroma) recall", recall(wri[4][1], "propc").mean(), 0.55, 0.82)
-    gate("wrinkle 3 mm: prop(RGB) recall", recall(wri[3][1], "prop").mean(), 0.38, 0.62)
-    gate("wrinkle 3 mm: prop(chroma) recall", recall(wri[3][1], "propc").mean(), 0.7, 0.92)
-    gate("wrinkle 1 mm -> 4 mm: prop(chroma) recall drop",
-         recall(wri[1][1], "propc").mean() - recall(wri[4][1], "propc").mean(), 0.2, 0.42)
-    gate("wrinkle 0 mm: median error prop(chroma) [mm]", quant(errs(wri[0][1], "propc"), 50), 0.35, 0.8)
-    gate("wrinkle 4 mm: median error prop(chroma) [mm]", quant(errs(wri[4][1], "propc"), 50), 2.5, 4.2)
+    print("\n   壊れる値の表(再現率が 0.9 を下回る境目)")
+    brk = {}
+    for m in METH5:
+        brk[m] = (lowest_de_ok(con, m), first_wrinkle_below(wri, m))
+        print("   %-22s 0.9 に届く最低の ΔE %5.1f   しわで 0.9 を下回る最初の振幅 %s mm" %
+              (NAMES[m], brk[m][0], "なし" if brk[m][1] > 50 else "%.0f" % brk[m][1]))
+        gate("lowest dE with recall >= 0.9: %s" % m, brk[m][0], "%.1f")
+        gate("first wrinkle with recall < 0.9: %s [mm]" % m, brk[m][1], "%.1f")
+
     print("\n4. 照明の方位 [度](台の色 %.1f、ΔE %.0f)" % (LIGHT_CONTRAST, np.mean([r["dE"] for r in cell("half", LIGHT_CONTRAST, 1.0, 90.0)])))
     lig = []
     for a in AZIMUTHS:
         recs = cell("half", LIGHT_CONTRAST, 1.0, a)
         lig.append((a, recs))
         print("   %3.0f  " % a + "  ".join("%s %.2f" % (m, recall(recs, m).mean()) for m in SHOWN))
+        for m in METH5:
+            gate("azimuth %.0f: recall %s" % (a, m), recall(recs, m).mean())
 
-    pr = [recall(recs, "propc").mean() for _, recs in lig]
-    pp = [recall(recs, "prop").mean() for _, recs in lig]
-    gate("azimuth: prop(chroma) recall, minimum over 4", min(pr), 0.97, 1.0)
-    gate("azimuth: prop(RGB) recall range (max - min); no azimuth effect found at 20 seeds", max(pp) - min(pp), 0.0, 0.12)
     print("\n5. 辺の向きと折り線")
     sidm = {}
     for m in ("prop", "propc", "rect", "rectc"):
         v = np.array([x for r in allb for x in r["side"][m]])
         sidm[m] = (quant(v, 50), quant(v, 90), len(v))
-        print("   %-18s 辺の向きの誤差 中央値 %.2f 度 90%%点 %.2f 度 (辺 %d 本)" % (NAMES[m], sidm[m][0], sidm[m][1], len(v)))
+        print("   %-22s 辺の向きの誤差 中央値 %.2f 度 90%%点 %.2f 度 (辺 %d 本)" % (NAMES[m], sidm[m][0], sidm[m][1], len(v)))
+        gate("side direction error median %s [deg]" % m, sidm[m][0])
+        gate("side direction error p90 %s [deg]" % m, sidm[m][1])
     folded = [r for f in ("half", "third", "quarter") for r in base[f]]
     cre = {}
     for m in ("prop", "propc", "rect", "rectc"):
         rc, n = crease_recall(folded, m)
         sides = [x for r in folded for x in r["crease_side"][m]]
         cre[m] = (rc, n, float(np.mean(sides)) if sides else float("nan"), len(sides))
-        print("   %-18s 折り線の再現率 %.3f (%d 本)  検出した辺のうち折り線に当たる割合 %.3f (%d 辺)" %
+        print("   %-22s 折り線の再現率 %.3f (%d 本)  検出した辺のうち折り線に当たる割合 %.3f (%d 辺)" %
               ((NAMES[m],) + cre[m]))
+    gate("crease recall prop(RGB), 80 creases", cre["prop"][0])
+    gate("share of detected sides that are creases (no discrimination)", cre["prop"][2])
 
-    gate("side direction error median prop(RGB) [deg]", sidm["prop"][0], 0.1, 0.25)
-    gate("side direction error p90 prop(RGB) [deg]", sidm["prop"][1], 0.5, 1.1)
-    gate("side direction error median minrect [deg]", sidm["rect"][0], 0.08, 0.22)
-    gate("crease recall prop(RGB), 80 creases", cre["prop"][0], 0.98, 1.0)
-    gate("share of detected sides that are creases (no discrimination)", cre["prop"][2], 0.30, 0.36)
     print("\n6. つかむ点(開いた隅 = 折り目に触れない隅)の順位: 得点が最上位の検出が開いた真の隅の 8 mm 以内にあるか")
     chance = float(np.mean([r["open"].sum() / 4.0 for r in folded]))
-    hits = {m: hit1(folded, m) for m in ("prop", "propc", "harris", "hull", "rect")}
+    hits = {m: hit1(folded, m) for m in ("prop", "propc", "harris", "hull", "far", "rect")}
     for m, v in hits.items():
         hm = boot_ci(v)
-        print("   %-18s hit@1 %.3f [%.3f, %.3f]" % (NAMES[m], *hm))
+        print("   %-22s hit@1 %.3f [%.3f, %.3f]" % (NAMES[m], *hm))
     print("   偶然(開いた隅の割合の平均): %.3f" % chance)
     hem_off = {f: cell_hem_off(f) for f in ("half", "third", "quarter")}
     ho = [r for f in hem_off for r in hem_off[f]]
@@ -1053,37 +1323,40 @@ def main():
     neg_s = [b[1] for r in folded for b in r["bands"] if b[2]]
     auc_hem, auc_shade = auc(pos, neg), auc(neg_s, pos_s)
     print("   辺が切り口(折り目でない)かの AUC: 裾の線の深さ %.3f、丸みの陰影の帯 %.3f(折り目の方が帯が広いとして)" % (auc_hem, auc_shade))
+    for m, v in hits.items():
+        gate("grasp hit@1 minus chance: %s" % m, v.mean() - chance)
+    gate("grasp hit@1 chance level", chance)
+    gate("grasp hit@1 minus chance without hem line: prop(RGB)", hit1(ho, "prop").mean() - chance)
+    gate("grasp hit@1 minus chance without hem line: prop(chroma)", hit1(ho, "propc").mean() - chance)
+    gate("AUC raw vs crease, hem depth", auc_hem)
+    gate("AUC raw vs crease, shading band (weak)", auc_shade)
 
-    gate("grasp hit@1 prop(RGB)", hits["prop"].mean(), 0.85, 0.97)
-    gate("grasp hit@1 prop(chroma)", hits["propc"].mean(), 0.90, 1.0)
-    gate("grasp hit@1 chance level", chance, 0.40, 0.43)
-    gate("grasp hit@1 Harris minus chance", hits["harris"].mean() - chance, -0.1, 0.15)
-    gate("grasp hit@1 minrect (no ranking) minus chance", hits["rect"].mean() - chance, -0.2, 0.1)
-    gate("grasp hit@1 prop(RGB) without hem line", hit1(ho, "prop").mean(), 0.15, 0.40)
-    gate("grasp hit@1 prop(chroma) without hem line", hit1(ho, "propc").mean(), 0.5, 0.72)
-    gate("AUC raw vs crease, hem depth", auc_hem, 0.86, 0.96)
-    gate("AUC raw vs crease, shading band (weak)", auc_shade, 0.5, 0.7)
     print("\n7. 確認実験")
     d_w0 = paired_diff(cell("half", 1.0, 0.0, 90.0), cell("half", 1.0, 0.0, 90.0), "propc", "prop")
     d_w3 = paired_diff(cell("half", 1.0, 3.0, 90.0), cell("half", 1.0, 3.0, 90.0), "propc", "prop")
     d_w4 = paired_diff(cell("half", 1.0, 4.0, 90.0), cell("half", 1.0, 4.0, 90.0), "propc", "prop")
     print("   色度(明るさを捨てる)にしたときの再現率の増分(種ごとの差の平均と 95 %% 区間): しわ 0 mm %+.3f [%+.3f, %+.3f]、"
           "3 mm %+.3f [%+.3f, %+.3f]、4 mm %+.3f [%+.3f, %+.3f]" % (d_w0 + d_w3 + d_w4))
-    gate("chroma - RGB recall gain, wrinkle 0 mm (CI lower <= 0)", d_w0[1], None, 0.0)
-    gate("chroma - RGB recall gain, wrinkle 0 mm (CI upper >= 0)", d_w0[2], 0.0, None)
-    gate("chroma - RGB recall gain, wrinkle 3 mm (CI lower)", d_w3[1], 0.10, None)
-    gate("chroma - RGB recall gain, wrinkle 4 mm (mean)", d_w4[0], 0.38, 0.6)
-    wt = wrong_truth_recall()
-    gate("recall against another seed truth", wt, 0.0, 0.02)
-    print("   別の種の真値と突き合わせた再現率: %.3f(正しい真値では %.3f)" % (wt, summary["prop"][0][0]))
+    gate("chroma - RGB recall gain, wrinkle 0 mm (mean)", d_w0[0])
+    gate("chroma - RGB recall gain, wrinkle 3 mm (mean)", d_w3[0])
+    gate("chroma - RGB recall gain, wrinkle 4 mm (mean)", d_w4[0])
+    d_v = {w: paired_diff(cell("half", 1.0, w, 90.0), cell("half", 1.0, w, 90.0), "propv", "propc") for w in (0.0, 3.0, 4.0)}
+    print("   交点を使わず多角形の頂点をそのまま隅にした版(色度)との再現率の差(頂点 - 交点): " +
+          "、".join("しわ %.0f mm %+.3f [%+.3f, %+.3f]" % ((w,) + d_v[w]) for w in d_v))
+    for w in d_v:
+        gate("vertex - intersection recall gain, wrinkle %.0f mm (mean)" % w, d_v[w][0])
+    wt = shifted_truth_recall()
+    gate("recall against truth shifted by 20 mm", wt)
+    print("   真値を 20 mm 平行移動した偽の真値と突き合わせた再現率: %.3f(正しい真値では %.3f)" % (wt, summary["prop"][0][0]))
 
     figures(summary, con, wri, hits)
     print("\n8. 実行時間 %.0f 秒" % (time.time() - t0))
-    return dict(summary=summary, con=con, wri=wri, lig=lig, base=base, hits=hits, chance=chance, cre=cre, sidm=sidm)
+    return dict(summary=summary, con=con, wri=wri, lig=lig, base=base, hits=hits, chance=chance, cre=cre, sidm=sidm,
+                brk=brk, tb=tb)
 
 
 def figures(summary, con, wri, hits):
-    """図(``FULLSEYE_FIGURES=off`` なら何もしない)。数値は上の実験の値をそのまま使う。"""
+    """図(``FULLSEYE_FIGURES=off`` なら何もしない)。説明文の数値は上の実験の値から作る(本文と食い違わない)。"""
     if figs.target_dir() is None:
         return
     panels, caps = [], []
@@ -1093,45 +1366,55 @@ def figures(summary, con, wri, hits):
         det = detect_proposed(img, chroma_only=True)
         err, _ = match_corners(det["corners"], tr["corners_px"], tr["mm_per_px"], GATE_MM)
         ok = int(np.sum(np.isfinite(err) & (err <= FOUND_MM)))
-        msg = "fold=%s, dE %.0f, wrinkle %.0f mm: %d/4 corners within 5 mm" % (f, tr["contrast_dE"], w, ok)
+        msg = "fold=%s, this seed's dE %.0f, wrinkle %.0f mm: %d/4 corners within 5 mm" % (f, tr["contrast_dE"], w, ok)
         if ok:
             msg += " (median %.1f mm)" % np.nanmedian(err[np.isfinite(err) & (err <= FOUND_MM)])
         panels.append(overlay(img, tr, det))
         caps.append(msg)
         assert float(np.ptp(panels[-1])) > 0.1
-    # 重ね描きが見えること: 赤(検出)・青(真の隅)・黄(折り目)が純色で何画素か残っている
+    # 重ね描きが見えること: 赤(検出)・青(真の隅の円)・黄(折り目)・緑(辺)が純色で何画素か残っている
     big = np.concatenate([p.reshape(-1, 3) for p in panels[:4]])
-    for col in ((1.0, 0.0, 0.0), (0.0, 0.2, 1.0), (1.0, 1.0, 0.0)):
-        assert int(np.all(np.isclose(big, col), axis=1).sum()) > 50, col
+    for col in ((1.0, 0.0, 0.0), (0.0, 0.2, 1.0), (1.0, 1.0, 0.0), (0.0, 1.0, 0.0)):
+        assert int(np.all(np.isclose(big, col), axis=1).sum()) > 100, col
     figs.save_grid("towel_overlays", panels, captions=caps, ncols=3, gray=False,
-                   caption="synthetic towel, 1 mm per pixel. red = detected corners (chroma variant), blue = true corners, "
-                           "yellow = true creases, green = detected sides. bottom row: low contrast and strong wrinkle")
-    series, kinds, styles, colors = [], [], [], []
-    for m, col, sty in (("prop", "emphasis", None), ("propc", "right", None), ("rectc", "reference", "dashed"),
-                        ("harris", "wrong", None), ("hull", "neutral", None)):
-        series.append((NAMES_EN[m], np.array([dE for _, dE, _ in con]), np.array([recall(r, m).mean() for _, _, r in con])))
-        kinds.append("line")
-        styles.append(sty)
-        colors.append(col)
-    figs.save_plot("towel_contrast", series, xlabel="colour difference between towel and table (CIE Lab dE)",
-                   ylabel="corner recall within 5 mm", title="segmentation needs colour contrast; Harris does not",
-                   kinds=kinds, styles=styles, colors=colors, ylim=(0.0, 1.05),
-                   caption="half fold, wrinkle 1 mm, %d seeds per point" % SEEDS)
-    series = []
-    for m in ("prop", "propc", "rectc", "harris", "hull"):
-        series.append((NAMES_EN[m], np.array([w for w, _ in wri]), np.array([recall(r, m).mean() for _, r in wri])))
-    figs.save_plot("towel_wrinkle", series, xlabel="wrinkle amplitude [mm]", ylabel="corner recall within 5 mm",
-                   title="strong wrinkles break every method", kinds=kinds, styles=styles, colors=colors,
-                   ylim=(0.0, 1.05), caption="half fold, dE 69, %d seeds per point" % SEEDS)
+                   caption="synthetic towel, 1 mm per pixel. red cross = detected corner (chroma variant), blue circle = true corner, "
+                           "yellow = true crease, green = detected side. bottom row: low contrast, strong wrinkle. "
+                           "dE is this seed's; the mean over 20 seeds is %.0f" % np.mean([r["dE"] for r in cell("half", 1.0, 1.0, 90.0)]))
+
+    def sweep(xs, getter, name_x, title, fname, caption):
+        series, kinds, styles, colors = [], [], [], []
+        for m, col, sty in (("prop", "emphasis", None), ("propc", "right", None), ("rect", "reference", "dashed"),
+                            ("rectc", "neutral", "dashed"), ("harris", "wrong", None)):
+            xv = np.array(xs, float)
+            yv = np.array([getter(m, k) for k in range(len(xs))])
+            series.append((NAMES_EN[m], xv, yv))
+            kinds.append("line")
+            styles.append(sty)
+            colors.append(col)
+            series.append(("", xv, yv))                              # 同じ色の点: 凡例の記号が線の上にも出る
+            kinds.append("scatter")
+            styles.append(None)
+            colors.append(col)
+        figs.save_plot(fname, series, xlabel=name_x, ylabel="corner recall within 5 mm", title=title, kinds=kinds,
+                       styles=styles, colors=colors, ylim=(0.0, 1.05), caption=caption)
+
+    sweep([dE for _, dE, _ in con], lambda m, k: recall(con[k][2], m).mean(), "colour difference between towel and table (CIE Lab dE)",
+          "only at dE 0 do all region methods fail; Harris does not need a region", "towel_contrast",
+          "half fold, wrinkle 1 mm, %d seeds per point. hull vertices and 4-farthest are in the table, not drawn" % SEEDS)
+    sweep([w for w, _ in wri], lambda m, k: recall(wri[k][1], m).mean(), "wrinkle amplitude [mm]",
+          "wrinkles: every method falls; the plain rectangle holds up too", "towel_wrinkle",
+          "half fold, dE 69, %d seeds per point. min-area rectangle (RGB) is dashed" % SEEDS)
     rows = []
     for m in SHOWN:
         rc, e50, e90, p50, p90 = summary[m]
-        rows.append([NAMES_EN[m], "%.3f [%.3f, %.3f]" % rc, "%.2f (%.2f)" % (e50, p50), "%.2f (%.2f)" % (e90, p90),
+        rows.append([NAMES_EN[m], "%.2f (%.2f)" % (e50, p50), "%.2f (%.2f)" % (e90, p90), "%.3f [%.3f, %.3f]" % rc,
                      "%.2f" % hits[m].mean() if m in hits else "-"])
-    figs.save_table("towel_summary", ["method", "corner recall [95% CI]", "median err mm (px)", "p90 err mm (px)",
+    cap = ("median error: min-area rectangle (RGB) %.2f mm, proposed (chroma) %.2f mm, proposed (RGB) %.2f mm. "
+           "The rectangle prior wins in the clean case; the chroma proposal ties it and is better at 4 mm wrinkles"
+           % (summary["rect"][1], summary["propc"][1], summary["prop"][1]))
+    figs.save_table("towel_summary", ["method", "median err mm (px)", "p90 err mm (px)", "corner recall [95% CI]",
                                       "grasp hit@1"], rows,
-                    title="4 folds x %d seeds, dE 69, wrinkle 1 mm" % SEEDS,
-                    caption="min-rect keeps a rectangle prior; the generic polygon pipeline never beats it where both work")
+                    title="4 folds x %d seeds, dE 69, wrinkle 1 mm" % SEEDS, caption=cap)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
 

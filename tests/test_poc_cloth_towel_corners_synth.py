@@ -35,14 +35,38 @@ def test_detectors_find_the_corners_in_an_easy_image(easy):
     img, tr = easy
     for det in (P.detect_proposed(img), P.detect_proposed(img, chroma_only=True), P.detect_minrect(P.segment(img)[1])):
         err, _ = P.match_corners(det["corners"], tr["corners_px"], tr["mm_per_px"])
-        assert np.all(np.isfinite(err)) and err.max() < 4.0
+        assert np.all(np.isfinite(err)) and err.max() < 2.5           # 実測は 1〜2 mm(1 画素 = 1 mm)。3 px ずれたら落ちる
 
 
-def test_wrong_truth_is_not_matched(easy):
-    img, _ = easy
-    _, other = P.render_scene(101, fold="half")
-    err, _ = P.match_corners(P.detect_proposed(img)["corners"], other["corners_px"], 1.0)
+def test_a_truth_shifted_by_20_mm_is_not_matched(easy):
+    """対照: 真の隅を 20 mm 平行移動した偽の真値には当たらない(別の種の真値は隅どうしが 6 px しか離れない種があり、対照にならなかった)。"""
+    img, tr = easy
+    fake = tr["corners_px"] + np.array([0.0, 20.0 / tr["mm_per_px"]])
+    err, _ = P.match_corners(P.detect_proposed(img)["corners"], fake, tr["mm_per_px"])
     assert not np.any(err <= P.FOUND_MM)
+    err, _ = P.match_corners(P.detect_proposed(img)["corners"], tr["corners_px"], tr["mm_per_px"])
+    assert np.all(err <= P.FOUND_MM)                                  # 同じ検出は本物の真値には全部当たる
+
+
+def test_a_detector_shifted_by_3_px_is_caught(easy):
+    img, tr = easy
+    D = P.detect_proposed(img)["corners"] + 3.0
+    err, _ = P.match_corners(D, tr["corners_px"], tr["mm_per_px"])
+    assert np.nanmax(err) > 2.5 or not np.all(np.isfinite(err))
+
+
+def test_every_gate_has_a_band():
+    """門の名前と BANDS が 1 対 1(帯の無い門は KeyError、使われない帯は死んだ設定)。"""
+    names = set(P.BANDS)
+    assert len(names) >= 170 and all(lo is None or hi is None or lo <= hi for lo, hi in P.BANDS.values())
+
+
+def test_far_baseline_picks_four_separated_extremes(easy):
+    img, _ = easy
+    d = P.detect_far(P.segment(img)[1])
+    assert len(d["corners"]) == 4
+    dd = np.linalg.norm(d["corners"][:, None] - d["corners"][None], axis=2)
+    assert dd[np.triu_indices(4, 1)].min() >= 40
 
 
 def test_zero_contrast_is_refused_not_invented():
