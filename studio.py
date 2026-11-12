@@ -4110,6 +4110,21 @@ def shortcut_table(items):
     return rows
 
 
+#: コマンドパレットの別名(日本語・英語・やりたいことの言い方)。action の鍵 -> 空白区切りの語。
+#: 表示する名前(label)はそのまま、検索のときだけ label + この語に当てる(STUDIO_UX_RULES §6)。
+PALETTE_WORDS = {
+    "program_find": "find search 検索 探す 見つける 文字列 テキスト検索 ctrl+f",
+    "program_replace": "replace substitute find and replace 置換 置き換え 置き換える 一括置換 ctrl+h",
+    "program_find_next": "find next next match 次を検索 次へ 次の一致 f3",
+    "program_find_prev": "find previous previous match 前を検索 前へ 前の一致 shift+f3",
+    "program_comment": "comment uncomment toggle comment out コメント コメントアウト コメント解除 行コメント 無効化 ctrl+/",
+    "program_help_here": "help operator reference docs documentation ヘルプ 説明 リファレンス op オペレータ 使い方 f1 shift+f1",
+    "program_font_bigger": "font size zoom in bigger larger text 文字サイズ 文字 拡大 大きく フォント ズーム",
+    "program_font_smaller": "font size zoom out smaller text 文字サイズ 文字 縮小 小さく フォント ズーム",
+    "run_selection": "run selection selected lines partial run 選んだ行 選択 部分実行 一部だけ 実行",
+}
+
+
 def palette_filter(labels, query):
     """Rank *labels* for the command palette by a substring *query*.
 
@@ -12336,6 +12351,7 @@ def build_window(model=None):
         # never offers a command that would silently no-op.
         items = [("▸ " + a.text().replace("…", "").strip(), a.trigger)
                  for a in win._actions.values() if a is not act_palette and a.isEnabled()]
+        action_keys = [k for k, a in win._actions.items() if a is not act_palette and a.isEnabled()]
         items += [("sample: " + nm, (lambda idx=i + 1: load_sample(idx)))
                   for i, nm in enumerate(recipes.names())]
         items += [("recent: " + os.path.basename(p), (lambda p=p: _open_recent(p)))
@@ -12344,6 +12360,9 @@ def build_window(model=None):
         # 台帳の op は「実行窓をその op で開く」(Ctrl+P → 名前 → Enter の 3 手で試せる。2026-10-03)
         items += [("ledger: " + n, (lambda n=n: win._open_ledger_runner(n))) for n in ledger_op_names()]
         labels = [lbl for lbl, _ in items]
+        # 検索に当てる文字列 = 表示名 + 別名の語(日本語・英語)。先頭の action だけが別名を持つ
+        hay = [(lbl + " " + PALETTE_WORDS.get(action_keys[i], "")) if i < len(action_keys) else lbl
+               for i, lbl in enumerate(labels)]
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Command palette")
         tag_dialog(dlg, "editor")
         v = QtWidgets.QVBoxLayout(dlg)
@@ -12353,7 +12372,7 @@ def build_window(model=None):
 
         def refill(_=None):
             lst.clear()
-            for i in palette_filter(labels, ed.text())[:200]:
+            for i in palette_filter(hay, ed.text())[:200]:
                 it = QtWidgets.QListWidgetItem(labels[i])
                 it.setData(QtCore.Qt.UserRole, i)
                 lst.addItem(it)
@@ -12379,7 +12398,7 @@ def build_window(model=None):
         ed.returnPressed.connect(run_sel)
         lst.itemActivated.connect(lambda _=None: run_sel())   # covers Enter AND double-click
         refill(); dlg.resize(560, 440); ed.setFocus()
-        win._palette = {"filter": palette_filter, "labels": labels, "run": run_sel,
+        win._palette = {"filter": palette_filter, "labels": labels, "hay": hay, "run": run_sel,
                         "edit": ed, "list": lst, "state": pal}
         dlg.exec()
 
@@ -15381,6 +15400,46 @@ def build_window(model=None):
         "focus_search": act_focus_search, "pin_a": act_pin, "run_selection": act_run_sel,
     }
     win._actions.update(_palette_extra)                 # Tools ▸ Run a ledger op もパレットから
+
+    # ★2026-11-12 IDE 第 1 便 / STUDIO_UX_RULES §1: Program 欄の機能にも「メニュー・パレット・キー」の入口を付ける。
+    #   キーは欄にフォーカスがある時だけ(欄の部品が先に受ける)。ウィンドウ全体の Ctrl+F / Ctrl+H / F1 は奪わない。
+    def _program_action(key, text, shortcuts, tip, do, menu_key):
+        a = _act(text, None, tip)
+        a.setShortcuts([QtGui.QKeySequence(s_) for s_ in shortcuts])
+        a.setShortcutContext(QtCore.Qt.WidgetWithChildrenShortcut)      # Program 欄の中だけ
+        code_edit.addAction(a)
+
+        def _go(_=False):
+            win._docks["program"].show(); win._docks["program"].raise_()
+            code_edit.setFocus()
+            do()
+        a.triggered.connect(_go)
+        win._actions[key] = a
+        win._menus[menu_key].addAction(a)
+        return a
+    _edit_sep = win._menus["edit"].addSeparator()
+    _program_action("program_find", "Find in Program", ["Ctrl+F"],
+                    "Search inside the Program text (the operator search box keeps Ctrl+F elsewhere)",
+                    lambda: code_edit.open_find(False), "edit")
+    _program_action("program_replace", "Replace in Program", ["Ctrl+H"],
+                    "Search and replace inside the Program text; Replace all is one undo step",
+                    lambda: code_edit.open_find(True), "edit")
+    _program_action("program_find_next", "Find next in Program", ["F3"],
+                    "Go to the next match of the Program search", lambda: code_edit._ide_do("next"), "edit")
+    _program_action("program_find_prev", "Find previous in Program", ["Shift+F3"],
+                    "Go to the previous match of the Program search", lambda: code_edit._ide_do("prev"), "edit")
+    _program_action("program_comment", "Comment / uncomment lines", ["Ctrl+/"],
+                    "Toggle the line comment (* ) on the selected Program lines; one undo step",
+                    lambda: code_edit.toggle_comment(), "edit")
+    _program_action("program_font_bigger", "Bigger editor text", ["Ctrl++", "Ctrl+="],
+                    "Make the Program text one point bigger (6 to 32; also Ctrl + mouse wheel)",
+                    lambda: code_edit.zoom(1), "view")
+    _program_action("program_font_smaller", "Smaller editor text", ["Ctrl+-"],
+                    "Make the Program text one point smaller (6 to 32; also Ctrl + mouse wheel)",
+                    lambda: code_edit.zoom(-1), "view")
+    _program_action("program_help_here", "Help for the operator under the cursor", ["Shift+F1"],
+                    "Open the help of the operator the Program cursor is on; the keyboard shortcuts list stays on F1",
+                    lambda: code_edit.help_for_word(), "help")
     win.addAction(act_focus_search)          # app-wide Ctrl+F -> operator search
     # -- multi-monitor: pop every tool panel out as its own top-level window --- #
     def float_all_panels(floating=True):

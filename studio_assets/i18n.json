@@ -2229,6 +2229,134 @@
    "ko": "%d〜%d번째 줄 실행",
    "de": "Zeilen %d–%d ausgeführt",
    "hi": "पंक्तियाँ %d–%d चलाई गईं"
+  },
+  "Find in Program": {
+   "ja": "Program 内を検索",
+   "zh": "在 Program 中查找",
+   "tw": "在 Program 中尋找",
+   "ko": "Program에서 찾기",
+   "de": "Im Program suchen",
+   "hi": "Program में खोजें"
+  },
+  "Replace in Program": {
+   "ja": "Program 内を置換",
+   "zh": "在 Program 中替换",
+   "tw": "在 Program 中取代",
+   "ko": "Program에서 바꾸기",
+   "de": "Im Program ersetzen",
+   "hi": "Program में बदलें"
+  },
+  "Find next in Program": {
+   "ja": "Program 内で次を検索",
+   "zh": "在 Program 中查找下一个",
+   "tw": "在 Program 中尋找下一個",
+   "ko": "Program에서 다음 찾기",
+   "de": "Im Program nächsten suchen",
+   "hi": "Program में अगला खोजें"
+  },
+  "Find previous in Program": {
+   "ja": "Program 内で前を検索",
+   "zh": "在 Program 中查找上一个",
+   "tw": "在 Program 中尋找上一個",
+   "ko": "Program에서 이전 찾기",
+   "de": "Im Program vorherigen suchen",
+   "hi": "Program में पिछला खोजें"
+  },
+  "Comment / uncomment lines": {
+   "ja": "行コメントの付け外し",
+   "zh": "切换行注释",
+   "tw": "切換行註解",
+   "ko": "줄 주석 켜기/끄기",
+   "de": "Zeilenkommentar umschalten",
+   "hi": "पंक्ति टिप्पणी चालू/बंद"
+  },
+  "Bigger editor text": {
+   "ja": "エディタの文字を大きく",
+   "zh": "放大编辑器文字",
+   "tw": "放大編輯器文字",
+   "ko": "편집기 글자 크게",
+   "de": "Editor-Text vergrößern",
+   "hi": "संपादक का पाठ बड़ा करें"
+  },
+  "Smaller editor text": {
+   "ja": "エディタの文字を小さく",
+   "zh": "缩小编辑器文字",
+   "tw": "縮小編輯器文字",
+   "ko": "편집기 글자 작게",
+   "de": "Editor-Text verkleinern",
+   "hi": "संपादक का पाठ छोटा करें"
+  },
+  "Help for the operator under the cursor": {
+   "ja": "カーソル下の op のヘルプ",
+   "zh": "光标下算子的帮助",
+   "tw": "游標下運算子的說明",
+   "ko": "커서 아래 연산자 도움말",
+   "de": "Hilfe zum Operator unter dem Cursor",
+   "hi": "कर्सर के नीचे के ऑपरेटर की सहायता"
+  },
+  "Search inside the Program text (the operator search box keeps Ctrl+F elsewhere)": {
+   "ja": "Program の文字列の中を検索します(Program 以外にいる時の Ctrl+F は op の検索欄のままです)",
+   "zh": "在 Program 文本中查找(不在 Program 时 Ctrl+F 仍是算子搜索框)",
+   "tw": "在 Program 文字中尋找(不在 Program 時 Ctrl+F 仍是運算子搜尋框)",
+   "ko": "Program 텍스트 안에서 찾습니다(Program 밖에서는 Ctrl+F가 연산자 검색창 그대로입니다)",
+   "de": "Sucht im Program-Text (außerhalb des Program bleibt Strg+F die Operatorsuche)",
+   "hi": "Program पाठ के भीतर खोजें (Program के बाहर Ctrl+F ऑपरेटर खोज ही रहता है)"
+  },
+  "Search and replace inside the Program text; Replace all is one undo step": {
+   "ja": "Program の文字列を検索して置換します。すべて置換は 1 回の元に戻すで戻ります",
+   "zh": "在 Program 文本中查找并替换;全部替换只需一次撤销",
+   "tw": "在 Program 文字中尋找並取代;全部取代只需一次復原",
+   "ko": "Program 텍스트에서 찾아 바꿉니다. 모두 바꾸기는 실행 취소 한 번으로 되돌립니다",
+   "de": "Sucht und ersetzt im Program-Text; Alle ersetzen ist ein einziger Rückgängig-Schritt",
+   "hi": "Program पाठ में खोजें और बदलें; सभी बदलना एक Undo में वापस होता है"
+  },
+  "Go to the next match of the Program search": {
+   "ja": "Program 内の検索で、次の一致へ移ります",
+   "zh": "跳到 Program 搜索的下一个匹配",
+   "tw": "跳到 Program 搜尋的下一個符合項",
+   "ko": "Program 검색의 다음 일치로 이동합니다",
+   "de": "Springt zum nächsten Treffer der Program-Suche",
+   "hi": "Program खोज के अगले मिलान पर जाएँ"
+  },
+  "Go to the previous match of the Program search": {
+   "ja": "Program 内の検索で、前の一致へ移ります",
+   "zh": "跳到 Program 搜索的上一个匹配",
+   "tw": "跳到 Program 搜尋的上一個符合項",
+   "ko": "Program 검색의 이전 일치로 이동합니다",
+   "de": "Springt zum vorherigen Treffer der Program-Suche",
+   "hi": "Program खोज के पिछले मिलान पर जाएँ"
+  },
+  "Toggle the line comment (* ) on the selected Program lines; one undo step": {
+   "ja": "選んだ Program の行の行コメント(* )を付け外します。元に戻すは 1 回です",
+   "zh": "切换所选 Program 行的行注释(* );一次撤销即可还原",
+   "tw": "切換所選 Program 行的行註解(* );一次復原即可還原",
+   "ko": "선택한 Program 줄의 줄 주석(* )을 켜거나 끕니다. 실행 취소 한 번으로 되돌립니다",
+   "de": "Schaltet den Zeilenkommentar (* ) der markierten Program-Zeilen um; ein Rückgängig-Schritt",
+   "hi": "चुनी Program पंक्तियों की टिप्पणी (* ) चालू/बंद करें; एक Undo"
+  },
+  "Make the Program text one point bigger (6 to 32; also Ctrl + mouse wheel)": {
+   "ja": "Program の文字を 1 ポイント大きくします(6〜32。Ctrl+マウスホイールでも変えられます)",
+   "zh": "将 Program 文字放大 1 磅(6 到 32;也可用 Ctrl+鼠标滚轮)",
+   "tw": "將 Program 文字放大 1 點(6 到 32;也可用 Ctrl+滑鼠滾輪)",
+   "ko": "Program 글자를 1pt 키웁니다(6~32. Ctrl+마우스 휠로도 바꿀 수 있습니다)",
+   "de": "Vergrößert den Program-Text um einen Punkt (6 bis 32; auch Strg + Mausrad)",
+   "hi": "Program पाठ को 1 पॉइंट बड़ा करें (6 से 32; Ctrl + माउस व्हील से भी)"
+  },
+  "Make the Program text one point smaller (6 to 32; also Ctrl + mouse wheel)": {
+   "ja": "Program の文字を 1 ポイント小さくします(6〜32。Ctrl+マウスホイールでも変えられます)",
+   "zh": "将 Program 文字缩小 1 磅(6 到 32;也可用 Ctrl+鼠标滚轮)",
+   "tw": "將 Program 文字縮小 1 點(6 到 32;也可用 Ctrl+滑鼠滾輪)",
+   "ko": "Program 글자를 1pt 줄입니다(6~32. Ctrl+마우스 휠로도 바꿀 수 있습니다)",
+   "de": "Verkleinert den Program-Text um einen Punkt (6 bis 32; auch Strg + Mausrad)",
+   "hi": "Program पाठ को 1 पॉइंट छोटा करें (6 से 32; Ctrl + माउस व्हील से भी)"
+  },
+  "Open the help of the operator the Program cursor is on; the keyboard shortcuts list stays on F1": {
+   "ja": "Program のカーソルがある op のヘルプを開きます(F1 はこれまでどおりキー一覧です)",
+   "zh": "打开 Program 光标所在算子的帮助(F1 仍是快捷键列表)",
+   "tw": "開啟 Program 游標所在運算子的說明(F1 仍是快捷鍵列表)",
+   "ko": "Program 커서가 있는 연산자의 도움말을 엽니다(F1은 그대로 단축키 목록입니다)",
+   "de": "Öffnet die Hilfe des Operators unter dem Program-Cursor (F1 zeigt weiterhin die Tastenkürzel)",
+   "hi": "Program कर्सर वाले ऑपरेटर की सहायता खोलें (F1 अब भी कीबोर्ड शॉर्टकट सूची है)"
   }
  },
   "pending_translation": {

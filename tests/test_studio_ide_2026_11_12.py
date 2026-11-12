@@ -736,3 +736,93 @@ def test_roi_statistics_appear_in_the_inspector(win):
     assert text.startswith(before.split("\n\nroi:")[0])                  # 本文はそのまま、ROI が後ろに付く
     win._set_roi(None)                                                   # 解除(Shift+クリックと同じ入口)
     assert "roi" not in win._inspector.toPlainText()
+
+
+# --------------------------------------------------------------------------- 10. 入口(STUDIO_UX_RULES §1・§6)
+_ENTRY_KEYS = {
+    "program_find": ("Find in Program", "Ctrl+F"), "program_replace": ("Replace in Program", "Ctrl+H"),
+    "program_find_next": ("Find next in Program", "F3"), "program_find_prev": ("Find previous in Program", "Shift+F3"),
+    "program_comment": ("Comment / uncomment lines", "Ctrl+/"), "program_help_here": ("Help for the operator under the cursor", "Shift+F1"),
+    "program_font_bigger": ("Bigger editor text", "Ctrl++"), "program_font_smaller": ("Smaller editor text", "Ctrl+-"),
+    "run_selection": ("Run selected lines", "Ctrl+Alt+Return"),
+}
+
+
+def _menu_texts(win):
+    out = []
+    for key in ("edit", "view", "help", "run"):
+        out += [a.text() for a in win._menus[key].actions()]
+    return out
+
+
+def test_every_new_feature_has_menu_palette_and_key_entries_under_one_name(win):
+    texts = _menu_texts(win)
+    for key, (name, seq) in _ENTRY_KEYS.items():
+        a = win._actions[key]
+        assert a.text() == name, (key, a.text())
+        assert name in texts, ("menu", key)                                   # メニュー
+        assert seq in [s.toString() for s in a.shortcuts()], (key, [s.toString() for s in a.shortcuts()])   # キー
+        assert a.toolTip(), key                                                # ヒント
+
+
+def _palette_hits(win, query):
+    win._actions["palette"].trigger if False else None
+    labels = ["▸ " + win._actions[k].text() + " " + studio.PALETTE_WORDS.get(k, "") for k in win._actions]
+    keys = list(win._actions)
+    return [keys[i] for i in studio.palette_filter(labels, query)]
+
+
+@pytest.mark.parametrize("query, key", [
+    ("検索", "program_find"), ("find", "program_find"), ("探す", "program_find"),
+    ("置換", "program_replace"), ("replace", "program_replace"), ("置き換え", "program_replace"),
+    ("次を検索", "program_find_next"), ("前を検索", "program_find_prev"),
+    ("コメント", "program_comment"), ("comment", "program_comment"), ("コメントアウト", "program_comment"),
+    ("ヘルプ", "program_help_here"), ("documentation", "program_help_here"),
+    ("文字サイズ", "program_font_bigger"), ("font size", "program_font_smaller"), ("拡大", "program_font_bigger"), ("縮小", "program_font_smaller"),
+    ("選んだ行", "run_selection"), ("selection", "run_selection"), ("部分実行", "run_selection"),
+])
+def test_command_palette_finds_the_new_features_by_japanese_and_english_words(win, query, key):
+    assert key in _palette_hits(win, query), (query, key)
+
+
+def test_real_palette_dialog_lists_the_new_actions_and_runs_one(win):
+    """実際のパレット(Ctrl+P の窓)で、日本語の語から当たり、Enter で動く。"""
+    from PySide6 import QtCore, QtWidgets
+    from PySide6.QtTest import QTest
+    ed = _editor(win, "otsu (0.5,0.5)\n")
+    seen = {}
+
+    def drive():
+        pal = win._palette
+        pal["edit"].setText("置換")
+        QtWidgets.QApplication.processEvents()
+        seen["rows"] = [pal["list"].item(i).text() for i in range(pal["list"].count())]
+        QTest.keyClick(pal["edit"], QtCore.Qt.Key_Return)
+    QtCore.QTimer.singleShot(300, drive)
+    win._actions["palette"].trigger()
+    _pump(0.3)
+    assert any("Replace in Program" in r for r in seen["rows"]), seen["rows"][:5]
+    assert win._program["find"]["bar"].isVisible()                          # Enter で置換つきの検索帯が開いた
+    assert win._program["find"]["replace_edit"].isVisible()
+
+
+def test_menu_entry_runs_the_feature_from_anywhere(win):
+    win._program["edit"].setPlainText("* a\notsu (0.5,0.5)\n")
+    win._actions["program_find"].trigger()
+    assert win._program["find"]["bar"].isVisible()
+    win._program["find"]["bar"].close_bar()
+    win._actions["program_font_bigger"].trigger()
+    assert win._program["edit"].font().pointSize() >= 11
+    win._program["edit"].selectAll()
+    win._actions["program_comment"].trigger()
+    assert win._program["edit"].toPlainText().startswith("* * a")
+
+
+def test_new_entry_names_have_six_languages_and_japanese_ui_shows_japanese(win):
+    win._apply_language("ja")
+    try:
+        for key in _ENTRY_KEYS:
+            t = win._actions[key].text()
+            assert _CJK.search(t), (key, t)                                     # 日本語 UI に英語だけの名前を残さない
+    finally:
+        win._apply_language("en")
