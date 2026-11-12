@@ -62,6 +62,13 @@
     "de": "%s geladen — Farbdatei, als Graustufen (Luminanz) gelesen (die Verarbeitung läuft auf einem Kanal)",
     "hi": "%s लोड हुआ — रंगीन फ़ाइल, ग्रेस्केल (ल्यूमिनेंस) में पढ़ी गई (प्रोसेसिंग एक चैनल पर होती है)"
   },
+  "in: %s → out: %s": {
+    "ja": "入力: %s → 出力: %s", "zh": "输入: %s → 输出: %s", "tw": "輸入: %s → 輸出: %s",
+    "ko": "입력: %s → 출력: %s", "de": "Ein: %s → Aus: %s", "hi": "इनपुट: %s → आउटपुट: %s"
+  },
+  "first: %s": {
+    "ja": "先に: %s", "zh": "先做: %s", "tw": "先做: %s", "ko": "먼저: %s", "de": "Zuerst: %s", "hi": "पहले: %s"
+  },
   "Common choices": {
     "ja": "定番", "zh": "常用", "tw": "常用", "ko": "기본 선택", "de": "Übliche Wahl", "hi": "आम विकल्प"
   },

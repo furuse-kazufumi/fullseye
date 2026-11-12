@@ -99,6 +99,19 @@ def test_studio_lists_the_staples_first(tmp_path, monkeypatch):
         assert ops[:2] == ["otsu", "threshold"], ops[:6]
         assert [r["name"] for r in ui["rows"]()["staples"]][0] == "otsu"
         assert lst.item(0).data(QtCore.Qt.UserRole + 4) == "staples"      # 先頭の見出しが「定番」
+        # P-19: 行は一覧の見える幅に収まり、「試す」「ヘルプ」のボタンが横スクロールの先に隠れない
+        vw = lst.viewport().width()
+        rows = [r for g in ui["rows"]().values() for r in g]
+        assert len(rows) >= 5
+        for r in rows:
+            assert lst.visualItemRect(r["item"]).width() <= vw, r["name"]
+            b = r["help_button"]
+            assert b.mapTo(lst.viewport(), b.rect().topRight()).x() <= vw, r["name"]
+            assert r["text"].startswith(r["name"])                          # op 名が行の先頭
+        # 前処理が要る定番は「先に: a → この op」と別の行に出る
+        ui["search_now"]("膨張"); _pump(0.3)
+        first = ui["rows"]()["staples"][0]
+        assert first["name"] == "dilation_circle" and first["text"].splitlines()[-1].endswith("→ dilation_circle")
         # 定番が無い語では見出しを出さない
         ui["search_now"]("gaussian"); _pump(0.3)
         assert lst.item(0).data(QtCore.Qt.UserRole + 4) != "staples"

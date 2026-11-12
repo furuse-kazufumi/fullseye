@@ -7215,10 +7215,15 @@ def build_window(model=None):
 
     def _add_search_row(group, row):
         needs_pre = group == "needs_preprocessing" or row.get("group") == "needs_preprocessing"
-        bridge = "".join(" → " + n for n in row.get("bridge", [])) if needs_pre else ""
-        text_ = "%s  (%s)\n入力: %s → 出力: %s%s" % (
-            row.get("label") or row["name"], row["name"], row.get("in_sort") or "?",
-            row.get("out_sort") or "?", bridge)
+        # ★2026-11-12: 行は op 名を先頭に(説明が長いと名前が右へ切れていた、P-09)。前処理は「先に: a → この op」と
+        # 別の行に書く(従来は「出力: region → otsu」と出力の後ろに繋がり、順序が逆に読めた)。
+        label_ = (row.get("label") or "").strip()
+        if len(label_) > 64:
+            label_ = label_[:63] + "…"
+        text_ = row["name"] + ("  —  " + label_ if label_ and label_ != row["name"] else "")
+        text_ += "\n" + tr("in: %s → out: %s") % (row.get("in_sort") or "?", row.get("out_sort") or "?")
+        if needs_pre and row.get("bridge"):
+            text_ += "\n" + tr("first: %s") % " → ".join(list(row["bridge"]) + [row["name"]])
         it = QtWidgets.QListWidgetItem(text_); it.setData(QtCore.Qt.UserRole, row["name"])
         it.setData(QtCore.Qt.UserRole + 3, group)
         tip = ", ".join(row.get("why") or [])
@@ -7226,13 +7231,26 @@ def build_window(model=None):
             tip = (tip + "\n" if tip else "") + tr("Missing optional extra: %s") % row["name"].split("_")[0]
             it.setFlags(QtCore.Qt.NoItemFlags); it.setForeground(QtGui.QColor(MUTED))
         it.setToolTip(tip); op_list.addItem(it)
-        box = QtWidgets.QWidget(); h = QtWidgets.QHBoxLayout(box); h.setContentsMargins(2, 1, 2, 1)
-        label = QtWidgets.QLabel(text_); label.setWordWrap(True); h.addWidget(label, 1)
+        # ★P-19(2026-11-12): 説明は行の幅いっぱいに折り返し、ボタンはその下の右寄せに置く。従来は横並びで、
+        # 折り返さない説明文の幅で行が伸び、「今のデータで試す」「ヘルプ」が横スクロールの先に隠れていた。
+        box = QtWidgets.QWidget(); v_ = QtWidgets.QVBoxLayout(box); v_.setContentsMargins(4, 3, 4, 3); v_.setSpacing(2)
+        label = QtWidgets.QLabel(text_); label.setWordWrap(True); v_.addWidget(label)
+        h = QtWidgets.QHBoxLayout(); h.setContentsMargins(0, 0, 0, 0); h.addStretch(1); v_.addLayout(h)
         run = QtWidgets.QPushButton(tr("Try on current data")); help_ = QtWidgets.QPushButton(tr("Help"))
         enabled = row.get("tier") != "unavailable"; run.setEnabled(enabled); help_.setEnabled(enabled)
         run.clicked.connect(lambda _=False, n=row["name"]: run_op_once(n, _search_current_value()))
         help_.clicked.connect(lambda _=False, n=row["name"]: show_op_help(n))
-        h.addWidget(run); h.addWidget(help_); it.setSizeHint(box.sizeHint()); op_list.setItemWidget(it, box)
+        h.addWidget(run); h.addWidget(help_)
+        # 縦のスクロールバーが後から出ても収まる幅(行を足している途中は viewport がまだ広い)
+        vw = op_list.width() - 2 * op_list.frameWidth() - op_list.verticalScrollBar().sizeHint().width()
+        if vw > 160:
+            lw = vw - 12
+            label.setFixedWidth(lw)
+            hh = label.heightForWidth(lw) + run.sizeHint().height() + 2 + 8
+            it.setSizeHint(QtCore.QSize(vw - 2, hh))
+        else:                              # まだ表示されていない(幅が決まっていない)ときは従来どおり
+            it.setSizeHint(box.sizeHint())
+        op_list.setItemWidget(it, box)
         search_state["rows"][group].append(dict(row, text=text_, item=it, try_button=run, help_button=help_))
 
     def grouped_search(query=None):
