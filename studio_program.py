@@ -47,7 +47,7 @@ __all__ = [
     "prelude_exports", "prelude_collisions", "prelude_namespace", "op_table", "memo_eligible",
     "fingerprint", "describe_value", "pipeline_search_dirs", "close_program_windows", "needs_gui_thread",
     "Problem", "check_program", "checker_backends", "complete", "hover", "apply_fix", "CONFIGS",
-    "run_file", "evaluate", "STARTER_PROGRAM",
+    "run_file", "evaluate", "STARTER_PROGRAM", "abandoned_runs",
 ]
 
 SYNTAX_PYTHON = "python"
@@ -1144,6 +1144,178 @@ def _hdev_run(text: str, image, names, result: ProgramResult, current_stages) ->
     return result
 
 
+#: 止めの例外を撃ってから、戻らなければ諦めるまでの秒数(呼び出し側を永久に待たせない)。
+_STOP_GRACE_S = 1.0
+#: 撃ち直しの間隔と上限回数(`except BaseException` で握りつぶすループ対策)。
+_SHOT_INTERVAL_S = 0.05
+_MAX_SHOTS = 60
+#: Debug の見張りは行フックより少し遅らせる(行フックの方が行番号つきの文で止める)。
+_WATCHDOG_DEBUG_SLACK_S = 0.25
+#: 止められずに残した実行(daemon スレッド)。``abandoned_runs()`` で一覧。
+_ABANDONED: list = []
+#: 作業スレッドのスタック(深い再帰で RecursionError より先にスタックが尽きないように)。
+_WORKER_STACK_BYTES = 64 * 1024 * 1024
+_STACK_LOCK = threading.Lock()
+
+
+class _AsyncTimeLimit(ProgramStopped):
+    """見張りが SetAsyncExc で撃つ止めの例外(時間の上限)。引数なしで作られる。"""
+
+    def __init__(self, *args):
+        super().__init__("time_limit", 0)
+
+
+class _AsyncStopRequested(ProgramStopped):
+    """見張りが SetAsyncExc で撃つ止めの例外(停止の要求)。"""
+
+    def __init__(self, *args):
+        super().__init__("stop_requested", 0)
+
+
+def _shoot(thread_id: int, exc_cls) -> bool:
+    """*thread_id* のスレッドに、次の bytecode の境目で *exc_cls* を投げさせる(CPython の
+    ``PyThreadState_SetAsyncExc``)。C の中で回っている間は届かない(戻った所で届く)。"""
+    import ctypes
+    n = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_ulong(thread_id), ctypes.py_object(exc_cls))
+    if n > 1:                                        # 起きないはずだが、起きたら取り消す(他のスレッドを壊さない)
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_ulong(thread_id), None)
+        return False
+    return n == 1
+
+
+def abandoned_runs() -> list:
+    """止められずに残した実行の一覧 ``[{"thread", "started", "alive"}]``(生きている物だけ残す)。"""
+    _ABANDONED[:] = [a for a in _ABANDONED if a["thread"].is_alive()]
+    return [dict(a, alive=a["thread"].is_alive()) for a in _ABANDONED]
+
+
+def _run_with_watchdog(fn, outcome: dict, deadline, stop_event, in_caller: bool) -> bool:
+    """*fn* を回し、時間の上限(*deadline*)か *stop_event* で止めの例外を撃つ。戻らなければ撃ち直し、
+    撃ち始めて :data:`_STOP_GRACE_S` 秒で諦めて True(= 残した)を返す。
+
+    ``in_caller=False``: *fn* を作業スレッド(daemon)で回し、呼び出し側は待つだけ。諦めたら戻る。
+    ``in_caller=True``(Qt を直接使うプログラム): *fn* を呼び出し側のスレッドで回し、見張りは別のスレッドから
+    撃つ。この形では C の中で止まった物を諦めて戻ることはできない(設計書 §15)。"""
+    if in_caller:
+        target = threading.current_thread().ident
+        done = threading.Event()
+
+        def watch():
+            shot_at, shots, last = None, 0, 0.0
+            while not done.wait(0.02):
+                exc = _due(deadline, stop_event)
+                if exc is None:
+                    continue
+                now = time.perf_counter()
+                if shot_at is None:
+                    shot_at = now
+                if shots < _MAX_SHOTS and now - last >= _SHOT_INTERVAL_S:
+                    _shoot(target, exc)
+                    shots, last = shots + 1, now
+        w = threading.Thread(target=watch, name="studio-program-watchdog", daemon=True)
+        w.start()
+        try:
+            fn()
+        finally:
+            done.set()
+            w.join(1.0)
+        return False
+    with _STACK_LOCK:
+        old = threading.stack_size()
+        try:
+            threading.stack_size(_WORKER_STACK_BYTES)
+        except (ValueError, RuntimeError):
+            pass
+        th = threading.Thread(target=fn, name="studio-program", daemon=True)
+        th.start()
+        try:
+            threading.stack_size(old)
+        except (ValueError, RuntimeError):
+            pass
+    shot_at, shots, last = None, 0, 0.0
+    while th.is_alive():
+        th.join(0.02)
+        if not th.is_alive():
+            break
+        exc = _due(deadline, stop_event)
+        if exc is None:
+            continue
+        now = time.perf_counter()
+        if shot_at is None:
+            shot_at = now
+        if shots < _MAX_SHOTS and now - last >= _SHOT_INTERVAL_S:
+            _shoot(th.ident, exc)
+            shots, last = shots + 1, now
+        if now - shot_at > _STOP_GRACE_S:
+            _ABANDONED.append({"thread": th, "started": time.time()})
+            return True
+    return False
+
+
+def _due(deadline, stop_event):
+    if stop_event is not None and stop_event.is_set():
+        return _AsyncStopRequested
+    if deadline is not None and time.perf_counter() > deadline:
+        return _AsyncTimeLimit
+    return None
+
+
+class _GlobalState:
+    """実行の前後で戻すプロセス全体の状態: ``sys.path``・``os.environ``・作業フォルダ・``builtins`` の名前・
+    ``warnings`` の絞り。戻さない物(設計書 §4.2): 読み込んだ他人のパッケージ(``sys.modules``。利用者の
+    フォルダの物は外す)・numpy の乱数や ``seterr``・logging の設定・signal・開いたファイルやスレッド。"""
+
+    def __init__(self):
+        import warnings
+        self.path = list(sys.path)
+        self.environ = dict(os.environ)
+        try:
+            self.cwd = os.getcwd()
+        except OSError:
+            self.cwd = None
+        self.builtins = dict(vars(builtins))
+        self.warnings = list(warnings.filters)
+
+    @classmethod
+    def take(cls) -> "_GlobalState":
+        return cls()
+
+    def restore(self) -> list:
+        """戻した物の名前の列(変わっていなかった物は書かない)。"""
+        import warnings
+        done = []
+        if sys.path != self.path:
+            sys.path[:] = self.path
+            done.append("sys.path")
+        if dict(os.environ) != self.environ:
+            for k in [k for k in os.environ if k not in self.environ]:
+                del os.environ[k]
+            for k, v in self.environ.items():
+                if os.environ.get(k) != v:
+                    os.environ[k] = v
+            done.append("os.environ")
+        if self.cwd is not None:
+            try:
+                if os.getcwd() != self.cwd:
+                    os.chdir(self.cwd)
+                    done.append("cwd")
+            except OSError:
+                os.chdir(self.cwd)
+                done.append("cwd")
+        bd = vars(builtins)
+        if bd.keys() != self.builtins.keys() or any(bd[k] is not v for k, v in self.builtins.items()):
+            for k in [k for k in bd if k not in self.builtins]:
+                del bd[k]
+            for k, v in self.builtins.items():
+                if bd.get(k) is not v:
+                    bd[k] = v
+            done.append("builtins")
+        if warnings.filters != self.warnings:
+            warnings.filters[:] = self.warnings
+            done.append("warnings")
+        return done
+
+
 #: プロジェクトのフォルダの中でプログラム(.py)を置く場所。``import`` の探し場所に一時的に足す。
 PROJECT_PROGRAMS_SUBDIR = "programs"
 
@@ -1365,6 +1537,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
     if not trusted:
         result.not_run_reason = ("not run: this Python program came from a file, project or automation and "
                                  "will execute on this PC — confirm it first (digest %s)" % program_digest(text)[:12])
+        result.errors = [result.not_run_reason]      # 黙って何もしない、にしない
         return result
     if image is None:
         result.errors = ["line 1: a Python program needs an input image"]
@@ -1413,35 +1586,75 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
     # Studio 本体や他のスレッドの出力まで取り込んでしまう)。file= を渡した print はそのまま。
     ns["print"] = _capture_print(out)
     hits0 = memo.hits if memo is not None else 0
-    token = _ACTIVE.set(rec)                         # contextvar = スレッドごと(どのスレッドから呼ばれても混ざらない)
-    old_trace = sys.gettrace()                       # settrace も呼んだスレッドだけに効く
+    snapshot = _GlobalState.take()
     path_token = _push_sys_path(user_dirs)
+    outcome: dict = {}
     t0 = time.perf_counter()
-    try:
-        if not release:
-            sys.settrace(tracer.global_trace)
+
+    def body():
+        """作業スレッドの中身: contextvar・settrace はこのスレッドだけに付ける。"""
+        token = _ACTIVE.set(rec)
         try:
-            exec(code, ns)                           # noqa: S102 -- 本物の Python(trusted のときだけ)
-        finally:
             if not release:
-                sys.settrace(old_trace)
-        result.ran = True
-    except ProgramStopped as e:
-        result.ran = True
-        result.stopped, result.stopped_line = e.reason, e.line
-        if e.reason == "time_limit":
-            result.errors = ["line %d: stopped: time limit %.3g s exceeded" % (e.line, time_limit_s)]
-            result.error_line = e.line
-        elif e.reason == "stop_requested":
-            result.errors = ["line %d: stopped on request" % e.line]
-            result.error_line = e.line
-    except SystemExit as e:
-        result.ran = True
-        ln = _err_line_from_tb(e.__traceback__, code_name) or 0
-        result.errors = ["line %d: the program called exit(%r)" % (ln, e.code)]
+                sys.settrace(tracer.global_trace)
+            try:
+                exec(code, ns)                       # noqa: S102 -- 本物の Python(trusted のときだけ)
+            finally:
+                if not release:
+                    sys.settrace(None)
+            outcome["kind"] = "ok"
+        except ProgramStopped as e:
+            outcome.update(kind="stopped", reason=e.reason,
+                           line=e.line or _err_line_from_tb(e.__traceback__, code_name) or 0)
+        except SystemExit as e:
+            outcome.update(kind="exit", code=e.code, line=_err_line_from_tb(e.__traceback__, code_name) or 0)
+        except BaseException as e:                   # noqa: BLE001 -- 行番号つきで返す(KeyboardInterrupt も)
+            outcome.update(kind="error", exc=e)
+        finally:
+            try:
+                _ACTIVE.reset(token)
+            except BaseException:                    # noqa: BLE001 -- 遅れて届いた止めの例外
+                pass
+
+    def guarded():
+        try:
+            body()
+        except BaseException:                        # noqa: BLE001 -- body の外で届いた止めの例外は捨てる
+            outcome.setdefault("kind", "stopped")
+
+    deadline = None if time_limit_s is None else t0 + time_limit_s
+    if not release and deadline is not None:
+        deadline += _WATCHDOG_DEBUG_SLACK_S          # Debug は行フックが先に止める(行番号つきの文)。見張りは保険
+    if needs_gui_thread(text) and threading.current_thread() is threading.main_thread():
+        # Qt を直接使うプログラムは GUI(main)スレッドで回す(設計書 §15 の案 C)。見張りは別スレッドから撃つ
+        abandoned = _run_with_watchdog(guarded, outcome, deadline, stop_event, in_caller=True)
+    else:
+        abandoned = _run_with_watchdog(guarded, outcome, deadline, stop_event, in_caller=False)
+    result.ran = True
+    kind = outcome.get("kind")
+    if abandoned:
+        reason = "time limit %.3g s" % time_limit_s if (deadline is not None and time.perf_counter() > deadline) \
+            else "a stop request"
+        result.stopped = "unstoppable"
+        result.errors = ["could not stop the program after %s within %.1f s — it is inside a long call "
+                         "(C code, time.sleep, a big numpy operation) or keeps catching the stop; it goes on "
+                         "running in the background and its results are ignored" % (reason, _STOP_GRACE_S)]
+        result.notes.append("abandoned run: see studio_program.abandoned_runs()")
+    elif kind == "stopped":
+        reason, ln = outcome.get("reason", "stop_requested"), outcome.get("line", 0)
+        result.stopped, result.stopped_line = reason, ln
+        if reason == "time_limit":
+            result.errors = ["line %d: stopped: time limit %.3g s exceeded" % (ln, time_limit_s)]
+            result.error_line = ln
+        elif reason == "stop_requested":
+            result.errors = ["line %d: stopped on request" % ln]
+            result.error_line = ln
+    elif kind == "exit":
+        ln = outcome["line"]
+        result.errors = ["line %d: the program called exit(%r)" % (ln, outcome["code"])]
         result.error_line = ln
-    except Exception as e:                           # noqa: BLE001 -- 行番号つきで返す
-        result.ran = True
+    elif kind == "error":
+        e = outcome["exc"]
         result.error_file, deep_line = _err_location(e.__traceback__, code_name, user_dirs)
         ln = _err_line_from_tb(e.__traceback__, code_name) or 0
         if result.error_file != code_name and deep_line is not None:
@@ -1456,11 +1669,10 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
                                                                                      e.name.split(".")[0])
         result.errors = [msg]
         result.error_line = ln
-    finally:
-        _ACTIVE.reset(token)
-        if sys.gettrace() is not old_trace:
-            sys.settrace(old_trace)
-        _pop_sys_path(path_token)
+    _pop_sys_path(path_token)
+    restored = snapshot.restore()
+    if restored:
+        result.notes.append("restored after the run: " + ", ".join(restored))
     result.elapsed_s = time.perf_counter() - t0
     result.lines_run = tracer.lines
     result.stdout = out.getvalue()
