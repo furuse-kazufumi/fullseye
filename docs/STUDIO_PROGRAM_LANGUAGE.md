@@ -485,6 +485,58 @@ if n > 5:
   0.5 日、入口 4 種・6 言語・offscreen 試験・スクリーンショット 1.5 日、計 約 5 日(ProgramEditor の
   別担当の作業が入った後)。
 
+### 13.1 繋いだ(2026-11-13、integrate/studio-1-2-0-2026-11-13)
+
+実装は `studio_pymode.py`(Qt。モードの状態・実行の橋・出力の欄・記録の欄・信頼の確認・ファイルの開閉・入口)。
+studio.py の差し込みは `win._pymode` を見て振り分けるだけ(F5 / F6 / Shift+F5・`sync_program`・文面の変化・
+`apply_program`・選んだ行の実行・打っている最中の検査・Problems・パイプラインを開いた時・Project の `.py`・
+窓の題・閉じる前の確認・言語の切り替え・`ProgramEditor` の装飾とコメントの記号と旧い補完の止め方)。
+試験 `tests/test_studio_python_mode_2026_11_13.py`、本物の窓の筋書き `C:/dev/data/studio_e2e_2026_11_13/e2e.py`。
+
+§13 の設計どおりの所: 文面が正本で段の欄は実行の記録(行・op・つまみ・出力・時間・「↺ 使い回し / ⟳ 計算」・
+サムネイル。文面を直すと「記録は古い(行 N から)」)、モードごとに文面を別に持つ、Python のときは
+`sync_program` が文面を作り直さない、`OpMemo` は窓ごとに 1 つ、変数とウォッチは既存の Variables の欄の
+入れ物へ(`VarsWatchWidget`、パイプラインのモードでは今までの欄)、確認は `TrustStore`(設定が ini ならその隣、
+それ以外は利用者のデータの場所の `studio_trust.json`)。
+
+違えた所と理由:
+
+1. **`build_window()` の既定はパイプラインのまま**(`start_mode="pipeline"`)。`fullseye-studio`(`main()`)は
+   `start_mode="auto"` = 設定の「起動時のモード」(既定は前回のまま、初回は Python)。既存の Studio の試験
+   (42 ファイル、1171 件)は全部 `build_window()` を呼び、起動直後の Program 欄がパイプラインの記法である前提で
+   書かれているため。利用者の起動は決定どおり Python から始まる。
+2. **続行・1 行実行は上から走り直す**(§4 のまま)。`run_program(resume_after_lines=前の lines_run + 1)` で
+   止まった所までのブレークポイントを素通りし、1 行実行は `max_lines=前の lines_run + 1`。止まった後に文面を
+   直していれば、続行は上からの実行になる(出力の欄にそう書く)。乱数や外の状態に依るプログラムは、走り直しで
+   止まる前と違う値になりうる(正直な限界)。
+3. **条件つきブレークポイントは実行系で評価**(止まる行の枠の globals / locals)。ウォッチの評価器
+   (`WatchPanel.condition_evaluator`)は実行後の名前空間しか見えないので使わない。評価できない条件では
+   止めて理由を `notes` に出す(素通りさせない)。
+4. **入口**: メニューは新しい最上位を足さず、Run ▸ Program mode(Python のモード / パイプラインのモード /
+   切り替え Ctrl+Alt+M / Python にする / Debug・Release Ctrl+Alt+D / 起動時のモード / 例 / 出力を消す)、
+   File に新規 Ctrl+N・開く Ctrl+Alt+O・保存 Ctrl+Alt+S・名前を付けて保存 Ctrl+Alt+Shift+S、Run に実行・1 行・
+   止める Ctrl+F2・ブレークポイント F9・条件。F5 / F6 / Shift+F5 は既存の動作が Python のモードの間こちらへ回す
+   (同じキーを 2 つに割り当てると Qt はどちらも撃たない)。最上位のメニューを増やさないのは、見た目の担当が
+   メニューの帯を触っているため。
+5. **確認の後の編集**: ファイル・プロジェクトから開いた文面は初回の実行の前に確認する。確認した後にエディタで
+   直した文面は、利用者が打った物として扱う(1 文字ごとに聞き直さない)。ファイルを開き直して中身が違えば
+   聞き直す。自分で保存した中身は確認済みとして覚える。
+6. **出力の欄**は Program の欄の中(エディタの下)。下の帯のタブ(Problems / 出力 / 対話)は見た目の担当の枝。
+7. **補完**は `studio_pyedit_complete.default_provider`(0 始まりの行)を直接使い、`studio_program.complete`
+   (1 始まり)は使わない。行の変換は `studio_pymode.to_block` / `to_line` の 1 か所(試験あり)。jedi は
+   `allow_unsafe_interpreter_executions=False`・`auto_import_modules=[]` にした(実行後の値の property などを
+   補完のために呼ばない)。ただし jedi は C 拡張のモジュールを調べるとき別プロセスで import する
+   (利用者の .py は静的に読むだけ)。最初の補完の待ち(実測 2.9 s)は Python のモードに入った時に背景で温める。
+8. **終了時の落ち方を直した**: `PyEditAssist` の event filter を付けたままプロセスが終わると Windows で
+   access violation(exit 139)。`atexit` で外し、窓を閉じるときにも外す(`PyEditAssist.detach`)。
+9. **言語**: 新しい文は i18n.json の strings に 6 言語。エディタ支援の部品の文(studio_pyedit_i18n.json)は
+   i18n.json へ移さず、Studio の表に無ければ部品の表を引く(部品の表に hi は無いので、hi では部品の文は英語)。
+
+まだ入れていない物(次の便): つまみ ↔ コードの値の往復(記録の行のつまみを動かして文面の数字を書き換える)、
+助言(`advise_program`)の「適用」、GUI スレッドの橋(`GUI_BRIDGE`、§15 の案 A)、関数の中の局所変数の表示
+(止まった所の変数は実行の名前空間 = モジュールの階層だけ)、中へ / 外へ・呼び出しの積み重ね、Python の
+文の検査の文の訳(`check_program` の文は英語)。
+
 ## 14. 既存の「Python Editor」との関係
 
 studio.py には既にスクリプトを走らせる欄がある(Python Editor、`Run (F5) executes the CURRENT tab with the

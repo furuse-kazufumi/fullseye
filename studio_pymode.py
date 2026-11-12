@@ -459,7 +459,8 @@ class PyModeController(QtCore.QObject):
         self.bar = bar
         # 出力の欄(Python のモードだけ)
         self.output = _OutputView(self.goto_line)
-        self.output.setMaximumHeight(150)
+        self.output.setMaximumHeight(96)                     # コードの欄を狭めない(実際の窓で 5 行しか見えなかった)
+        self.output.setMinimumHeight(40)
         self.output_title = QtWidgets.QLabel()
         self.output_title.setProperty("muted", True)
         idx = lay.indexOf(ctx["status"])
@@ -717,6 +718,8 @@ class PyModeController(QtCore.QObject):
             return
         if self.session is not None:                         # 止まった時の文面と違う: 続行は上から走り直しになる
             self.edit.set_exec_line(0)
+        if self.edit.timings:                                # 前の実行の行ごとの時間は、行がずれると別の行に付く(実際の窓で見えた)
+            self.edit.set_timings({})
         self._update_labels()
 
     # ---- 検査(打っている最中) ----
@@ -863,7 +866,7 @@ class PyModeController(QtCore.QObject):
                           {"text": text, "action": action, "config": self.config}).start()
         self.state["pymode_runs"] = self.state.get("pymode_runs", 0) + 1
         self._out_header(action)
-        self.ctx["status"].setText(self.tr("running…"))
+        self._status(self.tr("running…"))
         self._update_labels()
         self._poll.start()
         return True
@@ -872,7 +875,7 @@ class PyModeController(QtCore.QObject):
         """Ctrl+F2: 走っていれば止める。止まっている(ブレークポイント)なら Debug の区切りを終える。"""
         if self.job is not None:
             self.job.stop_event.set()
-            self.ctx["status"].setText(self.tr("stop requested…"))
+            self._status(self.tr("stop requested…"))
             self.flash(self.tr("Stop requested"))
             return True
         if self.session is not None:
@@ -962,7 +965,7 @@ class PyModeController(QtCore.QObject):
         try:
             if job.exc is not None:
                 self._out("✕ " + self.tr("internal error: %s") % job.exc)
-                self.ctx["status"].setText(self.tr("internal error: %s") % job.exc)
+                self._status(self.tr("internal error: %s") % job.exc)
             elif job.kind == "selection":
                 self._selection_done(job)
             else:
@@ -981,7 +984,7 @@ class PyModeController(QtCore.QObject):
             if m:
                 err = "line %d:%s" % (l1 + int(m.group(1)) - 1, err[m.end():])
             self._out("✕ " + err)
-            self.ctx["status"].setText("✕ " + err)
+            self._status("✕ " + err)
         else:
             v = r.get("value")
             if v is not None:
@@ -989,7 +992,7 @@ class PyModeController(QtCore.QObject):
                 self._out("= " + summ)
                 if _is_image(v):
                     self._show_value(v)
-            self.ctx["status"].setText(self.tr("ran lines %d–%d") % job.meta["lines"])
+            self._status(self.tr("ran lines %d–%d") % job.meta["lines"])
         self._refresh_variables(self.namespace)
         self.flash(self.tr("ran lines %d–%d") % job.meta["lines"])
 
@@ -1033,8 +1036,9 @@ class PyModeController(QtCore.QObject):
                 hits = sum(1 for c in res.calls if c.cached)
                 msg = tr("ran in %.0f ms (%s)  ·  %d op call(s), %d from cache") % (
                     res.elapsed_s * 1000.0, "Debug" if res.config == "debug" else "Release", len(res.calls), hits)
-        self._out(msg)
-        self.ctx["status"].setText(msg)
+        if not (res.errors and not paused):                   # 誤りの文は上で出力の欄へ書いた(2 度書かない)
+            self._out(msg)
+        self._status(msg)
         for n in res.notes:
             if n.startswith("Release does not stop"):
                 self.flash(tr("Release does not stop at breakpoints: switch to Debug to use them"))
@@ -1101,6 +1105,14 @@ class PyModeController(QtCore.QObject):
         self.edit.goto_line(int(ln))
 
     # ---- 出力の欄 ----
+    def _status(self, msg: str, limit: int = 110):
+        """Program 欄の状態行(1 行。長い文は切り、全文はツールチップへ)。長い文のままだと欄の最小幅が広がり、
+        上の帯の右側(実行・止める)が窓の外へ押し出された(実際の窓で見えた)。"""
+        lab = self.ctx["status"]
+        one = " ".join(str(msg).split())
+        lab.setText(one if len(one) <= limit else one[:limit - 1] + "\u2026")
+        lab.setToolTip(str(msg))
+
     def _out(self, text: str):
         self.output.appendPlainText(text)
         sb = self.output.verticalScrollBar()
