@@ -2450,7 +2450,7 @@ def stage_knob_text(name, a, b):
         elif param_specs.is_generic(sp):
             parts.append("%s=%.2f" % (letter, float(knob)))
         else:
-            lab = sp.get("label") or letter
+            lab = tr(sp.get("label")) if sp.get("label") else letter
             parts.append("%s=%s" % (lab, param_specs.format_display(sp, float(knob))))
     return ", ".join(parts)
 
@@ -3571,6 +3571,22 @@ _ARG_ROLES = {
 }
 
 
+def _spec_head(spec, letter):
+    """param_specs.spec_label の UI 言語版: 'a · blur σ' / 'a (–)' / 'a'。ラベルは tr() を通す(未訳は英語のまま)。"""
+    if spec.get("kind") == "unused":
+        return "%s (–)" % letter
+    lab = spec.get("label") or ""
+    return "%s · %s" % (letter, tr(lab)) if lab else letter
+
+
+def op_panel_signature(row) -> str:
+    """op 一覧の下の署名欄に出す文: :func:`op_signature_detail` から実装の式(``impl:`` の行)を除いたもの。
+    一覧に行を残すため。実装の式は選んだ段のつまみ欄と、この欄のツールチップに全文がある。"""
+    full = op_signature_detail(row)
+    keep = [ln for ln in full.split("\n") if not ln.startswith(("impl:", "実装:"))]
+    return "\n".join(keep)
+
+
 def op_arg_roles(name):
     """Best-effort (a_role, b_role) description for an op's two knobs. Curated for
     common ops; ('', '') stays generic. Returns (None, None) if the op is unknown."""
@@ -3608,11 +3624,11 @@ def op_signature_detail(row) -> str:
                    row.get("provenance") or "(none)", row["name"]))
     lines = [op_detail(row)]
     a_role, b_role = op_arg_roles(row["name"])
-    lines.append("knob a — %s" % (a_role if a_role else "(unused)" if a_role == "" else "see impl"))
-    lines.append("knob b — %s" % (b_role if b_role else "(unused)" if b_role == "" else "see impl"))
+    lines.append(tr("knob a — %s") % (tr(a_role) if a_role else tr("(unused)") if a_role == "" else tr("see impl")))
+    lines.append(tr("knob b — %s") % (tr(b_role) if b_role else tr("(unused)") if b_role == "" else tr("see impl")))
     src = op_impl_source(row["name"])
     if src:
-        lines.append("impl: %s" % src)
+        lines.append(tr("impl: %s") % src)
     return "\n".join(lines)
 
 
@@ -4270,6 +4286,7 @@ def _knob_row_class(QtWidgets, QtCore):
 
     class KnobRow(QtCore.QObject):
         SLIDER_MAX_STEPS = 2000
+        TYPED_WIDTH = 118                      # px: the typed widget's fixed width (kept even while hidden)
 
         def __init__(self, letter, parent=None, raw=None, slider=True, raw_tip=None):
             super().__init__(parent)
@@ -4306,7 +4323,12 @@ def _knob_row_class(QtWidgets, QtCore):
             for _w, _t in self._default_tips:
                 _w.setToolTip(tr(_t))
             self.typed.setVisible(False)
-            self.typed.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+            _sp = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+            _sp.setRetainSizeWhenHidden(True)
+            self.typed.setSizePolicy(_sp)
+            # ★2026-11-12: op を選ぶたびに右パネルが約 190px 広がった。typed 欄が spec の種類で 0〜110px と
+            #   変わり、隠れると幅ゼロになっていたため。常に同じ幅を取る(隠れても保つ)。
+            self.typed.setFixedWidth(self.TYPED_WIDTH)
             self.fspin.valueChanged.connect(lambda v: self._from_typed(v))
             self.ispin.valueChanged.connect(lambda v: self._from_typed(v))
             self.combo.currentIndexChanged.connect(lambda i: self._from_typed(i))
@@ -4374,7 +4396,7 @@ def _knob_row_class(QtWidgets, QtCore):
                 w.setToolTip(tip)
             for w, dflt in self._default_tips:
                 w.setToolTip(tip or tr(dflt))
-            self.label.setText(PS.spec_label(sp, self.letter))
+            self.label.setText(_spec_head(sp, self.letter))
 
         def set_enabled(self, on):
             """Enable/disable the editing widgets; an 'unused' knob keeps only the raw
@@ -4418,12 +4440,12 @@ def _knob_row_class(QtWidgets, QtCore):
         def display_text(self, knob):
             """'a · blur σ: 1.08 px  (0.290)' / 'a: 0.29' for the panel label."""
             sp = self.spec
-            head = PS.spec_label(sp, self.letter)
+            head = _spec_head(sp, self.letter)
             if sp.get("kind") == "unused":
-                return "%s  ·  unused by this op  (%.3f)" % (head, float(knob))
+                return "%s  ·  %s  (%.3f)" % (head, tr("unused by this op"), float(knob))
             if PS.is_generic(sp):
                 return "%s: %.3f" % (head, float(knob))
-            return "%s: %s  (knob %.3f)" % (head, PS.format_display(sp, knob), float(knob))
+            return "%s: %s  (%s %.3f)" % (head, PS.format_display(sp, knob), tr("knob"), float(knob))
 
         # ---- writes ------------------------------------------------------------ #
         def set_knob(self, knob, source=None):
@@ -4695,7 +4717,9 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
             self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
             self.setBackgroundBrush(QtGui.QColor("#202020"))
-            self.setMinimumSize(380, 380)
+            # ★2026-11-12: 380x380 の下限は主画像欄(MDI の中)より大きく、欄の下が切れた(窓に合わせても収まらない)。
+            #   欄に収まる下限にする。別窓(tools=True)は従来どおり。
+            self.setMinimumSize(380, 380) if tools else self.setMinimumSize(200, 140)
             self.setMouseTracking(True)
             self._data = None
             self._text_items = []                    # dev_disp_text annotations (scene items)
@@ -4765,7 +4789,15 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self._tools = strip
 
         def resizeEvent(self, e):
-            super().resizeEvent(e)
+            was = self._fitted
+            self._sync_zooming = True                # 大きさが変わってスクロールバーの範囲が動くのは利用者のパンではない
+            try:
+                super().resizeEvent(e)
+            finally:
+                self._sync_zooming = False
+            self._fitted = was
+            if was and not self._item.pixmap().isNull():
+                self.fit()                           # 合わせた状態なら、新しい欄の実寸で合わせ直す
             if self._tools is not None:
                 self._tools.move(6, 6); self._tools.raise_()
             self._place_notice()
@@ -4989,6 +5021,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
 
         def _scaled(self, f):
             """Scale by *f* and tell the sync group once (the scroll bars moving meanwhile are not a pan)."""
+            self._fitted = False                     # 利用者が倍率を変えた: 以後は大きさ変更で勝手に合わせ直さない
             self._sync_zooming = True
             try:
                 self.scale(f, f)
@@ -5003,6 +5036,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self._scaled(f)
 
         def reset_zoom(self):
+            self._fitted = False
             self.resetTransform()
             self._sync_zoomed()
 
@@ -5013,6 +5047,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
                     self.fitInView(self._item, QtCore.Qt.KeepAspectRatio)
                 finally:
                     self._sync_zooming = False
+                self._fitted = True
                 self._sync_zoomed()
 
         def set_pixmap_keep_view(self, pm):
@@ -5047,6 +5082,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             rect = QtCore.QRectF(float(min(c1, c2)), float(min(r1, r2)),
                                  float(abs(c2 - c1)) or 1.0, float(abs(r2 - r1)) or 1.0)
             self.fitInView(rect, QtCore.Qt.KeepAspectRatio)
+            self._fitted = False
     return ImageView
 
 
@@ -5839,6 +5875,39 @@ PANEL_NAME_EN = {"operators": "Operators", "pipeline": "Pipeline · Parameters",
 #: current UI language (module-level so `tr` works in any nested scope; the value is
 #: switched by build_window's apply_language and mirrors win._lang).
 _UI_LANG = {"code": "en"}
+
+
+def _pair(ja, en):
+    """「日本語 / English」の併記だった文言を言語で出し分ける。
+
+    英語モードは従来どおりの併記(文言を変えない)。日本語モードは日本語だけ。ほかの言語は英語の原文だけ
+    (日本語を見せない)。★2026-11-12: 日本語モードに「未計算 / not computed」の英語が残っていた。"""
+    code = _UI_LANG["code"]
+    if code == "en":
+        return "%s / %s" % (ja, en)
+    if code == "ja":
+        return ja
+    return en
+
+
+_EMPTY_PROGRAM_FIRST = "* empty pipeline — type ops here (HDevelop syntax), e.g.:"
+_EMPTY_PROGRAM_LAST = "* control flow:  for 3 ... endfor   ·   if 1 ... else ... endif"
+
+
+def _empty_program_text():
+    """空のパイプラインのとき、コード欄に最初に出す説明コメント(UI の言語で)。"""
+    return (tr(_EMPTY_PROGRAM_FIRST) + "\n"
+            "* gaussian (0.4, 0.5)\n* sobel_mag (0.5, 0.5)\n* otsu (0.5, 0.5)\n"
+            + tr(_EMPTY_PROGRAM_LAST))
+
+
+def _is_empty_program_text(body):
+    """*body* が、どの言語でも空のパイプラインの説明コメントそのものか(利用者が書いた物と取り違えない)。"""
+    first = (body or "").lstrip().split("\n", 1)[0].strip()
+    langs = {_EMPTY_PROGRAM_FIRST} | {row.get(code, "") for code in LANGUAGES
+                                      for row in [STRINGS_I18N.get(_EMPTY_PROGRAM_FIRST, {})]}
+    langs.discard("")
+    return bool(first) and first in langs
 
 
 def tr(text):
@@ -6646,6 +6715,15 @@ def build_window(model=None):
         close_guard = None
         quiesce = None     # 実行ワーカーの QThread を止めて待つ(閉じる前に必ず)
         _closing = False   # closeEvent が通った後は dock の可視変化を利用者操作として記録しない
+        first_layout_pending = False   # 保存済みのレイアウトが無い初回: 最初に表示された後で画像欄:コード欄の比を整える
+        apply_first_layout = None
+
+        def showEvent(self, ev):
+            super().showEvent(ev)
+            if self.first_layout_pending and self.apply_first_layout is not None:
+                self.first_layout_pending = False
+                # 表示直後(寸法が確定してから)に 1 回だけ。保存済みレイアウトがある起動では立てない(P-01 を壊さない)
+                QtCore.QTimer.singleShot(0, self.apply_first_layout)
 
         def closeEvent(self, ev):
             guard = self.close_guard
@@ -7002,7 +7080,7 @@ def build_window(model=None):
     # -- left: operator browser + samples ------------------------------------ #
     left = QtWidgets.QWidget(); lv = QtWidgets.QVBoxLayout(left); lv.setSpacing(6)
     lv.setContentsMargins(6, 6, 6, 6)
-    samples = QtWidgets.QComboBox(); samples.addItem("— load a sample —")
+    samples = QtWidgets.QComboBox(); samples.addItem(tr("— load a sample —"))
     # size to ~10 chars, not the widest recipe name, so the compact panel can be narrow
     samples.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
     samples.setMinimumContentsLength(10)
@@ -7013,13 +7091,14 @@ def build_window(model=None):
     b_browse_samples = _tbtn("grid", "Browse the sample gallery — preview each sample's code before loading it")
     s_hint = QtWidgets.QLabel("pick one → loads into the pipeline + Program panel")
     s_hint.setProperty("muted", True); s_hint.setWordWrap(True)
+    s_hint.setVisible(False)       # ★2026-11-12: 1 行ぶん op の一覧に譲る(同じ文は選択欄のツールチップと「最初の 3 手」にある)
     slay = QtWidgets.QVBoxLayout()
     srow = QtWidgets.QHBoxLayout(); srow.addWidget(samples, 1); srow.addWidget(b_browse_samples)
     slay.addLayout(srow); slay.addWidget(s_hint)
     lv.addWidget(_group(QtWidgets, "SAMPLE PIPELINES", slay))
 
     all_ops = api.list_ops(include_algo=True)   # + the opt-in general-algorithm tier (read-only)
-    cat = QtWidgets.QComboBox(); cat.addItem("all categories")
+    cat = QtWidgets.QComboBox(); cat.addItem(tr("all categories"))
     cat.addItems(sorted({r["category"] for r in all_ops}))
     cat.setToolTip("Filter operators by category")
     cat.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
@@ -7036,16 +7115,45 @@ def build_window(model=None):
                             "running). Nothing is converted. Off: list every operator.")
     ops_fit_note = QtWidgets.QLabel("")
     ops_fit_note.setProperty("muted", True); ops_fit_note.setWordWrap(True)
+    ops_fit_note.setVisible(False)          # ★2026-11-12: 一覧に譲る(文はチェックボックスのツールチップに出す)
     ops_fit_state = {}                  # last (switch, upstream sort) the list was filled for
     op_list = QtWidgets.QListWidget()
     op_list.setToolTip("Double-click an operator to insert it into the pipeline")
+    op_list.setStyleSheet("QListWidget::item { padding: 0px 6px; }")       # 一覧の行を詰める(全体の既定は上下 2px)
+    op_list.setMinimumHeight(60)
     op_hint = QtWidgets.QLabel("set a, b · Insert into pipeline or Run once · double-click = insert")
     op_hint.setWordWrap(True)                             # wrap: a long hint must not force a wide panel
     op_hint.setProperty("muted", True)
+    class _AutoHeight(QtCore.QObject):
+        """折り返すラベルの最小の高さを、いまの幅で必要な高さに合わせる(幅や文が変わると行数が変わり、
+        欄が最初の高さのままだと下の行が切れていた: 「impl: …」の 2 行目)。"""
+        def __init__(self, label, floor=0):
+            super().__init__(label)
+            self._label, self._floor, self._busy = label, int(floor), False
+            label.installEventFilter(self)
+
+        def refresh(self):
+            lab = self._label
+            if self._busy or lab.width() <= 1:
+                return
+            self._busy = True
+            try:
+                need = max(self._floor, lab.heightForWidth(lab.width()))
+                if lab.minimumHeight() != need:
+                    lab.setMinimumHeight(need)
+            finally:
+                self._busy = False
+
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.Resize:
+                self.refresh()
+            return False
+
     op_param = QtWidgets.QLabel("select an operator to see its signature")
     op_param.setProperty("hint", True); op_param.setWordWrap(True)
     op_param.setToolTip("The selected operator's input→output sorts, HALCON alias and what each knob does")
-    op_param.setMinimumHeight(92)
+    op_param.setMinimumHeight(56)      # ★2026-11-12: 92 → 56(実装の式は欄から外し、op の一覧に行を譲る。長い署名は高さが伸びる)
+    op_param_fit = _AutoHeight(op_param, 56)
     # HDevelop-style operator entry: pick an op, set its two args, then Insert into
     # the pipeline OR Run once (single-shot) and see the result in a graphics window.
     op_a_spin = QtWidgets.QDoubleSpinBox(); op_a_spin.setRange(0.0, 1.0)
@@ -7062,26 +7170,32 @@ def build_window(model=None):
     b_help = _tbtn("help", "Operator help (image-processing details)")
     b_help.setEnabled(False)
     olay = QtWidgets.QVBoxLayout()
-    olay.addWidget(cat); olay.addWidget(search)
+    olay.setSpacing(3)                       # ★2026-11-12: 1280x673 で op の一覧が 2 行しか見えなかった。間隔・並びを詰めて一覧に譲る
+    _csrow = QtWidgets.QHBoxLayout(); _csrow.setSpacing(4)
+    _csrow.addWidget(cat, 0); _csrow.addWidget(search, 1)      # カテゴリと検索は 1 行に
+    olay.addLayout(_csrow)
     olay.addWidget(ops_fit_only); olay.addWidget(ops_fit_note)
     olay.addWidget(op_list, 1)
     olay.addWidget(op_param)
-    argrow = QtWidgets.QHBoxLayout()
+    argrow = QtWidgets.QGridLayout()            # a と b は 2 行(1 行に並べると 2×(ラベル+欄+typed 欄)で右パネルの下限が決まっていた)
     lbl_a = QtWidgets.QLabel("a"); lbl_b = QtWidgets.QLabel("b")
     lbl_a.setToolTip("Argument a — the label shows its role for the selected operator")
     lbl_b.setToolTip("Argument b — the label shows its role for the selected operator")
     lbl_a.setMinimumWidth(96); lbl_b.setMinimumWidth(96)     # room for the role name
+    lbl_a.setMaximumWidth(150); lbl_b.setMaximumWidth(150)   # ★長い役割名が右パネルを広げない(切れた分はツールチップに全文)
     # Spec-driven typed widgets (σ in px / iterations / kernel choice / on-off) sit
     # next to the raw 0..1 spins: the raw spin is what Insert / Run once pass to the
     # op, the typed widget shows the same value in the op's own units (param_specs).
     op_row_a = KnobRow("a", win, raw=op_a_spin, slider=False)
     op_row_b = KnobRow("b", win, raw=op_b_spin, slider=False)
-    argrow.addWidget(lbl_a); argrow.addWidget(op_a_spin, 1); argrow.addWidget(op_row_a.typed, 1)
-    argrow.addWidget(lbl_b); argrow.addWidget(op_b_spin, 1); argrow.addWidget(op_row_b.typed, 1)
+    argrow.addWidget(lbl_a, 0, 0); argrow.addWidget(op_a_spin, 0, 1); argrow.addWidget(op_row_a.typed, 0, 2)
+    argrow.addWidget(lbl_b, 1, 0); argrow.addWidget(op_b_spin, 1, 1); argrow.addWidget(op_row_b.typed, 1, 2)
+    argrow.setColumnStretch(1, 1)
     olay.addLayout(argrow)
     oprow = QtWidgets.QHBoxLayout()
     oprow.addWidget(b_insert); oprow.addWidget(b_run_once); oprow.addWidget(b_help); oprow.addStretch(1)
     olay.addLayout(oprow); olay.addWidget(op_hint)
+    op_hint.setVisible(False)               # 同じ案内は 3 つのボタンのツールチップと「最初の 3 手」にある(1 行を一覧に譲る)
     lv.addWidget(_group(QtWidgets, "OPERATORS", olay), 1)
 
     search_state = {"rows": {g: [] for g in ("applicable", "needs_preprocessing", "other")},
@@ -7184,7 +7298,7 @@ def build_window(model=None):
                 % (shown, total, fit_sort, prev[0] + 1, prev[1]))
 
     def refill_ops():
-        kw = search.text().lower(); c = cat.currentText()
+        kw = search.text().lower(); c = "all categories" if cat.currentIndex() <= 0 else cat.currentText()
         if kw:
             grouped_search(kw)
             return
@@ -7239,7 +7353,13 @@ def build_window(model=None):
             op_list.addItem(it)
             if keep is not None and r["name"] == keep:
                 op_list.setCurrentItem(it)
-        ops_fit_note.setText(_ops_fit_note_text(fit_sort, fit_prev, len(ranked), in_category))
+        _note = _ops_fit_note_text(fit_sort, fit_prev, len(ranked), in_category)
+        ops_fit_note.setText(_note)
+        # ★2026-11-12: 注記の行は一覧に譲り、全文はチェックボックスのツールチップに出す(件数・理由はそこで読める)
+        _base = ops_fit_only.property("base_tip")
+        if _base is None:
+            _base = ops_fit_only.toolTip(); ops_fit_only.setProperty("base_tip", _base)
+        ops_fit_only.setToolTip((_base + "\n\n" if _base else "") + _note)
 
     def _ops_follow_upstream():
         """Refill the browser when the insertion point's upstream sort (or the switch) changed.
@@ -7282,6 +7402,9 @@ def build_window(model=None):
 
     stage_detail = QtWidgets.QLabel("select a stage to tune its knobs")
     stage_detail.setWordWrap(True); stage_detail.setProperty("hint", True)
+    stage_detail.setMinimumWidth(1)
+    stage_detail_fit = _AutoHeight(stage_detail)
+    win._stage_detail = stage_detail
     # One KnobRow per knob: slider spanning the DISPLAYED range + typed widget
     # (unit spin / int spin / choice combo / checkbox, per param_specs) + the raw
     # 0..1 spin for exact entry. A generic op shows exactly the old slider + spin.
@@ -7290,6 +7413,10 @@ def build_window(model=None):
     la, lb = krow_a.label, krow_b.label
     spin_a, spin_b = krow_a.raw, krow_b.raw
     la.setText("a: 0.50"); lb.setText("b: 0.50")
+    for _l in (la, lb):                    # つまみの文(値や役割名)の長さで右パネルが広がらない
+        _l.setMinimumWidth(1)
+    for _l in (op_param, op_hint, ops_fit_note):
+        _l.setMinimumWidth(1)
     krow_a.set_enabled(False); krow_b.set_enabled(False)
     _ra = QtWidgets.QHBoxLayout(); _ra.addWidget(sa, 1); _ra.addWidget(krow_a.typed); _ra.addWidget(spin_a)
     _rb = QtWidgets.QHBoxLayout(); _rb.addWidget(sb, 1); _rb.addWidget(krow_b.typed); _rb.addWidget(spin_b)
@@ -7383,23 +7510,27 @@ def build_window(model=None):
     ilay.setContentsMargins(4, 4, 4, 4); ilay.setSpacing(4)
     image_panel = QtWidgets.QWidget(); image_panel.setLayout(ilay)
     image_panel.setObjectName("graphics_primary")
-    image_panel.setMinimumSize(320, 260)
+    image_panel.setMinimumSize(320, 200)
 
     # ---- P-12 (2026-11-12): the first three steps, over the image until the user closes it ---------- #
     first_steps = QtWidgets.QFrame(); first_steps.setObjectName("first_steps")
     first_steps.setStyleSheet("#first_steps { background: %s; border: 1px solid %s; border-radius: 6px; }"
                               % (NAVY_2, TEAL))
-    _fs_lay = QtWidgets.QHBoxLayout(first_steps); _fs_lay.setContentsMargins(10, 6, 6, 6); _fs_lay.setSpacing(14)
+    _fs_lay = QtWidgets.QHBoxLayout(first_steps); _fs_lay.setContentsMargins(10, 2, 4, 2); _fs_lay.setSpacing(14)
     _fs_title = QtWidgets.QLabel("First steps"); _fs_title.setStyleSheet("font-weight:700;")
     _fs_lay.addWidget(_fs_title)
     for _txt in ("1. Open a sample: File ▸ Sample images",
                  "2. Select an operator in the Operators panel and press +",
                  "3. Press ▶▶ to run"):
-        _fs_step = QtWidgets.QLabel(_txt); _fs_step.setWordWrap(True)
-        _fs_lay.addWidget(_fs_step, 1)
+        _fs_step = QtWidgets.QLabel(_txt)
+        _fs_step.setMinimumWidth(1)        # ★2026-11-12: 折り返さず 1 行(狭い欄では右が切れる。全文はツールチップ)
+        _fs_step.setToolTip(_txt)
+        _fs_lay.addWidget(_fs_step, 0)
+    _fs_lay.addStretch(1)
     _fs_close = QtWidgets.QToolButton(); _fs_close.setText("✕")
     _fs_close.setToolTip("Hide these steps. Help ▸ First steps shows them again")
-    _fs_lay.addWidget(_fs_close, 0, QtCore.Qt.AlignTop)
+    _fs_lay.addWidget(_fs_close, 0, QtCore.Qt.AlignVCenter)
+    first_steps.setMaximumHeight(40)
     ilay.insertWidget(0, first_steps)
 
     def _first_steps_dismissed():
@@ -7672,6 +7803,19 @@ def build_window(model=None):
         _d.hide()
     win.resizeDocks([dock_ops], [420], QtCore.Qt.Horizontal)        # narrow right column → image keeps the rest
     win.resizeDocks([dock_code], [300], QtCore.Qt.Vertical)         # wide bottom code strip = 2nd largest
+    FIRST_RUN_IMAGE_RATIO = 0.60     # 初回の画像欄の縦の割合(画像欄 + コード欄 に対して)。★2026-11-12: 290px しか無く画像が切れた
+
+    def _apply_first_run_ratio():
+        """初回(保存済みレイアウト無し)だけ、画像欄を縦の約 60% にする。"""
+        try:
+            total = mdi.height() + dock_code.height()
+            if total > 0 and dock_code.isVisible():
+                win.resizeDocks([dock_code], [int(round(total * (1.0 - FIRST_RUN_IMAGE_RATIO)))], QtCore.Qt.Vertical)
+            if dock_ops.isVisible():                  # 右の列も、build 時(窓の大きさが決まる前)の指定を、表示後の窓幅で取り直す
+                win.resizeDocks([dock_ops], [min(420, max(320, int(win.width() * 0.36)))], QtCore.Qt.Horizontal)
+        except RuntimeError:                  # 窓の破棄中
+            pass
+    win.apply_first_layout = _apply_first_run_ratio
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
                   "program": dock_code, "variables": dock_vars, "compare": dock_cmp, "ab": dock_ab}
     # Work modes are view state only.  The central result is registered alongside
@@ -8102,19 +8246,25 @@ def build_window(model=None):
                 it.setToolTip(base)
             elif pv["status"] == "stale":
                 it.setIcon(_glyph_icon("\u21bb", AMBER))
-                it.setToolTip("\u518d\u8a08\u7b97\u304c\u5fc5\u8981 / recompute needed\n\n" + base)
+                it.setToolTip(_pair("再計算が必要", "recompute needed") + "\n\n" + base)
             elif pv["status"] == "evicted":
                 th = pv["thumb"]                       # still current: only the full array was dropped
                 it.setIcon(_thumb_icon(th) if th is not None else _glyph_icon("\u25cc", MUTED))
-                it.setToolTip("\u5024\u306f\u4e88\u7b97\u3067\u89e3\u653e / evicted (budget): "
-                              "the picture is current, the array is recomputed on demand\n\n" + base)
+                it.setToolTip((_pair("値は予算で解放", "evicted (budget): the picture is current, the array is recomputed on demand")
+                               if _UI_LANG["code"] != "ja" else
+                               "値は予算で解放: 絵は最新のまま。配列は必要になったとき計算し直す") + "\n\n" + base)
             else:
                 it.setIcon(_glyph_icon("\u2026", MUTED))
-                it.setToolTip("\u672a\u8a08\u7b97 / not computed\n\n" + base)
+                it.setToolTip(_pair("未計算", "not computed") + "\n\n" + base)
             it.setData(QtCore.Qt.UserRole + 2, pv["status"])
     win._update_stage_icons = update_stage_icons
 
-    def refresh_stage_list(select=None, sync_code=True):
+    def _refresh_rows_after_live_render():
+        """段の欄を、直前に同期で描いた結果(モデルのキャッシュ)に合わせる。選択・コード欄・つまみは触らない。"""
+        i = selected_index()
+        refresh_stage_list(select=i if 0 <= i < len(model.stages) else None, sync_code=False, sync_ui=False)
+
+    def refresh_stage_list(select=None, sync_code=True, sync_ui=True):
         """Rebuild the stage rows (and the Problems panel).
 
         Never renders the image: the row is selected with the list's signals still
@@ -8145,11 +8295,12 @@ def build_window(model=None):
             if st:
                 summ = step_summary(st)
             elif pstatus == "stale":
-                summ = "再計算が必要 / recompute needed"
+                summ = _pair("再計算が必要", "recompute needed")
             elif pstatus == "evicted":
-                summ = "値は予算で解放 / evicted (budget): recomputed on demand"
+                summ = _pair("値は予算で解放", "evicted (budget): recomputed on demand") \
+                    if _UI_LANG["code"] != "ja" else "値は予算で解放: 必要になったとき計算し直す"
             else:
-                summ = "未計算 / not computed"
+                summ = _pair("未計算", "not computed")
             ms = times[i] if (i < len(times) and st) else None
             tstr = ("  ·  %.1f ms" % ms) if isinstance(ms, (int, float)) else ""
             mem = mems[i] if (i < len(mems) and st) else None
@@ -8194,8 +8345,9 @@ def build_window(model=None):
         stage_list.blockSignals(False)
         state["reordering"] = False
         refresh_problems(states)
-        _ops_follow_upstream()                        # the insertion point's upstream sort may have changed
-        sync_stage_ui()
+        if sync_ui:                                   # (live row refresh while a knob is dragged: leave the knob widgets alone)
+            _ops_follow_upstream()                    # the insertion point's upstream sort may have changed
+            sync_stage_ui()
         if sync_code:                                 # (a run keeps the editor's cursor / timings: sync_code=False)
             getattr(win, "_code_sync", lambda: None)()   # keep the program (code) view in sync
 
@@ -8291,7 +8443,7 @@ def build_window(model=None):
         if not probs and not perr and not rerr and not notes and not pin_bad \
                 and not (roundtrip is not None and not roundtrip.ok) \
                 and not state.get("structured_errors"):
-            hint = QtWidgets.QListWidgetItem("no problems")
+            hint = QtWidgets.QListWidgetItem(tr("no problems"))
             hint.setForeground(QtGui.QColor(MUTED))
             hint.setData(QtCore.Qt.UserRole, -1)
             problems_list.addItem(hint)
@@ -8338,6 +8490,19 @@ def build_window(model=None):
         gen = model.displayed_generation or run_ctl.latest_generation
         if not gen:
             run_attr.setText("")
+            return
+        if state.get("shown_live") and not run_ctl.running:
+            # 画面の画像は、いまの設定を同期で計算した結果(世代の結果ではない): 古い世代の名前は出さない。
+            # ただし、直前に完了した結果が今の設定と違うなら、それを見に行く導線(帯と「その結果を見る」)は残す。
+            run_attr.setText("")
+            _last = run_ctl.latest_generation
+            _snap = run_snapshots.get(_last)
+            _stale = (_snap is not None and _last in run_completed and model.displayed_generation == _last
+                      and _snap["token"] != _current_run_token())
+            if _stale:
+                run_banner.setText(tr("The completed result used settings from before the change"))
+            for widget in (run_banner, run_show, run_current):
+                widget.setVisible(bool(_stale))
             return
         snap = run_snapshots.get(gen)
         changed = snap is not None and snap["token"] != _current_run_token()
@@ -8679,12 +8844,17 @@ def build_window(model=None):
             worker_value = state.pop("worker_result", None)
             if worker_value is not None:
                 val = worker_value
+                state["shown_live"] = False           # worker が出した世代の結果を見せている
             elif run_ctl.running and model.displayed_generation:
                 val = model.displayed_result
             elif idx < 0 and state.get("view_raw"):
                 val = model.result_upto(-1)           # Reset -> the pre-pipeline raw image
+                state["shown_live"] = True
             else:
                 val = model.result_upto(idx if idx >= 0 else len(model.stages) - 1)
+                # ★2026-11-12: これは「いまの設定を同期で計算した結果」で、どの worker 世代でもない。
+                #   状態バーが古い「表示中の結果: 世代 N」を言い続けないよう印を付ける(_update_attribution が読む)
+                state["shown_live"] = True
         except Exception as e:                        # a bad/unknown op in the chain
             view.set_message(tr("Pipeline error") + "\n\n%s\n\n" % truncate(e, 700)
                              + tr("(details: Problems list, Display · Analysis panel)"))
@@ -9242,7 +9412,7 @@ def build_window(model=None):
 
     ab_restore.clicked.connect(restore_a); ab_adopt.clicked.connect(adopt_b); ab_keep.clicked.connect(keep_both)
 
-    def show_result():
+    def show_result(refresh_rows=True):
         """Render the current result. The whole body is guarded, not just the
         pipeline call: inspect_result / apply_display / _to_qimage / histogram_image
         all run on backend output and can raise on a degenerate array (e.g. a
@@ -9253,6 +9423,11 @@ def build_window(model=None):
         state["renders"] += 1
         try:
             _render()
+            _update_attribution()
+            if refresh_rows and state.get("shown_live") and not run_ctl.running:
+                # 画像は今この瞬間に計算した結果。段の欄(キャッシュだけを読む)も追いつかせる
+                # (★2026-11-12: + の直後に「未計算」のまま・つまみの途中で古い文字のままだった)
+                _refresh_rows_after_live_render()
             update_stage_compare()
             _strip_schedule()
             _ab_schedule()
@@ -9314,8 +9489,9 @@ def build_window(model=None):
             if b_role and param_specs.is_generic(specs["b"]) and specs["b"].get("kind") != "unused":
                 lb.setText("%s  ·  %s" % (lb.text(), b_role))
             stage_detail.setText(op_signature_detail(row) if row else name)
+            stage_detail_fit.refresh()
         else:
-            stage_detail.setText("select a stage to tune its knobs")
+            stage_detail.setText(tr("select a stage to tune its knobs"))
         krow_a.set_enabled(valid); krow_b.set_enabled(valid)
         update_actions()
 
@@ -9358,7 +9534,12 @@ def build_window(model=None):
             model.set_knobs(i, b=v)
         mark_dirty()
         settings_changed()
-        show_result()
+        import time as _t
+        _now = _t.monotonic()
+        _rows = _now - getattr(win, "_knob_rows_t", 0.0) >= 0.1     # 段の欄の作り直しは 100ms に 1 回まで(ドラッグ中の負荷)
+        if _rows:
+            win._knob_rows_t = _now
+        show_result(refresh_rows=_rows)
         knob_timer.start(KNOB_DEBOUNCE_MS)
 
     def on_knob_a(val):
@@ -9516,7 +9697,7 @@ def build_window(model=None):
         doc = code_edit.document()
         n = doc.blockCount()
         body = code_edit.toPlainText()
-        if not model.stages and body.lstrip().startswith("* empty pipeline"):
+        if not model.stages and _is_empty_program_text(body):
             body, n, after_line = "", 0, 0            # replace the placeholder comment
         code_edit.blockSignals(True)
         try:
@@ -11596,24 +11777,28 @@ def build_window(model=None):
             short = role
             for sep in ("—", "=", "("):
                 short = short.split(sep)[0]
-            short = short.strip()[:16]
+            short = short.strip()
+            _t = tr(short)
+            short = _t if _t != short else short[:16]        # 訳があれば訳(短い)、無ければ従来どおり 16 字まで
             return "%s · %s" % (letter, short) if short else letter
         if curated and role == "":                # curated AND explicitly empty = unused
             return "%s (–)" % letter
         if spec is not None and (spec.get("kind") == "unused" or spec.get("label")):
-            return param_specs.spec_label(spec, letter)
+            return _spec_head(spec, letter)
         return letter                             # un-curated op: keep it generic
 
     def on_op_selected(cur, _prev=None):
         if cur is None:
-            op_param.setText("select an operator to see its signature")
+            op_param.setText(tr("select an operator to see its signature"))
             lbl_a.setText("a"); lbl_b.setText("b")
             op_row_a.set_spec(param_specs.GENERIC_FLOAT); op_row_b.set_spec(param_specs.GENERIC_FLOAT)
             op_a_spin.setEnabled(True); op_b_spin.setEnabled(True)
             b_insert.setEnabled(True); b_help.setEnabled(False); b_run_once.setEnabled(True); return
         name = cur.data(QtCore.Qt.UserRole)
         row = _op_row(name)
-        op_param.setText(op_signature_detail(row) if row else cur.text())
+        op_param.setText(op_panel_signature(row) if row else cur.text())
+        op_param.setToolTip(op_signature_detail(row) if row else cur.text())      # 実装の式も含む全文
+        op_param_fit.refresh()
         if row and row.get("backend") == "general":
             # general-algorithm tier: read-only in the image UI (different seq/scalar
             # model). No a/b knobs, and Insert / Run once / Help are image-pipeline
@@ -11810,9 +11995,7 @@ def build_window(model=None):
 
     def program_text_from_model():
         if not model.stages:
-            return ("* empty pipeline — type ops here (HDevelop syntax), e.g.:\n"
-                    "* gaussian (0.4, 0.5)\n* sobel_mag (0.5, 0.5)\n* otsu (0.5, 0.5)\n"
-                    "* control flow:  for 3 ... endfor   ·   if 1 ... else ... endif")
+            return _empty_program_text()
         # repr = full precision: the program must run the SAME pipeline as the model
         # (a 0.12345 knob used to come back as 0.123 after Sync/Apply)
         return "\n".join(("# bypassed: %s (%r, %r)" if _is_bypassed(st) else "%s (%r, %r)") % tuple(st[:3])
@@ -12101,7 +12284,8 @@ def build_window(model=None):
         try:
             val = model.cached_result(it.data(QtCore.Qt.UserRole))
             if val is None:
-                var_inspect.setPlainText("未計算 / not computed (run or step to this stage)")
+                var_inspect.setPlainText((_pair("未計算", "not computed") + (" (run or step to this stage)" if _UI_LANG["code"] != "ja"
+                                          else "(実行するか、この段まで進めると計算されます)")))
             else:
                 var_inspect.setPlainText(format_inspection(inspect_result(val)))
         except Exception as e:
@@ -12599,6 +12783,7 @@ def build_window(model=None):
     act_pyedit.triggered.connect(lambda _=False: show_python_editor())
     b_browse_samples.clicked.connect(show_samples)       # sample gallery reachable from the panel
     win._samples = samples
+    win._category_combo = cat
     win._browse_samples = b_browse_samples
     win._show_samples = show_samples
     act_about.triggered.connect(show_about)
@@ -14771,6 +14956,20 @@ def build_window(model=None):
         return root
     win._localize = localize
 
+    def _relocalize_dynamic():
+        """tr() で組み立てた(ラベル表に載らない)文を、いまの言語で作り直す。コンボの先頭項目・段の欄・
+        問題欄・つまみの名前と説明・空のコード欄のコメント。"""
+        try:
+            samples.setItemText(0, tr("— load a sample —"))
+            cat.setItemText(0, tr("all categories"))
+            on_op_selected(op_list.currentItem())
+            win._knob_spec_op = None                         # つまみの名前を言語で作り直す(spec は同じ)
+            i = selected_index()
+            refresh_stage_list(select=i if 0 <= i < len(model.stages) else None,
+                               sync_code=not model.stages)
+        except Exception as exc:                             # noqa: BLE001 -- 表示の再構築が窓を壊さない
+            _log_soft_failure("could not rebuild translated texts after a language switch", exc)
+
     def apply_language(lang):
         # 受け付ける言語は i18n.json の 'languages' が決める —— ここに固定の許可リストを
         # 置いていたあいだ、メニューには出るのに選ぶと英語に戻る言語があった(表に足す
@@ -14786,6 +14985,7 @@ def build_window(model=None):
         _apply_tooltips()
         _apply_labels()
         _update_current_indicator()
+        _relocalize_dynamic()
         for code, a in win._lang_actions.items():
             a.setChecked(code == win._lang)
         try:
@@ -15217,6 +15417,7 @@ def build_window(model=None):
     # so "Reset panel layout" always has somewhere to go back to.
     win._default_state = win.saveState()
     _restore_work_layout = False
+    _restored_dock_state = False
     try:
         _saved_work_layout = _settings().value("studio/work_mode_layout")
         if _saved_work_layout:
@@ -15237,8 +15438,10 @@ def build_window(model=None):
                 win.restoreGeometry(geo)
             if st:
                 win.restoreState(st)
+                _restored_dock_state = True
     except Exception:
         pass
+    win.first_layout_pending = not _restored_dock_state     # 保存済みの dock 配置を使った起動では比を触らない
     if _restore_work_layout:
         win._apply_layout_state()
     try:
