@@ -257,3 +257,128 @@ def test_type_mismatch_is_one_row_in_problems(win):
     rows = [r for r in _problems(win) if "stage 2" in r]
     assert len(rows) == 1, _problems(win)
     assert "outputs 'region'" in rows[0] or "region" in rows[0]
+
+
+# --------------------------------------------------------------------------- 3. 検索と置換(B-4)
+_THREE = "otsu (0.5,0.5)\ngaussian (0.4,0.5)\notsu (0.5,0.5)\n"
+
+
+def _fw():
+    from PySide6 import QtWidgets
+    return QtWidgets.QApplication.focusWidget()
+
+
+def test_ctrl_f_in_the_program_goes_to_the_find_bar_not_the_operator_search(win):
+    from PySide6 import QtCore
+    ed = _editor(win, _THREE)
+    f = win._program["find"]
+    assert not f["bar"].isVisible()
+    _key(ed, QtCore.Qt.Key_F, QtCore.Qt.ControlModifier)
+    assert f["bar"].isVisible()
+    assert _fw() is f["find_edit"], _fw()
+    assert _fw() is not win._search_ui["edit"]
+    assert not f["replace_edit"].isVisible()                       # Ctrl+F は検索だけ
+
+
+def test_ctrl_f_elsewhere_still_goes_to_the_operator_search(win):
+    from PySide6 import QtCore
+    lst = win._search_ui["list"]
+    lst.setFocus()
+    win.activateWindow()
+    _pump(0.2)
+    _key(lst, QtCore.Qt.Key_F, QtCore.Qt.ControlModifier)
+    assert _fw() is win._search_ui["edit"], _fw()                   # 従来どおり
+    assert not win._program["find"]["bar"].isVisible()
+
+
+def test_enter_finds_next_and_wraps_f3_and_shift_f3_move_and_esc_closes(win):
+    from PySide6 import QtCore, QtGui
+    from PySide6.QtTest import QTest
+    ed = _editor(win, _THREE)
+    f = win._program["find"]
+    c = ed.textCursor(); c.movePosition(QtGui.QTextCursor.Start); ed.setTextCursor(c)
+    _key(ed, QtCore.Qt.Key_F, QtCore.Qt.ControlModifier)
+    QTest.keyClicks(f["find_edit"], "otsu")
+    assert "2" in f["count"].text()                                 # 2 件
+    line = lambda: ed.textCursor().blockNumber() + 1
+    _key(f["find_edit"], QtCore.Qt.Key_Return)
+    assert line() == 1 and ed.textCursor().selectedText() == "otsu"
+    _key(f["find_edit"], QtCore.Qt.Key_Return)
+    assert line() == 3                                              # 次の一致へ
+    _key(f["find_edit"], QtCore.Qt.Key_Return)
+    assert line() == 1                                              # 末尾から先頭へ戻る
+    _key(ed, QtCore.Qt.Key_F3)
+    assert line() == 3
+    _key(ed, QtCore.Qt.Key_F3, QtCore.Qt.ShiftModifier)
+    assert line() == 1
+    _key(f["find_edit"], QtCore.Qt.Key_Escape)                      # Esc で閉じる。フォーカスは欄へ戻る
+    assert not f["bar"].isVisible() and win.focusWidget() is ed        # (offscreen の窓は非アクティブなので窓の側の焦点で見る)
+    _key(ed, QtCore.Qt.Key_F3)                                      # 閉じたあとも F3 は検索語で動く
+    assert line() in (1, 3) and ed.textCursor().selectedText() == "otsu"
+
+
+def test_esc_in_the_editor_closes_the_find_bar(win):
+    from PySide6 import QtCore
+    ed = _editor(win, _THREE)
+    _key(ed, QtCore.Qt.Key_F, QtCore.Qt.ControlModifier)
+    ed.setFocus()
+    _key(ed, QtCore.Qt.Key_Escape)
+    assert not win._program["find"]["bar"].isVisible()
+
+
+def test_match_case_toggle(win):
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    ed = _editor(win, "Otsu otsu OTSU\n")
+    f = win._program["find"]
+    _key(ed, QtCore.Qt.Key_F, QtCore.Qt.ControlModifier)
+    QTest.keyClicks(f["find_edit"], "otsu")
+    assert f["bar"].matches() == 3                                  # 既定は区別しない
+    f["case"].setChecked(True)
+    assert f["bar"].matches() == 1
+
+
+def test_replace_all_is_one_undo(win):
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    ed = _editor(win, _THREE)
+    f = win._program["find"]
+    _key(ed, QtCore.Qt.Key_H, QtCore.Qt.ControlModifier)            # Ctrl+H = 置換つき
+    assert f["bar"].isVisible() and f["replace_edit"].isVisible()
+    assert _fw() is f["find_edit"]                                  # ホールドアウトの窓は開かない
+    QTest.keyClicks(f["find_edit"], "otsu")
+    QTest.keyClicks(f["replace_edit"], "sobel_mag")
+    f["replace_all"].click()
+    _pump(0.1)
+    assert "otsu" not in ed.toPlainText() and ed.toPlainText().count("sobel_mag") == 2
+    ed.setFocus()
+    _key(ed, QtCore.Qt.Key_Z, QtCore.Qt.ControlModifier)            # Undo 1 回で全部戻る
+    assert ed.toPlainText() == _THREE
+
+
+def test_replace_one_replaces_the_selected_match_and_moves_on(win):
+    from PySide6 import QtCore, QtGui
+    from PySide6.QtTest import QTest
+    ed = _editor(win, _THREE)
+    f = win._program["find"]
+    c = ed.textCursor(); c.movePosition(QtGui.QTextCursor.Start); ed.setTextCursor(c)
+    _key(ed, QtCore.Qt.Key_H, QtCore.Qt.ControlModifier)
+    QTest.keyClicks(f["find_edit"], "otsu")
+    QTest.keyClicks(f["replace_edit"], "canny")
+    f["replace"].click()                                            # 最初は選ぶだけ
+    assert ed.toPlainText() == _THREE
+    f["replace"].click()                                            # 選んでいる 1 件を置き換えて次へ
+    assert ed.toPlainText().count("canny") == 1 and ed.toPlainText().count("otsu") == 1
+    assert ed.textCursor().selectedText() == "otsu"
+
+
+def test_replace_text_containing_the_query_does_not_loop(win):
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    ed = _editor(win, "otsu\notsu\n")
+    f = win._program["find"]
+    _key(ed, QtCore.Qt.Key_H, QtCore.Qt.ControlModifier)
+    QTest.keyClicks(f["find_edit"], "otsu")
+    QTest.keyClicks(f["replace_edit"], "otsu_x")
+    assert f["bar"].replace_all() == 2
+    assert ed.toPlainText() == "otsu_x\notsu_x\n"

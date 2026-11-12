@@ -2053,6 +2053,94 @@
    "ko": "혹시 이것인가요: %s?",
    "de": "Meinten Sie: %s?",
    "hi": "क्या आपका मतलब था: %s?"
+  },
+  "Find": {
+   "ja": "検索",
+   "zh": "查找",
+   "tw": "尋找",
+   "ko": "찾기",
+   "de": "Suchen",
+   "hi": "खोजें"
+  },
+  "Replace with": {
+   "ja": "置換後の文字列",
+   "zh": "替换为",
+   "tw": "取代為",
+   "ko": "바꿀 내용",
+   "de": "Ersetzen durch",
+   "hi": "इससे बदलें"
+  },
+  "Replace": {
+   "ja": "置換",
+   "zh": "替换",
+   "tw": "取代",
+   "ko": "바꾸기",
+   "de": "Ersetzen",
+   "hi": "बदलें"
+  },
+  "Replace all": {
+   "ja": "すべて置換",
+   "zh": "全部替换",
+   "tw": "全部取代",
+   "ko": "모두 바꾸기",
+   "de": "Alle ersetzen",
+   "hi": "सभी बदलें"
+  },
+  "Match case": {
+   "ja": "大文字小文字を区別",
+   "zh": "区分大小写",
+   "tw": "區分大小寫",
+   "ko": "대소문자 구분",
+   "de": "Groß-/Kleinschreibung beachten",
+   "hi": "अक्षर-भेद मानें"
+  },
+  "Find previous (Shift+F3)": {
+   "ja": "前を検索 (Shift+F3)",
+   "zh": "查找上一个 (Shift+F3)",
+   "tw": "尋找上一個 (Shift+F3)",
+   "ko": "이전 찾기 (Shift+F3)",
+   "de": "Vorheriges suchen (Umschalt+F3)",
+   "hi": "पिछला खोजें (Shift+F3)"
+  },
+  "Find next (F3)": {
+   "ja": "次を検索 (F3)",
+   "zh": "查找下一个 (F3)",
+   "tw": "尋找下一個 (F3)",
+   "ko": "다음 찾기 (F3)",
+   "de": "Nächstes suchen (F3)",
+   "hi": "अगला खोजें (F3)"
+  },
+  "Close (Esc)": {
+   "ja": "閉じる (Esc)",
+   "zh": "关闭 (Esc)",
+   "tw": "關閉 (Esc)",
+   "ko": "닫기 (Esc)",
+   "de": "Schließen (Esc)",
+   "hi": "बंद करें (Esc)"
+  },
+  "%d matches": {
+   "ja": "%d 件",
+   "zh": "%d 处匹配",
+   "tw": "%d 處符合",
+   "ko": "%d건 일치",
+   "de": "%d Treffer",
+   "hi": "%d मिलान"
+  },
+  "no match": {
+   "ja": "一致なし",
+   "zh": "无匹配",
+   "tw": "無符合",
+   "ko": "일치 없음",
+   "de": "kein Treffer",
+   "hi": "कोई मिलान नहीं"
+  },
+  "%d replaced": {
+   "ja": "%d 件を置換しました",
+   "zh": "已替换 %d 处",
+   "tw": "已取代 %d 處",
+   "ko": "%d건 바꿈",
+   "de": "%d ersetzt",
+   "hi": "%d बदले गए"
   }
  },
   "pending_translation": {

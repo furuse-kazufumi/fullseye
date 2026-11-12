@@ -6543,6 +6543,180 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
         def mousePressEvent(self, ev):
             self._editor.gutter_click(ev)
 
+    class _FindEdit(QtWidgets.QLineEdit):
+        """検索欄・置換欄。Esc / F3 / Shift+F3 / Ctrl+F / Ctrl+H をウィンドウの同じキー(op の検索・ホールドアウト)
+        より先に受ける。"""
+
+        def __init__(self, bar):
+            super().__init__()
+            self._bar = bar
+
+        def event(self, ev):
+            if ev.type() == QtCore.QEvent.ShortcutOverride:
+                k, m = ev.key(), ev.modifiers()
+                ctrl = bool(m & QtCore.Qt.ControlModifier)
+                if k in (QtCore.Qt.Key_Escape, QtCore.Qt.Key_F3) or (ctrl and k in (QtCore.Qt.Key_F, QtCore.Qt.Key_H)):
+                    ev.accept()
+                    return True
+            return super().event(ev)
+
+        def keyPressEvent(self, ev):
+            k, m = ev.key(), ev.modifiers()
+            shift = bool(m & QtCore.Qt.ShiftModifier)
+            ctrl = bool(m & QtCore.Qt.ControlModifier)
+            if k == QtCore.Qt.Key_Escape:
+                self._bar.close_bar(); return
+            if k == QtCore.Qt.Key_F3:
+                self._bar.step(backward=shift); return
+            if ctrl and k in (QtCore.Qt.Key_F, QtCore.Qt.Key_H):
+                self._bar.open(replace=(k == QtCore.Qt.Key_H)); return
+            if k in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
+                if self is self._bar.replace_edit:
+                    self._bar.replace_one()
+                else:
+                    self._bar.step(backward=shift)
+                return
+            super().keyPressEvent(ev)
+
+    class _FindBar(QtWidgets.QWidget):
+        """Program 欄の下に出す検索・置換の帯(★2026-11-12 IDE 第 1 便, B-4)。
+        Ctrl+F = 検索、Ctrl+H = 置換つき、F3 / Shift+F3 = 次 / 前、Esc = 閉じる。全置換は 1 回の Undo で戻る。"""
+
+        def __init__(self, editor):
+            super().__init__()
+            self._ed = editor
+            self.setObjectName("ProgramFindBar")
+            lay = QtWidgets.QVBoxLayout(self)
+            lay.setContentsMargins(2, 2, 2, 2); lay.setSpacing(2)
+            row1 = QtWidgets.QHBoxLayout(); row1.setSpacing(3)
+            self.find_edit = _FindEdit(self)
+            self.find_edit.setPlaceholderText(tr("Find"))
+            self.find_edit.setClearButtonEnabled(True)
+            self.case = QtWidgets.QCheckBox("Aa")
+            self.case.setToolTip(tr("Match case"))
+            self.btn_prev = QtWidgets.QToolButton(); self.btn_prev.setText("\u2191")
+            self.btn_prev.setToolTip(tr("Find previous (Shift+F3)"))
+            self.btn_next = QtWidgets.QToolButton(); self.btn_next.setText("\u2193")
+            self.btn_next.setToolTip(tr("Find next (F3)"))
+            self.btn_close = QtWidgets.QToolButton(); self.btn_close.setText("\u2715")
+            self.btn_close.setToolTip(tr("Close (Esc)"))
+            self.count = QtWidgets.QLabel(""); self.count.setProperty("hint", True)
+            for w_ in (self.find_edit,):
+                row1.addWidget(w_, 1)
+            for w_ in (self.case, self.btn_prev, self.btn_next, self.count, self.btn_close):
+                row1.addWidget(w_)
+            lay.addLayout(row1)
+            self.replace_row = QtWidgets.QWidget()
+            row2 = QtWidgets.QHBoxLayout(self.replace_row); row2.setContentsMargins(0, 0, 0, 0); row2.setSpacing(3)
+            self.replace_edit = _FindEdit(self)
+            self.replace_edit.setPlaceholderText(tr("Replace with"))
+            self.btn_replace = QtWidgets.QPushButton(tr("Replace"))
+            self.btn_replace_all = QtWidgets.QPushButton(tr("Replace all"))
+            row2.addWidget(self.replace_edit, 1); row2.addWidget(self.btn_replace); row2.addWidget(self.btn_replace_all)
+            lay.addWidget(self.replace_row)
+            self.btn_next.clicked.connect(lambda _=False: self.step(False))
+            self.btn_prev.clicked.connect(lambda _=False: self.step(True))
+            self.btn_close.clicked.connect(lambda _=False: self.close_bar())
+            self.btn_replace.clicked.connect(lambda _=False: self.replace_one())
+            self.btn_replace_all.clicked.connect(lambda _=False: self.replace_all())
+            self.find_edit.textChanged.connect(lambda _t: self._update_count())
+            self.case.toggled.connect(lambda _c: self._update_count())
+            self.hide()
+
+        # -- 開く・閉じる --
+        def open(self, replace=False, seed=None):
+            self.show()
+            self.replace_row.setVisible(bool(replace))
+            if seed:
+                self.find_edit.setText(seed)
+            self.find_edit.setFocus()
+            self.find_edit.selectAll()
+            self._update_count()
+
+        def close_bar(self):
+            self.hide()
+            self._ed.setFocus()
+
+        # -- 検索 --
+        def _flags(self, backward=False):
+            fl = QtGui.QTextDocument.FindFlag(0)
+            if self.case.isChecked():
+                fl |= QtGui.QTextDocument.FindCaseSensitively
+            if backward:
+                fl |= QtGui.QTextDocument.FindBackward
+            return fl
+
+        def matches(self):
+            """本文の中の一致の数。"""
+            q = self.find_edit.text()
+            if not q:
+                return 0
+            doc, n = self._ed.document(), 0
+            c = doc.find(q, 0, self._flags())
+            while not c.isNull():
+                n += 1
+                c = doc.find(q, c, self._flags())
+            return n
+
+        def _update_count(self):
+            q = self.find_edit.text()
+            n = self.matches() if q else 0
+            self.count.setText("" if not q else (tr("%d matches") % n if n else tr("no match")))
+            return n
+
+        def step(self, backward=False):
+            """次(``backward`` なら前)の一致へ移る。末尾まで行ったら先頭から(戻って来る)。見つけたら True。"""
+            q = self.find_edit.text()
+            if not q:
+                return False
+            ed = self._ed
+            if ed.find(q, self._flags(backward)):
+                return True
+            cur = ed.textCursor()
+            cur.movePosition(QtGui.QTextCursor.End if backward else QtGui.QTextCursor.Start)
+            ed.setTextCursor(cur)
+            found = ed.find(q, self._flags(backward))
+            if not found:
+                self.count.setText(tr("no match"))
+            return found
+
+        # -- 置換 --
+        def replace_one(self):
+            """いま選んでいる一致を置き換えて次へ。選んでいなければ次の一致を選ぶだけ。"""
+            q = self.find_edit.text()
+            if not q:
+                return False
+            ed = self._ed
+            sel = ed.textCursor().selectedText()
+            same = (sel == q) if self.case.isChecked() else (sel.lower() == q.lower())
+            if same:
+                ed.textCursor().insertText(self.replace_edit.text())
+            ok = self.step(False)
+            self._update_count()
+            return ok
+
+        def replace_all(self):
+            """全件を置き換える。**1 回の Undo で全部戻る**(編集ブロックで包む)。置き換えた件数を返す。"""
+            q, r = self.find_edit.text(), self.replace_edit.text()
+            if not q:
+                return 0
+            doc = self._ed.document()
+            guard = QtGui.QTextCursor(doc)
+            guard.beginEditBlock()
+            n = 0
+            try:
+                c = doc.find(q, 0, self._flags())
+                while not c.isNull():
+                    c.insertText(r)
+                    n += 1
+                    c = doc.find(q, c, self._flags())      # 置換した文の後ろから(置換語に q を含んでも無限にならない)
+            finally:
+                guard.endEditBlock()
+            self.count.setText(tr("%d replaced") % n)
+            if self._ed.on_message is not None:
+                self._ed.on_message(tr("%d replaced") % n)
+            return n
+
     class ProgramEditor(QtWidgets.QPlainTextEdit):
         BREAK = "#e5484d"
         #: ★2026-11-12 IDE 第 1 便: 窓(build_window)が入れる受け手。None なら何もしない(部品単体でも動く)。
@@ -6743,6 +6917,13 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
         # ------------------------------------------------------------------ #
         def _ide_init(self):
             """IDE 部品の初期化(__init__ の最後から)。"""
+            self.find_bar = _FindBar(self)             # 置き場は窓の側(欄の下)。この欄は持ち主として動かす
+
+        def open_find(self, replace=False):
+            """検索帯を開く(Ctrl+F / Ctrl+H)。1 行だけ選んでいれば、それを検索語にする。"""
+            sel = self.textCursor().selectedText()
+            seed = sel if (sel and "\u2029" not in sel and len(sel) <= 200) else None
+            self.find_bar.open(replace, seed)
 
         def _say(self, text):
             if self.on_message is not None:
@@ -6823,7 +7004,23 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             return super().viewportEvent(ev)
 
         def _ide_action(self, ev):
-            """このキーが IDE 動作なら名前を返す。<<IDE-KEYS>>"""
+            """このキーが IDE 動作なら名前を返す(ウィンドウの同じキーより先に、ShortcutOverride でも使う)。"""
+            k, m, K = ev.key(), ev.modifiers(), QtCore.Qt
+            ctrl, shift = bool(m & K.ControlModifier), bool(m & K.ShiftModifier)
+            if m & K.AltModifier or m & K.MetaModifier:
+                return None
+            if ctrl and not shift:
+                if k == K.Key_F:
+                    return "find"
+                if k == K.Key_H:
+                    return "replace"
+                # <<IDE-KEYS-2>>
+            if not ctrl:
+                if k == K.Key_F3:
+                    return "prev" if shift else "next"
+                if k == K.Key_Escape and not shift and self.find_bar.isVisible():
+                    return "close_find"
+                # <<IDE-KEYS-3>>
             return None
 
         def event(self, ev):
@@ -6836,7 +7033,19 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             return super().event(ev)
 
         def _ide_do(self, action):
-            """IDE 動作を実行する。<<IDE-DO>>"""
+            """IDE 動作を実行する。"""
+            if action == "find":
+                self.open_find(False)
+            elif action == "replace":
+                self.open_find(True)
+            elif action in ("next", "prev"):
+                if not self.find_bar.find_edit.text():
+                    self.open_find(False)               # 検索語がまだ無い: 帯を開いて入力へ
+                else:
+                    self.find_bar.step(backward=(action == "prev"))
+            elif action == "close_find":
+                self.find_bar.close_bar()
+            # <<IDE-DO-2>>
 
         def keyPressEvent(self, ev):
             comp = self._completer
@@ -7890,7 +8099,7 @@ def build_window(model=None):
     for _cb in (c_run, c_cont, c_step, c_reset, c_apply, c_sync):
         crow.addWidget(_cb)
     crow.addStretch(1)
-    cvl.addLayout(crow); cvl.addWidget(code_edit, 1); cvl.addWidget(code_status)
+    cvl.addLayout(crow); cvl.addWidget(code_edit, 1); cvl.addWidget(code_edit.find_bar); cvl.addWidget(code_status)
 
     # -- variables & objects window (HDevelop variable window) --------------- #
     var_list = QtWidgets.QListWidget()
@@ -12627,6 +12836,11 @@ def build_window(model=None):
         check_program_syntax()
     win._program["apply"] = _apply_and_check
     win._program["check"] = check_program_syntax
+    _fb = code_edit.find_bar
+    win._program["find"] = {"bar": _fb, "find_edit": _fb.find_edit, "replace_edit": _fb.replace_edit,
+                            "case": _fb.case, "next": _fb.btn_next, "prev": _fb.btn_prev,
+                            "replace": _fb.btn_replace, "replace_all": _fb.btn_replace_all,
+                            "close": _fb.btn_close, "count": _fb.count}
     code_edit.on_message = lambda m_: flash(m_)
     code_edit.on_open_help = lambda n_: show_op_help(n_)
     code_edit.on_font_change = lambda pt_: _apply_mono_font(pt_)
