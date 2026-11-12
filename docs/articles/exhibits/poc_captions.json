@@ -3207,7 +3207,19 @@
    "caption_ja": "厚さ 100 µm の Si のダイの下の接合面(SiO2 1 + 1 µm、直径 40 µm・ピッチ 80 µm の Cu パッド 1 + 1 µm)に直径 5〜24 µm のボイドを置き、水 1 mm・F# 3 の集束探触子の SAM(走査型超音波顕微鏡) で撮る。エコーは層の伝達行列(Airy の再帰・時間領域の経路の和・光学の薄膜の式と 1e-12 で照合済み)。★★接合面の期待時刻で読んだ位相は、誘電体 −91°・Cu パッド +84°(薄い層は直交)、ボイドは誘電体の中 −175°・パッドの上 +159°(反転)。★★振幅の像ではボイド 12 個中 8 個が良品の画素の明るさの範囲に隠れる。直交の背景に反転のエコーが直角に足されるので、9〜16 µm のボイドの振幅の変化は 0.4〜3.5σ、位相を使う変化は 3.0〜8.9σ。位相の像で反転と読む画素は 16 µm 以上のボイドすべてで、良品 26,724 画素中 1 画素。★従来の「|RF| 最大の 1 点の符号」は無傷の Cu パッドで 140〜400 MHz の間に 5 回転ぶ。★最適周波数は閉形式 (k/a)·sqrt(log2(1 + a² ln2/(β k²)))(10 µm で 139.16 MHz、総当たりと一致)、表面エコーの裾がゲートに入る下限 130 MHz。★★POD(â vs a、88 個): 位相を使う検出の a90/95 は 150 / 200 / 300 MHz で 12.4 / 13.9 / 57.6 µm、振幅だけは 16.6 / 19.3 / 101.6 µm(同じ基準・同じ閾値の規則)。1-D 平面波・縦波だけ・ガウスの横 PSF・屈折の収差なし・Si の減衰 0(未確認)・kissing bond なしの合成であることは docstring に明記。検査 16 件・約 15 秒。",
    "caption_en": "A thinned 100 um silicon die over a hybrid bond (SiO2 1 + 1 um, Cu pads 1 + 1 um of 40 um diameter at 80 um pitch) with voids of 5 to 24 um placed on pads and in the dielectric, imaged by a focused scanning acoustic microscope (1 mm of water, F/3); echoes come from a layer transfer matrix checked against a bottom-up Airy recursion (Airy multiple-reflection formula), a time-domain ray sum and the optical thin-film formula to 1e-12. Read at the expected time of the bond plane, the dielectric echo is at -91 deg and the Cu pad at +84 deg (thin layers give quadrature echoes) while voids are inverted (-175 deg in the dielectric, +159 deg on a pad). In the amplitude image 8 of 12 voids hide inside the brightness range of intact pixels: an inverted echo adds at right angles to a quadrature background, so voids of 9 to 16 um change the amplitude by 0.4 to 3.5 sigma but the phase-aware statistic by 3.0 to 8.9 sigma; the phase image flags every void of 16 um and up and 1 of 26,724 intact pixels. The conventional single-sample polarity of an intact Cu pad flips 5 times between 140 and 400 MHz. The optimal frequency has a closed form (139.16 MHz for a 10 um void, equal to brute force) and the front-echo tail sets a floor of 130 MHz. POD (a-hat vs a, 88 voids): a90/95 of the phase-aware detector is 12.4 / 13.9 / 57.6 um at 150 / 200 / 300 MHz against 16.6 / 19.3 / 101.6 um for amplitude only, under the same baseline and threshold rule. Synthetic: 1-D plane-wave longitudinal layers, a Gaussian lateral PSF, no refraction aberration, silicon attenuation set to 0 (unverified), no kissing bonds.",
    "lead_ja": "積み重ねたチップの接合面にできる小さなボイドを、超音波顕微鏡で探す。直径 16 µm 以上のボイドは、反射の位相の像ですべて反転して光った。明るさの像では、小さなボイドの多くが良品に紛れる。",
-   "lead_en": "Small voids in the bonding plane of stacked chips are searched for with a scanning acoustic microscope. Every void of 16 um or more appeared inverted and bright in the echo-phase image. In the brightness image many small voids hide among good pixels."
+   "lead_en": "Small voids in the bonding plane of stacked chips are searched for with a scanning acoustic microscope. Every void of 16 um or more appeared inverted and bright in the echo-phase image. In the brightness image many small voids hide among good pixels.",
+   "ops": [
+    "acoustic_layer_stack",
+    "acoustic_interface_coefficients",
+    "acoustic_material_table",
+    "pulse_echo_ascan",
+    "echo_phase_polarity",
+    "sam_cscan",
+    "sam_frequency_tradeoff",
+    "pod_ahat_fit",
+    "pod_from_ahat",
+    "pod_false_call"
+   ]
   },
   {
    "id": "poc_illusions_and_perpetual_drawing",
