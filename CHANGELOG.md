@@ -46,6 +46,23 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 - `archive_*`(7z / rar の書庫)が 7-Zip を探すとき、と `algo_difftest.find_c_compiler` が C コンパイラを探すときに、`shutil.which` を使っていた。Python 3.11 の `shutil.which` は Windows で作業フォルダを PATH の先頭に足すので、書庫を開くフォルダに `7z.bat`、作業フォルダに `gcc.bat` が置いてあると、Fullseye がそれを実行した(7-Zip が `%ProgramFiles%\7-Zip` に無いとき。手元の 3.11.9 で `shutil.which('7z')` が `.\7z.BAT` を返すのを確かめた)。インストーラのレビューで `powershell` について見つかった形の兄弟。
 - `backend_safe.which_outside_cwd(name)` を足し、2 か所ともそれを通す。Windows の裸の名前は PATH の絶対パスの項目だけを見る(空・`.`・相対の項目は飛ばす。作業フォルダを PATH に絶対パスで入れた利用者の指定は尊重する)。配布するモジュールに裸の `shutil.which(` が残っていないことを試験にした(`tools/` の開発用スクリプトは対象外)。
+### XML を読む入口を 1 つの門(`safe_xml`)に寄せた(外部のファイルの DOCTYPE・大きさ・zip 爆弾)
+
+何が起き得たか: 外部のファイルから XML を読む入口(CommonRoad・OSM・CityGML・OME-TIFF の埋め込み XML・3MF・MJCF の include・SVG)のうち、DOCTYPE を断っていたのは SVG の `svg_entities` だけで、大きさの上限も SVG だけだった(定義ファイルの読み書きの棚卸し §3 表 X・§4 I)。標準の `xml.etree` は内部実体 `<!ENTITY a "hello">` を展開して受理し(実測)、8 MB の入力が約 170 MB のメモリになり(実測)、3MF は zip の中の `.model` の展開後の大きさに上限が無かった。expat 2.4.1 以降の増幅制限と外部実体を読まない標準の動作で、爆発は今の環境では起きにくいが、古い expat・別の環境では保証が無かった。
+
+何を変えたか: 新しいモジュール `safe_xml.py`(`safe_xml_parse` / `safe_xml_parse_zip_member` / `safe_xml_iterparse`、例外は `UnsafeXMLError`(`ValueError` の子))。DOCTYPE は **解析器の DOCTYPE 通知**(`TreeBuilder.doctype`)で断る。バイト列の正規表現ではなく expat が読んだ後なので、UTF-8 / UTF-16 の BOM つき・なし・宣言つきの iso-8859-1 でも見落とさない。大きさの上限は既定 50 MiB(SVG の既存の上限に揃える)、zip の中は展開後の大きさにも上限(宣言が嘘でも `max_bytes + 1` までしか読まない)。壊れた XML は従来どおり `ET.ParseError`。`defusedxml` は依存に足さず使わない(この門だけで同じ入力を断れる)。本体の 11 か所の解析呼び出し(drivecommonroad 1・drivejapan 1・driveplateau 2・fileio 2・optdraw 1・pegfail 1・pegtactile 1・printpath 1・examples_3d/anatomical_hand 1)を全部この門に通した。tools/ の JUnit 読み(ci_junit_floor・ci_failure_record・ci_local×3・mutation_probe の計 6 呼び出し)は CI の生成物を読む内部の道具なので対象外。
+
+挙動が変わる点: DOCTYPE / ENTITY を含む入力は、(SVG 以外でも)`UnsafeXMLError` で断る(以前は内部実体が展開されて受理された)。50 MiB を超える XML は断る(plateau の CityGML はストリーム読みで上限なし)。3MF の `.model` は展開後 50 MiB まで。コメント・CDATA の中に `<!DOCTYPE` と書いてあるだけの文書は、正規表現のときと違って断らない。正常な文書の読み結果は変わらない(標準の `ET.fromstring` と `ET.tostring` のバイト一致を試験)。
+
+実測: tests/test_safe_xml_parse_2026_11_12.py(145 本)。読み手 11 本 × DTD 6 種(10 段の入れ子実体・5 kB の実体・外部実体・内部実体・DOCTYPE のみ・SYSTEM つき DOCTYPE)× 別エンコード 5 種を読み手の入口から渡して全部断られる。52 MB の入力・展開後 52 MB の 3MF(圧縮後 1 MB 未満)も断られる。配布するモジュールを走査して、門を通さない解析の呼び出しが 0(対象は tests/・tools/・build/・examples/ を除く 500 本超。件数に下限つき)。
+
+### パイプラインのファイルの版の印(`fullseye_pipeline`)を読むときに検査する
+
+何が起き得たか: パイプラインのファイルの読み手(`FullseyeEngine.from_dict` / `load`(CLI の `imgevolve.py run` も通る)、Studio の `validate_pipeline_dict`(「Open pipeline」の `PipelineModel.load_dict` と studio_lite の `load_recipe` も通る))が、版の印を見ていなかった。`{"fullseye_pipeline": 99}`・`"banana"`・別の種類 `{"fullseye_graph": 1}` のファイルでも、`stages` があれば段 `gaussian` を持つエンジンとして受理された(再現: 7 つの入口 × 5 つの悪い印 = 全部 ACCEPT)。MCP にはパイプラインのファイルを読む入口は無い(`stages` を引数で受ける)。
+
+何を変えたか: 検査を小さな関数 `engine.check_pipeline_header(d, *, where=...)`(定数 `engine.PIPELINE_FORMAT_VERSION = 1`)にして、`FullseyeEngine.from_dict` と `studio.validate_pipeline_dict` の 2 か所から呼ぶ(ほかの読み手はこの 2 つを通る)。`fullseye_pipeline` があるとき値が整数の 1 でなければ(99・`"banana"`・`1.0`・`true`・`null`)`ValueError`、`fullseye_graph` だけのファイルも `ValueError`(「何を期待し、何が来たか」を言う)。印の無い古いファイル(`stages` だけ)は今までどおり読む(警告は付けない)。形式は変えていない(書く側は `fullseye_pipeline: 1` のまま)。別の担当が進めている封筒 `fullseye_kind` は見ない。
+
+挙動が変わる点: 印が整数の 1 でないファイル(99・文字列など)と、グラフのファイルが断られる。リポジトリ内の全ファイル(`examples/data/` など)の印は 1 で、正常なファイルの読み結果は変わらない。実測: tests/test_pipeline_header_mark_2026_11_12.py(62 本)を含む、Engine・Studio・studio_lite・CLI・XML の試験 555 本が通る。
 
 ## 1.1.0 — 2026-11-12
 

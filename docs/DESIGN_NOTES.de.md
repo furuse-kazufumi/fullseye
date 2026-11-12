@@ -336,13 +336,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L118** _(ja)_ — ★2026-11-05(敵対的検証 C13): 以前は ``tuple(st)[1:3]`` で段を読み、dict 段は鍵の名前 ("op" / "a")を float にしようとして ValueError、``(name, {"a": ..})`` は float(dict) の TypeError だった(run_pipeline は同じ段を受ける)。名前は stage_name、ノブは api._normalise_stage の 1 本。
 - **L251** _(ja)_ — ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
-- **L304** _(ja)_ — ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、 {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
-- **L311** _(ja)_ — ★2026-11-05(敵対的検証 C3): ノブの読み方は run_pipeline と同じ api._normalise_stage 1 本。 以前はここだけ別の読み方で、dict 段の未知キー({"op": "threshold", "A": 0.9} の打ち間違い)と 4 要素目(("threshold", 0.9, 0.5, 0.1))を黙って捨て、文字列ノブ "0.9" を float() で通していた —— run_pipeline は同じ段を TypeError で断る。同じ段は入口によらず同じ意味・同じ拒否。
-- **L331** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107): {"stages": None} が 0 段のエンジンになり、run が入力をそのまま 返していた(壊れた設定が「成功」)。[] は文書どおり恒等、None / 数値は設定の壊れ。
-- **L337** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
-- **L430** _(ja)_ — ★範囲外は断る(2026-09-20、GenSpark N40): --upto 9 / -1 が黙って全段 / 0 段になっていた
-- **L482** _(ja)_ — ★2026-11-04 external audit E4: each stage used to go through ``run_pipeline(prev, [st])`` on its own, so the chain-wide checks of :meth:`run` (sort chain, knobs, non-finite entry) never saw the whole pipeline -- ``otsu,invert`` ran here while ``run`` refuses it. Prepare the whole chain first (runs nothing), then resume stage by stage on the same runner Studio's stage cache uses (``entry`` only for the first stage).
-- **L490** _(ja)_ — ★2026-11-05(敵対的検証 C6): (1) 入口の契約(uint8 の /255 と台帳記録、extra_checks の値域、 strict での拒否)は**キャッシュに当たっても毎回**通す —— 以前は第 1 段が当たると飛び、 strict + extra_checks="on" で run() が断る画像を暖まった run_cached() は返していた。 (2) 結果を変える状態を鍵に入れる: 照合用テンプレート(ops._MATCH_CTX、スレッドローカル)と fssystem の全パラメータ —— 以前はテンプレート A の答えをテンプレート B で返した。 (3) 計算中に劣化台帳へ記録が残った段はキャッシュしない(当たると記録が消え、fallback の値が 「成功」に見えた)。次の呼び出しでもう一度計算され、同じ記録が残る。
+- **L330** _(ja)_ — ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、 {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
+- **L337** _(ja)_ — ★2026-11-05(敵対的検証 C3): ノブの読み方は run_pipeline と同じ api._normalise_stage 1 本。 以前はここだけ別の読み方で、dict 段の未知キー({"op": "threshold", "A": 0.9} の打ち間違い)と 4 要素目(("threshold", 0.9, 0.5, 0.1))を黙って捨て、文字列ノブ "0.9" を float() で通していた —— run_pipeline は同じ段を TypeError で断る。同じ段は入口によらず同じ意味・同じ拒否。
+- **L358** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107): {"stages": None} が 0 段のエンジンになり、run が入力をそのまま 返していた(壊れた設定が「成功」)。[] は文書どおり恒等、None / 数値は設定の壊れ。
+- **L364** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
+- **L457** _(ja)_ — ★範囲外は断る(2026-09-20、GenSpark N40): --upto 9 / -1 が黙って全段 / 0 段になっていた
+- **L509** _(ja)_ — ★2026-11-04 external audit E4: each stage used to go through ``run_pipeline(prev, [st])`` on its own, so the chain-wide checks of :meth:`run` (sort chain, knobs, non-finite entry) never saw the whole pipeline -- ``otsu,invert`` ran here while ``run`` refuses it. Prepare the whole chain first (runs nothing), then resume stage by stage on the same runner Studio's stage cache uses (``entry`` only for the first stage).
+- **L517** _(ja)_ — ★2026-11-05(敵対的検証 C6): (1) 入口の契約(uint8 の /255 と台帳記録、extra_checks の値域、 strict での拒否)は**キャッシュに当たっても毎回**通す —— 以前は第 1 段が当たると飛び、 strict + extra_checks="on" で run() が断る画像を暖まった run_cached() は返していた。 (2) 結果を変える状態を鍵に入れる: 照合用テンプレート(ops._MATCH_CTX、スレッドローカル)と fssystem の全パラメータ —— 以前はテンプレート A の答えをテンプレート B で返した。 (3) 計算中に劣化台帳へ記録が残った段はキャッシュしない(当たると記録が消え、fallback の値が 「成功」に見えた)。次の呼び出しでもう一度計算され、同じ記録が残る。
 
 ## `evis_fullseye_bridge.py`
 
@@ -1676,18 +1676,18 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fileio.py`
 
-- **L93** _(ja)_ — ★2026-11-05 redteam I8: the table above is now every spelling of the teem NRRD format spec ("type" field): "signed long long" / "signed long long int" were missing and refused.
-- **L240** _(ja)_ — ★2026-11-05 redteam I24: one empty cell (a missing value, written by table_write_csv for None) sent the whole column through float64, so a large int column with a gap came back rounded -- against "丸めて返さない". Blank cells are now allowed here: such a column is returned as an integer masked array (mask = the blanks), exact and still numeric.
-- **L298** _(ja)_ — ★2026-11-05 redteam I25: a UTF-8 BOM (Excel's "CSV UTF-8" writes one) became part of the first column name ('\ufeffx'). It is a byte-order mark, not data: drop it once.
-- **L884** _(ja)_ — ★2026-11-05 redteam (io, archive probe): Windows reserved device names (Microsoft "Naming Files, Paths, and Namespaces") include COM0 / LPT0, the superscript digits ¹ ² ³ and the console names CONIN$ / CONOUT$. Only CON/PRN/AUX/NUL and COM1-9 / LPT1-9 were listed, so "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
-- **L1384** _(ja)_ — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
-- **L1503** _(ja)_ — ★2026-11-05 redteam I6: FITS 4.0 §4.2.1.2 -- in free format the opening quote of a string may stand in any column after the value indicator, not only column 11. Leading blanks before the quote are not part of the value (blanks *inside* the quotes still are).
-- **L1721** _(ja)_ — ★2026-11-05 redteam I4: FITS 4.0 §5.3 / Table 11 -- the four integer offset conventions (BSCALE=1 with BZERO = -128 / 2**15 / 2**31 / 2**63) denote *integer* data of the other signedness. uint64 used to go through float64 (2**63 + 1 -> 2**63, 2**64 - 1 -> 2**64) and int8 came back as float64. They are now decoded with exact integer arithmetic.
-- **L1795** _(ja)_ — ★2026-11-05 redteam I7: MRC2014 word 28 (byte 108) is NVERSION = 20140 (year*10 + version). It was left 0, so the file did not declare itself MRC2014 (mrcfile.validate rejected it).
-- **L2107** _(ja)_ — ★2026-11-05 redteam I9: the "space" field (LPS / RAS / scanner-xyz ...) was dropped, so an LPS and an RAS file -- the same numbers in mirrored patient frames -- read back identical. It is returned as meta["space"] (canonical teem name, None when absent) and written back.
-- **L2278** _(ja)_ — ★参照実装 nifti1_io.c(nifti_quatern_to_mat44)と同じ規則: 1 - |bcd|^2 < 1e-7 なら 180 度回転と みなして a = 0 とし、(b, c, d) を単位長に正規化する。2026-11-04 まで閾値が無く、float32 の 丸め屑 1.2e-8 から a = 1.1e-4 を作って向きを 0.0125 度回していた(OpenNeuro ds000117 の 磁場地図で nibabel と 8e-4 の差。examples/poc_real_file_formats.py が見つけた)。
-- **L2463** _(ja)_ — ★2026-11-05 redteam I10: tifffile squeezes length-1 axes on read, and OME's 5-D Size* cannot tell "ZYX with Z=1" from "YX". The axes as written are recorded in a namespaced MapAnnotation so ome_tiff_read can restore the written shape (other readers ignore it).
-- **L2497** _(ja)_ — ★2026-11-05 redteam I11: the docstring promised to reject a Pixels Type that disagrees with the TIFF samples, but ``dtype`` was never read -- Type="int16" over uint16 data passed.
+- **L94** _(ja)_ — ★2026-11-05 redteam I8: the table above is now every spelling of the teem NRRD format spec ("type" field): "signed long long" / "signed long long int" were missing and refused.
+- **L241** _(ja)_ — ★2026-11-05 redteam I24: one empty cell (a missing value, written by table_write_csv for None) sent the whole column through float64, so a large int column with a gap came back rounded -- against "丸めて返さない". Blank cells are now allowed here: such a column is returned as an integer masked array (mask = the blanks), exact and still numeric.
+- **L299** _(ja)_ — ★2026-11-05 redteam I25: a UTF-8 BOM (Excel's "CSV UTF-8" writes one) became part of the first column name ('\ufeffx'). It is a byte-order mark, not data: drop it once.
+- **L885** _(ja)_ — ★2026-11-05 redteam (io, archive probe): Windows reserved device names (Microsoft "Naming Files, Paths, and Namespaces") include COM0 / LPT0, the superscript digits ¹ ² ³ and the console names CONIN$ / CONOUT$. Only CON/PRN/AUX/NUL and COM1-9 / LPT1-9 were listed, so "COM0", "LPT0.txt", "COM¹.txt" and "CONOUT$" were extracted as-is.
+- **L1385** _(ja)_ — ★2026-11-04 external audit I3: a member written through ``archive.open(ZipInfo, "w")`` takes ITS level from the ZipInfo, not from ``ZipFile(compresslevel=)``; with none set, zlib's default ran and level 0 / 1 / 9 gave byte-identical archives.
+- **L1504** _(ja)_ — ★2026-11-05 redteam I6: FITS 4.0 §4.2.1.2 -- in free format the opening quote of a string may stand in any column after the value indicator, not only column 11. Leading blanks before the quote are not part of the value (blanks *inside* the quotes still are).
+- **L1722** _(ja)_ — ★2026-11-05 redteam I4: FITS 4.0 §5.3 / Table 11 -- the four integer offset conventions (BSCALE=1 with BZERO = -128 / 2**15 / 2**31 / 2**63) denote *integer* data of the other signedness. uint64 used to go through float64 (2**63 + 1 -> 2**63, 2**64 - 1 -> 2**64) and int8 came back as float64. They are now decoded with exact integer arithmetic.
+- **L1796** _(ja)_ — ★2026-11-05 redteam I7: MRC2014 word 28 (byte 108) is NVERSION = 20140 (year*10 + version). It was left 0, so the file did not declare itself MRC2014 (mrcfile.validate rejected it).
+- **L2108** _(ja)_ — ★2026-11-05 redteam I9: the "space" field (LPS / RAS / scanner-xyz ...) was dropped, so an LPS and an RAS file -- the same numbers in mirrored patient frames -- read back identical. It is returned as meta["space"] (canonical teem name, None when absent) and written back.
+- **L2279** _(ja)_ — ★参照実装 nifti1_io.c(nifti_quatern_to_mat44)と同じ規則: 1 - |bcd|^2 < 1e-7 なら 180 度回転と みなして a = 0 とし、(b, c, d) を単位長に正規化する。2026-11-04 まで閾値が無く、float32 の 丸め屑 1.2e-8 から a = 1.1e-4 を作って向きを 0.0125 度回していた(OpenNeuro ds000117 の 磁場地図で nibabel と 8e-4 の差。examples/poc_real_file_formats.py が見つけた)。
+- **L2464** _(ja)_ — ★2026-11-05 redteam I10: tifffile squeezes length-1 axes on read, and OME's 5-D Size* cannot tell "ZYX with Z=1" from "YX". The axes as written are recorded in a namespaced MapAnnotation so ome_tiff_read can restore the written shape (other readers ignore it).
+- **L2498** _(ja)_ — ★2026-11-05 redteam I11: the docstring promised to reject a Pixels Type that disagrees with the TIFF samples, but ``dtype`` was never read -- Type="int16" over uint16 data passed.
 
 ## `fit_transform.py`
 
@@ -2310,8 +2310,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `optdraw.py`
 
-- **L677** _(ja)_ — ★入射瞳が無限遠(物体側テレセン)では近軸の F 値 = EFL / 入射瞳径 が 0 になる —— 意味の無い「F/0.00」を書かない
-- **L911** _(ja)_ — ★上面図は第三角法で側面図と横軸 y を共有するので、センサーの長辺(像の横 = 世界の x)は縦に描かれる。 向きを取り違えないよう、軸の矢印と名前を描く(+X が上)。
+- **L678** _(ja)_ — ★入射瞳が無限遠(物体側テレセン)では近軸の F 値 = EFL / 入射瞳径 が 0 になる —— 意味の無い「F/0.00」を書かない
+- **L912** _(ja)_ — ★上面図は第三角法で側面図と横軸 y を共有するので、センサーの長辺(像の横 = 世界の x)は縦に描かれる。 向きを取り違えないよう、軸の矢印と名前を描く(+X が上)。
 
 ## `optics.py`
 
@@ -2406,17 +2406,17 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `printpath.py`
 
-- **L45** _(ja)_ — 様式化(npr、2026-09-23)。★test_printpath の門が `set(OPSPRINTPATH) == set(__all__) - {定数}` を要求するので、 台帳とここの**両方**に書く必要がある。
-- **L185** _(ja)_ — ★2026-10-07: 行番号 N123 とチェックサム *71 を外す(外さないと N が命令に見え、その行の移動が黙って落ちた)
-- **L195** _(ja)_ — ★2026-10-07: G の無い座標だけの行(modal な移動)などは黙って捨てず拒否する
-- **L209** _(ja)_ — ★2026-10-07: 以前は黙って無視され、直後の G91 の相対量が絶対座標として読まれていた 軸は数値なしでも書ける(``G28 X Y``)ので、数値つきの語でなく文字そのものを見る
-- **L231** _(ja)_ — ★2026-10-07: 始点未定の軸への相対移動は未定のまま(以前は相対量を絶対座標として読んだ)
-- **L717** _(ja)_ — ★ペンプロッタの経路と 3D プリンタの経路は**同じ対象**(順に回る線分の列)で、 # 出口も同じ(contours_to_gcode → gcode_write / gcode_time_estimate)。 # だから族を新しく立てず、ここに stroke カテゴリとして足す。 # 参考: Kaplan & Bosch, "TSP Art", Computational Aesthetics 2005。 # --------------------------------------------------------------------------- # 点描の距離。"euclidean" 以外は将来。
-- **L818** _(ja)_ — ★画素ごとの最近傍を**KD 木**で引く。以前は各反復で (画素 x 点) の距離行列を まるごと作っていたので、202x300 の絵に 9,000 点を置くだけで 60,600 x 9,000 = 5.5 億要素(4.4 GB 相当)を 18 回組み直していた —— 手元で 101 秒、共有ランナーでは PoC の実行門(1 本 600 秒)に迫る。KD 木は**厳密に同じ最近傍**を返すので答えは 変わらない(同距離の並びだけは実装依存になるため、種を固定した回帰検査を置く)。
-- **L1034** _(ja)_ — ★被覆率で塗る。整数画素の円板で塗っていたときはペン幅が**階段**になり (0.5 / 1.0 / 1.5 px がインク率 0.1900 で一致し、2.0 で 0.4853 へ跳ねた)、 「目標の濃さに合うペン幅」を解くことができなかった。画素中心から標本までの 距離で被覆率を出すと、ペン幅が連続なノブになる。
-- **L1076** _(ja)_ — ★2026-10-07: 反射の詰め物を手で切ると r ≥ 辺の長さで足りず出力が縮んだ((8, 12), σ=3 → (4, 12))。 np.pad の reflect は繰り返し反射するので形が保たれる(r < 辺の長さでは従来と同じ値)
-- **L1086** _(ja)_ — ★「きれいな絵」を返す op ではなく、**保った量と捨てた量を数で返す** op にする。 既存の NPR ライブラリは絵しか返さない —— 差はそこ。真値はモアレ周期の予言、 被覆率 w/d の閉形式、既知の縞の向き、Lloyd の単調減少(既存 stipple_energy が 測る)、セル平均が L2 最適であること。 ------------------------------------------------------------------------- #
-- **L1297** _(ja)_ — ★ストロークを**構造に沿わせる**なら、縞の周波数ベクトルはその **直交方向**に向ける(線は周波数ベクトルに直交に走る)。 この 90 度を入れ忘れていて、docstring は「沿う」と書きながら 実装は「横切る」だった —— 既知の角度の縞を渡す門で掴んだ (2026-09-23)。絵を見るだけではどちらも「それらしい線」に見える。
+- **L46** _(ja)_ — 様式化(npr、2026-09-23)。★test_printpath の門が `set(OPSPRINTPATH) == set(__all__) - {定数}` を要求するので、 台帳とここの**両方**に書く必要がある。
+- **L186** _(ja)_ — ★2026-10-07: 行番号 N123 とチェックサム *71 を外す(外さないと N が命令に見え、その行の移動が黙って落ちた)
+- **L196** _(ja)_ — ★2026-10-07: G の無い座標だけの行(modal な移動)などは黙って捨てず拒否する
+- **L210** _(ja)_ — ★2026-10-07: 以前は黙って無視され、直後の G91 の相対量が絶対座標として読まれていた 軸は数値なしでも書ける(``G28 X Y``)ので、数値つきの語でなく文字そのものを見る
+- **L232** _(ja)_ — ★2026-10-07: 始点未定の軸への相対移動は未定のまま(以前は相対量を絶対座標として読んだ)
+- **L718** _(ja)_ — ★ペンプロッタの経路と 3D プリンタの経路は**同じ対象**(順に回る線分の列)で、 # 出口も同じ(contours_to_gcode → gcode_write / gcode_time_estimate)。 # だから族を新しく立てず、ここに stroke カテゴリとして足す。 # 参考: Kaplan & Bosch, "TSP Art", Computational Aesthetics 2005。 # --------------------------------------------------------------------------- # 点描の距離。"euclidean" 以外は将来。
+- **L819** _(ja)_ — ★画素ごとの最近傍を**KD 木**で引く。以前は各反復で (画素 x 点) の距離行列を まるごと作っていたので、202x300 の絵に 9,000 点を置くだけで 60,600 x 9,000 = 5.5 億要素(4.4 GB 相当)を 18 回組み直していた —— 手元で 101 秒、共有ランナーでは PoC の実行門(1 本 600 秒)に迫る。KD 木は**厳密に同じ最近傍**を返すので答えは 変わらない(同距離の並びだけは実装依存になるため、種を固定した回帰検査を置く)。
+- **L1035** _(ja)_ — ★被覆率で塗る。整数画素の円板で塗っていたときはペン幅が**階段**になり (0.5 / 1.0 / 1.5 px がインク率 0.1900 で一致し、2.0 で 0.4853 へ跳ねた)、 「目標の濃さに合うペン幅」を解くことができなかった。画素中心から標本までの 距離で被覆率を出すと、ペン幅が連続なノブになる。
+- **L1077** _(ja)_ — ★2026-10-07: 反射の詰め物を手で切ると r ≥ 辺の長さで足りず出力が縮んだ((8, 12), σ=3 → (4, 12))。 np.pad の reflect は繰り返し反射するので形が保たれる(r < 辺の長さでは従来と同じ値)
+- **L1087** _(ja)_ — ★「きれいな絵」を返す op ではなく、**保った量と捨てた量を数で返す** op にする。 既存の NPR ライブラリは絵しか返さない —— 差はそこ。真値はモアレ周期の予言、 被覆率 w/d の閉形式、既知の縞の向き、Lloyd の単調減少(既存 stipple_energy が 測る)、セル平均が L2 最適であること。 ------------------------------------------------------------------------- #
+- **L1298** _(ja)_ — ★ストロークを**構造に沿わせる**なら、縞の周波数ベクトルはその **直交方向**に向ける(線は周波数ベクトルに直交に走る)。 この 90 度を入れ忘れていて、docstring は「沿う」と書きながら 実装は「横切る」だった —— 既知の角度の縞を渡す門で掴んだ (2026-09-23)。絵を見るだけではどちらも「それらしい線」に見える。
 
 ## `problems.py`
 
@@ -2580,44 +2580,44 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `studio.py`
 
-- **L366** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
-- **L375** — ★ Rechtsklick auf die Abbildung selbst (Benutzer 2026-09-06: "es wäre schön, das als Abbildung Angezeigte per Rechtsklick in die Zwischenablage kopieren zu können"). Eine Studio-UI-Konvention dieses Repos —— **die Anzeigeseite muss auch per Rechtsklick alles ermöglichen**. Es kann dasselbe wie die Buttonreihe unten (mach es nicht zu einem Entweder-oder).
-- **L1006** _(ja)_ — ★2026-11-05(敵対的検証 C6 の兄弟): engine.run_cached と同じく、結果を変える状態 —— 照合用 テンプレート(ops._MATCH_CTX)と fssystem の全パラメータ —— も文脈に入れる(変われば全段を捨てる)。
-- **L1641** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
-- **L1651** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
-- **L1674** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
-- **L1685** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
-- **L2278** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
-- **L3557** _(ja)_ — ★2026-11-12: この 3 本の b は「未使用」("")と書いていたが、2026-09-17 から端の扱いを選ぶ(ops._border)。
-- **L3749** _(ja)_ — ★2026-11-12: `gaussian (nan, 0.5)` が a=1.0 として黙って走っていた(max/min が NaN を素通しする)
-- **L3751** _(ja)_ — ★P-13(2026-11-12): 0..1 の外の値はここで黙って丸めていた。丸めた事実を行ごとに残す(apply_program が画面に出す)。
-- **L4353** _(ja)_ — ★2026-11-12: op を選ぶたびに右パネルが約 190px 広がった。typed 欄が spec の種類で 0〜110px と 変わり、隠れると幅ゼロになっていたため。常に同じ幅を取る(隠れても保つ)。
-- **L4406** _(ja)_ — ★2026-11-12: 前の spec の範囲が残っていた(percentile の後に開くと 5..95 のままで 1.0 に届かず、int の後だと右端が knob 0.04 になって窓が黙って 3 に変わる)。
-- **L4748** _(ja)_ — ★2026-11-12: 380x380 の下限は主画像欄(MDI の中)より大きく、欄の下が切れた(窓に合わせても収まらない)。 欄に収まる下限にする。別窓(tools=True)は従来どおり。
-- **L5887** _(ja)_ — ★2026-11-12: i18n.json の最上位に置かれた行は、上の一覧に載っているものしか読んでいなかった。 検索結果の見出し(Applicable to the current input / Needs preprocessing / Other)やボタン (Try on current data / Help)は訳が表にあるのに、日本語 UI でも英語のままだった。 最上位の「言語コード → 文」の行は全部読む(節の名前は除く)。
-- **L6774** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
-- **L6782** _(ja)_ — ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。 それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。 以後の visibilityChanged は利用者の操作ではないので記録しない。
-- **L7259** _(ja)_ — ★2026-11-12: 行は op 名を先頭に(説明が長いと名前が右へ切れていた、P-09)。前処理は「先に: a → この op」と 別の行に書く(従来は「出力: region → otsu」と出力の後ろに繋がり、順序が逆に読めた)。
-- **L7275** _(ja)_ — ★P-19(2026-11-12): 説明は行の幅いっぱいに折り返し、ボタンはその下の右寄せに置く。従来は横並びで、 折り返さない説明文の幅で行が伸び、「今のデータで試す」「ヘルプ」が横スクロールの先に隠れていた。
-- **L7347** _(ja)_ — ★P-09(2026-11-12): 入門の語(「二値化」「回転」…)に当たる定番の op を、検索の順位とは別に先頭へ出す。 3 群の中身と並びは変えない(studio_search の約束)。前処理が要る定番は行の中に手順(→ op)が出る。
-- **L7447** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L7465** _(ja)_ — ★2026-11-12: 注記の行は一覧に譲り、全文はチェックボックスのツールチップに出す(件数・理由はそこで読める)
-- **L8962** _(ja)_ — ★2026-11-12: これは「いまの設定を同期で計算した結果」で、どの worker 世代でもない。 状態バーが古い「表示中の結果: 世代 N」を言い続けないよう印を付ける(_update_attribution が読む)
-- **L9536** _(ja)_ — (★2026-11-12: + の直後に「未計算」のまま・つまみの途中で古い文字のままだった)
-- **L9870** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L10032** _(ja)_ — ★2026-11-12: 全画素を float64 のカラーで復号し直していた(8000×6000 の JPEG で 0.96 秒・2.46 GB)。 Pillow があれば、ヘッダのモードを見てから 256 px 以内に縮めた絵で比べる。無ければ小さいファイルだけ従来の道。
-- **L10069** _(ja)_ — ★P-17(2026-11-12): カラーのファイルは輝度にして読む(処理列は 2-D)。黙って灰色にせず、そう言う。
-- **L11000** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
-- **L11156** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
-- **L12005** _(ja)_ — ★2026-11-12: 選んでいないときに入れるのは**検索の 1 位**。先頭に出している「定番」の欄は対象にしない (「canny edge」で Enter を押すと sobel_amp が入っていた —— レビューの指摘)。定番は自分で選んだ時だけ。
-- **L12045** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L12289** _(ja)_ — ★P-13(2026-11-12): `gaussian (9.0, -3.0)` は通り、ライブラリが 0..1 に丸めて走らせる (FullseyeFallbackWarning が出るだけで、画面は何も言わなかった)。どの値を何として走らせたかを言う。
-- **L12968** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
-- **L13041** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
-- **L13044** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
-- **L14533** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
-- **L14552** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
-- **L15654** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L367** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
+- **L376** — ★ Rechtsklick auf die Abbildung selbst (Benutzer 2026-09-06: "es wäre schön, das als Abbildung Angezeigte per Rechtsklick in die Zwischenablage kopieren zu können"). Eine Studio-UI-Konvention dieses Repos —— **die Anzeigeseite muss auch per Rechtsklick alles ermöglichen**. Es kann dasselbe wie die Buttonreihe unten (mach es nicht zu einem Entweder-oder).
+- **L1007** _(ja)_ — ★2026-11-05(敵対的検証 C6 の兄弟): engine.run_cached と同じく、結果を変える状態 —— 照合用 テンプレート(ops._MATCH_CTX)と fssystem の全パラメータ —— も文脈に入れる(変われば全段を捨てる)。
+- **L1642** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
+- **L1652** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
+- **L1675** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
+- **L1686** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
+- **L2279** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
+- **L3558** _(ja)_ — ★2026-11-12: この 3 本の b は「未使用」("")と書いていたが、2026-09-17 から端の扱いを選ぶ(ops._border)。
+- **L3750** _(ja)_ — ★2026-11-12: `gaussian (nan, 0.5)` が a=1.0 として黙って走っていた(max/min が NaN を素通しする)
+- **L3752** _(ja)_ — ★P-13(2026-11-12): 0..1 の外の値はここで黙って丸めていた。丸めた事実を行ごとに残す(apply_program が画面に出す)。
+- **L4354** _(ja)_ — ★2026-11-12: op を選ぶたびに右パネルが約 190px 広がった。typed 欄が spec の種類で 0〜110px と 変わり、隠れると幅ゼロになっていたため。常に同じ幅を取る(隠れても保つ)。
+- **L4407** _(ja)_ — ★2026-11-12: 前の spec の範囲が残っていた(percentile の後に開くと 5..95 のままで 1.0 に届かず、int の後だと右端が knob 0.04 になって窓が黙って 3 に変わる)。
+- **L4749** _(ja)_ — ★2026-11-12: 380x380 の下限は主画像欄(MDI の中)より大きく、欄の下が切れた(窓に合わせても収まらない)。 欄に収まる下限にする。別窓(tools=True)は従来どおり。
+- **L5888** _(ja)_ — ★2026-11-12: i18n.json の最上位に置かれた行は、上の一覧に載っているものしか読んでいなかった。 検索結果の見出し(Applicable to the current input / Needs preprocessing / Other)やボタン (Try on current data / Help)は訳が表にあるのに、日本語 UI でも英語のままだった。 最上位の「言語コード → 文」の行は全部読む(節の名前は除く)。
+- **L6775** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+- **L6783** _(ja)_ — ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。 それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。 以後の visibilityChanged は利用者の操作ではないので記録しない。
+- **L7260** _(ja)_ — ★2026-11-12: 行は op 名を先頭に(説明が長いと名前が右へ切れていた、P-09)。前処理は「先に: a → この op」と 別の行に書く(従来は「出力: region → otsu」と出力の後ろに繋がり、順序が逆に読めた)。
+- **L7276** _(ja)_ — ★P-19(2026-11-12): 説明は行の幅いっぱいに折り返し、ボタンはその下の右寄せに置く。従来は横並びで、 折り返さない説明文の幅で行が伸び、「今のデータで試す」「ヘルプ」が横スクロールの先に隠れていた。
+- **L7348** _(ja)_ — ★P-09(2026-11-12): 入門の語(「二値化」「回転」…)に当たる定番の op を、検索の順位とは別に先頭へ出す。 3 群の中身と並びは変えない(studio_search の約束)。前処理が要る定番は行の中に手順(→ op)が出る。
+- **L7448** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L7466** _(ja)_ — ★2026-11-12: 注記の行は一覧に譲り、全文はチェックボックスのツールチップに出す(件数・理由はそこで読める)
+- **L8963** _(ja)_ — ★2026-11-12: これは「いまの設定を同期で計算した結果」で、どの worker 世代でもない。 状態バーが古い「表示中の結果: 世代 N」を言い続けないよう印を付ける(_update_attribution が読む)
+- **L9537** _(ja)_ — (★2026-11-12: + の直後に「未計算」のまま・つまみの途中で古い文字のままだった)
+- **L9871** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L10033** _(ja)_ — ★2026-11-12: 全画素を float64 のカラーで復号し直していた(8000×6000 の JPEG で 0.96 秒・2.46 GB)。 Pillow があれば、ヘッダのモードを見てから 256 px 以内に縮めた絵で比べる。無ければ小さいファイルだけ従来の道。
+- **L10070** _(ja)_ — ★P-17(2026-11-12): カラーのファイルは輝度にして読む(処理列は 2-D)。黙って灰色にせず、そう言う。
+- **L11001** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L11157** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L12006** _(ja)_ — ★2026-11-12: 選んでいないときに入れるのは**検索の 1 位**。先頭に出している「定番」の欄は対象にしない (「canny edge」で Enter を押すと sobel_amp が入っていた —— レビューの指摘)。定番は自分で選んだ時だけ。
+- **L12046** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L12290** _(ja)_ — ★P-13(2026-11-12): `gaussian (9.0, -3.0)` は通り、ライブラリが 0..1 に丸めて走らせる (FullseyeFallbackWarning が出るだけで、画面は何も言わなかった)。どの値を何として走らせたかを言う。
+- **L12969** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+- **L13042** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+- **L13045** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+- **L14534** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
+- **L14553** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+- **L15655** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `studio_result.py`
 

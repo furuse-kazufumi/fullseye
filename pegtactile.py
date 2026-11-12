@@ -846,10 +846,11 @@ def pegtactile_cutaway_xml(xml: str, alpha: float = 0.22, width: int = 480, heig
     (y = −45 mm、水平、fovy 34°)を足した MJCF 文字列。物理は元の場面で回し、qpos を写して描くだけ(接触は元の場面のもの)。
     **Raises** ValueError: XML が読めない、``plate`` の body・``visual/global`` が無い、alpha が [0, 1] の外。"""
     import xml.etree.ElementTree as ET
+    from safe_xml import safe_xml_parse
     if not (0.0 <= float(alpha) <= 1.0):
         raise ValueError("pegtactile_cutaway_xml: alpha must be in [0, 1]")
     try:
-        root = ET.fromstring(str(xml))
+        root = safe_xml_parse(str(xml), kind="data", op="pegtactile_cutaway_xml")
     except ET.ParseError as exc:
         raise ValueError("pegtactile_cutaway_xml: not an XML string (%s)" % exc) from exc
     plate = next((b for b in root.iter("body") if b.get("name") == "plate"), None)

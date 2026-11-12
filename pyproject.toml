@@ -151,7 +151,7 @@ py-modules = [
   # `torch_lazy` is the lazy torch/torch.nn.functional shim imported by
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
-  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "fileio", "opsfileio", "_archive_tarxz",
+  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "safe_xml", "fileio", "opsfileio", "_archive_tarxz",
   # device_policy: device="auto" の規則(表は fullseye/data/DEVICE_RULES.json)。api が import する。
   "device_policy",
   # gpu_route: op の GPU 経路(accel / native / shadow)を決める唯一の関数。台帳を読むのもここだけ。

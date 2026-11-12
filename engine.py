@@ -29,7 +29,7 @@ import numpy as np
 import api
 from studio_result import StageCache, assess_validity
 
-__all__ = ["FullseyeEngine", "diagnose_stages", "stage_name", "StageCache", "pipeline_states"]
+__all__ = ["FullseyeEngine", "diagnose_stages", "stage_name", "StageCache", "pipeline_states", "check_pipeline_header"]
 
 
 def _input_hash(image):
@@ -270,6 +270,32 @@ def diagnose_stages(stages) -> list[dict]:
     return problems
 
 
+#: パイプラインのファイル(``to_dict`` / Studio の Save pipeline が書く JSON)の版。印 ``fullseye_pipeline`` の値。
+PIPELINE_FORMAT_VERSION = 1
+
+
+def check_pipeline_header(d, *, where: str = "pipeline file") -> None:
+    """パイプラインのファイルの **版の印** を読むときに検査する(各読み手がここを呼ぶ。形式は変えない)。
+
+    - ``fullseye_pipeline`` があるとき、値は整数の :data:`PIPELINE_FORMAT_VERSION`(= 1)でなければ ``ValueError``
+      (``99``・``"banana"``・``1.0``・``True`` は断る。何を期待し何が来たかを言う)。
+    - 別の種類の印(``fullseye_graph``)だけを持つファイルは断る(グラフは ``FullseyeGraph.from_dict``)。
+    - 印が無い古いファイル(``stages`` だけ)は今までどおり読む(警告は付けない。既存の読み手に警告の流儀が無い)。
+    - dict でない入力はここでは見ない(各読み手が自分の言葉で断る)。印以外のキー(``fullseye_kind`` など)も見ない。
+    """
+    if not isinstance(d, dict):
+        return
+    if "fullseye_pipeline" in d:
+        v = d["fullseye_pipeline"]
+        if type(v) is not int or v != PIPELINE_FORMAT_VERSION:
+            raise ValueError("%s: expected 'fullseye_pipeline': %d (integer), got %r (%s)"
+                             % (where, PIPELINE_FORMAT_VERSION, v, type(v).__name__))
+    elif "fullseye_graph" in d:
+        raise ValueError("%s: expected a pipeline file ('fullseye_pipeline': %d), got a graph file ('fullseye_graph': %r)"
+                         " -- load graphs with FullseyeGraph.from_dict"
+                         % (where, PIPELINE_FORMAT_VERSION, d["fullseye_graph"]))
+
+
 class _hybridmethod:
     """classmethod としてもインスタンスメソッドとしても呼べる ``load`` / ``from_dict`` / ``from_ops``。
 
@@ -325,6 +351,7 @@ class FullseyeEngine:
     def from_dict(cls, self, d: dict, name: str = "pipeline") -> "FullseyeEngine":
         """Build from ``{"stages": [...], "name": ...}`` (what :meth:`to_dict` returns). On an instance,
         loads INTO that instance and returns it."""
+        check_pipeline_header(d, where="from_dict")
         if not isinstance(d, dict) or "stages" not in d:
             raise ValueError("not a Fullseye pipeline dict (missing 'stages')")
         if d["stages"] is None or isinstance(d["stages"], (int, float, bool)):

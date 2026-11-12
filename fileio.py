@@ -32,6 +32,7 @@ import uuid
 import zipfile
 import zlib
 import xml.etree.ElementTree as _ET
+from safe_xml import safe_xml_parse as _safe_xml_parse
 from collections.abc import Mapping
 
 import numpy as np
@@ -2484,7 +2485,7 @@ def ome_tiff_write(stack, *, meta):
 
 def _ome_xml_meta(xml: str, shape, axes: str, dtype, op: str):
     try:
-        root = _ET.fromstring(xml)
+        root = _safe_xml_parse(xml, kind="data", op=op)
     except _ET.ParseError as exc:
         raise ValueError(f"{op}: malformed OME-XML: {exc}") from exc
     images = [node for node in root.iter() if node.tag.rsplit("}", 1)[-1] == "Image"]
@@ -2544,7 +2545,7 @@ def _ome_xml_meta(xml: str, shape, axes: str, dtype, op: str):
 def _ome_written_axes(xml: str, op: str):
     """The axes ome_tiff_write recorded (``None`` for files written by anything else)."""
     try:
-        root = _ET.fromstring(xml)
+        root = _safe_xml_parse(xml, kind="data", op=op)
     except _ET.ParseError as exc:
         raise ValueError(f"{op}: malformed OME-XML: {exc}") from exc
     found = []
