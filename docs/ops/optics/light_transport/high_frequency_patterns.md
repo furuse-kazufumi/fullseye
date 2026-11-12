@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_interreflection_fringe_error]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # high_frequency_patterns — OPTICS `light_transport` op

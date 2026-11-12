@@ -8,7 +8,7 @@ gpu: なし
 examples: [annotate3d_figure, gear_metrology, molecule_atom_count, procedural_hand, render_beauty, sdf_csg, sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # sphere_sdf — 3D `sdf_csg` op

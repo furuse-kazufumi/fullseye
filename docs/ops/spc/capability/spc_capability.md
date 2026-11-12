@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_spc]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # spc_capability — SPC `capability` op

@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery_drive_city_terrain, gallery_drive_japan_roads, gallery_drive_world_objects, poc_driving_longitudinal, poc_driving_school, poc_driving_town, poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # course_road — DRIVE `course` op

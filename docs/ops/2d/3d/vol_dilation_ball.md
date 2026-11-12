@@ -8,7 +8,7 @@ gpu: あり(vol_dilation_ball_g)
 examples: [gallery2d_physics_alife_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # vol_dilation_ball — 2D `3d` op

@@ -8,7 +8,7 @@ gpu: なし
 examples: [optics_imaging, poc_mueller_dofp_observability, poc_photoelasticity, polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # mueller_element — OPTICS `polarization` op

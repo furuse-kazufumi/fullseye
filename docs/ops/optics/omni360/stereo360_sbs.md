@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [omni360_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # stereo360_sbs — OPTICS `omni360` op

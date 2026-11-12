@@ -8,7 +8,7 @@ gpu: なし
 examples: [pcl_geodesic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # statistical_outlier_removal — 3D `preprocess` op
