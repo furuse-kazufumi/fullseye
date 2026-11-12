@@ -41,6 +41,7 @@ import studio_roundtrip
 import studio_batch
 import studio_display
 import studio_layout
+import studio_project
 
 
 # --------------------------------------------------------------------------- #
@@ -4113,6 +4114,9 @@ def shortcut_table(items):
 #: コマンドパレットの別名(日本語・英語・やりたいことの言い方)。action の鍵 -> 空白区切りの語。
 #: 表示する名前(label)はそのまま、検索のときだけ label + この語に当てる(STUDIO_UX_RULES §6)。
 PALETTE_WORDS = {
+    "project_open": "project folder open folder files explorer tree プロジェクト フォルダ フォルダを開く ファイル ツリー エクスプローラ ctrl+shift+j",
+    "project_new": "project new project create folder プロジェクト 新しいプロジェクト 新規 フォルダ作成 ファイル ツリー",
+    "project_panel": "project folder files explorer tree panel プロジェクト フォルダ ファイル ツリー エクスプローラ パネル",
     "program_find": "find search 検索 探す 見つける 文字列 テキスト検索 ctrl+f",
     "program_replace": "replace substitute find and replace 置換 置き換え 置き換える 一括置換 ctrl+h",
     "program_find_next": "find next next match 次を検索 次へ 次の一致 f3",
@@ -5939,7 +5943,7 @@ WORK_MODE_TIP_EN = {
     "inspect": "Shows Display · Analysis (large) and Variables & Objects next to the image, for reading values",
     "code": "Shows the Program (code) panel large next to the image, for editing the pipeline as text",
 }
-PANEL_NAME_EN = {"operators": "Operators", "pipeline": "Pipeline · Parameters", "display": "Display · Analysis",
+PANEL_NAME_EN = {"project": "Project", "operators": "Operators", "pipeline": "Pipeline · Parameters", "display": "Display · Analysis",
                  "program": "Program (code)", "variables": "Variables & Objects", "compare": "Stage in → out",
                  "ab": "A / B", "result": "Result image"}
 
@@ -7413,6 +7417,10 @@ def build_window(model=None):
         win._menus[key] = mm
         return mm
 
+    # 第 2 便: プロジェクト = フォルダ。入口は File メニュー・パレット・パネル一覧・「パネルを探す」・キー・パネルへのフォルダのドロップ
+    act_project_open = _act("Open folder…", None, "Choose a folder: it becomes the project and its files are listed in the Project panel")
+    act_project_new = _act("New project…", None, "Create a project folder with the standard sub-folders: images, pipelines, programs, params, results")
+    act_project_panel = _act("Project", "Ctrl+Shift+J", "Show the Project panel: the project folder as a tree of files")
     m = _menu(mb, "&File", "file")
     act_viewer = _act("Image Viewer…", "Ctrl+Shift+I",    # ★O は Open pipeline と重なり、どちらも発火しなかった
                       "Open images (or drop images / a folder) to look at them: zoom, pixel values, histogram")
@@ -7420,6 +7428,9 @@ def build_window(model=None):
     m.addSeparator()
     m.addAction(act_open_pipe); m.addAction(act_save_pipe); m.addAction(act_export)  # pipeline docs
     win._recent_menu = _menu(m, "Open Recent", "recent")     # populated by _rebuild_recent_menu()
+    m.addAction(act_project_open); m.addAction(act_project_new)
+    win._recent_folders_menu = _menu(m, "Recent folders", "recent_folders")
+    m.addSeparator()
     m.addAction(act_samples)                                  # sample pipelines + code gallery
     sample_img_menu = _menu(m, "Sample images", "sample_images")   # collected license-clean images
     try:
@@ -8285,6 +8296,8 @@ def build_window(model=None):
     dock_disp = _mk_dock("Display · Analysis", right, "dock_display")
     dock_code = _mk_dock("Program (code)", code_w, "dock_program")
     dock_vars = _mk_dock("Variables & Objects", var_w, "dock_variables")
+    proj_w = QtWidgets.QWidget()                      # 第 2 便: プロジェクト(フォルダ)のツリー。中身は build_panel が作る
+    dock_project = _mk_dock("Project", proj_w, "dock_project")
 
     SyncView = _sync_view_class(QtWidgets, QtGui, QtCore)
     sync_group = ViewSyncGroup()                          # Stage in -> out panes + A / B panes (+ the main view, optionally)
@@ -8389,6 +8402,8 @@ def build_window(model=None):
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_ab)
     win.tabifyDockWidget(dock_ops, dock_ab)                         # A / B tabbed in
     dock_ops.raise_()
+    win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_project)   # 第 2 便: 左側。既定は隠す(右の列と画像の比率を崩さない)
+    dock_project.hide()
     # The inspection panels (Variables & Objects, Pipeline·Params, Display·Analysis) are
     # on-demand — the user keeps them undocked / shown only when needed — so they start
     # hidden and the image owns the workspace. Toolbar + Window ▸ Panels toggles bring
@@ -8411,7 +8426,8 @@ def build_window(model=None):
             pass
     win.apply_first_layout = _apply_first_run_ratio
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
-                  "program": dock_code, "variables": dock_vars, "compare": dock_cmp, "ab": dock_ab}
+                  "program": dock_code, "variables": dock_vars, "compare": dock_cmp, "ab": dock_ab,
+                  "project": dock_project}
     # Work modes are view state only.  The central result is registered alongside
     # the real docks so the Qt-free preset model can describe focus and sizing.
     win._layout_panels = dict(win._docks)
@@ -8524,7 +8540,7 @@ def build_window(model=None):
     _more_menu = QtWidgets.QMenu("More", win)
     win._more_menu = _more_menu                          # retain (shiboken ownership)
     _panels_sub = QtWidgets.QMenu("Panels", _more_menu); win._more_menu_panels = _panels_sub
-    for _d in (dock_vars, dock_disp, dock_pipe, dock_cmp, dock_ab, dock_ops, dock_code):
+    for _d in (dock_vars, dock_disp, dock_pipe, dock_cmp, dock_ab, dock_ops, dock_code, dock_project):
         _panels_sub.addAction(_d.toggleViewAction())
     _more_menu.addMenu(_panels_sub)
     _more_menu.addSeparator()
@@ -8665,7 +8681,7 @@ def build_window(model=None):
     act_cascade = _act("Cascade graphics windows", None, "Cascade the open graphics windows")
     act_reset_layout = _act("Reset panel layout", None, "Restore the default tool-panel layout")
     menu_panels = _menu(menu_windows, "Panels", "panels")
-    for _d in (dock_ops, dock_pipe, dock_disp, dock_code, dock_vars):
+    for _d in (dock_ops, dock_pipe, dock_disp, dock_code, dock_vars, dock_project):
         menu_panels.addAction(_d.toggleViewAction())
     menu_panels.addSeparator()             # Float all/Dock all + per-panel Float appended below
     menu_graphics = _menu(menu_windows, "Graphics windows", "graphics")
@@ -8729,6 +8745,10 @@ def build_window(model=None):
         seg = (os.path.basename(pp) if pp else "untitled") + star
         if ip:
             seg += " — " + os.path.basename(ip)
+        _pj = getattr(win, "_project", None)
+        _pr = _pj["root"]() if _pj else None
+        if _pr:                                                  # 第 2 便: どのプロジェクトを見ているかが題に出る
+            seg += " — " + tr("Project") + ": " + (os.path.basename(_pr.rstrip("\\/")) or _pr)
         win.setWindowTitle(seg + " — Fullseye Studio")
     win._set_title = _set_title
 
@@ -10600,7 +10620,7 @@ def build_window(model=None):
 
     def load_image():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(
-            win, "Open image", "", "Images (%s)" % " ".join("*" + e for e in IMAGE_FILE_EXTS))
+            win, "Open image", _proj_path("image"), "Images (%s)" % " ".join("*" + e for e in IMAGE_FILE_EXTS))
         if path:
             _load_image_path(path)
 
@@ -10645,7 +10665,7 @@ def build_window(model=None):
         return raw if isinstance(raw, np.ndarray) else None
 
     def _save_array(arr, title, default, what):
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, title, default,
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, title, _proj_path("result", default),
                                                         "PNG (*.png);;All files (*)")
         if not path:
             return
@@ -10675,7 +10695,7 @@ def build_window(model=None):
         arr = _result_array()
         if arr is None:
             flash("nothing to save — run the pipeline first"); return
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save to"), "result", "All files (*)")
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save to"), _proj_path("result", "result"), "All files (*)")
         if not path:
             return
         try:
@@ -10690,7 +10710,7 @@ def build_window(model=None):
         arr = _result_array()
         if arr is None:
             flash("nothing to save — run the pipeline first"); return
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save the raw values"), "result.npy",
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save the raw values"), _proj_path("result", "result.npy"),
                                                         "NumPy (*.npy)")
         if not path:
             return
@@ -15108,7 +15128,7 @@ def build_window(model=None):
 
     def save_pipe():
         import json
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save pipeline", "pipeline.json",
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save pipeline", _proj_path("pipeline", "pipeline.json"),
                                                         "JSON (*.json)")
         if not path:
             return
@@ -15172,8 +15192,85 @@ def build_window(model=None):
     win._open_pipe_path = _open_pipe_path
     win._refresh_stage_list = refresh_stage_list
 
+    # ---- 第 2 便: プロジェクト(フォルダ)のパネル。行き先は種類ごとに 1 つの関数 -------------------------------------- #
+    def open_python_file(path):
+        """プロジェクトの .py を開く行き先(1 か所)。Python のモードは次の版: いまは案内だけで、**import も exec もしない**。"""
+        flash(tr("Python mode comes in the next version: %s was not run") % os.path.basename(path))
+        state["python_note"] = path
+    win._open_python_file = open_python_file
+
+    def open_params_file(path):
+        """プロジェクトのパラメータ・定義(.json / .toml / .yaml / .yml / .xml)を開く行き先(1 か所)。いまは読み取り専用の表示。"""
+        try:
+            text, cut = studio_project.read_text_limited(path)
+        except OSError as e:
+            report_error("Could not open file", "%s\n\n%s" % (path, e)); return None
+        title = os.path.basename(path) + " (" + tr("read-only") + ")"
+        sub_ = open_code_window(title, text + ("\n\n... " + tr("(cut: the file is larger than 1 MB)") if cut else ""))
+        return sub_
+    win._open_params_file = open_params_file
+
+    def _proj_path(kind, default=""):
+        """プロジェクトが開いている間の、保存・開くダイアログの初期位置(種類の置き場所。無ければ聞く)。閉じていれば *default*。"""
+        pj = getattr(win, "_project", None)
+        if not pj or not pj["root"]():
+            return default
+        d = pj["ensure_kind_dir"](kind)
+        return (os.path.join(d, default) if default else d) if d else default
+    win._proj_path = _proj_path
+
+    def _pick_dir(title, start):
+        return QtWidgets.QFileDialog.getExistingDirectory(win, title, start or "")
+
+    def _ask_text(title, label, default):
+        text, ok = QtWidgets.QInputDialog.getText(win, title, label, QtWidgets.QLineEdit.Normal, default)
+        return text if ok else None
+
+    def _rebuild_recent_folders():
+        menu = win._recent_folders_menu
+        menu.clear()
+        paths = win._project["recent"]()
+        if not paths:
+            menu.addAction(tr("(no recent folders)")).setEnabled(False); return
+        for p_ in paths:
+            a_ = menu.addAction(os.path.basename(p_.rstrip("\\/")) or p_); a_.setToolTip(p_)
+            a_.triggered.connect(lambda _=False, x=p_: win._project["open_dir"](x))
+
+    def _project_changed():
+        _set_title(); _rebuild_recent_folders()
+        pj = win._project
+        if pj["root"]():
+            win._layout_state = studio_layout.set_override(win._layout_state, "project", visible=True, collapsed=False)
+            _apply_layout_state(); dock_project.raise_(); _save_layout_state()
+
+    _sample_dir = None
+    try:
+        import sample_images as _si_
+        if os.path.isdir(getattr(_si_, "_DIR", "")) and any(
+                f_.lower().endswith(IMAGE_FILE_EXTS) for f_ in os.listdir(_si_._DIR)):
+            _sample_dir = _si_._DIR
+    except Exception:                                      # noqa: BLE001 - サンプルが無くてもパネルは動く(ボタンを付けない)
+        _sample_dir = None
+    win._project = studio_project.build_panel(proj_w, {
+        "tr": tr, "flash": lambda m_: flash(m_), "settings": _settings, "image_exts": IMAGE_FILE_EXTS,
+        "open_image": lambda p_: _load_image_path(p_), "open_pipeline": lambda p_: _open_pipe_path(p_),
+        "open_python": lambda p_: open_python_file(p_), "open_params": lambda p_: open_params_file(p_),
+        "compare_images": lambda ps_: show_image_viewer(list(ps_)),
+        "confirm": lambda t_, x_: bool(CONFIRM_HOOK(win, t_, x_)), "warn": lambda t_, x_: ERROR_HOOK(win, t_, x_),
+        "pick_dir": _pick_dir, "ask_text": _ask_text, "sample_dir": _sample_dir, "on_change": _project_changed})
+    act_project_open.triggered.connect(lambda _=False: win._project["choose_dir"]())
+    act_project_new.triggered.connect(lambda _=False: win._project["new_project"]())
+
+    def _show_project_panel():
+        win._layout_state = studio_layout.set_override(win._layout_state, "project", visible=True, collapsed=False)
+        _apply_layout_state(); dock_project.show(); dock_project.raise_(); _save_layout_state()
+        win._project["tree"].setFocus()
+    act_project_panel.triggered.connect(lambda _=False: _show_project_panel())
+    win._show_project_panel = _show_project_panel
+    _rebuild_recent_folders()
+
     def open_pipe():
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", "", "JSON (*.json)")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", _proj_path("pipeline"), "JSON (*.json)")
         if path:
             _open_pipe_path(path)
 
@@ -15398,6 +15495,7 @@ def build_window(model=None):
         "dbg_run": act_dbg_run, "dbg_step": act_dbg_step, "dbg_reset": act_dbg_reset,
         "duplicate_stage": act_dup, "bypass": act_bypass, "move_top": act_top, "move_bottom": act_bottom,
         "focus_search": act_focus_search, "pin_a": act_pin, "run_selection": act_run_sel,
+        "project_open": act_project_open, "project_new": act_project_new, "project_panel": act_project_panel,
     }
     win._actions.update(_palette_extra)                 # Tools ▸ Run a ledger op もパレットから
 
@@ -15441,6 +15539,8 @@ def build_window(model=None):
                     "Open the help of the operator the Program cursor is on; the keyboard shortcuts list stays on F1",
                     lambda: code_edit.help_for_word(), "help")
     win.addAction(act_focus_search)          # app-wide Ctrl+F -> operator search
+    win.addAction(act_project_panel)         # 第 2 便: Ctrl+Shift+J = プロジェクトのパネル(ほかの割り当てと重ならない)
+    QtCore.QTimer.singleShot(0, lambda: win._project["restore"]())   # 最後に開いていたフォルダと木の開閉を戻す
     # -- multi-monitor: pop every tool panel out as its own top-level window --- #
     def float_all_panels(floating=True):
         for d in win._docks.values():
@@ -15661,7 +15761,7 @@ def build_window(model=None):
     menu_panels.addSeparator()
     for _k, _lbl in (("operators", "Operators"), ("pipeline", "Pipeline · Parameters"),
                      ("display", "Display · Analysis"), ("program", "Program (code)"),
-                     ("variables", "Variables & Objects")):
+                     ("variables", "Variables & Objects"), ("project", "Project")):
         menu_panels.addAction("Float: %s" % _lbl).triggered.connect(
             lambda _=False, k=_k: float_panel(k, True))
     menu_panels.addSeparator()
@@ -15801,6 +15901,9 @@ def build_window(model=None):
         try:
             samples.setItemText(0, tr("— load a sample —"))
             cat.setItemText(0, tr("all categories"))
+            _pj = getattr(win, "_project", None)
+            if _pj:                                          # 第 2 便: プロジェクトのパネル(絞り込みの選択肢・標準フォルダの表示名)
+                _pj["retranslate"](); _pj["reload"]()
             on_op_selected(op_list.currentItem())
             win._knob_spec_op = None                         # つまみの名前を言語で作り直す(spec は同じ)
             i = selected_index()

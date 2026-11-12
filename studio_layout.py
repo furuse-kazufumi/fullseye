@@ -12,6 +12,7 @@ PANELS = {
     "program": {"name": "コード", "aliases": ["code", "code pane", "program", "プログラム"]},
     "variables": {"name": "変数とオブジェクト", "aliases": ["variables", "objects", "watch", "変数"]},
     "compare": {"name": "段階の前後比較", "aliases": ["compare", "stage in out", "before after", "比較"]},
+    "project": {"name": "プロジェクト", "aliases": ["project", "folder", "files", "explorer", "tree", "フォルダ", "ファイル", "ツリー", "エクスプローラ"]},
     "ab": {"name": "A/B 比較", "aliases": ["a/b", "ab compare", "result compare", "結果比較"]},
     "result": {"name": "結果画像", "aliases": ["result", "result view", "image", "画像", "graphics"]},
 }
