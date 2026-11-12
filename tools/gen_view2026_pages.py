@@ -322,9 +322,18 @@ def validate(d: dict) -> list[str]:
         bad.append("本ページの展示の数が合わない(showcase=%d / featured=%d、合計 %d 本以下・各 1 本以上)" %
                    (tiers["showcase"], tiers["featured"], MAIN_LIMIT))
     gate = gate_results(d)
+    vids = [i["id"] for i in vw["items"]]
+    main_viewers = vw.get("main_ids", [])
+    if len(main_viewers) != len(set(main_viewers)) or [i for i in main_viewers if i not in vids]:
+        bad.append("viewers.main_ids が重複しているか、viewers.items に無い id を含む: %s" % main_viewers)
+    if len(main_viewers) + len(d.get("field_viewers", {}).get("items", [])) > MAIN_VIEWERS_LIMIT:
+        bad.append("本ページの「触って見る」が %d 本を超えている" % MAIN_VIEWERS_LIMIT)
     for e in d["exhibits"]:
         if e.get("tier") not in MAIN_TIERS:
             continue
+        for lang in ("ja", "en"):
+            if not str(e.get("truth", {}).get(lang, "")).strip():
+                bad.append("%s: 真値の種類(truth.%s)が無い" % (e["id"], lang))
         if not e.get("ops"):
             bad.append("%s: 本ページの展示に使った Fullseye の op が無い" % e["id"])
         if e["id"] in withdrawn_ids() or gate[e["id"]].count < 1:
@@ -480,6 +489,7 @@ def counts(d: dict) -> tuple[int, int]:
 
 
 MAIN_TIERS = ("showcase", "featured")
+MAIN_VIEWERS_LIMIT = 6   # 本ページ(ja/en)の「触って見る」の本数(field_viewers + viewers.main_ids)
 MAIN_LIMIT = 20          # 本ページ(ja/en)に載せる展示の上限。質が足りなければ減らしてよい
 
 MAIN_TEXT = {
@@ -489,6 +499,10 @@ MAIN_TEXT = {
         "more_top": "本ページには展示 {n} 本だけを載せています。そのほかの展示 {m} 本は[おまけページ](more.md)にあります。",
         "more": "[おまけ:そのほかの PoC](more.md)も見る。",
         "about_link": "[Fullseye について、もう少し詳しく読む](about.md)",
+        "truth": "真値",
+        "detail": "くわしく",
+        "detail_h": "本ページの展示の詳細(全文)",
+        "viewers_more": "触って見る(そのほか)",
     },
     "en": {
         "showcase": "Showcase",
@@ -496,6 +510,10 @@ MAIN_TEXT = {
         "more_top": "This page shows only {n} exhibits. The other {m} are on the [Extras page](more.md).",
         "more": "See [Extras: more PoCs](more.md), too.",
         "about_link": "[Read more about Fullseye](about.md)",
+        "truth": "Ground truth",
+        "detail": "Details",
+        "detail_h": "Details of the exhibits on the main page (full text)",
+        "viewers_more": "Try it yourself (more)",
     },
 }
 MORE_TEXT = {
@@ -533,7 +551,32 @@ def _tiles(d: dict, rows: list[dict], lang: str, up: str, docs: str, media) -> l
     return out + ["</div>", ""]
 
 
-def _item_lines(d: dict, e: dict, lang: str, ui: dict, media, glossary_ledger: dict, glossary: dict) -> list[str]:
+def _anchor(pid: str) -> str:
+    """おまけページの詳細の項目の錨(本ページの「くわしく」の行き先)。"""
+    return "d-" + pid.replace("_", "-")
+
+
+def _brief_lines(d: dict, rows: list[dict], lang: str, media) -> list[str]:
+    """本ページ(ja/en)の展示 1 本の短い説明: 題(リンク)+ lead + 真値の種類 + 「くわしく」(おまけページの全文へ)。"""
+    text = MAIN_TEXT[lang]
+    out = []
+    for e in rows:
+        out.append("- **[%s](%s)**: %s" % (e["label"][lang], media(e), e["lead"][lang]))
+        out.append("  %s: %s · [%s](more.md#%s)" % (text["truth"], e["truth"][lang], text["detail"], _anchor(e["id"])))
+    return out + [""]
+
+
+def _viewer_lines(items: list[dict], lang: str, up: str) -> list[str]:
+    out = []
+    for it in items:
+        title = it["title"].get(lang, it["title"]["en"])
+        line = it["line"].get(lang, it["line"]["en"])
+        out.append("- **[%s](%sviewers/%s.html?lang=%s)**: %s" % (title, up, it["id"], lang, line))
+    return out
+
+
+def _item_lines(d: dict, e: dict, lang: str, ui: dict, media, glossary_ledger: dict, glossary: dict,
+                anchor: bool = False) -> list[str]:
     """展示 1 本の説明の行(題と lead、見る所と数字、ja/en は使った op、用語)。"""
     num = " **%s**" % e["num"][lang] if e["num"][lang].strip() else ""
     src = _source(d, e)
@@ -542,7 +585,8 @@ def _item_lines(d: dict, e: dict, lang: str, ui: dict, media, glossary_ledger: d
     if _is_viewer(d, e):
         kind += ", " + _viewer_mb(d, e)
     youtube = " [YouTube](%s)" % e["youtube_url"] if e.get("youtube_url") else ""
-    out = ["- [%s](%s) (%s): %s" % (e["label"][lang], media(e), kind, e["lead"][lang]),
+    out = ["- [%s](%s) (%s): %s%s" % (e["label"][lang], media(e), kind, e["lead"][lang],
+                                        '<a id="%s"></a>' % _anchor(e["id"]) if anchor else ""),
            "  %s%s%s" % (e["see"][lang], num, link + youtube)]
     if lang in ("ja", "en") and e.get("ops"):
         label = "使った Fullseye の op" if lang == "ja" else "Fullseye ops used"
@@ -705,10 +749,9 @@ def build(d: dict, lang: str) -> str:
         for it in d["field_viewers"]["items"]:
             out.append("- **[%s](%s%s?lang=%s)**: %s (%s)" % (
                 it["title"][lang], up, it["path"], lang, it["line"][lang], _field_mb(it)))
-    for it in vw["items"]:
-        title = it["title"].get(lang, it["title"]["en"])
-        line = it["line"].get(lang, it["line"]["en"])
-        out.append("- **[%s](%sviewers/%s.html?lang=%s)**: %s" % (title, up, it["id"], lang, line))
+    by_id = {it["id"]: it for it in vw["items"]}
+    shown = [by_id[i] for i in vw["main_ids"]] if split else vw["items"]    # ja/en は先頭の数本だけ(残りはおまけページ)
+    out += _viewer_lines(shown, lang, up)
     out.append("")
 
     if split:
@@ -721,10 +764,7 @@ def build(d: dict, lang: str) -> str:
             if lang != "ja" and any("numbers_source" in e for e in rows):
                 out += [ui["poc_caption_lang_note"], ""]
             out += _tiles(d, rows, lang, up, docs, media)
-            out += ['<div class="vl" markdown="1">', ""]
-            for e in rows:
-                out += _item_lines(d, e, lang, ui, media, glossary_ledger, glossary)
-            out += ["", "</div>", ""]
+            out += _brief_lines(d, rows, lang, media)
         out += _series_block(d, lang, up, ui)
         out += _share_alike_block(d, lang, main_rows)
         out += ["## " + ui["h_about"], "", ui["about"], "", MAIN_TEXT[lang]["more"], ""]
@@ -761,6 +801,18 @@ def build_more(d: dict, lang: str) -> str:
     out = ['<div class="vlang" markdown="1">', "", ja_switch + " · " + en_switch, "", "</div>", "",
            "# " + MORE_TEXT[lang]["title"], "", MORE_TEXT[lang]["intro"], "", MORE_TEXT[lang]["back"], "",
            STYLE, ""]
+    text = MAIN_TEXT[lang]
+    vw = d["viewers"]
+    on_main = set(vw["main_ids"])
+    out += ["## " + text["viewers_more"], ""]
+    out += _viewer_lines([it for it in vw["items"] if it["id"] not in on_main], lang, up)
+    out.append("")
+    glossary_ledger, glossary = _glossary_inputs()
+    out += ["## " + text["detail_h"], "", '<div class="vl" markdown="1">', ""]
+    for e in d["exhibits"]:
+        if e["id"] in main_ids:
+            out += _item_lines(d, e, lang, ui, media, glossary_ledger, glossary, anchor=True)
+    out += ["", "</div>", ""]
     out += _caps_block(d, lang, docs, ui)
     out += _all_block(d, lang, up, docs, ui, media, rows_all)
     out += _share_alike_block(d, lang, rest + rows_all)

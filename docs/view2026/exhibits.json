@@ -658,7 +658,11 @@
     "text_box",
     "wrapped_phase"
    ],
-   "tier": "showcase"
+   "tier": "showcase",
+   "truth": {
+    "ja": "自作合成",
+    "en": "Synthetic"
+   }
   },
   {
    "id": "poc_industrial_oct",
@@ -724,7 +728,11 @@
     "oct_k_linearize",
     "oct_layer_thickness"
    ],
-   "tier": "showcase"
+   "tier": "showcase",
+   "truth": {
+    "ja": "実データ",
+    "en": "Real data"
+   }
   },
   {
    "id": "poc_hyperspectral_foreign_matter",
@@ -785,7 +793,11 @@
     "spectral_reflectance_from_material",
     "text_box"
    ],
-   "tier": "showcase"
+   "tier": "showcase",
+   "truth": {
+    "ja": "実データ",
+    "en": "Real data"
+   }
   },
   {
    "id": "poc_thin_film_reflectometry",
@@ -846,7 +858,11 @@
     "text_box",
     "thinning"
    ],
-   "tier": "showcase"
+   "tier": "showcase",
+   "truth": {
+    "ja": "実データ",
+    "en": "Real data"
+   }
   },
   {
    "id": "poc_telecentric_metrology",
@@ -923,7 +939,11 @@
     "trace_rays",
     "vignetting_vs_field"
    ],
-   "tier": "showcase"
+   "tier": "showcase",
+   "truth": {
+    "ja": "実データ",
+    "en": "Real data"
+   }
   },
   {
    "id": "poc_virtual_sem_kv_cd_bse",
@@ -984,7 +1004,11 @@
     "sem_yield_curve",
     "threshold"
    ],
-   "tier": "showcase"
+   "tier": "showcase",
+   "truth": {
+    "ja": "公表値",
+    "en": "Published values"
+   }
   },
   {
    "id": "poc_cad_scan_deviation",
@@ -1051,7 +1075,11 @@
     "text_box",
     "voxel_grid_downsample"
    ],
-   "tier": "showcase"
+   "tier": "showcase",
+   "truth": {
+    "ja": "自作合成",
+    "en": "Synthetic"
+   }
   },
   {
    "id": "poc_good_sample_variation_model",
@@ -1111,65 +1139,80 @@
     "varmodel_fit",
     "varmodel_score"
    ],
-   "tier": "showcase"
+   "tier": "showcase",
+   "truth": {
+    "ja": "実データ",
+    "en": "Real data"
+   }
   },
   {
-   "id": "poc_code_matching_breakdown",
+   "id": "poc_surface_defect_classifiers",
    "category": "inspection",
-   "media": "05_highlight_sweep.gif",
-   "motion": true,
+   "media": "01_defect_patches.png",
+   "motion": false,
    "label": {
-    "ja": "白飛びや隠れに強い符号の照合",
-    "en": "Code matching that survives glare and occlusion",
-    "zh": "耐过曝与遮挡的符号匹配",
-    "tw": "耐過曝與遮擋的符號比對",
-    "ko": "하이라이트·가림에 강한 부호 매칭",
-    "de": "Code-Matching, robust gegen Glanz und Verdeckung",
-    "hi": "glare और occlusion झेलने वाली code matching",
-    "fr": "Appariement par codes résistant aux reflets et à l'occultation"
+    "ja": "金属の表面の欠陥を学習した分類器で仕分ける ―― 研削の筋に沿う傷は 4 本に 3 本を見落とし、知らない孔は 95 % 拒否する",
+    "en": "Sorting Metal Surface Defects with Trained Classifiers: Scratches Along the Grinding Lay Are Missed 3 Times in 4, and Unseen Pits Are 95 % Rejected",
+    "zh": "用训练的分类器分拣金属表面缺陷:沿磨削纹的划痕四条漏三条,未见过的蚀坑拒识 95 %",
+    "tw": "用訓練的分類器分揀金屬表面缺陷:沿研磨紋的刮痕四條漏三條,未見過的蝕坑拒識 95 %",
+    "ko": "학습한 분류기로 금속 표면 결함을 가른다: 연삭 결을 따르는 긁힘은 4개 중 3개를 놓치고, 처음 보는 부식 구멍은 95 % 거부한다",
+    "de": "Metalloberflächenfehler mit trainierten Klassifikatoren sortiert: Kratzer entlang der Schleifriefen werden zu drei Vierteln übersehen, unbekannte Poren zu 95 % abgelehnt",
+    "hi": "प्रशिक्षित वर्गीकारकों से धातु सतह दोषों की छँटाई: घिसाई की धारियों के साथ की खरोंचें 4 में 3 छूटती हैं, अनदेखे गड्ढे 95 % अस्वीकृत",
+    "fr": "Trier les défauts de surface métallique par classifieurs appris : les rayures le long des stries de meulage sont manquées trois fois sur quatre, les piqûres inconnues rejetées à 95 %"
    },
    "lead": {
-    "ja": "テンプレート照合でよく使う正規化相互相関は、対象の一部が隠れたり光沢で白く飛んだりすると外れやすい。明るさの変化の向きを符号にして比べる照合を加え、公開の実写から切ったテンプレート 40 枚で撹乱を強めていった。符号で比べる照合は隠れに強いが、回転にはどの方法も弱かった。",
-    "en": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
-    "zh": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
-    "tw": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
-    "ko": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
-    "de": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
-    "hi": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
-    "fr": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation."
+    "ja": "研削した金属の小片に、傷・打痕・汚れを物理で描き、学習した分類器で仕分けた。汚れの画素は、正常な画素から学んだ分類で IoU 0.915 まで塗り分けられた。一方、研削の筋に沿う傷は見落としやすく、知らない孔は拒否される。",
+    "en": "Small pieces of ground metal were drawn with scratches, dents and stains by physics, and sorted with trained classifiers. Stained pixels were painted with an IoU of 0.915 by a classifier learned from normal pixels. Scratches along the grinding marks are easily missed, and unknown holes are rejected.",
+    "zh": "Small pieces of ground metal were drawn with scratches, dents and stains by physics, and sorted with trained classifiers. Stained pixels were painted with an IoU of 0.915 by a classifier learned from normal pixels. Scratches along the grinding marks are easily missed, and unknown holes are rejected.",
+    "tw": "Small pieces of ground metal were drawn with scratches, dents and stains by physics, and sorted with trained classifiers. Stained pixels were painted with an IoU of 0.915 by a classifier learned from normal pixels. Scratches along the grinding marks are easily missed, and unknown holes are rejected.",
+    "ko": "Small pieces of ground metal were drawn with scratches, dents and stains by physics, and sorted with trained classifiers. Stained pixels were painted with an IoU of 0.915 by a classifier learned from normal pixels. Scratches along the grinding marks are easily missed, and unknown holes are rejected.",
+    "de": "Small pieces of ground metal were drawn with scratches, dents and stains by physics, and sorted with trained classifiers. Stained pixels were painted with an IoU of 0.915 by a classifier learned from normal pixels. Scratches along the grinding marks are easily missed, and unknown holes are rejected.",
+    "hi": "Small pieces of ground metal were drawn with scratches, dents and stains by physics, and sorted with trained classifiers. Stained pixels were painted with an IoU of 0.915 by a classifier learned from normal pixels. Scratches along the grinding marks are easily missed, and unknown holes are rejected.",
+    "fr": "Small pieces of ground metal were drawn with scratches, dents and stains by physics, and sorted with trained classifiers. Stained pixels were painted with an IoU of 0.915 by a classifier learned from normal pixels. Scratches along the grinding marks are easily missed, and unknown holes are rejected."
    },
    "see": {
-    "ja": "テンプレート照合の正規化相互相関(NCC)は明るさの値を比べるので、テンプレートの一部が隠れる・光沢が飛ぶ・片側だけ暗いといった局所の崩れに弱い。明るさの変化の向きを符号にして比べる照合 4 種(方向符号照合 OCM、増分符号相関 ISC、選択的相関係数 SCC、背景比較の Radial Reach Filter。文献の式から再実装)を codematch 6 op として足し、公開の実写 5 枚(CC0)から切った 32 x 32 のテンプレート 40 枚に段階的な撹乱を掛けた。当たりが半分を割る所は、遮蔽で NCC 10 %・SCC 36 %・ISC 63 %・OCM 67 %、飽和ハイライトで NCC 6 %・SCC 10 %・OCM 44 %・ISC 53 %。回転には 4 種とも弱い(7〜9°)。SCC は符号の合った画素だけを選ぶので無関係な位置でも相関が上がり(選択の偏り)、文献の式のままでは NCC より先に壊れた。無相関の使用率の期待値 + 4σ を床にして直した。",
-    "en": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
-    "zh": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
-    "tw": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
-    "ko": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
-    "de": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
-    "hi": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
-    "fr": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. "
+    "ja": "研削した金属の小片(96x96 px)に、傷(V 溝)・打痕(窪み)・汚れ(茶色の反射率)を物理的に描いた。高さの欠陥は陰影だけを、汚れは色だけを変え、欠陥の重さは 0〜1 で振る。画素の段では、正常な金属の画素から learn_ndim_norm で正規分布を学び、class_ndim_norm で異常な画素を塗る。汚れの画素は classify_image_class_lut で IoU 0.915、class_2dim_sup で 0.729、class_2dim_unsup で 0.535(標準化したとき)。領域の特徴 7 個で GMM・MLP・SVM・k-NN を学習した。種 5 本の正解率は 0.871〜0.886(±0.02)。scikit-learn の第 2 実装との差は、許容差 3·sqrt(2p(1−p)/n) の 0.41 倍以内に収まった。GMM(成分 1)は閉形式の 2 次判別と 100 % 一致する。学習に無い腐食の孔は、検証側で決めた対数密度の閾値で 94.8 % を拒否した。既知の小片の誤拒否は 6.0 % だった。ラベルを入れ替えると正解率は 0.238 に落ちる。汚れの再現率 100 % は、色を変える欠陥が汚れだけだからで、特徴の漏れではない。研削の筋から 15° 以内の傷は再現率 0.275 で、45° より立った傷の 0.949 より大きく落ちる。筋を消すために選んだ勾配の向きが、筋に沿う傷も一緒に消している。",
+    "en": "Ground-metal patches (96x96 px) are rendered with scratches (V-grooves), dents (smooth pits) and stains (a brown drop in reflectance). Height defects change only the shading and the stain changes only the colour, with a defect weight from 0 to 1. At pixel level, learn_ndim_norm learns a normal model from clean metal pixels and class_ndim_norm paints the anomalous ones. Stain pixels reach IoU 0.915 with classify_image_class_lut, 0.729 with class_2dim_sup and 0.535 with class_2dim_unsup on standardised channels. Seven region features train GMM, MLP, SVM and k-NN classifiers. Over five seeds their accuracy is 0.871-0.886 (±0.02). Each stays within 0.41 of the tolerance 3·sqrt(2p(1−p)/n) of a scikit-learn second implementation, and the one-component GMM agrees 100 % with closed-form QDA. Corrosion pits, never trained, are 94.8 % rejected by a log-density threshold set on the validation split; 6.0 % of known patches are rejected. Permuted labels drop the accuracy to 0.238. The stain's 100 % recall holds because it is the only defect that changes colour, not because a feature leaks the truth. Scratches within 15° of the grinding lay are recalled at 0.275, against 0.949 above 45°: the gradient chosen to suppress the lay suppresses scratches along it too.",
+    "zh": "Ground-metal patches (96x96 px) are rendered with scratches (V-grooves), dents (smooth pits) and stains (a brown drop in reflectance). Height defects change only the shading and the stain changes only the colour, with a defect weight from 0 to 1. At pixel level, learn_ndim_norm learns a normal model from clean metal pixels and class_ndim_norm paints the anomalous ones. Stain pixels reach IoU 0.915 with classify_image_class_lut, 0.729 with class_2dim_sup and 0.535 with class_2dim_unsup on standardised channels. Seven region features train GMM, MLP, SVM and k-NN classifiers. Over five seeds their accuracy is 0.871-0.886 (±0.02). Each stays within 0.41 of the tolerance 3·sqrt(2p(1−p)/n) of a scikit-learn second implementation, and the one-component GMM agrees 100 % with closed-form QDA. Corrosion pits, never trained, are 94.8 % rejected by a log-density threshold set on the validation split; 6.0 % of known patches are rejected. Permuted labels drop the accuracy to 0.238. The stain's 100 % recall holds because it is the only defect that changes colour, not because a feature leaks the truth. Scratches within 15° of the grinding lay are recalled at 0.275, against 0.949 above 45°: the gradient chosen to suppress the lay suppresses scratches along it too.",
+    "tw": "Ground-metal patches (96x96 px) are rendered with scratches (V-grooves), dents (smooth pits) and stains (a brown drop in reflectance). Height defects change only the shading and the stain changes only the colour, with a defect weight from 0 to 1. At pixel level, learn_ndim_norm learns a normal model from clean metal pixels and class_ndim_norm paints the anomalous ones. Stain pixels reach IoU 0.915 with classify_image_class_lut, 0.729 with class_2dim_sup and 0.535 with class_2dim_unsup on standardised channels. Seven region features train GMM, MLP, SVM and k-NN classifiers. Over five seeds their accuracy is 0.871-0.886 (±0.02). Each stays within 0.41 of the tolerance 3·sqrt(2p(1−p)/n) of a scikit-learn second implementation, and the one-component GMM agrees 100 % with closed-form QDA. Corrosion pits, never trained, are 94.8 % rejected by a log-density threshold set on the validation split; 6.0 % of known patches are rejected. Permuted labels drop the accuracy to 0.238. The stain's 100 % recall holds because it is the only defect that changes colour, not because a feature leaks the truth. Scratches within 15° of the grinding lay are recalled at 0.275, against 0.949 above 45°: the gradient chosen to suppress the lay suppresses scratches along it too.",
+    "ko": "Ground-metal patches (96x96 px) are rendered with scratches (V-grooves), dents (smooth pits) and stains (a brown drop in reflectance). Height defects change only the shading and the stain changes only the colour, with a defect weight from 0 to 1. At pixel level, learn_ndim_norm learns a normal model from clean metal pixels and class_ndim_norm paints the anomalous ones. Stain pixels reach IoU 0.915 with classify_image_class_lut, 0.729 with class_2dim_sup and 0.535 with class_2dim_unsup on standardised channels. Seven region features train GMM, MLP, SVM and k-NN classifiers. Over five seeds their accuracy is 0.871-0.886 (±0.02). Each stays within 0.41 of the tolerance 3·sqrt(2p(1−p)/n) of a scikit-learn second implementation, and the one-component GMM agrees 100 % with closed-form QDA. Corrosion pits, never trained, are 94.8 % rejected by a log-density threshold set on the validation split; 6.0 % of known patches are rejected. Permuted labels drop the accuracy to 0.238. The stain's 100 % recall holds because it is the only defect that changes colour, not because a feature leaks the truth. Scratches within 15° of the grinding lay are recalled at 0.275, against 0.949 above 45°: the gradient chosen to suppress the lay suppresses scratches along it too.",
+    "de": "Ground-metal patches (96x96 px) are rendered with scratches (V-grooves), dents (smooth pits) and stains (a brown drop in reflectance). Height defects change only the shading and the stain changes only the colour, with a defect weight from 0 to 1. At pixel level, learn_ndim_norm learns a normal model from clean metal pixels and class_ndim_norm paints the anomalous ones. Stain pixels reach IoU 0.915 with classify_image_class_lut, 0.729 with class_2dim_sup and 0.535 with class_2dim_unsup on standardised channels. Seven region features train GMM, MLP, SVM and k-NN classifiers. Over five seeds their accuracy is 0.871-0.886 (±0.02). Each stays within 0.41 of the tolerance 3·sqrt(2p(1−p)/n) of a scikit-learn second implementation, and the one-component GMM agrees 100 % with closed-form QDA. Corrosion pits, never trained, are 94.8 % rejected by a log-density threshold set on the validation split; 6.0 % of known patches are rejected. Permuted labels drop the accuracy to 0.238. The stain's 100 % recall holds because it is the only defect that changes colour, not because a feature leaks the truth. Scratches within 15° of the grinding lay are recalled at 0.275, against 0.949 above 45°: the gradient chosen to suppress the lay suppresses scratches along it too.",
+    "hi": "Ground-metal patches (96x96 px) are rendered with scratches (V-grooves), dents (smooth pits) and stains (a brown drop in reflectance). Height defects change only the shading and the stain changes only the colour, with a defect weight from 0 to 1. At pixel level, learn_ndim_norm learns a normal model from clean metal pixels and class_ndim_norm paints the anomalous ones. Stain pixels reach IoU 0.915 with classify_image_class_lut, 0.729 with class_2dim_sup and 0.535 with class_2dim_unsup on standardised channels. Seven region features train GMM, MLP, SVM and k-NN classifiers. Over five seeds their accuracy is 0.871-0.886 (±0.02). Each stays within 0.41 of the tolerance 3·sqrt(2p(1−p)/n) of a scikit-learn second implementation, and the one-component GMM agrees 100 % with closed-form QDA. Corrosion pits, never trained, are 94.8 % rejected by a log-density threshold set on the validation split; 6.0 % of known patches are rejected. Permuted labels drop the accuracy to 0.238. The stain's 100 % recall holds because it is the only defect that changes colour, not because a feature leaks the truth. Scratches within 15° of the grinding lay are recalled at 0.275, against 0.949 above 45°: the gradient chosen to suppress the lay suppresses scratches along it too.",
+    "fr": "Ground-metal patches (96x96 px) are rendered with scratches (V-grooves), dents (smooth pits) and stains (a brown drop in reflectance). Height defects change only the shading and the stain changes only the colour, with a defect weight from 0 to 1. At pixel level, learn_ndim_norm learns a normal model from clean metal pixels and class_ndim_norm paints the anomalous ones. Stain pixels reach IoU 0.915 with classify_image_class_lut, 0.729 with class_2dim_sup and 0.535 with class_2dim_unsup on standardised channels. Seven region features train GMM, MLP, SVM and k-NN classifiers. Over five seeds their accuracy is 0.871-0.886 (±0.02). Each stays within 0.41 of the tolerance 3·sqrt(2p(1−p)/n) of a scikit-learn second implementation, and the one-component GMM agrees 100 % with closed-form QDA. Corrosion pits, never trained, are 94.8 % rejected by a log-density threshold set on the validation split; 6.0 % of known patches are rejected. Permuted labels drop the accuracy to 0.238. The stain's 100 % recall holds because it is the only defect that changes colour, not because a feature leaks the truth. Scratches within 15° of the grinding lay are recalled at 0.275, against 0.949 above 45°: the gradient chosen to suppress the lay suppresses scratches along it too."
    },
    "num": {
-    "ja": "空を切った平坦なテンプレート 11 枚では、NCC は相関 0.82 前後で 10 枚を外し、符号系は拒否するか正解する(誤答 0)。門は総当たりの第 2 実装・既存の NCC・単調変換での不変性・rot90 の可換性(巡回差を絶対差にした探針で崩れる)・正解位置の値の閉形式(1,080 試行で |z| ≤ 3.6)。",
-    "en": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
-    "zh": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
-    "tw": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
-    "ko": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
-    "de": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
-    "hi": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
-    "fr": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials)."
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
    },
    "numbers_source": "log",
    "youtube_url": "",
+   "tier": "showcase",
+   "truth": {
+    "ja": "自作合成",
+    "en": "Synthetic"
+   },
    "ops": [
-    "isc_match",
-    "ncc_locate",
-    "ocm_match",
-    "radial_reach_filter",
-    "reflect",
-    "scc_match",
-    "text_box"
-   ],
-   "tier": "showcase"
+    "class_ndim_norm",
+    "learn_ndim_norm",
+    "classify_image_class_lut",
+    "class_2dim_sup",
+    "class_2dim_unsup",
+    "train_class_gmm",
+    "classify_class_gmm",
+    "train_class_mlp",
+    "classify_class_mlp",
+    "train_class_svm",
+    "classify_class_svm",
+    "train_class_knn",
+    "classify_class_knn",
+    "evaluate_class_gmm"
+   ]
   },
   {
    "id": "poc_ai_built_inspection_scored",
@@ -1230,7 +1273,11 @@
     "select_shape",
     "median",
     "gaussian"
-   ]
+   ],
+   "truth": {
+    "ja": "実データ",
+    "en": "Real data"
+   }
   },
   {
    "id": "poc_bottle_pattern_inverse",
@@ -1285,7 +1332,11 @@
     "bottle_image",
     "bottle_fit_from_pattern",
     "fill_level_from_image"
-   ]
+   ],
+   "truth": {
+    "ja": "自作合成",
+    "en": "Synthetic"
+   }
   },
   {
    "id": "poc_real_tum_rgbd_slam",
@@ -1343,7 +1394,11 @@
     "fit_plane_3d",
     "plane_segmentation",
     "euclidean_cluster"
-   ]
+   ],
+   "truth": {
+    "ja": "実データ",
+    "en": "Real data"
+   }
   },
   {
    "id": "poc_real_walnut_cbct",
@@ -1403,7 +1458,11 @@
     "ct_adjoint_project",
     "rmse",
     "ssim"
-   ]
+   ],
+   "truth": {
+    "ja": "実データ",
+    "en": "Real data"
+   }
   },
   {
    "id": "poc_3d_sensor_modalities",
@@ -1465,7 +1524,11 @@
     "laser_line_center_centroid",
     "light_section_speckle_floor",
     "form_factors_2d"
-   ]
+   ],
+   "truth": {
+    "ja": "自作合成",
+    "en": "Synthetic"
+   }
   },
   {
    "id": "poc_equipment_selection_map",
@@ -1530,7 +1593,11 @@
     "ingaas_photodiode_qe",
     "spectral_integral",
     "bandpass_spectrum"
-   ]
+   ],
+   "truth": {
+    "ja": "自作合成",
+    "en": "Synthetic"
+   }
   },
   {
    "id": "poc_real_stereo_multiscanline",
@@ -1589,7 +1656,11 @@
     "crop_rectangle2",
     "create_ncc_model",
     "find_ncc_models"
-   ]
+   ],
+   "truth": {
+    "ja": "実データ",
+    "en": "Real data"
+   }
   },
   {
    "id": "poc_real_defect_floor",
@@ -1645,7 +1716,11 @@
     "ellipse",
     "reflect",
     "median"
-   ]
+   ],
+   "truth": {
+    "ja": "実写の地",
+    "en": "Real background"
+   }
   },
   {
    "id": "poc_sam_hybrid_bonding_voids",
@@ -1706,7 +1781,11 @@
     "pod_ahat_fit",
     "pod_from_ahat",
     "pod_false_call"
-   ]
+   ],
+   "truth": {
+    "ja": "自作合成",
+    "en": "Synthetic"
+   }
   },
   {
    "id": "poc_photoelasticity",
@@ -1771,7 +1850,11 @@
     "ticks",
     "unwrap_phase_2d"
    ],
-   "tier": "featured"
+   "tier": "featured",
+   "truth": {
+    "ja": "自作合成",
+    "en": "Synthetic"
+   }
   },
   {
    "id": "poc_mixed_case_depalletizing",
@@ -1831,7 +1914,69 @@
     "fit_rectangle2",
     "crop_rectangle2",
     "area_intersection_rectangle2"
-   ]
+   ],
+   "truth": {
+    "ja": "自作合成",
+    "en": "Synthetic"
+   }
+  },
+  {
+   "id": "poc_code_matching_breakdown",
+   "category": "inspection",
+   "media": "05_highlight_sweep.gif",
+   "motion": true,
+   "label": {
+    "ja": "白飛びや隠れに強い符号の照合",
+    "en": "Code matching that survives glare and occlusion",
+    "zh": "耐过曝与遮挡的符号匹配",
+    "tw": "耐過曝與遮擋的符號比對",
+    "ko": "하이라이트·가림에 강한 부호 매칭",
+    "de": "Code-Matching, robust gegen Glanz und Verdeckung",
+    "hi": "glare और occlusion झेलने वाली code matching",
+    "fr": "Appariement par codes résistant aux reflets et à l'occultation"
+   },
+   "lead": {
+    "ja": "テンプレート照合でよく使う正規化相互相関は、対象の一部が隠れたり光沢で白く飛んだりすると外れやすい。明るさの変化の向きを符号にして比べる照合を加え、公開の実写から切ったテンプレート 40 枚で撹乱を強めていった。符号で比べる照合は隠れに強いが、回転にはどの方法も弱かった。",
+    "en": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
+    "zh": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
+    "tw": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
+    "ko": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
+    "de": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
+    "hi": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
+    "fr": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation."
+   },
+   "see": {
+    "ja": "テンプレート照合の正規化相互相関(NCC)は明るさの値を比べるので、テンプレートの一部が隠れる・光沢が飛ぶ・片側だけ暗いといった局所の崩れに弱い。明るさの変化の向きを符号にして比べる照合 4 種(方向符号照合 OCM、増分符号相関 ISC、選択的相関係数 SCC、背景比較の Radial Reach Filter。文献の式から再実装)を codematch 6 op として足し、公開の実写 5 枚(CC0)から切った 32 x 32 のテンプレート 40 枚に段階的な撹乱を掛けた。当たりが半分を割る所は、遮蔽で NCC 10 %・SCC 36 %・ISC 63 %・OCM 67 %、飽和ハイライトで NCC 6 %・SCC 10 %・OCM 44 %・ISC 53 %。回転には 4 種とも弱い(7〜9°)。SCC は符号の合った画素だけを選ぶので無関係な位置でも相関が上がり(選択の偏り)、文献の式のままでは NCC より先に壊れた。無相関の使用率の期待値 + 4σ を床にして直した。",
+    "en": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
+    "zh": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
+    "tw": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
+    "ko": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
+    "de": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
+    "hi": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. ",
+    "fr": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. "
+   },
+   "num": {
+    "ja": "空を切った平坦なテンプレート 11 枚では、NCC は相関 0.82 前後で 10 枚を外し、符号系は拒否するか正解する(誤答 0)。門は総当たりの第 2 実装・既存の NCC・単調変換での不変性・rot90 の可換性(巡回差を絶対差にした探針で崩れる)・正解位置の値の閉形式(1,080 試行で |z| ≤ 3.6)。",
+    "en": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
+    "zh": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
+    "tw": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
+    "ko": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
+    "de": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
+    "hi": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
+    "fr": "On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials)."
+   },
+   "numbers_source": "log",
+   "youtube_url": "",
+   "ops": [
+    "isc_match",
+    "ncc_locate",
+    "ocm_match",
+    "radial_reach_filter",
+    "reflect",
+    "scc_match",
+    "text_box"
+   ],
+   "tier": "more"
   },
   {
    "id": "poc_caltab_chain_truth",
@@ -3294,7 +3439,7 @@
   "poc_virtual_sem_kv_cd_bse",
   "poc_cad_scan_deviation",
   "poc_good_sample_variation_model",
-  "poc_code_matching_breakdown",
+  "poc_surface_defect_classifiers",
   "poc_ai_built_inspection_scored",
   "poc_bottle_pattern_inverse",
   "poc_real_tum_rgbd_slam",
@@ -3306,6 +3451,7 @@
   "poc_sam_hybrid_bonding_voids",
   "poc_photoelasticity",
   "poc_mixed_case_depalletizing",
+  "poc_code_matching_breakdown",
   "poc_caltab_chain_truth",
   "poc_tdi_linescan",
   "poc_itof_multifreq",
@@ -10426,7 +10572,14 @@
      "fr": "Les itérations rapprochent le contour GVF de sa forme finale"
     }
    }
-  ]
+  ],
+  "main_ids": [
+   "poc_cad_scan_deviation",
+   "poc_photoelasticity",
+   "poc_polarization_specular",
+   "poc_thermography_ndt"
+  ],
+  "_main_ids": "本ページ(ja/en)の「触って見る」に置く viewers.items の id と順(field_viewers の後)。残りはおまけページ。field_viewers + main_ids は 6 本まで。"
  },
  "field_viewers": {
   "_": "本ページ先頭の「触って見る」に置く、場を掃引する動く 3-D 展示(ja/en のみ。ビューアに 8 言語が入るまで)。viewers.items とは別の正本。光弾性の 3-D(photoelastic_anim3d.html)は 10/31 に取り下げた(hold)ので置かない。",

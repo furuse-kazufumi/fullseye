@@ -55,6 +55,35 @@ def test_non_compute_exclusions_have_reasons_and_do_not_open_the_gate(tmp_path) 
     assert F.count_calls(source) == ()
 
 
+def test_gate_counts_calls_made_through_a_helper_that_returns_fs_ledger(tmp_path) -> None:
+    """``def _L(): return fs.ledger`` を経由した ``_L().patchdist_fit(...)`` を数える(poc_patch_anomaly の数え漏れ)。"""
+    source = tmp_path / "helper.py"
+    source.write_text(
+        "import fullseye as fs\n"
+        "def _L():\n    return fs.ledger\n"
+        "f = lambda s: _L().patchdist_fit(s)\n"
+        "def other():\n    return unrelated\n"
+        "other().patchbank_fit(1)\n",           # ledger を返さない関数の経由は数えない
+        encoding="utf-8",
+    )
+    calls = F.count_calls(source)
+    assert len(calls) == 1 and "op:patchdist_fit" in calls[0], calls
+    real = F.count_calls(ROOT / "examples" / "poc_patch_anomaly.py")
+    assert real, "poc_patch_anomaly は fs.ledger 経由で Fullseye の op を呼んでいる"
+
+
+def test_declared_ops_count_only_when_every_one_resolves_to_a_shipped_function() -> None:
+    good = {"id": "x", "ops": ["driveenv.sight_stop_speed", "drivelateral.pure_pursuit_curvature"]}
+    assert len(F.declared_op_calls(good)) == 2
+    assert all("declared:" in call for call in F.declared_op_calls(good))
+    for bad_ops in (["driveenv.no_such_function"], ["no_such_module.f"], ["driveenv.sight_stop_speed", "plain_name"],
+                    ["examplefig.f"], []):
+        assert F.declared_op_calls({"id": "y", "ops": bad_ops}) == (), bad_ops
+    # 例のスクリプトを読んで 0 件でも、宣言が全部実在すれば通る。宣言が無ければ 0 件のまま。
+    assert F.inspect({"id": "z", "source_url": "", "ops": good["ops"]}).count == 2
+    assert F.inspect({"id": "z", "source_url": ""}).count == 0
+
+
 def test_fake_exhibit_without_fullseye_is_dropped_by_the_real_generator() -> None:
     broken = copy.deepcopy(G.load())
     fake_id = "fake_without_fullseye"

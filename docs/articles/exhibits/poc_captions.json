@@ -4925,8 +4925,24 @@
    "caption_ja": "研削した金属の小片(96x96 px)に、傷(V 溝)・打痕(窪み)・汚れ(茶色の反射率)を物理的に描いた。高さの欠陥は陰影だけを、汚れは色だけを変え、欠陥の重さは 0〜1 で振る。画素の段では、正常な金属の画素から learn_ndim_norm で正規分布を学び、class_ndim_norm で異常な画素を塗る。汚れの画素は classify_image_class_lut で IoU 0.915、class_2dim_sup で 0.729、class_2dim_unsup で 0.535(標準化したとき)。領域の特徴 7 個で GMM・MLP・SVM・k-NN を学習した。種 5 本の正解率は 0.871〜0.886(±0.02)。scikit-learn の第 2 実装との差は、許容差 3·sqrt(2p(1−p)/n) の 0.41 倍以内に収まった。GMM(成分 1)は閉形式の 2 次判別と 100 % 一致する。学習に無い腐食の孔は、検証側で決めた対数密度の閾値で 94.8 % を拒否した。既知の小片の誤拒否は 6.0 % だった。ラベルを入れ替えると正解率は 0.238 に落ちる。汚れの再現率 100 % は、色を変える欠陥が汚れだけだからで、特徴の漏れではない。研削の筋から 15° 以内の傷は再現率 0.275 で、45° より立った傷の 0.949 より大きく落ちる。筋を消すために選んだ勾配の向きが、筋に沿う傷も一緒に消している。",
    "caption_en": "Ground-metal patches (96x96 px) are rendered with scratches (V-grooves), dents (smooth pits) and stains (a brown drop in reflectance). Height defects change only the shading and the stain changes only the colour, with a defect weight from 0 to 1. At pixel level, learn_ndim_norm learns a normal model from clean metal pixels and class_ndim_norm paints the anomalous ones. Stain pixels reach IoU 0.915 with classify_image_class_lut, 0.729 with class_2dim_sup and 0.535 with class_2dim_unsup on standardised channels. Seven region features train GMM, MLP, SVM and k-NN classifiers. Over five seeds their accuracy is 0.871-0.886 (±0.02). Each stays within 0.41 of the tolerance 3·sqrt(2p(1−p)/n) of a scikit-learn second implementation, and the one-component GMM agrees 100 % with closed-form QDA. Corrosion pits, never trained, are 94.8 % rejected by a log-density threshold set on the validation split; 6.0 % of known patches are rejected. Permuted labels drop the accuracy to 0.238. The stain's 100 % recall holds because it is the only defect that changes colour, not because a feature leaks the truth. Scratches within 15° of the grinding lay are recalled at 0.275, against 0.949 above 45°: the gradient chosen to suppress the lay suppresses scratches along it too.",
    "run": "py -3.11 examples/poc_surface_defect_classifiers.py",
-   "lead_ja": "",
-   "lead_en": ""
+   "lead_ja": "研削した金属の小片に、傷・打痕・汚れを物理で描き、学習した分類器で仕分けた。汚れの画素は、正常な画素から学んだ分類で IoU 0.915 まで塗り分けられた。一方、研削の筋に沿う傷は見落としやすく、知らない孔は拒否される。",
+   "lead_en": "Small pieces of ground metal were drawn with scratches, dents and stains by physics, and sorted with trained classifiers. Stained pixels were painted with an IoU of 0.915 by a classifier learned from normal pixels. Scratches along the grinding marks are easily missed, and unknown holes are rejected.",
+   "ops": [
+    "class_ndim_norm",
+    "learn_ndim_norm",
+    "classify_image_class_lut",
+    "class_2dim_sup",
+    "class_2dim_unsup",
+    "train_class_gmm",
+    "classify_class_gmm",
+    "train_class_mlp",
+    "classify_class_mlp",
+    "train_class_svm",
+    "classify_class_svm",
+    "train_class_knn",
+    "classify_class_knn",
+    "evaluate_class_gmm"
+   ]
   }
  ]
 }

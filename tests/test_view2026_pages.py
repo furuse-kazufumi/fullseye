@@ -77,7 +77,9 @@ def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
     for exhibit in d["exhibits"]:
         if exhibit["id"] not in public_ids:
             continue            # Fullseye の計算を呼ばない展示は公開しない(門)
-        page = main_page if exhibit["tier"] in G.MAIN_TIERS else more_page
+        page = more_page            # 本ページの展示の全文(lead → 見る所と数字)もおまけページにある
+        if exhibit["tier"] in G.MAIN_TIERS:
+            assert exhibit["lead"]["ja"] in main_page   # 本ページには lead がある
         marker = "- [%s]" % exhibit["label"]["ja"]
         start = page.index(marker)
         end = page.find("\n- [", start + len(marker))

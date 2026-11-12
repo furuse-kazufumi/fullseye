@@ -141,6 +141,19 @@ def count_calls(path: Path) -> tuple[str, ...]:
         targets = node.targets if isinstance(node, ast.Assign) else [node.target]
         ledger_aliases.update(target.id for target in targets if isinstance(target, ast.Name))
 
+    # ``def _L(): return fs.ledger`` のように台帳の入口を返す小さな関数。``_L().<op>(...)`` を台帳の呼び出しとして数える
+    # (2026-11-12: poc_patch_anomaly がこの形で、数え漏れて公開から外れていた)。
+    ledger_funcs: set[str] = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.FunctionDef):
+            continue
+        for sub_node in ast.walk(node):
+            if isinstance(sub_node, ast.Return) and sub_node.value is not None:
+                ret = _attr_parts(sub_node.value)
+                if ret and ((len(ret) == 2 and ret[0] in fs_aliases and ret[1] == "ledger") or
+                            (len(ret) == 1 and ret[0] in ledger_aliases)):
+                    ledger_funcs.add(node.name)
+
     found: dict[int, str] = {}
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
@@ -149,6 +162,10 @@ def count_calls(path: Path) -> tuple[str, ...]:
         final = parts[-1] if parts else node.func.id if isinstance(node.func, ast.Name) else ""
 
         reasons: list[str] = []
+        if (isinstance(node.func, ast.Attribute) and isinstance(node.func.value, ast.Call) and
+                isinstance(node.func.value.func, ast.Name) and node.func.value.func.id in ledger_funcs and
+                node.func.attr in ops):
+            reasons.append("op:%s" % node.func.attr)
         rooted_at_fs = bool(parts and parts[0] in fs_aliases and len(parts) >= 2)
         fs_first = parts[1] if rooted_at_fs else ""
         # (a) OP_INDEX の op 名の呼び出し。外部ライブラリの同名関数は数えない。
@@ -179,9 +196,40 @@ def count_calls(path: Path) -> tuple[str, ...]:
     return tuple(sorted(found.values(), key=lambda value: int(value.split(":", 1)[0])))
 
 
+@cache
+def _defined_functions(path: Path) -> frozenset[str]:
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    return frozenset(node.name for node in tree.body if isinstance(node, ast.FunctionDef))
+
+
+def declared_op_calls(item: dict) -> tuple[str, ...]:
+    """例のスクリプトが無い展示(外部の動画など)が宣言した ``ops``(``module.func``)を数える。
+
+    全部が配布モジュール(``pyproject`` の ``py-modules``、``NON_COMPUTE_MODULES`` 以外)の最上位の関数として実在するときだけ。
+    1 つでも解決できなければ 0 件。**実際にその動画で呼んだことの証明ではなく、宣言した op が実在することの確認**なので、
+    結果の印を ``declared:`` にして、スクリプトを読んだ数と区別する。
+    """
+    ops = item.get("ops") or []
+    if not ops:
+        return ()
+    shipped = distributed_modules()
+    out = []
+    for op in ops:
+        module, _, func = str(op).partition(".")
+        if not func or module not in shipped or module in NON_COMPUTE_MODULES:
+            return ()
+        path = ROOT / (module + ".py")
+        if not path.is_file() or func not in _defined_functions(path):
+            return ()
+        out.append("0:declared:%s" % op)
+    return tuple(out)
+
+
 def inspect(item: dict) -> GateResult:
     source = source_for(item)
     calls = count_calls(source) if source is not None else ()
+    if not calls:
+        calls = declared_op_calls(item)
     return GateResult(item["id"], source, calls)
 
 
