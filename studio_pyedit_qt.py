@@ -18,8 +18,10 @@
 """
 from __future__ import annotations
 
+import atexit
 import html
 import re
+import weakref
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Mapping
 
@@ -58,11 +60,16 @@ def _qcolor(c: str) -> QtGui.QColor:
 # --------------------------------------------------------------------------- #
 # 色分け
 # --------------------------------------------------------------------------- #
-class BlockData(QtGui.QTextBlockUserData):
-    """ブロックごとの字句と括弧(再走査せずに括弧の対応・同じ名前の強調を作るため)。"""
+class BlockData:
+    """ブロックごとの字句と括弧(再走査せずに括弧の対応・同じ名前の強調を作るため)。
+
+    ★2026-11-13: 以前は ``QTextBlockUserData`` の子としてブロックに付けていたが、Python の userData を付けたまま
+    プロセスが終わると Windows で access violation(exit 139)になった。今は色分けの側の辞書に持つ
+    (:meth:`PythonHighlighter.data_for`)。"""
+
+    __slots__ = ("tokens", "brackets")
 
     def __init__(self, tokens, brackets):
-        super().__init__()
         self.tokens = tokens
         self.brackets = brackets
 
@@ -111,7 +118,35 @@ class PythonHighlighter(QtGui.QSyntaxHighlighter):
             if f is not None:
                 self.setFormat(a, b - a, f)
         self.setCurrentBlockState(state)
-        self.setCurrentBlockUserData(BlockData(toks, syn.brackets_of(toks, text)))
+        self._remember(text, prev, BlockData(toks, syn.brackets_of(toks, text)))
+
+    #: 字句の控えの上限(行の文面と前の行の状態ごと)。超えたら古い順に捨てる(次に要るとき走査し直す)。
+    CACHE_LINES = 20000
+
+    def _remember(self, text: str, prev: int, data: "BlockData") -> None:
+        cache = self.__dict__.setdefault("_blocks", {})
+        key = (text, prev if prev > 0 else 0)
+        cache.pop(key, None)
+        cache[key] = data
+        if len(cache) > self.CACHE_LINES:
+            for k in list(cache)[: len(cache) - self.CACHE_LINES]:
+                del cache[k]
+
+    def data_for(self, blk) -> "BlockData | None":
+        """ブロック *blk* の字句と括弧(色分けした時の控え。無ければその場で走査する)。"""
+        if not blk.isValid():
+            return None
+        pb = blk.previous()
+        prev = pb.userState() if pb.isValid() else -1
+        text = blk.text()
+        key = (text, prev if prev > 0 else 0)
+        cache = self.__dict__.setdefault("_blocks", {})
+        d = cache.get(key)
+        if d is None:
+            toks, _state = self.lexer.scan(text, key[1])
+            d = BlockData(toks, syn.brackets_of(toks, text))
+            self._remember(text, prev, d)
+        return d
 
 
 # --------------------------------------------------------------------------- #
@@ -326,6 +361,21 @@ class Marks:
     errors: dict = field(default_factory=dict)       # 行 → 理由
 
 
+_LIVE_ASSISTS: "weakref.WeakSet" = weakref.WeakSet()
+
+
+def _detach_all_at_exit() -> None:
+    """プロセスの終わり: 生きている PyEditAssist の event filter を外す(外さないと Windows で exit 139)。"""
+    for a in list(_LIVE_ASSISTS):
+        try:
+            a.detach()
+        except Exception:                                       # noqa: BLE001 -- 終了の途中は何も投げない
+            pass
+
+
+atexit.register(_detach_all_at_exit)
+
+
 class PyEditAssist(QtCore.QObject):
     """``QPlainTextEdit`` に色分け・補完・シグネチャ・ホバー・括弧・同じ名前の強調・行の印を足す。"""
 
@@ -342,6 +392,9 @@ class PyEditAssist(QtCore.QObject):
         self.marks = Marks()
         self.external_selections: Callable[[], list] | None = None
         self.completion_enabled = True
+        #: False の間は何もしない(色分けを外し、キー・ホバー・装飾に触らない)。Studio の Program 欄は 1 つの欄を
+        #: パイプラインの記法と Python で切り替えるので、Python のモードの間だけ True にする(2026-11-13)。
+        self.active = True
         self.lexer = syn.LineLexer(backend)
         self.highlighter = PythonHighlighter(editor.document(), self.theme, self.lexer)
         self.popup = CompletionPopup(editor, lambda: self.theme, tr)
@@ -361,6 +414,8 @@ class PyEditAssist(QtCore.QObject):
         self._sig_timer.timeout.connect(self.update_signature)
         editor.installEventFilter(self)
         editor.viewport().installEventFilter(self)
+        self._filters_on = True
+        _LIVE_ASSISTS.add(self)
         editor.cursorPositionChanged.connect(self._on_cursor)
         editor.textChanged.connect(self._on_text)
         app = QtWidgets.QApplication.instance()
@@ -369,6 +424,46 @@ class PyEditAssist(QtCore.QObject):
         editor.verticalScrollBar().valueChanged.connect(lambda _v: (self.popup.hide(), self._deco_timer.start()))
         self.apply_theme()
         self._sync_vocabulary()
+
+    def detach(self) -> None:
+        """編集欄から外す(event filter・色分け・窓)。閉じる前とプロセスの終わりに呼ぶ。何度呼んでもよい。"""
+        if not getattr(self, "_filters_on", False):
+            return
+        self._filters_on = False
+        self.active = False
+        try:
+            import shiboken6                                    # noqa: PLC0415  (PySide6 に付いてくる)
+            alive = shiboken6.isValid(self.editor)
+        except ImportError:
+            alive = True
+        if not alive:
+            return
+        try:
+            self.editor.removeEventFilter(self)
+            self.editor.viewport().removeEventFilter(self)
+            self._deco_timer.stop()
+            self._sig_timer.stop()
+            self.popup.hide()
+            self.tip.hide()
+            self.highlighter.setDocument(None)
+        except RuntimeError:                                    # C++ 側が先に消えた
+            pass
+
+    def set_active(self, active: bool) -> None:
+        """Python のモードに入る(True)・出る(False)。出るときは色分けを外し、窓を閉じる。"""
+        active = bool(active)
+        if active == self.active:
+            return
+        self.active = active
+        if active:
+            self.highlighter.setDocument(self.editor.document())
+            self.apply_theme()
+        else:
+            self.popup.hide()
+            self.tip.hide()
+            self._deco_timer.stop()
+            self._sig_timer.stop()
+            self.highlighter.setDocument(None)
 
     def _on_app_state(self, state) -> None:
         if state != QtCore.Qt.ApplicationActive:          # 別のアプリへ切り替えたら窓を閉じる
@@ -436,7 +531,7 @@ class PyEditAssist(QtCore.QObject):
             per_line = []
             blk = doc.begin()
             while blk.isValid():
-                ud = blk.userData()
+                ud = self.highlighter.data_for(blk)
                 per_line.append(ud.brackets if isinstance(ud, BlockData) else [])
                 blk = blk.next()
             pairs, bad = syn.match_brackets(per_line)
@@ -444,6 +539,8 @@ class PyEditAssist(QtCore.QObject):
         return self._bracket_cache[1], self._bracket_cache[2]
 
     def refresh_decorations(self) -> None:
+        if not self.active:
+            return
         th = self.theme
         ed = self.editor
         doc = ed.document()
@@ -490,7 +587,7 @@ class PyEditAssist(QtCore.QObject):
             sels.append(self._sel(lc, ff))
         # 括弧
         blk = cur.block()
-        ud = blk.userData()
+        ud = self.highlighter.data_for(blk)
         col = cur.positionInBlock()
         if isinstance(ud, BlockData):
             pairs, bad = self._brackets()
@@ -543,7 +640,7 @@ class PyEditAssist(QtCore.QObject):
             top = ed.blockBoundingGeometry(blk).translated(ed.contentOffset()).top()
             if top > bottom:
                 break
-            ud = blk.userData()
+            ud = self.highlighter.data_for(blk)
             if isinstance(ud, BlockData):
                 text = blk.text()
                 for a, b in syn.occurrences(ud.tokens, text, word):
@@ -559,6 +656,8 @@ class PyEditAssist(QtCore.QObject):
 
     # ---- イベント ----
     def _on_cursor(self) -> None:
+        if not self.active:
+            return
         self._deco_timer.start()
         self._sig_timer.start()
         if self.popup.isVisible():
@@ -567,6 +666,8 @@ class PyEditAssist(QtCore.QObject):
                 self.popup.hide()
 
     def _on_text(self) -> None:
+        if not self.active:
+            return
         self._deco_timer.start()
 
     def _word_start_col(self) -> int:
@@ -575,6 +676,8 @@ class PyEditAssist(QtCore.QObject):
         return len(before) - len(comp.word_prefix(before))
 
     def eventFilter(self, obj, ev):
+        if not self.active:
+            return False
         et = ev.type()
         if obj is self.editor:
             if et == QtCore.QEvent.KeyPress:
@@ -642,7 +745,7 @@ class PyEditAssist(QtCore.QObject):
 
     def show_completions(self, force: bool = False) -> bool:
         """候補を出す。出たら True。``force`` は Ctrl+Space(打ちかけが空でも出す)。"""
-        if self.provider is None:
+        if self.provider is None or not self.active:
             return False
         text, line, col = self._position()
         try:
@@ -692,7 +795,7 @@ class PyEditAssist(QtCore.QObject):
 
     # ---- シグネチャ ----
     def update_signature(self) -> None:
-        if self.provider is None or not hasattr(self.provider, "signature"):
+        if self.provider is None or not self.active or not hasattr(self.provider, "signature"):
             return
         text, line, col = self._position()
         try:
