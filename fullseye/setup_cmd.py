@@ -333,8 +333,10 @@ def _default_launch() -> None:
         w = Path(exe).with_name("pythonw.exe")
         exe = str(w) if w.is_file() else exe
         kw["creationflags"] = 0x00000008 | 0x00000200       # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
-    subprocess.Popen([exe, "-m", "studio"], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                     stderr=subprocess.DEVNULL, cwd=str(Path.home()), **kw)
+    from fullseye import shortcuts
+    # -P: 作業フォルダ(sys.path[0])を足さない = ホームに置かれた別の studio.py を先に読まない。作業フォルダも setup フォルダ。
+    subprocess.Popen([exe, "-P", "-m", "studio"], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                     stderr=subprocess.DEVNULL, cwd=str(shortcuts.launch_workdir()), **kw)
 
 
 def _default_rag() -> str:

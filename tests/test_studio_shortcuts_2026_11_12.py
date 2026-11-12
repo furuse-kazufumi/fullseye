@@ -47,22 +47,23 @@ def test_windows_lnk_create_idempotent_remove(tmp_path):
     first = shortcuts.read_lnk(made[0])
     assert first["Target"].lower().endswith("pythonw.exe")          # no console window
     assert Path(first["Target"]).parent == Path(sys.executable).parent   # this environment's interpreter
-    assert first["Arguments"] == "-m studio"
+    assert first["Arguments"] == "-P -m studio"                       # -P: ホームの studio.py を先に読まない
+    assert Path(first["WorkingDir"]) == dirs["icon_dir"]              # 作業フォルダ = setup フォルダ(ホームではない)
     assert Path(first["Icon"].split(",")[0]) == dirs["icon_dir"] / "fullseye.ico"
     assert (dirs["icon_dir"] / "fullseye.ico").read_bytes() == (ROOT / "assets" / "fullseye.ico").read_bytes()
     # twice -> same result, no error
     again = shortcuts.install(desktop=True, dirs=dirs, reg_key=r"Software\FullseyeTest\t1")
     assert again == made and shortcuts.read_lnk(again[0]) == first
     # remove: deletes lnks + icon, folders that became empty; second remove is a no-op
-    gone = shortcuts.remove(dirs=dirs)
+    gone = shortcuts.remove(dirs=dirs, allow_keys=(r"Software\FullseyeTest\t1",))
     assert not shortcuts.regkey_exists(r"Software\FullseyeTest\t1")
-    assert len(gone) == 3 and not any(p.exists() for p in gone)
+    assert len(gone) == 4 and not any(p.exists() for p in gone)
     assert not dirs["start_menu"].exists() and not dirs["icon_dir"].exists()
     assert shortcuts.remove(dirs=dirs) == []
 
 
 @pytest.mark.skipif(not WIN, reason="the .lnk path is Windows-only")
-def test_windows_start_menu_only_by_default_and_venv_python_is_used(tmp_path):
+def test_windows_start_menu_only_by_default_and_venv_python_is_used(tmp_path, monkeypatch):
     fake = tmp_path / "venv" / "Scripts"
     fake.mkdir(parents=True)
     (fake / "python.exe").write_bytes(b"")
@@ -71,7 +72,9 @@ def test_windows_start_menu_only_by_default_and_venv_python_is_used(tmp_path):
     made = shortcuts.install(python=str(fake / "python.exe"), dirs=dirs, reg_key=r"Software\FullseyeTest\t2")
     assert made == [dirs["start_menu"] / "Fullseye Studio.lnk"] and not dirs["desktop"].exists()
     assert Path(shortcuts.read_lnk(made[0])["Target"]) == fake / "pythonw.exe"
-    shortcuts.remove(dirs=dirs)
+    # 登録した物の持ち主はその Python の環境。消すのも、その環境から(別の環境からは消さない = 指摘 11)
+    monkeypatch.setattr(shortcuts, "env_owner", lambda: shortcuts.owner_of_python(str(fake / "python.exe")))
+    shortcuts.remove(dirs=dirs, allow_keys=(r"Software\FullseyeTest\t2",))
     assert not shortcuts.regkey_exists(r"Software\FullseyeTest\t2")
 
 
@@ -84,15 +87,16 @@ def test_windows_missing_pythonw_is_a_clear_error(tmp_path):
 
 
 # --------------------------------------------------------------------------- Linux .desktop(どの OS でも書ける)
-def test_linux_desktop_entry_idempotent_remove(tmp_path):
+def test_linux_desktop_entry_idempotent_remove(tmp_path, monkeypatch):
     dirs = {"apps": tmp_path / "apps", "icon_dir": tmp_path / "icons", "desktop": tmp_path / "Desktop"}
     made = shortcuts.install(platform="linux", python="/opt/py 3/bin/python", dirs=dirs)
     assert made == [dirs["apps"] / "fullseye-studio.desktop"]
     text = made[0].read_text(encoding="utf-8")
-    assert 'Exec="/opt/py 3/bin/python" -m studio' in text and "Terminal=false" in text
+    assert 'Exec="/opt/py 3/bin/python" -P -m studio' in text and "Terminal=false" in text
     assert "Icon=%s" % (dirs["icon_dir"] / "fullseye-studio.png") in text
     assert (dirs["icon_dir"] / "fullseye-studio.png").is_file()
     assert shortcuts.install(platform="linux", python="/opt/py 3/bin/python", dirs=dirs) == made
+    monkeypatch.setattr(shortcuts, "env_owner", lambda: shortcuts.owner_of_python("/opt/py 3/bin/python"))
     gone = shortcuts.remove(platform="linux", dirs=dirs)
     assert len(gone) == 2 and shortcuts.remove(platform="linux", dirs=dirs) == []
 
@@ -283,6 +287,16 @@ def _plat():
     return "win" if WIN else "linux"
 
 
+def _test_keys(ledger):
+    """台帳に載っている試験用レジストリキー(本番コードは Software\\FullseyeTest を許さない。テストが引数で許可を渡す)。"""
+    import json
+    try:
+        ents = json.loads(Path(ledger).read_text(encoding="utf-8"))["entries"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return ()
+    return tuple(e["path"] for e in ents if e.get("kind") == "regkey" and e["path"].startswith("Software\\FullseyeTest\\"))
+
+
 def _un(tmp_path, ledger, dirs, argv, answers=(), tty=True, pip=None):
     it = iter(answers)
 
@@ -297,7 +311,8 @@ def _un(tmp_path, ledger, dirs, argv, answers=(), tty=True, pip=None):
            "LOCALAPPDATA": str(tmp_path / "nolocal")}
     rc = uninstall.main(["--uninstall", "--lang", "en", *argv], input_fn=input_fn,
                         pip_fn=lambda: (calls.append(1), "LOGPATH")[1], is_tty=tty, out=buf, ledger=ledger, dirs=dirs,
-                        env=env, registry=False)            # 実レジストリ(本物の Studio 設定)は見ない・消さない
+                        env=env, registry=False,             # 実レジストリ(本物の Studio 設定)は見ない・消さない
+                        allow_keys=_test_keys(ledger), pip_check_fn=lambda: ("ok", ""))
     return rc, buf.getvalue(), calls
 
 
@@ -312,7 +327,7 @@ def test_ledger_records_what_install_created_and_is_idempotent(tmp_path):
     if WIN:
         assert ("regkey", r"Software\FullseyeTest\a") in keys
         assert shortcuts.regkey_exists(r"Software\FullseyeTest\a")
-    shortcuts.remove(platform=_plat(), dirs=dirs, ledger=ledger)
+    shortcuts.remove(platform=_plat(), dirs=dirs, ledger=ledger, allow_keys=(r"Software\FullseyeTest\a",))
     assert not ledger.exists()                                              # 全部消えたら台帳も畳む
     if WIN:
         assert not shortcuts.regkey_exists(r"Software\FullseyeTest\a")
@@ -348,7 +363,7 @@ def test_uninstall_dry_run_deletes_nothing(tmp_path):
     assert ledger.read_text(encoding="utf-8") == before
     if WIN:
         assert shortcuts.regkey_exists(r"Software\FullseyeTest\c")
-        shortcuts.remove(platform="win", dirs=dirs, ledger=ledger)           # 試験用キーの後始末
+        shortcuts.remove(platform="win", dirs=dirs, ledger=ledger, allow_keys=(r"Software\FullseyeTest\c",))   # 試験用キーの後始末
 
 
 def test_uninstall_non_terminal_without_flags_deletes_nothing(tmp_path):
@@ -359,7 +374,7 @@ def test_uninstall_non_terminal_without_flags_deletes_nothing(tmp_path):
     assert rc == 0 and "not a terminal" in out and pip == []
     assert sorted(p for p in tmp_path.rglob("*") if p.is_file()) == files
     if WIN:
-        shortcuts.remove(platform="win", dirs=dirs, ledger=ledger)
+        shortcuts.remove(platform="win", dirs=dirs, ledger=ledger, allow_keys=(r"Software\FullseyeTest\d",))
 
 
 def test_uninstall_settings_and_cache_are_kept_unless_confirmed(tmp_path):

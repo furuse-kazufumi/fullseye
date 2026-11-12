@@ -31,6 +31,9 @@ from pathlib import Path
 
 PKG = Path(__file__).resolve().parent           # installed (or checkout) fullseye package
 SKILL_NAME = "fullseye-ops"
+# install() が置く目印。``fullseye setup --uninstall`` は、既定の置き場の外にある skill を、この目印があるときだけ消す
+# (台帳が書き換えられても、同名の別のフォルダを丸ごと消さない)。
+MARKER_NAME = ".fullseye-installed"
 _REPO_LINE = re.compile(r"^FULLSEYE_REPO = .*$", re.MULTILINE)
 
 
@@ -123,11 +126,16 @@ def install(target_dir: Path, repo: Path | None = None, _auto_repo: bool = True,
             (dest / rel).write_text(text, encoding="utf-8", newline="\n")
         else:
             shutil.copy2(src, dest / rel)
+    (dest / MARKER_NAME).write_text("installed by fullseye-rag; fullseye setup --uninstall may remove this folder\n",
+                                    encoding="utf-8")
     return dest
 
 
 def uninstall(target_dir: Path) -> bool:
     dest = target_dir / SKILL_NAME
+    if dest.is_symlink():               # リンク(ジャンクション)なら中身ではなくリンクだけを外す
+        dest.unlink()
+        return True
     if dest.is_dir():
         shutil.rmtree(dest)
         return True

@@ -7,6 +7,20 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 直し — インストール体験(setup / ショートカット / アンインストール): 独立レビュー(2026-11-12)の 16 件
+
+- 台帳の中身を**許可制**で検証してから消す(`shortcuts.check_ledger_item`): file は setup が作る名前(`Fullseye Studio.lnk` / `fullseye.ico` / `fullseye-uninstall.cmd` / `fullseye-studio.desktop` / png)と置き場(スタートメニューの `Fullseye`・デスクトップ・setup フォルダ・Linux の applications / icons)、dir_if_empty は setup が作ったフォルダ、regkey は `Uninstall\Fullseye` の完全一致、claude_skill は `default_target()` の直下か `fullseye-rag` が置く目印(`.fullseye-installed`)がある物だけ。許可外は消さず「台帳にあるが消さなかったもの」として理由つきで出す(終了コード 1)。書き換えた台帳(`thesis.docx`)や `FULLSEYE_LEDGER` の差し替えで任意のファイルが消えた事故を止めた。試験用キー `Software\fullseyetest\` は本番コードから外し、テストが引数 `allow_keys` で渡す。
+- 台帳の各項目に作った環境(`sys.prefix`)を記録し、別の環境が作った物は `--yes` でも残して警告(venv A で登録 → B で登録 → A から uninstall で B のショートカットが消えていた)。
+- 壊れた台帳(`{not json`・`{"entries":{}}`・`[1,2]`)は警告して「台帳なし」の既知の場所の検出に倒す(`--dry-run` でも例外で落ちていた)。`--remove-shortcuts` は台帳に無いデスクトップの同名 `.lnk` を消さず、レジストリだけ消した時も「nothing to remove」と言わない。
+- PowerShell を `%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe` の絶対パスで呼ぶ(Python 3.11 の `shutil.which` は作業フォルダを先に引き、置かれた `powershell.bat` が走った)。`.lnk` と `fullseye setup` の起動は `-P -m studio`・作業フォルダ = setup フォルダ(ホームの `studio.py` を先に読んでいた)。デスクトップは `SHGetKnownFolderPath`(OneDrive の下でも本物の場所)。`APPDATA` / `LOCALAPPDATA` が相対パスなら拒否。
+- アンインストール: pip の段は、この Python に pip があり、`importlib.metadata` が指す fullseye が動いている物と同じ場所のときだけ(uv の venv では `uv pip uninstall` を案内して終了コード 3、checkout 実行で別の fullseye を消さない)。別プロセスの起動は `DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP | CREATE_BREAKAWAY_FROM_JOB`(Job が許さなければ外して再試行。`CREATE_NO_WINDOW` は併用すると無視されるので付けない)。
+- 「アプリと機能」の `UninstallString` を、setup フォルダの `fullseye-uninstall.cmd`(Python に頼らない後始末スクリプト)にした。Python と `fullseye/uninstall.py` が在れば `python -I uninstall.py --uninstall --pause`(パッケージ本体を import しないので scipy が壊れた環境でも動く)、無ければ(venv を消した後)`.lnk`・アイコン・台帳・Uninstall キー・自分自身だけを固定の名前で消す。
+- 登録の途中で失敗しても、コピー済みのアイコンなど作った物は作った直後に台帳へ載る。Linux の `.desktop` の `Exec` で `%` `"` `$` `` ` `` `\` を仕様どおり逃がす。
+- テスト: `tests/conftest.py` がセッション全体で `FULLSEYE_LEDGER` を一時ファイルへ向け(`fullseye-rag` が本物の台帳に書いていた)、終了時に空の `HKCU\Software\FullseyeTest` を残さない。`_reg_delete_tree` と Uninstall キーの削除を実レジストリ(試験用キー)で通すテスト、`.lnk` の読み戻し、venv を消した状態の後始末スクリプトの実走を追加(`tests/test_installer_review_2026_11_12.py`)。`tools/ci_wheel_check.py` に「wheel に `studio_assets/fullseye.ico` と `fullseye_256.png` が入っている」を追加。
+- **既知の制約**(直していません・未確認): Store 版 Python(MSIX)では `%APPDATA%` / `%LOCALAPPDATA%` への書き込みが私的な領域に振り替えられ、登録が見えない可能性。
+- **既知の制約**(直していません・未確認): conda の `pythonw.exe` を環境を有効にせず起動すると DLL が見つからないことがある。
+- **既知の制約**(直していません・未確認): `.lnk` に AppUserModelID を書いていないので、タスクバーのピン留めとの結びつきは未確認。
+
 ### 直し — Studio の画像欄と表示(操作動画の試し撮りで見つかった物。次の patch 版 1.1.1 に入れる)
 
 - 画像が画像欄に収まらず、下が切れた。画像欄(`ImageView`)の最小サイズが 380x380 で、初回の欄(論理 1280x673 の窓で高さ 283px)より大きく、「窓に合わせる」を押しても欄からはみ出す大きさに合わせていた。最小サイズを 200x140 に下げ、「窓に合わせた」状態のまま窓や欄の大きさが変わったときは新しい欄の実寸で合わせ直す(利用者が拡大した後は動かさない)。起動直後のデモ画像も、レイアウト確定前の大きさで合わせた倍率のまま残らない。
