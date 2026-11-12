@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 4d87be350a9b -->
+<!-- i18n-source-sha: 9b7064a1ea20 -->
 # Fullseye Studio 完全指南
 
 繁重处理不会冻结窗口。底部区域显示当前阶段和进度；停止请求会在下一个阶段边界得到确认。若运行期间设置发生变化，界面会标明显示结果的代次，并可选择查看旧设置的完成结果或用当前设置重新运行。
@@ -84,15 +84,15 @@ fullseye-studio             # 若已 pip install -e .，可用控制台脚本
 
 ### IMAGE（结果视图）
 - **Load image…（Ctrl+O）** — 加载图像文件作为基准帧（png/jpg/bmp/tif）。
-- **Synthetic demo（Ctrl+D）** — 加载合成演示图像。
+- **Synthetic demo** — 加载合成演示图像。
 - **Save result…（Ctrl+S）** — 将当前显示的结果保存为 PNG。
-- **缩放**: 鼠标滚轮在光标位置缩放，拖动平移。**Zoom +（Ctrl+=）/ Zoom −（Ctrl+-）/ Fit（Ctrl+0）/ 1:1（Ctrl+1）**。
+- **缩放**: 鼠标滚轮在光标位置缩放，拖动平移。**Zoom +（Ctrl+=）/ Zoom −（Ctrl+-）/ Fit（Ctrl+0）/ 1:1（Ctrl+Alt+1）**。
 - 当结果为标量 feature、contour 结果或尚未加载图像时，视图中央会显示提示信息（不留空白）。
 - 悬停时，状态栏会显示 `x, y, value`（彩色图像则显示 RGB）。
 
 ### DISPLAY & PERCEPTION (v14)
 - **Display（颜色映射）** — 为 2D 结果着色以便显示: `gray` / `shaded relief` / `height (color)` / 各种颜色映射（jet, viridis, turbo, magma, plasma, inferno ……）。
-- **3D surface（Ctrl+3）** — 将当前结果以可旋转的 3D 曲面显示（仅在有 `QtDataVisualization` 时可用／best-effort）。便于查看高度/深度图。
+- **3D surface（Ctrl+Alt+3）** — 将当前结果以可旋转的 3D 曲面显示（仅在有 `QtDataVisualization` 时可用／best-effort）。便于查看高度/深度图。
 - **感知面板（2 帧）** — 用 **Load frame B…** 加载第 2 帧，选择模式后 **Run**:
   - `optical flow` — 用色相可视化两帧之间的稠密光流。
   - `motion overlay` — 把运动区域叠加到原图上。
@@ -120,11 +120,11 @@ fullseye-studio             # 若已 pip install -e .，可用控制台脚本
 | 操作 | 快捷键 | 操作 | 快捷键 |
 |---|---|---|---|
 | Open image | `Ctrl+O` | Remove stage | `Del` |
-| Synthetic demo | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
+| Duplicate stage | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
 | Save result | `Ctrl+S` | Clear pipeline | `Ctrl+Shift+Backspace` |
 | Open pipeline | `Ctrl+Shift+O` | Zoom in / out | `Ctrl+=` / `Ctrl+-` |
-| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+1` |
-| Export | `Ctrl+E` | 3D surface | `Ctrl+3` |
+| Save pipeline | `Ctrl+Shift+S` | Fit / Actual size (1:1) | `Ctrl+0` / `Ctrl+Alt+1` |
+| Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |

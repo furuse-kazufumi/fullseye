@@ -270,9 +270,9 @@ def test_from_the_shown_result_to_code_and_to_a_ledger_op():
     labels = [a.text() for a in menu.actions()]
     assert "Pipeline as code → editor" in labels and "Send this result to a ledger op…" in labels
     script = win._pipeline_script()
-    assert "def pipeline(frame):" in script and script.rstrip().endswith("result = pipeline(img)")
-    # 開いている画像のパスが無いときは置き場所を示す行(読む人が差し替える)
-    assert "your_image.png" in script or "read_image(" in script
+    # 2026-11-12(P-02): 単体で走る形(pipeline + main + __main__)。存在しない your_image.png は書かない
+    assert "def pipeline(frame):" in script and 'if __name__ == "__main__":' in script
+    assert "your_image.png" not in script
     ed = win._insert_code_into_editor(script, "pipeline.py")
     assert "result = pipeline(img)" in ed.toPlainText()
     # 結果 → 台帳 op: 画像を取る入力は「いまの画像」が最初から選ばれている

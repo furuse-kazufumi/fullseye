@@ -46,11 +46,11 @@ toolbar and buttons — same handler, three entry points).
 | action | shortcut | action | shortcut |
 |---|---|---|---|
 | Open image | `Ctrl+O` | Remove stage | `Del` |
-| Synthetic demo | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
+| Duplicate stage | `Ctrl+D` | Move stage up / down | `Ctrl+↑` / `Ctrl+↓` |
 | Save result | `Ctrl+S` | Clear pipeline | `Ctrl+Shift+⌫` |
 | Open / Save pipeline | `Ctrl+Shift+O/S` | Zoom in / out | `Ctrl+=` / `Ctrl+-` |
-| Export | `Ctrl+E` | Fit / 1:1 | `Ctrl+0` / `Ctrl+1` |
-| Quit | `Ctrl+Q` | 3-D surface | `Ctrl+3` |
+| Export | `Ctrl+E` | Fit / 1:1 | `Ctrl+0` / `Ctrl+Alt+1` |
+| Quit | `Ctrl+Q` | 3-D surface | `Ctrl+Alt+3` |
 | Reset / Step / Run all | `Home` / `Ctrl+→` / `Ctrl+Enter` | | |
 
 *Principle — recognition over recall + Fitts's law:* the highest-frequency
