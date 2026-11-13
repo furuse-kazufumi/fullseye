@@ -13,6 +13,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 型の直し方の候補と plan の経路から、入力の中身を読まない op(`MCP_INPUT_INDEPENDENT.json`、採点が断る一覧と同じ)を外した。以前は image → region の候補が `hx_gen_empty_region` で、従うと `count_obj` = 0 が判定 ok で返った。
 - 実行できない op の誤り文: 理由の 1 文と代わりの手(読む・Python から呼ぶ・同じ分類で MCP が走らせられる op)を付けた(上の節)。代わりの op は、名前の語を共有する物だけを並べる。`fullseye_apply` の「近い名前」に同じ名前を出さない。
 - `fullseye_op_cards`: 上限(`budget_tokens`)で落とした名前も `missing`(`reason` = `budget_tokens` / `unknown_op`)と本文の先頭の 1 行に書く(以前は知らない名前だけで、上限で落ちた名前はどこにも出なかった)。`budget_tokens` を schema に足した(ハンドラは読むのに渡せなかった。minimal では隠す)。**挙動が変わる点**: カードの `executable` は MCP で走るか(OP_GRAPH の `verified_executable`)を表す。以前の意味(Python の関数として呼べるか)は `python_executable` に移した。`truncated` は上限で落とした名前があるか。
+- `fullseye_find_ops`: `executable_only`(既定 false、minimal では隠す)を足した。**挙動が変わる点**: `proposals` の各行は `{kind, name, executable}` の参照だけにした(以前は ops / retry_ops / recipes の行を丸ごと写し、応答の約半分が重複だった)。件数と順番は変わらない。中身は `ops` / `recipes` を読む。
 
 ### MCP: 光学・照明・合成の入口などの台帳 op を MCP から実行できるようにした(2026-11-13)
 

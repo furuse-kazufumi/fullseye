@@ -133,3 +133,22 @@ def test_op_cards_report_names_dropped_for_budget_and_mean_mcp_by_executable(cat
     assert cards["illumination_design"]["executable"] is True and cards["gaussian"]["executable"] is True
     assert cards["lens_file_read"]["executable"] is False and cards["lens_file_read"]["python_executable"] is True
     assert cards["lens_file_read"]["mcp_unavailable"]["reason"] == "io_parameter"
+
+
+# --------------------------------------------------------------------------- 6: find_ops の重複と executable_only
+def test_find_ops_proposals_are_references_and_executable_only_filters(cat, store):
+    """直す前: proposals は ops / recipes の行を丸ごと写していて(検証の 1 回で ops 2.6 KB に proposals 4.3 KB)、
+    MCP で走る op だけに絞る手が無かった。"""
+    r = S.call_tool("fullseye_find_ops", {"query": "illumination design glossy metal"}, cat, store)
+    sc = r["structuredContent"]
+    assert len(sc["proposals"]) == 7
+    assert all(set(p) == {"kind", "name", "executable"} for p in sc["proposals"])
+    assert [p["name"] for p in sc["proposals"] if p["kind"] == "op"] == [o["name"] for o in sc["ops"]]
+    assert len(json.dumps(sc["proposals"], ensure_ascii=False)) < len(json.dumps(sc["ops"], ensure_ascii=False)) / 3
+    only = S.call_tool("fullseye_find_ops", {"query": "lens", "executable_only": True}, cat, store)["structuredContent"]
+    assert only["executable_only"] is True and len(only["ops"]) >= 3
+    assert all(p["executable"] for p in only["proposals"] if p["kind"] == "op")
+    plain = S.call_tool("fullseye_find_ops", {"query": "lens"}, cat, store)["structuredContent"]
+    assert "executable_only" not in plain and 3 <= len(plain["proposals"]) <= 7 and 3 <= len(only["proposals"]) <= 7
+    assert any(not p["executable"] for p in plain["proposals"])     # 絞らなければ走らない op も混ざる
+    assert not plain["proposals"][0]["executable"] or plain["proposals"][0]["name"] in {o["name"] for o in only["ops"]}

@@ -123,6 +123,8 @@ TOOLS: dict[str, dict] = {
                 #   additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
                 "lang": {"type": "string", "enum": ["ja", "en", "zh", "tw", "ko", "de", "hi"],
                          "description": "要約の言語(省略時は問い合わせの文字から判定)"},
+                "executable_only": {"type": "boolean", "default": False,
+                                    "description": "true なら MCP で実行できる op だけを返す"},
             },
             "required": ["query"],
             "additionalProperties": False,
@@ -2485,7 +2487,7 @@ def _profile_tool_names(profile: str) -> set[str]:
 #   plan の want の空・空白はハンドラが ArgError(-32602)で断る(minLength は空白だけを止められず、予算も食う)。
 # 2026-11-13: op_cards の budget_tokens を schema に足した(ハンドラは読むのに渡せなかった)分も同じ扱い。
 MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check", "dry_run", "assume_cuda"),
-                                                   "fullseye_find_ops": ("lang",),
+                                                   "fullseye_find_ops": ("lang", "executable_only"),
                                                    "fullseye_op_cards": ("budget_tokens",)}
 
 
@@ -3003,8 +3005,16 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             # a limit equal to the default reserved the recipe slots).
             recipe_limit = max(0, min(get_system("find_ops_recipe_max"), total_limit - 1))
             op_limit = total_limit - recipe_limit
-            r = search_ops(a["query"], op_limit, lang=a.get("lang"),
-                           in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
+            executable_only = bool(a.get("executable_only", False))
+            # executable_only: 多めに引いて MCP で走る op だけを残す(順位は検索のまま)
+            r = search_ops(a["query"], min(MAX_SEARCH_LIMIT, op_limit * 8) if executable_only else op_limit,
+                           lang=a.get("lang"), in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
+            if executable_only:
+                from fullseye.opsearch import _graph
+                runnable = {e["op"] for e in _graph()["edges"] if e.get("verified_executable")}
+                r["ops"] = [row for row in r["ops"] if row["name"] in runnable][:op_limit]
+                r["retry_ops"] = [row for row in r.get("retry_ops", []) if row["name"] in runnable]
+                r["executable_only"] = True
         except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)
             raise ArgError(str(exc)) from exc
         from fullseye.recipesearch import find_recipes
@@ -3036,9 +3046,16 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
                 lines.append("recipe: %s | %d stages | %s" %
                              (recipe["name"], len(ops), " → ".join(ops)))
             text = "\n".join(lines) or _format(r)
-        r["proposals"] = ([{"kind": "op", **row} for row in r["ops"]] +
-                          [{"kind": "retry_op", **row} for row in r.get("retry_ops", [])] +
-                          [{"kind": "recipe", **row} for row in r["recipes"]])[:total_limit]
+        # ★2026-11-13(報告 6): proposals は ops / retry_ops / recipes の行を丸ごと写していて、応答の半分が重複だった
+        #   (検証の 1 回で ops 2.6 KB に proposals 4.3 KB)。順番と種類だけの参照にする(中身は元の一覧を読む)。
+        from fullseye.opsearch import _graph
+        runnable = {e["op"] for e in _graph()["edges"] if e.get("verified_executable")}
+        r["proposals"] = ([{"kind": "op", "name": row["name"], "executable": row["name"] in runnable}
+                           for row in r["ops"]] +
+                          [{"kind": "retry_op", "name": row["name"], "executable": row["name"] in runnable}
+                           for row in r.get("retry_ops", [])] +
+                          [{"kind": "recipe", "name": row["name"], "executable": row.get("runner", "mcp") == "mcp"}
+                           for row in r["recipes"]])[:total_limit]
         return tool_result(text, r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_suggest_pipeline":
         from fullseye.opsearch import normalize_sort, search_ops, op_cards
