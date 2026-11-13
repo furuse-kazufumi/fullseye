@@ -77,7 +77,61 @@ def _to01_by_dtype(im):
     return im.astype(np.float64)
 
 
+#: 復号器が 1 つも無い時の 1 行(%s = 呼ばれ方に合わせた CLI 名)。ASCII だけで書く(cp932 の端末でも同じ文で出る)。
+_NO_IMAGE_CODEC = ("%s: reading and writing image files needs OpenCV or Pillow, and neither is installed here. "
+                   'Install one:  pip install "fullseye[opencv]"   (or:  pip install "fullseye[pil]")')
+
+
+def _image_codec() -> str:
+    """CLI の画像の読み書きに使う部品: ``"cv2"``(在れば)か ``"pil"``(cv2 が無い時)。
+
+    ★2026-11-13(配布物の検証 M2): ``pip install fullseye`` だけ(numpy と scipy)で ``fullseye apply`` /
+    ``pipeline`` が ``No module named 'cv2'`` の生の traceback で落ちていた(``fullseye --help`` の最初の例)。
+    ``[pil]`` や ``[gui]`` を入れても直らなかった(ここは cv2 を直に import していた)。cv2 が無ければ Pillow に倒し、
+    どちらも無ければ、どの extra を入れればよいかを 1 行で言って止める(``SystemExit`` = rc 1、traceback なし)。
+    """
+    try:
+        import cv2  # noqa: F401
+        return "cv2"
+    except ImportError:
+        pass
+    try:
+        import PIL.Image  # noqa: F401
+        return "pil"
+    except ImportError:
+        raise SystemExit(_NO_IMAGE_CODEC % _prog()) from None
+
+
+#: Pillow が 16 bit の灰を持つ形(``np.asarray`` で uint16 になる)
+_PIL_16BIT_MODES = ("I;16", "I;16L", "I;16B", "I;16N")
+
+
+def _imread_pil(path, sort):
+    """cv2 の無い環境の読み込み(Pillow)。約束は cv2 の経路と同じ: color は RGB、灰は 16 bit の標本を保って
+    dtype の最大値で割る、region は 0.5 で 2 値、EXIF の向きを守る(``cv2.imread`` と同じ)。"""
+    from PIL import Image, ImageOps
+    try:
+        with Image.open(path) as im0:
+            im = ImageOps.exif_transpose(im0)
+            if im.mode in _PIL_16BIT_MODES or im.mode == "I":
+                a = np.asarray(im)
+                if a.dtype.kind == "i" and a.size and a.min() >= 0 and a.max() <= 65535:
+                    a = a.astype(np.uint16)          # 32 bit の箱に入った 16 bit の標本(古い Pillow の "I")
+                g = _to01_by_dtype(a)
+                if sort == "color":
+                    return np.repeat(g[:, :, None], 3, axis=2)
+            elif sort == "color":
+                return _to01_by_dtype(np.asarray(im.convert("RGB")))
+            else:
+                g = _to01_by_dtype(np.asarray(im.convert("L")))
+    except (OSError, ValueError) as e:              # 無い・壊れた・画像でない(UnidentifiedImageError も OSError)
+        raise SystemExit("cannot read %s (%s)" % (path, e)) from None
+    return (g > 0.5).astype(np.float64) if sort == "region" else g
+
+
 def _imread(path, sort):
+    if _image_codec() == "pil":
+        return _imread_pil(path, sort)
     # ★2026-10-24: IMREAD_COLOR / IMREAD_GRAYSCALE alone demote a 16-bit file to
     #   8 bits (cv2 drops the low byte) and the result was then divided by 255.
     #   IMREAD_ANYDEPTH keeps the samples; scaling follows the decoded dtype.
@@ -95,8 +149,19 @@ def _imread(path, sort):
 
 
 def _imwrite(path, v):
-    import cv2
+    codec = _image_codec()
     v = np.asarray(v)
+    if codec == "pil":
+        if v.ndim == 3 and v.shape[-1] == 1:
+            v = v[:, :, 0]
+        out = np.clip(np.asarray(v, np.float64) * 255, 0, 255).astype(np.uint8)    # RGB のまま(Pillow は RGB)
+        from PIL import Image
+        try:
+            Image.fromarray(out).save(path)
+        except (OSError, ValueError, KeyError, TypeError) as e:    # 未対応の拡張子・書けない場所・形
+            raise SystemExit("cannot write %s (%s)" % (path, e)) from None
+        return
+    import cv2
     if v.ndim == 3 and v.shape[-1] == 3:
         out = np.clip(v * 255, 0, 255).astype(np.uint8)[:, :, ::-1]     # RGB->BGR
     else:
@@ -337,6 +402,7 @@ def cmd_run(a):
     if a.inp is None:
         raise SystemExit("need an input image (or use --describe / --to-python)")
 
+    _image_codec()                  # 読み書きの部品が 1 つも無ければ 1 行で止める(imgio の ValueError の traceback にしない)
     img = imgio.load(a.inp)
     if a.stepwise:
         for i, s in enumerate(eng.run_stepwise(img)):
@@ -617,6 +683,7 @@ def cmd_synth(a):
     """Learn a texture from an image and synthesise a NEW, similar one (synth.py)."""
     import imgio
     import synth
+    _image_codec()                  # run と同じ(cv2 も Pillow も無い環境で traceback にしない)
     img = imgio.load(a.inp)
     size = None
     if a.size:
