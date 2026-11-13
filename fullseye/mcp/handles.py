@@ -183,7 +183,9 @@ class HandleStore:
                 p = os.path.join(SAMPLE_DIR, it.get("file", ""))
                 if os.path.isfile(p):
                     rows.append({"name": it.get("name"), "path": p,
-                                 "source": it.get("source"), "licence": it.get("licence")})
+                                 "source": it.get("source"), "licence": it.get("licence"),
+                                 "description": it.get("description"),
+                                 "has_truth": bool(it.get("truth_mask"))})
         return rows
 
     # ---------------------------------------------------------------- store

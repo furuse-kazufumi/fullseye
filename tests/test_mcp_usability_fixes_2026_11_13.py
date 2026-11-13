@@ -314,3 +314,18 @@ def test_request_phrasing_is_not_a_search_term_and_katakana_is_not_split():
     _body, bridged, drop = _ja_query("サーモグラフィ 欠陥 深さ")
     assert {"thermo", "lockin"} <= set(bridged) and "グラ" in drop and "ラフ" in drop
     assert _ja_query("edge detection") == ("edge detection", [], set())
+
+
+# --------------------------------------------------------------------------- 13: list_samples の来歴
+def test_list_samples_says_what_each_sample_shows_its_source_and_licence(cat, store):
+    """直す前: list_samples は名前だけで、来歴・ライセンス・何が写っているか・真値があるかが分からなかった。"""
+    r = S.call_tool("fullseye_list_samples", {}, cat, store)
+    sc = r["structuredContent"]
+    details = {d["name"]: d for d in sc["sample_details"]}
+    assert len(details) >= 10 and set(details) == set(sc["samples"])
+    assert all(d["source"] and d["licence"] for d in details.values())
+    weld = details["weld_xray_porosity"]
+    assert weld["has_truth"] is True and "weld" in weld["what"].lower()
+    assert "- weld_xray_porosity:" in _text(r) and "真値あり" in _text(r)
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    assert root not in json.dumps(r, ensure_ascii=False)

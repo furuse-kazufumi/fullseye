@@ -3277,8 +3277,18 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         rows = store.samples()
         names=[r["name"] for r in rows]
         files = store.root_files()
-        text = ("files: " + (", ".join(files) if files else "(なし)") + "\nsamples: " + ", ".join(names))
-        return tool_result(text, {"files": files, "samples": names},
+        # ★2026-11-13(報告 13): 名前だけで、来歴・ライセンス・何が写っているかが分からなかった。
+        #   samples(名前の一覧)は従来どおり、詳しい行は sample_details に足す(ホストのパスは出さない)。
+        details = [{"name": r["name"], "what": r.get("description"), "source": r.get("source"),
+                    "licence": r.get("licence"), "has_truth": bool(r.get("has_truth"))} for r in rows]
+
+        def _line(d):
+            what = " ".join(str(d["what"]).split())[:110] if d["what"] else "(説明なし)"
+            return "- %s: %s [%s%s]" % (d["name"], what, d["licence"] or "licence unknown",
+                                        "; 真値あり" if d["has_truth"] else "")
+        text = ("files: " + (", ".join(files) if files else "(なし)") + "\nsamples: " + ", ".join(names)
+                + "\n" + "\n".join(_line(d) for d in details))
+        return tool_result(text, {"files": files, "samples": names, "sample_details": details},
                            max_structured_bytes=max_structured_bytes)
     try:
         if name == "fullseye_load_image":
