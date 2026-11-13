@@ -1368,6 +1368,61 @@ def _sort_mismatch_fixes(actual: str, expected: str) -> list[dict]:
     return fixes
 
 
+def _error_line(err: dict, stages: list) -> str:
+    """検証の誤り 1 件を 1 行にする(段番号・op・機械が読む符号・人が読む理由・直し方)。"""
+    stage = err.get("stage") or 0
+    op = stages[stage - 1].get("op") if 0 < stage <= len(stages) and isinstance(stages[stage - 1], dict) else None
+    head = ("段 %d %s" % (stage, op)) if stage else "pipeline"
+    reason = str(err.get("reason"))
+    short = lambda v: json.dumps(v, ensure_ascii=False)[:200]   # noqa: E731
+    if reason == "sort_mismatch":
+        body = "入力の型が違う(来たのは %s、要るのは %s)" % (
+            ", ".join(map(str, err.get("actual", []))), ", ".join(map(str, err.get("expected", []))))
+        fixes = [f.get("stage") or f.get("call") for f in err.get("fixes", []) if f.get("stage") or f.get("call")]
+        if fixes:
+            body += "。直し方の候補: " + " / ".join(dict.fromkeys(fixes))
+    elif reason == "unknown_op":
+        near = err.get("candidates") or []
+        body = "知らない op" + (("。近い名前: " + ", ".join(near[:5])) if near else "")
+    elif reason == "not_executable_in_mcp":
+        body = "MCP では実行できない(%s%s)" % (err.get("probe_reason") or err.get("detail"),
+                                              (": " + err["why"]) if err.get("why") else "")
+        if err.get("instead"):
+            body += "。代わりに: " + " / ".join(err["instead"])
+    elif reason == "unknown_parameter":
+        body = "知らない引数 %s。使える名前: %s" % (short(err.get("value")), short(err.get("candidates")))
+        if err.get("detail"):
+            body += "。" + str(err["detail"])
+    elif reason == "missing_parameter":
+        body = "必須の引数が無い: %s" % short(err.get("value"))
+    elif reason == "input_arity_mismatch":
+        body = "入力の本数が違う(渡したのは %s 本、要るのは %s 本%s)" % (
+            err.get("value"), err.get("expected"),
+            (": " + ", ".join(err["expected_sorts"])) if err.get("expected_sorts") else "")
+    elif err.get("detail"):
+        body = str(err["detail"])
+    elif "value" in err:
+        body = short(err["value"]) + ((" (expected %s)" % short(err["expected"])) if "expected" in err else "")
+    else:
+        body = ""
+    return "%s: %s%s" % (head, reason, (" — " + body) if body else "")
+
+
+def _validation_text(checked: dict, stages: list) -> str:
+    """検証の結果の本文。合否と、誤りごとの段番号と理由を 1 行ずつ(structuredContent を読めない相手にも届く)。
+
+    ★2026-11-13(AI の役での検証): 理由が structuredContent にしか無く、本文は「error」の 1 語だった。"""
+    if checked.get("valid"):
+        lines = ["検証: 合格(%d 段、1 段も走らせていない)。最終の型 %s" % (len(checked["stages"]), checked.get("out_sort"))]
+        lines += ["段 %d %s: %s -> %s" % (s["stage"], s["op"], ", ".join(s.get("in_sorts") or []) or "(入力なし)",
+                                          s["out_sort"]) for s in checked["stages"]]
+        return "\n".join(lines)
+    errors = checked.get("errors", [])
+    lines = ["検証: 不合格(誤り %d 件、1 段も走らせていない)" % len(errors)]
+    lines += [_error_line(e, stages) for e in errors]
+    return "\n".join(lines)
+
+
 def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, *,
                       max_stages: int | None = None, bindings: dict | None = None,
                       store: HandleStore | None = None, outputs: list[str] | None = None) -> dict:
@@ -1961,11 +2016,11 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             raise ArgError("pipeline validation failed: %s"%json.dumps(checked["errors"],ensure_ascii=False))
         if not explicit:
             first=checked["errors"][0]
-            op=a["stages"][first.get("stage",1)-1].get("op") if first.get("stage") else "pipeline"
             label="型の不一致: " if first.get("reason")=="sort_mismatch" else ""
-            raise ArgError("%s段 %s %s: %s"%(label,first.get("stage",0),op,
-                json.dumps(first,ensure_ascii=False)), data=checked)
-        return _tool_error(json.dumps(checked,ensure_ascii=False),checked)
+            # 本文(-32602 の message)は段番号と理由を 1 行ずつ。機械が読む全体は error.data に載る。
+            raise ArgError(label + "\n".join(_error_line(e, a["stages"]) for e in checked["errors"])
+                           + "\n(1 段も走らせていない)", data=checked)
+        return _tool_error(_validation_text(checked, a["stages"]), checked)
     bindings = checked["bindings"]
     outputs=a.get("outputs") or (["stage:%d"%len(a["stages"])] if a["stages"] else [])
     from collections import Counter
@@ -2246,8 +2301,26 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         for r in records:
             r.pop("_lines", None)
         bad=next(r for r in records if r.get("status")=="failed")
-        return _tool_error("段 %d %s failed in strict mode: "% (bad["stage"],bad["op"])+
-                           json.dumps(result,ensure_ascii=False,separators=(",",":")),result)
+        # 本文は段ごとに 1 行(★2026-11-13: 以前は結果の JSON を丸ごと 1 行に繋いでいて、どの段がなぜ
+        #   止まったかを本文から読めなかった)。
+        lines = ["段 %d %s failed in strict mode: %s" % (bad["stage"], bad["op"], bad.get("reason"))]
+        for r in records:
+            err = r.get("error") or {}
+            if r.get("status") == "ok":
+                lines.append("段 %d %s: ok -> %s" % (r["stage"], r["op"], r.get("out_sort")))
+            elif r.get("status") == "failed":
+                detail = ("%s: %s" % (err.get("type"), err.get("message"))) if err else (r.get("out_sort") or "")
+                lines.append("段 %d %s: 失敗 %s — %s" % (r["stage"], r["op"], r.get("reason"), detail))
+                if err.get("limit"):
+                    lines.append("  上限: %s(時間 %s 秒、メモリ %s MiB)" % (
+                        err["limit"], err.get("time_limit_s"), int(err.get("memory_limit_bytes", 0)) >> 20))
+                if r.get("example"):
+                    lines.append("  動く見本: fullseye_pipeline(stages=%s)" % json.dumps(
+                        r["example"]["stages"], ensure_ascii=False, separators=(",", ":"))[:400])
+            else:
+                lines.append("段 %d %s: 走らせていない(%s、止めたのは %s)" % (
+                    r["stage"], r["op"], r.get("reason"), ", ".join(r.get("blocked_by", []))))
+        return _tool_error("\n".join(lines), result)
     text=(("パイプライン %d 段 完走: "%sum(r.get("status")=="ok" for r in records)) +
           " -> ".join(r["op"] for r in records if r.get("status")=="ok"))
     table_lines = []
@@ -3035,7 +3108,7 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         #   None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
         r = validate_pipeline(a["stages"], a.get("start_sort"), cat, max_stages=None,
                               bindings=a.get("bindings"),store=store)
-        text = json.dumps(r, ensure_ascii=False, indent=2)
+        text = _validation_text(r, a["stages"])
         return (tool_result(text, r, max_structured_bytes=max_structured_bytes) if r["valid"]
                 else _tool_error(text, r))
     if name == "fullseye_op_help":

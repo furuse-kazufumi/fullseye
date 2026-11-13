@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### MCP: AI の役での検証の報告 2〜13 番と、判定 ok の意味の直し(2026-11-13)
+
+- 失敗の本文: `fullseye_validate_pipeline` の不合格・`fullseye_pipeline` の型の誤り(-32602)・段の失敗の本文を、段番号・op・理由・直し方の 1 行ずつにした(以前は「error」の 1 語や、結果の JSON を 1 行に繋いだ物で、理由は structuredContent にしか無かった)。structuredContent は変えていない。
+
 ### MCP: 光学・照明・合成の入口などの台帳 op を MCP から実行できるようにした(2026-11-13)
 
 AI の役で MCP を使った検証(2026-11-13)で、optics の op は MCP から 1 つも実行できなかった(照明の 17 op は全部
