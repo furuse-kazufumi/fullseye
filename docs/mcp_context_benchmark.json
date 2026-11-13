@@ -2,7 +2,7 @@
   "method": "minimal tools schema plus only LLM-visible content[].text from find_ops(limit=7, typed), plan(k=7), and cards; UTF-8 JSON bytes/4; structuredContent excluded",
   "scope": "Counts discovery through planning/cards only; execution and answer-correctness evaluation are excluded.",
   "tool_profiles": {
-    "full_tokens": 4285,
+    "full_tokens": 4308,
     "minimal_tokens": 1496,
     "full_tools": 24,
     "minimal_tools": 10
