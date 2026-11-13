@@ -521,9 +521,13 @@ class KeyRecorder(QtWidgets.QLineEdit):
     """押したキーを記録する欄。記録の間は窓のキーを撃たせない(ShortcutOverride を取る)。IME の文字は受けない。
 
     ``allow_chords`` の時、続けて押したもう 1 打は 2 打鍵のキー(3 打目で始めから)。そうでなければ毎回置き換える。
+    修飾なしの Enter = 決める(``commit``)、Esc = 記録をやめる(空なら ``leave``)、Tab / Shift+Tab = フォーカス移動
+    (VS Code のキーの記録と同じ)。``record_literally`` の後の 1 打だけは、Tab・Esc・Enter もそのまま記録する。
     """
 
     recorded = QtCore.Signal(str)
+    commit = QtCore.Signal()
+    leave = QtCore.Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -532,6 +536,41 @@ class KeyRecorder(QtWidgets.QLineEdit):
         self.setAttribute(_K.WA_InputMethodEnabled, False)
         self.allow_chords = True
         self._strokes: list = []
+        self._literal = False
+        self._placeholder = ""
+
+    def record_literally(self, hint: str = "") -> None:
+        """次の 1 打を、Tab・Esc・Enter も含めてそのまま記録する。"""
+        self._literal = True
+        self._placeholder = self.placeholderText()
+        if hint:
+            self.setPlaceholderText(hint)
+        self.setFocus()
+
+    def _end_literal(self) -> None:
+        if self._literal:
+            self._literal = False
+            self.setPlaceholderText(self._placeholder)
+
+    def _navigation(self, ev) -> bool:
+        """記録しないキー(Tab の移動・Enter・Esc)なら処理して True。"""
+        key, mods = int(ev.key()), ev.modifiers()
+        hard = mods & (_K.ControlModifier | _K.AltModifier | _K.MetaModifier)
+        if key in (int(_K.Key_Tab), int(_K.Key_Backtab)) and not hard:
+            self.focusNextPrevChild(key == int(_K.Key_Tab) and not mods & _K.ShiftModifier)
+            return True
+        if hard or mods & _K.ShiftModifier:
+            return False
+        if key in (int(_K.Key_Return), int(_K.Key_Enter)):
+            self.commit.emit()
+            return True
+        if key == int(_K.Key_Escape):
+            if self._strokes:
+                self.clear_keys()
+            else:
+                self.leave.emit()
+            return True
+        return False
 
     def sequence(self) -> str:
         return ", ".join(self._strokes)
@@ -546,7 +585,9 @@ class KeyRecorder(QtWidgets.QLineEdit):
         if et == QtCore.QEvent.ShortcutOverride:
             ev.accept()
             return True
-        if et == QtCore.QEvent.KeyPress:                       # Tab もここで記録する(フォーカスを動かさない)
+        if et == QtCore.QEvent.KeyPress:                       # QLineEdit の既定(Tab の移動など)へは渡さない
+            if not self._literal and self._navigation(ev):
+                return True
             self.keyPressEvent(ev)
             return True
         return super().event(ev)
@@ -555,12 +596,17 @@ class KeyRecorder(QtWidgets.QLineEdit):
         keys = event_keys(ev)
         if not keys or ev.isAutoRepeat():
             return
+        self._end_literal()
         if self.allow_chords and len(self._strokes) == 1:
             self._strokes.append(keys[0])
         else:
             self._strokes = [keys[0]]
         self.setText(self.sequence())
         self.recorded.emit(self.sequence())
+
+    def focusOutEvent(self, ev):                               # noqa: N802 (Qt の名前)
+        self._end_literal()
+        super().focusOutEvent(ev)
 
     def inputMethodEvent(self, ev):                            # noqa: N802 (Qt の名前)
         ev.ignore()                                            # 変換中の文字はキーとして記録しない
@@ -602,6 +648,9 @@ class KeyboardDialog(QtWidgets.QDialog):
         self.preset_label = QtWidgets.QLabel()
         self.preset = QtWidgets.QComboBox()
         self.preset.setObjectName("keymapPreset")
+        self.preset.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)   # 言語を変えても文が切れない
+        self.preset.setFocusPolicy(_K.StrongFocus)
+        self.preset.installEventFilter(self)                       # フォーカスの無い時のホイールで型を変えない
         for name in km.PRESETS:
             self.preset.addItem(tr(km.PRESET_TITLES[name]), name)
         self.preset.activated.connect(self._on_preset)
@@ -641,6 +690,11 @@ class KeyboardDialog(QtWidgets.QDialog):
             hh.setSectionResizeMode(col, QtWidgets.QHeaderView.ResizeToContents)
         self.table.itemSelectionChanged.connect(self._on_select)
         lay.addWidget(self.table, 1)
+        self.no_match = QtWidgets.QLabel()                         # 検索が 0 件の時の例
+        self.no_match.setObjectName("keymapNoMatch")
+        self.no_match.setProperty("muted", True)
+        self.no_match.hide()
+        lay.addWidget(self.no_match)
         self.selected = QtWidgets.QLabel()
         self.selected.setObjectName("keymapSelected")
         self.current = QtWidgets.QLabel()
@@ -656,11 +710,17 @@ class KeyboardDialog(QtWidgets.QDialog):
         self.recorder.setFont(_key_font(self.recorder.font()))
         self.recorder.setStyleSheet(_KEY_FONT_QSS)
         self.recorder.recorded.connect(self._on_recorded)
+        self.recorder.commit.connect(self._on_commit)
+        self.recorder.leave.connect(lambda: self.table.setFocus())
         self.b_clear = QtWidgets.QPushButton()
         self.b_clear.clicked.connect(lambda _=False: self.recorder.clear_keys())
+        self.b_literal = QtWidgets.QPushButton()
+        self.b_literal.setObjectName("keymapLiteral")
+        self.b_literal.clicked.connect(lambda _=False: self.recorder.record_literally(self.ctl.tr(km.PH_LITERAL)))
         rec.addWidget(self.record_label)
         rec.addWidget(self.recorder, 1)
         rec.addWidget(self.b_clear)
+        rec.addWidget(self.b_literal)
         lay.addLayout(rec)
         self.hint = QtWidgets.QLabel()
         self.hint.setProperty("muted", True)
@@ -712,15 +772,24 @@ class KeyboardDialog(QtWidgets.QDialog):
         self.preset_label.setText(tr(km.LBL_PRESET))
         for i in range(self.preset.count()):
             self.preset.setItemText(i, tr(km.PRESET_TITLES[self.preset.itemData(i)]))
+        self.preset.updateGeometry()
+        self.no_match.setText(tr(km.MSG_NO_MATCH))
         self.search.setPlaceholderText(tr(km.PH_SEARCH))
         self.table.setHorizontalHeaderLabels([tr(km.COL_COMMAND), tr(km.COL_KEY), tr(km.COL_WHERE), tr(km.COL_CHANGED)])
         self.record_label.setText(tr(km.LBL_RECORD))
         self.recorder.setPlaceholderText(tr(km.PH_RECORD))
         for b, s in ((self.b_clear, km.BTN_CLEAR), (self.b_assign, km.BTN_ASSIGN), (self.b_add, km.BTN_ADD),
                      (self.b_remove, km.BTN_REMOVE), (self.b_reset, km.BTN_RESET), (self.b_reset_all, km.BTN_RESET_ALL),
-                     (self.b_import, km.BTN_IMPORT), (self.b_export, km.BTN_EXPORT), (self.b_close, km.BTN_CLOSE)):
+                     (self.b_import, km.BTN_IMPORT), (self.b_export, km.BTN_EXPORT), (self.b_close, km.BTN_CLOSE),
+                     (self.b_literal, km.BTN_LITERAL)):
             b.setText(tr(s))
         self.refill()
+
+    def eventFilter(self, obj, ev):                             # noqa: N802 (Qt の名前)
+        if obj is self.preset and ev.type() == QtCore.QEvent.Wheel and not self.preset.hasFocus():
+            ev.ignore()
+            return True                                        # 表を回すつもりのホイールで型の切り替えを聞かない
+        return super().eventFilter(obj, ev)
 
     # ---- 表 ---------------------------------------------------------------- #
     def refill(self) -> None:
@@ -756,6 +825,7 @@ class KeyboardDialog(QtWidgets.QDialog):
         t.blockSignals(False)
         self._filter()
         self._show_load_note()
+        self.b_reset_all.setEnabled(bool(ctl.keymap.overrides()))
         self.select(keep) if keep else self._show_detail()
 
     def _show_load_note(self) -> None:
@@ -775,6 +845,7 @@ class KeyboardDialog(QtWidgets.QDialog):
         shown = {r[0] for r in km.search(self._rows, self.search.text())}
         for r, row in enumerate(self._rows):
             self.table.setRowHidden(r, row[0] not in shown)
+        self.no_match.setVisible(bool(self.search.text().strip()) and not shown)
 
     def visible_ids(self) -> list:
         """今の絞り込みで見えている行の ID(上から)。"""
@@ -802,7 +873,7 @@ class KeyboardDialog(QtWidgets.QDialog):
     def _show_detail(self) -> None:
         tr, c = self.ctl.tr, self._cmd()
         editable = c is not None and not c.fixed
-        for w in (self.recorder, self.b_clear, self.b_remove, self.b_reset):
+        for w in (self.recorder, self.b_clear, self.b_literal, self.b_remove, self.b_reset):
             w.setEnabled(editable)
         self.b_reset.setEnabled(editable and self.ctl.keymap.is_changed(c.id))
         self.b_remove.setEnabled(editable and bool(self.ctl.keymap.keys(c.id)))
@@ -825,7 +896,8 @@ class KeyboardDialog(QtWidgets.QDialog):
             self.b_add.setEnabled(False)
             return
         self.recorder.allow_chords = km.SCOPES[c.scope].chords
-        self.hint.setText(tr(km.HINT_CHORD if self.recorder.allow_chords else km.HINT_NO_CHORD))
+        self.hint.setText(tr(km.HINT_CHORD if self.recorder.allow_chords else km.HINT_NO_CHORD) + " "
+                          + tr(km.HINT_KEYS))
         self._on_recorded(self.recorder.sequence())
 
     def _render(self, probs: list) -> str:
@@ -845,10 +917,18 @@ class KeyboardDialog(QtWidgets.QDialog):
         keys = (tuple(self.ctl.keymap.keys(c.id)) + (seq,)) if add else (seq,)
         return self.ctl.check(c.id, keys)
 
+    def _removal(self, seq: str) -> str | None:
+        """記録したキーが今のキーの 1 つで、他にもキーがあれば、そのキーだけを外す(「<キー> を外す」)。"""
+        c = self._cmd()
+        keys = self.ctl.keymap.keys(c.id) if c is not None else ()
+        return seq if seq and seq in keys and len(keys) > 1 else None
+
     def _on_recorded(self, seq: str) -> None:
         c = self._cmd()
         if c is None or c.fixed:
             return
+        one = self._removal(seq)
+        self.b_remove.setText(self.ctl.tr(km.BTN_REMOVE_ONE) % one if one else self.ctl.tr(km.BTN_REMOVE))
         if not seq:
             cur = self.ctl.check(c.id, self.ctl.keymap.keys(c.id))
             notes = [p for p in cur if p.level != "error"]
@@ -863,6 +943,9 @@ class KeyboardDialog(QtWidgets.QDialog):
             self.b_add.setEnabled(False)
             return
         probs = self.problems_for(seq)
+        cur = tuple(self.ctl.keymap.keys(c.id))
+        if cur and cur != (seq,) and not any(p.level == "error" for p in probs):
+            probs = list(probs) + [km.Problem("info", "replaces", c.id, seq, detail=" / ".join(cur))]
         self.status.setText(self._render(probs))
         self.b_assign.setEnabled(not any(p.level == "error" for p in probs))
         add_probs = self.problems_for(seq, add=True)
@@ -885,10 +968,17 @@ class KeyboardDialog(QtWidgets.QDialog):
         self._after(probs)
         return probs
 
+    def _on_commit(self) -> None:
+        """記録の欄の Enter: 割り当てられる時だけ割り当てる。"""
+        if self.b_assign.isEnabled():
+            self.do_assign()
+
     def do_remove(self) -> None:
         c = self._cmd()
         if c is not None and not c.fixed:
-            self._after(self.ctl.assign(c.id, ()))
+            one = self._removal(self.recorder.sequence())
+            keys = tuple(k for k in self.ctl.keymap.keys(c.id) if k != one) if one else ()
+            self._after(self.ctl.assign(c.id, keys))
 
     def do_reset(self) -> list:
         c = self._cmd()
@@ -913,7 +1003,7 @@ class KeyboardDialog(QtWidgets.QDialog):
         n = len(self.ctl.keymap.overrides())
         if not n:
             return False
-        if not self.confirm(tr(km.TTL_RESET_ALL), tr(km.ASK_RESET_ALL) % n):
+        if not self.confirm(tr(km.TTL_RESET_ALL), tr(km.ASK_RESET_ALL) % n, tr(km.BTN_RESET_ALL_DO)):
             return False
         self.ctl.reset_all()
         return True
@@ -934,7 +1024,7 @@ class KeyboardDialog(QtWidgets.QDialog):
         if dropped:
             text += "\n\n" + tr(km.ASK_PRESET_DROP) % len(dropped) + "\n" + "\n".join(
                 "  %s: %s" % (tr(km.BY_ID[cid].title), " / ".join(keys) or tr(km.LBL_NONE)) for cid, keys in dropped)
-        if not self.confirm(tr(km.TTL_PRESET), text):
+        if not self.confirm(tr(km.TTL_PRESET), text, tr(km.BTN_SWITCH)):
             return False
         self.ctl.switch_preset(name)
         return True
@@ -944,11 +1034,25 @@ class KeyboardDialog(QtWidgets.QDialog):
         path = self.ask_open()
         if not path:
             return False
-        ok, probs = self.ctl.import_file(path)
-        if not ok:
+        new, probs = self.ctl.read_import(path)
+        if new is None:
             self.inform(tr(km.BTN_IMPORT), tr(km.MSG_IMPORT_FAILED) + "\n" + "\n".join(
                 "  " + self.ctl.describe(p) for p in probs if p.level == "error"))
             return False
+        cur = self.ctl.keymap
+        if cur.overrides() or cur.preset != km.DEFAULT_PRESET:   # 今の変更が消える: 置き換える前に聞く
+            text = tr(km.ASK_IMPORT) % (len(cur.overrides()), len(new.overrides()))
+            if new.preset != cur.preset:
+                text += "\n" + tr(km.ASK_IMPORT_PRESET) % tr(km.PRESET_TITLES[new.preset])
+            lost = [cid for cid in sorted(cur.overrides()) if new.keys(cid) != cur.keys(cid)
+                    and not new.is_changed(cid)]
+            if lost:
+                text += "\n\n" + tr(km.ASK_IMPORT_LOST) + "\n" + "\n".join(
+                    "  %s: %s" % (tr(km.BY_ID[cid].title), " / ".join(cur.keys(cid)) or tr(km.LBL_NONE))
+                    for cid in lost[:20])
+            if not self.confirm(tr(km.TTL_IMPORT), text, tr(km.BTN_REPLACE)):
+                return False
+        self.ctl.use_import(new)
         self.status.setText(html.escape(tr(km.MSG_IMPORTED) % len(self.ctl.keymap.overrides())))
         return True
 
@@ -957,13 +1061,38 @@ class KeyboardDialog(QtWidgets.QDialog):
         path = self.ask_save()
         if not path:
             return False
-        n = self.ctl.export_file(path)
+        try:
+            n = self.ctl.export_file(path)
+        except OSError as exc:                                 # 書けない場所・使われているファイル
+            self.inform(tr(km.BTN_EXPORT), tr(km.MSG_EXPORT_FAILED) % (
+                os.path.basename(path), km._safe(exc.strerror or type(exc).__name__, 80)))
+            self.status.setText("")
+            return False
         self.status.setText(html.escape(tr(km.MSG_EXPORTED) % (n, os.path.basename(path))))
         return True
 
     # ---- 既定の確認の窓 ---------------------------------------------------- #
-    def _confirm(self, title: str, text: str) -> bool:
-        return QtWidgets.QMessageBox.question(self, title, text) == QtWidgets.QMessageBox.Yes
+    def _confirm_box(self, title: str, text: str, action: str | None = None) -> tuple:
+        """確認の窓(既定とエスケープはキャンセル。Enter だけでは取り返しのつかない事をしない)。``(窓, 実行のボタン)``。"""
+        tr = self.ctl.tr
+        box = QtWidgets.QMessageBox(self)
+        box.setIcon(QtWidgets.QMessageBox.Question)
+        box.setWindowTitle(title)
+        box.setText(text)
+        ok = box.addButton(action or title, QtWidgets.QMessageBox.AcceptRole)
+        cancel = box.addButton(tr(km.BTN_CANCEL), QtWidgets.QMessageBox.RejectRole)
+        box.setDefaultButton(cancel)
+        box.setEscapeButton(cancel)
+        cancel.setFocus()
+        return box, ok
+
+    def _confirm(self, title: str, text: str, action: str | None = None) -> bool:
+        box, ok = self._confirm_box(title, text, action)
+        try:
+            box.exec()
+            return box.clickedButton() is ok
+        finally:
+            box.deleteLater()
 
     def _inform(self, title: str, text: str) -> None:
         QtWidgets.QMessageBox.warning(self, title, text)
@@ -1147,27 +1276,51 @@ class KeymapController(QtCore.QObject):
         return dropped
 
     def export_file(self, path: str) -> int:
-        """上書きを JSON に書き出す(LF、UTF-8)。書いた上書きの数。"""
-        with open(path, "wb") as fh:
-            fh.write(self.keymap.to_json().encode("utf-8"))
+        """上書きを JSON に書き出す(LF、UTF-8)。一時ファイルに書いてから置き換える。書いた上書きの数。
+
+        書けなければ ``OSError``(途中のファイルは残さない)。
+        """
+        tmp = path + ".tmp-%d" % os.getpid()
+        try:
+            with open(tmp, "wb") as fh:
+                fh.write(self.keymap.to_json().encode("utf-8"))
+            os.replace(tmp, path)
+        finally:
+            if os.path.exists(tmp):
+                try:
+                    os.remove(tmp)
+                except OSError:
+                    pass
         return len(self.keymap.overrides())
 
     def import_file(self, path: str) -> tuple:
-        """JSON を読み込む。駄目なら何も変えず ``(False, problems)``。"""
+        """JSON を読み込んで当てる(確認なし。設定の窓は read_import → 確認 → use_import)。駄目なら何も変えず
+        ``(False, problems)``。"""
+        new, probs = self.read_import(path)
+        if new is None:
+            return False, probs
+        self.use_import(new)
+        return True, probs
+
+    def use_import(self, new: km.Keymap) -> None:
+        """読み込んだ表に置き換える。前の表(変えた物があれば)を keymap/user.previous に 1 世代残す。"""
+        s = self.store()
+        if s is not None and (self.keymap.overrides() or self.keymap.preset != km.DEFAULT_PRESET):
+            s.setValue(km.PREVIOUS_KEY, self.keymap.to_json())
+        self.keymap = new
+        self._commit()
+
+    def read_import(self, path: str) -> tuple:
+        """JSON を読んで検査する(まだ当てない)。``(Keymap, 警告)`` か ``(None, problems)``。"""
         try:
             size = os.path.getsize(path)
             if size > km.MAX_IMPORT_BYTES:
-                return False, [km.Problem("error", "too_big", detail="%d bytes" % size)]
+                return None, [km.Problem("error", "too_big", detail="%d bytes" % size)]
             with open(path, "rb") as fh:
                 data = fh.read(km.MAX_IMPORT_BYTES + 1)
         except OSError as exc:
-            return False, [km.Problem("error", "bad_json", detail=str(exc)[:80])]
-        new, probs = km.import_text(data, self.fixed_entries(), self.places)
-        if new is None:
-            return False, probs
-        self.keymap = new
-        self._commit()
-        return True, probs
+            return None, [km.Problem("error", "bad_json", detail=str(exc)[:80])]
+        return km.import_text(data, self.fixed_entries(), self.places)
 
     # ---- 表示 -------------------------------------------------------------- #
     def _fixed_title(self, e: km.Entry) -> str:
@@ -1190,8 +1343,11 @@ class KeymapController(QtCore.QObject):
             self.dialog = KeyboardDialog(self)
             _state(self.win).on_lang.append(lambda: self.dialog.retranslate() if _valid(self.dialog) else None)
         self.dialog.refill()
+        first = not self.dialog.isVisible()
         self.dialog.show()
         self.dialog.raise_()
+        if first:
+            self.dialog.search.setFocus()                      # 開いた時は検索欄(型の箱をキー 1 つで変えない)
         return self.dialog
 
 

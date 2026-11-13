@@ -349,7 +349,7 @@ def test_every_own_string_has_five_translations_and_nothing_else():
     table = km.load_table()
     assert km.missing() == []
     assert sorted(table) == sorted(km.ui_strings())
-    assert len(table) == 132
+    assert len(table) == 146
     ph = re.compile(r"%\(\w+\)s|%[sd]")
     for en, row in table.items():
         for lang in km.LANGS[1:]:
@@ -494,7 +494,9 @@ def ctl(win, studio_mod):
     c = win._keymap
     yield c
     if c.dialog is not None:
-        c.dialog.close()
+        c.dialog.close()                                                  # 差し替えた確認の窓などを次へ残さない
+        c.dialog.deleteLater()
+        c.dialog = None
     if studio_mod._UI_LANG.get("code") != "en":
         win._apply_language("en")
     c.keymap = km.Keymap()
@@ -842,12 +844,12 @@ def test_dialog_reset_all_and_preset_need_a_confirmation(win, ctl):
     ctl.assign("export", ("F10",))
     ctl.assign("fit", ("Ctrl+Shift+F12",))
     asked = []
-    dlg.confirm = lambda title, text: asked.append((title, text)) or False
+    dlg.confirm = lambda title, text, *_a: asked.append((title, text)) or False
     assert dlg.do_reset_all() is False and len(ctl.keymap.overrides()) == 2   # 断った: 何も変えない
     assert "2" in asked[-1][1]
     assert dlg.switch_preset("vscode") is False and ctl.keymap.preset == "visual_studio"
     assert "F10" in asked[-1][1]                                         # 外れる上書きを先に知らせる
-    dlg.confirm = lambda title, text: True
+    dlg.confirm = lambda title, text, *_a: True
     assert dlg.switch_preset("vscode") is True
     assert ctl.keymap.preset == "vscode" and ctl.keymap.overrides() == {"fit": ("Ctrl+Shift+F12",)}
     assert dlg.preset.currentData() == "vscode"
@@ -898,11 +900,9 @@ def test_the_recorder_ignores_the_ime_and_records_two_strokes(win, ctl):
     assert rec.sequence() == "Ctrl+K, Ctrl+S"
     _press(rec, K.Key_E, K.ControlModifier)
     assert rec.sequence() == "Ctrl+E"                                     # 3 打目で始めから
-    from PySide6 import QtWidgets  # noqa: PLC0415
-    before = QtWidgets.QApplication.focusWidget()
+    dlg.b_literal.click()
     _press(rec, K.Key_Tab)
-    assert rec.sequence() == "Ctrl+E, Tab"                                # Tab も記録する
-    assert QtWidgets.QApplication.focusWidget() is before                 # フォーカスは動かない
+    assert rec.sequence() == "Ctrl+E, Tab"                                # 「そのまま記録」の時は Tab も記録する
     assert dlg.select("editops_line_duplicate")
     assert not rec.allow_chords
     _press(rec, K.Key_K, K.ControlModifier)
@@ -1336,3 +1336,196 @@ def test_the_default_keys_of_the_program_editor_do_not_change(win, ctl):
     assert ed.font().pointSize() > size
     QTest.keyClick(ed, K.Key_Minus, K.ControlModifier)
     assert ed.font().pointSize() == size
+
+
+# --------------------------------------------------------------------------- #
+# 2026-11-13 独立レビュー 1 回目の直し(C4: 設定の窓の使い勝手)
+# --------------------------------------------------------------------------- #
+def _answer_next_box(key_name="Key_Return", after_ms=80):
+    """次に出るモーダルの窓へ 1 打送る(3 秒で出なければ、出ていれば閉じて「時間切れ」を記録)。"""
+    from PySide6 import QtCore, QtWidgets  # noqa: PLC0415
+    from PySide6.QtTest import QTest  # noqa: PLC0415
+    seen = {"sent": 0, "timeout": 0, "focus": None, "tries": 0}
+
+    def poke():
+        box = QtWidgets.QApplication.activeModalWidget()
+        if box is None:
+            seen["tries"] += 1
+            if seen["tries"] < 60:
+                QtCore.QTimer.singleShot(50, poke)
+            return
+        target = QtWidgets.QApplication.focusWidget() or box
+        seen["focus"] = target
+        QTest.keyClick(target, getattr(QtCore.Qt, key_name))
+        seen["sent"] += 1
+
+    def guard():
+        box = QtWidgets.QApplication.activeModalWidget()
+        if box is not None:
+            seen["timeout"] += 1
+            box.close()
+    QtCore.QTimer.singleShot(after_ms, poke)
+    QtCore.QTimer.singleShot(3000, guard)
+    return seen
+
+
+def test_confirmations_default_to_cancel_and_enter_does_not_do_it(win, ctl):
+    from PySide6 import QtWidgets  # noqa: PLC0415
+    dlg = ctl.open_dialog()
+    box, ok = dlg._confirm_box("T", "text", "Reset all")
+    try:
+        assert box.defaultButton() is not None and box.defaultButton() is not ok
+        assert box.escapeButton() is box.defaultButton() and box.defaultButton().text() == "Cancel"
+        assert ok.text() == "Reset all"
+    finally:
+        box.deleteLater()
+    assert ctl.assign("fit", ("Ctrl+Shift+F12",)) == [] and ctl.assign("export", ("Ctrl+Shift+F11",)) == []
+    seen = _answer_next_box()
+    assert dlg.do_reset_all() is False
+    assert seen["sent"] == 1 and seen["timeout"] == 0
+    assert isinstance(seen["focus"], QtWidgets.QPushButton) and seen["focus"].text() == "Cancel"
+    assert len(ctl.keymap.overrides()) == 2                              # Enter だけでは全部を戻さない
+    seen = _answer_next_box()
+    assert dlg.switch_preset("vscode") is False and ctl.keymap.preset == "visual_studio"
+    assert seen["sent"] == 1 and seen["timeout"] == 0
+    seen = _answer_next_box("Key_Escape")
+    assert dlg.do_reset_all() is False and len(ctl.keymap.overrides()) == 2
+    assert seen["sent"] == 1 and seen["timeout"] == 0
+
+
+def test_the_dialog_opens_on_the_search_and_the_preset_box_ignores_the_wheel(win, ctl):
+    from PySide6 import QtCore, QtGui, QtWidgets  # noqa: PLC0415
+    dlg = ctl.open_dialog()
+    dlg.activateWindow()
+    _pump(0.2)
+    assert dlg.search.hasFocus()
+    assert dlg.preset.focusPolicy() == QtCore.Qt.StrongFocus
+    asked = []
+    dlg.confirm = lambda *a: asked.append(a) or False
+    pos = QtCore.QPointF(5, 5)
+    ev = QtGui.QWheelEvent(pos, dlg.preset.mapToGlobal(pos), QtCore.QPoint(0, 0), QtCore.QPoint(0, -120),
+                           QtCore.Qt.NoButton, QtCore.Qt.NoModifier, QtCore.Qt.NoScrollPhase, False)
+    QtWidgets.QApplication.sendEvent(dlg.preset, ev)
+    _pump(0.05)
+    assert asked == [] and dlg.preset.currentData() == "visual_studio"   # ホイール 1 段で型の切り替えを聞かない
+
+
+def _write_keys(path, bindings, preset="visual_studio"):
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump({"format": km.FORMAT, "version": 1, "preset": preset, "bindings": bindings}, fh)
+
+
+def test_import_asks_before_replacing_and_keeps_the_previous_map(win, ctl, studio_mod, tmp_path):
+    dlg = ctl.open_dialog()
+    path = str(tmp_path / "other.json")
+    _write_keys(path, {"zoom_in": ["Ctrl+F11"]}, preset="vscode")
+    dlg.ask_open = lambda: path
+    asked = []
+    dlg.confirm = lambda title, text, *_a: asked.append(text) or False
+    assert dlg.do_import() is True and asked == []                        # 変えた物が無ければ聞かない
+    assert ctl.keymap.overrides() == {"zoom_in": ("Ctrl+F11",)} and ctl.keymap.preset == "vscode"
+    ctl.keymap = km.Keymap()
+    assert ctl.assign("fit", ("Ctrl+Shift+F12",)) == [] and ctl.assign("export", ("Ctrl+Shift+F11",)) == []
+    assert dlg.do_import() is False                                       # 断った: 何も変えない
+    assert len(asked) == 1 and "2" in asked[0] and "Fit to window" in asked[0] and "VS Code" in asked[0]
+    assert set(ctl.keymap.overrides()) == {"fit", "export"}
+    dlg.confirm = lambda *a: True
+    assert dlg.do_import() is True and ctl.keymap.overrides() == {"zoom_in": ("Ctrl+F11",)}
+    prev = json.loads(studio_mod._settings().value(km.PREVIOUS_KEY))
+    assert prev["bindings"] == {"export": ["Ctrl+Shift+F11"], "fit": ["Ctrl+Shift+F12"]}   # 前の表を 1 世代残す
+
+
+def test_the_recorder_enter_assigns_esc_stops_and_tab_moves_on(win, ctl):
+    from PySide6 import QtCore, QtWidgets  # noqa: PLC0415
+    K = QtCore.Qt
+    dlg = ctl.open_dialog()
+    dlg.activateWindow()
+    rec = dlg.recorder
+    for cid, key, mods, want in (("fit", K.Key_F12, K.ControlModifier | K.ShiftModifier, "Ctrl+Shift+F12"),
+                                 ("editops_line_duplicate", K.Key_D, K.ControlModifier | K.ShiftModifier, "Ctrl+Shift+D")):
+        assert dlg.select(cid)
+        rec.setFocus()
+        _press(rec, key, mods)
+        _press(rec, K.Key_Return)                                         # Enter = 割り当てる(Return を記録しない)
+        assert ctl.keymap.keys(cid) == (want,), cid
+    assert dlg.select("fit")
+    rec.setFocus()
+    _press(rec, K.Key_F9, K.ControlModifier)
+    assert rec.sequence() == "Ctrl+F9"
+    _press(rec, K.Key_Escape)                                             # Esc 1 回目 = 記録をやめる
+    assert rec.sequence() == "" and rec.hasFocus()
+    _press(rec, K.Key_Escape)                                             # 2 回目 = 表へ戻る(窓は閉じない)
+    assert dlg.table.hasFocus() and dlg.isVisible()
+    rec.setFocus()
+    _press(rec, K.Key_Tab)
+    assert not rec.hasFocus() and rec.sequence() == ""                    # Tab = 次へ
+    dlg.b_literal.click()
+    assert rec.hasFocus()
+    _press(rec, K.Key_Escape)
+    assert rec.sequence() == "Esc"                                         # 「そのまま記録」の 1 打だけ Esc も記録
+    assert isinstance(QtWidgets.QApplication.focusWidget(), QtWidgets.QWidget)
+
+
+def test_assign_says_which_keys_it_replaces_and_one_key_can_be_removed(win, ctl):
+    from PySide6 import QtCore  # noqa: PLC0415
+    K = QtCore.Qt
+    dlg = ctl.open_dialog()
+    assert dlg.select("dbg_run")
+    rec = dlg.recorder
+    rec.setFocus()
+    _press(rec, K.Key_F8)
+    assert "F5 / Ctrl+R" in dlg.status.text() and dlg.b_assign.isEnabled()
+    rec.clear_keys()
+    _press(rec, K.Key_R, K.ControlModifier)
+    assert dlg.b_remove.text() == "Remove Ctrl+R"
+    dlg.b_remove.click()
+    assert ctl.keymap.keys("dbg_run") == ("F5",)
+    assert dlg.b_remove.text() == "Remove keys"
+
+
+def test_a_failed_export_says_so_and_leaves_no_half_file(win, ctl, tmp_path):
+    dlg = ctl.open_dialog()
+    assert ctl.assign("fit", ("Ctrl+Shift+F12",)) == []
+    said = []
+    dlg.inform = lambda title, text: said.append(text)
+    dlg.ask_save = lambda: str(tmp_path / "no_such_folder" / "keys.json")
+    assert dlg.do_export() is False
+    assert said and "keys.json" in said[0]
+    good = tmp_path / "keys.json"
+    dlg.ask_save = lambda: str(good)
+    assert dlg.do_export() is True
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["keys.json"]      # 一時ファイルを残さない
+    assert json.loads(good.read_text(encoding="utf-8"))["bindings"] == {"fit": ["Ctrl+Shift+F12"]}
+
+
+def test_the_preset_box_grows_with_a_longer_translation(win, ctl):
+    dlg = ctl.open_dialog()
+    _pump(0.1)
+    before = dlg.preset.sizeHint().width()
+    long = "W" * 60
+    old = ctl.tr
+    ctl.tr = lambda s: long if s in km.PRESET_TITLES.values() else old(s)
+    try:
+        dlg.retranslate()
+        _pump(0.1)
+        assert dlg.preset.sizeHint().width() > before
+        assert dlg.preset.sizeHint().width() >= dlg.preset.fontMetrics().horizontalAdvance(long)
+    finally:
+        ctl.tr = old
+        dlg.retranslate()
+
+
+def test_reset_all_is_off_with_nothing_changed_and_search_reads_other_spellings(win, ctl):
+    dlg = ctl.open_dialog()
+    assert not dlg.b_reset_all.isEnabled()
+    assert ctl.assign("fit", ("Ctrl+Shift+F12",)) == []
+    assert dlg.b_reset_all.isEnabled()
+    rows = km.shortcut_rows(km.Keymap())
+    want = [r[0] for r in km.search(rows, "ctrl+d")]
+    assert want == ["duplicate_stage", "editops_line_duplicate"]
+    for q in ("Ctrl-D", "^D", "C-d", "ctrl - d"):
+        assert [r[0] for r in km.search(rows, q)] == want, q
+    dlg.search.setText("zzzz qqqq")
+    assert dlg.visible_ids() == [] and not dlg.no_match.isHidden()
+    dlg.search.setText("")
+    assert dlg.no_match.isHidden()

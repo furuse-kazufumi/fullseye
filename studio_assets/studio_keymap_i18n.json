@@ -924,6 +924,104 @@
    "tw": "不帶 Ctrl 或 Alt 的 %(key)s 在清單和輸入框中需要(移動、刪除、取消)",
    "ko": "Ctrl 이나 Alt 가 없는 %(key)s 는 목록과 입력란에서 필요합니다 (이동·삭제·취소)",
    "de": "%(key)s ohne Strg oder Alt wird in Listen und Feldern gebraucht (Bewegen, Löschen, Abbrechen)"
+  },
+  "Enter assigns, Esc stops recording, Tab moves on.": {
+   "ja": "Enter で割り当て、Esc で記録をやめ、Tab で次へ。",
+   "zh": "Enter 分配，Esc 停止录制，Tab 移到下一项。",
+   "tw": "Enter 指派，Esc 停止錄製，Tab 移到下一項。",
+   "ko": "Enter 로 지정, Esc 로 기록 중지, Tab 으로 다음으로.",
+   "de": "Eingabe weist zu, Esc beendet die Aufnahme, Tab geht weiter."
+  },
+  "Record Tab / Esc / Enter": {
+   "ja": "Tab / Esc / Enter を記録",
+   "zh": "录制 Tab / Esc / Enter",
+   "tw": "錄製 Tab / Esc / Enter",
+   "ko": "Tab / Esc / Enter 기록",
+   "de": "Tab / Esc / Eingabe aufnehmen"
+  },
+  "Press one key: Tab, Esc and Enter are recorded too": {
+   "ja": "キーを 1 つ押す: Tab・Esc・Enter もそのまま記録する",
+   "zh": "按一个键: Tab、Esc 和 Enter 也会被录制",
+   "tw": "按一個鍵: Tab、Esc 和 Enter 也會被錄製",
+   "ko": "키 하나를 누르세요: Tab·Esc·Enter 도 기록됩니다",
+   "de": "Eine Taste drücken: auch Tab, Esc und Eingabe werden aufgenommen"
+  },
+  "Remove %s": {
+   "ja": "%s を外す",
+   "zh": "移除 %s",
+   "tw": "移除 %s",
+   "ko": "%s 제거",
+   "de": "%s entfernen"
+  },
+  "Cancel": {
+   "ja": "キャンセル",
+   "zh": "取消",
+   "tw": "取消",
+   "ko": "취소",
+   "de": "Abbrechen"
+  },
+  "Reset all": {
+   "ja": "全部を戻す",
+   "zh": "全部恢复",
+   "tw": "全部還原",
+   "ko": "모두 되돌리기",
+   "de": "Alle zurücksetzen"
+  },
+  "Replace": {
+   "ja": "置き換える",
+   "zh": "替换",
+   "tw": "取代",
+   "ko": "바꾸기",
+   "de": "Ersetzen"
+  },
+  "Import shortcuts": {
+   "ja": "ショートカットの読み込み",
+   "zh": "导入快捷键",
+   "tw": "匯入快速鍵",
+   "ko": "단축키 가져오기",
+   "de": "Tastenkürzel importieren"
+  },
+  "Replace your %d changed shortcuts with the %d in the file?": {
+   "ja": "変えた %d 個のショートカットを、ファイルの %d 個で置き換えますか?",
+   "zh": "要把您更改的 %d 项快捷键替换为文件中的 %d 项吗?",
+   "tw": "要把您變更的 %d 項快速鍵取代為檔案中的 %d 項嗎?",
+   "ko": "바꾼 단축키 %d개를 파일의 %d개로 바꿀까요?",
+   "de": "Ihre %d geänderten Tastenkürzel durch die %d aus der Datei ersetzen?"
+  },
+  "The preset becomes %s.": {
+   "ja": "型は %s になる。",
+   "zh": "预设将变为 %s。",
+   "tw": "預設將變為 %s。",
+   "ko": "프리셋이 %s 로 바뀝니다.",
+   "de": "Die Vorlage wird %s."
+  },
+  "These changes of yours are not in the file and go back to the preset:": {
+   "ja": "次の変更はファイルに無いので、型の既定に戻る:",
+   "zh": "以下更改不在文件中，将恢复为预设:",
+   "tw": "以下變更不在檔案中，將還原為預設:",
+   "ko": "다음 변경은 파일에 없어 프리셋으로 돌아갑니다:",
+   "de": "Diese Ihrer Änderungen fehlen in der Datei und gehen auf die Vorlage zurück:"
+  },
+  "Could not save %s (%s)": {
+   "ja": "%s を保存できなかった(%s)",
+   "zh": "无法保存 %s(%s)",
+   "tw": "無法儲存 %s(%s)",
+   "ko": "%s 를 저장하지 못했습니다 (%s)",
+   "de": "%s konnte nicht gespeichert werden (%s)"
+  },
+  "Nothing matches. Try a command name or a key, for example: duplicate, ctrl+d": {
+   "ja": "当たる物が無い。コマンド名かキーで探す(例: 複製、ctrl+d)",
+   "zh": "没有匹配项。请尝试命令名或按键，例如: duplicate、ctrl+d",
+   "tw": "沒有符合項目。請嘗試指令名稱或按鍵，例如: duplicate、ctrl+d",
+   "ko": "일치하는 항목이 없습니다. 명령 이름이나 키로 찾아 보세요 (예: duplicate, ctrl+d)",
+   "de": "Nichts gefunden. Befehlsnamen oder Taste versuchen, z. B. duplicate, ctrl+d"
+  },
+  "Assign replaces %(detail)s (Add as another key keeps them)": {
+   "ja": "「割り当てる」は %(detail)s を外して置き換える(「別のキーとして足す」なら残る)",
+   "zh": "“分配”会替换 %(detail)s(“添加为另一个按键”则保留它们)",
+   "tw": "「指派」會取代 %(detail)s(「新增為另一個按鍵」則保留它們)",
+   "ko": "지정은 %(detail)s 를 바꿉니다 (다른 키로 추가하면 남습니다)",
+   "de": "Zuweisen ersetzt %(detail)s (Als weitere Taste hinzufügen behält sie)"
   }
  }
 }

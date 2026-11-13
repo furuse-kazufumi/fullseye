@@ -47,6 +47,8 @@ VERSION = 1
 SETTINGS_KEY = "keymap/user"
 #: 起動の時に使えなかった元の文字列(利用者が変えて保存する時に 1 つだけ残す)。
 BACKUP_KEY = SETTINGS_KEY + ".backup"
+#: 読み込みで置き換える前の表(1 世代)。
+PREVIOUS_KEY = SETTINGS_KEY + ".previous"
 DEFAULT_PRESET = "visual_studio"
 #: 読み込みの上限(バイト)。キーの表はどんなに多くても数 KB。
 MAX_IMPORT_BYTES = 256 * 1024
@@ -1083,15 +1085,31 @@ def shortcut_rows(keymap: Keymap, tr: Callable = (lambda s: s), extra: Iterable 
     return rows
 
 
+_SEARCH_MODS = {"ctrl": "Ctrl", "control": "Ctrl", "strg": "Ctrl", "c": "Ctrl", "shift": "Shift", "s": "Shift",
+                "alt": "Alt", "m": "Alt", "meta": "Meta", "win": "Meta"}
+
+
+def _search_key(q: str) -> str | None:
+    """検索の語をキーとして読む(``ctrl+d`` に加え ``Ctrl-D`` ``^D`` ``C-d``(Emacs の書き方)も)。読めなければ None。"""
+    s = q.strip()
+    if len(s) > 1 and s.startswith("^"):
+        s = "Ctrl+" + s[1:]
+    s = re.sub(r"(?i)\b(ctrl|control|strg|shift|alt|meta|win|c|s|m)\s*-\s*(?=\S)",
+               lambda m: _SEARCH_MODS[m.group(1).lower()] + "+", s)
+    if not ("+" in s or _FKEY.match(s) or s.lower() in _NAMED):
+        return None
+    try:
+        return normalize_sequence(s)
+    except KeyParseError:
+        return None
+
+
 def search(rows: Sequence, query: str) -> list:
-    """``shortcut_rows`` の行を語で絞る。語がキーとして読めれば、そのキーを持つ行も当たる(``ctrl+d``)。"""
+    """``shortcut_rows`` の行を語で絞る。語がキーとして読めれば、そのキーを持つ行も当たる(``ctrl+d`` ``Ctrl-D`` ``^D``)。"""
     q = (query or "").strip()
     if not q:
         return list(rows)
-    try:
-        as_key = normalize_sequence(q) if "+" in q or _FKEY.match(q) or q.lower() in _NAMED else None
-    except KeyParseError:
-        as_key = None
+    as_key = _search_key(q)
     low = q.lower()
     out = []
     for r in rows:
@@ -1123,6 +1141,20 @@ LBL_RECORD = "New key"
 PH_RECORD = "Click here, then press the keys"
 HINT_CHORD = "A second key right after the first makes a two-stroke key. Clear starts over."
 HINT_NO_CHORD = "One key at a time here (no two-stroke keys in editors)."
+HINT_KEYS = "Enter assigns, Esc stops recording, Tab moves on."
+BTN_LITERAL = "Record Tab / Esc / Enter"
+PH_LITERAL = "Press one key: Tab, Esc and Enter are recorded too"
+BTN_REMOVE_ONE = "Remove %s"
+BTN_CANCEL = "Cancel"
+BTN_RESET_ALL_DO = "Reset all"
+BTN_SWITCH = "Switch preset"
+BTN_REPLACE = "Replace"
+TTL_IMPORT = "Import shortcuts"
+ASK_IMPORT = "Replace your %d changed shortcuts with the %d in the file?"
+ASK_IMPORT_PRESET = "The preset becomes %s."
+ASK_IMPORT_LOST = "These changes of yours are not in the file and go back to the preset:"
+MSG_EXPORT_FAILED = "Could not save %s (%s)"
+MSG_NO_MATCH = "Nothing matches. Try a command name or a key, for example: duplicate, ctrl+d"
 BTN_CLEAR = "Clear"
 BTN_ASSIGN = "Assign"
 BTN_ADD = "Add as another key"
@@ -1168,6 +1200,7 @@ MESSAGES = {
     "shadow": "In %(place)s, %(other)s takes %(key)s first",
     "shadows": "In %(place)s, this command takes %(key)s before %(other)s",
     "shared": "%(key)s is shared with %(other)s; each takes it only in its own situation",
+    "replaces": "Assign replaces %(detail)s (Add as another key keeps them)",
     "steals_text": "In %(place)s, %(key)s would do this command instead of %(other)s",
     "mnemonic": "%(key)s opens %(other)s: this command would not get it",
     "mnemonic_other": "%(key)s opens %(other)s: in that language this command would not get it",
@@ -1245,7 +1278,9 @@ def ui_strings() -> tuple:
              MSG_CHANGED, MSG_PICK, TTL_RESET_ALL, ASK_RESET_ALL, TTL_PRESET, ASK_PRESET, ASK_PRESET_DROP,
              MSG_IMPORTED, MSG_IMPORT_FAILED, MSG_EXPORTED, MSG_LOAD_PROBLEM, FILE_FILTER, MSG_MENU_BAR, MSG_TEXT_KEY,
              MSG_LOAD_PART, MSG_LOAD_BROKEN, MSG_LOAD_NEWER, MSG_LOAD_HEADER, MSG_MENU_OTHER, MSG_LANG_PROBLEM,
-             MSG_LANG_HEADER]
+             MSG_LANG_HEADER, HINT_KEYS, BTN_LITERAL, PH_LITERAL, BTN_REMOVE_ONE, BTN_CANCEL, BTN_RESET_ALL_DO,
+             BTN_SWITCH, BTN_REPLACE, TTL_IMPORT, ASK_IMPORT, ASK_IMPORT_PRESET, ASK_IMPORT_LOST, MSG_EXPORT_FAILED,
+             MSG_NO_MATCH]
     fixed += list(PRESET_TITLES.values()) + [s.title for s in SCOPES.values()] + [t for t, _s in PLACES.values()]
     fixed += list(MESSAGES.values()) + [c.title for c in COMMANDS if c.own_title]
     seen, out = set(), []
