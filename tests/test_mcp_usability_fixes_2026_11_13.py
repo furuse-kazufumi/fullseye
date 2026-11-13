@@ -364,3 +364,12 @@ def test_ok_says_it_only_checked_the_shape_and_flags_obvious_anomalies(cat, stor
         {"op": "gaussian"}, {"op": "sobel_amp"}, {"op": "hx_gen_empty_region"}, {"op": "count_obj"}],
         "vision": "none"}, cat, store)
     assert "段 3 hx_gen_empty_region は入力の中身を読まない op" in _text(blind)
+
+
+def test_largest_component_note_is_only_shown_when_other_components_were_left_out(cat, store):
+    """再現の続き(2026-11-13): select_largest の後の diameter_region に「成分 1 個のうち最大の 1 つ」と出ていた。"""
+    h = S.call_tool("fullseye_load_image", {"path": "metal_hairline_scratch"}, cat, store)["structuredContent"]["handle"]
+    r = S.call_tool("fullseye_pipeline", {"handle": h, "stages": [{"op": "otsu"}, {"op": "select_largest"},
+                                                                 {"op": "diameter_region"}], "vision": "none"}, cat, store)
+    rec = r["structuredContent"]["stages"][-1]
+    assert rec["measured"]["components_in_input"] == 1 and "最大の 1 つだけ" not in _text(r)

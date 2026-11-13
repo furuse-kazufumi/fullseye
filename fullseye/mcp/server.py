@@ -2451,7 +2451,9 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         if last is not None and (last.get("meaning") or last.get("unit")):
             text += "\n値の意味(段 %d %s): %s%s" % (last["stage"], last["op"], last.get("meaning", ""),
                                                 ("。単位 %s" % last["unit"]) if last.get("unit") else "")
-        if last is not None and last.get("measured", {}).get("scope") == "largest_connected_component":
+        if (last is not None and last.get("measured", {}).get("scope") == "largest_connected_component"
+                and last["measured"]["components_in_input"] > 1):
+            # 成分が 1 個(select_largest の後など)なら全体を測ったのと同じなので、本文の注意は出さない
             n = last["measured"]["components_in_input"]
             text += "\n注意: 入力の領域の連結成分 %d 個のうち、最大の 1 つだけを測った値" % n + (
                 "(他の %d 個は数に入っていない)" % (n - 1) if n > 1 else "")
