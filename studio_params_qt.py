@@ -1268,15 +1268,36 @@ class ParamsPanel(QtWidgets.QWidget):
         self.refresh()
 
     def dragEnterEvent(self, ev: QtGui.QDragEnterEvent) -> None:
-        if ev.mimeData().hasUrls() and any(os.path.splitext(u.toLocalFile())[1].lower() in M.FORMATS
-                                           for u in ev.mimeData().urls()):
+        # 受けられない物も引き入れさせる: 落とした所で理由を言うため(黙って断らない。設計書 P12)。
+        md = ev.mimeData()
+        if md.hasUrls() or md.hasText():
             ev.acceptProposedAction()
 
+    def dragMoveEvent(self, ev: QtGui.QDragMoveEvent) -> None:
+        ev.acceptProposedAction()
+
     def dropEvent(self, ev: QtGui.QDropEvent) -> None:
-        paths = [u.toLocalFile() for u in ev.mimeData().urls() if u.isLocalFile()]
-        if paths:
-            ev.acceptProposedAction()
-            self.add_paths(paths)
+        """束のファイルは列に足し、それ以外(画像・フォルダ・ネットの URL・ただの文字)は下の行に理由を出す。"""
+        ev.acceptProposedAction()
+        self.drop_paths(ev.mimeData())
+
+    def drop_paths(self, md: QtCore.QMimeData) -> list[M.Outcome]:
+        """落とされた物を振り分ける: 束のファイル(.json / .toml / .yaml / .yml / .xml)は足し、残りは理由を言う。"""
+        tr = self.tr_
+        urls = md.urls() if md.hasUrls() else []
+        files = [u.toLocalFile() for u in urls if u.isLocalFile()]
+        good = [f for f in files if os.path.splitext(f)[1].lower() in M.FORMATS and not os.path.isdir(f)]
+        bad = [f for f in files if f not in good]
+        outs = self.add_paths(good) if good else []
+        why = [o.text(tr) for o in outs if not o.ok]
+        if bad:
+            names = ", ".join(os.path.basename(os.path.normpath(f)) or f for f in bad)
+            why.append(tr("not a parameter file: %s") % names + " (" + tr("open .json, .toml, .yaml / .yml or .xml") + ")")
+        if len(files) < len(urls) or not urls:
+            why.append(tr("only files can be dropped here") + " (" + tr("open .json, .toml, .yaml / .yml or .xml") + ")")
+        if why:
+            self.show_message(" | ".join(why), "error" if any(not o.ok for o in outs) else "warn")
+        return outs
 
     # ---- 絞り込み ----
     def set_diff_only(self, on: bool) -> None:

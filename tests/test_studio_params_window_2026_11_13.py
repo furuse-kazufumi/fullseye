@@ -1688,3 +1688,60 @@ def test_params_rejected_cell_keeps_text_and_marks_invalid(qapp, fusion, ini, tm
     assert [k.toString() for k in redo.shortcuts()] == ["Ctrl+Y", "Ctrl+Shift+Z"]
     assert redo.toolTip().endswith("(Ctrl+Y)")                          # 表示は Ctrl+Y(設計書 P08-2)
     _close_quietly(win)
+
+
+def _drop(p, mime) -> tuple[bool, bool]:
+    """``mime`` を窓へ引き入れて落とす。(引き入れを受けたか, 落としを受けたか)。"""
+    act = Qt.CopyAction
+    enter = QtGui.QDragEnterEvent(QtCore.QPoint(10, 10), act, mime, Qt.LeftButton, Qt.NoModifier)
+    enter.ignore()
+    p.dragEnterEvent(enter)
+    if not enter.isAccepted():
+        return False, False
+    drop = QtGui.QDropEvent(QtCore.QPointF(10, 10), act, mime, Qt.LeftButton, Qt.NoModifier)
+    drop.ignore()
+    p.dropEvent(drop)
+    return True, drop.isAccepted()
+
+
+def _mime(urls=(), text=None):
+    m = QtCore.QMimeData()
+    if urls:
+        m.setUrls([u if isinstance(u, QtCore.QUrl) else QtCore.QUrl.fromLocalFile(u) for u in urls])
+    if text is not None:
+        m.setText(text)
+    return m
+
+
+def test_params_drop_reject_says_why(qapp, ini, tmp_path):
+    """D91 / G12(c): 対象外の物(画像・フォルダ・ネットの URL・ただの文字)を落としても黙らず、下の行に理由(何が・開ける種類)。
+    束のファイルと混ぜて落とせば、束は足し、対象外の物の理由を言う。どの言語でも訳がある。"""
+    png = _raw(tmp_path, "photo.png", b"\x89PNG")
+    folder = tmp_path / "rigs"
+    folder.mkdir()
+    day = _write(tmp_path, "day.json", DAY)
+    win = _window(qapp, lang="ja")
+    p = win.panel
+    tr = M.make_tr("ja")
+    kinds = tr("open .json, .toml, .yaml / .yml or .xml")
+    cases = [
+        ([png], None, [tr("not a parameter file: %s") % "photo.png"]),
+        ([str(folder)], None, [tr("not a parameter file: %s") % "rigs"]),
+        ([QtCore.QUrl("https://example.com/rig.json")], None, [tr("only files can be dropped here")]),
+        ((), "camera.fx = 2", [tr("only files can be dropped here")]),
+    ]
+    seen = 0
+    for urls, text, wants in cases:
+        assert _drop(p, _mime(urls, text)) == (True, True), (urls, text)
+        msg = p.message_label.full_text()
+        assert p.message_level == "warn" and msg.startswith("\u25b2 "), msg
+        assert all(w in msg for w in wants) and kinds in msg, (msg, wants)
+        assert p.model.columns == [], msg
+        seen += 1
+    assert seen == 4
+    assert _drop(p, _mime([day, png])) == (True, True)                  # 混ぜて落とす: 束は足し、画像の理由を言う
+    assert [c.name for c in p.model.columns] == ["day.json"]
+    assert (tr("not a parameter file: %s") % "photo.png") in p.message_label.full_text()
+    for en in ("not a parameter file: %s", "only files can be dropped here", "open .json, .toml, .yaml / .yml or .xml"):
+        assert tr(en) != en
+    _close_quietly(win)

@@ -840,6 +840,27 @@
    "tw": "範例: %s",
    "ko": "예: %s",
    "de": "Beispiel: %s"
+  },
+  "not a parameter file: %s": {
+   "ja": "パラメータのファイルではありません: %s",
+   "zh": "不是参数文件: %s",
+   "tw": "不是參數檔案: %s",
+   "ko": "파라미터 파일이 아닙니다: %s",
+   "de": "keine Parameterdatei: %s"
+  },
+  "only files can be dropped here": {
+   "ja": "ここへ落とせるのはファイルだけです",
+   "zh": "这里只能拖放文件",
+   "tw": "這裡只能拖放檔案",
+   "ko": "여기에는 파일만 놓을 수 있습니다",
+   "de": "hier können nur Dateien abgelegt werden"
+  },
+  "open .json, .toml, .yaml / .yml or .xml": {
+   "ja": "開けるのは .json・.toml・.yaml / .yml・.xml",
+   "zh": "可打开 .json、.toml、.yaml / .yml 或 .xml",
+   "tw": "可開啟 .json、.toml、.yaml / .yml 或 .xml",
+   "ko": ".json, .toml, .yaml / .yml, .xml 파일을 열 수 있습니다",
+   "de": "geöffnet werden .json, .toml, .yaml / .yml oder .xml"
   }
  }
 }
