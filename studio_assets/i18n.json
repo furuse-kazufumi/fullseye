@@ -2334,6 +2334,11 @@
   "window σ": {"ja": "窓の σ"},
   "σ1 (fine)": {"ja": "σ1(細かい)"},
   "σ2 (coarse)": {"ja": "σ2(粗い)"},
-  "impl: %s": {"ja": "実装: %s"}
+  "impl: %s": {"ja": "実装: %s"},
+  "‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: fullseye algo run %s": {"ja": "「%s」は数列・数を扱う一般アルゴリズムの op です。画像の処理手順には入りません(コマンドで実行: fullseye algo run %s)"},
+  "‘%s’ takes two or more inputs, so it cannot be added as a single pipeline stage — it was not added": {"ja": "「%s」は入力が 2 つ以上要る op なので、1 入力の段としては入れられません(追加していません)"},
+  "‘%s’ is not available in this environment (its optional backend is not installed) — it was not added to the pipeline": {"ja": "「%s」はこの環境では使えません(追加のパッケージが未導入)。処理手順には追加していません"},
+  "cannot be added as a stage": {"ja": "段としては入れられません"},
+  "First stage: showing %d of %d operators that can take the loaded input ('%s').": {"ja": "最初の段: %d / %d 件を表示しています(読み込んだ入力 '%s' を受けられる op)。"}
  }
 }

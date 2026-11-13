@@ -4037,6 +4037,83 @@ def _ops_accepting(rows, sort):
     return [r for r in rows if engine._compatible(sort, r.get("in_sort") or "")]
 
 
+#: 検索が空の時の op の一覧の先頭(この順)。続きは ``studio_search.STAPLES`` の各組の先頭の op(定番の表が正本)。
+STARTER_HEAD = ("gaussian", "median", "sobel_amp", "otsu", "threshold")
+
+#: 1 入力の段として入れられない理由(英語が原文。画面へは ``tr()`` を通す)
+NOT_INSERTABLE_TEXT = {
+    "general": "‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: fullseye algo run %s",
+    "two_input": "‘%s’ takes two or more inputs, so it cannot be added as a single pipeline stage "
+                 "— it was not added",
+    "unavailable": "‘%s’ is not available in this environment (its optional backend is not installed) "
+                   "— it was not added to the pipeline",
+}
+
+
+def op_insertable(name, row=None):
+    """``(ok, reason)``: can *name* be inserted as a single pipeline stage here?
+
+    ``reason`` is ``""`` when it can, else a key of :data:`NOT_INSERTABLE_TEXT`: ``"general"`` (the read-only
+    general-algorithm tier), ``"two_input"`` (needs a second image/region) or ``"unavailable"`` (its optional
+    backend is not installed). The same rule ``add_op`` refuses by, so the list never promises more than Insert does.
+    """
+    if row is None:
+        row = _op_row(name)
+    if row and row.get("backend") == "general":
+        return False, "general"
+    if api.find_op(name) is not None:
+        return True, ""
+    try:
+        two_input = name in api._nary_by_name()
+    except Exception:                               # noqa: BLE001 - 理由の言い分けだけの為に落とさない
+        two_input = False
+    return False, ("two_input" if two_input else "unavailable")
+
+
+def not_insertable_text(name, reason):
+    """The sentence shown when *name* cannot be inserted, in the UI language."""
+    text = tr(NOT_INSERTABLE_TEXT[reason])
+    return text % ((name, name) if text.count("%s") == 2 else name)
+
+
+def starter_ops():
+    """The ops the browse list starts from: :data:`STARTER_HEAD`, then the first op of every staple group
+    (``studio_search.STAPLES``), without repeats, keeping only what can be inserted in this environment."""
+    import studio_search
+    names = list(STARTER_HEAD)
+    for _terms, ops_ in studio_search.STAPLES:
+        if ops_ and ops_[0] not in names:
+            names.append(ops_[0])
+    return [n for n in names if op_insertable(n)[0]]
+
+
+#: 最初の段(入力の画像を直接受ける段)で、2 次元の濃淡・二値・ラベルの画像が入れる入力の型。
+#: ``image`` はそのまま、``region`` は入口で二値化して合わせる(``api._coerce_input``)、``any`` は何でも。
+_ENTRY_2D_SORTS = ("image", "region")
+
+
+def entry_sort_of(value):
+    """The sort of the loaded input as the FIRST stage meets it (``"image"`` / ``"region"`` / ``"volume"`` …),
+    or None when it cannot be told (then the list is not narrowed)."""
+    import studio_search
+    return studio_search.canonical_sort(studio_search.current_sort_of(value))
+
+
+def _ops_accepting_entry(rows, entry_sort):
+    """The rows whose first input can take the LOADED input at the first stage; all rows when unknown.
+
+    A 2-D grey / binary / label image enters ``image`` ops as it is and ``region`` ops through the entry
+    coercion; every other declared input (``beatcube``, ``points``, ``seq`` …) cannot take it, so those rows
+    are hidden while the switch is on (they only HIDE — one click on the switch lists them again)."""
+    rows = list(rows)
+    if entry_sort is None:
+        return rows
+    if entry_sort in ("image", "region", "labels2d"):
+        ok = set(_ENTRY_2D_SORTS)
+        return [r for r in rows if (r.get("in_sort") or "") in ok or (r.get("in_sort") or "") == engine._ANY]
+    return [r for r in rows if engine._compatible(entry_sort, r.get("in_sort") or "")]
+
+
 #: Sample image the dev_* visualization demo loads (a collected, license-clean image).
 HDEV_VISUAL_DEMO_IMAGE = "coins"
 
@@ -7425,9 +7502,25 @@ def build_window(model=None):
     def _ops_upstream():
         return _upstream_sort(model.stages, _ops_insert_position())
 
-    def _ops_fit_note_text(fit_sort, prev, shown, total):
+    def _ops_entry_sort():
+        """The loaded input's sort when the insertion point is the first stage and the switch is on, else None."""
+        if not ops_fit_only.isChecked() or _ops_upstream()[0] is not None:
+            return None
+        try:
+            return entry_sort_of(model.image)
+        except Exception as exc:                        # noqa: BLE001 -- 型が読めない入力では絞らない
+            _log_soft_failure("could not tell the sort of the loaded input", exc)
+            return None
+
+    def _ops_fit_key():
+        return (ops_fit_only.isChecked(), _ops_upstream()[0], _ops_entry_sort())
+
+    def _ops_fit_note_text(fit_sort, prev, shown, total, entry_sort=None):
         if not ops_fit_only.isChecked():
             return tr("Showing every operator (the type filter is off).")
+        if fit_sort is None and entry_sort is not None:
+            return (tr("First stage: showing %d of %d operators that can take the loaded input ('%s').")
+                    % (shown, total, entry_sort))
         if fit_sort is None:
             return tr("First stage: every operator is listed (the input image is matched at the entry).")
         if fit_sort == engine._ANY:
@@ -7447,10 +7540,18 @@ def build_window(model=None):
         keep = _cur.data(QtCore.Qt.UserRole) if _cur is not None else None
         op_list.clear()
         fit_sort, fit_prev = _ops_upstream()
-        ops_fit_state["key"] = (ops_fit_only.isChecked(), fit_sort)
+        entry_sort = _ops_entry_sort()
+        ops_fit_state["key"] = (ops_fit_only.isChecked(), fit_sort, entry_sort)
         fit_names = None
         if ops_fit_only.isChecked() and fit_sort not in (None, engine._ANY):
             fit_names = {r["name"] for r in _ops_accepting(all_ops, fit_sort)}
+        elif entry_sort is not None:
+            # ★2026-11-13(初回起動の点検 S2): 最初の段でも、読み込んだ画像を受けられない op(beatcube 用の
+            # レーダーの op・点群・数列 …)は、スイッチが入っている間は並べない。
+            fit_names = {r["name"] for r in _ops_accepting_entry(all_ops, entry_sort)}
+        # ★2026-11-13(S2): 一覧は定番から始める。1 入力の段として入れられない op(2 入力・未導入・一般アルゴリズム)は
+        # 末尾へ回して薄く出し、理由を行に持たせる(従来は先頭の 17 行が全部「入れられない op」だった)。
+        starters = {n: i for i, n in enumerate(starter_ops())} if c == "all categories" else {}
         ranked = []
         in_category = 0
         for r in all_ops:
@@ -7483,21 +7584,31 @@ def build_window(model=None):
             hal = (r.get("halcon") or "").lower()
             rank = (0 if not kw or nm == kw else 1 if nm.startswith(kw) else 2 if kw in nm
                     else 3 if kw in hal else 4)
-            ranked.append((rank, r))
-        ranked.sort(key=lambda t: t[0])
-        for _rank, r in ranked:
-            it = QtWidgets.QListWidgetItem(f"{r['name']}   [{r['in_sort']} → {r['out_sort']}]")
+            _ok, _why = op_insertable(r["name"], r)
+            _lead = ((0, starters[r["name"]]) if _ok and r["name"] in starters
+                     else (1, 0) if _ok else (2, 0))
+            ranked.append((_lead, rank, r, _why))
+        ranked.sort(key=lambda t: (t[0], t[1]))
+        for _lead, _rank, r, _why in ranked:
+            _text = f"{r['name']}   [{r['in_sort']} → {r['out_sort']}]"
+            if _why:
+                _text += "   · " + tr("cannot be added as a stage")
+            it = QtWidgets.QListWidgetItem(_text)
             it.setData(QtCore.Qt.UserRole, r["name"])
             it.setToolTip(op_tooltip(r))
+            if _why:
+                it.setData(QtCore.Qt.UserRole + 5, _why)
+                it.setForeground(QtGui.QColor(MUTED))
             op_list.addItem(it)
             if keep is not None and r["name"] == keep:
                 op_list.setCurrentItem(it)
-        _note = _ops_fit_note_text(fit_sort, fit_prev, len(ranked), in_category)
+        _note = _ops_fit_note_text(fit_sort, fit_prev, len(ranked), in_category, entry_sort)
         ops_fit_note.setText(_note)
         # ★2026-11-12: 注記の行は一覧に譲り、全文はチェックボックスのツールチップに出す(件数・理由はそこで読める)
         _base = ops_fit_only.property("base_tip")
         if _base is None:
             _base = ops_fit_only.toolTip(); ops_fit_only.setProperty("base_tip", _base)
+        _base = tr(_base) if _base else _base           # base_tip is the English source (2026-11-13)
         ops_fit_only.setToolTip((_base + "\n\n" if _base else "") + _note)
 
     def _ops_follow_upstream():
@@ -7505,7 +7616,7 @@ def build_window(model=None):
         A typed query keeps its own grouping by the current value (``grouped_search``)."""
         if search.text().strip():
             return
-        if (ops_fit_only.isChecked(), _ops_upstream()[0]) != ops_fit_state.get("key"):
+        if _ops_fit_key() != ops_fit_state.get("key"):
             refill_ops()
     refill_ops()
 
@@ -9790,23 +9901,13 @@ def build_window(model=None):
         if not name:
             return
         row = _op_row(name)
-        if row and row.get("backend") == "general":     # double-click on a read-only general op
-            flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
-                  "fullseye algo run %s" % (name, name))
-            return
-        if api.find_op(name) is None:
-            # ★2026-11-13: 索引には載っているが、この環境では呼べない op(optional backend が未導入)。
-            # 以前は add_stage の KeyError がスロットの中で消えて、何も起きなかった。
-            try:
-                two_input = name in api._nary_by_name()
-            except Exception:                       # noqa: BLE001 - 理由の言い分けだけの為に、入れる操作を落とさない
-                two_input = False
-            if two_input:
-                flash("‘%s’ takes two or more inputs, so it cannot be added as a single pipeline stage "
-                      "— it was not added" % name)
-            else:
-                flash("‘%s’ is not available in this environment (its optional backend is not installed) "
-                      "— it was not added to the pipeline" % name)
+        _ok, _why = op_insertable(name, row)
+        if not _ok:
+            # ★2026-11-13: 索引には載っているが 1 入力の段として入れられない op(一般アルゴリズム・2 入力・
+            # optional backend が未導入)。以前は add_stage の KeyError がスロットの中で消えて、何も起きなかった。
+            # 理由は UI の言語で、ステータスバーと + ボタンの上の欄の両方に出す(初回起動の点検 S2)。
+            _say = not_insertable_text(name, _why)
+            flash(_say); op_param.setText(_say); op_param_fit.refresh()
             return
         a_val, b_val = op_a_spin.value(), op_b_spin.value()
         line = "%s (%r, %r)" % (name, float(a_val), float(b_val))   # repr: full precision
@@ -9950,6 +10051,7 @@ def build_window(model=None):
     win._op_list = op_list
     win._op_buttons = {"insert": b_insert, "run_once": b_run_once, "help": b_help}
     win._op_list = op_list            # exposed for tests (verify the general tier is read-only)
+    win._op_param = op_param          # the line above the + button (signature / why an op was not added)
 
     class _OpTipFilter(QtCore.QObject):
         """Hovering an op row shows that op's own one-sentence description (first sentence of its help page in the
@@ -9960,7 +10062,11 @@ def build_window(model=None):
                 name = item.data(QtCore.Qt.UserRole) if item is not None else None
                 row = (_row_by_name.get(name) or _op_row(name)) if isinstance(name, str) and name else None
                 if row:
-                    QtWidgets.QToolTip.showText(ev.globalPos(), op_tooltip(row, _UI_LANG["code"]), op_list)
+                    _tip = op_tooltip(row, _UI_LANG["code"])
+                    _why = item.data(QtCore.Qt.UserRole + 5)
+                    if _why in NOT_INSERTABLE_TEXT:                # 入れられない行は、理由を先に
+                        _tip = not_insertable_text(name, _why) + "\n\n" + _tip
+                    QtWidgets.QToolTip.showText(ev.globalPos(), _tip, op_list)
                     return True
             return False
     _op_tip_filter = _OpTipFilter(win)
@@ -15171,6 +15277,7 @@ def build_window(model=None):
         try:
             samples.setItemText(0, tr("— load a sample —"))
             cat.setItemText(0, tr("all categories"))
+            refill_ops()                                     # 行の「段としては入れられません」と注記(S2)
             on_op_selected(op_list.currentItem())
             win._knob_spec_op = None                         # つまみの名前を言語で作り直す(spec は同じ)
             i = selected_index()

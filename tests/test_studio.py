@@ -240,6 +240,9 @@ def test_op_browser_general_tier_is_readonly_offscreen():
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
     win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     op_list, btns = win._op_list, win._op_buttons
+    # 2026-11-13(S2): 「前段の出力を受けられる op だけ表示」が入っていると、最初の段でも画像を受けない
+    # 一般アルゴリズムの op は隠れる。スイッチを切れば並ぶ(読み取り専用のまま)。
+    win._ops_fit["check"].setChecked(False)
     names = [op_list.item(i).data(QtCore.Qt.UserRole) for i in range(op_list.count())]
     assert "gaussian" in names                   # image ops present
     assert "strfind" in names and "gauss_solve" in names   # general tier shown in the browser
@@ -383,7 +386,8 @@ def test_program_editor_and_help_exclude_general_tier_offscreen():
     import algo
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
     win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
-    # the browser SHOWS the general tier (read-only) ...
+    # the browser SHOWS the general tier (read-only) when the type switch is off (2026-11-13, S2) ...
+    win._ops_fit["check"].setChecked(False)
     shown = [win._op_list.item(i).data(QtCore.Qt.UserRole) for i in range(win._op_list.count())]
     assert set(algo.algo_names()) <= set(shown)
     # ... but the code parser / autocomplete / Help picker names EXCLUDE it
