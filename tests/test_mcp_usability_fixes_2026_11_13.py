@@ -282,3 +282,35 @@ def test_type_gate_refusals_do_not_use_up_scoring_attempts(cat, store):
     counted = S.call_tool("fullseye_score_pipeline", {"task_id": tid, "stages": [{"op": "otsu"}]}, cat, store)
     sc = counted["structuredContent"]
     assert sc["reason"] == "output_sort_mismatch" and sc["attempt_counted"] is True and sc["attempts_used"] == before + 1
+
+
+# --------------------------------------------------------------------------- 12: 日本語の検索
+#: 検証(2026-11-13)の日本語の問い合わせと、上位 5 件に入るべき op の名前の型(依頼の意図から人が決めた)。
+_JA_QUERIES = (
+    ("光沢のある金属の表面の傷を見つけて長さを測りたい", r"illumin|lighting|solid_angle|defect_contrast|coaxial"),
+    ("光沢のある金属 傷 照明の当て方", r"illumin|lighting|solid_angle|defect_contrast|coaxial"),
+    ("透明な瓶の中の液面の高さを測りたい", r"bottle|fill_level|liquid|container"),
+    ("印刷のかすれを見つけたい", r"print|grade_|char|ocr"),
+    ("ムラのある背景から小さな欠陥を見つけたい", r"background|rolling_ball|tophat|bothat|adaptive|sauvola|niblack"),
+    ("サーモグラフィ 欠陥 深さ", r"therm|lockin"),
+)
+
+
+@pytest.mark.parametrize("query, want", _JA_QUERIES)
+def test_japanese_requests_find_the_operators_they_ask_for(cat, store, query, want):
+    """直す前: 「見つけたい」の「見つ」「つけ」が「見つける」を含む要約(QR・PIV の外れ値 …)に当たり、照明・液面・
+    サーモグラフィの op は英語に直さないと当たらなかった(サーモグラフィの「グラ」「ラフ」はホモグラフィに当たった)。"""
+    import re
+    ops = S.call_tool("fullseye_find_ops", {"query": query}, cat, store)["structuredContent"]["ops"]
+    top5 = [o["name"] for o in ops[:5]]
+    assert len(top5) == 5
+    assert [n for n in top5 if re.search(want, n)], (query, top5)
+
+
+def test_request_phrasing_is_not_a_search_term_and_katakana_is_not_split():
+    from fullseye.opsearch import _ja_query
+    body, bridged, drop = _ja_query("印刷のかすれを見つけたい")
+    assert "見つけ" not in body and "print" in bridged
+    _body, bridged, drop = _ja_query("サーモグラフィ 欠陥 深さ")
+    assert {"thermo", "lockin"} <= set(bridged) and "グラ" in drop and "ラフ" in drop
+    assert _ja_query("edge detection") == ("edge detection", [], set())

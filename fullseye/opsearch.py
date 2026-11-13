@@ -813,6 +813,53 @@ _HI_STOP = frozenset("""के का की को में से पर ह�
     कर करता करती करते करें करना किया होता होती होते होना हो गया गई गए वाला वाली वाले लिए साथ तक द्वारा
     इस उस इन उन कि नहीं न अपने अपना अपनी लगाना पता""".split())
 
+#: 日本語の現場の言い方 → 英語の術語(★2026-11-13、報告 12)。optics・照明・計測の op の要約は英語だけの物が多く、
+#: 「照明」「液面」「サーモグラフィ」で引いても当たらなかった(英語に直すと当たる)。問い合わせにある語の組は、
+#: 英語の語を**問い合わせの語として**足す(言い換えの弱い重みではない)。片仮名の語は、その 2 文字の切れ端を
+#: 検索語から外す(「サーモグラフィ」の「グラ」「ラフ」が「ホモグラフィ」に当たっていた)。
+JA_TERMS: tuple = (
+    ("照明", "ライティング", "光源", "illumination", "lighting", "light"),
+    ("同軸照明", "coaxial"), ("暗視野", "darkfield", "dark field"), ("明視野", "bright field"),
+    ("ドーム照明", "dome"), ("リング照明", "ring light"), ("光沢", "鏡面", "glossy", "specular"),
+    ("傷", "キズ", "scratch"), ("欠陥", "defect"), ("かすれ", "faint", "missing ink"), ("印字", "印刷", "print"),
+    ("液面", "fill level", "liquid level"), ("瓶", "ボトル", "bottle"), ("透明", "transparent"),
+    ("ステレオ", "stereo", "binocular"), ("視差", "disparity"), ("2台のカメラ", "二台のカメラ", "stereo", "binocular"),
+    ("レンズ", "lens"), ("焦点距離", "focal length"), ("被写界深度", "depth of field"), ("倍率", "magnification"),
+    ("視野", "field of view"), ("センサ", "センサー", "sensor"), ("画素分解能", "pixel size", "mm per px"),
+    ("サーモグラフィ", "サーモグラフィー", "熱画像", "thermography", "thermal", "lockin"),
+    ("赤外線", "infrared"), ("熱拡散", "thermal diffusion"), ("穴", "hole"), ("直径", "diameter"),
+    ("精度", "accuracy", "uncertainty"), ("ムラ", "むら", "shading", "uneven background"),
+)
+_KATAKANA_WORD = __import__("re").compile("[\u30a0-\u30ff]+")
+#: 依頼の言い回し(何を探すかでなく、探したいという言い方)。検索語にすると「見つける」を含む要約が上位に来た。
+_JA_REQUEST = __import__("re").compile(
+    r"(?:を|が|に)?(?:見つけ|探し|調べ|知り|決め|選び|使い|やり|し)(?:たい|てほしい|て|る)|"
+    r"(?:測り|はかり)たい|測るのに|どの|どれ|どう|要るか|必要か|でしょうか|ですか|ますか|できるか|ために|には|のに|"
+    r"(?:の)?当て方|やり方|方法")
+
+
+def _ja_query(query: str) -> tuple[str, list[str], set[str]]:
+    """日本語の問い合わせから、依頼の言い回しを外した本文・橋渡しの英語の語・外す片仮名の切れ端を作る。"""
+    if not _KANA.search(_norm(query)):
+        return query, [], set()
+    body = _JA_REQUEST.sub(" ", _norm(query))
+    body = body.replace("測りたい", "測定")
+    bridged: list[str] = []
+    drop: set[str] = set()
+    fq = _fold(body)
+    for group in JA_TERMS:
+        hits = [w for w in group if not w.isascii() and _fold(w) in fq]
+        if not hits:
+            continue
+        for w in group:
+            if w.isascii():
+                bridged.extend(tokenize(w))
+        for w in hits:
+            if _KATAKANA_WORD.fullmatch(w) and len(w) >= 4:
+                drop |= set(tokenize(w))         # 片仮名の語の 2 文字の切れ端は使わない(英語の語で引く)
+    return body, list(dict.fromkeys(bridged)), drop
+
+
 #: ヒンディー語の日常語 → 英語の術語(訳の方針で術語は英語のまま書いたので、日常語で引いても当たるように)。
 #: 言語をまたぐ組はこの表だけ(他の言語は要約自体が訳語で書かれている)。
 HI_TERMS: tuple = (
@@ -1013,7 +1060,10 @@ def search_ops(query: str, k: int | None = None, *, lang: str | None = None, in_
         raise ValueError("search_ops: k must be a positive int, got %r" % (k,))
     in_sort, out_sort = normalize_sort(in_sort), normalize_sort(out_sort)
     ix = load_index(index_path)
-    q = list(dict.fromkeys(tokenize(query)))
+    body, bridged, drop = _ja_query(query)
+    q = [t for t in dict.fromkeys(tokenize(body) + bridged) if t not in drop]
+    if not q:                                            # 言い回しだけの問い合わせ: 元の語で引く
+        q = list(dict.fromkeys(tokenize(query)))
     extra = _synonym_tokens(query, set(q))
     rows, docs, lens, avg, idf = ix["rows"], ix["docs"], ix["lens"], ix["avg"], ix["idf"]
     scores: dict[int, float] = {}

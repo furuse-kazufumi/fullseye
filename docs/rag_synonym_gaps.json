@@ -3,7 +3,7 @@
   "source": "docs/ops/rag_benchmark.json",
   "n_queries": 40,
   "overall": {
-    "search_recall_at_10": 0.6375,
+    "search_recall_at_10": 0.6625,
     "plan_recall_at_10": 0.7875,
     "executable_plan_recall_at_10": 0.7875
   },
@@ -34,7 +34,7 @@
     },
     "specular_transparent": {
       "n_queries": 8,
-      "search_recall_at_10": 0.375,
+      "search_recall_at_10": 0.5,
       "plan_recall_at_10": 0.875,
       "executable_plan_recall_at_10": 0.875
     }
@@ -134,12 +134,10 @@
       "id": "sp01",
       "category": "specular_transparent",
       "query": "鏡面の拡散反射と正反射を偏光画像から分離する",
-      "search_recall_at_10": 0.0,
+      "search_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "executable_plan_recall_at_10": 1.0,
-      "missed_by_search": [
-        "polarization_separate"
-      ],
+      "missed_by_search": [],
       "missed_by_plan": []
     },
     {
@@ -512,14 +510,6 @@
       "query": "Merkmale für wechselnde Produktvarianten finden",
       "missed_by_search": [
         "cv_good_features"
-      ]
-    },
-    {
-      "id": "sp01",
-      "category": "specular_transparent",
-      "query": "鏡面の拡散反射と正反射を偏光画像から分離する",
-      "missed_by_search": [
-        "polarization_separate"
       ]
     },
     {
