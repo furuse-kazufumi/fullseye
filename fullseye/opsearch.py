@@ -212,9 +212,14 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
     # example OP_SEARCH used ``images`` while OP_GRAPH used ``seq<image>``).
     # Normalize both graph sides here, rather than relying on every generator
     # having changed spelling in lockstep.
+    # ★2026-11-13(AI の役での検証、報告 3): 型の直し方の候補に hx_gen_empty_region(入力を形のためだけに読み、
+    #   中身を見ない生成の op)が出て、従うと count_obj = 0 が判定 ok で返った。入力の中身を読まない op
+    #   (MCP_INPUT_INDEPENDENT.json、採点が断る一覧と同じ)は経路の途中に置かない。
+    blind = _input_independent_names()
     edges = [{**e, "inputs": [normalize_sort(x) for x in e.get("inputs", ())],
               "output": normalize_sort(e.get("output"))}
              for e in graph["edges"] if (e.get("verified_executable") or not executable_only)
+             and e["op"] not in blind
              and normalize_sort(e.get("output")) not in ("unknown", "any")
              and "unknown" not in {normalize_sort(x) for x in e.get("inputs", ())}]
     import heapq
@@ -704,6 +709,14 @@ def mcp_unavailable_text(op: str) -> str:
         return ""
     return "%s is not executable in MCP (%s: %s). Instead: %s" % (
         op, info["reason"], info["why"], "; ".join(info["instead"]))
+
+
+def _input_independent_names() -> frozenset:
+    """出力が入力の中身に依存しない op(tools/gen_mcp_input_independent.py → MCP_INPUT_INDEPENDENT.json)。"""
+    try:
+        return frozenset((_load_data("MCP_INPUT_INDEPENDENT.json").get("ops") or {}))
+    except (FileNotFoundError, ValueError):
+        return frozenset()
 
 
 def _next_call_skeleton(row: dict) -> str:

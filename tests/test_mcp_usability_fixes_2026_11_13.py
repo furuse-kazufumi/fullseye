@@ -71,3 +71,23 @@ def test_strict_failure_text_has_one_line_per_stage(cat, store):
     assert lines[0] == "段 1 illumination_design failed in strict mode: execution_failed"
     assert lines[1].startswith("段 1 illumination_design: 失敗 execution_failed — ValueError:")
     assert "動く見本" in _text(r) and "{\"completed\"" not in _text(r)
+
+
+# --------------------------------------------------------------------------- 3: 入力を読まない op を提案と plan から外す
+def test_fixes_and_plans_never_route_through_ops_that_ignore_their_input(cat, store):
+    """直す前: image → region の直し方の候補が hx_gen_empty_region(入力の中身を見ない生成の op)で、
+    従った gaussian → sobel_amp → hx_gen_empty_region → count_obj が 0.0 を判定 ok で返した。"""
+    from fullseye.opsearch import _input_independent_names, plan
+    blind = _input_independent_names()
+    assert "hx_gen_empty_region" in blind and len(blind) >= 20
+    checked = S.validate_pipeline([{"op": "gaussian"}, {"op": "otsu"}, {"op": "sobel_amp"}, {"op": "count_obj"}],
+                                  "image", cat, store=store)
+    fixes = [f for e in checked["errors"] for m in e.get("value", []) if isinstance(m, dict)
+             for f in m.get("fixes", []) if f.get("kind") == "conversion"]
+    assert fixes, checked["errors"]
+    used = {op for f in fixes for op in f["ops"]}
+    assert used and not (used & blind), used & blind
+    routes = plan("image", "region", constraints={"k": 10, "max_depth": 3})
+    assert routes.get("ok") and routes["plans"]
+    ops_in_plans = {op for pl in routes["plans"] for op in pl["ops"]}
+    assert ops_in_plans and not (ops_in_plans & blind), ops_in_plans & blind
