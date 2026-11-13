@@ -14591,6 +14591,17 @@ def build_window(model=None):
     win._open_physical_ai_viewer = open_physical_ai_viewer
     win._latest_evis_perception = _latest_evis_perception
 
+    def _sync_physical_ai_item():
+        """M14(2026-11-13、初回起動の点検): 素材(知覚 GIF)が無い時はメニューに出さない(開くと「未生成です」だけの窓だった)。
+        メニューを開くたびに見直す(GIF を作った後は、再起動しなくても出る)。"""
+        try:
+            act_physical_ai.setVisible(_latest_evis_perception() is not None)
+        except Exception as exc:                            # noqa: BLE001 -- メニューを開く操作を落とさない
+            _log_soft_failure("could not look for the evis perception GIF", exc)
+    _sync_physical_ai_item()
+    menu_tools.aboutToShow.connect(_sync_physical_ai_item)
+    win._sync_physical_ai_item = _sync_physical_ai_item
+
     # ------------------------------------------------------------------ Compound eye → brain(2026-09-20)
     def open_eye_brain_panel():
         """Tools ▸ Compound eye → brain: 左 = 複眼が見る像(個眼格子)、右 = 脳の立体(Viewer3D、ドラッグで視点)。

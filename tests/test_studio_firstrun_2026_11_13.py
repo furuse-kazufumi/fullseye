@@ -726,3 +726,19 @@ def test_m15_typing_in_the_help_picker_opens_the_exact_page(launch):
         assert want in br.toPlainText()[:400], (typed, br.toPlainText()[:120])
     assert pick.count() == n0                                         # 打った語を行として足さない
     win._help["dialog"].close()
+
+
+def test_m14_the_evis_item_is_listed_only_with_its_material(launch, monkeypatch, tmp_path):
+    win, _model = launch()
+    act = win._act_physical_ai
+    real = win._sync_physical_ai_item
+    # the closure looks the GIF up through its own helper: point it at nothing / at a file
+    import glob as _glob
+    monkeypatch.setattr(_glob, "glob", lambda pattern, *a, **k: [])
+    real()
+    assert not act.isVisible()
+    gif = tmp_path / "evis_fullseye_x.gif"
+    gif.write_bytes(b"GIF89a")
+    monkeypatch.setattr(_glob, "glob", lambda pattern, *a, **k: [str(gif)] if "evis_fullseye" in pattern else [])
+    real()
+    assert act.isVisible()
