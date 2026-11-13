@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1934. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1941. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -448,20 +448,20 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_3d_sensor_modalities.py`
 
-- **L109** _(ja)_ — 部品を画素の格子からずらして置く [mm]。★ずらさないと壁が ToF の画素(0.4 mm)の境目にちょうど乗り、 縁の混合画素が 1 つも出ない(2026-11-08 に実測: ToF の縁の外側が全部「正しい」)。実物の壁は画素の境目を選ばない
-- **L414** _(ja)_ — ★真上へ跳ねる光は高さの図(張り出しが無い)には二度と当たらないので辿らない(時間の大半がここだった)
-- **L577** _(ja)_ — (★前の版は ToF だけ露光が固定で「露光を上げられない」と書いていた —— 条件の差で勝ち負けを作っていた)
-- **L712** _(ja)_ — ★u' は像の座標を cos a で割った座標(u' = x − z·tan a)。瞳の遮断の空間周波数 sin u/λ は像の座標での値なので、 u' では cos a 倍にする(掛けないと粒が cos 30° = 0.87 倍細かくなり、雑音が低く出る。2026-11-08 の再レビュー)
-- **L768** _(ja)_ — ★標本の足跡(幅 FINE)を、重なる 2 つの画素へ重なりの比で分ける。点で 1 画素へ落とすと、 細い光条の中心が画素の格子へ引き寄せられる(シミュの都合で出る偽の偏り、最大 0.04 mm を実測)。
-- **L827** _(ja)_ — ★レンズのぼけは光切断ではコヒーレントな瞳(coherent_speckle の中)で入れてあるので、二重に掛けない
-- **L916** _(ja)_ — 2 台のカメラの傾き ±[°]。★±15°(輻輳 30°)にして、縞投影・光切断の三角測量の角 30° と揃える (前の版は ±5° で、ステレオだけ三角測量の角が 3 分の 1 だった。条件の差で負けを作らない)
-- **L961** _(ja)_ — ★いちばん近い測定を採る(線形に補間すると、壁をまたぐ所に「間の高さ」を作ってしまう —— 縁の外側の判定で、方式ではなく並べ直しが浮いた画素を作る)
-- **L980** _(ja)_ — ★2026-11-08 の敵対的レビューの指摘で変えた: 前の版は方式ごとに「つや消しの雑音の 5 倍」を閾値にしていて、 ToF 6.7 mm・照度差ステレオ 10 mm と雑音の大きい方式ほど甘く、トゲだらけの ToF が「偽 0 %」になっていた。
-- **L1501** _(ja)_ — ★表示の高さは部品の範囲に切る(照度差ステレオの積分の飛び値 1 本で、立体全体が潰れて見えた)
-- **L1896** _(ja)_ — ★門の経緯(2026-11-08、消さずに残す): (1) 最初の門は「全部の点の PF が縞投影・光切断は 0.1 mm 以下、ToF は 1 mm 超」。画素 0.1 mm(CI)で通り、 画素 0.05 mm(full)で光切断が 0.110 mm になって NG。PF は範囲(最大 − 最小)なので点が多いほど大きい。 (2) 光切断を外した比の門に書き直したのは、結果を見て門を動かした形だったので戻した。 (3) 点を 200 にそろえた PF で同じ主張を確かめたが、種 77 の 1 回の抽選(下側 5 %)に頼っていた。 (4) 200 回の抽選の中央値・外れ点の除外なし(全部の点の列とそろえる)にすると、full で光切断が 0.104 mm (5〜95 % 0.077〜0.129)となり、**光切断の PF ≤ 0.1 mm は成り立たない**。CI(画素 0.1 mm)では 0.071 で通る —— 画素で合否が変わる主張は立てない。光切断は「約 0.1 mm」として表と印字に出し(限界)、門に残すのは 画素に依らず成り立つ「縞投影 ≤ 0.1 mm、ToF > 1 mm」だけ(再レビューの提案の書き方)
-- **L1953** _(ja)_ — ★ステレオの黒の外れは画素で大きく変わる(0.1 mm で 37 %、0.05 mm で 6 %)ので、画素を値と並べる
-- **L2126** _(ja)_ — ★line_width_um は op の約束で「カメラから見た」光条の 1/e² の半幅 w(強度 exp(−2y²/w²))。光条は 2σ、 カメラ(30°)からは cos 30° 倍に縮んで見える。参照の細かさは 1 標本 ≤ 6.25 µm(16 倍、強度のナイキスト 8.1 µm より細かい)、試行 16 回(χ² の 95 % 区間 約 ±5 %)。前の版(8 倍・4 回)は参照が粗く、 「1 画素で平均すると op も式を下回る」と誤って読んだ(2026-11-08 の再レビュー)
-- **L2284** _(ja)_ — ★キーを op と同じ名前(残差の二乗平均の 3 文字)にすると、op の例の索引(引用符つきの op 名を拾う)がこの PoC を op の例に数える
+- **L119** _(ja)_ — 部品を画素の格子からずらして置く [mm]。★ずらさないと壁が ToF の画素(0.4 mm)の境目にちょうど乗り、 縁の混合画素が 1 つも出ない(2026-11-08 に実測: ToF の縁の外側が全部「正しい」)。実物の壁は画素の境目を選ばない
+- **L424** _(ja)_ — ★真上へ跳ねる光は高さの図(張り出しが無い)には二度と当たらないので辿らない(時間の大半がここだった)
+- **L587** _(ja)_ — (★前の版は ToF だけ露光が固定で「露光を上げられない」と書いていた —— 条件の差で勝ち負けを作っていた)
+- **L722** _(ja)_ — ★u' は像の座標を cos a で割った座標(u' = x − z·tan a)。瞳の遮断の空間周波数 sin u/λ は像の座標での値なので、 u' では cos a 倍にする(掛けないと粒が cos 30° = 0.87 倍細かくなり、雑音が低く出る。2026-11-08 の再レビュー)
+- **L778** _(ja)_ — ★標本の足跡(幅 FINE)を、重なる 2 つの画素へ重なりの比で分ける。点で 1 画素へ落とすと、 細い光条の中心が画素の格子へ引き寄せられる(シミュの都合で出る偽の偏り、最大 0.04 mm を実測)。
+- **L837** _(ja)_ — ★レンズのぼけは光切断ではコヒーレントな瞳(coherent_speckle の中)で入れてあるので、二重に掛けない
+- **L926** _(ja)_ — 2 台のカメラの傾き ±[°]。★±15°(輻輳 30°)にして、縞投影・光切断の三角測量の角 30° と揃える (前の版は ±5° で、ステレオだけ三角測量の角が 3 分の 1 だった。条件の差で負けを作らない)
+- **L971** _(ja)_ — ★いちばん近い測定を採る(線形に補間すると、壁をまたぐ所に「間の高さ」を作ってしまう —— 縁の外側の判定で、方式ではなく並べ直しが浮いた画素を作る)
+- **L990** _(ja)_ — ★2026-11-08 の敵対的レビューの指摘で変えた: 前の版は方式ごとに「つや消しの雑音の 5 倍」を閾値にしていて、 ToF 6.7 mm・照度差ステレオ 10 mm と雑音の大きい方式ほど甘く、トゲだらけの ToF が「偽 0 %」になっていた。
+- **L1511** _(ja)_ — ★表示の高さは部品の範囲に切る(照度差ステレオの積分の飛び値 1 本で、立体全体が潰れて見えた)
+- **L1906** _(ja)_ — ★門の経緯(2026-11-08、消さずに残す): (1) 最初の門は「全部の点の PF が縞投影・光切断は 0.1 mm 以下、ToF は 1 mm 超」。画素 0.1 mm(CI)で通り、 画素 0.05 mm(full)で光切断が 0.110 mm になって NG。PF は範囲(最大 − 最小)なので点が多いほど大きい。 (2) 光切断を外した比の門に書き直したのは、結果を見て門を動かした形だったので戻した。 (3) 点を 200 にそろえた PF で同じ主張を確かめたが、種 77 の 1 回の抽選(下側 5 %)に頼っていた。 (4) 200 回の抽選の中央値・外れ点の除外なし(全部の点の列とそろえる)にすると、full で光切断が 0.104 mm (5〜95 % 0.077〜0.129)となり、**光切断の PF ≤ 0.1 mm は成り立たない**。CI(画素 0.1 mm)では 0.071 で通る —— 画素で合否が変わる主張は立てない。光切断は「約 0.1 mm」として表と印字に出し(限界)、門に残すのは 画素に依らず成り立つ「縞投影 ≤ 0.1 mm、ToF > 1 mm」だけ(再レビューの提案の書き方)
+- **L1963** _(ja)_ — ★ステレオの黒の外れは画素で大きく変わる(0.1 mm で 37 %、0.05 mm で 6 %)ので、画素を値と並べる
+- **L2136** _(ja)_ — ★line_width_um は op の約束で「カメラから見た」光条の 1/e² の半幅 w(強度 exp(−2y²/w²))。光条は 2σ、 カメラ(30°)からは cos 30° 倍に縮んで見える。参照の細かさは 1 標本 ≤ 6.25 µm(16 倍、強度のナイキスト 8.1 µm より細かい)、試行 16 回(χ² の 95 % 区間 約 ±5 %)。前の版(8 倍・4 回)は参照が粗く、 「1 画素で平均すると op も式を下回る」と誤って読んだ(2026-11-08 の再レビュー)
+- **L2294** _(ja)_ — ★キーを op と同じ名前(残差の二乗平均の 3 文字)にすると、op の例の索引(引用符つきの op 名を拾う)がこの PoC を op の例に数える
 
 ## `examples/poc_active_contours.py`
 
@@ -526,6 +526,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_bone_trabecular_thickness.py`
 
 - **L708** _(ja)_ — ★穴が塞がったので、所見を「無い」から「**規約が 1 画素ずれる**」に書き換える。
+
+## `examples/poc_bottle_pattern_inverse.py`
+
+- **L448** _(ja)_ — ★同じ雑音の条件どうし(2026-11-13): 満の瓶を、同心と奥行き 0.3 mm の偏心で、同じ雑音の実現 N_ECC 回ずつ当てはめる。 前の版は「雑音なしの当てはめのずれ」と「雑音ありの残差の床」を 1 つの門に混ぜていた(そういう観測は存在しない)。
 
 ## `examples/poc_bump_coplanarity.py`
 
@@ -1013,10 +1017,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_mixed_case_depalletizing.py`
 
-- **L1778** _(ja)_ — と同じ 5 mm にした。★この値は scene 1・2 の真値を見て決めたので、scene 1・2 は「調整に使った」、 scene 3〜10 は「見ていない」として結果を分けて出す(``split_by_tuning``)。
-- **L1787** _(ja)_ — ≈ 3 px。★感度: scene 1・2 の 10 枚で 0 px → 長辺 −13 / 短辺 −4.5 mm、6 px → −0.3 / +4.1 mm (6 px では遮る縁の 深度カメラの「縁の太り」まで拾って外へ伸びる)。真値で合わせ込まず見積もりの 3 にした。 全 50 枚の 0 / 3 / 6 の比較(下書きの段で出した): 再現率 0.705 / 0.705 / 0.674、誤検出 14.8 / 43.1 / 52.2 枚あたり。 全 50 枚の実測(2026-11-08): 0 px → 再現率 0.705・長 −7.8・短 −2.6 mm・誤検出 14.8 枚/画像 / 3 px → 0.705・−2.0・+2.9・43.1 / 6 px → 0.674・+0.4・+5.8・52.2。再現率は変わらず、寸法の偏りと 誤検出の数の綱引き(太らせると雑音の小片まで矩形らしくなる)。
-- **L1966** _(ja)_ — ★scipy の binary_dilation は iterations=0 で「変わらなくなるまで」太らせる(= 切り出し全体)。0 は太らせない。
-- **L3220** _(ja)_ — ★これらの門は、天面の合わせ目を入れた場面の結果を見てから置いた。全部の種と見ていない種 3〜9 の両方で確かめる。
+- **L1781** _(ja)_ — と同じ 5 mm にした。★この値は scene 1・2 の真値を見て決めたので、scene 1・2 は「調整に使った」、 scene 3〜10 は「見ていない」として結果を分けて出す(``split_by_tuning``)。
+- **L1790** _(ja)_ — ≈ 3 px。★感度: scene 1・2 の 10 枚で 0 px → 長辺 −13 / 短辺 −4.5 mm、6 px → −0.3 / +4.1 mm (6 px では遮る縁の 深度カメラの「縁の太り」まで拾って外へ伸びる)。真値で合わせ込まず見積もりの 3 にした。 全 50 枚の 0 / 3 / 6 の比較(下書きの段で出した): 再現率 0.705 / 0.705 / 0.674、誤検出 14.8 / 43.1 / 52.2 枚あたり。 全 50 枚の実測(2026-11-08): 0 px → 再現率 0.705・長 −7.8・短 −2.6 mm・誤検出 14.8 枚/画像 / 3 px → 0.705・−2.0・+2.9・43.1 / 6 px → 0.674・+0.4・+5.8・52.2。再現率は変わらず、寸法の偏りと 誤検出の数の綱引き(太らせると雑音の小片まで矩形らしくなる)。
+- **L1969** _(ja)_ — ★scipy の binary_dilation は iterations=0 で「変わらなくなるまで」太らせる(= 切り出し全体)。0 は太らせない。
+- **L3226** _(ja)_ — ★見出しのカラーの主張: 見ていない種のコマが Blender のカラーで揃っていれば測って確かめ、無ければ(CI)記録で読む。
+- **L3232** _(ja)_ — ★これらの門は、天面の合わせ目を入れた場面の結果を見てから置いた。全部の種と見ていない種 3〜9 の両方で確かめる。
 
 ## `examples/poc_moire_screen.py`
 
@@ -1093,17 +1098,17 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_photoelasticity.py`
 
-- **L163** — ★Den Befund festhalten: Dies ist eine **exakte** Gegenrechnung zu fullseyes Mueller-op, die selbst bei einem vollen δ-Durchlauf in 15-Grad-Schritten und 5 θ-Werten auf Maschinengenauigkeit übereinstimmt (gemessen 2.2e-16). Lockert sich das, misst man ab Abschnitt 3 nicht das "Ausleseverfahren", sondern einen Bug im op.
-- **L188** — ★Auch die Gegenrechnung des Spannungsfelds selbst festhalten. Stimmt die integrierte Kraft nicht mit der Last überein, ist es nicht der "wahre Wert", und der Zentralwert muss algebraisch mit der geschlossenen Form 8P/(πDh) identisch sein.
-- **L209** — ★Das Niveau des Nullpunkts festhalten. Jedes folgende "N-fach" verwendet diese 1.09 MPa als Nenner, verschiebt sich das, ändert sich die Bedeutung des Vergleichs.
-- **L232** — ★Den Befund festhalten: Das naive Verfahren, aus einem einzigen Dunkelfeldbild nur ganzzahlige Streifen abzulesen, **schlägt den Nullpunkt nicht einmal um das 2-fache**. Weil die Auflösung durch den Schritt fσ/h = 1.78 MPa begrenzt ist. Der Kontrast zur Phasenverschiebung in Abschnitt 4 (deren Fehler auf Maschinengenauigkeit fällt) ist das Rückgrat dieses PoC.
-- **L271** — ★Da wir bei null Rauschen aus derselben Intensitätsgleichung zurückrechnen, muss θ **exakt** zurückkommen (die Algebra, die 4θ aus den 4 planpolarisierten Bildern erzeugt, ist selbst die Umkehrabbildung).
-- **L296** — ★Den Befund festhalten. (1) Die Übereinstimmung übersteigt 95 %, erreicht aber **nie 100 %**. Der Rest sind Pixel, deren Vorzeichen durch die Mehrdeutigkeit (δ,θ) ↔ (-δ,θ+90°) umgekehrt ist, die sich für ein einzelnes Pixel allein (aus einer Messung bei einer Wellenlänge) prinzipiell nicht beseitigen lässt; mit der räumlichen Stetigkeit sieht es anders aus (in Abschnitt 5 gemessen). Den Befund unverändert festhalten: weder "nahezu übereinstimmend" noch "vollständig übereinstimmend".
-- **L367** — ★Den Befund festhalten. (1) Es gibt keine Depolarisation (der Stokes-Betrag ist exakt 1). Das ist die Grundlage für die Behauptung in Abschnitt 5, dass in der Modulation nicht die Lichtmenge, sondern **die Phasenempfindlichkeit** abfällt.
-- **L373** — (2) ★★Die Messung sagt das **Gegenteil** der naiven Erwartung, "eine Maske zu übergeben behebt es": ohne Maske 97.0 % / bei Ausschluss der Unterabtastung 97.1 % / **schließt man auch die niedrige Modulation aus, fällt es auf 81.9 %**. Weil das Entfernen der niedrig modulierten Pixel die Region zerteilt und skimages unwrap pro Insel einen anderen 2π-Offset wählt. Niedrig modulierte Pixel sind nicht die Ursache der Abweichungen; bei einer vorzeichenvertauschten Eingabe hebt ihr Ausschluss die Übereinstimmung nicht, sondern senkt sie. Dieselbe Maske auf eine vorzeichenrichtige Eingabe senkt sie nicht (unten gemessen). Dass die Region nicht zerteilt wird (anderes 2π je Insel), ist ebenfalls gemessen. Der Mechanismus ist ungeklärt. Den Messwert festhalten.
-- **L443** _(ja)_ — ★所見を固定する(いずれも測った事実。門は動かさない)。 (a) 外れの大半は 4 節の符号の反転と同じ画素。
-- **L530** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
-- **L533** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
+- **L185** — ★Den Befund festhalten: Dies ist eine **exakte** Gegenrechnung zu fullseyes Mueller-op, die selbst bei einem vollen δ-Durchlauf in 15-Grad-Schritten und 5 θ-Werten auf Maschinengenauigkeit übereinstimmt (gemessen 2.2e-16). Lockert sich das, misst man ab Abschnitt 3 nicht das "Ausleseverfahren", sondern einen Bug im op.
+- **L210** — ★Auch die Gegenrechnung des Spannungsfelds selbst festhalten. Stimmt die integrierte Kraft nicht mit der Last überein, ist es nicht der "wahre Wert", und der Zentralwert muss algebraisch mit der geschlossenen Form 8P/(πDh) identisch sein.
+- **L231** — ★Das Niveau des Nullpunkts festhalten. Jedes folgende "N-fach" verwendet diese 1.09 MPa als Nenner, verschiebt sich das, ändert sich die Bedeutung des Vergleichs.
+- **L254** — ★Den Befund festhalten: Das naive Verfahren, aus einem einzigen Dunkelfeldbild nur ganzzahlige Streifen abzulesen, **schlägt den Nullpunkt nicht einmal um das 2-fache**. Weil die Auflösung durch den Schritt fσ/h = 1.78 MPa begrenzt ist. Der Kontrast zur Phasenverschiebung in Abschnitt 4 (deren Fehler auf Maschinengenauigkeit fällt) ist das Rückgrat dieses PoC.
+- **L293** — ★Da wir bei null Rauschen aus derselben Intensitätsgleichung zurückrechnen, muss θ **exakt** zurückkommen (die Algebra, die 4θ aus den 4 planpolarisierten Bildern erzeugt, ist selbst die Umkehrabbildung).
+- **L321** — ★Den Befund festhalten. (1) Die Übereinstimmung übersteigt 95 %, erreicht aber **nie 100 %**. Der Rest sind Pixel, deren Vorzeichen durch die Mehrdeutigkeit (δ,θ) ↔ (-δ,θ+90°) umgekehrt ist, die sich für ein einzelnes Pixel allein (aus einer Messung bei einer Wellenlänge) prinzipiell nicht beseitigen lässt; mit der räumlichen Stetigkeit sieht es anders aus (in Abschnitt 5 gemessen). Den Befund unverändert festhalten: weder "nahezu übereinstimmend" noch "vollständig übereinstimmend".
+- **L392** — ★Den Befund festhalten. (1) Es gibt keine Depolarisation (der Stokes-Betrag ist exakt 1). Das ist die Grundlage für die Behauptung in Abschnitt 5, dass in der Modulation nicht die Lichtmenge, sondern **die Phasenempfindlichkeit** abfällt.
+- **L398** — (2) ★★Die Messung sagt das **Gegenteil** der naiven Erwartung, "eine Maske zu übergeben behebt es": ohne Maske 97.0 % / bei Ausschluss der Unterabtastung 97.1 % / **schließt man auch die niedrige Modulation aus, fällt es auf 81.9 %**. Weil das Entfernen der niedrig modulierten Pixel die Region zerteilt und skimages unwrap pro Insel einen anderen 2π-Offset wählt. Niedrig modulierte Pixel sind nicht die Ursache der Abweichungen; bei einer vorzeichenvertauschten Eingabe hebt ihr Ausschluss die Übereinstimmung nicht, sondern senkt sie. Dieselbe Maske auf eine vorzeichenrichtige Eingabe senkt sie nicht (unten gemessen). Dass die Region nicht zerteilt wird (anderes 2π je Insel), ist ebenfalls gemessen. Der Mechanismus ist ungeklärt. Den Messwert festhalten.
+- **L468** _(ja)_ — ★所見を固定する(いずれも測った事実。門は動かさない)。 (a) 外れの大半は 4 節の符号の反転と同じ画素。
+- **L556** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
+- **L559** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
 
 ## `examples/poc_pigment_unmixing.py`
 
@@ -1203,6 +1208,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_real_grain_skiz.py`
 
 - **L480** _(ja)_ — ★2026-11-09: opening_seg の修正で粒の数が 57 → 31(専門家 18)、変動係数が 0.145 → 0.176 に動き、 門「SKIZ の粒の数は専門家の 2 倍以上」「変動係数は専門家の半分以下」が成り立たなくなった。門の値を実測の 直上へ動かすのは緩めになるので、2 本とも門から外し、数値は印字と RECORDED にだけ残す(主張は本文で縮めた)。
+
+## `examples/poc_real_stereo_multiscanline.py`
+
+- **L127** _(ja)_ — bad-N のしきい [px]。★この PoC の画像は 1/4 解像度(:data:`RES_SCALE`)なので、2 px は原寸の 8 px に当たる。 Middlebury の公式の表の bad 2.0(常に原寸で数える)とは別の、4 倍緩い閾値 —— 原寸換算の呼び方なら bad 8.0。
+
+## `examples/poc_real_walnut_cbct.py`
+
+- **L948** _(ja)_ — ★主張の検査ではない。別の行のデータも矛盾の無いデータなので、この不等式は作りの上でほぼ必ず通る (2 つの行の雑音・散乱の差だけで決まる)。落ちたら fan_data / 再投影の配線が壊れた印として読む。
 
 ## `examples/poc_recycling_sorting.py`
 
@@ -1366,7 +1379,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L113** _(ja)_ — 狙い = iterative)。★2026-10-15 から門に使う: 手元に optiland が無いとき(CI)は、この記録値と telecentric.chief_ray_angle・raytrace.chief_ray(入射瞳が無限遠なら絞りを狙う)の両方を 2e-6 mm で照合する (記録は 6 桁に丸めてあるので丸めの幅 5e-7 mm を含む)。
 - **L520** _(ja)_ — ★手前(z の高い層)から over 合成: 手前の被覆率の分だけ奥を隠す(2026-11-05 まで 全層を足してぼかした重みで割っていて、奥のぼけが合焦した手前の縁に被った。 optscene.defocus_blur と同じ欠陥 —— 敵対的検証 第 2 巡 O1 の兄弟)
 - **L1017** _(ja)_ — ★2026-11-05: 往路 10 コマ + 復路 8 コマ。復路は往路と同じ高さなので描き直さず使い回す (1 コマ = 3 本のレンズの描画で、手元 1 本 ~15 秒。18 → 10 回で図の段が ~6 分縮む)。 以前は復路を np.linspace(3, -3, 10) から取っていて、往路と 1 ulp(6.7e-16 mm)違う だけの同じ絵を描いていた。図つきの全数走行で 900 秒を超えていた主因がこの GIF。
-- **L1240** _(ja)_ — ★リングごとに自由な楕円(5 自由度)を当てると、影で弧が 90〜180° しか見えない外側のリングは長半径が外挿で 膨らむ・縮む(2026-10-15 に元の解像度で見て分かった: 外側のリングで楕円が白い線から外れ、間隔が 246〜257 px/mm と ばらついた)。テレセン(正射影)なら傾いた板の同心円は「中心と形を共有する楕円の族」に写るので、族ごと当てる。 族の仮定そのもの(中心の共有)は (c) でリングごとに中心を解き直して確かめる。
+- **L1301** _(ja)_ — ★リングごとに自由な楕円(5 自由度)を当てると、影で弧が 90〜180° しか見えない外側のリングは長半径が外挿で 膨らむ・縮む(2026-10-15 に元の解像度で見て分かった: 外側のリングで楕円が白い線から外れ、間隔が 246〜257 px/mm と ばらついた)。テレセン(正射影)なら傾いた板の同心円は「中心と形を共有する楕円の族」に写るので、族ごと当てる。 族の仮定そのもの(中心の共有)は (c) でリングごとに中心を解き直して確かめる。
 
 ## `examples/poc_tem_ctf_thon_rings.py`
 
@@ -1496,6 +1509,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_video_physics_consistency.py`
 
 - **L177** _(ja)_ — ★ 縁に触れた bbox の辺は車の縁でなく画像の縁。そのまま使うと位置が 0.36 m ずれて黙って軌跡に入る(2026-10-23 の敵対的レビュー、 発射条件の端 3000 本中 2 本)。label_extent は切り詰めを知らないので、ここで止める。
+
+## `examples/poc_virtual_sem_kv_cd_bse.py`
+
+- **L276** _(ja)_ — ★モンテカルロの統計誤差: 主張に使う側壁 88 度・80 度の 1 kV と 20 kV を、種を替えて測り直す(最初の種は上の表の 1 回)。
+- **L373** _(ja)_ — ★W の粒の 1 kV のコントラストを種を替えて(最初の種 4 は上の 1 回)。粒は数画素で、画素あたりの電子が少ないので大きく揺れる。
+- **L424** _(ja)_ — ★表面の W の 1 kV を種を替えて(最初の種 2 は上の表の 1 回)。門は種の平均で。
 
 ## `examples/poc_warehouse_flow.py`
 
