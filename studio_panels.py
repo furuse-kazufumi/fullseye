@@ -829,6 +829,75 @@ def follow_progress(brand, bar, label=None):
     return f
 
 
+def button_action(win, button):
+    """The ONE QAction of a panel's own button that has none (a tool or push button made with a
+    ``clicked`` handler). Triggering it presses the real button, so the function, its checks and its
+    undo step are the button's. Its name (the button's text, else the first line of its tool tip),
+    tool tip, icon and enabled state are copied from the button whenever a menu shows it
+    (``sync_button_actions``), so they cannot disagree. Asked again for the same button it returns
+    the same action: one function, one QAction."""
+    from PySide6 import QtGui   # noqa: PLC0415
+    st = _state(win)
+    cache = st.setdefault("button_actions", {})
+    act = cache.get(button)
+    if act is None:
+        act = QtGui.QAction(win)
+        act.setObjectName("panel_button_action")
+        act.triggered.connect(lambda _c=False, b=button: b.click() if b.isEnabled() else None)
+        cache[button] = act
+        st.setdefault("button_of", {})[act] = button
+    _copy_button(button, act)
+    return act
+
+
+#: where a long tool tip is cut to make a menu entry (the whole tip stays the entry's tool tip)
+_NAME_CUTS = (" \u2014 ", ": ", "; ", " (", " \u2192 ", " \u2190 ", "\uff08", "\uff1a", "\u3002", "(")
+
+
+def short_name(tip, limit=32):
+    """A menu entry's name from a button's tool tip: its first line, cut before the first explanation
+    (" \u2014 ", ": ", "; ", " (", an arrow, the Japanese full stop ...) when longer than ``limit``."""
+    import unicodedata   # noqa: PLC0415
+    line = (tip or "").strip().split("\n")[0].strip()
+    if sum(2 if unicodedata.east_asian_width(ch) in "WF" else 1 for ch in line) <= limit:   # columns, not characters
+        return line
+    cuts = [line.find(c) for c in _NAME_CUTS if line.find(c) >= 2]
+    return line[:min(cuts)].strip() if cuts else line
+
+
+def _copy_button(button, act):
+    text = (button.text() or "").replace("&", "").strip()
+    tip = (button.toolTip() or "").strip()
+    if not text or text in ("\u2026", "+", "\u2212", "-"):           # an icon / a sign: the tool tip names it
+        text = short_name(tip) or button.accessibleName() or text
+    act.setText(text)
+    act.setToolTip(tip or text)
+    act.setStatusTip(tip.split("\n")[0] if tip else text)
+    if button.property("accent"):              # drawn for the accent ground: no icon in a menu (it would vanish)
+        from PySide6 import QtGui   # noqa: PLC0415
+        act.setIcon(QtGui.QIcon())
+    else:
+        act.setIcon(button.icon())
+    act.setEnabled(button.isEnabled())
+
+
+def sync_button_actions(win):
+    """Copy name / tip / icon / enabled state from every button into its action (a menu is about to
+    show them; the language or the state may have changed). Returns the number of actions synced."""
+    n = 0
+    for act, button in list((_state(win).get("button_of") or {}).items()):
+        try:
+            _copy_button(button, act)
+            n += 1
+        except RuntimeError:                     # the button was destroyed with its panel
+            pass
+    return n
+
+
+#: How many of its own functions a panel's menu offers (user, 2026-11-13: "3 to 8")
+MENU_OWN_MIN, MENU_OWN_MAX = 3, 8
+
+
 def register_panel(win, key, status=None, actions=None):
     """What one panel shows in its title band and offers in its menu button — the ONE place a panel
     (also one added later: console, parameters, call stack) says so.
@@ -855,6 +924,11 @@ def _default_registrations(win):
     def pick(*names):
         return [acts[n] for n in names if n in acts]
 
+    def btn(key, *names):
+        """The panel's own buttons that have no QAction (``win._panel_buttons``, set by studio.py)."""
+        own = (getattr(win, "_panel_buttons", None) or {}).get(key) or {}
+        return [button_action(win, own[n]) for n in names if own.get(n) is not None]
+
     def shown_ops():
         ol = getattr(win, "_op_list", None)
         if ol is None or ol.count() == 0:
@@ -874,16 +948,21 @@ def _default_registrations(win):
         lst = (getattr(win, "_variables", None) or {}).get("list")
         return tr(S_ST_VARS) % lst.count() if lst is not None else ""
 
+    register_panel(win, "program", [],
+                   btn("program", "run", "continue", "step", "reset") + [None]
+                   + btn("program", "apply", "sync") + [None] + pick("export", "verify_exported"))
     register_panel(win, "operators", [{"id": "shown", "text": shown_ops, "priority": 1}],
                    pick("focus_search", "op_reference", "samples"))
     register_panel(win, "pipeline", [{"id": "errors", "text": errors, "priority": 2},
                                      {"id": "stages", "text": stages, "priority": 1}],
                    pick("run_all", "step", "reset") + [None]
                    + pick("remove", "move_up", "move_down", "duplicate_stage", "bypass"))
-    register_panel(win, "variables", [{"id": "count", "text": variables, "priority": 1}], pick("viewer_3d", "feature_inspection"))
+    register_panel(win, "variables", [{"id": "count", "text": variables, "priority": 1}],
+                   btn("variables", "display_new", "display_here") + pick("viewer_3d", "feature_inspection")
+                   + [None] + btn("variables", "watch_remove"))
     register_panel(win, "display", [], pick("fit", "actual_size", "zoom_in", "zoom_out", "surface_3d"))
-    register_panel(win, "compare", [], pick("pin_a"))
-    register_panel(win, "ab", [], pick("pin_a"))
+    register_panel(win, "compare", [], pick("step", "reset") + [None] + pick("pin_a"))
+    register_panel(win, "ab", [], pick("pin_a") + [None] + btn("ab", "restore", "adopt", "keep"))
 
 
 def refresh(win, tr, lang="en"):
@@ -911,13 +990,15 @@ def refresh(win, tr, lang="en"):
     lb.setFixedSize(d["icon_btn"], d["icon_btn"]); lb.setIconSize(QtCore.QSize(d["icon"], d["icon"]))
     lb.setToolTip(tr(S_LAYOUT)); lb.setAccessibleName(tr(S_LAYOUT))
     for text, action in st["layout_actions"]:
-        action.setText(tr(text))
+        if action not in st.get("shared_actions", ()):      # the Window menu's own are named by studio.py
+            action.setText(tr(text))
     for key, action in st["float_actions"].items():
         action.setText("%s: %s" % (tr(S_FLOAT), win._docks[key].windowTitle()))
     for bar in st["titles"].values():
         bar.restyle()
     for mode, action in st["strip_actions"].items():
         action.setText(tr(S_STRIP[mode]))
+    sync_button_actions(win)                     # menu entries made from buttons: the language of the moment
     for entry in st["strips"]:                  # the "..." of a turned icon row: what it holds
         entry["more"].setToolTip(tr(S_MORE)); entry["more"].setAccessibleName(tr(S_MORE))
     tighten(win)
@@ -950,6 +1031,8 @@ def install(win, tr, settings=None):
             self.label.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
             self.label.setMinimumWidth(20)
             self.status, self.actions, self.dropped = [], [], []
+            self.a_hide = QtGui.QAction("Hide", self)            # one per panel (named in restyle)
+            self.a_hide.triggered.connect(lambda _c=False: self.dock.hide())
             self.status_box = QtWidgets.QHBoxLayout(); self.status_box.setContentsMargins(8, 0, 0, 0)
             self.status_box.setSpacing(10)
             self.b_menu = QtWidgets.QToolButton(); self.b_menu.setObjectName("dock_title_menu")
@@ -959,9 +1042,13 @@ def install(win, tr, settings=None):
             self.b_menu.setPopupMode(QtWidgets.QToolButton.InstantPopup)
             self.b_menu.setMenu(QtWidgets.QMenu(self.b_menu))
             self.b_menu.menu().aboutToShow.connect(self.fill_menu)
-            self.key_menu = QtGui.QShortcut(QtGui.QKeySequence("Alt+M"), dock)      # inside this panel: open its menu
-            self.key_menu.setContext(QtCore.Qt.WidgetWithChildrenShortcut)
-            self.key_menu.activated.connect(self.b_menu.showMenu)
+            # Alt+M inside this panel opens its menu: a QAction of the panel (named in restyle), so the key
+            # is listed with every other key binding of the window
+            self.key_menu = QtGui.QAction("Panel menu", dock)
+            self.key_menu.setShortcut(QtGui.QKeySequence("Alt+M"))
+            self.key_menu.setShortcutContext(QtCore.Qt.WidgetWithChildrenShortcut)
+            self.key_menu.triggered.connect(lambda _c=False: self.b_menu.showMenu())
+            dock.addAction(self.key_menu)
             self.b_float = QtWidgets.QToolButton(); self.b_float.setObjectName("dock_title_float")
             self.b_close = QtWidgets.QToolButton(); self.b_close.setObjectName("dock_title_close")
             for b in (self.b_float, self.b_close):
@@ -1040,6 +1127,7 @@ def install(win, tr, settings=None):
             _tr = st["tr"]
             menu = self.b_menu.menu()
             menu.clear()
+            sync_button_actions(win)                 # buttons' names / enabled state of this moment
             for item in self.dropped:
                 menu.addAction(item["now"]).setEnabled(False)
             if self.dropped:
@@ -1055,8 +1143,7 @@ def install(win, tr, settings=None):
                 menu.addAction(st["strip_actions"][mode])
             menu.addSeparator()
             menu.addAction(st["float_actions"][self.key])
-            hide = menu.addAction(_tr(S_HIDE))
-            hide.triggered.connect(lambda _c=False: self.dock.hide())
+            menu.addAction(self.a_hide)
             menu.addAction(st["layout_actions"][0][1])           # Reset panel layout
 
         def restyle(self):
@@ -1073,12 +1160,14 @@ def install(win, tr, settings=None):
                 b.setFixedSize(side, side); b.setIconSize(QtCore.QSize(12, 12))
             name = "%s \u2014 %s (Alt+M)" % (text, _tr(S_MENU))
             self.b_menu.setToolTip(name); self.b_menu.setAccessibleName("%s \u2014 %s" % (text, _tr(S_MENU)))
+            self.key_menu.setText("%s \u2014 %s" % (text, _tr(S_MENU)))
             self.label.setAccessibleName(text)
             for item in self.status:
                 item["now"] = None                   # texts are in the language of the moment: ask again
             self.update_status()
             self.b_close.setIcon(_icon("close", p["muted"]))
             self.b_close.setToolTip(_tr(S_HIDE)); self.b_close.setAccessibleName(_tr(S_HIDE))
+            self.a_hide.setText(_tr(S_HIDE))
             self.follow()
 
         def follow(self):
@@ -1172,12 +1261,18 @@ def install(win, tr, settings=None):
     grow.setStyleSheet("background:transparent;")
     rail.addWidget(grow)
     lmenu = QtWidgets.QMenu(win); st["menus"].append(lmenu)
+    # one function, one QAction: where the window already has the action (Window menu), that one is used
+    known = getattr(win, "_actions", None) or {}
+    shared = {S_RESET: known.get("reset_layout"), S_DOCK_ALL: known.get("dock_all")}
+    st["shared_actions"] = [a for a in shared.values() if a is not None]
     for text, fn in ((S_RESET, lambda: win._reset_layout()),
                      (S_CODE_LEFT, lambda: set_code_side(win, "left")),
                      (S_CODE_BOTTOM, lambda: set_code_side(win, "bottom")),
                      (S_DOCK_ALL, lambda: [toggle_float(win, k, False) for k, d in win._docks.items() if d.isFloating()])):
-        a = QtGui.QAction(tr(text), win)
-        a.triggered.connect(lambda _c=False, f=fn: f())
+        a = shared.get(text)
+        if a is None:
+            a = QtGui.QAction(tr(text), win)
+            a.triggered.connect(lambda _c=False, f=fn: f())
         lmenu.addAction(a)
         st["layout_actions"].append((text, a))
     lb = QtWidgets.QToolButton(); lb.setObjectName("rail_layout")

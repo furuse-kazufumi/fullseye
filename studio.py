@@ -14912,6 +14912,7 @@ def build_window(model=None):
     menu_panels.addAction(act_float_all); menu_panels.addAction(act_dock_all)
     act_float_all.triggered.connect(lambda: float_all_panels(True))
     act_dock_all.triggered.connect(lambda: float_all_panels(False))
+    win._actions["dock_all"] = act_dock_all; win._actions["reset_layout"] = act_reset_layout   # one QAction each (studio_panels)
     win._float_all_panels = float_all_panels
 
     # -- per-panel float control (finer than all-or-nothing float) ------------ #
@@ -15769,6 +15770,10 @@ def build_window(model=None):
     except Exception:
         pass
 
+    win._panel_buttons = {                       # panel buttons without a QAction -> the panel menus (studio_panels)
+        "program": {"run": c_run, "continue": c_cont, "step": c_step, "reset": c_reset, "apply": c_apply, "sync": c_sync},
+        "variables": {"display_new": v_disp, "display_here": v_here, "watch_remove": w_del},
+        "ab": {"restore": ab_restore, "adopt": ab_adopt, "keep": ab_keep}}
     studio_panels.install(win, tr, _settings)   # panel bar + title bands + first-run arrangement (image + code)
     studio_theme.watch_code_fonts(QtWidgets.QApplication.instance())   # dialogs / editor tabs built later
     win._brand_follow = studio_panels.follow_progress(win._brand, run_progress, run_status)   # runs / batches

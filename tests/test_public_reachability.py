@@ -88,7 +88,9 @@ _INTERNAL = {
     "studio_theme": 40,
     # studio_panels 2026-11-13(第 2 段): パネルの帯・dock ⇔ 別ウィンドウ・配置の保存と復元・横長のパネルで
     #   道具とタブを左へ・題の帯へ状態と ≡ を登録する口・左上の進捗の表示 25 本。Studio の窓の内側の部品で op ではない(studio.py からは短い呼び出しだけ。試験が直接呼ぶ)。
-    "studio_panels": 25,
+    # studio_panels +3 2026-11-13(要件 5): パネルのボタンの QAction(button_action / sync_button_actions)と、
+    #   ツールチップからメニューの項目名を切る short_name。
+    "studio_panels": 28,
     "studio": 91, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
@@ -333,7 +335,8 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (配色・密度・コントラストの表と QSS。Studio の内側)・studio.dock_layout_usable 1。実測 1104。
 # 2026-11-13 origin/master(1086 = 1084 + 2)を merge: 1104 + 2 = 1106。実測 1106。
 # 2026-11-13 見た目の第 2 段: 1106 + 46 = 1152。studio_panels 25・studio_theme 21(コードの書体・怪しい文字・色の門)。実測 1152。
-_HIDDEN_FUNCTIONS_TODAY = 1152
+# 2026-11-13 要件 5(≡ の項目): 1152 + 3 = 1155。studio_panels の button_action / sync_button_actions / short_name。
+_HIDDEN_FUNCTIONS_TODAY = 1155
 
 
 def _hidden_total():

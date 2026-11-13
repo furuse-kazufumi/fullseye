@@ -112,6 +112,54 @@
   "hi": "हिन्दी"
  },
  "tooltips": {
+  "Continue: resume from the execution line to the next breakpoint / end (pause via breakpoints, resume here)": {
+   "ja": "続行: 実行中の行から次のブレークポイントまたは最後まで進める(ブレークポイントで止め、ここで再開)",
+   "zh": "继续: 从执行行运行到下一个断点或结尾(用断点暂停,在此恢复)",
+   "tw": "繼續: 從執行行執行到下一個中斷點或結尾(用中斷點暫停,在此繼續)",
+   "ko": "계속: 실행 줄부터 다음 중단점 또는 끝까지 진행(중단점에서 멈추고 여기서 재개)",
+   "de": "Fortsetzen: von der Ausführungszeile bis zum nächsten Haltepunkt / Ende (Pause über Haltepunkte, hier fortsetzen)",
+   "hi": "जारी रखें: निष्पादन पंक्ति से अगले breakpoint / अंत तक (breakpoint पर रुकें, यहाँ से फिर शुरू करें)"
+  },
+  "Apply → parse the code and replace the pipeline": {
+   "ja": "適用 → コードを解析して処理手順を置き換える",
+   "zh": "应用 → 解析代码并替换流水线",
+   "tw": "套用 → 解析程式碼並取代管線",
+   "ko": "적용 → 코드를 해석해 파이프라인을 교체",
+   "de": "Anwenden → Code einlesen und die Pipeline ersetzen",
+   "hi": "लागू करें → कोड पढ़कर pipeline बदलें"
+  },
+  "Sync ← regenerate the code from the current pipeline": {
+   "ja": "同期 ← 今の処理手順からコードを作り直す",
+   "zh": "同步 ← 从当前流水线重新生成代码",
+   "tw": "同步 ← 從目前管線重新產生程式碼",
+   "ko": "동기화 ← 현재 파이프라인에서 코드를 다시 생성",
+   "de": "Abgleichen ← Code aus der aktuellen Pipeline neu erzeugen",
+   "hi": "सिंक ← मौजूदा pipeline से कोड फिर बनाएँ"
+  },
+  "Display the selected variable in a NEW graphics window": {
+   "ja": "選んだ変数を新しいグラフィックス窓に表示",
+   "zh": "在新的图形窗口中显示所选变量",
+   "tw": "在新的圖形視窗中顯示所選變數",
+   "ko": "선택한 변수를 새 그래픽 창에 표시",
+   "de": "Ausgewählte Variable in einem NEUEN Grafikfenster anzeigen",
+   "hi": "चुने गए variable को नई graphics window में दिखाएँ"
+  },
+  "Display the selected variable in the CURRENT graphics window (double-clicking the variable does the same)": {
+   "ja": "選んだ変数を今のグラフィックス窓に表示(変数をダブルクリックしても同じ)",
+   "zh": "在当前图形窗口中显示所选变量(双击变量效果相同)",
+   "tw": "在目前的圖形視窗中顯示所選變數(按兩下變數效果相同)",
+   "ko": "선택한 변수를 현재 그래픽 창에 표시(변수를 더블클릭해도 같음)",
+   "de": "Ausgewählte Variable im AKTUELLEN Grafikfenster anzeigen (Doppelklick auf die Variable tut dasselbe)",
+   "hi": "चुने गए variable को मौजूदा graphics window में दिखाएँ (variable पर double-click भी यही करता है)"
+  },
+  "Remove the selected watch row": {
+   "ja": "選んだ監視式の行を消す",
+   "zh": "删除所选的监视行",
+   "tw": "刪除所選的監看列",
+   "ko": "선택한 감시식 행 삭제",
+   "de": "Ausgewählte Überwachungszeile entfernen",
+   "hi": "चुनी गई watch पंक्ति हटाएँ"
+  },
   "Load an image file (Ctrl+O)": {
    "ja": "画像ファイルを開く (Ctrl+O)",
    "zh": "加载图像文件 (Ctrl+O)",

@@ -786,8 +786,9 @@ def test_every_panel_has_a_title_band_with_a_menu_button_one_line_high(tmp_path,
             assert bar.b_menu.accessibleName() == title + " — Panel menu", key
             assert bar.b_menu.toolTip().endswith("(Alt+M)") and bar.label.accessibleName() == title, key
             assert bar.b_menu.focusPolicy() == QtCore.Qt.TabFocus, key                 # reachable with Tab
-            assert bar.key_menu.key().toString() == "Alt+M", key
-            assert bar.key_menu.context() == QtCore.Qt.WidgetWithChildrenShortcut, key  # only inside this panel
+            assert bar.key_menu.shortcut().toString() == "Alt+M", key
+            assert bar.key_menu.shortcutContext() == QtCore.Qt.WidgetWithChildrenShortcut, key  # only inside this panel
+            assert bar.key_menu in win._docks[key].actions() and bar.key_menu.text() == title + " \u2014 Panel menu", key
             # order on the band: name, [status], menu, separate window, hide
             xs = [bar.label.x(), bar.b_menu.x(), bar.b_float.x(), bar.b_close.x()]
             assert xs == sorted(xs) and len(set(xs)) == 4, key
@@ -805,7 +806,7 @@ def test_the_menu_holds_what_the_panel_registered_then_the_common_entries(tmp_pa
         want = {"operators": ["focus_search", "op_reference", "samples"],
                 "pipeline": ["run_all", "step", "reset", None, "remove", "move_up", "move_down", "duplicate_stage", "bypass"],
                 "display": ["fit", "actual_size", "zoom_in", "zoom_out", "surface_3d"],
-                "compare": ["pin_a"], "ab": ["pin_a"]}
+                "compare": ["step", "reset", None, "pin_a"]}            # (program / variables / A / B: buttons too, below)
         total = 0
         for key, names in want.items():
             assert all(n is None or n in win._actions for n in names), key          # the actions exist in this build
@@ -820,7 +821,7 @@ def test_the_menu_holds_what_the_panel_registered_then_the_common_entries(tmp_pa
             assert tail[3].isSeparator() and tail[4] is st["float_actions"][key], key
             assert tail[5].text() == "Hide" and tail[6] is st["layout_actions"][0][1], key
             total += len(own)
-        assert total == 3 + 8 + 5 + 1 + 1
+        assert total == 3 + 8 + 5 + 3
         # a key in the menu is the action's own (shown at the right by Qt): Run all has one
         assert win._actions["run_all"].shortcut().toString() != ""
         # the menu's Hide really hides
@@ -832,6 +833,71 @@ def test_the_menu_holds_what_the_panel_registered_then_the_common_entries(tmp_pa
         with pytest.raises(KeyError):
             studio_panels.register_panel(win, "no_such_panel")
     finally:
+        _close(app, win)
+
+
+def test_every_panel_menu_offers_three_to_eight_of_its_own_and_one_qaction_per_function(tmp_path, monkeypatch):
+    """User, 2026-11-13: the menu button holds 3..8 of the panel's frequent functions + the common entries,
+    and the same function is the same QAction wherever it appears (menu bar, bar's layout menu, panel menus)."""
+    from PySide6 import QtGui
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        st = win._panels
+        own = {k: [a for a in bar.actions if a is not None] for k, bar in st["titles"].items()}
+        assert sorted(own) == sorted(studio_panels.RAIL_ORDER) and len(own) == 7
+        for key, acts in own.items():
+            assert studio_panels.MENU_OWN_MIN <= len(acts) <= studio_panels.MENU_OWN_MAX, (key, [a.text() for a in acts])
+            assert len(set(acts)) == len(acts), key                                  # no entry twice in one menu
+            assert all(a.text().strip() for a in acts), key                         # every entry has a name
+        # the panel buttons that had no QAction: one action each, the button's name / state, pressing the button
+        pb = win._panel_buttons
+        assert sorted(pb) == ["ab", "program", "variables"] and sum(len(v) for v in pb.values()) == 6 + 3 + 3
+        backed = st["button_of"]
+        assert len(backed) == 4 + 2 + 3 + 3 and set(backed.values()) <= {b for v in pb.values() for b in v.values()}
+        for act, button in backed.items():
+            assert studio_panels.button_action(win, button) is act                     # asked again: the same object
+            assert act.toolTip() == button.toolTip().strip() and act.text()
+        restore = pb["ab"]["restore"]
+        act = studio_panels.button_action(win, restore)
+        assert act.text() == restore.text()                                          # a push button keeps its own words
+        clicks = []
+        restore.clicked.connect(lambda _c=False: clicks.append(1))
+        restore.setEnabled(True); act.trigger(); _pump(app, 0.05)
+        assert clicks == [1]                                                         # the entry presses the real button
+        restore.setEnabled(False)
+        st["titles"]["ab"].fill_menu()                                             # the menu takes the state of the moment
+        assert not act.isEnabled()
+        act.trigger(); _pump(app, 0.05)
+        assert clicks == [1]                                                         # a disabled button is not pressed
+        name = studio_panels.button_action(win, pb["program"]["apply"]).text()
+        assert name == "Apply" and len(studio_panels.button_action(win, pb["program"]["continue"]).text()) <= 32
+        # one function, one QAction: the bar's layout menu uses the Window menu's own actions
+        layout = dict(st["layout_actions"])
+        assert layout[studio_panels.S_RESET] is win._actions["reset_layout"]
+        assert layout[studio_panels.S_DOCK_ALL] is win._actions["dock_all"]
+        texts = [a.text() for a in win.findChildren(QtGui.QAction)]
+        assert texts.count("Reset panel layout") == 1 and texts.count("Dock all panels") == 1, \
+            (texts.count("Reset panel layout"), texts.count("Dock all panels"))
+        bar = st["titles"]["variables"]
+        def kept(b):            # the menu's entries without the read-outs that did not fit (made per opening)
+            return [a for a in b.b_menu.menu().actions() if not a.isSeparator()][len(b.dropped):]
+        bar.fill_menu(); first = kept(bar)
+        bar.fill_menu(); second = kept(bar)
+        assert len(second) >= 3 + 5 and first == second and bar.a_hide in second       # Hide is made once, not per opening
+        # "Reset panel layout" from a panel menu really resets (image + code)
+        win._docks["pipeline"].show(); _pump(app, 0.1)
+        layout[studio_panels.S_RESET].trigger(); _pump(app, 0.3)
+        assert [k for k, d in win._docks.items() if not d.isHidden()] == ["program"]
+        win._apply_language("ja"); _pump(app, 0.3)                                   # names follow the language
+        st["titles"]["ab"].fill_menu()
+        assert act.text() == restore.text() and act.text() != "Restore A", act.text()
+        names = [a.text() for bar in st["titles"].values() for a in bar.actions if a is not None]
+        assert len(names) >= 7 * studio_panels.MENU_OWN_MIN
+        english = [n for n in names if all(ord(ch) < 128 for ch in n)]
+        assert english == [], english                                                 # no English left in the Japanese menus
+        assert studio_panels.button_action(win, pb["program"]["apply"]).text() == "\u9069\u7528"     # cut by columns
+    finally:
+        win._apply_language("en")
         _close(app, win)
 
 
