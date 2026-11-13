@@ -10390,6 +10390,19 @@ def build_window(model=None):
         refresh_stage_list(select=newpos)
         show_result()
         _place_program_cursor(_stage_line(newpos))
+        _show_pipeline_tab_once()
+
+    def _show_pipeline_tab_once():
+        """気づける入口(2026-11-13、初回起動の点検): この窓で最初の op を入れた時に 1 度だけ、段ごとの途中の絵・個数・
+        時間・メモリとつまみのある「処理手順と調整」のタブを前へ(op の一覧と同じ所にタブで重なり、隠れている時だけ)。"""
+        if state.get("pipeline_tab_shown") or len(model.stages) != 1:
+            return
+        state["pipeline_tab_shown"] = True
+        try:
+            if dock_pipe in win.tabifiedDockWidgets(dock_ops) and dock_pipe.visibleRegion().isEmpty():
+                dock_pipe.raise_()
+        except Exception as exc:                            # noqa: BLE001 -- 入口のために段の追加を落とさない
+            _log_soft_failure("could not bring the pipeline tab forward", exc)
 
     def _insert_program_line(text, after_line):
         """Insert *text* as a new editor line after 1-based *after_line* (0 = at the
@@ -12614,10 +12627,17 @@ def build_window(model=None):
     b_run_once.clicked.connect(lambda _=False: run_op_once())
     # itemActivated fires on BOTH Enter and double-click (one signal), so keyboard-only
     # pipeline building works and there is no double-insert from wiring two signals.
-    op_list.itemActivated.connect(add_op)
-    # 検索の「見本」の行(M12): Enter / ダブルクリックで見本を開く(op の行は add_op が受ける)
-    op_list.itemActivated.connect(
-        lambda it: win._open_search_sample(it.data(QtCore.Qt.UserRole + 6)) if it.data(QtCore.Qt.UserRole + 6) else None)
+    def _on_op_item_activated(it):
+        """Enter / ダブルクリック: 検索の「見本」の行(M12)は見本を開き、それ以外は add_op。
+
+        ★先に行を読んでから振り分ける。add_op は一覧を作り直して行を消すので、2 つ目の受け手が後から同じ行を読むと
+        Python ごと落ちた(access violation、2026-11-13 の全体の試験で発覚)。"""
+        sample = it.data(QtCore.Qt.UserRole + 6) if it is not None else None
+        if sample:
+            win._open_search_sample(sample)
+            return
+        add_op(it)
+    op_list.itemActivated.connect(_on_op_item_activated)
 
     def _insert_searched_op():
         """Enter in the search box inserts the highlighted row (the first insertable row on screen, see
