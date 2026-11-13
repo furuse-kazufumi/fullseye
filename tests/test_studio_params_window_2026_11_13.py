@@ -888,7 +888,8 @@ def test_cells_are_edited_in_place_with_type_checks(qapp, ini, tmp_path):
     # 断られる編集
     assert tm.setData(fx, "fast", Qt.EditRole) is False
     assert p.model.value(0, "camera.fx") == 820.0
-    assert p.message_level == "error" and p.message_label.full_text() == "✕ camera.fx: this field holds a number; 'fast' is not a number"
+    assert p.message_level == "error"
+    assert p.message_label.full_text() == "✕ camera.fx: this field holds a number; 'fast' is not a number — example: 820.0"
     # 真偽はチェックで
     assert tm.setData(p.index_of(0, "exposure.auto"), Qt.Unchecked, Qt.CheckStateRole) is True
     assert p.model.value(0, "exposure.auto") is False
@@ -1628,4 +1629,62 @@ def test_params_no_ctrl_d_binding(qapp, ini, tmp_path):
     assert not p.tmodel.diff_only and not diff.isChecked()
     p.buttons["diff"].click()
     assert p.tmodel.diff_only and diff.isChecked()
+    _close_quietly(win)
+
+
+def _open_editor(qapp, p, col, key):
+    idx = p.index_of(col, key)
+    p.tree.setCurrentIndex(idx)
+    p.tree.edit(idx)
+    _pump(qapp)
+    eds = [w for w in p.tree.viewport().findChildren(QtWidgets.QLineEdit) if w.isVisible()]
+    assert len(eds) == 1, len(eds)
+    return eds[0]
+
+
+def test_params_rejected_cell_keeps_text_and_marks_invalid(qapp, fusion, ini, tmp_path):
+    """D89 / G08: 表のセルで断った時は、打った文字を欄に残し(欄は開いたまま)、property "invalid" が真で赤枠、ツールヒントと
+    状態の行に理由 + 例(今の値)。直して Enter で確定。Esc は取り消し。Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z が同じ行き来をする。"""
+    win = _window(qapp, _three_files(tmp_path))
+    p = win.panel
+    win.activateWindow()
+    cases = [(0, "camera.fx", "fast", "812.5"), (1, "optics.wavelength", "5 ms", "0.55 um"),
+             (0, "camera.size", "640", "[640, 480]")]
+    checked = 0
+    for col, key, bad, now in cases:
+        before = p.model.value(col, key)
+        ed = _open_editor(qapp, p, col, key)
+        ed.setText(bad)
+        QTest.keyClick(ed, Qt.Key_Return)
+        _pump(qapp)
+        assert ed.isVisible() and ed.text() == bad and ed.property("invalid") is True, key
+        assert "border" in ed.styleSheet() and p.model.value(col, key) == before, key
+        assert p.message_level == "error" and ("example: " + now) in p.message_label.full_text(), key
+        assert ed.toolTip() == p.message_label.full_text()[2:] and bad in ed.toolTip(), key
+        QTest.keyClick(ed, Qt.Key_Escape)                               # 取り消し: 値はそのまま
+        _pump(qapp)
+        assert not ed.isVisible() and p.model.value(col, key) == before, key
+        checked += 1
+    assert checked == 3
+    ed = _open_editor(qapp, p, 0, "camera.fx")
+    ed.setText("fast")
+    QTest.keyClick(ed, Qt.Key_Return)
+    assert ed.property("invalid") is True
+    ed.setText("820")                                                  # 直すと印が消え、Enter で確定する
+    assert ed.property("invalid") is False and ed.styleSheet() == ""
+    QTest.keyClick(ed, Qt.Key_Return)
+    _pump(qapp)
+    assert not ed.isVisible() and p.model.value(0, "camera.fx") == 820.0
+    # 取り消し・やり直し: Ctrl+Z → 前、Ctrl+Y → 後、Ctrl+Z → 前、Ctrl+Shift+Z → 後
+    p.tree.setFocus()
+    seen = []
+    for k, mod in ((Qt.Key_Z, Qt.ControlModifier), (Qt.Key_Y, Qt.ControlModifier), (Qt.Key_Z, Qt.ControlModifier),
+                   (Qt.Key_Z, Qt.ControlModifier | Qt.ShiftModifier)):
+        QTest.keyClick(p.tree, k, mod)
+        _pump(qapp)
+        seen.append(p.model.value(0, "camera.fx"))
+    assert seen == [812.5, 820.0, 812.5, 820.0]
+    redo = p.tool_actions["redo"]
+    assert [k.toString() for k in redo.shortcuts()] == ["Ctrl+Y", "Ctrl+Shift+Z"]
+    assert redo.toolTip().endswith("(Ctrl+Y)")                          # 表示は Ctrl+Y(設計書 P08-2)
     _close_quietly(win)

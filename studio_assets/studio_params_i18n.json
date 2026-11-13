@@ -833,6 +833,13 @@
    "tw": "%s 有未儲存的變更;重新載入會重新讀取檔案並捨棄這些變更",
    "ko": "%s에 저장하지 않은 변경이 있습니다. 다시 읽으면 파일을 다시 읽고 변경은 사라집니다",
    "de": "%s hat ungespeicherte Änderungen; Neu laden liest die Datei erneut und verwirft sie"
+  },
+  "example: %s": {
+   "ja": "例: %s",
+   "zh": "示例: %s",
+   "tw": "範例: %s",
+   "ko": "예: %s",
+   "de": "Beispiel: %s"
   }
  }
 }

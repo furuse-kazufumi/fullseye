@@ -64,6 +64,14 @@ def _default_settings() -> QtCore.QSettings:
     return QtCore.QSettings("Fullseye", "Studio")
 
 
+#: 状態の色の予備(studio_theme が無い時)。琥珀 = 注意・違う、赤 = 誤り。押せる物と枠には使わない(設計書 P14-2)。
+_STATE_RGB = {"warn": (232, 163, 61), "err": (217, 83, 79)}
+
+
+def _state_colour(role: str) -> QtGui.QColor:
+    return QtGui.QColor(*_STATE_RGB[role])
+
+
 def _mix(a: QtGui.QColor, b: QtGui.QColor, t: float) -> QtGui.QColor:
     return QtGui.QColor(round(a.red() + (b.red() - a.red()) * t), round(a.green() + (b.green() - a.green()) * t),
                         round(a.blue() + (b.blue() - a.blue()) * t))
@@ -363,12 +371,14 @@ class ParamsTreeModel(QtCore.QAbstractItemModel):
         self._missing_brush: QtGui.QBrush | None = None
         self._cell_icon: QtGui.QIcon | None = None
         self._bold: QtGui.QFont | None = None
+        #: 直前の setData で断った時の文(理由 — 例: 今の値)。通った・触っただけなら None。
+        self.last_refusal: str | None = None
         self.rebuild()
 
     # ---- 見た目の材料(パレットから) ----
     def set_palette(self, pal: QtGui.QPalette, font: QtGui.QFont) -> None:
         base, text = pal.color(QtGui.QPalette.Base), pal.color(QtGui.QPalette.Text)
-        self._diff_brush = QtGui.QBrush(_mix(base, QtGui.QColor(232, 163, 61), 0.30))
+        self._diff_brush = QtGui.QBrush(_mix(base, _state_colour("warn"), 0.30))
         self._missing_brush = QtGui.QBrush(_mix(base, text, 0.30), Qt.BDiagPattern)
         self._cell_icon = _draw_icon("celldiff", _mix(base, text, 0.75), _CELL_MARK_PX)
         self._bold = QtGui.QFont(font)
@@ -608,6 +618,7 @@ class ParamsTreeModel(QtCore.QAbstractItemModel):
         return f | Qt.ItemIsEditable
 
     def setData(self, index: QtCore.QModelIndex, value: Any, role: int = Qt.EditRole) -> bool:
+        self.last_refusal = None
         n, r, ci, v = self._cell(index)
         if r is None or v is None:
             return False
@@ -621,7 +632,9 @@ class ParamsTreeModel(QtCore.QAbstractItemModel):
         else:
             return False
         if not out.ok:
-            self.rejected.emit(out.text(self.tr))
+            # 断る時は理由に例(この欄の今の値)を添える(設計書 P08-5「赤枠 + 理由 + 例」)。
+            self.last_refusal = out.text(self.tr) + " — " + self.tr("example: %s") % M.format_value(v)
+            self.rejected.emit(self.last_refusal)
             return False
         self.sync()
         self.edited.emit(out)
@@ -629,7 +642,15 @@ class ParamsTreeModel(QtCore.QAbstractItemModel):
 
 
 class _Delegate(QtWidgets.QStyledItemDelegate):
-    """行の高さ = 文字 + 4 px。編集は枠なしの文字の欄(数もスピンでなく文字 + 検査)。"""
+    """行の高さ = 文字 + 4 px。編集は枠なしの文字の欄(数もスピンでなく文字 + 検査)。
+
+    Enter / Tab では自分で確定を試み、断られたら欄を閉じない: 打った文字はそのまま、property ``invalid`` = 真で赤枠、
+    ツールヒントに理由 + 例(設計書 P08-5)。打ち直すと印は消える。Esc は取り消し。"""
+
+    _COMMIT_KEYS = {Qt.Key_Return: QtWidgets.QAbstractItemDelegate.NoHint,
+                    Qt.Key_Enter: QtWidgets.QAbstractItemDelegate.NoHint,
+                    Qt.Key_Tab: QtWidgets.QAbstractItemDelegate.EditNextItem,
+                    Qt.Key_Backtab: QtWidgets.QAbstractItemDelegate.EditPreviousItem}
 
     def sizeHint(self, option: QtWidgets.QStyleOptionViewItem, index: QtCore.QModelIndex) -> QtCore.QSize:
         sz = super().sizeHint(option, index)
@@ -641,7 +662,40 @@ class _Delegate(QtWidgets.QStyledItemDelegate):
         ed.setFrame(False)
         ed.setContentsMargins(0, 0, 0, 0)
         ed.setTextMargins(0, 0, 0, 0)
+        ed.setProperty("invalid", False)
+        ed._fs_index = QtCore.QPersistentModelIndex(index)  # type: ignore[attr-defined]
+        ed.textChanged.connect(lambda _t, e=ed: self._mark(e, ""))
         return ed
+
+    @staticmethod
+    def _mark(editor: QtWidgets.QLineEdit, reason: str) -> None:
+        """欄に断った印を付ける(``reason`` が空なら外す)。"""
+        bad = bool(reason)
+        if bool(editor.property("invalid")) == bad and editor.toolTip() == reason:
+            return
+        editor.setProperty("invalid", bad)
+        if bad:
+            c = _state_colour("err")
+            editor.setStyleSheet("QLineEdit { border: 1px solid rgb(%d, %d, %d); }" % (c.red(), c.green(), c.blue()))
+        else:
+            editor.setStyleSheet("")
+        editor.setToolTip(reason)
+
+    def eventFilter(self, obj: QtCore.QObject, ev: QtCore.QEvent) -> bool:
+        if (isinstance(obj, QtWidgets.QLineEdit) and ev.type() == QtCore.QEvent.KeyPress
+                and ev.key() in self._COMMIT_KEYS and ev.modifiers() in (Qt.NoModifier, Qt.KeypadModifier, Qt.ShiftModifier)):
+            idx = getattr(obj, "_fs_index", None)
+            model = idx.model() if idx is not None and idx.isValid() else None
+            if isinstance(model, ParamsTreeModel):
+                index = model.index(idx.row(), idx.column(), idx.parent())
+                model.setData(index, obj.text(), Qt.EditRole)
+                if model.last_refusal is not None:
+                    self._mark(obj, model.last_refusal)
+                    QtWidgets.QToolTip.showText(obj.mapToGlobal(QtCore.QPoint(0, obj.height())), model.last_refusal, obj)
+                    return True                                  # 欄を閉じない(打った文字を残す)
+                self.closeEditor.emit(obj, self._COMMIT_KEYS[ev.key()])
+                return True
+        return super().eventFilter(obj, ev)
 
     def setEditorData(self, editor: QtWidgets.QWidget, index: QtCore.QModelIndex) -> None:
         editor.setText(index.data(Qt.EditRole) or "")      # type: ignore[attr-defined]
@@ -741,7 +795,8 @@ class ParamsPanel(QtWidgets.QWidget):
         action("reload", "reload", "Reload", "read the selected bundle again from its file", self.reload_current)
         items.append(None)
         action("undo", "undo", "Undo", "take back the last change", self.undo, "Ctrl+Z")
-        action("redo", "redo", "Redo", "apply the change again", self.redo, "Ctrl+Y")
+        redo = action("redo", "redo", "Redo", "apply the change again", self.redo, "Ctrl+Y")
+        redo.setShortcuts([QtGui.QKeySequence("Ctrl+Y"), QtGui.QKeySequence("Ctrl+Shift+Z")])  # 表示は Ctrl+Y(P08-2)
         cp = action("copy", "copy", "Copy to column", "copy the selected value, or every differing value, to another bundle",
                     None)
         self.copy_menu = QtWidgets.QMenu(self)
@@ -973,8 +1028,8 @@ class ParamsPanel(QtWidgets.QWidget):
         self.message_level = level
         pal = self.message_label.palette()
         base = self.palette().color(QtGui.QPalette.WindowText)
-        tone = {"info": base, "warn": _mix(base, QtGui.QColor(232, 163, 61), 0.6),
-                "error": _mix(base, QtGui.QColor(217, 83, 79), 0.7)}[level]
+        tone = {"info": base, "warn": _mix(base, _state_colour("warn"), 0.6),
+                "error": _mix(base, _state_colour("err"), 0.7)}[level]
         pal.setColor(QtGui.QPalette.WindowText, tone)
         self.message_label.setPalette(pal)
 
