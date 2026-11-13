@@ -330,15 +330,18 @@ def test_m5_readout_has_coordinates_in_the_ui_language(launch, lang, word):
 
 
 def test_m5_real_mouse_move_over_the_image_gives_coordinates(launch):
-    from PySide6 import QtCore
-    from PySide6.QtTest import QTest
+    """画像の欄が受ける本物のマウス移動の事象(ImageView の mouseMoveEvent を通る)。QTest.mouseMove は、ほかの試験の
+    窓が残る長い実行では窓の下に無いと届かない事があるので、事象を欄に直接送る。"""
+    from PySide6 import QtCore, QtGui, QtWidgets
     win, model = launch(lang="ja", user=True)
-    from PySide6 import QtWidgets
     view = [w for w in win.findChildren(QtWidgets.QWidget) if type(w).__name__ == "ImageView"][0]
     vp = view.viewport() if hasattr(view, "viewport") else view
     c = vp.rect().center()
-    QTest.mouseMove(vp, c); _pump(0.1)
-    QTest.mouseMove(vp, QtCore.QPoint(c.x() + 5, c.y() + 3)); _pump(0.2)
+    for p in (c, QtCore.QPoint(c.x() + 5, c.y() + 3)):
+        pf = QtCore.QPointF(p)
+        ev = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, pf, QtCore.QPointF(vp.mapToGlobal(p)),
+                               QtCore.Qt.NoButton, QtCore.Qt.NoButton, QtCore.Qt.NoModifier)
+        QtWidgets.QApplication.sendEvent(vp, ev); _pump(0.1)
     text = win._readout.text()
     m = re.match(r"x=(\d+)  y=(\d+)   値 ", text)
     assert m, text
