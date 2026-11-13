@@ -98,6 +98,8 @@ def _exempt(text):
         return True
     if text == "Fullseye Studio" or text in studio.LANGUAGES.values() or text == "Language / 言語 / 语言":
         return True
+    if text == "Python":            # 2026-11-13: 書き出しのボタンの字。言語の名前(固有名)で、どの言語の UI でも同じ字
+        return True
     if re.match(r"\d+×\d+ ", text):
         return True
     return False
@@ -174,6 +176,7 @@ PENDING_ROWS_CEILING += 2    # M13: 台帳の op の理由の文とボタン
 PENDING_ROWS_CEILING += 1    # L9: 開けないファイルを落とした時の 1 行
 PENDING_ROWS_CEILING += 3    # L11: op の一覧の右クリックのメニュー
 PENDING_ROWS_CEILING += 2    # F1 = 選んでいる op のヘルプ(メニューの字とツールヒント)
+PENDING_ROWS_CEILING += 5    # 気づける入口: 帯の「作例(N)」「ファイルを落とせます」とそのツールヒント
 
 
 # --------------------------------------------------------------------------- #

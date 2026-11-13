@@ -861,3 +861,46 @@ def test_f1_opens_the_selected_ops_help_and_no_key_does_two_things(launch):
     QTest.keyClick(win._stage_list, QtCore.Qt.Key_F1); _pump(0.4)
     assert help_["pick"].currentText() == "gaussian"
     help_["dialog"].close()
+
+
+def test_entrances_python_label_and_band_links(launch):
+    from PySide6 import QtCore, QtWidgets
+    win, model = launch(lang="ja")
+    tb = [t for t in win.findChildren(QtWidgets.QToolBar) if t.isVisible()][0]
+    w = tb.widgetForAction(win._actions["export"])
+    assert w.toolButtonStyle() == QtCore.Qt.ToolButtonTextBesideIcon and w.text() == "Python"
+    assert win._actions["export"].text().replace("&", "") != "Python"         # メニューの字はそのまま
+    links = win._first_steps_links
+    import examples2d
+    assert links["examples"].text() == "作例(%d)" % len(examples2d.names()) and len(examples2d.names()) > 100
+    assert links["drop"].text() == "ファイルを落とせます"
+    assert links["examples"].isVisibleTo(links["column"]) and links["drop"].isVisibleTo(links["column"])
+    links["drop"].click(); _pump(0.3)
+    assert win._last_formats_help.isVisible(); win._last_formats_help.close()
+    links["examples"].click(); _pump(0.5)
+    assert win._ex2d_dlg.isVisible(); win._ex2d_dlg.close()
+    win._apply_language("en"); _pump(0.1)
+    assert links["examples"].text() == "Examples (%d)" % len(examples2d.names())
+    assert links["drop"].text() == "You can drop files here"
+
+
+@pytest.mark.parametrize("lang", ["ja", "en"])
+@pytest.mark.parametrize("size", [(1366, 768), (1920, 1080)])
+def test_entrances_never_cut_the_first_steps(launch, lang, size):
+    """帯の作例・ファイルの列は、手順の文を切らずに置ける時だけ出る(手順の文が先)。"""
+    from PySide6 import QtWidgets
+    win, model = launch(lang=lang, size=size)
+    win.resize(*size); _pump(0.3)
+    band = win._first_steps
+    steps = [lbl for lbl in band.findChildren(QtWidgets.QLabel) if lbl.text()[:2] in ("1.", "2.", "3.")]
+    assert len(steps) == 3
+    col = win._first_steps_links["column"]
+    lay = band.layout()
+    m = lay.contentsMargins()
+    parts = [w for w in band.findChildren(QtWidgets.QWidget) if w.parent() is band and w is not col]
+    need = m.left() + m.right() + sum(w.sizeHint().width() for w in parts) + lay.spacing() * len(parts)
+    # 規則そのもの(字の幅は環境のフォントで変わるので、寸法ではなく規則を確かめる)
+    assert col.isVisibleTo(band) == (band.width() >= need + col.sizeHint().width()), (lang, size, band.width(), need)
+    if col.isVisibleTo(band):
+        for lbl in steps:
+            assert lbl.width() >= lbl.sizeHint().width(), (lang, size, lbl.text(), lbl.width(), lbl.sizeHint().width())

@@ -7378,6 +7378,12 @@ def build_window(model=None):
                     (act_batch, "apply"), (act_export, "export"), (act_pin, "eye")):
         _a.setIcon(_icon(QtGui, QtCore, _ic, TEXT))
         tb.addAction(_a)
+    # 気づける入口(2026-11-13、初回起動の点検): 書き出しのボタンに字。アイコンだけでは「そのまま走る Python に
+    # 書き出せる」と分からなかった(Python は固有名なので、どの言語でも同じ字)。
+    act_export.setIconText("Python")
+    _w_export = tb.widgetForAction(act_export)
+    if _w_export is not None:
+        _w_export.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
 
     # Central document area = an MDI workspace of graphics windows (HDevelop-style:
     # multiple image/result windows the user can open, tile, cascade and float).
@@ -8016,6 +8022,8 @@ def build_window(model=None):
     win._op_knob_rows = (op_row_a, op_row_b)
 
     b_export = _tbtn("export", "Export this pipeline as an --ops string and Python (Ctrl+E)")
+    b_export.setText("Python"); b_export.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)   # 気づける入口
+    b_export.setFixedSize(max(30, b_export.sizeHint().width()), 28)
     b_savep = _tbtn("save", "Save pipeline to JSON (Ctrl+Shift+S)")
     b_openp = _tbtn("open", "Open a pipeline from JSON (Ctrl+Shift+O)")
     xrow = QtWidgets.QHBoxLayout()
@@ -8067,6 +8075,7 @@ def build_window(model=None):
     _fs_lay = QtWidgets.QHBoxLayout(first_steps); _fs_lay.setContentsMargins(10, 2, 4, 2); _fs_lay.setSpacing(14)
     _fs_title = QtWidgets.QLabel("First steps"); _fs_title.setStyleSheet("font-weight:700;")
     _fs_lay.addWidget(_fs_title)
+    _fs_steps = []
     for _txt in ("1. Open a sample: File ▸ Sample images",
                  "2. Select an operator in the Operators panel and press +",
                  "3. Press ▶▶ to run"):
@@ -8074,6 +8083,36 @@ def build_window(model=None):
         _fs_step.setMinimumWidth(1)        # ★2026-11-12: 折り返さず 1 行(狭い欄では右が切れる。全文はツールチップ)
         _fs_step.setToolTip(_txt)
         _fs_lay.addWidget(_fs_step, 0)
+        _fs_steps.append(_fs_step)
+    # 気づける入口(2026-11-13): 作例(2-D の作例の一覧、その場で走る)と、落とせるファイルの一覧への入口を帯に
+    try:
+        import examples2d as _ex2d
+        _n_examples = len(_ex2d.names())
+    except Exception as exc:                                # noqa: BLE001 -- 一覧が読めなければ数を出さない
+        _log_soft_failure("could not count the 2-D examples", exc)
+        _n_examples = 0
+
+    def _fs_examples_text():
+        return tr("Examples (%d)") % _n_examples if _n_examples else tr("Examples")
+    _fs_link_css = ("QToolButton { color: %s; border: none; background: transparent; text-decoration: underline; "
+                    "padding: 0 2px; margin: 0; }" % TEAL)
+    _fs_examples = QtWidgets.QToolButton(); _fs_examples.setText(_fs_examples_text())
+    _fs_examples.setToolTip("Browse the 2-D worked examples: read the code, run it in place, copy it")
+    _fs_drop = QtWidgets.QToolButton(); _fs_drop.setText("You can drop files here")
+    _fs_drop.setToolTip("Images, a folder, 3-D, video, audio, .py and .json open by drag and drop — see the list")
+    # 2 つを小さい字で縦に重ねた 1 列(帯の高さの中)。手順の文の幅は削らない: 置く幅が無い時は列ごと隠す
+    _fs_links = QtWidgets.QWidget(); _fs_links.setObjectName("fs_links")
+    _fs_links.setStyleSheet("#fs_links { background: transparent; }")
+    _fs_ll = QtWidgets.QVBoxLayout(_fs_links); _fs_ll.setContentsMargins(0, 0, 0, 0); _fs_ll.setSpacing(0)
+    for _b in (_fs_examples, _fs_drop):
+        _b.setStyleSheet(_fs_link_css); _b.setCursor(QtCore.Qt.PointingHandCursor)
+        _f = _b.font(); _f.setPointSizeF(max(7.0, _f.pointSizeF() - 1.0)); _b.setFont(_f)
+        _b.setFixedHeight(QtGui.QFontMetrics(_f).height() + 1)       # 2 行で帯の高さ(40px)に収まる
+        _fs_ll.addWidget(_b, 0, QtCore.Qt.AlignLeft)
+    _fs_lay.addWidget(_fs_links, 0)
+    _fs_examples.clicked.connect(lambda _=False: win._act_2d_examples.trigger())
+    _fs_drop.clicked.connect(lambda _=False: act_formats.trigger())
+    win._first_steps_links = {"examples": _fs_examples, "drop": _fs_drop, "column": _fs_links}
     _fs_lay.addStretch(1)
     _fs_close = QtWidgets.QToolButton(); _fs_close.setText("✕")
     _fs_close.setToolTip("Hide these steps. Help ▸ First steps shows them again")
@@ -8095,6 +8134,25 @@ def build_window(model=None):
             _log_soft_failure("could not remember that the first steps were closed", exc)
 
     first_steps.setVisible(not _first_steps_dismissed())
+
+    def _fs_fit_links():
+        """帯の幅が、手順の文を切らずに作例・ファイルの列も置ける時だけ列を出す(入口のために手順の文を削らない)。"""
+        m = _fs_lay.contentsMargins()
+        parts = [_fs_title] + _fs_steps + [_fs_close]
+        need = (m.left() + m.right() + sum(w.sizeHint().width() for w in parts)
+                + _fs_lay.spacing() * len(parts))
+        room = first_steps.width() >= need + _fs_links.sizeHint().width()
+        if _fs_links.isVisibleTo(first_steps) != room:
+            _fs_links.setVisible(room)
+    win._fs_fit_links = _fs_fit_links
+
+    class _FsFit(QtCore.QObject):
+        def eventFilter(self, obj, ev):
+            if ev.type() in (QtCore.QEvent.Resize, QtCore.QEvent.Show):
+                _fs_fit_links()
+            return False
+    _fs_fit_filter = _FsFit(first_steps)
+    first_steps.installEventFilter(_fs_fit_filter)
     _fs_close.clicked.connect(_close_first_steps)
     act_first_steps.triggered.connect(lambda _=False: first_steps.show())
     win._first_steps = first_steps
@@ -15726,6 +15784,8 @@ def build_window(model=None):
         try:
             samples.setItemText(0, tr("— load a sample —"))
             cat.setItemText(0, tr("all categories"))
+            _fs_examples.setText(_fs_examples_text())        # 帯の「作例(492)」(数つきの文は表の行で引けない)
+            _fs_fit_links()                                  # 文の長さが言語で変わる
             refill_ops()                                     # 行の「段としては入れられません」と注記(S2)
             on_op_selected(op_list.currentItem())
             win._knob_spec_op = None                         # つまみの名前を言語で作り直す(spec は同じ)
