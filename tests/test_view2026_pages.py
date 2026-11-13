@@ -33,8 +33,7 @@ def test_every_capability_doc_is_on_every_page():
     assert langs[0] == "ja" and len(langs) >= 7   # 言語を足しても通る(ja が先頭、既存の 7 言語は残る)
     for lang in langs:
         page = G.build(d, lang)
-        if lang in ("ja", "en"):
-            page += "\n" + G.build_more(d, lang)      # ja/en の「できること」はおまけページ
+        page += "\n" + G.build_more(d, lang)      # 「できること」はおまけページ(8 言語)
         missing = [c["id"] for c in caps if "capabilities/%s.md" % c["id"] not in page]
         assert not missing, "%s: 載っていない説明がある: %s" % (lang, missing)
         assert "fix_text_in_image" in page, "%s: 生成画像の文字を直す例が辿れない" % lang
@@ -46,7 +45,7 @@ def test_other_examples_are_counted_not_typed():
     d = G.load()
     for lang in ("ja", "en"):
         assert d["ui"]["other_examples"][lang].format(n=n) in G.build_more(d, lang)   # おまけページ
-    assert d["ui"]["other_examples"]["de"].format(n=n) in G.build(d, "de")
+    assert d["ui"]["other_examples"]["de"].format(n=n) in G.build_more(d, "de")
 
 
 def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
@@ -84,8 +83,9 @@ def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
         start = page.index(marker)
         end = page.find("\n- [", start + len(marker))
         block = page[start:end if end >= 0 else None]
-        lead_at = block.index(exhibit["lead"]["ja"])
-        see_at = block.find(exhibit["see"]["ja"], lead_at + len(exhibit["lead"]["ja"]))
+        lead, see = G._code_md(exhibit["lead"]["ja"]), G._code_md(exhibit["see"]["ja"])   # ページではコードらしい語が等幅になる
+        lead_at = block.index(lead)
+        see_at = block.find(see, lead_at + len(lead))
         assert lead_at < see_at, exhibit["id"]
 
 
@@ -170,7 +170,7 @@ def test_a_missing_example_stops_the_generator(monkeypatch):
 
 def test_japanese_only_docs_are_marked_on_other_languages():
     d = G.load()
-    page = G.build(d, "de")
+    page = G.build_more(d, "de")
     lines = [ln for ln in page.splitlines() if "/capabilities/" in ln]
     assert lines
     assert all(G.JA_MARK in ln for ln in lines)

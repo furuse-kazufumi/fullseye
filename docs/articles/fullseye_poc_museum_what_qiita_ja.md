@@ -436,7 +436,7 @@ py -3.11 examples/poc_print_registration.py
 
 ## No.2026.116 —— 薄い欠陥はどこまで見えるか —— 実写の地に真値を仕込んで検出限界を測る
 
-検査の現場では、薄い傷がどこまで見えるかを平らな地に雑音を載せた合成画像で見積もることが多い。雑音の量をそろえても、実写のレンガの地では検出限界が合成の 3.47 倍まで悪くなった。限界を決めていたのは雑音ではなく、目地のような地の構造だった。
+検査の現場では、弱い欠陥がどこまで見えるかを平らな地に雑音を載せた合成画像で見積もることが多い。雑音の量をそろえても、実写の地では検出限界が合成より悪くなり、最も悪いレンガの地で 3.47 倍だった。限界を決めていたのは雑音ではなく、目地のような地の構造だった。
 
 [![薄い欠陥はどこまで見えるか —— 実写の地に真値を仕込んで検出限界を測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels.png)
 
@@ -998,11 +998,11 @@ py -3.11 examples/poc_agv_fleet.py
 
 ## No.2026.223 —— ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける ―― 小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る
 
-積み重ねたチップの接合面にできる小さなボイドを、超音波顕微鏡で探す。直径 16 µm 以上のボイドは、反射の位相の像ですべて反転して光った。明るさの像では、小さなボイドの多くが良品に紛れる。
+積み重ねたチップの接合面にできる小さなボイドを超音波顕微鏡で探す、シミュレーションである。直径 16 µm 以上のボイドは、反射の位相の像で反転して光った。明るさの像では、小さなボイドの多くが良品に紛れる。
 
 [![ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける ―― 小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase.png)
 
-*↑ **ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける ―― 小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る** ―― 厚さ 100 µm の Si のダイの下の接合面(SiO2 1 + 1 µm、直径 40 µm・ピッチ 80 µm の Cu パッド 1 + 1 µm)に直径 5〜24 µm のボイドを置き、水 1 mm・F# 3 の集束探触子の SAM(走査型超音波顕微鏡) で撮る。エコーは層の伝達行列(Airy の再帰・時間領域の経路の和・光学の薄膜の式と 1e-12 で照合済み)。★★接合面の期待時刻で読んだ位相は、誘電体 −91°・Cu パッド +84°(薄い層は直交)、ボイドは誘電体の中 −175°・パッドの上 +159°(反転)。★★振幅の像ではボイド 12 個中 8 個が良品の画素の明るさの範囲に隠れる。直交の背景に反転のエコーが直角に足されるので、9〜16 µm のボイドの振幅の変化は 0.4〜3.5σ、位相を使う変化は 3.0〜8.9σ。位相の像で反転と読む画素は 16 µm 以上のボイドすべてで、良品 26,724 画素中 1 画素。★従来の「|RF| 最大の 1 点の符号」は無傷の Cu パッドで 140〜400 MHz の間に 5 回転ぶ。★最適周波数は閉形式 (k/a)·sqrt(log2(1 + a² ln2/(β k²)))(10 µm で 139.16 MHz、総当たりと一致)、表面エコーの裾がゲートに入る下限 130 MHz。★★POD(â vs a、88 個): 位相を使う検出の a90/95 は 150 / 200 / 300 MHz で 12.4 / 13.9 / 57.6 µm、振幅だけは 16.6 / 19.3 / 101.6 µm(同じ基準・同じ閾値の規則)。1-D 平面波・縦波だけ・ガウスの横 PSF・屈折の収差なし・Si の減衰 0(未確認)・kissing bond なしの合成であることは docstring に明記。検査 16 件・約 15 秒。*
+*↑ **ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける ―― 小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る** ―― 厚さ 100 µm の Si のダイの下の接合面(SiO2 1 + 1 µm、直径 40 µm・ピッチ 80 µm の Cu パッド 1 + 1 µm)に直径 5〜24 µm のボイドを置き、水 1 mm・F# 3 の集束探触子の SAM(走査型超音波顕微鏡) で撮る。エコーは層の伝達行列(Airy の再帰・時間領域の経路の和・光学の薄膜の式と 1e-12 で照合済み)。★★接合面の期待時刻で読んだ位相は、誘電体 −91°・Cu パッド +84°(薄い層は直交)、ボイドは誘電体の中 −175°・パッドの上 +159°(反転)。★★振幅の像ではボイド 12 個中 8 個が良品の画素の明るさの範囲に隠れる。直交の背景に反転のエコーが直角に足されるので、9〜16 µm のボイドの振幅の変化は 0.4〜3.5σ、位相を使う変化は 3.0〜8.9σ。位相の像で反転と読む画素は 16 µm 以上のボイドすべてで、良品 26,724 画素中 1 画素。★従来の「|RF| 最大の 1 点の符号」は無傷の Cu パッドで 140〜400 MHz の間に 5 回転ぶ。★最適周波数は閉形式 (k/a)·sqrt(log2(1 + a² ln2/(β k²)))(10 µm で 139.16 MHz、総当たりと一致)、表面エコーの裾がゲートに入る下限 130 MHz。★★POD(â vs a、88 個): 位相を使う検出の a90/95 は 150 / 200 / 300 MHz で 12.4 / 13.9 / 57.6 µm、振幅だけは 16.6 / 19.3 / 101.6 µm(300 MHz の値は、試したボイドの最大 36 µm の外への外挿。同じ基準・同じ閾値の規則)。1-D 平面波・縦波だけ・ガウスの横 PSF・屈折の収差なし・Si の減衰 0(未確認)・kissing bond なしの合成であることは docstring に明記。検査 16 件・約 15 秒。*
 
 用語: SAM — 集束した超音波を試料上で走査し、反射波の振幅・位相・到達時間から内部界面や欠陥を画像化する装置。; Airy — 平行平板内で繰り返す多重反射を無限級数として合成し、透過率を表す式。
 
@@ -1562,7 +1562,7 @@ py -3.11 examples/poc_real_typewritten_ocr.py
 
 ## No.2026.310 —— 混載デパレタイズ: 継ぎ目が詰まると深度の段差では箱を分けられない —— 深度の V 字の溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の深さ・すき間・テープで入れ替わる(地図)
 
-詰めて並んだ同じ柄の段ボールを、天井の深度カメラとカラーで見分けて下ろす。深度の段差では同じ柄の箱を分けられず、深度の浅い溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の作り 28 通りの地図で入れ替わった。同じ柄では合わせ目が深いとカラー、切り口が広く開きテープが無く溝が浅いときだけ深度の溝が上になる。
+計算で作った場面で、詰めて並んだ同じ柄の段ボールを、天井の深度カメラとカラーで見分けて下ろす。深度の段差では同じ柄の箱を分けられず、深度の浅い溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の作り 28 通りの地図で入れ替わった。勝ち負けは、縁の丸みや合わせ目といった場面の作りに強く依存する。
 
 [![混載デパレタイズ: 継ぎ目が詰まると深度の段差では箱を分けられない —— 深度の V 字の溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の深さ・すき間・テープで入れ替わる(地図)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png)
 
@@ -1604,7 +1604,7 @@ py -3.11 examples/poc_mixed_case_depalletizing.py
 
 ## No.2026.308 —— AI が組んだ検査を公開実データの真値で採点する ―― 失敗を道具・MCP・模型に分け、直す前と後を並べる(ローカル LLM のひび割れは 20 回に 1〜3 本で再現せず、クラウド LLM は 3 本とも偶然を超えるが既存レシピに届かない)
 
-課題を自然言語で渡して AI に検査のレシピを組ませた。公開のひび割れ画像 400 枚を配布元のラベルで採点し、失敗の原因を道具・MCP・模型に分けた。クラウドの LLM は偶然を超えて選り分けたが、既存のレシピには届かなかった。
+課題を自然言語で渡し、ローカルの LLM に MCP だけで検査のレシピを組ませた。公開のひび割れ画像 400 枚を配布元のラベルで画像ごとに採点すると、選り分けるレシピを組めた回はごく少なかった。ろうそくの汚れの課題では一度も組めず、既存のレシピには届かなかった。
 
 [![AI が組んだ検査を公開実データの真値で採点する ―― 失敗を道具・MCP・模型に分け、直す前と後を並べる(ローカル LLM のひび割れは 20 回に 1〜3 本で再現せず、クラウド LLM は 3 本とも偶然を超えるが既存レシピに届かない)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png)
 
@@ -2206,7 +2206,7 @@ py -3.11 examples/poc_particle_sizing.py
 
 ## No.2026.031 —— 光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性
 
-透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。巻き戻した後に外れた画素は、ほとんどが巻きではなく符号の二義性によるものだった。
+透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。巻き戻した後に外れた画素の多くは、光弾性でよく知られた符号の二義性によるものだった。
 
 [![光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 
@@ -3218,7 +3218,7 @@ py -3.11 examples/poc_moire_alignment.py
 
 ## No.2026.233 —— テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える
 
-段差のある部品を一枚の画像で測ると、普通のレンズでは近い面ほど大きく写り、寸法が違って読まれる。論文で公開されたテレセントリックレンズの実画像を測り、倍率が論文の値と 0.05 % の差で一致した。合成の章では、物体の高さが変わってもテレセントリックでは倍率がほとんど動かない。
+段差のある部品を一枚の画像で測ると、普通のレンズでは近い面ほど大きく写る。論文で公開されたテレセントリックレンズの実画像から測った倍率は論文の値と合ったが、論文自身の値が ±0.25 % 散るので、それより細かい一致とは読まない。傾いた板の同心円の中心がずれないことが、その証拠になる。
 
 [![テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate.png)
 

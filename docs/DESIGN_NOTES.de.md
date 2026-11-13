@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1933. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1934. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -3305,6 +3305,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L103** _(ja)_ — ★2026-11-08: 以前は台帳の PoC を「手書きの見どころかこの一括のどちらかに必ず載せる」ために、 載っていない PoC を全部目玉へ足していた。目玉を約 40 件に絞った(ユーザーの決定)ので、回すと 285 件に戻ってしまう。目玉は featured_ids だけ、それ以外は all に在ることを確かめる側に替えた。
 
+## `tools/build_view2026_viewers.py`
+
+- **L336** _(ja)_ — ★窓の比較は PoC の 4 節と同じ関数で(2026-11-13)。それまでここで別に計算していて、25 秒の側が 全コマの地図(0.5 mm・直径 2 mm が +627 %)になり、PoC・論文の +612 %(窓は最後の 1 コマを含めない)と食い違っていた。
+
 ## `tools/chain_fuzz.py`
 
 - **L45** — ★Fuer Katalog, Hints und Adapter ist das ausgelieferte Modul ``typed_catalog`` die Quelle der Wahrheit (2026-09-05). Frueher lebten sie hier, und backends_typed las sie, indem es tools/ zu sys.path hinzufuegte -- dadurch verschwanden im wheel tb_* 143 op stillschweigend. Die Richtung wurde umgekehrt.
@@ -3470,9 +3474,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/gen_view2026_pages.py`
 
-- **L271** _(ja)_ — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
-- **L338** _(ja)_ — ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
-- **L341** _(ja)_ — ★2026-11-12: 本ページ(ja/en)に載せるのは tier が showcase / featured の展示だけ(MAIN_LIMIT 本まで)。
+- **L272** _(ja)_ — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
+- **L339** _(ja)_ — ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
+- **L342** _(ja)_ — ★2026-11-12: 本ページ(ja/en)に載せるのは tier が showcase / featured の展示だけ(MAIN_LIMIT 本まで)。
 
 ## `tools/gen_view2026_story_gifs.py`
 

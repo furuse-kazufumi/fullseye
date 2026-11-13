@@ -772,7 +772,7 @@ py -3.11 examples/poc_water_inspection_images.py
 
 ## No.2026.312 —— 背景の縞の歪みからガラス瓶を逆に測る(同じ仮定の下のシミュレーション)―― 外半径・壁厚・屈折率・液面を真値で採点し、分けられない量と検出できない誤差を出す
 
-透明な瓶は後ろの縞を歪めて見せる。画素ごとに背景の位置を求め、外半径・壁厚・屈折率・液面を逆に当てはめて、充填 5 通りの真値で採点した。分けられない量と検出できない誤差も出すが、真値は自作のシミュレーションである。
+透明な瓶は後ろの縞を歪めて見せる。画素ごとに背景の位置を求め、外半径・壁厚・屈折率・液面を逆に当てはめて、充填 5 通りの真値で採点した。分けられない量も出すが、真値は自作のシミュレーションで、実物の瓶では確かめていない。
 
 [![背景の縞の歪みからガラス瓶を逆に測る(同じ仮定の下のシミュレーション)―― 外半径・壁厚・屈折率・液面を真値で採点し、分けられない量と検出できない誤差を出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png)
 
@@ -850,7 +850,7 @@ py -3.11 examples/poc_photograph_through_prescription.py
 
 ## No.2026.304 —— 実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する ―― 縦ずれを無視すると参照から 2.6 倍遠いのに、再投影の残差では見分けられない(差 2.3 %)
 
-公開されている実測のコーンビーム CT(クルミ)を、FDK と反復法で再構成した。投影 300 枚を使い、配布元の参照で採点すると、縦ずれを無視した再構成は参照からかなり遠くなる。それなのに再投影の残差では、その差が見分けられない。
+公開されている実測のコーンビーム CT(クルミ)を、FDK と反復法で再構成した。投影 300 枚を使い配布元の参照で採点すると、縦ずれを無視した再構成は別の断面を作ることになり、参照から遠くなる。そのデータ自体に矛盾は無いので再投影の残差は変わらず、これは作りの上で当然である。
 
 [![実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する ―― 縦ずれを無視すると参照から 2.6 倍遠いのに、再投影の残差では見分けられない(差 2.3 %)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png)
 
@@ -2684,7 +2684,7 @@ py -3.11 examples/poc_sheet_deformation_ffd.py
 
 ## No.2026.302 —— 実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする
 
-実写のステレオ対から、視差・距離・面・円の姿勢まで求めた。Middlebury 2014 の真値の視差で平均誤差を採点し、OpenCV と比べた。壊れる場所は地図にして示した。
+実写のステレオ対から、視差・距離・面・円の姿勢まで求めた。Middlebury 2014 の真値の視差で平均誤差を採点し、OpenCV と比べた。両方が有効な画素だけで比べるとほぼ同等で、差の多くはどこを無効にするかの選び方から来る。
 
 [![実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png)
 
@@ -3090,7 +3090,7 @@ py -3.11 examples/poc_lens_solves_afocal.py
 
 ## No.2026.239 —— 見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える
 
-肉や仁と同じ色の異物は、カラーカメラでは見分けられない。公開の実画像を分光画像として分類すると、豚バラの上の異物を誤警報 1.1 % で検出できた。帯域を減らすと誤警報が増え、合成データでは足りた条件が実データでは足りなかった。
+公開の実画像を近赤外の分光画像として使い、豚バラの上の異物を分類した。撮影を分けて画素ごとに採点すると、誤警報 1.1 % で大半を検出できた。帯域を減らすと誤警報が増え、色が同じ異物をカラーで見分けられないことは合成でだけ示した。
 
 [![見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png)
 
@@ -3448,7 +3448,7 @@ py -3.11 examples/poc_bev_sensor_fusion.py
 
 ## No.2026.058 —— CAD と実測点群の差分検査 ―― 合わせた分だけ欠陥が消え、無い所にへこみが出る
 
-点群を設計形状へ合わせてから検査すると、位置合わせが欠陥を吸収したり別の場所へ移したりする。へこみや反りを既知量で入れた部品を合わせ、欠陥のない対照にも66.5平方mmの公差外領域が出る条件を測った。図では、剛体運動に似た偏差は薄まり、稜線では対応先が隣面へ飛んで偽のへこみが現れる。
+点群を設計形状へ合わせてから検査すると、位置合わせが偏差の一部を吸収し、外れて見える場所が移る。反りを既知量で入れた部品では、真値がごく小さい中央に深さ 121 µm の読みが出た。合成の結果で、設計形状を点に置き換えて測ると欠陥のない対照でも稜線に公差外が出る。
 
 [![CAD と実測点群の差分検査 ―― 合わせた分だけ欠陥が消え、無い所にへこみが出る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene.png)
 
@@ -4176,7 +4176,7 @@ py -3.11 examples/poc_bga_ball_type_roundtrip.py
 
 ## No.2026.309 —— 同じ部品を 3-D センサの 5 方式で測る ―― 縞投影・間接 ToF・光切断・照度差ステレオ・ステレオは、どの材質のどこで壊れるか
 
-同じ部品を、方式の違う立体センサで、つや消し・金属光沢・半透明・黒の材質ごとに測った。形の外れを共通の物差し 0.1 mm で数え、寸法表の真値と比べた。どの材質のどこで壊れるかは方式ごとに違う。
+同じ部品を、方式の違う立体センサの模型で、つや消し・金属光沢・半透明・黒の材質ごとに測ったシミュレーションである。形の外れを共通の物差し 0.1 mm で数え、寸法表の真値と比べた。方式ごとに分解能の桁が違うので順位ではなく、どの材質のどこで壊れるかを見る。
 
 [![同じ部品を 3-D センサの 5 方式で測る ―― 縞投影・間接 ToF・光切断・照度差ステレオ・ステレオは、どの材質のどこで壊れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map.png)
 
@@ -4218,7 +4218,7 @@ py -3.11 examples/poc_3d_sensor_modalities.py
 
 ## No.2026.314 —— 実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせないよりは良いが等速の仮定とほぼ同じ水準で、設定の選び方は分割しだい、窓の残差は距離の 2 乗かどうかを決められなかった(TUM RGB-D)
 
-机の上を撮った公開データの深度画像で、隣り合う画像の位置合わせをモーションキャプチャの真値と比べた。合わせないときの 0.42 倍まで誤差は減ったが、直前の動きを使う等速の仮定とほぼ同じ水準だった。小さな窓の平面の残差は距離とともに増えたが、量子化と窓の広さが混ざり、距離の二乗かどうかは決められなかった。
+机の上を撮った公開データのひと続きの深度画像で、隣り合う画像の位置合わせをモーションキャプチャの真値と比べた。合わせないときより誤差は減り、最も悪い分け方でも 0.42 倍だったが、等速の予測より良いかは画像の分け方で変わった。小さな窓の平面の残差は距離とともに増えたが、距離の二乗かどうかは決められなかった。
 
 [![実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせないよりは良いが等速の仮定とほぼ同じ水準で、設定の選び方は分割しだい、窓の残差は距離の 2 乗かどうかを決められなかった(TUM RGB-D)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles.png)
 

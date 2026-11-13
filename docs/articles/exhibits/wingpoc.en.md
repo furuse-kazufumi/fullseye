@@ -428,7 +428,7 @@ Ops used (notes): [`fly_hex_lattice`](https://furuse.work/ops/flyvision/lattice/
 
 ## No.2026.116 —— How Faint a Defect Can Still Be Found — Planting a Known Truth in a Real Background
 
-Inspection teams often estimate how faint a scratch they can catch on a synthetic image of a flat field plus noise. With the noise level matched, a real brick background raised the detection limit by up to 3.47 times. The limit was set not by noise but by structure in the background, such as mortar joints.
+Inspection teams often estimate how weak a flaw they can catch on a synthetic image of a flat field plus noise. With the noise level matched, real backgrounds raised the detection limit, by 3.47 times on the worst, a brick wall. The limit was set not by noise but by structure in the background, such as mortar joints.
 
 [![How Faint a Defect Can Still Be Found — Planting a Known Truth in a Real Background](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels.png)
 
@@ -990,11 +990,11 @@ Ops used (notes): [`adg_build`](https://furuse.work/ops/drive/agv/adg_build.html
 
 ## No.2026.223 —— Find Hybrid-Bond Voids by Echo Phase, Not Brightness - Small Voids Hide in the Amplitude Image and Light Up Inverted in the Phase Image
 
-Small voids in the bonding plane of stacked chips are searched for with a scanning acoustic microscope. Every void of 16 um or more appeared inverted and bright in the echo-phase image. In the brightness image many small voids hide among good pixels.
+This simulation searches for small voids in the bonding plane of stacked chips with a scanning acoustic microscope. The voids of 16 um or more appeared inverted and bright in the echo-phase image. In the brightness image many small voids hide among good pixels.
 
 [![Find Hybrid-Bond Voids by Echo Phase, Not Brightness - Small Voids Hide in the Amplitude Image and Light Up Inverted in the Phase Image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase.png)
 
-*↑ **Find Hybrid-Bond Voids by Echo Phase, Not Brightness - Small Voids Hide in the Amplitude Image and Light Up Inverted in the Phase Image** ―― A thinned 100 um silicon die over a hybrid bond (SiO2 1 + 1 um, Cu pads 1 + 1 um of 40 um diameter at 80 um pitch) with voids of 5 to 24 um placed on pads and in the dielectric, imaged by a focused scanning acoustic microscope (1 mm of water, F/3); echoes come from a layer transfer matrix checked against a bottom-up Airy recursion (Airy multiple-reflection formula), a time-domain ray sum and the optical thin-film formula to 1e-12. Read at the expected time of the bond plane, the dielectric echo is at -91 deg and the Cu pad at +84 deg (thin layers give quadrature echoes) while voids are inverted (-175 deg in the dielectric, +159 deg on a pad). In the amplitude image 8 of 12 voids hide inside the brightness range of intact pixels: an inverted echo adds at right angles to a quadrature background, so voids of 9 to 16 um change the amplitude by 0.4 to 3.5 sigma but the phase-aware statistic by 3.0 to 8.9 sigma; the phase image flags every void of 16 um and up and 1 of 26,724 intact pixels. The conventional single-sample polarity of an intact Cu pad flips 5 times between 140 and 400 MHz. The optimal frequency has a closed form (139.16 MHz for a 10 um void, equal to brute force) and the front-echo tail sets a floor of 130 MHz. POD (a-hat vs a, 88 voids): a90/95 of the phase-aware detector is 12.4 / 13.9 / 57.6 um at 150 / 200 / 300 MHz against 16.6 / 19.3 / 101.6 um for amplitude only, under the same baseline and threshold rule. Synthetic: 1-D plane-wave longitudinal layers, a Gaussian lateral PSF, no refraction aberration, silicon attenuation set to 0 (unverified), no kissing bonds.*
+*↑ **Find Hybrid-Bond Voids by Echo Phase, Not Brightness - Small Voids Hide in the Amplitude Image and Light Up Inverted in the Phase Image** ―― A thinned 100 um silicon die over a hybrid bond (SiO2 1 + 1 um, Cu pads 1 + 1 um of 40 um diameter at 80 um pitch) with voids of 5 to 24 um placed on pads and in the dielectric, imaged by a focused scanning acoustic microscope (1 mm of water, F/3); echoes come from a layer transfer matrix checked against a bottom-up Airy recursion (Airy multiple-reflection formula), a time-domain ray sum and the optical thin-film formula to 1e-12. Read at the expected time of the bond plane, the dielectric echo is at -91 deg and the Cu pad at +84 deg (thin layers give quadrature echoes) while voids are inverted (-175 deg in the dielectric, +159 deg on a pad). In the amplitude image 8 of 12 voids hide inside the brightness range of intact pixels: an inverted echo adds at right angles to a quadrature background, so voids of 9 to 16 um change the amplitude by 0.4 to 3.5 sigma but the phase-aware statistic by 3.0 to 8.9 sigma; the phase image flags every void of 16 um and up and 1 of 26,724 intact pixels. The conventional single-sample polarity of an intact Cu pad flips 5 times between 140 and 400 MHz. The optimal frequency has a closed form (139.16 MHz for a 10 um void, equal to brute force) and the front-echo tail sets a floor of 130 MHz. POD (a-hat vs a, 88 voids): a90/95 of the phase-aware detector is 12.4 / 13.9 / 57.6 um at 150 / 200 / 300 MHz (the 300 MHz values are extrapolated beyond the largest void tested, 36 um) against 16.6 / 19.3 / 101.6 um for amplitude only, under the same baseline and threshold rule. Synthetic: 1-D plane-wave longitudinal layers, a Gaussian lateral PSF, no refraction aberration, silicon attenuation set to 0 (unverified), no kissing bonds.*
 
 Terms: SAM — An instrument that scans focused ultrasound over a specimen and images internal interfaces or defects from echo amplitude, phase, or arrival time.; Airy — The formula for a parallel plate's transmittance obtained by summing its infinite series of multiple reflections.
 
@@ -1554,7 +1554,7 @@ Ops used (notes): [`area_center_gray`](https://furuse.work/ops/mv/gray/area_cent
 
 ## No.2026.310 —— Mixed-Case Depalletizing: With Tight Seams a Depth Step Cannot Separate the Cartons — Whether a Depth V-Groove or a Dark Colour Groove Wins Flips with the Depth, Gap and Tape of the Flap Seam (a Map)
 
-Packed cartons with identical prints are told apart from overhead depth and colour, then unloaded. A depth step splits none, and whether depth dips or dark colour lines win flips across 28 flap-seam builds. With identical prints, deep grooves favour colour; only wide, untaped cuts over shallow grooves favour depth.
+In a rendered scene, packed cartons with identical prints are told apart from overhead depth and colour, then unloaded. A depth step splits none, and whether depth dips or dark colour lines win flips across 28 flap-seam builds. The outcome depends strongly on how the scene is built, such as edge rounding and the seams.
 
 [![Mixed-Case Depalletizing: With Tight Seams a Depth Step Cannot Separate the Cartons — Whether a Depth V-Groove or a Dark Colour Groove Wins Flips with the Depth, Gap and Tape of the Flap Seam (a Map)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png)
 
@@ -1596,7 +1596,7 @@ Ops used (notes): [`bilateral_filter_depth`](https://furuse.work/ops/3d/depth_de
 
 ## No.2026.308 —— Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)
 
-We gave an AI a task in natural language and let it assemble the inspection recipe. It was scored on 400 public crack images against the labels from their source, and each failure was sorted into tool, MCP or model. Cloud LLMs beat chance but did not reach the existing recipes.
+We gave a local LLM a task in natural language and let it assemble an inspection recipe through MCP alone. Scored per image on 400 public crack images against the labels from their source, it produced a sorting recipe in only a few runs. It never managed the candle task and stayed below the existing recipes.
 
 [![Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png)
 
@@ -2200,7 +2200,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.031 —— Stress by Photoelasticity — Most Unwrapping Errors Are the Sign Ambiguity
 
-Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping.
+Through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the well-known sign ambiguity, not the wrapping.
 
 [![Stress by Photoelasticity — Most Unwrapping Errors Are the Sign Ambiguity](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 
@@ -3210,7 +3210,7 @@ Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html)
 
 ## No.2026.233 —— Telecentric Lenses for Dimensional Metrology — Move Only the Stop of the Same Lens and the Height-Dependent Magnification Disappears
 
-Measured in one image, a stepped part looks larger where it is nearer, so an ordinary lens misreads its dimensions. On the published real images from a telecentric lens, the magnification matched the paper within 0.05 %. In the synthetic chapter, telecentric magnification barely moves with object height.
+In one image, a stepped part looks larger where it is nearer through an ordinary lens. The magnification measured on public real images from a telecentric lens agrees with the paper, whose own values spread by ±0.25 %, so the match is not read as finer. Ring centres on a tilted plate that do not drift are evidence.
 
 [![Telecentric Lenses for Dimensional Metrology — Move Only the Stop of the Same Lens and the Height-Dependent Magnification Disappears](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate.png)
 
@@ -5946,7 +5946,7 @@ Ops used (notes): [`bottle_image`](https://furuse.work/ops/optics/watervision/bo
 
 ## No.2026.312 —— Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and What Cannot Be Detected
 
-A transparent bottle distorts the stripes behind it. For each pixel we find where the background is seen, fit the bottle geometry and indices backwards, and score 5 fill states against the true values of the simulation. Quantities that are inseparable and errors that stay undetectable are reported too.
+A transparent bottle distorts the stripes behind it. For each pixel we find where the background is seen, fit the bottle geometry and indices backwards, and score 5 fill states against the true values of the simulation. Quantities that are inseparable are reported too, and nothing was checked on a real bottle.
 
 [![Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and What Cannot Be Detected](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png)
 
@@ -6024,7 +6024,7 @@ Ops used (notes): [`bokeh_shape`](https://furuse.work/ops/optics/lensrender/boke
 
 ## No.2026.304 —— Reconstructing a Measured Cone-Beam CT Scan of a Walnut and Scoring It Against the Providers' Reference — Ignoring the Vertical Offset Puts It 2.6 Times Farther from the Reference, yet the Reprojection Residual Cannot Tell (2.3 % Apart)
 
-A walnut was really scanned in a cone beam, and the data were reconstructed with FDK and iterative methods. Using 300 projections and scoring against the reference from its authors, the result that ignores the vertical shift ends up much more distant. But the residual after reprojection cannot reveal the gap.
+A walnut was really scanned in a cone beam and reconstructed with FDK and iterative methods. With 300 projections scored against the authors' reference, neglecting the vertical shift rebuilds a different slice, further away. Those data are self-consistent, so the residual after reprojecting cannot change.
 
 [![Reconstructing a Measured Cone-Beam CT Scan of a Walnut and Scoring It Against the Providers' Reference — Ignoring the Vertical Offset Puts It 2.6 Times Farther from the Reference, yet the Reprojection Residual Cannot Tell (2.3 % Apart)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png)
 
@@ -7858,7 +7858,7 @@ Ops used (notes): [`median`](https://furuse.work/ops/2d/rank/median.html) · [`p
 
 ## No.2026.302 —— Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks
 
-Using a real pair of stereo images, we compute disparity, distance, surfaces and even the pose of a circle. The result is scored with the true disparity that Middlebury 2014 supplies and compared with OpenCV. Where it breaks is shown on a map.
+Using a real pair of stereo images, we compute disparity, distance, surfaces and even the pose of a circle. The result is scored with the true disparity that Middlebury 2014 supplies and compared with OpenCV. On pixels valid in both, the two are about equal, and most of the gap is which pixels each invalidates.
 
 [![Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png)
 
@@ -8264,7 +8264,7 @@ Ops used (notes): [`afocal_system`](https://furuse.work/ops/optics/lenssolve/afo
 
 ## No.2026.239 —— Sorting Look-Alike Foreign Matter with Hyperspectral NIR — Two Real Datasets (Plastic Flakes, Foreign Objects on Pork Belly) and a Material-Table Simulation of the Failure Modes
 
-Foreign matter the same colour as meat or kernels cannot be told apart by a colour camera. Classifying public real images as spectral data detected debris on pork belly with 1.1 % false alarms. With fewer bands the false alarms grew, so a band set that sufficed on synthetic data did not suffice on real data.
+Public real images were used as near-infrared spectral data to classify debris lying on pork belly. Scored per pixel on separate captures, most of it was detected at 1.1 % false alarms. With fewer bands the false alarms grew, and that a colour camera fails on same-coloured matter is shown only on synthetic data.
 
 [![Sorting Look-Alike Foreign Matter with Hyperspectral NIR — Two Real Datasets (Plastic Flakes, Foreign Objects on Pork Belly) and a Material-Table Simulation of the Failure Modes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png)
 
@@ -9386,7 +9386,7 @@ Ops used (notes): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) �
 
 ## No.2026.058 —— CAD-to-scan deviation inspection — the fit absorbs the defect and invents a dent
 
-Aligning a scan to its design can absorb a defect or move it elsewhere. Known dents and warps were added to a part; even the defect-free control produced 66.5 square mm of false rejected area. Rigid-like deviations shrink, while nearest points jump across edges and create a fictitious dent.
+Aligning a scan to its design absorbs part of the deviation and moves where it looks out of tolerance. On a part with a known warp, a reading 121 µm deep appears at the centre where the true deviation is tiny. This is synthetic, and a point-sampled design shows out-of-tolerance edges even without a defect.
 
 [![CAD-to-scan deviation inspection — the fit absorbs the defect and invents a dent](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene.png)
 
@@ -10114,7 +10114,7 @@ Ops used (notes): [`angles_to_normals`](https://furuse.work/ops/reprconv/directi
 
 ## No.2026.309 —— One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material
 
-The same part was measured by several depth-sensing methods in matte, glossy metal, translucent and black materials. Shape errors were counted with a common 0.1 mm yardstick and compared with the dimension table. Which material breaks which method, and where, differs from method to method.
+In this simulation, models of several depth-sensing methods measure one part in matte, glossy metal, translucent and black materials. Shape errors were counted with a common 0.1 mm yardstick and compared with the dimension table. Their resolutions differ by orders of magnitude, so read where each breaks, not a ranking.
 
 [![One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map.png)
 
@@ -10156,7 +10156,7 @@ Ops used (notes): [`absolute_phase`](https://furuse.work/ops/3d/structured_light
 
 ## No.2026.314 —— Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Better Than Not Aligning but About Level With a Constant-Velocity Guess, the Tuning Depends on the Split, and Window Residuals Cannot Settle the Square Law (TUM RGB-D)
 
-On public depth images of a desk, frame-to-frame alignment was checked against motion-capture truth. Error fell to 0.42 of no alignment, yet it was no better than assuming steady speed. Small-window plane residuals grew with distance, but quantisation and window size blur whether the law is a square.
+On one public sequence of desk depth images, frame-to-frame alignment was checked against motion-capture truth. Error fell to 0.42 times even on the worst split, but whether it beats a steady-speed guess hinges on how frames are split. Small-window plane residuals grew with distance, and no square law was confirmed.
 
 [![Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Better Than Not Aligning but About Level With a Constant-Velocity Guess, the Tuning Depends on the Split, and Window Residuals Cannot Settle the Square Law (TUM RGB-D)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles.png)
 
@@ -10478,7 +10478,7 @@ Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/
 
 ## No.2026.043 —— Depth of a Subsurface Defect by Pulsed Thermography
 
-A flash warms the surface, and the cooling thermal images reveal how deep a hidden delamination lies. For a small, shallow defect, cutting the fitting window to 4 s restored a correct depth. The error came not from heat spreading sideways but from the choice of window.
+In this synthetic experiment a flash warms the surface, and the cooling thermal images reveal how deep a delamination lies. The depth of small defects, far off with a long fit window, came back near the truth when the window was cut to 4 s. Too short a window fails on deep defects, so the window must follow the depth.
 
 [![Depth of a Subsurface Defect by Pulsed Thermography](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map.png)
 
@@ -10836,7 +10836,7 @@ Ops used (notes): [`bandpass`](https://furuse.work/ops/oned/signal/bandpass.html
 
 ## No.2026.234 —— Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen — Phase-Measuring Deflectometry
 
-A very shallow dent in glossy paint is practically invisible in an ordinary photograph. Projecting fringes on a screen in front of the surface and reading how their mirror image bends gives curvature, and a dent 3 µm deep stands out clearly. The flat-looking photo sits next to curvature maps in which the dents appear.
+A very shallow dent in glossy paint barely shows in a photograph under diffuse light. Projecting fringes on a screen facing the surface and reading how their mirror image bends gives curvature, and a planted dent 3 µm deep stands out. This is a synthetic scene, and photographs under oblique light were not compared.
 
 [![Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen — Phase-Measuring Deflectometry](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png)
 
@@ -10962,7 +10962,7 @@ Ops used (notes): [`airy_pattern`](https://furuse.work/ops/optics/wave/airy_patt
 
 ## No.2026.243 —— Indirect Time of Flight, Multi-Frequency — Higher Frequencies Measure Finer, but Wrapping, Multipath, Flying Pixels and Harmonics Break It
 
-An indirect ToF camera measures distance from the phase delay of modulated light. Combining three frequencies keeps the distance unambiguous out to 18.7 m. Multipath and object edges make the distance jump without any warning.
+An indirect ToF camera measures distance from the phase delay of modulated light. On synthetic signals, combining three frequencies keeps the distance unambiguous out to 18.7 m. Multipath and object edges make the distance jump without any warning.
 
 [![Indirect Time of Flight, Multi-Frequency — Higher Frequencies Measure Finer, but Wrapping, Multipath, Flying Pixels and Harmonics Break It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap.png)
 
@@ -11004,7 +11004,7 @@ Ops used (notes): [`annotate_figure_grid`](https://furuse.work/ops/annotate/pape
 
 ## No.2026.241 —— Industrial OCT (optical coherence tomography) — Layer Thickness and Hidden Defects of Paints, Coatings and Multilayer Films, Seen in Depth by the FFT of One Spectral Interferogram
 
-We want to see the layers of paint and multilayer film in depth without cutting them. Clear-coat thicknesses computed from public raw interference spectra of automotive paint agree with the paper's OCT values within 1.5 µm. Layers too thin to separate are reported as unmeasurable instead of guessed.
+We want to see paint and film layers in depth without cutting. Clear-coat thicknesses from public raw interference spectra of automotive paint agree within 3.6 µm with microscope measurements of the same panels. Agreement with the paper's own values only reproduces the same data, and the panel matching is inferred.
 
 [![Industrial OCT (optical coherence tomography) — Layer Thickness and Hidden Defects of Paints, Coatings and Multilayer Films, Seen in Depth by the FFT of One Spectral Interferogram](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png)
 
@@ -11048,7 +11048,7 @@ Fullseye ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass
 
 ## No.2026.237 —— Thin-Film Thickness by Spectral Reflectometry — Scored on Public Measured Data, then Fringes, Interference Colours, FFT versus Model Fit and Thickness Maps
 
-Oxide thickness on silicon can be read from interference fringes and colours in reflected light. From a real micrograph published by other researchers, a per-pixel thickness map was drawn, centred on 87.4 nm. It stays below the reference value, and the camera's colour sensitivity is unknown.
+Oxide thickness on silicon can be read from interference fringes and colours in reflected light. Read per pixel from a real micrograph published by others, the central value was 87.4 nm. That is about a tenth below the reference derived from the paper, and the camera's colour sensitivity is unknown.
 
 [![Thin-Film Thickness by Spectral Reflectometry — Scored on Public Measured Data, then Fringes, Interference Colours, FFT versus Model Fit and Thickness Maps](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness.png)
 
@@ -11132,7 +11132,7 @@ Ops used (notes): [`abbe_number`](https://furuse.work/ops/optics/matprop/abbe_nu
 
 ## No.2026.245 —— A Virtual SEM — Fire Electrons One by One into the Solid, and the Image and the Measured Line Width Change with the Voltage (Scored against Measured Data)
 
-An SEM image is not a photo of the surface but a tally of electrons escaping after scattering inside the solid. A model that tracks each electron was checked against measured backscatter data for 7 elements. On the same line, the beam energy decides which sidewall height is read as the linewidth.
+An SEM image is not a photo of the surface but a tally of electrons escaping after scattering in the solid. A model that tracks each electron was checked against measured backscatter data for 7 elements. With no real images of known linewidth, the shift of the linewidth reading with beam energy stays inside the model.
 
 [![A Virtual SEM — Fire Electrons One by One into the Solid, and the Image and the Measured Line Width Change with the Voltage (Scored against Measured Data)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume.png)
 

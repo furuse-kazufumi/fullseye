@@ -18,7 +18,7 @@
   "crop_title_band_fraction": 0.12,
   "min_laplacian_density": 0.0005,
   "min_content_fraction": 0.36,
-  "manual_thumbnail_spec_count": 33,
+  "manual_thumbnail_spec_count": 34,
   "entries": {
     "poc_phase_measuring_deflectometry": {
       "representative": "03_photo_vs_pmd.png",
@@ -234,7 +234,7 @@
       "still": "articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png",
       "alt": {
         "ja": "写真の欠陥の信号は最大 0.00066(8 bit の 1 段 = 0.0039 より小さい)。縞の鏡像は凹みで縞がわずかに曲がる(1 周期の 1 割弱)だけだが、位相 → 勾配 → 曲率と進むほどはっきりする。曲率マップの SNR は凹み A で 110、B で 57。",
-        "en": "A very shallow dent in glossy paint is practically invisible in an ordinary photograph. Projecting fringes on a screen in front of the surface and reading how their mirror image bends gives curvature, and a dent 3 µm deep stands out clearly. The flat-looking photo sits next to curvature maps in which the dents appear."
+        "en": "A very shallow dent in glossy paint barely shows in a photograph under diffuse light. Projecting fringes on a screen facing the surface and reading how their mirror image bends gives curvature, and a planted dent 3 µm deep stands out. This is a synthetic scene, and photographs under oblique light were not compared."
       }
     },
     "poc_industrial_oct": {
@@ -434,7 +434,7 @@
       "still": "articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png",
       "alt": {
         "ja": "生の干渉スペクトル(CC BY 4.0、Liverpool Research Data Catalogue 126)を Fullseye の op だけで k 線形化・FFT し、界面を動的計画法で辿った。横 1 mm(100 本)、縦は表面の 40 µm 上から光路 260 µm。白の見本は着色層が強く散乱し、下の面が立たない。III-B の表面の下の水平な線は自己相関の幽霊。",
-        "en": "We want to see the layers of paint and multilayer film in depth without cutting them. Clear-coat thicknesses computed from public raw interference spectra of automotive paint agree with the paper's OCT values within 1.5 µm. Layers too thin to separate are reported as unmeasurable instead of guessed."
+        "en": "We want to see paint and film layers in depth without cutting. Clear-coat thicknesses from public raw interference spectra of automotive paint agree within 3.6 µm with microscope measurements of the same panels. Agreement with the paper's own values only reproduces the same data, and the panel matching is inferred."
       }
     },
     "poc_hyperspectral_foreign_matter": {
@@ -647,7 +647,7 @@
       "still": "articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png",
       "alt": {
         "ja": "実データ: 破砕した樹脂片(0.3〜4 cm)を 400〜2500 nm の分光カメラで撮った場面(46 x 92 px、1100〜2400 nm)。左半分の画素のクラス平均で学び、右半分を採点: クラス平均の再現率 0.816(生の反射率の SAM は 0.439)。出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。改変: 試験ヘッダの fwhm を 360 帯に切り詰め、1100〜2400 nm を切り出し、連続体除去。",
-        "en": "Foreign matter the same colour as meat or kernels cannot be told apart by a colour camera. Classifying public real images as spectral data detected debris on pork belly with 1.1 % false alarms. With fewer bands the false alarms grew, so a band set that sufficed on synthetic data did not suffice on real data."
+        "en": "Public real images were used as near-infrared spectral data to classify debris lying on pork belly. Scored per pixel on separate captures, most of it was detected at 1.1 % false alarms. With fewer bands the false alarms grew, and that a colour camera fails on same-coloured matter is shown only on synthetic data."
       }
     },
     "poc_thin_film_reflectometry": {
@@ -852,7 +852,7 @@
       "still": "articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness.png",
       "alt": {
         "ja": "実物の顕微鏡のカラー写真(左が裸の Si、右が Si 上の SiO₂)から、裸の Si の領域で色を材料表の Si に合わせ、film_thickness_map(RGB)で画素ごとの膜厚を出した。SiO₂ 側の中央値 87.4 nm、基準 98.5 nm(-11 %)。カメラの分光感度は不明で、CIE の等色関数で代用している。視野の周辺減光(-9 %)は裸の Si の側だけで当てはめて割った(SiO₂ 側の明るさの傾き -11 % → -1 %)。Si 側は中央値 0.0 nm だが 95 パーセンタイル 12 nm —— 0 nm 付近では反射率が膜厚の 2 乗でしか変わらないので、写真の明るさの揺れが数 nm に化ける(補正前は減光で Si 側が 2 段に分かれていた)。出典: Schwarz ら, Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502、データ Zenodo 10.5281/zenodo.13753754(CC BY 4.0)。改変: 1920×1080 → 640×360 に縮小し JPEG で保存、右に計算した膜厚の図を並べた。",
-        "en": "Oxide thickness on silicon can be read from interference fringes and colours in reflected light. From a real micrograph published by other researchers, a per-pixel thickness map was drawn, centred on 87.4 nm. It stays below the reference value, and the camera's colour sensitivity is unknown."
+        "en": "Oxide thickness on silicon can be read from interference fringes and colours in reflected light. Read per pixel from a real micrograph published by others, the central value was 87.4 nm. That is about a tenth below the reference derived from the paper, and the camera's colour sensitivity is unknown."
       }
     },
     "poc_cad_scan_deviation": {
@@ -1065,7 +1065,7 @@
       "still": "articles/assets/poc/poc_cad_scan_deviation/01_scene.png",
       "alt": {
         "ja": "主図(動画、640 × 360・30 fps・12 秒): 前半は実測点群(だいだい)が CAD の参照点(灰)に重なるまで —— 位置合わせなし → FPFH 粗合わせ → 点-面 ICP の推定姿勢の間を補間して動かす(偏差 RMS 18285.3 → 105.4 → 81.7 µm)。後半は重なった点群を一周し、符号付き偏差(±0.40 mm、だいだい = 足りない / 青 = 余る)で塗る(形が読めるよう陰影を薄く足した)。公差 ±0.10 mm を外れた面積は推定 2300.6 mm²、真値 2514.5 mm²。左手前の 3 本の線は CAD の x・y・z 軸。",
-        "en": "Aligning a scan to its design can absorb a defect or move it elsewhere. Known dents and warps were added to a part; even the defect-free control produced 66.5 square mm of false rejected area. Rigid-like deviations shrink, while nearest points jump across edges and create a fictitious dent."
+        "en": "Aligning a scan to its design absorbs part of the deviation and moves where it looks out of tolerance. On a part with a known warp, a reading 121 µm deep appears at the centre where the true deviation is tiny. This is synthetic, and a point-sampled design shows out-of-tolerance edges even without a defect."
       }
     },
     "poc_telecentric_metrology": {
@@ -1270,7 +1270,7 @@
       "still": "articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate.png",
       "alt": {
         "ja": "【実画像】テレセンで撮ったアライメント板(円の間隔 1 mm)の生画像に、中心から放射状の測定線(measure_pos)で取ったリングの中心線へ当てた、同心の相似な楕円の族を重ねた(1/2 に縮小。検分は次の等倍の図で)。板は 29.5° 傾いて楕円に写り、右上は影でリングが見えない。長軸の伸びは 252.13 px/mm で、論文の K1 = 252.0 px/mm と +0.05 %。A. W. Stark, A. Osadare, M. Guo, G. J. Gentsch, D. Boettger, G. Brehm, C. Franke, \"Telecentric stereo 3D imaging with isotropic micrometer resolution bridges macro- and microscale in small Lepidopterans\", Scientific Reports 15, 28690 (2025), doi:10.1038/s41598-025-13795-6. 画像: figshare collection doi:10.6084/m9.figshare.c.7652423(item 28322132 / 28322006 / 28322036、A. Stark)。CC BY 4.0。改変: グレースケール化・縮小・計測の線の描き込み。",
-        "en": "Measured in one image, a stepped part looks larger where it is nearer, so an ordinary lens misreads its dimensions. On the published real images from a telecentric lens, the magnification matched the paper within 0.05 %. In the synthetic chapter, telecentric magnification barely moves with object height."
+        "en": "In one image, a stepped part looks larger where it is nearer through an ordinary lens. The magnification measured on public real images from a telecentric lens agrees with the paper, whose own values spread by ±0.25 %, so the match is not read as finer. Ring centres on a tilted plate that do not drift are evidence."
       }
     },
     "poc_tem_ctf_thon_rings": {
@@ -1692,7 +1692,7 @@
       "still": "articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png",
       "alt": {
         "ja": "行 = 加速電圧、列 = 検出器。SE の 2 列はパネルごとにコントラストを合わせた(実機の調整と同じ。SE の総量は 1 → 20 kV で 1 桁落ちる)。反射電子の列は 3 電圧で共通の濃淡。1 kV のレンズ内 SE は PMMA の上面が明るい。5 / 20 kV では線の縁だけが明るい帯になる。側方の SE は検出器(右)を向く縁が明るい。反射電子は W の粒が 1 kV で最も浮き、電圧を上げると電子が粒を突き抜けて薄まる。PMMA の線は反射電子ではほぼ消える(細い線は側壁から電子が抜け、溝の Si は影になるので η の差が相殺する)。1 画素 2.4 nm、画素あたり 90 電子(雑音は撃った電子の数そのもの)。",
-        "en": "An SEM image is not a photo of the surface but a tally of electrons escaping after scattering inside the solid. A model that tracks each electron was checked against measured backscatter data for 7 elements. On the same line, the beam energy decides which sidewall height is read as the linewidth."
+        "en": "An SEM image is not a photo of the surface but a tally of electrons escaping after scattering in the solid. A model that tracks each electron was checked against measured backscatter data for 7 elements. With no real images of known linewidth, the shift of the linewidth reading with beam energy stays inside the model."
       }
     },
     "poc_dual_energy_xray": {
@@ -2828,7 +2828,7 @@
       "still": "articles/assets/poc/poc_photoelasticity/01_polariscope.png",
       "alt": {
         "ja": "動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷重に比例して 2.38 まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 2 回)。後半は荷重 500 N のまま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点で、中央の真値 θ の図で白く塗った点と重なる。応力場と偏光像は光弾性の族の op(brazilian_disc_stress / principal_stress / photoelastic_retardation / polariscope_intensity)。",
-        "en": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping."
+        "en": "Through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the well-known sign ambiguity, not the wrapping."
       }
     },
     "walker2d_terrain_vision": {
@@ -6127,7 +6127,7 @@
       "still": "articles/assets/poc/poc_thermography_ndt/01_depth_table.png",
       "alt": {
         "ja": "右下三角(直径が深さの 4 倍以上)は数 %。左上は横拡散で壊れる。",
-        "en": "A flash warms the surface, and the cooling thermal images reveal how deep a hidden delamination lies. For a small, shallow defect, cutting the fitting window to 4 s restored a correct depth. The error came not from heat spreading sideways but from the choice of window."
+        "en": "In this synthetic experiment a flash warms the surface, and the cooling thermal images reveal how deep a delamination lies. The depth of small defects, far off with a long fit window, came back near the truth when the window was cut to 4 s. Too short a window fails on deep defects, so the window must follow the depth."
       }
     },
     "poc_veiling_glare": {
@@ -11041,7 +11041,7 @@
       "still": "articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase.png",
       "alt": {
         "ja": "150 MHz、受信雑音 1.5e-3。誘電体の中の小さなボイドは振幅の像で背景と同じ明るさ(直交の背景に反転のエコーが直角に足される)。位相の像ではボイドだけが +1 側に光り、無傷のパッドと誘電体は 0 付近(±90°)。パッドの縁の逆向きの輪は、+80° のパッドと −90° の誘電体のエコーが PSF の中で打ち消し合って位相が 0° 付近へ回ったもの(振幅の像でパッドの縁が暗い輪になるのも同じ理由)。",
-        "en": "Small voids in the bonding plane of stacked chips are searched for with a scanning acoustic microscope. Every void of 16 um or more appeared inverted and bright in the echo-phase image. In the brightness image many small voids hide among good pixels."
+        "en": "This simulation searches for small voids in the bonding plane of stacked chips with a scanning acoustic microscope. The voids of 16 um or more appeared inverted and bright in the echo-phase image. In the brightness image many small voids hide among good pixels."
       }
     },
     "poc_zernike_aberrations": {
@@ -18255,7 +18255,7 @@
       "still": "articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap.png",
       "alt": {
         "ja": "倉庫の通路を 3 周波の間接 ToF で撮る。120 MHz の位相は 1.25 m ごとに折り返す。3 周波の剰余を全部の次数の仮説で採点すると 18.7 m まで一意になるが、遠い棚ほど信号が弱く、次数を丸ごと誤った画素が点状に出る(誤差の図)。周波数の最大公約数が 20 MHz の組では 7.49 m より奥が何の警告も無く手前に折り返して映る(右下)。",
-        "en": "An indirect ToF camera measures distance from the phase delay of modulated light. Combining three frequencies keeps the distance unambiguous out to 18.7 m. Multipath and object edges make the distance jump without any warning."
+        "en": "An indirect ToF camera measures distance from the phase delay of modulated light. On synthetic signals, combining three frequencies keeps the distance unambiguous out to 18.7 m. Multipath and object edges make the distance jump without any warning."
       }
     },
     "poc_pigment_unmixing": {
@@ -28063,7 +28063,7 @@
       "still": "articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png",
       "alt": {
         "ja": "R 30 mm・壁 1.5 mm・n 1.52 の瓶、水 1.333。各画素の光線を追跡して背景のどこを見ているか(u)を求め、そこの市松を描いた。逆から見ると、この歪みが瓶を測る手がかり。",
-        "en": "A transparent bottle distorts the stripes behind it. For each pixel we find where the background is seen, fit the bottle geometry and indices backwards, and score 5 fill states against the true values of the simulation. Quantities that are inseparable and errors that stay undetectable are reported too."
+        "en": "A transparent bottle distorts the stripes behind it. For each pixel we find where the background is seen, fit the bottle geometry and indices backwards, and score 5 fill states against the true values of the simulation. Quantities that are inseparable are reported too, and nothing was checked on a real bottle."
       }
     },
     "poc_lens_global_search": {
@@ -31973,7 +31973,7 @@
       "still": "articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png",
       "alt": {
         "ja": "カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。",
-        "en": "On public depth images of a desk, frame-to-frame alignment was checked against motion-capture truth. Error fell to 0.42 of no alignment, yet it was no better than assuming steady speed. Small-window plane residuals grew with distance, but quantisation and window size blur whether the law is a square."
+        "en": "On one public sequence of desk depth images, frame-to-frame alignment was checked against motion-capture truth. Error fell to 0.42 times even on the worst split, but whether it beats a steady-speed guess hinges on how frames are split. Small-window plane residuals grew with distance, and no square law was confirmed."
       }
     },
     "poc_light_section_step_weld_floor": {
@@ -33147,7 +33147,7 @@
       "still": "articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png",
       "alt": {
         "ja": "遮蔽は左右一致で無効に落ち、誤りは段差の近くと見え方が変わる面(光沢)に残る。無地では SGBM に負け、両方が有効な画素の平均誤差も SGBM がわずかに小さい(0.918 対 0.912 px)。処理時間は SGBM の数十倍(機械と負荷で変わる)。 遮蔽 bad2 71.5 % 無効 57.0 % / 段差の近く bad2 14.1 % 無効 9.7 % / 無地 bad2 4.1 % 無効 14.5 % / 見え方が変わる面 bad2 11.5 % 無効 20.7 % / それ以外 bad2 0.8 % 無効 5.7 %",
-        "en": "Using a real pair of stereo images, we compute disparity, distance, surfaces and even the pose of a circle. The result is scored with the true disparity that Middlebury 2014 supplies and compared with OpenCV. Where it breaks is shown on a map."
+        "en": "Using a real pair of stereo images, we compute disparity, distance, surfaces and even the pose of a circle. The result is scored with the true disparity that Middlebury 2014 supplies and compared with OpenCV. On pixels valid in both, the two are about equal, and most of the gap is which pixels each invalidates."
       }
     },
     "poc_real_chessboard_undistort": {
@@ -33471,7 +33471,7 @@
       "still": "articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png",
       "alt": {
         "ja": "中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差。★ = 残差が正しい幾何以下)、左から 正しい / 面内回転 0.5° を無視 / 縦ずれ 7.2 画素を無視 / 横に 0.3 mm ずらす / 回転の向きを逆に。下段 = 差 ±0.03 /mm。縦ずれを無視したデータも、それ自体は矛盾の無いデータなので、再構成した像を投影し直すとデータによく合う —— 残差では幾何の誤りが見えない。参照(外の真値)と比べて初めて分かる。横ずれと回転の向きの取り違えは残差にも出る。隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。",
-        "en": "A walnut was really scanned in a cone beam, and the data were reconstructed with FDK and iterative methods. Using 300 projections and scoring against the reference from its authors, the result that ignores the vertical shift ends up much more distant. But the residual after reprojection cannot reveal the gap."
+        "en": "A walnut was really scanned in a cone beam and reconstructed with FDK and iterative methods. With 300 projections scored against the authors' reference, neglecting the vertical shift rebuilds a different slice, further away. Those data are self-consistent, so the residual after reprojecting cannot change."
       }
     },
     "poc_real_typewritten_ocr": {
@@ -33876,7 +33876,7 @@
       "still": "articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png",
       "alt": {
         "ja": "同じ柄の箱が詰めて並んだパレット(種 0)を、5 通りの手がかりで切り分けた天面。種 0 は V 字に有利な種(図の下の注)。",
-        "en": "Packed cartons with identical prints are told apart from overhead depth and colour, then unloaded. A depth step splits none, and whether depth dips or dark colour lines win flips across 28 flap-seam builds. With identical prints, deep grooves favour colour; only wide, untaped cuts over shallow grooves favour depth."
+        "en": "In a rendered scene, packed cartons with identical prints are told apart from overhead depth and colour, then unloaded. A depth step splits none, and whether depth dips or dark colour lines win flips across 28 flap-seam builds. The outcome depends strongly on how the scene is built, such as edge rounding and the seams."
       }
     },
     "poc_3d_sensor_modalities": {
@@ -34076,7 +34076,7 @@
       "still": "articles/assets/poc/poc_3d_sensor_modalities/01_map.png",
       "alt": {
         "ja": "同じ部品(段差・止まり穴・斜面・V 溝・リブ・浅い打痕)を 4 つの材質で、ステレオ・縞投影・間接 ToF・光切断・照度差ステレオの 5 方式で測った形。灰 = 欠測、橙 = 全方式共通の 0.1 mm を超える外れ。三角測量の角はステレオ・縞投影・光切断とも 30°。撮像は物理で描き、高さへの戻しは Fullseye の op。照度差ステレオの高さの定数は真値に合わせた(形の外れは偏りを引いて数えるので、合わせ方に依らない)。",
-        "en": "The same part was measured by several depth-sensing methods in matte, glossy metal, translucent and black materials. Shape errors were counted with a common 0.1 mm yardstick and compared with the dimension table. Which material breaks which method, and where, differs from method to method."
+        "en": "In this simulation, models of several depth-sensing methods measure one part in matte, glossy metal, translucent and black materials. Shape errors were counted with a common 0.1 mm yardstick and compared with the dimension table. Their resolutions differ by orders of magnitude, so read where each breaks, not a ranking."
       }
     },
     "poc_ai_built_inspection_scored": {
@@ -34293,7 +34293,7 @@
       "still": "articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png",
       "alt": {
         "ja": "コンクリートのひび割れ(試験画像、塗り = 検出)。欠陥の画像は NG なら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも寄せていない)。検出は表示のため 2 画素太らせた。出典表示: Özgenel, Ç. F. (2019). Concrete Crack Images for Classification. Mendeley Data, v2. doi:10.17632/5y9wdsg2zt.2. CC BY 4.0; converted to gray",
-        "en": "We gave an AI a task in natural language and let it assemble the inspection recipe. It was scored on 400 public crack images against the labels from their source, and each failure was sorted into tool, MCP or model. Cloud LLMs beat chance but did not reach the existing recipes."
+        "en": "We gave a local LLM a task in natural language and let it assemble an inspection recipe through MCP alone. Scored per image on 400 public crack images against the labels from their source, it produced a sorting recipe in only a few runs. It never managed the candle task and stayed below the existing recipes."
       }
     },
     "poc_equipment_selection_map": {
@@ -34665,7 +34665,7 @@
       "still": "articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png",
       "alt": {
         "ja": "360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。",
-        "en": "Voids in a synthetic aluminium casting were scanned with cone-beam CT, rebuilt with FDK and iterative methods and scored on exact ellipsoids. FDK, last by image error, can still size voids better than the iterative method that ranks first. The best-looking reconstruction is not always the best measurement."
+        "en": "Voids in a synthetic aluminium casting were scanned with cone-beam CT, rebuilt by several methods, and scored on exact ellipsoids. With 12 views, the classic method that ranks last by image error sized the voids better than the best iterative one. The best-looking reconstruction is not always the best measurement."
       }
     },
     "poc_surface_defect_classifiers": {

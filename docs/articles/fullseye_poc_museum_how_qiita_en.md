@@ -772,7 +772,7 @@ Ops used (notes): [`bottle_image`](https://furuse.work/ops/optics/watervision/bo
 
 ## No.2026.312 —— Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and What Cannot Be Detected
 
-A transparent bottle distorts the stripes behind it. For each pixel we find where the background is seen, fit the bottle geometry and indices backwards, and score 5 fill states against the true values of the simulation. Quantities that are inseparable and errors that stay undetectable are reported too.
+A transparent bottle distorts the stripes behind it. For each pixel we find where the background is seen, fit the bottle geometry and indices backwards, and score 5 fill states against the true values of the simulation. Quantities that are inseparable are reported too, and nothing was checked on a real bottle.
 
 [![Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and What Cannot Be Detected](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png)
 
@@ -850,7 +850,7 @@ Ops used (notes): [`bokeh_shape`](https://furuse.work/ops/optics/lensrender/boke
 
 ## No.2026.304 —— Reconstructing a Measured Cone-Beam CT Scan of a Walnut and Scoring It Against the Providers' Reference — Ignoring the Vertical Offset Puts It 2.6 Times Farther from the Reference, yet the Reprojection Residual Cannot Tell (2.3 % Apart)
 
-A walnut was really scanned in a cone beam, and the data were reconstructed with FDK and iterative methods. Using 300 projections and scoring against the reference from its authors, the result that ignores the vertical shift ends up much more distant. But the residual after reprojection cannot reveal the gap.
+A walnut was really scanned in a cone beam and reconstructed with FDK and iterative methods. With 300 projections scored against the authors' reference, neglecting the vertical shift rebuilds a different slice, further away. Those data are self-consistent, so the residual after reprojecting cannot change.
 
 [![Reconstructing a Measured Cone-Beam CT Scan of a Walnut and Scoring It Against the Providers' Reference — Ignoring the Vertical Offset Puts It 2.6 Times Farther from the Reference, yet the Reprojection Residual Cannot Tell (2.3 % Apart)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png)
 
@@ -2684,7 +2684,7 @@ Ops used (notes): [`median`](https://furuse.work/ops/2d/rank/median.html) · [`p
 
 ## No.2026.302 —— Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks
 
-Using a real pair of stereo images, we compute disparity, distance, surfaces and even the pose of a circle. The result is scored with the true disparity that Middlebury 2014 supplies and compared with OpenCV. Where it breaks is shown on a map.
+Using a real pair of stereo images, we compute disparity, distance, surfaces and even the pose of a circle. The result is scored with the true disparity that Middlebury 2014 supplies and compared with OpenCV. On pixels valid in both, the two are about equal, and most of the gap is which pixels each invalidates.
 
 [![Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png)
 
@@ -3090,7 +3090,7 @@ Ops used (notes): [`afocal_system`](https://furuse.work/ops/optics/lenssolve/afo
 
 ## No.2026.239 —— Sorting Look-Alike Foreign Matter with Hyperspectral NIR — Two Real Datasets (Plastic Flakes, Foreign Objects on Pork Belly) and a Material-Table Simulation of the Failure Modes
 
-Foreign matter the same colour as meat or kernels cannot be told apart by a colour camera. Classifying public real images as spectral data detected debris on pork belly with 1.1 % false alarms. With fewer bands the false alarms grew, so a band set that sufficed on synthetic data did not suffice on real data.
+Public real images were used as near-infrared spectral data to classify debris lying on pork belly. Scored per pixel on separate captures, most of it was detected at 1.1 % false alarms. With fewer bands the false alarms grew, and that a colour camera fails on same-coloured matter is shown only on synthetic data.
 
 [![Sorting Look-Alike Foreign Matter with Hyperspectral NIR — Two Real Datasets (Plastic Flakes, Foreign Objects on Pork Belly) and a Material-Table Simulation of the Failure Modes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png)
 
@@ -3448,7 +3448,7 @@ Ops used (notes): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) �
 
 ## No.2026.058 —— CAD-to-scan deviation inspection — the fit absorbs the defect and invents a dent
 
-Aligning a scan to its design can absorb a defect or move it elsewhere. Known dents and warps were added to a part; even the defect-free control produced 66.5 square mm of false rejected area. Rigid-like deviations shrink, while nearest points jump across edges and create a fictitious dent.
+Aligning a scan to its design absorbs part of the deviation and moves where it looks out of tolerance. On a part with a known warp, a reading 121 µm deep appears at the centre where the true deviation is tiny. This is synthetic, and a point-sampled design shows out-of-tolerance edges even without a defect.
 
 [![CAD-to-scan deviation inspection — the fit absorbs the defect and invents a dent](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene.png)
 
@@ -4176,7 +4176,7 @@ Ops used (notes): [`angles_to_normals`](https://furuse.work/ops/reprconv/directi
 
 ## No.2026.309 —— One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material
 
-The same part was measured by several depth-sensing methods in matte, glossy metal, translucent and black materials. Shape errors were counted with a common 0.1 mm yardstick and compared with the dimension table. Which material breaks which method, and where, differs from method to method.
+In this simulation, models of several depth-sensing methods measure one part in matte, glossy metal, translucent and black materials. Shape errors were counted with a common 0.1 mm yardstick and compared with the dimension table. Their resolutions differ by orders of magnitude, so read where each breaks, not a ranking.
 
 [![One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map.png)
 
@@ -4218,7 +4218,7 @@ Ops used (notes): [`absolute_phase`](https://furuse.work/ops/3d/structured_light
 
 ## No.2026.314 —— Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Better Than Not Aligning but About Level With a Constant-Velocity Guess, the Tuning Depends on the Split, and Window Residuals Cannot Settle the Square Law (TUM RGB-D)
 
-On public depth images of a desk, frame-to-frame alignment was checked against motion-capture truth. Error fell to 0.42 of no alignment, yet it was no better than assuming steady speed. Small-window plane residuals grew with distance, but quantisation and window size blur whether the law is a square.
+On one public sequence of desk depth images, frame-to-frame alignment was checked against motion-capture truth. Error fell to 0.42 times even on the worst split, but whether it beats a steady-speed guess hinges on how frames are split. Small-window plane residuals grew with distance, and no square law was confirmed.
 
 [![Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Better Than Not Aligning but About Level With a Constant-Velocity Guess, the Tuning Depends on the Split, and Window Residuals Cannot Settle the Square Law (TUM RGB-D)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles.png)
 

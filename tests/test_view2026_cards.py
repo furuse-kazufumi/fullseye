@@ -47,7 +47,7 @@ def _viewer_cards(lines: list[str]) -> list[str]:
 
 def _expected_rows(data, lang: str) -> list[dict]:
     rows = G.public_data(data)["exhibits"]
-    return [e for e in rows if e["tier"] in G.MAIN_TIERS] if lang in ("ja", "en") else rows
+    return [e for e in rows if e["tier"] in G.MAIN_TIERS]      # 8 言語とも本ページは目玉・準目玉だけ
 
 
 @pytest.mark.parametrize("lang", LANGS)
@@ -57,7 +57,7 @@ def test_every_exhibit_is_one_block_with_one_image_and_its_title_once(lang: str)
     cards = _cards(lines)
     rows = _expected_rows(data, lang)
     assert len(cards) == len(rows) >= 10, lang
-    labels = {e["label"][lang] for e in rows}
+    labels = {e["label"][G._content_lang(lang)] for e in rows}      # ja/en 以外のページの題は英語
     seen = set()
     for card in cards:
         assert card.count("<img ") == 1, (lang, card[:120])
@@ -93,7 +93,7 @@ def test_each_viewer_has_a_small_image_whose_alt_is_its_title(lang: str) -> None
     if lang in ("ja", "en"):
         items = list(data["field_viewers"]["items"]) + [by_id[i] for i in vw["main_ids"]]
     else:
-        items = list(vw["items"])
+        items = [by_id[i] for i in vw["main_ids"]]      # 場を掃引する 3-D は ja/en の HTML だけなので置かない
     assert len(viewer_lines) == len(items), lang
     for it, line in zip(items, viewer_lines):
         title = it["title"].get(lang, it["title"]["en"])
@@ -119,7 +119,9 @@ def test_text_without_an_image_never_runs_long(lang: str) -> None:
         longest = max(longest, run)
     assert longest <= MAX_TEXT_RUN, (lang, longest)
     limit = MAX_CARD_TEXT.get(lang, MAX_CARD_TEXT_OTHER)
-    for card in _cards(lines):
+    cards = _cards(lines)
+    assert len(cards) >= 10, lang
+    for card in cards:
         assert len(_visible(card)) <= limit, (lang, len(_visible(card)), card[:100])
 
 
@@ -149,11 +151,8 @@ def test_page_order_is_the_same_in_every_language(lang: str) -> None:
     intro = page[at["intro"]:page.index("</div></div>", at["intro"])]
     assert intro.count("<img ") == 1 and 'alt="%s"' % html.escape(ui["intro_alt"], quote=True) in intro, lang
     assert 'loading="lazy"' not in intro, "最初の画面の画像は遅延読み込みにしない"
-    # 見出し(##)の並び: 触って見る → (目玉・準目玉 | 見どころ)→ シリーズ記事
+    # 見出し(##)の並び: 触って見る → 目玉 → 準目玉 → シリーズ記事
     headings = [line[3:] for line in page.splitlines() if line.startswith("## ")]
-    if lang in ("ja", "en"):
-        want = [data["viewers"]["h"][lang], G.MAIN_TEXT[lang]["showcase"], G.MAIN_TEXT[lang]["featured"]]
-    else:
-        want = [data["viewers"]["h"][lang], ui["h_highlights"]]
+    want = [data["viewers"]["h"][lang], G.MAIN_TEXT[lang]["showcase"], G.MAIN_TEXT[lang]["featured"]]
     assert headings[:len(want)] == want, (lang, headings[:6])
     assert headings[len(want)].startswith(ui["h_series"]), (lang, headings)

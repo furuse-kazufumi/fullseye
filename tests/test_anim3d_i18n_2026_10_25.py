@@ -225,9 +225,9 @@ def _inject_anim3d(d, tmp_path, langs):
 
 
 def test_entry_page_links_anim3d_with_lang_and_size(tmp_path):
-    """注入した exhibits の viewer は ja/en では more、残る 6 言語では本ページに載る。
+    """注入した exhibits の viewer は、8 言語ともおまけページ(more)に載る(2026-11-13 から全言語で同じ分け方)。
 
-    field_viewers は ja/en の本ページだけ、viewers は全言語の本ページに残る専用入口であり、
+    field_viewers は ja/en の本ページだけ、viewers の先頭の数本は全言語の本ページに残る専用入口であり、
     ここで検査する exhibits の viewer とはページ分割の扱いが異なる。
     """
     d = G.load()
@@ -239,10 +239,7 @@ def test_entry_page_links_anim3d_with_lang_and_size(tmp_path):
     mb = G._viewer_mb(d, e)
     assert len(d["langs"]) == 8
     for l in d["langs"]:
-        pages = [G.build(d, l)]
-        if l in ("ja", "en"):
-            pages.append(G.build_more(d, l))
-        page = "\n".join(pages)
+        page = "\n".join([G.build(d, l), G.build_more(d, l)])
         link = "%s?lang=%s" % (G._media_rel(d, e), l)
         linked_lines = [line for line in page.splitlines() if link in line]
         assert linked_lines, "%s: 動く 3-D への言語つきリンクが無い" % l
@@ -278,8 +275,8 @@ def test_try_it_viewer_entry_accepts_ja_en_and_falls_back_to_english(tmp_path):
             "line": {"ja": "値 2 を見る。", "en": "See value 2."},
         })
         assert not [x for x in G.validate(d) if viewer_id in x]
-        assert "Two languages" in G.build(d, "fr")
-        assert "See value 2." in G.build(d, "fr")
+        assert "Two languages" in G.build_more(d, "fr")      # 本ページに置かない viewer はおまけページ
+        assert "See value 2." in G.build_more(d, "fr")
     finally:
         (G.BASE / "viewers" / (viewer_id + ".html")).unlink()
 

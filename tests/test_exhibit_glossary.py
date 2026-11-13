@@ -70,9 +70,7 @@ def test_every_view_exhibit_with_terms_gets_a_term_line_in_every_language():
         expected = sum(bool(G.terms_for_exhibit(ledger[e["id"]], lang, glossary))
                        for e in public["exhibits"] if e["id"] in ledger)
         assert expected >= 8, "%s: 用語を含む公開展示が %d 本まで減った" % (lang, expected)
-        pages = [VIEW.build(data, lang)]
-        if lang in ("ja", "en"):
-            pages.append(VIEW.build_more(data, lang))      # 本ページに載せない展示の用語行はおまけページ
+        pages = [VIEW.build(data, lang), VIEW.build_more(data, lang)]      # 用語行はおまけページ(8 言語とも)
         label = "  用語:" if lang == "ja" else "  Terms:"
         actual = sum(line.startswith(label) for page in pages for line in page.splitlines())
         assert actual >= expected, "%s: 用語行 %d / 用語を含む展示 %d" % (lang, actual, expected)

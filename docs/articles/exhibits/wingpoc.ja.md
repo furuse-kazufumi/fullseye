@@ -428,7 +428,7 @@ py -3.11 examples/poc_print_registration.py
 
 ## No.2026.116 —— 薄い欠陥はどこまで見えるか —— 実写の地に真値を仕込んで検出限界を測る
 
-検査の現場では、薄い傷がどこまで見えるかを平らな地に雑音を載せた合成画像で見積もることが多い。雑音の量をそろえても、実写のレンガの地では検出限界が合成の 3.47 倍まで悪くなった。限界を決めていたのは雑音ではなく、目地のような地の構造だった。
+検査の現場では、弱い欠陥がどこまで見えるかを平らな地に雑音を載せた合成画像で見積もることが多い。雑音の量をそろえても、実写の地では検出限界が合成より悪くなり、最も悪いレンガの地で 3.47 倍だった。限界を決めていたのは雑音ではなく、目地のような地の構造だった。
 
 [![薄い欠陥はどこまで見えるか —— 実写の地に真値を仕込んで検出限界を測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels.png)
 
@@ -990,11 +990,11 @@ py -3.11 examples/poc_agv_fleet.py
 
 ## No.2026.223 —— ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける ―― 小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る
 
-積み重ねたチップの接合面にできる小さなボイドを、超音波顕微鏡で探す。直径 16 µm 以上のボイドは、反射の位相の像ですべて反転して光った。明るさの像では、小さなボイドの多くが良品に紛れる。
+積み重ねたチップの接合面にできる小さなボイドを超音波顕微鏡で探す、シミュレーションである。直径 16 µm 以上のボイドは、反射の位相の像で反転して光った。明るさの像では、小さなボイドの多くが良品に紛れる。
 
 [![ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける ―― 小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase.png)
 
-*↑ **ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける ―― 小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る** ―― 厚さ 100 µm の Si のダイの下の接合面(SiO2 1 + 1 µm、直径 40 µm・ピッチ 80 µm の Cu パッド 1 + 1 µm)に直径 5〜24 µm のボイドを置き、水 1 mm・F# 3 の集束探触子の SAM(走査型超音波顕微鏡) で撮る。エコーは層の伝達行列(Airy の再帰・時間領域の経路の和・光学の薄膜の式と 1e-12 で照合済み)。★★接合面の期待時刻で読んだ位相は、誘電体 −91°・Cu パッド +84°(薄い層は直交)、ボイドは誘電体の中 −175°・パッドの上 +159°(反転)。★★振幅の像ではボイド 12 個中 8 個が良品の画素の明るさの範囲に隠れる。直交の背景に反転のエコーが直角に足されるので、9〜16 µm のボイドの振幅の変化は 0.4〜3.5σ、位相を使う変化は 3.0〜8.9σ。位相の像で反転と読む画素は 16 µm 以上のボイドすべてで、良品 26,724 画素中 1 画素。★従来の「|RF| 最大の 1 点の符号」は無傷の Cu パッドで 140〜400 MHz の間に 5 回転ぶ。★最適周波数は閉形式 (k/a)·sqrt(log2(1 + a² ln2/(β k²)))(10 µm で 139.16 MHz、総当たりと一致)、表面エコーの裾がゲートに入る下限 130 MHz。★★POD(â vs a、88 個): 位相を使う検出の a90/95 は 150 / 200 / 300 MHz で 12.4 / 13.9 / 57.6 µm、振幅だけは 16.6 / 19.3 / 101.6 µm(同じ基準・同じ閾値の規則)。1-D 平面波・縦波だけ・ガウスの横 PSF・屈折の収差なし・Si の減衰 0(未確認)・kissing bond なしの合成であることは docstring に明記。検査 16 件・約 15 秒。*
+*↑ **ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける ―― 小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る** ―― 厚さ 100 µm の Si のダイの下の接合面(SiO2 1 + 1 µm、直径 40 µm・ピッチ 80 µm の Cu パッド 1 + 1 µm)に直径 5〜24 µm のボイドを置き、水 1 mm・F# 3 の集束探触子の SAM(走査型超音波顕微鏡) で撮る。エコーは層の伝達行列(Airy の再帰・時間領域の経路の和・光学の薄膜の式と 1e-12 で照合済み)。★★接合面の期待時刻で読んだ位相は、誘電体 −91°・Cu パッド +84°(薄い層は直交)、ボイドは誘電体の中 −175°・パッドの上 +159°(反転)。★★振幅の像ではボイド 12 個中 8 個が良品の画素の明るさの範囲に隠れる。直交の背景に反転のエコーが直角に足されるので、9〜16 µm のボイドの振幅の変化は 0.4〜3.5σ、位相を使う変化は 3.0〜8.9σ。位相の像で反転と読む画素は 16 µm 以上のボイドすべてで、良品 26,724 画素中 1 画素。★従来の「|RF| 最大の 1 点の符号」は無傷の Cu パッドで 140〜400 MHz の間に 5 回転ぶ。★最適周波数は閉形式 (k/a)·sqrt(log2(1 + a² ln2/(β k²)))(10 µm で 139.16 MHz、総当たりと一致)、表面エコーの裾がゲートに入る下限 130 MHz。★★POD(â vs a、88 個): 位相を使う検出の a90/95 は 150 / 200 / 300 MHz で 12.4 / 13.9 / 57.6 µm、振幅だけは 16.6 / 19.3 / 101.6 µm(300 MHz の値は、試したボイドの最大 36 µm の外への外挿。同じ基準・同じ閾値の規則)。1-D 平面波・縦波だけ・ガウスの横 PSF・屈折の収差なし・Si の減衰 0(未確認)・kissing bond なしの合成であることは docstring に明記。検査 16 件・約 15 秒。*
 
 用語: SAM — 集束した超音波を試料上で走査し、反射波の振幅・位相・到達時間から内部界面や欠陥を画像化する装置。; Airy — 平行平板内で繰り返す多重反射を無限級数として合成し、透過率を表す式。
 
@@ -1554,7 +1554,7 @@ py -3.11 examples/poc_real_typewritten_ocr.py
 
 ## No.2026.310 —— 混載デパレタイズ: 継ぎ目が詰まると深度の段差では箱を分けられない —— 深度の V 字の溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の深さ・すき間・テープで入れ替わる(地図)
 
-詰めて並んだ同じ柄の段ボールを、天井の深度カメラとカラーで見分けて下ろす。深度の段差では同じ柄の箱を分けられず、深度の浅い溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の作り 28 通りの地図で入れ替わった。同じ柄では合わせ目が深いとカラー、切り口が広く開きテープが無く溝が浅いときだけ深度の溝が上になる。
+計算で作った場面で、詰めて並んだ同じ柄の段ボールを、天井の深度カメラとカラーで見分けて下ろす。深度の段差では同じ柄の箱を分けられず、深度の浅い溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の作り 28 通りの地図で入れ替わった。勝ち負けは、縁の丸みや合わせ目といった場面の作りに強く依存する。
 
 [![混載デパレタイズ: 継ぎ目が詰まると深度の段差では箱を分けられない —— 深度の V 字の溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の深さ・すき間・テープで入れ替わる(地図)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png)
 
@@ -1596,7 +1596,7 @@ py -3.11 examples/poc_mixed_case_depalletizing.py
 
 ## No.2026.308 —— AI が組んだ検査を公開実データの真値で採点する ―― 失敗を道具・MCP・模型に分け、直す前と後を並べる(ローカル LLM のひび割れは 20 回に 1〜3 本で再現せず、クラウド LLM は 3 本とも偶然を超えるが既存レシピに届かない)
 
-課題を自然言語で渡して AI に検査のレシピを組ませた。公開のひび割れ画像 400 枚を配布元のラベルで採点し、失敗の原因を道具・MCP・模型に分けた。クラウドの LLM は偶然を超えて選り分けたが、既存のレシピには届かなかった。
+課題を自然言語で渡し、ローカルの LLM に MCP だけで検査のレシピを組ませた。公開のひび割れ画像 400 枚を配布元のラベルで画像ごとに採点すると、選り分けるレシピを組めた回はごく少なかった。ろうそくの汚れの課題では一度も組めず、既存のレシピには届かなかった。
 
 [![AI が組んだ検査を公開実データの真値で採点する ―― 失敗を道具・MCP・模型に分け、直す前と後を並べる(ローカル LLM のひび割れは 20 回に 1〜3 本で再現せず、クラウド LLM は 3 本とも偶然を超えるが既存レシピに届かない)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png)
 
@@ -2198,7 +2198,7 @@ py -3.11 examples/poc_particle_sizing.py
 
 ## No.2026.031 —— 光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性
 
-透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。巻き戻した後に外れた画素は、ほとんどが巻きではなく符号の二義性によるものだった。
+透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。巻き戻した後に外れた画素の多くは、光弾性でよく知られた符号の二義性によるものだった。
 
 [![光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 
@@ -3210,7 +3210,7 @@ py -3.11 examples/poc_moire_alignment.py
 
 ## No.2026.233 —— テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える
 
-段差のある部品を一枚の画像で測ると、普通のレンズでは近い面ほど大きく写り、寸法が違って読まれる。論文で公開されたテレセントリックレンズの実画像を測り、倍率が論文の値と 0.05 % の差で一致した。合成の章では、物体の高さが変わってもテレセントリックでは倍率がほとんど動かない。
+段差のある部品を一枚の画像で測ると、普通のレンズでは近い面ほど大きく写る。論文で公開されたテレセントリックレンズの実画像から測った倍率は論文の値と合ったが、論文自身の値が ±0.25 % 散るので、それより細かい一致とは読まない。傾いた板の同心円の中心がずれないことが、その証拠になる。
 
 [![テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate.png)
 
@@ -5944,7 +5944,7 @@ py -3.11 examples/poc_water_inspection_images.py
 
 ## No.2026.312 —— 背景の縞の歪みからガラス瓶を逆に測る(同じ仮定の下のシミュレーション)―― 外半径・壁厚・屈折率・液面を真値で採点し、分けられない量と検出できない誤差を出す
 
-透明な瓶は後ろの縞を歪めて見せる。画素ごとに背景の位置を求め、外半径・壁厚・屈折率・液面を逆に当てはめて、充填 5 通りの真値で採点した。分けられない量と検出できない誤差も出すが、真値は自作のシミュレーションである。
+透明な瓶は後ろの縞を歪めて見せる。画素ごとに背景の位置を求め、外半径・壁厚・屈折率・液面を逆に当てはめて、充填 5 通りの真値で採点した。分けられない量も出すが、真値は自作のシミュレーションで、実物の瓶では確かめていない。
 
 [![背景の縞の歪みからガラス瓶を逆に測る(同じ仮定の下のシミュレーション)―― 外半径・壁厚・屈折率・液面を真値で採点し、分けられない量と検出できない誤差を出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png)
 
@@ -6022,7 +6022,7 @@ py -3.11 examples/poc_photograph_through_prescription.py
 
 ## No.2026.304 —— 実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する ―― 縦ずれを無視すると参照から 2.6 倍遠いのに、再投影の残差では見分けられない(差 2.3 %)
 
-公開されている実測のコーンビーム CT(クルミ)を、FDK と反復法で再構成した。投影 300 枚を使い、配布元の参照で採点すると、縦ずれを無視した再構成は参照からかなり遠くなる。それなのに再投影の残差では、その差が見分けられない。
+公開されている実測のコーンビーム CT(クルミ)を、FDK と反復法で再構成した。投影 300 枚を使い配布元の参照で採点すると、縦ずれを無視した再構成は別の断面を作ることになり、参照から遠くなる。そのデータ自体に矛盾は無いので再投影の残差は変わらず、これは作りの上で当然である。
 
 [![実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する ―― 縦ずれを無視すると参照から 2.6 倍遠いのに、再投影の残差では見分けられない(差 2.3 %)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png)
 
@@ -7856,7 +7856,7 @@ py -3.11 examples/poc_sheet_deformation_ffd.py
 
 ## No.2026.302 —— 実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする
 
-実写のステレオ対から、視差・距離・面・円の姿勢まで求めた。Middlebury 2014 の真値の視差で平均誤差を採点し、OpenCV と比べた。壊れる場所は地図にして示した。
+実写のステレオ対から、視差・距離・面・円の姿勢まで求めた。Middlebury 2014 の真値の視差で平均誤差を採点し、OpenCV と比べた。両方が有効な画素だけで比べるとほぼ同等で、差の多くはどこを無効にするかの選び方から来る。
 
 [![実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png)
 
@@ -8262,7 +8262,7 @@ py -3.11 examples/poc_lens_solves_afocal.py
 
 ## No.2026.239 —— 見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える
 
-肉や仁と同じ色の異物は、カラーカメラでは見分けられない。公開の実画像を分光画像として分類すると、豚バラの上の異物を誤警報 1.1 % で検出できた。帯域を減らすと誤警報が増え、合成データでは足りた条件が実データでは足りなかった。
+公開の実画像を近赤外の分光画像として使い、豚バラの上の異物を分類した。撮影を分けて画素ごとに採点すると、誤警報 1.1 % で大半を検出できた。帯域を減らすと誤警報が増え、色が同じ異物をカラーで見分けられないことは合成でだけ示した。
 
 [![見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png)
 
@@ -9384,7 +9384,7 @@ py -3.11 examples/poc_bev_sensor_fusion.py
 
 ## No.2026.058 —— CAD と実測点群の差分検査 ―― 合わせた分だけ欠陥が消え、無い所にへこみが出る
 
-点群を設計形状へ合わせてから検査すると、位置合わせが欠陥を吸収したり別の場所へ移したりする。へこみや反りを既知量で入れた部品を合わせ、欠陥のない対照にも66.5平方mmの公差外領域が出る条件を測った。図では、剛体運動に似た偏差は薄まり、稜線では対応先が隣面へ飛んで偽のへこみが現れる。
+点群を設計形状へ合わせてから検査すると、位置合わせが偏差の一部を吸収し、外れて見える場所が移る。反りを既知量で入れた部品では、真値がごく小さい中央に深さ 121 µm の読みが出た。合成の結果で、設計形状を点に置き換えて測ると欠陥のない対照でも稜線に公差外が出る。
 
 [![CAD と実測点群の差分検査 ―― 合わせた分だけ欠陥が消え、無い所にへこみが出る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene.png)
 
@@ -10112,7 +10112,7 @@ py -3.11 examples/poc_bga_ball_type_roundtrip.py
 
 ## No.2026.309 —— 同じ部品を 3-D センサの 5 方式で測る ―― 縞投影・間接 ToF・光切断・照度差ステレオ・ステレオは、どの材質のどこで壊れるか
 
-同じ部品を、方式の違う立体センサで、つや消し・金属光沢・半透明・黒の材質ごとに測った。形の外れを共通の物差し 0.1 mm で数え、寸法表の真値と比べた。どの材質のどこで壊れるかは方式ごとに違う。
+同じ部品を、方式の違う立体センサの模型で、つや消し・金属光沢・半透明・黒の材質ごとに測ったシミュレーションである。形の外れを共通の物差し 0.1 mm で数え、寸法表の真値と比べた。方式ごとに分解能の桁が違うので順位ではなく、どの材質のどこで壊れるかを見る。
 
 [![同じ部品を 3-D センサの 5 方式で測る ―― 縞投影・間接 ToF・光切断・照度差ステレオ・ステレオは、どの材質のどこで壊れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map.png)
 
@@ -10154,7 +10154,7 @@ py -3.11 examples/poc_3d_sensor_modalities.py
 
 ## No.2026.314 —— 実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせないよりは良いが等速の仮定とほぼ同じ水準で、設定の選び方は分割しだい、窓の残差は距離の 2 乗かどうかを決められなかった(TUM RGB-D)
 
-机の上を撮った公開データの深度画像で、隣り合う画像の位置合わせをモーションキャプチャの真値と比べた。合わせないときの 0.42 倍まで誤差は減ったが、直前の動きを使う等速の仮定とほぼ同じ水準だった。小さな窓の平面の残差は距離とともに増えたが、量子化と窓の広さが混ざり、距離の二乗かどうかは決められなかった。
+机の上を撮った公開データのひと続きの深度画像で、隣り合う画像の位置合わせをモーションキャプチャの真値と比べた。合わせないときより誤差は減り、最も悪い分け方でも 0.42 倍だったが、等速の予測より良いかは画像の分け方で変わった。小さな窓の平面の残差は距離とともに増えたが、距離の二乗かどうかは決められなかった。
 
 [![実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせないよりは良いが等速の仮定とほぼ同じ水準で、設定の選び方は分割しだい、窓の残差は距離の 2 乗かどうかを決められなかった(TUM RGB-D)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles.png)
 
@@ -10476,7 +10476,7 @@ py -3.11 examples/poc_thermal_radiometry.py
 
 ## No.2026.043 —— パルスサーモグラフィで内部欠陥の深さを測る
 
-フラッシュで表面を温め、冷えていく熱画像から内部の剥離の深さを読む。小さく浅い欠陥は、当てはめる時間窓を 4 秒に切り詰めると正しい深さに戻った。外れの原因は熱の横への広がりではなく、時間窓の取り方だった。
+フラッシュで表面を温め、冷えていく熱画像から内部の剥離の深さを読む、合成の実験である。長い時間窓では大きく外れた小さい欠陥の深さが、当てはめる窓を 4 秒に切り詰めると真値の近くに戻った。短すぎる窓では深い欠陥が外れるので、窓は深さに合わせて選ぶ。
 
 [![パルスサーモグラフィで内部欠陥の深さを測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map.png)
 
@@ -10834,7 +10834,7 @@ FULLSEYE_GWOSC_DATA=<dir> py -3.11 examples/poc_gw_detector_pseudo_simulation.py
 
 ## No.2026.234 —— 写真では見えない µm の凹みを、画面に映した縞の鏡像で見つける ―― 位相計測デフレクトメトリ
 
-光沢のある塗装面のごく浅い凹みは、照明を当てた写真ではまず見えない。面の前の画面に縞を映し、その鏡像のゆがみから曲率を求めると、深さ 3 µm の凹みがはっきり浮かんだ。写真ではほぼ一様な面に、縞の鏡像からだけ凹みが現れる。
+光沢のある塗装面のごく浅い凹みは、拡散照明の写真ではほぼ写らない。面の前の画面に縞を映し、その鏡像のゆがみから曲率を求めると、仕込んだ深さ 3 µm の凹みが浮かんだ。合成の場面での結果で、斜めから照らす写真とは比べていない。
 
 [![写真では見えない µm の凹みを、画面に映した縞の鏡像で見つける ―― 位相計測デフレクトメトリ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png)
 
@@ -10960,7 +10960,7 @@ py -3.11 examples/poc_pixel_shift.py
 
 ## No.2026.243 —— 間接 ToF の多周波アンラップ ―― 周波数を上げるほど細かく測れるが、折り返し・多重反射・縁の混合・高調波で壊れる
 
-間接 ToF は、変調した光が戻るまでの位相のずれから距離を測る。周波数を組み合わせると、18.7 m まで距離を一意に読める。多重反射や物の縁では、警告なしに距離が飛ぶ。
+間接 ToF は、変調した光が戻るまでの位相のずれから距離を測る。合成の信号では、周波数を組み合わせると 18.7 m まで距離を一意に読める。多重反射や物の縁では、警告なしに距離が飛ぶ。
 
 [![間接 ToF の多周波アンラップ ―― 周波数を上げるほど細かく測れるが、折り返し・多重反射・縁の混合・高調波で壊れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap.png)
 
@@ -11002,7 +11002,7 @@ py -3.11 examples/poc_itof_multifreq.py
 
 ## No.2026.241 —— 工業用 OCT(光干渉断層法) ―― 塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る
 
-塗装や多層フィルムの層の厚さを、切らずに奥行き方向から見たい。公開されている自動車塗装の生の干渉スペクトルから透明層の厚さを求め、論文の OCT の値と 1.5 µm 以内で一致した。分離できない薄い層には値を出さず、測れないと返す。
+塗装や多層フィルムの層の厚さを、切らずに奥行き方向から見たい。公開されている自動車塗装の生の干渉スペクトルから透明層の厚さを求め、同じ見本を顕微鏡で測った値と 3.6 µm 以内で合った。論文の値との一致は同じデータの再現にあたり、見本と表の対応は厚さから推定した。
 
 [![工業用 OCT(光干渉断層法) ―― 塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png)
 
@@ -11046,7 +11046,7 @@ py -3.11 examples/poc_industrial_oct.py
 
 ## No.2026.237 —— 分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ
 
-シリコン上の酸化膜の厚さは、反射スペクトルの干渉縞や色から読み取れる。他の研究者が公開した実物の顕微鏡写真から、画素ごとの膜厚を中央値 87.4 nm として地図にした。基準の値とのずれは残り、カメラの色の感度は分かっていない。
+シリコン上の酸化膜の厚さは、反射スペクトルの干渉縞や色から読み取れる。他の研究者が公開した実物の顕微鏡写真から画素ごとに読むと、中央値は 87.4 nm だった。論文の値から求めた基準より一割ほど薄く、カメラの色の感度は分かっていない。
 
 [![分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness.png)
 
@@ -11130,7 +11130,7 @@ py -3.11 examples/poc_chromatic_confocal.py
 
 ## No.2026.245 —— 仮想 SEM ―― 電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)
 
-SEM の像は表面の写真ではなく、固体の中で散乱した電子のうち外へ出てきたものの集計である。電子を一つずつ追う模型を組み、反射電子の量を 7 元素の実測データベースと照合した。同じ線でも加速電圧を変えると、側壁のどの高さを線幅として測っているかが変わる。
+SEM の像は表面の写真ではなく、固体の中で散乱した電子のうち外へ出てきたものの集計である。電子を一つずつ追う模型を組み、反射電子の量を 7 元素の実測データベースと照合した。線幅の真値つきの実画像は無く、加速電圧で線幅の読みが変わるという結果は模型の中の話である。
 
 [![仮想 SEM ―― 電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume.png)
 

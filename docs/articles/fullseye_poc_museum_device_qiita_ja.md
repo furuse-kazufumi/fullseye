@@ -298,7 +298,7 @@ py -3.11 examples/poc_thermal_radiometry.py
 
 ## No.2026.043 —— パルスサーモグラフィで内部欠陥の深さを測る
 
-フラッシュで表面を温め、冷えていく熱画像から内部の剥離の深さを読む。小さく浅い欠陥は、当てはめる時間窓を 4 秒に切り詰めると正しい深さに戻った。外れの原因は熱の横への広がりではなく、時間窓の取り方だった。
+フラッシュで表面を温め、冷えていく熱画像から内部の剥離の深さを読む、合成の実験である。長い時間窓では大きく外れた小さい欠陥の深さが、当てはめる窓を 4 秒に切り詰めると真値の近くに戻った。短すぎる窓では深い欠陥が外れるので、窓は深さに合わせて選ぶ。
 
 [![パルスサーモグラフィで内部欠陥の深さを測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map.png)
 
@@ -656,7 +656,7 @@ FULLSEYE_GWOSC_DATA=<dir> py -3.11 examples/poc_gw_detector_pseudo_simulation.py
 
 ## No.2026.234 —— 写真では見えない µm の凹みを、画面に映した縞の鏡像で見つける ―― 位相計測デフレクトメトリ
 
-光沢のある塗装面のごく浅い凹みは、照明を当てた写真ではまず見えない。面の前の画面に縞を映し、その鏡像のゆがみから曲率を求めると、深さ 3 µm の凹みがはっきり浮かんだ。写真ではほぼ一様な面に、縞の鏡像からだけ凹みが現れる。
+光沢のある塗装面のごく浅い凹みは、拡散照明の写真ではほぼ写らない。面の前の画面に縞を映し、その鏡像のゆがみから曲率を求めると、仕込んだ深さ 3 µm の凹みが浮かんだ。合成の場面での結果で、斜めから照らす写真とは比べていない。
 
 [![写真では見えない µm の凹みを、画面に映した縞の鏡像で見つける ―― 位相計測デフレクトメトリ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png)
 
@@ -782,7 +782,7 @@ py -3.11 examples/poc_pixel_shift.py
 
 ## No.2026.243 —— 間接 ToF の多周波アンラップ ―― 周波数を上げるほど細かく測れるが、折り返し・多重反射・縁の混合・高調波で壊れる
 
-間接 ToF は、変調した光が戻るまでの位相のずれから距離を測る。周波数を組み合わせると、18.7 m まで距離を一意に読める。多重反射や物の縁では、警告なしに距離が飛ぶ。
+間接 ToF は、変調した光が戻るまでの位相のずれから距離を測る。合成の信号では、周波数を組み合わせると 18.7 m まで距離を一意に読める。多重反射や物の縁では、警告なしに距離が飛ぶ。
 
 [![間接 ToF の多周波アンラップ ―― 周波数を上げるほど細かく測れるが、折り返し・多重反射・縁の混合・高調波で壊れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap.png)
 
@@ -824,7 +824,7 @@ py -3.11 examples/poc_itof_multifreq.py
 
 ## No.2026.241 —— 工業用 OCT(光干渉断層法) ―― 塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る
 
-塗装や多層フィルムの層の厚さを、切らずに奥行き方向から見たい。公開されている自動車塗装の生の干渉スペクトルから透明層の厚さを求め、論文の OCT の値と 1.5 µm 以内で一致した。分離できない薄い層には値を出さず、測れないと返す。
+塗装や多層フィルムの層の厚さを、切らずに奥行き方向から見たい。公開されている自動車塗装の生の干渉スペクトルから透明層の厚さを求め、同じ見本を顕微鏡で測った値と 3.6 µm 以内で合った。論文の値との一致は同じデータの再現にあたり、見本と表の対応は厚さから推定した。
 
 [![工業用 OCT(光干渉断層法) ―― 塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png)
 
@@ -868,7 +868,7 @@ py -3.11 examples/poc_industrial_oct.py
 
 ## No.2026.237 —— 分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ
 
-シリコン上の酸化膜の厚さは、反射スペクトルの干渉縞や色から読み取れる。他の研究者が公開した実物の顕微鏡写真から、画素ごとの膜厚を中央値 87.4 nm として地図にした。基準の値とのずれは残り、カメラの色の感度は分かっていない。
+シリコン上の酸化膜の厚さは、反射スペクトルの干渉縞や色から読み取れる。他の研究者が公開した実物の顕微鏡写真から画素ごとに読むと、中央値は 87.4 nm だった。論文の値から求めた基準より一割ほど薄く、カメラの色の感度は分かっていない。
 
 [![分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness.png)
 
@@ -952,7 +952,7 @@ py -3.11 examples/poc_chromatic_confocal.py
 
 ## No.2026.245 —— 仮想 SEM ―― 電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)
 
-SEM の像は表面の写真ではなく、固体の中で散乱した電子のうち外へ出てきたものの集計である。電子を一つずつ追う模型を組み、反射電子の量を 7 元素の実測データベースと照合した。同じ線でも加速電圧を変えると、側壁のどの高さを線幅として測っているかが変わる。
+SEM の像は表面の写真ではなく、固体の中で散乱した電子のうち外へ出てきたものの集計である。電子を一つずつ追う模型を組み、反射電子の量を 7 元素の実測データベースと照合した。線幅の真値つきの実画像は無く、加速電圧で線幅の読みが変わるという結果は模型の中の話である。
 
 [![仮想 SEM ―― 電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume.png)
 
