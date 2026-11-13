@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：611 / 1937 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：611 / 1938 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `_archive_tarxz.py`
@@ -1893,22 +1893,22 @@
 
 - **L48** _(ja)_ — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
 - **L57** — ★不要吞掉它(2026-09-06 的對抗性評審)。`imgops_nary` 是只需 numpy 和 scipy 的一級 module，因此 import 失敗意味著「損壞的 checkout」,而非「該環境沒有的功能」。以前是 `except Exception: pass`，又因為**這個函數同時兼任生成器和檢查器**，CI 可以在保持綠色的情況下發布一個整整消失了 17 個 op 的索引。
-- **L81** _(ja)_ — ★2026-10-24: IMREAD_COLOR / IMREAD_GRAYSCALE alone demote a 16-bit file to 8 bits (cv2 drops the low byte) and the result was then divided by 255. IMREAD_ANYDEPTH keeps the samples; scaling follows the decoded dtype.
-- **L158** _(ja)_ — ★2026-09-20(GenSpark 第 37 報 N131): 台帳 op(`color_lut`)と汎用アルゴリズム(`quicksort`)は索引に 載っているのに `has` が「unknown」と答えていた —— 発見面(索引)と判定面(registry + nary)が別だった。 索引(同梱複製)の台帳行と algo 層をここで引く。
-- **L179** _(ja)_ — ★2026-11-11(外部監査 v1.0.0): 索引に在る op が optional 依存(extra)の不足で登録されていないとき、 「unknown op」と言っていた(`apply` は MissingBackendError で正しく案内する)。在るが足りない、と言う。
-- **L264** _(ja)_ — ★2026-11-05(敵対的検証 C1 の兄弟): 以前は生の ops.RT を呼び、apply の入口の契約(ノブの有限性・ 0..1 の範囲、空・次元、extra_checks、fallback の guard と台帳)を飛ばしていた —— `--a 5` / `--a nan` が黙って通った。n 項の枝(_apply_nary)と同じく api.apply を on_error="raise" で通す(CLI は fail-closed)。
-- **L298** _(ja)_ — ★2026-11-05(敵対的検証 C1 の兄弟): 段ごとに生の ops.RT を呼んでいたので、型連鎖 (gaussian,vol_gaussian)もノブも検査されなかった。run_pipeline(何も走らせる前に型連鎖とノブを 検査する)を on_error="raise" で通す。
-- **L371** _(ja)_ — ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
-- **L376** _(ja)_ — ★2026-11-11(外部ユーザー指摘): ``python -m fullseye``(argv[0] は fullseye/__main__.py)は PyPI から入れた人の入口で、 imgevolve.py は checkout にしか無い。-m 経由を checkout の綴りと取り違えて、無いファイルを勧めていた。
-- **L384** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
-- **L422** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228 の再現で見つけた): color 層は OpenCV が要る(extra `opencv`)。 素の `pip install fullseye` では空が正しいのに、ここが無条件に assert していたので `fullseye index` が AssertionError で落ちていた。黙って空になるのを止めたいのは OpenCV が在るときだけ。
-- **L447** _(ja)_ — ★2026-11-04(統合 GPU): 規則は tools/ にあるので、imgevolve.py の隣に tools/ が無い置き方(変異探針の 小さな作業木: imgevolve.py だけを写し、本体は PYTHONPATH で引く)では見つからず索引が組めなかった。 imgevolve.py の隣を先に、無ければ sys.path の各所の tools/ を探す。
-- **L502** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228): checkout の判定が「HERE に docs/ が在るか」だけだった。wheel の HERE は site-packages そのものなので、別のパッケージが site-packages/docs/ を置いていると、そこへ OP_INDEX.json を書きに行く(読み取り専用の環境では落ちる)。checkout にしか無い正本の組で判定する。
-- **L585** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
-- **L694** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
-- **L696** _(ja)_ — ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。
-- **L697** _(ja)_ — ★2026-11-12: 引数なしは「必須引数が無い」エラー(rc=2)でなく、次に何をするかの案内を出す(rc=0)。 `fullseye setup` は対話的な初期設定(fullseye/setup_cmd.py)。自前の argparse に丸ごと渡す。
-- **L717** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
+- **L135** _(ja)_ — ★2026-10-24: IMREAD_COLOR / IMREAD_GRAYSCALE alone demote a 16-bit file to 8 bits (cv2 drops the low byte) and the result was then divided by 255. IMREAD_ANYDEPTH keeps the samples; scaling follows the decoded dtype.
+- **L223** _(ja)_ — ★2026-09-20(GenSpark 第 37 報 N131): 台帳 op(`color_lut`)と汎用アルゴリズム(`quicksort`)は索引に 載っているのに `has` が「unknown」と答えていた —— 発見面(索引)と判定面(registry + nary)が別だった。 索引(同梱複製)の台帳行と algo 層をここで引く。
+- **L244** _(ja)_ — ★2026-11-11(外部監査 v1.0.0): 索引に在る op が optional 依存(extra)の不足で登録されていないとき、 「unknown op」と言っていた(`apply` は MissingBackendError で正しく案内する)。在るが足りない、と言う。
+- **L329** _(ja)_ — ★2026-11-05(敵対的検証 C1 の兄弟): 以前は生の ops.RT を呼び、apply の入口の契約(ノブの有限性・ 0..1 の範囲、空・次元、extra_checks、fallback の guard と台帳)を飛ばしていた —— `--a 5` / `--a nan` が黙って通った。n 項の枝(_apply_nary)と同じく api.apply を on_error="raise" で通す(CLI は fail-closed)。
+- **L363** _(ja)_ — ★2026-11-05(敵対的検証 C1 の兄弟): 段ごとに生の ops.RT を呼んでいたので、型連鎖 (gaussian,vol_gaussian)もノブも検査されなかった。run_pipeline(何も走らせる前に型連鎖とノブを 検査する)を on_error="raise" で通す。
+- **L437** _(ja)_ — ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
+- **L442** _(ja)_ — ★2026-11-11(外部ユーザー指摘): ``python -m fullseye``(argv[0] は fullseye/__main__.py)は PyPI から入れた人の入口で、 imgevolve.py は checkout にしか無い。-m 経由を checkout の綴りと取り違えて、無いファイルを勧めていた。
+- **L450** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
+- **L488** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228 の再現で見つけた): color 層は OpenCV が要る(extra `opencv`)。 素の `pip install fullseye` では空が正しいのに、ここが無条件に assert していたので `fullseye index` が AssertionError で落ちていた。黙って空になるのを止めたいのは OpenCV が在るときだけ。
+- **L513** _(ja)_ — ★2026-11-04(統合 GPU): 規則は tools/ にあるので、imgevolve.py の隣に tools/ が無い置き方(変異探針の 小さな作業木: imgevolve.py だけを写し、本体は PYTHONPATH で引く)では見つからず索引が組めなかった。 imgevolve.py の隣を先に、無ければ sys.path の各所の tools/ を探す。
+- **L568** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228): checkout の判定が「HERE に docs/ が在るか」だけだった。wheel の HERE は site-packages そのものなので、別のパッケージが site-packages/docs/ を置いていると、そこへ OP_INDEX.json を書きに行く(読み取り専用の環境では落ちる)。checkout にしか無い正本の組で判定する。
+- **L651** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
+- **L781** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
+- **L783** _(ja)_ — ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。
+- **L784** _(ja)_ — ★2026-11-12: 引数なしは「必須引数が無い」エラー(rc=2)でなく、次に何をするかの案内を出す(rc=0)。 `fullseye setup` は対話的な初期設定(fullseye/setup_cmd.py)。自前の argparse に丸ごと渡す。
+- **L804** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
 
 ## `imgforensics.py`
 
@@ -2628,6 +2628,10 @@
 - **L14606** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
 - **L14670** _(ja)_ — ★2026-11-13: ini の設定は、1 件だけの列を str で返す。そのまま回すとパスが 1 文字ずつの項目になっていた。
 - **L15712** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+
+## `studio_errors.py`
+
+- **L434** _(ja)_ — ★2026-11-13(配布物の検証 M1): 見本の画像を開く時のように op の外で失敗すると op 名が無く、文の主語が 「?」になっていた("Cause ? needs the optional package Pillow")。op 名もパッケージ名も、無い時は 文の形を変える(主語を「?」で埋めない)。
 
 ## `studio_result.py`
 
@@ -3358,9 +3362,9 @@
 
 ## `tools/ci_wheel_check.py`
 
-- **L25** — ★**把這個腳本自身的所在位置從 sys.path 中移除。** Python 會把腳本的目錄放到 sys.path[0]，所以從 checkout 的 `tools/` 啟動時，即使在 wheel 側的 venv 中也能 import 到 `tools/` 下（未隨附的 chain_fuzz 等），於是就在「能看到 wheel 裡沒有的東西」的狀態下計數。2026-09-05 的複查中，這個門**漏掉了 tb_* 143 op 的缺失**正是因為這個。同時也把 cwd 移到空的暫存目錄（cwd 是 checkout 的話會發生同樣的事）。
-- **L34** — ★在移動 cwd **之前**記住原來的 cwd，此後把所有引數路徑都相對它來解析。2026-09-05 實測：preflight 傳的是絕對路徑所以本地能通過，ci.yml 傳的是相對路徑，於是 dump 被寫棄到暫存 dir，compare 以 FileNotFoundError 崩潰 -- **門在正式的呼叫路徑上一次也沒有執行比較**。這是「門要立在事故發生的地方」的第 3 次。不是去修呼叫方，而是讓它即使用相對路徑呼叫也能正確運作，把這一整類關掉。
-- **L156** — ★2026-09-08：也看 editable 側。在此之前 ``a["failed_backends"]`` **只是收集，誰也沒讀** -- 在同一輪裡作為與 examplefig 的圖失敗同型別的漏洞被揪出。editable 的 venv 有**很多** optional 依賴，所以 backend 可能因版本不一致而 import 失敗。這時 wheel 側只是「因為依賴不存在，一開始就不在」，不記錄失敗，這個比較仍然綠著通過。掉落的 backend 的 op 就從登錄檔裡悄然消失。
+- **L32** — ★**把這個腳本自身的所在位置從 sys.path 中移除。** Python 會把腳本的目錄放到 sys.path[0]，所以從 checkout 的 `tools/` 啟動時，即使在 wheel 側的 venv 中也能 import 到 `tools/` 下（未隨附的 chain_fuzz 等），於是就在「能看到 wheel 裡沒有的東西」的狀態下計數。2026-09-05 的複查中，這個門**漏掉了 tb_* 143 op 的缺失**正是因為這個。同時也把 cwd 移到空的暫存目錄（cwd 是 checkout 的話會發生同樣的事）。
+- **L41** — ★在移動 cwd **之前**記住原來的 cwd，此後把所有引數路徑都相對它來解析。2026-09-05 實測：preflight 傳的是絕對路徑所以本地能通過，ci.yml 傳的是相對路徑，於是 dump 被寫棄到暫存 dir，compare 以 FileNotFoundError 崩潰 -- **門在正式的呼叫路徑上一次也沒有執行比較**。這是「門要立在事故發生的地方」的第 3 次。不是去修呼叫方，而是讓它即使用相對路徑呼叫也能正確運作，把這一整類關掉。
+- **L163** — ★2026-09-08：也看 editable 側。在此之前 ``a["failed_backends"]`` **只是收集，誰也沒讀** -- 在同一輪裡作為與 examplefig 的圖失敗同型別的漏洞被揪出。editable 的 venv 有**很多** optional 依賴，所以 backend 可能因版本不一致而 import 失敗。這時 wheel 側只是「因為依賴不存在，一開始就不在」，不記錄失敗，這個比較仍然綠著通過。掉落的 backend 的 op 就從登錄檔裡悄然消失。
 
 ## `tools/conversion_matrix.py`
 

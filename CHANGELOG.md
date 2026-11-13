@@ -17,6 +17,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - MCP サーバの stdio: 改行区切りの JSON(MCP の stdio の決まり。Claude Code・Claude Desktop・公式の Python SDK が使う形)に応えるようにした。1.1.0 までは Content-Length 枠しか読まず、公式のクライアントの `initialize` が時間切れになっていた(`claude mcp add fullseye -- python -m fullseye.mcp` で繋がらない)。相手が使った枠で返すので、従来の Content-Length 枠のクライアントもそのまま動く。あわせて、深い入れ子の JSON 1 通でサーバが落ちる件と、本文が `null` の 1 通で黙って終了する件を直した(それぞれ -32700 と -32600 を返して続ける)。公式のクライアントでの接続を試験に足した。
 - Studio の検索: 1 位が、この環境に無い op(optional backend が未導入。例: kornia が無い時の `xkor_bilateral`)の時、Enter が何も入れずに黙っていた。入れられる最初の行を入れ、無い op を自分で選んだ時は理由を表示する(master の定時 CI の py3.12 / py3.14 で見つかった)。
 - Studio: 「最近開いた画像」が 1 件だけの時、設定の読み戻しが文字列を返すと、パスが 1 文字ずつの項目になっていた。2 入力の op(`abs_diff_image` など)を段に入れようとした時は、入らない理由(2 つ以上の入力を取る)を表示する(初回の体験の点検で見つかった)。
+- 配布物(wheel)から入れると、MCP の `fullseye_find_ops` / `fullseye_plan` が毎回 -32603 で落ちていた(`fullseye/data/TUNING_CARDS.json` が package-data の列挙に無く、1.1.0 の wheel にも無かった)。足した上で、`tools/ci_wheel_check.py --package-data` が git で追跡している `fullseye/` の .py 以外の全部と、組んだ wheel の中身を突き合わせる(CI の `Wheel completeness` の段。列挙ではなくファイルの側から数える)。列挙にあったがどこにも無い 3 つの名前(`data/OP_DEVICE.json`・`data/OP_SORTS.json`・`data/OP_PATTERNS.json`)は外した。
+- README の勧める `pip install "fullseye[gui]"` で Pillow が入らず、Studio の「最初の 3 手」の 1 手目(見本の画像を開く)が失敗していた。`gui` の extra に `Pillow>=13.0`(`pil` と同じ下限)を足した。op の外で依存が無い時のダイアログの原因の文の主語が「?」だった(`? needs the optional package Pillow`)のも直した。
+- 日本語の Windows で `fullseye` の出力をパイプやファイルへ回すと、cp932 に無い字(「—」など)で `UnicodeEncodeError`(終了コード 1)になっていた(`fullseye --help > h.txt`・`fullseye has <無い名前>`・`fullseye samples list`)。符号化は変えずに、書けない字だけを置き換える(端末での見た目は変わらない)。
+- `python -m fullseye.mcp --help` が使い方を出さずに stdio サーバとして入力を待っていた(端末で打つと黙って止まる)。`-h` / `--help` は使い方を出して 0、知らない引数は使い方と理由を出して 2。
+- `pip install fullseye` だけ(cv2 無し)で `fullseye apply` / `pipeline` が `No module named 'cv2'` の traceback で落ちていた(`[pil]` を入れても同じ)。cv2 が無ければ Pillow で読み書きし、どちらも無ければ入れる extra(`fullseye[opencv]` か `fullseye[pil]`)を 1 行で言って終了コード 1(`run` / `synth` も同じ)。
+- `.test_durations` を master の CI の実測(run 43348040276 の `test-durations-merged`)で更新した(PR の片で鮮度の門の 95 % を割っていた: 3264/3503 = 93.2 %)。
 
 ### 直し — インストール体験(setup / ショートカット / アンインストール): 独立レビュー(2026-11-12)1 回目の 16 件と 2 回目の 11 件
 
