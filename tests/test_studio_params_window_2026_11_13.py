@@ -1594,3 +1594,38 @@ def test_params_strip_can_be_replaced_by_scroll_or_wrap(qapp, fusion, ini, tmp_p
         p.set_strip_widget(QtWidgets.QLabel("no"))
     assert p.strip_widget() is strip
     _close_quietly(win)
+
+
+def _window_keys(win) -> list[str]:
+    """窓の中の全部の QAction と QShortcut のキー(空でない物)。"""
+    keys = []
+    for a in win.findChildren(QtGui.QAction):
+        keys += [k.toString() for k in a.shortcuts() if not k.isEmpty()]
+    for sc in win.findChildren(QtGui.QShortcut):
+        keys += [k.toString() for k in sc.keys() if not k.isEmpty()]
+    return keys
+
+
+def test_params_no_ctrl_d_binding(qapp, ini, tmp_path):
+    """D90 / G13: 「違う行だけ」は帯のトグルだけ(Ctrl+D は Studio では「複製」。キーは [キー] の登録簿で決める)。
+    窓の全部の QAction と QShortcut のキーを数え(7 個以上)、Ctrl+D が 0。キーが表に届く事を Ctrl+Z で確かめてから、
+    Ctrl+D を押しても絞り込みが変わらない事を見る。トグルは押せば効く。"""
+    win = _window(qapp, _three_files(tmp_path))
+    p = win.panel
+    win.activateWindow()
+    keys = _window_keys(win)
+    assert len(keys) >= 7 and {"Ctrl+O", "Ctrl+S", "Ctrl+Z", "Ctrl+Y", "Ctrl+F"} <= set(keys)
+    assert [k for k in keys if k == "Ctrl+D"] == []
+    diff = p.tool_actions["diff"]
+    assert diff.shortcut().isEmpty() and "Ctrl+D" not in diff.toolTip() and diff.toolTip().startswith("Differences only")
+    assert p.edit_cell(0, "camera.fx", "900").ok
+    p.tree.setFocus()
+    _pump(qapp)
+    QTest.keyClick(p.tree, Qt.Key_Z, Qt.ControlModifier)                 # 届く事の対照
+    assert p.model.value(0, "camera.fx") == 812.5 and p.message_label.full_text().startswith("undone:")
+    QTest.keyClick(p.tree, Qt.Key_D, Qt.ControlModifier)
+    _pump(qapp)
+    assert not p.tmodel.diff_only and not diff.isChecked()
+    p.buttons["diff"].click()
+    assert p.tmodel.diff_only and diff.isChecked()
+    _close_quietly(win)

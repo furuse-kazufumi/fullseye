@@ -748,8 +748,9 @@ class ParamsPanel(QtWidgets.QWidget):
         self.copy_menu.aboutToShow.connect(self._fill_copy_menu)
         cp.setMenu(self.copy_menu)
         items.append(None)
+        # キーは付けない(D90: Ctrl+D は Studio で「複製」。付けるなら [キー] の登録簿で決める)。帯のトグルだけ。
         action("diff", "diff", "Differences only", "show only the rows where the bundles differ", self.set_diff_only,
-               "Ctrl+D", checkable=True)
+               checkable=True)
         self._strip_items = items
         self._apply_action_texts()
         self._strip_side = "top"
