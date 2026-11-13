@@ -52,9 +52,12 @@ V 字の溝の深さは場面の作り(縁の丸み 4 mm)が決めるので、�
   足したもの。描画は repo の外(``FULLSEYE_DEPAL_RENDERS``)に置き、``tools/depal_blender_run.py`` で
   作り直せる。無い環境(CI)では、同じ反射率の画像を数値で陰影づけした代用のカラーで回す。
   ★代用のカラーでは境界がくっきりして、カラーを使うやり方の順位が Blender と入れ替わる。そこで CI の
-  門は、カラーを読まない主張(深度の V 字 > 深度の段差、種 0 の 1 枚)と、隙間ありの最低線(深度の段差・
-  カラーの溝・両方 ≥ 0.85。カラーの溝と両方は代用カラーで測る)だけにしてある。カラーを使うやり方の比べ合い
-  と合わせ目の地図は CI では確かめていない(全部を回す実行でだけ門にする)。
+  門は、カラーを読まない主張(深度の V 字 > 深度の段差。種 0 と、調整に使っていない種 3〜5 の「継ぎ目が
+  詰まる」「同じ柄」の最初のコマ)と、隙間ありの最低線(深度の段差・カラーの溝・両方 ≥ 0.85。カラーの溝と
+  両方は代用カラーで測る)を測って確かめる。見出しのカラーの主張(カラーの溝 vs 深度、勝ち負けは合わせ目の
+  作りで入れ替わる)は、Blender の描画が無い CI では**測っていない** —— full の記録 ``RECORDED_FULL``
+  (2026-11-09 の full 実行の表)を読む門で確かめ、その旨を印字する。手元に Blender の描画があれば、種 3〜5 の
+  カラーの溝 > 深度の段差 は縮小版でも測って確かめる(2026-11-13、作者と独立の検証の指摘で足した)。
 * Blender の深度と幾何の深度の照合は、同じ幾何を書き出して描いたもの —— カメラの合わせの検算でしかない。
 
 **実データの章**(BOP の HOPE があるとき): 能動ステレオ式の深度カメラの実深度で、同じ op の組
@@ -68,7 +71,7 @@ fit_rectangle2。切り分けの手順と閾値は別実装)が箱型の物体�
 
 実行例::
 
-    py -3.11 examples/poc_mixed_case_depalletizing.py                   # CI と同じ縮小版(種 0 の 1 枚、2 手まで)
+    py -3.11 examples/poc_mixed_case_depalletizing.py                   # 縮小版(種 0 の 1 枚・2 手 + 種 3〜5 の最初のコマ)
     set FULLSEYE_DEPAL_FULL=1 & py -3.11 examples/poc_mixed_case_depalletizing.py   # 全部(10 枚 × 5 条件、掃引、実データ)
 
 図(``FULLSEYE_FIGURE_DIR`` があり、全部を回したときだけ): 代表図(同じ柄のパレットを 5 通りで)、
@@ -2982,6 +2985,11 @@ MODES = tuple(DETECTORS)
 #: 閾値(VALLEY_MIN・SEAM_BH・STEP_M)を決めるのに見た場面の種 / 見ていない種。
 TUNE_SEEDS = (0, 1, 2)
 HELD_SEEDS = (3, 4, 5, 6, 7, 8, 9)
+#: 縮小版(CI)でも回す「見ていない種」と条件(2026-11-13、作者と独立の検証の指摘で足した)。種 0 は閾値を置くのに見た
+#: 種なので、それだけで門を回すと調整に使った場面で調整の結果を確かめることになる。合わせ目の地図と同じ種 3〜5 の
+#: 最初のコマだけ(1 個ずつ下ろす繰り返しは回さない)。
+REDUCED_HELD_SEEDS = (3, 4, 5)
+REDUCED_HELD_CONDS = ("tight", "same")
 #: 深度の V 字の溝の閾値の掃引 [mm](決めた値 0.5 mm は種 0〜2 の場面を見てから置いた)。
 VALLEY_SWEEP_MM = (0.2, 0.3, 0.5, 0.8, 1.0, 1.3, 1.6)
 SWEEP_CONDS = ("tight", "same")
@@ -3094,11 +3102,11 @@ def _pool(fn, jobs, workers):
     return [fn(*j) for j in jobs]
 
 
-def chapter_conditions(seeds, loop_seeds, loop_steps, root=None, loop_conds=None, workers=1, sweep=False):
-    """5 条件 × seeds の場面を回して、条件ごとに束ねる。繰り返しは loop_seeds だけ。"""
+def chapter_conditions(seeds, loop_seeds, loop_steps, root=None, loop_conds=None, workers=1, sweep=False, conds=None):
+    """5 条件(``conds`` で絞れる)× seeds の場面を回して、条件ごとに束ねる。繰り返しは loop_seeds だけ。"""
     jobs = [(c, s, loop_steps, s in loop_seeds and (loop_conds is None or c in loop_conds), root, s == seeds[0],
              sweep and c in SWEEP_CONDS)
-            for c in CONDITIONS for s in seeds]
+            for c in (conds or CONDITIONS) for s in seeds]
     outs = _pool(run_scene, jobs, workers)
     res = {c: {m: {"static": [], "logs": [], "log_seeds": []} for m in MODES} for c in CONDITIONS}
     res["_examples"] = {}
@@ -3186,7 +3194,7 @@ def static_summary(entries, seeds=None):
             "pos_med_mm": 1000 * med(pos), "size_med_mm": 1000 * med(size)}
 
 
-def gates(res, full: bool, held):
+def gates(res, full: bool, held, colour_held: bool = False):
     """門(どれか外れたら止める)。値は同じ実行の値。主張は種の中央値で書き、門も中央値で。"""
     fails = []
     for cond in CONDITIONS:
@@ -3215,6 +3223,10 @@ def gates(res, full: bool, held):
             if not vh > dh:
                 fails.append("%s(見ていない種): 深度の V 字 %.2f が深度の段差 %.2f を上回らない" % (cond, vh, dh))
     if not full:
+        # ★見出しのカラーの主張: 見ていない種のコマが Blender のカラーで揃っていれば測って確かめ、無ければ(CI)記録で読む。
+        if held and colour_held:
+            fails += held_colour_gates(res, held)
+        fails += recorded_claim_gates()
         return fails
     # カラーを使う主張(Blender のカラーでだけ確かめる。CI の代用カラーでは確かめていない)。
     # ★これらの門は、天面の合わせ目を入れた場面の結果を見てから置いた。全部の種と見ていない種 3〜9 の両方で確かめる。
@@ -3251,6 +3263,256 @@ def print_map(fm):
             d, g, t = cell
             print("  %-8s %-8s 溝 %.1f mm すき間 %.1f mm: " % (CONDITION_JA[c][:6], MAP_TAPE_JA[t], d, g)
                   + "  ".join("%.2f/%.1f" % fm[(c, cell, m)] for m in MAP_MODES))
+
+
+RECORDED_FULL = {
+    "source": ("2026-11-09 の full 実行(コミット 9dbd9e4958、Blender のカラー、10 枚 × 5 条件、合わせ目の地図は種 3〜5)の"
+               "表 03_first_frame_recall と 11_flap_seam_map_table(docs/articles/assets/poc/poc_mixed_case_depalletizing)"),
+    #: 最初のコマの再現率、見ていない種 3〜9 の中央値(条件 → やり方 → 値)。
+    "held_recall": {
+        'gap': {'depth': 1.00, 'vgroove': 0.88, 'color': 0.44, 'cseam': 1.00, 'fused': 1.00},
+        'tight': {'depth': 0.33, 'vgroove': 0.60, 'color': 0.29, 'cseam': 0.57, 'fused': 0.40},
+        'same': {'depth': 0.00, 'vgroove': 0.17, 'color': 0.17, 'cseam': 0.71, 'fused': 0.67},
+        'shrink': {'depth': 0.38, 'vgroove': 0.33, 'color': 0.38, 'cseam': 0.50, 'fused': 0.46},
+        'crush': {'depth': 0.50, 'vgroove': 0.57, 'color': 0.50, 'cseam': 0.62, 'fused': 0.62},
+    },
+    #: 合わせ目の地図(種 3〜5 の中央): (条件, 溝 mm, すき間 mm, テープ, やり方, 再現率, 外れ 件/枚)。
+    "map": [
+        ('tight', 0.2, 0.0, 'kraft', 'vgroove', 0.82, 1.0),
+        ('tight', 0.2, 0.0, 'kraft', 'cseam', 0.71, 0.0),
+        ('tight', 0.2, 0.0, 'kraft', 'fused', 0.71, 0.0),
+        ('tight', 0.5, 0.0, 'kraft', 'vgroove', 0.82, 1.0),
+        ('tight', 0.5, 0.0, 'kraft', 'cseam', 0.71, 0.0),
+        ('tight', 0.5, 0.0, 'kraft', 'fused', 0.71, 0.0),
+        ('tight', 1.0, 0.0, 'kraft', 'vgroove', 0.82, 1.0),
+        ('tight', 1.0, 0.0, 'kraft', 'cseam', 0.71, 0.0),
+        ('tight', 1.0, 0.0, 'kraft', 'fused', 0.71, 0.0),
+        ('tight', 2.0, 0.0, 'kraft', 'vgroove', 0.60, 5.0),
+        ('tight', 2.0, 0.0, 'kraft', 'cseam', 0.71, 0.0),
+        ('tight', 2.0, 0.0, 'kraft', 'fused', 0.71, 0.0),
+        ('tight', 0.2, 0.0, 'clear', 'vgroove', 0.64, 5.0),
+        ('tight', 0.2, 0.0, 'clear', 'cseam', 0.57, 0.0),
+        ('tight', 0.2, 0.0, 'clear', 'fused', 0.57, 0.0),
+        ('tight', 0.5, 0.0, 'clear', 'vgroove', 0.73, 3.0),
+        ('tight', 0.5, 0.0, 'clear', 'cseam', 0.57, 0.0),
+        ('tight', 0.5, 0.0, 'clear', 'fused', 0.57, 0.0),
+        ('tight', 1.0, 0.0, 'clear', 'vgroove', 0.57, 7.0),
+        ('tight', 1.0, 0.0, 'clear', 'cseam', 0.71, 0.0),
+        ('tight', 1.0, 0.0, 'clear', 'fused', 0.71, 0.0),
+        ('tight', 2.0, 0.0, 'clear', 'vgroove', 0.57, 8.0),
+        ('tight', 2.0, 0.0, 'clear', 'cseam', 0.71, 0.0),
+        ('tight', 2.0, 0.0, 'clear', 'fused', 0.71, 0.0),
+        ('tight', 0.2, 0.5, 'clear', 'vgroove', 0.64, 5.0),
+        ('tight', 0.2, 0.5, 'clear', 'cseam', 0.70, 0.0),
+        ('tight', 0.2, 0.5, 'clear', 'fused', 0.57, 0.0),
+        ('tight', 0.5, 0.5, 'clear', 'vgroove', 0.73, 3.0),
+        ('tight', 0.5, 0.5, 'clear', 'cseam', 0.70, 0.0),
+        ('tight', 0.5, 0.5, 'clear', 'fused', 0.57, 0.0),
+        ('tight', 1.0, 0.5, 'clear', 'vgroove', 0.57, 7.0),
+        ('tight', 1.0, 0.5, 'clear', 'cseam', 0.64, 3.0),
+        ('tight', 1.0, 0.5, 'clear', 'fused', 0.57, 2.0),
+        ('tight', 2.0, 0.5, 'clear', 'vgroove', 0.57, 8.0),
+        ('tight', 2.0, 0.5, 'clear', 'cseam', 0.60, 4.0),
+        ('tight', 2.0, 0.5, 'clear', 'fused', 0.43, 4.0),
+        ('tight', 0.2, 1.5, 'clear', 'vgroove', 0.64, 5.0),
+        ('tight', 0.2, 1.5, 'clear', 'cseam', 0.70, 0.0),
+        ('tight', 0.2, 1.5, 'clear', 'fused', 0.57, 0.0),
+        ('tight', 0.5, 1.5, 'clear', 'vgroove', 0.73, 3.0),
+        ('tight', 0.5, 1.5, 'clear', 'cseam', 0.64, 3.0),
+        ('tight', 0.5, 1.5, 'clear', 'fused', 0.57, 0.0),
+        ('tight', 1.0, 1.5, 'clear', 'vgroove', 0.57, 7.0),
+        ('tight', 1.0, 1.5, 'clear', 'cseam', 0.64, 3.0),
+        ('tight', 1.0, 1.5, 'clear', 'fused', 0.57, 2.0),
+        ('tight', 2.0, 1.5, 'clear', 'vgroove', 0.57, 8.0),
+        ('tight', 2.0, 1.5, 'clear', 'cseam', 0.55, 4.0),
+        ('tight', 2.0, 1.5, 'clear', 'fused', 0.43, 4.0),
+        ('tight', 0.2, 0.0, 'none', 'vgroove', 0.82, 1.0),
+        ('tight', 0.2, 0.0, 'none', 'cseam', 0.71, 0.0),
+        ('tight', 0.2, 0.0, 'none', 'fused', 0.71, 0.0),
+        ('tight', 0.5, 0.0, 'none', 'vgroove', 0.82, 1.0),
+        ('tight', 0.5, 0.0, 'none', 'cseam', 0.71, 0.0),
+        ('tight', 0.5, 0.0, 'none', 'fused', 0.71, 0.0),
+        ('tight', 1.0, 0.0, 'none', 'vgroove', 0.82, 1.0),
+        ('tight', 1.0, 0.0, 'none', 'cseam', 0.71, 0.0),
+        ('tight', 1.0, 0.0, 'none', 'fused', 0.71, 0.0),
+        ('tight', 2.0, 0.0, 'none', 'vgroove', 0.60, 5.0),
+        ('tight', 2.0, 0.0, 'none', 'cseam', 0.71, 0.0),
+        ('tight', 2.0, 0.0, 'none', 'fused', 0.71, 0.0),
+        ('tight', 0.2, 0.5, 'none', 'vgroove', 0.82, 1.0),
+        ('tight', 0.2, 0.5, 'none', 'cseam', 0.82, 0.0),
+        ('tight', 0.2, 0.5, 'none', 'fused', 0.71, 0.0),
+        ('tight', 0.5, 0.5, 'none', 'vgroove', 0.82, 1.0),
+        ('tight', 0.5, 0.5, 'none', 'cseam', 0.82, 0.0),
+        ('tight', 0.5, 0.5, 'none', 'fused', 0.71, 0.0),
+        ('tight', 1.0, 0.5, 'none', 'vgroove', 0.82, 1.0),
+        ('tight', 1.0, 0.5, 'none', 'cseam', 0.82, 0.0),
+        ('tight', 1.0, 0.5, 'none', 'fused', 0.71, 0.0),
+        ('tight', 2.0, 0.5, 'none', 'vgroove', 0.60, 5.0),
+        ('tight', 2.0, 0.5, 'none', 'cseam', 0.82, 0.0),
+        ('tight', 2.0, 0.5, 'none', 'fused', 0.71, 0.0),
+        ('tight', 0.2, 1.5, 'none', 'vgroove', 0.82, 1.0),
+        ('tight', 0.2, 1.5, 'none', 'cseam', 0.82, 0.0),
+        ('tight', 0.2, 1.5, 'none', 'fused', 0.71, 0.0),
+        ('tight', 0.5, 1.5, 'none', 'vgroove', 0.82, 1.0),
+        ('tight', 0.5, 1.5, 'none', 'cseam', 0.82, 0.0),
+        ('tight', 0.5, 1.5, 'none', 'fused', 0.71, 0.0),
+        ('tight', 1.0, 1.5, 'none', 'vgroove', 0.82, 1.0),
+        ('tight', 1.0, 1.5, 'none', 'cseam', 0.82, 0.0),
+        ('tight', 1.0, 1.5, 'none', 'fused', 0.71, 0.0),
+        ('tight', 2.0, 1.5, 'none', 'vgroove', 0.60, 5.0),
+        ('tight', 2.0, 1.5, 'none', 'cseam', 0.82, 0.0),
+        ('tight', 2.0, 1.5, 'none', 'fused', 0.57, 0.0),
+        ('same', 0.2, 0.0, 'kraft', 'vgroove', 1.00, 0.0),
+        ('same', 0.2, 0.0, 'kraft', 'cseam', 0.83, 1.0),
+        ('same', 0.2, 0.0, 'kraft', 'fused', 0.71, 1.0),
+        ('same', 0.5, 0.0, 'kraft', 'vgroove', 1.00, 0.0),
+        ('same', 0.5, 0.0, 'kraft', 'cseam', 0.83, 1.0),
+        ('same', 0.5, 0.0, 'kraft', 'fused', 0.71, 1.0),
+        ('same', 1.0, 0.0, 'kraft', 'vgroove', 1.00, 0.0),
+        ('same', 1.0, 0.0, 'kraft', 'cseam', 0.83, 1.0),
+        ('same', 1.0, 0.0, 'kraft', 'fused', 0.71, 1.0),
+        ('same', 2.0, 0.0, 'kraft', 'vgroove', 0.29, 7.0),
+        ('same', 2.0, 0.0, 'kraft', 'cseam', 0.83, 1.0),
+        ('same', 2.0, 0.0, 'kraft', 'fused', 0.71, 1.0),
+        ('same', 0.2, 0.0, 'clear', 'vgroove', 0.67, 6.0),
+        ('same', 0.2, 0.0, 'clear', 'cseam', 1.00, 0.0),
+        ('same', 0.2, 0.0, 'clear', 'fused', 0.83, 1.0),
+        ('same', 0.5, 0.0, 'clear', 'vgroove', 0.67, 8.0),
+        ('same', 0.5, 0.0, 'clear', 'cseam', 1.00, 0.0),
+        ('same', 0.5, 0.0, 'clear', 'fused', 0.83, 1.0),
+        ('same', 1.0, 0.0, 'clear', 'vgroove', 0.57, 7.0),
+        ('same', 1.0, 0.0, 'clear', 'cseam', 1.00, 0.0),
+        ('same', 1.0, 0.0, 'clear', 'fused', 0.83, 1.0),
+        ('same', 2.0, 0.0, 'clear', 'vgroove', 0.29, 12.0),
+        ('same', 2.0, 0.0, 'clear', 'cseam', 0.83, 1.0),
+        ('same', 2.0, 0.0, 'clear', 'fused', 0.71, 1.0),
+        ('same', 0.2, 0.5, 'clear', 'vgroove', 0.67, 6.0),
+        ('same', 0.2, 0.5, 'clear', 'cseam', 1.00, 0.0),
+        ('same', 0.2, 0.5, 'clear', 'fused', 0.83, 1.0),
+        ('same', 0.5, 0.5, 'clear', 'vgroove', 0.67, 7.0),
+        ('same', 0.5, 0.5, 'clear', 'cseam', 0.83, 1.0),
+        ('same', 0.5, 0.5, 'clear', 'fused', 0.83, 1.0),
+        ('same', 1.0, 0.5, 'clear', 'vgroove', 0.57, 7.0),
+        ('same', 1.0, 0.5, 'clear', 'cseam', 0.71, 4.0),
+        ('same', 1.0, 0.5, 'clear', 'fused', 0.67, 4.0),
+        ('same', 2.0, 0.5, 'clear', 'vgroove', 0.43, 12.0),
+        ('same', 2.0, 0.5, 'clear', 'cseam', 0.29, 8.0),
+        ('same', 2.0, 0.5, 'clear', 'fused', 0.43, 8.0),
+        ('same', 0.2, 1.5, 'clear', 'vgroove', 0.67, 6.0),
+        ('same', 0.2, 1.5, 'clear', 'cseam', 0.83, 2.0),
+        ('same', 0.2, 1.5, 'clear', 'fused', 0.83, 1.0),
+        ('same', 0.5, 1.5, 'clear', 'vgroove', 0.67, 7.0),
+        ('same', 0.5, 1.5, 'clear', 'cseam', 0.71, 4.0),
+        ('same', 0.5, 1.5, 'clear', 'fused', 0.83, 2.0),
+        ('same', 1.0, 1.5, 'clear', 'vgroove', 0.57, 7.0),
+        ('same', 1.0, 1.5, 'clear', 'cseam', 0.43, 8.0),
+        ('same', 1.0, 1.5, 'clear', 'fused', 0.50, 5.0),
+        ('same', 2.0, 1.5, 'clear', 'vgroove', 0.43, 12.0),
+        ('same', 2.0, 1.5, 'clear', 'cseam', 0.29, 8.0),
+        ('same', 2.0, 1.5, 'clear', 'fused', 0.43, 8.0),
+        ('same', 0.2, 0.0, 'none', 'vgroove', 1.00, 0.0),
+        ('same', 0.2, 0.0, 'none', 'cseam', 1.00, 0.0),
+        ('same', 0.2, 0.0, 'none', 'fused', 0.83, 1.0),
+        ('same', 0.5, 0.0, 'none', 'vgroove', 1.00, 0.0),
+        ('same', 0.5, 0.0, 'none', 'cseam', 1.00, 0.0),
+        ('same', 0.5, 0.0, 'none', 'fused', 0.71, 1.0),
+        ('same', 1.0, 0.0, 'none', 'vgroove', 1.00, 0.0),
+        ('same', 1.0, 0.0, 'none', 'cseam', 1.00, 0.0),
+        ('same', 1.0, 0.0, 'none', 'fused', 0.71, 1.0),
+        ('same', 2.0, 0.0, 'none', 'vgroove', 0.29, 7.0),
+        ('same', 2.0, 0.0, 'none', 'cseam', 1.00, 0.0),
+        ('same', 2.0, 0.0, 'none', 'fused', 0.83, 1.0),
+        ('same', 0.2, 0.5, 'none', 'vgroove', 1.00, 0.0),
+        ('same', 0.2, 0.5, 'none', 'cseam', 1.00, 0.0),
+        ('same', 0.2, 0.5, 'none', 'fused', 0.83, 1.0),
+        ('same', 0.5, 0.5, 'none', 'vgroove', 1.00, 0.0),
+        ('same', 0.5, 0.5, 'none', 'cseam', 1.00, 0.0),
+        ('same', 0.5, 0.5, 'none', 'fused', 0.83, 1.0),
+        ('same', 1.0, 0.5, 'none', 'vgroove', 1.00, 0.0),
+        ('same', 1.0, 0.5, 'none', 'cseam', 1.00, 0.0),
+        ('same', 1.0, 0.5, 'none', 'fused', 0.83, 1.0),
+        ('same', 2.0, 0.5, 'none', 'vgroove', 0.29, 7.0),
+        ('same', 2.0, 0.5, 'none', 'cseam', 0.83, 1.0),
+        ('same', 2.0, 0.5, 'none', 'fused', 0.83, 1.0),
+        ('same', 0.2, 1.5, 'none', 'vgroove', 1.00, 0.0),
+        ('same', 0.2, 1.5, 'none', 'cseam', 0.83, 1.0),
+        ('same', 0.2, 1.5, 'none', 'fused', 0.83, 1.0),
+        ('same', 0.5, 1.5, 'none', 'vgroove', 1.00, 0.0),
+        ('same', 0.5, 1.5, 'none', 'cseam', 0.83, 2.0),
+        ('same', 0.5, 1.5, 'none', 'fused', 0.83, 1.0),
+        ('same', 1.0, 1.5, 'none', 'vgroove', 1.00, 0.0),
+        ('same', 1.0, 1.5, 'none', 'cseam', 0.71, 4.0),
+        ('same', 1.0, 1.5, 'none', 'fused', 0.83, 1.0),
+        ('same', 2.0, 1.5, 'none', 'vgroove', 0.29, 7.0),
+        ('same', 2.0, 1.5, 'none', 'cseam', 0.71, 4.0),
+        ('same', 2.0, 1.5, 'none', 'fused', 0.29, 5.0),
+    ],
+}
+def recorded_fm() -> dict:
+    """RECORDED_FULL の地図を、``chapter_map`` の返り値と同じ形 {(条件, (溝, すき間, テープ), やり方): (再現率, 外れ)} にする。"""
+    return {(c, (d, g, t), m): (r, f) for c, d, g, t, m, r, f in RECORDED_FULL["map"]}
+
+
+def recorded_claim_gates() -> list[str]:
+    """見出しの主張のうちカラーを使う部分を、full の記録(RECORDED_FULL)で確かめる。★測り直しではない。
+
+    CI には Blender の描画が無く、代用のカラーではカラーを使うやり方の順位が入れ替わりうるので、縮小版ではこの
+    「記録値を読む門」で見出しの主張(カラーの溝 vs 深度、勝敗は合わせ目の作りで入れ替わる)を確かめる。
+    記録がこの PoC の主張と食い違う形に書き換えられたら落ちる —— 記録と主張の食い違いは捕まえるが、記録そのものが
+    今のコードの出力かどうかは確かめない(それは full の実行が記録との差を印字する)。
+    """
+    fails = []
+    h = RECORDED_FULL["held_recall"]
+    print("★記録値を読む門(測り直しではない): 見出しのカラーの主張を full の記録で確かめる —— %s" % RECORDED_FULL["source"])
+    for cond in ("tight", "same"):
+        print("   記録 %s(見ていない種 3〜9 の中央): %s" % (CONDITION_JA[cond], " / ".join(
+            "%s %.2f" % (MODE_JA[m], h[cond][m]) for m in MODES)))
+        if not h[cond]["cseam"] > h[cond]["depth"]:
+            fails.append("記録 %s: カラーの溝 %.2f が深度の段差 %.2f を上回らない" % (cond, h[cond]["cseam"], h[cond]["depth"]))
+        if not h[cond]["color"] < h[cond]["cseam"]:
+            fails.append("記録 %s: カラーだけ %.2f がカラーの溝 %.2f を下回らない" % (cond, h[cond]["color"], h[cond]["cseam"]))
+    if not h["same"]["vgroove"] < h["same"]["cseam"]:
+        fails.append("記録 same: 深度の V 字 %.2f がカラーの溝 %.2f を下回らない" % (h["same"]["vgroove"], h["same"]["cseam"]))
+    fm = recorded_fm()
+    want = {(c, cell, m) for c in MAP_CONDS for cell in map_cells() for m in MAP_MODES}
+    if set(fm) != want:
+        fails.append("記録の地図の升目が map_cells() と合わない(記録 %d / 地図 %d)" % (len(fm), len(want)))
+        return fails
+    fails += ["記録の" + f for f in map_gates(fm)]
+    for c in MAP_CONDS:
+        v = sum(fm[(c, cell, "vgroove")][0] > fm[(c, cell, "cseam")][0] for cell in map_cells())
+        s = sum(fm[(c, cell, "cseam")][0] > fm[(c, cell, "vgroove")][0] for cell in map_cells())
+        print("   記録の地図 %s(種 3〜5): 深度の V 字が上 %d 升 / カラーの溝が上 %d 升 / 同点 %d 升(全 %d 升)"
+              % (CONDITION_JA[c], v, s, len(map_cells()) - v - s, len(map_cells())))
+        if not (v > 0 and s > 0):
+            fails.append("記録の地図 %s: 勝ち負けが入れ替わらない(V 字が上 %d 升、カラーの溝が上 %d 升)" % (c, v, s))
+    return fails
+
+
+def held_colour_gates(res, held) -> list[str]:
+    """Blender のカラーが見ていない種のコマで揃っているときだけ: カラーの溝 > 深度の段差 をその種で測って確かめる。"""
+    fails = []
+    for cond in ("tight", "same"):
+        d_ = static_summary(res[cond]["depth"]["static"], held)["recall"]
+        cs = static_summary(res[cond]["cseam"]["static"], held)["recall"]
+        print("   測った %s(見ていない種 %s、Blender のカラー): 深度の段差 %.2f / カラーの溝 %.2f"
+              % (CONDITION_JA[cond], ",".join(map(str, held)), d_, cs))
+        if not cs > d_:
+            fails.append("%s(見ていない種 %s、Blender のカラー): カラーの溝 %.2f が深度の段差 %.2f を上回らない"
+                         % (cond, ",".join(map(str, held)), cs, d_))
+    return fails
+
+
+def compare_with_record(res, held) -> None:
+    """full の実行で、見ていない種の中央値を記録(RECORDED_FULL)と並べて印字する(門にはしない。記録の更新は手で)。"""
+    h = RECORDED_FULL["held_recall"]
+    worst = 0.0
+    print("== 記録(RECORDED_FULL)との差: 見ていない種の再現率の中央値 ==")
+    for cond in CONDITIONS:
+        got = {m: static_summary(res[cond][m]["static"], held)["recall"] for m in MODES}
+        worst = max([worst] + [abs(got[m] - h[cond][m]) for m in MODES])
+        print("  %-10s " % CONDITION_JA[cond] + "  ".join("%s %.2f(記録 %.2f)" % (MODE_JA[m], got[m], h[cond][m]) for m in MODES))
+    print("  差の最大 %.3f(記録は小数 2 桁。0.005 を超えたら RECORDED_FULL を取り直す)" % worst)
 
 
 def map_gates(fm):
@@ -3309,7 +3571,7 @@ def print_tables(res, held, sweep, edge):
             print("  %s: " % ("%.0f mm" % r if r > 0 else "%.0f mm 合わせ目なし" % -r)
                   + "  ".join("%s/%s %.2f" % (CONDITION_JA[c][:4], MODE_JA[m], edge[(c, m, r)])
                               for c in SWEEP_CONDS for m in DEPTH_ONLY_MODES))
-    loop_seeds = sorted({e["seed"] for c in CONDITIONS for m in MODES for e in res[c][m]["static"]})
+    loop_seeds = sorted({sd for c in CONDITIONS for m in MODES for sd in res[c][m]["log_seeds"]})
     print("== 1 個ずつ下ろす(結果の数、回した種 %s。縮小版は「同じ柄」だけ 2 手) ==" % ",".join(map(str, loop_seeds)))
     print("%-10s %-8s " % ("条件", "やり方") + " ".join("%6s" % OUTCOME_JA[k][:4] for k in OUTCOMES) + "   成功率")
     for cond in CONDITIONS:
@@ -3518,20 +3780,44 @@ def main():
     t0 = time.time()
     res = chapter_conditions(seeds, seeds, loop_steps, root, None if full else ("same",),
                              workers, sweep=full)
+    colour_held = False
+    if not full:
+        # 見ていない種 3〜5 の最初のコマ(2 条件)を足す。深度だけの主張はこの種でも門にし、カラーの主張は
+        # Blender のコマが揃っていれば測る(揃っていなければ記録で読む)。
+        res_h = chapter_conditions(REDUCED_HELD_SEEDS, (), 0, root, (), 1, conds=REDUCED_HELD_CONDS)
+        for c in REDUCED_HELD_CONDS:
+            for m in MODES:
+                res[c][m]["static"] += res_h[c][m]["static"]
+            res[c]["_n_boxes"] += res_h[c]["_n_boxes"]
+        res["_missing"].update(res_h["_missing"])
+        res["_blender_used"] += res_h["_blender_used"]
+        res.setdefault("_blender_depth", []).extend(res_h.get("_blender_depth", []))
+        held = REDUCED_HELD_SEEDS
+        colour_held = root is not None and res_h["_blender_used"] > 0 and not res_h["_missing"]
     edge = chapter_edge(workers) if full and not iterating else {}
     flapmap, map_missing = chapter_map(root, workers) if full and not iterating else ({}, 0)
     print_tables(res, held, res["_sweep"], edge)
     if flapmap:
         print_map(flapmap)
-    fails = gates(res, full, held)
+    fails = gates(res, full, held, colour_held)
+    if full:
+        compare_with_record(res, held)
     if flapmap:
         fails += map_gates(flapmap)
         if map_missing:
             fails.append("合わせ目の地図の Blender のコマが %d 枚足りない" % map_missing)
     if not full:
-        print("★縮小版(CI): 主張の門は深度だけの主張(深度の V 字 > 深度の段差、種 0 の 1 枚)と、隙間ありの最低線"
-              "(段差・カラーの溝・両方 ≥ 0.85)だけ。カラーを使うやり方の比べ合い(カラーの溝 > 段差、カラーだけ < カラーの溝、"
-              "V 字 < カラーの溝)は、代用のカラーでは逆転しうるので確かめていない。")
+        print("★縮小版(CI): 測って確かめた門は、深度だけの主張(深度の V 字 > 深度の段差。種 0 と、調整に使っていない種 %s の"
+              "「継ぎ目が詰まる」「同じ柄」)と、隙間ありの最低線(段差・カラーの溝・両方 ≥ 0.85、種 0)。"
+              % ",".join(map(str, REDUCED_HELD_SEEDS)))
+        if colour_held:
+            print("   見出しのカラーの主張(カラーの溝 > 深度の段差)は、種 %s の Blender のカラーで測って確かめた。"
+                  "勝ち負けが合わせ目の作りで入れ替わる事(地図)は full の記録で読んだ(測り直していない)。"
+                  % ",".join(map(str, REDUCED_HELD_SEEDS)))
+        else:
+            print("   見出しのカラーの主張(カラーの溝 vs 深度、勝ち負けは合わせ目の作りで入れ替わる)は、Blender の描画が無いので"
+                  "測っていない —— full の記録(RECORDED_FULL)を読む門で確かめた。代用のカラーでは順位が逆転しうるので、"
+                  "代用のカラーの数字では確かめない。")
     # 実データの章は全部を回すときだけ(Blender のコマを揃える繰り返しの途中では回さない)
     hope = chapter_hope(fails) if full and not iterating else None
     missing = res["_missing"]
