@@ -1562,7 +1562,7 @@ py -3.11 examples/poc_real_typewritten_ocr.py
 
 ## No.2026.310 —— 混載デパレタイズ: 継ぎ目が詰まると深度の段差では箱を分けられない —— 深度の V 字の溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の深さ・すき間・テープで入れ替わる(地図)
 
-Blender で作った場面(シミュレーション)で、詰めて並んだ同じ柄の段ボールを、天井の深度カメラとカラーで見分けて下ろす。深度の段差では同じ柄の箱を分けられず、深度の浅い溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の作り 28 通りの地図で入れ替わった。同じ柄では合わせ目が深いとカラー、切り口が広く開きテープが無く溝が浅いときだけ深度の溝が上になる。
+合成の場面で、詰めて並んだ同じ柄の段ボールを、天井の深度カメラとカラーで見分けて下ろす。深度の段差では同じ柄の箱を分けられず、深度の浅い溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の作り 28 通りの地図で入れ替わった。同じ柄では合わせ目が深いとカラー、切り口が広く開きテープが無く溝が浅いときだけ深度の溝が上になる。
 
 [![混載デパレタイズ: 継ぎ目が詰まると深度の段差では箱を分けられない —— 深度の V 字の溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の深さ・すき間・テープで入れ替わる(地図)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png)
 
@@ -2206,7 +2206,7 @@ py -3.11 examples/poc_particle_sizing.py
 
 ## No.2026.031 —— 光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが既知の符号のあいまいさ
 
-透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。巻き戻した後に外れた画素は、ほとんどが巻きではなく、位相シフト光弾性で既知の符号のあいまいさ(等傾角が π/2 の周期でしか決まらない)によるものだった —— 既知の問題が Fullseye の op の鎖でも外れの大半を占めることを、画素を数えて確かめた。
+透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。巻き戻した後に外れた画素の大半は巻きではなく、位相シフト光弾性で以前から知られた符号のあいまいさと同じ画素だった。
 
 [![光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが既知の符号のあいまいさ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 

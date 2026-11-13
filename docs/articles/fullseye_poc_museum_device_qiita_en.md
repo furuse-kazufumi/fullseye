@@ -824,7 +824,7 @@ Ops used (notes): [`annotate_figure_grid`](https://furuse.work/ops/annotate/pape
 
 ## No.2026.241 —— Industrial OCT (optical coherence tomography) — Layer Thickness and Hidden Defects of Paints, Coatings and Multilayer Films, Seen in Depth by the FFT of One Spectral Interferogram
 
-We want to see the layers of paint and multilayer film in depth without cutting them. Clear-coat thicknesses computed from public raw interference spectra of automotive paint agree with microscope measurements of the same panels within 3.6 µm (the paper's OCT values, derived by its authors from the same data, are reproduced within 1.5 µm; the paper does not map panels to table rows, so the mapping was inferred from thickness). Layers too thin to separate are reported as unmeasurable instead of guessed.
+Paint and film layers are seen in depth without cutting. Clear coats measured from public raw spectra of car paint agree with microscope readings of the same panels within 3.6 µm. Matching the paper's OCT only reproduces the same data, and layers too thin to separate get no value.
 
 [![Industrial OCT (optical coherence tomography) — Layer Thickness and Hidden Defects of Paints, Coatings and Multilayer Films, Seen in Depth by the FFT of One Spectral Interferogram](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png)
 

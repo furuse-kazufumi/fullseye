@@ -824,7 +824,7 @@ py -3.11 examples/poc_itof_multifreq.py
 
 ## No.2026.241 —— 工業用 OCT(光干渉断層法) ―― 塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る
 
-塗装や多層フィルムの層の厚さを、切らずに奥行き方向から見たい。公開されている自動車塗装の生の干渉スペクトルから透明層の厚さを求めると、同じ見本を顕微鏡で測った値と 3.6 µm 以内で一致した(論文の著者が同じデータから出した OCT の値は 1.5 µm 以内で再現した。見本と論文の表の対応は書かれておらず、厚さから推定した)。分離できない薄い層には値を出さず、測れないと返す。
+塗装や多層フィルムの層の厚さを、切らずに奥行き方向から見たい。公開されている自動車塗装の生の干渉スペクトルから透明層の厚さを求めると、同じ見本を顕微鏡で測った値と 3.6 µm 以内で一致した。論文の OCT の値との近さは同じデータの処理の再現にすぎず、分離できない薄い層には値を出さない。
 
 [![工業用 OCT(光干渉断層法) ―― 塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png)
 
