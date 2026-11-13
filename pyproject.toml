@@ -374,8 +374,16 @@ py-modules = [
               "data/op_knob.json",
               # 意味で op を引く検索の索引(6 言語の要約。fullseye.opsearch / fullseye-rag search、2026-10-07)
               "data/OP_SEARCH.json", "data/OP_CARDS.json", "data/OP_PROBE.json", "data/RECIPE_INDEX.json",
-              "data/OP_GRAPH.json", "data/OP_FAMILIES.json", "data/OP_DEVICE.json", "data/OP_SORTS.json",
-              "data/OP_SHAPES.json", "data/OP_PATTERNS.json", "data/SYSTEM_PARAMS.json",
+              "data/OP_GRAPH.json", "data/OP_FAMILIES.json",
+              "data/OP_SHAPES.json", "data/SYSTEM_PARAMS.json",
+              # 状況から「正規化してからつまみを回す」札を引く表(fullseye.opsearch.tuning_cards が読む。MCP の
+              # fullseye_find_ops / fullseye_plan が毎回引く)。git では v1.1.0 から追跡していたのにここに無く、
+              # 1.1.0 / 1.1.1 の wheel では 2 つの tool が必ず -32603 で落ちた(2026-11-13、配布物の検証 S2)。
+              # 門 = tools/ci_wheel_check.py --package-data(列挙ではなく git の追跡から数える)。
+              "data/TUNING_CARDS.json",
+              # ★2026-11-13: ここに在った data/OP_DEVICE.json・data/OP_SORTS.json・data/OP_PATTERNS.json は、
+              #   リポジトリにも読むコードにも無い名前だった(列挙は黙って空を通す)。外した。
+              #   tests/test_wheel_package_data_2026_11_13.py が「列挙した名前は checkout に在る」を数える。
               # device="auto" の実測の表(device_policy が読む。tools/gen_device_rules.py が生ログから作る)
               "data/DEVICE_RULES.json",
               # 実測で採用した機械的 GPU の許可リスト(gpu_shadow.run_allowed が読む)
