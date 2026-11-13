@@ -6295,6 +6295,24 @@ def _abs_fig_src(html, help_dir):
 _NO_HELP_PAGE_NOTE = "No help page has been written for this operator yet. The signature and category above come from its registration."
 
 
+_HELP_EMPH = re.compile(r"<p>\*(?!\*)((?:(?!</p>)[^*])+?)\*</p>")       # 中に <code> などの印があってもよい
+_HELP_STRONG = re.compile(r"<p>\*\*([^*<]+?)\*\*")
+
+
+def help_plain_markup(html_text):
+    """L3(2026-11-13、初回起動の点検): 生成したヘルプに Markdown の強調が生のまま残っていた
+    (``<p>*図は合成の入力…*</p>``・``<p>**つまみ a を振る**…``、2-D のヘルプ 6,947 枚)。段落が丸ごと強調の形と、
+    段落の頭の太字だけを直す(式の ``*`` ・``**`` は段落の頭に来ないので触らない)。"""
+    html_text = _HELP_EMPH.sub(r"<p><em>\1</em></p>", html_text)
+    return _HELP_STRONG.sub(r"<p><b>\1</b>", html_text)
+
+
+def plain_summary(text):
+    """L3: 検索のカードの説明から reST / Markdown の印(````x````・```x```)を外す(生のまま出ていた)。"""
+    t = re.sub(r"``(.+?)``", r"\1", text or "")
+    return re.sub(r"`([^`\n]+)`", r"\1", t)
+
+
 def op_help_html(name, lang="en", meta=None, dim="2d"):
     """Rich HTML help for one operator. Lookup order (see studio_assets/op_help/):
       1. op_help/<name>.<lang>.html   language-specific
@@ -6321,7 +6339,7 @@ def op_help_html(name, lang="en", meta=None, dim="2d"):
         if os.path.exists(p):
             try:
                 with open(p, encoding="utf-8") as f:
-                    return _abs_fig_src(f.read(), _help_fig_root())
+                    return help_plain_markup(_abs_fig_src(f.read(), _help_fig_root()))
             except Exception:
                 break
     m = meta or {}
@@ -7516,7 +7534,7 @@ def build_window(model=None):
         needs_pre = group == "needs_preprocessing" or row.get("group") == "needs_preprocessing"
         # ★2026-11-12: 行は op 名を先頭に(説明が長いと名前が右へ切れていた、P-09)。前処理は「先に: a → この op」と
         # 別の行に書く(従来は「出力: region → otsu」と出力の後ろに繋がり、順序が逆に読めた)。
-        label_ = (row.get("label") or "").strip()
+        label_ = plain_summary((row.get("label") or "").strip())       # L3: ``x`` を生のまま出さない
         if len(label_) > 64:
             label_ = label_[:63] + "…"
         text_ = row["name"] + ("  —  " + label_ if label_ and label_ != row["name"] else "")
@@ -7566,6 +7584,11 @@ def build_window(model=None):
                 b.setSizePolicy(QtWidgets.QSizePolicy.Maximum if b.sizeHint().width() * 2 < lw
                                 else QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Fixed)
             hh = label.heightForWidth(lw) + run.sizeHint().height() + 2 + 8
+            # L3(2026-11-13): 3 行目の下が欠けた。箱の配置そのものが要る高さ(余白・間隔込み)も見て、字の下がりの分を足す
+            _lay = box.layout()
+            if _lay is not None and _lay.hasHeightForWidth():
+                hh = max(hh, _lay.heightForWidth(vw - 2))
+            hh += label.fontMetrics().descent() + 2
             box.setFixedWidth(vw - 2)
             it.setSizeHint(QtCore.QSize(vw - 2, hh))
         else:                              # まだ表示されていない(幅が決まっていない)ときは従来どおり

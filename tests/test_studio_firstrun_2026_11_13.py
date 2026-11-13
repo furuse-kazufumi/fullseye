@@ -671,3 +671,28 @@ def test_l10_running_an_empty_pipeline_says_so(launch):
     win._op_list.setFocus(); _pump(0.05)
     QTest.keyClick(win._op_list, QtCore.Qt.Key_F5); _pump(0.4)
     assert "まだ実行する物がありません" not in win.statusBar().currentMessage()
+
+
+def test_l3_search_cards_are_whole_and_plain(launch):
+    win, model = launch(lang="ja")
+    ui = win._search_ui
+    ui["search_now"]("ぼかす"); _pump(0.3)
+    rows = [r for g in ui["rows"]().values() for r in g]
+    assert len(rows) >= 5
+    for r in rows:
+        assert "``" not in r["text"] and "`" not in r["label_widget"].text(), r["text"]
+        label, box, it = r["label_widget"], r["box"], r["item"]
+        need = box.layout().heightForWidth(box.width())
+        assert it.sizeHint().height() >= need, (r["name"], it.sizeHint().height(), need)   # 下が欠けない
+        assert it.sizeHint().height() >= label.heightForWidth(label.width()) + r["try_button"].sizeHint().height()
+    assert "gauss_filter" in rows[0]["text"] and "``gauss_filter``" not in rows[0]["text"]
+
+
+def test_l3_help_pages_show_emphasis_not_asterisks():
+    html = studio.op_help_html("sobel_amp", "ja", studio._op_row("sobel_amp"))
+    assert "<p>*" not in html and "<p>**" not in html
+    assert "<em>" in html
+    raw = "<p>*図は合成の入力。*</p><p>**つまみ a を振る**(0.1):</p><pre>x = a * b ** 2</pre><p>A_t = Da*lap(A)</p>"
+    out = studio.help_plain_markup(raw)
+    assert out == "<p><em>図は合成の入力。</em></p><p><b>つまみ a を振る</b>(0.1):</p><pre>x = a * b ** 2</pre><p>A_t = Da*lap(A)</p>"
+    assert studio.plain_summary("HALCON の ``gauss_filter`` と `x`") == "HALCON の gauss_filter と x"
