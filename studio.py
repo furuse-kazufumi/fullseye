@@ -35,7 +35,7 @@ import flow          # v14 perception panel
 import motion
 import stereo
 import terrain
-from studio_search import search_grouped, search_zero_results_help
+from studio_search import samples_for, search_grouped, search_zero_results_help
 import studio_errors
 import studio_roundtrip
 import studio_batch
@@ -7478,6 +7478,48 @@ def build_window(model=None):
     _search_row_refit = _SearchRowRefit(op_list)
     op_list.installEventFilter(_search_row_refit)
 
+    def _add_search_samples(names):
+        """検索の結果に「見本」の群を足す(M12)。行の「見本を開く」は、見本の処理手順とその見本の画像を読む。"""
+        head = QtWidgets.QListWidgetItem("▾ " + tr("Samples"))
+        head.setData(QtCore.Qt.UserRole + 4, "samples"); head.setFlags(QtCore.Qt.ItemIsEnabled)
+        op_list.addItem(head); search_state["groups"]["samples"] = head; _fit_search_head(head)
+        search_state["rows"]["samples"] = []
+        for name in names:
+            text_ = name + "\n" + tr("Sample pipeline with its own image")
+            it = QtWidgets.QListWidgetItem(text_)
+            it.setData(QtCore.Qt.UserRole + 6, name)          # op の行ではない(UserRole は空 = Enter の対象にならない)
+            op_list.addItem(it)
+            box = QtWidgets.QWidget(); v_ = QtWidgets.QVBoxLayout(box); v_.setContentsMargins(4, 3, 4, 3); v_.setSpacing(2)
+            label = QtWidgets.QLabel(text_); label.setWordWrap(True); v_.addWidget(label)
+            h = QtWidgets.QHBoxLayout(); h.setContentsMargins(0, 0, 0, 0); h.addStretch(1); v_.addLayout(h)
+            run = QtWidgets.QPushButton(tr("Open sample"))
+            run.setToolTip(tr("Load this sample pipeline and the image it was made for"))
+            run.clicked.connect(lambda _=False, n=name: open_search_sample(n))
+            help_ = QtWidgets.QPushButton(tr("Help")); help_.setEnabled(False); help_.hide()
+            h.addWidget(run)
+            entry = {"name": name, "text": text_, "item": it, "try_button": run, "help_button": help_,
+                     "label_widget": label, "box": box}
+            _fit_search_row(entry)
+            op_list.setItemWidget(it, box)
+            search_state["rows"]["samples"].append(entry)
+
+    def open_search_sample(name):
+        """検索の「見本」の行から、見本の処理手順(サンプルの処理手順の欄と同じ読み方)と、その見本の画像を開く。"""
+        idx = samples.findText(name)
+        if idx <= 0:
+            flash(tr("This sample is not available here: %s") % name)
+            return False
+        want = [st[0] for st in (recipes.stages(name) or [])]
+        samples.blockSignals(True); samples.setCurrentIndex(idx); samples.blockSignals(False)
+        load_sample(idx)                                   # 確認・元に戻す・Program の欄は欄と同じ
+        if [s[0] for s in model.stages] != want:
+            return False                                   # 取り消された / 読めなかった
+        image = (recipes.get(name) or {}).get("image")
+        if image:
+            load_sample_image(image)
+        return True
+    win._open_search_sample = open_search_sample
+
     def _search_enter_target():
         """The row Enter inserts: the first row on screen, top to bottom, that can be inserted here.
 
@@ -7514,6 +7556,11 @@ def build_window(model=None):
             op_list.addItem(head); search_state["groups"]["staples"] = head; _fit_search_head(head)
             for row in result["staples"]:
                 _add_search_row("staples", row)
+        # ★2026-11-13(初回起動の点検 M12): 現場の言葉(傷・打痕 …)に当たる同梱の FA の見本。定番の直後に置く
+        # (Enter で入る行 = 先頭の op は変わらない)。定番が無い時は一番下。
+        _sample_names = samples_for(q)
+        if _sample_names and result.get("staples"):
+            _add_search_samples(_sample_names)
         if count:
             for group, title_ in headers.items():
                 head = QtWidgets.QListWidgetItem("▾ " + title_)
@@ -7536,6 +7583,8 @@ def build_window(model=None):
                 h.addWidget(b); search_state["chips"].append(b)
             h.addStretch(1); chip = QtWidgets.QListWidgetItem(); op_list.addItem(chip)
             chip.setSizeHint(chiprow.sizeHint()); op_list.setItemWidget(chip, chiprow)
+        if _sample_names and not result.get("staples"):
+            _add_search_samples(_sample_names)
         _target = _search_enter_target()          # M1: Enter で入る行を、押す前から選択状態で見せる
         if _target is not None:
             op_list.setCurrentItem(_target)
@@ -12226,6 +12275,9 @@ def build_window(model=None):
     # itemActivated fires on BOTH Enter and double-click (one signal), so keyboard-only
     # pipeline building works and there is no double-insert from wiring two signals.
     op_list.itemActivated.connect(add_op)
+    # 検索の「見本」の行(M12): Enter / ダブルクリックで見本を開く(op の行は add_op が受ける)
+    op_list.itemActivated.connect(
+        lambda it: win._open_search_sample(it.data(QtCore.Qt.UserRole + 6)) if it.data(QtCore.Qt.UserRole + 6) else None)
 
     def _insert_searched_op():
         """Enter in the search box inserts the highlighted row (the first insertable row on screen, see

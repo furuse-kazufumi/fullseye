@@ -371,3 +371,73 @@ def test_status_messages_get_room_to_be_seen(launch):
     width_for_text = first_permanent - 6
     need = bar.fontMetrics().horizontalAdvance("x" * 40)
     assert width_for_text >= need, (width_for_text, need)
+
+
+# --------------------------------------------------------------------------- #
+# M12: 検索の語彙に現場の言葉                                                     #
+# --------------------------------------------------------------------------- #
+#: 点検の時に 0 件・無関係だった語(日英)。どれも定番の op が先頭に出る
+FIELD_WORDS = ("傷", "きず", "キズ", "擦り傷", "へこみ", "凹み", "打痕", "欠け", "割れ", "ひび", "汚れ", "シミ", "ムラ",
+               "異物", "熱", "サーモ", "錆", "刻印", "穴の数", "scratch", "dent", "crack", "stain", "dirt", "mura",
+               "foreign fibre", "thermal", "thermography", "rust", "engraved code", "count holes")
+
+
+@pytest.mark.parametrize("word", FIELD_WORDS)
+def test_m12_field_words_reach_insertable_staples(word):
+    import studio_search as ss
+    names = ss.staples_for(word)
+    assert names, word
+    assert studio.op_insertable(names[0])[0], (word, names[0])
+
+
+def test_m12_field_words_reach_the_fa_samples_and_never_the_xray_one():
+    import recipes
+    import studio_search as ss
+    assert ss.samples_for("傷") == ["FA — scratch on hairline metal"]
+    assert ss.samples_for("打痕") == ss.samples_for("dent") == ["FA — dent and foreign fibre on resin"]
+    assert ss.samples_for("刻印") == ["FA — engraved lot code (binarize for OCR)"]
+    assert ss.samples_for("count holes") == ["FA — count holes in a back-lit plate"]
+    assert ss.samples_for("ぼかし") == [] and ss.samples_for("canny edge") == []
+    names = [n for _t, ns in ss.SAMPLE_TERMS for n in ns]
+    assert len(names) == 4 and set(names) <= set(recipes.names())
+    assert not any("x-ray" in n.lower() for n in names)
+    # X 線・CT に関わる語は表に入れない(定番にも見本にも)
+    terms = [t.lower() for tb in (ss.STAPLES, ss.SAMPLE_TERMS) for ts, _ in tb for t in ts]
+    assert len(terms) > 100
+    for bad in ("x線", "x 線", "x-ray", "xray", "ct", "レントゲン", "透過", "断層", "tomograph", "radiograph"):
+        assert not any(bad == t or bad in t.split() or (not bad.isascii() and bad in t) for t in terms), bad
+    # 見本の語はどれも定番にもある(画面では定番の直後に並び、Enter で入る先頭の op は変わらない)
+    for ts, _names in ss.SAMPLE_TERMS:
+        for t in ts:
+            assert ss.staples_for(t), t
+
+
+@pytest.mark.parametrize("query", ["stainless steel", "student", "trust", "industrial", "chip", "文字列"])
+def test_m12_words_inside_other_words_do_not_fire(query):
+    import studio_search as ss
+    assert ss.staples_for(query) == []
+    assert ss.samples_for(query) == []
+
+
+def test_m12_search_shows_the_sample_after_the_staples_and_opens_it_with_its_image(launch):
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    import sample_images
+    win, model = launch(lang="ja", user=True)
+    ui = win._search_ui
+    lst = ui["list"]
+    ui["search_now"]("傷"); _pump(0.3)
+    rows = ui["rows"]()
+    assert [r["name"] for r in rows["staples"]][:2] == ["sk_rolling_ball", "bothat"]
+    assert [r["name"] for r in rows["samples"]] == ["FA — scratch on hairline metal"]
+    heads = [lst.item(i).data(QtCore.Qt.UserRole + 4) for i in range(lst.count())
+             if lst.item(i).data(QtCore.Qt.UserRole + 4)]
+    assert heads[:2] == ["staples", "samples"]
+    assert "見本" in rows["samples"][0]["try_button"].text()
+    # Enter で入るのは先頭の op(見本の行ではない)
+    assert lst.currentItem().data(QtCore.Qt.UserRole) == "sk_rolling_ball"
+    # 「見本を開く」で、見本の処理手順と見本の画像の両方が入る
+    QTest.mouseClick(rows["samples"][0]["try_button"], QtCore.Qt.LeftButton); _pump(0.5)
+    import recipes
+    assert [s[0] for s in model.stages] == [st[0] for st in recipes.stages("FA — scratch on hairline metal")]
+    assert np.array_equal(model.image, sample_images.load("metal_hairline_scratch"))

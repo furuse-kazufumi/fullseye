@@ -32,6 +32,7 @@ import numpy as np
 __all__ = [
     "current_sort_of", "search_grouped", "search_zero_results_help",
     "SORT_ALIASES", "canonical_sort", "clear_caches", "STAPLES", "STAPLE_EXCLUDE_JA", "staples_for",
+    "SAMPLE_TERMS", "samples_for",
 ]
 
 #: 台帳の型名 → 2-D レジストリの型名(同じものを指す対)。比べる前にこれで寄せる。
@@ -89,6 +90,41 @@ STAPLES = (
     (("差分", "引き算", "difference", "subtract"), ("abs_diff_image", "sub_image")),
     (("フーリエ", "周波数", "fft", "fourier"), ("fft_image",)),
     (("領域分割", "ウォーターシェッド", "watershed"), ("watersheds",)),
+    # ---- 現場の言葉(★2026-11-13、初回起動の点検 M12: 「傷」「へこみ」「熱」で 0 件だった)。欠陥の種類ごとに、
+    # 1 枚の濃淡画像で最初に試す op(背景を引く・細い筋を強める・局所しきい値 …)。X 線・CT の語は足さない。
+    (("傷", "きず", "キズ", "擦り傷", "引っかき", "scratch", "scratches", "scuff"),
+     ("sk_rolling_ball", "bothat", "sk_frangi", "dyn_threshold")),
+    (("へこみ", "凹み", "くぼみ", "窪み", "打痕", "dent", "dents"),
+     ("hx_plane_deviation", "sk_rolling_ball", "tophat", "dyn_threshold")),
+    (("欠け", "チッピング", "chipping", "chipped"), ("otsu", "fill_up", "sk_convex", "convexity")),
+    (("割れ", "ひび", "ヒビ", "クラック", "亀裂", "crack", "cracks", "fissure"),
+     ("sk_frangi", "bothat", "xsk_sato", "dyn_threshold")),
+    (("汚れ", "よごれ", "シミ", "染み", "stain", "stains", "dirt", "smudge"),
+     ("sk_rolling_ball", "dyn_threshold", "local_threshold", "sk_dog")),
+    (("ムラ", "シェーディング", "mura", "shading", "uneven", "unevenness", "non-uniform"),
+     ("sk_rolling_ball", "highpass", "sk_sauvola", "clahe")),
+    (("異物", "ゴミ", "ごみ", "埃", "ほこり", "繊維", "foreign matter", "foreign fibre", "foreign fiber", "debris",
+      "dust", "contamination"),
+     ("tophat", "bothat", "dyn_threshold", "select_shape")),
+    (("熱", "サーモ", "赤外", "温度", "thermal", "thermography", "infrared", "temperature", "hot spot"),
+     ("scale_image_max", "threshold", "local_max", "clahe")),
+    (("錆", "サビ", "腐食", "rust", "corrosion"), ("std_filter", "dyn_threshold", "local_threshold", "gabor")),
+    (("刻印", "印字", "ロット", "engraved", "lot code", "marking", "ocr"),
+     ("adaptive_gauss_thresh", "otsu", "dyn_threshold", "select_shape")),
+    (("穴の数", "穴を数え", "穴の個数", "count holes", "hole count"),
+     ("otsu", "sk_clear_border", "count_obj", "connect_and_holes")),
+)
+
+#: 現場の言葉 → 同梱の FA の見本(``recipes`` の名前。見本ごとに自分の画像を持つ)。★2026-11-13(初回起動の点検 M12):
+#: 傷・打痕の見本があるのに、検索から届かなかった。当て方は :data:`STAPLES` と同じ(英語は単語、日本語は部分文字列、
+#: op 名を含む問い合わせには出さない)。どの語も :data:`STAPLES` にもある(画面では定番の直後に並ぶ)。
+#: X 線・CT の見本(溶接の気孔)には語を当てない。
+SAMPLE_TERMS = (
+    (("傷", "きず", "キズ", "擦り傷", "引っかき", "scratch", "scratches", "scuff"), ("FA — scratch on hairline metal",)),
+    (("へこみ", "凹み", "くぼみ", "窪み", "打痕", "dent", "dents", "異物", "繊維", "foreign matter", "foreign fibre",
+      "foreign fiber"), ("FA — dent and foreign fibre on resin",)),
+    (("刻印", "印字", "ロット", "engraved", "lot code", "marking", "ocr"), ("FA — engraved lot code (binarize for OCR)",)),
+    (("穴の数", "穴を数え", "穴の個数", "count holes", "hole count"), ("FA — count holes in a back-lit plate",)),
 )
 
 #: 英語の句で、別の意味になるもの(「edge preserving」の edge でエッジ検出を出さない)。問い合わせから除いてから当てる。
@@ -516,22 +552,20 @@ def search_grouped(query: str, current_value: Any = None, current_sort: Optional
     return out
 
 
-def staples_for(query: str) -> list:
-    """問い合わせに当たる定番の op 名(:data:`STAPLES` の表の順、重複なし、索引に在るものだけ、最大 :data:`STAPLES_MAX`)。
+def _staple_query_forms(query: str):
+    """:func:`staples_for` と :func:`samples_for` が語を当てる形 ``(q, padded, padded_rest, q_ja)``。
 
-    当たる語が無ければ空のリスト。文字は NFKC で寄せて小文字にしてから、表の語を**部分文字列**として探す
-    (「画像を二値化したい」でも「二値化」に当たる)。
-    """
+    当てない問い合わせ(空、``_`` を含む = op 名を打っている途中、語のどれかが op 名そのもの)は None。"""
     if not isinstance(query, str) or not query.strip():
-        return []
+        return None
     import re
     import unicodedata
     q = unicodedata.normalize("NFKC", query).lower()
     if "_" in q:                                       # op 名を打っている途中(circle_fit、area_open …)
-        return []
+        return None
     words = re.findall(r"[a-z0-9]+", q)
     if any(_row_of(w) is not None for w in words) or _row_of(q.strip()) is not None:
-        return []                                      # 名前で探している(canny edge、median blur、threshold)
+        return None                                    # 名前で探している(canny edge、median blur、threshold)
     padded = " " + " ".join(words) + " "
     for phrase in STAPLE_EXCLUDE_EN:                   # 「edge preserving」の edge でエッジ検出を出さない
         if (" " + phrase + " ") in padded:
@@ -542,23 +576,56 @@ def staples_for(query: str) -> list:
     q_ja = q
     for phrase in STAPLE_EXCLUDE_JA:
         q_ja = q_ja.replace(phrase, " ")
+    return q, padded, padded_rest, q_ja
+
+
+def _staple_term_hit(term: str, forms) -> bool:
+    """表の語 *term* が問い合わせ(:func:`_staple_query_forms` の形)に当たるか。英語は単語(句)、日本語は部分文字列。"""
+    import re
+    import unicodedata
+    q, padded, padded_rest, q_ja = forms
+    t = unicodedata.normalize("NFKC", term).lower()
+    if re.fullmatch(r"[a-z0-9 ]+", t):
+        t = " ".join(t.split())
+        return (" " + t + " ") in (padded if t in STAPLE_EXCLUDE_EN else padded_rest)   # 単語(句)として
+    return t in (q if t in STAPLE_EXCLUDE_JA else q_ja)                               # 日本語は部分文字列
+
+
+def staples_for(query: str) -> list:
+    """問い合わせに当たる定番の op 名(:data:`STAPLES` の表の順、重複なし、索引に在るものだけ、最大 :data:`STAPLES_MAX`)。
+
+    当たる語が無ければ空のリスト。文字は NFKC で寄せて小文字にしてから、表の語を**部分文字列**として探す
+    (「画像を二値化したい」でも「二値化」に当たる)。
+    """
+    forms = _staple_query_forms(query)
+    if forms is None:
+        return []
     out: list = []
     for terms, ops in STAPLES:
-        hit = False
-        for t in terms:
-            t = unicodedata.normalize("NFKC", t).lower()
-            if re.fullmatch(r"[a-z0-9 ]+", t):
-                t = " ".join(t.split())
-                hit = (" " + t + " ") in (padded if t in STAPLE_EXCLUDE_EN else padded_rest)   # 単語(句)として
-            else:
-                hit = t in (q if t in STAPLE_EXCLUDE_JA else q_ja)        # 日本語は部分文字列
-            if hit:
-                break
-        if hit:
+        if any(_staple_term_hit(t, forms) for t in terms):
             for name in ops:
                 if name not in out and _row_of(name) is not None:
                     out.append(name)
     return out[:STAPLES_MAX]
+
+
+def samples_for(query: str) -> list:
+    """問い合わせに当たる同梱の FA の見本の名前(:data:`SAMPLE_TERMS` の表の順、重複なし、``recipes`` に在るものだけ)。
+
+    当て方は :func:`staples_for` と同じ。当たる語が無ければ空のリスト。"""
+    forms = _staple_query_forms(query)
+    if forms is None:
+        return []
+    try:
+        import recipes
+        have = set(recipes.names())
+    except Exception:                                  # noqa: BLE001 -- 見本が読めない環境では出さない
+        return []
+    out: list = []
+    for terms, names in SAMPLE_TERMS:
+        if any(_staple_term_hit(t, forms) for t in terms):
+            out.extend(n for n in names if n in have and n not in out)
+    return out
 
 
 def _staple_hit(name: str, lang: Optional[str]) -> dict:

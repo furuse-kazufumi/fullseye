@@ -2340,6 +2340,11 @@
   "‘%s’ is not available in this environment (its optional backend is not installed) — it was not added to the pipeline": {"ja": "「%s」はこの環境では使えません(追加のパッケージが未導入)。処理手順には追加していません"},
   "cannot be added as a stage": {"ja": "段としては入れられません"},
   "First stage: showing %d of %d operators that can take the loaded input ('%s').": {"ja": "最初の段: %d / %d 件を表示しています(読み込んだ入力 '%s' を受けられる op)。"},
-  "x=%d  y=%d   value %s (%s) / shown %s / range %s to %s": {"ja": "x=%d  y=%d   値 %s (%s) / 表示 %s / レンジ %s〜%s"}
+  "x=%d  y=%d   value %s (%s) / shown %s / range %s to %s": {"ja": "x=%d  y=%d   値 %s (%s) / 表示 %s / レンジ %s〜%s"},
+  "Samples": {"ja": "見本"},
+  "Sample pipeline with its own image": {"ja": "見本の処理手順(専用の画像つき)"},
+  "Open sample": {"ja": "見本を開く"},
+  "Load this sample pipeline and the image it was made for": {"ja": "この見本の処理手順と、見本の画像を読み込みます"},
+  "This sample is not available here: %s": {"ja": "この見本はここでは使えません: %s"}
  }
 }
