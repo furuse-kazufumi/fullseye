@@ -940,3 +940,22 @@ def test_status_message_and_readout_never_overlap_after_a_run(launch):
     assert bar.currentMessage() and not ro.isVisible(), (bar.currentMessage(), ro.isVisible())
     bar.clearMessage(); _pump(0.2)
     assert ro.isVisible()                                              # 文が消えたら読み取りは戻る
+
+
+def test_entrance_the_first_op_brings_the_pipeline_tab_forward_once(launch):
+    from PySide6 import QtCore
+    win, model = launch(lang="ja", user=True)
+    pipe, ops = win._docks["pipeline"], win._docks["operators"]
+    if pipe not in win.tabifiedDockWidgets(ops):
+        pytest.skip("この配置では 2 つのパネルがタブで重なっていない")
+    assert pipe.visibleRegion().isEmpty() and not ops.visibleRegion().isEmpty()     # 起動直後は op の一覧
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("gaussian")); win._op_buttons["insert"].click(); _pump(0.3)
+    assert not pipe.visibleRegion().isEmpty(), "最初の op の後に「処理手順と調整」が前に出ていない"
+    ops.raise_(); _pump(0.2)                                           # 利用者が op の一覧へ戻る
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("median") if "median" in names else 0)
+    win._op_buttons["insert"].click(); _pump(0.3)
+    assert len(model.stages) == 2
+    assert pipe.visibleRegion().isEmpty(), "2 つ目の op でも切り替わった(1 度だけのはず)"
