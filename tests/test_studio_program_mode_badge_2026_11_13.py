@@ -168,6 +168,35 @@ def test_python_text_in_pipeline_mode_gets_a_warning_mark_and_choices_but_no_aut
         _close(win)
 
 
+def test_moving_text_that_came_with_an_opened_pipeline_file_asks_before_the_first_run(tmp_path, monkeypatch):
+    """札の「この文面を Python のモードへ移す」: 開いたパイプラインのファイルから来た文面は、そのファイルの信頼を
+    引き継ぐ(手で打った物にしない。初回の実行の前に確認する。第 1 回レビュー H1 の変換と同じ約束)。"""
+    asked = []
+    monkeypatch.setattr(pm_mod, "TRUST_HOOK", lambda *a: asked.append(a) or False)
+    win, _ = _launch(tmp_path, monkeypatch)
+    try:
+        pm = win._pymode
+        other = studio.PipelineModel(studio.demo_image(48))
+        other.add_stage("gaussian")
+        p = tmp_path / "from_disk.json"
+        p.write_text(json.dumps(other.to_dict()), encoding="utf-8")
+        win._open_pipe_path(str(p))
+        _pump(0.2)
+        assert pm.pipe_source == os.path.abspath(str(p))
+        win._program["edit"].setPlainText("# python\nk = 1\n")
+        pm.update_badge()
+        assert pm.mode_mismatch() == "python_text_in_pipeline"
+        assert pm.move_text_to_python() is True and pm.active
+        assert pm.origin == "file" and pm.session_trusted is False         # 「手で打った」扱いにしない
+        runs0 = pm.state.get("pymode_runs", 0)
+        pm.run()
+        _pump(0.3)
+        assert len(asked) == 1 and pm.state.get("pymode_runs", 0) == runs0  # 断った: 走っていない
+        assert os.path.basename(str(p)) in asked[0][2]                       # どのファイルから来たかを言う
+    finally:
+        _close(win)
+
+
 def test_pipeline_text_in_python_mode_gets_a_warning_mark_and_converts_only_when_chosen(tmp_path, monkeypatch):
     win, _ = _launch(tmp_path, monkeypatch)
     try:
