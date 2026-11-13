@@ -2496,6 +2496,9 @@
   "'%s' → %s": {"ja": "「%s」→ %s"},
   "‘%s’ is a typed-ledger op: it takes typed inputs, so it runs in Tools ▸ Run a ledger op (Ctrl+Shift+L), not as a pipeline stage": {"ja": "「%s」は型つきの入力を取る台帳の op です。処理手順の段ではなく、ツール ▸ 台帳の op を実行(Ctrl+Shift+L)で動かします"},
   "Open in Run a ledger op": {"ja": "台帳の op を実行で開く"},
-  "Studio cannot open '%s'. Help ▸ Files you can open lists what it can (images, folders, 3-D, video, audio …)": {"ja": "「%s」は開けません。開けるファイルは ヘルプ ▸ 開けるファイル にあります(画像・フォルダ・3-D・動画・音声 …)"}
+  "Studio cannot open '%s'. Help ▸ Files you can open lists what it can (images, folders, 3-D, video, audio …)": {"ja": "「%s」は開けません。開けるファイルは ヘルプ ▸ 開けるファイル にあります(画像・フォルダ・3-D・動画・音声 …)"},
+  "Insert into pipeline": {"ja": "処理手順に入れる"},
+  "Run once (preview)": {"ja": "1 回だけ実行(試し)"},
+  "Operator help…": {"ja": "op のヘルプ…"}
  }
 }

@@ -786,3 +786,28 @@ def test_l9_an_unsupported_drop_says_one_short_line_in_the_ui_language(launch, t
     help_menu = next(a.menu() for a in win.menuBar().actions() if a.menu() and "ヘルプ" in a.text())
     assert any(a.text().replace("&", "").startswith("開けるファイル") for a in help_menu.actions()), \
         [a.text() for a in help_menu.actions()]
+
+
+def test_l11_right_click_on_an_op_row_opens_its_menu(launch):
+    from PySide6 import QtCore, QtWidgets
+    win, model = launch(lang="ja")
+    lst = win._op_list
+    assert lst.currentItem() is None                                    # 何も選んでいない一覧
+    shown = []
+
+    def _catch():
+        m = QtWidgets.QApplication.activePopupWidget()
+        if isinstance(m, QtWidgets.QMenu):
+            shown.append([a.text() for a in m.actions() if not a.isSeparator()]); m.close()
+    QtCore.QTimer.singleShot(300, _catch)
+    item = lst.item(1)                                                   # 2 行目(median)
+    rect = lst.visualItemRect(item)
+    lst.customContextMenuRequested.emit(rect.center()); _pump(0.5)
+    assert lst.currentItem() is item
+    assert shown == [["処理手順に入れる", "1 回だけ実行(試し)", "op のヘルプ…"]], shown
+    # 入れられない行は「入れる」を出さない
+    win._ops_fit["check"].setChecked(False); _pump(0.1)
+    bad = [lst.item(i) for i in range(lst.count()) if lst.item(i).data(QtCore.Qt.UserRole) == "abs_diff_image"][0]
+    lst.setCurrentItem(bad)
+    labels = [lbl for lbl, _ in win._ctx["operators"]()]
+    assert "処理手順に入れる" not in labels and "op のヘルプ…" in labels

@@ -13400,10 +13400,15 @@ def build_window(model=None):
     sync_panels()
 
     # right-click context menus (dev-IDE density: act where you point) --------- #
-    def _ctx_menu(widget, actions_fn):
+    def _ctx_menu(widget, actions_fn, select_under_cursor=False):
         widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 
         def _show(pos):
+            if select_under_cursor:
+                # L11(2026-11-13): 右クリックした行を先に選ぶ(選ぶ前の一覧では何も出なかった)
+                hit = widget.itemAt(pos)
+                if hit is not None and widget.currentItem() is not hit:
+                    widget.setCurrentItem(hit)
             items = actions_fn()
             if not items:
                 return
@@ -13421,11 +13426,20 @@ def build_window(model=None):
         cur = op_list.currentItem()
         if cur is None:
             return []
+        sample = cur.data(QtCore.Qt.UserRole + 6)
+        if sample:                                         # 検索の「見本」の行(M12)
+            return [(tr("Open sample"), lambda: open_search_sample(sample))]
         name = cur.data(QtCore.Qt.UserRole)
-        return [("Insert into pipeline", lambda: add_op(cur)),
-                ("Run once (preview)", run_op_once),
-                ("---", None),
-                ("Operator help…", lambda: show_op_help(name))]
+        if not name:                                       # 群の見出しの行
+            return []
+        ok, why = op_insertable(name)
+        items = []
+        if ok:
+            items += [(tr("Insert into pipeline"), lambda: add_op(cur)), (tr("Run once (preview)"), run_op_once)]
+        elif why == "ledger":
+            items.append((tr("Open in Run a ledger op"), lambda: win._open_ledger_runner(name, prefer_image=True)))
+        items += [("---", None), (tr("Operator help…"), lambda: show_op_help(name))]
+        return items
 
     def _stage_ctx():
         i = stage_list.currentRow()
@@ -13487,7 +13501,7 @@ def build_window(model=None):
                 ("---", None),
                 ("Inspect (panel)", show_variable_inspection)]
 
-    win._ctx = {"operators": _ctx_menu(op_list, _op_ctx),
+    win._ctx = {"operators": _ctx_menu(op_list, _op_ctx, select_under_cursor=True),
                 "pipeline": _ctx_menu(stage_list, _stage_ctx),
                 "variables": _ctx_menu(var_list, _var_ctx)}
     win._variables["popup"] = inspect_variable_popup     # right-click "Inspect in popup…"
