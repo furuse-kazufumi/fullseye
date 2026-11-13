@@ -872,10 +872,18 @@ class KeyboardDialog(QtWidgets.QDialog):
         for r, row in enumerate(self._rows):
             if row[0] == cid:
                 self.table.selectRow(r)
+                self._scroll_to(cid)                           # 選んだ行を見える所へ(行を隠し直した直後は、並べ直しの後にもう一度)
+                QtCore.QTimer.singleShot(0, lambda c=cid: self._scroll_to(c) if _valid(self) else None)
                 self._cid = cid
                 self._show_detail()
                 return True
         return False
+
+    def _scroll_to(self, cid: str) -> None:
+        for r, row in enumerate(self._rows):
+            if row[0] == cid and self.table.item(r, 0) is not None:
+                self.table.scrollToItem(self.table.item(r, 0))
+                return
 
     def _on_select(self) -> None:
         items = self.table.selectedItems()

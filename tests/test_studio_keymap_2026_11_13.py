@@ -1990,3 +1990,20 @@ def test_menubar_mnemonics_no_overlap_7_languages():
     for lang in langs:
         letters = [_mnemonic_letter(t if lang == "en" else table[t][lang]) for t in _MENUS]
         assert all(letters) and len(set(letters)) == len(_MENUS), (lang, letters)   # D13: de の Alt+A が 2 つだった
+
+
+def test_the_selected_row_is_scrolled_into_view(win, ctl):
+    dlg = ctl.open_dialog()
+    dlg.resize(900, 400)
+    _pump(0.2)
+    rows = dlg.visible_ids()
+    assert len(rows) > 60
+    for cid in (rows[-1], rows[0], rows[len(rows) // 2]):
+        dlg.search.setText("f1")                                          # 撮影で見た形: 絞った後に戻してすぐ選ぶ
+        _pump(0.05)
+        dlg.search.setText("")
+        assert dlg.select(cid)
+        _pump(0.05)
+        r = [row[0] for row in dlg._rows].index(cid)
+        rect = dlg.table.visualItemRect(dlg.table.item(r, 0))
+        assert dlg.table.viewport().rect().contains(rect.center()), cid      # 選んだ行が見えている
