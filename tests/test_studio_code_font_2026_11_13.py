@@ -261,7 +261,7 @@ def test_marks_are_painted_over_a_full_width_space_and_its_kin(qapp):
 @pytest.mark.parametrize("name", studio_theme.THEMES)
 def test_code_roles_can_be_told_apart_also_with_protan_and_deutan_vision(name):
     rows = studio_theme.distinct_report(name)
-    assert len(rows) == len(studio_theme.DISTINCT_PAIRS) == 10
+    assert len(rows) == len(studio_theme.DISTINCT_PAIRS) == 23
     bad = [r for r in rows if not r[6]]
     assert not bad, bad
     for a, b, d0, dp, dd, cue, _ok in rows:
@@ -271,12 +271,37 @@ def test_code_roles_can_be_told_apart_also_with_protan_and_deutan_vision(name):
     for role in studio_theme.SYNTAX_ROLES + ("text",):
         assert studio_theme.contrast(p[role], p["editor"]) >= 4.5, role               # WCAG AA on the editor ground
         assert role in studio_theme.CODE_STYLE
-    assert "syn_op" in studio_theme.SYNTAX_ROLES and len(studio_theme.SYNTAX_ROLES) == 7
+    assert "syn_op" in studio_theme.SYNTAX_ROLES and len(studio_theme.SYNTAX_ROLES) == 10
     # the measure itself: black / white are 100 apart, a colour is 0 from itself, red and green collapse for a deutan eye
     assert studio_theme.delta_e("#000000", "#ffffff") == pytest.approx(100.0, abs=0.1)
     assert studio_theme.delta_e(p["syn_num"], p["syn_num"]) == 0
     assert studio_theme.delta_e(studio_theme.simulate_cvd("#d04040", "deutan"), studio_theme.simulate_cvd("#6a8a2a", "deutan")) < \
         studio_theme.delta_e("#d04040", "#6a8a2a") / 2
+
+
+@pytest.mark.parametrize("name", studio_theme.THEMES)
+def test_the_code_colour_table_has_every_role_the_user_listed_and_passes_its_gates(name):
+    """User, 2026-11-13: numbers, names, keywords, strings, comments, operators, brackets, op names,
+    undefined names and the ground of a suspicious character, in a table; 4.5 : 1 and told apart, both schemes."""
+    table = studio_theme.code_colour_table(name)
+    listed = ("number", "name", "keyword", "string", "comment", "operator", "bracket", "op name",
+              "undefined name", "suspicious-character ground")
+    assert len(table) == 12 and [r[0] for r in table][:10] == list(listed)
+    p = studio_theme.PALETTES[name]
+    roles = [r[2] for r in table]
+    assert len(set(roles)) == len(roles)                                           # one role per meaning
+    assert set(roles) - {"text"} == set(studio_theme.SYNTAX_ROLES) | set(studio_theme.CODE_GROUND_ROLES)
+    fg = [r for r in table if r[2] not in studio_theme.CODE_GROUND_ROLES]
+    assert len(fg) == 11
+    for en, _ja, role, hex_, low, _cue in fg:
+        assert hex_ == p[role] and low >= 4.5, (name, en, role, low)                   # on the editor, the current line, the ground
+    # colour is never the only cue where a reader must stop: an undefined name is also underlined (wave)
+    assert studio_theme.CODE_STYLE["syn_undef"] == {"underline": "wave"}
+    rows = studio_theme.ground_report(name)
+    assert len(rows) == 3 and all(r[3] for r in rows), rows                       # the ground stands apart
+    # the state hues (ok / warn / err) are not reused for op names or brackets
+    for role in ("syn_opname", "syn_bracket"):
+        assert all(studio_theme.delta_e(p[role], p[s]) >= studio_theme.DISTINCT_MIN for s in ("ok", "warn", "err")), role
 
 
 def test_apply_keeps_the_widgets_own_rules_and_does_not_pile_up(qapp):

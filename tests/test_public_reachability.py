@@ -85,7 +85,8 @@ _INTERNAL = {
     #   Studio の見た目の内側の部品で op ではない。studio +1 は dock_layout_usable(保存した配置の検査)。
     # studio_theme 2026-11-13(第 2 段): +21 = コードの書体(候補の表から選ぶ・部品へ当てる・後から出来た窓を見張る・設定の一覧)、
     #   怪しい文字の検出と印(suspicious_chars / mark_code)、色の見分けの門(lab / delta_e / simulate_cvd / distinct_report)。
-    "studio_theme": 40,
+    # studio_theme +2 2026-11-13(要件 7): コードの色の表(code_colour_table)と下地の見分けの門(ground_report)。
+    "studio_theme": 42,
     # studio_panels 2026-11-13(第 2 段): パネルの帯・dock ⇔ 別ウィンドウ・配置の保存と復元・横長のパネルで
     #   道具とタブを左へ・題の帯へ状態と ≡ を登録する口・左上の進捗の表示 25 本。Studio の窓の内側の部品で op ではない(studio.py からは短い呼び出しだけ。試験が直接呼ぶ)。
     # studio_panels +3 2026-11-13(要件 5): パネルのボタンの QAction(button_action / sync_button_actions)と、
@@ -340,7 +341,8 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-13 要件 5(≡ の項目): 1152 + 3 = 1155。studio_panels の button_action / sync_button_actions / short_name。
 # 2026-11-13 要件 8(左上のコマ送り): 1155 + 5 = 1160。studio_panels の icon_frames / system_reduces_motion /
 #   reduce_motion / reduce_motion_action / brand_wrap。
-_HIDDEN_FUNCTIONS_TODAY = 1160
+# 2026-11-13 要件 7(コードの色の表): 1160 + 2 = 1162。studio_theme の code_colour_table / ground_report。
+_HIDDEN_FUNCTIONS_TODAY = 1162
 
 
 def _hidden_total():

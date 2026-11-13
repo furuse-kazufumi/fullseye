@@ -35,7 +35,10 @@ ROLES = {
     "rail_hi": "panel bar, button under the pointer",
 }
 #: Syntax roles (Program editor / Python editor).
-SYNTAX_ROLES = ("syn_kw", "syn_num", "syn_str", "syn_def", "syn_deco", "syn_cmt", "syn_op")
+SYNTAX_ROLES = ("syn_kw", "syn_num", "syn_str", "syn_def", "syn_deco", "syn_cmt", "syn_op",
+                "syn_bracket", "syn_opname", "syn_undef")
+#: Grounds the highlighter sets behind characters (a QTextCharFormat background, under the glyph).
+CODE_GROUND_ROLES = ("syn_suspect_bg",)
 
 PALETTES = {
     # ① 計器盤 Instrument — dark slate; colour only for state.
@@ -50,6 +53,7 @@ PALETTES = {
         "rail": "#264151", "rail_hi": "#34647e",
         "syn_kw": "#e8b04a", "syn_num": "#ff9db8", "syn_str": "#9fd28a", "syn_def": "#7cc8f0",
         "syn_deco": "#c6a4f0", "syn_cmt": "#8a95a4", "syn_op": "#6fd6c4",
+        "syn_bracket": "#e4784e", "syn_opname": "#009cfc", "syn_undef": "#c08a78", "syn_suspect_bg": "#2c1804",
     },
     # ③ 操作盤 Machine Panel — light neutral grey (factory floor, projector, print).
     "panel": {
@@ -63,6 +67,7 @@ PALETTES = {
         "rail": "#9cb5d0", "rail_hi": "#709ac8",
         "syn_kw": "#8a4b00", "syn_num": "#a3330e", "syn_str": "#25702c", "syn_def": "#0b57a4",
         "syn_deco": "#6b3fa0", "syn_cmt": "#5f6b78", "syn_op": "#00695c",
+        "syn_bracket": "#5a3660", "syn_opname": "#8a2a42", "syn_undef": "#663624", "syn_suspect_bg": "#fcecd8",
     },
 }
 THEMES = ("instrument", "panel")
@@ -799,11 +804,37 @@ def watch_code_fonts(app):
 CODE_STYLE = {
     "text": {}, "syn_kw": {"bold": True}, "syn_num": {}, "syn_str": {}, "syn_def": {"bold": True},
     "syn_deco": {"italic": True}, "syn_cmt": {"italic": True}, "syn_op": {},
+    "syn_bracket": {}, "syn_opname": {}, "syn_undef": {"underline": "wave"},
 }
+#: The colour table of code (user, 2026-11-13): what a reader tells apart -> role. A name is body text;
+#: a suspicious character keeps its own colour and gets the ground (and mark_code's frame / underline).
+CODE_ROLE_TABLE = (
+    ("number", "\u6570", "syn_num"),
+    ("name", "\u540d\u524d", "text"),
+    ("keyword", "\u30ad\u30fc\u30ef\u30fc\u30c9", "syn_kw"),
+    ("string", "\u6587\u5b57\u5217", "syn_str"),
+    ("comment", "\u30b3\u30e1\u30f3\u30c8", "syn_cmt"),
+    ("operator", "\u6f14\u7b97\u5b50", "syn_op"),
+    ("bracket", "\u62ec\u5f27", "syn_bracket"),
+    ("op name", "op \u306e\u540d\u524d", "syn_opname"),
+    ("undefined name", "\u672a\u5b9a\u7fa9", "syn_undef"),
+    ("suspicious-character ground", "\u602a\u3057\u3044\u6587\u5b57\u306e\u4e0b\u5730", "syn_suspect_bg"),
+    ("def / class name", "\u5b9a\u7fa9\u306e\u540d\u524d", "syn_def"),
+    ("decorator", "\u30c7\u30b3\u30ec\u30fc\u30bf", "syn_deco"),
+)
+#: grounds code is read on: every code colour keeps 4.5 : 1 on each (WCAG AA, both schemes)
+CODE_GROUNDS = ("editor", "curline", "syn_suspect_bg")
+#: a ground that marks something must stand apart from the grounds around it (CIE76)
+GROUND_PAIRS = (("syn_suspect_bg", "editor"), ("syn_suspect_bg", "curline"), ("syn_suspect_bg", "execline"))
+GROUND_MIN = 12.0
 #: pairs of roles that sit next to each other in code and must not be mistaken for each other
 DISTINCT_PAIRS = (
     ("syn_num", "text"), ("syn_kw", "text"), ("syn_str", "text"), ("syn_op", "text"), ("syn_cmt", "text"),
     ("syn_str", "syn_cmt"), ("syn_num", "syn_str"), ("syn_kw", "syn_def"), ("syn_num", "syn_kw"), ("syn_op", "syn_num"),
+    ("syn_opname", "text"), ("syn_opname", "syn_def"), ("syn_opname", "syn_kw"), ("syn_opname", "syn_num"),
+    ("syn_opname", "syn_op"), ("syn_bracket", "text"), ("syn_bracket", "syn_op"), ("syn_bracket", "syn_num"),
+    ("syn_bracket", "syn_str"), ("syn_bracket", "syn_kw"), ("syn_undef", "text"), ("syn_undef", "syn_opname"),
+    ("syn_undef", "syn_num"),
 )
 #: smallest colour difference (CIE76, Lab) for a pair: seen normally / with protan or deutan vision
 DISTINCT_MIN, DISTINCT_MIN_CVD = 18.0, 10.0
@@ -856,3 +887,21 @@ def distinct_report(name):
         ok = d0 >= DISTINCT_MIN and (min(dp, dd) >= DISTINCT_MIN_CVD or cue)
         rows.append((a, b, round(d0, 1), round(dp, 1), round(dd, 1), cue, ok))
     return rows
+
+
+def code_colour_table(name):
+    """The code colour table of one scheme: one row per CODE_ROLE_TABLE entry,
+    (meaning, meaning_ja, role, hex, lowest contrast on CODE_GROUNDS (None for a ground), cue)."""
+    p = PALETTES[normalise_theme(name)]
+    rows = []
+    for en, ja, role in CODE_ROLE_TABLE:
+        low = None if role in CODE_GROUND_ROLES else round(min(contrast(p[role], p[g]) for g in CODE_GROUNDS), 2)
+        cue = ", ".join("%s=%s" % kv for kv in sorted(CODE_STYLE.get(role, {}).items())) or "-"
+        rows.append((en, ja, role, p[role], low, cue))
+    return rows
+
+
+def ground_report(name):
+    """(ground a, ground b, dE, ok) per GROUND_PAIRS: a marking ground stands apart from its neighbours."""
+    p = PALETTES[normalise_theme(name)]
+    return [(a, b, round(delta_e(p[a], p[b]), 1), delta_e(p[a], p[b]) >= GROUND_MIN) for a, b in GROUND_PAIRS]
