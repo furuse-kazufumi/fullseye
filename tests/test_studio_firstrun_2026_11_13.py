@@ -210,3 +210,50 @@ def test_s2_pressing_plus_on_a_two_input_op_says_why_in_the_ui_language(launch):
     # 理由の文は 3 種とも表にある
     assert len(studio.NOT_INSERTABLE_TEXT) == 3
     assert all(studio.STRINGS_I18N.get(t, {}).get("ja") for t in studio.NOT_INSERTABLE_TEXT.values())
+
+
+# --------------------------------------------------------------------------- #
+# M1: 検索して Enter で入る op = 見えている先頭の行                                  #
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("query,want", [
+    ("blur", "gaussian"), ("ぼかす", "gaussian"), ("edge", "sobel_amp"), ("二値化", "otsu"),
+    ("canny edge", "canny*"),           # op 名を含む問い合わせ: 定番は出ず、canny の op(11/12 の sobel_amp に戻らない)
+])
+def test_m1_enter_inserts_the_highlighted_first_row(launch, query, want):
+    """直す前: 「blur」で先頭に gaussian が見えているのに、Enter で入るのは下の欄の 1 位(xkor_bilateral)だった。"""
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    win, model = launch()
+    ui = win._search_ui
+    lst = ui["list"]
+    ui["search_now"](query); _pump(0.2)
+    on_screen = [lst.item(i) for i in range(lst.count())
+                 if lst.item(i).data(QtCore.Qt.UserRole) and not lst.item(i).isHidden()]
+    assert len(on_screen) >= 3, query
+    first = next(it for it in on_screen if studio.op_insertable(it.data(QtCore.Qt.UserRole))[0])
+    cur = lst.currentItem()
+    assert cur is first, (query, cur and cur.data(QtCore.Qt.UserRole), first.data(QtCore.Qt.UserRole))
+    name = cur.data(QtCore.Qt.UserRole)
+    if want.endswith("*"):
+        assert want[:-1] in name and name != "sobel_amp", name
+    else:
+        assert name == want
+    n0 = len(model.stages)
+    QTest.keyClick(ui["edit"], QtCore.Qt.Key_Return); _pump(0.3)
+    assert [s[0] for s in model.stages[n0:]] == [api.find_op(name).name]
+
+
+def test_m1_a_clicked_row_stays_the_choice_for_enter(launch):
+    """結果が出ている時に Enter で検索し直さない(利用者がクリックで選んだ行が消えていた)。"""
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    win, model = launch()
+    ui = win._search_ui
+    lst = ui["list"]
+    ui["search_now"]("blur"); _pump(0.2)
+    staples = [r["name"] for r in ui["rows"]()["staples"]]
+    assert staples[:3] == ["gaussian", "mean_image", "median"], staples
+    target = ui["rows"]()["staples"][2]["item"]                     # median を選ぶ
+    lst.setCurrentItem(target); _pump(0.05)
+    QTest.keyClick(ui["edit"], QtCore.Qt.Key_Return); _pump(0.3)
+    assert [s[0] for s in model.stages] == ["median"]

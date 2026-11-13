@@ -7442,6 +7442,23 @@ def build_window(model=None):
     _search_row_refit = _SearchRowRefit(op_list)
     op_list.installEventFilter(_search_row_refit)
 
+    def _search_enter_target():
+        """The row Enter inserts: the first row on screen, top to bottom, that can be inserted here.
+
+        ★2026-11-13(初回起動の点検 M1): 「定番」の欄も含めて、見えている順の最初の行。11/12 は「canny edge」で
+        Enter を押すと定番の sobel_amp が入った為に定番を外していたが、op 名を含む問い合わせ(canny edge・median blur)
+        では ``studio_search.staples_for`` が定番を出さない(先頭は検索の 1 位 = canny の op)ので、外す理由が無くなった。
+        外したままだと「blur」で先頭に見える gaussian ではなく下の欄の 1 位(xkor_bilateral)が入っていた。
+        畳んだ群の行・この環境で入れられない行(2 入力・未導入)は飛ばす。"""
+        for i in range(op_list.count()):
+            item = op_list.item(i)
+            nm = item.data(QtCore.Qt.UserRole)
+            if not nm or item.isHidden() or not (item.flags() & QtCore.Qt.ItemIsEnabled):
+                continue
+            if op_insertable(nm)[0]:
+                return item
+        return None
+
     def grouped_search(query=None):
         q = search.text().strip() if query is None else str(query)
         if query is not None and search.text() != q:
@@ -7483,6 +7500,9 @@ def build_window(model=None):
                 h.addWidget(b); search_state["chips"].append(b)
             h.addStretch(1); chip = QtWidgets.QListWidgetItem(); op_list.addItem(chip)
             chip.setSizeHint(chiprow.sizeHint()); op_list.setItemWidget(chip, chiprow)
+        _target = _search_enter_target()          # M1: Enter で入る行を、押す前から選択状態で見せる
+        if _target is not None:
+            op_list.setCurrentItem(_target)
         return result
 
     def _ops_insert_position():
@@ -12148,25 +12168,22 @@ def build_window(model=None):
     op_list.itemActivated.connect(add_op)
 
     def _insert_searched_op():
-        """Enter in the search box inserts the highlighted (or first) filtered op."""
-        if search.text().strip():
+        """Enter in the search box inserts the highlighted row (the first insertable row on screen, see
+        ``_search_enter_target``; a row the user clicked stays the choice)."""
+        if search.text().strip() and search_timer.isActive():
+            # 打った直後(表示がまだ前の語の結果)だけ検索し直す。結果が出ている時に作り直すと、
+            # 利用者がクリックで選んだ行が消えていた。
             search_timer.stop()
             grouped_search(search.text().strip())
         it = op_list.currentItem()
-        if it is None or not it.data(QtCore.Qt.UserRole):
-            # ★2026-11-12: 選んでいないときに入れるのは**検索の 1 位**。先頭に出している「定番」の欄は対象にしない
-            # (「canny edge」で Enter を押すと sobel_amp が入っていた —— レビューの指摘)。定番は自分で選んだ時だけ。
-            # ★2026-11-13: その中でも「この環境で入れられる」最初の行(1 位が未導入の backend の op だと、
-            # Enter が何もしなかった)。入れられる行が 1 つも無ければ 1 位を渡し、add_op が理由を言う。
-            hits = [op_list.item(i) for i in range(op_list.count())
-                    if op_list.item(i).data(QtCore.Qt.UserRole)
-                    and op_list.item(i).data(QtCore.Qt.UserRole + 3) != "staples"]
-
-            def _addable(item):
-                nm = item.data(QtCore.Qt.UserRole)
-                row = _op_row(nm)
-                return not (row and row.get("backend") == "general") and api.find_op(nm) is not None
-            it = next((h for h in hits if _addable(h)), hits[0] if hits else None)
+        if it is None or not it.data(QtCore.Qt.UserRole) or it.isHidden():
+            # ★2026-11-12 / 11-13: 選んでいない時は、見えている順で最初の「この環境で入れられる」行
+            # (定番の欄を含む。経緯は _search_enter_target)。入れられる行が 1 つも無ければ先頭の op の行を渡し、
+            # add_op が理由を UI の言語で言う。
+            it = _search_enter_target()
+            if it is None:
+                it = next((op_list.item(i) for i in range(op_list.count())
+                           if op_list.item(i).data(QtCore.Qt.UserRole)), None)
         if it is not None:
             add_op(it)
     search.returnPressed.connect(_insert_searched_op)
