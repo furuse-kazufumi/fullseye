@@ -270,8 +270,9 @@ Studio が固まったり戻らなくなったりしない事。
 - **プログラムが起こしたスレッドが変えた環境変数・作業フォルダ・ファイルは戻さない**(知らせるだけ)。
   ThreadPoolExecutor と asyncio の作業用のスレッドは数えない(ライブラリが持ち続ける物と区別できない)。
 - **止められずに残した実行が終わった所で「もう一度戻す」時、その間に Studio 自身がした変更も実行前の値へ戻る**
-  (環境変数・`sys.path`・warnings の絞り・`sys.stderr`。区別していない)。また、残した実行のスレッドが終わってから
-  戻し終えるまでの短い間は、次の実行を断らない。
+  (環境変数・`sys.path`・warnings の絞り・`sys.stderr`。区別していない)。残した実行は、**戻し終えるまで**を
+  「残っている」に数える(スレッドが終わった瞬間に次の実行を通すと、その実行の途中で状態と import の見張りが
+  戻されるため。試験あり)。
 - **戻さないプロセスの状態**(`RESTORED_STATE` の外): `sys.meta_path` / `sys.path_hooks` に足した import の仕掛け、
   `gc` の有効・無効、`locale`、乱数の状態、`sys.modules` の中の標準ライブラリの差し替え、`sys.setswitchinterval`、
   `sys.set_int_max_str_digits`、`threading.setprofile` / `settrace`、`sys.addaudithook`(外す方法が無い)。
