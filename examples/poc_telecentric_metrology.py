@@ -1204,7 +1204,7 @@ def _ring_centre_offsets(g, rings, half=60.0):
     リングの点を取った ``measure_pos``(エッジの組の中点)を使わない別の読み: 楕円の法線に沿って ±*half* px の明るさの
     断面を双一次補間で取り(平滑は σ = 1 だけ)、地(10 % 点)と山の半値で切った内縁と外縁の中点を線の中心とする。
     1° ごと。線が見えない所(影、山 − 地 < 0.15)、隣のリングを拾った所(山が 30 px より遠い)、画像の外は数えない。
-    返り値: リングごとの ``{"k", "n", "median", "p10", "p90", "width", "worst10"}``(worst10 = 方位 10° ごとの中央値の最大)。
+    返り値: リングごとの ``{"k", "n", "med", "p10", "p90", "width", "worst10"}``(worst10 = 方位 10° ごとの中央値の最大)。
 
     ★2026-11-13、作者と独立の検証が「1/2 に縮めた図で、外側のリングの楕円が線の外縁に乗って見える(半径 2000 px で
     10 px なら 0.5 %)」と指摘したので、当てはめの偏りか見え方かを数で切り分けるために足した。
@@ -1252,7 +1252,7 @@ def _ring_centre_offsets(g, rings, half=60.0):
         a = np.array(rows)
         sect = [float(np.median(a[(a[:, 0] // 10) == b, 1])) for b in np.unique(a[:, 0] // 10)
                 if int(((a[:, 0] // 10) == b).sum()) >= 5]
-        out.append({"k": r["k"], "n": len(a), "median": float(np.median(a[:, 1])),
+        out.append({"k": r["k"], "n": len(a), "med": float(np.median(a[:, 1])),
                     "p10": float(np.percentile(a[:, 1], 10)), "p90": float(np.percentile(a[:, 1], 90)),
                     "width": float(np.median(a[:, 2])),
                     "worst10": max(sect, key=abs) if sect else float("nan")})
@@ -1399,9 +1399,9 @@ def chapter_real(L):
     offs = _ring_centre_offsets(g, rings)
     for o in offs:
         print("   リング %d の独立の読み: 断面 %3d 本、楕円 → 線の中心(半値中点)の距離 中央 %+.2f px(10〜90 %% 点 %+.2f〜%+.2f)、"
-              "線の半値幅 %.0f px、方位 10° ごとの中央値の最大 %+.1f px" % (o["k"], o["n"], o["median"], o["p10"], o["p90"],
+              "線の半値幅 %.0f px、方位 10° ごとの中央値の最大 %+.1f px" % (o["k"], o["n"], o["med"], o["p10"], o["p90"],
                                                        o["width"], o["worst10"]))
-    off_worst = max(abs(o["median"]) for o in offs)
+    off_worst = max(abs(o["med"]) for o in offs)
     off_local = max(abs(o["worst10"]) for o in offs)
     NUMBERS.update({"real_centre_offset_px": off_worst, "real_centre_offset_local_px": off_local})
     gate("実画像: 当てはめた楕円は線の中心に乗っている —— measure_pos と独立の読み(法線に沿った半値中点)との距離は、"
