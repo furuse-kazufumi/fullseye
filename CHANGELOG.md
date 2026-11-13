@@ -11,7 +11,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 - `examples/poc_cloth_towel_corners_synth.py`: 0〜2 回折ったタオルを**自前の幾何で描き**(MuJoCo の布は台を貫通して不採用)、`gaussian` / `otsu` / `fill_up` / `sk_find_contours` / `xg_gen_polygons` と辺の直線の交点で隅・辺を出す。真値は描画側(隅の高さで投影)。データは自作の合成で、新 op なし。
 - 基準線: Harris のみ・凸包の頂点のみ・重心から最遠の 4 点・最小外接長方形。誤差の中央値(種 20 本 x 4 折り方): 提案(色度)1.08 mm・最小外接長方形 1.14 mm・提案(RGB)1.55 mm・Harris 3.62 mm・凸包 4.16 mm。
-- 所見(限界): 長方形の前提が使える範囲では単純な最小外接長方形が提案(RGB)に勝つ。再現率 0.9 に届く最低の ΔE は RGB の方法 46・色度の方法 32・Harris 57。しわは 3 mm で崩れ始める。つかむ隅の順位は描いた裾の縫い目だけが手がかり(0.917、縫い目なしで 0.349)。
+- 所見(限界): 長方形の前提が使える範囲では単純な最小外接長方形が提案(RGB)に勝つ。再現率 0.9 に届く最低の ΔE は RGB の方法 46・色度の方法 32・Harris 57。しわは 3 mm で崩れ始める。つかむ隅の順位は描いた裾の縫い目だけが手がかり(0.917、縫い目なしで 0.349 = 種の組 10 組を合わせた値)。
 - 門 179 本(帯は種の組 8 つで測り、決定に使わない 2 組で通ることを確認)。登録: examples2d・exhibit_numbers(2026.317)・poc_captions・view2026 exhibits・tests/test_poc_cloth_towel_corners_synth.py。
 
 ## 1.1.1 — 2026-11-13
