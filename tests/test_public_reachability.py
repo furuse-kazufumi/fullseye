@@ -125,7 +125,7 @@ _INTERNAL = {
     #   2026-11-13 3 便目(第 2 回レビューの直し): studio_pyedit_safe 9 → 15(型の記述子で読む class_dict / mro_of /
     #   name_of、同一性の tin、実体で決める is_library_class、利用者のコードを呼ばない exception_text)、
     #   studio_pyedit_values 30 → 31(stray_threads: 残った __repr__ 用のスレッドの一覧)。
-    "studio_project": 23, "studio_pymode": 20, "studio_pyedit_syntax": 22, "studio_pyedit_complete": 35,
+    "studio_project": 23, "studio_pymode": 22, "studio_pyedit_syntax": 22, "studio_pyedit_complete": 35,
     "studio_pyedit_values": 31, "studio_pyedit_i18n": 5, "studio_pyedit_qt": 9, "studio_pyedit_vars_qt": 14,
     "studio_program_i18n": 4, "studio_pyedit_safe": 15,
 }
@@ -367,7 +367,7 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-13 同じ枝の 4 便目(確認の窓・Undo・自動保存): 1313 → 1317(+4)。studio.CONFIRM_ACTION_HOOK(差し替え口。既定の窓の関数を指す)・studio.confirm_action(やり直しの効かない
 #   操作の前に聞く入口)・studio.studio_pymode_autosave_range(設定の画面の範囲)・studio_batch.existing_outputs
 #   (一括処理が上書きする既存のファイルの数。確認の文に使う)。どれも GUI の内側。
-_HIDDEN_FUNCTIONS_TODAY = 1317
+_HIDDEN_FUNCTIONS_TODAY = 1319
 
 
 def _hidden_total():

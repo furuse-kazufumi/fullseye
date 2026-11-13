@@ -56,6 +56,62 @@ MODES = (MODE_PIPELINE, MODE_PYTHON)
 START_CHOICES = ("last", MODE_PYTHON, MODE_PIPELINE)
 SETTINGS_PREFIX = "pymode/"
 POLL_MS = 30
+#: モードの札(Program 欄の左上)の色 ``{配色: {モード: (文字, 地)}}``。モードは**色・形(印)・語**の 3 つで言う
+#: (色だけに頼らない)。赤・琥珀・緑は状態の色なので使わない。文字と地のコントラスト比は 4.5 以上(試験が測る)。
+BADGE_PALETTES = {
+    "dark": {MODE_PYTHON: ("#0b1020", "#8ab4ff"), MODE_PIPELINE: ("#0b1020", "#d0b0ff")},
+    "light": {MODE_PYTHON: ("#ffffff", "#1f4fa3"), MODE_PIPELINE: ("#ffffff", "#5b3aa0")},
+}
+#: 札の印(形)。Python = 菱形、パイプライン = 段の列を表す横線。食い違いの時は前に警告の印を足す。
+#: どれも Segoe UI / Arial / DejaVu Sans / Noto Sans にある字(U+2630 の三本線は無く、代わりの字の無い所では箱になった)。
+BADGE_GLYPHS = {MODE_PYTHON: "\u25c6", MODE_PIPELINE: "\u2261"}
+BADGE_WARNING = "\u26a0"
+#: 食い違いの時の札の縁の色。警告は状態なので琥珀を使う(⚠ の印と並べる。色だけに頼らない)。
+BADGE_WARN_BORDER = {"dark": "#f0b429", "light": "#b45309"}
+_UNSENT = object()
+
+
+def contrast_ratio(fg: str, bg: str) -> float:
+    """2 つの色(``#rrggbb``)の WCAG のコントラスト比(1〜21)。"""
+    def lum(c):
+        c = c.lstrip("#")
+        out = []
+        for i in (0, 2, 4):
+            v = int(c[i:i + 2], 16) / 255.0
+            out.append(v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4)
+        return 0.2126 * out[0] + 0.7152 * out[1] + 0.0722 * out[2]
+    a, b = lum(fg), lum(bg)
+    hi, lo = max(a, b), min(a, b)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+_MIXED_LINES_RE = re.compile(r"line (\d+):.*?line (\d+):", re.S)
+
+
+def _classify(text: str) -> tuple:
+    """``(どちらに見えるか, 混ざっている行)``。前は ``"python"`` / ``"pipeline"`` / None(空・コメントだけ・
+    混ざっている・決められない)。後は 2 つの書き方が混ざっている時だけ ``(パイプラインの書き方の行,
+    Python の書き方の行)``(``detect_syntax`` の「混ざっている」の文から読む)。実行しない(字句と構文木だけ)。"""
+    lines = [ln.strip() for ln in (text or "").splitlines()]
+    code = [ln for ln in lines if ln and not ln.startswith(("#", "*"))]
+    if not code:
+        return None, None
+    try:
+        syn, errs = sp.detect_syntax(text)
+    except Exception:                                         # noqa: BLE001 -- 判定の失敗で画面を止めない
+        return None, None
+    if errs:
+        m = _MIXED_LINES_RE.search(str(errs[0]))
+        return None, ((int(m.group(1)), int(m.group(2))) if m else (1, 1))
+    return (MODE_PYTHON if syn == sp.SYNTAX_PYTHON else MODE_PIPELINE), None
+
+
+def text_looks_like(text: str) -> str | None:
+    """文面がどちらの書き方に見えるか: ``"python"`` / ``"pipeline"`` / None(空・コメントだけ・混ざっている・
+    決められない)。実行しない(``studio_program.detect_syntax`` = 字句と構文木だけ)。"""
+    return _classify(text)[0]
+
+
 #: 出力の欄の上限: 行数(越えたら古い行から捨てる)と、1 回に書く文字数(越えたら末尾だけ)。
 MAX_OUTPUT_LINES = 5000
 MAX_OUTPUT_CHARS = 200_000
@@ -563,6 +619,19 @@ class PyModeController(QtCore.QObject):
         lay = ctx["code_layout"]
         bar = QtWidgets.QHBoxLayout()
         bar.setSpacing(4)
+        # モードの札: この欄の文面がパイプラインか Python かを、切り替えのボタンの状態に頼らずに常に見せる
+        self.badge = QtWidgets.QToolButton()
+        self.badge.setObjectName("program_mode_badge")
+        self.badge.setAutoRaise(True)
+        self.badge.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.badge.clicked.connect(lambda _=False: self._badge_clicked())
+        self.badge_palette = "dark"
+        self._mismatch: str | None = None
+        self._mixed_at: int | None = None                     # 混ざっている時、直す側の行(札の「この行へ」)
+        self._badge_key = None                                # (モード, 文書): これが変わった時だけ文面を読み直す
+        self._badge_sent: dict = {}                           # 繋ぎ先へ最後に送った値(同じ値は送り直さない)
+        self._checked = (None, None)                          # (文面, 検査の結果): 最後の check_now
+        bar.addWidget(self.badge)
         self.btn_pipe = QtWidgets.QToolButton()
         self.btn_py = QtWidgets.QToolButton()
         for b, m in ((self.btn_pipe, MODE_PIPELINE), (self.btn_py, MODE_PYTHON)):
@@ -723,8 +792,8 @@ class PyModeController(QtCore.QObject):
         self.btn_py.setToolTip(tr("Python mode: the Program text is the source; the stage list records each run"))
         self.config_box.setToolTip(tr("Debug stops at breakpoints and steps line by line; Release runs faster "
                                       "without the line hook (breakpoints do not stop)"))
-        self.btn_run.setText(tr("Run"))
-        self.btn_run.setToolTip(tr("Run the Python program (F5). When stopped at a breakpoint: continue"))
+        self.btn_run.setText(tr("Run as Python"))
+        self.btn_run.setToolTip(tr("Run the Program text as Python (F5). When stopped at a breakpoint: continue"))
         self.btn_step.setText(tr("Step"))
         self.btn_step.setToolTip(tr("Step: run one line and stop (F6, Debug only)"))
         self.btn_stop.setText(tr("Stop"))
@@ -781,7 +850,8 @@ class PyModeController(QtCore.QObject):
         self.btn_stop.setEnabled(self.running or self.session is not None)
         self.btn_step.setEnabled(self.config == "debug")
         st = self.session is not None and not self.running
-        self.btn_run.setText(tr("Continue") if st else tr("Run"))
+        self.btn_run.setText(tr("Continue") if st else tr("Run as Python"))
+        self.update_badge(recheck=False)                      # 1 打ごとの道: 文面はモードか文書が変わった時だけ読む
         self._update_record_title()
         self._sync_actions()
         try:
@@ -802,6 +872,178 @@ class PyModeController(QtCore.QObject):
         if ch is not None:
             head += "  ·  " + tr("⚠ out of date: the text changed from line %d — run again") % ch
         self.record_title.setText(head)
+
+    # ---- どちらの書き方か(札・パネルの題・状態の帯) ----
+    def mode_name(self, mode: str | None = None) -> str:
+        """モードの名前(今の言語)。"""
+        return self.tr("Python") if (mode or self.mode) == MODE_PYTHON else self.tr("Pipeline")
+
+    def mode_title(self) -> str:
+        """パネルの題に出す文字列(今の言語。``Program (code) — Python``)。パネルの題の帯に状態を並べる側は、
+        これを読む(英語の原文は :meth:`mode_title_en`)。"""
+        return self.tr(self.mode_title_en())
+
+    def mode_title_en(self) -> str:
+        return "Program (code) \u2014 Python" if self.active else "Program (code) \u2014 Pipeline"
+
+    def badge_text(self) -> str:
+        """札の文字: 印(形)+ モードの名前。文面がモードと食い違っていれば、前に警告の印。"""
+        t = "%s %s" % (BADGE_GLYPHS[self.mode], self.mode_name())
+        return (BADGE_WARNING + " " + t) if self._mismatch else t
+
+    def mode_mismatch(self, problems=None) -> str | None:
+        """文面がモードと食い違っているか: ``"python_text_in_pipeline"`` / ``"pipeline_text_in_python"`` /
+        ``"mixed"``(2 つの書き方が 1 つの文面に混ざっている。直す側の行は ``self._mixed_at``)/ None。
+        *problems* は Python のモードの検査(``check_program``)の結果で、その ``mixed_syntax`` の行も拾う
+        (渡されなければ、同じ文面で最後に検査した結果を使う)。実行しない。"""
+        text = self.edit.toPlainText()
+        looks, mixed = _classify(text)
+        self._mixed_at = None
+        if looks is not None and looks != self.mode:
+            return "python_text_in_pipeline" if looks == MODE_PYTHON else "pipeline_text_in_python"
+        if mixed is not None:                                 # 直す側 = 今のモードと違う書き方の行
+            self._mixed_at = mixed[0] if self.active else mixed[1]
+            return "mixed"
+        if self.active:
+            if problems is None and self._checked[0] == text:
+                problems = self._checked[1]
+            hits = sorted(int(p.line) for p in (problems or ()) if getattr(p, "code", None) == "mixed_syntax")
+            if hits:
+                self._mixed_at = hits[0]
+                return "mixed"
+        return None
+
+    def set_badge_palette(self, name: str):
+        """札の配色を選ぶ(``"dark"`` / ``"light"``。画面の配色に合わせて呼ぶ)。"""
+        if name not in BADGE_PALETTES:
+            raise ValueError("palette must be one of %s" % (sorted(BADGE_PALETTES),))
+        self.badge_palette = name
+        self.update_badge()
+
+    def update_badge(self, recheck: bool = True, problems=None):
+        """札・パネルの題・状態の帯・実行の入口の説明を、今のモードと文面に合わせる(モードの切り替え・ファイルを
+        開く・変換・打っている最中の検査から呼ばれる。勝手にモードは変えない)。
+
+        *recheck* が False の時(1 打ごとの ``_update_labels``)は、モードか文書が変わった時だけ文面を読み直す。
+        打っている最中の読み直しは、間を置いた検査(``check_now`` / パイプラインの構文の検査)が recheck=True で
+        呼ぶ(2,000 行の文面で 1 回 13 ms ほど。1 打ごとには払わない)。"""
+        tr = self.tr
+        key = (self.mode, id(self.edit.document()))
+        if recheck or key != self._badge_key:
+            self._badge_key = key
+            self._mismatch = self.mode_mismatch(problems)
+        fg, bg = BADGE_PALETTES[self.badge_palette][self.mode]
+        border = ("2px solid %s" % BADGE_WARN_BORDER[self.badge_palette]) if self._mismatch else "0"
+        self.badge.setText(self.badge_text())
+        self.badge.setStyleSheet("QToolButton#program_mode_badge{color:%s;background:%s;border:%s;border-radius:3px;"
+                                 "padding:2px 8px;font-weight:bold;}" % (fg, bg, border))
+        if self._mismatch == "python_text_in_pipeline":
+            tip = tr("The Program is in Pipeline mode, but this text looks like Python. Click for the choices "
+                     "(nothing is switched by itself)")
+        elif self._mismatch == "pipeline_text_in_python":
+            tip = tr("The Program is in Python mode, but this text looks like a pipeline. Click for the choices "
+                     "(nothing is switched by itself)")
+        elif self._mismatch == "mixed":
+            tip = tr("This text mixes the pipeline syntax and Python (line %d is in the other syntax). Click for the "
+                     "choices (nothing is switched by itself)") % int(self._mixed_at or 1)
+        elif self.active:
+            tip = tr("This text is Python: F5 runs it as Python and the stage list records the run")
+        else:
+            tip = tr("This text is a pipeline: the stage list is the source and F5 runs the stages")
+        self.badge.setToolTip(tip)
+        self.badge.setAccessibleName(self.badge_text())
+        self.badge.setAccessibleDescription(tip)
+        # パネルの題・実行の入口の説明は言語の表に英語の原文を登録する側なので、値が変わった時(= モードが変わった時)
+        # だけ送る。状態の帯は今の言語の文そのものなので毎回。
+        for name, value, always in (("set_panel_title", self.mode_title_en(), False),
+                                    ("status_mode", tr("Program: %s") % self.mode_name(), True),
+                                    ("run_hints", self.active, False)):
+            if not always and self._badge_sent.get(name, _UNSENT) == value:
+                continue
+            try:
+                self.ctx.get(name, lambda _v: None)(value)
+                self._badge_sent[name] = value
+            except Exception as e:                            # noqa: BLE001 -- 表示の失敗でモードの処理を止めない
+                self.state.setdefault("errors", []).append(("could not show the Program mode (%s)" % name, str(e)))
+
+    def badge_menu(self) -> QtWidgets.QMenu:
+        """札を押した時の選択肢(食い違いの時は直し方を先に。どれも利用者が選んだ時だけ動く)。"""
+        tr = self.tr
+        m = QtWidgets.QMenu(self.badge)
+        if self._mismatch == "python_text_in_pipeline":
+            m.addAction(tr("Move this text to Python mode"), self.move_text_to_python)
+            m.addAction(tr("Switch to Python mode (this text stays in Pipeline mode)"),
+                        lambda: self.set_mode(MODE_PYTHON))
+        elif self._mismatch == "pipeline_text_in_python":
+            m.addAction(tr("Convert this text to Python"), self.convert_text_in_place)
+            m.addAction(tr("Switch to Pipeline mode (this text stays in Python mode)"),
+                        lambda: self.set_mode(MODE_PIPELINE))
+        elif self._mismatch == "mixed":
+            ln = int(self._mixed_at or 1)
+            m.addAction(tr("Go to line %d") % ln, lambda: self.goto_line(ln))
+            if self.active:
+                m.addAction(tr("Switch to Pipeline mode (this text stays in Python mode)"),
+                            lambda: self.set_mode(MODE_PIPELINE))
+            else:
+                m.addAction(tr("Move this text to Python mode"), self.move_text_to_python)
+                m.addAction(tr("Switch to Python mode (this text stays in Pipeline mode)"),
+                            lambda: self.set_mode(MODE_PYTHON))
+        else:
+            m.addAction(tr("Switch to Pipeline mode") if self.active else tr("Switch to Python mode"), self.toggle_mode)
+        self._badge_menu = m
+        return m
+
+    def _badge_clicked(self):                                # pragma: no cover - GUI (the menu is tested through badge_menu)
+        m = self.badge_menu()
+        m.popup(self.badge.mapToGlobal(QtCore.QPoint(0, self.badge.height())))
+
+    def _replace_python_text(self, text: str):
+        """Python のモードの文面を *text* に置き換える(1 つの編集 = Ctrl+Z の 1 回で前の文面に戻る)。"""
+        cur = QtGui.QTextCursor(self.edit.document())
+        cur.select(QtGui.QTextCursor.Document)
+        cur.insertText(text)
+
+    def move_text_to_python(self) -> bool:
+        """パイプラインのモードにある Python らしい文面を、Python のモードへ移す(モードも切り替える)。
+        開いたパイプラインのファイルから来た文面は、そのファイルの信頼を引き継ぐ(初回の実行の前に確認)。"""
+        if self.active:
+            return False
+        text = self.edit.toPlainText()
+        if self.file and self.unsaved() and not self._confirm_unsaved(self.tr("Move this text to Python mode")):
+            return False
+        self.set_mode(MODE_PYTHON, announce=False)
+        if not self.active:
+            return False
+        self._replace_python_text(text)
+        self._after_text_adopted()
+        self.flash(self.tr("Moved the text to Python mode (Ctrl+Z restores the previous Python text)"))
+        return True
+
+    def convert_text_in_place(self) -> bool:
+        """Python のモードにあるパイプラインの書き方の文面を、その場で Python に変換する(Ctrl+Z の 1 回で戻る)。"""
+        if not self.active:
+            return False
+        py, errs = sp.hdev_to_python(self.edit.toPlainText())
+        if errs:
+            self.flash(self.tr("Could not convert to Python: %s") % "; ".join(self._loc(e) for e in errs[:2]))
+            return False
+        self._replace_python_text(py)
+        self._update_labels()
+        self.update_badge()
+        self.flash(self.tr("Converted the pipeline to Python (Ctrl+Z restores the previous Python text)"))
+        return True
+
+    def _after_text_adopted(self):
+        """パイプラインの側から来た文面を Python の文面にした後の、由来と信頼の付け方(``convert_to_python`` と同じ)。"""
+        if self.pipe_source:
+            self.file, self.origin, self.session_trusted, self.saved_digest = None, "file", False, None
+            self.origin_path = self.pipe_source
+        else:
+            self.file, self.origin, self.session_trusted, self.saved_digest = None, "typed", True, None
+            self.origin_path = None
+        self.last = None
+        self._update_labels()
+        self.update_badge()
 
     def title_segment(self) -> str | None:
         """窓の題の先頭(Python のモードのときだけ。プログラムの名前と未保存の印)。"""
@@ -910,6 +1152,7 @@ class PyModeController(QtCore.QObject):
             self.origin_path = None
         self.last = None
         self._update_labels()
+        self.update_badge()
         self.flash(self.tr("Converted the pipeline to Python (Ctrl+Z restores the previous Python text)"))
         return True
 
@@ -940,6 +1183,8 @@ class PyModeController(QtCore.QObject):
         except Exception as e:                                # noqa: BLE001 -- 検査が入力を止めない
             probs = []
             self.state.setdefault("errors", []).append(("program check failed", str(e)))
+        self._checked = (text, probs)
+        self.update_badge(problems=probs)                     # 文面がモードと食い違っていないか(札の警告の印。混ざった行も)
         rows, per_line = problem_rows(probs, self._ptr)
         if self.last is not None and self.last_text == text and self.last.error_line and self.last.errors:
             ln = int(self.last.error_line)
@@ -1468,8 +1713,10 @@ class PyModeController(QtCore.QObject):
 
     def _out_header(self, action):
         name = {"run": self.tr("Run"), "continue": self.tr("Continue"), "step": self.tr("Step")}[action]
-        self._out("── %s  %s  (%s)  %s" % (name, self.display_name(), self.tr("Debug") if self.config == "debug"
-                                                      else self.tr("Release"), time.strftime("%H:%M:%S")))
+        # どの書き方として走った結果かを見出しに残す(この欄は Python のモードの実行だけが書く)
+        self._out("── %s  %s  (%s · %s)  %s" % (name, self.display_name(), self.tr("Python"),
+                                                    self.tr("Debug") if self.config == "debug" else self.tr("Release"),
+                                                    time.strftime("%H:%M:%S")))
 
     def clear_output(self):
         self.output.clear()
@@ -1781,6 +2028,9 @@ class PyModeController(QtCore.QObject):
         for a, py_only in acts.values():
             if py_only:
                 a.setEnabled(self.active)
+        run = acts.get("pymode_run")
+        if run is not None:      # Python のモードでは Run メニューの「Python として実行」(= Run all。F5 / Ctrl+Return)と
+            run[0].setVisible(not self.active)                # 同じ動作: 同じ物を 2 つ並べない(コマンドパレットには残る)
 
     # ---- 起動・終了 ----
     def restore(self, start_mode: str):

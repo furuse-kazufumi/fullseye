@@ -410,7 +410,7 @@ def test_stop_while_waiting_ends_the_thread_and_editing_restarts_from_the_top(tm
         thread = pm.session.job.thread
         QTest.keyClick(ed, QtCore.Qt.Key_F2, QtCore.Qt.ControlModifier)  # 止める = Debug の区切りを終える
         assert pm.session is None and not thread.is_alive() and not pm.btn_stop.isEnabled()
-        assert pm.btn_run.text() == "Run"
+        assert pm.btn_run.text() == "Run as Python"
         _f5(win)                                                         # もう一度止まる
         thread = pm.session.job.thread
         _set_text(win, "# python\nprint('one')\nk = 2\nshow(img)\n")      # 止まっている間に文面を直す

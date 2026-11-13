@@ -452,7 +452,7 @@ def _default_confirm_action(parent, title, text, action):     # pragma: no cover
         return False
     box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, title, text, QtWidgets.QMessageBox.NoButton, parent)
     go = box.addButton(action, QtWidgets.QMessageBox.DestructiveRole)
-    cancel = box.addButton(QtWidgets.QMessageBox.Cancel)
+    cancel = box.addButton(tr("Cancel"), QtWidgets.QMessageBox.RejectRole)
     box.setDefaultButton(cancel)
     box.setEscapeButton(cancel)
     box.exec()
@@ -8311,7 +8311,8 @@ def build_window(model=None, start_mode="pipeline"):
                          "Type for autocomplete; click the gutter to toggle a breakpoint; Step / Run (timed).")
     # P-11 (2026-11-12): these hints named keys that are not bound here (Ctrl+Shift+Return, F10, and an F5 that
     # runs the whole pipeline) -- the keys that exist are Run all F5 / Step F6 / Reset Shift+F5 in the Run menu.
-    c_run = _tbtn("play", "Run every line, timing each; stops at a breakpoint", accent=True)
+    c_run = _tbtn("play", "Run the Program as a pipeline: every line, timing each; stops at a breakpoint",
+                  accent=True)
     c_cont = _tbtn("playplay", "Continue: resume from the execution line to the next "
                    "breakpoint / end (pause via breakpoints, resume here)")
     c_step = _tbtn("step", "Execute one more line and show its result")
@@ -13313,6 +13314,8 @@ def build_window(model=None, start_mode="pipeline"):
         _pm = getattr(win, "_pymode", None)
         if _pm is not None and _pm.active:                  # Python のモード: studio_program.check_program(実行しない)
             _pm.check_now(); return
+        if _pm is not None:
+            _pm.update_badge()                              # パイプラインのモードなのに Python らしい文面、を札に出す
         text = code_edit.toPlainText()
         errs_ = []
         saved = dict(_HDEV_CLAMPED)                       # 解析は「丸めたつまみ」の控えを作り直す。apply の結果を壊さない
@@ -16779,6 +16782,50 @@ def build_window(model=None, start_mode="pipeline"):
             _apply_layout_state(); win._docks[name].show(); win._docks[name].raise_(); _save_layout_state()
         except Exception as exc:                          # noqa: BLE001
             _log_soft_failure("could not show the %s panel" % name, exc)
+    # ★2026-11-13: Program 欄がどちらの書き方か(パイプライン / Python)を、パネルの題と窓の下の状態の帯にも出す。
+    #   パネルの題の帯に状態を並べる側は、ここ(_pm_panel_title)で受け取る文字列か win._pymode.mode_title() を使う。
+    _mode_status = QtWidgets.QLabel()
+    _mode_status.setObjectName("program_mode_status")
+    win.statusBar().addPermanentWidget(_mode_status)
+    win._mode_status = _mode_status
+
+    def _pm_status_mode(text):
+        _mode_status.setText(text)
+
+    _PROGRAM_TITLES = ("Program (code)", "Program (code) — Python", "Program (code) — Pipeline")
+
+    def _pm_panel_title(en_title):
+        """Program のパネルの題を「Program (code) — Python / Pipeline」にする(英語の原文を言語の表に登録し直す)。"""
+        entry = {dock_code: ("wtitle", en_title)}
+        for obj, (kind, en) in list(win._label_en.items()):   # 表示メニューの「このパネルを出す」も同じ名前で呼ぶ
+            if kind == "text" and en in _PROGRAM_TITLES:
+                entry[obj] = (kind, en_title)
+        win._label_en.update(entry)
+        _apply_labels(entry)
+
+    # F5 の説明(実行の入口)もモードに合わせる: Python のモードでは F5 / Ctrl+R / Ctrl+Return は Python として走る
+    _RUN_PY_EN = ((act_runall, "Run as Python", "Run the Program text as Python. Also F5 or Ctrl+R from any panel"),
+                  (act_dbg_run, "Run as Python (F5 / Ctrl+R)",
+                   "Run the Program text as Python (debugger Run); when stopped at a breakpoint: continue"),
+                  (b_runall, None, "Run the Program text as Python (Ctrl+Enter)"))
+    _run_base = {}
+
+    def _pm_run_hints(py):
+        """実行の入口(Run all・F5 の動作・Ctrl+Return のボタン)の名前と説明を Program 欄のモードに合わせる。英語の
+        原文を言語の表に登録し直す(言語を切り替えても今のモードの文が訳される)。パイプラインの側は元の文に戻す。"""
+        if not _run_base:
+            for obj, _text, _tip in _RUN_PY_EN:
+                _run_base[obj] = (win._label_en.get(obj), win._tt_en.get(obj))
+        labels, tips = {}, {}
+        for obj, text_py, tip_py in _RUN_PY_EN:
+            base_label, base_tip = _run_base[obj]
+            if base_label is not None:
+                labels[obj] = win._label_en[obj] = (base_label[0], text_py) if (py and text_py) else base_label
+            if base_tip is not None:
+                tips[obj] = win._tt_en[obj] = tip_py if py else base_tip
+        _apply_labels(labels)
+        _apply_tooltips(tips)
+
     def _pm_first_steps(py):
         """起動時の案内(最初の 3 手)を Program 欄のモードに合わせる: Python のモードでは「F5 で例を実行」、
         パイプラインのモードでは今までの「サンプルを開く → op を足す → 実行」。英語の原文を言語の表に登録し直す
@@ -16792,6 +16839,7 @@ def build_window(model=None, start_mode="pipeline"):
         _apply_tooltips(tips)
     studio_pymode.install(win, {
         "first_steps": _pm_first_steps,
+        "set_panel_title": _pm_panel_title, "status_mode": _pm_status_mode, "run_hints": _pm_run_hints,
         "confirm_action": lambda t_, x_, a_: confirm_action(win, t_, x_, a_),
         "generated_text": _generated_program_text,
         "on_text_document": lambda d_: d_.contentsChanged.connect(_syntax_timer.start),
