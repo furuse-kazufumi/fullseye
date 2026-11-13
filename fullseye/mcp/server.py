@@ -1394,6 +1394,36 @@ def _measure_note(op_name: str, args: list) -> dict:
     return note
 
 
+#: 判定 ok の範囲(★2026-11-13、C)。同じ画像に 4 通りの処理で 1.0 / 46.3 / 75.0 / 1285.0 が全部 ok で返り、
+#: ok が「値が正しい」と読まれていた。判定は出力の形だけを見る。
+VERDICT_SCOPE_TEXT = ("判定 ok は出力の形(有限・空でない・定数でない)を見ただけで、値の正しさではない"
+                      "(利用者の画像に真値は無い。真値で確かめるのは fullseye_make_task / fullseye_score_pipeline の合成の課題)")
+
+
+def _ok_cautions(records: list, a: dict, store: HandleStore) -> list[str]:
+    """判定 ok の結果に付ける注意(明らかな異常だけ。見つからなければ空)。"""
+    from .handles import HandleError
+    cautions: list[str] = []
+    ok = [r for r in records if r.get("status") == "ok"]
+    blind = _input_independent_ops()
+    for r in ok:
+        if a.get("handle") and r.get("op") in blind:
+            cautions.append("段 %d %s は入力の中身を読まない op(結果は入力の画像に依らない)" % (r["stage"], r["op"]))
+    last = next((r for r in reversed(ok) if r.get("value_handle")), None)
+    if last is not None and last.get("unit") == "px" and a.get("handle"):
+        try:
+            value = float(np.asarray(store.get(last["value_handle"])[1], dtype=np.float64).reshape(-1)[0])
+            shape = np.shape(store.get(a["handle"])[1])
+        except (HandleError, TypeError, ValueError, IndexError):
+            return cautions
+        if len(shape) >= 2:
+            diagonal = math.hypot(shape[0], shape[1])
+            if math.isfinite(value) and value >= 0.9 * diagonal:
+                cautions.append("値 %.1f px は画像の対角 %.1f px とほぼ同じ(物ではなく画像全体や枠を測った疑い)"
+                                % (value, diagonal))
+    return cautions
+
+
 def _op_summary(name: str) -> str | None:
     """op の 1 行の説明(OP_CARDS の summary)。結果に「何を計算したか」を添えるのに使う。"""
     try:
@@ -2415,6 +2445,8 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         text += "\n" + "\n".join(table_lines)
     else:
         text += "\n判定=ok value=%s" % result.get("value")
+        text += "\n" + VERDICT_SCOPE_TEXT
+        result["verdict_scope"] = "shape_only"
         last = next((r for r in reversed(records) if r.get("status") == "ok" and r.get("value_handle")), None)
         if last is not None and (last.get("meaning") or last.get("unit")):
             text += "\n値の意味(段 %d %s): %s%s" % (last["stage"], last["op"], last.get("meaning", ""),
@@ -2423,6 +2455,10 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             n = last["measured"]["components_in_input"]
             text += "\n注意: 入力の領域の連結成分 %d 個のうち、最大の 1 つだけを測った値" % n + (
                 "(他の %d 個は数に入っていない)" % (n - 1) if n > 1 else "")
+        cautions = _ok_cautions(records, a, store)
+        if cautions:
+            result["cautions"] = cautions
+            text += "".join("\n注意: " + c for c in cautions)
     return tool_result(text,result,links=links,max_structured_bytes=max_structured_bytes)
 
 

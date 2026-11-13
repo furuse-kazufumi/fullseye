@@ -329,3 +329,38 @@ def test_list_samples_says_what_each_sample_shows_its_source_and_licence(cat, st
     assert "- weld_xray_porosity:" in _text(r) and "真値あり" in _text(r)
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     assert root not in json.dumps(r, ensure_ascii=False)
+
+
+# --------------------------------------------------------------------------- C: 判定 ok の意味
+_SCRATCH_PIPELINES = (                                  # 同じ傷の画像に、別々の 4 通りの「長さ」
+    [{"op": "invert"}, {"op": "otsu"}, {"op": "count_obj"}],
+    [{"op": "gaussian", "a": 0.1}, {"op": "sk_rolling_ball", "a": 0.2}, {"op": "threshold", "a": 0.12},
+     {"op": "select_shape", "a": 0.0}, {"op": "select_largest"}, {"op": "diameter_region"}],
+    [{"op": "otsu"}, {"op": "distance_transform"}, {"op": "sobel_amp"}, {"op": "otsu"}, {"op": "diameter_region"}],
+    [{"op": "invert"}, {"op": "otsu"}, {"op": "diameter_region"}],
+)
+
+
+def test_ok_says_it_only_checked_the_shape_and_flags_obvious_anomalies(cat, store):
+    """直す前: 同じ画像に 4 通りの処理で 1.0 / 46.3 / 75.0 / 1285.0 が全部 判定=ok で返り、ok が「値が正しい」と
+    読まれた。otsu → distance_transform → sobel_amp → otsu → diameter_region = 803.2(対角 804.6 px とほぼ同じ)も ok。
+    判定は形だけを見る事を本文で言い、明らかな異常(対角とほぼ同じ長さ・入力を読まない段)に注意を付ける。"""
+    h = S.call_tool("fullseye_load_image", {"path": "metal_hairline_scratch"}, cat, store)["structuredContent"]["handle"]
+    values, cautions = [], []
+    for stages in _SCRATCH_PIPELINES:
+        r = S.call_tool("fullseye_pipeline", {"handle": h, "stages": stages, "vision": "none"}, cat, store)
+        sc = r["structuredContent"]
+        assert not r["isError"] and "判定=ok" in _text(r)
+        assert "値の正しさではない" in _text(r) and sc["verdict_scope"] == "shape_only"
+        values.append(round(float(sc["value"]), 1))
+        cautions.append(sc.get("cautions", []))
+    assert len(set(values)) == 4 and values[0] == 1.0 and values[1] == 46.3, values
+    assert [bool(c) for c in cautions] == [False, False, False, True], cautions
+    assert "画像の対角" in cautions[3][0]
+    plate = S.call_tool("fullseye_load_image", {"path": "machined_plate_holes"}, cat, store)["structuredContent"]["handle"]
+    r = S.call_tool("fullseye_pipeline", {"handle": plate, "stages": _SCRATCH_PIPELINES[2], "vision": "none"}, cat, store)
+    assert round(r["structuredContent"]["value"], 1) == 803.2 and "画像の対角 804.5 px" in _text(r)
+    blind = S.call_tool("fullseye_pipeline", {"handle": h, "stages": [
+        {"op": "gaussian"}, {"op": "sobel_amp"}, {"op": "hx_gen_empty_region"}, {"op": "count_obj"}],
+        "vision": "none"}, cat, store)
+    assert "段 3 hx_gen_empty_region は入力の中身を読まない op" in _text(blind)
