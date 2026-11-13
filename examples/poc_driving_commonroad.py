@@ -46,7 +46,6 @@ import math
 import os
 import sys
 import time
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import numpy as np
@@ -54,6 +53,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import drivecommonroad as CR  # noqa: E402
 import examplefig as figs  # noqa: E402
+from safe_xml import safe_xml_parse as _parse_xml  # noqa: E402  (XML は門を通して読む: DOCTYPE・大きさ・深さ)
 
 _GATES = []
 ATTR = "出典: CommonRoad scenarios (TUM, BSD-3-Clause)"
@@ -286,7 +286,7 @@ def main() -> int:
 
     print("== 6. solution XML")
     sxml = CR.cr_solution_xml(sc, run)
-    root = ET.fromstring(sxml)
+    root = _parse_xml(sxml)
     states = root.find("ksTrajectory").findall("ksState")
     xs = np.array([float(s.findtext("x")) for s in states])
     ys = np.array([float(s.findtext("y")) for s in states])

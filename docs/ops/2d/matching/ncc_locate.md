@@ -9,7 +9,7 @@ gpu: あり(ncc_locate)
 examples: [gallery2d_contour_measure, mcp_usability, poc_code_matching_breakdown, poc_search_sweep_width, poc_template_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # ncc_locate — 2D `matching` op

@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_emva1288_sensor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # emva_dark_current — OPTICS `sensorchar` op

@@ -9,7 +9,7 @@ gpu: なし
 examples: [poc_calipers_under_illusion, poc_dimensional_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # fuzzy_measure_pairing — MEASURE1D `caliper` op

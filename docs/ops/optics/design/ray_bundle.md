@@ -8,7 +8,7 @@ gpu: なし
 examples: [anim3d_lens_aberrations, poc_lens_file_roundtrip, poc_lens_merit_operands, poc_lens_solves_afocal, poc_lens_tolerancing, poc_noncoaxial_optics, poc_photograph_through_prescription, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # ray_bundle — OPTICS `design` op

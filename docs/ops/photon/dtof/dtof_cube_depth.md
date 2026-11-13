@@ -8,7 +8,7 @@ gpu: なし
 examples: [photon_timeresolved, poc_dtof_ranging, poc_itof_multifreq, poc_tof_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # dtof_cube_depth — PHOTON `dtof` op

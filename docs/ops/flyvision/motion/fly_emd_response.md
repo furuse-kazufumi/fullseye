@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_fly_vision, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # fly_emd_response — FLYVISION `motion` op

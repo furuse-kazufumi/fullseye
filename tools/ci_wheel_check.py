@@ -95,9 +95,20 @@ def _dump(path: str) -> int:
     pkg_dir = os.path.dirname(fullseye.__file__)
     catalogs_missing = [n for n in ("OP_CATALOG.md", "OP_CATALOG.en.md", "OP_CATALOG.zh.md")
                         if not os.path.isfile(os.path.join(pkg_dir, n))]
+    # 2026-11-12: Start メニューのアイコン(fullseye.ico / fullseye_256.png)が wheel に在るか。pyproject の文字列を
+    # grep するだけの門は、package-data の書き方が効いているかを見ない。配布物の側で実在を数える。
+    icons_missing = []
+    try:
+        import studio_assets                             # noqa: F401  (上の unshipped_present と同じ)
+        sa_base = os.path.dirname(studio_assets.__file__)
+        icons_missing = ["studio_assets/" + n for n in ("fullseye.ico", "fullseye_256.png")
+                         if not os.path.isfile(os.path.join(sa_base, n))]
+    except Exception:                                  # noqa: BLE001
+        icons_missing = ["studio_assets/fullseye.ico", "studio_assets/fullseye_256.png"]
     payload = {
         "version": getattr(fullseye, "__version__", "?"),
         "catalogs_missing": catalogs_missing,
+        "icons_missing": icons_missing,
         "unshipped_present": unshipped_present,
         "ops": names,
         "failed_backends": [list(x) for x in getattr(ops, "FAILED_BACKENDS", [])],
@@ -154,6 +165,9 @@ def _compare(a_path: str, b_path: str) -> int:
     if b.get("catalogs_missing"):
         problems.append("wheel に同梱の目録が無い: %s(pyproject の package-data を見る)"
                         % b["catalogs_missing"])
+    if b.get("icons_missing"):
+        problems.append("wheel に同梱のアイコンが無い: %s(Start メニューの .lnk が指す物。pyproject の package-data を見る)"
+                        % b["icons_missing"])
     if b.get("unshipped_present"):
         problems.append("同梱しないはずの資産が wheel に乗っている: %s "
                         "(pyproject の exclude-package-data を見る)" % b["unshipped_present"])

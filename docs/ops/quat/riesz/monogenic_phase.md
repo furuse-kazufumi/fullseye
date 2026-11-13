@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [perf_monogenic_metrics, quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # monogenic_phase — QUAT `riesz` op

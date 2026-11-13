@@ -272,8 +272,10 @@ def test_step_summary_and_row_formatting():
     s = studio.step_summary({"kind": "image", "shape": (64, 64), "mean": 0.41234})
     assert s == "image 64×64 mean=0.412"
     assert studio.step_summary({"kind": "feature", "value": 3.0}) == "feature = 3"
-    assert studio.stage_knob_text("gaussian", 0.29, 0.5) == "blur σ=1.08 px, b=–"
-    assert studio.stage_knob_text("median", 0.6, 0.5) == "kernel=7 px, b=–"
+    # ★2026-11-12: gaussian / median の b は端の扱いを選ぶ(「b=–」= 未使用と書いていたのは誤り)
+    assert studio.stage_knob_text("gaussian", 0.29, 0.5) == "blur σ=1.08 px, border handling=reflect"
+    assert studio.stage_knob_text("median", 0.6, 0.9) == "kernel=7 px, border handling=wrap"
+    assert studio.stage_knob_text("sobel_mag", 0.6, 0.5) == "a=–, b=–"            # 本当に未使用の op
     assert studio.stage_knob_text("no_such_op", 0.5, 0.25) == "a=0.50, b=0.25"
 
 
@@ -317,7 +319,8 @@ def test_stage_knob_widgets_follow_the_spec():
         assert (ra.slider.minimum(), ra.slider.maximum()) == (0, 270) and ra.slider.value() == 78
         assert not ra.typed.isHidden() and ra.typed.currentWidget() is ra.fspin
         assert "blur σ" in ra.label.text() and "1.08 px" in ra.label.text()
-        assert rb.spec["kind"] == "unused" and not rb.slider.isEnabled() and rb.raw.isEnabled()
+        assert rb.spec["kind"] == "choice" and rb.spec["choices"][0] == "reflect" and rb.raw.isEnabled()
+        assert rb.typed.currentWidget() is rb.combo and rb.combo.currentText() == "reflect"
         ra.fspin.setValue(2.0)                                    # typed σ -> knob (2.0-0.3)/2.7
         assert model.stages[0][1] == pytest.approx((2.0 - 0.3) / 2.7)
         assert model.stages[0][2] == 0.5                          # the other knob untouched
@@ -378,7 +381,7 @@ def test_operator_panel_typed_widgets_and_labels():
             ol.setCurrentRow(idx)
         select("median")
         assert ra.typed.currentWidget() is ra.combo and lbl_a.text().startswith("a · kernel")
-        assert lbl_b.text() == "b (–)" and not b_spin.isEnabled()
+        assert lbl_b.text().startswith("b · border") and b_spin.isEnabled()     # 端の扱い(未使用ではない)
         a_spin.setValue(0.9)                                      # raw -> combo mirrors
         assert ra.combo.currentText() == "9 px"
         ra.combo.setCurrentIndex(0)                               # combo -> raw knob

@@ -8,7 +8,7 @@ gpu: なし
 examples: [voxel_labels_color]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # vol_labels_to_meshes — VOLCOLOR `render` op

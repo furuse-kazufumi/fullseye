@@ -1,0 +1,31 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">gaussian <span style="color:#8b91a0;font-size:11px">· 平滑化 · HALCON: gauss_filter</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image → image</b></p>
+<p style="color:#8b91a0;margin:2px 0">呼び出し: <code style="color:#e2e5ec">fs.apply(img, "gaussian", a=0.4, b=0.5)</code> &nbsp;·&nbsp; <code style="color:#e2e5ec">fs.op.gaussian(img, a=0.4, b=0.5)</code> &nbsp;·&nbsp; Studio: <code style="color:#e2e5ec">gaussian a b</code></p>
+<p>画像に等方的な 2 次元ガウス核を畳み込む。代表的な<b>線形のローパスフィルタ</b>で、
+細かいノイズを抑え、全体の形は残す。代わりにエッジはぼける。縦と横に分けて計算でき、
+勾配・エッジ・二値化の op の前に最初に掛けることが多い。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">引数</h3>
+<table cellpadding="3" style="color:#e2e5ec">
+  <tr><td><b>a</b></td><td>核の<i>標準偏差 σ</i>(ぼかしの強さ)。σ = 0.3 + 2.7·a。a が小さいと軽いノイズ除去、大きいと強いぼかし。</td></tr>
+  <tr><td><b>b</b></td><td>画像の端の扱い。b ≤ 0.5 で <i>reflect</i>(折り返し、既定)。b を上げると順に <i>nearest</i>(端の画素を延ばす)、<i>constant</i>(0 で埋める)、<i>wrap</i>(反対側から巻き取る)。変わるのは端の近くの画素だけ。</td></tr>
+</table>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">使い方</h3>
+<p>先にノイズを落としてから、微分や二値化に進む。ぼかしすぎる(a が大きい)と細部が消えるので、
+気になるノイズが消える最小の σ を選ぶ。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">サンプル</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">gaussian 0.4 0.5
+sobel_mag 0.5 0.5
+otsu 0.5 0.5</pre>
+<p>▸ <a style="color:#22d3bf" href="sample:gaussian%200.4%200.5%0Asobel_mag%200.5%200.5%0Aotsu%200.5%200.5">このパイプラインを読み込む</a>
+&nbsp;·&nbsp; <a style="color:#f5a524" href="run:gaussian%200.4%200.5%0Asobel_mag%200.5%200.5%0Aotsu%200.5%200.5">読み込んで実行</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">関連する op</h3>
+<p><a style="color:#22d3bf" href="op:median">median</a> ·
+<a style="color:#22d3bf" href="op:bilateral">bilateral</a> ·
+<a style="color:#22d3bf" href="op:mean_box">mean_box</a> ·
+<a style="color:#22d3bf" href="op:sobel_mag">sobel_mag</a></p>
+
+<p style="color:#8b91a0;font-size:11px">来歴: 分離型のガウス畳み込み(scipy.ndimage)。 docs/PROVENANCE.md を参照。</p>

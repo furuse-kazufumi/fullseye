@@ -9,7 +9,7 @@ gpu: あり(lbl_moments_region_2nd_rel_invar)
 examples: [gallery2d_features]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # moments_region_2nd_rel_invar — 2D `features` op
