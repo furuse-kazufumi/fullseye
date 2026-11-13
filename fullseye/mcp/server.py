@@ -173,7 +173,10 @@ TOOLS: dict[str, dict] = {
     "fullseye_op_cards": {
         "description": "Return short complete op cards within a token budget; cards are never cut mid-card.",
         "inputSchema": {"type": "object", "properties": {
-            "names": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"type": "string"}}},
+            "names": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"type": "string"}},
+            # ★2026-11-13: ハンドラは budget_tokens を読むのに schema に無く、上限を上げる手が無かった
+            "budget_tokens": {"type": "integer", "minimum": 1, "maximum": 20000, "default": 500,
+                              "description": "token budget for all cards; names that do not fit are listed in missing"}},
             "required": ["names"], "additionalProperties": False},
     },
     "fullseye_suggest_pipeline": {
@@ -2480,8 +2483,10 @@ def _profile_tool_names(profile: str) -> set[str]:
 # 2026-11-04(統合 GPU): 第 5 便の dry_run / assume_cuda で再び 1,500 を超えた(1,588)ので同じ扱いにする。
 # 2026-11-05(敵対的検証 D10): find_ops の lang を schema に足した分で 1,531 になったので lang も隠す。
 #   plan の want の空・空白はハンドラが ArgError(-32602)で断る(minLength は空白だけを止められず、予算も食う)。
+# 2026-11-13: op_cards の budget_tokens を schema に足した(ハンドラは読むのに渡せなかった)分も同じ扱い。
 MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check", "dry_run", "assume_cuda"),
-                                                   "fullseye_find_ops": ("lang",)}
+                                                   "fullseye_find_ops": ("lang",),
+                                                   "fullseye_op_cards": ("budget_tokens",)}
 
 
 def _advertised_schema(name: str, profile: str) -> dict:
@@ -3101,7 +3106,15 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             r = op_cards(a["names"], a.get("budget_tokens", 500))
         except ValueError as exc:
             raise ArgError(str(exc)) from exc
-        return tool_result(json.dumps(r, ensure_ascii=False, indent=2), r, max_structured_bytes=max_structured_bytes)
+        text = json.dumps(r, ensure_ascii=False, indent=2)
+        if r["missing"]:
+            # ★2026-11-13(報告 5): 落とした名前が structuredContent の奥にしか無かった。本文の先頭に 1 行で書く
+            def _why(m):
+                if m["reason"] == "budget_tokens":
+                    return "%s(budget_tokens=%d に収まらない。上げるか、名前を減らす)" % (m["name"], r["budget_tokens"])
+                return "%s(知らない op%s)" % (m["name"], ("。近い名前: " + ", ".join(m["near"])) if m.get("near") else "")
+            text = "落とした名前: " + " / ".join(_why(m) for m in r["missing"]) + "\n" + text
+        return tool_result(text, r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_validate_pipeline":
         # ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、
         #   pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。

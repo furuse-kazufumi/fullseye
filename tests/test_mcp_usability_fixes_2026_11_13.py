@@ -111,3 +111,25 @@ def test_alternatives_share_a_name_word_and_the_name_is_not_its_own_neighbour(ca
         S.call_tool("fullseye_apply", {"handle": h, "op": "lockin_phase"}, cat, store)
     assert "'lockin_phase'(registry 層に無い)" in str(err.value)
     assert "近い名前: ['lockin_phase'" not in str(err.value) and "op_run('lockin_phase'" in str(err.value)
+
+
+# --------------------------------------------------------------------------- 5: op_cards の missing と executable
+def test_op_cards_report_names_dropped_for_budget_and_mean_mcp_by_executable(cat, store):
+    """直す前: 上限で落とした名前はどこにも書かれず(missing は知らない名前だけ)、executable は
+    「Python の関数として呼べるか」で、true のカードの op を pipeline に渡すと not_executable_in_mcp で断られた。"""
+    from fullseye.opsearch import op_cards
+    small = op_cards(["gaussian", "otsu", "lens_file_read", "no_such_op_q"], 60)
+    names = [c["name"] for c in small["cards"]]
+    dropped = [m["name"] for m in small["missing"] if m["reason"] == "budget_tokens"]
+    assert small["truncated"] and dropped and set(names) | set(dropped) == {"gaussian", "otsu", "lens_file_read"}
+    assert [m["name"] for m in small["missing"] if m["reason"] == "unknown_op"] == ["no_such_op_q"]
+    assert small["omitted_for_budget"] == dropped
+    r = S.call_tool("fullseye_op_cards", {"names": ["gaussian", "otsu", "lens_file_read", "no_such_op_q"],
+                                          "budget_tokens": 60}, cat, store)
+    first = _text(r).splitlines()[0]
+    assert first.startswith("落とした名前: ") and "budget_tokens=60" in first and "no_such_op_q(知らない op" in first
+    cards = {c["name"]: c for c in op_cards(["illumination_design", "lens_file_read", "gaussian"], 20000)["cards"]}
+    assert len(cards) == 3
+    assert cards["illumination_design"]["executable"] is True and cards["gaussian"]["executable"] is True
+    assert cards["lens_file_read"]["executable"] is False and cards["lens_file_read"]["python_executable"] is True
+    assert cards["lens_file_read"]["mcp_unavailable"]["reason"] == "io_parameter"

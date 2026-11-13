@@ -664,7 +664,7 @@ MCP_UNAVAILABLE_REASONS = {
     "unsupported_value": "returns objects that cannot cross the MCP boundary (only numeric arrays and JSON trees do)",
     "input_count_differs_from_graph": "its ledger and the type graph disagree on the number of inputs",
     "example_chain_too_long": "a runnable example needs more than 12 stages including the stages that build its inputs",
-    "mcp_pipeline_failed": "its example did not pass through the fullseye_pipeline tool (handle shape or response limits)",
+    "mcp_pipeline_failed": "its example did not pass through the MCP pipeline tool (handle shape or response limits)",
     "not_in_ledger": "it is not in an op ledger, so MCP has no verified way to call it",
     "not_verified": "it has not passed the MCP execution check",
 }
@@ -1201,16 +1201,25 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
         physical = {}
     import difflib
     edges={e["op"]:e for e in _graph()["edges"]}
-    cards, missing = [], []
-    for name in names:
+    cards, missing, omitted = [], [], []
+    for n_name, name in enumerate(names):
         card = table.get(name)
         if card is None:
-            missing.append({"name":name,"near":difflib.get_close_matches(name,table,n=3,cutoff=.45)}); continue
+            missing.append({"name":name,"reason":"unknown_op",
+                            "near":[x for x in difflib.get_close_matches(name,table,n=4,cutoff=.45) if x != name][:3]})
+            continue
         card=dict(card); edge=edges.get(name,{})
+        # ★2026-11-13(報告 5): executable は「Python の関数として呼べるか」で、MCP で走るかと食い違っていた
+        #   (true のカードの op を pipeline に渡すと not_executable_in_mcp)。executable = MCP で走るか、
+        #   以前の意味は python_executable に残す。
         card.update({"inputs":edge.get("inputs",[]),"output":edge.get("output"),
-                     "executable":bool(edge.get("executable")),
+                     "executable":bool(edge.get("verified_executable")),
+                     "python_executable":bool(edge.get("executable")),
                      "executable_reason":edge.get("executable_reason"),
                      "parameters":edge.get("parameter_schema",[])})
+        if not edge.get("verified_executable"):
+            info = mcp_unavailable(name) or {}
+            card["mcp_unavailable"] = {k: info.get(k) for k in ("reason", "why")}
         if name in physical:
             card["named_physical_parameters"] = physical[name]
         executor=edge.get("executor")
@@ -1229,12 +1238,18 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
             card["tokens"] = cost
         prospective=math.ceil(len(json.dumps(cards+[card],ensure_ascii=False,separators=(",",":")))/4)
         if prospective > budget_tokens:
+            # 上限で落とした名前(この名前と、まだ見ていない残り)も missing に書く(黙って切り詰めない)
+            omitted = [x for x in names[n_name:] if x in table]
+            missing += [{"name": x, "reason": "budget_tokens", "card_tokens": card["tokens"] if x == name else None}
+                        for x in omitted]
+            missing += [{"name": x, "reason": "unknown_op", "near": [y for y in difflib.get_close_matches(
+                x, table, n=4, cutoff=.45) if y != x][:3]} for x in names[n_name:] if x not in table]
             break
         cards.append(card)
     actual_tokens=(math.ceil(len(json.dumps(cards,ensure_ascii=False,separators=(",",":")))/4)
                    if cards else 0)
     return {"cards": cards, "used_tokens": actual_tokens, "budget_tokens": budget_tokens,
-            "truncated": len(cards) + len(missing) < len(names), "missing": missing}
+            "truncated": bool(omitted), "omitted_for_budget": omitted, "missing": missing}
 
 
 def tuning_cards(query: str, op_names: list[str] | None = None, limit: int = 3) -> list[dict]:
