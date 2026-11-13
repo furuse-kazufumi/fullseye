@@ -924,3 +924,19 @@ def test_entrance_a_region_result_offers_its_table(launch):
     dlg = win._feat_dlg
     assert dlg is not None and dlg.isVisible()
     dlg.close(); _pump(0.1)
+
+
+def test_status_message_and_readout_never_overlap_after_a_run(launch):
+    from PySide6 import QtCore
+    win, model = launch(lang="ja", user=True)
+    bar, ro = win.statusBar(), win._readout
+    win._flash("probe message"); _pump(0.1)
+    assert bar.currentMessage() == "probe message" and not ro.isVisible()
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("otsu")); win._op_buttons["insert"].click(); _pump(0.2)
+    win._flash("probe message"); _pump(0.1)
+    win._actions["run_all"].trigger(); _pump(0.8)                       # 右の欄が変わり、バーが並べ直される
+    assert bar.currentMessage() and not ro.isVisible(), (bar.currentMessage(), ro.isVisible())
+    bar.clearMessage(); _pump(0.2)
+    assert ro.isVisible()                                              # 文が消えたら読み取りは戻る

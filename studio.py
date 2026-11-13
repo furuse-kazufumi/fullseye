@@ -15372,6 +15372,22 @@ def build_window(model=None):
             studio_display.pixel_readout(image, rng, y, x))
     win._readout = readout
 
+    def _rehide_readout():
+        if status.currentMessage() and readout.isVisible():
+            readout.hide()
+            # QStatusBar 自身と同じ印: 明示的に隠した事にしない(文が消えた時に QStatusBar が読み取りを出し直せる)
+            readout.setAttribute(QtCore.Qt.WA_WState_ExplicitShowHide, False)
+
+    class _ReadoutGuard(QtCore.QObject):
+        """一時的な文が出ている間に読み取りの欄が出たら隠し直す(2026-11-13、M5 の続き)。
+        QStatusBar は並べ直すたびに普通の欄を出し直すので、実行中に右の欄が変わると文と読み取りが重なって描かれた。"""
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.Show and status.currentMessage():
+                QtCore.QTimer.singleShot(0, _rehide_readout)
+            return False
+    _readout_guard = _ReadoutGuard(readout)
+    readout.installEventFilter(_readout_guard)
+
     def _display_settings_changed(*_):
         manual = range_manual.isChecked()
         range_lo.setEnabled(manual); range_hi.setEnabled(manual)
