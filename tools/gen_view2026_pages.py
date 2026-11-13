@@ -109,6 +109,7 @@ li, p, code { overflow-wrap: anywhere; }
 .vc > a picture { display: block; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 6px; background: #fff; }
 .vc > a picture img { height: 100%; aspect-ratio: auto; object-fit: contain; border-radius: 0; background: #fff; }
 .vc > a b { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.6); color: #fff; font-size: 12px; padding: 1px 6px; border-radius: 9px; }
+.vc > a .vtb { position: absolute; left: 6px; bottom: 6px; max-width: calc(100% - 12px); background: rgba(0,0,0,.66); color: #fff; font-size: 12px; font-style: normal; line-height: 1.4; padding: 1px 7px; border-radius: 9px; }
 .vt { flex: 1 1 auto; min-width: 0; }
 .vt .vh { font-size: 17px; font-weight: 600; line-height: 1.4; margin: 0 0 6px; }
 .vt p { margin: 0 0 6px; }
@@ -736,14 +737,22 @@ def _intro(d: dict, lang: str, up: str, ui: dict) -> list[str]:
             '<div class="vt"><p>%s</p>%s</div></div>' % (up, src, alt, w, h, _esc(ui["about"]), link), ""]
 
 
-def _card(d: dict, e: dict, lang: str, up: str, docs: str, media, body: str, label: str | None = None) -> str:
-    """展示 1 本 = 画像 + 題 + 本文 の 1 かたまり(PC は画像が左、スマホは画像が上)。題は 1 回だけ出す(画像の alt は題と同じ文)。"""
+def _card(d: dict, e: dict, lang: str, up: str, docs: str, media, body: str, label: str | None = None,
+          badge: str = "") -> str:
+    """展示 1 本 = 画像 + 題 + 本文 の 1 かたまり(PC は画像が左、スマホは画像が上)。題は 1 回だけ出す(画像の alt は題と同じ文)。
+    ``badge`` はタイル(画像)の左下に重ねる短い印(本ページでは真値の種類)。"""
     lab = label or e["label"][lang]
     url = media(e)
     mark = "<b>&#9654;</b>" if e["motion"] else ""
     img = _representative_img(d, e, lang, up, docs, 260, alt=lab)
     head = '<div class="vh"><a href="%s">%s</a>%s</div>' % (url, _esc(lab), _sa_small(e, lang))
-    return '<div class="vc"><a href="%s">%s%s</a><div class="vt">%s%s</div></div>' % (url, img, mark, head, body)
+    return '<div class="vc"><a href="%s">%s%s%s</a><div class="vt">%s%s</div></div>' % (url, img, mark, badge, head, body)
+
+
+def truth_badge(e: dict, lang: str) -> str:
+    """タイルに重ねる真値の印(2026-11-13、独立レビューの指摘: 合成の展示は、画像と題だけを見る人にも合成と分かるように)。
+    本文の「真値: …」と同じ文を、全部の展示に同じ形で出す(合成だけに付けると、印の無い展示が実データに見える)。"""
+    return '<i class="vtb">%s: %s</i>' % (MAIN_TEXT[lang]["truth"], _esc(e["truth"][lang]))
 
 
 def _main_cards(d: dict, rows: list[dict], lang: str, up: str, docs: str, media) -> list[str]:
@@ -754,7 +763,7 @@ def _main_cards(d: dict, rows: list[dict], lang: str, up: str, docs: str, media)
     for e in rows:
         body = '<p>%s</p><p class="vm">%s: %s · <a href="more.md#%s">%s</a></p>' % (
             _code_html(_esc(e["lead"][cl])), text["truth"], _esc(e["truth"][lang]), _anchor(e["id"]), text["detail"])
-        out += [_card(d, e, lang, up, docs, media, body, label=e["label"][cl]), ""]
+        out += [_card(d, e, lang, up, docs, media, body, label=e["label"][cl], badge=truth_badge(e, lang)), ""]
     return out
 
 
@@ -822,7 +831,10 @@ def _item_lines(d: dict, e: dict, lang: str, ui: dict, media, glossary_ledger: d
 def _list_by_category(d: dict, rows: list[dict], lang: str, ui: dict, media) -> list[str]:
     """「何が見えるか・測った数字」。分類ごとに並べる。"""
     glossary_ledger, glossary = _glossary_inputs()
-    out = ["## " + ui["h_list"], "", ui["list_intro"], "", '<div class="vl" markdown="1">', ""]
+    out = ["## " + ui["h_list"], "", ui["list_intro"], ""]
+    if lang not in CONTENT_LANGS:
+        out += [ui["poc_caption_lang_note"], ""]     # 訳の無い展示は英語のまま出る(訳は ja/en だけ)
+    out += ['<div class="vl" markdown="1">', ""]
     for cat in d["categories"]:
         part = [e for e in rows if e["category"] == cat["id"]]
         if not part:
@@ -980,7 +992,7 @@ def build(d: dict, lang: str) -> str:
             continue
         out += ["## " + MAIN_TEXT[lang][tier], ""]
         if lang not in CONTENT_LANGS:
-            out += [ui["poc_caption_lang_note"], ""]
+            out += [ui["featured_en_note"], ""]      # この節の題と説明は英語(訳は ja/en だけ。2026-11-13)
         out += _main_cards(d, rows, lang, up, docs, media)
     out += _series_block(d, lang, up, ui)
     out += _share_alike_block(d, lang, main_rows)
@@ -1016,10 +1028,15 @@ def build_more(d: dict, lang: str) -> str:
     out += _viewer_lines([it for it in vw["items"] if it["id"] not in on_main], lang, up)
     out.append("")
     glossary_ledger, glossary = _glossary_inputs()
-    out += ["## " + text["detail_h"], "", '<div class="vl" markdown="1">', ""]
+    out += ["## " + text["detail_h"], ""]
+    if lang not in CONTENT_LANGS:
+        out += [ui["featured_en_note"], ""]          # 本ページと同じく、この節の題と説明は英語(2026-11-13)
+    out += ['<div class="vl" markdown="1">', ""]
+    cl = _content_lang(lang)
     for e in d["exhibits"]:
         if e["id"] in main_ids:
-            out += _item_lines(d, e, lang, ui, media, glossary_ledger, glossary, anchor=True)
+            shown = dict(e, **{f: {lang: e[f][cl]} for f in ("label", "lead", "see", "num")})
+            out += _item_lines(d, shown, lang, ui, media, glossary_ledger, glossary, anchor=True)
     out += ["", "</div>", ""]
     out += _caps_block(d, lang, docs, ui)
     out += _all_block(d, lang, up, docs, ui, media, rows_all)

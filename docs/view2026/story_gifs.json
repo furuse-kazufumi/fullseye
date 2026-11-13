@@ -31973,7 +31973,7 @@
       "still": "articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png",
       "alt": {
         "ja": "カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。",
-        "en": "On one public sequence of desk depth images, frame-to-frame alignment was checked against motion-capture truth. Error fell to 0.42 times even on the worst split, but whether it beats a steady-speed guess hinges on how frames are split. Small-window plane residuals grew with distance, and no square law was confirmed."
+        "en": "On one public desk depth sequence, frame-to-frame alignment was checked against motion-capture truth. Error fell below no alignment, but the gain over a steady-speed guess hinged on outlier trimming and on which of 8 splits was used. Plane residuals in small windows grew with distance, but no square law was confirmed."
       }
     },
     "poc_light_section_step_weld_floor": {
@@ -34293,7 +34293,7 @@
       "still": "articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png",
       "alt": {
         "ja": "コンクリートのひび割れ(試験画像、塗り = 検出)。欠陥の画像は NG なら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも寄せていない)。検出は表示のため 2 画素太らせた。出典表示: Özgenel, Ç. F. (2019). Concrete Crack Images for Classification. Mendeley Data, v2. doi:10.17632/5y9wdsg2zt.2. CC BY 4.0; converted to gray",
-        "en": "We gave a local LLM a task in natural language and let it assemble an inspection recipe through MCP alone. Scored per image on 400 public crack images against the labels from their source, it produced a sorting recipe in only a few runs. It never managed the candle task and stayed below the existing recipes."
+        "en": "A local LLM got a task in natural language and assembled inspection recipes through MCP alone. Scored per image on 400 public crack images with their source labels, very few of its runs sorted them, and none managed the candle stains. Cloud LLM runs had unmatched conditions, and none reached the existing recipes."
       }
     },
     "poc_equipment_selection_map": {

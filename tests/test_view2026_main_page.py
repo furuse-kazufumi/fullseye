@@ -54,9 +54,50 @@ def test_every_main_exhibit_has_lead_truth_and_a_details_link_that_exists() -> N
             at = more.index('id="%s"' % G._anchor(e["id"]))
             nxt = more.find("\n- [", at + 10)
             detail = more[at:nxt if nxt >= 0 else None]
-            assert G._code_md(e["see"][lang]) in detail, (lang, e["id"])
+            assert G._code_md(e["see"][G._content_lang(lang)]) in detail, (lang, e["id"])   # 本ページと同じ言語(ja/en 以外は英語)
             if lang in ("ja", "en"):            # 使った op の行は ja/en だけ(ほかの言語は見る所と数字まで)
                 assert all(("`%s`" % op) in detail for op in e["ops"]), (lang, e["id"])
+
+
+def test_every_main_tile_carries_the_truth_badge() -> None:
+    """タイル(画像)の左下に真値の種類の印がある(2026-11-13、独立レビュー: 合成の展示は画像と題だけを見る人にも分かるように)。
+    合成の展示だけでなく全部に付く(印の無い展示が実データに見えないように)。"""
+    data = G.load()
+    rows = _main_rows(data)
+    assert len(rows) >= 10, len(rows)
+    synthetic = [e for e in rows if e["truth"]["ja"] == "自作合成"]
+    assert len(synthetic) >= 5, len(synthetic)
+    assert len(data["langs"]) >= 8, data["langs"]
+    for lang in data["langs"]:
+        main = G.build(data, lang)
+        text = G.MAIN_TEXT[lang]
+        for e in rows:
+            block = next(line for line in main.splitlines()
+                         if line.startswith('<div class="vc">') and 'more.md#%s"' % G._anchor(e["id"]) in line)
+            tile = block.split('<div class="vt">')[0]           # 画像のリンクの中だけ
+            badge = '<i class="vtb">%s: %s</i>' % (text["truth"], G._esc(e["truth"][lang]))
+            assert tile.count(badge) == 1, (lang, e["id"])
+        assert ".vc > a .vtb {" in main, lang
+
+
+def test_other_languages_say_that_the_exhibit_texts_are_in_english() -> None:
+    """ja/en 以外の言語では、目玉の題と説明を英語で出し、その節の頭に断り書きを置く(本ページとおまけページの詳細の節)。"""
+    data = G.load()
+    rows = _main_rows(data)
+    assert len(rows) >= 10, len(rows)
+    assert [l for l in data["langs"] if l not in G.CONTENT_LANGS], "ja/en 以外の言語が無い(この試験が空振りする)"
+    for lang in data["langs"]:
+        main, more = G.build(data, lang), G.build_more(data, lang)
+        note = data["ui"]["featured_en_note"][lang]
+        detail = more.split("## " + G.MAIN_TEXT[lang]["detail_h"])[1].split("\n## ")[0]
+        if lang in G.CONTENT_LANGS:
+            assert note not in main and note not in more, lang
+            continue
+        assert main.count(note) == len({e["tier"] for e in rows}), lang          # 目玉・準目玉の節ごとに 1 回
+        assert detail.lstrip().startswith(note), lang
+        for e in rows:
+            assert "- [%s](" % e["label"]["en"] in detail, (lang, e["id"])
+            assert G._code_md(e["lead"]["en"]) in detail, (lang, e["id"])
 
 
 def test_viewers_on_the_main_page_are_few_and_the_rest_are_on_the_extras_page() -> None:
