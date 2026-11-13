@@ -70,6 +70,8 @@ def event_keys(ev) -> list:
 
     Shift で変わる記号は元のキーに Shift を付けた形(``Shift+Alt+.``)を先に、Qt の届けた形
     (``Shift+Alt+>``)、Shift を除いた形(配列で Shift が要る ``Ctrl++``)も返す。テンキーの Enter は Return も。
+    Shift を除いた形は **Shift で変わる記号が届いた時だけ**(2026-11-13 レビュー F4: F キーや ``/`` にも付けていたので、
+    ``F2`` に変えたキーが ``Shift+F2`` も奪い、既定の表でも ``Ctrl+Shift+/`` が行をコメントにしていた)。
     """
     key, raw = int(ev.key()), ev.modifiers()
     if key in _PURE:
@@ -95,7 +97,7 @@ def event_keys(ev) -> list:
     if shifted and key in _UNSHIFT:
         add(_UNSHIFT[key], mods)
     add(key, mods)
-    if shifted:
+    if shifted and key in _UNSHIFT:
         plain = _K.NoModifier
         for flag in (_K.ControlModifier, _K.AltModifier, _K.MetaModifier):
             if mods & flag:
@@ -131,11 +133,20 @@ class _ProgramKeys(QtCore.QObject):
         super().__init__(editor)
         self.editor = editor
         self.current: dict = {}
+        self.bound: set = set()                                # 今キーが 1 つ以上ある操作
         self.managed = {c.ide for c in km.COMMANDS if c.ide and not c.fixed}
+        self.defaults: dict = {}                               # 操作 → 型の既定のキー(どの型でも)
+        for c in km.COMMANDS:
+            if c.ide and not c.fixed:
+                keys = set(self.defaults.get(c.ide, ())) | set(c.keys)
+                for over in km.PRESETS.values():
+                    keys |= set(over.get(c.id, ()))
+                self.defaults[c.ide] = keys
         editor.installEventFilter(self)
 
     def set_table(self, keymap: km.Keymap) -> None:
         self.current = {k: c.ide for c in km.COMMANDS if c.ide and not c.fixed for k in keymap.keys(c.id)}
+        self.bound = set(self.current.values())
 
     def _editops_takes(self, ev) -> bool:
         ops = eq.get(self.editor)
@@ -146,7 +157,8 @@ class _ProgramKeys(QtCore.QObject):
         if obj is not self.editor or t not in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress):
             return False
         try:
-            for k in event_keys(ev):
+            keys = event_keys(ev)
+            for k in keys:
                 name = self.current.get(k)
                 if name:
                     if t == QtCore.QEvent.ShortcutOverride:
@@ -159,7 +171,8 @@ class _ProgramKeys(QtCore.QObject):
                     return True
             ide = getattr(obj, "_ide_action", None)
             hard = ide(ev) if ide is not None else None
-            if hard in self.managed:
+            if hard in self.managed and (hard not in self.bound
+                                         or any(k in self.defaults.get(hard, ()) for k in keys)):
                 if self._editops_takes(ev):
                     return False                               # 矩形選択の部品のキーになった: そちらへ
                 return True                                    # 外した既定のキー: 欄に通さない(窓のキーが撃たれる)

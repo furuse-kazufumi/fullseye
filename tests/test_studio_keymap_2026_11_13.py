@@ -1271,3 +1271,68 @@ def test_resetting_one_command_never_makes_a_conflict(win, ctl):
     assert "Export" in dlg.status.text() and ctl.keymap.keys("open_image") == ()
     assert ctl.assign("export", ()) == []
     assert [p for p in ctl.reset("open_image") if p.level == "error"] == [] and ctl.keymap.keys("open_image") == ("Ctrl+O",)
+
+
+# --------------------------------------------------------------------------- #
+# 2026-11-13 独立レビュー 1 回目の直し(C3: Program 欄のフィルタが Shift を外した形で当てない)
+# --------------------------------------------------------------------------- #
+def _key_event(key, mods):
+    from PySide6 import QtCore, QtGui  # noqa: PLC0415
+    return QtGui.QKeyEvent(QtCore.QEvent.KeyPress, key, mods)
+
+
+def test_event_keys_drop_shift_only_for_symbols_that_need_shift(app):
+    import studio_keymap_qt as kq  # noqa: PLC0415
+    from PySide6 import QtCore  # noqa: PLC0415
+    K = QtCore.Qt
+    assert kq.event_keys(_key_event(K.Key_F2, K.ShiftModifier)) == ["Shift+F2"]
+    assert kq.event_keys(_key_event(K.Key_Down, K.ShiftModifier | K.ControlModifier)) == ["Ctrl+Shift+Down"]
+    assert kq.event_keys(_key_event(K.Key_1, K.ShiftModifier | K.ControlModifier)) == ["Ctrl+Shift+1"]
+    assert kq.event_keys(_key_event(K.Key_Slash, K.ShiftModifier | K.ControlModifier)) == ["Ctrl+Shift+/"]
+    plus = kq.event_keys(_key_event(K.Key_Plus, K.ShiftModifier | K.ControlModifier))
+    assert plus[0] == "Ctrl+Shift+=" and "Ctrl++" in plus                     # 配列で Shift が要る記号: Ctrl++ も
+    assert kq.event_keys(_key_event(K.Key_Greater, K.ShiftModifier | K.AltModifier))[0] == "Shift+Alt+."
+
+
+def test_shift_with_a_changed_program_key_still_reaches_the_window(win, ctl, monkeypatch):
+    _QtCore, _QtGui, QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    K = QtCore.Qt
+    monkeypatch.setattr(QtWidgets.QMessageBox, "information", staticmethod(lambda *a, **k: QtWidgets.QMessageBox.Ok))
+    bar = win._program["find"]["bar"]
+    hits = []
+
+    def spy(*_a):
+        hits.append(1)
+    guide = win._actions["quick_guide"]
+    guide.triggered.connect(spy)
+    try:
+        assert ctl.assign("program_find_next", ("F2",)) == []
+        _activate(win)
+        ed = _program(win, "blur (0.5, 0.5)")
+        QTest.keyClick(ed, K.Key_F2, K.ShiftModifier)
+        _pump(0.05)
+        assert hits == [1] and not bar.isVisible()                          # 窓の Shift+F2(Quick guide)が撃たれる
+        QTest.keyClick(ed, K.Key_F2)
+        assert bar.isVisible()                                              # F2 は欄の「次を探す」
+    finally:
+        guide.triggered.disconnect(spy)
+        bar.close_bar()
+
+
+def test_the_default_keys_of_the_program_editor_do_not_change(win, ctl):
+    _QtCore, _QtGui, _QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    K = QtCore.Qt
+    _activate(win)
+    ed = _program(win, "x = 1")
+    QTest.keyClick(ed, K.Key_Slash, K.ControlModifier | K.ShiftModifier)
+    assert ed.toPlainText() == "x = 1"                                        # Ctrl+Shift+/ はコメントにしない(前と同じ)
+    QTest.keyClick(ed, K.Key_Slash, K.ControlModifier)
+    assert ed.toPlainText() != "x = 1"                                        # Ctrl+/ はコメント
+    ed.undo()
+    size = ed.font().pointSize()
+    QTest.keyClick(ed, K.Key_Equal, K.ControlModifier | K.ShiftModifier)      # Ctrl+Shift+= も文字を大きく(前と同じ)
+    assert ed.font().pointSize() > size
+    QTest.keyClick(ed, K.Key_Minus, K.ControlModifier)
+    assert ed.font().pointSize() == size
