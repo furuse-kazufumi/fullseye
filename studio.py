@@ -8061,6 +8061,16 @@ def build_window(model=None):
     _vline.setStyleSheet("color:%s;" % LINE); itop.addWidget(_vline); itop.addSpacing(8)
     for w_ in (b_zin, b_zout, b_fit, b_11):
         itop.addWidget(w_)
+    # 気づける入口(2026-11-13、初回起動の点検): 結果が領域の時だけ「表で見る(N 個)」。特徴量の検査(領域ごとの面積・
+    # 重心・円形度の表、行を押すと絵で光る、CSV)はツールのメニューの奥にあって、自力では気づけなかった。
+    b_regions = QtWidgets.QToolButton(); b_regions.setObjectName("see_regions_table")
+    b_regions.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+    b_regions.setToolTip("Feature inspection: area, centre, circularity … of every region in a table; "
+                         "a row lights its region up in the image (Ctrl+F5)")
+    b_regions.setCursor(QtCore.Qt.PointingHandCursor); b_regions.setVisible(False)
+    b_regions.clicked.connect(lambda _=False: act_featins.trigger())
+    win._b_regions = b_regions
+    itop.addSpacing(12); itop.addWidget(b_regions)
     itop.addStretch(1)
     ilay.addLayout(itop); ilay.addWidget(view, 1)
     ilay.setContentsMargins(4, 4, 4, 4); ilay.setSpacing(4)
@@ -10053,6 +10063,21 @@ def build_window(model=None):
 
     ab_restore.clicked.connect(restore_a); ab_adopt.clicked.connect(adopt_b); ab_keep.clicked.connect(keep_both)
 
+    def _update_region_table_button():
+        """結果が 2-D の領域(0 / 1)なら「表で見る(N 個)」を出す。N は特徴量の検査と同じ数え方(8 連結、0.5 より上)。"""
+        raw = state.get("raw")
+        n = 0
+        try:
+            if isinstance(raw, np.ndarray) and raw.ndim == 2 and raw.size and _cheap_is_binary(raw):
+                from scipy import ndimage as _ndi
+                n = int(_ndi.label(np.asarray(raw) > 0.5, structure=np.ones((3, 3), bool))[1])
+        except Exception as exc:                            # noqa: BLE001 -- 入口の数え間違いで表示を止めない
+            _log_soft_failure("could not count the regions of the result", exc)
+            n = 0
+        if n > 0:
+            b_regions.setText(tr("See as a table (%d)") % n)
+        b_regions.setVisible(n > 0)
+
     def _readout_follow_input():
         """L8: 入力の画像を読み替えたら、前の画像の読み取りを消して案内に戻す(古い値が残っていた)。"""
         img = model.image
@@ -10072,6 +10097,7 @@ def build_window(model=None):
         try:
             _readout_follow_input()
             _render()
+            _update_region_table_button()
             _update_attribution()
             if refresh_rows and state.get("shown_live") and not run_ctl.running:
                 # 画像は今この瞬間に計算した結果。段の欄(キャッシュだけを読む)も追いつかせる
@@ -15786,6 +15812,7 @@ def build_window(model=None):
             cat.setItemText(0, tr("all categories"))
             _fs_examples.setText(_fs_examples_text())        # 帯の「作例(492)」(数つきの文は表の行で引けない)
             _fs_fit_links()                                  # 文の長さが言語で変わる
+            _update_region_table_button()                    # 「表で見る(N 個)」(数つきの文)
             refill_ops()                                     # 行の「段としては入れられません」と注記(S2)
             on_op_selected(op_list.currentItem())
             win._knob_spec_op = None                         # つまみの名前を言語で作り直す(spec は同じ)

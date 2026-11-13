@@ -904,3 +904,23 @@ def test_entrances_never_cut_the_first_steps(launch, lang, size):
     if col.isVisibleTo(band):
         for lbl in steps:
             assert lbl.width() >= lbl.sizeHint().width(), (lang, size, lbl.text(), lbl.width(), lbl.sizeHint().width())
+
+
+def test_entrance_a_region_result_offers_its_table(launch):
+    from PySide6 import QtCore
+    from scipy import ndimage
+    win, model = launch(lang="ja", user=True)
+    b = win._b_regions
+    assert not b.isVisibleTo(win)                                      # 濃淡の画像の時は出さない
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("otsu")); win._op_buttons["insert"].click(); _pump(0.2)
+    win._actions["run_all"].trigger(); _pump(0.8)
+    out = np.asarray(model.result_upto(0)) > 0.5
+    n = ndimage.label(out, structure=np.ones((3, 3), bool))[1]
+    assert n > 10
+    assert b.isVisibleTo(win) and b.text() == "表で見る(%d 個)" % n, b.text()
+    b.click(); _pump(0.6)
+    dlg = win._feat_dlg
+    assert dlg is not None and dlg.isVisible()
+    dlg.close(); _pump(0.1)

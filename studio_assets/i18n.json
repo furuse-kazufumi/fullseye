@@ -2506,6 +2506,8 @@
   "Examples": {"ja": "作例"},
   "Browse the 2-D worked examples: read the code, run it in place, copy it": {"ja": "2-D の作例の一覧: コードを読み、その場で走らせ、写せます"},
   "You can drop files here": {"ja": "ファイルを落とせます"},
-  "Images, a folder, 3-D, video, audio, .py and .json open by drag and drop — see the list": {"ja": "画像・フォルダ・3-D・動画・音声・.py・.json はドラッグ&ドロップで開けます(一覧を見る)"}
+  "Images, a folder, 3-D, video, audio, .py and .json open by drag and drop — see the list": {"ja": "画像・フォルダ・3-D・動画・音声・.py・.json はドラッグ&ドロップで開けます(一覧を見る)"},
+  "See as a table (%d)": {"ja": "表で見る(%d 個)"},
+  "Feature inspection: area, centre, circularity … of every region in a table; a row lights its region up in the image (Ctrl+F5)": {"ja": "特徴量の検査: 領域ごとの面積・重心・円形度 … を表に。行を押すと、その領域が絵の上で光ります(Ctrl+F5)"}
  }
 }
