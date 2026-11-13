@@ -3627,10 +3627,76 @@ def op_arg_roles(name):
     return _ARG_ROLES.get(name, ("", ""))
 
 
-def op_impl_source(name):
+_KNOB_DEAD = {}
+
+
+def knob_dead_measured(name):
+    """``docs/ops/_fig/figures.json`` の実測で、0.1 / 0.5 / 0.9 と振っても出力が同じだったつまみ(``{"a", "b"}`` の部分集合)。
+
+    図を作った 1 枚の入力での実測なので、ほかの入力では効く事がある(2026-11-13 に 2 つの入力で確かめ直すと 769 件中
+    11 件が動いた)。だから**無効にする根拠には使わず**、文の言い方にだけ使う。docs の無い環境では空。"""
+    if "_all" not in _KNOB_DEAD:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs", "ops", "_fig", "figures.json")
+        try:
+            with open(path, encoding="utf-8") as f:
+                ops_ = json.load(f).get("ops", {})
+            _KNOB_DEAD["_all"] = {n: frozenset(m.get("knob_dead") or ()) for n, m in ops_.items()
+                                  if isinstance(m, dict) and m.get("status") == "ok"}
+        except (OSError, ValueError, AttributeError):
+            _KNOB_DEAD["_all"] = {}
+    return _KNOB_DEAD["_all"].get(name, frozenset())
+
+
+def knob_use(name, letter):
+    """``(state, why)``: does op *name* read knob *letter*?
+
+    * ``("unused", "table")`` / ``("unused", "spec")`` — the curated role table says ``""`` or the knob spec says
+      unused. Both are checked against the implementation by a test (test_knobs_shown_as_unused_really_do_nothing),
+      so only these grey the knob out.
+    * ``("used", ...)`` — a curated role or a spec label names what it does.
+    * ``("unknown", "measured")`` — nothing names it, and the figure run measured no change (wording only).
+    * ``("unknown", "")`` — nothing tells. ★2026-11-13(初回起動の点検 M3): 以前はこの場合も「(未使用)」と書いていた
+      (xkor_bilateral・sk_rolling_ball は a を使うのに「未使用」)。"""
+    if name in _ARG_ROLES:
+        role = _ARG_ROLES[name][0 if letter == "a" else 1]
+        return ("used", "table") if role else ("unused", "table")
+    try:
+        spec = param_specs.spec_for(name)[letter]
+    except Exception:                                   # noqa: BLE001 -- 分からないなら「分からない」
+        spec = {}
+    if spec.get("kind") == "unused":
+        return "unused", "spec"
+    if spec.get("label"):
+        return "used", "spec"
+    if letter in knob_dead_measured(name):
+        return "unknown", "measured"
+    return "unknown", ""
+
+
+def knob_role_text(name, letter, role=None):
+    """「つまみ a — …」の …(UI の言語): 役割 / (未使用) / 実測の事実 / 実装を参照。"""
+    if role:
+        return tr(role)
+    use, why = knob_use(name, letter)
+    if use == "unused":
+        return tr("(unused)")
+    lab = ""
+    try:
+        lab = param_specs.spec_for(name)[letter].get("label") or ""
+    except Exception:                                   # noqa: BLE001
+        pass
+    if lab:
+        return tr(lab)
+    if why == "measured":
+        return tr("the output did not change at 0.1 / 0.5 / 0.9 on the sample input (measured)")
+    return tr("see impl")
+
+
+def op_impl_source(name, limit=220):
     """The operative expression of an op's implementation (honest, universal answer
     to 'what do a and b do'): e.g. gaussian -> 'gaussian_filter(v, sigma=0.3 + 2.7 * a)'.
-    Empty string if the source is unavailable (C-extension, lambda without source)."""
+    Empty string if the source is unavailable (C-extension, lambda without source).
+    ``limit`` cuts the text (None = the whole expression, for the opened "Show the implementation")."""
     op = api.find_op(name)
     if op is None:
         return ""
@@ -3639,10 +3705,11 @@ def op_impl_source(name):
     except (OSError, TypeError):
         return ""
     body = src.split("return ", 1)
-    return (body[1] if len(body) == 2 else src)[:220]
+    text = body[1] if len(body) == 2 else src
+    return text[:limit] if limit else text
 
 
-def op_signature_detail(row) -> str:
+def op_signature_detail(row, impl_limit=220) -> str:
     """Rich multi-line signature for the operator panel: the sort/category/HALCON
     line, each knob's role, and the implementation expression. Answers the user's
     'the arguments can't be judged' by showing exactly what a and b control."""
@@ -3656,9 +3723,9 @@ def op_signature_detail(row) -> str:
                    row.get("provenance") or "(none)", row["name"]))
     lines = [op_detail(row)]
     a_role, b_role = op_arg_roles(row["name"])
-    lines.append(tr("knob a — %s") % (tr(a_role) if a_role else tr("(unused)") if a_role == "" else tr("see impl")))
-    lines.append(tr("knob b — %s") % (tr(b_role) if b_role else tr("(unused)") if b_role == "" else tr("see impl")))
-    src = op_impl_source(row["name"])
+    lines.append(tr("knob a — %s") % knob_role_text(row["name"], "a", a_role))     # M3: 表に無い op を「未使用」と言わない
+    lines.append(tr("knob b — %s") % knob_role_text(row["name"], "b", b_role))
+    src = op_impl_source(row["name"], impl_limit)
     if src:
         lines.append(tr("impl: %s") % src)
     return "\n".join(lines)
@@ -4569,13 +4636,14 @@ def _knob_row_class(QtWidgets, QtCore):
             self.label.setText(_spec_head(sp, self.letter))
 
         def set_enabled(self, on):
-            """Enable/disable the editing widgets; an 'unused' knob keeps only the raw
-            spin live (honest: the op never reads it, but the value is still stored)."""
+            """Enable/disable the editing widgets. An 'unused' knob is greyed out entirely, the raw 0..1 box
+            included (★2026-11-13 M3: the raw box stayed live, so otsu's knobs could be "moved" for nothing);
+            the stored value is still shown."""
             unused = self.spec.get("kind") == "unused"
             if self.slider:
                 self.slider.setEnabled(bool(on) and not unused)
             self.typed.setEnabled(bool(on) and not unused)
-            self.raw.setEnabled(bool(on))
+            self.raw.setEnabled(bool(on) and not unused)
 
         # ---- value mapping ---------------------------------------------------- #
         def _float_steps(self):
@@ -4646,8 +4714,21 @@ def _knob_row_class(QtWidgets, QtCore):
             if self.changed is not None:
                 self.changed(knob, source)
 
+        def short_knob(self, knob):
+            """L6: the shortest decimal (2..6 places) of *knob* that lands on the same slider position and the
+            same shown value, so the code reads ``bilateral (0.847, 0.5)`` instead of
+            ``(0.8466666666666667, 0.5)`` and reads back to exactly the stored knob (repr round-trips)."""
+            k = min(1.0, max(0.0, float(knob)))
+            pos = self.knob_to_pos(k)
+            shown = PS.format_display(self.spec, k)
+            for places in range(2, 7):
+                q = round(k, places)
+                if 0.0 <= q <= 1.0 and self.knob_to_pos(q) == pos and PS.format_display(self.spec, q) == shown:
+                    return q
+            return k
+
         def _from_slider(self, pos):
-            self._emit(self.pos_to_knob(pos), "slider")
+            self._emit(self.short_knob(self.pos_to_knob(pos)), "slider")
 
         def _from_raw(self, v):
             self._emit(float(v), "raw")
@@ -4659,7 +4740,7 @@ def _knob_row_class(QtWidgets, QtCore):
                 v = self.combo.currentIndex()
             elif kind == "bool":
                 v = self.check.isChecked()
-            self._emit(PS.display_to_knob(sp, v), "typed")
+            self._emit(PS.display_to_knob(sp, v), "typed")         # 打った値はそのまま(L6 の短縮はスライダだけ)
 
         def typed_value(self):
             """The current DISPLAYED value (what the typed widget shows)."""
@@ -7805,8 +7886,15 @@ def build_window(model=None):
     krow_a.set_enabled(False); krow_b.set_enabled(False)
     _ra = QtWidgets.QHBoxLayout(); _ra.addWidget(sa, 1); _ra.addWidget(krow_a.typed); _ra.addWidget(spin_a)
     _rb = QtWidgets.QHBoxLayout(); _rb.addWidget(sb, 1); _rb.addWidget(krow_b.typed); _rb.addWidget(spin_b)
+    # M4(2026-11-13): 実装の式は既定で畳む(途中で切れた式が先頭に出ていた)。押すと全文。
+    impl_toggle = QtWidgets.QToolButton(); impl_toggle.setCheckable(True)
+    impl_toggle.setText("Show the implementation")
+    impl_toggle.setToolTip("Show the line of the selected stage's implementation that uses a and b")
+    impl_toggle.setVisible(False)
+    win._impl_toggle = impl_toggle
     klay = QtWidgets.QVBoxLayout()
-    klay.addWidget(stage_detail); klay.addWidget(la); klay.addLayout(_ra)
+    klay.addWidget(stage_detail); klay.addWidget(impl_toggle, 0, QtCore.Qt.AlignLeft)
+    klay.addWidget(la); klay.addLayout(_ra)
     klay.addWidget(lb); klay.addLayout(_rb)
     # ---- Studio slice 3 A: "try nearby values" strip (collapsed by default; computes only when open) ---- #
     strip_toggle = QtWidgets.QToolButton()
@@ -9916,12 +10004,34 @@ def build_window(model=None):
                 la.setText("%s  ·  %s" % (la.text(), a_role))
             if b_role and param_specs.is_generic(specs["b"]) and specs["b"].get("kind") != "unused":
                 lb.setText("%s  ·  %s" % (lb.text(), b_role))
-            stage_detail.setText(op_signature_detail(row) if row else name)
+            stage_detail.setText(_stage_detail_text(row) if row else name)
             stage_detail_fit.refresh()
         else:
             stage_detail.setText(tr("select a stage to tune its knobs"))
+        impl_toggle.setVisible(bool(valid and row and op_impl_source(name)))
         krow_a.set_enabled(valid); krow_b.set_enabled(valid)
+        if valid:
+            # M3: 表か spec が未使用と言うつまみは、値の欄も含めて動かせない(役割の表に無い op は止めない)
+            for krow, lab, letter in ((krow_a, la, "a"), (krow_b, lb, "b")):
+                if knob_use(name, letter)[0] == "unused":
+                    krow.set_enabled(False)
+                    if krow.spec.get("kind") != "unused":
+                        lab.setText("%s  ·  %s" % (lab.text(), tr("unused by this op")))
         update_actions()
+
+    def _stage_detail_text(row):
+        """M4: 選んだ段の説明。実装の式は「Show the implementation」を押した時だけ(全文)。"""
+        if impl_toggle.isChecked():
+            return op_signature_detail(row, impl_limit=None)
+        return op_panel_signature(row)
+
+    def _refresh_stage_detail(_on=None):
+        i = selected_index()
+        if 0 <= i < len(model.stages):
+            row = _op_row(model.stages[i][0])
+            if row:
+                stage_detail.setText(_stage_detail_text(row)); stage_detail_fit.refresh()
+    impl_toggle.toggled.connect(_refresh_stage_detail)
 
     def on_stage_selected():
         _ops_follow_upstream()
@@ -12309,14 +12419,13 @@ def build_window(model=None):
         lbl_b.setText(_knob_label("b", b_role, curated, specs["b"]))
         # only disable a knob we KNOW is unused (curated "" or a source-verified spec);
         # never for an un-curated op
-        a_unused = (curated and a_role == "") or specs["a"].get("kind") == "unused"
-        b_unused = (curated and b_role == "") or specs["b"].get("kind") == "unused"
+        # M3: 表か spec が未使用と言う時だけ止める(役割の表に無い op を「未使用」と言わない)
+        a_unused = knob_use(name, "a")[0] == "unused"
+        b_unused = knob_use(name, "b")[0] == "unused"
         op_a_spin.setEnabled(not a_unused); op_row_a.typed.setEnabled(not a_unused)
         op_b_spin.setEnabled(not b_unused); op_row_b.typed.setEnabled(not b_unused)
-        lbl_a.setToolTip(a_role or specs["a"].get("doc")
-                         or ("(unused by %s)" % name if a_unused else "argument a"))
-        lbl_b.setToolTip(b_role or specs["b"].get("doc")
-                         or ("(unused by %s)" % name if b_unused else "argument b"))
+        lbl_a.setToolTip(tr(a_role) if a_role else specs["a"].get("doc") or knob_role_text(name, "a", a_role))
+        lbl_b.setToolTip(tr(b_role) if b_role else specs["b"].get("doc") or knob_role_text(name, "b", b_role))
         b_insert.setEnabled(True); b_help.setEnabled(True); b_run_once.setEnabled(True)
     op_list.currentItemChanged.connect(on_op_selected)
     def _toggle_search_group(item):

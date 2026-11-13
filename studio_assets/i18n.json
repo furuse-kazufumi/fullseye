@@ -2487,6 +2487,9 @@
   "Zoom the image out": {"ja": "画像を縮小する"},
   "current result: shape · dtype · value range": {"ja": "今の結果: 形・データ型・値の範囲"},
   "image view": {"ja": "画像の表示"},
-  "pixel read-out": {"ja": "画素の読み取り"}
+  "pixel read-out": {"ja": "画素の読み取り"},
+  "Show the implementation": {"ja": "実装を見る"},
+  "Show the line of the selected stage's implementation that uses a and b": {"ja": "選んだ段の実装のうち、a と b を使う行を見せます"},
+  "the output did not change at 0.1 / 0.5 / 0.9 on the sample input (measured)": {"ja": "見本の入力では 0.1 / 0.5 / 0.9 で出力が変わらなかった(実測)"}
  }
 }

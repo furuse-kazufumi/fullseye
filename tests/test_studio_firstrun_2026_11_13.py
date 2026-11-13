@@ -468,17 +468,23 @@ def test_m10_quit_asks_with_three_choices_in_the_ui_language(launch, monkeypatch
     win, model = launch(lang="ja")
     _dirty_pipeline(win, model)
     assert win.windowTitle().startswith("untitled*")
+    # 本物の窓を出す(ほかの試験のモジュールが CONFIRM_HOOK を差し替えたままの事がある)
+    monkeypatch.setattr(studio, "CONFIRM_HOOK", studio._default_confirm)
+    monkeypatch.setattr(studio, "CLOSE_CONFIRM_HOOK", studio._default_close_confirm)
     seen = {}
+    timer = QtCore.QTimer(); timer.setInterval(50)
 
     def _inspect():
         box = QtWidgets.QApplication.activeModalWidget()
+        if not isinstance(box, QtWidgets.QMessageBox):
+            return                                                     # まだ出ていない: 次の 50 ms
+        timer.stop()
         seen["title"] = box.windowTitle(); seen["text"] = box.text()
         seen["buttons"] = [b.text() for b in box.buttons()]
         seen["default"] = box.defaultButton().text()
         seen["escape"] = box.escapeButton().text()
         box.escapeButton().click()                                     # Esc と同じ = キャンセル
-    QtCore.QTimer.singleShot(300, _inspect)
-    assert studio.CONFIRM_HOOK is studio._default_confirm             # 本物の窓を出す
+    timer.timeout.connect(_inspect); timer.start()
     assert _close(win) is False                                       # キャンセル → 閉じない
     assert sorted(seen["buttons"]) == sorted(["保存して閉じる", "保存せずに閉じる", "キャンセル"]), seen
     assert seen["default"] == seen["escape"] == "キャンセル"
@@ -537,3 +543,95 @@ def test_m10_a_sample_left_as_loaded_is_not_unsaved(launch, monkeypatch):
     assert len(asked) == 1
     title, text = asked[0]
     assert title == "見本の処理手順を読み込む" and "破棄しますか" in text, asked
+
+
+# --------------------------------------------------------------------------- #
+# M3・M4・L6: つまみの欄                                                          #
+# --------------------------------------------------------------------------- #
+def _knob_line(name, letter):
+    detail = studio.op_signature_detail(studio._op_row(name))
+    return [ln for ln in detail.splitlines() if ln.startswith("knob %s" % letter)][0]
+
+
+def test_m3_ops_missing_from_the_role_table_are_not_called_unused():
+    """直す前: 役割の表に無い op は全部「(unused)」。sk_rolling_ball の a(球の半径)・xkor_bilateral の a・b も。"""
+    assert "(unused)" not in _knob_line("sk_rolling_ball", "a") and "ball radius" in _knob_line("sk_rolling_ball", "a")
+    assert "(unused)" in _knob_line("sk_rolling_ball", "b")                 # spec が未使用と言う(実装で確かめ済み)
+    assert "(unused)" not in _knob_line("erosion_circle", "a")
+    if api.find_op("xkor_bilateral") is not None:
+        assert "(unused)" not in _knob_line("xkor_bilateral", "a") and "(unused)" not in _knob_line("xkor_bilateral", "b")
+    assert "(unused)" in _knob_line("sobel_amp", "a") and "(unused)" in _knob_line("sobel_amp", "b")
+    assert studio.knob_use("sobel_amp", "a") == ("unused", "spec")
+    assert studio.knob_use("otsu", "b") == ("unused", "table")
+    assert studio.knob_use("gaussian", "a")[0] == "used"
+    # 実測だけ(図の 1 枚の入力)では「未使用」と言わず、止めもしない
+    measured = [(n, k) for n in ("erosion_circle", "fill_up", "select_shape") for k in "ab"
+                if studio.knob_use(n, k) == ("unknown", "measured")]
+    if studio.knob_dead_measured("erosion_circle"):                      # docs のある checkout だけ
+        assert measured
+        n, k = measured[0]
+        assert "(unused)" not in _knob_line(n, k) and "measured" in _knob_line(n, k)
+
+
+@pytest.mark.parametrize("name,dead", [("sobel_amp", "ab"), ("otsu", "ab"), ("gaussian", ""), ("threshold", "b")])
+def test_m3_unused_knobs_are_greyed_out_in_both_panels(launch, name, dead):
+    from PySide6 import QtCore
+    win, model = launch()
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index(name)); _pump(0.1)
+    for spin, letter in zip(win._op_arg_spins, "ab"):                   # + の上の欄
+        assert spin.isEnabled() == (letter not in dead), (name, letter)
+    win._op_buttons["insert"].click(); _pump(0.3)
+    assert [s[0] for s in model.stages] == [name]
+    win._stage_list.setCurrentRow(0); _pump(0.2)
+    for krow, letter in zip(win._knob_rows, "ab"):
+        live = [w.isEnabled() for w in (krow.raw, krow.typed) + ((krow.slider,) if krow.slider else ())]
+        if letter in dead:
+            assert not any(live), (name, letter, live)                    # 値の欄も含めて動かせない
+        else:
+            assert krow.raw.isEnabled() and (krow.slider is None or krow.slider.isEnabled()), (name, letter)
+
+
+def test_m4_the_implementation_is_folded_until_asked(launch):
+    from PySide6 import QtCore
+    win, model = launch(lang="ja")
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("gaussian")); win._op_buttons["insert"].click(); _pump(0.3)
+    win._stage_list.setCurrentRow(0); _pump(0.2)
+    d = win._stage_detail
+    assert "実装" not in d.text() and "つまみ a" in d.text()
+    assert win._impl_toggle.isVisibleTo(win) and win._impl_toggle.text() == "実装を見る"
+    win._impl_toggle.setChecked(True); _pump(0.1)
+    full = studio.op_impl_source("gaussian", None)
+    assert full and full in d.text()                                      # 途中で切らない
+    win._impl_toggle.setChecked(False); _pump(0.1)
+    assert full not in d.text()
+
+
+def test_l6_a_slider_move_stores_a_short_knob_that_reads_back_the_same(launch):
+    from PySide6 import QtCore
+    win, model = launch()
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("bilateral")); win._op_buttons["insert"].click(); _pump(0.3)
+    win._stage_list.setCurrentRow(0); _pump(0.2)
+    ka = win._knob_rows[0]
+    moved = 0
+    for frac in (0.13, 0.37, 0.5, 0.71, 0.849, 0.97):
+        pos = int(ka.slider.maximum() * frac)
+        ka.slider.setValue(pos); _pump(0.05)
+        knob = model.stages[0][1]
+        assert len(repr(knob)) <= 7, (frac, knob)                         # 0.847 のような短い数
+        assert ka.knob_to_pos(knob) == pos                                # 同じ目盛り
+        long_knob = ka.pos_to_knob(pos)
+        assert studio.param_specs.format_display(ka.spec, knob) == studio.param_specs.format_display(ka.spec, long_knob)
+        moved += 1
+    assert moved == 6
+    _pump(0.3)
+    code = win._program["edit"].toPlainText()
+    line = [ln for ln in code.splitlines() if ln.startswith("bilateral")][0]
+    assert line == "bilateral (%r, %r)" % (model.stages[0][1], model.stages[0][2]), line
+    stages, errs = studio.parse_hdev_program(line, studio.api.op_names())
+    assert not errs and stages[0][1] == model.stages[0][1]               # 往復で値が変わらない
