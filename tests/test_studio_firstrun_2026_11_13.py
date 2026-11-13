@@ -787,8 +787,9 @@ def test_l9_an_unsupported_drop_says_one_short_line_in_the_ui_language(launch, t
     assert len(said) < 120 and "unsupported" not in said
     assert np.array_equal(model.image, before)
     help_menu = next(a.menu() for a in win.menuBar().actions() if a.menu() and "ヘルプ" in a.text())
-    assert any(a.text().replace("&", "").startswith("開けるファイル") for a in help_menu.actions()), \
-        [a.text() for a in help_menu.actions()]
+    labels = [a.text().replace("&", "") for a in help_menu.actions()]
+    assert len(labels) >= 3, labels
+    assert [t for t in labels if t.startswith("開けるファイル")], labels
 
 
 def test_l11_right_click_on_an_op_row_opens_its_menu(launch):
