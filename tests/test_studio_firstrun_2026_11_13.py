@@ -696,3 +696,33 @@ def test_l3_help_pages_show_emphasis_not_asterisks():
     out = studio.help_plain_markup(raw)
     assert out == "<p><em>図は合成の入力。</em></p><p><b>つまみ a を振る</b>(0.1):</p><pre>x = a * b ** 2</pre><p>A_t = Da*lap(A)</p>"
     assert studio.plain_summary("HALCON の ``gauss_filter`` と `x`") == "HALCON の gauss_filter と x"
+
+
+def test_m15_help_search_prefers_the_exact_name():
+    names = ["select_shape_xld", "select_shape", "cv_cc_count", "connect_and_holes", "gaussian", "fill_holes  (3D)"]
+    halcon = {"cv_cc_count": "connection", "select_shape": "select_shape", "connect_and_holes": "connection_holes"}
+    assert studio.help_query_target("select_shape", names, halcon) == "select_shape"
+    assert studio.help_query_target("SELECT_SHAPE", names, halcon) == "select_shape"
+    assert studio.help_query_target("connection", names, halcon) == "cv_cc_count"          # HALCON の名前
+    assert studio.help_query_target("gauss", names, halcon) == "gaussian"                  # 前方一致
+    assert studio.help_query_target("holes", names, halcon) == "fill_holes  (3D)"           # 部分一致の最短
+    assert studio.help_query_target("xyzzy", names, halcon) is None
+    assert studio.help_query_target("  ", names, halcon) is None
+
+
+def test_m15_typing_in_the_help_picker_opens_the_exact_page(launch):
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    win, model = launch()
+    win._actions["op_reference"].trigger(); _pump(0.5)
+    pick, br = win._help["pick"], win._help["browser"]
+    ed = pick.lineEdit()
+    n0 = pick.count()
+    for typed, want in (("select_shape", "select_shape"), ("connection", "cv_cc_count"), ("otsu", "otsu")):
+        ed.setFocus(); QTest.keyClick(ed, QtCore.Qt.Key_A, QtCore.Qt.ControlModifier)
+        QTest.keyClicks(ed, typed); _pump(0.2)
+        QTest.keyClick(ed, QtCore.Qt.Key_Return); _pump(0.4)
+        assert pick.currentText() == want, (typed, pick.currentText())
+        assert want in br.toPlainText()[:400], (typed, br.toPlainText()[:120])
+    assert pick.count() == n0                                         # 打った語を行として足さない
+    win._help["dialog"].close()

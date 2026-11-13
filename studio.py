@@ -6313,6 +6313,31 @@ def plain_summary(text):
     return re.sub(r"`([^`\n]+)`", r"\1", t)
 
 
+def help_query_target(text, names, halcon=None):
+    """M15(2026-11-13、初回起動の点検): ヘルプの検索欄に打った語 → 開く項目(*names* の 1 つ)、無ければ None。
+
+    完全一致(大文字小文字を問わない)→ HALCON の名前の完全一致(``connection`` → その対応の op)→ 前方一致の最短 →
+    部分一致の最短。従来は欄の自動補完が登録順の最初の前方一致を選び、``select_shape`` と打つと
+    ``select_shape_xld`` が開いた。表に無い語の Enter は、欄に新しい行として足されるだけだった。"""
+    q = (text or "").strip().lower()
+    if not q:
+        return None
+    names = list(names)
+    exact = [n for n in names if n.lower() == q]
+    if exact:
+        return exact[0]
+    if halcon:
+        have = set(names)
+        hits = sorted(n for n, h in halcon.items() if h and str(h).lower() == q and n in have)
+        if hits:
+            return hits[0]
+    for pick in ((lambda n: n.lower().startswith(q)), (lambda n: q in n.lower())):
+        hits = sorted((n for n in names if pick(n)), key=lambda n: (len(n), n))
+        if hits:
+            return hits[0]
+    return None
+
+
 def op_help_html(name, lang="en", meta=None, dim="2d"):
     """Rich HTML help for one operator. Lookup order (see studio_assets/op_help/):
       1. op_help/<name>.<lang>.html   language-specific
@@ -13178,7 +13203,9 @@ def build_window(model=None):
                 _help_entries[_disp] = (_dim, _n); _help_led.append(_disp)
     except Exception:
         pass
-    help_pick.addItems(list(op_names) + _help_d3 + _help_led)
+    # M15: 名前の順に並べる(欄の自動補完は並びの最初の前方一致を選ぶので、select_shape が select_shape_xld より先に)
+    help_pick.addItems(sorted(op_names) + sorted(_help_d3) + sorted(_help_led))
+    help_pick.setInsertPolicy(QtWidgets.QComboBox.NoInsert)       # 打った語を新しい行として足さない
     help_pick.setToolTip("Jump to any operator's help (2-D image ops, 3-D point/mesh/volume ops, "
                          "and the ledger families: math / optics / imgmetrics / …)")
     hd_copy = QtWidgets.QPushButton("Copy sig")
@@ -13299,6 +13326,24 @@ def build_window(model=None):
     # in that order (unpacking the tuple directly would swap them: name<-dim, dim<-name).
     help_pick.currentTextChanged.connect(
         lambda t: show_op_help(_help_entries[t][1], _help_entries[t][0]) if t in _help_entries else None)
+
+    def _help_pick_enter():
+        """M15: Enter で、打った語に一番近い項目を開く(完全一致 → HALCON の名前 → 前方一致 → 部分一致)。"""
+        ed_ = help_pick.lineEdit()
+        text = ed_.text()
+        if ed_.hasSelectedText() and ed_.selectionStart() + len(ed_.selectedText()) == len(text):
+            text = text[:ed_.selectionStart()]             # 自動補完が足した尾は、打った語ではない
+        target = help_query_target(text, list(_help_entries),
+                                   {r["name"]: r.get("halcon") for r in all_ops if r.get("halcon")})
+        if target is None:
+            flash(tr("No operator help matches '%s'") % text.strip())
+            return
+        if target.lower() != text.strip().lower():
+            flash(tr("'%s' → %s") % (text.strip(), target))
+        help_pick.blockSignals(True); help_pick.setCurrentIndex(help_pick.findText(target))
+        help_pick.blockSignals(False)
+        show_op_help(_help_entries[target][1], _help_entries[target][0])
+    help_pick.lineEdit().returnPressed.connect(_help_pick_enter)
     def _copy_help_sig():
         t = help_pick.currentText()
         entry = _help_entries.get(t)

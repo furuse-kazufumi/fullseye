@@ -2491,6 +2491,8 @@
   "Show the implementation": {"ja": "実装を見る"},
   "Show the line of the selected stage's implementation that uses a and b": {"ja": "選んだ段の実装のうち、a と b を使う行を見せます"},
   "the output did not change at 0.1 / 0.5 / 0.9 on the sample input (measured)": {"ja": "見本の入力では 0.1 / 0.5 / 0.9 で出力が変わらなかった(実測)"},
-  "Nothing to run yet: add an operator first (type in the operator search box and press Enter, or select one and press +)": {"ja": "まだ実行する物がありません。先に op を入れてください(op の検索欄に打って Enter、または選んで +)"}
+  "Nothing to run yet: add an operator first (type in the operator search box and press Enter, or select one and press +)": {"ja": "まだ実行する物がありません。先に op を入れてください(op の検索欄に打って Enter、または選んで +)"},
+  "No operator help matches '%s'": {"ja": "「%s」に当たる op のヘルプがありません"},
+  "'%s' → %s": {"ja": "「%s」→ %s"}
  }
 }
