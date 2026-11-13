@@ -1036,6 +1036,20 @@
    "tw": "目前位置的說明: 程式碼游標下的 op、所選的階段或 op；什麼都沒選時顯示鍵盤快速鍵",
    "ko": "지금 있는 곳의 도움말: 코드 커서 아래의 op, 선택한 단계나 op. 아무것도 선택하지 않았으면 키보드 단축키",
    "de": "Hilfe zu dem, worauf Sie stehen: der Operator unter dem Code-Cursor, die gewählte Stufe oder der gewählte Operator; ohne Auswahl die Tastenkürzel"
+  },
+  "Save the program (code editor)": {
+   "ja": "プログラムを保存(コードの欄)",
+   "zh": "保存程序(代码区)",
+   "tw": "儲存程式(程式碼區)",
+   "ko": "프로그램 저장 (코드 칸)",
+   "de": "Programm speichern (Code-Feld)"
+  },
+  "Nothing to save yet: the pipeline has no stage": {
+   "ja": "まだ保存する物が無い: パイプラインに段が無い",
+   "zh": "还没有可保存的内容: 管道中没有阶段",
+   "tw": "還沒有可儲存的內容: 管線中沒有階段",
+   "ko": "아직 저장할 것이 없습니다: 파이프라인에 단계가 없습니다",
+   "de": "Noch nichts zu speichern: die Pipeline hat keine Stufe"
   }
  }
 }

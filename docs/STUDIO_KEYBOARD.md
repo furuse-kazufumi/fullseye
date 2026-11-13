@@ -128,7 +128,7 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `editops_line_duplicate` | 行を複製 | `Ctrl+D` | `Shift+Alt+Down` |
 | `editops_bracket_jump` | 対応する括弧へ移動 | `Ctrl+]` | `Ctrl+Shift+\` |
 
-全部のコマンド(111 個。★ は 2 つの型で違う行。「—」はキー無し = 自分で割り当てられる):
+全部のコマンド(112 個。★ は 2 つの型で違う行。「—」はキー無し = 自分で割り当てられる):
 
 | ID | 操作 | 範囲 | Visual Studio 風(既定) | VS Code 風 |
 |---|---|---|---|---|
@@ -221,6 +221,7 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `program_comment` | 行コメントの付け外し | Program 欄 | `Ctrl+/` | `Ctrl+/` |
 | `program_font_bigger` | エディタの文字を大きく | Program 欄 | `Ctrl++` / `Ctrl+=` | `Ctrl++` / `Ctrl+=` |
 | `program_font_smaller` | エディタの文字を小さく | Program 欄 | `Ctrl+-` | `Ctrl+-` |
+| `program_save` | プログラムを保存(コードの欄) | Program 欄 | `Ctrl+S` | `Ctrl+S` |
 | `editops_box_up` | 矩形選択を上へ広げる ★ | コードエディタ | `Shift+Alt+Up` / `Ctrl+Alt+Up` | `Ctrl+Shift+Alt+Up` / `Ctrl+Alt+Up` |
 | `editops_box_down` | 矩形選択を下へ広げる ★ | コードエディタ | `Shift+Alt+Down` / `Ctrl+Alt+Down` | `Ctrl+Shift+Alt+Down` / `Ctrl+Alt+Down` |
 | `editops_box_left` | 矩形選択を左へ広げる ★ | コードエディタ | `Shift+Alt+Left` | `Ctrl+Shift+Alt+Left` |

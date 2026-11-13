@@ -26,10 +26,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def test_registry_counts_and_every_command_has_a_scope_and_default_keys():
     cmds = km.COMMANDS
     # 件数を先に確かめる(足した・消したら、ここが知らせる)
-    assert len(cmds) == 124
-    assert sum(not c.fixed for c in cmds) == 111 and sum(c.fixed for c in cmds) == 13
-    assert sum(bool(c.keys) for c in cmds if not c.fixed) == 90
-    assert sum(len(c.keys) for c in cmds if not c.fixed) == 94
+    assert len(cmds) == 125
+    assert sum(not c.fixed for c in cmds) == 112 and sum(c.fixed for c in cmds) == 13
+    assert sum(bool(c.keys) for c in cmds if not c.fixed) == 91
+    assert sum(len(c.keys) for c in cmds if not c.fixed) == 95
     assert len({c.id for c in cmds}) == len(cmds)
     for c in cmds:
         assert re.fullmatch(r"[a-z][a-z0-9_]*", c.id), c.id
@@ -40,7 +40,10 @@ def test_registry_counts_and_every_command_has_a_scope_and_default_keys():
         if c.fixed:
             assert c.keys and not c.target, c.id                      # 組み込みはキーを持ち、取り付け先は無い
         else:
-            assert c.target.split(":")[0] in {"action", "label", "attr", "work_mode", "editops", "shortcut", "own"}
+            assert c.target.split(":")[0] in {"action", "label", "attr", "work_mode", "editops", "shortcut", "own",
+                                              "filter"}
+        if c.target.startswith("filter:"):
+            assert c.scope == "program_editor" and c.ide == c.target.split(":", 1)[1], c.id   # 欄のフィルタだけが受ける
         if c.target.startswith("action:"):
             assert c.target == "action:" + c.id                        # win._actions の鍵 = ID
         for m in c.mentions:
@@ -332,7 +335,7 @@ def test_rows_and_search():
     k = km.Keymap()
     rows = km.shortcut_rows(k)
     bound = [c for c in km.COMMANDS if c.keys]
-    assert len(rows) == len(bound) == 103
+    assert len(rows) == len(bound) == 104
     assert len(km.shortcut_rows(k, include_unbound=True)) == len(km.COMMANDS)
     assert [r[0] for r in km.search(rows, "ctrl+d")] == ["duplicate_stage", "editops_line_duplicate"]
     assert [r[0] for r in km.search(rows, "Ctrl+K")] == ["keyboard_settings"]               # 和音の 1 打目でも引ける
@@ -351,7 +354,7 @@ def test_every_own_string_has_five_translations_and_nothing_else():
     table = km.load_table()
     assert km.missing() == []
     assert sorted(table) == sorted(km.ui_strings())
-    assert len(table) == 148
+    assert len(table) == 150
     ph = re.compile(r"%\(\w+\)s|%[sd]")
     for en, row in table.items():
         for lang in km.LANGS[1:]:
@@ -1714,5 +1717,102 @@ def test_f1_takes_over_the_firstrun_action_when_both_branches_are_merged(app, st
     finally:
         if getattr(w, "_keymap", None) is not None and w._keymap.dialog is not None:
             w._keymap.dialog.close()
+        _close(w)
+        eq.apply_bindings(None)
+
+
+# --------------------------------------------------------------------------- #
+# B5 [キー] 1.2-A D48: コードの欄の Ctrl+S
+# --------------------------------------------------------------------------- #
+def _with_a_stage(studio_mod):
+    """起動直後の窓に段を 1 つ(gaussian)入れて返す(空のパイプラインは保存の QAction が無効)。"""
+    from PySide6 import QtCore  # noqa: PLC0415
+    w, c = _build(studio_mod)
+    lst = w._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("gaussian"))
+    w._op_buttons["insert"].click()
+    _pump(0.3)
+    assert w._actions["save_pipeline"].isEnabled()
+    return w, c
+
+
+def test_code_editor_ctrl_s_saves_program_not_result(app, studio_mod, monkeypatch):
+    _QtCore, _QtGui, QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    import studio_editops_qt as eq  # noqa: PLC0415
+    K = QtCore.Qt
+    captions = []
+
+    def fake_save(*a, **k):
+        captions.append(str(a[1] if len(a) > 1 else k.get("caption", "")))
+        return "", ""
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName", staticmethod(fake_save))
+    w, c = _with_a_stage(studio_mod)
+    hits = {"pymode_save": 0, "save_result": 0, "save_pipeline": 0}
+    for key in hits:
+        w._actions[key].triggered.connect(lambda *_a, k=key: hits.__setitem__(k, hits[k] + 1))
+    pm = w._pymode
+    try:
+        pm.set_mode("python")
+        _activate(w)
+        ed = _program(w, "x = 1\n")
+        assert pm.active and ed is w._program["edit"]
+        QTest.keyClick(ed, K.Key_S, K.ControlModifier)                     # Python のモード: プログラムの保存
+        _pump(0.1)
+        assert hits == {"pymode_save": 1, "save_result": 0, "save_pipeline": 0}, hits
+        assert captions and not any("result" in s.lower() for s in captions), captions
+        pm.set_mode("pipeline")
+        ed.setFocus()
+        _pump(0.05)
+        QTest.keyClick(ed, K.Key_S, K.ControlModifier)                     # パイプラインのモード: パイプラインの保存
+        _pump(0.1)
+        assert hits == {"pymode_save": 1, "save_result": 0, "save_pipeline": 1}, hits
+        w._search.setFocus()
+        _pump(0.05)
+        QTest.keyClick(w._search, K.Key_S, K.ControlModifier)              # コードの欄の外は今までどおり(窓の Ctrl+S は 1.3)
+        _pump(0.1)
+        assert hits["save_result"] == 1 and hits["pymode_save"] == 1 and hits["save_pipeline"] == 1
+        assert c.keymap.keys("pymode_save") == ("Ctrl+Alt+S",)              # Ctrl+Alt+S も残す
+        assert ("info", "shadows", "save_result") in _codes(c.check("program_save", ("Ctrl+S",)))
+    finally:
+        pm.set_mode("pipeline")
+        _close(w)
+        eq.apply_bindings(None)
+
+
+def test_the_code_editor_save_key_can_be_changed_and_an_empty_pipeline_says_so(app, studio_mod, monkeypatch):
+    _QtCore, _QtGui, QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    import studio_editops_qt as eq  # noqa: PLC0415
+    K = QtCore.Qt
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName", staticmethod(lambda *a, **k: ("", "")))
+    w, c = _with_a_stage(studio_mod)
+    said = []
+    c.flash = said.append
+    hits = []
+    w._actions["save_pipeline"].triggered.connect(lambda *_a: hits.append(1))
+    try:
+        assert c.assign("program_save", ("Ctrl+F12",)) == []
+        _activate(w)
+        ed = w._program["edit"]
+        w._docks["program"].show()
+        ed.setFocus()
+        _pump(0.1)
+        QTest.keyClick(ed, K.Key_F12, K.ControlModifier)                   # 変えたキーでパイプラインの保存
+        _pump(0.1)
+        assert hits == [1] and said == []
+        w._stage_list.setCurrentRow(0)
+        w._actions["remove"].trigger()                                    # 段を消す = 空のパイプライン
+        _pump(0.3)
+        assert not w._actions["save_pipeline"].isEnabled()
+        ed.setFocus()
+        _pump(0.05)
+        QTest.keyClick(ed, K.Key_F12, K.ControlModifier)                   # 保存できない事を言う(黙らない)
+        _pump(0.1)
+        assert hits == [1] and said == [km.MSG_NOTHING_TO_SAVE]
+    finally:
+        c.keymap = km.Keymap()
+        c._commit()
         _close(w)
         eq.apply_bindings(None)

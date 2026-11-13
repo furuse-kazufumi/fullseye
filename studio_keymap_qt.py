@@ -175,6 +175,9 @@ class _ProgramKeys(QtCore.QObject):
                     ctl = get(self.win) if self.win is not None else None
                     if name == "help" and ctl is not None:
                         ctl.help_here()                        # F1 = ここのヘルプ(窓と同じ答え)
+                    elif name == "save":
+                        if ctl is not None:
+                            ctl.save_program()                 # Ctrl+S = プログラム / パイプラインの保存
                     else:
                         obj._ide_do(name)
                     return True
@@ -355,8 +358,8 @@ def apply_keymap(win, keymap: km.Keymap, lang=None) -> dict:
     _resolve(win, st)
     applied, missing = 0, []
     for c in km.COMMANDS:
-        if c.fixed or c.target.startswith("editops:"):
-            continue
+        if c.fixed or c.target.startswith(("editops:", "filter:")):
+            continue                                           # 矩形選択の部品・Program 欄のフィルタは下で配る
         objs = [o for o in st.targets.get(c.id, ()) if _valid(o)]
         if not objs:
             if not c.target.startswith("shortcut:"):
@@ -1393,6 +1396,23 @@ class KeymapController(QtCore.QObject):
             return "op:" + name
         self.open_dialog()
         return "keys"
+
+    def save_program(self) -> str:
+        """コードの欄の Ctrl+S(D48): Python のモードならプログラム(pymode_save)、パイプラインのモードならパイプライン
+        (save_pipeline)を保存する。撃った QAction の ID(撃てなければ空)。"""
+        acts = getattr(self.win, "_actions", None) or {}
+        pm = getattr(self.win, "_pymode", None)
+        key = "pymode_save" if pm is not None and getattr(pm, "active", False) else "save_pipeline"
+        a = acts.get(key)
+        if isinstance(a, QtGui.QAction) and _valid(a) and a.isEnabled():
+            a.trigger()
+            return key
+        if key == "save_pipeline" and self.flash:              # 空のパイプライン: 黙らずに言う
+            try:
+                self.flash(self.tr(km.MSG_NOTHING_TO_SAVE))
+            except Exception:                                  # noqa: BLE001
+                pass
+        return ""
 
     def open_dialog(self) -> KeyboardDialog:
         """設定の窓を出す(2 度目は同じ窓を前へ)。"""

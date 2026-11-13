@@ -272,7 +272,8 @@ def _spellings(key: str) -> list:
 class Command(NamedTuple):
     """コマンド 1 つ。``keys`` は既定(Visual Studio 風の型)。``target`` は Qt の側が本物を探す手がかり
     (``action:<win._actions の鍵>`` / ``label:<英語の表示名>`` / ``attr:<窓の属性>`` / ``work_mode:<作業モード>`` /
-    ``editops:<操作>`` / ``shortcut:<別窓>:<既定のキー>`` / ``own:<この部品が作る>``)。``fixed`` は変えられない
+    ``editops:<操作>`` / ``shortcut:<別窓>:<既定のキー>`` / ``own:<この部品が作る>`` / ``filter:<操作>`` = QAction を
+    持たず Program 欄のフィルタだけが受ける)。``fixed`` は変えられない
     (当たりの検査と一覧のためだけに載せる)。``mentions`` は表示の文がキーを書いている別のコマンド。
     ``own_title`` は表示名の訳をこの部品の表で引く(それ以外は Studio の訳の表)。``ide`` は Program 欄の部品が
     自分で受ける操作の名前(窓全体のコマンドに付けると、Program 欄ではそのキーを欄が先に受けて同じ意味で動く)。
@@ -409,6 +410,8 @@ COMMANDS = (
     _c("program_comment", "Comment / uncomment lines", _E, "Ctrl+/", ide="comment"),
     _c("program_font_bigger", "Bigger editor text", _E, "Ctrl++|Ctrl+=", ide="zoom_in"),
     _c("program_font_smaller", "Smaller editor text", _E, "Ctrl+-", ide="zoom_out"),
+    # コードの欄の Ctrl+S = プログラム / パイプラインの保存(D48。窓の save_result より先に欄が受ける)
+    _c("program_save", "Save the program (code editor)", _E, "Ctrl+S", "filter:save", ide="save", own_title=True),
 ) + _editops_commands() + (
     # ---- 別窓(窓を開いた時に作る QShortcut) ----
     _c("python_editor_run", "Run (Python Editor)", "python_editor_window", "F5", "shortcut:python_editor:F5",
@@ -1171,6 +1174,7 @@ ASK_IMPORT_PRESET = "The preset becomes %s."
 ASK_IMPORT_LOST = "These changes of yours are not in the file and go back to the preset:"
 MSG_EXPORT_FAILED = "Could not save %s (%s)"
 MSG_NO_MATCH = "Nothing matches. Try a command name or a key, for example: duplicate, ctrl+d"
+MSG_NOTHING_TO_SAVE = "Nothing to save yet: the pipeline has no stage"
 BTN_CLEAR = "Clear"
 BTN_ASSIGN = "Assign"
 BTN_ADD = "Add as another key"
@@ -1296,7 +1300,7 @@ def ui_strings() -> tuple:
              MSG_LOAD_PART, MSG_LOAD_BROKEN, MSG_LOAD_NEWER, MSG_LOAD_HEADER, MSG_MENU_OTHER, MSG_LANG_PROBLEM,
              MSG_LANG_HEADER, HINT_KEYS, BTN_LITERAL, PH_LITERAL, BTN_REMOVE_ONE, BTN_CANCEL, BTN_RESET_ALL_DO,
              BTN_SWITCH, BTN_REPLACE, TTL_IMPORT, ASK_IMPORT, ASK_IMPORT_PRESET, ASK_IMPORT_LOST, MSG_EXPORT_FAILED,
-             MSG_NO_MATCH]
+             MSG_NO_MATCH, MSG_NOTHING_TO_SAVE]
     fixed += list(PRESET_TITLES.values()) + [s.title for s in SCOPES.values()] + [t for t, _s in PLACES.values()]
     fixed += list(MESSAGES.values()) + [c.title for c in COMMANDS if c.own_title]
     seen, out = set(), []
