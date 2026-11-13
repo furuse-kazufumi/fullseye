@@ -397,13 +397,16 @@ SUSPICIOUS_KINDS = {
     "wide_space": "full-width space (U+3000) — looks like indentation, is a syntax error",
     "wide_ascii": "full-width form of an ASCII character (U+FF01..U+FF5E), e.g. a full-width bracket or colon",
     "invisible": "zero-width or direction-control character (U+200B..U+200F, U+202A..U+202E, U+2060..U+2069, U+FEFF)",
-    "lookalike": "a character drawn like an ASCII one: Cyrillic / Greek letters, the minus sign U+2212 and short dashes",
+    "lookalike": ("a character drawn like an ASCII one: Cyrillic / Greek letters, the minus sign U+2212, the dashes "
+                  "U+2010..U+2015, typographic quotes U+2018 / U+2019 / U+201C / U+201D and primes U+2032 / U+2033"),
     "trailing": "space or tab at the end of a line",
     "tab": "tab character",
 }
 _LOOKALIKE = frozenset("\u0430\u0435\u043e\u0440\u0441\u0445\u0443\u0456\u0458\u0410\u0412\u0415\u041a\u041c\u041d\u041e\u0420"
                        "\u0421\u0422\u0425\u03bf\u03bd\u0391\u0392\u0395\u0396\u0397\u0399\u039a\u039c\u039d\u039f\u03a1\u03a4\u03a5\u03a7"
-                       "\u2212\u2010\u2011\u2012\u2013")       # minus sign and the short dashes: drawn like "-"
+                       "\u2212\u2010\u2011\u2012\u2013"        # minus sign and the short dashes: drawn like "-"
+                       "\u2014\u2015"                          # em dash, bar: 1 px from "-" in BIZ UDGothic (2026-11-13)
+                       "\u2018\u2019\u201c\u201d\u2032\u2033")   # typographic quotes / primes: ' and " are curly in BIZ UDGothic
 _INVISIBLE = frozenset([0xFEFF] + list(range(0x200B, 0x2010)) + list(range(0x202A, 0x202F))
                        + list(range(0x2060, 0x206A)))
 

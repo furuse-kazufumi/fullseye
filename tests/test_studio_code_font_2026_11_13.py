@@ -203,6 +203,12 @@ def test_suspicious_characters_are_found_by_kind():
     assert find("f\uff08a\uff09\uff1a") == [(1, "wide_ascii"), (3, "wide_ascii"), (4, "wide_ascii")]
     assert find("a\u200bb\u202ec\ufeff") == [(1, "invisible"), (3, "invisible"), (5, "invisible")]
     assert find("p\u0430ss") == [(1, "lookalike")]                                   # Cyrillic a inside "pass"
+    # pasted from a document: typographic quotes, the em dash (1 px from "-" in BIZ UDGothic), primes
+    assert find("print(\u2018a\u2019)") == [(6, "lookalike"), (8, "lookalike")]
+    assert find("s = \u201cab\u201d") == [(4, "lookalike"), (7, "lookalike")]
+    assert find("x \u2014 y \u2015 z") == [(2, "lookalike"), (6, "lookalike")]
+    assert find("t = 3\u2032 + 4\u2033") == [(5, "lookalike"), (10, "lookalike")]
+    assert find("print('a', \"b\")  # ascii quotes - and _") == []                 # the ASCII ones are not
     assert find("x = 1  \t") == [(5, "trailing"), (6, "trailing"), (7, "trailing")]
     assert find("\tif x:") == [(0, "tab")]
     assert find("# \u65e5\u672c\u8a9e\u306e\u30b3\u30e1\u30f3\u30c8 abc") == []   # ordinary Japanese is not suspicious
