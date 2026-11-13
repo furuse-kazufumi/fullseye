@@ -16,6 +16,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - Studio: 画像欄の収まり・初回のレイアウトと言語・op の一覧の行間・検索結果の行・つまみの表示(「未使用」と出していた 8 本が実は効いていた)などの直し。
 - MCP サーバの stdio: 改行区切りの JSON(MCP の stdio の決まり。Claude Code・Claude Desktop・公式の Python SDK が使う形)に応えるようにした。1.1.0 までは Content-Length 枠しか読まず、公式のクライアントの `initialize` が時間切れになっていた(`claude mcp add fullseye -- python -m fullseye.mcp` で繋がらない)。相手が使った枠で返すので、従来の Content-Length 枠のクライアントもそのまま動く。あわせて、深い入れ子の JSON 1 通でサーバが落ちる件と、本文が `null` の 1 通で黙って終了する件を直した(それぞれ -32700 と -32600 を返して続ける)。公式のクライアントでの接続を試験に足した。
 - Studio の検索: 1 位が、この環境に無い op(optional backend が未導入。例: kornia が無い時の `xkor_bilateral`)の時、Enter が何も入れずに黙っていた。入れられる最初の行を入れ、無い op を自分で選んだ時は理由を表示する(master の定時 CI の py3.12 / py3.14 で見つかった)。
+- Studio: 「最近開いた画像」が 1 件だけの時、設定の読み戻しが文字列を返すと、パスが 1 文字ずつの項目になっていた。2 入力の op(`abs_diff_image` など)を段に入れようとした時は、入らない理由(2 つ以上の入力を取る)を表示する(初回の体験の点検で見つかった)。
 
 ### 直し — インストール体験(setup / ショートカット / アンインストール): 独立レビュー(2026-11-12)1 回目の 16 件と 2 回目の 11 件
 
