@@ -41,6 +41,65 @@ claude mcp add fullseye -- py -3.11 -m fullseye.mcp
 set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP_ROOT = "...")
 ```
 
+## 公式の mcp Python クライアントで確かめる(initialize → tools/list → tools/call)
+
+サーバは MCP の stdio の決まり(1 行に 1 通の JSON。Claude Code・Claude Desktop・公式 SDK が使う形)と、
+従来の Content-Length の枠の両方に応える(1.1.1 から)。公式の `mcp` Python クライアント(1.23.3 で確認)で、
+次の例が initialize → tools/list(24 道具)→ tools/call(照明の設計)まで通る:
+
+```python
+import asyncio
+
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+
+async def main():
+    server = StdioServerParameters(command="py", args=["-3.11", "-m", "fullseye.mcp"],
+                                   env={"PYTHONUTF8": "1"})
+    async with stdio_client(server) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            tools = await session.list_tools()
+            print(len(tools.tools), "tools")
+            result = await session.call_tool("fullseye_pipeline", {"stages": [
+                {"op": "illumination_design", "params": {"surface": "glossy", "slope_deg": 5.0}}]})
+            print(result.content[0].text[:300])
+
+
+asyncio.run(main())
+```
+
+- `stdio_client` はサーバに**最小限の環境変数だけ**を渡す(PATH・TEMP・USERPROFILE など)。自分の画像の根
+  (`FULLSEYE_MCP_ROOT`)や、checkout を読ませる `PYTHONPATH` は `env=` に書く。書かないとサーバはそれを知らずに起動する。
+- `py -3.11 -m fullseye.mcp` が読む fullseye が 1.1.0 以前だと、改行区切りの initialize に応えず、クライアントは
+  時間切れか `Connection closed` で終わる。どの木を読んでいるかは `py -3.11 -c "import fullseye; print(fullseye.__file__)"`。
+- Claude Desktop の `claude_desktop_config.json` に書く形は、上と同じ command・args・env:
+  `{"mcpServers": {"fullseye": {"command": "py", "args": ["-3.11", "-m", "fullseye.mcp"], "env": {"PYTHONUTF8": "1"}}}}`
+  (この形を Claude Desktop の実物では確かめていない。確かめたのは公式クライアントで、同じ command・args・env)。
+
+## MCP から実行できる op と、実行できない op
+
+2026-11-13 の時点で、OP_GRAPH の 3,842 op のうち **2,456 が MCP から実行できる**(同じプロセスで走る registry
+などの 956 + 隔離した作業プロセスで走る台帳 op 1,500)。optics の 506 op のうち 305。残りの 1,386 は**読むだけ**
+(`fullseye_op_help` / `fullseye_op_cards`)で、走らせるのは MCP の外の Python から(カードの `call`)。
+
+- 台帳 op(光学・照明の設計、合成の入口、px→mm …)は `fullseye_pipeline` / `fullseye_apply` から、作業プロセス
+  (`fullseye/mcp/opworker.py`)で走る。1 回の上限は `mcp_op_time_limit_s`(既定 30 秒)と
+  `mcp_op_memory_limit_bytes`(既定 2 GiB、作業プロセスのメモリの増分)で、CPU だけ。作業プロセスは一時フォルダの外へ
+  書けず、Python と fullseye の外を読めず、ネットにも繋がらない。上限を超えた段は `resource_limit` で失敗する。
+- 引数は台帳の仕様(数・整数・真偽・選択肢・短い名前)で検査し、合わなければ 1 段も走らせずに断る(丸めない)。
+- 入力の無い op だけの pipeline は handle が要らない(上の例)。結果は単位つきの表(`ranking`・`recommended` …)で、
+  表の中の 2-D の配列は `image` のハンドルになり、次の pipeline に渡せる。
+- どの op を載せるかは実測の台帳(`docs/mcp_isolated_ops.json`、`tools/mcp_isolated_probe.py`)が決める。載せなかった
+  op は理由の符号を持ち、誤り文は「なぜ実行できないか」と「代わりに何が出来るか」(読む・Python から呼ぶ・同じ分類で
+  MCP が走らせられる op)を返す。主な理由は、自動の確認で見本の入力では動かなかった(`sample_run_failed`、897 op)と、
+  ファイル・URL・関数の引数を取る(`io_parameter`、163 op)。
+- **判定 ok の意味**: 出力の形(有限・空でない・定数でない)を見ただけで、値の正しさではない。利用者の画像には真値が
+  無いので、MCP からは値の正しさを確かめられない。真値で確かめられるのは `fullseye_make_task` /
+  `fullseye_score_pipeline` の合成の課題だけ。明らかな異常(画像の対角とほぼ同じ長さ、入力の中身を読まない段)には
+  `cautions` が付く。
+
 ## 最小プロファイルは10道具(opはデータとして検索する)
 
 op はデータで、tool は「探す・読む・読み込む・走らせる・観察する」の数個だけ。
