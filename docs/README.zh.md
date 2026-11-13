@@ -1,6 +1,8 @@
 <!-- i18n-source-sha: c3e09847755f -->
 # Fullseye 文档索引
 
+<img src="assets/img/fullseye_256.png" alt="Fullseye 标志" width="80" height="80">
+
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
 > **将在 ViEW2026(2026 年 12 月 3–4 日,横滨 Pacifico)发表 → [ViEW2026 页面](view2026/zh/)**(PoC 的动态结果、可在浏览器中操作的查看器、论文信息)

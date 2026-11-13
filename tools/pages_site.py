@@ -31,9 +31,11 @@ repo からは消さない(Qiita が読む)。配備物からだけ外す。
     門 2: サイトの総バイト数が ``--max-bytes`` 以下。
     門 3: 読んだ html のページ数が ``--min-pages`` 以上、残った assets が ``--min-kept-assets`` 以上
           (空のサイト・違うディレクトリを通さない床)。
-    門 4: html の ``<link rel="stylesheet">`` と ``<script src>`` のうちサイト内を指すものが全部実在し、
-          ルート相対の参照が ``/fullseye/`` で始まるページが 0(baseurl が repo 名に倒れた印)。
-          サイト内の stylesheet が 0 本のサイトも落とす(空を通さない)。
+    門 4: html の ``<link rel="stylesheet">``・``<script src>``・アイコンの ``<link>``(``rel`` に ``icon`` /
+          ``apple-touch-icon`` / ``apple-touch-icon-precomposed`` の語があるもの。2026-11-13 に favicon を
+          足したときから)のうちサイト内を指すものが全部実在し、ルート相対の参照が ``/fullseye/`` で
+          始まるページが 0(baseurl が repo 名に倒れた印)。サイト内の stylesheet が 0 本のサイトも落とす
+          (空を通さない)。アイコンには床を置かない(本数と見本のページの href を要約に出す)。
     報告だけ: assets 以外で解決できない内部リンク(元からある切れたリンク)の件数と一覧。
 
 対象外(読まない): JS が文字列を組み立てて作る URL、fetch した JSON の中身から作る URL。prune は json・js の
@@ -586,19 +588,22 @@ def _resolves_in(tgt: str, files, dirs) -> bool:
 BASEURL_FALLBACK_PREFIX = "/fullseye/"
 #: 要約に「組み方の見本」を出すページ。
 SAMPLE_PAGES = ("index.html", "view2026/index.html")
+#: 門 4 でアイコンとして数える ``<link rel>`` の語(どれか 1 つを含めば数える。大文字小文字は区別しない)。
+ICON_RELS = frozenset({"icon", "apple-touch-icon", "apple-touch-icon-precomposed"})
 
 
 class _WiringParser(HTMLParser):
-    """門 4 用: stylesheet の href・script の src・``/fullseye/`` 前置の参照・見本の欄を集める。
+    """門 4 用: stylesheet とアイコンの href・script の src・``/fullseye/`` 前置の参照・見本の欄を集める。
 
-    門 1 の ``_StrictParser`` とは別に持つ(stylesheet と script だけを、属性の組で見る)。
+    門 1 の ``_StrictParser`` とは別に持つ(stylesheet・script・アイコンだけを、属性の組で見る)。
     """
 
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.wiring: list[tuple[str, str]] = []  # (種類, 生の URL)
         self.fullseye_prefixed: list[str] = []
-        self.sample = {"stylesheet": [], "canonical": None, "og:url": None, "title": None, "generator": None}
+        self.sample = {"stylesheet": [], "icon": [], "canonical": None, "og:url": None, "title": None,
+                       "generator": None}
         self.base: str | None = None
         self._in_title = False
         self._title: list[str] = []
@@ -619,6 +624,9 @@ class _WiringParser(HTMLParser):
         if tag == "link" and "stylesheet" in rel and a.get("href"):
             self.wiring.append(("stylesheet", a["href"].strip()))
             self.sample["stylesheet"].append(a["href"].strip())
+        if tag == "link" and "stylesheet" not in rel and ICON_RELS.intersection(rel) and a.get("href"):
+            self.wiring.append(("icon", a["href"].strip()))
+            self.sample["icon"].append(a["href"].strip())
         if tag == "link" and "canonical" in rel and self.sample["canonical"] is None:
             self.sample["canonical"] = a.get("href")
         if tag == "script" and a.get("src"):
@@ -642,7 +650,7 @@ class _WiringParser(HTMLParser):
 
 
 def page_wiring(site: str, files: dict[str, int]) -> dict:
-    """門 4: サイト内を指す stylesheet と script が全部実在するか、``/fullseye/`` 前置のページが無いか。
+    """門 4: サイト内を指す stylesheet・script・アイコンが全部実在するか、``/fullseye/`` 前置のページが無いか。
 
     サイト内 = 相対・ルート相対・このサイトの絶対 URL(``strict_resolve`` が None でないもの)。
     ``?query`` と ``#fragment`` は外して、ファイルそのものが在ることを求める(ディレクトリでは足りない)。
@@ -650,7 +658,7 @@ def page_wiring(site: str, files: dict[str, int]) -> dict:
     付くはずなので、0 本は組み方が壊れた印)。
     """
     missing = []
-    internal = {"stylesheet": 0, "script": 0}
+    internal = {"stylesheet": 0, "script": 0, "icon": 0}
     prefixed_pages = []
     samples = {}
     for rel in files:
@@ -673,6 +681,7 @@ def page_wiring(site: str, files: dict[str, int]) -> dict:
     return {
         "wiring_internal_stylesheets": internal["stylesheet"],
         "wiring_internal_scripts": internal["script"],
+        "wiring_internal_icons": internal["icon"],
         "wiring_missing": missing,
         "baseurl_prefixed_pages_count": len(prefixed_pages),
         "baseurl_prefixed_pages": prefixed_pages[:200],
@@ -842,8 +851,10 @@ def check_summary(rep: dict) -> str:
         f"(1 GB まで残り {_mib(rep['margin_bytes'])} = {100 * rep['margin_bytes'] / rep['max_bytes']:.1f} %)",
         f"- 門 3 html {rep['html_pages']:,} ≥ {rep['min_pages']:,}: {mark[g['gate3_min_pages']]}"
         f" / 残った assets {rep['kept_assets']:,} ≥ {rep['min_kept_assets']:,}: {mark[g['gate3_min_kept_assets']]}",
-        f"- 門 4 サイト内の stylesheet・script が全部在り、`/fullseye/` 前置のページが無い: {mark[g['gate4_page_wiring']]}"
-        f"(stylesheet {rep['wiring_internal_stylesheets']:,} 本・script {rep['wiring_internal_scripts']:,} 本、"
+        f"- 門 4 サイト内の stylesheet・script・アイコンが全部在り、`/fullseye/` 前置のページが無い: "
+        f"{mark[g['gate4_page_wiring']]}"
+        f"(stylesheet {rep['wiring_internal_stylesheets']:,} 本・script {rep['wiring_internal_scripts']:,} 本・"
+        f"アイコン {rep['wiring_internal_icons']:,} 本、"
         f"欠け {len(rep['wiring_missing'])} 件、`/fullseye/` 前置 {rep['baseurl_prefixed_pages_count']} ページ)",
         f"- 門 5 repo にも無い assets への参照が 0 件: {mark[g['gate5_no_broken_asset_links']]}"
         f"({rep['broken_asset_links_count']:,} 件"
@@ -862,6 +873,7 @@ def check_summary(rep: dict) -> str:
             lines.append(f"- `{page}`: (サイトに無い)")
             continue
         lines.append(f"- `{page}` stylesheet: {', '.join('`%s`' % h for h in smp['stylesheet']) or '(無し)'}")
+        lines.append(f"- `{page}` icon: {', '.join('`%s`' % h for h in smp['icon']) or '(無し)'}")
         for key in ("canonical", "og:url", "title", "generator"):
             lines.append(f"- `{page}` {key}: `{smp[key]}`")
     lines.append("")

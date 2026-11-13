@@ -45,7 +45,7 @@
 | PFM | `.pfm` | `raster.read_depth`<br>`raster.read_pfm`<br>`raster.read_raster` | `imgio.save`<br>`raster.write_pfm` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+78 | — |
 | PGM | `.pgm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+76 | — |
 | Stanford PLY | `.ply` | `fileio.mesh_read_ply`<br>`gsplatnp.gs_read_file`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_ply`<br>`gsplat_train_native.save_gaussians_ply`<br>`imgio.save_ply`<br>`mesh.write_mesh`<br>+1 | `gs_read_file`<br>`mesh_read_ply`<br>`mesh_write_ply` | 必須: PIL, gsplat, torch<br>optional: numpy | `tests/test_audit_file_formats.py`<br>`tests/test_fileio_mesh.py`<br>+13 | `plyfile`<br>`trimesh` |
-| PNG | `.png` | `raster.read_depth`<br>`raster.read_raster` | `imgio.save`<br>`studio_display.save_outputs` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+102 | — |
+| PNG | `.png` | `raster.read_depth`<br>`raster.read_raster` | `imgio.save`<br>`studio_display.save_outputs` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+103 | — |
 | PPM | `.ppm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+76 | — |
 | XYZ text | `.pts` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_mesh.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+2 | — |
 | RAW raster | `.raw` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_article_media_tool_2026_11_11.py`<br>`tests/test_gfx2d.py`<br>+13 | — |

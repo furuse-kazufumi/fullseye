@@ -549,7 +549,8 @@ def test_gate4_passes_on_a_well_wired_site_and_writes_the_build_sample(tmp_path)
     assert rep["wiring_internal_stylesheets"] == 2  # index.html と view2026/index.html
     smp = rep["build_samples"]["view2026/index.html"]
     assert smp == {"stylesheet": ["/assets/css/style.css?v=abc#x"], "canonical": "https://furuse.work/view2026/",
-                   "og:url": "https://furuse.work/view2026/", "title": "T | fullseye", "generator": "Jekyll v3.10.0"}
+                   "og:url": "https://furuse.work/view2026/", "title": "T | fullseye", "generator": "Jekyll v3.10.0",
+                   "icon": []}
     text = md.read_text(encoding="utf-8")
     assert "組み方の見本" in text and "`view2026/index.html` canonical: `https://furuse.work/view2026/`" in text
 
@@ -605,6 +606,78 @@ def test_gate4_fails_on_a_site_without_any_internal_stylesheet(tmp_path):
     assert rep["wiring_internal_stylesheets"] == 0
     assert rep["wiring_missing"] == [] and rep["baseurl_prefixed_pages_count"] == 0
     assert not rep["gates"]["gate4_page_wiring"]
+
+
+# ---- 門 4 のアイコン(2026-11-13: favicon を docs/_includes/head-custom.html で全ページに足した)----
+
+ICON_LINKS_HTML = ('<link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16 32x32 48x48">'
+                   '<link rel="icon" type="image/png" href="/assets/img/fullseye_256.png" sizes="256x256">'
+                   '<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">')
+ICON_FILES = ("favicon.ico", "assets/img/fullseye_256.png", "apple-touch-icon.png")
+
+
+def make_iconed_site(tmp_path):
+    site, docs = make_themed_site(tmp_path)
+    head = THEME_HEAD.replace("</head>", ICON_LINKS_HTML + "</head>")
+    for base in (site, docs):
+        (base / "view2026" / "index.html").write_text(head, encoding="utf-8")
+        for rel in ICON_FILES:
+            p = base / rel
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_bytes(b"icon")
+    return site, docs
+
+
+def test_gate4_checks_icon_links_and_prints_them_in_the_build_sample(tmp_path):
+    site, docs = make_iconed_site(tmp_path)
+    md = tmp_path / "s.md"
+    r = run_cli(*check_args(site, docs, extra=("--summary-md", str(md))))
+    assert r.returncode == 0, r.stdout + r.stderr
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert rep["gates"]["gate4_page_wiring"]
+    assert rep["wiring_internal_icons"] == 3
+    assert rep["build_samples"]["view2026/index.html"]["icon"] == [
+        "/favicon.ico", "/assets/img/fullseye_256.png", "/apple-touch-icon.png"]
+    assert rep["build_samples"]["index.html"]["icon"] == []
+    text = md.read_text(encoding="utf-8")
+    assert ("`view2026/index.html` icon: `/favicon.ico`, `/assets/img/fullseye_256.png`, "
+            "`/apple-touch-icon.png`") in text
+    assert "`index.html` icon: (無し)" in text
+    assert "アイコン 3 本" in text
+
+
+@pytest.mark.parametrize("rel", ICON_FILES)
+def test_gate4_fails_when_an_icon_file_is_missing(tmp_path, rel):
+    site, docs = make_iconed_site(tmp_path)
+    os.remove(site / rel)
+    r = run_cli(*check_args(site, docs))
+    assert r.returncode == 1
+    assert "WIRING view2026/index.html icon" in r.stderr and rel in r.stderr
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert not rep["gates"]["gate4_page_wiring"]
+    assert {(m["kind"], m["target"]) for m in rep["wiring_missing"]} == {("icon", rel)}
+
+
+def test_gate4_counts_only_internal_icons_and_any_icon_rel_word(tmp_path):
+    # data: と外のサイトのアイコンは数えない。rel は大文字小文字を区別せず、"shortcut icon" と
+    # apple-touch-icon-precomposed も数える。stylesheet は icon の語を含んでもアイコンに数えない。
+    site, docs = make_themed_site(tmp_path)
+    head = THEME_HEAD.replace("</head>", (
+        '<link rel="Shortcut Icon" href="data:image/png;base64,AAAA">'
+        '<link rel="icon" href="https://example.com/x.ico">'
+        '<link rel="apple-touch-icon-precomposed" href="/touch.png">'
+        '<link rel="mask-icon" href="/mask.svg">'
+        '</head>'))
+    (site / "view2026" / "index.html").write_text(head, encoding="utf-8")
+    (site / "touch.png").write_bytes(b"x")
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert rep["gates"]["gate4_page_wiring"]
+    assert rep["wiring_internal_icons"] == 1  # /touch.png だけ(data: と外は数えない、mask-icon は語が違う)
+    assert rep["build_samples"]["view2026/index.html"]["icon"] == [
+        "data:image/png;base64,AAAA", "https://example.com/x.ico", "/touch.png"]
+    os.remove(site / "touch.png")
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert {(m["kind"], m["target"]) for m in rep["wiring_missing"]} == {("icon", "touch.png")}
 
 
 # ---- 独立レビューの指摘(2026-11-11)----

@@ -1,5 +1,7 @@
 # Fullseye ドキュメント索引
 
+<img src="assets/img/fullseye_256.png" alt="Fullseye のロゴ" width="80" height="80">
+
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
 > **ViEW2026(2026 年 12 月 3〜4 日、パシフィコ横浜)で発表します → [ViEW2026 のページ](view2026/)**(PoC の動く結果・ブラウザで触れるビューア・論文の情報)
