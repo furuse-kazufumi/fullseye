@@ -1729,7 +1729,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fssystem.py`
 
-- **L173** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T5): tightens_only=True の数値の上限 10 項目が、既定より**大きい**値 (find_ops_k=10、mcp_stack_max_pixels=64 Mpx、plan_max_depth=16 …)を受け付け、上の docstring の 「緩められない」を破っていた。既定より緩い値を表から外し、ここで機械的に止める(足し直すと import で落ちる)。
+- **L174** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T5): tightens_only=True の数値の上限 10 項目が、既定より**大きい**値 (find_ops_k=10、mcp_stack_max_pixels=64 Mpx、plan_max_depth=16 …)を受け付け、上の docstring の 「緩められない」を破っていた。既定より緩い値を表から外し、ここで機械的に止める(足し直すと import で落ちる)。
 
 ## `fullseye/__init__.py`
 
