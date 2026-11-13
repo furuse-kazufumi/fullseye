@@ -183,10 +183,11 @@
         16777216,
         33554432
       ],
-      "meaning": "Pixel cap for MCP image loads, stacks, and operation outputs.",
+      "meaning": "Pixel cap for MCP image loads, stacks, and operation outputs (image headers are checked before decoding).",
       "hide_from_ai": true,
       "applied_by": [
-        "fullseye/mcp/server.py"
+        "fullseye/mcp/server.py",
+        "fullseye/mcp/handles.py"
       ],
       "affects_numbers": false,
       "status": "applied"
