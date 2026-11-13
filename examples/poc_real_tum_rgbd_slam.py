@@ -691,11 +691,11 @@ def main() -> None:
     print("  ★後半(採点): 並進 %.1f mm(合わせない %.1f mm、比 %.2f)、回転 %.2f°(合わせない %.2f°)、最大 %.1f mm、"
           "中央 %.1f mm" % (1e3 * rpe_t_b, 1e3 * rpe_t_id_b, rpe_t_b / rpe_t_id_b, rpe_r_b, rpe_r_id_b,
                            1e3 * float(et[half:].max()), 1e3 * float(np.median(et[half:]))))
-    g.check("後半の並進 RPE が合わせないの半分未満(弱い門: 最弱の基準との比較)", rpe_t_b < 0.5 * rpe_t_id_b,
+    g.check("後半の並進 RPE が合わせないの半分未満(弱い門)", rpe_t_b < 0.5 * rpe_t_id_b,
             "%.1f mm 対 %.1f mm(比 %.2f)" % (1e3 * rpe_t_b, 1e3 * rpe_t_id_b, rpe_t_b / rpe_t_id_b))
-    g.check("後半の回転 RPE が合わせないより小(弱い門: 最弱の基準との比較)", rpe_r_b < rpe_r_id_b, "%.2f° 対 %.2f°" % (rpe_r_b, rpe_r_id_b))
+    g.check("後半の回転 RPE が合わせないより小(弱い門)", rpe_r_b < rpe_r_id_b, "%.2f° 対 %.2f°" % (rpe_r_b, rpe_r_id_b))
     default_t = rms_of(reg["err_t"][None])
-    g.check("既定(trim なし)でも並進 RPE が合わせないより小(弱い門: 最弱の基準との比較)", default_t < rms_of(it),
+    g.check("既定(trim なし)でも並進 RPE が合わせないより小(弱い門)", default_t < rms_of(it),
             "全 31 組で %.1f mm 対 %.1f mm(比 %.2f)" % (1e3 * default_t, 1e3 * rms_of(it), default_t / rms_of(it)))
     ch = chain_of(reg["est"][chosen])
     ate, ate_err = ate_rmse(ch, traj["poses"])
@@ -704,7 +704,7 @@ def main() -> None:
     path = float(np.sum(np.linalg.norm(np.diff([p[:3, 3] for p in traj["poses"]], axis=0), axis=1)))
     print("  ATE(鎖、剛体整列後)RMSE: 選んだ trim %.1f mm / 既定 %.1f mm / 合わせない %.1f mm(経路長 %.2f m、"
           "最終ドリフト %.1f mm)" % (1e3 * ate, 1e3 * ate_default, 1e3 * ate_ident, path, 1e3 * float(ate_err[-1])))
-    g.check("ATE が合わせないの半分未満(弱い門: 合わせないの ATE は真値の経路の広がりそのもの)", ate < 0.5 * ate_ident,
+    g.check("ATE が合わせないの半分未満(弱い門)", ate < 0.5 * ate_ident,
             "%.1f mm 対 %.1f mm(全 %d 組の鎖)" % (1e3 * ate, 1e3 * ate_ident, npair))
     # --- 基準を強くする(等速)・分割を替える・3 組の影響 ------------------------------ #
     rel = traj["rel"]
@@ -749,7 +749,7 @@ def main() -> None:
     print("  ★比は %.2f〜%.2f(本文の分割は最悪の %.2f)。trim 0.1 が選ばれたのは 8 通り中 %d 通り、本文の分割だけ 0.2。"
           "全 31 組では trim 0.1 が %.1f mm、0.2 が %.1f mm。「選択が後半に移らない」は**この 1 回の分割の話**で一般化しない。"
           % (min(ratios), max(ratios), ratios[0], n01, 1e3 * rms_of(reg["err_t"][0.1]), 1e3 * rms_of(et)))
-    g.check("分割 8 通りのどれでも合わせないの半分未満(弱い門: 最弱の基準との比較)", max(ratios) < 0.5,
+    g.check("分割 8 通りのどれでも合わせないの半分未満(弱い門)", max(ratios) < 0.5,
             "比 %.2f〜%.2f" % (min(ratios), max(ratios)))
     cv_all = rms_of(cv)
     print("  ★見出しに使うなら: 「合わせないの %.2f 倍」は 8 通りの分割で最悪の 1 つ(範囲 %.2f〜%.2f)。等速(oracle)%.1f mm に対しては、"
@@ -761,7 +761,7 @@ def main() -> None:
     ir_t = rms_of(reg_ir["err_t"][chosen])
     print("  内部パラメータを IR の公称値(%s、歪み補正なし)にすると、同じ trim の全組の並進 RPE %.1f mm(ROS の既定 %.1f mm)"
           % (K_FR1_IR, 1e3 * ir_t, 1e3 * rms_of(et)))
-    g.check("内部パラメータを替えても合わせないより良い(弱い門: 最弱の基準との比較)", ir_t < rms_of(it), "%.1f mm 対 %.1f mm" % (1e3 * ir_t, 1e3 * rms_of(it)))
+    g.check("内部パラメータを替えても合わせないより良い(弱い門)", ir_t < rms_of(it), "%.1f mm 対 %.1f mm" % (1e3 * ir_t, 1e3 * rms_of(it)))
 
     # --- 雑音 ------------------------------------------------------------- #
     print("\n[雑音] 窓(%d×%d 画素)の平面当てはめ残差(深度方向)を、距離の区間ごとの中央値で見る" % (TILE, TILE))
