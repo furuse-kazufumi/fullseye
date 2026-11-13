@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_ct_casting_sparse_views, poc_real_walnut_cbct]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # ct_dual_energy_reconstruct — TOMOGRAPHY `ct_scan` op

@@ -8,7 +8,7 @@ gpu: なし
 examples: [fpfh_correspondence]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # compute_fpfh — 3D `feature_register` op

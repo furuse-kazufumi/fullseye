@@ -9,7 +9,7 @@ gpu: あり(gauss_image)
 examples: [gallery2d_smoothing_rank, poc_colocalization_crosstalk, poc_moire_screen, poc_prnu_camera_fingerprint, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # gauss_image — 2D `smoothing` op

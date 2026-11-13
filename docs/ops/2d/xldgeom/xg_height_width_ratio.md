@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_geometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # xg_height_width_ratio — 2D `xldgeom` op

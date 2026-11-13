@@ -29,7 +29,6 @@ import itertools
 import math
 import sys
 import time
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import numpy as np
@@ -37,6 +36,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import annotate as AN  # noqa: E402
 import examplefig as figs  # noqa: E402
+from safe_xml import safe_xml_parse as _parse_xml  # noqa: E402  (XML は門を通して読む: DOCTYPE・大きさ・深さ)
 import pegfail as F  # noqa: E402
 import pegsim as P  # noqa: E402
 
@@ -199,9 +199,9 @@ def numpy_part() -> dict:
          sm["latency_ticks"] == 30 and sm["first_cls"] == "wedging" and abs(cf["accuracy"] - 0.75) < 1e-12
          and abs(cf["per_class_recall"][cf["classes"].index("jamming")] - 0.5) < 1e-12 and cf["matrix"].sum() == 4)
     # ── 12. MJCF(mujoco 不要)
-    x0 = ET.fromstring(F.pegfail_scene_mjcf(KP))
-    xb = ET.fromstring(F.pegfail_scene_mjcf(KP, blocked_depth=6e-3))
-    xd = ET.fromstring(F.pegfail_scene_mjcf(KP, decoy_xy=(26e-3, 0.0)))
+    x0 = _parse_xml(F.pegfail_scene_mjcf(KP))
+    xb = _parse_xml(F.pegfail_scene_mjcf(KP, blocked_depth=6e-3))
+    xd = _parse_xml(F.pegfail_scene_mjcf(KP, decoy_xy=(26e-3, 0.0)))
     plug = next(g for g in xb.iter("geom") if g.get("name") == "plug")
     half = (Hd - 6e-3) / 2
     n_decoy = sum(1 for g in xd.iter("geom") if (g.get("name") or "").startswith("decoy_"))

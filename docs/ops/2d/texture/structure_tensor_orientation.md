@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [degenerate_inputs, gallery2d_texture_freq]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # structure_tensor_orientation — 2D `texture` op

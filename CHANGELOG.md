@@ -7,6 +7,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+## 1.1.1 — 2026-11-13
+
+1.1.1。1.1.0 の後の直しをまとめた patch 版(`CONTRIBUTING.md` の「直しは溜めずに、短い間隔の patch で出す」)。op の追加・削除・改名はなく、索引の op 数は 1.1.0 と同じ 3,838(うち型付き台帳 2,874)。
+
+- 1.1.0 に無かった入口: `fullseye setup`(環境の確認・スタートメニューのショートカット・後始末の `fullseye setup --uninstall`)。下の「インストール体験」の節は、この入口を 5 回の見直し(独立レビューと PR の CI)で直した記録で、どれも 1.1.0 には含まれていない。
+- 入力の受け付け方が変わる所(各節の「挙動が変わる点」に実測つきで書いてある): DOCTYPE / ENTITY を含む XML、大きさ・要素数・深さの上限を超える XML は `UnsafeXMLError` で断る(`read_3mf` / `osm_parse` は 1.1.0 の無制限から 512 MiB・1,000 万要素の上限つきになり、`safe_xml.xml_limits` で外せる)。パイプラインのファイルは、版の印が整数の 1 でないものとグラフのファイルを断る。外部コマンド(7-Zip・C コンパイラ・PowerShell)は作業フォルダから拾わない。正常な文書の読み結果と、op の索引は変えていない。
+- Studio: 画像欄の収まり・初回のレイアウトと言語・op の一覧の行間・検索結果の行・つまみの表示(「未使用」と出していた 8 本が実は効いていた)などの直し。
+
 ### 直し — インストール体験(setup / ショートカット / アンインストール): 独立レビュー(2026-11-12)1 回目の 16 件と 2 回目の 11 件
 
 - **扱いの内訳**: 1 回目の指摘は、番号 1〜16 を直し、番号の外に挙げた既知の制約 3 件(下の 3 行)は直していない(未確認のため)。2 回目の指摘 11 件(下の「2 回目」)は全部この節で直した。
@@ -19,7 +27,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 「アプリと機能」の `UninstallString` を、setup フォルダの `fullseye-uninstall.cmd`(Python に頼らない後始末スクリプト)にした。Python と `fullseye/uninstall.py` が在れば `python -I uninstall.py --uninstall --pause`(パッケージ本体を import しないので scipy が壊れた環境でも動く)、無ければ(venv を消した後)`.lnk`・アイコン・台帳・Uninstall キー・自分自身だけを固定の名前で消す。「python.exe は在るが起動できない」(venv の元の Python を消した = `pyvenv.cfg` の home が無い、rc 103)場合も、`python -I -c 0` で起動を確かめて同じ後始末へ進む(2 回目の指摘 1。確かめるまでは、この場合に「アプリと機能」から永久に消せなかった)。
 - 登録の途中で失敗しても、コピー済みのアイコンなど作った物は作った直後に台帳へ載る。Linux の `.desktop` の `Exec` で `%` `"` `$` `` ` `` `\` を仕様どおり逃がす。
 - テスト: `tests/conftest.py` がセッション全体で `FULLSEYE_LEDGER` を一時ファイルへ向け(`fullseye-rag` が本物の台帳に書いていた)、終了時に空の `HKCU\Software\FullseyeTest` を残さない。`_reg_delete_tree` と Uninstall キーの削除を実レジストリ(試験用キー)で通すテスト、`.lnk` の読み戻し、venv を消した状態の後始末スクリプトの実走を追加(`tests/test_installer_review_2026_11_12.py`)。これらは **Windows だけの試験**(他の OS では skip)で、ubuntu の CI では走らない。2 回目の対応で CI に `windows-latest` の job `windows-installer` を足し、この 2 ファイルだけをそこで実際に走らせる。`tools/ci_wheel_check.py` に「wheel に `studio_assets/fullseye.ico` と `fullseye_256.png` が入っている」を追加。
-- **2 回目の指摘**: (1) 上のとおり、起動できない python のときも後始末へ。(2) 壊れた台帳で「台帳なし」に倒したとき、既知の場所に setup フォルダの `fullseye.ico`・`fullseye-uninstall.cmd`・`Uninstall\Fullseye` キー(完全一致)を足した(固定の名前だけ。`.cmd` がキーを消せずに残り続けない)。(3) Python 3.11 の `is_symlink()` はジャンクションで False なので、`st_file_attributes` の再解析ポイントで判定し、ジャンクションの `fullseye-ops` は `os.rmdir` でリンクだけ外す(指す先は消さない。`fullseye-rag --uninstall` も落ちない)。(4) 空でない `dir_if_empty` を「[消したもの]」と言わず「[残したもの]」へ。走行中の後始末スクリプトとそれが入る setup フォルダは別枠「この画面が閉じた直後に消すもの」に出す。(5) Claude Code の skill は「作ったもの」の y とは別の問いにし、`SKILL.md` を手で編集していれば既定では残す(`--yes` でも)。(6) `-I` の単独実行がユーザー site(`pip install --user`)を外す問題: ユーザー site も探し、「別の場所」と「pip で入っていない」の文を分けた。(7) setup フォルダのパスに、定義済みの `%NAME%`(や `%CD%`)があれば登録時に理由を出して拒否(cmd.exe が展開して .cmd の起動が失敗するため)。(8) 終了コードの意味を表にして docstring と README に書き、`fullseye setup` は選んだ段が失敗すれば 1 を返す(これまで常に 0)。pip の段を出せず fullseye 本体が残るときだけ 3。(9) CI に `windows-latest` の job を追加。(10) この節の書き方を、上の直しに合わせて訂正。(11) MCP の物理パラメータの choice の写像を `param_specs.display_to_knob` 経由にした(等幅でない choice でも狂わない。既存の choice の値は変わらない)。
+- **2 回目の指摘**: (1) 上のとおり、起動できない python のときも後始末へ。(2) 壊れた台帳で「台帳なし」に倒したとき、既知の場所に setup フォルダの `fullseye.ico`・`fullseye-uninstall.cmd`・`Uninstall\Fullseye` キー(完全一致)を足した(固定の名前だけ。`.cmd` がキーを消せずに残り続けない)。(3) Python 3.11 の `is_symlink()` はジャンクションで False なので、`st_file_attributes` の再解析ポイントで判定し、ジャンクションの `fullseye-ops` は `os.rmdir` でリンクだけ外す(指す先は消さない。`fullseye-rag --uninstall` も落ちない)。(4) 空でない `dir_if_empty` を「[消したもの]」と言わず「[残したもの]」へ。走行中の後始末スクリプトとそれが入る setup フォルダは別枠「この画面が閉じた直後に消すもの」に出す。(5) Claude Code の skill は「作ったもの」の y とは別の問いにし、手で編集していれば既定では残す(`--yes` でも)。編集済みの判定は、`SKILL.md` が原本と違う・原本に無いファイルがある(`my_notes.md` など)・原本が見つからず判定できない、のどれかなら編集済み(判定できないときは残す・確認に倒す)。(6) `-I` の単独実行がユーザー site(`pip install --user`)を外す問題: ユーザー site も探し、「別の場所」と「pip で入っていない」の文を分けた。(7) setup フォルダのパスに、定義済みの `%NAME%`(や `%CD%`)があれば登録時に理由を出して拒否(cmd.exe が展開して .cmd の起動が失敗するため)。(8) 終了コードの意味を表にして docstring と README に書き、`fullseye setup` は選んだ段が失敗すれば 1 を返す(これまで常に 0)。pip の段を出せず fullseye 本体が残るときだけ 3。(9) CI に `windows-latest` の job を追加。(10) この節の書き方を、上の直しに合わせて訂正。(11) MCP の物理パラメータの choice の写像を `param_specs.display_to_knob` 経由にした(等幅でない choice でも狂わない。既存の choice の値は変わらない)。
+- **3 回目の独立レビュー(インストーラ側)**: (1)【High】`test_R2` が、環境変数を一時フォルダへ向けても `shortcuts.windows_dirs()` がデスクトップだけ `SHGetKnownFolderPath` で**本物**を引き、`registry=True` 既定で本物の `Uninstall\Fullseye` も計画に入るため、台帳が壊れた状態の `--yes` で利用者の本物のデスクトップの `Fullseye Studio.lnk` と「アプリと機能」の登録を消しうる穴だった(開発機で実際にデスクトップの `Fullseye Studio.lnk` が消えた)。直し: (a) 試験の包みが `dirs` / `env` / `registry=False` を一時フォルダに固定して渡す。(b) 別プロセスで uninstall を走らせる試験(R2)は、包み自身が `collect` を取って JSON に書き(外が 1 件でもあれば何も消さず非ゼロで終わる)、試験がそれを読んで「一時フォルダの外・自分以外のキーが 0 件、自分の物が入っている」を確かめてから消す 2 段目へ進む(`--wrap-plan-only` → `verify_plan_file`。包みが一覧を書かない変異は落ちる)。`.cmd` の実走(R1・12_13 など)は、実行するそのファイルの `del` / `rmdir` / `reg delete` の対象を先に確かめる(`guard_script`)。(c) `tests/conftest.py` に、試験群の前後で本物のデスクトップ・スタートメニュー・HKCU の Uninstall・setup フォルダの一覧を取って**差があれば失敗**させる見張り(Windows だけ)と、インストーラの試験の間は `UNINSTALL_KEY` を試験用の名前に差し替える fixture を追加。全試験の全数調査は上記 3 ファイルの `uninstall.main` / `shortcuts.remove` / `install` / `rag_setup.main` / `run_cli` の呼び出しを 1 つずつ確認(別プロセスの `fullseye setup --uninstall` は `--dry-run` か非端末で、何も消さない)。(d) 出荷コード: 後始末は消す前に必ず一覧を出し、さらに**名前と置き場だけで消さず、中身で Fullseye の物と確かめる**(`.lnk` は指す先の引数が `-m studio` か install.ps1 の `studio.py`、`.cmd` は先頭の印、`.ico` / `.png` は画像の印、`.desktop` は Name と `-m studio`、Uninstall キーは DisplayName と UninstallString)。確かめられない物は消さず「消さなかったもの」に出す(`shortcuts.verify_fullseye_item`。`--remove-shortcuts` も同じ)。(2)【Medium】`.cmd` の起動確認 `if errorlevel 1` は負の終了コード(DLL が無いときの 0xC0000135)を見逃すので、終了コードが 0 かどうかで分岐する `|| goto fallback` / `&& exit /b` に直した(`.cmd` の中に `errorlevel` の判定は残っていない)。(3)【Medium】`skill_edited` は、原本が見つからないときに「編集していない」と答えて `--yes` で手編集の skill を消していたのを、判定できなければ編集済み扱い(残す)に直し、原本に無いファイルがあれば編集済みとした。(4) `pip uninstall` の段を起動できなかったときも終了コード 3(表どおり)。CI の `windows-installer` に `timeout-minutes: 15`。
+- **4 回目(PR の CI で出た分)**: (1) 英語の Windows で日本語のユーザー名(その逆も)だと、スタートメニューのショートカットが作れなかった(`Unable to save shortcut ... ????`)。PowerShell まで文字は無傷で届いており、壊していたのは `WScript.Shell` の ShortcutLink が文字列を**システムの ANSI コードページ**で持つことだった(コードページに無い文字が `?` になる)。`.lnk` の読み書きを `IShellLinkW` + `IPersistFile`(Unicode の COM)の ctypes 直呼びに替え、PowerShell も Add-Type も要らない形にした(COM が使えない環境のためだけに従来の PowerShell 経路を残す)。`.cmd` は UTF-8 + `chcp 65001` で、コードページに無い文字のパスでも動くことを実走で確認(タイ語・ヘブライ語・韓国語・日本語・記号入りのパス)。(2) Linux で落ちていた: 台帳に `regkey` の行があると `winreg` を import して落ちた(`regkey_exists` / `unregister_uninstall_entry` が非 Windows で安全に振る舞う)。試験は Windows だけの物に skip の印を付け、Linux でも確かめられる部分(内容の確かめ・台帳の壊れ方・`.desktop` の Unicode・レジストリ行の扱い)を別の試験として残した。(3) 空を通す表明の台帳: `assert any(...)` / `for` の前に件数の確認を置いた(台帳の数は増やしていない)。(4) `test_public_reachability` の台帳の数(1084)は 1.1.1 の側に合わせた。
+- **5 回目**: (1) 上の (b) のとおり、R2 は別プロセスの包みが取った一覧を確かめる形にした。(2) `remove_item` の中の内容確認(二重の確かめ)を落とす試験、conftest の前後比較で「本物の setup フォルダが空で新しく作られた」を検出する区別(無い / 空)、COM の `CoInitializeEx` に対する `CoUninitialize`(S_OK・S_FALSE は対にし、`RPC_E_CHANGED_MODE` は対にしない)と、`__enter__` の途中で `QueryInterface` が失敗したときの ShellLink の Release 漏れを直した(試験あり)。(3) Studio: 行の高さの試験は QSS の `height` 指定そのものと(使える Qt では)windows11 様式での実測を見る。初回起動の言語の判断を `studio._startup_language` に切り出し、offscreen でも試験できる形にした(`build_window` はそれを呼ぶだけ)。英語以外に決まった言語は設定に書き込まれるので、後で OS の言語を変えても追従しない(英語のときは書き込まないので追従する)。
+- **Studio の定番の欄(同じ回の確認)**: `STAPLE_EXCLUDE_EN` / `STAPLE_EXCLUDE_JA` の上のコメントが入れ替わっていたのを直した。単独の「鏡」「左右」「上下」「ラベル」で定番が出なくなったのは、2 回目のレビュー(f54982b9f9)で部分一致の誤爆(顕微鏡・上下限・ラベル文字列)を避けるために**意図して**語を狭めた結果で、戻さない(試験に固定)。英語の語のうち op 名と同じ 5 つ(`equalize` / `invert` / `skeleton` / `thinning` / `difference`)が単独では定番を出さないのは「op 名そのものを打った人には定番を出さない」決まりの結果で、そのまま(試験に明記)。
 - **既知の制約**(直していません・未確認): Store 版 Python(MSIX)では `%APPDATA%` / `%LOCALAPPDATA%` への書き込みが私的な領域に振り替えられ、登録が見えない可能性。
 - **既知の制約**(直していません・未確認): conda の `pythonw.exe` を環境を有効にせず起動すると DLL が見つからないことがある。
 - **既知の制約**(直していません・未確認): `.lnk` に AppUserModelID を書いていないので、タスクバーのピン留めとの結びつきは未確認。
@@ -45,7 +57,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ### 直し — Studio の op の一覧の行間と、初回起動の言語(2026-11-12)
 
 - **op の一覧の行間が空きすぎていた。** Windows 11 の Qt の様式は一覧の行に上下 14 px の余白を足すので、文字 16 px に対して行が 30 px あった(余白を 0 にする指定は効いていなかった)。行の高さを「文字の高さ + 4 px」で指定し、同じ窓で見える行が 14 行から 21 行になった。検索結果の行(名前・説明・ボタン)の高さは変わらない。
-- **初回起動の言語を OS の言語に合わせる。** 言語を選んだ事がない状態では、日本語の Windows でも英語の画面で始まっていた。保存された言語が無いときは OS の言語(日本語・简体中文・繁體中文・한국어・Deutsch・हिन्दी)に合わせ、対応が無ければ英語。メニューで選び直せば次からはその言語(`studio.lang_from_locale`)。
+- **初回起動の言語を OS の言語に合わせる。** 言語を選んだ事がない状態では、日本語の Windows でも英語の画面で始まっていた。保存された言語が無いときは OS の言語(日本語・简体中文・繁體中文・한국어・Deutsch・हिन्दी)に合わせ、対応が無ければ英語。メニューで選び直せば次からはその言語(`studio.lang_from_locale` / `studio._startup_language`)。初回に OS から決めた(英語以外の)言語は設定に書き込まれ、以後は OS の言語を変えても追従しない。
 
 ### 修正 — 外部コマンドを作業フォルダから拾わない(2026-11-12)
 
@@ -57,7 +69,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 何を変えたか: 新しいモジュール `safe_xml.py`(`safe_xml_parse` / `safe_xml_parse_zip_member` / `safe_xml_iterparse`、例外は `UnsafeXMLError`(`ValueError` の子))。DOCTYPE は **解析器の DOCTYPE 通知**(`TreeBuilder.doctype`)で断る。バイト列の正規表現ではなく expat が読んだ後なので、UTF-8 / UTF-16 の BOM つき・なし・宣言つきの iso-8859-1 でも見落とさない。大きさの上限は既定 50 MiB(SVG の既存の上限に揃える)、zip の中は展開後の大きさにも上限(宣言が嘘でも `max_bytes + 1` までしか読まない)。壊れた XML は従来どおり `ET.ParseError`。`defusedxml` は依存に足さず使わない(この門だけで同じ入力を断れる)。本体の 11 か所の解析呼び出し(drivecommonroad 1・drivejapan 1・driveplateau 2・fileio 2・optdraw 1・pegfail 1・pegtactile 1・printpath 1・examples_3d/anatomical_hand 1)を全部この門に通した。tools/ の JUnit 読み(ci_junit_floor・ci_failure_record・ci_local×3・mutation_probe の計 6 呼び出し)は CI の生成物を読む内部の道具なので対象外。
 
-挙動が変わる点: DOCTYPE / ENTITY を含む入力は、(SVG 以外でも)`UnsafeXMLError` で断る(以前は内部実体が展開されて受理された)。50 MiB を超える XML は断る(plateau の CityGML はストリーム読みで上限なし)。3MF の `.model` は展開後 50 MiB まで。コメント・CDATA の中に `<!DOCTYPE` と書いてあるだけの文書は、正規表現のときと違って断らない。正常な文書の読み結果は変わらない(標準の `ET.fromstring` と `ET.tostring` のバイト一致を試験)。
+挙動が変わる点: DOCTYPE / ENTITY を含む入力は、(SVG 以外でも)`UnsafeXMLError` で断る(以前は内部実体が展開されて受理された)。50 MiB を超える XML は断る(plateau の CityGML はストリーム読みで上限なし。`read_3mf` と `osm_parse` は 1.1.0 で上限が無かったので、下の「独立レビュー 3・4 回目」のとおり既定を大きめにした)。コメント・CDATA の中に `<!DOCTYPE` と書いてあるだけの文書は、正規表現のときと違って断らない。正常な文書の読み結果は変わらない(標準の `ET.fromstring` と `ET.tostring` のバイト一致を試験)。
 
 実測: tests/test_safe_xml_parse_2026_11_12.py(145 本)。読み手 11 本 × DTD 6 種(10 段の入れ子実体・5 kB の実体・外部実体・内部実体・DOCTYPE のみ・SYSTEM つき DOCTYPE)× 別エンコード 5 種を読み手の入口から渡して全部断られる。52 MB の入力・展開後 52 MB の 3MF(圧縮後 1 MB 未満)も断られる。配布するモジュールを走査して、門を通さない解析の呼び出しが 0(対象は tests/・tools/・build/・examples/ を除く 500 本超。件数に下限つき)。
 
@@ -68,6 +80,35 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 何を変えたか: 検査を小さな関数 `engine.check_pipeline_header(d, *, where=...)`(定数 `engine.PIPELINE_FORMAT_VERSION = 1`)にして、`FullseyeEngine.from_dict` と `studio.validate_pipeline_dict` の 2 か所から呼ぶ(ほかの読み手はこの 2 つを通る)。`fullseye_pipeline` があるとき値が整数の 1 でなければ(99・`"banana"`・`1.0`・`true`・`null`)`ValueError`、`fullseye_graph` だけのファイルも `ValueError`(「何を期待し、何が来たか」を言う)。印の無い古いファイル(`stages` だけ)は今までどおり読む(警告は付けない)。形式は変えていない(書く側は `fullseye_pipeline: 1` のまま)。別の担当が進めている封筒 `fullseye_kind` は見ない。
 
 挙動が変わる点: 印が整数の 1 でないファイル(99・文字列など)と、グラフのファイルが断られる。リポジトリ内の全ファイル(`examples/data/` など)の印は 1 で、正常なファイルの読み結果は変わらない。実測: tests/test_pipeline_header_mark_2026_11_12.py(62 本)を含む、Engine・Studio・studio_lite・CLI・XML の試験 555 本が通る。
+
+### 直し — `safe_xml` と版の印の検査: 独立レビュー(2026-11-12)3 回目の指摘
+
+何が起き得たか(直す前の実測): (1) 大きさの上限(50 MiB)だけではメモリを抑えられない。平らな `<a/>` を並べた 8.4 MB がピーク 185 MB(入力の 22 倍、1 要素あたり約 88 バイト)で、上限いっぱいなら約 1.1 GB。入れ子は 20 万段が受理され、`pegtactile_cutaway_xml` では `RecursionError` が外へ出た。(2) `safe_xml_parse` の既定 `kind="auto"` が、`<` で始まらない文字列をパスとして開いた。`\\host\share\x.xml` を渡すと SMB で読みに行き、別のホストなら Windows の認証情報が外へ出る経路になり、ファイルの有無も例外の違いで分かった。(3) 配布物の走査の試験が正規表現で、別名の import などを見逃した。(4) zip の 2 段の守りは、どちらか一方を消しても試験が通った。(5) `fullseye_graph` と `fullseye_pipeline: 1` の両方を持つ dict を受理した。
+
+何を変えたか:
+- 要素の数の上限(既定 100 万。`osm_parse` だけ 200 万)と入れ子の深さの上限(既定 256)を足した(`max_elements` / `max_depth`、読み手ごとに変えられる、`None` で無効)。超えたら `UnsafeXMLError`。決め方 = 手元の実ファイルの最大が OSM 3.2 MB の 77,854 要素・CommonRoad 9,498・ginza.osm 13,789、入れ子は PLATEAU の 14 なので、要素数は最大の約 13 倍、深さは Python の再帰上限(1000)の手前。8.4 MB の平らな入力は 100 万要素で止まり、ピークは 185 MB から 97 MB。`safe_xml_iterparse`(CityGML)は深さのみ既定 256 で、要素の総数は上限なし(`elem.clear()` で木を抱えない設計で、実ファイルは 1 本で 226 万要素(219 MB)あり、総数で切ると通らない)。`clear()` しない呼び出し側は `max_elements` を付ける。
+- `kind="auto"` の意味を変えた: `str` / `bytes` は常に本文、パスとして開くのは `os.PathLike` か `kind="path"` を明示したときだけ。リポジトリ内の呼び出しは全部 `kind` を明示していて変わらない。`safe_xml` は 1.1.1 で新しく入ったモジュールで、既存の利用者はいない(1.1.0 以前の版には無い)ので、これは互換性を壊す変更ではなく、入る前の既定の決め直し。
+- `safe_xml_iterparse` を、標準の C の `iterparse` + ルート要素の前の部分の expat 検査に作り替えた(前の実装は Python の TreeBuilder で全要素を通していた)。この作り替えの途中で、入力の終わりで expat が末尾の token を保留するため、DOCTYPE がストリームの最後の chunk にあると見逃す穴を試験が見つけ、直した。
+- 配布物の走査の試験を ast に替えた(import の別名・`from ... import fromstring as fs`・`X.fromstring`・`fromstringlist`・`XMLID`・`XMLParser`・`ElementTree(file=)`・dom / sax / expat / pyexpat / lxml / plistlib / xmlrpc の import を検出。検出器自身も 20 形で試験)。`examples/` も対象に含め、そこの 8 か所の XML 解析を門に通した(`poc_real_sem_metal_layer.py` の自前の DOCTYPE 検査は門に寄せた)。
+- zip の 2 段の守りを別々の試験にした(宣言が大きい → `open` を呼ばずに断る / 宣言が嘘で小さい → `max_bytes + 1` バイトだけ読んで断る)。どちらかを消すと落ちることを確かめた。
+- 版の印: 両方の印を持つ dict を `ValueError`。`np.int64(1)` は断ったまま、メッセージで「Python / JSON の整数。numpy の整数は `int()` で」と言う。
+
+挙動が変わる点: 上のとおり(要素数 100 万超・深さ 256 超の XML を断る。`kind="auto"` の文字列はパスにならない。両方の印の dict を断る)。実ファイルの読み結果は、手元の OSM・PLATEAU(丸ごと 2 本)・CommonRoad・OME を標準の `ElementTree` に差し替えた同じ読み手と突き合わせて一致した。ただし **大きな正常ファイルは、この節の時点の既定では断られた**(下の 4 回目の指摘で直した: 3MF と OSM)。
+
+速度(正直に): 平らな合成データでは `safe_xml_parse` が標準の `fromstring` の 1.4 倍(0.72 s → 1.01 s、200 万要素級)、`iterparse` が 1.4 倍(0.39 s → 0.55 s。前の実装は 1.8 倍)。要素数と深さを Python の `start` / `end` で数えるぶんで、これ以上は縮められなかった。PLATEAU の実ファイルでは `plateau_parse` +11 % / −11 %(ばらつき)、`plateau_lod2_mesh` +18 % / +6 %(142〜219 MB の 2 ファイル、1 回ずつ)。
+
+### 直し — 大きな正常ファイルを断らない・上限を外す手段(独立レビュー 4 回目、2026-11-13)
+
+何が起き得たか: 3MF は頂点と三角形が 1 要素ずつなので、100 万三角形(72 MB・約 150 万要素)が既定の 50 MiB / 100 万要素の門で断られた(実測で約 65 万三角形まで)。1.1.0 の `read_3mf` には上限が無かった。街全体の OSM(50 MiB 超)も同じ。利用者が上限を外す手段も無かった。`safe_xml_iterparse` はルート要素より前の部分を全部メモリに溜め、100 MB のコメントでピーク 373 MB になった。
+
+何を変えたか:
+- 上限を外す入口 `safe_xml.xml_limits(max_bytes=..., max_elements=..., max_depth=..., max_prolog_bytes=...)`(`with` の中だけ効く。`None` で無制限。DOCTYPE の拒否は外せない)。読み手の引数に既定値を足せない契約 op(`read_3mf`・`osm_parse`・`cr_read`・`ome_tiff_read`・`svg_entities`)があるので、引数でなくモジュールの設定(`contextvars`)にした。`safe_xml_parse` 系の関数は引数でも渡せる。断るときの文に「上限を上げるには …」を入れた。
+- 読み手ごとの既定: `read_3mf` = 展開後 512 MiB・1,000 万要素(約 0.9 GB)、`osm_parse` = 512 MiB・1,000 万要素。実測: 100 万三角形・50 万頂点(71.7 MB)の 3MF が既定で 4.1 秒・読める。ほかの読み手の既定は前の節のまま(50 MiB・100 万要素・深さ 256。実ファイルの最大は OSM 3.2 MB の 77,854 要素)。SVG の 50 MiB は `xml_limits(max_bytes=...)` で上げられる。
+- `safe_xml_iterparse` の前置きの先読みに上限(`max_prolog_bytes`、既定 4 MiB。実ファイルの前置きは数 KB)。
+- ast の走査の見逃し 4 形(`getattr(ET, "fromstring")`・`from ... import *`・`xml.etree.ElementInclude`・組み立てた文字列の `import_module`)を足した。
+- `tests/test_mcp_usability_189_190.py::test_goal_semantics_change_plan_rank_and_explain_the_exact_boost` の揺れ(計画の探索が実時間 900 ms で打ち切られ、負荷が高いと 0 件になって落ちる)を、試験の `constraints` に `timeout_ms: 10000` を足して直した(上限は決定的な `max_expansions` だけ。製品の既定は変えない)。
+
+挙動が変わる点: `read_3mf` / `osm_parse` は 1.1.0 の無制限から 512 MiB・1,000 万要素の上限つきになった(それを超えるファイルは `xml_limits` で読める)。1.1.0 で読めた現実的な大きさ(100 万三角形の 3MF など)は既定で読める。
 
 ## 1.1.0 — 2026-11-12
 

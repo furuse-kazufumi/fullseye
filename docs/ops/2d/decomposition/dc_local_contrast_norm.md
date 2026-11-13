@@ -8,7 +8,7 @@ gpu: あり(dc_local_contrast_norm)
 examples: [gallery2d_texture_freq]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # dc_local_contrast_norm — 2D `decomposition` op

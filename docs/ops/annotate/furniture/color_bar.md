@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [annotate_gallery, poc_cad_scan_deviation, poc_ct_void_morphology, poc_dem_terrain, poc_interferometry_step, poc_lidar_terrain_change, poc_lightfield_depth, poc_multibeam_bathymetry, poc_pv_thermal_survey, poc_sem_tem_same_particle, poc_simcal_thin_film, poc_stockpile_volume, poc_thermography_ndt]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # color_bar — ANNOTATE `furniture` op

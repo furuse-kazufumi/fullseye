@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery_drive_world_objects, poc_driving_humanoids]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # humanoid_clip_mesh — DRIVE `humanoid` op

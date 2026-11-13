@@ -8,7 +8,7 @@ gpu: あり(vol_reg_erode_g)
 examples: [gallery2d_physics_alife_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # vol_reg_erode — 2D `3d` op

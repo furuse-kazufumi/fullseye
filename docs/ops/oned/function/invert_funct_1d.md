@@ -9,7 +9,7 @@ gpu: あり(許可リスト)
 examples: [poc_veiling_glare]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # invert_funct_1d — ONED `function` op

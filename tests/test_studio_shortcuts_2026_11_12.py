@@ -218,6 +218,7 @@ def test_bad_answer_is_asked_again():
 def test_requirements_come_from_pyproject_extras_not_the_package_itself():
     reqs = setup_cmd.requirements_for(["gui", "opencv"])
     assert any(r.lower().startswith("pyside6") for r in reqs) and any(r.lower().startswith("opencv") for r in reqs)
+    assert len(reqs) >= 2, reqs                                       # 空の列に対する not any は無条件に通る
     assert not any(r.lower().startswith("fullseye") for r in reqs)
     assert setup_cmd.pip_command(["x"])[:4] == [sys.executable, "-m", "pip", "install"]
 
@@ -324,7 +325,8 @@ def test_ledger_records_what_install_created_and_is_idempotent(tmp_path):
     ents = shortcuts.ledger_load(ledger)
     keys = [(e["kind"], e["path"]) for e in ents]
     assert len(keys) == len(set(keys))
-    assert any(k == "file" for k, _ in keys) and any(k == "dir_if_empty" for k, _ in keys)
+    assert any(k == "file" for k, _ in keys)
+    assert any(k == "dir_if_empty" for k, _ in keys) or not WIN       # 空なら畳むフォルダの記録は Windows だけ(Linux は畳むフォルダを作らない)
     if WIN:
         assert ("regkey", r"Software\FullseyeTest\a") in keys
         assert shortcuts.regkey_exists(r"Software\FullseyeTest\a")
@@ -403,7 +405,8 @@ def test_uninstall_without_ledger_detects_known_shortcut_places_only(tmp_path):
     dirs = _win_dirs(tmp_path) if WIN else _linux_dirs(tmp_path)
     known = (dirs["start_menu"] / "Fullseye Studio.lnk") if WIN else (dirs["apps"] / "fullseye-studio.desktop")
     known.parent.mkdir(parents=True)
-    known.write_bytes(b"old")
+    from test_installer_review_2026_11_12 import _real_shortcut
+    _real_shortcut(known)                     # 名前だけでは消さない: Fullseye を起動する本物のショートカットにする
     stray = known.parent / "other.lnk"
     stray.write_bytes(b"not ours")
     rc, out, pip = _un(tmp_path, tmp_path / "no_such_ledger.json", dirs, ["--yes"])

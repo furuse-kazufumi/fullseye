@@ -154,22 +154,29 @@ def remove_link(p: Path) -> None:
 
 
 def skill_edited(dest: Path) -> bool:
-    """インストールしたスキルの SKILL.md が、同梱の原本から手で変えられているか(FULLSEYE_REPO の行は見ない)。
+    """インストールしたスキルが、同梱の原本から手で変えられているか(FULLSEYE_REPO の行は見ない)。
 
-    手編集を黙って消さないため、アンインストールは編集済みの skill を既定で残す。"""
-    if is_link(dest):                   # リンクは外すだけ(指す先の開発用の原本は消さない)ので、編集の判定は要らない
+    **判定できないときは True(編集済み = 残す・確認に倒す)**。次のどれかなら True:
+    同梱の原本が見つからない / SKILL.md が読めない・原本と違う / フォルダに、原本に無いファイルがある
+    (利用者が足した my_notes.md など。``fullseye-rag`` が置く目印だけは除く)。
+    アンインストールは編集済みの skill を既定(``--yes`` を含む)で残す。リンク(ジャンクション)は外すだけなので False。"""
+    if is_link(dest):
         return False
     cur = dest / "SKILL.md"
     if not cur.is_file():
-        return False
+        return True                     # SKILL.md が無い(壊れた・別物)= 判定できない
     try:
+        src_dir = _skill_source(find_repo())
         text = cur.read_text(encoding="utf-8")
-        src = _skill_source(find_repo()) / "SKILL.md"
-        orig = src.read_text(encoding="utf-8")
-    except (OSError, SystemExit):
-        return False
+        orig = (src_dir / "SKILL.md").read_text(encoding="utf-8")
+        shipped = {p.relative_to(src_dir).as_posix() for p in src_dir.rglob("*") if p.is_file()}
+        present = {p.relative_to(dest).as_posix() for p in dest.rglob("*") if p.is_file()}
+    except (OSError, SystemExit, ValueError):
+        return True                     # 原本が見つからない等: 判定できない → 編集済み扱い
     norm = lambda s: _REPO_LINE.sub("FULLSEYE_REPO = <pinned>", s.replace("\r\n", "\n"), count=1)    # noqa: E731
-    return norm(text) != norm(orig)
+    if norm(text) != norm(orig):
+        return True
+    return bool(present - shipped - {MARKER_NAME})
 
 
 def uninstall(target_dir: Path) -> bool:

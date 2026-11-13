@@ -71,7 +71,7 @@ _INTERNAL = {
     # 2026-11-12 safe_xml(1.1.1): XML を DOCTYPE・実体の増幅なしで読む内部の層 4 本(UnsafeXMLError /
     # safe_xml_parse / safe_xml_parse_zip_member / safe_xml_iterparse)。利用者は各形式の読み込み(CommonRoad・OSM・
     # OME-TIFF・SVG・3MF・CityGML …)から使う。公開の op にするかは 1.2.0 の定義ファイルの層で決める。
-    "safe_xml": 4,
+    "safe_xml": 6,
     "param_specs": 11, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
     # GPU 第 4 便: 一括経路。op でなく、raytrace / optics と同じ定義を (M, W, R) で計算する下回りの部品。
@@ -326,7 +326,8 @@ def test_pending_exposure_shrinks_when_fixed():
 #   backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。
 # 2026-11-12 見た目の第 1 段(feat/studio-console-theme-2026-11-12): 1084 + 20 = 1104。studio_theme 19
 #   (配色・密度・コントラストの表と QSS。Studio の内側)・studio.dock_layout_usable 1。実測 1104。
-_HIDDEN_FUNCTIONS_TODAY = 1104
+# 2026-11-13 origin/master(1086 = 1084 + 2)を merge: 1104 + 2 = 1106。実測 1106。
+_HIDDEN_FUNCTIONS_TODAY = 1106
 
 
 def _hidden_total():

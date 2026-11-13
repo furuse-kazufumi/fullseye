@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery_drive_carla_bridge, poc_carla_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # carla_scene_synthetic — DRIVE `carla` op

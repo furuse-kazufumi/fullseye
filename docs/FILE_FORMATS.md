@@ -36,7 +36,7 @@
 | NumPy array | `.npy` | `mesh.read_points`<br>`motionio.read_events`<br>`volio.read_volume` | `mesh.write_points`<br>`studio_display.save_outputs`<br>`volio.write_volume` | `read_events` | optional: SimpleITK, tifffile | `tests/test_capabilities.py`<br>`tests/test_examples3d.py`<br>+24 | — |
 | NumPy archive | `.npz` | `mesh.read_points`<br>`motionio.read_events`<br>`volio.read_volume` | `mesh.write_points`<br>`volio.write_volume` | `read_events` | optional: SimpleITK, tifffile | `tests/test_carlabridge.py`<br>`tests/test_itokawa_anim3d.py`<br>+14 | — |
 | NRRD | `.nrrd` | `fileio.nrrd_read`<br>`volio.read_volume` | `fileio.nrrd_write`<br>`volio.write_volume` | `nrrd_read`<br>`nrrd_write` | optional: SimpleITK, tifffile | `tests/test_audit_extra_2026_11_04.py`<br>`tests/test_fileio_scientific.py`<br>+3 | `nrrd` |
-| Wavefront OBJ | `.obj` | `driveworld.read_obj_colored`<br>`fileio.mesh_read_obj`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_obj`<br>`mesh.write_mesh` | `mesh_read_obj`<br>`mesh_write_obj` | stdlib / core | `tests/test_abi_apply.py`<br>`tests/test_audit_0_7_1_fixes_2026_10_21.py`<br>+16 | `trimesh` |
+| Wavefront OBJ | `.obj` | `driveworld.read_obj_colored`<br>`fileio.mesh_read_obj`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_obj`<br>`mesh.write_mesh` | `mesh_read_obj`<br>`mesh_write_obj` | stdlib / core | `tests/test_abi_apply.py`<br>`tests/test_audit_0_7_1_fixes_2026_10_21.py`<br>+17 | `trimesh` |
 | Geomview OFF | `.off` | `fileio.mesh_read_off`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_off`<br>`mesh.write_mesh` | `mesh_read_off`<br>`mesh_write_off` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_drivelateral.py`<br>+9 | `trimesh` |
 | OME-TIFF | `.ome.tif` | `fileio.ome_tiff_read` | `fileio.ome_tiff_write` | `ome_tiff_read`<br>`ome_tiff_write` | optional: tifffile | `tests/test_fileio_scientific.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
 | OME-TIFF | `.ome.tiff` | `fileio.ome_tiff_read` | `fileio.ome_tiff_write` | `ome_tiff_read`<br>`ome_tiff_write` | optional: tifffile | `tests/test_fileio_scientific.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
@@ -58,7 +58,7 @@
 | WAV | `.wav` | `dsp.read_wav` | `dsp.write_wav` | `read_wav`<br>`write_wav` | stdlib / core | `tests/test_chain_type_contracts.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+19 | — |
 | WebM video | `.webm` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | Excel workbook | `.xlsx` | — | `fullseye.xlsxio.save_xlsx_report` | — | optional: openpyxl | `tests/test_inspect_batch.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+2 | — |
-| XML | `.xml` | `safe_xml.safe_xml_parse`<br>`safe_xml.safe_xml_parse_zip_member` | — | — | stdlib / core | `tests/test_anatomical_hand.py`<br>`tests/test_ci_folded_run_no_comment_2026_11_03.py`<br>+13 | — |
+| XML | `.xml` | `safe_xml.safe_xml_parse`<br>`safe_xml.safe_xml_parse_zip_member` | — | — | stdlib / core | `tests/test_anatomical_hand.py`<br>`tests/test_ci_folded_run_no_comment_2026_11_03.py`<br>+14 | — |
 | XYZ point cloud | `.xyz` | `fileio.points_read_xyz`<br>`mesh.read_points` | `fileio.points_write_xyz`<br>`mesh.write_points` | `points_read_xyz`<br>`points_write_xyz` | stdlib / core | `tests/test_anim3d_raster_gate_2026_10_26.py`<br>`tests/test_audit_file_formats.py`<br>+9 | — |
 
 ## 集計

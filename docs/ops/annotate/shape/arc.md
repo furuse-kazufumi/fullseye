@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [annotate_gallery, poc_mixed_case_depalletizing, poc_optics_drawings, poc_plenoptic_camera, poc_polish_wipe_measure, poc_real_walnut_cbct, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # arc — ANNOTATE `shape` op

@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_virtual_acceptance_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # virtual_acceptance_test — ACCEPTANCE `simulate` op

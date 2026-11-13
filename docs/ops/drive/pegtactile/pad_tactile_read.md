@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_knife_tactile_toughness, poc_peg_insertion_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # pad_tactile_read — DRIVE `pegtactile` op

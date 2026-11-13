@@ -379,11 +379,13 @@ def test_stage_row_says_not_computed_in_japanese_only_for_a_stage_that_was_never
     win._apply_language("ja"); _pump(0.3)
     try:
         rows = _rows(win)
+        assert len(rows) >= 3, rows                                   # 空の欄に対する any / not any は無条件に通る
         assert any("未計算" in r or "再計算が必要" in r for r in rows), rows
         assert not any("not computed" in r or "recompute needed" in r for r in rows), rows
     finally:
         win._apply_language("en"); _pump(0.2)
     rows = _rows(win)
+    assert len(rows) >= 3, rows
     assert any("未計算 / not computed" in r or "再計算が必要 / recompute needed" in r for r in rows), rows
 
 

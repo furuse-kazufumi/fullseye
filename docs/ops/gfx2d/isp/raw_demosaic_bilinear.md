@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [poc_pixel_shift, raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # raw_demosaic_bilinear — GFX2D `isp` op

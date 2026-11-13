@@ -532,12 +532,51 @@ def test_op_list_rows_are_compact_and_search_rows_keep_their_height(monkeypatch,
         assert ol.count() > 100
         rows = [ol.sizeHintForRow(i) for i in range(10)]
         assert all(fm <= h <= fm + studio._OP_ROW_PAD + 2 for h in rows), (fm, rows)
+        # 行の高さの指定そのもの(既定の様式では差が出ないので、QSS の height を直接確かめる)
+        assert "height: %dpx" % (fm + studio._OP_ROW_PAD) in ol.styleSheet(), ol.styleSheet()
         win._search_ui["search_now"]("threshold"); _pump(0.5)
         tall = [ol.sizeHintForRow(i) for i in range(ol.count())]
         assert max(tall) >= 2 * fm, tall[:8]            # 説明とボタンのある行は潰れていない
     finally:
         win.close_guard = lambda: True
         win.quiesce(); win.close(); _pump(0.1)
+
+
+def test_op_list_rows_stay_compact_under_the_windows11_style_when_available(monkeypatch, tmp_path):
+    """Windows 11 相当の様式(行に上下 14 px を足す)を使える Qt では、その様式での実測。使えない環境は skip。"""
+    pytest.importorskip("PySide6")
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    from PySide6 import QtWidgets
+    import studio
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    if "windows11" not in [k.lower() for k in QtWidgets.QStyleFactory.keys()]:
+        pytest.skip("this Qt has no windows11 style")
+    prev = app.style().objectName()
+    app.setStyle("windows11")
+    try:
+        monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / "s.ini"))
+        win, _model = studio.build_window()
+        win.show(); _pump(0.4)
+        try:
+            ol = win._op_list
+            fm = ol.fontMetrics().height()
+            rows = [ol.sizeHintForRow(i) for i in range(10)]
+            assert len(rows) == 10 and all(h <= fm + studio._OP_ROW_PAD + 2 for h in rows), (fm, rows)
+        finally:
+            win.close_guard = lambda: True
+            win.quiesce(); win.close(); _pump(0.1)
+    finally:
+        app.setStyle(prev)
+
+
+def test_startup_language_decision():
+    """起動時の分岐(offscreen では build_window の中で走らない)を関数に切り出して試験する。"""
+    import studio
+    f = studio._startup_language
+    assert f("de", "ja_JP") == "de" and f("en", "ja_JP") == "en"          # 保存があればそれ(OS が変わっても追従しない)
+    assert f(None, "ja_JP") == "ja" and f(None, "zh_TW") == "tw" and f(None, "fr_FR") == "en"   # 初回は OS から
+    assert f("xx", "ko_KR") == "ko" and f("", "ja_JP") == "ja"            # 表に無い保存値は初回と同じ扱い
+    assert f(None, "ja_JP", languages={"en": "English"}) == "en"
 
 
 def test_first_run_language_follows_the_os_locale():
@@ -551,3 +590,23 @@ def test_first_run_language_follows_the_os_locale():
     assert f("en_US") == "en" and f("fr_FR") == "en" and f("C") == "en" and f("") == "en" and f(None) == "en"
     assert f("ja_JP", languages={"en": "English"}) == "en"          # 表に無ければ英語
     assert all(f(code) == code for code in studio.LANGUAGES)        # 表の言語は全部自分に決まる
+
+
+def test_bare_ambiguous_words_give_no_staple_but_the_specific_phrases_do():
+    """2 回目のレビュー(f54982b9f9)で**意図して**狭めた語。単独の「鏡」「左右」「上下」「ラベル」は誤爆するので定番を出さない
+    (顕微鏡・上下限・左右対称・ラベル文字列)。具体的な言い方では出る。3 回目のレビューで「意図した変更か」を確かめて固定した。"""
+    for bare in ("鏡", "左右", "上下", "ラベル", "顕微鏡"):
+        assert ss.staples_for(bare) == [], bare
+    assert ss.staples_for("左右反転") == ["mirror_image"] and "mirror_image" in ss.staples_for("上下を反転")
+    assert ss.staples_for("鏡像")[:1] == ["mirror_image"]
+    for phrase in ("ラベル付け", "ラベリング"):
+        assert "connect_and_holes" in ss.staples_for(phrase), phrase
+
+
+@pytest.mark.parametrize("word", ["equalize", "invert", "skeleton", "thinning", "difference"])
+def test_english_words_that_are_also_op_names_give_no_staple_by_design(word):
+    """op 名と同じ英語の語は単独では定番を出さない。「op 名そのものを打った人の先頭に別の op を置かない」決まりの結果で、
+    そのままにしている(困るなら、語を 2 つ以上にするか、別の言い方 equalise / skeletonize / negative を使う)。"""
+    assert ss._row_of(word) is not None                  # 理由: その語は op 名として索引に在る
+    assert ss.staples_for(word) == []
+    assert ss.staples_for(word + "_") == []

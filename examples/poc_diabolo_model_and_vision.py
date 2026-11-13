@@ -29,7 +29,6 @@ from __future__ import annotations
 import math
 import sys
 import time
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import numpy as np
@@ -38,6 +37,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import annotate as AN  # noqa: E402
 import diabolo as D  # noqa: E402
 import examplefig as figs  # noqa: E402
+from safe_xml import safe_xml_parse as _parse_xml  # noqa: E402  (XML は門を通して読む: DOCTYPE・大きさ・深さ)
 import imagedraw as IDR  # noqa: E402
 from drawstyle import DrawStyle  # noqa: E402
 
@@ -347,7 +347,7 @@ def numpy_part() -> dict:
          % (depth_ratio, mirror), abs(depth_ratio - 1.05) < 0.002 and mirror < 1e-6)
     _NUM["probe_depth_ratio"] = depth_ratio
     # ── 18(既定). MJCF 文字列
-    root = ET.fromstring(D.diabolo_scene_mjcf(P))
+    root = _parse_xml(D.diabolo_scene_mjcf(P))
     sp = root.find("tendon/spatial")
     ok = (sp is not None and sp.get("range") == "0 1.45" and [s.get("site") for s in sp if s.tag == "site"] == ["sL", "sD", "sR"]
           and sum(1 for b in root.iter("body") if b.get("mocap") == "true") == 2
