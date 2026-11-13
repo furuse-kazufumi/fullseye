@@ -1429,3 +1429,168 @@ def test_params_set_confirm_takes_the_parents_confirm_action(qapp, ini, tmp_path
     assert w2.panel.confirm_function() is new_style
     _close_quietly(w2)
     parent.deleteLater()
+
+
+def _strips(p) -> list:
+    return [w for w in p.findChildren(QtWidgets.QWidget, "panelStrip")]
+
+
+def test_params_strip_is_one_part_of_actions_and_turns(qapp, fusion, ini, tmp_path):
+    """A2 の備え: 道具の列は 1 つの部品(objectName "panelStrip")で、道具 10 個は QAction(パネルにも載り、≡ から届く)。
+    set_strip_side("left") で縦の 1 列(x が全部同じ・y が増える)が表の左に、"top" で横の 1 行(y が同じ・x が増える)が表の上に。"""
+    win = _window(qapp, _three_files(tmp_path), size=(720, 420))
+    p = win.panel
+    assert _strips(p) == [p.strip_widget()] and p.strip_side() == "top"
+    items = p.strip_actions()
+    acts = [a for a in items if a is not None]
+    assert len(acts) == len(BUTTONS) == 10 and items.count(None) == 3
+    assert [p.tool_actions[k] for k in BUTTONS] == acts
+    assert set(acts) <= set(p.actions())                                  # パネルに載る(キーと ≡ の一覧の元)
+    for k in BUTTONS:
+        a, b = p.tool_actions[k], p.buttons[k]
+        assert a.text().strip() and a.toolTip().startswith(a.text()) and b.defaultAction() is a, k
+        assert b.parent() is p.strip_widget() and b.accessibleName() == a.text(), k
+    for side, want in (("left", "column"), ("top", "row"), ("left", "column")):
+        assert p.set_strip_side(side) == side == p.strip_side()
+        _pump(qapp)
+        strip = p.strip_widget()
+        pos = [p.buttons[k].mapTo(p, QtCore.QPoint(0, 0)) for k in BUTTONS]
+        assert len(pos) == 10
+        if want == "column":
+            assert len({q.x() for q in pos}) == 1 and [q.y() for q in pos] == sorted(q.y() for q in pos)
+            assert len({q.y() for q in pos}) == 10
+            assert strip.mapTo(p, QtCore.QPoint(strip.width(), 0)).x() <= p.stack.geometry().left()
+            assert strip.mapTo(p, QtCore.QPoint(0, 0)).y() <= p.stack.geometry().top()
+        else:
+            assert len({q.y() for q in pos}) == 1 and [q.x() for q in pos] == sorted(q.x() for q in pos)
+            assert len({q.x() for q in pos}) == 10
+            assert strip.mapTo(p, QtCore.QPoint(0, strip.height())).y() <= p.stack.geometry().top()
+        assert p.search.isVisible() and p.search.mapTo(p, QtCore.QPoint(0, p.search.height())).y() <= p.stack.geometry().top()
+        assert _strips(p) == [strip]
+    with pytest.raises(ValueError):
+        p.set_strip_side("right")
+    assert p.strip_side() == "left"
+    _close_quietly(win)
+
+
+class _WrapStrip(QtWidgets.QWidget):
+    """折り返す型の代役: 3 個ごとに次の段(横)/ 次の列(縦)。全部が見える。"""
+
+    PER_LINE = 3
+
+    def __init__(self):
+        super().__init__()
+        self.grid = QtWidgets.QGridLayout(self)
+        self.grid.setContentsMargins(0, 0, 0, 0)
+        self.orientation = Qt.Horizontal
+        self.items: list = []
+        self.made: dict = {}
+
+    def set_actions(self, items):
+        self.items = list(items)
+        self._lay()
+
+    def set_orientation(self, o):
+        self.orientation = o
+        self._lay()
+
+    def _lay(self):
+        while self.grid.count():
+            w = self.grid.takeAt(0).widget()
+            if w is not None:
+                w.setParent(None)
+                w.deleteLater()
+        self.made = {}
+        for n, a in enumerate(x for x in self.items if x is not None):
+            b = QtWidgets.QToolButton(self)
+            b.setDefaultAction(a)
+            line, at = divmod(n, self.PER_LINE)
+            if self.orientation == Qt.Horizontal:
+                self.grid.addWidget(b, line, at)
+            else:
+                self.grid.addWidget(b, at, line)
+            self.made[a] = b
+
+    def button_for(self, a):
+        return self.made.get(a)
+
+
+class _ScrollStrip(QtWidgets.QScrollArea):
+    """送る型の代役: 既定の列を、ボタン 2 個分の長さのスクロールの窓に入れる(隠れた物は送って届く)。"""
+
+    def __init__(self):
+        super().__init__()
+        self.inner = Q._ToolStrip()
+        self.setWidget(self.inner)
+        self.setWidgetResizable(False)
+        self.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)       # 送りはボタンとホイールの役(棒は出さない)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.orientation = Qt.Horizontal
+
+    def set_actions(self, items):
+        self.inner.set_actions(items)
+        self.inner.adjustSize()
+
+    def set_orientation(self, o):
+        self.orientation = o
+        self.inner.set_orientation(o)
+        self.inner.adjustSize()
+        two = 2 * Q.BUTTON_PX + Q.GAP_PX
+        if o == Qt.Horizontal:
+            self.setFixedSize(two, Q.BUTTON_PX + 2)
+        else:
+            self.setFixedSize(Q.BUTTON_PX + 2, two)
+
+    def button_for(self, a):
+        return self.inner.button_for(a)
+
+
+def _reached(strip, actions) -> int:
+    """列の部品の中で、送り(スクロール)を使ってでも目に見える位置に出せたボタンの数。"""
+    n = 0
+    for a in actions:
+        b = strip.button_for(a)
+        if b is None:
+            continue
+        if isinstance(strip, QtWidgets.QScrollArea):
+            strip.ensureWidgetVisible(b, 0, 0)
+            QtWidgets.QApplication.processEvents()
+            r = QtCore.QRect(b.mapTo(strip.viewport(), QtCore.QPoint(0, 0)), b.size())
+            if strip.viewport().rect().contains(r):
+                n += 1
+        elif b.isVisible() and strip.rect().contains(QtCore.QRect(b.mapTo(strip, QtCore.QPoint(0, 0)), b.size())):
+            n += 1
+    return n
+
+
+@pytest.mark.parametrize("kind", ["scroll", "wrap"])
+def test_params_strip_can_be_replaced_by_scroll_or_wrap(qapp, fusion, ini, tmp_path, kind):
+    """A2・A3 の備え: 列の部品を外の部品(送る型・折り返す型)に差し替えられる。差し替えた部品は同じ QAction 10 個を受け、
+    objectName は "panelStrip"・パネルの中に 1 つだけ、横 / 縦のどちらでも 10 個全部に届く(数で)。状態(有効・押した)は
+    QAction を通して差し替えた部品のボタンにも出る。約束を満たさない物は TypeError(黙って受けない)。"""
+    win = _window(qapp, _three_files(tmp_path), size=(720, 420))
+    p = win.panel
+    old = p.strip_widget()
+    strip = _ScrollStrip() if kind == "scroll" else _WrapStrip()
+    p.set_strip_widget(strip)
+    _pump(qapp)
+    assert p.strip_widget() is strip and strip.objectName() == "panelStrip" and _strips(p) == [strip]
+    assert old.parent() is None and not old.isVisible()
+    acts = [a for a in p.strip_actions() if a is not None]
+    assert len(acts) == 10 and [p.buttons[k] for k in BUTTONS] == [strip.button_for(a) for a in acts]
+    for side, orient in (("top", Qt.Horizontal), ("left", Qt.Vertical), ("top", Qt.Horizontal)):
+        p.set_strip_side(side)
+        _pump(qapp)
+        assert strip.orientation == orient
+        assert _reached(strip, acts) == 10, (kind, side)
+    assert not p.buttons["redo"].isEnabled() and not p.buttons["diff"].isChecked()
+    assert p.edit_cell(0, "camera.fx", "900").ok
+    p.undo()
+    assert p.buttons["redo"].isEnabled()
+    p.buttons["diff"].click()
+    assert p.tmodel.diff_only and p.buttons["diff"].isChecked()
+    with pytest.raises(TypeError):
+        p.set_strip_widget(QtWidgets.QLabel("no"))
+    assert p.strip_widget() is strip
+    _close_quietly(win)

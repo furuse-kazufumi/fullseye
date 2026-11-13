@@ -241,6 +241,78 @@ def _answer_key(got: Any, buttons: Sequence[tuple[str, str]]) -> str:
     return "cancel"
 
 
+class _StripButton(QtWidgets.QToolButton):
+    """列の 1 つのボタン(QAction を押す)。読み上げの名前は QAction の名前に追従する。"""
+
+    def __init__(self, action: QtGui.QAction, parent: QtWidgets.QWidget) -> None:
+        super().__init__(parent)
+        self.setDefaultAction(action)
+        self.setToolButtonStyle(Qt.ToolButtonIconOnly)
+        self.setIconSize(QtCore.QSize(_ICON_PX, _ICON_PX))
+        self.setFixedSize(BUTTON_PX, BUTTON_PX)
+        self.setAutoRaise(True)
+        if action.menu() is not None:                  # メニューは QAction の menu() から出る(setMenu は既定の QAction を外す)
+            self.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+        action.changed.connect(self._sync)
+        self._sync()
+
+    def _sync(self) -> None:
+        a = self.defaultAction()
+        if a is not None:
+            self.setAccessibleName(a.text().replace("&&", "&"))
+
+
+class _ToolStrip(QtWidgets.QWidget):
+    """道具の列の既定の部品: QAction の並びを、アイコンだけのボタンの横の 1 行か縦の 1 列にする。
+
+    外の部品(収まらない時に送る ScrollStrip・折り返す列など)へ差し替える時の約束(:meth:`ParamsPanel.set_strip_widget`):
+
+    * ``set_actions(items)`` — ``items`` = ``QAction`` か ``None``(群の区切り)の並び。同じ QAction を使う(複製しない。
+      有効・押した状態・ツールヒント・キーは QAction が正本)。
+    * ``set_orientation(o)`` — ``Qt.Horizontal`` = 横の 1 行、``Qt.Vertical`` = 縦の 1 列。
+    * ``button_for(action)``(任意)— その QAction を押すボタン(試験と ``ParamsPanel.buttons`` の元)。
+
+    この既定の部品は収まらない時の扱いを持たない(全部のボタンが見える長さを最小の大きさにする = 隠さない)。"""
+
+    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+        super().__init__(parent)
+        self._lay = QtWidgets.QBoxLayout(QtWidgets.QBoxLayout.LeftToRight, self)
+        self._lay.setContentsMargins(0, 0, 0, 0)
+        self._lay.setSpacing(GAP_PX)
+        self._buttons: dict[int, _StripButton] = {}
+        self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+
+    def set_actions(self, items: Sequence[QtGui.QAction | None]) -> None:
+        while self._lay.count():
+            w = self._lay.takeAt(0).widget()
+            if w is not None:
+                w.setParent(None)
+                w.deleteLater()
+        self._buttons = {}
+        for a in items:
+            if a is None:
+                self._lay.addSpacing(GAP_PX)            # 群の間 = 4 + 4 = 8 px
+                continue
+            b = _StripButton(a, self)
+            self._lay.addWidget(b)
+            self._buttons[id(a)] = b
+
+    def set_orientation(self, o: Qt.Orientation) -> None:
+        self._lay.setDirection(QtWidgets.QBoxLayout.TopToBottom if o == Qt.Vertical else QtWidgets.QBoxLayout.LeftToRight)
+
+    def orientation(self) -> Qt.Orientation:
+        return Qt.Vertical if self._lay.direction() == QtWidgets.QBoxLayout.TopToBottom else Qt.Horizontal
+
+    def button_for(self, action: QtGui.QAction) -> QtWidgets.QToolButton | None:
+        return self._buttons.get(id(action))
+
+
+#: 道具の列の向き(外から set_strip_side で選ぶ。自動で選ぶ規則は studio_panels の strip_side が持つ)。
+STRIP_SIDES = ("top", "left")
+#: 列の部品の objectName(全部のパネルで同じ名前で数える)。
+STRIP_NAME = "panelStrip"
+
+
 class _ElideLabel(QtWidgets.QLabel):
     """1 行に収まらなければ末尾を … にするラベル(全文はツールヒント)。"""
 
@@ -620,55 +692,72 @@ class ParamsPanel(QtWidgets.QWidget):
         lay = QtWidgets.QVBoxLayout(self)
         lay.setContentsMargins(2, 2, 2, 2)
         lay.setSpacing(2)
+        # 本体 = [縦の時の道具の列] + [検索の帯 / 表]。横の時は道具の列が検索の帯の左に入る(_place_strip)。
+        self._body = QtWidgets.QHBoxLayout()
+        self._body.setContentsMargins(0, 0, 0, 0)
+        self._body.setSpacing(2)
+        self._column = QtWidgets.QVBoxLayout()
+        self._column.setContentsMargins(0, 0, 0, 0)
+        self._column.setSpacing(2)
         self.bar = QtWidgets.QWidget(self)
-        bl = QtWidgets.QHBoxLayout(self.bar)
-        bl.setContentsMargins(0, 0, 0, 0)
-        bl.setSpacing(GAP_PX)
+        self._bar_lay = QtWidgets.QGridLayout(self.bar)
+        self._bar_lay.setContentsMargins(0, 0, 0, 0)
+        self._bar_lay.setHorizontalSpacing(GAP_PX)
+        self._bar_lay.setVerticalSpacing(2)
         color = self.palette().color(QtGui.QPalette.ButtonText)
-        self.buttons: dict[str, QtWidgets.QToolButton] = {}
+        #: 道具(1 機能 1 QAction)。鍵 → QAction。列の部品・キー・パネルの ≡ はどれもこの QAction を使う。
+        self.tool_actions: dict[str, QtGui.QAction] = {}
+        self._action_texts: dict[str, tuple[str, str, str]] = {}
+        items: list[QtGui.QAction | None] = []
 
-        def button(key: str, icon: str, name: str, what: str, slot: Callable[[], Any] | None, shortcut: str = "",
-                   checkable: bool = False) -> QtWidgets.QToolButton:
-            b = QtWidgets.QToolButton(self.bar)
-            b.setIcon(_draw_icon(icon, color))
-            b.setIconSize(QtCore.QSize(_ICON_PX, _ICON_PX))
-            b.setFixedSize(BUTTON_PX, BUTTON_PX)
-            b.setAutoRaise(True)
-            b.setCheckable(checkable)
-            b.setAccessibleName(tr(name))
-            tip = "%s — %s" % (tr(name), tr(what))
-            b.setToolTip(tip + (" (%s)" % shortcut if shortcut else ""))
-            if slot is not None:
-                (b.toggled if checkable else b.clicked).connect(slot)
+        def action(key: str, icon: str, name: str, what: str, slot: Callable[..., Any] | None, shortcut: str = "",
+                   checkable: bool = False) -> QtGui.QAction:
+            a = QtGui.QAction(self)
+            a.setObjectName("params_" + key)
+            a.setIcon(_draw_icon(icon, color))
+            a.setCheckable(checkable)
             if shortcut:
-                sc = QtGui.QShortcut(QtGui.QKeySequence(shortcut), self)
-                sc.setContext(Qt.WidgetWithChildrenShortcut)
-                sc.activated.connect(b.toggle if checkable else b.click)
-            bl.addWidget(b)
-            self.buttons[key] = b
-            return b
+                a.setShortcut(QtGui.QKeySequence(shortcut))
+                a.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+            if slot is not None:
+                if checkable:
+                    a.toggled.connect(slot)
+                else:
+                    a.triggered.connect(lambda _checked=False, f=slot: f())
+            self.addAction(a)
+            self.tool_actions[key] = a
+            self._action_texts[key] = (name, what, shortcut)
+            items.append(a)
+            return a
 
-        button("open", "open", "Open", "open parameter files in place of the ones shown", self.open_files, "Ctrl+O")
-        button("add", "add", "Add column", "add parameter files beside the ones shown", self.add_files, "Ctrl+Shift+O")
-        button("remove", "remove", "Remove column", "take the selected bundle out of the table (the file stays)",
+        action("open", "open", "Open", "open parameter files in place of the ones shown", self.open_files, "Ctrl+O")
+        action("add", "add", "Add column", "add parameter files beside the ones shown", self.add_files, "Ctrl+Shift+O")
+        action("remove", "remove", "Remove column", "take the selected bundle out of the table (the file stays)",
                self.remove_current)
-        bl.addSpacing(GAP_PX)
-        button("save", "save", "Save", "write every changed bundle back to its file", self.save_all, "Ctrl+S")
-        button("saveas", "saveas", "Save As", "write the selected bundle to a new JSON, YAML or XML file",
+        items.append(None)
+        action("save", "save", "Save", "write every changed bundle back to its file", self.save_all, "Ctrl+S")
+        action("saveas", "saveas", "Save As", "write the selected bundle to a new JSON, YAML or XML file",
                self.save_current_as, "Ctrl+Shift+S")
-        button("reload", "reload", "Reload", "read the selected bundle again from its file", self.reload_current)
-        bl.addSpacing(GAP_PX)
-        button("undo", "undo", "Undo", "take back the last change", self.undo, "Ctrl+Z")
-        button("redo", "redo", "Redo", "apply the change again", self.redo, "Ctrl+Y")
-        cp = button("copy", "copy", "Copy to column", "copy the selected value, or every differing value, to another bundle",
+        action("reload", "reload", "Reload", "read the selected bundle again from its file", self.reload_current)
+        items.append(None)
+        action("undo", "undo", "Undo", "take back the last change", self.undo, "Ctrl+Z")
+        action("redo", "redo", "Redo", "apply the change again", self.redo, "Ctrl+Y")
+        cp = action("copy", "copy", "Copy to column", "copy the selected value, or every differing value, to another bundle",
                     None)
-        cp.setPopupMode(QtWidgets.QToolButton.InstantPopup)
-        self.copy_menu = QtWidgets.QMenu(cp)
+        self.copy_menu = QtWidgets.QMenu(self)
         self.copy_menu.aboutToShow.connect(self._fill_copy_menu)
         cp.setMenu(self.copy_menu)
-        bl.addSpacing(GAP_PX)
-        button("diff", "diff", "Differences only", "show only the rows where the bundles differ", self.set_diff_only,
+        items.append(None)
+        action("diff", "diff", "Differences only", "show only the rows where the bundles differ", self.set_diff_only,
                "Ctrl+D", checkable=True)
+        self._strip_items = items
+        self._apply_action_texts()
+        self._strip_side = "top"
+        self.strip: QtWidgets.QWidget = _ToolStrip(self)
+        self.strip.setObjectName(STRIP_NAME)
+        self.strip.set_actions(self._strip_items)    # type: ignore[attr-defined]
+        #: 鍵 → 今の列の部品のボタン(部品が button_for を持つ時。試験と古い呼び出しの口。状態は QAction が正本)。
+        self.buttons: dict[str, QtWidgets.QAbstractButton] = {}
         self.search = QtWidgets.QLineEdit(self.bar)
         self.search.setPlaceholderText(tr("Search keys"))
         self.search.setToolTip(tr("Search keys") + " — " + tr("show only the keys that contain this text") + " (Ctrl+F)")
@@ -678,11 +767,10 @@ class ParamsPanel(QtWidgets.QWidget):
         self.search.setMinimumWidth(60)
         self.search.addAction(_draw_icon("search", color), QtWidgets.QLineEdit.LeadingPosition)
         self.search.textChanged.connect(self.set_query)
-        bl.addWidget(self.search, 1)
         sc = QtGui.QShortcut(QtGui.QKeySequence("Ctrl+F"), self)
         sc.setContext(Qt.WidgetWithChildrenShortcut)
         sc.activated.connect(lambda: (self.search.setFocus(), self.search.selectAll()))
-        lay.addWidget(self.bar)
+        self._column.addWidget(self.bar)
 
         self.stack = QtWidgets.QStackedWidget(self)
         # 空の状態: 何をする場所か 1 行、最初の一手 1 つ、例 1 つ。
@@ -740,7 +828,10 @@ class ParamsPanel(QtWidgets.QWidget):
         self.tmodel.rejected.connect(self._on_rejected)
         self.tmodel.edited.connect(self._on_edited)
         self.stack.addWidget(self.tree)
-        lay.addWidget(self.stack, 1)
+        self._column.addWidget(self.stack, 1)
+        self._body.addLayout(self._column, 1)
+        lay.addLayout(self._body, 1)
+        self._place_strip()
 
         self.status = QtWidgets.QWidget(self)
         sl = QtWidgets.QHBoxLayout(self.status)
@@ -754,6 +845,88 @@ class ParamsPanel(QtWidgets.QWidget):
         self.status.setFixedHeight(self.row_height())
         self.status.installEventFilter(self)
         lay.addWidget(self.status)
+
+    # ---- 道具の列(1 つの部品。向きと部品は外から変えられる) ----
+    def _apply_action_texts(self) -> None:
+        """道具の名前とツールヒント(「名前 — 何をするか (キー)」)を今の言語で入れ直す。"""
+        tr = self.tr_
+        for key, (name, what, shortcut) in self._action_texts.items():
+            a = self.tool_actions[key]
+            a.setText(_label(tr(name)))
+            keys = a.shortcut().toString(QtGui.QKeySequence.NativeText) if shortcut else ""
+            a.setToolTip("%s — %s" % (tr(name), tr(what)) + (" (%s)" % keys if keys else ""))
+
+    def _sync_buttons(self) -> None:
+        find = getattr(self.strip, "button_for", None)
+        self.buttons = {}
+        if callable(find):
+            for key, a in self.tool_actions.items():
+                b = find(a)
+                if b is not None:
+                    self.buttons[key] = b
+
+    def strip_actions(self) -> list[QtGui.QAction | None]:
+        """道具の列に並べる QAction(``None`` = 群の区切り)。外の部品・パネルの ≡ はこれを使う。"""
+        return list(self._strip_items)
+
+    def strip_widget(self) -> QtWidgets.QWidget:
+        """今の道具の列の部品(objectName ``"panelStrip"``)。"""
+        return self.strip
+
+    def strip_side(self) -> str:
+        """道具の列の向き: ``"top"``(表の上に横の 1 行)/ ``"left"``(表の左に縦の 1 列)。"""
+        return self._strip_side
+
+    def set_strip_side(self, side: str) -> str:
+        """道具の列の向きを外から変える(自動で選ぶ規則は呼ぶ側 = studio_panels の strip_side)。知らない向きは ValueError。"""
+        if side not in STRIP_SIDES:
+            raise ValueError("strip side must be one of %s (got %r)" % (" / ".join(STRIP_SIDES), side))
+        if side != self._strip_side:
+            self._strip_side = side
+            self._place_strip()
+        return side
+
+    def set_strip_widget(self, widget: QtWidgets.QWidget) -> None:
+        """道具の列の部品を差し替える(収まらない時に送る型・折り返す型を外の部品に任せる口)。
+
+        ``widget`` は QWidget で ``set_actions`` と ``set_orientation`` を持つ事(:class:`_ToolStrip` の約束)。満たさなければ
+        TypeError(黙って受けない)。前の部品はパネルから外して隠す(親なし。捨てるか使い直すかは呼ぶ側)。"""
+        if not isinstance(widget, QtWidgets.QWidget) or not all(
+                callable(getattr(widget, name, None)) for name in ("set_actions", "set_orientation")):
+            raise TypeError("a strip must be a QWidget with set_actions(items) and set_orientation(o): %r" % (widget,))
+        old = self.strip
+        if widget is old:
+            return
+        self._unplace_strip()
+        old.hide()
+        old.setParent(None)
+        widget.setParent(self)
+        widget.setObjectName(STRIP_NAME)
+        widget.set_actions(self._strip_items)        # type: ignore[attr-defined]
+        self.strip = widget
+        self._place_strip()
+        widget.show()
+
+    def _unplace_strip(self) -> None:
+        for w in (self.strip, self.search):
+            self._bar_lay.removeWidget(w)
+        self._body.removeWidget(self.strip)
+
+    def _place_strip(self) -> None:
+        """道具の列と検索の欄を、今の向きの場所へ置く。"""
+        self._unplace_strip()
+        if self._strip_side == "left":
+            self.strip.set_orientation(Qt.Vertical)   # type: ignore[attr-defined]
+            self._body.insertWidget(0, self.strip, 0, Qt.AlignTop)
+            self._bar_lay.addWidget(self.search, 0, 0, 1, 2)
+        else:
+            self.strip.set_orientation(Qt.Horizontal)  # type: ignore[attr-defined]
+            self._bar_lay.addWidget(self.strip, 0, 0, Qt.AlignLeft | Qt.AlignVCenter)
+            self._bar_lay.addWidget(self.search, 0, 1)
+        self._bar_lay.setColumnStretch(0, 0)
+        self._bar_lay.setColumnStretch(1, 1)
+        self.strip.updateGeometry()
+        self._sync_buttons()                            # 向きでボタンを作り直す部品もある
 
     def row_height(self) -> int:
         """行の高さ(px)= 文字の高さ + ``ROW_EXTRA_PX``。"""
@@ -910,14 +1083,15 @@ class ParamsPanel(QtWidgets.QWidget):
         cur = self.current_column()
         col = self.model.columns[cur] if cur is not None else None
         has = bool(self.model.columns)
-        self.buttons["remove"].setEnabled(col is not None)
-        self.buttons["saveas"].setEnabled(col is not None)
-        self.buttons["reload"].setEnabled(col is not None and col.path is not None)
-        self.buttons["save"].setEnabled(self.model.is_dirty())
-        self.buttons["undo"].setEnabled(self.model.can_undo())
-        self.buttons["redo"].setEnabled(self.model.can_redo())
-        self.buttons["copy"].setEnabled(len(self.model.columns) >= 2)
-        self.buttons["diff"].setEnabled(has)
+        a = self.tool_actions
+        a["remove"].setEnabled(col is not None)
+        a["saveas"].setEnabled(col is not None)
+        a["reload"].setEnabled(col is not None and col.path is not None)
+        a["save"].setEnabled(self.model.is_dirty())
+        a["undo"].setEnabled(self.model.can_undo())
+        a["redo"].setEnabled(self.model.can_redo())
+        a["copy"].setEnabled(len(self.model.columns) >= 2)
+        a["diff"].setEnabled(has)
         self.search.setEnabled(has)
 
     def eventFilter(self, obj: QtCore.QObject, ev: QtCore.QEvent) -> bool:
@@ -1051,8 +1225,8 @@ class ParamsPanel(QtWidgets.QWidget):
     # ---- 絞り込み ----
     def set_diff_only(self, on: bool) -> None:
         """違う行(と片方に無い行)だけにする。"""
-        if self.buttons["diff"].isChecked() != bool(on):
-            self.buttons["diff"].setChecked(bool(on))
+        if self.tool_actions["diff"].isChecked() != bool(on):
+            self.tool_actions["diff"].setChecked(bool(on))         # toggled → もう一度ここへ来る
             return
         self.tmodel.diff_only = bool(on)
         self.refresh()
