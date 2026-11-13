@@ -707,8 +707,8 @@ EXCLUDED = {
     "tools/gen_evis_media.py": _IMAGE_REASON + " 入力は手元の evis 実験映像(EVIS_CHOPSTICK_DIR)。",
     "tools/gen_visionlab_video.py": _IMAGE_REASON + " 動画(GIF/MP4)。",
     "tools/gen_studio_screenshots.py": _IMAGE_REASON + " Studio(PySide6)を実際に起動して撮る。CI に画面は無い。",
-    "assets/make_icon.py": _IMAGE_REASON + (" assets/fullseye.ico / fullseye_256.png。入力はコードだけなので、"
-                                            "make_icon.py を変えない限り古びない。"),
+    "assets/make_icon.py": _IMAGE_REASON + (" assets/fullseye.ico / fullseye_256.png と公開サイトの docs/favicon.ico・"
+                                            "docs/apple-touch-icon.png・docs/assets/img/fullseye_256.png。入力はコードだけなので、make_icon.py を変えない限り古びない。"),
     # (F) スパイクの記録(spikes/out_gallery/ はコミット済みの当時の証跡)
     "spikes/evis_walk_perception.py": _SPIKE_REASON,
     "spikes/studio_app.py": _SPIKE_REASON + " PySide6 の GUI を起動する。",

@@ -1,6 +1,8 @@
 <!-- i18n-source-sha: c3e09847755f -->
 # Fullseye Documentation Index
 
+<img src="assets/img/fullseye_256.png" alt="Fullseye logo" width="80" height="80">
+
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
 > **Presenting at ViEW2026 (3–4 December 2026, Pacifico Yokohama) → [ViEW2026 page](view2026/en/)** (moving PoC results, viewers you can use in the browser, the paper)

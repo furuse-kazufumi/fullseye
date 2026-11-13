@@ -1,6 +1,8 @@
 <!-- i18n-source-sha: c3e09847755f -->
 # Fullseye 문서 색인
 
+<img src="assets/img/fullseye_256.png" alt="Fullseye 로고" width="80" height="80">
+
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
 > **ViEW2026(2026년 12월 3–4일, 퍼시피코 요코하마)에서 발표합니다 → [ViEW2026 페이지](view2026/ko/)** (PoC의 움직이는 결과, 브라우저에서 조작하는 뷰어, 논문 정보)
