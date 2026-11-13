@@ -125,6 +125,11 @@ _INTERNAL = {
     "studio_project": 23, "studio_pymode": 20, "studio_pyedit_syntax": 22, "studio_pyedit_complete": 35,
     "studio_pyedit_values": 30, "studio_pyedit_i18n": 5, "studio_pyedit_qt": 9, "studio_pyedit_vars_qt": 14,
     "studio_program_i18n": 4, "studio_pyedit_safe": 9,
+    # ★2026-11-13(feat/studio-blockselect): コードエディタの矩形選択・複数カーソル・行の操作。Studio の GUI の内側の
+    #   部品で、利用者の入口は Studio のエディタ(キー・右クリックのメニュー)。op にも facade にも出さない。
+    #   studio_editops 43(Qt なし: 見た目の桁 ↔ 文字の位置・箱 → 行ごとの選択・編集の計画・括弧・キーの表・対訳)、
+    #   studio_editops_qt 7(EditOps / install / uninstall / get と、キーの当たりの検査 3 本)。
+    "studio_editops": 43, "studio_editops_qt": 7,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -357,7 +362,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1290
 # 2026-11-13 同じ枝の 2 便目: 1290 → 1305(+15、この機械の実測)。内訳: 上の _INTERNAL の studio_program_i18n 4・
 #   studio_pyedit_safe 9・studio_pymode + 1、studio_program.starter_program 1(例の文面を UI の言語で返す。GUI の内側)。
-_HIDDEN_FUNCTIONS_TODAY = 1305
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1305
+# 2026-11-13 feat/studio-blockselect: 1305 → 1355(+50、この機械の実測)。上の _INTERNAL の studio_editops 43・
+#   studio_editops_qt 7 のうち、公開経路の名前と重ならない分。
+_HIDDEN_FUNCTIONS_TODAY = 1355
 
 
 def _hidden_total():
