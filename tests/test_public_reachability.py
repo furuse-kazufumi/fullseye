@@ -81,7 +81,11 @@ _INTERNAL = {
     # studio_search / studio_errors 2026-10-20: Studio の論理層(Qt 非依存)。UI への配線は次の片。
     #   search 6 本(current_sort_of / search_grouped / search_zero_results_help / canonical_sort / clear_caches / nearest_op_names)
     #   errors 3 本(explain_failure / format_failure / localize)。studio と同じ「GUI の内側の部品」で、テストが直接呼ぶ。
-    "studio": 90, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    # studio / studio_search 2026-11-13(初回起動の点検の直し、fix/studio-firstrun-2026-11-13): studio +13(op_insertable /
+    #   not_insertable_text / starter_ops / entry_sort_of / op_is_ledger / sample_menu_order / format_pixel_readout /
+    #   knob_dead_measured / knob_use / knob_role_text / help_plain_markup / plain_summary / help_query_target)、
+    #   studio_search +1(samples_for)。どれも GUI の内側の部品で、試験が直接呼ぶ。
+    "studio": 103, "studio_errors": 3, "studio_search": 8, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
@@ -321,7 +325,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   param_specs.half_then_thirds_index 1(端の扱い・構造要素の形のつまみの対応。Studio と MCP の内側の部品)・
 #   studio_search.staples_for 1(検索の「定番」の群。Studio の内側)・studio 3(lang_from_locale ほか、GUI の内側)・
 #   backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。
-_HIDDEN_FUNCTIONS_TODAY = 1086
+# 2026-11-13(Studio の初回起動の点検の直し): 1086 + 15 = 1101。studio 13・studio_search 1(上の _INTERNAL の注記)と、
+#   studio.CLOSE_CONFIRM_HOOK 1(M10 の終了の確認の差し替え口。関数を指す名前なので総数に入る)。どれも GUI の内側の部品で、op ではない。
+_HIDDEN_FUNCTIONS_TODAY = 1101
 
 
 def _hidden_total():
