@@ -220,8 +220,10 @@ TOOLS: dict[str, dict] = {
     "fullseye_catalog_coverage": {
         "description": (
             "カタログ 5 層(index / registry / ledger / note / facade)の交差を数える。"
-            "検索がどれだけの機能を見えているか、ノートの無い op はどれかを返す。"),
-        "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+            "検索がどれだけの機能を見えているか、ノートの無い op はどれかを返す。既定は件数だけ。"),
+        "inputSchema": {"type": "object", "properties": {
+            "detail": {"type": "boolean", "default": False, "description": "true なら op 名の一覧も返す"}},
+            "additionalProperties": False},
     },
     "fullseye_list_samples": {
         "description": "読める画像名(files=作業場所、samples=同梱)。load_image の path に渡す。",
@@ -806,11 +808,36 @@ def _help_text(h: dict) -> str:
     return head + (h["body"] or "(この op にはノートも Studio ヘルプも無い)")
 
 
+def _public_source(source: str) -> str:
+    """``package:<絶対パス>`` / ``docs:<絶対パス>`` を、置き場所の名前とパッケージ・リポジトリの中の相対の場所にする。
+
+    ★2026-11-13(報告 9): ホストの絶対パス(利用者名を含む)を MCP の相手に返していた。"""
+    kind, _, path = str(source).partition(":")
+    norm = path.replace("\\", "/")
+    for marker in ("fullseye/data/", "docs/"):
+        at = norm.rfind("/" + marker)
+        if at >= 0:
+            return "%s:%s" % (kind, norm[at + 1:])
+    return "%s:%s" % (kind, os.path.basename(norm.rstrip("/")) or "?")
+
+
+def _public_coverage(c: dict, *, detail: bool) -> dict:
+    """catalog_coverage の応答: 既定は件数だけ(名前の一覧は detail=true)、出どころは相対の場所。"""
+    out = dict(c, index_source=_public_source(c["index_source"]), notes_source=_public_source(c["notes_source"]))
+    if not detail:
+        for key in ("index_without_note", "registry_not_in_index", "index_not_in_registry", "ledger_without_note"):
+            out[key] = len(c[key])
+        out.pop("note_only_names", None)
+    out["detail"] = detail
+    return out
+
+
 def _coverage_text(c: dict) -> str:
     return ("op 名 %d。層別: %s。索引にあってノート無し %d / レジストリにあって索引無し %d / "
             "索引にあってレジストリ無し %d / facade にあって索引無し %d / ノートだけ %d"
-            % (c["total_names"], c["per_source"], len(c["index_without_note"]),
-               len(c["registry_not_in_index"]), len(c["index_not_in_registry"]),
+            % (c["total_names"], c["per_source"], *(
+                v if isinstance(v, int) else len(v) for v in (
+                    c["index_without_note"], c["registry_not_in_index"], c["index_not_in_registry"])),
                c["facade_not_in_index"], c["note_only"]))
 
 
@@ -3208,7 +3235,7 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         return tool_result(_help_text(h), structured, links=links,
                            max_structured_bytes=max_structured_bytes)
     if name == "fullseye_catalog_coverage":
-        c = cat.coverage()
+        c = _public_coverage(cat.coverage(), detail=bool(a.get("detail", False)))
         return tool_result(_coverage_text(c), c, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_list_samples":
         rows = store.samples()

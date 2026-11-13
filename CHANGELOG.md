@@ -16,6 +16,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `fullseye_find_ops`: `executable_only`(既定 false、minimal では隠す)を足した。**挙動が変わる点**: `proposals` の各行は `{kind, name, executable}` の参照だけにした(以前は ops / retry_ops / recipes の行を丸ごと写し、応答の約半分が重複だった)。件数と順番は変わらない。中身は `ops` / `recipes` を読む。
 - tools/list: 段の `inputs`・`params`・`a` と `fullseye_plan` の `have`・`want`・`goal` に 1 行の説明を足し、英語だった 3 道具(`fullseye_op_cards`・`fullseye_validate_pipeline`・`fullseye_load_stack`)の説明を日本語に揃えた。minimal の予算(1,500 トークン)に収めるため、find_ops・pipeline・handle・型の説明を短くした(minimal 1,498 → 1,496、full 4,211 → 4,285 トークン)。
 - 計測値に単位と意味: registry の計測 op の値に `meaning`(op の要約)・`unit`(要約から読める物だけ: px / count)・`measured`(`diameter_region` など 26 op は入力の領域の**最大の連結成分 1 つだけ**を測る。その時は成分の数も)を付け、本文にも書く。`pixel_to_world` の値に mm、`mm_per_px_from_reference` に mm/px。
+- **挙動が変わる点**: `fullseye_catalog_coverage` の既定は件数だけ(`index_without_note` などの名前の一覧は `detail=true` の時だけ)。`index_source` / `notes_source` はホストの絶対パスでなく、パッケージ・リポジトリの中の相対の場所(例 `package:fullseye/data/OP_INDEX.json`)。
 
 ### MCP: 光学・照明・合成の入口などの台帳 op を MCP から実行できるようにした(2026-11-13)
 

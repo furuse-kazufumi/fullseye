@@ -190,3 +190,16 @@ def test_measurements_carry_meaning_unit_and_the_largest_component_scope(cat, st
     mm = S.call_tool("fullseye_pipeline", {"stages": [{"op": "pixel_to_world",
                                                        "params": {"value_px": 46.3, "mm_per_px": 0.02}}]}, cat, store)
     assert mm["structuredContent"]["stages"][0]["units"] == {"value": "mm"} and "value = 0.926 mm" in _text(mm)
+
+
+# --------------------------------------------------------------------------- 9: catalog_coverage
+def test_catalog_coverage_defaults_to_counts_and_hides_host_paths(cat, store):
+    """直す前: 既定で名前の一覧(数千件)とホストの絶対パス(利用者名を含む)を返していた。"""
+    r = S.call_tool("fullseye_catalog_coverage", {}, cat, store)
+    sc = r["structuredContent"]
+    assert sc["detail"] is False and isinstance(sc["index_without_note"], int) and "note_only_names" not in sc
+    dumped = json.dumps(r, ensure_ascii=False)
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    assert root not in dumped and root.replace("\\", "/") not in dumped and len(dumped) < 4000
+    full = S.call_tool("fullseye_catalog_coverage", {"detail": True}, cat, store)["structuredContent"]
+    assert isinstance(full["index_not_in_registry"], list) and len(full["index_not_in_registry"]) ==         sc["index_not_in_registry"]
