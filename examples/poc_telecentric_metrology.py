@@ -1198,6 +1198,67 @@ def _rho_of(P_, c_, phi_, q_):
     return np.sqrt(u * u + (v / q_) ** 2)
 
 
+def _ring_centre_offsets(g, rings, half=60.0):
+    """当てはめた楕円と、画素から**独立に**読んだ明るい線の中心との符号つき距離 [px](外向きが正)。
+
+    リングの点を取った ``measure_pos``(エッジの組の中点)を使わない別の読み: 楕円の法線に沿って ±*half* px の明るさの
+    断面を双一次補間で取り(平滑は σ = 1 だけ)、地(10 % 点)と山の半値で切った内縁と外縁の中点を線の中心とする。
+    1° ごと。線が見えない所(影、山 − 地 < 0.15)、隣のリングを拾った所(山が 30 px より遠い)、画像の外は数えない。
+    返り値: リングごとの ``{"k", "n", "median", "p10", "p90", "width", "worst10"}``(worst10 = 方位 10° ごとの中央値の最大)。
+
+    ★2026-11-13、作者と独立の検証が「1/2 に縮めた図で、外側のリングの楕円が線の外縁に乗って見える(半径 2000 px で
+    10 px なら 0.5 %)」と指摘したので、当てはめの偏りか見え方かを数で切り分けるために足した。
+    """
+    from scipy import ndimage
+    gs = ndimage.gaussian_filter(g, 1.0)
+    tt = np.arange(-half, half + 0.25, 0.5)
+    out = []
+    for r in rings:
+        f = r["f"]
+        phi = math.radians(f["angle_deg"])
+        ra, rb = f["ra"], f["rb"]
+        rows = []
+        for deg in range(360):
+            th = math.radians(deg)
+            ex, ey = ra * math.cos(th), rb * math.sin(th)
+            nx, ny = math.cos(th) / ra, math.sin(th) / rb            # 楕円の外向き法線(軸の座標)
+            nn = math.hypot(nx, ny)
+            nx, ny = nx / nn, ny / nn
+            x = f["cx"] + ex * math.cos(phi) - ey * math.sin(phi)
+            y = f["cy"] + ex * math.sin(phi) + ey * math.cos(phi)
+            xs = x + tt * (nx * math.cos(phi) - ny * math.sin(phi))
+            ys = y + tt * (nx * math.sin(phi) + ny * math.cos(phi))
+            if xs.min() < 2 or ys.min() < 2 or xs.max() > g.shape[1] - 3 or ys.max() > g.shape[0] - 3:
+                continue
+            prof = ndimage.map_coordinates(gs, [ys, xs], order=1)
+            base, peak = float(np.percentile(prof, 10)), float(prof.max())
+            ip = int(np.argmax(prof))
+            if peak - base < 0.15 or abs(tt[ip]) > 30:
+                continue
+            lvl = base + 0.5 * (peak - base)
+            i0, i1 = ip, ip
+            while i0 > 0 and prof[i0] > lvl:
+                i0 -= 1
+            while i1 < len(prof) - 1 and prof[i1] > lvl:
+                i1 += 1
+            if i0 == 0 or i1 == len(prof) - 1:
+                continue
+            e_in = tt[i0] + (lvl - prof[i0]) / (prof[i0 + 1] - prof[i0]) * 0.5
+            e_out = tt[i1 - 1] + (lvl - prof[i1 - 1]) / (prof[i1] - prof[i1 - 1]) * 0.5
+            ang = math.degrees(math.atan2(y - f["cy"], x - f["cx"])) % 360.0
+            rows.append((ang, 0.5 * (e_in + e_out), e_out - e_in))
+        if len(rows) < 10:
+            continue
+        a = np.array(rows)
+        sect = [float(np.median(a[(a[:, 0] // 10) == b, 1])) for b in np.unique(a[:, 0] // 10)
+                if int(((a[:, 0] // 10) == b).sum()) >= 5]
+        out.append({"k": r["k"], "n": len(a), "median": float(np.median(a[:, 1])),
+                    "p10": float(np.percentile(a[:, 1], 10)), "p90": float(np.percentile(a[:, 1], 90)),
+                    "width": float(np.median(a[:, 2])),
+                    "worst10": max(sect, key=abs) if sect else float("nan")})
+    return out
+
+
 def plate_ring_points(g):
     """アライメント板の画像 *g*(0〜1)から、中央の穴の中心と、リングの中心線の点・リングの番号を取る。
 
@@ -1334,6 +1395,22 @@ def chapter_real(L):
     gate("実画像: 中心から放射状の測定線(measure_pos の立ち上がりと立ち下がりの中点)でリング %d 本を拾い、同心の相似な"
          "楕円の族への残差は RMS 最大 %.2f px(外れ点 %d / %d 点を落とした)" % (len(rings), worst, int((~inl).sum()), len(inl)),
          len(rings) >= 5 and worst < 3.0)
+    # 当てはめた楕円は線の中心に乗っているか —— measure_pos と独立の読み(法線に沿った半値中点)で数える
+    offs = _ring_centre_offsets(g, rings)
+    for o in offs:
+        print("   リング %d の独立の読み: 断面 %3d 本、楕円 → 線の中心(半値中点)の距離 中央 %+.2f px(10〜90 %% 点 %+.2f〜%+.2f)、"
+              "線の半値幅 %.0f px、方位 10° ごとの中央値の最大 %+.1f px" % (o["k"], o["n"], o["median"], o["p10"], o["p90"],
+                                                       o["width"], o["worst10"]))
+    off_worst = max(abs(o["median"]) for o in offs)
+    off_local = max(abs(o["worst10"]) for o in offs)
+    NUMBERS.update({"real_centre_offset_px": off_worst, "real_centre_offset_local_px": off_local})
+    gate("実画像: 当てはめた楕円は線の中心に乗っている —— measure_pos と独立の読み(法線に沿った半値中点)との距離は、"
+         "リングごとの中央値で最大 %.2f px(最も外のリングの長半径の %.3f %%。線の半値幅は %.0f〜%.0f px)"
+         % (off_worst, 100.0 * off_worst / rings[-1]["f"]["ra"], min(o["width"] for o in offs),
+            max(o["width"] for o in offs)), len(offs) == len(rings) and off_worst < 2.0,
+         "★局所的には方位 10° の幅で最大 %.1f px 外れる所がある(線が影に入る境・画像の端で、線の片側が暗くなる所)。"
+         "1/2 に縮めた図で楕円が線の縁に寄って見えるのはそういう所で、族の当てはめ全体の偏り(10 px = 0.5 %% 級)ではない"
+         % off_local)
     free_d = np.diff([r["free_ra"] for r in rings])
     vs = 100.0 * (pxmm / PAPER["K1_px_per_mm"] - 1)
     NUMBERS.update({"real_px_per_mm": pxmm, "real_vs_K1_pct": vs, "real_um_per_px": 1000.0 / pxmm})
