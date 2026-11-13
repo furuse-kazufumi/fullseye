@@ -1487,6 +1487,17 @@ def _install_help(win, ctl: "KeymapController", st: _State, palette_words) -> No
         _take_over(sc, lambda _=False: ctl.open_dialog())
 
 
+def _install_image_focus(win, st: _State) -> None:
+    """「画像だけを抜ける」(Esc)を、画像だけ(image_focus がチェック)の間だけ有効にする(D10。窓の Esc を食わない)。"""
+    focus = next((o for o in st.targets.get("image_focus", ()) if isinstance(o, QtGui.QAction) and _valid(o)), None)
+    leave = next((o for o in st.targets.get("leave_image_focus", ()) if isinstance(o, QtGui.QAction) and _valid(o)),
+                 None)
+    if focus is None or leave is None or not focus.isCheckable():
+        return
+    leave.setEnabled(focus.isChecked())
+    focus.toggled.connect(lambda on: leave.setEnabled(bool(on)) if _valid(leave) else None)
+
+
 def install(win, settings=None, tr=None, lang=None, flash=None, palette_words: dict | None = None,
             python_editor_editops: bool | None = None, model=None) -> KeymapController:
     """窓 ``win`` にキーの割り当てを取り付ける(2 度呼んでも 1 つ)。保存してあった上書きを読み、配る。
@@ -1523,4 +1534,5 @@ def install(win, settings=None, tr=None, lang=None, flash=None, palette_words: d
     st.on_lang.append(lambda: ctl.recheck(flash=True))       # 言語を変えたら、今の言語で効かない上書きを知らせる
     ctl.load()
     ctl.apply()
+    _install_image_focus(win, st)
     return ctl

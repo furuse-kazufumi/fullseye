@@ -1816,3 +1816,38 @@ def test_the_code_editor_save_key_can_be_changed_and_an_empty_pipeline_says_so(a
         c._commit()
         _close(w)
         eq.apply_bindings(None)
+
+
+# --------------------------------------------------------------------------- #
+# B5 [キー] 1.2-A D10: Esc は画像だけ(Image focus)の間だけ
+# --------------------------------------------------------------------------- #
+def test_escape_not_eaten_outside_image_focus(win, ctl):
+    _QtCore, _QtGui, QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    K = QtCore.Qt
+    leave, focus = win._actions["leave_image_focus"], win._actions["image_focus"]
+    hits = []
+
+    def spy(*_a):
+        hits.append(1)
+    leave.triggered.connect(spy)
+    try:
+        assert not focus.isChecked() and not leave.isEnabled()
+        _activate(win)
+        places = (win._search, win._op_list, win._stage_list, win._program["edit"])
+        for w in places:
+            w.setFocus()
+            _pump(0.05)
+            QTest.keyClick(w, K.Key_Escape)
+        assert len(places) == 4 and hits == []                            # 窓のどこで押しても撃たれない
+        win._toggle_focus_image(True)
+        _pump(0.2)
+        assert focus.isChecked() and leave.isEnabled()
+        QTest.keyClick(win, K.Key_Escape)
+        _pump(0.2)
+        assert hits == [1] and not focus.isChecked() and not leave.isEnabled()   # 画像だけの間は Esc で抜ける
+        assert _keys_of(leave) == ("Esc",)                                # キーはそのまま(有効・無効だけ)
+    finally:
+        leave.triggered.disconnect(spy)
+        if focus.isChecked():
+            win._toggle_focus_image(False)
