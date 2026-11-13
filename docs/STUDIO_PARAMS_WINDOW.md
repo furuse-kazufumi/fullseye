@@ -188,7 +188,9 @@ Studio から開いた時は、Studio の `confirm_action` を `ParamsPanel.set_
 
 ## 言語
 
-画面の文は英語が正で、日本語・簡体字・繁体字・韓国語・ドイツ語の訳を `studio_assets/studio_params_i18n.json` に持っています(形は `studio_pyedit_i18n.json` と同じ)。`studio_params_model.make_tr("ja")` がその言語の `tr` を返します。読み手が言った理由(ファイルのどこが、なぜ)は英語のまま文の中に入ります。
+画面の文は英語が正で、日本語・簡体字・繁体字・韓国語・ドイツ語の訳を `studio_assets/studio_params_i18n.json` に持っています(形は `studio_pyedit_i18n.json` と同じ)。`studio_params_model.make_tr("ja")` がその言語の `tr` を返します。開いたまま言語を切り替える時は `ParamsWindow.set_tr(tr)`(パネルだけなら `ParamsPanel.set_tr(tr)`)を呼ぶと、道具の名前とツールヒント・検索の欄・案内・見出し・数え方・題・知らせの行まで全部その言語で作り直します(中身は変わりません)。
+
+状態の色(違うセルの地・注意・誤り・断った欄の枠)は、`studio_theme` が使える時はその役割の色(`warn` / `err`)、無い時は窓の予備の色です。theme を切り替えた後は `ParamsPanel.apply_theme()` で読み直します。読み手が言った理由(ファイルのどこが、なぜ)は英語のまま文の中に入ります。
 
 ## いまは出来ない事
 

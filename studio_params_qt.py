@@ -69,6 +69,14 @@ _STATE_RGB = {"warn": (232, 163, 61), "err": (217, 83, 79)}
 
 
 def _state_colour(role: str) -> QtGui.QColor:
+    """状態の色(``"warn"`` / ``"err"``)。studio_theme が import できればその役割の色、できなければ予備の色。"""
+    try:
+        import studio_theme  # noqa: PLC0415  (見た目の枝の役割の表。無い木でも窓は動く)
+        c = QtGui.QColor(studio_theme.colour(role))
+        if c.isValid():
+            return c
+    except (ImportError, AttributeError, KeyError, TypeError, ValueError):
+        pass
     return QtGui.QColor(*_STATE_RGB[role])
 
 
@@ -373,6 +381,8 @@ class ParamsTreeModel(QtCore.QAbstractItemModel):
         self._bold: QtGui.QFont | None = None
         #: 直前の setData で断った時の文(理由 — 例: 今の値)。通った・触っただけなら None。
         self.last_refusal: str | None = None
+        #: その文を作る関数(tr → 文)。言語を切り替えた時に知らせの行を作り直すため。
+        self.last_refusal_source: Callable[[Callable[[str], str]], str] | None = None
         self.rebuild()
 
     # ---- 見た目の材料(パレットから) ----
@@ -619,6 +629,7 @@ class ParamsTreeModel(QtCore.QAbstractItemModel):
 
     def setData(self, index: QtCore.QModelIndex, value: Any, role: int = Qt.EditRole) -> bool:
         self.last_refusal = None
+        self.last_refusal_source = None
         n, r, ci, v = self._cell(index)
         if r is None or v is None:
             return False
@@ -633,7 +644,11 @@ class ParamsTreeModel(QtCore.QAbstractItemModel):
             return False
         if not out.ok:
             # 断る時は理由に例(この欄の今の値)を添える(設計書 P08-5「赤枠 + 理由 + 例」)。
-            self.last_refusal = out.text(self.tr) + " — " + self.tr("example: %s") % M.format_value(v)
+            def refusal(tr: Callable[[str], str], out: M.Outcome = out, v: Any = v) -> str:
+                return out.text(tr) + " — " + tr("example: %s") % M.format_value(v)
+
+            self.last_refusal_source = refusal
+            self.last_refusal = refusal(self.tr)
             self.rejected.emit(self.last_refusal)
             return False
         self.sync()
@@ -762,6 +777,8 @@ class ParamsPanel(QtWidgets.QWidget):
         #: 道具(1 機能 1 QAction)。鍵 → QAction。列の部品・キー・パネルの ≡ はどれもこの QAction を使う。
         self.tool_actions: dict[str, QtGui.QAction] = {}
         self._action_texts: dict[str, tuple[str, str, str]] = {}
+        self._action_icons: dict[str, str] = {}
+        self._message_src: Callable[[Callable[[str], str]], str] | None = None
         items: list[QtGui.QAction | None] = []
 
         def action(key: str, icon: str, name: str, what: str, slot: Callable[..., Any] | None, shortcut: str = "",
@@ -781,6 +798,7 @@ class ParamsPanel(QtWidgets.QWidget):
             self.addAction(a)
             self.tool_actions[key] = a
             self._action_texts[key] = (name, what, shortcut)
+            self._action_icons[key] = icon
             items.append(a)
             return a
 
@@ -815,12 +833,10 @@ class ParamsPanel(QtWidgets.QWidget):
         #: 鍵 → 今の列の部品のボタン(部品が button_for を持つ時。試験と古い呼び出しの口。状態は QAction が正本)。
         self.buttons: dict[str, QtWidgets.QAbstractButton] = {}
         self.search = QtWidgets.QLineEdit(self.bar)
-        self.search.setPlaceholderText(tr("Search keys"))
-        self.search.setToolTip(tr("Search keys") + " — " + tr("show only the keys that contain this text") + " (Ctrl+F)")
-        self.search.setAccessibleName(tr("Search keys"))
         self.search.setClearButtonEnabled(True)
         self.search.setFixedHeight(BUTTON_PX)
-        self.search.addAction(_draw_icon("search", color), QtWidgets.QLineEdit.LeadingPosition)
+        self._search_icon = self.search.addAction(_draw_icon("search", color), QtWidgets.QLineEdit.LeadingPosition)
+        self._apply_search_texts()
         self._search_below = False
         self._replace_pending = False
         self._fit_search()
@@ -837,18 +853,18 @@ class ParamsPanel(QtWidgets.QWidget):
         el.setContentsMargins(6, 6, 6, 6)
         el.setSpacing(8)
         el.addStretch(1)
-        self.empty_label = QtWidgets.QLabel(tr(self.EMPTY_TEXT), self.empty)
+        self.empty_label = QtWidgets.QLabel(self.empty)
         self.empty_label.setWordWrap(True)
         self.empty_label.setAlignment(Qt.AlignCenter)
         el.addWidget(self.empty_label)
         row = QtWidgets.QHBoxLayout()
         row.setSpacing(GAP_PX)
         row.addStretch(1)
-        self.empty_open = QtWidgets.QPushButton(tr("Open files"), self.empty)
+        self.empty_open = QtWidgets.QPushButton(self.empty)
         self.empty_open.clicked.connect(self.open_files)
-        self.empty_example = QtWidgets.QPushButton(tr("Open the example"), self.empty)
-        self.empty_example.setToolTip(tr("Two bundles of the same rig (day and night) to try comparing and copying"))
+        self.empty_example = QtWidgets.QPushButton(self.empty)
         self.empty_example.clicked.connect(self.open_example)
+        self._apply_empty_texts()
         row.addWidget(self.empty_open)
         row.addWidget(self.empty_example)
         row.addStretch(1)
@@ -857,6 +873,8 @@ class ParamsPanel(QtWidgets.QWidget):
         self.stack.addWidget(self.empty)
         # 絞り込みで 0 行: 一覧の場所に「該当なし: "語"」と次の一手(設計書 P07-3)。
         self.no_match = QtWidgets.QWidget(self.stack)
+        #: 該当なしの頁に最後に出した状態: 検索の語(違う行が無い時は "")、まだ出していなければ None。
+        self._no_match_word: str | None = None
         nl = QtWidgets.QVBoxLayout(self.no_match)
         nl.setContentsMargins(6, 6, 6, 6)
         nl.setSpacing(8)
@@ -933,6 +951,43 @@ class ParamsPanel(QtWidgets.QWidget):
             a.setText(_label(tr(name)))
             keys = a.shortcut().toString(QtGui.QKeySequence.NativeText) if shortcut else ""
             a.setToolTip("%s — %s" % (tr(name), tr(what)) + (" (%s)" % keys if keys else ""))
+
+    def _apply_search_texts(self) -> None:
+        tr = self.tr_
+        self.search.setPlaceholderText(tr("Search keys"))
+        self.search.setToolTip(tr("Search keys") + " — " + tr("show only the keys that contain this text") + " (Ctrl+F)")
+        self.search.setAccessibleName(tr("Search keys"))
+
+    def _apply_empty_texts(self) -> None:
+        tr = self.tr_
+        self.empty_label.setText(tr(self.EMPTY_TEXT))
+        self.empty_open.setText(_label(tr("Open files")))
+        self.empty_example.setText(_label(tr("Open the example")))
+        self.empty_example.setToolTip(tr("Two bundles of the same rig (day and night) to try comparing and copying"))
+
+    def set_tr(self, tr: Callable[[str], str]) -> None:
+        """言語を切り替える: 窓に出ている文を全部、その言語で作り直す(設計書 P15-2)。中身(列・絞り込み・未保存)は変えない。"""
+        self.tr_ = tr
+        self.tmodel.tr = tr
+        self._apply_action_texts()
+        self._apply_search_texts()
+        self._fit_search()
+        self._apply_empty_texts()
+        self._apply_no_match_texts()
+        self._place_strip()                              # 検索の欄の最小幅が変わると段が変わる
+        self.tmodel.sync()                               # 見出し・セルのツールヒント
+        self.refresh()                                   # 数え方・題・該当なし・列の幅
+        self._render_message()
+
+    def apply_theme(self) -> None:
+        """theme を切り替えた後に呼ぶ: 状態の色(違うセル・注意・誤り)とアイコンの色を読み直す(設計書 P14-2)。"""
+        color = self.palette().color(QtGui.QPalette.ButtonText)
+        for key, icon in self._action_icons.items():
+            self.tool_actions[key].setIcon(_draw_icon(icon, color))
+        self._search_icon.setIcon(_draw_icon("search", color))
+        self.tmodel.set_palette(self.palette(), self.font())
+        self.tmodel.sync()
+        self._render_message()
 
     def _sync_buttons(self) -> None:
         find = getattr(self.strip, "button_for", None)
@@ -1074,11 +1129,23 @@ class ParamsPanel(QtWidgets.QWidget):
             parts.append("* " + tr("%d unsaved") % c["dirty"])
         return " · ".join(parts)
 
-    def show_message(self, text: str, level: str = "info") -> None:
-        """状態の 1 行の右側。``level`` = info / warn / error(形 + 語。色だけにしない)。"""
+    def show_message(self, text: str | Callable[[Callable[[str], str]], str], level: str = "info") -> None:
+        """状態の 1 行の右側。``level`` = info / warn / error(形 + 語。色だけにしない)。
+
+        ``text`` は文か、文を作る関数(tr → 文)。関数で渡した知らせは、言語を切り替えた時に作り直す。"""
+        self._message_src = text if callable(text) else None
+        self.message_level = level
+        self._render_message(None if callable(text) else text)
+
+    def _render_message(self, text: str | None = None) -> None:
+        level = self.message_level
+        if text is None:
+            if self._message_src is None:
+                text = self.message_label.full_text()[2:] if level != "info" else self.message_label.full_text()
+            else:
+                text = self._message_src(self.tr_)
         mark = {"info": "", "warn": "▲ ", "error": "✕ "}[level]
         self.message_label.set_full_text(mark + text if text else "")
-        self.message_level = level
         pal = self.message_label.palette()
         base = self.palette().color(QtGui.QPalette.WindowText)
         tone = {"info": base, "warn": _mix(base, _state_colour("warn"), 0.6),
@@ -1087,16 +1154,15 @@ class ParamsPanel(QtWidgets.QWidget):
         self.message_label.setPalette(pal)
 
     def _outcome(self, out: M.Outcome) -> M.Outcome:
-        text = out.text(self.tr_)
-        notes = out.note_texts(self.tr_)
         if not out.ok:
-            self.show_message("; ".join([text] + notes) if text else "", "error")
+            self.show_message(lambda tr: "; ".join([out.text(tr)] + out.note_texts(tr)) if out.code else "", "error")
         else:
-            self.show_message("; ".join(([text] if text else []) + notes), "warn" if notes and not text else "info")
+            self.show_message(lambda tr: "; ".join(([out.text(tr)] if out.code else []) + out.note_texts(tr)),
+                              "warn" if out.notes and not out.code else "info")
         return out
 
     def _on_rejected(self, text: str) -> None:
-        self.show_message(text, "error")
+        self.show_message(self.tmodel.last_refusal_source or text, "error")
         idx = self.tree.currentIndex()
         if idx.isValid() and self.isVisible():
             QtWidgets.QToolTip.showText(self.tree.viewport().mapToGlobal(self.tree.visualRect(idx).bottomLeft()), text, self.tree)
@@ -1164,15 +1230,23 @@ class ParamsPanel(QtWidgets.QWidget):
         if not self.model.columns:
             return self.empty
         if self.tmodel.rowCount() == 0 and (self.tmodel.query or self.tmodel.diff_only):
-            tr = self.tr_
-            if self.tmodel.query:
-                self.no_match_label.setText(tr('No match: "%s"') % self.tmodel.query)
-                self.no_match_button.setText(_label(tr("Clear the search")))
-            else:
-                self.no_match_label.setText(tr("The bundles do not differ"))
-                self.no_match_button.setText(_label(tr("Show every row")))
+            self._no_match_word = self.tmodel.query
+            self._apply_no_match_texts()
             return self.no_match
         return self.tree
+
+    def _apply_no_match_texts(self) -> None:
+        """該当なしの頁の文(検索の語があれば「該当なし: "語"」、無ければ違う行が無い事)。"""
+        tr = self.tr_
+        word = self._no_match_word
+        if word is None:
+            return
+        if word:
+            self.no_match_label.setText(tr('No match: "%s"') % word)
+            self.no_match_button.setText(_label(tr("Clear the search")))
+        else:
+            self.no_match_label.setText(tr("The bundles do not differ"))
+            self.no_match_button.setText(_label(tr("Show every row")))
 
     def _no_match_step(self) -> None:
         """該当なしの次の一手: 検索を消す(検索で 0 行)/ 全部の行を出す(違う行だけで 0 行)。"""
@@ -1306,7 +1380,7 @@ class ParamsPanel(QtWidgets.QWidget):
         self.refresh()
         bad = [o for o in outs if not o.ok]
         if bad:
-            self.show_message(" | ".join(o.text(self.tr_) for o in bad), "error")
+            self.show_message(lambda tr: " | ".join(o.text(tr) for o in bad), "error")
         elif outs:
             self.show_message("", "info")
         return outs
@@ -1358,20 +1432,24 @@ class ParamsPanel(QtWidgets.QWidget):
 
     def drop_paths(self, md: QtCore.QMimeData) -> list[M.Outcome]:
         """落とされた物を振り分ける: 束のファイル(.json / .toml / .yaml / .yml / .xml)は足し、残りは理由を言う。"""
-        tr = self.tr_
         urls = md.urls() if md.hasUrls() else []
         files = [u.toLocalFile() for u in urls if u.isLocalFile()]
         good = [f for f in files if os.path.splitext(f)[1].lower() in M.FORMATS and not os.path.isdir(f)]
         bad = [f for f in files if f not in good]
         outs = self.add_paths(good) if good else []
-        why = [o.text(tr) for o in outs if not o.ok]
-        if bad:
-            names = ", ".join(os.path.basename(os.path.normpath(f)) or f for f in bad)
-            why.append(tr("not a parameter file: %s") % names + " (" + tr("open .json, .toml, .yaml / .yml or .xml") + ")")
-        if len(files) < len(urls) or not urls:
-            why.append(tr("only files can be dropped here") + " (" + tr("open .json, .toml, .yaml / .yml or .xml") + ")")
-        if why:
-            self.show_message(" | ".join(why), "error" if any(not o.ok for o in outs) else "warn")
+        names = ", ".join(os.path.basename(os.path.normpath(f)) or f for f in bad)
+        not_files = len(files) < len(urls) or not urls
+
+        def why(tr: Callable[[str], str]) -> str:
+            parts = [o.text(tr) for o in outs if not o.ok]
+            if names:
+                parts.append(tr("not a parameter file: %s") % names + " (" + tr("open .json, .toml, .yaml / .yml or .xml") + ")")
+            if not_files:
+                parts.append(tr("only files can be dropped here") + " (" + tr("open .json, .toml, .yaml / .yml or .xml") + ")")
+            return " | ".join(parts)
+
+        if names or not_files or any(not o.ok for o in outs):
+            self.show_message(why, "error" if any(not o.ok for o in outs) else "warn")
         return outs
 
     # ---- 絞り込み ----
@@ -1404,7 +1482,7 @@ class ParamsPanel(QtWidgets.QWidget):
     def undo(self) -> None:
         out = self.model.undo()
         if out.ok:
-            self.show_message(self.tr_("undone: %s") % out.text(self.tr_), "info")
+            self.show_message(lambda tr: tr("undone: %s") % out.text(tr), "info")
             self.refresh()
         else:
             self._outcome(out)
@@ -1412,7 +1490,7 @@ class ParamsPanel(QtWidgets.QWidget):
     def redo(self) -> None:
         out = self.model.redo()
         if out.ok:
-            self.show_message(self.tr_("redone: %s") % out.text(self.tr_), "info")
+            self.show_message(lambda tr: tr("redone: %s") % out.text(tr), "info")
             self.refresh()
         else:
             self._outcome(out)
@@ -1428,7 +1506,8 @@ class ParamsPanel(QtWidgets.QWidget):
         """違う値を全部、列から列へ写す。"""
         out = self.model.copy_column(src, dst)
         if out.ok:
-            self.show_message(self.tr_("copied %d value(s) to %s") % (out.count, self.model.columns[dst].name), "info")
+            name = self.model.columns[dst].name
+            self.show_message(lambda tr: tr("copied %d value(s) to %s") % (out.count, name), "info")
             self.refresh()
         else:
             self._outcome(out)
@@ -1486,12 +1565,12 @@ class ParamsPanel(QtWidgets.QWidget):
                     self.reload_column(i)
                     return False
                 if choice != "overwrite":
-                    self.show_message(self.tr_("not saved: %s") % col.name, "warn")
+                    self.show_message(lambda tr, n=col.name: tr("not saved: %s") % n, "warn")
                     return False
                 force = True
             else:
                 if not self.ask_losses(col.name, out.note_texts(self.tr_)):
-                    self.show_message(self.tr_("not saved: %s") % col.name, "warn")
+                    self.show_message(lambda tr, n=col.name: tr("not saved: %s") % n, "warn")
                     return False
                 accept = True
         self._outcome(out)
@@ -1507,7 +1586,7 @@ class ParamsPanel(QtWidgets.QWidget):
         out = self.model.save_as(i, path)
         if not out.ok and out.needs_confirm:
             if not self.ask_losses(col.name, out.note_texts(self.tr_)):
-                self.show_message(self.tr_("not saved: %s") % col.name, "warn")
+                self.show_message(lambda tr, n=col.name: tr("not saved: %s") % n, "warn")
                 return False
             out = self.model.save_as(i, path, accept_losses=True)
         self._outcome(out)
@@ -1560,10 +1639,14 @@ class ParamsPanel(QtWidgets.QWidget):
         """外で変わったファイルを調べ、あれば状態の行に出す。"""
         found = self.model.check_external()
         if found and found != self._last_external:
-            tr = self.tr_
-            msgs = [tr(M.MESSAGES["external.changed" if state == "changed" else "external.missing"])
-                    % (self.model.columns[i].name,) for i, state in found]
-            self.show_message("; ".join(msgs) + " — " + tr("Reload reads it again"), "warn")
+            names = [(self.model.columns[i].name, state) for i, state in found]
+
+            def changed(tr: Callable[[str], str]) -> str:
+                msgs = [tr(M.MESSAGES["external.changed" if state == "changed" else "external.missing"]) % (name,)
+                        for name, state in names]
+                return "; ".join(msgs) + " — " + tr("Reload reads it again")
+
+            self.show_message(changed, "warn")
         self._last_external = found
         return found
 
@@ -1678,6 +1761,11 @@ class ParamsWindow(QtWidgets.QDialog):
         self.setWindowTitle(self.panel.title())
         self.setMinimumSize(320, 160)
         self._restore()
+
+    def set_tr(self, tr: Callable[[str], str]) -> None:
+        """言語を切り替える(窓の題と、パネルの全部の文)。"""
+        self.panel.set_tr(tr)
+        self.setWindowTitle(self.panel.title())
 
     # ---- 位置と大きさ・絞り込みの状態 ----
     def _restore(self) -> None:

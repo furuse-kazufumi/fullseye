@@ -1847,3 +1847,106 @@ def test_params_compact_counts_keep_shown_of_all(qapp, ini, tmp_path):
     p.search.setText("EXPO")
     assert p.counts_text(compact=True).startswith("3 bundle(s) · 3 / 9 ·")
     _close_quietly(win)
+
+
+def _window_texts(win) -> dict:
+    """窓に出ている文を全部集める(題・道具の名前とツールヒント・読み上げの名前・検索・空の案内・見出し・数え方・知らせ・
+    該当なし)。言語を切り替えた窓と、最初からその言語で作った窓を比べる。"""
+    p = win.panel
+    out = {"title": win.windowTitle(), "search.placeholder": p.search.placeholderText(),
+           "search.tip": p.search.toolTip(), "search.name": p.search.accessibleName(),
+           "empty": p.empty_label.text(), "empty.open": p.empty_open.text(), "empty.example": p.empty_example.text(),
+           "empty.example.tip": p.empty_example.toolTip(), "counts": p.counts_label.text(),
+           "counts.tip": p.counts_label.toolTip(), "message": p.message_label.full_text(),
+           "no_match": p.no_match_label.text(), "no_match.button": p.no_match_button.text()}
+    for k, a in p.tool_actions.items():
+        out["action.%s.text" % k] = a.text()
+        out["action.%s.tip" % k] = a.toolTip()
+        out["button.%s.name" % k] = p.buttons[k].accessibleName()
+    tm = p.tmodel
+    for i in range(tm.columnCount()):
+        out["header.%d" % i] = tm.headerData(i, Qt.Horizontal)
+        out["header.%d.tip" % i] = tm.headerData(i, Qt.Horizontal, Qt.ToolTipRole)
+    for key in ("camera.fx", "exposure.gain_db"):
+        for c in range(3):
+            out["cell.%s.%d.tip" % (key, c)] = p.index_of(c, key).data(Qt.ToolTipRole)
+    return out
+
+
+def _same_state(qapp, win, paths):
+    p = win.panel
+    assert p.copy_column(0, 2).ok                                         # 知らせ: 写した
+    p.set_diff_only(True)
+    p.search.setText("zzz")                                               # 該当なし
+    _pump(qapp)
+    assert p.stack.currentWidget() is p.no_match
+    p.search.setText("")
+    assert p.copy_column(1, 0).ok
+
+
+def test_params_language_switch_rebuilds_every_text(qapp, ini, tmp_path):
+    """D92 / G15: en で開いた窓を ja・de に切り替えると、窓の文が全部、最初からその言語で作った窓と同じになる(数えた文は
+    50 以上)。知らせの行も作り直す。切り替えの前後で中身(列・絞り込み・未保存)は変わらない。"""
+    paths = _three_files(tmp_path)
+    win = _window(qapp, paths, lang="en")
+    _same_state(qapp, win, paths)
+    before_cols = [c.name for c in win.panel.model.columns]
+    compared = 0
+    for lang in ("ja", "de"):
+        win.set_tr(M.make_tr(lang))
+        _pump(qapp)
+        got = _window_texts(win)
+        fresh = _window(qapp, paths, lang=lang)
+        _same_state(qapp, fresh, paths)
+        want = _window_texts(fresh)
+        assert len(want) >= 50 and sorted(got) == sorted(want)
+        diff = {k: (got[k], want[k]) for k in want if got[k] != want[k]}
+        assert diff == {}, (lang, diff)
+        assert want["message"] and want["title"] != "Parameters — day.json, night.yaml *, lab.xml *"
+        compared += len(want)
+        _close_quietly(fresh)
+    assert compared >= 100
+    assert [c.name for c in win.panel.model.columns] == before_cols and win.panel.tmodel.diff_only
+    assert win.panel.model.is_dirty()
+    _close_quietly(win)
+
+
+def test_params_colours_come_from_theme_roles(qapp, ini, tmp_path, monkeypatch):
+    """D92 / P14-2: 状態の色(違うセルの地・注意・誤り・断った欄の枠)は studio_theme の役割(warn / err)から。theme が
+    import できなければ今の色(琥珀 232,163,61・赤 217,83,79)。apply_theme() で読み直す。"""
+    import sys
+    import types
+
+    fake = types.ModuleType("studio_theme")
+    roles = {"warn": "#00c000", "err": "#0000f0"}
+    fake.colour = lambda role: roles[role]
+    seen = []
+    for mod, warn, err in ((None, (232, 163, 61), (217, 83, 79)), (fake, (0, 192, 0), (0, 0, 240))):
+        monkeypatch.setitem(sys.modules, "studio_theme", mod)
+        assert Q._state_colour("warn").getRgb()[:3] == warn and Q._state_colour("err").getRgb()[:3] == err
+        d = tmp_path / ("theme%d" % len(seen))
+        d.mkdir()
+        win = _window(qapp, _three_files(d))
+        p = win.panel
+        base = p.palette().color(QtGui.QPalette.Base)
+        want = Q._mix(base, QtGui.QColor(*warn), 0.30)
+        brush = p.index_of(0, "camera.fx").data(Qt.BackgroundRole)
+        assert brush.color().getRgb()[:3] == want.getRgb()[:3]
+        p.show_message("x", "error")
+        tone = p.message_label.palette().color(QtGui.QPalette.WindowText)
+        assert tone.getRgb()[:3] == Q._mix(p.palette().color(QtGui.QPalette.WindowText), QtGui.QColor(*err), 0.7).getRgb()[:3]
+        seen.append(brush.color().getRgb()[:3])
+        _close_quietly(win)
+    assert len(seen) == 2 and seen[0] != seen[1]
+    # 窓を作った後に theme が変わったら apply_theme で読み直す
+    monkeypatch.setitem(sys.modules, "studio_theme", None)
+    d = tmp_path / "late"
+    d.mkdir()
+    win = _window(qapp, _three_files(d))
+    p = win.panel
+    old = p.index_of(0, "camera.fx").data(Qt.BackgroundRole).color().getRgb()[:3]
+    monkeypatch.setitem(sys.modules, "studio_theme", fake)
+    p.apply_theme()
+    new = p.index_of(0, "camera.fx").data(Qt.BackgroundRole).color().getRgb()[:3]
+    assert old != new == Q._mix(p.palette().color(QtGui.QPalette.Base), QtGui.QColor(0, 192, 0), 0.30).getRgb()[:3]
+    _close_quietly(win)
