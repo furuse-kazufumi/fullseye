@@ -18,6 +18,7 @@
 """
 from __future__ import annotations
 
+import inspect
 import json
 import os
 import sys
@@ -147,6 +148,97 @@ def _draw_icon(name: str, color: QtGui.QColor, px: int = _ICON_PX) -> QtGui.QIco
         raise ValueError("unknown icon %r" % name)
     p.end()
     return QtGui.QIcon(pm)
+
+
+# --------------------------------------------------------------------------- #
+# 確認の窓(設計書 P09: 出すのは Undo で戻せない時だけ・既定と Esc はキャンセル・ボタンは tr を通した動詞・
+# Qt の標準ボタンを使わない・作る関数と見せる関数を分ける)
+# --------------------------------------------------------------------------- #
+#: ボタンの役割の鍵 → Qt の役割(左右の並びは役割で Qt に任せる。手で並べない)。
+_CONFIRM_ROLES = {
+    "save": QtWidgets.QMessageBox.AcceptRole, "reload": QtWidgets.QMessageBox.AcceptRole,
+    "discard": QtWidgets.QMessageBox.DestructiveRole, "overwrite": QtWidgets.QMessageBox.DestructiveRole,
+    "run": QtWidgets.QMessageBox.DestructiveRole, "cancel": QtWidgets.QMessageBox.RejectRole,
+}
+#: 未保存の窓の動詞: 操作 → (題 = 操作の名前, 保存して<動詞>, 保存せずに<動詞>)。英語が正(tr で訳す)。
+UNSAVED_VERBS = {
+    "close": ("Close", "Save and close", "Close without saving"),
+    "open": ("Open", "Save and open", "Open without saving"),
+    "remove": ("Remove column", "Save and remove", "Remove without saving"),
+}
+#: 確認の種類(設計書 P09-2 の kind)ごとのボタン [(役割の鍵, 英語の文)]。run の動詞は呼ぶ所が渡す。
+CHANGED_BUTTONS = (("reload", "Reload"), ("overwrite", "Overwrite anyway"), ("cancel", "Cancel"))
+
+
+def _label(text: str) -> str:
+    """ボタンに出す文('&' をニーモニックにしない = '&&')。"""
+    return text.replace("&", "&&")
+
+
+def _build_confirm_box(parent: QtWidgets.QWidget | None, title: str, text: str, buttons: Sequence[tuple[str, str]],
+                       details: str = "") -> QtWidgets.QMessageBox:
+    """確認の箱を**作る**(見せない)。``buttons`` = [(役割の鍵, 画面の文)](文は tr を通した物)。
+
+    標準ボタンは使わない(全部 addButton)。既定のボタン(Enter)と Esc は ``"cancel"`` のボタン。ボタンには
+    property ``fsRole`` = 役割の鍵を付ける(押された物の答えと、門が数える時の目印)。``"cancel"`` が無ければ
+    ``ValueError``(キャンセルできない確認は作らない)。"""
+    keys = [k for k, _s in buttons]
+    if "cancel" not in keys or len(set(keys)) != len(keys) or any(k not in _CONFIRM_ROLES for k in keys):
+        raise ValueError("a confirm box needs distinct known roles and a cancel button: %r" % (keys,))
+    box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, title, text, QtWidgets.QMessageBox.NoButton, parent)
+    box.setTextFormat(Qt.PlainText)
+    if details:
+        box.setInformativeText(details)
+    cancel = None
+    for key, label in buttons:
+        b = box.addButton(_label(label), _CONFIRM_ROLES[key])
+        b.setProperty("fsRole", key)
+        if key == "cancel":
+            cancel = b
+    box.setDefaultButton(cancel)
+    box.setEscapeButton(cancel)
+    return box
+
+
+def _exec_confirm_box(box: QtWidgets.QMessageBox) -> str:
+    """作った箱を**見せて**答えを待つ。押したボタンの役割の鍵(閉じただけ・知らない物は ``"cancel"``)。"""
+    box.exec()
+    hit = box.clickedButton()
+    role = hit.property("fsRole") if hit is not None else None
+    return role if isinstance(role, str) and role in _CONFIRM_ROLES else "cancel"
+
+
+def _accepts_kind(fn: Callable[..., Any]) -> bool:
+    """``fn`` が新しい形の confirm_action(``kind=`` / ``buttons=`` を受ける)か。"""
+    try:
+        params = inspect.signature(fn).parameters.values()
+    except (TypeError, ValueError):
+        return False
+    names = {p.name for p in params}
+    return "kind" in names or any(p.kind is inspect.Parameter.VAR_KEYWORD for p in params)
+
+
+_ROLE_NAMES = {"accept": QtWidgets.QMessageBox.AcceptRole, "destructive": QtWidgets.QMessageBox.DestructiveRole,
+               "reject": QtWidgets.QMessageBox.RejectRole}
+
+
+def _answer_key(got: Any, buttons: Sequence[tuple[str, str]]) -> str:
+    """親の confirm_action の答えを、こちらの役割の鍵にする。分からない答えは ``"cancel"``(fail-closed)。
+
+    受ける形: 役割の鍵の文字 / Qt の役割(QMessageBox.ButtonRole か、その名前 accept / destructive / reject)/
+    真偽(2 択の時だけ。真 = キャンセルでない方)。"""
+    keys = [k for k, _s in buttons]
+    if isinstance(got, bool):
+        others = [k for k in keys if k != "cancel"]
+        return others[0] if got and len(others) == 1 else "cancel"
+    if isinstance(got, str) and got in keys:
+        return got
+    role = _ROLE_NAMES.get(got.lower()) if isinstance(got, str) else got
+    if isinstance(role, QtWidgets.QMessageBox.ButtonRole):
+        hits = [k for k in keys if _CONFIRM_ROLES[k] == role]
+        if len(hits) == 1:
+            return hits[0]
+    return "cancel"
 
 
 class _ElideLabel(QtWidgets.QLabel):
@@ -516,6 +608,8 @@ class ParamsPanel(QtWidgets.QWidget):
         self.ask_overwrite: Callable[[str, str], str] = self._ask_overwrite_box
         self.pick_open: Callable[[], list[str]] = self._pick_open_dialog
         self.pick_save: Callable[[int], str] = self._pick_save_dialog
+        #: 親(Studio)の confirm_action(``set_confirm``)。None = 自前の箱(同じ形)。
+        self._confirm_fn: Callable[..., Any] | None = None
         self._build()
         self.setAcceptDrops(True)
         self.refresh()
@@ -915,7 +1009,7 @@ class ParamsPanel(QtWidgets.QWidget):
     def open_files(self) -> None:
         """今の列を置き換えて開く(未保存があれば聞く)。"""
         paths = self.pick_open()
-        if not paths or not self.confirm_discard():
+        if not paths or not self.confirm_discard(verb="open"):
             return
         while self.model.columns:
             self.model.remove_column(0)
@@ -938,7 +1032,7 @@ class ParamsPanel(QtWidgets.QWidget):
         ci = self.current_column()
         if ci is None:
             return
-        if self.model.is_dirty(ci) and not self.confirm_discard([ci]):
+        if self.model.is_dirty(ci) and not self.confirm_discard([ci], verb="remove"):
             return
         self.model.remove_column(ci)
         self.refresh()
@@ -1114,16 +1208,21 @@ class ParamsPanel(QtWidgets.QWidget):
         ci = self.current_column()
         if ci is None:
             return
-        if self.model.is_dirty(ci) and not self.confirm_discard([ci]):
+        if self.model.is_dirty(ci) and not self.confirm_discard([ci], verb="reload"):
             return
         self.reload_column(ci)
 
-    def confirm_discard(self, cols: Sequence[int] | None = None) -> bool:
-        """未保存の変更を手放してよいか(保存 / 捨てる / やめる)。進んでよければ True。"""
+    def confirm_discard(self, cols: Sequence[int] | None = None, verb: str = "close") -> bool:
+        """未保存の変更を手放してよいか(保存して<動詞> / 保存せずに<動詞> / キャンセル)。進んでよければ True。
+
+        ``verb`` = close / open / remove(:data:`UNSAVED_VERBS`)、reload(保存しても意味が無いので
+        [読み直す][キャンセル] の 2 択)。差し口 ``ask_unsaved`` を差し替えた時は、その答え(save / discard / cancel)を使う。"""
         idxs = [i for i in (cols if cols is not None else range(len(self.model.columns))) if self.model.is_dirty(i)]
         if not idxs:
             return True
-        choice = self.ask_unsaved([self.model.columns[i].name for i in idxs])
+        names = [self.model.columns[i].name for i in idxs]
+        hook = self.ask_unsaved
+        choice = self._ask_unsaved_box(names, verb) if hook == self._ask_unsaved_box else hook(names)
         if choice == "save":
             return all([self.save_column(i) for i in idxs])
         return choice == "discard"
@@ -1147,44 +1246,61 @@ class ParamsPanel(QtWidgets.QWidget):
         self._after_change(structure=False)
         return out
 
-    # ---- 聞く所の既定 ----
-    def _ask_unsaved_box(self, names: list[str]) -> str:
+    # ---- 聞く所(確認の窓は 1 つの形: 設計書 P09) ----
+    def set_confirm(self, fn: Callable[..., Any] | None) -> None:
+        """親(Studio)の ``confirm_action`` を受け取る。``None`` で自前の箱(同じ形)に戻す。
+
+        新しい形 ``fn(parent, title, text, action, *, kind, buttons) -> 答え``: ``kind`` = unsaved / changed / run、
+        ``buttons`` = [(役割の鍵, 画面の文)](文は tr 済み、並びは表示の順)。答えは役割の鍵・Qt の役割・真偽(2 択だけ)の
+        どれでもよく、分からない答えはキャンセル。古い形 ``fn(parent, title, text, action) -> bool`` は 2 択(kind = run)
+        だけを任せ、3 択は自前の箱で聞く(真偽では 3 つを言い分けられない)。"""
+        self._confirm_fn = fn
+
+    def confirm_function(self) -> Callable[..., Any] | None:
+        """``set_confirm`` で受け取った関数(無ければ None)。"""
+        return self._confirm_fn
+
+    def _confirm(self, kind: str, title: str, text: str, buttons: Sequence[tuple[str, str]], action: str,
+                 details: str = "") -> str:
+        """確認を 1 回聞く。``buttons`` / ``title`` / ``action`` は英語の元の文(ここで tr を通す)。答え = 役割の鍵。"""
         tr = self.tr_
-        box = QtWidgets.QMessageBox(self)
-        box.setIcon(QtWidgets.QMessageBox.Warning)
-        box.setWindowTitle(tr("Parameters"))
-        box.setText(tr("These bundles have unsaved changes: %s") % ", ".join(names))
-        b_save = box.addButton(tr("Save"), QtWidgets.QMessageBox.AcceptRole)
-        b_drop = box.addButton(tr("Discard"), QtWidgets.QMessageBox.DestructiveRole)
-        box.addButton(tr("Cancel"), QtWidgets.QMessageBox.RejectRole)
-        box.exec()
-        hit = box.clickedButton()
-        return "save" if hit is b_save else "discard" if hit is b_drop else "cancel"
+        shown = [(k, tr(s)) for k, s in buttons]
+        fn = self._confirm_fn
+        if fn is not None:
+            if _accepts_kind(fn):
+                body = text + ("\n\n" + details if details else "")
+                return _answer_key(fn(self, tr(title), body, tr(action), kind=kind, buttons=list(shown)), shown)
+            if len(shown) == 2:
+                return _answer_key(fn(self, tr(title), text + ("\n\n" + details if details else ""), tr(action)),
+                                   shown)
+        box = _build_confirm_box(self, tr(title), text, shown, details)
+        try:
+            return _exec_confirm_box(box)
+        finally:
+            box.deleteLater()
+
+    def _ask_unsaved_box(self, names: list[str], verb: str = "close") -> str:
+        """未保存の束を手放す前に聞く: save / discard / cancel。"""
+        tr = self.tr_
+        if verb == "reload":
+            text = tr("%s has unsaved changes; reloading reads the file again and drops them") % ", ".join(names)
+            got = self._confirm("run", "Reload", text, (("run", "Reload"), ("cancel", "Cancel")), "Reload")
+            return "discard" if got == "run" else "cancel"
+        title, save, drop = UNSAVED_VERBS[verb]
+        text = tr("%d bundle(s) have unsaved changes: %s") % (len(names), ", ".join(names))
+        return self._confirm("unsaved", title, text, (("save", save), ("discard", drop), ("cancel", "Cancel")), title)
 
     def _ask_losses_box(self, name: str, lines: list[str]) -> bool:
+        """保存で失われる物があれば聞く: それでも保存なら True。"""
         tr = self.tr_
-        box = QtWidgets.QMessageBox(self)
-        box.setIcon(QtWidgets.QMessageBox.Warning)
-        box.setWindowTitle(tr("Parameters"))
-        box.setText(tr("Saving %s rewrites the whole file. These are not kept:") % name)
-        box.setInformativeText("\n".join("• " + s for s in lines))
-        b_ok = box.addButton(tr("Save anyway"), QtWidgets.QMessageBox.AcceptRole)
-        box.addButton(tr("Cancel"), QtWidgets.QMessageBox.RejectRole)
-        box.exec()
-        return box.clickedButton() is b_ok
+        text = tr("Saving %s rewrites the whole file. These are not kept:") % name
+        details = "\n".join("\u2022 " + s for s in lines)
+        return self._confirm("run", "Save", text, (("run", "Save anyway"), ("cancel", "Cancel")), "Save anyway",
+                             details) == "run"
 
     def _ask_overwrite_box(self, name: str, text: str) -> str:
-        tr = self.tr_
-        box = QtWidgets.QMessageBox(self)
-        box.setIcon(QtWidgets.QMessageBox.Warning)
-        box.setWindowTitle(tr("Parameters"))
-        box.setText(text)
-        b_over = box.addButton(tr("Overwrite"), QtWidgets.QMessageBox.DestructiveRole)
-        b_reload = box.addButton(tr("Reload"), QtWidgets.QMessageBox.AcceptRole)
-        box.addButton(tr("Cancel"), QtWidgets.QMessageBox.RejectRole)
-        box.exec()
-        hit = box.clickedButton()
-        return "overwrite" if hit is b_over else "reload" if hit is b_reload else "cancel"
+        """読んだ後に外で変わった・消えたファイルへ保存する前に聞く: reload / overwrite / cancel。"""
+        return self._confirm("changed", "Save", text, CHANGED_BUTTONS, "Overwrite anyway")
 
     def _start_dir(self) -> str:
         for c in self.model.columns:
@@ -1218,12 +1334,14 @@ class ParamsWindow(QtWidgets.QDialog):
     """モードレスの窓。Esc で閉じる・位置と大きさを覚える・未保存なら閉じる前に聞く・前に来たら外での変更を調べる。"""
 
     def __init__(self, parent: QtWidgets.QWidget | None = None, tr: Callable[[str], str] | None = None,
-                 settings: Callable[[], Any] | None = None, model: M.ParamsModel | None = None) -> None:
+                 settings: Callable[[], Any] | None = None, model: M.ParamsModel | None = None,
+                 confirm: Callable[..., Any] | None = None) -> None:
         super().__init__(parent, Qt.Window | Qt.WindowCloseButtonHint | Qt.WindowMinMaxButtonsHint)
         self.setModal(False)
         self.setAttribute(Qt.WA_DeleteOnClose, False)
         self._settings = settings or _default_settings
         self.panel = ParamsPanel(tr, self, model, self._settings)
+        self.panel.set_confirm(confirm)
         lay = QtWidgets.QVBoxLayout(self)
         lay.setContentsMargins(0, 0, 0, 0)
         lay.setSpacing(0)
@@ -1306,13 +1424,17 @@ class ParamsWindow(QtWidgets.QDialog):
 
 def show_params_window(parent: QtWidgets.QWidget | None = None, paths: Sequence[str] = (),
                        tr: Callable[[str], str] | None = None, settings: Callable[[], Any] | None = None,
-                       ) -> ParamsWindow:
-    """Studio から呼ぶ入口。同じ親の窓が既にあれば 2 枚目を作らず、``paths`` を列に足して前に出す。"""
+                       confirm: Callable[..., Any] | None = None) -> ParamsWindow:
+    """Studio から呼ぶ入口。同じ親の窓が既にあれば 2 枚目を作らず、``paths`` を列に足して前に出す。
+
+    ``confirm`` = Studio の ``confirm_action``(確認の窓を Studio と同じ形にする。:meth:`ParamsPanel.set_confirm`)。"""
     win = getattr(parent, "_params_window", None) if parent is not None else None
     if not isinstance(win, ParamsWindow):
-        win = ParamsWindow(parent, tr, settings)
+        win = ParamsWindow(parent, tr, settings, confirm=confirm)
         if parent is not None:
             parent._params_window = win             # type: ignore[attr-defined]
+    elif confirm is not None:
+        win.panel.set_confirm(confirm)
     if paths:
         win.panel.add_paths(list(paths))
     win.show()

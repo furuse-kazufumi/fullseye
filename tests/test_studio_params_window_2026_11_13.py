@@ -1235,21 +1235,22 @@ def test_the_three_question_boxes_ask_in_the_ui_language(qapp, ini, tmp_path):
     tr = M.make_tr("ja")
     log: list = []
     answers = []
-    for label, want in (("Save", "save"), ("Discard", "discard"), ("Cancel", "cancel")):
+    for label, want in (("Save and close", "save"), ("Close without saving", "discard"), ("Cancel", "cancel")):
         _answer(qapp, tr(label), log)
         answers.append(p._ask_unsaved_box(["day.json"]) == want)
     for label, want in (("Save anyway", True), ("Cancel", False)):
         _answer(qapp, tr(label), log)
         answers.append(p._ask_losses_box("day.json", ["a", "b"]) is want)
-    for label, want in (("Overwrite", "overwrite"), ("Reload", "reload"), ("Cancel", "cancel")):
+    for label, want in (("Overwrite anyway", "overwrite"), ("Reload", "reload"), ("Cancel", "cancel")):
         _answer(qapp, tr(label), log)
         answers.append(p._ask_overwrite_box("day.json", "changed") == want)
     assert answers == [True] * 8 and len(log) == 8
-    assert log[0][0] == tr("These bundles have unsaved changes: %s") % "day.json"
-    assert log[0][2] == sorted([tr("Save"), tr("Discard"), tr("Cancel")]) and log[0][2] != ["Cancel", "Discard", "Save"]
+    assert log[0][0] == tr("%d bundle(s) have unsaved changes: %s") % (1, "day.json")
+    want = sorted([tr("Save and close"), tr("Close without saving"), tr("Cancel")])
+    assert log[0][2] == want and want != sorted(["Save and close", "Close without saving", "Cancel"])
     assert log[3][0] == tr("Saving %s rewrites the whole file. These are not kept:") % "day.json"
     assert log[3][1] == "\u2022 a\n\u2022 b" and log[3][2] == sorted([tr("Save anyway"), tr("Cancel")])
-    assert log[5][2] == sorted([tr("Overwrite"), tr("Reload"), tr("Cancel")])
+    assert log[5][2] == sorted([tr("Overwrite anyway"), tr("Reload"), tr("Cancel")])
     _close_quietly(win)
 
 
@@ -1257,3 +1258,174 @@ def test_main_refuses_a_dangling_lang_option(capsys):
     """``--lang`` に値が無ければ窓を出さずに 2 を返す。"""
     assert Q.main(["--lang"]) == 2
     assert "ja" in capsys.readouterr().err
+
+
+# ============================================================================================== #
+# 1.2.0 の操作感(B6 [束]、設計書 STUDIO_INTERACTION_RULES の P07〜P09・P12〜P15)
+# ============================================================================================== #
+from PySide6.QtTest import QTest  # noqa: E402
+
+
+@pytest.fixture
+def fusion(qapp):
+    """見た目と配置の門は Qt の様式を Fusion に固定して数える(設計書 P14-9)。"""
+    before = qapp.style().name()
+    qapp.setStyle("Fusion")
+    yield qapp
+    qapp.setStyle(before)
+
+
+def _collect_real_boxes(monkeypatch, key):
+    """確認の箱を「見せる関数」だけ差し替え、作る関数が作った本物の箱を見せてから ``key`` を送る。
+
+    箱の中身(題・文・ボタンの文・役割・既定・Esc・標準ボタン)と、押されたボタンの役割を記録して返す。"""
+    seen = []
+
+    def show(box):
+        box.show()
+        QTest.keyClick(box, key)
+        hit = box.clickedButton()
+        seen.append({
+            "title": box.windowTitle(), "text": box.text(), "informative": box.informativeText(),
+            "buttons": [(b.text(), b.property("fsRole"), box.buttonRole(b)) for b in box.buttons()],
+            "default": box.defaultButton().property("fsRole") if box.defaultButton() is not None else None,
+            "escape": box.escapeButton().property("fsRole") if box.escapeButton() is not None else None,
+            "default_role": box.buttonRole(box.defaultButton()) if box.defaultButton() is not None else None,
+            "standard": box.standardButtons(), "hit": hit.property("fsRole") if hit is not None else None,
+            "modal_visible": box.isVisible()})
+        return seen[-1]["hit"] or "cancel"
+
+    monkeypatch.setattr(Q, "_exec_confirm_box", show)
+    return seen
+
+
+#: 入口ごとの箱の形(英語の元の文): 題・ボタン(役割の鍵, 文)。
+_BOX_SHAPES = {
+    "close": ("Close", [("save", "Save and close"), ("discard", "Close without saving"), ("cancel", "Cancel")]),
+    "open": ("Open", [("save", "Save and open"), ("discard", "Open without saving"), ("cancel", "Cancel")]),
+    "remove": ("Remove column", [("save", "Save and remove"), ("discard", "Remove without saving"),
+                                 ("cancel", "Cancel")]),
+    "reload": ("Reload", [("run", "Reload"), ("cancel", "Cancel")]),
+    "losses": ("Save", [("run", "Save anyway"), ("cancel", "Cancel")]),
+    "changed": ("Save", [("reload", "Reload"), ("overwrite", "Overwrite anyway"), ("cancel", "Cancel")]),
+}
+
+
+def _drive_every_box_entry(qapp, p, win, paths) -> list[str]:
+    """6 つの入口を順に通す(どれも箱で「キャンセル」になる前提)。通った入口の名前を返し、状態が変わらない事を確かめる。"""
+    done = []
+    assert p.edit_cell(0, "camera.fx", "900").ok and p.model.is_dirty(0)
+    win.close()                                                           # 閉じる → 未保存の箱
+    assert win.isVisible() and p.model.is_dirty(0)
+    done.append("close")
+    p.pick_open = lambda: [paths[0]]
+    p.open_files()                                                        # 開き直す → 未保存の箱(開く)
+    assert [c.name for c in p.model.columns] == ["day.json", "night.yaml", "lab.xml"] and p.model.is_dirty(0)
+    done.append("open")
+    assert p.select_cell(0, "camera.fx")
+    p.remove_current()                                                    # 列を外す → 未保存の箱(外す)
+    assert len(p.model.columns) == 3
+    done.append("remove")
+    p.reload_current()                                                    # 読み直す → 実行の箱(読み直す)
+    assert p.model.value(0, "camera.fx") == 900.0
+    done.append("reload")
+    with open(paths[1], "a", encoding="utf-8") as fh:                     # YAML のコメントは保存で失われる
+        fh.write("# hand-written note\n")
+    assert p.reload_column(1) and p.edit_cell(1, "camera.fx", "901").ok
+    before = open(paths[1], "rb").read()
+    assert p.save_column(1) is False and open(paths[1], "rb").read() == before
+    done.append("losses")
+    assert p.edit_cell(2, "camera.fx", "902").ok
+    with open(paths[2], "a", encoding="utf-8") as fh:                     # 外で変わった XML
+        fh.write("\n")
+    with open(paths[2], "rb") as fh:
+        lab_before = fh.read()
+    assert p.save_column(2) is False and open(paths[2], "rb").read() == lab_before
+    assert p.model.value(2, "camera.fx") == 902.0                         # 読み直してもいない
+    done.append("changed")
+    return done
+
+
+@pytest.mark.parametrize("key", [Qt.Key_Escape, Qt.Key_Return])
+def test_params_boxes_default_and_escape_cancel_real_box(qapp, fusion, ini, tmp_path, monkeypatch, key):
+    """D88 / G09(b'): 6 つの入口(閉じる・開く・列を外す・読み直す・失われる保存・外で変わった)から本物の箱を作らせ、
+    Esc でも Enter でもキャンセルになり何も変わらない。標準ボタン 0・既定 = Esc = キャンセル(RejectRole)・ボタンは動詞で
+    UI の言語(ja の訳が表にあり、英語と違う)。"""
+    table = M.load_i18n_table()
+    tr = M.make_tr("ja")
+    seen = _collect_real_boxes(monkeypatch, key)
+    paths = _three_files(tmp_path)
+    win = _window(qapp, paths, lang="ja")
+    p = win.panel
+    done = _drive_every_box_entry(qapp, p, win, paths)
+    assert done == list(_BOX_SHAPES) and len(seen) == len(done) == 6
+    checked = 0
+    for name, box in zip(done, seen):
+        title, buttons = _BOX_SHAPES[name]
+        assert box["standard"] == QtWidgets.QMessageBox.NoButton, name
+        assert box["default"] == box["escape"] == "cancel" == box["hit"], (name, box)
+        assert box["default_role"] == QtWidgets.QMessageBox.RejectRole, name
+        assert sorted((b[1], b[0]) for b in box["buttons"]) == sorted((k, tr(s)) for k, s in buttons), name
+        assert box["title"] == tr(title) != title, name
+        for text, _role_key, _role in box["buttons"]:
+            en = [s for _k, s in buttons if tr(s) == text]
+            assert len(en) == 1 and en[0] in table and text != en[0], (name, text)
+            checked += 1
+        assert not box["modal_visible"], name                             # 答えたら箱は閉じる
+    assert checked == 3 + 3 + 3 + 2 + 2 + 3
+    assert seen[0]["text"] == tr("%d bundle(s) have unsaved changes: %s") % (1, "day.json")
+    assert seen[4]["informative"].count("\u2022") == 2                    # 失われる物の並び
+    _close_quietly(win)
+
+
+def test_params_set_confirm_takes_the_parents_confirm_action(qapp, ini, tmp_path, monkeypatch):
+    """D88: 親(Studio)の confirm_action を set_confirm で受け取る。新しい形(kind・buttons)は役割の鍵・役割・真偽のどれで
+    答えてもよく、知らない答えはキャンセル(fail-closed)。古い形(4 つの引数 → 真偽)は 2 択だけを任せ、3 択は自前の箱で聞く。"""
+    own = _collect_real_boxes(monkeypatch, Qt.Key_Escape)
+    paths = _three_files(tmp_path)
+    calls = []
+
+    def new_style(parent, title, text, action, *, kind="run", buttons=None):
+        calls.append((title, text, action, kind, [k for k, _s in buttons]))
+        return answers.pop(0)
+
+    win = Q.ParamsWindow(None, M.make_tr("en"), confirm=new_style)
+    p = win.panel
+    p.add_paths(paths)
+    win.show()
+    _pump(qapp)
+    assert p.edit_cell(0, "camera.fx", "900").ok
+    answers = ["cancel", "nonsense", QtWidgets.QMessageBox.RejectRole, False]
+    for _ in range(4):
+        win.close()
+        assert win.isVisible() and p.model.is_dirty(0)
+    assert len(calls) == 4 and calls[0] == ("Close", "1 bundle(s) have unsaved changes: day.json", "Close", "unsaved",
+                                            ["save", "discard", "cancel"])
+    answers = [QtWidgets.QMessageBox.DestructiveRole]                         # 役割で答える = 保存せずに閉じる
+    win.close()
+    assert not win.isVisible() and not p.model.is_dirty(0) and len(calls) == 5
+    win.show()
+    assert p.edit_cell(0, "camera.fx", "901").ok
+    answers = ["save"]
+    win.close()
+    assert not win.isVisible() and M.read_bundle(paths[0])["camera.fx"] == 901.0
+    assert own == []                                                          # 新しい形なら自前の箱は出ない
+    # 古い形の confirm_action(parent, title, text, action) -> bool
+    legacy = []
+    p.set_confirm(lambda parent, title, text, action: (legacy.append((title, action)) or True))
+    win.show()
+    with open(paths[1], "a", encoding="utf-8") as fh:
+        fh.write("# note\n")
+    assert p.reload_column(1) and p.edit_cell(1, "camera.fx", "5").ok
+    assert p.save_column(1) is True and legacy == [("Save", "Save anyway")]   # 2 択は親へ
+    assert p.edit_cell(0, "camera.fx", "6").ok
+    win.close()                                                               # 3 択は自前の箱(Esc でキャンセル)
+    assert win.isVisible() and len(own) == 1 and own[0]["hit"] == "cancel" and len(legacy) == 1
+    p.set_confirm(None)
+    _close_quietly(win)
+    # Studio の入口からも渡せる
+    parent = QtWidgets.QWidget()
+    w2 = Q.show_params_window(parent, [paths[2]], M.make_tr("en"), confirm=new_style)
+    assert w2.panel.confirm_function() is new_style
+    _close_quietly(w2)
+    parent.deleteLater()
