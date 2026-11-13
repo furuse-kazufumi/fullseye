@@ -2597,6 +2597,19 @@ def handle_tools_list(params: dict) -> dict:
             "estimated_tokens": math.ceil(len(json.dumps(rows, ensure_ascii=False)) / 4)}
 
 
+def _has_non_finite(value, depth: int = 0) -> bool:
+    """JSON の木に非有限の数があるか(深さ 64 まで。それより深い木は from_jsonable が断る)。"""
+    if isinstance(value, float):
+        return not math.isfinite(value)
+    if depth > 64:
+        return False
+    if isinstance(value, dict):
+        return any(_has_non_finite(v, depth + 1) for v in value.values())
+    if isinstance(value, (list, tuple)):
+        return any(_has_non_finite(v, depth + 1) for v in value)
+    return False
+
+
 def _import_json(a: dict, store: HandleStore) -> dict:
     """JSON 封筒(引数)→ 配列 sort はハンドル、非配列は値。壊れた封筒は -32602。"""
     import numpy as np
@@ -2612,11 +2625,25 @@ def _import_json(a: dict, store: HandleStore) -> dict:
     # ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する
     #   (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
     limits = {"max_bytes": int(store.max_bytes), "max_pixels": int(get_system("mcp_stack_max_pixels"))}
+    # ★2026-11-13(報告 10 / S6): NaN・Infinity(JSON の決まりに無い定数、または封筒の中の非有限の数)を受けていた。
+    #   取り込みの前に断る(他の入口と同じく、非有限は受けない)。
+    if has_json and isinstance(a["json"], str):
+        def _no_constants(token):
+            raise ArgError("json に %s がある(JSON の決まりに無い非有限の定数は取り込まない)" % token)
+        try:
+            json.loads(a["json"], parse_constant=_no_constants)
+        except json.JSONDecodeError:
+            pass                                                 # 形の崩れは from_json が理由つきで断る
+    if has_env and _has_non_finite(a["envelope"]):
+        raise ArgError("envelope に非有限の数(NaN / Infinity)がある。取り込まない")
     try:
         value, sort = (fullseye.from_json(a["json"], **limits) if has_json
                        else fullseye.from_jsonable(a["envelope"], **limits))
     except ValueError as exc:                                    # 信頼境界: 封筒を再検証
         raise ArgError("JSON 封筒が読めない: %s" % exc) from None
+    if isinstance(value, np.ndarray) and value.dtype.kind in "fc" and not np.isfinite(value).all():
+        raise ArgError("取り込む配列に非有限の値(NaN / Inf)が %d 個ある。取り込まない(有限の値にしてから渡す)"
+                       % int((~np.isfinite(value)).sum()))
     if isinstance(value, np.ndarray):
         meta = store.put(value, sort=sort, provenance=[{"import_json": sort}])
         text = "取り込んだ: %s  sort=%s  shape=%s%s" % (

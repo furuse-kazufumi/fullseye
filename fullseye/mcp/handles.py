@@ -41,6 +41,29 @@ def default_roots() -> list[str]:
     return roots
 
 
+def _declared_pixels(path: str) -> int | None:
+    """画像ファイルの見出しが宣言する画素数(高さ × 幅)。読めなければ None(その時は復号の後の上限が効く)。"""
+    import struct
+    ext = os.path.splitext(path)[1].lower()
+    try:
+        if ext == ".npy":
+            arr = np.load(path, mmap_mode="r", allow_pickle=False)
+            return int(np.prod(arr.shape[:2], dtype=np.int64)) if arr.ndim >= 2 else int(arr.size)
+        with open(path, "rb") as fh:
+            head = fh.read(33)
+        if head[:8] == b"\x89PNG\r\n\x1a\n" and head[12:16] == b"IHDR":
+            width, height = struct.unpack(">II", head[16:24])
+            return int(width) * int(height)
+        try:
+            from PIL import Image
+        except ImportError:
+            return None
+        with Image.open(path) as im:                     # 遅延: 見出しだけを読む
+            return int(im.size[0]) * int(im.size[1])
+    except Exception:                                    # noqa: BLE001 - 見出しが読めない物は復号の側の検査に任せる
+        return None
+
+
 class HandleStore:
     def __init__(self, roots: list[str] | None = None, *, max_items: int = 256,
                  max_bytes: int | None = None, thumb_dir: str | None = None):
@@ -52,6 +75,12 @@ class HandleStore:
         #   小図の保存が FileNotFoundError で落ち、テスト 4 件で発覚(2026-09-15)。
         self.thumb_dir = thumb_dir or tempfile.mkdtemp(prefix="fullseye-mcp-")
         os.makedirs(self.thumb_dir, exist_ok=True)
+        if thumb_dir is None:
+            # ★2026-11-13(報告 10 / S7): 自分で作った一時フォルダはサーバの終了後も残っていた。
+            #   この置き場が捨てられる時(終了時を含む)に消す。渡されたフォルダは消さない。
+            import shutil
+            import weakref
+            self._cleanup = weakref.finalize(self, shutil.rmtree, self.thumb_dir, True)
         self._meta: OrderedDict[str, dict] = OrderedDict()
         self._arr: dict[str, object] = {}
         self._evicted: set[str] = set()
@@ -60,22 +89,36 @@ class HandleStore:
     # ---------------------------------------------------------------- paths
     def display_path(self, path: str) -> str:
         """Return an MCP-safe path label without exposing host roots or home dirs."""
-        real = os.path.realpath(path)
-        for root in self.roots:
-            if real == root:
-                return "<root>"
-            if real.startswith(root + os.sep):
-                return "<root>/" + os.path.relpath(real, root).replace(os.sep, "/")
-        return "<outside>/" + os.path.basename(real)
+        try:
+            real = os.path.realpath(path)
+            for root in self.roots:
+                if real == root:
+                    return "<root>"
+                if real.startswith(root + os.sep):
+                    return "<root>/" + os.path.relpath(real, root).replace(os.sep, "/")
+        except (ValueError, OSError):
+            # ★2026-11-13(報告 10 / S7): path=NUL などの装置名で relpath が ValueError を投げ、-32603 になっていた
+            real = str(path)
+        return "<outside>/" + (os.path.basename(real.replace("\\", "/").rstrip("/")) or "?")
+
+    def _inside_roots(self, path: str) -> bool:
+        try:
+            real = os.path.realpath(path)
+        except (ValueError, OSError):
+            return False
+        return any(real == r or real.startswith(r + os.sep) for r in self.roots)
 
     def _check_path(self, path: str) -> str:
         if not isinstance(path, str) or not path.strip():
             raise HandleError("path が空")
-        if os.path.isabs(path):
-            real = os.path.realpath(path)
-        else:
-            candidates=[os.path.realpath(os.path.join(root,path)) for root in self.roots]
-            real=next((p for p in candidates if os.path.isfile(p)), candidates[0] if candidates else os.path.realpath(path))
+        try:
+            if os.path.isabs(path):
+                real = os.path.realpath(path)
+            else:
+                candidates=[os.path.realpath(os.path.join(root,path)) for root in self.roots]
+                real=next((p for p in candidates if os.path.isfile(p)), candidates[0] if candidates else os.path.realpath(path))
+        except (ValueError, OSError):
+            raise HandleError("読めないパス: %s(読めるのは <root> の下だけ)" % self.display_path(path)) from None
         inside = any(real == r or real.startswith(r + os.sep) for r in self.roots)
         if not inside:
             raise HandleError(
@@ -105,9 +148,13 @@ class HandleStore:
             for dirpath, dirnames, filenames in os.walk(root):
                 rel = os.path.relpath(dirpath, root)
                 depth = 0 if rel == "." else rel.count(os.sep) + 1        # 根 = 0、1 段下 = 1
-                dirnames[:] = sorted(d for d in dirnames if not d.startswith(".")) if depth < 1 else []
+                # ★2026-11-13(報告 10 / S4): 根の中のジャンクション・リンクの先(根の外)の名前を並べていた
+                #   (中身は _check_path が断るが、名前が漏れる)。実体が根の外の物は辿らず、並べない。
+                dirnames[:] = sorted(d for d in dirnames if not d.startswith(".")
+                                     and self._inside_roots(os.path.join(dirpath, d))) if depth < 1 else []
                 for fn in sorted(filenames):
-                    if not fn.startswith(".") and os.path.splitext(fn)[1].lower() in IMAGE_EXT:
+                    if (not fn.startswith(".") and os.path.splitext(fn)[1].lower() in IMAGE_EXT
+                            and self._inside_roots(os.path.join(dirpath, fn))):
                         out.append(os.path.relpath(os.path.join(dirpath, fn), root).replace(os.sep, "/"))
                         if len(out) >= limit:
                             return out
@@ -189,6 +236,14 @@ class HandleStore:
         if named is not None: path=named
         real = self._check_path(path)
         note = None
+        # ★2026-11-13(報告 10 / S3): 20,000×20,000 の PNG を全部復号(4 秒・1.2 GB)してから画素の上限で断っていた。
+        #   見出し(PNG の IHDR、Pillow の遅延の open、npy の見出し)で画素数を先に見る。
+        from fssystem import get_system
+        max_pixels = int(get_system("mcp_stack_max_pixels"))
+        declared = _declared_pixels(real)
+        if declared is not None and declared > max_pixels:
+            raise HandleError("画素が多すぎる: %s は %d 画素で、上限 mcp_stack_max_pixels=%d を超える(復号しない)"
+                              % (self.display_path(real), declared, max_pixels))
         # ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に
         # 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る
         # (-32602)。npy は pickle を決して許さない。

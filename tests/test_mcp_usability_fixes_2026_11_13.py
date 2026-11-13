@@ -203,3 +203,66 @@ def test_catalog_coverage_defaults_to_counts_and_hides_host_paths(cat, store):
     assert root not in dumped and root.replace("\\", "/") not in dumped and len(dumped) < 4000
     full = S.call_tool("fullseye_catalog_coverage", {"detail": True}, cat, store)["structuredContent"]
     assert isinstance(full["index_not_in_registry"], list) and len(full["index_not_in_registry"]) ==         sc["index_not_in_registry"]
+
+
+# --------------------------------------------------------------------------- 10: 読み込みの境界
+def _link_dir(link, target):
+    """根の中に、根の外を指すディレクトリのリンクを作る(Windows はジャンクション、他は symlink)。"""
+    import subprocess
+    if os.name == "nt":
+        done = subprocess.run(["cmd", "/c", "mklink", "/J", str(link), str(target)], capture_output=True)
+        return done.returncode == 0
+    try:
+        os.symlink(str(target), str(link), target_is_directory=True)
+        return True
+    except OSError:
+        return False
+
+
+def test_load_boundary_pixels_links_device_names_nan_and_temp_folder(cat, tmp_path):
+    """直す前: 20,000×20,000 の PNG を全部復号してから断り(4 秒)、根の中のリンクの先(根の外)のファイル名を
+    list_samples に出し、path=NUL で -32603、import_json が NaN / Infinity を受け、一時フォルダが終了後も残った。"""
+    import fullseye
+    import imgio
+    root, outside = tmp_path / "root", tmp_path / "outside"
+    root.mkdir(); outside.mkdir()
+    imgio.save(str(root / "ok.png"), np.zeros((8, 8, 3)))
+    imgio.save(str(outside / "secret_name.png"), np.zeros((8, 8, 3)))
+    # 宣言だけが巨大な PNG(IHDR が 20,000 × 20,000)。中身は復号させない
+    import struct
+    import zlib
+    ihdr = struct.pack(">IIBBBBB", 20000, 20000, 8, 0, 0, 0, 0)
+    chunk = lambda kind, data: (struct.pack(">I", len(data)) + kind + data      # noqa: E731
+                                + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF))
+    (root / "huge.png").write_bytes(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", ihdr) + chunk(b"IEND", b""))
+    linked = _link_dir(root / "jn", outside)
+    store = HandleStore(roots=[str(root)])
+    files = store.root_files()
+    assert "ok.png" in files and not [f for f in files if "secret_name" in f], files
+    if linked:
+        with pytest.raises(S.ArgError, match="根の外"):
+            S.call_tool("fullseye_load_image", {"path": "jn/secret_name.png"}, cat, store)
+    with pytest.raises(S.ArgError, match="画素が多すぎる") as err:
+        S.call_tool("fullseye_load_image", {"path": "huge.png"}, cat, store)
+    assert "復号しない" in str(err.value) and str(tmp_path) not in str(err.value)
+    with pytest.raises(S.ArgError) as err:
+        S.call_tool("fullseye_load_image", {"path": "NUL"}, cat, store)
+    assert "<outside>/" in str(err.value) and str(tmp_path) not in str(err.value)
+    env = json.dumps(fullseye.to_jsonable(np.float64(1.5), "feature"))
+    for bad in (env.replace("1.5", "NaN"), env.replace("1.5", "Infinity")):
+        with pytest.raises(S.ArgError, match="非有限"):
+            S.call_tool("fullseye_import_json", {"json": bad}, cat, store)
+    with pytest.raises(S.ArgError, match="非有限"):
+        S.call_tool("fullseye_import_json", {"envelope": fullseye.to_jsonable(np.array([1.0, np.nan]), "signal")},
+                    cat, store)
+    ok = S.call_tool("fullseye_import_json", {"json": env}, cat, store)
+    assert not ok["isError"]
+    folder = store.thumb_dir
+    assert os.path.isdir(folder)
+    store._cleanup()
+    assert not os.path.exists(folder)
+    given = tmp_path / "given"
+    HandleStore(roots=[str(root)], thumb_dir=str(given))
+    import gc
+    gc.collect()
+    assert given.is_dir()                                         # 渡されたフォルダは消さない
