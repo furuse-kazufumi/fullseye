@@ -467,6 +467,46 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "Reduce motion": {
+   "ja": "動きを減らす",
+   "zh": "减少动画",
+   "tw": "減少動畫",
+   "ko": "움직임 줄이기",
+   "de": "Bewegung reduzieren",
+   "hi": "गति कम करें"
+  },
+  "Keep the icon still while something runs (until changed here, Windows' own animation setting is followed)": {
+   "ja": "処理中もアイコンを動かさない(ここで変えるまでは Windows のアニメーションの設定に従う)",
+   "zh": "处理时图标保持不动(在此更改之前,遵循 Windows 的动画设置)",
+   "tw": "處理時圖示保持不動(在此變更之前,依照 Windows 的動畫設定)",
+   "ko": "처리 중에도 아이콘을 움직이지 않음(여기서 바꾸기 전까지는 Windows 애니메이션 설정을 따름)",
+   "de": "Das Symbol bewegt sich während einer Arbeit nicht (bis zur Änderung hier gilt die Animationseinstellung von Windows)",
+   "hi": "काम चलते समय icon स्थिर रहे (यहाँ बदलने तक Windows की animation सेटिंग मानी जाती है)"
+  },
+  "Opening %s": {
+   "ja": "%s を開いています",
+   "zh": "正在打开 %s",
+   "tw": "正在開啟 %s",
+   "ko": "%s 여는 중",
+   "de": "%s wird geöffnet",
+   "hi": "%s खोला जा रहा है"
+  },
+  "Loading sample: %s": {
+   "ja": "サンプルを読み込み中: %s",
+   "zh": "正在加载示例: %s",
+   "tw": "正在載入範例: %s",
+   "ko": "샘플 불러오는 중: %s",
+   "de": "Beispiel wird geladen: %s",
+   "hi": "नमूना लोड हो रहा है: %s"
+  },
+  "Searching: %s": {
+   "ja": "検索中: %s",
+   "zh": "正在搜索: %s",
+   "tw": "正在搜尋: %s",
+   "ko": "검색 중: %s",
+   "de": "Suche: %s",
+   "hi": "खोज रहे हैं: %s"
+  },
   "More tools": {
    "ja": "ほかの道具",
    "zh": "更多工具",

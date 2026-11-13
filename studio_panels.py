@@ -51,6 +51,12 @@ S_CODE_BOTTOM = "Code at the bottom (wide)"
 S_DOCK_ALL = "Dock all panels"
 S_MENU = "Panel menu"
 S_MORE = "More tools"
+S_REDUCE = "Reduce motion"
+S_REDUCE_TIP = ("Keep the icon still while something runs "
+                "(until changed here, Windows' own animation setting is followed)")
+S_OPENING = "Opening %s"
+S_SAMPLE = "Loading sample: %s"
+S_SEARCHING = "Searching: %s"
 S_ST_SHOWN = "Shown: %d / %d"
 S_ST_STAGES = "Stages: %d"
 S_ST_ERRORS = "Errors: %d"
@@ -59,7 +65,7 @@ S_STRIP = {"auto": "Tools and tabs: automatic (on the left when the panel is wid
            "top": "Tools and tabs: on top",
            "left": "Tools and tabs: on the left"}
 STRINGS = (S_BAR, S_HINT, S_FLOAT, S_DOCK, S_HIDE, S_SHOW, S_LAYOUT, S_RESET, S_CODE_LEFT,
-           S_CODE_BOTTOM, S_DOCK_ALL, S_MENU, S_MORE, S_ST_SHOWN, S_ST_STAGES, S_ST_ERRORS, S_ST_VARS) + tuple(S_STRIP.values())
+           S_CODE_BOTTOM, S_DOCK_ALL, S_MENU, S_MORE, S_REDUCE, S_REDUCE_TIP, S_OPENING, S_SAMPLE, S_SEARCHING, S_ST_SHOWN, S_ST_STAGES, S_ST_ERRORS, S_ST_VARS) + tuple(S_STRIP.values())
 
 _QWIDGETSIZE_MAX = 16777215
 
@@ -640,9 +646,159 @@ BRAND_DONE_MS = 800              # how long "done" / the failure text stays
 BRAND_STALE_MS = 120000          # a job nobody updated or ended for this long is dropped (and logged)
 
 
-def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=None):
+# --------------------------------------------------------------------------- #
+# the icon in motion while something runs: a flip book (user, 2026-11-13)
+#
+# The Fullseye icon is a reticle: a cream centre, an orange ring, a teal ring, navy outlines and a
+# navy cross. Three motions that belong to that shape were drawn from the icon itself and compared
+# (stage-2 report: brand_motion_compare.png and the numbers beside it):
+#   "turn"    the cross turns a quarter of a circle per cycle; the rings are round, so only the cross
+#             moves (aiming / scanning);
+#   "breathe" the cream centre widens and narrows (a pupil, an aperture stopping down);
+#   "sweep"   a light sector runs round the teal ring (a radar, a scan line).
+# Default "turn": its frame 0 is the icon pixel for pixel (no jump when a job begins), the moving part
+# is the thin cross, so the corner stays calm next to the text, and at 22 px it plainly moves.
+# Frames are made once per icon / size / motion and kept; the timer runs at BRAND_FRAMES per
+# BRAND_CYCLE_MS only while a job is shown and the window can be seen; "reduce motion" (the Studio
+# setting, else Windows' own "show animations" switch) keeps frame 0 and the band does not move.
+# --------------------------------------------------------------------------- #
+#: colours measured on studio_assets/fullseye_256.png; "light" is the sweep's lit teal
+ICON_COLOURS = {"navy": "#0d2039", "teal": "#14b8a6", "orange": "#f5a524", "cream": "#fff3d6", "light": "#a8f2e4"}
+#: radii on the same icon, as fractions of the outer radius: cream / navy / orange / navy / teal / rim
+ICON_RADII = (0.20, 0.34, 0.56, 0.68, 0.92, 1.0)
+BRAND_MOTIONS = ("turn", "breathe", "sweep")
+BRAND_MOTION = "turn"
+BRAND_FRAMES = 10                # frames per cycle
+BRAND_CYCLE_MS = 1000            # one cycle; the flip-book timer ticks every BRAND_CYCLE_MS / BRAND_FRAMES
+REDUCE_MOTION_KEY = "ui/reduce_motion"      # "1" / "0"; unset = follow the system
+_FRAME_CACHE = {}
+
+
+def _icon_image(source, side):
+    """``source`` (a QIcon, QPixmap, QImage or a file path) as a ``side`` x ``side`` ARGB image."""
+    from PySide6 import QtCore, QtGui   # noqa: PLC0415
+    if isinstance(source, str):
+        img = QtGui.QImage(source)
+    elif isinstance(source, QtGui.QIcon):
+        img = source.pixmap(QtCore.QSize(side, side)).toImage()
+    elif isinstance(source, QtGui.QPixmap):
+        img = source.toImage()
+    else:
+        img = QtGui.QImage(source)
+    if img.isNull():
+        raise ValueError("no icon image to animate")
+    img = img.convertToFormat(QtGui.QImage.Format_ARGB32)
+    if img.width() != side or img.height() != side:
+        img = img.scaled(side, side, QtCore.Qt.IgnoreAspectRatio, QtCore.Qt.SmoothTransformation)
+    img.setDevicePixelRatio(1.0)
+    return img
+
+
+def icon_frames(source, px=22, motion=BRAND_MOTION, n=BRAND_FRAMES, dpr=2):
+    """The flip book: ``n`` QPixmaps of ``px`` logical pixels (drawn at ``dpr``) made from the icon.
+
+    Frame k shows phase k / n of one cycle. "turn" and "breathe" leave frame 0 equal to the icon;
+    "sweep" lights a sector from the first frame on. Kept per (icon, px, motion, n, dpr)."""
+    from PySide6 import QtCore, QtGui   # noqa: PLC0415
+    import math   # noqa: PLC0415
+    if motion not in BRAND_MOTIONS:
+        raise ValueError("motion must be one of %s, not %r" % (BRAND_MOTIONS, motion))
+    n, dpr = max(1, int(n)), max(1, int(round(float(dpr))))
+    side = int(px) * dpr
+    ident = source if isinstance(source, str) else source.cacheKey()
+    key = (ident, int(px), motion, n, dpr)
+    hit = _FRAME_CACHE.get(key)
+    if hit is not None:
+        return hit
+    base = _icon_image(source, side)
+    c = side / 2.0
+    R = side / 2.0
+    col = {name: QtGui.QColor(v) for name, v in ICON_COLOURS.items()}
+    frames = []
+    for k in range(n):
+        t = k / float(n)
+        out = QtGui.QImage(base) if k == 0 or motion == "sweep" else QtGui.QImage(side, side, QtGui.QImage.Format_ARGB32)
+        if motion == "turn" and k:
+            out.fill(QtCore.Qt.transparent)
+            p = QtGui.QPainter(out)
+            p.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
+            p.setRenderHint(QtGui.QPainter.Antialiasing, True)
+            p.translate(c, c); p.rotate(90.0 * t); p.translate(-c, -c)     # the cross is four-fold: 90 degrees = a cycle
+            p.drawImage(0, 0, base)
+            p.end()
+        elif motion == "breathe" and k:
+            out = QtGui.QImage(base)
+            pupil = ICON_RADII[0] + 0.10 * (0.5 - 0.5 * math.cos(2.0 * math.pi * t))
+            p = QtGui.QPainter(out)
+            p.setRenderHint(QtGui.QPainter.Antialiasing, True)
+            p.setPen(QtCore.Qt.NoPen)
+            p.setBrush(col["navy"]); p.drawEllipse(QtCore.QPointF(c, c), (pupil + 0.14) * R, (pupil + 0.14) * R)
+            p.setBrush(col["cream"]); p.drawEllipse(QtCore.QPointF(c, c), pupil * R, pupil * R)
+            p.end()
+        elif motion == "sweep":
+            # teal pixels inside the teal ring get lighter in a sector that trails the head (clockwise from the top)
+            head = 360.0 * t
+            teal, light = col["teal"], col["light"]
+            for y in range(side):
+                for x in range(side):
+                    dx, dy = x + 0.5 - c, y + 0.5 - c
+                    r = (dx * dx + dy * dy) ** 0.5 / R
+                    if not ICON_RADII[3] < r < ICON_RADII[4]:
+                        continue
+                    px_ = out.pixelColor(x, y)
+                    if abs(px_.red() - teal.red()) + abs(px_.green() - teal.green()) + abs(px_.blue() - teal.blue()) > 90:
+                        continue                                     # the navy cross and outlines stay
+                    ang = math.degrees(math.atan2(dx, -dy)) % 360.0  # 0 at the top, clockwise
+                    behind = (head - ang) % 360.0
+                    w = max(0.0, 1.0 - behind / 80.0) * 0.9
+                    if w > 0:
+                        px_.setRed(int(px_.red() + (light.red() - px_.red()) * w))
+                        px_.setGreen(int(px_.green() + (light.green() - px_.green()) * w))
+                        px_.setBlue(int(px_.blue() + (light.blue() - px_.blue()) * w))
+                        out.setPixelColor(x, y, px_)
+        pm = QtGui.QPixmap.fromImage(out)
+        pm.setDevicePixelRatio(dpr)
+        frames.append(pm)
+    _FRAME_CACHE[key] = frames
+    return frames
+
+
+def system_reduces_motion():
+    """True when the operating system asks for fewer animations (Windows: "Show animations in
+    Windows" off, read with SystemParametersInfo SPI_GETCLIENTAREAANIMATION; read only). False
+    elsewhere or when it cannot be read."""
+    if os.name != "nt":
+        return False
+    try:
+        import ctypes   # noqa: PLC0415
+        value = ctypes.c_int(1)
+        ok = ctypes.windll.user32.SystemParametersInfoW(0x1042, 0, ctypes.byref(value), 0)
+        return bool(ok) and not value.value
+    except Exception:                            # noqa: BLE001 - no answer = animations allowed
+        return False
+
+
+def reduce_motion(settings=None):
+    """The Studio's own "reduce motion" setting when it is set ("1" / "0"), else the system's."""
+    try:
+        value = settings.value(REDUCE_MOTION_KEY) if settings is not None else None
+    except Exception:                            # noqa: BLE001 - a broken store: follow the system
+        value = None
+    word = str(value).strip().lower() if value is not None else ""
+    if word in ("1", "true", "on", "yes"):
+        return True
+    if word in ("0", "false", "off", "no"):
+        return False
+    return system_reduces_motion()
+
+
+def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=None, reduce=None):
     """Build the brand / progress widget (a QWidget with ``begin`` / ``update_job`` / ``end``;
-    ``update`` is QWidget's own repaint, so the middle call is ``update_job``)."""
+    ``update`` is QWidget's own repaint, so the middle call is ``update_job``).
+
+    ``icon``: a QIcon (drawn sharp at the screen's pixel ratio), a QPixmap, or None. While a job is
+    shown the icon is a flip book (``icon_frames``). ``reduce``: a callable that says whether motion
+    is to be reduced (asked when a job begins; None = never)."""
     from PySide6 import QtCore, QtGui, QtWidgets   # noqa: PLC0415
     import itertools   # noqa: PLC0415
     import time as _time   # noqa: PLC0415
@@ -654,14 +810,19 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
             super().__init__(parent)
             self.setObjectName("brand_status")
             self.name, self.icon, self.log, self.tr = name, icon, log, tr or (lambda s: s)
+            self.reduce = reduce
             self.jobs = {}                           # token -> {"text", "total", "done", "t0", "seen"}
             self.tokens = itertools.count(1)
             self.flash = None                        # (text, ok) shown for BRAND_DONE_MS after the last job
             self.phase = 0
+            self.frame = 0                           # flip-book frame while busy (0 = the icon as it is)
+            self.frames_advanced = 0                 # how many times the flip book turned a page (tests, report)
+            self.motion = BRAND_MOTION
             self.reduced_motion = False
             self.show_after_ms, self.done_ms, self.stale_ms = BRAND_SHOW_AFTER_MS, BRAND_DONE_MS, BRAND_STALE_MS
             self._call.connect(self._on_call)
-            self.tick = QtCore.QTimer(self); self.tick.setInterval(100); self.tick.timeout.connect(self._on_tick)
+            self.tick = QtCore.QTimer(self); self.tick.setInterval(BRAND_CYCLE_MS // BRAND_FRAMES)
+            self.tick.timeout.connect(self._on_tick)
             self.flash_timer = QtCore.QTimer(self); self.flash_timer.setSingleShot(True)
             self.flash_timer.timeout.connect(self._flash_over)
             f = self.font(); f.setPixelSize(15); f.setWeight(QtGui.QFont.ExtraBold)
@@ -669,7 +830,7 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
             g = self.font(); g.setPixelSize(12)
             self.job_font = g
             w = QtGui.QFontMetrics(f).horizontalAdvance(name) + (30 if icon is not None else 0) + 20
-            self.setFixedSize(max(w, 190), 24)       # the frame is the same idle and busy
+            self.setFixedSize(max(w, 210), 24)       # the frame is the same idle and busy
             self.setAccessibleName(name)
 
         # ---- the door (any thread) ---------------------------------------- #
@@ -691,6 +852,10 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
                 token, text, total, t0 = args
                 self.jobs[token] = {"text": text, "total": total, "done": 0, "t0": t0, "seen": now}
                 self.flash = None
+                try:
+                    self.reduced_motion = bool(self.reduce()) if self.reduce is not None else False
+                except Exception:                    # noqa: BLE001 - no answer = motion allowed
+                    self.reduced_motion = False
                 self.tick.start()
             elif what == "update":
                 token, done, text = args
@@ -711,7 +876,19 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
                 if not self.jobs and (shown or not ok):          # a failure is always said, however short
                     self.flash = (text or (self.tr("Done") if ok else self.tr("Failed")), ok)
                     self.flash_timer.start(self.done_ms)
+                if not self.jobs:
+                    self.frame = 0
             self._sync()
+
+        def can_be_seen(self):
+            """The corner is on a screen: shown, its window not minimised and exposed."""
+            if not self.isVisible():
+                return False
+            top = self.window()
+            if top.isMinimized():
+                return False
+            handle = top.windowHandle()
+            return handle is None or handle.isExposed()
 
         def _on_tick(self):
             now = _time.monotonic()
@@ -720,11 +897,19 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
                     self.jobs.pop(token, None)
                     if self.log is not None:
                         self.log("progress job was never ended: %r" % (job["text"],), "dropped after %d ms" % self.stale_ms)
-            if not self.reduced_motion:
+            seen = self.can_be_seen()
+            busy = self.current()[0] == "busy"
+            if seen and busy and not self.reduced_motion:            # nothing moves where nobody can see it
                 self.phase = (self.phase + 3) % 24
+                self.frame = (self.frame + 1) % BRAND_FRAMES
+                self.frames_advanced += 1
+            # hidden: one look a second (the stale-job valve still works), no painting
+            self.tick.setInterval(BRAND_CYCLE_MS // BRAND_FRAMES if seen else 1000)
             if not self.jobs:
                 self.tick.stop()
-            self._sync()
+                self.frame = 0
+            if seen:
+                self._sync()
 
         def _flash_over(self):
             self.flash = None
@@ -756,6 +941,13 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
                 self.setToolTip(cur[1]); self.setAccessibleDescription(cur[1])
             self.update()
 
+        def icon_frame(self, k=0):
+            """Frame ``k`` of the flip book at this screen's pixel ratio (None without an icon)."""
+            if self.icon is None:
+                return None
+            dpr = max(1, int(round(self.devicePixelRatioF() + 0.49)))
+            return icon_frames(self.icon, 22, self.motion, BRAND_FRAMES, dpr)[k % BRAND_FRAMES]
+
         def paintEvent(self, _ev):
             p = studio_theme.PALETTES[studio_theme.current_name()]
             cur = self.current()
@@ -774,8 +966,9 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
                 painter.fillRect(QtCore.QRect(0, r.height() - 2, r.width(), 2), QtGui.QColor(p["line"]))
             elif cur[0] == "failed":
                 painter.fillRect(r, QtGui.QColor(p["warn_bg"]))
-            if self.icon is not None and cur[0] == "idle":
-                painter.drawPixmap(QtCore.QRect(6, (r.height() - 22) // 2, 22, 22), self.icon)
+            pm = self.icon_frame(self.frame if cur[0] == "busy" else 0)
+            if pm is not None:                                   # the icon stays; while busy it is the flip book
+                painter.drawPixmap(QtCore.QRect(6, (r.height() - 22) // 2, 22, 22), pm)
                 x = 34
             if cur[0] == "idle":
                 painter.setFont(self.name_font); painter.setPen(QtGui.QColor(p["brand"]))
@@ -792,6 +985,66 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
             painter.end()
 
     return BrandStatus()
+
+
+def brand_wrap(brand, fn, text_of, ok=None):
+    """``fn`` run as one job of the brand corner: begin before, end after. The job counts as done when
+    ``fn`` returns anything but False (or when ``ok(result, *args, **kwargs)`` says so); an exception
+    ends it as failed and is raised again. Work on the GUI thread cannot be painted while it runs: the
+    corner then says the outcome afterwards — when it took BRAND_SHOW_AFTER_MS or more, or failed."""
+    import functools   # noqa: PLC0415
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        try:
+            text = str(text_of(*args, **kwargs) or "")
+        except Exception:                            # noqa: BLE001 - a label must never stop the work
+            text = ""
+        token = brand.begin(text)
+        try:
+            result = fn(*args, **kwargs)
+        except BaseException:
+            brand.end(token, False, ("%s — %s" % (text, brand.tr("Failed"))) if text else None)
+            raise
+        try:
+            good = (result is not False) if ok is None else bool(ok(result, *args, **kwargs))
+        except Exception:                            # noqa: BLE001
+            good = True
+        brand.end(token, good, ("%s — %s" % (text, brand.tr("Done" if good else "Failed"))) if text else None)
+        return result
+    wrapper.brand_job = True
+    return wrapper
+
+
+def reduce_motion_action(win, menu, settings, tr):
+    """The "Reduce motion" switch (checkable, in ``menu``). Checked at start = what is in effect now
+    (the Studio setting, else the system's); a change is saved (``REDUCE_MOTION_KEY``) and reaches the
+    brand corner at once. Returns the action (also ``win._reduce_motion_action``)."""
+    from PySide6 import QtGui   # noqa: PLC0415
+    act = QtGui.QAction(tr(S_REDUCE), win)
+    act.setObjectName("reduce_motion")
+    act.setCheckable(True)
+    try:
+        act.setChecked(reduce_motion(settings()))
+    except Exception:                            # noqa: BLE001 - a broken store: motion allowed
+        act.setChecked(False)
+    act.setToolTip(tr(S_REDUCE_TIP)); act.setStatusTip(tr(S_REDUCE_TIP))
+
+    def flip(on):
+        try:
+            settings().setValue(REDUCE_MOTION_KEY, "1" if on else "0")
+        except Exception:                        # noqa: BLE001 - the switch still works for this session
+            pass
+        brand = getattr(win, "_brand", None)
+        if brand is not None:
+            brand.reduced_motion = bool(on)
+            if on:
+                brand.frame = 0
+            brand.update()
+    act.toggled.connect(flip)
+    menu.addAction(act)
+    win._reduce_motion_action = act
+    return act
 
 
 def follow_progress(brand, bar, label=None):
@@ -973,6 +1226,8 @@ def refresh(win, tr, lang="en"):
     if st is None:
         return
     st["tr"], st["lang"] = tr, lang
+    if getattr(win, "_brand", None) is not None:
+        win._brand.tr = tr
     c = rail_colours()
     d = studio_theme.density()
     rail = st["rail"]
@@ -999,6 +1254,9 @@ def refresh(win, tr, lang="en"):
     for mode, action in st["strip_actions"].items():
         action.setText(tr(S_STRIP[mode]))
     sync_button_actions(win)                     # menu entries made from buttons: the language of the moment
+    rm = getattr(win, "_reduce_motion_action", None)
+    if rm is not None:
+        rm.setText(tr(S_REDUCE)); rm.setToolTip(tr(S_REDUCE_TIP)); rm.setStatusTip(tr(S_REDUCE_TIP))
     for entry in st["strips"]:                  # the "..." of a turned icon row: what it holds
         entry["more"].setToolTip(tr(S_MORE)); entry["more"].setAccessibleName(tr(S_MORE))
     tighten(win)

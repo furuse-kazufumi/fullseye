@@ -7171,8 +7171,8 @@ def build_window(model=None):
     win.addToolBar(tb)
     # icon + name; while something runs the same frame is the progress read-out (studio_panels, 2026-11-13)
     win._brand = studio_panels.make_brand_status(
-        win, "Fullseye Studio", QtGui.QIcon(_ICON_PATH).pixmap(22, 22) if os.path.exists(_ICON_PATH) else None,
-        _log_soft_failure, tr)
+        win, "Fullseye Studio", QtGui.QIcon(_ICON_PATH) if os.path.exists(_ICON_PATH) else None,
+        _log_soft_failure, tr, reduce=lambda: studio_panels.reduce_motion(_settings()))
     tb.addWidget(win._brand)
     spacer = QtWidgets.QWidget()
     spacer.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
@@ -7497,6 +7497,9 @@ def build_window(model=None):
             h.addStretch(1); chip = QtWidgets.QListWidgetItem(); op_list.addItem(chip)
             chip.setSizeHint(chiprow.sizeHint()); op_list.setItemWidget(chip, chiprow)
         return result
+    grouped_search = studio_panels.brand_wrap(          # the first search builds the index: the corner says so
+        win._brand, grouped_search,
+        lambda query=None: tr(studio_panels.S_SEARCHING) % (search.text().strip() if query is None else query))
 
     def _ops_insert_position():
         """Where Insert / double-click will put the next stage (the same rule as ``add_op``):
@@ -10202,6 +10205,8 @@ def build_window(model=None):
         show_result()
         return True
 
+    _load_image_path = studio_panels.brand_wrap(       # the corner says what is being opened (2026-11-13)
+        win._brand, _load_image_path, lambda p: tr(studio_panels.S_OPENING) % os.path.basename(str(p)))
     win._load_image_path = _load_image_path          # exposed for tests
 
     def load_image():
@@ -10229,6 +10234,9 @@ def build_window(model=None):
         model.input_path = None
         state["fit_next"] = True
         flash("loaded sample image: " + name); show_result()
+    load_sample_image = studio_panels.brand_wrap(
+        win._brand, load_sample_image, lambda n: tr(studio_panels.S_SAMPLE) % n,
+        ok=lambda _r, n: state.get("input_sample") == n)
     win._load_sample_image = load_sample_image
 
     def load_visual_demo():
@@ -15350,6 +15358,7 @@ def build_window(model=None):
         _a.triggered.connect(lambda _c=False, k=_k: apply_theme(level=k))
         _density_menu.addAction(_a); win._density_actions[_k] = _a; win._actions["density_" + _k] = _a
     win._theme_groups = (_tg, _dg)
+    win._actions["reduce_motion"] = studio_panels.reduce_motion_action(win, menu_view, _settings, tr)
 
     # Data-driven from studio_assets/i18n.json 'languages' — add a language there,
     # no code change. English is always present as the base.

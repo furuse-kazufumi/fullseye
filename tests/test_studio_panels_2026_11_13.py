@@ -91,7 +91,7 @@ def test_every_bar_string_is_translated_into_every_language():
     with open(path, encoding="utf-8") as fh:
         data = json.load(fh)
     langs = set(data["languages"]) - {"en"}
-    assert len(langs) == 6 and len(studio_panels.STRINGS) == 20
+    assert len(langs) == 6 and len(studio_panels.STRINGS) == 25
     for text in studio_panels.STRINGS:
         row = data["strings"].get(text)
         assert row is not None, "no i18n row for %r" % text
@@ -1140,6 +1140,202 @@ def test_brand_follows_the_run_progress_bar_in_the_real_window(tmp_path, monkeyp
         for lang in ("ja", "zh", "tw", "ko", "de", "en"):                   # the frame holds in every language
             win._apply_language(lang); _pump(app, 0.1)
             assert (b.width(), b.height()) == size and b.isVisible(), lang
+    finally:
+        win._apply_language("en")
+        _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# the icon as a flip book while something runs (requirement 8, 2026-11-13)
+# --------------------------------------------------------------------------- #
+_ICO = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "studio_assets", "fullseye.ico")
+
+
+def _img_of(pm):
+    from PySide6 import QtGui
+    return pm.toImage().convertToFormat(QtGui.QImage.Format_ARGB32)
+
+
+def _changed(a, b):
+    assert (a.width(), a.height()) == (b.width(), b.height()) and a.width() > 0
+    return sum(1 for y in range(a.height()) for x in range(a.width()) if a.pixel(x, y) != b.pixel(x, y))
+
+
+def test_flip_book_frames_are_the_icon_in_motion(monkeypatch):
+    pytest.importorskip("PySide6")
+    monkeypatch.setenv("QT_QPA_PLATFORM", "offscreen")
+    from PySide6 import QtCore, QtGui, QtWidgets
+    _app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    icon = QtGui.QIcon(_ICO)
+    assert not icon.isNull()
+    n = studio_panels.BRAND_FRAMES
+    assert 8 <= n <= 12 and 800 <= studio_panels.BRAND_CYCLE_MS <= 1200            # 8..12 frames, about a second
+    assert studio_panels.BRAND_MOTION in studio_panels.BRAND_MOTIONS and len(studio_panels.BRAND_MOTIONS) == 3
+    base = icon.pixmap(QtCore.QSize(44, 44)).toImage().convertToFormat(QtGui.QImage.Format_ARGB32)
+    for motion in studio_panels.BRAND_MOTIONS:
+        frames = studio_panels.icon_frames(icon, 22, motion, n, 2)
+        assert len(frames) == n and studio_panels.icon_frames(icon, 22, motion, n, 2) is frames     # made once
+        imgs = [_img_of(f) for f in frames]
+        assert len(imgs) == n                                                        # counted before all()
+        assert len(frames) == n
+        assert all(f.devicePixelRatio() == 2 and (im.width(), im.height()) == (44, 44) for f, im in zip(frames, imgs))
+        steps = [_changed(imgs[k], imgs[(k + 1) % n]) for k in range(n)]
+        assert min(steps) > 0, (motion, steps)                                       # every page differs from the next
+        if motion != "sweep":
+            assert _changed(imgs[0], base) == 0, motion                             # frame 0 IS the icon: no jump at the start
+    turn = [_img_of(f) for f in studio_panels.icon_frames(icon, 22, "turn", n, 2)]
+    moved = _changed(turn[0], turn[n // 2])                                           # 45 degrees: the cross has moved
+    assert moved > 0.08 * 44 * 44, moved
+    with pytest.raises(ValueError):
+        studio_panels.icon_frames(icon, 22, "spin", n, 2)
+
+
+def _brand_with_icon(monkeypatch, reduce=None):
+    pytest.importorskip("PySide6")
+    monkeypatch.setenv("QT_QPA_PLATFORM", "offscreen")
+    from PySide6 import QtGui, QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    host = QtWidgets.QWidget()
+    b = studio_panels.make_brand_status(host, "Fullseye Studio", QtGui.QIcon(_ICO), None, None, reduce=reduce)
+    host.resize(400, 60); host.show()
+    _pump(app, 0.05)
+    return app, host, b
+
+
+def _icon_part(b):
+    from PySide6 import QtCore, QtGui
+    return b.grab(QtCore.QRect(6, 1, 22, 22)).toImage().convertToFormat(QtGui.QImage.Format_ARGB32)
+
+
+def test_the_flip_book_turns_only_while_a_job_is_shown_and_the_window_is_seen(monkeypatch):
+    app, host, b = _brand_with_icon(monkeypatch)
+    try:
+        idle = _icon_part(b)
+        b.show_after_ms = 0
+        tok = b.begin("Running 2 / 5", total=5)
+        _pump(app, 0.65)
+        assert b.current()[0] == "busy" and b.frames_advanced >= 3, b.frames_advanced     # ~10 pages a second
+        assert b.tick.interval() == studio_panels.BRAND_CYCLE_MS // studio_panels.BRAND_FRAMES
+        pages = set()
+        for _ in range(6):
+            _pump(app, 0.11)
+            pages.add(b.frame)
+        assert len(pages) >= 3, pages
+        b.frame = studio_panels.BRAND_FRAMES // 2
+        assert _changed(_icon_part(b), idle) > 0                                     # the painted icon moves
+        b.grab()
+        assert b.shown_text.startswith("▶ Running 2 / 5")                       # the words stay beside it
+        host.hide(); _pump(app, 0.05)
+        before = b.frames_advanced
+        _pump(app, 0.5)
+        assert b.frames_advanced == before and b.tick.interval() == 1000            # nobody can see it: no page turns
+        assert not b.can_be_seen()
+        host.show(); _pump(app, 1.3)
+        assert b.frames_advanced > before and b.can_be_seen()                     # back on screen: it moves again
+        b.end(tok); _pump(app, 0.05)
+        assert b.frame == 0
+        b.flash_timer.stop(); b._flash_over()
+        assert _changed(_icon_part(b), idle) == 0                                    # idle: the icon as it is
+        _pump(app, 0.25)
+        assert not b.tick.isActive()                                                 # no job: no timer at all
+    finally:
+        host.close()
+
+
+def test_reduce_motion_keeps_the_first_page(monkeypatch):
+    from PySide6 import QtGui
+    app, host, b = _brand_with_icon(monkeypatch, reduce=lambda: True)
+    try:
+        b.show_after_ms = 0
+        tok = b.begin("Indexing the search")                                       # unknown length: stripes
+        _pump(app, 0.25)
+        first = b.grab().toImage().convertToFormat(QtGui.QImage.Format_ARGB32)
+        _pump(app, 0.45)
+        later = b.grab().toImage().convertToFormat(QtGui.QImage.Format_ARGB32)
+        assert b.reduced_motion and b.current()[0] == "busy"
+        assert b.frames_advanced == 0 and b.frame == 0 and b.phase == 0             # neither the icon nor the stripes move
+        assert _changed(first, later) == 0                                           # the whole corner is still
+        b.end(tok)
+        b.reduce = lambda: (_ for _ in ()).throw(RuntimeError("no settings"))      # a broken answer: motion allowed
+        tok = b.begin("x"); _pump(app, 0.35)
+        assert not b.reduced_motion and b.frames_advanced >= 1
+        b.end(tok)
+    finally:
+        host.close()
+
+
+def test_the_reduce_motion_setting_and_the_system_switch(tmp_path, monkeypatch):
+    pytest.importorskip("PySide6")
+    from PySide6 import QtCore
+    s = QtCore.QSettings(str(tmp_path / "rm.ini"), QtCore.QSettings.IniFormat)
+    system = studio_panels.system_reduces_motion()
+    assert system in (True, False)
+    assert studio_panels.reduce_motion(s) is system                                 # unset: the system decides
+    assert studio_panels.reduce_motion(None) is system
+    for value, want in (("1", True), ("true", True), ("0", False), ("off", False), ("maybe", system)):
+        s.setValue(studio_panels.REDUCE_MOTION_KEY, value)
+        assert studio_panels.reduce_motion(s) is want, value
+
+
+def test_brand_wrap_reports_done_failed_and_raises_again(monkeypatch):
+    app, host, b = _brand_with_icon(monkeypatch)
+    try:
+        b.show_after_ms = 0
+        calls = []
+        ok = studio_panels.brand_wrap(b, lambda p: (calls.append(p), True)[1], lambda p: "Opening %s" % p)
+        assert ok("a.png") is True and calls == ["a.png"] and ok.brand_job
+        _pump(app, 0.05)
+        assert b.current() == ("done", "Opening a.png — Done")
+        bad = studio_panels.brand_wrap(b, lambda p: False, lambda p: "Opening %s" % p)
+        assert bad("b.png") is False
+        _pump(app, 0.05)
+        assert b.current() == ("failed", "Opening b.png — Failed")
+        b.show_after_ms = 300                                                        # a short failure is still said
+        b.flash_timer.stop(); b._flash_over()
+
+        def boom(_p):
+            raise OSError("disk")
+        with pytest.raises(OSError):
+            studio_panels.brand_wrap(b, boom, lambda p: "Saving %s" % p)("c.png")
+        _pump(app, 0.05)
+        assert b.current() == ("failed", "Saving c.png — Failed") and b.jobs == {}
+        label_breaks = studio_panels.brand_wrap(b, lambda: 7, lambda: 1 / 0)          # a broken label never stops the work
+        assert label_breaks() == 7
+        judged = studio_panels.brand_wrap(b, lambda n: None, lambda n: n, ok=lambda r, n: n == "yes")
+        b.flash_timer.stop(); b._flash_over()
+        judged("no"); _pump(app, 0.05)
+        assert b.current()[0] == "failed"
+    finally:
+        host.close()
+
+
+def test_loading_a_sample_and_searching_are_jobs_of_the_corner_in_the_real_window(tmp_path, monkeypatch):
+    import studio
+    monkeypatch.setattr(studio, "ERROR_HOOK", lambda *a: None)                     # no modal in tests
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        b = win._brand
+        assert isinstance(b.icon, __import__("PySide6.QtGui", fromlist=["QIcon"]).QIcon)   # drawn sharp at the screen's ratio
+        assert win._load_image_path.brand_job and win._load_sample_image.brand_job
+        assert win._search_ui["search_now"].brand_job
+        b.show_after_ms = 0
+        win._load_sample_image("coins"); _pump(app, 0.1)
+        assert b.current() == ("done", "Loading sample: coins — Done"), b.current()
+        b.flash_timer.stop(); b._flash_over()
+        win._search_ui["search_now"]("blur"); _pump(app, 0.1)
+        assert b.current() == ("done", "Searching: blur — Done"), b.current()
+        b.flash_timer.stop(); b._flash_over()
+        win._load_sample_image("no_such_sample_xyz"); _pump(app, 0.2)
+        assert b.current()[0] == "failed" and "no_such_sample_xyz" in b.current()[1], b.current()
+        act = win._actions["reduce_motion"]
+        assert act.isCheckable() and act in win.findChildren(__import__("PySide6.QtGui", fromlist=["QAction"]).QAction)
+        act.setChecked(True); _pump(app, 0.05)
+        assert b.reduced_motion
+        from PySide6 import QtCore
+        assert QtCore.QSettings(str(tmp_path / "s.ini"), QtCore.QSettings.IniFormat).value(studio_panels.REDUCE_MOTION_KEY) == "1"
+        act.setChecked(False)
+        win._apply_language("ja"); _pump(app, 0.3)
+        assert act.text() == "動きを減らす"
     finally:
         win._apply_language("en")
         _close(app, win)
