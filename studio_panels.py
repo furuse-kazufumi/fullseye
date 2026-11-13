@@ -32,7 +32,9 @@ PRINCIPAL = ("program",)
 #: The work mode that describes the first-run arrangement (studio_layout.MODES).
 INITIAL_MODE = "code"
 #: Order of the buttons on the panel bar (every key of ``win._docks`` must be here — a test counts).
-RAIL_ORDER = ("program", "operators", "pipeline", "variables", "display", "compare", "ab")
+#: "project" is the Project dock of the integration branch (integrate/studio-1-2-0): without it here,
+#: install() raises KeyError as soon as the two branches are merged (D61). A key without a dock is skipped.
+RAIL_ORDER = ("program", "operators", "pipeline", "variables", "display", "compare", "ab", "project")
 #: objectName of the bar (also its key in QMainWindow.saveState()).
 RAIL_NAME = "panel_rail"
 WORK_LAYOUT_KEY = "studio/work_mode_layout"
@@ -93,7 +95,7 @@ def rail_qss(theme=None, level=None):
     c = rail_colours(theme)
     return (
         "QToolBar#%(n)s { background:%(band)s; border:none; border-right:1px solid %(line)s; "
-        "spacing:2px; padding:2px 2px 2px 2px; }\n"
+        "spacing:4px; padding:2px 2px 2px 2px; }\n"
         "QToolBar#%(n)s QToolButton { background:transparent; border:none; border-left:2px solid transparent; "
         "border-radius:0px; padding:0px; margin:0px; }\n"
         "QToolBar#%(n)s QToolButton:hover { background:%(hover)s; }\n"
@@ -207,6 +209,8 @@ def _glyph(name, colour, px=16):
         rect(1.5, 4.5, 4.5, 7); rect(10, 4.5, 4.5, 7); path([(7.2, 6.3), (8.8, 8), (7.2, 9.7)])
     elif name == "ab":                         # split view, left half filled
         rect(2, 3, 12, 10); rect(2, 3, 6, 10, fill=True)
+    elif name == "project":                    # a folder
+        path([(2, 4), (6, 4), (7.5, 5.5), (14, 5.5), (14, 13), (2, 13), (2, 4)]); line(2, 7.5, 14, 7.5)
     elif name == "layout":                     # window split into three
         rect(2, 2.5, 12, 11); line(6.5, 2.5, 6.5, 13.5); line(6.5, 8.5, 14, 8.5)
     elif name == "float":                      # two overlapping windows
@@ -245,9 +249,26 @@ def _behind_a_tab(win, dock):
     return dock.visibleRegion().isEmpty()
 
 
+def show_principal(win, key):
+    """A principal (the code) is brought forward and given the keyboard; it is never hidden (P01-1)."""
+    from PySide6 import QtWidgets   # noqa: PLC0415
+    dock = win._docks[key]
+    dock.show(); dock.raise_()
+    if dock.isFloating():
+        _keep_on_screen(win, dock)
+        dock.activateWindow()
+    root = dock.widget()
+    editor = root.findChild(QtWidgets.QPlainTextEdit) if root is not None else None
+    (editor or root or dock).setFocus()
+    return True
+
+
 def toggle_panel(win, key):
     """The panel-bar click: hidden -> shown and raised; behind a tab -> raised; in front -> hidden.
-    Returns True when the panel is shown afterwards."""
+    A principal (``PRINCIPAL``) is only ever shown, raised and focused. Returns True when the
+    panel is shown afterwards."""
+    if key in PRINCIPAL:
+        return show_principal(win, key)
     dock = win._docks[key]
     if dock.isHidden():
         dock.show(); dock.raise_()
@@ -1201,6 +1222,10 @@ def _default_registrations(win):
         lst = (getattr(win, "_variables", None) or {}).get("list")
         return tr(S_ST_VARS) % lst.count() if lst is not None else ""
 
+    def register_panel(win_, key, *args, **kwargs):            # a panel this window does not have: skipped
+        if key in win_._docks:
+            globals()["register_panel"](win_, key, *args, **kwargs)
+
     register_panel(win, "program", [],
                    btn("program", "run", "continue", "step", "reset") + [None]
                    + btn("program", "apply", "sync") + [None] + pick("export", "verify_exported"))
@@ -1249,6 +1274,8 @@ def refresh(win, tr, lang="en"):
             action.setText(tr(text))
     for key, action in st["float_actions"].items():
         action.setText("%s: %s" % (tr(S_FLOAT), win._docks[key].windowTitle()))
+    for key, action in (st.get("principal_actions") or {}).items():
+        action.setText(win._docks[key].windowTitle())
     for bar in st["titles"].values():
         bar.restyle()
     for mode, action in st["strip_actions"].items():
@@ -1274,9 +1301,11 @@ def install(win, tr, settings=None):
         raise KeyError("panels without a place on the panel bar: %s" % sorted(missing))
 
     class TitleBar(QtWidgets.QWidget):
-        """Name, then the panel's status items, then space; on the right the menu button, separate
-        window / dock, hide. Mouse presses on the name, the status items and the space are left to
-        QDockWidget (labels do not take them), so dragging and double-click keep working."""
+        """Name, then the panel's status items, then space; on the right separate window / dock,
+        hide, and the menu button at the right end (name | status | float x | menu, D105). A
+        principal has no hide button (D104). Mouse presses on the name, the status items and the
+        space are left to QDockWidget (labels do not take them), so dragging and double-click keep
+        working."""
 
         def __init__(self, key, dock):
             super().__init__(dock)
@@ -1284,7 +1313,7 @@ def install(win, tr, settings=None):
             self.setObjectName("dock_title")
             self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
             lay = QtWidgets.QHBoxLayout(self)
-            lay.setContentsMargins(10, 0, 2, 1); lay.setSpacing(2)
+            lay.setContentsMargins(10, 0, 2, 1); lay.setSpacing(studio_theme.density()["click_gap"])
             self.label = QtWidgets.QLabel(dock.windowTitle())
             self.label.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
             self.label.setMinimumWidth(20)
@@ -1308,16 +1337,25 @@ def install(win, tr, settings=None):
             self.key_menu.triggered.connect(lambda _c=False: self.b_menu.showMenu())
             dock.addAction(self.key_menu)
             self.b_float = QtWidgets.QToolButton(); self.b_float.setObjectName("dock_title_float")
-            self.b_close = QtWidgets.QToolButton(); self.b_close.setObjectName("dock_title_close")
-            for b in (self.b_float, self.b_close):
-                b.setAutoRaise(True); b.setFocusPolicy(QtCore.Qt.NoFocus)
-                b.setCursor(QtCore.Qt.PointingHandCursor); b.setProperty("keepSize", True)
+            self.b_close = None                                  # a principal is never put away (D104)
+            if key not in PRINCIPAL:
+                self.b_close = QtWidgets.QToolButton(); self.b_close.setObjectName("dock_title_close")
+            for b in self.buttons():
+                if b is not self.b_menu:
+                    b.setAutoRaise(True); b.setFocusPolicy(QtCore.Qt.NoFocus)
+                    b.setCursor(QtCore.Qt.PointingHandCursor); b.setProperty("keepSize", True)
             lay.addWidget(self.label); lay.addLayout(self.status_box); lay.addStretch(1)
-            lay.addWidget(self.b_menu); lay.addWidget(self.b_float); lay.addWidget(self.b_close)
+            for b in self.buttons():                            # float, hide, then the menu at the right end
+                lay.addWidget(b)
             self.b_float.clicked.connect(lambda _c=False: toggle_float(win, key))
-            self.b_close.clicked.connect(lambda _c=False: dock.hide())
+            if self.b_close is not None:
+                self.b_close.clicked.connect(lambda _c=False: dock.hide())
             dock.windowTitleChanged.connect(lambda _t: self.restyle())
             dock.topLevelChanged.connect(lambda _f: sync(win))
+
+        def buttons(self):
+            """The band's buttons from left to right: separate window, hide (not on a principal), menu."""
+            return [b for b in (self.b_float, self.b_close, self.b_menu) if b is not None]
 
         def sizeHint(self):                      # QDockWidget asks the hint (not the fixed size) for the band
             return QtCore.QSize(super().sizeHint().width(), studio_theme.density()["title_band"] - 2)
@@ -1357,9 +1395,10 @@ def install(win, tr, settings=None):
         def fit(self):
             """Too narrow for everything: whole status items go, lowest priority first. The name and
             the buttons stay to the last."""
+            gap = self.layout().spacing()
             fixed = self.label.sizeHint().width() + 10 + 2 + 1
-            for b in (self.b_menu, self.b_float, self.b_close):
-                fixed += b.width() + 2
+            for b in self.buttons():
+                fixed += b.width() + gap
             room = self.width() - fixed - 8
             keep, self.dropped = [], []
             for item in sorted(self.status, key=lambda it: -it["priority"]):
@@ -1410,11 +1449,12 @@ def install(win, tr, settings=None):
             d = studio_theme.density()
             p = studio_theme.PALETTES[studio_theme.current_name()]
             self.setStyleSheet(title_qss())
-            self.setFixedHeight(d["title_band"] - 2)        # 11 px name + 16 px buttons: 2 px under the table's band
-            side = max(14, d["title_band"] - 6)
+            self.setFixedHeight(d["title_band"] - 2)        # 11 px name + 18 px buttons: 2 px under the table's band
+            side = d["title_button"]                         # one number for every title band (P04-1, D97)
+            self.layout().setSpacing(d["click_gap"])
             text = self.dock.windowTitle()
             self.label.setText(text.upper() if st["lang"] in ("en", "de") else text)
-            for b in (self.b_menu, self.b_float, self.b_close):
+            for b in self.buttons():
                 b.setFixedSize(side, side); b.setIconSize(QtCore.QSize(12, 12))
             name = "%s \u2014 %s (Alt+M)" % (text, _tr(S_MENU))
             self.b_menu.setToolTip(name); self.b_menu.setAccessibleName("%s \u2014 %s" % (text, _tr(S_MENU)))
@@ -1423,9 +1463,11 @@ def install(win, tr, settings=None):
             for item in self.status:
                 item["now"] = None                   # texts are in the language of the moment: ask again
             self.update_status()
-            self.b_close.setIcon(_icon("close", p["muted"]))
-            self.b_close.setToolTip(_tr(S_HIDE)); self.b_close.setAccessibleName(_tr(S_HIDE))
+            if self.b_close is not None:
+                self.b_close.setIcon(_icon("close", p["muted"]))
+                self.b_close.setToolTip(_tr(S_HIDE)); self.b_close.setAccessibleName(_tr(S_HIDE))
             self.a_hide.setText(_tr(S_HIDE))
+            self.a_hide.setVisible(self.key not in PRINCIPAL)
             self.follow()
 
         def follow(self):
@@ -1609,12 +1651,34 @@ def install(win, tr, settings=None):
         dock.dockLocationChanged.connect(lambda _a: follow.run())
         dock.topLevelChanged.connect(lambda _f: follow.run())
 
+    # a principal's entry in Window > Panels / More > Panels / the palette brings it forward and gives it
+    # the keyboard; it is not a check box (D104: shown is not a choice)
+    st["principal_actions"] = {}
+    for key in PRINCIPAL:
+        dock = win._docks.get(key)
+        if dock is None:
+            continue
+        pa = QtGui.QAction(dock.windowTitle(), win)
+        pa.setObjectName("panel_show_" + key)
+        pa.triggered.connect(lambda _c=False, k=key: (show_principal(win, k), sync(win)))
+        st["principal_actions"][key] = pa
+        for m in (getattr(win, "_menu_panels", None), getattr(win, "_more_menu_panels", None)):
+            if m is None:
+                continue
+            tva = dock.toggleViewAction()
+            if tva in m.actions():
+                m.insertAction(tva, pa); m.removeAction(tva)
+            elif pa not in m.actions():
+                m.insertAction(m.actions()[0] if m.actions() else None, pa)
+
     # menus + command palette: every panel has a show / hide entry and a separate-window entry
     menu = getattr(win, "_menu_panels", None)
     if menu is not None:
         listed = set(menu.actions())
         for key in RAIL_ORDER:
             tva = win._docks[key].toggleViewAction() if key in win._docks else None
+            if key in PRINCIPAL:
+                continue
             if tva is not None and tva not in listed:
                 before = next((a for a in menu.actions() if a.isSeparator()), None)
                 menu.insertAction(before, tva)
@@ -1625,6 +1689,8 @@ def install(win, tr, settings=None):
     if isinstance(actions, dict):
         for key, fa in st["float_actions"].items():
             actions["panel_float_" + key] = fa
+        for key, pa in st["principal_actions"].items():
+            actions["panel_show_" + key] = pa
         for text, a in st["layout_actions"]:
             if text in (S_CODE_LEFT, S_CODE_BOTTOM):
                 actions["layout_" + ("code_left" if text == S_CODE_LEFT else "code_bottom")] = a

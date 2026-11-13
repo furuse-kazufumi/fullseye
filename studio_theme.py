@@ -78,10 +78,10 @@ THEME_LABELS = {"instrument": "Instrument (dark)", "panel": "Machine panel (ligh
 DENSITY = {
     "compact": {"row_pad": 4, "unit": 4, "row_gap": 3, "group_gap": 8, "inner": 6, "title_gap": 2,
                 "title_band": 22, "tab_v": 2, "icon": 16, "icon_btn": 24, "main_icon": 20, "main_btn": 28,
-                "click_gap": 4},
+                "click_gap": 4, "title_button": 18},
     "standard": {"row_pad": 8, "unit": 6, "row_gap": 6, "group_gap": 10, "inner": 8, "title_gap": 4,
                  "title_band": 28, "tab_v": 4, "icon": 18, "icon_btn": 28, "main_icon": 20, "main_btn": 30,
-                 "click_gap": 4},
+                 "click_gap": 4, "title_button": 18},
 }
 DENSITIES = ("compact", "standard")
 DEFAULT_DENSITY = "compact"

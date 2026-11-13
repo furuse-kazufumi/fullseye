@@ -17,7 +17,9 @@ import studio_layout
 import studio_panels
 import studio_theme
 
-OTHERS = tuple(k for k in studio_panels.RAIL_ORDER if k not in studio_panels.PRINCIPAL)
+#: the docks of this branch (RAIL_ORDER also names the integration branch's Project dock, D61)
+DOCKS = tuple(k for k in studio_panels.RAIL_ORDER if k != "project")
+OTHERS = tuple(k for k in DOCKS if k not in studio_panels.PRINCIPAL)
 
 
 # --------------------------------------------------------------------------- #
@@ -26,7 +28,7 @@ OTHERS = tuple(k for k in studio_panels.RAIL_ORDER if k not in studio_panels.PRI
 def test_the_bar_has_a_place_for_every_panel_of_the_layout_table():
     panels = set(studio_layout.PANELS) - {"result"}             # the image is the central widget, not a panel
     assert len(panels) == 7
-    assert set(studio_panels.RAIL_ORDER) == panels
+    assert set(DOCKS) == panels and set(studio_panels.RAIL_ORDER) - panels == {"project"}
     assert len(studio_panels.RAIL_ORDER) == len(set(studio_panels.RAIL_ORDER))
     assert studio_panels.PRINCIPAL == ("program",) and len(OTHERS) == 6
 
@@ -139,14 +141,14 @@ def _shown(win):
     return {k: not d.isHidden() for k, d in win._docks.items()}
 
 
-FIRST_RUN = {k: (k in studio_panels.PRINCIPAL) for k in studio_panels.RAIL_ORDER}
+FIRST_RUN = {k: (k in studio_panels.PRINCIPAL) for k in DOCKS}
 
 
 def test_first_run_shows_image_and_code_and_a_bar_button_per_panel(tmp_path, monkeypatch):
     from PySide6 import QtCore, QtWidgets
     app, win = _launch(monkeypatch, tmp_path / "s.ini")
     try:
-        assert len(win._docks) == 7 and set(win._docks) == set(studio_panels.RAIL_ORDER)
+        assert len(win._docks) == 7 and set(win._docks) == set(DOCKS)
         assert _shown(win) == FIRST_RUN
         assert win.centralWidget().isVisible() and win._docks["program"].isVisible()
         assert not any(d.isFloating() for d in win._docks.values())
@@ -167,7 +169,7 @@ def test_first_run_shows_image_and_code_and_a_bar_button_per_panel(tmp_path, mon
             assert b.isChecked() == (key in studio_panels.PRINCIPAL), key
             names.add(title)
         assert len(names) == 7                                             # seven different names
-        ys = [st["buttons"][k].y() for k in studio_panels.RAIL_ORDER]
+        ys = [st["buttons"][k].y() for k in DOCKS]
         assert ys == sorted(ys) and len(set(ys)) == 7                      # one column, in table order
         gaps = [b - a - 24 for a, b in zip(ys[1:], ys[2:])]                # between neighbouring buttons (after the code button)
         assert gaps and all(0 <= g <= 4 for g in gaps), gaps
@@ -182,7 +184,8 @@ def test_first_run_shows_image_and_code_and_a_bar_button_per_panel(tmp_path, mon
         for key, bar in st["titles"].items():
             assert win._docks[key].titleBarWidget() is bar
             assert bar.label.text() == win._docks[key].windowTitle().upper()          # English UI: caps
-            assert bar.b_float.toolTip() == "Separate window" and bar.b_close.toolTip() == "Hide"
+            assert bar.b_float.toolTip() == "Separate window"
+            assert (bar.b_close is None) if key in studio_panels.PRINCIPAL else (bar.b_close.toolTip() == "Hide")
         assert isinstance(win.centralWidget(), QtWidgets.QMdiArea)
     finally:
         _close(app, win)
@@ -200,11 +203,10 @@ def test_each_bar_button_shows_and_hides_its_own_panel(tmp_path, monkeypatch):
             assert win._docks[key].isVisible() and buttons[key].isChecked(), key
             buttons[key].click(); _pump(app, 0.1)
             assert _shown(win) == before and not buttons[key].isChecked(), key
-        buttons["program"].click(); _pump(app, 0.1)                        # the code panel can be put away too ...
-        assert _shown(win) == {k: False for k in win._docks} and not buttons["program"].isChecked()
-        assert buttons["program"].isVisible()                              # ... and its button is still there
+        buttons["program"].click(); _pump(app, 0.1)                        # the code panel is a principal (D104):
+        assert _shown(win) == FIRST_RUN and buttons["program"].isChecked()  # its button brings it forward, never hides it
         buttons["program"].click(); _pump(app, 0.1)
-        assert _shown(win) == FIRST_RUN
+        assert _shown(win) == FIRST_RUN and buttons["program"].isChecked()
         # the title band's close button and the bar stay in step
         buttons["variables"].click(); _pump(app, 0.1)
         win._panels["titles"]["variables"].b_close.click(); _pump(app, 0.1)
@@ -238,7 +240,7 @@ def test_every_panel_becomes_a_separate_window_and_docks_back(tmp_path, monkeypa
     try:
         st = win._panels
         assert len(st["float_actions"]) == 7
-        for key in studio_panels.RAIL_ORDER:
+        for key in DOCKS:
             dock, bar = win._docks[key], st["titles"][key]
             area = win.dockWidgetArea(dock)
             assert studio_panels.toggle_float(win, key) is True; _pump(app, 0.1)
@@ -483,10 +485,12 @@ def test_menu_and_palette_reach_every_panel(tmp_path, monkeypatch):
     try:
         listed = win._menu_panels.actions()
         for key, dock in win._docks.items():
-            assert dock.toggleViewAction() in listed, "Window > Panels has no show / hide entry for %s" % key
+            entry = (win._panels["principal_actions"][key] if key in studio_panels.PRINCIPAL
+                     else dock.toggleViewAction())                              # a principal: "bring forward" (D104)
+            assert entry in listed, "Window > Panels has no show / hide entry for %s" % key
             assert win._panels["float_actions"][key] in listed, key
             assert win._actions["panel_float_" + key] is win._panels["float_actions"][key]
-        assert sum(1 for a in listed if a in [d.toggleViewAction() for d in win._docks.values()]) == 7
+        assert sum(1 for a in listed if a in [d.toggleViewAction() for d in win._docks.values()]) == 6
         assert win._actions["layout_code_left"].text() == "Code on the left (tall)"
         assert win._actions["layout_code_bottom"].text() == "Code at the bottom (wide)"
     finally:
@@ -789,12 +793,12 @@ def test_every_panel_has_a_title_band_with_a_menu_button_one_line_high(tmp_path,
             assert bar.key_menu.shortcut().toString() == "Alt+M", key
             assert bar.key_menu.shortcutContext() == QtCore.Qt.WidgetWithChildrenShortcut, key  # only inside this panel
             assert bar.key_menu in win._docks[key].actions() and bar.key_menu.text() == title + " \u2014 Panel menu", key
-            # order on the band: name, [status], menu, separate window, hide
-            xs = [bar.label.x(), bar.b_menu.x(), bar.b_float.x(), bar.b_close.x()]
-            assert xs == sorted(xs) and len(set(xs)) == 4, key
+            # order on the band: name, [status], separate window, hide, menu at the right end (D105)
+            xs = [bar.label.x()] + [b.x() for b in bar.buttons()]
+            assert xs == sorted(xs) and len(set(xs)) == len(xs) and xs[-1] == bar.b_menu.x(), key
             for item in bar.status:
                 if not item["label"].isHidden():
-                    assert bar.label.x() < item["label"].x() < bar.b_menu.x(), (key, item["id"])
+                    assert bar.label.x() < item["label"].x() < bar.buttons()[0].x(), (key, item["id"])
     finally:
         _close(app, win)
 
@@ -844,7 +848,7 @@ def test_every_panel_menu_offers_three_to_eight_of_its_own_and_one_qaction_per_f
     try:
         st = win._panels
         own = {k: [a for a in bar.actions if a is not None] for k, bar in st["titles"].items()}
-        assert sorted(own) == sorted(studio_panels.RAIL_ORDER) and len(own) == 7
+        assert sorted(own) == sorted(DOCKS) and len(own) == 7
         for key, acts in own.items():
             assert studio_panels.MENU_OWN_MIN <= len(acts) <= studio_panels.MENU_OWN_MAX, (key, [a.text() for a in acts])
             assert len(set(acts)) == len(acts), key                                  # no entry twice in one menu
@@ -964,7 +968,7 @@ def test_a_narrow_band_drops_whole_items_lowest_priority_first_and_keeps_name_an
             for i in bar.status:                                                    # never a cut item: whole or gone
                 if not i["label"].isHidden():
                     assert i["label"].width() >= i["label"].fontMetrics().horizontalAdvance(i["now"]), (width, i["id"])
-                    assert i["label"].x() + i["label"].width() <= bar.b_menu.x(), (width, i["id"])
+                    assert i["label"].x() + i["label"].width() <= bar.buttons()[0].x(), (width, i["id"])
             assert sorted(i["id"] for i in bar.dropped) == sorted(set(texts) - set(vis))
         assert set(seen[0]) == {"lo", "hi", "mid"} and seen[-1] == ()
         order = []
@@ -1000,7 +1004,7 @@ def test_double_click_and_drag_on_the_name_still_belong_to_the_dock(tmp_path, mo
         dock.show(); _pump(app, 0.3)
         bar = win._panels["titles"]["operators"]
         on_name = bar.label.geometry().center()
-        on_space = QtCore.QPoint((bar.label.geometry().right() + bar.b_menu.x()) // 2, bar.height() // 2)
+        on_space = QtCore.QPoint((bar.label.geometry().right() + bar.buttons()[0].x()) // 2, bar.height() // 2)
         assert bar.childAt(on_space) is None or bar.childAt(on_space) in [i["label"] for i in bar.status]
         assert not dock.isFloating()
         QtTest.QTest.mouseDClick(bar, QtCore.Qt.LeftButton, pos=on_name); _pump(app, 0.3)
