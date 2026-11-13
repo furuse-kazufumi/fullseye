@@ -1,13 +1,6 @@
 {
  "_note": "Parameter bundle window (studio_params_qt / studio_params_model): English is the source text; 5 languages. Same shape as studio_pyedit_i18n.json.",
  "strings": {
-  "Could not open %s: %s": {
-   "ja": "%s を開けません: %s",
-   "zh": "无法打开 %s: %s",
-   "tw": "無法開啟 %s: %s",
-   "ko": "%s을(를) 열 수 없습니다: %s",
-   "de": "%s kann nicht geöffnet werden: %s"
-  },
   "%s is already open in this window": {
    "ja": "%s はこの窓で既に開いています",
    "zh": "%s 已在此窗口中打开",
@@ -203,13 +196,6 @@
    "tw": "儲存 %s 會遺失檔案中的部分內容",
    "ko": "%s을(를) 저장하면 파일에서 사라지는 것이 있습니다",
    "de": "Beim Speichern von %s geht einiges aus der Datei verloren"
-  },
-  "could not save %s: %s (the file on disk is unchanged)": {
-   "ja": "%s を保存できません: %s(ディスクの上のファイルは変わっていません)",
-   "zh": "无法保存 %s: %s(磁盘上的文件未改变)",
-   "tw": "無法儲存 %s: %s(磁碟上的檔案未改變)",
-   "ko": "%s을(를) 저장할 수 없습니다: %s(디스크의 파일은 그대로입니다)",
-   "de": "%s konnte nicht gespeichert werden: %s (die Datei auf dem Datenträger ist unverändert)"
   },
   "could not save %s: the written file does not read back the same at %s (the file on disk is unchanged)": {
    "ja": "%s を保存できません: 書いた物を読み直すと %s が同じになりません(ディスクの上のファイルは変わっていません)",
@@ -861,6 +847,48 @@
    "tw": "可開啟 .json、.toml、.yaml / .yml 或 .xml",
    "ko": ".json, .toml, .yaml / .yml, .xml 파일을 열 수 있습니다",
    "de": "geöffnet werden .json, .toml, .yaml / .yml oder .xml"
+  },
+  "Could not open %s (%s)": {
+   "ja": "%s を開けません(%s)",
+   "zh": "无法打开 %s(%s)",
+   "tw": "無法開啟 %s(%s)",
+   "ko": "%s을(를) 열 수 없습니다(%s)",
+   "de": "%s kann nicht geöffnet werden (%s)"
+  },
+  "could not save %s; the file on disk is unchanged (%s)": {
+   "ja": "%s を保存できません。ディスクの上のファイルは変わっていません(%s)",
+   "zh": "无法保存 %s;磁盘上的文件未改变(%s)",
+   "tw": "無法儲存 %s;磁碟上的檔案未改變(%s)",
+   "ko": "%s을(를) 저장할 수 없습니다. 디스크의 파일은 그대로입니다(%s)",
+   "de": "%s konnte nicht gespeichert werden; die Datei auf dem Datenträger ist unverändert (%s)"
+  },
+  "No match: \"%s\"": {
+   "ja": "該当なし: \"%s\"",
+   "zh": "无匹配: \"%s\"",
+   "tw": "無符合: \"%s\"",
+   "ko": "일치 없음: \"%s\"",
+   "de": "Keine Treffer: \"%s\""
+  },
+  "Clear the search": {
+   "ja": "検索を消す",
+   "zh": "清除搜索",
+   "tw": "清除搜尋",
+   "ko": "검색 지우기",
+   "de": "Suche löschen"
+  },
+  "The bundles do not differ": {
+   "ja": "束の間に違う行はありません",
+   "zh": "参数组之间没有差异",
+   "tw": "參數組之間沒有差異",
+   "ko": "묶음 사이에 다른 행이 없습니다",
+   "de": "Die Bündel unterscheiden sich nicht"
+  },
+  "Show every row": {
+   "ja": "全部の行を出す",
+   "zh": "显示所有行",
+   "tw": "顯示所有列",
+   "ko": "모든 행 표시",
+   "de": "Alle Zeilen zeigen"
   }
  }
 }

@@ -671,7 +671,7 @@ def _placeholders(text: str) -> list[str]:
 def test_every_message_is_translated_into_five_languages():
     """対訳の表: 画面の文の型は全部 5 言語(ja・zh・tw・ko・de)に訳があり、% の並びが英語と同じ。使わない行は無い。"""
     table = M.load_i18n_table()
-    assert len(table) >= 110 and "Could not open %s: %s" in table
+    assert len(table) >= 110 and "Could not open %s (%s)" in table
     templates = [t for t in M.MESSAGES.values() if t != "%s"]
     assert len(templates) == len(M.MESSAGES) - 1 == 44
     missing = [t for t in templates if t not in table]
@@ -1774,3 +1774,76 @@ def test_params_deferred_calls_do_not_outlive_the_window(qapp, ini, tmp_path):
         _pump(qapp)                                                        # 予約した呼び出しは捨てられる(落ちない)
         steps += 1
     assert steps == 2
+
+
+@pytest.mark.parametrize("lang", ["ja", "de", "en"])
+def test_params_search_zero_hits_says_no_match(qapp, fusion, ini, tmp_path, lang):
+    """D112 / G07(a): 330 px の窓でも検索の欄が切れない(置いた文字が全部見える幅・窓の内側)。合わない語では一覧の中に
+    「該当なし: "語"」と次の一手(検索を消す)が出て、件数は「0 / 9 行」、前の知らせは消える。次の一手で元の 9 行に戻る。"""
+    tr = M.make_tr(lang)
+    win = _window(qapp, _three_files(tmp_path), lang=lang, size=(330, 300))
+    p = win.panel
+    _pump(qapp)
+    s = p.search
+    fm = s.fontMetrics()
+    left = s.mapTo(p, QtCore.QPoint(0, 0)).x()
+    assert s.isVisible() and left >= 0 and left + s.width() <= p.width() - 2, (lang, left, s.width(), p.width())
+    assert s.width() >= fm.horizontalAdvance(s.placeholderText()) + 32, (lang, s.width())
+    for k in BUTTONS:                                                   # 道具も切れない
+        b = p.buttons[k]
+        x = b.mapTo(p, QtCore.QPoint(0, 0)).x()
+        assert b.isVisible() and 0 <= x and x + b.width() <= p.width() - 2, (lang, k)
+    assert p.copy_column(0, 2).ok and p.message_label.full_text() != ""   # 古い知らせ
+    s.setText("zzz")
+    _pump(qapp)
+    assert p.stack.currentWidget() is p.no_match and p.no_match.isVisible()
+    assert p.no_match_label.text() == tr('No match: "%s"') % "zzz"
+    assert p.no_match_button.text() == tr("Clear the search") and p.no_match_button.isVisible()
+    assert p.counts_label.toolTip().startswith(tr("%d bundle(s)") % 3 + " · " + tr("%d of %d row(s)") % (0, 9))
+    assert p.message_label.full_text() == ""                            # 古い知らせを残さない
+    p.no_match_button.click()
+    _pump(qapp)
+    assert s.text() == "" and p.stack.currentWidget() is p.tree and len(_visible_keys(p)) == 9
+    # 違う行だけで 0 行: 同じ場所に「束は違いません」と次の一手(全部の行を出す)。day と lab を同じにする。
+    p.model.remove_column(1)
+    p.refresh()
+    assert [c.name for c in p.model.columns] == ["day.json", "lab.xml"]   # 上の写しで day と lab は同じ値
+    p.set_diff_only(True)
+    _pump(qapp)
+    assert _visible_keys(p) == [] and p.stack.currentWidget() is p.no_match
+    assert p.no_match_label.text() == tr("The bundles do not differ")
+    assert p.no_match_button.text() == tr("Show every row")
+    p.no_match_button.click()
+    _pump(qapp)
+    assert not p.tmodel.diff_only and p.stack.currentWidget() is p.tree and len(_visible_keys(p)) == 8
+    _close_quietly(win)
+
+
+def test_params_os_reason_goes_in_brackets_at_the_end(qapp, ini, tmp_path):
+    """D112: 読み手・OS が返す英語の理由は、UI の言語の文の後ろに括弧で付ける(「x を開けません(<理由>)」)。"""
+    win = _window(qapp, lang="ja")
+    p = win.panel
+    tr = M.make_tr("ja")
+    outs = p.add_paths([str(tmp_path / "nope.json"), _raw(tmp_path, "bad.json", "{")])
+    assert [o.ok for o in outs] == [False, False]
+    msg = p.message_label.full_text()
+    parts = [tr("Could not open %s (%s)") % (o.args[0], o.args[1]) for o in outs]
+    assert msg == "\u2715 " + " | ".join(parts)
+    assert parts[0].startswith("nope.json を開けません(") and parts[0].endswith(")")
+    m = M.ParamsModel()
+    assert M.MESSAGES["save.failed"].endswith("(%s)") and M.MESSAGES["load.refused"].endswith("(%s)")
+    assert m.add_file(str(tmp_path / "nope.json")).text(tr).startswith("nope.json を開けません(")
+    _close_quietly(win)
+
+
+def test_params_compact_counts_keep_shown_of_all(qapp, ini, tmp_path):
+    """D112 / G07(a): 狭い窓の短い数え方でも、絞っている時は「見えている行 / 全部の行」が出る(0 件なら 0 / 9)。"""
+    win = _window(qapp, _three_files(tmp_path), size=(330, 300))
+    p = win.panel
+    assert p.counts_text(compact=True) == "3 bundle(s) · ≠ 4 · ◌ 1"
+    p.search.setText("zzz")
+    assert p.counts_text(compact=True) == "3 bundle(s) · 0 / 9 · ≠ 4 · ◌ 1"
+    assert p.counts_label.text() in (p.counts_text(), p.counts_text(compact=True)) and "0" in p.counts_label.text()
+    p.search.setText("EXPO")
+    assert p.counts_text(compact=True).startswith("3 bundle(s) · 3 / 9 ·")
+    _close_quietly(win)

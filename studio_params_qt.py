@@ -820,8 +820,10 @@ class ParamsPanel(QtWidgets.QWidget):
         self.search.setAccessibleName(tr("Search keys"))
         self.search.setClearButtonEnabled(True)
         self.search.setFixedHeight(BUTTON_PX)
-        self.search.setMinimumWidth(60)
         self.search.addAction(_draw_icon("search", color), QtWidgets.QLineEdit.LeadingPosition)
+        self._search_below = False
+        self._replace_pending = False
+        self._fit_search()
         self.search.textChanged.connect(self.set_query)
         sc = QtGui.QShortcut(QtGui.QKeySequence("Ctrl+F"), self)
         sc.setContext(Qt.WidgetWithChildrenShortcut)
@@ -853,6 +855,26 @@ class ParamsPanel(QtWidgets.QWidget):
         el.addLayout(row)
         el.addStretch(1)
         self.stack.addWidget(self.empty)
+        # 絞り込みで 0 行: 一覧の場所に「該当なし: "語"」と次の一手(設計書 P07-3)。
+        self.no_match = QtWidgets.QWidget(self.stack)
+        nl = QtWidgets.QVBoxLayout(self.no_match)
+        nl.setContentsMargins(6, 6, 6, 6)
+        nl.setSpacing(8)
+        nl.addStretch(1)
+        self.no_match_label = QtWidgets.QLabel(self.no_match)
+        self.no_match_label.setTextFormat(Qt.PlainText)
+        self.no_match_label.setWordWrap(True)
+        self.no_match_label.setAlignment(Qt.AlignCenter)
+        nl.addWidget(self.no_match_label)
+        nrow = QtWidgets.QHBoxLayout()
+        nrow.addStretch(1)
+        self.no_match_button = QtWidgets.QPushButton(self.no_match)
+        self.no_match_button.clicked.connect(self._no_match_step)
+        nrow.addWidget(self.no_match_button)
+        nrow.addStretch(1)
+        nl.addLayout(nrow)
+        nl.addStretch(1)
+        self.stack.addWidget(self.no_match)
 
         self.tree = QtWidgets.QTreeView(self.stack)
         self.tmodel = ParamsTreeModel(self.model, tr, self)
@@ -975,14 +997,42 @@ class ParamsPanel(QtWidgets.QWidget):
             self.strip.set_orientation(Qt.Vertical)   # type: ignore[attr-defined]
             self._body.insertWidget(0, self.strip, 0, Qt.AlignTop)
             self._bar_lay.addWidget(self.search, 0, 0, 1, 2)
+            self._search_below = False
         else:
             self.strip.set_orientation(Qt.Horizontal)  # type: ignore[attr-defined]
             self._bar_lay.addWidget(self.strip, 0, 0, Qt.AlignLeft | Qt.AlignVCenter)
-            self._bar_lay.addWidget(self.search, 0, 1)
+            self._search_below = self._search_needs_own_row()
+            if self._search_below:                       # 狭い窓: 検索の欄は次の段に全幅で(切らない。D112)
+                self._bar_lay.addWidget(self.search, 1, 0, 1, 2)
+            else:
+                self._bar_lay.addWidget(self.search, 0, 1)
         self._bar_lay.setColumnStretch(0, 0)
         self._bar_lay.setColumnStretch(1, 1)
         self.strip.updateGeometry()
         self._sync_buttons()                            # 向きでボタンを作り直す部品もある
+
+    def _fit_search(self) -> None:
+        """検索の欄の最小幅 = 置いた文字の幅 + 前のアイコンと × の分(言語を変えたら測り直す)。"""
+        fm = self.search.fontMetrics()
+        self.search.setMinimumWidth(max(80, fm.horizontalAdvance(self.search.placeholderText()) + 2 * _ICON_PX + 4 * GAP_PX))
+
+    def _search_needs_own_row(self) -> bool:
+        """横の道具の列の隣に、検索の欄が最小幅で収まらないか。"""
+        room = self.width() - 4                          # 枠の内側(左右 2 px)
+        need = self.strip.sizeHint().width() + GAP_PX + self.search.minimumWidth()
+        return room < need
+
+    def resizeEvent(self, ev: QtGui.QResizeEvent) -> None:
+        super().resizeEvent(ev)
+        # 配置を当てている途中で中身を組み替えると Qt が落ちるので、組み替えは通知の後に 1 回だけ。
+        if self._strip_side == "top" and self._search_needs_own_row() != self._search_below and not self._replace_pending:
+            self._replace_pending = True
+            QtCore.QTimer.singleShot(0, self, self._replace_after_resize)  # self が消えたら呼ばない
+
+    def _replace_after_resize(self) -> None:
+        self._replace_pending = False
+        if self._strip_side == "top" and self._search_needs_own_row() != self._search_below:
+            self._place_strip()
 
     def row_height(self) -> int:
         """行の高さ(px)= 文字の高さ + ``ROW_EXTRA_PX``。"""
@@ -1003,6 +1053,9 @@ class ParamsPanel(QtWidgets.QWidget):
         if not c["columns"]:
             return parts[0]
         if compact:
+            shown = len(self.model.rows(diff_only=self.tmodel.diff_only, query=self.tmodel.query))
+            if shown != c["rows"]:                       # 絞っている時は n / N(語なし)
+                parts.append("%d / %d" % (shown, c["rows"]))
             parts.append("%s %d" % (MARK_DIFFER, c["differ"]))
             if c["partial"]:
                 parts.append("%s %d" % (MARK_PARTIAL, c["partial"]))
@@ -1101,10 +1154,32 @@ class ParamsPanel(QtWidgets.QWidget):
         walk(QtCore.QModelIndex())
         if cur is not None:
             self.select_cell(cur[0], cur[1])
-        self.stack.setCurrentWidget(self.tree if self.model.columns else self.empty)
+        self.stack.setCurrentWidget(self._current_page())
         if ncols != self.tmodel.columnCount() or not self._user_sized:
             self._fit_columns()
         self._update_status()
+
+    def _current_page(self) -> QtWidgets.QWidget:
+        """一覧の場所に出す頁: 何も開いていない = 空の案内 / 絞り込みで 0 行 = 該当なし / それ以外 = 表。"""
+        if not self.model.columns:
+            return self.empty
+        if self.tmodel.rowCount() == 0 and (self.tmodel.query or self.tmodel.diff_only):
+            tr = self.tr_
+            if self.tmodel.query:
+                self.no_match_label.setText(tr('No match: "%s"') % self.tmodel.query)
+                self.no_match_button.setText(_label(tr("Clear the search")))
+            else:
+                self.no_match_label.setText(tr("The bundles do not differ"))
+                self.no_match_button.setText(_label(tr("Show every row")))
+            return self.no_match
+        return self.tree
+
+    def _no_match_step(self) -> None:
+        """該当なしの次の一手: 検索を消す(検索で 0 行)/ 全部の行を出す(違う行だけで 0 行)。"""
+        if self.tmodel.query:
+            self.search.clear()
+        else:
+            self.set_diff_only(False)
 
     def _after_change(self, structure: bool = True, deferred: bool = False) -> None:
         if structure:
@@ -1306,6 +1381,7 @@ class ParamsPanel(QtWidgets.QWidget):
             self.tool_actions["diff"].setChecked(bool(on))         # toggled → もう一度ここへ来る
             return
         self.tmodel.diff_only = bool(on)
+        self.show_message("", "info")                    # 前の表についての知らせを残さない(D112)
         self.refresh()
 
     def set_query(self, text: str) -> None:
@@ -1314,6 +1390,7 @@ class ParamsPanel(QtWidgets.QWidget):
             self.search.setText(text)
             return
         self.tmodel.query = text
+        self.show_message("", "info")                    # 前の表についての知らせを残さない(D112)
         self.refresh()
 
     # ---- 直す ----

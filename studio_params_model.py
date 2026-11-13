@@ -73,7 +73,7 @@ _YAML_WORDS = frozenset("y n yes no on off true false null none nan inf".split()
 #: 画面に出す文の型(英語が正。``%`` の並びは訳でも変えない)。鍵は :class:`Outcome` の ``code``。
 MESSAGES: dict[str, str] = {
     # 読む
-    "load.refused": "Could not open %s: %s",
+    "load.refused": "Could not open %s (%s)",            # 読み手・OS の英語の理由は括弧で後ろに(D112)
     "load.duplicate": "%s is already open in this window",
     # 直す
     "edit.readonly": "%s is read-only here (TOML is read but not written); use Save As to make a JSON, YAML or XML copy",
@@ -106,7 +106,7 @@ MESSAGES: dict[str, str] = {
     "save.external": "%s changed on disk after it was read; reload it, or save again to overwrite",
     "save.gone": "%s no longer exists on disk; saving will create it again",
     "save.confirm": "saving %s drops some things from the file",
-    "save.failed": "could not save %s: %s (the file on disk is unchanged)",
+    "save.failed": "could not save %s; the file on disk is unchanged (%s)",
     "save.verify": "could not save %s: the written file does not read back the same at %s (the file on disk is unchanged)",
     "save.done": "saved %s",
     "save.clean": "%s has no unsaved changes",
