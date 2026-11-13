@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Studio の Program 欄の Python のモード(UI の繋ぎ, 2026-11-13)。
 
-受け入れの筋書き 13 項目(C:/dev/data/studio_e2e_2026_11_13/e2e.py が本物の窓で通す物)の offscreen 版。
+受け入れの筋書き 13 項目(repo の外に置いた作業用の e2e.py が本物の窓で通す物)の offscreen 版。
 起動は既存の Studio の試験と同じ(offscreen・空の設定ファイル)。キーは QTest で本物のキーイベントを送る。
 確認の窓(信頼・保存・名前を付けて保存・条件)は studio_pymode の差し込み口を差し替える。
 """
