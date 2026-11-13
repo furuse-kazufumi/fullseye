@@ -30,7 +30,6 @@
   ["flash", "copied signature: "],
   ["flash", "could not save layout presets: %s"],
   ["flash", "displayed %s in %s"],
-  ["flash", "drop: unsupported file '%s' — drop images / a folder, .py, .json, 3-D (ply, splat, obj, stl, pcd, glb, las, urdf, bvh, swc, nii, dcm …), video (mp4, avi, animated gif, hdf), events (x y t p), .md / .svg, audio (wav, mp3, flac …) or .npy"],
   ["flash", "events %s: %s events, %d×%d, columns %s%s"],
   ["flash", "example source not found: %s/%s.py"],
   ["flash", "example source not found: examples_3d/%s.py"],

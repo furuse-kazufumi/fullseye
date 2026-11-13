@@ -15149,9 +15149,10 @@ def build_window(model=None):
         handled = any(kinds[k] for k in ("images", "scripts", "pipelines", "models3d", "videos", "arrays", "events",
                                          "documents", "audio"))
         if kinds["other"] and not handled:
-            flash("drop: unsupported file '%s' — drop images / a folder, .py, .json, 3-D (ply, splat, obj, stl, pcd, "
-                  "glb, las, urdf, bvh, swc, nii, dcm …), video (mp4, avi, animated gif, hdf), events (x y t p), "
-                  ".md / .svg, audio (wav, mp3, flac …) or .npy" % os.path.basename(kinds["other"][0]))
+            # L9(2026-11-13、初回起動の点検): 300 字の英語の形式の並びだった。1 行で言い、一覧の在りかを指す
+            _what = os.path.basename(kinds["other"][0])
+            flash(tr("Studio cannot open '%s'. Help ▸ Files you can open lists what it can (images, folders, "
+                     "3-D, video, audio …)") % _what)
 
     def _open_events(path):
         """イベントカメラのファイル → 極性つきのコマ (T, H, W) → 動画の立方体(ON = 明、OFF = 暗、0 = 灰)。"""

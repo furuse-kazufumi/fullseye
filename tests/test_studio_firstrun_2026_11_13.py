@@ -771,3 +771,18 @@ def test_m13_a_ledger_op_from_the_search_opens_in_the_ledger_runner(launch, monk
     assert studio.op_insertable(r["name"]) == (False, "ledger")
     win._op_list.itemActivated.emit(r["item"]); _pump(0.2)
     assert not model.stages and "台帳の op を実行" in win.statusBar().currentMessage()
+
+
+def test_l9_an_unsupported_drop_says_one_short_line_in_the_ui_language(launch, tmp_path):
+    win, model = launch(lang="ja")
+    odd = tmp_path / "notes.xyzq"
+    odd.write_text("x", encoding="utf-8")
+    before = model.image.copy()
+    win.drop_handler([str(odd)]); _pump(0.2)
+    said = win.statusBar().currentMessage()
+    assert "notes.xyzq" in said and "開けません" in said and "開けるファイル" in said, said
+    assert len(said) < 120 and "unsupported" not in said
+    assert np.array_equal(model.image, before)
+    help_menu = next(a.menu() for a in win.menuBar().actions() if a.menu() and "ヘルプ" in a.text())
+    assert any(a.text().replace("&", "").startswith("開けるファイル") for a in help_menu.actions()), \
+        [a.text() for a in help_menu.actions()]
