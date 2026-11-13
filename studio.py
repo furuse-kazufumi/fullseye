@@ -9794,6 +9794,12 @@ def build_window(model=None):
             flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
                   "fullseye algo run %s" % (name, name))
             return
+        if api.find_op(name) is None:
+            # ★2026-11-13: 索引には載っているが、この環境では呼べない op(optional backend が未導入)。
+            # 以前は add_stage の KeyError がスロットの中で消えて、何も起きなかった。
+            flash("‘%s’ is not available in this environment (its optional backend is not installed) "
+                  "— it was not added to the pipeline" % name)
+            return
         a_val, b_val = op_a_spin.value(), op_b_spin.value()
         line = "%s (%r, %r)" % (name, float(a_val), float(b_val))   # repr: full precision
         if state.get("code_dirty"):
@@ -12036,9 +12042,17 @@ def build_window(model=None):
         if it is None or not it.data(QtCore.Qt.UserRole):
             # ★2026-11-12: 選んでいないときに入れるのは**検索の 1 位**。先頭に出している「定番」の欄は対象にしない
             # (「canny edge」で Enter を押すと sobel_amp が入っていた —— レビューの指摘)。定番は自分で選んだ時だけ。
-            it = next((op_list.item(i) for i in range(op_list.count())
-                       if op_list.item(i).data(QtCore.Qt.UserRole)
-                       and op_list.item(i).data(QtCore.Qt.UserRole + 3) != "staples"), None)
+            # ★2026-11-13: その中でも「この環境で入れられる」最初の行(1 位が未導入の backend の op だと、
+            # Enter が何もしなかった)。入れられる行が 1 つも無ければ 1 位を渡し、add_op が理由を言う。
+            hits = [op_list.item(i) for i in range(op_list.count())
+                    if op_list.item(i).data(QtCore.Qt.UserRole)
+                    and op_list.item(i).data(QtCore.Qt.UserRole + 3) != "staples"]
+
+            def _addable(item):
+                nm = item.data(QtCore.Qt.UserRole)
+                row = _op_row(nm)
+                return not (row and row.get("backend") == "general") and api.find_op(nm) is not None
+            it = next((h for h in hits if _addable(h)), hits[0] if hits else None)
         if it is not None:
             add_op(it)
     search.returnPressed.connect(_insert_searched_op)
