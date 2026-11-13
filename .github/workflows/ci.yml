@@ -302,6 +302,10 @@ jobs:
           .wheelenv/bin/pip install -q numpy scipy dist_check/*.whl
           .wheelenv/bin/python tools/ci_wheel_check.py --dump ops_wheel.json
           python tools/ci_wheel_check.py --compare ops_editable.json ops_wheel.json
+          # ★2026-11-13: git で追跡している fullseye/ の実行時データ(.py 以外)を、組んだ wheel の中身と突き合わせる
+          #   (列挙した物ではなくファイルの側から数える)。fullseye/data/TUNING_CARDS.json が 1.1.0 / 1.1.1 の wheel に無く、
+          #   MCP の fullseye_find_ops / fullseye_plan が毎回 -32603 だった(配布物の検証 S2)。
+          python tools/ci_wheel_check.py --package-data dist_check/*.whl
           # wheel の大きさの門(PyPI の 1 ファイル上限 100 MB。2026-09-07 に 96 MB まで膨れていた)
           python -c "import glob,os,sys; w=glob.glob('dist_check/*.whl')[0]; s=os.path.getsize(w); print('wheel %.1f MB' % (s/1e6)); sys.exit(1 if s > 70e6 else 0)"
       - name: Packaging invariants

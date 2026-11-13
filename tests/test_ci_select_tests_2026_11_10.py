@@ -1007,7 +1007,11 @@ def test_poc_runner_split_on_the_real_baseline_shortens_the_longest_shard():
     ids = sorted(d)
     poc_total = sum(v for k, v in d.items() if k.startswith(_POC + "::"))
     pocs = [x for x in ids if x.startswith(_POC + "::test_the_poc_runs_clean[")]
-    assert poc_total > 3000 and len(pocs) > 250
+    # ★2026-11-13: 床は `poc_total > 3000` だった = 2026-10-22 の記録の値(PoC 3,738 秒 / 全体 21,041 秒)。master の
+    #   run 43348040276 の実測を取り込むと PoC は 1,904 秒 / 全体 14,346 秒(縮小モードの実測)で、PoC のファイルは
+    #   もう均等な 1 片(2,391 秒)より軽く、「ファイルが下限」は実の数では成り立たない。実の記録では配り方の不変条件を、
+    #   「最長の片を短くする」は実の id のまま PoC の重さだけを均等な 1 片の 1.5 倍まで増やした記録で確かめる。
+    assert poc_total > 0 and len(pocs) > 250
     for n in (1, 2, 3, 6, 8):
         plan, loads = CST._shard_plan_with_loads(ids, n, d)
         assert sum(len(p) for p in plan) == len(ids) == len(set().union(*[set(p) for p in plan]))
@@ -1015,10 +1019,22 @@ def test_poc_runner_split_on_the_real_baseline_shortens_the_longest_shard():
         assert holders == [1] * len(pocs)
         assert abs(sum(loads) - sum(d.values())) < 1e-6 * sum(d.values())         # 重さの総量は変えない
     plan, loads = CST._shard_plan_with_loads(ids, 6, d)
-    assert max(loads) < poc_total, (loads, poc_total)                              # 1 ファイルが下限ではなくなった
     assert max(loads) <= 1.02 * (sum(loads) / 6), loads
     info = CST.plan_session(ids, selection=None, shard="1/6", durations_path=CST.ROOT / ".test_durations")
     assert info["est_seconds"] == round(loads[0]) and info["sizes"] == [len(p) for p in plan]
+    # PoC のファイルが均等な 1 片の 1.5 倍になる重さ: h = 1.5 * (others + h) / 6  ->  h = others / 3
+    others = sum(v for k, v in d.items() if not k.startswith(_POC + "::"))
+    scale = others / (3.0 * poc_total)
+    heavy = {x: (v * scale if x.startswith(_POC + "::") else v) for x, v in d.items()}
+    heavy_total = scale * poc_total
+    assert heavy_total > 1.45 * (sum(heavy.values()) / 6)                          # 前提: ファイル 1 つが均等な片より重い
+    _, loads_h = CST._shard_plan_with_loads(ids, 6, heavy)
+    whole = _POC.replace(".py", "_as_one_file.py") + "::"                           # 同じ重さを 1 ファイルのまま配ると
+    _, loads_w = CST._shard_plan_with_loads([x.replace(_POC + "::", whole, 1) for x in ids], 6,
+                                            {x.replace(_POC + "::", whole, 1): v for x, v in heavy.items()})
+    assert max(loads_w) >= heavy_total, (loads_w, heavy_total)                     # 1 ファイルの片が下限になる
+    assert max(loads_h) < heavy_total, (loads_h, heavy_total)                      # 散らすと下限ではなくなる
+    assert max(loads_h) <= 1.02 * (sum(loads_h) / 6), loads_h
 
 
 def test_poc_runner_split_holds_with_a_pr_selection(tmp_path):

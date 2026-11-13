@@ -10,15 +10,22 @@ py-modules の漏れが原理的に再現しない。
 `pip install fullseye` した環境で op が **857 → 633(-224、26%)**。
 `ops.FAILED_BACKENDS` にはその 2 件が最初から記録されていたが、
 **それを見る門は checkout の側にしか立っていなかった**。
+
+``--package-data WHEEL``(2026-11-13): git で追跡している ``fullseye/`` の実行時データ(.py 以外)と
+wheel(zip)の中身を、**ファイルの側から**突き合わせる。列挙した物だけを数える門(目録・アイコン)は、
+列挙から漏れた物に原理的に盲目 —— ``fullseye/data/TUNING_CARDS.json`` が 1.1.0 / 1.1.1 の wheel に無く、
+MCP の ``fullseye_find_ops`` / ``fullseye_plan`` が毎回 -32603 で落ちていた(配布物の検証 S2)。
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import warnings
+import zipfile
 
 warnings.filterwarnings("ignore")
 
@@ -187,16 +194,97 @@ def _compare(a_path: str, b_path: str) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------- #
+# 2026-11-13: git で追跡している fullseye/ の実行時データ と wheel の中身の突き合わせ
+# --------------------------------------------------------------------------- #
+#: 突き合わせる範囲: ``fullseye`` パッケージの下で git が追跡する **.py 以外**の全部
+#: (data/*.json・OP_CATALOG*.md・SENSOR_PLAYBOOK.md・i18n/*.json・skill_template/ ……)。
+#: .py は py-modules / packages の門(上の --dump / --compare と tests/test_packaging_subpackages.py)が見る。
+PACKAGE_DATA_ROOT = "fullseye/"
+
+#: git で追跡しているが**意図して**同梱しない ``fullseye/`` の下のファイルと、その理由。
+#: 足すときは「wheel に入る .py が読まない」ことを確かめてから。同梱に変えたら、ここから消して
+#: pyproject の package-data に足す。ここに在るのに git が追跡しなくなった物は NG(古い除外を残さない)。
+NOT_SHIPPED = {
+    "fullseye/data/gpu_required.json":
+        "GPU 必須 op の正本名簿。読むのは tools/gpu_tier_rules.py と tools/gen_gpu_fill3_report.py(checkout の"
+        "道具。imgevolve の索引づくりも tools/ を探して呼ぶ)だけで、wheel の実行時には読まない",
+}
+
+
+def _tracked_package_files(repo: str) -> list:
+    """``git ls-files`` が追跡する ``fullseye/`` の下の .py 以外のファイル(repo 相対・``/`` 区切り)。
+
+    git が使えなければ ``OSError`` / ``subprocess.SubprocessError`` をそのまま上げる(呼ぶ側が NG にする)。
+    """
+    out = subprocess.run(["git", "-C", repo, "ls-files", "-z", "--", PACKAGE_DATA_ROOT.rstrip("/")],
+                         capture_output=True, check=True, timeout=300).stdout
+    names = [p for p in out.decode("utf-8", "surrogateescape").split("\0") if p]
+    return sorted(p for p in names if not p.endswith((".py", ".pyc")) and "/__pycache__/" not in p)
+
+
+def _package_data(wheel: str, repo: str = "") -> int:
+    """wheel(zip)に、git で追跡している ``fullseye/`` の実行時データが**中身ごと**入っているか。
+
+    NG にするもの: 追跡しているのに wheel に無い / wheel の中で 0 バイト / 追跡が 0 件(門が空を通す)/
+    :data:`NOT_SHIPPED` に挙げたのに追跡されていない(古い除外)/ wheel を開けない / git が使えない。
+    判定は全部 NG の 1 行(traceback で死ぬ門は「門が壊れた」のか「落ちた」のかを区別できない)。
+    """
+    repo = repo or os.path.dirname(_HERE)
+    wheel = _at_orig(wheel)
+    try:
+        tracked = _tracked_package_files(repo)
+    except (OSError, subprocess.SubprocessError) as e:
+        print("NG: git ls-files で %s の追跡ファイルを数えられない(%s: %s)—— checkout の tools/ から走らせる"
+              % (PACKAGE_DATA_ROOT, type(e).__name__, e))
+        return 1
+    if not tracked:
+        print("NG: git が追跡する %s の .py 以外のファイルが 0 件 —— 門が空を通している(repo=%s)"
+              % (PACKAGE_DATA_ROOT, repo))
+        return 1
+    try:
+        with zipfile.ZipFile(wheel) as zf:
+            sizes = {i.filename: i.file_size for i in zf.infolist()}
+    except (OSError, zipfile.BadZipFile) as e:
+        print("NG: wheel を開けない: %s(%s: %s)" % (wheel, type(e).__name__, e))
+        return 1
+    want = [p for p in tracked if p not in NOT_SHIPPED]
+    missing = [p for p in want if p not in sizes]
+    empty = [p for p in want if sizes.get(p) == 0]
+    stale = sorted(p for p in NOT_SHIPPED if p not in tracked)
+    problems = []
+    if missing:
+        problems.append("git で追跡している実行時データが wheel に無い(pyproject の [tool.setuptools.package-data] の "
+                        "\"fullseye\" に足す。同梱しないなら理由を NOT_SHIPPED に書く): %s" % missing)
+    if empty:
+        problems.append("wheel の中で 0 バイト: %s" % empty)
+    if stale:
+        problems.append("NOT_SHIPPED に挙げたのに git が追跡していない(除外を消す): %s" % stale)
+    print("%s: git が追跡する %s の .py 以外 %d 件(意図して同梱しない %d 件)/ そのうち wheel に在る %d 件"
+          % (os.path.basename(wheel), PACKAGE_DATA_ROOT, len(tracked), len(tracked) - len(want),
+             len(want) - len(missing)))
+    if problems:
+        for t in problems:
+            print("NG:", t)
+        return 1
+    print("OK: 追跡している実行時データは全部 wheel に中身ごと入っている")
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dump", metavar="OUT")
     ap.add_argument("--compare", nargs=2, metavar=("EDITABLE", "WHEEL"))
+    ap.add_argument("--package-data", metavar="WHEEL",
+                    help="wheel (.whl) に git で追跡している fullseye/ の実行時データが入っているか")
     ns = ap.parse_args(argv)
     if ns.dump:
         return _dump(ns.dump)
     if ns.compare:
         return _compare(*ns.compare)
-    ap.error("--dump か --compare のどちらかが要る")
+    if ns.package_data:
+        return _package_data(ns.package_data)
+    ap.error("--dump / --compare / --package-data のどれかが要る")
 
 
 if __name__ == "__main__":
