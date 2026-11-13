@@ -810,9 +810,9 @@ def _describe_obj(name: str, obj) -> tuple:
         sig = _sig_text(obj)
         doc = _doc_of(obj)
         first = _first_sentence(doc, 90)
-        one = (name + sig if sig and len(sig) < 60 else first) or type(obj).__name__
+        one = (name + sig if sig and len(sig) < 60 else first) or safe.type_name(obj)
         return (one if one else first), (name + sig + "\n\n" + doc if sig else doc)
-    return type(obj).__name__, ""
+    return safe.type_name(obj), ""
 
 
 def _static_attr(obj, name: str):
@@ -951,7 +951,7 @@ class FallbackProvider:
             return []                                        # 未 import のモジュールは勝手に import しない
         # モジュールの __getattr__ / __dir__(PEP 562)は呼ばない: 名前は静的に集める
         declared = _static_attr(obj, "__all__")
-        if type(declared) in (list, tuple) and all(type(n) is str for n in declared):
+        if safe.tin(type(declared), (list, tuple)) and all(type(n) is str for n in declared):
             names = list(declared)
         else:
             names = [n for n in safe.static_names(obj) if not n.startswith("_")]
@@ -1030,7 +1030,7 @@ class FallbackProvider:
     def _lazy_completion(self, name: str, kind: str, obj, score: float, op: OpInfo | None = None) -> Completion:
         if op is not None:
             return self._op_completion(op, score + 3)
-        detail = type(obj).__name__ if obj is not None else ""
+        detail = safe.type_name(obj) if obj is not None else ""
         if obj is not None and (callable(obj) or _is_module(obj)):
             detail = {"module": self.tr("module"), "class": self.tr("class")}.get(kind, "") or ""
         return Completion(name, kind, detail, score=score,
@@ -1084,7 +1084,7 @@ class FallbackProvider:
             if not _isinst(name, str) or name.startswith("_") or name in self.prelude or name in self.op_names():
                 continue                                     # op は台帳の候補(型と説明つき)を使う
             kind = _kind_of_obj(val)
-            cands.append(Completion(name, "variable" if kind == "variable" else kind, type(val).__name__, score=23.0))
+            cands.append(Completion(name, "variable" if kind == "variable" else kind, safe.type_name(val), score=23.0))
         # prelude
         for name, (kind, desc) in self.prelude.items():
             cands.append(Completion(name, kind, self.tr(desc), score=20.0))
@@ -1186,7 +1186,7 @@ class FallbackProvider:
             return Hover("%s  (%s)" % (word, kind), self.tr(desc))
         ns = self.namespace()
         if word in ns and not root:
-            return Hover("%s: %s" % (word, type(ns[word]).__name__), "")
+            return Hover("%s: %s" % (word, safe.type_name(ns[word])), "")
         if cat == "keyword":
             return Hover(word, self.tr("keyword"))
         return None

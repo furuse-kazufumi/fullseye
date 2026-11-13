@@ -122,9 +122,12 @@ _INTERNAL = {
     #   受け渡しに使う部品)。studio_program_i18n 4(実行系・検査の英語の文を UI の言語へ: placeholders / line_label /
     #   localize / line_number_of。画面に出す所だけが使う)。studio_pyedit_safe 9(実行後の値を利用者のコードを
     #   走らせずに調べる: 型だけの判定・ライブラリの型か・静的な名前。補完と変数の欄の内側)。
+    #   2026-11-13 3 便目(第 2 回レビューの直し): studio_pyedit_safe 9 → 15(型の記述子で読む class_dict / mro_of /
+    #   name_of、同一性の tin、実体で決める is_library_class、利用者のコードを呼ばない exception_text)、
+    #   studio_pyedit_values 30 → 31(stray_threads: 残った __repr__ 用のスレッドの一覧)。
     "studio_project": 23, "studio_pymode": 20, "studio_pyedit_syntax": 22, "studio_pyedit_complete": 35,
-    "studio_pyedit_values": 30, "studio_pyedit_i18n": 5, "studio_pyedit_qt": 9, "studio_pyedit_vars_qt": 14,
-    "studio_program_i18n": 4, "studio_pyedit_safe": 9,
+    "studio_pyedit_values": 31, "studio_pyedit_i18n": 5, "studio_pyedit_qt": 9, "studio_pyedit_vars_qt": 14,
+    "studio_program_i18n": 4, "studio_pyedit_safe": 15,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -357,7 +360,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1290
 # 2026-11-13 同じ枝の 2 便目: 1290 → 1305(+15、この機械の実測)。内訳: 上の _INTERNAL の studio_program_i18n 4・
 #   studio_pyedit_safe 9・studio_pymode + 1、studio_program.starter_program 1(例の文面を UI の言語で返す。GUI の内側)。
-_HIDDEN_FUNCTIONS_TODAY = 1305
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1305
+# 2026-11-13 同じ枝の 3 便目(第 2 回レビューの直し): 1305 → 1313(+8、この機械の実測)。内訳: studio_pyedit_safe 6・
+#   studio_pyedit_values 1・studio_program.program_threads 1(プログラムが残したスレッドの一覧。GUI の内側)。
+_HIDDEN_FUNCTIONS_TODAY = 1313
 
 
 def _hidden_total():

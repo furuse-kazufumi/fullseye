@@ -12254,33 +12254,43 @@ def build_window(model=None, start_mode="pipeline"):
             text = ed.toPlainText()
             if not text.strip():
                 flash("nothing to run — the editor is empty"); return
-            if getattr(ed, "_from_file", False):
+            if getattr(ed, "_from_file", False) and not getattr(ed, "_confirmed", False):
                 # ファイルから開いた Python: 確認が済むまで走らせない(同じ中身なら次からは聞かない。中身が変われば聞き直す)。
                 # 確認した後にこのタブで直した文面は、利用者が打った物として扱う(Python のモードと同じ)
                 _pm = getattr(win, "_pymode", None)
-                if _pm is None or not _pm.confirm_file_program(text, ed._path):
+                if _pm is None or not _pm.confirm_file_program(text, ed._path or getattr(ed, "_origin", None)):
                     status.setText(tr("Not run: the program was not confirmed")); return
-                ed._from_file = False
-            script = ed._path
-            scratch = None                    # set when running from a temp copy
-            if script is None or ed._dirty:
-                # unsaved buffers run from a scratch copy — Run never forces a Save
-                import tempfile
-                d = os.path.join(tempfile.gettempdir(), "fullseye_studio")
+                ed._confirmed = True
+            # ★2026-11-13(第 2 回レビュー R4): **走らせるのは常に画面の文面**(一時の写し)。以前は、未編集のタブは
+            #   ディスクのファイルを走らせていたので、開いた後でファイルが書き換わると、確認の窓に出した文面と違う物が
+            #   走り、確認した後の書き換えは聞かずに走った。元のファイルの場所は PYTHONPATH に足す(隣の .py を import できる)。
+            notice = ""
+            if ed._path and not ed._dirty:
                 try:
-                    os.makedirs(d, exist_ok=True)
-                    script = scratch = os.path.join(d, "scratch_%d.py" % os.getpid())
-                    with open(script, "w", encoding="utf-8") as f:
-                        f.write(text)
-                except Exception as e:
-                    report_error("run", e); return
-            out.setPlainText("$ py %s\n\n" % os.path.basename(script))
+                    with open(ed._path, "r", encoding="utf-8") as f:
+                        if f.read() != text:
+                            notice = tr("The file changed on disk after it was opened: this tab still shows (and "
+                                        "runs) the text it was opened with") + "\n"
+                except (OSError, UnicodeDecodeError):
+                    pass
+            import tempfile
+            d = os.path.join(tempfile.gettempdir(), "fullseye_studio")
+            try:
+                os.makedirs(d, exist_ok=True)
+                script = scratch = os.path.join(d, "scratch_%d.py" % os.getpid())
+                with open(script, "w", encoding="utf-8") as f:
+                    f.write(text)
+            except Exception as e:
+                report_error("run", e); return
+            shown_name = os.path.basename(ed._path) if ed._path else os.path.basename(script)
+            out.setPlainText(notice + "$ py %s\n\n" % shown_name)
             status.setText("running…")
             proc = QtCore.QProcess(dlg)
             proc.setProcessChannelMode(QtCore.QProcess.MergedChannels)
             proc.setWorkingDirectory(repo_root)
             env = QtCore.QProcessEnvironment.systemEnvironment()
-            env.insert("PYTHONPATH", repo_root + os.pathsep + env.value("PYTHONPATH"))
+            _here = (os.path.dirname(os.path.abspath(ed._path)) + os.pathsep) if ed._path else ""
+            env.insert("PYTHONPATH", _here + repo_root + os.pathsep + env.value("PYTHONPATH"))
             env.insert("PYTHONUTF8", "1")
             # UI 言語をライブラリ層(fsi18n)へ伝播 — スクリプトが出す fsi18n.msg()
             # 経由のメッセージが Studio の言語設定に追従する(docs/I18N.md)
@@ -12393,7 +12403,7 @@ def build_window(model=None, start_mode="pipeline"):
     win._pipeline_script = pipeline_script
     win._main_view = view                                # 右クリックの項目をテストで数える
 
-    def open_code_window(title, text):
+    def open_code_window(title, text, source_path=None):
         # A read-only, syntax-highlighted CODE window inside the MDI area — the sample-
         # browsing counterpart of a graphics window (user spec 2026-08-30: comparing
         # several samples and copying fragments between them is everyday work in an
@@ -12419,7 +12429,15 @@ def build_window(model=None, start_mode="pipeline"):
             QtWidgets.QApplication.clipboard().setText(ed.toPlainText())
             flash("copied '%s' to the clipboard" % title)
         b_copy.clicked.connect(_copy_all)
-        b_edit.clicked.connect(lambda _=False: show_python_editor(ed.toPlainText(), title))
+        def _open_in_editor(_=False):
+            show_python_editor(ed.toPlainText(), title)
+            if source_path:
+                # ★2026-11-13(第 2 回レビュー R10): ファイル(プロジェクトのパラメータなど)から読んだ文面をエディタへ
+                #   送った物は「ファイルから開いた Python」と同じ: 初回の実行の前に確認する
+                _cur = win._pyedit["editor"]()
+                if _cur is not None:
+                    _cur._from_file = True; _cur._origin = source_path
+        b_edit.clicked.connect(_open_in_editor)
         sub = mdi.addSubWindow(w)
         sub.setWindowTitle(title)
         sub.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -15316,7 +15334,8 @@ def build_window(model=None, start_mode="pipeline"):
         except OSError as e:
             report_error("Could not open file", "%s\n\n%s" % (path, e)); return None
         title = os.path.basename(path) + " (" + tr("read-only") + ")"
-        sub_ = open_code_window(title, text + ("\n\n... " + tr("(cut: the file is larger than 1 MB)") if cut else ""))
+        sub_ = open_code_window(title, text + ("\n\n... " + tr("(cut: the file is larger than 1 MB)") if cut else ""),
+                                source_path=os.path.abspath(path))
         return sub_
     win._open_params_file = open_params_file
 

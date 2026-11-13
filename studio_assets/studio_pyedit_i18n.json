@@ -869,13 +869,6 @@
    "ko": "멈춤: 시간 제한 %.3g초를 넘었습니다",
    "de": "angehalten: Zeitlimit von %.3g s überschritten"
   },
-  "the program called exit(%r)": {
-   "ja": "プログラムが exit(%r) を呼びました",
-   "zh": "程序调用了 exit(%r)",
-   "tw": "程式呼叫了 exit(%r)",
-   "ko": "프로그램이 exit(%r)를 호출했습니다",
-   "de": "das Programm hat exit(%r) aufgerufen"
-  },
   "a Python program needs an input image": {
    "ja": "Python のプログラムには入力の画像が要ります",
    "zh": "Python 程序需要输入图像",
@@ -1498,6 +1491,76 @@
    "tw": "…(之前的 %d 個字元的輸出已捨棄)",
    "ko": "…(앞쪽 출력 %d자는 버렸습니다)",
    "de": "… (%d frühere Zeichen der Ausgabe verworfen)"
+  },
+  "the program called exit(%s)": {
+   "ja": "プログラムが exit(%s) を呼びました",
+   "zh": "程序调用了 exit(%s)",
+   "tw": "程式呼叫了 exit(%s)",
+   "ko": "프로그램이 exit(%s)를 호출했습니다",
+   "de": "das Programm hat exit(%s) aufgerufen"
+  },
+  "the program raised an error, but its text could not be made in time": {
+   "ja": "プログラムが誤りを出しましたが、その文を時間内に作れませんでした",
+   "zh": "程序出错了,但未能及时生成其错误文本",
+   "tw": "程式出錯了,但未能及時產生其錯誤文字",
+   "ko": "프로그램이 오류를 냈지만 그 글을 제때 만들지 못했습니다",
+   "de": "das Programm hat einen Fehler ausgelöst, dessen Text ließ sich aber nicht rechtzeitig erzeugen"
+  },
+  "plt.show(): the figure was put in the image pane (a program does not open windows in Studio)": {
+   "ja": "plt.show(): 図を画像の欄に出しました(Studio の中のプログラムは窓を開きません)",
+   "zh": "plt.show():已将图放到图像栏(Studio 中的程序不会打开窗口)",
+   "tw": "plt.show():已將圖放到影像欄(Studio 中的程式不會開啟視窗)",
+   "ko": "plt.show(): 그림을 이미지 창에 넣었습니다(Studio 안의 프로그램은 창을 열지 않습니다)",
+   "de": "plt.show(): die Abbildung wurde in das Bildfeld gelegt (ein Programm öffnet in Studio keine Fenster)"
+  },
+  "the program started %d thread(s) that are still running after it ended: %s — they keep running in Studio and can change files, the environment and the working folder; what they change is not restored": {
+   "ja": "プログラムが起こしたスレッド %d 本が、終わった後も動いています: %s — Studio の中で動き続け、ファイル・環境変数・作業フォルダを書き換える可能性があります。書き換えた物は元へ戻しません",
+   "zh": "程序启动的 %d 个线程在结束后仍在运行:%s — 它们会在 Studio 中继续运行,可能修改文件、环境变量和工作文件夹;它们改动的内容不会被恢复",
+   "tw": "程式啟動的 %d 個執行緒在結束後仍在執行:%s — 它們會在 Studio 中繼續執行,可能修改檔案、環境變數和工作資料夾;它們改動的內容不會被還原",
+   "ko": "프로그램이 시작한 스레드 %d개가 끝난 뒤에도 돌고 있습니다: %s — Studio 안에서 계속 돌며 파일, 환경 변수, 작업 폴더를 바꿀 수 있습니다. 바꾼 것은 되돌리지 않습니다",
+   "de": "das Programm hat %d Thread(s) gestartet, die nach seinem Ende weiterlaufen: %s — sie laufen in Studio weiter und können Dateien, die Umgebung und den Arbeitsordner ändern; ihre Änderungen werden nicht zurückgesetzt"
+  },
+  "the result could not be described in time: the variables are not listed": {
+   "ja": "結果を時間内に文字にできませんでした: 変数の一覧は出しません",
+   "zh": "未能及时描述结果:不列出变量",
+   "tw": "未能及時描述結果:不列出變數",
+   "ko": "결과를 제때 글로 만들지 못했습니다: 변수 목록은 내지 않습니다",
+   "de": "das Ergebnis ließ sich nicht rechtzeitig beschreiben: die Variablen werden nicht aufgelistet"
+  },
+  "Studio does not let a running program import %s: GUI toolkits (Qt, tkinter, the interactive matplotlib backends) only work on Studio's own GUI thread — draw with matplotlib as usual; plt.show() and show(fig) put the figure in the image pane": {
+   "ja": "Studio は、実行中のプログラムに %s の import をさせません: GUI の部品(Qt・tkinter・窓を出す matplotlib の backend)は Studio 自身の GUI のスレッドでしか動きません — matplotlib はいつもどおり描いてください。plt.show() と show(fig) は図を画像の欄に出します",
+   "zh": "Studio 不允许运行中的程序导入 %s:GUI 工具包(Qt、tkinter、交互式的 matplotlib 后端)只能在 Studio 自己的 GUI 线程中工作 — 请照常用 matplotlib 绘图;plt.show() 和 show(fig) 会把图放到图像栏",
+   "tw": "Studio 不允許執行中的程式匯入 %s:GUI 工具包(Qt、tkinter、互動式的 matplotlib 後端)只能在 Studio 自己的 GUI 執行緒中運作 — 請照常用 matplotlib 繪圖;plt.show() 和 show(fig) 會把圖放到影像欄",
+   "ko": "Studio는 실행 중인 프로그램이 %s을(를) import하지 못하게 합니다: GUI 도구(Qt, tkinter, 창을 띄우는 matplotlib 백엔드)는 Studio 자신의 GUI 스레드에서만 동작합니다 — matplotlib은 평소처럼 그리세요. plt.show()와 show(fig)는 그림을 이미지 창에 넣습니다",
+   "de": "Studio lässt ein laufendes Programm %s nicht importieren: GUI-Toolkits (Qt, tkinter, die interaktiven matplotlib-Backends) funktionieren nur im GUI-Thread von Studio — wie gewohnt mit matplotlib zeichnen; plt.show() und show(fig) legen die Abbildung in das Bildfeld"
+  },
+  "<the text of this %s is not available: its __str__ did not return in time>": {
+   "ja": "<この %s の文は出せません: __str__ が時間内に戻りませんでした>",
+   "zh": "<无法给出这个 %s 的文本:它的 __str__ 没有及时返回>",
+   "tw": "<無法給出這個 %s 的文字:它的 __str__ 沒有及時返回>",
+   "ko": "<이 %s의 글은 낼 수 없습니다: __str__이 제때 돌아오지 않았습니다>",
+   "de": "<der Text dieses %s ist nicht verfügbar: sein __str__ kam nicht rechtzeitig zurück>"
+  },
+  "<the text of this %s is not available: its __str__ raised %s>": {
+   "ja": "<この %s の文は出せません: __str__ が %s を出しました>",
+   "zh": "<无法给出这个 %s 的文本:它的 __str__ 抛出了 %s>",
+   "tw": "<無法給出這個 %s 的文字:它的 __str__ 拋出了 %s>",
+   "ko": "<이 %s의 글은 낼 수 없습니다: __str__이 %s을(를) 냈습니다>",
+   "de": "<der Text dieses %s ist nicht verfügbar: sein __str__ löste %s aus>"
+  },
+  "(not shown: an earlier value is still running its own code)": {
+   "ja": "(表示していません: 前の値が、まだ自分のコードを実行しています)",
+   "zh": "(未显示:之前的值仍在运行它自己的代码)",
+   "tw": "(未顯示:先前的值仍在執行它自己的程式碼)",
+   "ko": "(표시하지 않음: 앞의 값이 아직 자기 코드를 실행하고 있습니다)",
+   "de": "(nicht angezeigt: ein früherer Wert führt noch seinen eigenen Code aus)"
+  },
+  "not run: a value shown in the Variables or Watch panel is still running its own code in the background (%d) — wait until it ends or restart Studio": {
+   "ja": "実行していません: 変数かウォッチの欄に出した値が、まだ背景で自分のコードを実行しています(%d 件)— 終わるまで待つか、Studio を起動し直してください",
+   "zh": "未运行:变量或监视栏中显示的某个值仍在后台运行它自己的代码(%d 个)— 请等它结束,或重新启动 Studio",
+   "tw": "未執行:變數或監看欄中顯示的某個值仍在背景執行它自己的程式碼(%d 個)— 請等它結束,或重新啟動 Studio",
+   "ko": "실행하지 않았습니다: 변수 또는 감시 창에 보인 값이 아직 백그라운드에서 자기 코드를 실행하고 있습니다(%d개) — 끝날 때까지 기다리거나 Studio를 다시 시작하세요",
+   "de": "nicht ausgeführt: ein im Variablen- oder Überwachungsfeld gezeigter Wert führt im Hintergrund noch seinen eigenen Code aus (%d) — warten, bis er endet, oder Studio neu starten"
   }
  }
 }

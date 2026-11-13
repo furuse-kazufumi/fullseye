@@ -32,7 +32,8 @@ LINE_LABEL = "line %d"
 LINE_BODY_TEMPLATES = (
     "stopped on request",
     "stopped: time limit %.3g s exceeded",
-    "the program called exit(%r)",
+    "the program called exit(%s)",
+    "the program raised an error, but its text could not be made in time",
     "a Python program needs an input image",
     "cannot compile: %s",
     "breakpoint condition %r could not be evaluated (%s: %s) — stopped there",
@@ -63,12 +64,28 @@ RUN_TEMPLATES = (
     "are ignored",
     "no namespace: run the program first (keep_namespace=True)",
     "not run: untrusted input",
+    "not run: a value shown in the Variables or Watch panel is still running its own code in the background "
+    "(%d) — wait until it ends or restart Studio",
+    "plt.show(): the figure was put in the image pane (a program does not open windows in Studio)",
+    "the program started %d thread(s) that are still running after it ended: %s — they keep running "
+    "in Studio and can change files, the environment and the working folder; what they change is not "
+    "restored",
+    "the result could not be described in time: the variables are not listed",
     "not run: an earlier run could not be stopped and is still running in the background (%d) — it "
     "can still change files, the environment and the working folder; wait until it ends or restart "
     "Studio",
     "until the abandoned run ends, new runs are refused; the process state is restored again when it "
     "ends",
     "… (%d earlier characters of output dropped)",
+)
+
+#: Python の例外の文として出る物(``line N: 型: 文`` の「文」。値として埋まる)。
+ERROR_TEXT_TEMPLATES = (
+    "Studio does not let a running program import %s: GUI toolkits (Qt, tkinter, the interactive "
+    "matplotlib backends) only work on Studio's own GUI thread — draw with matplotlib as usual; "
+    "plt.show() and show(fig) put the figure in the image pane",
+    "<the text of this %s is not available: its __str__ did not return in time>",
+    "<the text of this %s is not available: its __str__ raised %s>",
 )
 
 #: 値として埋まる短い句(「止められなかった」の理由)。
@@ -151,8 +168,8 @@ ADVICE_TEMPLATES = (
 )
 
 #: 訳の表に在るべき全部の型(試験が数える)。
-TEMPLATES = ((LINE_LABEL,) + LINE_BODY_TEMPLATES + RUN_TEMPLATES + ARG_TEMPLATES + CHECK_TEMPLATES
-             + ADVICE_TEMPLATES)
+TEMPLATES = ((LINE_LABEL,) + LINE_BODY_TEMPLATES + RUN_TEMPLATES + ERROR_TEXT_TEMPLATES + ARG_TEMPLATES
+             + CHECK_TEMPLATES + ADVICE_TEMPLATES)
 
 _PLACEHOLDER = re.compile(r"%(?:0\d+X|\.\d+[gf]|[sdr])")
 _LINE_PREFIX = re.compile(r"line (\d+): (.*)\Z", re.S)
@@ -195,6 +212,8 @@ def _ordered(templates) -> list:
 
 _BODY = _ordered(LINE_BODY_TEMPLATES + RUN_TEMPLATES + CHECK_TEMPLATES + ADVICE_TEMPLATES)
 _ARGS = _ordered(ARG_TEMPLATES)
+_ERROR_TEXTS = _ordered(ERROR_TEXT_TEMPLATES)
+_ERROR_LINE = re.compile(r"([A-Za-z_][\w.]*): (.*)\Z", re.S)
 
 
 def _fill(translated: str, groups) -> str | None:
@@ -233,8 +252,18 @@ def localize(text: str, tr: Callable) -> str:
     m = _LINE_PREFIX.match(text)
     if m is not None:
         body = m.group(2)
-        return "%s: %s" % (line_label(int(m.group(1)), tr), _match(body, _BODY, tr, True) or body)
+        return "%s: %s" % (line_label(int(m.group(1)), tr), _match(body, _BODY, tr, True) or _error_text(body, tr))
     return _match(text, _BODY, tr, True) or text
+
+
+def _error_text(body: str, tr: Callable) -> str:
+    """``型: 文`` の「文」が Studio の作った文(GUI の部品の import を断った、``__str__`` が戻らなかった)なら、そこだけ直す。
+    Python 自身の例外の文はそのまま。"""
+    m = _ERROR_LINE.match(body)
+    if m is None:
+        return body
+    hit = _match(m.group(2), _ERROR_TEXTS, tr, False)
+    return body if hit is None else "%s: %s" % (m.group(1), hit)
 
 
 _LINE_PATTERNS: list | None = None

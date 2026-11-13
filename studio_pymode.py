@@ -42,6 +42,7 @@ import re
 import tempfile
 import threading
 import time
+import types
 from dataclasses import dataclass, field
 
 from PySide6 import QtCore, QtGui, QtWidgets
@@ -58,6 +59,7 @@ POLL_MS = 30
 #: 出力の欄の上限: 行数(越えたら古い行から捨てる)と、1 回に書く文字数(越えたら末尾だけ)。
 MAX_OUTPUT_LINES = 5000
 MAX_OUTPUT_CHARS = 200_000
+MAX_TOOLTIP_CHARS = 2000
 #: 未保存の文面を設定へ書き出す間隔(落ちても次の起動で戻る)。
 AUTOSAVE_MS = 5000
 DEFAULT_TIME_LIMIT_S = sp.DEFAULT_TIME_LIMIT_S
@@ -1025,6 +1027,11 @@ class PyModeController(QtCore.QObject):
                           gate=gate).start()
         self.state["pymode_runs"] = self.state.get("pymode_runs", 0) + 1
         self._out_header(action)
+        left = sp.program_threads()
+        if left:                                              # 前の実行が起こしたスレッドがまだ動いている: 知らせてから走る
+            self._out("⚠ " + self.tr("Threads started by an earlier run are still running (%s): they can change "
+                                     "files, the environment and the working folder while this program runs")
+                      % ", ".join(left[:5]))
         self._status(self.tr("running…"))
         self._update_labels()
         self._poll.start()
@@ -1035,12 +1042,31 @@ class PyModeController(QtCore.QObject):
         フォルダを書き換え続けるので、重ねて走らせない。2026-11-13 レビュー H3)。"""
         left = sp.abandoned_runs()
         if not left:
-            return False
+            # 変数・ウォッチの欄が利用者のコード(__repr__・式)のために起こして、止まらずに残っているスレッド。
+            # 止めの例外が保留のまま残ると Debug の実行が約 300 倍遅くなり、何もしないプログラムが時間切れになる
+            # (2026-11-13 第 2 回レビュー R5)。残っている間は始めずに、そう言う
+            stray = self._stray_value_threads()
+            if not stray:
+                return False
+            msg = self.tr("Not run: a value in the Variables or Watch panel is still running its own code in the "
+                          "background (%d) — wait until it ends or restart Studio") % stray
+            self._out("✕ " + msg)
+            self._status("✕ " + msg)
+            self.flash(msg)
+            return True
         msg = self._loc(sp.ABANDONED_BLOCKS_RUN % len(left))
         self._out("✕ " + msg)
         self._status("✕ " + msg)
         self.flash(msg)
         return True
+
+    @staticmethod
+    def _stray_value_threads() -> int:
+        try:
+            import studio_pyedit_values as pv
+            return len(pv.stray_threads())
+        except Exception:                                     # noqa: BLE001
+            return 0
 
     def _resume(self, plan: dict) -> bool:
         """止まって待っている実行を起こす(続行・1 行実行)。**止まった所から続く**: 上から走り直さない。"""
@@ -1139,8 +1165,8 @@ class PyModeController(QtCore.QObject):
             self._prelude_keys = set(sp.prelude_namespace(include_heavy=False)) | {"fs"}
         out = {}
         for k, v in ns.items():
-            if not isinstance(k, str) or k.startswith("_") or type(v).__name__ == "module":
-                continue
+            if type(k) is not str or k.startswith("_") or issubclass(type(v), types.ModuleType):
+                continue                                      # 型だけで決める(メタクラスの __name__ を読まない)
             rec = ns.get("__studio_recorder__")
             if k == "print" or (k == "image" and (v is ns.get("img") or (rec is not None and v is rec.input))):
                 continue                                      # 取り込みの print と img の別名は変数の一覧に出さない
@@ -1325,6 +1351,14 @@ class PyModeController(QtCore.QObject):
             self.ctx.get("show_panel", lambda _n: None)("variables")
 
     def _show_value(self, v):
+        import numpy as np
+        if type(v) is not np.ndarray:
+            # 画面の側(GUI のスレッド)は素の配列だけを受け取る。それ以外(利用者のクラスの物・派生した配列)を表示の
+            # 処理へ渡すと、その ``__class__`` / ``__array__`` などが GUI のスレッドで走る(第 2 回レビュー R1)
+            if v is not None:
+                self._out("ℹ " + self.tr("The shown value is not an image (%s): nothing is displayed")
+                          % sp.describe_value(v)[2])
+            return
         try:
             self.ctx["show_value"](v)
         except Exception as e:                                # noqa: BLE001 -- 表示の失敗で実行の結果を失わない
@@ -1340,7 +1374,8 @@ class PyModeController(QtCore.QObject):
         lab = self.ctx["status"]
         one = " ".join(str(msg).split())
         lab.setText(one if len(one) <= limit else one[:limit - 1] + "\u2026")
-        lab.setToolTip(str(msg))
+        tip = str(msg)                                        # ツールチップにも上限(20 MB の文で画面が数秒止まった)
+        lab.setToolTip(tip if len(tip) <= MAX_TOOLTIP_CHARS else tip[:MAX_TOOLTIP_CHARS] + "\u2026")
 
     def _out(self, text: str):
         if len(text) > MAX_OUTPUT_CHARS:                      # 1 回の書き込みが大きすぎる: 末尾だけ(画面を固めない)

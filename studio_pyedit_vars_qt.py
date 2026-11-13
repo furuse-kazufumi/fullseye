@@ -289,7 +289,7 @@ class ValueTree(QtWidgets.QTreeWidget):
             self._reject(item, str(exc))
             return
         except Exception as exc:                                # noqa: BLE001 — 供給元の失敗も理由つきで断る
-            self._reject(item, "%s: %s" % (type(exc).__name__, exc))
+            self._reject(item, V.safe.exception_text(exc))
             return
         node.value = new
         node.summary = V.summarize(new, self.limits, tr)

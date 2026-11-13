@@ -72,9 +72,64 @@ class _Timeout(BaseException):
 _STUCK: set = set()       # 時間切れになった (型, id)。同じ物の repr を繰り返さない
 
 
+def _env_snapshot() -> tuple:
+    import os
+    try:
+        cwd = os.getcwd()
+    except OSError:
+        cwd = None
+    return dict(os.environ), cwd
+
+
+def _env_restore(snap: tuple) -> bool:
+    """利用者の ``__repr__`` などが変えた環境変数と作業フォルダを、呼ぶ前の値へ戻す。変わっていたら True。"""
+    import os
+    env, cwd = snap
+    changed = False
+    if dict(os.environ) != env:
+        for k in [k for k in os.environ if k not in env]:
+            del os.environ[k]
+        for k, v in env.items():
+            if os.environ.get(k) != v:
+                os.environ[k] = v
+        changed = True
+    try:
+        if cwd is not None and os.getcwd() != cwd:
+            os.chdir(cwd)
+            changed = True
+    except OSError:
+        pass
+    return changed
+
+
+def stray_threads() -> list:
+    """時間切れの後も止まらずに残っている、利用者のコード(``__repr__``・ウォッチの式)のスレッド(生きている物だけ)。
+
+    1 本でも残っている間は、新しいスレッドを起こさない(:func:`run_with_timeout` は ``"busy"`` を返す)。止めの
+    例外が届かずに保留のまま残ると、CPython 3.11 では ``sys.settrace`` の下のコードが約 300 倍遅くなり、次の Debug の
+    実行が何もしなくても時間切れになる(2026-11-13 第 2 回レビュー R5)。Studio は、残っている間は次の実行を始めず、
+    そう知らせる。"""
+    STUCK_THREADS[:] = [t for t in STUCK_THREADS if t.is_alive()]
+    return list(STUCK_THREADS)
+
+
+def _remember_stray(th, snap=None) -> None:
+    STUCK_THREADS.append(th)
+    if snap is not None:                                     # 終わった所で、そのスレッドが変えた環境を戻す
+        def reap():
+            th.join()
+            _env_restore(snap)
+        threading.Thread(target=reap, name="pyedit-reaper", daemon=True).start()
+
+
 def run_with_timeout(fn: Callable, timeout_s: float) -> tuple:
-    """``fn()`` を別スレッドで走らせる。返り値 ``(状態, 値)``: 状態は ``"ok"`` / ``"error"``(値は例外)/ ``"timeout"``。"""
+    """``fn()`` を別スレッドで走らせる。返り値 ``(状態, 値)``: 状態は ``"ok"`` / ``"error"``(値は例外)/
+    ``"timeout"`` / ``"busy"``(前の時間切れのスレッドがまだ残っているので、呼ばなかった)。
+    ``fn`` が変えた環境変数と作業フォルダは、戻った所(残ったなら終わった所)で呼ぶ前の値へ戻す。"""
+    if stray_threads():
+        return "busy", None
     box: dict = {}
+    snap = _env_snapshot()
 
     def target():
         try:
@@ -93,7 +148,12 @@ def run_with_timeout(fn: Callable, timeout_s: float) -> tuple:
         except Exception:                                    # noqa: BLE001
             pass
         th.join(0.05)
+        if th.is_alive():
+            _remember_stray(th, snap)                        # 残った: 数に入れ、終わった所で環境を戻す
+        else:
+            _env_restore(snap)
         return "timeout", None
+    _env_restore(snap)
     if "e" in box:
         return "error", box["e"]
     if box.get("timeout"):
@@ -252,10 +312,10 @@ def _brief(v, lim: Limits) -> str:
         try:
             return _num(float(v)) if v.dtype.kind in "iuf" else str(v.dtype)
         except Exception:                                    # noqa: BLE001
-            return type(v).__name__
-    if t in (list, tuple, set, frozenset, dict):
-        return "%s[%d]" % (t.__name__, _base_len(v))
-    return t.__name__
+            return safe.type_name(v)
+    if safe.tin(t, (list, tuple, set, frozenset, dict)):
+        return "%s[%d]" % (safe.name_of(t), _base_len(v))
+    return safe.name_of(t)
 
 
 def _base_len(v) -> int:
@@ -289,7 +349,7 @@ def summarize(value, limits: Limits = DEFAULT_LIMITS, tr: Callable = _ident) -> 
     try:
         return _summarize(value, lim, tr)
     except Exception as exc:                                 # noqa: BLE001 — 要約の失敗で一覧を落とさない
-        return Summary("error", type_name_of(value), tr("summary failed: %s") % _clip("%s: %s" % (type(exc).__name__, exc), 60),
+        return Summary("error", type_name_of(value), tr("summary failed: %s") % _clip(safe.exception_text(exc), 60),
                        problem="repr_failed")
 
 
@@ -312,7 +372,7 @@ def _summarize(v, lim: Limits, tr) -> Summary:
         return Summary("str", tn, _clip(r, lim.max_text), length=len(v), editable=(t is str),
                        detail="%s: %d" % (tr("length"), len(v)))
     if _isinst(v, (bytes, bytearray)):
-        return Summary("bytes", tn, "%s[%d] %s" % (t.__name__, len(v), v[:12].hex(" ")), length=len(v))
+        return Summary("bytes", tn, "%s[%d] %s" % (safe.name_of(t), len(v), v[:12].hex(" ")), length=len(v))
     if _isinst(v, np.ndarray):
         return _summarize_array(v, lim, tr)
     if _isinst(v, np.generic):
@@ -334,7 +394,7 @@ def _summarize(v, lim: Limits, tr) -> Summary:
             "dict" if _isinst(v, dict) else "list" if _isinst(v, list) else "tuple" if _isinst(v, tuple)
             else "set" if _isinst(v, set) else "frozenset"]
         kind = "dict" if _isinst(v, dict) else "list" if _isinst(v, list) else "tuple" if _isinst(v, tuple) else "set"
-        return Summary(kind, tn, _clip("%s[%d] " % (t.__name__, n) + br % (body + more), lim.max_text),
+        return Summary(kind, tn, _clip("%s[%d] " % (safe.name_of(t), n) + br % (body + more), lim.max_text),
                        length=n, expandable=n > 0)
     if _isinst(v, types.ModuleType):
         return Summary("module", "module", "module " + str(getattr(v, "__name__", "?")))
@@ -357,8 +417,8 @@ def _object_dict(v):
 def _has_default_repr(t: type) -> bool:
     """``__repr__`` を誰も定義していないか(MRO の ``__dict__`` を静的に見る)。"""
     try:
-        for k in type.__getattribute__(t, "__mro__"):
-            if "__repr__" in type.__getattribute__(k, "__dict__"):
+        for k in safe.mro_of(t):
+            if "__repr__" in safe.class_dict(k):
                 return k is object
         return True
     except Exception:                                        # noqa: BLE001
@@ -375,13 +435,16 @@ def _summarize_object(v, lim: Limits, tr, tn: str) -> Summary:
     if key in _STUCK:
         return Summary("object", tn, tr("(repr timed out)"), problem="repr_timeout", expandable=has_children)
     st, val = run_with_timeout(lambda: repr(v), lim.repr_timeout_s)
+    if st == "busy":
+        return Summary("object", tn, tr("(not shown: an earlier value is still running its own code)"),
+                       problem="repr_timeout", expandable=has_children)
     if st == "timeout":
         _STUCK.add(key)
         if len(_STUCK) > 500:
             _STUCK.clear()
         return Summary("object", tn, tr("(repr timed out)"), problem="repr_timeout", expandable=has_children)
     if st == "error":
-        return Summary("object", tn, tr("(repr failed: %s)") % _clip("%s: %s" % (type(val).__name__, val), 50),
+        return Summary("object", tn, tr("(repr failed: %s)") % _clip(safe.exception_text(val), 50),
                        problem="repr_failed", expandable=has_children)
     if not _isinst(val, str):
         return Summary("object", tn, tr("(repr failed: %s)") % "returned non-string", problem="repr_failed")
@@ -391,7 +454,7 @@ def _summarize_object(v, lim: Limits, tr, tn: str) -> Summary:
 
 def _has_slots(t: type) -> bool:
     try:
-        return any("__slots__" in k.__dict__ for k in t.__mro__ if k is not object)
+        return any("__slots__" in safe.class_dict(k) for k in safe.mro_of(t) if k is not object)
     except Exception:                                        # noqa: BLE001
         return False
 
@@ -411,8 +474,8 @@ class Child:
 
 def _slot_names(t: type) -> list:
     out = []
-    for k in t.__mro__:
-        sl = k.__dict__.get("__slots__")
+    for k in safe.mro_of(t):
+        sl = safe.class_dict(k).get("__slots__")
         if sl is None:
             continue
         for n in ([sl] if _isinst(sl, str) else list(sl)):
@@ -433,7 +496,7 @@ def children(value, *, ancestors: Iterable = (), explicit_attrs: Iterable = (), 
 
     if _isinst(value, dict):
         for k, v in itertools.islice(dict.items(value), n):
-            add(_brief(k, limits) if _isinst(k, (str, int, float, bool, tuple, type(None))) else type(k).__name__,
+            add(_brief(k, limits) if _isinst(k, (str, int, float, bool, tuple, type(None))) else safe.type_name(k),
                 ("item", k), v)
         rest = dict.__len__(value) - n
         if rest > 0:
@@ -473,11 +536,11 @@ def children(value, *, ancestors: Iterable = (), explicit_attrs: Iterable = (), 
             if name.startswith("_") and not include_private:
                 continue
             descr = None
-            for kl in t.__mro__:
-                if name in kl.__dict__:
-                    descr = kl.__dict__[name]
+            for kl in safe.mro_of(t):
+                if name in safe.class_dict(kl):
+                    descr = safe.class_dict(kl)[name]
                     break
-            if type(descr).__name__ == "member_descriptor":
+            if safe.type_name(descr) == "member_descriptor":
                 try:
                     add(name, ("attr", name), descr.__get__(value))
                 except AttributeError:
@@ -491,12 +554,12 @@ def children(value, *, ancestors: Iterable = (), explicit_attrs: Iterable = (), 
             else:
                 out.append(Child(name, ("attr", name), None,
                                  note=tr("could not read: %s") % (tr("timed out") if st == "timeout" else
-                                                                  _clip("%s: %s" % (type(v).__name__, v), 50))))
+                                                                  _clip(safe.exception_text(v), 50))))
     return out
 
 
 def _is_atom(v) -> bool:
-    return v is None or type(v) in (int, float, bool, str, complex, bytes)
+    return v is None or safe.tin(type(v), (int, float, bool, str, complex, bytes))
 
 
 def candidate_attributes(value) -> list:
@@ -543,7 +606,7 @@ def resolve_path(ns: Mapping, path: Sequence):
                 cur = d[key]
             else:
                 cur = inspect.getattr_static(cur, key)
-                if type(cur).__name__ == "member_descriptor":
+                if safe.type_name(cur) == "member_descriptor":
                     raise KeyError(key)
         elif kind == "field":
             cur = cur[key]
@@ -564,7 +627,7 @@ def assign_path(ns: dict, path: Sequence, value) -> None:
     try:
         parent = resolve_path(ns, path[:-1])
     except Exception as exc:                                 # noqa: BLE001
-        raise EditError("%s: %s" % (type(exc).__name__, exc)) from exc
+        raise EditError(safe.exception_text(exc)) from exc
     kind, key = path[-1]
     try:
         if kind == "item":
@@ -575,11 +638,11 @@ def assign_path(ns: dict, path: Sequence, value) -> None:
                 d[key] = value
             else:
                 descr = None
-                for kl in type(parent).__mro__:
-                    if key in kl.__dict__:
-                        descr = kl.__dict__[key]
+                for kl in safe.mro_of(type(parent)):
+                    if key in safe.class_dict(kl):
+                        descr = safe.class_dict(kl)[key]
                         break
-                if type(descr).__name__ == "member_descriptor":
+                if safe.type_name(descr) == "member_descriptor":
                     descr.__set__(parent, value)
                 else:
                     raise EditError("not a plain attribute")
@@ -588,7 +651,7 @@ def assign_path(ns: dict, path: Sequence, value) -> None:
     except EditError:
         raise
     except Exception as exc:                                 # noqa: BLE001
-        raise EditError("%s: %s" % (type(exc).__name__, exc)) from exc
+        raise EditError(safe.exception_text(exc)) from exc
 
 
 @runtime_checkable
@@ -622,7 +685,7 @@ def namespace_items(snap) -> list:
 # --------------------------------------------------------------------------- #
 def is_editable(value) -> bool:
     t = type(value)
-    if t in (bool, int, float, str):
+    if safe.tin(t, (bool, int, float, str)):
         return True
     return _isinst(value, (np.bool_, np.integer, np.floating))
 
@@ -655,7 +718,7 @@ def parse_edit(text: str, current, tr: Callable = _ident):
             return iv
         info = np.iinfo(t)
         if not (info.min <= iv <= info.max):
-            raise EditError(tr("out of range for %s: %d..%d") % (t.__name__, info.min, info.max))
+            raise EditError(tr("out of range for %s: %d..%d") % (safe.name_of(t), info.min, info.max))
         return t(iv)
     try:
         fv = float(s)
@@ -672,8 +735,8 @@ def parse_edit(text: str, current, tr: Callable = _ident):
 def fingerprint(v) -> tuple:
     """値の小さな指紋(変わったかの判定用)。大きな配列は標本で見る。利用者のコードは呼ばない。"""
     t = type(v)
-    if v is None or t in (bool, int, float, complex):
-        return (t.__name__, v if t is not float or v == v else "nan")
+    if v is None or safe.tin(t, (bool, int, float, complex)):
+        return (safe.name_of(t), v if t is not float or v == v else "nan")
     if _isinst(v, str):
         return ("str", len(v), zlib.adler32(v[:20000].encode("utf-8", "replace")), hash(v[-64:]))
     if _isinst(v, (bytes, bytearray)):
@@ -688,12 +751,12 @@ def fingerprint(v) -> tuple:
     if _isinst(v, (list, tuple, dict, set, frozenset)):
         items = _items_of(v, 32)
         if _isinst(v, dict):
-            sub = tuple((repr(k)[:40] if type(k) in (str, int) else type(k).__name__, _fp_brief(x)) for k, x in items)
+            sub = tuple((repr(k)[:40] if safe.tin(type(k), (str, int)) else safe.type_name(k), _fp_brief(x)) for k, x in items)
         else:
             sub = tuple(_fp_brief(x) for x in items)
-        return (t.__name__, _base_len(v), sub)
+        return (safe.name_of(t), _base_len(v), sub)
     if _isinst(v, (types.ModuleType, types.FunctionType, type)):
-        return (t.__name__, id(v))
+        return (safe.name_of(t), id(v))
     d = _object_dict(v)
     if d is not None:
         return (type_name_of(v), tuple((k, _fp_brief(x)) for k, x in itertools.islice(dict.items(d), 16)))
@@ -702,15 +765,15 @@ def fingerprint(v) -> tuple:
 
 def _fp_brief(v) -> tuple:
     t = type(v)
-    if v is None or t in (bool, int, float):
-        return (t.__name__, v if t is not float or v == v else "nan")
+    if v is None or safe.tin(t, (bool, int, float)):
+        return (safe.name_of(t), v if t is not float or v == v else "nan")
     if _isinst(v, str):
         return ("str", len(v), hash(v[:200]))
     if _isinst(v, np.ndarray):
         return ("nd", v.shape, v.dtype.str, zlib.adler32(np.ascontiguousarray(_sample(v, 256)[0]).tobytes())
                 if v.dtype.kind in "biufc" and v.size else 0)
     if _isinst(v, (list, tuple, dict, set, frozenset)):
-        return (t.__name__, _base_len(v))
+        return (safe.name_of(t), _base_len(v))
     return (type_name_of(v),)
 
 
@@ -897,11 +960,13 @@ class WatchEvaluator:
         return st, val, (time.perf_counter() - t0) * 1000.0
 
     def _error_text(self, st: str, val) -> str:
+        if st == "busy":
+            return self.tr("(not shown: an earlier value is still running its own code)")
         if st == "timeout":
             return self.tr("timed out (over %d ms)") % int(self.timeout_s * 1000)
         if _isinst(val, SyntaxError):
             return self.tr("syntax error: %s") % _clip(str(val.msg or val), 80)
-        return "%s: %s" % (type(val).__name__, _clip(str(val), 100))
+        return _clip(safe.exception_text(val, 100), 130)       # 利用者の例外の __str__ は呼ばない
 
     def evaluate(self, expr: str) -> WatchResult:
         st, val, ms = self._eval(expr)
@@ -922,7 +987,7 @@ class WatchEvaluator:
         try:
             hit = bool(val)
         except Exception as exc:                             # noqa: BLE001
-            return ConditionResult(False, False, "%s: %s" % (type(exc).__name__, _clip(str(exc), 80)))
+            return ConditionResult(False, False, _clip(safe.exception_text(exc, 80), 110))
         return ConditionResult(True, hit, None)
 
     def reset_changes(self) -> None:
@@ -965,6 +1030,10 @@ class WatchJob:
             code = compile(src, "<watch>", "eval")
         except SyntaxError as exc:
             self.result = WatchResult(expr, False, error=evaluator._error_text("syntax", exc))
+            return
+        if stray_threads():                            # 前の時間切れのスレッドが残っている間は、新しく起こさない
+            self.result = WatchResult(expr, False, stuck=True,
+                                      error=evaluator.tr("(not shown: an earlier value is still running its own code)"))
             return
         g = evaluator.namespace()                      # 名前空間の写しは UI スレッドで取る(辞書の反復中の変更を避ける)
         g.setdefault("__builtins__", builtins)

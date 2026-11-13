@@ -49,6 +49,7 @@ __all__ = [
     "fingerprint", "describe_value", "pipeline_search_dirs", "close_program_windows", "needs_gui_thread",
     "Problem", "check_program", "checker_backends", "complete", "hover", "apply_fix", "CONFIGS",
     "run_file", "evaluate", "STARTER_PROGRAM", "STARTER_PROGRAMS", "starter_program", "abandoned_runs",
+    "program_threads",
 ]
 
 SYNTAX_PYTHON = "python"
@@ -392,6 +393,30 @@ def _is(v, cls) -> bool:
     return issubclass(type(v), cls)
 
 
+def _tname(t) -> str:
+    """型の名前(``type`` 自身の読み出しで。メタクラスの ``__name__`` のプロパティ = 利用者のコードを通さない)。"""
+    try:
+        n = type.__dict__["__name__"].__get__(t)     # type.__getattribute__ はメタクラスのプロパティを拾う
+        return n if type(n) is str else "object"
+    except Exception:                                # noqa: BLE001
+        return "object"
+
+
+def _tin(t, types_) -> bool:
+    """*t* が *types_* のどれかと**同一**か。``t in (int, float)`` は ``==`` を呼ぶので、メタクラスの ``__eq__``
+    (利用者のコード)が走る。同一性だけで比べる。"""
+    for x in types_:
+        if t is x:
+            return True
+    return False
+
+
+#: 例外の属性は、型の記述子で直接読む(利用者の例外クラスの ``__getattribute__`` を通さない)。
+_EXC_TRACEBACK = BaseException.__dict__["__traceback__"]
+_EXIT_CODE = SystemExit.__dict__["code"]
+_IMPORT_NAME = ImportError.__dict__["name"]
+
+
 def _numpy_type(t) -> bool:
     """numpy 自身が定義した型か(利用者が派生した配列・スカラはメソッドを差し替えられるので別扱い)。"""
     try:
@@ -414,7 +439,7 @@ def _kind_of(v, rec: "Recorder | None" = None) -> str:
         return "int"
     if _is(v, (float, np.floating)):
         return "float"
-    return type(v).__name__
+    return _tname(type(v))
 
 
 def _shape_of(v):
@@ -874,7 +899,11 @@ def _op(name, *args, a=None, b=None):
 
 
 def _show(x):
-    """*x* を最後に画面へ出す値にする(最後の ``show`` が勝つ)。*x* を返す。"""
+    """*x* を最後に画面へ出す値にする(最後の ``show`` が勝つ)。*x* を返す。matplotlib の図(Figure)は、
+    Agg で描いた画像にして出す(窓は開かない)。"""
+    if _is_mpl_figure(x):
+        active_recorder().show(_figure_to_array(x))
+        return x
     return active_recorder().show(x)
 
 
@@ -1081,10 +1110,10 @@ def _safe_text(v, depth: int = 0) -> str | None:
     if t is str or t is bytes:
         return repr(v) if len(v) <= _SUMMARY_CHARS else None
     if _is(v, np.generic) and _numpy_type(t):
-        return repr(v.item()) if v.dtype.kind in "biuf" else "<%s>" % t.__name__
+        return repr(v.item()) if v.dtype.kind in "biuf" else "<%s>" % _tname(t)
     if t is np.ndarray:
         return "<ndarray %s>" % "×".join(str(s) for s in v.shape)
-    if t in _PLAIN_CONTAINERS:
+    if _tin(t, _PLAIN_CONTAINERS):
         if depth >= 2 or len(v) > _SUMMARY_ITEMS:
             return None
         if t is dict:
@@ -1106,7 +1135,7 @@ def _safe_text(v, depth: int = 0) -> str | None:
         if not parts:
             return "set()" if t is set else "frozenset()"
         return "{%s}" % body if t is set else "frozenset({%s})" % body
-    return "<%s>" % t.__name__
+    return "<%s>" % _tname(t)
 
 
 def describe_value(v, rec: Recorder | None = None) -> tuple:
@@ -1124,25 +1153,25 @@ def describe_value(v, rec: Recorder | None = None) -> tuple:
         if a.size <= 16 and a.dtype.kind in "biufc":                      # object の配列は要素の repr を呼ぶので書かない
             return kind, shape, "%s %s %s" % (kind, dims, np.array2string(a, precision=4, threshold=16))
         return kind, shape, "%s %s %s" % (kind, dims, a.dtype)
-    if v is None or t in (bool, int, float) or (_is(v, np.generic) and _numpy_type(t)):
-        return kind, None, _safe_text(v) or t.__name__
+    if v is None or t is bool or t is int or t is float or (_is(v, np.generic) and _numpy_type(t)):
+        return kind, None, _safe_text(v) or _tname(t)
     if t is str:
         r = repr(v[:_SUMMARY_CHARS + 1])                                   # 長い文字列の全文の repr は作らない
         return kind, None, r if len(v) <= _SUMMARY_CHARS and len(r) <= _SUMMARY_CHARS else r[:57] + "…'"
     if _is(v, _PLAIN_CONTAINERS):
         base = next(b for b in _PLAIN_CONTAINERS if _is(v, b))
-        head = "%s[%d]" % (t.__name__, base.__len__(v))                    # 派生した型の __len__ は呼ばない
-        r = _safe_text(v) if t in _PLAIN_CONTAINERS else None
+        head = "%s[%d]" % (_tname(t), base.__len__(v))                     # 派生した型の __len__ は呼ばない
+        r = _safe_text(v) if _tin(t, _PLAIN_CONTAINERS) else None
         return kind, None, head + (" " + r if r is not None and len(r) <= _SUMMARY_CHARS else "")
     if t is Pipeline:
         return "pipeline", None, "%s: %s" % (v.name, " → ".join(s[0] for s in v.stages))
-    if t in (types.FunctionType, types.BuiltinFunctionType, types.MethodType):
+    if t is types.FunctionType or t is types.BuiltinFunctionType or t is types.MethodType:
         return "function", None, v.__name__
     if _is(v, type):
-        return "function", None, type.__getattribute__(v, "__name__")
+        return "function", None, _tname(v)
     if callable(v):
-        return "function", None, t.__name__
-    return kind, None, t.__name__
+        return "function", None, _tname(t)
+    return kind, None, _tname(t)
 
 
 @dataclass
@@ -1387,6 +1416,33 @@ def _hdev_run(text: str, image, names, result: ProgramResult, current_stages) ->
     return result
 
 
+#: 例外の文の上限(文字)。越えた分は切って、切った事を書く(20 MB の文が状態の欄やツールチップに入らない)。
+MAX_ERROR_CHARS = 2000
+#: 実行の後で結果を文字にする処理(例外の文・終了コード・変数の表)の時間の上限(秒)。作業スレッドの中・
+#: 見張りの内側で行い、越えたら止めの例外を撃つ(利用者の ``__str__`` が戻らなくても実行は終わる)。
+_DESCRIBE_LIMIT_S = 2.0
+
+
+def _clip_text(s: str, limit: int | None = None) -> str:
+    """長い文を *limit* 文字で切り、切った文字数を書く。"""
+    limit = MAX_ERROR_CHARS if limit is None else limit
+    if len(s) <= limit:
+        return s
+    return s[:limit] + " … (%d more characters)" % (len(s) - limit)
+
+
+def _exception_text(e) -> str:
+    """例外の文(``str(e)``)。**利用者のコードを呼ぶ唯一の所**(``__str__``、引数の ``__repr__``)なので、必ず作業
+    スレッドの中・見張りの内側から呼ぶこと。戻らなければ見張りが止めの例外を撃ち、型の名前だけの文になる。"""
+    try:
+        s = str(e)
+        return _clip_text(s) if type(s) is str else "<%s>" % _tname(type(e))
+    except ProgramStopped:
+        return "<the text of this %s is not available: its __str__ did not return in time>" % _tname(type(e))
+    except BaseException as x:                       # noqa: BLE001 -- __str__ の中の誤り
+        return "<the text of this %s is not available: its __str__ raised %s>" % (_tname(type(e)), _tname(type(x)))
+
+
 #: 止めの例外を撃ってから、戻らなければ諦めるまでの秒数(呼び出し側を永久に待たせない)。
 _STOP_GRACE_S = 1.0
 #: 撃ち直しの間隔と上限回数(`except BaseException` で握りつぶすループ対策)。
@@ -1438,17 +1494,222 @@ ABANDONED_BLOCKS_RUN = ("not run: an earlier run could not be stopped and is sti
                         "or restart Studio")
 
 
-def _restore_when_done(thread, snapshot) -> None:
+#: 変数・ウォッチの欄が利用者のコード(``__repr__``・式)のために起こして、時間切れの後も残っているスレッドがある間に、
+#: 次の実行を断る時の文(``%d`` = 残っている数)。止めの例外が保留のまま残ると、``sys.settrace`` の下の実行(Debug)が
+#: 約 300 倍遅くなり、何もしないプログラムが時間切れになる(CPython 3.11。2026-11-13 第 2 回レビュー R5)。
+STRAY_BLOCKS_RUN = ("not run: a value shown in the Variables or Watch panel is still running its own code in the "
+                    "background (%d) — wait until it ends or restart Studio")
+
+
+def _stray_value_threads() -> int:
+    """``studio_pyedit_values`` が残したスレッドの数(読み込まれていなければ 0。ここからは import しない)。"""
+    mod = sys.modules.get("studio_pyedit_values")
+    try:
+        return len(mod.stray_threads()) if mod is not None else 0
+    except Exception:                                # noqa: BLE001
+        return 0
+
+
+def _restore_when_done(entry, snapshot, guard=None) -> None:
     """止められずに残した実行が終わった所で、プロセスの状態をもう一度戻す(残った実行は、諦めて戻した**後**にも
     環境変数や作業フォルダを書き換える。2026-11-13 レビュー H3)。その間、次の実行は始めない
-    (:data:`ABANDONED_BLOCKS_RUN`)ので、戻す相手は必ずこの実行の前の状態。"""
+    (:data:`ABANDONED_BLOCKS_RUN`)ので、戻す相手は必ずこの実行の前の状態。
+
+    *entry* = ``_ABANDONED`` の行。**戻し終えるまで**を「残っている」に数える(行のスレッドを、この後始末の
+    スレッドに差し替える)。残した実行のスレッドが終わった瞬間に次の実行を通すと、その実行の途中で状態と import の
+    見張りが戻されてしまう。"""
+    thread = entry["thread"]
+
     def body():
         thread.join()
         try:
             snapshot.restore()
+            if guard is not None:
+                guard.uninstall()
         except Exception:                            # noqa: BLE001 -- 見張りのスレッドを落とさない
             pass
-    threading.Thread(target=body, name="studio-program-late-restore", daemon=True).start()
+    reaper = threading.Thread(target=body, name="studio-program-late-restore", daemon=True)
+    reaper.start()
+    entry["thread"] = reaper                         # 始めてから差し替える(始める前は is_alive() が偽で、行が消される)
+
+
+#: 作業スレッドからの import を断る GUI の部品(Qt の束ね・tkinter)。Qt の窓は GUI(main)スレッドでしか作れない。
+GUI_TOOLKIT_MODULES = ("PySide6", "PySide2", "PyQt5", "PyQt6", "shiboken6", "pyqtgraph", "qtpy", "tkinter", "_tkinter", "wx")
+#: matplotlib の、窓を出す backend の名前に入る語(``matplotlib.backends.backend_qtagg`` など)。
+_MPL_GUI_BACKEND_WORDS = ("qt", "tk", "wx", "gtk", "macosx", "webagg", "nbagg")
+GUI_IMPORT_REFUSED = ("Studio does not let a running program import %s: GUI toolkits (Qt, tkinter, the interactive "
+                      "matplotlib backends) only work on Studio's own GUI thread — draw with matplotlib as usual; "
+                      "plt.show() and show(fig) put the figure in the image pane")
+MPL_SHOWN_NOTE = "plt.show(): the figure was put in the image pane (a program does not open windows in Studio)"
+
+
+def _figure_to_array(fig):
+    """matplotlib の図を画像の配列(H×W×3、0..1 の float)にする(Agg で描く。窓は作らない)。"""
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    canvas = fig.canvas if type(fig.canvas) is FigureCanvasAgg else FigureCanvasAgg(fig)
+    canvas.draw()
+    rgba = np.asarray(canvas.buffer_rgba())
+    return np.ascontiguousarray(rgba[..., :3]).astype(np.float64) / 255.0
+
+
+def _is_mpl_figure(x) -> bool:
+    t = type(x)
+    try:
+        mod = type.__dict__["__module__"].__get__(t)
+    except Exception:                                # noqa: BLE001
+        return False
+    return type(mod) is str and mod.split(".")[0] == "matplotlib" and _tname(t) in ("Figure", "SubFigure")
+
+
+class _ImportGuard:
+    """実行の間だけ効く見張り(設計書 §15、2026-11-13 第 2 回レビュー R3):
+
+    * **プログラムの作業スレッド**からの GUI の部品(:data:`GUI_TOOLKIT_MODULES`、matplotlib の窓を出す backend)の
+      import を ``ImportError`` で断る。``import`` 文・``__import__``・``importlib.import_module``・``exec`` した
+      文字列の中の import、ライブラリ(matplotlib)の中からの import を拾う。``sys.modules`` から直接引く道と、
+      プログラムが起こした別のスレッドは拾えない(既知の制約)。他のスレッド(Studio の GUI)の import は通す。
+    * matplotlib は Agg(窓を出さない)で動かし、``plt.show()`` は今の図を画像の欄へ出す。
+
+    Studio は PySide6 を読み込み済みなので、何もしないと matplotlib は QtAgg を選び、``plt.show()`` の 1 行が
+    作業スレッドで Qt の窓を作る(図を閉じた所で Studio 全体が固まった)。"""
+
+    def __init__(self, recorder):
+        self.rec = recorder
+        self.tid = None                              # プログラムの作業スレッド(body の先頭で入れる)
+        self.orig_import = None
+        self.orig_import_module = None
+        self.plt_show = None                         # (pyplot, 元の show, 差し替えた show)
+        self.mpl_env = None
+        self.shown_figures = 0
+
+    # ---- 断る名前 ----
+    @staticmethod
+    def refused(name) -> bool:
+        if type(name) is not str:
+            return False
+        if name.split(".")[0] in GUI_TOOLKIT_MODULES:
+            return True
+        if name.startswith("matplotlib.backends.backend_"):
+            tail = name[len("matplotlib.backends.backend_"):].lower()
+            return any(w in tail for w in _MPL_GUI_BACKEND_WORDS)
+        return False
+
+    def _check(self, name):
+        if self.refused(name):
+            raise ImportError(GUI_IMPORT_REFUSED % name)
+
+    # ---- 付ける・外す(呼び出し側のスレッド) ----
+    def install(self):
+        import importlib
+        guard = self
+        self.orig_import = builtins.__import__
+        self.orig_import_module = importlib.import_module
+
+        def guarded_import(name, globals=None, locals=None, fromlist=(), level=0):
+            mine = threading.get_ident() == guard.tid
+            if mine and not level:
+                guard._check(name)
+                for sub in (fromlist or ()):         # from matplotlib.backends import backend_qtagg
+                    if type(sub) is str:
+                        guard._check("%s.%s" % (name, sub))
+            mod = guard.orig_import(name, globals, locals, fromlist, level)
+            if mine:
+                guard._after_import()
+            return mod
+
+        def guarded_import_module(name, package=None):
+            mine = threading.get_ident() == guard.tid
+            if mine and type(name) is str and not name.startswith("."):
+                guard._check(name)
+            mod = guard.orig_import_module(name, package)
+            if mine:
+                guard._after_import()
+            return mod
+
+        builtins.__import__ = guarded_import
+        importlib.import_module = guarded_import_module
+        self._mine = (guarded_import, guarded_import_module)
+        # matplotlib: 窓を出さない backend に固定する(利用者の環境の MPLBACKEND=QtAgg も、実行の間だけ Agg にする。
+        # 写し(_GlobalState)はこの後に取るので、戻しはこの値を保ち、外す時(uninstall)に実行の前の値へ戻す)
+        self.mpl_env = os.environ.get("MPLBACKEND")
+        os.environ["MPLBACKEND"] = "Agg"
+        mpl = sys.modules.get("matplotlib")
+        if mpl is not None:
+            try:
+                plt = sys.modules.get("matplotlib.pyplot")
+                now = dict.__getitem__(mpl.rcParams, "backend")       # 自動の選択を起こさずに今の設定だけ読む
+                if (plt is None or not plt.get_fignums()) and not (type(now) is str and now.lower() == "agg"):
+                    mpl.use("Agg", force=True)
+            except Exception:                        # noqa: BLE001 -- matplotlib の都合で実行を止めない
+                pass
+        self._after_import()
+
+    def uninstall(self):
+        import importlib
+        if self.orig_import is not None and builtins.__import__ is self._mine[0]:
+            builtins.__import__ = self.orig_import
+        if self.orig_import_module is not None and importlib.import_module is self._mine[1]:
+            importlib.import_module = self.orig_import_module
+        if self.plt_show is not None:
+            plt, orig, mine = self.plt_show
+            if getattr(plt, "show", None) is mine:
+                plt.show = orig
+            self.plt_show = None
+        if self.orig_import is not None:             # 実行の間だけの MPLBACKEND=Agg を、実行の前の値へ
+            if self.mpl_env is None:
+                os.environ.pop("MPLBACKEND", None)
+            else:
+                os.environ["MPLBACKEND"] = self.mpl_env
+            self.orig_import = None
+
+    # ---- matplotlib の show ----
+    def _after_import(self):
+        if self.plt_show is not None:
+            return
+        plt = sys.modules.get("matplotlib.pyplot")
+        if plt is None or not hasattr(plt, "show") or not hasattr(plt, "get_fignums"):
+            return
+        guard = self
+        orig = plt.show
+
+        def show(*args, **kwargs):
+            """Studio の中の ``plt.show()``: 窓は開かず、今の図を画像の欄へ出す(Studio の ``show(fig)`` と同じ)。"""
+            if threading.get_ident() != guard.tid:
+                return orig(*args, **kwargs)
+            nums = plt.get_fignums()
+            if not nums:
+                return None
+            guard.rec.show(_figure_to_array(plt.gcf()))
+            guard.shown_figures += 1
+            return None
+        plt.show = show
+        self.plt_show = (plt, orig, show)
+
+
+def _program_threads_alive(before: set) -> list:
+    """実行の前(*before* = その時のスレッドの集合)には無く、今も生きているスレッド(プログラムが起こした物)。
+    Studio 自身の作業用のスレッド(名前が ``studio-`` / ``pyedit-`` で始まる物)は数えない。"""
+    out = []
+    for th in threading.enumerate():
+        if th in before or not th.is_alive() or th is threading.current_thread():
+            continue
+        if str(th.name).startswith(("studio-", "pyedit-")):
+            continue
+        out.append(th)
+    return out
+
+
+#: プログラムが起こして、実行の後も動いているスレッド(生きている物だけ残す)。``program_threads()`` で一覧。
+_PROGRAM_THREADS: list = []
+PROGRAM_THREADS_NOTE = ("the program started %d thread(s) that are still running after it ended: %s — they keep "
+                        "running in Studio and can change files, the environment and the working folder; what "
+                        "they change is not restored")
+
+
+def program_threads() -> list:
+    """前の実行のプログラムが起こして、まだ動いているスレッドの名前の一覧。"""
+    _PROGRAM_THREADS[:] = [t for t in _PROGRAM_THREADS if t.is_alive()]
+    return [str(t.name) for t in _PROGRAM_THREADS]
 
 
 def _first_qt_import_line(text: str) -> int:
@@ -1478,9 +1739,11 @@ def _run_with_watchdog(fn, outcome: dict, deadline, stop_event, in_caller: bool,
         done = threading.Event()
 
         def watch():
-            shot_at, shots, last = None, 0, 0.0
+            shot_at, shots, last, phase = None, 0, 0.0, None
             while not done.wait(0.02):
-                exc = _due(deadline, stop_event, clock)
+                if outcome.get("phase") != phase:    # 実行 → 結果を文字にする段: 撃った数と諦めるまでの時間を数え直す
+                    shot_at, shots, last, phase = None, 0, 0.0, outcome.get("phase")
+                exc = _due(deadline, stop_event, clock, outcome)
                 if exc is None:
                     continue
                 now = time.perf_counter()
@@ -1509,12 +1772,14 @@ def _run_with_watchdog(fn, outcome: dict, deadline, stop_event, in_caller: bool,
             threading.stack_size(old)
         except (ValueError, RuntimeError):
             pass
-    shot_at, shots, last = None, 0, 0.0
+    shot_at, shots, last, phase = None, 0, 0.0, None
     while th.is_alive():
         th.join(0.02)
         if not th.is_alive():
             break
-        exc = _due(deadline, stop_event, clock)
+        if outcome.get("phase") != phase:            # 実行 → 結果を文字にする段: 撃った数と諦めるまでの時間を数え直す
+            shot_at, shots, last, phase = None, 0, 0.0, outcome.get("phase")
+        exc = _due(deadline, stop_event, clock, outcome)
         if exc is None:
             continue
         now = time.perf_counter()
@@ -1529,9 +1794,14 @@ def _run_with_watchdog(fn, outcome: dict, deadline, stop_event, in_caller: bool,
     return False
 
 
-def _due(deadline, stop_event, clock=None):
+def _due(deadline, stop_event, clock=None, outcome=None):
     """今撃つべき止めの例外(無ければ None)。ブレークポイントで待っている間(*clock*.paused)は時間切れを
-    撃たず、待っていた時間は上限に数えない。止める要求は待っている間も撃つ(待ちから起きた所で届く)。"""
+    撃たず、待っていた時間は上限に数えない。止める要求は待っている間も撃つ(待ちから起きた所で届く)。
+    プログラムが終わって結果を文字にする段(``outcome["phase"] == "describe"``)は、その段の上限だけを見る
+    (プログラムの時間切れ・止める要求でこの段を撃たない。撃つと結果の文が作れない)。"""
+    if outcome is not None and outcome.get("phase") == "describe":
+        dl = outcome.get("describe_deadline")
+        return _AsyncTimeLimit if dl is not None and time.perf_counter() > dl else None
     if stop_event is not None and stop_event.is_set():
         return _AsyncStopRequested
     if clock is not None and clock.paused:
@@ -1700,8 +1970,8 @@ def evaluate(source: str, namespace, *, trusted: bool = True, time_limit_s: floa
             box["value"], box["err"] = None, "stopped: %s" % ("time limit" if e.reason == "time_limit" else "on request")
         except BaseException as e:                   # noqa: BLE001 -- 行番号つきで返す
             box["value"] = None
-            box["err"] = "line %d: %s: %s" % (_err_line_from_tb(e.__traceback__, "<studio-console>") or 1,
-                                               type(e).__name__, e)
+            box["err"] = "line %d: %s: %s" % (_err_line_from_tb(_EXC_TRACEBACK.__get__(e), "<studio-console>") or 1,
+                                               _tname(type(e)), _exception_text(e))
         finally:
             try:
                 _ACTIVE.reset(token)
@@ -1866,7 +2136,7 @@ def _variables(ns: dict, base: dict, rec: Recorder) -> tuple:
             continue
         if k in base and base[k] is v:
             continue                                 # 前置きの名前(書き換えていない物)
-        if type(v).__name__ == "module":
+        if _is(v, types.ModuleType):
             continue
         kind, shape, summ = describe_value(v, rec)
         rows.append(VarInfo(k, kind, shape, summ))
@@ -1937,6 +2207,11 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
         result.not_run_reason = ABANDONED_BLOCKS_RUN % len(left)
         result.errors = [result.not_run_reason]
         return result
+    stray = _stray_value_threads()
+    if stray:                                        # 変数の欄の __repr__ のスレッドが残っている間も始めない(R5)
+        result.not_run_reason = STRAY_BLOCKS_RUN % stray
+        result.errors = [result.not_run_reason]
+        return result
     if GUI_BRIDGE is None and threading.current_thread() is not threading.main_thread() and needs_gui_thread(text):
         # Qt の窓は GUI(main)スレッドでしか作れない。橋(GUI_BRIDGE)が無いまま作業スレッドで走らせると
         # 未定義の動作になる(「ran」と報告しない。2026-11-13 レビュー M1)。
@@ -1993,13 +2268,21 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
     # Studio 本体や他のスレッドの出力まで取り込んでしまう)。file= を渡した print はそのまま。
     ns["print"] = _capture_print(out)
     hits0 = memo.hits if memo is not None else 0
+    in_caller = needs_gui_thread(text) and threading.current_thread() is threading.main_thread()
+    # GUI の部品の import の見張りは、プログラムを作業スレッドで回す時だけ(橋があれば、窓は橋が GUI スレッドで作る)
+    guard = _ImportGuard(rec) if (GUI_BRIDGE is None and not in_caller) else None
+    if guard is not None:
+        guard.install()                              # 写しを取る前に付ける(戻しの後で自分で外す)
     snapshot = _GlobalState.take()
+    threads_before = set(threading.enumerate())
     path_token = _push_sys_path(user_dirs)
     outcome: dict = {}
     t0 = time.perf_counter()
 
     def body():
         """作業スレッドの中身: contextvar・settrace はこのスレッドだけに付ける。"""
+        if guard is not None:
+            guard.tid = threading.get_ident()
         token = _ACTIVE.set(rec)
         try:
             if not release:
@@ -2012,9 +2295,10 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
             outcome["kind"] = "ok"
         except ProgramStopped as e:
             outcome.update(kind="stopped", reason=e.reason,
-                           line=e.line or _err_line_from_tb(e.__traceback__, code_name) or 0)
+                           line=e.line or _err_line_from_tb(_EXC_TRACEBACK.__get__(e), code_name) or 0)
         except SystemExit as e:
-            outcome.update(kind="exit", code=e.code, line=_err_line_from_tb(e.__traceback__, code_name) or 0)
+            outcome.update(kind="exit", code=_EXIT_CODE.__get__(e),
+                           line=_err_line_from_tb(_EXC_TRACEBACK.__get__(e), code_name) or 0)
         except BaseException as e:                   # noqa: BLE001 -- 行番号つきで返す(KeyboardInterrupt も)
             outcome.update(kind="error", exc=e)
         finally:
@@ -2023,15 +2307,66 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
             except BaseException:                    # noqa: BLE001 -- 遅れて届いた止めの例外
                 pass
 
+    def describe_once() -> dict:
+        """結果を文字にする(作業スレッド・見張りの内側)。利用者のコードを呼びうるのは :func:`_exception_text` だけ。"""
+        texts: dict = {}
+        kind_ = outcome.get("kind")
+        if kind_ == "exit":
+            code_ = outcome.get("code")
+            texts["code"] = _safe_text(code_) or "<%s>" % _tname(type(code_))
+        elif kind_ == "error":
+            e = outcome["exc"]
+            tb = _EXC_TRACEBACK.__get__(e)
+            texts["type"] = _tname(type(e))
+            texts["where"] = _err_location(tb, code_name, user_dirs)
+            texts["line"] = _err_line_from_tb(tb, code_name) or 0
+            if _is(e, ModuleNotFoundError):
+                name = _IMPORT_NAME.__get__(e)
+                texts["missing"] = name.split(".")[0] if type(name) is str and name else None
+            if "exc_text" not in outcome:            # やり直しになっても __str__ は 1 回しか呼ばない
+                outcome["exc_text"] = "<the text of this %s is not available>" % texts["type"]
+                outcome["exc_text"] = _exception_text(e)
+                # ここから先は利用者のコードを呼ばない: 残りの分の時間を取り直す(__str__ が上限を使い切っていても表は作る)
+                outcome["describe_deadline"] = time.perf_counter() + _DESCRIBE_LIMIT_S
+            texts["text"] = outcome["exc_text"]
+        filled = ProgramResult(syntax=syn, config=config)
+        fill(filled)
+        texts["filled"] = filled
+        return texts
+
+    def describe():
+        """プログラムが終わった後、**結果を文字にする処理の全部**をここ(作業スレッド・見張りの内側・上限つき)で
+        済ませる。呼び出し側(GUI)は出来上がった str と表だけを受け取り、利用者の値には触らない
+        (2026-11-13 第 2 回レビュー R1: 例外の ``__str__``・``sys.exit(obj)`` の ``__repr__``・メタクラスの
+        ``__eq__`` / ``__name__``・``__class__`` のプロパティが、見張りの外で上限なしに呼ばれていた)。"""
+        outcome["phase"] = "describe"               # 先に段を切り替える(見張りがプログラムの時間切れで撃つのをやめる)
+        outcome.setdefault("describe_deadline", time.perf_counter() + _DESCRIBE_LIMIT_S)
+        for _attempt in range(4):                    # 遅れて届いた止めの例外で途中から抜けたら、作り直す
+            try:
+                outcome["texts"] = describe_once()
+                break
+            except BaseException:                    # noqa: BLE001 -- 止めの例外・思わぬ誤り
+                if time.perf_counter() > outcome["describe_deadline"]:
+                    break
+        outcome["phase"] = "done"
+
     def guarded():
         try:
             body()
         except BaseException:                        # noqa: BLE001 -- body の外で届いた止めの例外は捨てる
             outcome.setdefault("kind", "stopped")
+        for _attempt in range(4):                    # 段の切り替えの前後に届いた止めの例外では、やり直す
+            try:
+                describe()
+                break
+            except BaseException:                    # noqa: BLE001
+                continue
+        outcome["phase"] = "done"
 
-    def fill(res: ProgramResult, live: bool = False) -> None:
+    def fill(res: ProgramResult, live: bool = False, values: bool = True) -> None:
         """実行の状態を *res* へ写す(終わった時の結果と、止まって待つ時の途中の結果で同じ)。*live* = 途中:
-        記録は写しを渡す(続きの実行が足しても、渡した結果は変わらない)。"""
+        記録は写しを渡す(続きの実行が足しても、渡した結果は変わらない)。型の判定は同一性だけ(利用者のコードを
+        呼ばない)。*values* = False: 値に触らない(結果を文字にする段が終わらなかった時の最小の埋め方)。"""
         res.elapsed_s = time.perf_counter() - t0 - clock.paused_s
         res.lines_run = tracer.lines
         res.notes.extend(tracer.notes)
@@ -2041,11 +2376,12 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
         res.clamped = rec.clamped
         res.directives = rec.directives
         res.windows = rec.windows
-        res.output, res.output_source = rec.output()
-        res.output_sort = rec.sort_of(res.output) if isinstance(res.output, np.ndarray) else _kind_of(res.output)
-        res.variables, res.values = _variables(ns, base, rec)
-        if keep_namespace:
-            res.namespace = ns
+        if values:
+            res.output, res.output_source = rec.output()
+            res.output_sort = rec.sort_of(res.output) if _is(res.output, np.ndarray) else _kind_of(res.output)
+            res.variables, res.values = _variables(ns, base, rec)
+            if keep_namespace:
+                res.namespace = ns
         res.memo_hits = (memo.hits - hits0) if memo is not None else 0
 
     def on_pause(reason, ln, frame):
@@ -2067,7 +2403,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
     deadline = None if time_limit_s is None else t0 + time_limit_s
     if not release and deadline is not None:
         deadline += _WATCHDOG_DEBUG_SLACK_S          # Debug は行フックが先に止める(行番号つきの文)。見張りは保険
-    if needs_gui_thread(text) and threading.current_thread() is threading.main_thread():
+    if in_caller:
         # Qt を直接使うプログラムは GUI(main)スレッドで回す(設計書 §15 の案 C)。見張りは別スレッドから撃つ
         abandoned = _run_with_watchdog(guarded, outcome, deadline, stop_event, in_caller=True, clock=clock)
     else:
@@ -2076,6 +2412,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
         abandoned = _run_with_watchdog(guarded, outcome, deadline, stop_event, in_caller=False, clock=clock)
     result.ran = True
     kind = outcome.get("kind")
+    texts = outcome.get("texts") if not abandoned else None      # 作業スレッドが作り終えた文と表(無ければ None)
     if abandoned:
         reason = "time limit %.3g s" % time_limit_s \
             if (deadline is not None and time.perf_counter() - clock.paused_s > deadline) else "a stop request"
@@ -2086,7 +2423,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
         result.notes.append("abandoned run: see studio_program.abandoned_runs()")
         result.notes.append("until the abandoned run ends, new runs are refused; the process state is restored "
                             "again when it ends")
-        _restore_when_done(_ABANDONED[-1]["thread"], snapshot)
+        _restore_when_done(_ABANDONED[-1], snapshot, guard)
     elif kind == "stopped":
         reason, ln = outcome.get("reason", "stop_requested"), outcome.get("line", 0)
         result.stopped, result.stopped_line = reason, ln
@@ -2100,29 +2437,53 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
             result.error_line = ln
     elif kind == "exit":
         ln = outcome["line"]
-        result.errors = ["line %d: the program called exit(%r)" % (ln, outcome["code"])]
+        code_text = texts["code"] if texts else "<not available>"
+        result.errors = ["line %d: the program called exit(%s)" % (ln, code_text)]
         result.error_line = ln
     elif kind == "error":
-        e = outcome["exc"]
-        result.error_file, deep_line = _err_location(e.__traceback__, code_name, user_dirs)
-        ln = _err_line_from_tb(e.__traceback__, code_name) or 0
-        if result.error_file != code_name and deep_line is not None:
-            result.notes.append("the error is in %s line %d (called from line %d)"
-                                % (result.error_file, deep_line, ln))
+        # ここ(呼び出し側)では例外そのものに触らない: 作業スレッドが作った str だけを使う
+        if texts:
+            result.error_file, deep_line = texts["where"]
+            ln = texts["line"]
+            if result.error_file != code_name and deep_line is not None:
+                result.notes.append("the error is in %s line %d (called from line %d)"
+                                    % (result.error_file, deep_line, ln))
+            else:
+                result.error_file = code_name
+            msg = "line %d: %s: %s" % (ln, texts["type"], texts["text"])
+            if texts.get("missing"):
+                # 入っていない物は ImportError をそのまま見せ、入れ方を 1 行で言う(Studio と同じ Python へ)
+                msg += " — install it into Studio's Python: \"%s\" -m pip install %s" % (sys.executable,
+                                                                                         texts["missing"])
         else:
-            result.error_file = code_name
-        msg = "line %d: %s: %s" % (ln, type(e).__name__, e)
-        if isinstance(e, ModuleNotFoundError) and getattr(e, "name", None):
-            # 入っていない物は ImportError をそのまま見せ、入れ方を 1 行で言う(Studio と同じ Python へ)
-            msg += " — install it into Studio's Python: \"%s\" -m pip install %s" % (sys.executable,
-                                                                                     e.name.split(".")[0])
+            ln, result.error_file = 0, code_name
+            msg = "line %d: the program raised an error, but its text could not be made in time" % ln
         result.errors = [msg]
         result.error_line = ln
+    if guard is not None and guard.shown_figures:
+        result.notes.append(MPL_SHOWN_NOTE)
+    left_threads = _program_threads_alive(threads_before) if not abandoned else []
+    if left_threads:
+        _PROGRAM_THREADS.extend(left_threads)
+        names = ", ".join(str(t.name) for t in left_threads[:5]) + (" …" if len(left_threads) > 5 else "")
+        result.notes.append(PROGRAM_THREADS_NOTE % (len(left_threads), names))
     _pop_sys_path(path_token)
     restored = snapshot.restore()
+    if guard is not None and not abandoned:
+        guard.uninstall()                            # 残した実行が生きている間は付けたまま(終わった所で外す)
     if restored:
         result.notes.append("restored after the run: " + ", ".join(restored))
-    fill(result)
+    if texts:                                        # 作業スレッドが作り終えた表を写す(呼び出し側は値に触らない)
+        f = texts["filled"]
+        for name in ("elapsed_s", "lines_run", "stdout", "stdout_total", "calls", "clamped", "directives",
+                     "windows", "output", "output_source", "output_sort", "variables", "values", "namespace",
+                     "memo_hits"):
+            setattr(result, name, getattr(f, name))
+        result.notes.extend(f.notes)
+    else:
+        fill(result, values=False)
+        if not abandoned:
+            result.notes.append("the result could not be described in time: the variables are not listed")
     return result
 
 
