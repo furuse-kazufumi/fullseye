@@ -34810,7 +34810,7 @@
       "still": "articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png",
       "alt": {
         "ja": "synthetic towel, 1 mm per pixel. red cross = detected corner (chroma variant), blue circle = true corner, yellow = true crease, green = detected side. bottom row: low contrast, strong wrinkle. dE is this seed's; the mean over 20 seeds is 69",
-        "en": "Knowing where a towel's edges meet tells a robot where to grasp before folding. On synthetic images with varied folds, wrinkles and table colour, the corners were found within about 1 mm. A plain rectangle fit worked best, and every method broke when the table colour was close or the wrinkles were strong."
+        "en": "Knowing where a towel's edges meet tells a robot where to grasp. In rendered images of folded towels the corners were found within about 1 mm, though such small gaps depend on how the truth is defined. Simple rectangle fitting worked best, and every method broke with close colours or strong wrinkles."
       }
     }
   }
