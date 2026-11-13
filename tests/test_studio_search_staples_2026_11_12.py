@@ -648,3 +648,66 @@ def test_english_words_that_are_also_op_names_give_no_staple_by_design(word):
     assert ss._row_of(word) is not None                  # 理由: その語は op 名として索引に在る
     assert ss.staples_for(word) == []
     assert ss.staples_for(word + "_") == []
+
+
+def test_recent_images_with_one_entry_survive_a_restart(tmp_path, monkeypatch):
+    """最近開いた画像が 1 件だけの時、設定の読み戻しが str を返す事があり、パスが 1 文字ずつの項目になっていた(2026-11-13)。
+
+    QSettings は 1 件だけの列を str で返す事がある(形式と中身による)。その場合を直接作って確かめる。"""
+    import studio as _studio
+    from PySide6 import QtWidgets
+    target = str(tmp_path / "one image.png")
+    real = _studio._settings
+
+    class _OneStringSettings:
+        """recent_files だけ str を返す(1 件だけの列が str で戻る QSettings の振る舞い)。"""
+        def __init__(self):
+            self._s = real()
+
+        def value(self, key, default=None, *args, **kw):
+            if key == "recent_files":
+                return target
+            return self._s.value(key, default, *args, **kw)
+
+        def __getattr__(self, name):
+            return getattr(self._s, name)
+
+    monkeypatch.setattr(_studio, "_settings", _OneStringSettings)
+    studio, win, model = _studio_window(tmp_path, monkeypatch)
+    try:
+        menus = [m for m in win.findChildren(QtWidgets.QMenu)
+                 if any("one image.png" in a.text() or a.text().strip() in ("o", "n", "e") for a in m.actions())]
+        assert len(menus) == 1, [m.title() for m in menus]
+        texts = [a.text() for a in menus[0].actions() if a.text() and not a.isSeparator()]
+        files = [x for x in texts if "one image.png" in x]
+        assert len(files) == 1, texts
+        assert len(texts) <= 3, texts          # 1 件 +「消す」などの項目。1 文字ずつなら数十になる
+    finally:
+        _close_window(studio, win)
+
+
+def test_adding_a_two_input_op_says_why_it_was_not_added(tmp_path, monkeypatch, capfd):
+    """2 入力の op を入れようとした時、「optional backend が未導入」と誤った理由を言っていた(2026-11-13)。"""
+    studio, win, model = _studio_window(tmp_path, monkeypatch)
+    try:
+        said = []
+        ui = win._search_ui
+        nary = sorted(studio.api._nary_by_name())
+        assert nary, "2 入力の op が 1 つも無い"
+        name = next((n for n in nary if studio.api.find_op(n) is None), None)
+        assert name, nary[:5]
+        ui["edit"].setText(name); ui["search_now"](name); _pump(0.3)
+        from PySide6 import QtCore as _QtCore
+        items = [ui["list"].item(i) for i in range(ui["list"].count())]
+        target = [it for it in items if it.data(_QtCore.Qt.UserRole) == name]
+        assert target, name
+        bar = win.statusBar()
+        n0 = len(model.stages)
+        ui["list"].itemActivated.emit(target[0]); _pump(0.3)
+        said.append(bar.currentMessage())
+        assert len(model.stages) == n0
+        assert "two or more inputs" in said[0], said
+        assert "optional backend" not in said[0]
+        assert "Traceback" not in capfd.readouterr().err
+    finally:
+        _close_window(studio, win)

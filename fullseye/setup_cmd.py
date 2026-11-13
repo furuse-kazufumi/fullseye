@@ -38,7 +38,7 @@ PROBES = [
     ("xlsx", "openpyxl", "openpyxl", "Excel レポート", "Excel reports"),
 ]
 # importlib.metadata で取れないとき(checkout 直読みなど)の代替。
-_FALLBACK_REQ = {"gui": ["PySide6>=6.5"], "opencv": ["opencv-python>=4.8.1.78"], "skimage": ["scikit-image>=0.20"],
+_FALLBACK_REQ = {"gui": ["PySide6>=6.5", "Pillow>=13.0"], "opencv": ["opencv-python>=4.8.1.78"], "skimage": ["scikit-image>=0.20"],
                  "pil": ["Pillow>=13.0"]}
 # 用途ごとの「入れておくと良い」軽い extras(torch / GPU は重いので勧めない。報告だけする)。
 RECOMMENDED = {"studio": ["gui"], "python": ["opencv", "skimage", "pil"], "ai": []}
