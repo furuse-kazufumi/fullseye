@@ -437,7 +437,17 @@ def _visible_rows(lst):
     return n
 
 
+def _open_operators(win):
+    """2026-11-13 (stage 2): the first run is image + code; the operators panel comes from the panel bar.
+    Measured on a hidden panel, the list is Qt's never-laid-out 640 x 480 and every row counts as visible."""
+    if win._docks["operators"].isHidden():
+        win._panels["buttons"]["operators"].click()
+        _pump(0.4)
+    assert win._docks["operators"].isVisible() and win._op_list.isVisible()
+
+
 def test_operator_list_shows_six_or_more_rows_at_1280x673(win):
+    _open_operators(win)
     lst = win._op_list
     assert _visible_rows(lst) >= 6, "op の一覧が %d 行しか見えない(高さ %d)" % (_visible_rows(lst), lst.height())
     # op を選んだ状態でも(署名欄が伸びても一覧は 6 行を保つ)
@@ -453,10 +463,12 @@ def test_operator_list_shows_six_or_more_rows_at_1280x673(win):
 
 def test_operator_list_uses_all_the_free_height_in_a_tall_window(tmp_path, monkeypatch):
     small, _m = _launch(tmp_path, monkeypatch, (1280, 673), name="a.ini")
+    _open_operators(small)
     h_small = small._op_list.height()
     _close(small)
     big, _m2 = _launch(tmp_path, monkeypatch, (1920, 1080), name="b.ini")
     try:
+        _open_operators(big)
         assert big._op_list.height() >= h_small + 300, (h_small, big._op_list.height())
         assert _visible_rows(big._op_list) >= 12, _visible_rows(big._op_list)
     finally:
@@ -464,6 +476,7 @@ def test_operator_list_uses_all_the_free_height_in_a_tall_window(tmp_path, monke
 
 
 def test_operator_list_still_has_rows_after_a_search(win):
+    _open_operators(win)                                         # a hidden list is 640 x 480 and passes anything
     se = win._search_ui["edit"]
     se.setText("blur"); win._search_ui["search_now"]("blur"); _pump(0.4)
     lst = win._op_list

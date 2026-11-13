@@ -2777,6 +2777,7 @@ def _downsample_grid(hm, max_side=140):
 # scheme switch reaches every part (per-widget sheets, painted gutters, icons, highlighters).
 import weakref as _weakref                     # noqa: E402
 import studio_theme                            # noqa: E402
+import studio_panels                           # noqa: E402  (panel bar, dock <-> separate window, saved layout)
 
 _LEGACY = studio_theme.legacy_constants(studio_theme.PALETTES[studio_theme.DEFAULT_THEME])
 NAVY_0, NAVY_1, NAVY_2 = _LEGACY["NAVY_0"], _LEGACY["NAVY_1"], _LEGACY["NAVY_2"]
@@ -2895,7 +2896,7 @@ def _apply_density(win):
             continue
         items = [lay.itemAt(i) for i in range(lay.count())]
         widgets = [it.widget() for it in items if it.widget() is not None]
-        if isinstance(w, QtWidgets.QGroupBox):
+        if isinstance(w, QtWidgets.QGroupBox) and lay is w.layout():
             lay.setContentsMargins(d["inner"], d["title_gap"], d["inner"], d["inner"])
         elif lay is w.layout():
             m = lay.contentsMargins()
@@ -6900,11 +6901,8 @@ def build_window(model=None):
             #   以後の visibilityChanged は利用者の操作ではないので記録しない。
             self._closing = True
             try:                              # remember window position + panel layout
-                if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-                    s = _settings()
-                    s.setValue("geometry", self.saveGeometry())
-                    s.setValue("windowState", self.saveState())
-                    s.setValue("layout_version", "3")
+                if studio_panels.persist_enabled():
+                    studio_panels.save_layout(self, _settings())
             except Exception as e:
                 _log_soft_failure("could not save window geometry/layout", e)
             ev.accept()
@@ -7171,14 +7169,11 @@ def build_window(model=None):
     tb.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
     tb.setIconSize(QtCore.QSize(18, 18))
     win.addToolBar(tb)
-    if os.path.exists(_ICON_PATH):
-        brand = QtWidgets.QLabel()
-        brand.setPixmap(QtGui.QIcon(_ICON_PATH).pixmap(22, 22))
-        brand.setStyleSheet("padding:0 6px;")
-        tb.addWidget(brand)
-    title = QtWidgets.QLabel("Fullseye Studio")
-    _themed_style(title, "font-size:15px; font-weight:800; color:{brand}; padding:0 4px;")
-    tb.addWidget(title)
+    # icon + name; while something runs the same frame is the progress read-out (studio_panels, 2026-11-13)
+    win._brand = studio_panels.make_brand_status(
+        win, "Fullseye Studio", QtGui.QIcon(_ICON_PATH).pixmap(22, 22) if os.path.exists(_ICON_PATH) else None,
+        _log_soft_failure, tr)
+    tb.addWidget(win._brand)
     spacer = QtWidgets.QWidget()
     spacer.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
     tb.addWidget(spacer)
@@ -7817,15 +7812,24 @@ def build_window(model=None):
     range_note.setProperty("hint", True); range_note.setWordWrap(True)
     range_warning = QtWidgets.QLabel(""); _themed_style(range_warning, "color:{warn};")
     range_warning.hide()
-    rrow = QtWidgets.QHBoxLayout()
-    for _widget in (range_each, range_shared, range_manual, QtWidgets.QLabel("lo"), range_lo,
-                    QtWidgets.QLabel("hi"), range_hi):
+    # ★2026-11-13: one row of three radios + two spin boxes (range 1e100 -> a very wide minimum) made this
+    #   panel at least ~700 px wide; shown in a 1024 px window it left 288 px for the image. Two rows.
+    rrow = QtWidgets.QHBoxLayout(); rrow2 = QtWidgets.QHBoxLayout()
+    for _widget in (range_each, range_shared, range_manual):
         rrow.addWidget(_widget)
-    dlay.addLayout(drow); dlay.addLayout(rrow); dlay.addWidget(range_note)
+    rrow.addStretch(1)
+    for _widget in (QtWidgets.QLabel("lo"), range_lo, QtWidgets.QLabel("hi"), range_hi):
+        rrow2.addWidget(_widget, 1 if isinstance(_widget, QtWidgets.QDoubleSpinBox) else 0)
+    range_lo.setMinimumWidth(96); range_hi.setMinimumWidth(96)
+    dlay.addLayout(drow); dlay.addLayout(rrow); dlay.addLayout(rrow2); dlay.addWidget(range_note)
     dlay.addWidget(range_warning); dlay.addLayout(prow)
     rv.addWidget(_group(QtWidgets, "DISPLAY & PERCEPTION", dlay))
 
     hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(64)
+    # ★2026-11-13: a label with a pixmap is never narrower than the pixmap, so the panel could only grow
+    #   (664 px minimum; 288 px left for the image in a 1024 px window). The width follows the panel.
+    hist_view.setMinimumWidth(120); hist_view.setScaledContents(True)   # narrower than the pixmap: scale, do not clip
+    hist_view.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Fixed)
     _themed_style(hist_view, "background:{chrome}; border:1px solid {line}; border-radius:6px;")
     inspector = QtWidgets.QPlainTextEdit(); inspector.setReadOnly(True); inspector.setFixedHeight(150)
     inspector.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
@@ -8320,10 +8324,7 @@ def build_window(model=None):
     act_cascade.triggered.connect(mdi.cascadeSubWindows)
 
     def reset_layout():
-        if getattr(win, "_default_state", None) is not None:
-            win.restoreState(win._default_state)
-        for _d in win._docks.values():
-            _d.show()
+        studio_panels.reset_layout(win, _settings())     # the first-run arrangement: image + code
     act_reset_layout.triggered.connect(reset_layout)
     win._reset_layout = reset_layout
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
@@ -14004,17 +14005,12 @@ def build_window(model=None):
         CodeEditor picks the persisted value up on construction."""
         pt = max(6, min(int(pt), 32))
         _settings().setValue("ui/mono_font_pt", pt)
-        for ed in [code_edit] + ([win._pyedit["tabs"].widget(i)
-                                  for i in range(win._pyedit["tabs"].count())]
-                                 if getattr(win, "_pyedit", None) else []):
-            f = ed.font(); f.setPointSize(pt); ed.setFont(f)
-            # widget-level rule outranks the app QSS (which pins QPlainTextEdit fonts)
-            ed.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace; "
-                             "font-size:%dpt;" % pt)
-            ed.setTabStopDistance(4 * ed.fontMetrics().horizontalAdvance(" "))
+        # the typeface and where it applies are decided in studio_theme (CODE_FONTS, code_surfaces)
+        studio_theme.refresh_code_fonts(pt)
         return pt
     win._apply_mono_font = _apply_mono_font
-    try:        # apply the persisted size to the program editor at startup
+    try:        # apply the persisted size (and the user's own family, if any) at startup
+        studio_theme.set_code_family(_settings().value("ui/mono_font_family", ""))
         _apply_mono_font(int(_settings()
                              .value("ui/mono_font_pt", 10)))
     except (TypeError, ValueError):
@@ -14073,6 +14069,13 @@ def build_window(model=None):
         fpt.setValue(int(sset.value("ui/mono_font_pt", 10)))
         fpt.setToolTip("Monospace font size for the program editor, Python Editor tabs "
                        "and code windows.")
+        ffam = QtWidgets.QComboBox()             # code family: "" = studio_theme's table decides
+        ffam.addItem(tr("Automatic"), "")
+        for _f in studio_theme.code_font_choices():
+            ffam.addItem(_f, _f)
+        ffam.setCurrentIndex(max(0, ffam.findData(str(sset.value("ui/mono_font_family", "") or ""))))
+        ffam.setToolTip("Typeface of every place that shows or takes code. Automatic: the first installed face "
+                        "whose full-width characters are exactly two half-width cells (BIZ UDGothic, MS Gothic).")
         interp = QtWidgets.QLineEdit(str(sset.value("pyedit/interpreter", "") or ""))
         interp.setPlaceholderText(sys.executable + "   (empty = this Studio's Python)")
         interp.setToolTip("Interpreter used by the Python Editor's Run. Empty = the Python "
@@ -14100,7 +14103,7 @@ def build_window(model=None):
                                    ("Default display mode", dmode),
                                    ("Region draw (dev_set_draw)", drawm),
                                    ("Region line width", drawlw)])
-        _settings_page("Editor", [("Editor font size", fpt),
+        _settings_page("Editor", [("Editor font size", fpt), ("Code font", ffam),
                                   ("Python Editor interpreter", interp)])
         cat_tree.currentItemChanged.connect(
             lambda it, _prev=None: it is not None
@@ -14114,6 +14117,7 @@ def build_window(model=None):
         root.addWidget(bb)
         dlg.resize(640, 420)
         dlg._tree = cat_tree; dlg._stack = stack     # test / scripting hooks
+        dlg._code_font = ffam; dlg._code_pt = fpt
         win._system_dialog = dlg               # for headless tests
         # NOTE: no win._localize here — this dialog is rebuilt per-open with tr() at
         # build time; registering tr()-produced text would poison the English baseline
@@ -14126,6 +14130,8 @@ def build_window(model=None):
             set_draw_style(mode=drawm.currentText(), line_width=drawlw.value())
             sset.setValue("draw/mode", drawm.currentText())
             sset.setValue("draw/line_width", drawlw.value())
+            sset.setValue("ui/mono_font_family", ffam.currentData())
+            studio_theme.set_code_family(ffam.currentData())
             _apply_mono_font(fpt.value())
             ip = interp.text().strip()
             if ip and not os.path.isfile(ip):
@@ -15052,7 +15058,10 @@ def build_window(model=None):
 
     # built-in deterministic arrangements (no saved state needed)
     def layout_balanced():
-        win._reset_layout()                        # restore factory state + show all docks
+        win._reset_layout()                        # the first-run arrangement ...
+        for _k in ("operators", "pipeline", "display", "program", "variables"):
+            win._docks[_k].show()                  # ... then every main panel (the rest stay on the panel bar)
+        win._docks["operators"].raise_()
         win._flash and win._flash("layout: balanced (default)")
 
     def layout_graphics_focus():
@@ -15303,6 +15312,8 @@ def build_window(model=None):
                 pass
         _refresh_themed()
         _apply_density(win)
+        studio_panels.refresh(win, tr, _UI_LANG["code"])
+        studio_theme.apply_code_fonts(win)            # the density pass rewrote the op list's own sheet
         _theme_menu.setTitle(tr("Colour scheme")); _density_menu.setTitle(tr("Density"))
         for _k, _a in win._theme_actions.items():
             _a.setChecked(_k == studio_theme.current_name())
@@ -15758,6 +15769,9 @@ def build_window(model=None):
     except Exception:
         pass
 
+    studio_panels.install(win, tr, _settings)   # panel bar + title bands + first-run arrangement (image + code)
+    studio_theme.watch_code_fonts(QtWidgets.QApplication.instance())   # dialogs / editor tabs built later
+    win._brand_follow = studio_panels.follow_progress(win._brand, run_progress, run_status)   # runs / batches
     apply_theme(save=False)                  # scheme + density on every widget built above (2026-11-12)
     # Default (factory) panel layout — captured before any saved layout is applied,
     # so "Reset panel layout" always has somewhere to go back to.
@@ -15772,26 +15786,13 @@ def build_window(model=None):
     except (TypeError, ValueError) as exc:
         _log_soft_failure("could not restore work-mode layout", exc)
     try:                                     # restore the user's remembered geometry + layout
-        if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-            s = _settings()
-            geo = s.value("geometry")
-            # Only reuse a saved dock layout from the SAME layout version. The current
-            # default (v3: image-dominant central, Program tall on the right, op/var
-            # panels compact) differs from older saves, so a stale windowState is
-            # ignored and the new default shows.
-            st = s.value("windowState") if str(s.value("layout_version")) == "3" else None
-            if geo:
-                win.restoreGeometry(geo)
-            if st:
-                # ★2026-11-12: restoreState says False for a broken blob (the layout is left as is);
-                #   a well-formed blob that hides every main panel used to be accepted. Both -> default.
-                _restored_dock_state = bool(win.restoreState(st))
-                if _restored_dock_state and not dock_layout_usable(win):
-                    win.restoreState(win._default_state)
-                    _restored_dock_state = False
-                    _log_soft_failure("saved panel layout hid every main panel", "restored the default layout")
-    except Exception:
-        pass
+        if studio_panels.persist_enabled():
+            # Only a saved dock layout of the SAME layout version is reused (studio_panels.LAYOUT_VERSION);
+            # a blob restoreState refuses, or one that hides every main panel, leaves the first-run
+            # arrangement (2026-11-12).
+            _restored_dock_state = studio_panels.restore_layout(win, _settings(), dock_layout_usable)
+    except Exception as _e:                  # noqa: BLE001 - a broken store must not stop the window
+        _log_soft_failure("could not restore the saved panel layout", _e)
     win.first_layout_pending = not _restored_dock_state     # 保存済みの dock 配置を使った起動では比を触らない
     if _restore_work_layout:
         win._apply_layout_state()

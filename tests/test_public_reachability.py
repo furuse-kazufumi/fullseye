@@ -83,7 +83,12 @@ _INTERNAL = {
     #   errors 3 本(explain_failure / format_failure / localize)。studio と同じ「GUI の内側の部品」で、テストが直接呼ぶ。
     # studio_theme 2026-11-12(feat/studio-console-theme): 配色・密度の表と QSS を組む関数 19 本(Qt 非依存)。
     #   Studio の見た目の内側の部品で op ではない。studio +1 は dock_layout_usable(保存した配置の検査)。
-    "studio_theme": 19,
+    # studio_theme 2026-11-13(第 2 段): +21 = コードの書体(候補の表から選ぶ・部品へ当てる・後から出来た窓を見張る・設定の一覧)、
+    #   怪しい文字の検出と印(suspicious_chars / mark_code)、色の見分けの門(lab / delta_e / simulate_cvd / distinct_report)。
+    "studio_theme": 40,
+    # studio_panels 2026-11-13(第 2 段): パネルの帯・dock ⇔ 別ウィンドウ・配置の保存と復元・横長のパネルで
+    #   道具とタブを左へ・題の帯へ状態と ≡ を登録する口・左上の進捗の表示 25 本。Studio の窓の内側の部品で op ではない(studio.py からは短い呼び出しだけ。試験が直接呼ぶ)。
+    "studio_panels": 25,
     "studio": 91, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
@@ -327,7 +332,8 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-12 見た目の第 1 段(feat/studio-console-theme-2026-11-12): 1084 + 20 = 1104。studio_theme 19
 #   (配色・密度・コントラストの表と QSS。Studio の内側)・studio.dock_layout_usable 1。実測 1104。
 # 2026-11-13 origin/master(1086 = 1084 + 2)を merge: 1104 + 2 = 1106。実測 1106。
-_HIDDEN_FUNCTIONS_TODAY = 1106
+# 2026-11-13 見た目の第 2 段: 1106 + 46 = 1152。studio_panels 25・studio_theme 21(コードの書体・怪しい文字・色の門)。実測 1152。
+_HIDDEN_FUNCTIONS_TODAY = 1152
 
 
 def _hidden_total():

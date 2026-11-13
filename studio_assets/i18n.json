@@ -419,6 +419,198 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "More tools": {
+   "ja": "ほかの道具",
+   "zh": "更多工具",
+   "tw": "更多工具",
+   "ko": "도구 더 보기",
+   "de": "Weitere Werkzeuge",
+   "hi": "और उपकरण"
+  },
+  "Done": {
+   "ja": "完了",
+   "zh": "完成",
+   "tw": "完成",
+   "ko": "완료",
+   "de": "Fertig",
+   "hi": "पूर्ण"
+  },
+  "Failed": {
+   "ja": "失敗",
+   "zh": "失败",
+   "tw": "失敗",
+   "ko": "실패",
+   "de": "Fehlgeschlagen",
+   "hi": "विफल"
+  },
+  "Panel menu": {
+   "ja": "パネルのメニュー",
+   "zh": "面板菜单",
+   "tw": "面板選單",
+   "ko": "패널 메뉴",
+   "de": "Bereichsmenü",
+   "hi": "पैनल मेनू"
+  },
+  "Shown: %d / %d": {
+   "ja": "表示 %d / %d",
+   "zh": "显示 %d / %d",
+   "tw": "顯示 %d / %d",
+   "ko": "표시 %d / %d",
+   "de": "Angezeigt: %d / %d",
+   "hi": "दिख रहे: %d / %d"
+  },
+  "Stages: %d": {
+   "ja": "段 %d",
+   "zh": "阶段 %d",
+   "tw": "階段 %d",
+   "ko": "단계 %d",
+   "de": "Stufen: %d",
+   "hi": "चरण: %d"
+  },
+  "Errors: %d": {
+   "ja": "エラー %d",
+   "zh": "错误 %d",
+   "tw": "錯誤 %d",
+   "ko": "오류 %d",
+   "de": "Fehler: %d",
+   "hi": "त्रुटियाँ: %d"
+  },
+  "Variables: %d": {
+   "ja": "変数 %d",
+   "zh": "变量 %d",
+   "tw": "變數 %d",
+   "ko": "변수 %d",
+   "de": "Variablen: %d",
+   "hi": "चर: %d"
+  },
+  "Tools and tabs: automatic (on the left when the panel is wide)": {
+   "ja": "道具とタブ: 自動(横長のパネルでは左に縦並び)",
+   "zh": "工具和标签: 自动(面板较宽时放在左侧)",
+   "tw": "工具與分頁: 自動(面板較寬時放在左側)",
+   "ko": "도구와 탭: 자동(패널이 가로로 길면 왼쪽에)",
+   "de": "Werkzeuge und Reiter: automatisch (links, wenn der Bereich breit ist)",
+   "hi": "औज़ार और टैब: स्वचालित (चौड़े पैनल में बाईं ओर)"
+  },
+  "Tools and tabs: on top": {
+   "ja": "道具とタブ: 上に横並び",
+   "zh": "工具和标签: 在上方",
+   "tw": "工具與分頁: 在上方",
+   "ko": "도구와 탭: 위에",
+   "de": "Werkzeuge und Reiter: oben",
+   "hi": "औज़ार और टैब: ऊपर"
+  },
+  "Tools and tabs: on the left": {
+   "ja": "道具とタブ: 左に縦並び",
+   "zh": "工具和标签: 在左侧",
+   "tw": "工具與分頁: 在左側",
+   "ko": "도구와 탭: 왼쪽에",
+   "de": "Werkzeuge und Reiter: links",
+   "hi": "औज़ार और टैब: बाईं ओर"
+  },
+  "Code font": {
+   "ja": "コードの書体",
+   "zh": "代码字体",
+   "tw": "程式碼字型",
+   "ko": "코드 글꼴",
+   "de": "Code-Schrift",
+   "hi": "कोड फ़ॉन्ट"
+  },
+  "Automatic": {
+   "ja": "自動",
+   "zh": "自动",
+   "tw": "自動",
+   "ko": "자동",
+   "de": "Automatisch",
+   "hi": "स्वचालित"
+  },
+  "Panel bar": {
+   "ja": "パネルの帯",
+   "zh": "面板栏",
+   "tw": "面板列",
+   "ko": "패널 막대",
+   "de": "Bereichsleiste",
+   "hi": "पैनल पट्टी"
+  },
+  "Click: show or hide. Right-click: separate window or dock.": {
+   "ja": "クリック: 出す / しまう。右クリック: 別ウィンドウ / 本体に戻す。",
+   "zh": "单击: 显示或隐藏。右键: 独立窗口或停靠。",
+   "tw": "按一下: 顯示或隱藏。右鍵: 獨立視窗或停駐。",
+   "ko": "클릭: 표시 / 숨기기. 오른쪽 클릭: 별도 창 / 도킹.",
+   "de": "Klick: ein- oder ausblenden. Rechtsklick: eigenes Fenster oder andocken.",
+   "hi": "क्लिक: दिखाएँ या छिपाएँ। राइट-क्लिक: अलग विंडो या डॉक।"
+  },
+  "Separate window": {
+   "ja": "別ウィンドウにする",
+   "zh": "独立窗口",
+   "tw": "獨立視窗",
+   "ko": "별도 창으로",
+   "de": "Eigenes Fenster",
+   "hi": "अलग विंडो"
+  },
+  "Dock in the main window": {
+   "ja": "本体の窓に戻す",
+   "zh": "停靠到主窗口",
+   "tw": "停駐到主視窗",
+   "ko": "기본 창에 도킹",
+   "de": "Im Hauptfenster andocken",
+   "hi": "मुख्य विंडो में डॉक करें"
+  },
+  "Hide": {
+   "ja": "しまう",
+   "zh": "隐藏",
+   "tw": "隱藏",
+   "ko": "숨기기",
+   "de": "Ausblenden",
+   "hi": "छिपाएँ"
+  },
+  "Show": {
+   "ja": "出す",
+   "zh": "显示",
+   "tw": "顯示",
+   "ko": "표시",
+   "de": "Einblenden",
+   "hi": "दिखाएँ"
+  },
+  "Layout": {
+   "ja": "レイアウト",
+   "zh": "布局",
+   "tw": "版面配置",
+   "ko": "배치",
+   "de": "Anordnung",
+   "hi": "लेआउट"
+  },
+  "Reset panel layout": {
+   "ja": "パネル配置を元に戻す",
+   "zh": "重置面板布局",
+   "tw": "重設面板配置",
+   "ko": "패널 배치 초기화",
+   "de": "Bereichsanordnung zurücksetzen",
+   "hi": "पैनल लेआउट रीसेट करें"
+  },
+  "Code on the left (tall)": {
+   "ja": "コードを左に(縦長)",
+   "zh": "代码在左侧(竖长)",
+   "tw": "程式碼在左側(直長)",
+   "ko": "코드를 왼쪽에(세로로 길게)",
+   "de": "Code links (hoch)",
+   "hi": "कोड बाईं ओर (लंबा)"
+  },
+  "Code at the bottom (wide)": {
+   "ja": "コードを下に(横長)",
+   "zh": "代码在底部(横宽)",
+   "tw": "程式碼在底部(橫寬)",
+   "ko": "코드를 아래에(가로로 넓게)",
+   "de": "Code unten (breit)",
+   "hi": "कोड नीचे (चौड़ा)"
+  },
+  "Dock all panels": {
+   "ja": "すべてのパネルを戻す",
+   "zh": "停靠所有面板",
+   "tw": "停駐所有面板",
+   "ko": "모든 패널 도킹",
+   "de": "Alle Bereiche andocken",
+   "hi": "सभी पैनल डॉक करें"
+  },
   "Build pipeline": {
    "ja": "処理を組む",
    "zh": "构建流程",
@@ -2234,7 +2426,6 @@
     "Float: Program (code)": {"ja": "別窓にする: コード"},
     "Float: Variables & Objects": {"ja": "別窓にする: 変数とオブジェクト"},
     "Graphics windows": {"ja": "グラフィクス窓"},
-    "Layout": {"ja": "レイアウト"},
     "Balanced (default)": {"ja": "バランス(既定)"},
     "Graphics focus": {"ja": "画像を重視"},
     "Code focus": {"ja": "コードを重視"},
@@ -2247,7 +2438,6 @@
     "○ Displayed image": {"ja": "○ 現在の表示画像"},
     "○ Both": {"ja": "○ 両方"},
     "More": {"ja": "その他"},
-    "Reset panel layout": {"ja": "パネル配置を元に戻す"},
     "Run all (F5 / Ctrl+R)": {"ja": "すべて実行 (F5 / Ctrl+R)"},
     "Step (F6)": {"ja": "1 段実行 (F6)"},
     "Reset to start (Shift+F5)": {"ja": "最初に戻す (Shift+F5)"},
@@ -2271,7 +2461,6 @@
     "Magenta": {"ja": "マゼンタ"},
     "White": {"ja": "白"},
     "Float all panels (multi-display)": {"ja": "すべてのパネルを別窓にする(マルチディスプレイ)"},
-    "Dock all panels": {"ja": "すべてのパネルを戻す"},
     "Detach graphics window": {"ja": "グラフィクス窓を切り離す"},
     "Reattach graphics window": {"ja": "グラフィクス窓を戻す"},
     "PIPELINE": {"ja": "処理手順"},

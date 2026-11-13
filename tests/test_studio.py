@@ -1554,18 +1554,19 @@ def test_default_layout_is_image_dominant():
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert isinstance(win.centralWidget(), QtWidgets.QMdiArea)          # image workspace is central
-    # Program (code) = wide bottom strip; Operators = compact right column (visible)
+    # Program (code) = wide bottom strip; Operators = compact right column
     assert win.dockWidgetArea(win._docks["program"]) == QtCore.Qt.BottomDockWidgetArea
     assert win.dockWidgetArea(win._docks["operators"]) == QtCore.Qt.RightDockWidgetArea
-    assert not win._docks["program"].isHidden() and not win._docks["operators"].isHidden()
-    # the inspection panels start HIDDEN (on-demand) so the image owns the workspace.
-    # 2026-11-12 (P-15): Pipeline · Parameters is the exception -- its tab sits next to Operators
-    # from the first launch (a first-time user could not find the knobs behind a hidden dock).
-    for key in ("variables", "pipeline", "display"):
+    assert not win._docks["program"].isHidden()
+    # 2026-11-13 (stage 2): the image and the code are the principals; EVERY other panel starts
+    # hidden and comes from the panel bar (one always-visible icon button each). This replaces the
+    # 2026-11-12 exception (P-15: the Pipeline · Parameters tab shown from the first launch so a
+    # first-time user finds the knobs) -- the knobs are now one click away on the bar instead.
+    for key in ("operators", "variables", "pipeline", "display"):
         assert win.dockWidgetArea(win._docks[key]) == QtCore.Qt.RightDockWidgetArea, key
-    for key in ("variables", "display"):
-        assert win._docks[key].isHidden(), "%s should start hidden (on-demand)" % key
-    assert not win._docks["pipeline"].isHidden()
+        assert win._docks[key].isHidden(), "%s should start hidden (on the panel bar)" % key
+        assert win._panels["buttons"][key].toolTip().startswith(win._docks[key].windowTitle())
+    assert len(win._panels["buttons"]) == len(win._docks) == 7
     # each on-demand panel has a toggle action (toolbar + Window ▸ Panels) to bring it back
     for key in ("variables", "pipeline", "display"):
         assert win._docks[key].toggleViewAction() is not None
