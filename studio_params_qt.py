@@ -1109,7 +1109,7 @@ class ParamsPanel(QtWidgets.QWidget):
     def _after_change(self, structure: bool = True, deferred: bool = False) -> None:
         if structure:
             if deferred:
-                QtCore.QTimer.singleShot(0, self.refresh)
+                QtCore.QTimer.singleShot(0, self, self.refresh)     # self が消えたら呼ばない
             else:
                 self.refresh()
         else:
@@ -1158,7 +1158,7 @@ class ParamsPanel(QtWidgets.QWidget):
         elif obj is self.tree.viewport() and ev.type() == QtCore.QEvent.Resize and not self._user_sized:
             if not self._fit_pending:                    # 見出しの幅が決まってから(この通知の後)等分し直す
                 self._fit_pending = True
-                QtCore.QTimer.singleShot(0, self._fit_columns)
+                QtCore.QTimer.singleShot(0, self, self._fit_columns)  # self が消えたら呼ばない
         return super().eventFilter(obj, ev)
 
     def _fit_columns(self) -> None:

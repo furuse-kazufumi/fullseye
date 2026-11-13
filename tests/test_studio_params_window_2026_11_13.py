@@ -1745,3 +1745,32 @@ def test_params_drop_reject_says_why(qapp, ini, tmp_path):
     for en in ("not a parameter file: %s", "only files can be dropped here", "open .json, .toml, .yaml / .yml or .xml"):
         assert tr(en) != en
     _close_quietly(win)
+
+
+def test_params_deferred_calls_do_not_outlive_the_window(qapp, ini, tmp_path):
+    """直し(既存): 遅らせた呼び出し(列の幅の等分・表の作り直し)が、窓が消えた後に走らない。直す前は消えた表に触って
+    RuntimeError か access violation(2 つ続けて窓を作る試験で数回に 1 回落ちた)。呼び出しを予約してから窓を消し、
+    次の回で何も起きない事を、予約の種類ごとに数える。"""
+    import shiboken6
+
+    steps = 0
+    for kind in ("fit", "refresh"):
+        d = tmp_path / kind
+        d.mkdir()
+        win = _window(qapp, _three_files(d))
+        p = win.panel
+        if kind == "fit":
+            p._user_sized = False
+            p._fit_pending = False
+            vp = p.tree.viewport()
+            p.eventFilter(vp, QtGui.QResizeEvent(vp.size(), vp.size()))     # 等分を次の回へ予約する
+            assert p._fit_pending
+        else:
+            p._after_change(structure=True, deferred=True)                 # 作り直しを次の回へ予約する
+        p.ask_unsaved = lambda names: "discard"
+        win.hide()
+        shiboken6.delete(win)                                              # 窓の C++ の側を今消す
+        assert not shiboken6.isValid(p)
+        _pump(qapp)                                                        # 予約した呼び出しは捨てられる(落ちない)
+        steps += 1
+    assert steps == 2
