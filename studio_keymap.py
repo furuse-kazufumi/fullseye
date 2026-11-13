@@ -274,7 +274,9 @@ class Command(NamedTuple):
     (``action:<win._actions の鍵>`` / ``label:<英語の表示名>`` / ``attr:<窓の属性>`` / ``work_mode:<作業モード>`` /
     ``editops:<操作>`` / ``shortcut:<別窓>:<既定のキー>`` / ``own:<この部品が作る>``)。``fixed`` は変えられない
     (当たりの検査と一覧のためだけに載せる)。``mentions`` は表示の文がキーを書いている別のコマンド。
-    ``own_title`` は表示名の訳をこの部品の表で引く(それ以外は Studio の訳の表)。"""
+    ``own_title`` は表示名の訳をこの部品の表で引く(それ以外は Studio の訳の表)。``ide`` は Program 欄の部品が
+    自分で受ける操作の名前(窓全体のコマンドに付けると、Program 欄ではそのキーを欄が先に受けて同じ意味で動く)。
+    ``adopt`` は他の枝が本体に足す同じ意味の ``win._actions`` の鍵(あればその QAction を使う)。"""
     id: str
     title: str
     scope: str
@@ -285,6 +287,7 @@ class Command(NamedTuple):
     mentions: tuple = ()
     ide: str = ""
     own_title: bool = False
+    adopt: tuple = ()
 
 
 def _c(cid, title, scope, keys="", target=None, **kw) -> Command:
@@ -382,9 +385,11 @@ COMMANDS = (
        own_title=True),
     # ---- 窓全体: Help ----
     _c("editops_howto", _eo.ACT_HOWTO, _W),
+    # F1 = ここのヘルプ(D127。初回の枝 07e66baa0a と同じ: キーの一覧は Ctrl+F1、op の一覧は Shift+F1)
+    _c("help_here", "Help here", _W, "F1", "own:help_here", ide="help", own_title=True, adopt=("selected_help",)),
     _c("op_reference", "Operator reference…", _W, "Shift+F1"),
     _c("quick_guide", "Quick guide (en/ja/zh)", _W, "Shift+F2", "label:Quick guide (en/ja/zh)"),
-    _c("shortcuts", "Keyboard shortcuts", _W, "F1"),
+    _c("shortcuts", "Keyboard shortcuts", _W, "Ctrl+F1"),
     _c("about", "About Fullseye Studio", _W),
     # ---- 段の一覧(フォーカスがある時だけ) ----
     _c("remove", "Remove stage", _P, "Del"),
@@ -404,8 +409,6 @@ COMMANDS = (
     _c("program_comment", "Comment / uncomment lines", _E, "Ctrl+/", ide="comment"),
     _c("program_font_bigger", "Bigger editor text", _E, "Ctrl++|Ctrl+=", ide="zoom_in"),
     _c("program_font_smaller", "Smaller editor text", _E, "Ctrl+-", ide="zoom_out"),
-    _c("program_help_here", "Help for the operator under the cursor", _E, "Shift+F1", ide="help",
-       mentions=("shortcuts",)),
 ) + _editops_commands() + (
     # ---- 別窓(窓を開いた時に作る QShortcut) ----
     _c("python_editor_run", "Run (Python Editor)", "python_editor_window", "F5", "shortcut:python_editor:F5",
@@ -446,6 +449,14 @@ COMMANDS = (
 BY_ID = {c.id: c for c in COMMANDS}
 if len(BY_ID) != len(COMMANDS):                                 # pragma: no cover -- 登録簿の書き損じ
     raise RuntimeError("コマンドの ID が重なっている")
+#: 他の枝が本体に足す、同じ意味の QAction の鍵 → コマンドの ID(取り付けはその QAction をそのまま使う)。
+ADOPTED = {a: c.id for c in COMMANDS for a in c.adopt}
+#: 本体にあるが意味を別のコマンドへ吸わせた QAction の鍵 → 吸わせた先(取り付けはキーを外して隠し、win._actions から外す)。
+ABSORBED = {"program_help_here": "help_here"}
+#: Program 欄(ProgramEditor._ide_action)がキーを直接書いている操作 → そのキー。変えた・外したキーは欄に通さない。
+PROGRAM_EDITOR_HARD_KEYS = {"find": ("Ctrl+F",), "replace": ("Ctrl+H",), "next": ("F3",), "prev": ("Shift+F3",),
+                            "comment": ("Ctrl+/",), "zoom_in": ("Ctrl++", "Ctrl+="), "zoom_out": ("Ctrl+-",),
+                            "help": ("Shift+F1",)}
 
 #: 型(プリセット)= 既定(Visual Studio 風)との差分。
 PRESETS = {
@@ -454,6 +465,7 @@ PRESETS = {
         "palette": ("Ctrl+Shift+P", "F1"),
         "find_panel": ("Ctrl+P",),
         "shortcuts": ("Ctrl+K, Ctrl+R",),
+        "help_here": ("Ctrl+F1",),                              # F1 は VS Code の慣例どおりコマンドパレット
         "dbg_step": ("F10",),
         "editops_box_up": ("Ctrl+Shift+Alt+Up", "Ctrl+Alt+Up"),
         "editops_box_down": ("Ctrl+Shift+Alt+Down", "Ctrl+Alt+Down"),
@@ -732,6 +744,8 @@ class Keymap:
         for c in COMMANDS:
             for k in self.keys(c.id):
                 out.append(Entry(c.id, k, c.scope, c.when, c.fixed, c.title))
+                if c.ide and c.scope != "program_editor":      # Program 欄では欄の部品が同じ意味で先に受ける
+                    out.append(Entry(c.id, k, "program_editor", c.when, c.fixed, c.title))
         out.extend(extra)
         return out
 
@@ -1128,6 +1142,8 @@ def search(rows: Sequence, query: str) -> list:
 # 画面の文と対訳
 # --------------------------------------------------------------------------- #
 ACT_SETTINGS = "Customize keyboard shortcuts…"
+TIP_HELP_HERE = ("Help for what you are on: the operator under the code cursor, the selected stage or operator; "
+                 "with nothing selected, the keyboard shortcuts")
 DLG_TITLE = "Customize keyboard shortcuts"
 LBL_PRESET = "Preset"
 PH_SEARCH = "Search by command, key or place (for example: duplicate, ctrl+d)"
@@ -1272,7 +1288,7 @@ def describe_problem(p: Problem, tr: Callable = (lambda s: s), titles: dict | No
 
 def ui_strings() -> tuple:
     """この部品の対訳の表が持つ英語の文の全部(表はこれと 1 対 1)。"""
-    fixed = [ACT_SETTINGS, DLG_TITLE, LBL_PRESET, PH_SEARCH, COL_COMMAND, COL_KEY, COL_WHERE, COL_CHANGED,
+    fixed = [ACT_SETTINGS, TIP_HELP_HERE, DLG_TITLE, LBL_PRESET, PH_SEARCH, COL_COMMAND, COL_KEY, COL_WHERE, COL_CHANGED,
              LBL_CURRENT, LBL_NONE, LBL_RECORD, PH_RECORD, HINT_CHORD, HINT_NO_CHORD, BTN_CLEAR, BTN_ASSIGN, BTN_ADD,
              BTN_REMOVE, BTN_RESET, BTN_RESET_ALL, BTN_IMPORT, BTN_EXPORT, BTN_CLOSE, MSG_FIXED, MSG_NO_CONFLICT,
              MSG_CHANGED, MSG_PICK, TTL_RESET_ALL, ASK_RESET_ALL, TTL_PRESET, ASK_PRESET, ASK_PRESET_DROP,

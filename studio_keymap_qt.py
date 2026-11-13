@@ -127,18 +127,23 @@ def _qt_stripped(text: str) -> str:
 # Program 欄: 欄が直接書いているキーの前に置く判定
 # --------------------------------------------------------------------------- #
 class _ProgramKeys(QtCore.QObject):
-    """Program 欄(``ProgramEditor``)のイベントフィルタ。変えたキーで欄の操作を呼び、外した既定のキーは欄に通さない。"""
+    """Program 欄(``ProgramEditor``)のイベントフィルタ。変えたキーで欄の操作を呼び、外した既定のキーは欄に通さない。
 
-    def __init__(self, editor):
+    ``help``(F1 = ここのヘルプ)は窓の help_here と同じ答えを出す(カーソルの下が op でなければ、選んだ段 / op /
+    キーの一覧)。
+    """
+
+    def __init__(self, editor, win=None):
         super().__init__(editor)
         self.editor = editor
+        self.win = win
         self.current: dict = {}
         self.bound: set = set()                                # 今キーが 1 つ以上ある操作
         self.managed = {c.ide for c in km.COMMANDS if c.ide and not c.fixed}
         self.defaults: dict = {}                               # 操作 → 型の既定のキー(どの型でも)
         for c in km.COMMANDS:
             if c.ide and not c.fixed:
-                keys = set(self.defaults.get(c.ide, ())) | set(c.keys)
+                keys = set(self.defaults.get(c.ide, ())) | set(c.keys) | set(km.PROGRAM_EDITOR_HARD_KEYS.get(c.ide, ()))
                 for over in km.PRESETS.values():
                     keys |= set(over.get(c.id, ()))
                 self.defaults[c.ide] = keys
@@ -167,7 +172,11 @@ class _ProgramKeys(QtCore.QObject):
                     comp = getattr(obj, "_completer", None)
                     if comp is not None:
                         comp.popup().hide()
-                    obj._ide_do(name)
+                    ctl = get(self.win) if self.win is not None else None
+                    if name == "help" and ctl is not None:
+                        ctl.help_here()                        # F1 = ここのヘルプ(窓と同じ答え)
+                    else:
+                        obj._ide_do(name)
                     return True
             ide = getattr(obj, "_ide_action", None)
             hard = ide(ev) if ide is not None else None
@@ -360,7 +369,7 @@ def apply_keymap(win, keymap: km.Keymap, lang=None) -> dict:
     edit = prog.get("edit") if isinstance(prog, dict) else None
     if edit is not None and hasattr(edit, "_ide_do"):
         if st.program is None or not _valid(st.program):
-            st.program = _ProgramKeys(edit)
+            st.program = _ProgramKeys(edit, win)
         st.program.set_table(keymap)
     eq.apply_bindings({c.target.split(":", 1)[1]: keymap.keys(c.id)
                        for c in km.COMMANDS if c.target.startswith("editops:")})
@@ -1114,9 +1123,10 @@ class KeymapController(QtCore.QObject):
 
     changed = QtCore.Signal()
 
-    def __init__(self, win, settings=None, tr=None, lang=None, flash=None, python_editor_editops=None):
+    def __init__(self, win, settings=None, tr=None, lang=None, flash=None, python_editor_editops=None, model=None):
         super().__init__(win)
         self.win = win
+        self.model = model                                     # パイプライン(段の op の名前を引く。無ければ win._pymode.model)
         self._py_editops = python_editor_editops               # None = 今ある Python エディタの欄を見て決める
         self.lang_problems: list = []                          # 今の言語で効かない上書き(言語の切り替えの後)
         self._settings = settings
@@ -1337,6 +1347,53 @@ class KeymapController(QtCore.QObject):
         titles = {e.command: self._fixed_title(e) for e in self.fixed_entries()}
         return km.describe_problem(p, self.tr, titles)
 
+    # ---- F1 = ここのヘルプ(D127) ----------------------------------------- #
+    def _stage_or_op(self, focus) -> str | None:
+        """段の一覧にフォーカスがあれば選んだ段の op、無ければ op の一覧で選んだ op、無ければ選んだ段の op。"""
+        win = self.win
+        model = self.model if self.model is not None else getattr(getattr(win, "_pymode", None), "model", None)
+        stages = getattr(model, "stages", None) or []
+        sl, ol = getattr(win, "_stage_list", None), getattr(win, "_op_list", None)
+        stage_op = None
+        if sl is not None:
+            row = sl.currentRow()
+            item = sl.currentItem()
+            idx = item.data(_K.UserRole) if item is not None else None
+            idx = idx if isinstance(idx, int) else row
+            if 0 <= idx < len(stages):
+                stage_op = stages[idx][0]
+        if sl is not None and stage_op and (focus is sl or (focus is not None and sl.isAncestorOf(focus))):
+            return stage_op
+        if ol is not None and ol.currentItem() is not None:
+            name = ol.currentItem().data(_K.UserRole)
+            if name:
+                return name
+        return stage_op
+
+    def help_here(self) -> str:
+        """F1 = ここのヘルプ: コードの欄のカーソルの下の op / 選んだ段 / 選んだ op / 何も無ければキーの一覧。
+
+        何を開いたか(``code:<op>`` / ``op:<op>`` / ``keys``)を返す。初回の枝の F1(07e66baa0a)と同じ順に、コードの欄を足した。
+        """
+        win = self.win
+        show = (getattr(win, "_help", None) or {}).get("show")
+        focus = QtWidgets.QApplication.focusWidget()
+        prog = getattr(win, "_program", None)
+        ed = prog.get("edit") if isinstance(prog, dict) else None
+        if ed is not None and focus is not None and (focus is ed or ed.isAncestorOf(focus)):
+            word = ed.word_under_cursor() if hasattr(ed, "word_under_cursor") else ""
+            if word and word in (getattr(ed, "_words", None) or ()):
+                opener = getattr(ed, "on_open_help", None) or show
+                if callable(opener):
+                    opener(word)
+                    return "code:" + word
+        name = self._stage_or_op(focus)
+        if name and callable(show):
+            show(name)
+            return "op:" + name
+        self.open_dialog()
+        return "keys"
+
     def open_dialog(self) -> KeyboardDialog:
         """設定の窓を出す(2 度目は同じ窓を前へ)。"""
         if self.dialog is None or not _valid(self.dialog):
@@ -1359,22 +1416,72 @@ def get(win) -> KeymapController | None:
 
 _PALETTE_WORDS = ("キー キーボード ショートカット 設定 割り当て 変更 keyboard shortcuts keys keybindings keymap "
                   "customize assign")
+_PALETTE_HELP_WORDS = "ヘルプ ここ 説明 op help here f1 context"
+
+
+def _take_over(action: QtGui.QAction, slot) -> None:
+    """``action`` の受け手を全部外して ``slot`` だけにする(本体・他の枝の古い受け手を残さない)。"""
+    import warnings                                            # noqa: PLC0415
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)
+        try:
+            action.triggered.disconnect()
+        except (RuntimeError, TypeError):                      # 受け手が 1 つも無い
+            pass
+    action.triggered.connect(slot)
+
+
+def _install_help(win, ctl: "KeymapController", st: _State, palette_words) -> None:
+    """F1 = ここのヘルプ(help_here)と、キーの一覧(shortcuts)= 設定の窓を本物の窓へ付ける(D127・D19)。"""
+    acts = getattr(win, "_actions", None)
+    acts = acts if isinstance(acts, dict) else {}
+    help_menu = (getattr(win, "_menus", None) or {}).get("help")
+    adopted = next((acts[k] for k, cid in km.ADOPTED.items() if cid == "help_here"
+                    and isinstance(acts.get(k), QtGui.QAction)), None)
+    if adopted is not None:                                    # 初回の枝の F1 の QAction をそのまま使う
+        a = adopted
+    else:
+        a = QtGui.QAction(ctl.tr(km.BY_ID["help_here"].title), win)
+        a.setToolTip(ctl.tr(km.TIP_HELP_HERE))
+        a.setStatusTip(ctl.tr(km.TIP_HELP_HERE))
+        sc = acts.get("shortcuts")
+        if help_menu is not None:
+            before = sc if isinstance(sc, QtGui.QAction) and sc in help_menu.actions() else None
+            help_menu.insertAction(before, a)
+        win.addAction(a)
+        st.on_lang.append(lambda: (a.setText(ctl.tr(km.BY_ID["help_here"].title)),
+                                   a.setToolTip(ctl.tr(km.TIP_HELP_HERE)),
+                                   a.setStatusTip(ctl.tr(km.TIP_HELP_HERE))) if _valid(a) else None)
+    _take_over(a, lambda _=False: ctl.help_here())
+    st.own["help_here"] = a
+    for old, new in km.ABSORBED.items():                       # 意味を吸わせた本体の QAction: キーを外して隠す
+        b = acts.pop(old, None)
+        if isinstance(b, QtGui.QAction) and _valid(b):
+            b.setShortcuts([])
+            b.setVisible(False)
+            b.setEnabled(False)
+        if palette_words is not None and old in palette_words:
+            palette_words[new] = (palette_words.get(new, "") + " " + palette_words[old]).strip()
+    sc = acts.get("shortcuts")
+    if isinstance(sc, QtGui.QAction):                          # キーの一覧 = 設定の窓(古いモーダルの表は出さない)
+        _take_over(sc, lambda _=False: ctl.open_dialog())
 
 
 def install(win, settings=None, tr=None, lang=None, flash=None, palette_words: dict | None = None,
-            python_editor_editops: bool | None = None) -> KeymapController:
+            python_editor_editops: bool | None = None, model=None) -> KeymapController:
     """窓 ``win`` にキーの割り当てを取り付ける(2 度呼んでも 1 つ)。保存してあった上書きを読み、配る。
 
     ``settings``: ``QSettings`` を返す関数(``studio._settings``。無ければ覚えない)/ ``tr``: Studio の ``tr`` /
     ``lang``: 今の言語の符号を返す関数 / ``flash``: 状態行へ 1 行(無ければ ``win._flash``)/
     ``palette_words``: ``studio.PALETTE_WORDS``(パレットの別名を足す)/ ``python_editor_editops``: Python エディタの
-    窓にも矩形選択の部品を付ける配線なら True(None = 開いている Python エディタを見て決める)。
+    窓にも矩形選択の部品を付ける配線なら True(None = 開いている Python エディタを見て決める)/ ``model``: パイプライン
+    (F1 で選んだ段の op を引く。無ければ ``win._pymode.model``)。
     """
     ctl = get(win)
     if ctl is not None:
         return ctl
     ctl = KeymapController(win, settings=settings, tr=tr, lang=lang, flash=flash,
-                           python_editor_editops=python_editor_editops)
+                           python_editor_editops=python_editor_editops, model=model)
     win._keymap = ctl
     st = _state(win)
     a = QtGui.QAction(ctl.tr(km.ACT_SETTINGS), win)
@@ -1391,6 +1498,8 @@ def install(win, settings=None, tr=None, lang=None, flash=None, palette_words: d
     st.on_lang.append(lambda: a.setText(ctl.tr(km.ACT_SETTINGS)) if _valid(a) else None)
     if palette_words is not None:
         palette_words.setdefault("keyboard_settings", _PALETTE_WORDS)
+        palette_words.setdefault("help_here", _PALETTE_HELP_WORDS)
+    _install_help(win, ctl, st, palette_words)
     st.on_lang.append(lambda: ctl.recheck(flash=True))       # 言語を変えたら、今の言語で効かない上書きを知らせる
     ctl.load()
     ctl.apply()

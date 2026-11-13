@@ -46,7 +46,9 @@ def test_registry_counts_and_every_command_has_a_scope_and_default_keys():
         for m in c.mentions:
             assert m in km.BY_ID and m != c.id
         if c.ide:
-            assert c.scope == "program_editor"
+            assert c.scope in ("program_editor", "window"), c.id
+        for a in c.adopt:
+            assert km.ADOPTED[a] == c.id and a not in km.BY_ID
     used = {s for _t, scopes in km.PLACES.values() for s in scopes}
     assert used == set(km.SCOPES)                                      # どの範囲も、どこかの場所で効く
 
@@ -349,7 +351,7 @@ def test_every_own_string_has_five_translations_and_nothing_else():
     table = km.load_table()
     assert km.missing() == []
     assert sorted(table) == sorted(km.ui_strings())
-    assert len(table) == 146
+    assert len(table) == 148
     ph = re.compile(r"%\(\w+\)s|%[sd]")
     for en, row in table.items():
         for lang in km.LANGS[1:]:
@@ -518,6 +520,7 @@ def test_install_finds_every_command_of_the_real_window(win, ctl):
     assert rep["missing"] == [] and rep["applied"] >= 85
     assert len(win._actions) >= 100
     assert [k for k in win._actions if k not in km.BY_ID] == []          # 本体に足した action は登録簿にも載せる
+    assert [k for k in km.ABSORBED if k in win._actions] == []            # 吸わせた action は外した
     st = kq._state(win)
     for cid, en in (("image_focus", "Image focus"), ("leave_image_focus", "Leave image focus"),
                     ("code_to_editor", "Pipeline as code → editor"), ("work_mode_build", "Build pipeline")):
@@ -1529,3 +1532,187 @@ def test_reset_all_is_off_with_nothing_changed_and_search_reads_other_spellings(
     assert dlg.visible_ids() == [] and not dlg.no_match.isHidden()
     dlg.search.setText("")
     assert dlg.no_match.isHidden()
+
+
+# --------------------------------------------------------------------------- #
+# B5 [キー] 1.2-A D127: F1 = ここのヘルプ / Ctrl+F1 = キーの一覧(設定の窓、D19)/ Shift+F1 = op の一覧
+# --------------------------------------------------------------------------- #
+def _window_shortcuts(win):
+    """初回の枝(07e66baa0a)の tests/test_studio_firstrun_2026_11_13.py と同じ数え方(写し): 窓のどこからでも効く
+    ショートカット(キー → それを持つ物の一覧)。部品の中だけで効く物は数えない。"""
+    from collections import defaultdict
+    from PySide6 import QtCore, QtGui
+    scoped = (QtCore.Qt.WidgetShortcut, QtCore.Qt.WidgetWithChildrenShortcut)
+    keys = defaultdict(list)
+    for a in win.findChildren(QtGui.QAction):
+        if a.shortcutContext() in scoped:
+            continue
+        for k in a.shortcuts():
+            if not k.isEmpty():
+                keys[k.toString()].append(a.text().replace("&", ""))
+    for s in win.findChildren(QtGui.QShortcut):
+        if s.context() not in scoped and not s.key().isEmpty():
+            keys[s.key().toString()].append("QShortcut")
+    return keys
+
+
+def test_the_f1_keys_of_the_registry_agree_with_the_firstrun_branch():
+    assert km.BY_ID["help_here"].keys == ("F1",) and km.BY_ID["help_here"].scope == "window"
+    assert km.BY_ID["shortcuts"].keys == ("Ctrl+F1",) and km.BY_ID["op_reference"].keys == ("Shift+F1",)
+    assert "program_help_here" not in km.BY_ID                              # help_here に吸わせた
+    for preset in km.PRESETS:
+        k = km.Keymap(preset)
+        owners = [c.id for c in km.COMMANDS if "F1" in k.keys(c.id) and km.BY_ID[c.id].scope == "window"]
+        assert len(owners) == 1, (preset, owners)                         # 窓全体の F1 は 1 つだけ
+    # Program 欄では F1 も help_here(カーソルの下の op)。Shift+F1 は窓の op の一覧へ通す
+    assert ("F1" in [e.key for e in km.Keymap().entries() if e.command == "help_here" and e.scope == "program_editor"])
+
+
+def _modal_guard():
+    """3 秒たってもモーダルの窓が出ていれば閉じ、その数を返す(古いモーダルの表が出たら試験を止めない)。"""
+    from PySide6 import QtCore, QtWidgets  # noqa: PLC0415
+    seen = {"modal": 0}
+
+    def guard():
+        box = QtWidgets.QApplication.activeModalWidget()
+        if box is not None:
+            seen["modal"] += 1
+            box.close()
+    QtCore.QTimer.singleShot(1500, guard)
+    return seen
+
+
+def test_f1_is_help_here_ctrl_f1_is_key_list_agrees_with_firstrun(app, studio_mod):
+    """起動直後の窓で(初回の枝の試験と同じ条件)、数え方の答えと F1 の行き先を確かめる。"""
+    _QtCore, _QtGui, QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    import studio_editops_qt as eq  # noqa: PLC0415
+    K = QtCore.Qt
+    fresh, fctl = _build(studio_mod)
+    try:
+        keys = _window_shortcuts(fresh)
+        assert len(keys) >= 40                                            # 数え方が空になっていない
+        dup = {k: v for k, v in keys.items() if len(v) > 1}
+        assert not dup, dup                                               # 初回の枝の試験と同じ答え(重なり 0)
+        assert keys["F1"] == [fresh._actions["help_here"].text().replace("&", "")]
+        assert keys["Ctrl+F1"] and keys["Shift+F1"]
+        help_ = fresh._help
+        lst = fresh._op_list
+        names = [lst.item(i).data(K.UserRole) for i in range(lst.count())]
+        _activate(fresh)
+        lst.setCurrentRow(names.index("median"))
+        lst.setFocus()
+        _pump(0.1)
+        QTest.keyClick(lst, K.Key_F1)
+        _pump(0.3)
+        assert help_["dialog"].isVisible() and help_["pick"].currentText() == "median"
+        help_["dialog"].close()
+        # 段の一覧にフォーカスがあれば、その段の op
+        lst.setCurrentRow(names.index("gaussian"))
+        fresh._op_buttons["insert"].click()
+        _pump(0.3)
+        stage_list = fresh._stage_list
+        row = stage_list.currentRow()                                     # 挿入した段が選ばれている
+        assert row >= 0 and "gaussian" in stage_list.item(row).text()
+        lst.setCurrentRow(names.index("median"))
+        _activate(fresh)
+        stage_list.setCurrentRow(row)
+        stage_list.setFocus()
+        _pump(0.1)
+        QTest.keyClick(stage_list, K.Key_F1)
+        _pump(0.3)
+        assert help_["pick"].currentText() == "gaussian"
+        help_["dialog"].close()
+        # Program 欄: カーソルの下の op
+        ed = _program(fresh, "median (5)")
+        cur = ed.textCursor()
+        cur.setPosition(2)
+        ed.setTextCursor(cur)
+        QTest.keyClick(ed, K.Key_F1)
+        _pump(0.3)
+        assert help_["dialog"].isVisible() and help_["pick"].currentText() == "median"
+        help_["dialog"].close()
+        # 何も選んでいなければキーの一覧 = 設定の窓(モードレス。古いモーダルの表は出ない)
+        lst.setCurrentRow(-1)
+        stage_list.setCurrentRow(-1)
+        _activate(fresh)
+        fresh._search.setFocus()                                          # 一覧にフォーカスを置くと先頭が今の行になる
+        _pump(0.1)
+        assert lst.currentItem() is None and stage_list.currentItem() is None
+        guard = _modal_guard()
+        QTest.keyClick(fresh._search, K.Key_F1)
+        _pump(0.3)
+        assert guard["modal"] == 0 and fctl.dialog is not None and fctl.dialog.isVisible()
+        assert not fctl.dialog.isModal()
+        fctl.dialog.close()
+    finally:
+        _close(fresh)
+        eq.apply_bindings(None)
+
+
+def test_ctrl_f1_opens_the_key_list_and_shift_f1_in_the_code_is_the_operator_reference(win, ctl, monkeypatch):
+    _QtCore, _QtGui, QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    K = QtCore.Qt
+    _activate(win)
+    win._search.setFocus()
+    _pump(0.05)
+    guard = _modal_guard()
+    QTest.keyClick(win._search, K.Key_F1, K.ControlModifier)
+    _pump(0.3)
+    assert guard["modal"] == 0 and ctl.dialog is not None and ctl.dialog.isVisible()   # D19: キーの一覧 = 設定の窓
+    ctl.dialog.close()
+    hits = []
+
+    def spy(*_a):
+        hits.append(1)
+    ref = win._actions["op_reference"]
+    ref.triggered.connect(spy)
+    said = []
+    ed = _program(win, "x = 1")
+    monkeypatch.setattr(ed, "help_for_word", lambda: said.append(1) or False)
+    try:
+        guard = _modal_guard()
+        QTest.keyClick(ed, K.Key_F1, K.ShiftModifier)
+        _pump(1.6)
+        assert hits == [1] and said == []                                   # Shift+F1 = op の一覧(コードの欄でも)
+    finally:
+        ref.triggered.disconnect(spy)
+
+
+def test_f1_takes_over_the_firstrun_action_when_both_branches_are_merged(app, studio_mod):
+    """初回の枝を合わせた時の形(win._actions["selected_help"] = F1 の QAction)を作り、取り付けると F1 が 1 つになる。"""
+    import studio_editops_qt as eq  # noqa: PLC0415
+    import studio_keymap_qt as kq  # noqa: PLC0415
+    from PySide6 import QtGui  # noqa: PLC0415
+    w, _model = studio_mod.build_window()
+    old = []
+    try:
+        a = QtGui.QAction("Help for the selected operator", w)
+        a.setShortcut(QtGui.QKeySequence("F1"))
+        a.triggered.connect(lambda *_: old.append(1))
+        w._actions["shortcuts"].setShortcut(QtGui.QKeySequence("Ctrl+F1"))
+        w._menus["help"].addAction(a)
+        w._actions["selected_help"] = a
+        ops = eq.install(w._program["edit"], settings=studio_mod._settings)
+        w._actions.update(ops.command_actions(w))
+        ctl = kq.install(w, settings=studio_mod._settings, tr=studio_mod.tr,
+                         lang=lambda: studio_mod._UI_LANG.get("code", "en"))
+        keys = _window_shortcuts(w)
+        dup = {k: v for k, v in keys.items() if len(v) > 1}
+        assert len(keys) >= 40 and not dup, dup
+        assert keys["F1"] == ["Help for the selected operator"]             # 初回の枝の QAction をそのまま使う
+        assert w._actions["help_here"] is a and a.objectName() == "keymap:help_here"
+        assert [k for k in w._actions if k not in km.BY_ID] == ["selected_help"]
+        assert km.ADOPTED == {"selected_help": "help_here"}
+        assert ctl.assign("help_here", ("Ctrl+Shift+F1",)) == [] and _keys_of(a) == ("Ctrl+Shift+F1",)
+        ctl.keymap = km.Keymap()
+        ctl._commit()
+        a.trigger()
+        _pump(0.2)
+        assert old == []                                                    # 古い受け手は外した(行き先は help_here)
+    finally:
+        if getattr(w, "_keymap", None) is not None and w._keymap.dialog is not None:
+            w._keymap.dialog.close()
+        _close(w)
+        eq.apply_bindings(None)

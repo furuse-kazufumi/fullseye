@@ -1022,6 +1022,20 @@
    "tw": "「指派」會取代 %(detail)s(「新增為另一個按鍵」則保留它們)",
    "ko": "지정은 %(detail)s 를 바꿉니다 (다른 키로 추가하면 남습니다)",
    "de": "Zuweisen ersetzt %(detail)s (Als weitere Taste hinzufügen behält sie)"
+  },
+  "Help here": {
+   "ja": "ここのヘルプ",
+   "zh": "此处的帮助",
+   "tw": "此處的說明",
+   "ko": "여기 도움말",
+   "de": "Hilfe hierzu"
+  },
+  "Help for what you are on: the operator under the code cursor, the selected stage or operator; with nothing selected, the keyboard shortcuts": {
+   "ja": "今いる所のヘルプ: コードのカーソルの下の op、選んでいる段か op。何も選んでいなければキーの一覧",
+   "zh": "当前位置的帮助: 代码光标下的 op、所选的阶段或 op；什么都没选时显示键盘快捷键",
+   "tw": "目前位置的說明: 程式碼游標下的 op、所選的階段或 op；什麼都沒選時顯示鍵盤快速鍵",
+   "ko": "지금 있는 곳의 도움말: 코드 커서 아래의 op, 선택한 단계나 op. 아무것도 선택하지 않았으면 키보드 단축키",
+   "de": "Hilfe zu dem, worauf Sie stehen: der Operator unter dem Code-Cursor, die gewählte Stufe oder der gewählte Operator; ohne Auswahl die Tastenkürzel"
   }
  }
 }

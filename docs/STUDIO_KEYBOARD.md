@@ -65,7 +65,10 @@ Fullseye Studio のショートカットキーは、利用者が自分で決め�
 | Python エディタの窓(`python_editor_window`) | Python エディタ | Qt の表(QAction / QShortcut) | 使える |
 | 画像ビューアの窓(`image_viewer_window`) | 画像ビューア | Qt の表(QAction / QShortcut) | 使える |
 | 3-D 表示(`view3d`) | 3-D 表示 | 部品が自分で先に受ける | — |
-| テキスト欄(`text`) | テキスト欄、Program 欄、Program 欄の検索欄、Python エディタ | テキスト欄の標準のキー | — |
+| テキスト欄(`text`) | テキスト欄、Program 欄、Program 欄の検索欄、Python エディタ | テキスト欄が先に取る標準のキー | — |
+| テキスト欄(窓のキーが勝つ)(`text_lost`) | テキスト欄、Program 欄、Program 欄の検索欄、Python エディタ | 窓のキーが勝つと欄の操作が消える標準のキー | — |
+| メニューバー(`menu_bar`) | 窓全体、テキスト欄、段の一覧、Program 欄、Program 欄の検索欄、画像の窓 | 今の言語のメニューバーのニーモニック | — |
+| 他の言語のメニューバー(`menu_bar_other`) | 窓全体、テキスト欄、段の一覧、Program 欄、Program 欄の検索欄、画像の窓 | 他の言語のメニューバーのニーモニック | — |
 
 当たりの決まり(`studio_keymap.find_conflicts`):
 
@@ -114,7 +117,8 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 |---|---|---|---|
 | `palette` | コマンドパレット… | `Ctrl+P` | `Ctrl+Shift+P` / `F1` |
 | `find_panel` | パネルを探す… | `Ctrl+Shift+P` | `Ctrl+P` |
-| `shortcuts` | キーボードショートカット | `F1` | `Ctrl+K, Ctrl+R` |
+| `shortcuts` | キーボードショートカット | `Ctrl+F1` | `Ctrl+K, Ctrl+R` |
+| `help_here` | ここのヘルプ | `F1` | `Ctrl+F1` |
 | `dbg_step` | 1 段進む(どの欄からでも) | `F6` | `F10` |
 | `editops_box_up` | 矩形選択を上へ広げる | `Shift+Alt+Up` / `Ctrl+Alt+Up` | `Ctrl+Shift+Alt+Up` / `Ctrl+Alt+Up` |
 | `editops_box_down` | 矩形選択を下へ広げる | `Shift+Alt+Down` / `Ctrl+Alt+Down` | `Ctrl+Shift+Alt+Down` / `Ctrl+Alt+Down` |
@@ -196,9 +200,10 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `system_settings` | 環境設定… | 窓全体 | `Ctrl+,` | `Ctrl+,` |
 | `keyboard_settings` | キーボードのショートカットの設定… | 窓全体 | `Ctrl+K, Ctrl+S` | `Ctrl+K, Ctrl+S` |
 | `editops_howto` | 矩形選択の使い方… | 窓全体 | — | — |
+| `help_here` | ここのヘルプ ★ | 窓全体 | `F1` | `Ctrl+F1` |
 | `op_reference` | op リファレンス… | 窓全体 | `Shift+F1` | `Shift+F1` |
 | `quick_guide` | クイックガイド (en/ja/zh) | 窓全体 | `Shift+F2` | `Shift+F2` |
-| `shortcuts` | キーボードショートカット ★ | 窓全体 | `F1` | `Ctrl+K, Ctrl+R` |
+| `shortcuts` | キーボードショートカット ★ | 窓全体 | `Ctrl+F1` | `Ctrl+K, Ctrl+R` |
 | `about` | Fullseye Studio について | 窓全体 | — | — |
 | `remove` | 段を削除 | 段の一覧 | `Del` | `Del` |
 | `duplicate_stage` | 段を複製 | 段の一覧 | `Ctrl+D` | `Ctrl+D` |
@@ -216,7 +221,6 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `program_comment` | 行コメントの付け外し | Program 欄 | `Ctrl+/` | `Ctrl+/` |
 | `program_font_bigger` | エディタの文字を大きく | Program 欄 | `Ctrl++` / `Ctrl+=` | `Ctrl++` / `Ctrl+=` |
 | `program_font_smaller` | エディタの文字を小さく | Program 欄 | `Ctrl+-` | `Ctrl+-` |
-| `program_help_here` | カーソル下の op のヘルプ | Program 欄 | `Shift+F1` | `Shift+F1` |
 | `editops_box_up` | 矩形選択を上へ広げる ★ | コードエディタ | `Shift+Alt+Up` / `Ctrl+Alt+Up` | `Ctrl+Shift+Alt+Up` / `Ctrl+Alt+Up` |
 | `editops_box_down` | 矩形選択を下へ広げる ★ | コードエディタ | `Shift+Alt+Down` / `Ctrl+Alt+Down` | `Ctrl+Shift+Alt+Down` / `Ctrl+Alt+Down` |
 | `editops_box_left` | 矩形選択を左へ広げる ★ | コードエディタ | `Shift+Alt+Left` | `Ctrl+Shift+Alt+Left` |
