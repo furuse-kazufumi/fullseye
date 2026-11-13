@@ -163,6 +163,7 @@ def test_rows_without_a_full_translation_are_counted_not_hidden():
 PENDING_ROWS_CEILING = 294   # +1: 「impl: %s」(2 回目の直し)
 # 2026-11-13 初回起動の点検の直し: 入れられない op の理由 3 文・行の印・最初の段の注記(S2)
 PENDING_ROWS_CEILING += 5
+PENDING_ROWS_CEILING += 1    # M5: 座標つきの画素の読み取りの 1 行
 
 
 # --------------------------------------------------------------------------- #

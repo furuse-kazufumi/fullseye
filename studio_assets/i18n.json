@@ -2339,6 +2339,7 @@
   "‘%s’ takes two or more inputs, so it cannot be added as a single pipeline stage — it was not added": {"ja": "「%s」は入力が 2 つ以上要る op なので、1 入力の段としては入れられません(追加していません)"},
   "‘%s’ is not available in this environment (its optional backend is not installed) — it was not added to the pipeline": {"ja": "「%s」はこの環境では使えません(追加のパッケージが未導入)。処理手順には追加していません"},
   "cannot be added as a stage": {"ja": "段としては入れられません"},
-  "First stage: showing %d of %d operators that can take the loaded input ('%s').": {"ja": "最初の段: %d / %d 件を表示しています(読み込んだ入力 '%s' を受けられる op)。"}
+  "First stage: showing %d of %d operators that can take the loaded input ('%s').": {"ja": "最初の段: %d / %d 件を表示しています(読み込んだ入力 '%s' を受けられる op)。"},
+  "x=%d  y=%d   value %s (%s) / shown %s / range %s to %s": {"ja": "x=%d  y=%d   値 %s (%s) / 表示 %s / レンジ %s〜%s"}
  }
 }

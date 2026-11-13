@@ -304,3 +304,70 @@ def test_m2_build_window_default_and_main_entry(launch):
     order = studio.sample_menu_order(["gradient", "blobs", "coins", "cell"])
     assert order == ["coins", "gradient", "blobs", "cell"]
     assert studio.sample_menu_order(["gradient", "blobs"]) == ["gradient", "blobs"]   # 無ければ並びは同じ
+
+
+# --------------------------------------------------------------------------- #
+# M5・L8: 画素の読み取り / ステータスバーの文                                       #
+# --------------------------------------------------------------------------- #
+def _hover(win, model, x, y):
+    """画像の上でカーソルを動かした時と同じ呼び出し(ImageView.hover_cb)。"""
+    from PySide6 import QtWidgets
+    view = [w for w in win.findChildren(QtWidgets.QWidget) if type(w).__name__ == "ImageView"][0]
+    view.hover_cb(x, y, model.image[y, x])
+    return view
+
+
+@pytest.mark.parametrize("lang,word", [("ja", "値"), ("en", "value")])
+def test_m5_readout_has_coordinates_in_the_ui_language(launch, lang, word):
+    win, model = launch(lang=lang, user=True)
+    _hover(win, model, 12, 34)
+    text = win._readout.text()
+    assert text.startswith("x=12  y=34   "), text
+    assert word in text
+    assert bool(_CJK.search(text)) == (lang == "ja"), text
+    v = float(model.image[34, 12])
+    assert format(v, ".4g") in text                                  # 読んでいる画素の値そのもの
+
+
+def test_m5_real_mouse_move_over_the_image_gives_coordinates(launch):
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    win, model = launch(lang="ja", user=True)
+    from PySide6 import QtWidgets
+    view = [w for w in win.findChildren(QtWidgets.QWidget) if type(w).__name__ == "ImageView"][0]
+    vp = view.viewport() if hasattr(view, "viewport") else view
+    c = vp.rect().center()
+    QTest.mouseMove(vp, c); _pump(0.1)
+    QTest.mouseMove(vp, QtCore.QPoint(c.x() + 5, c.y() + 3)); _pump(0.2)
+    text = win._readout.text()
+    m = re.match(r"x=(\d+)  y=(\d+)   値 ", text)
+    assert m, text
+    x, y = int(m.group(1)), int(m.group(2))
+    h, w = model.image.shape[:2]
+    assert 0 <= x < w and 0 <= y < h
+    assert abs(x - w // 2) < w // 4 and abs(y - h // 2) < h // 4      # 中央付近を指している
+
+
+def test_l8_reloading_the_image_clears_the_readout(launch):
+    win, model = launch(lang="ja", user=True)
+    hint = studio.STRINGS_I18N["hover over the image for pixel coordinates + value"]["ja"]
+    _hover(win, model, 3, 4)
+    assert win._readout.text().startswith("x=3  y=4")
+    win._load_sample_image("blobs"); _pump(0.2)
+    assert win._readout.text() == hint                               # 前の画像の値が残らない
+    _hover(win, model, 5, 6)
+    assert win._readout.text().startswith("x=5  y=6")
+    win._load_sample_image("blobs"); _pump(0.2)                      # 同じ名前でも新しく読んだ画像
+    assert win._readout.text() == hint
+
+
+def test_status_messages_get_room_to_be_seen(launch):
+    """一時的な文(flash)を描く欄が幅 0 で、どの文も画面に出ていなかった(読み取りの欄は隠れ、右の欄が全幅を取っていた)。"""
+    win, model = launch(lang="ja", size=(1366, 768))
+    bar = win.statusBar()
+    bar.showMessage("x" * 40, 3000); _pump(0.2)
+    assert bar.currentMessage()
+    first_permanent = min(w.x() for w in (win._img_info, win._run_ui["box"]) if w.isVisible())
+    width_for_text = first_permanent - 6
+    need = bar.fontMetrics().horizontalAdvance("x" * 40)
+    assert width_for_text >= need, (width_for_text, need)

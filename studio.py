@@ -4114,6 +4114,21 @@ def _ops_accepting_entry(rows, entry_sort):
     return [r for r in rows if engine._compatible(entry_sort, r.get("in_sort") or "")]
 
 
+#: 画素の読み取りの 1 行(英語が原文。画面へは ``tr()`` を通す)。座標は画像の配列の (x = 列, y = 行)。
+PIXEL_READOUT_TEXT = "x=%d  y=%d   value %s (%s) / shown %s / range %s to %s"
+
+
+def format_pixel_readout(info, x, y):
+    """``studio_display.pixel_readout`` の結果を、座標つきの 1 行に(UI の言語)。
+
+    ★2026-11-13(初回起動の点検 M5): 案内は「座標と値が出ます」なのに座標が出ず、文は英語の UI でも日本語だった。"""
+    value = info["value"]
+    value_text = value if isinstance(value, str) else format(value, ".4g")
+    shown = "—" if info["display_value"] is None else str(info["display_value"])
+    return tr(PIXEL_READOUT_TEXT) % (int(x), int(y), value_text, info["dtype"], shown,
+                                     format(info["lo"], ".4g"), format(info["hi"], ".4g"))
+
+
 #: Sample image the dev_* visualization demo loads (a collected, license-clean image).
 HDEV_VISUAL_DEMO_IMAGE = "coins"
 
@@ -7234,7 +7249,9 @@ def build_window(model=None):
     for widget in (run_attr, run_status, run_progress, run_stop, run_banner, run_show, run_current):
         run_lay.addWidget(widget)
     run_progress.hide(); run_stop.hide(); run_banner.hide(); run_show.hide(); run_current.hide()
-    status.addPermanentWidget(run_box, 1)
+    # ★2026-11-13(初回起動の点検): 伸びる幅を run_box に渡すと、一時的な文(flash)を描く欄が幅 0 になり、
+    # 「入れられない理由」などの文が画面に一度も出なかった。空いた幅は文と画素の読み取りの欄へ。
+    status.addPermanentWidget(run_box, 0)
     win._run_ui = {"box": run_box, "attribution": run_attr, "status": run_status,
                    "progress": run_progress, "stop": run_stop, "banner": run_banner,
                    "show_result": run_show, "run_current": run_current}
@@ -9701,6 +9718,13 @@ def build_window(model=None):
 
     ab_restore.clicked.connect(restore_a); ab_adopt.clicked.connect(adopt_b); ab_keep.clicked.connect(keep_both)
 
+    def _readout_follow_input():
+        """L8: 入力の画像を読み替えたら、前の画像の読み取りを消して案内に戻す(古い値が残っていた)。"""
+        img = model.image
+        if state.get("readout_input") is not img:
+            state["readout_input"] = img
+            readout.setText(tr("hover over the image for pixel coordinates + value"))
+
     def show_result(refresh_rows=True):
         """Render the current result. The whole body is guarded, not just the
         pipeline call: inspect_result / apply_display / _to_qimage / histogram_image
@@ -9711,6 +9735,7 @@ def build_window(model=None):
             return                            # dev_update_window('off'): no auto-display
         state["renders"] += 1
         try:
+            _readout_follow_input()
             _render()
             _update_attribution()
             if refresh_rows and state.get("shown_live") and not run_ctl.running:
@@ -14871,26 +14896,16 @@ def build_window(model=None):
             info = studio_display.pixel_readout(raw, rng, y, x)
             if info is None:
                 return
-            value = info["value"]
-            value_text = value if isinstance(value, str) else format(value, ".4g")
-            shown = "—" if info["display_value"] is None else str(info["display_value"])
-            readout.setText("値 %s (%s) / 表示 %s / レンジ %s〜%s" % (
-                value_text, info["dtype"], shown, format(info["lo"], ".4g"),
-                format(info["hi"], ".4g")))
+            readout.setText(format_pixel_readout(info, x, y))          # M5: 座標つき、UI の言語
         elif np.ndim(v) == 0:
             readout.setText(f"x={x}  y={y}   value={float(v):.4f}")
         else:
             readout.setText(f"x={x}  y={y}   RGB=({float(v[0]):.3f},{float(v[1]):.3f},{float(v[2]):.3f})")
     view.hover_cb = on_hover
     win._format_display_readout = lambda image, rng, y, x: (
-        None if studio_display.pixel_readout(image, rng, y, x) is None else
-        "値 %s (%s) / 表示 %s / レンジ %s〜%s" % (
-            (lambda z: z if isinstance(z, str) else format(z, ".4g"))(
-                studio_display.pixel_readout(image, rng, y, x)["value"]),
-            studio_display.pixel_readout(image, rng, y, x)["dtype"],
-            studio_display.pixel_readout(image, rng, y, x)["display_value"],
-            format(studio_display.pixel_readout(image, rng, y, x)["lo"], ".4g"),
-            format(studio_display.pixel_readout(image, rng, y, x)["hi"], ".4g")))
+        lambda info: None if info is None else format_pixel_readout(info, x, y))(
+            studio_display.pixel_readout(image, rng, y, x))
+    win._readout = readout
 
     def _display_settings_changed(*_):
         manual = range_manual.isChecked()
