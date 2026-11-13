@@ -296,6 +296,8 @@ py-modules = [
   "studio_pymode", "studio_pyedit_syntax", "studio_pyedit_complete", "studio_pyedit_values", "studio_pyedit_i18n",
   # studio_program_i18n: 実行系・検査の文を UI の言語へ / studio_pyedit_safe: 実行後の値を利用者のコードを走らせずに調べる
   "studio_program_i18n", "studio_pyedit_safe",
+  # パラメータの束を並べて見る・直す窓(受け入れ表 D3): studio_params_model = 表のモデル(Qt なし)/ studio_params_qt = 窓
+  "studio_params_model", "studio_params_qt",
   "studio_pyedit_qt", "studio_pyedit_vars_qt", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",

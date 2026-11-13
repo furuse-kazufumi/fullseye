@@ -827,6 +827,7 @@ NOT_A_GENERATOR = {
     "projmap.py": "ライブラリ(save_gif は呼び手がパスを渡す)。__main__ は数値の表を表示するだけ。",
     "sim_source.py": "ライブラリ(save_* は呼び手が dir を渡す)。__main__ はカメラ情報を表示するだけ。",
     "studio.py": "GUI アプリ(Studio)。保存は利用者の操作で、指定された場所へ。",
+    "studio_params_qt.py": "GUI の窓(パラメータの束を並べて見る・直す)。保存は利用者の操作で、開いたファイルか「名前を付けて保存」の先へ(repo の生成物は書かない)。",
     "verify_auto.py": "門(auto op の機能ゲート)。結果 data/auto_functional_gate.json は gitignore。",
     "halcon_scrape.py": "取得スクリプト(ネットワーク)。出力 data/halcon_operators.json は gitignore の手元キャッシュ。",
     "tools/plateau_fetch.py": "取得スクリプト(HTTP Range で PLATEAU の zip から抜く)。出力先は repo の外。",

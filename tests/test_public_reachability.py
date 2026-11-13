@@ -125,6 +125,12 @@ _INTERNAL = {
     "studio_project": 23, "studio_pymode": 20, "studio_pyedit_syntax": 22, "studio_pyedit_complete": 35,
     "studio_pyedit_values": 30, "studio_pyedit_i18n": 5, "studio_pyedit_qt": 9, "studio_pyedit_vars_qt": 14,
     "studio_program_i18n": 4, "studio_pyedit_safe": 9,
+    # ★2026-11-13(feat/studio-params): パラメータの束を並べて見る・直す窓(受け入れ表 D3)。Studio の GUI の内側の部品で、
+    #   利用者の入口は窓(python -m studio_params_qt / Studio のメニュー)。束そのものの入口は fullseye.load_params ほか
+    #   (fullseye.parambundle)で、こちらは op にも facade にも出さない。実測: studio_params_model 17(ParamsModel・
+    #   Outcome・列 / 行 / 木の型・読む read_bundle・原子的に書く write_bundle_atomic・編集の解釈 parse_edit・対訳 make_tr ほか)、
+    #   studio_params_qt 5(ParamsPanel・ParamsWindow・ParamsTreeModel・show_params_window・main)。
+    "studio_params_model": 17, "studio_params_qt": 5,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -357,7 +363,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1290
 # 2026-11-13 同じ枝の 2 便目: 1290 → 1305(+15、この機械の実測)。内訳: 上の _INTERNAL の studio_program_i18n 4・
 #   studio_pyedit_safe 9・studio_pymode + 1、studio_program.starter_program 1(例の文面を UI の言語で返す。GUI の内側)。
-_HIDDEN_FUNCTIONS_TODAY = 1305
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1305
+# 2026-11-13 feat/studio-params(パラメータの窓): 1305 → 1327(+22、この機械の実測)。内訳: 上の _INTERNAL の
+#   studio_params_model 17・studio_params_qt 5。
+_HIDDEN_FUNCTIONS_TODAY = 1327
 
 
 def _hidden_total():
