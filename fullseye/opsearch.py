@@ -686,9 +686,11 @@ def mcp_unavailable(op: str) -> dict | None:
     category = edge.get("category")
     words = set(op.split("_"))
     # 同じ分類で走る op を、名前の語(lens / file / illumination …)を多く共有する順に
-    alternatives = [name for _shared, name in sorted(
+    # 名前の語を 1 つも共有しない op は並べない(optics の 300 個から abc 順の 5 個を出すと、手がかりにならない)
+    alternatives = [name for shared, name in sorted(
         (-len(words & set(e["op"].split("_"))), e["op"]) for e in edges
-        if category and e.get("category") == category and e.get("verified_executable") and e["op"] != op)][:5]
+        if category and e.get("category") == category and e.get("verified_executable") and e["op"] != op)
+        if shared < 0][:5]
     try:
         card = next((c for c in _load_data(PKG_CARDS)["ops"] if c["name"] == op), None)
     except (FileNotFoundError, ValueError):

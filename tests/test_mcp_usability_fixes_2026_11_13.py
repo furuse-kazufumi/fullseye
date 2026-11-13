@@ -91,3 +91,23 @@ def test_fixes_and_plans_never_route_through_ops_that_ignore_their_input(cat, st
     assert routes.get("ok") and routes["plans"]
     ops_in_plans = {op for pl in routes["plans"] for op in pl["ops"]}
     assert ops_in_plans and not (ops_in_plans & blind), ops_in_plans & blind
+
+
+# --------------------------------------------------------------------------- 4: 実行できない op の誤り文と「近い名前」
+def test_alternatives_share_a_name_word_and_the_name_is_not_its_own_neighbour(cat, store):
+    """直す前: fullseye_apply は台帳の op にも「registry 層に無い」とだけ返し、「近い名前」に同じ名前を出した。
+    代わりの op は、同じ分類で名前の語を共有する物だけ(共有しなければ並べない)。"""
+    from fullseye.opsearch import mcp_unavailable
+    lens = mcp_unavailable("lens_file_read")["executable_alternatives"]
+    assert len(lens) >= 3
+    assert all(set(name.split("_")) & {"lens", "file", "read"} for name in lens)
+    thermal = mcp_unavailable("lockin_thermal_wave")
+    assert thermal["reason"] == "sample_run_failed"
+    alternatives = thermal["executable_alternatives"]
+    assert len(alternatives) <= 5
+    assert not [n for n in alternatives if not set(n.split("_")) & {"lockin", "thermal", "wave"}]
+    h = S.call_tool("fullseye_load_image", {"path": "coins"}, cat, store)["structuredContent"]["handle"]
+    with pytest.raises(S.ArgError) as err:
+        S.call_tool("fullseye_apply", {"handle": h, "op": "lockin_phase"}, cat, store)
+    assert "'lockin_phase'(registry 層に無い)" in str(err.value)
+    assert "近い名前: ['lockin_phase'" not in str(err.value) and "op_run('lockin_phase'" in str(err.value)

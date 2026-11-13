@@ -11,6 +11,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 - 失敗の本文: `fullseye_validate_pipeline` の不合格・`fullseye_pipeline` の型の誤り(-32602)・段の失敗の本文を、段番号・op・理由・直し方の 1 行ずつにした(以前は「error」の 1 語や、結果の JSON を 1 行に繋いだ物で、理由は structuredContent にしか無かった)。structuredContent は変えていない。
 - 型の直し方の候補と plan の経路から、入力の中身を読まない op(`MCP_INPUT_INDEPENDENT.json`、採点が断る一覧と同じ)を外した。以前は image → region の候補が `hx_gen_empty_region` で、従うと `count_obj` = 0 が判定 ok で返った。
+- 実行できない op の誤り文: 理由の 1 文と代わりの手(読む・Python から呼ぶ・同じ分類で MCP が走らせられる op)を付けた(上の節)。代わりの op は、名前の語を共有する物だけを並べる。`fullseye_apply` の「近い名前」に同じ名前を出さない。
 
 ### MCP: 光学・照明・合成の入口などの台帳 op を MCP から実行できるようにした(2026-11-13)
 
