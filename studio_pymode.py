@@ -62,6 +62,11 @@ MAX_OUTPUT_CHARS = 200_000
 MAX_TOOLTIP_CHARS = 2000
 #: 未保存の文面を設定へ書き出す間隔(落ちても次の起動で戻る)。
 AUTOSAVE_MS = 5000
+#: ファイルそのものへの自動保存(既定は切。退避 = 上の AUTOSAVE_MS とは別で、退避は設定に関係なく常に動く)。
+#: "off" = しない / "idle" = 打つのを止めてから一定時間の後 / "focus" = Program 欄からフォーカスが外れた時。
+AUTOSAVE_FILE_MODES = ("off", "idle", "focus")
+DEFAULT_AUTOSAVE_IDLE_S = 2.0
+AUTOSAVE_IDLE_RANGE_S = (0.5, 600.0)
 DEFAULT_TIME_LIMIT_S = sp.DEFAULT_TIME_LIMIT_S
 NEW_PROGRAM_COMMENT = "New program. F5 runs it; img is the image open in Studio."
 NEW_PROGRAM_TEXT = ("# python\n"
@@ -373,6 +378,13 @@ class PyModeController(QtCore.QObject):
         self._prelude_keys = None
         self._legacy_ss = self.edit.styleSheet()
         self._suspend_text = False
+        #: モードごとの文書。モードの切り替えは ``setDocument`` で差し替えるだけ = 文面も Undo の履歴も失わない
+        #: (``setPlainText`` で入れ替えていた間は、切り替えのたびに履歴が消えた)。エディタが持ち主のままだと
+        #: ``setDocument`` で前の文書が消されるので、持ち主をここ(QObject)へ移す。
+        self.doc_pipe = self.edit.document()
+        self.doc_pipe.setParent(self)
+        self.doc_py: QtGui.QTextDocument | None = None
+        self._cursor_pos = {MODE_PIPELINE: 0, MODE_PYTHON: 0}
         self.trust = sp.TrustStore(trust_store_path(self._settings_file()))
         self._poll = QtCore.QTimer(self)
         self._poll.setInterval(POLL_MS)
@@ -380,12 +392,18 @@ class PyModeController(QtCore.QObject):
         self._autosave = QtCore.QTimer(self)
         self._autosave.setInterval(AUTOSAVE_MS)
         self._autosave.timeout.connect(self.autosave_now)
+        self._file_save_timer = QtCore.QTimer(self)           # ファイルへの自動保存(打つのを止めてから)
+        self._file_save_timer.setSingleShot(True)
+        self._file_save_timer.timeout.connect(lambda: self.autosave_file("idle"))
+        self._conflict_told: str | None = None                # 「外で変わったので自動保存しない」と言った時のディスクの中身
+        self._autosave_actions: dict = {}
         self.assist = None
         with self._quiet_text():
             self._build_assist()
         self._build_ui()
         self.edit.assist_hook = self._paint_marks
         self.edit._gutter.installEventFilter(self)
+        self.edit.installEventFilter(self)                    # フォーカスが外れた時の自動保存
 
     @contextlib.contextmanager
     def _quiet_text(self):
@@ -561,12 +579,27 @@ class PyModeController(QtCore.QObject):
         self.mode_note.setProperty("hint", True)
         bar.addWidget(self.mode_note)
         bar.addStretch(1)
+        self.autosave_note = QtWidgets.QLabel()               # 「自動保存した」を小さく出す(窓は出さない)
+        self.autosave_note.setProperty("muted", True)
+        bar.addWidget(self.autosave_note)
         self.file_label = QtWidgets.QLabel()
         bar.addWidget(self.file_label)
         self.config_box = QtWidgets.QComboBox()
         self.config_box.addItems([tr("Debug"), tr("Release")])
         self.config_box.currentIndexChanged.connect(lambda i: self.set_config(("debug", "release")[i]))
         bar.addWidget(self.config_box)
+        # 文面の「元に戻す / やり直し」(どちらのモードでも。出来ない時は無効)
+        self.btn_undo = QtWidgets.QToolButton()
+        self.btn_redo = QtWidgets.QToolButton()
+        for b, glyph, fn in ((self.btn_undo, "\u21b6", lambda: self.edit.undo()),
+                             (self.btn_redo, "\u21b7", lambda: self.edit.redo())):
+            b.setText(glyph)
+            b.setFocusPolicy(QtCore.Qt.NoFocus)               # 押してもコード欄のフォーカスを奪わない
+            b.setEnabled(False)
+            b.clicked.connect(lambda _=False, f=fn: f())
+            bar.addWidget(b)
+        self.edit.undoAvailable.connect(self.btn_undo.setEnabled)
+        self.edit.redoAvailable.connect(self.btn_redo.setEnabled)
         self.btn_run = QtWidgets.QToolButton()
         self.btn_step = QtWidgets.QToolButton()
         self.btn_stop = QtWidgets.QToolButton()
@@ -629,6 +662,10 @@ class PyModeController(QtCore.QObject):
         new = vq.VarsWatchWidget(self.var_source, self._ptr, on_run=self.run, on_open_example=self.open_example)
         new.variables.imageRequested.connect(lambda _n, v: self._show_value(v))
         new.watch.changed.connect(lambda _l: self._set("watch", self.vars.watch.dumps()))
+        new.watch.confirm_remove = lambda expr: self._confirm(
+            self.tr("Remove the watch expression"),
+            self.tr("The watch expression  %s  is removed from the list. It cannot be brought back (you can type it "
+                    "again).") % expr, self.tr("Remove it"))
         new.watch.table.setToolTip(self.tr("Watch expressions and their values, evaluated again each time the "
                                            "program stops or finishes"))
         if watch:
@@ -678,6 +715,8 @@ class PyModeController(QtCore.QObject):
                 a.setStatusTip(tr(tip_en))
         for m, title_en in getattr(self, "_menu_titles", ()):
             m.setTitle(tr(title_en))
+        self.btn_undo.setToolTip(tr("Undo the last edit of the Program text (Ctrl+Z)"))
+        self.btn_redo.setToolTip(tr("Redo the edit that was undone (Ctrl+Y or Ctrl+Shift+Z)"))
         self.btn_pipe.setText(tr("Pipeline mode"))
         self.btn_py.setText(tr("Python mode"))
         self.btn_pipe.setToolTip(tr("Pipeline mode: the stage list is the source; the Program shows it as code"))
@@ -704,7 +743,7 @@ class PyModeController(QtCore.QObject):
         for b in self.ctx.get("pipeline_buttons", ()):
             b.setVisible(not py)
         for w in (self.config_box, self.btn_run, self.btn_step, self.btn_stop, self.file_label, self.output,
-                  self.output_title):
+                  self.output_title, self.autosave_note):
             w.setVisible(py)
         self.stage_stack.setCurrentIndex(1 if py else 0)
         if getattr(self, "var_stack", None) is not None:
@@ -722,6 +761,13 @@ class PyModeController(QtCore.QObject):
                 self.edit.setStyleSheet(self._legacy_ss)
         self._update_labels()
         self.edit._highlight()
+        d = self.edit.document()                              # 文書を差し替えた: ボタンの有効・無効をその文書に合わせる
+        self.btn_undo.setEnabled(d.isUndoAvailable())
+        self.btn_redo.setEnabled(d.isRedoAvailable())
+        try:
+            self.ctx.get("sync_undo_actions", lambda: None)()
+        except Exception:                                     # noqa: BLE001
+            pass
 
     def _update_labels(self):
         tr = self.tr
@@ -776,13 +822,17 @@ class PyModeController(QtCore.QObject):
             return
         self._suspend_text = True
         try:
+            self._cursor_pos[self.mode] = self.edit.textCursor().position()
             if mode == MODE_PYTHON:
                 self.pipe_text = self.edit.toPlainText()
                 self.pipe_dirty = bool(self.state.get("code_dirty"))
                 self.breakpoints_pipe = set(self.edit.breakpoints)
                 self.mode = MODE_PYTHON
                 self.state["code_dirty"] = False
-                self.edit.setPlainText(self.py_text)
+                doc = self._python_document()
+                self.edit.setDocument(doc)                    # 文書ごと差し替える: Undo の履歴はそのまま
+                if doc.toPlainText() != self.py_text:         # 離れている間に入れ替わった(起動時の復元・言語の切り替え)
+                    self.edit.setPlainText(self.py_text)
                 self.edit.breakpoints = set(self.breakpoints_py)
                 self.edit.clear_exec()
                 self.warm_up()
@@ -791,14 +841,19 @@ class PyModeController(QtCore.QObject):
                 self.breakpoints_py = set(self.edit.breakpoints)
                 self._end_session()
                 self.mode = MODE_PIPELINE
+                self.edit.setDocument(self.doc_pipe)
                 self.edit.breakpoints = set(self.breakpoints_pipe)
                 self.edit.set_errors({})
-                if self.pipe_text is not None and self.pipe_dirty:
-                    self.edit.setPlainText(self.pipe_text)
-                    self.state["code_dirty"] = True
+                if self.pipe_dirty:
+                    self.state["code_dirty"] = True           # 未適用の編集は文書に残っている
                 else:
                     self.state["code_dirty"] = False
-                    self.ctx["sync_program"]()                # 段の列(正本)から文面を作り直す
+                    gen = self.ctx.get("generated_text", self.ctx["pipeline_text"])()
+                    if self.edit.toPlainText().strip() != gen.strip():
+                        self.ctx["sync_program"]()            # 段の列(正本)が変わっていた時だけ作り直す
+            cur = self.edit.textCursor()
+            cur.setPosition(max(0, min(self._cursor_pos.get(mode, 0), max(0, self.edit.document().characterCount() - 1))))
+            self.edit.setTextCursor(cur)
         finally:
             self._suspend_text = False
         self._set("mode", self.mode)
@@ -812,6 +867,22 @@ class PyModeController(QtCore.QObject):
             self.flash(self.tr("Python mode: the text is the source; the stage list records each run")
                        if self.active else self.tr("Pipeline mode: the stage list is the source"))
 
+    def _python_document(self) -> QtGui.QTextDocument:
+        """Python のモードの文書(初めて入る時に作る。持ち主はこの QObject)。"""
+        if self.doc_py is None:
+            d = QtGui.QTextDocument(self)
+            d.setDocumentLayout(QtWidgets.QPlainTextDocumentLayout(d))
+            d.setDefaultFont(self.doc_pipe.defaultFont())
+            d.setPlainText(self.py_text)
+            d.clearUndoRedoStacks()                           # 開いた直後は履歴が空
+            d.setModified(False)
+            try:
+                self.ctx.get("on_text_document", lambda _d: None)(d)   # 打っている最中の検査などを、この文書にも繋ぐ
+            except Exception as e:                            # noqa: BLE001
+                self.state.setdefault("errors", []).append(("could not wire the Python document", str(e)))
+            self.doc_py = d
+        return self.doc_py
+
     def toggle_mode(self):
         self.set_mode(MODE_PIPELINE if self.active else MODE_PYTHON)
 
@@ -819,6 +890,8 @@ class PyModeController(QtCore.QObject):
         """パイプラインの文面を Python にして Python のモードへ(行の位置は変えない。Undo で前の Python に戻る)。"""
         # 変換するのはパイプラインの文面(Python のモードにいるなら、正本の段の列から作り直した物)
         src = self.edit.toPlainText() if not self.active else self.ctx["pipeline_text"]()
+        if self.file and self.unsaved() and not self._confirm_unsaved(self.tr("Convert to Python")):
+            return False                                      # ファイルの未保存の変更は、置き換える前に聞く(文面は Ctrl+Z で戻るが、ファイルとの結び付きは切れる)
         py, errs = sp.hdev_to_python(src)
         if errs:
             self.flash(self.tr("Could not convert to Python: %s") % "; ".join(self._loc(e) for e in errs[:2]))
@@ -855,6 +928,8 @@ class PyModeController(QtCore.QObject):
             self.edit.set_exec_line(0)
         if self.edit.timings:                                # 前の実行の行ごとの時間は、行がずれると別の行に付く(実際の窓で見えた)
             self.edit.set_timings({})
+        if self.active and self.file and self.autosave_file_mode() == "idle":
+            self._file_save_timer.start(int(self.autosave_idle_s() * 1000))   # 打つたびに数え直す
         self._update_labels()
 
     # ---- 検査(打っている最中) ----
@@ -925,6 +1000,12 @@ class PyModeController(QtCore.QObject):
         return expr
 
     def eventFilter(self, obj, ev):
+        if obj is self.edit and ev.type() == QtCore.QEvent.FocusOut:
+            # 補完の窓・メニューが一時的にフォーカスを取る時は「外れた」に数えない
+            if ev.reason() not in (QtCore.Qt.PopupFocusReason, QtCore.Qt.MenuBarFocusReason) \
+                    and self.autosave_file_mode() == "focus":
+                self.autosave_file("focus")
+            return False
         if (self.active and obj is self.edit._gutter and ev.type() == QtCore.QEvent.MouseButtonPress
                 and ev.button() == QtCore.Qt.RightButton):
             y = ev.position().y() if hasattr(ev, "position") else ev.y()
@@ -1393,6 +1474,17 @@ class PyModeController(QtCore.QObject):
     def clear_output(self):
         self.output.clear()
 
+    def clear_output_asked(self):
+        """「出力を消す」の入口: 消した出力は戻らないので、空でなければ先に聞く。"""
+        n = self.output.document().blockCount() if self.output.toPlainText() else 0
+        if n and not self._confirm(self.tr("Clear output"),
+                                   self.tr("The Output pane has %d line(s) of print output, notes and errors from the "
+                                           "runs so far. Clearing erases them; they cannot be brought back.") % n,
+                                   self.tr("Clear the output")):
+            return False
+        self.clear_output()
+        return True
+
     def set_config(self, config: str):
         if config not in sp.CONFIGS:
             raise ValueError(config)
@@ -1408,6 +1500,10 @@ class PyModeController(QtCore.QObject):
         self._update_labels()
 
     # ---- ファイル ----
+    def _confirm(self, title: str, text: str, action: str) -> bool:
+        """やり直しの効かない操作の前に聞く(studio.confirm_action。繋がっていなければ実行しない側)。"""
+        return bool(self.ctx.get("confirm_action", lambda *_a: False)(title, text, action))
+
     def _confirm_unsaved(self, title) -> bool:
         if not self.unsaved():
             return True
@@ -1467,6 +1563,10 @@ class PyModeController(QtCore.QObject):
             self._suspend_text = False
         self.py_text = text
         self.file = path
+        self._file_save_timer.stop()
+        self._conflict_told = None
+        self.autosave_note.setText("")
+        self.autosave_note.setToolTip("")
         self.origin_path = None
         self.origin = origin
         self.session_trusted = origin == "typed"
@@ -1483,6 +1583,12 @@ class PyModeController(QtCore.QObject):
     def save(self) -> bool:
         if not self.file:
             return self.save_as()
+        if self.disk_changed() and not self._confirm(
+                self.tr("Save Python program"),
+                self.tr("%s was changed on disk by another program after Studio read it. Saving replaces that "
+                        "version with the text in the Program; it cannot be brought back.")
+                % os.path.basename(self.file), self.tr("Overwrite the file")):
+            return False
         return self._write(self.file)
 
     def save_as(self) -> bool:
@@ -1492,6 +1598,12 @@ class PyModeController(QtCore.QObject):
             return False
         if not path.lower().endswith(".py"):
             path += ".py"
+            # 保存の窓は打った名前で「上書きしますか」を確かめた。拡張子を足した後の名前は確かめていない
+            if os.path.exists(path) and not self._confirm(
+                    self.tr("Save Python program as"),
+                    self.tr("%s already exists. Saving replaces it; the old file cannot be brought back.")
+                    % os.path.basename(path), self.tr("Overwrite the file")):
+                return False
         return self._write(path)
 
     def _write(self, path) -> bool:
@@ -1603,11 +1715,27 @@ class PyModeController(QtCore.QObject):
             g3.addAction(a)
             start.addAction(a)
         self._start_group = g3
+        auto = QtWidgets.QMenu(tr("Autosave to the file"), pm)
+        pm.addMenu(auto)
+        self._menu_titles.append((auto, "Autosave to the file"))
+        g4 = QtGui.QActionGroup(win)
+        g4.setExclusive(True)
+        tip = ("Save the Python file by itself while you type. Off by default. A program that has no file yet is "
+               "only kept in the crash-recovery backup; a file changed by another program is never overwritten")
+        for key, mode, label in (("pymode_autosave_off", "off", "Autosave: off"),
+                                 ("pymode_autosave_idle", "idle", "Autosave: after a pause in typing"),
+                                 ("pymode_autosave_focus", "focus", "Autosave: when the Program loses the focus")):
+            a = mk(key, label, None, tip, lambda m=mode: self.set_autosave_file(m), auto,
+                   "自動保存 autosave auto save 保存 ファイル file", checkable=True)
+            g4.addAction(a)
+            self._autosave_actions[mode] = a
+        self._autosave_group = g4
+        self._sync_autosave_actions()
         mk("pymode_example", "Open the Python example", None,
            "Put the example program (a sample image, four ops, a variable and an if) into the Program",
            self.open_example, pm, "例 example sample サンプル python")
         mk("pymode_clear_output", "Clear output", None, "Clear the Output pane under the Program",
-           self.clear_output, pm, "出力 output 消す clear", py_only=True)
+           self.clear_output_asked, pm, "出力 output 消す clear", py_only=True)
         # File
         fm = menus.get("file")
         sep_before = fm.actions()[0] if fm is not None and fm.actions() else None
@@ -1732,6 +1860,93 @@ class PyModeController(QtCore.QObject):
         except Exception:                                     # noqa: BLE001
             pass
 
+    # ---- ファイルへの自動保存(設定で入れる。既定は切) ----
+    def autosave_file_mode(self) -> str:
+        m = str(self._get("autosave_file", "off"))
+        return m if m in AUTOSAVE_FILE_MODES else "off"
+
+    def autosave_idle_s(self) -> float:
+        try:
+            v = float(self._get("autosave_idle_s", DEFAULT_AUTOSAVE_IDLE_S))
+        except (TypeError, ValueError):
+            v = DEFAULT_AUTOSAVE_IDLE_S
+        lo, hi = AUTOSAVE_IDLE_RANGE_S
+        return min(hi, max(lo, v))
+
+    def set_autosave_file(self, mode: str, idle_s: float | None = None):
+        """ファイルへの自動保存の設定(メニューと設定の画面から)。"""
+        if mode not in AUTOSAVE_FILE_MODES:
+            raise ValueError("autosave mode must be one of %s" % (AUTOSAVE_FILE_MODES,))
+        self._set("autosave_file", mode)
+        if idle_s is not None:
+            lo, hi = AUTOSAVE_IDLE_RANGE_S
+            self._set("autosave_idle_s", min(hi, max(lo, float(idle_s))))
+        if mode != "idle":
+            self._file_save_timer.stop()
+        self._sync_autosave_actions()
+        self.flash({"off": self.tr("Autosave to the file: off"),
+                    "idle": self.tr("Autosave to the file: %.1f s after you stop typing") % self.autosave_idle_s(),
+                    "focus": self.tr("Autosave to the file: when the Program loses the focus")}[mode])
+
+    def _sync_autosave_actions(self):
+        mode = self.autosave_file_mode()
+        for m, a in self._autosave_actions.items():
+            a.setChecked(m == mode)
+
+    def _disk_digest(self) -> str | None:
+        """ファイルの今の中身の SHA-256(読めなければ None = 無い・壊れている)。"""
+        try:
+            with open(self.file, "rb") as fh:
+                raw = fh.read(4 * 1024 * 1024 + 1)
+            return sp.program_digest(raw.decode("utf-8-sig").replace("\r\n", "\n"))
+        except (OSError, UnicodeDecodeError, TypeError):
+            return None
+
+    def disk_changed(self) -> bool:
+        """開いた(か最後に保存した)後で、ファイルが Studio の外で書き換えられたか。"""
+        if not self.file or not os.path.isfile(self.file):
+            return False
+        d = self._disk_digest()
+        return d is not None and d != self.saved_digest
+
+    def autosave_file(self, why: str = "idle") -> bool:
+        """設定が入っていれば、Python のファイルへ今の文面を保存する(窓は出さない。状態の欄に小さく出す)。
+
+        * 保存先の無い文面(無題)には効かない(退避だけ)。変わっていなければ書かない。
+        * **外でファイルが変わっていたら上書きしない**(1 回だけ知らせる。手で保存すれば上書きの確認が出る)。
+        * 構文が壊れている途中でも保存する。実行はしない。信頼の状態(台帳・``session_trusted``)は変えない。
+        * 書き方は ``atomic_write_text``(書きかけのファイルを残さない)。"""
+        if self.autosave_file_mode() == "off" or not self.file:
+            return False
+        text = self.edit.toPlainText() if self.active else self.py_text
+        digest = sp.program_digest(text)
+        if digest == self.saved_digest:
+            return False
+        if self.disk_changed():
+            disk = self._disk_digest()
+            if self._conflict_told != disk:
+                self._conflict_told = disk
+                msg = self.tr("Not autosaved: %s was changed on disk by another program — Save (Ctrl+Alt+S) asks "
+                              "before it overwrites that; open the file again to read it") % os.path.basename(self.file)
+                self.autosave_note.setText("\u26a0 " + self.tr("not autosaved"))
+                self.autosave_note.setToolTip(msg)
+                self.flash(msg)
+            return False
+        try:
+            atomic_write_text(self.file, text)
+        except OSError as e:
+            self.autosave_note.setText("\u26a0 " + self.tr("not autosaved"))
+            self.autosave_note.setToolTip(self.tr("Could not autosave %s: %s") % (os.path.basename(self.file), e))
+            return False
+        self.saved_digest = digest
+        self._conflict_told = None
+        self.autosave_note.setText(self.tr("autosaved %s") % time.strftime("%H:%M:%S"))
+        self.autosave_note.setToolTip(self.tr("Saved to %s automatically (%s)") % (
+            self.file, self.tr("after a pause in typing") if why == "idle" else self.tr("the Program lost the focus")))
+        self.state["pymode_autosaves"] = self.state.get("pymode_autosaves", 0) + 1
+        self._update_labels()
+        return True
+
     def autosave_now(self) -> bool:
         """文面が前に書き出した時から変わっていれば、状態(未保存の文面・カーソル・ブレークポイント)を設定へ
         書き出す。Studio が落ちても、次の起動で文面が戻る(プログラムが ``os._exit`` を呼んだ時など)。"""
@@ -1745,6 +1960,12 @@ class PyModeController(QtCore.QObject):
 
     def confirm_close(self) -> bool:
         """終了の前: 未保存の Python のプログラムを聞く(無題の文面は設定に残すので聞かない)。"""
+        if self.running or (self.session is not None and self.session.live):
+            if not self._confirm(self.tr("Quit Fullseye Studio"),
+                                 self.tr("A Python program is still running (or stopped at a breakpoint). Closing "
+                                         "Studio stops it: what it has computed so far is lost."),
+                                 self.tr("Stop it and quit")):
+                return False
         if self.file and self.unsaved():
             return self._confirm_unsaved(self.tr("Quit Fullseye Studio"))
         return True
@@ -1760,6 +1981,9 @@ class PyModeController(QtCore.QObject):
             self._end_session()
         self._poll.stop()
         self._autosave.stop()
+        if self._file_save_timer.isActive():                  # 待っていた自動保存は、閉じる前に済ませる
+            self._file_save_timer.stop()
+            self.autosave_file("idle")
         self.detach_highlighter()
         if self.vars is not None:
             try:

@@ -326,7 +326,7 @@ def test_h3_the_window_says_that_the_earlier_run_is_still_running(tmp_path, monk
     try:
         pm = win._pymode
         pm.set_config("release")
-        _set_text(win, "# python\n" + _late_writer(tmp_path, 2.5))
+        _set_text(win, "# python\n" + _late_writer(tmp_path, 6.0))     # 並行の負荷でも、次の F5 より先に終わらない長さ
         res = _f5(win, timeout=10)
         assert res.stopped == "unstoppable"
         runs0 = pm.state.get("pymode_runs", 0)

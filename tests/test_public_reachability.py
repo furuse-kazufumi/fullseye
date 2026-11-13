@@ -83,7 +83,7 @@ _INTERNAL = {
     # studio_search / studio_errors 2026-10-20: Studio の論理層(Qt 非依存)。UI への配線は次の片。
     #   search 6 本(current_sort_of / search_grouped / search_zero_results_help / canonical_sort / clear_caches / nearest_op_names)
     #   errors 3 本(explain_failure / format_failure / localize)。studio と同じ「GUI の内側の部品」で、テストが直接呼ぶ。
-    "studio": 90, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    "studio": 92, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 7, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
@@ -363,7 +363,11 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1305
 # 2026-11-13 同じ枝の 3 便目(第 2 回レビューの直し): 1305 → 1313(+8、この機械の実測)。内訳: studio_pyedit_safe 6・
 #   studio_pyedit_values 1・studio_program.program_threads 1(プログラムが残したスレッドの一覧。GUI の内側)。
-_HIDDEN_FUNCTIONS_TODAY = 1313
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1313
+# 2026-11-13 同じ枝の 4 便目(確認の窓・Undo・自動保存): 1313 → 1317(+4)。studio.CONFIRM_ACTION_HOOK(差し替え口。既定の窓の関数を指す)・studio.confirm_action(やり直しの効かない
+#   操作の前に聞く入口)・studio.studio_pymode_autosave_range(設定の画面の範囲)・studio_batch.existing_outputs
+#   (一括処理が上書きする既存のファイルの数。確認の文に使う)。どれも GUI の内側。
+_HIDDEN_FUNCTIONS_TODAY = 1317
 
 
 def _hidden_total():

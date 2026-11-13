@@ -745,7 +745,9 @@ class WatchPanel(QtWidgets.QWidget):
         lay.addWidget(self.preview)
         self.input.returnPressed.connect(self.add_from_input)
         self.btn_add.clicked.connect(lambda _=False: self.add_from_input())
-        self.btn_del.clicked.connect(lambda _=False: self.remove_selected())
+        #: ``confirm_remove(式) -> bool``: 「−」を押した時、消す前に聞く(消した式は戻せない)。None なら聞かない。
+        self.confirm_remove = None
+        self.btn_del.clicked.connect(lambda _=False: self.remove_selected_asked())
         self.btn_up.clicked.connect(lambda _=False: self.move_selected(-1))
         self.btn_down.clicked.connect(lambda _=False: self.move_selected(1))
         self.btn_again.clicked.connect(lambda _=False: self.evaluate_again())
@@ -783,6 +785,16 @@ class WatchPanel(QtWidgets.QWidget):
     def add_from_input(self) -> None:
         if self.add_expression(self.input.text()):
             self.input.clear()
+
+    def remove_selected_asked(self) -> bool:
+        """「−」のボタン: 消す前に聞く(``confirm_remove`` が繋がっていれば)。"""
+        r = self.table.currentRow()
+        if not (0 <= r < len(self.watch.exprs)):
+            return False
+        if self.confirm_remove is not None and not self.confirm_remove(self.watch.exprs[r]):
+            return False
+        self.remove_selected()
+        return True
 
     def remove_selected(self) -> None:
         r = self.table.currentRow()

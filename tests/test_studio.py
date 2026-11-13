@@ -2095,7 +2095,14 @@ def test_window_title_and_recent_files(tmp_path):
         labels = [a.text() for a in win._recent_menu.actions()]
         assert any("myflow.json" in l for l in labels) and any("cell.png" in l for l in labels)
         assert "Clear recent" in labels
-        next(a for a in win._recent_menu.actions() if a.text() == "Clear recent").trigger()
+        asked = []
+        old_hook = studio.CONFIRM_ACTION_HOOK                       # 2026-11-13: 一覧を消す前に聞く(戻せないので)
+        studio.CONFIRM_ACTION_HOOK = lambda parent, title, text, action: asked.append(title) or True
+        try:
+            next(a for a in win._recent_menu.actions() if a.text() == "Clear recent").trigger()
+        finally:
+            studio.CONFIRM_ACTION_HOOK = old_hook
+        assert asked == ["Clear recent"]
         assert win._recent_menu.actions()[0].text() == "(no recent files)"
     finally:
         S.setValue("recent_files", saved)

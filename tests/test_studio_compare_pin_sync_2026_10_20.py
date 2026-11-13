@@ -62,6 +62,9 @@ def _window3():
 @pytest.fixture(autouse=True)
 def _no_modal_confirm(monkeypatch):
     monkeypatch.setattr(studio, "CONFIRM_HOOK", lambda parent, title, text: True)
+    # 2026-11-13: 固定を捨てる操作(3 つ目の固定・「今の結果を採る」)は先に聞く。ここの試験は「実行する」と答える
+    # (聞く事そのものは tests/test_studio_undo_autosave_confirm_2026_11_13.py が数える)
+    monkeypatch.setattr(studio, "CONFIRM_ACTION_HOOK", lambda parent, title, text, action: True)
     yield
     studio._UI_LANG["code"] = "en"
 

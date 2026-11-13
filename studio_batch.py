@@ -118,6 +118,21 @@ class BatchPlan:
             len(self.files), shown, _POLICY_LABELS[self.policy])
 
 
+def existing_outputs(plan) -> tuple:
+    """*plan* を走らせると**上書きされる**既存のファイル: ``(出力の画像の数, summary.csv が在るか)``。
+    画像は「上書き」の決まりの時だけ数える(「上書きしない」「番号を付ける」は既存を壊さない)。
+    summary.csv は決まりに依らず毎回書き直す。確認の窓の文に使う(読むだけ)。"""
+    n = 0
+    if plan.policy == "overwrite" and plan.what_to_save.get("final_image", True):
+        for src in plan.files:
+            try:
+                if output_path(src, plan.folder, plan.out_dir, "overwrite").exists():
+                    n += 1
+            except (OSError, ValueError):
+                continue
+    return n, (Path(plan.out_dir) / "summary.csv").exists()
+
+
 @dataclass(frozen=True)
 class BatchResult:
     done: int

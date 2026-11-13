@@ -443,8 +443,31 @@ def _default_confirm(parent, title, text):                    # pragma: no cover
     return btn == QtWidgets.QMessageBox.Discard
 
 
+def _default_confirm_action(parent, title, text, action):     # pragma: no cover - GUI
+    """「やり直しの効かない操作」の確認の窓: 何が失われるかを *text* に書き、押せるのは *action*(実行する)と
+    キャンセル。**既定のボタンはキャンセル**(Enter・Esc のどちらでも何も起きない)。「次から聞かない」は付けない。
+    画面の無い実行(offscreen)では窓を出せないので、安全な側(実行しない)を返す。"""
+    from PySide6 import QtWidgets
+    if os.environ.get("QT_QPA_PLATFORM") == "offscreen":
+        return False
+    box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, title, text, QtWidgets.QMessageBox.NoButton, parent)
+    go = box.addButton(action, QtWidgets.QMessageBox.DestructiveRole)
+    cancel = box.addButton(QtWidgets.QMessageBox.Cancel)
+    box.setDefaultButton(cancel)
+    box.setEscapeButton(cancel)
+    box.exec()
+    return box.clickedButton() is go
+
+
 ERROR_HOOK = _default_error       # (parent, title, text) -> None
 CONFIRM_HOOK = _default_confirm   # (parent, title, text) -> bool (True = go ahead)
+#: CONFIRM_ACTION_HOOK(parent, 題, 何が失われるか, 実行のボタンの名前) -> bool(True = 実行する)。試験は差し替えて数える。
+CONFIRM_ACTION_HOOK = _default_confirm_action
+
+
+def confirm_action(parent, title, text, action) -> bool:
+    """やり直しの効かない操作の前に聞く(:data:`CONFIRM_ACTION_HOOK`)。True = 実行してよい。"""
+    return bool(CONFIRM_ACTION_HOOK(parent, title, text, action))
 KNOB_DEBOUNCE_MS = 160            # coalesce knob drags before re-running step_states
 
 RUN_WORKER_I18N_KEYS = (
@@ -6013,6 +6036,12 @@ def lang_from_locale(name, languages=None):
     return code if code in langs else "en"
 
 
+def studio_pymode_autosave_range():
+    """ファイルへの自動保存の「打つのを止めてから」の秒数の範囲(studio_pymode の値。import を遅らせる)。"""
+    import studio_pymode
+    return studio_pymode.AUTOSAVE_IDLE_RANGE_S
+
+
 #: 起動時の案内(最初の 3 手)。Program 欄のモードごとに 3 行(画面の文は英語が正、訳は i18n.json の strings)。
 FIRST_STEPS_PIPELINE = ("1. Open a sample: File ▸ Sample images",
                         "2. Select an operator in the Operators panel and press +",
@@ -7403,8 +7432,10 @@ def build_window(model=None, start_mode="pipeline"):
     act_top = _act("Move stage to top", "Ctrl+Shift+Up", "Move the selected stage to the front")
     act_bottom = _act("Move stage to bottom", "Ctrl+Shift+Down", "Move the selected stage to the end")
     act_focus_search = _act("Focus operator search", "Ctrl+F", "Jump to the operator search box")
-    act_undo = _act("Undo", "Ctrl+Z", "Undo the last pipeline edit")
-    act_redo = _act("Redo", "Ctrl+Shift+Z", "Redo the last undone pipeline edit")
+    act_undo = _act("Undo", "Ctrl+Z", "Undo the last edit: the Program text when the Program has the focus, "
+                    "otherwise the stage list")
+    act_redo = _act("Redo", "Ctrl+Shift+Z", "Redo what was undone (Ctrl+Y or Ctrl+Shift+Z): the Program text when "
+                    "the Program has the focus, otherwise the stage list")
     act_undo.setEnabled(False); act_redo.setEnabled(False)
     act_pin = _act("Pin as A", "Ctrl+Shift+A",
                    "Freeze the current pipeline and its result as A, then compare it with what you change next "
@@ -8759,8 +8790,16 @@ def build_window(model=None, start_mode="pipeline"):
             win.restoreState(win._default_state)
         for _d in win._docks.values():
             _d.show()
-    act_reset_layout.triggered.connect(reset_layout)
+    def reset_layout_asked(_=False):
+        if not confirm_action(win, tr("Reset panel layout"),
+                              tr("The panels go back to the default arrangement. The arrangement you have now is "
+                                 "lost unless it was saved as a layout (Window ▸ Layout ▸ Save)."),
+                              tr("Reset the layout")):
+            return
+        reset_layout()
+    act_reset_layout.triggered.connect(reset_layout_asked)
     win._reset_layout = reset_layout
+    win._reset_layout_asked = reset_layout_asked
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
              "dirty": False, "code_dirty": False, "errors": [], "perception_error": None,
              "program_error": None, "structured_errors": [], "stage_lines": None,
@@ -8846,6 +8885,9 @@ def build_window(model=None, start_mode="pipeline"):
         unapplied Program-editor edits (Codex #9). When neither is pending, no prompt."""
         pipe_dirty = state["dirty"] and bool(model.stages)
         code_dirty = bool(state.get("code_dirty"))
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active and _pm.pipe_dirty:
+            code_dirty = True                 # Python のモードにいる間、未適用のパイプラインの文面は別の文書に残っている
         # Python Editor の未保存タブも数える(アプリ終了経路のデータ損失防止)。
         # Count unsaved Python-Editor tabs too — the app-quit path must not
         # silently discard them (only per-tab close prompted before this fix).
@@ -10094,8 +10136,18 @@ def build_window(model=None, start_mode="pipeline"):
         mark_dirty()
         _refresh_problems_only()
         update_ab()
-    act_pin.triggered.connect(lambda _=False: pin_as_a())
+    def pin_as_a_asked(_=False):
+        """固定の入口(メニュー・キー・「両方残す」): 3 つ目を固定すると一番古い固定が押し出される。戻せないので先に聞く。"""
+        if len(model.pins) >= MAX_PINS and not confirm_action(
+                win, tr("Pin the result"),
+                tr("%d snapshots are already pinned. Pinning this result drops the oldest one (%s): its pipeline "
+                   "and its picture cannot be brought back.") % (len(model.pins), _pin_label(0)),
+                tr("Drop the oldest and pin")):
+            return
+        pin_as_a()
+    act_pin.triggered.connect(pin_as_a_asked)
     win._pin_a = pin_as_a
+    win._pin_a_asked = pin_as_a_asked
 
     def restore_a():
         pin = _ref_pin()
@@ -10121,9 +10173,20 @@ def build_window(model=None, start_mode="pipeline"):
         update_ab()
 
     def keep_both():
-        pin_as_a()
+        pin_as_a_asked()
 
-    ab_restore.clicked.connect(restore_a); ab_adopt.clicked.connect(adopt_b); ab_keep.clicked.connect(keep_both)
+    def adopt_b_asked(_=False):
+        """「今の結果を採る」: 固定した方が捨てられる。戻せないので先に聞く。"""
+        pin = _ref_pin()
+        if pin is None:
+            return
+        if not confirm_action(win, tr("Keep the current result"),
+                              tr("The pinned snapshot %s is dropped: its pipeline and its picture cannot be brought "
+                                 "back.") % _pin_label(model.pins.index(pin)), tr("Drop the snapshot")):
+            return
+        adopt_b()
+
+    ab_restore.clicked.connect(restore_a); ab_adopt.clicked.connect(adopt_b_asked); ab_keep.clicked.connect(keep_both)
 
     def show_result(refresh_rows=True):
         """Render the current result. The whole body is guarded, not just the
@@ -10306,7 +10369,16 @@ def build_window(model=None, start_mode="pipeline"):
     win._knob_drag_base = None
     _UNDO_CAP = 100
 
-    def _sync_undo_actions():
+    def _undo_target_is_text():
+        """「元に戻す / やり直し」の相手は、フォーカスのある方: Program 欄(文面の Undo)か、それ以外(段の操作の Undo)。"""
+        w = QtWidgets.QApplication.focusWidget()
+        return w is not None and (w is code_edit or code_edit.isAncestorOf(w))
+
+    def _sync_undo_actions(*_a):
+        if _undo_target_is_text():
+            d = code_edit.document()
+            act_undo.setEnabled(d.isUndoAvailable()); act_redo.setEnabled(d.isRedoAvailable())
+            return
         act_undo.setEnabled(bool(win._undo_stack))
         act_redo.setEnabled(bool(win._redo_stack))
 
@@ -10355,8 +10427,25 @@ def build_window(model=None, start_mode="pipeline"):
         win._undo_stack.append(_snapshot(lab))
         _restore_stages(snap)
         flash("redo %s(%d more)" % ((lab + " ") if lab else "", len(win._redo_stack)))
+    def undo_focused():
+        """Edit ▸ Undo: Program 欄にフォーカスがあれば文面を、そうでなければ段の操作を戻す。"""
+        if _undo_target_is_text():
+            code_edit.undo()
+        else:
+            undo()
+        _sync_undo_actions()
+
+    def redo_focused():
+        if _undo_target_is_text():
+            code_edit.redo()
+        else:
+            redo()
+        _sync_undo_actions()
     win._undo = undo
     win._redo = redo
+    win._undo_focused = undo_focused
+    win._redo_focused = redo_focused
+    win._sync_undo_actions = _sync_undo_actions
     win._push_undo = push_undo
 
     def add_op(item):
@@ -10716,6 +10805,13 @@ def build_window(model=None, start_mode="pipeline"):
     def load_visual_demo():
         """dev_* visualization demo: load the coins sample image and a Program that
         actually USES the HDevelop dev_set_draw / dev_set_color / dev_disp_text ops."""
+        if not confirm_discard("Load the dev_* demo"):
+            return
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:      # Python の文面を置き換えない: パイプラインのモードへ(Python の文面は残る)
+            _pm.set_mode("pipeline", announce=False)
+            if _pm.active:
+                return                          # 実行中などで切り替えられなかった
         load_sample_image(HDEV_VISUAL_DEMO_IMAGE)
         code_edit.setPlainText(HDEV_VISUAL_DEMO)
         apply_program()
@@ -11022,6 +11118,14 @@ def build_window(model=None, start_mode="pipeline"):
                 plan = build_plan()
             except Exception as exc:
                 report_error(tr("Cannot start the batch"), exc); return
+            n_img, has_summary = studio_batch.existing_outputs(plan)
+            if (n_img or has_summary) and not confirm_action(
+                    dlg, tr("Apply to folder"),
+                    tr("The output folder already has results: %d output file(s) of this batch and %s. "
+                       "Running overwrites them; the old files cannot be brought back.")
+                    % (n_img, tr("summary.csv") if has_summary else tr("no summary.csv")),
+                    tr("Overwrite and run")):
+                return
             summary.setText(plan.summary()); execute.setEnabled(False)
             start_batch_async(plan)
 
@@ -11347,10 +11451,15 @@ def build_window(model=None, start_mode="pipeline"):
                 return
             if not confirm_discard("Load sample pipeline"):
                 return
+            snap = _snapshot("load sample")
             try:
                 model.load_recipe(it.text())
             except Exception as e:
                 report_error("Sample pipeline", e); return
+            win._undo_stack.append(snap)          # 置き換えた段の列は Ctrl+Z で戻る(他の読み込みと同じ)
+            if len(win._undo_stack) > _UNDO_CAP:
+                del win._undo_stack[0]
+            win._redo_stack.clear(); _sync_undo_actions()
             mark_dirty()
             refresh_stage_list(select=len(model.stages) - 1); show_result()
             flash("loaded sample '%s' — the gallery stays open" % it.text())
@@ -12143,6 +12252,7 @@ def build_window(model=None, start_mode="pipeline"):
             ed.on_open_ledger_op = lambda name: win._open_ledger_runner(name)   # エディタ → 実行窓
             ed._hl = Highlighter(ed.document())
             ed._path = path; ed._hint = hint; ed._dirty = False
+            ed._disk_text = text if path else None    # 開いた時のディスクの中身
             ed.setPlainText(text)
             ed.textChanged.connect(lambda ed=ed: _mark_dirty(ed))
             tabs_ed.setCurrentIndex(tabs_ed.addTab(ed, _tab_title(ed)))
@@ -12190,6 +12300,7 @@ def build_window(model=None, start_mode="pipeline"):
             except Exception as e:
                 report_error("save", e); return False
             ed._path = path; ed._dirty = False; _sync_tab(ed)
+            ed._disk_text = ed.toPlainText()          # 今ディスクに在る中身(外で変わったかの基準)
             flash("saved " + os.path.basename(path))
             return True
 
@@ -12208,6 +12319,17 @@ def build_window(model=None, start_mode="pipeline"):
             if ed is None:
                 return
             if ed._path:
+                try:
+                    with open(ed._path, "r", encoding="utf-8") as f:
+                        on_disk = f.read()
+                except (OSError, UnicodeDecodeError):
+                    on_disk = None
+                if on_disk is not None and on_disk != getattr(ed, "_disk_text", on_disk) and not confirm_action(
+                        dlg, tr("Save Python file"),
+                        tr("%s was changed on disk by another program after it was opened here. Saving replaces "
+                           "that version with the text of this tab; it cannot be brought back.")
+                        % os.path.basename(ed._path), tr("Overwrite the file")):
+                    return
                 save_to(ed._path)
             else:
                 do_save_as()
@@ -12765,7 +12887,24 @@ def build_window(model=None, start_mode="pipeline"):
     act_top.triggered.connect(lambda: move_to_end(True))
     act_bottom.triggered.connect(lambda: move_to_end(False))
     act_focus_search.triggered.connect(lambda: (search.setFocus(), search.selectAll()))
-    act_undo.triggered.connect(undo); act_redo.triggered.connect(redo)
+    act_undo.triggered.connect(undo_focused); act_redo.triggered.connect(redo_focused)
+    # ★2026-11-13: やり直しは Ctrl+Shift+Z と Ctrl+Y のどちらでも。有効・無効は、フォーカスのある方の履歴に合わせる
+    act_redo.setShortcuts([QtGui.QKeySequence("Ctrl+Shift+Z"), QtGui.QKeySequence("Ctrl+Y")])
+    code_edit.undoAvailable.connect(_sync_undo_actions); code_edit.redoAvailable.connect(_sync_undo_actions)
+    def _focus_moved(*_a):
+        try:
+            _sync_undo_actions()
+        except RuntimeError:                              # 閉じた窓の部品(フォーカスの合図はアプリ全体で 1 本)
+            _drop_focus_hook()
+
+    def _drop_focus_hook(*_a):
+        try:
+            QtWidgets.QApplication.instance().focusChanged.disconnect(_focus_moved)
+        except (RuntimeError, TypeError, AttributeError):
+            pass
+    QtWidgets.QApplication.instance().focusChanged.connect(_focus_moved)
+    win.destroyed.connect(_drop_focus_hook)
+    win._drop_focus_hook = _drop_focus_hook
     act_zin.triggered.connect(lambda: view.zoom(1.25)); act_zout.triggered.connect(lambda: view.zoom(0.8))
     act_fit.triggered.connect(view.fit); act_11.triggered.connect(view.reset_zoom)
     act_reset.triggered.connect(reset_to_raw)
@@ -13124,7 +13263,26 @@ def build_window(model=None, start_mode="pipeline"):
     code_edit.on_run_selection = run_selection
 
     c_apply.clicked.connect(apply_program)
-    c_sync.clicked.connect(sync_program)
+    def _generated_program_text():
+        """Sync が Program 欄に書く文面(適用済みの表示の指示 + 段の列から作った行)。"""
+        dev_lines = state.get("dev_lines") or []
+        body = program_text_from_model()
+        return "\n".join(dev_lines) + "\n" + body if dev_lines else body
+
+    def sync_program_asked(_=False):
+        """Sync のボタン: 適用済みの文面にコメント・空行・for / if が残っていて、作り直すとそれが消える時は先に聞く
+        (段の列を変えた時の自動の作り直しは聞かない: 段の列が正本、という決まりの動き)。"""
+        _pm = getattr(win, "_pymode", None)
+        if not (_pm is not None and _pm.active) and not state.get("code_dirty") \
+                and code_edit.toPlainText().strip() != _generated_program_text().strip():
+            if not confirm_action(win, tr("Sync the Program"),
+                                  tr("The Program text has comments, blank lines or for / if blocks that the stage "
+                                     "list does not keep. Sync rebuilds the text from the stage list, one line per "
+                                     "stage: those parts are lost and Ctrl+Z does not bring them back."),
+                                  tr("Rebuild the text")):
+                return
+        sync_program()
+    c_sync.clicked.connect(sync_program_asked)
     c_run.clicked.connect(lambda: run_program(True))
     c_cont.clicked.connect(lambda: continue_program())
     c_step.clicked.connect(step_program)
@@ -13133,7 +13291,15 @@ def build_window(model=None, start_mode="pipeline"):
         sync_program()
         code_edit.clear_exec()
         code_status.setText("ready")
-    c_reset.clicked.connect(reset_program)
+    def reset_program_asked(_=False):
+        """Reset のボタン: 未適用の編集があれば、捨てる前に聞く(捨てた文面は Ctrl+Z でも戻らない)。"""
+        if state.get("code_dirty") and not confirm_action(
+                win, tr("Reset the Program"),
+                tr("The Program text has edits that were not applied. Reset throws them away and rebuilds the text "
+                   "from the stage list; Ctrl+Z does not bring them back."), tr("Discard the edits")):
+            return
+        reset_program()
+    c_reset.clicked.connect(reset_program_asked)
     win._program = {"edit": code_edit, "apply": apply_program, "run": run_program,
                     "step": step_program, "continue": continue_program, "run_from": run_from,
                     "parse": parse_program, "text": program_text_from_model,
@@ -13553,6 +13719,13 @@ def build_window(model=None, start_mode="pipeline"):
         elif s.startswith("sample:") or s.startswith("run:"):   # load a sample pipeline
             import urllib.parse as _up
             code = _up.unquote(s.split(":", 1)[1])
+            if not confirm_discard("Load the sample from help"):
+                return
+            _pm = getattr(win, "_pymode", None)
+            if _pm is not None and _pm.active:  # Python の文面を置き換えない: パイプラインのモードへ(Python の文面は残る)
+                _pm.set_mode("pipeline", announce=False)
+                if _pm.active:
+                    return
             code_edit.setPlainText(code)
             apply_program()
             if s.startswith("run:"):
@@ -14740,6 +14913,21 @@ def build_window(model=None, start_mode="pipeline"):
         interp.setPlaceholderText(sys.executable + "   (empty = this Studio's Python)")
         interp.setToolTip("Interpreter used by the Python Editor's Run. Empty = the Python "
                           "running Studio. A non-existent path is refused (fail-closed).")
+        # ★2026-11-13: Python のファイルへの自動保存(既定は切。メニュー Run ▸ Program mode ▸ Autosave と同じ設定)
+        _pm_set = getattr(win, "_pymode", None)
+        asave = QtWidgets.QComboBox()
+        for _lab in ("Autosave: off", "Autosave: after a pause in typing", "Autosave: when the Program loses the focus"):
+            asave.addItem(tr(_lab))
+        asave.setToolTip(tr("Save the Python file by itself while you type. Off by default. A program that has no "
+                            "file yet is only kept in the crash-recovery backup; a file changed by another program "
+                            "is never overwritten"))
+        asave_s = QtWidgets.QDoubleSpinBox(); asave_s.setDecimals(1); asave_s.setSingleStep(0.5); asave_s.setSuffix(" s")
+        asave_s.setRange(*studio_pymode_autosave_range())
+        asave_s.setToolTip(tr("How long after the last keystroke the file is saved (autosave after a pause in typing)"))
+        if _pm_set is not None:
+            asave.setCurrentIndex(("off", "idle", "focus").index(_pm_set.autosave_file_mode()))
+            asave_s.setValue(_pm_set.autosave_idle_s())
+        dlg._autosave_mode = asave; dlg._autosave_delay = asave_s
         chk = QtWidgets.QLabel("fail-closed  (the runtime refuses degraded operators)")
         chk.setStyleSheet("QLabel{color:%s;}" % MUTED)
         _settings_page("Execution", [("Threads (thread_num)", th),
@@ -14750,7 +14938,9 @@ def build_window(model=None, start_mode="pipeline"):
                                    ("Region draw (dev_set_draw)", drawm),
                                    ("Region line width", drawlw)])
         _settings_page("Editor", [("Editor font size", fpt),
-                                  ("Python Editor interpreter", interp)])
+                                  ("Python Editor interpreter", interp),
+                                  ("Autosave the Python file", asave),
+                                  ("Autosave delay", asave_s)])
         cat_tree.currentItemChanged.connect(
             lambda it, _prev=None: it is not None
             and stack.setCurrentIndex(it.data(0, QtCore.Qt.UserRole)))
@@ -14782,6 +14972,8 @@ def build_window(model=None, start_mode="pipeline"):
                              "not a file (kept previous): %s" % ip)
             else:
                 sset.setValue("pyedit/interpreter", ip)
+            if _pm_set is not None:
+                _pm_set.set_autosave_file(("off", "idle", "focus")[asave.currentIndex()], asave_s.value())
             flash("settings applied (threads %d · timeout %d ms · windows ≤%d · font %dpt)"
                   % (th.value(), to.value(), mw.value(), fpt.value()))
     win._open_system_settings = open_system_settings
@@ -15518,7 +15710,12 @@ def build_window(model=None, start_mode="pipeline"):
             a = menu.addAction(os.path.basename(pth)); a.setToolTip(pth)
             a.triggered.connect(lambda _=False, x=pth: _open_recent(x))
         menu.addSeparator()
-        menu.addAction("Clear recent").triggered.connect(lambda: _save_recent([]))
+        def _clear_recent_asked(_=False):
+            if confirm_action(win, tr("Clear recent"),
+                              tr("The list of %d recently opened file(s) is erased. The files themselves are not "
+                                 "touched; the list cannot be brought back.") % len(paths), tr("Clear the list")):
+                _save_recent([])
+        menu.addAction("Clear recent").triggered.connect(_clear_recent_asked)
     win._rebuild_recent_menu = _rebuild_recent_menu
 
     b_savep.clicked.connect(save_pipe); b_openp.clicked.connect(open_pipe)
@@ -15859,11 +16056,19 @@ def build_window(model=None, start_mode="pipeline"):
 
     layouts_menu = _menu(menu_windows, "Layout", "layout")
 
+    win._confirm_action = lambda t_, x_, a_: confirm_action(win, t_, x_, a_)
+
     def _prompt_save_layout():
         try:
             name, ok = QtWidgets.QInputDialog.getText(win, "Save layout", "Layout name:")
             if ok and str(name).strip():
-                save_layout_preset(str(name).strip())
+                _nm = str(name).strip()
+                if _nm in win._preset_store and not confirm_action(
+                        win, tr("Save layout"),
+                        tr("A layout named '%s' already exists. Saving replaces it with the arrangement you have now; "
+                           "the old one cannot be brought back.") % _nm, tr("Replace the layout")):
+                    return
+                save_layout_preset(_nm)
         except Exception:
             pass
 
@@ -15883,7 +16088,10 @@ def build_window(model=None, start_mode="pipeline"):
                     lambda _=False, n=nm: apply_layout_preset(n))
             for nm in sorted(win._preset_store):
                 layouts_menu.addAction("Delete layout: %s" % nm).triggered.connect(
-                    lambda _=False, n=nm: delete_layout_preset(n))
+                    lambda _=False, n=nm: confirm_action(
+                        win, tr("Delete layout"),
+                        tr("The saved layout '%s' is deleted. It cannot be brought back.") % n,
+                        tr("Delete the layout")) and delete_layout_preset(n))
     win._rebuild_layouts_menu = _rebuild_layouts_menu
     win._layouts_menu = layouts_menu
 
@@ -16584,6 +16792,10 @@ def build_window(model=None, start_mode="pipeline"):
         _apply_tooltips(tips)
     studio_pymode.install(win, {
         "first_steps": _pm_first_steps,
+        "confirm_action": lambda t_, x_, a_: confirm_action(win, t_, x_, a_),
+        "generated_text": _generated_program_text,
+        "on_text_document": lambda d_: d_.contentsChanged.connect(_syntax_timer.start),
+        "sync_undo_actions": _sync_undo_actions,
         "tr": tr, "lang": lambda: _UI_LANG.get("code", "en"), "flash": flash, "settings": _settings,
         "edit": code_edit, "status": code_status, "code_layout": cvl,
         "pipeline_buttons": (c_run, c_cont, c_step, c_reset, c_apply, c_sync),
