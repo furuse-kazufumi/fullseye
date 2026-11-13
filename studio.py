@@ -4117,6 +4117,25 @@ def _ops_accepting_entry(rows, entry_sort):
 #: Sample image the dev_* visualization demo loads (a collected, license-clean image).
 HDEV_VISUAL_DEMO_IMAGE = "coins"
 
+#: 利用者が起動した窓に最初に出す画像(同梱の見本。来歴とライセンスは studio_assets/sample_images/manifest.json
+#: の coins = skimage.data、BSD / public domain)。ぼかし・メディアン・エッジ・二値化・粒の計数のどれでも見た目が
+#: はっきり変わる(初回起動の点検 M2: 合成のデモ画像は滑らかで、ぼかしと見本の 1 番目を掛けても変わらなかった。
+#: 実測の平均の変化 gaussian 0.004 → 0.034、median 0.001 → 0.030)。
+#: ``build_window()`` の既定(``demo_image``)は変えない —— 試験 14 本(25 か所)と埋め込みの窓の前提を動かさない。
+STARTUP_SAMPLE_IMAGE = "coins"
+
+
+def sample_menu_order(names):
+    """File ▸ Sample images の並び: :data:`STARTUP_SAMPLE_IMAGE` を先頭に、残りは manifest の順。
+
+    「最初の 3 手」の 1 手目(File ▸ Sample images)を文字どおりに辿って先頭を開いても、変化の見える画像になる
+    (従来の先頭は滑らかな gradient で、2・3 手目のぼかしを掛けても絵が変わらなかった)。"""
+    names = list(names)
+    if STARTUP_SAMPLE_IMAGE in names:
+        names.remove(STARTUP_SAMPLE_IMAGE)
+        names.insert(0, STARTUP_SAMPLE_IMAGE)
+    return names
+
 #: An HDevelop-style program that actually USES the dev_* visualization directives:
 #: segment the coins, then draw the region as a coloured outline with a text label.
 HDEV_VISUAL_DEMO = (
@@ -7042,7 +7061,7 @@ def build_window(model=None):
     sample_img_menu = _menu(m, "Sample images", "sample_images")   # collected license-clean images
     try:
         import sample_images as _si
-        for _nm in _si.names():
+        for _nm in sample_menu_order(_si.names()):         # M2: 起動時の画像を先頭に
             _a = QtGui.QAction(_nm, win)
             _a.triggered.connect(lambda _=False, nm=_nm: win._load_sample_image(nm))
             sample_img_menu.addAction(_a)
@@ -10275,6 +10294,22 @@ def build_window(model=None):
         state["fit_next"] = True
         flash("loaded sample image: " + name); show_result()
     win._load_sample_image = load_sample_image
+
+    def first_launch_scene():
+        """利用者が起動した窓が最初に見せる画像(``main()`` が呼ぶ。初回起動の点検 M2)。
+
+        :data:`STARTUP_SAMPLE_IMAGE` を File ▸ Sample images と同じ読み方で開く。同梱されていない時は合成の
+        デモ画像のまま(``build_window()`` の既定)。開けたら True。"""
+        try:
+            import sample_images
+            if sample_images.path(STARTUP_SAMPLE_IMAGE) is None:
+                return False
+        except Exception as exc:                            # noqa: BLE001 -- 見本が読めない環境でも起動は続ける
+            _log_soft_failure("could not find the startup sample image", exc)
+            return False
+        load_sample_image(STARTUP_SAMPLE_IMAGE)
+        return state.get("input_sample") == STARTUP_SAMPLE_IMAGE
+    win._first_launch_scene = first_launch_scene
 
     def load_visual_demo():
         """dev_* visualization demo: load the coins sample image and a Program that
@@ -15903,6 +15938,9 @@ def main(argv=None) -> int:
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
     win, _ = build_window()
     win.show()
+    # M2: 起動した人が最初に見る画像は同梱の見本(coins)。show() の後に開く(窓が出る前にステータスの文を出すと、
+    # 画素の読み取りの欄が隠れずに文と重なった)。絵を描くのは app.exec() の後なので、デモ画像は一瞬も出ない。
+    win._first_launch_scene()
     return app.exec()
 
 

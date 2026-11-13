@@ -41,11 +41,11 @@ def launch(tmp_path, monkeypatch):
     def _launch(lang="en", user=False, size=(1366, 768)):
         monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / ("s%d.ini" % len(opened))))
         win, model = studio.build_window()
-        if user:
-            win._first_launch_scene()
         if lang != "en":
             win._apply_language(lang)
         win.resize(*size); win.show(); _pump(0.3)
+        if user:                                # main() と同じ順(show の後)
+            win._first_launch_scene(); _pump(0.2)
         opened.append(win)
         return win, model
 
@@ -166,6 +166,7 @@ def test_s2_first_steps_band_can_be_followed_literally(launch):
     file_menu = next(a.menu() for a in win.menuBar().actions() if a.text().replace("&", "") == "File")
     sample_menu = next(a.menu() for a in file_menu.actions() if a.menu() and a.text() == "Sample images")
     assert len(sample_menu.actions()) >= 5
+    assert sample_menu.actions()[0].text() == studio.STARTUP_SAMPLE_IMAGE      # M2: 先頭は変化の見える画像
     before = model.image.copy()
     sample_menu.actions()[0].trigger(); _pump(0.3)
     assert model.image.shape != before.shape or not np.array_equal(model.image, before)
@@ -185,6 +186,8 @@ def test_s2_first_steps_band_can_be_followed_literally(launch):
     out = model.result_upto(len(model.stages) - 1)
     assert isinstance(out, np.ndarray) and out.shape == model.image.shape
     assert np.isfinite(out).all()
+    # M2: 直す前の先頭(gradient)では平均の変化が 0.00004 で、▶▶ を押しても絵が変わらなかった
+    assert float(np.abs(out - model.image).mean()) > 0.01, "実行しても絵が変わらない"
     # 先頭だけでなく、最初に見えている行はどれも入れられる
     lst.scrollToTop(); _pump(0.05)
     visible = [lst.item(i) for i in range(lst.count())
@@ -257,3 +260,47 @@ def test_m1_a_clicked_row_stays_the_choice_for_enter(launch):
     lst.setCurrentItem(target); _pump(0.05)
     QTest.keyClick(ui["edit"], QtCore.Qt.Key_Return); _pump(0.3)
     assert [s[0] for s in model.stages] == ["median"]
+
+
+# --------------------------------------------------------------------------- #
+# M2: 起動した人が最初に見る画像                                                  #
+# --------------------------------------------------------------------------- #
+def test_m2_user_window_opens_on_a_sample_every_first_op_visibly_changes(launch):
+    from scipy import ndimage
+    win, model = launch(user=True)
+    import sample_images
+    assert studio.STARTUP_SAMPLE_IMAGE == "coins"
+    assert np.array_equal(model.image, sample_images.load("coins"))
+    # 来歴とライセンスが同梱の一覧にある
+    entry = [e for e in sample_images.entries() if e["name"] == studio.STARTUP_SAMPLE_IMAGE]
+    assert len(entry) == 1 and entry[0]["source"] and entry[0]["licence"]
+    img = np.asarray(model.image, float)
+    demo = studio.demo_image()
+    for op, floor in (("gaussian", 0.02), ("median", 0.02), ("sobel_amp", 0.1)):
+        out = np.asarray(api.find_op(op).fn(img, 0.5, 0.5), float)
+        changed = float(np.abs(out - img).mean())
+        before = float(np.abs(np.asarray(api.find_op(op).fn(demo, 0.5, 0.5), float) - demo).mean())
+        assert changed > floor, (op, changed)
+        assert op == "sobel_amp" or changed > 5 * before, (op, changed, before)   # 合成のデモ画像より大きく変わる
+    reg = np.asarray(api.find_op("otsu").fn(img, 0.5, 0.5), float) > 0.5
+    assert 0.2 < reg.mean() < 0.6                                     # 二値化で前景と背景が分かれる
+    filled = ndimage.binary_fill_holes(reg)
+    n = ndimage.label(ndimage.binary_opening(filled, iterations=2))[1]
+    assert 15 <= n <= 40, n                                           # 粒(コイン)が数えられる
+    assert "coins" in win.statusBar().currentMessage()                # 何を開いたかを言う
+    from PySide6 import QtWidgets
+    readout = win.statusBar().findChildren(QtWidgets.QLabel)[0]
+    assert not readout.isVisible()                                    # 文と画素の読み取りが重ならない
+
+
+def test_m2_build_window_default_and_main_entry(launch):
+    """build_window() の既定は合成のデモ画像のまま(試験と埋め込みの前提)。利用者の入口 main() だけが見本を開く。"""
+    import inspect
+    _win, model = launch()
+    assert np.array_equal(model.image, studio.demo_image())
+    src = inspect.getsource(studio.main)
+    assert src.count("_first_launch_scene()") == 1
+    assert src.index("build_window()") < src.index("win.show()") < src.index("_first_launch_scene()")
+    order = studio.sample_menu_order(["gradient", "blobs", "coins", "cell"])
+    assert order == ["coins", "gradient", "blobs", "cell"]
+    assert studio.sample_menu_order(["gradient", "blobs"]) == ["gradient", "blobs"]   # 無ければ並びは同じ
