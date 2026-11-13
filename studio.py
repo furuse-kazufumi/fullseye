@@ -12518,8 +12518,16 @@ def build_window(model=None):
             prog["apply"]()
             if state.get("code_dirty"):
                 return
+        if not model.stages:
+            _say_pipeline_is_empty()
+            return
         step_to(len(model.stages) - 1)
         _flash_run_validity()
+
+    def _say_pipeline_is_empty():
+        """L10(2026-11-13、初回起動の点検): 空のパイプラインで F5 を押しても何も起きず、何も言わなかった。"""
+        flash(tr("Nothing to run yet: add an operator first (type in the operator search box and press Enter, "
+                 "or select one and press +)"))
 
     def _do_run_all_async():
         prog = getattr(win, "_program", None)
@@ -12527,8 +12535,10 @@ def build_window(model=None):
             prog["apply"]()
             if state.get("code_dirty"):
                 return
-        if model.stages:
-            stage_list.setCurrentRow(len(model.stages) - 1)
+        if not model.stages:
+            _say_pipeline_is_empty()                    # L10
+            return
+        stage_list.setCurrentRow(len(model.stages) - 1)
         start_run_async()
 
     def _flash_run_validity():

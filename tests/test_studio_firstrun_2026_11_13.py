@@ -652,3 +652,22 @@ def test_l1_ctrl_y_redoes(launch):
     assert model.stages == []
     QTest.keyClick(win, QtCore.Qt.Key_Y, QtCore.Qt.ControlModifier); _pump(0.2)
     assert [s[0] for s in model.stages] == ["gaussian"]
+
+
+def test_l10_running_an_empty_pipeline_says_so(launch):
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    win, model = launch(lang="ja")
+    assert not model.stages
+    win._op_list.setFocus(); _pump(0.05)
+    QTest.keyClick(win._op_list, QtCore.Qt.Key_F5); _pump(0.2)
+    said = win.statusBar().currentMessage()
+    assert "まだ実行する物がありません" in said and "Enter" in said, said
+    win.statusBar().clearMessage()
+    QTest.keyClick(win._op_list, QtCore.Qt.Key_R, QtCore.Qt.ControlModifier); _pump(0.2)   # Ctrl+R も同じ
+    assert "まだ実行する物がありません" in win.statusBar().currentMessage()
+    _dirty_pipeline(win, model)
+    win.statusBar().clearMessage()
+    win._op_list.setFocus(); _pump(0.05)
+    QTest.keyClick(win._op_list, QtCore.Qt.Key_F5); _pump(0.4)
+    assert "まだ実行する物がありません" not in win.statusBar().currentMessage()
