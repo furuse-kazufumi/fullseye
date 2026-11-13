@@ -29,7 +29,7 @@ def test_registry_counts_and_every_command_has_a_scope_and_default_keys():
     assert len(cmds) == 125
     assert sum(not c.fixed for c in cmds) == 112 and sum(c.fixed for c in cmds) == 13
     assert sum(bool(c.keys) for c in cmds if not c.fixed) == 91
-    assert sum(len(c.keys) for c in cmds if not c.fixed) == 95
+    assert sum(len(c.keys) for c in cmds if not c.fixed) == 97
     assert len({c.id for c in cmds}) == len(cmds)
     for c in cmds:
         assert re.fullmatch(r"[a-z][a-z0-9_]*", c.id), c.id
@@ -818,7 +818,7 @@ def test_dialog_search_record_conflict_and_assign(win, ctl):
     dlg.b_add.click()
     assert ctl.keymap.keys("zoom_in") == ("Ctrl+F11", "Ctrl+=")
     dlg.b_reset.click()
-    assert ctl.keymap.keys("zoom_in") == ("Ctrl+=",) and not ctl.keymap.is_changed("zoom_in")
+    assert ctl.keymap.keys("zoom_in") == ("Ctrl+=", "Ctrl++") and not ctl.keymap.is_changed("zoom_in")
     dlg.b_remove.click()
     assert ctl.keymap.keys("zoom_in") == () and _keys_of(win._actions["zoom_in"]) == ()
     h = dlg.table.verticalHeader().defaultSectionSize()
@@ -1200,7 +1200,7 @@ def test_a_plain_arrow_on_the_window_is_refused_and_the_list_still_moves(win, ct
     _QtCore, _QtGui, _QtWidgets, QTest = _qt()
     from PySide6 import QtCore  # noqa: PLC0415
     probs = ctl.assign("zoom_in", ("Down",))
-    assert ("error", "nav_key", "") in _codes(probs) and ctl.keymap.keys("zoom_in") == ("Ctrl+=",)
+    assert ("error", "nav_key", "") in _codes(probs) and ctl.keymap.keys("zoom_in") == ("Ctrl+=", "Ctrl++")
     lst = win._op_list
     _activate(win)
     lst.setCurrentRow(0)
@@ -1851,3 +1851,86 @@ def test_escape_not_eaten_outside_image_focus(win, ctl):
         leave.triggered.disconnect(spy)
         if focus.isChecked():
             win._toggle_focus_image(False)
+
+
+# --------------------------------------------------------------------------- #
+# B5 [キー] 1.2-B: D11 holdout / D16 やり直し / D29 拡大 / G13(a) 登録簿と本物の窓(D12・D93 は済みの確かめ)
+# --------------------------------------------------------------------------- #
+def test_holdout_leaves_ctrl_h_to_replace():
+    k = km.Keymap()
+    assert k.keys("holdout") == ("Ctrl+Alt+H",) and k.keys("program_replace") == ("Ctrl+H",)
+    owners = [c.id for c in km.COMMANDS if "Ctrl+H" in k.keys(c.id) and not c.fixed]
+    assert owners == ["program_replace"]                                  # Ctrl+H = ここで置換だけ
+    assert [p for p in k.check("holdout", ("Ctrl+Alt+H",)) if p.level == "error"] == []
+
+
+def test_redo_shows_ctrl_y_and_both_work(app, studio_mod):
+    _QtCore, _QtGui, _QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    import studio_editops_qt as eq  # noqa: PLC0415
+    K = QtCore.Qt
+    w, c = _with_a_stage(studio_mod)
+    a = w._actions["redo"]
+    hits = []
+    a.triggered.connect(lambda *_a: hits.append(1))
+    try:
+        assert c.keymap.keys("redo") == ("Ctrl+Y", "Ctrl+Shift+Z")
+        assert a.shortcut().toString() == "Ctrl+Y"                        # メニューの右 = 先頭のキー
+        _activate(w)
+        sl = w._stage_list
+        for key, mods in ((K.Key_Y, K.ControlModifier), (K.Key_Z, K.ControlModifier | K.ShiftModifier)):
+            w._actions["undo"].trigger()                                  # 段を入れたのを戻す → やり直せる
+            _pump(0.2)
+            assert a.isEnabled()
+            sl.setFocus()
+            _pump(0.05)
+            QTest.keyClick(sl, key, mods)
+            _pump(0.2)
+        assert hits == [1, 1]                                             # どちらのキーでも
+        assert "gaussian" in " ".join(sl.item(i).text() for i in range(sl.count()))
+    finally:
+        _close(w)
+        eq.apply_bindings(None)
+
+
+def test_zoom_in_takes_ctrl_plus_and_ctrl_equal(win, ctl):
+    _QtCore, _QtGui, _QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    K = QtCore.Qt
+    a = win._actions["zoom_in"]
+    assert ctl.keymap.keys("zoom_in") == ("Ctrl+=", "Ctrl++")
+    hits = []
+
+    def spy(*_a):
+        hits.append(1)
+    a.triggered.connect(spy)
+    try:
+        _activate(win)
+        win._stage_list.setFocus()
+        _pump(0.05)
+        QTest.keyClick(win._stage_list, K.Key_Equal, K.ControlModifier)
+        QTest.keyClick(win._stage_list, K.Key_Plus, K.ControlModifier)
+        assert hits == [1, 1]
+    finally:
+        a.triggered.disconnect(spy)
+
+
+def test_registry_matches_window_and_count_floor(win, ctl):
+    from PySide6 import QtGui  # noqa: PLC0415
+    import studio_keymap_qt as kq  # noqa: PLC0415
+    st = kq._state(win)
+    keys = {k for c in km.COMMANDS for k in ctl.keymap.keys(c.id)}
+    assert len(keys) >= 60                                                # キーの数に下限(G13(a))
+    checked = 0
+    for cid, a in win._actions.items():
+        if not isinstance(a, QtGui.QAction) or cid not in km.BY_ID:
+            continue
+        c = km.BY_ID[cid]
+        if c.target.startswith(("editops:", "filter:")):
+            continue
+        assert _keys_of(a) == ctl.keymap.keys(cid), cid                     # 窓の QAction のキー = 登録簿
+        checked += 1
+    assert checked >= 85
+    for cid in ("code_to_editor", "image_focus", "leave_image_focus", "find_panel", "quick_guide"):
+        assert st.targets.get(cid) and win._actions[cid] is st.targets[cid][0], cid   # ID の無かった物も登録簿から
+    assert win._editops.keys_for("line.duplicate") == ctl.keymap.keys("editops_line_duplicate")   # D93

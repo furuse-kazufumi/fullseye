@@ -332,12 +332,12 @@ COMMANDS = (
     _c("pymode_save_as", "Save Python program as…", _W, "Ctrl+Alt+Shift+S"),
     # ---- 窓全体: Edit ----
     _c("undo", "Undo", _W, "Ctrl+Z"),
-    _c("redo", "Redo", _W, "Ctrl+Shift+Z"),
+    _c("redo", "Redo", _W, "Ctrl+Y|Ctrl+Shift+Z"),                # D16: 表示は Ctrl+Y(VS と同じ)、Ctrl+Shift+Z も効く
     _c("pin_a", "Pin as A", _W, "Ctrl+Shift+A"),
     _c("clear", "Clear pipeline", _W, "Ctrl+Shift+Backspace"),
     _c("focus_search", "Focus operator search", _W, "Ctrl+F"),
     # ---- 窓全体: View ----
-    _c("zoom_in", "Zoom in", _W, "Ctrl+="),
+    _c("zoom_in", "Zoom in", _W, "Ctrl+=|Ctrl++"),                # D29: Ctrl++ も(配列に強く)
     _c("zoom_out", "Zoom out", _W, "Ctrl+-"),
     _c("fit", "Fit to window", _W, "Ctrl+0"),
     _c("actual_size", "Actual size (1:1)", _W, "Ctrl+Alt+1"),
@@ -351,7 +351,7 @@ COMMANDS = (
     _c("dbg_reset", "Reset to start (from any panel)", _W, "Shift+F5", own_title=True),
     _c("batch_apply", "Apply to folder…", _W),
     _c("verify_exported", "Verify exported Python…", _W, "Ctrl+Shift+R"),
-    _c("holdout", "Validate on holdout…", _W, "Ctrl+H"),
+    _c("holdout", "Validate on holdout…", _W, "Ctrl+Alt+H"),      # D11: Ctrl+H は「ここで置換」だけ
     _c("pymode_python", "Python mode", _W),
     _c("pymode_pipeline", "Pipeline mode", _W),
     _c("pymode_toggle", "Switch Python / Pipeline mode", _W, "Ctrl+Alt+M"),

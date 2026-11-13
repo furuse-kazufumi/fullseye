@@ -152,11 +152,11 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `pymode_save` | Python のプログラムを保存 | 窓全体 | `Ctrl+Alt+S` | `Ctrl+Alt+S` |
 | `pymode_save_as` | 名前を付けて Python のプログラムを保存… | 窓全体 | `Ctrl+Shift+Alt+S` | `Ctrl+Shift+Alt+S` |
 | `undo` | 元に戻す | 窓全体 | `Ctrl+Z` | `Ctrl+Z` |
-| `redo` | やり直す | 窓全体 | `Ctrl+Shift+Z` | `Ctrl+Shift+Z` |
+| `redo` | やり直す | 窓全体 | `Ctrl+Y` / `Ctrl+Shift+Z` | `Ctrl+Y` / `Ctrl+Shift+Z` |
 | `pin_a` | A として固定 | 窓全体 | `Ctrl+Shift+A` | `Ctrl+Shift+A` |
 | `clear` | パイプラインを空にする | 窓全体 | `Ctrl+Shift+Backspace` | `Ctrl+Shift+Backspace` |
 | `focus_search` | op 検索欄へ移動 | 窓全体 | `Ctrl+F` | `Ctrl+F` |
-| `zoom_in` | 拡大 | 窓全体 | `Ctrl+=` | `Ctrl+=` |
+| `zoom_in` | 拡大 | 窓全体 | `Ctrl+=` / `Ctrl++` | `Ctrl+=` / `Ctrl++` |
 | `zoom_out` | 縮小 | 窓全体 | `Ctrl+-` | `Ctrl+-` |
 | `fit` | 窓に合わせる | 窓全体 | `Ctrl+0` | `Ctrl+0` |
 | `actual_size` | 実寸 (1:1) | 窓全体 | `Ctrl+Alt+1` | `Ctrl+Alt+1` |
@@ -169,7 +169,7 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `dbg_reset` | 最初に戻す(どの欄からでも) | 窓全体 | `Shift+F5` | `Shift+F5` |
 | `batch_apply` | この処理をフォルダに適用… | 窓全体 | — | — |
 | `verify_exported` | 書き出した Python を検証… | 窓全体 | `Ctrl+Shift+R` | `Ctrl+Shift+R` |
-| `holdout` | 検証用の画像で確かめる… | 窓全体 | `Ctrl+H` | `Ctrl+H` |
+| `holdout` | 検証用の画像で確かめる… | 窓全体 | `Ctrl+Alt+H` | `Ctrl+Alt+H` |
 | `pymode_python` | Python のモード | 窓全体 | — | — |
 | `pymode_pipeline` | パイプラインのモード | 窓全体 | — | — |
 | `pymode_toggle` | Python / パイプラインのモードを切り替え | 窓全体 | `Ctrl+Alt+M` | `Ctrl+Alt+M` |
