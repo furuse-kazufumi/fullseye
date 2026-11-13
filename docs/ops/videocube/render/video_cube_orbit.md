@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # video_cube_orbit — VIDEOCUBE `render` op

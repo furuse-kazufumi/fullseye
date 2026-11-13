@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_datacenter_thermal_field, poc_multibeam_bathymetry, poc_stockpile_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # interp_scattered — MATH `interp_poly` op

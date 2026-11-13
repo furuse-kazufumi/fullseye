@@ -70,6 +70,7 @@ from __future__ import annotations
 import json
 import math
 import xml.etree.ElementTree as ET
+from safe_xml import safe_xml_parse
 from collections import deque
 from datetime import datetime
 from pathlib import Path
@@ -380,7 +381,7 @@ def cr_read(source) -> dict:
     else:
         raise ValueError("%s: source must be an XML string or a path" % op)
     try:
-        root = ET.fromstring(text.encode("utf-8") if isinstance(text, str) else text)
+        root = safe_xml_parse(text.encode("utf-8") if isinstance(text, str) else text, kind="data", op=op)
     except ET.ParseError as ex:
         raise ValueError("%s: XML parse error: %s" % (op, ex))
     if root.tag != "commonRoad":

@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [structured_light, structured_light_scan]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # wrapped_phase — 3D `structured_light` op

@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [poc_dose_uniformity_from_grinding, poc_powder_grinding_ae]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # particle_image_d50 — DRIVE `grind` op

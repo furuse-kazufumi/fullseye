@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_driving_school, poc_real_sem_metal_layer, poc_thermal_drift_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # polygon_area — DRIVE `japan` op

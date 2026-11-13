@@ -9,7 +9,7 @@ optimal, it is the usual first step before gradient, edge or threshold operators
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">Arguments</h3>
 <table cellpadding="3" style="color:#e2e5ec">
   <tr><td><b>a</b></td><td>kernel <i>sigma</i> (blur radius). σ ≈ 0.3 + 2.7·a — small a = gentle denoise, large a = strong blur.</td></tr>
-  <tr><td><b>b</b></td><td>reserved / unused for this operator.</td></tr>
+  <tr><td><b>b</b></td><td>border handling: b ≤ 0.5 = <i>reflect</i> (the default), then <i>nearest</i>, <i>constant</i> (pad with 0) and <i>wrap</i> as b grows. It only changes pixels near the image border.</td></tr>
 </table>
 
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">Usage</h3>

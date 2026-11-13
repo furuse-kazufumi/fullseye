@@ -5,7 +5,7 @@
     "source_url": "https://www.mvtec.com/doc/halcon/2605/en/",
     "source_line": "Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605)."
   },
-  "package_version": "1.1.0",
+  "package_version": "1.1.1",
   "git": {
     "commit": "62d66cbea178cd6233aa7c70b4c76d7ca1f3c869",
     "dirty": true

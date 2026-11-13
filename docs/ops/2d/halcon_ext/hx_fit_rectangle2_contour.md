@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_halcon_ext]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # hx_fit_rectangle2_contour — 2D `halcon_ext` op

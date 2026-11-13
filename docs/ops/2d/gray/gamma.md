@@ -9,7 +9,7 @@ gpu: あり(gamma_image)
 examples: [gallery2d_gray_arith, poc_itof_multifreq, poc_simcal_thin_film]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # gamma — 2D `gray` op

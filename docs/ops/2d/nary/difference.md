@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery_nary_image_algebra, gfx2d_scene, poc_granular_heap_repose, poc_powder_scoop_pour, poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # difference — 2D `nary` op

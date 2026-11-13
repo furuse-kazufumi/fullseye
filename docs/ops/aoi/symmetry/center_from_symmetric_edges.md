@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_symmetry_self_reference_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # center_from_symmetric_edges — AOI `symmetry` op

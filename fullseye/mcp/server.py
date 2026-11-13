@@ -968,7 +968,9 @@ def _physical_value_to_knob(op: str, name: str, value: Any, spec: dict) -> float
         if shown not in allowed:
             raise ArgError("%s.%s=%s is outside the documented choices %s %s; values are not rounded" %
                            (op, name, value, allowed, spec.get("unit") or ""))
-        return (allowed.index(shown) + 0.5) / len(allowed)
+        # 等幅でない choice(param_specs の half_then_thirds など)でも狂わないよう、param_specs の逆写像を通す(display = choice の添字)
+        from param_specs import display_to_knob
+        return display_to_knob(spec, allowed.index(shown))
     lo, hi = float(spec["min"]), float(spec["max"])
     if shown < lo or shown > hi:
         raise ArgError("%s.%s=%s is outside the documented range [%s, %s] %s; values are not clipped" %

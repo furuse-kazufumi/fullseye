@@ -9,7 +9,7 @@ gpu: あり(許可リスト)
 examples: [poc_good_sample_variation_model, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # varmodel_fit — SPC `variation` op

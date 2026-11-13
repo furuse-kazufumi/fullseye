@@ -101,6 +101,35 @@ def _iters(doc="morphology iterations 1..4 — ops._it(a)"):
 _SIGMA = "σ"
 _DEG = "°"
 
+#: ``ops._border(b)``: b ≤ 0.5 は reflect(既定)、その先を 3 等分して nearest / constant / wrap。
+#: ★2026-11-12: gaussian / mean_box / median の b は 2026-09-17 から端の扱いを選ぶのに、ここは UNUSED のままで、
+#: Studio は「b (–) · この op では使いません」と出してつまみを無効にしていた。区切りが等間隔でない
+#: (0.5 までが 1 つ目)ので、等幅のバケツ("bucket")でなく専用の写し方 "half_then_thirds" を使う。
+def _half_then_thirds(label, choices, doc, source):
+    d = _spec(label, "choice", choices=choices, doc=doc, source=source)
+    d["map"] = "half_then_thirds"
+    return d
+
+
+def half_then_thirds_index(knob: float) -> int:
+    """``ops._border`` / ``ops._se`` と同じ区切り: 0.5 以下は 0、その先を 3 等分して 1, 2, 3。"""
+    x = _clamp01(knob)
+    return 0 if x <= 0.5 else 1 + min(2, int((x - 0.5) / (0.5 / 3.0)))
+
+
+#: 各選択肢を表すつまみの値。0 番は**既定値の 0.5**(まん中に置くと保存済みのプログラムの値と揃う)。
+_HALF_THEN_THIRDS_KNOB = (0.5, 0.5 + 0.5 / 6.0, 0.75, 0.5 + 2.5 / 6.0)
+
+BORDER: dict[str, Any] = _half_then_thirds(
+    "border handling", ["reflect", "nearest", "constant", "wrap"],
+    "border handling: b ≤ 0.5 reflect (default), then nearest, constant (0), wrap in equal thirds of 0.5..1",
+    "_border(b)")
+#: ``ops._se(b, k)``: b ≤ 0.5 は正方形(既定)、その先を 3 等分して十字 / 円板 / 水平線。
+SE_SHAPE: dict[str, Any] = _half_then_thirds(
+    "element shape", ["square", "cross", "disc", "line"],
+    "structuring element: b ≤ 0.5 square (default), then cross, disc, horizontal line in equal thirds of 0.5..1",
+    "_se(b, k)")
+
 # --------------------------------------------------------------------------- #
 # HAND-WRITTEN specs (each verified against the op source; see the tests)
 # --------------------------------------------------------------------------- #
@@ -108,8 +137,8 @@ PARAM_SPECS: dict[str, dict[str, dict[str, Any]]] = {
     # ---- smoothing / rank / grey morphology (ops.py) ----
     "gaussian": {"a": _lin("blur " + _SIGMA, 0.3, 3.0, 0.01, "px",
                            "Gaussian σ = 0.3 + 2.7·a", "0.3 + 2.7 * a"),
-                 "b": UNUSED},
-    "mean_box": {"a": _kernel("box (uniform) filter size"), "b": UNUSED},
+                 "b": BORDER},
+    "mean_box": {"a": _kernel("box (uniform) filter size"), "b": BORDER},
     "mean_box_wh": {
         "a": _spec("window width", "choice", choices=[str(x) for x in range(1, 16, 2)],
                    unit="px", doc="odd horizontal window 1..15 px",
@@ -118,16 +147,16 @@ PARAM_SPECS: dict[str, dict[str, dict[str, Any]]] = {
                    unit="px", doc="odd vertical window 1..15 px",
                    source="1 + 2 * min(7, int(8 * b))"),
     },
-    "median": {"a": _kernel("median filter size"), "b": UNUSED},
+    "median": {"a": _kernel("median filter size"), "b": BORDER},
     "min_filter": {"a": _kernel("minimum filter size"), "b": UNUSED},
     "max_filter": {"a": _kernel("maximum filter size"), "b": UNUSED},
     "percentile": {"a": _kernel("percentile filter size"),
                    "b": _int_floor("percentile", 5, 95, "%", "rank percentile 5..95",
                                    "int(5 + 90 * b)")},
-    "gerode": {"a": _kernel("grey erosion size"), "b": UNUSED},
-    "gdilate": {"a": _kernel("grey dilation size"), "b": UNUSED},
-    "gopen": {"a": _kernel("grey opening size"), "b": UNUSED},
-    "gclose": {"a": _kernel("grey closing size"), "b": UNUSED},
+    "gerode": {"a": _kernel("grey erosion size"), "b": SE_SHAPE},
+    "gdilate": {"a": _kernel("grey dilation size"), "b": SE_SHAPE},
+    "gopen": {"a": _kernel("grey opening size"), "b": SE_SHAPE},
+    "gclose": {"a": _kernel("grey closing size"), "b": SE_SHAPE},
     "tophat": {"a": _kernel("white top-hat size"), "b": UNUSED},
     "bothat": {"a": _kernel("black top-hat size"), "b": UNUSED},
     "morph_grad": {"a": _kernel("morphological gradient size"), "b": UNUSED},
@@ -257,7 +286,7 @@ PARAM_SPECS: dict[str, dict[str, dict[str, Any]]] = {
     "gray_bothat": {"a": _kernel("rectangular black top-hat window"), "b": UNUSED},
     # ---- volumes ----
     "vol_gaussian": {"a": _lin("blur " + _SIGMA, 0.3, 3.0, 0.01, "vx", "σ = 0.3 + 2.7·a", "0.3 + 2.7 * a"),
-                     "b": UNUSED},
+                     "b": BORDER},
     "vol_median": {"a": UNUSED, "b": UNUSED},
     "vol_threshold": {"a": _lin("level", 0.0, 1.0, 0.001, None, "keep v > a", "a"), "b": UNUSED},
     "vol_reg_dilate": {"a": _int_floor("iterations", 1, 4, doc="6-neighbour dilation iterations",
@@ -366,6 +395,8 @@ def knob_to_display(spec: dict, knob: float):
         n = len(spec.get("choices") or [])
         if n == 0:
             return 0
+        if m == "half_then_thirds":
+            return min(n - 1, half_then_thirds_index(k))
         return min(n - 1, int(k * n))
     if kind == "int":
         lo, hi = int(lo), int(hi)
@@ -399,6 +430,8 @@ def display_to_knob(spec: dict, shown) -> float:
         if n <= 1:
             return 0.0
         i = min(n - 1, max(0, int(shown)))
+        if m == "half_then_thirds":
+            return _HALF_THEN_THIRDS_KNOB[min(i, len(_HALF_THEN_THIRDS_KNOB) - 1)]
         return _clamp01((i + 0.5) / n)
     if kind == "int":
         lo, hi = int(lo), int(hi)

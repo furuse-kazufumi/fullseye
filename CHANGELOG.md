@@ -7,6 +7,109 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+## 1.1.1 — 2026-11-13
+
+1.1.1。1.1.0 の後の直しをまとめた patch 版(`CONTRIBUTING.md` の「直しは溜めずに、短い間隔の patch で出す」)。op の追加・削除・改名はなく、索引の op 数は 1.1.0 と同じ 3,838(うち型付き台帳 2,874)。
+
+- 1.1.0 に無かった入口: `fullseye setup`(環境の確認・スタートメニューのショートカット・後始末の `fullseye setup --uninstall`)。下の「インストール体験」の節は、この入口を 5 回の見直し(独立レビューと PR の CI)で直した記録で、どれも 1.1.0 には含まれていない。
+- 入力の受け付け方が変わる所(各節の「挙動が変わる点」に実測つきで書いてある): DOCTYPE / ENTITY を含む XML、大きさ・要素数・深さの上限を超える XML は `UnsafeXMLError` で断る(`read_3mf` / `osm_parse` は 1.1.0 の無制限から 512 MiB・1,000 万要素の上限つきになり、`safe_xml.xml_limits` で外せる)。パイプラインのファイルは、版の印が整数の 1 でないものとグラフのファイルを断る。外部コマンド(7-Zip・C コンパイラ・PowerShell)は作業フォルダから拾わない。正常な文書の読み結果と、op の索引は変えていない。
+- Studio: 画像欄の収まり・初回のレイアウトと言語・op の一覧の行間・検索結果の行・つまみの表示(「未使用」と出していた 8 本が実は効いていた)などの直し。
+
+### 直し — インストール体験(setup / ショートカット / アンインストール): 独立レビュー(2026-11-12)1 回目の 16 件と 2 回目の 11 件
+
+- **扱いの内訳**: 1 回目の指摘は、番号 1〜16 を直し、番号の外に挙げた既知の制約 3 件(下の 3 行)は直していない(未確認のため)。2 回目の指摘 11 件(下の「2 回目」)は全部この節で直した。
+
+- 台帳の中身を**許可制**で検証してから消す(`shortcuts.check_ledger_item`): file は setup が作る名前(`Fullseye Studio.lnk` / `fullseye.ico` / `fullseye-uninstall.cmd` / `fullseye-studio.desktop` / png)と置き場(スタートメニューの `Fullseye`・デスクトップ・setup フォルダ・Linux の applications / icons)、dir_if_empty は setup が作ったフォルダ、regkey は `Uninstall\Fullseye` の完全一致、claude_skill は `default_target()` の直下か `fullseye-rag` が置く目印(`.fullseye-installed`)がある物だけ。許可外は消さず「台帳にあるが消さなかったもの」として理由つきで出す(終了コード 1)。書き換えた台帳(`thesis.docx`)や `FULLSEYE_LEDGER` の差し替えで任意のファイルが消えた事故を止めた。試験用キー `Software\fullseyetest\` は本番コードから外し、テストが引数 `allow_keys` で渡す。
+- 台帳の各項目に作った環境(`sys.prefix`)を記録し、別の環境が作った物は `--yes` でも残して警告(venv A で登録 → B で登録 → A から uninstall で B のショートカットが消えていた)。
+- 壊れた台帳(`{not json`・`{"entries":{}}`・`[1,2]`)は警告して「台帳なし」の既知の場所の検出に倒す(`--dry-run` でも例外で落ちていた)。`--remove-shortcuts` は台帳に無いデスクトップの同名 `.lnk` を消さず、レジストリだけ消した時も「nothing to remove」と言わない。
+- PowerShell を `%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe` の絶対パスで呼ぶ(Python 3.11 の `shutil.which` は作業フォルダを先に引き、置かれた `powershell.bat` が走った)。`.lnk` と `fullseye setup` の起動は `-P -m studio`・作業フォルダ = setup フォルダ(ホームの `studio.py` を先に読んでいた)。デスクトップは `SHGetKnownFolderPath`(OneDrive の下でも本物の場所)。`APPDATA` / `LOCALAPPDATA` が相対パスなら拒否。
+- アンインストール: pip の段は、この Python に pip があり、`importlib.metadata` が指す fullseye が動いている物と同じ場所のときだけ(uv の venv では `uv pip uninstall` を案内して終了コード 3、checkout 実行で別の fullseye を消さない)。別プロセスの起動は `DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP | CREATE_BREAKAWAY_FROM_JOB`(Job が許さなければ外して再試行。`CREATE_NO_WINDOW` は併用すると無視されるので付けない)。
+- 「アプリと機能」の `UninstallString` を、setup フォルダの `fullseye-uninstall.cmd`(Python に頼らない後始末スクリプト)にした。Python と `fullseye/uninstall.py` が在れば `python -I uninstall.py --uninstall --pause`(パッケージ本体を import しないので scipy が壊れた環境でも動く)、無ければ(venv を消した後)`.lnk`・アイコン・台帳・Uninstall キー・自分自身だけを固定の名前で消す。「python.exe は在るが起動できない」(venv の元の Python を消した = `pyvenv.cfg` の home が無い、rc 103)場合も、`python -I -c 0` で起動を確かめて同じ後始末へ進む(2 回目の指摘 1。確かめるまでは、この場合に「アプリと機能」から永久に消せなかった)。
+- 登録の途中で失敗しても、コピー済みのアイコンなど作った物は作った直後に台帳へ載る。Linux の `.desktop` の `Exec` で `%` `"` `$` `` ` `` `\` を仕様どおり逃がす。
+- テスト: `tests/conftest.py` がセッション全体で `FULLSEYE_LEDGER` を一時ファイルへ向け(`fullseye-rag` が本物の台帳に書いていた)、終了時に空の `HKCU\Software\FullseyeTest` を残さない。`_reg_delete_tree` と Uninstall キーの削除を実レジストリ(試験用キー)で通すテスト、`.lnk` の読み戻し、venv を消した状態の後始末スクリプトの実走を追加(`tests/test_installer_review_2026_11_12.py`)。これらは **Windows だけの試験**(他の OS では skip)で、ubuntu の CI では走らない。2 回目の対応で CI に `windows-latest` の job `windows-installer` を足し、この 2 ファイルだけをそこで実際に走らせる。`tools/ci_wheel_check.py` に「wheel に `studio_assets/fullseye.ico` と `fullseye_256.png` が入っている」を追加。
+- **2 回目の指摘**: (1) 上のとおり、起動できない python のときも後始末へ。(2) 壊れた台帳で「台帳なし」に倒したとき、既知の場所に setup フォルダの `fullseye.ico`・`fullseye-uninstall.cmd`・`Uninstall\Fullseye` キー(完全一致)を足した(固定の名前だけ。`.cmd` がキーを消せずに残り続けない)。(3) Python 3.11 の `is_symlink()` はジャンクションで False なので、`st_file_attributes` の再解析ポイントで判定し、ジャンクションの `fullseye-ops` は `os.rmdir` でリンクだけ外す(指す先は消さない。`fullseye-rag --uninstall` も落ちない)。(4) 空でない `dir_if_empty` を「[消したもの]」と言わず「[残したもの]」へ。走行中の後始末スクリプトとそれが入る setup フォルダは別枠「この画面が閉じた直後に消すもの」に出す。(5) Claude Code の skill は「作ったもの」の y とは別の問いにし、手で編集していれば既定では残す(`--yes` でも)。編集済みの判定は、`SKILL.md` が原本と違う・原本に無いファイルがある(`my_notes.md` など)・原本が見つからず判定できない、のどれかなら編集済み(判定できないときは残す・確認に倒す)。(6) `-I` の単独実行がユーザー site(`pip install --user`)を外す問題: ユーザー site も探し、「別の場所」と「pip で入っていない」の文を分けた。(7) setup フォルダのパスに、定義済みの `%NAME%`(や `%CD%`)があれば登録時に理由を出して拒否(cmd.exe が展開して .cmd の起動が失敗するため)。(8) 終了コードの意味を表にして docstring と README に書き、`fullseye setup` は選んだ段が失敗すれば 1 を返す(これまで常に 0)。pip の段を出せず fullseye 本体が残るときだけ 3。(9) CI に `windows-latest` の job を追加。(10) この節の書き方を、上の直しに合わせて訂正。(11) MCP の物理パラメータの choice の写像を `param_specs.display_to_knob` 経由にした(等幅でない choice でも狂わない。既存の choice の値は変わらない)。
+- **3 回目の独立レビュー(インストーラ側)**: (1)【High】`test_R2` が、環境変数を一時フォルダへ向けても `shortcuts.windows_dirs()` がデスクトップだけ `SHGetKnownFolderPath` で**本物**を引き、`registry=True` 既定で本物の `Uninstall\Fullseye` も計画に入るため、台帳が壊れた状態の `--yes` で利用者の本物のデスクトップの `Fullseye Studio.lnk` と「アプリと機能」の登録を消しうる穴だった(開発機で実際にデスクトップの `Fullseye Studio.lnk` が消えた)。直し: (a) 試験の包みが `dirs` / `env` / `registry=False` を一時フォルダに固定して渡す。(b) 別プロセスで uninstall を走らせる試験(R2)は、包み自身が `collect` を取って JSON に書き(外が 1 件でもあれば何も消さず非ゼロで終わる)、試験がそれを読んで「一時フォルダの外・自分以外のキーが 0 件、自分の物が入っている」を確かめてから消す 2 段目へ進む(`--wrap-plan-only` → `verify_plan_file`。包みが一覧を書かない変異は落ちる)。`.cmd` の実走(R1・12_13 など)は、実行するそのファイルの `del` / `rmdir` / `reg delete` の対象を先に確かめる(`guard_script`)。(c) `tests/conftest.py` に、試験群の前後で本物のデスクトップ・スタートメニュー・HKCU の Uninstall・setup フォルダの一覧を取って**差があれば失敗**させる見張り(Windows だけ)と、インストーラの試験の間は `UNINSTALL_KEY` を試験用の名前に差し替える fixture を追加。全試験の全数調査は上記 3 ファイルの `uninstall.main` / `shortcuts.remove` / `install` / `rag_setup.main` / `run_cli` の呼び出しを 1 つずつ確認(別プロセスの `fullseye setup --uninstall` は `--dry-run` か非端末で、何も消さない)。(d) 出荷コード: 後始末は消す前に必ず一覧を出し、さらに**名前と置き場だけで消さず、中身で Fullseye の物と確かめる**(`.lnk` は指す先の引数が `-m studio` か install.ps1 の `studio.py`、`.cmd` は先頭の印、`.ico` / `.png` は画像の印、`.desktop` は Name と `-m studio`、Uninstall キーは DisplayName と UninstallString)。確かめられない物は消さず「消さなかったもの」に出す(`shortcuts.verify_fullseye_item`。`--remove-shortcuts` も同じ)。(2)【Medium】`.cmd` の起動確認 `if errorlevel 1` は負の終了コード(DLL が無いときの 0xC0000135)を見逃すので、終了コードが 0 かどうかで分岐する `|| goto fallback` / `&& exit /b` に直した(`.cmd` の中に `errorlevel` の判定は残っていない)。(3)【Medium】`skill_edited` は、原本が見つからないときに「編集していない」と答えて `--yes` で手編集の skill を消していたのを、判定できなければ編集済み扱い(残す)に直し、原本に無いファイルがあれば編集済みとした。(4) `pip uninstall` の段を起動できなかったときも終了コード 3(表どおり)。CI の `windows-installer` に `timeout-minutes: 15`。
+- **4 回目(PR の CI で出た分)**: (1) 英語の Windows で日本語のユーザー名(その逆も)だと、スタートメニューのショートカットが作れなかった(`Unable to save shortcut ... ????`)。PowerShell まで文字は無傷で届いており、壊していたのは `WScript.Shell` の ShortcutLink が文字列を**システムの ANSI コードページ**で持つことだった(コードページに無い文字が `?` になる)。`.lnk` の読み書きを `IShellLinkW` + `IPersistFile`(Unicode の COM)の ctypes 直呼びに替え、PowerShell も Add-Type も要らない形にした(COM が使えない環境のためだけに従来の PowerShell 経路を残す)。`.cmd` は UTF-8 + `chcp 65001` で、コードページに無い文字のパスでも動くことを実走で確認(タイ語・ヘブライ語・韓国語・日本語・記号入りのパス)。(2) Linux で落ちていた: 台帳に `regkey` の行があると `winreg` を import して落ちた(`regkey_exists` / `unregister_uninstall_entry` が非 Windows で安全に振る舞う)。試験は Windows だけの物に skip の印を付け、Linux でも確かめられる部分(内容の確かめ・台帳の壊れ方・`.desktop` の Unicode・レジストリ行の扱い)を別の試験として残した。(3) 空を通す表明の台帳: `assert any(...)` / `for` の前に件数の確認を置いた(台帳の数は増やしていない)。(4) `test_public_reachability` の台帳の数(1084)は 1.1.1 の側に合わせた。
+- **5 回目**: (1) 上の (b) のとおり、R2 は別プロセスの包みが取った一覧を確かめる形にした。(2) `remove_item` の中の内容確認(二重の確かめ)を落とす試験、conftest の前後比較で「本物の setup フォルダが空で新しく作られた」を検出する区別(無い / 空)、COM の `CoInitializeEx` に対する `CoUninitialize`(S_OK・S_FALSE は対にし、`RPC_E_CHANGED_MODE` は対にしない)と、`__enter__` の途中で `QueryInterface` が失敗したときの ShellLink の Release 漏れを直した(試験あり)。(3) Studio: 行の高さの試験は QSS の `height` 指定そのものと(使える Qt では)windows11 様式での実測を見る。初回起動の言語の判断を `studio._startup_language` に切り出し、offscreen でも試験できる形にした(`build_window` はそれを呼ぶだけ)。英語以外に決まった言語は設定に書き込まれるので、後で OS の言語を変えても追従しない(英語のときは書き込まないので追従する)。
+- **Studio の定番の欄(同じ回の確認)**: `STAPLE_EXCLUDE_EN` / `STAPLE_EXCLUDE_JA` の上のコメントが入れ替わっていたのを直した。単独の「鏡」「左右」「上下」「ラベル」で定番が出なくなったのは、2 回目のレビュー(f54982b9f9)で部分一致の誤爆(顕微鏡・上下限・ラベル文字列)を避けるために**意図して**語を狭めた結果で、戻さない(試験に固定)。英語の語のうち op 名と同じ 5 つ(`equalize` / `invert` / `skeleton` / `thinning` / `difference`)が単独では定番を出さないのは「op 名そのものを打った人には定番を出さない」決まりの結果で、そのまま(試験に明記)。
+- **既知の制約**(直していません・未確認): Store 版 Python(MSIX)では `%APPDATA%` / `%LOCALAPPDATA%` への書き込みが私的な領域に振り替えられ、登録が見えない可能性。
+- **既知の制約**(直していません・未確認): conda の `pythonw.exe` を環境を有効にせず起動すると DLL が見つからないことがある。
+- **既知の制約**(直していません・未確認): `.lnk` に AppUserModelID を書いていないので、タスクバーのピン留めとの結びつきは未確認。
+
+### 直し — Studio の画像欄と表示(操作動画の試し撮りで見つかった物。次の patch 版 1.1.1 に入れる)
+
+- 画像が画像欄に収まらず、下が切れた。画像欄(`ImageView`)の最小サイズが 380x380 で、初回の欄(論理 1280x673 の窓で高さ 283px)より大きく、「窓に合わせる」を押しても欄からはみ出す大きさに合わせていた。最小サイズを 200x140 に下げ、「窓に合わせた」状態のまま窓や欄の大きさが変わったときは新しい欄の実寸で合わせ直す(利用者が拡大した後は動かさない)。起動直後のデモ画像も、レイアウト確定前の大きさで合わせた倍率のまま残らない。
+- 初回(設定が空)のレイアウト: 画像欄が縦の約 60%(従来は約 49%、コード欄が大きかった)、右の列は幅 420px 以内。保存済みのレイアウトがある起動では触らない(P-01 の復元はそのまま)。
+- `+` で op を足した直後に、処理手順の欄が「未計算 / not computed」のままだった(実行ボタンを押すと追いつく)のを、画像と同じ結果の要約に直した。つまみのドラッグ中も 100ms ごとに段の欄を追従させる。worker で走らせた後に設定を変えると、画像は「いまの設定の結果」になるのに状態バーが「表示中の結果: 世代 N」と言い続けたのを、世代を言わず、「変更前の設定による結果」の帯も出さない形にした(もう一度走らせると世代が戻る)。
+- 右パネルの幅が中身で変わらない。op を選ぶと約 190px 広がって画像が左へ寄り、つまみを動かし始めるとコード欄が 12px 縮んでいた。つまみの入力欄(typed)が spec の種類で 0〜110px と変わり、隠れると幅ゼロになっていたため。常に同じ幅を取り、op の a / b は 2 行に並べた。
+- 日本語モードに残っていた英語を訳した(コンボの先頭項目・「問題はありません」・段の欄の「未計算」の併記・つまみの名前と説明・コード欄の初期コメント)。英語モードの文言は変えていない。日本語だけの行を `pending_translation` に 84 本足した(211 → 295)(他言語は未訳のまま英語を出す)。op 固有の説明文(`impl: ndimage…`、HALCON の英文)と、docstring から自動で作ったつまみの名前は、この版では訳していない。
+- op の一覧が 1280x673 で 2 行しか見えなかったのを 6 行以上に(一覧の下の空きは署名欄の最小高さ 92px だった)。カテゴリと検索を 1 行にし、署名欄から実装の式(`impl:` の行。全文はツールチップ)を外し、案内文(サンプル・注記・追加の説明)は一覧に譲ってツールチップへ。「選んだ段・つまみ」の説明欄は折り返しの行数に高さが追従し、`impl:` の 2 行目が切れない(日本語では「実装:」)。
+- 設定を変えた後も、直前に完了した結果へ行く導線(帯と「その結果を見る」)を残す(画像は今の設定の結果のまま、状態バーは世代を言わない)。完了した結果と設定が同じなら出さない。
+- 「最初の 3 手」の帯を 1 行(高さ 36px 前後。従来は英語で 2 行・オフスクリーンの幅広フォントで 110px)に。閉じるボタンと既読の保存は変えていない。
+- 入門の語で定番の op が先頭に出る(使い勝手の点検 P-09)。「二値化」の先頭が `hx_close_edges`、「回転」が `rope_rotate`、「ラベリング」が `polar_unwrap` だった(検索は説明文の語の重みで並べるので、基本の op が埋もれる)。`studio_search.search_grouped` が別の欄 `staples`(27 組の語 → 定番の op、最大 6 件)を返し、Studio は検索結果の先頭に「定番」として出す。**検索の順位(`search_ops`)と 3 群の中身・並びは変えていない**。op 名そのものを打ったときは出さない。領域用の op(膨張・穴埋めなど)は画像からの前処理の列を行の中に出す。
+- 検索結果の行を作り直した(P-19)。op 名を行の先頭に置き、説明は行の幅で折り返し、「今のデータで試す」「ヘルプ」のボタンはその下の右寄せに置く(従来は折り返さない説明文の幅で行が伸び、ボタンが横スクロールの先に隠れ、op 名が右へ切れていた)。前処理が要る op は「先に: otsu → dilation_circle」と別の行に書く(従来は「出力: region → otsu」と出力の後ろに繋がり、順序が逆に読めた)。「入力: / 出力:」の語は言語の切り替えに追従する。
+- Program 欄で 0〜1 の外のつまみを書くと、黙って端の値に丸めて実行していた(P-13。`gaussian (9.0, -3.0)` は `gaussian (1, 0)` として走る)。実行は止めず、適用後の状態欄と状態バーに「つまみが 0〜1 の外です。近い端の値で実行しました: gaussian a=9 → 1 · gaussian b=-3 → 0」と出す。
+- 手書きのヘルプ 3 本(`gaussian` / `otsu` / `sobel_mag`)の引数の説明が実装と違っていた: `otsu` の a を「自動しきい値の偏り」、`sobel_mag` の a を「出力の利得」、`gaussian` の b を「未使用」と書いていたが、実装は `otsu` と `sobel_mag` が a・b とも未使用、`gaussian` の b は端の扱い(reflect / nearest / constant / wrap)。英語版を直し、同じ構成・同じサンプルのリンクを持つ手書きの日本語版(`<name>.ja.html`)を足した(P-08。日本語 UI でこの 3 本だけ英語だった)。ページの記述と op の挙動が合うことを試験にした。
+- **「未使用」と出して無効にしていたつまみが、実は効いていた(8 本)**: `gaussian` / `mean_box` / `median` / `vol_gaussian` の b は 2026-09-17 から端の扱い(reflect / nearest / constant / wrap)を選び、`gerode` / `gdilate` / `gopen` / `gclose` の b は構造要素の形(正方形 / 十字 / 円板 / 水平線)を選ぶのに、Studio のつまみの表(`param_specs.PARAM_SPECS` と `studio._ARG_ROLES`)は「未使用」のままで、b のつまみを無効にし「b (–) · この op では使いません」と出していた(動画の試し撮りの画面で見つけた)。8 本とも選択肢のコンボ(既定は従来どおりの値 0.5 = reflect / 正方形)にした。区切りは op の実装と同じ「0.5 までが 1 つ目、その先を 3 等分」で、つまみ 0〜1 の全域で `ops._border` / `ops._se` と一致することを試験にした。あわせて、「未使用」と出すつまみ 60 本あまりを実際に動かし、出力が 1 ビットも変わらないことを試験にした(走らせた件数に下限つき)。
+- **対訳の表にあるのに画面に届いていなかった行**: `studio_assets/i18n.json` の最上位に置かれた行は、一覧に載った一部しか読まれていなかった。検索結果の見出し(現在の入力に適用できる / 前処理が必要 / その他)、「今のデータで試す」「ヘルプ」のボタン、「近い語を試してください」などが、訳があるのに日本語 UI でも英語のままだった(10 行)。最上位の行は全部読むようにした。あわせて、`studio.py` の `tr("…")` に渡している文(210 個)を全部走査し、日本語の行が無い 8 個(書き出しの検証まわり)に 6 言語の訳を足した。「`tr()` の文は全部が日本語の行を持つ」「最上位の行は全部 `tr()` に届く」を試験にした。
+- **2 回目の独立レビュー(2026-11-12)を受けた Studio 側の直し**: (1) 定番の欄を先頭に出したせいで、Enter が検索の 1 位でなく定番を入れていた(「canny edge」で Enter → `sobel_amp`)→ Enter は検索の 1 位だけを対象にする。(2) 定番の語の部分一致が誤爆していた(顕微鏡 → mirror、account → ラベリング、nothing → skeleton、knowledge → エッジ など)→ 英語は単語として、日本語は別の意味の複合語を除いてから当て、問い合わせに op 名や `_` があれば出さない。(3) 選択肢のつまみのスライダに前の op の範囲が残っていた(整数のつまみの op の後に開くと、右端まで引いても窓が 3 に戻る)→ 選択肢に替わるたびに 0..100 に戻す。(4) 検索の後でパネルを狭めると行と見出しの幅が前のまま残り、ボタンが画面の外へ出ていた → 一覧の幅が変わるたびに合わせ直し、長い見出しは切ってホバーで全文。(5) `sobel_mag` のヘルプの「最小〜最大で 0..1」は誤りで、実装は自分の最大値で割る → 文を直し、試験で実装と突き合わせる。(6) `gaussian (nan, 0.5)` が a=1.0 として黙って走っていた → 有限でない値は解析エラー。丸めの知らせは行番号つきにし、`if 0 … endif` の中や無効にした行は知らせない。(7) カラーの判定が全画素を float64 で復号し直していた(8000×6000 の JPEG で 0.96 秒・2.46 GB)→ Pillow があれば 256 px 以内に縮めた絵で比べる。(8) 定番の行を op ごとの検索で組んでいて最初の検索が約 1 秒かかった → 索引から直接組む(実測 0.16 秒)。(9) 「Help」の日本語が「説明」でメニューの「ヘルプ」と揺れていた。
+- カラーのファイルを開くと黙って灰色になっていた(P-17)。読み方は変えず(処理列は 1 チャネル)、状態バーで「カラーのファイルなので、グレー(輝度)にして読んでいます」と言う。
+### 直し — Studio の op の一覧の行間と、初回起動の言語(2026-11-12)
+
+- **op の一覧の行間が空きすぎていた。** Windows 11 の Qt の様式は一覧の行に上下 14 px の余白を足すので、文字 16 px に対して行が 30 px あった(余白を 0 にする指定は効いていなかった)。行の高さを「文字の高さ + 4 px」で指定し、同じ窓で見える行が 14 行から 21 行になった。検索結果の行(名前・説明・ボタン)の高さは変わらない。
+- **初回起動の言語を OS の言語に合わせる。** 言語を選んだ事がない状態では、日本語の Windows でも英語の画面で始まっていた。保存された言語が無いときは OS の言語(日本語・简体中文・繁體中文・한국어・Deutsch・हिन्दी)に合わせ、対応が無ければ英語。メニューで選び直せば次からはその言語(`studio.lang_from_locale` / `studio._startup_language`)。初回に OS から決めた(英語以外の)言語は設定に書き込まれ、以後は OS の言語を変えても追従しない。
+
+### 修正 — 外部コマンドを作業フォルダから拾わない(2026-11-12)
+
+- `archive_*`(7z / rar の書庫)が 7-Zip を探すとき、と `algo_difftest.find_c_compiler` が C コンパイラを探すときに、`shutil.which` を使っていた。Python 3.11 の `shutil.which` は Windows で作業フォルダを PATH の先頭に足すので、書庫を開くフォルダに `7z.bat`、作業フォルダに `gcc.bat` が置いてあると、Fullseye がそれを実行した(7-Zip が `%ProgramFiles%\7-Zip` に無いとき。手元の 3.11.9 で `shutil.which('7z')` が `.\7z.BAT` を返すのを確かめた)。インストーラのレビューで `powershell` について見つかった形の兄弟。
+- `backend_safe.which_outside_cwd(name)` を足し、2 か所ともそれを通す。Windows の裸の名前は PATH の絶対パスの項目だけを見る(空・`.`・相対の項目は飛ばす。作業フォルダを PATH に絶対パスで入れた利用者の指定は尊重する)。配布するモジュールに裸の `shutil.which(` が残っていないことを試験にした(`tools/` の開発用スクリプトは対象外)。
+### XML を読む入口を 1 つの門(`safe_xml`)に寄せた(外部のファイルの DOCTYPE・大きさ・zip 爆弾)
+
+何が起き得たか: 外部のファイルから XML を読む入口(CommonRoad・OSM・CityGML・OME-TIFF の埋め込み XML・3MF・MJCF の include・SVG)のうち、DOCTYPE を断っていたのは SVG の `svg_entities` だけで、大きさの上限も SVG だけだった(定義ファイルの読み書きの棚卸し §3 表 X・§4 I)。標準の `xml.etree` は内部実体 `<!ENTITY a "hello">` を展開して受理し(実測)、8 MB の入力が約 170 MB のメモリになり(実測)、3MF は zip の中の `.model` の展開後の大きさに上限が無かった。expat 2.4.1 以降の増幅制限と外部実体を読まない標準の動作で、爆発は今の環境では起きにくいが、古い expat・別の環境では保証が無かった。
+
+何を変えたか: 新しいモジュール `safe_xml.py`(`safe_xml_parse` / `safe_xml_parse_zip_member` / `safe_xml_iterparse`、例外は `UnsafeXMLError`(`ValueError` の子))。DOCTYPE は **解析器の DOCTYPE 通知**(`TreeBuilder.doctype`)で断る。バイト列の正規表現ではなく expat が読んだ後なので、UTF-8 / UTF-16 の BOM つき・なし・宣言つきの iso-8859-1 でも見落とさない。大きさの上限は既定 50 MiB(SVG の既存の上限に揃える)、zip の中は展開後の大きさにも上限(宣言が嘘でも `max_bytes + 1` までしか読まない)。壊れた XML は従来どおり `ET.ParseError`。`defusedxml` は依存に足さず使わない(この門だけで同じ入力を断れる)。本体の 11 か所の解析呼び出し(drivecommonroad 1・drivejapan 1・driveplateau 2・fileio 2・optdraw 1・pegfail 1・pegtactile 1・printpath 1・examples_3d/anatomical_hand 1)を全部この門に通した。tools/ の JUnit 読み(ci_junit_floor・ci_failure_record・ci_local×3・mutation_probe の計 6 呼び出し)は CI の生成物を読む内部の道具なので対象外。
+
+挙動が変わる点: DOCTYPE / ENTITY を含む入力は、(SVG 以外でも)`UnsafeXMLError` で断る(以前は内部実体が展開されて受理された)。50 MiB を超える XML は断る(plateau の CityGML はストリーム読みで上限なし。`read_3mf` と `osm_parse` は 1.1.0 で上限が無かったので、下の「独立レビュー 3・4 回目」のとおり既定を大きめにした)。コメント・CDATA の中に `<!DOCTYPE` と書いてあるだけの文書は、正規表現のときと違って断らない。正常な文書の読み結果は変わらない(標準の `ET.fromstring` と `ET.tostring` のバイト一致を試験)。
+
+実測: tests/test_safe_xml_parse_2026_11_12.py(145 本)。読み手 11 本 × DTD 6 種(10 段の入れ子実体・5 kB の実体・外部実体・内部実体・DOCTYPE のみ・SYSTEM つき DOCTYPE)× 別エンコード 5 種を読み手の入口から渡して全部断られる。52 MB の入力・展開後 52 MB の 3MF(圧縮後 1 MB 未満)も断られる。配布するモジュールを走査して、門を通さない解析の呼び出しが 0(対象は tests/・tools/・build/・examples/ を除く 500 本超。件数に下限つき)。
+
+### パイプラインのファイルの版の印(`fullseye_pipeline`)を読むときに検査する
+
+何が起き得たか: パイプラインのファイルの読み手(`FullseyeEngine.from_dict` / `load`(CLI の `imgevolve.py run` も通る)、Studio の `validate_pipeline_dict`(「Open pipeline」の `PipelineModel.load_dict` と studio_lite の `load_recipe` も通る))が、版の印を見ていなかった。`{"fullseye_pipeline": 99}`・`"banana"`・別の種類 `{"fullseye_graph": 1}` のファイルでも、`stages` があれば段 `gaussian` を持つエンジンとして受理された(再現: 7 つの入口 × 5 つの悪い印 = 全部 ACCEPT)。MCP にはパイプラインのファイルを読む入口は無い(`stages` を引数で受ける)。
+
+何を変えたか: 検査を小さな関数 `engine.check_pipeline_header(d, *, where=...)`(定数 `engine.PIPELINE_FORMAT_VERSION = 1`)にして、`FullseyeEngine.from_dict` と `studio.validate_pipeline_dict` の 2 か所から呼ぶ(ほかの読み手はこの 2 つを通る)。`fullseye_pipeline` があるとき値が整数の 1 でなければ(99・`"banana"`・`1.0`・`true`・`null`)`ValueError`、`fullseye_graph` だけのファイルも `ValueError`(「何を期待し、何が来たか」を言う)。印の無い古いファイル(`stages` だけ)は今までどおり読む(警告は付けない)。形式は変えていない(書く側は `fullseye_pipeline: 1` のまま)。別の担当が進めている封筒 `fullseye_kind` は見ない。
+
+挙動が変わる点: 印が整数の 1 でないファイル(99・文字列など)と、グラフのファイルが断られる。リポジトリ内の全ファイル(`examples/data/` など)の印は 1 で、正常なファイルの読み結果は変わらない。実測: tests/test_pipeline_header_mark_2026_11_12.py(62 本)を含む、Engine・Studio・studio_lite・CLI・XML の試験 555 本が通る。
+
+### 直し — `safe_xml` と版の印の検査: 独立レビュー(2026-11-12)3 回目の指摘
+
+何が起き得たか(直す前の実測): (1) 大きさの上限(50 MiB)だけではメモリを抑えられない。平らな `<a/>` を並べた 8.4 MB がピーク 185 MB(入力の 22 倍、1 要素あたり約 88 バイト)で、上限いっぱいなら約 1.1 GB。入れ子は 20 万段が受理され、`pegtactile_cutaway_xml` では `RecursionError` が外へ出た。(2) `safe_xml_parse` の既定 `kind="auto"` が、`<` で始まらない文字列をパスとして開いた。`\\host\share\x.xml` を渡すと SMB で読みに行き、別のホストなら Windows の認証情報が外へ出る経路になり、ファイルの有無も例外の違いで分かった。(3) 配布物の走査の試験が正規表現で、別名の import などを見逃した。(4) zip の 2 段の守りは、どちらか一方を消しても試験が通った。(5) `fullseye_graph` と `fullseye_pipeline: 1` の両方を持つ dict を受理した。
+
+何を変えたか:
+- 要素の数の上限(既定 100 万。`osm_parse` だけ 200 万)と入れ子の深さの上限(既定 256)を足した(`max_elements` / `max_depth`、読み手ごとに変えられる、`None` で無効)。超えたら `UnsafeXMLError`。決め方 = 手元の実ファイルの最大が OSM 3.2 MB の 77,854 要素・CommonRoad 9,498・ginza.osm 13,789、入れ子は PLATEAU の 14 なので、要素数は最大の約 13 倍、深さは Python の再帰上限(1000)の手前。8.4 MB の平らな入力は 100 万要素で止まり、ピークは 185 MB から 97 MB。`safe_xml_iterparse`(CityGML)は深さのみ既定 256 で、要素の総数は上限なし(`elem.clear()` で木を抱えない設計で、実ファイルは 1 本で 226 万要素(219 MB)あり、総数で切ると通らない)。`clear()` しない呼び出し側は `max_elements` を付ける。
+- `kind="auto"` の意味を変えた: `str` / `bytes` は常に本文、パスとして開くのは `os.PathLike` か `kind="path"` を明示したときだけ。リポジトリ内の呼び出しは全部 `kind` を明示していて変わらない。`safe_xml` は 1.1.1 で新しく入ったモジュールで、既存の利用者はいない(1.1.0 以前の版には無い)ので、これは互換性を壊す変更ではなく、入る前の既定の決め直し。
+- `safe_xml_iterparse` を、標準の C の `iterparse` + ルート要素の前の部分の expat 検査に作り替えた(前の実装は Python の TreeBuilder で全要素を通していた)。この作り替えの途中で、入力の終わりで expat が末尾の token を保留するため、DOCTYPE がストリームの最後の chunk にあると見逃す穴を試験が見つけ、直した。
+- 配布物の走査の試験を ast に替えた(import の別名・`from ... import fromstring as fs`・`X.fromstring`・`fromstringlist`・`XMLID`・`XMLParser`・`ElementTree(file=)`・dom / sax / expat / pyexpat / lxml / plistlib / xmlrpc の import を検出。検出器自身も 20 形で試験)。`examples/` も対象に含め、そこの 8 か所の XML 解析を門に通した(`poc_real_sem_metal_layer.py` の自前の DOCTYPE 検査は門に寄せた)。
+- zip の 2 段の守りを別々の試験にした(宣言が大きい → `open` を呼ばずに断る / 宣言が嘘で小さい → `max_bytes + 1` バイトだけ読んで断る)。どちらかを消すと落ちることを確かめた。
+- 版の印: 両方の印を持つ dict を `ValueError`。`np.int64(1)` は断ったまま、メッセージで「Python / JSON の整数。numpy の整数は `int()` で」と言う。
+
+挙動が変わる点: 上のとおり(要素数 100 万超・深さ 256 超の XML を断る。`kind="auto"` の文字列はパスにならない。両方の印の dict を断る)。実ファイルの読み結果は、手元の OSM・PLATEAU(丸ごと 2 本)・CommonRoad・OME を標準の `ElementTree` に差し替えた同じ読み手と突き合わせて一致した。ただし **大きな正常ファイルは、この節の時点の既定では断られた**(下の 4 回目の指摘で直した: 3MF と OSM)。
+
+速度(正直に): 平らな合成データでは `safe_xml_parse` が標準の `fromstring` の 1.4 倍(0.72 s → 1.01 s、200 万要素級)、`iterparse` が 1.4 倍(0.39 s → 0.55 s。前の実装は 1.8 倍)。要素数と深さを Python の `start` / `end` で数えるぶんで、これ以上は縮められなかった。PLATEAU の実ファイルでは `plateau_parse` +11 % / −11 %(ばらつき)、`plateau_lod2_mesh` +18 % / +6 %(142〜219 MB の 2 ファイル、1 回ずつ)。
+
+### 直し — 大きな正常ファイルを断らない・上限を外す手段(独立レビュー 4 回目、2026-11-13)
+
+何が起き得たか: 3MF は頂点と三角形が 1 要素ずつなので、100 万三角形(72 MB・約 150 万要素)が既定の 50 MiB / 100 万要素の門で断られた(実測で約 65 万三角形まで)。1.1.0 の `read_3mf` には上限が無かった。街全体の OSM(50 MiB 超)も同じ。利用者が上限を外す手段も無かった。`safe_xml_iterparse` はルート要素より前の部分を全部メモリに溜め、100 MB のコメントでピーク 373 MB になった。
+
+何を変えたか:
+- 上限を外す入口 `safe_xml.xml_limits(max_bytes=..., max_elements=..., max_depth=..., max_prolog_bytes=...)`(`with` の中だけ効く。`None` で無制限。DOCTYPE の拒否は外せない)。読み手の引数に既定値を足せない契約 op(`read_3mf`・`osm_parse`・`cr_read`・`ome_tiff_read`・`svg_entities`)があるので、引数でなくモジュールの設定(`contextvars`)にした。`safe_xml_parse` 系の関数は引数でも渡せる。断るときの文に「上限を上げるには …」を入れた。
+- 読み手ごとの既定: `read_3mf` = 展開後 512 MiB・1,000 万要素(約 0.9 GB)、`osm_parse` = 512 MiB・1,000 万要素。実測: 100 万三角形・50 万頂点(71.7 MB)の 3MF が既定で 4.1 秒・読める。ほかの読み手の既定は前の節のまま(50 MiB・100 万要素・深さ 256。実ファイルの最大は OSM 3.2 MB の 77,854 要素)。SVG の 50 MiB は `xml_limits(max_bytes=...)` で上げられる。
+- `safe_xml_iterparse` の前置きの先読みに上限(`max_prolog_bytes`、既定 4 MiB。実ファイルの前置きは数 KB)。
+- ast の走査の見逃し 4 形(`getattr(ET, "fromstring")`・`from ... import *`・`xml.etree.ElementInclude`・組み立てた文字列の `import_module`)を足した。
+- `tests/test_mcp_usability_189_190.py::test_goal_semantics_change_plan_rank_and_explain_the_exact_boost` の揺れ(計画の探索が実時間 900 ms で打ち切られ、負荷が高いと 0 件になって落ちる)を、試験の `constraints` に `timeout_ms: 10000` を足して直した(上限は決定的な `max_expansions` だけ。製品の既定は変えない)。
+
+挙動が変わる点: `read_3mf` / `osm_parse` は 1.1.0 の無制限から 512 MiB・1,000 万要素の上限つきになった(それを超えるファイルは `xml_limits` で読める)。1.1.0 で読めた現実的な大きさ(100 万三角形の 3MF など)は既定で読める。
+
 ## 1.1.0 — 2026-11-12
 
 1.1.0。1.0.0 の後に、既存の op の出力や失敗の仕方が変わる修正が入ったので、patch(1.0.x)でなく minor で出す。`CONTRIBUTING.md` の「Versioning」は「minor の桁が破壊的変更の合図」で、「既定の数値が変わる」「黙って通していた入力を明示的に拒否する(fail-soft から fail-closed へ)」を minor の条件に挙げている。下の「挙動の変更」の項目がそれに当たる(新しい op・PoC・文書・速度の改善だけなら patch だった)。op の削除・改名はない。既定の `device` は `"cpu"` のまま。
