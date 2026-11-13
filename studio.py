@@ -7751,7 +7751,7 @@ def build_window(model=None):
     _fs_title = QtWidgets.QLabel("First steps"); _fs_title.setStyleSheet("font-weight:700;")
     _fs_lay.addWidget(_fs_title)
     for _txt in ("1. Open a sample: File ▸ Sample images",
-                 "2. Select an operator in the Operators panel and press +",
+                 "2. Open Operators from the panel bar on the left, select an operator and press +",   # the panel is on the bar (stage 2)
                  "3. Press ▶▶ to run"):
         _fs_step = QtWidgets.QLabel(_txt)
         _fs_step.setMinimumWidth(1)        # ★2026-11-12: 折り返さず 1 行(狭い欄では右が切れる。全文はツールチップ)

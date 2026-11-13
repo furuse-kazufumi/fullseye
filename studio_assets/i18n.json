@@ -2649,7 +2649,7 @@
   "Freeze the current pipeline and input settings, then apply them to every image in a folder, one by one": {"ja": "いまの処理と入力設定を固定して、フォルダ内の画像へ順番に適用します"},
   "First steps": {"ja": "最初の 3 手"},
   "1. Open a sample: File ▸ Sample images": {"ja": "1. サンプルを開く(ファイル ▸ サンプル画像)"},
-  "2. Select an operator in the Operators panel and press +": {"ja": "2. 「処理を選ぶ」パネルで op を選び、+ を押す"},
+  "2. Open Operators from the panel bar on the left, select an operator and press +": {"ja": "2. 左端の帯から「処理を選ぶ」を出し、op を選んで + を押す"},
   "3. Press ▶▶ to run": {"ja": "3. ▶▶ で実行"},
   "Hide these steps. Help ▸ First steps shows them again": {"ja": "この案内を閉じます。ヘルプ ▸ 最初の 3 手 でもう一度出せます"},
   "Show the three first steps over the image again": {"ja": "最初の 3 手の案内を画像の上にもう一度出します"},

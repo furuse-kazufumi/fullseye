@@ -311,6 +311,8 @@ def test_first_steps_band_shows_once_closes_and_returns_from_help(tmp_path, monk
         assert not w._first_steps.isHidden(), "初回は案内を出す"
         text = " ".join(l.text() for l in w._first_steps.findChildren(QtWidgets.QLabel))
         assert "Sample images" in text and "+" in text and "▶▶" in text
+        # 2026-11-13: the first run is image + code; the steps say where the operators come from
+        assert "panel bar" in text and w._docks["operators"].isHidden() and w._panels["buttons"]["operators"].isVisible()
         w._first_steps_close.click(); _pump()
         assert w._first_steps.isHidden()
     finally:
@@ -334,6 +336,7 @@ def test_first_steps_text_is_translated(win):
     finally:
         win._apply_language("en"); _pump()
     assert "サンプルを開く" in text and "最初の 3 手" in text
+    assert "左端の帯" in text                                    # the panel bar, in Japanese
 
 
 # --------------------------------------------------------------------------- #
