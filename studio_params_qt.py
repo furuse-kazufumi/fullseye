@@ -779,6 +779,7 @@ class ParamsPanel(QtWidgets.QWidget):
         self._action_texts: dict[str, tuple[str, str, str]] = {}
         self._action_icons: dict[str, str] = {}
         self._message_src: Callable[[Callable[[str], str]], str] | None = None
+        self._message_text = ""
         items: list[QtGui.QAction | None] = []
 
         def action(key: str, icon: str, name: str, what: str, slot: Callable[..., Any] | None, shortcut: str = "",
@@ -1134,16 +1135,14 @@ class ParamsPanel(QtWidgets.QWidget):
 
         ``text`` は文か、文を作る関数(tr → 文)。関数で渡した知らせは、言語を切り替えた時に作り直す。"""
         self._message_src = text if callable(text) else None
+        self._message_text = "" if callable(text) else text
         self.message_level = level
-        self._render_message(None if callable(text) else text)
+        self._render_message()
 
-    def _render_message(self, text: str | None = None) -> None:
+    def _render_message(self) -> None:
+        """知らせの行を今の言語と色で描き直す(文を作る関数で渡された知らせは作り直し、文はそのまま)。"""
         level = self.message_level
-        if text is None:
-            if self._message_src is None:
-                text = self.message_label.full_text()[2:] if level != "info" else self.message_label.full_text()
-            else:
-                text = self._message_src(self.tr_)
+        text = self._message_src(self.tr_) if self._message_src is not None else self._message_text
         mark = {"info": "", "warn": "▲ ", "error": "✕ "}[level]
         self.message_label.set_full_text(mark + text if text else "")
         pal = self.message_label.palette()
