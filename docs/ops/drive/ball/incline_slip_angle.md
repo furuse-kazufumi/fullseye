@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery_drive_ballistics]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # incline_slip_angle — DRIVE `ball` op

@@ -9,7 +9,7 @@ gpu: なし
 examples: [machine_vision_tour, poc_real_chessboard_undistort, poc_real_stereo_multiscanline]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # points_lepetit — MV `detect` op

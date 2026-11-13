@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [poc_larval_connectome_reservoir]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # ridge_readout — CONNGRAPH `reservoir` op

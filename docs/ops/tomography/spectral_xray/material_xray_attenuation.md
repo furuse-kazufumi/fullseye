@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_dual_energy_xray, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # material_xray_attenuation — TOMOGRAPHY `spectral_xray` op

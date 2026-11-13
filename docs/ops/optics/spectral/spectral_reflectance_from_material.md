@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_hyperspectral_foreign_matter]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # spectral_reflectance_from_material — OPTICS `spectral` op

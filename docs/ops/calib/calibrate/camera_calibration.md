@@ -9,7 +9,7 @@ gpu: なし
 examples: [camera_intrinsics_calibration, lens_calibration_loop_demo, poc_calibration_truth_map, poc_camera_calibration]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # camera_calibration — CALIB `calibrate` op

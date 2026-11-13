@@ -8,7 +8,7 @@ gpu: なし
 examples: [lens_optimize_demo, poc_material_optical_library, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # glass_catalog — OPTICS `design` op

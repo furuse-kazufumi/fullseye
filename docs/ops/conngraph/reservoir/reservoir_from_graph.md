@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_larval_connectome_reservoir, poc_malecns_activity_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # reservoir_from_graph — CONNGRAPH `reservoir` op

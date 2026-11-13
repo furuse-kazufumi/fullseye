@@ -9,7 +9,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [poc_cold_chain_excursion, poc_search_sweep_width, signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # integrate_funct_1d — ONED `function` op

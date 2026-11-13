@@ -8,7 +8,7 @@ gpu: なし
 examples: [dem_geodesy_tour, poc_geodetic_benchmarks_real, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # dem_ecef_to_geodetic — DEM `geodesy` op
