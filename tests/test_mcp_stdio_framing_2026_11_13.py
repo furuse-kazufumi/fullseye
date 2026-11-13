@@ -63,8 +63,7 @@ def test_newline_delimited_requests_get_newline_delimited_replies(catalog):
     assert [r["id"] for r in replies] == [1, 2]
     assert replies[0]["result"]["serverInfo"]["name"] == "fullseye"
     assert len(replies[1]["result"]["tools"]) >= 10
-    for x in lines[:-1]:
-        assert b"\r" not in x                                     # 1 行 1 通(本文に生の改行が入らない)
+    assert b"\r" not in out                                       # 1 行 1 通(本文に生の改行が入らない)
 
 
 def test_content_length_requests_still_get_content_length_replies(catalog):
