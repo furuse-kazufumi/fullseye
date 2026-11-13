@@ -404,7 +404,45 @@ def test_enter_inserts_the_top_search_hit_not_a_staple(tmp_path, monkeypatch):
         ui["list"].setCurrentItem(None)
         ui["edit"].returnPressed.emit(); _pump(0.3)
         assert len(model.stages) == n0 + 1
-        assert model.stages[-1][0] == ranked[0], (model.stages[-1][0], ranked[:3], rows["staples"][0]["name"])
+        # 1 位が、この環境に無い op(optional backend が未導入)の事がある(CI の py3.12 / py3.14 で
+        # 「blur」の 1 位が xkor_bilateral だった)。その時は、入れられる最初の行が入る。
+        addable = [n for n in ranked if studio.api.find_op(n) is not None]
+        assert addable, ranked[:5]
+        assert model.stages[-1][0] == studio.api.find_op(addable[0]).name, (
+            model.stages[-1][0], ranked[:3], rows["staples"][0]["name"])
+        assert model.stages[-1][0] != rows["staples"][0]["name"] or addable[0] == rows["staples"][0]["name"]
+    finally:
+        _close_window(studio, win)
+
+
+def test_enter_skips_a_top_hit_that_is_not_installed_here(tmp_path, monkeypatch, capfd):
+    """検索の 1 位がこの環境で呼べない op でも、Enter は次の入れられる行を入れ、例外を出さない(2026-11-13 の回帰)。"""
+    studio, win, model = _studio_window(tmp_path, monkeypatch)
+    try:
+        ui = win._search_ui
+        win._ops_fit["check"].setChecked(False)
+        ui["edit"].setText("blur"); ui["search_now"]("blur"); _pump(0.3)
+        rows = ui["rows"]()
+        ranked = [r["name"] for g in ("applicable", "needs_preprocessing", "other") for r in rows[g]]
+        real = studio.api.find_op
+        addable = [n for n in ranked if real(n) is not None]
+        assert len(addable) >= 2, ranked[:5]
+        gone = addable[0]                                   # 1 位が「未導入」だった事にする
+        monkeypatch.setattr(studio.api, "find_op", lambda name, *a, **k: None if name == gone else real(name, *a, **k))
+        n0 = len(model.stages)
+        ui["list"].setCurrentItem(None)
+        ui["edit"].returnPressed.emit(); _pump(0.3)
+        assert len(model.stages) == n0 + 1
+        assert model.stages[-1][0] == real(addable[1]).name, (model.stages[-1][0], addable[:3])
+        # 無い op を自分で選んで入れようとした時は、入らず、例外も出ない。
+        from PySide6 import QtCore as _QtCore
+        items = [ui["list"].item(i) for i in range(ui["list"].count())]
+        target = [it for it in items if it.data(_QtCore.Qt.UserRole) == gone]
+        assert target, gone
+        n1 = len(model.stages)
+        ui["list"].itemActivated.emit(target[0]); _pump(0.3)
+        assert len(model.stages) == n1
+        assert "Traceback" not in capfd.readouterr().err
     finally:
         _close_window(studio, win)
 
