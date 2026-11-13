@@ -169,3 +169,24 @@ def test_tools_list_explains_stage_and_plan_arguments_in_one_language():
     english = [n for n, t in TOOLS.items() if not re.search(r"[぀-ヿ一-鿿]", t["description"])]
     assert len(TOOLS) >= 20 and english == []
     assert handle_tools_list({"profile": "minimal"})["estimated_tokens"] < 1500
+
+
+# --------------------------------------------------------------------------- 8: 計測値に単位と意味
+def test_measurements_carry_meaning_unit_and_the_largest_component_scope(cat, store):
+    """直す前: otsu → diameter_region の 46.3 が単位も意味も無く返り、それが 10 片以上に切れた傷の
+    最大の 1 片の弦だという事が結果から分からなかった。px→mm の値にも mm が付いていなかった。"""
+    h = S.call_tool("fullseye_load_image", {"path": "metal_hairline_scratch"}, cat, store)["structuredContent"]["handle"]
+    r = S.call_tool("fullseye_pipeline", {"handle": h, "stages": [{"op": "otsu"}, {"op": "diameter_region"}],
+                                          "vision": "none"}, cat, store)
+    rec = r["structuredContent"]["stages"][-1]
+    assert rec["unit"] == "px" and "longest chord" in rec["meaning"]
+    assert rec["measured"]["scope"] == "largest_connected_component" and rec["measured"]["components_in_input"] >= 2
+    text = _text(r)
+    assert "単位 px" in text and "最大の 1 つだけを測った" in text
+    count = S.call_tool("fullseye_pipeline", {"handle": h, "stages": [{"op": "otsu"}, {"op": "count_obj"}],
+                                              "vision": "none"}, cat, store)
+    assert count["structuredContent"]["stages"][-1]["unit"] == "count"
+    assert "measured" not in count["structuredContent"]["stages"][-1] and "最大の 1 つ" not in _text(count)
+    mm = S.call_tool("fullseye_pipeline", {"stages": [{"op": "pixel_to_world",
+                                                       "params": {"value_px": 46.3, "mm_per_px": 0.02}}]}, cat, store)
+    assert mm["structuredContent"]["stages"][0]["units"] == {"value": "mm"} and "value = 0.926 mm" in _text(mm)

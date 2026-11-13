@@ -1316,10 +1316,55 @@ def _summary_lines(summary: dict, limit: int = 40) -> list[str]:
             else:
                 lines.append("%s = %s%s" % (key, cell(v), unit))
     else:
-        lines.append("value = %s" % cell(tree))
+        lines.append("value = %s%s" % (cell(tree), (" " + units["value"]) if units.get("value") else ""))
     if summary.get("truncated"):
         lines.append("(要約は一部を省いた。全体は value_handle を fullseye_inspect / fullseye_export_json で読む)")
     return lines[:limit]
+
+
+#: 数 1 個を返す台帳 op の値の単位(鍵の名前から読めない物)。
+_ISOLATED_VALUE_UNITS = {"pixel_to_world": "mm", "mm_per_px_from_reference": "mm/px"}
+#: registry の計測 op の値の単位(OP_CARDS の要約の言い方から読む。読めなければ書かない)。
+_SUMMARY_UNIT_RULES = ((__import__("re").compile(r"\bin pixels\b|\[px\]|distance .* in pixels", __import__("re").I), "px"),
+                       (__import__("re").compile(r"number of connected components", __import__("re").I), "count"))
+
+
+def _largest_component_only(op) -> bool:
+    """registry の領域特徴の op が、最大の連結成分 1 つだけを測るか(ops の領域特徴の工場の metric で決まる)。"""
+    fn = op.fn
+    for _ in range(4):                      # _safe(...) などの包みを、閉包の fn をたどって外す
+        code = getattr(fn, "__code__", None)
+        if code is None or not fn.__closure__ or "metric" in code.co_freevars or "fn" not in code.co_freevars:
+            break
+        fn = fn.__closure__[code.co_freevars.index("fn")].cell_contents
+    code = getattr(fn, "__code__", None)
+    if code is None or "metric" not in code.co_freevars or not fn.__closure__:
+        return False
+    metric = fn.__closure__[code.co_freevars.index("metric")].cell_contents
+    # count / area_center / area は領域全体、それ以外は _largest_label の最大の成分だけ(ops.py の工場)
+    return isinstance(metric, str) and metric not in ("count", "area_center", "area")
+
+
+def _measure_note(op_name: str, args: list) -> dict:
+    """registry の計測 op の値に付ける意味・単位・測った範囲(★2026-11-13、報告 8: 46.3 が単位も意味も無く返り、
+    それが 10 片に切れた傷の最大の 1 片の弦だと結果からは分からなかった)。"""
+    import ops
+    op = ops._BY_NAME.get(op_name)
+    if op is None:
+        return {}
+    note: dict = {}
+    summary = _op_summary(op_name) or ""
+    if summary:
+        note["meaning"] = summary.split(" — ")[0].split(". ")[0][:200]
+    for rx, unit in _SUMMARY_UNIT_RULES:
+        if rx.search(summary):
+            note["unit"] = unit
+            break
+    if _largest_component_only(op) and args and isinstance(args[0], np.ndarray) and args[0].ndim == 2:
+        from scipy import ndimage
+        n = int(ndimage.label(args[0] > 0.5, structure=np.ones((3, 3)))[1])
+        note["measured"] = {"scope": "largest_connected_component", "components_in_input": n}
+    return note
 
 
 def _op_summary(name: str) -> str | None:
@@ -2242,6 +2287,8 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             rec["value_handle"],rec["handle"]=handle,None
             if isolated_info is not None:
                 summary=_summarize_value(out,store,provenance=[{"pipeline_value":edge["op"],"stage":i}])
+                if edge["op"] in _ISOLATED_VALUE_UNITS and not isinstance(summary["value"], dict):
+                    summary["units"]["value"] = _ISOLATED_VALUE_UNITS[edge["op"]]
                 rec["value"]=summary["value"]; rec["units"]=summary["units"]
                 rec["field_handles"]=summary["handles"]; rec["value_truncated"]=summary["truncated"]
                 if summary.get("non_finite"):
@@ -2253,6 +2300,8 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                     provenance=[{"pipeline_value":edge["op"],"stage":i}],max_bytes=2048)
                 if normalized is not None:
                     rec["value"]=normalized
+                if edge["executor"]["kind"] == "registry" and out_sort in ("feature", "measurement"):
+                    rec.update(_measure_note(edge["op"], args))
         records.append(rec)
         release(refs + param_refs)
         if remaining[ref] <= 0:
@@ -2339,6 +2388,14 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         text += "\n" + "\n".join(table_lines)
     else:
         text += "\n判定=ok value=%s" % result.get("value")
+        last = next((r for r in reversed(records) if r.get("status") == "ok" and r.get("value_handle")), None)
+        if last is not None and (last.get("meaning") or last.get("unit")):
+            text += "\n値の意味(段 %d %s): %s%s" % (last["stage"], last["op"], last.get("meaning", ""),
+                                                ("。単位 %s" % last["unit"]) if last.get("unit") else "")
+        if last is not None and last.get("measured", {}).get("scope") == "largest_connected_component":
+            n = last["measured"]["components_in_input"]
+            text += "\n注意: 入力の領域の連結成分 %d 個のうち、最大の 1 つだけを測った値" % n + (
+                "(他の %d 個は数に入っていない)" % (n - 1) if n > 1 else "")
     return tool_result(text,result,links=links,max_structured_bytes=max_structured_bytes)
 
 
