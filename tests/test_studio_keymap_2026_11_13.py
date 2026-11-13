@@ -1934,3 +1934,59 @@ def test_registry_matches_window_and_count_floor(win, ctl):
     for cid in ("code_to_editor", "image_focus", "leave_image_focus", "find_panel", "quick_guide"):
         assert st.targets.get(cid) and win._actions[cid] is st.targets[cid][0], cid   # ID の無かった物も登録簿から
     assert win._editops.keys_for("line.duplicate") == ctl.keymap.keys("editops_line_duplicate")   # D93
+
+
+# --------------------------------------------------------------------------- #
+# B5 [キー] 1.2-B: 意味(family)と G13(b')・7 言語のメニューバーのニーモニック G13(c)
+# --------------------------------------------------------------------------- #
+def test_every_command_has_a_family_and_the_known_pairs_share_one():
+    fams = {c.id: km.family(c.id) for c in km.COMMANDS}
+    assert len(fams) == len(km.COMMANDS) and all(fams.values())
+    for a, b, f in (("focus_search", "program_find", "find"), ("zoom_in", "program_font_bigger", "zoom"),
+                    ("zoom_out", "program_font_smaller", "zoom"), ("save_result", "program_save", "save"),
+                    ("run_all", "fixed_program_run_selection", "run"), ("duplicate_stage", "editops_line_duplicate",
+                                                                       "duplicate"),
+                    ("leave_image_focus", "editops_box_cancel", "escape"), ("help_here", "op_reference", "help")):
+        assert fams[a] == fams[b] == f, (a, b)
+    assert fams["holdout"] != fams["program_replace"]
+    assert len(set(fams.values())) >= 20                                  # 意味で分けている(全部が 1 つではない)
+
+
+def test_same_key_different_family_is_zero():
+    for preset in km.PRESETS:
+        assert km.same_key_different_family(km.Keymap(preset)) == [], preset
+    seeded = km.Keymap()
+    seeded._set("holdout", ("Ctrl+H",))                                    # 1.2-B の前の形(Ctrl+H が 2 つの意味)
+    got = km.same_key_different_family(seeded)
+    assert sorted((k, a, b) for k, a, b, _place in got) == [("Ctrl+H", "holdout", "fixed_find_switch"),
+                                                            ("Ctrl+H", "holdout", "program_replace")]
+    text = [km.Entry("text:Undo", "Ctrl+Z", "text", None, True, "Text fields: Undo")]
+    assert km.same_key_different_family(km.Keymap(), extra=text) == []      # 窓の Undo と欄の Undo は同じ意味
+    bad = km.Keymap()
+    bad._set("export", ("Ctrl+Z",))
+    bad._set("undo", ())
+    assert [(k, a) for k, a, _b, _p in km.same_key_different_family(bad, extra=text)] == [("Ctrl+Z", "export")]
+
+
+def test_same_key_different_family_is_zero_on_the_real_window(win, ctl):
+    assert km.same_key_different_family(ctl.keymap, ctl.fixed_entries(), ctl.places) == []
+
+
+_MENUS = ("&File", "&Edit", "&View", "&Run", "&Window", "&Tools", "&Help")
+
+
+def _mnemonic_letter(text):
+    m = re.search(r"&([^&])", text.replace("&&", ""))
+    return m.group(1).upper() if m else None
+
+
+def test_menubar_mnemonics_no_overlap_7_languages():
+    with open(os.path.join(ROOT, "studio_assets", "i18n.json"), encoding="utf-8") as fh:
+        data = json.load(fh)
+    table = {k: v for k, v in data.items() if k != "strings"}
+    table.update(data["strings"])                                         # 訳は上の段と "strings" の 2 か所にある
+    langs = ["en"] + sorted({lang for t in _MENUS for lang in table[t]})
+    assert len(langs) == 7                                                # en ja zh tw ko de hi
+    for lang in langs:
+        letters = [_mnemonic_letter(t if lang == "en" else table[t][lang]) for t in _MENUS]
+        assert all(letters) and len(set(letters)) == len(_MENUS), (lang, letters)   # D13: de の Alt+A が 2 つだった

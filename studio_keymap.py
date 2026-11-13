@@ -461,6 +461,74 @@ PROGRAM_EDITOR_HARD_KEYS = {"find": ("Ctrl+F",), "replace": ("Ctrl+H",), "next":
                             "comment": ("Ctrl+/",), "zoom_in": ("Ctrl++", "Ctrl+="), "zoom_out": ("Ctrl+-",),
                             "help": ("Shift+F1",)}
 
+# --------------------------------------------------------------------------- #
+# 意味(family): 同じキーに付いた 2 つのコマンドは、範囲が重なるなら同じ意味でなければならない(設計書 P13-2・G13(b'))
+# --------------------------------------------------------------------------- #
+#: ID の語 → 意味。上から順に見る(Esc の段の close / cancel / leave は find などより先)。
+_FAMILY_WORDS = (
+    ("escape", ("close", "cancel", "leave")),
+    ("find", ("find", "search")),
+    ("replace", ("replace",)),
+    ("zoom", ("zoom", "bigger", "smaller")),
+    ("help", ("help", "reference", "shortcuts", "guide", "howto", "about")),
+    ("save", ("save", "export")),
+    ("open", ("open",)),
+    ("undo", ("undo",)),
+    ("redo", ("redo",)),
+    ("duplicate", ("duplicate",)),
+    ("comment", ("comment",)),
+    ("run", ("run",)),
+    ("step", ("step",)),
+    ("reset", ("reset",)),
+    ("stop", ("stop",)),
+    ("delete", ("remove", "delete", "clear")),
+    ("move", ("move",)),
+    ("select", ("box", "multi")),
+    ("settings", ("settings",)),
+)
+#: テキスト欄の標準のキーの名前(QKeySequence.StandardKey)→ 意味。
+_TEXT_FAMILIES = (("Undo", "undo"), ("Redo", "redo"), ("Cut", "clipboard"), ("Copy", "clipboard"),
+                  ("Paste", "clipboard"), ("Delete", "delete"), ("MoveTo", "move"), ("Select", "select"),
+                  ("Insert", "newline"))
+
+
+def family(cid: str) -> str:
+    """コマンド ``cid`` の意味(``find`` ``zoom`` ``save`` …)。ID の語のどれにも当てはまらなければ ID そのもの。"""
+    words = cid.split("_")
+    for fam, keys in _FAMILY_WORDS:
+        if any(w in keys for w in words):
+            return fam
+    return cid
+
+
+def _entry_family(e: Entry) -> str:
+    if e.family:
+        return e.family
+    if e.command in BY_ID:
+        return family(e.command)
+    kind, _, name = e.command.partition(":")
+    if kind == "text":
+        return next((f for prefix, f in _TEXT_FAMILIES if name.startswith(prefix)), name)
+    if kind in ("menu", "menu_other"):
+        return "menu"
+    return e.command
+
+
+def same_key_different_family(keymap: "Keymap", extra: Iterable = (), places: dict | None = None) -> list:
+    """範囲の重なる所で、同じキーに付いた 2 つの意味(family)が違う組 ``[(キー, コマンド, 相手, 場所)]``(G13(b'))。
+
+    当たり(error)でなくても数える(窓の Ctrl+H = holdout と、コードの欄の Ctrl+H = 置換、など)。
+    """
+    extra = list(extra)
+    fams = {e.command: _entry_family(e) for e in keymap.entries(extra)}
+    out = []
+    for p in find_conflicts(keymap.entries(extra), places=places):
+        fa, fb = fams.get(p.command, p.command), fams.get(p.other, p.other)
+        if fa != fb:
+            out.append((p.key, p.command, p.other, p.place))
+    return out
+
+
 #: 型(プリセット)= 既定(Visual Studio 風)との差分。
 PRESETS = {
     "visual_studio": {},
@@ -504,13 +572,14 @@ class Problem(NamedTuple):
 
 
 class Entry(NamedTuple):
-    """当たりの検査の 1 行: どのコマンドの、どのキーが、どの範囲で効くか。"""
+    """当たりの検査の 1 行: どのコマンドの、どのキーが、どの範囲で効くか。``family`` は意味(登録簿の外の相手用)。"""
     command: str
     key: str
     scope: str
     when: str | None = None
     fixed: bool = False
     title: str = ""
+    family: str = ""
 
 
 _OS_TAKEN = {"Alt+Tab", "Shift+Alt+Tab", "Alt+Esc", "Ctrl+Esc", "Ctrl+Alt+Del", "Ctrl+Shift+Esc"}

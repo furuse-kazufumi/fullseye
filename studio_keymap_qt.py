@@ -434,7 +434,11 @@ def _strings_table() -> dict:
                 data = json.load(fh)
         except (OSError, ValueError):                          # 訳が読めなくても、今の言語の分は数える
             data = {}
-        _STRINGS["file"] = data if isinstance(data, dict) else {}
+        data = data if isinstance(data, dict) else {}
+        merged = {k: v for k, v in data.items() if k != "strings"}
+        if isinstance(data.get("strings"), dict):              # 訳は上の段と "strings" の 2 か所にある
+            merged.update(data["strings"])
+        _STRINGS["file"] = merged
     return _STRINGS["file"]
 
 
@@ -480,7 +484,7 @@ def _menu_entries(win, strings: dict | None = None) -> list:
         t = _mnemonic(title)
         if t:
             name = _qt_stripped(title)
-            out.append(km.Entry("menu:" + name, t, "menu_bar", None, True, km.MSG_MENU_BAR % name))
+            out.append(km.Entry("menu:" + name, t, "menu_bar", None, True, km.MSG_MENU_BAR % name, "menu"))
             current.add(t)
         menu = a.menu()
         rec = labels.get(menu) if menu is not None else None
@@ -503,7 +507,8 @@ def _menu_entries(win, strings: dict | None = None) -> list:
                     names.append(name)
     for t in sorted(other):
         names = ", ".join(other[t])
-        out.append(km.Entry("menu_other:" + names, t, "menu_bar_other", None, True, km.MSG_MENU_OTHER % names))
+        out.append(km.Entry("menu_other:" + names, t, "menu_bar_other", None, True, km.MSG_MENU_OTHER % names,
+                            "menu"))
     return out
 
 
