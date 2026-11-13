@@ -2889,7 +2889,8 @@ def _score_pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
         return _tool_error("不合格(%s): %s" % (reason, message), body)
 
     try:
-        rec = tasks.claim(task_id)
+        # 走らせる前の検査(入力の縛り・引数・入力を読まない op・型の門)は回数を取らずに行い、通ったら claim する
+        rec = tasks.peek(task_id)
     except TaskError as exc:
         return refuse(exc.reason, str(exc))
     fam = FAMILIES[rec.kind]
@@ -2898,6 +2899,7 @@ def _score_pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
     if capped:
         base["feedback_capped"] = True
     stages = a["stages"]
+    base["attempt_counted"] = False                   # 型の門までの拒否は回数に数えない(報告 11)
     # 0. 課題の入力に縛る(F1): 段が読めるのは have:<入力の型> と stage:N だけ
     foreign = _foreign_refs(stages, fam.input_sort)
     if foreign:
@@ -2919,7 +2921,14 @@ def _score_pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
     checked = validate_pipeline(stages, fam.input_sort, cat,
                                 bindings={"have:%s" % fam.input_sort: handle}, store=store)
     if not checked["valid"]:
-        return refuse("type_gate", "型の門で不合格(1 段も走らせていない)", errors=checked["errors"], **base)
+        return refuse("type_gate", "型の門で不合格(1 段も走らせていない。採点の回数に数えない)",
+                      errors=checked["errors"], **base)
+    try:
+        rec = tasks.claim(task_id)                    # ここから 1 回に数える(従来どおり、出力の型の検査も含む)
+    except TaskError as exc:
+        return refuse(exc.reason, str(exc))
+    base["attempts_used"] = rec.attempts
+    base["attempt_counted"] = True
     if checked.get("out_sort") not in fam.output_sorts:
         return refuse("output_sort_mismatch", "最終段の型 %s は採点できない(要るのは %s)"
                       % (checked.get("out_sort"), "/".join(fam.output_sorts)), **base)

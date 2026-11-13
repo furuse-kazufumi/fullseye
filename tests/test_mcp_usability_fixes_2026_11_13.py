@@ -266,3 +266,19 @@ def test_load_boundary_pixels_links_device_names_nan_and_temp_folder(cat, tmp_pa
     import gc
     gc.collect()
     assert given.is_dir()                                         # 渡されたフォルダは消さない
+
+
+# --------------------------------------------------------------------------- 11: 型の門で落ちた試行を数えない
+def test_type_gate_refusals_do_not_use_up_scoring_attempts(cat, store):
+    """直す前: 型の門で落ちた試行(1 段も走らせず、真値に触れない)も 1 回に数え、型を直しているだけで
+    32 回の枠を使い切った。走らせた試行(出力の型の検査から先)は従来どおり数える。"""
+    made = S.call_tool("fullseye_make_task", {"kind": "blob_count", "seed": 3}, cat, store)["structuredContent"]
+    tid, before = made["task_id"], made["attempts_used"]
+    for _ in range(5):
+        r = S.call_tool("fullseye_score_pipeline", {"task_id": tid, "stages": [{"op": "gaussian"}, {"op": "count_obj"}]},
+                        cat, store)
+        sc = r["structuredContent"]
+        assert sc["reason"] == "type_gate" and sc["attempt_counted"] is False and sc["attempts_used"] == before
+    counted = S.call_tool("fullseye_score_pipeline", {"task_id": tid, "stages": [{"op": "otsu"}]}, cat, store)
+    sc = counted["structuredContent"]
+    assert sc["reason"] == "output_sort_mismatch" and sc["attempt_counted"] is True and sc["attempts_used"] == before + 1

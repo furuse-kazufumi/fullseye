@@ -696,6 +696,31 @@ class TaskStore:
                 self._items.popitem(last=False)
             return rec
 
+    def peek(self, task_id: str) -> TaskRecord:
+        """採点の回数を取らずに課題を読む(:meth:`claim` と同じ検査: 知らない・期限切れ・使い切りは TaskError)。
+
+        ★2026-11-13(報告 11): 型の門で落ちた試行(1 段も走らせず、真値に触れない)も 1 回に数えていて、
+        型の誤りを直しているだけで 32 回の枠を使い切った。走らせる前の検査は peek で、走らせる直前に claim する。"""
+        if not isinstance(task_id, str) or not task_id.startswith(TASK_PREFIX):
+            raise TaskError("unknown_task", "task_id は %s<16 hex> の形: %r" % (TASK_PREFIX, task_id))
+        with self._lock:
+            rec = self._items.get(task_id)
+            if rec is None:
+                raise TaskError("unknown_task", "知らない task_id(作っていない / 捨てられた): %s" % task_id)
+            if self.clock() - rec.created > self.ttl_s:
+                self._items.pop(task_id, None)
+                raise TaskError("task_expired", "task_id の期限(%g 秒)が切れた: %s —— fullseye_make_task で作り直す"
+                                "(採点の回数は戻らない)" % (self.ttl_s, task_id))
+            key = (rec.kind, rec.seed)
+            data = self._read_file() if self.attempts_path else None
+            used = max(self._attempts.get(key, 0), (data or {}).get(self._file_key(key), 0))
+            rec.attempts = used
+            if used >= self.max_attempts:
+                raise TaskError("attempts_exhausted", "この真値(%s seed=%d)の採点の回数(%d 回)を使い切った"
+                                "(つまみを変えた課題・作り直した課題・別のセッションも同じ回数を数える)"
+                                % (rec.kind, rec.seed, self.max_attempts))
+            return rec
+
     def claim(self, task_id: str) -> TaskRecord:
         """採点 1 回ぶんを取る。知らない・期限切れ・使い切りは TaskError。"""
         if not isinstance(task_id, str) or not task_id.startswith(TASK_PREFIX):

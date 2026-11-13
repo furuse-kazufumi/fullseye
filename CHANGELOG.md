@@ -18,6 +18,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 計測値に単位と意味: registry の計測 op の値に `meaning`(op の要約)・`unit`(要約から読める物だけ: px / count)・`measured`(`diameter_region` など 26 op は入力の領域の**最大の連結成分 1 つだけ**を測る。その時は成分の数も)を付け、本文にも書く。`pixel_to_world` の値に mm、`mm_per_px_from_reference` に mm/px。
 - **挙動が変わる点**: `fullseye_catalog_coverage` の既定は件数だけ(`index_without_note` などの名前の一覧は `detail=true` の時だけ)。`index_source` / `notes_source` はホストの絶対パスでなく、パッケージ・リポジトリの中の相対の場所(例 `package:fullseye/data/OP_INDEX.json`)。
 - 読み込みの境界: `fullseye_load_image` は見出し(PNG の IHDR・Pillow の遅延の open・npy の見出し)で画素数を先に見て、上限を超える画像を復号しない(以前は 20,000×20,000 を復号してから断った)。`fullseye_list_samples` は根の中のジャンクション・リンクの先(根の外)の名前を並べない。`path=NUL` などで -32603 にせず、根の外として断る(ホストのパスを出さない)。`fullseye_import_json` は NaN・Infinity(JSON の定数・封筒の中の数・配列の中の値)を断る。サーバが自分で作った一時フォルダは置き場が捨てられる時に消す。
+- `fullseye_score_pipeline`: 型の門まで(入力の縛り・引数・入力を読まない op・型の検査)で断った試行は採点の回数に数えない(`attempt_counted: false`)。走らせる前で真値に触れないため。出力の型の検査から先は従来どおり数える。
 
 ### MCP: 光学・照明・合成の入口などの台帳 op を MCP から実行できるようにした(2026-11-13)
 
