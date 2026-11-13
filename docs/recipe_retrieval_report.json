@@ -1,7 +1,7 @@
 {
   "method": "Business-language queries contain no operator names. recall_at_2: the expected existing recipe is in the top 2. e2e_task_recipe_hit_at_2: one of the top-2 MCP-runnable recipes contains an op PR #224's judge expects. blind_*_hit_at_3: queries written from docs/ops without seeing the recipes; a top-3 recipe has that family / one of the listed ops.",
   "recipes_in_index": 271,
-  "recipes_mcp": 89,
+  "recipes_mcp": 132,
   "recall_at_2": 0.6666666666666666,
   "queries": [
     {
@@ -138,7 +138,7 @@
       "judge": "judge_match_position",
       "top_2": [
         "Locate — find a rotated part and its angle (shape-based matching)",
-        "Measure — perimeter of a round part from sub-pixel edges"
+        "3D — centre of a scanned part (centroid position)"
       ],
       "hit": true
     },
@@ -219,7 +219,7 @@
       "judge": "judge_phase_mean",
       "top_2": [
         "Measure — wrapped phase from 4-step phase-shifted fringes",
-        "3D — height map from 4-step phase-shift fringes (decode, unwrap, scale)"
+        "3D — height of a bump by phase-shift structured light"
       ],
       "hit": true
     },
@@ -228,7 +228,7 @@
       "judge": "judge_depth_mean",
       "top_2": [
         "3D — height map from 4-step phase-shift fringes (decode, unwrap, scale)",
-        "Measure — wrapped phase from 4-step phase-shifted fringes"
+        "3D — height of a bump by phase-shift structured light"
       ],
       "hit": true
     },
@@ -914,7 +914,7 @@
     },
     "recipes_mcp": {
       "before": 25,
-      "after": 89
+      "after": 132
     },
     "recall_at_2": {
       "before": 1.0,

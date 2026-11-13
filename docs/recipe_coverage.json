@@ -43,8 +43,8 @@
    "XLD": 10
   },
   "runner": {
-   "mcp": 89,
-   "python": 182
+   "mcp": 132,
+   "python": 139
   },
   "truth_gated": 247,
   "type_cuts_total": 0,
@@ -2095,7 +2095,7 @@
    "family": "blob",
    "task_class": "inspection",
    "halcon": "Regions",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 3,
    "ops": [
     "otsu",
@@ -2114,7 +2114,7 @@
    "family": "blob",
    "task_class": "inspection",
    "halcon": "Regions",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 5,
    "ops": [
     "otsu",
@@ -2172,7 +2172,7 @@
    "family": "segmentation",
    "task_class": "inspection",
    "halcon": "Segmentation",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 5,
    "ops": [
     "otsu",
@@ -2193,7 +2193,7 @@
    "family": "segmentation",
    "task_class": "preprocess",
    "halcon": "Segmentation",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "gaussian",
@@ -2361,7 +2361,7 @@
    "family": "generative",
    "task_class": "simulation",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 1,
    "ops": [
     "sem_render"
@@ -2471,7 +2471,7 @@
    "family": "imgmetrics",
    "task_class": "analysis",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "invert",
@@ -2507,7 +2507,7 @@
    "family": "imgforensics",
    "task_class": "inspection",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "gaussian",
@@ -2525,7 +2525,7 @@
    "family": "imgforensics",
    "task_class": "inspection",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 4,
    "ops": [
     "noise_inconsistency_map",
@@ -2580,7 +2580,7 @@
    "family": "shape2d",
    "task_class": "measurement",
    "halcon": "XLD",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 3,
    "ops": [
     "fourier_smooth",
@@ -2787,7 +2787,7 @@
    "family": "quat",
    "task_class": "measurement",
    "halcon": "Texture",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "monogenic_signal",
@@ -2858,7 +2858,7 @@
    "family": "text",
    "task_class": "inspection",
    "halcon": "OCR",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 1,
    "ops": [
     "swt_map"
@@ -2875,7 +2875,7 @@
    "family": "text",
    "task_class": "inspection",
    "halcon": "OCR",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 1,
    "ops": [
     "text_candidates"
@@ -2892,7 +2892,7 @@
    "family": "text",
    "task_class": "inspection",
    "halcon": "OCR",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "text_candidates",
@@ -2912,7 +2912,7 @@
    "family": "3d",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "voxel_grid_downsample",
@@ -2930,7 +2930,7 @@
    "family": "3d",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "statistical_outlier_removal",
@@ -2948,7 +2948,7 @@
    "family": "3d",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 1,
    "ops": [
     "ransac_plane"
@@ -2965,7 +2965,7 @@
    "family": "3d",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "estimate_point_normals",
@@ -2983,7 +2983,7 @@
    "family": "reprconv",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "principal_curvatures",
@@ -3001,7 +3001,7 @@
    "family": "reprconv",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "voxel_grid_downsample",
@@ -3019,7 +3019,7 @@
    "family": "3d",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "convex_hull",
@@ -3037,7 +3037,7 @@
    "family": "3d",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "convex_hull",
@@ -3185,7 +3185,7 @@
    "family": "3d",
    "task_class": "3d",
    "halcon": "3D Reconstruction",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "synthesize_fringes",
@@ -3238,7 +3238,7 @@
    "family": "3d",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "filter_by_volume",
@@ -3256,7 +3256,7 @@
    "family": "3d",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "voxel_to_mesh",
@@ -3274,7 +3274,7 @@
    "family": "3d",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 3,
    "ops": [
     "voxel_to_mesh",
@@ -3293,7 +3293,7 @@
    "family": "3d",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "vol_label",
@@ -3606,7 +3606,7 @@
    "family": "volcolor",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 1,
    "ops": [
     "vol_label_shape_stats"
@@ -3623,7 +3623,7 @@
    "family": "volcolor",
    "task_class": "3d",
    "halcon": "3D Object Model",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "vol_label",
@@ -3641,7 +3641,7 @@
    "family": "volcolor",
    "task_class": "visualization",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "vol_colorize_labels",
@@ -3659,7 +3659,7 @@
    "family": "videocube",
    "task_class": "analysis",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 1,
    "ops": [
     "video_cube_cut"
@@ -4052,7 +4052,7 @@
    "family": "photon",
    "task_class": "preprocess",
    "halcon": "Filters",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "photon_sample",
@@ -4163,7 +4163,7 @@
    "family": "astrostack",
    "task_class": "preprocess",
    "halcon": "Filters",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "sigma_clip_stack",
@@ -4318,7 +4318,7 @@
    "family": "piv",
    "task_class": "measurement",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "piv_to_velocity",
@@ -4731,7 +4731,7 @@
    "family": "math",
    "task_class": "analysis",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "stat_covariance",
@@ -4785,7 +4785,7 @@
    "family": "oned",
    "task_class": "measurement",
    "halcon": "1D Measuring",
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "smooth_funct_1d_gauss",
@@ -4803,7 +4803,7 @@
    "family": "oned",
    "task_class": "measurement",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "envelope",
@@ -4838,7 +4838,7 @@
    "family": "spc",
    "task_class": "inspection",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 1,
    "ops": [
     "spc_xbar_r"
@@ -4891,7 +4891,7 @@
    "family": "conngraph",
    "task_class": "analysis",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "graph_from_synapses",
@@ -4909,7 +4909,7 @@
    "family": "conngraph",
    "task_class": "analysis",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 3,
    "ops": [
     "graph_from_synapses",
@@ -4998,7 +4998,7 @@
    "family": "multivar",
    "task_class": "analysis",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 1,
    "ops": [
     "mv_pca"
@@ -5033,7 +5033,7 @@
    "family": "videostream",
    "task_class": "inspection",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "temporal_bilateral",
@@ -5051,7 +5051,7 @@
    "family": "videostream",
    "task_class": "inspection",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 2,
    "ops": [
     "deflicker",
@@ -5289,7 +5289,7 @@
    "family": "math",
    "task_class": "measurement",
    "halcon": null,
-   "runner": "python",
+   "runner": "mcp",
    "stages": 1,
    "ops": [
     "wave_dominant_frequency"

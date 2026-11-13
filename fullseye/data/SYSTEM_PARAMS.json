@@ -117,6 +117,36 @@
       "affects_numbers": false,
       "status": "applied"
     },
+    "mcp_op_memory_limit_bytes": {
+      "default": 2147483648,
+      "values": [
+        268435456,
+        1073741824,
+        2147483648
+      ],
+      "meaning": "Memory-growth cap for one ledger op run in the isolated MCP worker; the worker stops itself when it is exceeded.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ],
+      "affects_numbers": false,
+      "status": "applied"
+    },
+    "mcp_op_time_limit_s": {
+      "default": 30,
+      "values": [
+        5,
+        10,
+        30
+      ],
+      "meaning": "Wall-time cap for one ledger op run in the isolated MCP worker; the worker is killed when it is exceeded.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ],
+      "affects_numbers": false,
+      "status": "applied"
+    },
     "mcp_pipeline_max_intermediate_bytes": {
       "default": 134217728,
       "values": [

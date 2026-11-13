@@ -418,6 +418,12 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    # ---- 2026-11-13: 台帳 op を MCP の隔離した子プロセスで走らせる実測の台帳 ----
+    "tools/mcp_isolated_probe.py": ("台帳 op を MCP の作業プロセス(fullseye/mcp/opworker.py)で見本の入力つきで実際に走らせ、"
+                                    "時間(5 秒)とメモリ(1 GiB)の上限・ファイルとネットの砂場・道具の経路を通った物だけを "
+                                    "docs/mcp_isolated_ops.json に書く実測の道具(docs/op_knob.json と同じ扱い)。答えが機械の速さで揺れ"
+                                    "(上限の近くの op)、回し直すと MCP で実行できる op の集合 = 道具の契約が変わるので、drift 検査には入れず"
+                                    "人が差分を読む。回すのは台帳 op を足した・直した時(全部で 2〜5 分 + --verify-mcp で約 15 分)。"),
     # ---- 2026-11-10: CI の先頭のジョブ(gates)が読む、失敗の実績の表 ----
     "tools/ci_failure_history.py": ("GitHub の直近の失敗した run のログ(gh run list / gh run view --log-failed、読むだけ)から"
                                     "テストのファイルごとの落ちた run の数を数え、tools/ci_failure_history.json に書く手元専用の道具。"

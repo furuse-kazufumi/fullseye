@@ -644,6 +644,68 @@ def _with_probe(row: dict, probes: dict) -> dict:
     return out
 
 
+#: MCP で実行できない理由(OP_GRAPH の ``mcp_probe`` / ``not_executable_in_mcp``)→ 人が読む 1 文。
+#: 符号は tools/mcp_isolated_probe.py と tools/gen_op_facets.py が付ける。知らない符号は符号のまま返す。
+MCP_UNAVAILABLE_REASONS = {
+    "io_side_effect": "takes a file, URL or callable argument; MCP ops never touch files",
+    "io_parameter": "takes a file, URL or callable argument; MCP ops never touch files",
+    "sample_run_failed": "the automatic MCP check could not run it on a sample input "
+                         "(its inputs need a person or a specific producing op to build)",
+    "no_sample_input": "the automatic MCP check has no sample for one of its input types",
+    "nonfinite_output": "returned NaN or infinity on the sample input, so it did not pass the bounded check",
+    "output_type_differs_from_declared": "its return value did not match its declared output type",
+    "time_limit": "exceeded the 5 s check limit even on the sample input",
+    "memory_limit": "exceeded the 1 GiB check limit even on the sample input",
+    "unsupported_value": "returns objects that cannot cross the MCP boundary (only numeric arrays and JSON trees do)",
+    "input_count_differs_from_graph": "its ledger and the type graph disagree on the number of inputs",
+    "example_chain_too_long": "a runnable example needs more than 12 stages including the stages that build its inputs",
+    "mcp_pipeline_failed": "its example did not pass through the fullseye_pipeline tool (handle shape or response limits)",
+    "not_in_ledger": "it is not in an op ledger, so MCP has no verified way to call it",
+    "not_verified": "it has not passed the MCP execution check",
+}
+
+
+def mcp_unavailable(op: str) -> dict | None:
+    """MCP で実行できない op の理由と代わりの手(実行できるなら ``None``)。
+
+    返り値 ``{"op", "reason", "why", "instead": [1 行の手], "executable_alternatives": [同じ分類で走る op]}``。
+    誤り文(fullseye_validate_pipeline / fullseye_pipeline / fullseye_apply)と find_ops の骨格が同じ物を使う。"""
+    try:
+        edges = _graph()["edges"]
+    except (FileNotFoundError, ValueError):
+        return None
+    edge = next((e for e in edges if e["op"] == op), None)
+    if edge is None or edge.get("verified_executable"):
+        return None
+    reason = edge.get("mcp_probe") or edge.get("not_executable_in_mcp") or edge.get("executable_reason") or "not_verified"
+    category = edge.get("category")
+    words = set(op.split("_"))
+    # 同じ分類で走る op を、名前の語(lens / file / illumination …)を多く共有する順に
+    alternatives = [name for _shared, name in sorted(
+        (-len(words & set(e["op"].split("_"))), e["op"]) for e in edges
+        if category and e.get("category") == category and e.get("verified_executable") and e["op"] != op)][:5]
+    try:
+        card = next((c for c in _load_data(PKG_CARDS)["ops"] if c["name"] == op), None)
+    except (FileNotFoundError, ValueError):
+        card = None
+    instead = ["read it: fullseye_op_help(op=%r) / fullseye_op_cards(names=[%r])" % (op, op)]
+    if (card or {}).get("call"):
+        instead.append("run it outside MCP from Python: %s" % card["call"])
+    if alternatives:
+        instead.append("ops in the same category (%s) that MCP can run: %s" % (category, ", ".join(alternatives)))
+    return {"op": op, "reason": reason, "why": MCP_UNAVAILABLE_REASONS.get(reason, reason), "instead": instead,
+            "executable_alternatives": alternatives}
+
+
+def mcp_unavailable_text(op: str) -> str:
+    """:func:`mcp_unavailable` を 1 行の文にする(実行できる op なら空文字)。"""
+    info = mcp_unavailable(op)
+    if info is None:
+        return ""
+    return "%s is not executable in MCP (%s: %s). Instead: %s" % (
+        op, info["reason"], info["why"], "; ".join(info["instead"]))
+
+
 def _next_call_skeleton(row: dict) -> str:
     """One-line loader + executable pipeline skeleton for a search candidate."""
     sort = normalize_sort(row.get("in_sort"))
@@ -665,6 +727,16 @@ def _next_call_skeleton(row: dict) -> str:
     # ★2026-11-03(完成度監査 A-2): MCP で実行できない op(``verified_executable`` でない = 台帳 op の大半)にも
     #   ``fullseye_pipeline(...)`` の骨格を付けていた。従うと ``fullseye_validate_pipeline`` が
     #   ``not_executable_in_mcp`` で拒む。MCP の外での呼び方(カードの ``call``)を返す。
+    if edge is not None and (edge.get("executor") or {}).get("isolation") == "worker":
+        # ★2026-11-13: 台帳 op(光学・照明・合成の入口)は pipeline から隔離した子プロセスで走る。実測で通った
+        #   見本の段(入力を作る段も含む)をそのまま骨格にする。
+        stages = (edge.get("example") or {}).get("stages") or [{"op": op}]
+        needs = sorted({ref for st in stages for ref in st.get("inputs", []) if ref.startswith("have:")})
+        body = json.dumps(stages, ensure_ascii=False, separators=(",", ":"))
+        if needs:
+            return ("obtain handle(s) for %s -> fullseye_pipeline(bindings={%s}, stages=%s)"
+                    % (", ".join(needs), ", ".join('"%s":<handle>' % n for n in needs), body))
+        return "fullseye_pipeline(stages=%s)" % body
     if edge is not None and not edge.get("verified_executable"):
         reason = edge.get("not_executable_in_mcp") or edge.get("executable_reason") or "not_verified"
         try:
@@ -672,7 +744,9 @@ def _next_call_skeleton(row: dict) -> str:
         except (FileNotFoundError, ValueError):
             card = None
         call = (card or {}).get("call") or "see fullseye_op_cards"
-        return "not executable in MCP (%s); call from Python: %s" % (reason, call)
+        why = MCP_UNAVAILABLE_REASONS.get(edge.get("mcp_probe") or reason)
+        return "not executable in MCP (%s%s); call from Python: %s" % (
+            edge.get("mcp_probe") or reason, (": " + why) if why else "", call)
     inputs = list((edge or {}).get("inputs") or ([sort] if sort else []))
     if len(inputs) <= 1:
         stage = '{"op":%r}' % op

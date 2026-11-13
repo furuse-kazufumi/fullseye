@@ -16,6 +16,11 @@
 一覧に載っていればそのまま残す(依存の揃った環境で作った判定を、揃っていない環境で消さない)。
 一覧は拒否の側にだけ使う(ここに無い op が入力に依存する保証はしない —— 採点は実行時の検査も別に行う)。
 
+★2026-11-13: 台帳 op(光学・照明・合成の入口 …)は隔離した子プロセスで走る(fullseye/mcp/opworker.py、約 1,500 op)。
+この鎖の中で 7 回ずつ走らせると 20 分を超え、時間の上限に当たるかどうかが機械で揺れて一覧が環境で変わる。
+隔離の op は実測の台帳(``tools/mcp_isolated_probe.py --verify-mcp`` が同じ 7 枚・同じ判定で書く
+``docs/mcp_isolated_ops.json`` の ``input_independent``)を読み、ここでは走らせない。
+
 TODO(2026-11-10、独立レビュー第 3 巡 R1): いまは**既定のつまみ(a = b = 0.5)だけ**で判定している。つまみの端
 (しきい値の a = 0 / 1 など)で出力が定数になる (op, つまみ) の組は一覧に載らない。つまみの端と中央
 (a, b ∈ {0, 0.5, 1} の 9 通り)を調べて組で断る形にすると、走らせる回数が 9 倍(この機械で約 2 分 → 約 17 分)
@@ -103,13 +108,17 @@ def _run(cat, store, value, sort, op):
     return store.get(rows[-1]["handle"])[1]
 
 
-def build(previous: dict | None) -> dict:
+ISOLATED_LEDGER = os.path.join(ROOT, "docs", "mcp_isolated_ops.json")
+
+
+def _context():
+    """判定の実行器の文脈(軽い catalog の代役・handle の置き場)と、型ごとの 7 つの入力。"""
     if ROOT not in sys.path:
         sys.path.insert(0, ROOT)
     import numpy as np
     from types import SimpleNamespace
     from fullseye.mcp.handles import HandleStore
-    from fullseye.opsearch import _graph, known_sorts
+    from fullseye.opsearch import known_sorts
     warnings.simplefilter("ignore")
     np.seterr(all="ignore")
     # 実行器が catalog から使うのは知らない op 名の近い候補だけ。op ノート(docs/ops)を読まない軽い代役にする
@@ -126,7 +135,15 @@ def build(previous: dict | None) -> dict:
             continue
         if all(d is not None for d in derived) and len({_canon(d) for d in derived}) == n:
             inputs[sort] = derived
-    edges = [e for e in _graph()["edges"] if e.get("verified_executable") and len(e.get("inputs") or []) == 1]
+    return cat, store, inputs
+
+
+def _is_isolated(edge: dict) -> bool:
+    return (edge.get("executor") or {}).get("isolation") == "worker"
+
+
+def judge(edges: list[dict], cat, store, inputs) -> tuple[dict, set]:
+    """1 入力の op ごとに 7 つの入力で走らせ、7 つとも走って出力が同じ物を ``flagged`` に、判定できた物を ``tested`` に。"""
     flagged, tested = {}, set()
     for e in sorted(edges, key=lambda e: e["op"]):
         sort = e["inputs"][0]
@@ -146,6 +163,23 @@ def build(previous: dict | None) -> dict:
         tested.add(e["op"])
         if len(set(outs)) == 1:
             flagged[e["op"]] = {"in_sort": sort, "out_sort": e.get("output")}
+    return flagged, tested
+
+
+def build(previous: dict | None) -> dict:
+    from fullseye.opsearch import _graph
+    cat, store, inputs = _context()
+    edges = [e for e in _graph()["edges"] if e.get("verified_executable") and len(e.get("inputs") or []) == 1
+             and not _is_isolated(e)]
+    flagged, tested = judge(edges, cat, store, inputs)
+    # 隔離して走る台帳 op: 実測の台帳の判定(probe --verify-mcp)を読む
+    with open(ISOLATED_LEDGER, encoding="utf-8") as fh:
+        ledger = json.load(fh)
+    isolated_now = {e["op"] for e in _graph()["edges"] if e.get("verified_executable") and _is_isolated(e)}
+    for op, row in (ledger.get("input_independent") or {}).items():
+        if op in isolated_now:
+            flagged[op] = dict(row, judged_by="tools/mcp_isolated_probe.py --verify-mcp")
+    tested |= set(ledger.get("input_independence_tested") or []) & isolated_now
     # 判定できなかった op は commit 済みの判定を残す
     for op, row in ((previous or {}).get("ops") or {}).items():
         if op not in tested and op not in flagged:
@@ -154,7 +188,9 @@ def build(previous: dict | None) -> dict:
                        "128x128 shape (noise / gradient with discs / stripes with a dark square / a large disc / a coarse "
                        "checkerboard / the blob_count and defect_inspect task images; other sorts via a converter op); "
                        "listed when all 7 outputs are byte-identical. Ops that could not run here keep their "
-                       "committed entry. Used by fullseye_score_pipeline as a deny list."),
+                       "committed entry. Ledger ops run in the isolated MCP worker are judged the same way by "
+                       "tools/mcp_isolated_probe.py --verify-mcp and read from docs/mcp_isolated_ops.json. "
+                       "Used by fullseye_score_pipeline as a deny list."),
             "ops": {k: flagged[k] for k in sorted(flagged)}}
 
 

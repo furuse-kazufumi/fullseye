@@ -244,8 +244,9 @@ def test_find_ops_does_not_give_a_pipeline_skeleton_to_ops_mcp_cannot_run():
     from fullseye.opsearch import _graph, _next_call_skeleton
     edges = {e["op"]: e for e in _graph()["edges"]}
     cards = {c["name"]: c for c in _cards()}
-    names = [n for n in ("dem_slope", "bandpass") if n in edges]
-    assert names
+    # ★2026-11-13: dem_slope は隔離した子プロセスで MCP から走るようになった。走らない物(ファイルを読む op)で見る。
+    names = [n for n in ("lens_file_read", "bandpass") if n in edges]
+    assert len(names) == 2
     for n in names:
         assert not edges[n].get("verified_executable"), n
         nc = _next_call_skeleton({"name": n, "in_sort": cards[n]["in_sort"]})
@@ -254,6 +255,9 @@ def test_find_ops_does_not_give_a_pipeline_skeleton_to_ops_mcp_cannot_run():
     # MCP で実行できる op には今まで通り骨格が付く
     ok = next(n for n, e in edges.items() if e.get("verified_executable") and n == "gauss_filter")
     assert "fullseye_pipeline" in _next_call_skeleton({"name": ok, "in_sort": "image"})
+    # 隔離して走る台帳 op には、実測で通った見本の段が骨格として付く
+    nc = _next_call_skeleton({"name": "illumination_design", "in_sort": None})
+    assert nc.startswith("fullseye_pipeline(stages=") and '"op":"illumination_design"' in nc, nc
 
 
 def test_every_find_ops_next_call_agrees_with_validate_pipeline():
@@ -271,7 +275,10 @@ def test_every_find_ops_next_call_agrees_with_validate_pipeline():
             n_py += 1
             if e.get("verified_executable"):
                 bad.append(e["op"])
-    assert n_pipe >= 900 and n_py >= 2000, (n_pipe, n_py)
+    # ★2026-11-13: 台帳 op を隔離して走らせるようにして、骨格の付く側が 956 → 2,400 台へ移った。
+    #   両側の床は実測から取り、全 edge を数えた事も表明する(片側だけ縮んでも、合計が縮んでも落ちる)。
+    assert n_pipe >= 2400 and n_py >= 1200, (n_pipe, n_py)
+    assert n_pipe + n_py == len(_graph()["edges"])
     assert not bad, bad[:20]
 
 

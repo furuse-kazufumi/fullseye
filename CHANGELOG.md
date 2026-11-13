@@ -7,6 +7,39 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### MCP: 光学・照明・合成の入口などの台帳 op を MCP から実行できるようにした(2026-11-13)
+
+AI の役で MCP を使った検証(2026-11-13)で、optics の op は MCP から 1 つも実行できなかった(照明の 17 op は全部
+「not executable in MCP; call from Python」)。台帳 op を、MCP のサーバと別の作業プロセス(`fullseye/mcp/opworker.py`)で、
+時間とメモリの上限つきで走らせる経路を `fullseye_pipeline` と `fullseye_apply` に足した。新しい道具は無い。
+
+- MCP から実行できる op: 956 → 2,456(全 3,842 edge のうち。増えた 1,500 は隔離して走る台帳 op)。optics の 506 op は
+  0 → 305。照明の 17 op、レンズ・センサの選定(`lens_spec`・`sensor_spec`・`depth_of_field`・`mtf50` など)、合成の入口
+  (`bottle_image`)、px→mm(`pixel_to_world`)、ステレオ(`binocular_disparity_ms`)が道具だけで呼べる。
+- 載せる op は実測で決める(`tools/mcp_isolated_probe.py` → `docs/mcp_isolated_ops.json`): ファイル・URL・関数の引数を
+  取らず、見本の入力で作業プロセスの中で 5 秒・1 GiB 以内に走り、宣言の型の有限の値を返し、道具の経路
+  (`--verify-mcp`)も通った物だけ。載せなかった 1,151 op は理由の符号つき(見本で動かない 897、ファイル等の引数 163 など)。
+- 上限: 1 回の実行は `mcp_op_time_limit_s`(既定 30 秒)と `mcp_op_memory_limit_bytes`(既定 2 GiB、作業プロセスの
+  メモリの増分)。超えたら作業プロセスを止め、段は `resource_limit` で失敗する(黙って長く走らせない)。
+  作業プロセスは audit hook で、作業用の一時フォルダの外への書き込み・Python と fullseye の外の読み込み・
+  ソケット・子プロセスを断る。値の受け渡しは JSON の木と数値配列だけ(pickle を使わない)。
+- 引数: 台帳の仕様(数・整数・真偽・選択肢・短い名前)で検査し、合わない値は 1 段も走らせずに断る(丸めない)。
+  文字列の引数はパスの区切り・ドライブ名・`..` を書けない。`device` は `cpu` だけ(GPU のメモリは上限で縛れない)。
+- 結果: 表・数は上限つきの要約と単位(鍵の名前の `_mm`・`_deg` など)、op の 1 行の意味、使った引数の単位を返す。
+  表の中の 2-D 配列は `image` のハンドルになり、次の pipeline に渡せる。複素数は `re` / `im` に分ける。
+- 実行できない op の誤り文(`fullseye_validate_pipeline` / `fullseye_pipeline` / `fullseye_apply` / find_ops の骨格)に、
+  理由の 1 文と、代わりの手(`fullseye_op_help` で読む・Python からの呼び方・同じ分類で MCP が走らせられる op)を付けた。
+  `fullseye_apply` の「近い名前」に同じ名前を出さない。
+
+挙動が変わる点(後方互換):
+
+- `fullseye_pipeline` の `required` から `handle` を外した(入力の無い op だけの pipeline のため)。handle を渡す
+  従来の要求はそのまま通る(受ける要求を広げるだけ)。
+- OP_GRAPH の `verified_executable` が真の edge に、`executor.isolation = "worker"` の物(台帳 op)が加わった。
+  同じプロセスで走る Python の op の集合(11 op)は変わらない。
+- `MCP_INPUT_INDEPENDENT.json` は、隔離の op の判定を実測の台帳から読む(regen_all の中で 1,500 op を 7 回ずつ走らせない)。
+- レシピの `runner = "mcp"` が 89 → 132(台帳 op を含むレシピが MCP で走るようになった)。
+
 ## 1.1.1 — 2026-11-13
 
 1.1.1。1.1.0 の後の直しをまとめた patch 版(`CONTRIBUTING.md` の「直しは溜めずに、短い間隔の patch で出す」)。op の追加・削除・改名はなく、索引の op 数は 1.1.0 と同じ 3,838(うち型付き台帳 2,874)。

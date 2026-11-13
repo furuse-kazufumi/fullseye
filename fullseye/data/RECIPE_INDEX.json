@@ -3582,7 +3582,7 @@
       "family": "blob",
       "task_class": "inspection",
       "halcon": "Regions",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "table",
       "stages": [
@@ -3593,7 +3593,7 @@
         },
         {
           "op": "blob_label",
-          "kw": {
+          "params": {
             "connectivity": 8
           }
         },
@@ -3624,7 +3624,7 @@
       "family": "blob",
       "task_class": "inspection",
       "halcon": "Regions",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "labels2d",
       "stages": [
@@ -3638,25 +3638,25 @@
         },
         {
           "op": "blob_distance",
-          "args": [
-            "$s1"
+          "inputs": [
+            "stage:1"
           ]
         },
         {
           "op": "blob_seeds",
-          "args": [
-            "$s3"
+          "inputs": [
+            "stage:3"
           ],
-          "kw": {
+          "params": {
             "h": 2.0
           }
         },
         {
           "op": "blob_split",
-          "args": [
-            "$s2",
-            "$s4",
-            "$s3"
+          "inputs": [
+            "stage:2",
+            "stage:4",
+            "stage:3"
           ]
         }
       ],
@@ -3762,7 +3762,7 @@
       "family": "segmentation",
       "task_class": "inspection",
       "halcon": "Segmentation",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "labels2d",
       "stages": [
@@ -3781,18 +3781,18 @@
         },
         {
           "op": "blob_seeds",
-          "args": [
-            "$s2"
+          "inputs": [
+            "stage:2"
           ],
-          "kw": {
+          "params": {
             "h": 2.0
           }
         },
         {
           "op": "watersheds_marker",
-          "args": [
-            "$s3",
-            "$s4"
+          "inputs": [
+            "stage:3",
+            "stage:4"
           ]
         }
       ],
@@ -3819,7 +3819,7 @@
       "family": "segmentation",
       "task_class": "preprocess",
       "halcon": "Segmentation",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "table",
       "stages": [
@@ -4259,13 +4259,13 @@
       "family": "generative",
       "task_class": "simulation",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "image",
       "stages": [
         {
           "op": "sem_render",
-          "kw": {
+          "params": {
             "pixel_nm": 1.0,
             "psf_px": 1.5,
             "base": 0.25
@@ -4523,7 +4523,7 @@
       "family": "imgmetrics",
       "task_class": "analysis",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "scalar",
       "stages": [
@@ -4534,11 +4534,11 @@
         },
         {
           "op": "mutual_information",
-          "args": [
-            "$in",
-            "$prev"
+          "inputs": [
+            "have:image",
+            "stage:1"
           ],
-          "kw": {
+          "params": {
             "bins": 64
           }
         }
@@ -4610,7 +4610,7 @@
       "family": "imgforensics",
       "task_class": "inspection",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "table",
       "stages": [
@@ -4621,7 +4621,7 @@
         },
         {
           "op": "copy_move_regions",
-          "kw": {
+          "params": {
             "method": "block"
           }
         }
@@ -4649,13 +4649,13 @@
       "family": "imgforensics",
       "task_class": "inspection",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "table",
       "stages": [
         {
           "op": "noise_inconsistency_map",
-          "kw": {
+          "params": {
             "block": 16
           }
         },
@@ -4775,25 +4775,25 @@
       "family": "shape2d",
       "task_class": "measurement",
       "halcon": "XLD",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "pairs",
       "output_sort": "pairs",
       "stages": [
         {
           "op": "fourier_smooth",
-          "kw": {
+          "params": {
             "keep": 5
           }
         },
         {
           "op": "elliptic_fourier",
-          "kw": {
+          "params": {
             "n_harmonics": 5
           }
         },
         {
           "op": "invariants",
-          "kw": {
+          "params": {
             "scale_invariant": false
           }
         }
@@ -5277,13 +5277,13 @@
       "family": "quat",
       "task_class": "measurement",
       "halcon": "Texture",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "image",
       "stages": [
         {
           "op": "monogenic_signal",
-          "kw": {
+          "params": {
             "wavelength_px": 8.0
           }
         },
@@ -5431,13 +5431,13 @@
       "family": "text",
       "task_class": "inspection",
       "halcon": "OCR",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "table",
       "stages": [
         {
           "op": "swt_map",
-          "kw": {
+          "params": {
             "dark_on_light": true
           }
         }
@@ -5465,13 +5465,13 @@
       "family": "text",
       "task_class": "inspection",
       "halcon": "OCR",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "matrix",
       "output_sort": "table",
       "stages": [
         {
           "op": "text_candidates",
-          "kw": {
+          "params": {
             "min_area": 8
           }
         }
@@ -5499,13 +5499,13 @@
       "family": "text",
       "task_class": "inspection",
       "halcon": "OCR",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "matrix",
       "output_sort": "table",
       "stages": [
         {
           "op": "text_candidates",
-          "kw": {
+          "params": {
             "min_area": 8
           }
         },
@@ -5536,19 +5536,19 @@
       "family": "3d",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "points",
       "output_sort": "primitive",
       "stages": [
         {
           "op": "voxel_grid_downsample",
-          "kw": {
+          "params": {
             "voxel_size": 0.04
           }
         },
         {
           "op": "ransac_sphere",
-          "kw": {
+          "params": {
             "thresh": 0.02,
             "iters": 300
           }
@@ -5577,13 +5577,13 @@
       "family": "3d",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "points",
       "output_sort": "primitive",
       "stages": [
         {
           "op": "statistical_outlier_removal",
-          "kw": {
+          "params": {
             "k": 16,
             "std_ratio": 2.0
           }
@@ -5615,13 +5615,13 @@
       "family": "3d",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "points",
       "output_sort": "primitive",
       "stages": [
         {
           "op": "ransac_plane",
-          "kw": {
+          "params": {
             "thresh": 0.01,
             "iters": 300
           }
@@ -5650,23 +5650,23 @@
       "family": "3d",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "points",
       "output_sort": "primitive",
       "stages": [
         {
           "op": "estimate_point_normals",
-          "kw": {
+          "params": {
             "k": 16
           }
         },
         {
           "op": "ransac_cylinder",
-          "args": [
-            "$in",
-            "$prev"
+          "inputs": [
+            "have:points",
+            "stage:1"
           ],
-          "kw": {
+          "params": {
             "thresh": 0.01,
             "iters": 300
           }
@@ -5695,13 +5695,13 @@
       "family": "reprconv",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "points",
       "output_sort": "table",
       "stages": [
         {
           "op": "principal_curvatures",
-          "kw": {
+          "params": {
             "k": 25
           }
         },
@@ -5732,13 +5732,13 @@
       "family": "reprconv",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "points",
       "output_sort": "position",
       "stages": [
         {
           "op": "voxel_grid_downsample",
-          "kw": {
+          "params": {
             "voxel_size": 0.05
           }
         },
@@ -5769,7 +5769,7 @@
       "family": "3d",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "points",
       "output_sort": "measurement",
       "stages": [
@@ -5803,7 +5803,7 @@
       "family": "3d",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "points",
       "output_sort": "measurement",
       "stages": [
@@ -6156,13 +6156,13 @@
       "family": "3d",
       "task_class": "3d",
       "halcon": "3D Reconstruction",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "depth",
       "stages": [
         {
           "op": "synthesize_fringes",
-          "kw": {
+          "params": {
             "n_steps": 4,
             "freq": 0.0,
             "phase_gain": 2.0
@@ -6170,7 +6170,7 @@
         },
         {
           "op": "decode_fringe",
-          "kw": {
+          "params": {
             "k": 0.5
           }
         }
@@ -6286,13 +6286,13 @@
       "family": "3d",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "voxel",
       "output_sort": "table",
       "stages": [
         {
           "op": "filter_by_volume",
-          "kw": {
+          "params": {
             "min_voxels": 10
           }
         },
@@ -6323,13 +6323,13 @@
       "family": "3d",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "voxel",
       "output_sort": "measurement",
       "stages": [
         {
           "op": "voxel_to_mesh",
-          "kw": {
+          "params": {
             "iso": 0.5
           }
         },
@@ -6360,19 +6360,19 @@
       "family": "3d",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "voxel",
       "output_sort": "measurement",
       "stages": [
         {
           "op": "voxel_to_mesh",
-          "kw": {
+          "params": {
             "iso": 0.5
           }
         },
         {
           "op": "taubin_smooth",
-          "kw": {
+          "params": {
             "iters": 10
           }
         },
@@ -6403,13 +6403,13 @@
       "family": "3d",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "voxel",
       "output_sort": "table",
       "stages": [
         {
           "op": "vol_label",
-          "kw": {
+          "params": {
             "connectivity": 26
           }
         },
@@ -7109,7 +7109,7 @@
       "family": "volcolor",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "labels",
       "output_sort": "table",
       "stages": [
@@ -7140,7 +7140,7 @@
       "family": "volcolor",
       "task_class": "3d",
       "halcon": "3D Object Model",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "voxel",
       "output_sort": "table",
       "stages": [
@@ -7174,7 +7174,7 @@
       "family": "volcolor",
       "task_class": "visualization",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "labels",
       "output_sort": "rgbimage",
       "stages": [
@@ -7183,7 +7183,7 @@
         },
         {
           "op": "vol_label_slice_rgb",
-          "kw": {
+          "params": {
             "index": 8,
             "axis": "x"
           }
@@ -7212,13 +7212,13 @@
       "family": "videocube",
       "task_class": "analysis",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "seq<image>",
       "output_sort": "image",
       "stages": [
         {
           "op": "video_cube_cut",
-          "kw": {
+          "params": {
             "plane": "xt",
             "position": 0.5
           }
@@ -8169,13 +8169,13 @@
       "family": "photon",
       "task_class": "preprocess",
       "halcon": "Filters",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "image",
       "stages": [
         {
           "op": "photon_sample",
-          "kw": {
+          "params": {
             "photons_per_unit": 100.0,
             "seed": 7
           }
@@ -8436,13 +8436,13 @@
       "family": "astrostack",
       "task_class": "preprocess",
       "halcon": "Filters",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "seq<image>",
       "output_sort": "measurement",
       "stages": [
         {
           "op": "sigma_clip_stack",
-          "kw": {
+          "params": {
             "kappa": 3.0
           }
         },
@@ -8864,13 +8864,13 @@
       "family": "piv",
       "task_class": "measurement",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "flow2d",
       "output_sort": "image",
       "stages": [
         {
           "op": "piv_to_velocity",
-          "kw": {
+          "params": {
             "pixel_size_m": 1e-05,
             "dt_s": 0.001
           }
@@ -9838,7 +9838,7 @@
       "family": "math",
       "task_class": "analysis",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "matrix",
       "output_sort": "measurement",
       "stages": [
@@ -9948,13 +9948,13 @@
       "family": "oned",
       "task_class": "measurement",
       "halcon": "1D Measuring",
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "signal",
       "output_sort": "indices",
       "stages": [
         {
           "op": "smooth_funct_1d_gauss",
-          "kw": {
+          "params": {
             "sigma": 2.0
           }
         },
@@ -9985,7 +9985,7 @@
       "family": "oned",
       "task_class": "measurement",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "signal",
       "output_sort": "measurement",
       "stages": [
@@ -10054,7 +10054,7 @@
       "family": "spc",
       "task_class": "inspection",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "matrix",
       "output_sort": "table",
       "stages": [
@@ -10163,7 +10163,7 @@
       "family": "conngraph",
       "task_class": "analysis",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "synapse_table",
       "output_sort": "signal",
       "stages": [
@@ -10197,7 +10197,7 @@
       "family": "conngraph",
       "task_class": "analysis",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "synapse_table",
       "output_sort": "labels",
       "stages": [
@@ -10206,7 +10206,7 @@
         },
         {
           "op": "graph_binarize",
-          "kw": {
+          "params": {
             "thresh": 1.0
           }
         },
@@ -10391,13 +10391,13 @@
       "family": "multivar",
       "task_class": "analysis",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "matrix",
       "output_sort": "table",
       "stages": [
         {
           "op": "mv_pca",
-          "kw": {
+          "params": {
             "standardize": false,
             "n_parallel": 50,
             "seed": 0
@@ -10470,13 +10470,13 @@
       "family": "videostream",
       "task_class": "inspection",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "seq<image>",
       "output_sort": "table",
       "stages": [
         {
           "op": "temporal_bilateral",
-          "kw": {
+          "params": {
             "window": 3,
             "sigma_t": 2.0,
             "sigma_r": 0.1
@@ -10484,7 +10484,7 @@
         },
         {
           "op": "scene_cut_detection",
-          "kw": {
+          "params": {
             "bins": 32,
             "threshold": 0.3
           }
@@ -10513,7 +10513,7 @@
       "family": "videostream",
       "task_class": "inspection",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "seq<image>",
       "output_sort": "seq<image>",
       "stages": [
@@ -10522,7 +10522,7 @@
         },
         {
           "op": "running_gaussian_foreground",
-          "kw": {
+          "params": {
             "alpha": 0.05,
             "k": 4.0,
             "var_init": 0.0001
@@ -11024,7 +11024,7 @@
       "family": "math",
       "task_class": "measurement",
       "halcon": null,
-      "runner": "python",
+      "runner": "mcp",
       "input_sort": "image",
       "output_sort": "table",
       "stages": [

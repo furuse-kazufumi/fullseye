@@ -206,6 +206,34 @@ def _runtime_function(fn) -> dict:
             "doc": inspect.getdoc(fn) or ""}
 
 
+def _isolated_ops() -> dict:
+    """隔離した子プロセスで走らせてよい台帳 op(実測の台帳 docs/mcp_isolated_ops.json、tools/mcp_isolated_probe.py)。
+
+    実測の台帳が無い・空なら生成を止める(黙って「実行できる op が 0」の OP_GRAPH を書かない)。"""
+    path = ROOT / "docs" / "mcp_isolated_ops.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not data.get("ops"):
+        raise RuntimeError("docs/mcp_isolated_ops.json has no ops; run tools/mcp_isolated_probe.py")
+    return data
+
+
+def _isolated_parameter_schema(rows: list[dict]) -> list[dict]:
+    """実測の台帳の引数の行を、OP_GRAPH の parameter_schema の形(従来の鍵 + kind / choices / doc)にする。"""
+    out = []
+    for row in rows:
+        rec = {"name": row["name"], "type": row["kind"], "kind": row["kind"], "required": bool(row["required"]),
+               "range": "undocumented", "unit": row.get("unit") or "undocumented"}
+        if not row.get("unit"):
+            rec["unit"] = "undocumented"
+        else:
+            rec["unit"] = row["unit"]
+        for key in ("default", "choices", "doc"):
+            if key in row:
+                rec[key] = row[key]
+        out.append(rec)
+    return out
+
+
 def _mcp_unsafe_parameter(parameters: list[dict]) -> str | None:
     for p in parameters:
         name, annotation = p.get("name", ""), p.get("type", "")
@@ -454,6 +482,8 @@ def build() -> dict[str, object]:
 
     executable_reasons = Counter()
     ledger_functions = _ledger_functions()
+    isolated_ledger = _isolated_ops()
+    isolated_ops, isolated_refused = isolated_ledger["ops"], isolated_ledger.get("refused", {})
     for edge in edges:
         if edge.get("executable"):
             edge["executor"] = {"kind": "registry", "alias":edge["op"]}
@@ -490,7 +520,22 @@ def build() -> dict[str, object]:
             edge.pop("parameters",None)
 
         unsafe = _mcp_unsafe_parameter((fn or {}).get("parameters", []))
-        if unsafe:
+        iso = isolated_ops.get(edge["op"])
+        if (iso is not None and edge.get("executor", {}).get("kind") == "python"
+                and len(iso["data"]) == len(edge["inputs"])):
+            # ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)を MCP の pipeline から走らせる。実測の台帳に
+            #   載った op だけを、隔離した子プロセス(時間とメモリの上限つき)で走らせる印を付ける。
+            edge["verified_executable"] = True
+            edge["executor"] = dict(edge["executor"], isolation="worker", ledger_module=iso["ledger"][0],
+                                    ledger_table=iso["ledger"][1], key=iso["key"],
+                                    data_names=[d["name"] for d in iso["data"]],
+                                    literal_inputs=[d["name"] for d in iso["data"] if d.get("literal")],
+                                    array_params=list(iso.get("array_params", [])))
+            edge["parameter_schema"] = _isolated_parameter_schema(iso["params"])
+            edge["example"] = iso["example"]
+            edge["verification"] = {"source": "tools/mcp_isolated_probe.py -> docs/mcp_isolated_ops.json",
+                                    "status": "ok", "checks": list(isolated_ledger.get("checks", []))}
+        elif unsafe:
             edge["verified_executable"] = False
             edge["not_executable_in_mcp"] = "io_side_effect"
             edge["mcp_rejection_detail"] = "unsafe parameter: %s" % unsafe
@@ -509,6 +554,9 @@ def build() -> dict[str, object]:
             edge["not_executable_in_mcp"] = "not_verified"
             if edge.get("executor",{}).get("kind")=="registry" and edge["op"] in registry_verification:
                 edge["verification"] = registry_verification[edge["op"]]
+        if not edge["verified_executable"] and edge["op"] in isolated_refused:
+            # なぜ MCP で走らせないかの実測の理由(誤り文と op カードが使う)
+            edge["mcp_probe"] = isolated_refused[edge["op"]]
 
     stochastic_rx = re.compile(r"^(?:aug_|tb_random_)|random")
     global_rx = re.compile(r"equalize|autocontrast|autolevel")

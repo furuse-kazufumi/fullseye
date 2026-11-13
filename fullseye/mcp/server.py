@@ -322,10 +322,10 @@ TOOLS: dict[str, dict] = {
                         "required": ["op"],
                         "additionalProperties": False,
                     },
-                    "description": "[{op, params?}, …]。物理量は名前つきparamsを使う。a/bは互換用",
+                    "description": "[{op, params?}, …]。物理量は名前つきparamsを使う。a/bは互換用。入力の無いopだけならhandle不要",
                 },
             },
-            "required": ["handle", "stages"],
+            "required": ["stages"],
             "additionalProperties": False,
         },
     },
@@ -957,11 +957,15 @@ def _enforce_pixel_limit(value, where: str) -> None:
 def _resolve_op(name: str, cat: Catalog, *, stage: int | None = None):
     """registry 層の op に解決する。無ければ近い名前を添えて拒否(黙って倒さない)。"""
     import ops
+    from fullseye.opsearch import mcp_unavailable_text
     op = ops._BY_NAME.get(name)
     if op is None:
         where = "段 %d: " % stage if stage else ""
-        raise ArgError("%sfullseye_apply で実行できる op ではない: %r(registry 層に無い)。近い名前: %s"
-                       % (where, name, cat.nearest(name)))
+        # ★2026-11-13: 台帳にある op にも「registry 層に無い」とだけ返し、「近い名前」に同じ名前を出していた。
+        why = mcp_unavailable_text(name)
+        near = [x for x in cat.nearest(name) if x != name]
+        raise ArgError("%sfullseye_apply で実行できる op ではない: %r(registry 層に無い)。%s%s"
+                       % (where, name, (why + "。") if why else "", ("近い名前: %s" % near) if near else ""))
     from fullseye.opsearch import _graph
     edge = next((e for e in _graph()["edges"] if e["op"] == name), None)
     if edge is None or not edge.get("verified_executable"):
@@ -1053,6 +1057,293 @@ def _named_knobs(op: str, params: dict | None, a: float = 0.5,
         used[name] = {"value": value, "unit": spec.get("unit"), "knob": knob,
                       "range": spec.get("choices") or [spec.get("min"), spec.get("max")]}
     return knobs["a"], knobs["b"], used
+
+
+#: 数 1 個を受ける入力(``measurement``)に繋げる型。registry の計測 op は ``feature`` で数を返す。
+_SCALAR_INPUT_SORTS = frozenset({"measurement", "scalar"})
+_SCALAR_COMPATIBLE_SORTS = frozenset({"measurement", "scalar", "feature"})
+#: 台帳 op の文字列の引数に書ける文字(パスの区切り・ドライブ名・親フォルダを書けない)。
+_ISOLATED_TEXT_RX = __import__("re").compile(r"[\w .+\-()%,=µ°]{1,80}")
+_ISOLATED_MAX_ELEMENTS = 4096
+_ISOLATED_MAX_DEPTH = 4
+#: 画像の列の型。MCP の handle では (T,H,W) の配列、台帳 op の引数と返り値では 2-D 配列の list。
+_SEQUENCE_SORTS = frozenset({"seq<image>", "images"})
+#: ラベルの型。台帳 op は整数の配列だけを受ける(実数のラベルは閾値の前の画像の取り違えとして断る)。
+_LABEL_SORTS = frozenset({"labels", "labels2d"})
+
+
+def _integral_labels(value):
+    """MCP の handle に実数で入ったラベル(``fullseye_import_json`` などは実数で持つ)を整数にする。
+
+    全部が有限の整数値のときだけ写す。小数を含む配列はそのまま渡し、op 自身の検査に断らせる(丸めない)。"""
+    if isinstance(value, np.ndarray) and value.dtype.kind == "f" and value.size and np.isfinite(value).all():
+        rounded = np.rint(value)
+        if np.array_equal(rounded, value) and np.abs(rounded).max() < 2 ** 31:
+            return rounded.astype(np.int32)
+    return value
+
+
+def _stack_sequence(value, op: str):
+    """台帳 op が返した画像の列(2-D 配列の list)を、MCP の handle の形 (T,H,W) にまとめる。
+
+    形の揃わない列・2-D でない要素は、まとめずにそのまま返す(後の出力の検査が invalid_output で断る)。"""
+    if isinstance(value, (list, tuple)) and value and all(
+            isinstance(frame, np.ndarray) and frame.ndim == 2 and frame.dtype.kind in "biuf"
+            and frame.shape == value[0].shape for frame in value):
+        return np.stack([np.asarray(frame, dtype=np.float64) for frame in value])
+    return value
+
+
+def _is_isolated(edge: dict | None) -> bool:
+    """隔離した子プロセス(:mod:`fullseye.mcp.opworker`)で走らせる台帳 op か。"""
+    return bool(edge) and (edge.get("executor") or {}).get("isolation") == "worker"
+
+
+def _isolated_limits() -> dict:
+    """隔離実行 1 回の上限(呼ぶたびに fssystem を読む)。"""
+    return {"time_limit_s": float(get_system("mcp_op_time_limit_s")),
+            "memory_limit_bytes": int(get_system("mcp_op_memory_limit_bytes")),
+            "max_pixels": int(get_system("mcp_stack_max_pixels"))}
+
+
+def _check_isolated_param(op: str, row: dict, value) -> str | None:
+    """台帳 op の引数 1 個を、台帳の仕様(``opassist.param_spec`` 由来の kind / choices / 単位)で検査する。
+
+    問題が無ければ None、あれば理由の文。信頼境界: 数は有限、列は 4096 要素・4 段まで、文字列は短い名前だけ
+    (パスを書けない)。値は丸めず・切り詰めず、合わなければ断る。"""
+    kind = row.get("kind") or "number"
+    unit = (" [%s]" % row["unit"]) if row.get("unit") else ""
+    name = "%s.%s" % (op, row["name"])
+    if value is None:
+        if row.get("required") or row.get("default", None) is not None:
+            return "%s must not be null (omit it to use the default %r)" % (name, row.get("default"))
+        return None
+    if row.get("name") == "device" and value != "cpu":
+        # GPU のメモリは子の見張り(作業プロセスのメモリの増分)では縛れないので、MCP からは CPU だけ
+        return "%s=%r: the MCP op worker runs on the CPU only (omit it or pass \"cpu\")" % (name, value)
+    if kind == "choice":
+        choices = list(row.get("choices") or [])
+        return None if value in choices else "%s=%r is not one of %s" % (name, value, choices)
+    if kind == "bool":
+        return None if isinstance(value, bool) else "%s must be true or false" % name
+    if kind == "text":
+        if isinstance(value, str) and _ISOLATED_TEXT_RX.fullmatch(value) and ".." not in value:
+            return None
+        return ("%s must be a short name (letters, digits, space, _ . + - ( ) %% , =; at most 80 characters); "
+                "default %r" % (name, row.get("default")))
+    count = [0]
+
+    def numeric(item, depth) -> bool:
+        if isinstance(item, bool):
+            return False
+        if isinstance(item, (int, float)):
+            count[0] += 1
+            if kind == "int" and not (isinstance(item, int) or float(item).is_integer()):
+                return False
+            return math.isfinite(float(item)) and abs(float(item)) <= 1e15 and count[0] <= _ISOLATED_MAX_ELEMENTS
+        if isinstance(item, list) and depth < _ISOLATED_MAX_DEPTH:
+            return all(numeric(x, depth + 1) for x in item)
+        return False
+
+    if numeric(value, 0):
+        return None
+    return ("%s must be a finite %s%s, or a list of them (at most %d elements, %d levels); default %r"
+            % (name, "integer" if kind == "int" else "number", unit, _ISOLATED_MAX_ELEMENTS, _ISOLATED_MAX_DEPTH,
+               row.get("default")))
+
+
+def _scalar_of(value, where: str) -> float:
+    """数 1 個を受ける入力へ渡す値を、有限の数 1 個として取り出す(合わなければ ArgError)。"""
+    if isinstance(value, dict) and set(value) >= {"value"} and len(value) <= 3:
+        value = value["value"]
+    arr = np.asarray(value)
+    if arr.dtype.kind not in "biuf" or arr.size != 1:
+        raise ArgError("%s must be one number; got %s with %d element(s)" % (where, arr.dtype, arr.size))
+    number = float(arr.reshape(-1)[0])
+    if not math.isfinite(number):
+        raise ArgError("%s must be finite" % where)
+    return number
+
+
+_UNIT_SUFFIXES = (("_per_mm", "1/mm"), ("_um", "µm"), ("_nm", "nm"), ("_mm", "mm"), ("_cm", "cm"), ("_deg", "°"),
+                  ("_px", "px"), ("_hz", "Hz"), ("_ms", "ms"), ("_s", "s"), ("_rad", "rad"))
+
+
+def _unit_of_key(key: str) -> str | None:
+    """結果の表の鍵の名前から単位を読む(``height_mm`` → mm、``mm_per_px`` → mm/px)。名前に無ければ None。"""
+    if "_per_" in key:
+        head, _, tail = key.rpartition("_per_")
+        num = head.rsplit("_", 1)[-1]
+        if num in ("mm", "um", "nm", "px", "deg", "cm", "m", "lp", "cycles") and tail.isalpha():
+            return "%s/%s" % (num, tail)
+    for suffix, unit in sorted(_UNIT_SUFFIXES, key=lambda kv: -len(kv[0])):
+        if key.endswith(suffix):
+            return unit
+    return None
+
+
+def _array_field_sort(arr: np.ndarray) -> str:
+    """表の中の配列に付ける型(次の pipeline の handle に渡せるように)。決められない形は ``any``。"""
+    if arr.dtype.kind == "f" and arr.ndim == 2:
+        return "image"
+    if arr.dtype.kind == "f" and arr.ndim == 3 and arr.shape[-1] == 3:
+        return "color"
+    if arr.dtype.kind == "f" and arr.ndim == 1:
+        return "signal"
+    return "any"
+
+
+def _summarize_value(value, store: HandleStore, *, provenance: list, max_bytes: int = 6000) -> dict:
+    """台帳 op の結果(表・数・配列の木)を、上限つきの JSON の要約にする。
+
+    返り値 ``{"value": 木, "units": {鍵: 単位}, "handles": [{key, handle, sort, shape}], "truncated": bool}``。
+    数は有限だけを書く(非有限は ``null`` にして ``non_finite`` に鍵を残す)。17 要素以上の配列は値を載せず、
+    形・最小・最大とハンドル(2-D の実数配列は ``image`` なので、次の pipeline の handle に渡せる)を返す。"""
+    units: dict[str, str] = {}
+    handles: list[dict] = []
+    non_finite: list[str] = []
+    state = {"rows": 10, "keys": 48, "truncated": False}
+
+    def conv(item, key: str, depth: int):
+        if isinstance(item, np.generic):
+            item = item.item()
+        if item is None or isinstance(item, (bool, str)):
+            return item if not isinstance(item, str) or len(item) <= 200 else item[:200] + "…"
+        if isinstance(item, int):
+            return item
+        if isinstance(item, float):
+            if not math.isfinite(item):
+                non_finite.append(key)
+                return None
+            return item
+        if isinstance(item, complex):
+            return {"re": conv(item.real, key, depth), "im": conv(item.imag, key, depth)}
+        if isinstance(item, np.ndarray):
+            if item.size <= 16 and item.dtype.kind in "biuf":
+                return conv(item.tolist(), key, depth)
+            desc: dict = {"array": list(item.shape), "dtype": str(item.dtype)}
+            if item.size and item.dtype.kind in "biuf":
+                finite = item[np.isfinite(item)] if item.dtype.kind == "f" else item
+                if finite.size:
+                    desc["min"], desc["max"] = float(finite.min()), float(finite.max())
+            sort = _array_field_sort(item)
+            try:
+                meta = store.put(item, sort=sort, provenance=provenance + [{"field": key}])
+                desc["handle"], desc["sort"] = meta["handle"], sort
+                handles.append({"key": key, "handle": meta["handle"], "sort": sort, "shape": list(item.shape)})
+            except HandleError:
+                desc["handle"] = None
+            return desc
+        if isinstance(item, dict):
+            if depth >= 6:
+                state["truncated"] = True
+                return {"_omitted": "nested table"}
+            out = {}
+            for n, (k, v) in enumerate(item.items()):
+                k = str(k)
+                if n >= state["keys"]:
+                    out["_omitted_keys"] = len(item) - n
+                    state["truncated"] = True
+                    break
+                unit = _unit_of_key(k)
+                if unit:
+                    units[k] = unit
+                out[k] = conv(v, k, depth + 1)
+            return out
+        if isinstance(item, (list, tuple)):
+            if depth >= 6:
+                state["truncated"] = True
+                return ["…"]
+            rows = [conv(v, key, depth + 1) for v in item[:state["rows"]]]
+            if len(item) > state["rows"]:
+                rows.append({"_omitted_rows": len(item) - state["rows"]})
+                state["truncated"] = True
+            return rows
+        state["truncated"] = True
+        return "<%s>" % type(item).__name__
+
+    for rows, keys in ((10, 48), (4, 24), (2, 12)):
+        state.update(rows=rows, keys=keys, truncated=False)
+        units.clear(); del handles[:]; del non_finite[:]
+        tree = conv(value, "value", 0)
+        if len(json.dumps(tree, ensure_ascii=False).encode("utf-8")) <= max_bytes:
+            break
+    else:
+        tree = {"_omitted": "result is larger than %d bytes; read it with fullseye_inspect / fullseye_export_json "
+                            "on value_handle" % max_bytes}
+        state["truncated"] = True
+    out = {"value": tree, "units": dict(units), "handles": list(handles), "truncated": bool(state["truncated"])}
+    if non_finite:
+        out["non_finite"] = sorted(set(non_finite))
+    return out
+
+
+def _summary_lines(summary: dict, limit: int = 40) -> list[str]:
+    """:func:`_summarize_value` の要約を、人と文字だけのクライアントが読める行にする(単位つき)。"""
+    units = summary.get("units", {})
+    lines: list[str] = []
+
+    def cell(v) -> str:
+        if isinstance(v, float):
+            return "%.6g" % v
+        if isinstance(v, dict) and "array" in v:
+            rng = (" min=%.4g max=%.4g" % (v["min"], v["max"])) if "min" in v else ""
+            return "array shape=%s%s%s" % (v["array"], rng,
+                                           (" handle=%s sort=%s" % (v["handle"], v.get("sort"))) if v.get("handle") else "")
+        if isinstance(v, (dict, list)):
+            return json.dumps(v, ensure_ascii=False)[:160]
+        return str(v)
+
+    tree = summary.get("value")
+    if isinstance(tree, dict):
+        for key, v in tree.items():
+            unit = (" " + units[key]) if key in units and not isinstance(v, (dict, list)) else ""
+            if isinstance(v, list) and v and all(isinstance(r, dict) for r in v):
+                lines.append("%s (%d rows shown):" % (key, sum("_omitted_rows" not in r for r in v)))
+                for n, row in enumerate(v[:5], 1):
+                    if "_omitted_rows" in row:
+                        lines.append("  … +%d rows" % row["_omitted_rows"])
+                    else:
+                        lines.append("  %d. %s" % (n, ", ".join(
+                            "%s=%s%s" % (k, cell(x), (" " + units[k]) if k in units else "")
+                            for k, x in list(row.items())[:8])))
+            else:
+                lines.append("%s = %s%s" % (key, cell(v), unit))
+    else:
+        lines.append("value = %s" % cell(tree))
+    if summary.get("truncated"):
+        lines.append("(要約は一部を省いた。全体は value_handle を fullseye_inspect / fullseye_export_json で読む)")
+    return lines[:limit]
+
+
+def _op_summary(name: str) -> str | None:
+    """op の 1 行の説明(OP_CARDS の summary)。結果に「何を計算したか」を添えるのに使う。"""
+    try:
+        from fullseye.opsearch import PKG_CARDS, _load_data
+        key = "cards_by_name"
+        cache = _op_summary.__dict__
+        if key not in cache:
+            cache[key] = {c["name"]: c.get("summary") for c in _load_data(PKG_CARDS)["ops"]}
+        return cache[key].get(name)
+    except (FileNotFoundError, ValueError, KeyError):
+        return None
+
+
+def _run_isolated_stage(edge: dict, args: list, params: dict):
+    """隔離した子プロセスで台帳 op を 1 つ走らせる。``(値, 情報)`` を返す。上限と失敗は例外で返す。"""
+    from .opworker import run_isolated
+    executor = edge["executor"]
+    limits = _isolated_limits()
+    for arg in args:
+        _enforce_pixel_limit(arg, "input of %s" % edge["op"])
+    job = {"ledger_module": executor["ledger_module"], "ledger_table": executor["ledger_table"],
+           "key": executor["key"], "data_names": list(executor.get("data_names") or [])}
+    _log("isolated", edge["op"], "start", "time<=%.0fs" % limits["time_limit_s"],
+         "memory<=%dMiB" % (limits["memory_limit_bytes"] >> 20))
+    value, info = run_isolated(job, args, params, time_limit_s=limits["time_limit_s"],
+                               max_rss=limits["memory_limit_bytes"])
+    _log("isolated", edge["op"], "done", "%.2fs" % info.get("elapsed_s", 0.0))
+    return value, dict(info, **limits)
 
 
 def _sort_mismatch_fixes(actual: str, expected: str) -> list[dict]:
@@ -1148,8 +1439,17 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
         refs = spec.get("inputs")
         if refs is not None:
             refs = [normalize_ref(ref) for ref in refs]
+        isolated = _is_isolated(edge)
+        literal_names = []
+        expected_inputs = list(edge["inputs"]) if edge else []
+        if isolated:
+            # 数 1 個を受けるデータ入力(measurement)は、名前で params に書ける(数、または {"ref": …})。
+            executor = edge["executor"]
+            literal_names = [n for n in executor.get("literal_inputs", []) if n in spec.get("params", {})]
+            expected_inputs = [s for n, s in zip(executor.get("data_names", []), edge["inputs"])
+                               if n not in literal_names]
         if refs is None:
-            refs = [] if not edge or not edge.get("inputs") else (["stage:%d"%(i-1)] if i>1 else
+            refs = [] if not edge or not expected_inputs else (["stage:%d"%(i-1)] if i>1 else
                     (["have:%s"%start_sort] if start_sort else []))
         if refs is not None:
             if edge is None:
@@ -1157,13 +1457,20 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                                "candidates":[x for x in cat.nearest(name) if x != name]})
                 continue
             if not edge.get("verified_executable"):
+                from fullseye.opsearch import mcp_unavailable
+                info = mcp_unavailable(name) or {}
                 errors.append({"layer":"stage","stage":i,"reason":"not_executable_in_mcp","value":name,
                                "detail":edge.get("not_executable_in_mcp", edge.get("executable_reason","no verified executor")),
-                               "candidates":[]})
+                               "why":info.get("why"),"probe_reason":info.get("reason"),
+                               "instead":info.get("instead", []),
+                               "candidates":info.get("executable_alternatives", [])})
                 continue
-            if len(refs) != len(edge["inputs"]):
-                errors.append({"layer":"stage","stage":i,"reason":"input_arity_mismatch","value":len(refs),
-                               "expected":len(edge["inputs"]),"candidates":[]})
+            if len(refs) != len(expected_inputs):
+                err = {"layer":"stage","stage":i,"reason":"input_arity_mismatch","value":len(refs),
+                       "expected":len(expected_inputs),"expected_sorts":list(expected_inputs),"candidates":[]}
+                if isolated and edge.get("example"):
+                    err["example"] = edge["example"]
+                errors.append(err)
             actual=[]; resolved=[]
             for ref in refs:
                 known={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
@@ -1174,8 +1481,9 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                     actual.append("unknown"); resolved.append(ref)
                     errors.append({"layer":"stage","stage":i,"reason":"unknown_input_ref",
                                    "value":ref,"detail":str(exc),"candidates":[]})
-            mismatches=[{"input":j,"actual":a,"expected":b} for j,(a,b) in enumerate(zip(actual,edge["inputs"]))
-                        if b not in ("poly",a)]
+            mismatches=[{"input":j,"actual":a,"expected":b} for j,(a,b) in enumerate(zip(actual,expected_inputs))
+                        if b not in ("poly",a)
+                        and not (isolated and b in _SCALAR_INPUT_SORTS and a in _SCALAR_COMPATIBLE_SORTS)]
             if mismatches:
                 for mismatch in mismatches:
                     mismatch["fixes"] = _sort_mismatch_fixes(mismatch["actual"], mismatch["expected"])
@@ -1192,6 +1500,8 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             schema={p["name"]:p for p in edge.get("parameter_schema",[])}
             physical = physical_catalog.get(name, {})
             schema_names = set(schema) | set(physical)
+            if isolated:
+                schema_names |= set(edge["executor"].get("literal_inputs", []))
             unknown_params=sorted(set(spec.get("params",{}))-schema_names)
             if unknown_params:
                 err = {"layer":"stage","stage":i,"reason":"unknown_parameter","value":unknown_params,
@@ -1205,6 +1515,33 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                 errors.append({"layer":"stage","stage":i,"reason":"missing_parameter","value":missing,"candidates":[]})
             for pname,pvalue in spec.get("params",{}).items():
                 if pname in physical:
+                    continue
+                if isolated and pname in literal_names:
+                    # 数 1 個の入力: 有限の数か、数を返した段への参照
+                    if isinstance(pvalue, dict) and set(pvalue) == {"ref"}:
+                        known={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
+                        try:
+                            ref_sort=normalize_sort(_resolve_pipeline_ref(normalize_ref(pvalue["ref"]),known,store)[0]["sort"])
+                        except (ArgError,HandleError) as exc:
+                            errors.append({"layer":"stage","stage":i,"reason":"unknown_parameter_ref",
+                                           "value":pvalue["ref"],"detail":str(exc),"candidates":[]})
+                            continue
+                        if ref_sort not in _SCALAR_COMPATIBLE_SORTS:
+                            errors.append({"layer":"stage","stage":i,"reason":"parameter_ref_sort_mismatch",
+                                           "value":ref_sort,"expected":sorted(_SCALAR_COMPATIBLE_SORTS),"candidates":[]})
+                    elif (isinstance(pvalue, bool) or not isinstance(pvalue, (int, float))
+                          or not math.isfinite(float(pvalue))):
+                        errors.append({"layer":"stage","stage":i,"reason":"parameter_type_mismatch","value":pname,
+                                       "detail":"%s.%s must be one finite number or {\"ref\": \"stage:N\"}" % (name, pname),
+                                       "candidates":[]})
+                    continue
+                if isolated and pname in schema and not (isinstance(pvalue, dict) and ("ref" in pvalue or "profile" in pvalue)):
+                    problem = _check_isolated_param(name, schema[pname], pvalue)
+                    if problem:
+                        errors.append({"layer":"stage","stage":i,"reason":"parameter_type_mismatch","value":pname,
+                                       "detail":problem,"expected":{k: schema[pname].get(k) for k in
+                                                                    ("kind","unit","choices","default") if schema[pname].get(k) is not None},
+                                       "candidates":[]})
                     continue
                 if isinstance(pvalue,dict) and "ref" in pvalue:
                     expected=edge.get("ref_parameters",{}).get(pname)
@@ -1260,6 +1597,8 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             normalized.append({"stage":i,"op":name,"inputs":list(refs),"params":dict(spec.get("params",{})),
                                "a":ka,"b":kb,"named_params":named_used,
                                "in_sorts":edge["inputs"],"out_sort":out})
+            if isolated:
+                normalized[-1].update({"isolated":True,"literal_inputs":list(literal_names)})
             continue
     known_outputs={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
     for ref in outputs or []:
@@ -1457,9 +1796,41 @@ def _pipeline_json_value(value, store: HandleStore, *, sort: str, provenance: li
     return normalized if len(encoded) <= max_bytes else None
 
 
+def _apply_isolated(a: dict, edge: dict, cat: Catalog, store: HandleStore, *,
+                    max_structured_bytes: int | None = None) -> dict:
+    """台帳 op(隔離して走る物)の fullseye_apply: 1 段の fullseye_pipeline と同じ経路・同じ検査で走らせる。"""
+    if a.get("device") not in (None, "cpu", "auto"):
+        raise ArgError("%s runs in the MCP op worker on the CPU only; omit device or pass \"cpu\"" % edge["op"])
+    for key in ("a", "b", "allow_degraded", "parity_check"):
+        if key in a:
+            raise ArgError("%s is a ledger op: use named params (%s), not %s" % (
+                edge["op"], ", ".join(r["name"] for r in edge.get("parameter_schema", [])) or "none", key))
+    executor = edge["executor"]
+    params = dict(a.get("params") or {})
+    data_inputs = [n for n in executor.get("data_names", []) if n not in params]
+    if len(data_inputs) > 1:
+        raise ArgError("%s takes %d inputs (%s); fullseye_apply carries one handle. Use fullseye_pipeline with "
+                       "stages=[{\"op\":%r,\"inputs\":[<handle>, ...]}]" % (
+                           edge["op"], len(data_inputs), ", ".join(edge["inputs"]), edge["op"]))
+    stage = {"op": edge["op"]}
+    if params:
+        stage["params"] = params
+    args = {"stages": [stage], "vision": a.get("vision", "auto")}
+    if data_inputs:
+        args["handle"] = a["handle"]
+    return _pipeline(args, cat, store, max_structured_bytes=max_structured_bytes)
+
+
 def _apply(a: dict, cat: Catalog, store: HandleStore, *,
            max_structured_bytes: int | None = None) -> dict:
     max_structured_bytes = _response_budget(max_structured_bytes)
+    import ops
+    if a["op"] not in ops._BY_NAME:
+        from fullseye.opsearch import _graph
+        edge = next((e for e in _graph()["edges"] if e["op"] == a["op"]), None)
+        if _is_isolated(edge) and edge.get("verified_executable"):
+            # ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)も fullseye_apply から呼べる(pipeline と同じ経路)
+            return _apply_isolated(a, edge, cat, store, max_structured_bytes=max_structured_bytes)
     op = _resolve_op(a["op"], cat)
     meta, arr = store.get(a["handle"])
     _check_sort(op, meta["sort"], prev="ハンドル %s" % meta["handle"])
@@ -1643,9 +2014,46 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 try: params[pname]=resolve_profile(pvalue["profile"])
                 except ValueError as exc: raise ArgError(str(exc)) from exc
         parity_meta = None
+        isolated_info = None
         try:
             executor=edge["executor"]
-            if executor["kind"]=="identity":
+            if _is_isolated(edge):
+                # 台帳 op(光学・照明・合成の入口): 隔離した子プロセスで、時間とメモリの上限つきで走らせる。
+                #   引数は validate_pipeline が台帳の仕様で検査済み。ここでは境界を越える直前にもう一度見る。
+                call_params = {}
+                literal = {}
+                for pname, pvalue in params.items():
+                    if pname in normalized_spec.get("literal_inputs", ()):
+                        literal[pname] = _scalar_of(pvalue, "%s.%s" % (edge["op"], pname))
+                        continue
+                    row = next((r for r in edge.get("parameter_schema", []) if r["name"] == pname), None)
+                    raw = spec.get("params", {}).get(pname)
+                    if row is None or (not (isinstance(raw, dict) and ("ref" in raw or "profile" in raw))
+                                       and _check_isolated_param(edge["op"], row, pvalue)):
+                        raise ArgError("stage %d (%s): parameter %r failed re-validation" % (i, edge["op"], pname))
+                    if pname in executor.get("array_params", ()) and isinstance(pvalue, list):
+                        # 見本で配列だった引数(K など)は、JSON の list のままでは op が添字で読めない
+                        pvalue = np.asarray(pvalue, dtype=np.float64)
+                    call_params[pname] = pvalue
+                data_args = []
+                supplied = iter(args)
+                for dname, dsort in zip(executor.get("data_names", []), edge["inputs"]):
+                    if dname in literal:
+                        data_args.append(literal[dname])
+                    else:
+                        item = next(supplied)
+                        if dsort in _SCALAR_INPUT_SORTS:
+                            item = _scalar_of(item, "%s.%s" % (edge["op"], dname))
+                        elif dsort in _SEQUENCE_SORTS and isinstance(item, np.ndarray) and item.ndim == 3:
+                            # MCP の handle は (T,H,W) の配列。台帳 op は 2-D の list を受ける(3-D は意味が曖昧なので断る)
+                            item = [np.ascontiguousarray(frame) for frame in item]
+                        elif dsort in _LABEL_SORTS:
+                            item = _integral_labels(item)
+                        data_args.append(item)
+                out, isolated_info = _run_isolated_stage(edge, data_args, call_params)
+                if edge["output"] in _SEQUENCE_SORTS:
+                    out = _stack_sequence(out, edge["op"])
+            elif executor["kind"]=="identity":
                 out=args[0]
             elif executor["kind"]=="registry":
                 import ops as runtime_ops
@@ -1694,8 +2102,21 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 out=fn(*args,**params)
         except Exception as exc:  # noqa: BLE001
             failed.add("stage:%d"%i)
-            records.append({"stage":i,"ref":"stage:%d"%i,"op":edge["op"],"status":"failed",
-                            "reason":"execution_failed","error":{"type":type(exc).__name__,"message":str(exc)[:300]}})
+            reason = "execution_failed"
+            error = {"type":type(exc).__name__,"message":str(exc)[:300]}
+            if getattr(exc, "reason", None) in ("time_limit", "memory_limit"):
+                # 隔離実行の上限: どの上限に当たったかと、その値を返す(黙って長く走らせない)
+                reason = "resource_limit"
+                error.update({"limit": exc.reason, **_isolated_limits()})
+            elif getattr(exc, "reason", None) == "op_error" and getattr(exc, "error_type", None):
+                error["type"] = exc.error_type
+            if getattr(exc, "reason", None):
+                _log("isolated", edge["op"], "failed", exc.reason)
+            failed_rec = {"stage":i,"ref":"stage:%d"%i,"op":edge["op"],"status":"failed",
+                          "reason":reason,"error":error}
+            if _is_isolated(edge) and edge.get("example"):
+                failed_rec["example"] = edge["example"]
+            records.append(failed_rec)
             release(refs + param_refs)
             continue
         out_sort=metas[0]["sort"] if edge["output"]=="poly" and metas else edge["output"]
@@ -1734,20 +2155,43 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         if parity_meta is not None:
             rec["parity"] = parity_meta
         if isinstance(out, np.ndarray) and out_sort not in _BULKY_SORTS and out.size <= 256:
-            rec["value"] = out.tolist()
+            # ★2026-11-13: 複素数の配列(Jones ベクトルなど)をそのまま tolist すると JSON にできず、道具ごと落ちた
+            rec["value"] = ({"re": out.real.tolist(), "im": out.imag.tolist()} if out.dtype.kind == "c"
+                            else out.tolist())
         if normalized_spec.get("named_params"):
             rec["named_params"] = normalized_spec["named_params"]
         if isinstance(out,np.ndarray) and vd.get("escalate") and not links and a.get("vision","auto")!="none":
             links=_maybe_thumb(store,meta,args[0] if args else None,out,vision=a.get("vision","auto"),
                                escalate=True,quantity=False,tag="stage%d_%s"%(i,edge["op"]))
             for link in links: link["description"]="段 %d(%s): "% (i,edge["op"])+link["description"]
+        if isolated_info is not None:
+            rec["isolated"] = {"elapsed_s": round(isolated_info.get("elapsed_s", 0.0), 3),
+                               "time_limit_s": isolated_info["time_limit_s"],
+                               "memory_limit_bytes": isolated_info["memory_limit_bytes"]}
+            meaning = _op_summary(edge["op"])
+            if meaning:
+                rec["meaning"] = meaning
+            used = {}
+            for row in edge.get("parameter_schema", []):
+                if row["name"] in spec.get("params", {}) and row.get("unit") not in (None, "", "undocumented"):
+                    used[row["name"]] = row["unit"]
+            if used:
+                rec["param_units"] = used
         if not isinstance(out,np.ndarray):
             rec["value_handle"],rec["handle"]=handle,None
-            normalized=_pipeline_json_value(
-                out,store,sort=out_sort,
-                provenance=[{"pipeline_value":edge["op"],"stage":i}],max_bytes=2048)
-            if normalized is not None:
-                rec["value"]=normalized
+            if isolated_info is not None:
+                summary=_summarize_value(out,store,provenance=[{"pipeline_value":edge["op"],"stage":i}])
+                rec["value"]=summary["value"]; rec["units"]=summary["units"]
+                rec["field_handles"]=summary["handles"]; rec["value_truncated"]=summary["truncated"]
+                if summary.get("non_finite"):
+                    rec["non_finite"]=summary["non_finite"]
+                rec["_lines"]=_summary_lines(summary)
+            else:
+                normalized=_pipeline_json_value(
+                    out,store,sort=out_sort,
+                    provenance=[{"pipeline_value":edge["op"],"stage":i}],max_bytes=2048)
+                if normalized is not None:
+                    rec["value"]=normalized
         records.append(rec)
         release(refs + param_refs)
         if remaining[ref] <= 0:
@@ -1799,12 +2243,23 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         addon=_typed_json_addon(last_value,records[-1].get("out_sort"),max_structured_bytes) if last_value is not None else None
         if addon is not None: result["json"]=addon[0]
     if failed:
+        for r in records:
+            r.pop("_lines", None)
         bad=next(r for r in records if r.get("status")=="failed")
         return _tool_error("段 %d %s failed in strict mode: "% (bad["stage"],bad["op"])+
                            json.dumps(result,ensure_ascii=False,separators=(",",":")),result)
     text=(("パイプライン %d 段 完走: "%sum(r.get("status")=="ok" for r in records)) +
           " -> ".join(r["op"] for r in records if r.get("status")=="ok"))
-    text += "\n判定=ok value=%s" % result.get("value")
+    table_lines = []
+    for r in records:
+        lines = r.pop("_lines", None)
+        if lines and r.get("status") == "ok":
+            table_lines.append("段 %d %s%s" % (r["stage"], r["op"], (": " + r["meaning"]) if r.get("meaning") else ""))
+            table_lines.extend("  " + ln for ln in lines)
+    if table_lines:
+        text += "\n" + "\n".join(table_lines)
+    else:
+        text += "\n判定=ok value=%s" % result.get("value")
     return tool_result(text,result,links=links,max_structured_bytes=max_structured_bytes)
 
 

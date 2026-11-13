@@ -364,7 +364,10 @@ def test_tools_list_declares_the_image_tools_with_closed_schemas(cat):
               "fullseye_inspect", "fullseye_pipeline"):
         assert n in tl and tl[n]["inputSchema"]["additionalProperties"] is False
     assert tl["fullseye_apply"]["inputSchema"]["required"] == ["handle", "op"]
-    assert tl["fullseye_pipeline"]["inputSchema"]["required"] == ["handle", "stages"]
+    # ★2026-11-13: 入力の無い台帳 op(照明の設計・合成の入口)だけの pipeline は handle を要らないので、
+    #   required から handle を外した(受ける要求を広げるだけ。handle を渡す従来の要求はそのまま通る)。
+    assert tl["fullseye_pipeline"]["inputSchema"]["required"] == ["stages"]
+    assert "handle" in tl["fullseye_pipeline"]["inputSchema"]["properties"]
 
 
 def test_the_demo_runs_as_written_and_shows_a_verdict():
