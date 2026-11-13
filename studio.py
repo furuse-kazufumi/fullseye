@@ -7286,7 +7286,8 @@ def build_window(model=None):
                    "show_result": run_show, "run_current": run_current}
 
     def flash(msg):
-        status.showMessage(msg, 6000)
+        # ★2026-11-13(初回起動の点検 M9): 表に行がある文は UI の言語で(書式つきの文は呼ぶ所で tr() を通す)
+        status.showMessage(tr(msg), 6000)
 
     # -- left: operator browser + samples ------------------------------------ #
     left = QtWidgets.QWidget(); lv = QtWidgets.QVBoxLayout(left); lv.setSpacing(6)
@@ -8553,7 +8554,7 @@ def build_window(model=None):
             pass
         if show_modal:
             try:
-                ERROR_HOOK(win, title, studio_errors.format_failure(
+                ERROR_HOOK(win, tr(title), studio_errors.format_failure(       # 題も UI の言語で(M9)
                     info, _UI_LANG.get("code", "en")))
             except Exception:             # a stubbed/absent dialog must never crash us
                 pass
@@ -10059,7 +10060,7 @@ def build_window(model=None):
         lab = getattr(snap, "label", None)
         win._redo_stack.append(_snapshot(lab))
         _restore_stages(snap)
-        flash("undo %s(%d more)" % ((lab + " ") if lab else "", len(win._undo_stack)))
+        flash(tr("undo %s(%d more)") % ((lab + " ") if lab else "", len(win._undo_stack)))
 
     def redo():
         if not win._redo_stack:
@@ -10068,7 +10069,7 @@ def build_window(model=None):
         lab = getattr(snap, "label", None)
         win._undo_stack.append(_snapshot(lab))
         _restore_stages(snap)
-        flash("redo %s(%d more)" % ((lab + " ") if lab else "", len(win._redo_stack)))
+        flash(tr("redo %s(%d more)") % ((lab + " ") if lab else "", len(win._redo_stack)))
     win._undo = undo
     win._redo = redo
     win._push_undo = push_undo
@@ -10095,7 +10096,7 @@ def build_window(model=None):
             # never clobber what the user typed (Codex #9).
             ln = _insert_program_line(line, code_edit.textCursor().blockNumber() + 1)
             code_status.setText("● inserted %s on line %d — Apply to run the program" % (name, ln))
-            flash("inserted `%s` at line %d of the Program (Apply to run)" % (line, ln))
+            flash(tr("inserted `%s` at line %d of the Program (Apply to run)") % (line, ln))
             return
         push_undo()
         # Insertion point = the Program cursor (which follows the selected stage, so a
@@ -10177,8 +10178,7 @@ def build_window(model=None):
             name = cur.data(QtCore.Qt.UserRole)
         row = _op_row(name)
         if row and row.get("backend") == "general":
-            flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
-                  "fullseye algo run %s" % (name, name))
+            flash(not_insertable_text(name, "general"))       # M9: S2 と同じ文(UI の言語)
             return
         base = _search_current_value() if base is None else base
         if base is None:
@@ -10209,19 +10209,19 @@ def build_window(model=None):
                 # window so the single-shot preview never clobbers the pipeline result
                 new_graphics_window(pm, title)
                 if fell:
-                    flash("⚠ ran %s once but it FELL BACK (%s) — the window shows the sort fallback, not a result"
+                    flash(tr("⚠ ran %s once but it FELL BACK (%s) — the window shows the sort fallback, not a result")
                           % (name, fell[-1]["error"][:110]))
                 else:
-                    flash("ran %s once — result in a new graphics window (pipeline unchanged)" % name)
+                    flash(tr("ran %s once — result in a new graphics window (pipeline unchanged)") % name)
             else:
                 # a secondary window is current: reuse it (HDevelop dev_display) so
                 # repeated Run-once tuning doesn't spawn a new window every time
                 v = _current_view()
                 v.set_pixmap(pm); v.fit(); v.set_data(out)
-                flash("ran %s once → Graphics %d (pipeline unchanged)" % (name, _current_handle()))
+                flash(tr("ran %s once → Graphics %d (pipeline unchanged)") % (name, _current_handle()))
         else:                                   # scalar feature / contour: no raster preview
             d = inspect_result(out)
-            flash("ran %s once → %s (pipeline unchanged)" % (name, d.get("value", d.get("kind", "result"))))
+            flash(tr("ran %s once → %s (pipeline unchanged)") % (name, d.get("value", d.get("kind", "result"))))
         win._last_run_once = {"op": name, "a": a, "b": b, "result": out}
     win._run_op_once = run_op_once
     win._op_arg_spins = (op_a_spin, op_b_spin)
@@ -10402,7 +10402,7 @@ def build_window(model=None):
             flash(tr("loaded %s — a colour file, read as greyscale (the pipeline works on one channel)")
                   % os.path.basename(path))
         else:
-            flash("loaded " + os.path.basename(path))
+            flash(tr("loaded %s") % os.path.basename(path))
         show_result()
         return True
 
@@ -10432,7 +10432,7 @@ def build_window(model=None):
         state["input_sample"] = name
         model.input_path = None
         state["fit_next"] = True
-        flash("loaded sample image: " + name); show_result()
+        flash(tr("loaded sample image: %s") % name); show_result()
     win._load_sample_image = load_sample_image
 
     def first_launch_scene():
@@ -10482,9 +10482,9 @@ def build_window(model=None):
         # Ctrl+S saves a PNG of the RESULT; the dirty '*' tracks the PIPELINE. If the
         # pipeline has unsaved edits, say which key saves it so the star isn't a mystery.
         if state.get("dirty") and model.stages:
-            flash("saved %s  ·  (Ctrl+Shift+S saves the pipeline itself)" % os.path.basename(path))
+            flash(tr("saved %s  ·  (Ctrl+Shift+S saves the pipeline itself)") % os.path.basename(path))
         else:
-            flash("saved " + os.path.basename(path))
+            flash(tr("saved %s") % os.path.basename(path))
 
     def save_result():
         arr = _result_array()
@@ -10554,7 +10554,7 @@ def build_window(model=None):
             return
         if not pm.save(path):
             report_error("Could not save graphics window", path); return
-        flash("saved " + os.path.basename(path))
+        flash(tr("saved %s") % os.path.basename(path))
     win._save_secondary_view = _save_secondary_view
 
     def copy_result():
@@ -10864,7 +10864,7 @@ def build_window(model=None):
     act_holdout.triggered.connect(show_holdout)
 
     def show_about():
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("About Fullseye Studio")
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("About Fullseye Studio"))
         tag_dialog(dlg, "system")
         v = QtWidgets.QVBoxLayout(dlg)
         row = QtWidgets.QHBoxLayout()
@@ -10886,7 +10886,7 @@ def build_window(model=None):
 
     def show_shortcuts():
         rows = shortcut_table([(a.text(), a.shortcut().toString()) for a in win._actions.values()])
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Keyboard shortcuts")
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Keyboard shortcuts"))
         tag_dialog(dlg, "reference")
         v = QtWidgets.QVBoxLayout(dlg)
         tbl = QtWidgets.QTableWidget(len(rows), 2)
@@ -10905,7 +10905,7 @@ def build_window(model=None):
         dlg.resize(460, 540); dlg.exec()
 
     def show_op_reference():
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Operator reference")
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Operator reference"))
         tag_dialog(dlg, "reference")
         v = QtWidgets.QVBoxLayout(dlg)
         srch = QtWidgets.QLineEdit(); srch.setPlaceholderText("search operators…")
@@ -11013,7 +11013,7 @@ def build_window(model=None):
         if getattr(win, "_samples_dlg", None) is not None:
             win._samples_dlg.show(); win._samples_dlg.raise_(); win._samples_dlg.activateWindow()
             return
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Samples & code")
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Samples & code"))
         tag_dialog(dlg, "reference")
         dlg.setModal(False)                        # lives beside Studio, not on top of it
         h = QtWidgets.QHBoxLayout(dlg)
@@ -12164,8 +12164,7 @@ def build_window(model=None):
     def add_op_by_name(n):
         row = _op_row(n)
         if row and row.get("backend") == "general":     # palette: general ops are run-via-CLI only
-            flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
-                  "fullseye algo run %s" % (n, n))
+            flash(not_insertable_text(n, "general"))
             return
         push_undo()
         model.add_stage(n)
@@ -12187,7 +12186,7 @@ def build_window(model=None):
         # 台帳の op は「実行窓をその op で開く」(Ctrl+P → 名前 → Enter の 3 手で試せる。2026-10-03)
         items += [("ledger: " + n, (lambda n=n: win._open_ledger_runner(n))) for n in ledger_op_names()]
         labels = [lbl for lbl, _ in items]
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Command palette")
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Command palette"))
         tag_dialog(dlg, "editor")
         v = QtWidgets.QVBoxLayout(dlg)
         ed = QtWidgets.QLineEdit(); ed.setPlaceholderText("type an action or operator…  (Enter to run)")
@@ -14828,7 +14827,7 @@ def build_window(model=None):
         state["dirty"] = False                                # now matches a file on disk
         state["pipe_path"] = os.path.abspath(path)
         _push_recent(path); _set_title()
-        flash("saved " + os.path.basename(path))
+        flash(tr("saved %s") % os.path.basename(path))
 
     def _open_pipe_path(path):
         import json
@@ -14876,7 +14875,7 @@ def build_window(model=None):
         if model.directives:
             apply_text_directives("\n".join(model.directives))
         _push_recent(path); _set_title()
-        flash("loaded " + os.path.basename(path))
+        flash(tr("loaded %s") % os.path.basename(path))
     win._open_pipe_path = _open_pipe_path
     win._refresh_stage_list = refresh_stage_list
 
@@ -14985,7 +14984,7 @@ def build_window(model=None):
 
     def _open_recent(path):
         if not os.path.exists(path):
-            flash("recent file no longer exists: " + os.path.basename(path))
+            flash(tr("recent file no longer exists: %s") % os.path.basename(path))
             _save_recent([x for x in _recent_paths()
                           if os.path.normcase(x) != os.path.normcase(os.path.abspath(path))])
             return
@@ -15509,7 +15508,7 @@ def build_window(model=None):
 
     def show_guide():
         try:
-            QtWidgets.QMessageBox.information(win, "Fullseye Studio — guide",
+            QtWidgets.QMessageBox.information(win, tr("Fullseye Studio — guide"),
                                              HELP_I18N.get(win._lang, HELP_I18N["en"]))
         except Exception:
             pass
