@@ -165,6 +165,7 @@ PENDING_ROWS_CEILING = 294   # +1: 「impl: %s」(2 回目の直し)
 PENDING_ROWS_CEILING += 5
 PENDING_ROWS_CEILING += 1    # M5: 座標つきの画素の読み取りの 1 行
 PENDING_ROWS_CEILING += 5    # M12: 検索の「見本」の群(見出し・行・ボタン・ツールチップ・使えない時の文)
+PENDING_ROWS_CEILING += 18   # M10 / M9: 終了と破棄の確認の文・ボタン・題、見本を読んだ時の文
 
 
 # --------------------------------------------------------------------------- #

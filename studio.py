@@ -434,16 +434,45 @@ def _default_error(parent, title, text):                      # pragma: no cover
 
 
 def _default_confirm(parent, title, text):                    # pragma: no cover - GUI
+    """「捨てる / キャンセル」の確認。ボタンの字は UI の言語(Qt の標準ボタンは Qt の翻訳が無いと英語のまま)。"""
     from PySide6 import QtWidgets
-    btn = QtWidgets.QMessageBox.question(
-        parent, title, text,
-        QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel,
-        QtWidgets.QMessageBox.Cancel)
-    return btn == QtWidgets.QMessageBox.Discard
+    box = QtWidgets.QMessageBox(parent)
+    box.setIcon(QtWidgets.QMessageBox.Question)
+    box.setWindowTitle(title); box.setText(text)
+    b_discard = box.addButton(tr("Discard"), QtWidgets.QMessageBox.DestructiveRole)
+    b_cancel = box.addButton(tr("Cancel"), QtWidgets.QMessageBox.RejectRole)
+    box.setDefaultButton(b_cancel); box.setEscapeButton(b_cancel)
+    box.exec()
+    return box.clickedButton() is b_discard
+
+
+def _default_close_confirm(parent, title, text, can_save):    # pragma: no cover - GUI
+    """終了の確認(★2026-11-13、初回起動の点検 M10)。返り値は ``"save"`` / ``"discard"`` / ``"cancel"``。
+
+    ボタンは「保存して閉じる」(保存できる時だけ)・「保存せずに閉じる」・「キャンセル」(既定・Esc)。従来は
+    Cancel と Discard の 2 つで、字も英語だった。:data:`CONFIRM_HOOK` が差し替えてある時(試験・埋め込み)は
+    モーダルを出さず、その答え(True = 捨てて閉じる)に従う。"""
+    if CONFIRM_HOOK is not _default_confirm:
+        return "discard" if CONFIRM_HOOK(parent, title, text) else "cancel"
+    from PySide6 import QtWidgets
+    box = QtWidgets.QMessageBox(parent)
+    box.setIcon(QtWidgets.QMessageBox.Question)
+    box.setWindowTitle(title); box.setText(text)
+    b_save = box.addButton(tr("Save and close"), QtWidgets.QMessageBox.AcceptRole) if can_save else None
+    b_discard = box.addButton(tr("Close without saving"), QtWidgets.QMessageBox.DestructiveRole)
+    b_cancel = box.addButton(tr("Cancel"), QtWidgets.QMessageBox.RejectRole)
+    box.setDefaultButton(b_cancel); box.setEscapeButton(b_cancel)
+    box.exec()
+    hit = box.clickedButton()
+    if b_save is not None and hit is b_save:
+        return "save"
+    return "discard" if hit is b_discard else "cancel"
 
 
 ERROR_HOOK = _default_error       # (parent, title, text) -> None
 CONFIRM_HOOK = _default_confirm   # (parent, title, text) -> bool (True = go ahead)
+#: (parent, title, text, can_save) -> "save" | "discard" | "cancel"(終了の確認だけが使う)
+CLOSE_CONFIRM_HOOK = _default_close_confirm
 KNOB_DEBOUNCE_MS = 160            # coalesce knob drags before re-running step_states
 
 RUN_WORKER_I18N_KEYS = (
@@ -8483,10 +8512,20 @@ def build_window(model=None):
         state["dirty"] = True
         _set_title()
 
+    def _pipeline_unsaved():
+        """段に、保存していない変更があるか。
+
+        ★2026-11-13(初回起動の点検 M10): 見本を読んだだけ(段が読んだ時のまま)なら無い事にする —— 見本の後に
+        別の見本を選ぶ・終了するたびに「破棄しますか」と聞かれていた。見本の段は ``state["sample_stages"]`` に覚える。"""
+        if not (state.get("dirty") and model.stages):
+            return False
+        pristine = state.get("sample_stages")
+        return not (pristine is not None and [list(s) for s in model.stages] == pristine)
+
     def _set_title():
         """Window title = <pipeline>* — <image> — Fullseye Studio (star = unsaved)."""
         pp = state.get("pipe_path"); ip = state.get("image_path")
-        star = "*" if (state.get("dirty") and model.stages) else ""
+        star = "*" if _pipeline_unsaved() else ""
         seg = (os.path.basename(pp) if pp else "untitled") + star
         if ip:
             seg += " — " + os.path.basename(ip)
@@ -8520,10 +8559,9 @@ def build_window(model=None):
                 pass
     win._report_error = report_error
 
-    def confirm_discard(title, what="the current pipeline"):
-        """True if it is OK to throw away unsaved work — unsaved pipeline stages OR
-        unapplied Program-editor edits (Codex #9). When neither is pending, no prompt."""
-        pipe_dirty = state["dirty"] and bool(model.stages)
+    def _unsaved_work():
+        """``(pipe_dirty, code_dirty, ed_dirty, parts)``: 保存していない物と、それを言う句(UI の言語)。"""
+        pipe_dirty = _pipeline_unsaved()
         code_dirty = bool(state.get("code_dirty"))
         # Python Editor の未保存タブも数える(アプリ終了経路のデータ損失防止)。
         # Count unsaved Python-Editor tabs too — the app-quit path must not
@@ -8535,17 +8573,43 @@ def build_window(model=None):
             if tabs is not None:
                 ed_dirty = sum(1 for i in range(tabs.count())
                                if getattr(tabs.widget(i), "_dirty", False))
-        if not (pipe_dirty or code_dirty or ed_dirty):
-            return True
         parts = []
         if pipe_dirty:
-            parts.append("%d unsaved stage(s)" % len(model.stages))
+            parts.append(tr("%d unsaved stage(s)") % len(model.stages))
         if code_dirty:
-            parts.append("unapplied Program edits")
+            parts.append(tr("unapplied Program edits"))
         if ed_dirty:
-            parts.append("%d unsaved editor tab(s)" % ed_dirty)
-        return bool(CONFIRM_HOOK(
-            win, title, "%s has %s.\nDiscard them?" % (what.capitalize(), " and ".join(parts))))
+            parts.append(tr("%d unsaved editor tab(s)") % ed_dirty)
+        return pipe_dirty, code_dirty, ed_dirty, parts
+
+    def _unsaved_sentence(what, parts):
+        return tr("%s has %s.") % (tr(what[:1].upper() + what[1:]), tr(" and ").join(parts))
+
+    def confirm_discard(title, what="the current pipeline"):
+        """True if it is OK to throw away unsaved work — unsaved pipeline stages OR
+        unapplied Program-editor edits (Codex #9). When neither is pending, no prompt.
+        The title and the sentence are in the UI language (2026-11-13, M9)."""
+        _pipe, _code, _ed, parts = _unsaved_work()
+        if not parts:
+            return True
+        return bool(CONFIRM_HOOK(win, tr(title), _unsaved_sentence(what, parts) + "\n" + tr("Discard them?")))
+
+    def close_guard():
+        """終了の確認(★2026-11-13、初回起動の点検 M10): 保存して閉じる / 保存せずに閉じる / キャンセル(既定)。
+
+        「保存して閉じる」は段が未保存で、ほかに未保存の物(Program の未適用の編集・エディタのタブ)が無い時だけ出す
+        (保存できるのは処理手順だけなので、ほかの物を黙って失わない)。保存の窓を取り消したら閉じない。"""
+        pipe_dirty, code_dirty, ed_dirty, parts = _unsaved_work()
+        if not parts:
+            return True
+        can_save = bool(pipe_dirty and not code_dirty and not ed_dirty)
+        text = (_unsaved_sentence("the current pipeline", parts) + "\n"
+                + (tr("Save the pipeline before closing?") if can_save else tr("Close without saving them?")))
+        answer = CLOSE_CONFIRM_HOOK(win, tr("Quit Fullseye Studio"), text, can_save)
+        if answer == "save" and can_save:
+            save_pipe()
+            return not _pipeline_unsaved()
+        return answer == "discard"
 
     _icon_cache = {}
     _KIND_GLYPH = {"table": "\u25a6", "feature": "#", "series": "~", "array": "\u25a3", "contour": "\u2307",
@@ -10235,9 +10299,11 @@ def build_window(model=None):
             del win._undo_stack[0]
         win._redo_stack.clear(); _sync_undo_actions()
         mark_dirty()
+        state["sample_stages"] = [list(s) for s in model.stages]     # M10: 見本のままなら未保存と言わない
+        _set_title()
         refresh_stage_list(select=len(model.stages) - 1)
         show_result()
-        flash("loaded sample '%s' — its code is now in the Program panel" % samples.itemText(idx))
+        flash(tr("loaded sample '%s' — its code is now in the Program panel") % samples.itemText(idx))
         try:                                  # surface the code so the sample is easy to read/run
             win._docks["program"].show(); win._docks["program"].raise_()
         except Exception:
@@ -11024,8 +11090,10 @@ def build_window(model=None):
             except Exception as e:
                 report_error("Sample pipeline", e); return
             mark_dirty()
+            state["sample_stages"] = [list(s) for s in model.stages]     # M10: 見本のままなら未保存と言わない
+            _set_title()
             refresh_stage_list(select=len(model.stages) - 1); show_result()
-            flash("loaded sample '%s' — the gallery stays open" % it.text())
+            flash(tr("loaded sample '%s' — the gallery stays open") % it.text())
 
         left = QtWidgets.QVBoxLayout()
         lbl = QtWidgets.QLabel("Sample pipelines"); lbl.setProperty("muted", True)
@@ -15004,7 +15072,7 @@ def build_window(model=None):
         if not _w.toolTip():
             _w.setToolTip(_n)
 
-    win.close_guard = lambda: confirm_discard("Quit Fullseye Studio")
+    win.close_guard = close_guard
     win._perception = {"model": pmodel, "mode": percep_mode, "run": run_perception}
     win._flash = flash
     win._state = state                                   # for tests / headless driving

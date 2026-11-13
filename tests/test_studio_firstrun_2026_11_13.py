@@ -441,3 +441,99 @@ def test_m12_search_shows_the_sample_after_the_staples_and_opens_it_with_its_ima
     import recipes
     assert [s[0] for s in model.stages] == [st[0] for st in recipes.stages("FA — scratch on hairline metal")]
     assert np.array_equal(model.image, sample_images.load("metal_hairline_scratch"))
+
+
+# --------------------------------------------------------------------------- #
+# M10: 未保存で閉じる時の確認                                                     #
+# --------------------------------------------------------------------------- #
+def _dirty_pipeline(win, model):
+    """+ で段を 1 つ入れる(利用者の操作と同じ経路。未保存になる)。"""
+    from PySide6 import QtCore
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("gaussian")); _pump(0.05)
+    win._op_buttons["insert"].click(); _pump(0.2)
+    assert [s[0] for s in model.stages] == ["gaussian"]
+
+
+def _close(win):
+    from PySide6 import QtGui, QtWidgets
+    ev = QtGui.QCloseEvent(); ev.accept()
+    QtWidgets.QApplication.sendEvent(win, ev)
+    return ev.isAccepted()
+
+
+def test_m10_quit_asks_with_three_choices_in_the_ui_language(launch, monkeypatch):
+    from PySide6 import QtCore, QtWidgets
+    win, model = launch(lang="ja")
+    _dirty_pipeline(win, model)
+    assert win.windowTitle().startswith("untitled*")
+    seen = {}
+
+    def _inspect():
+        box = QtWidgets.QApplication.activeModalWidget()
+        seen["title"] = box.windowTitle(); seen["text"] = box.text()
+        seen["buttons"] = [b.text() for b in box.buttons()]
+        seen["default"] = box.defaultButton().text()
+        seen["escape"] = box.escapeButton().text()
+        box.escapeButton().click()                                     # Esc と同じ = キャンセル
+    QtCore.QTimer.singleShot(300, _inspect)
+    assert studio.CONFIRM_HOOK is studio._default_confirm             # 本物の窓を出す
+    assert _close(win) is False                                       # キャンセル → 閉じない
+    assert sorted(seen["buttons"]) == sorted(["保存して閉じる", "保存せずに閉じる", "キャンセル"]), seen
+    assert seen["default"] == seen["escape"] == "キャンセル"
+    assert seen["title"] == "Fullseye Studio を終了"
+    assert "未保存の段 1 個" in seen["text"] and "保存しますか" in seen["text"], seen["text"]
+    assert not re.search(r"[A-Za-z]{4,}", seen["text"].replace("Program", "")), seen["text"]
+
+
+def test_m10_save_and_close_saves_then_closes_and_a_cancelled_save_keeps_the_window(launch, monkeypatch, tmp_path):
+    from PySide6 import QtWidgets
+    win, model = launch(lang="en")
+    _dirty_pipeline(win, model)
+    calls = []
+
+    def _hook(parent, title, text, can_save):
+        calls.append((title, text, can_save))
+        return "save"
+    monkeypatch.setattr(studio, "CLOSE_CONFIRM_HOOK", _hook)
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName", staticmethod(lambda *a, **k: ("", "")))
+    assert _close(win) is False                                       # 保存の窓を取り消した → 閉じない
+    assert calls[-1][2] is True and "Save the pipeline before closing?" in calls[-1][1]
+    out = tmp_path / "p.json"
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName", staticmethod(lambda *a, **k: (str(out), "")))
+    assert _close(win) is True
+    assert out.exists() and '"gaussian"' in out.read_text(encoding="utf-8")
+    monkeypatch.setattr(studio, "CLOSE_CONFIRM_HOOK", lambda *a: "discard")
+    assert _close(win) is True                                        # 保存済み: 聞かずに閉じる
+    assert len(calls) == 2
+
+
+def test_m10_discard_and_cancel(launch, monkeypatch):
+    win, model = launch(lang="en")
+    _dirty_pipeline(win, model)
+    monkeypatch.setattr(studio, "CLOSE_CONFIRM_HOOK", lambda *a: "cancel")
+    assert _close(win) is False
+    monkeypatch.setattr(studio, "CLOSE_CONFIRM_HOOK", lambda *a: "discard")
+    assert _close(win) is True
+
+
+def test_m10_a_sample_left_as_loaded_is_not_unsaved(launch, monkeypatch):
+    from PySide6 import QtWidgets
+    win, model = launch(lang="ja")
+    asked = []
+    monkeypatch.setattr(studio, "CONFIRM_HOOK", lambda p, t, txt: (asked.append((t, txt)), True)[1])
+    combo = [c for c in win.findChildren(QtWidgets.QComboBox)
+             if c.count() > 5 and c.itemText(1).startswith("Denoise")][0]
+    combo.setCurrentIndex(1); _pump(0.3)
+    assert len(model.stages) >= 1 and not asked
+    assert "*" not in win.windowTitle()
+    combo.setCurrentIndex(2); _pump(0.3)                              # 見本 → 別の見本: 聞かない
+    assert not asked
+    assert win.close_guard() is True                                  # 見本のままなら終了も聞かない
+    win._op_list.setCurrentRow(0); win._op_buttons["insert"].click(); _pump(0.2)   # 段を足すと未保存
+    assert "*" in win.windowTitle()
+    combo.setCurrentIndex(3); _pump(0.3)
+    assert len(asked) == 1
+    title, text = asked[0]
+    assert title == "見本の処理手順を読み込む" and "破棄しますか" in text, asked

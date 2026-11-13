@@ -2345,6 +2345,24 @@
   "Sample pipeline with its own image": {"ja": "見本の処理手順(専用の画像つき)"},
   "Open sample": {"ja": "見本を開く"},
   "Load this sample pipeline and the image it was made for": {"ja": "この見本の処理手順と、見本の画像を読み込みます"},
-  "This sample is not available here: %s": {"ja": "この見本はここでは使えません: %s"}
+  "This sample is not available here: %s": {"ja": "この見本はここでは使えません: %s"},
+  "Discard": {"ja": "破棄"},
+  "Cancel": {"ja": "キャンセル"},
+  "Save and close": {"ja": "保存して閉じる"},
+  "Close without saving": {"ja": "保存せずに閉じる"},
+  "%d unsaved stage(s)": {"ja": "未保存の段 %d 個"},
+  "unapplied Program edits": {"ja": "Program 欄の未適用の編集"},
+  "%d unsaved editor tab(s)": {"ja": "未保存のエディタのタブ %d 個"},
+  "%s has %s.": {"ja": "%sに、%sがあります。"},
+  "The current pipeline": {"ja": "現在の処理手順"},
+  " and ": {"ja": "、"},
+  "Discard them?": {"ja": "破棄しますか?"},
+  "Save the pipeline before closing?": {"ja": "閉じる前に処理手順を保存しますか?"},
+  "Close without saving them?": {"ja": "保存せずに閉じますか?"},
+  "Quit Fullseye Studio": {"ja": "Fullseye Studio を終了"},
+  "Load sample pipeline": {"ja": "見本の処理手順を読み込む"},
+  "Open pipeline": {"ja": "処理手順を開く"},
+  "loaded sample '%s' — its code is now in the Program panel": {"ja": "見本「%s」を読み込みました。コードは Program 欄にあります"},
+  "loaded sample '%s' — the gallery stays open": {"ja": "見本「%s」を読み込みました(一覧の窓は開いたままです)"}
  }
 }
