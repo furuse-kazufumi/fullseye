@@ -68,6 +68,7 @@ S_STRIP = {"auto": "Tools and tabs: automatic (on the left when the panel is wid
            "left": "Tools and tabs: on the left"}
 STRINGS = (S_BAR, S_HINT, S_FLOAT, S_DOCK, S_HIDE, S_SHOW, S_LAYOUT, S_RESET, S_CODE_LEFT,
            S_CODE_BOTTOM, S_DOCK_ALL, S_MENU, S_MORE, S_REDUCE, S_REDUCE_TIP, S_OPENING, S_SAMPLE, S_SEARCHING, S_ST_SHOWN, S_ST_STAGES, S_ST_ERRORS, S_ST_VARS) + tuple(S_STRIP.values())
+# (the strings of the strip - S_OVERFLOW, S_SCROLL_BACK, S_SCROLL_ON - are added below, where they are defined)
 
 _QWIDGETSIZE_MAX = 16777215
 
@@ -219,6 +220,14 @@ def _glyph(name, colour, px=16):
         rect(2.5, 2.5, 11, 11); rect(2.5, 9.5, 11, 4, fill=True)
     elif name == "close":
         line(4, 4, 12, 12); line(12, 4, 4, 12)
+    elif name == "scroll_back_h":              # the scroll buttons of a strip (A2): chevrons
+        path([(10, 3.5), (5.5, 8), (10, 12.5)])
+    elif name == "scroll_on_h":
+        path([(6, 3.5), (10.5, 8), (6, 12.5)])
+    elif name == "scroll_back_v":
+        path([(3.5, 10), (8, 5.5), (12.5, 10)])
+    elif name == "scroll_on_v":
+        path([(3.5, 6), (8, 10.5), (12.5, 6)])
     else:
         p.end()
         raise KeyError("no glyph named %r" % (name,))
@@ -371,6 +380,9 @@ def restore_layout(win, settings, usable=None):
             ok = False
         if not ok:
             win.restoreState(win._default_state)
+    st = getattr(win, "_panels", None)
+    if ok and st is not None:
+        st["restore_again"] = state              # once more when shown and the strips have their side (relayout)
     after_restore(win)
     return ok
 
@@ -434,6 +446,7 @@ def tighten(win):
     changed = 0
     for dock in win._docks.values():
         root = dock.widget()
+        root = getattr(root, "_fs_body", root)  # a panel whose strip stands on its left: the panel itself
         if root is None:
             continue
         for box in root.findChildren(QtWidgets.QGroupBox)[::-1] + [root]:    # inner columns first
@@ -507,114 +520,923 @@ def strip_side(width, height, current="top", mode="auto"):
     return current
 
 
-def _find_strips(win):
-    """Icon rows that sit directly under (or above) a list in a panel, re-housed so they can turn.
+# --------------------------------------------------------------------------- #
+# one strip for every panel's tools and every tab row (A1 A2 A3, user 2026-11-13)
+#
+# Every panel DECLARES its tool strip: register_panel(win, key, strip=(row, body)) for a dock,
+# declare_strip for the main image, adopt_image_strip for every other image window (also when it is
+# detached). Nothing is guessed from the widget tree any more (the old _find_strips looked for "an
+# icon row next to a list" and missed every strip that was not). A panel without a strip says why
+# (STRIP_EXEMPT); panel_ledger(win) lists every panel and what it declared, and the gates count it.
+#
+# A strip is a FlowStrip. It turns with its panel: a row across the top while the panel is tall or near
+# square, one column on the left when it is wide (strip_side: 2.2 / 1.6; automatic / on top / on the
+# left - one setting for every panel, the image windows and the code). When it does not fit it either
+#   SCROLLS: a scroll button at each end (across: back / on to the left / right, down: up / down; one
+#            press = one item, held = repeat, the wheel too, the button at an end is disabled), or
+#   WRAPS:   onto more rows (a row strip) or columns (a column strip), at most WRAP_MAX_LINES; past that
+#            the last one scrolls, so every item stays reachable.
+# One setting for every strip and every tab row: "When they do not fit: scroll / wrap" (default scroll:
+# it takes no room and nothing moves). The tab row of a group of tabbed panels is the same part: a
+# FlowStrip of FlowTabs laid over Qt's own QTabBar, which stays the model (current tab, the arrow keys,
+# what QMainWindow raises). Qt has no multi-row tab bar, so the rows are drawn here and Qt's bar is only
+# made as thick as the rows need. Wrapped rows stay where they are when a tab is chosen (the old
+# Windows multi-row tab control moved the chosen row next to the page - the tab under the mouse jumped
+# away; Visual Studio has no multi-row tool-window tabs): only the mark of the chosen tab moves.
+# --------------------------------------------------------------------------- #
+OVERFLOW_MODES = ("scroll", "wrap")
+OVERFLOW_KEY = "panels/overflow_mode"
+WRAP_MAX_LINES = 3
+S_OVERFLOW = {"scroll": "When they do not fit: scroll", "wrap": "When they do not fit: wrap onto more rows"}
+S_SCROLL_BACK = "Scroll back — show the ones before (or turn the mouse wheel)"
+S_SCROLL_ON = "Scroll on — show the ones after (or turn the mouse wheel)"
+#: panels that have no tool strip of their own, and why (panel_ledger lists them with the reason)
+STRIP_EXEMPT = {
+    "display": "its three buttons each belong to the choice box beside them (display mode, frame B, "
+               "perception mode): a strip would part a button from the box it acts on",
+    "compare": "no tool buttons: two image panes and a summary line",
+}
+_FAR = -30000                                   # where an item that is scrolled out of sight waits
+STRINGS = STRINGS + tuple(S_OVERFLOW.values()) + (S_SCROLL_BACK, S_SCROLL_ON)
 
-    Rule: in a vertical column, a list / tree / table followed (or preceded) by a row whose widgets
-    are all icon-only tool buttons, at least two of them. The two items are moved into one box
-    layout whose direction is switched later; nothing else in the column moves."""
-    from PySide6 import QtWidgets   # noqa: PLC0415
 
-    def icon_row(item):
-        lay = item.layout() if item is not None else None
-        if not isinstance(lay, QtWidgets.QHBoxLayout):
+def normalise_overflow_mode(value):
+    """An overflow mode from the settings: "scroll" (the default) or "wrap"."""
+    value = str(value or "").strip().lower()
+    return value if value in OVERFLOW_MODES else "scroll"
+
+
+def scroll_arrow(level=None):
+    """Length of one scroll button along its strip: half a tool button (12 px compact, 14 standard). The
+    same for tool strips and tab rows; across the strip it is as thick as the row it scrolls."""
+    d = studio_theme.DENSITY[studio_theme.normalise_density(level or studio_theme.current_density())]
+    return max(10, d["icon_btn"] // 2)
+
+
+def _leads(n, gaps):
+    lead = list(gaps) if isinstance(gaps, (list, tuple)) else [gaps] * n
+    if len(lead) != n:
+        raise ValueError("one gap per item (%d) or one number, not %d" % (n, len(lead)))
+    return [max(0, int(g)) for g in lead]
+
+
+def _span(ext, lead, idx):
+    return sum(ext[i] for i in idx) + sum(lead[i] for i in idx[1:])
+
+
+def flow_plan(extents, length, mode="scroll", gaps=4, max_lines=WRAP_MAX_LINES):
+    """Qt-free: how a row of items fits into ``length`` px along the strip.
+
+    ``extents``: each item's length along the strip. ``gaps``: one number, or one per item = the gap
+    BEFORE that item when it is not the first of its row (a new group has a wider one). Returns
+    {"lines": [[index, ...], ...], "scroll": index of the line that scrolls, or None}.
+    Everything on one line when it fits (or when the strip has no length yet). "scroll": that one line
+    scrolls. "wrap": greedy rows of at most ``length``; more than ``max_lines`` rows -> the last row
+    takes all the rest and scrolls. An item longer than the strip cannot wrap: it scrolls."""
+    n = len(extents)
+    ext = [max(0, int(e)) for e in extents]
+    lead = _leads(n, gaps)
+    every = list(range(n))
+    if n == 0:
+        return {"lines": [], "scroll": None}
+    if length <= 0 or _span(ext, lead, every) <= length:
+        return {"lines": [every], "scroll": None}
+    if normalise_overflow_mode(mode) == "scroll" or max_lines <= 1 or max(ext) > length:
+        return {"lines": [every], "scroll": 0}
+    lines, cur = [], []
+    for i in every:
+        if cur and _span(ext, lead, cur + [i]) > length:
+            lines.append(cur)
+            cur = []
+        cur.append(i)
+    lines.append(cur)
+    if len(lines) <= max_lines:
+        return {"lines": lines, "scroll": None}
+    head = lines[:max_lines - 1]
+    return {"lines": head + [[i for line in lines[max_lines - 1:] for i in line]], "scroll": max_lines - 1}
+
+
+def scroll_reach(extents, gaps, room, first=0):
+    """Qt-free: one scrolling line of items in ``room`` px (the length between its two scroll buttons).
+
+    Returns (first, end, last_first): items first .. end-1 are wholly shown (always at least one), and
+    ``last_first`` is the smallest start at which the LAST item is shown - the end of the scroll."""
+    n = len(extents)
+    if n == 0:
+        return 0, 0, 0
+    ext = [max(0, int(e)) for e in extents]
+    lead = _leads(n, gaps)
+    last_first, used = n - 1, ext[n - 1]
+    while last_first > 0 and used + lead[last_first] + ext[last_first - 1] <= room:
+        used += lead[last_first] + ext[last_first - 1]
+        last_first -= 1
+    first = max(0, min(int(first), last_first))
+    end, used = first + 1, ext[first]
+    while end < n and used + lead[end] + ext[end] <= room:
+        used += lead[end] + ext[end]
+        end += 1
+    return first, end, last_first
+
+
+_FLOW = {}
+
+
+def flow_classes():
+    """FlowStrip / FlowTab / TabRow (made once; Qt is imported here, not when the module loads)."""
+    if _FLOW:
+        return _FLOW
+    from PySide6 import QtCore, QtGui, QtWidgets   # noqa: PLC0415
+
+    class FlowStrip(QtWidgets.QWidget):
+        """One row (or column) of tools or tabs that scrolls or wraps when it does not fit.
+
+        ``kind`` "tools": a panel's own buttons, moved in by ``set_groups``; "tabs": the FlowTabs of a
+        TabRow. objectName "flow_strip" and the property "flowKind" are what the gates count. An item
+        the application hides is left out; an item scrolled out of sight waits outside the strip (it is
+        not hidden, so the application's own show / hide stays the application's)."""
+
+        def __init__(self, kind="tools", key="", parent=None):
+            super().__init__(parent)
+            self.setObjectName("flow_strip")
+            self.setProperty("flowKind", kind)
+            self.setProperty("flowKey", key)
+            self.kind, self.key = kind, key
+            self.orientation = "h"
+            self.mode = "scroll"
+            self.groups = []
+            self.first = 0
+            self.thickness = None                    # one row's thickness; None = the thickest item
+            self.overlay = False                     # drawn over an image: a ground of its own
+            self.sizes_itself = kind == "tools"      # a tab row's size is its tab bar's
+            self.state = {"lines": 1, "scrolling": False, "first": 0, "last_first": 0, "shown": []}
+            self._seps, self._busy, self._queued = [], False, False
+            self.tr = lambda s: s
+            self.b_back = self._arrow("flow_back", -1)
+            self.b_on = self._arrow("flow_on", 1)
+            self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+            self.restyle()
+
+        def _arrow(self, name, step):
+            b = QtWidgets.QToolButton(self)
+            b.setObjectName(name)
+            b.setAutoRaise(True)
+            b.setFocusPolicy(QtCore.Qt.NoFocus)
+            b.setAutoRepeat(True); b.setAutoRepeatDelay(350); b.setAutoRepeatInterval(90)
+            b.setProperty("keepSize", True)
+            b.clicked.connect(lambda _c=False, s=step: self.scroll_by(s))
+            b.hide()
+            return b
+
+        # ---- what it holds -------------------------------------------------- #
+        def set_groups(self, groups):
+            """The items in groups (a wider gap and a thin line between two groups), moved into the strip."""
+            for w in self.items():
+                w.removeEventFilter(self)
+            self.groups = [list(g) for g in groups if g]
+            for w in self.items():
+                hidden = w.isHidden() and w.testAttribute(QtCore.Qt.WA_WState_ExplicitShowHide)
+                w.setParent(self)
+                w.setVisible(not hidden)
+                w.installEventFilter(self)
+            self.first = 0
+            self.updateGeometry()
+            self.relayout()
+
+        def items(self):
+            return [w for g in self.groups for w in g]
+
+        def set_orientation(self, orientation):
+            orientation = "v" if orientation == "v" else "h"
+            if orientation == self.orientation:
+                return
+            self.orientation = orientation
+            self.first = 0
+            if self.sizes_itself:
+                self.setMinimumSize(0, 0)
+                self.setMaximumSize(_QWIDGETSIZE_MAX, _QWIDGETSIZE_MAX)
+            pol = QtWidgets.QSizePolicy
+            self.setSizePolicy(pol.Preferred, pol.Fixed) if orientation == "h" else self.setSizePolicy(pol.Fixed, pol.Preferred)
+            self._set_arrow_icons()
+            self.updateGeometry()
+            self.relayout()
+
+        def set_mode(self, mode):
+            mode = normalise_overflow_mode(mode)
+            if mode != self.mode:
+                self.mode = mode
+                self.first = 0
+                self.updateGeometry()
+                self.relayout()
+
+        # ---- sizes ---------------------------------------------------------- #
+        def _gaps(self):
+            d = studio_theme.density()
+            return (0, 0) if self.kind == "tabs" else (d["click_gap"], d["group_gap"])
+
+        def _laid(self):
+            """[(widget, along, across, lead, new_group)] for the items the application shows."""
+            gap, ggap = self._gaps()
+            out = []
+            for g in self.groups:
+                start = True
+                for w in g:
+                    if w.isHidden():
+                        continue
+                    s = w.sizeHint().expandedTo(w.minimumSize()).boundedTo(w.maximumSize())
+                    along, across = (s.width(), s.height()) if self.orientation == "h" else (s.height(), s.width())
+                    newg = start and bool(out)
+                    out.append((w, along, across, ggap if newg else gap, newg))
+                    start = False
+            return out
+
+        def _row(self, laid):
+            if self.thickness:
+                return int(self.thickness)
+            return max([a for _w, _l, a, _g, _n in laid] or [studio_theme.density()["icon_btn"]])
+
+        def _line_gap(self):
+            return self._gaps()[0]
+
+        def sizeHint(self):
+            laid = self._laid()
+            ext = [x[1] for x in laid]
+            along = _span(ext, [x[3] for x in laid], list(range(len(laid)))) if laid else 0
+            k = max(1, self.state["lines"])
+            across = k * self._row(laid) + (k - 1) * self._line_gap()
+            return QtCore.QSize(along, across) if self.orientation == "h" else QtCore.QSize(across, along)
+
+        def minimumSizeHint(self):
+            laid = self._laid()
+            along = (2 * scroll_arrow() + max(x[1] for x in laid)) if laid else 0
+            k = max(1, self.state["lines"])
+            across = k * self._row(laid) + (k - 1) * self._line_gap()
+            return QtCore.QSize(along, across) if self.orientation == "h" else QtCore.QSize(across, along)
+
+        # ---- placing -------------------------------------------------------- #
+        def relayout(self):
+            if self._busy:
+                return
+            self._busy = True
+            try:
+                self._place()
+            finally:
+                self._busy = False
+
+        def _queue(self):
+            if not self._queued:
+                self._queued = True
+                QtCore.QTimer.singleShot(0, self._run_queued)
+
+        def _run_queued(self):
+            self._queued = False
+            try:
+                self.relayout()
+            except RuntimeError:                     # the strip went with its panel
+                pass
+
+        def _place(self):
+            laid = self._laid()
+            h = self.orientation == "h"
+            length = self.width() if h else self.height()
+            arrow = scroll_arrow()
+            t = self._row(laid)
+            lg = self._line_gap()
+            plan = flow_plan([x[1] for x in laid], length, self.mode, [x[3] for x in laid], WRAP_MAX_LINES)
+            lines = plan["lines"] or [[]]
+            k = len(lines)
+            across_total = k * t + (k - 1) * lg
+            if self.sizes_itself:                    # the row / column is exactly as thick as its lines
+                if h and (self.minimumHeight() != across_total or self.maximumHeight() != across_total):
+                    self.setFixedHeight(across_total)
+                elif not h and (self.minimumWidth() != across_total or self.maximumWidth() != across_total):
+                    self.setFixedWidth(across_total)
+            pos, self._seps, shown = {}, [], []
+            first = last_first = 0
+            sl = plan["scroll"]
+            for li, line in enumerate(lines):
+                c0 = li * (t + lg)
+                if li == sl:
+                    sub = [laid[i] for i in line]
+                    first, end, last_first = scroll_reach([x[1] for x in sub], [0] + [x[3] for x in sub[1:]],
+                                                          max(0, length - 2 * arrow), self.first)
+                    self.first = first
+                    vis, m = line[first:end], arrow
+                else:
+                    vis, m = line, 0
+                for j, i in enumerate(vis):
+                    w, along, across, lead, newg = laid[i]
+                    if j:
+                        if newg:
+                            self._seps.append((m + lead // 2, c0, t))
+                        m += lead
+                    pos[i] = (m, c0, along, across)
+                    m += along
+                    shown.append(w)
+            for i, (w, along, across, _lead, _newg) in enumerate(laid):
+                if i not in pos:
+                    w.move(_FAR, _FAR)               # out of sight; still reachable from the panel's menu
+                    continue
+                a, c0, along, across = pos[i]
+                if self.kind == "tabs" or w.minimumSize() != w.maximumSize():
+                    across = t                       # a tab and a button with text fill the row
+                c = c0 + max(0, (t - across) // 2)
+                w.setGeometry(a, c, along, across) if h else w.setGeometry(c, a, across, along)
+            if sl is not None:
+                c0 = sl * (t + lg)
+                for b, a in ((self.b_back, 0), (self.b_on, max(0, length - arrow))):
+                    b.setGeometry(a, c0, arrow, t) if h else b.setGeometry(c0, a, t, arrow)
+                    b.show(); b.raise_()
+                self.b_back.setEnabled(first > 0)
+                self.b_on.setEnabled(first < last_first)
+            else:
+                self.b_back.hide(); self.b_on.hide()
+                self.first = 0
+            if self.state["lines"] != k:
+                self.updateGeometry()
+            self.state = {"lines": k, "scrolling": sl is not None, "first": first, "last_first": last_first,
+                          "shown": shown, "plan": plan}
+            self.update()
+
+        # ---- moving --------------------------------------------------------- #
+        def scroll_by(self, step):
+            if not self.state["scrolling"]:
+                return
+            self.first = max(0, min(self.first + int(step), self.state["last_first"]))
+            self.relayout()
+
+        def ensure_visible(self, w):
+            """Bring ``w`` into sight when it is scrolled away (a chosen tab, a tool that got the focus)."""
+            if not self.state["scrolling"] or w in self.state["shown"] or w not in self.items():
+                return
+            for _ in range(len(self.items()) + 1):
+                before = self.first
+                order = [x[0] for x in self._laid()]
+                shown = self.state["shown"]
+                if w in shown:
+                    break
+                ahead = order.index(w) > max(order.index(s) for s in shown) if shown else True
+                self.first = max(0, self.first + (1 if ahead else -1))
+                self.relayout()
+                if self.first == before:
+                    break
+
+        # ---- Qt events ------------------------------------------------------ #
+        def eventFilter(self, obj, ev):
+            t = ev.type()
+            if t in (QtCore.QEvent.Show, QtCore.QEvent.Hide) and not self._busy:
+                self.updateGeometry()
+                self._queue()
+            elif t == QtCore.QEvent.Resize and not self._busy:
+                self._queue()
+            elif t == QtCore.QEvent.FocusIn:
+                self.ensure_visible(obj)
+            return False
+
+        def resizeEvent(self, ev):
+            super().resizeEvent(ev)
+            self.relayout()
+
+        def wheelEvent(self, ev):
+            if not self.state["scrolling"]:
+                ev.ignore()
+                return
+            d = ev.angleDelta()
+            v = d.y() or d.x()
+            if v:
+                self.scroll_by(-1 if v > 0 else 1)
+            ev.accept()
+
+        def restyle(self, tr=None):
+            if tr is not None:
+                self.tr = tr
+            p = studio_theme.PALETTES[studio_theme.current_name()]
+            self.setStyleSheet(
+                "QToolButton#flow_back, QToolButton#flow_on { background:%(chrome)s; border:1px solid %(line)s; "
+                "border-radius:2px; padding:0px; margin:0px; }\n"
+                "QToolButton#flow_back:hover, QToolButton#flow_on:hover { border-color:%(accent)s; }\n"
+                "QToolButton#flow_back:disabled, QToolButton#flow_on:disabled { background:transparent; "
+                "border-color:transparent; }\n" % p)
+            self.b_back.setToolTip(self.tr(S_SCROLL_BACK)); self.b_back.setAccessibleName(self.tr(S_SCROLL_BACK))
+            self.b_on.setToolTip(self.tr(S_SCROLL_ON)); self.b_on.setAccessibleName(self.tr(S_SCROLL_ON))
+            self._set_arrow_icons()
+            self.updateGeometry()
+            self.relayout()
+
+        def _set_arrow_icons(self):
+            p = studio_theme.PALETTES[studio_theme.current_name()]
+            side = max(8, scroll_arrow() - 2)
+            for b, name in ((self.b_back, "scroll_back"), (self.b_on, "scroll_on")):
+                g = name + ("_v" if self.orientation == "v" else "_h")
+                ic = QtGui.QIcon()
+                ic.addPixmap(_glyph(g, p["text"]), QtGui.QIcon.Normal)
+                ic.addPixmap(_glyph(g, p["off"]), QtGui.QIcon.Disabled)
+                b.setIcon(ic)
+                b.setIconSize(QtCore.QSize(side, side))
+
+        def paintEvent(self, _ev):
+            if not self._seps and not self.overlay:
+                return
+            p = studio_theme.PALETTES[studio_theme.current_name()]
+            painter = QtGui.QPainter(self)
+            if self.overlay:                         # over an image: a ground of its own
+                ground = QtGui.QColor(p["chrome"]); ground.setAlpha(220)
+                painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
+                painter.setPen(QtCore.Qt.NoPen); painter.setBrush(ground)
+                painter.drawRoundedRect(QtCore.QRectF(self.rect()), 5, 5)
+            painter.setPen(QtGui.QPen(QtGui.QColor(p["line"]), 1))
+            for a, c0, t in self._seps:              # a thin line between two groups
+                if self.orientation == "h":
+                    painter.drawLine(a, c0 + 3, a, c0 + t - 4)
+                else:
+                    painter.drawLine(c0 + 3, a, c0 + t - 4, a)
+            painter.end()
+
+    class FlowTab(QtWidgets.QAbstractButton):
+        """One tab of a TabRow, drawn by the strip: the text is never cut and never loses an '&' (it is
+        not a mnemonic here), a vertical tab is turned 90 degrees and read from the bottom up (the
+        user's choice). Its text is kept apart from QAbstractButton.setText (which would make '&' a key)."""
+
+        def __init__(self, row, index, text, parent=None):
+            super().__init__(parent)
+            self.setObjectName("flow_tab")
+            self.row, self.index, self.label = row, index, str(text)
+            self.vertical = False
+            self.setCheckable(True)
+            self.setFocusPolicy(QtCore.Qt.NoFocus)
+            self.setAccessibleName(self.label)
+            self.setToolTip(self.label)
+            self.setAttribute(QtCore.Qt.WA_Hover, True)
+            self._press = None
+
+        def sizeHint(self):
+            fm = self.fontMetrics()
+            d = studio_theme.density()
+            along = fm.horizontalAdvance(self.label) + 4 * d["unit"] + 2
+            across = fm.height() + 2 * d["tab_v"] + 2
+            return QtCore.QSize(across, along) if self.vertical else QtCore.QSize(along, across)
+
+        def minimumSizeHint(self):
+            return self.sizeHint()
+
+        def paintEvent(self, _ev):
+            p = studio_theme.PALETTES[studio_theme.current_name()]
+            painter = QtGui.QPainter(self)
+            r = self.rect()
+            on = self.isChecked()
+            painter.fillRect(r, QtGui.QColor(p["bg2"] if on else (p["hover"] if self.underMouse() else p["bg1"])))
+            painter.setPen(QtGui.QColor(p["line"]))
+            painter.drawRect(r.adjusted(0, 0, -1, -1))
+            if on:                                   # the chosen tab: the accent edge, as Qt's tab had
+                edge = QtCore.QRect(0, 0, 2, r.height()) if self.vertical else QtCore.QRect(0, 0, r.width(), 2)
+                painter.fillRect(edge, QtGui.QColor(p["accent"]))
+                if self.row is not None and self.row.has_focus():
+                    pen = QtGui.QPen(QtGui.QColor(p["accent_hi"]), 1, QtCore.Qt.DotLine)
+                    painter.setPen(pen)
+                    painter.drawRect(r.adjusted(3, 3, -4, -4))
+            painter.setPen(QtGui.QColor(p["text"] if on else p["muted"]))
+            painter.setFont(self.font())
+            if self.vertical:
+                painter.translate(0, r.height())
+                painter.rotate(-90)
+                box = QtCore.QRect(0, 0, r.height(), r.width())
+            else:
+                box = QtCore.QRect(r)
+            painter.drawText(box, QtCore.Qt.AlignCenter, self.label)     # no mnemonic flag: '&' is drawn
+            painter.end()
+
+        def mousePressEvent(self, ev):
+            if ev.button() == QtCore.Qt.LeftButton:
+                self._press = ev.position().toPoint()
+            super().mousePressEvent(ev)
+
+        def mouseMoveEvent(self, ev):
+            if self._press is not None and ev.buttons() & QtCore.Qt.LeftButton:
+                here = ev.position().toPoint()
+                if (here - self._press).manhattanLength() >= QtWidgets.QApplication.startDragDistance():
+                    strip = self.parentWidget()
+                    at = self.mapTo(strip, here)
+                    margin = 2 * max(8, (self.height() if not self.vertical else self.width()))
+                    if not strip.rect().adjusted(-margin, -margin, margin, margin).contains(at):
+                        self._press = None
+                        self.setDown(False)
+                        if self.row is not None:          # pulled out of the row: a separate window (P18-4)
+                            self.row.drag_out(self.index, ev.globalPosition().toPoint())
+                        return
+            super().mouseMoveEvent(ev)
+
+        def mouseReleaseEvent(self, ev):
+            self._press = None
+            super().mouseReleaseEvent(ev)
+
+        def contextMenuEvent(self, ev):
+            if self.row is not None:                     # a tab's right-click = that panel's menu (P18-3)
+                self.row.menu_for(self.index, ev.globalPos())
+            ev.accept()
+
+    class TabRow(QtCore.QObject):
+        """The tab row of one group of tabbed panels: a FlowStrip of FlowTabs over Qt's QTabBar."""
+
+        def __init__(self, win, bar):
+            super().__init__(bar)
+            self.win, self.bar = win, bar
+            self.strip = FlowStrip("tabs", "tabs", bar)
+            self.tabs, self.sig, self.qss = [], None, ""
+            self.t1, self.off = None, None
+            self.strip.show()
+            bar.installEventFilter(self)
+            bar.currentChanged.connect(self.follow_current)
+            bar.setProperty("fsTabRow", True)
+
+        def vertical(self):
+            return self.bar.shape() in (QtWidgets.QTabBar.RoundedWest, QtWidgets.QTabBar.RoundedEast,
+                                        QtWidgets.QTabBar.TriangularWest, QtWidgets.QTabBar.TriangularEast)
+
+        def has_focus(self):
+            return self.bar.hasFocus()
+
+        def signature(self):
+            b = self.bar
+            return (b.count(), tuple(b.tabText(i) for i in range(b.count())), b.shape())
+
+        def _set_qss(self, qss):
+            if qss != self.qss:
+                self.qss = qss
+                self.bar.setStyleSheet(qss)
+
+        def _measure(self):
+            """One row's thickness = Qt's bar as it is without the extra rows."""
+            self._set_qss("")
+            s = self.bar.sizeHint()
+            self.t1 = max(1, s.width() if self.vertical() else s.height())
+            self.off = None
+
+        def rebuild(self):
+            for t in self.tabs:
+                t.setParent(None)
+                t.deleteLater()
+            v = self.vertical()
+            self.tabs = []
+            for i in range(self.bar.count()):
+                tab = FlowTab(self, i, self.bar.tabText(i))
+                tab.vertical = v
+                tab.setFont(self.bar.font())
+                tab.clicked.connect(lambda _c=False, k=i: self.select(k))
+                self.tabs.append(tab)
+            self.strip.set_groups([self.tabs])
+            self._measure()
+            self.follow_current(self.bar.currentIndex())
+
+        def place(self):
+            st = _state(self.win)
+            sig = self.signature()
+            if sig != self.sig:
+                self.sig = sig
+                self.rebuild()
+            if self.t1 is None:
+                self._measure()
+            self.strip.tr = st["tr"]
+            self.strip.set_orientation("v" if self.vertical() else "h")
+            self.strip.set_mode(st.get("overflow_mode", "scroll"))
+            self.strip.thickness = self.t1
+            self.strip.setGeometry(self.bar.rect())
+            self.strip.raise_()
+            self.strip.relayout()
+            self._rows(self.strip.state["lines"])
+
+        def _rows(self, k):
+            """Make Qt's bar as thick as ``k`` rows (it is only the room; the rows are the strip's)."""
+            if k <= 1:
+                self._set_qss("")
+                return
+            side = "width" if self.vertical() else "height"
+            if self.off is None:                     # what the style adds to a tab's min-height / min-width
+                probe = 4 * self.t1
+                self._set_qss("QTabBar::tab { min-%s: %dpx; }" % (side, probe))
+                s = self.bar.sizeHint()
+                self.off = (s.width() if self.vertical() else s.height()) - probe
+            self._set_qss("QTabBar::tab { min-%s: %dpx; }" % (side, max(1, k * self.t1 - self.off)))
+
+        def follow_current(self, index):
+            for t in self.tabs:
+                t.setChecked(t.index == index)
+            if 0 <= index < len(self.tabs):
+                self.strip.ensure_visible(self.tabs[index])
+
+        def select(self, index):
+            self.bar.setCurrentIndex(index)          # Qt raises the panel of that tab
+            self.follow_current(self.bar.currentIndex())
+
+        def key_at(self, index):
+            """The panel key of tab ``index`` (Qt keeps the dock's address as the tab's data)."""
+            data = self.bar.tabData(index)
+            try:
+                import shiboken6   # noqa: PLC0415
+                for key, dock in self.win._docks.items():
+                    if shiboken6.getCppPointer(dock)[0] == data:
+                        return key
+            except Exception:                        # noqa: BLE001 - fall back on the name
+                pass
+            text = self.bar.tabText(index)
+            for key, dock in self.win._docks.items():
+                if dock.windowTitle() == text:
+                    return key
             return None
-        ws = [lay.itemAt(i).widget() for i in range(lay.count()) if lay.itemAt(i).widget() is not None]
-        if len(ws) >= 2 and all(isinstance(w, QtWidgets.QToolButton) and not w.text() for w in ws):
-            return ws
-        return None
 
+        def menu_for(self, index, gpos):
+            key = self.key_at(index)
+            bar = _state(self.win)["titles"].get(key) if key else None
+            if bar is None:
+                return None
+            bar.fill_menu()
+            menu = bar.b_menu.menu()
+            _state(self.win)["open_menu"] = menu
+            menu.popup(gpos)
+            return menu
+
+        def drag_out(self, index, gpos):
+            key = self.key_at(index)
+            if key is None:
+                return None
+            toggle_float(self.win, key, True)
+            dock = self.win._docks[key]
+            dock.move(gpos - QtCore.QPoint(40, 10))
+            _keep_on_screen(self.win, dock)
+            sync(self.win)
+            return dock
+
+        def eventFilter(self, obj, ev):
+            t = ev.type()
+            if t in (QtCore.QEvent.Resize, QtCore.QEvent.Show, QtCore.QEvent.FontChange):
+                QtCore.QTimer.singleShot(0, self._safe_place)
+            elif t in (QtCore.QEvent.FocusIn, QtCore.QEvent.FocusOut):
+                for tab in self.tabs:
+                    tab.update()
+            return False
+
+        def _safe_place(self):
+            try:
+                self.place()
+            except RuntimeError:                     # the bar went with the window
+                pass
+
+    _FLOW.update(FlowStrip=FlowStrip, FlowTab=FlowTab, TabRow=TabRow)
+    return _FLOW
+
+
+def _holding(start, target):
+    """(layout, index) of the item that holds ``target`` (a widget or a layout) under ``start``."""
+    stack = [start] if start is not None else []
+    while stack:
+        lay = stack.pop()
+        for i in range(lay.count()):
+            it = lay.itemAt(i)
+            if it.widget() is target or it.layout() is target:
+                return lay, i
+            if it.layout() is not None:
+                stack.append(it.layout())
+    return None, -1
+
+
+def declare_strip(win, key, row, body=None, shape=None, root=None):
+    """Panel ``key`` declares its tool strip (the ONE door; register_panel(strip=...) calls it).
+
+    ``row``: the row layout that holds the panel's tool buttons. Every button in it (in order) goes into
+    the strip; a separator line or a gap of 6 px or more between two of them starts a new group; the
+    rest of the row (a box, a label) stays where it is. ``body``: the widget the strip stands to the
+    left of when the panel is wide (None: the whole panel). ``shape``: the widget whose width and height
+    decide the side (None: the dock). ``root``: the panel's top widget when ``body`` is None and the
+    panel is not a dock. Returns the FlowStrip (calling again for the same key returns the first one)."""
+    from PySide6 import QtCore, QtWidgets   # noqa: PLC0415
+    st = _state(win)
+    decl = st.setdefault("strip_decl", {})
+    if decl.get(key, {}).get("strip") is not None:
+        return decl[key]["strip"]
+    FlowStrip = flow_classes()["FlowStrip"]
+    dock = win._docks.get(key) if hasattr(win, "_docks") else None
+    shape = shape if shape is not None else dock
+    if shape is None:
+        raise ValueError("strip of %r: no dock of that name, so a shape widget is needed" % (key,))
+    # 1. the buttons, in groups; separators between them leave the row
+    groups, cur, drop, first_at = [], [], [], None
+    items = [row.itemAt(i) for i in range(row.count())]
+    for i, it in enumerate(items):
+        w = it.widget()
+        if isinstance(w, QtWidgets.QAbstractButton):
+            cur.append(w)
+            first_at = i if first_at is None else first_at
+        elif cur and any(isinstance(x.widget(), QtWidgets.QAbstractButton) for x in items[i + 1:]):
+            line = isinstance(w, QtWidgets.QFrame) and w.frameShape() == QtWidgets.QFrame.VLine
+            gap = it.spacerItem() is not None
+            if line or gap:
+                drop.append(i)
+                if line or it.sizeHint().width() >= 6 or it.spacerItem().expandingDirections():
+                    if cur:
+                        groups.append(cur)
+                    cur = []
+            else:                                    # another kind of widget between buttons: a new group
+                groups.append(cur)
+                cur = []
+    if cur:
+        groups.append(cur)
+    buttons = [b for g in groups for b in g]
+    if not buttons:
+        raise ValueError("strip of %r: the row holds no buttons" % (key,))
+    for i in sorted(drop + [row.indexOf(b) for b in buttons], reverse=True):
+        it = row.takeAt(i)
+        w = it.widget() if it is not None else None
+        if w is not None and not isinstance(w, QtWidgets.QAbstractButton):
+            w.hide()
+            w.setParent(None)
+    strip = FlowStrip("tools", key)
+    strip.set_groups(groups)
+    row.insertWidget(first_at - sum(1 for i in drop if i < first_at), strip)
+    slot = row.indexOf(strip)
+    # 2. the row's home: a widget of its own, so that it can step aside when the strip is on the left
+    parent = row.parent()
+    if not isinstance(parent, QtWidgets.QBoxLayout):
+        raise TypeError("strip of %r: its row must sit in a box layout, not %r" % (key, type(parent).__name__))
+    at = next(i for i in range(parent.count()) if parent.itemAt(i).layout() is row)
+    stretch = parent.stretch(at)
+    m = row.contentsMargins()
+    parent.takeAt(at)
+    row.setParent(None)
+    home = QtWidgets.QWidget()
+    home.setObjectName("strip_home")
+    home.setLayout(row)
+    row.setContentsMargins(m)
+    home.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+    parent.insertWidget(at, home, stretch)
+    # 3. the left column: the body (or the whole panel) gets a column on its left for the strip
+    host = QtWidgets.QWidget()
+    host.setObjectName("strip_host")
+    hl = QtWidgets.QHBoxLayout(host)
+    hl.setContentsMargins(0, 0, 0, 0)
+    hl.setSpacing(studio_theme.density()["click_gap"])
+    left = QtWidgets.QVBoxLayout()
+    left.setContentsMargins(0, 0, 0, 0)
+    hl.addLayout(left)
+    if body is None:
+        top = root if root is not None else (dock.widget() if dock is not None else None)
+        if top is None:
+            raise ValueError("strip of %r: no panel widget to stand beside" % (key,))
+        if dock is not None and dock.widget() is top:
+            dock.setWidget(host)
+        hl.addWidget(top, 1)
+        top.show()
+        body = top
+        host._fs_body = top                      # tighten() works on the panel, not on the strip's host
+    else:
+        lay, i = _holding(body.parentWidget().layout() if body.parentWidget() is not None else None, body)
+        if not isinstance(lay, QtWidgets.QBoxLayout):
+            raise TypeError("strip of %r: its body must sit in a box layout" % (key,))
+        stretch = lay.stretch(i)
+        hidden = body.isHidden() and body.testAttribute(QtCore.Qt.WA_WState_ExplicitShowHide)
+        lay.takeAt(i)
+        host.setSizePolicy(body.sizePolicy())
+        hl.addWidget(body, 1)
+        lay.insertWidget(i, host, stretch)
+        body.setVisible(not hidden)
+    entry = {"key": key, "kind": "dock" if dock is not None else "image", "strip": strip, "row": row,
+             "slot": slot, "home": home, "host": host, "left": left, "body": body, "shape": shape, "side": "top"}
+    st["strips"].append(entry)
+    decl[key] = {"strip": strip, "reason": None, "entry": entry}
+    strip.restyle(st["tr"])
+    if shape is not dock and st.get("follow") is not None:
+        shape.installEventFilter(st["follow"])
+    return strip
+
+
+def adopt_image_strip(win, view, key=None):
+    """An image window's own tool strip (the small one over its top-left corner) becomes a FlowStrip that
+    turns and scrolls like every other. Safe to call twice; returns the strip or None (no strip)."""
+    st = getattr(win, "_panels", None)
+    old = getattr(view, "_tools", None)
+    if st is None or old is None:
+        return None
+    if old.objectName() == "flow_strip":
+        return old
+    buttons = getattr(view, "tool_buttons", None) or {}
+    order = [b for b in (old.layout().itemAt(i).widget() for i in range(old.layout().count())) if b is not None]
+    order = [b for b in order if b in buttons.values()]
+    if not order:
+        return None
+    save = [b for b in order if buttons.get("save") is b]
+    look = [b for b in order if b not in save]
+    st["image_seq"] = st.get("image_seq", 1) + 1
+    key = key or "graphics_%d" % st["image_seq"]
+    FlowStrip = flow_classes()["FlowStrip"]
+    strip = FlowStrip("tools", key, view)
+    strip.overlay = True
+    strip.set_groups([look, save])
+    old.hide()
+    old.setParent(None)
+    old.deleteLater()
+    view._tools = strip
+    strip.move(6, 6)
+    strip.show()
+    strip.raise_()
+    entry = {"key": key, "kind": "overlay", "strip": strip, "shape": view, "side": "top"}
+    st["strips"].append(entry)
+    st.setdefault("strip_decl", {})[key] = {"strip": strip, "reason": None, "entry": entry}
+    strip.restyle(st["tr"])
+    if st.get("follow") is not None:
+        view.installEventFilter(st["follow"])
+    _place_overlay(entry)
+    return strip
+
+
+def _place_overlay(entry):
+    strip, view = entry["strip"], entry["shape"]
+    room = (view.width() if entry["side"] == "top" else view.height()) - 12
+    hint = strip.sizeHint()
+    if entry["side"] == "top":
+        strip.resize(max(1, min(hint.width(), room)), strip.height())
+    else:
+        strip.resize(strip.width(), max(1, min(hint.height(), room)))
+    strip.move(6, 6)
+    strip.raise_()
+
+
+def _turn(entry, side):
+    """One strip to the left of its body as a column, or back into its row on top."""
+    strip = entry["strip"]
+    if entry["kind"] == "overlay":
+        entry["side"] = side
+        strip.set_orientation("v" if side == "left" else "h")
+        _place_overlay(entry)
+        return
+    row, left, home = entry["row"], entry["left"], entry["home"]
+    if side == "left":
+        if row.indexOf(strip) >= 0:
+            row.removeWidget(strip)
+            left.addWidget(strip, 1)
+        strip.set_orientation("v")
+        rest = [row.itemAt(i).widget() for i in range(row.count())]
+        home.setVisible(any(w is not None and not w.isHidden() for w in rest))
+    else:
+        if row.indexOf(strip) < 0:
+            left.removeWidget(strip)
+            row.insertWidget(min(entry["slot"], row.count()), strip)
+        strip.set_orientation("h")
+        home.show()
+    strip.show()
+    entry["side"] = side
+
+
+def _alive(w):
+    try:
+        w.objectName()
+        return True
+    except RuntimeError:
+        return False
+
+
+def panel_ledger(win):
+    """Every panel on screen and what it declared: [{"key", "kind", "strip", "reason", "shape"}].
+
+    ``kind``: "code" (the principal dock), "dock", or "image" (the main image and every other image
+    window, also a detached one). A floating panel is its dock. A strip of None comes with its reason."""
+    st = _state(win)
+    decl = st.get("strip_decl") or {}
     out = []
     for key, dock in win._docks.items():
-        if key in PRINCIPAL or dock.widget() is None:      # the code panel belongs to the Program work
-            continue
-        root = dock.widget()
-        for box in [root] + root.findChildren(QtWidgets.QGroupBox):
-            col = box.layout()
-            if not isinstance(col, QtWidgets.QVBoxLayout):
-                continue
-            i = 0
-            while i < col.count() - 1:
-                a, b = col.itemAt(i), col.itemAt(i + 1)
-                view = a.widget() if isinstance(a.widget(), QtWidgets.QAbstractItemView) else None
-                buttons = icon_row(b)
-                below = True
-                if view is None or buttons is None:
-                    view = b.widget() if isinstance(b.widget(), QtWidgets.QAbstractItemView) else None
-                    buttons = icon_row(a)
-                    below = False
-                if view is None or buttons is None:
-                    i += 1
-                    continue
-                stretch = col.stretch(i if below else i + 1)
-                row = (b if below else a).layout()
-                col.takeAt(i + 1); col.takeAt(i)
-                row.setParent(None)
-                pair = QtWidgets.QBoxLayout(QtWidgets.QBoxLayout.BottomToTop if below else QtWidgets.QBoxLayout.TopToBottom)
-                pair.setContentsMargins(0, 0, 0, 0); pair.setSpacing(col.spacing())
-                pair.addLayout(row); pair.addWidget(view, 1)
-                col.insertLayout(i, pair, max(1, stretch))
-                more = QtWidgets.QToolButton(); more.setText("…"); more.setObjectName("strip_more")
-                more.setProperty("keepSize", True); more.setPopupMode(QtWidgets.QToolButton.InstantPopup)
-                more.setMenu(QtWidgets.QMenu(more)); more.hide()
-                row.addWidget(more)
-
-                def fill(menu=more.menu(), tools=buttons):
-                    # built when it opens: the tools' enabled state and tool tips are those of that moment
-                    menu.clear()
-                    for b in tools:
-                        if b.isHidden():
-                            act = menu.addAction(b.icon(), (b.toolTip() or b.accessibleName() or "").split("\n")[0])
-                            act.setEnabled(b.isEnabled())
-                            act.triggered.connect(lambda _c=False, btn=b: btn.click())
-                more.menu().aboutToShow.connect(fill)
-                out.append({"key": key, "dock": dock, "pair": pair, "row": row, "view": view, "buttons": buttons,
-                            "below": below, "more": more, "side": "top", "shown": len(buttons)})
-                i += 1
+        d = decl.get(key) or {}
+        out.append({"key": key, "kind": "code" if key in PRINCIPAL else "dock", "strip": d.get("strip"),
+                    "reason": d.get("reason"), "shape": dock})
+    for entry in st["strips"]:
+        if entry["kind"] in ("image", "overlay") and _alive(entry["shape"]):
+            out.append({"key": entry["key"], "kind": "image", "strip": entry["strip"], "reason": None,
+                        "shape": entry["shape"]})
     return out
 
 
-def _turn_strip(entry, side):
-    """One icon row to the left (a column) or back where it was built (a row). In a column that is
-    too short for every button, the last ones go into the "…" menu."""
-    from PySide6 import QtWidgets   # noqa: PLC0415
-    d = studio_theme.density()
-    row, pair, more = entry["row"], entry["pair"], entry["more"]
-    buttons = entry["buttons"]
-    if side == "left":
-        pair.setDirection(QtWidgets.QBoxLayout.LeftToRight)
-        row.setDirection(QtWidgets.QBoxLayout.TopToBottom)
-        row.setSpacing(2)
-        step = max(b.height() for b in buttons) + 2
-        room = entry["view"].height() if entry["view"].height() > 0 else step * len(buttons)
-        fit = len(buttons) if step * len(buttons) <= room else max(1, room // step - 1)
-    else:
-        pair.setDirection(QtWidgets.QBoxLayout.BottomToTop if entry["below"] else QtWidgets.QBoxLayout.TopToBottom)
-        row.setDirection(QtWidgets.QBoxLayout.LeftToRight)
-        row.setSpacing(d["click_gap"])
-        fit = len(buttons)
-    for n, b in enumerate(buttons):
-        b.setVisible(n < fit)
-    more.setFixedSize(d["icon_btn"], d["icon_btn"])
-    more.setVisible(fit < len(buttons))
-    entry["side"], entry["shown"] = side, fit
-
-
 def relayout(win):
-    """Every panel's icon row and every dock area's tab bar take the side their panel's shape asks
-    for (or the user's fixed side). Safe to call at any time; does nothing before ``install``."""
+    """Every declared strip takes the side its panel's shape asks for (or the user's fixed side) and the
+    overflow mode; every tab row of tabbed panels likewise. Safe at any time; nothing before ``install``."""
     from PySide6 import QtCore, QtWidgets   # noqa: PLC0415
     st = getattr(win, "_panels", None)
     if st is None:
         return {}
-    mode = st["strip_mode"]
+    mode, overflow = st["strip_mode"], st.get("overflow_mode", "scroll")
+    for view in win.findChildren(QtWidgets.QGraphicsView):          # image windows made since (or detached)
+        tools = getattr(view, "_tools", None)
+        if tools is not None and _alive(tools) and tools.objectName() != "flow_strip":
+            adopt_image_strip(win, view)
+    keep = []
     for entry in st["strips"]:
-        dock = entry["dock"]
-        if dock.isHidden() or dock.width() <= 0:
+        shape = entry["shape"]
+        if not _alive(shape) or not _alive(entry["strip"]):
+            continue                                 # an image window that was closed
+        keep.append(entry)
+        entry["strip"].set_mode(overflow)
+        if shape.isHidden() or shape.width() <= 0:
             continue
-        side = strip_side(dock.width(), dock.height(), entry["side"], mode)
-        if side != entry["side"] or side == "left":
-            _turn_strip(entry, side)
+        side = strip_side(shape.width(), shape.height(), entry["side"], mode)
+        if side != entry["side"]:
+            _turn(entry, side)
+        elif entry["kind"] == "overlay":
+            _place_overlay(entry)
+    st["strips"] = keep
     areas = {}
     for area in (QtCore.Qt.LeftDockWidgetArea, QtCore.Qt.RightDockWidgetArea,
                  QtCore.Qt.TopDockWidgetArea, QtCore.Qt.BottomDockWidgetArea):
@@ -629,14 +1451,28 @@ def relayout(win):
         if side != now:
             win.setTabPosition(area, QtWidgets.QTabWidget.West if side == "left" else QtWidgets.QTabWidget.North)
         areas[area] = side
+    rows = st.setdefault("tab_rows", {})
+    TabRow = flow_classes()["TabRow"]
     for bar in win.findChildren(QtWidgets.QTabBar):
         if bar.parentWidget() is win:                    # the tab bars of tabbed panels
-            bar.setElideMode(QtCore.Qt.ElideNone)        # a name is never cut; too many tabs -> Qt's scroll arrows
-            bar.setUsesScrollButtons(True)
+            bar.setElideMode(QtCore.Qt.ElideNone)        # a name is never cut
+            bar.setUsesScrollButtons(True)               # Qt's own scrolling, under the row that is drawn
+            bar.setTabsClosable(False)                   # a tab is never closed (P18-3)
             if st.get("tab_keys") is not None and not bar.property("fsTabKeys"):
                 bar.setProperty("fsTabKeys", True)
                 bar.installEventFilter(st["tab_keys"])
+            row = rows.get(id(bar))
+            if row is None or row.bar is not bar:
+                row = rows[id(bar)] = TabRow(win, bar)
+            row.place()
     st["tab_sides"] = areas
+    again = st.pop("restore_again", None) if win.isVisible() else None
+    if again is not None:                        # the sizes as saved, now that every strip has its side
+        win._applying_layout = True
+        try:
+            win.restoreState(again)
+        finally:
+            win._applying_layout = False
     return areas
 
 
@@ -650,6 +1486,27 @@ def set_strip_mode(win, mode, settings=None):
         action.setChecked(m == st["strip_mode"])
     relayout(win)
     return st["strip_mode"]
+
+
+def set_overflow_mode(win, mode, settings=None):
+    """"scroll" or "wrap" for every tool strip and every tab row at once (saved when ``settings`` is
+    given). Returns how many strips and tab rows now use it."""
+    st = _state(win)
+    st["overflow_mode"] = normalise_overflow_mode(mode)
+    if settings is not None:
+        settings.setValue(OVERFLOW_KEY, st["overflow_mode"])
+    for m, action in (st.get("overflow_actions") or {}).items():
+        action.setChecked(m == st["overflow_mode"])
+    relayout(win)
+    return sum(1 for s in all_strips(win) if s.mode == st["overflow_mode"])
+
+
+def all_strips(win):
+    """Every FlowStrip of the window: the declared tool strips and the tab rows."""
+    st = _state(win)
+    out = [e["strip"] for e in st["strips"] if _alive(e["strip"])]
+    out += [r.strip for r in (st.get("tab_rows") or {}).values() if _alive(r.bar)]
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -1172,9 +2029,15 @@ def sync_button_actions(win):
 MENU_OWN_MIN, MENU_OWN_MAX = 3, 8
 
 
-def register_panel(win, key, status=None, actions=None):
-    """What one panel shows in its title band and offers in its menu button — the ONE place a panel
-    (also one added later: console, parameters, call stack) says so.
+def register_panel(win, key, status=None, actions=None, strip=None, no_strip=None, strip_equiv=None):
+    """What one panel shows in its title band, offers in its menu button and uses as its tool strip —
+    the ONE place a panel (also one added later: console, parameters, call stack) says so.
+
+    ``strip``: (row, body) = the panel's tool strip (declare_strip, once per panel). ``no_strip``: why
+    the panel has none (panel_ledger keeps the reason; a panel with neither fails the gate). Every
+    button of the strip is also an entry of the menu (A2: a tool scrolled out of sight is one menu entry
+    away): ``strip_equiv[button]`` (the window's QAction for the same function), else the button's
+    default action, else button_action(win, button); the ones ``actions`` lacks are added at the end.
 
     ``status``: a list of ``{"id": str, "text": callable -> str, "tip": str, "priority": int}``. Each
     is a small read-out to the right of the name; ``text()`` is asked four times a second while the
@@ -1182,11 +2045,31 @@ def register_panel(win, key, status=None, actions=None):
     go first (whole items, never cut text); what was dropped is listed at the top of the menu.
     ``actions``: QActions (the same objects the panel's buttons / the main menu use, so name, key
     and enabled state cannot disagree); ``None`` in the list is a separator. Calling again replaces."""
+    from PySide6 import QtWidgets   # noqa: PLC0415
     st = _state(win)
     if key not in win._docks:
         raise KeyError("no panel named %r" % (key,))
+    actions = list(actions or [])
+    if strip is not None:
+        row, body = strip
+        fs = declare_strip(win, key, row, body)
+        own, extra = [a for a in actions if a is not None], []
+        reach = st.setdefault("strip_action_of", {})
+        made = st.get("button_actions") or {}
+        for b in fs.items():                     # the entry the panel already lists for this button comes first
+            act = ((made.get(b) if made.get(b) in own else None)
+                   or (b.defaultAction() if isinstance(b, QtWidgets.QToolButton) else None)
+                   or (strip_equiv or {}).get(b)
+                   or button_action(win, b))
+            reach[b] = act
+            if act not in own and act not in extra:
+                extra.append(act)
+        if extra:
+            actions += ([None] if own else []) + extra
+    elif no_strip:
+        st.setdefault("strip_decl", {})[key] = {"strip": None, "reason": str(no_strip), "entry": None}
     bar = st["titles"][key]
-    bar.set_registration(list(status or []), list(actions or []))
+    bar.set_registration(list(status or []), actions)
     return bar
 
 
@@ -1222,9 +2105,21 @@ def _default_registrations(win):
         lst = (getattr(win, "_variables", None) or {}).get("list")
         return tr(S_ST_VARS) % lst.count() if lst is not None else ""
 
+    strips = getattr(win, "_panel_strips", None) or {}         # {key: (row, body)} - studio.py declares them
+    own_buttons = getattr(win, "_panel_buttons", None) or {}
+
+    def equiv(key):
+        """A strip button whose function the window already has as a QAction (same name in win._actions)."""
+        return {b: acts[n] for n, b in (own_buttons.get(key) or {}).items() if n in acts and b is not None}
+
     def register_panel(win_, key, *args, **kwargs):            # a panel this window does not have: skipped
-        if key in win_._docks:
-            globals()["register_panel"](win_, key, *args, **kwargs)
+        if key not in win_._docks:
+            return
+        if key in strips:
+            kwargs.update(strip=strips[key], strip_equiv=equiv(key))
+        else:
+            kwargs.update(no_strip=STRIP_EXEMPT.get(key))
+        globals()["register_panel"](win_, key, *args, **kwargs)
 
     register_panel(win, "program", [],
                    btn("program", "run", "continue", "step", "reset") + [None]
@@ -1241,6 +2136,17 @@ def _default_registrations(win):
     register_panel(win, "display", [], pick("fit", "actual_size", "zoom_in", "zoom_out", "surface_3d"))
     register_panel(win, "compare", [], pick("step", "reset") + [None] + pick("pin_a"))
     register_panel(win, "ab", [], pick("pin_a") + [None] + btn("ab", "restore", "adopt", "keep"))
+    # the main image window: its strip of open / demo / save | zoom (it has no menu button; the same
+    # QActions are in the File and View menus and on the image's right-click)
+    if "graphics_1" in strips:
+        row, body = strips["graphics_1"]
+        sub = getattr(win, "_primary_gsub", None)
+        shape = sub.widget() if sub is not None and sub.widget() is not None else body.parentWidget()
+        fs = declare_strip(win, "graphics_1", row, body, shape=shape)
+        reach = _state(win).setdefault("strip_action_of", {})
+        same = equiv("graphics_1")
+        for b in fs.items():
+            reach[b] = same.get(b) or button_action(win, b)
 
 
 def refresh(win, tr, lang="en"):
@@ -1284,8 +2190,15 @@ def refresh(win, tr, lang="en"):
     rm = getattr(win, "_reduce_motion_action", None)
     if rm is not None:
         rm.setText(tr(S_REDUCE)); rm.setToolTip(tr(S_REDUCE_TIP)); rm.setStatusTip(tr(S_REDUCE_TIP))
-    for entry in st["strips"]:                  # the "..." of a turned icon row: what it holds
-        entry["more"].setToolTip(tr(S_MORE)); entry["more"].setAccessibleName(tr(S_MORE))
+    for mode, action in (st.get("overflow_actions") or {}).items():
+        action.setText(tr(S_OVERFLOW[mode]))
+    for entry in st["strips"]:                  # every tool strip: its scroll buttons' look and words
+        if _alive(entry["strip"]):
+            entry["strip"].restyle(tr)
+    for row in (st.get("tab_rows") or {}).values():
+        if _alive(row.bar):
+            row.sig, row.t1 = None, None        # rebuilt in the new font / language at the next place()
+            row.strip.restyle(tr)
     tighten(win)
     relayout(win)
     sync(win)
@@ -1506,7 +2419,8 @@ def install(win, tr, settings=None):
     esc = EscCloses(win)
     st = {"rail": rail, "buttons": {}, "titles": {}, "float_actions": {}, "layout_actions": [],
           "strips": [], "strip_actions": {}, "strip_mode": "auto", "tab_sides": {}, "settings": settings,
-          "tr": tr, "lang": "en", "esc": esc, "menus": []}
+          "tr": tr, "lang": "en", "esc": esc, "menus": [], "overflow_mode": "scroll", "overflow_actions": {},
+          "tab_rows": {}, "strip_decl": {}}
     win._panels = st
 
     def panel_menu(key, button, pos):
@@ -1587,16 +2501,36 @@ def install(win, tr, settings=None):
         st["strip_mode"] = normalise_strip_mode(settings().value(STRIP_MODE_KEY) if settings is not None else "auto")
     except Exception:                            # noqa: BLE001 - a broken store must not stop the window
         st["strip_mode"] = "auto"
-    st["strips"] = _find_strips(win)
+    try:
+        st["overflow_mode"] = normalise_overflow_mode(settings().value(OVERFLOW_KEY) if settings is not None else "scroll")
+    except Exception:                            # noqa: BLE001 - a broken store must not stop the window
+        st["overflow_mode"] = "scroll"
     lmenu.addSeparator()
     group = QtGui.QActionGroup(win); group.setExclusive(True); st["strip_group"] = group
     for mode in STRIP_MODES:
         a = QtGui.QAction(tr(S_STRIP[mode]), win)
+        a.setObjectName("strip_" + mode)
         a.setCheckable(True); a.setChecked(mode == st["strip_mode"]); group.addAction(a)
         a.triggered.connect(lambda _c=False, m=mode: set_strip_mode(
             win, m, st["settings"]() if st["settings"] is not None else None))
         lmenu.addAction(a)
         st["strip_actions"][mode] = a
+    # when tools or tabs do not fit: scroll / wrap - one setting for every strip and tab row (A3)
+    lmenu.addSeparator()
+    ogroup = QtGui.QActionGroup(win); ogroup.setExclusive(True); st["overflow_group"] = ogroup
+    for mode in OVERFLOW_MODES:
+        a = QtGui.QAction(tr(S_OVERFLOW[mode]), win)
+        a.setObjectName("overflow_" + mode)
+        a.setCheckable(True); a.setChecked(mode == st["overflow_mode"]); ogroup.addAction(a)
+        a.triggered.connect(lambda _c=False, m=mode: set_overflow_mode(
+            win, m, st["settings"]() if st["settings"] is not None else None))
+        lmenu.addAction(a)
+        st["overflow_actions"][mode] = a
+    view_menu = (getattr(win, "_menus", None) or {}).get("view")
+    if view_menu is not None:                    # the same entries in the View menu (and so in the palette)
+        view_menu.addSeparator()
+        for a in list(st["strip_actions"].values()) + [None] + list(st["overflow_actions"].values()):
+            view_menu.addSeparator() if a is None else view_menu.addAction(a)
 
     class Follow(QtCore.QObject):
         """A panel or the window changed size / place: look again, once per event-loop turn."""
@@ -1691,6 +2625,10 @@ def install(win, tr, settings=None):
             actions["panel_float_" + key] = fa
         for key, pa in st["principal_actions"].items():
             actions["panel_show_" + key] = pa
+        for mode, a in st["strip_actions"].items():
+            actions["strip_" + mode] = a
+        for mode, a in st["overflow_actions"].items():
+            actions["overflow_" + mode] = a
         for text, a in st["layout_actions"]:
             if text in (S_CODE_LEFT, S_CODE_BOTTOM):
                 actions["layout_" + ("code_left" if text == S_CODE_LEFT else "code_bottom")] = a

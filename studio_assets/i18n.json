@@ -112,6 +112,30 @@
   "hi": "हिन्दी"
  },
  "tooltips": {
+  "Insert operator into the pipeline with a, b (Enter / double-click)": {
+   "ja": "a, b で処理手順に op を追加 (Enter / ダブルクリック)",
+   "zh": "用 a, b 把算子插入处理流程 (Enter / 双击)",
+   "tw": "用 a, b 把運算子插入處理流程 (Enter / 雙擊)",
+   "ko": "a, b로 연산자를 처리 순서에 추가 (Enter / 더블 클릭)",
+   "de": "Operator mit a, b in die Pipeline einfügen (Eingabe / Doppelklick)",
+   "hi": "a, b के साथ operator को pipeline में जोड़ें (Enter / डबल-क्लिक)"
+  },
+  "Run once on the loaded image — pipeline NOT changed (HDevelop single-step execution)": {
+   "ja": "読み込んだ画像で 1 回実行 — 処理手順は変えない(HDevelop の 1 段実行)",
+   "zh": "在已载入的图像上运行一次 — 不改变处理流程(HDevelop 单步执行)",
+   "tw": "在已載入的影像上執行一次 — 不改變處理流程(HDevelop 單步執行)",
+   "ko": "불러온 이미지에서 한 번 실행 — 처리 순서는 바꾸지 않음(HDevelop 단일 단계 실행)",
+   "de": "Einmal auf dem geladenen Bild ausführen — Pipeline bleibt unverändert (HDevelop-Einzelschritt)",
+   "hi": "लोड की गई image पर एक बार चलाएँ — pipeline नहीं बदलती (HDevelop single-step)"
+  },
+  "Operator help (image-processing details)": {
+   "ja": "op のヘルプ(画像処理の詳しい説明)",
+   "zh": "算子帮助(图像处理详解)",
+   "tw": "運算子說明(影像處理詳解)",
+   "ko": "연산자 도움말(영상 처리 상세)",
+   "de": "Operator-Hilfe (Details zur Bildverarbeitung)",
+   "hi": "Operator सहायता (image-processing विवरण)"
+  },
   "Continue: resume from the execution line to the next breakpoint / end (pause via breakpoints, resume here)": {
    "ja": "続行: 実行中の行から次のブレークポイントまたは最後まで進める(ブレークポイントで止め、ここで再開)",
    "zh": "继续: 从执行行运行到下一个断点或结尾(用断点暂停,在此恢复)",
@@ -467,6 +491,38 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "When they do not fit: scroll": {
+   "ja": "収まらない時: 送る",
+   "zh": "放不下时: 滚动",
+   "tw": "放不下時: 捲動",
+   "ko": "들어가지 않을 때: 스크롤",
+   "de": "Wenn es nicht passt: blättern",
+   "hi": "न समाने पर: स्क्रॉल करें"
+  },
+  "When they do not fit: wrap onto more rows": {
+   "ja": "収まらない時: 折り返す(数段組)",
+   "zh": "放不下时: 换行(多行)",
+   "tw": "放不下時: 換行(多列)",
+   "ko": "들어가지 않을 때: 줄 바꿈(여러 줄)",
+   "de": "Wenn es nicht passt: umbrechen (mehrere Reihen)",
+   "hi": "न समाने पर: कई पंक्तियों में लपेटें"
+  },
+  "Scroll back — show the ones before (or turn the mouse wheel)": {
+   "ja": "前へ送る — 前の物を見せる(マウスのホイールでも)",
+   "zh": "向前滚动 — 显示前面的项(也可用鼠标滚轮)",
+   "tw": "向前捲動 — 顯示前面的項目(也可用滑鼠滾輪)",
+   "ko": "앞으로 — 앞의 항목을 보입니다(마우스 휠로도)",
+   "de": "Zurückblättern — die vorderen zeigen (oder das Mausrad drehen)",
+   "hi": "पीछे स्क्रॉल — पहले वाले दिखाएँ (या माउस व्हील घुमाएँ)"
+  },
+  "Scroll on — show the ones after (or turn the mouse wheel)": {
+   "ja": "次へ送る — 後の物を見せる(マウスのホイールでも)",
+   "zh": "向后滚动 — 显示后面的项(也可用鼠标滚轮)",
+   "tw": "向後捲動 — 顯示後面的項目(也可用滑鼠滾輪)",
+   "ko": "뒤로 — 뒤의 항목을 보입니다(마우스 휠로도)",
+   "de": "Weiterblättern — die hinteren zeigen (oder das Mausrad drehen)",
+   "hi": "आगे स्क्रॉल — बाद वाले दिखाएँ (या माउस व्हील घुमाएँ)"
+  },
   "Reduce motion": {
    "ja": "動きを減らす",
    "zh": "减少动画",

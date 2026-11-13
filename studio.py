@@ -8243,6 +8243,7 @@ def build_window(model=None):
         sub.setWindowTitle(title or ("Graphics %d" % h))
         sub.resize(440, 360)
         sub.show()
+        studio_panels.adopt_image_strip(win, gv, "graphics_%d" % h)   # its strip turns / scrolls like every panel's
         win._graphics_windows.append(sub)
         win._current_gfx = sub                     # a freshly opened window becomes current
         _update_current_indicator()
@@ -15779,10 +15780,18 @@ def build_window(model=None):
     except Exception:
         pass
 
-    win._panel_buttons = {                       # panel buttons without a QAction -> the panel menus (studio_panels)
+    win._panel_buttons = {                       # panel buttons -> the panel menus (studio_panels); a name the window
         "program": {"run": c_run, "continue": c_cont, "step": c_step, "reset": c_reset, "apply": c_apply, "sync": c_sync},
         "variables": {"display_new": v_disp, "display_here": v_here, "watch_remove": w_del},
-        "ab": {"restore": ab_restore, "adopt": ab_adopt, "keep": ab_keep}}
+        "ab": {"restore": ab_restore, "adopt": ab_adopt, "keep": ab_keep},       # has in win._actions = that QAction
+        "operators": {"insert": b_insert, "run_once": b_run_once, "help": b_help},
+        "pipeline": {"remove": b_rm, "move_up": b_up, "move_down": b_dn, "reset": b_reset, "step": b_step,
+                     "run_all": b_runall},
+        "graphics_1": {"open_image": b_load, "demo": b_demo, "save_result": b_save, "zoom_in": b_zin,
+                       "zoom_out": b_zout, "fit": b_fit, "actual_size": b_11}}
+    win._panel_strips = {                        # each panel's tool strip: (its row of buttons, what it stands beside;
+        "program": (crow, None), "operators": (oprow, None), "pipeline": (erow, None),   # None = the whole panel)
+        "variables": (vrow, None), "ab": (_abbtn, None), "graphics_1": (itop, view)}
     studio_panels.install(win, tr, _settings)   # panel bar + title bands + first-run arrangement (image + code)
     studio_theme.watch_code_fonts(QtWidgets.QApplication.instance())   # dialogs / editor tabs built later
     win._brand_follow = studio_panels.follow_progress(win._brand, run_progress, run_status)   # runs / batches

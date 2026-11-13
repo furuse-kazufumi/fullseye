@@ -93,7 +93,7 @@ def test_every_bar_string_is_translated_into_every_language():
     with open(path, encoding="utf-8") as fh:
         data = json.load(fh)
     langs = set(data["languages"]) - {"en"}
-    assert len(langs) == 6 and len(studio_panels.STRINGS) == 25
+    assert len(langs) == 6 and len(studio_panels.STRINGS) == 29
     for text in studio_panels.STRINGS:
         row = data["strings"].get(text)
         assert row is not None, "no i18n row for %r" % text
@@ -606,68 +606,40 @@ def _to_bottom(win, app, keys, code_left=True):
 
 
 def test_icon_rows_turn_with_the_shape_of_their_panel(tmp_path, monkeypatch):
-    from PySide6 import QtCore, QtWidgets
+    """Every panel declares its strip (A1, 2026-11-13); the gate over all panels and the scroll / wrap of a
+    strip that does not fit (A2 A3, which replaced the "..." menu) are in test_studio_panels_interaction_2026_11_13."""
+    from PySide6 import QtCore
     app, win = _launch(monkeypatch, tmp_path / "s.ini")
     try:
         win.resize(1280, 720); _pump(app, 0.2)
-        strips = win._panels["strips"]
-        assert sorted((e["key"], len(e["buttons"])) for e in strips) == [("pipeline", 6), ("variables", 2)]
-        entry = [e for e in strips if e["key"] == "variables"][0]
+        strips = {e["key"]: e for e in win._panels["strips"]}
+        assert {k: len(e["strip"].items()) for k, e in strips.items() if k in win._docks} == {
+            "program": 6, "operators": 3, "pipeline": 6, "variables": 2, "ab": 3}
+        entry = strips["variables"]
+        s = entry["strip"]
         dock = win._docks["variables"]
         dock.show(); _pump(app, 0.4)                                        # in the right column: tall
-        assert dock.height() > dock.width() and entry["side"] == "top"
-        assert entry["row"].direction() == QtWidgets.QBoxLayout.LeftToRight
-        ys = {b.y() for b in entry["buttons"]}
-        assert len(ys) == 1 and entry["buttons"][0].y() > entry["view"].y()  # one row, under the list (as built)
+        assert dock.height() > dock.width() and entry["side"] == "top" and s.orientation == "h"
+        assert len({b.mapTo(dock, QtCore.QPoint(0, 0)).y() for b in s.items()}) == 1      # one row
         _to_bottom(win, app, ["variables"])                                 # under the image: wide
         assert dock.width() >= 2.2 * dock.height(), (dock.width(), dock.height())
-        assert entry["side"] == "left" and entry["row"].direction() == QtWidgets.QBoxLayout.TopToBottom
-        xs = {b.x() for b in entry["buttons"]}
-        assert len(xs) == 1 and entry["buttons"][0].x() < entry["view"].x()  # one column, left of the list
-        assert entry["buttons"][0].y() < entry["buttons"][1].y()
-        assert all(b.isVisible() for b in entry["buttons"]) and not entry["more"].isVisible()
-        wide_h = entry["view"].height()
+        assert entry["side"] == "left" and s.orientation == "v"
+        xs = {b.mapTo(dock, QtCore.QPoint(0, 0)).x() for b in s.items()}
+        assert len(xs) == 1 and min(xs) < entry["body"].mapTo(dock, QtCore.QPoint(0, 0)).x()   # one column, on the left
+        assert not entry["home"].isVisible()                                # the row it left gives its height back
         studio_panels.set_strip_mode(win, "top"); _pump(app, 0.3)           # the user fixes it on top
-        assert entry["side"] == "top" and entry["row"].direction() == QtWidgets.QBoxLayout.LeftToRight
-        assert entry["view"].height() < wide_h                              # the row takes its height back
+        assert entry["side"] == "top" and s.orientation == "h" and entry["home"].isVisible()
         studio_panels.set_strip_mode(win, "auto"); _pump(app, 0.3)
         assert entry["side"] == "left"
         win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock); _pump(app, 0.4)   # moved back: tall again
         assert dock.height() > dock.width() and entry["side"] == "top"
         studio_panels.set_strip_mode(win, "left"); _pump(app, 0.3)          # fixed on the left although tall
-        assert entry["side"] == "left" and len({b.x() for b in entry["buttons"]}) == 1
+        assert entry["side"] == "left" and s.orientation == "v"
         studio_panels.toggle_float(win, "variables"); dock.resize(900, 260); _pump(app, 0.4)
         studio_panels.set_strip_mode(win, "auto"); _pump(app, 0.3)
         assert entry["side"] == "left"                                      # a separate window follows its own shape
         dock.resize(300, 500); _pump(app, 0.4)
         assert entry["side"] == "top"
-    finally:
-        _close(app, win)
-
-
-def test_a_column_too_short_for_every_button_puts_the_rest_behind_the_dots(tmp_path, monkeypatch):
-    app, win = _launch(monkeypatch, tmp_path / "s.ini")
-    try:
-        entry = [e for e in win._panels["strips"] if e["key"] == "pipeline"][0]
-        win._docks["pipeline"].show(); _pump(app, 0.3)
-        assert len(entry["buttons"]) == 6
-        entry["view"].setFixedHeight(70); _pump(app, 0.2)
-        studio_panels._turn_strip(entry, "left"); _pump(app, 0.2)
-        shown = [b for b in entry["buttons"] if not b.isHidden()]
-        hidden = [b for b in entry["buttons"] if b.isHidden()]
-        assert 1 <= len(shown) < 6 and len(shown) + len(hidden) == 6 and entry["shown"] == len(shown)
-        assert not entry["more"].isHidden() and entry["more"].text() == "…"
-        clicks = []
-        hidden[0].clicked.connect(lambda _c=False: clicks.append(1))
-        hidden[0].setEnabled(True); hidden[-1].setEnabled(False)
-        entry["more"].menu().aboutToShow.emit()                             # the menu is filled when it opens
-        acts = entry["more"].menu().actions()
-        assert len(acts) == len(hidden) and all(a.text() for a in acts)     # every hidden tool is in the menu, by name
-        assert acts[0].isEnabled() and (len(acts) == 1 or not acts[-1].isEnabled())   # with the tool's own enabled state
-        acts[0].trigger()
-        assert clicks == [1]                                                # the menu entry presses the real button
-        studio_panels._turn_strip(entry, "top")
-        assert all(not b.isHidden() for b in entry["buttons"]) and entry["more"].isHidden()
     finally:
         _close(app, win)
 
@@ -815,7 +787,7 @@ def test_the_menu_holds_what_the_panel_registered_then_the_common_entries(tmp_pa
         for key, names in want.items():
             assert all(n is None or n in win._actions for n in names), key          # the actions exist in this build
             bar = st["titles"][key]
-            assert [a for a in bar.actions] == [None if n is None else win._actions[n] for n in names], key
+            assert bar.actions[:len(names)] == [None if n is None else win._actions[n] for n in names], key
             bar.fill_menu()
             acts = bar.b_menu.menu().actions()
             own = [a for a in acts if a in [win._actions[n] for n in names if n]]
@@ -826,6 +798,8 @@ def test_the_menu_holds_what_the_panel_registered_then_the_common_entries(tmp_pa
             assert tail[5].text() == "Hide" and tail[6] is st["layout_actions"][0][1], key
             total += len(own)
         assert total == 3 + 8 + 5 + 3
+        ops = st["titles"]["operators"].actions                                   # the strip's buttons follow (A2)
+        assert ops[3:] == [None] + [studio_panels.button_action(win, b) for b in win._panel_buttons["operators"].values()]
         # a key in the menu is the action's own (shown at the right by Qt): Run all has one
         assert win._actions["run_all"].shortcut().toString() != ""
         # the menu's Hide really hides
@@ -855,9 +829,10 @@ def test_every_panel_menu_offers_three_to_eight_of_its_own_and_one_qaction_per_f
             assert all(a.text().strip() for a in acts), key                         # every entry has a name
         # the panel buttons that had no QAction: one action each, the button's name / state, pressing the button
         pb = win._panel_buttons
-        assert sorted(pb) == ["ab", "program", "variables"] and sum(len(v) for v in pb.values()) == 6 + 3 + 3
-        backed = st["button_of"]
-        assert len(backed) == 4 + 2 + 3 + 3 and set(backed.values()) <= {b for v in pb.values() for b in v.values()}
+        assert sorted(pb) == ["ab", "graphics_1", "operators", "pipeline", "program", "variables"]
+        assert sum(len(v) for v in pb.values()) == 6 + 3 + 3 + 3 + 6 + 7
+        backed = st["button_of"]                    # pipeline / graphics_1 use the window's own QActions (same names)
+        assert len(backed) == 4 + 2 + 3 + 3 + 3 and set(backed.values()) <= {b for v in pb.values() for b in v.values()}
         for act, button in backed.items():
             assert studio_panels.button_action(win, button) is act                     # asked again: the same object
             assert act.toolTip() == button.toolTip().strip() and act.text()
