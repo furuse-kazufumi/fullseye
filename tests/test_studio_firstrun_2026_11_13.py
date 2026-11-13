@@ -811,3 +811,53 @@ def test_l11_right_click_on_an_op_row_opens_its_menu(launch):
     lst.setCurrentItem(bad)
     labels = [lbl for lbl, _ in win._ctx["operators"]()]
     assert "処理手順に入れる" not in labels and "op のヘルプ…" in labels
+
+
+# --------------------------------------------------------------------------- #
+# 気づける入口                                                                   #
+# --------------------------------------------------------------------------- #
+def _window_shortcuts(win):
+    """窓のどこからでも効くショートカット(キー → それを持つ物の一覧)。部品の中だけで効く物は数えない。"""
+    from collections import defaultdict
+    from PySide6 import QtCore, QtGui
+    scoped = (QtCore.Qt.WidgetShortcut, QtCore.Qt.WidgetWithChildrenShortcut)
+    keys = defaultdict(list)
+    for a in win.findChildren(QtGui.QAction):
+        if a.shortcutContext() in scoped:
+            continue
+        for k in a.shortcuts():
+            if not k.isEmpty():
+                keys[k.toString()].append(a.text().replace("&", ""))
+    for s in win.findChildren(QtGui.QShortcut):
+        if s.context() not in scoped and not s.key().isEmpty():
+            keys[s.key().toString()].append("QShortcut")
+    return keys
+
+
+def test_f1_opens_the_selected_ops_help_and_no_key_does_two_things(launch):
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    win, model = launch(lang="ja")
+    keys = _window_shortcuts(win)
+    assert len(keys) >= 40                                            # 数え方が空になっていない
+    dup = {k: v for k, v in keys.items() if len(v) > 1}
+    assert not dup, dup
+    assert keys["F1"] == ["選んでいる op のヘルプ"] and keys["Ctrl+F1"] and keys["Shift+F1"]
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("median")); lst.setFocus(); _pump(0.1)
+    QTest.keyClick(lst, QtCore.Qt.Key_F1); _pump(0.4)
+    help_ = win._help
+    assert help_["dialog"].isVisible() and help_["pick"].currentText() == "median"
+    assert "median" in help_["browser"].toPlainText()[:600]
+    help_["dialog"].close()
+    # 段の一覧に焦点があれば、その段の op
+    lst.setCurrentRow(names.index("gaussian")); win._op_buttons["insert"].click(); _pump(0.3)
+    lst.setCurrentRow(names.index("otsu") if "otsu" in [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+                      else 0)
+    win.activateWindow(); _pump(0.1)                                  # ヘルプの窓を閉じた後、主の窓へ戻す
+    win._stage_list.setCurrentRow(0); win._stage_list.setFocus(); _pump(0.1)
+    assert win._stage_list.hasFocus()
+    QTest.keyClick(win._stage_list, QtCore.Qt.Key_F1); _pump(0.4)
+    assert help_["pick"].currentText() == "gaussian"
+    help_["dialog"].close()

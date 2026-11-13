@@ -647,7 +647,9 @@ def test_shortcuts_help_action_wired():
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert "shortcuts" in win._actions
-    assert win._actions["shortcuts"].shortcut().toString() == "F1"
+    # 2026-11-13(初回起動の点検): F1 は選んでいる op のヘルプ。ショートカットの一覧は Ctrl+F1
+    assert win._actions["shortcuts"].shortcut().toString() == "Ctrl+F1"
+    assert win._actions["selected_help"].shortcut().toString() == "F1"
 
 
 def test_sample_code_helper():

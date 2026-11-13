@@ -7196,7 +7196,12 @@ def build_window(model=None):
     act_viewer3d = _act("3D viewer…", "Ctrl+Alt+4",
                         "Open the interactive 3-D viewer (point cloud / mesh file, "
                         "orbit / zoom / pan)")
-    act_shortcuts = _act("Keyboard shortcuts", "F1", "Show all keyboard shortcuts")
+    # ★2026-11-13(初回起動の点検): F1 は「選んでいる op のヘルプ」(HDevelop と同じ)。一覧はヘルプの奥にあって、
+    # 実際に走らせた入出力の図のある op のヘルプに自力で気づけなかった。ショートカットの一覧は Ctrl+F1 へ。
+    act_shortcuts = _act("Keyboard shortcuts", "Ctrl+F1", "Show all keyboard shortcuts")
+    act_selected_help = _act("Help for the selected operator", "F1",
+                             "Open the help of the operator selected in the list, or of the selected stage "
+                             "(with nothing selected: all keyboard shortcuts)")
     act_op_help = _act("Operator reference…", "Shift+F1", "Browse every operator with its sorts + HALCON alias")
     act_samples = _act("Samples & code…", None, "Load a sample pipeline and see its code")
     act_about = _act("About Fullseye Studio", None, "About this application")
@@ -7347,6 +7352,7 @@ def build_window(model=None):
         lambda _=False: QtGui.QDesktopServices.openUrl(QtCore.QUrl(_FEEDBACK_URL)))
     win._act_feedback = act_feedback; win._feedback_url = _FEEDBACK_URL
     m.addAction(act_feedback); m.addSeparator()
+    m.addAction(act_selected_help)
     m.addAction(act_shortcuts); m.addSeparator(); m.addAction(act_about)
 
     # ---- branded toolbar (icon-only; tooltips carry the meaning) ------------- #
@@ -13508,6 +13514,23 @@ def build_window(model=None):
 
     act_palette.triggered.connect(show_palette)
     act_shortcuts.triggered.connect(show_shortcuts)
+
+    def show_selected_op_help():
+        """F1: 段の一覧に入力の焦点があれば選んでいる段の op、なければ一覧で選んでいる op、どちらも無ければショートカットの一覧。"""
+        name = None
+        i = selected_index()
+        if stage_list.hasFocus() and 0 <= i < len(model.stages):
+            name = model.stages[i][0]
+        if not name:
+            cur = op_list.currentItem()
+            name = cur.data(QtCore.Qt.UserRole) if cur is not None else None
+        if not name and 0 <= i < len(model.stages):
+            name = model.stages[i][0]
+        if name:
+            show_op_help(name)
+        else:
+            show_shortcuts()
+    act_selected_help.triggered.connect(show_selected_op_help)
     act_op_help.triggered.connect(
         lambda: show_op_help((op_list.currentItem().data(QtCore.Qt.UserRole))
                              if op_list.currentItem() else (op_names[0] if op_names else "")))
@@ -15333,6 +15356,7 @@ def build_window(model=None):
         "zoom_in": act_zin, "zoom_out": act_zout, "fit": act_fit,
         "actual_size": act_11, "surface_3d": act_3d, "reset": act_reset, "step": act_step,
         "run_all": act_runall, "holdout": act_holdout, "palette": act_palette, "shortcuts": act_shortcuts,
+        "selected_help": act_selected_help,
         "verify_exported": act_roundtrip, "batch_apply": act_batch,
         "feature_inspection": act_featins, "viewer_3d": act_viewer3d,
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,

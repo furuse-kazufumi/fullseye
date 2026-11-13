@@ -173,6 +173,7 @@ PENDING_ROWS_CEILING += 2    # M15: ヘルプの検索で当たらない時・�
 PENDING_ROWS_CEILING += 2    # M13: 台帳の op の理由の文とボタン
 PENDING_ROWS_CEILING += 1    # L9: 開けないファイルを落とした時の 1 行
 PENDING_ROWS_CEILING += 3    # L11: op の一覧の右クリックのメニュー
+PENDING_ROWS_CEILING += 2    # F1 = 選んでいる op のヘルプ(メニューの字とツールヒント)
 
 
 # --------------------------------------------------------------------------- #
