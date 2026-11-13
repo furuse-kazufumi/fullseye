@@ -211,7 +211,7 @@ def test_s2_pressing_plus_on_a_two_input_op_says_why_in_the_ui_language(launch):
     assert "takes two or more inputs" not in said
     assert "入力が 2 つ以上" in win._op_param.text()                  # + ボタンのすぐ上にも出る
     # 理由の文は 3 種とも表にある
-    assert len(studio.NOT_INSERTABLE_TEXT) == 3
+    assert len(studio.NOT_INSERTABLE_TEXT) == 4                        # + M13 の台帳の op
     assert all(studio.STRINGS_I18N.get(t, {}).get("ja") for t in studio.NOT_INSERTABLE_TEXT.values())
 
 
@@ -742,3 +742,32 @@ def test_m14_the_evis_item_is_listed_only_with_its_material(launch, monkeypatch,
     monkeypatch.setattr(_glob, "glob", lambda pattern, *a, **k: [str(gif)] if "evis_fullseye" in pattern else [])
     real()
     assert act.isVisible()
+
+
+def test_m13_a_ledger_op_from_the_search_opens_in_the_ledger_runner(launch, monkeypatch):
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    win, model = launch(lang="ja")
+    errors = []
+    monkeypatch.setattr(studio, "ERROR_HOOK", lambda p, t, txt: errors.append((t, txt)))
+    opened = []
+    monkeypatch.setattr(win, "_open_ledger_runner", lambda op=None, prefer_image=False: opened.append((op, prefer_image)))
+    ui = win._search_ui
+    ui["search_now"]("lens"); _pump(0.3)
+    rows = [r for g in ui["rows"]().values() for r in g if r.get("tier") == "ledger"]
+    assert len(rows) >= 2, [r["name"] for g in ui["rows"]().values() for r in g][:10]
+    r = rows[0]
+    assert studio.op_is_ledger(r["name"]) and studio.api.find_op(r["name"]) is None
+    assert r["try_button"].text() == "台帳の op を実行で開く"
+    ui["list"].scrollToItem(r["item"]); _pump(0.1)
+    r["try_button"].click(); _pump(0.2)
+    assert opened == [(r["name"], True)] and not errors
+    # 試す(Run once)の道も、モーダルではなく窓を開いて 1 行で言う
+    win._run_op_once(r["name"]); _pump(0.2)
+    assert opened[-1] == (r["name"], True) and not errors
+    said = win.statusBar().currentMessage()
+    assert "台帳の op" in said and "typed-ledger" not in said and "op_run" not in said, said
+    # + / ダブルクリック: 入らず、理由を UI の言語で
+    assert studio.op_insertable(r["name"]) == (False, "ledger")
+    win._op_list.itemActivated.emit(r["item"]); _pump(0.2)
+    assert not model.stages and "台帳の op を実行" in win.statusBar().currentMessage()

@@ -2493,6 +2493,8 @@
   "the output did not change at 0.1 / 0.5 / 0.9 on the sample input (measured)": {"ja": "見本の入力では 0.1 / 0.5 / 0.9 で出力が変わらなかった(実測)"},
   "Nothing to run yet: add an operator first (type in the operator search box and press Enter, or select one and press +)": {"ja": "まだ実行する物がありません。先に op を入れてください(op の検索欄に打って Enter、または選んで +)"},
   "No operator help matches '%s'": {"ja": "「%s」に当たる op のヘルプがありません"},
-  "'%s' → %s": {"ja": "「%s」→ %s"}
+  "'%s' → %s": {"ja": "「%s」→ %s"},
+  "‘%s’ is a typed-ledger op: it takes typed inputs, so it runs in Tools ▸ Run a ledger op (Ctrl+Shift+L), not as a pipeline stage": {"ja": "「%s」は型つきの入力を取る台帳の op です。処理手順の段ではなく、ツール ▸ 台帳の op を実行(Ctrl+Shift+L)で動かします"},
+  "Open in Run a ledger op": {"ja": "台帳の op を実行で開く"}
  }
 }

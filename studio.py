@@ -4143,7 +4143,18 @@ NOT_INSERTABLE_TEXT = {
                  "— it was not added",
     "unavailable": "‘%s’ is not available in this environment (its optional backend is not installed) "
                    "— it was not added to the pipeline",
+    # M13(2026-11-13): 型つきの入力を取る台帳の op。従来は「未導入」と言い、試すとライブラリの英語の文のモーダルだった
+    "ledger": "‘%s’ is a typed-ledger op: it takes typed inputs, so it runs in Tools ▸ Run a ledger op "
+              "(Ctrl+Shift+L), not as a pipeline stage",
 }
+
+
+def op_is_ledger(name):
+    """True when *name* is a typed-ledger op of the shipped index (runs with typed inputs, not as a 1-image stage)."""
+    try:
+        return (api._shipped_index().get(name) or {}).get("tier") == "ledger"
+    except Exception:                               # noqa: BLE001 -- 索引が読めなければ台帳の op とは言わない
+        return False
 
 
 def op_insertable(name, row=None):
@@ -4159,6 +4170,8 @@ def op_insertable(name, row=None):
         return False, "general"
     if api.find_op(name) is not None:
         return True, ""
+    if op_is_ledger(name):
+        return False, "ledger"
     try:
         two_input = name in api._nary_by_name()
     except Exception:                               # noqa: BLE001 - 理由の言い分けだけの為に落とさない
@@ -7580,7 +7593,13 @@ def build_window(model=None):
         h = QtWidgets.QHBoxLayout(); h.setContentsMargins(0, 0, 0, 0); h.addStretch(1); v_.addLayout(h)
         run = QtWidgets.QPushButton(tr("Try on current data")); help_ = QtWidgets.QPushButton(tr("Help"))
         enabled = row.get("tier") != "unavailable"; run.setEnabled(enabled); help_.setEnabled(enabled)
-        run.clicked.connect(lambda _=False, n=row["name"]: run_op_once(n, _search_current_value()))
+        if row.get("tier") == "ledger" and api.find_op(row["name"]) is None:
+            # M13: 台帳の op は「台帳の op を実行」の窓で(型つきの入力の欄がある)。今の画像を入力にして開く
+            run.setText(tr("Open in Run a ledger op"))
+            run.setToolTip(tr(NOT_INSERTABLE_TEXT["ledger"]) % row["name"])
+            run.clicked.connect(lambda _=False, n=row["name"]: win._open_ledger_runner(n, prefer_image=True))
+        else:
+            run.clicked.connect(lambda _=False, n=row["name"]: run_op_once(n, _search_current_value()))
         help_.clicked.connect(lambda _=False, n=row["name"]: show_op_help(n))
         h.addWidget(run); h.addWidget(help_)
         entry = dict(row, text=text_, item=it, try_button=run, help_button=help_, label_widget=label, box=box)
@@ -10339,6 +10358,11 @@ def build_window(model=None):
         row = _op_row(name)
         if row and row.get("backend") == "general":
             flash(not_insertable_text(name, "general"))       # M9: S2 と同じ文(UI の言語)
+            return
+        if api.find_op(name) is None and op_is_ledger(name):
+            # M13: ライブラリの英語の文のモーダルではなく、台帳の op の窓を今の画像で開く
+            flash(not_insertable_text(name, "ledger"))
+            win._open_ledger_runner(name, prefer_image=True)
             return
         base = _search_current_value() if base is None else base
         if base is None:
