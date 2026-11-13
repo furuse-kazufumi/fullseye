@@ -690,7 +690,27 @@ def cmd_samples(a):
     print("unknown action %r" % act); return 2
 
 
+def _tolerate_unencodable_output() -> None:
+    """標準出力 / 標準エラーで、その符号化で書けない文字を置き換える(符号化そのものは変えない)。
+
+    ★2026-11-13(配布物の検証 M3): 日本語 Windows で出力をパイプやファイルへ回すと標準出力は cp932(strict)になり、
+    help の「—」などで ``UnicodeEncodeError``(rc=1)になっていた —— ``fullseye --help > h.txt``・
+    ``fullseye has <無い名前>``・``fullseye samples list``。標準出力は ``replace``(書けない字は ``?``)、
+    標準エラーは Python の既定と同じ ``backslashreplace``。Windows の端末(コンソールは UTF-8)や UTF-8 の
+    パイプでは置き換える字が無いので、見た目は変わらない。``fullseye setup`` の手当てと同じ。
+    """
+    for name, handler in (("stdout", "replace"), ("stderr", "backslashreplace")):
+        stream = getattr(sys, name, None)
+        if stream is None or getattr(stream, "errors", None) not in ("strict", "surrogateescape"):
+            continue
+        try:
+            stream.reconfigure(errors=handler)
+        except (AttributeError, ValueError, OSError):   # reconfigure の無い流れ(差し替えられた stdout など)
+            pass
+
+
 def main() -> int:
+    _tolerate_unencodable_output()
     # ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、
     # `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
     # ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。
