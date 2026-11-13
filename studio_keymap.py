@@ -14,6 +14,11 @@ Qt の側(``studio_keymap_qt``)は、ここで決めたキーを本物の ``QAct
   効く範囲)で表す。Qt の表(QAction / QShortcut)どうしが 1 か所で同じキーを持つと Qt はどちらも撃たないので
   **当たり(error)**。部品が自分で先に受ける範囲(Program 欄・エディタ・検索欄・3-D 表示)は、窓全体の同じ
   キーより先に取るだけなので **隠す(info)**。同じエディタの部品どうしは error(片方が黙って負ける)。
+  テキスト欄の標準のキーは、欄が先に取る物(``text``)と窓のキーが勝って欄の操作が消える物(``text_lost``)に
+  分ける(Qt の側が本物の欄に送って実測する)。消える方と組むのは **警告**。メニューバーのニーモニックは、今の
+  言語の物が error(メニューが取る)、他の言語の物が警告。
+* 窓全体の範囲では、修飾なしの矢印・PgUp/PgDown・Home/End・Backspace/Del/Ins/Esc を付けない(一覧と入力欄の
+  移動・削除・取り消しが効かなくなる)。型の既定(段の一覧の Home・Del)は許す。
 * **型(プリセット)** は 2 つ。``visual_studio`` = Studio の既定(今までのキーそのまま)、``vscode`` = VS Code の
   慣例(エディタの Ctrl+D = 次の一致を足す、行の複製 = Shift+Alt+Down など)。型は既定の差分として持つ。
 * **保存するのは利用者の上書きだけ**(型との差分)。キーを外した事は空の並びで明示する。設定の 1 つの鍵
@@ -56,7 +61,9 @@ MAX_DEPTH = 32
 # --------------------------------------------------------------------------- #
 class Scope(NamedTuple):
     """キーが効く範囲。``mech``: ``qt``(Qt の表で撃つ)/ ``filter``(部品が自分で先に受ける)/ ``text``
-    (テキスト欄の標準のキー)。``group`` が同じ ``filter`` は同じ部品の上にある。"""
+    (テキスト欄が先に取る標準のキー)/ ``lost``(窓のキーが勝つと欄の操作が消える標準のキー)/ ``menu``
+    (今の言語のメニューバーのニーモニック)/ ``menu_other``(他の言語のニーモニック)。``group`` が同じ ``filter``
+    は同じ部品の上にある。"""
     name: str
     title: str
     mech: str
@@ -79,21 +86,29 @@ SCOPES = {s.name: s for s in (
     Scope("image_viewer_window", "Image Viewer window", "qt", "image_viewer", text_free=True, chords=True),
     Scope("view3d", "3-D view", "filter", "view3d", text_free=True),
     Scope("text", "Text fields", "text", "text"),
+    Scope("text_lost", "Text fields (the window key wins)", "lost", "text"),
+    Scope("menu_bar", "Menu bar", "menu", "main"),
+    Scope("menu_bar_other", "Menu bar in other languages", "menu_other", "main"),
 )}
 
 #: フォーカスのある所 → (名前, そこで同時に効く範囲)。当たりはここで重なる範囲の間だけ数える。
+#: 既定は「Python エディタの窓にも矩形選択の部品が付く」(厳しい側。Qt なしの検査・文書・読み込みの既定)。
+_MENUS = ("menu_bar", "menu_bar_other")
+_TEXT = ("text", "text_lost")
 PLACES = {
-    "main": ("the main window", ("window",)),
-    "text_field": ("text fields", ("window", "text")),
-    "stage_list": ("the stage list", ("window", "pipeline_list")),
-    "program_editor": ("the Program editor", ("window", "program_editor", "editor", "editor_box", "text")),
-    "program_find": ("the Program find field", ("window", "program_find", "text")),
-    "graphics": ("graphics windows", ("window", "graphics_subwindow")),
-    "python_editor": ("the Python Editor", ("python_editor_window", "editor", "editor_box", "editor_no_comment",
-                                            "text")),
+    "main": ("the main window", ("window",) + _MENUS),
+    "text_field": ("text fields", ("window",) + _MENUS + _TEXT),
+    "stage_list": ("the stage list", ("window", "pipeline_list") + _MENUS),
+    "program_editor": ("the Program editor", ("window", "program_editor", "editor", "editor_box") + _MENUS + _TEXT),
+    "program_find": ("the Program find field", ("window", "program_find") + _MENUS + _TEXT),
+    "graphics": ("graphics windows", ("window", "graphics_subwindow") + _MENUS),
+    "python_editor": ("the Python Editor", ("python_editor_window", "editor", "editor_box", "editor_no_comment")
+                      + _TEXT),
     "image_viewer": ("the Image Viewer", ("image_viewer_window",)),
     "view3d": ("the 3-D view", ("view3d",)),
 }
+#: Python エディタの窓に矩形選択の部品を付けない配線(本体の今の形。studio_editops の配線の覚え書き 3 章は任意)。
+PLACES_PLAIN_PYTHON_EDITOR = dict(PLACES, python_editor=("the Python Editor", ("python_editor_window",) + _TEXT))
 
 
 # --------------------------------------------------------------------------- #
@@ -522,6 +537,23 @@ def _plain_problem(key: str, scope: Scope) -> str | None:
     return None
 
 
+#: 一覧・木・入力欄の移動・削除・取り消しに要る、修飾なしのキー(窓全体の範囲に付けると、それらが効かなくなる)。
+_NAV_KEYS = {"Up", "Down", "Left", "Right", "PgUp", "PgDown", "Home", "End", "Backspace", "Del", "Ins", "Esc"}
+
+
+def _nav_problem(cid: str, key: str, scope: Scope) -> bool:
+    """修飾なしの移動・削除・取り消しのキーを、Qt の表で撃つ範囲(文字を打つ欄や一覧を含む窓)に付けるか。"""
+    if scope.mech != "qt" or scope.text_free:
+        return False
+    mods, name = _split_stroke(key.split(", ")[0])
+    if mods or name not in _NAV_KEYS:
+        return False
+    own = set(BY_ID[cid].keys)                                 # 型の既定(段の一覧の Home・Del など)は許す
+    for over in PRESETS.values():
+        own |= set(over.get(cid, ()))
+    return key not in own
+
+
 def validate_keys(cid: str, keys: Sequence) -> list:
     """キーの並び ``keys``(正規化済み)を ``cid`` に付けてよいか(当たりは見ない)。"""
     cmd = BY_ID.get(cid)
@@ -539,6 +571,8 @@ def validate_keys(cid: str, keys: Sequence) -> list:
         plain = _plain_problem(k, scope)
         if plain:
             out.append(Problem("error", plain, cid, k))
+        elif _nav_problem(cid, k, scope):
+            out.append(Problem("error", "nav_key", cid, k))
         for level, code in reserved(k):
             out.append(Problem(level, code, cid, k))
     return out
@@ -554,30 +588,40 @@ def _relation(a: str, b: str) -> str | None:
 
 def _severity(a: Entry, b: Entry, rel: str) -> tuple | None:
     sa, sb = SCOPES[a.scope], SCOPES[b.scope]
-    if sa.mech == "qt" and sb.mech == "qt":
+    mechs = {sa.mech, sb.mech}
+    if mechs == {"qt"}:
         return ("error", "ambiguous" if rel == "same" else "prefix")
-    if sa.mech == "filter" and sb.mech == "filter":
+    if mechs == {"filter"}:
         if sa.group != sb.group:
             return None
         wa, wb = a.when or sa.when, b.when or sb.when
         if wa and wb and wa != wb:
             return ("info", "shared")
         return ("error", "same_widget" if rel == "same" else "prefix")
-    if sa.mech == "text" and sb.mech == "text":
-        return None
+    if not mechs & {"qt", "filter"}:
+        return None                                            # 組み込みどうし(欄の標準のキー・メニュー)
+    if "menu" in mechs:                                        # メニューバーが取る(部品は先に取る)
+        return ("error", "mnemonic") if "qt" in mechs else ("info", "shadow")
+    if "menu_other" in mechs:
+        return ("warning", "mnemonic_other") if "qt" in mechs else ("info", "shadow")
+    if "lost" in mechs or ("filter" in mechs and "text" in mechs):
+        return ("warning", "steals_text")                     # 欄の標準の操作(語の削除・コピー …)が消える
     return ("info", "shadow")
 
 
-_RANK = {"filter": 2, "text": 1, "qt": 0}
+_RANK = {"filter": 3, "text": 2, "menu": 1, "qt": 0, "lost": 0, "menu_other": 0}
+_LEVEL_RANK = {"error": 2, "warning": 1, "info": 0}
 
 
-def find_conflicts(entries: Iterable, only: Iterable | None = None) -> list:
+def find_conflicts(entries: Iterable, only: Iterable | None = None, places: dict | None = None) -> list:
     """当たり ``[Problem]``。``only`` を渡すと、そのコマンドが関わる物だけ(``command`` がそのコマンドの側)。
 
-    組み込み(``fixed``)どうしは数えない(今あって動いている。棚卸しで実測済み)。
+    組み込み(``fixed``)どうしは数えない(今あって動いている。棚卸しで実測済み)。``places`` は場所の表
+    (既定 ``PLACES``。本体の配線に合わせるなら ``PLACES_PLAIN_PYTHON_EDITOR``)。
     """
     entries = list(entries)
     only = set(only) if only is not None else None
+    places = PLACES if places is None else places
     by_first: dict = {}
     for e in entries:
         by_first.setdefault(e.key.split(", ")[0], []).append(e)
@@ -593,10 +637,10 @@ def find_conflicts(entries: Iterable, only: Iterable | None = None) -> list:
                 if rel is None:
                     continue
                 worst = None
-                for place, (_title, scopes) in PLACES.items():
+                for place, (_title, scopes) in places.items():
                     if a.scope in scopes and b.scope in scopes:
                         sev = _severity(a, b, rel)
-                        if sev and (worst is None or (sev[0] == "error" and worst[0] != "error")):
+                        if sev and (worst is None or _LEVEL_RANK[sev[0]] > _LEVEL_RANK[worst[0]]):
                             worst = (sev[0], sev[1], place)
                 if worst is None:
                     continue
@@ -614,19 +658,20 @@ def find_conflicts(entries: Iterable, only: Iterable | None = None) -> list:
     for e in entries:
         if e.fixed or (only is not None and e.command not in only) or SCOPES[e.scope].mech != "qt":
             continue
-        places = [p for p, (_t, scopes) in PLACES.items() if e.scope in scopes]
+        where = [p for p, (_t, scopes) in places.items() if e.scope in scopes]
         blockers = []
-        for p in places:
-            scopes = PLACES[p][1]
+        for p in where:
+            scopes = places[p][1]
             hit = [o for o in by_first.get(e.key.split(", ")[0], ()) if o.command != e.command and o.key == e.key
-                   and o.scope in scopes and SCOPES[o.scope].mech != "qt" and not (o.when or SCOPES[o.scope].when)]
+                   and o.scope in scopes and SCOPES[o.scope].mech in ("filter", "text")
+                   and not (o.when or SCOPES[o.scope].when)]
             if not hit:
                 break
             blockers.append(hit[0])
         else:
             if blockers:
                 out.append(Problem("error", "unreachable", e.command, e.key, blockers[0].command, blockers[0].key,
-                                   places[0]))
+                                   where[0]))
     return out
 
 
@@ -688,7 +733,7 @@ class Keymap:
         out.extend(extra)
         return out
 
-    def problems(self, extra: Iterable = ()) -> list:
+    def problems(self, extra: Iterable = (), places: dict | None = None) -> list:
         """表全体の問題(上書きのキーの検査 + 当たり)。"""
         out = []
         for cid, keys in self._over.items():
@@ -697,10 +742,14 @@ class Keymap:
             if not c.fixed:
                 for k in self.keys(c.id):
                     out.extend(Problem(lv, code, c.id, k) for lv, code in reserved(k) if lv == "error")
-        return out + find_conflicts(self.entries(extra))
+        return out + find_conflicts(self.entries(extra), places=places)
 
-    def check(self, cid: str, keys, extra: Iterable = ()) -> list:
-        """``cid`` を ``keys`` にしたら何が起きるか(まだ当てない)。"""
+    def check(self, cid: str, keys, extra: Iterable = (), places: dict | None = None) -> list:
+        """``cid`` を ``keys`` にしたら何が起きるか(まだ当てない)。
+
+        ``cid`` の側から見た当たりに加え、表全体で新しく増える error も返す(このキーで相手がどこでも届かなく
+        なる = ``blocks``)。表全体の検査(読み込み)が後で捨てる割り当てを、ここで先に断る。
+        """
         try:
             keys = parse_keys(keys)
         except KeyParseError as exc:
@@ -708,13 +757,23 @@ class Keymap:
         out = validate_keys(cid, keys)
         if any(p.code in ("unknown_command", "fixed_command") for p in out):
             return out
+        extra = list(extra)
         trial = self.copy()
         trial._set(cid, keys)
-        return out + find_conflicts(trial.entries(extra), only={cid})
+        after = trial.entries(extra)
+        out += find_conflicts(after, only={cid}, places=places)
+        before = {p for p in find_conflicts(self.entries(extra), places=places) if p.level == "error"}
+        for p in find_conflicts(after, places=places):
+            if p.level != "error" or p in before or p.command == cid:
+                continue
+            q = _as_seen_from(p, cid) if p.other == cid else p
+            if q not in out:
+                out.append(q)
+        return out
 
-    def assign(self, cid: str, keys, extra: Iterable = ()) -> list:
+    def assign(self, cid: str, keys, extra: Iterable = (), places: dict | None = None) -> list:
         """``cid`` のキーを ``keys`` にする。error が 1 つでもあれば当てずに問題を返す(相手は勝手に外さない)。"""
-        probs = self.check(cid, keys, extra)
+        probs = self.check(cid, keys, extra, places)
         if not any(p.level == "error" for p in probs):
             self._set(cid, parse_keys(keys))
         return probs
@@ -729,7 +788,7 @@ class Keymap:
         self._over = {}
         return n
 
-    def switch_preset(self, name: str, extra: Iterable = ()) -> list:
+    def switch_preset(self, name: str, extra: Iterable = (), places: dict | None = None) -> list:
         """型を変える(上書きは残す)。新しい型と当たる上書きは捨て、捨てた ``[(cid, keys)]`` を返す。"""
         if name not in PRESETS:
             raise ValueError("知らない型: %r" % (name,))
@@ -738,7 +797,7 @@ class Keymap:
             trial._set(cid, keys)
         dropped = []
         while True:
-            errs = [p for p in find_conflicts(trial.entries(extra)) if p.level == "error"]
+            errs = [p for p in find_conflicts(trial.entries(extra), places=places) if p.level == "error"]
             victim = next((c for p in errs for c in (p.command, p.other) if c in trial._over), None)
             if victim is None:
                 break
@@ -758,7 +817,7 @@ class Keymap:
 _TOP_KEYS = {"format", "version", "preset", "bindings"}
 
 
-def _read(data, strict: bool, extra: Iterable = ()) -> tuple:
+def _read(data, strict: bool, extra: Iterable = (), places: dict | None = None) -> tuple:
     """読み込みの共通部。``strict`` なら問題が 1 つでもあれば ``(None, problems)``。"""
     probs = []
     if not isinstance(data, dict):
@@ -803,8 +862,9 @@ def _read(data, strict: bool, extra: Iterable = ()) -> tuple:
             continue
         km._set(cid, keys)
     # 当たり: 寛容に読む時は、当たった上書きを捨てる。厳しく読む時は全部を断る
+    extra = list(extra)
     while True:
-        errs = [p for p in find_conflicts(km.entries(extra)) if p.level == "error"]
+        errs = [p for p in find_conflicts(km.entries(extra), places=places) if p.level == "error"]
         if not errs:
             break
         victim = next((c for p in errs for c in (p.command, p.other) if c in km._over), None)
@@ -887,7 +947,7 @@ def _loads(text: str):
         raise _JsonRefused("bad_json", "nested too deeply") from exc
 
 
-def from_settings_text(text, extra: Iterable = ()) -> tuple:
+def from_settings_text(text, extra: Iterable = (), places: dict | None = None) -> tuple:
     """設定に覚えた文字列 → ``(Keymap, problems)``。壊れていても必ず Keymap を返し、例外を出さない(壊れた分は捨てる)。
 
     新しい版(``version`` が ``VERSION`` より大きい)の設定は読まずに既定を返す(``settings_newer``。元の値は残す)。
@@ -907,7 +967,7 @@ def from_settings_text(text, extra: Iterable = ()) -> tuple:
         if isinstance(ver, int) and not isinstance(ver, bool) and ver > VERSION:
             return Keymap(), [Problem("warning", "settings_newer", detail=str(ver))]
     try:
-        km, probs = _read(data, strict=False, extra=extra)
+        km, probs = _read(data, strict=False, extra=extra, places=places)
     except Exception as exc:                                   # noqa: BLE001 -- 何が来ても起動は止めない
         return Keymap(), [Problem("warning", "settings_broken", detail=type(exc).__name__)]
     if km is None:
@@ -915,7 +975,7 @@ def from_settings_text(text, extra: Iterable = ()) -> tuple:
     return km, probs
 
 
-def import_text(data, extra: Iterable = ()) -> tuple:
+def import_text(data, extra: Iterable = (), places: dict | None = None) -> tuple:
     """書き出した JSON(文字列かバイト列)→ ``(Keymap, warnings)``。駄目なら ``(None, problems)``(何も当てない)。"""
     raw = data.encode("utf-8") if isinstance(data, str) else bytes(data)
     if len(raw) > MAX_IMPORT_BYTES:
@@ -927,7 +987,7 @@ def import_text(data, extra: Iterable = ()) -> tuple:
     except (UnicodeDecodeError, ValueError) as exc:
         return None, [Problem("error", "bad_json", detail=str(exc)[:80])]
     try:
-        return _read(obj, strict=True, extra=extra)
+        return _read(obj, strict=True, extra=extra, places=places)
     except Exception as exc:                                   # noqa: BLE001 -- 読み込みは知らせて断る(落ちない)
         return None, [Problem("error", "bad_type", detail=type(exc).__name__)]
 
@@ -1093,7 +1153,11 @@ MSG_LOAD_HEADER = "Not used when Studio started:"
 FILE_FILTER = "Fullseye Studio keys (*.json)"
 #: 登録簿に無い組み込みの相手(当たりの文と一覧): メニューバーのニーモニック / テキスト欄の標準のキー。
 MSG_MENU_BAR = "Menu bar: %s"
+MSG_MENU_OTHER = "Menu bar in other languages: %s"
 MSG_TEXT_KEY = "Text fields: %s"
+MSG_LANG_PROBLEM = ("Keyboard shortcuts: %d of your changes do not work in this language "
+                    "(Tools > Customize keyboard shortcuts)")
+MSG_LANG_HEADER = "Do not work in this language:"
 
 MESSAGES = {
     "ambiguous": "%(key)s is also used by %(other)s: in %(place)s neither would work",
@@ -1104,6 +1168,10 @@ MESSAGES = {
     "shadow": "In %(place)s, %(other)s takes %(key)s first",
     "shadows": "In %(place)s, this command takes %(key)s before %(other)s",
     "shared": "%(key)s is shared with %(other)s; each takes it only in its own situation",
+    "steals_text": "In %(place)s, %(key)s would do this command instead of %(other)s",
+    "mnemonic": "%(key)s opens %(other)s: this command would not get it",
+    "mnemonic_other": "%(key)s opens %(other)s: in that language this command would not get it",
+    "nav_key": "%(key)s without Ctrl or Alt is needed in lists and fields (to move, delete or cancel)",
     "chord_not_here": "%(key)s: two-stroke keys work only in window-wide places, not in editors",
     "too_many_strokes": "%(key)s: at most two strokes",
     "bad_key": "Cannot read the key %(key)s",
@@ -1176,7 +1244,8 @@ def ui_strings() -> tuple:
              BTN_REMOVE, BTN_RESET, BTN_RESET_ALL, BTN_IMPORT, BTN_EXPORT, BTN_CLOSE, MSG_FIXED, MSG_NO_CONFLICT,
              MSG_CHANGED, MSG_PICK, TTL_RESET_ALL, ASK_RESET_ALL, TTL_PRESET, ASK_PRESET, ASK_PRESET_DROP,
              MSG_IMPORTED, MSG_IMPORT_FAILED, MSG_EXPORTED, MSG_LOAD_PROBLEM, FILE_FILTER, MSG_MENU_BAR, MSG_TEXT_KEY,
-             MSG_LOAD_PART, MSG_LOAD_BROKEN, MSG_LOAD_NEWER, MSG_LOAD_HEADER]
+             MSG_LOAD_PART, MSG_LOAD_BROKEN, MSG_LOAD_NEWER, MSG_LOAD_HEADER, MSG_MENU_OTHER, MSG_LANG_PROBLEM,
+             MSG_LANG_HEADER]
     fixed += list(PRESET_TITLES.values()) + [s.title for s in SCOPES.values()] + [t for t, _s in PLACES.values()]
     fixed += list(MESSAGES.values()) + [c.title for c in COMMANDS if c.own_title]
     seen, out = set(), []

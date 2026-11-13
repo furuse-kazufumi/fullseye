@@ -183,9 +183,9 @@ def test_key_rules_by_scope():
 
 
 def test_fixed_entries_from_the_window_take_part():
-    menu = km.Entry("menu:File", "Alt+F", "window", None, True, "Menu bar: File")
+    menu = km.Entry("menu:File", "Alt+F", "menu_bar", None, True, "Menu bar: File")
     probs = km.Keymap().check("export", ("Alt+F",), extra=[menu])
-    assert _codes(probs) == [("error", "ambiguous", "menu:File")]
+    assert _codes(probs) == [("error", "mnemonic", "menu:File")]
     assert "Menu bar: File" in km.describe_problem(probs[0], titles={"menu:File": "Menu bar: File"})
 
 
@@ -349,7 +349,7 @@ def test_every_own_string_has_five_translations_and_nothing_else():
     table = km.load_table()
     assert km.missing() == []
     assert sorted(table) == sorted(km.ui_strings())
-    assert len(table) == 122
+    assert len(table) == 132
     ph = re.compile(r"%\(\w+\)s|%[sd]")
     for en, row in table.items():
         for lang in km.LANGS[1:]:
@@ -765,7 +765,7 @@ def test_the_f1_table_and_the_palette_show_the_changed_key(win, ctl, studio_mod)
 
 def test_window_mnemonics_take_part_in_the_check(win, ctl):
     probs = ctl.check("export", ("Alt+F",))
-    assert [(p.level, p.code, p.other) for p in probs] == [("error", "ambiguous", "menu:File")]
+    assert [(p.level, p.code, p.other) for p in probs] == [("error", "mnemonic", "menu:File")]
     assert "Menu bar: File" in ctl.describe(probs[0])
 
 
@@ -1099,3 +1099,175 @@ def test_the_start_message_counts_the_dropped_overrides_and_the_dialog_lists_the
         _close(w7)
         _set_saved(studio_mod, None)
     ctl.apply()
+
+
+# --------------------------------------------------------------------------- #
+# 2026-11-13 独立レビュー 1 回目の直し(C2: 当たりの判定を実際の動きに合わせる)
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("cid, key", [("zoom_in", "Down"), ("zoom_in", "Up"), ("zoom_in", "PgDown"), ("zoom_in", "End"),
+                                      ("zoom_in", "Backspace"), ("zoom_in", "Home"), ("zoom_in", "Esc"),
+                                      ("duplicate_stage", "Home"), ("python_editor_save", "Left")])
+def test_keys_that_lists_and_fields_need_are_refused_on_window_wide_places(cid, key):
+    assert ("error", "nav_key", "") in _codes(km.Keymap().check(cid, (key,)))
+
+
+def test_the_stage_lists_own_plain_keys_stay_and_text_free_windows_may_use_them():
+    k = km.Keymap()
+    assert km.validate_keys("reset", ("Home",)) == [] and km.validate_keys("remove", ("Del",)) == []
+    assert k.check("image_viewer_fit", ("Down",)) == []                  # 画像ビューアは文字を打たない窓
+    assert k.check("zoom_in", ("Ctrl+PgDown",)) == []                    # 修飾があれば一覧の移動ではない
+
+
+def test_a_key_that_would_block_another_command_is_refused_before_assigning():
+    k = km.Keymap()
+    probs = k.check("editops_line_duplicate", ("F5",))                   # 既定の場所 = Python エディタにも部品が付く
+    assert ("error", "blocks", "python_editor_run") in _codes(probs)
+    assert k.assign("editops_line_duplicate", ("F5",)) and k.keys("editops_line_duplicate") == ("Ctrl+D",)
+    plain = km.PLACES_PLAIN_PYTHON_EDITOR                                # 部品を付けない配線(本体の今の形)
+    assert [p for p in k.check("editops_line_duplicate", ("F5",), places=plain) if p.level == "error"] == []
+    got, probs = km.import_text(km.Keymap(overrides={"fit": ["Ctrl+Shift+F12"]}).to_json(), places=plain)
+    assert got is not None and got.keys("fit") == ("Ctrl+Shift+F12",) and probs == []
+
+
+_TEXT = [km.Entry("text:Copy", "Ctrl+C", "text", None, True, "Text fields: Copy"),
+         km.Entry("text:SelectAll", "Ctrl+A", "text", None, True, "Text fields: SelectAll"),
+         km.Entry("text:DeleteStartOfWord", "Ctrl+Backspace", "text_lost", None, True, "Text fields: DeleteStartOfWord")]
+
+
+def test_text_keys_the_field_takes_first_and_the_ones_it_would_lose():
+    k = km.Keymap()
+    assert _codes(k.check("zoom_in", ("Ctrl+A",), extra=_TEXT)) == [("info", "shadow", "text:SelectAll")]
+    assert _codes(k.check("zoom_in", ("Ctrl+Backspace",), extra=_TEXT)) == [
+        ("warning", "steals_text", "text:DeleteStartOfWord")]
+    # エディタの部品が欄の標準のキーを取ると、欄の操作(コピー)が消える = 警告
+    assert ("warning", "steals_text", "text:Copy") in _codes(k.check("editops_line_duplicate", ("Ctrl+C",),
+                                                                        extra=_TEXT))
+
+
+def test_menu_bar_keys_of_this_and_the_other_languages():
+    menus = [km.Entry("menu:File", "Alt+F", "menu_bar", None, True, "Menu bar: File"),
+             km.Entry("menu_other:Datei (de)", "Alt+D", "menu_bar_other", None, True, "Datei (de)")]
+    k = km.Keymap()
+    assert _codes(k.check("zoom_in", ("Alt+F",), extra=menus)) == [("error", "mnemonic", "menu:File")]
+    assert _codes(k.check("zoom_in", ("Alt+D",), extra=menus)) == [("warning", "mnemonic_other", "menu_other:Datei (de)")]
+    assert _codes(k.check("program_find", ("Alt+F",), extra=menus)) == [("info", "shadows", "menu:File")]
+
+
+def test_text_field_keys_are_measured_on_real_fields_and_the_verdict_matches_them(win, ctl):
+    _QtCore, _QtGui, _QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    import studio_keymap_qt as kq  # noqa: PLC0415
+    K = QtCore.Qt
+    fixed = {e.key: e.scope for e in kq.collect_fixed(win) if e.command.startswith("text:")}
+    assert len(fixed) >= 30
+    assert fixed["Ctrl+A"] == "text" and fixed["Ctrl+C"] == "text"
+    assert fixed["Ctrl+Backspace"] == "text_lost" and fixed["PgDown"] == "text_lost"
+    assert fixed["Shift+Down"] == "text_lost"                           # 1 行の欄(QLineEdit)は受けない
+    hits = []
+
+    def spy(*_a):
+        hits.append(1)
+    win._actions["zoom_in"].triggered.connect(spy)
+    try:
+        for key, mods, verdict, fires in ((K.Key_A, K.ControlModifier, "info", False),
+                                          (K.Key_Backspace, K.ControlModifier, "warning", True)):
+            name = km.normalize_sequence(QtGui_seq(key, mods))
+            probs = ctl.check("zoom_in", (name,))
+            assert [p.level for p in probs] == [verdict], (name, probs)
+            assert ctl.assign("zoom_in", (name,)) == probs
+            _activate(win)
+            win._search.setFocus()
+            _pump(0.05)
+            del hits[:]
+            QTest.keyClick(win._search, key, mods)
+            assert bool(hits) is fires, name                                # 判定と本物の動きが同じ
+    finally:
+        win._actions["zoom_in"].triggered.disconnect(spy)
+
+
+def QtGui_seq(key, mods):
+    from PySide6 import QtCore, QtGui  # noqa: PLC0415
+    return QtGui.QKeySequence(QtCore.QKeyCombination(mods, key)).toString(QtGui.QKeySequence.PortableText)
+
+
+def test_a_plain_arrow_on_the_window_is_refused_and_the_list_still_moves(win, ctl):
+    _QtCore, _QtGui, _QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    probs = ctl.assign("zoom_in", ("Down",))
+    assert ("error", "nav_key", "") in _codes(probs) and ctl.keymap.keys("zoom_in") == ("Ctrl+=",)
+    lst = win._op_list
+    _activate(win)
+    lst.setCurrentRow(0)
+    lst.setFocus()
+    _pump(0.05)
+    QTest.keyClick(lst, QtCore.Qt.Key_Down)
+    assert lst.currentRow() == 1
+
+
+def test_the_python_editor_places_follow_what_is_really_attached(win, ctl, studio_mod):
+    import studio_editops_qt as eq  # noqa: PLC0415
+    from PySide6 import QtWidgets  # noqa: PLC0415
+    assert [p for p in ctl.check("editops_line_duplicate", ("F5",)) if p.level == "error"] == []
+    assert [p.level for p in ctl.assign("editops_line_duplicate", ("F5",))].count("error") == 0
+    w8, ctl8 = _build(studio_mod)                                         # 次の起動でも消えない
+    try:
+        assert ctl8.keymap.keys("editops_line_duplicate") == ("F5",) and ctl8.load_problems == []
+    finally:
+        _close(w8)
+    ctl.reset("editops_line_duplicate")
+    win._act_pyedit.trigger()
+    _pump(0.3)
+    pdlg = win._pyedit_dlg
+    try:
+        eds = [e for e in pdlg.findChildren(QtWidgets.QPlainTextEdit) if hasattr(e, "word_under_cursor")]
+        assert eds
+        ops = eq.install(eds[0])                                          # Python エディタにも部品を付ける配線
+        try:
+            assert ("error", "blocks", "python_editor_run") in _codes(ctl.check("editops_line_duplicate", ("F5",)))
+        finally:
+            eq.uninstall(eds[0])
+            assert ops is not None
+    finally:
+        pdlg.close()
+    ctl.apply()
+
+
+def test_mnemonics_of_every_language_take_part_and_a_switch_says_what_stops_working(win, ctl):
+    import studio_keymap_qt as kq  # noqa: PLC0415
+    others = {e.key: e.command for e in kq.collect_fixed(win) if e.scope == "menu_bar_other"}
+    assert "Alt+D" in others and "Datei" in others["Alt+D"]
+    assert "Alt+A" in others and "Ansicht" in others["Alt+A"]
+    probs = ctl.check("zoom_in", ("Alt+D",))
+    assert [(p.level, p.code) for p in probs] == [("warning", "mnemonic_other")]
+    assert "Datei" in ctl.describe(probs[0])
+    assert ctl.assign("zoom_in", ("Alt+D",)) == probs
+    said = []
+    old_flash, ctl.flash = ctl.flash, said.append
+    try:
+        win._lang_actions["de"].trigger()
+        _pump(0.1)
+        assert len(said) == 1 and " 1 " in said[0]
+        assert [(p.code, p.command) for p in ctl.lang_problems] == [("mnemonic", "zoom_in")]
+        dlg = ctl.open_dialog()
+        _pump(0.1)
+        assert not dlg.load_note.isHidden() and "Alt+D" in dlg.load_note.text()
+        win._lang_actions["en"].trigger()
+        _pump(0.1)
+        assert ctl.lang_problems == [] and dlg.load_note.isHidden()
+    finally:
+        ctl.flash = old_flash
+
+
+def test_resetting_one_command_never_makes_a_conflict(win, ctl):
+    assert ctl.assign("open_image", ()) == []
+    assert ctl.assign("export", ("Ctrl+O",)) == []
+    probs = ctl.reset("open_image")
+    assert ("error", "ambiguous", "export") in _codes(probs)
+    assert ctl.keymap.keys("open_image") == () and ctl.keymap.keys("export") == ("Ctrl+O",)   # 何も変えない
+    dlg = ctl.open_dialog()
+    assert dlg.select("open_image")
+    dlg.b_reset.click()
+    _pump(0.05)
+    assert "Export" in dlg.status.text() and ctl.keymap.keys("open_image") == ()
+    assert ctl.assign("export", ()) == []
+    assert [p for p in ctl.reset("open_image") if p.level == "error"] == [] and ctl.keymap.keys("open_image") == ("Ctrl+O",)

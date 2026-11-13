@@ -24,7 +24,9 @@ Studio 本体への取り付けは 1 行::
 from __future__ import annotations
 
 import html
+import json
 import os
+import sys
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
@@ -389,17 +391,101 @@ def _install_hooks(win, st: _State) -> None:
         win._localize = localize
 
 
-def collect_fixed(win) -> list:
-    """変えられないが当たりの検査に入れるキー: 今の言語のメニューバーのニーモニックと、テキスト欄の標準のキー。"""
-    out = []
+_STRINGS: dict = {}
+_FIELD_VERDICT: dict = {}
+_PROBE_FIELDS: list = []
+
+
+def _strings_table() -> dict:
+    """Studio の訳の表 ``{英語: {言語: 訳}}``(読み込み済みの studio から。無ければ studio_assets/i18n.json)。"""
+    mod = sys.modules.get("studio")
+    tab = getattr(mod, "STRINGS_I18N", None) if mod is not None else None
+    if isinstance(tab, dict):
+        return tab
+    if "file" not in _STRINGS:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_assets", "i18n.json")
+        try:
+            with open(path, encoding="utf-8") as fh:
+                data = json.load(fh)
+        except (OSError, ValueError):                          # 訳が読めなくても、今の言語の分は数える
+            data = {}
+        _STRINGS["file"] = data if isinstance(data, dict) else {}
+    return _STRINGS["file"]
+
+
+def _mnemonic(title: str) -> str | None:
+    return _seq_text(QtGui.QKeySequence.mnemonic(title)) if title else None
+
+
+def _field_takes(key: str) -> bool:
+    """テキスト欄(本物の QPlainTextEdit と QLineEdit の両方)が ``key`` を ShortcutOverride で先に取るか(実測)。
+
+    取らない欄があれば、窓の同じキーが勝って、その欄の標準の操作が消える(2026-11-13 の実測: Ctrl+Backspace・
+    Ctrl+Del・PgDown は両方とも取らない、Shift+Down・Up・Down・Return は 1 行の欄が取らない)。
+    """
+    if key in _FIELD_VERDICT:
+        return _FIELD_VERDICT[key]
+    if not _PROBE_FIELDS or not all(_valid(w) for w in _PROBE_FIELDS):
+        pte = QtWidgets.QPlainTextEdit()
+        pte.setPlainText("ab cd\nef gh")
+        _PROBE_FIELDS[:] = [pte, QtWidgets.QLineEdit("ab cd")]
+    seq = QtGui.QKeySequence(key)
+    taken = seq.count() == 1
+    if taken:
+        comb = seq[0]
+        for w in _PROBE_FIELDS:
+            ev = QtGui.QKeyEvent(QtCore.QEvent.ShortcutOverride, comb.key(), comb.keyboardModifiers())
+            ev.ignore()
+            QtCore.QCoreApplication.sendEvent(w, ev)
+            taken = taken and ev.isAccepted()
+    _FIELD_VERDICT[key] = taken
+    return taken
+
+
+def _menu_entries(win, strings: dict | None = None) -> list:
+    """メニューバーのニーモニック: 今の言語の物(範囲 menu_bar)と、他の言語の物(menu_bar_other、キーごとに 1 行)。"""
     mb = win.menuBar() if hasattr(win, "menuBar") else None
-    if mb is not None:
-        for a in mb.actions():
-            title = a.text()
-            t = _seq_text(QtGui.QKeySequence.mnemonic(title)) if title else None
-            if t:
-                name = _qt_stripped(title)
-                out.append(km.Entry("menu:" + name, t, "window", None, True, km.MSG_MENU_BAR % name))
+    if mb is None:
+        return []
+    labels = getattr(win, "_label_en", None) or {}
+    table = strings if strings is not None else _strings_table()
+    out, current, sources = [], set(), []
+    for a in mb.actions():
+        title = a.text()
+        t = _mnemonic(title)
+        if t:
+            name = _qt_stripped(title)
+            out.append(km.Entry("menu:" + name, t, "menu_bar", None, True, km.MSG_MENU_BAR % name))
+            current.add(t)
+        menu = a.menu()
+        rec = labels.get(menu) if menu is not None else None
+        en = rec[1] if isinstance(rec, tuple) and len(rec) == 2 and isinstance(rec[1], str) else None
+        if en is None and getattr(win, "_lang", "en") == "en":
+            en = title
+        sources.append(en)
+    other: dict = {}
+    for en in sources:
+        if not en:
+            continue
+        row = table.get(en)
+        row = row if isinstance(row, dict) else {}
+        for lang, text in [("en", en)] + sorted((k, v) for k, v in row.items() if isinstance(v, str)):
+            t = _mnemonic(text)
+            if t and t not in current:
+                name = "%s (%s)" % (_qt_stripped(text), lang)
+                names = other.setdefault(t, [])
+                if name not in names:
+                    names.append(name)
+    for t in sorted(other):
+        names = ", ".join(other[t])
+        out.append(km.Entry("menu_other:" + names, t, "menu_bar_other", None, True, km.MSG_MENU_OTHER % names))
+    return out
+
+
+def collect_fixed(win, strings: dict | None = None) -> list:
+    """変えられないが当たりの検査に入れるキー: メニューバーのニーモニック(今の言語と他の言語)と、テキスト欄の
+    標準のキー(欄が先に取る ``text`` / 窓のキーが勝つと欄の操作が消える ``text_lost``。本物の欄で実測)。"""
+    out = _menu_entries(win, strings)
     seen = set()
     for key, owner, _covers in eq.builtin_text_keys():
         try:
@@ -410,7 +496,8 @@ def collect_fixed(win) -> list:
             continue
         seen.add(t)
         name = owner.split(".")[-1]
-        out.append(km.Entry("text:" + name, t, "text", None, True, km.MSG_TEXT_KEY % name))
+        scope = "text" if _field_takes(t) else "text_lost"
+        out.append(km.Entry("text:" + name, t, scope, None, True, km.MSG_TEXT_KEY % name))
     return out
 
 
@@ -659,12 +746,16 @@ class KeyboardDialog(QtWidgets.QDialog):
         self.select(keep) if keep else self._show_detail()
 
     def _show_load_note(self) -> None:
-        probs = [p for p in self.ctl.load_problems if p.level != "info"]
-        if not probs:
+        tr = self.ctl.tr
+        parts = []
+        for header, probs in ((km.MSG_LOAD_HEADER, [p for p in self.ctl.load_problems if p.level != "info"]),
+                              (km.MSG_LANG_HEADER, list(self.ctl.lang_problems))):
+            if probs:
+                parts.append(tr(header) + "\n" + "\n".join("  " + self.ctl.describe(p) for p in probs[:12]))
+        if not parts:
             self.load_note.hide()
             return
-        self.load_note.setText(self.ctl.tr(km.MSG_LOAD_HEADER) + "\n" + "\n".join(
-            "  " + self.ctl.describe(p) for p in probs[:12]))
+        self.load_note.setText("\n".join(parts))
         self.load_note.show()
 
     def _filter(self) -> None:
@@ -786,11 +877,13 @@ class KeyboardDialog(QtWidgets.QDialog):
         if c is not None and not c.fixed:
             self._after(self.ctl.assign(c.id, ()))
 
-    def do_reset(self) -> None:
+    def do_reset(self) -> list:
         c = self._cmd()
-        if c is not None and not c.fixed:
-            self.ctl.reset(c.id)
-            self._after([])
+        if c is None or c.fixed:
+            return []
+        probs = self.ctl.reset(c.id)                           # 当たるなら戻さずに相手を示す
+        self._after(probs)
+        return probs
 
     def _after(self, probs: list) -> None:
         if any(p.level == "error" for p in probs):
@@ -823,7 +916,7 @@ class KeyboardDialog(QtWidgets.QDialog):
         if name == self.ctl.keymap.preset:
             return True
         trial = self.ctl.keymap.copy()
-        dropped = trial.switch_preset(name, self.ctl.fixed_entries())
+        dropped = trial.switch_preset(name, self.ctl.fixed_entries(), self.ctl.places)
         text = tr(km.ASK_PRESET) % tr(km.PRESET_TITLES[name])
         if dropped:
             text += "\n\n" + tr(km.ASK_PRESET_DROP) % len(dropped) + "\n" + "\n".join(
@@ -879,9 +972,11 @@ class KeymapController(QtCore.QObject):
 
     changed = QtCore.Signal()
 
-    def __init__(self, win, settings=None, tr=None, lang=None, flash=None):
+    def __init__(self, win, settings=None, tr=None, lang=None, flash=None, python_editor_editops=None):
         super().__init__(win)
         self.win = win
+        self._py_editops = python_editor_editops               # None = 今ある Python エディタの欄を見て決める
+        self.lang_problems: list = []                          # 今の言語で効かない上書き(言語の切り替えの後)
         self._settings = settings
         self._lang = lang or (lambda: getattr(win, "_lang", "en"))
         self.tr = km.make_tr(self._lang, first=tr)
@@ -914,7 +1009,7 @@ class KeymapController(QtCore.QObject):
         if value is not None and not isinstance(value, str):
             value = repr(value)                                # 型の違う値(手で書き換えた設定)= 壊れている
         try:
-            self.keymap, probs = km.from_settings_text(value, self.fixed_entries())
+            self.keymap, probs = km.from_settings_text(value, self.fixed_entries(), self.places)
         except Exception as exc:                               # noqa: BLE001 -- 何が来ても既定で起動する
             self.keymap, probs = km.Keymap(), [km.Problem("warning", "settings_broken", detail=type(exc).__name__)]
         self.load_problems = [p for p in probs if p.level != "info"]
@@ -959,6 +1054,43 @@ class KeymapController(QtCore.QObject):
     def fixed_entries(self) -> list:
         return collect_fixed(self.win)
 
+    @property
+    def places(self) -> dict:
+        """当たりを数える場所の表。Python エディタの窓に矩形選択の部品が本当に付いているかで選ぶ。"""
+        attached = self._py_editops
+        if attached is None:
+            dlg = getattr(self.win, "_pyedit_dlg", None)
+            attached = False
+            if dlg is not None and _valid(dlg):
+                attached = any(eq.get(e) is not None for e in dlg.findChildren(QtWidgets.QPlainTextEdit))
+        return km.PLACES if attached else km.PLACES_PLAIN_PYTHON_EDITOR
+
+    def recheck(self, flash: bool = True) -> list:
+        """表全体を今の言語で調べ直す(言語の切り替えの後)。効かなくなった上書き(今の言語のメニューバーの
+        ニーモニックと当たる等)を ``lang_problems`` に置き、``flash`` なら状態行に 1 行。上書きは外さない。"""
+        try:
+            probs = self.keymap.problems(self.fixed_entries(), self.places)
+        except Exception as exc:                               # noqa: BLE001 -- 表示の付け直しが窓を壊さない
+            print("studio_keymap_qt: %s: %s" % (type(exc).__name__, exc))
+            probs = []
+        over = self.keymap.overrides()
+        mine = []
+        for p in probs:
+            if p.level != "error":
+                continue
+            for c in (p.command, p.other):
+                if c in over:
+                    q = km._as_seen_from(p, c)
+                    if q not in mine:
+                        mine.append(q)
+        self.lang_problems = mine
+        if flash and mine and self.flash:
+            try:
+                self.flash(self.tr(km.MSG_LANG_PROBLEM) % len({p.command for p in mine}))
+            except Exception:                                  # noqa: BLE001
+                pass
+        return mine
+
     def apply(self) -> dict:
         report = apply_keymap(self.win, self.keymap, self._lang)
         self.changed.emit()
@@ -966,24 +1098,30 @@ class KeymapController(QtCore.QObject):
 
     def _commit(self) -> None:
         self.save()
+        self.recheck(flash=False)
         self.apply()
 
     # ---- 変える ------------------------------------------------------------ #
     def check(self, cid: str, keys) -> list:
-        return self.keymap.check(cid, keys, self.fixed_entries())
+        return self.keymap.check(cid, keys, self.fixed_entries(), self.places)
 
     def assign(self, cid: str, keys) -> list:
         """``cid`` のキーを ``keys`` にする。当たり(error)があれば何も変えずに問題を返す。"""
-        probs = self.keymap.assign(cid, keys, self.fixed_entries())
+        probs = self.keymap.assign(cid, keys, self.fixed_entries(), self.places)
         if not any(p.level == "error" for p in probs):
             self._commit()
         return probs
 
-    def reset(self, cid: str) -> bool:
-        done = self.keymap.reset(cid)
-        if done:
-            self._commit()
-        return done
+    def reset(self, cid: str) -> list:
+        """``cid`` を型の既定に戻す。戻すと当たり(error)ができるなら戻さずに問題を返す(相手は勝手に外さない)。"""
+        if not self.keymap.is_changed(cid):
+            return []
+        probs = self.keymap.check(cid, self.keymap.preset_keys(cid), self.fixed_entries(), self.places)
+        if any(p.level == "error" for p in probs):
+            return probs
+        self.keymap.reset(cid)
+        self._commit()
+        return probs
 
     def reset_all(self) -> int:
         n = self.keymap.reset_all()
@@ -991,7 +1129,7 @@ class KeymapController(QtCore.QObject):
         return n
 
     def switch_preset(self, name: str) -> list:
-        dropped = self.keymap.switch_preset(name, self.fixed_entries())
+        dropped = self.keymap.switch_preset(name, self.fixed_entries(), self.places)
         self._commit()
         return dropped
 
@@ -1011,7 +1149,7 @@ class KeymapController(QtCore.QObject):
                 data = fh.read(km.MAX_IMPORT_BYTES + 1)
         except OSError as exc:
             return False, [km.Problem("error", "bad_json", detail=str(exc)[:80])]
-        new, probs = km.import_text(data, self.fixed_entries())
+        new, probs = km.import_text(data, self.fixed_entries(), self.places)
         if new is None:
             return False, probs
         self.keymap = new
@@ -1020,12 +1158,13 @@ class KeymapController(QtCore.QObject):
 
     # ---- 表示 -------------------------------------------------------------- #
     def _fixed_title(self, e: km.Entry) -> str:
-        tmpl = km.MSG_MENU_BAR if e.command.startswith("menu:") else km.MSG_TEXT_KEY
+        kind = e.command.split(":", 1)[0]
+        tmpl = {"menu": km.MSG_MENU_BAR, "menu_other": km.MSG_MENU_OTHER}.get(kind, km.MSG_TEXT_KEY)
         return self.tr(tmpl) % e.command.split(":", 1)[1]
 
     def rows(self, include_unbound: bool = True) -> list:
-        """一覧の行(F1 の表・設定の窓)。メニューバーのニーモニックも組み込みとして並べる。"""
-        menu = [e._replace(title=self._fixed_title(e)) for e in self.fixed_entries() if e.scope == "window"]
+        """一覧の行(F1 の表・設定の窓)。今の言語のメニューバーのニーモニックも組み込みとして並べる。"""
+        menu = [e._replace(title=self._fixed_title(e)) for e in self.fixed_entries() if e.scope == "menu_bar"]
         return km.shortcut_rows(self.keymap, self.tr, extra=menu, include_unbound=include_unbound)
 
     def describe(self, p: km.Problem) -> str:
@@ -1053,18 +1192,20 @@ _PALETTE_WORDS = ("キー キーボード ショートカット 設定 割り当
                   "customize assign")
 
 
-def install(win, settings=None, tr=None, lang=None, flash=None, palette_words: dict | None = None
-            ) -> KeymapController:
+def install(win, settings=None, tr=None, lang=None, flash=None, palette_words: dict | None = None,
+            python_editor_editops: bool | None = None) -> KeymapController:
     """窓 ``win`` にキーの割り当てを取り付ける(2 度呼んでも 1 つ)。保存してあった上書きを読み、配る。
 
     ``settings``: ``QSettings`` を返す関数(``studio._settings``。無ければ覚えない)/ ``tr``: Studio の ``tr`` /
     ``lang``: 今の言語の符号を返す関数 / ``flash``: 状態行へ 1 行(無ければ ``win._flash``)/
-    ``palette_words``: ``studio.PALETTE_WORDS``(パレットの別名を足す)。
+    ``palette_words``: ``studio.PALETTE_WORDS``(パレットの別名を足す)/ ``python_editor_editops``: Python エディタの
+    窓にも矩形選択の部品を付ける配線なら True(None = 開いている Python エディタを見て決める)。
     """
     ctl = get(win)
     if ctl is not None:
         return ctl
-    ctl = KeymapController(win, settings=settings, tr=tr, lang=lang, flash=flash)
+    ctl = KeymapController(win, settings=settings, tr=tr, lang=lang, flash=flash,
+                           python_editor_editops=python_editor_editops)
     win._keymap = ctl
     st = _state(win)
     a = QtGui.QAction(ctl.tr(km.ACT_SETTINGS), win)
@@ -1081,6 +1222,7 @@ def install(win, settings=None, tr=None, lang=None, flash=None, palette_words: d
     st.on_lang.append(lambda: a.setText(ctl.tr(km.ACT_SETTINGS)) if _valid(a) else None)
     if palette_words is not None:
         palette_words.setdefault("keyboard_settings", _PALETTE_WORDS)
+    st.on_lang.append(lambda: ctl.recheck(flash=True))       # 言語を変えたら、今の言語で効かない上書きを知らせる
     ctl.load()
     ctl.apply()
     return ctl

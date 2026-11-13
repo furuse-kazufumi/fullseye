@@ -854,6 +854,76 @@
    "tw": "已儲存的快速鍵來自較新的版本(%(detail)s)；已保留但不使用",
    "ko": "저장된 단축키는 더 새로운 버전(%(detail)s)의 것입니다. 남겨 두고 쓰지 않습니다",
    "de": "Die gespeicherten Tastenkürzel stammen aus einer neueren Version (%(detail)s); sie bleiben und werden nicht verwendet"
+  },
+  "Text fields (the window key wins)": {
+   "ja": "テキスト欄(窓のキーが勝つ)",
+   "zh": "文本框(窗口按键优先)",
+   "tw": "文字欄位(視窗按鍵優先)",
+   "ko": "텍스트 칸 (창의 키가 이김)",
+   "de": "Textfelder (die Fenstertaste gewinnt)"
+  },
+  "Menu bar": {
+   "ja": "メニューバー",
+   "zh": "菜单栏",
+   "tw": "選單列",
+   "ko": "메뉴 막대",
+   "de": "Menüleiste"
+  },
+  "Menu bar in other languages": {
+   "ja": "他の言語のメニューバー",
+   "zh": "其他语言的菜单栏",
+   "tw": "其他語言的選單列",
+   "ko": "다른 언어의 메뉴 막대",
+   "de": "Menüleiste in anderen Sprachen"
+  },
+  "Menu bar in other languages: %s": {
+   "ja": "他の言語のメニューバー: %s",
+   "zh": "其他语言的菜单栏: %s",
+   "tw": "其他語言的選單列: %s",
+   "ko": "다른 언어의 메뉴 막대: %s",
+   "de": "Menüleiste in anderen Sprachen: %s"
+  },
+  "Keyboard shortcuts: %d of your changes do not work in this language (Tools > Customize keyboard shortcuts)": {
+   "ja": "キーボードのショートカット: 変えたキーのうち %d 個がこの言語では効かない(ツール > キーボードのショートカットの設定)",
+   "zh": "键盘快捷键: 您更改的按键中有 %d 项在此语言下无效(工具 > 自定义键盘快捷键)",
+   "tw": "鍵盤快速鍵: 您變更的按鍵中有 %d 項在此語言下無效(工具 > 自訂鍵盤快速鍵)",
+   "ko": "키보드 단축키: 바꾼 키 중 %d개가 이 언어에서는 작동하지 않습니다 (도구 > 키보드 단축키 설정)",
+   "de": "Tastenkürzel: %d Ihrer Änderungen wirken in dieser Sprache nicht (Werkzeuge > Tastenkürzel anpassen)"
+  },
+  "Do not work in this language:": {
+   "ja": "この言語では効かない物:",
+   "zh": "在此语言下无效:",
+   "tw": "在此語言下無效:",
+   "ko": "이 언어에서 작동하지 않는 것:",
+   "de": "Wirken in dieser Sprache nicht:"
+  },
+  "In %(place)s, %(key)s would do this command instead of %(other)s": {
+   "ja": "%(place)s では、%(key)s で %(other)s の代わりにこのコマンドが動く",
+   "zh": "在%(place)s中，%(key)s 会执行此命令，而不是 %(other)s",
+   "tw": "在%(place)s中，%(key)s 會執行此指令，而不是 %(other)s",
+   "ko": "%(place)s에서는 %(key)s 가 %(other)s 대신 이 명령을 실행합니다",
+   "de": "In %(place)s würde %(key)s diesen Befehl statt %(other)s ausführen"
+  },
+  "%(key)s opens %(other)s: this command would not get it": {
+   "ja": "%(key)s は %(other)s を開く: このコマンドには届かない",
+   "zh": "%(key)s 会打开 %(other)s: 此命令收不到",
+   "tw": "%(key)s 會開啟 %(other)s: 此指令收不到",
+   "ko": "%(key)s 는 %(other)s 를 엽니다: 이 명령에는 닿지 않습니다",
+   "de": "%(key)s öffnet %(other)s: dieser Befehl bekäme sie nicht"
+  },
+  "%(key)s opens %(other)s: in that language this command would not get it": {
+   "ja": "%(key)s は %(other)s を開く: その言語ではこのコマンドに届かない",
+   "zh": "%(key)s 会打开 %(other)s: 在该语言下此命令收不到",
+   "tw": "%(key)s 會開啟 %(other)s: 在該語言下此指令收不到",
+   "ko": "%(key)s 는 %(other)s 를 엽니다: 그 언어에서는 이 명령에 닿지 않습니다",
+   "de": "%(key)s öffnet %(other)s: in dieser Sprache bekäme dieser Befehl sie nicht"
+  },
+  "%(key)s without Ctrl or Alt is needed in lists and fields (to move, delete or cancel)": {
+   "ja": "Ctrl も Alt も付かない %(key)s は、一覧と入力欄で要る(移動・削除・取り消し)",
+   "zh": "不带 Ctrl 或 Alt 的 %(key)s 在列表和输入框中需要(移动、删除、取消)",
+   "tw": "不帶 Ctrl 或 Alt 的 %(key)s 在清單和輸入框中需要(移動、刪除、取消)",
+   "ko": "Ctrl 이나 Alt 가 없는 %(key)s 는 목록과 입력란에서 필요합니다 (이동·삭제·취소)",
+   "de": "%(key)s ohne Strg oder Alt wird in Listen und Feldern gebraucht (Bewegen, Löschen, Abbrechen)"
   }
  }
 }
