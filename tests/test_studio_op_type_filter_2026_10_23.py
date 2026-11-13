@@ -128,12 +128,19 @@ def test_browser_follows_the_selected_stage_and_switch_turns_it_off():
     win.close()
 
 
-def test_first_stage_is_not_narrowed_and_category_counts_agree():
+def test_first_stage_is_narrowed_to_the_loaded_image_and_category_counts_agree():
+    """2026-11-13(初回起動の点検 S2): 最初の段も、読み込んだ画像を受けられる op だけに絞る(従来は絞らず、
+    beatcube 用のレーダーの op などが並んでいた)。スイッチを切れば全部出る。"""
     win, _model = _window()
     fit = win._ops_fit
     rows = api.list_ops(include_algo=True)
-    assert len(_listed(win)) == len(rows)
+    expect = [r["name"] for r in studio._ops_accepting_entry(rows, "image")]
+    assert 0 < len(expect) < len(rows)
+    assert sorted(_listed(win)) == sorted(expect)
     assert "First stage" in fit["note"].text()
+    fit["check"].setChecked(False)
+    assert len(_listed(win)) == len(rows)
+    fit["check"].setChecked(True)
     win.close()
 
     win, _model = _window(["threshold"])

@@ -170,6 +170,9 @@ PARAM_SPECS: dict[str, dict[str, dict[str, Any]]] = {
                           "blur σ of the mask = 0.5 + 1.5·b", "0.5 + 1.5 * b")},
     # ---- edges ----
     "sobel_mag": {"a": UNUSED, "b": UNUSED},
+    # 2026-11-13(Studio の初回起動の点検 M3): 実装は np.hypot(sobel(x, 1), sobel(x, 0)) を正規化するだけで a・b を読まない
+    # (検索が空の時の一覧の 3 番目。つまみが 2 本動かせたのに何も変わらなかった)。
+    "sobel_amp": {"a": UNUSED, "b": UNUSED},
     "laplace": {"a": UNUSED, "b": UNUSED},
     "prewitt_mag": {"a": UNUSED, "b": UNUSED},
     "roberts_mag": {"a": UNUSED, "b": UNUSED},

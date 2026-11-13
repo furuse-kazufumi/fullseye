@@ -390,8 +390,14 @@ def _close_window(studio, win):
     win.quiesce(); win.close(); _pump(0.1)
 
 
-def test_enter_inserts_the_top_search_hit_not_a_staple(tmp_path, monkeypatch):
-    """定番の欄を先頭に出しても、Enter が入れるのは検索の 1 位(「blur」で Enter → 定番の gaussian ではなく 1 位)。"""
+def test_enter_inserts_the_first_row_on_screen_staples_included(tmp_path, monkeypatch):
+    """Enter が入れるのは、見えている先頭の行(「blur」→ 定番の gaussian)。その行は押す前から選択状態。
+
+    ★2026-11-13(初回起動の点検 M1)で約束を変えた。11/12 は「canny edge」で定番の sobel_amp が入った為に定番を
+    外したが、op 名を含む問い合わせには定番が出ない(test_staples_do_not_fire_on_unrelated_or_name_queries)ので、
+    「canny edge」は検索の 1 位(canny の op)のまま。外したままだと、先頭に gaussian が見えているのに
+    下の欄の 1 位(xkor_bilateral)が入っていた。
+    """
     studio, win, model = _studio_window(tmp_path, monkeypatch)
     try:
         ui = win._search_ui
@@ -399,18 +405,21 @@ def test_enter_inserts_the_top_search_hit_not_a_staple(tmp_path, monkeypatch):
         ui["edit"].setText("blur"); ui["search_now"]("blur"); _pump(0.3)
         rows = ui["rows"]()
         assert rows["staples"], "この試験は定番が出る語で行う"
-        ranked = [r["name"] for g in ("applicable", "needs_preprocessing", "other") for r in rows[g]]
+        first = rows["staples"][0]["name"]
+        assert first == "gaussian"
+        assert ui["list"].currentItem() is rows["staples"][0]["item"]        # 押す前から見えている
         n0 = len(model.stages)
-        ui["list"].setCurrentItem(None)
+        ui["list"].setCurrentItem(None)                                     # 選択を外しても同じ行
         ui["edit"].returnPressed.emit(); _pump(0.3)
         assert len(model.stages) == n0 + 1
-        # 1 位が、この環境に無い op(optional backend が未導入)の事がある(CI の py3.12 / py3.14 で
-        # 「blur」の 1 位が xkor_bilateral だった)。その時は、入れられる最初の行が入る。
-        addable = [n for n in ranked if studio.api.find_op(n) is not None]
-        assert addable, ranked[:5]
-        assert model.stages[-1][0] == studio.api.find_op(addable[0]).name, (
-            model.stages[-1][0], ranked[:3], rows["staples"][0]["name"])
-        assert model.stages[-1][0] != rows["staples"][0]["name"] or addable[0] == rows["staples"][0]["name"]
+        assert model.stages[-1][0] == studio.api.find_op(first).name
+        # op 名を含む問い合わせ: 定番は出ず、先頭は canny の op(11/12 の sobel_amp の取り違えが戻らない)
+        ui["edit"].setText("canny edge"); ui["search_now"]("canny edge"); _pump(0.3)
+        assert ui["rows"]()["staples"] == []
+        n1 = len(model.stages)
+        ui["edit"].returnPressed.emit(); _pump(0.3)
+        assert len(model.stages) == n1 + 1
+        assert "canny" in model.stages[-1][0] and model.stages[-1][0] != "sobel_amp", model.stages[-1][0]
     finally:
         _close_window(studio, win)
 
@@ -423,11 +432,12 @@ def test_enter_skips_a_top_hit_that_is_not_installed_here(tmp_path, monkeypatch,
         win._ops_fit["check"].setChecked(False)
         ui["edit"].setText("blur"); ui["search_now"]("blur"); _pump(0.3)
         rows = ui["rows"]()
-        ranked = [r["name"] for g in ("applicable", "needs_preprocessing", "other") for r in rows[g]]
+        ranked = list(dict.fromkeys(r["name"] for g in ("staples", "applicable", "needs_preprocessing", "other")
+                                    for r in rows[g]))
         real = studio.api.find_op
         addable = [n for n in ranked if real(n) is not None]
         assert len(addable) >= 2, ranked[:5]
-        gone = addable[0]                                   # 1 位が「未導入」だった事にする
+        gone = addable[0]                                   # 先頭の行が「未導入」だった事にする(M1: 定番を含む)
         monkeypatch.setattr(studio.api, "find_op", lambda name, *a, **k: None if name == gone else real(name, *a, **k))
         n0 = len(model.stages)
         ui["list"].setCurrentItem(None)
@@ -648,3 +658,66 @@ def test_english_words_that_are_also_op_names_give_no_staple_by_design(word):
     assert ss._row_of(word) is not None                  # 理由: その語は op 名として索引に在る
     assert ss.staples_for(word) == []
     assert ss.staples_for(word + "_") == []
+
+
+def test_recent_images_with_one_entry_survive_a_restart(tmp_path, monkeypatch):
+    """最近開いた画像が 1 件だけの時、設定の読み戻しが str を返す事があり、パスが 1 文字ずつの項目になっていた(2026-11-13)。
+
+    QSettings は 1 件だけの列を str で返す事がある(形式と中身による)。その場合を直接作って確かめる。"""
+    import studio as _studio
+    from PySide6 import QtWidgets
+    target = str(tmp_path / "one image.png")
+    real = _studio._settings
+
+    class _OneStringSettings:
+        """recent_files だけ str を返す(1 件だけの列が str で戻る QSettings の振る舞い)。"""
+        def __init__(self):
+            self._s = real()
+
+        def value(self, key, default=None, *args, **kw):
+            if key == "recent_files":
+                return target
+            return self._s.value(key, default, *args, **kw)
+
+        def __getattr__(self, name):
+            return getattr(self._s, name)
+
+    monkeypatch.setattr(_studio, "_settings", _OneStringSettings)
+    studio, win, model = _studio_window(tmp_path, monkeypatch)
+    try:
+        menus = [m for m in win.findChildren(QtWidgets.QMenu)
+                 if any("one image.png" in a.text() or a.text().strip() in ("o", "n", "e") for a in m.actions())]
+        assert len(menus) == 1, [m.title() for m in menus]
+        texts = [a.text() for a in menus[0].actions() if a.text() and not a.isSeparator()]
+        files = [x for x in texts if "one image.png" in x]
+        assert len(files) == 1, texts
+        assert len(texts) <= 3, texts          # 1 件 +「消す」などの項目。1 文字ずつなら数十になる
+    finally:
+        _close_window(studio, win)
+
+
+def test_adding_a_two_input_op_says_why_it_was_not_added(tmp_path, monkeypatch, capfd):
+    """2 入力の op を入れようとした時、「optional backend が未導入」と誤った理由を言っていた(2026-11-13)。"""
+    studio, win, model = _studio_window(tmp_path, monkeypatch)
+    try:
+        said = []
+        ui = win._search_ui
+        nary = sorted(studio.api._nary_by_name())
+        assert nary, "2 入力の op が 1 つも無い"
+        name = next((n for n in nary if studio.api.find_op(n) is None), None)
+        assert name, nary[:5]
+        ui["edit"].setText(name); ui["search_now"](name); _pump(0.3)
+        from PySide6 import QtCore as _QtCore
+        items = [ui["list"].item(i) for i in range(ui["list"].count())]
+        target = [it for it in items if it.data(_QtCore.Qt.UserRole) == name]
+        assert target, name
+        bar = win.statusBar()
+        n0 = len(model.stages)
+        ui["list"].itemActivated.emit(target[0]); _pump(0.3)
+        said.append(bar.currentMessage())
+        assert len(model.stages) == n0
+        assert "two or more inputs" in said[0], said
+        assert "optional backend" not in said[0]
+        assert "Traceback" not in capfd.readouterr().err
+    finally:
+        _close_window(studio, win)

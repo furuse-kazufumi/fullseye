@@ -98,6 +98,8 @@ def _exempt(text):
         return True
     if text == "Fullseye Studio" or text in studio.LANGUAGES.values() or text == "Language / 言語 / 语言":
         return True
+    if text == "Python":            # 2026-11-13: 書き出しのボタンの字。言語の名前(固有名)で、どの言語の UI でも同じ字
+        return True
     if re.match(r"\d+×\d+ ", text):
         return True
     return False
@@ -161,6 +163,21 @@ def test_rows_without_a_full_translation_are_counted_not_hidden():
 
 #: 2026-11-12 の画像欄の直し(日本語モードに残る英語)で、日本語だけの行を 83 本足した(210 → 293)。他言語は未訳のまま
 PENDING_ROWS_CEILING = 294   # +1: 「impl: %s」(2 回目の直し)
+# 2026-11-13 初回起動の点検の直し: 入れられない op の理由 3 文・行の印・最初の段の注記(S2)
+PENDING_ROWS_CEILING += 5
+PENDING_ROWS_CEILING += 1    # M5: 座標つきの画素の読み取りの 1 行
+PENDING_ROWS_CEILING += 5    # M12: 検索の「見本」の群(見出し・行・ボタン・ツールチップ・使えない時の文)
+PENDING_ROWS_CEILING += 18   # M10 / M9: 終了と破棄の確認の文・ボタン・題、見本を読んだ時の文
+PENDING_ROWS_CEILING += 124  # M9: 窓のツールヒント 95(英語のまま 99 → 4)、ステータスの文・エラーと窓の題 29
+PENDING_ROWS_CEILING += 3    # M3 / M4: 「実装を見る」とそのツールヒント、実測で出力が変わらなかったつまみの文
+PENDING_ROWS_CEILING += 1    # L10: 空のパイプラインで実行した時の 1 行
+PENDING_ROWS_CEILING += 2    # M15: ヘルプの検索で当たらない時・別の名前に寄せた時の文
+PENDING_ROWS_CEILING += 2    # M13: 台帳の op の理由の文とボタン
+PENDING_ROWS_CEILING += 1    # L9: 開けないファイルを落とした時の 1 行
+PENDING_ROWS_CEILING += 3    # L11: op の一覧の右クリックのメニュー
+PENDING_ROWS_CEILING += 2    # F1 = 選んでいる op のヘルプ(メニューの字とツールヒント)
+PENDING_ROWS_CEILING += 5    # 気づける入口: 帯の「作例(N)」「ファイルを落とせます」とそのツールヒント
+PENDING_ROWS_CEILING += 2    # 気づける入口: 結果が領域の時の「表で見る(N 個)」とそのツールヒント
 
 
 # --------------------------------------------------------------------------- #

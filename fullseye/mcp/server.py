@@ -583,18 +583,51 @@ class FramingError(ValueError):
     """フレームは来たが JSON として読めない(EOF とは区別する)。"""
 
 
-def read_message(stdin) -> dict | None:
-    """Content-Length フレームを 1 つ読む。EOF は None、壊れた本文は FramingError。
+#: 枠の種類。``FRAMING_LINES`` = MCP の stdio の決まり(1 行 1 通、改行区切りの JSON)、
+#: ``FRAMING_HEADERS`` = Content-Length 枠(LSP 風。1.1.0 までの唯一の形で、自前のクライアントが使う)。
+FRAMING_LINES = "lines"
+FRAMING_HEADERS = "content-length"
 
-    ★llmesh 版は両方 None にしていた。それだと「相手が切った」と「相手が壊れた JSON を
-    送った」が同じに見え、後者に -32700 を返せない。"""
+#: 改行区切りの 1 通の上限(バイト)。これを超える行は読み捨てずに断る(メモリを相手に握らせない)。
+MAX_LINE_BYTES = 64 * 1024 * 1024
+
+
+def _loads_body(body: bytes):
+    """本文を JSON として読む。読めない・深すぎる入れ子は FramingError(→ -32700)。"""
+    try:
+        return json.loads(body)
+    except json.JSONDecodeError as exc:
+        raise FramingError("本文が JSON でない: %s" % exc) from exc
+    except RecursionError as exc:
+        # ★2026-11-13: 3,000 段の入れ子 1 通でサーバが落ちていた(json.loads の RecursionError を受けていなかった)。
+        raise FramingError("本文の入れ子が深すぎる") from exc
+    except UnicodeDecodeError as exc:
+        raise FramingError("本文が UTF-8 でない: %s" % exc) from exc
+
+
+def read_framed(stdin) -> tuple[object, str] | None:
+    """1 通を読み、``(本文, 枠の種類)`` を返す。EOF は None、壊れた 1 通は FramingError。
+
+    ★2026-11-13: MCP の stdio の決まりは「1 行 1 通の JSON(改行区切り)」で、公式のクライアント
+    (Claude Code / Claude Desktop / mcp の Python SDK)はこの形で話す。1.1.0 までは Content-Length 枠
+    しか読まず、公式のクライアントの initialize に応えなかった。先頭の行が ``{`` か ``[`` で始まれば
+    改行区切り、そうでなければ Content-Length 枠として読む(両方に応える)。
+
+    本文は dict とは限らない(``null`` や配列も JSON として正しい)。型の検査は呼び出し側が行う ——
+    ここで None を返すのは EOF だけ(``null`` の本文を EOF と取り違えて黙って終了していた)。"""
     headers: dict[bytes, bytes] = {}
     while True:
-        raw = stdin.readline()
+        raw = stdin.readline(MAX_LINE_BYTES + 1)
         if not raw:
             return None
         line = raw.strip()
+        if not headers and line[:1] in (b"{", b"["):
+            if len(raw) > MAX_LINE_BYTES and not raw.endswith(b"\n"):
+                raise FramingError("1 通が長すぎる(上限 %d バイト)" % MAX_LINE_BYTES)
+            return _loads_body(line), FRAMING_LINES
         if not line:
+            if not headers:
+                continue                      # 通と通の間の空行は読み飛ばす(改行区切りの相手が余分に送る事がある)
             break
         if b":" in line:
             k, _, v = line.partition(b":")
@@ -613,14 +646,26 @@ def read_message(stdin) -> dict | None:
     body = stdin.read(length)
     if len(body) < length:
         return None
-    try:
-        return json.loads(body)
-    except json.JSONDecodeError as exc:
-        raise FramingError("本文が JSON でない: %s" % exc) from exc
+    return _loads_body(body), FRAMING_HEADERS
 
 
-def write_message(stdout, msg: dict) -> None:
-    """1 通を Content-Length 枠で書く。**JSON に無い NaN / ±inf のトークンは決して書かない**(fail-closed)。
+def read_message(stdin) -> dict | None:
+    """1 通を読む(枠の種類は返さない、従来の入口)。EOF は None、壊れた 1 通は FramingError。
+
+    ★llmesh 版は両方 None にしていた。それだと「相手が切った」と「相手が壊れた JSON を
+    送った」が同じに見え、後者に -32700 を返せない。"""
+    got = read_framed(stdin)
+    if got is None:
+        return None
+    msg, _framing = got
+    if msg is None:
+        raise FramingError("本文が JSON の null(要求でも通知でもない)")
+    return msg
+
+
+def write_message(stdout, msg: dict, *, framing: str = FRAMING_HEADERS) -> None:
+    """1 通を書く。``framing`` が ``FRAMING_LINES`` なら 1 行の JSON + 改行(MCP の stdio の決まり)、
+    既定は Content-Length 枠。**JSON に無い NaN / ±inf のトークンは決して書かない**(fail-closed)。
 
     ★2026-11-05(敵対的検証): ``json.dumps`` の既定 ``allow_nan=True`` は ``NaN`` / ``Infinity`` を
     そのまま出し、厳密な JSON の相手には壊れた本文になる。非有限の値が混ざった応答は、同じ id の
@@ -632,8 +677,12 @@ def write_message(stdout, msg: dict) -> None:
         body = json.dumps(_err(msg.get("id") if isinstance(msg, dict) else None, -32603,
                                "内部エラー: 応答に JSON で表せない非有限の値(NaN / inf)が含まれていた"),
                           ensure_ascii=False).encode("utf-8")
-    stdout.write(b"Content-Length: " + str(len(body)).encode() + b"\r\n\r\n")
-    stdout.write(body)
+    if framing == FRAMING_LINES:
+        # json.dumps は改行をエスケープするので、本文に生の改行は入らない(1 行 1 通が保たれる)。
+        stdout.write(body + b"\n")
+    else:
+        stdout.write(b"Content-Length: " + str(len(body)).encode() + b"\r\n\r\n")
+        stdout.write(body)
     stdout.flush()
 
 
@@ -2642,17 +2691,25 @@ def run_stdio_server(stdin=None, stdout=None, *, catalog: Catalog | None = None,
     # ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
     _log("ready: %d catalog names (op names + HALCON aliases; ops = fullseye_catalog_coverage), %d sorts, roots=%s"
          % (len(cat.entries), len(cat.sorts), store.roots))
+    framing = FRAMING_HEADERS            # 相手が最後に使った枠で返す(最初の 1 通が来るまでは従来の形)
     while True:
         try:
-            msg = read_message(stdin)
+            got = read_framed(stdin)
         except FramingError as exc:
-            write_message(stdout, _err(None, -32700, str(exc)))
+            write_message(stdout, _err(None, -32700, str(exc)), framing=framing)
             continue
-        if msg is None:
+        if got is None:
             return 0
+        msg, framing = got
+        if not isinstance(msg, dict):
+            # ★2026-11-13: 本文が null の 1 通で黙って終了していた。要求の形でない本文は -32600 を返して続ける
+            # (配列 = JSON-RPC のバッチは受け付けない)。
+            write_message(stdout, _err(None, -32600, "要求は JSON のオブジェクトで送る(受け取った型: %s)"
+                                       % type(msg).__name__), framing=framing)
+            continue
         resp = dispatch(msg, cat, store)
         if resp is not None:
-            write_message(stdout, resp)
+            write_message(stdout, resp, framing=framing)
 
 
 def demo() -> int:

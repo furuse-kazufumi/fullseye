@@ -478,7 +478,10 @@ def test_stage_description_is_not_cut_off_and_impl_is_translated(win):
     win._op_buttons["insert"].click(); _pump(0.3)
     win._docks["pipeline"].show(); win._docks["pipeline"].raise_(); _pump(0.4)
     d = win._stage_detail
-    assert d.wordWrap() and "impl:" in d.text()
+    # 2026-11-13(初回起動の点検 M4): 実装の式は既定で畳み、「Show the implementation」で全文を出す
+    assert d.wordWrap() and "impl:" not in d.text()
+    win._impl_toggle.setChecked(True); _pump(0.2)
+    assert "impl:" in d.text()
     assert d.height() >= d.heightForWidth(d.width()), "説明欄が文の高さに足りず、下の行が切れる: %d < %d" % (d.height(), d.heightForWidth(d.width()))
     # 幅を変えても追従する
     win.resize(1500, 800); _pump(0.4)
