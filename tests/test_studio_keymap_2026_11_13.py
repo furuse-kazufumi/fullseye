@@ -221,9 +221,11 @@ def test_switching_the_preset_keeps_your_changes_but_drops_the_conflicting_ones(
 
 
 def test_broken_settings_give_the_default_map_and_say_why():
-    for text in ("{broken", "[1, 2]", json.dumps({"format": "other"}), json.dumps({"format": km.FORMAT, "version": 9})):
+    for text in ("{broken", "[1, 2]", json.dumps({"format": "other"}), json.dumps({"format": km.FORMAT, "version": 0})):
         k, probs = km.from_settings_text(text)
         assert k == km.Keymap() and probs and probs[0].code == "settings_broken", text
+    k, probs = km.from_settings_text(json.dumps({"format": km.FORMAT, "version": 9}))
+    assert k == km.Keymap() and [p.code for p in probs] == ["settings_newer"]          # 新しい版: 読まずに残す
     assert km.from_settings_text(None) == (km.Keymap(), [])
     assert km.from_settings_text(12)[1][0].code == "settings_broken"
 
@@ -347,7 +349,7 @@ def test_every_own_string_has_five_translations_and_nothing_else():
     table = km.load_table()
     assert km.missing() == []
     assert sorted(table) == sorted(km.ui_strings())
-    assert len(table) == 116
+    assert len(table) == 122
     ph = re.compile(r"%\(\w+\)s|%[sd]")
     for en, row in table.items():
         for lang in km.LANGS[1:]:
@@ -705,9 +707,9 @@ def test_broken_settings_do_not_stop_the_start(win, ctl, studio_mod):
     try:
         assert ctl3.keymap == km.Keymap()
         assert [p.code for p in ctl3.load_problems] == ["settings_broken"]
-        assert said and "1" in said[0]
+        assert said == [km.MSG_LOAD_BROKEN]
         assert _keys_of(w3._actions["fit"]) == ("Ctrl+0",)
-        assert studio_mod._settings().value(km.SETTINGS_KEY) is None      # 壊れた分は捨てて書き直した
+        assert studio_mod._settings().value(km.SETTINGS_KEY) == "{this is not json"   # 起動では書き直さない
         data = {"format": km.FORMAT, "version": 1, "preset": "visual_studio",
                 "bindings": {"fit": ["Ctrl+Shift+F12"], "no_such": ["Ctrl+F12"], "export": ["Ctrl+O"]}}
         s = studio_mod._settings()
@@ -941,3 +943,159 @@ def test_separate_window_shortcuts_follow_the_keymap(win, ctl):
         assert _keys_of(run) == ("Ctrl+F5",)
     finally:
         pdlg.close()
+
+
+# --------------------------------------------------------------------------- #
+# 2026-11-13 独立レビュー 1 回目の直し(C1: 設定の読み込みを壊れにくく)
+# --------------------------------------------------------------------------- #
+_DEEP = "[" * 50000 + "]" * 50000
+
+
+@pytest.mark.parametrize("text", [
+    json.dumps({"format": km.FORMAT, "version": 1, "preset": [], "bindings": {}}),
+    json.dumps({"format": km.FORMAT, "version": 1, "preset": {}, "bindings": {}}),
+    json.dumps({"format": km.FORMAT, "version": 1, "preset": 3, "bindings": {"fit": ["Ctrl+Shift+F12"]}}),
+    json.dumps({"format": km.FORMAT, "version": [1], "bindings": {}}),
+    json.dumps({"format": [km.FORMAT], "version": 1}),
+    _DEEP,
+    '{"format": "%s", "version": 1, "bindings": {"fit": %s}}' % (km.FORMAT, _DEEP),
+], ids=["preset_list", "preset_dict", "preset_int", "version_list", "format_list", "deep", "deep_inside"])
+def test_settings_of_a_wrong_shape_never_raise_and_give_a_map(text):
+    k, probs = km.from_settings_text(text)
+    assert isinstance(k, km.Keymap) and probs
+    assert all(p.level in ("error", "warning") for p in probs)
+    assert probs[0].code in ("settings_broken", "unknown_preset"), probs
+
+
+@pytest.mark.parametrize("data, code", [
+    (json.dumps({"format": km.FORMAT, "version": 1, "preset": [], "bindings": {}}), "unknown_preset"),
+    (json.dumps({"format": km.FORMAT, "version": 1, "preset": {}, "bindings": {}}), "unknown_preset"),
+    ("[" * 100000 + "]" * 100000, "bad_json"),
+    ("[" * 120000, "bad_json"),
+    ('{"format": "%s", "version": 1, "bindings": {"fit": ["Ctrl+F12"], "fit": ["Ctrl+F11"]}}' % km.FORMAT,
+     "bad_type"),
+    ('{"format": "%s", "format": "%s", "version": 1}' % (km.FORMAT, km.FORMAT), "bad_type"),
+], ids=["preset_list", "preset_dict", "deep_200kb", "open_120kb", "same_id_twice", "same_field_twice"])
+def test_import_refuses_wrong_shapes_without_raising(data, code):
+    assert len(data.encode("utf-8")) <= km.MAX_IMPORT_BYTES
+    got, probs = km.import_text(data)
+    assert got is None
+    assert code in [p.code for p in probs], probs
+
+
+def test_a_dropped_override_always_says_why_and_a_round_trip_never_loses_silently():
+    # 部品(エディタ)の側のキーを変えて、Qt の表の側(Python エディタの Run = F5)を届かなくする
+    k = km.Keymap()
+    k._set("editops_line_duplicate", ("F5",))                    # 検査を通さずに作った表(古い版が保存した物など)
+    got, probs = km.import_text(k.to_json())
+    assert got is None                                           # 「成功」と言って上書きを落とさない
+    assert "editops_line_duplicate" in [p.command for p in probs if p.level == "error"], probs
+    k2, probs2 = km.from_settings_text(k.to_json())
+    assert k2.overrides() == {}
+    assert [p.command for p in probs2 if p.level == "error"] == ["editops_line_duplicate"], probs2
+
+
+def test_dropped_counts_only_the_overrides_that_were_not_used():
+    data = {"format": km.FORMAT, "version": 1, "preset": "visual_studio", "bindings": {
+        "fit": ["Ctrl+Shift+F12"], "no_such": ["Ctrl+F12"], "export": ["Ctrl+O"], "zoom_out": ["Ctrl+Alt+Z"]}}
+    _k, probs = km.from_settings_text(json.dumps(data))
+    assert km.dropped_commands(probs) == ["export", "no_such"]   # 警告だけの zoom_out は当てている = 数えない
+    assert km.dropped_commands([km.Problem("warning", "settings_newer", detail="2")]) == []
+
+
+def test_messages_from_a_file_cannot_fake_lines_or_turn_the_text_around():
+    fake = "x\n\n\u202e\nImported 5 changed shortcuts. All good." + "y" * 80
+    p = km.Problem("error", "unknown_command", fake, "Ctrl+\u202eQ", detail="\x1b[2J")
+    text = km.describe_problem(p)
+    assert "\n" not in text and "\u202e" not in text and "\x1b" not in text
+    assert "\\u000a" in text and "\\u202e" in text
+    assert len(text) < 120
+    got, probs = km.import_text(json.dumps({"format": km.FORMAT, "version": 1, "bindings": {fake: ["F12"]}}))
+    assert got is None and probs
+    lines = [km.describe_problem(q) for q in probs]
+    assert lines and not any("\n" in s or "\u202e" in s for s in lines)
+
+
+def _set_saved(studio_mod, value):
+    s = studio_mod._settings()
+    if value is None:
+        s.remove(km.SETTINGS_KEY)
+    else:
+        s.setValue(km.SETTINGS_KEY, value)
+    s.remove(km.SETTINGS_KEY + ".backup")
+    s.sync()
+
+
+@pytest.mark.parametrize("value, message", [
+    (json.dumps({"format": km.FORMAT, "version": 1, "preset": [], "bindings": {}}), km.MSG_LOAD_PART),
+    ("[" * 50000 + "]" * 50000, km.MSG_LOAD_BROKEN),
+], ids=["preset_list", "deep"])
+def test_broken_settings_of_any_shape_do_not_stop_the_start(win, ctl, studio_mod, value, message):
+    _set_saved(studio_mod, value)
+    said = []
+    w4, ctl4 = _build(studio_mod, flash=said.append)
+    try:
+        assert ctl4.keymap == km.Keymap()
+        assert said == [message]
+        assert _keys_of(w4._actions["fit"]) == ("Ctrl+0",)
+        assert studio_mod._settings().value(km.SETTINGS_KEY) == value       # 起動では書き直さない
+    finally:
+        _close(w4)
+        _set_saved(studio_mod, None)
+    ctl.apply()
+
+
+def test_a_newer_setting_is_kept_and_backed_up_before_a_change(win, ctl, studio_mod):
+    newer = json.dumps({"format": km.FORMAT, "version": 2, "preset": "vscode", "bindings": {"undo": ["Ctrl+Alt+Z"]},
+                        "macros": {"x": 1}})
+    _set_saved(studio_mod, newer)
+    said = []
+    w5, ctl5 = _build(studio_mod, flash=said.append)
+    try:
+        assert ctl5.keymap == km.Keymap() and len(said) == 1 and "newer" in said[0]
+        assert studio_mod._settings().value(km.SETTINGS_KEY) == newer
+        assert ctl5.assign("fit", ("Ctrl+Shift+F12",)) == []                 # 利用者が変えた時にだけ書く
+        s = studio_mod._settings()
+        assert s.value(km.SETTINGS_KEY + ".backup") == newer                # 元の文字列は残す
+        assert json.loads(s.value(km.SETTINGS_KEY))["bindings"] == {"fit": ["Ctrl+Shift+F12"]}
+    finally:
+        _close(w5)
+        _set_saved(studio_mod, None)
+    ctl.apply()
+
+
+def test_warnings_only_settings_are_used_quietly_and_not_rewritten(win, ctl, studio_mod):
+    saved = json.dumps({"format": km.FORMAT, "version": 1, "preset": "visual_studio", "bindings": {"fit": ["Ctrl+Alt+F"]}})
+    _set_saved(studio_mod, saved)
+    said = []
+    w6, ctl6 = _build(studio_mod, flash=said.append)
+    try:
+        assert ctl6.keymap.keys("fit") == ("Ctrl+Alt+F",) and said == []
+        assert _keys_of(w6._actions["fit"]) == ("Ctrl+Alt+F",)
+        assert studio_mod._settings().value(km.SETTINGS_KEY) == saved
+    finally:
+        _close(w6)
+        _set_saved(studio_mod, None)
+    ctl.apply()
+
+
+def test_the_start_message_counts_the_dropped_overrides_and_the_dialog_lists_them(win, ctl, studio_mod):
+    data = {"format": km.FORMAT, "version": 1, "preset": "visual_studio",
+            "bindings": {"fit": ["Ctrl+Shift+F12"], "no_such": ["Ctrl+F12"], "export": ["Ctrl+O"]}}
+    _set_saved(studio_mod, json.dumps(data))
+    said = []
+    w7, ctl7 = _build(studio_mod, flash=said.append)
+    try:
+        assert len(said) == 1 and " 2 " in said[0]                          # 捨てた上書きは 2 つ
+        dlg = ctl7.open_dialog()
+        _pump(0.1)
+        note = dlg.load_note
+        assert not note.isHidden()
+        assert "no_such" in note.text() and "Open image" in note.text()
+        ctl7.reset_all()                                                     # 変えたら知らせは消える
+        assert note.isHidden()
+        dlg.close()
+    finally:
+        _close(w7)
+        _set_saved(studio_mod, None)
+    ctl.apply()

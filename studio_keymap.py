@@ -17,7 +17,9 @@ Qt の側(``studio_keymap_qt``)は、ここで決めたキーを本物の ``QAct
 * **型(プリセット)** は 2 つ。``visual_studio`` = Studio の既定(今までのキーそのまま)、``vscode`` = VS Code の
   慣例(エディタの Ctrl+D = 次の一致を足す、行の複製 = Shift+Alt+Down など)。型は既定の差分として持つ。
 * **保存するのは利用者の上書きだけ**(型との差分)。キーを外した事は空の並びで明示する。設定の 1 つの鍵
-  (``SETTINGS_KEY``)に JSON で書く。読めない・壊れた分は捨てて知らせ、起動は止めない。
+  (``SETTINGS_KEY``)に JSON で書く。読めない・壊れた分は捨てて知らせ、起動は止めない(型違い・深い入れ子・
+  重なった鍵でも例外を出さない)。**起動では書き直さない**: 利用者が変えて保存する時に、使えなかった元の文字列を
+  ``BACKUP_KEY`` に残してから書く。新しい版の設定(``version`` が大きい)は読まずに残す。
 * **書き出し・読み込み** も同じ JSON。読み込みは fail-closed(型・鍵・ID・キー・当たりのどれか 1 つでも駄目なら
   何も当てない)。
 * **2 打鍵の和音**(``Ctrl+K, Ctrl+S``)は Qt の表で動く範囲(窓全体・段の一覧・別窓)だけ。エディタの部品は
@@ -29,6 +31,7 @@ import itertools
 import json
 import os
 import re
+import unicodedata
 from typing import Callable, Iterable, NamedTuple, Sequence
 
 import studio_editops as _eo
@@ -37,11 +40,15 @@ FORMAT = "fullseye-studio-keymap"
 VERSION = 1
 #: 設定(``studio._settings()``)の鍵。値は JSON の文字列 1 つ。
 SETTINGS_KEY = "keymap/user"
+#: 起動の時に使えなかった元の文字列(利用者が変えて保存する時に 1 つだけ残す)。
+BACKUP_KEY = SETTINGS_KEY + ".backup"
 DEFAULT_PRESET = "visual_studio"
 #: 読み込みの上限(バイト)。キーの表はどんなに多くても数 KB。
 MAX_IMPORT_BYTES = 256 * 1024
 MAX_KEYS_PER_COMMAND = 4
 MAX_STROKES = 2
+#: JSON の入れ子の上限(キーの表は 3 段。これより深い物は読む前に断る = 再帰の上限に頼らない)。
+MAX_DEPTH = 32
 
 
 # --------------------------------------------------------------------------- #
@@ -764,7 +771,7 @@ def _read(data, strict: bool, extra: Iterable = ()) -> tuple:
     if unknown:
         probs.append(Problem("error", "bad_type", detail=", ".join(str(u)[:40] for u in unknown[:5])))
     preset = data.get("preset", DEFAULT_PRESET)
-    if preset not in PRESETS:
+    if not (isinstance(preset, str) and preset in PRESETS):    # list / dict は ``in`` で TypeError になる
         probs.append(Problem("error", "unknown_preset", detail=str(preset)[:40]))
         preset = DEFAULT_PRESET
     km = Keymap(preset)
@@ -803,24 +810,106 @@ def _read(data, strict: bool, extra: Iterable = ()) -> tuple:
         victim = next((c for p in errs for c in (p.command, p.other) if c in km._over), None)
         if victim is None:
             break
-        probs.extend(p for p in find_conflicts(km.entries(extra), only={victim}) if p.level == "error")
+        for p in errs:                                         # 捨てる理由は必ず残す(相手を届かなくする側も)
+            if victim in (p.command, p.other):
+                q = _as_seen_from(p, victim)
+                if q not in probs:
+                    probs.append(q)
         del km._over[victim]
     if strict and any(p.level == "error" for p in probs):
         return None, probs
     return km, probs
 
 
+def _as_seen_from(p: Problem, cid: str) -> Problem:
+    """当たり ``p`` を ``cid`` の側から書き直す(``command`` = ``cid``)。届かなくなる相手は ``blocks``。"""
+    if p.command == cid:
+        return p
+    code = {"unreachable": "blocks", "shadow": "shadows", "shadows": "shadow"}.get(p.code, p.code)
+    return Problem(p.level, code, cid, p.other_key, p.command, p.key, p.place, p.detail)
+
+
+def dropped_commands(probs: Iterable) -> list:
+    """読み込みの問題のうち、捨てた上書きのコマンド(登録簿に無い ID も含む)。起動の知らせで数える物。"""
+    return sorted({p.command for p in probs if p.level == "error" and p.command})
+
+
+class _JsonRefused(ValueError):
+    """読む前・読む時に断った JSON。``code`` は ``bad_json`` / ``bad_type``。"""
+
+    def __init__(self, code: str, detail: str):
+        super().__init__(detail)
+        self.code = code
+        self.detail = detail
+
+
+def _depth(text: str) -> int:
+    """JSON の文字列の入れ子の深さ(文字列の中の括弧は数えない)。"""
+    depth = top = 0
+    in_str = esc = False
+    for ch in text:
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+        elif ch == '"':
+            in_str = True
+        elif ch in "[{":
+            depth += 1
+            if depth > top:
+                top = depth
+                if top > MAX_DEPTH:
+                    return top
+        elif ch in "]}":
+            depth -= 1
+    return top
+
+
+def _no_duplicates(pairs):
+    out = {}
+    for k, v in pairs:
+        if k in out:
+            raise _JsonRefused("bad_type", "duplicate: %s" % str(k)[:40])
+        out[k] = v
+    return out
+
+
+def _loads(text: str):
+    """JSON を読む。深すぎる入れ子・重なった鍵は ``_JsonRefused``(再帰の上限や後勝ちに頼らない)。"""
+    if _depth(text) > MAX_DEPTH:
+        raise _JsonRefused("bad_json", "nested more than %d levels" % MAX_DEPTH)
+    try:
+        return json.loads(text, object_pairs_hook=_no_duplicates)
+    except RecursionError as exc:                              # pragma: no cover -- 上の深さの検査が先に断る
+        raise _JsonRefused("bad_json", "nested too deeply") from exc
+
+
 def from_settings_text(text, extra: Iterable = ()) -> tuple:
-    """設定に覚えた文字列 → ``(Keymap, problems)``。壊れていても必ず Keymap を返す(壊れた分は捨てる)。"""
+    """設定に覚えた文字列 → ``(Keymap, problems)``。壊れていても必ず Keymap を返し、例外を出さない(壊れた分は捨てる)。
+
+    新しい版(``version`` が ``VERSION`` より大きい)の設定は読まずに既定を返す(``settings_newer``。元の値は残す)。
+    """
     if text is None or text == "":
         return Keymap(), []
     if not isinstance(text, str):
         return Keymap(), [Problem("warning", "settings_broken", detail=type(text).__name__)]
     try:
-        data = json.loads(text)
+        data = _loads(text)
+    except _JsonRefused as exc:
+        return Keymap(), [Problem("warning", "settings_broken", detail=exc.detail)]
     except ValueError as exc:
         return Keymap(), [Problem("warning", "settings_broken", detail="JSON: %s" % str(exc)[:80])]
-    km, probs = _read(data, strict=False, extra=extra)
+    if isinstance(data, dict) and data.get("format") == FORMAT:
+        ver = data.get("version")
+        if isinstance(ver, int) and not isinstance(ver, bool) and ver > VERSION:
+            return Keymap(), [Problem("warning", "settings_newer", detail=str(ver))]
+    try:
+        km, probs = _read(data, strict=False, extra=extra)
+    except Exception as exc:                                   # noqa: BLE001 -- 何が来ても起動は止めない
+        return Keymap(), [Problem("warning", "settings_broken", detail=type(exc).__name__)]
     if km is None:
         return Keymap(), [Problem("warning", "settings_broken", detail=probs[0].code if probs else "?")] + probs
     return km, probs
@@ -832,10 +921,15 @@ def import_text(data, extra: Iterable = ()) -> tuple:
     if len(raw) > MAX_IMPORT_BYTES:
         return None, [Problem("error", "too_big", detail="%d bytes" % len(raw))]
     try:
-        obj = json.loads(raw.decode("utf-8"))
+        obj = _loads(raw.decode("utf-8"))
+    except _JsonRefused as exc:
+        return None, [Problem("error", exc.code, detail=exc.detail)]
     except (UnicodeDecodeError, ValueError) as exc:
         return None, [Problem("error", "bad_json", detail=str(exc)[:80])]
-    return _read(obj, strict=True, extra=extra)
+    try:
+        return _read(obj, strict=True, extra=extra)
+    except Exception as exc:                                   # noqa: BLE001 -- 読み込みは知らせて断る(落ちない)
+        return None, [Problem("error", "bad_type", detail=type(exc).__name__)]
 
 
 # --------------------------------------------------------------------------- #
@@ -991,6 +1085,11 @@ MSG_IMPORTED = "Imported %d changed shortcuts"
 MSG_IMPORT_FAILED = "The file was not imported (nothing was changed):"
 MSG_EXPORTED = "Saved %d changed shortcuts to %s"
 MSG_LOAD_PROBLEM = "Keyboard shortcuts: %d saved changes could not be used (Tools > Customize keyboard shortcuts)"
+MSG_LOAD_PART = "Keyboard shortcuts: part of the saved settings could not be used (Tools > Customize keyboard shortcuts)"
+MSG_LOAD_BROKEN = ("Keyboard shortcuts: the saved settings could not be read, so the preset is used "
+                   "(Tools > Customize keyboard shortcuts)")
+MSG_LOAD_NEWER = "Keyboard shortcuts: the saved settings are from a newer Studio; they are kept as they are and not used"
+MSG_LOAD_HEADER = "Not used when Studio started:"
 FILE_FILTER = "Fullseye Studio keys (*.json)"
 #: 登録簿に無い組み込みの相手(当たりの文と一覧): メニューバーのニーモニック / テキスト欄の標準のキー。
 MSG_MENU_BAR = "Menu bar: %s"
@@ -1001,6 +1100,7 @@ MESSAGES = {
     "prefix": "%(key)s and %(other_key)s (%(other)s) begin with the same key: in %(place)s one could never be pressed",
     "same_widget": "%(key)s is also taken by %(other)s in the same editor",
     "unreachable": "%(key)s would never reach this command: %(other)s takes it first",
+    "blocks": "%(key)s would take the key from %(other)s everywhere it works",
     "shadow": "In %(place)s, %(other)s takes %(key)s first",
     "shadows": "In %(place)s, this command takes %(key)s before %(other)s",
     "shared": "%(key)s is shared with %(other)s; each takes it only in its own situation",
@@ -1027,8 +1127,26 @@ MESSAGES = {
     "bad_version": "Unsupported version: %(detail)s",
     "bad_type": "Wrong type or unknown field: %(detail)s",
     "too_big": "The file is too big (%(detail)s)",
-    "settings_broken": "The saved shortcuts could not be read and were reset (%(detail)s)",
+    "settings_broken": "The saved shortcuts could not be read; the preset is used (%(detail)s)",
+    "settings_newer": "The saved shortcuts are from a newer version (%(detail)s); they were kept and not used",
 }
+
+
+#: 書字方向を変える文字(表示の前に \uXXXX にする)。
+_BIDI = set("\u061c\u200e\u200f\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069")
+
+
+def _safe(text, limit: int = 40) -> str:
+    """外から来た文字(ファイルの ID・キー・detail)を 1 行の安全な文にする。制御文字・書字方向の文字・行の区切りは
+    ``\\uXXXX`` に置き換え、``limit`` 字で切る(偽の行や逆向きの文を作らせない)。"""
+    out = []
+    for ch in "" if text is None else str(text):
+        if ch in _BIDI or unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Co", "Cn", "Zl", "Zp"):
+            out.append("\\u%04x" % ord(ch) if ord(ch) <= 0xFFFF else "\\U%08x" % ord(ch))
+        else:
+            out.append(ch)
+    s = "".join(out)
+    return s if len(s) <= limit else s[:limit - 1] + "…"
 
 
 def describe_problem(p: Problem, tr: Callable = (lambda s: s), titles: dict | None = None) -> str:
@@ -1037,11 +1155,13 @@ def describe_problem(p: Problem, tr: Callable = (lambda s: s), titles: dict | No
     def title(cid):
         c = BY_ID.get(cid)
         if c is None:
-            return (titles or {}).get(cid, cid)
+            got = (titles or {}).get(cid)
+            return got if got is not None else _safe(cid)
         return "%s (%s)" % (tr(c.title), tr(SCOPES[c.scope].title))
-    args = {"key": p.key, "other_key": p.other_key, "command": tr(BY_ID[p.command].title) if p.command in BY_ID
-            else p.command, "other": title(p.other) if p.other else "", "detail": p.detail,
-            "place": tr(PLACES[p.place][0]) if p.place in PLACES else p.place}
+    args = {"key": _safe(p.key), "other_key": _safe(p.other_key),
+            "command": tr(BY_ID[p.command].title) if p.command in BY_ID else _safe(p.command),
+            "other": title(p.other) if p.other else "", "detail": _safe(p.detail, 80),
+            "place": tr(PLACES[p.place][0]) if p.place in PLACES else _safe(p.place)}
     tmpl = tr(MESSAGES.get(p.code, p.code))
     try:
         return tmpl % args
@@ -1055,7 +1175,8 @@ def ui_strings() -> tuple:
              LBL_CURRENT, LBL_NONE, LBL_RECORD, PH_RECORD, HINT_CHORD, HINT_NO_CHORD, BTN_CLEAR, BTN_ASSIGN, BTN_ADD,
              BTN_REMOVE, BTN_RESET, BTN_RESET_ALL, BTN_IMPORT, BTN_EXPORT, BTN_CLOSE, MSG_FIXED, MSG_NO_CONFLICT,
              MSG_CHANGED, MSG_PICK, TTL_RESET_ALL, ASK_RESET_ALL, TTL_PRESET, ASK_PRESET, ASK_PRESET_DROP,
-             MSG_IMPORTED, MSG_IMPORT_FAILED, MSG_EXPORTED, MSG_LOAD_PROBLEM, FILE_FILTER, MSG_MENU_BAR, MSG_TEXT_KEY]
+             MSG_IMPORTED, MSG_IMPORT_FAILED, MSG_EXPORTED, MSG_LOAD_PROBLEM, FILE_FILTER, MSG_MENU_BAR, MSG_TEXT_KEY,
+             MSG_LOAD_PART, MSG_LOAD_BROKEN, MSG_LOAD_NEWER, MSG_LOAD_HEADER]
     fixed += list(PRESET_TITLES.values()) + [s.title for s in SCOPES.values()] + [t for t, _s in PLACES.values()]
     fixed += list(MESSAGES.values()) + [c.title for c in COMMANDS if c.own_title]
     seen, out = set(), []

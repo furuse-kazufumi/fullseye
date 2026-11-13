@@ -137,7 +137,7 @@ _INTERNAL = {
     #   一覧と検索・対訳)、studio_keymap_qt 8(install / apply_keymap / get / 設定の窓と記録の欄 / 制御役 /
     #   窓の組み込みのキーを集める collect_fixed / キーの出来事の読み方 event_keys)。
     "studio_editops": 43, "studio_editops_qt": 8,
-    "studio_keymap": 25, "studio_keymap_qt": 8,
+    "studio_keymap": 26, "studio_keymap_qt": 8,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -376,7 +376,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1355
 # 2026-11-13 feat/studio-keymap: 1355 → 1389(+34、この機械の実測)。上の _INTERNAL の studio_keymap 25・
 #   studio_keymap_qt 8 と studio_editops_qt + 1 のうち、公開経路の名前と重ならない分。
-_HIDDEN_FUNCTIONS_TODAY = 1389
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1389
+# 2026-11-13 feat/studio-keymap レビュー 1 回目の直し C1(dropped_commands: 起動で捨てた上書きを数える): 1389 → 1390(+1、この機械の実測)。studio_keymap 25 → 26・studio_keymap_qt 8 → 8。
+_HIDDEN_FUNCTIONS_TODAY = 1390
 
 
 def _hidden_total():

@@ -505,6 +505,12 @@ class KeyboardDialog(QtWidgets.QDialog):
         for name in km.PRESETS:
             self.preset.addItem(tr(km.PRESET_TITLES[name]), name)
         self.preset.activated.connect(self._on_preset)
+        self.load_note = QtWidgets.QLabel()                       # 起動の時に使えなかった設定(無ければ隠す)
+        self.load_note.setObjectName("keymapLoadNote")
+        self.load_note.setWordWrap(True)
+        self.load_note.setTextFormat(_K.PlainText)
+        self.load_note.setStyleSheet("color: %s;" % _WARN)
+        self.load_note.hide()
         self.search = QtWidgets.QLineEdit()
         self.search.setObjectName("keymapSearch")
         self.search.setClearButtonEnabled(True)
@@ -513,6 +519,7 @@ class KeyboardDialog(QtWidgets.QDialog):
         top.addWidget(self.preset)
         top.addWidget(self.search, 1)
         lay.addLayout(top)
+        lay.addWidget(self.load_note)
         self.table = QtWidgets.QTableWidget(0, 4)
         self.table.setObjectName("keymapTable")
         self.table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
@@ -648,7 +655,17 @@ class KeyboardDialog(QtWidgets.QDialog):
                 t.setItem(r, col, it)
         t.blockSignals(False)
         self._filter()
+        self._show_load_note()
         self.select(keep) if keep else self._show_detail()
+
+    def _show_load_note(self) -> None:
+        probs = [p for p in self.ctl.load_problems if p.level != "info"]
+        if not probs:
+            self.load_note.hide()
+            return
+        self.load_note.setText(self.ctl.tr(km.MSG_LOAD_HEADER) + "\n" + "\n".join(
+            "  " + self.ctl.describe(p) for p in probs[:12]))
+        self.load_note.show()
 
     def _filter(self) -> None:
         shown = {r[0] for r in km.search(self._rows, self.search.text())}
@@ -871,6 +888,7 @@ class KeymapController(QtCore.QObject):
         self.flash = flash if flash is not None else getattr(win, "_flash", None)
         self.keymap = km.Keymap()
         self.load_problems: list = []
+        self._loaded_raw: str | None = None                     # 起動の時に使えなかった元の文字列(保存の前に残す)
         self.dialog: KeyboardDialog | None = None
 
     # ---- 設定 -------------------------------------------------------------- #
@@ -883,27 +901,53 @@ class KeymapController(QtCore.QObject):
             return None
 
     def load(self) -> list:
-        """保存してあった上書きを読む。壊れた分は捨て、捨てた事を状態行に 1 行出し、きれいにして書き直す。"""
+        """保存してあった上書きを読む。壊れた分は捨てて状態行に 1 行(数えるのは捨てた上書き)。何が来ても例外を出さない。
+
+        起動では設定を書き直さない(版を戻した・新しい版の設定を消さない)。利用者が変えて保存する時に、使えなかった
+        元の文字列を ``keymap/user.backup`` に残す。
+        """
         s = self.store()
-        value = s.value(km.SETTINGS_KEY) if s is not None else None
+        try:
+            value = s.value(km.SETTINGS_KEY) if s is not None else None
+        except Exception:                                      # noqa: BLE001 -- 設定が読めなくてもキーは動く
+            value = None
         if value is not None and not isinstance(value, str):
             value = repr(value)                                # 型の違う値(手で書き換えた設定)= 壊れている
-        self.keymap, probs = km.from_settings_text(value, self.fixed_entries())
-        self.load_problems = probs
-        bad = [p for p in probs if p.level != "info"]
-        if bad:
-            if self.flash:
-                try:
-                    self.flash(self.tr(km.MSG_LOAD_PROBLEM) % len(bad))
-                except Exception:                              # noqa: BLE001
-                    pass
-            self.save()
+        try:
+            self.keymap, probs = km.from_settings_text(value, self.fixed_entries())
+        except Exception as exc:                               # noqa: BLE001 -- 何が来ても既定で起動する
+            self.keymap, probs = km.Keymap(), [km.Problem("warning", "settings_broken", detail=type(exc).__name__)]
+        self.load_problems = [p for p in probs if p.level != "info"]
+        self._loaded_raw = value if self.load_problems else None
+        text = self._load_message(probs)
+        if text and self.flash:
+            try:
+                self.flash(text)
+            except Exception:                                  # noqa: BLE001
+                pass
         return probs
+
+    def _load_message(self, probs: list) -> str | None:
+        codes = {p.code for p in probs}
+        if "settings_newer" in codes:
+            return self.tr(km.MSG_LOAD_NEWER)
+        if "settings_broken" in codes:
+            return self.tr(km.MSG_LOAD_BROKEN)
+        n = len(km.dropped_commands(probs))
+        if n:
+            return self.tr(km.MSG_LOAD_PROBLEM) % n
+        if any(p.level == "error" for p in probs):
+            return self.tr(km.MSG_LOAD_PART)
+        return None                                            # 警告だけ(当てている): 起動では言わない。設定の窓で見せる
 
     def save(self) -> bool:
         s = self.store()
         if s is None:
             return False
+        if self._loaded_raw is not None:                       # 起動の時に使えなかった元の文字列を 1 つ残してから書く
+            s.setValue(km.BACKUP_KEY, self._loaded_raw)
+            self._loaded_raw = None
+        self.load_problems = []
         if self.keymap.overrides() or self.keymap.preset != km.DEFAULT_PRESET:
             s.setValue(km.SETTINGS_KEY, self.keymap.to_json())
         else:

@@ -645,13 +645,6 @@
    "ko": "파일이 너무 큽니다 (%(detail)s)",
    "de": "Die Datei ist zu groß (%(detail)s)"
   },
-  "The saved shortcuts could not be read and were reset (%(detail)s)": {
-   "ja": "保存してあったショートカットを読めなかったので既定に戻した(%(detail)s)",
-   "zh": "无法读取已保存的快捷键，已恢复为默认(%(detail)s)",
-   "tw": "無法讀取已儲存的快速鍵，已還原為預設(%(detail)s)",
-   "ko": "저장된 단축키를 읽을 수 없어 기본값으로 되돌렸습니다 (%(detail)s)",
-   "de": "Die gespeicherten Tastenkürzel waren nicht lesbar und wurden zurückgesetzt (%(detail)s)"
-  },
   "Run all (from any panel)": {
    "ja": "全部を実行(どの欄からでも)",
    "zh": "全部运行(任意面板)",
@@ -812,6 +805,55 @@
    "tw": "關閉影像視窗(Qt)",
    "ko": "그래픽 창 닫기 (Qt)",
    "de": "Grafikfenster schließen (Qt)"
+  },
+  "Keyboard shortcuts: part of the saved settings could not be used (Tools > Customize keyboard shortcuts)": {
+   "ja": "キーボードのショートカット: 保存してあった設定の一部を使えなかった(ツール > キーボードのショートカットの設定)",
+   "zh": "键盘快捷键: 已保存的设置有一部分无法使用(工具 > 自定义键盘快捷键)",
+   "tw": "鍵盤快速鍵: 已儲存的設定有一部分無法使用(工具 > 自訂鍵盤快速鍵)",
+   "ko": "키보드 단축키: 저장된 설정의 일부를 쓸 수 없었습니다 (도구 > 키보드 단축키 설정)",
+   "de": "Tastenkürzel: Ein Teil der gespeicherten Einstellungen war nicht verwendbar (Werkzeuge > Tastenkürzel anpassen)"
+  },
+  "Keyboard shortcuts: the saved settings could not be read, so the preset is used (Tools > Customize keyboard shortcuts)": {
+   "ja": "キーボードのショートカット: 保存してあった設定を読めなかったので、型の既定を使う(ツール > キーボードのショートカットの設定)",
+   "zh": "键盘快捷键: 无法读取已保存的设置，因此使用预设(工具 > 自定义键盘快捷键)",
+   "tw": "鍵盤快速鍵: 無法讀取已儲存的設定，因此使用預設(工具 > 自訂鍵盤快速鍵)",
+   "ko": "키보드 단축키: 저장된 설정을 읽을 수 없어 프리셋을 씁니다 (도구 > 키보드 단축키 설정)",
+   "de": "Tastenkürzel: Die gespeicherten Einstellungen waren nicht lesbar, daher gilt die Vorlage (Werkzeuge > Tastenkürzel anpassen)"
+  },
+  "Keyboard shortcuts: the saved settings are from a newer Studio; they are kept as they are and not used": {
+   "ja": "キーボードのショートカット: 保存してあった設定は新しい版の Studio の物。そのまま残し、ここでは使わない",
+   "zh": "键盘快捷键: 已保存的设置来自更新版本的 Studio；原样保留，此处不使用",
+   "tw": "鍵盤快速鍵: 已儲存的設定來自較新版本的 Studio；原樣保留，此處不使用",
+   "ko": "키보드 단축키: 저장된 설정은 더 새로운 Studio의 것입니다. 그대로 두고 여기서는 쓰지 않습니다",
+   "de": "Tastenkürzel: Die gespeicherten Einstellungen stammen aus einem neueren Studio; sie bleiben unverändert und werden hier nicht verwendet"
+  },
+  "Not used when Studio started:": {
+   "ja": "起動の時に使えなかった物:",
+   "zh": "启动时未能使用:",
+   "tw": "啟動時未能使用:",
+   "ko": "시작할 때 쓰지 못한 것:",
+   "de": "Beim Start nicht verwendet:"
+  },
+  "%(key)s would take the key from %(other)s everywhere it works": {
+   "ja": "%(key)s にすると、%(other)s が効く所のどこでもキーを奪う",
+   "zh": "%(key)s 会在 %(other)s 生效的所有地方抢走这个按键",
+   "tw": "%(key)s 會在 %(other)s 生效的所有地方搶走這個按鍵",
+   "ko": "%(key)s 는 %(other)s 가 작동하는 모든 곳에서 키를 빼앗습니다",
+   "de": "%(key)s nähme %(other)s die Taste überall weg, wo es gilt"
+  },
+  "The saved shortcuts could not be read; the preset is used (%(detail)s)": {
+   "ja": "保存してあったショートカットを読めなかったので、型の既定を使う(%(detail)s)",
+   "zh": "无法读取已保存的快捷键，因此使用预设(%(detail)s)",
+   "tw": "無法讀取已儲存的快速鍵，因此使用預設(%(detail)s)",
+   "ko": "저장된 단축키를 읽을 수 없어 프리셋을 씁니다 (%(detail)s)",
+   "de": "Die gespeicherten Tastenkürzel waren nicht lesbar; es gilt die Vorlage (%(detail)s)"
+  },
+  "The saved shortcuts are from a newer version (%(detail)s); they were kept and not used": {
+   "ja": "保存してあったショートカットは新しい版(%(detail)s)の物。残したまま使わない",
+   "zh": "已保存的快捷键来自更新的版本(%(detail)s)；已保留但不使用",
+   "tw": "已儲存的快速鍵來自較新的版本(%(detail)s)；已保留但不使用",
+   "ko": "저장된 단축키는 더 새로운 버전(%(detail)s)의 것입니다. 남겨 두고 쓰지 않습니다",
+   "de": "Die gespeicherten Tastenkürzel stammen aus einer neueren Version (%(detail)s); sie bleiben und werden nicht verwendet"
   }
  }
 }
