@@ -7113,6 +7113,8 @@ def build_window(model=None):
     act_focus_search = _act("Focus operator search", "Ctrl+F", "Jump to the operator search box")
     act_undo = _act("Undo", "Ctrl+Z", "Undo the last pipeline edit")
     act_redo = _act("Redo", "Ctrl+Shift+Z", "Redo the last undone pipeline edit")
+    # L1(2026-11-13、初回起動の点検): Windows の慣れた Ctrl+Y でもやり直す(Ctrl+Shift+Z だけだった)
+    act_redo.setShortcuts([QtGui.QKeySequence("Ctrl+Shift+Z"), QtGui.QKeySequence("Ctrl+Y")])
     act_undo.setEnabled(False); act_redo.setEnabled(False)
     act_pin = _act("Pin as A", "Ctrl+Shift+A",
                    "Freeze the current pipeline and its result as A, then compare it with what you change next "

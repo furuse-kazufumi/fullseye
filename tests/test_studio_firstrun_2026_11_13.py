@@ -635,3 +635,20 @@ def test_l6_a_slider_move_stores_a_short_knob_that_reads_back_the_same(launch):
     assert line == "bilateral (%r, %r)" % (model.stages[0][1], model.stages[0][2]), line
     stages, errs = studio.parse_hdev_program(line, studio.api.op_names())
     assert not errs and stages[0][1] == model.stages[0][1]               # 往復で値が変わらない
+
+
+# --------------------------------------------------------------------------- #
+# L1・L10・L3・M15・M14・M13・L9・L11                                            #
+# --------------------------------------------------------------------------- #
+def test_l1_ctrl_y_redoes(launch):
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    win, model = launch()
+    keys = [s.toString() for s in win._actions["redo"].shortcuts()]
+    assert keys == ["Ctrl+Shift+Z", "Ctrl+Y"]
+    _dirty_pipeline(win, model)
+    win._stage_list.setFocus()
+    QTest.keyClick(win, QtCore.Qt.Key_Z, QtCore.Qt.ControlModifier); _pump(0.2)
+    assert model.stages == []
+    QTest.keyClick(win, QtCore.Qt.Key_Y, QtCore.Qt.ControlModifier); _pump(0.2)
+    assert [s[0] for s in model.stages] == ["gaussian"]
