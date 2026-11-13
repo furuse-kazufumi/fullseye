@@ -11,7 +11,7 @@
 エディタの部品(クラス)は変えない。キーとマウスはイベントフィルタで受け、計算は ``studio_editops``(Qt なし)。
 
 取り付けで変わる所(``install`` を呼ばないエディタは 1 つも変わらない)
-* キー(``studio_editops.KEYMAP``)と Alt + ドラッグ。補完の窓が出ている間の Tab / Enter / Esc / 上下は窓へ譲る。
+* キー(既定は ``studio_editops.KEYMAP``。キーの設定で変えた今のキーは ``apply_bindings`` で受ける)と Alt + ドラッグ。補完の窓が出ている間の Tab / Enter / Esc / 上下は窓へ譲る。
 * 箱の見た目は行ごとの ``ExtraSelection``。エディタの持ち主(``ProgramEditor._highlight`` や ``PyEditAssist``)が
   ``setExtraSelections`` を呼ぶたびに消えないよう、**この 1 つのエディタの** ``setExtraSelections`` を包み、
   持ち主の印の後ろに箱の印を足す(クラスは触らない。``uninstall`` で外れる)。
@@ -37,14 +37,19 @@ _PURE_MODIFIER_KEYS = (_K.Key_Shift, _K.Key_Control, _K.Key_Alt, _K.Key_Meta, _K
                        _K.Key_NumLock, _K.Key_ScrollLock)
 _POPUP_KEYS = (_K.Key_Tab, _K.Key_Backtab, _K.Key_Return, _K.Key_Enter, _K.Key_Escape, _K.Key_Up, _K.Key_Down,
                _K.Key_PageUp, _K.Key_PageDown)
-#: Shift を押すと別の記号になるキー(``Shift+Alt+.`` は ``>`` として届く)。
-_SHIFTED = {_K.Key_Period: _K.Key_Greater, _K.Key_Slash: _K.Key_Question, _K.Key_BracketRight: _K.Key_BraceRight}
+#: Shift を押すと別の記号になるキー(``Shift+Alt+.`` は ``>`` として届く)。US 配列の対。JIS などは要実機確認。
+_SHIFTED = {_K.Key_Period: _K.Key_Greater, _K.Key_Slash: _K.Key_Question, _K.Key_BracketRight: _K.Key_BraceRight,
+            _K.Key_BracketLeft: _K.Key_BraceLeft, _K.Key_Backslash: _K.Key_Bar, _K.Key_Comma: _K.Key_Less,
+            _K.Key_Semicolon: _K.Key_Colon, _K.Key_Apostrophe: _K.Key_QuoteDbl, _K.Key_Minus: _K.Key_Underscore,
+            _K.Key_Equal: _K.Key_Plus, _K.Key_QuoteLeft: _K.Key_AsciiTilde}
 SETTINGS_PREFIX = "editops/"
 DEFAULT_RULERS = (79, 99)
 #: これより行の多い文書では、対応する括弧を探さない(強調も、飛ぶ操作も)。
 MAX_BRACKET_LINES = 20000
 
 _LIVE: "weakref.WeakSet" = weakref.WeakSet()
+#: キーの設定(studio_keymap)で変えた今のキー ``{操作: キーの並び}``。None = 表の既定。``apply_bindings`` が書く。
+_BINDINGS: dict | None = None
 
 
 def _detach_all_at_exit() -> None:
@@ -103,12 +108,18 @@ class _Overlay(QtWidgets.QWidget):
             ops.paint_overlay(self)
 
 
-def _key_table() -> dict:
-    """``(キー, 修飾)`` → 操作。``studio_editops.KEYMAP`` から作る。"""
+def _key_table(bindings: dict | None = None) -> dict:
+    """``(キー, 修飾)`` → 操作。``studio_editops.KEYMAP`` から作る(``bindings`` に載った操作はそのキー)。
+
+    2 打鍵の和音はここでは受けない(1 打ずつ判定している。キーの登録簿の検査が和音を断る)。
+    """
     out = {}
     for b in eo.KEYMAP:
-        for ks in b.keys:
-            comb = QtGui.QKeySequence(ks)[0]
+        for ks in (b.keys if bindings is None else bindings.get(b.command, b.keys)):
+            seq = QtGui.QKeySequence(ks)
+            if seq.count() != 1:
+                continue
+            comb = seq[0]
             key, mods = comb.key(), comb.keyboardModifiers() & _MODS
             out[(_int(key), _int(mods))] = b
             if key in _SHIFTED and mods & _K.ShiftModifier:
@@ -156,7 +167,9 @@ class EditOps(QtCore.QObject):
         self._menu = None
         #: イベントフィルタの中で起きた最後の例外(無ければ None)。試験と不具合の調べに使う。
         self.last_error: Exception | None = None
-        self._keys = _key_table()
+        self._bindings: dict | None = dict(_BINDINGS) if _BINDINGS else None
+        self._keys = _key_table(self._bindings)
+        self._palette_actions: dict = {}
         self.rulers = self._load_rulers()
         self.trim_on_save = self._load_bool("trim_on_save", False)
         self._overlay = _Overlay(self)
@@ -1159,16 +1172,46 @@ class EditOps(QtCore.QObject):
         self._menu = menu                                      # 出ている間、Python の側で持っておく
         menu.popup(global_pos)
 
+    def keys_for(self, command: str) -> tuple:
+        """操作 ``command`` の今のキー(キーの設定で変えていなければ表の既定)。"""
+        for b in eo.KEYMAP:
+            if b.command == command:
+                if self._bindings is not None and command in self._bindings:
+                    return tuple(self._bindings[command])
+                return tuple(b.keys)
+        raise ValueError("知らない操作: %r" % (command,))
+
+    def set_bindings(self, bindings: dict | None) -> None:
+        """今のキーを ``{操作: キーの並び}`` にする(None で表の既定)。メニュー・パレットの文もそろえる。"""
+        known = {b.command for b in eo.KEYMAP}
+        if bindings is not None:
+            bad = sorted(set(bindings) - known)
+            if bad:
+                raise ValueError("知らない操作: %s" % ", ".join(bad))
+            bindings = {c: tuple(k) for c, k in bindings.items()}
+        self._bindings = bindings
+        self._keys = _key_table(bindings)
+        for b in eo.KEYMAP:
+            a = self._palette_actions.get(b.command)
+            if a is not None:
+                try:
+                    keys = self.keys_for(b.command)
+                    a.setToolTip("%s (%s)" % (self.tr(b.title), " / ".join(keys)) if keys else self.tr(b.title))
+                except RuntimeError:                            # QAction が先に消えた
+                    self._palette_actions.pop(b.command, None)
+
     def _label(self, binding: eo.Binding) -> str:
         text = self.tr(binding.title)
-        return text + "\t" + binding.keys[0] if binding.keys else text
+        keys = self.keys_for(binding.command)
+        return text + "\t" + keys[0] if keys else text
 
     def _command_action(self, menu, binding: eo.Binding) -> QtGui.QAction:
         a = QtGui.QAction(self._label(binding), menu)
         menu.addAction(a)
         a.setObjectName("editops:" + binding.command)
-        if binding.keys:
-            a.setToolTip("%s (%s)" % (self.tr(binding.title), " / ".join(binding.keys)))
+        keys = self.keys_for(binding.command)
+        if keys:
+            a.setToolTip("%s (%s)" % (self.tr(binding.title), " / ".join(keys)))
         a.triggered.connect(lambda _=False, c=binding.command: (self.editor.setFocus(), self.run(c)))
         return a
 
@@ -1217,10 +1260,12 @@ class EditOps(QtCore.QObject):
         for b in eo.KEYMAP:
             a = QtGui.QAction(self.tr(b.title), parent or self)
             a.setObjectName("editops:" + b.command)
-            if b.keys:
-                a.setToolTip("%s (%s)" % (self.tr(b.title), " / ".join(b.keys)))
+            keys = self.keys_for(b.command)
+            if keys:
+                a.setToolTip("%s (%s)" % (self.tr(b.title), " / ".join(keys)))
             a.triggered.connect(lambda _=False, c=b.command: (self.editor.setFocus(), self.run(c)))
             out["editops_" + b.command.replace(".", "_")] = a
+            self._palette_actions[b.command] = a
         a = QtGui.QAction(self.tr(eo.ACT_HOWTO), parent or self)
         a.setObjectName("editops:howto")
         a.triggered.connect(lambda _=False: self.show_howto())
@@ -1228,8 +1273,14 @@ class EditOps(QtCore.QObject):
         return out
 
     def howto_text(self) -> str:
-        """「矩形選択の使い方」の文(今の言語)。"""
-        return self.tr(eo.HOWTO_TEXT)
+        """「矩形選択の使い方」の文(今の言語)。キーの設定で変えたキーがあれば、末尾にその一覧を足す
+        (本文は既定のキーで書いてある)。"""
+        text = self.tr(eo.HOWTO_TEXT)
+        changed = [b for b in eo.KEYMAP if self.keys_for(b.command) != tuple(b.keys)]
+        if changed:
+            text += "\n\n" + self.tr(eo.MSG_KEYS_CHANGED) + "\n" + "\n".join(
+                "%s: %s" % (self.tr(b.title), " / ".join(self.keys_for(b.command)) or "—") for b in changed)
+        return text
 
     def show_howto(self) -> QtWidgets.QMessageBox:
         """「矩形選択の使い方」を、本体を止めない窓で出す(Esc で閉じる。2 度目は同じ窓を前へ)。"""
@@ -1269,6 +1320,28 @@ def install(editor: QtWidgets.QPlainTextEdit, **options) -> EditOps:
     return get(editor) or EditOps(editor, **options)
 
 
+def apply_bindings(bindings: dict | None) -> int:
+    """今ある全部の EditOps と、これから取り付ける EditOps のキーを ``{操作: キーの並び}`` にする。
+
+    None で表の既定(``studio_editops.KEYMAP``)へ戻す。知らない操作の名前は ``ValueError``。
+    キーの登録簿(``studio_keymap_qt.apply_keymap``)が呼ぶ。キーを付け替えた EditOps の数を返す。
+    """
+    global _BINDINGS
+    if bindings is not None:
+        known = {b.command for b in eo.KEYMAP}
+        bad = sorted(set(bindings) - known)
+        if bad:
+            raise ValueError("知らない操作: %s" % ", ".join(bad))
+        bindings = {c: tuple(k) for c, k in bindings.items()}
+    _BINDINGS = bindings
+    n = 0
+    for ops in list(_LIVE):
+        if ops._on:
+            ops.set_bindings(bindings)
+            n += 1
+    return n
+
+
 def uninstall(editor: QtWidgets.QPlainTextEdit) -> bool:
     """``editor`` から外す。付いていたら True。"""
     ops = get(editor)
@@ -1306,10 +1379,26 @@ def builtin_text_keys() -> list:
     return out
 
 
+def _host_window(w):
+    """部品 ``w`` が属する窓。メニュー(それ自体が浮いた窓)はメニューバー・親の側へたどる。"""
+    seen = 0
+    while isinstance(w, QtWidgets.QMenu) and seen < 16:
+        w = w.parentWidget()
+        seen += 1
+    return w.window() if isinstance(w, QtWidgets.QWidget) else None
+
+
 def _covers(context, widgets, editor: QtWidgets.QWidget) -> bool:
-    """その文脈のショートカットが、``editor`` にフォーカスがある時に効くか。"""
-    if context in (_K.ApplicationShortcut, _K.WindowShortcut):
+    """その文脈のショートカットが、``editor`` にフォーカスがある時に効くか。
+
+    窓全体(WindowShortcut)のキーは、**同じ窓**の物だけ(2026-11-13: 別窓の Python エディタ・画像ビューアの
+    QShortcut を本体の Program 欄に効くと数えていた)。
+    """
+    if context == _K.ApplicationShortcut:
         return True
+    if context == _K.WindowShortcut:
+        win = editor.window()
+        return any(_host_window(w) is win for w in widgets)
     if context == _K.WidgetShortcut:
         return any(w is editor for w in widgets)
     if context == _K.WidgetWithChildrenShortcut:
@@ -1349,7 +1438,9 @@ def check_conflicts(window: QtWidgets.QWidget, editor: QtWidgets.QWidget) -> dic
     * ``internal``: エディタの部品が自分で受けているキー(``studio_editops.EDITOR_INTERNAL_KEYS``)と同じキー。
     * ``builtin``: QPlainTextEdit の標準のキーと同じキー(プラットフォームで違う)。
     """
-    mine = eo.active_bindings(editor_has_comment=hasattr(editor, "toggle_comment"))
+    ops = get(editor)
+    mine = eo.active_bindings(editor_has_comment=hasattr(editor, "toggle_comment"),
+                              keys=ops._bindings if ops is not None else _BINDINGS)
     existing = collect_shortcuts(window, editor)
     return {
         "studio": eo.find_conflicts(mine, existing),

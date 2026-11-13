@@ -1,0 +1,817 @@
+{
+ "_note": "studio_keymap (keyboard shortcuts settings): English is the source text (studio_keymap.ui_strings()). Command titles of existing menu actions come from studio_assets/i18n.json; this table holds only the texts of the keyboard settings window, the scope names, the messages and the titles of commands that have no menu action. tests/test_studio_keymap_2026_11_13.py checks the table is complete.",
+ "strings": {
+  "Customize keyboard shortcuts…": {
+   "ja": "キーボードのショートカットの設定…",
+   "zh": "自定义键盘快捷键…",
+   "tw": "自訂鍵盤快速鍵…",
+   "ko": "키보드 단축키 설정…",
+   "de": "Tastenkürzel anpassen…"
+  },
+  "Customize keyboard shortcuts": {
+   "ja": "キーボードのショートカットの設定",
+   "zh": "自定义键盘快捷键",
+   "tw": "自訂鍵盤快速鍵",
+   "ko": "키보드 단축키 설정",
+   "de": "Tastenkürzel anpassen"
+  },
+  "Preset": {
+   "ja": "型",
+   "zh": "预设",
+   "tw": "預設",
+   "ko": "프리셋",
+   "de": "Vorlage"
+  },
+  "Search by command, key or place (for example: duplicate, ctrl+d)": {
+   "ja": "コマンド名・キー・範囲で探す(例: 複製、ctrl+d)",
+   "zh": "按命令、按键或位置搜索(例如: duplicate、ctrl+d)",
+   "tw": "依指令、按鍵或位置搜尋(例如: duplicate、ctrl+d)",
+   "ko": "명령·키·위치로 찾기 (예: duplicate, ctrl+d)",
+   "de": "Nach Befehl, Taste oder Ort suchen (z. B. duplicate, ctrl+d)"
+  },
+  "Command": {
+   "ja": "コマンド",
+   "zh": "命令",
+   "tw": "指令",
+   "ko": "명령",
+   "de": "Befehl"
+  },
+  "Key": {
+   "ja": "キー",
+   "zh": "按键",
+   "tw": "按鍵",
+   "ko": "키",
+   "de": "Taste"
+  },
+  "Where": {
+   "ja": "効く範囲",
+   "zh": "生效范围",
+   "tw": "作用範圍",
+   "ko": "적용 범위",
+   "de": "Gilt in"
+  },
+  "Changed": {
+   "ja": "変更",
+   "zh": "已改",
+   "tw": "已改",
+   "ko": "변경",
+   "de": "Geändert"
+  },
+  "Current keys: %s": {
+   "ja": "今のキー: %s",
+   "zh": "当前按键: %s",
+   "tw": "目前按鍵: %s",
+   "ko": "현재 키: %s",
+   "de": "Aktuelle Tasten: %s"
+  },
+  "(none)": {
+   "ja": "(なし)",
+   "zh": "(无)",
+   "tw": "(無)",
+   "ko": "(없음)",
+   "de": "(keine)"
+  },
+  "New key": {
+   "ja": "新しいキー",
+   "zh": "新按键",
+   "tw": "新按鍵",
+   "ko": "새 키",
+   "de": "Neue Taste"
+  },
+  "Click here, then press the keys": {
+   "ja": "ここをクリックしてからキーを押す",
+   "zh": "点击此处，然后按下按键",
+   "tw": "點這裡，然後按下按鍵",
+   "ko": "여기를 클릭한 뒤 키를 누르세요",
+   "de": "Hier klicken, dann die Tasten drücken"
+  },
+  "A second key right after the first makes a two-stroke key. Clear starts over.": {
+   "ja": "続けてもう 1 つ押すと 2 打鍵のキーになる。「消す」でやり直し。",
+   "zh": "紧接着再按一个键即成为两段按键。点“清除”重新开始。",
+   "tw": "緊接著再按一個鍵即成為兩段按鍵。按「清除」重新開始。",
+   "ko": "이어서 한 번 더 누르면 두 단계 키가 됩니다. 지우기로 다시 시작합니다.",
+   "de": "Eine zweite Taste direkt danach ergibt ein Zwei-Tasten-Kürzel. Leeren beginnt neu."
+  },
+  "One key at a time here (no two-stroke keys in editors).": {
+   "ja": "ここでは 1 打のキーだけ(エディタでは 2 打鍵のキーを使えない)。",
+   "zh": "这里只能用单个按键(编辑器中不支持两段按键)。",
+   "tw": "這裡只能用單一按鍵(編輯器中不支援兩段按鍵)。",
+   "ko": "여기서는 한 번에 키 하나만 (편집기에서는 두 단계 키를 쓸 수 없음).",
+   "de": "Hier nur eine Taste (keine Zwei-Tasten-Kürzel in Editoren)."
+  },
+  "Clear": {
+   "ja": "消す",
+   "zh": "清除",
+   "tw": "清除",
+   "ko": "지우기",
+   "de": "Leeren"
+  },
+  "Assign": {
+   "ja": "割り当てる",
+   "zh": "分配",
+   "tw": "指定",
+   "ko": "지정",
+   "de": "Zuweisen"
+  },
+  "Add as another key": {
+   "ja": "別のキーとして足す",
+   "zh": "添加为另一个按键",
+   "tw": "新增為另一個按鍵",
+   "ko": "다른 키로 추가",
+   "de": "Als weitere Taste hinzufügen"
+  },
+  "Remove keys": {
+   "ja": "キーを外す",
+   "zh": "移除按键",
+   "tw": "移除按鍵",
+   "ko": "키 제거",
+   "de": "Tasten entfernen"
+  },
+  "Reset to preset": {
+   "ja": "型の既定に戻す",
+   "zh": "恢复为预设",
+   "tw": "還原為預設",
+   "ko": "프리셋으로 되돌리기",
+   "de": "Auf Vorlage zurücksetzen"
+  },
+  "Reset all…": {
+   "ja": "全部を戻す…",
+   "zh": "全部恢复…",
+   "tw": "全部還原…",
+   "ko": "모두 되돌리기…",
+   "de": "Alle zurücksetzen…"
+  },
+  "Import…": {
+   "ja": "読み込む…",
+   "zh": "导入…",
+   "tw": "匯入…",
+   "ko": "가져오기…",
+   "de": "Importieren…"
+  },
+  "Export…": {
+   "ja": "書き出す…",
+   "zh": "导出…",
+   "tw": "匯出…",
+   "ko": "내보내기…",
+   "de": "Exportieren…"
+  },
+  "Close": {
+   "ja": "閉じる",
+   "zh": "关闭",
+   "tw": "關閉",
+   "ko": "닫기",
+   "de": "Schließen"
+  },
+  "Built in: cannot be changed here": {
+   "ja": "組み込み: ここでは変えられない",
+   "zh": "内置: 此处无法更改",
+   "tw": "內建: 此處無法變更",
+   "ko": "내장: 여기서는 바꿀 수 없음",
+   "de": "Eingebaut: hier nicht änderbar"
+  },
+  "No conflicts": {
+   "ja": "当たりなし",
+   "zh": "无冲突",
+   "tw": "無衝突",
+   "ko": "충돌 없음",
+   "de": "Keine Konflikte"
+  },
+  "Changed from the preset": {
+   "ja": "型の既定から変えた",
+   "zh": "已从预设更改",
+   "tw": "已從預設變更",
+   "ko": "프리셋에서 변경함",
+   "de": "Gegenüber der Vorlage geändert"
+  },
+  "Pick a command in the table": {
+   "ja": "表からコマンドを選ぶ",
+   "zh": "请在表中选择命令",
+   "tw": "請在表中選擇指令",
+   "ko": "표에서 명령을 고르세요",
+   "de": "Einen Befehl in der Tabelle wählen"
+  },
+  "Reset all shortcuts": {
+   "ja": "全部のショートカットを戻す",
+   "zh": "恢复全部快捷键",
+   "tw": "還原全部快速鍵",
+   "ko": "모든 단축키 되돌리기",
+   "de": "Alle Tastenkürzel zurücksetzen"
+  },
+  "Reset all %d changed shortcuts to the preset? This cannot be undone.": {
+   "ja": "変えた %d 個のショートカットを全部、型の既定に戻しますか? 元に戻せません。",
+   "zh": "将已更改的 %d 个快捷键全部恢复为预设? 此操作无法撤销。",
+   "tw": "將已變更的 %d 個快速鍵全部還原為預設? 此操作無法復原。",
+   "ko": "변경한 단축키 %d개를 모두 프리셋으로 되돌릴까요? 되돌릴 수 없습니다.",
+   "de": "Alle %d geänderten Tastenkürzel auf die Vorlage zurücksetzen? Das lässt sich nicht rückgängig machen."
+  },
+  "Switch preset": {
+   "ja": "型を切り替える",
+   "zh": "切换预设",
+   "tw": "切換預設",
+   "ko": "프리셋 전환",
+   "de": "Vorlage wechseln"
+  },
+  "Switch to %s? Your own changes are kept.": {
+   "ja": "「%s」に切り替えますか? 自分で変えたキーは残ります。",
+   "zh": "切换到“%s”? 您自己更改的按键会保留。",
+   "tw": "切換到「%s」? 您自己變更的按鍵會保留。",
+   "ko": "'%s'(으)로 전환할까요? 직접 바꾼 키는 유지됩니다.",
+   "de": "Zu „%s“ wechseln? Eigene Änderungen bleiben erhalten."
+  },
+  "%d of your changes conflict with this preset and will be dropped:": {
+   "ja": "自分で変えたキーのうち %d 個がこの型と当たるので外れます:",
+   "zh": "您的更改中有 %d 项与此预设冲突，将被丢弃:",
+   "tw": "您的變更中有 %d 項與此預設衝突，將被捨棄:",
+   "ko": "직접 바꾼 키 중 %d개가 이 프리셋과 충돌하여 버려집니다:",
+   "de": "%d Ihrer Änderungen kollidieren mit dieser Vorlage und werden verworfen:"
+  },
+  "Imported %d changed shortcuts": {
+   "ja": "変更したショートカット %d 個を読み込んだ",
+   "zh": "已导入 %d 个更改的快捷键",
+   "tw": "已匯入 %d 個變更的快速鍵",
+   "ko": "변경한 단축키 %d개를 가져왔습니다",
+   "de": "%d geänderte Tastenkürzel importiert"
+  },
+  "The file was not imported (nothing was changed):": {
+   "ja": "ファイルを読み込まなかった(何も変えていない):",
+   "zh": "未导入该文件(没有任何更改):",
+   "tw": "未匯入該檔案(沒有任何變更):",
+   "ko": "파일을 가져오지 않았습니다 (아무것도 바꾸지 않음):",
+   "de": "Die Datei wurde nicht importiert (nichts geändert):"
+  },
+  "Saved %d changed shortcuts to %s": {
+   "ja": "変更したショートカット %d 個を %s に書き出した",
+   "zh": "已将 %d 个更改的快捷键保存到 %s",
+   "tw": "已將 %d 個變更的快速鍵儲存到 %s",
+   "ko": "변경한 단축키 %d개를 %s에 저장했습니다",
+   "de": "%d geänderte Tastenkürzel in %s gespeichert"
+  },
+  "Keyboard shortcuts: %d saved changes could not be used (Tools > Customize keyboard shortcuts)": {
+   "ja": "キーボードのショートカット: 保存してあった変更のうち %d 個を使えなかった(ツール > キーボードのショートカットの設定)",
+   "zh": "键盘快捷键: 有 %d 项已保存的更改无法使用(工具 > 自定义键盘快捷键)",
+   "tw": "鍵盤快速鍵: 有 %d 項已儲存的變更無法使用(工具 > 自訂鍵盤快速鍵)",
+   "ko": "키보드 단축키: 저장된 변경 %d개를 쓸 수 없었습니다 (도구 > 키보드 단축키 설정)",
+   "de": "Tastenkürzel: %d gespeicherte Änderungen waren nicht verwendbar (Werkzeuge > Tastenkürzel anpassen)"
+  },
+  "Fullseye Studio keys (*.json)": {
+   "ja": "Fullseye Studio のキー (*.json)",
+   "zh": "Fullseye Studio 按键 (*.json)",
+   "tw": "Fullseye Studio 按鍵 (*.json)",
+   "ko": "Fullseye Studio 키 (*.json)",
+   "de": "Fullseye-Studio-Tasten (*.json)"
+  },
+  "Menu bar: %s": {
+   "ja": "メニューバー: %s",
+   "zh": "菜单栏: %s",
+   "tw": "選單列: %s",
+   "ko": "메뉴 막대: %s",
+   "de": "Menüleiste: %s"
+  },
+  "Text fields: %s": {
+   "ja": "テキスト欄: %s",
+   "zh": "文本框: %s",
+   "tw": "文字欄位: %s",
+   "ko": "텍스트 칸: %s",
+   "de": "Textfelder: %s"
+  },
+  "Visual Studio style (default)": {
+   "ja": "Visual Studio 風(既定)",
+   "zh": "Visual Studio 风格(默认)",
+   "tw": "Visual Studio 風格(預設)",
+   "ko": "Visual Studio 스타일 (기본)",
+   "de": "Visual-Studio-Stil (Standard)"
+  },
+  "VS Code style": {
+   "ja": "VS Code 風",
+   "zh": "VS Code 风格",
+   "tw": "VS Code 風格",
+   "ko": "VS Code 스타일",
+   "de": "VS-Code-Stil"
+  },
+  "Main window": {
+   "ja": "窓全体",
+   "zh": "主窗口",
+   "tw": "主視窗",
+   "ko": "주 창",
+   "de": "Hauptfenster"
+  },
+  "Pipeline stage list": {
+   "ja": "段の一覧",
+   "zh": "流水线步骤列表",
+   "tw": "流程步驟清單",
+   "ko": "파이프라인 단계 목록",
+   "de": "Stufenliste der Pipeline"
+  },
+  "Graphics window": {
+   "ja": "画像の窓",
+   "zh": "图像窗口",
+   "tw": "影像視窗",
+   "ko": "그래픽 창",
+   "de": "Grafikfenster"
+  },
+  "Program editor": {
+   "ja": "Program 欄",
+   "zh": "Program 编辑器",
+   "tw": "Program 編輯器",
+   "ko": "Program 편집기",
+   "de": "Program-Editor"
+  },
+  "Code editors": {
+   "ja": "コードエディタ",
+   "zh": "代码编辑器",
+   "tw": "程式碼編輯器",
+   "ko": "코드 편집기",
+   "de": "Code-Editoren"
+  },
+  "Code editors (box selection)": {
+   "ja": "コードエディタ(矩形選択の間)",
+   "zh": "代码编辑器(矩形选择时)",
+   "tw": "程式碼編輯器(矩形選取時)",
+   "ko": "코드 편집기 (상자 선택 중)",
+   "de": "Code-Editoren (Blockauswahl)"
+  },
+  "Code editors without their own comment key": {
+   "ja": "自前のコメントのキーを持たないコードエディタ",
+   "zh": "没有自带注释键的代码编辑器",
+   "tw": "沒有自帶註解鍵的程式碼編輯器",
+   "ko": "자체 주석 키가 없는 코드 편집기",
+   "de": "Code-Editoren ohne eigene Kommentartaste"
+  },
+  "Program find field": {
+   "ja": "Program 欄の検索欄",
+   "zh": "Program 搜索框",
+   "tw": "Program 搜尋欄",
+   "ko": "Program 찾기 칸",
+   "de": "Suchfeld des Program"
+  },
+  "Python Editor window": {
+   "ja": "Python エディタの窓",
+   "zh": "Python 编辑器窗口",
+   "tw": "Python 編輯器視窗",
+   "ko": "Python 편집기 창",
+   "de": "Python-Editor-Fenster"
+  },
+  "Image Viewer window": {
+   "ja": "画像ビューアの窓",
+   "zh": "图像查看器窗口",
+   "tw": "影像檢視器視窗",
+   "ko": "이미지 뷰어 창",
+   "de": "Bildbetrachter-Fenster"
+  },
+  "3-D view": {
+   "ja": "3-D 表示",
+   "zh": "3-D 视图",
+   "tw": "3-D 檢視",
+   "ko": "3-D 보기",
+   "de": "3-D-Ansicht"
+  },
+  "Text fields": {
+   "ja": "テキスト欄",
+   "zh": "文本框",
+   "tw": "文字欄位",
+   "ko": "텍스트 칸",
+   "de": "Textfelder"
+  },
+  "the main window": {
+   "ja": "窓全体",
+   "zh": "主窗口",
+   "tw": "主視窗",
+   "ko": "주 창",
+   "de": "dem Hauptfenster"
+  },
+  "text fields": {
+   "ja": "テキスト欄",
+   "zh": "文本框",
+   "tw": "文字欄位",
+   "ko": "텍스트 칸",
+   "de": "Textfeldern"
+  },
+  "the stage list": {
+   "ja": "段の一覧",
+   "zh": "步骤列表",
+   "tw": "步驟清單",
+   "ko": "단계 목록",
+   "de": "der Stufenliste"
+  },
+  "the Program editor": {
+   "ja": "Program 欄",
+   "zh": "Program 编辑器",
+   "tw": "Program 編輯器",
+   "ko": "Program 편집기",
+   "de": "dem Program-Editor"
+  },
+  "the Program find field": {
+   "ja": "Program 欄の検索欄",
+   "zh": "Program 搜索框",
+   "tw": "Program 搜尋欄",
+   "ko": "Program 찾기 칸",
+   "de": "dem Suchfeld des Program"
+  },
+  "graphics windows": {
+   "ja": "画像の窓",
+   "zh": "图像窗口",
+   "tw": "影像視窗",
+   "ko": "그래픽 창",
+   "de": "Grafikfenstern"
+  },
+  "the Python Editor": {
+   "ja": "Python エディタ",
+   "zh": "Python 编辑器",
+   "tw": "Python 編輯器",
+   "ko": "Python 편집기",
+   "de": "dem Python-Editor"
+  },
+  "the Image Viewer": {
+   "ja": "画像ビューア",
+   "zh": "图像查看器",
+   "tw": "影像檢視器",
+   "ko": "이미지 뷰어",
+   "de": "dem Bildbetrachter"
+  },
+  "the 3-D view": {
+   "ja": "3-D 表示",
+   "zh": "3-D 视图",
+   "tw": "3-D 檢視",
+   "ko": "3-D 보기",
+   "de": "der 3-D-Ansicht"
+  },
+  "%(key)s is also used by %(other)s: in %(place)s neither would work": {
+   "ja": "%(key)s は %(other)s にも付いている: %(place)s ではどちらも効かなくなる",
+   "zh": "%(key)s 也被 %(other)s 使用: 在%(place)s中两者都不会生效",
+   "tw": "%(key)s 也被 %(other)s 使用: 在%(place)s中兩者都不會生效",
+   "ko": "%(key)s 는 %(other)s 에도 쓰입니다: %(place)s에서는 둘 다 작동하지 않습니다",
+   "de": "%(key)s ist auch %(other)s zugewiesen: in %(place)s würde keines funktionieren"
+  },
+  "%(key)s and %(other_key)s (%(other)s) begin with the same key: in %(place)s one could never be pressed": {
+   "ja": "%(key)s と %(other_key)s(%(other)s)は同じキーで始まる: %(place)s では片方を押せなくなる",
+   "zh": "%(key)s 与 %(other_key)s(%(other)s)以同一按键开头: 在%(place)s中其中一个永远无法按出",
+   "tw": "%(key)s 與 %(other_key)s(%(other)s)以同一按鍵開頭: 在%(place)s中其中一個永遠無法按出",
+   "ko": "%(key)s 와 %(other_key)s (%(other)s) 는 같은 키로 시작합니다: %(place)s에서는 하나를 누를 수 없게 됩니다",
+   "de": "%(key)s und %(other_key)s (%(other)s) beginnen mit derselben Taste: in %(place)s wäre eines nie erreichbar"
+  },
+  "%(key)s is also taken by %(other)s in the same editor": {
+   "ja": "%(key)s は同じエディタの %(other)s が受けている",
+   "zh": "%(key)s 已被同一编辑器中的 %(other)s 占用",
+   "tw": "%(key)s 已被同一編輯器中的 %(other)s 佔用",
+   "ko": "%(key)s 는 같은 편집기의 %(other)s 가 이미 받고 있습니다",
+   "de": "%(key)s wird im selben Editor schon von %(other)s belegt"
+  },
+  "%(key)s would never reach this command: %(other)s takes it first": {
+   "ja": "%(key)s はこのコマンドに届かない: %(other)s が先に受ける",
+   "zh": "%(key)s 永远到不了此命令: %(other)s 会先接收",
+   "tw": "%(key)s 永遠到不了此指令: %(other)s 會先接收",
+   "ko": "%(key)s 는 이 명령에 닿지 않습니다: %(other)s 가 먼저 받습니다",
+   "de": "%(key)s käme nie bei diesem Befehl an: %(other)s nimmt sie zuerst"
+  },
+  "In %(place)s, %(other)s takes %(key)s first": {
+   "ja": "%(place)s では %(other)s が %(key)s を先に受ける",
+   "zh": "在%(place)s中，%(other)s 先接收 %(key)s",
+   "tw": "在%(place)s中，%(other)s 先接收 %(key)s",
+   "ko": "%(place)s에서는 %(other)s 가 %(key)s 를 먼저 받습니다",
+   "de": "In %(place)s nimmt %(other)s die Taste %(key)s zuerst"
+  },
+  "In %(place)s, this command takes %(key)s before %(other)s": {
+   "ja": "%(place)s では、このコマンドが %(other)s より先に %(key)s を受ける",
+   "zh": "在%(place)s中，此命令比 %(other)s 先接收 %(key)s",
+   "tw": "在%(place)s中，此指令比 %(other)s 先接收 %(key)s",
+   "ko": "%(place)s에서는 이 명령이 %(other)s 보다 먼저 %(key)s 를 받습니다",
+   "de": "In %(place)s nimmt dieser Befehl %(key)s vor %(other)s"
+  },
+  "%(key)s is shared with %(other)s; each takes it only in its own situation": {
+   "ja": "%(key)s は %(other)s と共用: それぞれ自分の場面でだけ受ける",
+   "zh": "%(key)s 与 %(other)s 共用；各自只在自己的情形下接收",
+   "tw": "%(key)s 與 %(other)s 共用；各自只在自己的情境下接收",
+   "ko": "%(key)s 는 %(other)s 와 함께 씁니다. 각자 자기 상황에서만 받습니다",
+   "de": "%(key)s wird mit %(other)s geteilt; jeder nimmt sie nur in seiner eigenen Lage"
+  },
+  "%(key)s: two-stroke keys work only in window-wide places, not in editors": {
+   "ja": "%(key)s: 2 打鍵のキーは窓全体の範囲だけで使える(エディタでは使えない)",
+   "zh": "%(key)s: 两段按键只能用于整个窗口范围，不能用于编辑器",
+   "tw": "%(key)s: 兩段按鍵只能用於整個視窗範圍，不能用於編輯器",
+   "ko": "%(key)s: 두 단계 키는 창 전체 범위에서만 쓸 수 있고 편집기에서는 안 됩니다",
+   "de": "%(key)s: Zwei-Tasten-Kürzel gibt es nur fensterweit, nicht in Editoren"
+  },
+  "%(key)s: at most two strokes": {
+   "ja": "%(key)s: 2 打鍵まで",
+   "zh": "%(key)s: 最多两段",
+   "tw": "%(key)s: 最多兩段",
+   "ko": "%(key)s: 최대 두 단계",
+   "de": "%(key)s: höchstens zwei Tasten nacheinander"
+  },
+  "Cannot read the key %(key)s": {
+   "ja": "キー %(key)s を読めない",
+   "zh": "无法识别按键 %(key)s",
+   "tw": "無法識別按鍵 %(key)s",
+   "ko": "키 %(key)s 를 읽을 수 없습니다",
+   "de": "Die Taste %(key)s ist nicht lesbar"
+  },
+  "%(key)s without Ctrl or Alt would take typing here": {
+   "ja": "Ctrl も Alt も無い %(key)s は、ここでは文字の入力を奪う",
+   "zh": "不带 Ctrl 或 Alt 的 %(key)s 会在这里抢走文字输入",
+   "tw": "不帶 Ctrl 或 Alt 的 %(key)s 會在這裡搶走文字輸入",
+   "ko": "Ctrl 이나 Alt 가 없는 %(key)s 는 여기서 글자 입력을 빼앗습니다",
+   "de": "%(key)s ohne Strg oder Alt würde hier die Texteingabe wegnehmen"
+  },
+  "At most %(detail)s keys per command": {
+   "ja": "1 つのコマンドにキーは %(detail)s 個まで",
+   "zh": "每个命令最多 %(detail)s 个按键",
+   "tw": "每個指令最多 %(detail)s 個按鍵",
+   "ko": "명령 하나에 키는 최대 %(detail)s개",
+   "de": "Höchstens %(detail)s Tasten pro Befehl"
+  },
+  "%(key)s is taken by the operating system": {
+   "ja": "%(key)s は OS が先に取る",
+   "zh": "%(key)s 被操作系统占用",
+   "tw": "%(key)s 被作業系統佔用",
+   "ko": "%(key)s 는 운영 체제가 먼저 가져갑니다",
+   "de": "%(key)s belegt das Betriebssystem"
+  },
+  "%(key)s closes the window on Windows": {
+   "ja": "Windows では %(key)s で窓が閉じる",
+   "zh": "在 Windows 上 %(key)s 会关闭窗口",
+   "tw": "在 Windows 上 %(key)s 會關閉視窗",
+   "ko": "Windows 에서는 %(key)s 로 창이 닫힙니다",
+   "de": "Unter Windows schließt %(key)s das Fenster"
+  },
+  "%(key)s opens the window menu on Windows": {
+   "ja": "Windows では %(key)s で窓のメニューが開く",
+   "zh": "在 Windows 上 %(key)s 会打开窗口菜单",
+   "tw": "在 Windows 上 %(key)s 會開啟視窗選單",
+   "ko": "Windows 에서는 %(key)s 로 창 메뉴가 열립니다",
+   "de": "Unter Windows öffnet %(key)s das Fenstermenü"
+  },
+  "%(key)s may move the focus to the menu bar": {
+   "ja": "%(key)s はフォーカスをメニューバーへ移すことがある",
+   "zh": "%(key)s 可能会把焦点移到菜单栏",
+   "tw": "%(key)s 可能會把焦點移到選單列",
+   "ko": "%(key)s 는 포커스를 메뉴 막대로 옮길 수 있습니다",
+   "de": "%(key)s kann den Fokus in die Menüleiste setzen"
+  },
+  "%(key)s takes a screenshot on many systems": {
+   "ja": "多くの環境で %(key)s は画面の写しを撮る",
+   "zh": "在许多系统上 %(key)s 会截图",
+   "tw": "在許多系統上 %(key)s 會擷取螢幕",
+   "ko": "많은 시스템에서 %(key)s 는 화면을 캡처합니다",
+   "de": "%(key)s erstellt auf vielen Systemen ein Bildschirmfoto"
+  },
+  "On keyboards with AltGr (German, French, Polish …) %(key)s types a character": {
+   "ja": "AltGr のある配列(ドイツ語・フランス語・ポーランド語 …)では %(key)s で文字が入る",
+   "zh": "在带 AltGr 的键盘(德语、法语、波兰语 …)上 %(key)s 会输入字符",
+   "tw": "在有 AltGr 的鍵盤(德語、法語、波蘭語 …)上 %(key)s 會輸入字元",
+   "ko": "AltGr 가 있는 자판(독일어·프랑스어·폴란드어 …)에서는 %(key)s 로 글자가 입력됩니다",
+   "de": "Auf Tastaturen mit AltGr (Deutsch, Französisch, Polnisch …) tippt %(key)s ein Zeichen"
+  },
+  "Some graphics drivers rotate the screen with %(key)s; Linux desktops switch workspaces": {
+   "ja": "グラフィクスのドライバによっては %(key)s で画面が回る。Linux のデスクトップでは作業領域が切り替わる",
+   "zh": "某些显卡驱动用 %(key)s 旋转屏幕；Linux 桌面会切换工作区",
+   "tw": "某些顯示卡驅動程式用 %(key)s 旋轉螢幕；Linux 桌面會切換工作區",
+   "ko": "일부 그래픽 드라이버는 %(key)s 로 화면을 돌립니다. Linux 데스크톱은 작업 공간을 바꿉니다",
+   "de": "Manche Grafiktreiber drehen mit %(key)s den Bildschirm; Linux-Desktops wechseln die Arbeitsfläche"
+  },
+  "On Linux %(key)s switches to a text console": {
+   "ja": "Linux では %(key)s で文字のコンソールへ切り替わる",
+   "zh": "在 Linux 上 %(key)s 会切换到文本控制台",
+   "tw": "在 Linux 上 %(key)s 會切換到文字主控台",
+   "ko": "Linux 에서는 %(key)s 로 텍스트 콘솔로 바뀝니다",
+   "de": "Unter Linux wechselt %(key)s in eine Textkonsole"
+  },
+  "On many Linux desktops %(key)s opens a terminal": {
+   "ja": "多くの Linux のデスクトップでは %(key)s で端末が開く",
+   "zh": "在许多 Linux 桌面上 %(key)s 会打开终端",
+   "tw": "在許多 Linux 桌面上 %(key)s 會開啟終端機",
+   "ko": "많은 Linux 데스크톱에서 %(key)s 는 터미널을 엽니다",
+   "de": "Auf vielen Linux-Desktops öffnet %(key)s ein Terminal"
+  },
+  "%(key)s is used by input methods (IME) to switch modes": {
+   "ja": "%(key)s は入力方式(IME)が切り替えに使う",
+   "zh": "%(key)s 被输入法(IME)用于切换模式",
+   "tw": "%(key)s 被輸入法(IME)用於切換模式",
+   "ko": "%(key)s 는 입력기(IME)가 모드 전환에 씁니다",
+   "de": "%(key)s nutzen Eingabemethoden (IME) zum Umschalten"
+  },
+  "Unknown command: %(command)s": {
+   "ja": "知らないコマンド: %(command)s",
+   "zh": "未知命令: %(command)s",
+   "tw": "未知指令: %(command)s",
+   "ko": "알 수 없는 명령: %(command)s",
+   "de": "Unbekannter Befehl: %(command)s"
+  },
+  "%(command)s is built in and cannot be changed": {
+   "ja": "%(command)s は組み込みで変えられない",
+   "zh": "%(command)s 为内置，无法更改",
+   "tw": "%(command)s 為內建，無法變更",
+   "ko": "%(command)s 는 내장이라 바꿀 수 없습니다",
+   "de": "%(command)s ist eingebaut und nicht änderbar"
+  },
+  "Unknown preset: %(detail)s": {
+   "ja": "知らない型: %(detail)s",
+   "zh": "未知预设: %(detail)s",
+   "tw": "未知預設: %(detail)s",
+   "ko": "알 수 없는 프리셋: %(detail)s",
+   "de": "Unbekannte Vorlage: %(detail)s"
+  },
+  "Not a JSON file (%(detail)s)": {
+   "ja": "JSON のファイルではない(%(detail)s)",
+   "zh": "不是 JSON 文件(%(detail)s)",
+   "tw": "不是 JSON 檔案(%(detail)s)",
+   "ko": "JSON 파일이 아닙니다 (%(detail)s)",
+   "de": "Keine JSON-Datei (%(detail)s)"
+  },
+  "Not a Fullseye Studio key file (%(detail)s)": {
+   "ja": "Fullseye Studio のキーのファイルではない(%(detail)s)",
+   "zh": "不是 Fullseye Studio 按键文件(%(detail)s)",
+   "tw": "不是 Fullseye Studio 按鍵檔案(%(detail)s)",
+   "ko": "Fullseye Studio 키 파일이 아닙니다 (%(detail)s)",
+   "de": "Keine Fullseye-Studio-Tastendatei (%(detail)s)"
+  },
+  "Unsupported version: %(detail)s": {
+   "ja": "扱えない版: %(detail)s",
+   "zh": "不支持的版本: %(detail)s",
+   "tw": "不支援的版本: %(detail)s",
+   "ko": "지원하지 않는 버전: %(detail)s",
+   "de": "Nicht unterstützte Version: %(detail)s"
+  },
+  "Wrong type or unknown field: %(detail)s": {
+   "ja": "型が違うか、知らない項目: %(detail)s",
+   "zh": "类型错误或未知字段: %(detail)s",
+   "tw": "型別錯誤或未知欄位: %(detail)s",
+   "ko": "형식이 틀렸거나 알 수 없는 항목: %(detail)s",
+   "de": "Falscher Typ oder unbekanntes Feld: %(detail)s"
+  },
+  "The file is too big (%(detail)s)": {
+   "ja": "ファイルが大きすぎる(%(detail)s)",
+   "zh": "文件过大(%(detail)s)",
+   "tw": "檔案過大(%(detail)s)",
+   "ko": "파일이 너무 큽니다 (%(detail)s)",
+   "de": "Die Datei ist zu groß (%(detail)s)"
+  },
+  "The saved shortcuts could not be read and were reset (%(detail)s)": {
+   "ja": "保存してあったショートカットを読めなかったので既定に戻した(%(detail)s)",
+   "zh": "无法读取已保存的快捷键，已恢复为默认(%(detail)s)",
+   "tw": "無法讀取已儲存的快速鍵，已還原為預設(%(detail)s)",
+   "ko": "저장된 단축키를 읽을 수 없어 기본값으로 되돌렸습니다 (%(detail)s)",
+   "de": "Die gespeicherten Tastenkürzel waren nicht lesbar und wurden zurückgesetzt (%(detail)s)"
+  },
+  "Run all (from any panel)": {
+   "ja": "全部を実行(どの欄からでも)",
+   "zh": "全部运行(任意面板)",
+   "tw": "全部執行(任意面板)",
+   "ko": "전체 실행 (어느 패널에서나)",
+   "de": "Alles ausführen (aus jedem Bereich)"
+  },
+  "Step (from any panel)": {
+   "ja": "1 段進む(どの欄からでも)",
+   "zh": "单步(任意面板)",
+   "tw": "單步(任意面板)",
+   "ko": "한 단계 (어느 패널에서나)",
+   "de": "Einzelschritt (aus jedem Bereich)"
+  },
+  "Reset to start (from any panel)": {
+   "ja": "最初に戻す(どの欄からでも)",
+   "zh": "回到开头(任意面板)",
+   "tw": "回到開頭(任意面板)",
+   "ko": "처음으로 (어느 패널에서나)",
+   "de": "Zum Anfang (aus jedem Bereich)"
+  },
+  "Run (Python Editor)": {
+   "ja": "実行(Python エディタ)",
+   "zh": "运行(Python 编辑器)",
+   "tw": "執行(Python 編輯器)",
+   "ko": "실행 (Python 편집기)",
+   "de": "Ausführen (Python-Editor)"
+  },
+  "Save (Python Editor)": {
+   "ja": "保存(Python エディタ)",
+   "zh": "保存(Python 编辑器)",
+   "tw": "儲存(Python 編輯器)",
+   "ko": "저장 (Python 편집기)",
+   "de": "Speichern (Python-Editor)"
+  },
+  "Ledger op for the word under the cursor (Python Editor)": {
+   "ja": "カーソルの語の台帳 op(Python エディタ)",
+   "zh": "光标下单词的台账 op(Python 编辑器)",
+   "tw": "游標下單字的台帳 op(Python 編輯器)",
+   "ko": "커서 아래 단어의 대장 op (Python 편집기)",
+   "de": "Ledger-Op zum Wort am Cursor (Python-Editor)"
+  },
+  "Fit (Image Viewer)": {
+   "ja": "窓に合わせる(画像ビューア)",
+   "zh": "适应窗口(图像查看器)",
+   "tw": "符合視窗(影像檢視器)",
+   "ko": "창에 맞춤 (이미지 뷰어)",
+   "de": "Einpassen (Bildbetrachter)"
+  },
+  "1:1 (Image Viewer)": {
+   "ja": "1:1(画像ビューア)",
+   "zh": "1:1(图像查看器)",
+   "tw": "1:1(影像檢視器)",
+   "ko": "1:1 (이미지 뷰어)",
+   "de": "1:1 (Bildbetrachter)"
+  },
+  "Next image (Image Viewer)": {
+   "ja": "次の画像(画像ビューア)",
+   "zh": "下一张图像(图像查看器)",
+   "tw": "下一張影像(影像檢視器)",
+   "ko": "다음 이미지 (이미지 뷰어)",
+   "de": "Nächstes Bild (Bildbetrachter)"
+  },
+  "Previous image (Image Viewer)": {
+   "ja": "前の画像(画像ビューア)",
+   "zh": "上一张图像(图像查看器)",
+   "tw": "上一張影像(影像檢視器)",
+   "ko": "이전 이미지 (이미지 뷰어)",
+   "de": "Vorheriges Bild (Bildbetrachter)"
+  },
+  "Run the selected Program lines (with a selection)": {
+   "ja": "選んだ Program の行だけ実行(選びがある時)",
+   "zh": "只运行选中的 Program 行(有选择时)",
+   "tw": "只執行選取的 Program 行(有選取時)",
+   "ko": "선택한 Program 줄만 실행 (선택이 있을 때)",
+   "de": "Markierte Program-Zeilen ausführen (bei Auswahl)"
+  },
+  "Close the find bar (while it is open)": {
+   "ja": "検索の帯を閉じる(出ている時)",
+   "zh": "关闭搜索栏(显示时)",
+   "tw": "關閉搜尋列(顯示時)",
+   "ko": "찾기 막대 닫기 (열려 있을 때)",
+   "de": "Suchleiste schließen (wenn offen)"
+  },
+  "Complete the word (Python)": {
+   "ja": "語を補完(Python)",
+   "zh": "补全单词(Python)",
+   "tw": "補全單字(Python)",
+   "ko": "단어 완성 (Python)",
+   "de": "Wort vervollständigen (Python)"
+  },
+  "Find field: close": {
+   "ja": "検索欄: 閉じる",
+   "zh": "搜索框: 关闭",
+   "tw": "搜尋欄: 關閉",
+   "ko": "찾기 칸: 닫기",
+   "de": "Suchfeld: schließen"
+  },
+  "Find field: next match": {
+   "ja": "検索欄: 次の一致",
+   "zh": "搜索框: 下一个匹配",
+   "tw": "搜尋欄: 下一個符合",
+   "ko": "찾기 칸: 다음 일치",
+   "de": "Suchfeld: nächster Treffer"
+  },
+  "Find field: previous match": {
+   "ja": "検索欄: 前の一致",
+   "zh": "搜索框: 上一个匹配",
+   "tw": "搜尋欄: 上一個符合",
+   "ko": "찾기 칸: 이전 일치",
+   "de": "Suchfeld: vorheriger Treffer"
+  },
+  "Find field: find / replace": {
+   "ja": "検索欄: 検索 / 置換",
+   "zh": "搜索框: 查找 / 替换",
+   "tw": "搜尋欄: 尋找 / 取代",
+   "ko": "찾기 칸: 찾기 / 바꾸기",
+   "de": "Suchfeld: suchen / ersetzen"
+  },
+  "3-D view: first-person mode": {
+   "ja": "3-D 表示: 一人称",
+   "zh": "3-D 视图: 第一人称",
+   "tw": "3-D 檢視: 第一人稱",
+   "ko": "3-D 보기: 1인칭",
+   "de": "3-D-Ansicht: Ich-Perspektive"
+  },
+  "3-D view: move (first person)": {
+   "ja": "3-D 表示: 移動(一人称)",
+   "zh": "3-D 视图: 移动(第一人称)",
+   "tw": "3-D 檢視: 移動(第一人稱)",
+   "ko": "3-D 보기: 이동 (1인칭)",
+   "de": "3-D-Ansicht: bewegen (Ich-Perspektive)"
+  },
+  "3-D view: field of view": {
+   "ja": "3-D 表示: 視野角",
+   "zh": "3-D 视图: 视场角",
+   "tw": "3-D 檢視: 視野角",
+   "ko": "3-D 보기: 시야각",
+   "de": "3-D-Ansicht: Sichtfeld"
+  },
+  "3-D view: reset": {
+   "ja": "3-D 表示: 元に戻す",
+   "zh": "3-D 视图: 复位",
+   "tw": "3-D 檢視: 重設",
+   "ko": "3-D 보기: 초기화",
+   "de": "3-D-Ansicht: zurücksetzen"
+  },
+  "3-D view: wireframe": {
+   "ja": "3-D 表示: 線画",
+   "zh": "3-D 视图: 线框",
+   "tw": "3-D 檢視: 線框",
+   "ko": "3-D 보기: 와이어프레임",
+   "de": "3-D-Ansicht: Drahtgitter"
+  },
+  "Close the graphics window (Qt)": {
+   "ja": "画像の窓を閉じる(Qt)",
+   "zh": "关闭图像窗口(Qt)",
+   "tw": "關閉影像視窗(Qt)",
+   "ko": "그래픽 창 닫기 (Qt)",
+   "de": "Grafikfenster schließen (Qt)"
+  }
+ }
+}

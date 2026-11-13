@@ -625,7 +625,8 @@ def match_bracket(table: Sequence, line: int, index: int) -> tuple | None:
 
 
 # --------------------------------------------------------------------------- #
-# キーの割り当て(正本はこの表 1 つ。Qt の側・文書・当たりの検査がここから引く)
+# キーの割り当て。この表は**既定**(Visual Studio 風の型)。利用者が変えた今のキーは studio_keymap の登録簿が
+# 持ち、studio_editops_qt.apply_bindings で配る(2026-11-13)。Qt の側・文書・当たりの検査はここか登録簿から引く。
 # --------------------------------------------------------------------------- #
 class Binding(NamedTuple):
     """操作 1 つ。``when``: ``always`` = いつでも / ``box`` = 箱か複数カーソルがある時だけ /
@@ -670,6 +671,8 @@ MSG_NO_BRACKET = "no matching bracket"
 MSG_NO_OCCURRENCE = "no other occurrence"
 MSG_TRIMMED = "%d lines trimmed"
 MSG_BOX = "box: %d lines"
+#: 「矩形選択の使い方」の窓で、キーの設定で変えたキーを並べる前の 1 行。
+MSG_KEYS_CHANGED = "Some keys were changed in the keyboard settings:"
 HOWTO_TITLE = "Box selection"
 HOWTO_TEXT = (
     "Box (column) selection\n"
@@ -712,7 +715,7 @@ PALETTE_WORDS = {
 def ui_strings() -> tuple:
     """画面に出す英語の文の全部(対訳の表はこれと 1 対 1)。"""
     extra = (MENU_BOX, MENU_LINE, MENU_DISPLAY, ACT_HOWTO, ACT_RULERS, ACT_TRIM_ON_SAVE, MSG_NO_BRACKET,
-             MSG_NO_OCCURRENCE, MSG_TRIMMED, MSG_BOX, HOWTO_TEXT)
+             MSG_NO_OCCURRENCE, MSG_TRIMMED, MSG_BOX, HOWTO_TEXT, MSG_KEYS_CHANGED)
     seen, out = set(), []
     for s in tuple(b.title for b in KEYMAP) + extra:
         if s not in seen:
@@ -746,15 +749,20 @@ def normalize_key(key: str) -> str:
     return "+".join([m for m in _MOD_ORDER if m in mods] + [name])
 
 
-def active_bindings(editor_has_comment: bool = False, include_box_only: bool = False) -> list:
-    """いま効かせる割り当て ``[(操作, キー)]``。``editor_has_comment`` ならエディタの Ctrl+/ を奪わない。"""
+def active_bindings(editor_has_comment: bool = False, include_box_only: bool = False,
+                    keys: dict | None = None) -> list:
+    """いま効かせる割り当て ``[(操作, キー)]``。``editor_has_comment`` ならエディタの Ctrl+/ を奪わない。
+
+    ``keys`` は ``{操作: キーの並び}``(キーの設定で変えた今のキー)。載っていない操作は表の既定。
+    """
     out = []
     for b in KEYMAP:
         if b.when == "no_own_comment" and editor_has_comment:
             continue
         if b.when == "box" and not include_box_only:
             continue
-        out.extend((b.command, normalize_key(k)) for k in b.keys)
+        current = b.keys if keys is None else keys.get(b.command, b.keys)
+        out.extend((b.command, normalize_key(k)) for k in current)
     return out
 
 

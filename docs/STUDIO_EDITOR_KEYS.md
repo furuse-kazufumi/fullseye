@@ -5,6 +5,12 @@ Fullseye Studio のコードエディタ(Program 欄、Python エディタ)に�
 キーの割り当ての正本は `studio_editops.KEYMAP` の 1 つの表で、この文書・メニュー・当たりの検査はそこから引きます
 (試験 `tests/test_studio_editops_2026_11_13.py` が、表のキーが全部この文書に載っている事を確かめます)。
 
+**この文書のキーは既定(「Visual Studio 風」の型)です。** キーは Tools ▸ キーボードのショートカットの設定…
+(既定 `Ctrl+K, Ctrl+S`)で利用者が変えられます。変えたキーはメニューの右・右クリックのメニュー・
+「矩形選択の使い方」の窓の末尾に出ます。設定のしかた・範囲の考え方・2 つの型の全部のキーは
+[STUDIO_KEYBOARD.md](STUDIO_KEYBOARD.md) にあります(エディタの操作の ID は `editops_<操作>`。
+例 `editops_line_duplicate`)。
+
 操作の入口はキーだけではありません。エディタの右クリックのメニューに「矩形選択」「行の操作」「エディタの表示」が
 あり、各項目の右にキーが出ます。「矩形選択の使い方…」は、本体を止めない小さな窓で下の要点を出します。
 
@@ -97,6 +103,10 @@ Fullseye Studio のコードエディタ(Program 欄、Python エディタ)に�
 | `Ctrl+/` | Program 欄の Comment / uncomment lines | Program 欄では元の物をそのまま使う |
 | `Ctrl+F` `Ctrl+H` `F3` `Shift+F3` `Shift+F1` `Ctrl++` `Ctrl+-` `Ctrl+Return` `Ctrl+Space` | Program 欄・補完 | 使わない |
 | `F5` `F6` `F9` `Ctrl+S` ほか窓全体のキー | 実行・保存など | 使わない |
+
+「VS Code 風」の型では、エディタの `Ctrl+D` が「次の一致を選択に足す」、「行を複製」が `Shift+Alt+Down`、
+矩形選択が `Ctrl+Shift+Alt+矢印`(と `Ctrl+Alt+Up` / `Ctrl+Alt+Down`)、対応する括弧が `Ctrl+Shift+\` になります
+(VS Code の既定と同じ)。段の一覧の `Ctrl+D`(段の複製)はどちらの型でも同じです。
 
 確かめ方: `studio_editops_qt.check_conflicts(窓, エディタ)` が、窓の中の全部の `QAction` と `QShortcut` のキーと
 その効く範囲を集め、こちらのキーと突き合わせます。試験

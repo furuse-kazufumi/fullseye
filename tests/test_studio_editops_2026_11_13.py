@@ -510,7 +510,8 @@ def test_the_document_lists_every_key_of_the_keymap():
 def test_every_ui_string_has_five_translations_and_the_table_has_nothing_else():
     table = eo.load_table()
     strings = eo.ui_strings()
-    assert len(strings) == 26 and len(set(strings)) == 26
+    # 26 -> 27(2026-11-13: キーの設定で変えたキーを「使い方」の窓に並べる前の 1 行 MSG_KEYS_CHANGED)
+    assert len(strings) == 27 and len(set(strings)) == 27
     assert eo.missing() == []
     assert sorted(table) == sorted(strings)
     assert eo.LANGS == ("en", "ja", "zh", "tw", "ko", "de")
@@ -519,7 +520,7 @@ def test_every_ui_string_has_five_translations_and_the_table_has_nothing_else():
 
 def test_translations_keep_the_placeholders_and_japanese_is_not_left_in_english():
     table = eo.load_table()
-    assert len(table) == 26
+    assert len(table) == 27
     bad = []
     for key, row in table.items():
         for lang in eo.LANGS[1:]:

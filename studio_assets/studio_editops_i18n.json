@@ -182,6 +182,13 @@
    "tw": "矩形(欄)選取\n\nAlt + 拖曳: 選取一個矩形\nShift + Alt + 方向鍵: 擴大或縮小矩形\nShift + Alt + 按一下: 從游標到按下位置的矩形\nCtrl + Alt + ↑ / ↓: 在上方 / 下方加入游標\n輸入、Delete、Backspace、Tab: 作用於矩形的每一行\nCtrl + C / X / V: 逐行複製、剪下、貼上\nShift + Alt + . : 將所選字詞的下一個相符項加入選取\nEsc 或一般的按一下: 回到單一游標\n\n欄位依顯示寬度計算: 全形字元佔 2 欄,定位字元延伸到下一個定位點。到不了矩形左邊緣的行不會被選取。",
    "ko": "상자(열) 선택\n\nAlt + 끌기: 상자로 선택\nShift + Alt + 화살표 키: 상자를 넓히거나 좁히기\nShift + Alt + 클릭: 커서에서 클릭한 곳까지 상자로 선택\nCtrl + Alt + ↑ / ↓: 위 / 아래에 커서 추가\n입력, Delete, Backspace, Tab: 상자의 모든 줄에 적용\nCtrl + C / X / V: 줄 단위로 복사, 잘라내기, 붙여넣기\nShift + Alt + . : 선택한 단어의 다음 일치 항목을 선택에 추가\nEsc 또는 일반 클릭: 커서 하나로 돌아가기\n\n열은 보이는 폭으로 셉니다. 전각 문자는 2열, 탭은 다음 탭 위치까지입니다. 상자의 왼쪽 끝에 닿지 않는 줄은 선택되지 않습니다.",
    "de": "Blockauswahl (Spaltenauswahl)\n\nAlt + Ziehen: einen Block auswählen\nUmschalt + Alt + Pfeiltasten: Block vergrößern oder verkleinern\nUmschalt + Alt + Klick: Block vom Cursor bis zum Klick\nStrg + Alt + Auf / Ab: Cursor darüber / darunter hinzufügen\nTippen, Entf, Rücktaste, Tab: wirkt auf jede Zeile des Blocks\nStrg + C / X / V: zeilenweise kopieren, ausschneiden, einfügen\nUmschalt + Alt + . : nächstes Vorkommen des gewählten Worts hinzufügen\nEsc oder ein normaler Klick: zurück zu einem Cursor\n\nSpalten zählen nach der Darstellung: ein Zeichen voller Breite belegt 2 Spalten, ein Tabulator reicht bis zum nächsten Tabstopp. Zeilen, die den linken Rand des Blocks nicht erreichen, bleiben außen vor."
+  },
+  "Some keys were changed in the keyboard settings:": {
+   "ja": "キーの設定で変えたキー:",
+   "zh": "在键盘设置中更改过的按键:",
+   "tw": "在鍵盤設定中變更過的按鍵:",
+   "ko": "키보드 설정에서 바꾼 키:",
+   "de": "In den Tastenkürzel-Einstellungen geänderte Tasten:"
   }
  }
 }

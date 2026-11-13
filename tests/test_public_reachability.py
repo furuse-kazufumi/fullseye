@@ -129,7 +129,15 @@ _INTERNAL = {
     #   部品で、利用者の入口は Studio のエディタ(キー・右クリックのメニュー)。op にも facade にも出さない。
     #   studio_editops 43(Qt なし: 見た目の桁 ↔ 文字の位置・箱 → 行ごとの選択・編集の計画・括弧・キーの表・対訳)、
     #   studio_editops_qt 7(EditOps / install / uninstall / get と、キーの当たりの検査 3 本)。
-    "studio_editops": 43, "studio_editops_qt": 7,
+    #   2026-11-13 feat/studio-keymap: studio_editops_qt 7 → 8(apply_bindings: キーの登録簿から今のキーを全部の
+    #   エディタへ配る入口)。
+    # ★2026-11-13(feat/studio-keymap): 利用者が決められるショートカットキー。Studio の GUI の内側の部品で、利用者の
+    #   入口は Studio の Tools ▸ キーボードのショートカットの設定…(とキーそのもの)。op にも facade にも出さない。
+    #   studio_keymap 25(Qt なし: 登録簿・範囲・正規化・型・Keymap・当たりの判定・保存の形・読み込みの検査・文の書き換え・
+    #   一覧と検索・対訳)、studio_keymap_qt 8(install / apply_keymap / get / 設定の窓と記録の欄 / 制御役 /
+    #   窓の組み込みのキーを集める collect_fixed / キーの出来事の読み方 event_keys)。
+    "studio_editops": 43, "studio_editops_qt": 8,
+    "studio_keymap": 25, "studio_keymap_qt": 8,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -365,7 +373,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1305
 # 2026-11-13 feat/studio-blockselect: 1305 → 1355(+50、この機械の実測)。上の _INTERNAL の studio_editops 43・
 #   studio_editops_qt 7 のうち、公開経路の名前と重ならない分。
-_HIDDEN_FUNCTIONS_TODAY = 1355
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1355
+# 2026-11-13 feat/studio-keymap: 1355 → 1389(+34、この機械の実測)。上の _INTERNAL の studio_keymap 25・
+#   studio_keymap_qt 8 と studio_editops_qt + 1 のうち、公開経路の名前と重ならない分。
+_HIDDEN_FUNCTIONS_TODAY = 1389
 
 
 def _hidden_total():
