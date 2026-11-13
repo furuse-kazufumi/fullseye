@@ -8627,6 +8627,23 @@
     "hi": "प्रशिक्षित वर्गीकारकों से धातु सतह दोषों की छँटाई: घिसाई की धारियों के साथ की खरोंचें 4 में 3 छूटती हैं, अनदेखे गड्ढे 95 % अस्वीकृत",
     "fr": "Trier les défauts de surface métallique par classifieurs appris : les rayures le long des stries de meulage sont manquées trois fois sur quatre, les piqûres inconnues rejetées à 95 %"
    }
+  },
+  {
+   "id": "poc_cloth_towel_corners_synth",
+   "group": "wing_geometry",
+   "media": "01_towel_overlays.png",
+   "motion": false,
+   "thumb_src": "01_towel_overlays.png",
+   "label": {
+    "ja": "置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成)―― 単純な長方形の当てはめが最良で、一般の多角形が並ぶのは色度版だけ、台の色が近い所としわ 3 mm 以上で崩れる",
+    "en": "Finding Towel Corners, Sides and Creases with Classical Image Processing (Synthetic Rendering): A Plain Rectangle Fit Is Best, the General Polygon Only Ties It in Chroma, and Everything Degrades with Close Table Colours and Wrinkles of 3 mm or More",
+    "zh": "用经典图像处理找出毛巾的角、边与折线(合成):简单的矩形拟合最好,通用多边形只有色度版能与之相当,桌面颜色接近或皱纹达 3 mm 以上时全部退化",
+    "tw": "用經典影像處理找出毛巾的角、邊與摺線(合成):簡單的矩形擬合最好,通用多邊形只有色度版能與之相當,桌面顏色接近或皺紋達 3 mm 以上時全部退化",
+    "ko": "고전적 영상 처리로 수건의 모서리·변·접힘선 찾기(합성): 단순한 직사각형 맞춤이 최선이고, 일반 다각형은 색도판만 비슷하며, 탁자 색이 가깝거나 주름이 3 mm 이상이면 모두 무너진다",
+    "de": "Ecken, Seiten und Falzlinien eines Handtuchs mit klassischer Bildverarbeitung (synthetisch): Eine einfache Rechteckanpassung ist am besten, das allgemeine Polygon zieht nur in Chroma gleich, und bei ähnlicher Tischfarbe oder Falten ab 3 mm fällt alles ab",
+    "hi": "क्लासिक इमेज प्रोसेसिंग से तौलिये के कोने, किनारे और तह-रेखाएँ (सिंथेटिक): सरल आयत-फ़िट सबसे अच्छा है, सामान्य बहुभुज केवल क्रोमा में बराबरी करता है, और मेज़ का रंग पास होने या 3 mm से अधिक झुर्रियों पर सब कुछ बिगड़ता है",
+    "fr": "Coins, côtés et plis d'une serviette par traitement d'image classique (synthétique) : un simple ajustement de rectangle est le meilleur, le polygone général ne l'égale qu'en chroma, et tout se dégrade avec une couleur de table proche ou des plis de 3 mm et plus"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

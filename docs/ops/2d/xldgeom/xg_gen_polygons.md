@@ -6,7 +6,7 @@ in: contour
 out: contour
 halcon: gen_polygons_xld
 gpu: なし
-examples: [gallery2d_geometry]
+examples: [gallery2d_geometry, poc_cloth_towel_corners_synth]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -78,6 +78,7 @@ xg_gen_polygons 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_geometry](../../../../examples/gallery2d_geometry.py) — `py -3.11 examples/gallery2d_geometry.py`
+- [poc_cloth_towel_corners_synth](../../../../examples/poc_cloth_towel_corners_synth.py) — `py -3.11 examples/poc_cloth_towel_corners_synth.py`
 
 ## 型が繋がる次の op(`contour` を入力に取れる)
 

@@ -6974,7 +6974,7 @@ py -3.11 examples/poc_real_bg_kalman_tracking.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 27 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 28 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -7917,6 +7917,36 @@ py -3.11 examples/poc_real_chessboard_undistort.py
 この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_chessboard_undistort)
 
 使用 op(ノートへ): [`camera_calibration_lm`](https://furuse.work/ops/calib/calibrate/camera_calibration_lm.html) · [`change_radial_distortion_image`](https://furuse.work/ops/mv/resample/change_radial_distortion_image.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`map_image`](https://furuse.work/ops/mv/resample/map_image.html) · [`points_lepetit`](https://furuse.work/ops/mv/detect/points_lepetit.html) · [`rectify_to_world_plane`](https://furuse.work/ops/mv/resample/rectify_to_world_plane.html)
+
+## No.2026.317 —— 置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成)―― 単純な長方形の当てはめが最良で、一般の多角形が並ぶのは色度版だけ、台の色が近い所としわ 3 mm 以上で崩れる
+
+畳む前のタオルは、角と辺の位置が分かれば、つかむ場所が決まる。合成の画像で角は 1 mm 前後の誤差で見つかったが、差は真値の定義に左右される。単純な長方形の当てはめが最良で、台の色が近いときと強いしわでは、どの方法も崩れる。
+
+[![置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成)―― 単純な長方形の当てはめが最良で、一般の多角形が並ぶのは色度版だけ、台の色が近い所としわ 3 mm 以上で崩れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png)
+
+*↑ **置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成)―― 単純な長方形の当てはめが最良で、一般の多角形が並ぶのは色度版だけ、台の色が近い所としわ 3 mm 以上で崩れる** ―― 矩形のタオルを 0〜2 回折って台に置いた絵を、自前の幾何で描いた(MuJoCo の布は台を貫通し、追加の 3 設定でも直らず使えなかった)。厚み・しわ・縞と裾の縫い目・台の木目・影を描き、真の隅は描画側が持ち、隅の高さで投影した点とする(台の面で投影すると提案(RGB)と最小外接長方形の順位が入れ替わるので、1 mm 前後の差は真値の定義に左右される)。検出は gaussian・otsu・fill_up・sk_find_contours・xg_gen_polygons で領域と辺を出し、辺の直線の交点を隅にする(提案)。基準線は sk_corner_harris だけ、凸包の頂点だけ、重心から最遠の 4 点、最小外接長方形。種 20 本 x 折り方 4 通り(80 枚)の隅の誤差の中央値は、提案(色度)1.08 mm、最小外接長方形 1.14 mm、提案(RGB)1.55 mm、Harris のみ 3.62 mm、凸包 4.16 mm。90 % 点は提案(RGB)3.00 mm に対し最小外接長方形 2.01 mm で、長方形の前提が使える範囲では単純な基準線が提案(RGB)に勝つ。再現率(5 mm 以内)は粗い基準線(重心から最遠の 4 点)でも 0.944 で、提案(0.991 / 0.997)との差が小さいので、補助の数に留める。再現率が 0.9 に届く最低のコントラスト ΔE は、提案(RGB)46・最小外接長方形(RGB)46・色度の 2 方法 32・Harris 57。ΔE 0 では提案と最小外接長方形(RGB・色度)がどれも 0.15 以下で、領域を使わない Harris が 0.61 と最良。しわ 3 mm / 4 mm の再現率は、提案(RGB)0.50 / 0.30、最小外接長方形(RGB)0.82 / 0.55、提案(色度)0.80 / 0.68、Harris 0.51 / 0.33。交点を取らず多角形の頂点をそのまま隅にすると、しわ 4 mm で 0.84 に上がり(0 mm では誤差が 2.4 mm に悪化)、しわで落ちる原因の一部は直線の当てはめにあるという手がかりになる(未確認)。つかむ隅の順位は辺の内側 8 mm の裾の縫い目で 0.917(偶然 0.417)で、縫い目を描かない対照は種 0〜19 で 0.267(種の組 10 組を合わせると 0.348)。縫い目は私が描画に入れた手がかりで、実物が同じとは限らない。数値は種 0〜19 の 1 組。種の組を 10 組にすると、提案(色度)と最小外接長方形の順が 1 組で入れ替わり(差 0.002 mm)、ここに挙げたほかの並びは変わらなかった。*
+
+[![half fold, wrinkle 1 mm, 20 seeds per point.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast.png)
+
+*↑ 測定の図 ―― half fold, wrinkle 1 mm, 20 seeds per point. hull vertices and 4-farthest are in the table, not drawn*
+
+[![half fold, dE 69, 20 seeds per point.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle.png)
+
+*↑ half fold, dE 69, 20 seeds per point.*
+
+[![median error: min-area rectangle (RGB) 1.14 mm, proposed (chroma) 1.08 mm, proposed (RGB) 1.55 mm.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary.png)
+
+*↑ median error: min-area rectangle (RGB) 1.14 mm, proposed (chroma) 1.08 mm, proposed (RGB) 1.55 mm.*
+
+```
+py -3.11 examples/poc_cloth_towel_corners_synth.py
+```
+
+ソース: [examples/poc_cloth_towel_corners_synth.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cloth_towel_corners_synth.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth)
+
+使用 op(ノートへ): [`fill_up`](https://furuse.work/ops/2d/region/fill_up.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_corner_harris`](https://furuse.work/ops/2d/edges/sk_corner_harris.html) · [`sk_find_contours`](https://furuse.work/ops/2d/contour/sk_find_contours.html) · [`xg_gen_polygons`](https://furuse.work/ops/2d/xldgeom/xg_gen_polygons.html)
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 

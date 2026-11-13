@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**113 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**114 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1802,7 +1802,7 @@ Ops used (notes): [`atan2_image`](https://furuse.work/ops/mv/gray/atan2_image.ht
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 27 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 28 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -2745,6 +2745,36 @@ Source: [examples/poc_real_chessboard_undistort.py](https://github.com/furuse-ka
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_chessboard_undistort)
 
 Ops used (notes): [`camera_calibration_lm`](https://furuse.work/ops/calib/calibrate/camera_calibration_lm.html) · [`change_radial_distortion_image`](https://furuse.work/ops/mv/resample/change_radial_distortion_image.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`map_image`](https://furuse.work/ops/mv/resample/map_image.html) · [`points_lepetit`](https://furuse.work/ops/mv/detect/points_lepetit.html) · [`rectify_to_world_plane`](https://furuse.work/ops/mv/resample/rectify_to_world_plane.html)
+
+## No.2026.317 —— Finding Towel Corners, Sides and Creases with Classical Image Processing (Synthetic Rendering): A Plain Rectangle Fit Is Best, the General Polygon Only Ties It in Chroma, and Everything Degrades with Close Table Colours and Wrinkles of 3 mm or More
+
+Knowing where a towel's edges meet tells a robot where to grasp. In rendered images of folded towels the corners were found within about 1 mm, though such small gaps depend on how the truth is defined. Simple rectangle fitting worked best, and every method broke with close colours or strong wrinkles.
+
+[![Finding Towel Corners, Sides and Creases with Classical Image Processing (Synthetic Rendering): A Plain Rectangle Fit Is Best, the General Polygon Only Ties It in Chroma, and Everything Degrades with Close Table Colours and Wrinkles of 3 mm or More](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png)
+
+*↑ **Finding Towel Corners, Sides and Creases with Classical Image Processing (Synthetic Rendering): A Plain Rectangle Fit Is Best, the General Polygon Only Ties It in Chroma, and Everything Degrades with Close Table Colours and Wrinkles of 3 mm or More** ―― Rectangular towels folded 0-2 times and laid on a table are rendered with our own geometry (MuJoCo's cloth penetrated the table, and three more contact settings did not fix it). Thickness, wrinkles, stripes and hem stitching, table grain and shadows are drawn. The true corners belong to the renderer and are projected at the corner height (projected on the table plane instead, the order of the proposed RGB pipeline and the rectangle flips, so differences near 1 mm depend on the truth definition). Detection uses gaussian, otsu, fill_up, sk_find_contours and xg_gen_polygons for the region and sides and takes the intersections of the fitted side lines as corners (the proposal). The baselines are sk_corner_harris alone, hull vertices alone, the four points farthest from the centroid, and the minimum-area rectangle. Over 20 seeds x 4 folds (80 images) the median corner error is 1.08 mm for the chroma proposal, 1.14 mm for the rectangle, 1.55 mm for the RGB proposal, 3.62 mm for Harris and 4.16 mm for the hull. The 90th percentile is 3.00 mm for the RGB proposal against 2.01 mm for the rectangle, so where a rectangle prior applies the plain baseline beats the RGB proposal. Recall within 5 mm is kept as a secondary number: even the crude four-farthest-points baseline reaches 0.944, against 0.991 / 0.997 for the proposals. The lowest colour difference dE at which recall reaches 0.9 is 46 for the RGB proposal and the RGB rectangle, 32 for both chroma methods and 57 for Harris; at dE 0 the proposals and the rectangles (RGB and chroma) are all at 0.15 or below, and Harris, which needs no region, is best at 0.61. At wrinkles of 3 mm / 4 mm recall is 0.50 / 0.30 for the RGB proposal, 0.82 / 0.55 for the RGB rectangle, 0.80 / 0.68 for the chroma proposal and 0.51 / 0.33 for Harris. Taking the polygon vertices as corners without intersecting side lines rises to 0.84 at 4 mm (but the error worsens to 2.4 mm at 0 mm), a hint that part of the wrinkle loss lies in the line fit (untested). Ranking the grasp corner by hem stitching 8 mm inside each side gives 0.917 against a chance level of 0.417, and 0.267 on seeds 0-19 when the stitching is not drawn (0.348 pooled over 10 seed sets). The stitching is a cue we put in the renderer; real towels may differ. The numbers are one set of seeds 0-19; over ten seed sets the chroma proposal and the rectangle swap places in one set (by 0.002 mm), and the other orderings given here hold.*
+
+[![half fold, wrinkle 1 mm, 20 seeds per point.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast.png)
+
+*↑ The measurement ―― half fold, wrinkle 1 mm, 20 seeds per point. hull vertices and 4-farthest are in the table, not drawn (figure labels are in Japanese; the numbers are the same)*
+
+[![half fold, dE 69, 20 seeds per point.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle.png)
+
+*↑ half fold, dE 69, 20 seeds per point.*
+
+[![median error: min-area rectangle (RGB) 1.14 mm, proposed (chroma) 1.08 mm, proposed (RGB) 1.55 mm.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary.png)
+
+*↑ median error: min-area rectangle (RGB) 1.14 mm, proposed (chroma) 1.08 mm, proposed (RGB) 1.55 mm.*
+
+```
+py -3.11 examples/poc_cloth_towel_corners_synth.py
+```
+
+Source: [examples/poc_cloth_towel_corners_synth.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cloth_towel_corners_synth.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth)
+
+Ops used (notes): [`fill_up`](https://furuse.work/ops/2d/region/fill_up.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_corner_harris`](https://furuse.work/ops/2d/edges/sk_corner_harris.html) · [`sk_find_contours`](https://furuse.work/ops/2d/contour/sk_find_contours.html) · [`xg_gen_polygons`](https://furuse.work/ops/2d/xldgeom/xg_gen_polygons.html)
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 
