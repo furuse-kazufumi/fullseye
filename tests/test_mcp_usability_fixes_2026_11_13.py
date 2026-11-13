@@ -152,3 +152,20 @@ def test_find_ops_proposals_are_references_and_executable_only_filters(cat, stor
     assert "executable_only" not in plain and 3 <= len(plain["proposals"]) <= 7 and 3 <= len(only["proposals"]) <= 7
     assert any(not p["executable"] for p in plain["proposals"])     # 絞らなければ走らない op も混ざる
     assert not plain["proposals"][0]["executable"] or plain["proposals"][0]["name"] in {o["name"] for o in only["ops"]}
+
+
+# --------------------------------------------------------------------------- 7: tools/list の引数の説明と言語
+def test_tools_list_explains_stage_and_plan_arguments_in_one_language():
+    """直す前: 段の a・b・inputs と plan の have・want に説明が無く、op_cards / validate_pipeline / load_stack の
+    説明だけ英語だった(他は日本語)。minimal の予算(1,500 トークン)は守る。"""
+    import re
+    from fullseye.mcp.server import TOOLS, handle_tools_list
+    for tool in ("fullseye_pipeline", "fullseye_validate_pipeline"):
+        props = TOOLS[tool]["inputSchema"]["properties"]["stages"]["items"]["properties"]
+        missing = [k for k in ("inputs", "params", "a") if not props[k].get("description")]
+        assert missing == [], (tool, missing)
+    plan = TOOLS["fullseye_plan"]["inputSchema"]["properties"]
+    assert plan["have"]["description"] and plan["want"]["description"] and plan["goal"]["description"]
+    english = [n for n, t in TOOLS.items() if not re.search(r"[぀-ヿ一-鿿]", t["description"])]
+    assert len(TOOLS) >= 20 and english == []
+    assert handle_tools_list({"profile": "minimal"})["estimated_tokens"] < 1500

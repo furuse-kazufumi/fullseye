@@ -60,18 +60,22 @@ VISION = ("auto", "none", "thumb")
 # --------------------------------------------------------------------------- #
 # tool の宣言(入力スキーマは additionalProperties: false で余計なキーを拒む)     #
 # --------------------------------------------------------------------------- #
-_SORT_DESC = ("op の入出力の種別(image / region / points / volume ...)。"
-              "既知の種別以外は拒否する")
-_HANDLE = {"type": "string", "maxLength": 64,
-           "description": "fullseye://img/<16 hex>。load_image / apply が返す"}
+_SORT_DESC = "型(image / region / points / volume …)。知らない型は断る"
+_HANDLE = {"type": "string", "maxLength": 64, "description": "fullseye://img/<16 hex>"}
+#: 段(stage)の引数の 1 行の説明(fullseye_pipeline と fullseye_validate_pipeline で同じ)。★2026-11-13(報告 7)
+_STAGE_INPUTS = {"type": "array", "items": {"type": "string"}, "description": "入力: handle / have:<型> / stage:N"}
+_STAGE_PARAMS = {"type": "object", "description": "名前つき引数(op_cards の parameters)"}
+_KNOB_DESC = "互換用つまみ0〜1(物理量はparams)"
 _VISION = {"type": "string", "enum": list(VISION),
            "description": "auto=判定が ok でないときだけ対比の小図を出す / none=出さない / thumb=必ず出す"}
 
 TOOLS: dict[str, dict] = {
     "fullseye_plan": {
         "description": "型付き経路を計画する。入力と欲しい型が分かったら使い、次に fullseye_op_cards を呼ぶ。",
-        "inputSchema": {"type":"object","properties":{"have":{"oneOf":[{"type":"string"},{"type":"array","items":{"type":"string"}}]},
-            "want":{"type":"string"},"goal":{"type":"string","maxLength":400},
+        "inputSchema": {"type":"object","properties":{"have":{"oneOf":[{"type":"string"},{"type":"array","items":{"type":"string"}}],
+                                                               "description":"持っている型(例 image)"},
+            "want":{"type":"string","description":"欲しい型(例 table)"},
+            "goal":{"type":"string","maxLength":400,"description":"やりたい事(候補の順位に使う)"},
             "direction":{"type":"string","enum":["forward","backward"]},
             "pattern":{"type":"string"}},"required":["have","want"],"additionalProperties":False}},
     "fullseye_describe": {
@@ -104,11 +108,8 @@ TOOLS: dict[str, dict] = {
     },
     "fullseye_find_ops": {
         "description": (
-            "やりたいことの言葉(日本語・英語・中文(簡/繁)・한국어・Deutsch・हिन्दी)で op を探す。"
-            "op の要約 6 言語・名前・HALCON 名・型と、文献層のテーマ表で人が書いた文脈(現場の言い方、日本語と英訳)を BM25 で照合し、"
-            "順位つきで要約とノートの場所(文脈のある op は contexts も)を返す。"
-            "各候補は loader と pipeline stage の次呼び出し骨格つき。直接 0 件なら業務表現の"
-            "英語候補と型同義語で決定的に再検索し、retry_ops を同じ応答で返す。"),
+            "やりたい事の言葉(日本語・英語・中文・한국어・Deutsch・हिन्दी)で op を探し、順位・要約・ノートの場所と"
+            "次の呼び出しの骨格を返す(MCP で走らない op は理由つき)。直接 0 件なら英語の言い換えと型の同義語で引き直す(retry_ops)。"),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -173,7 +174,7 @@ TOOLS: dict[str, dict] = {
         "inputSchema": {"type":"object","properties":{"sort":{"type":"string"}},"additionalProperties":False},
     },
     "fullseye_op_cards": {
-        "description": "Return short complete op cards within a token budget; cards are never cut mid-card.",
+        "description": "op のカード(型・引数・MCP で走るか)をトークンの上限内で返す。途中で切らず、収まらない名前は missing に書く。",
         "inputSchema": {"type": "object", "properties": {
             "names": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"type": "string"}},
             # ★2026-11-13: ハンドラは budget_tokens を読むのに schema に無く、上限を上げる手が無かった
@@ -191,16 +192,16 @@ TOOLS: dict[str, dict] = {
             "required":["query","start_sort","goal_sort"],"additionalProperties":False},
     },
     "fullseye_validate_pipeline": {
-        "description": "Validate op existence, knob ranges, stage count, and type chaining without execution (fail-closed).",
+        "description": "走らせずに検査する: op の有無・引数・段数・型の連鎖(fail-closed)。不合格は段ごとに理由を返す。",
         "inputSchema": {"type": "object", "properties": {
             "start_sort": {"type": "string"},
             "bindings": {"type":"object","additionalProperties":_HANDLE},
             "stages": {"type": "array", "minItems": 1, "maxItems": 64, "items": {"type": "object",
                 "properties": {"op": {"type": "string", "maxLength": 120},
-                               "inputs": {"type":"array","items":{"type":"string"}},
-                               "params": {"type":"object"},
+                               "inputs": _STAGE_INPUTS,
+                               "params": _STAGE_PARAMS,
                                "allow_reuse":{"type":"boolean"},
-                               "a": {"type": "number"}, "b": {"type": "number"}},
+                               "a": {"type": "number", "description": _KNOB_DESC}, "b": {"type": "number"}},
                 "required": ["op"], "additionalProperties": False}}},
             "required": ["stages"], "additionalProperties": False},
     },
@@ -251,7 +252,7 @@ TOOLS: dict[str, dict] = {
             "vision":_VISION},"required":["path"],"additionalProperties":False},
     },
     "fullseye_load_stack": {
-        "description": "Load several sandboxed images into one typed sequence handle for multi-frame operators.",
+        "description": "作業場所の画像を何枚か読み、多フレームの op が受ける列のハンドル(seq<image> など)にする。",
         "inputSchema": {"type":"object","properties":{
             "paths":{"type":"array","minItems":1,"maxItems":256,"items":{"type":"string"}},
             "sort":{"type":"string","enum":["seq<image>","images","polsweep"]},
@@ -318,16 +319,16 @@ TOOLS: dict[str, dict] = {
                         "type": "object",
                             "properties": {
                                 "op": {"type": "string", "maxLength": 120},
-                                "inputs": {"type":"array","items":{"type":"string"}},
-                                "params": {"type":"object"},
+                                "inputs": _STAGE_INPUTS,
+                                "params": _STAGE_PARAMS,
                                 "allow_reuse":{"type":"boolean"},
-                            "a": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                            "a": {"type": "number", "minimum": 0.0, "maximum": 1.0, "description": _KNOB_DESC},
                             "b": {"type": "number", "minimum": 0.0, "maximum": 1.0},
                         },
                         "required": ["op"],
                         "additionalProperties": False,
                     },
-                    "description": "[{op, params?}, …]。物理量は名前つきparamsを使う。a/bは互換用。入力の無いopだけならhandle不要",
+                    "description": "[{op, params?, inputs?}, …]。入力の無いopだけならhandle不要",
                 },
             },
             "required": ["stages"],
