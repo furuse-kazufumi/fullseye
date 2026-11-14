@@ -26,8 +26,8 @@
 | MetaImage | `.mha` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
 | MetaImage | `.mhd` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
 | Matroska video | `.mkv` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
-| MODEL | `.model` | `printpath.read_3mf` | — | `read_3mf` | stdlib / core | `tests/test_ledger_probe_fresh_cwd.py`<br>`tests/test_optdraw.py`<br>+4 | — |
-| MOV | `.mov` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_anomaly_patch.py`<br>`tests/test_astrostack_median.py`<br>+18 | — |
+| MODEL | `.model` | `printpath.read_3mf` | — | `read_3mf` | stdlib / core | `tests/test_ledger_probe_fresh_cwd.py`<br>`tests/test_optdraw.py`<br>+5 | — |
+| MOV | `.mov` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_anomaly_patch.py`<br>`tests/test_astrostack_median.py`<br>+19 | — |
 | MP4 | `.mp4` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_docs_index_reachable.py`<br>`tests/test_examplefig_gif.py`<br>+8 | — |
 | MRC | `.mrc` | `fileio.em_mrc_read` | `fileio.em_mrc_write` | `em_mrc_read`<br>`em_mrc_write` | stdlib / core | `tests/test_fileio_scientific.py`<br>`tests/test_redteam_io_2026_11_05.py` | `mrcfile` |
 | NHDR | `.nhdr` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
