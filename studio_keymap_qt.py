@@ -1709,11 +1709,25 @@ class _EditMenu(QtCore.QObject):
         self.refresh()
         return True
 
+    def _ours(self, w) -> bool:
+        """部品 ``w`` が本体の窓の物か。本体から浮かせたドック(自分が窓になる)の中も数える(2026-11-15 確かめの担当
+        2 回目: Program の欄を浮かせると、コードの欄にフォーカスがあっても Edit ▸ 複製 が段になった)。"""
+        top = w.window()
+        if top is self.win:
+            return True
+        if isinstance(top, QtWidgets.QDockWidget) and top.isFloating():
+            p, n = top.parentWidget(), 0
+            while p is not None and n < 32:
+                if p is self.win:
+                    return True
+                p, n = p.parentWidget(), n + 1
+        return False
+
     def on_focus(self, _old, now) -> None:
         if now is None or isinstance(now, (QtWidgets.QMenu, QtWidgets.QMenuBar)):
             return                                             # メニューを開いている間は、開く前の場所のまま
         try:
-            if now.window() is not self.win:
+            if not self._ours(now):                            # 別の窓(Python エディタなど): 前の場所のまま
                 return
             ed = self.editor()
             self.code_focus = ed is not None and (now is ed or ed.isAncestorOf(now))

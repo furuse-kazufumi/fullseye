@@ -296,6 +296,17 @@ def test_import_is_fail_closed(case):
     assert code in [p.code for p in probs], probs
 
 
+def test_import_reads_a_file_saved_with_a_bom():
+    """確かめの担当 2 回目: PowerShell 5.1 の Out-File や古いメモ帳で保存し直すと先頭に BOM が付き、正しい書き出しの
+    ファイルが「Not a JSON file」で断られた。"""
+    text = km.Keymap(overrides={"fit": ["Ctrl+Shift+F12"]}).to_json()
+    for data in (b"\xef\xbb\xbf" + text.encode("utf-8"), "\ufeff" + text):
+        got, probs = km.import_text(data)
+        assert got is not None and got.keys("fit") == ("Ctrl+Shift+F12",) and probs == [], (data[:4], probs)
+    bad, probs = km.import_text(b"\xef\xbb\xbf{broken")
+    assert bad is None and [p.code for p in probs] == ["bad_json"]       # BOM の後ろが壊れていれば今までどおり断る
+
+
 def test_import_with_only_warnings_is_applied_and_the_warnings_are_returned():
     got, probs = km.import_text(_doc(bindings={"fit": ["Ctrl+Alt+F"]}))
     assert got is not None and got.keys("fit") == ("Ctrl+Alt+F",)
@@ -2511,6 +2522,51 @@ def test_the_edit_menu_has_one_duplicate_and_one_comment_and_they_go_by_focus(wi
     rows = {x.objectName() for a in win._editops.build_context_menu().actions() if a.menu() is not None
             for x in a.menu().actions() if x.isVisible()}
     assert {"editops:line.duplicate", "editops:line.comment"} <= rows
+
+
+def test_the_edit_menu_duplicate_follows_a_floating_program_panel(win, ctl):
+    """確かめの担当 2 回目(D94): Program のドックを浮かせると、コードの欄にフォーカスがあっても Edit ▸ 複製 が段に
+    なった(on_focus が now.window() is win で打ち切った。浮いたドックは自分が窓)。"""
+    from PySide6 import QtCore, QtWidgets  # noqa: PLC0415
+    import studio_keymap_qt as kq  # noqa: PLC0415
+    menus = win.findChildren(kq._EditMenu)
+    assert len(menus) == 1 and menus[0].action is not None
+    m, edit = menus[0], win._menus["edit"]
+    ed = _program(win, "a\nb")
+    dock = win._docks["program"]
+    _activate(win)
+    win._stage_list.setFocus()
+    _pump(0.05)
+    assert m.target() == "stage"
+    dock.setFloating(True)
+    _pump(0.2)
+    try:
+        assert dock.isFloating() and ed.window() is dock and ed.window() is not win   # 欄の窓は本体ではない
+        dock.activateWindow()
+        ed.setFocus()
+        _pump(0.15)
+        assert QtWidgets.QApplication.focusWidget() is ed
+        assert m.target() == "line"
+        edit.aboutToShow.emit()
+        assert m.action.toolTip() == "Duplicate line"
+        edit.popup(QtCore.QPoint(20, 20))                                  # メニューを開くだけ: 開く前の場所のまま
+        _pump(0.1)
+        edit.hide()
+        _pump(0.05)
+        assert m.target() == "line"
+        cur = ed.textCursor()
+        cur.setPosition(0)
+        ed.setTextCursor(cur)
+        m.action.trigger()
+        _pump(0.05)
+        assert ed.toPlainText() == "a\na\nb"                              # 浮いた欄の行を複製した
+        _activate(win)                                                    # 本体の窓の部品へ移れば段
+        win._stage_list.setFocus()
+        _pump(0.1)
+        assert m.target() == "stage"
+    finally:
+        dock.setFloating(False)
+        _pump(0.1)
 
 
 # --------------------------------------------------------------------------- #

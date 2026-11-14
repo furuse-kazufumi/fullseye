@@ -1083,7 +1083,7 @@ def import_text(data, extra: Iterable = (), places: dict | None = None) -> tuple
     if len(raw) > MAX_IMPORT_BYTES:
         return None, [Problem("error", "too_big", detail="%d bytes" % len(raw))]
     try:
-        obj = _loads(raw.decode("utf-8"))
+        obj = _loads(raw.decode("utf-8-sig"))                  # 先頭の BOM は読み飛ばす(PowerShell 5.1・古いメモ帳で保存し直した物)
     except _JsonRefused as exc:
         return None, [Problem("error", exc.code, detail=exc.detail)]
     except (UnicodeDecodeError, ValueError) as exc:
