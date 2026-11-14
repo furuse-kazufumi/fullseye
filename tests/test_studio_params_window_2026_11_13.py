@@ -2635,7 +2635,7 @@ class _FlowLike(QtWidgets.QWidget):
         self.setObjectName("flow_strip")
         self.orientation = "h"
         self.groups: list = []
-        self.first = self.last_first = 0
+        self.first = self.end_first = 0
         self.b_back, self.b_on = QtWidgets.QToolButton(self), QtWidgets.QToolButton(self)
         self.b_back.clicked.connect(lambda: self.scroll_by(-1))
         self.b_on.clicked.connect(lambda: self.scroll_by(1))
@@ -2675,7 +2675,7 @@ class _FlowLike(QtWidgets.QWidget):
         return QtCore.QSize(48, 24) if self.orientation == "h" else QtCore.QSize(24, 48)
 
     def scroll_by(self, step):
-        self.first = max(0, min(self.first + step, self.last_first))
+        self.first = max(0, min(self.first + step, self.end_first))
         self.relayout()
 
     def relayout(self):
@@ -2685,20 +2685,20 @@ class _FlowLike(QtWidgets.QWidget):
         fits = self._need() <= length
         arrow = 0 if fits else 12
         per = max(1, (length - 2 * arrow + 4) // 28)
-        self.last_first = 0 if fits else max(0, len(items) - per)
-        self.first = min(self.first, self.last_first)
+        self.end_first = 0 if fits else max(0, len(items) - per)
+        self.first = min(self.first, self.end_first)
         pos = arrow
         for i, w in enumerate(items):
             if fits or self.first <= i < self.first + per:
                 w.setGeometry(pos, 0, 24, 24) if h else w.setGeometry(0, pos, 24, 24)
                 pos += 28
             else:
-                w.move(-30000, -30000)
+                w.setGeometry(-30000, -30000, 24, 24)       # 送られて見えない所で待つ
         for b, at in ((self.b_back, 0), (self.b_on, length - 12)):
             b.setVisible(not fits)
             b.setGeometry(at, 0, 12, 24) if h else b.setGeometry(0, at, 24, 12)
         self.b_back.setEnabled(self.first > 0)
-        self.b_on.setEnabled(self.first < self.last_first)
+        self.b_on.setEnabled(self.first < self.end_first)
 
     def resizeEvent(self, ev):
         super().resizeEvent(ev)
