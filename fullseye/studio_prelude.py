@@ -18,4 +18,4 @@ import studio_program as _sp
 
 _NS = _sp.prelude_namespace()
 globals().update(_NS)
-__all__ = sorted(_NS)
+__all__ = list(sorted(_NS))                          # list(...) と書く: ruff(PLE0605)は sorted(...) を列と読めない
