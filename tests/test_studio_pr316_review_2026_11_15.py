@@ -258,7 +258,8 @@ def test_enter_in_the_search_box_keeps_the_keys_in_a_visible_box(launch):
     assert not edit.visibleRegion().isEmpty(), "Enter の後、焦点のある検索欄が見えていない"
     assert not ops.visibleRegion().isEmpty()
     QTest.keyClicks(win.focusWidget(), "x"); _pump(0.4)           # 続けて打った字は、見えている欄に入る
-    assert edit.text() == "blurx" and not edit.visibleRegion().isEmpty()
+    # (3 回目のレビューの後: Enter で入った語は選ばれているので、打った字が置き換える。従来は「blurx」)
+    assert edit.text() == "x" and not edit.visibleRegion().isEmpty()
 
 
 def test_plus_button_brings_the_tab_forward_and_the_focus_goes_with_it(launch):
@@ -766,6 +767,7 @@ def test_the_dead_knobs_of_a_starter_op_cannot_be_moved(launch, name, dead):
     lst = win._op_list
     names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
     lst.setCurrentRow(names.index(name)); _pump(0.1)
+    assert len(win._op_arg_spins) == 2 and len(win._knob_rows) == 2  # zip が空になって素通りしない
     for spin, letter in zip(win._op_arg_spins, "ab"):               # + の上の欄
         assert spin.isEnabled() == (letter not in dead), (name, letter)
     win._op_buttons["insert"].click(); _pump(0.3)
@@ -895,3 +897,149 @@ def test_the_changelog_tells_the_user_about_the_keys_that_moved():
     head = text[:text.index("## 1.1.1")]
     for word in ("`F1`", "`Ctrl+F1`", "`Ctrl+Y`", "coins", "保存して閉じる"):
         assert word in head, word
+
+
+# --------------------------------------------------------------------------- #
+# 独立レビュー 3 回目(2026-11-15): Enter の後のステータスと検索欄・見本の後の題・     #
+# 確認が 2 回壊れて閉じる時の写し                                                    #
+# --------------------------------------------------------------------------- #
+def test_a_not_added_sentence_does_not_outlive_the_next_enter_that_adds(launch):
+    """直す前: abs_diff_image + Enter(入らない)の後に gaussian + Enter で段は入ったが、ステータスは最大 6 秒
+    「abs_diff_image … (not added)」のまま(入れたのに入っていないと読めた)。"""
+    win, model = launch(lang="en", user=True)
+    _search(win, "abs_diff_image"); _enter(win)
+    assert not model.stages and "abs_diff_image" in win.statusBar().currentMessage()
+    _search(win, "gaussian"); _enter(win)
+    assert [s[0] for s in model.stages] == ["gaussian"]
+    assert "abs_diff_image" not in win.statusBar().currentMessage(), win.statusBar().currentMessage()
+
+
+def test_the_plus_button_also_clears_an_old_not_added_sentence(launch):
+    """+ ボタンで入れた時も同じ(段を入れる道は 1 つ: add_op)。"""
+    from PySide6 import QtCore
+    win, model = launch(lang="en", user=True)
+    _search(win, "abs_diff_image"); _enter(win)
+    assert "abs_diff_image" in win.statusBar().currentMessage()
+    win._search_ui["edit"].clear(); _pump(0.6)
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("median")); _pump(0.05)
+    win._op_buttons["insert"].click(); _pump(0.3)
+    assert [s[0] for s in model.stages] == ["median"]
+    assert "abs_diff_image" not in win.statusBar().currentMessage()
+
+
+def test_a_sentence_saying_why_stays_when_enter_adds_nothing(launch):
+    """入らなかった時の文は消さない(狭めすぎの見張り。直す前も通る)。"""
+    win, model = launch(lang="en", user=True)
+    _search(win, "gaussian"); _enter(win)
+    _search(win, "abs_diff_image"); _enter(win)
+    assert [s[0] for s in model.stages] == ["gaussian"]
+    assert "abs_diff_image" in win.statusBar().currentMessage()
+
+
+def test_after_enter_adds_the_query_is_selected_so_the_next_word_replaces_it(launch):
+    """直す前: 「二値化」+ Enter の後も欄の字は残り、選ばれていなかった。続けて「ノイズ」と打つと「二値化ノイズ」で
+    検索した。ここでは英語の語で、キーは QTest で打つ。"""
+    from PySide6.QtTest import QTest
+    win, model = launch(lang="en", user=True)
+    edit = win._search_ui["edit"]
+    win.activateWindow(); edit.setFocus(); _pump(0.1)
+    QTest.keyClicks(edit, "otsu"); _pump(0.5)
+    _enter(win)
+    assert [s[0] for s in model.stages] == ["otsu"]
+    assert edit.text() == "otsu" and edit.selectedText() == "otsu", (edit.text(), edit.selectedText())
+    QTest.keyClicks(win.focusWidget(), "fill"); _pump(0.5)
+    assert edit.text() == "fill", edit.text()
+
+
+def test_after_enter_adds_nothing_the_query_is_left_as_typed(launch):
+    """入らなかった時は選ばない(打ち直すか、行をクリックして選ぶ)。直す前も通る。"""
+    win, model = launch(lang="en", user=True)
+    edit = win._search_ui["edit"]
+    _search(win, "abs_diff_image"); _enter(win)
+    assert not model.stages and edit.text() == "abs_diff_image" and edit.selectedText() == ""
+
+
+def test_opening_a_sample_image_retitles_the_window(launch, tmp_path):
+    """直す前: 写真を開いた後に File ▸ Sample images(または検索の「見本を開く」)で見本の画像に替えても、窓の題は
+    写真のファイル名のままだった(image_path は None)。合成のデモ画像に替えた時も同じ。"""
+    import fullseye
+    win, model = launch(lang="en")
+    photo = tmp_path / "review_photo.png"
+    fullseye.write_image(str(photo), np.clip(np.random.default_rng(5).random((40, 56)), 0, 1))
+    assert win._load_image_path(str(photo)) is True
+    _pump(0.2)
+    assert "review_photo.png" in win.windowTitle()
+    win._load_sample_image("coins"); _pump(0.2)
+    assert win._state["input_sample"] == "coins" and win._state["image_path"] is None
+    assert "review_photo.png" not in win.windowTitle(), win.windowTitle()
+    assert win._load_image_path(str(photo)) is True
+    _pump(0.2)
+    assert "review_photo.png" in win.windowTitle()
+    win._actions["demo"].trigger(); _pump(0.2)
+    assert win._state["input_sample"] == "__demo__"
+    assert "review_photo.png" not in win.windowTitle(), win.windowTitle()
+
+
+def test_opening_a_search_sample_after_discarding_retitles_the_window(launch, monkeypatch, tmp_path):
+    """検索の「見本を開く」で破棄に答えた時(M12 で見本の画像も読むようになった入口)。"""
+    import fullseye
+    win, model = launch(lang="en")
+    monkeypatch.setattr(studio, "CONFIRM_HOOK", lambda p, t, txt: True)
+    photo = tmp_path / "review_photo.png"
+    fullseye.write_image(str(photo), np.clip(np.random.default_rng(6).random((40, 56)), 0, 1))
+    assert win._load_image_path(str(photo)) is True
+    _one_unsaved_stage(win, model)
+    assert "review_photo.png" in win.windowTitle()
+    assert win._open_search_sample("FA — scratch on hairline metal") is True
+    _pump(0.3)
+    assert win._state["input_sample"] == "metal_hairline_scratch"
+    assert "review_photo.png" not in win.windowTitle(), win.windowTitle()
+
+
+def _break_both_confirmations(win, monkeypatch, tmp_path):
+    """終了の確認も、代わりに出す英語の確認も例外を出す。ログと写しの置き場は tmp_path(本物の置き場に書かない)。"""
+    log = tmp_path / "studio_crash.log"
+    monkeypatch.setattr(studio, "_crash_log_path", lambda: str(log))
+
+    def boom():
+        raise RuntimeError("guard broke")
+
+    def hook_boom(*_a):
+        raise RuntimeError("dialog broke")
+    win.close_guard = boom
+    monkeypatch.setattr(studio, "CLOSE_CONFIRM_HOOK", hook_boom)
+    return log
+
+
+def test_closing_after_two_broken_confirmations_keeps_a_copy_of_the_unsaved_work(launch, monkeypatch, tmp_path):
+    """直す前: 確認が 2 回続けて壊れると、2 回目で聞かずに閉じ、未保存の段はログの 1 行(例外)だけを残して消えた。
+    今は閉じる前に、処理手順(Open pipeline で開ける形)と Program の未適用の文を studio_crash.log の隣に書き、
+    置き場をログに残す。"""
+    win, model = launch(lang="en")
+    _one_unsaved_stage(win, model)
+    win._state["code_dirty"] = True
+    log = _break_both_confirmations(win, monkeypatch, tmp_path)
+    assert _close(win) is False                                  # 1 回目は閉じない
+    assert not glob.glob(str(tmp_path / "studio_unsaved_*"))
+    assert _close(win) is True                                   # 2 回目は閉じる(閉じられない窓にしない)
+    pipes = glob.glob(str(tmp_path / "studio_unsaved_*_pipeline.json"))
+    progs = glob.glob(str(tmp_path / "studio_unsaved_*_program.txt"))
+    assert len(pipes) == 1 and len(progs) == 1, os.listdir(str(tmp_path))
+    with open(pipes[0], encoding="utf-8") as fh:
+        saved = json.load(fh)
+    assert [st[0] for st in saved["stages"]] == ["gaussian"]
+    back = studio.PipelineModel(np.zeros((8, 8)))
+    back.load_dict(saved)                                         # Open pipeline と同じ読み方で読める
+    assert [st[0] for st in back.stages] == ["gaussian"]
+    text = log.read_text(encoding="utf-8")
+    assert "a copy of the unsaved work was kept" in text and pipes[0] in text, text
+
+
+def test_closing_after_two_broken_confirmations_writes_nothing_when_nothing_is_unsaved(launch, monkeypatch, tmp_path):
+    """未保存の物が無ければ写しは書かない(置き場に空のファイルを増やさない)。"""
+    win, model = launch(lang="en")
+    _break_both_confirmations(win, monkeypatch, tmp_path)
+    assert _close(win) is False and _close(win) is True
+    assert not glob.glob(str(tmp_path / "studio_unsaved_*"))

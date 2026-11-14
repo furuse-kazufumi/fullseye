@@ -230,7 +230,11 @@ def _crash_log_path():
 def _log_soft_failure(context, exc):
     """Record a non-fatal failure (settings that could not be saved, …) in the same
     ``studio_crash.log`` the crash hooks write, and on stderr. Never raises."""
-    msg = "%s: %s: %s" % (context, type(exc).__name__, exc)
+    _log_line("%s: %s: %s" % (context, type(exc).__name__, exc))
+
+
+def _log_line(msg):
+    """Append one line to ``studio_crash.log`` and to stderr. Never raises."""
     try:
         path = _crash_log_path()
         with open(path, "a", encoding="utf-8") as fh:
@@ -7274,11 +7278,15 @@ def build_window(model=None):
                 QtCore.QTimer.singleShot(0, self.apply_first_layout)
 
         _close_guard_failures = 0
+        #: ``() -> [(suffix, text), ...]``: what the user made that is not on disk (installed by build_window).
+        rescue_unsaved = None
 
         def _ask_close_after_guard_failure(self, exc):
             """The unsaved-work check itself failed: ask in plain English (no translation table). True = close.
 
-            聞く事もできなかった時は閉じない。2 回続けてどちらも失敗した時だけ閉じる(閉じられない窓にしない)。"""
+            聞く事もできなかった時は閉じない。2 回続けてどちらも失敗した時だけ閉じる(閉じられない窓にしない)。
+            ★2026-11-15(PR #316 の独立レビュー 3 回目): その時は、閉じる前に作った物の写しを studio_crash.log の
+            隣に書き、置き場をログに残す(聞かずに閉じる唯一の道で、黙って失わない)。"""
             try:
                 answer = CLOSE_CONFIRM_HOOK(
                     self, "Quit Fullseye Studio",
@@ -7287,9 +7295,40 @@ def build_window(model=None):
             except Exception as e2:                        # noqa: BLE001 -- 聞く事もできない
                 _log_soft_failure("the fallback close confirmation failed too", e2)
                 self._close_guard_failures += 1
-                return self._close_guard_failures >= 2
+                if self._close_guard_failures >= 2:
+                    self._keep_a_copy_before_closing()
+                    return True
+                return False
             self._close_guard_failures = 0
             return answer == "discard"
+
+        def _keep_a_copy_before_closing(self):
+            """Write each unsaved piece (``rescue_unsaved``) next to ``studio_crash.log`` and log the paths.
+            Returns the written paths. Never raises: a copy that cannot be written is logged, and the window
+            still closes (a window that can never close is the worse failure)."""
+            written = []
+            try:
+                pieces = list(self.rescue_unsaved() or []) if self.rescue_unsaved is not None else []
+            except Exception as exc:                       # noqa: BLE001 -- 中身を読めなくても閉じる道は塞がない
+                _log_soft_failure("could not read the unsaved work to keep a copy", exc)
+                return written
+            if not pieces:
+                return written
+            import datetime
+            stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + "_%d" % os.getpid()
+            folder = os.path.dirname(os.path.abspath(_crash_log_path()))
+            for suffix, text in pieces:
+                path = os.path.join(folder, "studio_unsaved_%s_%s" % (stamp, suffix))
+                try:
+                    _atomic_write_text(path, text)
+                except Exception as exc:                   # noqa: BLE001
+                    _log_soft_failure("could not keep a copy of the unsaved work in %s" % path, exc)
+                    continue
+                written.append(path)
+            if written:
+                _log_line("closed without asking (the close confirmation failed twice); "
+                          "a copy of the unsaved work was kept: " + " | ".join(written))
+            return written
 
         def closeEvent(self, ev):
             guard = self.close_guard
@@ -10642,10 +10681,11 @@ def build_window(model=None):
 
     def add_op(item, raise_tab=True):
         """Insert the op of *item* after the insertion point. ``raise_tab=False`` (Enter in the search box)
-        leaves the tabs as they are — see ``_show_pipeline_tab_once``."""
+        leaves the tabs as they are — see ``_show_pipeline_tab_once``. True when a stage (or, with unapplied
+        Program edits, a Program line) went in."""
         name = item.data(QtCore.Qt.UserRole)
         if not name:
-            return
+            return False
         row = _op_row(name)
         _ok, _why = op_insertable(name, row)
         if not _ok:
@@ -10654,7 +10694,7 @@ def build_window(model=None):
             # 理由は UI の言語で、ステータスバーと + ボタンの上の欄の両方に出す(初回起動の点検 S2)。
             _say = not_insertable_text(name, _why)
             flash(_say); op_param.setText(_say); op_param_fit.refresh()
-            return
+            return False
         a_val, b_val = op_a_spin.value(), op_b_spin.value()
         line = "%s (%r, %r)" % (name, float(a_val), float(b_val))   # repr: full precision
         if state.get("code_dirty"):
@@ -10665,7 +10705,7 @@ def build_window(model=None):
             ln = _insert_program_line(line, code_edit.textCursor().blockNumber() + 1)
             code_status.setText("● inserted %s on line %d — Apply to run the program" % (name, ln))
             flash(tr("inserted `%s` at line %d of the Program (Apply to run)") % (line, ln))
-            return
+            return True
         push_undo()
         # Insertion point = the Program cursor (which follows the selected stage, so a
         # selected stage still means "insert right after it"; no selection = the end).
@@ -10687,10 +10727,14 @@ def build_window(model=None):
             _set_stage_lines(lines)
         mark_dirty()
         refresh_stage_list(select=newpos)
+        # ★2026-11-15(PR #316 の独立レビュー 3 回目): 前の Enter の「入れませんでした」の文を消す。残すと、入れた
+        # 後も最大 6 秒「追加していません」と読めた。段の計算が出す文(エラー等)は、この後の show_result が出す。
+        status.clearMessage()
         show_result()
         _place_program_cursor(_stage_line(newpos))
         if raise_tab:
             _show_pipeline_tab_once()
+        return True
 
     def _show_pipeline_tab_once():
         """気づける入口(2026-11-13、初回起動の点検): この窓で最初の op を入れた時に 1 度だけ、段ごとの途中の絵・個数・
@@ -11017,6 +11061,7 @@ def build_window(model=None):
         state["image_path"] = None; state["input_notes"] = []      # not a file: nothing to reference when saving
         state["input_sample"] = "__demo__"
         model.input_path = None
+        _set_title()                                   # 題に前の画像のファイル名を残さない(見本の画像と同じ)
         show_result()
 
     def load_sample_image(name):
@@ -11030,6 +11075,9 @@ def build_window(model=None):
         state["input_sample"] = name
         model.input_path = None
         state["fit_next"] = True
+        # ★2026-11-15(PR #316 の独立レビュー 3 回目): 題を付け直す。従来は前に開いた写真のファイル名が題に残った
+        # (File ▸ Sample images でも、M12 で入口が増えた検索の「見本を開く」でも)。
+        _set_title()
         flash(tr("loaded sample image: %s") % name); show_result()
     win._load_sample_image = load_sample_image
 
@@ -12995,7 +13043,10 @@ def build_window(model=None):
             flash(_say); op_param.setText(_say); op_param_fit.refresh()
             win._open_ledger_runner(_nm, prefer_image=True)
             return
-        add_op(it, raise_tab=False)             # 検索欄は見えたまま(キーは見えている欄に入る)
+        if add_op(it, raise_tab=False):         # 検索欄は見えたまま(キーは見えている欄に入る)
+            # ★2026-11-15(PR #316 の独立レビュー 3 回目): 入った後は語を選んでおく。続けて打つ語が前の語を
+            # 置き換える(従来は「二値化」の後に「ノイズ」と打つと「二値化ノイズ」で検索した)。
+            search.selectAll()
     search.returnPressed.connect(_insert_searched_op)
     win._search_ui = {
         "edit": search, "list": op_list, "timer": search_timer, "search_now": grouped_search,
@@ -15795,6 +15846,42 @@ def build_window(model=None):
             _w.setToolTip(_n)
 
     win.close_guard = close_guard
+
+    def _rescue_unsaved():
+        """``[(suffix, text), ...]`` of the unsaved work (the same three things the quit confirmation counts):
+        the pipeline as Save pipeline writes it (opens with Open pipeline), the unapplied Program text and
+        each unsaved Python-editor tab. Nothing is run or evaluated; the texts are written as they are.
+
+        Each piece is read on its own (the quit confirmation that failed may have failed on one of them):
+        when it cannot tell whether the pipeline is unsaved, it keeps a copy anyway."""
+        out = []
+        try:
+            pipe_dirty = _pipeline_unsaved()
+        except Exception as exc:                            # noqa: BLE001 -- 分からない時は写す側に倒す
+            _log_soft_failure("could not tell whether the pipeline is unsaved", exc)
+            pipe_dirty = bool(model.stages)
+        try:
+            if pipe_dirty:
+                out.append(("pipeline.json", json.dumps(model.to_dict(), indent=2)))
+        except Exception as exc:                            # noqa: BLE001
+            _log_soft_failure("could not write out the pipeline to keep a copy", exc)
+        try:
+            if state.get("code_dirty"):
+                out.append(("program.txt", code_edit.toPlainText()))
+        except Exception as exc:                            # noqa: BLE001
+            _log_soft_failure("could not read the Program text to keep a copy", exc)
+        try:
+            pe = state.get("pyedit")
+            tabs = pe.get("tabs") if pe is not None else None
+            if tabs is not None:
+                for i in range(tabs.count()):
+                    ed = tabs.widget(i)
+                    if getattr(ed, "_dirty", False):
+                        out.append(("editor_tab%d.py" % (i + 1), ed.toPlainText()))
+        except Exception as exc:                            # noqa: BLE001
+            _log_soft_failure("could not read the editor tabs to keep a copy", exc)
+        return out
+    win.rescue_unsaved = _rescue_unsaved
     win._perception = {"model": pmodel, "mode": percep_mode, "run": run_perception}
     win._flash = flash
     win._state = state                                   # for tests / headless driving
