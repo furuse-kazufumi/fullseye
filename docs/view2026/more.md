@@ -284,7 +284,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## ぜんぶ見る
 
-PoC 292 本と、ロボットの例 2 本。グループを開くとサムネイルが出ます。
+PoC 293 本と、ロボットの例 2 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -439,7 +439,7 @@ PoC 292 本と、ロボットの例 2 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>幾何・校正</b> (26)</summary>
+<details class="vall"><summary><b>幾何・校正</b> (27)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../articles/assets/poc/poc_simcal_thin_film/story.ja.gif" alt="Schwarz ら 2024 の顕微鏡写真(Si 上の SiO₂ の縁)を 40 px 角の 52 区画の RGB 平均にし、転送行列 × 黒体の光源 × CIE 1931 → sRGB × 利得 × ガンマ × 周辺減光の 7 本のつまみに合わせた終点を通る切り口(ほかのつまみは終点に固定、色は log10(χ² − 最小 + 1)、暗いほど合う、上が大きい値)。左は各軸 ±8 σ_CRLB(T 5752〜6449 K、周辺減光 -0.149〜-0.018)でも谷が 1 点に閉じる。右は利得 ×1/2〜×2・ガンマ 1.4〜3.2 の全域に谷が溝として伸び、明るさを上げても γ を上げれば同じ画素値に戻る。simcal_fit が値を出したのは T = 6100 K, vig = -0.084 だけで、膜厚・屈折率・分散・利得・ガンマは共線性指数 γ > 10 で「組み合わせ」として数を出さない。出典: Schwarz et al., Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502; data Zenodo 10.5281/zenodo.13753754 (CC BY 4.0). Modified: re-labelled and rounded table / micrograph downsized to 640x360, block means." loading="lazy" width="200" height="200"></picture><span>実画像で薄膜の模型を較正(決まる係数と決まらない組み合わせ)</span></a>
 <a href="../articles/assets/poc/poc_camera_calibration/06_real_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_camera_calibration/06_real_board.png"><img src="../articles/assets/poc/poc_camera_calibration/story.ja.gif" alt="上: 実写の校正板(OpenCV が配布する 13 枚、Apache-2.0)から 4 枚を選ぶ 715 通りを校正し直した。再投影の外れの 1 枚(left02.jpg)を含む組は RMS が大きく、含まない 495 組では 12 枚の推定 fx との差が -1.46〜+2.53 % 散り、RMS と |差| の相関は -0.045(基準を 13 枚の推定にすると値が変わる)。含まない組の RMS が 0.3 px 付近に固まる 165 組は 2 番目に外れた left13.jpg を含む。外れを RMS の大きい順に 1 / 2 / 3 枚除くと相関は -0.045 / -0.055 / +0.244 で、3 枚除くと門の 0.3 に近づく。下: 最も正面に近い 1 枚の板面の質感を、13 枚の推定値を真値に置いたカメラで傾き 32 / 8 / 2 度に 10 視点ずつ描き直し、OpenCV で角点を拾って校正した結果。再投影 RMS は 0.146 / 0.154 / 0.153 px でほぼ同じなのに、|fx 誤差| は雑音の種 5 個で 0.02〜0.08 / 0.22〜0.43 / 2.1〜7.4 %。警報になるのは sigma_fx(0.26 → 35.3 px)。合成の点(第 4 章)では 0.026 / 0.445 / 7.329 % だった。値は範囲で読む: 描き直しの経路は敏感で、真値が 1e-5 px 動くだけで角点が中央値 0.03 px 動いて雑音の実現が変わる。描いた板の背景で、写っていた板を埋めた部分が見えている画素は平均 3.7 %(最大 6.4 %)。" loading="lazy" width="200" height="200"></picture><span>再投影誤差が小さくても焦点距離は狂う</span></a>
@@ -467,6 +467,7 @@ PoC 292 本と、ロボットの例 2 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_multimodal_mi_registration.jpg" alt="相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる" width="200" height="200"><span>相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる</span></a>
 <a href="../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_sheet_deformation_ffd.jpg" alt="シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない" width="200" height="200"><span>シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない</span></a>
 <a href="../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><img src="../articles/assets/poc/poc_real_chessboard_undistort/story.ja.gif" alt="left03.jpg: 直線性 0.875 → 0.080 px。正面図の角と格子のずれ RMS 0.23 px。" loading="lazy" width="200" height="200"></picture><span>実写の校正板で歪みを直し正面図へ</span></a>
+<a href="../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><img src="../articles/assets/poc/poc_cloth_towel_corners_synth/story.ja.gif" alt="synthetic towel, 1 mm per pixel. red cross = detected corner (chroma variant), blue circle = true corner, yellow = true crease, green = detected side. bottom row: low contrast, strong wrinkle. dE is this seed's; the mean over 20 seeds is 69" loading="lazy" width="200" height="200"></picture><span>置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成)―― 単純な長方形の当てはめが最良で、一般の多角形が並ぶのは色度版だけ、台の色が近い所としわ 3 mm 以上で崩れる</span></a>
 </div>
 </details>
 

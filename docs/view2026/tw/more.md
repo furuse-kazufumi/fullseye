@@ -266,7 +266,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## 全部看
 
-PoC 292 個,另有機器人範例 2 個。展開分組即可載入縮圖。
+PoC 293 個,另有機器人範例 2 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -421,7 +421,7 @@ PoC 292 個,另有機器人範例 2 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>幾何與校正</b> (26)</summary>
+<details class="vall"><summary><b>幾何與校正</b> (27)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>以真實影像校正薄膜模型(可確定的係數與無法確定的組合)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><img src="../../articles/assets/poc/poc_camera_calibration/story.en.gif" alt="A small reprojection error does not guarantee a correct focal length. Re-rendering a real board nearly face-on kept the reprojection error about the same, but the focal-length error grew at least 28-fold over a tilted board. The warning is the spread of the focal-length estimate, not the reprojection error." loading="lazy" width="200" height="200"></picture><span>重投影誤差很小，焦距仍會偏</span></a>
@@ -449,6 +449,7 @@ PoC 292 個,另有機器人範例 2 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_multimodal_mi_registration.jpg" alt="可見光與紅外電路板影像相關為 −0.74,互資訊仍以 0.170 px 對位" width="200" height="200"><span>可見光與紅外電路板影像相關為 −0.74,互資訊仍以 0.170 px 對位</span></a>
 <a href="../../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sheet_deformation_ffd.jpg" alt="FFD 以 0.025 px 追蹤薄片變形,但條碼與空白處無法確定位移場" width="200" height="200"><span>FFD 以 0.025 px 追蹤薄片變形,但條碼與空白處無法確定位移場</span></a>
 <a href="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><img src="../../articles/assets/poc/poc_real_chessboard_undistort/story.en.gif" alt="Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing" loading="lazy" width="200" height="200"></picture><span>用真實校正板去畸變並校正為正視圖</span></a>
+<a href="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><img src="../../articles/assets/poc/poc_cloth_towel_corners_synth/story.en.gif" alt="Knowing where a towel's edges meet tells a robot where to grasp. In rendered images of folded towels the corners were found within about 1 mm, though such small gaps depend on how the truth is defined. Simple rectangle fitting worked best, and every method broke with close colours or strong wrinkles." loading="lazy" width="200" height="200"></picture><span>用經典影像處理找出毛巾的角、邊與摺線(合成):簡單的矩形擬合最好,通用多邊形只有色度版能與之相當,桌面顏色接近或皺紋達 3 mm 以上時全部退化</span></a>
 </div>
 </details>
 

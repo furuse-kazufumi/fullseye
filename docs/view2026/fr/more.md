@@ -266,7 +266,7 @@ Les titres et descriptions des démonstrations de cette section sont en anglais 
 
 ## Tout voir
 
-292 PoC et 2 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+293 PoC et 2 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -421,7 +421,7 @@ Les titres et descriptions des démonstrations de cette section sont en anglais 
 </div>
 </details>
 
-<details class="vall"><summary><b>Géométrie et calibrage</b> (26)</summary>
+<details class="vall"><summary><b>Géométrie et calibrage</b> (27)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>Étalonnage d'un modèle de couche mince sur des images réelles (coefficients déterminés et combinaisons indéterminées)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><img src="../../articles/assets/poc/poc_camera_calibration/story.en.gif" alt="A small reprojection error does not guarantee a correct focal length. Re-rendering a real board nearly face-on kept the reprojection error about the same, but the focal-length error grew at least 28-fold over a tilted board. The warning is the spread of the focal-length estimate, not the reprojection error." loading="lazy" width="200" height="200"></picture><span>Faible erreur de reprojection, focale fausse</span></a>
@@ -449,6 +449,7 @@ Les titres et descriptions des démonstrations de cette section sont en anglais 
 <a href="../../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_multimodal_mi_registration.jpg" alt="Images visible et thermique corrélées à −0,74 ; l'information mutuelle les recale à 0,170 px" width="200" height="200"><span>Images visible et thermique corrélées à −0,74 ; l'information mutuelle les recale à 0,170 px</span></a>
 <a href="../../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sheet_deformation_ffd.jpg" alt="La FFD suit la déformation d'une feuille à 0,025 px, mais codes-barres et marges vides laissent le champ indéterminé" width="200" height="200"><span>La FFD suit la déformation d'une feuille à 0,025 px, mais codes-barres et marges vides laissent le champ indéterminé</span></a>
 <a href="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><img src="../../articles/assets/poc/poc_real_chessboard_undistort/story.en.gif" alt="Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing" loading="lazy" width="200" height="200"></picture><span>Corriger la distorsion de vraies mires et les redresser de face</span></a>
+<a href="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><img src="../../articles/assets/poc/poc_cloth_towel_corners_synth/story.en.gif" alt="Knowing where a towel's edges meet tells a robot where to grasp. In rendered images of folded towels the corners were found within about 1 mm, though such small gaps depend on how the truth is defined. Simple rectangle fitting worked best, and every method broke with close colours or strong wrinkles." loading="lazy" width="200" height="200"></picture><span>Coins, côtés et plis d'une serviette par traitement d'image classique (synthétique) : un simple ajustement de rectangle est le meilleur, le polygone général ne l'égale qu'en chroma, et tout se dégrade avec une couleur de table proche ou des plis de 3 mm et plus</span></a>
 </div>
 </details>
 

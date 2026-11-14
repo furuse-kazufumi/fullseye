@@ -266,7 +266,7 @@ Titel und Beschreibungen der Exponate in diesem Abschnitt sind auf Englisch (Bes
 
 ## Alles ansehen
 
-292 PoCs und 2 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+293 PoCs und 2 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -421,7 +421,7 @@ Titel und Beschreibungen der Exponate in diesem Abschnitt sind auf Englisch (Bes
 </div>
 </details>
 
-<details class="vall"><summary><b>Geometrie und Kalibrierung</b> (26)</summary>
+<details class="vall"><summary><b>Geometrie und Kalibrierung</b> (27)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>Kalibrierung eines Dünnschichtmodells an echten Bildern (bestimmte Koeffizienten und Kombinationen)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><img src="../../articles/assets/poc/poc_camera_calibration/story.en.gif" alt="A small reprojection error does not guarantee a correct focal length. Re-rendering a real board nearly face-on kept the reprojection error about the same, but the focal-length error grew at least 28-fold over a tilted board. The warning is the spread of the focal-length estimate, not the reprojection error." loading="lazy" width="200" height="200"></picture><span>Kleiner Reprojektionsfehler, falsche Brennweite</span></a>
@@ -449,6 +449,7 @@ Titel und Beschreibungen der Exponate in diesem Abschnitt sind auf Englisch (Bes
 <a href="../../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_multimodal_mi_registration.jpg" alt="Sicht- und Wärmebild einer Platine korrelieren mit −0,74; Mutual Information registriert auf 0,170 px" width="200" height="200"><span>Sicht- und Wärmebild einer Platine korrelieren mit −0,74; Mutual Information registriert auf 0,170 px</span></a>
 <a href="../../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sheet_deformation_ffd.jpg" alt="FFD verfolgt Folienverformung auf 0,025 px, aber Strichcodes und leere Ränder lassen das Feld offen" width="200" height="200"><span>FFD verfolgt Folienverformung auf 0,025 px, aber Strichcodes und leere Ränder lassen das Feld offen</span></a>
 <a href="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_chessboard_undistort/01_board.png"><img src="../../articles/assets/poc/poc_real_chessboard_undistort/story.en.gif" alt="Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing" loading="lazy" width="200" height="200"></picture><span>Echte Kalibrierplatten entzerren und frontal abbilden</span></a>
+<a href="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png"><img src="../../articles/assets/poc/poc_cloth_towel_corners_synth/story.en.gif" alt="Knowing where a towel's edges meet tells a robot where to grasp. In rendered images of folded towels the corners were found within about 1 mm, though such small gaps depend on how the truth is defined. Simple rectangle fitting worked best, and every method broke with close colours or strong wrinkles." loading="lazy" width="200" height="200"></picture><span>Ecken, Seiten und Falzlinien eines Handtuchs mit klassischer Bildverarbeitung (synthetisch): Eine einfache Rechteckanpassung ist am besten, das allgemeine Polygon zieht nur in Chroma gleich, und bei ähnlicher Tischfarbe oder Falten ab 3 mm fällt alles ab</span></a>
 </div>
 </details>
 
