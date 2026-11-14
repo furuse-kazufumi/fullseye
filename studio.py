@@ -9797,8 +9797,16 @@ def build_window(model=None):
         if api.find_op(name) is None:
             # ★2026-11-13: 索引には載っているが、この環境では呼べない op(optional backend が未導入)。
             # 以前は add_stage の KeyError がスロットの中で消えて、何も起きなかった。
-            flash("‘%s’ is not available in this environment (its optional backend is not installed) "
-                  "— it was not added to the pipeline" % name)
+            try:
+                two_input = name in api._nary_by_name()
+            except Exception:                       # noqa: BLE001 - 理由の言い分けだけの為に、入れる操作を落とさない
+                two_input = False
+            if two_input:
+                flash("‘%s’ takes two or more inputs, so it cannot be added as a single pipeline stage "
+                      "— it was not added" % name)
+            else:
+                flash("‘%s’ is not available in this environment (its optional backend is not installed) "
+                      "— it was not added to the pipeline" % name)
             return
         a_val, b_val = op_a_spin.value(), op_b_spin.value()
         line = "%s (%r, %r)" % (name, float(a_val), float(b_val))   # repr: full precision
@@ -14658,6 +14666,9 @@ def build_window(model=None):
 
     def _recent_paths():
         v = _settings().value(_RECENT_KEY, [])
+        if isinstance(v, str):
+            # ★2026-11-13: ini の設定は、1 件だけの列を str で返す。そのまま回すとパスが 1 文字ずつの項目になっていた。
+            v = [v] if v else []
         return [x for x in (v or []) if isinstance(x, str)]
 
     def _save_recent(paths):
